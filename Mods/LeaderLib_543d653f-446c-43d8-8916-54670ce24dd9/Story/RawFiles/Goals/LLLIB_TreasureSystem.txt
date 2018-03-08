@@ -1,0 +1,429 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+//DB_LLLIB_Treasure_RegisteredObject(_TreasureID, _Object)
+//DB_LLLIB_Treasure_RegisteredObjectTemplate(_TreasureID, _Template)
+//DB_LLLIB_Treasure_TreasureItems(_TreasureID, _ItemTemplate, _Amount, _RequirementID)
+//DB_LLLIB_Treasure_Requirement_Level(_RequirementID, _MinLevel, _MaxLevel)
+//DB_LLLIB_Treasure_Requirement_Flag(_RequirementID, _Flag, _FlagType, _FlagVal)
+//DB_LLLIB_Treasure_Requirement_Amount(_RequirementID, _MaxAmount)
+//DB_LLLIB_Treasure_OnlyOnce(_TreasureID, _ItemTemplate, _OnCompletionEvent)
+//DB_LLLIB_Treasure_GeneratedEvent(_TreasureID, _ItemTemplate, _OnGeneratedEvent)
+//DB_LLLIB_Treasure_Temp_MatchedTreasure(_Trader, _TreasureID)
+//DB_LLLIB_Treasure_Temp_ActiveTraderDialog(_Trader, _Instance)
+//DB_LLLIB_Treasure_Temp_ItemCount(_Object, _ItemTemplate, _Amount)
+KBSECTION
+//REGION REGISTERING
+PROC
+LLLIB_Treasure_RegisterObject((STRING)_TreasureID, (GUIDSTRING)_Object)
+AND
+NOT DB_LLLIB_Treasure_RegisteredObject(_TreasureID,_)
+THEN
+DB_LLLIB_Treasure_RegisteredObject(_TreasureID, _Object);
+
+PROC
+LLLIB_Treasure_RegisterObjectByTemplate((STRING)_TreasureID, (STRING)_ObjectTemplate)
+AND
+NOT DB_LLLIB_Treasure_RegisteredObjectTemplate(_TreasureID,_)
+THEN
+DB_LLLIB_Treasure_RegisteredObjectTemplate(_TreasureID, _ObjectTemplate);
+
+PROC
+LLLIB_Treasure_AddFlagRequirement((STRING)_RequirementID, (STRING)_Flag, (STRING)_FlagType)
+AND
+_RequirementID != ""
+THEN
+DB_LLLIB_Treasure_Requirement_Flag(_RequirementID, _Flag, _FlagType, 1);
+
+PROC
+LLLIB_Treasure_AddFlagRequirement((STRING)_RequirementID, (STRING)_Flag, (STRING)_FlagType, (INTEGER)_FlagVal)
+AND
+_RequirementID != ""
+THEN
+DB_LLLIB_Treasure_Requirement_Flag(_RequirementID, _Flag, _FlagType, _FlagVal);
+
+PROC
+LLLIB_Treasure_AddLevelRequirement((STRING)_RequirementID, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
+AND
+_RequirementID != ""
+THEN
+DB_LLLIB_Treasure_Requirement_Level(_RequirementID, _MinLevel, _MaxLevel);
+
+PROC
+LLLIB_Treasure_AddMaxAmountRequirement((STRING)_RequirementID, (INTEGER)_MaxAmount)
+AND
+_RequirementID != ""
+THEN
+DB_LLLIB_Treasure_Requirement_Amount(_RequirementID, _MaxAmount);
+
+PROC
+LLLIB_Treasure_AddTreasureItem((STRING)_TreasureID, (STRING)_ItemTemplate, (INTEGER)_Amount)
+THEN
+DB_LLLIB_Treasure_TreasureItems(_TreasureID, _ItemTemplate, _Amount, "");
+
+PROC
+LLLIB_Treasure_AddTreasureItem((STRING)_TreasureID, (STRING)_ItemTemplate, (INTEGER)_Amount, (STRING)_RequirementID)
+THEN
+DB_LLLIB_Treasure_TreasureItems(_TreasureID, _ItemTemplate, _Amount, _RequirementID);
+
+PROC
+LLLIB_Treasure_AddGenerationEvent((STRING)_TreasureID, (STRING)_ItemTemplate, (STRING)_OnGeneratedEvent)
+THEN
+DB_LLLIB_Treasure_GeneratedEvent(_TreasureID, _ItemTemplate, _OnGeneratedEvent);
+
+PROC
+LLLIB_Treasure_GenerateOnce((STRING)_TreasureID, (STRING)_ItemTemplate, (STRING)_OnCompletionEvent)
+THEN
+DB_LLLIB_Treasure_OnlyOnce(_TreasureID, _ItemTemplate, _OnCompletionEvent);
+//END_REGION
+
+//REGION QUERIES_CHECKS
+//Don't bother checking requirements without an actual ID
+QRY
+LLLIB_QRY_Treasure_CanGenerate("")
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_QRY_Treasure_CanGenerate((STRING)_RequirementID)
+AND
+_RequirementID != ""
+AND
+NOT DB_LLLIB_Treasure_Requirement_Level(_RequirementID,_,_)
+AND
+NOT DB_LLLIB_Treasure_Requirement_Flag(_RequirementID,_,_,_)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_QRY_Treasure_CanGenerate((STRING)_RequirementID)
+AND
+_RequirementID != ""
+AND
+NOT DB_LLLIB_Treasure_Requirement_Level(_RequirementID,_,_)
+AND
+DB_LLLIB_Treasure_Requirement_Flag(_RequirementID, _Flag, _FlagType, _FlagVal)
+AND
+LLLIB_Helper_QRY_PartyFlagSet(_Flag, _FlagType, _FlagVal)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_QRY_Treasure_CanGenerate((STRING)_RequirementID)
+AND
+_RequirementID != ""
+AND
+NOT DB_LLLIB_Treasure_Requirement_Flag(_RequirementID,_,_,_)
+AND
+DB_LLLIB_Treasure_Requirement_Level(_RequirementID, _MinLevel, _MaxLevel)
+AND
+LLLIB_Helper_QRY_PartyLevelRangeMet(_MinLevel, _MaxLevel)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_QRY_Treasure_CanGenerate((STRING)_RequirementID)
+AND
+DB_LLLIB_Treasure_Requirement_Flag(_RequirementID, _Flag, _FlagType, _FlagVal)
+AND
+LLLIB_Helper_QRY_PartyFlagSet(_Flag, _FlagType, _FlagVal)
+AND
+DB_LLLIB_Treasure_Requirement_Level(_RequirementID, _MinLevel, _MaxLevel)
+AND
+LLLIB_Helper_QRY_PartyLevelRangeMet(_MinLevel, _MaxLevel)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_QRY_Treasure_IsRegisteredObject((GUIDSTRING)_Object)
+AND
+DB_LLLIB_Treasure_RegisteredObject(_TreasureID, _Object)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_QRY_Treasure_IsRegisteredObject((GUIDSTRING)_Object)
+AND
+NOT DB_LLLIB_Treasure_RegisteredObject(_, _Object)
+AND
+GetTemplate(_Object, _Template)
+AND
+DB_LLLIB_Treasure_RegisteredObjectTemplate(_TreasureID, _Template)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_QRY_Treasure_GetTreasureID((GUIDSTRING)_Object)
+AND
+DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
+THEN
+NOT DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
+
+QRY
+LLLIB_QRY_Treasure_GetTreasureID((GUIDSTRING)_Object)
+AND
+NOT DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object,_)
+AND
+DB_LLLIB_Treasure_RegisteredObject(_TreasureID, _Object)
+THEN
+DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
+
+QRY
+LLLIB_QRY_Treasure_GetTreasureID((GUIDSTRING)_Object)
+AND
+NOT DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object,_)
+AND
+GetTemplate(_Object, _Template)
+AND
+DB_LLLIB_Treasure_RegisteredObjectTemplate(_TreasureID, _Template)
+THEN
+DB_LLLIB_Treasure_Temp_MatchedTreasure((GUIDSTRING)_Object, _TreasureID);
+//END_REGION
+
+//REGION ITEM_LIMITS
+QRY
+LLLIB_QRY_Treasure_ItemLimitNotMet((GUIDSTRING)_Object, (STRING)_ItemTemplate, (STRING)_RequirementID, (INTEGER)_GeneratedAmount)
+AND
+IsTagged(_Object, "LLLIB_Treasure_GenerateEndlessly", 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_QRY_Treasure_ItemLimitNotMet((GUIDSTRING)_Object, (STRING)_ItemTemplate, (STRING)_RequirementID, (INTEGER)_GeneratedAmount)
+AND
+IsTagged(_Object, "LLLIB_Treasure_GenerateEndlessly", 0)
+AND
+_RequirementID != ""
+AND
+DB_LLLIB_Treasure_Requirement_Amount(_RequirementID, _MaxAmount)
+AND
+LLLIB_QRY_Treasure_GetItemCount(_Object, _ItemTemplate)
+AND
+DB_LLLIB_Treasure_Temp_ItemCount(_Object, _ItemTemplate, _Amount)
+AND
+_Amount < _MaxAmount
+THEN
+NOT DB_LLLIB_Treasure_Temp_ItemCount(_Object, _ItemTemplate, _Amount);
+
+//Incase somebody registers a requirement with "" as the ID
+QRY
+LLLIB_QRY_Treasure_ItemLimitNotMet((GUIDSTRING)_Object, (STRING)_ItemTemplate, (STRING)_RequirementID, (INTEGER)_GeneratedAmount)
+AND
+IsTagged(_Object, "LLLIB_Treasure_GenerateEndlessly", 0)
+AND
+_RequirementID == ""
+AND
+DB_LLLIB_Treasure_Requirement_Amount(_RequirementID,_)
+AND
+LLLIB_QRY_Treasure_GetItemCount(_Object, _ItemTemplate)
+AND
+DB_LLLIB_Treasure_Temp_ItemCount(_Object, _ItemTemplate, _Amount)
+AND
+_Amount < _GeneratedAmount
+THEN
+NOT DB_LLLIB_Treasure_Temp_ItemCount(_Object, _ItemTemplate, _Amount);
+
+QRY
+LLLIB_QRY_Treasure_ItemLimitNotMet((GUIDSTRING)_Object, (STRING)_ItemTemplate, (STRING)_RequirementID, (INTEGER)_GeneratedAmount)
+AND
+IsTagged(_Object, "LLLIB_Treasure_GenerateEndlessly", 0)
+AND
+NOT DB_LLLIB_Treasure_Requirement_Amount(_RequirementID,_)
+AND
+LLLIB_QRY_Treasure_GetItemCount(_Object, _ItemTemplate)
+AND
+DB_LLLIB_Treasure_Temp_ItemCount(_Object, _ItemTemplate, _Amount)
+AND
+_Amount < _GeneratedAmount
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_QRY_Treasure_GetItemCount((GUIDSTRING)_Object, (STRING)_ItemTemplate)
+AND
+ObjectIsCharacter(_Object, 1)
+AND
+CharacterGetItemTemplateCount((CHARACTERGUID)_Object, _ItemTemplate, _Amount)
+THEN
+DB_LLLIB_Treasure_Temp_ItemCount((GUIDSTRING)_Object, _ItemTemplate, _Amount);
+
+QRY
+LLLIB_QRY_Treasure_GetItemCount((GUIDSTRING)_Object, (STRING)_ItemTemplate)
+AND
+ObjectIsItem(_Object, 1)
+AND
+ItemIsContainer((ITEMGUID)_Object, 1)
+AND
+ItemTemplateIsInContainer((ITEMGUID)_Object, _ItemTemplate, _Amount)
+THEN
+DB_LLLIB_Treasure_Temp_ItemCount((GUIDSTRING)_Object, _ItemTemplate, _Amount);
+//END_REGION
+
+//REGION GENERATING
+PROC
+LLLIB_Treasure_GenerateItems((GUIDSTRING)_Object, (STRING)_TreasureID)
+AND
+DB_LLLIB_Treasure_TreasureItems(_TreasureID, _ItemTemplate, _Amount, _RequirementID)
+AND
+LLLIB_QRY_Treasure_CanGenerate(_RequirementID)
+AND
+LLLIB_QRY_Treasure_ItemLimitNotMet(_Object, _ItemTemplate, _RequirementID, _Amount)
+THEN
+ItemTemplateAddTo(_ItemTemplate, _Object, _Amount);
+LLLIB_Treasure_SendGeneratedEvent(_Object, _TreasureID, _ItemTemplate);
+LLLIB_Treasure_RemoveIfOnlyOnce(_Object, _TreasureID, _ItemTemplate);
+
+PROC
+LLLIB_Treasure_SendGeneratedEvent((GUIDSTRING)_Owner, (STRING)_OwnerID, (STRING)_ItemTemplate)
+AND
+DB_LLLIB_Treasure_GeneratedEvent(_OwnerID, _ItemTemplate, _OnGeneratedEvent)
+THEN
+SetStoryEvent(_Owner, _OnGeneratedEvent);
+
+PROC
+LLLIB_Treasure_RemoveIfOnlyOnce((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate)
+AND
+DB_LLLIB_Treasure_OnlyOnce(_TreasureID, _ItemTemplate, _OnCompletionEvent)
+AND
+DB_LLLIB_Treasure_TreasureItems(_TreasureID, _ItemTemplate, _Amount, _RequirementID)
+THEN
+NOT DB_LLLIB_Treasure_TreasureItems(_TreasureID, _ItemTemplate, _Amount, _RequirementID);
+
+PROC
+LLLIB_Treasure_RemoveIfOnlyOnce((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate)
+AND
+DB_LLLIB_Treasure_OnlyOnce(_TreasureID, _ItemTemplate, _OnCompletionEvent)
+THEN
+ObjectSetFlag(_Object, "LLLIB_Treasure_GenerationEnded");
+SetStoryEvent(_Object, _OnCompletionEvent);
+
+PROC
+LLLIB_Treasure_DisableGenerationForObject((GUIDSTRING)_Object)
+AND
+IsTagged(_Object, "LLLIB_Treasure_GenerateEndlessly", 0)
+THEN
+ObjectSetFlag(_Object, "LLLIB_Treasure_GenerationEnded");
+
+IF
+ObjectWasTagged(_Object, "LLLIB_Treasure_GenerateEndlessly")
+AND
+ObjectGetFlag(_Object, "LLLIB_Treasure_GenerationEnded", 1)
+THEN
+ObjectClearFlag(_Object, "LLLIB_Treasure_GenerationEnded");
+//END_REGION
+
+//REGION TREASURE_EVENTS
+IF
+//ItemOpened(_Object)
+CharacterUsedItem(_, _Object)
+AND
+IsTagged(_Object, "LLLIB_Item_IgnoreOpened", 0)
+AND
+ObjectGetFlag(_Object, "LLLIB_Treasure_GenerationEnded", 0)
+AND
+ItemIsContainer(_Object, 1)
+AND
+LLLIB_QRY_Treasure_GetTreasureID((GUIDSTRING)_Object)
+AND
+DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
+THEN
+LLLIB_Treasure_GenerateItems(_Object, _TreasureID);
+NOT DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
+LLLIB_Treasure_DisableGenerationForObject(_Object);
+
+IF
+ObjectFlagSet("LLLIB_Treasure_GenerateNow", _Object, _)
+AND
+LLLIB_Helper_QRY_ClearObjectFlag(_Object, "LLLIB_Treasure_GenerateNow")
+AND
+LLLIB_QRY_Treasure_GetTreasureID(_Object)
+AND
+DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
+THEN
+LLLIB_Treasure_GenerateItems(_Object, _TreasureID);
+NOT DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
+//END_REGION
+
+//REGION TRADER_EVENTS
+IF
+TradeGenerationEnded(_Object)
+AND
+IsTagged(_Object, "LLLIB_Trader_IgnoreTradeGeneration", 0)
+AND
+ObjectGetFlag(_Object, "LLLIB_Treasure_GenerationEnded", 0)
+AND
+LLLIB_QRY_Treasure_GetTreasureID((GUIDSTRING)_Object)
+AND
+DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
+THEN
+LLLIB_Treasure_GenerateItems(_Object, _TreasureID);
+NOT DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
+
+IF
+DialogStarted(_Dialog, _Instance)
+AND
+DialogGetInvolvedNPC(_Instance, 1, _Object)
+AND
+IsTagged(_Object, "LLLIB_Trader_GenerateOnDialog", 1)
+AND
+ObjectGetFlag(_Object, "LLLIB_Treasure_GenerationEnded", 0)
+AND
+LLLIB_QRY_Treasure_GetTreasureID(_Object)
+AND
+DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
+THEN
+LLLIB_Treasure_GenerateItems(_Object, _TreasureID);
+NOT DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
+
+IF
+ObjectFlagSet("LLLIB_Trader_OpenTrade", (CHARACTERGUID)_Object, _Instance)
+AND
+LLLIB_Helper_QRY_ClearObjectFlag(_Object, "LLLIB_Treasure_OpenTrade")
+AND
+DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
+THEN
+StartTrade(_Player, _Object);
+//END_REGION
+
+//REGION LEADER_TRADER
+IF
+DialogStarted("LLLIB_Trader", _Instance)
+AND
+DialogGetInvolvedNPC(_Instance, 1, _Object)
+THEN
+DB_LLLIB_Treasure_Temp_ActiveTraderDialog(_Object, _Instance);
+
+IF
+DialogStarted("LLLIB_Trader", _Instance)
+AND
+DialogGetInvolvedPlayer(_Instance, 1, _Player)
+AND
+ObjectGetFlag(_Player, "LLLIB_Treasure_PlayerTalkedToLeaderTrader", 1)
+THEN
+DialogSetVariableStringForInstance(_Instance, "LLLIB_Treasure_Greeting_f143b90b-9afc-477e-b133-6a1574341261", "Welcome back! Looking to trade?");
+
+IF
+DialogEnded("LLLIB_Trader", _Instance)
+AND
+DB_LLLIB_Treasure_Temp_ActiveTraderDialog(_Object, _Instance)
+THEN
+NOT DB_LLLIB_Treasure_Temp_ActiveTraderDialog(_Object, _Instance);
+
+IF
+ObjectFlagSet("StartTrade", _Speaker, _Instance)
+AND
+DB_LLLIB_Treasure_Temp_ActiveTraderDialog(_Object, _Instance)
+THEN
+DialogSetVariableStringForInstance(_Instance, "LLLIB_Treasure_Greeting_f143b90b-9afc-477e-b133-6a1574341261", "Anything else?");
+
+IF
+RequestTrade(_Player, _Object)
+AND
+DB_LLLIB_Treasure_Temp_ActiveTraderDialog(_Object, _Instance)
+THEN
+DialogSetVariableStringForInstance(_Instance, "LLLIB_Treasure_Greeting_f143b90b-9afc-477e-b133-6a1574341261", "Anything else?");
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

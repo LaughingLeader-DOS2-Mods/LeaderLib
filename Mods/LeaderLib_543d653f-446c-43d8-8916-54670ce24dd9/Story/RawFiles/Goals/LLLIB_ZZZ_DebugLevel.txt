@@ -1,0 +1,64 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+IF
+GameStarted("LeaderLib_TestLevel",_)
+THEN
+LLLIB_Treasure_RegisterObject("LLLIB_TestLevel_Trader", CHARACTERGUID_Humans_Male_Clothing_Poor_000_cc53113d-d4f2-4e8f-9ee4-e6aedf51669b);
+LLLIB_Treasure_AddTreasureItem("LLLIB_TestLevel_Trader", "LOOT_Source_Orb_106a7107-cf36-4331-b5b5-6de71969f370", 1, "LLLIB_Debug_TraderRequirements");
+LLLIB_Treasure_AddFlagRequirement("LLLIB_Debug_TraderRequirements", "LLLIB_Trader_PlayerTalkedToLeaderTrader", "Object", 1);
+LLLIB_Treasure_AddLevelRequirement("LLLIB_Debug_TraderRequirements", 2, 2);
+
+LLLIB_Treasure_RegisterObject("LLLIB_TestLevel_Chest1", ITEMGUID_LLLIB_Debug_TestChest_ff6c9edf-aa21-447a-8bb2-2a647a8dae46);
+LLLIB_Treasure_AddTreasureItem("LLLIB_TestLevel_Chest1", "LOOT_Source_Orb_106a7107-cf36-4331-b5b5-6de71969f370", 2, "LLLIB_TestLevel_Chest1_Requirements");
+LLLIB_Treasure_AddFlagRequirement("LLLIB_TestLevel_Chest1_Requirements", "LLLIB_Trader_PlayerTalkedToLeaderTrader", "Object", 0);
+
+IF
+GameStarted("LeaderLib_TestLevel",_)
+THEN
+GlobalSetFlag("LEADERLOG_DEBUG_ENABLED");
+TimerLaunch("LeaderLib_TestLevel_IteratorDelay", 500);
+
+IF
+TimerFinished("LeaderLib_TestLevel_IteratorDelay")
+THEN
+LeaderLog_DebugLog("[LLLIB:DebugLevel] ","Searching for players.");
+CharacterLaunchIterator("LLLIB_Debug_AddPlayer");
+
+IF
+StoryEvent((CHARACTERGUID)_Player, "LLLIB_Debug_AddPlayer")
+AND
+CharacterIsPlayer(_Player, 1)
+AND
+NOT DB_IsPlayer(_Player)
+THEN
+DB_IsPlayer(_Player);
+LeaderLog_DebugLog("[LLLIB:DebugLevel] ","Added player to DB_IsPlayer.");
+
+IF
+DialogStarted(_Dialog, _Instance)
+AND
+DialogGetInvolvedNPC(_Instance, 1, _Trader)
+AND
+IsTagged(_Trader, "LLLIB_Treasure_GenerateOnDialog", 1)
+AND
+LLLIB_QRY_Treasure_IsRegisteredObject(_Trader)
+THEN
+LeaderLog_DebugLog("[LLLIB:DebugLevel] ","Dialog generation tag set, generating items for trader.");
+
+IF
+DialogStarted(_Dialog, _Instance)
+AND
+DialogGetInvolvedNPC(_Instance, 1, (CHARACTERGUID)_Trader)
+AND
+IsTagged(_Trader, "LLLIB_Treasure_GenerateOnDialog", 1)
+AND
+NOT LLLIB_QRY_Treasure_IsRegisteredObject(_Trader)
+THEN
+LeaderLog_DebugLog("[LLLIB:DebugLevel][ERROR] ","Dialog generation tag set, but trader is not registered!");
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

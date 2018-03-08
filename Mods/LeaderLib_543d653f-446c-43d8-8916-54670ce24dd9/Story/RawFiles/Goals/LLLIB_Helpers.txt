@@ -1,0 +1,142 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+//DB_LLLIB_Helper_Temp_StopIteratingForFlags(1)
+//DB_LLLIB_Helper_Temp_StopIteratingForMinLevel(1)
+//DB_LLLIB_Helper_Temp_StopIteratingForMaxLevel(1)
+KBSECTION
+//REGION QUERY_INFO
+QRY
+LLLIB_Helper_QRY_PartyFlagSet((STRING)_Flag, (STRING)_FlagType, (INTEGER)_FlagVal)
+AND
+DB_LLLIB_Helper_Temp_StopIteratingForFlags(_Val)
+THEN
+NOT DB_LLLIB_Helper_Temp_StopIteratingForFlags(_Val);
+
+QRY
+LLLIB_Helper_QRY_PartyFlagSet((STRING)_Flag, (STRING)_FlagType, (INTEGER)_FlagVal)
+AND
+DB_IsPlayer(_Player)
+AND
+NOT DB_LLLIB_Helper_Temp_StopIteratingForFlags(1)
+AND
+LLLIB_Helper_QRY_FlagSet(_Player, _Flag, _FlagType, _FlagVal)
+THEN
+DB_LLLIB_Helper_Temp_StopIteratingForFlags(1);
+
+QRY
+LLLIB_Helper_QRY_FlagSet((GUIDSTRING)_Object, (STRING)_Flag, "Object", (INTEGER)_FlagVal)
+AND
+ObjectGetFlag(_Object, _Flag, _FlagVal)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_Helper_QRY_FlagSet((CHARACTERGUID)_Player, (STRING)_Flag, "Character", (INTEGER)_FlagVal)
+AND
+ObjectGetFlag(_Player, _Flag, _FlagVal)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_Helper_QRY_FlagSet((CHARACTERGUID)_Player, (STRING)_Flag, "User", (INTEGER)_FlagVal)
+AND
+UserGetFlag(_Player, _Flag, _FlagVal)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_Helper_QRY_FlagSet((GUIDSTRING)_Object, (STRING)_Flag, "Global", (INTEGER)_FlagVal)
+AND
+GlobalGetFlag(_Flag, _FlagVal)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_Helper_QRY_PartyMinLevelMet((INTEGER)_MinLevel)
+AND
+_MinLevel <= 0
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_Helper_QRY_PartyMinLevelMet((INTEGER)_MinLevel)
+AND
+DB_LLLIB_Helper_Temp_StopIteratingForMinLevel(_Val)
+THEN
+NOT DB_LLLIB_Helper_Temp_StopIteratingForMinLevel(_Val);
+
+QRY
+LLLIB_Helper_QRY_PartyMinLevelMet((INTEGER)_MinLevel)
+AND
+_MinLevel > 0
+AND
+DB_IsPlayer(_Player)
+AND
+NOT DB_LLLIB_Helper_Temp_StopIteratingForMinLevel(1)
+AND
+CharacterGetLevel(_Player, _Level)
+AND
+_Level >= _MinLevel
+THEN
+DB_LLLIB_Helper_Temp_StopIteratingForMinLevel(1);
+
+QRY
+LLLIB_Helper_QRY_PartyMaxLevelMet((INTEGER)_MaxLevel)
+AND
+_MaxLevel <= 0
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_Helper_QRY_PartyMaxLevelMet((INTEGER)_MaxLevel)
+AND
+DB_LLLIB_Helper_Temp_StopIteratingForMaxLevel(_Val)
+THEN
+NOT DB_LLLIB_Helper_Temp_StopIteratingForMaxLevel(_Val);
+
+QRY
+LLLIB_Helper_QRY_PartyMaxLevelMet((INTEGER)_MaxLevel)
+AND
+_MaxLevel > 0
+AND
+DB_IsPlayer(_Player)
+AND
+NOT DB_LLLIB_Helper_Temp_StopIteratingForMaxLevel(1)
+AND
+CharacterGetLevel(_Player, _Level)
+AND
+_Level <= _MaxLevel
+THEN
+DB_LLLIB_Helper_Temp_StopIteratingForMaxLevel(1);
+
+QRY
+LLLIB_Helper_QRY_PartyLevelRangeMet((INTEGER)_MinLevel, (INTEGER)_MaxLevel)
+AND
+LLLIB_Helper_QRY_PartyMinLevelMet(_MinLevel)
+AND
+LLLIB_Helper_QRY_PartyMaxLevelMet(_MaxLevel)
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION FLAG_HELPERS
+QRY
+LLLIB_Helper_QRY_ClearObjectFlag((GUIDSTRING)_Object, (STRING)_Flag)
+THEN
+ObjectClearFlag(_Object, _Flag);
+
+QRY
+LLLIB_Helper_QRY_ClearUserFlag((CHARACTERGUID)_Object, (STRING)_Flag)
+THEN
+UserClearFlag(_Object, _Flag, 0);
+
+QRY
+LLLIB_Helper_QRY_ClearGlobalFlag((STRING)_Flag)
+THEN
+GlobalClearFlag(_Flag);
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

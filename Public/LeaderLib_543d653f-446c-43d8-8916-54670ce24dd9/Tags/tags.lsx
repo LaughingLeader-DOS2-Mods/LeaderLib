@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<save>
+    <header version="2" time="1520513100" />
+    <version major="3" minor="1" revision="7" build="0" />
+    <region id="Tags">
+        <node id="root">
+            <children>
+                <node id="Tag">
+                    <attribute id="Description" value="Generated trade treasure when dialog is started with a registered trader." type="23" />
+                    <attribute id="Name" value="LLLIB_Trader_GenerateOnDialog" type="23" />
+                    <children>
+                        <node id="Categories">
+                            <children>
+                                <node id="Category">
+                                    <attribute id="Name" value="Code" type="23" />
+                                </node>
+                            </children>
+                        </node>
+                    </children>
+                </node>
+                <node id="Tag">
+                    <attribute id="Description" value="Treasure will generate on each event, rather than be limited by a max amount." type="23" />
+                    <attribute id="Name" value="LLLIB_Treasure_GenerateEndlessly" type="23" />
+                    <children>
+                        <node id="Categories">
+                            <children>
+                                <node id="Category">
+                                    <attribute id="Name" value="Code" type="23" />
+                                </node>
+                            </children>
+                        </node>
+                    </children>
+                </node>
+            </children>
+        </node>
+    </region>
+</save>

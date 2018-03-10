@@ -1,0 +1,38 @@
+INIT
+	FIXEDSTRING:%EmptyString=""
+EVENTS
+
+EVENT AddTreasureTable
+VARS
+	CHARACTER:_Target
+	FIXEDSTRING:_TableName
+ON
+	OnCharacterEvent(_Target, "LLLIB_Treasure_AddTreasureTable")
+ACTIONS
+IF "c1"
+	GetVar(_TableName, _Target, "LLLIB_Treasure_TreasureTableToAdd")
+THEN
+	CharacterAddTreasureTable(_Target, _TableName)
+ENDIF
+
+EVENT RemoveTreasureTable
+VARS
+	CHARACTER:_Target
+	FIXEDSTRING:_TableName
+ON
+	OnCharacterEvent(_Target, "LLLIB_Treasure_AddTreasureTable")
+ACTIONS
+IF "c1"
+	GetVar(_TableName, _Target, "LLLIB_Treasure_TreasureTableToAdd")
+THEN
+	CharacterRemoveTreasureTable(_Target, _TableName)
+ENDIF
+
+EVENT ClearTreasureTables
+VARS
+	CHARACTER:_Target
+	FIXEDSTRING:_TableName
+ON
+	OnCharacterEvent(_Target, "LLLIB_Treasure_ClearTreasureTables")
+ACTIONS
+	CharacterClearTreasureTables(_Target)

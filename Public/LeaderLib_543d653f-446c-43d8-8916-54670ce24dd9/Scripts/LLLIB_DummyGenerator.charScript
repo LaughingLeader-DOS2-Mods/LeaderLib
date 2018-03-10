@@ -1,0 +1,37 @@
+INIT
+	CHARACTER:__Me
+	FIXEDSTRING:%EmptyString=""
+EVENTS
+
+EVENT GenerateItemByStat
+VARS
+	FIXEDSTRING:_StatName
+ON
+	OnCharacterEvent(__Me, "LLLIB_Treasure_GenerateByStat")
+ACTIONS
+IF "c1"
+	GetVar(_StatName, __Me, "LLLIB_Treasure_ItemStat")
+THEN
+	CharacterAddToInventory(__Me, _StatName, 1, 1)
+	//SetVar(__Me, "LLLIB_Treasure_ItemStat", %EmptyString)
+ENDIF
+
+/*
+EVENT OnItemAdded
+VARS
+	ITEM:_Item
+	CHARACTER:_TargetChar
+	ITEM:_TargetContainer
+ON
+	OnPickupItem(__Me, _Item)
+ACTIONS
+IF "c1"
+	GetVar(_TargetChar, __Me, "LLLIB_Treasure_ObjectTarget")
+THEN
+	ItemToInventory(_Item, _TargetChar)
+ELIF "c1"
+	GetVar(_TargetContainer, __Me, "LLLIB_Treasure_ObjectTarget")
+THEN
+	ItemToInventory(_Item, _TargetContainer)
+ENDIF
+*/

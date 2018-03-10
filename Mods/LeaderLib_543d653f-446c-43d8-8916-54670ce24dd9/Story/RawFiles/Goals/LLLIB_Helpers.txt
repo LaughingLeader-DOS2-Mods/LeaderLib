@@ -173,6 +173,12 @@ DB_LLLIB_Random_Seed(_Seed);
 
 QRY
 LLLIB_Random_QRY_AdjustSeed()
+THEN
+DB_NOOP(1);
+
+/*
+QRY
+LLLIB_Random_QRY_AdjustSeed()
 AND
 DB_LLLIB_Random_Seed(_Seed)
 AND
@@ -182,6 +188,7 @@ IntegerSum(_SeedLCG1, 1013904223, _SeedLCG2)
 THEN
 NOT DB_LLLIB_Random_Seed(_Seed);
 DB_LLLIB_Random_Seed(_SeedLCG2);
+*/
 
 QRY
 LLLIB_Random((INTEGER)_Modulo)
@@ -197,7 +204,9 @@ LLLIB_Random_QRY_AdjustSeed()
 AND
 DB_LLLIB_Random_Seed(_Seed)
 AND
-IntegerModulo(_Seed, _Modulo, _Rand)
+Random(_Seed, _Ran)
+AND
+IntegerModulo(_Ran, _Modulo, _Rand)
 THEN
 DB_LLLIB_Temp_RandomResult(_Rand);
 

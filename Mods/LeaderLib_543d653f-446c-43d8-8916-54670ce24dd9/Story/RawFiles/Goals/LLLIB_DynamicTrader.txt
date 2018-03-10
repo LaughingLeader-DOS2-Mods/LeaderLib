@@ -1,0 +1,112 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+//Settings
+//DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn)
+//DB_LLLIB_Traders_LevelSettings(_TraderID, _Level, _Requirement)
+//DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z)
+//DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger)
+//DB_LLLIB_Traders_CreationEvents(_TraderID, _EventName)
+
+//Dynamic
+//DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
+KBSECTION
+/*
+
+//REGION QUERIES
+QRY
+LLLIB_QRY_Traders_HasPosition((STRING)_TraderID, (STRING)_Level)
+AND
+DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _PosX, _PosY, _PosZ)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_QRY_Traders_HasPosition((STRING)_TraderID, (STRING)_Level)
+AND
+DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger)
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION SPAWNING
+PROC
+LLLIB_Traders_CreateTraders((STRING)_Level)
+AND
+DB_LLLIB_Traders_LevelSettings(_TraderID, _Level, _Requirement)
+AND
+DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn)
+AND
+NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
+AND
+LLLIB_QRY_Traders_HasPosition(_TraderID, _Level)
+THEN
+LLLIB_Traders_SpawnTrader(_TraderID, _Level, _Template);
+
+PROC
+LLLIB_Traders_SpawnTrader((STRING)_TraderID, (STRING)_Level, (STRING)_Template, (INTEGER)_PlaySpawn)
+AND
+NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
+AND
+DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger)
+AND
+GetPosition(_Trigger,_x,_y,_z)
+AND
+CharacterCreateAtPosition(_x,_y,_z, _Template, _PlaySpawn, _Trader)
+THEN
+DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
+
+PROC
+LLLIB_Traders_SpawnTrader((STRING)_TraderID, (STRING)_Level, (STRING)_Template, (INTEGER)_PlaySpawn)
+AND
+NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
+AND
+DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z)
+AND
+CharacterCreateAtPosition(_x,_y,_z, _Template, _PlaySpawn, _Trader)
+THEN
+DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
+
+//Creation events
+IF
+DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+AND
+DB_LLLIB_Traders_CreationEvents(_TraderID, _EventName)
+THEN
+SetStoryEvent(_Trader, _EventName);
+
+//Generate treasure on spawn
+IF
+DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+THEN
+SetStoryEvent(_Trader, "LLLIB_GenerateTreasure");
+//END_REGION
+
+//REGION REGISTERING
+PROC
+LLLIB_Trader_RegisterTrader((STRING)_TraderID, (STRING)_Template)
+AND
+NOT DB_LLLIB_Traders_RegisteredTrader(_TraderID,_,_)
+THEN
+DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, 0);
+
+PROC
+LLLIB_Trader_RegisterTrader((STRING)_TraderID, (STRING)_Template, (INTEGER)_PlaySpawn)
+AND
+DB_LLLIB_Traders_RegisteredTrader(_TraderID,_,_)
+THEN
+LeaderLog_DebugLog("[LLLIB:Trader][ERROR] Error adding trader with ID '", _TraderID, "': Trader already exists!");
+
+PROC
+LLLIB_Trader_RegisterTrader((STRING)_TraderID, (STRING)_Template, (INTEGER)_PlaySpawn)
+AND
+NOT DB_LLLIB_Traders_RegisteredTrader(_TraderID,_,_)
+THEN
+DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn);
+//END_REGION
+
+*/
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

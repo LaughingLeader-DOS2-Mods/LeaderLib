@@ -4,6 +4,7 @@ INITSECTION
 //DB_LLLIB_Helper_Temp_StopIteratingForFlags(1)
 //DB_LLLIB_Helper_Temp_StopIteratingForMinLevel(1)
 //DB_LLLIB_Helper_Temp_StopIteratingForMaxLevel(1)
+//DB_LLLIB_Helper_Temp_HighestLevelInParty(_Level)
 KBSECTION
 //REGION QUERY_INFO
 QRY
@@ -118,6 +119,28 @@ AND
 LLLIB_Helper_QRY_PartyMaxLevelMet(_MaxLevel)
 THEN
 DB_NOOP(1);
+
+QRY
+LLLIB_Helper_QRY_GetHighestLevelInParty()
+AND
+DB_LLLIB_Helper_Temp_HighestLevelInParty(_Level)
+THEN
+NOT DB_LLLIB_Helper_Temp_HighestLevelInParty(_Level);
+DB_LLLIB_Helper_Temp_HighestLevelInParty(1);
+
+QRY
+LLLIB_Helper_QRY_GetHighestLevelInParty()
+AND
+DB_IsPlayer(_Player)
+AND
+DB_LLLIB_Helper_Temp_HighestLevelInParty(_HighestLevel)
+AND
+CharacterGetLevel(_Player, _Level)
+AND
+_Level > _HighestLevel
+THEN
+NOT DB_LLLIB_Helper_Temp_HighestLevelInParty(_HighestLevel);
+DB_LLLIB_Helper_Temp_HighestLevelInParty(_Level);
 //END_REGION
 
 //REGION FLAG_HELPERS
@@ -135,6 +158,88 @@ QRY
 LLLIB_Helper_QRY_ClearGlobalFlag((STRING)_Flag)
 THEN
 GlobalClearFlag(_Flag);
+//END_REGION
+
+//REGION RANDOM
+//Thanks to Norbyte for this chunk
+QRY
+LLLIB_Random_QRY_AdjustSeed()
+AND
+NOT DB_LLLIB_Random_Seed(_)
+AND
+Random(99999, _Seed)
+THEN
+DB_LLLIB_Random_Seed(_Seed);
+
+QRY
+LLLIB_Random_QRY_AdjustSeed()
+AND
+DB_LLLIB_Random_Seed(_Seed)
+AND
+IntegerProduct(_Seed, 1664525, _SeedLCG1)
+AND
+IntegerSum(_SeedLCG1, 1013904223, _SeedLCG2)
+THEN
+NOT DB_LLLIB_Random_Seed(_Seed);
+DB_LLLIB_Random_Seed(_SeedLCG2);
+
+QRY
+LLLIB_Random((INTEGER)_Modulo)
+AND
+DB_LLLIB_Temp_RandomResult(_OldRand)
+THEN
+NOT DB_LLLIB_Temp_RandomResult(_OldRand);
+
+QRY
+LLLIB_Random((INTEGER)_Modulo)
+AND
+LLLIB_Random_QRY_AdjustSeed()
+AND
+DB_LLLIB_Random_Seed(_Seed)
+AND
+IntegerModulo(_Seed, _Modulo, _Rand)
+THEN
+DB_LLLIB_Temp_RandomResult(_Rand);
+
+//Random range
+QRY
+LLLIB_Random((INTEGER)_MinRan, (INTEGER)_MaxRan)
+AND
+NOT DB_LLLIB_Random_Seed(_)
+AND
+Random(99999, _Seed)
+THEN
+DB_LLLIB_Random_Seed(_Seed);
+
+//END_REGION
+
+//REGION RANDOM_RANGE
+QRY
+LLLIB_Random((INTEGER)_MinRan, (INTEGER)_MaxRan)
+AND
+DB_LLLIB_Temp_RandomResult(_OldRand)
+THEN
+NOT DB_LLLIB_Temp_RandomResult(_OldRand);
+
+//min + rand() / (RAND_MAX / (max - min + 1) + 1)
+QRY
+LLLIB_Random((INTEGER)_MinRan, (INTEGER)_MaxRan)
+AND
+Random(99999, _RanSeed)
+AND
+IntegerSubtract(_MaxRan, _MinRan, _Ran1)
+AND
+IntegerSum(_Ran1, 1, _Ran2)
+AND
+IntegerDivide(99999, _Ran2, _Ran3)
+AND
+IntegerSum(_Ran3, 1, _Ran4)
+AND
+IntegerDivide(_RanSeed, _Ran4, _Ran5)
+AND
+IntegerSum(_Ran5, _MinRan, _Val)
+THEN
+DB_LLLIB_Temp_RandomResult(_Val);
 //END_REGION
 EXITSECTION
 

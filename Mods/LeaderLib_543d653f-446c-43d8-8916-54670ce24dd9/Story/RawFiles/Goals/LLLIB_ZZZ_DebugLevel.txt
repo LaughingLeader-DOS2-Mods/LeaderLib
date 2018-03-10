@@ -15,6 +15,11 @@ LLLIB_Treasure_RegisterObject("LLLIB_TestLevel_Chest1", ITEMGUID_LLLIB_Debug_Tes
 LLLIB_Treasure_AddTreasureItem("LLLIB_TestLevel_Chest1", "LOOT_Source_Orb_106a7107-cf36-4331-b5b5-6de71969f370", 2, "LLLIB_TestLevel_Chest1_Requirements");
 LLLIB_Treasure_AddFlagRequirement("LLLIB_TestLevel_Chest1_Requirements", "LLLIB_Trader_PlayerTalkedToLeaderTrader", "Object", 0);
 
+LLLIB_Treasure_AddTreasureItem("LLLIB_TestLevel_Chest1", "WPN_Dwarves_Sword_2H_B_03f8fb7a-59cf-47eb-9298-79cedaf744e5", 1, "");
+LLLIB_Treasure_AddTreasureItem("LLLIB_TestLevel_Chest1", "WPN_Elves_Spear_2H_B_bec707cd-8340-4d4d-8cdc-edfedf7f311d", 2, "");
+LLLIB_Treasure_ConfigureTreasureItem("LLLIB_TestLevel_Chest1", "WPN_Dwarves_Sword_2H_B_03f8fb7a-59cf-47eb-9298-79cedaf744e5", 5, 10);
+LLLIB_Treasure_ConfigureTreasureItem("LLLIB_TestLevel_Chest1", "WPN_Elves_Spear_2H_B_bec707cd-8340-4d4d-8cdc-edfedf7f311d", 1);
+
 IF
 GameStarted("LeaderLib_TestLevel",_)
 THEN
@@ -58,6 +63,18 @@ AND
 NOT LLLIB_QRY_Treasure_IsRegisteredObject(_Trader)
 THEN
 LeaderLog_DebugLog("[LLLIB:DebugLevel][ERROR] ","Dialog generation tag set, but trader is not registered!");
+
+IF
+CharacterUsedItem(_, ITEMGUID_LLLIB_DebugLever_TestRandom_d3152baa-c6d4-4e8e-a622-a6bb9c149b3e)
+AND
+LLLIB_Random(1, 19)
+AND
+DB_LLLIB_Temp_RandomResult(_Ran)
+AND
+IntegertoString(_Ran, _RanStr)
+THEN
+NOT DB_LLLIB_Temp_RandomResult(_Ran);
+LeaderLog_DebugLog("[LLLIB:TreasureSystem] Random range result: ",_RanStr," | Min: 1 Max: 19");
 EXITSECTION
 
 ENDEXITSECTION

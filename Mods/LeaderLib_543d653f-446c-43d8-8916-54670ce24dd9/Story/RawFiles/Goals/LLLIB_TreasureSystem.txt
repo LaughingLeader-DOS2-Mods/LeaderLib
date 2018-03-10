@@ -3,7 +3,7 @@ SubGoalCombiner SGC_AND
 INITSECTION
 //DB_LLLIB_Treasure_RegisteredObject(_TreasureID, _Object)
 //DB_LLLIB_Treasure_RegisteredObjectTemplate(_TreasureID, _Template)
-//DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _UsePartyLevel, _MinLevel, _MaxLevel)
+//DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel)
 
 //DB_LLLIB_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID)
 //DB_LLLIB_Treasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID)
@@ -15,7 +15,7 @@ INITSECTION
 //DB_LLLIB_Treasure_Requirement_Flag(_RequirementID, _Flag, _FlagType, _FlagVal)
 //DB_LLLIB_Treasure_Requirement_Amount(_RequirementID, _MaxAmount)
 
-//DB_LLLIB_Treasure_OnlyOnce(_TreasureID, _ItemEntry, _OnCompletionEvent)
+//DB_LLLIB_Treasure_OnlyOnce(_TreasureID, _ItemEntryOrTreasureTable, _OnCompletionEvent)
 //DB_LLLIB_Treasure_GeneratedEvent(_TreasureID, _ItemEntry, _OnGeneratedEvent)
 
 //DB_LLLIB_Treasure_StatToTemplate(_ItemEntry, _ItemTemplate)
@@ -23,7 +23,6 @@ INITSECTION
 //DB_LLLIB_Treasure_Temp_DummyTarget(_Object, _Dummy, _ItemEntry, _TreasureID)
 
 //DB_LLLIB_Treasure_Temp_MatchedTreasure(_Trader, _TreasureID)
-//DB_LLLIB_Treasure_Temp_ActiveTraderDialog(_Trader, _Instance)
 //DB_LLLIB_Treasure_Temp_ItemCount(_Object, _ItemTemplate, _Amount)
 //DB_LLLIB_Treasure_Temp_GenerateItem(_Object, _ItemEntry, _TreasureID, _CurrentAmount, _MaxAmount, _IsStat)
 //DB_LLLIB_Treasure_Temp_Queue_GenerateStatItem(_Object, _TreasureID, _ItemStat, _ItemTemplate, _Amount, _RequirementID)
@@ -45,19 +44,24 @@ THEN
 DB_LLLIB_Treasure_RegisteredObjectTemplate(_TreasureID, _ObjectTemplate);
 
 PROC
-LLLIB_Treasure_RegisterTreasureTable((STRING)_TreasureID, (STRING)_TreaseTable, (INTEGER)_UsePartyLevel)
+LLLIB_Treasure_RegisterTreasureTable((STRING)_TreasureID, (STRING)_TreaseTable, (STRING)_RequirementID)
 THEN
-DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreaseTable, _UsePartyLevel, 1, 1);
+DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreaseTable, _RequirementID,1,1,1);
 
 PROC
-LLLIB_Treasure_RegisterTreasureTable((STRING)_TreasureID, (STRING)_TreaseTable, (INTEGER)_UsePartyLevel, (INTEGER)_Level)
+LLLIB_Treasure_RegisterTreasureTable((STRING)_TreasureID, (STRING)_TreaseTable, (STRING)_RequirementID, (INTEGER)_UsePartyLevel)
 THEN
-DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreaseTable, _UsePartyLevel, _Level, _Level);
+DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreaseTable, _RequirementID, _UsePartyLevel, 1, 1);
 
 PROC
-LLLIB_Treasure_RegisterTreasureTable((STRING)_TreasureID, (STRING)_TreaseTable, (INTEGER)_UsePartyLevel, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
+LLLIB_Treasure_RegisterTreasureTable((STRING)_TreasureID, (STRING)_TreaseTable, (STRING)_RequirementID, (INTEGER)_UsePartyLevel, (INTEGER)_Level)
 THEN
-DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreaseTable, _UsePartyLevel, _MinLevel, _MaxLevel);
+DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreaseTable, _RequirementID, _UsePartyLevel, _Level, _Level);
+
+PROC
+LLLIB_Treasure_RegisterTreasureTable((STRING)_TreasureID, (STRING)_TreaseTable, (STRING)_RequirementID, (INTEGER)_UsePartyLevel, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
+THEN
+DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreaseTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel);
 
 PROC
 LLLIB_Treasure_AddFlagRequirement((STRING)_RequirementID, (STRING)_Flag, (STRING)_FlagType)
@@ -157,7 +161,9 @@ DB_LLLIB_Treasure_OnlyOnce(_TreasureID, _ItemEntry, _OnCompletionEvent);
 //REGION QUERIES_CHECKS
 //Don't bother checking requirements without an actual ID
 QRY
-LLLIB_QRY_Treasure_CanGenerate("")
+LLLIB_QRY_Treasure_CanGenerate((STRING)_RequirementID)
+AND
+_RequirementID == ""
 THEN
 DB_NOOP(1);
 
@@ -183,6 +189,7 @@ DB_LLLIB_Treasure_Requirement_Flag(_RequirementID, _Flag, _FlagType, _FlagVal)
 AND
 LLLIB_Helper_QRY_PartyFlagSet(_Flag, _FlagType, _FlagVal)
 THEN
+LeaderLog_DebugLog(_Flag, " is set on party");
 DB_NOOP(1);
 
 QRY
@@ -421,43 +428,42 @@ THEN
 NOT DB_LLLIB_Treasure_Temp_ItemCount(_Object, _ItemEntry, _Amount);
 //END_REGION
 
-//REGION GENERATING
+//REGION TREASURE_TABLE_GENERATION
 PROC
 LLLIB_Treasure_GenerateItems((GUIDSTRING)_Object, (STRING)_TreasureID)
 AND
-DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _UsePartyLevel, _MinLevel, _MaxLevel)
+DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel)
+AND
+LLLIB_QRY_Treasure_CanGenerate(_RequirementID)
+AND
+NOT DB_LLLIB_Treasure_TableWasGenerated(_Object, _TreasureID, _TreasureTable)
 AND
 _UsePartyLevel > 0
+AND
+LeaderLog_QRY_DebugLog("Checking highest level")
 AND
 LLLIB_Helper_QRY_GetHighestLevelInParty()
 AND
 DB_LLLIB_Helper_Temp_HighestLevelInParty(_Level)
 AND
-CreateItemTemplateAtPosition("LOOT_BackPack_A_6c70c298-aa29-418f-a659-f8e0b5f5fa60", 0.0,0.0,0.0, _Backpack)
+LeaderLog_QRY_DebugLog("Creating backpack")
 AND
-GetClosestPlayer(_Object, _Player, _)
+CreateItemTemplateAtPosition("LOOT_BackPack_A_6c70c298-aa29-418f-a659-f8e0b5f5fa60", 0.0,0.0,0.0, _Backpack)
 THEN
-GenerateTreasure(_Backpack, _TreasureTable, _Level, _Player);
-MoveAllItemsTo(_Backpack, _Object);
+GenerateTreasure(_Backpack, _TreasureTable, _Level, NULL_00000000-0000-0000-0000-000000000000);
+MoveAllItemsTo(_Backpack, _Object, 0, 0, 1);
 ItemDestroy(_Backpack);
 SetOnStage(_Backpack, 0);
-LeaderLog_DebugLog("[LLLIB:TreasureSystem:GenerateItems] Generated treasure table [",_TreasureTable,"] at the party's highest level.");
+LLLIB_Treasure_Internal_OnTreasureTableGenerated(_Object, _TreasureID, _TreasureTable);
 
 PROC
 LLLIB_Treasure_GenerateItems((GUIDSTRING)_Object, (STRING)_TreasureID)
 AND
-DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _UsePartyLevel, _MinLevel, _MaxLevel)
+DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel)
 AND
-_UsePartyLevel > 0
+LLLIB_QRY_Treasure_CanGenerate(_RequirementID)
 AND
-NOT GetClosestPlayer(_Object, _, _)
-THEN
-LeaderLog_DebugLog("[LLLIB:TreasureSystem:GenerateItems][ERROR] Couldn't find a player close to object.");
-
-PROC
-LLLIB_Treasure_GenerateItems((GUIDSTRING)_Object, (STRING)_TreasureID)
-AND
-DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _UsePartyLevel, _MinLevel, _MaxLevel)
+NOT DB_LLLIB_Treasure_TableWasGenerated(_Object, _TreasureID, _TreasureTable)
 AND
 _UsePartyLevel <= 0
 AND
@@ -466,15 +472,21 @@ AND
 DB_LLLIB_Temp_RandomResult(_Level)
 AND
 CreateItemTemplateAtPosition("LOOT_BackPack_A_6c70c298-aa29-418f-a659-f8e0b5f5fa60", 0.0,0.0,0.0, _Backpack)
-AND
-GetClosestPlayer(_Object, _Player, _)
 THEN
-GenerateTreasure(_Backpack, _TreasureTable, _Level, _Player);
-MoveAllItemsTo(_Backpack, _Object);
+GenerateTreasure(_Backpack, _TreasureTable, _Level, NULL_00000000-0000-0000-0000-000000000000);
+MoveAllItemsTo(_Backpack, _Object, 0, 0, 1);
 ItemDestroy(_Backpack);
 SetOnStage(_Backpack, 0);
-LeaderLog_DebugLog("[LLLIB:TreasureSystem:GenerateItems] Generated treasure table [",_TreasureTable,"] at a level range.");
+LLLIB_Treasure_Internal_OnTreasureTableGenerated(_Object, _TreasureID, _TreasureTable);
 
+PROC
+LLLIB_Treasure_Internal_OnTreasureTableGenerated((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_TreasureTable)
+THEN
+LLLIB_Treasure_MarkAsFinished(_Object, _TreasureID, _TreasureTable);
+DB_LLLIB_Treasure_TableWasGenerated(_Object, _TreasureID, _TreasureTable);
+//END_REGION
+
+//REGION ITEM_GENERATION
 PROC
 LLLIB_Treasure_GenerateItems((GUIDSTRING)_Object, (STRING)_TreasureID)
 AND
@@ -844,12 +856,6 @@ LLLIB_Random(100)
 AND
 DB_LLLIB_Temp_RandomResult(_Roll)
 AND
-IntegertoString(_Roll, _RollStr)
-AND
-IntegertoString(_Chance, _ChanceStr)
-AND
-LeaderLog_QRY_DebugLog("[LLLIB:Treasure:ApplyDeltaMods] Deltamod[",_Deltamod,"] roll: ", _RollStr, "/",_ChanceStr)
-AND
 _Roll <= _Chance
 THEN
 ItemAddDeltaModifier(_Item, _Deltamod);
@@ -869,10 +875,6 @@ DB_LLLIB_Treasure_ItemRunes(_TreasureID, _ItemEntry, _Rune, _Chance)
 AND
 DB_LLLIB_Treaasure_Temp_RuneSlot(_Item, _Slot)
 AND
-IntegertoString(_Slot, _SlotStr)
-AND
-LeaderLog_QRY_DebugLog("[LLLIB:Treasure:InsertRunes] Inserting rune[",_Rune,"] in slot: ", _SlotStr)
-AND
 LLLIB_Treasure_QRY_InsertRuneInSlot(_Item, _Rune, _Slot, _Chance)
 AND
 IntegerSum(_Slot, 1, _NextSlot)
@@ -890,8 +892,6 @@ AND
 DB_LLLIB_Temp_RandomResult(_Roll)
 AND
 _Roll <= _Chance
-AND
-LeaderLog_QRY_DebugLog("[LLLIB:Treasure:InsertRunes] Rune ",_Rune," inserted?")
 THEN
 LLLIB_Treasure_Internal_DummyInsertRune(_Item, _Rune, _Slot);
 NOT DB_LLLIB_Temp_RandomResult(_Roll);
@@ -994,45 +994,6 @@ AND
 DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
 THEN
 StartTrade(_Player, _Object);
-//END_REGION
-
-//REGION LEADER_TRADER
-IF
-DialogStarted("LLLIB_Trader", _Instance)
-AND
-DialogGetInvolvedNPC(_Instance, 1, _Object)
-THEN
-DB_LLLIB_Treasure_Temp_ActiveTraderDialog(_Object, _Instance);
-
-IF
-DialogStarted("LLLIB_Trader", _Instance)
-AND
-DialogGetInvolvedPlayer(_Instance, 1, _Player)
-AND
-ObjectGetFlag(_Player, "LLLIB_Treasure_PlayerTalkedToLeaderTrader", 1)
-THEN
-DialogSetVariableStringForInstance(_Instance, "LLLIB_Treasure_Greeting_f143b90b-9afc-477e-b133-6a1574341261", "Welcome back! Looking to trade?");
-
-IF
-DialogEnded("LLLIB_Trader", _Instance)
-AND
-DB_LLLIB_Treasure_Temp_ActiveTraderDialog(_Object, _Instance)
-THEN
-NOT DB_LLLIB_Treasure_Temp_ActiveTraderDialog(_Object, _Instance);
-
-IF
-ObjectFlagSet("StartTrade", _Speaker, _Instance)
-AND
-DB_LLLIB_Treasure_Temp_ActiveTraderDialog(_Object, _Instance)
-THEN
-DialogSetVariableStringForInstance(_Instance, "LLLIB_Treasure_Greeting_f143b90b-9afc-477e-b133-6a1574341261", "Anything else?");
-
-IF
-RequestTrade(_Player, _Object)
-AND
-DB_LLLIB_Treasure_Temp_ActiveTraderDialog(_Object, _Instance)
-THEN
-DialogSetVariableStringForInstance(_Instance, "LLLIB_Treasure_Greeting_f143b90b-9afc-477e-b133-6a1574341261", "Anything else?");
 //END_REGION
 EXITSECTION
 

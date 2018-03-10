@@ -8,16 +8,25 @@ INITSECTION
 KBSECTION
 //REGION QUERY_INFO
 QRY
-LLLIB_Helper_QRY_PartyFlagSet((STRING)_Flag, (STRING)_FlagType, (INTEGER)_FlagVal)
+LLLIB_Helper_QRY_PartyFlag_ClearIterator()
 AND
 DB_LLLIB_Helper_Temp_StopIteratingForFlags(_Val)
 THEN
 NOT DB_LLLIB_Helper_Temp_StopIteratingForFlags(_Val);
 
 QRY
+LLLIB_Helper_QRY_PartyFlag_ClearIterator()
+THEN
+DB_NOOP(1);
+
+QRY
 LLLIB_Helper_QRY_PartyFlagSet((STRING)_Flag, (STRING)_FlagType, (INTEGER)_FlagVal)
 AND
+LLLIB_Helper_QRY_PartyFlag_ClearIterator()
+AND
 DB_IsPlayer(_Player)
+AND
+_Player != NULL_00000000-0000-0000-0000-000000000000
 AND
 NOT DB_LLLIB_Helper_Temp_StopIteratingForFlags(1)
 AND
@@ -126,6 +135,13 @@ AND
 DB_LLLIB_Helper_Temp_HighestLevelInParty(_Level)
 THEN
 NOT DB_LLLIB_Helper_Temp_HighestLevelInParty(_Level);
+DB_LLLIB_Helper_Temp_HighestLevelInParty(1);
+
+QRY
+LLLIB_Helper_QRY_GetHighestLevelInParty()
+AND
+NOT DB_LLLIB_Helper_Temp_HighestLevelInParty(_)
+THEN
 DB_LLLIB_Helper_Temp_HighestLevelInParty(1);
 
 QRY

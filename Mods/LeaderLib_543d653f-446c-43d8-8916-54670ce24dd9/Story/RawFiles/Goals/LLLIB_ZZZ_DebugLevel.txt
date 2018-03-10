@@ -1,7 +1,7 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-
+//DB_LLLIB_Treasure_Temp_ActiveTraderDialog(_Trader, _Instance)
 KBSECTION
 IF
 GameStarted("LeaderLib_TestLevel",_)
@@ -9,11 +9,11 @@ THEN
 LLLIB_Treasure_RegisterObject("LLLIB_TestLevel_Trader", CHARACTERGUID_Humans_Male_Clothing_Poor_000_cc53113d-d4f2-4e8f-9ee4-e6aedf51669b);
 LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_TestLevel_Trader", "LOOT_Source_Orb_106a7107-cf36-4331-b5b5-6de71969f370", 1, "LLLIB_Debug_TraderRequirements");
 LLLIB_Treasure_AddFlagRequirement("LLLIB_Debug_TraderRequirements", "LLLIB_Trader_PlayerTalkedToLeaderTrader", "Object", 1);
-LLLIB_Treasure_AddLevelRequirement("LLLIB_Debug_TraderRequirements", 2, 2);
+//LLLIB_Treasure_AddLevelRequirement("LLLIB_Debug_TraderRequirements", 2, 2);
 
 LLLIB_Treasure_RegisterObject("LLLIB_TestLevel_Chest1", ITEMGUID_LLLIB_Debug_TestChest_ff6c9edf-aa21-447a-8bb2-2a647a8dae46);
-LLLIB_Treasure_RegisterTreasureTable("LLLIB_TestLevel_Chest1", "TEST_Generation", 1);
-//LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_TestLevel_Chest1", "LOOT_Source_Orb_106a7107-cf36-4331-b5b5-6de71969f370", 2, "LLLIB_TestLevel_Chest1_Requirements");
+LLLIB_Treasure_RegisterTreasureTable("LLLIB_TestLevel_Chest1", "TEST_Generation", "LLLIB_Debug_TraderRequirements", 1);
+LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_TestLevel_Chest1", "LOOT_Source_Orb_106a7107-cf36-4331-b5b5-6de71969f370", 2, "LLLIB_TestLevel_Chest1_Requirements");
 LLLIB_Treasure_AddFlagRequirement("LLLIB_TestLevel_Chest1_Requirements", "LLLIB_Trader_PlayerTalkedToLeaderTrader", "Object", 0);
 
 //LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_TestLevel_Chest1", "WPN_Dwarves_Sword_2H_B_03f8fb7a-59cf-47eb-9298-79cedaf744e5", 1);
@@ -50,6 +50,7 @@ NOT DB_IsPlayer(_Player)
 THEN
 DB_IsPlayer(_Player);
 LeaderLog_DebugLog("[LLLIB:DebugLevel] ","Added player to DB_IsPlayer.");
+//ObjectClearFlag(_Player, "LLLIB_Trader_PlayerTalkedToLeaderTrader");
 
 IF
 DialogStarted(_Dialog, _Instance)
@@ -84,6 +85,45 @@ IntegertoString(_Ran, _RanStr)
 THEN
 NOT DB_LLLIB_Temp_RandomResult(_Ran);
 LeaderLog_DebugLog("[LLLIB:TreasureSystem] Random range result: ",_RanStr," | Min: 1 Max: 19");
+
+//REGION LEADER_TRADER
+IF
+DialogStarted("LLLIB_Trader", _Instance)
+AND
+DialogGetInvolvedNPC(_Instance, 1, _Object)
+THEN
+DB_LLLIB_Debug_Temp_ActiveTraderDialog(_Object, _Instance);
+
+IF
+DialogStarted("LLLIB_Trader", _Instance)
+AND
+DialogGetInvolvedPlayer(_Instance, 1, _Player)
+AND
+ObjectGetFlag(_Player, "LLLIB_Trader_PlayerTalkedToLeaderTrader", 1)
+THEN
+DialogSetVariableStringForInstance(_Instance, "LLLIB_Treasure_Greeting_f143b90b-9afc-477e-b133-6a1574341261", "Welcome back! Looking to trade?");
+
+IF
+DialogEnded("LLLIB_Trader", _Instance)
+AND
+DB_LLLIB_Debug_Temp_ActiveTraderDialog(_Object, _Instance)
+THEN
+NOT DB_LLLIB_Debug_Temp_ActiveTraderDialog(_Object, _Instance);
+
+IF
+ObjectFlagSet("StartTrade", _Speaker, _Instance)
+AND
+DB_LLLIB_Debug_Temp_ActiveTraderDialog(_Object, _Instance)
+THEN
+DialogSetVariableStringForInstance(_Instance, "LLLIB_Treasure_Greeting_f143b90b-9afc-477e-b133-6a1574341261", "Anything else?");
+
+IF
+RequestTrade(_Player, _Object)
+AND
+DB_LLLIB_Debug_Temp_ActiveTraderDialog(_Object, _Instance)
+THEN
+DialogSetVariableStringForInstance(_Instance, "LLLIB_Treasure_Greeting_f143b90b-9afc-477e-b133-6a1574341261", "Anything else?");
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

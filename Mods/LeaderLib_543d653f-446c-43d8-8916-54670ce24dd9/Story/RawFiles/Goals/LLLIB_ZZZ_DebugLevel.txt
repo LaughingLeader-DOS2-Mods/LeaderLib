@@ -12,15 +12,19 @@ LLLIB_Treasure_AddFlagRequirement("LLLIB_Debug_TraderRequirements", "LLLIB_Trade
 //LLLIB_Treasure_AddLevelRequirement("LLLIB_Debug_TraderRequirements", 2, 2);
 
 LLLIB_Treasure_RegisterObject("LLLIB_TestLevel_Chest1", ITEMGUID_LLLIB_Debug_TestChest_ff6c9edf-aa21-447a-8bb2-2a647a8dae46);
+LLLIB_Treasure_RegisterObject("LLLIB_TestLevel_Chest1", ITEMGUID_LLLIB_DebugLevel_TestChest2_cde2491b-741c-4442-a016-74761b43f3c5);
 LLLIB_Treasure_RegisterTreasureTable("LLLIB_TestLevel_Chest1", "TEST_Generation", "LLLIB_Debug_TraderRequirements", 1);
 LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_TestLevel_Chest1", "LOOT_Source_Orb_106a7107-cf36-4331-b5b5-6de71969f370", 2, "LLLIB_TestLevel_Chest1_Requirements");
+LLLIB_Treasure_AddMaxAmountRequirement("LLLIB_TestLevel_Chest1_Requirements", 1);
 LLLIB_Treasure_AddFlagRequirement("LLLIB_TestLevel_Chest1_Requirements", "LLLIB_Trader_PlayerTalkedToLeaderTrader", "Object", 0);
 
 //LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_TestLevel_Chest1", "WPN_Dwarves_Sword_2H_B_03f8fb7a-59cf-47eb-9298-79cedaf744e5", 1);
 LLLIB_Treasure_Configure_ItemLevel("LLLIB_TestLevel_Chest1", "WPN_Dwarves_Sword_2H_B_03f8fb7a-59cf-47eb-9298-79cedaf744e5", 0, 5, 10);
 //LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_TestLevel_Chest1", "WPN_Elves_Spear_2H_B_bec707cd-8340-4d4d-8cdc-edfedf7f311d", 1);
 LLLIB_Treasure_Configure_ItemLevel("LLLIB_TestLevel_Chest1", "WPN_Elves_Spear_2H_B_bec707cd-8340-4d4d-8cdc-edfedf7f311d", 0, 1);
-LLLIB_Treasure_AddTreasureItemStat("LLLIB_TestLevel_Chest1", "WPN_Cheat_Sword_1H_RuneSlot2", 1);
+
+LLLIB_Treasure_AddTreasureItemStat("LLLIB_TestLevel_Chest1", "WPN_Cheat_Sword_1H_RuneSlot2", 1, "LLLIB_TestLevel_Chest2_Requirements");
+LLLIB_Treasure_AddFlagRequirement("LLLIB_TestLevel_Chest2_Requirements", "LLLIB_Trader_PlayerTalkedToLeaderTrader", "Object", 1);
 LLLIB_Treasure_Configure_ItemLevel("LLLIB_TestLevel_Chest1", "WPN_Cheat_Sword_1H_RuneSlot2", 0, 2, 13);
 LLLIB_Treasure_Configure_AddDeltaMod("LLLIB_TestLevel_Chest1", "WPN_Cheat_Sword_1H_RuneSlot2", "Boost_Weapon_Ability_FireSpecialist_Staff", 75);
 LLLIB_Treasure_Configure_AddDeltaMod("LLLIB_TestLevel_Chest1", "WPN_Cheat_Sword_1H_RuneSlot2", "Boost_Weapon_Secondary_Accuracy_Medium", 20);
@@ -33,6 +37,7 @@ IF
 GameStarted("LeaderLib_TestLevel",_)
 THEN
 GlobalSetFlag("LEADERLOG_DEBUG_ENABLED");
+SysClear("DB_IsPlayer", 1);
 TimerLaunch("LeaderLib_TestLevel_IteratorDelay", 500);
 
 IF

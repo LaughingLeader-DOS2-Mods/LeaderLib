@@ -1,0 +1,4 @@
+new skillset "LLLIB_LeaderTrader"
+add skill "Target_Overpower"
+add skill "Target_CripplingBlow"
+add skill "Shout_Whirlwind"

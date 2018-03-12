@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<stats stat_object_definition_id="e078e210-b9ba-48e5-afe3-c5eb91ba8545">
+  <stat_objects>
+    <stat_object index="0" is_substat="false">
+      <fields>
+        <field name="Name" type="NameStatObjectFieldDefinition" clear_inherited_value="false" value="LLLIB_EventParser_Indestructible" />
+        <field name="Act part" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="20" enumeration_type_name="ActPart" />
+        <field name="Value" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="0" />
+        <field name="Weight" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="0" />
+        <field name="Vitality" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="-1" />
+        <field name="PiercingResistance" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="100" />
+        <field name="PhysicalResistance" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="100" />
+        <field name="FireResistance" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="100" />
+        <field name="EarthResistance" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="100" />
+        <field name="WaterResistance" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="100" />
+        <field name="AirResistance" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="100" />
+        <field name="PoisonResistance" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="100" />
+        <field name="Flags" type="StringStatObjectFieldDefinition" clear_inherited_value="false" value="FreezeImmunity;BurnImmunity;StunImmunity;PoisonImmunity;ChilledImmunity;WetImmunity;WarmImmunity" />
+        <field name="IgnoredByAI" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="1" enumeration_type_name="YesNo" />
+      </fields>
+    </stat_object>
+  </stat_objects>
+</stats>

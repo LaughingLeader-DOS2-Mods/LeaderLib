@@ -1,0 +1,45 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+//REGION AVOID_COMBAT
+IF
+CombatStarted(_CombatID)
+AND
+CharacterIsInCombat(CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41, 1)
+AND
+CombatGetIDForCharacter(CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41, _CombatID)
+THEN
+DB_LLLIB_LeaderTrader_AvoidingCombat(_CombatID);
+DisplayText(CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41, "I'm retired from the chaos of battle! No more I say!");
+CharacterUseSkill(CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41, "Shout_ChameleonSkin", CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41, 0, 1, 1);
+
+IF
+CharacterStatusApplied(CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41, "INVISIBLE", _)
+THEN
+SetOnStage(CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41, 0);
+
+IF
+CombatEnded(_CombatID)
+AND
+DB_LLLIB_LeaderTrader_AvoidingCombat(_CombatID)
+THEN
+TimerLaunch("LLLIB_Timers_LeaderTrader_CombatEnded", 3000);
+NOT DB_LLLIB_LeaderTrader_AvoidingCombat(_CombatID);
+
+IF
+TimerFinished("LLLIB_Timers_LeaderTrader_CombatEnded")
+THEN
+SetOnStage(CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41, 1);
+ApplyStatus(CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41, "INVISIBLE", 6.0, 1);
+
+IF
+CharacterStatusRemoved(CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41, "Invisible", _)
+THEN
+DisplayText(CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41, "Hrmph...");
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

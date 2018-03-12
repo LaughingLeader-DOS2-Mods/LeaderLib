@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<stats stat_object_definition_id="a8098c1a-f86e-11da-bd1a-00112444be1e">
+  <stat_objects>
+    <stat_object index="0" is_substat="false">
+      <fields>
+        <field name="Name" type="NameStatObjectFieldDefinition" clear_inherited_value="false" value="LLLIB_Trader_Act1" />
+        <field name="Using" type="BaseClassStatObjectFieldDefinition" clear_inherited_value="false" value="_Hero" />
+        <field name="Act part" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="20" enumeration_type_name="ActPart" />
+        <field name="Act strength" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="12" enumeration_type_name="Penalty Qualifier" />
+        <field name="Strength" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="51" enumeration_type_name="PreciseQualifier" />
+        <field name="Finesse" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="21" enumeration_type_name="PreciseQualifier" />
+        <field name="Intelligence" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="81" enumeration_type_name="PreciseQualifier" />
+        <field name="Constitution" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="51" enumeration_type_name="PreciseQualifier" />
+        <field name="MagicArmor" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="25" />
+        <field name="Initiative" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="10" />
+        <field name="TwoHanded" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="5" />
+        <field name="WarriorLore" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="6" />
+        <field name="EarthSpecialist" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="2" />
+        <field name="Loremaster" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="5" />
+        <field name="Talents" type="StringStatObjectFieldDefinition" clear_inherited_value="false" value="AttackOfOpportunity;QuickStep;Perfectionist" />
+        <field name="Wits" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="71" enumeration_type_name="PreciseQualifier" />
+        <field name="Armor" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="50" />
+        <field name="APStart" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="6" />
+        <field name="APRecovery" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="4" />
+        <field name="Leadership" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="10" />
+        <field name="RogueLore" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="2" />
+        <field name="WaterSpecialist" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="4" />
+        <field name="Reflection" type="StringStatObjectFieldDefinition" clear_inherited_value="false" value="6" />
+        <field name="Act" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="0" enumeration_type_name="Act" />
+        <field name="Flags" type="StringStatObjectFieldDefinition" clear_inherited_value="false" value="KnockdownImmunity;Grounded" />
+      </fields>
+    </stat_object>
+    <stat_object index="1" is_substat="false">
+      <fields>
+        <field name="Name" type="NameStatObjectFieldDefinition" clear_inherited_value="false" value="LLLIB_DummyHelper" />
+        <field name="Act" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="0" enumeration_type_name="Act" />
+        <field name="Act part" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="20" enumeration_type_name="ActPart" />
+        <field name="Act strength" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="12" enumeration_type_name="Penalty Qualifier" />
+        <field name="Constitution" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="11" enumeration_type_name="PreciseQualifier" />
+        <field name="Vitality" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="-1" />
+        <field name="PiercingResistance" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="100" />
+        <field name="PhysicalResistance" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="100" />
+        <field name="FireResistance" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="100" />
+        <field name="EarthResistance" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="100" />
+        <field name="WaterResistance" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="100" />
+        <field name="AirResistance" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="100" />
+        <field name="PoisonResistance" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="100" />
+      </fields>
+    </stat_object>
+  </stat_objects>
+</stats>

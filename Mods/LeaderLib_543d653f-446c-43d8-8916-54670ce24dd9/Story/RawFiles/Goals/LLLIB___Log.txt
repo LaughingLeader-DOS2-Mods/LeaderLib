@@ -12,7 +12,7 @@ THEN
 DB_NOOP(1);
 
 QRY
-LeaderLog_QRY_DebugLogEnabled()
+LeaderLog_QRY_DebugEnabled()
 AND
 GlobalGetFlag("LEADERLOG_DEBUG_ENABLED", 1)
 THEN
@@ -156,7 +156,7 @@ AND
 IntegertoString(_FlagVal1, _FlagVal1Str)
 THEN
 LeaderLog_SetTarget(_Player);
-LeaderLog_CombatLog("[LeaderLog:LogFlag] ", _FlagName1, " = ", _FlagVal1Str);
+LeaderLog_Combat("[LeaderLog:LogFlag] ", _FlagName1, " = ", _FlagVal1Str);
 
 PROC
 LeaderLog_LogFlag((CHARACTERGUID)_Player, (STRING)_FlagName1, (INTEGER)_FlagVal1, (STRING)_FlagName2, (INTEGER)_FlagVal2)
@@ -168,7 +168,7 @@ AND
 IntegertoString(_FlagVal2, _FlagVal2Str)
 THEN
 LeaderLog_SetTarget(_Player);
-LeaderLog_CombatLog("[LeaderLog:LogFlag] ", _FlagName1, " = ", _FlagVal1Str, " | ", _FlagName2, " = ", _FlagVal2Str);
+LeaderLog_Combat("[LeaderLog:LogFlag] ", _FlagName1, " = ", _FlagVal1Str, " | ", _FlagName2, " = ", _FlagVal2Str);
 //END_REGION
 
 //REGION PRINTING
@@ -264,183 +264,183 @@ LeaderLog_ClearCombinedString("LeaderLog_Print");
 
 //REGION COMBAT_LOG
 QRY
-LeaderLog_QRY_CombatLog((STRING)_Str1)
+LeaderLog_QRY_Combat((STRING)_Str1)
 THEN
-LeaderLog_CombatLog(_Str1);
+LeaderLog_Combat(_Str1);
 
 QRY
-LeaderLog_QRY_CombatLog((STRING)_Str1, (STRING)_Str2)
+LeaderLog_QRY_Combat((STRING)_Str1, (STRING)_Str2)
 THEN
-LeaderLog_CombatLog(_Str1, _Str2);
+LeaderLog_Combat(_Str1, _Str2);
 
 QRY
-LeaderLog_QRY_CombatLog((STRING)_Str1, (STRING)_Str2, (STRING)_Str3)
+LeaderLog_QRY_Combat((STRING)_Str1, (STRING)_Str2, (STRING)_Str3)
 THEN
-LeaderLog_CombatLog(_Str1, _Str2, _Str3);
+LeaderLog_Combat(_Str1, _Str2, _Str3);
 
 QRY
-LeaderLog_QRY_CombatLog((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4)
+LeaderLog_QRY_Combat((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4)
 THEN
-LeaderLog_CombatLog(_Str1, _Str2, _Str3, _Str4);
+LeaderLog_Combat(_Str1, _Str2, _Str3, _Str4);
 
 QRY
-LeaderLog_QRY_CombatLog((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5)
+LeaderLog_QRY_Combat((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5)
 THEN
-LeaderLog_CombatLog(_Str1, _Str2, _Str3, _Str4, _Str5);
+LeaderLog_Combat(_Str1, _Str2, _Str3, _Str4, _Str5);
 
 QRY
-LeaderLog_QRY_CombatLog((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6)
+LeaderLog_QRY_Combat((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6)
 THEN
-LeaderLog_CombatLog(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6);
+LeaderLog_Combat(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6);
 
 QRY
-LeaderLog_QRY_CombatLog((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7)
+LeaderLog_QRY_Combat((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7)
 THEN
-LeaderLog_CombatLog(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7);
+LeaderLog_Combat(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7);
 
 QRY
-LeaderLog_QRY_CombatLog((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8)
+LeaderLog_QRY_Combat((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8)
 THEN
-LeaderLog_CombatLog(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8);
+LeaderLog_Combat(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8);
 
 PROC
-LeaderLog_CombatLog((STRING)_Str1)
+LeaderLog_Combat((STRING)_Str1)
 THEN
-LeaderLog_CombatLog(_Str1, "", "", "", "", "", "", "");
+LeaderLog_Combat(_Str1, "", "", "", "", "", "", "");
 
 PROC
-LeaderLog_CombatLog((STRING)_Str1, (STRING)_Str2)
+LeaderLog_Combat((STRING)_Str1, (STRING)_Str2)
 THEN
-LeaderLog_CombatLog(_Str1, _Str2, "", "", "", "", "", "");
+LeaderLog_Combat(_Str1, _Str2, "", "", "", "", "", "");
 
 PROC
-LeaderLog_CombatLog((STRING)_Str1, (STRING)_Str2, (STRING)_Str3)
+LeaderLog_Combat((STRING)_Str1, (STRING)_Str2, (STRING)_Str3)
 THEN
-LeaderLog_CombatLog(_Str1, _Str2, _Str3, "", "", "", "", "");
+LeaderLog_Combat(_Str1, _Str2, _Str3, "", "", "", "", "");
 
 PROC
-LeaderLog_CombatLog((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4)
+LeaderLog_Combat((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4)
 THEN
-LeaderLog_CombatLog(_Str1, _Str2, _Str3, _Str4, "", "", "", "");
+LeaderLog_Combat(_Str1, _Str2, _Str3, _Str4, "", "", "", "");
 
 PROC
-LeaderLog_CombatLog((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5)
+LeaderLog_Combat((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5)
 THEN
-LeaderLog_CombatLog(_Str1, _Str2, _Str3, _Str4, _Str5, "", "", "");
+LeaderLog_Combat(_Str1, _Str2, _Str3, _Str4, _Str5, "", "", "");
 
 PROC
-LeaderLog_CombatLog((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6)
+LeaderLog_Combat((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6)
 THEN
-LeaderLog_CombatLog(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6, "", "");
+LeaderLog_Combat(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6, "", "");
 
 PROC
-LeaderLog_CombatLog((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7)
+LeaderLog_Combat((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7)
 THEN
-LeaderLog_CombatLog(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, "");
+LeaderLog_Combat(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, "");
 
 PROC
-LeaderLog_CombatLog((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8)
+LeaderLog_Combat((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8)
 AND
 DB_LeaderLog_Temp_NextLogTarget(_Player)
 AND
 LeaderLog_QRY_PlayerLogEnabled(_Player)
 AND
-LeaderLog_QRY_Internal_CombineStrings("LeaderLog_CombatLog", _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8)
+LeaderLog_QRY_Internal_CombineStrings("LeaderLog_Combat", _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8)
 AND
-DB_LeaderLog_Temp_CombinedString("LeaderLog_CombatLog", _CombinedStr)
+DB_LeaderLog_Temp_CombinedString("LeaderLog_Combat", _CombinedStr)
 THEN
-SetVarFixedString(_Player, "LeaderLog_CombatLogText", _CombinedStr);
+SetVarFixedString(_Player, "LeaderLog_CombatText", _CombinedStr);
 SetStoryEvent(_Player, "LeaderLog_Events_PlayerCombatLog");
-LeaderLog_ClearCombinedString("LeaderLog_CombatLog");
+LeaderLog_ClearCombinedString("LeaderLog_Combat");
 //END_REGION
 
 //REGION EDITOR_LOG
 QRY
-LeaderLog_QRY_DebugLog((STRING)_Str1)
+LeaderLog_QRY_Debug((STRING)_Str1)
 THEN
-LeaderLog_DebugLog(_Str1);
+LeaderLog_Debug(_Str1);
 
 QRY
-LeaderLog_QRY_DebugLog((STRING)_Str1, (STRING)_Str2)
+LeaderLog_QRY_Debug((STRING)_Str1, (STRING)_Str2)
 THEN
-LeaderLog_DebugLog(_Str1, _Str2);
+LeaderLog_Debug(_Str1, _Str2);
 
 QRY
-LeaderLog_QRY_DebugLog((STRING)_Str1, (STRING)_Str2, (STRING)_Str3)
+LeaderLog_QRY_Debug((STRING)_Str1, (STRING)_Str2, (STRING)_Str3)
 THEN
-LeaderLog_DebugLog(_Str1, _Str2, _Str3);
+LeaderLog_Debug(_Str1, _Str2, _Str3);
 
 QRY
-LeaderLog_QRY_DebugLog((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4)
+LeaderLog_QRY_Debug((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4)
 THEN
-LeaderLog_DebugLog(_Str1, _Str2, _Str3, _Str4);
+LeaderLog_Debug(_Str1, _Str2, _Str3, _Str4);
 
 QRY
-LeaderLog_QRY_DebugLog((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5)
+LeaderLog_QRY_Debug((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5)
 THEN
-LeaderLog_DebugLog(_Str1, _Str2, _Str3, _Str4, _Str5);
+LeaderLog_Debug(_Str1, _Str2, _Str3, _Str4, _Str5);
 
 QRY
-LeaderLog_QRY_DebugLog((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6)
+LeaderLog_QRY_Debug((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6)
 THEN
-LeaderLog_DebugLog(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6);
+LeaderLog_Debug(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6);
 
 QRY
-LeaderLog_QRY_DebugLog((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7)
+LeaderLog_QRY_Debug((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7)
 THEN
-LeaderLog_DebugLog(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7);
+LeaderLog_Debug(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7);
 
 QRY
-LeaderLog_QRY_DebugLog((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8)
+LeaderLog_QRY_Debug((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8)
 THEN
-LeaderLog_DebugLog(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8);
+LeaderLog_Debug(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8);
 
 PROC
-LeaderLog_DebugLog((STRING)_Str1)
+LeaderLog_Debug((STRING)_Str1)
 THEN
-LeaderLog_DebugLog(_Str1, "", "", "", "", "", "", "");
+LeaderLog_Debug(_Str1, "", "", "", "", "", "", "");
 
 PROC
-LeaderLog_DebugLog((STRING)_Str1, (STRING)_Str2)
+LeaderLog_Debug((STRING)_Str1, (STRING)_Str2)
 THEN
-LeaderLog_DebugLog(_Str1, _Str2, "", "", "", "", "", "");
+LeaderLog_Debug(_Str1, _Str2, "", "", "", "", "", "");
 
 PROC
-LeaderLog_DebugLog((STRING)_Str1, (STRING)_Str2, (STRING)_Str3)
+LeaderLog_Debug((STRING)_Str1, (STRING)_Str2, (STRING)_Str3)
 THEN
-LeaderLog_DebugLog(_Str1, _Str2, _Str3, "", "", "", "", "");
+LeaderLog_Debug(_Str1, _Str2, _Str3, "", "", "", "", "");
 
 PROC
-LeaderLog_DebugLog((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4)
+LeaderLog_Debug((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4)
 THEN
-LeaderLog_DebugLog(_Str1, _Str2, _Str3, _Str4, "", "", "", "");
+LeaderLog_Debug(_Str1, _Str2, _Str3, _Str4, "", "", "", "");
 
 PROC
-LeaderLog_DebugLog((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5)
+LeaderLog_Debug((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5)
 THEN
-LeaderLog_DebugLog(_Str1, _Str2, _Str3, _Str4, _Str5, "", "", "");
+LeaderLog_Debug(_Str1, _Str2, _Str3, _Str4, _Str5, "", "", "");
 
 PROC
-LeaderLog_DebugLog((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6)
+LeaderLog_Debug((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6)
 THEN
-LeaderLog_DebugLog(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6, "", "");
+LeaderLog_Debug(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6, "", "");
 
 PROC
-LeaderLog_DebugLog((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7)
+LeaderLog_Debug((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7)
 THEN
-LeaderLog_DebugLog(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, "");
+LeaderLog_Debug(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, "");
 
 PROC
-LeaderLog_DebugLog((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8)
+LeaderLog_Debug((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8)
 AND
-LeaderLog_QRY_DebugLogEnabled()
+LeaderLog_QRY_DebugEnabled()
 AND
-LeaderLog_QRY_Internal_CombineStrings("LeaderLog_DebugLog", _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8)
+LeaderLog_QRY_Internal_CombineStrings("LeaderLog_Debug", _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8)
 AND
-DB_LeaderLog_Temp_CombinedString("LeaderLog_DebugLog", _CombinedStr)
+DB_LeaderLog_Temp_CombinedString("LeaderLog_Debug", _CombinedStr)
 THEN
 DebugBreak(_CombinedStr);
-LeaderLog_ClearCombinedString("LeaderLog_DebugLog");
+LeaderLog_ClearCombinedString("LeaderLog_Debug");
 //END_REGION
 EXITSECTION
 

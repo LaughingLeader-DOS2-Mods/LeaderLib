@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<stats stat_object_definition_id="47014da6-a81c-40a9-9f3c-4a74b6ddc574">
+  <stat_objects>
+    <stat_object index="0" is_substat="false">
+      <fields>
+        <field name="Name" type="NameStatObjectFieldDefinition" clear_inherited_value="false" value="LLLIB_DUMMY_INVULNERABLE" />
+        <field name="Type" type="StringStatObjectFieldDefinition" clear_inherited_value="false" value="INVISIBLE" />
+        <field name="ForGameMaster" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="0" enumeration_type_name="YesNo" />
+        <field name="InitiateCombat" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="0" enumeration_type_name="YesNo" />
+        <field name="DisplayName" type="TranslatedStringStatObjectFieldDefinition" clear_inherited_value="false" value=" " />
+        <field name="Description" type="TranslatedStringStatObjectFieldDefinition" clear_inherited_value="false" value="Character is an invisible dummy, used for script purposes. Look away from the curtain!" />
+        <field name="FormatColor" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="0" enumeration_type_name="FormatStringColor" />
+        <field name="MaterialType" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="3" enumeration_type_name="MaterialType" />
+        <field name="MaterialApplyBody" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="1" enumeration_type_name="YesNo" />
+        <field name="MaterialApplyArmor" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="1" enumeration_type_name="YesNo" />
+        <field name="MaterialApplyWeapon" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="1" enumeration_type_name="YesNo" />
+        <field name="MaterialApplyNormalMap" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="1" enumeration_type_name="YesNo" />
+        <field name="SoundStart" type="StringStatObjectFieldDefinition" clear_inherited_value="false" value="Status_Tex_Invisible_Start" />
+        <field name="SoundLoop" type="StringStatObjectFieldDefinition" clear_inherited_value="false" value="Status_Tex_Invisible_Loop" />
+        <field name="SoundStop" type="StringStatObjectFieldDefinition" clear_inherited_value="false" value="Status_Tex_Invisible_Stop" />
+        <field name="StackId" type="StringStatObjectFieldDefinition" clear_inherited_value="false" value="Stack_LLLIB_Dummy_Invulnerable" />
+        <field name="Material" type="StringStatObjectFieldDefinition" clear_inherited_value="false" value="6148f9f3-a2d8-4aa9-add3-368c411b1080" />
+        <field name="IsInvulnerable" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="1" enumeration_type_name="YesNo" />
+      </fields>
+    </stat_object>
+  </stat_objects>
+</stats>

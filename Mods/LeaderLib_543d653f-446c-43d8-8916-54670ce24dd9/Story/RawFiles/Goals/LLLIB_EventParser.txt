@@ -1,0 +1,27 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+//DB_LLLIB_SendEvent(_EventName)
+KBSECTION
+IF
+GameStarted(_,_)
+AND
+ObjectExists(ITEMGUID_S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, 0)
+THEN
+LeaderLog_Debug("[LLLIB:EventParser][ERROR] Event Parser doesn't exist?");
+
+//Send out a general event, using the Event Parser object.
+PROC
+LLLIB_Events_SendEvent((STRING)_EventName)
+THEN
+DB_LLLIB_SendEvent(_EventName);
+
+IF
+DB_LLLIB_SendEvent(_EventName)
+THEN
+SetStoryEvent(ITEMGUID_S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, _EventName);
+NOT DB_LLLIB_SendEvent(_EventName);
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

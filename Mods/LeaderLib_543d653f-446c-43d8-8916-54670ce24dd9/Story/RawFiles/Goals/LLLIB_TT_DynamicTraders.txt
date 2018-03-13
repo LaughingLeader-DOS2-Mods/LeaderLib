@@ -7,6 +7,7 @@ INITSECTION
 //DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID)
 //DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z)
 //DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger)
+//DB_LLLIB_Traders_LevelPositionObject(_TraderID, _Level, Object)
 //DB_LLLIB_Traders_CreationEvents(_TraderID, _EventName)
 //DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID)
 
@@ -72,6 +73,13 @@ THEN
 DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger);
 
 PROC
+LLLIB_Trader_Register_PositionObject((STRING)_TraderID, (STRING)_Level, (GUIDSTRING)_Object)
+AND
+NOT DB_LLLIB_Traders_LevelPositionObject(_TraderID, _Level, _)
+THEN
+DB_LLLIB_Traders_LevelPositionObject(_TraderID, _Level, Object);
+
+PROC
 LLLIB_Trader_Register_CreationEvent((STRING)_TraderID, (STRING)_EventName)
 THEN
 DB_LLLIB_Traders_CreationEvents(_TraderID, _EventName);
@@ -101,32 +109,48 @@ AND
 DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger)
 THEN
 DB_NOOP(1);
+
+QRY
+LLLIB_QRY_Traders_HasPosition((STRING)_TraderID, (STRING)_Level)
+AND
+DB_LLLIB_Traders_LevelPositionObject(_TraderID, _Level, Object)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION SPAWNING
+IF
+GameStarted(_Level,_)
+THEN
+LLLIB_Traders_CreateTraders(_Level);
+
 PROC
 LLLIB_Traders_CreateTraders((STRING)_Level)
 AND
-DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _Requirement)
+DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID)
 AND
 DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn)
 AND
 NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
 AND
 LLLIB_QRY_Traders_HasPosition(_TraderID, _Level)
+AND
+LLLIB_QRY_Requirements_AllMet(_RequirementID)
 THEN
 LLLIB_Traders_SpawnTrader(_TraderID, _Level, _Template, _PlaySpawn);
 
 PROC
 LLLIB_Traders_CreateTraders((STRING)_Level)
 AND
-DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _Requirement)
+DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID)
 AND
 DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader)
 AND
 ObjectExists(_Trader, 1)
 AND
 LLLIB_QRY_Traders_HasPosition(_TraderID, _Level)
+AND
+LLLIB_QRY_Requirements_AllMet(_RequirementID)
 THEN
 LLLIB_Traders_TeleportToPosition(_TraderID, _Level, _Trader);
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
@@ -186,9 +210,18 @@ LLLIB_Traders_TeleportToPosition(_TraderID, _Level, _Trader, _TeleportEvent);
 PROC
 LLLIB_Traders_TeleportToPosition((STRING)_TraderID, (STRING)_Level, (CHARACTERGUID)_Trader)
 AND
-NOT DB_LLLIB_Traders_CreationEvents(_TraderID, _TeleportEvent)
+NOT DB_LLLIB_Traders_CreationEvents(_TraderID, _)
 THEN
 LLLIB_Traders_TeleportToPosition(_TraderID, _Level, _Trader, "");
+
+PROC
+LLLIB_Traders_TeleportToPosition((STRING)_TraderID, (STRING)_Level, (CHARACTERGUID)_Trader, (STRING)_TeleportEvent)
+AND
+NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
+AND
+DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z)
+THEN
+TeleportToPosition(_Trader, _x,_y,_z, _TeleportEvent, 0, 1);
 
 PROC
 LLLIB_Traders_TeleportToPosition((STRING)_TraderID, (STRING)_Level, (CHARACTERGUID)_Trader, (STRING)_TeleportEvent)
@@ -202,9 +235,9 @@ TeleportToPosition(_Trader, _x,_y,_z, _TeleportEvent, 0, 1);
 PROC
 LLLIB_Traders_TeleportToPosition((STRING)_TraderID, (STRING)_Level, (CHARACTERGUID)_Trader, (STRING)_TeleportEvent)
 AND
-NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
+DB_LLLIB_Traders_LevelPositionObject(_TraderID, _Level, _Object)
 AND
-DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z)
+GetPosition(_Object,_x,_y,_z)
 THEN
 TeleportToPosition(_Trader, _x,_y,_z, _TeleportEvent, 0, 1);
 
@@ -269,8 +302,6 @@ THEN
 ClearVarObject(_Trader, "Seat");
 //END_REGION
 
-//END_REGION
-
 //REGION REQUIREMENT_SPAWNING
 IF
 ObjectFlagSet(_Flag, _Object, _)
@@ -327,9 +358,7 @@ DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID)
 AND
 NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
 AND
-LLLIB_QRY_Requirements_PartyLevelMet(_RequirementID)
-AND
-LLLIB_QRY_Requirements_PartyFlagMet(_RequirementID)
+LLLIB_QRY_Requirements_AllMet(_RequirementID)
 THEN
 LLLIB_Traders_CreateTrader(_TraderID, _Level);
 
@@ -340,7 +369,7 @@ DB_CurrentLevel(_Level)
 AND
 DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID)
 AND
-LLLIB_QRY_Requirements_PartyLevelMet(_RequirementID)
+LLLIB_QRY_Requirements_AllMet(_RequirementID)
 AND
 NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
 THEN

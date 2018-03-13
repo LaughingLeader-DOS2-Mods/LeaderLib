@@ -9,14 +9,22 @@ LLLIB_LeaderTrader_RegisterTrader()
 THEN
 LLLIB_Trader_Register_GlobalTrader("LLLIB_LeaderTrader", CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41);
 LLLIB_Trader_Register_Level("LLLIB_LeaderTrader", "TUT_Tutorial_A");
-LLLIB_Trader_Register_Position("LLLIB_LeaderTrader", "TUT_Tutorial_A", 31.19, 4, -252.77);
+LLLIB_Trader_Register_Position("LLLIB_LeaderTrader", "TUT_Tutorial_A", 31.19, 4.0, -252.77);
 
 LLLIB_Trader_Register_Level("LLLIB_LeaderTrader", "FJ_FortJoy_Main");
 LLLIB_Trader_Register_Position("LLLIB_LeaderTrader", "FJ_FortJoy_Main", 219.86, -16.79, 362.70);
 
-LLLIB_Trader_Register_Level("LLLIB_LeaderTrader", "LV_Deck-1_A");
-LLLIB_Trader_Register_Position("LLLIB_LeaderTrader", "LV_Deck-1_A", 31.95, 11.06, -6.09);
-LLLIB_Trader_Register_Seat("LLLIB_LeaderTrader", "LV_Deck-1_A", ITEMGUID_FUR_Humans_Citz_Stool_C_005_a2a11ad5-645b-4719-bfd5-be04f32fbb2a);
+LLLIB_LeaderTrader_RegisterDeckSeat("LV_HoE_Main", ITEMGUID_FUR_Humans_Citz_Stool_C_005_a2a11ad5-645b-4719-bfd5-be04f32fbb2a);
+LLLIB_LeaderTrader_RegisterDeckSeat("RC_Main", ITEMGUID_FUR_Humans_Citz_Stool_C_005_a2a11ad5-645b-4719-bfd5-be04f32fbb2a);
+LLLIB_LeaderTrader_RegisterDeckSeat("CoS_Main", ITEMGUID_FUR_Humans_Citz_Stool_C_005_a2a11ad5-645b-4719-bfd5-be04f32fbb2a);
+LLLIB_LeaderTrader_RegisterDeckSeat("Arx_Main", ITEMGUID_FUR_Humans_Citz_Stool_C_005_a2a11ad5-645b-4719-bfd5-be04f32fbb2a);
+
+PROC
+LLLIB_LeaderTrader_RegisterDeckSeat((STRING)_LevelName, (GUIDSTRING)_Seat)
+THEN
+LLLIB_Trader_Register_Level("LLLIB_LeaderTrader", _LevelName);
+LLLIB_Trader_Register_PositionObject("LLLIB_LeaderTrader", _LevelName, _Seat);
+LLLIB_Trader_Register_Seat("LLLIB_LeaderTrader", _LevelName, _Seat);
 //END_REGION
 
 //REGION AVOID_COMBAT

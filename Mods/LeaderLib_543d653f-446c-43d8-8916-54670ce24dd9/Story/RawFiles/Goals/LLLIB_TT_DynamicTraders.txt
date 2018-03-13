@@ -3,7 +3,7 @@ SubGoalCombiner SGC_AND
 INITSECTION
 //Settings
 //DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn)
-//DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader, _PlaySpawn)
+//DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader)
 //DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID)
 //DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z)
 //DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger)
@@ -40,9 +40,9 @@ THEN
 DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn);
 
 PROC
-LLLIB_Trader_Register_GlobalTrader((STRING)_TraderID, (CHARACTERGUID)_Trader, (INTEGER)_PlaySpawn)
+LLLIB_Trader_Register_GlobalTrader((STRING)_TraderID, (CHARACTERGUID)_Trader)
 THEN
-DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader, _PlaySpawn);
+DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader);
 
 PROC
 LLLIB_Trader_Register_Level((STRING)_TraderID, (STRING)_Level)
@@ -111,13 +111,13 @@ LLLIB_Traders_CreateTraders((STRING)_Level)
 AND
 DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _Requirement)
 AND
-DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader, _PlaySpawn)
+DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader)
 AND
 ObjectExists(_Trader, 1)
 AND
 LLLIB_QRY_Traders_HasPosition(_TraderID, _Level)
 THEN
-LLLIB_Traders_TeleportToPosition(_TraderID, _Level, _Trader, _PlaySpawn);
+LLLIB_Traders_TeleportToPosition(_TraderID, _Level, _Trader);
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
 
 PROC
@@ -132,13 +132,13 @@ LLLIB_Traders_SpawnTrader(_TraderID, _Level, _Template, _PlaySpawn);
 PROC
 LLLIB_Traders_CreateTrader((STRING)_TraderID, (STRING)_Level)
 AND
-DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader, _PlaySpawn)
+DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader)
 AND
 ObjectExists(_Trader, 1)
 AND
 LLLIB_QRY_Traders_HasPosition(_TraderID, _Level)
 THEN
-LLLIB_Traders_TeleportToPosition(_TraderID, _Level, _Trader, _PlaySpawn);
+LLLIB_Traders_TeleportToPosition(_TraderID, _Level, _Trader);
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
 
 PROC
@@ -166,22 +166,36 @@ THEN
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
 
 PROC
-LLLIB_Traders_TeleportToPosition((STRING)_TraderID, (STRING)_Level, (CHARACTERGUID)_Trader, (INTEGER)_PlaySpawn)
+LLLIB_Traders_TeleportToPosition((STRING)_TraderID, (STRING)_Level, (CHARACTERGUID)_Trader)
+AND
+DB_LLLIB_Traders_CreationEvents(_TraderID, _TeleportEvent)
+THEN
+LLLIB_Traders_TeleportToPosition(_TraderID, _Level, _Trader, _TeleportEvent);
+
+PROC
+LLLIB_Traders_TeleportToPosition((STRING)_TraderID, (STRING)_Level, (CHARACTERGUID)_Trader)
+AND
+NOT DB_LLLIB_Traders_CreationEvents(_TraderID, _TeleportEvent)
+THEN
+LLLIB_Traders_TeleportToPosition(_TraderID, _Level, _Trader, "");
+
+PROC
+LLLIB_Traders_TeleportToPosition((STRING)_TraderID, (STRING)_Level, (CHARACTERGUID)_Trader, (STRING)_TeleportEvent)
 AND
 DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger)
 AND
 GetPosition(_Trigger,_x,_y,_z)
 THEN
-TeleportToPosition(_Trader, _x,_y,_z, "", 0, 1);
+TeleportToPosition(_Trader, _x,_y,_z, _TeleportEvent, 0, 1);
 
 PROC
-LLLIB_Traders_TeleportToPosition((STRING)_TraderID, (STRING)_Level, (CHARACTERGUID)_Trader, (INTEGER)_PlaySpawn)
+LLLIB_Traders_TeleportToPosition((STRING)_TraderID, (STRING)_Level, (CHARACTERGUID)_Trader, (STRING)_TeleportEvent)
 AND
 NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
 AND
 DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z)
 THEN
-TeleportToPosition(_Trader, _x,_y,_z, "", 0, 1);
+TeleportToPosition(_Trader, _x,_y,_z, _TeleportEvent, 0, 1);
 
 //Creation events
 IF

@@ -1,31 +1,9 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-LLLIB_Updater_RegisterMod("LeaderLib", "0.1.0.0", "LaughingLeader");
+LeaderUpdater_RegisterMod("LeaderLib", "0.1.0.0", "LaughingLeader");
 KBSECTION
-//REGION MOD_UPDATING
-PROC
-LLLIB_Updater_ClearPreviousVersions((STRING)_ModName, (STRING)_Author)
-AND
-DB_Mods_RegisteredMod(_ModName, _Version, _Author)
-THEN
-NOT DB_Mods_RegisteredMod(_ModName, _Version, _Author);
-
-PROC
-LLLIB_Updater_RegisterMod((STRING)_ModName, (STRING)_Version, (STRING)_Author)
-AND
-NOT DB_Mods_RegisteredMod(_ModName, _Version, _Author)
-THEN
-LLLIB_Updater_ClearPreviousVersions(_ModName, _Author);
-DB_Mods_RegisteredMod(_ModName, _Version, _Author);
-
-QRY
-LLLIB_QRY_Updater_ModUpdateNeeded((STRING)_ModName, (STRING)_Version, (STRING)_Author)
-AND
-NOT DB_Mods_RegisteredMod(_ModName, _Version, _Author)
-THEN
-DB_NOOP(1);
-
+//REGION LLLIB_UPDATING
 PROC
 LLLIB_System_UpdateDatabases()
 THEN
@@ -48,27 +26,20 @@ LeaderLog_Debug("[LLLIB:Updater] Databases cleared and re-initialized.");
 IF
 GameStarted(_,_)
 AND
-LLLIB_QRY_Updater_ModUpdateNeeded("LeaderLib", "0.1.0.0", "LaughingLeader")
+LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "0.1.0.0", "LaughingLeader")
 THEN
-LLLIB_Updater_RegisterMod("LeaderLib", "0.1.0.0", "LaughingLeader");
+LeaderUpdater_RegisterMod("LeaderLib", "0.1.0.0", "LaughingLeader");
 LLLIB_System_UpdateDatabases();
 //END_REGION
 
 //REGION UNINSTALLING
 PROC
-LLLIB_Updater_UnregisterMod((STRING)_ModName, (STRING)_Author)
-AND
-DB_Mods_RegisteredMod(_ModName, _Version, _Author)
-THEN
-NOT DB_Mods_RegisteredMod(_ModName, _Version, _Author);
-
-PROC
-LLLIB_Updater_UnregisterMod()
+LeaderUpdater_UnregisterMod("LeaderLib", "LaughingLeader")
 THEN
 GlobalClearFlag("LEADERLIB_ACTIVE");
 
 PROC
-LLLIB_Updater_UninstallMod()
+LeaderUpdater_UninstallMod("LeaderLib", "LaughingLeader")
 THEN
 LeaderLog_Debug("[LLLIB:Updater:Uninstaller] Uninstalling LeaderLib.");
 LeaderLog_Debug("[LLLIB:Updater:Uninstaller] Attempting to end all LeaderLib dialogs. Resuming in 2 seconds.");
@@ -85,7 +56,7 @@ LLLIB_Updater_DestroyItems();
 LeaderLog_Debug("[LLLIB:Updater:Uninstaller] Clearing databases.");
 LLLIB_System_ClearDatabases();
 LeaderLog_Debug("[LLLIB:Updater:Uninstaller] Unregistering LeaderLib.");
-LLLIB_Updater_UnregisterMod();
+//LeaderUpdater_UnregisterMod();
 
 PROC
 LLLIB_Updater_CloseDialogs()
@@ -144,13 +115,13 @@ ItemDestroy(_Item);
 
 //REGION ACTIVE_FLAG
 PROC
-LLLIB_Updater_RegisterMod("LeaderLib", (STRING)_Version, "LaughingLeader")
+LeaderUpdater_RegisterMod("LeaderLib", (STRING)_Version, "LaughingLeader")
 AND
 GlobalGetFlag("LEADERLIB_ACTIVE", 0)
 THEN
 GlobalSetFlag("LEADERLIB_ACTIVE");
 //END_REGION
 EXITSECTION
-LLLIB_Updater_UnregisterMod("LeaderLib", "LaughingLeader");
+LeaderUpdater_UnregisterMod("LeaderLib", "LaughingLeader");
 ENDEXITSECTION
 ParentTargetEdge "LaughingLeader__LeaderLib"

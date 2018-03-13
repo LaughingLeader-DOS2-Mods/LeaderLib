@@ -1,0 +1,48 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+//REGION MOD_UPDATING_API
+PROC
+LeaderUpdater_ClearPreviousVersions((STRING)_ModName, (STRING)_Author)
+AND
+DB_Mods_RegisteredMod(_ModName, _Version, _Author)
+THEN
+NOT DB_Mods_RegisteredMod(_ModName, _Version, _Author);
+
+PROC
+LeaderUpdater_RegisterMod((STRING)_ModName, (STRING)_Version, (STRING)_Author)
+AND
+NOT DB_Mods_RegisteredMod(_ModName, _Version, _Author)
+THEN
+LeaderUpdater_ClearPreviousVersions(_ModName, _Author);
+DB_Mods_RegisteredMod(_ModName, _Version, _Author);
+
+QRY
+LeaderUpdater_QRY_ModUpdateNeeded((STRING)_ModName, (STRING)_Version, (STRING)_Author)
+AND
+NOT DB_Mods_RegisteredMod(_ModName, _Version, _Author)
+THEN
+DB_NOOP(1);
+
+//END_REGION
+
+//REGION UNINSTALLING
+PROC
+LeaderUpdater_UnregisterMod((STRING)_ModName, (STRING)_Author)
+AND
+DB_Mods_RegisteredMod(_ModName, _Version, _Author)
+THEN
+NOT DB_Mods_RegisteredMod(_ModName, _Version, _Author);
+
+PROC
+LeaderUpdater_UninstallMod((STRING)_ModName, (STRING)_Author)
+THEN
+LeaderUpdater_UnregisterMod(_ModName, _Author);
+
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

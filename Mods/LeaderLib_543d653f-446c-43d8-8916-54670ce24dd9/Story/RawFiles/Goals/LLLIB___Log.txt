@@ -442,6 +442,95 @@ THEN
 DebugBreak(_CombinedStr);
 LeaderLog_ClearCombinedString("LeaderLog_Debug");
 //END_REGION
+
+//REGION STATUS_TEXT
+QRY
+LeaderLog_QRY_Status((CHARACTERGUID)_Character, (STRING)_Str1)
+THEN
+LeaderLog_Status(_Character, _Str1);
+
+QRY
+LeaderLog_QRY_Status((CHARACTERGUID)_Character, (STRING)_Str1, (STRING)_Str2)
+THEN
+LeaderLog_Status(_Character, _Str1, _Str2);
+
+QRY
+LeaderLog_QRY_Status((CHARACTERGUID)_Character, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3)
+THEN
+LeaderLog_Status(_Character, _Str1, _Str2, _Str3);
+
+QRY
+LeaderLog_QRY_Status((CHARACTERGUID)_Character, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4)
+THEN
+LeaderLog_Status(_Character, _Str1, _Str2, _Str3, _Str4);
+
+QRY
+LeaderLog_QRY_Status((CHARACTERGUID)_Character, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5)
+THEN
+LeaderLog_Status(_Character, _Str1, _Str2, _Str3, _Str4, _Str5);
+
+QRY
+LeaderLog_QRY_Status((CHARACTERGUID)_Character, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6)
+THEN
+LeaderLog_Status(_Character, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6);
+
+QRY
+LeaderLog_QRY_Status((CHARACTERGUID)_Character, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7)
+THEN
+LeaderLog_Status(_Character, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7);
+
+QRY
+LeaderLog_QRY_Status((CHARACTERGUID)_Character, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8)
+THEN
+LeaderLog_Status(_Character, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8);
+
+PROC
+LeaderLog_Status((CHARACTERGUID)_Character, (STRING)_Str1)
+THEN
+LeaderLog_Status(_Character, _Str1, "", "", "", "", "", "", "");
+
+PROC
+LeaderLog_Status((CHARACTERGUID)_Character, (STRING)_Str1, (STRING)_Str2)
+THEN
+LeaderLog_Status(_Character, _Str1, _Str2, "", "", "", "", "", "");
+
+PROC
+LeaderLog_Status((CHARACTERGUID)_Character, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3)
+THEN
+LeaderLog_Status(_Character, _Str1, _Str2, _Str3, "", "", "", "", "");
+
+PROC
+LeaderLog_Status((CHARACTERGUID)_Character, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4)
+THEN
+LeaderLog_Status(_Character, _Str1, _Str2, _Str3, _Str4, "", "", "", "");
+
+PROC
+LeaderLog_Status((CHARACTERGUID)_Character, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5)
+THEN
+LeaderLog_Status(_Character, _Str1, _Str2, _Str3, _Str4, _Str5, "", "", "");
+
+PROC
+LeaderLog_Status((CHARACTERGUID)_Character, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6)
+THEN
+LeaderLog_Status(_Character, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, "", "");
+
+PROC
+LeaderLog_Status((CHARACTERGUID)_Character, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7)
+THEN
+LeaderLog_Status(_Character, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, "");
+
+PROC
+LeaderLog_Status((CHARACTERGUID)_Character, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8)
+AND
+LeaderLog_QRY_CanPrint()
+AND
+LeaderLog_QRY_Internal_CombineStrings("LeaderLog_StatusText", _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8)
+AND
+DB_LeaderLog_Temp_CombinedString("LeaderLog_StatusText", _CombinedStr)
+THEN
+CharacterStatusText(_Character, _CombinedStr);
+LeaderLog_ClearCombinedString("LeaderLog_StatusText");
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

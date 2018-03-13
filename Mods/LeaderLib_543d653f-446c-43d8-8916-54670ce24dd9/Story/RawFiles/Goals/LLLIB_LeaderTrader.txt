@@ -1,8 +1,17 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-
+LLLIB_LeaderTrader_RegisterTrader();
 KBSECTION
+//REGION REGISTER
+PROC
+LLLIB_LeaderTrader_RegisterTrader()
+THEN
+LLLIB_Trader_Register_GlobalTrader("LLLIB_LeaderTrader", CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41);
+LLLIB_Trader_Register_Level("LLLIB_LeaderTrader", "TUT_Tutorial_A");
+LLLIB_Trader_Register_Level("LLLIB_LeaderTrader", "FJ_FortJoy_Main");
+//END_REGION
+
 //REGION AVOID_COMBAT
 IF
 CombatStarted(_CombatID)

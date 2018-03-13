@@ -91,6 +91,24 @@ AND
 _RequirementID == ""
 THEN
 DB_NOOP(1);
+
+QRY
+LLLIB_QRY_Requirements_AllMet((STRING)_RequirementID)
+AND
+_RequirementID == ""
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_QRY_Requirements_AllMet((STRING)_RequirementID)
+AND
+_RequirementID != ""
+AND
+LLLIB_QRY_Requirements_PartyFlagMet(_RequirementID)
+AND
+LLLIB_QRY_Requirements_PartyLevelMet(_RequirementID)
+THEN
+DB_NOOP(1);
 //END_REGION
 EXITSECTION
 

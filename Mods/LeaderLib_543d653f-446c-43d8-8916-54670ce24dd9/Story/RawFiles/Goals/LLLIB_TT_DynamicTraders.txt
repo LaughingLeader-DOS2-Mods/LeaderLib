@@ -8,6 +8,7 @@ INITSECTION
 //DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z)
 //DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger)
 //DB_LLLIB_Traders_CreationEvents(_TraderID, _EventName)
+//DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID)
 
 //Dynamic
 //DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
@@ -74,6 +75,16 @@ PROC
 LLLIB_Trader_Register_CreationEvent((STRING)_TraderID, (STRING)_EventName)
 THEN
 DB_LLLIB_Traders_CreationEvents(_TraderID, _EventName);
+
+PROC
+LLLIB_Trader_Register_Seat((STRING)_TraderID, (STRING)_Level, (ITEMGUID)_Seat)
+THEN
+LLLIB_Trader_Register_Seat(_TraderID, _Level, _Seat, "");
+
+PROC
+LLLIB_Trader_Register_Seat((STRING)_TraderID, (STRING)_Level, (ITEMGUID)_Seat, (STRING)_RequirementID)
+THEN
+DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID);
 //END_REGION
 
 //REGION QUERIES
@@ -210,6 +221,52 @@ IF
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
 THEN
 SetStoryEvent(_Trader, "LLLIB_GenerateTreasure");
+
+//Sit
+IF
+DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+AND
+DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID)
+AND
+ObjectExists(_Seat, 1)
+AND
+LLLIB_QRY_Requirements_AllMet(_RequirementID)
+THEN
+SetVarObject(_Trader, "Seat", _Seat);
+
+QRY
+DB_LLLIB_QRY_Traders_CantSit((STRING)_TraderID, (STRING)_Level)
+AND
+NOT DB_LLLIB_Traders_Seat(_TraderID, _Level, _, _)
+THEN
+DB_NOOP(1);
+
+QRY
+DB_LLLIB_QRY_Traders_CantSit((STRING)_TraderID, (STRING)_Level)
+AND
+DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID)
+AND
+ObjectExists(_Seat, 0)
+THEN
+DB_NOOP(1);
+
+QRY
+DB_LLLIB_QRY_Traders_CantSit((STRING)_TraderID, (STRING)_Level)
+AND
+DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID)
+AND
+ObjectExists(_Seat, 1)
+AND
+NOT LLLIB_QRY_Requirements_AllMet(_RequirementID)
+THEN
+DB_NOOP(1);
+
+IF
+DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+AND
+NOT DB_LLLIB_Traders_CantSit(_TraderID, _Level)
+THEN
+ClearVarObject(_Trader, "Seat");
 //END_REGION
 
 //END_REGION

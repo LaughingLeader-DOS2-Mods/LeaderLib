@@ -1,0 +1,45 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+LLLIB_InitSettings();
+KBSECTION
+PROC
+LLLIB_InitSettings()
+THEN
+LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_EquipmentSlots", 1);
+DB_LLLIB_EquipmentSlots("Weapon");
+DB_LLLIB_EquipmentSlots("Shield");
+DB_LLLIB_EquipmentSlots("Helmet");
+DB_LLLIB_EquipmentSlots("Breast");
+DB_LLLIB_EquipmentSlots("Leggings");
+DB_LLLIB_EquipmentSlots("Ring");
+DB_LLLIB_EquipmentSlots("Belt");
+DB_LLLIB_EquipmentSlots("Boots");
+DB_LLLIB_EquipmentSlots("Gloves");
+DB_LLLIB_EquipmentSlots("Amulet");
+DB_LLLIB_EquipmentSlots("Ring2");
+
+
+//REGION UPDATING
+PROC
+LLLIB_System_UpdateDatabases()
+THEN
+LLLIB_InitSettings();
+LeaderLog_Debug("[LLLIB:Settings] Databases updated.");
+
+PROC
+LLLIB_System_ClearDatabases()
+THEN
+LeaderLog_Debug("[LLLIB:Settings] Databases cleared.");
+
+PROC
+LLLIB_Updater_ResetDatabases()
+THEN
+LLLIB_System_ClearDatabases();
+LLLIB_System_UpdateDatabases();
+LeaderLog_Debug("[LLLIB:Settings] Databases cleared and re-initialized.");
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

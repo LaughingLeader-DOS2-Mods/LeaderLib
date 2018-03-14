@@ -30,6 +30,7 @@ LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "0.1.0.0", "LaughingLeader")
 THEN
 LeaderUpdater_RegisterMod("LeaderLib", "0.1.0.0", "LaughingLeader");
 LLLIB_System_UpdateDatabases();
+LLLIB_Events_SendEvent("LLLIB_Events_UpdateDatabases");
 //END_REGION
 
 //REGION UNINSTALLING

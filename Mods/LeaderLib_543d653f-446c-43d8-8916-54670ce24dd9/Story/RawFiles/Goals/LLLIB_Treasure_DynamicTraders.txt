@@ -5,10 +5,11 @@ INITSECTION
 //DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn)
 //DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader)
 //DB_LLLIB_Traders_SpawnRequirement(_TraderID, _Level, _RequirementID)
+//DB_LLLIB_Traders_StartingGold(_TraderID, _Level, _Amount, _RequirementID)
 //DB_LLLIB_Traders_Dialog(_TraderID, _Level, _Dialog, _RequirementID)
 //DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z)
 //DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger)
-//DB_LLLIB_Traders_LevelPositionObject(_TraderID, _Level, Object)
+//DB_LLLIB_Traders_LevelPositionObject(_TraderID, _Level, _Object)
 //DB_LLLIB_Traders_CreationEvents(_TraderID, _EventName)
 //DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID)
 
@@ -62,6 +63,16 @@ THEN
 DB_LLLIB_Traders_SpawnRequirement(_TraderID, _Level, _Requirement);
 
 PROC
+LLLIB_Trader_Register_StartingGold((STRING)_TraderID, (STRING)_Level, (INTEGER)_Amount)
+THEN
+LLLIB_Trader_Register_StartingGold(_TraderID, _Level, _Amount, "");
+
+PROC
+LLLIB_Trader_Register_StartingGold((STRING)_TraderID, (STRING)_Level, (INTEGER)_Amount, (STRING)_Requirement)
+THEN
+DB_LLLIB_Traders_StartingGold(_TraderID, _Level, _Amount, _Requirement);
+
+PROC
 LLLIB_Trader_Register_Dialog((STRING)_TraderID, (STRING)_Dialog)
 THEN
 LLLIB_Trader_Register_Dialog(_TraderID, "", _Dialog, "");
@@ -111,6 +122,83 @@ PROC
 LLLIB_Trader_Register_Seat((STRING)_TraderID, (STRING)_Level, (ITEMGUID)_Seat, (STRING)_RequirementID)
 THEN
 DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID);
+//END_REGION
+
+//REGION CLEARING
+PROC
+LLLIB_Trader_ClearTrader((STRING)_TraderID)
+AND
+DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn)
+THEN
+NOT DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn);
+
+PROC
+LLLIB_Trader_ClearTrader((STRING)_TraderID)
+AND
+DB_LLLIB_Traders_StartingGold(_TraderID, _Level, _Amount, _RequirementID)
+THEN
+NOT DB_LLLIB_Traders_StartingGold(_TraderID, _Level, _Amount, _RequirementID);
+
+PROC
+LLLIB_Trader_ClearTrader((STRING)_TraderID)
+AND
+DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader)
+THEN
+NOT DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader);
+
+PROC
+LLLIB_Trader_ClearTrader((STRING)_TraderID)
+AND
+DB_LLLIB_Traders_SpawnRequirement(_TraderID, _Level, _RequirementID)
+THEN
+NOT DB_LLLIB_Traders_SpawnRequirement(_TraderID, _Level, _RequirementID);
+
+PROC
+LLLIB_Trader_ClearTrader((STRING)_TraderID)
+AND
+DB_LLLIB_Traders_Dialog(_TraderID, _Level, _Dialog, _RequirementID)
+THEN
+NOT DB_LLLIB_Traders_Dialog(_TraderID, _Level, _Dialog, _RequirementID);
+
+PROC
+LLLIB_Trader_ClearTrader((STRING)_TraderID)
+AND
+DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z)
+THEN
+NOT DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z);
+
+PROC
+LLLIB_Trader_ClearTrader((STRING)_TraderID)
+AND
+DB_LLLIB_Traders_LevelPositionObject(_TraderID, _Level, _Object)
+THEN
+NOT DB_LLLIB_Traders_LevelPositionObject(_TraderID, _Level, _Object);
+
+PROC
+LLLIB_Trader_ClearTrader((STRING)_TraderID)
+AND
+DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger)
+THEN
+NOT DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger);
+
+PROC
+LLLIB_Trader_ClearTrader((STRING)_TraderID)
+AND
+DB_LLLIB_Traders_CreationEvents(_TraderID, _EventName)
+THEN
+NOT DB_LLLIB_Traders_CreationEvents(_TraderID, _EventName);
+
+PROC
+LLLIB_Trader_ClearTrader((STRING)_TraderID)
+AND
+DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID)
+THEN
+NOT DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID);
+
+PROC
+LLLIB_Trader_ClearTrader((STRING)_TraderID)
+THEN
+LeaderLog_Debug("[LLLIB:Traders] Trader [",_TraderID,"] removed from all associated databases.");
 //END_REGION
 
 //REGION QUERIES
@@ -211,6 +299,15 @@ LLLIB_Traders_SetDialog((CHARACTERGUID)_Trader, (STRING)_Dialog)
 THEN
 ProcRemoveAllDialogEntriesForSpeaker(_Trader);
 DB_Dialogs(_Trader, _Dialog);
+
+PROC
+LLLIB_Traders_AddStartingGold((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
+AND
+DB_LLLIB_Traders_StartingGold(_TraderID, _Level, _Amount, _RequirementID)
+AND
+LLLIB_QRY_Requirements_AllMet(_RequirementID)
+THEN
+CharacterAddGold(_Trader, _Amount);
 //END_REGION
 
 //REGION SPAWNING
@@ -406,6 +503,7 @@ IF
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
 THEN
 LLLIB_Traders_SetDialogToUnlocked(_Trader, _TraderID, _Level);
+LLLIB_Traders_AddStartingGold(_Trader, _TraderID, _Level);
 
 //Generate treasure on spawn
 IF

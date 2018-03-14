@@ -339,6 +339,44 @@ IntegerSum(_Ran5, _MinRan, _Val)
 THEN
 DB_LLLIB_Temp_RandomResult(_Val);
 //END_REGION
+
+//REGION DATABASE_HELPERS
+PROC
+LLLIB_Helper_ClearExistingDatabase((STRING)_DatabaseName, (INTEGER)_Arity)
+AND
+SysCount(_DatabaseName, _Arity, _Count)
+AND
+_Count > 0
+THEN
+SysClear(_DatabaseName, _Arity);
+
+PROC
+LLLIB_Helper_DatabaseCount((STRING)_DatabaseName, (INTEGER)_Arity)
+AND
+SysCount(_DatabaseName, _Arity, _Total)
+AND
+IntegertoString(_Total, _TotalStr)
+AND
+StringConcatenate("[LLLIB:Helpers(DatabaseCount)] '", _DatabaseName, _Str1)
+AND
+StringConcatenate(_Str1, "' Total Entries: ", _Str2)
+AND
+StringConcatenate(_Str2, _TotalStr, _Str3)
+THEN
+LeaderLog_Debug(_Str3);
+//END_REGION
+
+//REGION EQUIPMENT_REFRESH
+PROC
+LLLIB_Helper_RefreshEquipment((CHARACTERGUID)_Character)
+AND
+DB_LLLIB_EquipmentSlots(_Slot)
+AND
+CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
+THEN
+CharacterUnequipItem(_Character, _Item);
+CharacterEquipItem(_Character, _Item);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

@@ -22,7 +22,7 @@ data "WaterSpecialist" "4"
 data "EarthSpecialist" "2"
 data "Loremaster" "5"
 data "Reflection" "6"
-data "Flags" "KnockdownImmunity;Grounded"
+data "Flags" "KnockdownImmunity"
 data "Talents" "AttackOfOpportunity;QuickStep;Perfectionist"
 
 new entry "LLLIB_DummyHelper"

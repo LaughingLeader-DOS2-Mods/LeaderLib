@@ -19,7 +19,7 @@ DB_LLLIB_SendEvent(_EventName);
 IF
 DB_LLLIB_SendEvent(_EventName)
 THEN
-SetStoryEvent(ITEMGUID_S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, _EventName);
+SetStoryEvent(S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, _EventName);
 NOT DB_LLLIB_SendEvent(_EventName);
 EXITSECTION
 

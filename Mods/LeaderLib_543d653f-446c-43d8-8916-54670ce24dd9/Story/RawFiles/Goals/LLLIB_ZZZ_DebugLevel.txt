@@ -112,6 +112,18 @@ THEN
 TimerLaunch("LLLIB_Debug_Timers_NotifyFoundTrader", 4000);
 
 IF
+StoryEvent(_, "LLLIB_Events_UpdateDatabases")
+THEN
+TimerLaunch("LLLIB_Debug_Timers_NotifyUpdateTimer", 4000);
+
+IF
+TimerFinished("LLLIB_Debug_Timers_NotifyUpdateTimer")
+AND
+DB_IsPlayer(_Player)
+THEN
+OpenMessageBox(_Player, "LeaderLib Updated");
+
+IF
 TimerFinished("LLLIB_Debug_Timers_NotifyMissingTrader")
 AND
 DB_IsPlayer(_Player)

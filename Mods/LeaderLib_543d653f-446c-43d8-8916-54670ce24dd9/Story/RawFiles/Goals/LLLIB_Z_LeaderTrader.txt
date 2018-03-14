@@ -5,20 +5,30 @@ LLLIB_LeaderTrader_RegisterTrader();
 //DB_LLLIB_LeaderTrader(_LeaderTrader)
 KBSECTION
 //REGION REGISTER
+IF
+StoryEvent(_, "LLLIB_Events_UpdateDatabases")
+THEN
+LLLIB_LeaderTrader_RegisterTrader();
+
 PROC
 LLLIB_LeaderTrader_RegisterTrader()
 AND
 NOT DB_LLLIB_LeaderTrader(_)
 THEN
-DB_LLLIB_LeaderTrader((CHARACTERGUID)CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41);
+DB_LLLIB_LeaderTrader((CHARACTERGUID)CHARACTERGUID_S_LLLIB_RetiredLeader_3f047cc8-176d-4d91-a7a9-6637f5ff01d7);
 
 PROC
 LLLIB_LeaderTrader_RegisterTrader()
 AND
 DB_LLLIB_LeaderTrader(_LeaderTrader)
 THEN
+LLLIB_Trader_ClearTrader("LLLIB_LeaderTrader");
+
 LLLIB_Trader_Register_GlobalTrader("LLLIB_LeaderTrader", _LeaderTrader);
 LLLIB_Trader_Register_Position("LLLIB_LeaderTrader", "FJ_FortJoy_Main", 219.86, -16.79, 362.70);
+
+LLLIB_Requirements_AddFlagRequirement("LLLIB_LeaderTrader_WindegoHasCastSpell", "TUT_LowerDeck_WindegoHasCastSpell", "Global", 0);
+LLLIB_Requirements_AddFlagRequirement("LLLIB_LeaderTrader_PartyFoundSeekerCamp", "FTJ_SW_BeenToShelter", "Object", 1);
 
 LLLIB_LeaderTrader_RegisterDeckSeat("LeaderLib_TestLevel", ITEMGUID_LLLIB_DebugLevel_TraderChair_8468a5fd-00a4-42c2-aa15-1b1a25e46738);
 LLLIB_LeaderTrader_RegisterDeckSeat("TUT_Tutorial_A", ITEMGUID_S_TUT_KitchenBench_e628d79a-8f7b-4681-a55f-57f0b42a29db, "LLLIB_LeaderTrader_WindegoHasCastSpell");
@@ -27,7 +37,14 @@ LLLIB_LeaderTrader_RegisterDeckSeat("RC_Main", ITEMGUID_FUR_Humans_Citz_Stool_C_
 LLLIB_LeaderTrader_RegisterDeckSeat("CoS_Main", ITEMGUID_FUR_Humans_Citz_Stool_C_005_a2a11ad5-645b-4719-bfd5-be04f32fbb2a);
 LLLIB_LeaderTrader_RegisterDeckSeat("Arx_Main", ITEMGUID_FUR_Humans_Citz_Stool_C_005_a2a11ad5-645b-4719-bfd5-be04f32fbb2a);
 
-LLLIB_Requirements_AddFlagRequirement("LLLIB_LeaderTrader_WindegoHasCastSpell", "TUT_LowerDeck_WindegoHasCastSpell", "Global", 0);
+LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "LeaderLib_TestLevel", 20000);
+LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "TUT_Tutorial_A", 200);
+LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "FJ_FortJoy_Main", 2000);
+LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "FJ_FortJoy_Main", 4000, "LLLIB_LeaderTrader_PartyFoundSeekerCamp");
+LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "LV_HoE_Main", 4500);
+LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "RC_Main", 5000);
+LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "CoS_Main", 10000);
+LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "Arx_Main", 13000);
 
 PROC
 LLLIB_LeaderTrader_RegisterDeckSeat((STRING)_LevelName, (ITEMGUID)_Seat)
@@ -51,6 +68,7 @@ AND
 DB_LLLIB_LeaderTrader(_LeaderTrader)
 THEN
 CharacterTransform(_LeaderTrader, "LLLIB_RetiredLeader_Prisoner_e4cbf1f4-4eea-457c-93a3-ded05ae3605e", 1, 1, 1, 1, 1, 0, 0);
+LLLIB_Helper_RefreshEquipment(_LeaderTrader);
 DB_TUT_LowerDeck_WindegoSpareCharacters(_LeaderTrader); // To avoid exploding
 
 IF
@@ -59,6 +77,7 @@ AND
 DB_LLLIB_LeaderTrader(_LeaderTrader)
 THEN
 CharacterTransform(_LeaderTrader, "LLLIB_RetiredLeader_Act1_da17fca2-fe16-46d9-80b3-08971a8c8d49", 1, 1, 1, 1, 1, 0, 0);
+LLLIB_Helper_RefreshEquipment(_LeaderTrader);
 //END_REGION
 
 //REGION TUTORIAL
@@ -191,6 +210,19 @@ ObjectGetFlag(_LeaderTrader, "LLLIB_LeaderTrader_WasHiding", 1)
 THEN
 DisplayText(_LeaderTrader, "Hrmph...");
 ObjectClearFlag(_LeaderTrader, "LLLIB_LeaderTrader_WasHiding");
+
+IF
+ObjectFlagCleared("LLLIB_LeaderTrader_WasHiding", (CHARACTERGUID)_LeaderTrader, _)
+AND
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+AND
+DB_LLLIB_Traders_Spawned(_LeaderTrader, _TraderID, _Level)
+AND
+DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID)
+THEN
+//Reset the chair logic
+ClearVarObject(_LeaderTrader, "Seat");
+SetVarObject(_LeaderTrader, "Seat", _Seat);
 //END_REGION
 EXITSECTION
 

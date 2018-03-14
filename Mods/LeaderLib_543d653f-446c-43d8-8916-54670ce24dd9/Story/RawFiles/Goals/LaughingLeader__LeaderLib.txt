@@ -5,6 +5,7 @@ INITSECTION
 KBSECTION
 IF
 GameEventSet("GAMEEVENT_GameStarted")
+//GameStarted(_,_)
 THEN
 GoalCompleted;
 EXITSECTION

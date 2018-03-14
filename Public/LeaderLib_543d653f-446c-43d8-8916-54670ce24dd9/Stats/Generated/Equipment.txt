@@ -16,3 +16,13 @@ add equipment entry "ARM_Knight_Boots"
 add equipmentgroup
 add equipment entry "WPN_Knight_Sword_2H_Humans"
 
+new equipment "LLLIB_LeaderTrader_Prisoner"
+add equipmentgroup
+add equipment entry "ARM_Purge_UpperBody"
+add equipmentgroup
+add equipment entry "ARM_Purge_LowerBody"
+add equipmentgroup
+add equipment entry "ARM_Purge_Boots"
+add equipmentgroup
+add equipment entry "ARM_Purge_Gloves"
+

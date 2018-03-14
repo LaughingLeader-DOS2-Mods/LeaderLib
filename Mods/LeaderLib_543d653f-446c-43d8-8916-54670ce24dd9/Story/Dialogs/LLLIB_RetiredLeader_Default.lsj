@@ -1,7 +1,7 @@
 {
    "save" : {
       "header" : {
-         "time" : 1520502927,
+         "time" : 1520991441,
          "version" : "2.0.8.2"
       },
       "regions" : {
@@ -148,8 +148,8 @@
                         "setflags" : [ {} ],
                         "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 1},
-                        "transitionmode" : {"type" : 1, "value" : 0},
-                        "waittime" : {"type" : 6, "value" : -1.0}
+                        "transitionmode" : {"type" : 1, "value" : 1},
+                        "waittime" : {"type" : 6, "value" : 0.009999999776482582}
                      },
                      {
                         "GameData" : [
@@ -564,7 +564,7 @@
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 0},
+                        "speaker" : {"type" : 4, "value" : 1},
                         "stub" : {"type" : 19, "value" : 1},
                         "transitionmode" : {"type" : 1, "value" : 1},
                         "waittime" : {"type" : 6, "value" : 0.009999999776482582}

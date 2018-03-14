@@ -7,14 +7,21 @@ KBSECTION
 QRY
 LeaderLog_QRY_PlayerLogEnabled((CHARACTERGUID)_Player)
 AND
-UserGetFlag(_Player, "LEADERLOG_PLAYER_ENABLED", 1)
+UserGetFlag(_Player, "LEADERLOG_PLAYER_DISABLED", 0)
 THEN
 DB_NOOP(1);
 
 QRY
 LeaderLog_QRY_DebugEnabled()
 AND
-GlobalGetFlag("LEADERLOG_DEBUG_ENABLED", 1)
+GlobalGetFlag("LEADERLOG_DEBUG_DISABLED", 0)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLog_QRY_DebugEnabled()
+AND
+NOT GlobalGetFlag("LEADERLOG_DEBUG_DISABLED", _)
 THEN
 DB_NOOP(1);
 

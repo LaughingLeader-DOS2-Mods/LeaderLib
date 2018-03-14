@@ -11,9 +11,9 @@ INITSECTION
 //DB_LLLIB_Treasure_ItemDeltaMods(_TreasureID, _ItemEntry, _Deltamod, _Chance)
 //DB_LLLIB_Treasure_ItemRunes(_TreasureID, _ItemEntry, _Rune, _Chance)
 
-//DB_LLLIB_Requirement_PartyLevel(_RequirementID, _MinLevel, _MaxLevel)
-//DB_LLLIB_Requirement_Flag(_RequirementID, _Flag, _FlagType, _FlagVal)
-//DB_LLLIB_Requirement_MaxItemAmount(_RequirementID, _MaxAmount)
+//DB_LLLIB_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel, _StrictMode)
+//DB_LLLIB_Requirements_Flag(_RequirementID, _Flag, _FlagType, _FlagVal)
+//DB_LLLIB_Requirements_MaxItemAmount(_RequirementID, _MaxAmount)
 
 //DB_LLLIB_Treasure_OnlyOnce(_TreasureID, _ItemEntryOrTreasureTable, _OnCompletionEvent)
 //DB_LLLIB_Treasure_GeneratedEvent(_TreasureID, _ItemEntry, _OnGeneratedEvent)
@@ -129,64 +129,6 @@ DB_LLLIB_Treasure_OnlyOnce(_TreasureID, _ItemEntry, _OnCompletionEvent);
 //END_REGION
 
 //REGION QUERIES_CHECKS
-//Don't bother checking requirements without an actual ID
-QRY
-LLLIB_QRY_Treasure_CanGenerate((STRING)_RequirementID)
-AND
-_RequirementID == ""
-THEN
-DB_NOOP(1);
-
-QRY
-LLLIB_QRY_Treasure_CanGenerate((STRING)_RequirementID)
-AND
-_RequirementID != ""
-AND
-NOT DB_LLLIB_Requirement_PartyLevel(_RequirementID,_,_)
-AND
-NOT DB_LLLIB_Requirement_Flag(_RequirementID,_,_,_)
-THEN
-DB_NOOP(1);
-
-QRY
-LLLIB_QRY_Treasure_CanGenerate((STRING)_RequirementID)
-AND
-_RequirementID != ""
-AND
-NOT DB_LLLIB_Requirement_PartyLevel(_RequirementID,_,_)
-AND
-DB_LLLIB_Requirement_Flag(_RequirementID, _Flag, _FlagType, _FlagVal)
-AND
-LLLIB_Helper_QRY_PartyFlagSet(_Flag, _FlagType, _FlagVal)
-THEN
-DB_NOOP(1);
-
-QRY
-LLLIB_QRY_Treasure_CanGenerate((STRING)_RequirementID)
-AND
-_RequirementID != ""
-AND
-NOT DB_LLLIB_Requirement_Flag(_RequirementID,_,_,_)
-AND
-DB_LLLIB_Requirement_PartyLevel(_RequirementID, _MinLevel, _MaxLevel)
-AND
-LLLIB_Helper_QRY_PartyLevelRangeMet(_MinLevel, _MaxLevel)
-THEN
-DB_NOOP(1);
-
-QRY
-LLLIB_QRY_Treasure_CanGenerate((STRING)_RequirementID)
-AND
-DB_LLLIB_Requirement_Flag(_RequirementID, _Flag, _FlagType, _FlagVal)
-AND
-LLLIB_Helper_QRY_PartyFlagSet(_Flag, _FlagType, _FlagVal)
-AND
-DB_LLLIB_Requirement_PartyLevel(_RequirementID, _MinLevel, _MaxLevel)
-AND
-LLLIB_Helper_QRY_PartyLevelRangeMet(_MinLevel, _MaxLevel)
-THEN
-DB_NOOP(1);
-
 QRY
 LLLIB_QRY_Treasure_IsRegisteredObject((GUIDSTRING)_Object)
 AND
@@ -246,7 +188,7 @@ LLLIB_QRY_Treasure_ItemLimitNotMet((GUIDSTRING)_Object, (STRING)_ItemEntry, (STR
 AND
 _RequirementID != ""
 AND
-DB_LLLIB_Requirement_MaxItemAmount(_RequirementID, _MaxAmount)
+DB_LLLIB_Requirements_MaxItemAmount(_RequirementID, _MaxAmount)
 AND
 _CurrentAmount < _MaxAmount
 AND
@@ -259,7 +201,7 @@ LLLIB_QRY_Treasure_ItemLimitNotMet((GUIDSTRING)_Object, (STRING)_ItemEntry, (STR
 AND
 _RequirementID != ""
 AND
-NOT DB_LLLIB_Requirement_MaxItemAmount(_RequirementID,_)
+NOT DB_LLLIB_Requirements_MaxItemAmount(_RequirementID,_)
 AND
 _CurrentAmount < _GeneratedAmount
 AND
@@ -512,7 +454,7 @@ LLLIB_Treasure_GenerateItems((GUIDSTRING)_Object, (STRING)_TreasureID)
 AND
 DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel)
 AND
-LLLIB_QRY_Treasure_CanGenerate(_RequirementID)
+LLLIB_QRY_Requirements_AllMet(_RequirementID)
 AND
 NOT DB_LLLIB_Treasure_TableWasGenerated(_Object, _TreasureID, _TreasureTable)
 AND
@@ -539,7 +481,7 @@ LLLIB_Treasure_GenerateItems((GUIDSTRING)_Object, (STRING)_TreasureID)
 AND
 DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel)
 AND
-LLLIB_QRY_Treasure_CanGenerate(_RequirementID)
+LLLIB_QRY_Requirements_AllMet(_RequirementID)
 AND
 NOT DB_LLLIB_Treasure_TableWasGenerated(_Object, _TreasureID, _TreasureTable)
 AND
@@ -570,7 +512,7 @@ LLLIB_Treasure_GenerateItems((GUIDSTRING)_Object, (STRING)_TreasureID)
 AND
 DB_LLLIB_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID)
 AND
-LLLIB_QRY_Treasure_CanGenerate(_RequirementID)
+LLLIB_QRY_Requirements_AllMet(_RequirementID)
 AND
 LLLIB_QRY_Treasure_SkipAmountCheck(_Object, _RequirementID)
 THEN
@@ -582,7 +524,7 @@ LLLIB_Treasure_GenerateItems((GUIDSTRING)_Object, (STRING)_TreasureID)
 AND
 DB_LLLIB_Treasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID)
 AND
-LLLIB_QRY_Treasure_CanGenerate(_RequirementID)
+LLLIB_QRY_Requirements_AllMet(_RequirementID)
 AND
 LLLIB_QRY_Treasure_SkipAmountCheck(_Object, _RequirementID)
 THEN
@@ -595,7 +537,7 @@ LLLIB_Treasure_GenerateItems((GUIDSTRING)_Object, (STRING)_TreasureID)
 AND
 DB_LLLIB_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID)
 AND
-LLLIB_QRY_Treasure_CanGenerate(_RequirementID)
+LLLIB_QRY_Requirements_AllMet(_RequirementID)
 AND
 NOT LLLIB_QRY_Treasure_SkipAmountCheck(_Object, _RequirementID)
 THEN
@@ -606,7 +548,7 @@ LLLIB_Treasure_GenerateItems((GUIDSTRING)_Object, (STRING)_TreasureID)
 AND
 DB_LLLIB_Treasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID)
 AND
-LLLIB_QRY_Treasure_CanGenerate(_RequirementID)
+LLLIB_QRY_Requirements_AllMet(_RequirementID)
 AND
 NOT LLLIB_QRY_Treasure_SkipAmountCheck(_Object, _RequirementID)
 THEN
@@ -1060,4 +1002,4 @@ StartTrade(_Player, _Object);
 EXITSECTION
 
 ENDEXITSECTION
-ParentTargetEdge "LLLIB_TreasureAndTraders"
+ParentTargetEdge "LaughingLeader__LeaderLib"

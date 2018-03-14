@@ -2,49 +2,167 @@ Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
 LLLIB_LeaderTrader_RegisterTrader();
+//DB_LLLIB_LeaderTrader(_LeaderTrader)
 KBSECTION
 //REGION REGISTER
 PROC
 LLLIB_LeaderTrader_RegisterTrader()
+AND
+NOT DB_LLLIB_LeaderTrader(_)
 THEN
-LLLIB_Trader_Register_GlobalTrader("LLLIB_LeaderTrader", CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41);
-LLLIB_Trader_Register_Level("LLLIB_LeaderTrader", "TUT_Tutorial_A");
-LLLIB_Trader_Register_Position("LLLIB_LeaderTrader", "TUT_Tutorial_A", 31.19, 4.0, -252.77);
+DB_LLLIB_LeaderTrader((CHARACTERGUID)CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41);
 
-LLLIB_Trader_Register_Level("LLLIB_LeaderTrader", "FJ_FortJoy_Main");
+PROC
+LLLIB_LeaderTrader_RegisterTrader()
+AND
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+THEN
+LLLIB_Trader_Register_GlobalTrader("LLLIB_LeaderTrader", _LeaderTrader);
 LLLIB_Trader_Register_Position("LLLIB_LeaderTrader", "FJ_FortJoy_Main", 219.86, -16.79, 362.70);
 
 LLLIB_LeaderTrader_RegisterDeckSeat("LeaderLib_TestLevel", ITEMGUID_LLLIB_DebugLevel_TraderChair_8468a5fd-00a4-42c2-aa15-1b1a25e46738);
-
+LLLIB_LeaderTrader_RegisterDeckSeat("TUT_Tutorial_A", ITEMGUID_S_TUT_KitchenBench_e628d79a-8f7b-4681-a55f-57f0b42a29db, "LLLIB_LeaderTrader_WindegoHasCastSpell");
 LLLIB_LeaderTrader_RegisterDeckSeat("LV_HoE_Main", ITEMGUID_FUR_Humans_Citz_Stool_C_005_a2a11ad5-645b-4719-bfd5-be04f32fbb2a);
 LLLIB_LeaderTrader_RegisterDeckSeat("RC_Main", ITEMGUID_FUR_Humans_Citz_Stool_C_005_a2a11ad5-645b-4719-bfd5-be04f32fbb2a);
 LLLIB_LeaderTrader_RegisterDeckSeat("CoS_Main", ITEMGUID_FUR_Humans_Citz_Stool_C_005_a2a11ad5-645b-4719-bfd5-be04f32fbb2a);
 LLLIB_LeaderTrader_RegisterDeckSeat("Arx_Main", ITEMGUID_FUR_Humans_Citz_Stool_C_005_a2a11ad5-645b-4719-bfd5-be04f32fbb2a);
 
+LLLIB_Requirements_AddFlagRequirement("LLLIB_LeaderTrader_WindegoHasCastSpell", "TUT_LowerDeck_WindegoHasCastSpell", "Global", 0);
+
 PROC
 LLLIB_LeaderTrader_RegisterDeckSeat((STRING)_LevelName, (ITEMGUID)_Seat)
 THEN
-LLLIB_Trader_Register_Level("LLLIB_LeaderTrader", _LevelName);
+LLLIB_LeaderTrader_RegisterDeckSeat(_LevelName, _Seat, "");
+
+PROC
+LLLIB_LeaderTrader_RegisterDeckSeat((STRING)_LevelName, (ITEMGUID)_Seat, (STRING)_RequirementID)
+THEN
+LLLIB_Trader_Register_SpawnRequirement("LLLIB_LeaderTrader", _LevelName, _RequirementID);
 LLLIB_Trader_Register_PositionObject("LLLIB_LeaderTrader", _LevelName, (GUIDSTRING)_Seat);
 LLLIB_Trader_Register_Seat("LLLIB_LeaderTrader", _LevelName, (ITEMGUID)_Seat);
+
+LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", "LLLIB_RetiredLeader_Default");
+//END_REGION
+
+//REGION APPEARANCE_CHANGING
+IF
+DB_LLLIB_Traders_Spawned(_LeaderTrader, _TraderID, "TUT_Tutorial_A")
+AND
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+THEN
+CharacterTransform(_LeaderTrader, "LLLIB_RetiredLeader_Prisoner_e4cbf1f4-4eea-457c-93a3-ded05ae3605e", 1, 1, 1, 1, 1, 0, 0);
+DB_TUT_LowerDeck_WindegoSpareCharacters(_LeaderTrader); // To avoid exploding
+
+IF
+DB_LLLIB_Traders_Spawned(_LeaderTrader, _TraderID, "FJ_FortJoy_Main")
+AND
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+THEN
+CharacterTransform(_LeaderTrader, "LLLIB_RetiredLeader_Act1_da17fca2-fe16-46d9-80b3-08971a8c8d49", 1, 1, 1, 1, 1, 0, 0);
+//END_REGION
+
+//REGION TUTORIAL
+IF
+GlobalFlagSet("TUT_LowerDeck_WindegoHasCastSpell")
+AND
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+AND
+DB_LLLIB_Traders_Spawned(_LeaderTrader, _TraderID, _Level)
+THEN
+DisplayText(_LeaderTrader, "Hrmph. Sounds like my cue to sneak on out of here...");
+CharacterUseSkill(_LeaderTrader, "Shout_ChameleonSkin", _LeaderTrader, 0, 1, 1);
+TimerLaunch("LLLIB_Timeers_LeaderTrader_TUTDisappear", 2000);
+
+IF
+TimerFinished("LLLIB_Timeers_LeaderTrader_TUTDisappear")
+AND
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+AND
+DB_LLLIB_Traders_Spawned(_LeaderTrader, _TraderID, "TUT_Tutorial_A")
+THEN
+NOT DB_LLLIB_Traders_Spawned(_LeaderTrader, _TraderID, "TUT_Tutorial_A");
+
+IF
+TimerFinished("LLLIB_Timeers_LeaderTrader_TUTDisappear")
+AND
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+THEN
+SetOnStage(_LeaderTrader, 0);
+
+IF
+RegionEnded("TUT_Tutorial_A")
+AND
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+AND
+DB_TUT_LowerDeck_WindegoSpareCharacters(_LeaderTrader)
+THEN
+NOT DB_TUT_LowerDeck_WindegoSpareCharacters(_LeaderTrader);
+//END_REGION
+
+//REGION GREETING_CHANGE
+IF
+DialogStarted("LLLIB_RetiredLeader_Default", _Instance)
+AND
+DialogGetInvolvedNPC(_Instance, 1, _Object)
+THEN
+DB_LLLIB_Debug_Temp_ActiveTraderDialog(_Object, _Instance);
+
+IF
+DialogStarted("LLLIB_RetiredLeader_Default", _Instance)
+AND
+DialogGetInvolvedPlayer(_Instance, 1, _Player)
+AND
+ObjectGetFlag(_Player, "LLLIB_Trader_PlayerTalkedToLeaderTrader", 1)
+THEN
+DialogSetVariableStringForInstance(_Instance, "LLLIB_Treasure_Greeting_f143b90b-9afc-477e-b133-6a1574341261", "Welcome back! Looking to trade?");
+
+IF
+DialogEnded("LLLIB_RetiredLeader_Default", _Instance)
+AND
+DB_LLLIB_Debug_Temp_ActiveTraderDialog(_Object, _Instance)
+THEN
+NOT DB_LLLIB_Debug_Temp_ActiveTraderDialog(_Object, _Instance);
+
+IF
+ObjectFlagSet("StartTrade", _Speaker, _Instance)
+AND
+DB_LLLIB_Debug_Temp_ActiveTraderDialog(_Object, _Instance)
+THEN
+DialogSetVariableStringForInstance(_Instance, "LLLIB_Treasure_Greeting_f143b90b-9afc-477e-b133-6a1574341261", "Anything else?");
+
+IF
+RequestTrade(_Player, _Object)
+AND
+DB_LLLIB_Debug_Temp_ActiveTraderDialog(_Object, _Instance)
+THEN
+DialogSetVariableStringForInstance(_Instance, "LLLIB_Treasure_Greeting_f143b90b-9afc-477e-b133-6a1574341261", "Anything else?");
 //END_REGION
 
 //REGION AVOID_COMBAT
 IF
 CombatStarted(_CombatID)
 AND
-CharacterIsInCombat(CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41, 1)
+DB_LLLIB_LeaderTrader(_LeaderTrader)
 AND
-CombatGetIDForCharacter(CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41, _CombatID)
+CharacterIsInCombat(_LeaderTrader, 1)
+AND
+CombatGetIDForCharacter(_LeaderTrader, _CombatID)
+AND
+ObjectGetFlag(_LeaderTrader, "LLLIB_LeaderTrader_Hiding", 0)
 THEN
 DB_LLLIB_LeaderTrader_AvoidingCombat(_CombatID);
-DisplayText(CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41, "I'm retired from the chaos of battle! No more I say!");
-CharacterUseSkill(CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41, "Shout_ChameleonSkin", CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41, 0, 1, 1);
+DisplayText(_LeaderTrader, "I'm retired from the chaos of battle! No more I say!");
+CharacterUseSkill(_LeaderTrader, "Shout_ChameleonSkin", _LeaderTrader, 0, 1, 1);
+ObjectSetFlag(_LeaderTrader, "LLLIB_LeaderTrader_Hiding", 0);
 
 IF
-CharacterStatusApplied(CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41, "INVISIBLE", _)
+CharacterStatusApplied(_LeaderTrader, "INVISIBLE", _)
+AND
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+AND
+ObjectGetFlag(_LeaderTrader, "LLLIB_LeaderTrader_Hiding", 1)
 THEN
-SetOnStage(CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41, 0);
+SetOnStage(_LeaderTrader, 0);
 
 IF
 CombatEnded(_CombatID)
@@ -56,14 +174,23 @@ NOT DB_LLLIB_LeaderTrader_AvoidingCombat(_CombatID);
 
 IF
 TimerFinished("LLLIB_Timers_LeaderTrader_CombatEnded")
+AND
+DB_LLLIB_LeaderTrader(_LeaderTrader)
 THEN
-SetOnStage(CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41, 1);
-ApplyStatus(CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41, "INVISIBLE", 6.0, 1);
+SetOnStage(_LeaderTrader, 1);
+ObjectClearFlag(_LeaderTrader, "LLLIB_LeaderTrader_Hiding");
+ObjectSetFlag(_LeaderTrader, "LLLIB_LeaderTrader_WasHiding", 0);
+ApplyStatus(_LeaderTrader, "INVISIBLE", 6.0, 1);
 
 IF
-CharacterStatusRemoved(CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41, "Invisible", _)
+CharacterStatusRemoved(_LeaderTrader, "Invisible", _)
+AND
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+AND
+ObjectGetFlag(_LeaderTrader, "LLLIB_LeaderTrader_WasHiding", 1)
 THEN
-DisplayText(CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41, "Hrmph...");
+DisplayText(_LeaderTrader, "Hrmph...");
+ObjectClearFlag(_LeaderTrader, "LLLIB_LeaderTrader_WasHiding");
 //END_REGION
 EXITSECTION
 

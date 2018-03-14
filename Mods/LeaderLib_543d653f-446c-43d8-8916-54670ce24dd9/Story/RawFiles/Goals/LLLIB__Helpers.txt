@@ -4,6 +4,7 @@ INITSECTION
 //DB_LLLIB_Helper_Temp_StopIteratingForFlags(1)
 //DB_LLLIB_Helper_Temp_StopIteratingForMinLevel(1)
 //DB_LLLIB_Helper_Temp_StopIteratingForMaxLevel(1)
+//DB_LLLIB_Helper_Temp_PartyMemberOutsideOfLevelRange(1)
 //DB_LLLIB_Helper_Temp_HighestLevelInParty(_Level)
 KBSECTION
 //REGION QUERY_INFO
@@ -157,6 +158,78 @@ _Level > _HighestLevel
 THEN
 NOT DB_LLLIB_Helper_Temp_HighestLevelInParty(_HighestLevel);
 DB_LLLIB_Helper_Temp_HighestLevelInParty(_Level);
+//END_REGION
+
+//REGION PARTY_LEVELRANGE_STRICT
+QRY
+LLLIB_Helper_QRY_PartyMinLevelMet_Strict((INTEGER)_MinLevel)
+AND
+_MinLevel <= 0
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_Helper_QRY_PartyMinLevelMet_Strict((INTEGER)_MinLevel)
+AND
+DB_LLLIB_Helper_Temp_PartyMemberOutsideOfLevelRange(_Val)
+THEN
+NOT DB_LLLIB_Helper_Temp_PartyMemberOutsideOfLevelRange(_Val);
+
+QRY
+LLLIB_Helper_QRY_PartyMinLevelMet_Strict((INTEGER)_MinLevel)
+AND
+_MinLevel > 0
+AND
+DB_IsPlayer(_Player)
+AND
+NOT DB_LLLIB_Helper_Temp_PartyMemberOutsideOfLevelRange(1)
+AND
+CharacterGetLevel(_Player, _Level)
+AND
+_Level < _MinLevel
+THEN
+DB_LLLIB_Helper_Temp_PartyMemberOutsideOfLevelRange(1);
+
+QRY
+LLLIB_Helper_QRY_PartyMaxLevelMet_Strict((INTEGER)_MaxLevel)
+AND
+_MaxLevel <= 0
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_Helper_QRY_PartyMaxLevelMet_Strict((INTEGER)_MaxLevel)
+AND
+DB_LLLIB_Helper_Temp_StopIteratingForMaxLevel(_Val)
+THEN
+NOT DB_LLLIB_Helper_Temp_StopIteratingForMaxLevel(_Val);
+
+QRY
+LLLIB_Helper_QRY_PartyMaxLevelMet_Strict((INTEGER)_MaxLevel)
+AND
+_MaxLevel > 0
+AND
+DB_IsPlayer(_Player)
+AND
+NOT DB_LLLIB_Helper_Temp_PartyMemberOutsideOfLevelRange(1)
+AND
+CharacterGetLevel(_Player, _Level)
+AND
+_Level > _MaxLevel
+THEN
+DB_LLLIB_Helper_Temp_PartyMemberOutsideOfLevelRange(1);
+
+//Checks to make sure the whole party fits the range
+QRY
+LLLIB_Helper_QRY_PartyLevelRangeMet_Strict((INTEGER)_MinLevel, (INTEGER)_MaxLevel)
+AND
+LLLIB_Helper_QRY_PartyMinLevelMet_Strict(_MinLevel)
+AND
+LLLIB_Helper_QRY_PartyMaxLevelMet_Strict(_MaxLevel)
+AND
+NOT DB_LLLIB_Helper_Temp_PartyMemberOutsideOfLevelRange(1)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION FLAG_HELPERS

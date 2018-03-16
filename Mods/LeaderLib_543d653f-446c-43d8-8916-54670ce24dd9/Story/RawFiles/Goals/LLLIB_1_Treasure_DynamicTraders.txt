@@ -14,7 +14,7 @@ INITSECTION
 //DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID)
 
 //Dynamic
-//DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
+//DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
 
 //Ref
 //DB_LLLIB_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel)
@@ -128,6 +128,13 @@ DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID);
 PROC
 LLLIB_Trader_ClearTrader((STRING)_TraderID)
 AND
+DB_LLLIB_QRY_Traders_IsRegistered(_TraderID)
+THEN
+LeaderLog_Debug("[LLLIB:Traders] Trader [",_TraderID,"] removed from all associated databases.");
+
+PROC
+LLLIB_Trader_ClearTrader((STRING)_TraderID)
+AND
 DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn)
 THEN
 NOT DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn);
@@ -194,11 +201,6 @@ AND
 DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID)
 THEN
 NOT DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID);
-
-PROC
-LLLIB_Trader_ClearTrader((STRING)_TraderID)
-THEN
-LeaderLog_Debug("[LLLIB:Traders] Trader [",_TraderID,"] removed from all associated databases.");
 //END_REGION
 
 //REGION QUERIES
@@ -247,6 +249,20 @@ AND
 ObjectExists(_Seat, 1)
 AND
 NOT LLLIB_QRY_Requirements_AllMet(_RequirementID)
+THEN
+DB_NOOP(1);
+
+QRY
+DB_LLLIB_QRY_Traders_IsRegistered((STRING)_TraderID)
+AND
+DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn)
+THEN
+DB_NOOP(1);
+
+QRY
+DB_LLLIB_QRY_Traders_IsRegistered((STRING)_TraderID)
+AND
+DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader)
 THEN
 DB_NOOP(1);
 //END_REGION
@@ -380,6 +396,7 @@ AND
 CharacterCreateAtPosition(_x,_y,_z, _Template, _PlaySpawn, _Trader)
 THEN
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
+SetStoryEvent(_Trader, "LLLIB_Events_TraderCreated");
 
 PROC
 LLLIB_Traders_SpawnTrader((STRING)_TraderID, (STRING)_Level, (STRING)_Template, (INTEGER)_PlaySpawn)
@@ -391,23 +408,24 @@ AND
 CharacterCreateAtPosition(_x,_y,_z, _Template, _PlaySpawn, _Trader)
 THEN
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
+SetStoryEvent(_Trader, "LLLIB_Events_TraderCreated");
+
+PROC
+LLLIB_Traders_SpawnTrader((STRING)_TraderID, (STRING)_Level, (STRING)_Template, (INTEGER)_PlaySpawn)
+AND
+NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
+AND
+DB_LLLIB_Traders_LevelPositionObject(_TraderID, _Level, _Object)
+AND
+GetPosition(_Object, _x, _y, _z)
+AND
+CharacterCreateAtPosition(_x,_y,_z, _Template, _PlaySpawn, _Trader)
+THEN
+DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
+SetStoryEvent(_Trader, "LLLIB_Events_TraderCreated");
 
 PROC
 LLLIB_Traders_TeleportToPosition((STRING)_TraderID, (STRING)_Level, (CHARACTERGUID)_Trader)
-AND
-DB_LLLIB_Traders_CreationEvents(_TraderID, _TeleportEvent)
-THEN
-LLLIB_Traders_TeleportToPosition(_TraderID, _Level, _Trader, _TeleportEvent);
-
-PROC
-LLLIB_Traders_TeleportToPosition((STRING)_TraderID, (STRING)_Level, (CHARACTERGUID)_Trader)
-AND
-NOT DB_LLLIB_Traders_CreationEvents(_TraderID, _)
-THEN
-LLLIB_Traders_TeleportToPosition(_TraderID, _Level, _Trader, "LLLIB_TraderSit");
-
-PROC
-LLLIB_Traders_TeleportToPosition((STRING)_TraderID, (STRING)_Level, (CHARACTERGUID)_Trader, (STRING)_TeleportEvent)
 AND
 GetPosition(_Trader, _x,_y,_z)
 AND
@@ -426,18 +444,18 @@ THEN
 LeaderLog_Debug("[LLLIB:Traders] Global trader [",_TraderID,"] pre-tp position is ",_xpos,",",_ypos,",",_zpos);
 
 PROC
-LLLIB_Traders_TeleportToPosition((STRING)_TraderID, (STRING)_Level, (CHARACTERGUID)_Trader, (STRING)_TeleportEvent)
+LLLIB_Traders_TeleportToPosition((STRING)_TraderID, (STRING)_Level, (CHARACTERGUID)_Trader)
 AND
 NOT DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
 AND
 DB_LLLIB_Traders_LevelPositionObject(_TraderID, _Level, _Object)
 THEN
-DB_LLLIB_Debug_TraceEvent(_TraderID, _TeleportEvent, "object");
-TeleportTo(_Trader, _Object, _TeleportEvent, 0);
+DB_LLLIB_Debug_TraceEvent(_TraderID, "LLLIB_Events_TraderTeleported", "object");
+TeleportTo(_Trader, _Object, "LLLIB_Events_TraderTeleported", 0);
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
 
 PROC
-LLLIB_Traders_TeleportToPosition((STRING)_TraderID, (STRING)_Level, (CHARACTERGUID)_Trader, (STRING)_TeleportEvent)
+LLLIB_Traders_TeleportToPosition((STRING)_TraderID, (STRING)_Level, (CHARACTERGUID)_Trader)
 AND
 NOT DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
 AND
@@ -445,25 +463,25 @@ DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger)
 //AND
 //GetPosition(_Trigger,_x,_y,_z)
 THEN
-DB_LLLIB_Debug_TraceEvent(_TraderID, _TeleportEvent, "trigger");
-TeleportTo(_Trader, _Trigger, _TeleportEvent, 0);
+DB_LLLIB_Debug_TraceEvent(_TraderID, "LLLIB_Events_TraderTeleported", "trigger");
+TeleportTo(_Trader, _Trigger, "LLLIB_Events_TraderTeleported", 0);
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
 
 PROC
-LLLIB_Traders_TeleportToPosition((STRING)_TraderID, (STRING)_Level, (CHARACTERGUID)_Trader, (STRING)_TeleportEvent)
+LLLIB_Traders_TeleportToPosition((STRING)_TraderID, (STRING)_Level, (CHARACTERGUID)_Trader)
 AND
 NOT DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
 AND
 DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z)
 THEN
-DB_LLLIB_Debug_TraceEvent(_TraderID, _TeleportEvent, "position");
-TeleportToPosition(_Trader, _x,_y,_z, _TeleportEvent, 0);
+DB_LLLIB_Debug_TraceEvent(_TraderID, "LLLIB_Events_TraderTeleported", "position");
+TeleportToPosition(_Trader, _x,_y,_z, "LLLIB_Events_TraderTeleported", 0);
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
 
 IF
-StoryEvent((CHARACTERGUID)_Trader, _TeleportEvent)
+StoryEvent((CHARACTERGUID)_Trader, "LLLIB_Events_TraderTeleported")
 AND
-DB_LLLIB_Debug_TraceEvent(_TraderID, _TeleportEvent, _TypeStr)
+DB_LLLIB_Debug_TraceEvent(_TraderID, "LLLIB_Events_TraderTeleported", _TypeStr)
 AND
 GetPosition(_Trader, _x,_y,_z)
 AND
@@ -482,12 +500,37 @@ THEN
 LeaderLog_Debug("[LLLIB:Traders] Global trader [",_TraderID,"] post-tp position is ",_xpos,",",_ypos,",",_zpos);
 
 IF
-StoryEvent((CHARACTERGUID)_Trader, _TeleportEvent)
+StoryEvent((CHARACTERGUID)_Trader, "LLLIB_Events_TraderTeleported")
 AND
-DB_LLLIB_Debug_TraceEvent(_TraderID, _TeleportEvent, _TypeStr)
+DB_LLLIB_Debug_TraceEvent(_TraderID, "LLLIB_Events_TraderTeleported", _TypeStr)
 THEN
 LeaderLog_Debug("[LLLIB:Traders] Teleported global trader [",_TraderID,"] to ",_TypeStr,".");
-NOT DB_LLLIB_Debug_TraceEvent(_TraderID, _TeleportEvent, _TypeStr);
+NOT DB_LLLIB_Debug_TraceEvent(_TraderID, "LLLIB_Events_TraderTeleported", _TypeStr);
+
+/*
+IF
+StoryEvent((CHARACTERGUID)_Trader, "LLLIB_Events_TraderTeleported")
+AND
+DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+AND
+DB_LLLIB_Traders_CreationEvents(_TraderID, _EventName)
+THEN
+SetStoryEvent(_Trader, _EventName);
+*/
+
+IF
+StoryEvent((CHARACTERGUID)_Trader, "LLLIB_Events_TraderCreated")
+AND
+DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+THEN
+SetStoryEvent(_Trader, "LLLIB_Events_TraderReadyToSit");
+
+IF
+StoryEvent((CHARACTERGUID)_Trader, "LLLIB_Events_TraderTeleported")
+AND
+DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+THEN
+SetStoryEvent(_Trader, "LLLIB_Events_TraderReadyToSit");
 //END_REGION
 
 //REGION ON_SPAWN
@@ -509,27 +552,24 @@ LLLIB_Traders_AddStartingGold(_Trader, _TraderID, _Level);
 IF
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
 THEN
+//ItemTemplateAddTo("LLLIB_Dummy_InventoryInit_a76d007d-48d7-4aa6-b741-7b9fcd125de3", _Trader, 1);
 SetVisible(_Trader, 1);
 SetOnStage(_Trader, 1);
-SetStoryEvent(_Trader, "LLLIB_GenerateTreasure");
+SetStoryEvent(_Trader, "LLLIB_Treasure_GenerateNow");
+
+IF
+ItemAddedToCharacter(_Item, _Trader)
+AND
+GetTemplate(_Item, "LLLIB_Dummy_InventoryInit_a76d007d-48d7-4aa6-b741-7b9fcd125de3")
+THEN
+ItemDestroy(_Item);
 //END_REGION
 
 //REGION SITTING
 IF
-StoryEvent((CHARACTERGUID)_Trader, _Event)
-AND
-_Event == "LLLIB_TraderSit"
+StoryEvent((CHARACTERGUID)_Trader, "LLLIB_Events_TraderReadyToSit")
 AND
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
-THEN
-LLLIB_Traders_SetSeat(_Trader, _TraderID, _Level);
-
-IF
-StoryEvent((CHARACTERGUID)_Trader, _Event)
-AND
-DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
-AND
-DB_LLLIB_Traders_CreationEvents(_TraderID, _Event)
 THEN
 LLLIB_Traders_SetSeat(_Trader, _TraderID, _Level);
 
@@ -601,7 +641,7 @@ IF
 GameStarted(_,_)
 THEN
 LeaderLog_Debug("[LLLIB:Traders] Starting create traders timer. ");
-TimerLaunch("LLLIB_Timers_CreateTraders", 5000);
+TimerLaunch("LLLIB_Timers_CreateTraders", 1000);
 
 IF
 TimerFinished("LLLIB_Timers_CreateTraders")

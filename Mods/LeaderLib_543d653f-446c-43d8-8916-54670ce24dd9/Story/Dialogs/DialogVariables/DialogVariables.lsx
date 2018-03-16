@@ -1,10 +1,87 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <save>
-    <header version="2" time="1520502169" />
+    <header version="2" time="1521157970" />
     <version major="3" minor="1" revision="7" build="0" />
     <region id="DialogVariables">
         <node id="root">
             <children>
+                <node id="DialogVariable">
+                    <attribute id="DefaultValue" value="1" type="23" />
+                    <attribute id="Description" value="" type="23" />
+                    <attribute id="UUID" value="acb56c4f-a706-4418-9b7d-5a76473bdd03" type="31" />
+                    <attribute id="name" value="LLLIB_ModSettings_CurrentPage" type="22" />
+                    <attribute id="type" value="Int" type="23" />
+                </node>
+                <node id="DialogVariable">
+                    <attribute id="DefaultValue" value="1" type="23" />
+                    <attribute id="Description" value="" type="23" />
+                    <attribute id="UUID" value="92483e44-819f-4abd-a451-393ca1e3ad2f" type="31" />
+                    <attribute id="name" value="LLLIB_ModSettings_LastPage" type="22" />
+                    <attribute id="type" value="Int" type="23" />
+                </node>
+                <node id="DialogVariable">
+                    <attribute id="DefaultValue" value="" type="23" />
+                    <attribute id="Description" value="" type="23" />
+                    <attribute id="UUID" value="783ec14d-2861-4345-8dbc-45974fa34e15" type="31" />
+                    <attribute id="name" value="LLLIB_ModSettings_Menu1" type="22" />
+                    <attribute id="type" value="String" type="23" />
+                </node>
+                <node id="DialogVariable">
+                    <attribute id="DefaultValue" value="" type="23" />
+                    <attribute id="Description" value="" type="23" />
+                    <attribute id="UUID" value="9a2d2990-5cff-420e-ba8a-37f9510ab9e1" type="31" />
+                    <attribute id="name" value="LLLIB_ModSettings_Menu2" type="22" />
+                    <attribute id="type" value="String" type="23" />
+                </node>
+                <node id="DialogVariable">
+                    <attribute id="DefaultValue" value="" type="23" />
+                    <attribute id="Description" value="" type="23" />
+                    <attribute id="UUID" value="cf00a8c6-02d2-4fda-a766-4f533ac93b2d" type="31" />
+                    <attribute id="name" value="LLLIB_ModSettings_Menu3" type="22" />
+                    <attribute id="type" value="String" type="23" />
+                </node>
+                <node id="DialogVariable">
+                    <attribute id="DefaultValue" value="" type="23" />
+                    <attribute id="Description" value="" type="23" />
+                    <attribute id="UUID" value="337a1066-9a85-4005-a2dc-f0156bf13d16" type="31" />
+                    <attribute id="name" value="LLLIB_ModSettings_Menu4" type="22" />
+                    <attribute id="type" value="String" type="23" />
+                </node>
+                <node id="DialogVariable">
+                    <attribute id="DefaultValue" value="" type="23" />
+                    <attribute id="Description" value="" type="23" />
+                    <attribute id="UUID" value="45148ce6-e8f3-4af4-81ed-a3b2e1ff8a17" type="31" />
+                    <attribute id="name" value="LLLIB_ModSettings_Menu5" type="22" />
+                    <attribute id="type" value="String" type="23" />
+                </node>
+                <node id="DialogVariable">
+                    <attribute id="DefaultValue" value="" type="23" />
+                    <attribute id="Description" value="" type="23" />
+                    <attribute id="UUID" value="863af621-ff0c-454a-b6a3-7c9d3166a8a0" type="31" />
+                    <attribute id="name" value="LLLIB_ModSettings_Menu6" type="22" />
+                    <attribute id="type" value="String" type="23" />
+                </node>
+                <node id="DialogVariable">
+                    <attribute id="DefaultValue" value="" type="23" />
+                    <attribute id="Description" value="" type="23" />
+                    <attribute id="UUID" value="888ce02f-83ff-4173-be8d-f41fd348358f" type="31" />
+                    <attribute id="name" value="LLLIB_ModSettings_Menu7" type="22" />
+                    <attribute id="type" value="String" type="23" />
+                </node>
+                <node id="DialogVariable">
+                    <attribute id="DefaultValue" value="" type="23" />
+                    <attribute id="Description" value="" type="23" />
+                    <attribute id="UUID" value="a6aa98e6-cde4-491b-a2cb-2cd7d5d71f96" type="31" />
+                    <attribute id="name" value="LLLIB_ModSettings_Menu8" type="22" />
+                    <attribute id="type" value="String" type="23" />
+                </node>
+                <node id="DialogVariable">
+                    <attribute id="DefaultValue" value="" type="23" />
+                    <attribute id="Description" value="" type="23" />
+                    <attribute id="UUID" value="50c55fbe-ad1e-490e-92d1-8836ca42ca12" type="31" />
+                    <attribute id="name" value="LLLIB_Settings_RegisteredMods" type="22" />
+                    <attribute id="type" value="String" type="23" />
+                </node>
                 <node id="DialogVariable">
                     <attribute id="DefaultValue" value="Welcome! Looking to trade?" type="23" />
                     <attribute id="Description" value="" type="23" />

@@ -19,5 +19,18 @@
         <field name="IgnoredByAI" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="1" enumeration_type_name="YesNo" />
       </fields>
     </stat_object>
+    <stat_object index="1" is_substat="false">
+      <fields>
+        <field name="Name" type="NameStatObjectFieldDefinition" clear_inherited_value="false" value="LLLIB_BOOK_ModSettingsMenu" />
+        <field name="Using" type="BaseClassStatObjectFieldDefinition" clear_inherited_value="false" value="_Generics" />
+        <field name="RootTemplate" type="RootTemplateStatObjectFieldDefinition" clear_inherited_value="false" value="646a1194-3383-47fa-a379-ebefa3d2b108" />
+        <field name="Act part" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="30" enumeration_type_name="ActPart" />
+        <field name="Value" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="0" />
+        <field name="Weight" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="0" />
+        <field name="Act" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="0" enumeration_type_name="Act" />
+        <field name="UseAPCost" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="0" />
+        <field name="Unique" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="1" />
+      </fields>
+    </stat_object>
   </stat_objects>
 </stats>

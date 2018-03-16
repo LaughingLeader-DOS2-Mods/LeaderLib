@@ -1,0 +1,151 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+//DB_LLLIB_Treasure_Temp_ItemTemplateAmount(_Object, _TreasureID, _ItemTemplate, _Amount)
+//DB_LLLIB_Treasure_Temp_ItemStatAmount(_Object, _TreasureID, _ItemTemplate, _GeneratedStat, _Amount)
+KBSECTION
+//REGION COUNTING
+QRY
+LLLIB_QRY_Treasure_CountTemplate((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate)
+AND
+ObjectIsCharacter(_Object, 1)
+AND
+ItemTemplateIsInCharacterInventory((CHARACTERGUID)_Object, _ItemTemplate, _Amount)
+THEN
+DB_LLLIB_Treasure_Temp_ItemTemplateAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _Amount);
+
+QRY
+LLLIB_QRY_Treasure_CountTemplate((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate)
+AND
+ObjectIsItem(_Object, 1)
+AND
+ItemIsContainer((ITEMGUID)_Object, 1)
+AND
+ItemTemplateIsInContainer(_Object, _ItemTemplate, _Amount)
+THEN
+DB_LLLIB_Treasure_Temp_ItemTemplateAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _Amount);
+
+
+QRY
+LLLIB_QRY_Treasure_CountTemplateWithStat((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate, (STRING)_GeneratedStat)
+AND
+ObjectIsCharacter(_Object, 1)
+AND
+GetItemForItemTemplateInInventory((CHARACTERGUID)_Object, _ItemTemplate, _Item)
+AND
+GetVarFixedString(_Item, "LLLIB_GeneratedItemStat", _GeneratedStat)
+AND
+ItemGetAmount(_Item, _Amount)
+THEN
+DB_LLLIB_Treasure_Temp_ItemStatAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _GeneratedStat, _Amount);
+LeaderLog_Debug("[LLLIB:Treasure:CountTemplateWithStat] Found item template with stat on character. [",_TreasureID,"]:[",_GeneratedStat,"]:[",_ItemTemplate,"].");
+
+QRY
+LLLIB_QRY_Treasure_CountTemplateWithStat((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate, (STRING)_GeneratedStat)
+AND
+ObjectIsItem(_Object, 1)
+AND
+ItemIsContainer((ITEMGUID)_Object, 1)
+AND
+ItemTemplateIsInContainer(_Object, _ItemTemplate, _Amount)
+AND
+_Amount <= 0
+THEN
+DB_LLLIB_Treasure_Temp_ItemStatAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _GeneratedStat, 0);
+
+QRY
+LLLIB_QRY_Treasure_CountTemplateWithStat((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate, (STRING)_GeneratedStat)
+AND
+ObjectIsItem(_Object, 1)
+AND
+ItemIsContainer((ITEMGUID)_Object, 1)
+AND
+ItemTemplateIsInContainer(_Object, _ItemTemplate, _Amount)
+AND
+_Amount > 0
+AND
+LLLIB_QRY_Treasure_PrepareGeneratorDummy()
+AND
+DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
+THEN
+LeaderLog_Debug("[LLLIB:Treasure:CountTemplateWithStat] Moved all items to dummy for counting. [",_TreasureID,"]:[",_GeneratedStat,"].");
+MoveAllItemsTo(_Object, _Dummy);
+LLLIB_Treasure_Internal_CountItemsOnDummy(_Dummy, _Object, _TreasureID, _ItemTemplate, _GeneratedStat);
+
+//Move the items to a dummy character so we can actually get the item by the item template
+PROC
+LLLIB_Treasure_Internal_CountItemsOnDummy((GUIDSTRING)_Dummy, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate, (STRING)_GeneratedStat)
+AND
+LLLIB_QRY_Treasure_CountTemplateWithStat(_Dummy, _TreasureID, _ItemTemplate, _GeneratedStat)
+AND
+DB_LLLIB_Treasure_Temp_ItemStatAmount(_Dummy, _TreasureID, _ItemTemplate, _GeneratedStat, _Amount)
+THEN
+NOT DB_LLLIB_Treasure_Temp_ItemStatAmount(_Dummy, _TreasureID, _ItemTemplate, _GeneratedStat, _Amount);
+DB_LLLIB_Treasure_Temp_ItemStatAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _GeneratedStat, _Amount);
+MoveAllItemsTo(_Dummy, _Object);
+LeaderLog_Debug("[LLLIB:Treasure:CountTemplateWithStat] Counting finished. Moved items from dummy to object. [",_TreasureID,"]:[",_GeneratedStat,"].");
+//END_REGION
+
+//REGION QUERIES
+QRY
+LLLIB_QRY_Treasure_SkipAmountCheck((GUIDSTRING)_Object, (STRING)_RequirementID)
+AND
+IsTagged(_Object, "LLLIB_Treasure_NoAmountLimit", 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_QRY_Treasure_ItemLimitNotMet((GUIDSTRING)_Object, (STRING)_ItemEntry, (STRING)_RequirementID, (INTEGER)_GeneratedAmount, (INTEGER)_CurrentAmount)
+AND
+_RequirementID != ""
+AND
+DB_LLLIB_Requirements_MaxItemAmount(_RequirementID, _MaxAmount)
+AND
+_CurrentAmount < _MaxAmount
+AND
+IntegerSubtract(_GeneratedAmount, _MaxAmount, _AmountToCreate)
+THEN
+DB_LLLIB_Treasure_Temp_AmountToCreate(_Object, _ItemEntry, _AmountToCreate);
+
+QRY
+LLLIB_QRY_Treasure_ItemLimitNotMet((GUIDSTRING)_Object, (STRING)_ItemEntry, (STRING)_RequirementID, (INTEGER)_GeneratedAmount, (INTEGER)_CurrentAmount)
+AND
+_RequirementID != ""
+AND
+NOT DB_LLLIB_Requirements_MaxItemAmount(_RequirementID,_)
+AND
+_CurrentAmount < _GeneratedAmount
+AND
+IntegerSubtract(_GeneratedAmount, _CurrentAmount, _AmountToCreate)
+THEN
+DB_LLLIB_Treasure_Temp_AmountToCreate(_Object, _ItemEntry, _AmountToCreate);
+
+QRY
+LLLIB_QRY_Treasure_ItemLimitNotMet((GUIDSTRING)_Object, (STRING)_ItemEntry, (STRING)_RequirementID, (INTEGER)_GeneratedAmount, (INTEGER)_CurrentAmount)
+AND
+_RequirementID == ""
+AND
+_CurrentAmount < _GeneratedAmount
+AND
+IntegerSubtract(_GeneratedAmount, _CurrentAmount, _AmountToCreate)
+THEN
+DB_LLLIB_Treasure_Temp_AmountToCreate(_Object, _ItemEntry, _AmountToCreate);
+
+QRY
+LLLIB_QRY_Treasure_CountedItems((GUIDSTRING)_Object)
+AND
+DB_LLLIB_Treasure_Temp_ItemTemplateAmount(_Object,_,_,_)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_QRY_Treasure_CountedItems((GUIDSTRING)_Object)
+AND
+DB_LLLIB_Treasure_Temp_ItemStatAmount(_Object,_,_,_,_)
+THEN
+DB_NOOP(1);
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

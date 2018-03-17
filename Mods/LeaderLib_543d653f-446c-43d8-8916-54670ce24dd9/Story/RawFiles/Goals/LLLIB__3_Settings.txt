@@ -2,22 +2,20 @@ Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
 LLLIB_InitSettings();
-//DB_LLLIB_Sorting_Codex(_Index, _AlphanumericChar)
-//DB_LLLIB_Sorting_CharacterIndex(_StartIndex)
+//DB_LLLIB_Iterator(_Index)
+//DB_LLLIB_Settings_Temp_IteratorCreator(_CurrentInt, _MaxInt)
 KBSECTION
-PROC
-LLLIB_Settings_AddToCodex((STRING)_AlphanumericChar)
-AND
-NOT DB_LLLIB_Sorting_Codex(_,_AlphanumericChar)
-AND
-SysCount("DB_LLLIB_Sorting_Codex", 2, _Index)
-THEN
-DB_LLLIB_Sorting_Codex(_Index, _AlphanumericChar);
-
 PROC
 LLLIB_InitSettings()
 THEN
-LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_EquipmentSlots", 1);
+LLLIB_Settings_InitEquipmentSlots();
+LLLIB_Settings_CreateIterator(99);
+
+PROC
+LLLIB_Settings_InitEquipmentSlots()
+AND
+NOT DB_LLLIB_EquipmentSlots(_)
+THEN
 DB_LLLIB_EquipmentSlots("Weapon");
 DB_LLLIB_EquipmentSlots("Shield");
 DB_LLLIB_EquipmentSlots("Helmet");
@@ -29,10 +27,28 @@ DB_LLLIB_EquipmentSlots("Boots");
 DB_LLLIB_EquipmentSlots("Gloves");
 DB_LLLIB_EquipmentSlots("Amulet");
 DB_LLLIB_EquipmentSlots("Ring2");
+//END_REGION
 
-//Only check the first 9 characters
-LLLIB_Settings_BuildCharacterIndex();
-LLLIB_Settings_BuildCodex();
+//REGION ITERATOR
+PROC
+LLLIB_Settings_CreateIterator((INTEGER)_MaxInt)
+THEN
+SysClear("DB_LLLIB_Iterator", 1);
+DB_LLLIB_Settings_Temp_IteratorCreator(_MaxInt);
+DB_LLLIB_Settings_Temp_StartIteratorCreator(0);
+
+IF
+DB_LLLIB_Settings_Temp_StartIteratorCreator((INTEGER)_CurrentInt)
+AND
+DB_LLLIB_Settings_Temp_IteratorCreator(_MaxInt)
+AND
+_CurrentInt < _MaxInt
+AND
+IntegerSum(_CurrentInt, 1, _NextInt)
+THEN
+DB_LLLIB_Iterator(_CurrentInt);
+NOT DB_LLLIB_Settings_Temp_StartIteratorCreator(_CurrentInt);
+DB_LLLIB_Settings_Temp_StartIteratorCreator(_NextInt);
 //END_REGION
 
 //REGION UPDATING
@@ -50,99 +66,8 @@ LeaderLog_Debug("[LLLIB:Settings] Databases cleared.");
 PROC
 LLLIB_Updater_ResetDatabases()
 THEN
-LLLIB_System_ClearDatabases();
-LLLIB_System_UpdateDatabases();
-LeaderLog_Debug("[LLLIB:Settings] Databases cleared and re-initialized.");
-//END_REGION
-
-//REGION CODEX
-PROC
-LLLIB_Settings_BuildCodex()
-AND
-NOT DB_LLLIB_Sorting_Codex(_,_)
-THEN
-LLLIB_Settings_AddToCodex("A");
-LLLIB_Settings_AddToCodex("a");
-LLLIB_Settings_AddToCodex("B");
-LLLIB_Settings_AddToCodex("b");
-LLLIB_Settings_AddToCodex("C");
-LLLIB_Settings_AddToCodex("c");
-LLLIB_Settings_AddToCodex("D");
-LLLIB_Settings_AddToCodex("d");
-LLLIB_Settings_AddToCodex("E");
-LLLIB_Settings_AddToCodex("e");
-LLLIB_Settings_AddToCodex("F");
-LLLIB_Settings_AddToCodex("f");
-LLLIB_Settings_AddToCodex("G");
-LLLIB_Settings_AddToCodex("g");
-LLLIB_Settings_AddToCodex("H");
-LLLIB_Settings_AddToCodex("h");
-LLLIB_Settings_AddToCodex("I");
-LLLIB_Settings_AddToCodex("i");
-LLLIB_Settings_AddToCodex("J");
-LLLIB_Settings_AddToCodex("j");
-LLLIB_Settings_AddToCodex("K");
-LLLIB_Settings_AddToCodex("k");
-LLLIB_Settings_AddToCodex("L");
-LLLIB_Settings_AddToCodex("l");
-LLLIB_Settings_AddToCodex("M");
-LLLIB_Settings_AddToCodex("m");
-LLLIB_Settings_AddToCodex("N");
-LLLIB_Settings_AddToCodex("n");
-LLLIB_Settings_AddToCodex("O");
-LLLIB_Settings_AddToCodex("o");
-LLLIB_Settings_AddToCodex("P");
-LLLIB_Settings_AddToCodex("p");
-LLLIB_Settings_AddToCodex("Q");
-LLLIB_Settings_AddToCodex("q");
-LLLIB_Settings_AddToCodex("R");
-LLLIB_Settings_AddToCodex("r");
-LLLIB_Settings_AddToCodex("S");
-LLLIB_Settings_AddToCodex("s");
-LLLIB_Settings_AddToCodex("T");
-LLLIB_Settings_AddToCodex("t");
-LLLIB_Settings_AddToCodex("U");
-LLLIB_Settings_AddToCodex("u");
-LLLIB_Settings_AddToCodex("V");
-LLLIB_Settings_AddToCodex("v");
-LLLIB_Settings_AddToCodex("W");
-LLLIB_Settings_AddToCodex("w");
-LLLIB_Settings_AddToCodex("X");
-LLLIB_Settings_AddToCodex("x");
-LLLIB_Settings_AddToCodex("Y");
-LLLIB_Settings_AddToCodex("y");
-LLLIB_Settings_AddToCodex("Z");
-LLLIB_Settings_AddToCodex("z");
-
-LLLIB_Settings_AddToCodex("0");
-LLLIB_Settings_AddToCodex("1");
-LLLIB_Settings_AddToCodex("2");
-LLLIB_Settings_AddToCodex("3");
-LLLIB_Settings_AddToCodex("4");
-LLLIB_Settings_AddToCodex("5");
-LLLIB_Settings_AddToCodex("6");
-LLLIB_Settings_AddToCodex("7");
-LLLIB_Settings_AddToCodex("8");
-LLLIB_Settings_AddToCodex("9");
-//END_REGION
-
-//REGION CHARACTER_INDEX
-//Max 9 right now, since searching for 255 chars seems unnecessary when we just want to skip non-alphanumeric characters.
-PROC
-LLLIB_Settings_BuildCharacterIndex()
-AND
-NOT DB_LLLIB_Sorting_CharacterIndex(_)
-THEN
-DB_LLLIB_Sorting_CharacterIndex(0);
-DB_LLLIB_Sorting_CharacterIndex(1);
-DB_LLLIB_Sorting_CharacterIndex(2);
-DB_LLLIB_Sorting_CharacterIndex(3);
-DB_LLLIB_Sorting_CharacterIndex(4);
-DB_LLLIB_Sorting_CharacterIndex(5);
-DB_LLLIB_Sorting_CharacterIndex(6);
-DB_LLLIB_Sorting_CharacterIndex(7);
-DB_LLLIB_Sorting_CharacterIndex(8);
-DB_LLLIB_Sorting_CharacterIndex(9);
+DB_NOOP(1);
+//LeaderLog_Debug("[LLLIB:Settings] Databases cleared and re-initialized.");
 //END_REGION
 EXITSECTION
 

@@ -77,47 +77,57 @@ LeaderLog_ClearAllTargets();
 
 //REGION STRING_COMBINE
 QRY
-LeaderLog_QRY_Internal_CombineStrings((STRING)_ID, (STRING)_Str)
+LeaderLog_QRY_Internal_CombineStrings((STRING)_ID, (STRING)_Str1)
 THEN
-LeaderLog_Internal_CombineStrings(_ID, _Str, "", "", "", "", "", "", "");
+LeaderLog_Internal_CombineStrings(_ID, _Str1, "", "", "", "", "", "", "", "", "");
 
 QRY
 LeaderLog_QRY_Internal_CombineStrings((STRING)_ID, (STRING)_Str1, (STRING)_Str2)
 THEN
-LeaderLog_Internal_CombineStrings(_ID, _Str1, _Str2, "", "", "", "", "", "");
+LeaderLog_Internal_CombineStrings(_ID, _Str1, _Str2, "", "", "", "", "", "", "", "");
 
 QRY
 LeaderLog_QRY_Internal_CombineStrings((STRING)_ID, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3)
 THEN
-LeaderLog_Internal_CombineStrings(_ID, _Str1, _Str2, _Str3, "", "", "", "", "");
+LeaderLog_Internal_CombineStrings(_ID, _Str1, _Str2, _Str3, "", "", "", "", "", "", "");
 
 QRY
 LeaderLog_QRY_Internal_CombineStrings((STRING)_ID, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4)
 THEN
-LeaderLog_Internal_CombineStrings(_ID, _Str1, _Str2, _Str3, _Str4, "", "", "", "");
+LeaderLog_Internal_CombineStrings(_ID, _Str1, _Str2, _Str3, _Str4, "", "", "", "", "", "");
 
 QRY
 LeaderLog_QRY_Internal_CombineStrings((STRING)_ID, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5)
 THEN
-LeaderLog_Internal_CombineStrings(_ID, _Str1, _Str2, _Str3, _Str4, _Str5, "", "", "");
+LeaderLog_Internal_CombineStrings(_ID, _Str1, _Str2, _Str3, _Str4, _Str5, "", "", "", "", "");
 
 QRY
 LeaderLog_QRY_Internal_CombineStrings((STRING)_ID, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6)
 THEN
-LeaderLog_Internal_CombineStrings(_ID, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, "", "");
+LeaderLog_Internal_CombineStrings(_ID, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, "", "", "" ,"");
 
 QRY
 LeaderLog_QRY_Internal_CombineStrings((STRING)_ID, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7)
 THEN
-LeaderLog_Internal_CombineStrings(_ID, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, "");
+LeaderLog_Internal_CombineStrings(_ID, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, "", "", "");
 
 QRY
 LeaderLog_QRY_Internal_CombineStrings((STRING)_ID, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8)
 THEN
-LeaderLog_Internal_CombineStrings(_ID, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8);
+LeaderLog_Internal_CombineStrings(_ID, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, "", "");
+
+QRY
+LeaderLog_QRY_Internal_CombineStrings((STRING)_ID, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9)
+THEN
+LeaderLog_Internal_CombineStrings(_ID, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _Str9, "");
+
+QRY
+LeaderLog_QRY_Internal_CombineStrings((STRING)_ID, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10)
+THEN
+LeaderLog_Internal_CombineStrings(_ID, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _Str9, _Str10);
 
 PROC
-LeaderLog_Internal_CombineStrings((STRING)_ID, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8)
+LeaderLog_Internal_CombineStrings((STRING)_ID, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10)
 AND
 StringConcatenate(_Str1, _Str2, _Msg1)
 AND
@@ -132,9 +142,13 @@ AND
 StringConcatenate(_Msg5, _Str7, _Msg6)
 AND
 StringConcatenate(_Msg6, _Str8, _Msg7)
+AND
+StringConcatenate(_Msg7, _Str9, _Msg8)
+AND
+StringConcatenate(_Msg8, _Str10, _Msg9)
 THEN
 LeaderLog_ClearCombinedString(_ID);
-DB_LeaderLog_Temp_CombinedString(_ID, _Msg7);
+DB_LeaderLog_Temp_CombinedString(_ID, _Msg9);
 
 PROC
 LeaderLog_ClearCombinedString((STRING)_ID)
@@ -420,29 +434,39 @@ LeaderLog_Debug(_Str1, _Str2, _Str3, "", "", "", "", "");
 PROC
 LeaderLog_Debug((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4)
 THEN
-LeaderLog_Debug(_Str1, _Str2, _Str3, _Str4, "", "", "", "");
+LeaderLog_Debug(_Str1, _Str2, _Str3, _Str4, "", "", "", "", "", "");
 
 PROC
 LeaderLog_Debug((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5)
 THEN
-LeaderLog_Debug(_Str1, _Str2, _Str3, _Str4, _Str5, "", "", "");
+LeaderLog_Debug(_Str1, _Str2, _Str3, _Str4, _Str5, "", "", "", "", "");
 
 PROC
 LeaderLog_Debug((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6)
 THEN
-LeaderLog_Debug(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6, "", "");
+LeaderLog_Debug(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6, "", "", "" ,"");
 
 PROC
 LeaderLog_Debug((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7)
 THEN
-LeaderLog_Debug(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, "");
+LeaderLog_Debug(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, "", "", "");
 
 PROC
 LeaderLog_Debug((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8)
+THEN
+LeaderLog_Debug(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, "", "");
+
+PROC
+LeaderLog_Debug((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9)
+THEN
+LeaderLog_Debug(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _Str9, "");
+
+PROC
+LeaderLog_Debug((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10)
 AND
 LeaderLog_QRY_DebugEnabled()
 AND
-LeaderLog_QRY_Internal_CombineStrings("LeaderLog_Debug", _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8)
+LeaderLog_QRY_Internal_CombineStrings("LeaderLog_Debug", _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _Str9, _Str10)
 AND
 DB_LeaderLog_Temp_CombinedString("LeaderLog_Debug", _CombinedStr)
 THEN

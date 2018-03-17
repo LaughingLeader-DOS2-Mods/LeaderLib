@@ -14,10 +14,10 @@ LLLIB_ModSettings_InitSettings();
 //DB_LLLIB_ModSettings_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
 //DB_LLLIB_ModSettings_Temp_ActiveMenu(_Player, _ID, _Dialog)
 //DB_LLLIB_ModSettings_Temp_IsChangingMenuPage(_Player, _Instance)
-//DB_LLLIB_ModSettings_Temp_SortedMenus(_Index, _ID, _Dialog, _DisplayName)
-//DB_LLLIB_ModSettings_Temp_SortIndex(_CodexIndex)
-//DB_LLLIB_ModSettings_Temp_SortIndexIterator(_CurrentIndex, _TotalCharacters)
-//DB_LLLIB_ModSettings_Temp_SortCharacterFound(_DisplayName)
+
+//DB_LLLIB_ModSettings_Temp_PreviousMenu(_Index, _ID, _Dialog, _DisplayName)
+//DB_LLLIB_ModSettings_Temp_SortedMenu(_Index, _ID, _Dialog, _DisplayName)
+//DB_LLLIB_ModSettings_Temp_UnsortedMenu(_ID, _Dialog, _DisplayName)
 KBSECTION
 //REGION REGISTERING
 PROC
@@ -28,14 +28,18 @@ AND
 SysCount("DB_LLLIB_ModSettings_RegisteredMenu", 4, _Index)
 THEN
 DB_LLLIB_ModSettings_RegisteredMenu(_Index, _ID, _Dialog, _DisplayName);
+
+/*
 TimerCancel("LLLIB_Timers_StartSortMenu");
 TimerLaunch("LLLIB_Timers_StartSortMenu", 1000);
+*/
 
 IF
 TimerFinished("LLLIB_Timers_StartSortMenu")
 THEN
 LeaderLog_Debug("[LLLIB:ModSettings] Sorting mod menus alphabetically.");
 LLLIB_ModSettings_SortMenus();
+LLLIB_ModSettings_CalculateMaxPage();
 
 /*
 PROC
@@ -67,6 +71,17 @@ AND
 IntegerSubtract(_MaxPage, 1, _LastPageIndex)
 THEN
 DB_LLLIB_ModSettings_PageMax(_LastIndex, _LastPageIndex, _MaxPage);
+
+IF
+DB_LLLIB_ModSettings_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
+AND
+IntegertoString(_LastIndex, _Str1)
+AND
+IntegertoString(_LastPageIndex, _Str2)
+AND
+IntegertoString(_MaxPage, _Str3)
+THEN
+LeaderLog_Debug("[LLLIB:ModSettings] Max page set: LastIndex[",_Str1,"] LastPageIndex[",_Str2,"] MaxPage[",_Str3,"]");
 //END_REGION
 
 //REGION SETTINGS
@@ -115,154 +130,58 @@ LLLIB_System_UpdateDatabases();
 LeaderLog_Debug("[LLLIB:ModSettings] Databases cleared and re-initialized.");
 //END_REGION
 
-//REGION SORTING_MATCHING
-QRY
-LLLIB_QRY_ModSettings_Internal_CheckForSortCharacter((STRING)_AlphanumericChar, (STRING)_DisplayName)
-AND
-DB_LLLIB_Sorting_CharacterIndex(_StartIndex)
-AND
-NOT DB_LLLIB_ModSettings_Temp_SortCharacterFound(_DisplayName)
-AND
-StringSub(_DisplayName, _StartIndex, 1, _Char)
-AND
-_Char != ""
-AND
-_Char != " "
-//IntegertoString(_StartIndex, _IndexStr)
-//AND
-//LeaderLog_QRY_Debug("Checking ",_DisplayName, " => [",_Char,"] for ", _AlphanumericChar, " at index ",_IndexStr)
-AND
-StringContains(_Char, _AlphanumericChar, 1)
-THEN
-DB_LLLIB_ModSettings_Temp_SortCharacterFound(_DisplayName);
-
-PROC
-LLLIB_ModSettings_Internal_CheckSort((STRING)_Character)
-AND
-DB_LLLIB_ModSettings_RegisteredMenu(_MenuIndex, _ID, _Dialog, _DisplayName)
-AND
-LLLIB_QRY_ModSettings_Internal_CheckForSortCharacter(_Character, _DisplayName)
-THEN
-LLLIB_ModSettings_Internal_AddSortedModMenu(_ID, _DisplayName,  _Dialog);
-//END_REGION
-
 //REGION SORTING
 PROC
 LLLIB_ModSettings_SortMenus()
+AND
+DB_LLLIB_ModSettings_RegisteredMenu(_Index, _ID, _Dialog, _DisplayName)
 THEN
-LLLIB_ModSettings_Internal_BuildSortIndex();
+LLLIB_Sorter_AddString(_ID, _DisplayName);
 
 PROC
-LLLIB_ModSettings_Internal_AddSortedModMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog)
-AND
-SysCount("DB_LLLIB_ModSettings_Temp_SortedMenus", 4, _Index)
+LLLIB_ModSettings_SortMenus()
 THEN
-DB_LLLIB_ModSettings_Temp_SortedMenus(_Index, _ID, _Dialog, _DisplayName);
-
-PROC
-LLLIB_ModSettings_Internal_BuildSortIndex()
-AND
-SysCount("DB_LLLIB_Sorting_Codex", 2, _TotalCharacters)
-THEN
-SysClear("DB_LLLIB_ModSettings_Temp_SortIndexIterator", 2);
-DB_LLLIB_ModSettings_Temp_SortIndexIterator(0, _TotalCharacters);
-TimerLaunch("LLLIB_Timers_BuildSortIndex", 1);
-
-IF
-TimerFinished("LLLIB_Timers_BuildSortIndex")
-AND
-DB_LLLIB_ModSettings_Temp_SortIndexIterator(_CurrentIndex, _TotalCharacters)
-AND
-_CurrentIndex < _TotalCharacters
-AND
-IntegerSum(_CurrentIndex, 1, _NextIndex)
-THEN
-DB_LLLIB_ModSettings_Temp_SortIndex(_CurrentIndex);
-NOT DB_LLLIB_ModSettings_Temp_SortIndexIterator(_CurrentIndex, _TotalCharacters);
-DB_LLLIB_ModSettings_Temp_SortIndexIterator(_NextIndex, _TotalCharacters);
-TimerLaunch("LLLIB_Timers_BuildSortIndex", 1);
-
-IF
-TimerFinished("LLLIB_Timers_BuildSortIndex")
-AND
-DB_LLLIB_ModSettings_Temp_SortIndexIterator(_CurrentIndex, _TotalCharacters)
-AND
-_CurrentIndex >= _TotalCharacters
-THEN
-NOT DB_LLLIB_ModSettings_Temp_SortIndexIterator(_CurrentIndex, _TotalCharacters);
-LLLIB_ModSettings_Internal_StartMenuSort();
-
-PROC
-LLLIB_ModSettings_Internal_StartMenuSort()
-AND
-DB_LLLIB_ModSettings_Temp_SortIndex(_CodexIndex)
-AND
-DB_LLLIB_Sorting_Codex(_CodexIndex, _Character)
-THEN
-LLLIB_ModSettings_Internal_CheckSort(_Character);
-
-PROC
-LLLIB_ModSettings_Internal_StartMenuSort()
-THEN
-LLLIB_ModSettings_Internal_SortFinished();
-
-//Add menus who weren't found when sorting
-PROC
-LLLIB_ModSettings_Internal_SortFinished()
-AND
-DB_LLLIB_ModSettings_RegisteredMenu(_MenuIndex, _ID, _Dialog, _DisplayName)
-AND
-NOT DB_LLLIB_ModSettings_Temp_SortedMenus(_,_ID,_,_)
-THEN
-LLLIB_ModSettings_Internal_AddSortedModMenu(_ID, _DisplayName,  _Dialog);
-
-PROC
-LLLIB_ModSettings_Internal_SortFinished()
-THEN
-SysClear("DB_LLLIB_ModSettings_Temp_SortIndex", 1);
-SysClear("DB_LLLIB_ModSettings_Temp_SortIndexIterator", 2);
-SysClear("DB_LLLIB_ModSettings_Temp_SortCharacterFound", 1);
+LLLIB_Sorter_RunSorter();
+LLLIB_ModSettings_Sorter_SaveMenus();
+LLLIB_ModSettings_Sorter_SaveUnsortedMenus();
 SysClear("DB_LLLIB_ModSettings_RegisteredMenu", 4);
+LLLIB_ModSettings_Sorter_AddSortedMenus();
+LLLIB_ModSettings_Sorter_AddUnSortedMenus();
 
 PROC
-LLLIB_ModSettings_Internal_SortFinished()
+LLLIB_ModSettings_Sorter_SaveMenus()
 AND
-DB_LLLIB_ModSettings_Temp_SortedMenus(_Index, _ID, _Dialog, _DisplayName)
+DB_LLLIB_ModSettings_RegisteredMenu(_Index, _ID, _Dialog, _DisplayName)
+THEN
+DB_LLLIB_ModSettings_Temp_PreviousMenu(_Index, _ID, _Dialog, _DisplayName);
+
+PROC
+LLLIB_ModSettings_Sorter_SaveUnsortedMenus()
+AND
+DB_LLLIB_ModSettings_RegisteredMenu(_Index, _ID, _Dialog, _DisplayName)
+AND
+NOT DB_LLLIB_Sorter_FinalSorted(_, _ID, _DisplayName)
+THEN
+DB_LLLIB_ModSettings_Temp_UnsortedMenu(_ID, _Dialog, _DisplayName);
+
+PROC
+LLLIB_ModSettings_Sorter_AddSortedMenus()
+AND
+DB_LLLIB_Sorter_FinalSorted(_Index, _ID, _DisplayName)
+AND
+DB_LLLIB_ModSettings_Temp_PreviousMenu(_PreviousIndex, _ID, _Dialog, _DisplayName)
 THEN
 DB_LLLIB_ModSettings_RegisteredMenu(_Index, _ID, _Dialog, _DisplayName);
-NOT DB_LLLIB_ModSettings_Temp_SortedMenus(_Index, _ID, _Dialog, _DisplayName);
+NOT DB_LLLIB_Sorter_FinalSorted(_Index, _ID, _DisplayName);
+NOT DB_LLLIB_ModSettings_Temp_PreviousMenu(_PreviousIndex, _ID, _Dialog, _DisplayName);
 
 PROC
-LLLIB_ModSettings_Internal_SortFinished()
+LLLIB_ModSettings_Sorter_AddUnSortedMenus()
+AND
+DB_LLLIB_ModSettings_Temp_UnsortedMenu(_ID, _Dialog, _DisplayName)
 THEN
-LLLIB_ModSettings_CalculateMaxPage();
-LeaderLog_Debug("[LLLIB:ModSettings] Finished sorting mod menus alphabetically.");
-//END_REGION
-
-//REGION VARIABLE_INITIALIZATION
-PROC
-LLLIB_ModSettings_CalculateMaxPage()
-THEN
-LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_ModSettings_PageMax", 3);
-
-PROC
-LLLIB_ModSettings_CalculateMaxPage()
-AND
-SysCount("DB_LLLIB_ModSettings_RegisteredMenu", 5, _TotalMenus)
-AND
-DB_LLLIB_ModSettings_MenusPerPage(_MenusPerPage)
-AND
-IntegerSubtract(_MenusPerPage, 1, _Variance)
-AND
-IntegerSum(_TotalMenus, _Variance, _PageNumToDivide)
-AND
-IntegerDivide(_PageNumToDivide, _MenusPerPage, _MaxPage)
-AND
-IntegerSubtract(_TotalMenus, 1, _LastIndex)
-AND
-IntegerSubtract(_MaxPage, 1, _LastPageIndex)
-THEN
-DB_LLLIB_ModSettings_PageMax(_LastIndex, _LastPageIndex, _MaxPage);
+LLLIB_ModSettings_RegisterModMenu(_ID, _DisplayName, _Dialog);
+NOT DB_LLLIB_ModSettings_Temp_UnsortedMenu(_ID, _Dialog, _DisplayName);
 //END_REGION
 
 //REGION CLEAR
@@ -306,7 +225,7 @@ AND
 _MaxPage == 2
 THEN
 ObjectSetFlag(_Player, "LLLIB_ModSettings_HideNextPageButton", _Instance);
-LeaderLog_Debug("[LLLIB] ", "Hid next page button");
+LeaderLog_Debug("[LLLIB:ModSettings] Hid next page button");
 
 PROC
 LLLIB_ModSettings_SetPage((CHARACTERGUID)_Player, (INTEGER)_Page, (INTEGER)_Instance)
@@ -395,18 +314,18 @@ NOT DB_LLLIB_ModSettings_Temp_IsChangingMenuPage(_Player, _Instance);
 PROC
 LLLIB_ModSettings_LoadPageVariables((CHARACTERGUID)_Player, (INTEGER)_Instance)
 AND
-NOT DB_LLLIB_ModSettings_CurrentPageIndex(_Player, _)
-THEN
-DB_LLLIB_ModSettings_CurrentPageIndex(_Player, 0);
-LeaderLog_Debug("[LLLIB:ModSettings][ERROR] ", "Page not set for some reason. Setting to page 0.");
-
-PROC
-LLLIB_ModSettings_LoadPageVariables((CHARACTERGUID)_Player, (INTEGER)_Instance)
-AND
 NOT DB_LLLIB_ModSettings_PageMax(_,_,_)
 THEN
 LeaderLog_Debug("[LLLIB:ModSettings][ERROR] ", "Max page settings not set. Reconfiguring.");
 LLLIB_ModSettings_CalculateMaxPage();
+
+PROC
+LLLIB_ModSettings_LoadPageVariables((CHARACTERGUID)_Player, (INTEGER)_Instance)
+AND
+NOT DB_LLLIB_ModSettings_CurrentPageIndex(_Player, _)
+THEN
+LLLIB_ModSettings_SetPage(_Player, 0, _Instance);
+LeaderLog_Debug("[LLLIB:ModSettings][ERROR] ", "Page not set for some reason. Setting to page 0.");
 
 PROC
 LLLIB_ModSettings_LoadPageVariables((CHARACTERGUID)_Player, (INTEGER)_Instance)
@@ -483,11 +402,19 @@ DB_NOOP(1);
 PROC
 LLLIB_ModSettings_CheckPageCount((CHARACTERGUID)_Player)
 AND
+NOT DB_LLLIB_ModSettings_PageMax(_, _, _)
+THEN
+LeaderLog_Debug("[LLLIB:ModSettings] Wtf is going on. Page max not set?");
+
+PROC
+LLLIB_ModSettings_CheckPageCount((CHARACTERGUID)_Player)
+AND
 DB_LLLIB_ModSettings_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
 AND
 _MaxPage > 1
 THEN
-ObjectSetFlag(_Player, "LLLIB_ModSettings_HasMultiplePages");
+ObjectSetFlag(_Player, "LLLIB_ModSettings_HasMultiplePages", 0);
+LeaderLog_Debug("[LLLIB:ModSettings] Multple pages available.");
 
 PROC
 LLLIB_ModSettings_CheckPageCount((CHARACTERGUID)_Player)
@@ -497,6 +424,7 @@ AND
 _MaxPage <= 1
 THEN
 ObjectClearFlag(_Player, "LLLIB_ModSettings_HasMultiplePages");
+LeaderLog_Debug("[LLLIB:ModSettings] Only one page available.");
 //END_REGION
 
 //REGION FLAG_ACTIONS
@@ -555,7 +483,6 @@ DialogStarted("LLLIB_ModSettingsMenu", _Instance)
 AND
 DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
 THEN
-//LLLIB_ModSettings_CalculateMaxPage();
 LLLIB_ModSettings_ResetPlayerPage(_Player, _Instance);
 LLLIB_ModSettings_LoadPageVariables(_Player, _Instance);
 LLLIB_ModSettings_CheckPageCount(_Player);

@@ -33,6 +33,8 @@ LLLIB_Treasure_Configure_AddRune("LLLIB_TestLevel_Chest2", "WPN_Cheat_Sword_1H_R
 LLLIB_Treasure_Configure_AddRune("LLLIB_TestLevel_Chest2", "WPN_Cheat_Sword_1H_RuneSlot2", "LOOT_Rune_Masterwork_Large_7e16d9af-6865-4f0f-a67a-144b8ef2da26", 15);
 LLLIB_Treasure_Configure_AddRune("LLLIB_TestLevel_Chest2", "WPN_Cheat_Sword_1H_RuneSlot2", "LOOT_Rune_Thunder_Small_f27c8738-e46c-4780-98a1-2db27407e6ea", 15);
 
+//Sorting test
+/*
 LLLIB_ModSettings_RegisterModMenu("LLZ1", "[Zieonimus] Settings", "LLLIB_SettingsMenu");
 LLLIB_ModSettings_RegisterModMenu("LLZ2", "[Zzznonom] Settings", "LLLIB_SettingsMenu");
 LLLIB_ModSettings_RegisterModMenu("LLZ3", "[Zzaonimus] Settings", "LLLIB_SettingsMenu");
@@ -41,7 +43,13 @@ LLLIB_ModSettings_RegisterModMenu("LLZ5", "[Zironimus] Settings", "LLLIB_Setting
 LLLIB_ModSettings_RegisterModMenu("LLNWIZ", "[Naming Wizard] Settings", "LLLIB_SettingsMenu");
 LLLIB_ModSettings_RegisterModMenu("LLEQSET", "[Equipment Sets] Settings", "LLLIB_SettingsMenu");
 LLLIB_ModSettings_RegisterModMenu("LLDBT", "[Debug Tools] Settings", "LLLIB_SettingsMenu");
+
+LLLIB_ModSettings_RegisterModMenu("LLZasdas7", "[Blaaaabbbbbzter] Settings", "LLLIB_SettingsMenu");
+LLLIB_ModSettings_RegisterModMenu("LLZasd6", "[Blaaaabbbbbzter] Settings", "LLLIB_SettingsMenu");
+LLLIB_ModSettings_RegisterModMenu("LLasdZ92", "[Blaaaabbbbbzter9] Settings", "LLLIB_SettingsMenu");
+
 LLLIB_ModSettings_CalculateMaxPage();
+*/
 
 IF
 GameStarted("LeaderLib_TestLevel",_)

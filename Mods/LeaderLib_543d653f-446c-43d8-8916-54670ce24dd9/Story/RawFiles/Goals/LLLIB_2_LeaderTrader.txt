@@ -3,6 +3,10 @@ SubGoalCombiner SGC_AND
 INITSECTION
 LLLIB_LeaderTrader_RegisterTrader();
 //DB_LLLIB_LeaderTrader(_LeaderTrader)
+//DB_LLLIB_LeaderTrader_MetPlayer(_Player)
+
+//Settings
+//DB_LLLIB_LeaderTrader_Dialog(_ReferenceName, _Dialog)
 KBSECTION
 //REGION REGISTER
 IF
@@ -19,6 +23,13 @@ DB_LLLIB_LeaderTrader((CHARACTERGUID)CHARACTERGUID_S_LLLIB_RetiredLeader_3f047cc
 
 PROC
 LLLIB_LeaderTrader_RegisterTrader()
+THEN
+LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_LeaderTrader_Dialog", 2);
+DB_LLLIB_LeaderTrader_Dialog("Default", "LLLIB_RetiredLeader_Default");
+DB_LLLIB_LeaderTrader_Dialog("Tutorial", "LLLIB_RetiredLeader_TutorialBoat");
+
+PROC
+LLLIB_LeaderTrader_RegisterTrader()
 AND
 DB_LLLIB_LeaderTrader(_LeaderTrader)
 THEN
@@ -30,7 +41,8 @@ LLLIB_Trader_Register_Position("LLLIB_LeaderTrader", "FJ_FortJoy_Main", 219.86, 
 LLLIB_Trader_Register_CreationEvent("LLLIB_LeaderTrader", "LLLIB_Events_OnLeaderTradeSpawned");
 LLLIB_Requirements_AddFlagRequirement("LLLIB_LeaderTrader_WindegoHasCastSpell", "TUT_LowerDeck_WindegoHasCastSpell", "Global", 0);
 LLLIB_Requirements_AddFlagRequirement("LLLIB_LeaderTrader_PartyFoundSeekerCamp", "FTJ_SW_BeenToShelter", "Object", 1);
-
+LLLIB_Requirements_AddFlagRequirement("LLLIB_LeaderTrader_HasMetLeader", "LLLIB_Trader_PlayerTalkedToLeaderTrader", "Object", 1);
+LLLIB_Requirements_AddFlagRequirement("LLLIB_LeaderTrader_HasNotMetLeader", "LLLIB_Trader_PlayerTalkedToLeaderTrader", "Object", 1);
 
 LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "LeaderLib_TestLevel", 20000);
 LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "TUT_Tutorial_A", 200);
@@ -65,7 +77,9 @@ LLLIB_Trader_Register_SpawnRequirement("LLLIB_LeaderTrader", _LevelName, _Requir
 LLLIB_Trader_Register_PositionObject("LLLIB_LeaderTrader", _LevelName, (GUIDSTRING)_Seat);
 LLLIB_Trader_Register_Seat("LLLIB_LeaderTrader", _LevelName, (ITEMGUID)_Seat);
 
-LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", "LLLIB_RetiredLeader_Default");
+LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", "LLLIB_RetiredLeader_Default"); // Default
+LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", "TUT_Tutorial_A", "LLLIB_RetiredLeader_TutorialBoat", "LLLIB_LeaderTrader_HasNotMetLeader");
+LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", "TUT_Tutorial_A", "LLLIB_RetiredLeader_Default", "LLLIB_LeaderTrader_HasMetLeader");
 //END_REGION
 
 //REGION APPEARANCE_CHANGING
@@ -127,41 +141,60 @@ NOT DB_TUT_LowerDeck_WindegoSpareCharacters(_LeaderTrader);
 
 //REGION GREETING_CHANGE
 IF
-DialogStarted("LLLIB_RetiredLeader_Default", _Instance)
+DialogStarted(_Dialog, _Instance)
 AND
-DialogGetInvolvedNPC(_Instance, 1, _Object)
+DB_LLLIB_LeaderTrader_Dialog(_ReferenceName, _Dialog)
+AND
+DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
 THEN
-DB_LLLIB_Debug_Temp_ActiveTraderDialog(_Object, _Instance);
+DB_LLLIB_Debug_Temp_ActiveTraderDialog(_Player, _Instance);
+LLLIB_LeaderTrader_AdjustGreeting(_Instance, _Player);
 
-IF
-DialogStarted("LLLIB_RetiredLeader_Default", _Instance)
+PROC
+LLLIB_LeaderTrader_AdjustGreeting((INTEGER)_Instance, (CHARACTERGUID)_Player)
 AND
-DialogGetInvolvedPlayer(_Instance, 1, _Player)
-AND
-ObjectGetFlag(_Player, "LLLIB_Trader_PlayerTalkedToLeaderTrader", 1)
+DB_LLLIB_LeaderTrader_MetPlayer(_Player)
 THEN
 DialogSetVariableStringForInstance(_Instance, "LLLIB_Treasure_Greeting_f143b90b-9afc-477e-b133-6a1574341261", "Welcome back! Looking to trade?");
 
-IF
-DialogEnded("LLLIB_RetiredLeader_Default", _Instance)
+PROC
+LLLIB_LeaderTrader_AdjustGreeting((INTEGER)_Instance, (CHARACTERGUID)_Player)
 AND
-DB_LLLIB_Debug_Temp_ActiveTraderDialog(_Object, _Instance)
+NOT DB_LLLIB_LeaderTrader_MetPlayer(_Player)
 THEN
-NOT DB_LLLIB_Debug_Temp_ActiveTraderDialog(_Object, _Instance);
+DialogSetVariableStringForInstance(_Instance, "LLLIB_Treasure_Greeting_f143b90b-9afc-477e-b133-6a1574341261", "Hello! Looking to trade?");
 
 IF
-ObjectFlagSet("StartTrade", _Speaker, _Instance)
+DialogEnded(_Dialog, _Instance)
 AND
-DB_LLLIB_Debug_Temp_ActiveTraderDialog(_Object, _Instance)
+DB_LLLIB_LeaderTrader_Dialog(_ReferenceName, _Dialog)
+AND
+DB_LLLIB_Debug_Temp_ActiveTraderDialog(_Player, _Instance)
+THEN
+NOT DB_LLLIB_Debug_Temp_ActiveTraderDialog(_Player, _Instance);
+
+IF
+ObjectFlagSet("StartTrade", (CHARACTERGUID)_Player, _Instance)
+AND
+DB_LLLIB_Debug_Temp_ActiveTraderDialog(_Player, _Instance)
 THEN
 DialogSetVariableStringForInstance(_Instance, "LLLIB_Treasure_Greeting_f143b90b-9afc-477e-b133-6a1574341261", "Anything else?");
 
 IF
-RequestTrade(_Player, _Object)
+RequestTrade(_Player, _LeaderTrader)
 AND
-DB_LLLIB_Debug_Temp_ActiveTraderDialog(_Object, _Instance)
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+AND
+DB_LLLIB_Debug_Temp_ActiveTraderDialog(_Player, _Instance)
 THEN
 DialogSetVariableStringForInstance(_Instance, "LLLIB_Treasure_Greeting_f143b90b-9afc-477e-b133-6a1574341261", "Anything else?");
+//END_REGION
+
+//REGION MEMORY
+IF
+ObjectFlagSet("LLLIB_Trader_PlayerTalkedToLeaderTrader", (CHARACTERGUID)_Player, _Instance)
+THEN
+DB_LLLIB_LeaderTrader_MetPlayer(_Player);
 //END_REGION
 
 //REGION AVOID_COMBAT

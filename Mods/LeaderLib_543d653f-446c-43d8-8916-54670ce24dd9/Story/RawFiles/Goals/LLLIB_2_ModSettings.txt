@@ -28,18 +28,23 @@ AND
 SysCount("DB_LLLIB_ModSettings_RegisteredMenu", 4, _Index)
 THEN
 DB_LLLIB_ModSettings_RegisteredMenu(_Index, _ID, _Dialog, _DisplayName);
-
-/*
-TimerCancel("LLLIB_Timers_StartSortMenu");
-TimerLaunch("LLLIB_Timers_StartSortMenu", 1000);
-*/
+TimerCancel("LLLIB_Timers_StartSortingMenus");
+TimerLaunch("LLLIB_Timers_StartSortingMenus", 1000);
 
 IF
-TimerFinished("LLLIB_Timers_StartSortMenu")
+TimerFinished("LLLIB_Timers_StartSortingMenus")
+THEN
+LLLIB_ModSettings_CalculateMaxPage();
+
+IF
+TimerFinished("LLLIB_Timers_StartSortingMenus")
+AND
+SysCount("DB_LLLIB_ModSettings_RegisteredMenu", 4, _Total)
+AND
+_Total > 1
 THEN
 LeaderLog_Debug("[LLLIB:ModSettings] Sorting mod menus alphabetically.");
 LLLIB_ModSettings_SortMenus();
-LLLIB_ModSettings_CalculateMaxPage();
 
 /*
 PROC
@@ -141,12 +146,12 @@ LLLIB_Sorter_AddString(_ID, _DisplayName);
 PROC
 LLLIB_ModSettings_SortMenus()
 THEN
-LLLIB_Sorter_RunSorter();
 LLLIB_ModSettings_Sorter_SaveMenus();
+LLLIB_Sorter_RunSorter();
 LLLIB_ModSettings_Sorter_SaveUnsortedMenus();
 SysClear("DB_LLLIB_ModSettings_RegisteredMenu", 4);
 LLLIB_ModSettings_Sorter_AddSortedMenus();
-LLLIB_ModSettings_Sorter_AddUnSortedMenus();
+LLLIB_Sorter_ClearData();
 
 PROC
 LLLIB_ModSettings_Sorter_SaveMenus()
@@ -227,6 +232,7 @@ THEN
 ObjectSetFlag(_Player, "LLLIB_ModSettings_HideNextPageButton", _Instance);
 LeaderLog_Debug("[LLLIB:ModSettings] Hid next page button");
 
+/*
 PROC
 LLLIB_ModSettings_SetPage((CHARACTERGUID)_Player, (INTEGER)_Page, (INTEGER)_Instance)
 AND
@@ -237,6 +243,7 @@ AND
 IntegertoString(_MaxPage, _MaxPageStr)
 THEN
 LeaderLog_Debug("[LLLIB] ", "Test: LastIndex: ", _LastIndexStr," | Max: ",_MaxPageStr);
+*/
 
 PROC
 LLLIB_ModSettings_SetPage((CHARACTERGUID)_Player, (INTEGER)_Page, (INTEGER)_Instance)

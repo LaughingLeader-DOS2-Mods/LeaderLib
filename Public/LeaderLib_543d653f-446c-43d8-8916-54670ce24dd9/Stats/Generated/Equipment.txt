@@ -22,7 +22,5 @@ add equipment entry "ARM_Purge_UpperBody"
 add equipmentgroup
 add equipment entry "ARM_Purge_LowerBody"
 add equipmentgroup
-add equipment entry "ARM_Purge_Boots"
-add equipmentgroup
 add equipment entry "ARM_Purge_Gloves"
 

@@ -1,7 +1,7 @@
 {
    "save" : {
       "header" : {
-         "time" : 1521289432,
+         "time" : 1521378351,
          "version" : "2.0.8.2"
       },
       "regions" : {
@@ -442,7 +442,7 @@
                                                 "TagText" : {
                                                    "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
                                                    "type" : 28,
-                                                   "value" : "Opening settings menu..."
+                                                   "value" : ""
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -1622,16 +1622,13 @@
                                              {
                                                 "DialogVariables" : [
                                                    {
-                                                      "DialogVariables" : {"type" : 22, "value" : "acb56c4f-a706-4418-9b7d-5a76473bdd03"}
-                                                   },
-                                                   {
-                                                      "DialogVariables" : {"type" : 22, "value" : "92483e44-819f-4abd-a451-393ca1e3ad2f"}
+                                                      "DialogVariables" : {"type" : 22, "value" : "2b744313-9239-412c-80a8-f3b5e8b56156"}
                                                    }
                                                 ],
                                                 "TagText" : {
                                                    "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
                                                    "type" : 28,
-                                                   "value" : "Mod Settings Menu<br>Page: [LLLIB_ModSettings_CurrentPage_acb56c4f-a706-4418-9b7d-5a76473bdd03]/[LLLIB_ModSettings_LastPage_92483e44-819f-4abd-a451-393ca1e3ad2f]"
+                                                   "value" : "Mod Settings Menu<br>[LLLIB_ModSettings_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156]"
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }

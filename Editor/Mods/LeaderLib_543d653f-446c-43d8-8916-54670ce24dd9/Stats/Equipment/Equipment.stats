@@ -23,8 +23,6 @@
         <field name="Name" type="NameStatObjectFieldDefinition" clear_inherited_value="false" value="LLLIB_LeaderTrader_Prisoner" />
         <field name="1" type="StatReferenceStatObjectFieldDefinition" clear_inherited_value="false" stat_name="ARM_Purge_UpperBody" />
         <field name="2" type="StatReferenceStatObjectFieldDefinition" clear_inherited_value="false" stat_name="ARM_Purge_LowerBody" />
-        <field name="4" type="StatReferenceStatObjectFieldDefinition" clear_inherited_value="false" stat_name="ARM_Purge_Boots" />
-        <field name="5" type="StatReferenceStatObjectFieldDefinition" clear_inherited_value="false" stat_name="ARM_Purge_Gloves" />
       </fields>
     </stat_object>
   </stat_objects>

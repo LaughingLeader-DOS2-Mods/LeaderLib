@@ -1,4 +1,4 @@
-new entry "LLLIB_Trader_Act1"
+new entry "LLLIB_RetiredLeader_Default"
 type "Character"
 using "_Hero"
 data "Act" "1"

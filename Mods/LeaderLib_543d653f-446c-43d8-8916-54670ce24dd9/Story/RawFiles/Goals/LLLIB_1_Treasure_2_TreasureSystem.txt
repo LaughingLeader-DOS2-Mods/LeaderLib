@@ -507,8 +507,9 @@ LLLIB_Treasure_Internal_CreateGeneratorDummy()
 AND
 NOT DB_LLLIB_Treasure_GeneratorDummies(_)
 AND
-CharacterCreateAtPosition(0.0,0.0,0.0,"LLLIB_GeneratorDummy_24a5d60b-680b-4fbc-9b2c-19061a261297", 0, _Dummy)
+TemporaryCharacterCreateAtPosition(0.0,0.0,0.0,"LLLIB_GeneratorDummy_24a5d60b-680b-4fbc-9b2c-19061a261297", 0, _Dummy)
 THEN
+LeaderLog_Debug("[LLLIB:TreasureSystem:PrepareGeneratorDummy] Generator dummy created.");
 DB_LLLIB_Treasure_GeneratorDummies(_Dummy);
 
 IF

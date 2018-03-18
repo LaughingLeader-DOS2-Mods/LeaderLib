@@ -1,7 +1,7 @@
 {
    "save" : {
       "header" : {
-         "time" : 1521372494,
+         "time" : 1521378826,
          "version" : "2.0.8.2"
       },
       "regions" : {
@@ -55,7 +55,7 @@
                                                 "TagText" : {
                                                    "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
                                                    "type" : 28,
-                                                   "value" : "*As you start to form a coherent reply, puzzled look on your face, the old man speaks up.*"
+                                                   "value" : "*With a puzzled look on your face, the old man speaks up before you get a chance to respond.*"
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -153,7 +153,7 @@
                                                 "TagText" : {
                                                    "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
                                                    "type" : 28,
-                                                   "value" : "*Ask to see the trader's goods.*"
+                                                   "value" : "*Ask to see the goods.*"
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -251,7 +251,7 @@
                                                 "TagText" : {
                                                    "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
                                                    "type" : 28,
-                                                   "value" : "*Step away.*"
+                                                   "value" : "*Take your leave.*"
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -354,7 +354,7 @@
                                                 "TagText" : {
                                                    "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
                                                    "type" : 28,
-                                                   "value" : "*The old man yawns, barely giving you an indication of your presence.* \"Hmm?\""
+                                                   "value" : "*The old man yawns, barely giving an indication of your presence.* \"Hmm?\""
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -374,6 +374,9 @@
                               "child" : [
                                  {
                                     "UUID" : {"type" : 22, "value" : "60b32ffd-2a0b-4e8c-86c0-3a4eee0c1cb7"}
+                                 },
+                                 {
+                                    "UUID" : {"type" : 22, "value" : "b20f0f8c-b76c-469a-820c-7e3264cc4f25"}
                                  }
                               ]
                            }
@@ -433,7 +436,7 @@
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
-                        "ShowOnce" : {"type" : 19, "value" : 1},
+                        "ShowOnce" : {"type" : 19, "value" : 0},
                         "TaggedTexts" : [
                            {
                               "TaggedText" : [
@@ -452,7 +455,7 @@
                                                 "TagText" : {
                                                    "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
                                                    "type" : 28,
-                                                   "value" : "*Ask the old man who he is.*"
+                                                   "value" : "*Ask the man who he is.*"
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -550,7 +553,7 @@
                                                 "TagText" : {
                                                    "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
                                                    "type" : 28,
-                                                   "value" : "\"Oh! That reminds me. I have some goodies here I'm pawning for gambling money. You interested?\""
+                                                   "value" : "\"Oh! That reminds me. I have some goodies here. I'm pawning them for gambling money, you see. The craps tables here are fierce! You interested?\""
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -749,7 +752,7 @@
                                                 "TagText" : {
                                                    "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
                                                    "type" : 28,
-                                                   "value" : "*You take a look at the trader's wares.*"
+                                                   "value" : "*You take a look at his wares.*"
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -821,6 +824,104 @@
                         "stub" : {"type" : 19, "value" : 1},
                         "transitionmode" : {"type" : 1, "value" : 1},
                         "waittime" : {"type" : 6, "value" : 0.009999999776482582}
+                     },
+                     {
+                        "GameData" : [
+                           {
+                              "AiPersonalities" : [ {} ],
+                              "CameraTarget" : {"type" : 4, "value" : -1},
+                              "CustomMovie" : {"type" : 23, "value" : ""},
+                              "Emotion" : {"type" : 23, "value" : "Default"},
+                              "ExtraWaitTime" : {"type" : 4, "value" : 0},
+                              "MusicInstrumentSounds" : [ {} ],
+                              "OriginSound" : [
+                                 {
+                                    "OriginOnly" : {"type" : 22, "value" : ""},
+                                    "OriginTheme" : {"type" : 22, "value" : ""},
+                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
+                                 }
+                              ],
+                              "SoundEvent" : {"type" : 23, "value" : ""}
+                           }
+                        ],
+                        "ShowOnce" : {"type" : 19, "value" : 0},
+                        "TaggedTexts" : [
+                           {
+                              "TaggedText" : [
+                                 {
+                                    "HasTagRule" : {"type" : 19, "value" : 1},
+                                    "RuleGroup" : [
+                                       {
+                                          "Rules" : [ {} ],
+                                          "TagCombineOp" : {"type" : 1, "value" : 0}
+                                       }
+                                    ],
+                                    "TagTexts" : [
+                                       {
+                                          "TagText" : [
+                                             {
+                                                "TagText" : {
+                                                   "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
+                                                   "type" : 28,
+                                                   "value" : "*Introduce yourself, then ask who you're talking to.*"
+                                                },
+                                                "stub" : {"type" : 19, "value" : 1}
+                                             }
+                                          ]
+                                       }
+                                    ]
+                                 }
+                              ]
+                           }
+                        ],
+                        "Tags" : [ {} ],
+                        "UUID" : {"type" : 22, "value" : "b20f0f8c-b76c-469a-820c-7e3264cc4f25"},
+                        "addressedspeaker" : {"type" : 4, "value" : -1},
+                        "checkflags" : [ {} ],
+                        "children" : [
+                           {
+                              "child" : [
+                                 {
+                                    "UUID" : {"type" : 22, "value" : "bc5c46bd-4773-43fa-8c67-ee5ba58ce06b"}
+                                 }
+                              ]
+                           }
+                        ],
+                        "constructor" : {"type" : 22, "value" : "TagQuestion"},
+                        "editorData" : [
+                           {
+                              "data" : [
+                                 {
+                                    "key" : {"type" : 22, "value" : "NodeContext"},
+                                    "val" : {"type" : 23, "value" : ""}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "collapsed"},
+                                    "val" : {"type" : 23, "value" : "False"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "logicalname"},
+                                    "val" : {"type" : 23, "value" : "Question"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "position"},
+                                    "val" : {"type" : 23, "value" : "-305;234"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "sourcetemplate"},
+                                    "val" : {"type" : 23, "value" : ""}
+                                 }
+                              ]
+                           }
+                        ],
+                        "endnode" : {"type" : 19, "value" : 0},
+                        "exclusive" : {"type" : 19, "value" : 0},
+                        "optional" : {"type" : 19, "value" : 0},
+                        "setflags" : [ {} ],
+                        "speaker" : {"type" : 4, "value" : 1},
+                        "stub" : {"type" : 19, "value" : 1},
+                        "transitionmode" : {"type" : 1, "value" : 0},
+                        "waittime" : {"type" : 6, "value" : -1.0}
                      },
                      {
                         "GameData" : [
@@ -958,7 +1059,7 @@
                                                 "TagText" : {
                                                    "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
                                                    "type" : 28,
-                                                   "value" : "\"Anything else?\""
+                                                   "value" : "*He yawns.* \"Anything else?\""
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }

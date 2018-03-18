@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <save>
-    <header version="2" time="1521157970" />
+    <header version="2" time="1521377920" />
     <version major="3" minor="1" revision="7" build="0" />
     <region id="DialogVariables">
         <node id="root">
@@ -73,6 +73,13 @@
                     <attribute id="Description" value="" type="23" />
                     <attribute id="UUID" value="a6aa98e6-cde4-491b-a2cb-2cd7d5d71f96" type="31" />
                     <attribute id="name" value="LLLIB_ModSettings_Menu8" type="22" />
+                    <attribute id="type" value="String" type="23" />
+                </node>
+                <node id="DialogVariable">
+                    <attribute id="DefaultValue" value="" type="23" />
+                    <attribute id="Description" value="" type="23" />
+                    <attribute id="UUID" value="2b744313-9239-412c-80a8-f3b5e8b56156" type="31" />
+                    <attribute id="name" value="LLLIB_ModSettings_PageInfo" type="22" />
                     <attribute id="type" value="String" type="23" />
                 </node>
                 <node id="DialogVariable">

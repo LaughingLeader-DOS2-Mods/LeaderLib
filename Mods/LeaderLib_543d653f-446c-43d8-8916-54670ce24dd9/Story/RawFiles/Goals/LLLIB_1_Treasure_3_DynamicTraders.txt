@@ -4,7 +4,7 @@ INITSECTION
 //Settings
 //DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn)
 //DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader)
-//DB_LLLIB_Traders_SpawnRequirement(_TraderID, _Level, _RequirementID)
+//DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID)
 //DB_LLLIB_Traders_StartingGold(_TraderID, _Level, _Amount, _RequirementID)
 //DB_LLLIB_Traders_Dialog(_TraderID, _Level, _Dialog, _RequirementID)
 //DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z)
@@ -51,16 +51,16 @@ THEN
 DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader);
 
 PROC
-LLLIB_Trader_Register_SpawnRequirement((STRING)_TraderID, (STRING)_Level)
+LLLIB_Trader_Register_Level((STRING)_TraderID, (STRING)_Level)
 THEN
-LLLIB_Trader_Register_SpawnRequirement(_TraderID, _Level, "");
+LLLIB_Trader_Register_Level(_TraderID, _Level, "");
 
 PROC
-LLLIB_Trader_Register_SpawnRequirement((STRING)_TraderID, (STRING)_Level, (STRING)_Requirement)
+LLLIB_Trader_Register_Level((STRING)_TraderID, (STRING)_Level, (STRING)_Requirement)
 AND
-NOT DB_LLLIB_Traders_SpawnRequirement(_TraderID,_Level,_)
+NOT DB_LLLIB_Traders_RegisteredLevel(_TraderID,_Level,_)
 THEN
-DB_LLLIB_Traders_SpawnRequirement(_TraderID, _Level, _Requirement);
+DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _Requirement);
 
 PROC
 LLLIB_Trader_Register_StartingGold((STRING)_TraderID, (STRING)_Level, (INTEGER)_Amount)
@@ -156,9 +156,9 @@ NOT DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader);
 PROC
 LLLIB_Trader_ClearTrader((STRING)_TraderID)
 AND
-DB_LLLIB_Traders_SpawnRequirement(_TraderID, _Level, _RequirementID)
+DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID)
 THEN
-NOT DB_LLLIB_Traders_SpawnRequirement(_TraderID, _Level, _RequirementID);
+NOT DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID);
 
 PROC
 LLLIB_Trader_ClearTrader((STRING)_TraderID)
@@ -280,9 +280,24 @@ LLLIB_Traders_SetDialogToUnlocked((CHARACTERGUID)_Trader, (STRING)_TraderID, (ST
 AND
 DB_LLLIB_Traders_Dialog(_TraderID, _Level, _Dialog, _RequirementID)
 AND
+_RequirementID != "" //Prioritize dialog with requirements
+AND
 NOT DB_LLLIB_Traders_Temp_DialogFound(_TraderID, _)
 AND
 LLLIB_QRY_Requirements_AllMet(_RequirementID)
+THEN
+ProcRemoveAllDialogEntriesForSpeaker(_Trader);
+DB_Dialogs(_Trader, _Dialog);
+DB_LLLIB_Traders_Temp_DialogFound(_TraderID, _Dialog);
+
+PROC
+LLLIB_Traders_SetDialogToUnlocked((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
+AND
+DB_LLLIB_Traders_Dialog(_TraderID, _Level, _Dialog, _RequirementID)
+AND
+_RequirementID == ""
+AND
+NOT DB_LLLIB_Traders_Temp_DialogFound(_TraderID, _)
 THEN
 ProcRemoveAllDialogEntriesForSpeaker(_Trader);
 DB_Dialogs(_Trader, _Dialog);
@@ -330,42 +345,36 @@ CharacterAddGold(_Trader, _Amount);
 PROC
 LLLIB_Traders_CreateTraders((STRING)_Level)
 AND
-DB_LLLIB_Traders_SpawnRequirement(_TraderID, _Level, _RequirementID)
+DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID)
+AND
+LLLIB_QRY_Traders_Debug_TraceRequirement(_TraderID, _Level, _RequirementID)
+AND
+LLLIB_QRY_Requirements_AllMet(_RequirementID)
+THEN
+LLLIB_Traders_CreateTrader(_TraderID, _Level);
+
+QRY
+LLLIB_QRY_Traders_Debug_TraceRequirement((STRING)_TraderID, (STRING)_Level, (STRING)_RequirementID)
+AND
+LLLIB_QRY_Requirements_AllMet(_RequirementID)
+THEN
+LeaderLog_Debug("[LLLIB:Traders] Trader[",_TraderID,"] requirement[",_RequirementID,"] met for level [",_Level,"].");
+
+QRY
+LLLIB_QRY_Traders_Debug_TraceRequirement((STRING)_TraderID, (STRING)_Level, (STRING)_RequirementID)
+AND
+NOT LLLIB_QRY_Requirements_AllMet(_RequirementID)
+THEN
+LeaderLog_Debug("[LLLIB:Traders] Trader[",_TraderID,"] requirement[",_RequirementID,"] not met for level [",_Level,"].");
+
+PROC
+LLLIB_Traders_CreateTrader((STRING)_TraderID, (STRING)_Level)
 AND
 DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn)
 AND
 NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
 AND
 LLLIB_QRY_Traders_HasPosition(_TraderID, _Level)
-AND
-LLLIB_QRY_Requirements_AllMet(_RequirementID)
-THEN
-LLLIB_Traders_SpawnTrader(_TraderID, _Level, _Template, _PlaySpawn);
-
-PROC
-LLLIB_Traders_CreateTraders((STRING)_Level)
-AND
-DB_LLLIB_Traders_SpawnRequirement(_TraderID, _Level, _RequirementID)
-AND
-LLLIB_QRY_Requirements_AllMet(_RequirementID)
-AND
-DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader)
-AND
-ObjectExists(_Trader, 1)
-AND
-LLLIB_QRY_Traders_HasPosition(_TraderID, _Level)
-AND
-String(_Trader, _TraderStr)
-THEN
-LeaderLog_Debug("[LLLIB:Traders] Attempting to teleport global trader [",_TraderID,"]:[",_TraderStr,"].");
-LLLIB_Traders_TeleportToPosition(_TraderID, _Level, _Trader);
-
-PROC
-LLLIB_Traders_CreateTrader((STRING)_TraderID, (STRING)_Level)
-AND
-DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn)
-AND
-LLLIB_QRY_Traders_HasPosition(_TraderID, _Level)
 THEN
 LLLIB_Traders_SpawnTrader(_TraderID, _Level, _Template, _PlaySpawn);
 
@@ -381,7 +390,6 @@ AND
 String(_Trader, _TraderStr)
 THEN
 LeaderLog_Debug("[LLLIB:Traders] Attempting to teleport global trader [",_TraderID,"]:[",_TraderStr,"].");
-SetOnStage(_Trader, 1);
 LLLIB_Traders_TeleportToPosition(_TraderID, _Level, _Trader);
 
 PROC
@@ -627,7 +635,7 @@ LLLIB_Traders_SpawnIfRequirementsMet((STRING)_RequirementID)
 AND
 DB_CurrentLevel(_Level)
 AND
-DB_LLLIB_Traders_SpawnRequirement(_TraderID, _Level, _RequirementID)
+DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID)
 AND
 LLLIB_QRY_Requirements_AllMet(_RequirementID)
 AND

@@ -1,5 +1,7 @@
 INIT
 	FIXEDSTRING:%EmptyString=""
+	INT:%EmptyInt=0
+	INT:%DefaultShowInTrade=1
 EVENTS
 
 EVENT AddTreasureTable
@@ -36,3 +38,21 @@ ON
 	OnCharacterEvent(_Target, "LLLIB_Treasure_ClearTreasureTables")
 ACTIONS
 	CharacterClearTreasureTables(_Target)
+	
+EVENT GenerateItemByStat
+VARS
+	FIXEDSTRING:_StatName
+	CHARACTER:_Character
+	INT:_ShowInTrade
+ON
+	OnCharacterEvent(_Character, "LLLIB_Events_CreateEquipmentByStat")
+ACTIONS
+IF "c1&c2"
+	GetVar(_StatName, _Character, "LLLIB_Helpers_NextCreatedEquipmentStat")
+	GetVar(_ShowInTrade, _Character, "LLLIB_Helpers_ShowNextItemInTrade")
+THEN
+	CharacterAddToInventory(_Character, _StatName, 1, _ShowInTrade)
+	SetVar(_Character, "LLLIB_Helpers_NextCreatedEquipmentStat", %EmptyString)
+	SetVar(_Character, "LLLIB_Helpers_ShowNextItemInTrade", %DefaultShowInTrade)
+	//SetVar(__Me, "LLLIB_Treasure_ItemStat", %EmptyString)
+ENDIF

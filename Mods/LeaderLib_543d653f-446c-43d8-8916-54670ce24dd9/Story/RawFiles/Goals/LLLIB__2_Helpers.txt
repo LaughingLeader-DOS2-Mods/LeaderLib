@@ -376,6 +376,59 @@ CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
 THEN
 CharacterUnequipItem(_Character, _Item);
 CharacterEquipItem(_Character, _Item);
+
+PROC
+LLLIB_Helper_UnequipWeapons((CHARACTERGUID)_Character)
+AND
+CharacterGetEquippedWeapon(_Character, (ITEMGUID)_Item)
+THEN
+CharacterUnequipItem(_Character, _Item);
+
+PROC
+LLLIB_Helper_UnequipWeapons((CHARACTERGUID)_Character)
+AND
+CharacterGetEquippedShield(_Character, (ITEMGUID)_Item)
+AND
+GetTemplate(_Item, _Template)
+AND
+StringContains(_Template, "WPN", 1)
+THEN
+CharacterUnequipItem(_Character, _Item);
+//END_REGION
+
+//REGION ITEM_SPAWNING
+PROC
+LLLIB_Helper_CreateItemByStatAndEquip((CHARACTERGUID)_Character, (STRING)_Stat)
+THEN
+LLLIB_Helper_CreateItemByStatAndEquip(_Character, _Stat, 1);
+
+PROC
+LLLIB_Helper_CreateItemByStatAndEquip((CHARACTERGUID)_Character, (STRING)_Stat, (INTEGER)_ShowInTrade)
+AND
+GetUUID(_Character, _ID)
+AND
+StringConcatenate("LLLIB_Timers_CreateItemByStatAndEquip_", _ID, _TimerName)
+THEN
+//ObjectSetFlag(_Character, "LLLIB_Helpers_IsCreatingEquipment", 0);
+DB_LLLIB_Helper_Temp_StatEquipTimer(_TimerName, _Character);
+SetVarFixedString(_Character, "LLLIB_Helpers_NextCreatedEquipmentStat", _Stat);
+SetVarInteger(_Character, "LLLIB_Helpers_ShowNextItemInTrade", _ShowInTrade);
+SetStoryEvent(_Character, "LLLIB_Events_CreateEquipmentByStat");
+TimerLaunch(_TimerName, 200);
+
+IF
+ItemAddedToCharacter(_Item, _Character)
+AND
+DB_LLLIB_Helper_Temp_StatEquipTimer(_TimerName, _Character)
+THEN
+CharacterEquipItem(_Character, _Item);
+
+IF
+TimerFinished(_TimerName)
+AND
+DB_LLLIB_Helper_Temp_StatEquipTimer(_TimerName, _Character)
+THEN
+NOT DB_LLLIB_Helper_Temp_StatEquipTimer(_TimerName, _Character);
 //END_REGION
 EXITSECTION
 

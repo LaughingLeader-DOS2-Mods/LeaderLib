@@ -123,15 +123,24 @@ LeaderLog_Debug("[LLLIB:TreasureSystem] Random range result: ",_RanStr," | Min: 
 
 IF
 GameStarted("TUT_Tutorial_A", _)
+THEN
+TimerLaunch("LLLIB_Debug_Timers_CheckLeaderTimer", 5000);
+
+IF
+TimerFinished("LLLIB_Debug_Timers_CheckLeaderTimer")
 AND
-ObjectExists(CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41, 0)
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+AND
+ObjectExists(_LeaderTrader, 0)
 THEN
 TimerLaunch("LLLIB_Debug_Timers_NotifyMissingTrader", 1500);
 
 IF
-GameStarted("TUT_Tutorial_A", _)
+TimerFinished("LLLIB_Debug_Timers_CheckLeaderTimer")
 AND
-ObjectExists(CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41, 1)
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+AND
+ObjectExists(_LeaderTrader, 1)
 THEN
 TimerLaunch("LLLIB_Debug_Timers_NotifyFoundTrader", 4000);
 

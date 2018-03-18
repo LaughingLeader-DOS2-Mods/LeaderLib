@@ -3,7 +3,7 @@
   <stat_objects>
     <stat_object index="0" is_substat="false">
       <fields>
-        <field name="Name" type="NameStatObjectFieldDefinition" clear_inherited_value="false" value="LLLIB_Trader_Act1" />
+        <field name="Name" type="NameStatObjectFieldDefinition" clear_inherited_value="false" value="LLLIB_RetiredLeader_Default" />
         <field name="Using" type="BaseClassStatObjectFieldDefinition" clear_inherited_value="false" value="_Hero" />
         <field name="Act part" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="20" enumeration_type_name="ActPart" />
         <field name="Act strength" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="12" enumeration_type_name="Penalty Qualifier" />

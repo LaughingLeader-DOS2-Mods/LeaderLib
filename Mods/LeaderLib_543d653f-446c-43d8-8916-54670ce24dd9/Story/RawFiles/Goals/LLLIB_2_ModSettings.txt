@@ -109,8 +109,9 @@ DB_LLLIB_ModSettings_DynamicMenuVars(6, "LLLIB_ModSettings_Menu7_888ce02f-83ff-4
 DB_LLLIB_ModSettings_DynamicMenuVars(7, "LLLIB_ModSettings_Menu8_a6aa98e6-cde4-491b-a2cb-2cd7d5d71f96", "LLLIB_ModSettings_SelectedMenu8", "LLLIB_ModSettings_MenuEmpty8");
 
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_ModSettings_DialogVariables", 2);
-DB_LLLIB_ModSettings_DialogVariables("CurrentPage", "LLLIB_ModSettings_CurrentPage_acb56c4f-a706-4418-9b7d-5a76473bdd03");
-DB_LLLIB_ModSettings_DialogVariables("LastPage", "LLLIB_ModSettings_LastPage_92483e44-819f-4abd-a451-393ca1e3ad2f");
+DB_LLLIB_ModSettings_DialogVariables("PageInfo", "LLLIB_ModSettings_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156");
+//DB_LLLIB_ModSettings_DialogVariables("CurrentPage", "LLLIB_ModSettings_CurrentPage_acb56c4f-a706-4418-9b7d-5a76473bdd03");
+//DB_LLLIB_ModSettings_DialogVariables("LastPage", "LLLIB_ModSettings_LastPage_92483e44-819f-4abd-a451-393ca1e3ad2f");
 //END_REGION
 
 //REGION UPDATING
@@ -365,23 +366,46 @@ DB_LLLIB_MenuSettings_Temp_MenuVariableValue(_MenuIndex, _ID);
 
 PROC
 LLLIB_ModSettings_LoadPageVariables((CHARACTERGUID)_Player, (INTEGER)_Instance)
-AND
-DB_LLLIB_ModSettings_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
-AND
-DB_LLLIB_ModSettings_DialogVariables("LastPage", _VariableValue)
 THEN
-DialogSetVariableIntForInstance(_Instance, _VariableValue, _MaxPage);
+LLLIB_ModSettings_UpdatePageDisplay(_Player, _Instance);
 
 PROC
-LLLIB_ModSettings_LoadPageVariables((CHARACTERGUID)_Player, (INTEGER)_Instance)
+LLLIB_ModSettings_UpdatePageDisplay((CHARACTERGUID)_Player, (INTEGER)_Instance)
 AND
 DB_LLLIB_ModSettings_CurrentPageIndex(_Player, _Page)
 AND
+DB_LLLIB_ModSettings_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
+AND
+_MaxPage > 1
+AND
 IntegerSum(_Page, 1, _DisplayedPage)
 AND
-DB_LLLIB_ModSettings_DialogVariables("CurrentPage", _VariableValue)
+IntegertoString(_DisplayedPage, _PageStr1)
+AND
+IntegertoString(_MaxPage, _PageStr2)
+AND
+StringConcatenate("Page: ", _PageStr1, _Str1)
+AND
+StringConcatenate(_Str1, "/", _Str2)
+AND
+StringConcatenate(_Str2, _PageStr2, _FinalStr)
+AND
+DB_LLLIB_ModSettings_DialogVariables("PageInfo", _VariableValue)
 THEN
-DialogSetVariableIntForInstance(_Instance, _VariableValue, _DisplayedPage);
+DialogSetVariableStringForInstance(_Instance, _VariableValue, _FinalStr);
+
+PROC
+LLLIB_ModSettings_UpdatePageDisplay((CHARACTERGUID)_Player, (INTEGER)_Instance)
+AND
+DB_LLLIB_ModSettings_CurrentPageIndex(_Player, _Page)
+AND
+DB_LLLIB_ModSettings_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
+AND
+_MaxPage <= 1
+AND
+DB_LLLIB_ModSettings_DialogVariables("PageInfo", _VariableValue)
+THEN
+DialogSetVariableStringForInstance(_Instance, _VariableValue, "");
 
 QRY
 LLLIB_QRY_WordMenus_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_DisabledFlag)
@@ -435,17 +459,31 @@ LeaderLog_Debug("[LLLIB:ModSettings] Only one page available.");
 //END_REGION
 
 //REGION FLAG_ACTIONS
+PROC
+LLLIB_ModSettings_SetNextMenu((CHARACTERGUID)_Player, (STRING)_ID, (STRING)_Dialog)
+AND
+DB_LLLIB_ModSettings_Temp_ActiveMenu(_Player, _LastID, _LastDialog)
+THEN
+NOT DB_LLLIB_ModSettings_Temp_ActiveMenu(_Player, _LastID, _LastDialog);
+
+PROC
+LLLIB_ModSettings_SetNextMenu((CHARACTERGUID)_Player, (STRING)_ID, (STRING)_Dialog)
+THEN
+DB_LLLIB_ModSettings_Temp_ActiveMenu(_Player, _ID, _Dialog);
+
 IF
 ObjectFlagSet(_SelectFlag, (CHARACTERGUID)_Player, _Instance)
 AND
 DB_LLLIB_ModSettings_DynamicMenuVars(_MenuIndex, _DialogVar, _SelectFlag, _DisabledFlag)
+AND
+LLLIB_Helper_QRY_ClearObjectFlag(_Player, _SelectFlag)
 AND
 DB_LLLIB_MenuSettings_Temp_MenuVariableValue(_MenuIndex, _ID)
 AND
 DB_LLLIB_ModSettings_RegisteredMenu(_Index, _ID, _Dialog, _DisplayName)
 THEN
 //LeaderLog_Debug("[LLLIB] Loading menu for ", _ID);
-DB_LLLIB_ModSettings_Temp_ActiveMenu(_Player, _ID, _Dialog);
+LLLIB_ModSettings_SetNextMenu(_Player, _ID, _Dialog);
 
 IF
 ObjectFlagSet("LLLIB_ModSettings_NextPage", (CHARACTERGUID)_Player, _Instance)
@@ -511,7 +549,7 @@ AND
 DB_LLLIB_ModSettings_Temp_ActiveMenu(_Player, _ID, _Dialog)
 THEN
 NOT DB_LLLIB_ModSettings_Temp_ActiveMenu(_Player, _ID, _Dialog);
-//Proc_StartDialog(0, "LLLIB_ModSettingsMenu", _Player, _Player);
+Proc_StartDialog(0, "LLLIB_ModSettingsMenu", _Player, _Player);
 
 //END_REGION
 

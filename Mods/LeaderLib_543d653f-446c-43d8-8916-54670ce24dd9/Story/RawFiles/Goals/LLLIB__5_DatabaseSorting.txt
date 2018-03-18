@@ -168,14 +168,14 @@ LLLIB_Sorter_Internal_GroupString(_ID, _Str, 0);
 PROC
 LLLIB_Sorter_RunSorter()
 THEN
-LeaderLog_Debug("[LLLIB:Sorter] Sorter running.");
-//LeaderLog_Debug("[LLLIB:Sorter] Grouping ungrouped strings by iterator through them (looking for a codex char).");
+//LeaderLog_Debug("[LLLIB:Sorter] Sorter running.");
+////LeaderLog_Debug("[LLLIB:Sorter] Grouping ungrouped strings by iterator through them (looking for a codex char).");
 LLLIB_Sorter_GroupUngroupedStrings();
-//LeaderLog_Debug("[LLLIB:Sorter] Sorting resolved groups.");
+////LeaderLog_Debug("[LLLIB:Sorter] Sorting resolved groups.");
 LLLIB_Sorter_SortSubgroups();
-//LeaderLog_Debug("[LLLIB:Sorter] Sorting conflicts.");
+////LeaderLog_Debug("[LLLIB:Sorter] Sorting conflicts.");
 LLLIB_Sorter_SortConflicts();
-LeaderLog_Debug("[LLLIB:Sorter] Finalizing sorted strings.");
+//LeaderLog_Debug("[LLLIB:Sorter] Finalizing sorted strings.");
 LLLIB_Sorter_FinalizeSortedStrings();
 
 PROC
@@ -205,7 +205,7 @@ _Conflicts > 0
 AND
 IntegertoString(_Conflicts, _ConflictStr)
 THEN
-LeaderLog_Debug("[LLLIB:Sorter] String conflicts detected (",_ConflictStr,"). Attempting to resolve.");
+//LeaderLog_Debug("[LLLIB:Sorter] String conflicts detected (",_ConflictStr,"). Attempting to resolve.");
 LLLIB_Sorter_Internal_ResolveConflicts(); // Initial conflict resolve
 LLLIB_Sorter_SortConflicts(); // Attempt to keep resolving with an iterator, as long as there are conflicts to resolve
 
@@ -249,7 +249,7 @@ StringConcatenate(_SubChars, _NewSubChar, _NewSubChars)
 THEN
 NOT DB_LLLIB_Sorter_Temp_SortFamily(_ParentChar, _SubChars, _ID);
 DB_LLLIB_Sorter_Temp_SortFamily(_ParentChar, _NewSubChars, _ID);
-LeaderLog_Debug("[LLLIB:Sorter] Changed sort family from [",_SubChars,"] to [",_NewSubChars,"] for string ",_Str);
+//LeaderLog_Debug("[LLLIB:Sorter] Changed sort family from [",_SubChars,"] to [",_NewSubChars,"] for string ",_Str);
 //END_REGION
 
 //REGION SORT_PREPARING
@@ -333,7 +333,8 @@ _Total > 1
 AND
 IntegertoString(_Total, _TotalStr)
 THEN
-LeaderLog_Debug("[LLLIB:Sorter] Char [",_Char,"] has (",_TotalStr,") strings in the group (conflict detected).");
+//LeaderLog_Debug("[LLLIB:Sorter] Char [",_Char,"] has (",_TotalStr,") strings in the group (conflict detected).");
+DB_NOOP(1);
 
 QRY
 LLLIB_QRY_Sorter_Internal_CountStringsInChar((STRING)_Char)
@@ -370,7 +371,8 @@ _Total > 1
 AND
 IntegertoString(_Total, _TotalStr)
 THEN
-LeaderLog_Debug("[LLLIB:Sorter] _ID [",_ID,"] has (",_TotalStr,") strings in the group (conflict detected).");
+//LeaderLog_Debug("[LLLIB:Sorter] _ID [",_ID,"] has (",_TotalStr,") strings in the group (conflict detected).");
+DB_NOOP(1);
 
 QRY
 LLLIB_QRY_Sorter_Internal_CountTotalInSubFamilies()
@@ -439,7 +441,7 @@ THEN
 NOT DB_LLLIB_Sorter_Temp_SortedString(_SavedCharIndex, _SavedSortedChar, _ID, _Str, _TotalSorts, _SortedCharIndex, _SortVal);
 NOT DB_LLIB_Sorter_Temp_ConflictResolve(_ID, _Str);
 DB_LLLIB_Sorter_Temp_SortedString(_SavedCharIndex, _SavedSortedChar, _ID, _Str, _NextTotalSorts, _StartIndex, _NextSortVal);
-LeaderLog_Debug("[LLLIB:Sorter][",_Str,"][",_SubChar,"] NextSortVal[",_Str3,"] = ",_Str1," + ",_Str2);
+//LeaderLog_Debug("[LLLIB:Sorter][",_Str,"][",_SubChar,"] NextSortVal[",_Str3,"] = ",_Str1," + ",_Str2);
 //END_REGION
 
 //REGION FINALIZING
@@ -462,7 +464,7 @@ LLLIB_Sorter_Internal_AddToFinalSorted(_ID, _Str);
 PROC
 LLLIB_Sorter_Internal_FinalizeSortedStringsForChar((STRING)_Char)
 AND
-NOT DB_LLLIB_Sorter_Temp_MaxSortGroupVal(_Char, _, _)
+NOT DB_LLLIB_Sorter_Temp_MaxSortGroupVal(_Char, _)
 AND
 DB_LLLIB_Sorter_Temp_SortedString(_CharIndex, _Char, _ID, _Str, _TotalSorts, _SortedCharIndex, _SortVal)
 AND
@@ -487,32 +489,33 @@ LLLIB_Sorter_Internal_PrepareSortGroupIterator_MaxInt(_Char, _SubChars);
 PROC
 LLLIB_Sorter_Internal_PrepareSortGroupIterator_MaxInt((STRING)_Char, (STRING)_SubGroup)
 AND
-NOT DB_LLLIB_Sorter_Temp_MaxSortGroupVal(_Char, _SubGroup, _)
+NOT DB_LLLIB_Sorter_Temp_MaxSortGroupVal(_Char, _)
 THEN
-DB_LLLIB_Sorter_Temp_MaxSortGroupVal(_Char, _SubGroup, 0);
+DB_LLLIB_Sorter_Temp_MaxSortGroupVal(_Char, 0);
 
 PROC
 LLLIB_Sorter_Internal_PrepareSortGroupIterator_MaxInt((STRING)_Char, (STRING)_SubGroup)
 AND
 DB_LLLIB_Sorter_Temp_SortFamily(_Char, _SubGroup, _ID)
 AND
-DB_LLLIB_Sorter_Temp_MaxSortGroupVal(_Char, _SubGroup, _MaxInt)
-AND
 DB_LLLIB_Sorter_Temp_SortedString(_CharIndex, _Char, _ID, _Str, _TotalSorts, _SortedCharIndex, _SortVal)
+AND
+DB_LLLIB_Sorter_Temp_MaxSortGroupVal(_Char, _MaxInt)
 AND
 _SortVal > _MaxInt
 THEN
-NOT DB_LLLIB_Sorter_Temp_MaxSortGroupVal(_Char, _SubGroup, _MaxInt);
-DB_LLLIB_Sorter_Temp_MaxSortGroupVal(_Char, _SubGroup, _SortVal);
+NOT DB_LLLIB_Sorter_Temp_MaxSortGroupVal(_Char, _MaxInt);
+DB_LLLIB_Sorter_Temp_MaxSortGroupVal(_Char, _SortVal);
 
 PROC
 LLLIB_Sorter_Internal_PrepareSortGroupIterator_MaxInt((STRING)_Char, (STRING)_SubGroup)
 AND
-DB_LLLIB_Sorter_Temp_MaxSortGroupVal(_Char, _SubGroup, _MaxInt)
+DB_LLLIB_Sorter_Temp_MaxSortGroupVal(_Char, _MaxInt)
 AND
 IntegertoString(_MaxInt, _MaxIntStr)
 THEN
 LeaderLog_Debug("[LLLIB:Sorter] Max iterator value for [",_Char,":",_SubGroup,"] set to [",_MaxIntStr,"].");
+DB_NOOP(1);
 
 PROC
 LLLIB_Sorter_Internal_StartSortGroupIterator((STRING)_Char)
@@ -522,68 +525,76 @@ DB_LLLIB_Sorter_Temp_IteratorFailsafe(_Char, 0);
 PROC
 LLLIB_Sorter_Internal_StartSortGroupIterator((STRING)_Char)
 AND
-DB_LLLIB_Sorter_Temp_SortFamilies(_Char, _SubGroup)
-AND
-NOT DB_LLLIB_Sorter_Temp_SortGroupIterator(_Char, _SubGroup, _)
-AND
-DB_LLLIB_Sorter_Temp_MaxSortGroupVal(_Char, _SubGroup, _MaxInt)
+NOT DB_LLLIB_Sorter_Temp_SortGroupIterator(_Char, _)
 THEN
-DB_LLLIB_Sorter_Temp_SortGroupIterator(_Char, _SubGroup, 0);
+DB_LLLIB_Sorter_Temp_SortGroupIterator(_Char, 0);
 
 IF
-DB_LLLIB_Sorter_Temp_SortGroupIterator((STRING)_Char, (STRING)_SubGroup, (INTEGER)_Index)
+DB_LLLIB_Sorter_Temp_SortGroupIterator((STRING)_Char, (INTEGER)_Index)
 AND
-DB_LLLIB_Sorter_Temp_MaxSortGroupVal(_Char, _SubGroup, _MaxInt)
+DB_LLLIB_Sorter_Temp_MaxSortGroupVal(_Char, _MaxInt)
 AND
 _Index <= _MaxInt
 AND
-IntegerSum(_Index, 1, _CheckIndex)
+IntegerSum(_Index, 1, _NextIndex)
 AND
 DB_LLLIB_Sorter_Temp_IteratorFailsafe(_Char, _TotalLoops)
 AND
-_TotalLoops < 500
+_TotalLoops < 200
 AND
 IntegerSum(_TotalLoops, 1, _NewTotalLoops)
 THEN
+LLLIB_Sorter_Internal_Iterator_CheckSubgroups(_Char, _Index);
+NOT DB_LLLIB_Sorter_Temp_SortGroupIterator(_Char, _Index);
 NOT DB_LLLIB_Sorter_Temp_IteratorFailsafe(_Char, _TotalLoops);
 DB_LLLIB_Sorter_Temp_IteratorFailsafe(_Char, _NewTotalLoops);
-LLLIB_Sorter_Internal_AddToFinalIfMatch(_Char, _SubGroup, _CheckIndex);
-NOT DB_LLLIB_Sorter_Temp_SortGroupIterator(_Char, _SubGroup, _Index);
-DB_LLLIB_Sorter_Temp_SortGroupIterator(_Char, _SubGroup, _CheckIndex);
+DB_LLLIB_Sorter_Temp_SortGroupIterator(_Char, _NextIndex);
+
+PROC
+LLLIB_Sorter_Internal_Iterator_CheckSubgroups((STRING)_Char, (INTEGER)_Index)
+AND
+DB_LLLIB_Sorter_Temp_SortFamilies(_Char, _SubGroup)
+THEN
+LLLIB_Sorter_Internal_AddToFinalIfMatch(_Char, _SubGroup, _Index);
 
 IF
-DB_LLLIB_Sorter_Temp_SortGroupIterator((STRING)_Char, (STRING)_SubGroup, (INTEGER)_Index)
+DB_LLLIB_Sorter_Temp_SortGroupIterator((STRING)_Char, (INTEGER)_Index)
 AND
-DB_LLLIB_Sorter_Temp_MaxSortGroupVal(_Char, _SubGroup, _MaxInt)
+DB_LLLIB_Sorter_Temp_MaxSortGroupVal(_Char, _MaxInt)
 AND
 _Index > _MaxInt
 THEN
-//LeaderLog_Debug("[LLLIB:Sorter] Sub-group finalizing for char [",_Char,"] complete.");
+LeaderLog_Debug("[LLLIB:Sorter] Sub-group finalizing for char [",_Char,"] complete.");
 NOT DB_LLLIB_Sorter_Temp_SortGroupIterator(_Char, _Index);
 
 IF
-DB_LLLIB_Sorter_Temp_SortGroupIterator((STRING)_Char, (STRING)_SubGroup, (INTEGER)_Index)
+DB_LLLIB_Sorter_Temp_SortGroupIterator((STRING)_Char, (INTEGER)_Index)
 AND
-DB_LLLIB_Sorter_Temp_MaxSortGroupVal(_Char, _SubGroup, _MaxInt)
+DB_LLLIB_Sorter_Temp_MaxSortGroupVal(_Char, _MaxInt)
 AND
 DB_LLLIB_Sorter_Temp_IteratorFailsafe(_Char, _TotalLoops)
 AND
-_TotalLoops >= 500
+_TotalLoops >= 200
+AND
+IntegertoString(_TotalLoops, _TotalLoopStr)
+AND
+IntegertoString(_MaxInt, _MaxIntStr)
 THEN
-LeaderLog_Debug("[LLLIB:Sorter][ERROR] SortGroupIterator looped over 500 times! Something went wrong! Call a medic!");
+LeaderLog_Debug("[LLLIB:Sorter][ERROR] [",_Char,"] SortGroupIterator looped over ",_TotalLoopStr,"/",_MaxIntStr," times! Something went wrong! Call a medic!");
 NOT DB_LLLIB_Sorter_Temp_IteratorFailsafe(_Char, _TotalLoops);
 NOT DB_LLLIB_Sorter_Temp_SortGroupIterator(_Char, _Index);
+NOT DB_LLLIB_Sorter_Temp_MaxSortGroupVal(_Char, _MaxInt);
 
 PROC
 LLLIB_Sorter_Internal_AddToFinalIfMatch((STRING)_Char, (STRING)_SubGroup, (INTEGER)_SortVal)
 AND
-DB_LLLIB_Sorter_Temp_SortFamily(_ParentChar, _SubChars, _ID)
+DB_LLLIB_Sorter_Temp_SortFamily(_Char, _SubGroup, _ID)
 AND
 DB_LLLIB_Sorter_Temp_SortedString(_CharIndex, _Char, _ID, _Str, _TotalSorts, _SortedCharIndex, _SortVal)
 AND
 IntegertoString(_SortVal, _SortValStr)
 THEN
-LeaderLog_Debug("[LLLIB:Sorter] Finalized [",_Char,":",_SubGroup,"]:",_Str," with SortGroup [",_SortValStr,"].");
+LeaderLog_Debug("[LLLIB:Sorter] Finalized [",_Char,":",_SubGroup,"]:",_Str," with SortVal [",_SortValStr,"].");
 LLLIB_Sorter_Internal_AddToFinalSorted(_ID, _Str);
 //END_REGION
 EXITSECTION

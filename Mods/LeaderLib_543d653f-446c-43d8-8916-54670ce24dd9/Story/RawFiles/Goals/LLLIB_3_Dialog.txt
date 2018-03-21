@@ -2,16 +2,27 @@ Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
 LLLIB_Dialog_InitSettings();
+
+//DB_LLLIB_DialogNames(_Dialog)
+//DB_LLLIB_Dialog_AttitudeFlags(_Flag, _Amount)
 KBSECTION
 //REGION SETTINGS
 PROC
 LLLIB_Dialog_InitSettings()
 THEN
-LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_Dialog", 1);
-DB_LLLIB_Dialog("LLLIB_ModSettingsMenu");
-DB_LLLIB_Dialog("LLLIB_SettingsMenu");
-DB_LLLIB_Dialog("LLLIB_RetiredLeader_Default");
-DB_LLLIB_Dialog("LLLIB_RetiredLeader_TutorialBoat");
+LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_DialogNames", 1);
+DB_LLLIB_DialogNames("LLLIB_ModSettingsMenu");
+DB_LLLIB_DialogNames("LLLIB_SettingsMenu");
+DB_LLLIB_DialogNames("LLLIB_RetiredLeader_Default");
+DB_LLLIB_DialogNames("LLLIB_RetiredLeader_TutorialBoat");
+
+LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_Dialog_AttitudeFlags", 2);
+DB_LLLIB_Dialog_AttitudeFlags("LLLIB_IncreaseAttitude_5", 5);
+DB_LLLIB_Dialog_AttitudeFlags("LLLIB_IncreaseAttitude_10", 10);
+DB_LLLIB_Dialog_AttitudeFlags("LLLIB_IncreaseAttitude_25", 25);
+DB_LLLIB_Dialog_AttitudeFlags("LLLIB_IncreaseAttitude_50", 50);
+DB_LLLIB_Dialog_AttitudeFlags("LLLIB_IncreaseAttitude_75", 75);
+DB_LLLIB_Dialog_AttitudeFlags("LLLIB_IncreaseAttitude_100", 100);
 //END_REGION
 
 //REGION UPDATING
@@ -24,7 +35,7 @@ LeaderLog_Debug("[LLLIB:Dialog] Databases updated.");
 PROC
 LLLIB_System_ClearDatabases()
 THEN
-SysClear("DB_LLLIB_Dialog", 1);
+SysClear("DB_LLLIB_DialogNames", 1);
 LeaderLog_Debug("[LLLIB:Dialog] Databases cleared.");
 //END_REGION
 
@@ -32,7 +43,7 @@ LeaderLog_Debug("[LLLIB:Dialog] Databases cleared.");
 IF
 DialogStarted(_Dialog, _Instance)
 AND
-DB_LLLIB_Dialog(_Dialog)
+DB_LLLIB_DialogNames(_Dialog)
 AND
 DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
 AND
@@ -48,6 +59,77 @@ DB_LLLIB_Settings_DialogVariables("SpeakerName", _SpeakerVar)
 THEN
 DialogSetVariableStringForInstance(_Instance, _PlayerVar, _PlayerName);
 DialogSetVariableStringForInstance(_Instance, _SpeakerVar, _SpeakerName);
+
+IF
+DialogStarted(_Dialog, _Instance)
+AND
+DB_LLLIB_LeaderTrader_Dialog(_ReferenceName, _Dialog)
+AND
+DialogGetInvolvedNPC(_Instance, 1, (CHARACTERGUID)_LeaderTrader)
+AND
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+AND
+DB_LLLIB_Settings_DialogVariables("SpeakerName", _SpeakerVar)
+THEN
+DialogSetVariableStringForInstance(_Instance, _SpeakerVar, "Von Hunter");
+//END_REGION
+
+//REGION FLAG_COMMANDS
+IF
+ObjectFlagSet("LLLIB_GrantModSettingsBook", _Object, _Instance)
+AND
+LLLIB_Helper_QRY_ClearObjectFlag(_Object, "LLLIB_GrantModSettingsBook")
+AND
+DB_LLLIB_Settings_ItemTemplates("Book_ModSettings", _ItemTemplate)
+THEN
+ItemTemplateAddTo(_ItemTemplate, _Object, 1);
+
+//Attitude
+IF
+ObjectFlagSet(_Flag, (CHARACTERGUID)_Character, _Instance)
+AND
+DB_LLLIB_Dialog_AttitudeFlags(_Flag, _Amount)
+AND
+DialogGetInvolvedNPC(_Instance, 1, (CHARACTERGUID)_NPC)
+THEN
+DB_LLLIB_Dialog_AttitudeStatusText(_NPC, _Amount);
+CharacterAddAttitudeTowardsPlayer(_NPC, _Character, _Amount);
+ObjectClearFlag(_Character, _Flag);
+
+PROC
+DB_LLLIB_Dialog_AttitudeStatusText((CHARACTERGUID)_Target, (INTEGER)_Amount)
+AND
+_Amount > 0
+AND
+IntegertoString(_Amount, _AmountStr)
+AND
+StringConcatenate("<font color='#2EFE2E'>+", _AmountStr, _Str1)
+AND
+StringConcatenate(_Str1, " Attitude</font>", _StatusText)
+THEN
+CharacterStatusText(_Target, _StatusText);
+
+PROC
+DB_LLLIB_Dialog_AttitudeStatusText((CHARACTERGUID)_Target, (INTEGER)_Amount)
+AND
+_Amount < 0
+AND
+IntegertoString(_Amount, _AmountStr)
+AND
+StringConcatenate("<font color='#FF0000'>-", _AmountStr, _Str1)
+AND
+StringConcatenate(_Str1, " Attitude</font>", _StatusText)
+THEN
+CharacterStatusText(_Target, _StatusText);
+
+IF
+ObjectFlagSet("LLLIB_Trader_OpenTrade", (CHARACTERGUID)_Object, _Instance)
+AND
+LLLIB_Helper_QRY_ClearObjectFlag(_Object, "LLLIB_Treasure_OpenTrade")
+AND
+DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
+THEN
+StartTrade(_Player, _Object);
 //END_REGION
 EXITSECTION
 

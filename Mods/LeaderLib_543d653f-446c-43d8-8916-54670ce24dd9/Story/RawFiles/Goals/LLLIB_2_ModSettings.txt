@@ -550,14 +550,18 @@ Proc_StartDialog(0, "LLLIB_ModSettingsMenu", _Player, _Player);
 
 //REGION ITEM_USE
 IF
-CharacterUsedItemTemplate(_Player, "LLLIB_BOOK_ModSettingsMenu_646a1194-3383-47fa-a379-ebefa3d2b108", _)
+CharacterUsedItemTemplate(_Player, _ItemTemplate, _)
+AND
+DB_LLLIB_Settings_ItemTemplates("Book_ModSettings", _ItemTemplate)
 AND
 CharacterIsInCombat(_Player, 1)
 THEN
 CharacterStatusText(_Player, "<font color='#FF0000'>Unable to open Mod Settings menu in combat.</font>");
 
 IF
-CharacterUsedItemTemplate(_Player, "LLLIB_BOOK_ModSettingsMenu_646a1194-3383-47fa-a379-ebefa3d2b108", _)
+CharacterUsedItemTemplate(_Player, _ItemTemplate, _)
+AND
+DB_LLLIB_Settings_ItemTemplates("Book_ModSettings", _ItemTemplate)
 AND
 CharacterIsInCombat(_Player, 0)
 THEN

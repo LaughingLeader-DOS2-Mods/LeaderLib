@@ -2,9 +2,12 @@ Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
 LLLIB_Settings_InitSettings();
-//DB_LLLIB_Iterator(_Index)
-//DB_LLLIB_Settings_Temp_IteratorCreator(_CurrentInt, _MaxInt)
+
+//DB_LLLIB_Settings_ItemTemplates(_Name, _ItemTemplate)
 //DB_LLLIB_Settings_DialogVariables(_VariableName, _VariableValue)
+//DB_LLLIB_Iterator(_Index)
+
+//DB_LLLIB_Settings_Temp_IteratorCreator(_CurrentInt, _MaxInt)
 //DB_LLLIB_Settings_Temp_RegisteredModsList(_Instance, _Str)
 KBSECTION
 //REGION SETTINGS
@@ -13,6 +16,9 @@ LLLIB_Settings_InitSettings()
 THEN
 LLLIB_Settings_InitEquipmentSlots();
 LLLIB_Settings_CreateIterator(99);
+
+LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_Settings_ItemTemplates", 2);
+DB_LLLIB_Settings_ItemTemplates("Book_ModSettings", "LLLIB_BOOK_ModSettingsMenu_646a1194-3383-47fa-a379-ebefa3d2b108");
 
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_Settings_DialogVariables", 2);
 DB_LLLIB_Settings_DialogVariables("PlayerName", "LLLIB_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3");

@@ -1,7 +1,7 @@
 {
    "save" : {
       "header" : {
-         "time" : 1521642722,
+         "time" : 1521651410,
          "version" : "2.0.8.2"
       },
       "regions" : {
@@ -1398,7 +1398,7 @@
                                                 "TagText" : {
                                                    "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
                                                    "type" : 28,
-                                                   "value" : "Me? Oh, I'm nobody... Just an old bag of bones, keen on seeing the sights. I hear this cruise ship has a great buffet."
+                                                   "value" : "Me? Oh, I'm nobody... Just an old bag of bones, keen on seeing the sights. I hear this cruise ship has a great buffet. *He snorts.*"
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -1504,7 +1504,7 @@
                                                 "TagText" : {
                                                    "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
                                                    "type" : 28,
-                                                   "value" : "It's a pleasure to meet you [LLLIB_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3]. You can call me [LLLIB_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b]."
+                                                   "value" : "It's a pleasure to meet you [LLLIB_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3]. You may call me [LLLIB_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b]."
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }

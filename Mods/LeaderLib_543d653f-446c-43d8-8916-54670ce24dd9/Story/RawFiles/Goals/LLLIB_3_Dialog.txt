@@ -1,0 +1,55 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+LLLIB_Dialog_InitSettings();
+KBSECTION
+//REGION SETTINGS
+PROC
+LLLIB_Dialog_InitSettings()
+THEN
+LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_Dialog", 1);
+DB_LLLIB_Dialog("LLLIB_ModSettingsMenu");
+DB_LLLIB_Dialog("LLLIB_SettingsMenu");
+DB_LLLIB_Dialog("LLLIB_RetiredLeader_Default");
+DB_LLLIB_Dialog("LLLIB_RetiredLeader_TutorialBoat");
+//END_REGION
+
+//REGION UPDATING
+PROC
+LLLIB_System_UpdateDatabases()
+THEN
+LLLIB_Dialog_InitSettings();
+LeaderLog_Debug("[LLLIB:Dialog] Databases updated.");
+
+PROC
+LLLIB_System_ClearDatabases()
+THEN
+SysClear("DB_LLLIB_Dialog", 1);
+LeaderLog_Debug("[LLLIB:Dialog] Databases cleared.");
+//END_REGION
+
+//REGION GENERAL_DIALOGVARS_AUTOSET
+IF
+DialogStarted(_Dialog, _Instance)
+AND
+DB_LLLIB_Dialog(_Dialog)
+AND
+DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
+AND
+DialogGetInvolvedNPC(_Instance, 1, (CHARACTERGUID)_NPC)
+AND
+CharacterGetDisplayName(_Player, _, _PlayerName)
+AND
+CharacterGetDisplayName(_NPC, _, _SpeakerName)
+AND
+DB_LLLIB_Settings_DialogVariables("PlayerName", _PlayerVar)
+AND
+DB_LLLIB_Settings_DialogVariables("SpeakerName", _SpeakerVar)
+THEN
+DialogSetVariableStringForInstance(_Instance, _PlayerVar, _PlayerName);
+DialogSetVariableStringForInstance(_Instance, _SpeakerVar, _SpeakerName);
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <save>
-    <header version="2" time="1521377920" />
+    <header version="2" time="1521641295" />
     <version major="3" minor="1" revision="7" build="0" />
     <region id="DialogVariables">
         <node id="root">
@@ -85,8 +85,22 @@
                 <node id="DialogVariable">
                     <attribute id="DefaultValue" value="" type="23" />
                     <attribute id="Description" value="" type="23" />
+                    <attribute id="UUID" value="6c5b9559-53e3-47f7-8881-309a930e4be3" type="31" />
+                    <attribute id="name" value="LLLIB_PlayerName" type="22" />
+                    <attribute id="type" value="String" type="23" />
+                </node>
+                <node id="DialogVariable">
+                    <attribute id="DefaultValue" value="" type="23" />
+                    <attribute id="Description" value="" type="23" />
                     <attribute id="UUID" value="50c55fbe-ad1e-490e-92d1-8836ca42ca12" type="31" />
                     <attribute id="name" value="LLLIB_Settings_RegisteredMods" type="22" />
+                    <attribute id="type" value="String" type="23" />
+                </node>
+                <node id="DialogVariable">
+                    <attribute id="DefaultValue" value="" type="23" />
+                    <attribute id="Description" value="" type="23" />
+                    <attribute id="UUID" value="9fc648d4-7984-44e7-afa4-b8a07f21185b" type="31" />
+                    <attribute id="name" value="LLLIB_SpeakerName" type="22" />
                     <attribute id="type" value="String" type="23" />
                 </node>
                 <node id="DialogVariable">

@@ -4,7 +4,7 @@ INITSECTION
 LLLIB_ModSettings_InitSettings();
 
 //Settings
-//DB_LLLIB_ModSettings_DialogVariables(_VariableName, _VariableValue)
+//DB_LLLIB_Settings_DialogVariables(_VariableName, _VariableValue)
 //DB_LLLIB_ModSettings_DynamicMenuVars(_MenuIndex, _DialogVar, _SelectFlag, _DisabledFlag)
 //DB_LLLIB_ModSettings_MenusPerPage(_MaxPerPage)
 
@@ -107,11 +107,6 @@ DB_LLLIB_ModSettings_DynamicMenuVars(4, "LLLIB_ModSettings_Menu5_45148ce6-e8f3-4
 DB_LLLIB_ModSettings_DynamicMenuVars(5, "LLLIB_ModSettings_Menu6_863af621-ff0c-454a-b6a3-7c9d3166a8a0", "LLLIB_ModSettings_SelectedMenu6", "LLLIB_ModSettings_MenuEmpty6");
 DB_LLLIB_ModSettings_DynamicMenuVars(6, "LLLIB_ModSettings_Menu7_888ce02f-83ff-4173-be8d-f41fd348358f", "LLLIB_ModSettings_SelectedMenu7", "LLLIB_ModSettings_MenuEmpty7");
 DB_LLLIB_ModSettings_DynamicMenuVars(7, "LLLIB_ModSettings_Menu8_a6aa98e6-cde4-491b-a2cb-2cd7d5d71f96", "LLLIB_ModSettings_SelectedMenu8", "LLLIB_ModSettings_MenuEmpty8");
-
-LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_ModSettings_DialogVariables", 2);
-DB_LLLIB_ModSettings_DialogVariables("PageInfo", "LLLIB_ModSettings_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156");
-//DB_LLLIB_ModSettings_DialogVariables("CurrentPage", "LLLIB_ModSettings_CurrentPage_acb56c4f-a706-4418-9b7d-5a76473bdd03");
-//DB_LLLIB_ModSettings_DialogVariables("LastPage", "LLLIB_ModSettings_LastPage_92483e44-819f-4abd-a451-393ca1e3ad2f");
 //END_REGION
 
 //REGION UPDATING
@@ -390,7 +385,7 @@ StringConcatenate(_Str1, "/", _Str2)
 AND
 StringConcatenate(_Str2, _PageStr2, _FinalStr)
 AND
-DB_LLLIB_ModSettings_DialogVariables("PageInfo", _VariableValue)
+DB_LLLIB_Settings_DialogVariables("ModSettings_PageInfo", _VariableValue)
 THEN
 DialogSetVariableStringForInstance(_Instance, _VariableValue, _FinalStr);
 
@@ -403,7 +398,7 @@ DB_LLLIB_ModSettings_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
 AND
 _MaxPage <= 1
 AND
-DB_LLLIB_ModSettings_DialogVariables("PageInfo", _VariableValue)
+DB_LLLIB_Settings_DialogVariables("ModSettings_PageInfo", _VariableValue)
 THEN
 DialogSetVariableStringForInstance(_Instance, _VariableValue, "");
 

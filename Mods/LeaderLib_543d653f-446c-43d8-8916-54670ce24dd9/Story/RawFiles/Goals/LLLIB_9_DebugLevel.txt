@@ -103,12 +103,46 @@ NOT LLLIB_QRY_Treasure_IsRegisteredObject(_Trader)
 THEN
 LeaderLog_Debug("[LLLIB:DebugLevel][ERROR] ","Dialog generation tag set, but trader is not registered!");
 
+/*
 IF
 CharacterUsedItem(_Player, ITEMGUID_LLLIB_DebugLever_TestRandom_d3152baa-c6d4-4e8e-a622-a6bb9c149b3e)
 THEN
 //Proc_StartDialog(0, "LLLIB_ModSettingsMenu", _Player, _Player);
 LLLIB_ModSettings_SortMenus();
+*/
+IF
+SkillCast(_Player, "Shout_RecoverArmour", _)
+THEN
+CharacterResetCooldowns(_Player);
 
+IF
+SkillCast(_Player, "Shout_RecoverArmour", _)
+AND
+DB_MyMod_ToggleStatus("INVISIBLE", _Player, _Val)
+AND
+IntegerSubtract(1, _Val, _NewVal)
+THEN
+NOT DB_MyMod_ToggleStatus("INVISIBLE", _Player, _Val);
+DB_MyMod_ToggleStatus("INVISIBLE", _Player, _NewVal);
+
+IF
+SkillCast(_Player, "Shout_RecoverArmour", _)
+AND
+NOT DB_MyMod_ToggleStatus("INVISIBLE", _Player, _)
+THEN
+DB_MyMod_ToggleStatus("INVISIBLE", _Player, 1);
+
+IF
+DB_MyMod_ToggleStatus(_Status, _Player, 1)
+THEN
+ApplyStatus(_Player, _Status, -1.0, 1);
+
+IF
+DB_MyMod_ToggleStatus(_Status, _Player, 0)
+THEN
+RemoveStatus(_Player, _Status);
+
+/*
 IF
 CharacterUsedItem(_, ITEMGUID_LLLIB_DebugLever_TestRandom_d3152baa-c6d4-4e8e-a622-a6bb9c149b3e)
 AND
@@ -120,6 +154,7 @@ IntegertoString(_Ran, _RanStr)
 THEN
 NOT DB_LLLIB_Temp_RandomResult(_Ran);
 LeaderLog_Debug("[LLLIB:TreasureSystem] Random range result: ",_RanStr," | Min: 1 Max: 19");
+*/
 
 IF
 GameStarted("TUT_Tutorial_A", _)

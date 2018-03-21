@@ -1,15 +1,24 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-LLLIB_InitSettings();
+LLLIB_Settings_InitSettings();
 //DB_LLLIB_Iterator(_Index)
 //DB_LLLIB_Settings_Temp_IteratorCreator(_CurrentInt, _MaxInt)
+//DB_LLLIB_Settings_DialogVariables(_VariableName, _VariableValue)
+//DB_LLLIB_Settings_Temp_RegisteredModsList(_Instance, _Str)
 KBSECTION
+//REGION SETTINGS
 PROC
-LLLIB_InitSettings()
+LLLIB_Settings_InitSettings()
 THEN
 LLLIB_Settings_InitEquipmentSlots();
 LLLIB_Settings_CreateIterator(99);
+
+LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_Settings_DialogVariables", 2);
+DB_LLLIB_Settings_DialogVariables("PlayerName", "LLLIB_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3");
+DB_LLLIB_Settings_DialogVariables("SpeakerName", "LLLIB_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b");
+DB_LLLIB_Settings_DialogVariables("ModSettings_PageInfo", "LLLIB_ModSettings_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156");
+DB_LLLIB_Settings_DialogVariables("RegisteredMods", "LLLIB_Settings_RegisteredMods_50c55fbe-ad1e-490e-92d1-8836ca42ca12");
 
 PROC
 LLLIB_Settings_InitEquipmentSlots()
@@ -55,7 +64,7 @@ DB_LLLIB_Settings_Temp_StartIteratorCreator(_NextInt);
 PROC
 LLLIB_System_UpdateDatabases()
 THEN
-LLLIB_InitSettings();
+LLLIB_Settings_InitSettings();
 LeaderLog_Debug("[LLLIB:Settings] Databases updated.");
 
 PROC
@@ -68,6 +77,52 @@ LLLIB_Updater_ResetDatabases()
 THEN
 DB_NOOP(1);
 //LeaderLog_Debug("[LLLIB:Settings] Databases cleared and re-initialized.");
+//END_REGION
+
+//REGION REGISTERED_MODS
+IF
+ObjectFlagSet("LLLIB_Settings_ListRegisteredMods", _Player, _Instance)
+AND
+LLLIB_Helper_QRY_ClearObjectFlag(_Player, "LLLIB_Settings_ListRegisteredMods")
+THEN
+LLLIB_Settings_ListRegisteredMods(_Instance);
+
+
+PROC
+LLLIB_Settings_ListRegisteredMods((INTEGER)_Instance)
+AND
+NOT DB_LLLIB_Settings_Temp_RegisteredModsList(_Instance, _)
+THEN
+DB_LLLIB_Settings_Temp_RegisteredModsList(_Instance, "");
+
+PROC
+LLLIB_Settings_ListRegisteredMods((INTEGER)_Instance)
+AND
+DB_Mods_RegisteredMod(_ModName, _Version, _Author)
+AND
+DB_LLLIB_Settings_Temp_RegisteredModsList(_Instance, _Str)
+AND
+StringConcatenate("<b>", _ModName, _NameStr1)
+AND
+StringConcatenate(_NameStr1, "</b>", _NameStr2)
+AND
+LeaderLog_QRY_Internal_CombineStrings("LLLIB_Settings_ListMods", _Str, _NameStr2, " (", _Version, ") by ",_Author, "<br>")
+AND
+DB_LeaderLog_Temp_CombinedString("LLLIB_Settings_ListMods", _CombinedStr)
+THEN
+NOT DB_LLLIB_Settings_Temp_RegisteredModsList(_Instance, _Str);
+DB_LLLIB_Settings_Temp_RegisteredModsList(_Instance, _CombinedStr);
+LeaderLog_ClearCombinedString("LLLIB_Settings_ListMods");
+
+PROC
+LLLIB_Settings_ListRegisteredMods((INTEGER)_Instance)
+AND
+DB_LLLIB_Settings_DialogVariables("RegisteredMods", _DialogVar)
+AND
+DB_LLLIB_Settings_Temp_RegisteredModsList(_Instance, _Str)
+THEN
+DialogSetVariableStringForInstance(_Instance, _DialogVar, _Str);
+NOT DB_LLLIB_Settings_Temp_RegisteredModsList(_Instance, _Str);
 //END_REGION
 EXITSECTION
 

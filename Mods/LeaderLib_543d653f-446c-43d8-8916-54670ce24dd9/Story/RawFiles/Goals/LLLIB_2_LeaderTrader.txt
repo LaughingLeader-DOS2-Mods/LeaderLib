@@ -41,8 +41,8 @@ LLLIB_Trader_Register_Position("LLLIB_LeaderTrader", "FJ_FortJoy_Main", 219.86, 
 
 LLLIB_Requirements_AddFlagRequirement("LLLIB_LeaderTrader_WindegoHasCastSpell", "TUT_LowerDeck_WindegoHasCastSpell", "Global", 0);
 LLLIB_Requirements_AddFlagRequirement("LLLIB_LeaderTrader_PartyFoundSeekerCamp", "FTJ_SW_BeenToShelter", "Object", 1);
-LLLIB_Requirements_AddFlagRequirement("LLLIB_LeaderTrader_HasMetLeader", "LLLIB_Trader_PlayerTalkedToLeaderTrader", "Object", 1);
-LLLIB_Requirements_AddFlagRequirement("LLLIB_LeaderTrader_HasNotMetLeader", "LLLIB_Trader_PlayerTalkedToLeaderTrader", "Object", 0);
+LLLIB_Requirements_AddFlagRequirement("LLLIB_LeaderTrader_HasMetPlayer", "LLLIB_Trader_PlayerTalkedToLeaderTrader", "Object", 1);
+LLLIB_Requirements_AddFlagRequirement("LLLIB_LeaderTrader_HasNotMetPlayer", "LLLIB_Trader_PlayerTalkedToLeaderTrader", "Object", 0);
 
 LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "LeaderLib_TestLevel", 20000);
 LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "TUT_Tutorial_A", 200);
@@ -78,8 +78,8 @@ LLLIB_Trader_Register_PositionObject("LLLIB_LeaderTrader", _LevelName, (GUIDSTRI
 LLLIB_Trader_Register_Seat("LLLIB_LeaderTrader", _LevelName, (ITEMGUID)_Seat);
 
 LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", "", "LLLIB_RetiredLeader_Default"); // Default
-LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", "TUT_Tutorial_A", "LLLIB_RetiredLeader_TutorialBoat", "LLLIB_LeaderTrader_HasNotMetLeader");
-LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", "TUT_Tutorial_A", "LLLIB_RetiredLeader_Default", "LLLIB_LeaderTrader_HasMetLeader");
+LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", "LeaderLib_TestLevel", "LLLIB_RetiredLeader_TutorialBoat");
+LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", "TUT_Tutorial_A", "LLLIB_RetiredLeader_TutorialBoat");
 //END_REGION
 
 //REGION APPEARANCE_CHANGING

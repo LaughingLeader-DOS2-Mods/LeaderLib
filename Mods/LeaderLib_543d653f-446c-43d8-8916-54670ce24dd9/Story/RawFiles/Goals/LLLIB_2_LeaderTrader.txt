@@ -39,6 +39,10 @@ LLLIB_Trader_Register_CreationEvent("LLLIB_LeaderTrader", "LLLIB_Events_OnLeader
 LLLIB_Trader_Register_GlobalTrader("LLLIB_LeaderTrader", _LeaderTrader);
 LLLIB_Trader_Register_Position("LLLIB_LeaderTrader", "FJ_FortJoy_Main", 219.86, -16.79, 362.70);
 
+LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", "", "LLLIB_RetiredLeader_Default"); // Default
+LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", "TUT_Tutorial_A", "LLLIB_RetiredLeader_TutorialBoat");
+//LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", "LeaderLib_TestLevel", "LLLIB_RetiredLeader_TutorialBoat");
+
 LLLIB_Requirements_AddFlagRequirement("LLLIB_LeaderTrader_WindegoHasNotCastSpell", "TUT_LowerDeck_WindegoHasCastSpell", "Global", 0);
 LLLIB_Requirements_AddFlagRequirement("LLLIB_LeaderTrader_PartyFoundSeekerCamp", "FTJ_SW_BeenToShelter", "Object", 1);
 LLLIB_Requirements_AddFlagRequirement("LLLIB_LeaderTrader_HasMetPlayer", "LLLIB_Trader_PlayerTalkedToLeaderTrader", "Object", 1);
@@ -53,11 +57,12 @@ LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "RC_Main", 5000);
 LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "CoS_Main", 10000);
 LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "Arx_Main", 13000);
 
-LLLIB_Treasure_RegisterObjectByTraderID("LLLIB_LeaderTrader_ModBooks", "LLLIB_LeaderTrader");
+LLLIB_Treasure_Register_TreasureToTrader("LLLIB_LeaderTrader_ModBooks", "LLLIB_LeaderTrader");
 LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModBooks", "LLLIB_BOOK_ModSettingsMenu_646a1194-3383-47fa-a379-ebefa3d2b108", 1);
 LLLIB_Treasure_Configure_GenerationType("LLLIB_LeaderTrader_ModBooks", "LLLIB_BOOK_ModSettingsMenu_646a1194-3383-47fa-a379-ebefa3d2b108", "DIALOG_STARTED");
 //LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModBooks", "CON_Potion_Fire_Res_A_e78b642c-0216-4df4-b691-a41ff4747b6a", 8);
 //LLLIB_Treasure_AddTreasureItemStat("LLLIB_LeaderTrader_ModBooks", "WPN_Cheat_Sword_1H_RuneSlot2", 1);
+
 
 LLLIB_LeaderTrader_RegisterDeckSeat("LeaderLib_TestLevel", ITEMGUID_LLLIB_DebugLevel_TraderChair_8468a5fd-00a4-42c2-aa15-1b1a25e46738);
 LLLIB_LeaderTrader_RegisterDeckSeat("TUT_Tutorial_A", ITEMGUID_S_TUT_KitchenBench_e628d79a-8f7b-4681-a55f-57f0b42a29db, "LLLIB_LeaderTrader_WindegoHasNotCastSpell");
@@ -77,10 +82,6 @@ THEN
 LLLIB_Trader_Register_Level("LLLIB_LeaderTrader", _LevelName, _RequirementID);
 LLLIB_Trader_Register_PositionObject("LLLIB_LeaderTrader", _LevelName, (GUIDSTRING)_Seat);
 LLLIB_Trader_Register_Seat("LLLIB_LeaderTrader", _LevelName, (ITEMGUID)_Seat);
-
-LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", "", "LLLIB_RetiredLeader_Default"); // Default
-LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", "TUT_Tutorial_A", "LLLIB_RetiredLeader_TutorialBoat");
-//LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", "LeaderLib_TestLevel", "LLLIB_RetiredLeader_TutorialBoat");
 //END_REGION
 
 //REGION APPEARANCE_CHANGING

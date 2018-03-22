@@ -14,16 +14,16 @@ INITSECTION
 //DB_LLLIB_Treasure_ItemGenerationFlag(_TreasureID, _ItemEntry, _Flag, _FlagType)
 //DB_LLLIB_Treasure_ItemDeltaMods(_TreasureID, _ItemEntry, _Deltamod, _Chance)
 //DB_LLLIB_Treasure_ItemRunes(_TreasureID, _ItemEntry, _Rune, _Chance)
-
-//DB_LLLIB_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel, _StrictMode)
-//DB_LLLIB_Requirements_Flag(_RequirementID, _Flag, _FlagType, _FlagVal)
-//DB_LLLIB_Requirements_MaxItemAmount(_RequirementID, _MaxAmount)
+//DB_LLLIB_Treasure_ItemMaxAmount(_TreasureID, _ItemEntry, _MaxAmount)
 
 //DB_LLLIB_Treasure_OnlyOnce(_TreasureID, _ItemEntryOrTreasureTable, _OnCompletionEvent)
 //DB_LLLIB_Treasure_GeneratedEvent(_TreasureID, _ItemEntry, _OnGeneratedEvent)
 
 //DB_LLLIB_Treasure_StatToTemplate(_ItemEntry, _ItemTemplate)
 //DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
+
+//DB_LLLIB_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel, _StrictMode)
+//DB_LLLIB_Requirements_Flag(_RequirementID, _Flag, _FlagType, _FlagVal)
 
 //DB_LLLIB_Treasure_Temp_DummyTarget(_Object, _Dummy, _ItemEntry, _TreasureID)
 //DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
@@ -57,12 +57,14 @@ SysClear("DB_LLLIB_Treasure_RegisteredGenerationTypes", 1);
 SysClear("DB_LLLIB_Treasure_ItemGenerationFlag", 4);
 SysClear("DB_LLLIB_Treasure_ItemDeltaMods", 4);
 SysClear("DB_LLLIB_Treasure_ItemRunes", 4);
+SysClear("DB_LLLIB_Treasure_ItemMaxAmount", 3);
 SysClear("DB_LLLIB_Treasure_OnlyOnce", 3);
 SysClear("DB_LLLIB_Treasure_GeneratedEvent", 3);
 SysClear("DB_LLLIB_Treasure_StatToTemplate", 2);
 SysClear("DB_LLLIB_Treasure_GeneratorDummies", 1);
 SysClear("DB_LLLIB_Treasure_Temp_DummyTarget", 4);
 SysClear("DB_LLLIB_Treasure_Temp_MatchedTreasure", 2);
+SysClear("DB_LLLIB_Treasure_Temp_MatchedRequirementTreasure", 2);
 SysClear("DB_LLLIB_Treasure_Temp_FlagToTreasure", 3);
 SysClear("DB_LLLIB_Treasure_Temp_GenerationTypeToTreasure", 2);
 SysClear("DB_LLLIB_Treasure_Temp_AmountToCreate", 3);
@@ -87,145 +89,6 @@ SysClear("DB_LLLIB_Treasure_Temp_StartGeneration", 3);
 //LLLIB_System_ClearDatabases();
 LLLIB_System_UpdateDatabases();
 LeaderLog_Debug("[LLLIB:TreasureSystem] Temporary databases cleared.");
-//END_REGION
-
-//REGION REGISTERING
-PROC
-LLLIB_Treasure_RegisterObject((STRING)_TreasureID, (GUIDSTRING)_Object)
-THEN
-DB_LLLIB_Treasure_RegisteredObject(_TreasureID, _Object);
-
-PROC
-LLLIB_Treasure_RegisterObjectByTemplate((STRING)_TreasureID, (STRING)_ObjectTemplate)
-THEN
-DB_LLLIB_Treasure_RegisteredObjectTemplate(_TreasureID, _ObjectTemplate);
-
-PROC
-LLLIB_Treasure_RegisterObjectByTraderID((STRING)_TreasureID, (STRING)_TraderID)
-THEN
-DB_LLLIB_Treasure_RegisteredTrader(_TreasureID, _TraderID);
-
-PROC
-LLLIB_Treasure_RegisterTreasureTable((STRING)_TreasureID, (STRING)_TreaseTable, (STRING)_RequirementID)
-THEN
-DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreaseTable, _RequirementID,1,1,1);
-
-PROC
-LLLIB_Treasure_RegisterTreasureTable((STRING)_TreasureID, (STRING)_TreaseTable, (STRING)_RequirementID, (INTEGER)_UsePartyLevel)
-THEN
-DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreaseTable, _RequirementID, _UsePartyLevel, 1, 1);
-
-PROC
-LLLIB_Treasure_RegisterTreasureTable((STRING)_TreasureID, (STRING)_TreaseTable, (STRING)_RequirementID, (INTEGER)_UsePartyLevel, (INTEGER)_Level)
-THEN
-DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreaseTable, _RequirementID, _UsePartyLevel, _Level, _Level);
-
-PROC
-LLLIB_Treasure_RegisterTreasureTable((STRING)_TreasureID, (STRING)_TreaseTable, (STRING)_RequirementID, (INTEGER)_UsePartyLevel, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
-THEN
-DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreaseTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel);
-
-PROC
-LLLIB_Treasure_AddTreasureItemTemplate((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Amount)
-THEN
-DB_LLLIB_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, "");
-
-PROC
-LLLIB_Treasure_AddTreasureItemTemplate((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Amount, (STRING)_RequirementID)
-THEN
-DB_LLLIB_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID);
-
-PROC
-LLLIB_Treasure_AddTreasureItemStat((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Amount)
-THEN
-DB_LLLIB_Treasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, "");
-
-PROC
-LLLIB_Treasure_AddTreasureItemStat((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Amount, (STRING)_RequirementID)
-THEN
-DB_LLLIB_Treasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID);
-
-/* Generation types:
-MANUAL
-TRADE_GENERATION_START
-TRADE_GENERATION_END
-TRADE_OPENED
-DIALOG_STARTED
-DIALOG_ENDED
-FLAG
-OPENED
-LEVEL_LOADED
-PARTY_LEVELED_UP
-*/
-PROC
-LLLIB_Treasure_Configure_GenerationType((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_GenerationType)
-AND
-NOT DB_LLLIB_Treasure_ItemGenerationType(_TreasureID, _ItemEntry, _GenerationType)
-THEN
-DB_LLLIB_Treasure_ItemGenerationType(_TreasureID, _ItemEntry, _GenerationType);
-
-PROC
-LLLIB_Treasure_Configure_GenerationFlag((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_Flag, (STRING)_FlagType)
-AND
-NOT DB_LLLIB_Treasure_ItemGenerationFlag(_TreasureID, _ItemEntry, _Flag, _FlagType)
-THEN
-LLLIB_Treasure_Configure_GenerationType(_TreasureID, _ItemEntry, "FLAG");
-DB_LLLIB_Treasure_ItemGenerationFlag(_TreasureID, _ItemEntry, _Flag, _FlagType);
-
-PROC
-LLLIB_Treasure_Configure_ItemLevel((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_UsePartyLevel)
-THEN
-LLLIB_Treasure_Configure_ItemLevel(_TreasureID, _ItemEntry, _UsePartyLevel, 1, 1);
-
-PROC
-LLLIB_Treasure_Configure_ItemLevel((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_UsePartyLevel, (INTEGER)_Level)
-THEN
-LLLIB_Treasure_Configure_ItemLevel(_TreasureID, _ItemEntry, _UsePartyLevel, _Level, _Level);
-
-PROC
-LLLIB_Treasure_Configure_ItemLevel((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_UsePartyLevel, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
-AND
-DB_LLLIB_Treasure_ItemGenerationSettings(_TreasureID, _ItemEntry, _PrevVal, _PrevMin, _PrevMax)
-THEN
-NOT DB_LLLIB_Treasure_ItemGenerationSettings(_TreasureID, _ItemEntry, _PrevVal, _PrevMin, _PrevMax);
-DB_LLLIB_Treasure_ItemGenerationSettings(_TreasureID, _ItemEntry, _UsePartyLevel, _MinLevel, _MaxLevel);
-//LeaderLog_Debug("[LLLIB:TreasureSystem] Previous settings for ",_TreasureID,":",_ItemEntry," were overwritten.");
-
-PROC
-LLLIB_Treasure_Configure_ItemLevel((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_UsePartyLevel, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
-AND
-NOT DB_LLLIB_Treasure_ItemGenerationSettings(_TreasureID, _ItemEntry,_,_,_)
-THEN
-DB_LLLIB_Treasure_ItemGenerationSettings(_TreasureID, _ItemEntry, _UsePartyLevel, _MinLevel, _MaxLevel);
-
-PROC
-LLLIB_Treasure_Configure_AddDeltaMod((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_Deltamod, (INTEGER)_Chance)
-THEN
-DB_LLLIB_Treasure_ItemDeltaMods(_TreasureID, _ItemEntry, _Deltamod, _Chance);
-
-PROC
-LLLIB_Treasure_Configure_AddRune((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_Rune, (INTEGER)_Chance)
-THEN
-DB_LLLIB_Treasure_ItemRunes(_TreasureID, _ItemEntry, _Rune, _Chance);
-
-PROC
-LLLIB_Treasure_AddGenerationEvent((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_OnGeneratedEvent)
-THEN
-DB_LLLIB_Treasure_GeneratedEvent(_TreasureID, _ItemEntry, _OnGeneratedEvent);
-
-PROC
-LLLIB_Treasure_GenerateOnce((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_OnCompletionEvent)
-THEN
-DB_LLLIB_Treasure_OnlyOnce(_TreasureID, _ItemEntry, _OnCompletionEvent);
-//END_REGION
-
-//REGION INTERNAL_REGISTERING
-PROC
-LLLIB_Treasure_Configure_GenerationType((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_GenerationType)
-AND
-NOT DB_LLLIB_Treasure_RegisteredGenerationTypes(_GenerationType)
-THEN
-DB_LLLIB_Treasure_RegisteredGenerationTypes(_GenerationType);
 //END_REGION
 
 //REGION GETTERS
@@ -580,7 +443,7 @@ NOT LLLIB_QRY_Treasure_SkipAmountCheck(_Object, _RequirementID)
 AND
 NOT DB_LLLIB_Treasure_StatToTemplate(_ItemEntry, _)
 THEN
-LeaderLog_Debug("[LLLIB:Treasure:GenerateItems] Object is missing stat-based [",_TreasureID,"]:[",_ItemEntry,"] item template. Skipping counting.");
+LeaderLog_Debug("[LLLIB:Treasure:StartItemGeneration] Object is missing stat-based [",_TreasureID,"]:[",_ItemEntry,"] item template. Skipping counting.");
 ObjectSetFlag(_Object, "LLLIB_Treasure_IsGeneratingTreasure", 0);
 DB_LLLIB_Treasure_Temp_GenerateItem(_Object, _ItemEntry, _TreasureID, 0, _Amount, 1);
 
@@ -598,9 +461,10 @@ DB_LLLIB_Treasure_Temp_Queue_CountStat(_Object, _TreasureID, _ItemTemplate, _Ite
 PROC
 LLLIB_Treasure_Internal_StartItemGeneration((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Amount, (STRING)_RequirementID, (INTEGER)_IsStat)
 AND
-LLLIB_QRY_Treasure_CountedItems(_Object)
+LLLIB_QRY_Treasure_CountedItems(_Object, _TreasureID, _ItemEntry)
 THEN
-LLLIB_Treasure_Internal_CountingComplete(_Object);
+//LeaderLog_Debug("[LLLIB:Treasure:StartItemGeneration] Object counting complete [",_TreasureID,"]:[",_ItemEntry,"].");
+LLLIB_Treasure_Internal_CountingComplete(_Object, _TreasureID, _ItemEntry);
 
 IF
 DB_LLLIB_Treasure_Temp_GenerateItem((GUIDSTRING)_Object, (STRING)_ItemEntry, (STRING)_TreasureID, (INTEGER)_CreatedAmount, (INTEGER)_MaxAmount, (INTEGER)_IsStat)
@@ -692,7 +556,7 @@ SetStoryEvent(_Object, "LLLIB_Events_Treasure_GenerationFinished");
 
 //REGION ITEM_AMOUNT_COUNTING
 PROC
-LLLIB_Treasure_Internal_CountingComplete((GUIDSTRING)_Object)
+LLLIB_Treasure_Internal_CountingComplete((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry)
 AND
 DB_LLLIB_Treasure_Temp_Queue_CountTemplate(_Object, _TreasureID, _ItemEntry, _GeneratedAmount, _RequirementID)
 AND
@@ -700,7 +564,7 @@ DB_LLLIB_Treasure_Temp_ItemTemplateAmount(_Object, _TreasureID, _ItemEntry, _Cur
 AND
 LLLIB_QRY_Treasure_Debug_CompareAmounts(_TreasureID, _ItemEntry, _GeneratedAmount, _CurrentAmount)
 AND
-LLLIB_QRY_Treasure_ItemLimitNotMet(_Object, _ItemEntry, _RequirementID, _GeneratedAmount, _CurrentAmount)
+LLLIB_QRY_Treasure_ItemLimitNotMet(_Object, _TreasureID, _ItemEntry, _RequirementID, _GeneratedAmount, _CurrentAmount)
 AND
 DB_LLLIB_Treasure_Temp_AmountToCreate(_Object, _ItemEntry, _AmountToCreate)
 THEN
@@ -712,13 +576,13 @@ NOT DB_LLLIB_Treasure_Temp_ItemTemplateAmount(_Object, _TreasureID, _ItemEntry, 
 NOT DB_LLLIB_Treasure_Temp_Queue_GenerateTemplateItem(_Object, _TreasureID, _ItemEntry, _GeneratedAmount, _RequirementID);
 
 PROC
-LLLIB_Treasure_Internal_CountingComplete((GUIDSTRING)_Object)
+LLLIB_Treasure_Internal_CountingComplete((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry)
 AND
 DB_LLLIB_Treasure_Temp_Queue_CountStat(_Object, _TreasureID, _ItemTemplate, _ItemEntry, _GeneratedAmount, _RequirementID)
 AND
 DB_LLLIB_Treasure_Temp_ItemStatAmount(_Object, _TreasureID, _ItemTemplate, _ItemEntry, _CurrentAmount)
 AND
-LLLIB_QRY_Treasure_ItemLimitNotMet(_Object, _ItemEntry, _RequirementID, _GeneratedAmount, _CurrentAmount)
+LLLIB_QRY_Treasure_ItemLimitNotMet(_Object, _TreasureID, _ItemEntry, _RequirementID, _GeneratedAmount, _CurrentAmount)
 AND
 DB_LLLIB_Treasure_Temp_AmountToCreate(_Object, _ItemEntry, _AmountToCreate)
 THEN
@@ -1146,8 +1010,8 @@ LLLIB_Treasure_Internal_GenerateByFlag(_Flag, "Global");
 IF
 GameStarted(_,_)
 THEN
-//To give some time for other mods to register treasure
-TimerLaunch("LLLIB_Timers_Treasure_LevelLoadedTreasureTimer", 1000);
+//Give some time for other mods to register treasure
+TimerLaunch("LLLIB_Timers_Treasure_LevelLoadedTreasureTimer", 2000);
 
 IF
 TimerFinished("LLLIB_Timers_Treasure_LevelLoadedTreasureTimer")
@@ -1170,6 +1034,12 @@ IF
 CharacterLeveledUp(_Player)
 AND
 CharacterIsPlayer(_Player, 1)
+THEN
+TimerCancel("LLLIB_Timers_Treasure_LevelUpTreasureTimer");
+TimerLaunch("LLLIB_Timers_Treasure_LevelUpTreasureTimer", 1000);
+
+IF
+TimerFinished("LLLIB_Timers_Treasure_LevelUpTreasureTimer")
 AND
 DB_LLLIB_Treasure_RegisteredGenerationTypes("PARTY_LEVELED_UP")
 AND
@@ -1220,10 +1090,10 @@ NOT DB_LLLIB_Treasure_Temp_PartyLeveledUpGenerationTimer(_TimerName, _TreasureID
 IF
 DB_LLLIB_Requirements_JustUnlocked(_RequirementID)
 THEN
-LLLIB_Treasure_Internal_GenerateViaRequirement(_RequirementID);
+LLLIB_Treasure_Internal_GenerateFromRequirement(_RequirementID);
 
 PROC
-LLLIB_Treasure_Internal_GenerateViaRequirement((STRING)_RequirementID)
+LLLIB_Treasure_Internal_GenerateFromRequirement((STRING)_RequirementID)
 AND
 DB_LLLIB_Treasure_RegisteredGenerationTypes("REQUIREMENT_UNLOCKED")
 AND
@@ -1242,7 +1112,7 @@ LLLIB_Treasure_GenerateItems(_Object, _TreasureID, "REQUIREMENT_UNLOCKED");
 NOT DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
 
 PROC
-LLLIB_Treasure_Internal_GenerateViaRequirement((STRING)_RequirementID)
+LLLIB_Treasure_Internal_GenerateFromRequirement((STRING)_RequirementID)
 AND
 DB_LLLIB_Treasure_Temp_MatchedRequirementTreasure(_TreasureID, _RequirementID)
 THEN
@@ -1294,6 +1164,7 @@ ObjectClearFlag(_Object, "LLLIB_Treasure_GenerationSuccessful");
 //END_REGION
 
 //REGION DEBUG
+/*
 QRY
 LLLIB_QRY_Treasure_Debug_CompareAmounts((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_GeneratedAmount, (INTEGER)_CurrentAmount)
 AND
@@ -1302,6 +1173,12 @@ AND
 IntegertoString(_CurrentAmount, _CurStr)
 THEN
 LeaderLog_Debug("[LLLIB:Treasure:Debug] Comparing item amounts for [",_TreasureID,":",_ItemEntry,"] - ",_CurStr,"/",_GenStr);
+*/
+
+QRY
+LLLIB_QRY_Treasure_Debug_CompareAmounts((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_GeneratedAmount, (INTEGER)_CurrentAmount)
+THEN
+DB_NOOP(1);
 
 PROC
 LLLIB_Treasure_CountItems((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_GeneratedAmount, (STRING)_RequirementID, (INTEGER)_IsStat)

@@ -96,7 +96,7 @@ THEN
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_ModSettings_MenusPerPage", 1);
 DB_LLLIB_ModSettings_MenusPerPage(8);
 
-LLLIB_ModSettings_RegisterModMenu("LLLIB", "[LeaderLib] Settings", "LLLIB_SettingsMenu");
+LLLIB_ModSettings_RegisterModMenu("LaughingLeader_LeaderLib", "[LeaderLib] Settings", "LLLIB_SettingsMenu");
 
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_ModSettings_DynamicMenuVars", 4);
 DB_LLLIB_ModSettings_DynamicMenuVars(0, "LLLIB_ModSettings_Menu1_783ec14d-2861-4345-8dbc-45974fa34e15", "LLLIB_ModSettings_SelectedMenu1", "LLLIB_ModSettings_MenuEmpty1");

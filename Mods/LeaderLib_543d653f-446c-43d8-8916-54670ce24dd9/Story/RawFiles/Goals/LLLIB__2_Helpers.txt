@@ -158,6 +158,27 @@ _Level > _HighestLevel
 THEN
 NOT DB_LLLIB_Helper_Temp_HighestLevelInParty(_HighestLevel);
 DB_LLLIB_Helper_Temp_HighestLevelInParty(_Level);
+
+QRY
+LLLIB_Helper_QRY_GetHighestLevelCharacterInParty()
+AND
+DB_LLLIB_Helper_Temp_HighestLevelCharacterInParty(_Player, _Level)
+THEN
+NOT DB_LLLIB_Helper_Temp_HighestLevelCharacterInParty(_Player, _Level);
+
+QRY
+LLLIB_Helper_QRY_GetHighestLevelCharacterInParty()
+AND
+LLLIB_Helper_QRY_GetHighestLevelInParty()
+AND
+DB_LLLIB_Helper_Temp_HighestLevelInParty(_Level)
+AND
+DB_IsPlayer(_Player)
+AND
+CharacterGetLevel(_Player, _Level)
+THEN
+NOT DB_LLLIB_Helper_Temp_HighestLevelInParty(_Level);
+DB_LLLIB_Helper_Temp_HighestLevelCharacterInParty(_Player, _Level);
 //END_REGION
 
 //REGION PARTY_LEVELRANGE_STRICT

@@ -19,7 +19,6 @@ INITSECTION
 //Ref
 //DB_LLLIB_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel)
 //DB_LLLIB_Requirements_Flag(_RequirementID, _Flag, _FlagType, _FlagVal)
-//DB_LLLIB_Requirements_MaxItemAmount(_RequirementID, _MaxAmount)
 
 //DB_LLLIB_Traders_Temp_DialogFound(_TraderID)
 KBSECTION
@@ -92,6 +91,7 @@ LLLIB_Trader_Register_Position((STRING)_TraderID, (STRING)_Level, (REAL)_x, (REA
 AND
 NOT DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _,_,_)
 THEN
+LLLIB_Trader_Register_Level(_TraderID, _Level);
 DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z);
 
 PROC
@@ -99,6 +99,7 @@ LLLIB_Trader_Register_PositionTrigger((STRING)_TraderID, (STRING)_Level, (TRIGGE
 AND
 NOT DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _)
 THEN
+LLLIB_Trader_Register_Level(_TraderID, _Level);
 DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger);
 
 PROC
@@ -106,6 +107,7 @@ LLLIB_Trader_Register_PositionObject((STRING)_TraderID, (STRING)_Level, (GUIDSTR
 AND
 NOT DB_LLLIB_Traders_LevelPositionObject(_TraderID, _Level, _)
 THEN
+LLLIB_Trader_Register_Level(_TraderID, _Level);
 DB_LLLIB_Traders_LevelPositionObject(_TraderID, _Level, _Object);
 
 PROC
@@ -347,8 +349,6 @@ LLLIB_Traders_CreateTraders((STRING)_Level)
 AND
 DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID)
 AND
-LLLIB_QRY_Traders_Debug_TraceRequirement(_TraderID, _Level, _RequirementID)
-AND
 LLLIB_QRY_Requirements_AllMet(_RequirementID)
 THEN
 LLLIB_Traders_CreateTrader(_TraderID, _Level);
@@ -432,6 +432,7 @@ THEN
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
 SetStoryEvent(_Trader, "LLLIB_Events_TraderCreated");
 
+/*
 PROC
 LLLIB_Traders_TeleportToPosition((STRING)_TraderID, (STRING)_Level, (CHARACTERGUID)_Trader)
 AND
@@ -450,6 +451,7 @@ AND
 IntegertoString(_zint, _zpos)
 THEN
 LeaderLog_Debug("[LLLIB:Traders] Global trader [",_TraderID,"] pre-tp position is ",_xpos,",",_ypos,",",_zpos);
+*/
 
 PROC
 LLLIB_Traders_TeleportToPosition((STRING)_TraderID, (STRING)_Level, (CHARACTERGUID)_Trader)
@@ -458,7 +460,7 @@ NOT DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
 AND
 DB_LLLIB_Traders_LevelPositionObject(_TraderID, _Level, _Object)
 THEN
-DB_LLLIB_Debug_TraceEvent(_TraderID, "LLLIB_Events_TraderTeleported", "object");
+//DB_LLLIB_Debug_TraceEvent(_TraderID, "LLLIB_Events_TraderTeleported", "object");
 TeleportTo(_Trader, _Object, "LLLIB_Events_TraderTeleported", 0);
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
 
@@ -471,7 +473,7 @@ DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger)
 //AND
 //GetPosition(_Trigger,_x,_y,_z)
 THEN
-DB_LLLIB_Debug_TraceEvent(_TraderID, "LLLIB_Events_TraderTeleported", "trigger");
+//DB_LLLIB_Debug_TraceEvent(_TraderID, "LLLIB_Events_TraderTeleported", "trigger");
 TeleportTo(_Trader, _Trigger, "LLLIB_Events_TraderTeleported", 0);
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
 
@@ -482,7 +484,10 @@ NOT DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
 AND
 DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z)
 THEN
-DB_LLLIB_Debug_TraceEvent(_TraderID, "LLLIB_Events_TraderTeleported", "position");
+//DB_LLLIB_Debug_TraceEvent(_TraderID, "LLLIB_Events_TraderTeleported", "position");
+//Workaround for global characters not showing up after teleporting to a position
+TeleportToPosition(ITEMGUID_S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, 0.0, 0.0, 0.0, "", 0);
+TeleportTo(_Trader, ITEMGUID_S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, "", 0);
 TeleportToPosition(_Trader, _x,_y,_z, "LLLIB_Events_TraderTeleported", 0);
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
 
@@ -563,7 +568,18 @@ THEN
 //ItemTemplateAddTo("LLLIB_Dummy_InventoryInit_a76d007d-48d7-4aa6-b741-7b9fcd125de3", _Trader, 1);
 SetVisible(_Trader, 1);
 SetOnStage(_Trader, 1);
-SetStoryEvent(_Trader, "LLLIB_Treasure_GenerateNow");
+LLLIB_Traders_Internal_GenerateInitialTradeTreasure(_Trader); // Generate via DOS2's trade treasure system
+ObjectSetFlag(_Trader, "LLLIB_Treasure_GenerateNow", 0); // Generate via the scripted treasure system
+
+PROC
+LLLIB_Traders_Internal_GenerateInitialTradeTreasure((CHARACTERGUID)_Trader)
+AND
+LLLIB_Helper_QRY_GetHighestLevelCharacterInParty()
+AND
+DB_LLLIB_Helper_Temp_HighestLevelCharacterInParty(_Player, _Level)
+THEN
+GenerateItems(_Player, _Trader);
+NOT DB_LLLIB_Helper_Temp_HighestLevelCharacterInParty(_Player, _Level);
 
 IF
 ItemAddedToCharacter(_Item, _Trader)
@@ -646,10 +662,10 @@ LLLIB_Traders_CreateTrader(_TraderID, _Level);
 
 //REGION SPAWN_TRIGGER
 IF
-GameStarted(_,_)
+StoryEvent(_, "LeaderLib_Initialized")
 THEN
-LeaderLog_Debug("[LLLIB:Traders] Starting create traders timer. ");
-TimerLaunch("LLLIB_Timers_CreateTraders", 1000);
+LeaderLog_Debug("[LLLIB:Traders] Starting trader spawn timer. ");
+TimerLaunch("LLLIB_Timers_CreateTraders", 2000);
 
 IF
 TimerFinished("LLLIB_Timers_CreateTraders")

@@ -42,6 +42,19 @@ THEN
 LeaderUpdater_UnregisterMod(_ModName, _Author);
 
 //END_REGION
+
+//REGION API_EVENTS
+IF
+GameStarted(_,_)
+THEN
+TimerLaunch("LLLIB_Timers_LeaderLibInitialized", 1);
+
+IF
+TimerFinished("LLLIB_Timers_LeaderLibInitialized")
+THEN
+LeaderLog_Debug("[LLLIB:LeaderUpdater] LeaderLib initialized.");
+LLLIB_Events_SendEvent("LeaderLib_Initialized");
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

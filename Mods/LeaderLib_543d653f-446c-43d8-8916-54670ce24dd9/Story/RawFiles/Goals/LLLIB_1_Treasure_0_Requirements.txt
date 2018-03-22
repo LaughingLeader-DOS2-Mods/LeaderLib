@@ -9,6 +9,29 @@ INITSECTION
 //Dynamic
 //DB_LLLIB_Requirements_IsUnlocked(_RequirementID)
 KBSECTION
+//REGION UPDATING
+PROC
+LLLIB_System_UpdateDatabases()
+THEN
+LeaderLog_Debug("[LLLIB:Requirements] Databases updated.");
+
+PROC
+LLLIB_System_ClearDatabases()
+THEN
+SysClear("DB_LLLIB_Requirements_PartyLevel", 4);
+SysClear("DB_LLLIB_Requirements_Flag", 4);
+SysClear("DB_LLLIB_Requirements_MaxItemAmount", 2);
+SysClear("DB_LLLIB_Requirements_IsUnlocked", 1);
+LeaderLog_Debug("[LLLIB:Requirements] Databases cleared.");
+
+PROC
+LLLIB_Updater_ResetDatabases()
+THEN
+LLLIB_System_ClearDatabases();
+LLLIB_System_UpdateDatabases();
+LeaderLog_Debug("[LLLIB:Requirements] Databases cleared and re-initialized.");
+//END_REGION
+
 //REGION REGISTERING
 PROC
 LLLIB_Requirements_AddFlagRequirement((STRING)_RequirementID, (STRING)_Flag, (STRING)_FlagType)
@@ -164,7 +187,28 @@ DB_NOOP(1);
 PROC
 LLLIB_Requirements_RequirementUnlocked((STRING)_RequirementID)
 THEN
-LeaderLog_Debug("[LLLIB:Requirements] Requirement[",_RequirementID,"] unlocked.");
+LeaderLog_Debug("[LLLIB:Requirements] Requirement [",_RequirementID,"] unlocked.");
+
+PROC
+LLLIB_Requirements_RequirementUnlocked((STRING)_RequirementID)
+AND
+_RequirementID != ""
+AND
+NOT DB_LLLIB_Requirements_JustUnlocked(_RequirementID)
+AND
+StringConcatenate("LLLIB_Timers_Requirements_RemoveJustUnlocked_", _RequirementID, _TimerName)
+THEN
+DB_LLLIB_Requirements_JustUnlocked(_RequirementID);
+DB_LLLIB_Requirements_Temp_RemoveJustUnlocked(_TimerName, _RequirementID);
+TimerLaunch(_TimerName, 1000);
+
+IF
+TimerFinished(_TimerName)
+AND
+DB_LLLIB_Requirements_Temp_RemoveJustUnlocked(_TimerName, _RequirementID)
+THEN
+NOT DB_LLLIB_Requirements_JustUnlocked(_RequirementID);
+NOT DB_LLLIB_Requirements_Temp_RemoveJustUnlocked(_TimerName, _RequirementID);
 
 PROC
 LLLIB_Requirements_RequirementLocked((STRING)_RequirementID)

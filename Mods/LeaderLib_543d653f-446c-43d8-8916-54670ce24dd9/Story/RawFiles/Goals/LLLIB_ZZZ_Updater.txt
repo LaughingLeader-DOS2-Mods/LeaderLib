@@ -3,7 +3,7 @@ SubGoalCombiner SGC_AND
 INITSECTION
 LeaderUpdater_RegisterMod("LeaderLib", "0.1.0.0", "LaughingLeader");
 KBSECTION
-//REGION LLLIB_UPDATING
+//REGION UPDATING
 PROC
 LLLIB_System_UpdateDatabases()
 THEN

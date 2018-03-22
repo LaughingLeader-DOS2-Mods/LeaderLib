@@ -9,7 +9,7 @@ VARS
 	CHARACTER:_Target
 	FIXEDSTRING:_TableName
 ON
-	OnCharacterEvent(_Target, "LLLIB_Treasure_AddTreasureTable")
+	OnCharacterEvent(_Target, "LLLIB_Events_Treasure_AddTreasureTable")
 ACTIONS
 IF "c1"
 	GetVar(_TableName, _Target, "LLLIB_Treasure_TreasureTableToAdd")
@@ -22,10 +22,10 @@ VARS
 	CHARACTER:_Target
 	FIXEDSTRING:_TableName
 ON
-	OnCharacterEvent(_Target, "LLLIB_Treasure_AddTreasureTable")
+	OnCharacterEvent(_Target, "LLLIB_Events_Treasure_RemoveTreasureTables")
 ACTIONS
 IF "c1"
-	GetVar(_TableName, _Target, "LLLIB_Treasure_TreasureTableToAdd")
+	GetVar(_TableName, _Target, "LLLIB_Treasure_TreasureTableToRemove")
 THEN
 	CharacterRemoveTreasureTable(_Target, _TableName)
 ENDIF
@@ -35,7 +35,7 @@ VARS
 	CHARACTER:_Target
 	FIXEDSTRING:_TableName
 ON
-	OnCharacterEvent(_Target, "LLLIB_Treasure_ClearTreasureTables")
+	OnCharacterEvent(_Target, "LLLIB_Events_Treasure_ClearTreasureTables")
 ACTIONS
 	CharacterClearTreasureTables(_Target)
 	

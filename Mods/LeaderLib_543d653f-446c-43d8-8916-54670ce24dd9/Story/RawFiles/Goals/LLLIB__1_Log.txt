@@ -416,6 +416,16 @@ LeaderLog_QRY_Debug((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, 
 THEN
 LeaderLog_Debug(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8);
 
+QRY
+LeaderLog_QRY_Debug((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9)
+THEN
+LeaderLog_Debug(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _Str9);
+
+QRY
+LeaderLog_QRY_Debug((STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10)
+THEN
+LeaderLog_Debug(_Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _Str9, _Str10);
+
 PROC
 LeaderLog_Debug((STRING)_Str1)
 THEN
@@ -471,7 +481,7 @@ AND
 DB_LeaderLog_Temp_CombinedString("LeaderLog_Debug", _CombinedStr)
 THEN
 DebugBreak(_CombinedStr);
-LeaderLog_ClearCombinedString("LeaderLog_Debug");
+NOT DB_LeaderLog_Temp_CombinedString("LeaderLog_Debug", _CombinedStr);
 //END_REGION
 
 //REGION STATUS_TEXT

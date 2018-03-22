@@ -7,7 +7,7 @@ EVENT GenerateItemByStat
 VARS
 	FIXEDSTRING:_StatName
 ON
-	OnCharacterEvent(__Me, "LLLIB_Treasure_GenerateByStat")
+	OnCharacterEvent(__Me, "LLLIB_Events_Treasure_GenerateByStat")
 ACTIONS
 IF "c1"
 	GetVar(_StatName, __Me, "LLLIB_Treasure_ItemStat")

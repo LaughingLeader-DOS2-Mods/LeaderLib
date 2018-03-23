@@ -58,10 +58,10 @@ THEN
 LeaderUpdater_ClearModActiveGoals(_ModName, _Author);
 
 IF
-DB_LeaderLib_ModBridge_RegisterMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog)
+DB_LeaderLib_ModBridge_RegisterMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModName, (STRING)_Author)
 THEN
-LeaderLib_RegisterModMenu(_ID, _DisplayName, _Dialog);
-NOT DB_LeaderLib_ModBridge_RegisterMenu(_ID, _DisplayName, _Dialog);
+LeaderLib_RegisterModMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
+NOT DB_LeaderLib_ModBridge_RegisterMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
 //END_REGION
 
 //REGION LOGGING
@@ -182,10 +182,10 @@ SysClear("DB_LeaderLib_ModBridge_Log", 11);
 PROC
 LLLIB_ModBridge_RunCleanup()
 AND
-DB_LeaderLib_ModBridge_RegisterMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog)
+DB_LeaderLib_ModBridge_RegisterMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModName, (STRING)_Author)
 THEN
-LeaderLib_RegisterModMenu(_ID, _DisplayName, _Dialog);
-NOT DB_LeaderLib_ModBridge_RegisterMenu(_ID, _DisplayName, _Dialog);
+LeaderLib_RegisterModMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
+NOT DB_LeaderLib_ModBridge_RegisterMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
 
 PROC
 LLLIB_ModBridge_RunCleanup()

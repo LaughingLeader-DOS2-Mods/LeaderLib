@@ -9,6 +9,7 @@ LLLIB_Settings_InitSettings();
 
 //DB_LLLIB_Settings_Temp_IteratorCreator(_CurrentInt, _MaxInt)
 //DB_LLLIB_Settings_Temp_RegisteredModsList(_Instance, _Str)
+//DB_LLLIB_Settings_Temp_ActiveModsList(_Instance, _Str)
 KBSECTION
 //REGION SETTINGS
 PROC
@@ -25,6 +26,7 @@ DB_LLLIB_Settings_DialogVariables("PlayerName", "LLLIB_PlayerName_6c5b9559-53e3-
 DB_LLLIB_Settings_DialogVariables("SpeakerName", "LLLIB_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b");
 DB_LLLIB_Settings_DialogVariables("ModSettings_PageInfo", "LLLIB_ModSettings_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156");
 DB_LLLIB_Settings_DialogVariables("RegisteredMods", "LLLIB_Settings_RegisteredMods_50c55fbe-ad1e-490e-92d1-8836ca42ca12");
+DB_LLLIB_Settings_DialogVariables("ActiveMods", "LLLIB_Settings_ActiveMods_4099e5fd-da72-464b-9e9e-9bc30a1b994d");
 
 PROC
 LLLIB_Settings_InitEquipmentSlots()
@@ -85,7 +87,7 @@ DB_NOOP(1);
 //LeaderLog_Log("DEBUG", "[LLLIB:Settings] Databases cleared and re-initialized.");
 //END_REGION
 
-//REGION REGISTERED_MODS
+//REGION MOD_DATA
 IF
 ObjectFlagSet("LLLIB_Settings_ListRegisteredMods", _Player, _Instance)
 AND
@@ -128,6 +130,51 @@ DB_LLLIB_Settings_Temp_RegisteredModsList(_Instance, _Str)
 THEN
 DialogSetVariableStringForInstance(_Instance, _DialogVar, _Str);
 NOT DB_LLLIB_Settings_Temp_RegisteredModsList(_Instance, _Str);
+
+IF
+ObjectFlagSet("LLLIB_Settings_ListActiveMods", _Player, _Instance)
+AND
+LLLIB_Helper_QRY_ClearObjectFlag(_Player, "LLLIB_Settings_ListActiveMods")
+THEN
+LLLIB_Settings_ListActiveMods(_Instance);
+
+PROC
+LLLIB_Settings_ListActiveMods((INTEGER)_Instance)
+AND
+NOT DB_LLLIB_Settings_Temp_ActiveModsList(_Instance, _)
+THEN
+DB_LLLIB_Settings_Temp_ActiveModsList(_Instance, "");
+
+PROC
+LLLIB_Settings_ListActiveMods((INTEGER)_Instance)
+AND
+DB_Mods_RegisteredMod(_ModName, _Version, _Author)
+AND
+LeaderUpdater_QRY_ModIsActive(_ModName, _Author)
+AND
+DB_LLLIB_Settings_Temp_ActiveModsList(_Instance, _Str)
+AND
+StringConcatenate("<b>", _ModName, _NameStr1)
+AND
+StringConcatenate(_NameStr1, "</b>", _NameStr2)
+AND
+LeaderLog_QRY_Log("COMBINE", _Str, _NameStr2, " (", _Version, ") by ",_Author, "<br>")
+AND
+DB_LeaderLog_Temp_CombinedString(_CombinedStr)
+THEN
+NOT DB_LLLIB_Settings_Temp_ActiveModsList(_Instance, _Str);
+DB_LLLIB_Settings_Temp_ActiveModsList(_Instance, _CombinedStr);
+NOT DB_LeaderLog_Temp_CombinedString(_CombinedStr);
+
+PROC
+LLLIB_Settings_ListActiveMods((INTEGER)_Instance)
+AND
+DB_LLLIB_Settings_DialogVariables("ActiveMods", _DialogVar)
+AND
+DB_LLLIB_Settings_Temp_ActiveModsList(_Instance, _Str)
+THEN
+DialogSetVariableStringForInstance(_Instance, _DialogVar, _Str);
+NOT DB_LLLIB_Settings_Temp_ActiveModsList(_Instance, _Str);
 //END_REGION
 
 //REGION SETTINGS_MENU

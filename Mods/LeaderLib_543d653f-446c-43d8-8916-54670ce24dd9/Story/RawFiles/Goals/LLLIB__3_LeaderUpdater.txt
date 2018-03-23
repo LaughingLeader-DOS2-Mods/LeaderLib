@@ -55,7 +55,7 @@ THEN
 DB_NOOP(1);
 
 QRY
-LeaderUpdater_QRY_ModIsRunning((STRING)_ModName, (STRING)_Author)
+LeaderUpdater_QRY_ModIsActive((STRING)_ModName, (STRING)_Author)
 AND
 DB_Mods_RegisteredMod(_ModName, _Version, _Author)
 AND

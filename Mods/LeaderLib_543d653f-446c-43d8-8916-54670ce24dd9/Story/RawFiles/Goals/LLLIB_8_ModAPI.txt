@@ -1,8 +1,26 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
+//DB_LeaderLib_ModBridge_RegisterMenu(_ID, _DisplayName, _Dialog)
+//DB_LeaderLib_ModBridge_AddItemToLeaderTrader(_Template, _Amount)
+//DB_LeaderLib_ModBridge_AddBookToLeaderTrader(_Template, _Amount)
+//DB_LeaderLib_ModBridge_SendEvent(_EventName)
+//DB_LeaderLib_ModBridge_RegisterMod(_ModName, _Version, _Author)
 
+//DB_LeaderLib_ModBridge_Log_SetTarget(_Target)
+//DB_LeaderLib_ModBridge_Log_ClearTarget(_Target)
+//DB_LeaderLib_ModBridge_Log(_Type, _Str1)
+//DB_LeaderLib_ModBridge_Log(_Type, _Str1, _Str2)
+//DB_LeaderLib_ModBridge_Log(_Type, _Str1, _Str2, _Str3)
+//DB_LeaderLib_ModBridge_Log(_Type, _Str1, _Str2, _Str3, _Str4)
+//DB_LeaderLib_ModBridge_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5)
+//DB_LeaderLib_ModBridge_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6)
+//DB_LeaderLib_ModBridge_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7)
+//DB_LeaderLib_ModBridge_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8)
+//DB_LeaderLib_ModBridge_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _Str9)
+//DB_LeaderLib_ModBridge_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _Str9, _Str10)
 KBSECTION
+//REGION DB_INTERACTIONS
 IF
 DB_LeaderLib_ModBridge_RegisterMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog)
 THEN
@@ -26,6 +44,15 @@ DB_LeaderLib_ModBridge_SendEvent((STRING)_EventName)
 THEN
 LLLIB_EventParser_Internal_RunEvent(_EventName);
 NOT DB_LeaderLib_ModBridge_SendEvent(_EventName);
+//END_REGION
+
+//REGION REGISTERING
+IF
+DB_LeaderLib_ModBridge_RegisterMod((STRING)_ModName, (STRING)_Version, (STRING)_Author)
+THEN
+LeaderUpdater_RegisterMod(_ModName, _Version, _Author);
+NOT DB_LeaderLib_ModBridge_RegisterMod(_ModName, _Version, _Author);
+//END_REGION
 
 //REGION LOGGING
 IF
@@ -106,12 +133,81 @@ IF
 GameStarted(_,_)
 THEN
 TimerLaunch("LLLIB_Timers_LeaderLibInitialized", 1);
+TimerLaunch("LLLIB_Timers_LeaderLib_ModBridgeCleanup", 500);
 
 IF
 TimerFinished("LLLIB_Timers_LeaderLibInitialized")
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:LeaderUpdater] LeaderLib initialized.");
+LeaderLog_Log("DEBUG", "[LLLIB:ModAPI] LeaderLib initialized.");
 LLLIB_Events_SendEvent("LeaderLib_Initialized");
+//END_REGION
+
+//REGION CLEANUP
+/* In the event that any of these databases were set without LeaderLib installed, run through them again. */
+IF
+TimerFinished("LLLIB_Timers_LeaderLib_ModBridgeCleanup")
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:ModAPI] Cleaning ModBridge.");
+LLLIB_ModBridge_RunCleanup();
+
+PROC
+LLLIB_ModBridge_RunCleanup()
+THEN
+//Clear logs that are still remaining
+SysClear("DB_LeaderLib_ModBridge_Log_SetTarget", 1);
+SysClear("DB_LeaderLib_ModBridge_Log_ClearTarget", 1);
+SysClear("DB_LeaderLib_ModBridge_Log", 2);
+SysClear("DB_LeaderLib_ModBridge_Log", 3);
+SysClear("DB_LeaderLib_ModBridge_Log", 4);
+SysClear("DB_LeaderLib_ModBridge_Log", 5);
+SysClear("DB_LeaderLib_ModBridge_Log", 6);
+SysClear("DB_LeaderLib_ModBridge_Log", 7);
+SysClear("DB_LeaderLib_ModBridge_Log", 8);
+SysClear("DB_LeaderLib_ModBridge_Log", 9);
+SysClear("DB_LeaderLib_ModBridge_Log", 10);
+SysClear("DB_LeaderLib_ModBridge_Log", 11);
+
+
+//Parse databases that were set before LeaderLib was loaded.
+PROC
+LLLIB_ModBridge_RunCleanup()
+AND
+DB_LeaderLib_ModBridge_RegisterMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog)
+THEN
+LLLIB_ModSettings_RegisterModMenu(_ID, _DisplayName, _Dialog);
+NOT DB_LeaderLib_ModBridge_RegisterMenu(_ID, _DisplayName, _Dialog);
+
+PROC
+LLLIB_ModBridge_RunCleanup()
+AND
+DB_LeaderLib_ModBridge_AddItemToLeaderTrader((STRING)_Template, (INTEGER)_Amount)
+THEN
+LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModItems", _Template, _Amount);
+NOT DB_LeaderLib_ModBridge_AddItemToLeaderTrader(_Template, _Amount);
+
+PROC
+LLLIB_ModBridge_RunCleanup()
+AND
+DB_LeaderLib_ModBridge_RegisterMod((STRING)_ModName, (STRING)_Version, (STRING)_Author)
+THEN
+LeaderUpdater_RegisterMod(_ModName, _Version, _Author);
+NOT DB_LeaderLib_ModBridge_RegisterMod(_ModName, _Version, _Author);
+
+PROC
+LLLIB_ModBridge_RunCleanup()
+AND
+DB_LeaderLib_ModBridge_AddBookToLeaderTrader((STRING)_Template, (INTEGER)_Amount)
+THEN
+LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModBooks", _Template, _Amount);
+NOT DB_LeaderLib_ModBridge_AddBookToLeaderTrader(_Template, _Amount);
+
+PROC
+LLLIB_ModBridge_RunCleanup()
+AND
+DB_LeaderLib_ModBridge_SendEvent((STRING)_EventName)
+THEN
+LLLIB_EventParser_Internal_RunEvent(_EventName);
+NOT DB_LeaderLib_ModBridge_SendEvent(_EventName);
 //END_REGION
 EXITSECTION
 

@@ -30,13 +30,13 @@ PROC
 LLLIB_System_UpdateDatabases()
 THEN
 LLLIB_Dialog_InitSettings();
-LeaderLog_Debug("[LLLIB:Dialog] Databases updated.");
+LeaderLog_Log("DEBUG", "[LLLIB:Dialog] Databases updated.");
 
 PROC
 LLLIB_System_ClearDatabases()
 THEN
 SysClear("DB_LLLIB_DialogNames", 1);
-LeaderLog_Debug("[LLLIB:Dialog] Databases cleared.");
+LeaderLog_Log("DEBUG", "[LLLIB:Dialog] Databases cleared.");
 //END_REGION
 
 //REGION GENERAL_DIALOGVARS_AUTOSET

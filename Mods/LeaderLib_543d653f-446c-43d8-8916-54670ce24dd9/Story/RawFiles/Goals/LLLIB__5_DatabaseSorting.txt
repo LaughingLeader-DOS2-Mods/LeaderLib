@@ -27,12 +27,12 @@ PROC
 LLLIB_System_UpdateDatabases()
 THEN
 LLLIB_Sorter_InitSettings();
-LeaderLog_Debug("[LLLIB:Sorter] Databases updated.");
+LeaderLog_Log("DEBUG", "[LLLIB:Sorter] Databases updated.");
 
 PROC
 LLLIB_System_ClearDatabases()
 THEN
-LeaderLog_Debug("[LLLIB:Sorter] Databases cleared.");
+LeaderLog_Log("DEBUG", "[LLLIB:Sorter] Databases cleared.");
 
 PROC
 LLLIB_Updater_ResetDatabases()
@@ -173,7 +173,7 @@ DB_LLLIB_Sorter_Temp_StringBackup(_ID, _Str)
 AND
 NOT DB_LLLIB_Sorter_FinalSorted(_, _ID, _Str)
 THEN
-LeaderLog_Debug("[LLLIB:Sorter][ERROR] string [",_ID,"] = '",_Str,"' returned unsorted. Adding back in at the end.");
+LeaderLog_Log("DEBUG", "[LLLIB:Sorter][ERROR] string [",_ID,"] = '",_Str,"' returned unsorted. Adding back in at the end.");
 LLLIB_Sorter_FinalizeString(_ID, _Str);
 NOT DB_LLLIB_Sorter_Temp_StringBackup(_ID, _Str);
 
@@ -225,7 +225,7 @@ AND
 SysCount("DB_LLLIB_Sorter_FinalSorted", 3, _Index)
 THEN
 DB_LLLIB_Sorter_FinalSorted(_Index, _ID, _Str);
-LeaderLog_Debug("[LLLIB:Sorter] Finished sorting string [",_ID,"] = '",_Str,"'");
+LeaderLog_Log("DEBUG", "[LLLIB:Sorter] Finished sorting string [",_ID,"] = '",_Str,"'");
 //END_REGION
 
 //REGION SORTING
@@ -242,7 +242,7 @@ _Total == 1
 AND
 DB_LLLIB_Sorter_Temp_StringQueue(_Char, _ID, _Str, _FirstCharIndex)
 THEN
-//LeaderLog_Debug("[LLLIB:Sorter] Char[",_Char,"] only has 1 entry. Finalizing.");
+//LeaderLog_Log("DEBUG", "[LLLIB:Sorter] Char[",_Char,"] only has 1 entry. Finalizing.");
 NOT DB_LLLIB_Sorter_Temp_StringQueue(_Char, _ID, _Str, _FirstCharIndex);
 LLLIB_Sorter_FinalizeString(_ID, _Str);
 
@@ -257,7 +257,7 @@ DB_LLLIB_Sorter_Temp_StringCharCount(_Char, _Total)
 AND
 _Total > 1
 AND
-LeaderLog_QRY_Debug("[LLLIB:Sorter] Char[",_Char,"] has multiple entries. Sorting.")
+LeaderLog_QRY_Log("DEBUG", "[LLLIB:Sorter] Char[",_Char,"] has multiple entries. Sorting.")
 THEN
 LLLIB_Sorter_SortStringsForChar(_Char);
 
@@ -353,7 +353,7 @@ StringSub(_Str, _CheckIndex, 1, _SubStr)
 AND
 _CheckChar == _SubStr
 THEN
-//LeaderLog_Debug("[LLLIB:Sorter] Match in Char[",_ParentChar,"] for [",_CheckChar,"] in substring '",_SubStr,"' for '",_Str,"'");
+//LeaderLog_Log("DEBUG", "[LLLIB:Sorter] Match in Char[",_ParentChar,"] for [",_CheckChar,"] in substring '",_SubStr,"' for '",_Str,"'");
 NOT DB_LLLIB_Sorter_Temp_StringQueue(_ParentChar, _ID, _Str, _StartCheckIndex);
 DB_LLLIB_Sorter_Temp_StringQueue(_ParentChar, _ID, _Str, _CheckIndex);
 DB_LLLIB_Sorter_Temp_CharIterator_MatchedStrings(_ParentChar, _ID, _CheckChar, _CheckIndex);
@@ -379,7 +379,7 @@ LLLIB_Sorter_Internal_IterateChar((STRING)_ParentChar, (STRING)_Group)
 AND
 LLLIB_QRY_Sorter_ShouldProcess(_ParentChar)
 THEN
-//LeaderLog_Debug("[LLLIB:Sorter] Processing matches for Char[",_ParentChar,"]");
+//LeaderLog_Log("DEBUG", "[LLLIB:Sorter] Processing matches for Char[",_ParentChar,"]");
 LLLIB_Sorter_Internal_ProcessMatches(_ParentChar);
 
 PROC
@@ -397,7 +397,7 @@ IntegertoString(_Total, _TotalStr)
 AND
 IntegertoString(_CheckIndex, _CheckIndexStr)
 THEN
-//LeaderLog_Debug("[LLLIB:Sorter] [",_TotalStr,"] total matches for Char[",_ParentChar,"][",_CheckChar,"][",_CheckIndexStr,"]");
+//LeaderLog_Log("DEBUG", "[LLLIB:Sorter] [",_TotalStr,"] total matches for Char[",_ParentChar,"][",_CheckChar,"][",_CheckIndexStr,"]");
 LLLIB_Sorter_Internal_ProcessMatchTotal(_ParentChar, _CheckChar, _Total, _CheckIndex);
 NOT DB_LLLIB_Sorter_Temp_StringCharMatchCount(_ParentChar, _CheckChar, _CheckIndex, _Total);
 
@@ -441,7 +441,7 @@ NOT DB_LLLIB_Sorter_Temp_LastString(_ParentChar, _ID, _CheckChar, _CheckIndex, _
 NOT DB_LLLIB_Sorter_Temp_LastString(_ParentChar, _OtherID, _CheckChar, _CheckIndex, _OtherStr);
 NOT DB_LLLIB_Sorter_Temp_StringQueue(_ParentChar, _ID, _Str, _FirstCharIndex);
 NOT DB_LLLIB_Sorter_Temp_StringQueue(_ParentChar, _OtherID, _OtherStr, _FirstCharIndex);
-LeaderLog_Debug("[LLLIB:Sorter] [DUPLICATES] [",_ID,"] and [",_OtherID,"] have the same string value of '",_Str,"'. Finalizing.");
+LeaderLog_Log("DEBUG", "[LLLIB:Sorter] [DUPLICATES] [",_ID,"] and [",_OtherID,"] have the same string value of '",_Str,"'. Finalizing.");
 LLLIB_Sorter_FinalizeString(_ID, _Str);
 LLLIB_Sorter_FinalizeString(_OtherID, _OtherStr);
 
@@ -469,7 +469,7 @@ StringConcatenate(_Str1, _RanStr, _Group)
 THEN
 LLLIB_Sorter_Internal_SetSortGroup(_ParentChar, _CheckChar, _CheckIndex, _Group);
 NOT DB_LLLIB_Sorter_Temp_CharIterator_CheckSubGroup(_ParentChar, _CheckChar, _CheckIndex);
-//LeaderLog_Debug("[LLLIB:Sorter] Continuing iteration for Char[",_ParentChar,"]");
+//LeaderLog_Log("DEBUG", "[LLLIB:Sorter] Continuing iteration for Char[",_ParentChar,"]");
 LLLIB_Sorter_Internal_IterateChar(_ParentChar, _Group);
 
 PROC
@@ -486,7 +486,7 @@ LLLIB_Sorter_Internal_SetSortGroup((STRING)_ParentChar, (STRING)_CheckChar, (INT
 AND
 DB_LLLIB_Sorter_Temp_CharIterator_MatchedStrings(_ParentChar, _ID, _CheckChar, _CheckIndex)
 THEN
-//LeaderLog_Debug("[LLLIB:Sorter] Group [",_Group,"] set on [",_ID,"]");
+//LeaderLog_Log("DEBUG", "[LLLIB:Sorter] Group [",_Group,"] set on [",_ID,"]");
 DB_LLLIB_Sorter_Temp_SortGroup(_ID, _Group);
 
 PROC

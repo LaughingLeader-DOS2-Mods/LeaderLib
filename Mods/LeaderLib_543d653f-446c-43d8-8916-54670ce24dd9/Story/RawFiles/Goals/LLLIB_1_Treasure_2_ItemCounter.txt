@@ -38,7 +38,7 @@ AND
 ItemGetAmount(_Item, _Amount)
 THEN
 DB_LLLIB_Treasure_Temp_ItemStatAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _GeneratedStat, _Amount);
-LeaderLog_Debug("[LLLIB:Treasure:CountTemplateWithStat] Found item template with stat on character. [",_TreasureID,"]:[",_GeneratedStat,"]:[",_ItemTemplate,"].");
+LeaderLog_Log("DEBUG", "[LLLIB:Treasure:CountTemplateWithStat] Found item template with stat on character. [",_TreasureID,"]:[",_GeneratedStat,"]:[",_ItemTemplate,"].");
 
 QRY
 LLLIB_QRY_Treasure_CountTemplateWithStat((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate, (STRING)_GeneratedStat)
@@ -68,7 +68,7 @@ LLLIB_QRY_Treasure_PrepareGeneratorDummy()
 AND
 DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
 THEN
-LeaderLog_Debug("[LLLIB:Treasure:CountTemplateWithStat] Moved all items to dummy for counting. [",_TreasureID,"]:[",_GeneratedStat,"].");
+LeaderLog_Log("DEBUG", "[LLLIB:Treasure:CountTemplateWithStat] Moved all items to dummy for counting. [",_TreasureID,"]:[",_GeneratedStat,"].");
 MoveAllItemsTo(_Object, _Dummy);
 LLLIB_Treasure_Internal_CountItemsOnDummy(_Dummy, _Object, _TreasureID, _ItemTemplate, _GeneratedStat);
 
@@ -83,7 +83,7 @@ THEN
 NOT DB_LLLIB_Treasure_Temp_ItemStatAmount(_Dummy, _TreasureID, _ItemTemplate, _GeneratedStat, _Amount);
 DB_LLLIB_Treasure_Temp_ItemStatAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _GeneratedStat, _Amount);
 MoveAllItemsTo(_Dummy, _Object);
-LeaderLog_Debug("[LLLIB:Treasure:CountTemplateWithStat] Counting finished. Moved items from dummy to object. [",_TreasureID,"]:[",_GeneratedStat,"].");
+LeaderLog_Log("DEBUG", "[LLLIB:Treasure:CountTemplateWithStat] Counting finished. Moved items from dummy to object. [",_TreasureID,"]:[",_GeneratedStat,"].");
 //END_REGION
 
 //REGION QUERIES

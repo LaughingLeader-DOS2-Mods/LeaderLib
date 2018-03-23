@@ -40,7 +40,7 @@ KBSECTION
 PROC
 LLLIB_System_UpdateDatabases()
 THEN
-LeaderLog_Debug("[LLLIB:TreasureSystem] Databases updated.");
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem] Databases updated.");
 
 PROC
 LLLIB_System_ClearDatabases()
@@ -72,7 +72,7 @@ SysClear("DB_LLLIB_Treasure_Temp_GenerateItem", 6);
 SysClear("DB_LLLIB_Treasure_Temp_Queue_CountTemplate", 5);
 SysClear("DB_LLLIB_Treasure_Temp_Queue_CountStat", 6);
 SysClear("DB_LLLIB_Treasure_Temp_StartGeneration", 3);
-LeaderLog_Debug("[LLLIB:TreasureSystem] Databases cleared.");
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem] Databases cleared.");
 
 PROC
 LLLIB_Updater_ResetDatabases()
@@ -88,7 +88,7 @@ SysClear("DB_LLLIB_Treasure_Temp_Queue_CountStat", 6);
 SysClear("DB_LLLIB_Treasure_Temp_StartGeneration", 3);
 //LLLIB_System_ClearDatabases();
 LLLIB_System_UpdateDatabases();
-LeaderLog_Debug("[LLLIB:TreasureSystem] Temporary databases cleared.");
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem] Temporary databases cleared.");
 //END_REGION
 
 //REGION GETTERS
@@ -167,7 +167,7 @@ AND
 NOT DB_LLLIB_Treasure_Temp_MatchTemplate(_TreasureID, _Template, _GenerationType)
 THEN
 DB_LLLIB_Treasure_Temp_MatchTemplate(_TreasureID, _Template, _GenerationType);
-LeaderLog_Debug("[LLLIB:TreasureSystem] Launching iterators to find object with template [",_Template,"] for [",_TreasureID,":",_GenerationType,"]");
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem] Launching iterators to find object with template [",_Template,"] for [",_TreasureID,":",_GenerationType,"]");
 CharacterLaunchIterator("LLLIB_Events_Treasure_FindObject");
 ItemLaunchIterator("LLLIB_Events_Treasure_FindObject");
 
@@ -350,13 +350,13 @@ NOT DB_LLLIB_Treasure_TableWasGenerated(_Object, _TreasureID, _TreasureTable)
 AND
 _UsePartyLevel > 0
 AND
-LeaderLog_QRY_Debug("Checking highest level")
+LeaderLog_QRY_Log("DEBUG", "Checking highest level")
 AND
 LLLIB_Helper_QRY_GetHighestLevelInParty()
 AND
 DB_LLLIB_Helper_Temp_HighestLevelInParty(_Level)
 AND
-LeaderLog_QRY_Debug("Creating backpack")
+LeaderLog_QRY_Log("DEBUG", "Creating backpack")
 AND
 CreateItemTemplateAtPosition("LOOT_BackPack_A_6c70c298-aa29-418f-a659-f8e0b5f5fa60", 0.0,0.0,0.0, _Backpack)
 THEN
@@ -423,7 +423,7 @@ LLLIB_Treasure_Internal_StartItemGeneration((GUIDSTRING)_Object, (STRING)_Treasu
 AND
 LLLIB_QRY_Treasure_SkipAmountCheck(_Object, _RequirementID)
 THEN
-LeaderLog_Debug("[LLLIB:TreasureSystem:GenerateItems] Skipping amount check and generating item [",_TreasureID,"]:[",_ItemEntry,"].");
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:GenerateItems] Skipping amount check and generating item [",_TreasureID,"]:[",_ItemEntry,"].");
 ObjectSetFlag(_Object, "LLLIB_Treasure_IsGeneratingTreasure", 0);
 DB_LLLIB_Treasure_Temp_GenerateItem(_Object, _ItemEntry, _TreasureID, 0, _Amount, _IsStat);
 
@@ -443,7 +443,7 @@ NOT LLLIB_QRY_Treasure_SkipAmountCheck(_Object, _RequirementID)
 AND
 NOT DB_LLLIB_Treasure_StatToTemplate(_ItemEntry, _)
 THEN
-LeaderLog_Debug("[LLLIB:Treasure:StartItemGeneration] Object is missing stat-based [",_TreasureID,"]:[",_ItemEntry,"] item template. Skipping counting.");
+LeaderLog_Log("DEBUG", "[LLLIB:Treasure:StartItemGeneration] Object is missing stat-based [",_TreasureID,"]:[",_ItemEntry,"] item template. Skipping counting.");
 ObjectSetFlag(_Object, "LLLIB_Treasure_IsGeneratingTreasure", 0);
 DB_LLLIB_Treasure_Temp_GenerateItem(_Object, _ItemEntry, _TreasureID, 0, _Amount, 1);
 
@@ -463,7 +463,7 @@ LLLIB_Treasure_Internal_StartItemGeneration((GUIDSTRING)_Object, (STRING)_Treasu
 AND
 LLLIB_QRY_Treasure_CountedItems(_Object, _TreasureID, _ItemEntry)
 THEN
-//LeaderLog_Debug("[LLLIB:Treasure:StartItemGeneration] Object counting complete [",_TreasureID,"]:[",_ItemEntry,"].");
+//LeaderLog_Log("DEBUG", "[LLLIB:Treasure:StartItemGeneration] Object counting complete [",_TreasureID,"]:[",_ItemEntry,"].");
 LLLIB_Treasure_Internal_CountingComplete(_Object, _TreasureID, _ItemEntry);
 
 IF
@@ -480,7 +480,7 @@ _CreatedAmount < _MaxAmount
 AND
 IntegerSum(_CreatedAmount, 1, _NextAmount)
 THEN
-LeaderLog_Debug("[LLLIB:TreasureSystem:GenerateItems] Generating item [",_TreasureID,"]:[",_ItemEntry,"].");
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:GenerateItems] Generating item [",_TreasureID,"]:[",_ItemEntry,"].");
 ItemTemplateAddTo(_ItemEntry, _Object, 1);
 NOT DB_LLLIB_Treasure_Temp_GenerateItem(_Object, _ItemEntry, _TreasureID, _CreatedAmount, _MaxAmount, _IsStat);
 DB_LLLIB_Treasure_Temp_GenerateItem(_Object, _ItemEntry, _TreasureID, _NextAmount, _MaxAmount, _IsStat);
@@ -494,7 +494,7 @@ _CreatedAmount < _MaxAmount
 AND
 IntegerSum(_CreatedAmount, 1, _NextAmount)
 THEN
-LeaderLog_Debug("[LLLIB:TreasureSystem:GenerateItems] Generating stat item [",_TreasureID,"]:[",_ItemEntry,"].");
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:GenerateItems] Generating stat item [",_TreasureID,"]:[",_ItemEntry,"].");
 LLLIB_Treasure_Internal_CreateItemByStat(_Object, _ItemEntry, _TreasureID);
 NOT DB_LLLIB_Treasure_Temp_GenerateItem(_Object, _ItemEntry, _TreasureID, _CreatedAmount, _MaxAmount, _IsStat);
 DB_LLLIB_Treasure_Temp_GenerateItem(_Object, _ItemEntry, _TreasureID, _NextAmount, _MaxAmount, _IsStat);
@@ -551,7 +551,7 @@ THEN
 ObjectClearFlag(_Object, "LLLIB_Treasure_IsGeneratingTreasure");
 NOT DB_LLLIB_Treasure_Temp_ResetGeneratedFlagTimer(_Object, _TimerName);
 SetStoryEvent(_Object, "LLLIB_Events_Treasure_GenerationFinished");
-//LeaderLog_Debug("[LLLIB:TreasureSystem:ResetGeneratedFlagTimer] Flag and database Temp_MatchedTreasure cleared.");
+//LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:ResetGeneratedFlagTimer] Flag and database Temp_MatchedTreasure cleared.");
 //END_REGION
 
 //REGION ITEM_AMOUNT_COUNTING
@@ -568,7 +568,7 @@ LLLIB_QRY_Treasure_ItemLimitNotMet(_Object, _TreasureID, _ItemEntry, _Requiremen
 AND
 DB_LLLIB_Treasure_Temp_AmountToCreate(_Object, _ItemEntry, _AmountToCreate)
 THEN
-//LeaderLog_Debug("[LLLIB:TreasureSystem:CountingComplete] Counting complete. Generating item by template.");
+//LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:CountingComplete] Counting complete. Generating item by template.");
 ObjectSetFlag(_Object, "LLLIB_Treasure_IsGeneratingTreasure", 0);
 DB_LLLIB_Treasure_Temp_GenerateItem(_Object, _ItemEntry, _TreasureID, 0, _AmountToCreate, 0);
 NOT DB_LLLIB_Treasure_Temp_AmountToCreate(_Object, _ItemEntry, _AmountToCreate);
@@ -586,7 +586,7 @@ LLLIB_QRY_Treasure_ItemLimitNotMet(_Object, _TreasureID, _ItemEntry, _Requiremen
 AND
 DB_LLLIB_Treasure_Temp_AmountToCreate(_Object, _ItemEntry, _AmountToCreate)
 THEN
-//LeaderLog_Debug("[LLLIB:TreasureSystem:CountingComplete] Counting complete. Generating item by stat.");
+//LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:CountingComplete] Counting complete. Generating item by stat.");
 ObjectSetFlag(_Object, "LLLIB_Treasure_IsGeneratingTreasure", 0);
 DB_LLLIB_Treasure_Temp_GenerateItem(_Object, _ItemEntry, _TreasureID, 0, _AmountToCreate, 1);
 NOT DB_LLLIB_Treasure_Temp_AmountToCreate(_Object, _ItemEntry, _AmountToCreate);
@@ -606,14 +606,14 @@ DB_LLLIB_Treasure_Temp_DummyTarget(_Object, _Dummy, _ItemEntry, _TreasureID);
 //SetVarObject(_Dummy, "LLLIB_Treasure_ObjectTarget", _Object);
 SetVarFixedString(_Dummy, "LLLIB_Treasure_ItemStat", _ItemEntry);
 SetStoryEvent(_Dummy, "LLLIB_Events_Treasure_GenerateByStat");
-LeaderLog_Debug("[LLLIB:TreasureSystem:StatItemGen] Created item by stat.");
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:StatItemGen] Created item by stat.");
 
 PROC
 LLLIB_Treasure_Internal_CreateItemByStat((GUIDSTRING)_Object, (STRING)_ItemEntry, (STRING)_TreasureID)
 AND
 NOT DB_LLLIB_Treasure_GeneratorDummies(_)
 THEN
-LeaderLog_Debug("[LLLIB:TreasureSystem:StatItemGen][ERROR] Error creating item by stat: No generator dummy found!");
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:StatItemGen][ERROR] Error creating item by stat: No generator dummy found!");
 
 QRY
 LLLIB_QRY_Treasure_PrepareGeneratorDummy()
@@ -647,7 +647,7 @@ NOT DB_LLLIB_Treasure_GeneratorDummies(_)
 AND
 TemporaryCharacterCreateAtPosition(0.0,0.0,0.0,"LLLIB_GeneratorDummy_24a5d60b-680b-4fbc-9b2c-19061a261297", 0, _Dummy)
 THEN
-LeaderLog_Debug("[LLLIB:TreasureSystem:PrepareGeneratorDummy] Generator dummy created.");
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:PrepareGeneratorDummy] Generator dummy created.");
 DB_LLLIB_Treasure_GeneratorDummies(_Dummy);
 
 IF
@@ -669,7 +669,7 @@ SetVarFixedString(_Dummy, "LLLIB_Treasure_ItemStat", "");
 NOT DB_LLLIB_Treasure_Temp_DummyTarget(_Object, _Dummy, _ItemEntry);
 LLLIB_Treasure_MarkAsFinished(_Object, _ItemEntry, _TreasureID);
 ObjectClearFlag(_Dummy, "LLLIB_GeneratorDummy_CreatedItem");
-//LeaderLog_Debug("[LLLIB:TreasureSystem:StatItem] Stat item [",_ItemEntry,"] sent to target.");
+//LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:StatItem] Stat item [",_ItemEntry,"] sent to target.");
 //END_REGION
 
 //REGION POST_GENERATION
@@ -698,7 +698,7 @@ GetVarFixedString(_Item, "LLLIB_GeneratedItemStat", _ItemEntry)
 AND
 GetStatString(_Item, _Stat)
 THEN
-LeaderLog_Debug("[LLLIB:TreasureSystem:OnAdded(Debug)] Item with saved stat ",_ItemEntry,"(",_Stat,") added to container.");
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:OnAdded(Debug)] Item with saved stat ",_ItemEntry,"(",_Stat,") added to container.");
 
 PROC
 LLLIB_Treasure_OnAdded((GUIDSTRING)_Object, (ITEMGUID)_Item, (STRING)_TreasureID)
@@ -712,7 +712,7 @@ THEN
 LLLIB_Treasure_AdjustItemLevel(_Item, _TreasureID, _ItemEntry);
 LLLIB_Treasure_ApplyDeltaMods(_Item, _TreasureID, _ItemEntry);
 LLLIB_Treasure_InsertRunes(_Item, _TreasureID, _ItemEntry);
-//LeaderLog_Debug("[LLLIB:TreasureSystem:OnAdded(TemplateItem] Adjusted treasure level, delta mods, and runes.");
+//LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:OnAdded(TemplateItem] Adjusted treasure level, delta mods, and runes.");
 
 PROC
 LLLIB_Treasure_OnAdded((GUIDSTRING)_Object, (ITEMGUID)_Item, (STRING)_TreasureID)
@@ -730,7 +730,7 @@ DB_LLLIB_Treasure_StatToTemplate(_ItemEntry, _ItemTemplate);
 LLLIB_Treasure_AdjustItemLevel(_Item, _TreasureID, _ItemEntry);
 LLLIB_Treasure_ApplyDeltaMods(_Item, _TreasureID, _ItemEntry);
 LLLIB_Treasure_InsertRunes(_Item, _TreasureID, _ItemEntry);
-//LeaderLog_Debug("[LLLIB:TreasureSystem:OnAdded(StatItem)] Adjusted treasure level, delta mods, and runes.");
+//LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:OnAdded(StatItem)] Adjusted treasure level, delta mods, and runes.");
 
 PROC
 LLLIB_Treasure_OnAdded((GUIDSTRING)_Object, (ITEMGUID)_Item, (STRING)_TreasureID)
@@ -743,7 +743,7 @@ DB_LLLIB_Treasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _Requireme
 AND
 NOT GetTemplate(_Item, _)
 THEN
-LeaderLog_Debug("[LLLIB:TreasureSystem:OnAdded(StatItem)][ERROR] Couldn't find a template for item with stat ", _ItemEntry);
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:OnAdded(StatItem)][ERROR] Couldn't find a template for item with stat ", _ItemEntry);
 
 /*
 PROC
@@ -751,7 +751,7 @@ LLLIB_Treasure_OnAdded((GUIDSTRING)_Object, (ITEMGUID)_Item)
 AND
 ObjectGetFlag(_Object, "LLLIB_Treasure_IsGeneratingTreasure", 1)
 THEN
-//LeaderLog_Debug("[LLLIB:TreasureSystem] Treasure added.");
+//LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem] Treasure added.");
 */
 
 PROC
@@ -1107,7 +1107,7 @@ LLLIB_QRY_Treasure_GetTreasureObject(_TreasureID, "REQUIREMENT_UNLOCKED")
 AND
 DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
 THEN
-LeaderLog_Debug("[LLLIB:TreasureSystem] Generating [",_TreasureID,"] due to requirement [",_RequirementID,"] unlocking.");
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem] Generating [",_TreasureID,"] due to requirement [",_RequirementID,"] unlocking.");
 LLLIB_Treasure_GenerateItems(_Object, _TreasureID, "REQUIREMENT_UNLOCKED");
 NOT DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
 
@@ -1172,7 +1172,7 @@ IntegertoString(_GeneratedAmount, _GenStr)
 AND
 IntegertoString(_CurrentAmount, _CurStr)
 THEN
-LeaderLog_Debug("[LLLIB:Treasure:Debug] Comparing item amounts for [",_TreasureID,":",_ItemEntry,"] - ",_CurStr,"/",_GenStr);
+LeaderLog_Log("DEBUG", "[LLLIB:Treasure:Debug] Comparing item amounts for [",_TreasureID,":",_ItemEntry,"] - ",_CurStr,"/",_GenStr);
 */
 
 QRY
@@ -1191,13 +1191,13 @@ IntegertoString(_Val, _ValStr)
 AND
 GetTemplate(_Object, _Template)
 THEN
-LeaderLog_Debug("[LLLIB:Treasure:CountItems] Item template [",_TreasureID,"]:[",_ItemEntry,"][",_Template,"] found = ", _ValStr);
+LeaderLog_Log("DEBUG", "[LLLIB:Treasure:CountItems] Item template [",_TreasureID,"]:[",_ItemEntry,"][",_Template,"] found = ", _ValStr);
 
 /*
 IF
 StoryEvent(_Object, _Event)
 THEN
-LeaderLog_Debug("[LLLIB:Treasure:Debug] Debugging event [",_Event,"]. It is the completion event?");
+LeaderLog_Log("DEBUG", "[LLLIB:Treasure:Debug] Debugging event [",_Event,"]. It is the completion event?");
 */
 //END_REGION
 EXITSECTION

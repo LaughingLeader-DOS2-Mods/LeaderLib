@@ -12,14 +12,28 @@ KBSECTION
 IF
 StoryEvent(_, "LLLIB_Events_UpdateDatabases")
 THEN
+LLLIB_Trader_ClearTrader("LLLIB_LeaderTrader");
 LLLIB_LeaderTrader_RegisterTrader();
 
 PROC
 LLLIB_LeaderTrader_RegisterTrader()
 AND
 NOT DB_LLLIB_LeaderTrader(_)
+AND
+ObjectExists(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574, 1)
 THEN
 DB_LLLIB_LeaderTrader((CHARACTERGUID)CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574);
+LLLIB_Trader_Register_GlobalTrader("LLLIB_LeaderTrader", CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574);
+
+//If the global version doesn't exist for some reason, use the template
+PROC
+LLLIB_LeaderTrader_RegisterTrader()
+AND
+NOT DB_LLLIB_LeaderTrader(_)
+AND
+ObjectExists(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574, 0)
+THEN
+LLLIB_Trader_Register_Trader("LLLIB_LeaderTrader", "LLLIB_RetiredLeader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e", 0);
 
 PROC
 LLLIB_LeaderTrader_RegisterTrader()
@@ -33,11 +47,15 @@ LLLIB_LeaderTrader_RegisterTrader()
 AND
 DB_LLLIB_LeaderTrader(_LeaderTrader)
 THEN
-LLLIB_Trader_ClearTrader("LLLIB_LeaderTrader");
 LLLIB_Trader_Register_CreationEvent("LLLIB_LeaderTrader", "LLLIB_Events_OnLeaderTradeSpawned");
 
-LLLIB_Trader_Register_GlobalTrader("LLLIB_LeaderTrader", _LeaderTrader);
-LLLIB_Trader_Register_Position("LLLIB_LeaderTrader", "FJ_FortJoy_Main", 219.86, -16.79, 362.70);
+
+//In case the position objects were destroyed
+LLLIB_Trader_Register_Position("LLLIB_LeaderTrader", "FJ_FortJoy_Main", 220.01, -16.79, 362.97);
+LLLIB_Trader_Register_Position("LLLIB_LeaderTrader", "LV_HoE_Main", 341.49, 7.81, 581.80);
+LLLIB_Trader_Register_Position("LLLIB_LeaderTrader", "RC_Main", 746.05, 8.11, -37.73);
+
+LLLIB_Trader_Register_PositionObject("LLLIB_LeaderTrader", "FJ_FortJoy_Main", CHARACTERGUID_S_FTJ_StartingAreaChild_39cbb883-7e80-445c-b5f8-0e42d2283d73);
 
 LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", "", "LLLIB_RetiredLeader_Default"); // Default
 LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", "TUT_Tutorial_A", "LLLIB_RetiredLeader_TutorialBoat");
@@ -279,6 +297,14 @@ ClearVarObject(_LeaderTrader, "Seat");
 SetVarObject(_LeaderTrader, "Seat", _Seat);
 //END_REGION
 
+//REGION MISC
+
+//END_REGION
+
+//REGION EXISTING_SAVES
+
+//END_REGION
+
 IF
 StoryEvent((CHARACTERGUID)_Trader, "LLLIB_Events_OnLeaderTradeSpawned")
 THEN
@@ -290,6 +316,30 @@ AND
 IsGameLevel("TUT_Tutorial_A", 1)
 THEN
 LLLIB_Helper_UnequipWeapons(_Trader);
+
+IF
+StoryEvent((CHARACTERGUID)_Trader, "LLLIB_Events_OnLeaderTradeSpawned")
+AND
+IsGameLevel("FJ_FortJoy_Main", 1)
+THEN
+CharacterMoveToPosition(_Trader, 220.01, -16.79, 362.97, 0, "LLLIB_Events_LeaderTraderFinishedMoving");
+//TimerLaunch("LLLIB_LeaderTrader_MoveFailsafeTimer", 10000);
+
+/*
+IF
+StoryEvent((CHARACTERGUID)_LeaderTrader, "LLLIB_Events_LeaderTraderFinishedMoving")
+THEN
+TimerCancel("LLLIB_LeaderTrader_MoveFailsafeTimer");
+
+IF
+TimerFinished("LLLIB_LeaderTrader_MoveFailsafeTimer")
+AND
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+AND
+GetPosition(_LeaderTrader, _x,_y,_z)
+THEN
+CharacterMoveToPosition(_Trader, _x,_y,_z, 0, "");
+*/
 EXITSECTION
 
 ENDEXITSECTION

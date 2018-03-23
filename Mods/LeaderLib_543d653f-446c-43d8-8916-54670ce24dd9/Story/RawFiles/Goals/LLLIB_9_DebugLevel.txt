@@ -63,14 +63,14 @@ TimerLaunch("LeaderLib_TestLevel_IteratorDelay", 500);
 IF
 TimerFinished("LeaderLib_TestLevel_IteratorDelay")
 THEN
-//LeaderLog_Debug("[LLLIB:DebugLevel] ","Searching for players.");
+//LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] ","Searching for players.");
 CharacterLaunchIterator("LLLIB_Debug_AddPlayer");
 LLLIB_Events_SendEvent("LLLIB_Events_TestEvent");
 
 IF
 StoryEvent(_, "LLLIB_Events_TestEvent")
 THEN
-LeaderLog_Debug("[LLLIB:DebugLevel] ","LLLIB_Events_TestEvent ran.");
+LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] ","LLLIB_Events_TestEvent ran.");
 
 IF
 StoryEvent((CHARACTERGUID)_Player, "LLLIB_Debug_AddPlayer")
@@ -80,7 +80,7 @@ AND
 NOT DB_IsPlayer(_Player)
 THEN
 DB_IsPlayer(_Player);
-//LeaderLog_Debug("[LLLIB:DebugLevel] ","Added player to DB_IsPlayer.");
+//LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] ","Added player to DB_IsPlayer.");
 //ObjectClearFlag(_Player, "LLLIB_Trader_PlayerTalkedToLeaderTrader");
 
 IF
@@ -92,7 +92,7 @@ IsTagged(_Trader, "LLLIB_Treasure_GenerateOnDialog", 1)
 AND
 LLLIB_QRY_Treasure_IsRegisteredObject(_Trader)
 THEN
-LeaderLog_Debug("[LLLIB:DebugLevel] ","Dialog generation tag set, generating items for trader.");
+LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] ","Dialog generation tag set, generating items for trader.");
 
 IF
 DialogStarted(_Dialog, _Instance)
@@ -103,7 +103,7 @@ IsTagged(_Trader, "LLLIB_Treasure_GenerateOnDialog", 1)
 AND
 NOT LLLIB_QRY_Treasure_IsRegisteredObject(_Trader)
 THEN
-LeaderLog_Debug("[LLLIB:DebugLevel][ERROR] ","Dialog generation tag set, but trader is not registered!");
+LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel][ERROR] ","Dialog generation tag set, but trader is not registered!");
 
 /*
 IF
@@ -155,7 +155,7 @@ AND
 IntegertoString(_Ran, _RanStr)
 THEN
 NOT DB_LLLIB_Temp_RandomResult(_Ran);
-LeaderLog_Debug("[LLLIB:TreasureSystem] Random range result: ",_RanStr," | Min: 1 Max: 19");
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem] Random range result: ",_RanStr," | Min: 1 Max: 19");
 */
 
 IF
@@ -207,7 +207,7 @@ DB_IsPlayer(_Player)
 THEN
 //OpenMessageBox(_Player, "Global leader trader found. Did it spawn?");
 //TeleportTo(CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41, _Player);
-LeaderLog_Debug("[LLLIB:LeaderTrader:Debug] Teleported Leader Trader to player.");
+LeaderLog_Log("DEBUG", "[LLLIB:LeaderTrader:Debug] Teleported Leader Trader to player.");
 EXITSECTION
 
 ENDEXITSECTION

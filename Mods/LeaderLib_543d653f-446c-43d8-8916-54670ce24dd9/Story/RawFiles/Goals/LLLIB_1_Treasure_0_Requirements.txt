@@ -13,7 +13,7 @@ KBSECTION
 PROC
 LLLIB_System_UpdateDatabases()
 THEN
-LeaderLog_Debug("[LLLIB:Requirements] Databases updated.");
+LeaderLog_Log("DEBUG", "[LLLIB:Requirements] Databases updated.");
 
 PROC
 LLLIB_System_ClearDatabases()
@@ -22,14 +22,14 @@ SysClear("DB_LLLIB_Requirements_PartyLevel", 4);
 SysClear("DB_LLLIB_Requirements_Flag", 4);
 SysClear("DB_LLLIB_Treasure_ItemMaxAmount", 2);
 SysClear("DB_LLLIB_Requirements_IsUnlocked", 1);
-LeaderLog_Debug("[LLLIB:Requirements] Databases cleared.");
+LeaderLog_Log("DEBUG", "[LLLIB:Requirements] Databases cleared.");
 
 PROC
 LLLIB_Updater_ResetDatabases()
 THEN
 LLLIB_System_ClearDatabases();
 LLLIB_System_UpdateDatabases();
-LeaderLog_Debug("[LLLIB:Requirements] Databases cleared and re-initialized.");
+LeaderLog_Log("DEBUG", "[LLLIB:Requirements] Databases cleared and re-initialized.");
 //END_REGION
 
 //REGION REGISTERING
@@ -179,7 +179,7 @@ DB_NOOP(1);
 PROC
 LLLIB_Requirements_RequirementUnlocked((STRING)_RequirementID)
 THEN
-LeaderLog_Debug("[LLLIB:Requirements] Requirement [",_RequirementID,"] unlocked.");
+LeaderLog_Log("DEBUG", "[LLLIB:Requirements] Requirement [",_RequirementID,"] unlocked.");
 
 PROC
 LLLIB_Requirements_RequirementUnlocked((STRING)_RequirementID)
@@ -205,7 +205,7 @@ NOT DB_LLLIB_Requirements_Temp_RemoveJustUnlocked(_TimerName, _RequirementID);
 PROC
 LLLIB_Requirements_RequirementLocked((STRING)_RequirementID)
 THEN
-LeaderLog_Debug("[LLLIB:Requirements] Requirement[",_RequirementID,"] locked.");
+LeaderLog_Log("DEBUG", "[LLLIB:Requirements] Requirement[",_RequirementID,"] locked.");
 //END_REGION
 
 //REGION FLAG_UNLOCKING

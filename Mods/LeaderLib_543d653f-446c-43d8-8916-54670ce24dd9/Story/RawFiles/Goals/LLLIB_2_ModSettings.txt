@@ -43,7 +43,7 @@ SysCount("DB_LLLIB_ModSettings_RegisteredMenu", 4, _Total)
 AND
 _Total > 1
 THEN
-LeaderLog_Debug("[LLLIB:ModSettings] Sorting mod menus alphabetically.");
+LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Sorting mod menus alphabetically.");
 LLLIB_ModSettings_SortMenus();
 
 /*
@@ -86,7 +86,7 @@ IntegertoString(_LastPageIndex, _Str2)
 AND
 IntegertoString(_MaxPage, _Str3)
 THEN
-LeaderLog_Debug("[LLLIB:ModSettings] Max page set: LastIndex[",_Str1,"] LastPageIndex[",_Str2,"] MaxPage[",_Str3,"]");
+LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Max page set: LastIndex[",_Str1,"] LastPageIndex[",_Str2,"] MaxPage[",_Str3,"]");
 //END_REGION
 
 //REGION SETTINGS
@@ -114,21 +114,21 @@ PROC
 LLLIB_System_UpdateDatabases()
 THEN
 LLLIB_ModSettings_InitSettings();
-LeaderLog_Debug("[LLLIB:ModSettings] Databases updated.");
+LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Databases updated.");
 
 PROC
 LLLIB_System_ClearDatabases()
 THEN
 SysClear("DB_LLLIB_ModSettings_MenusPerPage", 1);
 SysClear("DB_LLLIB_ModSettings_RegisteredMenu", 4);
-LeaderLog_Debug("[LLLIB:ModSettings] Databases cleared.");
+LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Databases cleared.");
 
 PROC
 LLLIB_Updater_ResetDatabases()
 THEN
 LLLIB_System_ClearDatabases();
 LLLIB_System_UpdateDatabases();
-LeaderLog_Debug("[LLLIB:ModSettings] Databases cleared and re-initialized.");
+LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Databases cleared and re-initialized.");
 //END_REGION
 
 //REGION SORTING
@@ -226,7 +226,7 @@ AND
 _MaxPage == 2
 THEN
 ObjectSetFlag(_Player, "LLLIB_ModSettings_HideNextPageButton", _Instance);
-LeaderLog_Debug("[LLLIB:ModSettings] Hid next page button");
+LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Hid next page button");
 
 /*
 PROC
@@ -238,7 +238,7 @@ IntegertoString(_LastPageIndex, _LastIndexStr)
 AND
 IntegertoString(_MaxPage, _MaxPageStr)
 THEN
-LeaderLog_Debug("[LLLIB] ", "Test: LastIndex: ", _LastIndexStr," | Max: ",_MaxPageStr);
+LeaderLog_Log("DEBUG", "[LLLIB] ", "Test: LastIndex: ", _LastIndexStr," | Max: ",_MaxPageStr);
 */
 
 PROC
@@ -319,7 +319,7 @@ LLLIB_ModSettings_LoadPageVariables((CHARACTERGUID)_Player, (INTEGER)_Instance)
 AND
 NOT DB_LLLIB_ModSettings_PageMax(_,_,_)
 THEN
-LeaderLog_Debug("[LLLIB:ModSettings][ERROR] ", "Max page settings not set. Reconfiguring.");
+LeaderLog_Log("DEBUG", "[LLLIB:ModSettings][ERROR] ", "Max page settings not set. Reconfiguring.");
 LLLIB_ModSettings_CalculateMaxPage();
 
 PROC
@@ -328,7 +328,7 @@ AND
 NOT DB_LLLIB_ModSettings_CurrentPageIndex(_Player, _)
 THEN
 LLLIB_ModSettings_SetPage(_Player, 0, _Instance);
-LeaderLog_Debug("[LLLIB:ModSettings][ERROR] ", "Page not set for some reason. Setting to page 0.");
+LeaderLog_Log("DEBUG", "[LLLIB:ModSettings][ERROR] ", "Page not set for some reason. Setting to page 0.");
 
 PROC
 LLLIB_ModSettings_LoadPageVariables((CHARACTERGUID)_Player, (INTEGER)_Instance)
@@ -430,7 +430,7 @@ LLLIB_ModSettings_CheckPageCount((CHARACTERGUID)_Player)
 AND
 NOT DB_LLLIB_ModSettings_PageMax(_, _, _)
 THEN
-LeaderLog_Debug("[LLLIB:ModSettings] Wtf is going on. Page max not set?");
+LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Wtf is going on. Page max not set?");
 
 PROC
 LLLIB_ModSettings_CheckPageCount((CHARACTERGUID)_Player)
@@ -440,7 +440,7 @@ AND
 _MaxPage > 1
 THEN
 ObjectSetFlag(_Player, "LLLIB_ModSettings_HasMultiplePages", 0);
-LeaderLog_Debug("[LLLIB:ModSettings] Multple pages available.");
+LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Multple pages available.");
 
 PROC
 LLLIB_ModSettings_CheckPageCount((CHARACTERGUID)_Player)
@@ -450,7 +450,7 @@ AND
 _MaxPage <= 1
 THEN
 ObjectClearFlag(_Player, "LLLIB_ModSettings_HasMultiplePages");
-LeaderLog_Debug("[LLLIB:ModSettings] Only one page available.");
+LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Only one page available.");
 //END_REGION
 
 //REGION FLAG_ACTIONS
@@ -477,7 +477,7 @@ DB_LLLIB_MenuSettings_Temp_MenuVariableValue(_MenuIndex, _ID)
 AND
 DB_LLLIB_ModSettings_RegisteredMenu(_Index, _ID, _Dialog, _DisplayName)
 THEN
-//LeaderLog_Debug("[LLLIB] Loading menu for ", _ID);
+//LeaderLog_Log("DEBUG", "[LLLIB] Loading menu for ", _ID);
 LLLIB_ModSettings_SetNextMenu(_Player, _ID, _Dialog);
 
 IF

@@ -119,7 +119,7 @@ DB_LLLIB_Treasure_ItemGenerationSettings(_TreasureID, _ItemEntry, _PrevVal, _Pre
 THEN
 NOT DB_LLLIB_Treasure_ItemGenerationSettings(_TreasureID, _ItemEntry, _PrevVal, _PrevMin, _PrevMax);
 DB_LLLIB_Treasure_ItemGenerationSettings(_TreasureID, _ItemEntry, _UsePartyLevel, _MinLevel, _MaxLevel);
-//LeaderLog_Debug("[LLLIB:TreasureSystem] Previous settings for ",_TreasureID,":",_ItemEntry," were overwritten.");
+//LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem] Previous settings for ",_TreasureID,":",_ItemEntry," were overwritten.");
 
 PROC
 LLLIB_Treasure_Configure_ItemLevel((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_UsePartyLevel, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)

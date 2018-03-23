@@ -52,7 +52,7 @@ TimerLaunch("LLLIB_Timers_LeaderLibInitialized", 1);
 IF
 TimerFinished("LLLIB_Timers_LeaderLibInitialized")
 THEN
-LeaderLog_Debug("[LLLIB:LeaderUpdater] LeaderLib initialized.");
+LeaderLog_Log("DEBUG", "[LLLIB:LeaderUpdater] LeaderLib initialized.");
 LLLIB_Events_SendEvent("LeaderLib_Initialized");
 //END_REGION
 EXITSECTION

@@ -2,13 +2,76 @@ Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
 //DB_LLLIB_SendEvent(_EventName)
+//DB_LLLIB_EventParser_Spawned(_EventParser)
 KBSECTION
+//REGION HELPERS
+PROC
+LLLIB_EventParser_CreateNew()
+AND
+DB_LLLIB_EventParser_Spawned(_EventParser)
+AND
+ObjectExists(_EventParser, 0)
+THEN
+NOT DB_LLLIB_EventParser_Spawned(_EventParser);
+
+PROC
+LLLIB_EventParser_CreateNew()
+AND
+NOT DB_LLLIB_EventParser_Spawned(_)
+AND
+CreateItemTemplateAtPosition("LLLIB_Scripting_EventParser_0f686d7d-2304-4f23-bd9a-8d402a6bdefe", 0.0, 0.0, 0.0, _EventParser)
+THEN
+DB_LLLIB_EventParser_Spawned(_EventParser);
+
+PROC
+LLLIB_EventParser_CreateNew()
+AND
+NOT DB_LLLIB_EventParser_Spawned(_) // Creating a temporary event parser failed, use a player
+AND
+DB_IsPlayer(_Player)
+AND
+NOT DB_LLLIB_EventParser_Spawned(_) // So we don't keep iterating
+THEN
+DB_LLLIB_EventParser_Spawned(_Player);
+
+QRY
+LLLIB_QRY_EventParser_CreateNew()
+THEN
+LLLIB_EventParser_CreateNew();
+
+QRY
+LLLIB_QRY_EventParser_GlobalParserExists()
+AND
+ObjectExists(ITEMGUID_S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, 1)
+THEN
+DB_NOOP(1);
+
+PROC
+LLLIB_EventParser_Internal_RunEvent((STRING)_EventName)
+AND
+LLLIB_QRY_EventParser_GlobalParserExists()
+THEN
+SetStoryEvent(S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, _EventName);
+
+PROC
+LLLIB_EventParser_Internal_RunEvent((STRING)_EventName)
+AND
+NOT LLLIB_QRY_EventParser_GlobalParserExists()
+AND
+LLLIB_QRY_EventParser_CreateNew()
+AND
+DB_LLLIB_EventParser_Spawned(_EventParser)
+THEN
+SetStoryEvent(_EventParser, _EventName);
+//END_REGION
+
 IF
 GameStarted(_,_)
 AND
-ObjectExists(ITEMGUID_S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, 0)
+NOT LLLIB_QRY_EventParser_GlobalParserExists()
 THEN
-LeaderLog_Debug("[LLLIB:EventParser][ERROR] Event Parser doesn't exist?");
+LeaderLog_Log("DEBUG", "[LLLIB:EventParser][ERROR] Global Event Parser doesn't exist for some reason. Creating new.");
+//LLLIB_EventParser_CreateNew();
 
 //Send out a general event, using the Event Parser object.
 PROC
@@ -19,7 +82,7 @@ DB_LLLIB_SendEvent(_EventName);
 IF
 DB_LLLIB_SendEvent(_EventName)
 THEN
-SetStoryEvent(S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, _EventName);
+LLLIB_EventParser_Internal_RunEvent(_EventName);
 NOT DB_LLLIB_SendEvent(_EventName);
 EXITSECTION
 

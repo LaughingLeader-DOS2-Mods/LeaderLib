@@ -384,7 +384,7 @@ StringConcatenate(_Str1, "' Total Entries: ", _Str2)
 AND
 StringConcatenate(_Str2, _TotalStr, _Str3)
 THEN
-LeaderLog_Debug(_Str3);
+LeaderLog_Log("DEBUG", _Str3);
 //END_REGION
 
 //REGION EQUIPMENT_REFRESH

@@ -25,9 +25,15 @@ LeaderLog_Log("DEBUG", "[LLLIB:Updater] Databases cleared and re-initialized.");
 //REGION UPDATE_EVENT
 IF
 GameStarted(_,_)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Updater] Game started.");
+
+IF
+GameStarted(_,_)
 AND
 LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "0.1.0.0", "LaughingLeader")
 THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Updater] Updating LeaderLib.");
 LeaderUpdater_RegisterMod("LeaderLib", "0.1.0.0", "LaughingLeader");
 LLLIB_System_UpdateDatabases();
 LLLIB_Events_SendEvent("LLLIB_Events_UpdateDatabases");

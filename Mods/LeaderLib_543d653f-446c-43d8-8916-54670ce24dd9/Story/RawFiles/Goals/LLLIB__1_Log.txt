@@ -6,7 +6,7 @@ INITSECTION
 KBSECTION
 //REGION DISABLED_CHECK
 QRY
-LeaderLog_QRY_Internal_LogTypeDisabled((STRING)_Flag)
+LeaderLog_QRY_Internal_DisableFlagActive((STRING)_Flag)
 AND
 GlobalGetFlag(_Flag, 1)
 THEN
@@ -15,35 +15,35 @@ DB_NOOP(1);
 QRY
 LeaderLog_QRY_LogTypeEnabled("COMBAT")
 AND
-NOT LeaderLog_QRY_Internal_LogTypeDisabled("LEADERLOG_COMBATLOG_DISABLED")
+NOT LeaderLog_QRY_Internal_DisableFlagActive("LEADERLOG_COMBATLOG_DISABLED")
 THEN
 DB_NOOP(1);
 
 QRY
 LeaderLog_QRY_LogTypeEnabled("STATUS")
 AND
-NOT LeaderLog_QRY_Internal_LogTypeDisabled("LEADERLOG_PRINT_DISABLED")
+NOT LeaderLog_QRY_Internal_DisableFlagActive("LEADERLOG_PRINT_DISABLED")
 THEN
 DB_NOOP(1);
 
 QRY
 LeaderLog_QRY_LogTypeEnabled("PRINT")
 AND
-NOT LeaderLog_QRY_Internal_LogTypeDisabled("LEADERLOG_PRINT_DISABLED")
+NOT LeaderLog_QRY_Internal_DisableFlagActive("LEADERLOG_PRINT_DISABLED")
 THEN
 DB_NOOP(1);
 
 QRY
 LeaderLog_QRY_LogTypeEnabled("DEBUG")
 AND
-NOT LeaderLog_QRY_Internal_LogTypeDisabled("LEADERLOG_DEBUG_DISABLED")
+GlobalGetFlag("LEADERLOG_DEBUG_ENABLED", 1)
 THEN
 DB_NOOP(1);
 
 QRY
 LeaderLog_QRY_LogTypeEnabled("EDITOR")
 AND
-NOT LeaderLog_QRY_Internal_LogTypeDisabled("LEADERLOG_DEBUG_DISABLED")
+GlobalGetFlag("LEADERLOG_DEBUG_ENABLED", 1)
 THEN
 DB_NOOP(1);
 

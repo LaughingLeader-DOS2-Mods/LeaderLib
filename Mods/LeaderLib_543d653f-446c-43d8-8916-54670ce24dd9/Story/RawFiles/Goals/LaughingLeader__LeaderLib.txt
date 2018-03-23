@@ -1,12 +1,12 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-
+LLLIB_Internal_StartLeaderLib();
 KBSECTION
-IF
-//GameEventSet("GAMEEVENT_GameStarted")
-GameStarted(_,_)
+PROC
+LLLIB_Internal_StartLeaderLib()
 THEN
+DebugBreak("[LLLIB] LeaderLib starting.");
 GoalCompleted;
 EXITSECTION
 

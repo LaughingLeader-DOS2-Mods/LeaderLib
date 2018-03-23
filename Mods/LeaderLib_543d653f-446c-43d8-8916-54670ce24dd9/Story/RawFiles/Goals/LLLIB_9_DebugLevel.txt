@@ -56,8 +56,6 @@ LLLIB_ModSettings_CalculateMaxPage();
 IF
 GameStarted("LeaderLib_TestLevel",_)
 THEN
-GlobalSetFlag("LEADERLOG_DEBUG_ENABLED");
-SysClear("DB_IsPlayer", 1);
 TimerLaunch("LeaderLib_TestLevel_IteratorDelay", 500);
 
 IF
@@ -211,4 +209,4 @@ LeaderLog_Log("DEBUG", "[LLLIB:LeaderTrader:Debug] Teleported Leader Trader to p
 EXITSECTION
 
 ENDEXITSECTION
-ParentTargetEdge "LaughingLeader__LeaderLib"
+ParentTargetEdge "LLLIB_9__Debug"

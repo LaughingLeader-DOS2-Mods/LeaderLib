@@ -600,7 +600,7 @@ THEN
 SetVisible(_Trader, 1);
 SetOnStage(_Trader, 1);
 LLLIB_Traders_Internal_GenerateInitialTradeTreasure(_Trader); // Generate via DOS2's trade treasure system
-ObjectSetFlag(_Trader, "LLLIB_Treasure_GenerateNow", 0); // Generate via the scripted treasure system
+ObjectSetFlag(_Trader, "LeaderLib_Treasure_GenerateNow", 0); // Generate via the scripted treasure system
 
 PROC
 LLLIB_Traders_Internal_GenerateInitialTradeTreasure((CHARACTERGUID)_Trader)

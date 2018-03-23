@@ -909,9 +909,9 @@ LLLIB_Treasure_GenerateItems(_Object, _TreasureID, "OPENED");
 NOT DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
 
 IF
-ObjectFlagSet("LLLIB_Treasure_GenerateNow", _Object, _)
+ObjectFlagSet("LeaderLib_Treasure_GenerateNow", _Object, _)
 AND
-LLLIB_Helper_QRY_ClearObjectFlag(_Object, "LLLIB_Treasure_GenerateNow")
+LLLIB_Helper_QRY_ClearObjectFlag(_Object, "LeaderLib_Treasure_GenerateNow")
 AND
 ObjectGetFlag(_Object, "LLLIB_Treasure_IsGeneratingTreasure", 0)
 AND

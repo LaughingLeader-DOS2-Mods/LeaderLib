@@ -93,7 +93,6 @@ LLLIB_Helper_QRY_ClearObjectFlag(_Player, "LLLIB_Settings_ListRegisteredMods")
 THEN
 LLLIB_Settings_ListRegisteredMods(_Instance);
 
-
 PROC
 LLLIB_Settings_ListRegisteredMods((INTEGER)_Instance)
 AND
@@ -129,6 +128,17 @@ DB_LLLIB_Settings_Temp_RegisteredModsList(_Instance, _Str)
 THEN
 DialogSetVariableStringForInstance(_Instance, _DialogVar, _Str);
 NOT DB_LLLIB_Settings_Temp_RegisteredModsList(_Instance, _Str);
+//END_REGION
+
+//REGION SETTINGS_MENU
+IF
+DialogStarted("LLLIB_SettingsMenu", _Instance)
+AND
+DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
+THEN
+LeaderLog_SetNextStatusColor(_Player, "#BF00FF");
+LeaderLog_SetOneshotTarget(_Player);
+LeaderLog_Log("STATUS", "Settings Opened!");
 //END_REGION
 EXITSECTION
 

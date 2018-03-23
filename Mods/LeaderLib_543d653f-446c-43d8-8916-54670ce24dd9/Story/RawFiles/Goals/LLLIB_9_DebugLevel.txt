@@ -37,18 +37,18 @@ LLLIB_Treasure_Configure_GenerationType("LLLIB_TestLevel_Chest2", "WPN_Cheat_Swo
 
 //Sorting test
 /*
-LLLIB_ModSettings_RegisterModMenu("LLZ1", "[Zieonimus] Settings", "LLLIB_SettingsMenu");
-LLLIB_ModSettings_RegisterModMenu("LLZ2", "[Zzznonom] Settings", "LLLIB_SettingsMenu");
-LLLIB_ModSettings_RegisterModMenu("LLZ3", "[Zzaonimus] Settings", "LLLIB_SettingsMenu");
-LLLIB_ModSettings_RegisterModMenu("LLZ4", "[Zaronimus] Settings", "LLLIB_SettingsMenu");
-LLLIB_ModSettings_RegisterModMenu("LLZ5", "[Zironimus] Settings", "LLLIB_SettingsMenu");
-LLLIB_ModSettings_RegisterModMenu("LLNWIZ", "[Naming Wizard] Settings", "LLLIB_SettingsMenu");
-LLLIB_ModSettings_RegisterModMenu("LLEQSET", "[Equipment Sets] Settings", "LLLIB_SettingsMenu");
-LLLIB_ModSettings_RegisterModMenu("LLDBT", "[Debug Tools] Settings", "LLLIB_SettingsMenu");
+LeaderLib_RegisterModMenu("LLZ1", "[Zieonimus] Settings", "LLLIB_SettingsMenu");
+LeaderLib_RegisterModMenu("LLZ2", "[Zzznonom] Settings", "LLLIB_SettingsMenu");
+LeaderLib_RegisterModMenu("LLZ3", "[Zzaonimus] Settings", "LLLIB_SettingsMenu");
+LeaderLib_RegisterModMenu("LLZ4", "[Zaronimus] Settings", "LLLIB_SettingsMenu");
+LeaderLib_RegisterModMenu("LLZ5", "[Zironimus] Settings", "LLLIB_SettingsMenu");
+LeaderLib_RegisterModMenu("LLNWIZ", "[Naming Wizard] Settings", "LLLIB_SettingsMenu");
+LeaderLib_RegisterModMenu("LLEQSET", "[Equipment Sets] Settings", "LLLIB_SettingsMenu");
+LeaderLib_RegisterModMenu("LLDBT", "[Debug Tools] Settings", "LLLIB_SettingsMenu");
 
-LLLIB_ModSettings_RegisterModMenu("LLZasdas7", "[Blaaaabbbbbzter] Settings", "LLLIB_SettingsMenu");
-LLLIB_ModSettings_RegisterModMenu("LLZasd6", "[Blaaaabbbbbzter] Settings", "LLLIB_SettingsMenu");
-LLLIB_ModSettings_RegisterModMenu("LLasdZ92", "[Blaaaabbbbbzter9] Settings", "LLLIB_SettingsMenu");
+LeaderLib_RegisterModMenu("LLZasdas7", "[Blaaaabbbbbzter] Settings", "LLLIB_SettingsMenu");
+LeaderLib_RegisterModMenu("LLZasd6", "[Blaaaabbbbbzter] Settings", "LLLIB_SettingsMenu");
+LeaderLib_RegisterModMenu("LLasdZ92", "[Blaaaabbbbbzter9] Settings", "LLLIB_SettingsMenu");
 
 LLLIB_ModSettings_CalculateMaxPage();
 */

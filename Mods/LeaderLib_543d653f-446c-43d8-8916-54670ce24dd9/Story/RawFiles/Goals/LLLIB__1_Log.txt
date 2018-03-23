@@ -3,6 +3,8 @@ SubGoalCombiner SGC_AND
 INITSECTION
 //DB_LeaderLog_Temp_CombinedString(_CombinedStr)
 //DB_LeaderLog_Temp_NextLogTarget(_Player)
+//DB_LeaderLog_Temp_TargetOnce(_Player)
+//DB_LeaderLog_Temp_NextStatusColor(_Player, _Color, _Size)
 KBSECTION
 //REGION DISABLED_CHECK
 QRY
@@ -22,14 +24,14 @@ DB_NOOP(1);
 QRY
 LeaderLog_QRY_LogTypeEnabled("STATUS")
 AND
-NOT LeaderLog_QRY_Internal_DisableFlagActive("LEADERLOG_PRINT_DISABLED")
+NOT LeaderLog_QRY_Internal_DisableFlagActive("LEADERLOG_STATUS_DISABLED")
 THEN
 DB_NOOP(1);
 
 QRY
 LeaderLog_QRY_LogTypeEnabled("PRINT")
 AND
-NOT LeaderLog_QRY_Internal_DisableFlagActive("LEADERLOG_PRINT_DISABLED")
+NOT LeaderLog_QRY_Internal_DisableFlagActive("LEADERLOG_STATUS_DISABLED")
 THEN
 DB_NOOP(1);
 
@@ -53,6 +55,28 @@ THEN
 DB_NOOP(1);
 //END_REGION
 
+//REGION TYPE_CHECK
+QRY
+LeaderLog_QRY_IsStatusType("STATUS")
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLog_QRY_IsStatusType("PRINT")
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLog_QRY_IsDebugType("EDITOR")
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLog_QRY_IsDebugType("DEBUG")
+THEN
+DB_NOOP(1);
+//END_REGION
+
 //REGION PLAYER_LOG_TARGETING
 QRY
 LeaderLog_QRY_SetTarget((CHARACTERGUID)_Player)
@@ -65,6 +89,33 @@ AND
 NOT DB_LeaderLog_Temp_NextLogTarget(_Player)
 THEN
 DB_LeaderLog_Temp_NextLogTarget(_Player);
+
+QRY
+LeaderLog_QRY_SetOneshotTarget((CHARACTERGUID)_Player)
+THEN
+LeaderLog_SetOneshotTarget(_Player);
+
+PROC
+LeaderLog_SetOneshotTarget((CHARACTERGUID)_Player)
+THEN
+LeaderLog_SetTarget(_Player);
+DB_LeaderLog_Temp_TargetOnce(_Player);
+
+PROC
+LeaderLog_Internal_ClearTargetIfOneshot((CHARACTERGUID)_Player)
+AND
+DB_LeaderLog_Temp_NextLogTarget(_Player)
+AND
+DB_LeaderLog_Temp_TargetOnce(_Player)
+THEN
+NOT DB_LeaderLog_Temp_NextLogTarget(_Player);
+
+PROC
+LeaderLog_Internal_ClearTargetIfOneshot((CHARACTERGUID)_Player)
+AND
+DB_LeaderLog_Temp_TargetOnce(_Player)
+THEN
+NOT DB_LeaderLog_Temp_TargetOnce(_Player);
 
 PROC
 LeaderLog_ClearTarget((CHARACTERGUID)_Player)
@@ -89,6 +140,25 @@ PROC
 LeaderLog_QRY_ClearAllTargets()
 THEN
 LeaderLog_ClearAllTargets();
+//END_REGION
+
+//REGION COLOR
+PROC
+LeaderLog_SetNextStatusColor((CHARACTERGUID)_Player, (STRING)_Color)
+THEN
+LeaderLog_SetNextStatusColor(_Player, _Color, "20");
+
+PROC
+LeaderLog_SetNextStatusColor((CHARACTERGUID)_Player, (STRING)_Color, (STRING)_Size)
+THEN
+DB_LeaderLog_Temp_NextStatusColor(_Player, _Color, _Size);
+
+PROC
+LeaderLog_ClearStatusColor((CHARACTERGUID)_Player)
+AND
+DB_LeaderLog_Temp_NextStatusColor(_Player, _Color, _Size)
+THEN
+NOT DB_LeaderLog_Temp_NextStatusColor(_Player, _Color, _Size);
 //END_REGION
 
 //REGION LOGGING
@@ -255,25 +325,44 @@ LeaderLog_Internal_RunString(_Type, _Msg9);
 PROC
 LeaderLog_Internal_RunString((STRING)_Type, (STRING)_Str)
 AND
-_Type == "PRINT"
+LeaderLog_QRY_IsStatusType(_Type)
 AND
 DB_LeaderLog_Temp_NextLogTarget(_Player)
+AND
+NOT DB_LeaderLog_Temp_NextStatusColor(_Player, _, _)
 THEN
 CharacterStatusText(_Player, _Str);
+LeaderLog_Internal_ClearTargetIfOneshot(_Player);
 
 PROC
 LeaderLog_Internal_RunString((STRING)_Type, (STRING)_Str)
 AND
-_Type == "STATUS"
+LeaderLog_QRY_IsStatusType(_Type)
 AND
 DB_LeaderLog_Temp_NextLogTarget(_Player)
+AND
+DB_LeaderLog_Temp_NextStatusColor(_Player, _Color, _Size)
+AND
+StringConcatenate("<font color='", _Color, _ColorStr1)
+AND
+StringConcatenate(_ColorStr1, "' size='", _ColorStr2)
+AND
+StringConcatenate(_ColorStr2, _Size, _ColorStr3)
+AND
+StringConcatenate(_ColorStr3, "'>", _ColorStr4)
+AND
+StringConcatenate(_ColorStr4, _Str, _ColorStr5)
+AND
+StringConcatenate(_ColorStr5, "</font>", _ColorStr6)
 THEN
-CharacterStatusText(_Player, _Str);
+CharacterStatusText(_Player, _ColorStr6);
+NOT DB_LeaderLog_Temp_NextStatusColor(_Player, _Color, _Size);
+LeaderLog_Internal_ClearTargetIfOneshot(_Player);
 
 PROC
 LeaderLog_Internal_RunString((STRING)_Type, (STRING)_Str)
 AND
-_Type == "DEBUG"
+LeaderLog_QRY_IsDebugType(_Type)
 THEN
 DebugBreak(_Str);
 
@@ -286,6 +375,7 @@ DB_LeaderLog_Temp_NextLogTarget(_Player)
 THEN
 SetVarFixedString(_Player, "LeaderLog_CombatText", _Str);
 SetStoryEvent(_Player, "LeaderLog_Events_PlayerCombatLog");
+LeaderLog_Internal_ClearTargetIfOneshot(_Player);
 
 PROC
 LeaderLog_Internal_RunString((STRING)_Type, (STRING)_Str)

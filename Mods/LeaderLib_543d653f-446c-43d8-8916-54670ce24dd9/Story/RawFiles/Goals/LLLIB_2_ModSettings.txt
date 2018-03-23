@@ -21,7 +21,7 @@ LLLIB_ModSettings_InitSettings();
 KBSECTION
 //REGION REGISTERING
 PROC
-LLLIB_ModSettings_RegisterModMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog)
+LeaderLib_RegisterModMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog)
 AND
 NOT DB_LLLIB_ModSettings_RegisteredMenu(_,_ID,_,_)
 AND
@@ -48,7 +48,7 @@ LLLIB_ModSettings_SortMenus();
 
 /*
 PROC
-LLLIB_ModSettings_RegisterModMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog)
+LeaderLib_RegisterModMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog)
 THEN
 LLLIB_ModSettings_CalculateMaxPage();
 */
@@ -96,7 +96,7 @@ THEN
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_ModSettings_MenusPerPage", 1);
 DB_LLLIB_ModSettings_MenusPerPage(8);
 
-LLLIB_ModSettings_RegisterModMenu("LaughingLeader_LeaderLib", "[LeaderLib] Settings", "LLLIB_SettingsMenu");
+LeaderLib_RegisterModMenu("LaughingLeader_LeaderLib", "[LeaderLib] Settings", "LLLIB_SettingsMenu");
 
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_ModSettings_DynamicMenuVars", 4);
 DB_LLLIB_ModSettings_DynamicMenuVars(0, "LLLIB_ModSettings_Menu1_783ec14d-2861-4345-8dbc-45974fa34e15", "LLLIB_ModSettings_SelectedMenu1", "LLLIB_ModSettings_MenuEmpty1");
@@ -181,7 +181,7 @@ LLLIB_ModSettings_Sorter_AddUnSortedMenus()
 AND
 DB_LLLIB_ModSettings_Temp_UnsortedMenu(_ID, _Dialog, _DisplayName)
 THEN
-LLLIB_ModSettings_RegisterModMenu(_ID, _DisplayName, _Dialog);
+LeaderLib_RegisterModMenu(_ID, _DisplayName, _Dialog);
 NOT DB_LLLIB_ModSettings_Temp_UnsortedMenu(_ID, _Dialog, _DisplayName);
 //END_REGION
 
@@ -541,11 +541,29 @@ DialogEnded(_Dialog, _Instance)
 AND
 DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
 AND
+UserGetFlag(_Player, "LeaderLib_AutoOpenModSettingsMenu", 1)
+AND
+ObjectGetFlag(_Player, "LeaderLib_OpenModSettingsMenu", 1)
+THEN
+LLLIB_ModSettings_Reopen(_Player, _Dialog);
+ObjectClearFlag(_Player, "LeaderLib_OpenModSettingsMenu");
+
+PROC
+LLLIB_ModSettings_Reopen((CHARACTERGUID)_Player, (STRING)_Dialog)
+AND
 DB_LLLIB_ModSettings_Temp_ActiveMenu(_Player, _ID, _Dialog)
 THEN
 NOT DB_LLLIB_ModSettings_Temp_ActiveMenu(_Player, _ID, _Dialog);
 Proc_StartDialog(0, "LLLIB_ModSettingsMenu", _Player, _Player);
 
+IF
+ObjectFlagSet("LeaderLib_ModSettingsMenu_ClearMemory", (CHARACTERGUID)_Player, _)
+AND
+LLLIB_Helper_QRY_ClearObjectFlag(_Player, "LeaderLib_ModSettingsMenu_ClearMemory")
+AND
+DB_LLLIB_ModSettings_Temp_ActiveMenu(_Player, _ID, _Dialog)
+THEN
+NOT DB_LLLIB_ModSettings_Temp_ActiveMenu(_Player, _ID, _Dialog);
 //END_REGION
 
 //REGION ITEM_USE

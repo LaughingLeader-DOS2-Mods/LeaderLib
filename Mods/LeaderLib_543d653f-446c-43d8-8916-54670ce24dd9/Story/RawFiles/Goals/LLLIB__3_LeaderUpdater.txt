@@ -1,9 +1,10 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-
+//DB_Mods_RegisteredMod(_ModName, _Version, _Author)
+//DB_Mods_ModActiveGoal(_ModName, _Author, _GoalTitle)
 KBSECTION
-//REGION MOD_UPDATING_API
+//REGION REGISTERING
 PROC
 LeaderUpdater_ClearPreviousVersions((STRING)_ModName, (STRING)_Author)
 AND
@@ -19,6 +20,33 @@ THEN
 LeaderUpdater_ClearPreviousVersions(_ModName, _Author);
 DB_Mods_RegisteredMod(_ModName, _Version, _Author);
 
+/* Maybe multiple active goals wouldn't be so bad?
+PROC
+LeaderUpdater_RegisterModActiveGoal((STRING)_ModName, (STRING)_Author, (STRING)_GoalTitle)
+AND
+DB_Mods_ModActiveGoal(_ModName, _Author, _PreviousGoalTitle)
+AND
+_PreviousGoalTitle != _GoalTitle
+THEN
+NOT DB_Mods_ModActiveGoal(_ModName, _Author, _PreviousGoalTitle);
+*/
+
+PROC
+LeaderUpdater_RegisterModActiveGoal((STRING)_ModName, (STRING)_Author, (STRING)_GoalTitle)
+AND
+NOT DB_Mods_ModActiveGoal(_ModName, _Author, _GoalTitle)
+THEN
+DB_Mods_ModActiveGoal(_ModName, _Author, _GoalTitle);
+
+PROC
+LeaderUpdater_ClearModActiveGoals((STRING)_ModName, (STRING)_Author)
+AND
+DB_Mods_ModActiveGoal(_ModName, _Author, _GoalTitle)
+THEN
+NOT DB_Mods_ModActiveGoal(_ModName, _Author, _GoalTitle);
+//END_REGION
+
+//REGION CHECKING
 QRY
 LeaderUpdater_QRY_ModUpdateNeeded((STRING)_ModName, (STRING)_Version, (STRING)_Author)
 AND
@@ -26,6 +54,16 @@ NOT DB_Mods_RegisteredMod(_ModName, _Version, _Author)
 THEN
 DB_NOOP(1);
 
+QRY
+LeaderUpdater_QRY_ModIsRunning((STRING)_ModName, (STRING)_Author)
+AND
+DB_Mods_RegisteredMod(_ModName, _Version, _Author)
+AND
+DB_Mods_ModActiveGoal(_ModName, _Author, _GoalTitle)
+AND
+SysIsActive(_GoalTitle)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION UNINSTALLING

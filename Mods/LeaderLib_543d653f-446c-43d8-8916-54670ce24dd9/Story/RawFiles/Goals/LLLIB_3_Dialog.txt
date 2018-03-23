@@ -17,12 +17,12 @@ DB_LLLIB_DialogNames("LLLIB_RetiredLeader_Default");
 DB_LLLIB_DialogNames("LLLIB_RetiredLeader_TutorialBoat");
 
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_Dialog_AttitudeFlags", 2);
-DB_LLLIB_Dialog_AttitudeFlags("LLLIB_IncreaseAttitude_5", 5);
-DB_LLLIB_Dialog_AttitudeFlags("LLLIB_IncreaseAttitude_10", 10);
-DB_LLLIB_Dialog_AttitudeFlags("LLLIB_IncreaseAttitude_25", 25);
-DB_LLLIB_Dialog_AttitudeFlags("LLLIB_IncreaseAttitude_50", 50);
-DB_LLLIB_Dialog_AttitudeFlags("LLLIB_IncreaseAttitude_75", 75);
-DB_LLLIB_Dialog_AttitudeFlags("LLLIB_IncreaseAttitude_100", 100);
+DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_IncreaseAttitude_5", 5);
+DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_IncreaseAttitude_10", 10);
+DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_IncreaseAttitude_25", 25);
+DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_IncreaseAttitude_50", 50);
+DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_IncreaseAttitude_75", 75);
+DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_IncreaseAttitude_100", 100);
 //END_REGION
 
 //REGION UPDATING
@@ -76,9 +76,9 @@ DialogSetVariableStringForInstance(_Instance, _SpeakerVar, "Von Hunter");
 
 //REGION FLAG_COMMANDS
 IF
-ObjectFlagSet("LLLIB_GrantModSettingsBook", _Object, _Instance)
+ObjectFlagSet("LeaderLib_GrantModSettingsBook", _Object, _Instance)
 AND
-LLLIB_Helper_QRY_ClearObjectFlag(_Object, "LLLIB_GrantModSettingsBook")
+LLLIB_Helper_QRY_ClearObjectFlag(_Object, "LeaderLib_GrantModSettingsBook")
 AND
 DB_LLLIB_Settings_ItemTemplates("Book_ModSettings", _ItemTemplate)
 THEN
@@ -123,7 +123,7 @@ THEN
 CharacterStatusText(_Target, _StatusText);
 
 IF
-ObjectFlagSet("LLLIB_Trader_OpenTrade", (CHARACTERGUID)_Object, _Instance)
+ObjectFlagSet("LeaderLib_Trader_OpenTrade", (CHARACTERGUID)_Object, _Instance)
 AND
 LLLIB_Helper_QRY_ClearObjectFlag(_Object, "LLLIB_Treasure_OpenTrade")
 AND

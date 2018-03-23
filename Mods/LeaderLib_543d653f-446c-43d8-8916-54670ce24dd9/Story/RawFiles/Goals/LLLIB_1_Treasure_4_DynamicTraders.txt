@@ -700,6 +700,16 @@ TimerLaunch("LLLIB_Timers_CreateTraders", 2000);
 
 IF
 TimerFinished("LLLIB_Timers_CreateTraders")
+THEN
+LLLIB_Traders_StartSpawning();
+
+IF
+StoryEvent(_, "LeaderLib_SpawnTraders")
+THEN
+LLLIB_Traders_StartSpawning();
+
+PROC
+LLLIB_Traders_StartSpawning()
 AND
 DB_CurrentLevel(_Level)
 THEN

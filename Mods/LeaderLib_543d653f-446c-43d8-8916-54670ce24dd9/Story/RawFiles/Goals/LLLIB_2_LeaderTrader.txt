@@ -49,6 +49,7 @@ LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "RC_Main", 5000);
 LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "CoS_Main", 10000);
 LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "Arx_Main", 13000);
 
+LLLIB_Treasure_Register_TreasureToTrader("LLLIB_LeaderTrader_ModItems", "LLLIB_LeaderTrader");
 LLLIB_Treasure_Register_TreasureToTrader("LLLIB_LeaderTrader_ModBooks", "LLLIB_LeaderTrader");
 LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModBooks", "LLLIB_BOOK_ModSettingsMenu_646a1194-3383-47fa-a379-ebefa3d2b108", 1);
 LLLIB_Treasure_Configure_GenerationType("LLLIB_LeaderTrader_ModBooks", "LLLIB_BOOK_ModSettingsMenu_646a1194-3383-47fa-a379-ebefa3d2b108", "DIALOG_STARTED");
@@ -225,6 +226,27 @@ THEN
 //Reset the chair logic
 ClearVarObject(_LeaderTrader, "Seat");
 SetVarObject(_LeaderTrader, "Seat", _Seat);
+//END_REGION
+
+//REGION ATTACKED
+IF
+AttackedByObject((CHARACTERGUID)_LeaderTrader, (CHARACTERGUID)_AttackerOwner, _Attacker, _DamageType, _DamageSource)
+AND
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+AND
+CharacterIsPlayer(_AttackerOwner, 1)
+AND
+NOT DB_LLLIB_LeaderTrader_IsRespondingToAttack(_)
+THEN
+DB_LLLIB_LeaderTrader_IsRespondingToAttack(1);
+Proc_StartDialog(1, "LLLIB_RetiredTrader_AttackResponse", _LeaderTrader);
+
+IF
+AutomatedDialogEnded("LLLIB_RetiredTrader_AttackResponse", _Instance)
+AND
+DB_LLLIB_LeaderTrader_IsRespondingToAttack(_Val)
+THEN
+NOT DB_LLLIB_LeaderTrader_IsRespondingToAttack(_Val);
 //END_REGION
 
 //REGION MISC

@@ -1,7 +1,7 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-LLLIB_LeaderTrader_RegisterTrader();
+LLLIB_LeaderTrader_RegisterTraderSettings();
 //DB_LLLIB_LeaderTrader(_LeaderTrader)
 //DB_LLLIB_LeaderTrader_MetPlayer(_Player)
 
@@ -13,42 +13,16 @@ IF
 StoryEvent(_, "LLLIB_Events_UpdateDatabases")
 THEN
 LLLIB_Trader_ClearTrader("LLLIB_LeaderTrader");
-LLLIB_LeaderTrader_RegisterTrader();
+LLLIB_LeaderTrader_RegisterTraderSettings();
 
 PROC
-LLLIB_LeaderTrader_RegisterTrader()
-AND
-NOT DB_LLLIB_LeaderTrader(_)
-AND
-ObjectExists(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574, 1)
-THEN
-DB_LLLIB_LeaderTrader((CHARACTERGUID)CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574);
-LLLIB_Trader_Register_GlobalTrader("LLLIB_LeaderTrader", CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574);
-
-//If the global version doesn't exist for some reason, use the template
-PROC
-LLLIB_LeaderTrader_RegisterTrader()
-AND
-NOT DB_LLLIB_LeaderTrader(_)
-AND
-ObjectExists(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574, 0)
-THEN
-LLLIB_Trader_Register_Trader("LLLIB_LeaderTrader", "LLLIB_RetiredLeader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e", 0);
-
-PROC
-LLLIB_LeaderTrader_RegisterTrader()
+LLLIB_LeaderTrader_RegisterTraderSettings()
 THEN
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_LeaderTrader_Dialog", 2);
 DB_LLLIB_LeaderTrader_Dialog("Default", "LLLIB_RetiredLeader_Default");
 DB_LLLIB_LeaderTrader_Dialog("Tutorial", "LLLIB_RetiredLeader_TutorialBoat");
 
-PROC
-LLLIB_LeaderTrader_RegisterTrader()
-AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
-THEN
 LLLIB_Trader_Register_CreationEvent("LLLIB_LeaderTrader", "LLLIB_Events_OnLeaderTradeSpawned");
-
 
 //In case the position objects were destroyed
 LLLIB_Trader_Register_Position("LLLIB_LeaderTrader", "FJ_FortJoy_Main", 220.01, -16.79, 362.97);
@@ -100,75 +74,31 @@ THEN
 LLLIB_Trader_Register_Level("LLLIB_LeaderTrader", _LevelName, _RequirementID);
 LLLIB_Trader_Register_PositionObject("LLLIB_LeaderTrader", _LevelName, (GUIDSTRING)_Seat);
 LLLIB_Trader_Register_Seat("LLLIB_LeaderTrader", _LevelName, (ITEMGUID)_Seat);
-//END_REGION
 
-//REGION APPEARANCE_CHANGING
-IF
-DB_LLLIB_Traders_Spawned(_LeaderTrader, _TraderID, "TUT_Tutorial_A")
+PROC
+LLLIB_LeaderTrader_RegisterTrader()
 AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
+NOT DB_LLLIB_LeaderTrader(_)
+AND
+ObjectExists(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574, 1)
 THEN
-CharacterTransform(_LeaderTrader, "LLLIB_RetiredLeader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e", 1, 1, 1, 1, 1, 1, 0);
-LLLIB_Helper_CreateItemByStatAndEquip(_LeaderTrader, "ARM_Purge_UpperBody");
-LLLIB_Helper_CreateItemByStatAndEquip(_LeaderTrader, "ARM_Purge_LowerBody");
-LLLIB_Helper_RefreshEquipment(_LeaderTrader);
-DB_TUT_LowerDeck_WindegoSpareCharacters(_LeaderTrader); // To avoid exploding
+DB_LLLIB_LeaderTrader((CHARACTERGUID)CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574);
+LLLIB_Trader_Register_GlobalTrader("LLLIB_LeaderTrader", CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574);
 
-IF
-DB_LLLIB_Traders_Spawned(_LeaderTrader, _TraderID, "FJ_FortJoy_Main")
+//If the global version doesn't exist for some reason, use the template
+PROC
+LLLIB_LeaderTrader_RegisterTrader()
 AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
+NOT DB_LLLIB_LeaderTrader(_)
+AND
+ObjectExists(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574, 0)
 THEN
-CharacterTransform(_LeaderTrader, "LLLIB_RetiredLeader_Act1_da17fca2-fe16-46d9-80b3-08971a8c8d49", 1, 1, 1, 1, 1, 1, 0);
-LLLIB_Helper_RefreshEquipment(_LeaderTrader);
-
-IF
-DB_LLLIB_Traders_Spawned(_LeaderTrader, _TraderID, "LeaderLib_TestLevel")
-AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
-THEN
-//CharacterTransform(_LeaderTrader, "LLLIB_RetiredLeader_Act1_da17fca2-fe16-46d9-80b3-08971a8c8d49", 1, 1, 1, 1, 1, 1, 0);
-LLLIB_Helper_CreateItemByStatAndEquip(_LeaderTrader, "ARM_Purge_UpperBody", 0);
-LLLIB_Helper_CreateItemByStatAndEquip(_LeaderTrader, "ARM_Purge_LowerBody", 0);
-//LLLIB_Helper_RefreshEquipment(_LeaderTrader);
-//END_REGION
-
-//REGION TUTORIAL
-IF
-GlobalFlagSet("TUT_LowerDeck_WindegoHasCastSpell")
-AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
-AND
-DB_LLLIB_Traders_Spawned(_LeaderTrader, _TraderID, _Level)
-THEN
-DisplayText(_LeaderTrader, "Hrmph. Sounds like my cue to sneak on out of here...");
-CharacterUseSkill(_LeaderTrader, "Shout_ChameleonSkin", _LeaderTrader, 0, 1, 1);
-TimerLaunch("LLLIB_Timeers_LeaderTrader_TUTDisappear", 2000);
+LLLIB_Trader_Register_Trader("LLLIB_LeaderTrader", "LLLIB_RetiredLeader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e", 0);
 
 IF
-TimerFinished("LLLIB_Timeers_LeaderTrader_TUTDisappear")
-AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
-AND
-DB_LLLIB_Traders_Spawned(_LeaderTrader, _TraderID, "TUT_Tutorial_A")
+GameStarted(_,_)
 THEN
-NOT DB_LLLIB_Traders_Spawned(_LeaderTrader, _TraderID, "TUT_Tutorial_A");
-
-IF
-TimerFinished("LLLIB_Timeers_LeaderTrader_TUTDisappear")
-AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
-THEN
-SetOnStage(_LeaderTrader, 0);
-
-IF
-RegionEnded("TUT_Tutorial_A")
-AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
-AND
-DB_TUT_LowerDeck_WindegoSpareCharacters(_LeaderTrader)
-THEN
-NOT DB_TUT_LowerDeck_WindegoSpareCharacters(_LeaderTrader);
+LLLIB_LeaderTrader_RegisterTrader();
 //END_REGION
 
 //REGION GREETING_CHANGE
@@ -242,7 +172,7 @@ AND
 ObjectGetFlag(_LeaderTrader, "LLLIB_LeaderTrader_Hiding", 0)
 THEN
 DB_LLLIB_LeaderTrader_AvoidingCombat(_CombatID);
-DisplayText(_LeaderTrader, "I'm retired from the chaos of battle! No more I say!");
+DisplayText(_LeaderTrader, "I'm retired! Leave me be.");
 CharacterUseSkill(_LeaderTrader, "Shout_ChameleonSkin", _LeaderTrader, 0, 1, 1);
 ObjectSetFlag(_LeaderTrader, "LLLIB_LeaderTrader_Hiding", 0);
 
@@ -305,6 +235,7 @@ SetVarObject(_LeaderTrader, "Seat", _Seat);
 
 //END_REGION
 
+//REGION SPAWN_EVENT
 IF
 StoryEvent((CHARACTERGUID)_Trader, "LLLIB_Events_OnLeaderTradeSpawned")
 THEN
@@ -313,19 +244,19 @@ ApplyStatus(_Trader, "LLLIB_PACIFIST", -1.0, 1);
 IF
 StoryEvent((CHARACTERGUID)_Trader, "LLLIB_Events_OnLeaderTradeSpawned")
 AND
-IsGameLevel("TUT_Tutorial_A", 1)
+DB_CurrentLevel("TUT_Tutorial_A")
 THEN
 LLLIB_Helper_UnequipWeapons(_Trader);
 
 IF
 StoryEvent((CHARACTERGUID)_Trader, "LLLIB_Events_OnLeaderTradeSpawned")
 AND
-IsGameLevel("FJ_FortJoy_Main", 1)
+DB_CurrentLevel("FJ_FortJoy_Main")
 THEN
+LeaderLog_Log("DEBUG","[LLLIB:LeaderTrader] Walking to position in FortJoy.");
 CharacterMoveToPosition(_Trader, 220.01, -16.79, 362.97, 0, "LLLIB_Events_LeaderTraderFinishedMoving");
-//TimerLaunch("LLLIB_LeaderTrader_MoveFailsafeTimer", 10000);
+TimerLaunch("LLLIB_LeaderTrader_MoveFailsafeTimer", 10000);
 
-/*
 IF
 StoryEvent((CHARACTERGUID)_LeaderTrader, "LLLIB_Events_LeaderTraderFinishedMoving")
 THEN
@@ -338,8 +269,91 @@ DB_LLLIB_LeaderTrader(_LeaderTrader)
 AND
 GetPosition(_LeaderTrader, _x,_y,_z)
 THEN
-CharacterMoveToPosition(_Trader, _x,_y,_z, 0, "");
-*/
+//Hopefully cancel walking
+CharacterMoveToPosition(_LeaderTrader, _x,_y,_z, 0, "");
+
+IF
+DB_LLLIB_Traders_Spawned(_LeaderTrader, "LLLIB_LeaderTrader", _Level)
+THEN
+LLLIB_LeaderTrader_Set(_LeaderTrader);
+
+PROC
+LLLIB_LeaderTrader_Set((CHARACTERGUID)_Character)
+AND
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+AND
+_Character != _LeaderTrader
+AND
+ObjectExists(_LeaderTrader, 0)
+THEN
+NOT DB_LLLIB_LeaderTrader(_LeaderTrader);
+
+PROC
+LLLIB_LeaderTrader_Set((CHARACTERGUID)_Character)
+AND
+NOT DB_LLLIB_LeaderTrader(_)
+THEN
+DB_LLLIB_LeaderTrader(_Character);
+//END_REGION
+
+//REGION APPEARANCE_CHANGING
+IF
+DB_LLLIB_Traders_Spawned(_LeaderTrader, "LLLIB_LeaderTrader", "TUT_Tutorial_A")
+THEN
+CharacterTransform(_LeaderTrader, "LLLIB_RetiredLeader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e", 1, 1, 1, 1, 1, 1, 0);
+LLLIB_Helper_CreateItemByStatAndEquip(_LeaderTrader, "ARM_Purge_UpperBody");
+LLLIB_Helper_CreateItemByStatAndEquip(_LeaderTrader, "ARM_Purge_LowerBody");
+LLLIB_Helper_RefreshEquipment(_LeaderTrader);
+DB_TUT_LowerDeck_WindegoSpareCharacters(_LeaderTrader); // To avoid exploding
+
+IF
+DB_LLLIB_Traders_Spawned(_LeaderTrader, "LLLIB_LeaderTrader", "FJ_FortJoy_Main")
+THEN
+CharacterTransform(_LeaderTrader, "LLLIB_RetiredLeader_Act1_da17fca2-fe16-46d9-80b3-08971a8c8d49", 1, 1, 1, 1, 1, 1, 0);
+LLLIB_Helper_RefreshEquipment(_LeaderTrader);
+
+IF
+DB_LLLIB_Traders_Spawned(_LeaderTrader, "LLLIB_LeaderTrader", "LeaderLib_TestLevel")
+THEN
+//CharacterTransform(_LeaderTrader, "LLLIB_RetiredLeader_Act1_da17fca2-fe16-46d9-80b3-08971a8c8d49", 1, 1, 1, 1, 1, 1, 0);
+LLLIB_Helper_CreateItemByStatAndEquip(_LeaderTrader, "ARM_Purge_UpperBody", 0);
+LLLIB_Helper_CreateItemByStatAndEquip(_LeaderTrader, "ARM_Purge_LowerBody", 0);
+//LLLIB_Helper_RefreshEquipment(_LeaderTrader);
+//END_REGION
+
+//REGION TUTORIAL
+IF
+GlobalFlagSet("TUT_LowerDeck_WindegoHasCastSpell")
+AND
+DB_LLLIB_Traders_Spawned(_LeaderTrader, "LLLIB_LeaderTrader", _Level)
+THEN
+DisplayText(_LeaderTrader, "Hrmph. Best to avoid trouble...");
+CharacterUseSkill(_LeaderTrader, "Shout_ChameleonSkin", _LeaderTrader, 0, 1, 1);
+TimerLaunch("LLLIB_Timeers_LeaderTrader_TUTDisappear", 2000);
+
+IF
+TimerFinished("LLLIB_Timeers_LeaderTrader_TUTDisappear")
+AND
+DB_LLLIB_Traders_Spawned(_LeaderTrader, "LLLIB_LeaderTrader", "TUT_Tutorial_A")
+THEN
+NOT DB_LLLIB_Traders_Spawned(_LeaderTrader, "LLLIB_LeaderTrader", "TUT_Tutorial_A");
+
+IF
+TimerFinished("LLLIB_Timeers_LeaderTrader_TUTDisappear")
+AND
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+THEN
+SetOnStage(_LeaderTrader, 0);
+
+IF
+RegionEnded("TUT_Tutorial_A")
+AND
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+AND
+DB_TUT_LowerDeck_WindegoSpareCharacters(_LeaderTrader)
+THEN
+NOT DB_TUT_LowerDeck_WindegoSpareCharacters(_LeaderTrader);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

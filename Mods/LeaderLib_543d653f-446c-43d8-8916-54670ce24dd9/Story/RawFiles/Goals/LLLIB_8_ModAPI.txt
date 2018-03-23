@@ -29,6 +29,18 @@ NOT DB_LeaderLib_ModBridge_SendEvent(_EventName);
 
 //REGION LOGGING
 IF
+DB_LeaderLib_ModBridge_Log_SetTarget((CHARACTERGUID)_Target)
+THEN
+LeaderLog_SetTarget(_Target);
+NOT DB_LeaderLib_ModBridge_Log_SetTarget(_Target);
+
+IF
+DB_LeaderLib_ModBridge_Log_ClearTarget((CHARACTERGUID)_Target)
+THEN
+LeaderLog_ClearTarget(_Target);
+NOT DB_LeaderLib_ModBridge_Log_ClearTarget(_Target);
+
+IF
 DB_LeaderLib_ModBridge_Log((STRING)_Type, (STRING)_Str1)
 THEN
 LeaderLog_Log(_Type, _Str1);
@@ -87,6 +99,19 @@ DB_LeaderLib_ModBridge_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)
 THEN
 LeaderLog_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _Str9, _Str10);
 NOT DB_LeaderLib_ModBridge_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _Str9, _Str10);
+//END_REGION
+
+//REGION API_EVENTS
+IF
+GameStarted(_,_)
+THEN
+TimerLaunch("LLLIB_Timers_LeaderLibInitialized", 1);
+
+IF
+TimerFinished("LLLIB_Timers_LeaderLibInitialized")
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:LeaderUpdater] LeaderLib initialized.");
+LLLIB_Events_SendEvent("LeaderLib_Initialized");
 //END_REGION
 EXITSECTION
 

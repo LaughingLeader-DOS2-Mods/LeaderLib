@@ -19,11 +19,10 @@
         <field name="Type" type="StringStatObjectFieldDefinition" clear_inherited_value="false" value="CONSUME" />
         <field name="InitiateCombat" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="0" enumeration_type_name="YesNo" />
         <field name="DisplayName" type="TranslatedStringStatObjectFieldDefinition" clear_inherited_value="false" value="New Items in Stock" />
-        <field name="Description" type="TranslatedStringStatObjectFieldDefinition" clear_inherited_value="false" value="Trader is selling new items." />
+        <field name="Description" type="TranslatedStringStatObjectFieldDefinition" clear_inherited_value="false" value="Character is selling new items." />
         <field name="FormatColor" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="15" enumeration_type_name="FormatStringColor" />
-        <field name="StackId" type="StringStatObjectFieldDefinition" clear_inherited_value="false" value="Stack_LLLIB_Pacifist" />
-        <field name="Icon" type="StringStatObjectFieldDefinition" clear_inherited_value="false" value="Item_Helper_A" />
-        <field name="StatusEffect" type="StringStatObjectFieldDefinition" clear_inherited_value="false" value="RS3_FX_UI_Exclamation_Mark_01:Dummy_OverheadFX" />
+        <field name="StackId" type="StringStatObjectFieldDefinition" clear_inherited_value="false" value="Stack_LLLIB_NewItems" />
+        <field name="Icon" type="StringStatObjectFieldDefinition" clear_inherited_value="false" value="Reward Panel_a" />
       </fields>
     </stat_object>
   </stat_objects>

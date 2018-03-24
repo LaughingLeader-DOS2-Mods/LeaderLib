@@ -302,6 +302,13 @@ DB_NOOP(1);
 
 
 QRY
+LLLIB_QRY_Treasure_ItemCanGenerate((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_RequirementID, "MANUAL")
+AND
+LLLIB_QRY_Requirements_AllMet(_RequirementID)
+THEN
+DB_NOOP(1);
+
+QRY
 LLLIB_QRY_Treasure_ItemCanGenerate((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_RequirementID, (STRING)_GenerationType)
 AND
 NOT DB_LLLIB_Treasure_ItemGenerationType(_TreasureID, _ItemEntry, _)
@@ -527,7 +534,7 @@ LLLIB_Treasure_MarkAsFinished((GUIDSTRING)_Object, (STRING)_ItemEntry, (STRING)_
 AND
 GetUUID(_Object, _ID)
 AND
-StringConcatenate("LLLIB_Treasure_ResetIstGeneratingFlagTimer_", _ID, _TimerName)
+StringConcatenate("LLLIB_Treasure_ResetGeneratingFlagTimer_", _ID, _TimerName)
 AND
 NOT DB_LLLIB_Treasure_Temp_ResetGeneratedFlagTimer(_Object, _TimerName)
 THEN
@@ -986,7 +993,7 @@ DialogGetInvolvedNPC(_Instance, 1, _Object)
 AND
 IsTagged(_Object, "LLLIB_Trader_GenerateOnDialog", 1)
 AND
-LLLIB_QRY_Treasure_ObjectCanStartGeneration((GUIDSTRING)_Object)
+LLLIB_QRY_Treasure_ObjectCanStartGeneration(_Object)
 AND
 LLLIB_QRY_Treasure_GetTreasureID(_Object)
 AND
@@ -1087,6 +1094,7 @@ DB_LLLIB_Treasure_Temp_PartyLeveledUpGenerationTimer(_TimerName, _TreasureID)
 THEN
 NOT DB_LLLIB_Treasure_Temp_PartyLeveledUpGenerationTimer(_TimerName, _TreasureID);
 
+//Use a proc here to avoid a weird crash
 IF
 DB_LLLIB_Requirements_JustUnlocked(_RequirementID)
 THEN

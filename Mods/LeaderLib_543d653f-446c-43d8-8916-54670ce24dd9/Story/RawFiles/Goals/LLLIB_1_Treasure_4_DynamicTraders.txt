@@ -735,6 +735,24 @@ THEN
 NOT DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
 LeaderLog_Log("DEBUG", "[LLLIB:Traders] Level ",_Level," ending. Removed global trader [",_TraderID,"] from spawned database.");
 //END_REGION
+
+//REGION TREASURE_GENERATION_STATUS
+IF
+StoryEvent((CHARACTERGUID)_Trader, "LLLIB_Events_Treasure_GenerationFinished")
+AND
+DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+THEN
+ApplyStatus(_Trader, "LLLIB_NEW_ITEMS", -1.0, 1);
+
+IF
+TradeEnds(_, _Trader)
+AND
+DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+AND
+HasActiveStatus(_Trader, "LLLIB_NEW_ITEMS", 1)
+THEN
+RemoveStatus(_Trader, "LLLIB_NEW_ITEMS");
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

@@ -179,6 +179,15 @@ CharacterGetLevel(_Player, _Level)
 THEN
 NOT DB_LLLIB_Helper_Temp_HighestLevelInParty(_Level);
 DB_LLLIB_Helper_Temp_HighestLevelCharacterInParty(_Player, _Level);
+
+QRY
+LLLIB_Helper_QRY_UserMatch((CHARACTERGUID)_Char1, (CHARACTERGUID)_Char2)
+AND
+CharacterGetReservedUserID(_Char1, _ID)
+AND
+CharacterGetReservedUserID(_Char2, _ID)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION PARTY_LEVELRANGE_STRICT
@@ -450,6 +459,52 @@ AND
 DB_LLLIB_Helper_Temp_StatEquipTimer(_TimerName, _Character)
 THEN
 NOT DB_LLLIB_Helper_Temp_StatEquipTimer(_TimerName, _Character);
+//END_REGION
+
+//REGION HOST_FLAGGING
+IF
+StoryEvent(_,"LeaderLib_Initialized")
+THEN
+//TimerLaunch("LLLIB_Timers_CheckHost", 1);
+LLLIB_Helper_MarkHost();
+
+IF
+TimerFinished("LLLIB_Timers_CheckHost")
+THEN
+LLLIB_Helper_MarkHost();
+
+PROC
+LLLIB_Helper_MarkHost()
+AND
+CharacterGetHostCharacter(_Host)
+AND
+UserGetFlag(_Host, "LeaderLib_IsHost", 0)
+THEN
+LeaderLog_Log("DEBUG","[LLLIB:Helpers] Flagged host user.");
+UserSetFlag(_Host, "LeaderLib_IsHost", 0);
+
+PROC
+LLLIB_Helper_MarkHost()
+AND
+CharacterGetHostCharacter(_Host)
+AND
+DB_IsPlayer(_Player)
+AND
+_Player != _Host
+AND
+NOT LLLIB_Helper_QRY_UserMatch(_Player, _Host)
+AND
+UserGetFlag(_Player, "LeaderLib_IsHost", 1)
+THEN
+LeaderLog_Log("DEBUG","[LLLIB:Helpers] Cleared host flag from non-host user.");
+UserClearFlag(_Player, "LeaderLib_IsHost", 0);
+
+PROC
+LLLIB_Helper_MarkHost()
+AND
+NOT CharacterGetHostCharacter(_)
+THEN
+LeaderLog_Log("DEBUG","[LLLIB:Helpers][ERROR] No host character found.");
 //END_REGION
 EXITSECTION
 

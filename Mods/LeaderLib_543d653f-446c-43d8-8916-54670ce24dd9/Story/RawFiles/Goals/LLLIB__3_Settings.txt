@@ -8,8 +8,8 @@ LLLIB_Settings_InitSettings();
 //DB_LLLIB_Iterator(_Index)
 
 //DB_LLLIB_Settings_Temp_IteratorCreator(_CurrentInt, _MaxInt)
-//DB_LLLIB_Settings_Temp_RegisteredModsList(_Instance, _Str)
-//DB_LLLIB_Settings_Temp_ActiveModsList(_Instance, _Str)
+//DB_LLLIB_Settings_Temp_RegisteredModsList(_Str)
+//DB_LLLIB_Settings_Temp_ActiveModText(_ModName, _Author, _Str)
 KBSECTION
 //REGION SETTINGS
 PROC
@@ -25,8 +25,7 @@ LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_Settings_DialogVariables", 2);
 DB_LLLIB_Settings_DialogVariables("PlayerName", "LLLIB_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3");
 DB_LLLIB_Settings_DialogVariables("SpeakerName", "LLLIB_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b");
 DB_LLLIB_Settings_DialogVariables("ModSettings_PageInfo", "LLLIB_ModSettings_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156");
-DB_LLLIB_Settings_DialogVariables("RegisteredMods", "LLLIB_Settings_RegisteredMods_50c55fbe-ad1e-490e-92d1-8836ca42ca12");
-DB_LLLIB_Settings_DialogVariables("ActiveMods", "LLLIB_Settings_ActiveMods_4099e5fd-da72-464b-9e9e-9bc30a1b994d");
+DB_LLLIB_Settings_DialogVariables("ModList", "LLLIB_Settings_ModList_50c55fbe-ad1e-490e-92d1-8836ca42ca12");
 
 PROC
 LLLIB_Settings_InitEquipmentSlots()
@@ -89,103 +88,89 @@ DB_NOOP(1);
 
 //REGION MOD_DATA
 IF
-ObjectFlagSet("LLLIB_Settings_ListRegisteredMods", _Player, _Instance)
+ObjectFlagSet("LLLIB_Settings_ListMods", _Player, _Instance)
 AND
-LLLIB_Helper_QRY_ClearObjectFlag(_Player, "LLLIB_Settings_ListRegisteredMods")
+LLLIB_Helper_QRY_ClearObjectFlag(_Player, "LLLIB_Settings_ListMods")
 THEN
-LLLIB_Settings_ListRegisteredMods(_Instance);
+LLLIB_Settings_BuildModList();
 
 PROC
-LLLIB_Settings_ListRegisteredMods((INTEGER)_Instance)
+LLLIB_Settings_BuildModList()
 AND
-NOT DB_LLLIB_Settings_Temp_RegisteredModsList(_Instance, _)
+DB_LLLIB_Settings_Temp_ActiveModText(_ModName, _Author, _Str)
 THEN
-DB_LLLIB_Settings_Temp_RegisteredModsList(_Instance, "");
+NOT DB_LLLIB_Settings_Temp_ActiveModText(_ModName, _Author, _Str);
 
 PROC
-LLLIB_Settings_ListRegisteredMods((INTEGER)_Instance)
+LLLIB_Settings_BuildModList()
 AND
-DB_Mods_Registered(_ModName, _Version, _Author)
-AND
-DB_LLLIB_Settings_Temp_RegisteredModsList(_Instance, _Str)
-AND
-StringConcatenate("<b>", _ModName, _NameStr1)
-AND
-StringConcatenate(_NameStr1, "</b>", _NameStr2)
-AND
-LeaderLog_QRY_Log("COMBINE", _Str, _NameStr2, " (", _Version, ") by ",_Author, "<br>")
-AND
-DB_LeaderLog_Temp_CombinedString(_CombinedStr)
+NOT DB_LLLIB_Settings_Temp_RegisteredModsList(_)
 THEN
-NOT DB_LLLIB_Settings_Temp_RegisteredModsList(_Instance, _Str);
-DB_LLLIB_Settings_Temp_RegisteredModsList(_Instance, _CombinedStr);
-NOT DB_LeaderLog_Temp_CombinedString(_CombinedStr);
+DB_LLLIB_Settings_Temp_RegisteredModsList("");
 
-PROC
-LLLIB_Settings_ListRegisteredMods((INTEGER)_Instance)
+QRY
+LLLIB_Settings_QRY_SetActiveText((STRING)_ModName, (STRING)_Author)
 AND
-DB_LLLIB_Settings_DialogVariables("RegisteredMods", _DialogVar)
-AND
-DB_LLLIB_Settings_Temp_RegisteredModsList(_Instance, _Str)
-THEN
-DialogSetVariableStringForInstance(_Instance, _DialogVar, _Str);
-NOT DB_LLLIB_Settings_Temp_RegisteredModsList(_Instance, _Str);
-
-IF
-ObjectFlagSet("LLLIB_Settings_ListActiveMods", _Player, _Instance)
-AND
-LLLIB_Helper_QRY_ClearObjectFlag(_Player, "LLLIB_Settings_ListActiveMods")
-THEN
-LLLIB_Settings_ListActiveMods(_Instance);
-
-PROC
-LLLIB_Settings_ListActiveMods((INTEGER)_Instance)
-AND
-NOT DB_LLLIB_Settings_Temp_ActiveModsList(_Instance, _)
-THEN
-DB_LLLIB_Settings_Temp_ActiveModsList(_Instance, "");
-
-PROC
-LLLIB_Settings_ListActiveMods((INTEGER)_Instance)
-AND
-DB_Mods_Registered(_ModName, _Version, _Author)
+LeaderUpdater_QRY_ModRegisteredActiveGoal(_ModName, _Author)
 AND
 LeaderUpdater_QRY_ModIsActive(_ModName, _Author)
+THEN
+DB_LLLIB_Settings_Temp_ActiveModText(_ModName, _Author, " <b>(Active)</b>");
+
+QRY
+LLLIB_Settings_QRY_SetActiveText((STRING)_ModName, (STRING)_Author)
 AND
-DB_LLLIB_Settings_Temp_ActiveModsList(_Instance, _Str)
+LeaderUpdater_QRY_ModRegisteredActiveGoal(_ModName, _Author)
 AND
-StringConcatenate("<b>", _ModName, _NameStr1)
+NOT LeaderUpdater_QRY_ModIsActive(_ModName, _Author)
+THEN
+DB_LLLIB_Settings_Temp_ActiveModText(_ModName, _Author, " <b>(Deactivated)</b>");
+
+QRY
+LLLIB_Settings_QRY_SetActiveText((STRING)_ModName, (STRING)_Author)
 AND
-StringConcatenate(_NameStr1, "</b>", _NameStr2)
+NOT LeaderUpdater_QRY_ModRegisteredActiveGoal(_ModName, _Author)
+THEN
+DB_LLLIB_Settings_Temp_ActiveModText(_ModName, _Author, " <b>(No Active Goal Registered)</b>");
+
+PROC
+LLLIB_Settings_BuildModList()
 AND
-LeaderLog_QRY_Log("COMBINE", _Str, _NameStr2, " (", _Version, ") by ",_Author, "<br>")
+DB_Mods_Registered(_ModName, _Version, _Author)
+AND
+DB_LLLIB_Settings_Temp_RegisteredModsList(_Str)
+AND
+StringConcatenate("<b>", _ModName, _NameStr)
+AND
+LLLIB_Settings_QRY_SetActiveText(_ModName, _Author)
+AND
+DB_LLLIB_Settings_Temp_ActiveModText(_ModName, _Author, _ActiveStr)
+AND
+LeaderLog_QRY_Log("COMBINE", _Str, _NameStr, "</b> (", _Version, ") by ",_Author, _ActiveStr, "<br>")
 AND
 DB_LeaderLog_Temp_CombinedString(_CombinedStr)
 THEN
-NOT DB_LLLIB_Settings_Temp_ActiveModsList(_Instance, _Str);
-DB_LLLIB_Settings_Temp_ActiveModsList(_Instance, _CombinedStr);
+NOT DB_LLLIB_Settings_Temp_RegisteredModsList(_Str);
+DB_LLLIB_Settings_Temp_RegisteredModsList(_CombinedStr);
 NOT DB_LeaderLog_Temp_CombinedString(_CombinedStr);
+NOT DB_LLLIB_Settings_Temp_ActiveModText(_ModName, _Author, _ActiveStr);
 
 PROC
-LLLIB_Settings_ListActiveMods((INTEGER)_Instance)
+LLLIB_Settings_BuildModList()
 AND
-DB_LLLIB_Settings_DialogVariables("ActiveMods", _DialogVar)
+DB_LLLIB_Settings_DialogVariables("ModList", _DialogVar)
 AND
-DB_LLLIB_Settings_Temp_ActiveModsList(_Instance, _Str)
+DB_LLLIB_Settings_Temp_RegisteredModsList(_Str)
 THEN
-DialogSetVariableStringForInstance(_Instance, _DialogVar, _Str);
-NOT DB_LLLIB_Settings_Temp_ActiveModsList(_Instance, _Str);
+DialogSetVariableString("LLLIB_SettingsMenu", _DialogVar, _Str);
+NOT DB_LLLIB_Settings_Temp_RegisteredModsList(_Str);
 //END_REGION
 
 //REGION SETTINGS_MENU
 IF
 DialogStarted("LLLIB_SettingsMenu", _Instance)
-AND
-DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
 THEN
-LeaderLog_SetNextStatusColor(_Player, "#BF00FF");
-LeaderLog_SetOneshotTarget(_Player);
-LeaderLog_Log("STATUS", "Settings Opened!");
+LLLIB_Settings_BuildModList();
 //END_REGION
 EXITSECTION
 

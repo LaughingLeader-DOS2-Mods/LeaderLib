@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <save>
-    <header version="2" time="1521843040" />
+    <header version="2" time="1521897090" />
     <version major="3" minor="1" revision="7" build="0" />
     <region id="DialogVariables">
         <node id="root">
@@ -91,16 +91,9 @@
                 </node>
                 <node id="DialogVariable">
                     <attribute id="DefaultValue" value="" type="23" />
-                    <attribute id="Description" value="Mods that are currently running." type="23" />
-                    <attribute id="UUID" value="4099e5fd-da72-464b-9e9e-9bc30a1b994d" type="31" />
-                    <attribute id="name" value="LLLIB_Settings_ActiveMods" type="22" />
-                    <attribute id="type" value="String" type="23" />
-                </node>
-                <node id="DialogVariable">
-                    <attribute id="DefaultValue" value="" type="23" />
                     <attribute id="Description" value="Mods that were registered to DB_Mods_Registered." type="23" />
                     <attribute id="UUID" value="50c55fbe-ad1e-490e-92d1-8836ca42ca12" type="31" />
-                    <attribute id="name" value="LLLIB_Settings_RegisteredMods" type="22" />
+                    <attribute id="name" value="LLLIB_Settings_ModList" type="22" />
                     <attribute id="type" value="String" type="23" />
                 </node>
                 <node id="DialogVariable">

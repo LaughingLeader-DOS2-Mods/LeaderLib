@@ -54,6 +54,13 @@ SysIsActive(_GoalTitle)
 THEN
 DB_NOOP(1);
 
+QRY
+LeaderUpdater_QRY_ModRegisteredActiveGoal((STRING)_ModName, (STRING)_Author)
+AND
+DB_Mods_ActiveGoal(_ModName, _Author, _GoalTitle)
+THEN
+DB_NOOP(1);
+
 PROC
 LeaderUpdater_CheckIfModIsActive((STRING)_ModName, (STRING)_Author, (STRING)_ActiveEvent, (STRING)_NotActiveEvent)
 AND

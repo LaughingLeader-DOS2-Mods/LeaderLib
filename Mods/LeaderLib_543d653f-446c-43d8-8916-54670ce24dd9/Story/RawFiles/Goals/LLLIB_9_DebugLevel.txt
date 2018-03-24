@@ -35,6 +35,8 @@ LLLIB_Treasure_Configure_AddRune("LLLIB_TestLevel_Chest2", "WPN_Cheat_Sword_1H_R
 
 LLLIB_Treasure_Configure_GenerationType("LLLIB_TestLevel_Chest2", "WPN_Cheat_Sword_1H_RuneSlot2", "REQUIREMENT_UNLOCKED");
 
+//GlobalSetFlag("LeaderLib_DiscoveredLeaderTraderBackground");
+
 //Sorting test
 /*
 LeaderLib_RegisterModMenu("LLZ1", "[Zieonimus] Settings", "LLLIB_SettingsMenu");

@@ -1,19 +1,34 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
+LLLIB_LeaderTrader_InitSettings();
 LLLIB_LeaderTrader_RegisterTraderSettings();
 //DB_LLLIB_LeaderTrader(_LeaderTrader)
 //DB_LLLIB_LeaderTrader_MetPlayer(_Player)
 
 //Settings
 //DB_LLLIB_LeaderTrader_Dialog(_ReferenceName, _Dialog)
+//DB_LLLIB_LeaderTrader_Appearance(_Level, _Template)
+//Dynamic
+//DB_LLLIB_LeaderTrader_CurrentAppearance(_Template)
 KBSECTION
 //REGION REGISTER
 IF
 StoryEvent(_, "LLLIB_Events_UpdateDatabases")
 THEN
-LLLIB_Trader_ClearTrader("LLLIB_LeaderTrader");
-LLLIB_LeaderTrader_RegisterTraderSettings();
+//LLLIB_Trader_ClearTrader("LLLIB_LeaderTrader");
+//LLLIB_LeaderTrader_RegisterTraderSettings();
+LLLIB_LeaderTrader_InitSettings();
+
+PROC
+LLLIB_LeaderTrader_InitSettings()
+THEN
+LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_LeaderTrader_Appearance", 2);
+//Naked version
+DB_LLLIB_LeaderTrader_Appearance("TUT_Tutorial_A", "LLLIB_RetiredLeader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e");
+DB_LLLIB_LeaderTrader_Appearance("LeaderLib_TestLevel", "LLLIB_RetiredLeader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e");
+//For other acts
+DB_LLLIB_LeaderTrader_Appearance("Default", "LLLIB_RetiredLeader_Act1_da17fca2-fe16-46d9-80b3-08971a8c8d49");
 
 PROC
 LLLIB_LeaderTrader_RegisterTraderSettings()
@@ -249,10 +264,6 @@ THEN
 NOT DB_LLLIB_LeaderTrader_IsRespondingToAttack(_Val);
 //END_REGION
 
-//REGION MISC
-
-//END_REGION
-
 //REGION EXISTING_SAVES
 
 //END_REGION
@@ -319,20 +330,46 @@ DB_LLLIB_LeaderTrader(_Character);
 //END_REGION
 
 //REGION APPEARANCE_CHANGING
+PROC
+LLLIB_LeaderTrader_SetAppearance((CHARACTERGUID)_LeaderTrader, (STRING)_NextTemplate)
+AND
+DB_LLLIB_LeaderTrader_CurrentAppearance(_Template)
+AND
+_NextTemplate != _Template
+THEN
+NOT DB_LLLIB_LeaderTrader_CurrentAppearance(_Template);
+
+PROC
+LLLIB_LeaderTrader_SetAppearance((CHARACTERGUID)_LeaderTrader, (STRING)_Template)
+AND
+NOT DB_LLLIB_LeaderTrader_CurrentAppearance(_Template)
+THEN
+CharacterTransform(_LeaderTrader, _Template, 1, 1, 1, 1, 1, 1, 0);
+DB_LLLIB_LeaderTrader_CurrentAppearance(_Template);
+
+IF
+DB_LLLIB_Traders_Spawned(_LeaderTrader, "LLLIB_LeaderTrader", _Level)
+AND
+DB_LLLIB_LeaderTrader_Appearance(_Level, _Template)
+THEN
+LLLIB_LeaderTrader_SetAppearance(_LeaderTrader, _Template);
+
+IF
+DB_LLLIB_Traders_Spawned(_LeaderTrader, "LLLIB_LeaderTrader", _Level)
+AND
+NOT DB_LLLIB_LeaderTrader_Appearance(_Level, _)
+AND
+DB_LLLIB_LeaderTrader_Appearance("Default", _Template)
+THEN
+LLLIB_LeaderTrader_SetAppearance(_LeaderTrader, _Template);
+
 IF
 DB_LLLIB_Traders_Spawned(_LeaderTrader, "LLLIB_LeaderTrader", "TUT_Tutorial_A")
 THEN
-CharacterTransform(_LeaderTrader, "LLLIB_RetiredLeader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e", 1, 1, 1, 1, 1, 1, 0);
 LLLIB_Helper_CreateItemByStatAndEquip(_LeaderTrader, "ARM_Purge_UpperBody");
 LLLIB_Helper_CreateItemByStatAndEquip(_LeaderTrader, "ARM_Purge_LowerBody");
 LLLIB_Helper_RefreshEquipment(_LeaderTrader);
 DB_TUT_LowerDeck_WindegoSpareCharacters(_LeaderTrader); // To avoid exploding
-
-IF
-DB_LLLIB_Traders_Spawned(_LeaderTrader, "LLLIB_LeaderTrader", "FJ_FortJoy_Main")
-THEN
-CharacterTransform(_LeaderTrader, "LLLIB_RetiredLeader_Act1_da17fca2-fe16-46d9-80b3-08971a8c8d49", 1, 1, 1, 1, 1, 1, 0);
-LLLIB_Helper_RefreshEquipment(_LeaderTrader);
 
 IF
 DB_LLLIB_Traders_Spawned(_LeaderTrader, "LLLIB_LeaderTrader", "LeaderLib_TestLevel")
@@ -340,7 +377,11 @@ THEN
 //CharacterTransform(_LeaderTrader, "LLLIB_RetiredLeader_Act1_da17fca2-fe16-46d9-80b3-08971a8c8d49", 1, 1, 1, 1, 1, 1, 0);
 LLLIB_Helper_CreateItemByStatAndEquip(_LeaderTrader, "ARM_Purge_UpperBody", 0);
 LLLIB_Helper_CreateItemByStatAndEquip(_LeaderTrader, "ARM_Purge_LowerBody", 0);
-//LLLIB_Helper_RefreshEquipment(_LeaderTrader);
+
+IF
+DB_LLLIB_Traders_Spawned(_LeaderTrader, "LLLIB_LeaderTrader", _Level)
+THEN
+LLLIB_Helper_RefreshEquipment(_LeaderTrader);
 //END_REGION
 
 //REGION TUTORIAL
@@ -375,6 +416,36 @@ AND
 DB_TUT_LowerDeck_WindegoSpareCharacters(_LeaderTrader)
 THEN
 NOT DB_TUT_LowerDeck_WindegoSpareCharacters(_LeaderTrader);
+//END_REGION
+
+//REGION DIALOG_NAME
+IF
+StoryEvent((CHARACTERGUID)_Trader, "LLLIB_Events_OnLeaderTradeSpawned")
+AND
+GlobalGetFlag("LeaderLib_DiscoveredLeaderTraderBackground", 1)
+THEN
+CharacterSetCustomName(_Trader, "Lothar, Retired Commander");
+
+IF
+GlobalFlagSet("LeaderLib_DiscoveredLeaderTraderBackground")
+AND
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+THEN
+CharacterSetCustomName(_LeaderTrader, "Lothar, Retired Commander");
+
+IF
+DialogStarted(_Dialog, _Instance)
+AND
+DB_LLLIB_LeaderTrader_Dialog(_ReferenceName, _Dialog)
+AND
+DialogGetInvolvedNPC(_Instance, 1, (CHARACTERGUID)_LeaderTrader)
+AND
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+AND
+DB_LLLIB_Settings_DialogVariables("SpeakerName", _SpeakerVar)
+THEN
+//To ignore the "Old Man" title when referring to himself.
+DialogSetVariableStringForInstance(_Instance, _SpeakerVar, "Lothar");
 //END_REGION
 EXITSECTION
 

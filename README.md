@@ -33,7 +33,7 @@ LeaderLib features a script-based treasure and trader system, which can be used 
 * Positions on specific levels can be assigned via coordinates, triggers, or objects (i.e. teleporting to a specific chair, or a character).
 * Seats can be assigned to traders, so they'll sit after spawning.
 
-## "Retired Leader" Trader
+## "Retired Commander" Trader
 LeaderLib adds a new trader to the main campaign that persists through every act.
 He exists as a central trader for mod-specific items added by all my mods. 
 

@@ -65,19 +65,6 @@ DB_LLLIB_Settings_DialogVariables("SpeakerName", _SpeakerVar)
 THEN
 DialogSetVariableStringForInstance(_Instance, _PlayerVar, _PlayerName);
 DialogSetVariableStringForInstance(_Instance, _SpeakerVar, _SpeakerName);
-
-IF
-DialogStarted(_Dialog, _Instance)
-AND
-DB_LLLIB_LeaderTrader_Dialog(_ReferenceName, _Dialog)
-AND
-DialogGetInvolvedNPC(_Instance, 1, (CHARACTERGUID)_LeaderTrader)
-AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
-AND
-DB_LLLIB_Settings_DialogVariables("SpeakerName", _SpeakerVar)
-THEN
-DialogSetVariableStringForInstance(_Instance, _SpeakerVar, "Von Hunter");
 //END_REGION
 
 //REGION FLAG_COMMANDS

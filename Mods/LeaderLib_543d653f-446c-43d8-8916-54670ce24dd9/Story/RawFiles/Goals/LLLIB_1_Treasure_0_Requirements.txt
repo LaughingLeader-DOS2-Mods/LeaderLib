@@ -4,6 +4,7 @@ INITSECTION
 //Settings
 //DB_LLLIB_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel, _StrictMode)
 //DB_LLLIB_Requirements_Flag(_RequirementID, _Flag, _FlagType, _FlagVal)
+//DB_LLLIB_Requirements_Region(_RequirementID, _Region)
 //DB_LLLIB_Treasure_ItemMaxAmount(_TreasureID, _ItemEntry, _MaxAmount)
 
 //Dynamic
@@ -69,6 +70,13 @@ AND
 _RequirementID != ""
 THEN
 DB_LLLIB_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel, _StrictMode);
+
+PROC
+LLLIB_Requirements_AddRegionRequirement((STRING)_RequirementID, (STRING)_Region)
+AND
+_RequirementID != ""
+THEN
+DB_LLLIB_Requirements_Region(_RequirementID, _Region);
 //END_REGION
 
 //REGION REQUIREMENT_CHECK
@@ -157,6 +165,31 @@ THEN
 DB_NOOP(1);
 
 QRY
+LLLIB_QRY_Requirements_RegionMet((STRING)_RequirementID)
+AND
+_RequirementID == ""
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_QRY_Requirements_RegionMet((STRING)_RequirementID)
+AND
+NOT DB_LLLIB_Requirements_Region(_RequirementID, _)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_QRY_Requirements_RegionMet((STRING)_RequirementID)
+AND
+_RequirementID != ""
+AND
+DB_LLLIB_Requirements_Region(_RequirementID, _Region)
+AND
+DB_CurrentLevel(_Region)
+THEN
+DB_NOOP(1);
+
+QRY
 LLLIB_QRY_Requirements_AllMet((STRING)_RequirementID)
 AND
 _RequirementID == ""
@@ -171,6 +204,8 @@ AND
 LLLIB_QRY_Requirements_PartyFlagMet(_RequirementID)
 AND
 LLLIB_QRY_Requirements_PartyLevelMet(_RequirementID)
+AND
+LLLIB_QRY_Requirements_RegionMet(_RequirementID)
 THEN
 DB_NOOP(1);
 //END_REGION
@@ -180,6 +215,7 @@ PROC
 LLLIB_Requirements_RequirementUnlocked((STRING)_RequirementID)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Requirements] Requirement [",_RequirementID,"] unlocked.");
+DB_LLLIB_Requirements_IsUnlocked(_RequirementID);
 
 PROC
 LLLIB_Requirements_RequirementUnlocked((STRING)_RequirementID)
@@ -205,55 +241,68 @@ NOT DB_LLLIB_Requirements_Temp_RemoveJustUnlocked(_TimerName, _RequirementID);
 PROC
 LLLIB_Requirements_RequirementLocked((STRING)_RequirementID)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Requirements] Requirement[",_RequirementID,"] locked.");
+LeaderLog_Log("DEBUG", "[LLLIB:Requirements] Requirement [",_RequirementID,"] locked.");
+NOT DB_LLLIB_Requirements_IsUnlocked(_RequirementID);
 //END_REGION
 
 //REGION FLAG_UNLOCKING
+PROC
+LLLIB_Requirements_Internal_OnFlagSet((STRING)_RequirementID, (INTEGER)_TargetVal, (INTEGER)_CurrentVal)
+AND
+_TargetVal != _CurrentVal
+THEN
+LLLIB_Requirements_RequirementLocked(_RequirementID);
+
+PROC
+LLLIB_Requirements_Internal_OnFlagSet((STRING)_RequirementID, (INTEGER)_TargetVal, (INTEGER)_CurrentVal)
+AND
+_TargetVal == _CurrentVal
+THEN
+LLLIB_Requirements_RequirementUnlocked(_RequirementID);
+
 IF
 ObjectFlagSet(_Flag, _Object, _)
 AND
-DB_LLLIB_Requirements_Flag(_RequirementID, _Flag, "Object", 1)
+DB_LLLIB_Requirements_Flag(_RequirementID, _Flag, "Object", _TargetVal)
+AND
+LeaderLog_QRY_Log("DEBUG", "Locked: Test")
 THEN
-LLLIB_Requirements_RequirementUnlocked(_RequirementID);
+LLLIB_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 1);
 
 IF
 ObjectFlagCleared(_Flag, _Object, _)
 AND
-DB_LLLIB_Requirements_Flag(_RequirementID, _Flag, "Object", 0)
+DB_LLLIB_Requirements_Flag(_RequirementID, _Flag, "Object", _TargetVal)
 THEN
-LLLIB_Requirements_RequirementUnlocked(_RequirementID);
+LLLIB_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 0);
 
 IF
 ObjectFlagSet(_Flag, (CHARACTERGUID)_Object, _)
 AND
-UserGetFlag(_Object, _Flag, _FlagVal)
-AND
-DB_LLLIB_Requirements_Flag(_RequirementID, _Flag, "User", _FlagVal)
+DB_LLLIB_Requirements_Flag(_RequirementID, _Flag, "User", _TargetVal)
 THEN
-LLLIB_Requirements_RequirementUnlocked(_RequirementID);
+LLLIB_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 1);
 
 IF
 ObjectFlagCleared(_Flag, (CHARACTERGUID)_Object, _)
 AND
-UserGetFlag(_Object, _Flag, _FlagVal)
-AND
-DB_LLLIB_Requirements_Flag(_RequirementID, _Flag, "User", _FlagVal)
+DB_LLLIB_Requirements_Flag(_RequirementID, _Flag, "User", _TargetVal)
 THEN
-LLLIB_Requirements_RequirementUnlocked(_RequirementID);
+LLLIB_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 0);
 
 IF
 GlobalFlagSet(_Flag)
 AND
-DB_LLLIB_Requirements_Flag(_RequirementID, _Flag, "Global", 1)
+DB_LLLIB_Requirements_Flag(_RequirementID, _Flag, "Global", _TargetVal)
 THEN
-LLLIB_Requirements_RequirementUnlocked(_RequirementID);
+LLLIB_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 1);
 
 IF
 GlobalFlagCleared(_Flag)
 AND
-DB_LLLIB_Requirements_Flag(_RequirementID, _Flag, "Global", 0)
+DB_LLLIB_Requirements_Flag(_RequirementID, _Flag, "Global", _TargetVal)
 THEN
-LLLIB_Requirements_RequirementUnlocked(_RequirementID);
+LLLIB_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 0);
 //END_REGION
 
 //REGION LEVEL_REQUIREMENT_UNLOCKED
@@ -273,7 +322,6 @@ AND
 LLLIB_QRY_Requirements_PartyFlagMet(_RequirementID)
 THEN
 LLLIB_Requirements_RequirementUnlocked(_RequirementID);
-DB_LLLIB_Requirements_IsUnlocked(_RequirementID);
 
 IF
 CharacterLeveledUp(_Player)
@@ -291,7 +339,28 @@ AND
 NOT LLLIB_QRY_Requirements_LevelMet(_Player, _MinLevel, _MaxLevel)
 THEN
 LLLIB_Requirements_RequirementLocked(_RequirementID);
-NOT DB_LLLIB_Requirements_IsUnlocked(_RequirementID);
+//END_REGION
+
+//REGION REGION_REQUIREMENT
+IF
+GameStarted(_Region, _)
+AND
+DB_LLLIB_Requirements_Region(_RequirementID, _Region)
+AND
+NOT DB_LLLIB_Requirements_IsUnlocked(_RequirementID)
+THEN
+LLLIB_Requirements_RequirementUnlocked(_RequirementID);
+
+IF
+GameStarted(_Level, _)
+AND
+DB_LLLIB_Requirements_Region(_RequirementID, _Region)
+AND
+_Level != _Region
+AND
+DB_LLLIB_Requirements_IsUnlocked(_RequirementID)
+THEN
+LLLIB_Requirements_RequirementLocked(_RequirementID);
 //END_REGION
 EXITSECTION
 

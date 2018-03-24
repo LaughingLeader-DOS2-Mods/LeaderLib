@@ -281,14 +281,14 @@ DB_NOOP(1);
 
 //REGION TRADER_PROCS
 PROC
-LLLIB_Traders_SetDialogToUnlocked((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
+LLLIB_Traders_SetDialogToFirstAvailable((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
 AND
 DB_LLLIB_Traders_Temp_DialogFound(_TraderID, _Dialog)
 THEN
 NOT DB_LLLIB_Traders_Temp_DialogFound(_TraderID, _Dialog);
 
 PROC
-LLLIB_Traders_SetDialogToUnlocked((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
+LLLIB_Traders_SetDialogToFirstAvailable((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
 AND
 DB_LLLIB_Traders_Dialog(_TraderID, _Level, _Dialog, _RequirementID)
 AND
@@ -303,7 +303,7 @@ DB_Dialogs(_Trader, _Dialog);
 DB_LLLIB_Traders_Temp_DialogFound(_TraderID, _Dialog);
 
 PROC
-LLLIB_Traders_SetDialogToUnlocked((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
+LLLIB_Traders_SetDialogToFirstAvailable((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
 AND
 DB_LLLIB_Traders_Dialog(_TraderID, _Level, _Dialog, _RequirementID)
 AND
@@ -317,7 +317,7 @@ DB_LLLIB_Traders_Temp_DialogFound(_TraderID, _Dialog);
 
 //Default to dialogs with no specific level in mind, if dialog not set.
 PROC
-LLLIB_Traders_SetDialogToUnlocked((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
+LLLIB_Traders_SetDialogToFirstAvailable((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
 AND
 DB_LLLIB_Traders_Dialog(_TraderID, "", _Dialog, _RequirementID)
 AND
@@ -330,11 +330,11 @@ DB_Dialogs(_Trader, _Dialog);
 DB_LLLIB_Traders_Temp_DialogFound(_TraderID, _Dialog);
 
 PROC
-LLLIB_Traders_SetDialogToUnlocked((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
+LLLIB_Traders_SetDialogToFirstAvailable((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
 AND
 DB_LLLIB_Traders_Temp_DialogFound(_TraderID, _Dialog)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Traders] Dialog [",_Dialog,"] found and set for trader [",_TraderID,"].");
+LeaderLog_Log("DEBUG", "[LLLIB:Traders:SetDialogToFirstAvailable] Dialog [",_Dialog,"] found and set for trader [",_TraderID,"].");
 NOT DB_LLLIB_Traders_Temp_DialogFound(_TraderID, _Dialog);
 
 PROC
@@ -589,7 +589,7 @@ SetStoryEvent(_Trader, _EventName);
 IF
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
 THEN
-LLLIB_Traders_SetDialogToUnlocked(_Trader, _TraderID, _Level);
+LLLIB_Traders_SetDialogToFirstAvailable(_Trader, _TraderID, _Level);
 LLLIB_Traders_AddStartingGold(_Trader, _TraderID, _Level);
 
 //Generate treasure on spawn
@@ -675,7 +675,7 @@ DB_CurrentLevel(_Level)
 AND
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Requirements] Requirement[",_RequirementID,"] locked.");
+LLLIB_Traders_SetDialogToFirstAvailable(_Trader, _TraderID, _Level);
 
 PROC
 LLLIB_Traders_SpawnIfRequirementsMet((STRING)_RequirementID)

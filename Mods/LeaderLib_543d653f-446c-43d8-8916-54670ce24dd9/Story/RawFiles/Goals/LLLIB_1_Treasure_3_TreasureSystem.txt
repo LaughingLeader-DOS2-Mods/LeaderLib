@@ -357,13 +357,9 @@ NOT DB_LLLIB_Treasure_TableWasGenerated(_Object, _TreasureID, _TreasureTable)
 AND
 _UsePartyLevel > 0
 AND
-LeaderLog_QRY_Log("DEBUG", "Checking highest level")
-AND
 LLLIB_Helper_QRY_GetHighestLevelInParty()
 AND
 DB_LLLIB_Helper_Temp_HighestLevelInParty(_Level)
-AND
-LeaderLog_QRY_Log("DEBUG", "Creating backpack")
 AND
 CreateItemTemplateAtPosition("LOOT_BackPack_A_6c70c298-aa29-418f-a659-f8e0b5f5fa60", 0.0,0.0,0.0, _Backpack)
 THEN
@@ -399,6 +395,7 @@ LLLIB_Treasure_Internal_OnTreasureTableGenerated(_Object, _TreasureID, _Treasure
 PROC
 LLLIB_Treasure_Internal_OnTreasureTableGenerated((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_TreasureTable)
 THEN
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:OnTreasureTableGenerated] Generated treasure table [",_TreasureTable,"] for treasure [",_TreasureID,"].");
 LLLIB_Treasure_MarkAsFinished(_Object, _TreasureID, _TreasureTable);
 DB_LLLIB_Treasure_TableWasGenerated(_Object, _TreasureID, _TreasureTable);
 //END_REGION

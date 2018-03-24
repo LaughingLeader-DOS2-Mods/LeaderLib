@@ -241,7 +241,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_Trader_PlayerTalkedToLeaderTrader"},
+                                          "name" : {"type" : 22, "value" : "LLLIB_LeaderTrader_IntroDone"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 1}
                                        }

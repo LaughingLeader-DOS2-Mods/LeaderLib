@@ -1,7 +1,7 @@
 {
    "save" : {
       "header" : {
-         "time" : 1521845583,
+         "time" : 1521910324,
          "version" : "2.0.8.2"
       },
       "regions" : {
@@ -1628,7 +1628,7 @@
                                                 "TagText" : {
                                                    "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
                                                    "type" : 28,
-                                                   "value" : "Mod Settings Menu<br>[LLLIB_ModSettings_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156]"
+                                                   "value" : "Mods<br>[LLLIB_ModSettings_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156]"
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -1762,7 +1762,7 @@
                   "speaker" : [
                      {
                         "index" : {"type" : 22, "value" : "0"},
-                        "list" : {"type" : 23, "value" : "e0d1ff71-04a8-4340-ae64-9684d846eb83"}
+                        "list" : {"type" : 23, "value" : "02c45912-4bff-4eef-ab96-9686f0dbb02d;e0d1ff71-04a8-4340-ae64-9684d846eb83"}
                      },
                      {
                         "index" : {"type" : 22, "value" : "1"},

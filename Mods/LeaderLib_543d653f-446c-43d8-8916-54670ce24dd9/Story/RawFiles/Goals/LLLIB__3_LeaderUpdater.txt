@@ -53,6 +53,20 @@ AND
 SysIsActive(_GoalTitle)
 THEN
 DB_NOOP(1);
+
+PROC
+LeaderUpdater_CheckIfModIsActive((STRING)_ModName, (STRING)_Author, (STRING)_ActiveEvent, (STRING)_NotActiveEvent)
+AND
+LeaderUpdater_QRY_ModIsActive(_ModName, _Author)
+THEN
+LLLIB_Events_SendEvent(_ActiveEvent);
+
+PROC
+LeaderUpdater_CheckIfModIsActive((STRING)_ModName, (STRING)_Author, (STRING)_ActiveEvent, (STRING)_NotActiveEvent)
+AND
+NOT LeaderUpdater_QRY_ModIsActive(_ModName, _Author)
+THEN
+LLLIB_Events_SendEvent(_NotActiveEvent);
 //END_REGION
 
 //REGION UNINSTALLING

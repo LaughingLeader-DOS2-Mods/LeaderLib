@@ -1,141 +1,147 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-//DB_LeaderLib_ModBridge_RegisterMenu(_ID, _DisplayName, _Dialog)
-//DB_LeaderLib_ModBridge_AddItemToLeaderTrader(_Template, _Amount)
-//DB_LeaderLib_ModBridge_AddBookToLeaderTrader(_Template, _Amount)
-//DB_LeaderLib_ModBridge_SendEvent(_EventName)
-//DB_LeaderLib_ModBridge_RegisterMod(_ModName, _Version, _Author)
+//DB_LeaderLib_ModApi_RegisterMenu(_ID, _DisplayName, _Dialog)
+//DB_LeaderLib_ModApi_AddItemToLeaderTrader(_Template, _Amount)
+//DB_LeaderLib_ModApi_AddBookToLeaderTrader(_Template, _Amount)
+//DB_LeaderLib_ModApi_SendEvent(_EventName)
+//DB_LeaderLib_ModApi_RegisterMod(_ModName, _Version, _Author)
 
-//DB_LeaderLib_ModBridge_Log_SetTarget(_Target)
-//DB_LeaderLib_ModBridge_Log_ClearTarget(_Target)
-//DB_LeaderLib_ModBridge_Log(_Type, _Str1)
-//DB_LeaderLib_ModBridge_Log(_Type, _Str1, _Str2)
-//DB_LeaderLib_ModBridge_Log(_Type, _Str1, _Str2, _Str3)
-//DB_LeaderLib_ModBridge_Log(_Type, _Str1, _Str2, _Str3, _Str4)
-//DB_LeaderLib_ModBridge_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5)
-//DB_LeaderLib_ModBridge_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6)
-//DB_LeaderLib_ModBridge_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7)
-//DB_LeaderLib_ModBridge_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8)
-//DB_LeaderLib_ModBridge_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _Str9)
-//DB_LeaderLib_ModBridge_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _Str9, _Str10)
+//DB_LeaderLib_ModApi_Log_SetTarget(_Target)
+//DB_LeaderLib_ModApi_Log_ClearTarget(_Target)
+//DB_LeaderLib_ModApi_Log(_Type, _Str1)
+//DB_LeaderLib_ModApi_Log(_Type, _Str1, _Str2)
+//DB_LeaderLib_ModApi_Log(_Type, _Str1, _Str2, _Str3)
+//DB_LeaderLib_ModApi_Log(_Type, _Str1, _Str2, _Str3, _Str4)
+//DB_LeaderLib_ModApi_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5)
+//DB_LeaderLib_ModApi_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6)
+//DB_LeaderLib_ModApi_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7)
+//DB_LeaderLib_ModApi_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8)
+//DB_LeaderLib_ModApi_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _Str9)
+//DB_LeaderLib_ModApi_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _Str9, _Str10)
 KBSECTION
 //REGION DB_INTERACTIONS
 IF
-DB_LeaderLib_ModBridge_AddItemToLeaderTrader((STRING)_Template, (INTEGER)_Amount)
+DB_LeaderLib_ModApi_AddItemToLeaderTrader((STRING)_Template, (INTEGER)_Amount)
 THEN
 LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModItems", _Template, _Amount);
-NOT DB_LeaderLib_ModBridge_AddItemToLeaderTrader(_Template, _Amount);
+NOT DB_LeaderLib_ModApi_AddItemToLeaderTrader(_Template, _Amount);
 
 IF
-DB_LeaderLib_ModBridge_AddBookToLeaderTrader((STRING)_Template, (INTEGER)_Amount)
+DB_LeaderLib_ModApi_AddBookToLeaderTrader((STRING)_Template, (INTEGER)_Amount)
 THEN
 LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModBooks", _Template, _Amount);
-NOT DB_LeaderLib_ModBridge_AddBookToLeaderTrader(_Template, _Amount);
+NOT DB_LeaderLib_ModApi_AddBookToLeaderTrader(_Template, _Amount);
 
 IF
-DB_LeaderLib_ModBridge_SendEvent((STRING)_EventName)
+DB_LeaderLib_ModApi_SendEvent((STRING)_EventName)
 THEN
 LLLIB_EventParser_Internal_RunEvent(_EventName);
-NOT DB_LeaderLib_ModBridge_SendEvent(_EventName);
+NOT DB_LeaderLib_ModApi_SendEvent(_EventName);
+
+IF
+DB_LeaderLib_ModApi_ModIsActive((STRING)_ModName, (STRING)_Author, (STRING)_ActiveEvent, (STRING)_InactiveEvent)
+THEN
+LeaderUpdater_CheckIfModIsActive(_ModName, _Author, _ActiveEvent, _InactiveEvent);
+NOT DB_LeaderLib_ModApi_ModIsActive(_ModName, _Author, _ActiveEvent, _InactiveEvent);
 //END_REGION
 
 //REGION REGISTERING
 IF
-DB_LeaderLib_ModBridge_RegisterMod((STRING)_ModName, (STRING)_Version, (STRING)_Author)
+DB_LeaderLib_ModApi_RegisterMod((STRING)_ModName, (STRING)_Version, (STRING)_Author)
 THEN
 LeaderUpdater_RegisterMod(_ModName, _Version, _Author);
-NOT DB_LeaderLib_ModBridge_RegisterMod(_ModName, _Version, _Author);
+NOT DB_LeaderLib_ModApi_RegisterMod(_ModName, _Version, _Author);
 
 IF
-DB_LeaderLib_ModBridge_RegisterActiveGoal((STRING)_ModName, (STRING)_Author, (STRING)_GoalTitle)
+DB_LeaderLib_ModApi_RegisterActiveGoal((STRING)_ModName, (STRING)_Author, (STRING)_GoalTitle)
 THEN
 LeaderUpdater_RegisterActiveGoal(_ModName, _Author, _GoalTitle);
 
 IF
-DB_LeaderLib_ModBridge_ClearActiveGoals((STRING)_ModName, (STRING)_Author)
+DB_LeaderLib_ModApi_ClearActiveGoals((STRING)_ModName, (STRING)_Author)
 THEN
 LeaderUpdater_ClearActiveGoals(_ModName, _Author);
 
 IF
-DB_LeaderLib_ModBridge_RegisterMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModName, (STRING)_Author)
+DB_LeaderLib_ModApi_RegisterMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModName, (STRING)_Author)
 THEN
 LeaderLib_RegisterModMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
-NOT DB_LeaderLib_ModBridge_RegisterMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
+NOT DB_LeaderLib_ModApi_RegisterMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
 //END_REGION
 
 //REGION LOGGING
 IF
-DB_LeaderLib_ModBridge_Log_SetTarget((CHARACTERGUID)_Target)
+DB_LeaderLib_ModApi_Log_SetTarget((CHARACTERGUID)_Target)
 THEN
 LeaderLog_SetTarget(_Target);
-NOT DB_LeaderLib_ModBridge_Log_SetTarget(_Target);
+NOT DB_LeaderLib_ModApi_Log_SetTarget(_Target);
 
 IF
-DB_LeaderLib_ModBridge_Log_ClearTarget((CHARACTERGUID)_Target)
+DB_LeaderLib_ModApi_Log_ClearTarget((CHARACTERGUID)_Target)
 THEN
 LeaderLog_ClearTarget(_Target);
-NOT DB_LeaderLib_ModBridge_Log_ClearTarget(_Target);
+NOT DB_LeaderLib_ModApi_Log_ClearTarget(_Target);
 
 IF
-DB_LeaderLib_ModBridge_Log((STRING)_Type, (STRING)_Str1)
+DB_LeaderLib_ModApi_Log((STRING)_Type, (STRING)_Str1)
 THEN
 LeaderLog_Log(_Type, _Str1);
-NOT DB_LeaderLib_ModBridge_Log(_Type, _Str1);
+NOT DB_LeaderLib_ModApi_Log(_Type, _Str1);
 
 IF
-DB_LeaderLib_ModBridge_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2)
+DB_LeaderLib_ModApi_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2)
 THEN
 LeaderLog_Log(_Type, _Str1, _Str2);
-NOT DB_LeaderLib_ModBridge_Log(_Type, _Str1, _Str2);
+NOT DB_LeaderLib_ModApi_Log(_Type, _Str1, _Str2);
 
 IF
-DB_LeaderLib_ModBridge_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3)
+DB_LeaderLib_ModApi_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3)
 THEN
 LeaderLog_Log(_Type, _Str1, _Str2, _Str3);
-NOT DB_LeaderLib_ModBridge_Log(_Type, _Str1, _Str2, _Str3);
+NOT DB_LeaderLib_ModApi_Log(_Type, _Str1, _Str2, _Str3);
 
 IF
-DB_LeaderLib_ModBridge_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4)
+DB_LeaderLib_ModApi_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4)
 THEN
 LeaderLog_Log(_Type, _Str1, _Str2, _Str3, _Str4);
-NOT DB_LeaderLib_ModBridge_Log(_Type, _Str1, _Str2, _Str3, _Str4);
+NOT DB_LeaderLib_ModApi_Log(_Type, _Str1, _Str2, _Str3, _Str4);
 
 IF
-DB_LeaderLib_ModBridge_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5)
+DB_LeaderLib_ModApi_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5)
 THEN
 LeaderLog_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5);
-NOT DB_LeaderLib_ModBridge_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5);
+NOT DB_LeaderLib_ModApi_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5);
 
 IF
-DB_LeaderLib_ModBridge_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6)
+DB_LeaderLib_ModApi_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6)
 THEN
 LeaderLog_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6);
-NOT DB_LeaderLib_ModBridge_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6);
+NOT DB_LeaderLib_ModApi_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6);
 
 IF
-DB_LeaderLib_ModBridge_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7)
+DB_LeaderLib_ModApi_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7)
 THEN
 LeaderLog_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7);
-NOT DB_LeaderLib_ModBridge_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7);
+NOT DB_LeaderLib_ModApi_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7);
 
 IF
-DB_LeaderLib_ModBridge_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8)
+DB_LeaderLib_ModApi_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8)
 THEN
 LeaderLog_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8);
-NOT DB_LeaderLib_ModBridge_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8);
+NOT DB_LeaderLib_ModApi_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8);
 
 IF
-DB_LeaderLib_ModBridge_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9)
+DB_LeaderLib_ModApi_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9)
 THEN
 LeaderLog_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _Str9);
-NOT DB_LeaderLib_ModBridge_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _Str9);
+NOT DB_LeaderLib_ModApi_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _Str9);
 
 IF
-DB_LeaderLib_ModBridge_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10)
+DB_LeaderLib_ModApi_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10)
 THEN
 LeaderLog_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _Str9, _Str10);
-NOT DB_LeaderLib_ModBridge_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _Str9, _Str10);
+NOT DB_LeaderLib_ModApi_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _Str9, _Str10);
 //END_REGION
 
 //REGION API_EVENTS
@@ -157,83 +163,91 @@ LLLIB_Events_SendEvent("LeaderLib_Initialized");
 IF
 TimerFinished("LLLIB_Timers_LeaderLib_ModBridgeCleanup")
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:ModAPI] Cleaning ModBridge.");
+LeaderLog_Log("DEBUG", "[LLLIB:ModAPI] ModBridge cleanup started. Running ModAPI databases.");
 LLLIB_ModBridge_RunCleanup();
 
 PROC
 LLLIB_ModBridge_RunCleanup()
 THEN
 //Clear logs that are still remaining
-SysClear("DB_LeaderLib_ModBridge_Log_SetTarget", 1);
-SysClear("DB_LeaderLib_ModBridge_Log_ClearTarget", 1);
-SysClear("DB_LeaderLib_ModBridge_Log", 2);
-SysClear("DB_LeaderLib_ModBridge_Log", 3);
-SysClear("DB_LeaderLib_ModBridge_Log", 4);
-SysClear("DB_LeaderLib_ModBridge_Log", 5);
-SysClear("DB_LeaderLib_ModBridge_Log", 6);
-SysClear("DB_LeaderLib_ModBridge_Log", 7);
-SysClear("DB_LeaderLib_ModBridge_Log", 8);
-SysClear("DB_LeaderLib_ModBridge_Log", 9);
-SysClear("DB_LeaderLib_ModBridge_Log", 10);
-SysClear("DB_LeaderLib_ModBridge_Log", 11);
+SysClear("DB_LeaderLib_ModApi_Log_SetTarget", 1);
+SysClear("DB_LeaderLib_ModApi_Log_ClearTarget", 1);
+SysClear("DB_LeaderLib_ModApi_Log", 2);
+SysClear("DB_LeaderLib_ModApi_Log", 3);
+SysClear("DB_LeaderLib_ModApi_Log", 4);
+SysClear("DB_LeaderLib_ModApi_Log", 5);
+SysClear("DB_LeaderLib_ModApi_Log", 6);
+SysClear("DB_LeaderLib_ModApi_Log", 7);
+SysClear("DB_LeaderLib_ModApi_Log", 8);
+SysClear("DB_LeaderLib_ModApi_Log", 9);
+SysClear("DB_LeaderLib_ModApi_Log", 10);
+SysClear("DB_LeaderLib_ModApi_Log", 11);
 
 
 //Parse databases that were set before LeaderLib was loaded.
 PROC
 LLLIB_ModBridge_RunCleanup()
 AND
-DB_LeaderLib_ModBridge_RegisterMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModName, (STRING)_Author)
+DB_LeaderLib_ModApi_RegisterMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModName, (STRING)_Author)
 THEN
 LeaderLib_RegisterModMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
-NOT DB_LeaderLib_ModBridge_RegisterMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
+NOT DB_LeaderLib_ModApi_RegisterMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
 
 PROC
 LLLIB_ModBridge_RunCleanup()
 AND
-DB_LeaderLib_ModBridge_RegisterMod((STRING)_ModName, (STRING)_Version, (STRING)_Author)
+DB_LeaderLib_ModApi_RegisterMod((STRING)_ModName, (STRING)_Version, (STRING)_Author)
 THEN
 LeaderUpdater_RegisterMod(_ModName, _Version, _Author);
-NOT DB_LeaderLib_ModBridge_RegisterMod(_ModName, _Version, _Author);
+NOT DB_LeaderLib_ModApi_RegisterMod(_ModName, _Version, _Author);
 
 PROC
 LLLIB_ModBridge_RunCleanup()
 AND
-DB_LeaderLib_ModBridge_RegisterActiveGoal((STRING)_ModName, (STRING)_Author, (STRING)_GoalTitle)
+DB_LeaderLib_ModApi_RegisterActiveGoal((STRING)_ModName, (STRING)_Author, (STRING)_GoalTitle)
 THEN
 LeaderUpdater_RegisterActiveGoal(_ModName, _Author, _GoalTitle);
-NOT DB_LeaderLib_ModBridge_RegisterActiveGoal(_ModName, _Author, _GoalTitle);
+NOT DB_LeaderLib_ModApi_RegisterActiveGoal(_ModName, _Author, _GoalTitle);
 
 PROC
 LLLIB_ModBridge_RunCleanup()
 AND
-DB_LeaderLib_ModBridge_ClearActiveGoals((STRING)_ModName, (STRING)_Author)
+DB_LeaderLib_ModApi_ClearActiveGoals((STRING)_ModName, (STRING)_Author)
 THEN
 LeaderUpdater_ClearActiveGoals(_ModName, _Author);
-NOT DB_LeaderLib_ModBridge_ClearActiveGoals(_ModName, _Author);
+NOT DB_LeaderLib_ModApi_ClearActiveGoals(_ModName, _Author);
 
 PROC
 LLLIB_ModBridge_RunCleanup()
 AND
-DB_LeaderLib_ModBridge_AddItemToLeaderTrader((STRING)_Template, (INTEGER)_Amount)
+DB_LeaderLib_ModApi_AddItemToLeaderTrader((STRING)_Template, (INTEGER)_Amount)
 THEN
 LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModItems", _Template, _Amount);
-NOT DB_LeaderLib_ModBridge_AddItemToLeaderTrader(_Template, _Amount);
+NOT DB_LeaderLib_ModApi_AddItemToLeaderTrader(_Template, _Amount);
 
 PROC
 LLLIB_ModBridge_RunCleanup()
 AND
-DB_LeaderLib_ModBridge_AddBookToLeaderTrader((STRING)_Template, (INTEGER)_Amount)
+DB_LeaderLib_ModApi_AddBookToLeaderTrader((STRING)_Template, (INTEGER)_Amount)
 THEN
 LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModBooks", _Template, _Amount);
-NOT DB_LeaderLib_ModBridge_AddBookToLeaderTrader(_Template, _Amount);
+NOT DB_LeaderLib_ModApi_AddBookToLeaderTrader(_Template, _Amount);
 
 PROC
 LLLIB_ModBridge_RunCleanup()
 AND
-DB_LeaderLib_ModBridge_SendEvent((STRING)_EventName)
+DB_LeaderLib_ModApi_SendEvent((STRING)_EventName)
 THEN
 LLLIB_EventParser_Internal_RunEvent(_EventName);
-NOT DB_LeaderLib_ModBridge_SendEvent(_EventName);
+NOT DB_LeaderLib_ModApi_SendEvent(_EventName);
+
+PROC
+LLLIB_ModBridge_RunCleanup()
+AND
+DB_LeaderLib_ModApi_ModIsActive((STRING)_ModName, (STRING)_Author, (STRING)_ActiveEvent, (STRING)_InactiveEvent)
+THEN
+LeaderUpdater_CheckIfModIsActive(_ModName, _Author, _ActiveEvent, _InactiveEvent);
+NOT DB_LeaderLib_ModApi_ModIsActive(_ModName, _Author, _ActiveEvent, _InactiveEvent);
 //END_REGION
 EXITSECTION
 

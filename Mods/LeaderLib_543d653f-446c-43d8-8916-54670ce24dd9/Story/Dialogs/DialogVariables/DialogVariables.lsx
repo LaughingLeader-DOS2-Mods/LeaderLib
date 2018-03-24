@@ -98,7 +98,7 @@
                 </node>
                 <node id="DialogVariable">
                     <attribute id="DefaultValue" value="" type="23" />
-                    <attribute id="Description" value="Mods that were registered to DB_Mods_RegisteredMods." type="23" />
+                    <attribute id="Description" value="Mods that were registered to DB_Mods_Registered." type="23" />
                     <attribute id="UUID" value="50c55fbe-ad1e-490e-92d1-8836ca42ca12" type="31" />
                     <attribute id="name" value="LLLIB_Settings_RegisteredMods" type="22" />
                     <attribute id="type" value="String" type="23" />

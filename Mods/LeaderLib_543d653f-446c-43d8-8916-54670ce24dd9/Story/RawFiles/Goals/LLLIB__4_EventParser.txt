@@ -1,7 +1,7 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-//DB_LLLIB_SendEvent(_EventName)
+//DB_LeaderLib_SendEvent(_EventName)
 //DB_LLLIB_EventParser_Spawned(_EventParser)
 KBSECTION
 //REGION HELPERS
@@ -77,13 +77,13 @@ LeaderLog_Log("DEBUG", "[LLLIB:EventParser][ERROR] Global Event Parser doesn't e
 PROC
 LLLIB_Events_SendEvent((STRING)_EventName)
 THEN
-DB_LLLIB_SendEvent(_EventName);
+DB_LeaderLib_SendEvent(_EventName);
 
 IF
-DB_LLLIB_SendEvent(_EventName)
+DB_LeaderLib_SendEvent(_EventName)
 THEN
 LLLIB_EventParser_Internal_RunEvent(_EventName);
-NOT DB_LLLIB_SendEvent(_EventName);
+NOT DB_LeaderLib_SendEvent(_EventName);
 EXITSECTION
 
 ENDEXITSECTION

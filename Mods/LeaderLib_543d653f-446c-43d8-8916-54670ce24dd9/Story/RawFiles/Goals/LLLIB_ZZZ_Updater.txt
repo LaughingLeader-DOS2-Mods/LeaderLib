@@ -1,7 +1,7 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-LeaderUpdater_RegisterMod("LeaderLib", "0.1.0.0", "LaughingLeader");
+LeaderUpdater_RegisterMod("LeaderLib", "0.7.0.0", "LaughingLeader");
 LeaderUpdater_RegisterActiveGoal("LeaderLib", "LaughingLeader", "LLLIB_ZZZ_Updater");
 KBSECTION
 //REGION UPDATING
@@ -32,10 +32,10 @@ LeaderLog_Log("DEBUG", "[LLLIB:Updater] Game started.");
 IF
 GameStarted(_,_)
 AND
-LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "0.1.0.0", "LaughingLeader")
+LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "0.7.0.0", "LaughingLeader")
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Updater] Updating LeaderLib.");
-LeaderUpdater_RegisterMod("LeaderLib", "0.1.0.0", "LaughingLeader");
+LeaderUpdater_RegisterMod("LeaderLib", "0.7.0.0", "LaughingLeader");
 LLLIB_System_UpdateDatabases();
 LLLIB_Events_SendEvent("LLLIB_Events_UpdateDatabases");
 //END_REGION

@@ -48,14 +48,14 @@ LeaderUpdater_RegisterMod(_ModName, _Version, _Author);
 NOT DB_LeaderLib_ModBridge_RegisterMod(_ModName, _Version, _Author);
 
 IF
-DB_LeaderLib_ModBridge_RegisterModActiveGoal((STRING)_ModName, (STRING)_Author, (STRING)_GoalTitle)
+DB_LeaderLib_ModBridge_RegisterActiveGoal((STRING)_ModName, (STRING)_Author, (STRING)_GoalTitle)
 THEN
-LeaderUpdater_RegisterModActiveGoal(_ModName, _Author, _GoalTitle);
+LeaderUpdater_RegisterActiveGoal(_ModName, _Author, _GoalTitle);
 
 IF
-DB_LeaderLib_ModBridge_ClearModActiveGoals((STRING)_ModName, (STRING)_Author)
+DB_LeaderLib_ModBridge_ClearActiveGoals((STRING)_ModName, (STRING)_Author)
 THEN
-LeaderUpdater_ClearModActiveGoals(_ModName, _Author);
+LeaderUpdater_ClearActiveGoals(_ModName, _Author);
 
 IF
 DB_LeaderLib_ModBridge_RegisterMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModName, (STRING)_Author)
@@ -198,18 +198,18 @@ NOT DB_LeaderLib_ModBridge_RegisterMod(_ModName, _Version, _Author);
 PROC
 LLLIB_ModBridge_RunCleanup()
 AND
-DB_LeaderLib_ModBridge_RegisterModActiveGoal((STRING)_ModName, (STRING)_Author, (STRING)_GoalTitle)
+DB_LeaderLib_ModBridge_RegisterActiveGoal((STRING)_ModName, (STRING)_Author, (STRING)_GoalTitle)
 THEN
-LeaderUpdater_RegisterModActiveGoal(_ModName, _Author, _GoalTitle);
-NOT DB_LeaderLib_ModBridge_RegisterModActiveGoal(_ModName, _Author, _GoalTitle);
+LeaderUpdater_RegisterActiveGoal(_ModName, _Author, _GoalTitle);
+NOT DB_LeaderLib_ModBridge_RegisterActiveGoal(_ModName, _Author, _GoalTitle);
 
 PROC
 LLLIB_ModBridge_RunCleanup()
 AND
-DB_LeaderLib_ModBridge_ClearModActiveGoals((STRING)_ModName, (STRING)_Author)
+DB_LeaderLib_ModBridge_ClearActiveGoals((STRING)_ModName, (STRING)_Author)
 THEN
-LeaderUpdater_ClearModActiveGoals(_ModName, _Author);
-NOT DB_LeaderLib_ModBridge_ClearModActiveGoals(_ModName, _Author);
+LeaderUpdater_ClearActiveGoals(_ModName, _Author);
+NOT DB_LeaderLib_ModBridge_ClearActiveGoals(_ModName, _Author);
 
 PROC
 LLLIB_ModBridge_RunCleanup()

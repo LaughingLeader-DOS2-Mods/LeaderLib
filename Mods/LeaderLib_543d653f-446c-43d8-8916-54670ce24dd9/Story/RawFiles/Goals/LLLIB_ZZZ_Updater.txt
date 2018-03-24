@@ -2,7 +2,7 @@ Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
 LeaderUpdater_RegisterMod("LeaderLib", "0.1.0.0", "LaughingLeader");
-LeaderUpdater_RegisterModActiveGoal("LeaderLib", "LaughingLeader", "LLLIB_ZZZ_Updater");
+LeaderUpdater_RegisterActiveGoal("LeaderLib", "LaughingLeader", "LLLIB_ZZZ_Updater");
 KBSECTION
 //REGION UPDATING
 PROC

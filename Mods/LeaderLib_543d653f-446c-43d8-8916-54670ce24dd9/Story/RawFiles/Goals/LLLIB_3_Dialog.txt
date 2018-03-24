@@ -23,6 +23,12 @@ DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_IncreaseAttitude_25", 25);
 DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_IncreaseAttitude_50", 50);
 DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_IncreaseAttitude_75", 75);
 DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_IncreaseAttitude_100", 100);
+DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_DecreaseAttitude_5", -5);
+DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_DecreaseAttitude_10", -10);
+DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_DecreaseAttitude_25", -25);
+DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_DecreaseAttitude_50", -50);
+DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_DecreaseAttitude_75", -75);
+DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_DecreaseAttitude_100", -100);
 //END_REGION
 
 //REGION UPDATING

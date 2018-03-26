@@ -264,8 +264,6 @@ IF
 ObjectFlagSet(_Flag, _Object, _)
 AND
 DB_LLLIB_Requirements_Flag(_RequirementID, _Flag, "Object", _TargetVal)
-AND
-LeaderLog_QRY_Log("DEBUG", "Locked: Test")
 THEN
 LLLIB_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 1);
 

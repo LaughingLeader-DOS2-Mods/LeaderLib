@@ -506,6 +506,18 @@ NOT CharacterGetHostCharacter(_)
 THEN
 LeaderLog_Log("DEBUG","[LLLIB:Helpers][ERROR] No host character found.");
 //END_REGION
+
+//REGION EDITOR_FLAGGING
+IF
+GameStarted(_, 1)
+THEN
+GlobalSetFlag("LeaderLib_IsEditorMode");
+
+IF
+GameStarted(_, 0)
+THEN
+GlobalClearFlag("LeaderLib_IsEditorMode");
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

@@ -1,0 +1,505 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+//DB_LLLIB_Sorter_Codex(_Index, _Char)
+//DB_LLLIB_Sorter_Iterator(_Index)
+//DB_LLLIB_Sorter_SortIterator(_Index)
+/*TIMERS*/
+//DB_LLLIB_Sorter_Temp_RunningSession(_SessionID, _TimerName, _TickRate, _CompleteEvent)
+/*Output*/
+//DB_LLLIB_Sorter_FinalSorted(_SessionID, _Index, _ID, _Str)
+/*Input*/
+//DB_LLLIB_Sorter_Temp_StringQueue(_SessionID, _ID, _Str)
+/*COUNTING*/
+//DB_LLLIB_Sorter_Temp_TotalStringsInQueue(_SessionID, _Total)
+//DB_LLLIB_Sorter_Temp_TotalStringsInChar(_SessionID, _Char, _Total)
+//DB_LLLIB_Sorter_Temp_TotalStringsInGroup(_SessionID, _ParentChar, _Group, _Total)
+/*SORTING_ITERATOR*/
+//DB_LLLIB_Sorter_Temp_MainCharIndex(_SessionID, _CharIndex)
+/*SORTING*/
+//DB_LLLIB_Sorter_Temp_MatchedChar(_SessionID, _Char, _ID)
+/*GROUPING*/
+//DB_LLLIB_Sorter_Temp_NextGroupForSorting(_SessionID, _Char, _Group)
+//DB_LLLIB_Sorter_Temp_Group(_Index, _SessionID, _Char, _Group)
+//DB_LLLIB_Sorter_Temp_GroupEntry(_SessionID, _Char, _Group, _ID, _LastSubIndex)
+/*ITERATOR*/
+KBSECTION
+//REGION STRING_ADDING
+//Run this first to add strings to sort.
+PROC
+LLLIB_Sorter_AddString((STRING)_SessionID, (STRING)_ID, (STRING)_Str)
+AND
+NOT DB_LLLIB_Sorter_Temp_StringQueue(_SessionID, _ID, _Str)
+THEN
+DB_LLLIB_Sorter_Temp_StringQueue(_SessionID, _ID, _Str);
+
+PROC
+LLLIB_Sorter_AddStringsToInitialChar((STRING)_SessionID)
+AND
+DB_LLLIB_Sorter_Codex(_Index, _Char)
+AND
+DB_LLLIB_Sorter_Temp_StringQueue(_SessionID, _ID, _Str)
+AND
+StringSub(_Str, 0, 1, _Char)
+THEN
+DB_LLLIB_Sorter_Temp_MatchedChar(_SessionID, _Char, _ID);
+
+PROC
+LLLIB_Sorter_FinalizeString((STRING)_SessionID, (STRING)_ID, (STRING)_Str)
+AND
+DB_LLLIB_Sorter_Temp_NextSortedIndex(_SessionID, _Index)
+THEN
+NOT DB_LLLIB_Sorter_Temp_NextSortedIndex(_SessionID, _Index);
+
+PROC
+LLLIB_Sorter_FinalizeString((STRING)_SessionID, (STRING)_ID, (STRING)_Str)
+AND
+NOT DB_LLLIB_Sorter_Temp_NextSortedIndex(_SessionID, _)
+THEN
+DB_LLLIB_Sorter_Temp_NextSortedIndex(_SessionID, 0);
+
+PROC
+LLLIB_Sorter_FinalizeString((STRING)_SessionID, (STRING)_ID, (STRING)_Str)
+AND
+DB_LLLIB_Sorter_FinalSorted(_SessionID, _Index, _, _)
+AND
+DB_LLLIB_Sorter_Temp_NextSortedIndex(_SessionID, _LastIndex)
+AND
+_Index >= _LastIndex
+AND
+IntegerSum(_Index, 1, _NextIndex)
+THEN
+NOT DB_LLLIB_Sorter_Temp_NextSortedIndex(_SessionID, _LastIndex);
+DB_LLLIB_Sorter_Temp_NextSortedIndex(_SessionID, _NextIndex);
+
+PROC
+LLLIB_Sorter_FinalizeString((STRING)_SessionID, (STRING)_ID, (STRING)_Str)
+AND
+DB_LLLIB_Sorter_Temp_NextSortedIndex(_SessionID, _Index)
+THEN
+DB_LLLIB_Sorter_FinalSorted(_SessionID, _Index, _ID, _Str);
+LLLIB_Sorter_ClearStringFromQueue(_SessionID, _ID, _Str);
+LeaderLog_Log("DEBUG", "[LLLIB:Sorter] Finalized string '",_Str,"' for session [",_SessionID,"]");
+
+PROC
+LLLIB_Sorter_ClearStringFromQueue((STRING)_SessionID, (STRING)_ID, (STRING)_Str)
+AND
+DB_LLLIB_Sorter_Temp_StringQueue(_SessionID, _ID, _Str)
+THEN
+NOT DB_LLLIB_Sorter_Temp_StringQueue(_SessionID, _ID, _Str);
+
+PROC
+LLLIB_Sorter_ClearStringFromQueue((STRING)_SessionID, (STRING)_ID, (STRING)_Str)
+AND
+DB_LLLIB_Sorter_Temp_MatchedChar(_SessionID, _Char, _ID)
+THEN
+NOT DB_LLLIB_Sorter_Temp_MatchedChar(_SessionID, _Char, _ID);
+
+PROC
+LLLIB_Sorter_SaveStrings((STRING)_SessionID)
+AND
+DB_LLLIB_Sorter_Temp_StringQueue(_SessionID, _ID, _Str)
+THEN
+DB_LLLIB_Sorter_Temp_StringBackup(_SessionID, _ID, _Str);
+
+PROC
+LLLIB_Sorter_AddUnsortedStrings((STRING)_SessionID)
+AND
+DB_LLLIB_Sorter_Temp_StringBackup(_SessionID, _ID, _Str)
+AND
+NOT DB_LLLIB_Sorter_FinalSorted(_SessionID, _, _ID, _Str)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Sorter][ERROR] String [",_ID,"] = '",_Str,"' returned unsorted. Adding back in at the end.");
+LLLIB_Sorter_FinalizeString(_SessionID, _ID, _Str);
+NOT DB_LLLIB_Sorter_Temp_StringBackup(_SessionID, _ID, _Str);
+//END_REGION
+
+//REGION START
+PROC
+LLLIB_Sorter_StartSorting((STRING)_SessionID, (STRING)_CompleteEvent, (INTEGER)_TickRate)
+AND
+StringConcatenate("LLLIB_Timers_Sorter_", _SessionID, _TimerName)
+THEN
+DB_LLLIB_Sorter_Temp_RunningSession(_SessionID, _TimerName, _TickRate, _CompleteEvent);
+LLLIB_Sorter_SaveStrings(_SessionID);
+LLLIB_Sorter_AddStringsToInitialChar(_SessionID);
+DB_LLLIB_Sorter_Temp_MainCharIndex(_SessionID, 0);
+LLLIB_Sorter_Internal_NextTick(_SessionID);
+
+QRY
+LLLIB_Sorter_QRY_QueueEmpty((STRING)_SessionID)
+AND
+NOT DB_LLLIB_Sorter_Temp_StringQueue(_SessionID,_,_)
+THEN
+DB_NOOP(1);
+
+PROC
+LLLIB_Sorter_SortingComplete((STRING)_SessionID)
+AND
+DB_LLLIB_Sorter_Temp_RunningSession(_SessionID, _TimerName, _TickRate, _CompleteEvent)
+THEN
+LLLIB_Sorter_AddUnsortedStrings(_SessionID);
+LLLIB_Events_SendEvent(_CompleteEvent);
+NOT DB_LLLIB_Sorter_Temp_RunningSession(_SessionID, _TimerName, _TickRate, _CompleteEvent);
+//END_REGION
+
+//REGION TIMER_TICK
+IF
+TimerFinished(_TimerName)
+AND
+DB_LLLIB_Sorter_Temp_RunningSession(_SessionID, _TimerName, _TickRate, _CompleteEvent)
+THEN
+LLLIB_Sorter_Internal_TickSession(_SessionID);
+
+PROC
+LLLIB_Sorter_Internal_NextTick((STRING)_SessionID)
+AND
+DB_LLLIB_Sorter_Temp_RunningSession(_SessionID, _TimerName, _TickRate, _CompleteEvent)
+THEN
+TimerLaunch(_TimerName, _TickRate);
+
+PROC
+LLLIB_Sorter_Internal_TickSession((STRING)_SessionID)
+AND
+LLLIB_Sorter_QRY_QueueEmpty(_SessionID)
+THEN
+LLLIB_Sorter_SortingComplete(_SessionID);
+//END_REGION
+
+//REGION TOTAL_STRINGS
+QRY
+LLLIB_Sorter_QRY_CountStringsInQueue((STRING)_SessionID)
+AND
+NOT DB_LLLIB_Sorter_Temp_TotalStringsInQueue(_SessionID, _)
+THEN
+DB_LLLIB_Sorter_Temp_TotalStringsInQueue(_SessionID, 0);
+
+QRY
+LLLIB_Sorter_QRY_CountStringsInQueue((STRING)_SessionID)
+AND
+DB_LLLIB_Sorter_Temp_StringQueue(_SessionID, _ID, _Str)
+AND
+DB_LLLIB_Sorter_Temp_TotalStringsInQueue(_SessionID, _Total)
+AND
+IntegerSum(_Total, 1, _NewTotal)
+THEN
+NOT DB_LLLIB_Sorter_Temp_TotalStringsInQueue(_SessionID, _Total);
+DB_LLLIB_Sorter_Temp_TotalStringsInQueue(_SessionID, _NewTotal);
+//END_REGION
+
+//REGION CHAR_COUNTING
+QRY
+LLLIB_Sorter_QRY_CountStringsInChar((STRING)_SessionID, (STRING)_Char)
+AND
+DB_LLLIB_Sorter_Temp_TotalStringsInChar(_SessionID, _Char, _PastCount)
+THEN
+NOT DB_LLLIB_Sorter_Temp_TotalStringsInChar(_SessionID, _Char, _PastCount);
+
+QRY
+LLLIB_Sorter_QRY_CountStringsInChar((STRING)_SessionID, (STRING)_Char)
+THEN
+DB_LLLIB_Sorter_Temp_TotalStringsInChar(_SessionID, _Char, 0);
+
+QRY
+LLLIB_Sorter_QRY_CountStringsInChar((STRING)_SessionID, (STRING)_Char)
+AND
+DB_LLLIB_Sorter_Temp_MatchedChar(_SessionID, _Char, _ID)
+AND
+DB_LLLIB_Sorter_Temp_TotalStringsInChar(_SessionID, _Char, _Total)
+AND
+IntegerSum(_Total, 1, _NewTotal)
+THEN
+NOT DB_LLLIB_Sorter_Temp_TotalStringsInChar(_SessionID, _Char, _Total);
+DB_LLLIB_Sorter_Temp_TotalStringsInChar(_SessionID, _Char, _NewTotal);
+//END_REGION
+
+//REGION GROUP_COUNTING
+QRY
+LLLIB_Sorter_QRY_CountStringsInGroup((STRING)_SessionID, (STRING)_ParentChar, (STRING)_Group)
+AND
+DB_LLLIB_Sorter_Temp_TotalStringsInGroup(_SessionID, _ParentChar, _Group, _PastCount)
+THEN
+NOT DB_LLLIB_Sorter_Temp_TotalStringsInGroup(_SessionID, _ParentChar, _Group, _PastCount);
+
+QRY
+LLLIB_Sorter_QRY_CountStringsInGroup((STRING)_SessionID, (STRING)_ParentChar, (STRING)_Group)
+THEN
+DB_LLLIB_Sorter_Temp_TotalStringsInGroup(_SessionID, _ParentChar, _Group, 0);
+
+QRY
+LLLIB_Sorter_QRY_CountStringsInGroup((STRING)_SessionID, (STRING)_ParentChar, (STRING)_Group)
+AND
+DB_LLLIB_Sorter_Temp_GroupEntry(_SessionID, _ParentChar, _Group, _ID, _LastSubIndex)
+AND
+DB_LLLIB_Sorter_Temp_TotalStringsInGroup(_SessionID, _ParentChar, _Group, _Total)
+AND
+IntegerSum(_Total, 1, _NewTotal)
+THEN
+NOT DB_LLLIB_Sorter_Temp_TotalStringsInGroup(_SessionID, _ParentChar, _Group, _Total);
+DB_LLLIB_Sorter_Temp_TotalStringsInGroup(_SessionID, _ParentChar, _Group, _NewTotal);
+//END_REGION
+
+//REGION TICK
+PROC
+LLLIB_Sorter_Internal_TickSession((STRING)_SessionID)
+AND
+LLLIB_Sorter_QRY_CountStringsInQueue(_SessionID)
+AND
+DB_LLLIB_Sorter_Temp_TotalStringsInQueue(_SessionID, _Total)
+AND
+_Total > 1
+THEN
+LLLIB_Sorter_Internal_Sort(_SessionID);
+
+PROC
+LLLIB_Sorter_Internal_TickSession((STRING)_SessionID)
+AND
+DB_LLLIB_Sorter_Temp_TotalStringsInQueue(_SessionID, _Total)
+AND
+_Total == 1
+AND
+DB_LLLIB_Sorter_Temp_StringQueue(_SessionID, _ID, _Str)
+THEN
+LLLIB_Sorter_FinalizeString(_SessionID, _ID, _Str);
+NOT DB_LLLIB_Sorter_Temp_TotalStringsInQueue(_SessionID, _Total);
+
+PROC
+LLLIB_Sorter_Internal_TickSession((STRING)_SessionID)
+AND
+DB_LLLIB_Sorter_Temp_TotalStringsInQueue(_SessionID, _Total)
+AND
+_Total <= 1
+THEN
+LLLIB_Sorter_SortingComplete(_SessionID);
+//END_REGION
+
+//REGION SORTING
+PROC
+LLLIB_Sorter_Internal_Sort((STRING)_SessionID)
+AND
+DB_LLLIB_Sorter_Temp_MainCharIndex(_SessionID, _CharIndex)
+AND
+DB_LLLIB_Sorter_Codex(_CharIndex, _Char)
+AND
+NOT DB_LLLIB_Sorter_Temp_NextGroupForSorting(_SessionID, _Char, _)
+AND
+LLLIB_Sorter_QRY_CountStringsInChar(_SessionID, _Char)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Sorter] Sorting Char [",_Char,"].");
+LLLIB_Sorter_Internal_SortChar(_SessionID, _Char);
+
+PROC
+LLLIB_Sorter_Internal_Sort((STRING)_SessionID)
+AND
+DB_LLLIB_Sorter_Temp_MainCharIndex(_SessionID, _CharIndex)
+AND
+DB_LLLIB_Sorter_Codex(_CharIndex, _Char)
+AND
+DB_LLLIB_Sorter_Temp_NextGroupForSorting(_SessionID, _Char, _Group)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Sorter] Sorting group [",_Char,"][",_Group,"].");
+LLLIB_Sorter_Internal_SortGroup(_SessionID, _Char, _Group);
+
+PROC
+LLLIB_Sorter_Internal_SortChar((STRING)_SessionID, (STRING)_Char)
+AND
+DB_LLLIB_Sorter_Temp_TotalStringsInChar(_SessionID, _Char, _Total)
+AND
+_Total <= 0
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Sorter] Total strings in Char [",_Char,"] is 0. Moving to next char.");
+NOT DB_LLLIB_Sorter_Temp_TotalStringsInChar(_SessionID, _Char, _Total);
+LLLIB_Sorter_Internal_NextChar(_SessionID);
+
+PROC
+LLLIB_Sorter_Internal_NextChar((STRING)_SessionID)
+AND
+DB_LLLIB_Sorter_Temp_MainCharIndex(_SessionID, _CharIndex)
+AND
+IntegerSum(_CharIndex, 1, _NextIndex)
+THEN
+NOT DB_LLLIB_Sorter_Temp_MainCharIndex(_SessionID, _CharIndex);
+DB_LLLIB_Sorter_Temp_MainCharIndex(_SessionID, _NextIndex);
+LLLIB_Sorter_Internal_NextTick(_SessionID);
+
+PROC
+LLLIB_Sorter_Internal_SortChar((STRING)_SessionID, (STRING)_Char)
+AND
+DB_LLLIB_Sorter_Temp_TotalStringsInChar(_SessionID, _Char, _Total)
+AND
+_Total == 1
+AND
+DB_LLLIB_Sorter_Temp_MatchedChar(_SessionID, _Char, _ID)
+AND
+DB_LLLIB_Sorter_Temp_StringQueue(_SessionID, _ID, _Str)
+THEN
+LLLIB_Sorter_FinalizeString(_SessionID, _ID, _Str);
+NOT DB_LLLIB_Sorter_Temp_MatchedChar(_SessionID, _Char, _ID);
+LLLIB_Sorter_Internal_NextChar(_SessionID);
+
+PROC
+LLLIB_Sorter_Internal_SortChar((STRING)_SessionID, (STRING)_Char)
+AND
+DB_LLLIB_Sorter_Temp_TotalStringsInChar(_SessionID, _Char, _Total)
+AND
+_Total > 1
+AND
+DB_LLLIB_Sorter_Codex(_CharIndex, _NextChar)
+AND
+DB_LLLIB_Sorter_Temp_MatchedChar(_SessionID, _Char, _ID)
+AND
+DB_LLLIB_Sorter_Temp_StringQueue(_SessionID, _ID, _Str)
+AND
+NOT DB_LLLIB_Sorter_Temp_GroupEntry(_SessionID, _Char, _, _ID, _)
+AND
+StringSub(_Str, 1, 1, _NextChar)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Sorter] Added string '",_Str,"' to group [",_NextChar,"] for char [",_Char,"]");
+DB_LLLIB_Sorter_Temp_GroupEntry(_SessionID, _Char, _NextChar, _ID, 1);
+LLLIB_Sorter_Internal_AddGroup(_SessionID, _Char, _NextChar);
+
+QRY
+LLLIB_Sorter_Internal_QRY_GetNextGroupIndex((STRING)_SessionID, (STRING)_ParentChar)
+AND
+NOT DB_LLLIB_Sorter_Temp_NextGroupIndex(_SessionID, _ParentChar, _)
+THEN
+DB_LLLIB_Sorter_Temp_NextGroupIndex(_SessionID, _ParentChar, 0);
+
+QRY
+LLLIB_Sorter_Internal_QRY_GetNextGroupIndex((STRING)_SessionID, (STRING)_ParentChar)
+AND
+DB_LLLIB_Sorter_Temp_NextGroupIndex(_SessionID, _ParentChar, _Index)
+AND
+DB_LLLIB_Sorter_Temp_Group(_GroupIndex, _SessionID, _ParentChar, _Group)
+AND
+IntegerSum(_Index, 1, _NextIndex)
+THEN
+NOT DB_LLLIB_Sorter_Temp_NextGroupIndex(_SessionID, _ParentChar, _Index);
+DB_LLLIB_Sorter_Temp_NextGroupIndex(_SessionID, _ParentChar, _NextIndex);
+
+PROC
+LLLIB_Sorter_Internal_AddGroup((STRING)_SessionID, (STRING)_ParentChar, (STRING)_Group)
+AND
+NOT DB_LLLIB_Sorter_Temp_Group(_SessionID, _ParentChar, _Group)
+AND
+LLLIB_Sorter_Internal_QRY_GetNextGroupIndex(_SessionID, _ParentChar)
+AND
+DB_LLLIB_Sorter_Temp_NextGroupIndex(_SessionID, _ParentChar, _Index)
+THEN
+DB_LLLIB_Sorter_Temp_Group(_Index, _SessionID, _ParentChar, _Group);
+NOT DB_LLLIB_Sorter_Temp_NextGroupIndex(_SessionID, _ParentChar, _Index);
+
+PROC
+LLLIB_Sorter_Internal_SortChar((STRING)_SessionID, (STRING)_Char)
+AND
+DB_LLLIB_Sorter_Temp_TotalStringsInChar(_SessionID, _Char, _Total)
+AND
+_Total > 1
+AND
+DB_LLLIB_Sorter_Iterator(_GroupIndex)
+AND
+DB_LLLIB_Sorter_Temp_Group(_GroupIndex, _SessionID, _Char, _Group)
+AND
+NOT DB_LLLIB_Sorter_Temp_NextGroupForSorting(_SessionID, _Char, _)
+AND
+LLLIB_Sorter_QRY_CountStringsInGroup(_SessionID, _Char, _Group)
+AND
+DB_LLLIB_Sorter_Temp_TotalStringsInGroup(_SessionID, _Char, _Group, _GroupTotal)
+AND
+_GroupTotal > 0
+AND
+IntegertoString(_GroupIndex, _GroupIndexStr)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Sorter] Next group for sorting set to [",_Char,"][",_Group,"](",_GroupIndexStr,")");
+DB_LLLIB_Sorter_Temp_NextGroupForSorting(_SessionID, _Char, _Group);
+LLLIB_Sorter_Internal_NextTick(_SessionID);
+//END_REGION
+
+//REGION GROUP_SORTING
+PROC
+LLLIB_Sorter_Internal_SortGroup((STRING)_SessionID, (STRING)_Char, (STRING)_Group)
+AND
+LLLIB_Sorter_QRY_CountStringsInGroup(_SessionID, _Char, _Group)
+AND
+DB_LLLIB_Sorter_Temp_TotalStringsInGroup(_SessionID, _Char, _Group, _GroupTotal)
+AND
+IntegertoString(_GroupTotal, _TotalStr)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Sorter] Sorting group [",_Group,"] for Char [",_Char,"]. Total in group: [",_TotalStr,"]");
+DB_NOOP(1);
+
+PROC
+LLLIB_Sorter_Internal_SortGroup((STRING)_SessionID, (STRING)_Char, (STRING)_Group)
+AND
+DB_LLLIB_Sorter_Temp_TotalStringsInGroup(_SessionID, _Char, _Group, _GroupTotal)
+AND
+_GroupTotal == 1
+AND
+DB_LLLIB_Sorter_Temp_GroupEntry(_SessionID, _Char, _Group, _ID, _LastSubIndex)
+AND
+DB_LLLIB_Sorter_Temp_StringQueue(_SessionID, _ID, _Str)
+THEN
+NOT DB_LLLIB_Sorter_Temp_GroupEntry(_SessionID, _Char, _Group, _ID, _LastSubIndex);
+NOT DB_LLLIB_Sorter_Temp_NextGroupForSorting(_SessionID, _Char, _Group);
+LLLIB_Sorter_FinalizeString(_SessionID, _ID, _Str);
+
+PROC
+LLLIB_Sorter_Internal_SortGroup((STRING)_SessionID, (STRING)_Char, (STRING)_Group)
+AND
+LLLIB_Sorter_QRY_CountStringsInGroup(_SessionID, _Char, _Group)
+AND
+DB_LLLIB_Sorter_Temp_TotalStringsInGroup(_SessionID, _Char, _Group, _GroupTotal)
+AND
+_GroupTotal <= 0
+THEN
+NOT DB_LLLIB_Sorter_Temp_NextGroupForSorting(_SessionID, _Char, _Group);
+NOT DB_LLLIB_Sorter_Temp_TotalStringsInGroup(_SessionID, _Char, _Group, _GroupTotal);
+LeaderLog_Log("DEBUG", "[LLLIB:Sorter] [",_Char,"] Group[",_Group,"] was empty. Cleaned up.");
+
+PROC
+LLLIB_Sorter_Internal_SortGroup((STRING)_SessionID, (STRING)_Char, (STRING)_Group)
+AND
+DB_LLLIB_Sorter_Temp_TotalStringsInGroup(_SessionID, _Char, _Group, _GroupTotal)
+AND
+_GroupTotal > 1
+AND
+DB_LLLIB_Sorter_Temp_Group(_Index, _SessionID, _Char, _Group)
+AND
+DB_LLLIB_Sorter_Codex(_, _NextChar)
+AND
+DB_LLLIB_Sorter_Temp_GroupEntry(_SessionID, _Char, _Group, _ID, _LastSubIndex)
+AND
+DB_LLLIB_Sorter_Temp_StringQueue(_SessionID, _ID, _Str)
+AND
+IntegerSum(_LastSubIndex, 1, _CheckIndex)
+AND
+StringSub(_Str, _CheckIndex, 1, _NextChar)
+AND
+StringConcatenate(_Group, _NextChar, _NextGroup)
+THEN
+NOT DB_LLLIB_Sorter_Temp_GroupEntry(_SessionID, _Char, _Group, _ID, _LastSubIndex);
+NOT DB_LLLIB_Sorter_Temp_NextGroupForSorting(_SessionID, _Char, _Group);
+DB_LLLIB_Sorter_Temp_GroupEntry(_SessionID, _Char, _NextGroup, _ID, _CheckIndex);
+DB_LLLIB_Sorter_Temp_Group(_Index, _SessionID, _Char, _NextGroup);
+LeaderLog_Log("DEBUG", "[LLLIB:Sorter] [",_Char,"] Group[",_Group,"] set to [",_NextGroup,"] using the same index.");
+LLLIB_Sorter_Internal_SetNextSortGroup(_SessionID, _Char, _NextGroup);
+
+PROC
+LLLIB_Sorter_Internal_SetNextSortGroup((STRING)_SessionID, (STRING)_Char, (STRING)_Group)
+AND
+NOT DB_LLLIB_Sorter_Temp_NextGroupForSorting(_SessionID, _Char, _)
+THEN
+DB_LLLIB_Sorter_Temp_NextGroupForSorting(_SessionID, _Char, _Group);
+
+PROC
+LLLIB_Sorter_Internal_SortGroup((STRING)_SessionID, (STRING)_Char, (STRING)_Group)
+AND
+NOT DB_LLLIB_Sorter_Temp_NextGroupForSorting(_SessionID, _Char, _Group)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Sorter] Finished sorting group [",_Char,"][",_Group,"]. Starting next tick.");
+LLLIB_Sorter_Internal_NextTick(_SessionID);
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

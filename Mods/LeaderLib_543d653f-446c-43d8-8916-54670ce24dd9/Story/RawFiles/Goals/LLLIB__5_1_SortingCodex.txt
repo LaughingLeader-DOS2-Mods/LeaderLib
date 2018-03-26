@@ -1,0 +1,170 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+LLLIB_Sorter_InitSettings();
+
+//DB_LLLIB_Sorter_Codex(_Index,_AlphanumericChar)
+//DB_LLLIB_Sorter_Iterator(_i)
+//DB_LLLIB_Sorter_MaxCodex(_Max)
+KBSECTION
+PROC
+LLLIB_Sorter_InitSettings()
+THEN
+LLLIB_Sorter_BuildIterator(256);
+LLLIB_Sorter_BuildCodex();
+
+//REGION UPDATING
+PROC
+LLLIB_System_UpdateDatabases()
+THEN
+LLLIB_Sorter_InitSettings();
+LeaderLog_Log("DEBUG", "[LLLIB:Sorter] Databases updated.");
+
+PROC
+LLLIB_System_ClearDatabases()
+THEN
+SysClear("DB_LLLIB_Sorter_Codex", 2);
+SysClear("DB_LLLIB_Sorter_Iterator", 1);
+LeaderLog_Log("DEBUG", "[LLLIB:Sorter] Databases cleared.");
+
+PROC
+LLLIB_Updater_ResetDatabases()
+THEN
+LLLIB_System_ClearDatabases();
+LLLIB_System_UpdateDatabases();
+//END_REGION
+
+//REGION CODEX
+PROC
+LLLIB_Sorter_AddToCodex((STRING)_AlphanumericChar)
+AND
+NOT DB_LLLIB_Sorter_Codex(_,_AlphanumericChar)
+AND
+SysCount("DB_LLLIB_Sorter_Codex", 2, _Index)
+THEN
+DB_LLLIB_Sorter_Codex(_Index, _AlphanumericChar);
+
+PROC
+LLLIB_Sorter_BuildCodex()
+AND
+NOT DB_LLLIB_Sorter_Codex(_,_)
+THEN
+/*Windows-like sort order
+Symbols
+Numbers
+Letters
+*/
+
+LLLIB_Sorter_AddToCodex(" ");
+LLLIB_Sorter_AddToCodex("!");
+//LLLIB_Sorter_AddToCodex('"');
+LLLIB_Sorter_AddToCodex("#");
+LLLIB_Sorter_AddToCodex("$");
+LLLIB_Sorter_AddToCodex("%");
+LLLIB_Sorter_AddToCodex("&");
+LLLIB_Sorter_AddToCodex("'");
+LLLIB_Sorter_AddToCodex("(");
+LLLIB_Sorter_AddToCodex(")");
+LLLIB_Sorter_AddToCodex("*");
+LLLIB_Sorter_AddToCodex("+");
+LLLIB_Sorter_AddToCodex(",");
+LLLIB_Sorter_AddToCodex("-");
+LLLIB_Sorter_AddToCodex(".");
+LLLIB_Sorter_AddToCodex("/");
+
+LLLIB_Sorter_AddToCodex(":");
+LLLIB_Sorter_AddToCodex(";");
+LLLIB_Sorter_AddToCodex("<");
+LLLIB_Sorter_AddToCodex("=");
+LLLIB_Sorter_AddToCodex(">");
+LLLIB_Sorter_AddToCodex("?");
+LLLIB_Sorter_AddToCodex("@");
+
+LLLIB_Sorter_AddToCodex("[");
+//LLLIB_Sorter_AddToCodex("\");
+LLLIB_Sorter_AddToCodex("]");
+//LLLIB_Sorter_AddToCodex("^");
+LLLIB_Sorter_AddToCodex("_");
+LLLIB_Sorter_AddToCodex("`");
+
+LLLIB_Sorter_AddToCodex("}");
+LLLIB_Sorter_AddToCodex("|");
+LLLIB_Sorter_AddToCodex("{");
+LLLIB_Sorter_AddToCodex("~");
+
+LLLIB_Sorter_AddToCodex("0");
+LLLIB_Sorter_AddToCodex("1");
+LLLIB_Sorter_AddToCodex("2");
+LLLIB_Sorter_AddToCodex("3");
+LLLIB_Sorter_AddToCodex("4");
+LLLIB_Sorter_AddToCodex("5");
+LLLIB_Sorter_AddToCodex("6");
+LLLIB_Sorter_AddToCodex("7");
+LLLIB_Sorter_AddToCodex("8");
+LLLIB_Sorter_AddToCodex("9");
+
+//String Sub isn't case-sensitive for some reason
+LLLIB_Sorter_AddToCodex("A");
+LLLIB_Sorter_AddToCodex("B");
+LLLIB_Sorter_AddToCodex("C");
+LLLIB_Sorter_AddToCodex("D");
+LLLIB_Sorter_AddToCodex("E");
+LLLIB_Sorter_AddToCodex("F");
+LLLIB_Sorter_AddToCodex("G");
+LLLIB_Sorter_AddToCodex("H");
+LLLIB_Sorter_AddToCodex("I");
+LLLIB_Sorter_AddToCodex("J");
+LLLIB_Sorter_AddToCodex("K");
+LLLIB_Sorter_AddToCodex("L");
+LLLIB_Sorter_AddToCodex("M");
+LLLIB_Sorter_AddToCodex("N");
+LLLIB_Sorter_AddToCodex("O");
+LLLIB_Sorter_AddToCodex("P");
+LLLIB_Sorter_AddToCodex("Q");
+LLLIB_Sorter_AddToCodex("R");
+LLLIB_Sorter_AddToCodex("S");
+LLLIB_Sorter_AddToCodex("T");
+LLLIB_Sorter_AddToCodex("U");
+LLLIB_Sorter_AddToCodex("V");
+LLLIB_Sorter_AddToCodex("W");
+LLLIB_Sorter_AddToCodex("X");
+LLLIB_Sorter_AddToCodex("Y");
+LLLIB_Sorter_AddToCodex("Z");
+
+PROC
+LLLIB_Sorter_BuildCodex()
+AND
+SysCount("DB_LLLIB_Sorter_Codex", 2, _Max)
+THEN
+SysClear("DB_LLLIB_Sorter_MaxCodex", 1);
+DB_LLLIB_Sorter_MaxCodex(_Max);
+//END_REGION
+
+//REGION CHARACTER_INDEX
+PROC
+LLLIB_Sorter_BuildIterator((INTEGER)_Max)
+AND
+NOT DB_LLLIB_Sorter_Iterator(_)
+THEN
+DB_LLLIB_Temp_BuildSortIterator(0, _Max);
+
+IF
+DB_LLLIB_Temp_BuildSortIterator(_Index, _Max)
+THEN
+DB_LLLIB_Sorter_OnSortIterator(_Index, _Max);
+
+PROC
+DB_LLLIB_Sorter_OnSortIterator((INTEGER)_Index, (INTEGER)_Max)
+AND
+_Index < _Max
+AND
+IntegerSum(_Index, 1, _NextIndex)
+THEN
+DB_LLLIB_Sorter_Iterator(_Index);
+NOT DB_LLLIB_Temp_BuildSortIterator(_Index, _Max);
+DB_LLLIB_Temp_BuildSortIterator(_NextIndex, _Max);
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

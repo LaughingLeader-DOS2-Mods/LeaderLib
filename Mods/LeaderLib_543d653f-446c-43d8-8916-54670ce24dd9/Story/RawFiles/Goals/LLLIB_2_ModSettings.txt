@@ -77,6 +77,7 @@ IntegerSubtract(_MaxPage, 1, _LastPageIndex)
 THEN
 DB_LLLIB_ModSettings_PageMax(_LastIndex, _LastPageIndex, _MaxPage);
 
+/*
 IF
 DB_LLLIB_ModSettings_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
 AND
@@ -87,6 +88,7 @@ AND
 IntegertoString(_MaxPage, _Str3)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Max page set: LastIndex[",_Str1,"] LastPageIndex[",_Str2,"] MaxPage[",_Str3,"]");
+*/
 //END_REGION
 
 //REGION SETTINGS
@@ -141,17 +143,22 @@ LLLIB_ModSettings_SortMenus()
 AND
 DB_LLLIB_ModSettings_RegisteredMenu(_Index, _ID, _DisplayName, _Dialog, _ModName, _Author)
 THEN
-LLLIB_Sorter_AddString(_ID, _DisplayName);
+LLLIB_Sorter_AddString("LLLIB_SortMenus", _ID, _DisplayName);
 
 PROC
 LLLIB_ModSettings_SortMenus()
 THEN
 LLLIB_ModSettings_Sorter_SaveMenus();
-LLLIB_Sorter_RunSorter();
+LLLIB_Sorter_StartSorting("LLLIB_SortMenus", "LLLIB_Events_MenuSortingFinished", 1);
+
+IF
+StoryEvent(_, "LLLIB_Events_MenuSortingFinished")
+THEN
 LLLIB_ModSettings_Sorter_SaveUnsortedMenus();
 SysClear("DB_LLLIB_ModSettings_RegisteredMenu", 6);
 LLLIB_ModSettings_Sorter_AddSortedMenus();
-LLLIB_Sorter_ClearData();
+//LLLIB_Sorter_ClearSessionData("LLLIB_SortMenus");
+LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Sorting complete.");
 
 PROC
 LLLIB_ModSettings_Sorter_SaveMenus()
@@ -165,19 +172,19 @@ LLLIB_ModSettings_Sorter_SaveUnsortedMenus()
 AND
 DB_LLLIB_ModSettings_RegisteredMenu(_Index, _ID, _DisplayName, _Dialog, _ModName, _Author)
 AND
-NOT DB_LLLIB_Sorter_FinalSorted(_, _ID, _DisplayName)
+NOT DB_LLLIB_Sorter_FinalSorted("LLLIB_SortMenus", _, _ID, _DisplayName)
 THEN
 DB_LLLIB_ModSettings_Temp_UnsortedMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
 
 PROC
 LLLIB_ModSettings_Sorter_AddSortedMenus()
 AND
-DB_LLLIB_Sorter_FinalSorted(_Index, _ID, _DisplayName)
+DB_LLLIB_Sorter_FinalSorted("LLLIB_SortMenus", _Index, _ID, _DisplayName)
 AND
 DB_LLLIB_ModSettings_Temp_PreviousMenu(_PreviousIndex, _ID, _DisplayName, _Dialog, _ModName, _Author)
 THEN
 DB_LLLIB_ModSettings_RegisteredMenu(_Index, _ID, _DisplayName, _Dialog, _ModName, _Author);
-NOT DB_LLLIB_Sorter_FinalSorted(_Index, _ID, _DisplayName);
+NOT DB_LLLIB_Sorter_FinalSorted("LLLIB_SortMenus", _Index, _ID, _DisplayName);
 NOT DB_LLLIB_ModSettings_Temp_PreviousMenu(_PreviousIndex, _ID, _DisplayName, _Dialog, _ModName, _Author);
 
 PROC

@@ -923,6 +923,7 @@ LLLIB_QRY_Treasure_GetTreasureID(_Object)
 AND
 DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
 THEN
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:GenerateNow] Manually generating items for treasure with ID [",_TreasureID,"]");
 LLLIB_Treasure_GenerateItems(_Object, _TreasureID, "MANUAL");
 NOT DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
 

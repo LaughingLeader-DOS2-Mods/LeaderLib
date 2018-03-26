@@ -734,6 +734,17 @@ DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader)
 THEN
 NOT DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
 LeaderLog_Log("DEBUG", "[LLLIB:Traders] Level ",_Level," ending. Removed global trader [",_TraderID,"] from spawned database.");
+
+IF
+RegionEnded(_Level)
+AND
+GlobalGetFlag("LeaderLib_IsEditorMode", 1)
+AND
+DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+THEN
+NOT DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
+SetOnStage(_Trader, 0);
+LeaderLog_Log("DEBUG", "[LLLIB:Traders] Level ",_Level," ending and editor mode is enabled. Remove trader [",_TraderID,"] from spawned database and setting off stage.");
 //END_REGION
 
 //REGION TREASURE_GENERATION_STATUS

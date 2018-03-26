@@ -6,7 +6,12 @@ KBSECTION
 IF
 GameStarted("LeaderLib_TestLevel",_)
 THEN
-LLLIB_Treasure_Register_TreasureToObject("LLLIB_TestLevel_Trader", CHARACTERGUID_Humans_Male_Clothing_Poor_000_cc53113d-d4f2-4e8f-9ee4-e6aedf51669b);
+LLLIB_Trader_Register_Trader("LLLIB_TestLevel_Trader", "Elves_Female_Clothing_3ba29ecd-4849-494d-a9a6-6221eea6761c", 1);
+LLLIB_Trader_Register_PositionObject("LLLIB_TestLevel_Trader", "LeaderLib_TestLevel", ITEMGUID_LLLIB_Debug_TestChest_ff6c9edf-aa21-447a-8bb2-2a647a8dae46);
+LLLIB_Trader_Register_Dialog("LLLIB_TestLevel_Trader", "", "LLLIB_RetiredLeader_Default");
+
+LLLIB_Treasure_Register_TreasureToTemplate("LLLIB_TestLevel_Trader", "Elves_Female_Clothing_3ba29ecd-4849-494d-a9a6-6221eea6761c");
+LLLIB_Treasure_Register_TreasureTable("LLLIB_TestLevel_Trader", "TEST_Generation", "", 1);
 LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_TestLevel_Trader", "LOOT_Source_Orb_106a7107-cf36-4331-b5b5-6de71969f370", 1, "LLLIB_Debug_TraderRequirements");
 LLLIB_Requirements_AddFlagRequirement("LLLIB_Debug_TraderRequirements", "LLLIB_LeaderTrader_IntroDone", "Object", 1);
 //LLLIB_Requirements_AddPartyLevelRequirement("LLLIB_Debug_TraderRequirements", 2, 2);
@@ -37,23 +42,42 @@ LLLIB_Treasure_Configure_GenerationType("LLLIB_TestLevel_Chest2", "WPN_Cheat_Swo
 
 //GlobalSetFlag("LeaderLib_DiscoveredLeaderTraderBackground");
 
-//Sorting test
-/*
-LeaderLib_RegisterModMenu("LLZ1", "[Zieonimus] Settings", "LLLIB_SettingsMenu");
-LeaderLib_RegisterModMenu("LLZ2", "[Zzznonom] Settings", "LLLIB_SettingsMenu");
-LeaderLib_RegisterModMenu("LLZ3", "[Zzaonimus] Settings", "LLLIB_SettingsMenu");
-LeaderLib_RegisterModMenu("LLZ4", "[Zaronimus] Settings", "LLLIB_SettingsMenu");
-LeaderLib_RegisterModMenu("LLZ5", "[Zironimus] Settings", "LLLIB_SettingsMenu");
-LeaderLib_RegisterModMenu("LLNWIZ", "[Naming Wizard] Settings", "LLLIB_SettingsMenu");
-LeaderLib_RegisterModMenu("LLEQSET", "[Equipment Sets] Settings", "LLLIB_SettingsMenu");
-LeaderLib_RegisterModMenu("LLDBT", "[Debug Tools] Settings", "LLLIB_SettingsMenu");
+//Sorting/Menu test
 
-LeaderLib_RegisterModMenu("LLZasdas7", "[Blaaaabbbbbzter] Settings", "LLLIB_SettingsMenu");
-LeaderLib_RegisterModMenu("LLZasd6", "[Blaaaabbbbbzter] Settings", "LLLIB_SettingsMenu");
-LeaderLib_RegisterModMenu("LLasdZ92", "[Blaaaabbbbbzter9] Settings", "LLLIB_SettingsMenu");
+LeaderLib_RegisterModMenu("LLZ1", "[Zieonimus] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_RegisterModMenu("LLZ2", "[Zzznonom] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_RegisterModMenu("LLZ3", "[Zzaonimus] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_RegisterModMenu("LLZ4", "[Zaronimus] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_RegisterModMenu("LLZ5", "[Zironimus] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_RegisterModMenu("LLNWIZ", "[Naming Wizard] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_RegisterModMenu("LLEQSET", "[Equipment Sets] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_RegisterModMenu("LLDBT", "[Debug Tools] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+
+/*
+LeaderLib_RegisterModMenu("LLZasdas7", "[Blaaaabbbbbzter] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_RegisterModMenu("LLZasd6", "[Blaaaabbbbbzter] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+*/
+LeaderLib_RegisterModMenu("LLasdZ92", "[Blaaaabbbbbzter9] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+
+LeaderLib_RegisterModMenu("LLTest10", "Zeronimus", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_RegisterModMenu("LLTest7", "Bananas", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_RegisterModMenu("LLTest2", "Apples2", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_RegisterModMenu("LLTest1", "Apples1", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+
+LeaderLib_RegisterModMenu("LLZZ7", "[ModMenu7] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_RegisterModMenu("LLZZ8", "[ModMenu8] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_RegisterModMenu("LLZZ9", "[ModMenu9] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_RegisterModMenu("LLZZ10", "[ModMenu10] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_RegisterModMenu("LLZZ11", "[ModMenu11] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_RegisterModMenu("LLZZ12", "[ModMenu12] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_RegisterModMenu("LLZZ1", "[ModMenu1] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_RegisterModMenu("LLZZ2", "[ModMenu2] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_RegisterModMenu("LLZZ3", "[ModMenu3] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_RegisterModMenu("LLZZ4", "[ModMenu4] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_RegisterModMenu("LLZZ5", "[ModMenu5] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_RegisterModMenu("LLZZ6", "[ModMenu6] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 
 LLLIB_ModSettings_CalculateMaxPage();
-*/
 
 IF
 GameStarted("LeaderLib_TestLevel",_)

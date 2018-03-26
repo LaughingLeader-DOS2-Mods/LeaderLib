@@ -701,7 +701,8 @@ TimerLaunch("LLLIB_Timers_CreateTraders", 2000);
 IF
 TimerFinished("LLLIB_Timers_CreateTraders")
 THEN
-LLLIB_Traders_StartSpawning();
+LeaderLog_Log("DEBUG", "[LLLIB:Traders] Starting trader spawning. ");
+//LLLIB_Traders_StartSpawning();
 
 IF
 StoryEvent(_, "LeaderLib_SpawnTraders")

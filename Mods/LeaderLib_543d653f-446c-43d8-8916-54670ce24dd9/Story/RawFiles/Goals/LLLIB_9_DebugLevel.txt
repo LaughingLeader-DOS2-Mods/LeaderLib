@@ -44,6 +44,7 @@ LLLIB_Treasure_Configure_GenerationType("LLLIB_TestLevel_Chest2", "WPN_Cheat_Swo
 
 //Sorting/Menu test
 
+/*
 LeaderLib_RegisterModMenu("LLZ1", "[Zieonimus] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZ2", "[Zzznonom] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZ3", "[Zzaonimus] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
@@ -53,16 +54,15 @@ LeaderLib_RegisterModMenu("LLNWIZ", "[Naming Wizard] Settings", "LLLIB_SettingsM
 LeaderLib_RegisterModMenu("LLEQSET", "[Equipment Sets] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLDBT", "[Debug Tools] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 
-/*
-LeaderLib_RegisterModMenu("LLZasdas7", "[Blaaaabbbbbzter] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_RegisterModMenu("LLZasd7", "[Blaaaabbbbbzter] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZasd6", "[Blaaaabbbbbzter] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-*/
 LeaderLib_RegisterModMenu("LLasdZ92", "[Blaaaabbbbbzter9] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 
 LeaderLib_RegisterModMenu("LLTest10", "Zeronimus", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLTest7", "Bananas", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLTest2", "Apples2", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLTest1", "Apples1", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+*/
 
 LeaderLib_RegisterModMenu("LLZZ7", "[ModMenu7] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZZ8", "[ModMenu8] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");

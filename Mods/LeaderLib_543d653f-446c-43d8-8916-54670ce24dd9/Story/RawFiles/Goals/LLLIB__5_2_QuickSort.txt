@@ -1,0 +1,530 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+//DB_LLLIB_Sorter_Codex(_Index, _Char)
+//DB_LLLIB_Sorter_Iterator(_i)
+/*SESSION*/
+//DB_LLLIB_Sorter_SessionTickRate(_SessionID, _TickRate)
+/*Output*/
+//DB_LLLIB_Sorter_FinalSorted(_SessionID, _Index, _ID, _Str)
+/*Input*/
+//DB_LLLIB_Sorter_Temp_StringQueue(_SessionID, _ID, _Str)
+//DB_LLLIB_Sorter_Temp_StringQueueDuplicates(_SessionID, _ID, _Str, _LinkedID)
+/*QUICKSORT*/
+//DB_LLLIB_Sorter_Temp_Pivot(_SessionID, _PivotChar, _PivotIndex)
+//DB_LLLIB_Sorter_Temp_Quicksort_Array_Properties(_SessionID, _Array, _ArrayType, _Length)
+//DB_LLLIB_Sorter_Temp_Quicksort_Array_Data(_SessionID, _Array, _Index, _ID, _Str)
+//DB_LLLIB_Sorter_Temp_Quicksort_Pivot(_SessionID, _Array, _PivotIndex, _PivotID, _PivotStr)
+//DB_LLLIB_Sorter_Temp_Quicksort_Timer(_SessionID, _Array, _TimerName, _CurrentIndex, _LastIndex)
+//DB_LLLIB_Sorter_Temp_Quicksort_TimerActive(_SessionID, _Array, _TimerName)
+/*ARRAY_LENGTH*/
+//LLLIB_Sorter_QuickSort_QRY_GetArrayLength(_SessionID, _Array)
+//DB_LLLIB_Sorter_Temp_ArrayLength(_SessionID, _Array, _Total)
+/*STRING_COMPARISON*/
+//DB_LLLIB_Sorter_StringLength(_Str, _Length)
+//DB_LLLIB_Sorter_Temp_CompareIterator(_SessionID, _Str1, _Str2, _i)
+//DB_LLLIB_Sorter_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _ComparisonVal)
+//DB_LLLIB_Sorter_Temp_StringCompare_StopIteration(_SessionID, _Str1, _Str2)
+KBSECTION
+//REGION ARRAY_LENGTH
+QRY
+LLLIB_Sorter_Quicksort_QRY_GetArrayLength((STRING)_SessionID, (STRING)_Array)
+AND
+DB_LLLIB_Sorter_Temp_ArrayLength(_SessionID, _Array, _PastCount)
+THEN
+NOT DB_LLLIB_Sorter_Temp_TotalStringsInGroup(_SessionID, _Array, _PastCount);
+
+QRY
+LLLIB_Sorter_Quicksort_QRY_GetArrayLength((STRING)_SessionID, (STRING)_Array)
+THEN
+DB_LLLIB_Sorter_Temp_ArrayLength(_SessionID, _Array, 0);
+
+QRY
+LLLIB_Sorter_Quicksort_QRY_GetArrayLength((STRING)_SessionID, (STRING)_Array)
+AND
+DB_LLLIB_Sorter_Temp_Quicksort_Array_Data(_SessionID, _Array, _Index, _ID, _Str)
+AND
+DB_LLLIB_Sorter_Temp_ArrayLength(_SessionID, _Array, _Total)
+AND
+IntegerSum(_Total, 1, _NewTotal)
+THEN
+NOT DB_LLLIB_Sorter_Temp_ArrayLength(_SessionID, _Array, _Total);
+DB_LLLIB_Sorter_Temp_ArrayLength(_SessionID, _Array, _NewTotal);
+//END_REGION
+
+//REGION ARRAY_METHODS
+PROC
+LLLIB_Sorter_Internal_Quicksort_NewArray((STRING)_SessionID, (STRING)_Array, (INTEGER)_ArrayType)
+AND
+NOT DB_LLLIB_Sorter_Temp_Quicksort_Array_Properties(_SessionID, _Array, _ArrayType, _)
+THEN
+DB_LLLIB_Sorter_Temp_Quicksort_Array_Properties(_SessionID, _Array, _ArrayType, 0);
+
+PROC
+LLLIB_Sorter_Internal_Quicksort_IncreaseArrayLength((STRING)_SessionID, (STRING)_Array)
+AND
+DB_LLLIB_Sorter_Temp_Quicksort_Array_Properties(_SessionID, _Array, _ArrayType, _Length)
+AND
+IntegerSum(_Length, 1, _NextLength)
+THEN
+NOT DB_LLLIB_Sorter_Temp_Quicksort_Array_Properties(_SessionID, _Array, _ArrayType, _Length);
+DB_LLLIB_Sorter_Temp_Quicksort_Array_Properties(_SessionID, _Array, _ArrayType, _NextLength);
+
+PROC
+LLLIB_Sorter_Internal_Quicksort_DecreaseArrayLength((STRING)_SessionID, (STRING)_Array)
+AND
+DB_LLLIB_Sorter_Temp_Quicksort_Array_Properties(_SessionID, _Array, _ArrayType, _Length)
+AND
+IntegerSubtract(_Length, 1, _NextLength)
+THEN
+NOT DB_LLLIB_Sorter_Temp_Quicksort_Array_Properties(_SessionID, _Array, _ArrayType, _Length);
+DB_LLLIB_Sorter_Temp_Quicksort_Array_Properties(_SessionID, _Array, _ArrayType, _NextLength);
+//END_REGION
+
+//REGION ARRAY_ADD
+PROC
+LLLIB_Sorter_Internal_Quicksort_AddToArray((STRING)_SessionID, (STRING)_Array, (STRING)_ID, (STRING)_Str)
+AND
+DB_LLLIB_Sorter_Temp_Quicksort_Array_Properties(_SessionID, _Array, _ArrayType, _NextIndex)
+THEN
+DB_LLLIB_Sorter_Temp_Quicksort_Array_Data(_SessionID, _Array, _NextIndex, _ID, _Str);
+LLLIB_Sorter_Internal_Quicksort_IncreaseArrayLength(_SessionID, _Array);
+
+PROC
+LLLIB_Sorter_Internal_Quicksort_AddToArrayAtIndex((STRING)_SessionID, (STRING)_Array, (STRING)_ID, (STRING)_Str, (INTEGER)_Index)
+AND
+NOT DB_LLLIB_Sorter_Temp_Quicksort_Array_Data(_SessionID, _Array, _, _, _)
+THEN
+DB_LLLIB_Sorter_Temp_Quicksort_Array_Data(_SessionID, _Array, _Index, _ID, _Str);
+LLLIB_Sorter_Internal_Quicksort_IncreaseArrayLength(_SessionID, _Array);
+
+PROC
+LLLIB_Sorter_Internal_Quicksort_AddToArrayAtIndex((STRING)_SessionID, (STRING)_Array, (STRING)_ID, (STRING)_Str, (INTEGER)_Index)
+AND
+DB_LLLIB_Sorter_Temp_Quicksort_Array_Data(_SessionID, _Array, 0, _, _)
+THEN
+LLLIB_Sorter_Internal_Quicksort_ShiftArrayDown(_SessionID, _Array, _Index);
+DB_LLLIB_Sorter_Temp_Quicksort_Array_Data(_SessionID, _Array, _Index, _ID, _Str);
+LLLIB_Sorter_Internal_Quicksort_IncreaseArrayLength(_SessionID, _Array);
+
+PROC
+LLLIB_Sorter_Internal_Quicksort_ShiftArrayDown((STRING)_SessionID, (STRING)_Array, (INTEGER)_AtIndex)
+AND
+DB_LLLIB_Sorter_Temp_Quicksort_Array_Data(_SessionID, _Array, _Index, _ID, _Str)
+AND
+_Index >= _AtIndex
+AND
+IntegerSum(_Index, 1, _NextIndex)
+THEN
+NOT DB_LLLIB_Sorter_Temp_Quicksort_Array_Data(_SessionID, _Array, _Index, _ID, _Str);
+DB_LLLIB_Sorter_Temp_Quicksort_Array_Data(_SessionID, _Array, _NextIndex, _ID, _Str);
+
+PROC
+LLLIB_Sorter_Internal_Quicksort_ShiftArrayUp((STRING)_SessionID, (STRING)_Array, (INTEGER)_StartIndex)
+AND
+DB_LLLIB_Sorter_Temp_Quicksort_Array_Data(_SessionID, _Array, _Index, _ID, _Str)
+AND
+_Index > _StartIndex
+AND
+IntegerSubtract(_Index, 1, _NextIndex)
+THEN
+NOT DB_LLLIB_Sorter_Temp_Quicksort_Array_Data(_SessionID, _Array, _Index, _ID, _Str);
+DB_LLLIB_Sorter_Temp_Quicksort_Array_Data(_SessionID, _Array, _NextIndex, _ID, _Str);
+//END_REGION
+
+//REGION ARRAY_REMOVE
+PROC
+LLLIB_Sorter_Internal_Quicksort_RemoveFromArray((STRING)_SessionID, (STRING)_Array, (STRING)_ID, (STRING)_Str)
+AND
+DB_LLLIB_Sorter_Temp_Quicksort_Array_Data(_SessionID, _Array, _Index, _ID, _Str)
+THEN
+NOT DB_LLLIB_Sorter_Temp_Quicksort_Array_Data(_SessionID, _Array, _Index, _ID, _Str);
+LLLIB_Sorter_Internal_Quicksort_DecreaseArrayLength(_SessionID, _Array);
+LLLIB_Sorter_Internal_Quicksort_ShiftArrayUp(_SessionID, _Array, _Index);
+
+PROC
+LLLIB_Sorter_Internal_Quicksort_RemoveFromArrayAtIndex((STRING)_SessionID, (STRING)_Array, (INTEGER)_Index)
+AND
+DB_LLLIB_Sorter_Temp_Quicksort_Array_Data(_SessionID, _Array, _Index, _ID, _Str)
+THEN
+LLLIB_Sorter_Internal_Quicksort_RemoveFromArray(_SessionID, _Array, _ID, _Str);
+//END_REGION
+
+//REGION SORT_START
+PROC
+LLLIB_Sorter_Internal_Quicksort_FirstSort((STRING)_SessionID)
+AND
+LLLIB_Sorter_QRY_CountStringsInQueue(_SessionID)
+AND
+DB_LLLIB_Sorter_Temp_TotalStringsInQueue(_SessionID, _Total)
+AND
+_Total == 1
+AND
+DB_LLLIB_Sorter_Temp_StringQueue(_SessionID, _ID, _Str)
+THEN
+LLLIB_Sorter_FinalizeString(_SessionID, _ID, _Str);
+
+PROC
+LLLIB_Sorter_Internal_Quicksort_FirstSort((STRING)_SessionID)
+AND
+DB_LLLIB_Sorter_Temp_TotalStringsInQueue(_SessionID, _Total)
+AND
+_Total > 1
+AND
+DB_LLLIB_Sorter_Temp_StringQueue(_SessionID, _ID, _Str)
+THEN
+LLLIB_Sorter_Internal_Quicksort_AddToArray(_SessionID, "MainQueue", _ID, _Str);
+
+PROC
+LLLIB_Sorter_Internal_Quicksort_FirstSort((STRING)_SessionID)
+AND
+DB_LLLIB_Sorter_Temp_TotalStringsInQueue(_SessionID, _Total)
+AND
+_Total > 1
+AND
+IntegerSubtract(_Total, 1, _Right)
+THEN
+LLLIB_Sorter_Internal_Quicksort_Sort(_SessionID, "MainQueue", 0, _Right);
+//END_REGION
+
+//REGION QUICKSORT
+PROC
+LLLIB_Sorter_Internal_Quicksort_Sort((STRING)_SessionID, (STRING)_Array, (INTEGER)_Left, (INTEGER)_Right)
+AND
+LLLIB_Sorter_Internal_Quicksort_GetPivot(_SessionID, _Array, _Left, _Right)
+AND
+LeaderLog_QRY_Log("COMBINE", "LLLIB_Timers_Sorter_Quicksorting_", _SessionID, "_", _Array)
+AND
+DB_LeaderLog_Temp_CombinedString(_TimerName)
+THEN
+DB_LLLIB_Sorter_Temp_Quicksort_Timer(_SessionID, _Array, _TimerName, _Left, _Right);
+NOT DB_LeaderLog_Temp_CombinedString(_TimerName);
+LLLIB_Sorter_Internal_Quicksort_NextIteration(_SessionID, _TimerName);
+
+PROC
+LLLIB_Sorter_Internal_Quicksort_NextIteration((STRING)_SessionID, (STRING)_TimerName)
+AND
+NOT DB_LLLIB_Sorter_Temp_Quicksort_TimerActive(_SessionID, _, _TimerName)
+AND
+DB_LLLIB_Sorter_SessionTickRate(_SessionID, _TickRate)
+THEN
+DB_LLLIB_Sorter_Temp_Quicksort_TimerActive(_SessionID, _Array, _TimerName);
+TimerLaunch(_TimerName, _TickRate);
+
+IF
+TimerFinished(_TimerName)
+AND
+DB_LLLIB_Sorter_Temp_Quicksort_Timer(_SessionID, _Array, _TimerName, _Left, _Right)
+AND
+DB_LLLIB_Sorter_Temp_Quicksort_TimerActive(_SessionID, _Array, _TimerName)
+THEN
+NOT DB_LLLIB_Sorter_Temp_Quicksort_TimerActive(_SessionID, _Array, _TimerName);
+
+IF
+TimerFinished(_TimerName)
+AND
+DB_LLLIB_Sorter_Temp_Quicksort_Timer(_SessionID, _Array, _TimerName, _Left, _Right)
+AND
+_Left <= _Right
+THEN
+LLLIB_Sorter_Internal_Quicksort_CompareLeft(_SessionID, _Array, _TimerName);
+
+PROC
+LLLIB_Sorter_Internal_Quicksort_CompareLeft((STRING)_SessionID, (STRING)_Array, (STRING)_TimerName)
+AND
+NOT DB_LLLIB_Sorter_Temp_Quicksort_TimerActive(_SessionID, _Array, _TimerName)
+AND
+DB_LLLIB_Sorter_Temp_Quicksort_Timer(_SessionID, _Array, _TimerName, _Left, _Right)
+AND
+DB_LLLIB_Sorter_Temp_Quicksort_Pivot(_SessionID, _Array, _PivotIndex, _PivotID, _PivotStr)
+AND
+DB_LLLIB_Sorter_Temp_Quicksort_Array_Data(_SessionID, _Array, _Left, _ID, _Str)
+AND
+LLLIB_Sorter_QRY_CompareStrings(_SessionID, _Str, _PivotStr)
+AND
+DB_LLLIB_Sorter_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _ComparisonVal)
+THEN
+LLLIB_Sorter_Internal_Quicksort_OnCompareLeft(_SessionID, _Array, _ComparisonVal, _TimerName);
+
+PROC
+LLLIB_Sorter_Internal_Quicksort_OnCompareLeft((STRING)_SessionID, (STRING)_Array, (INTEGER)_ComparisonVal, (STRING)_TimerName)
+AND
+NOT DB_LLLIB_Sorter_Temp_Quicksort_TimerActive(_SessionID, _Array, _TimerName)
+AND
+_ComparisonVal < 0
+AND
+DB_LLLIB_Sorter_Temp_Quicksort_Timer(_SessionID, _Array, _TimerName, _Left, _Right)
+AND
+IntegerSum(_Left, 1, _NextLeft)
+THEN
+NOT DB_LLLIB_Sorter_Temp_Quicksort_Timer(_SessionID, _Array, _TimerName, _Left, _Right);
+DB_LLLIB_Sorter_Temp_Quicksort_Timer(_SessionID, _Array, _TimerName, _NextLeft, _Right);
+LLLIB_Sorter_Internal_Quicksort_NextIteration(_SessionID, _TimerName);
+
+PROC
+LLLIB_Sorter_Internal_Quicksort_OnCompareLeft((STRING)_SessionID, (STRING)_Array, (INTEGER)_ComparisonVal, (STRING)_TimerName)
+AND
+NOT DB_LLLIB_Sorter_Temp_Quicksort_TimerActive(_SessionID, _Array, _TimerName)
+AND
+_ComparisonVal >= 0
+THEN
+LLLIB_Sorter_Internal_Quicksort_CompareRight(_SessionID, _Array, _TimerName);
+
+PROC
+LLLIB_Sorter_Internal_Quicksort_CompareRight((STRING)_SessionID, (STRING)_Array, (STRING)_TimerName)
+AND
+NOT DB_LLLIB_Sorter_Temp_Quicksort_TimerActive(_SessionID, _Array, _TimerName)
+AND
+DB_LLLIB_Sorter_Temp_Quicksort_Timer(_SessionID, _Array, _TimerName, _Left, _Right)
+AND
+DB_LLLIB_Sorter_Temp_Quicksort_Pivot(_SessionID, _Array, _PivotIndex, _PivotID, _PivotStr)
+AND
+DB_LLLIB_Sorter_Temp_Quicksort_Array_Data(_SessionID, _Array, _Right, _ID, _Str)
+AND
+LLLIB_Sorter_QRY_CompareStrings(_SessionID, _Str, _PivotStr)
+AND
+DB_LLLIB_Sorter_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _ComparisonVal)
+THEN
+LLLIB_Sorter_Internal_Quicksort_OnCompareRight(_SessionID, _Array, _ComparisonVal, _TimerName);
+
+PROC
+LLLIB_Sorter_Internal_Quicksort_OnCompareRight((STRING)_SessionID, (STRING)_Array, (INTEGER)_ComparisonVal, (STRING)_TimerName)
+AND
+NOT DB_LLLIB_Sorter_Temp_Quicksort_TimerActive(_SessionID, _Array, _TimerName)
+AND
+_ComparisonVal > 0
+AND
+DB_LLLIB_Sorter_Temp_Quicksort_Timer(_SessionID, _Array, _TimerName, _Left, _Right)
+AND
+IntegerSubtract(_Right, 1, _NextRight)
+THEN
+NOT DB_LLLIB_Sorter_Temp_Quicksort_Timer(_SessionID, _Array, _TimerName, _Left, _Right);
+DB_LLLIB_Sorter_Temp_Quicksort_Timer(_SessionID, _Array, _TimerName, _Left, _NextRight);
+LLLIB_Sorter_Internal_Quicksort_NextIteration(_SessionID, _TimerName);
+
+PROC
+LLLIB_Sorter_Internal_Quicksort_OnCompareRight((STRING)_SessionID, (STRING)_Array, (INTEGER)_ComparisonVal, (STRING)_TimerName)
+AND
+NOT DB_LLLIB_Sorter_Temp_Quicksort_TimerActive(_SessionID, _Array, _TimerName)
+AND
+_ComparisonVal <= 0
+THEN
+LLLIB_Sorter_Internal_Quicksort_SwapLeftAndRight(_SessionID, _Array);
+
+//Swap
+PROC
+LLLIB_Sorter_Internal_Quicksort_SwapLeftAndRight((STRING)_SessionID, (STRING)_Array)
+AND
+DB_LLLIB_Sorter_Temp_Quicksort_Timer(_SessionID, _Array, _TimerName, _Left, _Right)
+AND
+_Left <= _Right
+AND
+DB_LLLIB_Sorter_Temp_Quicksort_Array_Data(_SessionID, _Array, _Left, _LeftID, _LeftStr)
+AND
+DB_LLLIB_Sorter_Temp_Quicksort_Array_Data(_SessionID, _Array, _Right, _RightID, _RightStr)
+AND
+IntegerSum(_Left, 1, _NextLeft)
+AND
+IntegerSubtract(_Right, 1, _NextRight)
+THEN
+NOT DB_LLLIB_Sorter_Temp_Quicksort_Array_Data(_SessionID, _Array, _Left, _LeftID, _LeftStr);
+NOT DB_LLLIB_Sorter_Temp_Quicksort_Array_Data(_SessionID, _Array, _Right, _RightID, _RightStr);
+DB_LLLIB_Sorter_Temp_Quicksort_Array_Data(_SessionID, _Array, _Left, _RightID, _RightStr);
+DB_LLLIB_Sorter_Temp_Quicksort_Array_Data(_SessionID, _Array, _Right, _LeftID, _LeftStr);
+NOT DB_LLLIB_Sorter_Temp_Quicksort_Timer(_SessionID, _Array, _TimerName, _Left, _Right);
+DB_LLLIB_Sorter_Temp_Quicksort_Timer(_SessionID, _Array, _TimerName, _NextLeft, _NextRight);
+LLLIB_Sorter_Internal_Quicksort_NextIteration(_SessionID, _TimerName);
+//END_REGION
+
+//REGION PIVOT
+QRY
+LLLIB_Sorter_Internal_Quicksort_GetPivot((STRING)_SessionID, (STRING)_Array, (INTEGER)_Left, (INTEGER)_Right)
+AND
+IntegerSum(_Left, _Right, _Int)
+AND
+IntegerDivide(_Int, 2, _PivotIndex)
+AND
+DB_LLLIB_Sorter_Temp_Quicksort_Array_Data(_SessionID, _Array, _PivotIndex, _PivotID, _PivotStr)
+THEN
+DB_LLLIB_Sorter_Temp_Quicksort_Pivot(_SessionID, _Array, _PivotIndex, _PivotID, _PivotStr);
+//END_REGION
+
+//REGION STRING_COMPARE
+QRY
+LLLIB_Sorter_QRY_CompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+THEN
+LLLIB_Sorter_CompareStrings(_SessionID, _Str1, _Str2);
+
+PROC
+LLLIB_Sorter_CompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+THEN
+NOT DB_LLLIB_Sorter_Temp_StringCompare_StopIteration(_SessionID, _Str1, _Str2);
+DB_LLLIB_Sorter_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, 0);
+LLLIB_Sorter_Internal_CompareStrings(_SessionID, _Str1, _Str2);
+
+PROC
+LLLIB_Sorter_Internal_CompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+THEN
+DB_LLLIB_Sorter_Temp_CompareIterator(_SessionID, _Str1, _Str2, 0);
+
+PROC
+LLLIB_Sorter_Internal_CompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+AND
+DB_LLLIB_Sorter_Temp_CompareIterator(_SessionID, _Str1, _Str2, _i)
+AND
+StringSub(_Str1, _i, 1, _Char1)
+AND
+StringSub(_Str2, _i, 1, _Char2)
+AND
+DB_LLLIB_Sorter_Codex(_C1, _Char1)
+AND
+DB_LLLIB_Sorter_Codex(_C2, _Char2)
+AND
+IntegerSubtract(_C1, _C2, _Comparison)
+AND
+_Comparison != 0
+AND
+DB_LLLIB_Sorter_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _PastVal)
+THEN
+NOT DB_LLLIB_Sorter_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _PastVal);
+DB_LLLIB_Sorter_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _Comparison);
+DB_LLLIB_Sorter_Temp_StringCompare_StopIteration(_SessionID, _Str1, _Str2);
+
+PROC
+LLLIB_Sorter_Internal_CompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+AND
+NOT DB_LLLIB_Sorter_Temp_StringCompare_StopIteration(_SessionID, _Str1, _Str2)
+AND
+DB_LLLIB_Sorter_StringLength(_Str1, _Str1Length)
+AND
+DB_LLLIB_Sorter_StringLength(_Str2, _Str2Length)
+AND
+DB_LLLIB_Sorter_Temp_CompareIterator(_SessionID, _Str1, _Str2, _i)
+AND
+_i < _Str1Length
+AND
+_i < _Str2Length
+AND
+IntegerSum(_i, 1, _NextI)
+THEN
+NOT DB_LLLIB_Sorter_Temp_CompareIterator(_SessionID, _Str1, _Str2, _i);
+DB_LLLIB_Sorter_Temp_CompareIterator(_SessionID, _Str1, _Str2, _NextI);
+LLLIB_Sorter_Internal_CompareStrings(_SessionID, _Str1, _Str2);
+
+QRY
+LLLIB_Sorter_Internal_CompareStrings_QRY_EndReached((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+AND
+DB_LLLIB_Sorter_StringLength(_Str1, _Str1Length)
+AND
+DB_LLLIB_Sorter_Temp_CompareIterator(_SessionID, _Str1, _Str2, _i)
+AND
+_i >= _Str1Length
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_Sorter_Internal_CompareStrings_QRY_EndReached((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+AND
+DB_LLLIB_Sorter_StringLength(_Str2, _Str2Length)
+AND
+DB_LLLIB_Sorter_Temp_CompareIterator(_SessionID, _Str1, _Str2, _i)
+AND
+_i >= _Str2Length
+THEN
+DB_NOOP(1);
+
+PROC
+LLLIB_Sorter_Internal_CompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+AND
+NOT DB_LLLIB_Sorter_Temp_StringCompare_StopIteration(_SessionID, _Str1, _Str2)
+AND
+LLLIB_Sorter_Internal_CompareStrings_QRY_EndReached(_SessionID, _Str1, _Str2)
+THEN
+LLLIB_Sorter_Internal_CompareStrings_ReturnFinalValue(_SessionID, _Str1, _Str2);
+
+PROC
+LLLIB_Sorter_Internal_CompareStrings_ReturnFinalValue((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+AND
+NOT DB_LLLIB_Sorter_Temp_StringCompare_StopIteration(_SessionID, _Str1, _Str2)
+AND
+DB_LLLIB_Sorter_StringLength(_Str1, _Str1Length)
+AND
+DB_LLLIB_Sorter_StringLength(_Str2, _Str2Length)
+AND
+_Str1Length > _Str2Length
+AND
+DB_LLLIB_Sorter_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _PastVal)
+THEN
+NOT DB_LLLIB_Sorter_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _PastVal);
+DB_LLLIB_Sorter_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, 1);
+DB_LLLIB_Sorter_Temp_StringCompare_StopIteration(_SessionID, _Str1, _Str2);
+
+PROC
+LLLIB_Sorter_Internal_CompareStrings_ReturnFinalValue((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+AND
+NOT DB_LLLIB_Sorter_Temp_StringCompare_StopIteration(_SessionID, _Str1, _Str2)
+AND
+DB_LLLIB_Sorter_StringLength(_Str1, _Str1Length)
+AND
+DB_LLLIB_Sorter_StringLength(_Str2, _Str2Length)
+AND
+_Str1Length < _Str2Length
+AND
+DB_LLLIB_Sorter_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _PastVal)
+THEN
+NOT DB_LLLIB_Sorter_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _PastVal);
+DB_LLLIB_Sorter_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, -1);
+DB_LLLIB_Sorter_Temp_StringCompare_StopIteration(_SessionID, _Str1, _Str2);
+
+PROC
+LLLIB_Sorter_Internal_CompareStrings_ReturnFinalValue((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+AND
+NOT DB_LLLIB_Sorter_Temp_StringCompare_StopIteration(_SessionID, _Str1, _Str2)
+AND
+DB_LLLIB_Sorter_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _PastVal)
+THEN
+NOT DB_LLLIB_Sorter_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _PastVal);
+DB_LLLIB_Sorter_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, 0);
+DB_LLLIB_Sorter_Temp_StringCompare_StopIteration(_SessionID, _Str1, _Str2);
+//END_REGION
+
+//REGION STRING_LENGTH
+QRY
+LLLIB_Sorter_GetStringLength((STRING)_Str)
+THEN
+LLLIB_Sorter_DetermineStringLength(_Str);
+
+PROC
+LLLIB_Sorter_DetermineStringLength((STRING)_Str)
+THEN
+DB_LLLIB_Sorter_StringLength(_Str, 0);
+
+PROC
+LLLIB_Sorter_DetermineStringLength((STRING)_Str)
+AND
+DB_LLLIB_Sorter_Iterator(_i)
+AND
+StringSub(_Str, _i, 1, _Char)
+AND
+DB_LLLIB_Sorter_Codex(_, _Char)
+AND
+DB_LLLIB_Sorter_StringLength(_Str, _Length)
+AND
+IntegerSum(_Length, 1, _NextLength)
+THEN
+NOT DB_LLLIB_Sorter_StringLength(_Str, _Length);
+DB_LLLIB_Sorter_StringLength(_Str, _NextLength);
+
+PROC
+LLLIB_Sorter_DetermineStringLength((STRING)_Str)
+AND
+DB_LLLIB_Sorter_StringLength(_Str, _Length)
+AND
+IntegertoString(_Length, _LengthStr)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Sorter:DetermineStringLength] Length of [",_Str,"] is [",_LengthStr,"].");
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

@@ -135,6 +135,7 @@ AND
 StringConcatenate("LLLIB_Timers_Sorter_", _SessionID, _TimerName)
 THEN
 DB_LLLIB_Sorter_Temp_RunningSession(_SessionID, _TimerName, _TickRate, _CompleteEvent);
+DB_LLLIB_Sorter_SessionTickRate(_SessionID, _TickRate);
 DB_LLLIB_Sorter_Internal_RemoveDuplicatesFromQueue(_SessionID);
 LLLIB_Sorter_SaveStrings(_SessionID);
 LLLIB_Sorter_AddStringsToInitialChar(_SessionID);
@@ -540,7 +541,7 @@ DB_LLLIB_Sorter_Temp_TotalStringsInGroup(_SessionID, _Char, _Group, _GroupTotal)
 AND
 _GroupTotal > 1
 THEN
-//LLLIB_Sorter_Internal_SortGroupInitially(_SessionID, _Char, _Group);
+LLLIB_Sorter_Internal_SortGroupInitially(_SessionID, _Char, _Group);
 LLLIB_Sorter_Internal_OnSortGroup(_SessionID, _Char, _Group);
 LLLIB_Sorter_Internal_ClearCompareBlock(_SessionID);
 LLLIB_Sorter_Internal_OnSortGroup(_SessionID, _Char, _Group);

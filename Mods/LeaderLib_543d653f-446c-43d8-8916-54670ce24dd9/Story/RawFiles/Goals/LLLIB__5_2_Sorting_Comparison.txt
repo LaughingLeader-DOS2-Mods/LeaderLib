@@ -45,18 +45,48 @@ THEN
 NOT DB_LLLIB_Sorter_Temp_GroupEntry(_SessionID, _PastSortIndex, _Char, _Group, _ID, _Str, _LastSubIndex);
 DB_LLLIB_Sorter_Temp_GroupEntry(_SessionID, _SortIndex, _Char, _Group, _ID, _Str, _LastSubIndex);
 
+QRY
+LLLIB_Sorter_Internal_QRY_InComparisonBlock((STRING)_SessionID, (STRING)_ID, (STRING)_ID2)
+AND
+DB_LLLIB_Sorter_Temp_CompareBlock(_SessionID,_ID, _ID2)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_Sorter_Internal_QRY_InComparisonBlock((STRING)_SessionID, (STRING)_ID, (STRING)_ID2)
+AND
+DB_LLLIB_Sorter_Temp_CompareBlock(_SessionID,_ID2, _ID)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_Sorter_Internal_QRY_InComparisonBlock((STRING)_SessionID, (STRING)_ID)
+AND
+DB_LLLIB_Sorter_Temp_CompareBlock(_SessionID,_ID, _)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_Sorter_Internal_QRY_InComparisonBlock((STRING)_SessionID, (STRING)_ID)
+AND
+DB_LLLIB_Sorter_Temp_CompareBlock(_SessionID,_, _ID)
+THEN
+DB_NOOP(1);
+
 PROC
 LLLIB_Sorter_Internal_OnSortGroup((STRING)_SessionID, (STRING)_Char, (STRING)_Group)
 AND
+DB_LLLIB_Sorter_Codex(_Index, _Char)
+AND
 DB_LLLIB_Sorter_Temp_GroupEntry(_SessionID, _SortIndex, _Char, _Group, _ID, _Str, _LastSubIndex)
 AND
-NOT DB_LLLIB_Sorter_Temp_CompareBlock(_ID, _)
+NOT LLLIB_Sorter_Internal_QRY_InComparisonBlock(_SessionID, _ID)
 AND
 DB_LLLIB_Sorter_Temp_GroupEntry(_SessionID, _SortIndex2, _Char, _Group, _ID2, _Str2, _LastSubIndex2)
 AND
 _ID != _ID2
 AND
-NOT DB_LLLIB_Sorter_Temp_CompareBlock(_ID, _ID2)
+NOT LLLIB_Sorter_Internal_QRY_InComparisonBlock(_SessionID, _ID, _ID2)
 THEN
 DB_LLLIB_Sorter_Temp_CompareBlock(_SessionID, _ID, _ID2);
 LLLIB_Sorter_Internal_RunCompare(_SessionID, _Char, _Group, _ID, _ID2);
@@ -175,7 +205,7 @@ LLLIB_Sorter_Internal_ShiftGroupIfEqual((STRING)_SessionID, (STRING)_Char, (STRI
 AND
 _CheckChar1 == _CheckChar2
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Sorter:CompareValues][",_Char,"][",_Group,"] Char values are equal. Creating new group for the compared entries.");
+LeaderLog_Log("DEBUG", "[LLLIB:Sorter:CompareValues][",_Char,"][",_Group,"] Next char values are equal. Creating new group for the compared entries.");
 LLLIB_Sorter_Internal_ShiftGroupForward(_SessionID, _Char, _Group, _ID);
 LLLIB_Sorter_Internal_ShiftGroupForward(_SessionID, _Char, _Group, _ID2);
 
@@ -191,6 +221,14 @@ AND
 IntegerSum(_LastSubIndex, 1, _CheckSubIndex1)
 AND
 IntegerSum(_LastSubIndex2, 1, _CheckSubIndex2)
+AND
+StringSub(_Str, _CheckSubIndex1, 1, _CheckChar1)
+AND
+StringSub(_Str2, _CheckSubIndex2, 1, _CheckChar2)
+AND
+DB_LLLIB_Sorter_Codex(_CharValue1, _CheckChar1)
+AND
+DB_LLLIB_Sorter_Codex(_CharValue2, _CheckChar2)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Sorter:CompareValues][",_Char,"][",_Group,"] Next char values are not equal. Shifting sub index and comparing again.");
 NOT DB_LLLIB_Sorter_Temp_GroupEntry(_SessionID, _SortIndex, _Char, _Group, _ID, _Str, _LastSubIndex);
@@ -198,6 +236,7 @@ NOT DB_LLLIB_Sorter_Temp_GroupEntry(_SessionID, _SortIndex2, _Char, _Group, _ID2
 DB_LLLIB_Sorter_Temp_GroupEntry(_SessionID, _SortIndex, _Char, _Group, _ID, _Str, _CheckSubIndex1);
 DB_LLLIB_Sorter_Temp_GroupEntry(_SessionID, _SortIndex2, _Char, _Group, _ID2, _Str2, _CheckSubIndex2);
 LLLIB_Sorter_Internal_RunCompare(_SessionID, _Char, _Group, _ID, _ID2);
+//LLLIB_Sorter_Internal_CompareValues(_SessionID, _Char, _Group, _ID, _ID2, _CharValue1, _CharValue2);
 //END_REGION
 
 //REGION SHIFTING
@@ -217,7 +256,7 @@ THEN
 NOT DB_LLLIB_Sorter_Temp_GroupEntry(_SessionID, _SortIndex, _Char, _Group, _ID, _Str, _LastSubIndex);
 DB_LLLIB_Sorter_Temp_GroupEntry(_SessionID, 0, _Char, _NewGroup, _ID, _Str, _NewSubIndex);
 LLLIB_Sorter_Internal_AddGroup(_SessionID, _Char, _NewGroup);
-LeaderLog_Log("DEBUG", "[LLLIB:Sorter:CompareValues][",_Char,"] Group shifted from [",_Group,"] to => [",_NewGroup,"].");
+LeaderLog_Log("DEBUG", "[LLLIB:Sorter:CompareValues][",_Char,"] Group shifted from [",_Group,"] to => new group [",_NewGroup,"].");
 
 PROC
 LLLIB_Sorter_Internal_ShiftGroupForward((STRING)_SessionID, (STRING)_Char, (STRING)_Group, (STRING)_ID)

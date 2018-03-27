@@ -149,7 +149,7 @@ PROC
 LLLIB_ModSettings_SortMenus()
 THEN
 LLLIB_ModSettings_Sorter_SaveMenus();
-LLLIB_Sorter_StartSorting("LLLIB_SortMenus", "LLLIB_Events_MenuSortingFinished", 1);
+LLLIB_Sorter_StartSorting("LLLIB_SortMenus", "LLLIB_Events_MenuSortingFinished", 10000);
 
 IF
 StoryEvent(_, "LLLIB_Events_MenuSortingFinished")

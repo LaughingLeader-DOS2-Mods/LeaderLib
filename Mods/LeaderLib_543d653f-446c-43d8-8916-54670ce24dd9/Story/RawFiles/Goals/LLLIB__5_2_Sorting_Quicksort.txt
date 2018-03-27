@@ -245,7 +245,6 @@ LLLIB_Sorter_Quicksort_Internal_OnTick((STRING)_SessionID, (STRING)_Array, (STRI
 AND
 _Left <= _Right
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Sorter:Quicksort] [",_Array,"] Comparing left.");
 LLLIB_Sorter_Internal_Quicksort_CompareLeft(_SessionID, _Array, _TimerName);
 
 PROC
@@ -262,11 +261,11 @@ LLLIB_Sorter_Internal_Quicksort_CompareLeft((STRING)_SessionID, (STRING)_Array, 
 AND
 NOT DB_LLLIB_Sorter_Temp_Quicksort_TimerActive(_SessionID, _Array, _TimerName)
 AND
-DB_LLLIB_Sorter_Temp_Quicksort_IterationVars(_SessionID, _Array, _Left, _Right)
+DB_LLLIB_Sorter_Temp_Quicksort_IterationVars(_SessionID, _Array, _CurrentIndex, _Right)
 AND
 DB_LLLIB_Sorter_Temp_Quicksort_Pivot(_SessionID, _Array, _PivotIndex, _PivotID, _PivotStr)
 AND
-DB_LLLIB_Sorter_Temp_Quicksort_Array_Data(_SessionID, _Array, _Left, _ID, _Str)
+DB_LLLIB_Sorter_Temp_Quicksort_Array_Data(_SessionID, _Array, _CurrentIndex, _ID, _Str)
 AND
 LLLIB_Sorter_QRY_CompareStrings(_SessionID, _Str, _PivotStr)
 AND
@@ -274,7 +273,7 @@ DB_LLLIB_Sorter_Temp_StringCompare_Results(_SessionID, _Str, _PivotStr, _Compari
 AND
 IntegertoString(_ComparisonVal, _CompStr)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Sorter:Quicksort] [",_Array,"] Comparison for '",_Str,"' and '",_PivotStr,"' = ",_CompStr);
+LeaderLog_Log("DEBUG", "[LLLIB:Sorter:Quicksort] [",_Array,"] Left comparison for '",_Str,"' pivot '",_PivotStr,"' = ",_CompStr);
 LLLIB_Sorter_Internal_Quicksort_OnCompareLeft(_SessionID, _Array, _ComparisonVal, _TimerName);
 
 PROC
@@ -284,12 +283,12 @@ NOT DB_LLLIB_Sorter_Temp_Quicksort_TimerActive(_SessionID, _Array, _TimerName)
 AND
 _ComparisonVal < 0
 AND
-DB_LLLIB_Sorter_Temp_Quicksort_IterationVars(_SessionID, _Array, _Left, _Right)
+DB_LLLIB_Sorter_Temp_Quicksort_IterationVars(_SessionID, _Array, _CurrentIndex, _Right)
 AND
-IntegerSum(_Left, 1, _NextLeft)
+IntegerSum(_CurrentIndex, 1, _NextIndex)
 THEN
-NOT DB_LLLIB_Sorter_Temp_Quicksort_IterationVars(_SessionID, _Array, _Left, _Right);
-DB_LLLIB_Sorter_Temp_Quicksort_IterationVars(_SessionID, _Array, _NextLeft, _Right);
+NOT DB_LLLIB_Sorter_Temp_Quicksort_IterationVars(_SessionID, _Array, _CurrentIndex, _Right);
+DB_LLLIB_Sorter_Temp_Quicksort_IterationVars(_SessionID, _Array, _NextIndex, _Right);
 LLLIB_Sorter_Internal_Quicksort_NextIteration(_SessionID, _TimerName);
 
 PROC
@@ -299,7 +298,6 @@ NOT DB_LLLIB_Sorter_Temp_Quicksort_TimerActive(_SessionID, _Array, _TimerName)
 AND
 _ComparisonVal >= 0
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Sorter:Quicksort] [",_Array,"] Comparing right.");
 LLLIB_Sorter_Internal_Quicksort_CompareRight(_SessionID, _Array, _TimerName);
 
 PROC
@@ -319,7 +317,7 @@ DB_LLLIB_Sorter_Temp_StringCompare_Results(_SessionID, _Str, _PivotStr, _Compari
 AND
 IntegertoString(_ComparisonVal, _CompStr)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Sorter:Quicksort] [",_Array,"] Comparison for '",_Str,"' and '",_PivotStr,"' = ",_CompStr);
+LeaderLog_Log("DEBUG", "[LLLIB:Sorter:Quicksort] [",_Array,"] Right comparison for '",_Str,"' and pivot '",_PivotStr,"' = ",_CompStr);
 LLLIB_Sorter_Internal_Quicksort_OnCompareRight(_SessionID, _Array, _ComparisonVal, _TimerName);
 
 PROC
@@ -349,6 +347,8 @@ LLLIB_Sorter_Internal_Quicksort_SwapLeftAndRight(_SessionID, _Array, _TimerName)
 //Swap
 PROC
 LLLIB_Sorter_Internal_Quicksort_SwapLeftAndRight((STRING)_SessionID, (STRING)_Array, (STRING)_TimerName)
+AND
+NOT DB_LLLIB_Sorter_Temp_Quicksort_TimerActive(_SessionID, _Array, _TimerName)
 AND
 DB_LLLIB_Sorter_Temp_Quicksort_IterationVars(_SessionID, _Array, _Left, _Right)
 AND
@@ -395,6 +395,29 @@ DB_LLLIB_Sorter_Temp_Quicksort_InitialValues(_SessionID, _Array, _Left, _Right)
 THEN
 NOT DB_LLLIB_Sorter_Temp_Quicksort_InitialValues(_SessionID, _Array, _Left, _Right);
 
+QRY
+LLLIB_Sorter_Internal_Quicksort_QRY_SortFinished((STRING)_SessionID, (STRING)_Array)
+AND
+DB_LLLIB_Sorter_Temp_Quicksort_IterationVars(_SessionID, _Array, _I, _J)
+AND
+DB_LLLIB_Sorter_Temp_Quicksort_InitialValues(_SessionID, _Array, _Left, _Right)
+AND
+_I >= _Right
+AND
+_Left >= _J
+THEN
+DB_NOOP(1);
+
+PROC
+LLLIB_Sorter_Internal_Quicksort_StartRecursion((STRING)_SessionID, (STRING)_Array, (STRING)_TimerName)
+AND
+NOT DB_LLLIB_Sorter_Temp_Quicksort_RecursionStarted(_SessionID, _Array)
+AND
+LLLIB_Sorter_Internal_Quicksort_QRY_SortFinished(_SessionID, _Array)
+THEN
+LLLIB_Sorter_Quicksort_SortingComplete(_SessionID, _Array);
+DB_LLLIB_Sorter_Temp_Quicksort_RecursionStarted(_SessionID, _Array);
+
 PROC
 LLLIB_Sorter_Internal_Quicksort_StartRecursion((STRING)_SessionID, (STRING)_Array, (STRING)_TimerName)
 AND
@@ -424,28 +447,6 @@ THEN
 LLLIB_Sorter_Internal_Quicksort_CleanupLastSort(_SessionID, _Array, _TimerName);
 DB_LLLIB_Sorter_Temp_Quicksort_RecursionStarted(_SessionID, _Array);
 LLLIB_Sorter_Internal_Quicksort_Sort(_SessionID, _Array, _I, _Right);
-
-QRY
-LLLIB_Sorter_Internal_Quicksort_QRY_SortFinished((STRING)_SessionID, (STRING)_Array)
-AND
-DB_LLLIB_Sorter_Temp_Quicksort_IterationVars(_SessionID, _Array, _I, _J)
-AND
-DB_LLLIB_Sorter_Temp_Quicksort_InitialValues(_SessionID, _Array, _Left, _Right)
-AND
-_I >= _Right
-AND
-_Left >= _J
-THEN
-DB_NOOP(1);
-
-PROC
-LLLIB_Sorter_Internal_Quicksort_StartRecursion((STRING)_SessionID, (STRING)_Array, (STRING)_TimerName)
-AND
-NOT DB_LLLIB_Sorter_Temp_Quicksort_RecursionStarted(_SessionID, _Array)
-AND
-LLLIB_Sorter_Internal_Quicksort_QRY_SortFinished(_SessionID, _Array)
-THEN
-LLLIB_Sorter_Quicksort_SortingComplete(_SessionID, _Array);
 //END_REGION
 
 //REGION SORTING_COMPLETE
@@ -583,8 +584,29 @@ AND
 DB_LLLIB_Sorter_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _PastVal)
 THEN
 NOT DB_LLLIB_Sorter_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _PastVal);
-DB_LLLIB_Sorter_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _Comparison);
+LLLIB_Sorter_Internal_CompareStrings_SetCompareValue(_SessionID, _Str1, _Str2, _Comparison);
 DB_LLLIB_Sorter_Temp_StringCompare_StopIteration(_SessionID, _Str1, _Str2);
+
+PROC
+LLLIB_Sorter_Internal_CompareStrings_SetCompareValue((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2, (INTEGER)_Val)
+AND
+_Val > 0
+THEN
+DB_LLLIB_Sorter_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, 1);
+
+PROC
+LLLIB_Sorter_Internal_CompareStrings_SetCompareValue((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2, (INTEGER)_Val)
+AND
+_Val < 0
+THEN
+DB_LLLIB_Sorter_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, -1);
+
+PROC
+LLLIB_Sorter_Internal_CompareStrings_SetCompareValue((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2, (INTEGER)_Val)
+AND
+_Val == 0
+THEN
+DB_LLLIB_Sorter_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, 0);
 
 PROC
 LLLIB_Sorter_Internal_CompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
@@ -732,10 +754,9 @@ NOT DB_LLLIB_Sorter_Temp_Quicksort_TimerActive(_SessionID, _Array, _TimerName)
 AND
 DB_LLLIB_Sorter_Temp_RunningSession(_SessionID, _TickRate, _CompleteEvent)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Sorter:Quicksort] [",_Array,"] Starting next iteration tick.");
+//LeaderLog_Log("DEBUG", "[LLLIB:Sorter:Quicksort] [",_Array,"] Starting next iteration tick.");
 DB_LLLIB_Sorter_Temp_Quicksort_TimerActive(_SessionID, _Array, _TimerName);
-//TimerLaunch(_TimerName, _TickRate);
-TimerLaunch(_TimerName, 1000);
+TimerLaunch(_TimerName, _TickRate);
 //END_REGION
 EXITSECTION
 

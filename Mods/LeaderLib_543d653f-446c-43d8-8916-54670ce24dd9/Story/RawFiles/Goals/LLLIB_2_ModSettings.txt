@@ -7,9 +7,12 @@ LLLIB_ModSettings_InitSettings();
 //DB_LLLIB_Settings_DialogVariables(_VariableName, _VariableValue)
 //DB_LLLIB_ModSettings_DynamicMenuVars(_MenuIndex, _DialogVar, _SelectFlag, _DisabledFlag)
 //DB_LLLIB_ModSettings_MenusPerPage(_MaxPerPage)
+//DB_LLLIB_ModSettings_MenuSortTimerActive(1)
+//DB_LLLIB_ModSettings_SortingMenuTimer(_TimerName, _ID, _DisplayName, _CurrentIndex)
 
 //Dynamic
-//DB_LLLIB_ModSettings_RegisteredMenu(_Index, _ID, _DisplayName, _Dialog, _ModName, _Author)
+//DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _Index, _ID, _DisplayName)
+//DB_LLLIB_ModSettings_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModName, _Author)
 //DB_LLLIB_ModSettings_CurrentPageIndex(_Player, _Page)
 //DB_LLLIB_ModSettings_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
 //DB_LLLIB_ModSettings_Temp_ActiveMenu(_Player, _ID, _Dialog)
@@ -19,39 +22,252 @@ LLLIB_ModSettings_InitSettings();
 //DB_LLLIB_ModSettings_Temp_SortedMenu(_Index, _ID, _Dialog, _DisplayName)
 //DB_LLLIB_ModSettings_Temp_UnsortedMenu(_ID, _DisplayName, _Dialog, _ModName, _Author)
 KBSECTION
-//REGION REGISTERING
+//REGION MENU_REGISTERING_AND_SORTING
 PROC
 LeaderLib_RegisterModMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModName, (STRING)_Author)
 AND
-NOT DB_LLLIB_ModSettings_RegisteredMenu(_,_ID,_,_,_,_)
-AND
-SysCount("DB_LLLIB_ModSettings_RegisteredMenu", 6, _Index)
+NOT DB_LLLIB_ModSettings_RegisteredMenuData(_ID,_,_,_,_)
 THEN
-DB_LLLIB_ModSettings_RegisteredMenu(_Index, _ID, _DisplayName, _Dialog, _ModName, _Author);
-TimerCancel("LLLIB_Timers_StartSortingMenus");
-TimerLaunch("LLLIB_Timers_StartSortingMenus", 1000);
+LLLIB_Sorter_DetermineStringLength(_DisplayName);
+DB_LLLIB_ModSettings_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModName, _Author);
+TimerCancel("LLLIB_Timers_ModSettings_CalculateMaxPage");
+TimerLaunch("LLLIB_Timers_ModSettings_CalculateMaxPage", 1000);
+
+PROC
+LLLIB_ModSettings_SortingComplete()
+AND
+DB_LLLIB_ModSettings_SortingStarted(_Val)
+THEN
+NOT DB_LLLIB_ModSettings_SortingStarted(_Val);
+
+PROC
+LLLIB_ModSettings_SortingComplete()
+AND
+DB_LLLIB_ModSettings_CurrentlySorting(_Val)
+THEN
+NOT DB_LLLIB_ModSettings_CurrentlySorting(_Val);
+
+PROC
+LLLIB_ModSettings_SortingComplete()
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:ModSettings:SortingComplete] Menu sorting done.");
 
 IF
-TimerFinished("LLLIB_Timers_StartSortingMenus")
+StoryEvent(_, "LeaderLib_Initialized")
+AND
+DB_LLLIB_ModSettings_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModName, _Author)
+AND
+NOT DB_LLLIB_ModSettings_SortingStarted(_)
+AND
+NOT DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _, _ID, _)
 THEN
-LLLIB_ModSettings_CalculateMaxPage();
+TimerLaunch("LLLIB_Timers_ModSettings_SortMenus", 1000);
+DB_LLLIB_ModSettings_SortingStarted(1);
 
 IF
-TimerFinished("LLLIB_Timers_StartSortingMenus")
+TimerFinished("LLLIB_Timers_ModSettings_SortMenus")
 AND
-SysCount("DB_LLLIB_ModSettings_RegisteredMenu", 6, _Total)
-AND
-_Total > 1
+DB_LLLIB_ModSettings_CurrentlySorting(_Val)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Sorting mod menus alphabetically.");
-LLLIB_ModSettings_SortMenus();
+NOT DB_LLLIB_ModSettings_CurrentlySorting(_Val);
+
+IF
+TimerFinished("LLLIB_Timers_ModSettings_SortMenus")
+AND
+DB_LLLIB_ModSettings_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModName, _Author)
+AND
+NOT DB_LLLIB_ModSettings_CurrentlySorting(_)
+AND
+NOT DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _, _ID, _)
+THEN
+LLLIB_ModSettings_SortMenu(_ID, _DisplayName);
+DB_LLLIB_ModSettings_CurrentlySorting(1);
+
+PROC
+LLLIB_ModSettings_OnMenuSorted((STRING)_ID)
+AND
+DB_LLLIB_ModSettings_SortingMenuTimer(_TimerName, _ID, _DisplayName, _CurrentIndex)
+THEN
+NOT DB_LLLIB_ModSettings_SortingMenuTimer(_TimerName, _ID, _DisplayName, _CurrentIndex);
+TimerCancel(_TimerName);
+LeaderLog_Log("DEBUG", "[LLLIB:ModSettings:OnMenuSorted] Menu '",_DisplayName,"' was sorted successfully.");
+
+PROC
+LLLIB_ModSettings_OnMenuSorted((STRING)_ID)
+AND
+LLLIB_ModSettings_QRY_SortingNeeded()
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:ModSettings:OnMenuSorted] Starting sort timer. ");
+TimerLaunch("LLLIB_Timers_ModSettings_SortMenus", 500);
+
+PROC
+LLLIB_ModSettings_OnMenuSorted((STRING)_ID)
+AND
+DB_LLLIB_ModSettings_CurrentlySorting(_Val)
+THEN
+NOT DB_LLLIB_ModSettings_CurrentlySorting(_Val);
+
+PROC
+LLLIB_ModSettings_OnMenuSorted((STRING)_ID)
+AND
+NOT LLLIB_ModSettings_QRY_SortingNeeded()
+THEN
+LLLIB_ModSettings_SortingComplete();
+
+QRY
+LLLIB_ModSettings_QRY_SortingNeeded()
+AND
+DB_LLLIB_ModSettings_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModName, _Author)
+AND
+NOT DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _, _ID, _)
+THEN
+DB_NOOP(1);
+
+PROC
+LLLIB_ModSettings_SortMenu((STRING)_ID, (STRING)_DisplayName)
+AND
+NOT DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _, _, _)
+THEN
+LLLIB_Array_AddToDictionary("LLLIB_RegisteredMenus", _ID, _DisplayName);
+LLLIB_ModSettings_OnMenuSorted(_ID);
+
+PROC
+LLLIB_ModSettings_SortMenu((STRING)_ID, (STRING)_DisplayName)
+AND
+NOT DB_LLLIB_Array_Length("LLLIB_RegisteredMenus", _)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] [ERROR] Dictionary 'LLLIB_RegisteredMenus' has no length entry!");
+
+PROC
+LLLIB_ModSettings_SortMenu((STRING)_ID, (STRING)_DisplayName)
+AND
+NOT DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _, _ID, _)
+AND
+DB_LLLIB_Array_Length("LLLIB_RegisteredMenus", _Length)
+AND
+_Length > 0
+AND
+StringConcatenate("LLLIB_Timers_MenuSettings_SortingMenu_", _ID, _TimerName)
+THEN
+DB_LLLIB_ModSettings_SortingMenuTimer(_TimerName, _ID, _DisplayName, 0);
+LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Finding sorted position for menu '",_DisplayName,"'.");
+LLLIB_Array_BuildArrayIterator("LLLIB_RegisteredMenus");
+LLLIB_ModSettings_Internal_FindNextMenuIndex(_ID, _DisplayName);
 
 /*
 PROC
-LeaderLib_RegisterModMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog)
+LLLIB_ModSettings_Internal_FindNextMenuIndex((STRING)_ID, (STRING)_DisplayName)
+AND
+DB_LLLIB_Array_ArrayIterator("LLLIB_RegisteredMenus", _ID, _Index)
+AND
+IntegertoString(_Index, _IndexStr)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Test: '",_DisplayName,"' [",_IndexStr,"].");
+*/
+
+IF
+TimerFinished(_TimerName)
+AND
+DB_LLLIB_ModSettings_SortingMenuTimer(_TimerName, _ID, _DisplayName, _CurrentIndex)
+AND
+IntegerSum(_CurrentIndex, 1, _NextIndex)
+THEN
+NOT DB_LLLIB_ModSettings_SortingMenuTimer(_TimerName, _ID, _DisplayName, _CurrentIndex);
+DB_LLLIB_ModSettings_SortingMenuTimer(_TimerName, _ID, _DisplayName, _NextIndex);
+LLLIB_ModSettings_Internal_FindNextMenuIndex(_ID, _DisplayName);
+
+PROC
+LLLIB_ModSettings_Internal_FindNextMenuIndex((STRING)_ID, (STRING)_DisplayName)
+AND
+DB_LLLIB_ModSettings_SortingMenuTimer(_TimerName, _ID, _DisplayName, _Index)
+AND
+NOT DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _, _ID, _DisplayName)
+THEN
+LLLIB_ModSettings_Internal_MenuSort_OnIterator(_ID, _DisplayName, _Index);
+TimerLaunch(_TimerName, 500);
+
+PROC
+LLLIB_ModSettings_Internal_MenuSort_OnIterator((STRING)_ID, (STRING)_DisplayName, (INTEGER)_Index)
+AND
+IntegertoString(_Index, _CurrentIndexStr)
+AND
+DB_LLLIB_Array_Length("LLLIB_RegisteredMenus", _Length)
+AND
+IntegertoString(_Length, _LengthStr)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Iterating [",_ID,"]'",_DisplayName,"' index: [",_CurrentIndexStr,"/",_LengthStr,"].");
+
+PROC
+LLLIB_ModSettings_Internal_MenuSort_OnIterator((STRING)_ID, (STRING)_DisplayName, (INTEGER)_Index)
+AND
+NOT DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _, _ID, _)
+AND
+DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _Index, _CheckID, _CheckDisplayName)
+AND
+LLLIB_Sorter_QRY_CompareStrings("LLLIB_RegisteredMenus", _DisplayName, _CheckDisplayName)
+AND
+DB_LLLIB_StringCompare_Results(_DisplayName, _CheckDisplayName, _ComparisonVal)
+//IntegerSum(0,0,_ComparisonVal)
+AND
+IntegertoString(_ComparisonVal, _CompValStr)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:ModSettings:ProcessCompareResults] Comparison value: '",_DisplayName,"' => '",_CheckDisplayName,"' = ",_CompValStr);
+LLLIB_ModSettings_Internal_ProcessCompareResults(_ID, _DisplayName, _Index, _ComparisonVal);
+
+PROC
+LLLIB_ModSettings_Internal_MenuSort_OnIterator((STRING)_ID, (STRING)_DisplayName, (INTEGER)_Index)
+AND
+NOT DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _, _ID, _)
+AND
+DB_LLLIB_Array_Length("LLLIB_RegisteredMenus", _Length)
+AND
+_Index >= _Length
+THEN
+LLLIB_Array_AddToDictionary("LLLIB_RegisteredMenus", _ID, _DisplayName);
+LLLIB_ModSettings_OnMenuSorted(_ID);
+
+PROC
+LLLIB_ModSettings_Internal_ProcessCompareResults((STRING)_ID, (STRING)_DisplayName, (INTEGER)_CurrentIndex, (INTEGER)_ComparisonVal)
+AND
+NOT DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _, _ID, _)
+AND
+_ComparisonVal <= 0
+THEN
+LLLIB_Array_AddToDictionaryAtIndex("LLLIB_RegisteredMenus", _ID, _DisplayName, _CurrentIndex);
+LLLIB_ModSettings_OnMenuSorted(_ID);
+
+PROC
+LLLIB_ModSettings_Internal_ProcessCompareResults((STRING)_ID, (STRING)_DisplayName, (INTEGER)_CurrentIndex, (INTEGER)_ComparisonVal)
+AND
+NOT DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _, _ID, _)
+AND
+_ComparisonVal > 0
+AND
+DB_LLLIB_Array_Length("LLLIB_RegisteredMenus", _Length)
+AND
+_CurrentIndex < _Length
+THEN
+//Keep iterating
+DB_NOOP(1);
+
+PROC
+LLLIB_ModSettings_Internal_ProcessCompareResults((STRING)_ID, (STRING)_DisplayName, (INTEGER)_CurrentIndex, (INTEGER)_ComparisonVal)
+AND
+NOT DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _, _ID, _)
+AND
+_ComparisonVal > 0
+AND
+DB_LLLIB_Array_Length("LLLIB_RegisteredMenus", _Length)
+AND
+_CurrentIndex >= _Length
+THEN
+LLLIB_Array_AddToDictionary("LLLIB_RegisteredMenus", _ID, _DisplayName);
+LLLIB_ModSettings_OnMenuSorted(_ID);
+
+IF
+TimerFinished("LLLIB_Timers_ModSettings_CalculateMaxPage")
 THEN
 LLLIB_ModSettings_CalculateMaxPage();
-*/
 
 PROC
 LLLIB_ModSettings_CalculateMaxPage()
@@ -61,7 +277,7 @@ LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_ModSettings_PageMax", 3);
 PROC
 LLLIB_ModSettings_CalculateMaxPage()
 AND
-SysCount("DB_LLLIB_ModSettings_RegisteredMenu", 6, _TotalMenus)
+SysCount("DB_LLLIB_ModSettings_RegisteredMenuData", 5, _TotalMenus)
 AND
 DB_LLLIB_ModSettings_MenusPerPage(_MaxPerPage)
 AND
@@ -122,7 +338,7 @@ PROC
 LLLIB_System_ClearDatabases()
 THEN
 SysClear("DB_LLLIB_ModSettings_MenusPerPage", 1);
-SysClear("DB_LLLIB_ModSettings_RegisteredMenu", 4);
+SysClear("DB_LLLIB_ModSettings_RegisteredMenuData", 5);
 LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Databases cleared.");
 
 PROC
@@ -131,69 +347,6 @@ THEN
 LLLIB_System_ClearDatabases();
 LLLIB_System_UpdateDatabases();
 LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Databases cleared and re-initialized.");
-//END_REGION
-
-//REGION MOD_ACTIVE_CHECKING
-
-//END_REGION
-
-//REGION SORTING
-PROC
-LLLIB_ModSettings_SortMenus()
-AND
-DB_LLLIB_ModSettings_RegisteredMenu(_Index, _ID, _DisplayName, _Dialog, _ModName, _Author)
-THEN
-LLLIB_Sorter_AddString("LLLIB_SortMenus", _ID, _DisplayName);
-
-PROC
-LLLIB_ModSettings_SortMenus()
-THEN
-LLLIB_ModSettings_Sorter_SaveMenus();
-LLLIB_Sorter_StartSorting("LLLIB_SortMenus", "LLLIB_Events_MenuSortingFinished", 10);
-
-IF
-StoryEvent(_, "LLLIB_Events_MenuSortingFinished")
-THEN
-LLLIB_ModSettings_Sorter_SaveUnsortedMenus();
-SysClear("DB_LLLIB_ModSettings_RegisteredMenu", 6);
-LLLIB_ModSettings_Sorter_AddSortedMenus();
-//LLLIB_Sorter_ClearSessionData("LLLIB_SortMenus");
-LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Sorting complete.");
-
-PROC
-LLLIB_ModSettings_Sorter_SaveMenus()
-AND
-DB_LLLIB_ModSettings_RegisteredMenu(_Index, _ID, _DisplayName, _Dialog, _ModName, _Author)
-THEN
-DB_LLLIB_ModSettings_Temp_PreviousMenu(_Index, _ID, _DisplayName, _Dialog, _ModName, _Author);
-
-PROC
-LLLIB_ModSettings_Sorter_SaveUnsortedMenus()
-AND
-DB_LLLIB_ModSettings_RegisteredMenu(_Index, _ID, _DisplayName, _Dialog, _ModName, _Author)
-AND
-NOT DB_LLLIB_Sorter_FinalSorted("LLLIB_SortMenus", _, _ID, _DisplayName)
-THEN
-DB_LLLIB_ModSettings_Temp_UnsortedMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
-
-PROC
-LLLIB_ModSettings_Sorter_AddSortedMenus()
-AND
-DB_LLLIB_Sorter_FinalSorted("LLLIB_SortMenus", _Index, _ID, _DisplayName)
-AND
-DB_LLLIB_ModSettings_Temp_PreviousMenu(_PreviousIndex, _ID, _DisplayName, _Dialog, _ModName, _Author)
-THEN
-DB_LLLIB_ModSettings_RegisteredMenu(_Index, _ID, _DisplayName, _Dialog, _ModName, _Author);
-NOT DB_LLLIB_Sorter_FinalSorted("LLLIB_SortMenus", _Index, _ID, _DisplayName);
-NOT DB_LLLIB_ModSettings_Temp_PreviousMenu(_PreviousIndex, _ID, _DisplayName, _Dialog, _ModName, _Author);
-
-PROC
-LLLIB_ModSettings_Sorter_AddUnSortedMenus()
-AND
-DB_LLLIB_ModSettings_Temp_UnsortedMenu(_ID, _DisplayName, _Dialog, _ModName, _Author)
-THEN
-LeaderLib_RegisterModMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
-NOT DB_LLLIB_ModSettings_Temp_UnsortedMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
 //END_REGION
 
 //REGION CLEAR
@@ -363,7 +516,8 @@ IntegerSum(_MenuIndex, _StartIndex, _Index)
 AND
 LLLIB_QRY_WordMenus_DisableMenuIfNotAvailable(_Player, _Index, _DisabledFlag)
 AND
-DB_LLLIB_ModSettings_RegisteredMenu(_Index, _ID, _DisplayName, _Dialog, _ModName, _Author)
+DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _Index, _ID, _DisplayName)
+//DB_LLLIB_ModSettings_RegisteredMenu(_Index, _ID, _DisplayName, _Dialog, _ModName, _Author)
 AND
 NOT DB_LLLIB_MenuSettings_Temp_MenuVariableValue(_MenuIndex, _)
 THEN
@@ -416,7 +570,7 @@ DialogSetVariableStringForInstance(_Instance, _VariableValue, "");
 QRY
 LLLIB_QRY_WordMenus_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_DisabledFlag)
 AND
-NOT DB_LLLIB_ModSettings_RegisteredMenu(_Index,_,_,_,_,_)
+NOT DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _Index, _, _)
 AND
 ObjectGetFlag(_Player, _DisabledFlag, 0)
 THEN
@@ -425,7 +579,9 @@ ObjectSetFlag(_Player, _DisabledFlag);
 QRY
 LLLIB_QRY_WordMenus_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_DisabledFlag)
 AND
-DB_LLLIB_ModSettings_RegisteredMenu(_Index, _ID, _DisplayName, _Dialog, _ModName, _Author)
+DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _Index, _ID, _DisplayName)
+AND
+DB_LLLIB_ModSettings_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModName, _Author)
 AND
 ObjectGetFlag(_Player, _DisabledFlag, 0)
 AND
@@ -436,7 +592,9 @@ ObjectSetFlag(_Player, _DisabledFlag);
 QRY
 LLLIB_QRY_WordMenus_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_DisabledFlag)
 AND
-DB_LLLIB_ModSettings_RegisteredMenu(_Index, _ID, _DisplayName, _Dialog, _ModName, _Author)
+DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _Index, _ID, _DisplayName)
+AND
+DB_LLLIB_ModSettings_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModName, _Author)
 AND
 ObjectGetFlag(_Player, _DisabledFlag, 1)
 AND
@@ -499,7 +657,9 @@ LLLIB_Helper_QRY_ClearObjectFlag(_Player, _SelectFlag)
 AND
 DB_LLLIB_MenuSettings_Temp_MenuVariableValue(_MenuIndex, _ID)
 AND
-DB_LLLIB_ModSettings_RegisteredMenu(_Index, _ID, _DisplayName, _Dialog, _ModName, _Author)
+DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _MenuIndex, _ID, _DisplayName)
+AND
+DB_LLLIB_ModSettings_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModName, _Author)
 THEN
 //LeaderLog_Log("DEBUG", "[LLLIB] Loading menu for ", _ID);
 LLLIB_ModSettings_SetNextMenu(_Player, _ID, _Dialog);

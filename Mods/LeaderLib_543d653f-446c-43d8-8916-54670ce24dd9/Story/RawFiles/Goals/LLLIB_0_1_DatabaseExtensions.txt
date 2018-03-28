@@ -101,17 +101,6 @@ DB_LLLIB_Array_Data(_ID, _NextIndex, _Value);
 LLLIB_Array_IncreaseArrayLength(_ID);
 
 PROC
-LLLIB_Array_AddToArray((STRING)_ID, (STRING)_Value)
-AND
-DB_LLLIB_Array_Length(_ID, _Length)
-AND
-IntegerSubtract(_Length, 1, _AddedIndex)
-AND
-IntegertoString(_AddedIndex, _AddedIndexStr)
-THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:AddToArray] Added '",_Value,"' to array [",_ID,"] at index [",_AddedIndexStr,"].");
-
-PROC
 LLLIB_Array_AddToArrayAtIndex((STRING)_ID, (STRING)_Value, (INTEGER)_Index)
 AND
 NOT DB_LLLIB_Array_Data(_ID, _, _Value)
@@ -239,7 +228,7 @@ DB_LLLIB_Array_Length(_ID, _Length)
 AND
 NOT DB_LLLIB_Array_ArrayIterator(_ID, _Length)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:BuildArrayIterator] Building array iterator for [",_ID,"].");
+//LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:BuildArrayIterator] Building array iterator for [",_ID,"].");
 LLLIB_Array_Internal_StartArrayIteratorBuilder(_ID);
 
 PROC
@@ -301,17 +290,6 @@ DB_LLLIB_Dictionary_Data(_ID, _NextIndex, _Key, _Value);
 LLLIB_Array_IncreaseArrayLength(_ID);
 
 PROC
-LLLIB_Array_AddToDictionary((STRING)_ID, (STRING)_Key, (STRING)_Value)
-AND
-DB_LLLIB_Array_Length(_ID, _Length)
-AND
-IntegerSubtract(_Length, 1, _AddedIndex)
-AND
-IntegertoString(_AddedIndex, _AddedIndexStr)
-THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:AddToArray] Added '",_Value,"' to array [",_ID,"] at index [",_AddedIndexStr,"].");
-
-PROC
 LLLIB_Array_AddToDictionaryAtIndex((STRING)_ID, (STRING)_Key, (STRING)_Value, (INTEGER)_Index)
 AND
 NOT DB_LLLIB_Dictionary_Data(_ID, _, _Key, _)
@@ -333,15 +311,6 @@ LLLIB_Array_ShiftDictionaryDown(_ID, _Index);
 DB_LLLIB_Dictionary_Data(_ID, _Index, _Key, _Value);
 LLLIB_Array_IncreaseArrayLength(_ID);
 //LLLIB_Array_RebuildArrayLength(_ID, "Dictionary");
-
-PROC
-LLLIB_Array_AddToDictionaryAtIndex((STRING)_ID, (STRING)_Key, (STRING)_Value, (INTEGER)_Index)
-AND
-DB_LLLIB_Dictionary_Data(_ID, _Index, _Key, _Value)
-AND
-IntegertoString(_Index, _IndexStr)
-THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:AddToArray] Added [",_Key,"] = '",_Value,"' to dictionary [",_ID,"] at index [",_IndexStr,"].");
 
 PROC
 LLLIB_Array_ShiftDictionaryDown((STRING)_ID, (INTEGER)_AtIndex)
@@ -366,6 +335,45 @@ IntegerSubtract(_Index, 1, _NextIndex)
 THEN
 NOT DB_LLLIB_Dictionary_Data(_ID, _Index, _Key, _Value);
 DB_LLLIB_Dictionary_Data(_ID, _NextIndex, _Key, _Value);
+//END_REGION
+
+//REGION DEBUG
+/*
+PROC
+LLLIB_Array_AddToArray((STRING)_ID, (STRING)_Value)
+AND
+DB_LLLIB_Array_Length(_ID, _Length)
+AND
+IntegerSubtract(_Length, 1, _AddedIndex)
+AND
+IntegertoString(_AddedIndex, _AddedIndexStr)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:AddToArray] Added '",_Value,"' to array [",_ID,"] at index [",_AddedIndexStr,"].");
+*/
+
+/*
+PROC
+LLLIB_Array_AddToDictionaryAtIndex((STRING)_ID, (STRING)_Key, (STRING)_Value, (INTEGER)_Index)
+AND
+DB_LLLIB_Dictionary_Data(_ID, _Index, _Key, _Value)
+AND
+IntegertoString(_Index, _IndexStr)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:AddToArray] Added [",_Key,"] = '",_Value,"' to dictionary [",_ID,"] at index [",_IndexStr,"].");
+*/
+
+/*
+PROC
+LLLIB_Array_AddToDictionary((STRING)_ID, (STRING)_Key, (STRING)_Value)
+AND
+DB_LLLIB_Array_Length(_ID, _Length)
+AND
+IntegerSubtract(_Length, 1, _AddedIndex)
+AND
+IntegertoString(_AddedIndex, _AddedIndexStr)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:AddToArray] Added '",_Value,"' to array [",_ID,"] at index [",_AddedIndexStr,"].");
+*/
 //END_REGION
 EXITSECTION
 

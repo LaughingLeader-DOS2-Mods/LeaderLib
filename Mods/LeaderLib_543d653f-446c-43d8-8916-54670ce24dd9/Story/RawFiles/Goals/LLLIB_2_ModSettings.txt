@@ -7,7 +7,9 @@ LLLIB_ModSettings_InitSettings();
 //DB_LLLIB_Settings_DialogVariables(_VariableName, _VariableValue)
 //DB_LLLIB_ModSettings_DynamicMenuVars(_MenuIndex, _DialogVar, _SelectFlag, _DisabledFlag)
 //DB_LLLIB_ModSettings_MenusPerPage(_MaxPerPage)
+//DB_LLLIB_ModSettings_SortTickRate(_Rate)
 //DB_LLLIB_ModSettings_MenuSortTimerActive(1)
+//DB_LLLIB_ModSettings_SortingStarted(1)
 //DB_LLLIB_ModSettings_SortingMenuTimer(_TimerName, _ID, _DisplayName, _CurrentIndex)
 
 //Dynamic
@@ -22,7 +24,7 @@ LLLIB_ModSettings_InitSettings();
 //DB_LLLIB_ModSettings_Temp_SortedMenu(_Index, _ID, _Dialog, _DisplayName)
 //DB_LLLIB_ModSettings_Temp_UnsortedMenu(_ID, _DisplayName, _Dialog, _ModName, _Author)
 KBSECTION
-//REGION MENU_REGISTERING_AND_SORTING
+//REGION MENU_REGISTERING
 PROC
 LeaderLib_RegisterModMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModName, (STRING)_Author)
 AND
@@ -30,8 +32,110 @@ NOT DB_LLLIB_ModSettings_RegisteredMenuData(_ID,_,_,_,_)
 THEN
 LLLIB_Sorter_DetermineStringLength(_DisplayName);
 DB_LLLIB_ModSettings_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModName, _Author);
-TimerCancel("LLLIB_Timers_ModSettings_CalculateMaxPage");
-TimerLaunch("LLLIB_Timers_ModSettings_CalculateMaxPage", 1000);
+//END_REGION
+
+//REGION PAGE_MAX_CALCULATION
+IF
+TimerFinished("LLLIB_Timers_ModSettings_CalculateMaxPage")
+THEN
+LLLIB_ModSettings_CalculateMaxPage();
+
+PROC
+LLLIB_ModSettings_CalculateMaxPage()
+THEN
+LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_ModSettings_PageMax", 3);
+
+PROC
+LLLIB_ModSettings_CalculateMaxPage()
+AND
+SysCount("DB_LLLIB_ModSettings_RegisteredMenuData", 5, _TotalMenus)
+AND
+DB_LLLIB_ModSettings_MenusPerPage(_MaxPerPage)
+AND
+IntegerSubtract(_MaxPerPage, 1, _Variance)
+AND
+IntegerSum(_TotalMenus, _Variance, _PageNumToDivide)
+AND
+IntegerDivide(_PageNumToDivide, _MaxPerPage, _MaxPage)
+AND
+IntegerSubtract(_TotalMenus, 1, _LastIndex)
+AND
+IntegerSubtract(_MaxPage, 1, _LastPageIndex)
+THEN
+DB_LLLIB_ModSettings_PageMax(_LastIndex, _LastPageIndex, _MaxPage);
+
+/*
+IF
+DB_LLLIB_ModSettings_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
+AND
+IntegertoString(_LastIndex, _Str1)
+AND
+IntegertoString(_LastPageIndex, _Str2)
+AND
+IntegertoString(_MaxPage, _Str3)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Max page set: LastIndex[",_Str1,"] LastPageIndex[",_Str2,"] MaxPage[",_Str3,"]");
+*/
+//END_REGION
+
+//REGION SETTINGS
+PROC
+LLLIB_ModSettings_InitSettings()
+THEN
+LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_ModSettings_SortTickRate", 1);
+DB_LLLIB_ModSettings_SortTickRate(1);
+
+LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_ModSettings_MenusPerPage", 1);
+DB_LLLIB_ModSettings_MenusPerPage(8);
+
+LeaderLib_RegisterModMenu("LaughingLeader_LeaderLib", "[LeaderLib] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+
+LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_ModSettings_DynamicMenuVars", 4);
+DB_LLLIB_ModSettings_DynamicMenuVars(0, "LLLIB_ModSettings_Menu1_783ec14d-2861-4345-8dbc-45974fa34e15", "LLLIB_ModSettings_SelectedMenu1", "LLLIB_ModSettings_MenuEmpty1");
+DB_LLLIB_ModSettings_DynamicMenuVars(1, "LLLIB_ModSettings_Menu2_9a2d2990-5cff-420e-ba8a-37f9510ab9e1", "LLLIB_ModSettings_SelectedMenu2", "LLLIB_ModSettings_MenuEmpty2");
+DB_LLLIB_ModSettings_DynamicMenuVars(2, "LLLIB_ModSettings_Menu3_cf00a8c6-02d2-4fda-a766-4f533ac93b2d", "LLLIB_ModSettings_SelectedMenu3", "LLLIB_ModSettings_MenuEmpty3");
+DB_LLLIB_ModSettings_DynamicMenuVars(3, "LLLIB_ModSettings_Menu4_337a1066-9a85-4005-a2dc-f0156bf13d16", "LLLIB_ModSettings_SelectedMenu4", "LLLIB_ModSettings_MenuEmpty4");
+DB_LLLIB_ModSettings_DynamicMenuVars(4, "LLLIB_ModSettings_Menu5_45148ce6-e8f3-4af4-81ed-a3b2e1ff8a17", "LLLIB_ModSettings_SelectedMenu5", "LLLIB_ModSettings_MenuEmpty5");
+DB_LLLIB_ModSettings_DynamicMenuVars(5, "LLLIB_ModSettings_Menu6_863af621-ff0c-454a-b6a3-7c9d3166a8a0", "LLLIB_ModSettings_SelectedMenu6", "LLLIB_ModSettings_MenuEmpty6");
+DB_LLLIB_ModSettings_DynamicMenuVars(6, "LLLIB_ModSettings_Menu7_888ce02f-83ff-4173-be8d-f41fd348358f", "LLLIB_ModSettings_SelectedMenu7", "LLLIB_ModSettings_MenuEmpty7");
+DB_LLLIB_ModSettings_DynamicMenuVars(7, "LLLIB_ModSettings_Menu8_a6aa98e6-cde4-491b-a2cb-2cd7d5d71f96", "LLLIB_ModSettings_SelectedMenu8", "LLLIB_ModSettings_MenuEmpty8");
+//END_REGION
+
+//REGION UPDATING
+PROC
+LLLIB_System_UpdateDatabases()
+THEN
+LLLIB_ModSettings_InitSettings();
+LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Databases updated.");
+
+PROC
+LLLIB_System_ClearDatabases()
+THEN
+SysClear("DB_LLLIB_ModSettings_MenusPerPage", 1);
+SysClear("DB_LLLIB_ModSettings_RegisteredMenuData", 5);
+LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Databases cleared.");
+
+PROC
+LLLIB_Updater_ResetDatabases()
+THEN
+LLLIB_System_ClearDatabases();
+LLLIB_System_UpdateDatabases();
+LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Databases cleared and re-initialized.");
+//END_REGION
+
+//REGION SORTING
+//Sorting Start
+IF
+StoryEvent(_, "LeaderLib_Initialized")
+AND
+DB_LLLIB_ModSettings_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModName, _Author)
+AND
+NOT DB_LLLIB_ModSettings_SortingStarted(_)
+AND
+NOT DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _, _ID, _)
+THEN
+TimerLaunch("LLLIB_Timers_ModSettings_SortMenus", 500);
+DB_LLLIB_ModSettings_SortingStarted(1);
 
 PROC
 LLLIB_ModSettings_SortingComplete()
@@ -51,18 +155,8 @@ PROC
 LLLIB_ModSettings_SortingComplete()
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:ModSettings:SortingComplete] Menu sorting done.");
-
-IF
-StoryEvent(_, "LeaderLib_Initialized")
-AND
-DB_LLLIB_ModSettings_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModName, _Author)
-AND
-NOT DB_LLLIB_ModSettings_SortingStarted(_)
-AND
-NOT DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _, _ID, _)
-THEN
-TimerLaunch("LLLIB_Timers_ModSettings_SortMenus", 1000);
-DB_LLLIB_ModSettings_SortingStarted(1);
+TimerCancel("LLLIB_Timers_ModSettings_CalculateMaxPage");
+TimerLaunch("LLLIB_Timers_ModSettings_CalculateMaxPage", 1000);
 
 IF
 TimerFinished("LLLIB_Timers_ModSettings_SortMenus")
@@ -90,15 +184,17 @@ DB_LLLIB_ModSettings_SortingMenuTimer(_TimerName, _ID, _DisplayName, _CurrentInd
 THEN
 NOT DB_LLLIB_ModSettings_SortingMenuTimer(_TimerName, _ID, _DisplayName, _CurrentIndex);
 TimerCancel(_TimerName);
-LeaderLog_Log("DEBUG", "[LLLIB:ModSettings:OnMenuSorted] Menu '",_DisplayName,"' was sorted successfully.");
+//LeaderLog_Log("DEBUG", "[LLLIB:ModSettings:OnMenuSorted] Menu '",_DisplayName,"' was sorted successfully.");
 
 PROC
 LLLIB_ModSettings_OnMenuSorted((STRING)_ID)
 AND
 LLLIB_ModSettings_QRY_SortingNeeded()
+AND
+DB_LLLIB_ModSettings_SortTickRate(_Rate)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:ModSettings:OnMenuSorted] Starting sort timer. ");
-TimerLaunch("LLLIB_Timers_ModSettings_SortMenus", 500);
+//LeaderLog_Log("DEBUG", "[LLLIB:ModSettings:OnMenuSorted] Starting sort timer. ");
+TimerLaunch("LLLIB_Timers_ModSettings_SortMenus", _Rate);
 
 PROC
 LLLIB_ModSettings_OnMenuSorted((STRING)_ID)
@@ -150,20 +246,9 @@ AND
 StringConcatenate("LLLIB_Timers_MenuSettings_SortingMenu_", _ID, _TimerName)
 THEN
 DB_LLLIB_ModSettings_SortingMenuTimer(_TimerName, _ID, _DisplayName, 0);
-LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Finding sorted position for menu '",_DisplayName,"'.");
+//LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Finding sorted position for menu '",_DisplayName,"'.");
 LLLIB_Array_BuildArrayIterator("LLLIB_RegisteredMenus");
 LLLIB_ModSettings_Internal_FindNextMenuIndex(_ID, _DisplayName);
-
-/*
-PROC
-LLLIB_ModSettings_Internal_FindNextMenuIndex((STRING)_ID, (STRING)_DisplayName)
-AND
-DB_LLLIB_Array_ArrayIterator("LLLIB_RegisteredMenus", _ID, _Index)
-AND
-IntegertoString(_Index, _IndexStr)
-THEN
-LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Test: '",_DisplayName,"' [",_IndexStr,"].");
-*/
 
 IF
 TimerFinished(_TimerName)
@@ -182,10 +267,13 @@ AND
 DB_LLLIB_ModSettings_SortingMenuTimer(_TimerName, _ID, _DisplayName, _Index)
 AND
 NOT DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _, _ID, _DisplayName)
+AND
+DB_LLLIB_ModSettings_SortTickRate(_Rate)
 THEN
 LLLIB_ModSettings_Internal_MenuSort_OnIterator(_ID, _DisplayName, _Index);
-TimerLaunch(_TimerName, 500);
+TimerLaunch(_TimerName, _Rate);
 
+/*
 PROC
 LLLIB_ModSettings_Internal_MenuSort_OnIterator((STRING)_ID, (STRING)_DisplayName, (INTEGER)_Index)
 AND
@@ -196,6 +284,7 @@ AND
 IntegertoString(_Length, _LengthStr)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Iterating [",_ID,"]'",_DisplayName,"' index: [",_CurrentIndexStr,"/",_LengthStr,"].");
+*/
 
 PROC
 LLLIB_ModSettings_Internal_MenuSort_OnIterator((STRING)_ID, (STRING)_DisplayName, (INTEGER)_Index)
@@ -211,7 +300,7 @@ DB_LLLIB_StringCompare_Results(_DisplayName, _CheckDisplayName, _ComparisonVal)
 AND
 IntegertoString(_ComparisonVal, _CompValStr)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:ModSettings:ProcessCompareResults] Comparison value: '",_DisplayName,"' => '",_CheckDisplayName,"' = ",_CompValStr);
+//LeaderLog_Log("DEBUG", "[LLLIB:ModSettings:ProcessCompareResults] Comparison value: '",_DisplayName,"' => '",_CheckDisplayName,"' = ",_CompValStr);
 LLLIB_ModSettings_Internal_ProcessCompareResults(_ID, _DisplayName, _Index, _ComparisonVal);
 
 PROC
@@ -263,90 +352,6 @@ _CurrentIndex >= _Length
 THEN
 LLLIB_Array_AddToDictionary("LLLIB_RegisteredMenus", _ID, _DisplayName);
 LLLIB_ModSettings_OnMenuSorted(_ID);
-
-IF
-TimerFinished("LLLIB_Timers_ModSettings_CalculateMaxPage")
-THEN
-LLLIB_ModSettings_CalculateMaxPage();
-
-PROC
-LLLIB_ModSettings_CalculateMaxPage()
-THEN
-LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_ModSettings_PageMax", 3);
-
-PROC
-LLLIB_ModSettings_CalculateMaxPage()
-AND
-SysCount("DB_LLLIB_ModSettings_RegisteredMenuData", 5, _TotalMenus)
-AND
-DB_LLLIB_ModSettings_MenusPerPage(_MaxPerPage)
-AND
-IntegerSubtract(_MaxPerPage, 1, _Variance)
-AND
-IntegerSum(_TotalMenus, _Variance, _PageNumToDivide)
-AND
-IntegerDivide(_PageNumToDivide, _MaxPerPage, _MaxPage)
-AND
-IntegerSubtract(_TotalMenus, 1, _LastIndex)
-AND
-IntegerSubtract(_MaxPage, 1, _LastPageIndex)
-THEN
-DB_LLLIB_ModSettings_PageMax(_LastIndex, _LastPageIndex, _MaxPage);
-
-/*
-IF
-DB_LLLIB_ModSettings_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
-AND
-IntegertoString(_LastIndex, _Str1)
-AND
-IntegertoString(_LastPageIndex, _Str2)
-AND
-IntegertoString(_MaxPage, _Str3)
-THEN
-LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Max page set: LastIndex[",_Str1,"] LastPageIndex[",_Str2,"] MaxPage[",_Str3,"]");
-*/
-//END_REGION
-
-//REGION SETTINGS
-PROC
-LLLIB_ModSettings_InitSettings()
-THEN
-LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_ModSettings_MenusPerPage", 1);
-DB_LLLIB_ModSettings_MenusPerPage(8);
-
-LeaderLib_RegisterModMenu("LaughingLeader_LeaderLib", "[LeaderLib] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-
-LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_ModSettings_DynamicMenuVars", 4);
-DB_LLLIB_ModSettings_DynamicMenuVars(0, "LLLIB_ModSettings_Menu1_783ec14d-2861-4345-8dbc-45974fa34e15", "LLLIB_ModSettings_SelectedMenu1", "LLLIB_ModSettings_MenuEmpty1");
-DB_LLLIB_ModSettings_DynamicMenuVars(1, "LLLIB_ModSettings_Menu2_9a2d2990-5cff-420e-ba8a-37f9510ab9e1", "LLLIB_ModSettings_SelectedMenu2", "LLLIB_ModSettings_MenuEmpty2");
-DB_LLLIB_ModSettings_DynamicMenuVars(2, "LLLIB_ModSettings_Menu3_cf00a8c6-02d2-4fda-a766-4f533ac93b2d", "LLLIB_ModSettings_SelectedMenu3", "LLLIB_ModSettings_MenuEmpty3");
-DB_LLLIB_ModSettings_DynamicMenuVars(3, "LLLIB_ModSettings_Menu4_337a1066-9a85-4005-a2dc-f0156bf13d16", "LLLIB_ModSettings_SelectedMenu4", "LLLIB_ModSettings_MenuEmpty4");
-DB_LLLIB_ModSettings_DynamicMenuVars(4, "LLLIB_ModSettings_Menu5_45148ce6-e8f3-4af4-81ed-a3b2e1ff8a17", "LLLIB_ModSettings_SelectedMenu5", "LLLIB_ModSettings_MenuEmpty5");
-DB_LLLIB_ModSettings_DynamicMenuVars(5, "LLLIB_ModSettings_Menu6_863af621-ff0c-454a-b6a3-7c9d3166a8a0", "LLLIB_ModSettings_SelectedMenu6", "LLLIB_ModSettings_MenuEmpty6");
-DB_LLLIB_ModSettings_DynamicMenuVars(6, "LLLIB_ModSettings_Menu7_888ce02f-83ff-4173-be8d-f41fd348358f", "LLLIB_ModSettings_SelectedMenu7", "LLLIB_ModSettings_MenuEmpty7");
-DB_LLLIB_ModSettings_DynamicMenuVars(7, "LLLIB_ModSettings_Menu8_a6aa98e6-cde4-491b-a2cb-2cd7d5d71f96", "LLLIB_ModSettings_SelectedMenu8", "LLLIB_ModSettings_MenuEmpty8");
-//END_REGION
-
-//REGION UPDATING
-PROC
-LLLIB_System_UpdateDatabases()
-THEN
-LLLIB_ModSettings_InitSettings();
-LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Databases updated.");
-
-PROC
-LLLIB_System_ClearDatabases()
-THEN
-SysClear("DB_LLLIB_ModSettings_MenusPerPage", 1);
-SysClear("DB_LLLIB_ModSettings_RegisteredMenuData", 5);
-LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Databases cleared.");
-
-PROC
-LLLIB_Updater_ResetDatabases()
-THEN
-LLLIB_System_ClearDatabases();
-LLLIB_System_UpdateDatabases();
-LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Databases cleared and re-initialized.");
 //END_REGION
 
 //REGION CLEAR

@@ -43,7 +43,7 @@ LLLIB_Treasure_Configure_GenerationType("LLLIB_TestLevel_Chest2", "WPN_Cheat_Swo
 //GlobalSetFlag("LeaderLib_DiscoveredLeaderTraderBackground");
 
 //Sorting/Menu test
-/*
+
 LeaderLib_RegisterModMenu("LLZ1", "[Zieonimus] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZ2", "[Zzznonom] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZ3", "[Zzaonimus] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
@@ -61,7 +61,6 @@ LeaderLib_RegisterModMenu("LLTest10", "Zeronimus", "LLLIB_SettingsMenu", "Leader
 LeaderLib_RegisterModMenu("LLTest7", "Bananas", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLTest2", "Apples2", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLTest1", "Apples1", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-*/
 
 LeaderLib_RegisterModMenu("LLZZ2", "[ModMenu2] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZZ11", "[ModMenu11] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");

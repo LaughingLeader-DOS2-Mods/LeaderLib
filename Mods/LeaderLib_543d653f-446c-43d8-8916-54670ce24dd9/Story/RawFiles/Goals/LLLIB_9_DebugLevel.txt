@@ -64,14 +64,12 @@ LeaderLib_RegisterModMenu("LLTest2", "Apples2", "LLLIB_SettingsMenu", "LeaderLib
 LeaderLib_RegisterModMenu("LLTest1", "Apples1", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 */
 
-/*
 LeaderLib_RegisterModMenu("LLZZ2", "[ModMenu2] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZZ11", "[ModMenu11] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZZ3", "[ModMenu3] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZZ5", "[ModMenu5] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZZ7", "[ModMenu7] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZZ9", "[ModMenu9] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-*/
 LeaderLib_RegisterModMenu("LLZZ10", "[ModMenu10] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZZ12", "[ModMenu12] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZZ1", "[ModMenu1] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");

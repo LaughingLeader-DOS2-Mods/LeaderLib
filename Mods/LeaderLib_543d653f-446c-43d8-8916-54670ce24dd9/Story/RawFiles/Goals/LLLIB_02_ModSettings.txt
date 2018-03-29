@@ -122,9 +122,18 @@ LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Databases cleared and re-initialized
 //END_REGION
 
 //REGION SORTING
+QRY
+LLLIB_ModSettings_QRY_SortNeeded()
+AND
+DB_LLLIB_ModSettings_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModName, _Author)
+AND
+NOT DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _, _ID
+THEN
+DB_NOOP(1);
+
 //Sorting Start
 IF
-StoryEvent(_, "LeaderLib_Initialized")
+StoryEvent(_, "LeaderLib_SortMenus")
 AND
 DB_LLLIB_ModSettings_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModName, _Author)
 AND
@@ -133,8 +142,14 @@ AND
 NOT DB_LLLIB_DictionarySort_Temp_StringQueue("LLLIB_RegisteredMenus", _ID, _DisplayName)
 THEN
 LLLIB_DictionarySort_AddString("LLLIB_RegisteredMenus", _ID, _DisplayName);
-TimerCancel("LLLIB_Timers_ModSettings_SortMenus");
-TimerLaunch("LLLIB_Timers_ModSettings_SortMenus", 500);
+
+IF
+StoryEvent(_, "LeaderLib_Events_SortMenus")
+AND
+LLLIB_ModSettings_QRY_SortNeeded()
+THEN
+//TimerLaunch("LLLIB_Timers_ModSettings_SortMenus", 500);
+LLLIB_ModSettings_StartSorting();
 
 PROC
 LLLIB_ModSettings_SetSortTickRate((INTEGER)_TickRate)
@@ -153,8 +168,15 @@ THEN
 NOT DB_LLLIB_ModSettings_SortTickRate(_OtherTickRate);
 DB_LLLIB_ModSettings_SortTickRate(_TickRate);
 
+/*
 IF
 TimerFinished("LLLIB_Timers_ModSettings_SortMenus")
+THEN
+LLLIB_ModSettings_StartSorting();
+*/
+
+PROC
+LLLIB_ModSettings_StartSorting()
 AND
 SysCount("DB_LLLIB_ModSettings_RegisteredMenuData", 5, _TotalMenus)
 AND
@@ -165,8 +187,8 @@ THEN
 LeaderLog_Log("DEBUG", "[LLLIB:ModSettings:Sorting] Total menus = [",_TotalStr,"]. Setting sort tick rate to 0.");
 LLLIB_ModSettings_SetSortTickRate(0);
 
-IF
-TimerFinished("LLLIB_Timers_ModSettings_SortMenus")
+PROC
+LLLIB_ModSettings_StartSorting()
 AND
 SysCount("DB_LLLIB_ModSettings_RegisteredMenuData", 5, _TotalMenus)
 AND
@@ -177,16 +199,16 @@ THEN
 LeaderLog_Log("DEBUG", "[LLLIB:ModSettings:Sorting] Total menus = [",_TotalStr,"]. Setting sort tick rate to 1.");
 LLLIB_ModSettings_SetSortTickRate(1);
 
-IF
-TimerFinished("LLLIB_Timers_ModSettings_SortMenus")
+PROC
+LLLIB_ModSettings_StartSorting()
 AND
 DB_LLLIB_ModSettings_SortTickRate(_TickRate)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:ModSettings:Sorting] Starting menu sorting.");
-LLLIB_DictionarySort_StartSorting("LLLIB_RegisteredMenus", _TickRate, "LLLIB_Events_MenuSortComplete");
+LLLIB_DictionarySort_StartSorting("LLLIB_RegisteredMenus", _TickRate, "LeaderLib_Events_MenuSortComplete");
 
 IF
-StoryEvent(_, "LLLIB_Events_MenuSortComplete")
+StoryEvent(_, "LeaderLib_Events_MenuSortComplete")
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:ModSettings:SortingComplete] Menu sorting done.");
 TimerCancel("LLLIB_Timers_ModSettings_CalculateMaxPage");

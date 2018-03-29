@@ -1,0 +1,176 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+//DB_LLLIB_Dictionary_Data("LLLIB_System_EventStack", _Index, _StartEvent, _CompleteEvent)
+//LLLIB_EventFlow_CurrentEvent(_StackName, _Index)
+//LLLIB_EventFlow_EventStack(_StackName, _OnCompleteEvent)
+//LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent)
+KBSECTION
+//REGION INIT
+IF
+StoryEvent(_, "LeaderLib_Initialized")
+THEN
+LLLIB_EventFlow_Init_LeaderLibStack("LLLIB_EventFlow_EventStack");
+
+PROC
+LLLIB_EventFlow_AddStack((STRING)_StackName, (STRING)_OnCompleteEvent)
+AND
+NOT LLLIB_EventFlow_EventStack(_StackName, _)
+THEN
+LLLIB_EventFlow_EventStack(_StackName, _OnCompleteEvent);
+LLLIB_Array_NewArray(_StackName);
+
+PROC
+LLLIB_EventFlow_Init_LeaderLibStack((STRING)_StackName)
+THEN
+LLLIB_EventFlow_AddStack(_StackName, "LeaderLib_Events_InitEventFlowComplete");
+
+PROC
+LLLIB_EventFlow_Init_LeaderLibStack((STRING)_StackName)
+AND
+LLLIB_ModSettings_QRY_SortNeeded()
+THEN
+LLLIB_Array_AddToDictionary(_StackName, "LeaderLib_Events_SortMenus", "LeaderLib_Events_MenuSortComplete");
+
+PROC
+LLLIB_EventFlow_Init_LeaderLibStack((STRING)_StackName)
+THEN
+LLLIB_Array_AddToDictionary(_StackName, "LeaderLib_Events_SpawnTraders", "LeaderLib_Events_TraderSpawnComplete");
+LLLIB_EventFlow_Start(_StackName);
+
+PROC
+LLLIB_EventFlow_Start((STRING)_StackName)
+THEN
+LLLIB_EventFlow_SetCurrentEvent(_StackName, 0);
+//END_REGION
+
+//REGION SET_CURRENT_EVENT
+PROC
+LLLIB_EventFlow_SetCurrentEvent((STRING)_StackName, (INTEGER)_Index)
+AND
+LLLIB_EventFlow_CurrentEvent(_CurrentIndex)
+AND
+_CurrentIndex != _Index
+THEN
+NOT LLLIB_EventFlow_CurrentEvent(_CurrentIndex);
+LLLIB_EventFlow_CurrentEvent(_StackName, _Index);
+
+PROC
+LLLIB_EventFlow_SetCurrentEvent((STRING)_StackName, (INTEGER)_Index)
+THEN
+LLLIB_EventFlow_CurrentEvent(_StackName, _Index);
+
+PROC
+LLLIB_EventFlow_SetCurrentEvent((STRING)_StackName, (INTEGER)_Index)
+AND
+LLLIB_EventFlow_CurrentEvent(_StackName, _Index)
+AND
+DB_LLLIB_Dictionary_Data("LLLIB_EventFlow_EventStack", _Index, _StartEvent, _OnCompleteEvent)
+THEN
+LLLIB_EventFlow_LaunchTimeoutTimer(_StackName, _OnCompleteEvent);
+LLLIB_Events_SendEvent(_StartEvent);
+
+PROC
+LLLIB_EventFlow_SetCurrentEvent((STRING)_StackName, (INTEGER)_Index)
+AND
+DB_LLLIB_Array_Length("LLLIB_EventFlow_EventStack", _Length)
+AND
+_Index >= _Length
+THEN
+LLLIB_EventFlow_OnEventFlowComplete(_StackName);
+
+PROC
+LLLIB_EventFlow_NextEvent((STRING)_StackName)
+AND
+LLLIB_EventFlow_CurrentEvent(_StackName, _Index)
+AND
+IntegerSum(_Index, 1, _NextIndex)
+THEN
+LLLIB_EventFlow_SetCurrentEvent(_StackName, _NextIndex);
+//END_REGION
+
+//REGION TIMEOUT
+PROC
+LLLIB_EventFlow_LaunchTimeoutTimer((STRING)_StackName, (STRING)_OnCompleteEvent)
+AND
+LeaderLog_QRY_Log("COMBINE", "LLLIB_Timers_EventFlow_", _StackName, "_", _OnCompleteEvent)
+AND
+DB_LeaderLog_Temp_CombinedString(_TimerName)
+THEN
+NOT DB_LeaderLog_Temp_CombinedString(_TimerName);
+LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent);
+TimerLaunch(_TimerName, 10000);
+
+IF
+TimerFinished(_TimerName)
+AND
+LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:EventFlow:Timeout] Event flow [",_StackName,"] timed out (completion event [",_OnCompleteEvent,"] never fired). Starting next event in the stack.");
+NOT LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent);
+LLLIB_EventFlow_NextEvent(_StackName);
+
+PROC
+LLLIB_EventFlow_StopTimeoutTimer((STRING)_StackName, (STRING)_OnCompleteEvent)
+AND
+LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent)
+THEN
+NOT LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent);
+TimerCancel(_TimerName);
+//END_REGION
+
+//REGION NEXT
+IF
+StoryEvent(_, _OnCompleteEvent)
+AND
+LLLIB_EventFlow_EventStack(_StackName, _OnCompleteEvent)
+AND
+DB_LLLIB_Dictionary_Data(_StackName, _Index, _StartEvent, _OnCompleteEvent)
+THEN
+LLLIB_EventFlow_StopTimeoutTimer(_StackName, _OnCompleteEvent);
+LLLIB_EventFlow_NextEvent(_StackName);
+//END_REGION
+
+//REGION CLEAR
+PROC
+LLLIB_EventFlow_ClearStackData((STRING)_StackName)
+AND
+LLLIB_EventFlow_EventStack(_StackName, _OnCompleteEvent)
+THEN
+LLLIB_Array_ClearArray(_StackName);
+NOT LLLIB_EventFlow_EventStack(_StackName, _OnCompleteEvent);
+
+PROC
+LLLIB_EventFlow_ClearStackData((STRING)_StackName)
+AND
+LLLIB_EventFlow_CurrentEvent(_StackName, _Index)
+THEN
+NOT LLLIB_EventFlow_CurrentEvent(_StackName, _Index);
+
+PROC
+LLLIB_EventFlow_ClearStackData((STRING)_StackName)
+AND
+LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent)
+THEN
+LLLIB_EventFlow_StopTimeoutTimer(_StackName, _OnCompleteEvent);
+//END_REGION
+
+//REGION COMPLETE
+PROC
+LLLIB_EventFlow_OnEventFlowComplete((STRING)_StackName)
+AND
+LLLIB_EventFlow_EventStack(_StackName, _OnCompleteEvent)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:EventFlow:OnEventFlowComplete] Event flow [",_StackName,"] completed. Clearing dictionary and sending completion event [",_OnCompleteEvent,"].");
+LLLIB_Events_SendEvent(_OnCompleteEvent);
+LLLIB_EventFlow_ClearStackData(_StackName);
+
+IF
+StoryEvent(_, "LeaderLib_Events_InitEventFlowComplete")
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:EventFlow] LeaderLib event flow complete.");
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

@@ -15,6 +15,7 @@ INITSECTION
 
 //Dynamic
 //DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+//DB_LLLIB_Traders_SpawnQueue(_TraderID, _Level)
 
 //Ref
 //DB_LLLIB_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel)
@@ -361,6 +362,7 @@ DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID)
 AND
 LLLIB_QRY_Requirements_AllMet(_RequirementID)
 THEN
+DB_LLLIB_Traders_SpawnQueue(_TraderID, _Level);
 LLLIB_Traders_CreateTrader(_TraderID, _Level);
 
 PROC
@@ -369,7 +371,9 @@ AND
 NOT DB_LLLIB_Traders_RegisteredLevel(_, _Level, _)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Traders:CreateTraders] No registered traders for level [",_Level,"].");
+LLLIB_Events_SendEvent("LeaderLib_Events_TraderSpawnComplete");
 
+/*
 QRY
 LLLIB_QRY_Traders_Debug_TraceRequirement((STRING)_TraderID, (STRING)_Level, (STRING)_RequirementID)
 AND
@@ -383,6 +387,11 @@ AND
 NOT LLLIB_QRY_Requirements_AllMet(_RequirementID)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Traders] Trader[",_TraderID,"] requirement[",_RequirementID,"] not met for level [",_Level,"].");
+*/
+QRY
+LLLIB_QRY_Traders_Debug_TraceRequirement((STRING)_TraderID, (STRING)_Level, (STRING)_RequirementID)
+THEN
+DB_NOOP(1);
 
 PROC
 LLLIB_Traders_CreateTrader((STRING)_TraderID, (STRING)_Level)
@@ -691,7 +700,25 @@ THEN
 LLLIB_Traders_CreateTrader(_TraderID, _Level);
 //END_REGION
 
+//REGION SPAWN_QUEUE
+IF
+DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+AND
+DB_LLLIB_Traders_SpawnQueue(_TraderID, _Level)
+THEN
+NOT DB_LLLIB_Traders_SpawnQueue(_TraderID, _Level);
+LLLIB_Traders_CheckSpawnQueue(_Level);
+
+PROC
+LLLIB_Traders_CheckSpawnQueue((STRING)_Level)
+AND
+NOT DB_LLLIB_Traders_SpawnQueue(_, _Level)
+THEN
+LLLIB_Events_SendEvent("LeaderLib_Events_TraderSpawnComplete");
+//END_REGION
+
 //REGION SPAWN_EVENTS
+/*
 IF
 StoryEvent(_, "LeaderLib_Initialized")
 THEN
@@ -703,9 +730,10 @@ TimerFinished("LLLIB_Timers_CreateTraders")
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Traders] Starting trader spawning. ");
 //LLLIB_Traders_StartSpawning();
+*/
 
 IF
-StoryEvent(_, "LeaderLib_SpawnTraders")
+StoryEvent(_, "LeaderLib_Events_SpawnTraders")
 THEN
 LLLIB_Traders_StartSpawning();
 

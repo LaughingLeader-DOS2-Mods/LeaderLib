@@ -32,6 +32,7 @@ LLLIB_DictionarySort_StartSorting((STRING)_DictionaryID, (INTEGER)_TickRate, (ST
 AND
 DB_LLLIB_DictionarySort_SortingComplete(_DictionaryID)
 THEN
+LLLIB_DictionarySort_CleanupLastTrackedTime(_DictionaryID);
 NOT DB_LLLIB_DictionarySort_SortingComplete(_DictionaryID);
 
 PROC
@@ -435,7 +436,7 @@ THEN
 NOT DB_LLLIB_DictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex);
 
 PROC
-LLLIB_DictionarySort_CleanupJob((STRING)_DictionaryID)
+LLLIB_DictionarySort_CleanupLastTrackedTime((STRING)_DictionaryID)
 AND
 DB_LLLIB_DictionarySort_TotalTime(_DictionaryID, _TimeTaken)
 THEN

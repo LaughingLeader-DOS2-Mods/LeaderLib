@@ -659,6 +659,8 @@ ItemAddedToCharacter(_Item, _Dummy)
 AND
 GetTemplate(_Dummy, "LLLIB_GeneratorDummy_24a5d60b-680b-4fbc-9b2c-19061a261297")
 AND
+GetTemplate(_Item, _ItemTemplate)
+AND
 ObjectGetFlag(_Dummy, "LLLIB_GeneratorDummy_CreatedItem", 1)
 AND
 GetVarFixedString(_Dummy, "LLLIB_Treasure_ItemStat", _ItemEntry)
@@ -669,6 +671,7 @@ ItemGetAmount(_Item, _Amount)
 THEN
 ItemToInventory(_Item, _Object, _Amount, 0, 1);
 SetVarFixedString(_Item, "LLLIB_GeneratedItemStat", _ItemEntry);
+//DB_LLLIB_Treasure_StatToTemplate(_ItemEntry, _ItemTemplate);
 SetVarFixedString(_Dummy, "LLLIB_Treasure_ItemStat", "");
 NOT DB_LLLIB_Treasure_Temp_DummyTarget(_Object, _Dummy, _ItemEntry);
 LLLIB_Treasure_MarkAsFinished(_Object, _ItemEntry, _TreasureID);
@@ -764,6 +767,11 @@ AND
 DB_LLLIB_Treasure_GeneratedEvent(_OwnerID, _ItemEntry, _OnGeneratedEvent)
 THEN
 SetStoryEvent(_Owner, _OnGeneratedEvent);
+
+PROC
+LLLIB_Treasure_SendGeneratedEvent((GUIDSTRING)_Owner, (STRING)_OwnerID, (STRING)_ItemEntry)
+THEN
+SetStoryEvent(_Owner, "LeaderLib_Events_GenerationComplete");
 
 PROC
 LLLIB_Treasure_RemoveIfOnlyOnce((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry)

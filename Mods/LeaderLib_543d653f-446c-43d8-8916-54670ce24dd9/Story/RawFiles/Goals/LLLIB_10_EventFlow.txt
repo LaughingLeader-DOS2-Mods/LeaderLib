@@ -24,7 +24,7 @@ LLLIB_Array_NewArray(_StackName);
 PROC
 LLLIB_EventFlow_Init_LeaderLibStack((STRING)_StackName)
 THEN
-LLLIB_EventFlow_AddStack(_StackName, "LeaderLib_Events_InitEventFlowComplete", 5000);
+LLLIB_EventFlow_AddStack(_StackName, "LeaderLib_Events_InitEventFlowComplete", 500);
 
 PROC
 LLLIB_EventFlow_Init_LeaderLibStack((STRING)_StackName)

@@ -6,6 +6,8 @@ KBSECTION
 IF
 GameStarted("LeaderLib_TestLevel",_)
 THEN
+DB_NOOP(1);
+/*
 LLLIB_Trader_Register_Trader("LLLIB_TestLevel_Trader", "Elves_Female_Clothing_3ba29ecd-4849-494d-a9a6-6221eea6761c", 1);
 LLLIB_Trader_Register_PositionObject("LLLIB_TestLevel_Trader", "LeaderLib_TestLevel", ITEMGUID_LLLIB_Debug_TestChest_ff6c9edf-aa21-447a-8bb2-2a647a8dae46);
 LLLIB_Trader_Register_Dialog("LLLIB_TestLevel_Trader", "", "LLLIB_RetiredLeader_Default");
@@ -71,7 +73,7 @@ LeaderLib_RegisterModMenu("LLZZ1", "[ModMenu1] Settings", "LLLIB_SettingsMenu", 
 LeaderLib_RegisterModMenu("LLZZ6", "[ModMenu6] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZZ4", "[ModMenu4] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZZ8", "[ModMenu8] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-
+*/
 /*
 IF
 StoryEvent(_, "LeaderLib_Initialized")
@@ -186,6 +188,37 @@ IntegertoString(_Ran, _RanStr)
 THEN
 NOT DB_LLLIB_Temp_RandomResult(_Ran);
 LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem] Random range result: ",_RanStr," | Min: 1 Max: 19");
+*/
+
+IF
+CharacterUsedItem(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574, ITEMGUID_LLLIB_DebugLever_TestRandom_d3152baa-c6d4-4e8e-a622-a6bb9c149b3e)
+AND
+CharacterIsPlayer(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574, 1)
+AND
+CharacterGetOwner(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574, _Owner)
+THEN
+CharacterRemoveFromPlayerCharacter(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574, _Owner);
+CharacterRemoveFromParty(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574);
+CharacterMakeNPC(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574);
+
+IF
+CharacterUsedItem(_, ITEMGUID_LLLIB_DebugLever_TestRandom_d3152baa-c6d4-4e8e-a622-a6bb9c149b3e)
+AND
+CharacterIsPlayer(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574, 0)
+THEN
+CharacterMakePlayer(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574);
+MakePlayerActive(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574);
+
+/*
+IF
+RegionEnded(_Level)
+AND
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+AND
+CharacterIsPlayer(_LeaderTrader, 1)
+THEN
+CharacterMakeNPC(_LeaderTrader);
+CharacterRemoveFromParty(_LeaderTrader);
 */
 
 IF

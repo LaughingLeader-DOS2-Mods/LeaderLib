@@ -1,6 +1,8 @@
 INIT
 	CHARACTER:__Me
 	FIXEDSTRING:%EmptyString=""
+	INT:%EmptyInt=0
+	INT:%DefaultShowInTrade=1
 EVENTS
 
 EVENT GenerateItemByStat
@@ -14,6 +16,24 @@ IF "c1"
 THEN
 	SetFlag(__Me, "LLLIB_GeneratorDummy_CreatedItem")
 	CharacterAddToInventory(__Me, _StatName, 1, 1)
+	//SetVar(__Me, "LLLIB_Treasure_ItemStat", %EmptyString)
+ENDIF
+
+EVENT GenerateItemByStat_Helper
+VARS
+	FIXEDSTRING:_StatName
+	INT:_ShowInTrade
+ON
+	OnCharacterEvent(__Me, "LLLIB_Events_CreateEquipmentByStat")
+ACTIONS
+IF "c1&c2"
+	GetVar(_StatName, __Me, "LLLIB_Helpers_NextCreatedEquipmentStat")
+	GetVar(_ShowInTrade, __Me, "LLLIB_Helpers_ShowNextItemInTrade")
+THEN
+	SetFlag(__Me, "LLLIB_GeneratorDummy_CreatedEquipmentItem")
+	CharacterAddToInventory(__Me, _StatName, 1, _ShowInTrade)
+	SetVar(__Me, "LLLIB_Helpers_NextCreatedEquipmentStat", %EmptyString)
+	SetVar(__Me, "LLLIB_Helpers_ShowNextItemInTrade", %DefaultShowInTrade)
 	//SetVar(__Me, "LLLIB_Treasure_ItemStat", %EmptyString)
 ENDIF
 

@@ -75,6 +75,22 @@ NOT DB_LLLIB_Array_Length(_ID, _Length);
 DB_LLLIB_Array_Length(_ID, _NextLength);
 //END_REGION
 
+//REGION ARRAY_QUERIES
+QRY
+LLLIB_Array_QRY_DataExists((STRING)_ID)
+AND
+DB_LLLIB_Array_Data(_ID, _, _)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_Array_QRY_DictionaryDataExists((STRING)_ID)
+AND
+DB_LLLIB_Dictionary_Data(_ID, _, _, _)
+THEN
+DB_NOOP(1);
+//END_REGION
+
 //REGION ARRAY_METHODS
 PROC
 LLLIB_Array_NewArray((STRING)_ID)

@@ -2,28 +2,29 @@ Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
 //DB_LLLIB_Dictionary_Data("LLLIB_System_EventStack", _Index, _StartEvent, _CompleteEvent)
-//LLLIB_EventFlow_CurrentEvent(_StackName, _Index)
-//LLLIB_EventFlow_EventStack(_StackName, _OnCompleteEvent)
-//LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent)
+//DB_LLLIB_EventFlow_CurrentEvent(_StackName, _Index)
+//DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime)
+//DB_LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent)
+//DB_LLLIB_EventFlow_WaitTimer(_StackName, _TimerName)
 KBSECTION
 //REGION INIT
 IF
 StoryEvent(_, "LeaderLib_Initialized")
 THEN
-LLLIB_EventFlow_Init_LeaderLibStack("LLLIB_EventFlow_EventStack");
+LLLIB_EventFlow_Init_LeaderLibStack("DB_LLLIB_EventFlow_EventStack");
 
 PROC
-LLLIB_EventFlow_AddStack((STRING)_StackName, (STRING)_OnCompleteEvent)
+LLLIB_EventFlow_AddStack((STRING)_StackName, (STRING)_OnFlowCompleteEvent, (INTEGER)_TimeBetweenEvents)
 AND
-NOT LLLIB_EventFlow_EventStack(_StackName, _)
+NOT DB_LLLIB_EventFlow_EventStack(_StackName, _, _)
 THEN
-LLLIB_EventFlow_EventStack(_StackName, _OnCompleteEvent);
+DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _TimeBetweenEvents);
 LLLIB_Array_NewArray(_StackName);
 
 PROC
 LLLIB_EventFlow_Init_LeaderLibStack((STRING)_StackName)
 THEN
-LLLIB_EventFlow_AddStack(_StackName, "LeaderLib_Events_InitEventFlowComplete");
+LLLIB_EventFlow_AddStack(_StackName, "LeaderLib_Events_InitEventFlowComplete", 5000);
 
 PROC
 LLLIB_EventFlow_Init_LeaderLibStack((STRING)_StackName)
@@ -48,32 +49,33 @@ LLLIB_EventFlow_SetCurrentEvent(_StackName, 0);
 PROC
 LLLIB_EventFlow_SetCurrentEvent((STRING)_StackName, (INTEGER)_Index)
 AND
-LLLIB_EventFlow_CurrentEvent(_CurrentIndex)
+DB_LLLIB_EventFlow_CurrentEvent(_StackName, _CurrentIndex)
 AND
 _CurrentIndex != _Index
 THEN
-NOT LLLIB_EventFlow_CurrentEvent(_CurrentIndex);
-LLLIB_EventFlow_CurrentEvent(_StackName, _Index);
+NOT DB_LLLIB_EventFlow_CurrentEvent(_StackName, _CurrentIndex);
+DB_LLLIB_EventFlow_CurrentEvent(_StackName, _Index);
 
 PROC
 LLLIB_EventFlow_SetCurrentEvent((STRING)_StackName, (INTEGER)_Index)
 THEN
-LLLIB_EventFlow_CurrentEvent(_StackName, _Index);
+DB_LLLIB_EventFlow_CurrentEvent(_StackName, _Index);
 
 PROC
 LLLIB_EventFlow_SetCurrentEvent((STRING)_StackName, (INTEGER)_Index)
 AND
-LLLIB_EventFlow_CurrentEvent(_StackName, _Index)
+DB_LLLIB_EventFlow_CurrentEvent(_StackName, _Index)
 AND
-DB_LLLIB_Dictionary_Data("LLLIB_EventFlow_EventStack", _Index, _StartEvent, _OnCompleteEvent)
+DB_LLLIB_Dictionary_Data("DB_LLLIB_EventFlow_EventStack", _Index, _StartEvent, _OnCompleteEvent)
 THEN
 LLLIB_EventFlow_LaunchTimeoutTimer(_StackName, _OnCompleteEvent);
+LeaderLog_Log("DEBUG", "[LLLIB:EventFlow:SetCurrentEvent] Event flow [",_StackName,"] sent out StartEvent [",_StartEvent,"].");
 LLLIB_Events_SendEvent(_StartEvent);
 
 PROC
 LLLIB_EventFlow_SetCurrentEvent((STRING)_StackName, (INTEGER)_Index)
 AND
-DB_LLLIB_Array_Length("LLLIB_EventFlow_EventStack", _Length)
+DB_LLLIB_Array_Length("DB_LLLIB_EventFlow_EventStack", _Length)
 AND
 _Index >= _Length
 THEN
@@ -82,7 +84,7 @@ LLLIB_EventFlow_OnEventFlowComplete(_StackName);
 PROC
 LLLIB_EventFlow_NextEvent((STRING)_StackName)
 AND
-LLLIB_EventFlow_CurrentEvent(_StackName, _Index)
+DB_LLLIB_EventFlow_CurrentEvent(_StackName, _Index)
 AND
 IntegerSum(_Index, 1, _NextIndex)
 THEN
@@ -98,24 +100,24 @@ AND
 DB_LeaderLog_Temp_CombinedString(_TimerName)
 THEN
 NOT DB_LeaderLog_Temp_CombinedString(_TimerName);
-LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent);
-TimerLaunch(_TimerName, 10000);
+DB_LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent);
+TimerLaunch(_TimerName, 30000);
 
 IF
 TimerFinished(_TimerName)
 AND
-LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent)
+DB_LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:EventFlow:Timeout] Event flow [",_StackName,"] timed out (completion event [",_OnCompleteEvent,"] never fired). Starting next event in the stack.");
-NOT LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent);
+NOT DB_LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent);
 LLLIB_EventFlow_NextEvent(_StackName);
 
 PROC
 LLLIB_EventFlow_StopTimeoutTimer((STRING)_StackName, (STRING)_OnCompleteEvent)
 AND
-LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent)
+DB_LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent)
 THEN
-NOT LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent);
+NOT DB_LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent);
 TimerCancel(_TimerName);
 //END_REGION
 
@@ -123,11 +125,31 @@ TimerCancel(_TimerName);
 IF
 StoryEvent(_, _OnCompleteEvent)
 AND
-LLLIB_EventFlow_EventStack(_StackName, _OnCompleteEvent)
+DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime)
 AND
 DB_LLLIB_Dictionary_Data(_StackName, _Index, _StartEvent, _OnCompleteEvent)
+AND
+NOT DB_LLLIB_EventFlow_WaitTimer(_StackName, _)
 THEN
+LeaderLog_Log("DEBUG", "[LLLIB:EventFlow:OnEventComplete] Event flow [",_StackName,"] recieved OnCompleteEvent [",_OnCompleteEvent,"]. Starting wait timer for next event.");
 LLLIB_EventFlow_StopTimeoutTimer(_StackName, _OnCompleteEvent);
+LLLIB_EventFlow_StartWaitTimer(_StackName, _WaitTime);
+
+PROC
+LLLIB_EventFlow_StartWaitTimer((STRING)_StackName, (INTEGER)_WaitTime)
+AND
+StringConcatenate("LLLIB_Timers_EventFlow_WaitTimer_", _StackName, _TimerName)
+THEN
+DB_LLLIB_EventFlow_WaitTimer(_StackName, _TimerName);
+TimerLaunch(_TimerName, _WaitTime);
+
+IF
+TimerFinished(_TimerName)
+AND
+DB_LLLIB_EventFlow_WaitTimer(_StackName, _TimerName)
+THEN
+NOT DB_LLLIB_EventFlow_WaitTimer(_StackName, _TimerName);
+LeaderLog_Log("DEBUG", "[LLLIB:EventFlow:WaitTimer] Event flow [",_StackName,"] wait timer finished. Sending next event.");
 LLLIB_EventFlow_NextEvent(_StackName);
 //END_REGION
 
@@ -135,22 +157,22 @@ LLLIB_EventFlow_NextEvent(_StackName);
 PROC
 LLLIB_EventFlow_ClearStackData((STRING)_StackName)
 AND
-LLLIB_EventFlow_EventStack(_StackName, _OnCompleteEvent)
+DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime)
 THEN
 LLLIB_Array_ClearArray(_StackName);
-NOT LLLIB_EventFlow_EventStack(_StackName, _OnCompleteEvent);
+NOT DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime);
 
 PROC
 LLLIB_EventFlow_ClearStackData((STRING)_StackName)
 AND
-LLLIB_EventFlow_CurrentEvent(_StackName, _Index)
+DB_LLLIB_EventFlow_CurrentEvent(_StackName, _Index)
 THEN
-NOT LLLIB_EventFlow_CurrentEvent(_StackName, _Index);
+NOT DB_LLLIB_EventFlow_CurrentEvent(_StackName, _Index);
 
 PROC
 LLLIB_EventFlow_ClearStackData((STRING)_StackName)
 AND
-LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent)
+DB_LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent)
 THEN
 LLLIB_EventFlow_StopTimeoutTimer(_StackName, _OnCompleteEvent);
 //END_REGION
@@ -159,10 +181,10 @@ LLLIB_EventFlow_StopTimeoutTimer(_StackName, _OnCompleteEvent);
 PROC
 LLLIB_EventFlow_OnEventFlowComplete((STRING)_StackName)
 AND
-LLLIB_EventFlow_EventStack(_StackName, _OnCompleteEvent)
+DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:EventFlow:OnEventFlowComplete] Event flow [",_StackName,"] completed. Clearing dictionary and sending completion event [",_OnCompleteEvent,"].");
-LLLIB_Events_SendEvent(_OnCompleteEvent);
+LeaderLog_Log("DEBUG", "[LLLIB:EventFlow:OnEventFlowComplete] Event flow [",_StackName,"] completed. Clearing dictionary and sending completion event [",_OnFlowCompleteEvent,"].");
+LLLIB_Events_SendEvent(_OnFlowCompleteEvent);
 LLLIB_EventFlow_ClearStackData(_StackName);
 
 IF

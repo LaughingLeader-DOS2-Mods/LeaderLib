@@ -147,6 +147,13 @@ NOT DB_LeaderLib_ModApi_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _St
 //REGION API_EVENTS
 IF
 GameStarted(_,_)
+AND
+DB_LeaderLib_Initialized(_Val)
+THEN
+NOT DB_LeaderLib_Initialized(_Val);
+
+IF
+GameStarted(_,_)
 THEN
 TimerLaunch("LLLIB_Timers_LeaderLibInitialized", 1);
 TimerLaunch("LLLIB_Timers_LeaderLib_ModBridgeCleanup", 500);
@@ -154,6 +161,7 @@ TimerLaunch("LLLIB_Timers_LeaderLib_ModBridgeCleanup", 500);
 IF
 TimerFinished("LLLIB_Timers_LeaderLibInitialized")
 THEN
+DB_LeaderLib_Initialized(1);
 LeaderLog_Log("DEBUG", "[LLLIB:ModAPI] LeaderLib initialized.");
 LLLIB_Events_SendEvent("LeaderLib_Initialized");
 //END_REGION

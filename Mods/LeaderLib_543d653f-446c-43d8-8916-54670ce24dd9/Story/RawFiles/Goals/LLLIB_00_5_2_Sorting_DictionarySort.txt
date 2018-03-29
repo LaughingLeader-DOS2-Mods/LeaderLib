@@ -189,7 +189,7 @@ TimerFinished(_TimerName)
 AND
 DB_LLLIB_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort:SortJob(TimerFinished)] Ticking '",_DictionaryID,"'.");
+//LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort:SortJob(TimerFinished)] Ticking '",_DictionaryID,"'.");
 LLLIB_DictionarySort_Internal_OnTick(_DictionaryID);
 
 IF
@@ -197,7 +197,7 @@ TimerFinished(_TimerName)
 AND
 DB_LLLIB_DictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort:SortJob(TimerFinished)] Ticking entry [",_DictionaryID,"][",_ID,"].");
+//LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort:SortJob(TimerFinished)] Ticking entry [",_DictionaryID,"][",_ID,"].");
 LLLIB_DictionarySort_Internal_OnEntryTick(_DictionaryID, _ID);
 
 PROC
@@ -220,6 +220,15 @@ LLLIB_DictionarySort_SortEntry(_DictionaryID, _ID, _StringEntry);
 DB_LLLIB_DictionarySort_CurrentlySorting(_DictionaryID, 1);
 
 PROC
+LLLIB_DictionarySort_Internal_OnTick((STRING)_DictionaryID)
+AND
+NOT DB_LLLIB_DictionarySort_Temp_StringQueue(_DictionaryID, _, _)
+AND
+NOT DB_LLLIB_DictionarySort_SortingComplete(_DictionaryID)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort:OnTick] [ERROR] String queue for [",_DictionaryID,"] is empty!");
+
+PROC
 LLLIB_DictionarySort_OnStringSorted((STRING)_DictionaryID, (STRING)_ID)
 AND
 DB_LLLIB_DictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex)
@@ -233,7 +242,7 @@ LLLIB_DictionarySort_OnStringSorted((STRING)_DictionaryID, (STRING)_ID)
 AND
 LLLIB_DictionarySort_QRY_SortingNeeded()
 THEN
-////LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort:OnStringSorted] Starting sort timer. ");
+//LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort:OnStringSorted] Starting sort timer. ");
 LLLIB_DictionarySort_Internal_NextTick(_DictionaryID);
 
 PROC

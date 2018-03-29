@@ -361,8 +361,6 @@ IntegertoString(_Index, _IndexStr)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:AddToArray] Added [",_Key,"] = '",_Value,"' to dictionary [",_ID,"] at index [",_IndexStr,"].");
 
-
-
 PROC
 LLLIB_Array_AddToDictionary((STRING)_ID, (STRING)_Key, (STRING)_Value)
 AND
@@ -373,6 +371,34 @@ AND
 IntegertoString(_AddedIndex, _AddedIndexStr)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:AddToArray] Added '",_Value,"' to array [",_ID,"] at index [",_AddedIndexStr,"].");
+*/
+
+/*
+PROC
+LLLIB_Array_ShiftArrayDown((STRING)_ID, (INTEGER)_AtIndex)
+AND
+DB_LLLIB_Array_Data(_ID, _Index, _Value)
+AND
+_Index > _AtIndex
+AND
+IntegertoString(_Index, _IndexStr)
+AND
+IntegertoString(_AtIndex, _AtIndexStr)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:ShiftArrayDown(",_AtIndexStr,")] Shifted '",_Value,"' in array [",_ID,"] down, to index [",_IndexStr,"].");
+
+PROC
+LLLIB_Array_ShiftArrayUp((STRING)_ID, (INTEGER)_StartIndex)
+AND
+DB_LLLIB_Array_Data(_ID, _Index, _Value)
+AND
+_Index >= _StartIndex
+AND
+IntegertoString(_Index, _IndexStr)
+AND
+IntegertoString(_StartIndex, _StartIndexStr)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:ShiftArrayUp(",_StartIndexStr,")] Shifted '",_Value,"' in array [",_ID,"] up, to index [",_IndexStr,"].");
 */
 //END_REGION
 EXITSECTION

@@ -1,0 +1,284 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+//DB_LLLIB_Sorter_Codex(_Index, _Char)
+//DB_LLLIB_Sorter_Iterator(_Index)
+/*STRING_COMPARISON*/
+//DB_LLLIB_StringLength(_Str, _Length)
+//DB_LLLIB_StringCompare_Results(_Str1, _Str2, _Val)
+/*STRING_COMPARISON_INTERNAL*/
+//DB_LLLIB_StringExt_Temp_CompareIterator(_SessionID, _Str1, _Str2, _Index)
+//DB_LLLIB_StringExt_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _ComparisonVal)
+//DB_LLLIB_StringExt_Temp_StringCompare_StopIteration(_SessionID, _Str1, _Str2)
+KBSECTION
+//REGION STRING_COMPARE_HELPERS
+QRY
+LLLIB_StringExt_Internal_CompareStrings_QRY_EndReached((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2, (INTEGER)_Index)
+AND
+DB_LLLIB_StringLength(_Str1, _Str1Length)
+AND
+_Index >= _Str1Length
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_StringExt_Internal_CompareStrings_QRY_EndReached((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2, (INTEGER)_Index)
+AND
+DB_LLLIB_StringLength(_Str2, _Str2Length)
+AND
+_Index >= _Str2Length
+THEN
+DB_NOOP(1);
+
+PROC
+LLLIB_StringExt_Internal_CompareStrings_SetCompareValue((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2, (INTEGER)_Val)
+AND
+_Val > 0
+THEN
+DB_LLLIB_StringExt_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, 1);
+
+PROC
+LLLIB_StringExt_Internal_CompareStrings_SetCompareValue((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2, (INTEGER)_Val)
+AND
+_Val < 0
+THEN
+DB_LLLIB_StringExt_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, -1);
+
+PROC
+LLLIB_StringExt_Internal_CompareStrings_SetCompareValue((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2, (INTEGER)_Val)
+AND
+_Val == 0
+THEN
+DB_LLLIB_StringExt_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, 0);
+
+QRY
+LLLIB_StringExt_CompareStrings_QRY_HasResult((STRING)_Str1, (STRING)_Str2)
+AND
+DB_LLLIB_StringCompare_Results(_Str1, _Str2, _Val)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_StringExt_CompareStrings_QRY_HasResult((STRING)_Str1, (STRING)_Str2)
+AND
+DB_LLLIB_StringCompare_Results(_Str2, _Str1, _Val)
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION STRING_COMPARE
+QRY
+LLLIB_StringExt_QRY_CompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+THEN
+LLLIB_StringExt_CompareStrings(_SessionID, _Str1, _Str2);
+
+PROC
+LLLIB_StringExt_CompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+AND
+LLLIB_StringExt_CompareStrings_Internal_QRY_SkipCompareIfEqual(_Str1, _Str2)
+AND
+NOT LLLIB_StringExt_CompareStrings_QRY_HasResult(_Str1, _Str2)
+THEN
+LLLIB_StringExt_Internal_StartCompareStrings(_SessionID, _Str1, _Str2);
+
+QRY
+LLLIB_StringExt_CompareStrings_Internal_QRY_SkipCompareIfEqual((STRING)_Str1, (STRING)_Str2)
+AND
+NOT LLLIB_StringExt_CompareStrings_QRY_HasResult(_Str1, _Str2)
+AND
+_Str1 == _Str2
+THEN
+DB_LLLIB_StringCompare_Results(_Str1, _Str2, 0);
+
+QRY
+LLLIB_StringExt_CompareStrings_Internal_QRY_SkipCompareIfEqual((STRING)_Str1, (STRING)_Str2)
+THEN
+DB_NOOP(1);
+
+PROC
+LLLIB_StringExt_Internal_StartCompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+AND
+NOT DB_LLLIB_StringLength(_Str1, _)
+THEN
+LLLIB_StringExt_DetermineStringLength(_Str1);
+
+PROC
+LLLIB_StringExt_Internal_StartCompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+AND
+NOT DB_LLLIB_StringLength(_Str2, _)
+THEN
+LLLIB_StringExt_DetermineStringLength(_Str2);
+
+PROC
+LLLIB_StringExt_Internal_StartCompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+AND
+DB_LLLIB_StringExt_Temp_StringCompare_StopIteration(_SessionID, _Str1, _Str2)
+THEN
+NOT DB_LLLIB_StringExt_Temp_StringCompare_StopIteration(_SessionID, _Str1, _Str2);
+
+PROC
+LLLIB_StringExt_Internal_StartCompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+THEN
+DB_LLLIB_StringExt_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, 0);
+DB_LLLIB_StringExt_Temp_CompareIterator(_SessionID, _Str1, _Str2, 0);
+LLLIB_StringExt_Internal_CompareStrings(_SessionID, _Str1, _Str2);
+
+PROC
+LLLIB_StringExt_Internal_CompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+AND
+NOT DB_LLLIB_StringExt_Temp_StringCompare_StopIteration(_SessionID, _Str1, _Str2)
+AND
+DB_LLLIB_StringExt_Temp_CompareIterator(_SessionID, _Str1, _Str2, _Index)
+AND
+StringSub(_Str1, _Index, 1, _Char1)
+AND
+StringSub(_Str2, _Index, 1, _Char2)
+AND
+DB_LLLIB_Sorter_Codex(_C1, _Char1)
+AND
+DB_LLLIB_Sorter_Codex(_C2, _Char2)
+AND
+IntegerSubtract(_C1, _C2, _Comparison)
+AND
+_Comparison != 0
+AND
+DB_LLLIB_StringExt_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _PastVal)
+THEN
+NOT DB_LLLIB_StringExt_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _PastVal);
+LLLIB_StringExt_Internal_CompareStrings_SetCompareValue(_SessionID, _Str1, _Str2, _Comparison);
+LLLIB_StringExt_Internal_CompareStrings_ReturnCompareValue(_SessionID, _Str1, _Str2);
+DB_LLLIB_StringExt_Temp_StringCompare_StopIteration(_SessionID, _Str1, _Str2);
+
+PROC
+LLLIB_StringExt_Internal_CompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+AND
+NOT DB_LLLIB_StringExt_Temp_StringCompare_StopIteration(_SessionID, _Str1, _Str2)
+AND
+DB_LLLIB_StringExt_Temp_CompareIterator(_SessionID, _Str1, _Str2, _Index)
+AND
+NOT LLLIB_StringExt_Internal_CompareStrings_QRY_EndReached(_SessionID, _Str1, _Str2, _Index)
+AND
+IntegerSum(_Index, 1, _NextIndex)
+THEN
+NOT DB_LLLIB_StringExt_Temp_CompareIterator(_SessionID, _Str1, _Str2, _Index);
+DB_LLLIB_StringExt_Temp_CompareIterator(_SessionID, _Str1, _Str2, _NextIndex);
+LLLIB_StringExt_Internal_CompareStrings(_SessionID, _Str1, _Str2);
+
+PROC
+LLLIB_StringExt_Internal_CompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+AND
+NOT DB_LLLIB_StringExt_Temp_StringCompare_StopIteration(_SessionID, _Str1, _Str2)
+AND
+DB_LLLIB_StringExt_Temp_CompareIterator(_SessionID, _Str1, _Str2, _Index)
+AND
+LLLIB_StringExt_Internal_CompareStrings_QRY_EndReached(_SessionID, _Str1, _Str2, _Index)
+THEN
+LLLIB_StringExt_Internal_CompareStrings_ReturnFinalValue(_SessionID, _Str1, _Str2);
+
+PROC
+LLLIB_StringExt_Internal_CompareStrings_ReturnFinalValue((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+AND
+NOT LLLIB_StringExt_CompareStrings_QRY_HasResult(_Str1, _Str2)
+AND
+DB_LLLIB_StringLength(_Str1, _Str1Length)
+AND
+DB_LLLIB_StringLength(_Str2, _Str2Length)
+AND
+_Str1Length > _Str2Length
+AND
+DB_LLLIB_StringExt_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _PastVal)
+THEN
+NOT DB_LLLIB_StringExt_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _PastVal);
+DB_LLLIB_StringCompare_Results(_Str1, _Str2, 1);
+
+PROC
+LLLIB_StringExt_Internal_CompareStrings_ReturnFinalValue((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+AND
+NOT LLLIB_StringExt_CompareStrings_QRY_HasResult(_Str1, _Str2)
+AND
+DB_LLLIB_StringLength(_Str1, _Str1Length)
+AND
+DB_LLLIB_StringLength(_Str2, _Str2Length)
+AND
+_Str1Length < _Str2Length
+AND
+DB_LLLIB_StringExt_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _PastVal)
+THEN
+NOT DB_LLLIB_StringExt_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _PastVal);
+DB_LLLIB_StringCompare_Results(_Str1, _Str2, -1);
+
+PROC
+LLLIB_StringExt_Internal_CompareStrings_ReturnFinalValue((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+AND
+NOT LLLIB_StringExt_CompareStrings_QRY_HasResult(_Str1, _Str2)
+AND
+DB_LLLIB_StringExt_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _PastVal)
+THEN
+NOT DB_LLLIB_StringExt_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _PastVal);
+DB_LLLIB_StringCompare_Results(_Str1, _Str2, 0);
+
+PROC
+LLLIB_StringExt_Internal_CompareStrings_ReturnCompareValue((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+AND
+NOT LLLIB_StringExt_CompareStrings_QRY_HasResult(_Str1, _Str2)
+AND
+DB_LLLIB_StringExt_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _Val)
+THEN
+NOT DB_LLLIB_StringExt_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _Val);
+DB_LLLIB_StringCompare_Results(_Str1, _Str2, _Val);
+
+IF
+DB_LLLIB_StringCompare_Results(_Str1, _Str2, _Val)
+AND
+NOT DB_LLLIB_StringCompare_Results(_Str2, _Str1, _)
+AND
+IntegerProduct(_Val, -1, _OtherVal)
+THEN
+DB_LLLIB_StringCompare_Results(_Str2, _Str1, _OtherVal);
+//END_REGION
+
+//REGION STRING_LENGTH
+QRY
+LLLIB_StringExt_GetStringLength((STRING)_Str)
+THEN
+LLLIB_StringExt_DetermineStringLength(_Str);
+
+PROC
+LLLIB_StringExt_DetermineStringLength((STRING)_Str)
+AND
+NOT DB_LLLIB_StringLength(_Str, _)
+THEN
+DB_LLLIB_StringLength(_Str, 0);
+LLLIB_StringExt_Internal_DetermineStringLength(_Str);
+
+PROC
+LLLIB_StringExt_Internal_DetermineStringLength((STRING)_Str)
+AND
+DB_LLLIB_Sorter_Iterator(_Index)
+AND
+StringSub(_Str, _Index, 1, _Char)
+AND
+DB_LLLIB_Sorter_Codex(_, _Char)
+AND
+DB_LLLIB_StringLength(_Str, _Length)
+AND
+IntegerSum(_Length, 1, _NextLength)
+THEN
+NOT DB_LLLIB_StringLength(_Str, _Length);
+DB_LLLIB_StringLength(_Str, _NextLength);
+
+/*
+PROC
+LLLIB_StringExt_DetermineStringLength((STRING)_Str)
+AND
+DB_LLLIB_StringLength(_Str, _Length)
+AND
+IntegertoString(_Length, _LengthStr)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Sorter:DetermineStringLength] Length of '",_Str,"' is [",_LengthStr,"].");
+*/
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

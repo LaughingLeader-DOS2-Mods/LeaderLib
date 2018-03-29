@@ -360,9 +360,9 @@ AND
 IntegertoString(_Index, _IndexStr)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:AddToArray] Added [",_Key,"] = '",_Value,"' to dictionary [",_ID,"] at index [",_IndexStr,"].");
-*/
 
-/*
+
+
 PROC
 LLLIB_Array_AddToDictionary((STRING)_ID, (STRING)_Key, (STRING)_Value)
 AND

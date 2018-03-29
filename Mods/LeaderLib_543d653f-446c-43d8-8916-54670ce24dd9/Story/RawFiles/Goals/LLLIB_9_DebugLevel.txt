@@ -52,16 +52,13 @@ LeaderLib_RegisterModMenu("LLZ5", "[Zironimus] Settings", "LLLIB_SettingsMenu", 
 LeaderLib_RegisterModMenu("LLNWIZ", "[Naming Wizard] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLEQSET", "[Equipment Sets] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLDBT", "[Debug Tools] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-
 LeaderLib_RegisterModMenu("LLZasd7", "[Blaaaabbbbbzter] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZasd6", "[Blaaaabbbbbzter] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLasdZ92", "[Blaaaabbbbbzter9] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-
 LeaderLib_RegisterModMenu("LLTest10", "Zeronimus", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLTest7", "Bananas", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLTest2", "Apples2", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLTest1", "Apples1", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-
 LeaderLib_RegisterModMenu("LLZZ2", "[ModMenu2] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZZ11", "[ModMenu11] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZZ3", "[ModMenu3] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
@@ -70,7 +67,6 @@ LeaderLib_RegisterModMenu("LLZZ7", "[ModMenu7] Settings", "LLLIB_SettingsMenu", 
 LeaderLib_RegisterModMenu("LLZZ9", "[ModMenu9] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZZ10", "[ModMenu10] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZZ12", "[ModMenu12] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-
 LeaderLib_RegisterModMenu("LLZZ1", "[ModMenu1] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZZ6", "[ModMenu6] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZZ4", "[ModMenu4] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
@@ -78,16 +74,18 @@ LeaderLib_RegisterModMenu("LLZZ8", "[ModMenu8] Settings", "LLLIB_SettingsMenu", 
 
 LLLIB_ModSettings_CalculateMaxPage();
 
+/*
 IF
 StoryEvent(_, "LeaderLib_Initialized")
 AND
-LLLIB_Sorter_QRY_CompareStrings("Test", "[ModMenu2] Settings", "[ModMenu10] Settings")
+LLLIB_StringExt_QRY_CompareStrings("Test", "[ModMenu2] Settings", "[ModMenu10] Settings")
 AND
 DB_LLLIB_Sorter_Temp_StringCompare_Results("Test", _Str1, _Str2, _CompareVal)
 AND
 IntegertoString(_CompareVal, _CompareValStr)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] String comparison: '",_Str1,"' and '",_Str2,"' = [",_CompareValStr,"]");
+*/
 
 IF
 GameStarted("LeaderLib_TestLevel",_)

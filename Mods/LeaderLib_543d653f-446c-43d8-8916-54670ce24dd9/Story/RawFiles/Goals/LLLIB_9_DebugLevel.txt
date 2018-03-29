@@ -72,15 +72,13 @@ LeaderLib_RegisterModMenu("LLZZ6", "[ModMenu6] Settings", "LLLIB_SettingsMenu", 
 LeaderLib_RegisterModMenu("LLZZ4", "[ModMenu4] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZZ8", "[ModMenu8] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 
-LLLIB_ModSettings_CalculateMaxPage();
-
 /*
 IF
 StoryEvent(_, "LeaderLib_Initialized")
 AND
 LLLIB_StringExt_QRY_CompareStrings("Test", "[ModMenu2] Settings", "[ModMenu10] Settings")
 AND
-DB_LLLIB_Sorter_Temp_StringCompare_Results("Test", _Str1, _Str2, _CompareVal)
+DB_LLLIB_DictionarySort_Temp_StringCompare_Results("Test", _Str1, _Str2, _CompareVal)
 AND
 IntegertoString(_CompareVal, _CompareValStr)
 THEN

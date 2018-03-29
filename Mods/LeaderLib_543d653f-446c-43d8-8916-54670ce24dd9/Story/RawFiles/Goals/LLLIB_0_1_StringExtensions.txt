@@ -1,8 +1,8 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-//DB_LLLIB_Sorter_Codex(_Index, _Char)
-//DB_LLLIB_Sorter_Iterator(_Index)
+//DB_LLLIB_Codex(_Index, _Char)
+//DB_LLLIB_Codex_Iterator(_Index)
 /*STRING_COMPARISON*/
 //DB_LLLIB_StringLength(_Str, _Length)
 //DB_LLLIB_StringCompare_Results(_Str1, _Str2, _Val)
@@ -134,9 +134,9 @@ StringSub(_Str1, _Index, 1, _Char1)
 AND
 StringSub(_Str2, _Index, 1, _Char2)
 AND
-DB_LLLIB_Sorter_Codex(_C1, _Char1)
+DB_LLLIB_Codex(_C1, _Char1)
 AND
-DB_LLLIB_Sorter_Codex(_C2, _Char2)
+DB_LLLIB_Codex(_C2, _Char2)
 AND
 IntegerSubtract(_C1, _C2, _Comparison)
 AND
@@ -254,11 +254,11 @@ LLLIB_StringExt_Internal_DetermineStringLength(_Str);
 PROC
 LLLIB_StringExt_Internal_DetermineStringLength((STRING)_Str)
 AND
-DB_LLLIB_Sorter_Iterator(_Index)
+DB_LLLIB_Codex_Iterator(_Index)
 AND
 StringSub(_Str, _Index, 1, _Char)
 AND
-DB_LLLIB_Sorter_Codex(_, _Char)
+DB_LLLIB_Codex(_, _Char)
 AND
 DB_LLLIB_StringLength(_Str, _Length)
 AND

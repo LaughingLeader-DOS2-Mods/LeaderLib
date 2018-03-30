@@ -62,7 +62,7 @@ SysClear("DB_LLLIB_Treasure_OnlyOnce", 3);
 SysClear("DB_LLLIB_Treasure_GeneratedEvent", 3);
 SysClear("DB_LLLIB_Treasure_StatToTemplate", 2);
 SysClear("DB_LLLIB_Treasure_GeneratorDummies", 1);
-SysClear("DB_LLLIB_Treasure_Temp_DummyTarget", 4);
+SysClear("DB_LLLIB_Treasure_Temp_DummyTarget", 5);
 SysClear("DB_LLLIB_Treasure_Temp_MatchedTreasure", 2);
 SysClear("DB_LLLIB_Treasure_Temp_MatchedRequirementTreasure", 2);
 SysClear("DB_LLLIB_Treasure_Temp_FlagToTreasure", 3);
@@ -77,16 +77,7 @@ LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem] Databases cleared.");
 PROC
 LLLIB_Updater_ResetDatabases()
 THEN
-SysClear("DB_LLLIB_Treasure_Temp_DummyTarget", 4);
-SysClear("DB_LLLIB_Treasure_Temp_MatchedTreasure", 2);
-SysClear("DB_LLLIB_Treasure_Temp_FlagToTreasure", 3);
-SysClear("DB_LLLIB_Treasure_Temp_GenerationTypeToTreasure", 2);
-SysClear("DB_LLLIB_Treasure_Temp_AmountToCreate", 3);
-SysClear("DB_LLLIB_Treasure_Temp_GenerateItem", 6);
-SysClear("DB_LLLIB_Treasure_Temp_Queue_CountTemplate", 5);
-SysClear("DB_LLLIB_Treasure_Temp_Queue_CountStat", 6);
-SysClear("DB_LLLIB_Treasure_Temp_StartGeneration", 3);
-//LLLIB_System_ClearDatabases();
+LLLIB_System_ClearDatabases();
 LLLIB_System_UpdateDatabases();
 LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem] Temporary databases cleared.");
 //END_REGION
@@ -602,15 +593,23 @@ NOT DB_LLLIB_Treasure_Temp_Queue_GenerateStatItem(_Object, _TreasureID, _ItemEnt
 PROC
 LLLIB_Treasure_Internal_CreateItemByStat((GUIDSTRING)_Object, (STRING)_ItemEntry, (STRING)_TreasureID)
 AND
-LLLIB_QRY_Treasure_PrepareGeneratorDummy()
+GetUUID(_Object, _ObjectID)
 AND
-DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
+LeaderLog_QRY_Log("COMBINE", _ObjectID, "_", _TreasureID, "_", _ItemEntry)
+AND
+DB_LeaderLog_Temp_CombinedString(_DummyID)
+AND
+LeaderLog_QRY_ClearCombinedString(_DummyID)
+AND
+LLLIB_QRY_Treasure_PrepareGeneratorDummy(_DummyID)
+AND
+DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID)
 THEN
-DB_LLLIB_Treasure_Temp_DummyTarget(_Object, _Dummy, _ItemEntry, _TreasureID);
+DB_LLLIB_Treasure_Temp_DummyTarget(_Object, _Dummy, _ItemEntry, _TreasureID, _DummyID);
 //SetVarObject(_Dummy, "LLLIB_Treasure_ObjectTarget", _Object);
 SetVarFixedString(_Dummy, "LLLIB_Treasure_ItemStat", _ItemEntry);
 SetStoryEvent(_Dummy, "LLLIB_Events_Treasure_GenerateByStat");
-LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:StatItemGen] Created item by stat.");
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:StatItemGen] Creating item by stat [",_ItemEntry,"] using Dummy ID [",_DummyID,"].");
 
 PROC
 LLLIB_Treasure_Internal_CreateItemByStat((GUIDSTRING)_Object, (STRING)_ItemEntry, (STRING)_TreasureID)
@@ -619,63 +618,32 @@ NOT DB_LLLIB_Treasure_GeneratorDummies(_)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:StatItemGen][ERROR] Error creating item by stat: No generator dummy found!");
 
-QRY
-LLLIB_QRY_Treasure_PrepareGeneratorDummy()
-AND
-DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
-AND
-ObjectExists(_Dummy, 0)
-THEN
-NOT DB_LLLIB_Treasure_GeneratorDummies(_Dummy);
-
-QRY
-LLLIB_QRY_Treasure_PrepareGeneratorDummy()
-AND
-DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
-AND
-ObjectExists(_Dummy, 1)
-AND
-ObjectIsOnStage(_Dummy, 0)
-THEN
-SetOnStage(_Dummy, 1);
-
-QRY
-LLLIB_QRY_Treasure_PrepareGeneratorDummy()
-THEN
-LLLIB_Treasure_Internal_CreateGeneratorDummy();
-
-PROC
-LLLIB_Treasure_Internal_CreateGeneratorDummy()
-AND
-NOT DB_LLLIB_Treasure_GeneratorDummies(_)
-AND
-TemporaryCharacterCreateAtPosition(0.0,0.0,0.0,"LLLIB_GeneratorDummy_24a5d60b-680b-4fbc-9b2c-19061a261297", 0, _Dummy)
-THEN
-LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:PrepareGeneratorDummy] Generator dummy created.");
-DB_LLLIB_Treasure_GeneratorDummies(_Dummy);
-
 IF
 ItemAddedToCharacter(_Item, _Dummy)
 AND
 GetTemplate(_Dummy, "LLLIB_GeneratorDummy_24a5d60b-680b-4fbc-9b2c-19061a261297")
 AND
-GetTemplate(_Item, _ItemTemplate)
-AND
 ObjectGetFlag(_Dummy, "LLLIB_GeneratorDummy_CreatedItem", 1)
+AND
+GetVarString(_Dummy, "LLLIB_DummyID", _DummyID)
+AND
+DB_LLLIB_Treasure_Temp_DummyTarget(_Object, _Dummy, _ItemEntry, _TreasureID, _DummyID)
+AND
+GetTemplate(_Item, _ItemTemplate)
 AND
 GetVarFixedString(_Dummy, "LLLIB_Treasure_ItemStat", _ItemEntry)
 AND
-DB_LLLIB_Treasure_Temp_DummyTarget(_Object, _Dummy, _ItemEntry, _TreasureID)
-AND
 ItemGetAmount(_Item, _Amount)
 THEN
+NOT DB_LLLIB_Treasure_Temp_DummyTarget(_Object, _Dummy, _ItemEntry, _TreasureID, _DummyID);
+LLLIB_Treasure_ResetDummy(_Dummy);
+SetVarFixedString(_Dummy, "LLLIB_Treasure_ItemStat", "");
+ObjectClearFlag(_Dummy, "LLLIB_GeneratorDummy_CreatedItem");
+
 ItemToInventory(_Item, _Object, _Amount, 0, 1);
 SetVarFixedString(_Item, "LLLIB_GeneratedItemStat", _ItemEntry);
-//DB_LLLIB_Treasure_StatToTemplate(_ItemEntry, _ItemTemplate);
-SetVarFixedString(_Dummy, "LLLIB_Treasure_ItemStat", "");
-NOT DB_LLLIB_Treasure_Temp_DummyTarget(_Object, _Dummy, _ItemEntry);
 LLLIB_Treasure_MarkAsFinished(_Object, _ItemEntry, _TreasureID);
-ObjectClearFlag(_Dummy, "LLLIB_GeneratorDummy_CreatedItem");
+//DB_LLLIB_Treasure_StatToTemplate(_ItemEntry, _ItemTemplate);
 //LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:StatItem] Stat item [",_ItemEntry,"] sent to target.");
 //END_REGION
 

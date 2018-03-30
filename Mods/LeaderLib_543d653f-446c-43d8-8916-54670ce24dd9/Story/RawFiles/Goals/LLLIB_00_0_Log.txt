@@ -470,6 +470,32 @@ THEN
 LeaderLog_SetTarget(_Player);
 LeaderLog_Log("COMBAT", "[LeaderLog:LogFlag] ", _FlagName1, " = ", _FlagVal1Str, " | ", _FlagName2, " = ", _FlagVal2Str);
 //END_REGION
+
+//REGION CLEANUP
+QRY
+LeaderLog_QRY_ClearCombinedString((STRING)_CombinedStr)
+THEN
+LeaderLog_ClearCombinedString(_CombinedStr);
+
+PROC
+LeaderLog_ClearCombinedString((STRING)_CombinedStr)
+AND
+DB_LeaderLog_Temp_CombinedString(_CombinedStr)
+THEN
+NOT DB_LeaderLog_Temp_CombinedString(_CombinedStr);
+
+QRY
+LeaderLog_QRY_ClearCombinedString()
+THEN
+LeaderLog_ClearAllCombinedStrings();
+
+PROC
+LeaderLog_ClearAllCombinedStrings()
+AND
+DB_LeaderLog_Temp_CombinedString(_CombinedStr)
+THEN
+NOT DB_LeaderLog_Temp_CombinedString(_CombinedStr);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

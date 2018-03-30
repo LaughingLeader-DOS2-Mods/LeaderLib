@@ -1,0 +1,164 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+//DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
+//DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID)
+KBSECTION
+//REGION CREATION
+PROC
+LLLIB_Treasure_Internal_CreateGeneratorDummy((STRING)_DummyID)
+AND
+LLLIB_Treasure_Internal_QRY_IsDefaultDummyID(_DummyID)
+AND
+TemporaryCharacterCreateAtPosition(0.0,0.0,0.0,"LLLIB_GeneratorDummy_24a5d60b-680b-4fbc-9b2c-19061a261297", 0, _Dummy)
+THEN
+SetVarString(_Dummy, "LLLIB_DummyID", "");
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:CreateGeneratorDummy] Default generator dummy created.");
+DB_LLLIB_Treasure_GeneratorDummies(_Dummy);
+DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID);
+
+PROC
+LLLIB_Treasure_Internal_CreateGeneratorDummy((STRING)_DummyID)
+AND
+NOT LLLIB_Treasure_Internal_QRY_IsDefaultDummyID(_DummyID)
+AND
+TemporaryCharacterCreateAtPosition(0.0,0.0,0.0,"LLLIB_GeneratorDummy_24a5d60b-680b-4fbc-9b2c-19061a261297", 0, _Dummy)
+THEN
+SetVarString(_Dummy, "LLLIB_DummyID", _DummyID);
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:CreateGeneratorDummy] Generator dummy created. Set ID to [",_DummyID,"].");
+DB_LLLIB_Treasure_GeneratorDummies(_Dummy);
+DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID);
+//END_REGION
+
+//REGION QUERIES
+QRY
+LLLIB_Treasure_Internal_QRY_IsDefaultDummyID("")
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_Treasure_Internal_QRY_IsDefaultDummyID("Default")
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_Treasure_Internal_QRY_IsDefaultOrMatchesDummyID((CHARACTERGUID)_Dummy, (STRING)_CheckID)
+AND
+GetVarString(_Dummy, "LLLIB_DummyID", _CurrentID)
+AND
+LLLIB_Treasure_Internal_QRY_IsDefaultDummyID(_CurrentID)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_Treasure_Internal_QRY_IsDefaultOrMatchesDummyID((CHARACTERGUID)_Dummy, (STRING)_CheckID)
+AND
+GetVarString(_Dummy, "LLLIB_DummyID", _CurrentID)
+AND
+NOT LLLIB_Treasure_Internal_QRY_IsDefaultDummyID(_CurrentID)
+AND
+_CurrentID == _CheckID
+THEN
+DB_NOOP(1);
+
+//END_REGION
+
+//REGION RESET
+PROC
+LLLIB_Treasure_ResetDummyByID((STRING)_DummyID)
+AND
+DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID)
+THEN
+SetVarString(_Dummy, "LLLIB_DummyID", "");
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:ResetDummy] Dummy ID reset, and dummy removed from 'next' DB.");
+NOT DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID);
+
+PROC
+LLLIB_Treasure_ResetDummy((CHARACTERGUID)_Dummy)
+AND
+DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID)
+THEN
+SetVarString(_Dummy, "LLLIB_DummyID", "");
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:ResetDummy] Dummy ID reset.");
+
+PROC
+LLLIB_Treasure_ResetDummy((CHARACTERGUID)_Dummy)
+AND
+DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID)
+THEN
+NOT DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID);
+//END_REGION
+
+//REGION PREPARE
+QRY
+LLLIB_QRY_Treasure_PrepareGeneratorDummy()
+THEN
+LLLIB_Treasure_PrepareGeneratorDummy("");
+
+QRY
+LLLIB_QRY_Treasure_PrepareGeneratorDummy((STRING)_DummyID)
+THEN
+LLLIB_Treasure_PrepareGeneratorDummy(_DummyID);
+
+PROC
+LLLIB_Treasure_PrepareGeneratorDummy((STRING)_DummyID)
+THEN
+LLLIB_Treasure_Internal_DummyCheck();
+LLLIB_Treasure_Internal_GetNextDummy(_DummyID);
+
+PROC
+LLLIB_Treasure_Internal_DummyCheck()
+AND
+DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
+AND
+ObjectExists(_Dummy, 0)
+THEN
+NOT DB_LLLIB_Treasure_GeneratorDummies(_Dummy);
+LLLIB_Treasure_ResetDummy(_Dummy);
+
+PROC
+LLLIB_Treasure_Internal_DummyCheck()
+AND
+DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
+AND
+ObjectExists(_Dummy, 1)
+AND
+ObjectIsOnStage(_Dummy, 0)
+THEN
+SetOnStage(_Dummy, 1);
+
+PROC
+LLLIB_Treasure_Internal_GetNextDummy((STRING)_DummyID)
+AND
+NOT DB_LLLIB_Treasure_GeneratorDummies(_)
+THEN
+LLLIB_Treasure_Internal_CreateGeneratorDummy(_DummyID);
+
+PROC
+LLLIB_Treasure_Internal_GetNextDummy((STRING)_DummyID)
+AND
+DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
+AND
+NOT DB_LLLIB_Treasure_NextGeneratorDummy(_, _DummyID)
+AND
+LLLIB_Treasure_Internal_QRY_IsDefaultOrMatchesDummyID(_Dummy, _DummyID)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:CreateDummyIfNoneExist] Dummy found. Set ID to [",_DummyID,"] and setting as the next dummy.");
+SetVarString(_Dummy, "LLLIB_DummyID", _DummyID);
+DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID);
+
+PROC
+LLLIB_Treasure_Internal_GetNextDummy((STRING)_DummyID)
+AND
+NOT DB_LLLIB_Treasure_NextGeneratorDummy(_, _DummyID)
+AND
+SysCount("DB_LLLIB_Treasure_GeneratorDummies", 1, _TotalDummies)
+AND
+_TotalDummies > 0 // All current dummies are being used
+THEN
+LLLIB_Treasure_Internal_CreateGeneratorDummy(_DummyID);
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

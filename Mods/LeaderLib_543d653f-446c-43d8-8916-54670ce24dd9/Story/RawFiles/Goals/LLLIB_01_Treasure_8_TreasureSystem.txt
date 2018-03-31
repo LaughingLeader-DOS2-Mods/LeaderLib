@@ -798,11 +798,12 @@ LLLIB_QRY_Treasure_PrepareGeneratorDummy(_DummyID)
 AND
 DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID)
 THEN
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:StatItemGen] Creating item by stat [",_ItemEntry,"] using Dummy ID [",_DummyID,"].");
 DB_LLLIB_Treasure_Temp_DummyTarget(_Object, _Dummy, _TreasureID, _ItemEntry, _DummyID);
 //SetVarObject(_Dummy, "LLLIB_Treasure_ObjectTarget", _Object);
-SetVarFixedString(_Dummy, "LLLIB_Treasure_NextStatToGenerate", _ItemEntry);
-SetStoryEvent(_Dummy, "LLLIB_Events_Treasure_GenerateItemByStat");
-LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:StatItemGen] Creating item by stat [",_ItemEntry,"] using Dummy ID [",_DummyID,"].");
+SetVarFixedString(_Dummy, "LeaderLib_CreateByStat_NextStatToCreate", _ItemEntry);
+SetVarFixedString(_Dummy, "LeaderLib_CreateByStat_FlagToSet", "LLLIB_GeneratorDummy_GeneratedItem");
+SetStoryEvent(_Dummy, "LeaderLib_Commands_CreateItemByStat");
 
 PROC
 LLLIB_Treasure_Internal_GenerateItemByStat((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry)
@@ -827,7 +828,7 @@ DB_LLLIB_Treasure_Temp_DummyTarget(_Object, _Dummy, _TreasureID, _ItemEntry, _Du
 AND
 GetTemplate(_Item, _ItemTemplate)
 AND
-GetVarFixedString(_Dummy, "LLLIB_Treasure_NextStatToGenerate", _ItemEntry)
+GetVarFixedString(_Dummy, "LeaderLib_CreateByStat_NextStatToCreate", _ItemEntry)
 AND
 ItemGetAmount(_Item, _Amount)
 AND
@@ -835,7 +836,7 @@ DB_LLLIB_Treasure_Temp_ItemGenerationQueue(_ID, _Object, _TreasureID, _Generatio
 THEN
 NOT DB_LLLIB_Treasure_Temp_DummyTarget(_Object, _Dummy, _TreasureID, _ItemEntry, _DummyID);
 LLLIB_Treasure_ResetDummy(_Dummy);
-SetVarFixedString(_Dummy, "LLLIB_Treasure_NextStatToGenerate", "");
+SetVarFixedString(_Dummy, "LeaderLib_CreateByStat_NextStatToCreate", "");
 ObjectClearFlag(_Dummy, "LLLIB_GeneratorDummy_GeneratedItem");
 ItemToInventory(_Item, _Object, _Amount, 0, 1);
 SetVarFixedString(_Item, "LeaderLib_GeneratedItemStat", _ItemEntry);

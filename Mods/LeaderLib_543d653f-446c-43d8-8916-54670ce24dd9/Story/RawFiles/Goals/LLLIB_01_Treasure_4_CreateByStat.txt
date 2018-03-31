@@ -11,15 +11,20 @@ KBSECTION
 PROC
 LLLIB_Treasure_CreateItemByStat_AddToQueue((CHARACTERGUID)_Character, (STRING)_Stat)
 THEN
-LLLIB_Treasure_CreateItemByStat_AddToQueue(_Character, _Stat, 0, 1);
+LLLIB_Treasure_CreateItemByStat_AddToQueue(_Character, _Stat, 1, 1, 0);
 
 PROC
-LLLIB_Treasure_CreateItemByStat_AddToQueue((CHARACTERGUID)_Character, (STRING)_Stat, (INTEGER)_Equip)
+LLLIB_Treasure_CreateItemByStat_AddToQueue((CHARACTERGUID)_Character, (STRING)_Stat, (INTEGER)_Amount)
 THEN
-LLLIB_Treasure_CreateItemByStat_AddToQueue(_Character, _Stat, _Equip, 1);
+LLLIB_Treasure_CreateItemByStat_AddToQueue(_Character, _Stat, _Amount, 1, 0);
 
 PROC
-LLLIB_Treasure_CreateItemByStat_AddToQueue((CHARACTERGUID)_Character, (STRING)_Stat, (INTEGER)_Equip, (INTEGER)_ShowInTrade)
+LLLIB_Treasure_CreateItemByStat_AddToQueue((CHARACTERGUID)_Character, (STRING)_Stat, (INTEGER)_Amount, (INTEGER)_ShowInTrade)
+THEN
+LLLIB_Treasure_CreateItemByStat_AddToQueue(_Character, _Stat, _Amount, _ShowInTrade, 0);
+
+PROC
+LLLIB_Treasure_CreateItemByStat_AddToQueue((CHARACTERGUID)_Character, (STRING)_Stat, (INTEGER)_Amount, (INTEGER)_ShowInTrade, (INTEGER)_Equip)
 AND
 NOT DB_LLLIB_Treasure_Temp_CreateItemByStat_CharacterArray(_Character, _)
 AND
@@ -38,14 +43,12 @@ THEN
 DB_LLLIB_Treasure_Temp_CreateItemByStat_CharacterArray(_Character, _ArrayName);
 
 PROC
-LLLIB_Treasure_CreateItemByStat_AddToQueue((CHARACTERGUID)_Character, (STRING)_Stat, (INTEGER)_Equip, (INTEGER)_ShowInTrade)
-AND
-NOT DB_LLLIB_Treasure_Temp_CreateItemByStat_ItemQueue(_Character, _, _Stat, _, _)
+LLLIB_Treasure_CreateItemByStat_AddToQueue((CHARACTERGUID)_Character, (STRING)_Stat, (INTEGER)_Amount, (INTEGER)_ShowInTrade, (INTEGER)_Equip)
 AND
 DB_LLLIB_Treasure_Temp_CreateItemByStat_CharacterArray(_Character, _ArrayName)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Treasure:CreateItemByStat] Adding stat [",_Stat,"] to item queue for session [",_ArrayName,"].");
-DB_LLLIB_Treasure_Temp_CreateItemByStat_ItemQueue(_Character, _ArrayName, _Stat, _Equip, _ShowInTrade);
+DB_LLLIB_Treasure_Temp_CreateItemByStat_ItemQueue(_Character, _ArrayName, _Stat, _Equip, _ShowInTrade, _Amount);
 LLLIB_Array_AddToArray(_ArrayName, _Stat);
 
 PROC
@@ -63,7 +66,7 @@ LLLIB_Treasure_CreateItemByStat_Internal_CreateNextStatItem(_Character);
 QRY
 LLLIB_Treasure_CreateItemByStat_QRY_JobDone((CHARACTERGUID)_Character)
 AND
-NOT DB_LLLIB_Treasure_Temp_CreateItemByStat_ItemQueue(_Character, _, _, _, _)
+NOT DB_LLLIB_Treasure_Temp_CreateItemByStat_ItemQueue(_Character, _, _, _, _, _)
 THEN
 DB_NOOP(1);
 
@@ -98,7 +101,7 @@ LLLIB_Treasure_CreateItemByStat_Internal_ProcessNextStat(_Character, _ArrayName,
 PROC
 LLLIB_Treasure_CreateItemByStat_Internal_ProcessNextStat((CHARACTERGUID)_Character, (STRING)_ArrayName, (STRING)_Stat)
 AND
-DB_LLLIB_Treasure_Temp_CreateItemByStat_ItemQueue(_Character, _ArrayName, _Stat, _Equip, _ShowInTrade)
+DB_LLLIB_Treasure_Temp_CreateItemByStat_ItemQueue(_Character, _ArrayName, _Stat, _Equip, _ShowInTrade, _Amount)
 AND
 LLLIB_QRY_Treasure_PrepareGeneratorDummy(_ArrayName)
 AND
@@ -106,10 +109,13 @@ DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _ArrayName)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Treasure:CreateItemByStat] Creating [",_Stat,"] on dummy with ID [",_ArrayName,"]");
 DB_LLLIB_Treasure_Temp_CreateItemByStat_DummyTarget(_ArrayName, _Character, _Dummy, _Stat);
-SetVarFixedString(_Dummy, "LLLIB_Treasure_NextStatToCreate", _Stat);
-SetVarInteger(_Dummy, "LLLIB_Treasure_ShowNextItemInTrade", _ShowInTrade);
+SetVarFixedString(_Dummy, "LeaderLib_CreateByStat_NextStatToCreate", _Stat);
+SetVarFixedString(_Dummy, "LeaderLib_CreateByStat_FlagToSet", "LLLIB_GeneratorDummy_CreatedItem");
+SetVarInteger(_Dummy, "LeaderLib_CreateByStat_ShowInTrade", _ShowInTrade);
+SetVarInteger(_Dummy, "LeaderLib_CreateByStat_AmountToCreate", _Amount);
+ObjectSetFlag(_Dummy, "LeaderLib_CreateByStat_ResetVars");
 LLLIB_Treasure_CreateItemByStat_Internal_StartTimeoutTimer(_Character, _Stat);
-SetStoryEvent(_Dummy, "LLLIB_Events_Treasure_CreateItemByStat");
+SetStoryEvent(_Dummy, "LeaderLib_Commands_CreateItemByStat");
 
 IF
 ItemAddedToCharacter(_Item, _Dummy)
@@ -138,7 +144,7 @@ LLLIB_Treasure_CreateItemByStat_Internal_StartNextTick(_Character);
 PROC
 LLLIB_Treasure_CreateItemByStat_Internal_EquipCreatedStatItem((CHARACTERGUID)_Character, (ITEMGUID)_Item, (STRING)_Stat)
 AND
-DB_LLLIB_Treasure_Temp_CreateItemByStat_ItemQueue(_Character, _ArrayName, _Stat, _Equip, _ShowInTrade)
+DB_LLLIB_Treasure_Temp_CreateItemByStat_ItemQueue(_Character, _ArrayName, _Stat, _Equip, _ShowInTrade, _Amount)
 AND
 _Equip > 0
 THEN
@@ -201,7 +207,7 @@ LLLIB_Treasure_CreateItemByStat_Internal_StartNextTick(_Character);
 PROC
 LLLIB_Treasure_CreateItemByStat_Internal_ClearFromQueue((CHARACTERGUID)_Character, (STRING)_Stat)
 AND
-DB_LLLIB_Treasure_Temp_CreateItemByStat_ItemQueue(_Character, _ArrayName, _Stat, _Equip, _ShowInTrade)
+DB_LLLIB_Treasure_Temp_CreateItemByStat_ItemQueue(_Character, _ArrayName, _Stat, _Equip, _ShowInTrade, _Amount)
 AND
 DB_LLLIB_Treasure_Temp_CreateItemByStat_DummyTarget(_ArrayName, _Character, _Dummy, _Stat)
 THEN
@@ -210,9 +216,9 @@ NOT DB_LLLIB_Treasure_Temp_CreateItemByStat_DummyTarget(_ArrayName, _Character, 
 PROC
 LLLIB_Treasure_CreateItemByStat_Internal_ClearFromQueue((CHARACTERGUID)_Character, (STRING)_Stat)
 AND
-DB_LLLIB_Treasure_Temp_CreateItemByStat_ItemQueue(_Character, _ArrayName, _Stat, _Equip, _ShowInTrade)
+DB_LLLIB_Treasure_Temp_CreateItemByStat_ItemQueue(_Character, _ArrayName, _Stat, _Equip, _ShowInTrade, _Amount)
 THEN
-NOT DB_LLLIB_Treasure_Temp_CreateItemByStat_ItemQueue(_Character, _ArrayName, _Stat, _Equip, _ShowInTrade);
+NOT DB_LLLIB_Treasure_Temp_CreateItemByStat_ItemQueue(_Character, _ArrayName, _Stat, _Equip, _ShowInTrade, _Amount);
 
 PROC
 LLLIB_Treasure_CreateItemByStat_Cleanup((CHARACTERGUID)_Character)
@@ -224,9 +230,9 @@ NOT DB_LLLIB_Treasure_Temp_CreateItemByStat_DummyTarget(_ArrayName, _Character, 
 PROC
 LLLIB_Treasure_CreateItemByStat_Cleanup((CHARACTERGUID)_Character)
 AND
-DB_LLLIB_Treasure_Temp_CreateItemByStat_ItemQueue(_Character, _ArrayName, _Stat, _Equip, _ShowInTrade)
+DB_LLLIB_Treasure_Temp_CreateItemByStat_ItemQueue(_Character, _ArrayName, _Stat, _Equip, _ShowInTrade, _Amount)
 THEN
-NOT DB_LLLIB_Treasure_Temp_CreateItemByStat_ItemQueue(_Character, _ArrayName, _Stat, _Equip, _ShowInTrade);
+NOT DB_LLLIB_Treasure_Temp_CreateItemByStat_ItemQueue(_Character, _ArrayName, _Stat, _Equip, _ShowInTrade, _Amount);
 
 PROC
 LLLIB_Treasure_CreateItemByStat_Cleanup((CHARACTERGUID)_Character)

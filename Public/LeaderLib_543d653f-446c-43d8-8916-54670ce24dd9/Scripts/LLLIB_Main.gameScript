@@ -2,6 +2,7 @@ INIT
 	FIXEDSTRING:%EmptyString=""
 	INT:%EmptyInt=0
 	INT:%DefaultShowInTrade=1
+	INT:%DefaultAmount=1
 EVENTS
 
 EVENT AddTreasureTable
@@ -9,12 +10,14 @@ VARS
 	CHARACTER:_Target
 	FIXEDSTRING:_TableName
 ON
-	OnCharacterEvent(_Target, "LLLIB_Events_Treasure_AddTreasureTable")
+	OnCharacterEvent(_Target, "LeaderLib_Commands_AddTreasureTable")
 ACTIONS
 IF "c1"
-	GetVar(_TableName, _Target, "LLLIB_Treasure_TreasureTableToAdd")
+	GetVar(_TableName, _Target, "LeaderLib_TreasureTableToAdd")
 THEN
 	CharacterAddTreasureTable(_Target, _TableName)
+	CharacterEvent(_Target, "LeaderLib_Events_OnTreasureTableAdded")
+	//SetVar(_Target, "LeaderLib_TreasureTableToAdd", %EmptyString)
 ENDIF
 
 EVENT RemoveTreasureTable
@@ -22,12 +25,14 @@ VARS
 	CHARACTER:_Target
 	FIXEDSTRING:_TableName
 ON
-	OnCharacterEvent(_Target, "LLLIB_Events_Treasure_RemoveTreasureTables")
+	OnCharacterEvent(_Target, "LeaderLib_Commands_RemoveTreasureTable")
 ACTIONS
 IF "c1"
-	GetVar(_TableName, _Target, "LLLIB_Treasure_TreasureTableToRemove")
+	GetVar(_TableName, _Target, "LeaderLib_TreasureTableToRemove")
 THEN
 	CharacterRemoveTreasureTable(_Target, _TableName)
+	CharacterEvent(_Target, "LeaderLib_Events_OnTreasureTableRemoved")
+	//SetVar(_Target, "LeaderLib_TreasureTableToRemove", %EmptyString)
 ENDIF
 
 EVENT ClearTreasureTables
@@ -35,24 +40,51 @@ VARS
 	CHARACTER:_Target
 	FIXEDSTRING:_TableName
 ON
-	OnCharacterEvent(_Target, "LLLIB_Events_Treasure_ClearTreasureTables")
+	OnCharacterEvent(_Target, "LeaderLib_Commands_ClearTreasureTables")
 ACTIONS
 	CharacterClearTreasureTables(_Target)
+	CharacterEvent(_Target, "LeaderLib_Events_OnTreasureTablesCleared")
 	
 EVENT GenerateItemByStat
 VARS
 	FIXEDSTRING:_StatName
 	CHARACTER:_Character
 	INT:_ShowInTrade
+	INT:_Amount
+	FIXEDSTRING:_FlagToSet
 ON
-	OnCharacterEvent(_Character, "LLLIB_Events_CreateEquipmentByStat")
+	OnCharacterEvent(_Character, "LeaderLib_Commands_CreateItemByStat")
 ACTIONS
-IF "c1&c2"
-	GetVar(_StatName, _Character, "LLLIB_Helpers_NextCreatedEquipmentStat")
-	GetVar(_ShowInTrade, _Character, "LLLIB_Helpers_ShowNextItemInTrade")
+IF "c1"
+	GetVar(_StatName, _Character, "LeaderLib_CreateByStat_NextStatToCreate")
 THEN
-	CharacterAddToInventory(_Character, _StatName, 1, _ShowInTrade)
-	SetVar(_Character, "LLLIB_Helpers_NextCreatedEquipmentStat", %EmptyString)
-	SetVar(_Character, "LLLIB_Helpers_ShowNextItemInTrade", %DefaultShowInTrade)
-	//SetVar(__Me, "LLLIB_Treasure_ItemStat", %EmptyString)
+	IF "c1"
+		GetVar(_ShowInTrade, _Character, "LeaderLib_CreateByStat_ShowInTrade")
+	THEN
+	ELSE
+		Set(_ShowInTrade, %DefaultShowInTrade)
+	ENDIF
+	IF "c1"
+		GetVar(_Amount, _Character, "LeaderLib_CreateByStat_AmountToCreate")
+	THEN
+	ELSE
+		Set(_Amount, %DefaultAmount)
+	ENDIF
+	IF "c1"
+		GetVar(_FlagToSet, _Character, "LeaderLib_CreateByStat_FlagToSet")
+	THEN
+		SetFlag(_Character, _FlagToSet)
+	ENDIF
+	CharacterAddToInventory(_Character, _StatName, _Amount, _ShowInTrade)
+	CharacterEvent(_Character, "LeaderLib_Events_OnItemCreatedWithStat")
+	
+	IF "c1"
+		HasFlag(_Character, "LeaderLib_CreateByStat_ResetVars")
+	THEN
+		ClearFlag(_Character, "LeaderLib_CreateByStat_ResetVars")
+		SetVar(_Character, "LeaderLib_CreateByStat_NextStatToCreate", %EmptyString)
+		SetVar(_Character, "LeaderLib_CreateByStat_ShowInTrade", %DefaultShowInTrade)
+		SetVar(_Character, "LeaderLib_CreateByStat_AmountToCreate", %DefaultAmount)
+		SetVar(_Character, "LeaderLib_CreateByStat_FlagToSet", %EmptyString)
+	ENDIF
 ENDIF

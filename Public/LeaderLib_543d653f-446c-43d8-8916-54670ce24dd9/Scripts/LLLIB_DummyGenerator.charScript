@@ -3,6 +3,7 @@ INIT
 	FIXEDSTRING:%EmptyString=""
 	INT:%EmptyInt=0
 	INT:%DefaultShowInTrade=1
+	INT:%DefaultAmount=1
 EVENTS
 
 EVENT Init_Register
@@ -10,68 +11,3 @@ ON
 	OnInit()
 ACTIONS
 	CharacterEvent(__Me, "LLLIB_Events_GeneratorDummyInitialized")
-
-EVENT GenerateItemByStat
-VARS
-	FIXEDSTRING:_StatName
-	INT:_ShowInTrade
-ON
-	OnCharacterEvent(__Me, "LLLIB_Events_Treasure_GenerateItemByStat")
-ACTIONS
-IF "c1"
-	GetVar(_StatName, __Me, "LLLIB_Treasure_NextStatToGenerate")
-THEN
-	IF "c1"
-		GetVar(_ShowInTrade, __Me, "LLLIB_Treasure_ShowNextItemInTrade")
-	THEN
-	ELSE
-		Set(_ShowInTrade, %DefaultShowInTrade)
-	ENDIF
-	SetFlag(__Me, "LLLIB_GeneratorDummy_GeneratedItem")
-	SetVar(__Me, "LLLIB_Treasure_ShowNextItemInTrade", %DefaultShowInTrade)
-	CharacterAddToInventory(__Me, _StatName, 1, _ShowInTrade)
-	//SetVar(__Me, "LLLIB_Treasure_ItemStat", %EmptyString)
-ENDIF
-
-EVENT CreateItemByStat
-VARS
-	FIXEDSTRING:_StatName
-	INT:_ShowInTrade
-ON
-	OnCharacterEvent(__Me, "LLLIB_Events_Treasure_CreateItemByStat")
-ACTIONS
-IF "c1"
-	GetVar(_StatName, __Me, "LLLIB_Treasure_NextStatToCreate")
-THEN
-	IF "c1"
-		GetVar(_ShowInTrade, __Me, "LLLIB_Treasure_ShowNextItemInTrade")
-	THEN
-	ELSE
-		Set(_ShowInTrade, %DefaultShowInTrade)
-	ENDIF
-	SetFlag(__Me, "LLLIB_GeneratorDummy_CreatedItem")
-	CharacterAddToInventory(__Me, _StatName, 1, _ShowInTrade)
-	SetVar(__Me, "LLLIB_Treasure_NextStatToCreate", %EmptyString)
-	SetVar(__Me, "LLLIB_Treasure_ShowNextItemInTrade", %DefaultShowInTrade)
-	//SetVar(__Me, "LLLIB_Treasure_ItemStat", %EmptyString)
-ENDIF
-
-/*
-EVENT OnItemAdded
-VARS
-	ITEM:_Item
-	CHARACTER:_TargetChar
-	ITEM:_TargetContainer
-ON
-	OnPickupItem(__Me, _Item)
-ACTIONS
-IF "c1"
-	GetVar(_TargetChar, __Me, "LLLIB_Treasure_ObjectTarget")
-THEN
-	ItemToInventory(_Item, _TargetChar)
-ELIF "c1"
-	GetVar(_TargetContainer, __Me, "LLLIB_Treasure_ObjectTarget")
-THEN
-	ItemToInventory(_Item, _TargetContainer)
-ENDIF
-*/

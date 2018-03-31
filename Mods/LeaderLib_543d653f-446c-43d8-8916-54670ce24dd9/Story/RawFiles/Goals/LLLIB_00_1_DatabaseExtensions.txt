@@ -4,8 +4,10 @@ INITSECTION
 //DB_LLLIB_Array_Length(_ID, _Length)
 //DB_LLLIB_Array_Data(_ID, _Index, _Value)
 //DB_LLLIB_Dictionary_Data(_ID, _Index, _Key, _Value)
-//DB_LLLIB_Array_ArrayIterator(_ID, _CurrentIndex)
+//DB_LLLIB_Array_Iterator(_ID, _CurrentIndex)
 //DB_LLLIB_Array_Temp_ArrayIteratorBuilder(_ID, _CurrentIndex, _Length)
+//DB_LLLIB_Array_Temp_PopValue(_ID, _Value)
+//DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value)
 KBSECTION
 //REGION ARRAY_LENGTH
 QRY
@@ -58,11 +60,7 @@ IntegerSum(_Length, 1, _NextLength)
 THEN
 NOT DB_LLLIB_Array_Length(_ID, _Length);
 DB_LLLIB_Array_Length(_ID, _NextLength);
-
-IF
-DB_LLLIB_Array_Length(_ID, _Length)
-THEN
-DB_LLLIB_Array_ArrayIterator(_ID, _Length);
+DB_LLLIB_Array_Iterator(_ID, _NextLength);
 
 PROC
 LLLIB_Array_DecreaseArrayLength((STRING)_ID)
@@ -72,32 +70,18 @@ AND
 IntegerSubtract(_Length, 1, _NextLength)
 THEN
 NOT DB_LLLIB_Array_Length(_ID, _Length);
+NOT DB_LLLIB_Array_Iterator(_ID, _Length);
 DB_LLLIB_Array_Length(_ID, _NextLength);
 //END_REGION
 
-//REGION ARRAY_QUERIES
-QRY
-LLLIB_Array_QRY_DataExists((STRING)_ID)
-AND
-DB_LLLIB_Array_Data(_ID, _, _)
-THEN
-DB_NOOP(1);
-
-QRY
-LLLIB_Array_QRY_DictionaryDataExists((STRING)_ID)
-AND
-DB_LLLIB_Dictionary_Data(_ID, _, _, _)
-THEN
-DB_NOOP(1);
-//END_REGION
-
-//REGION ARRAY_METHODS
+//REGION ARRAY_NEW
 PROC
 LLLIB_Array_NewArray((STRING)_ID)
 AND
 NOT DB_LLLIB_Array_Length(_ID, _)
 THEN
 DB_LLLIB_Array_Length(_ID, 0);
+DB_LLLIB_Array_Iterator(_ID, 0);
 //END_REGION
 
 //REGION ARRAY_ADD
@@ -178,6 +162,104 @@ THEN
 LLLIB_Array_RemoveFromArray(_ID, _Value);
 //END_REGION
 
+//REGION ARRAY_FIRST_ENTRY
+
+QRY
+LLLIB_Array_QRY_GetFirstEntry((STRING)_ID)
+THEN
+LLLIB_Array_GetFirstEntry(_ID);
+
+PROC
+LLLIB_Array_GetFirstEntry((STRING)_ID)
+AND
+NOT DB_LLLIB_Array_Iterator(_ID, _)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:GetFirstEntry] [ERROR] No iterator found for array [",_ID,"]!");
+
+PROC
+LLLIB_Array_GetFirstEntry((STRING)_ID)
+AND
+NOT DB_LLLIB_Array_Data(_ID, _, _)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:GetFirstEntry] [ERROR] No entries found for array [",_ID,"]!");
+
+PROC
+LLLIB_Array_GetFirstEntry((STRING)_ID)
+AND
+DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value)
+THEN
+NOT DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value);
+
+PROC
+LLLIB_Array_GetFirstEntry((STRING)_ID)
+AND
+DB_LLLIB_Array_Iterator(_ID, _Index)
+AND
+NOT DB_LLLIB_Array_Temp_FirstEntry(_ID, _, _)
+//AND
+//IntegertoString(_Index, _IndexStr)
+//AND
+//LeaderLog_QRY_Log("DEBUG", "[LLLIB:DatabaseExtensions:GetFirstEntry] Checking index [",_IndexStr,"] in array [",_ID,"]")
+AND
+DB_LLLIB_Array_Data(_ID, _Index, _Value)
+THEN
+//LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:GetFirstEntry] First entry for array [",_ID,"] set to [",_IndexStr,"](",_Value,").");
+DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value);
+//END_REGION
+
+//REGION ARRAY_POP
+QRY
+LLLIB_Array_QRY_Pop((STRING)_ID)
+THEN
+LLLIB_Array_Pop(_ID);
+
+/* Stack-like behavior. Removed the top entry at index 0, shifts all other entries up one, and sets DB_LLLIB_Array_Temp_PopValue(_ID, _Value)
+*/
+PROC
+LLLIB_Array_Pop((STRING)_ID)
+AND
+DB_LLLIB_Array_Length(_ID, _Length)
+AND
+_Length <= 0
+AND
+IntegertoString(_Length, _LengthStr)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:Pop] [ERROR] Error popping array [",_ID,"]: length is [",_LengthStr,"]!");
+
+PROC
+LLLIB_Array_Pop((STRING)_ID)
+AND
+NOT DB_LLLIB_Array_Length(_ID, _)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:Pop] [ERROR] Error popping array [",_ID,"]: length is null!");
+
+PROC
+LLLIB_Array_Pop((STRING)_ID)
+AND
+DB_LLLIB_Array_Temp_PopValue(_ID, _Value)
+THEN
+NOT DB_LLLIB_Array_Temp_PopValue(_ID, _Value);
+
+PROC
+LLLIB_Array_Pop((STRING)_ID)
+AND
+LLLIB_Array_QRY_GetFirstEntry(_ID)
+AND
+NOT DB_LLLIB_Array_Temp_FirstEntry(_ID, _, _)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:Pop] [ERROR] No first entry found for array [",_ID,"]!");
+
+PROC
+LLLIB_Array_Pop((STRING)_ID)
+AND
+DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value)
+THEN
+DB_LLLIB_Array_Temp_PopValue(_ID, _Value);
+NOT DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value);
+//LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:Pop] Popped [",_Value,"] from array [",_ID,"].");
+LLLIB_Array_RemoveFromArray(_ID, _Value);
+//END_REGION
+
 //REGION ARRAY_CLEAR
 QRY
 LLLIB_Array_QRY_ClearArrayEntries((STRING)_ID)
@@ -201,9 +283,9 @@ NOT DB_LLLIB_Array_Length(_ID, _Length);
 PROC
 LLLIB_Array_ClearArrayIterators((STRING)_ID)
 AND
-DB_LLLIB_Array_ArrayIterator(_ID, _CurrentIndex)
+DB_LLLIB_Array_Iterator(_ID, _CurrentIndex)
 THEN
-NOT DB_LLLIB_Array_ArrayIterator(_ID, _CurrentIndex);
+NOT DB_LLLIB_Array_Iterator(_ID, _CurrentIndex);
 
 PROC
 LLLIB_Array_ClearArray((STRING)_ID)
@@ -224,9 +306,9 @@ LLLIB_Array_BuildArrayIterator(_ID);
 PROC
 LLLIB_Array_BuildArrayIterator((STRING)_ID)
 AND
-DB_LLLIB_Array_ArrayIterator(_ID, _CurrentIndex)
+DB_LLLIB_Array_Iterator(_ID, _CurrentIndex)
 THEN
-NOT DB_LLLIB_Array_ArrayIterator(_ID, _CurrentIndex);
+NOT DB_LLLIB_Array_Iterator(_ID, _CurrentIndex);
 */
 
 //Clear2
@@ -242,7 +324,7 @@ LLLIB_Array_BuildArrayIterator((STRING)_ID)
 AND
 DB_LLLIB_Array_Length(_ID, _Length)
 AND
-NOT DB_LLLIB_Array_ArrayIterator(_ID, _Length)
+NOT DB_LLLIB_Array_Iterator(_ID, _Length)
 THEN
 //LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:BuildArrayIterator] Building array iterator for [",_ID,"].");
 LLLIB_Array_Internal_StartArrayIteratorBuilder(_ID);
@@ -262,9 +344,9 @@ DB_LLLIB_Array_Temp_ArrayIteratorBuilder(_ID, _CurrentIndex, _Length)
 AND
 _CurrentIndex <= _Length
 AND
-NOT DB_LLLIB_Array_ArrayIterator(_ID, _CurrentIndex)
+NOT DB_LLLIB_Array_Iterator(_ID, _CurrentIndex)
 THEN
-DB_LLLIB_Array_ArrayIterator(_ID, _CurrentIndex);
+DB_LLLIB_Array_Iterator(_ID, _CurrentIndex);
 
 PROC
 LLLIB_Array_Internal_OnBuildArrayIterator((STRING)_ID)
@@ -281,12 +363,28 @@ LLLIB_Array_Internal_OnBuildArrayIterator(_ID);
 
 /*
 IF
-DB_LLLIB_Array_ArrayIterator(_ID, _Index)
+DB_LLLIB_Array_Iterator(_ID, _Index)
 AND
 IntegertoString(_Index, _IndexStr)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:ArrayIterator] Added [",_IndexStr,"] to array iterator [",_ID,"][",_SessionID,"].");
 */
+//END_REGION
+
+//REGION ARRAY_QUERIES
+QRY
+LLLIB_Array_QRY_DataExists((STRING)_ID)
+AND
+DB_LLLIB_Array_Data(_ID, _, _)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_Array_QRY_DictionaryDataExists((STRING)_ID)
+AND
+DB_LLLIB_Dictionary_Data(_ID, _, _, _)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION DICTIONARY_ADD

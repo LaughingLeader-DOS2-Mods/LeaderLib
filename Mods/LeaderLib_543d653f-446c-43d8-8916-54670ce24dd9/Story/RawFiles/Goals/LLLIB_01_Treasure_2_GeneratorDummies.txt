@@ -67,26 +67,30 @@ DB_NOOP(1);
 PROC
 LLLIB_Treasure_ResetDummyByID((STRING)_DummyID)
 AND
-DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID)
+DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
+AND
+GetVarString(_Dummy, "LLLIB_DummyID", _DummyID)
 THEN
 SetVarString(_Dummy, "LLLIB_DummyID", "");
-LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:ResetDummy] Dummy ID reset, and dummy removed from 'next' DB.");
-NOT DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID);
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:ResetDummyByID] Dummy with ID [",_DummyID,"] reset.");
+LLLIB_Treasure_RemoveNextDummy(_Dummy);
 
 PROC
 LLLIB_Treasure_ResetDummy((CHARACTERGUID)_Dummy)
 AND
-DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID)
+DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
 THEN
 SetVarString(_Dummy, "LLLIB_DummyID", "");
 LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:ResetDummy] Dummy ID reset.");
+LLLIB_Treasure_RemoveNextDummy(_Dummy);
 
 PROC
-LLLIB_Treasure_ResetDummy((CHARACTERGUID)_Dummy)
+LLLIB_Treasure_RemoveNextDummy((CHARACTERGUID)_Dummy)
 AND
 DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID)
 THEN
 NOT DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID);
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:ResetDummy] Dummy with ID [",_DummyID,"] removed from 'NextGeneratorDummy' database.");
 //END_REGION
 
 //REGION PREPARE
@@ -157,6 +161,16 @@ AND
 _TotalDummies > 0 // All current dummies are being used
 THEN
 LLLIB_Treasure_Internal_CreateGeneratorDummy(_DummyID);
+//END_REGION
+
+//REGION CLEANUP
+IF
+StoryEvent((CHARACTERGUID)_Dummy, "LLLIB_Events_GeneratorDummyInitialized")
+AND
+NOT DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:GeneratorDummyInitialized] Unregistered generator dummy initialized. Added to database.");
+DB_LLLIB_Treasure_GeneratorDummies(_Dummy);
 //END_REGION
 EXITSECTION
 

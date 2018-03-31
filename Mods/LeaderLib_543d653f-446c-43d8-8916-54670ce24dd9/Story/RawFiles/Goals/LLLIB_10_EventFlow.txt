@@ -9,9 +9,20 @@ INITSECTION
 KBSECTION
 //REGION INIT
 IF
-StoryEvent(_, "LeaderLib_Initialized")
+GameStarted(_,_)
 THEN
 LLLIB_EventFlow_Init_LeaderLibStack("DB_LLLIB_EventFlow_EventStack");
+
+IF
+StoryEvent(_, "LeaderLib_Initialized")
+THEN
+//Before starting the flow, let other mods do whatever they need to do for a few frames.
+TimerLaunch("LLLIB_Timers_StartDefaultFlow", 10);
+
+IF
+TimerFinished("LLLIB_Timers_StartDefaultFlow")
+THEN
+LLLIB_EventFlow_Start("DB_LLLIB_EventFlow_EventStack");
 
 PROC
 LLLIB_EventFlow_AddStack((STRING)_StackName, (STRING)_OnFlowCompleteEvent, (INTEGER)_TimeBetweenEvents)
@@ -37,7 +48,7 @@ PROC
 LLLIB_EventFlow_Init_LeaderLibStack((STRING)_StackName)
 THEN
 LLLIB_Array_AddToDictionary(_StackName, "LeaderLib_Events_SpawnTraders", "LeaderLib_Events_TraderSpawnComplete");
-LLLIB_EventFlow_Start(_StackName);
+LLLIB_Array_AddToDictionary(_StackName, "LeaderLib_Events_StartTreasureQueue", "LeaderLib_Events_TreasureQueueComplete");
 
 PROC
 LLLIB_EventFlow_Start((STRING)_StackName)

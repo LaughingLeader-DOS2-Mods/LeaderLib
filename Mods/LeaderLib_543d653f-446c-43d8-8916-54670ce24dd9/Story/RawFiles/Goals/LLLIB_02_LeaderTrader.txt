@@ -5,7 +5,6 @@ LLLIB_LeaderTrader_InitSettings();
 LLLIB_LeaderTrader_RegisterTraderSettings();
 //DB_LLLIB_LeaderTrader(_LeaderTrader)
 //DB_LLLIB_LeaderTrader_MetPlayer(_Player)
-//DB_LLLIB_LeaderTrader_SetAppearance(_Level)
 
 //Settings
 //DB_LLLIB_LeaderTrader_Dialog(_ReferenceName, _Dialog)
@@ -280,8 +279,10 @@ NOT DB_LLLIB_LeaderTrader_IsRespondingToAttack(_Val);
 //REGION SPAWN_EVENT
 IF
 StoryEvent((CHARACTERGUID)_Trader, "LLLIB_Events_OnLeaderTradeSpawned")
+AND
+DB_CurrentLevel(_Level)
 THEN
-ApplyStatus(_Trader, "LLLIB_PACIFIST", -1.0, 1);
+LLLIB_LeaderTrader_OnSpawned(_Trader, _Level);
 
 IF
 StoryEvent((CHARACTERGUID)_Trader, "LLLIB_Events_OnLeaderTradeSpawned")
@@ -356,24 +357,12 @@ THEN
 CharacterTransform(_LeaderTrader, _Template, 1, 1, 1, 1, 1, 1, 0);
 DB_LLLIB_LeaderTrader_CurrentAppearance(_Template);
 
-/*
-IF
-DB_LLLIB_Traders_Spawned(_LeaderTrader, "LLLIB_LeaderTrader", _Level)
-THEN
-*/
-
 IF
 StoryEvent((CHARACTERGUID)_LeaderTrader, "LeaderLib_Events_GenerationComplete")
 AND
 DB_LLLIB_LeaderTrader(_LeaderTrader)
-AND
-DB_CurrentLevel(_Level)
-AND
-NOT DB_LLLIB_LeaderTrader_SetAppearance(_Level)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:LeaderTrader] LeaderTrader just spawned.");
-LLLIB_LeaderTrader_OnSpawned(_LeaderTrader, _Level);
-DB_LLLIB_LeaderTrader_SetAppearance(_Level);
+LeaderLog_Log("DEBUG", "[LLLIB:LeaderTrader] Treasure generation complete.");
 
 PROC
 LLLIB_LeaderTrader_OnSpawned((CHARACTERGUID)_LeaderTrader, (STRING)_Level)
@@ -407,18 +396,18 @@ LLLIB_Treasure_CreateItemByStat_AddToQueue(_LeaderTrader, "ARM_Purge_UpperBody",
 LLLIB_Treasure_CreateItemByStat_AddToQueue(_LeaderTrader, "ARM_Purge_LowerBody", 1, 0);
 LLLIB_Treasure_CreateItemByStat_Start(_LeaderTrader, 100);
 
-/*
 PROC
 LLLIB_LeaderTrader_OnSpawned((CHARACTERGUID)_LeaderTrader, (STRING)_Level)
 THEN
+ApplyStatus(_LeaderTrader, "LLLIB_PACIFIST", -1.0, 1);
 LLLIB_Helper_RefreshEquipment(_LeaderTrader);
-*/
+
 IF
 RegionEnded(_Level)
 AND
-DB_LLLIB_LeaderTrader_SetAppearance(_Level)
+DB_LLLIB_LeaderTrader_CurrentAppearance(_Template)
 THEN
-NOT DB_LLLIB_LeaderTrader_SetAppearance(_Level);
+NOT DB_LLLIB_LeaderTrader_CurrentAppearance(_Template);
 //END_REGION
 
 //REGION TUTORIAL

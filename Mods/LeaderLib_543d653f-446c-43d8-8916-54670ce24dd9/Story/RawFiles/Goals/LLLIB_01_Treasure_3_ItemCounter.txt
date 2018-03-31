@@ -33,7 +33,7 @@ ObjectIsCharacter(_Object, 1)
 AND
 GetItemForItemTemplateInInventory((CHARACTERGUID)_Object, _ItemTemplate, _Item)
 AND
-GetVarFixedString(_Item, "LLLIB_GeneratedItemStat", _GeneratedStat)
+GetVarFixedString(_Item, "LeaderLib_GeneratedItemStat", _GeneratedStat)
 AND
 ItemGetAmount(_Item, _Amount)
 THEN

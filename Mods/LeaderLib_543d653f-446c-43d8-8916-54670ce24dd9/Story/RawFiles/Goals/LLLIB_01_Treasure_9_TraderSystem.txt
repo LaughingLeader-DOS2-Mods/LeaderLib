@@ -15,8 +15,11 @@ INITSECTION
 
 //Dynamic
 //DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+/*SPAWN_QUEUE*/
 //DB_LLLIB_Array_Data(_ArrayID, _Index, _TraderID)
 //DB_LLLIB_Traders_CurrentSpawnQueue(_Level, _ArrayID)
+//DB_LLLIB_Traders_CurrentlySpawning(_ArrayID, _TraderID)
+//DB_LLLIB_Traders_SpawnTimeoutTimer(_ArrayID, _TraderID, _TimerName)
 
 //Ref
 //DB_LLLIB_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel)
@@ -598,6 +601,11 @@ SetStoryEvent(_Trader, "LLLIB_Events_TraderReadyToSit");
 //Creation events
 IF
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+THEN
+SetStoryEvent(_Trader, "LeaderLib_Events_TraderSpawned");
+
+IF
+DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
 AND
 DB_LLLIB_Traders_CreationEvents(_TraderID, _EventName)
 THEN
@@ -732,7 +740,7 @@ LLLIB_Traders_Internal_AddToSpawnQueue((STRING)_TraderID)
 AND
 DB_LLLIB_Traders_CurrentSpawnQueue(_Level, _ArrayID)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Traders:AddToSpawnQueue] Added trader [",_TraderID,"] to spawn queue for level [",_Level,"].");
+LeaderLog_Log("DEBUG", "[LLLIB:Traders:AddToSpawnQueue] Added trader [",_TraderID,"] to spawn queue [",_ArrayID,"] for level [",_Level,"].");
 LLLIB_Array_AddToArray(_ArrayID, _TraderID);
 
 PROC
@@ -742,6 +750,7 @@ DB_CurrentLevel(_Level)
 AND
 NOT LLLIB_Traders_QRY_SpawnQueueEmpty(_Level)
 THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Traders:StartSpawnTimer] Starting spawn timer for [",_Level,"].");
 TimerLaunch("LLLIB_Timers_Traders_SpawnQueueTimer", 250);
 
 IF
@@ -749,20 +758,69 @@ TimerFinished("LLLIB_Timers_Traders_SpawnQueueTimer")
 AND
 DB_CurrentLevel(_Level)
 THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Traders:StartSpawnTimer] Spawning next in queue for level [",_Level,"].");
 LLLIB_Traders_Internal_SpawnNextInQueue(_Level);
-LLLIB_Traders_Internal_StartSpawnTimer();
+
+PROC
+LLLIB_Traders_Internal_SpawnNextInQueue((STRING)_Level)
+AND
+NOT DB_LLLIB_Traders_CurrentSpawnQueue(_Level, _)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Traders:SpawnNextInQueue] [ERROR] No array set for spawn queue for level [",_Level,"].");
 
 PROC
 LLLIB_Traders_Internal_SpawnNextInQueue((STRING)_Level)
 AND
 DB_LLLIB_Traders_CurrentSpawnQueue(_Level, _ArrayID)
 AND
-DB_LLLIB_Array_Data(_ArrayID, 0, _TraderID)
+LLLIB_Array_QRY_Pop(_ArrayID)
+AND
+DB_LLLIB_Array_Temp_PopValue(_ArrayID, _TraderID)
 THEN
-NOT DB_LLLIB_Array_Data(_ArrayID, 0, _TraderID);
-LLLIB_Array_ShiftArrayUp(_ArrayID, 0);
+NOT DB_LLLIB_Array_Temp_PopValue(_ArrayID, _TraderID);
 LeaderLog_Log("DEBUG", "[LLLIB:Traders:SpawnNextInQueue] Spawning trader [",_TraderID,"].");
+LLLIB_Traders_Internal_SpawnQueue_StartTimeoutTimer(_ArrayID, _TraderID);
+DB_LLLIB_Traders_CurrentlySpawning(_ArrayID, _TraderID);
 LLLIB_Traders_CreateTrader(_TraderID, _Level);
+
+IF
+StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_TraderSpawned")
+AND
+DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+AND
+DB_LLLIB_Traders_CurrentlySpawning(_ArrayID, _TraderID)
+THEN
+NOT DB_LLLIB_Traders_CurrentlySpawning(_ArrayID, _TraderID);
+LLLIB_Traders_Internal_SpawnQueue_CancelTimeoutTimer(_ArrayID, _TraderID);
+LLLIB_Traders_Internal_StartSpawnTimer();
+
+PROC
+LLLIB_Traders_Internal_SpawnQueue_StartTimeoutTimer((STRING)_ArrayID, (STRING)_TraderID)
+AND
+LeaderLog_QRY_Log("COMBINE", "LLLIB_Timers_Traders_SpawnQueueTimeout_", _ArrayID, "_", _TraderID)
+AND
+DB_LeaderLog_Temp_CombinedString(_TimerName)
+THEN
+NOT DB_LeaderLog_Temp_CombinedString(_TimerName);
+DB_LLLIB_Traders_SpawnTimeoutTimer(_ArrayID, _TraderID, _TimerName);
+TimerLaunch(_TimerName, 4000);
+
+PROC
+LLLIB_Traders_Internal_SpawnQueue_CancelTimeoutTimer((STRING)_ArrayID, (STRING)_TraderID)
+AND
+DB_LLLIB_Traders_SpawnTimeoutTimer(_ArrayID, _TraderID, _TimerName)
+THEN
+NOT DB_LLLIB_Traders_SpawnTimeoutTimer(_ArrayID, _TraderID, _TimerName);
+TimerCancel(_TimerName);
+
+IF
+TimerFinished(_TimerName)
+AND
+DB_LLLIB_Traders_SpawnTimeoutTimer(_ArrayID, _TraderID, _TimerName)
+THEN
+NOT DB_LLLIB_Traders_SpawnTimeoutTimer(_ArrayID, _TraderID, _TimerName);
+NOT DB_LLLIB_Traders_CurrentlySpawning(_ArrayID, _TraderID);
+LLLIB_Traders_Internal_StartSpawnTimer();
 
 PROC
 LLLIB_Traders_Internal_StartSpawnTimer()

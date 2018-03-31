@@ -5,7 +5,7 @@ LLLIB_DictionarySort_InitSettings();
 
 //DB_LLLIB_Codex(_Index,_AlphanumericChar)
 //DB_LLLIB_Codex_Iterator(_i)
-//DB_LLLIB_DictionarySort_MaxCodex(_Max)
+//DB_LLLIB_CodexCount(_Max)
 KBSECTION
 PROC
 LLLIB_DictionarySort_InitSettings()
@@ -136,8 +136,8 @@ LLLIB_DictionarySort_BuildCodex()
 AND
 SysCount("DB_LLLIB_Codex", 2, _Max)
 THEN
-SysClear("DB_LLLIB_DictionarySort_MaxCodex", 1);
-DB_LLLIB_DictionarySort_MaxCodex(_Max);
+SysClear("DB_LLLIB_CodexCount", 1);
+DB_LLLIB_CodexCount(_Max);
 //END_REGION
 
 //REGION CHARACTER_INDEX

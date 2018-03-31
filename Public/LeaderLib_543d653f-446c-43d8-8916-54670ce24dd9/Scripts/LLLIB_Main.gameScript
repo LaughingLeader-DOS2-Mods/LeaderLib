@@ -5,7 +5,7 @@ INIT
 	INT:%DefaultAmount=1
 EVENTS
 
-EVENT AddTreasureTable
+EVENT LLLIB_AddTreasureTable
 VARS
 	CHARACTER:_Target
 	FIXEDSTRING:_TableName
@@ -20,7 +20,7 @@ THEN
 	//SetVar(_Target, "LeaderLib_TreasureTableToAdd", %EmptyString)
 ENDIF
 
-EVENT RemoveTreasureTable
+EVENT LLLIB_RemoveTreasureTable
 VARS
 	CHARACTER:_Target
 	FIXEDSTRING:_TableName
@@ -35,7 +35,7 @@ THEN
 	//SetVar(_Target, "LeaderLib_TreasureTableToRemove", %EmptyString)
 ENDIF
 
-EVENT ClearTreasureTables
+EVENT LLLIB_ClearTreasureTables
 VARS
 	CHARACTER:_Target
 	FIXEDSTRING:_TableName
@@ -45,7 +45,7 @@ ACTIONS
 	CharacterClearTreasureTables(_Target)
 	CharacterEvent(_Target, "LeaderLib_Events_OnTreasureTablesCleared")
 	
-EVENT GenerateItemByStat
+EVENT LLLIB_GenerateItemByStat
 VARS
 	FIXEDSTRING:_StatName
 	CHARACTER:_Character
@@ -87,4 +87,19 @@ THEN
 		SetVar(_Character, "LeaderLib_CreateByStat_AmountToCreate", %DefaultAmount)
 		SetVar(_Character, "LeaderLib_CreateByStat_FlagToSet", %EmptyString)
 	ENDIF
+ENDIF
+
+EVENT LLLIB_CombatLog
+VARS
+	CHARACTER:_Character
+	FIXEDSTRING:_Text
+ON
+	OnCharacterEvent(_Character, "LeaderLib_Commands_LogToCombatLog")
+ACTIONS
+IF "c1"
+	GetVar(_Text, _Character, "LeaderLog_CombatLogText")
+THEN
+	DisplayCombatInfoText(_Character, _Text, 0)
+	DisplayText(_Character, _Text, 0)
+	CharacterEvent(_Character, "LeaderLib_Events_OnCombatLog")
 ENDIF

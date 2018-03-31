@@ -38,7 +38,7 @@ DB_LLLIB_LeaderTrader_Appearance("Default", "LLLIB_RetiredLeader_Act1_da17fca2-f
 PROC
 LLLIB_LeaderTrader_RegisterTraderSettings()
 THEN
-LLLIB_Trader_Register_CreationEvent("LLLIB_LeaderTrader", "LLLIB_Events_OnLeaderTradeSpawned");
+LLLIB_Trader_Register_CreationEvent("LLLIB_LeaderTrader", "LeaderLib_Events_OnLeaderTradeSpawned");
 
 //In case the position objects were destroyed
 LLLIB_Trader_Register_Position("LLLIB_LeaderTrader", "FJ_FortJoy_Main", 220.01, -16.79, 362.97);
@@ -278,21 +278,21 @@ NOT DB_LLLIB_LeaderTrader_IsRespondingToAttack(_Val);
 
 //REGION SPAWN_EVENT
 IF
-StoryEvent((CHARACTERGUID)_Trader, "LLLIB_Events_OnLeaderTradeSpawned")
+StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_OnLeaderTradeSpawned")
 AND
 DB_CurrentLevel(_Level)
 THEN
 LLLIB_LeaderTrader_OnSpawned(_Trader, _Level);
 
 IF
-StoryEvent((CHARACTERGUID)_Trader, "LLLIB_Events_OnLeaderTradeSpawned")
+StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_OnLeaderTradeSpawned")
 AND
 DB_CurrentLevel("TUT_Tutorial_A")
 THEN
 LLLIB_Helper_UnequipWeapons(_Trader);
 
 IF
-StoryEvent((CHARACTERGUID)_Trader, "LLLIB_Events_OnLeaderTradeSpawned")
+StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_OnLeaderTradeSpawned")
 AND
 DB_CurrentLevel("FJ_FortJoy_Main")
 THEN
@@ -465,7 +465,7 @@ CharacterSetCanTrade(_LeaderTrader, 1);
 
 //REGION DIALOG_NAME
 IF
-StoryEvent((CHARACTERGUID)_Trader, "LLLIB_Events_OnLeaderTradeSpawned")
+StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_OnLeaderTradeSpawned")
 AND
 GlobalGetFlag("LeaderLib_DiscoveredLeaderTraderBackground", 1)
 THEN

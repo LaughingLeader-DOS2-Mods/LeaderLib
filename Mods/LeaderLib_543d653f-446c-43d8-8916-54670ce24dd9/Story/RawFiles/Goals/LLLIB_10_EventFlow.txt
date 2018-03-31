@@ -11,7 +11,7 @@ KBSECTION
 IF
 GameStarted(_,_)
 THEN
-LLLIB_EventFlow_Init_LeaderLibStack("DB_LLLIB_EventFlow_EventStack");
+LLLIB_EventFlow_Init_LeaderLibStack("LLLIB_DefaultEventFlow");
 
 IF
 StoryEvent(_, "LeaderLib_Initialized")
@@ -22,7 +22,19 @@ TimerLaunch("LLLIB_Timers_StartDefaultFlow", 10);
 IF
 TimerFinished("LLLIB_Timers_StartDefaultFlow")
 THEN
-LLLIB_EventFlow_Start("DB_LLLIB_EventFlow_EventStack");
+LeaderLib_SendEvent("LeaderLib_Commands_StartDefaultEventFlow");
+
+IF
+StoryEvent(_, "LeaderLib_Commands_StartDefaultEventFlow")
+THEN
+GlobalSetFlag("LeaderLib_DefaultEventFlowRunning");
+LLLIB_EventFlow_Start("LLLIB_DefaultEventFlow");
+
+IF
+StoryEvent(_, "LeaderLib_Events_OnDefaultEventFlowComplete")
+THEN
+GlobalClearFlag("LeaderLib_DefaultEventFlowRunning");
+LeaderLog_Log("DEBUG", "[LLLIB:EventFlow] LeaderLib event flow complete.");
 
 PROC
 LLLIB_EventFlow_AddStack((STRING)_StackName, (STRING)_OnFlowCompleteEvent, (INTEGER)_TimeBetweenEvents)
@@ -35,20 +47,20 @@ LLLIB_Array_NewArray(_StackName);
 PROC
 LLLIB_EventFlow_Init_LeaderLibStack((STRING)_StackName)
 THEN
-LLLIB_EventFlow_AddStack(_StackName, "LeaderLib_Events_InitEventFlowComplete", 500);
+LLLIB_EventFlow_AddStack(_StackName, "LeaderLib_Events_OnDefaultEventFlowComplete", 500);
 
 PROC
 LLLIB_EventFlow_Init_LeaderLibStack((STRING)_StackName)
 AND
 LLLIB_ModSettings_QRY_SortNeeded()
 THEN
-LLLIB_Array_AddToDictionary(_StackName, "LeaderLib_Events_SortMenus", "LeaderLib_Events_MenuSortComplete");
+LLLIB_Array_AddToDictionary(_StackName, "LeaderLib_Commands_SortMenus", "LeaderLib_Events_OnMenuSortComplete");
 
 PROC
 LLLIB_EventFlow_Init_LeaderLibStack((STRING)_StackName)
 THEN
-LLLIB_Array_AddToDictionary(_StackName, "LeaderLib_Events_SpawnTraders", "LeaderLib_Events_TraderSpawnComplete");
-LLLIB_Array_AddToDictionary(_StackName, "LeaderLib_Events_StartTreasureQueue", "LeaderLib_Events_TreasureQueueComplete");
+LLLIB_Array_AddToDictionary(_StackName, "LeaderLib_Commands_SpawnTraders", "LeaderLib_Events_OnTraderSpawnComplete");
+LLLIB_Array_AddToDictionary(_StackName, "LeaderLib_Commands_StartTreasureGenerationQueue", "LeaderLib_Events_OnTreasureQueueComplete");
 
 PROC
 LLLIB_EventFlow_Start((STRING)_StackName)
@@ -77,16 +89,16 @@ LLLIB_EventFlow_SetCurrentEvent((STRING)_StackName, (INTEGER)_Index)
 AND
 DB_LLLIB_EventFlow_CurrentEvent(_StackName, _Index)
 AND
-DB_LLLIB_Dictionary_Data("DB_LLLIB_EventFlow_EventStack", _Index, _StartEvent, _OnCompleteEvent)
+DB_LLLIB_Dictionary_Data("LLLIB_DefaultEventFlow", _Index, _StartEvent, _OnCompleteEvent)
 THEN
 LLLIB_EventFlow_LaunchTimeoutTimer(_StackName, _OnCompleteEvent);
 LeaderLog_Log("DEBUG", "[LLLIB:EventFlow:SetCurrentEvent] Event flow [",_StackName,"] sent out StartEvent [",_StartEvent,"].");
-LLLIB_Events_SendEvent(_StartEvent);
+LeaderLib_SendEvent(_StartEvent);
 
 PROC
 LLLIB_EventFlow_SetCurrentEvent((STRING)_StackName, (INTEGER)_Index)
 AND
-DB_LLLIB_Array_Length("DB_LLLIB_EventFlow_EventStack", _Length)
+DB_LLLIB_Array_Length("LLLIB_DefaultEventFlow", _Length)
 AND
 _Index >= _Length
 THEN
@@ -195,13 +207,8 @@ AND
 DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:EventFlow:OnEventFlowComplete] Event flow [",_StackName,"] completed. Clearing dictionary and sending completion event [",_OnFlowCompleteEvent,"].");
-LLLIB_Events_SendEvent(_OnFlowCompleteEvent);
+LeaderLib_SendEvent(_OnFlowCompleteEvent);
 LLLIB_EventFlow_ClearStackData(_StackName);
-
-IF
-StoryEvent(_, "LeaderLib_Events_InitEventFlowComplete")
-THEN
-LeaderLog_Log("DEBUG", "[LLLIB:EventFlow] LeaderLib event flow complete.");
 //END_REGION
 EXITSECTION
 

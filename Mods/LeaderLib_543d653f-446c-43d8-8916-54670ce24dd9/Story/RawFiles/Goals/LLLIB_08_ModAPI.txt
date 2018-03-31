@@ -163,7 +163,7 @@ TimerFinished("LLLIB_Timers_LeaderLibInitialized")
 THEN
 DB_LeaderLib_Initialized(1);
 LeaderLog_Log("DEBUG", "[LLLIB:ModAPI] LeaderLib initialized.");
-LLLIB_Events_SendEvent("LeaderLib_Initialized");
+LeaderLib_SendEvent("LeaderLib_Initialized");
 //END_REGION
 
 //REGION CLEANUP

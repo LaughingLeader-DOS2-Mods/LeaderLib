@@ -80,7 +80,7 @@ NOT DB_LLLIB_DictionarySort_SortingComplete(_DictionaryID)
 THEN
 DB_LLLIB_DictionarySort_SortingComplete(_DictionaryID);
 LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort:SortingComplete] Sorting complete for '",_DictionaryID,"'. Sending completion event [",_CompleteEvent,"].");
-LLLIB_Events_SendEvent(_CompleteEvent);
+LeaderLib_SendEvent(_CompleteEvent);
 //END_REGION
 
 //REGION TIME_TRACKING

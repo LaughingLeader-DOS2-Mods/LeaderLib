@@ -97,7 +97,7 @@ TimerFinished("LeaderLib_TestLevel_IteratorDelay")
 THEN
 //LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] ","Searching for players.");
 CharacterLaunchIterator("LLLIB_Debug_AddPlayer");
-LLLIB_Events_SendEvent("LLLIB_Events_TestEvent");
+LeaderLib_SendEvent("LLLIB_Events_TestEvent");
 
 IF
 StoryEvent(_, "LLLIB_Events_TestEvent")
@@ -245,7 +245,7 @@ THEN
 TimerLaunch("LLLIB_Debug_Timers_NotifyFoundTrader", 4000);
 
 IF
-StoryEvent(_, "LLLIB_Events_UpdateDatabases")
+StoryEvent(_, "LeaderLib_Events_OnDatabasesUpdated")
 THEN
 TimerLaunch("LLLIB_Debug_Timers_NotifyUpdateTimer", 4000);
 

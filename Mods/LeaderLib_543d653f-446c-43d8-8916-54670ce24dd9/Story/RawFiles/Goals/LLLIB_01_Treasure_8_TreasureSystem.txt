@@ -175,7 +175,7 @@ AND
 DB_LLLIB_Treasure_Temp_MatchTemplate(_TreasureID, _Template, _GenerationType)
 THEN
 DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
-LLLIB_Events_SendEvent("LLLIB_Events_Treasure_ContinueGeneration");
+LeaderLib_SendEvent("LLLIB_Events_Treasure_ContinueGeneration");
 
 /*
 IF
@@ -555,19 +555,20 @@ NOT DB_LeaderLog_Temp_CombinedString(_ID);
 LLLIB_Array_AddToArray("LLLIB_ItemGenerationQueue", _ID);
 DB_LLLIB_Treasure_Temp_ItemGenerationQueue(_ID, _Object, _TreasureID, _GenerationType);
 
-/*
+
 IF
 DB_LLLIB_Treasure_Temp_ItemGenerationQueue(_ID, _Object, _TreasureID, _GenerationType)
 AND
+GlobalGetFlag("LeaderLib_DefaultEventFlowRunning", 0)
+AND
 NOT DB_LLLIB_Treasure_Temp_QueueTimerActive(1,_)
 THEN
-LLLIB_Treasure_StartQueue(100);
-*/
+LeaderLib_SendEvent("LeaderLib_Commands_StartTreasureGenerationQueue");
 
 IF
-StoryEvent(_, "LeaderLib_Events_StartTreasureQueue")
+StoryEvent(_, "LeaderLib_Commands_StartTreasureGenerationQueue")
 THEN
-LLLIB_Treasure_StartQueue(100);
+LLLIB_Treasure_StartQueue(50);
 
 PROC
 LLLIB_Treasure_StartQueue((INTEGER)_TickRate)
@@ -703,7 +704,7 @@ DB_LLLIB_Treasure_Temp_QueueTimerActive(_Active, _TickRate)
 THEN
 NOT DB_LLLIB_Treasure_Temp_QueueTimerActive(_Active, _TickRate);
 LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:OnGenerationFinished] Item generation queue complete.");
-LLLIB_Events_SendEvent("LeaderLib_Events_TreasureQueueComplete");
+LeaderLib_SendEvent("LeaderLib_Events_OnTreasureQueueComplete");
 //END_REGION
 
 //REGION FLAG_RESET
@@ -738,7 +739,7 @@ DB_LLLIB_Treasure_Temp_ResetGeneratedFlagTimer(_Object, _TimerName)
 THEN
 ObjectClearFlag(_Object, "LLLIB_Treasure_IsGeneratingTreasure");
 NOT DB_LLLIB_Treasure_Temp_ResetGeneratedFlagTimer(_Object, _TimerName);
-SetStoryEvent(_Object, "LLLIB_Events_Treasure_GenerationFinished");
+SetStoryEvent(_Object, "LeaderLib_Events_OnGenerationComplete");
 //LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:ResetGeneratedFlagTimer] Flag and database Temp_MatchedTreasure cleared.");
 //END_REGION
 
@@ -933,11 +934,6 @@ AND
 DB_LLLIB_Treasure_GeneratedEvent(_OwnerID, _ItemEntry, _OnGeneratedEvent)
 THEN
 SetStoryEvent(_Owner, _OnGeneratedEvent);
-
-PROC
-LLLIB_Treasure_SendGeneratedEvent((GUIDSTRING)_Owner, (STRING)_OwnerID, (STRING)_ItemEntry)
-THEN
-SetStoryEvent(_Owner, "LeaderLib_Events_GenerationComplete");
 
 PROC
 LLLIB_Treasure_RemoveIfOnlyOnce((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry)

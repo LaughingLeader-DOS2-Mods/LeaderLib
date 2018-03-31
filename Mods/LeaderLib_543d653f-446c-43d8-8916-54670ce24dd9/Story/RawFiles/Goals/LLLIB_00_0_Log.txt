@@ -373,8 +373,8 @@ _Type == "COMBAT"
 AND
 DB_LeaderLog_Temp_NextLogTarget(_Player)
 THEN
-SetVarFixedString(_Player, "LeaderLog_CombatText", _Str);
-SetStoryEvent(_Player, "LeaderLog_Events_PlayerCombatLog");
+SetVarFixedString(_Player, "LeaderLog_CombatLogText", _Str);
+SetStoryEvent(_Player, "LeaderLib_Commands_LogToCombatLog");
 LeaderLog_Internal_ClearTargetIfOneshot(_Player);
 
 PROC

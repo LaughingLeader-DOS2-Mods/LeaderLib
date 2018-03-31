@@ -37,7 +37,7 @@ THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Updater] Updating LeaderLib.");
 LeaderUpdater_RegisterMod("LeaderLib", "0.7.0.0", "LaughingLeader");
 LLLIB_System_UpdateDatabases();
-LLLIB_Events_SendEvent("LLLIB_Events_UpdateDatabases");
+LeaderLib_SendEvent("LeaderLib_Events_OnDatabasesUpdated");
 //END_REGION
 
 //REGION UNINSTALLING

@@ -382,7 +382,7 @@ AND
 NOT DB_LLLIB_Traders_RegisteredLevel(_, _Level, _)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Traders:CreateTraders] No registered traders for level [",_Level,"].");
-LLLIB_Events_SendEvent("LeaderLib_Events_TraderSpawnComplete");
+LeaderLib_SendEvent("LeaderLib_Events_OnTraderSpawnComplete");
 
 /*
 QRY
@@ -455,7 +455,7 @@ AND
 CharacterCreateAtPosition(_x,_y,_z, _Template, _PlaySpawn, _Trader)
 THEN
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
-SetStoryEvent(_Trader, "LLLIB_Events_TraderCreated");
+SetStoryEvent(_Trader, "LeaderLib_Events_OnTraderCreated");
 
 PROC
 LLLIB_Traders_SpawnTrader((STRING)_TraderID, (STRING)_Level, (STRING)_Template, (INTEGER)_PlaySpawn)
@@ -467,7 +467,7 @@ AND
 CharacterCreateAtPosition(_x,_y,_z, _Template, _PlaySpawn, _Trader)
 THEN
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
-SetStoryEvent(_Trader, "LLLIB_Events_TraderCreated");
+SetStoryEvent(_Trader, "LeaderLib_Events_OnTraderCreated");
 
 PROC
 LLLIB_Traders_SpawnTrader((STRING)_TraderID, (STRING)_Level, (STRING)_Template, (INTEGER)_PlaySpawn)
@@ -481,7 +481,7 @@ AND
 CharacterCreateAtPosition(_x,_y,_z, _Template, _PlaySpawn, _Trader)
 THEN
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
-SetStoryEvent(_Trader, "LLLIB_Events_TraderCreated");
+SetStoryEvent(_Trader, "LeaderLib_Events_OnTraderCreated");
 
 /*
 PROC
@@ -511,8 +511,8 @@ NOT DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
 AND
 DB_LLLIB_Traders_LevelPositionObject(_TraderID, _Level, _Object)
 THEN
-//DB_LLLIB_Debug_TraceEvent(_TraderID, "LLLIB_Events_TraderTeleported", "object");
-TeleportTo(_Trader, _Object, "LLLIB_Events_TraderTeleported", 0);
+//DB_LLLIB_Debug_TraceEvent(_TraderID, "LeaderLib_Events_OnTraderTeleported", "object");
+TeleportTo(_Trader, _Object, "LeaderLib_Events_OnTraderTeleported", 0);
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
 
 PROC
@@ -524,8 +524,8 @@ DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger)
 //AND
 //GetPosition(_Trigger,_x,_y,_z)
 THEN
-//DB_LLLIB_Debug_TraceEvent(_TraderID, "LLLIB_Events_TraderTeleported", "trigger");
-TeleportTo(_Trader, _Trigger, "LLLIB_Events_TraderTeleported", 0);
+//DB_LLLIB_Debug_TraceEvent(_TraderID, "LeaderLib_Events_OnTraderTeleported", "trigger");
+TeleportTo(_Trader, _Trigger, "LeaderLib_Events_OnTraderTeleported", 0);
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
 
 PROC
@@ -535,17 +535,17 @@ NOT DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
 AND
 DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z)
 THEN
-//DB_LLLIB_Debug_TraceEvent(_TraderID, "LLLIB_Events_TraderTeleported", "position");
+//DB_LLLIB_Debug_TraceEvent(_TraderID, "LeaderLib_Events_OnTraderTeleported", "position");
 //Workaround for global characters not showing up after teleporting to a position
 TeleportToPosition(ITEMGUID_S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, 0.0, 0.0, 0.0, "", 0);
 TeleportTo(_Trader, ITEMGUID_S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, "", 0);
-TeleportToPosition(_Trader, _x,_y,_z, "LLLIB_Events_TraderTeleported", 0);
+TeleportToPosition(_Trader, _x,_y,_z, "LeaderLib_Events_OnTraderTeleported", 0);
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
 
 IF
-StoryEvent((CHARACTERGUID)_Trader, "LLLIB_Events_TraderTeleported")
+StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_OnTraderTeleported")
 AND
-DB_LLLIB_Debug_TraceEvent(_TraderID, "LLLIB_Events_TraderTeleported", _TypeStr)
+DB_LLLIB_Debug_TraceEvent(_TraderID, "LeaderLib_Events_OnTraderTeleported", _TypeStr)
 AND
 GetPosition(_Trader, _x,_y,_z)
 AND
@@ -564,16 +564,16 @@ THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Traders] Global trader [",_TraderID,"] post-tp position is ",_xpos,",",_ypos,",",_zpos);
 
 IF
-StoryEvent((CHARACTERGUID)_Trader, "LLLIB_Events_TraderTeleported")
+StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_OnTraderTeleported")
 AND
-DB_LLLIB_Debug_TraceEvent(_TraderID, "LLLIB_Events_TraderTeleported", _TypeStr)
+DB_LLLIB_Debug_TraceEvent(_TraderID, "LeaderLib_Events_OnTraderTeleported", _TypeStr)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Traders] Teleported global trader [",_TraderID,"] to ",_TypeStr,".");
-NOT DB_LLLIB_Debug_TraceEvent(_TraderID, "LLLIB_Events_TraderTeleported", _TypeStr);
+NOT DB_LLLIB_Debug_TraceEvent(_TraderID, "LeaderLib_Events_OnTraderTeleported", _TypeStr);
 
 /*
 IF
-StoryEvent((CHARACTERGUID)_Trader, "LLLIB_Events_TraderTeleported")
+StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_OnTraderTeleported")
 AND
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
 AND
@@ -583,18 +583,18 @@ SetStoryEvent(_Trader, _EventName);
 */
 
 IF
-StoryEvent((CHARACTERGUID)_Trader, "LLLIB_Events_TraderCreated")
+StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_OnTraderCreated")
 AND
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
 THEN
-SetStoryEvent(_Trader, "LLLIB_Events_TraderReadyToSit");
+SetStoryEvent(_Trader, "LeaderLib_Commands_Trader_StartSitting");
 
 IF
-StoryEvent((CHARACTERGUID)_Trader, "LLLIB_Events_TraderTeleported")
+StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_OnTraderTeleported")
 AND
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
 THEN
-SetStoryEvent(_Trader, "LLLIB_Events_TraderReadyToSit");
+SetStoryEvent(_Trader, "LeaderLib_Commands_Trader_StartSitting");
 //END_REGION
 
 //REGION ON_SPAWN
@@ -602,7 +602,7 @@ SetStoryEvent(_Trader, "LLLIB_Events_TraderReadyToSit");
 IF
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
 THEN
-SetStoryEvent(_Trader, "LeaderLib_Events_TraderSpawned");
+SetStoryEvent(_Trader, "LeaderLib_Events_OnTraderSpawned");
 
 IF
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
@@ -647,7 +647,7 @@ ItemDestroy(_Item);
 
 //REGION SITTING
 IF
-StoryEvent((CHARACTERGUID)_Trader, "LLLIB_Events_TraderReadyToSit")
+StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Commands_Trader_StartSitting")
 AND
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
 THEN
@@ -663,7 +663,7 @@ AND
 LLLIB_QRY_Requirements_AllMet(_RequirementID)
 THEN
 SetVarObject(_Trader, "Seat", _Seat);
-CharacterUseItem(_Trader, _Seat, "");
+CharacterUseItem(_Trader, _Seat, "LeaderLib_Events_OnTraderSit");
 LeaderLog_Log("DEBUG", "[LLLIB:DynamicTraders] Set seat value on trader ", _TraderID);
 
 PROC
@@ -784,7 +784,7 @@ DB_LLLIB_Traders_CurrentlySpawning(_ArrayID, _TraderID);
 LLLIB_Traders_CreateTrader(_TraderID, _Level);
 
 IF
-StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_TraderSpawned")
+StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_OnTraderSpawned")
 AND
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
 AND
@@ -833,8 +833,8 @@ DB_LLLIB_Traders_CurrentSpawnQueue(_Level, _ArrayID)
 THEN
 LLLIB_Array_ClearArray(_ArrayID);
 NOT DB_LLLIB_Traders_CurrentSpawnQueue(_Level, _ArrayID);
-LeaderLog_Log("DEBUG", "[LLLIB:Traders:SpawnQueue] Spawn queue complete. Clearing queue and sending event [LeaderLib_Events_TraderSpawnComplete].");
-LLLIB_Events_SendEvent("LeaderLib_Events_TraderSpawnComplete");
+LeaderLog_Log("DEBUG", "[LLLIB:Traders:SpawnQueue] Spawn queue complete. Clearing queue and sending event [LeaderLib_Events_OnTraderSpawnComplete].");
+LeaderLib_SendEvent("LeaderLib_Events_OnTraderSpawnComplete");
 //END_REGION
 
 //REGION SPAWN_EVENTS
@@ -853,7 +853,7 @@ LeaderLog_Log("DEBUG", "[LLLIB:Traders] Starting trader spawning. ");
 */
 
 IF
-StoryEvent(_, "LeaderLib_Events_SpawnTraders")
+StoryEvent(_, "LeaderLib_Commands_SpawnTraders")
 THEN
 LLLIB_Traders_StartSpawning();
 

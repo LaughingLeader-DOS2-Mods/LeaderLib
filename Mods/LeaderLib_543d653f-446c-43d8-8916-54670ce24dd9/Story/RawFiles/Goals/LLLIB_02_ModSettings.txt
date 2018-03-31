@@ -132,7 +132,7 @@ NOT DB_LLLIB_EventFlow_CurrentEvent("DB_LLLIB_EventFlow_EventStack", _)
 AND
 LLLIB_ModSettings_QRY_SortNeeded()
 THEN
-LLLIB_Events_SendEvent("LeaderLib_Events_SortMenus");
+LeaderLib_SendEvent("LeaderLib_Commands_SortMenus");
 
 QRY
 LLLIB_ModSettings_QRY_SortNeeded()
@@ -145,7 +145,7 @@ DB_NOOP(1);
 
 //Sorting Start
 IF
-StoryEvent(_, "LeaderLib_Events_SortMenus")
+StoryEvent(_, "LeaderLib_Commands_SortMenus")
 AND
 DB_LLLIB_ModSettings_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModName, _Author)
 AND
@@ -156,7 +156,7 @@ THEN
 LLLIB_DictionarySort_AddString("LLLIB_RegisteredMenus", _ID, _DisplayName);
 
 IF
-StoryEvent(_, "LeaderLib_Events_SortMenus")
+StoryEvent(_, "LeaderLib_Commands_SortMenus")
 AND
 LLLIB_ModSettings_QRY_SortNeeded()
 THEN
@@ -217,10 +217,10 @@ AND
 DB_LLLIB_ModSettings_SortTickRate(_TickRate)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:ModSettings:Sorting] Starting menu sorting.");
-LLLIB_DictionarySort_StartSorting("LLLIB_RegisteredMenus", _TickRate, "LeaderLib_Events_MenuSortComplete");
+LLLIB_DictionarySort_StartSorting("LLLIB_RegisteredMenus", _TickRate, "LeaderLib_Events_OnMenuSortComplete");
 
 IF
-StoryEvent(_, "LeaderLib_Events_MenuSortComplete")
+StoryEvent(_, "LeaderLib_Events_OnMenuSortComplete")
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:ModSettings:SortingComplete] Menu sorting done.");
 TimerCancel("LLLIB_Timers_ModSettings_CalculateMaxPage");

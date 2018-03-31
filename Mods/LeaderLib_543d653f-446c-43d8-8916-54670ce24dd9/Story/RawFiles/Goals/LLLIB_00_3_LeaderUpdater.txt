@@ -66,14 +66,14 @@ LeaderUpdater_CheckIfModIsActive((STRING)_ModName, (STRING)_Author, (STRING)_Act
 AND
 LeaderUpdater_QRY_ModIsActive(_ModName, _Author)
 THEN
-LLLIB_Events_SendEvent(_ActiveEvent);
+LeaderLib_SendEvent(_ActiveEvent);
 
 PROC
 LeaderUpdater_CheckIfModIsActive((STRING)_ModName, (STRING)_Author, (STRING)_ActiveEvent, (STRING)_NotActiveEvent)
 AND
 NOT LeaderUpdater_QRY_ModIsActive(_ModName, _Author)
 THEN
-LLLIB_Events_SendEvent(_NotActiveEvent);
+LeaderLib_SendEvent(_NotActiveEvent);
 //END_REGION
 
 //REGION UNINSTALLING

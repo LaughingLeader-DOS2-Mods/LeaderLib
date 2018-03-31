@@ -99,7 +99,7 @@ ACTIONS
 IF "c1"
 	GetVar(_Text, _Character, "LeaderLog_CombatLogText")
 THEN
-	DisplayCombatInfoText(_Character, _Text, 0)
-	DisplayText(_Character, _Text, 0)
+	DisplayCombatInfoText(_Character, _Text, 0.0)
+	DisplayText(_Character, "", 0.0)
 	CharacterEvent(_Character, "LeaderLib_Events_OnCombatLog")
 ENDIF

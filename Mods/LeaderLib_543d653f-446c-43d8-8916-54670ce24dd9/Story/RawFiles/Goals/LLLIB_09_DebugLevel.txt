@@ -190,6 +190,7 @@ NOT DB_LLLIB_Temp_RandomResult(_Ran);
 LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem] Random range result: ",_RanStr," | Min: 1 Max: 19");
 */
 
+/*
 IF
 CharacterUsedItem(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574, ITEMGUID_LLLIB_DebugLever_TestRandom_d3152baa-c6d4-4e8e-a622-a6bb9c149b3e)
 AND
@@ -208,6 +209,21 @@ CharacterIsPlayer(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d4
 THEN
 CharacterMakePlayer(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574);
 MakePlayerActive(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574);
+
+*/
+
+IF
+CharacterUsedItem(_Char, ITEMGUID_LLLIB_DebugLever_TestRandom_d3152baa-c6d4-4e8e-a622-a6bb9c149b3e)
+THEN
+LeaderLog_SetOneshotTarget(_Char);
+LeaderLog_Log("COMBAT", "[LLLIB:Debug] Testing the combat log!");
+
+IF
+StoryEvent((CHARACTERGUID)_Char, "LeaderLib_Events_OnCombatLog")
+THEN
+LeaderLog_SetOneshotTarget(_Char);
+LeaderLog_SetNextStatusColor(_Char, "#FF0000", "30");
+LeaderLog_Log("STATUS", "[LLLIB:Debug] Color text!");
 
 /*
 IF

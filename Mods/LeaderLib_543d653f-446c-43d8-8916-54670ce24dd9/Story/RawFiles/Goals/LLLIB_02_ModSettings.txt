@@ -633,7 +633,7 @@ PROC
 LLLIB_System_UpdateDatabases()
 THEN
 LLLIB_ModSettings_InitSettings();
-LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Databases updated.");
+LeaderLog_Log("SYSTEM", "[LLLIB:ModSettings] Databases updated.");
 
 PROC
 LLLIB_System_RegisterDatabases()
@@ -645,7 +645,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModSettings", "D
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModSettings", "DB_LLLIB_ModSettings_PageMax", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModSettings", "DB_LLLIB_ModSettings_Temp_ActiveMenu", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModSettings", "DB_LLLIB_ModSettings_Temp_IsChangingMenuPage", 2);
-LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Databases registered.");
+LeaderLog_Log("SYSTEM", "[LLLIB:ModSettings] Databases registered.");
 //END_REGION
 EXITSECTION
 

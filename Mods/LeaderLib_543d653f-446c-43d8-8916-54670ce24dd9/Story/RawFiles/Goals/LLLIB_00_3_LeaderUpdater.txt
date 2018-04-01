@@ -14,6 +14,7 @@ NOT DB_Mods_Registered(_ModName, _Author, _Version)
 THEN
 LeaderUpdater_Clear_RegisteredModVersions(_ModName, _Author);
 DB_Mods_Registered(_ModName, _Author, _Version);
+LeaderLog_Log("DEBUG", "[LeaderUpdater:RegisterMod] Registered mod [",_ModName,"] by author [",_Author,"] with version [",_Version,"].");
 
 PROC
 LeaderUpdater_Register_ActiveGoal((STRING)_ModName, (STRING)_Author, (STRING)_GoalTitle)
@@ -24,6 +25,8 @@ DB_Mods_ActiveGoal(_ModName, _Author, _GoalTitle);
 
 PROC
 LeaderUpdater_Register_Database((STRING)_ModName, (STRING)_Author, (STRING)_ReferenceName, (STRING)_DatabaseName, (INTEGER)_Arity)
+AND
+NOT DB_LeaderUpdater_RegisteredDatabase(_ModName, _Author, _, _DatabaseName, _Arity)
 THEN
 DB_LeaderUpdater_RegisteredDatabase(_ModName, _Author, _ReferenceName, _DatabaseName, _Arity);
 
@@ -34,6 +37,13 @@ DB_LeaderUpdater_RegisteredGoal(_ModName, _Author, _GoalTitle);
 //END_REGION
 
 //REGION QUERIES
+QRY
+LeaderUpdater_QRY_ModIsRegistered((STRING)_ModName, (STRING)_Author)
+AND
+DB_Mods_Registered(_ModName, _Author, _Version)
+THEN
+DB_NOOP(1);
+
 QRY
 LeaderUpdater_QRY_ModUpdateNeeded((STRING)_ModName, (STRING)_Author, (STRING)_Version)
 AND
@@ -84,6 +94,13 @@ LeaderLib_SendEvent(_NotActiveEvent);
 //END_REGION
 
 //REGION RESET
+PROC
+LeaderUpdater_Clear_RegisteredModVersions((STRING)_ModName, (STRING)_Author)
+AND
+LeaderUpdater_QRY_ModIsRegistered(_ModName, _Author)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderUpdater:RegisterMod] Removing registered versions of mod [",_ModName,"] by author [",_Author,"].");
+
 PROC
 LeaderUpdater_Clear_RegisteredModVersions((STRING)_ModName, (STRING)_Author)
 AND
@@ -140,19 +157,19 @@ NOT DB_LeaderUpdater_RegisteredGoal(_ModName, _Author, _GoalTitle);
 PROC
 LLLIB_System_UpdateDatabases()
 THEN
-//LeaderLog_Log("DEBUG", "[LLLIB:LeaderUpdater] Databases updated.");
+//LeaderLog_Log("SYSTEM", "[LLLIB:LeaderUpdater] Databases updated.");
 DB_NOOP(1);
 
 PROC
 LLLIB_System_RegisterDatabases()
 THEN
-/*
+/* Probably don't want to actually clear these.
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderUpdater", "DB_Mods_Registered", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderUpdater", "DB_Mods_ActiveGoal", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderUpdater", "DB_LeaderUpdater_RegisteredDatabase", 5);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderUpdater", "DB_LeaderUpdater_RegisteredGoal", 3);
 */
-LeaderLog_Log("DEBUG", "[LLLIB:LeaderUpdater] Databases registered.");
+LeaderLog_Log("SYSTEM", "[LLLIB:LeaderUpdater] Databases registered.");
 //END_REGION
 
 //REGION UNINSTALLING

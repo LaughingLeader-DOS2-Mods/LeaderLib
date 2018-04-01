@@ -4,38 +4,48 @@ INITSECTION
 LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", "0.9.0.0");
 LeaderUpdater_Register_ActiveGoal("LeaderLib", "LaughingLeader", "LLLIB_ZZZ_Updater");
 LeaderLib_RegisterModMenu("LaughingLeader_LeaderLib", "[LeaderLib] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LLLIB_Updater_RegisterDatabasesOnce();
 KBSECTION
 //REGION UPDATING
 PROC
 LLLIB_System_UpdateDatabases()
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Updater] Databases updated.");
+LeaderLog_Log("SYSTEM", "[LLLIB:Updater] Databases updated.");
+
+PROC
+LLLIB_Updater_RegisterDatabasesOnce()
+AND
+NOT DB_LLLIB_Updater_RegisteredDatabases(_)
+THEN
+LLLIB_System_RegisterDatabases();
+DB_LLLIB_Updater_RegisteredDatabases(1);
 
 PROC
 LLLIB_System_RegisterDatabases()
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Updater] Databases registered.");
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Updater", "DB_LLLIB_Updater_RegisteredDatabases", 1);
+LeaderLog_Log("SYSTEM", "[LLLIB:Updater] Databases registered.");
 
 PROC
 LLLIB_Updater_ResetDatabases()
 THEN
 LeaderUpdater_Clear_AllDatabases("LeaderLib", "LaughingLeader");
 LLLIB_System_UpdateDatabases();
-LeaderLog_Log("DEBUG", "[LLLIB:Updater] Databases cleared and re-initialized.");
+LeaderLog_Log("SYSTEM", "[LLLIB:Updater] Databases cleared and re-initialized.");
 //END_REGION
 
 //REGION UPDATE_EVENT
 IF
 GameStarted(_,_)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Updater] Game started.");
+LeaderLog_Log("SYSTEM", "[LLLIB:Updater] Game started.");
 
 IF
 GameStarted(_,_)
 AND
 LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", "0.9.0.0")
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Updater] Updating LeaderLib.");
+LeaderLog_Log("SYSTEM", "[LLLIB:Updater] Updating LeaderLib.");
 LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", "0.9.0.0");
 LLLIB_System_UpdateDatabases();
 LeaderLib_SendEvent("LeaderLib_Events_OnDatabasesUpdated");
@@ -50,21 +60,21 @@ GlobalClearFlag("LeaderLib_Active");
 PROC
 LeaderUpdater_UninstallMod("LeaderLib", "LaughingLeader")
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Updater:Uninstaller] Uninstalling LeaderLib.");
-LeaderLog_Log("DEBUG", "[LLLIB:Updater:Uninstaller] Attempting to end all LeaderLib dialogs. Resuming in 2 seconds.");
+LeaderLog_Log("SYSTEM", "[LLLIB:Updater:Uninstaller] Uninstalling LeaderLib.");
+LeaderLog_Log("SYSTEM", "[LLLIB:Updater:Uninstaller] Attempting to end all LeaderLib dialogs. Resuming in 2 seconds.");
 LLLIB_Updater_CloseDialogs();
 TimerLaunch("LLLIB_Timers_Updater_UninstallerPhase2", 2000);
 
 IF
 TimerFinished("LLLIB_Timers_Updater_UninstallerPhase2")
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Updater:Uninstaller] Clearing all flags.");
+LeaderLog_Log("SYSTEM", "[LLLIB:Updater:Uninstaller] Clearing all flags.");
 LLLIB_Updater_ClearFlags();
-LeaderLog_Log("DEBUG", "[LLLIB:Updater:Uninstaller] Destroying all LeaderLib items.");
+LeaderLog_Log("SYSTEM", "[LLLIB:Updater:Uninstaller] Destroying all LeaderLib items.");
 LLLIB_Updater_DestroyItems();
-LeaderLog_Log("DEBUG", "[LLLIB:Updater:Uninstaller] Clearing databases.");
+LeaderLog_Log("SYSTEM", "[LLLIB:Updater:Uninstaller] Clearing databases.");
 LeaderUpdater_Clear_AllDatabases("LeaderLib", "LaughingLeader");
-LeaderLog_Log("DEBUG", "[LLLIB:Updater:Uninstaller] Unregistering LeaderLib.");
+LeaderLog_Log("SYSTEM", "[LLLIB:Updater:Uninstaller] Unregistering LeaderLib.");
 LeaderUpdater_UnregisterMod("LeaderLib", "LaughingLeader");
 
 PROC

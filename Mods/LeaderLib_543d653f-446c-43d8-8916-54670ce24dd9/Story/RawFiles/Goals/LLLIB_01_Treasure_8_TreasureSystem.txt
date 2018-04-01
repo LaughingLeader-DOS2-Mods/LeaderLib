@@ -62,7 +62,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem",
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_QueueTimerActive", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_TimeoutTimerActive", 4);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_ItemGenerationQueue", 4);
-LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem] Databases registered.");
+LeaderLog_Log("SYSTEM", "[LLLIB:TreasureSystem] Databases registered.");
 //END_REGION
 
 //REGION GETTERS

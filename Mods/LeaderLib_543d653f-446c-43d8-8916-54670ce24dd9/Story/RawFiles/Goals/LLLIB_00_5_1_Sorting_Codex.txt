@@ -149,7 +149,7 @@ PROC
 LLLIB_System_UpdateDatabases()
 THEN
 LLLIB_Codex_InitSettings();
-LeaderLog_Log("DEBUG", "[LLLIB:Codex] Databases updated.");
+LeaderLog_Log("SYSTEM", "[LLLIB:Codex] Databases updated.");
 
 PROC
 LLLIB_System_RegisterDatabases()
@@ -157,7 +157,7 @@ THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Codex", "DB_LLLIB_Codex", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Codex", "DB_LLLIB_Codex_Iterator", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Codex", "DB_LLLIB_CodexCount", 1);
-LeaderLog_Log("DEBUG", "[LLLIB:Codex] Databases registered.");
+LeaderLog_Log("SYSTEM", "[LLLIB:Codex] Databases registered.");
 //END_REGION
 EXITSECTION
 

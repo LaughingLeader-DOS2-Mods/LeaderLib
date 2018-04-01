@@ -553,7 +553,7 @@ NOT DB_LLLIB_StringExt_Temp_Version_Complete(_Str);
 PROC
 LLLIB_System_UpdateDatabases()
 THEN
-//LeaderLog_Log("DEBUG", "[LLLIB:StringExtensions] Databases updated.");
+//LeaderLog_Log("SYSTEM", "[LLLIB:StringExtensions] Databases updated.");
 DB_NOOP(1);
 
 PROC
@@ -564,7 +564,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "StringExtensions
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "StringExtensions", "DB_LLLIB_StringExt_Temp_CompareIterator", 4);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "StringExtensions", "DB_LLLIB_StringExt_Temp_StringCompare_Results", 4);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "StringExtensions", "DB_LLLIB_StringExt_Temp_StringCompare_StopIteration", 3);
-LeaderLog_Log("DEBUG", "[LLLIB:StringExtensions] Databases registered.");
+LeaderLog_Log("SYSTEM", "[LLLIB:StringExtensions] Databases registered.");
 //END_REGION
 EXITSECTION
 

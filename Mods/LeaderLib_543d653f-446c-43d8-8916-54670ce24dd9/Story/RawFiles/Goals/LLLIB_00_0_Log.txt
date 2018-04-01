@@ -5,7 +5,15 @@ INITSECTION
 //DB_LeaderLog_Temp_NextLogTarget(_Player)
 //DB_LeaderLog_Temp_TargetOnce(_Player)
 //DB_LeaderLog_Temp_NextStatusColor(_Player, _Color, _Size)
+GlobalSetFlag("LeaderLog_Debug_Enabled"); // For tracing system logs before it's defaultly disabled
 KBSECTION
+//REGION EDITOR_DEBUG_ENABLE
+IF
+GameStarted(_, 0)
+THEN
+GlobalClearFlag("LeaderLog_Debug_Enabled");
+//END_REGION
+
 //REGION DISABLED_CHECK
 QRY
 LeaderLog_QRY_Internal_DisableFlagActive((STRING)_Flag)
@@ -50,6 +58,11 @@ THEN
 DB_NOOP(1);
 
 QRY
+LeaderLog_QRY_LogTypeEnabled("SYSTEM")
+THEN
+DB_NOOP(1);
+
+QRY
 LeaderLog_QRY_LogTypeEnabled("COMBINE")
 THEN
 DB_NOOP(1);
@@ -73,6 +86,14 @@ DB_NOOP(1);
 
 QRY
 LeaderLog_QRY_IsDebugType("DEBUG")
+THEN
+DB_NOOP(1);
+
+//Default to DebugBreak if no types match
+QRY
+LeaderLog_QRY_IsDebugType((STRING)_Type)
+AND
+NOT LeaderLog_QRY_IsStatusType(_Type)
 THEN
 DB_NOOP(1);
 //END_REGION
@@ -567,7 +588,7 @@ LeaderLog_ClearAllTargets();
 PROC
 LLLIB_System_UpdateDatabases()
 THEN
-//LeaderLog_Log("DEBUG", "[LLLIB:LeaderLog] Databases updated.");
+//LeaderLog_Log("SYSTEM", "[LLLIB:LeaderLog] Databases updated.");
 DB_NOOP(1);
 
 PROC
@@ -577,7 +598,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderLog", "DB_
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderLog", "DB_LeaderLog_Temp_NextLogTarget", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderLog", "DB_LeaderLog_Temp_TargetOnce", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderLog", "DB_LeaderLog_Temp_NextStatusColor", 3);
-LeaderLog_Log("DEBUG", "[LLLIB:LeaderLog] Databases registered.");
+LeaderLog_Log("SYSTEM", "[LLLIB:LeaderLog] Databases registered.");
 //END_REGION
 EXITSECTION
 

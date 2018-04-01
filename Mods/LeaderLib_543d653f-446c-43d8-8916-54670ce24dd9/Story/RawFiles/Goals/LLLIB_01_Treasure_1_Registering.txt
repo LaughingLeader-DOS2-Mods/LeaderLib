@@ -303,7 +303,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registe
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_ItemMaxAmount", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_OnlyOnce", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_GeneratedEvent", 3);
-LeaderLog_Log("DEBUG", "[LLLIB:Treasure_Registering] Databases registered.");
+LeaderLog_Log("SYSTEM", "[LLLIB:Treasure_Registering] Databases registered.");
 //END_REGION
 EXITSECTION
 

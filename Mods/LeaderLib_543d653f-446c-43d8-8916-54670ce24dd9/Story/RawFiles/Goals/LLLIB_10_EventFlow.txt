@@ -224,7 +224,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventFlow", "DB_
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventFlow", "DB_LLLIB_EventFlow_EventStack", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventFlow", "DB_LLLIB_EventFlow_EventTimeout", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventFlow", "DB_LLLIB_EventFlow_WaitTimer", 2);
-LeaderLog_Log("DEBUG", "[LLLIB:EventFlow] Databases registered.");
+LeaderLog_Log("SYSTEM", "[LLLIB:EventFlow] Databases registered.");
 //END_REGION
 EXITSECTION
 

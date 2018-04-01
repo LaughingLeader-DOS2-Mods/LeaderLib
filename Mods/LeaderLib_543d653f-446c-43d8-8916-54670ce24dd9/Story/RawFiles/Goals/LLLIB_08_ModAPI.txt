@@ -38,7 +38,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_Lea
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_Log_SetTarget", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_Log_ClearTarget", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_Log", 2); // Should go up to 11
-LeaderLog_Log("DEBUG", "[LLLIB:ModAPI] Databases registered.");
+LeaderLog_Log("SYSTEM", "[LLLIB:ModAPI] Databases registered.");
 //END_REGION
 
 //REGION DB_MODAPI

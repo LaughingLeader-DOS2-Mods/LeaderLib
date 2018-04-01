@@ -938,7 +938,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Temp_CurrentlySpawning", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Temp_SpawnTimeoutTimer", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Temp_DialogFound", 1);
-LeaderLog_Log("DEBUG", "[LLLIB:TraderSystem] Databases registered.");
+LeaderLog_Log("SYSTEM", "[LLLIB:TraderSystem] Databases registered.");
 //END_REGION
 EXITSECTION
 

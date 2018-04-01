@@ -520,7 +520,7 @@ LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:ShiftArrayUp(",_StartIndexStr,
 PROC
 LLLIB_System_UpdateDatabases()
 THEN
-//LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions] Databases updated.");
+//LeaderLog_Log("SYSTEM", "[LLLIB:DatabaseExtensions] Databases updated.");
 DB_NOOP(1);
 
 PROC
@@ -533,7 +533,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensio
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LLLIB_Array_Temp_ArrayIteratorBuilder", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LLLIB_Array_Temp_PopValue", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LLLIB_Array_Temp_FirstEntry", 3);
-LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions] Databases registered.");
+LeaderLog_Log("SYSTEM", "[LLLIB:DatabaseExtensions] Databases registered.");
 //END_REGION
 EXITSECTION
 

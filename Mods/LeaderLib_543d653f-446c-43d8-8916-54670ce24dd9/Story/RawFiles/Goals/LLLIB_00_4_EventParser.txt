@@ -96,7 +96,7 @@ LLLIB_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventParser", "DB_LeaderLib_SendEvent", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventParser", "DB_LLLIB_EventParser_Spawned", 1);
-LeaderLog_Log("DEBUG", "[LLLIB:EventParser] Databases registered.");
+LeaderLog_Log("SYSTEM", "[LLLIB:EventParser] Databases registered.");
 //END_REGION
 EXITSECTION
 

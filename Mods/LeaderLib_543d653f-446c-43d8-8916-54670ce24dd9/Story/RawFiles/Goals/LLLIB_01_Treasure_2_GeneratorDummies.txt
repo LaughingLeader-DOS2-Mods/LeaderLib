@@ -184,7 +184,7 @@ LLLIB_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "GeneratorDummies", "DB_LLLIB_Treasure_GeneratorDummies", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "GeneratorDummies", "DB_LLLIB_Treasure_NextGeneratorDummy", 2);
-LeaderLog_Log("DEBUG", "[LLLIB:GeneratorDummies] Databases registered.");
+LeaderLog_Log("SYSTEM", "[LLLIB:GeneratorDummies] Databases registered.");
 //END_REGION
 EXITSECTION
 

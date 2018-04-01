@@ -484,7 +484,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort",
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LLLIB_DictionarySort_Temp_SortJob", 4);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LLLIB_DictionarySort_EntrySortTimer", 5);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LLLIB_DictionarySort_TotalTime", 2);
-LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort] Databases registered.");
+LeaderLog_Log("SYSTEM", "[LLLIB:DictionarySort] Databases registered.");
 //END_REGION
 EXITSECTION
 

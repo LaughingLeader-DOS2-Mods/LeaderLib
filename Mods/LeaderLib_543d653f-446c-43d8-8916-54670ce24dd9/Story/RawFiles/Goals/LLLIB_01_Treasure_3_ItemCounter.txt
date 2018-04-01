@@ -157,7 +157,7 @@ LLLIB_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_ItemCounter", "DB_LLLIB_Treasure_Temp_ItemTemplateAmount", 4);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_ItemCounter", "DB_LLLIB_Treasure_Temp_ItemStatAmount", 5);
-LeaderLog_Log("DEBUG", "[LLLIB:Treasure_ItemCounter] Databases registered.");
+LeaderLog_Log("SYSTEM", "[LLLIB:Treasure_ItemCounter] Databases registered.");
 //END_REGION
 EXITSECTION
 

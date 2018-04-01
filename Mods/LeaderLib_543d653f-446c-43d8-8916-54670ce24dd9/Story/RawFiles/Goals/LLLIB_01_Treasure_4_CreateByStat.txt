@@ -278,7 +278,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_CreateB
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_CreateByStat", "DB_LLLIB_Treasure_Temp_CreateItemByStat_QueueTimer", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_CreateByStat", "DB_LLLIB_Treasure_Temp_CreateItemByStat_TimeoutTimer", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_CreateByStat", "DB_LLLIB_Treasure_Temp_CreateItemByStat_DummyTarget", 4);
-LeaderLog_Log("DEBUG", "[LLLIB:Treasure_CreateByStat] Databases registered.");
+LeaderLog_Log("SYSTEM", "[LLLIB:Treasure_CreateByStat] Databases registered.");
 //END_REGION
 EXITSECTION
 

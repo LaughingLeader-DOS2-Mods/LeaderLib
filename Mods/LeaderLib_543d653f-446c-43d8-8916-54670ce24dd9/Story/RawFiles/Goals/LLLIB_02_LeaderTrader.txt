@@ -504,7 +504,7 @@ PROC
 LLLIB_System_UpdateDatabases()
 THEN
 LLLIB_LeaderTrader_InitSettings();
-LeaderLog_Log("DEBUG", "[LLLIB:LeaderTrader] Databases updated.");
+LeaderLog_Log("SYSTEM", "[LLLIB:LeaderTrader] Databases updated.");
 
 PROC
 LLLIB_System_RegisterDatabases()
@@ -514,7 +514,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_Dialog", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_Appearance", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_CurrentAppearance", 1);
-LeaderLog_Log("DEBUG", "[LLLIB:LeaderTrader] Databases registered.");
+LeaderLog_Log("SYSTEM", "[LLLIB:LeaderTrader] Databases registered.");
 //END_REGION
 EXITSECTION
 

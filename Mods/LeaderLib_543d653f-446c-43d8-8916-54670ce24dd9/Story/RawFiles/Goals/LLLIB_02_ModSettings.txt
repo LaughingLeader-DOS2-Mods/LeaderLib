@@ -576,10 +576,9 @@ DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
 AND
 UserGetFlag(_Player, "LeaderLib_AutoOpenModSettingsMenu", 1)
 AND
-ObjectGetFlag(_Player, "LeaderLib_OpenModSettingsMenu", 1)
+ObjectGetFlag(_Player, "LeaderLib_BlockModSettingsMenuReopen", 0)
 THEN
 LLLIB_ModSettings_Reopen(_Player, _Dialog);
-ObjectClearFlag(_Player, "LeaderLib_OpenModSettingsMenu");
 
 IF
 DialogEnded(_Dialog, _Instance)

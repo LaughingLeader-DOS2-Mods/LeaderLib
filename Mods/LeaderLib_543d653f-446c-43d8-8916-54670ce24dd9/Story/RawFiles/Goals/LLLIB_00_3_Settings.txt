@@ -117,7 +117,7 @@ DB_LLLIB_Settings_Temp_ActiveModText(_ModName, _Author, " <b>(No Active Goal Reg
 PROC
 LLLIB_Settings_BuildModList()
 AND
-DB_Mods_Registered(_ModName, _Version, _Author)
+DB_Mods_Registered(_ModName, _Author, _Version)
 AND
 DB_LLLIB_Settings_Temp_RegisteredModsList(_Str)
 AND

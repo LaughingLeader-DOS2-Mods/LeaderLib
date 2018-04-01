@@ -1,7 +1,7 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-LeaderUpdater_Register_Mod("LeaderLib", "0.9.0.0", "LaughingLeader");
+LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", "0.9.0.0");
 LeaderUpdater_Register_ActiveGoal("LeaderLib", "LaughingLeader", "LLLIB_ZZZ_Updater");
 LeaderLib_RegisterModMenu("LaughingLeader_LeaderLib", "[LeaderLib] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 KBSECTION
@@ -33,10 +33,10 @@ LeaderLog_Log("DEBUG", "[LLLIB:Updater] Game started.");
 IF
 GameStarted(_,_)
 AND
-LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "0.9.0.0", "LaughingLeader")
+LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", "0.9.0.0")
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Updater] Updating LeaderLib.");
-LeaderUpdater_Register_Mod("LeaderLib", "0.9.0.0", "LaughingLeader");
+LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", "0.9.0.0");
 LLLIB_System_UpdateDatabases();
 LeaderLib_SendEvent("LeaderLib_Events_OnDatabasesUpdated");
 //END_REGION
@@ -46,6 +46,14 @@ PROC
 LeaderUpdater_UnregisterMod("LeaderLib", "LaughingLeader")
 THEN
 GlobalClearFlag("LeaderLib_Active");
+
+PROC
+LLLNIW_Updater_ClearPlayerVariables()
+AND
+DB_IsPlayer(_Player)
+THEN
+//Clear global variables set on the player
+LLNWIZ_Naming_ClearSessionVariables(_Player);
 
 PROC
 LeaderUpdater_UninstallMod("LeaderLib", "LaughingLeader")

@@ -44,10 +44,10 @@ LeaderLog_Log("DEBUG", "[LLLIB:ModAPI] Databases registered.");
 //REGION DB_MODAPI
 /*Registering*/
 IF
-DB_LeaderLib_ModApi_RegisterMod((STRING)_ModName, (STRING)_Version, (STRING)_Author)
+DB_LeaderLib_ModApi_RegisterMod((STRING)_ModName, (STRING)_Author, (STRING)_Version)
 THEN
-LeaderUpdater_Register_Mod(_ModName, _Version, _Author);
-NOT DB_LeaderLib_ModApi_RegisterMod(_ModName, _Version, _Author);
+LeaderUpdater_Register_Mod(_ModName, _Author, _Version);
+NOT DB_LeaderLib_ModApi_RegisterMod(_ModName, _Author, _Version);
 
 IF
 DB_LeaderLib_ModApi_RegisterMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModName, (STRING)_Author)
@@ -265,10 +265,10 @@ Parse databases that were set before LeaderLib was loaded, then clear them.
 PROC
 LLLIB_ModApi_RunCleanup()
 AND
-DB_LeaderLib_ModApi_RegisterMod((STRING)_ModName, (STRING)_Version, (STRING)_Author)
+DB_LeaderLib_ModApi_RegisterMod((STRING)_ModName, (STRING)_Author, (STRING)_Version)
 THEN
-LeaderUpdater_Register_Mod(_ModName, _Version, _Author);
-NOT DB_LeaderLib_ModApi_RegisterMod(_ModName, _Version, _Author);
+LeaderUpdater_Register_Mod(_ModName, _Author, _Version);
+NOT DB_LeaderLib_ModApi_RegisterMod(_ModName, _Author, _Version);
 
 PROC
 LLLIB_ModApi_RunCleanup()

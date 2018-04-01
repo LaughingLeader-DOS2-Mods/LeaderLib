@@ -263,6 +263,23 @@ THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Treasure:CreateItemByStat] Item added to dummy with ID [",_DummyID,"].");
 */
 //END_REGION
+
+//REGION UPDATER
+PROC
+LLLIB_System_UpdateDatabases()
+THEN
+DB_NOOP(1);
+
+PROC
+LLLIB_System_RegisterDatabases()
+THEN
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_CreateByStat", "DB_LLLIB_Treasure_Temp_CreateItemByStat_CharacterArray", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_CreateByStat", "DB_LLLIB_Treasure_Temp_CreateItemByStat_ItemQueue", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_CreateByStat", "DB_LLLIB_Treasure_Temp_CreateItemByStat_QueueTimer", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_CreateByStat", "DB_LLLIB_Treasure_Temp_CreateItemByStat_TimeoutTimer", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_CreateByStat", "DB_LLLIB_Treasure_Temp_CreateItemByStat_DummyTarget", 4);
+LeaderLog_Log("DEBUG", "[LLLIB:Treasure_CreateByStat] Databases registered.");
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

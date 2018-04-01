@@ -466,6 +466,26 @@ THEN
 LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort:OnIterator] Iterating [",_DictionaryID,"][",_CurrentIndexStr,"/",_LengthStr,"] [",_ID,"] = ",_StringEntry);
 */
 //END_REGION
+
+//REGION UPDATER
+PROC
+LLLIB_System_UpdateDatabases()
+THEN
+DB_NOOP(1);
+
+PROC
+LLLIB_System_RegisterDatabases()
+THEN
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LLLIB_DictionarySort_Temp_StringQueue", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LLLIB_DictionarySort_SortingStarted", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LLLIB_DictionarySort_CurrentlySorting", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LLLIB_DictionarySort_TimerRunning", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LLLIB_DictionarySort_SortingComplete", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LLLIB_DictionarySort_Temp_SortJob", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LLLIB_DictionarySort_EntrySortTimer", 5);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LLLIB_DictionarySort_TotalTime", 2);
+LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort] Databases registered.");
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

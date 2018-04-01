@@ -172,6 +172,20 @@ THEN
 LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:GeneratorDummyInitialized] Unregistered generator dummy initialized. Added to database.");
 DB_LLLIB_Treasure_GeneratorDummies(_Dummy);
 //END_REGION
+
+//REGION UPDATER
+PROC
+LLLIB_System_UpdateDatabases()
+THEN
+DB_NOOP(1);
+
+PROC
+LLLIB_System_RegisterDatabases()
+THEN
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "GeneratorDummies", "DB_LLLIB_Treasure_GeneratorDummies", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "GeneratorDummies", "DB_LLLIB_Treasure_NextGeneratorDummy", 2);
+LeaderLog_Log("DEBUG", "[LLLIB:GeneratorDummies] Databases registered.");
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

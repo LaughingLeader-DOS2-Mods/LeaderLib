@@ -515,6 +515,26 @@ THEN
 LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:ShiftArrayUp(",_StartIndexStr,")] Shifted '",_Value,"' in array [",_ID,"] up, to index [",_IndexStr,"].");
 */
 //END_REGION
+
+//REGION UPDATER
+PROC
+LLLIB_System_UpdateDatabases()
+THEN
+//LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions] Databases updated.");
+DB_NOOP(1);
+
+PROC
+LLLIB_System_RegisterDatabases()
+THEN
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LLLIB_Array_Length", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LLLIB_Array_Data", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LLLIB_Dictionary_Data", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LLLIB_Array_Iterator", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LLLIB_Array_Temp_ArrayIteratorBuilder", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LLLIB_Array_Temp_PopValue", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LLLIB_Array_Temp_FirstEntry", 3);
+LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions] Databases registered.");
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

@@ -8,7 +8,6 @@ LLLIB_ModSettings_InitSettings();
 //DB_LLLIB_ModSettings_MenuVars(_MenuIndex, _DialogVar, _SelectFlag, _DisabledFlag)
 //DB_LLLIB_ModSettings_MenusPerPage(_MaxPerPage)
 //DB_LLLIB_ModSettings_SortTickRate(_Rate)
-//DB_LLLIB_ModSettings_SortingMenuTimer(_TimerName, _ID, _DisplayName, _CurrentIndex)
 
 //Dynamic
 //DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _Index, _ID, _DisplayName)
@@ -17,10 +16,6 @@ LLLIB_ModSettings_InitSettings();
 //DB_LLLIB_ModSettings_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
 //DB_LLLIB_ModSettings_Temp_ActiveMenu(_Player, _ID, _Dialog)
 //DB_LLLIB_ModSettings_Temp_IsChangingMenuPage(_Player, _Instance)
-
-//DB_LLLIB_ModSettings_Temp_PreviousMenu(_Index, _ID, _DisplayName, _Dialog, _ModName, _Author)
-//DB_LLLIB_ModSettings_Temp_SortedMenu(_Index, _ID, _Dialog, _DisplayName)
-//DB_LLLIB_ModSettings_Temp_UnsortedMenu(_ID, _DisplayName, _Dialog, _ModName, _Author)
 KBSECTION
 //REGION MENU_REGISTERING
 PROC
@@ -87,8 +82,6 @@ DB_LLLIB_ModSettings_SortTickRate(1);
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_ModSettings_MenusPerPage", 1);
 DB_LLLIB_ModSettings_MenusPerPage(8);
 
-LeaderLib_RegisterModMenu("LaughingLeader_LeaderLib", "[LeaderLib] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_ModSettings_MenuVars", 4);
 DB_LLLIB_ModSettings_MenuVars(0, "LLLIB_ModSettings_Menu1_783ec14d-2861-4345-8dbc-45974fa34e15", "LLLIB_ModSettings_SelectedMenu1", "LLLIB_ModSettings_MenuEmpty1");
 DB_LLLIB_ModSettings_MenuVars(1, "LLLIB_ModSettings_Menu2_9a2d2990-5cff-420e-ba8a-37f9510ab9e1", "LLLIB_ModSettings_SelectedMenu2", "LLLIB_ModSettings_MenuEmpty2");
@@ -98,28 +91,6 @@ DB_LLLIB_ModSettings_MenuVars(4, "LLLIB_ModSettings_Menu5_45148ce6-e8f3-4af4-81e
 DB_LLLIB_ModSettings_MenuVars(5, "LLLIB_ModSettings_Menu6_863af621-ff0c-454a-b6a3-7c9d3166a8a0", "LLLIB_ModSettings_SelectedMenu6", "LLLIB_ModSettings_MenuEmpty6");
 DB_LLLIB_ModSettings_MenuVars(6, "LLLIB_ModSettings_Menu7_888ce02f-83ff-4173-be8d-f41fd348358f", "LLLIB_ModSettings_SelectedMenu7", "LLLIB_ModSettings_MenuEmpty7");
 DB_LLLIB_ModSettings_MenuVars(7, "LLLIB_ModSettings_Menu8_a6aa98e6-cde4-491b-a2cb-2cd7d5d71f96", "LLLIB_ModSettings_SelectedMenu8", "LLLIB_ModSettings_MenuEmpty8");
-//END_REGION
-
-//REGION UPDATING
-PROC
-LLLIB_System_UpdateDatabases()
-THEN
-LLLIB_ModSettings_InitSettings();
-LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Databases updated.");
-
-PROC
-LLLIB_System_ClearDatabases()
-THEN
-SysClear("DB_LLLIB_ModSettings_MenusPerPage", 1);
-SysClear("DB_LLLIB_ModSettings_RegisteredMenuData", 5);
-LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Databases cleared.");
-
-PROC
-LLLIB_Updater_ResetDatabases()
-THEN
-LLLIB_System_ClearDatabases();
-LLLIB_System_UpdateDatabases();
-LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Databases cleared and re-initialized.");
 //END_REGION
 
 //REGION SORTING
@@ -656,6 +627,26 @@ AND
 CharacterIsInCombat(_Player, 0)
 THEN
 Proc_StartDialog(0, "LLLIB_ModSettingsMenu", _Book, _Player);
+//END_REGION
+
+//REGION UPDATER
+PROC
+LLLIB_System_UpdateDatabases()
+THEN
+LLLIB_ModSettings_InitSettings();
+LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Databases updated.");
+
+PROC
+LLLIB_System_RegisterDatabases()
+THEN
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModSettings", "DB_LLLIB_ModSettings_MenuVars", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModSettings", "DB_LLLIB_ModSettings_MenusPerPage", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModSettings", "DB_LLLIB_ModSettings_RegisteredMenuData", 5);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModSettings", "DB_LLLIB_ModSettings_CurrentPageIndex", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModSettings", "DB_LLLIB_ModSettings_PageMax", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModSettings", "DB_LLLIB_ModSettings_Temp_ActiveMenu", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModSettings", "DB_LLLIB_ModSettings_Temp_IsChangingMenuPage", 2);
+LeaderLog_Log("DEBUG", "[LLLIB:ModSettings] Databases registered.");
 //END_REGION
 EXITSECTION
 

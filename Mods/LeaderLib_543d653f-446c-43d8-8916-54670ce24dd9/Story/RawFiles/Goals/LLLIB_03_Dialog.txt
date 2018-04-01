@@ -38,7 +38,7 @@ DB_LLLIB_DialogVars("PlayerName", "LLLIB_PlayerName_6c5b9559-53e3-47f7-8881-309a
 DB_LLLIB_DialogVars("LeaderTrader_Greeting", "LLLIB_LeaderTrader_Greeting_f143b90b-9afc-477e-b133-6a1574341261-53e3-47f7-8881-309a930e4be3");
 //END_REGION
 
-//REGION UPDATING
+//REGION UPDATER
 PROC
 LLLIB_System_UpdateDatabases()
 THEN
@@ -46,10 +46,11 @@ LLLIB_Dialog_InitSettings();
 LeaderLog_Log("DEBUG", "[LLLIB:Dialog] Databases updated.");
 
 PROC
-LLLIB_System_ClearDatabases()
+LLLIB_System_RegisterDatabases()
 THEN
-SysClear("DB_LLLIB_DialogNames", 1);
-LeaderLog_Log("DEBUG", "[LLLIB:Dialog] Databases cleared.");
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LLLIB_DialogNames", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LLLIB_Dialog_AttitudeFlags", 2);
+LeaderLog_Log("DEBUG", "[LLLIB:Dialog] Databases registered.");
 //END_REGION
 
 //REGION GENERAL_DIALOGVARS_AUTOSET

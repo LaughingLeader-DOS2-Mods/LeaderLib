@@ -278,6 +278,24 @@ THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Sorter:DetermineStringLength] Length of '",_Str,"' is [",_LengthStr,"].");
 */
 //END_REGION
+
+//REGION UPDATER
+PROC
+LLLIB_System_UpdateDatabases()
+THEN
+//LeaderLog_Log("DEBUG", "[LLLIB:StringExtensions] Databases updated.");
+DB_NOOP(1);
+
+PROC
+LLLIB_System_RegisterDatabases()
+THEN
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "StringExtensions", "DB_LLLIB_StringLength", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "StringExtensions", "DB_LLLIB_StringCompare_Results", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "StringExtensions", "DB_LLLIB_StringExt_Temp_CompareIterator", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "StringExtensions", "DB_LLLIB_StringExt_Temp_StringCompare_Results", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "StringExtensions", "DB_LLLIB_StringExt_Temp_StringCompare_StopIteration", 3);
+LeaderLog_Log("DEBUG", "[LLLIB:StringExtensions] Databases registered.");
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

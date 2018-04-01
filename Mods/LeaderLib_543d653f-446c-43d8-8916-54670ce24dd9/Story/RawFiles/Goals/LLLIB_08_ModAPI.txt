@@ -50,24 +50,32 @@ NOT DB_LeaderLib_ModApi_ModIsActive(_ModName, _Author, _ActiveEvent, _InactiveEv
 IF
 DB_LeaderLib_ModApi_RegisterMod((STRING)_ModName, (STRING)_Version, (STRING)_Author)
 THEN
-LeaderUpdater_RegisterMod(_ModName, _Version, _Author);
+LeaderUpdater_Register_Mod(_ModName, _Version, _Author);
 NOT DB_LeaderLib_ModApi_RegisterMod(_ModName, _Version, _Author);
 
 IF
 DB_LeaderLib_ModApi_RegisterActiveGoal((STRING)_ModName, (STRING)_Author, (STRING)_GoalTitle)
 THEN
-LeaderUpdater_RegisterActiveGoal(_ModName, _Author, _GoalTitle);
+LeaderUpdater_Register_ActiveGoal(_ModName, _Author, _GoalTitle);
+NOT DB_LeaderLib_ModApi_RegisterActiveGoal(_ModName, _Author, _GoalTitle);
 
 IF
-DB_LeaderLib_ModApi_ClearActiveGoals((STRING)_ModName, (STRING)_Author)
+DB_LeaderLib_ModApi_RegisterDatabase((STRING)_ModName, (STRING)_Author, (STRING)_ReferenceName, (STRING)_DatabaseName, (INTEGER)_Arity)
 THEN
-LeaderUpdater_ClearActiveGoals(_ModName, _Author);
+LeaderUpdater_Register_Database(_ModName, _Author, _ReferenceName, _DatabaseName, _Arity);
+NOT DB_LeaderLib_ModApi_RegisterDatabase(_ModName, _Author, _ReferenceName, _DatabaseName, _Arity);
 
 IF
 DB_LeaderLib_ModApi_RegisterMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModName, (STRING)_Author)
 THEN
 LeaderLib_RegisterModMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
 NOT DB_LeaderLib_ModApi_RegisterMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
+
+IF
+DB_LeaderLib_ModApi_ClearActiveGoals((STRING)_ModName, (STRING)_Author)
+THEN
+LeaderUpdater_Clear_ActiveGoals(_ModName, _Author);
+NOT DB_LeaderLib_ModApi_ClearActiveGoals(_ModName, _Author);
 //END_REGION
 
 //REGION LOGGING
@@ -156,7 +164,7 @@ IF
 GameStarted(_,_)
 THEN
 TimerLaunch("LLLIB_Timers_LeaderLibInitialized", 1);
-TimerLaunch("LLLIB_Timers_LeaderLib_ModBridgeCleanup", 500);
+TimerLaunch("LLLIB_Timers_LeaderLib_ModApiCleanup", 500);
 
 IF
 TimerFinished("LLLIB_Timers_LeaderLibInitialized")
@@ -169,13 +177,13 @@ LeaderLib_SendEvent("LeaderLib_Initialized");
 //REGION CLEANUP
 /* In the event that any of these databases were set without LeaderLib installed, run through them again. */
 IF
-TimerFinished("LLLIB_Timers_LeaderLib_ModBridgeCleanup")
+TimerFinished("LLLIB_Timers_LeaderLib_ModApiCleanup")
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:ModAPI] ModBridge cleanup started. Running ModAPI databases.");
-LLLIB_ModBridge_RunCleanup();
+LeaderLog_Log("DEBUG", "[LLLIB:ModAPI] ModApi cleanup started. Running ModAPI databases.");
+LLLIB_ModApi_RunCleanup();
 
 PROC
-LLLIB_ModBridge_RunCleanup()
+LLLIB_ModApi_RunCleanup()
 THEN
 //Clear logs that are still remaining
 SysClear("DB_LeaderLib_ModApi_Log_SetTarget", 1);
@@ -194,7 +202,7 @@ SysClear("DB_LeaderLib_ModApi_Log", 11);
 
 //Parse databases that were set before LeaderLib was loaded.
 PROC
-LLLIB_ModBridge_RunCleanup()
+LLLIB_ModApi_RunCleanup()
 AND
 DB_LeaderLib_ModApi_RegisterMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModName, (STRING)_Author)
 THEN
@@ -202,31 +210,31 @@ LeaderLib_RegisterModMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
 NOT DB_LeaderLib_ModApi_RegisterMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
 
 PROC
-LLLIB_ModBridge_RunCleanup()
+LLLIB_ModApi_RunCleanup()
 AND
 DB_LeaderLib_ModApi_RegisterMod((STRING)_ModName, (STRING)_Version, (STRING)_Author)
 THEN
-LeaderUpdater_RegisterMod(_ModName, _Version, _Author);
+LeaderUpdater_Register_Mod(_ModName, _Version, _Author);
 NOT DB_LeaderLib_ModApi_RegisterMod(_ModName, _Version, _Author);
 
 PROC
-LLLIB_ModBridge_RunCleanup()
+LLLIB_ModApi_RunCleanup()
 AND
 DB_LeaderLib_ModApi_RegisterActiveGoal((STRING)_ModName, (STRING)_Author, (STRING)_GoalTitle)
 THEN
-LeaderUpdater_RegisterActiveGoal(_ModName, _Author, _GoalTitle);
+LeaderUpdater_Register_ActiveGoal(_ModName, _Author, _GoalTitle);
 NOT DB_LeaderLib_ModApi_RegisterActiveGoal(_ModName, _Author, _GoalTitle);
 
 PROC
-LLLIB_ModBridge_RunCleanup()
+LLLIB_ModApi_RunCleanup()
 AND
 DB_LeaderLib_ModApi_ClearActiveGoals((STRING)_ModName, (STRING)_Author)
 THEN
-LeaderUpdater_ClearActiveGoals(_ModName, _Author);
+LeaderUpdater_Clear_ActiveGoals(_ModName, _Author);
 NOT DB_LeaderLib_ModApi_ClearActiveGoals(_ModName, _Author);
 
 PROC
-LLLIB_ModBridge_RunCleanup()
+LLLIB_ModApi_RunCleanup()
 AND
 DB_LeaderLib_ModApi_AddItemToLeaderTrader((STRING)_Template, (INTEGER)_Amount)
 THEN
@@ -234,7 +242,7 @@ LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModItems", _Template,
 NOT DB_LeaderLib_ModApi_AddItemToLeaderTrader(_Template, _Amount);
 
 PROC
-LLLIB_ModBridge_RunCleanup()
+LLLIB_ModApi_RunCleanup()
 AND
 DB_LeaderLib_ModApi_AddBookToLeaderTrader((STRING)_Template, (INTEGER)_Amount)
 THEN
@@ -242,7 +250,7 @@ LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModBooks", _Template,
 NOT DB_LeaderLib_ModApi_AddBookToLeaderTrader(_Template, _Amount);
 
 PROC
-LLLIB_ModBridge_RunCleanup()
+LLLIB_ModApi_RunCleanup()
 AND
 DB_LeaderLib_ModApi_SendEvent((STRING)_EventName)
 THEN
@@ -250,12 +258,33 @@ LLLIB_EventParser_Internal_RunEvent(_EventName);
 NOT DB_LeaderLib_ModApi_SendEvent(_EventName);
 
 PROC
-LLLIB_ModBridge_RunCleanup()
+LLLIB_ModApi_RunCleanup()
 AND
 DB_LeaderLib_ModApi_ModIsActive((STRING)_ModName, (STRING)_Author, (STRING)_ActiveEvent, (STRING)_InactiveEvent)
 THEN
 LeaderUpdater_CheckIfModIsActive(_ModName, _Author, _ActiveEvent, _InactiveEvent);
 NOT DB_LeaderLib_ModApi_ModIsActive(_ModName, _Author, _ActiveEvent, _InactiveEvent);
+//END_REGION
+
+//REGION UPDATER
+PROC
+LLLIB_System_UpdateDatabases()
+THEN
+DB_NOOP(1);
+
+PROC
+LLLIB_System_RegisterDatabases()
+THEN
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_Initialized", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_RegisterMenu", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_AddItemToLeaderTrader", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_AddBookToLeaderTrader", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_SendEvent", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_RegisterMod", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_Log_SetTarget", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_Log_ClearTarget", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_Log", 2); // Should go up to 11
+LeaderLog_Log("DEBUG", "[LLLIB:ModAPI] Databases registered.");
 //END_REGION
 EXITSECTION
 

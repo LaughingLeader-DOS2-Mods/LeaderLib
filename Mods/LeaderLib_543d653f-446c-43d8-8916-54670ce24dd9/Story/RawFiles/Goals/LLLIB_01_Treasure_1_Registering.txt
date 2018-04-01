@@ -277,6 +277,34 @@ NOT DB_LLLIB_Treasure_RegisteredGenerationTypes(_GenerationType)
 THEN
 DB_LLLIB_Treasure_RegisteredGenerationTypes(_GenerationType);
 //END_REGION
+
+//REGION UPDATER
+PROC
+LLLIB_System_UpdateDatabases()
+THEN
+DB_NOOP(1);
+
+PROC
+LLLIB_System_RegisterDatabases()
+THEN
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_RegisteredObject", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_RegisteredObjectTemplate", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_RegisteredTrader", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_RegisteredTreasureTable", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_RegisteredTreasureTable", 6);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_TreasureItemTemplates", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_TreasureItemStats", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_ItemGenerationSettings", 5);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_ItemGenerationType", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_RegisteredGenerationTypes", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_ItemGenerationFlag", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_ItemDeltaMods", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_ItemRunes", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_ItemMaxAmount", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_OnlyOnce", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_GeneratedEvent", 3);
+LeaderLog_Log("DEBUG", "[LLLIB:Treasure_Registering] Databases registered.");
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

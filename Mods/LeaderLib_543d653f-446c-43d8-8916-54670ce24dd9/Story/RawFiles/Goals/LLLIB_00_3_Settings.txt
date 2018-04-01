@@ -5,7 +5,7 @@ LLLIB_Settings_InitSettings();
 
 //DB_LLLIB_Settings_ItemTemplates(_Name, _ItemTemplate)
 //DB_LLLIB_Settings_DialogVariables(_VariableName, _VariableValue)
-//DB_LLLIB_Iterator(_Index)
+//DB_LLLIB_Settings_Iterator(_Index)
 
 //DB_LLLIB_Settings_Temp_IteratorCreator(_CurrentInt, _MaxInt)
 //DB_LLLIB_Settings_Temp_RegisteredModsList(_Str)
@@ -49,7 +49,7 @@ DB_LLLIB_EquipmentSlots("Ring2");
 PROC
 LLLIB_Settings_CreateIterator((INTEGER)_MaxInt)
 THEN
-SysClear("DB_LLLIB_Iterator", 1);
+SysClear("DB_LLLIB_Settings_Iterator", 1);
 DB_LLLIB_Settings_Temp_IteratorCreator(_MaxInt);
 DB_LLLIB_Settings_Temp_StartIteratorCreator(0);
 
@@ -62,28 +62,9 @@ _CurrentInt < _MaxInt
 AND
 IntegerSum(_CurrentInt, 1, _NextInt)
 THEN
-DB_LLLIB_Iterator(_CurrentInt);
+DB_LLLIB_Settings_Iterator(_CurrentInt);
 NOT DB_LLLIB_Settings_Temp_StartIteratorCreator(_CurrentInt);
 DB_LLLIB_Settings_Temp_StartIteratorCreator(_NextInt);
-//END_REGION
-
-//REGION UPDATING
-PROC
-LLLIB_System_UpdateDatabases()
-THEN
-LLLIB_Settings_InitSettings();
-LeaderLog_Log("DEBUG", "[LLLIB:Settings] Databases updated.");
-
-PROC
-LLLIB_System_ClearDatabases()
-THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Settings] Databases cleared.");
-
-PROC
-LLLIB_Updater_ResetDatabases()
-THEN
-DB_NOOP(1);
-//LeaderLog_Log("DEBUG", "[LLLIB:Settings] Databases cleared and re-initialized.");
 //END_REGION
 
 //REGION MOD_DATA
@@ -171,6 +152,25 @@ IF
 DialogStarted("LLLIB_SettingsMenu", _Instance)
 THEN
 LLLIB_Settings_BuildModList();
+//END_REGION
+
+//REGION UPDATER
+PROC
+LLLIB_System_UpdateDatabases()
+THEN
+LLLIB_Settings_InitSettings();
+LeaderLog_Log("DEBUG", "[LLLIB:Settings] Databases updated.");
+
+PROC
+LLLIB_System_RegisterDatabases()
+THEN
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_ItemTemplates", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_DialogVariables", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_Iterator", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_Temp_IteratorCreator", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_Temp_RegisteredModsList", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_Temp_ActiveModText", 3);
+LeaderLog_Log("DEBUG", "[LLLIB:Settings] Databases registered.");
 //END_REGION
 EXITSECTION
 

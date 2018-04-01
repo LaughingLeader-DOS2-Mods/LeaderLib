@@ -210,6 +210,22 @@ LeaderLog_Log("DEBUG", "[LLLIB:EventFlow:OnEventFlowComplete] Event flow [",_Sta
 LeaderLib_SendEvent(_OnFlowCompleteEvent);
 LLLIB_EventFlow_ClearStackData(_StackName);
 //END_REGION
+
+//REGION UPDATER
+PROC
+LLLIB_System_UpdateDatabases()
+THEN
+DB_NOOP(1);
+
+PROC
+LLLIB_System_RegisterDatabases()
+THEN
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventFlow", "DB_LLLIB_EventFlow_CurrentEvent", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventFlow", "DB_LLLIB_EventFlow_EventStack", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventFlow", "DB_LLLIB_EventFlow_EventTimeout", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventFlow", "DB_LLLIB_EventFlow_WaitTimer", 2);
+LeaderLog_Log("DEBUG", "[LLLIB:EventFlow] Databases registered.");
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

@@ -145,6 +145,20 @@ DB_LLLIB_Treasure_Temp_ItemStatAmount(_Object, _TreasureID, _, _ItemEntry, _)
 THEN
 DB_NOOP(1);
 //END_REGION
+
+//REGION UPDATER
+PROC
+LLLIB_System_UpdateDatabases()
+THEN
+DB_NOOP(1);
+
+PROC
+LLLIB_System_RegisterDatabases()
+THEN
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_ItemCounter", "DB_LLLIB_Treasure_Temp_ItemTemplateAmount", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_ItemCounter", "DB_LLLIB_Treasure_Temp_ItemStatAmount", 5);
+LeaderLog_Log("DEBUG", "[LLLIB:Treasure_ItemCounter] Databases registered.");
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

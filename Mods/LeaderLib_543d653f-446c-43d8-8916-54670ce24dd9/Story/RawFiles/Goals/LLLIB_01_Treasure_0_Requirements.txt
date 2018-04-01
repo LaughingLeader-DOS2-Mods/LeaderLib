@@ -6,31 +6,24 @@ INITSECTION
 //DB_LLLIB_Requirements_Flag(_RequirementID, _Flag, _FlagType, _FlagVal)
 //DB_LLLIB_Requirements_Region(_RequirementID, _Region)
 //DB_LLLIB_Treasure_ItemMaxAmount(_TreasureID, _ItemEntry, _MaxAmount)
-
 //Dynamic
 //DB_LLLIB_Requirements_IsUnlocked(_RequirementID)
 KBSECTION
-//REGION UPDATING
+//REGION UPDATER
 PROC
 LLLIB_System_UpdateDatabases()
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Requirements] Databases updated.");
+DB_NOOP(1);
 
 PROC
-LLLIB_System_ClearDatabases()
+LLLIB_System_RegisterDatabases()
 THEN
-SysClear("DB_LLLIB_Requirements_PartyLevel", 4);
-SysClear("DB_LLLIB_Requirements_Flag", 4);
-SysClear("DB_LLLIB_Treasure_ItemMaxAmount", 2);
-SysClear("DB_LLLIB_Requirements_IsUnlocked", 1);
-LeaderLog_Log("DEBUG", "[LLLIB:Requirements] Databases cleared.");
-
-PROC
-LLLIB_Updater_ResetDatabases()
-THEN
-LLLIB_System_ClearDatabases();
-LLLIB_System_UpdateDatabases();
-LeaderLog_Log("DEBUG", "[LLLIB:Requirements] Databases cleared and re-initialized.");
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Requirements", "DB_LLLIB_Requirements_PartyLevel", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Requirements", "DB_LLLIB_Requirements_Flag", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Requirements", "DB_LLLIB_Requirements_Region", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Requirements", "DB_LLLIB_Treasure_ItemMaxAmount", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Requirements", "DB_LLLIB_Requirements_IsUnlocked", 1);
+LeaderLog_Log("DEBUG", "[LLLIB:Requirements] Databases registered.");
 //END_REGION
 
 //REGION REGISTERING

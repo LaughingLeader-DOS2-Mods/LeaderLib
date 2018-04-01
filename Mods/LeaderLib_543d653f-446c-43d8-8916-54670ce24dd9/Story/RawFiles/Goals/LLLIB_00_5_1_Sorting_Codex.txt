@@ -1,42 +1,21 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-LLLIB_DictionarySort_InitSettings();
+LLLIB_Codex_InitSettings();
 
 //DB_LLLIB_Codex(_Index,_AlphanumericChar)
 //DB_LLLIB_Codex_Iterator(_i)
 //DB_LLLIB_CodexCount(_Max)
 KBSECTION
 PROC
-LLLIB_DictionarySort_InitSettings()
+LLLIB_Codex_InitSettings()
 THEN
-LLLIB_DictionarySort_BuildIterator(256);
-LLLIB_DictionarySort_BuildCodex();
-
-//REGION UPDATING
-PROC
-LLLIB_System_UpdateDatabases()
-THEN
-LLLIB_DictionarySort_InitSettings();
-LeaderLog_Log("DEBUG", "[LLLIB:Sorter] Databases updated.");
-
-PROC
-LLLIB_System_ClearDatabases()
-THEN
-SysClear("DB_LLLIB_Codex", 2);
-SysClear("DB_LLLIB_Codex_Iterator", 1);
-LeaderLog_Log("DEBUG", "[LLLIB:Sorter] Databases cleared.");
-
-PROC
-LLLIB_Updater_ResetDatabases()
-THEN
-LLLIB_System_ClearDatabases();
-LLLIB_System_UpdateDatabases();
-//END_REGION
+LLLIB_Codex_BuildIterator(256);
+LLLIB_Codex_BuildCodex();
 
 //REGION CODEX
 PROC
-LLLIB_DictionarySort_AddToCodex((STRING)_AlphanumericChar)
+LLLIB_Codex_AddToCodex((STRING)_AlphanumericChar)
 AND
 NOT DB_LLLIB_Codex(_,_AlphanumericChar)
 AND
@@ -45,7 +24,7 @@ THEN
 DB_LLLIB_Codex(_Index, _AlphanumericChar);
 
 PROC
-LLLIB_DictionarySort_BuildCodex()
+LLLIB_Codex_BuildCodex()
 AND
 NOT DB_LLLIB_Codex(_,_)
 THEN
@@ -55,84 +34,84 @@ Numbers
 Letters
 */
 
-LLLIB_DictionarySort_AddToCodex(" ");
-LLLIB_DictionarySort_AddToCodex("!");
-//LLLIB_DictionarySort_AddToCodex('"');
-LLLIB_DictionarySort_AddToCodex("#");
-LLLIB_DictionarySort_AddToCodex("$");
-LLLIB_DictionarySort_AddToCodex("%");
-LLLIB_DictionarySort_AddToCodex("&");
-LLLIB_DictionarySort_AddToCodex("'");
-LLLIB_DictionarySort_AddToCodex("(");
-LLLIB_DictionarySort_AddToCodex(")");
-LLLIB_DictionarySort_AddToCodex("*");
-LLLIB_DictionarySort_AddToCodex("+");
-LLLIB_DictionarySort_AddToCodex(",");
-LLLIB_DictionarySort_AddToCodex("-");
-LLLIB_DictionarySort_AddToCodex(".");
-LLLIB_DictionarySort_AddToCodex("/");
+LLLIB_Codex_AddToCodex(" ");
+LLLIB_Codex_AddToCodex("!");
+//LLLIB_Codex_AddToCodex('"');
+LLLIB_Codex_AddToCodex("#");
+LLLIB_Codex_AddToCodex("$");
+LLLIB_Codex_AddToCodex("%");
+LLLIB_Codex_AddToCodex("&");
+LLLIB_Codex_AddToCodex("'");
+LLLIB_Codex_AddToCodex("(");
+LLLIB_Codex_AddToCodex(")");
+LLLIB_Codex_AddToCodex("*");
+LLLIB_Codex_AddToCodex("+");
+LLLIB_Codex_AddToCodex(",");
+LLLIB_Codex_AddToCodex("-");
+LLLIB_Codex_AddToCodex(".");
+LLLIB_Codex_AddToCodex("/");
 
-LLLIB_DictionarySort_AddToCodex(":");
-LLLIB_DictionarySort_AddToCodex(";");
-LLLIB_DictionarySort_AddToCodex("<");
-LLLIB_DictionarySort_AddToCodex("=");
-LLLIB_DictionarySort_AddToCodex(">");
-LLLIB_DictionarySort_AddToCodex("?");
-LLLIB_DictionarySort_AddToCodex("@");
+LLLIB_Codex_AddToCodex(":");
+LLLIB_Codex_AddToCodex(";");
+LLLIB_Codex_AddToCodex("<");
+LLLIB_Codex_AddToCodex("=");
+LLLIB_Codex_AddToCodex(">");
+LLLIB_Codex_AddToCodex("?");
+LLLIB_Codex_AddToCodex("@");
 
-LLLIB_DictionarySort_AddToCodex("[");
-//LLLIB_DictionarySort_AddToCodex("\");
-LLLIB_DictionarySort_AddToCodex("]");
-//LLLIB_DictionarySort_AddToCodex("^");
-LLLIB_DictionarySort_AddToCodex("_");
-LLLIB_DictionarySort_AddToCodex("`");
+LLLIB_Codex_AddToCodex("[");
+//LLLIB_Codex_AddToCodex("\");
+LLLIB_Codex_AddToCodex("]");
+//LLLIB_Codex_AddToCodex("^");
+LLLIB_Codex_AddToCodex("_");
+LLLIB_Codex_AddToCodex("`");
 
-LLLIB_DictionarySort_AddToCodex("}");
-LLLIB_DictionarySort_AddToCodex("|");
-LLLIB_DictionarySort_AddToCodex("{");
-LLLIB_DictionarySort_AddToCodex("~");
+LLLIB_Codex_AddToCodex("}");
+LLLIB_Codex_AddToCodex("|");
+LLLIB_Codex_AddToCodex("{");
+LLLIB_Codex_AddToCodex("~");
 
-LLLIB_DictionarySort_AddToCodex("0");
-LLLIB_DictionarySort_AddToCodex("1");
-LLLIB_DictionarySort_AddToCodex("2");
-LLLIB_DictionarySort_AddToCodex("3");
-LLLIB_DictionarySort_AddToCodex("4");
-LLLIB_DictionarySort_AddToCodex("5");
-LLLIB_DictionarySort_AddToCodex("6");
-LLLIB_DictionarySort_AddToCodex("7");
-LLLIB_DictionarySort_AddToCodex("8");
-LLLIB_DictionarySort_AddToCodex("9");
+LLLIB_Codex_AddToCodex("0");
+LLLIB_Codex_AddToCodex("1");
+LLLIB_Codex_AddToCodex("2");
+LLLIB_Codex_AddToCodex("3");
+LLLIB_Codex_AddToCodex("4");
+LLLIB_Codex_AddToCodex("5");
+LLLIB_Codex_AddToCodex("6");
+LLLIB_Codex_AddToCodex("7");
+LLLIB_Codex_AddToCodex("8");
+LLLIB_Codex_AddToCodex("9");
 
 //String Sub isn't case-sensitive for some reason
-LLLIB_DictionarySort_AddToCodex("A");
-LLLIB_DictionarySort_AddToCodex("B");
-LLLIB_DictionarySort_AddToCodex("C");
-LLLIB_DictionarySort_AddToCodex("D");
-LLLIB_DictionarySort_AddToCodex("E");
-LLLIB_DictionarySort_AddToCodex("F");
-LLLIB_DictionarySort_AddToCodex("G");
-LLLIB_DictionarySort_AddToCodex("H");
-LLLIB_DictionarySort_AddToCodex("I");
-LLLIB_DictionarySort_AddToCodex("J");
-LLLIB_DictionarySort_AddToCodex("K");
-LLLIB_DictionarySort_AddToCodex("L");
-LLLIB_DictionarySort_AddToCodex("M");
-LLLIB_DictionarySort_AddToCodex("N");
-LLLIB_DictionarySort_AddToCodex("O");
-LLLIB_DictionarySort_AddToCodex("P");
-LLLIB_DictionarySort_AddToCodex("Q");
-LLLIB_DictionarySort_AddToCodex("R");
-LLLIB_DictionarySort_AddToCodex("S");
-LLLIB_DictionarySort_AddToCodex("T");
-LLLIB_DictionarySort_AddToCodex("U");
-LLLIB_DictionarySort_AddToCodex("V");
-LLLIB_DictionarySort_AddToCodex("W");
-LLLIB_DictionarySort_AddToCodex("X");
-LLLIB_DictionarySort_AddToCodex("Y");
-LLLIB_DictionarySort_AddToCodex("Z");
+LLLIB_Codex_AddToCodex("A");
+LLLIB_Codex_AddToCodex("B");
+LLLIB_Codex_AddToCodex("C");
+LLLIB_Codex_AddToCodex("D");
+LLLIB_Codex_AddToCodex("E");
+LLLIB_Codex_AddToCodex("F");
+LLLIB_Codex_AddToCodex("G");
+LLLIB_Codex_AddToCodex("H");
+LLLIB_Codex_AddToCodex("I");
+LLLIB_Codex_AddToCodex("J");
+LLLIB_Codex_AddToCodex("K");
+LLLIB_Codex_AddToCodex("L");
+LLLIB_Codex_AddToCodex("M");
+LLLIB_Codex_AddToCodex("N");
+LLLIB_Codex_AddToCodex("O");
+LLLIB_Codex_AddToCodex("P");
+LLLIB_Codex_AddToCodex("Q");
+LLLIB_Codex_AddToCodex("R");
+LLLIB_Codex_AddToCodex("S");
+LLLIB_Codex_AddToCodex("T");
+LLLIB_Codex_AddToCodex("U");
+LLLIB_Codex_AddToCodex("V");
+LLLIB_Codex_AddToCodex("W");
+LLLIB_Codex_AddToCodex("X");
+LLLIB_Codex_AddToCodex("Y");
+LLLIB_Codex_AddToCodex("Z");
 
 PROC
-LLLIB_DictionarySort_BuildCodex()
+LLLIB_Codex_BuildCodex()
 AND
 SysCount("DB_LLLIB_Codex", 2, _Max)
 THEN
@@ -142,7 +121,7 @@ DB_LLLIB_CodexCount(_Max);
 
 //REGION CHARACTER_INDEX
 PROC
-LLLIB_DictionarySort_BuildIterator((INTEGER)_Max)
+LLLIB_Codex_BuildIterator((INTEGER)_Max)
 AND
 NOT DB_LLLIB_Codex_Iterator(_)
 THEN
@@ -151,10 +130,10 @@ DB_LLLIB_Temp_BuildSortIterator(0, _Max);
 IF
 DB_LLLIB_Temp_BuildSortIterator(_Index, _Max)
 THEN
-DB_LLLIB_DictionarySort_OnSortIterator(_Index, _Max);
+DB_LLLIB_Codex_OnSortIterator(_Index, _Max);
 
 PROC
-DB_LLLIB_DictionarySort_OnSortIterator((INTEGER)_Index, (INTEGER)_Max)
+DB_LLLIB_Codex_OnSortIterator((INTEGER)_Index, (INTEGER)_Max)
 AND
 _Index < _Max
 AND
@@ -163,6 +142,22 @@ THEN
 DB_LLLIB_Codex_Iterator(_Index);
 NOT DB_LLLIB_Temp_BuildSortIterator(_Index, _Max);
 DB_LLLIB_Temp_BuildSortIterator(_NextIndex, _Max);
+//END_REGION
+
+//REGION UPDATER
+PROC
+LLLIB_System_UpdateDatabases()
+THEN
+LLLIB_Codex_InitSettings();
+LeaderLog_Log("DEBUG", "[LLLIB:Codex] Databases updated.");
+
+PROC
+LLLIB_System_RegisterDatabases()
+THEN
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Codex", "DB_LLLIB_Codex", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Codex", "DB_LLLIB_Codex_Iterator", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Codex", "DB_LLLIB_CodexCount", 1);
+LeaderLog_Log("DEBUG", "[LLLIB:Codex] Databases registered.");
 //END_REGION
 EXITSECTION
 

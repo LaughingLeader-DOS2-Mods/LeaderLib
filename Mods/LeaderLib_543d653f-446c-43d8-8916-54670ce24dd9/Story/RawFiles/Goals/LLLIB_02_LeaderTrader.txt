@@ -498,6 +498,24 @@ THEN
 //To ignore the "Old Man" title when referring to himself.
 DialogSetVariableStringForInstance(_Instance, _SpeakerVar, "Lothar");
 //END_REGION
+
+//REGION UPDATER
+PROC
+LLLIB_System_UpdateDatabases()
+THEN
+LLLIB_LeaderTrader_InitSettings();
+LeaderLog_Log("DEBUG", "[LLLIB:LeaderTrader] Databases updated.");
+
+PROC
+LLLIB_System_RegisterDatabases()
+THEN
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_MetPlayer", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_Dialog", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_Appearance", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_CurrentAppearance", 1);
+LeaderLog_Log("DEBUG", "[LLLIB:LeaderTrader] Databases registered.");
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

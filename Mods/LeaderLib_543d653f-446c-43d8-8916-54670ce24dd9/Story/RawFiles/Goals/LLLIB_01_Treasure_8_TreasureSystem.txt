@@ -1,6 +1,7 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
+//REGION REGISTERED
 //DB_LLLIB_Treasure_RegisteredObject(_TreasureID, _Object)
 //DB_LLLIB_Treasure_RegisteredObjectTemplate(_TreasureID, _Template)
 //DB_LLLIB_Treasure_RegisteredTrader(_TreasureID, _TraderID)
@@ -18,12 +19,9 @@ INITSECTION
 
 //DB_LLLIB_Treasure_OnlyOnce(_TreasureID, _ItemEntryOrTreasureTable, _OnCompletionEvent)
 //DB_LLLIB_Treasure_GeneratedEvent(_TreasureID, _ItemEntry, _OnGeneratedEvent)
-
+//END_REGION
 //DB_LLLIB_Treasure_StatToTemplate(_ItemEntry, _ItemTemplate)
 //DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
-
-//DB_LLLIB_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel, _StrictMode)
-//DB_LLLIB_Requirements_Flag(_RequirementID, _Flag, _FlagType, _FlagVal)
 
 //DB_LLLIB_Treasure_Temp_DummyTarget(_Object, _Dummy, _TreasureID, _ItemEntry)
 //DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
@@ -41,50 +39,30 @@ INITSECTION
 //DB_LLLIB_Array_Data("LLLIB_ItemGenerationQueue", _Index, _ID)
 //DB_LLLIB_Treasure_Temp_ItemGenerationQueue(_ID, _Object, _TreasureID, _GenerationType)
 KBSECTION
-//REGION UPDATING
+//REGION UPDATER
 PROC
 LLLIB_System_UpdateDatabases()
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem] Databases updated.");
+DB_NOOP(1);
 
 PROC
-LLLIB_System_ClearDatabases()
+LLLIB_System_RegisterDatabases()
 THEN
-SysClear("DB_LLLIB_Treasure_RegisteredObject", 2);
-SysClear("DB_LLLIB_Treasure_RegisteredObjectTemplate", 2);
-SysClear("DB_LLLIB_Treasure_RegisteredTrader", 2);
-SysClear("DB_LLLIB_Treasure_RegisteredTreasureTable", 6);
-SysClear("DB_LLLIB_Treasure_TreasureItemTemplates", 4);
-SysClear("DB_LLLIB_Treasure_TreasureItemStats", 4);
-SysClear("DB_LLLIB_Treasure_ItemGenerationSettings", 5);
-SysClear("DB_LLLIB_Treasure_ItemGenerationType", 3);
-SysClear("DB_LLLIB_Treasure_RegisteredGenerationTypes", 1);
-SysClear("DB_LLLIB_Treasure_ItemGenerationFlag", 4);
-SysClear("DB_LLLIB_Treasure_ItemDeltaMods", 4);
-SysClear("DB_LLLIB_Treasure_ItemRunes", 4);
-SysClear("DB_LLLIB_Treasure_ItemMaxAmount", 3);
-SysClear("DB_LLLIB_Treasure_OnlyOnce", 3);
-SysClear("DB_LLLIB_Treasure_GeneratedEvent", 3);
-SysClear("DB_LLLIB_Treasure_StatToTemplate", 2);
-SysClear("DB_LLLIB_Treasure_GeneratorDummies", 1);
-SysClear("DB_LLLIB_Treasure_Temp_DummyTarget", 5);
-SysClear("DB_LLLIB_Treasure_Temp_MatchedTreasure", 2);
-SysClear("DB_LLLIB_Treasure_Temp_MatchedRequirementTreasure", 2);
-SysClear("DB_LLLIB_Treasure_Temp_FlagToTreasure", 3);
-SysClear("DB_LLLIB_Treasure_Temp_GenerationTypeToTreasure", 2);
-SysClear("DB_LLLIB_Treasure_Temp_AmountToCreate", 3);
-SysClear("DB_LLLIB_Treasure_Temp_GenerateItem", 6);
-SysClear("DB_LLLIB_Treasure_Temp_Queue_CountTemplate", 5);
-SysClear("DB_LLLIB_Treasure_Temp_Queue_CountStat", 6);
-SysClear("DB_LLLIB_Treasure_Temp_StartGeneration", 3);
-LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem] Databases cleared.");
-
-PROC
-LLLIB_Updater_ResetDatabases()
-THEN
-LLLIB_System_ClearDatabases();
-LLLIB_System_UpdateDatabases();
-LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem] Temporary databases cleared.");
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_StatToTemplate", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_DummyTarget", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_MatchedTreasure", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_MatchedRequirementTreasure", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_FlagToTreasure", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_GenerationTypeToTreasure", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_AmountToCreate", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_GenerateItem", 7);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_Queue_CountTemplate", 5);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_Queue_CountStat", 6);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_StartGeneration", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_QueueTimerActive", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_TimeoutTimerActive", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_ItemGenerationQueue", 4);
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem] Databases registered.");
 //END_REGION
 
 //REGION GETTERS

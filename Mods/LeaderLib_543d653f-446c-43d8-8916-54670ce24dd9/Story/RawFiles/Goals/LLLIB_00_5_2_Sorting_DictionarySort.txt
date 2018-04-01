@@ -21,7 +21,7 @@ KBSECTION
 PROC
 LLLIB_DictionarySort_AddString((STRING)_DictionaryID, (STRING)_ID, (STRING)_StringEntry)
 AND
-NOT DB_LLLIB_DictionarySort_Temp_StringQueue(_DictionaryID, _ID, _StringEntry)
+NOT DB_LLLIB_DictionarySort_Temp_StringQueue(_DictionaryID, _ID, _)
 THEN
 DB_LLLIB_DictionarySort_Temp_StringQueue(_DictionaryID, _ID, _StringEntry);
 //END_REGION

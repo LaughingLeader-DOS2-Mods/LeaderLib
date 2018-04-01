@@ -20,33 +20,29 @@ INITSECTION
 //DB_LeaderLib_ModApi_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _Str9)
 //DB_LeaderLib_ModApi_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _Str9, _Str10)
 KBSECTION
-//REGION DB_INTERACTIONS
-IF
-DB_LeaderLib_ModApi_AddItemToLeaderTrader((STRING)_Template, (INTEGER)_Amount)
+//REGION UPDATER
+PROC
+LLLIB_System_UpdateDatabases()
 THEN
-LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModItems", _Template, _Amount);
-NOT DB_LeaderLib_ModApi_AddItemToLeaderTrader(_Template, _Amount);
+DB_NOOP(1);
 
-IF
-DB_LeaderLib_ModApi_AddBookToLeaderTrader((STRING)_Template, (INTEGER)_Amount)
+PROC
+LLLIB_System_RegisterDatabases()
 THEN
-LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModBooks", _Template, _Amount);
-NOT DB_LeaderLib_ModApi_AddBookToLeaderTrader(_Template, _Amount);
-
-IF
-DB_LeaderLib_ModApi_SendEvent((STRING)_EventName)
-THEN
-LLLIB_EventParser_Internal_RunEvent(_EventName);
-NOT DB_LeaderLib_ModApi_SendEvent(_EventName);
-
-IF
-DB_LeaderLib_ModApi_ModIsActive((STRING)_ModName, (STRING)_Author, (STRING)_ActiveEvent, (STRING)_InactiveEvent)
-THEN
-LeaderUpdater_CheckIfModIsActive(_ModName, _Author, _ActiveEvent, _InactiveEvent);
-NOT DB_LeaderLib_ModApi_ModIsActive(_ModName, _Author, _ActiveEvent, _InactiveEvent);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_Initialized", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_RegisterMenu", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_AddItemToLeaderTrader", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_AddBookToLeaderTrader", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_SendEvent", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_RegisterMod", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_Log_SetTarget", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_Log_ClearTarget", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_Log", 2); // Should go up to 11
+LeaderLog_Log("DEBUG", "[LLLIB:ModAPI] Databases registered.");
 //END_REGION
 
-//REGION REGISTERING
+//REGION DB_MODAPI
+/*Registering*/
 IF
 DB_LeaderLib_ModApi_RegisterMod((STRING)_ModName, (STRING)_Version, (STRING)_Author)
 THEN
@@ -76,6 +72,44 @@ DB_LeaderLib_ModApi_ClearActiveGoals((STRING)_ModName, (STRING)_Author)
 THEN
 LeaderUpdater_Clear_ActiveGoals(_ModName, _Author);
 NOT DB_LeaderLib_ModApi_ClearActiveGoals(_ModName, _Author);
+
+/*Misc Commands*/
+IF
+DB_LeaderLib_ModApi_AddItemToLeaderTrader((STRING)_Template, (INTEGER)_Amount)
+THEN
+LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModItems", _Template, _Amount);
+NOT DB_LeaderLib_ModApi_AddItemToLeaderTrader(_Template, _Amount);
+
+IF
+DB_LeaderLib_ModApi_AddBookToLeaderTrader((STRING)_Template, (INTEGER)_Amount)
+THEN
+LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModBooks", _Template, _Amount);
+NOT DB_LeaderLib_ModApi_AddBookToLeaderTrader(_Template, _Amount);
+
+IF
+DB_LeaderLib_ModApi_SendEvent((STRING)_EventName)
+THEN
+LLLIB_EventParser_Internal_RunEvent(_EventName);
+NOT DB_LeaderLib_ModApi_SendEvent(_EventName);
+
+IF
+DB_LeaderLib_ModApi_ModIsActive((STRING)_ModName, (STRING)_Author, (STRING)_ActiveEvent, (STRING)_InactiveEvent)
+THEN
+LeaderUpdater_CheckIfModIsActive(_ModName, _Author, _ActiveEvent, _InactiveEvent);
+NOT DB_LeaderLib_ModApi_ModIsActive(_ModName, _Author, _ActiveEvent, _InactiveEvent);
+
+/*Sorting*/
+IF
+DB_LeaderLib_ModApi_AddToSortQueue((STRING)_DictionaryID, (STRING)_ID, (STRING)_String)
+THEN
+LLLIB_DictionarySort_AddString(_DictionaryID, _ID, _String);
+NOT DB_LeaderLib_ModApi_AddToSortQueue(_DictionaryID, _ID, _String);
+
+IF
+DB_LeaderLib_ModApi_StartSortQueue((STRING)_DictionaryID, (INTEGER)_TickRate, (STRING)_CompleteEvent)
+THEN
+LLLIB_DictionarySort_StartSorting(_DictionaryID, _TickRate, _CompleteEvent);
+NOT DB_LeaderLib_ModApi_StartSortQueue(_DictionaryID, _TickRate, _CompleteEvent);
 //END_REGION
 
 //REGION LOGGING
@@ -200,15 +234,9 @@ SysClear("DB_LeaderLib_ModApi_Log", 10);
 SysClear("DB_LeaderLib_ModApi_Log", 11);
 
 
-//Parse databases that were set before LeaderLib was loaded.
-PROC
-LLLIB_ModApi_RunCleanup()
-AND
-DB_LeaderLib_ModApi_RegisterMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModName, (STRING)_Author)
-THEN
-LeaderLib_RegisterModMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
-NOT DB_LeaderLib_ModApi_RegisterMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
-
+/*
+Parse databases that were set before LeaderLib was loaded, then clear them.
+*/
 PROC
 LLLIB_ModApi_RunCleanup()
 AND
@@ -228,11 +256,28 @@ NOT DB_LeaderLib_ModApi_RegisterActiveGoal(_ModName, _Author, _GoalTitle);
 PROC
 LLLIB_ModApi_RunCleanup()
 AND
+DB_LeaderLib_ModApi_RegisterDatabase((STRING)_ModName, (STRING)_Author, (STRING)_ReferenceName, (STRING)_DatabaseName, (INTEGER)_Arity)
+THEN
+LeaderUpdater_Register_Database(_ModName, _Author, _ReferenceName, _DatabaseName, _Arity);
+NOT DB_LeaderLib_ModApi_RegisterDatabase(_ModName, _Author, _ReferenceName, _DatabaseName, _Arity);
+
+PROC
+LLLIB_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_RegisterMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModName, (STRING)_Author)
+THEN
+LeaderLib_RegisterModMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
+NOT DB_LeaderLib_ModApi_RegisterMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
+
+PROC
+LLLIB_ModApi_RunCleanup()
+AND
 DB_LeaderLib_ModApi_ClearActiveGoals((STRING)_ModName, (STRING)_Author)
 THEN
 LeaderUpdater_Clear_ActiveGoals(_ModName, _Author);
 NOT DB_LeaderLib_ModApi_ClearActiveGoals(_ModName, _Author);
 
+/*Misc Commands*/
 PROC
 LLLIB_ModApi_RunCleanup()
 AND
@@ -264,27 +309,23 @@ DB_LeaderLib_ModApi_ModIsActive((STRING)_ModName, (STRING)_Author, (STRING)_Acti
 THEN
 LeaderUpdater_CheckIfModIsActive(_ModName, _Author, _ActiveEvent, _InactiveEvent);
 NOT DB_LeaderLib_ModApi_ModIsActive(_ModName, _Author, _ActiveEvent, _InactiveEvent);
-//END_REGION
 
-//REGION UPDATER
+/*Sorting*/
 PROC
-LLLIB_System_UpdateDatabases()
+LLLIB_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_AddToSortQueue((STRING)_DictionaryID, (STRING)_ID, (STRING)_String)
 THEN
-DB_NOOP(1);
+LLLIB_DictionarySort_AddString(_DictionaryID, _ID, _String);
+NOT DB_LeaderLib_ModApi_AddToSortQueue(_DictionaryID, _ID, _String);
 
 PROC
-LLLIB_System_RegisterDatabases()
+LLLIB_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_StartSortQueue((STRING)_DictionaryID, (INTEGER)_TickRate, (STRING)_CompleteEvent)
 THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_Initialized", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_RegisterMenu", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_AddItemToLeaderTrader", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_AddBookToLeaderTrader", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_SendEvent", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_RegisterMod", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_Log_SetTarget", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_Log_ClearTarget", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_Log", 2); // Should go up to 11
-LeaderLog_Log("DEBUG", "[LLLIB:ModAPI] Databases registered.");
+LLLIB_DictionarySort_StartSorting(_DictionaryID, _TickRate, _CompleteEvent);
+NOT DB_LeaderLib_ModApi_StartSortQueue(_DictionaryID, _TickRate, _CompleteEvent);
 //END_REGION
 EXITSECTION
 

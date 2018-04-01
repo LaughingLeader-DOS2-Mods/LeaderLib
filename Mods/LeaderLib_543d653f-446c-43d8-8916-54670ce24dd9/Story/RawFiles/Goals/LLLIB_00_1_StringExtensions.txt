@@ -10,6 +10,14 @@ INITSECTION
 //DB_LLLIB_StringExt_Temp_CompareIterator(_SessionID, _Str1, _Str2, _Index)
 //DB_LLLIB_StringExt_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _ComparisonVal)
 //DB_LLLIB_StringExt_Temp_StringCompare_StopIteration(_SessionID, _Str1, _Str2)
+/*ITERATOR*/
+//DB_LLLIB_StringExt_Temp_IteratorBuilder(_Str1, _CurrentIndex)
+//DB_LLLIB_StringExt_StringIterator(_Str, _Index)
+/*VERSION STRINGS*/
+//DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _Minor, _Revision, _Build)
+//DB_LLLIB_StringExt_Temp_Version_Index(_Str, _MajorIndex, _MinorIndex, _RevisionIndex, _BuildIndex)
+//DB_LLLIB_StringExt_Temp_Version_FoundPeriod(_Str, _TotalFound)
+//DB_LLLIB_StringExt_Temp_Version_Complete(_Str)
 KBSECTION
 //REGION STRING_COMPARE_HELPERS
 QRY
@@ -277,6 +285,268 @@ IntegertoString(_Length, _LengthStr)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Sorter:DetermineStringLength] Length of '",_Str,"' is [",_LengthStr,"].");
 */
+//END_REGION
+
+//REGION STRING_ITERATOR
+QRY
+LLLIB_StringExt_QRY_BuildIteratorByLength((STRING)_Str)
+THEN
+LLLIB_StringExt_BuildIteratorByLength(_Str);
+
+PROC
+LLLIB_StringExt_BuildIteratorByLength((STRING)_Str)
+AND
+NOT DB_LLLIB_StringExt_StringIterator(_Str, _)
+AND
+NOT DB_LLLIB_StringLength(_Str, _)
+THEN
+LLLIB_StringExt_DetermineStringLength(_Str);
+
+PROC
+LLLIB_StringExt_BuildIteratorByLength((STRING)_Str)
+AND
+NOT DB_LLLIB_StringExt_StringIterator(_Str, _)
+AND
+DB_LLLIB_StringLength(_Str, _Length)
+THEN
+DB_LLLIB_StringExt_Temp_IteratorBuilder(_Str, 0);
+LLLIB_StringExt_Internal_BuildIterator(_Str);
+
+PROC
+LLLIB_StringExt_Internal_BuildIterator((STRING)_Str)
+AND
+DB_LLLIB_StringExt_Temp_IteratorBuilder(_Str, _CurrentIndex)
+AND
+DB_LLLIB_StringLength(_Str, _Length)
+AND
+_CurrentIndex <= _Length
+AND
+IntegerSum(_CurrentIndex, 1, _NextIndex)
+THEN
+DB_LLLIB_StringExt_StringIterator(_Str, _CurrentIndex);
+NOT DB_LLLIB_StringExt_Temp_IteratorBuilder(_Str, _CurrentIndex);
+DB_LLLIB_StringExt_Temp_IteratorBuilder(_Str, _NextIndex);
+LLLIB_StringExt_Internal_BuildIterator(_Str);
+//END_REGION
+
+//REGION VERSION_STRING
+QRY
+LLLIB_StringExt_QRY_IsVersionString((STRING)_Str)
+AND
+StringContains(_Str, ".", 1)
+AND
+LLLIB_StringExt_QRY_ProcessVersionString(_Str)
+AND
+LLLIB_StringExt_QRY_IsValidVersionString(_Str)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:StringExt:IsVersionString] [",_Str,"] is a valid version string.");
+
+PROC
+LLLIB_StringExt_Debug_PrintVersionString((STRING)_Str)
+AND
+DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _Minor, _Revision, _Build)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:StringExt:Debug_PrintVersionString] [",_Str,"] = Major[",_Major,"] Minor[",_Minor,"] Revision[",_Revision,"] Build[",_Build,"]");
+
+PROC
+LLLIB_StringExt_Debug_PrintVersionString((STRING)_Str)
+AND
+NOT DB_LLLIB_StringExt_Temp_Version_String(_Str, _, _, _, _)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:StringExt:Debug_PrintVersionString] [",_Str,"] is not a valid version string.");
+
+QRY
+LLLIB_StringExt_QRY_IsValidVersionString((STRING)_Str)
+AND
+DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _Minor, _Revision, _Build)
+AND
+_Major != ""
+AND
+_Minor != ""
+AND
+_Revision != ""
+AND
+_Build != ""
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_StringExt_QRY_ProcessVersionString((STRING)_Str)
+THEN
+LLLIB_StringExt_ProcessVersionString(_Str);
+
+PROC
+LLLIB_StringExt_ProcessVersionString((STRING)_Str)
+AND
+NOT DB_LLLIB_StringExt_Temp_Version_String(_Str, _, _, _, _)
+THEN
+LLLIB_StringExt_BuildIteratorByLength(_Str);
+LLLIB_StringExt_ClearPreviousVersionData(_Str);
+DB_LLLIB_StringExt_Temp_Version_FoundPeriod(_Str, 0);
+LLLIB_StringExt_Internal_ProcessVersionString(_Str);
+
+PROC
+LLLIB_StringExt_Internal_ProcessVersionString((STRING)_Str)
+AND
+DB_LLLIB_StringExt_StringIterator(_Str, _Index)
+AND
+NOT DB_LLLIB_StringExt_Temp_Version_Complete(_Str)
+THEN
+LLLIB_StringExt_Internal_Version_OnIteratingVersionString(_Str, _Index);
+
+PROC
+LLLIB_StringExt_Internal_Version_OnIteratingVersionString((STRING)_Str, (INTEGER)_Index)
+AND
+_Index > 0
+AND
+StringSub(_Str, _Index, 1, ".")
+THEN
+LLLIB_StringExt_Internal_Version_FoundPeriod(_Str, _Index);
+
+PROC
+LLLIB_StringExt_Internal_Version_FoundPeriod((STRING)_Str, (INTEGER)_Index)
+AND
+DB_LLLIB_StringExt_Temp_Version_FoundPeriod(_Str, _TotalFound)
+AND
+_TotalFound < 3
+AND
+IntegerSum(_TotalFound, 1, _NextAmount)
+THEN
+NOT DB_LLLIB_StringExt_Temp_Version_FoundPeriod(_Str, _TotalFound);
+DB_LLLIB_StringExt_Temp_Version_FoundPeriod(_Str, _NextAmount);
+
+PROC
+LLLIB_StringExt_Internal_Version_FoundPeriod((STRING)_Str, (INTEGER)_Index)
+AND
+DB_LLLIB_StringExt_Temp_Version_FoundPeriod(_Str, _TotalFound)
+AND
+_TotalFound == 1
+AND
+StringSub(_Str, 0, _Index, _Major)
+AND
+IntegertoString(_Index, _IndexStr)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:StringExt:Version_FoundPeriod] Setting _MajorIndex to [",_IndexStr,"].");
+DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, "", "", "");
+DB_LLLIB_StringExt_Temp_Version_Index(_Str, _Index, -1, -1, -1);
+
+PROC
+LLLIB_StringExt_Internal_Version_FoundPeriod((STRING)_Str, (INTEGER)_Index)
+AND
+DB_LLLIB_StringExt_Temp_Version_FoundPeriod(_Str, _TotalFound)
+AND
+_TotalFound == 2
+AND
+DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _PastMinor, _Revision, _Build)
+AND
+DB_LLLIB_StringExt_Temp_Version_Index(_Str, _MajorIndex, _MinorIndex, _RevisionIndex, _BuildIndex)
+AND
+IntegerSum(_MajorIndex, 1, _MinorStartIndex)
+AND
+IntegerSubtract(_Index, 1, _LastCharIndex)
+AND
+IntegerSubtract(_LastCharIndex, _MajorIndex, _Count)
+AND
+StringSub(_Str, _MinorStartIndex, _Count, _Minor)
+AND
+IntegertoString(_Index, _IndexStr)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:StringExt:Version_FoundPeriod] Setting _MinorIndex to [",_IndexStr,"].");
+NOT DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _PastMinor, _Revision, _Build);
+NOT DB_LLLIB_StringExt_Temp_Version_Index(_Str, _MajorIndex, _MinorIndex, _RevisionIndex, _BuildIndex);
+DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _Minor, _Revision, _Build);
+DB_LLLIB_StringExt_Temp_Version_Index(_Str, _MajorIndex, _Index, _RevisionIndex, _BuildIndex);
+
+PROC
+LLLIB_StringExt_Internal_Version_FoundPeriod((STRING)_Str, (INTEGER)_Index)
+AND
+DB_LLLIB_StringExt_Temp_Version_FoundPeriod(_Str, _TotalFound)
+AND
+_TotalFound == 3
+AND
+DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _Minor, _PastRevision, _Build)
+AND
+DB_LLLIB_StringExt_Temp_Version_Index(_Str, _MajorIndex, _MinorIndex, _RevisionIndex, _BuildIndex)
+AND
+IntegerSum(_MinorIndex, 1, _RevStartIndex)
+AND
+IntegerSubtract(_Index, 1, _LastCharIndex)
+AND
+IntegerSubtract(_LastCharIndex, _MinorIndex, _Count)
+AND
+StringSub(_Str, _RevStartIndex, _Count, _Revision)
+AND
+IntegertoString(_Index, _IndexStr)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:StringExt:Version_FoundPeriod] Setting _RevisionIndex to [",_IndexStr,"].");
+NOT DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _Minor, _PastRevision, _Build);
+NOT DB_LLLIB_StringExt_Temp_Version_Index(_Str, _MajorIndex, _MinorIndex, _RevisionIndex, _BuildIndex);
+DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _Minor, _Revision, _Build);
+DB_LLLIB_StringExt_Temp_Version_Index(_Str, _MajorIndex, _MinorIndex, _Index, _BuildIndex);
+
+PROC
+LLLIB_StringExt_Internal_Version_FoundPeriod((STRING)_Str, (INTEGER)_Index)
+AND
+DB_LLLIB_StringExt_Temp_Version_FoundPeriod(_Str, _TotalFound)
+AND
+_TotalFound >= 3
+THEN
+LLLIB_StringExt_Internal_Version_GetBuild(_Str, _Index);
+
+//0.9.0.0
+PROC
+LLLIB_StringExt_Internal_Version_GetBuild((STRING)_Str, (INTEGER)_Index)
+AND
+DB_LLLIB_StringLength(_Str, _Length)
+AND
+DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _Minor, _Revision, _PastBuild)
+AND
+DB_LLLIB_StringExt_Temp_Version_Index(_Str, _MajorIndex, _MinorIndex, _RevisionIndex, _BuildIndex)
+AND
+IntegerSum(_RevisionIndex, 1, _BuildStartIndex)
+AND
+IntegerSubtract(_Length, _BuildStartIndex, _Count)
+AND
+StringSub(_Str, _BuildStartIndex, _Count, _Build)
+AND
+IntegertoString(_BuildStartIndex, _IndexStr)
+AND
+IntegertoString(_Count, _CountStr)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:StringExt:Version_GetBuild] Setting _BuildIndex to [",_IndexStr,"] with a count of [",_CountStr,"].");
+NOT DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _Minor, _Revision, _PastBuild);
+NOT DB_LLLIB_StringExt_Temp_Version_Index(_Str, _MajorIndex, _MinorIndex, _RevisionIndex, _BuildIndex);
+DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _Minor, _Revision, _Build);
+DB_LLLIB_StringExt_Temp_Version_Index(_Str, _MajorIndex, _MinorIndex, _RevisionIndex, _Length);
+DB_LLLIB_StringExt_Temp_Version_Complete(_Str);
+
+PROC
+LLLIB_StringExt_ClearPreviousVersionData((STRING)_Str)
+AND
+DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _Minor, _Revision, _Build)
+THEN
+NOT DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _Minor, _Revision, _Build);
+
+PROC
+LLLIB_StringExt_ClearPreviousVersionData((STRING)_Str)
+AND
+DB_LLLIB_StringExt_Temp_Version_Index(_Str, _MajorIndex, _MinorIndex, _RevisionIndex, _BuildIndex)
+THEN
+NOT DB_LLLIB_StringExt_Temp_Version_Index(_Str, _MajorIndex, _MinorIndex, _RevisionIndex, _BuildIndex);
+
+PROC
+LLLIB_StringExt_ClearPreviousVersionData((STRING)_Str)
+AND
+DB_LLLIB_StringExt_Temp_Version_FoundPeriod(_Str, _TotalFound)
+THEN
+NOT DB_LLLIB_StringExt_Temp_Version_FoundPeriod(_Str, _TotalFound);
+
+PROC
+LLLIB_StringExt_ClearPreviousVersionData((STRING)_Str)
+AND
+DB_LLLIB_StringExt_Temp_Version_Complete(_Str)
+THEN
+NOT DB_LLLIB_StringExt_Temp_Version_Complete(_Str);
 //END_REGION
 
 //REGION UPDATER

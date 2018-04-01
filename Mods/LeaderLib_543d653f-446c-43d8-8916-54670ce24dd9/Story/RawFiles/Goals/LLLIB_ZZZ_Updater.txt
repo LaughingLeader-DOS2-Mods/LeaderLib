@@ -1,7 +1,7 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-LeaderUpdater_Register_Mod("LeaderLib", "0.7.0.0", "LaughingLeader");
+LeaderUpdater_Register_Mod("LeaderLib", "0.9.0.0", "LaughingLeader");
 LeaderUpdater_Register_ActiveGoal("LeaderLib", "LaughingLeader", "LLLIB_ZZZ_Updater");
 LeaderLib_RegisterModMenu("LaughingLeader_LeaderLib", "[LeaderLib] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 KBSECTION
@@ -19,7 +19,7 @@ LeaderLog_Log("DEBUG", "[LLLIB:Updater] Databases registered.");
 PROC
 LLLIB_Updater_ResetDatabases()
 THEN
-LeaderUpdater_ClearAllDatabases("LeaderLib", "LaughingLeader");
+LeaderUpdater_Clear_AllDatabases("LeaderLib", "LaughingLeader");
 LLLIB_System_UpdateDatabases();
 LeaderLog_Log("DEBUG", "[LLLIB:Updater] Databases cleared and re-initialized.");
 //END_REGION
@@ -33,10 +33,10 @@ LeaderLog_Log("DEBUG", "[LLLIB:Updater] Game started.");
 IF
 GameStarted(_,_)
 AND
-LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "0.7.0.0", "LaughingLeader")
+LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "0.9.0.0", "LaughingLeader")
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Updater] Updating LeaderLib.");
-LeaderUpdater_Register_Mod("LeaderLib", "0.7.0.0", "LaughingLeader");
+LeaderUpdater_Register_Mod("LeaderLib", "0.9.0.0", "LaughingLeader");
 LLLIB_System_UpdateDatabases();
 LeaderLib_SendEvent("LeaderLib_Events_OnDatabasesUpdated");
 //END_REGION
@@ -63,9 +63,9 @@ LLLIB_Updater_ClearFlags();
 LeaderLog_Log("DEBUG", "[LLLIB:Updater:Uninstaller] Destroying all LeaderLib items.");
 LLLIB_Updater_DestroyItems();
 LeaderLog_Log("DEBUG", "[LLLIB:Updater:Uninstaller] Clearing databases.");
-LeaderUpdater_ClearAllDatabases("LeaderLib", "LaughingLeader");
+LeaderUpdater_Clear_AllDatabases("LeaderLib", "LaughingLeader");
 LeaderLog_Log("DEBUG", "[LLLIB:Updater:Uninstaller] Unregistering LeaderLib.");
-//LeaderUpdater_UnregisterMod();
+LeaderUpdater_UnregisterMod("LeaderLib", "LaughingLeader");
 
 PROC
 LLLIB_Updater_CloseDialogs()
@@ -131,6 +131,6 @@ THEN
 GlobalSetFlag("LeaderLib_Active");
 //END_REGION
 EXITSECTION
-LeaderUpdater_UnregisterMod("LeaderLib", "LaughingLeader");
+
 ENDEXITSECTION
 ParentTargetEdge "LaughingLeader__LeaderLib"

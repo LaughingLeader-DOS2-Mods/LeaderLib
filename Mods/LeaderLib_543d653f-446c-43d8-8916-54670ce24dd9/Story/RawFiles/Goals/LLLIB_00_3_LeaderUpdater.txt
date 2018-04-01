@@ -12,7 +12,7 @@ LeaderUpdater_Register_Mod((STRING)_ModName, (STRING)_Version, (STRING)_Author)
 AND
 NOT DB_Mods_Registered(_ModName, _Version, _Author)
 THEN
-LeaderUpdater_Clear_PreviousVersions(_ModName, _Author);
+LeaderUpdater_Clear_RegisteredModVersions(_ModName, _Author);
 DB_Mods_Registered(_ModName, _Version, _Author);
 
 PROC
@@ -76,7 +76,7 @@ LeaderLib_SendEvent(_NotActiveEvent);
 
 //REGION RESET
 PROC
-LeaderUpdater_Clear_PreviousVersions((STRING)_ModName, (STRING)_Author)
+LeaderUpdater_Clear_RegisteredModVersions((STRING)_ModName, (STRING)_Author)
 AND
 DB_Mods_Registered(_ModName, _Version, _Author)
 THEN
@@ -88,6 +88,13 @@ AND
 DB_Mods_ActiveGoal(_ModName, _Author, _GoalTitle)
 THEN
 NOT DB_Mods_ActiveGoal(_ModName, _Author, _GoalTitle);
+
+PROC
+LeaderUpdater_Clear_AllDatabases((STRING)_ModName, (STRING)_Author)
+AND
+DB_LeaderUpdater_RegisteredDatabase(_ModName, _Author, _GoalTitle, _DatabaseName, _Arity)
+THEN
+SysClear(_DatabaseName, _Arity);
 
 PROC
 LeaderUpdater_Reset_AllGoals((STRING)_ModName, (STRING)_Author)
@@ -129,14 +136,8 @@ NOT DB_Mods_Registered(_ModName, _Version, _Author);
 PROC
 LeaderUpdater_UninstallMod((STRING)_ModName, (STRING)_Author)
 THEN
-LeaderUpdater_UnregisterMod(_ModName, _Author);
-
-PROC
-LeaderUpdater_ClearAllDatabases((STRING)_ModName, (STRING)_Author)
-AND
-DB_LeaderUpdater_RegisteredDatabase(_ModName, _Author, _GoalTitle, _DatabaseName, _Arity)
-THEN
-SysClear(_DatabaseName, _Arity);
+//Currently unimplemented
+DB_NOOP(1);
 //END_REGION
 EXITSECTION
 

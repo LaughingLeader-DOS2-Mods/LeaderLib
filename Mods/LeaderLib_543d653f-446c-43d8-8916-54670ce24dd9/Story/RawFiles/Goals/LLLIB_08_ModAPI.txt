@@ -50,6 +50,12 @@ LeaderUpdater_Register_Mod(_ModName, _Version, _Author);
 NOT DB_LeaderLib_ModApi_RegisterMod(_ModName, _Version, _Author);
 
 IF
+DB_LeaderLib_ModApi_RegisterMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModName, (STRING)_Author)
+THEN
+LeaderLib_RegisterModMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
+NOT DB_LeaderLib_ModApi_RegisterMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
+
+IF
 DB_LeaderLib_ModApi_RegisterActiveGoal((STRING)_ModName, (STRING)_Author, (STRING)_GoalTitle)
 THEN
 LeaderUpdater_Register_ActiveGoal(_ModName, _Author, _GoalTitle);
@@ -62,16 +68,35 @@ LeaderUpdater_Register_Database(_ModName, _Author, _ReferenceName, _DatabaseName
 NOT DB_LeaderLib_ModApi_RegisterDatabase(_ModName, _Author, _ReferenceName, _DatabaseName, _Arity);
 
 IF
-DB_LeaderLib_ModApi_RegisterMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModName, (STRING)_Author)
+DB_LeaderLib_ModApi_RegisterGoal((STRING)_ModName, (STRING)_Author, (STRING)_GoalTitle)
 THEN
-LeaderLib_RegisterModMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
-NOT DB_LeaderLib_ModApi_RegisterMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
+LeaderUpdater_Register_Goal(_ModName, _Author, _GoalTitle);
+NOT DB_LeaderLib_ModApi_RegisterGoal(_ModName, _Author, _GoalTitle);
+
+/*Clear Commands*/
+IF
+DB_LeaderLib_ModApi_ClearRegisteredModVersions((STRING)_ModName, (STRING)_Author)
+THEN
+LeaderUpdater_Clear_RegisteredModVersions(_ModName, _Author);
+NOT DB_LeaderLib_ModApi_ClearRegisteredModVersions(_ModName, _Author);
 
 IF
 DB_LeaderLib_ModApi_ClearActiveGoals((STRING)_ModName, (STRING)_Author)
 THEN
 LeaderUpdater_Clear_ActiveGoals(_ModName, _Author);
 NOT DB_LeaderLib_ModApi_ClearActiveGoals(_ModName, _Author);
+
+IF
+DB_LeaderLib_ModApi_ClearAllDatabases((STRING)_ModName, (STRING)_Author)
+THEN
+LeaderUpdater_Clear_AllDatabases(_ModName, _Author);
+NOT DB_LeaderLib_ModApi_ClearAllDatabases(_ModName, _Author);
+
+IF
+DB_LeaderLib_ModApi_ResetAllGoals((STRING)_ModName, (STRING)_Author)
+THEN
+LeaderUpdater_Reset_AllGoals(_ModName, _Author);
+NOT DB_LeaderLib_ModApi_ResetAllGoals(_ModName, _Author);
 
 /*Misc Commands*/
 IF
@@ -233,10 +258,10 @@ SysClear("DB_LeaderLib_ModApi_Log", 9);
 SysClear("DB_LeaderLib_ModApi_Log", 10);
 SysClear("DB_LeaderLib_ModApi_Log", 11);
 
-
 /*
 Parse databases that were set before LeaderLib was loaded, then clear them.
 */
+/*Registering*/
 PROC
 LLLIB_ModApi_RunCleanup()
 AND
@@ -244,6 +269,14 @@ DB_LeaderLib_ModApi_RegisterMod((STRING)_ModName, (STRING)_Version, (STRING)_Aut
 THEN
 LeaderUpdater_Register_Mod(_ModName, _Version, _Author);
 NOT DB_LeaderLib_ModApi_RegisterMod(_ModName, _Version, _Author);
+
+PROC
+LLLIB_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_RegisterMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModName, (STRING)_Author)
+THEN
+LeaderLib_RegisterModMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
+NOT DB_LeaderLib_ModApi_RegisterMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
 
 PROC
 LLLIB_ModApi_RunCleanup()
@@ -264,10 +297,19 @@ NOT DB_LeaderLib_ModApi_RegisterDatabase(_ModName, _Author, _ReferenceName, _Dat
 PROC
 LLLIB_ModApi_RunCleanup()
 AND
-DB_LeaderLib_ModApi_RegisterMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModName, (STRING)_Author)
+DB_LeaderLib_ModApi_RegisterGoal((STRING)_ModName, (STRING)_Author, (STRING)_GoalTitle)
 THEN
-LeaderLib_RegisterModMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
-NOT DB_LeaderLib_ModApi_RegisterMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
+LeaderUpdater_Register_Goal(_ModName, _Author, _GoalTitle);
+NOT DB_LeaderLib_ModApi_RegisterGoal(_ModName, _Author, _GoalTitle);
+
+/*Clear Commands*/
+PROC
+LLLIB_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_ClearRegisteredModVersions((STRING)_ModName, (STRING)_Author)
+THEN
+LeaderUpdater_Clear_RegisteredModVersions(_ModName, _Author);
+NOT DB_LeaderLib_ModApi_ClearRegisteredModVersions(_ModName, _Author);
 
 PROC
 LLLIB_ModApi_RunCleanup()
@@ -276,6 +318,22 @@ DB_LeaderLib_ModApi_ClearActiveGoals((STRING)_ModName, (STRING)_Author)
 THEN
 LeaderUpdater_Clear_ActiveGoals(_ModName, _Author);
 NOT DB_LeaderLib_ModApi_ClearActiveGoals(_ModName, _Author);
+
+PROC
+LLLIB_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_ClearAllDatabases((STRING)_ModName, (STRING)_Author)
+THEN
+LeaderUpdater_Clear_AllDatabases(_ModName, _Author);
+NOT DB_LeaderLib_ModApi_ClearAllDatabases(_ModName, _Author);
+
+PROC
+LLLIB_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_ResetAllGoals((STRING)_ModName, (STRING)_Author)
+THEN
+LeaderUpdater_Reset_AllGoals(_ModName, _Author);
+NOT DB_LeaderLib_ModApi_ResetAllGoals(_ModName, _Author);
 
 /*Misc Commands*/
 PROC

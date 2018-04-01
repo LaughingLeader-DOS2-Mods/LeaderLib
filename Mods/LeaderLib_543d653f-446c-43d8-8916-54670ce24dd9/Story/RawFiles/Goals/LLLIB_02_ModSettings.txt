@@ -5,7 +5,7 @@ LLLIB_ModSettings_InitSettings();
 
 //Settings
 //DB_LLLIB_Settings_DialogVariables(_VariableName, _VariableValue)
-//DB_LLLIB_ModSettings_DynamicMenuVars(_MenuIndex, _DialogVar, _SelectFlag, _DisabledFlag)
+//DB_LLLIB_ModSettings_MenuVars(_MenuIndex, _DialogVar, _SelectFlag, _DisabledFlag)
 //DB_LLLIB_ModSettings_MenusPerPage(_MaxPerPage)
 //DB_LLLIB_ModSettings_SortTickRate(_Rate)
 //DB_LLLIB_ModSettings_SortingMenuTimer(_TimerName, _ID, _DisplayName, _CurrentIndex)
@@ -89,15 +89,15 @@ DB_LLLIB_ModSettings_MenusPerPage(8);
 
 LeaderLib_RegisterModMenu("LaughingLeader_LeaderLib", "[LeaderLib] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 
-LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_ModSettings_DynamicMenuVars", 4);
-DB_LLLIB_ModSettings_DynamicMenuVars(0, "LLLIB_ModSettings_Menu1_783ec14d-2861-4345-8dbc-45974fa34e15", "LLLIB_ModSettings_SelectedMenu1", "LLLIB_ModSettings_MenuEmpty1");
-DB_LLLIB_ModSettings_DynamicMenuVars(1, "LLLIB_ModSettings_Menu2_9a2d2990-5cff-420e-ba8a-37f9510ab9e1", "LLLIB_ModSettings_SelectedMenu2", "LLLIB_ModSettings_MenuEmpty2");
-DB_LLLIB_ModSettings_DynamicMenuVars(2, "LLLIB_ModSettings_Menu3_cf00a8c6-02d2-4fda-a766-4f533ac93b2d", "LLLIB_ModSettings_SelectedMenu3", "LLLIB_ModSettings_MenuEmpty3");
-DB_LLLIB_ModSettings_DynamicMenuVars(3, "LLLIB_ModSettings_Menu4_337a1066-9a85-4005-a2dc-f0156bf13d16", "LLLIB_ModSettings_SelectedMenu4", "LLLIB_ModSettings_MenuEmpty4");
-DB_LLLIB_ModSettings_DynamicMenuVars(4, "LLLIB_ModSettings_Menu5_45148ce6-e8f3-4af4-81ed-a3b2e1ff8a17", "LLLIB_ModSettings_SelectedMenu5", "LLLIB_ModSettings_MenuEmpty5");
-DB_LLLIB_ModSettings_DynamicMenuVars(5, "LLLIB_ModSettings_Menu6_863af621-ff0c-454a-b6a3-7c9d3166a8a0", "LLLIB_ModSettings_SelectedMenu6", "LLLIB_ModSettings_MenuEmpty6");
-DB_LLLIB_ModSettings_DynamicMenuVars(6, "LLLIB_ModSettings_Menu7_888ce02f-83ff-4173-be8d-f41fd348358f", "LLLIB_ModSettings_SelectedMenu7", "LLLIB_ModSettings_MenuEmpty7");
-DB_LLLIB_ModSettings_DynamicMenuVars(7, "LLLIB_ModSettings_Menu8_a6aa98e6-cde4-491b-a2cb-2cd7d5d71f96", "LLLIB_ModSettings_SelectedMenu8", "LLLIB_ModSettings_MenuEmpty8");
+LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_ModSettings_MenuVars", 4);
+DB_LLLIB_ModSettings_MenuVars(0, "LLLIB_ModSettings_Menu1_783ec14d-2861-4345-8dbc-45974fa34e15", "LLLIB_ModSettings_SelectedMenu1", "LLLIB_ModSettings_MenuEmpty1");
+DB_LLLIB_ModSettings_MenuVars(1, "LLLIB_ModSettings_Menu2_9a2d2990-5cff-420e-ba8a-37f9510ab9e1", "LLLIB_ModSettings_SelectedMenu2", "LLLIB_ModSettings_MenuEmpty2");
+DB_LLLIB_ModSettings_MenuVars(2, "LLLIB_ModSettings_Menu3_cf00a8c6-02d2-4fda-a766-4f533ac93b2d", "LLLIB_ModSettings_SelectedMenu3", "LLLIB_ModSettings_MenuEmpty3");
+DB_LLLIB_ModSettings_MenuVars(3, "LLLIB_ModSettings_Menu4_337a1066-9a85-4005-a2dc-f0156bf13d16", "LLLIB_ModSettings_SelectedMenu4", "LLLIB_ModSettings_MenuEmpty4");
+DB_LLLIB_ModSettings_MenuVars(4, "LLLIB_ModSettings_Menu5_45148ce6-e8f3-4af4-81ed-a3b2e1ff8a17", "LLLIB_ModSettings_SelectedMenu5", "LLLIB_ModSettings_MenuEmpty5");
+DB_LLLIB_ModSettings_MenuVars(5, "LLLIB_ModSettings_Menu6_863af621-ff0c-454a-b6a3-7c9d3166a8a0", "LLLIB_ModSettings_SelectedMenu6", "LLLIB_ModSettings_MenuEmpty6");
+DB_LLLIB_ModSettings_MenuVars(6, "LLLIB_ModSettings_Menu7_888ce02f-83ff-4173-be8d-f41fd348358f", "LLLIB_ModSettings_SelectedMenu7", "LLLIB_ModSettings_MenuEmpty7");
+DB_LLLIB_ModSettings_MenuVars(7, "LLLIB_ModSettings_Menu8_a6aa98e6-cde4-491b-a2cb-2cd7d5d71f96", "LLLIB_ModSettings_SelectedMenu8", "LLLIB_ModSettings_MenuEmpty8");
 //END_REGION
 
 //REGION UPDATING
@@ -388,7 +388,7 @@ DB_LLLIB_ModSettings_MenusPerPage(_MenusPerPage)
 AND
 IntegerProduct(_Page, _MenusPerPage, _StartIndex)
 AND
-DB_LLLIB_ModSettings_DynamicMenuVars(_MenuIndex, _DialogVar, _SelectFlag, _DisabledFlag)
+DB_LLLIB_ModSettings_MenuVars(_MenuIndex, _DialogVar, _SelectFlag, _DisabledFlag)
 AND
 IntegerSum(_MenuIndex, _StartIndex, _Index)
 AND
@@ -529,7 +529,7 @@ DB_LLLIB_ModSettings_Temp_ActiveMenu(_Player, _ID, _Dialog);
 IF
 ObjectFlagSet(_SelectFlag, (CHARACTERGUID)_Player, _Instance)
 AND
-DB_LLLIB_ModSettings_DynamicMenuVars(_MenuIndex, _DialogVar, _SelectFlag, _DisabledFlag)
+DB_LLLIB_ModSettings_MenuVars(_MenuIndex, _DialogVar, _SelectFlag, _DisabledFlag)
 AND
 LLLIB_Helper_QRY_ClearObjectFlag(_Player, _SelectFlag)
 AND
@@ -609,6 +609,16 @@ ObjectGetFlag(_Player, "LeaderLib_OpenModSettingsMenu", 1)
 THEN
 LLLIB_ModSettings_Reopen(_Player, _Dialog);
 ObjectClearFlag(_Player, "LeaderLib_OpenModSettingsMenu");
+
+IF
+DialogEnded(_Dialog, _Instance)
+AND
+DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
+AND
+ObjectGetFlag(_Player, "LeaderLib_OpenModSettingsMenu", 1)
+THEN
+ObjectClearFlag(_Player, "LeaderLib_OpenModSettingsMenu");
+LLLIB_ModSettings_Reopen(_Player, _Dialog);
 
 PROC
 LLLIB_ModSettings_Reopen((CHARACTERGUID)_Player, (STRING)_Dialog)

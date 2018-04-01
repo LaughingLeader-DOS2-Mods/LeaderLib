@@ -6,7 +6,7 @@ KBSECTION
 IF
 RegionStarted("LeaderLib_TestLevel")
 THEN
-GlobalSetFlag("LEADERLOG_DEBUG_ENABLED");
+GlobalSetFlag("LeaderLog_Debug_Enabled");
 GoalCompleted;
 EXITSECTION
 

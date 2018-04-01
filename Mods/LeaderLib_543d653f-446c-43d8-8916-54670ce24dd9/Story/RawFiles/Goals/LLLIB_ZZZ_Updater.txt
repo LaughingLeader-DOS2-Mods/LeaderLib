@@ -44,7 +44,7 @@ LeaderLib_SendEvent("LeaderLib_Events_OnDatabasesUpdated");
 PROC
 LeaderUpdater_UnregisterMod("LeaderLib", "LaughingLeader")
 THEN
-GlobalClearFlag("LEADERLIB_ACTIVE");
+GlobalClearFlag("LeaderLib_Active");
 
 PROC
 LeaderUpdater_UninstallMod("LeaderLib", "LaughingLeader")
@@ -125,9 +125,9 @@ ItemDestroy(_Item);
 PROC
 LeaderUpdater_RegisterMod("LeaderLib", (STRING)_Version, "LaughingLeader")
 AND
-GlobalGetFlag("LEADERLIB_ACTIVE", 0)
+GlobalGetFlag("LeaderLib_Active", 0)
 THEN
-GlobalSetFlag("LEADERLIB_ACTIVE");
+GlobalSetFlag("LeaderLib_Active");
 //END_REGION
 EXITSECTION
 LeaderUpdater_UnregisterMod("LeaderLib", "LaughingLeader");

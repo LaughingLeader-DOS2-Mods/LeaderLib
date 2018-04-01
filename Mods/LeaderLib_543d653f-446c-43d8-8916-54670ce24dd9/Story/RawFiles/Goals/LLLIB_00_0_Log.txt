@@ -17,35 +17,35 @@ DB_NOOP(1);
 QRY
 LeaderLog_QRY_LogTypeEnabled("COMBAT")
 AND
-NOT LeaderLog_QRY_Internal_DisableFlagActive("LEADERLOG_COMBATLOG_DISABLED")
+NOT LeaderLog_QRY_Internal_DisableFlagActive("LeaderLog_CombatLog_Disabled")
 THEN
 DB_NOOP(1);
 
 QRY
 LeaderLog_QRY_LogTypeEnabled("STATUS")
 AND
-NOT LeaderLog_QRY_Internal_DisableFlagActive("LEADERLOG_STATUS_DISABLED")
+NOT LeaderLog_QRY_Internal_DisableFlagActive("LeaderLog_Status_Disabled")
 THEN
 DB_NOOP(1);
 
 QRY
 LeaderLog_QRY_LogTypeEnabled("PRINT")
 AND
-NOT LeaderLog_QRY_Internal_DisableFlagActive("LEADERLOG_STATUS_DISABLED")
+NOT LeaderLog_QRY_Internal_DisableFlagActive("LeaderLog_Status_Disabled")
 THEN
 DB_NOOP(1);
 
 QRY
 LeaderLog_QRY_LogTypeEnabled("DEBUG")
 AND
-GlobalGetFlag("LEADERLOG_DEBUG_ENABLED", 1)
+GlobalGetFlag("LeaderLog_Debug_Enabled", 1)
 THEN
 DB_NOOP(1);
 
 QRY
 LeaderLog_QRY_LogTypeEnabled("EDITOR")
 AND
-GlobalGetFlag("LEADERLOG_DEBUG_ENABLED", 1)
+GlobalGetFlag("LeaderLog_Debug_Enabled", 1)
 THEN
 DB_NOOP(1);
 

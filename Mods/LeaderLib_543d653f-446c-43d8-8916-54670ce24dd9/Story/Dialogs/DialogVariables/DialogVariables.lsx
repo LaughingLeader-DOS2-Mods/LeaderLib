@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <save>
-    <header version="2" time="1521911010" />
+    <header version="2" time="1522540853" />
     <version major="3" minor="1" revision="7" build="0" />
     <region id="DialogVariables">
         <node id="root">
             <children>
+                <node id="DialogVariable">
+                    <attribute id="DefaultValue" value="Welcome! Looking to trade?" type="23" />
+                    <attribute id="Description" value="" type="23" />
+                    <attribute id="UUID" value="f143b90b-9afc-477e-b133-6a1574341261" type="31" />
+                    <attribute id="name" value="LLLIB_LeaderTrader_Greeting" type="22" />
+                    <attribute id="type" value="String" type="23" />
+                </node>
                 <node id="DialogVariable">
                     <attribute id="DefaultValue" value="1" type="23" />
                     <attribute id="Description" value="" type="23" />
@@ -76,7 +83,7 @@
                     <attribute id="type" value="String" type="23" />
                 </node>
                 <node id="DialogVariable">
-                    <attribute id="DefaultValue" value="" type="23" />
+                    <attribute id="DefaultValue" value="Displays the current/last page together." type="23" />
                     <attribute id="Description" value="" type="23" />
                     <attribute id="UUID" value="2b744313-9239-412c-80a8-f3b5e8b56156" type="31" />
                     <attribute id="name" value="LLLIB_ModSettings_PageInfo" type="22" />
@@ -101,13 +108,6 @@
                     <attribute id="Description" value="" type="23" />
                     <attribute id="UUID" value="9fc648d4-7984-44e7-afa4-b8a07f21185b" type="31" />
                     <attribute id="name" value="LLLIB_SpeakerName" type="22" />
-                    <attribute id="type" value="String" type="23" />
-                </node>
-                <node id="DialogVariable">
-                    <attribute id="DefaultValue" value="Welcome! Looking to trade?" type="23" />
-                    <attribute id="Description" value="" type="23" />
-                    <attribute id="UUID" value="f143b90b-9afc-477e-b133-6a1574341261" type="31" />
-                    <attribute id="name" value="LLLIB_Trader_Greeting" type="22" />
                     <attribute id="type" value="String" type="23" />
                 </node>
             </children>

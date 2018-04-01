@@ -1,7 +1,7 @@
 {
    "save" : {
       "header" : {
-         "time" : 1522530150,
+         "time" : 1522540913,
          "version" : "2.0.8.2"
       },
       "regions" : {
@@ -382,7 +382,7 @@
                                                 "TagText" : {
                                                    "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
                                                    "type" : 28,
-                                                   "value" : "[LLLIB_Trader_Greeting_f143b90b-9afc-477e-b133-6a1574341261]"
+                                                   "value" : "[LLLIB_LeaderTrader_Greeting_f143b90b-9afc-477e-b133-6a1574341261]"
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }

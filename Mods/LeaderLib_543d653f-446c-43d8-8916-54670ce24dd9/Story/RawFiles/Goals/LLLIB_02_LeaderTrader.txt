@@ -167,7 +167,6 @@ DB_LLLIB_DialogVars("LeaderTrader_Greeting", _Var)
 THEN
 DialogSetVariableStringForInstance(_Instance, _Var, "Anything else?");
 
-/*
 IF
 RequestTrade(_Player, _LeaderTrader)
 AND
@@ -178,7 +177,6 @@ AND
 DB_LLLIB_DialogVars("LeaderTrader_Greeting", _Var)
 THEN
 DialogSetVariableStringForInstance(_Instance, _Var, "Anything else?");
-*/
 
 IF
 DialogEnded(_Dialog, _Instance)
@@ -469,6 +467,13 @@ AND
 DialogGetInvolvedNPC(_Instance, 1, (CHARACTERGUID)_LeaderTrader)
 AND
 DB_LLLIB_LeaderTrader(_LeaderTrader)
+THEN
+CharacterSetCanTrade(_LeaderTrader, 1);
+
+IF
+DB_Dialogs(_LeaderTrader, "LLLIB_RetiredLeader_Default")
+AND
+DB_LLLIB_LeaderTrader((CHARACTERGUID)_LeaderTrader)
 THEN
 CharacterSetCanTrade(_LeaderTrader, 1);
 //END_REGION

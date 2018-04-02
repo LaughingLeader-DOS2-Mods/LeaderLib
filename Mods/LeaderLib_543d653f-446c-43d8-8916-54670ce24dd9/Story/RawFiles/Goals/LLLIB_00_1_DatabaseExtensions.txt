@@ -293,11 +293,32 @@ THEN
 NOT DB_LLLIB_Array_Iterator(_ID, _CurrentIndex);
 
 PROC
+LLLIB_Array_ClearArrayIterators((STRING)_ID)
+AND
+DB_LLLIB_Array_Temp_ArrayIteratorBuilder(_ID, _CurrentIndex, _Length)
+THEN
+NOT DB_LLLIB_Array_Temp_ArrayIteratorBuilder(_ID, _CurrentIndex, _Length);
+
+PROC
 LLLIB_Array_ClearArray((STRING)_ID)
 THEN
 LLLIB_Array_ClearArrayEntries(_ID);
 LLLIB_Array_ClearArrayIterators(_ID);
 LLLIB_Array_ClearArrayLength(_ID);
+
+PROC
+LLLIB_Array_ClearArray((STRING)_ID)
+AND
+DB_LLLIB_Array_Temp_PopValue(_ID, _Value)
+THEN
+NOT DB_LLLIB_Array_Temp_PopValue(_ID, _Value);
+
+PROC
+LLLIB_Array_ClearArray((STRING)_ID)
+AND
+DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value)
+THEN
+NOT DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value);
 //END_REGION
 
 //REGION ARRAY_ITERATOR

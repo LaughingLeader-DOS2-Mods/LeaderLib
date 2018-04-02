@@ -61,6 +61,7 @@ LLLIB_EventFlow_Init_LeaderLibStack((STRING)_StackName)
 THEN
 LLLIB_Array_AddToDictionary(_StackName, "LeaderLib_Commands_SpawnTraders", "LeaderLib_Events_OnTraderSpawnComplete");
 LLLIB_Array_AddToDictionary(_StackName, "LeaderLib_Commands_StartTreasureGenerationQueue", "LeaderLib_Events_OnTreasureQueueComplete");
+LLLIB_Array_AddToDictionary(_StackName, "LeaderLib_Commands_CheckTraders", "LeaderLib_Events_OnTraderCheckingComplete");
 
 PROC
 LLLIB_EventFlow_Start((STRING)_StackName)

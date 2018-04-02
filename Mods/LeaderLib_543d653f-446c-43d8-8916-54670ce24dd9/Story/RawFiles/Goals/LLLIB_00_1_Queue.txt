@@ -1,0 +1,179 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+//DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
+//DB_LLLIB_Queue_Timeout(_QueueID, _TimerName, _TimeoutValue, _OnTimeoutEvent)
+//DB_LLLIB_Queue_Temp_CurrentEntry(_QueueID, _Entry)
+KBSECTION
+//REGION CREATE_START
+
+PROC
+LLLIB_Queue_Create((STRING)_QueueID, (STRING)_ArrayID, (STRING)_TimerName, (INTEGER)_TickRate, (STRING)_IterateEvent, (STRING)_IterateCompletionEvent, (STRING)_OnCompletionEvent)
+THEN
+DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent);
+
+PROC
+LLLIB_Queue_SetTimeout((STRING)_QueueID, (STRING)_TimerName, (INTEGER)_TimeoutValue)
+THEN
+LLLIB_Queue_SetTimeout(_QueueID, _TimerName, _TimeoutValue, "");
+
+PROC
+LLLIB_Queue_SetTimeout((STRING)_QueueID, (STRING)_TimerName, (INTEGER)_TimeoutValue, (STRING)_OnTimeoutEvent)
+THEN
+DB_LLLIB_Queue_Timeout(_QueueID, _TimerName, _TimeoutValue, _OnTimeoutEvent);
+
+PROC
+LLLIB_Queue_Start((STRING)_QueueID)
+AND
+DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Queue:Start] Starting queue [",_QueueID,"].");
+LLLIB_Queue_Internal_NextTick(_QueueID);
+//END_REGION
+
+//REGION TICK_LOOP
+PROC
+LLLIB_Queue_Internal_StartTimer((STRING)_QueueID)
+AND
+DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
+THEN
+TimerLaunch(_TimerName, _TickRate);
+
+IF
+TimerFinished(_TimerName)
+AND
+DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
+THEN
+LLLIB_Queue_Internal_NextTick(_QueueID);
+
+PROC
+LLLIB_Queue_Internal_NextTick((STRING)_QueueID)
+AND
+DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
+AND
+DB_LLLIB_Array_Length(_ArrayID, _Length)
+AND
+_Length > 0
+AND
+LLLIB_Array_QRY_Pop(_ArrayID)
+AND
+DB_LLLIB_Array_Temp_PopValue(_ArrayID, _Entry)
+THEN
+NOT DB_LLLIB_Array_Temp_PopValue(_ArrayID, _Entry);
+LLLIB_Queue_Internal_ClearCurrentEntry(_QueueID);
+DB_LLLIB_Queue_Temp_CurrentEntry(_QueueID, _Entry);
+LLLIB_Queue_Internal_StartTimeoutTimer(_QueueID);
+LeaderLib_SendEvent(_IterateEvent);
+
+PROC
+LLLIB_Queue_Internal_NextTick((STRING)_QueueID)
+AND
+DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
+AND
+NOT DB_LLLIB_Array_Length(_ArrayID, _)
+AND
+NOT DB_LLLIB_Queue_Temp_CurrentEntry(_QueueID, _)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Queue:NextTick] [ERROR] Queue [",_QueueID,"] array [",_ArrayID,"] is missing a length!.");
+LLLIB_Queue_Internal_OnComplete(_QueueID);
+
+PROC
+LLLIB_Queue_Internal_NextTick((STRING)_QueueID)
+AND
+DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
+AND
+DB_LLLIB_Array_Length(_ArrayID, _Length)
+AND
+_Length <= 0
+AND
+NOT DB_LLLIB_Queue_Temp_CurrentEntry(_QueueID, _)
+THEN
+LLLIB_Queue_Internal_OnComplete(_QueueID);
+
+IF
+StoryEvent(_, _IterateCompletionEvent)
+AND
+DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
+THEN
+LLLIB_Queue_Internal_ClearCurrentEntry(_QueueID);
+LLLIB_Queue_Internal_CancelTimeoutTimer(_QueueID);
+LLLIB_Queue_Internal_StartTimer(_QueueID);
+//END_REGION
+
+//REGION ON_COMPLETE
+PROC
+LLLIB_Queue_Internal_OnComplete((STRING)_QueueID)
+AND
+DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Queue:OnComplete] Queue [",_QueueID,"] complete. Sending event [",_OnCompletionEvent,"].");
+LeaderLib_SendEvent(_OnCompletionEvent);
+LLLIB_Queue_ClearQueue(_QueueID);
+//END_REGION
+
+//REGION CLEAR
+PROC
+LLLIB_Queue_ClearQueue((STRING)_QueueID)
+AND
+DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
+THEN
+TimerCancel(_TimerName);
+LLLIB_Queue_Internal_ClearCurrentEntry(_QueueID);
+LLLIB_Array_ClearArray(_ArrayID);
+NOT DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent);
+
+PROC
+LLLIB_Queue_ClearQueue((STRING)_QueueID)
+AND
+DB_LLLIB_Queue_Timeout(_QueueID, _TimerName, _TimeoutValue, _OnTimeoutEvent)
+THEN
+TimerCancel(_TimerName);
+NOT DB_LLLIB_Queue_Timeout(_QueueID, _TimerName, _TimeoutValue, _OnTimeoutEvent);
+
+PROC
+LLLIB_Queue_Internal_ClearCurrentEntry((STRING)_QueueID)
+AND
+DB_LLLIB_Queue_Temp_CurrentEntry(_QueueID, _Entry)
+THEN
+NOT DB_LLLIB_Queue_Temp_CurrentEntry(_QueueID, _Entry);
+//END_REGION
+
+//REGION TIMEOUT
+PROC
+LLLIB_Queue_Internal_StartTimeoutTimer((STRING)_QueueID)
+AND
+DB_LLLIB_Queue_Timeout(_QueueID, _TimerName, _TimeoutValue, _OnTimeoutEvent)
+THEN
+TimerCancel(_TimerName);
+TimerLaunch(_TimerName, _TimeoutValue);
+
+IF
+TimerFinished(_TimerName)
+AND
+DB_LLLIB_Queue_Timeout(_QueueID, _TimerName, _TimeoutValue, _OnTimeoutEvent)
+AND
+_OnTimeoutEvent != ""
+THEN
+LeaderLib_SendEvent(_OnTimeoutEvent);
+
+IF
+TimerFinished(_TimerName)
+AND
+DB_LLLIB_Queue_Timeout(_QueueID, _TimerName, _TimeoutValue, _OnTimeoutEvent)
+AND
+IntegertoString(_TimeoutValue, _TimeoutValStr)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Queue:Timeout] Queue [",_QueueID,"] timed out after ",_TimeoutValStr,"ms. Starting next tick.");
+LLLIB_Queue_Internal_StartTimer(_QueueID);
+
+PROC
+LLLIB_Queue_Internal_CancelTimeoutTimer((STRING)_QueueID)
+AND
+DB_LLLIB_Queue_Timeout(_QueueID, _TimerName, _TimeoutValue, _OnTimeoutEvent)
+THEN
+TimerCancel(_TimerName);
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

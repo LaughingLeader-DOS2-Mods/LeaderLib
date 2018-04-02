@@ -12,9 +12,12 @@ LLLIB_Dialog_InitSettings()
 THEN
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_DialogNames", 1);
 DB_LLLIB_DialogNames("LLLIB_ModSettingsMenu");
-DB_LLLIB_DialogNames("LLLIB_SettingsMenu");
 DB_LLLIB_DialogNames("LLLIB_RetiredLeader_Default");
-DB_LLLIB_DialogNames("LLLIB_RetiredLeader_TutorialBoat");
+DB_LLLIB_DialogNames("LLLIB_RetiredLeader_FortJoy_Intro");
+DB_LLLIB_DialogNames("LLLIB_RetiredLeader_LadyVengeance_Intro");
+DB_LLLIB_DialogNames("LLLIB_RetiredLeader_Tutorial_Intro");
+DB_LLLIB_DialogNames("LLLIB_RetiredTrader_AttackResponse");
+DB_LLLIB_DialogNames("LLLIB_SettingsMenu");
 
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_Dialog_AttitudeFlags", 2);
 DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_IncreaseAttitude_5", 5);

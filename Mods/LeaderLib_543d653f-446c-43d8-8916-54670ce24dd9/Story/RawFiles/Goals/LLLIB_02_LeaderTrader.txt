@@ -24,7 +24,7 @@ LLLIB_LeaderTrader_InitSettings()
 THEN
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_LeaderTrader_Dialog", 2);
 DB_LLLIB_LeaderTrader_Dialog("Default", "LLLIB_RetiredLeader_Default");
-DB_LLLIB_LeaderTrader_Dialog("Tutorial", "LLLIB_RetiredLeader_Tutorial_Intro");
+DB_LLLIB_LeaderTrader_Dialog("Tutorial_Intro", "LLLIB_RetiredLeader_Tutorial_Intro");
 DB_LLLIB_LeaderTrader_Dialog("FortJoy_Intro", "LLLIB_RetiredLeader_FortJoy_Intro");
 DB_LLLIB_LeaderTrader_Dialog("LV_Intro", "LLLIB_RetiredLeader_LadyVengeance_Intro");
 DB_LLLIB_LeaderTrader_Dialog("Arx_Intro", "LLLIB_RetiredLeader_Arx_Intro");
@@ -516,11 +516,12 @@ CharacterSetCanTrade(_LeaderTrader, 1);
 
 //REGION DIALOG_NAME
 IF
-StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_OnLeaderTradeSpawned")
+StoryEvent((CHARACTERGUID)_LeaderTrader, "LeaderLib_Events_OnLeaderTradeSpawned")
 AND
 GlobalGetFlag("LeaderLib_DiscoveredLeaderTraderBackground", 1)
 THEN
-CharacterSetCustomName(_Trader, "Lothar, Retired Commander");
+CharacterSetCustomName(_LeaderTrader, "Lothar, Retired Commander");
+LLLIB_Dialog_SetNameOverride(_LeaderTrader, "Lothar, Retired Commander");
 
 IF
 GlobalFlagSet("LeaderLib_DiscoveredLeaderTraderBackground")
@@ -528,20 +529,14 @@ AND
 DB_LLLIB_LeaderTrader(_LeaderTrader)
 THEN
 CharacterSetCustomName(_LeaderTrader, "Lothar, Retired Commander");
+LLLIB_Dialog_SetNameOverride(_LeaderTrader, "Lothar, Retired Commander");
 
 IF
-DialogStarted(_Dialog, _Instance)
+StoryEvent((CHARACTERGUID)_LeaderTrader, "LeaderLib_Events_OnLeaderTradeSpawned")
 AND
-DB_LLLIB_LeaderTrader_Dialog(_ReferenceName, _Dialog)
-AND
-DialogGetInvolvedNPC(_Instance, 1, (CHARACTERGUID)_LeaderTrader)
-AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
-AND
-DB_LLLIB_Settings_DialogVariables("SpeakerName", _SpeakerVar)
+NOT GlobalGetFlag("LeaderLib_DiscoveredLeaderTraderBackground", 1)
 THEN
-//To ignore the "Old Man" title when referring to himself.
-DialogSetVariableStringForInstance(_Instance, _SpeakerVar, "Lothar");
+LLLIB_Dialog_SetNameOverride(_LeaderTrader, "Lothar");
 //END_REGION
 
 //REGION FLAG_COMMANDS
@@ -606,6 +601,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_Dialog", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_Appearance", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_CurrentAppearance", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_IntroDialogRequirements", 4);
 LeaderLog_Log("SYSTEM", "[LLLIB:LeaderTrader] Databases registered.");
 //END_REGION
 EXITSECTION

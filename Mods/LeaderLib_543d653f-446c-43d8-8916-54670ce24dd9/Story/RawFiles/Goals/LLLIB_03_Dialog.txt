@@ -5,6 +5,7 @@ LLLIB_Dialog_InitSettings();
 
 //DB_LLLIB_DialogNames(_Dialog)
 //DB_LLLIB_Dialog_AttitudeFlags(_Flag, _Amount)
+//DB_LLLIB_Dialog_NameOverride(_Character, _Name)
 KBSECTION
 //REGION SETTINGS
 PROC
@@ -53,10 +54,25 @@ LLLIB_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LLLIB_DialogNames", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LLLIB_Dialog_AttitudeFlags", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LLLIB_Dialog_NameOverride", 2);
 LeaderLog_Log("SYSTEM", "[LLLIB:Dialog] Databases registered.");
 //END_REGION
 
-//REGION GENERAL_DIALOGVARS_AUTOSET
+//REGION NAME_VARS
+PROC
+LLLIB_Dialog_SetNameOverride((CHARACTERGUID)_Character, (STRING)_Name)
+AND
+DB_LLLIB_Dialog_NameOverride(_Character, (STRING)_PastName)
+AND
+_Name != _PastName
+THEN
+NOT DB_LLLIB_Dialog_NameOverride(_Character, _PastName);
+
+PROC
+LLLIB_Dialog_SetNameOverride((CHARACTERGUID)_Character, (STRING)_Name)
+THEN
+DB_LLLIB_Dialog_NameOverride(_Character, _Name);
+
 IF
 DialogStarted(_Dialog, _Instance)
 AND
@@ -65,17 +81,75 @@ AND
 DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
 AND
 DialogGetInvolvedNPC(_Instance, 1, (CHARACTERGUID)_NPC)
+THEN
+LLIB_Dialog_SetPlayerName(_Player, _Instance);
+LLIB_Dialog_SetNPCName(_NPC, _Instance);
+
+PROC
+LLIB_Dialog_SetPlayerName((CHARACTERGUID)_Player, (INTEGER)_Instance)
+AND
+NOT DB_LLLIB_Dialog_NameOverride(_Player, _)
+AND
+GetVarString(_Player, "LLNWIZ_CustomName", _CustomName)
+AND
+DB_LLLIB_Settings_DialogVariables("PlayerName", _PlayerVar)
+THEN
+DialogSetVariableStringForInstance(_Instance, _PlayerVar, _CustomName);
+
+PROC
+LLIB_Dialog_SetPlayerName((CHARACTERGUID)_Player, (INTEGER)_Instance)
+AND
+NOT DB_LLLIB_Dialog_NameOverride(_Player, _)
+AND
+NOT GetVarString(_Player, "LLNWIZ_CustomName", _)
 AND
 CharacterGetDisplayName(_Player, _, _PlayerName)
 AND
-CharacterGetDisplayName(_NPC, _, _SpeakerName)
+DB_LLLIB_Settings_DialogVariables("PlayerName", _PlayerVar)
+THEN
+DialogSetVariableStringForInstance(_Instance, _PlayerVar, _PlayerName);
+
+PROC
+LLIB_Dialog_SetPlayerName((CHARACTERGUID)_Player, (INTEGER)_Instance)
+AND
+DB_LLLIB_Dialog_NameOverride(_Player, _Name)
 AND
 DB_LLLIB_Settings_DialogVariables("PlayerName", _PlayerVar)
+THEN
+DialogSetVariableStringForInstance(_Instance, _PlayerVar, _Name);
+
+PROC
+LLIB_Dialog_SetNPCName((CHARACTERGUID)_Character, (INTEGER)_Instance)
+AND
+NOT DB_LLLIB_Dialog_NameOverride(_Character, _)
+AND
+GetVarString(_Character, "LLNWIZ_CustomName", _CustomName)
 AND
 DB_LLLIB_Settings_DialogVariables("SpeakerName", _SpeakerVar)
 THEN
-DialogSetVariableStringForInstance(_Instance, _PlayerVar, _PlayerName);
+DialogSetVariableStringForInstance(_Instance, _SpeakerVar, _CustomName);
+
+PROC
+LLIB_Dialog_SetNPCName((CHARACTERGUID)_Character, (INTEGER)_Instance)
+AND
+NOT DB_LLLIB_Dialog_NameOverride(_Character, _)
+AND
+NOT GetVarString(_Character, "LLNWIZ_CustomName", _)
+AND
+CharacterGetDisplayName(_Character, _, _SpeakerName)
+AND
+DB_LLLIB_Settings_DialogVariables("SpeakerName", _SpeakerVar)
+THEN
 DialogSetVariableStringForInstance(_Instance, _SpeakerVar, _SpeakerName);
+
+PROC
+LLIB_Dialog_SetNPCName((CHARACTERGUID)_Character, (INTEGER)_Instance)
+AND
+DB_LLLIB_Dialog_NameOverride(_Character, _Name)
+AND
+DB_LLLIB_Settings_DialogVariables("SpeakerName", _SpeakerVar)
+THEN
+DialogSetVariableStringForInstance(_Instance, _SpeakerVar, _Name);
 //END_REGION
 
 //REGION FLAG_COMMANDS

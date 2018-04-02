@@ -27,7 +27,7 @@ LLLIB_Queue_Start((STRING)_QueueID)
 AND
 DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Queue:Start] Starting queue [",_QueueID,"].");
+LeaderLog_Log("DEBUG", "[LLLIB:QueueSystem:Start] Starting queue [",_QueueID,"].");
 LLLIB_Queue_Internal_NextTick(_QueueID);
 //END_REGION
 
@@ -74,7 +74,7 @@ NOT DB_LLLIB_Array_Length(_ArrayID, _)
 AND
 NOT DB_LLLIB_Queue_Temp_CurrentEntry(_QueueID, _)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Queue:NextTick] [ERROR] Queue [",_QueueID,"] array [",_ArrayID,"] is missing a length!.");
+LeaderLog_Log("DEBUG", "[LLLIB:QueueSystem:NextTick] [ERROR] Queue [",_QueueID,"] array [",_ArrayID,"] is missing a length!.");
 LLLIB_Queue_Internal_OnComplete(_QueueID);
 
 PROC
@@ -106,7 +106,7 @@ LLLIB_Queue_Internal_OnComplete((STRING)_QueueID)
 AND
 DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Queue:OnComplete] Queue [",_QueueID,"] complete. Sending event [",_OnCompletionEvent,"].");
+LeaderLog_Log("DEBUG", "[LLLIB:QueueSystem:OnComplete] Queue [",_QueueID,"] complete. Sending event [",_OnCompletionEvent,"].");
 LeaderLib_SendEvent(_OnCompletionEvent);
 LLLIB_Queue_ClearQueue(_QueueID);
 //END_REGION
@@ -163,7 +163,7 @@ DB_LLLIB_Queue_Timeout(_QueueID, _TimerName, _TimeoutValue, _OnTimeoutEvent)
 AND
 IntegertoString(_TimeoutValue, _TimeoutValStr)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Queue:Timeout] Queue [",_QueueID,"] timed out after ",_TimeoutValStr,"ms. Starting next tick.");
+LeaderLog_Log("DEBUG", "[LLLIB:QueueSystem:Timeout] Queue [",_QueueID,"] timed out after ",_TimeoutValStr,"ms. Starting next tick.");
 LLLIB_Queue_Internal_StartTimer(_QueueID);
 
 PROC
@@ -172,6 +172,22 @@ AND
 DB_LLLIB_Queue_Timeout(_QueueID, _TimerName, _TimeoutValue, _OnTimeoutEvent)
 THEN
 TimerCancel(_TimerName);
+//END_REGION
+
+//REGION UPDATER
+PROC
+LLLIB_System_UpdateDatabases()
+THEN
+//LeaderLog_Log("SYSTEM", "[LLLIB:QueueSystem] Databases updated.");
+DB_NOOP(1);
+
+PROC
+LLLIB_System_RegisterDatabases()
+THEN
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "QueueSystem", "DB_LLLIB_Queue", 7);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "QueueSystem", "DB_LLLIB_Queue_Timeout", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "QueueSystem", "DB_LLLIB_Queue_Temp_CurrentEntry", 2);
+LeaderLog_Log("SYSTEM", "[LLLIB:QueueSystem] Databases registered.");
 //END_REGION
 EXITSECTION
 

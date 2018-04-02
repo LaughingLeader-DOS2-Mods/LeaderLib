@@ -5,18 +5,30 @@ INITSECTION
 //DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID)
 KBSECTION
 //REGION CREATION
-PROC
-LLLIB_Treasure_Internal_CreateGeneratorDummy((STRING)_DummyID)
-AND
-LLLIB_Treasure_Internal_QRY_IsDefaultDummyID(_DummyID)
-AND
-TemporaryCharacterCreateAtPosition(0.0,0.0,0.0,"LLLIB_GeneratorDummy_24a5d60b-680b-4fbc-9b2c-19061a261297", 0, _Dummy)
+QRY
+LLLIB_Treasure_Internal_QRY_CreateGeneratorDummy((GUIDSTRING)_AtObject, (STRING)_DummyID)
 THEN
-SetVarString(_Dummy, "LLLIB_DummyID", "");
-LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:CreateGeneratorDummy] Default generator dummy created.");
+LLLIB_Treasure_Internal_CreateGeneratorDummy(_AtObject, _DummyID);
+
+PROC
+LLLIB_Treasure_Internal_CreateGeneratorDummy((GUIDSTRING)_AtObject, (STRING)_DummyID)
+AND
+GetPosition(_AtObject, _x,_y,_z)
+AND
+TemporaryCharacterCreateAtPosition(_x,_y,_z,"LLLIB_GeneratorDummy_24a5d60b-680b-4fbc-9b2c-19061a261297", 0, _Dummy)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:CreateGeneratorDummy] Generator dummy created. Set ID to [",_DummyID,"].");
+SetVarString(_Dummy, "LLLIB_DummyID", _DummyID);
 DB_LLLIB_Treasure_GeneratorDummies(_Dummy);
 DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID);
 
+PROC
+LLLIB_Treasure_Internal_CreateGeneratorDummy((GUIDSTRING)_AtObject, (STRING)_DummyID)
+AND
+NOT DB_LLLIB_Treasure_NextGeneratorDummy(_, _DummyID)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:CreateGeneratorDummy] Failed to create generator dummy. Make sure it's being created at a valid position.");
+/*
 PROC
 LLLIB_Treasure_Internal_CreateGeneratorDummy((STRING)_DummyID)
 AND
@@ -28,6 +40,7 @@ SetVarString(_Dummy, "LLLIB_DummyID", _DummyID);
 LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:CreateGeneratorDummy] Generator dummy created. Set ID to [",_DummyID,"].");
 DB_LLLIB_Treasure_GeneratorDummies(_Dummy);
 DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID);
+*/
 //END_REGION
 
 //REGION QUERIES
@@ -96,19 +109,28 @@ LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:ResetDummy] Dummy with ID [",_Dumm
 //REGION PREPARE
 QRY
 LLLIB_QRY_Treasure_PrepareGeneratorDummy()
+AND
+DB_IsPlayer(_Player)
+AND
+NOT DB_LLLIB_Treasure_NextGeneratorDummy(_, "")
 THEN
-LLLIB_Treasure_PrepareGeneratorDummy("");
+LLLIB_Treasure_PrepareGeneratorDummy((GUIDSTRING)_Player, "");
 
 QRY
-LLLIB_QRY_Treasure_PrepareGeneratorDummy((STRING)_DummyID)
+LLLIB_QRY_Treasure_PrepareGeneratorDummy((GUIDSTRING)_AtObject)
 THEN
-LLLIB_Treasure_PrepareGeneratorDummy(_DummyID);
+LLLIB_Treasure_PrepareGeneratorDummy(_AtObject, "");
+
+QRY
+LLLIB_QRY_Treasure_PrepareGeneratorDummy((GUIDSTRING)_AtObject, (STRING)_DummyID)
+THEN
+LLLIB_Treasure_PrepareGeneratorDummy(_AtObject, _DummyID);
 
 PROC
-LLLIB_Treasure_PrepareGeneratorDummy((STRING)_DummyID)
+LLLIB_Treasure_PrepareGeneratorDummy((GUIDSTRING)_AtObject, (STRING)_DummyID)
 THEN
 LLLIB_Treasure_Internal_DummyCheck();
-LLLIB_Treasure_Internal_GetNextDummy(_DummyID);
+LLLIB_Treasure_Internal_GetNextDummy(_AtObject, _DummyID);
 
 PROC
 LLLIB_Treasure_Internal_DummyCheck()
@@ -132,14 +154,12 @@ THEN
 SetOnStage(_Dummy, 1);
 
 PROC
-LLLIB_Treasure_Internal_GetNextDummy((STRING)_DummyID)
-AND
-NOT DB_LLLIB_Treasure_GeneratorDummies(_)
+LLLIB_Treasure_Internal_GetNextDummy((GUIDSTRING)_AtObject, (STRING)_DummyID)
 THEN
-LLLIB_Treasure_Internal_CreateGeneratorDummy(_DummyID);
+LLLIB_Treasure_Internal_FindNextDummy(_AtObject, _DummyID);
 
 PROC
-LLLIB_Treasure_Internal_GetNextDummy((STRING)_DummyID)
+LLLIB_Treasure_Internal_FindNextDummy((GUIDSTRING)_AtObject, (STRING)_DummyID)
 AND
 DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
 AND
@@ -147,20 +167,19 @@ NOT DB_LLLIB_Treasure_NextGeneratorDummy(_, _DummyID)
 AND
 LLLIB_Treasure_Internal_QRY_IsDefaultOrMatchesDummyID(_Dummy, _DummyID)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:CreateDummyIfNoneExist] Dummy found. Set ID to [",_DummyID,"] and setting as the next dummy.");
+TeleportTo(_Dummy, _AtObject, "", 0);
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:GetNextDummy] Dummy found. Set ID to [",_DummyID,"] and setting as the next dummy.");
 SetVarString(_Dummy, "LLLIB_DummyID", _DummyID);
 DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID);
 
 PROC
-LLLIB_Treasure_Internal_GetNextDummy((STRING)_DummyID)
+LLLIB_Treasure_Internal_GetNextDummy((GUIDSTRING)_AtObject, (STRING)_DummyID)
 AND
 NOT DB_LLLIB_Treasure_NextGeneratorDummy(_, _DummyID)
-AND
-SysCount("DB_LLLIB_Treasure_GeneratorDummies", 1, _TotalDummies)
-AND
-_TotalDummies > 0 // All current dummies are being used
 THEN
-LLLIB_Treasure_Internal_CreateGeneratorDummy(_DummyID);
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:GetNextDummy] No dummy found for ID [",_DummyID,"]. Creating new dummy.");
+LLLIB_Treasure_Internal_CreateGeneratorDummy(_AtObject, _DummyID);
+LLLIB_Treasure_Internal_FindNextDummy(_AtObject, _DummyID);
 //END_REGION
 
 //REGION CLEANUP

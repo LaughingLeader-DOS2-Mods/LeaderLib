@@ -773,7 +773,7 @@ DB_LeaderLog_Temp_CombinedString(_DummyID)
 AND
 LeaderLog_QRY_ClearCombinedString(_DummyID)
 AND
-LLLIB_QRY_Treasure_PrepareGeneratorDummy(_DummyID)
+LLLIB_QRY_Treasure_PrepareGeneratorDummy(_Object, _DummyID)
 AND
 DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID)
 THEN

@@ -217,6 +217,20 @@ LLLIB_Array_Pop(_ID);
 */
 PROC
 LLLIB_Array_Pop((STRING)_ID)
+THEN
+LLLIB_Array_Internal_ClearPreviousPop(_ID);
+LLLIB_Array_GetFirstEntry(_ID);
+LLLIB_Array_Internal_Pop(_ID);
+
+PROC
+LLLIB_Array_Internal_ClearPreviousPop((STRING)_ID)
+AND
+DB_LLLIB_Array_Temp_PopValue(_ID, _Value)
+THEN
+NOT DB_LLLIB_Array_Temp_PopValue(_ID, _Value);
+
+PROC
+LLLIB_Array_Internal_Pop((STRING)_ID)
 AND
 DB_LLLIB_Array_Length(_ID, _Length)
 AND
@@ -227,36 +241,27 @@ THEN
 LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:Pop] [ERROR] Error popping array [",_ID,"]: length is [",_LengthStr,"]!");
 
 PROC
-LLLIB_Array_Pop((STRING)_ID)
+LLLIB_Array_Internal_Pop((STRING)_ID)
 AND
 NOT DB_LLLIB_Array_Length(_ID, _)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:Pop] [ERROR] Error popping array [",_ID,"]: length is null!");
 
 PROC
-LLLIB_Array_Pop((STRING)_ID)
-AND
-DB_LLLIB_Array_Temp_PopValue(_ID, _Value)
-THEN
-NOT DB_LLLIB_Array_Temp_PopValue(_ID, _Value);
-
-PROC
-LLLIB_Array_Pop((STRING)_ID)
-AND
-LLLIB_Array_QRY_GetFirstEntry(_ID)
+LLLIB_Array_Internal_Pop((STRING)_ID)
 AND
 NOT DB_LLLIB_Array_Temp_FirstEntry(_ID, _, _)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:Pop] [ERROR] No first entry found for array [",_ID,"]!");
 
 PROC
-LLLIB_Array_Pop((STRING)_ID)
+LLLIB_Array_Internal_Pop((STRING)_ID)
 AND
 DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value)
 THEN
 DB_LLLIB_Array_Temp_PopValue(_ID, _Value);
 NOT DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value);
-//LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:Pop] Popped [",_Value,"] from array [",_ID,"].");
+LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:Pop] Popped [",_Value,"] from array [",_ID,"].");
 LLLIB_Array_RemoveFromArray(_ID, _Value);
 //END_REGION
 

@@ -38,6 +38,8 @@ DB_LLLIB_LeaderTrader_Appearance("Default", "LLLIB_RetiredLeader_Act1_da17fca2-f
 PROC
 LLLIB_LeaderTrader_RegisterTraderSettings()
 THEN
+DB_LLLIB_LeaderTrader_CurrentAppearance("LLLIB_RetiredLeader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e");
+
 LLLIB_Trader_Register_CreationEvent("LLLIB_LeaderTrader", "LeaderLib_Events_OnLeaderTradeSpawned");
 
 //Backup positions, in case the position objects were destroyed
@@ -389,6 +391,7 @@ LLLIB_LeaderTrader_SetAppearance(_LeaderTrader, _Template);
 PROC
 LLLIB_LeaderTrader_OnSpawned((CHARACTERGUID)_LeaderTrader, "TUT_Tutorial_A")
 THEN
+LLLIB_Treasure_CreateItemByStat_Cleanup(_LeaderTrader);
 LLLIB_Treasure_CreateItemByStat_AddToQueue(_LeaderTrader, "ARM_Purge_UpperBody", 1, 0, 1);
 LLLIB_Treasure_CreateItemByStat_AddToQueue(_LeaderTrader, "ARM_Purge_LowerBody", 1, 0, 1);
 LLLIB_Treasure_CreateItemByStat_Start(_LeaderTrader, 100);
@@ -397,6 +400,7 @@ DB_TUT_LowerDeck_WindegoSpareCharacters(_LeaderTrader); // To avoid exploding
 PROC
 LLLIB_LeaderTrader_OnSpawned((CHARACTERGUID)_LeaderTrader, "LeaderLib_TestLevel")
 THEN
+LLLIB_Treasure_CreateItemByStat_Cleanup(_LeaderTrader);
 //CharacterTransform(_LeaderTrader, "LLLIB_RetiredLeader_Act1_da17fca2-fe16-46d9-80b3-08971a8c8d49", 1, 1, 1, 1, 1, 1, 0);
 LLLIB_Treasure_CreateItemByStat_AddToQueue(_LeaderTrader, "ARM_Purge_UpperBody", 1, 0, 1);
 LLLIB_Treasure_CreateItemByStat_AddToQueue(_LeaderTrader, "ARM_Purge_LowerBody", 1, 0, 1);

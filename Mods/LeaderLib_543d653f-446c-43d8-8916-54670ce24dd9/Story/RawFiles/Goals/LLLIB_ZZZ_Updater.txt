@@ -32,6 +32,13 @@ THEN
 LeaderUpdater_Clear_AllDatabases("LeaderLib", "LaughingLeader");
 LLLIB_System_UpdateDatabases();
 LeaderLog_Log("SYSTEM", "[LLLIB:Updater] Databases cleared and re-initialized.");
+
+PROC
+LLLIB_Updater_ClearOutdatedDatabases()
+AND
+DB_Registered_Mod((STRING)_ModName, (STRING)_Version, "LaughingLeader")
+THEN
+NOT DB_Registered_Mod(_ModName, _Version, "LaughingLeader");
 //END_REGION
 
 //REGION UPDATE_EVENT
@@ -39,6 +46,7 @@ IF
 GameStarted(_,_)
 THEN
 LeaderLog_Log("SYSTEM", "[LLLIB:Updater] Game started.");
+LLLIB_Updater_ClearOutdatedDatabases();
 
 IF
 GameStarted(_,_)

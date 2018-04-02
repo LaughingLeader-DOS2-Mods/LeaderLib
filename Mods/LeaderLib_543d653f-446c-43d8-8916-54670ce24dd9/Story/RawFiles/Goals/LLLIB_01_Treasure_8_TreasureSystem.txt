@@ -9,7 +9,7 @@ INITSECTION
 
 //DB_LLLIB_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID)
 //DB_LLLIB_Treasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID)
-//DB_LLLIB_Treasure_ItemGenerationSettings(_TreasureID, _ItemEntry, _MinLevel, _MaxLevel, _UsePartyLevel)
+//DB_LLLIB_Treasure_ItemLevel(_TreasureID, _ItemEntry, _MinLevel, _MaxLevel, _UsePartyLevel)
 //DB_LLLIB_Treasure_ItemGenerationType(_TreasureID, _ItemEntry, _GenerationType)
 //DB_LLLIB_Treasure_RegisteredGenerationTypes(_GenerationType)
 //DB_LLLIB_Treasure_ItemGenerationFlag(_TreasureID, _ItemEntry, _Flag, _FlagType)
@@ -412,7 +412,7 @@ LLLIB_Treasure_Internal_ProcessItemEntry((STRING)_ID, (GUIDSTRING)_Object, (STRI
 AND
 NOT LLLIB_QRY_Treasure_ItemCanGenerate(_TreasureID, _ItemEntry, _RequirementID, _GenerationType)
 THEN
-//LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:ProcessItemEntry] Failed to generate items for [",_ID,"]. Treasure [",_TreasureID,"] does not pass the requirements.");
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:ProcessItemEntry] Skipping generation for [",_ID,"]. Treasure [",_TreasureID,"] does not pass the requirements.");
 LLLIB_Treasure_Internal_OnGenerationFinished(_ID, _Object);
 
 PROC
@@ -476,8 +476,12 @@ AND
 _CreatedAmount < _MaxAmount
 AND
 IntegerSum(_CreatedAmount, 1, _NextAmount)
+AND
+IntegertoString(_NextAmount, _AmountStr)
+AND
+IntegertoString(_MaxAmount, _MaxAmountStr)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:GenerateItems] Generating item [",_TreasureID,"]:[",_ItemEntry,"].");
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:GenerateItems] Generating item [",_TreasureID,"]:[",_ItemEntry,"] [",_AmountStr,"/",_MaxAmountStr,"].");
 ItemTemplateAddTo(_ItemEntry, _Object, 1);
 NOT DB_LLLIB_Treasure_Temp_GenerateItem(_ID, _Object, _TreasureID, _ItemEntry, _CreatedAmount, _MaxAmount, _IsStat);
 DB_LLLIB_Treasure_Temp_GenerateItem(_ID, _Object, _TreasureID, _ItemEntry, _NextAmount, _MaxAmount, _IsStat);
@@ -490,11 +494,22 @@ AND
 _CreatedAmount < _MaxAmount
 AND
 IntegerSum(_CreatedAmount, 1, _NextAmount)
+AND
+IntegertoString(_NextAmount, _AmountStr)
+AND
+IntegertoString(_MaxAmount, _MaxAmountStr)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:GenerateItems] Generating stat item [",_TreasureID,"]:[",_ItemEntry,"].");
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:GenerateItems] Generating stat item [",_TreasureID,"]:[",_ItemEntry,"]  [",_AmountStr,"/",_MaxAmountStr,"].");
 LLLIB_Treasure_Internal_GenerateItemByStat(_ID, _Object, _TreasureID, _ItemEntry);
 NOT DB_LLLIB_Treasure_Temp_GenerateItem(_ID, _Object, _TreasureID, _ItemEntry, _CreatedAmount, _MaxAmount, _IsStat);
 DB_LLLIB_Treasure_Temp_GenerateItem(_ID, _Object, _TreasureID, _ItemEntry, _NextAmount, _MaxAmount, _IsStat);
+
+PROC
+LLLIB_Treasure_Internal_GenerateItemNow((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_CreatedAmount, (INTEGER)_MaxAmount, (INTEGER)_IsStat)
+AND
+_CreatedAmount >= _MaxAmount
+THEN
+NOT DB_LLLIB_Treasure_Temp_GenerateItem(_ID, _Object, _TreasureID, _ItemEntry, _CreatedAmount, _MaxAmount, _IsStat);
 
 PROC
 LLLIB_Treasure_Internal_GenerateItemNow((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_CreatedAmount, (INTEGER)_MaxAmount, (INTEGER)_IsStat)
@@ -504,13 +519,6 @@ AND
 _IsStat <= 0
 THEN
 LLLIB_Treasure_Internal_MarkAsFinished(_ID, _Object, _TreasureID, _ItemEntry);
-
-IF
-DB_LLLIB_Treasure_Temp_GenerateItem((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_CreatedAmount, (INTEGER)_MaxAmount, (INTEGER)_IsStat)
-AND
-_CreatedAmount >= _MaxAmount
-THEN
-NOT DB_LLLIB_Treasure_Temp_GenerateItem(_ID, _Object, _TreasureID, _ItemEntry, _CreatedAmount, _MaxAmount, _IsStat);
 //END_REGION
 
 //REGION GENERATION_QUEUE
@@ -579,6 +587,14 @@ LLLIB_Treasure_Internal_ProcessQueueItem(_ID);
 PROC
 LLLIB_Treasure_Internal_StartTimeoutTimer((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_GenerationType)
 AND
+DB_LLLIB_Treasure_Temp_TimeoutTimerActive(_ID, _Object, _TreasureID, _GenerationType)
+THEN
+TimerCancel("LLLIB_Timers_Treasure_TimeoutTimer");
+TimerLaunch("LLLIB_Timers_Treasure_TimeoutTimer", 5000);
+
+PROC
+LLLIB_Treasure_Internal_StartTimeoutTimer((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_GenerationType)
+AND
 NOT DB_LLLIB_Treasure_Temp_TimeoutTimerActive(_,_,_,_)
 THEN
 DB_LLLIB_Treasure_Temp_TimeoutTimerActive(_ID, _Object, _TreasureID, _GenerationType);
@@ -606,6 +622,7 @@ AND
 DB_LLLIB_Treasure_Temp_TimeoutTimerActive(_ID, _Object, _TreasureID, _GenerationType)
 THEN
 NOT DB_LLLIB_Treasure_Temp_TimeoutTimerActive(_ID, _Object, _TreasureID, _GenerationType);
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:TimeoutTimer] [",_ID,"] timed out.");
 LLLIB_Treasure_Internal_OnGenerationFailed(_ID, _Object, _TreasureID, _GenerationType);
 
 PROC
@@ -630,12 +647,28 @@ DB_LLLIB_Treasure_Temp_ItemGenerationQueue(_, _Object, _, _)
 THEN
 DB_NOOP(1);
 
+QRY
+LLLIB_Treasure_QRY_StillGenerating((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID)
+AND
+DB_LLLIB_Treasure_Temp_GenerateItem(_ID, _Object, _TreasureID, _ItemEntry, _CreatedAmount, _MaxAmount, _IsStat)
+THEN
+DB_NOOP(1);
+
 PROC
 LLLIB_Treasure_Internal_MarkAsFinished((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry)
 AND
 NOT LLLIB_Treasure_QRY_StillInQueue(_Object)
+AND
+GetUUID(_Object, _ObjectID)
 THEN
-ObjectSetFlag(_Object, "LLLIB_Treasure_GenerationSuccessful", 0);
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:MarkAsFinished] Generation finished for object [",_ObjectID,"]. Setting 'LLLIB_Treasure_GenerationSuccessful' flag to true.");
+ObjectSetFlag(_Object, "LLLIB_Treasure_GenerationSuccessful");
+
+PROC
+LLLIB_Treasure_Internal_MarkAsFinished((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry)
+AND
+NOT LLLIB_Treasure_QRY_StillGenerating(_ID, _Object, _TreasureID)
+THEN
 LLLIB_Treasure_Internal_OnGenerationFinished(_ID, _Object);
 
 PROC
@@ -949,7 +982,7 @@ ObjectClearFlag(_Object, "LLLIB_Treasure_GenerationEnded");
 PROC
 LLLIB_Treasure_AdjustItemLevel((ITEMGUID)_Item, (STRING)_TreasureID, (STRING)_ItemEntry)
 AND
-DB_LLLIB_Treasure_ItemGenerationSettings(_TreasureID, _ItemEntry, _UsePartyLevel, _MinLevel, _MaxLevel)
+DB_LLLIB_Treasure_ItemLevel(_TreasureID, _ItemEntry, _UsePartyLevel, _MinLevel, _MaxLevel)
 AND
 _UsePartyLevel > 0
 AND
@@ -962,7 +995,7 @@ ItemLevelUpTo(_Item, _Level);
 PROC
 LLLIB_Treasure_AdjustItemLevel((ITEMGUID)_Item, (STRING)_TreasureID, (STRING)_ItemEntry)
 AND
-DB_LLLIB_Treasure_ItemGenerationSettings(_TreasureID, _ItemEntry, _UsePartyLevel, _MinLevel, _MaxLevel)
+DB_LLLIB_Treasure_ItemLevel(_TreasureID, _ItemEntry, _UsePartyLevel, _MinLevel, _MaxLevel)
 AND
 _UsePartyLevel <= 0
 AND

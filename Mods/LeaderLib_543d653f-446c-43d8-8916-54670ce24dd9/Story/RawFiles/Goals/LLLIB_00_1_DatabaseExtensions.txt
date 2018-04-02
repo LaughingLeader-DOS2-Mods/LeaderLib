@@ -261,7 +261,7 @@ DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value)
 THEN
 DB_LLLIB_Array_Temp_PopValue(_ID, _Value);
 NOT DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value);
-LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:Pop] Popped [",_Value,"] from array [",_ID,"].");
+//LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:Pop] Popped [",_Value,"] from array [",_ID,"].");
 LLLIB_Array_RemoveFromArray(_ID, _Value);
 //END_REGION
 

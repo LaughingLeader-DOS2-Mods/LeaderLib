@@ -141,8 +141,8 @@ ItemDestroy(_Item);
 //END_REGION
 
 //REGION ACTIVE_FLAG
-PROC
-LeaderUpdater_Register_Mod("LeaderLib", (STRING)_Version, "LaughingLeader")
+IF
+GameStarted(_,_)
 AND
 GlobalGetFlag("LeaderLib_Active", 0)
 THEN

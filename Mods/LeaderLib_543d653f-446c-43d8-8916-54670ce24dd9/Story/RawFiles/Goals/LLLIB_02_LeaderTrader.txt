@@ -587,8 +587,8 @@ ObjectSetFlag(_LeaderTrader, "LLLIB_LeaderTrader_GaveIntroItems");
 //END_REGION
 
 //REGION UPDATER
-PROC
-LLLIB_System_UpdateDatabases()
+IF
+StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
 THEN
 LLLIB_LeaderTrader_InitSettings();
 LeaderLog_Log("SYSTEM", "[LLLIB:LeaderTrader] Databases updated.");

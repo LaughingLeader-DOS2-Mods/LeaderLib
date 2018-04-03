@@ -629,8 +629,8 @@ Proc_StartDialog(0, "LLLIB_ModMenu", _Book, _Player);
 //END_REGION
 
 //REGION UPDATER
-PROC
-LLLIB_System_UpdateDatabases()
+IF
+StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
 THEN
 LLLIB_ModMenu_InitSettings();
 LeaderLog_Log("SYSTEM", "[LLLIB:ModMenu] Databases updated.");

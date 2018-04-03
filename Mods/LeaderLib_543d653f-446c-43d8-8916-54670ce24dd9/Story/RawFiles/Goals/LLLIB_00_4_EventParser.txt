@@ -86,8 +86,8 @@ LLLIB_EventParser_Internal_RunEvent(_EventName);
 NOT DB_LeaderLib_SendEvent(_EventName);
 
 //REGION UPDATER
-PROC
-LLLIB_System_UpdateDatabases()
+IF
+StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
 THEN
 DB_NOOP(1);
 

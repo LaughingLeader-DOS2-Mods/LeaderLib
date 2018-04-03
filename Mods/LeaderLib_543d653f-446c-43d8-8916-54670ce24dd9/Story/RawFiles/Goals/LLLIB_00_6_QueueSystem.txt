@@ -175,8 +175,8 @@ TimerCancel(_TimerName);
 //END_REGION
 
 //REGION UPDATER
-PROC
-LLLIB_System_UpdateDatabases()
+IF
+StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
 THEN
 //LeaderLog_Log("SYSTEM", "[LLLIB:QueueSystem] Databases updated.");
 DB_NOOP(1);

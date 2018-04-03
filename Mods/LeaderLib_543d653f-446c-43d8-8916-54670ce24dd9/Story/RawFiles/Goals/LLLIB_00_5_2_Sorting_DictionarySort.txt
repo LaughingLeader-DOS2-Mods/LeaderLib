@@ -468,8 +468,8 @@ LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort:OnIterator] Iterating [",_Dictiona
 //END_REGION
 
 //REGION UPDATER
-PROC
-LLLIB_System_UpdateDatabases()
+IF
+StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
 THEN
 DB_NOOP(1);
 

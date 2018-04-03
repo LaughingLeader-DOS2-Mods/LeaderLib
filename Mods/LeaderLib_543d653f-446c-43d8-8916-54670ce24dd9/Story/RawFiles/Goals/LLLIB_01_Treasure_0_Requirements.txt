@@ -10,8 +10,8 @@ INITSECTION
 //DB_LLLIB_Requirements_IsUnlocked(_RequirementID)
 KBSECTION
 //REGION UPDATER
-PROC
-LLLIB_System_UpdateDatabases()
+IF
+StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
 THEN
 DB_NOOP(1);
 

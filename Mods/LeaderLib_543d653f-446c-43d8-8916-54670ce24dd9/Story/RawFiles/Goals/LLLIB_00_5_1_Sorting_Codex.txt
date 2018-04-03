@@ -145,8 +145,8 @@ DB_LLLIB_Temp_BuildSortIterator(_NextIndex, _Max);
 //END_REGION
 
 //REGION UPDATER
-PROC
-LLLIB_System_UpdateDatabases()
+IF
+StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
 THEN
 LLLIB_Codex_InitSettings();
 LeaderLog_Log("SYSTEM", "[LLLIB:Codex] Databases updated.");

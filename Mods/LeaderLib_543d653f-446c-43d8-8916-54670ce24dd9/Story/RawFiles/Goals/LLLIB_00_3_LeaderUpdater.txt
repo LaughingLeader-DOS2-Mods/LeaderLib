@@ -190,8 +190,8 @@ NOT DB_LeaderUpdater_RegisteredGoal(_ModName, _Author, _GoalTitle);
 //END_REGION
 
 //REGION UPDATER
-PROC
-LLLIB_System_UpdateDatabases()
+IF
+StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
 THEN
 //LeaderLog_Log("SYSTEM", "[LLLIB:LeaderUpdater] Databases updated.");
 DB_NOOP(1);

@@ -43,8 +43,8 @@ DB_LLLIB_DialogVars("LeaderTrader_Greeting", "LLLIB_LeaderTrader_Greeting_f143b9
 //END_REGION
 
 //REGION UPDATER
-PROC
-LLLIB_System_UpdateDatabases()
+IF
+StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
 THEN
 LLLIB_Dialog_InitSettings();
 LeaderLog_Log("SYSTEM", "[LLLIB:Dialog] Databases updated.");

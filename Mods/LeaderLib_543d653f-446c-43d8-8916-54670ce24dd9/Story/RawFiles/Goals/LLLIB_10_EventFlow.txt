@@ -266,8 +266,8 @@ LLLIB_EventFlow_Clear_SessionData(_StackName);
 //END_REGION
 
 //REGION UPDATER
-PROC
-LLLIB_System_UpdateDatabases()
+IF
+StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
 AND
 LLLIB_Updater_QRY_SettingsNeedsUpdate("EventFlow_LeaderLib_DefaultStack")
 THEN

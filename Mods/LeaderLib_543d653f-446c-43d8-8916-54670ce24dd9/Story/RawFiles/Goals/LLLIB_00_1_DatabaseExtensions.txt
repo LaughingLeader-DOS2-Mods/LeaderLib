@@ -543,8 +543,8 @@ LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:ShiftArrayUp(",_StartIndexStr,
 //END_REGION
 
 //REGION UPDATER
-PROC
-LLLIB_System_UpdateDatabases()
+IF
+StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
 THEN
 //LeaderLog_Log("SYSTEM", "[LLLIB:DatabaseExtensions] Databases updated.");
 DB_NOOP(1);

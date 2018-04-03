@@ -550,8 +550,8 @@ NOT DB_LLLIB_StringExt_Temp_Version_Complete(_Str);
 //END_REGION
 
 //REGION UPDATER
-PROC
-LLLIB_System_UpdateDatabases()
+IF
+StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
 THEN
 //LeaderLog_Log("SYSTEM", "[LLLIB:StringExtensions] Databases updated.");
 DB_NOOP(1);

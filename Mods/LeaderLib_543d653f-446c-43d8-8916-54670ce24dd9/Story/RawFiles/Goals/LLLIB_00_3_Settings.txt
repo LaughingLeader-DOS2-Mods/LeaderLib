@@ -155,8 +155,8 @@ LLLIB_Settings_BuildModList();
 //END_REGION
 
 //REGION UPDATER
-PROC
-LLLIB_System_UpdateDatabases()
+IF
+StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
 THEN
 LLLIB_Settings_InitSettings();
 LeaderLog_Log("SYSTEM", "[LLLIB:Settings] Databases updated.");

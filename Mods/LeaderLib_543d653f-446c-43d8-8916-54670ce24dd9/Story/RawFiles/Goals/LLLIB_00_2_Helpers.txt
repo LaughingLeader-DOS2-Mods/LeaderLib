@@ -427,8 +427,8 @@ CharacterUnequipItem(_Character, _Item);
 //END_REGION
 
 //REGION UPDATER
-PROC
-LLLIB_System_UpdateDatabases()
+IF
+StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
 THEN
 //LeaderLog_Log("SYSTEM", "[LLLIB:Helpers] Databases updated.");
 DB_NOOP(1);

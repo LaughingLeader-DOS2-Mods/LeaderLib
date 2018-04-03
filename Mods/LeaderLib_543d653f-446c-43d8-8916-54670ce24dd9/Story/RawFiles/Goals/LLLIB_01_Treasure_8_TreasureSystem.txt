@@ -1194,10 +1194,14 @@ THEN
 LLLIB_Treasure_Internal_GenerateByFlag(_Flag, "Global");
 
 IF
-GameStarted(_,_)
+StoryEvent(_,"LeaderLib_Initialized")
+AND
+DB_CurrentLevel(_Level)
+AND
+IsCharacterCreationLevel(_Level, 0)
 THEN
 //Give some time for other mods to register treasure
-TimerLaunch("LLLIB_Timers_Treasure_LevelLoadedTreasureTimer", 2000);
+TimerLaunch("LLLIB_Timers_Treasure_LevelLoadedTreasureTimer", 200);
 
 IF
 TimerFinished("LLLIB_Timers_Treasure_LevelLoadedTreasureTimer")

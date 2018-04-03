@@ -5,6 +5,7 @@ INITSECTION
 //DB_Mods_ActiveGoal(_ModName, _Author, _GoalTitle)
 //DB_LeaderUpdater_RegisteredDatabase(_ModName, _Author, _ReferenceName, _DatabaseName, _Arity)
 //DB_LeaderUpdater_RegisteredGoal(_ModName, _Author, _GoalTitle)
+//DB_LeaderUpdater_LastSavedSettings(_ModName, _Author, _SettingsID, _Version)
 KBSECTION
 //REGION REGISTERING
 PROC
@@ -34,6 +35,41 @@ PROC
 LeaderUpdater_Register_Goal((STRING)_ModName, (STRING)_Author, (STRING)_GoalTitle)
 THEN
 DB_LeaderUpdater_RegisteredGoal(_ModName, _Author, _GoalTitle);
+//END_REGION
+
+//REGION VERSION_DATA
+PROC
+LeaderUpdater_SaveSettingsVersionData((STRING)_ModName, (STRING)_Author, (STRING)_SettingsID)
+AND
+DB_LeaderUpdater_LastSavedSettings(_ModName, _Author, _SettingsID, _PastVersion)
+THEN
+NOT DB_LeaderUpdater_LastSavedSettings(_ModName, _Author, _SettingsID, _PastVersion);
+
+/*Saves the current version for a particular SettingsID. Useful so newer settings, introduced in the current version, don't "update".*/
+PROC
+LeaderUpdater_SaveSettingsVersionData((STRING)_ModName, (STRING)_Author, (STRING)_SettingsID)
+AND
+DB_Mods_Registered(_ModName, _Author, _Version)
+THEN
+DB_LeaderUpdater_LastSavedSettings(_ModName, _Author, _SettingsID, _Version);
+
+QRY
+LeaderUpdater_QRY_SettingsNeedsUpdate((STRING)_ModName, (STRING)_Author, (STRING)_SettingsID)
+AND
+DB_LeaderUpdater_LastSavedSettings(_ModName, _Author, _SettingsID, _PastVersion)
+AND
+DB_Mods_Registered(_ModName, _Author, _Version)
+AND
+_PastVersion != _Version
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderUpdater_QRY_SettingsNeedsUpdate((STRING)_ModName, (STRING)_Author, (STRING)_SettingsID)
+AND
+NOT DB_LeaderUpdater_LastSavedSettings(_ModName, _Author, _SettingsID, _)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION QUERIES

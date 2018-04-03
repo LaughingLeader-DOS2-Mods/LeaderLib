@@ -70,7 +70,7 @@ GameStarted(_,_)
 AND
 NOT LLLIB_QRY_EventParser_GlobalParserExists()
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:EventParser][ERROR] Global Event Parser doesn't exist for some reason. Creating new.");
+LeaderLog_Log("DEBUG", "[LLLIB:EventParser][ERROR] Global Event Parser doesn't exist for some reason.");
 //LLLIB_EventParser_CreateNew();
 
 //Send out a general event, using the Event Parser object.

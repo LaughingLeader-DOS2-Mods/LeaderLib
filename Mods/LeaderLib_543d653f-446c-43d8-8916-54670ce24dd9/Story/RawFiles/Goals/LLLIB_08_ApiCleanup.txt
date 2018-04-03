@@ -1,0 +1,135 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+/*This file is created via a macro.*/
+KBSECTION
+/*
+Parse databases that were set before LeaderLib was loaded, then clear them.
+*/
+/*Registering*/
+PROC
+LLLIB_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_RegisterMod((STRING)_ModName, (STRING)_Author, (STRING)_Version)
+THEN
+LeaderUpdater_Register_Mod(_ModName, _Author, _Version);
+NOT DB_LeaderLib_ModApi_RegisterMod(_ModName, _Author, _Version);
+
+PROC
+LLLIB_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_RegisterMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModName, (STRING)_Author)
+THEN
+LeaderLib_RegisterModMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
+NOT DB_LeaderLib_ModApi_RegisterMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
+
+PROC
+LLLIB_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_RegisterActiveGoal((STRING)_ModName, (STRING)_Author, (STRING)_GoalTitle)
+THEN
+LeaderUpdater_Register_ActiveGoal(_ModName, _Author, _GoalTitle);
+NOT DB_LeaderLib_ModApi_RegisterActiveGoal(_ModName, _Author, _GoalTitle);
+
+PROC
+LLLIB_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_RegisterDatabase((STRING)_ModName, (STRING)_Author, (STRING)_ReferenceName, (STRING)_DatabaseName, (INTEGER)_Arity)
+THEN
+LeaderUpdater_Register_Database(_ModName, _Author, _ReferenceName, _DatabaseName, _Arity);
+NOT DB_LeaderLib_ModApi_RegisterDatabase(_ModName, _Author, _ReferenceName, _DatabaseName, _Arity);
+
+PROC
+LLLIB_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_RegisterGoal((STRING)_ModName, (STRING)_Author, (STRING)_GoalTitle)
+THEN
+LeaderUpdater_Register_Goal(_ModName, _Author, _GoalTitle);
+NOT DB_LeaderLib_ModApi_RegisterGoal(_ModName, _Author, _GoalTitle);
+
+/*Clear Commands*/
+PROC
+LLLIB_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_ClearRegisteredModVersions((STRING)_ModName, (STRING)_Author)
+THEN
+LeaderUpdater_Clear_RegisteredModVersions(_ModName, _Author);
+NOT DB_LeaderLib_ModApi_ClearRegisteredModVersions(_ModName, _Author);
+
+PROC
+LLLIB_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_ClearActiveGoals((STRING)_ModName, (STRING)_Author)
+THEN
+LeaderUpdater_Clear_ActiveGoals(_ModName, _Author);
+NOT DB_LeaderLib_ModApi_ClearActiveGoals(_ModName, _Author);
+
+PROC
+LLLIB_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_ClearAllDatabases((STRING)_ModName, (STRING)_Author)
+THEN
+LeaderUpdater_Clear_AllDatabases(_ModName, _Author);
+NOT DB_LeaderLib_ModApi_ClearAllDatabases(_ModName, _Author);
+
+PROC
+LLLIB_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_ResetAllGoals((STRING)_ModName, (STRING)_Author)
+THEN
+LeaderUpdater_Reset_AllGoals(_ModName, _Author);
+NOT DB_LeaderLib_ModApi_ResetAllGoals(_ModName, _Author);
+
+/*Misc Commands*/
+PROC
+LLLIB_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_AddItemToLeaderTrader((STRING)_Template, (INTEGER)_Amount)
+THEN
+LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModItems", _Template, _Amount);
+NOT DB_LeaderLib_ModApi_AddItemToLeaderTrader(_Template, _Amount);
+
+PROC
+LLLIB_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_AddBookToLeaderTrader((STRING)_Template, (INTEGER)_Amount)
+THEN
+LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModBooks", _Template, _Amount);
+NOT DB_LeaderLib_ModApi_AddBookToLeaderTrader(_Template, _Amount);
+
+PROC
+LLLIB_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_SendEvent((STRING)_EventName)
+THEN
+LLLIB_EventParser_Internal_RunEvent(_EventName);
+NOT DB_LeaderLib_ModApi_SendEvent(_EventName);
+
+PROC
+LLLIB_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_ModIsActive((STRING)_ModName, (STRING)_Author, (STRING)_ActiveEvent, (STRING)_InactiveEvent)
+THEN
+LeaderUpdater_CheckIfModIsActive(_ModName, _Author, _ActiveEvent, _InactiveEvent);
+NOT DB_LeaderLib_ModApi_ModIsActive(_ModName, _Author, _ActiveEvent, _InactiveEvent);
+
+/*Sorting*/
+PROC
+LLLIB_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_AddToSortQueue((STRING)_DictionaryID, (STRING)_ID, (STRING)_String)
+THEN
+LLLIB_DictionarySort_AddString(_DictionaryID, _ID, _String);
+NOT DB_LeaderLib_ModApi_AddToSortQueue(_DictionaryID, _ID, _String);
+
+PROC
+LLLIB_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_StartSortQueue((STRING)_DictionaryID, (INTEGER)_TickRate, (STRING)_CompleteEvent)
+THEN
+LLLIB_DictionarySort_StartSorting(_DictionaryID, _TickRate, _CompleteEvent);
+NOT DB_LeaderLib_ModApi_StartSortQueue(_DictionaryID, _TickRate, _CompleteEvent);
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

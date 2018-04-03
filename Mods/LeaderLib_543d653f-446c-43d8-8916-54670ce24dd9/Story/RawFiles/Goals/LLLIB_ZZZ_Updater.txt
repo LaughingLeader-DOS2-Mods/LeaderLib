@@ -6,9 +6,23 @@ LeaderUpdater_Register_ActiveGoal("LeaderLib", "LaughingLeader", "LLLIB_ZZZ_Upda
 LeaderLib_RegisterModMenu("LaughingLeader_LeaderLib", "[LeaderLib] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LLLIB_Updater_RegisterDatabasesOnce();
 KBSECTION
-//REGION UPDATING
+//REGION LEADER_UPDATER_ALIASES
 PROC
-LLLIB_System_UpdateDatabases()
+LLLIB_Updater_SaveSettingsVersionData((STRING)_SettingsID)
+THEN
+LeaderUpdater_SaveSettingsVersionData("LeaderLib", "LaughingLeader", _SettingsID);
+
+QRY
+LLLIB_Updater_QRY_SettingsNeedsUpdate((STRING)_SettingsID)
+AND
+LeaderUpdater_QRY_SettingsNeedsUpdate("LeaderLib", "LaughingLeader", _SettingsID)
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION UPDATING
+IF
+StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
 THEN
 LeaderLog_Log("SYSTEM", "[LLLIB:Updater] Databases updated.");
 
@@ -55,8 +69,7 @@ LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", "0.9.0.0")
 THEN
 LeaderLog_Log("SYSTEM", "[LLLIB:Updater] Updating LeaderLib.");
 LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", "0.9.0.0");
-LLLIB_System_UpdateDatabases();
-LeaderLib_SendEvent("LeaderLib_Events_OnDatabasesUpdated");
+LeaderLib_SendEvent("LeaderLib_Commands_UpdateSettings");
 //END_REGION
 
 //REGION UNINSTALLING

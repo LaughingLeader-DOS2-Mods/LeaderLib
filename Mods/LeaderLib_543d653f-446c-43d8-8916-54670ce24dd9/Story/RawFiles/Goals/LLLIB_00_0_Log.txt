@@ -6,12 +6,16 @@ INITSECTION
 //DB_LeaderLog_Temp_TargetOnce(_Player)
 //DB_LeaderLog_Temp_NextStatusColor(_Player, _Color, _Size)
 GlobalSetFlag("LeaderLog_Debug_Enabled"); // For tracing system logs before it's defaultly disabled
+DB_LeaderLog_InitialEnable(1);
 KBSECTION
 //REGION EDITOR_DEBUG_ENABLE
 IF
 GameStarted(_, 0)
+AND
+DB_LeaderLog_InitialEnable(_Val)
 THEN
 GlobalClearFlag("LeaderLog_Debug_Enabled");
+NOT DB_LeaderLog_InitialEnable(_Val);
 //END_REGION
 
 //REGION DISABLED_CHECK

@@ -17,10 +17,8 @@ INITSECTION
 //DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
 /*SPAWN_QUEUE*/
 //DB_LLLIB_Array_Data(_ArrayID, _Index, _TraderID)
-//DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID)
+//DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID, _SpawnEvent, _SpawnCompleteEvent, _SpawnQueueCompleteEvent, _TimeoutEvent)
 //DB_LLLIB_Traders_Temp_CurrentlySpawning(_ArrayID, _TraderID)
-//DB_LLLIB_Traders_Temp_SpawnTimeoutTimer(_ArrayID, _TraderID, _TimerName)
-
 //Ref
 //DB_LLLIB_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel)
 //DB_LLLIB_Requirements_Flag(_RequirementID, _Flag, _FlagType, _FlagVal)
@@ -432,162 +430,6 @@ LeaderLog_Log("DEBUG", "[LLLIB:Traders] Level ",_Level," ending and editor mode 
 //END_REGION
 
 //REGION SPAWN_QUEUE
-QRY
-LLLIB_Traders_QRY_SpawnQueueEmpty((STRING)_Level)
-AND
-DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID)
-AND
-NOT DB_LLLIB_Array_Data(_ArrayID,_,_)
-THEN
-DB_NOOP(1);
-
-PROC
-LLLIB_Traders_Internal_SetCurrentSpawnQueue((STRING)_Level)
-AND
-NOT DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level,_)
-AND
-StringConcatenate("LLLIB_Traders_SpawnQueue_", _Level, _ArrayID)
-THEN
-DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID);
-
-PROC
-LLLIB_Traders_Internal_AddToSpawnQueue((STRING)_TraderID)
-AND
-DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID)
-THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Traders:AddToSpawnQueue] Added trader [",_TraderID,"] to spawn queue [",_ArrayID,"] for level [",_Level,"].");
-LLLIB_Array_AddToArray(_ArrayID, _TraderID);
-
-PROC
-LLLIB_Traders_Internal_StartSpawnTimer()
-AND
-DB_CurrentLevel(_Level)
-AND
-NOT LLLIB_Traders_QRY_SpawnQueueEmpty(_Level)
-THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Traders:StartSpawnTimer] Starting spawn timer for [",_Level,"].");
-TimerLaunch("LLLIB_Timers_Traders_SpawnQueueTimer", 250);
-
-IF
-TimerFinished("LLLIB_Timers_Traders_SpawnQueueTimer")
-AND
-DB_CurrentLevel(_Level)
-THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Traders:StartSpawnTimer] Spawning next in queue for level [",_Level,"].");
-LLLIB_Traders_Internal_SpawnNextInQueue(_Level);
-
-PROC
-LLLIB_Traders_Internal_SpawnNextInQueue((STRING)_Level)
-AND
-NOT DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _)
-THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Traders:SpawnNextInQueue] [ERROR] No array set for spawn queue for level [",_Level,"].");
-
-PROC
-LLLIB_Traders_Internal_SpawnNextInQueue((STRING)_Level)
-AND
-DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID)
-AND
-LLLIB_Array_QRY_Pop(_ArrayID)
-AND
-DB_LLLIB_Array_Temp_PopValue(_ArrayID, _TraderID)
-THEN
-NOT DB_LLLIB_Array_Temp_PopValue(_ArrayID, _TraderID);
-LeaderLog_Log("DEBUG", "[LLLIB:Traders:SpawnNextInQueue] Spawning trader [",_TraderID,"].");
-LLLIB_Traders_Internal_SpawnQueue_StartTimeoutTimer(_ArrayID, _TraderID);
-DB_LLLIB_Traders_Temp_CurrentlySpawning(_ArrayID, _TraderID);
-LLLIB_Traders_CreateTrader(_TraderID, _Level);
-
-IF
-StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_OnTraderSpawned")
-AND
-DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
-AND
-DB_LLLIB_Traders_Temp_CurrentlySpawning(_ArrayID, _TraderID)
-THEN
-NOT DB_LLLIB_Traders_Temp_CurrentlySpawning(_ArrayID, _TraderID);
-LLLIB_Traders_Internal_SpawnQueue_CancelTimeoutTimer(_ArrayID, _TraderID);
-LLLIB_Traders_Internal_StartSpawnTimer();
-
-PROC
-LLLIB_Traders_Internal_SpawnQueue_StartTimeoutTimer((STRING)_ArrayID, (STRING)_TraderID)
-AND
-LeaderLog_QRY_Log("COMBINE", "LLLIB_Timers_Traders_SpawnQueueTimeout_", _ArrayID, "_", _TraderID)
-AND
-DB_LeaderLog_Temp_CombinedString(_TimerName)
-THEN
-NOT DB_LeaderLog_Temp_CombinedString(_TimerName);
-DB_LLLIB_Traders_Temp_SpawnTimeoutTimer(_ArrayID, _TraderID, _TimerName);
-TimerLaunch(_TimerName, 4000);
-
-PROC
-LLLIB_Traders_Internal_SpawnQueue_CancelTimeoutTimer((STRING)_ArrayID, (STRING)_TraderID)
-AND
-DB_LLLIB_Traders_Temp_SpawnTimeoutTimer(_ArrayID, _TraderID, _TimerName)
-THEN
-NOT DB_LLLIB_Traders_Temp_SpawnTimeoutTimer(_ArrayID, _TraderID, _TimerName);
-TimerCancel(_TimerName);
-
-IF
-TimerFinished(_TimerName)
-AND
-DB_LLLIB_Traders_Temp_SpawnTimeoutTimer(_ArrayID, _TraderID, _TimerName)
-THEN
-NOT DB_LLLIB_Traders_Temp_SpawnTimeoutTimer(_ArrayID, _TraderID, _TimerName);
-NOT DB_LLLIB_Traders_Temp_CurrentlySpawning(_ArrayID, _TraderID);
-LLLIB_Traders_Internal_StartSpawnTimer();
-
-PROC
-LLLIB_Traders_Internal_StartSpawnTimer()
-AND
-DB_CurrentLevel(_Level)
-AND
-LLLIB_Traders_QRY_SpawnQueueEmpty(_Level)
-AND
-DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID)
-THEN
-LLLIB_Array_ClearArray(_ArrayID);
-NOT DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID);
-LeaderLog_Log("DEBUG", "[LLLIB:Traders:SpawnQueue] Spawn queue complete. Clearing queue and sending event [LeaderLib_Events_OnTraderSpawnComplete].");
-LeaderLib_SendEvent("LeaderLib_Events_OnTraderSpawnComplete");
-//END_REGION
-
-//REGION STOP_QUEUE
-IF
-DB_LLLIB_EventFlow_StopEvent("LeaderLib_Commands_SpawnTraders")
-THEN
-LLLIB_Traders_Internal_StopSpawnQueue();
-NOT DB_LLLIB_EventFlow_StopEvent("LeaderLib_Commands_SpawnTraders");
-
-PROC
-LLLIB_Traders_Internal_StopSpawnQueue()
-AND
-DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID)
-THEN
-LLLIB_Array_ClearArray(_ArrayID);
-
-PROC
-LLLIB_Traders_Internal_StopSpawnQueue()
-AND
-DB_LLLIB_Traders_Temp_SpawnTimeoutTimer(_ArrayID, _TraderID, _TimerName)
-THEN
-TimerCancel(_TimerName);
-
-PROC
-LLLIB_Traders_Internal_StopSpawnQueue()
-THEN
-TimerCancel("LLLIB_Timers_Traders_SpawnQueueTimer");
-LLLIB_Traders_Internal_ClearSpawnQueue();
-
-PROC
-LLLIB_Traders_Internal_ClearSpawnQueue()
-THEN
-SysClear("DB_LLLIB_Traders_Temp_CurrentSpawnQueue", 2);
-SysClear("DB_LLLIB_Traders_Temp_CurrentlySpawning", 2);
-SysClear("DB_LLLIB_Traders_Temp_SpawnTimeoutTimer", 3);
-//END_REGION
-
-//REGION SPAWNING
 PROC
 LLLIB_Traders_CreateTraders((STRING)_Level)
 AND
@@ -603,7 +445,7 @@ LLLIB_Traders_CreateTraders((STRING)_Level)
 AND
 NOT LLLIB_Traders_QRY_SpawnQueueEmpty(_Level)
 THEN
-LLLIB_Traders_Internal_StartSpawnTimer();
+LLLIB_Traders_Internal_StartSpawnQueue();
 
 PROC
 LLLIB_Traders_CreateTraders((STRING)_Level)
@@ -613,6 +455,183 @@ THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Traders:CreateTraders] No registered traders for level [",_Level,"].");
 LeaderLib_SendEvent("LeaderLib_Events_OnTraderSpawnComplete");
 
+QRY
+LLLIB_Traders_QRY_SpawnQueueEmpty((STRING)_Level)
+AND
+DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID, _SpawnEvent, _SpawnCompleteEvent, _SpawnQueueCompleteEvent, _TimeoutEvent)
+AND
+NOT DB_LLLIB_Array_Data(_ArrayID,_,_)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_Traders_QRY_SpawnQueueEmpty((STRING)_Level)
+AND
+NOT DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _, _, _, _, _)
+THEN
+DB_NOOP(1);
+
+PROC
+LLLIB_Traders_Internal_SetCurrentSpawnQueue((STRING)_Level)
+AND
+NOT DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _, _, _, _, _)
+AND
+StringConcatenate("LLLIB_Traders_SpawnQueue_", _Level, _Str1)
+AND
+StringConcatenate(_Str1, "_", _Str2)
+AND
+StringConcatenate(_Str2, "List", _ArrayID)
+AND
+StringConcatenate(_Str2, "Events_OnSpawnTrader", _SpawnEvent)
+AND
+StringConcatenate(_Str2, "Events_OnSpawnTraderComplete", _SpawnCompleteEvent)
+AND
+StringConcatenate(_Str2, "Events_OnSpawnQueueComplete", _SpawnQueueCompleteEvent)
+AND
+StringConcatenate(_Str2, "Events_OnSpawnTimedOut", _TimeoutEvent)
+THEN
+DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID, _SpawnEvent, _SpawnCompleteEvent, _SpawnQueueCompleteEvent, _TimeoutEvent);
+
+PROC
+LLLIB_Traders_Internal_AddToSpawnQueue((STRING)_TraderID)
+AND
+DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID, _SpawnEvent, _SpawnCompleteEvent, _SpawnQueueCompleteEvent, _TimeoutEvent)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Traders:AddToSpawnQueue] Added trader [",_TraderID,"] to spawn queue [",_ArrayID,"] for level [",_Level,"].");
+LLLIB_Array_AddToArray(_ArrayID, _TraderID);
+
+PROC
+LLLIB_Traders_Internal_StartSpawnQueue()
+AND
+DB_CurrentLevel(_Level)
+AND
+DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID, _SpawnEvent, _SpawnCompleteEvent, _SpawnQueueCompleteEvent, _TimeoutEvent)
+AND
+DB_LLLIB_Array_Length(_ArrayID, _Length)
+THEN
+LLLIB_Traders_Internal_SpawnQueue_ProcessArraySize(_Level, _ArrayID, _Length);
+
+PROC
+LLLIB_Traders_Internal_SpawnQueue_ProcessArraySize((STRING)_Level, (STRING)_ArrayID, (INTEGER)_Length)
+AND
+_Length <= 0
+THEN
+LLLIB_Traders_Internal_CompleteSpawnQueue(_ArrayID);
+
+PROC
+LLLIB_Traders_Internal_SpawnQueue_ProcessArraySize((STRING)_Level, (STRING)_ArrayID, (INTEGER)_Length)
+AND
+_Length == 1
+AND
+DB_LLLIB_Array_Data(_ArrayID, _Index, _TraderID)
+THEN
+LLLIB_Traders_CreateTrader(_TraderID, _Level);
+LLLIB_Traders_Internal_CompleteSpawnQueue(_ArrayID);
+
+PROC
+LLLIB_Traders_Internal_SpawnQueue_ProcessArraySize((STRING)_Level, (STRING)_ArrayID, (INTEGER)_Length)
+AND
+_Length > 1
+THEN
+LLLIB_Traders_Internal_SpawnQueue_CreateQueue(_ArrayID);
+
+PROC
+LLLIB_Traders_Internal_SpawnQueue_CreateQueue((STRING)_ArrayID)
+AND
+DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID, _SpawnEvent, _SpawnCompleteEvent, _SpawnQueueCompleteEvent, _TimeoutEvent)
+AND
+StringConcatenate("LLLIB_Timers_QueueTimer_", _ArrayID, _QueueTimerName)
+AND
+StringConcatenate("LLLIB_Timers_QueueTimeoutTimer_", _ArrayID, _TimeoutTimerName)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Traders:StartSpawnQueue] Starting spawn queue [",_ArrayID,"] for level [",_Level,"].");
+LLLIB_Queue_Create(_ArrayID, _ArrayID, _QueueTimerName, 50, _SpawnEvent, _SpawnCompleteEvent, _SpawnQueueCompleteEvent);
+LLLIB_Queue_SetTimeout(_ArrayID, _TimeoutTimerName, 3000, _TimeoutEvent);
+LLLIB_Queue_Start(_ArrayID);
+
+IF
+StoryEvent(_, _SpawnEvent)
+AND
+DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID, _SpawnEvent, _SpawnCompleteEvent, _SpawnQueueCompleteEvent, _TimeoutEvent)
+AND
+DB_LLLIB_Queue_Temp_CurrentEntry(_ArrayID, _TraderID)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Traders:OnSpawnTrader] Spawning [",_TraderID,"] in queue for level [",_Level,"].");
+DB_LLLIB_Traders_Temp_CurrentlySpawning(_ArrayID, _TraderID);
+LLLIB_Traders_CreateTrader(_TraderID, _Level);
+
+IF
+StoryEvent(_, _TimeoutEvent)
+AND
+DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID, _SpawnEvent, _SpawnCompleteEvent, _SpawnQueueCompleteEvent, _TimeoutEvent)
+AND
+DB_LLLIB_Queue_Temp_CurrentEntry(_ArrayID, _TraderID)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Traders:SpawnQueueTimeout] [",_TraderID,"] spawned timed out for queue [",_ArrayID,"].");
+NOT DB_LLLIB_Queue_Temp_CurrentEntry(_ArrayID, _TraderID);
+
+IF
+StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_OnTraderSpawned")
+AND
+DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+AND
+DB_LLLIB_Traders_Temp_CurrentlySpawning(_ArrayID, _TraderID)
+AND
+DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID, _SpawnEvent, _SpawnCompleteEvent, _SpawnQueueCompleteEvent, _TimeoutEvent)
+THEN
+NOT DB_LLLIB_Traders_Temp_CurrentlySpawning(_ArrayID, _TraderID);
+LeaderLib_SendEvent(_SpawnCompleteEvent);
+
+IF
+StoryEvent(_, _SpawnQueueCompleteEvent)
+AND
+DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID, _SpawnEvent, _SpawnCompleteEvent, _SpawnQueueCompleteEvent, _TimeoutEvent)
+THEN
+LLLIB_Traders_Internal_CompleteSpawnQueue(_ArrayID);
+
+PROC
+LLLIB_Traders_Internal_CompleteSpawnQueue((STRING)_ArrayID)
+THEN
+LLLIB_Traders_Internal_ClearSpawnQueue(_ArrayID);
+LeaderLog_Log("DEBUG", "[LLLIB:Traders:SpawnQueueComplete] Spawn queue complete. Clearing queue and sending event [LeaderLib_Events_OnTraderSpawnComplete].");
+LeaderLib_SendEvent("LeaderLib_Events_OnTraderSpawnComplete");
+
+PROC
+LLLIB_Traders_Internal_ClearSpawnQueue((STRING)_ArrayID)
+AND
+DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID, _SpawnEvent, _SpawnCompleteEvent, _SpawnQueueCompleteEvent, _TimeoutEvent)
+AND
+DB_LLLIB_Traders_Temp_CurrentlySpawning(_ArrayID, _TraderID)
+THEN
+NOT DB_LLLIB_Traders_Temp_CurrentlySpawning(_ArrayID, _TraderID);
+
+PROC
+LLLIB_Traders_Internal_ClearSpawnQueue((STRING)_ArrayID)
+AND
+DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID, _SpawnEvent, _SpawnCompleteEvent, _SpawnQueueCompleteEvent, _TimeoutEvent)
+THEN
+LLLIB_Queue_Stop(_ArrayID);
+LLLIB_Queue_ClearQueue(_ArrayID);
+LLLIB_Array_ClearArray(_ArrayID);
+NOT DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID, _SpawnEvent, _SpawnCompleteEvent, _SpawnQueueCompleteEvent, _TimeoutEvent);
+//END_REGION
+
+//REGION STOP_QUEUE
+IF
+DB_LLLIB_EventFlow_StopEvent("LeaderLib_Commands_SpawnTraders")
+THEN
+LLLIB_Traders_Internal_StopSpawnQueues();
+NOT DB_LLLIB_EventFlow_StopEvent("LeaderLib_Commands_SpawnTraders");
+
+PROC
+LLLIB_Traders_Internal_StopSpawnQueues()
+AND
+DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID, _SpawnEvent, _SpawnCompleteEvent, _SpawnQueueCompleteEvent, _TimeoutEvent)
+THEN
+LLLIB_Traders_Internal_ClearSpawnQueue(_ArrayID);
+//END_REGION
+
+//REGION SPAWNING
 /*
 QRY
 LLLIB_QRY_Traders_Debug_TraceRequirement((STRING)_TraderID, (STRING)_Level, (STRING)_RequirementID)
@@ -1036,9 +1055,8 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_CreationEvents", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Seat", 4);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Spawned", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Temp_CurrentSpawnQueue", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Temp_CurrentSpawnQueue", 6);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Temp_CurrentlySpawning", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Temp_SpawnTimeoutTimer", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Temp_DialogFound", 1);
 LeaderLog_Log("SYSTEM", "[LLLIB:TraderSystem] Databases registered.");
 //END_REGION

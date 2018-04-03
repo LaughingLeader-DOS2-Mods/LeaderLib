@@ -4,9 +4,9 @@ INITSECTION
 //DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 //DB_LLLIB_Queue_Timeout(_QueueID, _TimerName, _TimeoutValue, _OnTimeoutEvent)
 //DB_LLLIB_Queue_Temp_CurrentEntry(_QueueID, _Entry)
+//DB_LLLIB_Queue_Temp_TimerRunning(_QueueID)
 KBSECTION
 //REGION CREATE_START
-
 PROC
 LLLIB_Queue_Create((STRING)_QueueID, (STRING)_ArrayID, (STRING)_TimerName, (INTEGER)_TickRate, (STRING)_IterateEvent, (STRING)_IterateCompletionEvent, (STRING)_OnCompletionEvent)
 THEN
@@ -39,19 +39,32 @@ TimerCancel(_TimerName);
 LLLIB_Queue_Internal_CancelTimeoutTimer(_QueueID);
 //END_REGION
 
+//REGION QUERIES
+QRY
+LLLIB_Queue_QRY_IsRunning((STRING)_QueueID)
+AND
+DB_LLLIB_Queue_Temp_TimerRunning(_QueueID)
+THEN
+DB_NOOP(1);
+//END_REGION
+
 //REGION TICK_LOOP
 PROC
 LLLIB_Queue_Internal_StartTimer((STRING)_QueueID)
 AND
 DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
+AND
+NOT DB_LLLIB_Queue_Temp_TimerRunning(_QueueID)
 THEN
 TimerLaunch(_TimerName, _TickRate);
+DB_LLLIB_Queue_Temp_TimerRunning(_QueueID);
 
 IF
 TimerFinished(_TimerName)
 AND
 DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 THEN
+NOT DB_LLLIB_Queue_Temp_TimerRunning(_QueueID);
 LLLIB_Queue_Internal_NextTick(_QueueID);
 
 PROC

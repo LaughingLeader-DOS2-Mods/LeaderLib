@@ -516,6 +516,22 @@ THEN
 LLLIB_Treasure_Internal_MarkAsFinished(_ID, _Object, _TreasureID, _ItemEntry);
 //END_REGION
 
+//REGION QUEUE_QUERIES
+QRY
+LLLIB_Treasure_QRY_StillInQueue((GUIDSTRING)_Object)
+AND
+DB_LLLIB_Treasure_Temp_ItemGenerationQueue(_, _Object, _, _)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_Treasure_QRY_StillGenerating((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID)
+AND
+DB_LLLIB_Treasure_Temp_GenerateItem(_ID, _Object, _TreasureID, _ItemEntry, _CreatedAmount, _MaxAmount, _IsStat)
+THEN
+DB_NOOP(1);
+//END_REGION
+
 //REGION GENERATION_QUEUE
 PROC
 LLLIB_Treasure_AddToGenerationQueue((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_GenerationType)
@@ -536,96 +552,18 @@ NOT DB_LeaderLog_Temp_CombinedString(_ID);
 LLLIB_Array_AddToArray("LLLIB_ItemGenerationQueue", _ID);
 DB_LLLIB_Treasure_Temp_ItemGenerationQueue(_ID, _Object, _TreasureID, _GenerationType);
 
-
-IF
-DB_LLLIB_Treasure_Temp_ItemGenerationQueue(_ID, _Object, _TreasureID, _GenerationType)
-AND
-GlobalGetFlag("LeaderLib_DefaultEventFlowRunning", 0)
-AND
-NOT DB_LLLIB_Treasure_Temp_QueueTimerActive(1,_)
-THEN
-LeaderLib_SendEvent("LeaderLib_Commands_StartTreasureGenerationQueue");
-
-IF
-StoryEvent(_, "LeaderLib_Commands_StartTreasureGenerationQueue")
-THEN
-LLLIB_Treasure_StartQueue(50);
-
 PROC
 LLLIB_Treasure_StartQueue((INTEGER)_TickRate)
-AND
-DB_LLLIB_Treasure_Temp_QueueTimerActive(1, _CurrentTickRate)
 THEN
-NOT DB_LLLIB_Treasure_Temp_QueueTimerActive(1, _CurrentTickRate);
-DB_LLLIB_Treasure_Temp_QueueTimerActive(1, _TickRate);
-TimerCancel("LLLIB_Timers_Treasure_ItemQueue");
-TimerLaunch("LLLIB_Timers_Treasure_ItemQueue", _TickRate);
-
-PROC
-LLLIB_Treasure_StartQueue((INTEGER)_TickRate)
-AND
-NOT DB_LLLIB_Treasure_Temp_QueueTimerActive(_,_)
-THEN
-DB_LLLIB_Treasure_Temp_QueueTimerActive(1, _TickRate);
-TimerLaunch("LLLIB_Timers_Treasure_ItemQueue", _TickRate);
-
-IF
-TimerFinished("LLLIB_Timers_Treasure_ItemQueue")
-AND
-LLLIB_Array_QRY_Pop("LLLIB_ItemGenerationQueue")
-AND
-DB_LLLIB_Array_Temp_PopValue("LLLIB_ItemGenerationQueue", _ID)
-THEN
-NOT DB_LLLIB_Array_Temp_PopValue("LLLIB_ItemGenerationQueue", _ID);
-LLLIB_Treasure_Internal_ProcessQueueItem(_ID);
-
-PROC
-LLLIB_Treasure_Internal_StartTimeoutTimer((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_GenerationType)
-AND
-DB_LLLIB_Treasure_Temp_TimeoutTimerActive(_ID, _Object, _TreasureID, _GenerationType)
-THEN
-TimerCancel("LLLIB_Timers_Treasure_TimeoutTimer");
-TimerLaunch("LLLIB_Timers_Treasure_TimeoutTimer", 5000);
-
-PROC
-LLLIB_Treasure_Internal_StartTimeoutTimer((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_GenerationType)
-AND
-NOT DB_LLLIB_Treasure_Temp_TimeoutTimerActive(_,_,_,_)
-THEN
-DB_LLLIB_Treasure_Temp_TimeoutTimerActive(_ID, _Object, _TreasureID, _GenerationType);
-TimerLaunch("LLLIB_Timers_Treasure_TimeoutTimer", 5000);
-
-PROC
-LLLIB_Treasure_Internal_CancelTimeoutTimer((STRING)_ID)
-AND
-DB_LLLIB_Treasure_Temp_TimeoutTimerActive(_ID, _Object, _TreasureID, _GenerationType)
-THEN
-NOT DB_LLLIB_Treasure_Temp_TimeoutTimerActive(_ID, _Object, _TreasureID, _GenerationType);
-TimerCancel("LLLIB_Timers_Treasure_TimeoutTimer");
-
-PROC
-LLLIB_Treasure_Internal_CancelTimeoutTimer((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_GenerationType)
-AND
-DB_LLLIB_Treasure_Temp_TimeoutTimerActive(_ID, _Object, _TreasureID, _GenerationType)
-THEN
-NOT DB_LLLIB_Treasure_Temp_TimeoutTimerActive(_ID, _Object, _TreasureID, _GenerationType);
-TimerCancel("LLLIB_Timers_Treasure_TimeoutTimer");
-
-IF
-TimerFinished("LLLIB_Timers_Treasure_TimeoutTimer")
-AND
-DB_LLLIB_Treasure_Temp_TimeoutTimerActive(_ID, _Object, _TreasureID, _GenerationType)
-THEN
-NOT DB_LLLIB_Treasure_Temp_TimeoutTimerActive(_ID, _Object, _TreasureID, _GenerationType);
-LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:TimeoutTimer] [",_ID,"] timed out.");
-LLLIB_Treasure_Internal_OnGenerationFailed(_ID, _Object, _TreasureID, _GenerationType);
+LLLIB_Queue_Create("LLLIB_ItemGenerationQueue", "LLLIB_ItemGenerationQueue", "LLLIB_Timers_Treasure_ItemQueue", _TickRate, "LLLIB_Events_Treasure_ProcessItem", "LLLIB_Events_OnItemGenerationComplete", "LLLIB_Events_OnTreasureQueueComplete");
+LLLIB_Queue_SetTimeout("LLLIB_ItemGenerationQueue", "LLLIB_Timers_Treasure_ItemQueueTimeout", 3000, "LLLIB_Events_OnItemGenerationTimeout");
+LLLIB_Queue_Start("LLLIB_ItemGenerationQueue");
 
 PROC
 LLLIB_Treasure_Internal_ProcessQueueItem((STRING)_ID)
 AND
 DB_LLLIB_Treasure_Temp_ItemGenerationQueue(_ID, _Object, _TreasureID, _GenerationType)
 THEN
-LLLIB_Treasure_Internal_StartTimeoutTimer(_ID, _Object, _TreasureID, _GenerationType);
 NOT DB_LLLIB_Treasure_Temp_ItemGenerationQueue(_ID, _Object, _TreasureID, _GenerationType);
 LLLIB_Treasure_GenerateItems(_ID, _Object, _TreasureID, _GenerationType);
 
@@ -634,20 +572,6 @@ LLLIB_Treasure_Internal_MarkAsFinished((STRING)_ID, (GUIDSTRING)_Object, (STRING
 THEN
 LLLIB_Treasure_SendGeneratedEvent(_Object, _TreasureID, _ItemEntry);
 LLLIB_Treasure_RemoveIfOnlyOnce(_Object, _TreasureID, _ItemEntry);
-
-QRY
-LLLIB_Treasure_QRY_StillInQueue((GUIDSTRING)_Object)
-AND
-DB_LLLIB_Treasure_Temp_ItemGenerationQueue(_, _Object, _, _)
-THEN
-DB_NOOP(1);
-
-QRY
-LLLIB_Treasure_QRY_StillGenerating((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID)
-AND
-DB_LLLIB_Treasure_Temp_GenerateItem(_ID, _Object, _TreasureID, _ItemEntry, _CreatedAmount, _MaxAmount, _IsStat)
-THEN
-DB_NOOP(1);
 
 PROC
 LLLIB_Treasure_Internal_MarkAsFinished((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry)
@@ -667,48 +591,65 @@ THEN
 LLLIB_Treasure_Internal_OnGenerationFinished(_ID, _Object);
 
 PROC
-LLLIB_Treasure_Internal_OnGenerationFinished((STRING)_ID, (GUIDSTRING)_Object)
-THEN
-LLLIB_Treasure_Internal_CancelTimeoutTimer(_ID);
-LLLIB_Treasure_Internal_GenerationQueue_NextTick(_ID);
-
-PROC
 LLLIB_Treasure_Internal_OnGenerationFailed((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_GenerationType)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:OnGenerationFailed] Failed to generate items for [",_ID,"]. Going to next item in queue.");
-LLLIB_Treasure_Internal_CancelTimeoutTimer(_ID, _Object, _TreasureID, _GenerationType);
-LLLIB_Treasure_Internal_GenerationQueue_NextTick(_ID);
+//END_REGION
 
+//REGION GENERATION_QUEUE_MANUAL_MODE
+//Manual starting
 PROC
-LLLIB_Treasure_Internal_GenerationQueue_NextTick((STRING)_ID)
-AND
-DB_LLLIB_Treasure_Temp_TimeoutTimerActive(_ID)
-THEN
-NOT DB_LLLIB_Treasure_Temp_TimeoutTimerActive(_ID);
-TimerCancel("LLLIB_Timers_Treasure_TimeoutTimer");
-
-PROC
-LLLIB_Treasure_Internal_GenerationQueue_NextTick((STRING)_ID)
+LLLIB_Treasure_AddToGenerationQueue((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_GenerationType)
 AND
 DB_LLLIB_Array_Length("LLLIB_ItemGenerationQueue", _Length)
 AND
 _Length > 0
 AND
-DB_LLLIB_Treasure_Temp_QueueTimerActive(_Active, _TickRate)
+GlobalGetFlag("LeaderLib_DefaultEventFlowRunning", 0)
+AND
+NOT LLLIB_Queue_QRY_IsRunning("LLLIB_ItemGenerationQueue")
 THEN
-NOT DB_LLLIB_Treasure_Temp_QueueTimerActive(_Active, _TickRate);
-LLLIB_Treasure_StartQueue(_TickRate);
+LeaderLib_SendEvent("LeaderLib_Commands_StartTreasureGenerationQueue");
+
+IF
+StoryEvent(_, "LeaderLib_Events_OnTreasureQueueComplete")
+AND
+GlobalGetFlag("LeaderLib_DefaultEventFlowRunning", 0)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:OnTreasureQueueComplete] Treasure generation queue manually completed (outside of the event flow).");
+//END_REGION
+
+//REGION QUEUE_EVENTS
+IF
+StoryEvent(_, "LeaderLib_Commands_StartTreasureGenerationQueue")
+THEN
+LLLIB_Treasure_StartQueue(50);
+
+IF
+StoryEvent(_, "LLLIB_Events_Treasure_ProcessItem")
+AND
+DB_LLLIB_Queue_Temp_CurrentEntry(_ArrayID, _ID)
+THEN
+LLLIB_Treasure_Internal_ProcessQueueItem(_ID);
+
+IF
+StoryEvent(_, "LLLIB_Events_OnItemGenerationTimeout")
+AND
+DB_LLLIB_Queue_Temp_CurrentEntry(_ArrayID, _ID)
+AND
+DB_LLLIB_Treasure_Temp_ItemGenerationQueue(_ID, _Object, _TreasureID, _GenerationType)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:GenerationQueueTimeout] [",_ID,"] timed out.");
+LLLIB_Treasure_Internal_OnGenerationFailed(_ID, _Object, _TreasureID, _GenerationType);
 
 PROC
-LLLIB_Treasure_Internal_GenerationQueue_NextTick((STRING)_ID)
-AND
-DB_LLLIB_Array_Length("LLLIB_ItemGenerationQueue", _Length)
-AND
-_Length <= 0
-AND
-DB_LLLIB_Treasure_Temp_QueueTimerActive(_Active, _TickRate)
+LLLIB_Treasure_Internal_OnGenerationFinished((STRING)_ID, (GUIDSTRING)_Object)
 THEN
-NOT DB_LLLIB_Treasure_Temp_QueueTimerActive(_Active, _TickRate);
+LeaderLib_SendEvent("LLLIB_Events_OnItemGenerationComplete");
+
+IF
+StoryEvent(_, "LLLIB_Events_OnTreasureQueueComplete")
+THEN
 LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:OnGenerationFinished] Item generation queue complete.");
 LeaderLib_SendEvent("LeaderLib_Events_OnTreasureQueueComplete");
 //END_REGION
@@ -836,7 +777,7 @@ LLLIB_Treasure_Internal_GenerateItemByStat((STRING)_ID, (GUIDSTRING)_Object, (ST
 AND
 NOT DB_LLLIB_Treasure_GeneratorDummies(_)
 AND
-DB_LLLIB_Treasure_Temp_TimeoutTimerActive(_ID, _Object, _TreasureID, _GenerationType)
+DB_LLLIB_Treasure_Temp_ItemGenerationQueue(_ID, _Object, _TreasureID, _GenerationType)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:StatItemGen][ERROR] Error creating item by stat: No generator dummy found!");
 LLLIB_Treasure_Internal_OnGenerationFailed(_ID, _Object, _TreasureID, _GenerationType);

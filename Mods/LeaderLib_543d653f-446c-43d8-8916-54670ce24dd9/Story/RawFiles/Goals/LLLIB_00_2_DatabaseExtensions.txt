@@ -406,6 +406,22 @@ THEN
 DB_NOOP(1);
 
 QRY
+LLLIB_Array_QRY_EmptyLength((STRING)_ID)
+AND
+DB_LLLIB_Array_Length(_ID, _Length)
+AND
+_Length <= 0
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_Array_QRY_EmptyLength((STRING)_ID)
+AND
+NOT DB_LLLIB_Array_Length(_ID, _)
+THEN
+DB_NOOP(1);
+
+QRY
 LLLIB_Array_QRY_DictionaryDataExists((STRING)_ID)
 AND
 DB_LLLIB_Dictionary_Data(_ID, _, _, _)

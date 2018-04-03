@@ -6,6 +6,7 @@ INITSECTION
 //DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime)
 //DB_LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent)
 //DB_LLLIB_EventFlow_WaitTimer(_StackName, _TimerName)
+//DB_LLLIB_EventFlow_CustomWaitTime(_StackName, _OnCompleteEvent, _WaitTime)
 LLLIB_EventFlow_Init_LeaderLibStack();
 KBSECTION
 //REGION DEFAULT_FLOW
@@ -22,6 +23,7 @@ THEN
 LLLIB_Updater_SaveSettingsVersionData("LLLIB_Settings_EventFlowDefaultStack");
 LLLIB_EventFlow_Clear_StackData("LLLIB_DefaultEventFlow");
 LLLIB_EventFlow_AddStack("LLLIB_DefaultEventFlow", "LeaderLib_Events_OnDefaultEventFlowComplete", 500);
+LLLIB_EventFlow_SetCustomWaitTime("LLLIB_DefaultEventFlow", "LeaderLib_Events_OnTraderSpawnComplete", 1000);
 LLLIB_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_SortMenus", "LeaderLib_Events_OnMenuSortComplete");
 LLLIB_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_SpawnTraders", "LeaderLib_Events_OnTraderSpawnComplete");
 LLLIB_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_StartTreasureGeneration", "LeaderLib_Events_OnTreasureGenerationComplete");
@@ -72,6 +74,20 @@ AND
 NOT LLLIB_EventFlow_QRY_CurrentlyRunning(_StackName)
 THEN
 LLLIB_EventFlow_SetCurrentEvent(_StackName, 0);
+
+PROC
+LLLIB_EventFlow_SetCustomWaitTime((STRING)_StackName, (STRING)_CompleteEvent, (INTEGER)_WaitTime)
+AND
+DB_LLLIB_EventFlow_CustomWaitTime(_StackName, _CompleteEvent, _LastWaitTime)
+AND
+_WaitTime != _LastWaitTime
+THEN
+NOT DB_LLLIB_EventFlow_CustomWaitTime(_StackName, _CompleteEvent, _LastWaitTime);
+
+PROC
+LLLIB_EventFlow_SetCustomWaitTime((STRING)_StackName, (STRING)_CompleteEvent, (INTEGER)_WaitTime)
+THEN
+DB_LLLIB_EventFlow_CustomWaitTime(_StackName, _CompleteEvent, _WaitTime);
 //END_REGION
 
 //REGION QUERIES
@@ -139,7 +155,7 @@ DB_LeaderLog_Temp_CombinedString(_TimerName)
 THEN
 NOT DB_LeaderLog_Temp_CombinedString(_TimerName);
 DB_LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent);
-TimerLaunch(_TimerName, 30000);
+TimerLaunch(_TimerName, 60000);
 
 IF
 TimerFinished(_TimerName)
@@ -177,11 +193,30 @@ LLLIB_EventFlow_QRY_CurrentlyRunning(_StackName)
 AND
 DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime)
 AND
+NOT DB_LLLIB_EventFlow_CustomWaitTime(_StackName, _OnCompleteEvent, _)
+AND
 NOT DB_LLLIB_EventFlow_WaitTimer(_StackName, _)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:EventFlow:OnEventComplete] Event flow [",_StackName,"] received OnCompleteEvent [",_OnCompleteEvent,"]. Starting wait timer for next event.");
 LLLIB_EventFlow_StopTimeoutTimer(_StackName, _OnCompleteEvent);
 LLLIB_EventFlow_StartWaitTimer(_StackName, _WaitTime);
+
+IF
+StoryEvent(_, _OnCompleteEvent)
+AND
+DB_LLLIB_Dictionary_Data(_StackName, _Index, _StartEvent, _OnCompleteEvent)
+AND
+LLLIB_EventFlow_QRY_CurrentlyRunning(_StackName)
+AND
+DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime)
+AND
+DB_LLLIB_EventFlow_CustomWaitTime(_StackName, _OnCompleteEvent, _CustomWaitTime)
+AND
+NOT DB_LLLIB_EventFlow_WaitTimer(_StackName, _)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:EventFlow:OnEventComplete] Event flow [",_StackName,"] received OnCompleteEvent [",_OnCompleteEvent,"]. Starting wait timer for next event, and using a custom wait time.");
+LLLIB_EventFlow_StopTimeoutTimer(_StackName, _OnCompleteEvent);
+LLLIB_EventFlow_StartWaitTimer(_StackName, _CustomWaitTime);
 
 PROC
 LLLIB_EventFlow_StartWaitTimer((STRING)_StackName, (INTEGER)_WaitTime)

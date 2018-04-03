@@ -553,7 +553,7 @@ LLLIB_Array_AddToArray("LLLIB_ItemGenerationQueue", _ID);
 DB_LLLIB_Treasure_Temp_ItemGenerationQueue(_ID, _Object, _TreasureID, _GenerationType);
 
 PROC
-LLLIB_Treasure_StartQueue((INTEGER)_TickRate)
+LLLIB_Treasure_StartQueue()
 AND
 DB_LLLIB_Array_Length("LLLIB_ItemGenerationQueue", _Length)
 AND
@@ -562,7 +562,7 @@ THEN
 LeaderLib_SendEvent("LLLIB_Events_OnTreasureQueueComplete");
 
 PROC
-LLLIB_Treasure_StartQueue((INTEGER)_TickRate)
+LLLIB_Treasure_StartQueue()
 AND
 DB_LLLIB_Array_Length("LLLIB_ItemGenerationQueue", _Length)
 AND
@@ -578,14 +578,16 @@ LLLIB_Array_RemoveFromArray("LLLIB_ItemGenerationQueue", _ID);
 LeaderLib_SendEvent("LLLIB_Events_OnTreasureQueueComplete");
 
 PROC
-LLLIB_Treasure_StartQueue((INTEGER)_TickRate)
+LLLIB_Treasure_StartQueue()
 AND
 DB_LLLIB_Array_Length("LLLIB_ItemGenerationQueue", _Length)
 AND
 _Length > 1
+AND
+DB_LLLIB_Settings_QueueRates("Treasure", _TickRate, _TimeoutRate)
 THEN
 LLLIB_Queue_Create("LLLIB_ItemGenerationQueue", "LLLIB_ItemGenerationQueue", "LLLIB_Timers_Treasure_ItemQueue", _TickRate, "LLLIB_Events_Treasure_ProcessItem", "LLLIB_Events_OnItemGenerationComplete", "LLLIB_Events_OnTreasureQueueComplete");
-LLLIB_Queue_SetTimeout("LLLIB_ItemGenerationQueue", "LLLIB_Timers_Treasure_ItemQueueTimeout", 3000, "LLLIB_Events_OnItemGenerationTimeout");
+LLLIB_Queue_SetTimeout("LLLIB_ItemGenerationQueue", "LLLIB_Timers_Treasure_ItemQueueTimeout", _TimeoutRate, "LLLIB_Events_OnItemGenerationTimeout");
 LLLIB_Queue_Start("LLLIB_ItemGenerationQueue");
 
 PROC
@@ -660,7 +662,7 @@ LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:OnTreasureQueueComplete] Treasure 
 IF
 StoryEvent(_, "LeaderLib_Commands_StartTreasureGeneration")
 THEN
-LLLIB_Treasure_StartQueue(50);
+LLLIB_Treasure_StartQueue();
 
 IF
 StoryEvent(_, "LLLIB_Events_Treasure_ProcessItem")

@@ -538,6 +538,8 @@ LLLIB_Traders_Internal_SpawnQueue_CreateQueue(_ArrayID);
 PROC
 LLLIB_Traders_Internal_SpawnQueue_CreateQueue((STRING)_ArrayID)
 AND
+DB_LLLIB_Settings_QueueRates("TraderSpawn", _TickRate, _TimeoutRate)
+AND
 DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID, _SpawnEvent, _SpawnCompleteEvent, _SpawnQueueCompleteEvent, _TimeoutEvent)
 AND
 StringConcatenate("LLLIB_Timers_QueueTimer_", _ArrayID, _QueueTimerName)
@@ -545,8 +547,8 @@ AND
 StringConcatenate("LLLIB_Timers_QueueTimeoutTimer_", _ArrayID, _TimeoutTimerName)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Traders:StartSpawnQueue] Starting spawn queue [",_ArrayID,"] for level [",_Level,"].");
-LLLIB_Queue_Create(_ArrayID, _ArrayID, _QueueTimerName, 50, _SpawnEvent, _SpawnCompleteEvent, _SpawnQueueCompleteEvent);
-LLLIB_Queue_SetTimeout(_ArrayID, _TimeoutTimerName, 3000, _TimeoutEvent);
+LLLIB_Queue_Create(_ArrayID, _ArrayID, _QueueTimerName, _TickRate, _SpawnEvent, _SpawnCompleteEvent, _SpawnQueueCompleteEvent);
+LLLIB_Queue_SetTimeout(_ArrayID, _TimeoutTimerName, _TimeoutRate, _TimeoutEvent);
 LLLIB_Queue_Start(_ArrayID);
 
 IF
@@ -912,9 +914,11 @@ LLLIB_Array_AddToArray("LLLIB_Traders_CheckQueue_TraderList", _TraderID);
 
 PROC
 LLLIB_Traders_Internal_StartCheckingTraders()
+AND
+DB_LLLIB_Settings_QueueRates("TraderCheck", _TickRate, _TimeoutRate)
 THEN
-LLLIB_Queue_Create("LLLIB_Traders_CheckQueue", "LLLIB_Traders_CheckQueue_TraderList", "LLLIB_Timers_Traders_CheckQueueTimer", 50, "LLLIB_Events_OnCheckTrader", "LLLIB_Events_OnCheckTraderComplete", "LLLIB_Events_OnCheckTraderQueueComplete");
-LLLIB_Queue_SetTimeout("LLLIB_Traders_CheckQueue", "LLLIB_Timers_Traders_CheckQueueTimeoutTimer", 3000);
+LLLIB_Queue_Create("LLLIB_Traders_CheckQueue", "LLLIB_Traders_CheckQueue_TraderList", "LLLIB_Timers_Traders_CheckQueueTimer", _TickRate, "LLLIB_Events_OnCheckTrader", "LLLIB_Events_OnCheckTraderComplete", "LLLIB_Events_OnCheckTraderQueueComplete");
+LLLIB_Queue_SetTimeout("LLLIB_Traders_CheckQueue", "LLLIB_Timers_Traders_CheckQueueTimeoutTimer", _TimeoutRate);
 LLLIB_Queue_Start("LLLIB_Traders_CheckQueue");
 
 IF

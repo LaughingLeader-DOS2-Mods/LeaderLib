@@ -92,41 +92,18 @@ LeaderLib_SendEvent(_IterateEvent);
 PROC
 LLLIB_Queue_Internal_NextTick((STRING)_QueueID)
 AND
-DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
-AND
 NOT DB_LLLIB_Queue_Temp_CurrentEntry(_QueueID, _)
-AND
-DB_LLLIB_Array_Length(_ArrayID, _Length)
-AND
-_Length > 0
-AND
-NOT DB_LLLIB_Queue_Temp_PopSuccess(_QueueID)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:QueueSystem:NextTick] [ERROR] Queue [",_QueueID,"] had an error popping a value from array [",_ArrayID,"].");
-LLLIB_Queue_Internal_OnComplete(_QueueID);
+LLLIB_Queue_Internal_CheckForErrors(_QueueID);
 
 PROC
 LLLIB_Queue_Internal_NextTick((STRING)_QueueID)
 AND
-DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
-AND
-NOT DB_LLLIB_Array_Length(_ArrayID, _)
-AND
 NOT DB_LLLIB_Queue_Temp_CurrentEntry(_QueueID, _)
-THEN
-LeaderLog_Log("DEBUG", "[LLLIB:QueueSystem:NextTick] [ERROR] Queue [",_QueueID,"] array [",_ArrayID,"] is missing a length!.");
-LLLIB_Queue_Internal_OnComplete(_QueueID);
-
-PROC
-LLLIB_Queue_Internal_NextTick((STRING)_QueueID)
 AND
 DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 AND
-DB_LLLIB_Array_Length(_ArrayID, _Length)
-AND
-_Length <= 0
-AND
-NOT DB_LLLIB_Queue_Temp_CurrentEntry(_QueueID, _)
+LLLIB_Array_QRY_EmptyLength(_ArrayID)
 THEN
 LLLIB_Queue_Internal_OnComplete(_QueueID);
 
@@ -140,6 +117,36 @@ LLLIB_Queue_Internal_CancelTimeoutTimer(_QueueID);
 LLLIB_Queue_Internal_StartTimer(_QueueID);
 //END_REGION
 
+//REGION ERROR_CHECKING
+PROC
+LLLIB_Queue_Internal_CheckForErrors((STRING)_QueueID)
+AND
+NOT DB_LLLIB_Queue_Temp_CurrentEntry(_QueueID, _)
+AND
+DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
+AND
+DB_LLLIB_Array_Length(_ArrayID, _Length)
+AND
+_Length > 0
+AND
+NOT DB_LLLIB_Queue_Temp_PopSuccess(_QueueID)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:QueueSystem:NextTick] [ERROR] Queue [",_QueueID,"] had an error popping a value from array [",_ArrayID,"].");
+
+PROC
+LLLIB_Queue_Internal_CheckForErrors((STRING)_QueueID)
+AND
+NOT DB_LLLIB_Queue_Temp_CurrentEntry(_QueueID, _)
+AND
+DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
+AND
+NOT DB_LLLIB_Array_Length(_ArrayID, _)
+AND
+NOT DB_LLLIB_Queue_Temp_CurrentEntry(_QueueID, _)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:QueueSystem:NextTick] [ERROR] Queue [",_QueueID,"] array [",_ArrayID,"] is missing a length entry!.");
+//END_REGION
+
 //REGION ON_COMPLETE
 PROC
 LLLIB_Queue_Internal_OnComplete((STRING)_QueueID)
@@ -148,6 +155,7 @@ DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _Iterat
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:QueueSystem:OnComplete] Queue [",_QueueID,"] complete. Sending event [",_OnCompletionEvent,"].");
 LeaderLib_SendEvent(_OnCompletionEvent);
+LLLIB_Queue_Stop(_QueueID); // Stop timers, if they're still running for some reason
 LLLIB_Queue_ClearQueue(_QueueID);
 //END_REGION
 

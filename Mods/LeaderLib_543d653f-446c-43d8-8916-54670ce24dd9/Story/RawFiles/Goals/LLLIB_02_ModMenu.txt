@@ -101,7 +101,7 @@ LLLIB_ModMenu_Internal_StartSortIfNeeded()
 AND
 DB_LeaderLib_Initialized(1)
 AND
-NOT DB_LLLIB_EventFlow_CurrentEvent("DB_LLLIB_EventFlow_EventStack", _)
+GlobalGetFlag("LeaderLib_DefaultEventFlowRunning", 0)
 AND
 LLLIB_ModMenu_QRY_SortNeeded()
 THEN
@@ -133,7 +133,6 @@ StoryEvent(_, "LeaderLib_Commands_SortMenus")
 AND
 LLLIB_ModMenu_QRY_SortNeeded()
 THEN
-//TimerLaunch("LLLIB_Timers_ModMenu_SortMenus", 500);
 LLLIB_ModMenu_StartSorting();
 
 IF
@@ -171,7 +170,7 @@ LLLIB_ModMenu_StartSorting()
 AND
 SysCount("DB_LLLIB_ModMenu_RegisteredMenuData", 5, _TotalMenus)
 AND
-_TotalMenus < 30
+_TotalMenus < 20
 AND
 IntegertoString(_TotalMenus, _TotalStr)
 THEN
@@ -183,12 +182,12 @@ LLLIB_ModMenu_StartSorting()
 AND
 SysCount("DB_LLLIB_ModMenu_RegisteredMenuData", 5, _TotalMenus)
 AND
-_TotalMenus >= 30
+_TotalMenus >= 20
 AND
 IntegertoString(_TotalMenus, _TotalStr)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:ModMenu:Sorting] Total menus = [",_TotalStr,"]. Setting sort tick rate to 1.");
-LLLIB_ModMenu_SetSortTickRate(1);
+LLLIB_ModMenu_SetSortTickRate(5);
 
 PROC
 LLLIB_ModMenu_StartSorting()

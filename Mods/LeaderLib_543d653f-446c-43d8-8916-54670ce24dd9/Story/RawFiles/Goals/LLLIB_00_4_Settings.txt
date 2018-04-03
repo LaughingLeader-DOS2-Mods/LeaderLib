@@ -5,7 +5,7 @@ LLLIB_Settings_InitSettings();
 
 //DB_LLLIB_Settings_ItemTemplates(_Name, _ItemTemplate)
 //DB_LLLIB_Settings_DialogVariables(_VariableName, _VariableValue)
-//DB_LLLIB_Settings_Iterator(_Index)
+//DB_LLLIB_Settings_QueueRates(_ReferenceName, _TickRate, _TimeoutRate)
 
 //DB_LLLIB_Settings_Temp_IteratorCreator(_CurrentInt, _MaxInt)
 //DB_LLLIB_Settings_Temp_RegisteredModsList(_Str)
@@ -17,6 +17,11 @@ LLLIB_Settings_InitSettings()
 THEN
 LLLIB_Updater_SaveSettingsVersionData("LLLIB_Settings_GeneralSettings");
 LLLIB_Settings_InitEquipmentSlots();
+
+LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_Settings_QueueRates", 3);
+DB_LLLIB_Settings_QueueRates("TraderSpawn", 1000, 2000);
+DB_LLLIB_Settings_QueueRates("TraderCheck", 100, 500);
+DB_LLLIB_Settings_QueueRates("Treasure", 100, 2000);
 
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_Settings_ItemTemplates", 2);
 DB_LLLIB_Settings_ItemTemplates("Book_ModMenu", "LLLIB_BOOK_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108");
@@ -43,6 +48,28 @@ DB_LLLIB_EquipmentSlots("Boots");
 DB_LLLIB_EquipmentSlots("Gloves");
 DB_LLLIB_EquipmentSlots("Amulet");
 DB_LLLIB_EquipmentSlots("Ring2");
+//END_REGION
+
+//REGION UPDATER
+IF
+StoryEvent(_,"LLLIB_Events_OnUpdateSettings")
+AND
+LLLIB_Updater_QRY_SettingsNeedsUpdate("LLLIB_Settings_GeneralSettings")
+THEN
+LLLIB_Settings_InitSettings();
+LeaderLog_Log("SYSTEM", "[LLLIB:Settings] Settings updated.");
+
+PROC
+LLLIB_System_RegisterDatabases()
+THEN
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_QueueRates", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_ItemTemplates", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_DialogVariables", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_Iterator", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_Temp_IteratorCreator", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_Temp_RegisteredModsList", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_Temp_ActiveModText", 3);
+LeaderLog_Log("SYSTEM", "[LLLIB:Settings] Databases registered.");
 //END_REGION
 
 //REGION ITERATOR
@@ -151,27 +178,6 @@ IF
 DialogStarted("LLLIB_SettingsMenu", _Instance)
 THEN
 LLLIB_Settings_BuildModList();
-//END_REGION
-
-//REGION UPDATER
-IF
-StoryEvent(_,"LLLIB_Events_OnUpdateSettings")
-AND
-LLLIB_Updater_QRY_SettingsNeedsUpdate("LLLIB_Settings_GeneralSettings")
-THEN
-LLLIB_Settings_InitSettings();
-LeaderLog_Log("SYSTEM", "[LLLIB:Settings] Settings updated.");
-
-PROC
-LLLIB_System_RegisterDatabases()
-THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_ItemTemplates", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_DialogVariables", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_Iterator", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_Temp_IteratorCreator", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_Temp_RegisteredModsList", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_Temp_ActiveModText", 3);
-LeaderLog_Log("SYSTEM", "[LLLIB:Settings] Databases registered.");
 //END_REGION
 EXITSECTION
 

@@ -10,7 +10,7 @@ DB_LeaderLog_InitialEnable(1);
 KBSECTION
 //REGION EDITOR_DEBUG_ENABLE
 IF
-GameStarted(_, 0)
+GameStarted(_,_)
 AND
 DB_LeaderLog_InitialEnable(_Val)
 THEN

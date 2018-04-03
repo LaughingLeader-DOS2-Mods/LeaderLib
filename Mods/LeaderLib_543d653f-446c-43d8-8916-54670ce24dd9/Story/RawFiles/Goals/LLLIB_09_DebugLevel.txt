@@ -7,7 +7,7 @@ IF
 GameStarted("LeaderLib_TestLevel",_)
 THEN
 DB_NOOP(1);
-/*
+
 LLLIB_Trader_Register_Trader("LLLIB_TestLevel_Trader", "Elves_Female_Clothing_3ba29ecd-4849-494d-a9a6-6221eea6761c", 1);
 LLLIB_Trader_Register_PositionObject("LLLIB_TestLevel_Trader", "LeaderLib_TestLevel", ITEMGUID_LLLIB_Debug_TestChest_ff6c9edf-aa21-447a-8bb2-2a647a8dae46);
 LLLIB_Trader_Register_Dialog("LLLIB_TestLevel_Trader", "", "LLLIB_LeaderTrader_Default");
@@ -15,14 +15,14 @@ LLLIB_Trader_Register_Dialog("LLLIB_TestLevel_Trader", "", "LLLIB_LeaderTrader_D
 LLLIB_Treasure_Register_TreasureToTemplate("LLLIB_TestLevel_Trader", "Elves_Female_Clothing_3ba29ecd-4849-494d-a9a6-6221eea6761c");
 LLLIB_Treasure_Register_TreasureTable("LLLIB_TestLevel_Trader", "TEST_Generation", "", 1);
 LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_TestLevel_Trader", "LOOT_Source_Orb_106a7107-cf36-4331-b5b5-6de71969f370", 1, "LLLIB_Debug_TraderRequirements");
-LLLIB_Requirements_AddFlagRequirement("LLLIB_Debug_TraderRequirements", "LLLIB_LeaderTrader_IntroDone", "Object", 1);
+LLLIB_Requirements_AddFlagRequirement("LLLIB_Debug_TraderRequirements", "LLLIB_LeaderTrader_PlayerIntroducedSelf", "Object", 1);
 //LLLIB_Requirements_AddPartyLevelRequirement("LLLIB_Debug_TraderRequirements", 2, 2);
 
 LLLIB_Treasure_Register_TreasureToObject("LLLIB_TestLevel_Chest1", ITEMGUID_LLLIB_Debug_TestChest_ff6c9edf-aa21-447a-8bb2-2a647a8dae46);
 LLLIB_Treasure_Register_TreasureTable("LLLIB_TestLevel_Chest1", "TEST_Generation", "LLLIB_Debug_TraderRequirements", 1);
 LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_TestLevel_Chest1", "LOOT_Source_Orb_106a7107-cf36-4331-b5b5-6de71969f370", 2, "LLLIB_TestLevel_Chest1_Requirements");
 LLLIB_Treasure_Configure_AddMaxAmount("LLLIB_TestLevel_Chest1", "LOOT_Source_Orb_106a7107-cf36-4331-b5b5-6de71969f370", 1);
-LLLIB_Requirements_AddFlagRequirement("LLLIB_TestLevel_Chest1_Requirements", "LLLIB_LeaderTrader_IntroDone", "Object", 0);
+LLLIB_Requirements_AddFlagRequirement("LLLIB_TestLevel_Chest1_Requirements", "LLLIB_LeaderTrader_PlayerIntroducedSelf", "Object", 0);
 
 //LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_TestLevel_Chest1", "WPN_Dwarves_Sword_2H_B_03f8fb7a-59cf-47eb-9298-79cedaf744e5", 1);
 LLLIB_Treasure_Configure_ItemLevel("LLLIB_TestLevel_Chest1", "WPN_Dwarves_Sword_2H_B_03f8fb7a-59cf-47eb-9298-79cedaf744e5", 0, 5, 10);
@@ -31,7 +31,7 @@ LLLIB_Treasure_Configure_ItemLevel("LLLIB_TestLevel_Chest1", "WPN_Elves_Spear_2H
 
 LLLIB_Treasure_Register_TreasureToObject("LLLIB_TestLevel_Chest2", ITEMGUID_LLLIB_DebugLevel_TestChest2_cde2491b-741c-4442-a016-74761b43f3c5);
 LLLIB_Treasure_AddTreasureItemStat("LLLIB_TestLevel_Chest2", "WPN_Cheat_Sword_1H_RuneSlot2", 1, "LLLIB_TestLevel_Chest2_Requirements");
-LLLIB_Requirements_AddFlagRequirement("LLLIB_TestLevel_Chest2_Requirements", "LLLIB_LeaderTrader_IntroDone", "Object", 1);
+LLLIB_Requirements_AddFlagRequirement("LLLIB_TestLevel_Chest2_Requirements", "LLLIB_LeaderTrader_PlayerIntroducedSelf", "Object", 1);
 LLLIB_Treasure_Configure_ItemLevel("LLLIB_TestLevel_Chest2", "WPN_Cheat_Sword_1H_RuneSlot2", 0, 2, 13);
 LLLIB_Treasure_Configure_AddDeltaMod("LLLIB_TestLevel_Chest2", "WPN_Cheat_Sword_1H_RuneSlot2", "Boost_Weapon_Ability_FireSpecialist_Staff", 75);
 LLLIB_Treasure_Configure_AddDeltaMod("LLLIB_TestLevel_Chest2", "WPN_Cheat_Sword_1H_RuneSlot2", "Boost_Weapon_Secondary_Accuracy_Medium", 20);
@@ -73,7 +73,7 @@ LeaderLib_RegisterModMenu("LLZZ1", "[ModMenu1] Settings", "LLLIB_SettingsMenu", 
 LeaderLib_RegisterModMenu("LLZZ6", "[ModMenu6] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZZ4", "[ModMenu4] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZZ8", "[ModMenu8] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-*/
+
 /*
 IF
 StoryEvent(_, "LeaderLib_Initialized")
@@ -113,7 +113,7 @@ NOT DB_IsPlayer(_Player)
 THEN
 DB_IsPlayer(_Player);
 //LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] ","Added player to DB_IsPlayer.");
-//ObjectClearFlag(_Player, "LLLIB_LeaderTrader_IntroDone");
+//ObjectClearFlag(_Player, "LLLIB_LeaderTrader_PlayerIntroducedSelf");
 
 IF
 DialogStarted(_Dialog, _Instance)

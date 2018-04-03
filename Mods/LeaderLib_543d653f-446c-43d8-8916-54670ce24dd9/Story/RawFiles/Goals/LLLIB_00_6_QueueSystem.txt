@@ -5,6 +5,7 @@ INITSECTION
 //DB_LLLIB_Queue_Timeout(_QueueID, _TimerName, _TimeoutValue, _OnTimeoutEvent)
 //DB_LLLIB_Queue_Temp_CurrentEntry(_QueueID, _Entry)
 //DB_LLLIB_Queue_Temp_TimerRunning(_QueueID)
+//DB_LLLIB_Queue_Temp_PopSuccess(_QueueID)
 KBSECTION
 //REGION CREATE_START
 PROC
@@ -65,6 +66,7 @@ AND
 DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 THEN
 NOT DB_LLLIB_Queue_Temp_TimerRunning(_QueueID);
+NOT DB_LLLIB_Queue_Temp_PopSuccess(_QueueID);
 LLLIB_Queue_Internal_NextTick(_QueueID);
 
 PROC
@@ -81,10 +83,27 @@ AND
 DB_LLLIB_Array_Temp_PopValue(_ArrayID, _Entry)
 THEN
 NOT DB_LLLIB_Array_Temp_PopValue(_ArrayID, _Entry);
+DB_LLLIB_Queue_Temp_PopSuccess(_QueueID);
 LLLIB_Queue_Internal_ClearCurrentEntry(_QueueID);
 DB_LLLIB_Queue_Temp_CurrentEntry(_QueueID, _Entry);
 LLLIB_Queue_Internal_StartTimeoutTimer(_QueueID);
 LeaderLib_SendEvent(_IterateEvent);
+
+PROC
+LLLIB_Queue_Internal_NextTick((STRING)_QueueID)
+AND
+DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
+AND
+NOT DB_LLLIB_Queue_Temp_CurrentEntry(_QueueID, _)
+AND
+DB_LLLIB_Array_Length(_ArrayID, _Length)
+AND
+_Length > 0
+AND
+NOT DB_LLLIB_Queue_Temp_PopSuccess(_QueueID)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:QueueSystem:NextTick] [ERROR] Queue [",_QueueID,"] had an error popping a value from array [",_ArrayID,"].");
+LLLIB_Queue_Internal_OnComplete(_QueueID);
 
 PROC
 LLLIB_Queue_Internal_NextTick((STRING)_QueueID)

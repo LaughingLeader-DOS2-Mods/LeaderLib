@@ -554,6 +554,35 @@ DB_LLLIB_Treasure_Temp_ItemGenerationQueue(_ID, _Object, _TreasureID, _Generatio
 
 PROC
 LLLIB_Treasure_StartQueue((INTEGER)_TickRate)
+AND
+DB_LLLIB_Array_Length("LLLIB_ItemGenerationQueue", _Length)
+AND
+_Length <= 0
+THEN
+LeaderLib_SendEvent("LLLIB_Events_OnTreasureQueueComplete");
+
+PROC
+LLLIB_Treasure_StartQueue((INTEGER)_TickRate)
+AND
+DB_LLLIB_Array_Length("LLLIB_ItemGenerationQueue", _Length)
+AND
+_Length == 1
+AND
+DB_LLLIB_Treasure_Temp_ItemGenerationQueue(_ID, _Object, _TreasureID, _GenerationType)
+AND
+DB_LLLIB_Array_Data("LLLIB_ItemGenerationQueue", _Index, _ID)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:StartQueue] Single entry detected. Skipping queue and generating [",_ID,"] directly.");
+LLLIB_Treasure_Internal_ProcessQueueItem(_ID);
+LLLIB_Array_RemoveFromArray("LLLIB_ItemGenerationQueue", _ID);
+LeaderLib_SendEvent("LLLIB_Events_OnTreasureQueueComplete");
+
+PROC
+LLLIB_Treasure_StartQueue((INTEGER)_TickRate)
+AND
+DB_LLLIB_Array_Length("LLLIB_ItemGenerationQueue", _Length)
+AND
+_Length > 1
 THEN
 LLLIB_Queue_Create("LLLIB_ItemGenerationQueue", "LLLIB_ItemGenerationQueue", "LLLIB_Timers_Treasure_ItemQueue", _TickRate, "LLLIB_Events_Treasure_ProcessItem", "LLLIB_Events_OnItemGenerationComplete", "LLLIB_Events_OnTreasureQueueComplete");
 LLLIB_Queue_SetTimeout("LLLIB_ItemGenerationQueue", "LLLIB_Timers_Treasure_ItemQueueTimeout", 3000, "LLLIB_Events_OnItemGenerationTimeout");
@@ -609,7 +638,15 @@ GlobalGetFlag("LeaderLib_DefaultEventFlowRunning", 0)
 AND
 NOT LLLIB_Queue_QRY_IsRunning("LLLIB_ItemGenerationQueue")
 THEN
-LeaderLib_SendEvent("LeaderLib_Commands_StartTreasureGenerationQueue");
+TimerCancel("LLLIB_Timers_Treasure_ManualGenerationTimer");
+TimerLaunch("LLLIB_Timers_Treasure_ManualGenerationTimer", 50);
+
+IF
+TimerFinished("LLLIB_Timers_Treasure_ManualGenerationTimer")
+AND
+NOT LLLIB_Queue_QRY_IsRunning("LLLIB_ItemGenerationQueue")
+THEN
+LeaderLib_SendEvent("LeaderLib_Commands_StartTreasureGeneration");
 
 IF
 StoryEvent(_, "LeaderLib_Events_OnTreasureQueueComplete")
@@ -621,7 +658,7 @@ LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:OnTreasureQueueComplete] Treasure 
 
 //REGION QUEUE_EVENTS
 IF
-StoryEvent(_, "LeaderLib_Commands_StartTreasureGenerationQueue")
+StoryEvent(_, "LeaderLib_Commands_StartTreasureGeneration")
 THEN
 LLLIB_Treasure_StartQueue(50);
 
@@ -650,27 +687,26 @@ LeaderLib_SendEvent("LLLIB_Events_OnItemGenerationComplete");
 IF
 StoryEvent(_, "LLLIB_Events_OnTreasureQueueComplete")
 THEN
+LLLIB_Queue_Stop("LLLIB_ItemGenerationQueue");
+LLLIB_Queue_ClearQueue("LLLIB_ItemGenerationQueue");
 LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:OnGenerationFinished] Item generation queue complete.");
-LeaderLib_SendEvent("LeaderLib_Events_OnTreasureQueueComplete");
+LeaderLib_SendEvent("LeaderLib_Events_OnTreasureGenerationComplete");
 //END_REGION
 
 //REGION STOP_QUEUE
 IF
-DB_LLLIB_EventFlow_StopEvent("LeaderLib_Commands_StartTreasureGenerationQueue")
+DB_LLLIB_EventFlow_StopEvent("LeaderLib_Commands_StartTreasureGeneration")
 THEN
 LLLIB_Treasure_Internal_StopQueue();
-NOT DB_LLLIB_EventFlow_StopEvent("LeaderLib_Commands_StartTreasureGenerationQueue");
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:StopQueue] Item generation queue forcefully stopped.");
+NOT DB_LLLIB_EventFlow_StopEvent("LeaderLib_Commands_StartTreasureGeneration");
 
 PROC
 LLLIB_Treasure_Internal_StopQueue()
 THEN
-TimerCancel("LLLIB_Timers_Treasure_TimeoutTimer");
-TimerCancel("LLLIB_Timers_Treasure_ItemQueue");
-LLLIB_Array_ClearArray("LLLIB_ItemGenerationQueue");
-SysClear("DB_LLLIB_Treasure_Temp_QueueTimerActive", 2);
-SysClear("DB_LLLIB_Treasure_Temp_TimeoutTimerActive", 4);
+LLLIB_Queue_Stop("LLLIB_ItemGenerationQueue");
+LLLIB_Queue_ClearQueue("LLLIB_ItemGenerationQueue");
 SysClear("DB_LLLIB_Treasure_Temp_ItemGenerationQueue", 4);
-LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:StopQueue] Item generation queue forcefully stopped.");
 //END_REGION
 
 //REGION FLAG_RESET

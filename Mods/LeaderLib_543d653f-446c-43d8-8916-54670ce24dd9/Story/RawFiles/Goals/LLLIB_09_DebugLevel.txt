@@ -287,6 +287,14 @@ THEN
 //OpenMessageBox(_Player, "Global leader trader found. Did it spawn?");
 //TeleportTo(CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41, _Player);
 LeaderLog_Log("DEBUG", "[LLLIB:LeaderTrader:Debug] Teleported Leader Trader to player.");
+
+
+//REGION LEVERS
+IF
+CharacterUsedItem(_Character, ITEMGUID_LLLIB_Debug_TestLeverB_65136f61-80ec-4965-bce9-5789eea56aca)
+THEN
+LLLIB_Treasure_AddToGenerationQueue(CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, "LLLIB_LeaderTrader_ModBooks", "MANUAL");
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

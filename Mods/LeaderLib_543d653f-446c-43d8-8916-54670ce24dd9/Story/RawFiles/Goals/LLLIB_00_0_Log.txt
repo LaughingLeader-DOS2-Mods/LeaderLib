@@ -98,6 +98,8 @@ QRY
 LeaderLog_QRY_IsDebugType((STRING)_Type)
 AND
 NOT LeaderLog_QRY_IsStatusType(_Type)
+AND
+_Type != "COMBINE"
 THEN
 DB_NOOP(1);
 //END_REGION

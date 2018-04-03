@@ -52,7 +52,7 @@ LLLIB_EventFlow_AddStack(_StackName, "LeaderLib_Events_OnDefaultEventFlowComplet
 PROC
 LLLIB_EventFlow_Init_LeaderLibStack((STRING)_StackName)
 AND
-LLLIB_ModSettings_QRY_SortNeeded()
+LLLIB_ModMenu_QRY_SortNeeded()
 THEN
 LLLIB_Array_AddToDictionary(_StackName, "LeaderLib_Commands_SortMenus", "LeaderLib_Events_OnMenuSortComplete");
 

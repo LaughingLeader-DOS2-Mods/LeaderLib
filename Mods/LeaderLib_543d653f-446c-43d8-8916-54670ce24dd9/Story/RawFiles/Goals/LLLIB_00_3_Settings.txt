@@ -19,12 +19,12 @@ LLLIB_Settings_InitEquipmentSlots();
 LLLIB_Settings_CreateIterator(99);
 
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_Settings_ItemTemplates", 2);
-DB_LLLIB_Settings_ItemTemplates("Book_ModSettings", "LLLIB_BOOK_ModSettingsMenu_646a1194-3383-47fa-a379-ebefa3d2b108");
+DB_LLLIB_Settings_ItemTemplates("Book_ModMenu", "LLLIB_BOOK_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108");
 
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_Settings_DialogVariables", 2);
 DB_LLLIB_Settings_DialogVariables("PlayerName", "LLLIB_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3");
 DB_LLLIB_Settings_DialogVariables("SpeakerName", "LLLIB_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b");
-DB_LLLIB_Settings_DialogVariables("ModSettings_PageInfo", "LLLIB_ModSettings_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156");
+DB_LLLIB_Settings_DialogVariables("ModMenu_PageInfo", "LLLIB_ModMenu_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156");
 DB_LLLIB_Settings_DialogVariables("ModList", "LLLIB_Settings_ModList_50c55fbe-ad1e-490e-92d1-8836ca42ca12");
 
 PROC

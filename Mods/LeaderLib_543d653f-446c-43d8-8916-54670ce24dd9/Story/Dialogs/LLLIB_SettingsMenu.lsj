@@ -942,7 +942,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LeaderLib_AutoOpenModSettingsMenu"},
+                                          "name" : {"type" : 22, "value" : "LeaderLib_AutoOpenModMenu"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
@@ -995,7 +995,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LeaderLib_AutoOpenModSettingsMenu"},
+                                          "name" : {"type" : 22, "value" : "LeaderLib_AutoOpenModMenu"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
@@ -1066,7 +1066,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LeaderLib_AutoOpenModSettingsMenu"},
+                                          "name" : {"type" : 22, "value" : "LeaderLib_AutoOpenModMenu"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
@@ -1119,7 +1119,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LeaderLib_AutoOpenModSettingsMenu"},
+                                          "name" : {"type" : 22, "value" : "LeaderLib_AutoOpenModMenu"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 1}
                                        }

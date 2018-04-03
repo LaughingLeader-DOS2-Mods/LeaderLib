@@ -10,7 +10,7 @@ DB_NOOP(1);
 /*
 LLLIB_Trader_Register_Trader("LLLIB_TestLevel_Trader", "Elves_Female_Clothing_3ba29ecd-4849-494d-a9a6-6221eea6761c", 1);
 LLLIB_Trader_Register_PositionObject("LLLIB_TestLevel_Trader", "LeaderLib_TestLevel", ITEMGUID_LLLIB_Debug_TestChest_ff6c9edf-aa21-447a-8bb2-2a647a8dae46);
-LLLIB_Trader_Register_Dialog("LLLIB_TestLevel_Trader", "", "LLLIB_RetiredLeader_Default");
+LLLIB_Trader_Register_Dialog("LLLIB_TestLevel_Trader", "", "LLLIB_LeaderTrader_Default");
 
 LLLIB_Treasure_Register_TreasureToTemplate("LLLIB_TestLevel_Trader", "Elves_Female_Clothing_3ba29ecd-4849-494d-a9a6-6221eea6761c");
 LLLIB_Treasure_Register_TreasureTable("LLLIB_TestLevel_Trader", "TEST_Generation", "", 1);
@@ -141,8 +141,8 @@ LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel][ERROR] ","Dialog generation tag set, 
 IF
 CharacterUsedItem(_Player, ITEMGUID_LLLIB_DebugLever_TestRandom_d3152baa-c6d4-4e8e-a622-a6bb9c149b3e)
 THEN
-//Proc_StartDialog(0, "LLLIB_ModSettingsMenu", _Player, _Player);
-LLLIB_ModSettings_SortMenus();
+//Proc_StartDialog(0, "LLLIB_ModMenu", _Player, _Player);
+LLLIB_ModMenu_SortMenus();
 */
 IF
 SkillCast(_Player, "Shout_RecoverArmour", _)
@@ -192,23 +192,23 @@ LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem] Random range result: ",_RanStr," 
 
 /*
 IF
-CharacterUsedItem(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574, ITEMGUID_LLLIB_DebugLever_TestRandom_d3152baa-c6d4-4e8e-a622-a6bb9c149b3e)
+CharacterUsedItem(CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, ITEMGUID_LLLIB_DebugLever_TestRandom_d3152baa-c6d4-4e8e-a622-a6bb9c149b3e)
 AND
-CharacterIsPlayer(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574, 1)
+CharacterIsPlayer(CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, 1)
 AND
-CharacterGetOwner(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574, _Owner)
+CharacterGetOwner(CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, _Owner)
 THEN
-CharacterRemoveFromPlayerCharacter(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574, _Owner);
-CharacterRemoveFromParty(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574);
-CharacterMakeNPC(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574);
+CharacterRemoveFromPlayerCharacter(CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, _Owner);
+CharacterRemoveFromParty(CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574);
+CharacterMakeNPC(CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574);
 
 IF
 CharacterUsedItem(_, ITEMGUID_LLLIB_DebugLever_TestRandom_d3152baa-c6d4-4e8e-a622-a6bb9c149b3e)
 AND
-CharacterIsPlayer(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574, 0)
+CharacterIsPlayer(CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, 0)
 THEN
-CharacterMakePlayer(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574);
-MakePlayerActive(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574);
+CharacterMakePlayer(CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574);
+MakePlayerActive(CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574);
 
 */
 

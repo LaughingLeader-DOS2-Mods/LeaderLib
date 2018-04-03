@@ -23,26 +23,26 @@ PROC
 LLLIB_LeaderTrader_InitSettings()
 THEN
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_LeaderTrader_Dialog", 2);
-DB_LLLIB_LeaderTrader_Dialog("Default", "LLLIB_RetiredLeader_Default");
-DB_LLLIB_LeaderTrader_Dialog("Tutorial_Intro", "LLLIB_RetiredLeader_Tutorial_Intro");
-DB_LLLIB_LeaderTrader_Dialog("FortJoy_Intro", "LLLIB_RetiredLeader_FortJoy_Intro");
-DB_LLLIB_LeaderTrader_Dialog("LV_Intro", "LLLIB_RetiredLeader_LadyVengeance_Intro");
-DB_LLLIB_LeaderTrader_Dialog("Arx_Intro", "LLLIB_RetiredLeader_Arx_Intro");
+DB_LLLIB_LeaderTrader_Dialog("Default", "LLLIB_LeaderTrader_Default");
+DB_LLLIB_LeaderTrader_Dialog("Tutorial_Intro", "LLLIB_LeaderTrader_Tutorial_Intro");
+DB_LLLIB_LeaderTrader_Dialog("FortJoy_Intro", "LLLIB_LeaderTrader_FortJoy_Intro");
+DB_LLLIB_LeaderTrader_Dialog("LV_Intro", "LLLIB_LeaderTrader_LadyVengeance_Intro");
+DB_LLLIB_LeaderTrader_Dialog("Arx_Intro", "LLLIB_LeaderTrader_Arx_Intro");
 
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_LeaderTrader_Appearance", 2);
 //Naked version
-DB_LLLIB_LeaderTrader_Appearance("TUT_Tutorial_A", "LLLIB_RetiredLeader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e");
-DB_LLLIB_LeaderTrader_Appearance("LeaderLib_TestLevel", "LLLIB_RetiredLeader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e");
+DB_LLLIB_LeaderTrader_Appearance("TUT_Tutorial_A", "LLLIB_LeaderTrader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e");
+DB_LLLIB_LeaderTrader_Appearance("LeaderLib_TestLevel", "LLLIB_LeaderTrader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e");
 //For other acts
-DB_LLLIB_LeaderTrader_Appearance("Default", "LLLIB_RetiredLeader_Act1_da17fca2-fe16-46d9-80b3-08971a8c8d49");
+DB_LLLIB_LeaderTrader_Appearance("Default", "LLLIB_LeaderTrader_Casual_da17fca2-fe16-46d9-80b3-08971a8c8d49");
 
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_LeaderTrader_IntroDialogRequirements", 4);
-DB_LLLIB_LeaderTrader_IntroDialogRequirements("TUT_Tutorial_A", "LLLIB_RetiredLeader_Tutorial_Intro", "LLLIB_LeaderTrader_TUT_IntroDone", "LLLIB_LeaderTrader_TUT_IntroPending");
-DB_LLLIB_LeaderTrader_IntroDialogRequirements("FJ_FortJoy_Main", "LLLIB_RetiredLeader_FortJoy_Intro", "LLLIB_LeaderTrader_FTJ_IntroDone", "LLLIB_LeaderTrader_FTJ_IntroPending");
-DB_LLLIB_LeaderTrader_IntroDialogRequirements("LV_HoE_Main", "LLLIB_RetiredLeader_LadyVengeance_Intro", "LLLIB_LeaderTrader_LadyVengeance_IntroDone", "LLLIB_LeaderTrader_LadyVengeance_IntroPending");
-DB_LLLIB_LeaderTrader_IntroDialogRequirements("RC_Main", "LLLIB_RetiredLeader_LadyVengeance_Intro", "LLLIB_LeaderTrader_LadyVengeance_IntroDone", "LLLIB_LeaderTrader_LadyVengeance_IntroPending");
-DB_LLLIB_LeaderTrader_IntroDialogRequirements("CoS_Main", "LLLIB_RetiredLeader_LadyVengeance_Intro", "LLLIB_LeaderTrader_LadyVengeance_IntroDone", "LLLIB_LeaderTrader_LadyVengeance_IntroPending");
-DB_LLLIB_LeaderTrader_IntroDialogRequirements("Arx_Main", "LLLIB_RetiredLeader_Arx_Intro", "LLLIB_LeaderTrader_Arx_IntroDone", "LLLIB_LeaderTrader_Arx_IntroPending");
+DB_LLLIB_LeaderTrader_IntroDialogRequirements("TUT_Tutorial_A", "LLLIB_LeaderTrader_Tutorial_Intro", "LLLIB_LeaderTrader_TUT_IntroDone", "LLLIB_LeaderTrader_TUT_IntroPending");
+DB_LLLIB_LeaderTrader_IntroDialogRequirements("FJ_FortJoy_Main", "LLLIB_LeaderTrader_FortJoy_Intro", "LLLIB_LeaderTrader_FTJ_IntroDone", "LLLIB_LeaderTrader_FTJ_IntroPending");
+DB_LLLIB_LeaderTrader_IntroDialogRequirements("LV_HoE_Main", "LLLIB_LeaderTrader_LadyVengeance_Intro", "LLLIB_LeaderTrader_LadyVengeance_IntroDone", "LLLIB_LeaderTrader_LadyVengeance_IntroPending");
+DB_LLLIB_LeaderTrader_IntroDialogRequirements("RC_Main", "LLLIB_LeaderTrader_LadyVengeance_Intro", "LLLIB_LeaderTrader_LadyVengeance_IntroDone", "LLLIB_LeaderTrader_LadyVengeance_IntroPending");
+DB_LLLIB_LeaderTrader_IntroDialogRequirements("CoS_Main", "LLLIB_LeaderTrader_LadyVengeance_Intro", "LLLIB_LeaderTrader_LadyVengeance_IntroDone", "LLLIB_LeaderTrader_LadyVengeance_IntroPending");
+DB_LLLIB_LeaderTrader_IntroDialogRequirements("Arx_Main", "LLLIB_LeaderTrader_Arx_Intro", "LLLIB_LeaderTrader_Arx_IntroDone", "LLLIB_LeaderTrader_Arx_IntroPending");
 //END_REGION
 
 //REGION REGISTER
@@ -58,9 +58,9 @@ LLLIB_Requirements_AddFlagRequirement(_RequirementID, _Flag, "Object", 0);
 PROC
 LLLIB_LeaderTrader_RegisterTraderSettings()
 THEN
-DB_LLLIB_LeaderTrader_CurrentAppearance("LLLIB_RetiredLeader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e");
+DB_LLLIB_LeaderTrader_CurrentAppearance("LLLIB_LeaderTrader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e");
 
-LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", "", "LLLIB_RetiredLeader_Default"); // Default
+LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", "", "LLLIB_LeaderTrader_Default"); // Default
 LLLIB_LeaderTrader_RegisterDialogSettings();
 
 LLLIB_Trader_Register_CreationEvent("LLLIB_LeaderTrader", "LeaderLib_Events_OnLeaderTradeSpawned");
@@ -94,10 +94,10 @@ LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "Arx_Main", 13000);
 LLLIB_Treasure_Register_TreasureToTrader("LLLIB_LeaderTrader_Misc", "LLLIB_LeaderTrader");
 LLLIB_Treasure_Register_TreasureToTrader("LLLIB_LeaderTrader_ModItems", "LLLIB_LeaderTrader");
 LLLIB_Treasure_Register_TreasureToTrader("LLLIB_LeaderTrader_ModBooks", "LLLIB_LeaderTrader");
-LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModBooks", "LLLIB_BOOK_ModSettingsMenu_646a1194-3383-47fa-a379-ebefa3d2b108", 1);
+LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModBooks", "LLLIB_BOOK_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108", 1);
 //LLLIB_Treasure_Register_TreasureTable("LLLIB_LeaderTrader_Misc", "ST_WeaponNormal", "LLLIB_RegionIsFortJoy", 1);
 //LLLIB_Treasure_Register_TreasureTable("LLLIB_LeaderTrader_Misc", "TEST_Generation", "LLLIB_RegionIsDebugLevel", 1);
-//LLLIB_Treasure_Configure_GenerationType("LLLIB_LeaderTrader_ModBooks", "LLLIB_BOOK_ModSettingsMenu_646a1194-3383-47fa-a379-ebefa3d2b108", "DIALOG_STARTED");
+//LLLIB_Treasure_Configure_GenerationType("LLLIB_LeaderTrader_ModBooks", "LLLIB_BOOK_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108", "DIALOG_STARTED");
 //LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModBooks", "CON_Potion_Fire_Res_A_e78b642c-0216-4df4-b691-a41ff4747b6a", 8);
 //LLLIB_Treasure_AddTreasureItemStat("LLLIB_LeaderTrader_ModBooks", "WPN_Cheat_Sword_1H_RuneSlot2", 1);
 
@@ -133,10 +133,10 @@ LLLIB_LeaderTrader_RegisterTrader()
 AND
 NOT DB_LLLIB_LeaderTrader(_)
 AND
-ObjectExists(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574, 1)
+ObjectExists(CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, 1)
 THEN
-DB_LLLIB_LeaderTrader((CHARACTERGUID)CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574);
-LLLIB_Trader_Register_GlobalTrader("LLLIB_LeaderTrader", CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574);
+DB_LLLIB_LeaderTrader((CHARACTERGUID)CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574);
+LLLIB_Trader_Register_GlobalTrader("LLLIB_LeaderTrader", CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574);
 
 //If the global version doesn't exist for some reason, use the template
 PROC
@@ -144,9 +144,9 @@ LLLIB_LeaderTrader_RegisterTrader()
 AND
 NOT DB_LLLIB_LeaderTrader(_)
 AND
-ObjectExists(CHARACTERGUID_S_LLLIB_RetiredLeader_61ae5acc-1537-4970-82bb-d408a3334574, 0)
+ObjectExists(CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, 0)
 THEN
-LLLIB_Trader_Register_Trader("LLLIB_LeaderTrader", "LLLIB_RetiredLeader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e", 0);
+LLLIB_Trader_Register_Trader("LLLIB_LeaderTrader", "LLLIB_LeaderTrader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e", 0);
 //END_REGION
 
 //REGION SETTINGS_UPDATE
@@ -293,10 +293,10 @@ AND
 NOT DB_LLLIB_LeaderTrader_IsRespondingToAttack(_)
 THEN
 DB_LLLIB_LeaderTrader_IsRespondingToAttack(1);
-Proc_StartDialog(1, "LLLIB_RetiredTrader_AttackResponse", _LeaderTrader);
+Proc_StartDialog(1, "LLLIB_LeaderTrader_AttackResponse", _LeaderTrader);
 
 IF
-AutomatedDialogEnded("LLLIB_RetiredTrader_AttackResponse", _Instance)
+AutomatedDialogEnded("LLLIB_LeaderTrader_AttackResponse", _Instance)
 AND
 DB_LLLIB_LeaderTrader_IsRespondingToAttack(_Val)
 THEN
@@ -420,7 +420,7 @@ PROC
 LLLIB_LeaderTrader_OnSpawned((CHARACTERGUID)_LeaderTrader, "LeaderLib_TestLevel")
 THEN
 LLLIB_Treasure_CreateItemByStat_Cleanup(_LeaderTrader);
-//CharacterTransform(_LeaderTrader, "LLLIB_RetiredLeader_Act1_da17fca2-fe16-46d9-80b3-08971a8c8d49", 1, 1, 1, 1, 1, 1, 0);
+//CharacterTransform(_LeaderTrader, "LLLIB_LeaderTrader_Act1_da17fca2-fe16-46d9-80b3-08971a8c8d49", 1, 1, 1, 1, 1, 1, 0);
 LLLIB_Treasure_CreateItemByStat_AddToQueue(_LeaderTrader, "ARM_Purge_UpperBody", 1, 0, 1);
 LLLIB_Treasure_CreateItemByStat_AddToQueue(_LeaderTrader, "ARM_Purge_LowerBody", 1, 0, 1);
 LLLIB_Treasure_CreateItemByStat_Start(_LeaderTrader, 100);
@@ -507,7 +507,7 @@ THEN
 CharacterSetCanTrade(_LeaderTrader, 0);
 
 IF
-DB_Dialogs(_LeaderTrader, "LLLIB_RetiredLeader_Default")
+DB_Dialogs(_LeaderTrader, "LLLIB_LeaderTrader_Default")
 AND
 DB_LLLIB_LeaderTrader((CHARACTERGUID)_LeaderTrader)
 THEN
@@ -549,16 +549,16 @@ LLLIB_LeaderTrader_GiveIntroItems(_Speaker);
 PROC
 LLLIB_LeaderTrader_GiveIntroItems((CHARACTERGUID)_Speaker)
 AND
-DB_LLLIB_Settings_ItemTemplates("Book_ModSettings", _ModSettingsBookTemplate)
+DB_LLLIB_Settings_ItemTemplates("Book_ModMenu", _ModMenuBookTemplate)
 AND
-ItemTemplateIsInUserInventory(_Speaker, _ModSettingsBookTemplate, 0, 0)
+ItemTemplateIsInUserInventory(_Speaker, _ModMenuBookTemplate, 0, 0)
 THEN
-ItemTemplateAddTo(_ModSettingsBookTemplate, _Speaker, 1);
+ItemTemplateAddTo(_ModMenuBookTemplate, _Speaker, 1);
 
 PROC
 LLLIB_LeaderTrader_GiveIntroItems((CHARACTERGUID)_Speaker)
 AND
-DB_LLLIB_Settings_ItemTemplates("Book_ModSettings", _ModSettingsBookTemplate)
+DB_LLLIB_Settings_ItemTemplates("Book_ModMenu", _ModMenuBookTemplate)
 AND
 DB_IsPlayer(_Player)
 AND
@@ -566,11 +566,11 @@ _Player != _Speaker
 AND
 NOT LLLIB_Helper_QRY_UserMatch(_Speaker, _Player)
 AND
-ItemTemplateIsInUserInventory(_Player, _ModSettingsBookTemplate, 0, 0)
+ItemTemplateIsInUserInventory(_Player, _ModMenuBookTemplate, 0, 0)
 AND
 CharacterIsControlled(_Player, 1)
 THEN
-ItemTemplateAddTo(_ModSettingsBookTemplate, _Player, 1);
+ItemTemplateAddTo(_ModMenuBookTemplate, _Player, 1);
 //END_REGION
 
 //REGION FIXES

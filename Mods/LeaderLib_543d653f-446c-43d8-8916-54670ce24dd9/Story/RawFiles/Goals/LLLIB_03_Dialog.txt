@@ -12,12 +12,12 @@ PROC
 LLLIB_Dialog_InitSettings()
 THEN
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_DialogNames", 1);
-DB_LLLIB_DialogNames("LLLIB_ModSettingsMenu");
-DB_LLLIB_DialogNames("LLLIB_RetiredLeader_Default");
-DB_LLLIB_DialogNames("LLLIB_RetiredLeader_FortJoy_Intro");
-DB_LLLIB_DialogNames("LLLIB_RetiredLeader_LadyVengeance_Intro");
-DB_LLLIB_DialogNames("LLLIB_RetiredLeader_Tutorial_Intro");
-DB_LLLIB_DialogNames("LLLIB_RetiredTrader_AttackResponse");
+DB_LLLIB_DialogNames("LLLIB_ModMenu");
+DB_LLLIB_DialogNames("LLLIB_LeaderTrader_Default");
+DB_LLLIB_DialogNames("LLLIB_LeaderTrader_FortJoy_Intro");
+DB_LLLIB_DialogNames("LLLIB_LeaderTrader_LadyVengeance_Intro");
+DB_LLLIB_DialogNames("LLLIB_LeaderTrader_Tutorial_Intro");
+DB_LLLIB_DialogNames("LLLIB_LeaderTrader_AttackResponse");
 DB_LLLIB_DialogNames("LLLIB_SettingsMenu");
 
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_Dialog_AttitudeFlags", 2);
@@ -35,7 +35,7 @@ DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_DecreaseAttitude_75", -75);
 DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_DecreaseAttitude_100", -100);
 
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_DialogVars", 2);
-DB_LLLIB_DialogVars("ModSettings_PageInfo", "LLLIB_ModSettings_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156");
+DB_LLLIB_DialogVars("ModMenu_PageInfo", "LLLIB_ModMenu_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156");
 DB_LLLIB_DialogVars("Settings_ModList", "LLLIB_Settings_ModList_50c55fbe-ad1e-490e-92d1-8836ca42ca12");
 DB_LLLIB_DialogVars("SpeakerName", "LLLIB_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b");
 DB_LLLIB_DialogVars("PlayerName", "LLLIB_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3");
@@ -154,11 +154,11 @@ DialogSetVariableStringForInstance(_Instance, _SpeakerVar, _Name);
 
 //REGION FLAG_COMMANDS
 IF
-ObjectFlagSet("LeaderLib_GrantModSettingsBook", _Object, _Instance)
+ObjectFlagSet("LeaderLib_GrantModMenuBook", _Object, _Instance)
 AND
-LLLIB_Helper_QRY_ClearObjectFlag(_Object, "LeaderLib_GrantModSettingsBook")
+LLLIB_Helper_QRY_ClearObjectFlag(_Object, "LeaderLib_GrantModMenuBook")
 AND
-DB_LLLIB_Settings_ItemTemplates("Book_ModSettings", _ItemTemplate)
+DB_LLLIB_Settings_ItemTemplates("Book_ModMenu", _ItemTemplate)
 THEN
 ItemTemplateAddTo(_ItemTemplate, _Object, 1);
 

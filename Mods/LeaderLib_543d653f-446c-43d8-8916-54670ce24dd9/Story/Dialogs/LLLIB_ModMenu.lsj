@@ -1,7 +1,7 @@
 {
    "save" : {
       "header" : {
-         "time" : 1521910324,
+         "time" : 1522717433,
          "version" : "2.0.8.2"
       },
       "regions" : {
@@ -60,7 +60,7 @@
                                                 "TagText" : {
                                                    "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
                                                    "type" : 28,
-                                                   "value" : "[LLLIB_ModSettings_Menu3_cf00a8c6-02d2-4fda-a766-4f533ac93b2d]"
+                                                   "value" : "[LLLIB_ModMenu_Menu3_cf00a8c6-02d2-4fda-a766-4f533ac93b2d]"
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -80,7 +80,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_ModSettings_MenuEmpty3"},
+                                          "name" : {"type" : 22, "value" : "LLLIB_ModMenu_MenuEmpty3"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
@@ -133,7 +133,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_ModSettings_SelectedMenu3"},
+                                          "name" : {"type" : 22, "value" : "LLLIB_ModMenu_SelectedMenu3"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
@@ -189,7 +189,7 @@
                                                 "TagText" : {
                                                    "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
                                                    "type" : 28,
-                                                   "value" : "[LLLIB_ModSettings_Menu1_783ec14d-2861-4345-8dbc-45974fa34e15]"
+                                                   "value" : "[LLLIB_ModMenu_Menu1_783ec14d-2861-4345-8dbc-45974fa34e15]"
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -209,7 +209,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_ModSettings_MenuEmpty1"},
+                                          "name" : {"type" : 22, "value" : "LLLIB_ModMenu_MenuEmpty1"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
@@ -262,7 +262,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_ModSettings_SelectedMenu1"},
+                                          "name" : {"type" : 22, "value" : "LLLIB_ModMenu_SelectedMenu1"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
@@ -318,7 +318,7 @@
                                                 "TagText" : {
                                                    "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
                                                    "type" : 28,
-                                                   "value" : "[LLLIB_ModSettings_Menu4_337a1066-9a85-4005-a2dc-f0156bf13d16]"
+                                                   "value" : "[LLLIB_ModMenu_Menu4_337a1066-9a85-4005-a2dc-f0156bf13d16]"
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -338,7 +338,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_ModSettings_MenuEmpty4"},
+                                          "name" : {"type" : 22, "value" : "LLLIB_ModMenu_MenuEmpty4"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
@@ -391,7 +391,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_ModSettings_SelectedMenu4"},
+                                          "name" : {"type" : 22, "value" : "LLLIB_ModMenu_SelectedMenu4"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
@@ -537,7 +537,7 @@
                                                 "TagText" : {
                                                    "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
                                                    "type" : 28,
-                                                   "value" : "[LLLIB_ModSettings_Menu7_888ce02f-83ff-4173-be8d-f41fd348358f]"
+                                                   "value" : "[LLLIB_ModMenu_Menu7_888ce02f-83ff-4173-be8d-f41fd348358f]"
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -557,7 +557,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_ModSettings_MenuEmpty7"},
+                                          "name" : {"type" : 22, "value" : "LLLIB_ModMenu_MenuEmpty7"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
@@ -610,7 +610,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_ModSettings_SelectedMenu7"},
+                                          "name" : {"type" : 22, "value" : "LLLIB_ModMenu_SelectedMenu7"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
@@ -666,7 +666,7 @@
                                                 "TagText" : {
                                                    "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
                                                    "type" : 28,
-                                                   "value" : "[LLLIB_ModSettings_Menu6_863af621-ff0c-454a-b6a3-7c9d3166a8a0]"
+                                                   "value" : "[LLLIB_ModMenu_Menu6_863af621-ff0c-454a-b6a3-7c9d3166a8a0]"
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -686,7 +686,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_ModSettings_MenuEmpty6"},
+                                          "name" : {"type" : 22, "value" : "LLLIB_ModMenu_MenuEmpty6"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
@@ -739,7 +739,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_ModSettings_SelectedMenu6"},
+                                          "name" : {"type" : 22, "value" : "LLLIB_ModMenu_SelectedMenu6"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
@@ -795,7 +795,7 @@
                                                 "TagText" : {
                                                    "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
                                                    "type" : 28,
-                                                   "value" : "[LLLIB_ModSettings_Menu2_9a2d2990-5cff-420e-ba8a-37f9510ab9e1]"
+                                                   "value" : "[LLLIB_ModMenu_Menu2_9a2d2990-5cff-420e-ba8a-37f9510ab9e1]"
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -815,7 +815,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_ModSettings_MenuEmpty2"},
+                                          "name" : {"type" : 22, "value" : "LLLIB_ModMenu_MenuEmpty2"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
@@ -868,7 +868,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_ModSettings_SelectedMenu2"},
+                                          "name" : {"type" : 22, "value" : "LLLIB_ModMenu_SelectedMenu2"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
@@ -924,7 +924,7 @@
                                                 "TagText" : {
                                                    "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
                                                    "type" : 28,
-                                                   "value" : "[LLLIB_ModSettings_Menu8_a6aa98e6-cde4-491b-a2cb-2cd7d5d71f96]"
+                                                   "value" : "[LLLIB_ModMenu_Menu8_a6aa98e6-cde4-491b-a2cb-2cd7d5d71f96]"
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -944,7 +944,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_ModSettings_MenuEmpty8"},
+                                          "name" : {"type" : 22, "value" : "LLLIB_ModMenu_MenuEmpty8"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
@@ -997,7 +997,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_ModSettings_SelectedMenu8"},
+                                          "name" : {"type" : 22, "value" : "LLLIB_ModMenu_SelectedMenu8"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
@@ -1068,12 +1068,12 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_ModSettings_HasMultiplePages"},
+                                          "name" : {"type" : 22, "value" : "LLLIB_ModMenu_HasMultiplePages"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 1}
                                        },
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_ModSettings_HidePreviousPageButton"},
+                                          "name" : {"type" : 22, "value" : "LLLIB_ModMenu_HidePreviousPageButton"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
@@ -1126,7 +1126,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_ModSettings_PreviousPage"},
+                                          "name" : {"type" : 22, "value" : "LLLIB_ModMenu_PreviousPage"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
@@ -1197,12 +1197,12 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_ModSettings_HasMultiplePages"},
+                                          "name" : {"type" : 22, "value" : "LLLIB_ModMenu_HasMultiplePages"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 1}
                                        },
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_ModSettings_HideNextPageButton"},
+                                          "name" : {"type" : 22, "value" : "LLLIB_ModMenu_HideNextPageButton"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
@@ -1255,7 +1255,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_ModSettings_NextPage"},
+                                          "name" : {"type" : 22, "value" : "LLLIB_ModMenu_NextPage"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
@@ -1409,7 +1409,7 @@
                                                 "TagText" : {
                                                    "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
                                                    "type" : 28,
-                                                   "value" : "[LLLIB_ModSettings_Menu5_45148ce6-e8f3-4af4-81ed-a3b2e1ff8a17]"
+                                                   "value" : "[LLLIB_ModMenu_Menu5_45148ce6-e8f3-4af4-81ed-a3b2e1ff8a17]"
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -1429,7 +1429,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_ModSettings_MenuEmpty5"},
+                                          "name" : {"type" : 22, "value" : "LLLIB_ModMenu_MenuEmpty5"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
@@ -1482,7 +1482,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_ModSettings_SelectedMenu5"},
+                                          "name" : {"type" : 22, "value" : "LLLIB_ModMenu_SelectedMenu5"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
@@ -1628,7 +1628,7 @@
                                                 "TagText" : {
                                                    "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
                                                    "type" : 28,
-                                                   "value" : "Mods<br>[LLLIB_ModSettings_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156]"
+                                                   "value" : "Mods<br>[LLLIB_ModMenu_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156]"
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }

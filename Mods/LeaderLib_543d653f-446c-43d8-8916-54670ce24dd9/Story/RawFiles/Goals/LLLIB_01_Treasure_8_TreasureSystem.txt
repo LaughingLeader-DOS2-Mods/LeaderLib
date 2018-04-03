@@ -40,11 +40,6 @@ INITSECTION
 //DB_LLLIB_Treasure_Temp_ItemGenerationQueue(_ID, _Object, _TreasureID, _GenerationType)
 KBSECTION
 //REGION UPDATER
-IF
-StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
-THEN
-DB_NOOP(1);
-
 PROC
 LLLIB_System_RegisterDatabases()
 THEN
@@ -716,6 +711,25 @@ THEN
 NOT DB_LLLIB_Treasure_Temp_QueueTimerActive(_Active, _TickRate);
 LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:OnGenerationFinished] Item generation queue complete.");
 LeaderLib_SendEvent("LeaderLib_Events_OnTreasureQueueComplete");
+//END_REGION
+
+//REGION STOP_QUEUE
+IF
+DB_LLLIB_EventFlow_StopEvent("LeaderLib_Commands_StartTreasureGenerationQueue")
+THEN
+LLLIB_Treasure_Internal_StopQueue();
+NOT DB_LLLIB_EventFlow_StopEvent("LeaderLib_Commands_StartTreasureGenerationQueue");
+
+PROC
+LLLIB_Treasure_Internal_StopQueue()
+THEN
+TimerCancel("LLLIB_Timers_Treasure_TimeoutTimer");
+TimerCancel("LLLIB_Timers_Treasure_ItemQueue");
+LLLIB_Array_ClearArray("LLLIB_ItemGenerationQueue");
+SysClear("DB_LLLIB_Treasure_Temp_QueueTimerActive", 2);
+SysClear("DB_LLLIB_Treasure_Temp_TimeoutTimerActive", 4);
+SysClear("DB_LLLIB_Treasure_Temp_ItemGenerationQueue", 4);
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:StopQueue] Item generation queue forcefully stopped.");
 //END_REGION
 
 //REGION FLAG_RESET

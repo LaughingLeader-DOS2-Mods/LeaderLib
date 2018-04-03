@@ -477,6 +477,62 @@ NOT DB_LLLIB_Dictionary_Data(_ID, _Index, _Key, _Value);
 DB_LLLIB_Dictionary_Data(_ID, _NextIndex, _Key, _Value);
 //END_REGION
 
+//REGION DICTIONARY_CLEAR
+QRY
+LLLIB_Array_QRY_ClearDictionaryEntries((STRING)_ID)
+THEN
+LLLIB_Array_ClearDictionaryEntries(_ID);
+
+PROC
+LLLIB_Array_ClearDictionaryEntries((STRING)_ID)
+AND
+DB_LLLIB_Dictionary_Data(_ID, _Index, _Key, _Value)
+THEN
+NOT DB_LLLIB_Dictionary_Data(_ID, _Index, _Key, _Value);
+
+PROC
+LLLIB_Array_ClearDictionaryLength((STRING)_ID)
+AND
+DB_LLLIB_Array_Length(_ID, _Length)
+THEN
+NOT DB_LLLIB_Array_Length(_ID, _Length);
+
+PROC
+LLLIB_Array_ClearDictionaryIterators((STRING)_ID)
+AND
+DB_LLLIB_Array_Iterator(_ID, _CurrentIndex)
+THEN
+NOT DB_LLLIB_Array_Iterator(_ID, _CurrentIndex);
+
+PROC
+LLLIB_Array_ClearDictionaryIterators((STRING)_ID)
+AND
+DB_LLLIB_Array_Temp_ArrayIteratorBuilder(_ID, _CurrentIndex, _Length)
+THEN
+NOT DB_LLLIB_Array_Temp_ArrayIteratorBuilder(_ID, _CurrentIndex, _Length);
+
+PROC
+LLLIB_Array_ClearDictionary((STRING)_ID)
+THEN
+LLLIB_Array_ClearDictionaryEntries(_ID);
+LLLIB_Array_ClearDictionaryIterators(_ID);
+LLLIB_Array_ClearDictionaryLength(_ID);
+
+PROC
+LLLIB_Array_ClearDictionary((STRING)_ID)
+AND
+DB_LLLIB_Array_Temp_PopValue(_ID, _Value)
+THEN
+NOT DB_LLLIB_Array_Temp_PopValue(_ID, _Value);
+
+PROC
+LLLIB_Array_ClearDictionary((STRING)_ID)
+AND
+DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value)
+THEN
+NOT DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value);
+//END_REGION
+
 //REGION DEBUG
 /*
 PROC
@@ -543,12 +599,6 @@ LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:ShiftArrayUp(",_StartIndexStr,
 //END_REGION
 
 //REGION UPDATER
-IF
-StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
-THEN
-//LeaderLog_Log("SYSTEM", "[LLLIB:DatabaseExtensions] Databases updated.");
-DB_NOOP(1);
-
 PROC
 LLLIB_System_RegisterDatabases()
 THEN

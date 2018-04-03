@@ -35,11 +35,7 @@ THEN
 LLLIB_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_SpawnTraders", "LeaderLib_Events_OnTraderSpawnComplete");
 LLLIB_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_StartTreasureGenerationQueue", "LeaderLib_Events_OnTreasureQueueComplete");
 LLLIB_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_CheckTraders", "LeaderLib_Events_OnTraderCheckingComplete");
-
-PROC
-LLLIB_EventFlow_Init_LeaderLibStack()
-THEN
-LLLIB_Updater_SaveSettingsVersionData("EventFlow_LeaderLib_DefaultStack");
+LLLIB_Updater_SaveSettingsVersionData("LLLIB_Settings_EventFlowDefaultStack");
 //END_REGION
 
 //REGION DEFAULT_START
@@ -227,8 +223,13 @@ LLLIB_EventFlow_Clear_StackData((STRING)_StackName)
 AND
 DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime)
 THEN
-LLLIB_Array_ClearArray(_StackName);
+LLLIB_Array_ClearDictionary(_StackName);
 NOT DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime);
+
+PROC
+LLLIB_EventFlow_Clear_StackData((STRING)_StackName)
+THEN
+LLLIB_EventFlow_Clear_SessionData(_StackName);
 
 PROC
 LLLIB_EventFlow_Clear_SessionData((STRING)_StackName)
@@ -236,6 +237,14 @@ AND
 DB_LLLIB_EventFlow_CurrentEvent(_StackName, _Index)
 THEN
 NOT DB_LLLIB_EventFlow_CurrentEvent(_StackName, _Index);
+
+PROC
+LLLIB_EventFlow_Clear_SessionData((STRING)_StackName)
+AND
+DB_LLLIB_EventFlow_WaitTimer(_StackName, _TimerName)
+THEN
+TimerCancel(_TimerName);
+NOT DB_LLLIB_EventFlow_WaitTimer(_StackName, _TimerName);
 
 PROC
 LLLIB_EventFlow_Clear_SessionData((STRING)_StackName)
@@ -260,16 +269,28 @@ LLLIB_EventFlow_Clear_SessionData(_StackName);
 PROC
 LLLIB_EventFlow_ForceStop((STRING)_StackName)
 THEN
+LeaderLog_Log("DEBUG", "[LLLIB:EventFlow:ForceStop] Forcefully stopping event flow [",_StackName,"]. Sending stop events for all entries in the stack.");
 LLLIB_EventFlow_CancelAllTimeoutTimers(_StackName);
 LLLIB_EventFlow_CancelWaitTimer(_StackName);
+
+PROC
+LLLIB_EventFlow_ForceStop((STRING)_StackName)
+AND
+DB_LLLIB_Dictionary_Data("LLLIB_System_EventStack", _Index, _StartEvent, _CompleteEvent)
+THEN
+DB_LLLIB_EventFlow_StopEvent(_StartEvent);
+
+PROC
+LLLIB_EventFlow_ForceStop((STRING)_StackName)
+THEN
 LLLIB_EventFlow_Clear_SessionData(_StackName);
 //END_REGION
 
 //REGION UPDATER
 IF
-StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
+StoryEvent(_,"LLLIB_Events_OnUpdateSettings")
 AND
-LLLIB_Updater_QRY_SettingsNeedsUpdate("EventFlow_LeaderLib_DefaultStack")
+LLLIB_Updater_QRY_SettingsNeedsUpdate("LLLIB_Settings_EventFlowDefaultStack")
 THEN
 LLLIB_EventFlow_Init_LeaderLibStack();
 

@@ -340,11 +340,6 @@ DB_NOOP(1);
 //END_REGION
 
 //REGION UPDATER
-IF
-StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
-THEN
-DB_NOOP(1);
-
 PROC
 LLLIB_System_RegisterDatabases()
 THEN

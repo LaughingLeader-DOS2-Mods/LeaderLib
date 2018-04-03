@@ -10,11 +10,6 @@ INITSECTION
 //DB_LLLIB_Requirements_IsUnlocked(_RequirementID)
 KBSECTION
 //REGION UPDATER
-IF
-StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
-THEN
-DB_NOOP(1);
-
 PROC
 LLLIB_System_RegisterDatabases()
 THEN

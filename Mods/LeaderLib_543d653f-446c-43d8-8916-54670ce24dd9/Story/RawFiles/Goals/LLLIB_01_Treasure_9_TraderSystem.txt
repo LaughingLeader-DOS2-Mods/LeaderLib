@@ -409,15 +409,6 @@ THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Traders] Creating traders for level ",_Level);
 LLLIB_Traders_CreateTraders(_Level);
 
-/*
-IF
-TimerFinished("LLLIB_Timers_CreateTraders")
-AND
-DB_IsPlayer(_Player)
-THEN
-OpenMessageBox(_Player, "Spawning traders");
-*/
-
 IF
 RegionEnded(_Level)
 AND
@@ -559,6 +550,41 @@ LLLIB_Array_ClearArray(_ArrayID);
 NOT DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID);
 LeaderLog_Log("DEBUG", "[LLLIB:Traders:SpawnQueue] Spawn queue complete. Clearing queue and sending event [LeaderLib_Events_OnTraderSpawnComplete].");
 LeaderLib_SendEvent("LeaderLib_Events_OnTraderSpawnComplete");
+//END_REGION
+
+//REGION STOP_QUEUE
+IF
+DB_LLLIB_EventFlow_StopEvent("LeaderLib_Commands_SpawnTraders")
+THEN
+LLLIB_Traders_Internal_StopSpawnQueue();
+NOT DB_LLLIB_EventFlow_StopEvent("LeaderLib_Commands_SpawnTraders");
+
+PROC
+LLLIB_Traders_Internal_StopSpawnQueue()
+AND
+DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID)
+THEN
+LLLIB_Array_ClearArray(_ArrayID);
+
+PROC
+LLLIB_Traders_Internal_StopSpawnQueue()
+AND
+DB_LLLIB_Traders_Temp_SpawnTimeoutTimer(_ArrayID, _TraderID, _TimerName)
+THEN
+TimerCancel(_TimerName);
+
+PROC
+LLLIB_Traders_Internal_StopSpawnQueue()
+THEN
+TimerCancel("LLLIB_Timers_Traders_SpawnQueueTimer");
+LLLIB_Traders_Internal_ClearSpawnQueue();
+
+PROC
+LLLIB_Traders_Internal_ClearSpawnQueue()
+THEN
+SysClear("DB_LLLIB_Traders_Temp_CurrentSpawnQueue", 2);
+SysClear("DB_LLLIB_Traders_Temp_CurrentlySpawning", 2);
+SysClear("DB_LLLIB_Traders_Temp_SpawnTimeoutTimer", 3);
 //END_REGION
 
 //REGION SPAWNING
@@ -892,6 +918,18 @@ StoryEvent(_, "LLLIB_Events_OnCheckTraderQueueComplete")
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:TraderSystem:CheckTraders] Trader check complete. Sending event [LeaderLib_Events_OnTraderCheckingComplete].");
 LeaderLib_SendEvent("LeaderLib_Events_OnTraderCheckingComplete");
+
+IF
+DB_LLLIB_EventFlow_StopEvent("LeaderLib_Commands_CheckTraders")
+THEN
+LLLIB_Traders_Internal_StopCheckingTraders();
+NOT DB_LLLIB_EventFlow_StopEvent("LeaderLib_Commands_CheckTraders");
+
+PROC
+LLLIB_Traders_Internal_StopCheckingTraders()
+THEN
+LLLIB_Queue_Stop("LLLIB_Traders_CheckQueue");
+LLLIB_Queue_ClearQueue("LLLIB_Traders_CheckQueue");
 //END_REGION
 
 //REGION SITTING
@@ -984,11 +1022,6 @@ RemoveStatus(_Trader, "LLLIB_NEW_ITEMS");
 //END_REGION
 
 //REGION UPDATER
-IF
-StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
-THEN
-DB_NOOP(1);
-
 PROC
 LLLIB_System_RegisterDatabases()
 THEN

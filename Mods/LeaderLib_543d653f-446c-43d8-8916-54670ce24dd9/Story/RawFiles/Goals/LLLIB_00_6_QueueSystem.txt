@@ -29,6 +29,14 @@ DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _Iterat
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:QueueSystem:Start] Starting queue [",_QueueID,"].");
 LLLIB_Queue_Internal_NextTick(_QueueID);
+
+PROC
+LLLIB_Queue_Stop((STRING)_QueueID)
+AND
+DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
+THEN
+TimerCancel(_TimerName);
+LLLIB_Queue_Internal_CancelTimeoutTimer(_QueueID);
 //END_REGION
 
 //REGION TICK_LOOP
@@ -175,12 +183,6 @@ TimerCancel(_TimerName);
 //END_REGION
 
 //REGION UPDATER
-IF
-StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
-THEN
-//LeaderLog_Log("SYSTEM", "[LLLIB:QueueSystem] Databases updated.");
-DB_NOOP(1);
-
 PROC
 LLLIB_System_RegisterDatabases()
 THEN

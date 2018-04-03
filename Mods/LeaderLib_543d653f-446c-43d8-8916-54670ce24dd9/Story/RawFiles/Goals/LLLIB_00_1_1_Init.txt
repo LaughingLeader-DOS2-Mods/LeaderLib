@@ -1,0 +1,23 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+//Initializing the mod version here, so settings will use this version
+LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", "0.9.0.0");
+KBSECTION
+//REGION LEADER_UPDATER_ALIASES
+PROC
+LLLIB_Updater_SaveSettingsVersionData((STRING)_SettingsID)
+THEN
+LeaderUpdater_SaveSettingsVersionData("LeaderLib", "LaughingLeader", _SettingsID);
+
+QRY
+LLLIB_Updater_QRY_SettingsNeedsUpdate((STRING)_SettingsID)
+AND
+LeaderUpdater_QRY_SettingsNeedsUpdate("LeaderLib", "LaughingLeader", _SettingsID)
+THEN
+DB_NOOP(1);
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

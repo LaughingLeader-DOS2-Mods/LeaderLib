@@ -10,6 +10,7 @@ KBSECTION
 PROC
 LLLIB_Codex_InitSettings()
 THEN
+LLLIB_Updater_SaveSettingsVersionData("LLLIB_Settings_Codex");
 LLLIB_Codex_BuildIterator(256);
 LLLIB_Codex_BuildCodex();
 
@@ -146,10 +147,12 @@ DB_LLLIB_Temp_BuildSortIterator(_NextIndex, _Max);
 
 //REGION UPDATER
 IF
-StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
+StoryEvent(_,"LLLIB_Events_OnUpdateSettings")
+AND
+LLLIB_Updater_QRY_SettingsNeedsUpdate("LLLIB_Settings_Codex")
 THEN
 LLLIB_Codex_InitSettings();
-LeaderLog_Log("SYSTEM", "[LLLIB:Codex] Databases updated.");
+LeaderLog_Log("SYSTEM", "[LLLIB:Codex] Settings updated.");
 
 PROC
 LLLIB_System_RegisterDatabases()

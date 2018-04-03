@@ -152,6 +152,13 @@ THEN
 NOT DB_Mods_ActiveGoal(_ModName, _Author, _GoalTitle);
 
 PROC
+LeaderUpdater_Clear_AllSavedSettings((STRING)_ModName, (STRING)_Author)
+AND
+DB_LeaderUpdater_LastSavedSettings(_ModName, _Author, _SettingsID, _Version)
+THEN
+NOT DB_LeaderUpdater_LastSavedSettings(_ModName, _Author, _SettingsID, _Version);
+
+PROC
 LeaderUpdater_Clear_AllDatabases((STRING)_ModName, (STRING)_Author)
 AND
 DB_LeaderUpdater_RegisteredDatabase(_ModName, _Author, _GoalTitle, _DatabaseName, _Arity)
@@ -190,12 +197,6 @@ NOT DB_LeaderUpdater_RegisteredGoal(_ModName, _Author, _GoalTitle);
 //END_REGION
 
 //REGION UPDATER
-IF
-StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
-THEN
-//LeaderLog_Log("SYSTEM", "[LLLIB:LeaderUpdater] Databases updated.");
-DB_NOOP(1);
-
 PROC
 LLLIB_System_RegisterDatabases()
 THEN

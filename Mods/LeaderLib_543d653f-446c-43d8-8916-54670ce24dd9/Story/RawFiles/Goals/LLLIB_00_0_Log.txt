@@ -589,12 +589,6 @@ LeaderLog_ClearAllTargets();
 //END_REGION
 
 //REGION UPDATER
-IF
-StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
-THEN
-//LeaderLog_Log("SYSTEM", "[LLLIB:LeaderLog] Databases updated.");
-DB_NOOP(1);
-
 PROC
 LLLIB_System_RegisterDatabases()
 THEN
@@ -602,6 +596,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderLog", "DB_
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderLog", "DB_LeaderLog_Temp_NextLogTarget", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderLog", "DB_LeaderLog_Temp_TargetOnce", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderLog", "DB_LeaderLog_Temp_NextStatusColor", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderLog", "DB_LeaderLog_InitialEnable", 1);
 LeaderLog_Log("SYSTEM", "[LLLIB:LeaderLog] Databases registered.");
 //END_REGION
 EXITSECTION

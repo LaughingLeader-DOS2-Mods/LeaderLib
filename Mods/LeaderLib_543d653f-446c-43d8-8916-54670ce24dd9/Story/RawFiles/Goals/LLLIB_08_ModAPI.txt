@@ -21,11 +21,6 @@ INITSECTION
 //DB_LeaderLib_ModApi_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _Str9, _Str10)
 KBSECTION
 //REGION UPDATER
-IF
-StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
-THEN
-DB_NOOP(1);
-
 PROC
 LLLIB_System_RegisterDatabases()
 THEN

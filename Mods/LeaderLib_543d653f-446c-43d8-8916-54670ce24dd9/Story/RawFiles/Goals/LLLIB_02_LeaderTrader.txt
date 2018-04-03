@@ -14,14 +14,11 @@ LLLIB_LeaderTrader_RegisterTraderSettings();
 //DB_LLLIB_LeaderTrader_CurrentAppearance(_Template)
 KBSECTION
 //REGION INIT
-IF
-StoryEvent(_, "LLLIB_Events_UpdateDatabases")
-THEN
-LLLIB_LeaderTrader_InitSettings();
-
 PROC
 LLLIB_LeaderTrader_InitSettings()
 THEN
+LLLIB_Updater_SaveSettingsVersionData("LLLIB_Settings_LeaderTrader");
+
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_LeaderTrader_Dialog", 2);
 DB_LLLIB_LeaderTrader_Dialog("Default", "LLLIB_LeaderTrader_Default");
 DB_LLLIB_LeaderTrader_Dialog("Tutorial_Intro", "LLLIB_LeaderTrader_Tutorial_Intro");
@@ -588,10 +585,12 @@ ObjectSetFlag(_LeaderTrader, "LLLIB_LeaderTrader_GaveIntroItems");
 
 //REGION UPDATER
 IF
-StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
+StoryEvent(_,"LLLIB_Events_OnUpdateSettings")
+AND
+LLLIB_Updater_QRY_SettingsNeedsUpdate("LLLIB_Settings_LeaderTrader")
 THEN
 LLLIB_LeaderTrader_InitSettings();
-LeaderLog_Log("SYSTEM", "[LLLIB:LeaderTrader] Databases updated.");
+LeaderLog_Log("SYSTEM", "[LLLIB:LeaderTrader] Settings updated.");
 
 PROC
 LLLIB_System_RegisterDatabases()

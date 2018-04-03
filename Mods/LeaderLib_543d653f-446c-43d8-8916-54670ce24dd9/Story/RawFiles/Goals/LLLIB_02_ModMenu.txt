@@ -76,6 +76,8 @@ LeaderLog_Log("DEBUG", "[LLLIB:ModMenu] Max page set: LastIndex[",_Str1,"] LastP
 PROC
 LLLIB_ModMenu_InitSettings()
 THEN
+LLLIB_Updater_SaveSettingsVersionData("LLLIB_Settings_ModMenu");
+
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_ModMenu_SortTickRate", 1);
 DB_LLLIB_ModMenu_SortTickRate(1);
 
@@ -133,6 +135,12 @@ LLLIB_ModMenu_QRY_SortNeeded()
 THEN
 //TimerLaunch("LLLIB_Timers_ModMenu_SortMenus", 500);
 LLLIB_ModMenu_StartSorting();
+
+IF
+DB_LLLIB_EventFlow_StopEvent("LeaderLib_Commands_SortMenus")
+THEN
+LLLIB_DictionarySort_StopSorting("LLLIB_RegisteredMenus");
+NOT DB_LLLIB_EventFlow_StopEvent("LeaderLib_Commands_SortMenus");
 
 PROC
 LLLIB_ModMenu_SetSortTickRate((INTEGER)_TickRate)
@@ -630,10 +638,12 @@ Proc_StartDialog(0, "LLLIB_ModMenu", _Book, _Player);
 
 //REGION UPDATER
 IF
-StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
+StoryEvent(_,"LLLIB_Events_OnUpdateSettings")
+AND
+LLLIB_Updater_QRY_SettingsNeedsUpdate("LLLIB_Settings_ModMenu")
 THEN
 LLLIB_ModMenu_InitSettings();
-LeaderLog_Log("SYSTEM", "[LLLIB:ModMenu] Databases updated.");
+LeaderLog_Log("SYSTEM", "[LLLIB:ModMenu] Settings updated.");
 
 PROC
 LLLIB_System_RegisterDatabases()

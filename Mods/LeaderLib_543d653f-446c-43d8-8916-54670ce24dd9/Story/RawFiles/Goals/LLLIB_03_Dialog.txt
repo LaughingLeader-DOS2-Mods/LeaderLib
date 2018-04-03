@@ -11,6 +11,8 @@ KBSECTION
 PROC
 LLLIB_Dialog_InitSettings()
 THEN
+LLLIB_Updater_SaveSettingsVersionData("LLLIB_Settings_Dialog");
+
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_DialogNames", 1);
 DB_LLLIB_DialogNames("LLLIB_ModMenu");
 DB_LLLIB_DialogNames("LLLIB_LeaderTrader_Default");
@@ -44,10 +46,12 @@ DB_LLLIB_DialogVars("LeaderTrader_Greeting", "LLLIB_LeaderTrader_Greeting_f143b9
 
 //REGION UPDATER
 IF
-StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
+StoryEvent(_,"LLLIB_Events_OnUpdateSettings")
+AND
+LLLIB_Updater_QRY_SettingsNeedsUpdate("LLLIB_Settings_Dialog")
 THEN
 LLLIB_Dialog_InitSettings();
-LeaderLog_Log("SYSTEM", "[LLLIB:Dialog] Databases updated.");
+LeaderLog_Log("SYSTEM", "[LLLIB:Dialog] Settings updated.");
 
 PROC
 LLLIB_System_RegisterDatabases()

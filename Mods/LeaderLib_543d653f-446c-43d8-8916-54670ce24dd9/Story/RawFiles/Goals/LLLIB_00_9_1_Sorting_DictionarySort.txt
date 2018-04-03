@@ -70,6 +70,31 @@ THEN
 LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort:StartSorting] Started sorting dictionary '",_DictionaryID,"' at a tick rate of [",_TickRateStr,"].");
 //END_REGION
 
+//REGION STOP
+PROC
+LLLIB_DictionarySort_StopSorting((STRING)_DictionaryID)
+AND
+DB_LLLIB_DictionarySort_TimerRunning(_DictionaryID, _TimerName)
+THEN
+TimerCancel(_TimerName);
+
+PROC
+LLLIB_DictionarySort_StopSorting((STRING)_DictionaryID)
+AND
+DB_LLLIB_DictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex)
+THEN
+TimerCancel(_TimerName);
+
+PROC
+LLLIB_DictionarySort_StopSorting((STRING)_DictionaryID)
+AND
+DB_LLLIB_DictionarySort_SortingStarted(_DictionaryID, _)
+THEN
+LLLIB_DictionarySort_CleanupJob(_DictionaryID);
+LLLIB_DictionarySort_CleanupLastTrackedTime(_DictionaryID);
+LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort:StopSorting] Sorting stopped for '",_DictionaryID,"'. Cleaned up data.");
+//END_REGION
+
 //REGION COMPLETE
 PROC
 LLLIB_DictionarySort_SortingComplete((STRING)_DictionaryID)
@@ -468,11 +493,6 @@ LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort:OnIterator] Iterating [",_Dictiona
 //END_REGION
 
 //REGION UPDATER
-IF
-StoryEvent(_,"LeaderLib_Commands_UpdateSettings")
-THEN
-DB_NOOP(1);
-
 PROC
 LLLIB_System_RegisterDatabases()
 THEN

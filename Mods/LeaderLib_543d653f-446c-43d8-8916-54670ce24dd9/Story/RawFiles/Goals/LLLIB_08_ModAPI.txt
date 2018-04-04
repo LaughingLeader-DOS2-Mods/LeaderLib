@@ -24,7 +24,6 @@ KBSECTION
 PROC
 LLLIB_System_RegisterDatabases()
 THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_Initialized", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_RegisterMenu", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_AddItemToLeaderTrader", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_AddBookToLeaderTrader", 2);

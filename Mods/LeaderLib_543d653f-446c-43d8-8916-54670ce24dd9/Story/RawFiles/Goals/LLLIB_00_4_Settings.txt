@@ -62,7 +62,7 @@ LeaderLog_Log("SYSTEM", "[LLLIB:Settings] Settings updated.");
 PROC
 LLLIB_System_RegisterDatabases()
 THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_QueueRates", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_QueueRates", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_ItemTemplates", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_DialogVariables", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_Iterator", 1);

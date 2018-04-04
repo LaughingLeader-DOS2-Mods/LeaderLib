@@ -8,6 +8,7 @@ LLLIB_ModMenu_InitSettings();
 //DB_LLLIB_ModMenu_MenuVars(_MenuIndex, _DialogVar, _SelectFlag, _DisabledFlag)
 //DB_LLLIB_ModMenu_MenusPerPage(_MaxPerPage)
 //DB_LLLIB_ModMenu_SortTickRate(_Rate)
+//DB_LLLIB_ModMenu_Temp_SortStarted(_Val)
 
 //Dynamic
 //DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _Index, _ID, _DisplayName)
@@ -99,13 +100,26 @@ DB_LLLIB_ModMenu_MenuVars(7, "LLLIB_ModMenu_Menu8_a6aa98e6-cde4-491b-a2cb-2cd7d5
 PROC
 LLLIB_ModMenu_Internal_StartSortIfNeeded()
 AND
+NOT DB_LLLIB_ModMenu_Temp_SortStarted(_)
+AND
 DB_LeaderLib_Initialized(1)
 AND
 GlobalGetFlag("LeaderLib_DefaultEventFlowRunning", 0)
 AND
 LLLIB_ModMenu_QRY_SortNeeded()
 THEN
-LeaderLib_SendEvent("LeaderLib_Commands_SortMenus");
+TimerCancel("LLLIB_ModMenu_StartManualSortTimer");
+TimerLaunch("LLLIB_ModMenu_StartManualSortTimer", 500);
+
+IF
+StoryEvent(_, "LeaderLib_Commands_SortMenus")
+THEN
+TimerCancel("LLLIB_ModMenu_StartManualSortTimer");
+
+IF
+TimerFinished("LLLIB_ModMenu_StartManualSortTimer")
+THEN
+LLLIB_ModMenu_StartSorting();
 
 QRY
 LLLIB_ModMenu_QRY_SortNeeded()
@@ -117,17 +131,6 @@ THEN
 DB_NOOP(1);
 
 //Sorting Start
-IF
-StoryEvent(_, "LeaderLib_Commands_SortMenus")
-AND
-DB_LLLIB_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModName, _Author)
-AND
-NOT DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _, _ID, _)
-AND
-NOT DB_LLLIB_DictionarySort_Temp_StringQueue("LLLIB_RegisteredMenus", _ID, _DisplayName)
-THEN
-LLLIB_DictionarySort_AddString("LLLIB_RegisteredMenus", _ID, _DisplayName);
-
 IF
 StoryEvent(_, "LeaderLib_Commands_SortMenus")
 AND
@@ -158,12 +161,16 @@ THEN
 NOT DB_LLLIB_ModMenu_SortTickRate(_OtherTickRate);
 DB_LLLIB_ModMenu_SortTickRate(_TickRate);
 
-/*
-IF
-TimerFinished("LLLIB_Timers_ModMenu_SortMenus")
+PROC
+LLLIB_ModMenu_StartSorting()
+AND
+DB_LLLIB_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModName, _Author)
+AND
+NOT DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _, _ID, _)
+AND
+NOT DB_LLLIB_DictionarySort_Temp_StringQueue("LLLIB_RegisteredMenus", _ID, _DisplayName)
 THEN
-LLLIB_ModMenu_StartSorting();
-*/
+LLLIB_DictionarySort_AddString("LLLIB_RegisteredMenus", _ID, _DisplayName);
 
 PROC
 LLLIB_ModMenu_StartSorting()
@@ -186,7 +193,7 @@ _TotalMenus >= 20
 AND
 IntegertoString(_TotalMenus, _TotalStr)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:ModMenu:Sorting] Total menus = [",_TotalStr,"]. Setting sort tick rate to 1.");
+LeaderLog_Log("DEBUG", "[LLLIB:ModMenu:Sorting] Total menus = [",_TotalStr,"]. Setting sort tick rate to 5.");
 LLLIB_ModMenu_SetSortTickRate(5);
 
 PROC
@@ -194,12 +201,14 @@ LLLIB_ModMenu_StartSorting()
 AND
 DB_LLLIB_ModMenu_SortTickRate(_TickRate)
 THEN
+DB_LLLIB_ModMenu_Temp_SortStarted(1);
 LeaderLog_Log("DEBUG", "[LLLIB:ModMenu:Sorting] Starting menu sorting.");
 LLLIB_DictionarySort_StartSorting("LLLIB_RegisteredMenus", _TickRate, "LeaderLib_Events_OnMenuSortComplete");
 
 IF
 StoryEvent(_, "LeaderLib_Events_OnMenuSortComplete")
 THEN
+NOT DB_LLLIB_ModMenu_Temp_SortStarted(1);
 LeaderLog_Log("DEBUG", "[LLLIB:ModMenu:SortingComplete] Menu sorting done.");
 TimerCancel("LLLIB_Timers_ModMenu_CalculateMaxPage");
 TimerLaunch("LLLIB_Timers_ModMenu_CalculateMaxPage", 1000);
@@ -654,6 +663,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModMenu", "DB_LL
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModMenu", "DB_LLLIB_ModMenu_PageMax", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModMenu", "DB_LLLIB_ModMenu_Temp_ActiveMenu", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModMenu", "DB_LLLIB_ModMenu_Temp_IsChangingMenuPage", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModMenu", "DB_LLLIB_ModMenu_Temp_SortStarted", 1);
 LeaderLog_Log("SYSTEM", "[LLLIB:ModMenu] Databases registered.");
 //END_REGION
 EXITSECTION

@@ -6,32 +6,114 @@ KBSECTION
 IF
 GameStarted("LeaderLib_TestLevel",_)
 THEN
-DB_NOOP(1);
+LLLIB_Requirements_AddFlagRequirement("LLLIB_DebugLevel_Trader1_SpawnFlag", "LLLIB_DebugLevel_SpawnTrader1", "Global", 1);
+LLLIB_Requirements_AddFlagRequirement("LLLIB_DebugLevel_TraderRequirements1", "LLLIB_DebugLevel_TalkedToTrader", "Object", 1);
+LLLIB_Requirements_AddFlagRequirement("LLLIB_DebugLevel_NotTraderRequirements1", "LLLIB_DebugLevel_TalkedToTrader", "Object", 0);
+LLLIB_Requirements_AddFlagRequirement("LLLIB_DebugLevel_ChestRequirements1", "LLLIB_DebugLevel_OpenedChest", "Object", 1);
+LLLIB_Requirements_AddFlagRequirement("LLLIB_DebugLevel_NotChestRequirements1", "LLLIB_DebugLevel_OpenedChest", "Object", 0);
+LL_DebugLevel_TreasureTest2();
 
+IF
+CharacterUsedItem(_Char, _Item)
+AND
+GetTemplate(_Item, _Template)
+AND
+StringContains(_Template, "Chest", 1)
+THEN
+ObjectSetFlag(_Char, "LLLIB_DebugLevel_OpenedChest");
+
+IF
+TradeEnds(_Player, _Trader)
+AND
+DB_LLLIB_Traders_Spawned(_Trader, "LLLIB_TestLevel_Trader", _Level)
+THEN
+ObjectSetFlag(_Player, "LLLIB_DebugLevel_TalkedToTrader");
+
+IF
+RequestTrade(_Player, _Trader)
+AND
+DB_LLLIB_Traders_Spawned(_Trader, "LLLIB_TestLevel_Trader", _Level)
+THEN
+ObjectSetFlag(_Player, "LLLIB_DebugLevel_TalkedToTrader");
+
+IF
+TextEventSet("llspawn")
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] Set trader spawn flag to true.");
+GlobalSetFlag("LLLIB_DebugLevel_SpawnTrader1");
+
+IF
+TextEventSet("lltest1")
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] Registered debug trader.");
+LLLIB_DebugLevel_TraderTest();
+LeaderLib_SendEvent("LeaderLib_Commands_SpawnTraders");
+
+IF
+TextEventSet("lltest2")
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] Registered a bunch of treasure.");
+LLLIB_DebugLevel_TreasureTest();
+
+IF
+TextEventSet("lltest3")
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] Registered a bunch of mod menus.");
+LLLIB_DebugLevel_ModMenuTest();
+
+//REGION TESTS
+IF
+StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_OnTraderSpawned")
+AND
+GetVarString(_Trader, "LeaderLib_TraderID", "LLLIB_TestLevel_Trader")
+//DB_LLLIB_Traders_Spawned(_Trader, "LLLIB_TestLevel_Trader", _Level)
+THEN
+SetTag(_Trader, "LLLIB_Trader_GenerateOnDialog");
+
+PROC
+LLLIB_DebugLevel_TraderTest()
+THEN
 LLLIB_Trader_Register_Trader("LLLIB_TestLevel_Trader", "Elves_Female_Clothing_3ba29ecd-4849-494d-a9a6-6221eea6761c", 1);
+LLLIB_Trader_Register_Level("LLLIB_TestLevel_Trader", "LeaderLib_TestLevel", "LLLIB_DebugLevel_Trader1_SpawnFlag");
 LLLIB_Trader_Register_PositionObject("LLLIB_TestLevel_Trader", "LeaderLib_TestLevel", ITEMGUID_LLLIB_Debug_TestChest_ff6c9edf-aa21-447a-8bb2-2a647a8dae46);
 LLLIB_Trader_Register_Dialog("LLLIB_TestLevel_Trader", "", "LLLIB_LeaderTrader_Default");
 
 LLLIB_Treasure_Register_TreasureToTemplate("LLLIB_TestLevel_Trader", "Elves_Female_Clothing_3ba29ecd-4849-494d-a9a6-6221eea6761c");
 LLLIB_Treasure_Register_TreasureTable("LLLIB_TestLevel_Trader", "TEST_Generation", "", 1);
-LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_TestLevel_Trader", "LOOT_Source_Orb_106a7107-cf36-4331-b5b5-6de71969f370", 1, "LLLIB_Debug_TraderRequirements");
-LLLIB_Requirements_AddFlagRequirement("LLLIB_Debug_TraderRequirements", "LLLIB_LeaderTrader_PlayerIntroducedSelf", "Object", 1);
-//LLLIB_Requirements_AddPartyLevelRequirement("LLLIB_Debug_TraderRequirements", 2, 2);
+LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_TestLevel_Trader", "LOOT_Source_Orb_106a7107-cf36-4331-b5b5-6de71969f370", 1, "LLLIB_DebugLevel_TraderRequirements1");
+LLLIB_Treasure_AddTreasureItemStat("LLLIB_TestLevel_Trader", "WPN_Cheat_Sword_1H_RuneSlot2", 1, "LLLIB_DebugLevel_TraderRequirements1");
+//LLLIB_Requirements_AddPartyLevelRequirement("LLLIB_DebugLevel_TraderRequirements1", 2, 2);
 
+LLLIB_Treasure_Configure_GenerationType("LLLIB_TestLevel_Trader", "LOOT_Source_Orb_106a7107-cf36-4331-b5b5-6de71969f370", "DIALOG_STARTED");
+LLLIB_Treasure_Configure_GenerationType("LLLIB_TestLevel_Trader", "WPN_Cheat_Sword_1H_RuneSlot2", "DIALOG_ENDED");
+//LLLIB_Treasure_Register_TreasureTable("LLLIB_LeaderTrader_Misc", "ST_WeaponNormal", "LLLIB_RegionIsFortJoy", 1);
+LLLIB_Treasure_Register_TreasureTable("LLLIB_TestLevel_Trader", "TEST_Generation", "LLLIB_DebugLevel_NotChestRequirements1", 1);
+//LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModBooks", "CON_Potion_Fire_Res_A_e78b642c-0216-4df4-b691-a41ff4747b6a", 8);
+//LLLIB_Treasure_AddTreasureItemStat("LLLIB_LeaderTrader_ModBooks", "WPN_Cheat_Sword_1H_RuneSlot2", 1);
+
+PROC
+LLLIB_DebugLevel_TreasureTest()
+THEN
 LLLIB_Treasure_Register_TreasureToObject("LLLIB_TestLevel_Chest1", ITEMGUID_LLLIB_Debug_TestChest_ff6c9edf-aa21-447a-8bb2-2a647a8dae46);
-LLLIB_Treasure_Register_TreasureTable("LLLIB_TestLevel_Chest1", "TEST_Generation", "LLLIB_Debug_TraderRequirements", 1);
-LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_TestLevel_Chest1", "LOOT_Source_Orb_106a7107-cf36-4331-b5b5-6de71969f370", 2, "LLLIB_TestLevel_Chest1_Requirements");
+LLLIB_Treasure_Register_TreasureTable("LLLIB_TestLevel_Chest1", "TEST_Generation", "LLLIB_DebugLevel_TraderRequirements1", 1);
+LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_TestLevel_Chest1", "LOOT_Source_Orb_106a7107-cf36-4331-b5b5-6de71969f370", 2, "LLLIB_DebugLevel_ChestRequirements1");
 LLLIB_Treasure_Configure_AddMaxAmount("LLLIB_TestLevel_Chest1", "LOOT_Source_Orb_106a7107-cf36-4331-b5b5-6de71969f370", 1);
-LLLIB_Requirements_AddFlagRequirement("LLLIB_TestLevel_Chest1_Requirements", "LLLIB_LeaderTrader_PlayerIntroducedSelf", "Object", 0);
 
 //LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_TestLevel_Chest1", "WPN_Dwarves_Sword_2H_B_03f8fb7a-59cf-47eb-9298-79cedaf744e5", 1);
 LLLIB_Treasure_Configure_ItemLevel("LLLIB_TestLevel_Chest1", "WPN_Dwarves_Sword_2H_B_03f8fb7a-59cf-47eb-9298-79cedaf744e5", 0, 5, 10);
 //LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_TestLevel_Chest1", "WPN_Elves_Spear_2H_B_bec707cd-8340-4d4d-8cdc-edfedf7f311d", 1);
 LLLIB_Treasure_Configure_ItemLevel("LLLIB_TestLevel_Chest1", "WPN_Elves_Spear_2H_B_bec707cd-8340-4d4d-8cdc-edfedf7f311d", 0, 1);
 
+//GlobalSetFlag("LeaderLib_DiscoveredLeaderTraderBackground");
+
+//Sorting/Menu test
+
+PROC
+LL_DebugLevel_TreasureTest2()
+THEN
 LLLIB_Treasure_Register_TreasureToObject("LLLIB_TestLevel_Chest2", ITEMGUID_LLLIB_DebugLevel_TestChest2_cde2491b-741c-4442-a016-74761b43f3c5);
-LLLIB_Treasure_AddTreasureItemStat("LLLIB_TestLevel_Chest2", "WPN_Cheat_Sword_1H_RuneSlot2", 1, "LLLIB_TestLevel_Chest2_Requirements");
-LLLIB_Requirements_AddFlagRequirement("LLLIB_TestLevel_Chest2_Requirements", "LLLIB_LeaderTrader_PlayerIntroducedSelf", "Object", 1);
+//LLLIB_Treasure_AddTreasureItemStat("LLLIB_TestLevel_Chest2", "WPN_Cheat_Sword_1H_RuneSlot2", 1, "LLLIB_DebugLevel_Trader1_SpawnFlag");
+LLLIB_Treasure_AddTreasureItemStat("LLLIB_TestLevel_Chest2", "WPN_Cheat_Sword_1H_RuneSlot2", 1, "");
 LLLIB_Treasure_Configure_ItemLevel("LLLIB_TestLevel_Chest2", "WPN_Cheat_Sword_1H_RuneSlot2", 0, 2, 13);
 LLLIB_Treasure_Configure_AddDeltaMod("LLLIB_TestLevel_Chest2", "WPN_Cheat_Sword_1H_RuneSlot2", "Boost_Weapon_Ability_FireSpecialist_Staff", 75);
 LLLIB_Treasure_Configure_AddDeltaMod("LLLIB_TestLevel_Chest2", "WPN_Cheat_Sword_1H_RuneSlot2", "Boost_Weapon_Secondary_Accuracy_Medium", 20);
@@ -39,13 +121,11 @@ LLLIB_Treasure_Configure_AddDeltaMod("LLLIB_TestLevel_Chest2", "WPN_Cheat_Sword_
 LLLIB_Treasure_Configure_AddRune("LLLIB_TestLevel_Chest2", "WPN_Cheat_Sword_1H_RuneSlot2", "LOOT_Rune_Flame_Large_9ac874d8-a7e5-48b1-954a-b11b46f6f390", 25);
 LLLIB_Treasure_Configure_AddRune("LLLIB_TestLevel_Chest2", "WPN_Cheat_Sword_1H_RuneSlot2", "LOOT_Rune_Masterwork_Large_7e16d9af-6865-4f0f-a67a-144b8ef2da26", 15);
 LLLIB_Treasure_Configure_AddRune("LLLIB_TestLevel_Chest2", "WPN_Cheat_Sword_1H_RuneSlot2", "LOOT_Rune_Thunder_Small_f27c8738-e46c-4780-98a1-2db27407e6ea", 15);
+//LLLIB_Treasure_Configure_GenerationType("LLLIB_TestLevel_Chest2", "WPN_Cheat_Sword_1H_RuneSlot2", "REQUIREMENT_UNLOCKED");
 
-LLLIB_Treasure_Configure_GenerationType("LLLIB_TestLevel_Chest2", "WPN_Cheat_Sword_1H_RuneSlot2", "REQUIREMENT_UNLOCKED");
-
-//GlobalSetFlag("LeaderLib_DiscoveredLeaderTraderBackground");
-
-//Sorting/Menu test
-
+PROC
+LLLIB_DebugLevel_ModMenuTest()
+THEN
 LeaderLib_RegisterModMenu("LLZ1", "[Zieonimus] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZ2", "[Zzznonom] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZ3", "[Zzaonimus] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
@@ -73,6 +153,7 @@ LeaderLib_RegisterModMenu("LLZZ1", "[ModMenu1] Settings", "LLLIB_SettingsMenu", 
 LeaderLib_RegisterModMenu("LLZZ6", "[ModMenu6] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZZ4", "[ModMenu4] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_RegisterModMenu("LLZZ8", "[ModMenu8] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+//END_REGION
 
 /*
 IF
@@ -87,6 +168,7 @@ THEN
 LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] String comparison: '",_Str1,"' and '",_Str2,"' = [",_CompareValStr,"]");
 */
 
+//REGION PLAYER_DATABASE_FIX
 IF
 GameStarted("LeaderLib_TestLevel",_)
 THEN
@@ -114,67 +196,39 @@ THEN
 DB_IsPlayer(_Player);
 //LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] ","Added player to DB_IsPlayer.");
 //ObjectClearFlag(_Player, "LLLIB_LeaderTrader_PlayerIntroducedSelf");
+//END_REGION
 
 IF
-DialogStarted(_Dialog, _Instance)
+SkillCast(_Player, _Skill, _)
 AND
-DialogGetInvolvedNPC(_Instance, 1, _Trader)
-AND
-IsTagged(_Trader, "LLLIB_Treasure_GenerateOnDialog", 1)
-AND
-LLLIB_QRY_Treasure_IsRegisteredObject(_Trader)
-THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] ","Dialog generation tag set, generating items for trader.");
-
-IF
-DialogStarted(_Dialog, _Instance)
-AND
-DialogGetInvolvedNPC(_Instance, 1, (CHARACTERGUID)_Trader)
-AND
-IsTagged(_Trader, "LLLIB_Treasure_GenerateOnDialog", 1)
-AND
-NOT LLLIB_QRY_Treasure_IsRegisteredObject(_Trader)
-THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel][ERROR] ","Dialog generation tag set, but trader is not registered!");
-
-/*
-IF
-CharacterUsedItem(_Player, ITEMGUID_LLLIB_DebugLever_TestRandom_d3152baa-c6d4-4e8e-a622-a6bb9c149b3e)
-THEN
-//Proc_StartDialog(0, "LLLIB_ModMenu", _Player, _Player);
-LLLIB_ModMenu_SortMenus();
-*/
-IF
-SkillCast(_Player, "Shout_RecoverArmour", _)
+CharacterIsPlayer(_Player, 1)
 THEN
 CharacterResetCooldowns(_Player);
 
 IF
-SkillCast(_Player, "Shout_RecoverArmour", _)
-AND
-DB_MyMod_ToggleStatus("INVISIBLE", _Player, _Val)
-AND
-IntegerSubtract(1, _Val, _NewVal)
+StoryEvent((CHARACTERGUID)_Char, "LeaderLib_Events_OnCombatLog")
 THEN
-NOT DB_MyMod_ToggleStatus("INVISIBLE", _Player, _Val);
-DB_MyMod_ToggleStatus("INVISIBLE", _Player, _NewVal);
+LeaderLog_SetOneshotTarget(_Char);
+LeaderLog_SetNextStatusColor(_Char, "#FF0000", "30");
+LeaderLog_Log("STATUS", "[LLLIB:Debug] Color text!");
 
+/*
 IF
-SkillCast(_Player, "Shout_RecoverArmour", _)
+RegionEnded(_Level)
 AND
-NOT DB_MyMod_ToggleStatus("INVISIBLE", _Player, _)
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+AND
+CharacterIsPlayer(_LeaderTrader, 1)
 THEN
-DB_MyMod_ToggleStatus("INVISIBLE", _Player, 1);
+CharacterMakeNPC(_LeaderTrader);
+CharacterRemoveFromParty(_LeaderTrader);
+*/
 
+//REGION LEVERS
 IF
-DB_MyMod_ToggleStatus(_Status, _Player, 1)
+CharacterUsedItem(_Character, ITEMGUID_LLLIB_Debug_TestLeverB_65136f61-80ec-4965-bce9-5789eea56aca)
 THEN
-ApplyStatus(_Player, _Status, -1.0, 1);
-
-IF
-DB_MyMod_ToggleStatus(_Status, _Player, 0)
-THEN
-RemoveStatus(_Player, _Status);
+LLLIB_Treasure_AddToGenerationQueue(CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, "LLLIB_LeaderTrader_ModBooks", "MANUAL");
 
 /*
 IF
@@ -217,83 +271,6 @@ CharacterUsedItem(_Char, ITEMGUID_LLLIB_DebugLever_TestRandom_d3152baa-c6d4-4e8e
 THEN
 LeaderLog_SetOneshotTarget(_Char);
 LeaderLog_Log("COMBAT", "[LLLIB:Debug] Testing the combat log!");
-
-IF
-StoryEvent((CHARACTERGUID)_Char, "LeaderLib_Events_OnCombatLog")
-THEN
-LeaderLog_SetOneshotTarget(_Char);
-LeaderLog_SetNextStatusColor(_Char, "#FF0000", "30");
-LeaderLog_Log("STATUS", "[LLLIB:Debug] Color text!");
-
-/*
-IF
-RegionEnded(_Level)
-AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
-AND
-CharacterIsPlayer(_LeaderTrader, 1)
-THEN
-CharacterMakeNPC(_LeaderTrader);
-CharacterRemoveFromParty(_LeaderTrader);
-*/
-
-IF
-GameStarted("TUT_Tutorial_A", _)
-THEN
-TimerLaunch("LLLIB_Debug_Timers_CheckLeaderTimer", 5000);
-
-IF
-TimerFinished("LLLIB_Debug_Timers_CheckLeaderTimer")
-AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
-AND
-ObjectExists(_LeaderTrader, 0)
-THEN
-TimerLaunch("LLLIB_Debug_Timers_NotifyMissingTrader", 1500);
-
-IF
-TimerFinished("LLLIB_Debug_Timers_CheckLeaderTimer")
-AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
-AND
-ObjectExists(_LeaderTrader, 1)
-THEN
-TimerLaunch("LLLIB_Debug_Timers_NotifyFoundTrader", 4000);
-
-IF
-StoryEvent(_, "LeaderLib_Events_OnDatabasesUpdated")
-THEN
-TimerLaunch("LLLIB_Debug_Timers_NotifyUpdateTimer", 4000);
-
-IF
-TimerFinished("LLLIB_Debug_Timers_NotifyUpdateTimer")
-AND
-DB_IsPlayer(_Player)
-THEN
-OpenMessageBox(_Player, "LeaderLib Updated");
-
-IF
-TimerFinished("LLLIB_Debug_Timers_NotifyMissingTrader")
-AND
-DB_IsPlayer(_Player)
-THEN
-OpenMessageBox(_Player, "Failed to find global leader trader.");
-
-IF
-TimerFinished("LLLIB_Debug_Timers_NotifyFoundTrader")
-AND
-DB_IsPlayer(_Player)
-THEN
-//OpenMessageBox(_Player, "Global leader trader found. Did it spawn?");
-//TeleportTo(CHARACTERGUID_S_LLLIB_LeaderTrader_b15c8e24-0de0-4ab2-940d-751bf95f0f41, _Player);
-LeaderLog_Log("DEBUG", "[LLLIB:LeaderTrader:Debug] Teleported Leader Trader to player.");
-
-
-//REGION LEVERS
-IF
-CharacterUsedItem(_Character, ITEMGUID_LLLIB_Debug_TestLeverB_65136f61-80ec-4965-bce9-5789eea56aca)
-THEN
-LLLIB_Treasure_AddToGenerationQueue(CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, "LLLIB_LeaderTrader_ModBooks", "MANUAL");
 //END_REGION
 EXITSECTION
 

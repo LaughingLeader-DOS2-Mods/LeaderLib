@@ -229,6 +229,8 @@ THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "QueueSystem", "DB_LLLIB_Queue", 7);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "QueueSystem", "DB_LLLIB_Queue_Timeout", 4);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "QueueSystem", "DB_LLLIB_Queue_Temp_CurrentEntry", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "QueueSystem", "DB_LLLIB_Queue_Temp_TimerRunning", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "QueueSystem", "DB_LLLIB_Queue_Temp_PopSuccess", 1);
 LeaderLog_Log("SYSTEM", "[LLLIB:QueueSystem] Databases registered.");
 //END_REGION
 EXITSECTION

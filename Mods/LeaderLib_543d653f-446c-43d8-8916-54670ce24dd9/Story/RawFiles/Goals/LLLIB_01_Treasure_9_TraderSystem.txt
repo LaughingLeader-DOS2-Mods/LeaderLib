@@ -25,212 +25,6 @@ INITSECTION
 
 //DB_LLLIB_Traders_Temp_DialogFound(_TraderID)
 KBSECTION
-//REGION REGISTERING
-PROC
-LLLIB_Trader_Register_Trader((STRING)_TraderID, (STRING)_Template)
-AND
-NOT DB_LLLIB_Traders_RegisteredTrader(_TraderID,_,_)
-THEN
-DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, 0);
-
-PROC
-LLLIB_Trader_Register_Trader((STRING)_TraderID, (STRING)_Template, (INTEGER)_PlaySpawn)
-AND
-DB_LLLIB_Traders_RegisteredTrader(_TraderID,_,_)
-THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Trader][ERROR] Error adding trader with ID '", _TraderID, "': Trader already exists!");
-
-PROC
-LLLIB_Trader_Register_Trader((STRING)_TraderID, (STRING)_Template, (INTEGER)_PlaySpawn)
-AND
-NOT DB_LLLIB_Traders_RegisteredTrader(_TraderID,_,_)
-THEN
-DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn);
-
-PROC
-LLLIB_Trader_Register_GlobalTrader((STRING)_TraderID, (CHARACTERGUID)_Trader)
-THEN
-DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader);
-
-PROC
-LLLIB_Trader_Register_Level((STRING)_TraderID, (STRING)_Level)
-THEN
-LLLIB_Trader_Register_Level(_TraderID, _Level, "");
-
-PROC
-LLLIB_Trader_Register_Level((STRING)_TraderID, (STRING)_Level, (STRING)_Requirement)
-AND
-NOT DB_LLLIB_Traders_RegisteredLevel(_TraderID,_Level,_)
-THEN
-DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _Requirement);
-
-PROC
-LLLIB_Trader_Register_Level((STRING)_TraderID, (STRING)_Level, (STRING)_Requirement)
-AND
-DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _LastRequirement)
-AND
-_LastRequirement != _Requirement
-THEN
-NOT DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _LastRequirement);
-DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _Requirement);
-
-PROC
-LLLIB_Trader_Register_StartingGold((STRING)_TraderID, (STRING)_Level, (INTEGER)_Amount)
-THEN
-LLLIB_Trader_Register_StartingGold(_TraderID, _Level, _Amount, "");
-
-PROC
-LLLIB_Trader_Register_StartingGold((STRING)_TraderID, (STRING)_Level, (INTEGER)_Amount, (STRING)_Requirement)
-THEN
-DB_LLLIB_Traders_StartingGold(_TraderID, _Level, _Amount, _Requirement);
-
-PROC
-LLLIB_Trader_Register_Dialog((STRING)_TraderID, (STRING)_Dialog)
-THEN
-LLLIB_Trader_Register_Dialog(_TraderID, "", _Dialog, "");
-
-PROC
-LLLIB_Trader_Register_Dialog((STRING)_TraderID, (STRING)_Level, (STRING)_Dialog)
-THEN
-LLLIB_Trader_Register_Dialog(_TraderID, _Level, _Dialog, "");
-
-PROC
-LLLIB_Trader_Register_Dialog((STRING)_TraderID, (STRING)_Level, (STRING)_Dialog, (STRING)_RequirementID)
-AND
-DB_LLLIB_Traders_Dialog(_TraderID, _Level, _Dialog, _PastRequirementID)
-AND
-_PastRequirementID != _RequirementID
-THEN
-NOT DB_LLLIB_Traders_Dialog(_TraderID, _Level, _Dialog, _PastRequirementID);
-DB_LLLIB_Traders_Dialog(_TraderID, _Level, _Dialog, _RequirementID);
-LeaderLog_Log("DEBUG", "[LLLIB:TraderSystem:Register_Dialog] Requirement for [",_TraderID,"][",_Level,"][",_Dialog,"] changed from [",_PastRequirementID,"] to [",_RequirementID,"].");
-
-PROC
-LLLIB_Trader_Register_Dialog((STRING)_TraderID, (STRING)_Level, (STRING)_Dialog, (STRING)_RequirementID)
-AND
-NOT DB_LLLIB_Traders_Dialog(_TraderID, _Level, _Dialog, _)
-THEN
-DB_LLLIB_Traders_Dialog(_TraderID, _Level, _Dialog, _RequirementID);
-
-PROC
-LLLIB_Trader_Register_Position((STRING)_TraderID, (STRING)_Level, (REAL)_x, (REAL)_y, (REAL)_z)
-AND
-NOT DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _,_,_)
-THEN
-LLLIB_Trader_Register_Level(_TraderID, _Level);
-DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z);
-
-PROC
-LLLIB_Trader_Register_PositionTrigger((STRING)_TraderID, (STRING)_Level, (TRIGGERGUID)_Trigger)
-AND
-NOT DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _)
-THEN
-LLLIB_Trader_Register_Level(_TraderID, _Level);
-DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger);
-
-PROC
-LLLIB_Trader_Register_PositionObject((STRING)_TraderID, (STRING)_Level, (GUIDSTRING)_Object)
-AND
-NOT DB_LLLIB_Traders_LevelPositionObject(_TraderID, _Level, _)
-THEN
-LLLIB_Trader_Register_Level(_TraderID, _Level);
-DB_LLLIB_Traders_LevelPositionObject(_TraderID, _Level, _Object);
-
-PROC
-LLLIB_Trader_Register_CreationEvent((STRING)_TraderID, (STRING)_EventName)
-THEN
-DB_LLLIB_Traders_CreationEvents(_TraderID, _EventName);
-
-PROC
-LLLIB_Trader_Register_Seat((STRING)_TraderID, (STRING)_Level, (ITEMGUID)_Seat)
-THEN
-LLLIB_Trader_Register_Seat(_TraderID, _Level, _Seat, "");
-
-PROC
-LLLIB_Trader_Register_Seat((STRING)_TraderID, (STRING)_Level, (ITEMGUID)_Seat, (STRING)_RequirementID)
-THEN
-DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID);
-//END_REGION
-
-//REGION CLEARING
-PROC
-LLLIB_Trader_ClearTrader((STRING)_TraderID)
-AND
-DB_LLLIB_QRY_Traders_IsRegistered(_TraderID)
-THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Traders] Trader [",_TraderID,"] removed from all associated databases.");
-
-PROC
-LLLIB_Trader_ClearTrader((STRING)_TraderID)
-AND
-DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn)
-THEN
-NOT DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn);
-
-PROC
-LLLIB_Trader_ClearTrader((STRING)_TraderID)
-AND
-DB_LLLIB_Traders_StartingGold(_TraderID, _Level, _Amount, _RequirementID)
-THEN
-NOT DB_LLLIB_Traders_StartingGold(_TraderID, _Level, _Amount, _RequirementID);
-
-PROC
-LLLIB_Trader_ClearTrader((STRING)_TraderID)
-AND
-DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader)
-THEN
-NOT DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader);
-
-PROC
-LLLIB_Trader_ClearTrader((STRING)_TraderID)
-AND
-DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID)
-THEN
-NOT DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID);
-
-PROC
-LLLIB_Trader_ClearTrader((STRING)_TraderID)
-AND
-DB_LLLIB_Traders_Dialog(_TraderID, _Level, _Dialog, _RequirementID)
-THEN
-NOT DB_LLLIB_Traders_Dialog(_TraderID, _Level, _Dialog, _RequirementID);
-
-PROC
-LLLIB_Trader_ClearTrader((STRING)_TraderID)
-AND
-DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z)
-THEN
-NOT DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z);
-
-PROC
-LLLIB_Trader_ClearTrader((STRING)_TraderID)
-AND
-DB_LLLIB_Traders_LevelPositionObject(_TraderID, _Level, _Object)
-THEN
-NOT DB_LLLIB_Traders_LevelPositionObject(_TraderID, _Level, _Object);
-
-PROC
-LLLIB_Trader_ClearTrader((STRING)_TraderID)
-AND
-DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger)
-THEN
-NOT DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger);
-
-PROC
-LLLIB_Trader_ClearTrader((STRING)_TraderID)
-AND
-DB_LLLIB_Traders_CreationEvents(_TraderID, _EventName)
-THEN
-NOT DB_LLLIB_Traders_CreationEvents(_TraderID, _EventName);
-
-PROC
-LLLIB_Trader_ClearTrader((STRING)_TraderID)
-AND
-DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID)
-THEN
-NOT DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID);
-//END_REGION
-
 //REGION QUERIES
 QRY
 LLLIB_QRY_Traders_HasPosition((STRING)_TraderID, (STRING)_Level)
@@ -856,6 +650,11 @@ LLLIB_Traders_OnSpawned(_Trader, _TraderID, _Level);
 PROC
 LLLIB_Traders_OnSpawned((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
 THEN
+SetVarString(_Trader, "LeaderLib_TraderID", _TraderID);
+
+PROC
+LLLIB_Traders_OnSpawned((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
+THEN
 SetStoryEvent(_Trader, "LeaderLib_Events_OnTraderSpawned");
 
 PROC
@@ -1048,16 +847,6 @@ RemoveStatus(_Trader, "LLLIB_NEW_ITEMS");
 PROC
 LLLIB_System_RegisterDatabases()
 THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_RegisteredTrader", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_RegisteredGlobalTrader", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_RegisteredLevel", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_StartingGold", 4);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Dialog", 4);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_LevelPosition", 5);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_LevelPositionTrigger", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_LevelPositionObject", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_CreationEvents", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Seat", 4);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Spawned", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Temp_CurrentSpawnQueue", 6);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Temp_CurrentlySpawning", 2);

@@ -3,6 +3,14 @@ SubGoalCombiner SGC_AND
 INITSECTION
 
 KBSECTION
+//REGION UPDATER
+PROC
+LLLIB_System_RegisterDatabases()
+THEN
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_Initialized", 1);
+LeaderLog_Log("SYSTEM", "[LLLIB:System] Databases registered.");
+//END_REGION
+
 //REGION EDITOR_FLAGGING
 IF
 GameStarted(_, 1)

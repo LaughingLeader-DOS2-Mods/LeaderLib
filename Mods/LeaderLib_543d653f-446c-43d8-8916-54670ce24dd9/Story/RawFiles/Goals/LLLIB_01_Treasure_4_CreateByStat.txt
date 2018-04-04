@@ -131,7 +131,7 @@ THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Treasure:CreateItemByStat] Creating [",_Stat,"] on dummy with ID [",_ArrayName,"]");
 DB_LLLIB_Treasure_Temp_CreateItemByStat_DummyTarget(_ArrayName, (CHARACTERGUID)_Character, _Dummy, _Stat);
 SetVarFixedString(_Dummy, "LeaderLib_CreateByStat_NextStatToCreate", _Stat);
-SetVarFixedString(_Dummy, "LeaderLib_CreateByStat_FlagToSet", "LLLIB_GeneratorDummy_CreatedItem");
+//SetVarFixedString(_Dummy, "LeaderLib_CreateByStat_FlagToSet", "LLLIB_GeneratorDummy_CreatedItem");
 SetVarInteger(_Dummy, "LeaderLib_CreateByStat_ShowInTrade", _ShowInTrade);
 SetVarInteger(_Dummy, "LeaderLib_CreateByStat_AmountToCreate", _Amount);
 ObjectSetFlag(_Dummy, "LeaderLib_CreateByStat_ResetVars");
@@ -148,10 +148,6 @@ NOT DB_LLLIB_Array_Temp_PopValue(_ArrayName, _Stat);
 IF
 ItemAddedToCharacter(_Item, _Dummy)
 AND
-GetTemplate(_Dummy, "LLLIB_GeneratorDummy_24a5d60b-680b-4fbc-9b2c-19061a261297")
-AND
-ObjectGetFlag(_Dummy, "LLLIB_GeneratorDummy_CreatedItem", 1)
-AND
 GetVarString(_Dummy, "LLLIB_DummyID", _DummyID)
 AND
 DB_LLLIB_Treasure_Temp_CreateItemByStat_DummyTarget(_DummyID, _Character, _Dummy, _Stat)
@@ -160,7 +156,6 @@ GetTemplate(_Item, _ItemTemplate)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Treasure:CreateItemByStat] Created [",_ItemTemplate,"] from stat [",_Stat,"] on dummy [",_DummyID,"].");
 NOT DB_LLLIB_Treasure_Temp_CreateItemByStat_DummyTarget(_DummyID, _Character, _Dummy, _Stat);
-ObjectClearFlag(_Dummy, "LLLIB_GeneratorDummy_CreatedItem");
 LLLIB_Treasure_CreateItemByStat_Internal_CancelTimeoutTimer(_Character, _Stat);
 SetVarFixedString(_Item, "LeaderLib_GeneratedItemStat", _Stat);
 DB_LLLIB_Treasure_StatToTemplate(_Stat, _ItemTemplate);

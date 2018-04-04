@@ -23,7 +23,7 @@ INITSECTION
 //DB_LLLIB_Treasure_StatToTemplate(_ItemEntry, _ItemTemplate)
 //DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
 
-//DB_LLLIB_Treasure_Temp_DummyTarget(_Object, _Dummy, _TreasureID, _ItemEntry)
+//DB_LLLIB_Treasure_Temp_DummyTarget(_Object, _Dummy, _TreasureID, _ItemEntry, _DummyID, _QueueEntryID)
 //DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
 //DB_LLLIB_Treasure_Temp_MatchedRequirementTreasure(_TreasureID, _RequirementID)
 //DB_LLLIB_Treasure_Temp_FlagToTreasure(_Flag, _FlagType, _TreasureID)
@@ -34,8 +34,6 @@ INITSECTION
 //DB_LLLIB_Treasure_Temp_Queue_CountStat(_Object, _TreasureID, _ItemTemplate, _ItemEntry, _GeneratedAmount, _RequirementID)
 //DB_LLLIB_Treasure_Temp_StartGeneration(_Object, _TreasureID, _TimerName)
 /*GENERATION_QUEUE*/
-//DB_LLLIB_Treasure_Temp_QueueTimerActive(_Active, _TickRate)
-//DB_LLLIB_Treasure_Temp_TimeoutTimerActive(_ID, _Object, _TreasureID, _GenerationType)
 //DB_LLLIB_Array_Data("LLLIB_ItemGenerationQueue", _Index, _ID)
 //DB_LLLIB_Treasure_Temp_ItemGenerationQueue(_ID, _Object, _TreasureID, _GenerationType)
 KBSECTION
@@ -44,7 +42,7 @@ PROC
 LLLIB_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_StatToTemplate", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_DummyTarget", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_DummyTarget", 6);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_MatchedTreasure", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_MatchedRequirementTreasure", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_FlagToTreasure", 3);
@@ -53,9 +51,6 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem",
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_GenerateItem", 7);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_Queue_CountTemplate", 5);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_Queue_CountStat", 6);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_StartGeneration", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_QueueTimerActive", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_TimeoutTimerActive", 4);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_ItemGenerationQueue", 4);
 LeaderLog_Log("SYSTEM", "[LLLIB:TreasureSystem] Databases registered.");
 //END_REGION
@@ -804,10 +799,10 @@ AND
 DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:StatItemGen] Creating item by stat [",_ItemEntry,"] using Dummy ID [",_DummyID,"].");
-DB_LLLIB_Treasure_Temp_DummyTarget(_Object, _Dummy, _TreasureID, _ItemEntry, _DummyID);
-//SetVarObject(_Dummy, "LLLIB_Treasure_ObjectTarget", _Object);
+DB_LLLIB_Treasure_Temp_DummyTarget(_Object, _Dummy, _TreasureID, _ItemEntry, _DummyID, _ID);
+ObjectClearFlag(_Dummy, "LeaderLib_CreateByStat_ResetVars");
 SetVarFixedString(_Dummy, "LeaderLib_CreateByStat_NextStatToCreate", _ItemEntry);
-SetVarFixedString(_Dummy, "LeaderLib_CreateByStat_FlagToSet", "LLLIB_GeneratorDummy_GeneratedItem");
+//SetVarFixedString(_Dummy, "LeaderLib_CreateByStat_FlagToSet", "LLLIB_GeneratedItemStat");
 SetStoryEvent(_Dummy, "LeaderLib_Commands_CreateItemByStat");
 
 PROC
@@ -823,45 +818,29 @@ LLLIB_Treasure_Internal_OnGenerationFailed(_ID, _Object, _TreasureID, _Generatio
 IF
 ItemAddedToCharacter(_Item, _Dummy)
 AND
-GetTemplate(_Dummy, "LLLIB_GeneratorDummy_24a5d60b-680b-4fbc-9b2c-19061a261297")
-AND
-ObjectGetFlag(_Dummy, "LLLIB_GeneratorDummy_GeneratedItem", 1)
-AND
 GetVarString(_Dummy, "LLLIB_DummyID", _DummyID)
 AND
-DB_LLLIB_Treasure_Temp_DummyTarget(_Object, _Dummy, _TreasureID, _ItemEntry, _DummyID)
-AND
-GetTemplate(_Item, _ItemTemplate)
+DB_LLLIB_Treasure_Temp_DummyTarget(_Object, _Dummy, _TreasureID, _ItemEntry, _DummyID, _QueueEntryID)
 AND
 GetVarFixedString(_Dummy, "LeaderLib_CreateByStat_NextStatToCreate", _ItemEntry)
 AND
 ItemGetAmount(_Item, _Amount)
-AND
-DB_LLLIB_Treasure_Temp_ItemGenerationQueue(_ID, _Object, _TreasureID, _GenerationType)
 THEN
-NOT DB_LLLIB_Treasure_Temp_DummyTarget(_Object, _Dummy, _TreasureID, _ItemEntry, _DummyID);
+NOT DB_LLLIB_Treasure_Temp_DummyTarget(_Object, _Dummy, _TreasureID, _ItemEntry, _DummyID, _QueueEntryID);
 LLLIB_Treasure_ResetDummy(_Dummy);
 SetVarFixedString(_Dummy, "LeaderLib_CreateByStat_NextStatToCreate", "");
-ObjectClearFlag(_Dummy, "LLLIB_GeneratorDummy_GeneratedItem");
+
 ItemToInventory(_Item, _Object, _Amount, 0, 1);
 SetVarFixedString(_Item, "LeaderLib_GeneratedItemStat", _ItemEntry);
-LLLIB_Treasure_Internal_MarkAsFinished(_ID, _Object, _TreasureID, _ItemEntry);
-//DB_LLLIB_Treasure_StatToTemplate(_ItemEntry, _ItemTemplate);
-//LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:StatItem] Stat item [",_ItemEntry,"] sent to target.");
+LLLIB_Treasure_Internal_MarkAsFinished(_QueueEntryID, _Object, _TreasureID, _ItemEntry);
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:StatItem] Stat item [",_ItemEntry,"] sent to target.");
 //END_REGION
 
 //REGION POST_GENERATION
 IF
 ItemAddedToCharacter(_Item, _Object)
 AND
-LLLIB_QRY_Treasure_GetTreasureID((GUIDSTRING)_Object)
-AND
-DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
-THEN
-LLLIB_Treasure_OnAdded(_Object, _Item, _TreasureID);
-
-IF
-ItemAddedToContainer(_Item, _Object)
+ObjectGetFlag(_Object, "LLLIB_Treasure_IsGeneratingTreasure", 1)
 AND
 LLLIB_QRY_Treasure_GetTreasureID((GUIDSTRING)_Object)
 AND
@@ -871,6 +850,19 @@ LLLIB_Treasure_OnAdded(_Object, _Item, _TreasureID);
 
 IF
 ItemAddedToContainer(_Item, _Object)
+AND
+ObjectGetFlag(_Object, "LLLIB_Treasure_IsGeneratingTreasure", 1)
+AND
+LLLIB_QRY_Treasure_GetTreasureID((GUIDSTRING)_Object)
+AND
+DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
+THEN
+LLLIB_Treasure_OnAdded(_Object, _Item, _TreasureID);
+
+IF
+ItemAddedToContainer(_Item, _Object)
+AND
+ObjectGetFlag(_Object, "LLLIB_Treasure_IsGeneratingTreasure", 1)
 AND
 GetVarFixedString(_Item, "LeaderLib_GeneratedItemStat", _ItemEntry)
 AND
@@ -881,8 +873,6 @@ LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:OnAdded(Debug)] Item with saved st
 PROC
 LLLIB_Treasure_OnAdded((GUIDSTRING)_Object, (ITEMGUID)_Item, (STRING)_TreasureID)
 AND
-ObjectGetFlag(_Object, "LLLIB_Treasure_IsGeneratingTreasure", 1)
-AND
 GetTemplate(_Item, _ItemEntry)
 AND
 DB_LLLIB_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID)
@@ -890,12 +880,10 @@ THEN
 LLLIB_Treasure_AdjustItemLevel(_Item, _TreasureID, _ItemEntry);
 LLLIB_Treasure_ApplyDeltaMods(_Item, _TreasureID, _ItemEntry);
 LLLIB_Treasure_InsertRunes(_Item, _TreasureID, _ItemEntry);
-//LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:OnAdded(TemplateItem] Adjusted treasure level, delta mods, and runes.");
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:OnAdded(TemplateItem] Adjusted treasure level, delta mods, and runes.");
 
 PROC
 LLLIB_Treasure_OnAdded((GUIDSTRING)_Object, (ITEMGUID)_Item, (STRING)_TreasureID)
-AND
-ObjectGetFlag(_Object, "LLLIB_Treasure_IsGeneratingTreasure", 1)
 AND
 GetVarFixedString(_Item, "LeaderLib_GeneratedItemStat", _ItemEntry)
 AND
@@ -908,12 +896,10 @@ DB_LLLIB_Treasure_StatToTemplate(_ItemEntry, _ItemTemplate);
 LLLIB_Treasure_AdjustItemLevel(_Item, _TreasureID, _ItemEntry);
 LLLIB_Treasure_ApplyDeltaMods(_Item, _TreasureID, _ItemEntry);
 LLLIB_Treasure_InsertRunes(_Item, _TreasureID, _ItemEntry);
-//LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:OnAdded(StatItem)] Adjusted treasure level, delta mods, and runes.");
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:OnAdded(StatItem)] Adjusted treasure level, delta mods, and runes.");
 
 PROC
 LLLIB_Treasure_OnAdded((GUIDSTRING)_Object, (ITEMGUID)_Item, (STRING)_TreasureID)
-AND
-ObjectGetFlag(_Object, "LLLIB_Treasure_IsGeneratingTreasure", 1)
 AND
 GetVarFixedString(_Item, "LeaderLib_GeneratedItemStat", _ItemEntry)
 AND

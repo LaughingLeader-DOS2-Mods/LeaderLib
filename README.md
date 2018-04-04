@@ -20,12 +20,18 @@ Mods can add LeaderLib support with no dependencies required, thanks to LeaderLi
 * A way to see what mods are currently active (provided they register in a way LeaderLib recognizes them). This lets mods work together without requiring a strict dependency.
 
 ## Treasure & Trader System
-LeaderLib features a script-based treasure and trader system, which can be used to spawn both treasure and loot dynamically, with a multitude of customization:
+LeaderLib features a script-based treasure and trader system, which can be used to spawn both traders and loot dynamically, with a multitude of customization:
 
-* Requirements (party level, flag, or region) can be created and set for specific treasure and trader spawning, preventing them from spawning until a requirement is met.
-	* Flag requirements can be object or global flags, and can be set to true or false (if the flag is set or not set).
-* Events for when traders spawn and treasure generates.
-* A queue system for spawning, making spawning large amounts of objects less taxing on the game. The queue also has a timeout system in place, for when something goes wrong.
+* Default events for when traders spawn and treasure generates, as well as the option to set custom events to fire when they're created.
+
+#### Requirements
+Requirements (party level, flag, or region) can be created and set for specific treasure and traders, preventing them from spawning until a requirement is met.
+* Flag requirements can be object or global flags, and can be set to true or false (if the flag is set or not set).
+* Treasure and traders can be set to spawn as soon as requirements are unlocked.
+* Requirements can be re-used between multiple traders and treasure.
+
+#### Queue System
+A queue system is used when creating both treasure and traders, making spawning large amounts of objects less taxing on the game. The queue also has a timeout system in place, for when something goes wrong.
 
 ### Treasure-Specific
 * Various generation types to specify *when* treasure can generate.

@@ -21,7 +21,8 @@ LLLIB_Settings_InitEquipmentSlots();
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_Settings_QueueRates", 3);
 DB_LLLIB_Settings_QueueRates("TraderSpawn", 1000, 2000);
 DB_LLLIB_Settings_QueueRates("TraderCheck", 100, 500);
-DB_LLLIB_Settings_QueueRates("Treasure", 100, 2000);
+DB_LLLIB_Settings_QueueRates("Treasure", 100, 60000);
+DB_LLLIB_Settings_QueueRates("ItemGeneration", 0, 2000);
 
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_Settings_ItemTemplates", 2);
 DB_LLLIB_Settings_ItemTemplates("Book_ModMenu", "LLLIB_BOOK_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108");

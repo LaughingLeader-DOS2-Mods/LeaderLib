@@ -8,9 +8,13 @@ INITSECTION
 
 //DB_LLLIB_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID)
 //DB_LLLIB_Treasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID)
+
 //DB_LLLIB_Treasure_ItemGenerationType(_TreasureID, _ItemEntry, _GenerationType)
+//DB_LLLIB_Treasure_TreasureGenerationType(_TreasureID, _GenerationType)
 //DB_LLLIB_Treasure_RegisteredGenerationTypes(_GenerationType)
 //DB_LLLIB_Treasure_ItemGenerationFlag(_TreasureID, _ItemEntry, _Flag, _FlagType)
+//DB_LLLIB_Treasure_GenerationSpeed(_TreasureID, _TickRate)
+
 //DB_LLLIB_Treasure_ItemLevel(_TreasureID, _ItemEntry, _MinLevel, _MaxLevel, _UsePartyLevel)
 //DB_LLLIB_Treasure_ItemDeltaMods(_TreasureID, _ItemEntry, _Deltamod, _Chance)
 //DB_LLLIB_Treasure_ItemRunes(_TreasureID, _ItemEntry, _Rune, _Chance)
@@ -18,6 +22,7 @@ INITSECTION
 
 //DB_LLLIB_Treasure_OnlyOnce(_TreasureID, _ItemEntryOrTreasureTable, _OnCompletionEvent)
 //DB_LLLIB_Treasure_GeneratedEvent(_TreasureID, _ItemEntry, _OnGeneratedEvent)
+//DB_LLLIB_Treasure_ItemDoneGenerating(_TreasureID, _ItemEntry)
 KBSECTION
 //REGION TREASURE_REGISTERING
 PROC
@@ -54,6 +59,11 @@ PROC
 LLLIB_Treasure_Register_TreasureTable((STRING)_TreasureID, (STRING)_TreaseTable, (STRING)_RequirementID, (INTEGER)_UsePartyLevel, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
 THEN
 DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreaseTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel);
+
+PROC
+LLLIB_Treasure_AddTreasureItemTemplate((STRING)_TreasureID, (STRING)_ItemEntry)
+THEN
+DB_LLLIB_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, 1, "");
 
 PROC
 LLLIB_Treasure_AddTreasureItemTemplate((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Amount)
@@ -95,12 +105,31 @@ THEN
 DB_LLLIB_Treasure_ItemGenerationType(_TreasureID, _ItemEntry, _GenerationType);
 
 PROC
+LLLIB_Treasure_Configure_DefaultGenerationType((STRING)_TreasureID, (STRING)_GenerationType)
+AND
+NOT DB_LLLIB_Treasure_TreasureGenerationType(_TreasureID, _GenerationType)
+THEN
+DB_LLLIB_Treasure_TreasureGenerationType(_TreasureID, _GenerationType);
+
+PROC
 LLLIB_Treasure_Configure_GenerationFlag((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_Flag, (STRING)_FlagType)
 AND
 NOT DB_LLLIB_Treasure_ItemGenerationFlag(_TreasureID, _ItemEntry, _Flag, _FlagType)
 THEN
 LLLIB_Treasure_Configure_GenerationType(_TreasureID, _ItemEntry, "FLAG");
 DB_LLLIB_Treasure_ItemGenerationFlag(_TreasureID, _ItemEntry, _Flag, _FlagType);
+
+PROC
+LLLIB_Treasure_Configure_GenerationSpeed((STRING)_TreasureID, (INTEGER)_TickRate)
+AND
+DB_LLLIB_Treasure_GenerationSpeed(_TreasureID, _TickRate)
+THEN
+NOT DB_LLLIB_Treasure_GenerationSpeed(_TreasureID, _TickRate);
+
+PROC
+LLLIB_Treasure_Configure_GenerationSpeed((STRING)_TreasureID, (INTEGER)_TickRate)
+THEN
+DB_LLLIB_Treasure_GenerationSpeed(_TreasureID, _TickRate);
 
 PROC
 LLLIB_Treasure_Configure_ItemLevel((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_UsePartyLevel)
@@ -155,6 +184,13 @@ DB_LLLIB_Treasure_OnlyOnce(_TreasureID, _ItemEntry, _OnCompletionEvent);
 //END_REGION
 
 //REGION INTERNAL_GENERATION_TYPES
+PROC
+LLLIB_Treasure_Configure_DefaultGenerationType((STRING)_TreasureID, (STRING)_GenerationType)
+AND
+NOT DB_LLLIB_Treasure_RegisteredGenerationTypes(_GenerationType)
+THEN
+DB_LLLIB_Treasure_RegisteredGenerationTypes(_GenerationType);
+
 PROC
 LLLIB_Treasure_Configure_GenerationType((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_GenerationType)
 AND
@@ -497,6 +533,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registe
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_TreasureItemStats", 4);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_ItemLevel", 5);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_ItemGenerationType", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_TreasureGenerationType", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_RegisteredGenerationTypes", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_ItemGenerationFlag", 4);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_ItemDeltaMods", 4);
@@ -504,6 +541,8 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registe
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_ItemMaxAmount", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_OnlyOnce", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_GeneratedEvent", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_ItemDoneGenerating", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_GenerationSpeed", 2);
 
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LLLIB_Traders_RegisteredTrader", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LLLIB_Traders_RegisteredGlobalTrader", 2);

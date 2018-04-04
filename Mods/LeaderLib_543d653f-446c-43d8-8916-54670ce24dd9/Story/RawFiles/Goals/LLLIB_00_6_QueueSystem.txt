@@ -205,14 +205,31 @@ THEN
 LeaderLib_SendEvent(_OnTimeoutEvent);
 
 IF
-TimerFinished(_TimerName)
+StoryEvent(_, _OnTimeoutEvent)
+AND
+DB_LLLIB_Queue_Timeout(_QueueID, _TimerName, _TimeoutValue, _OnTimeoutEvent)
+THEN
+LLLIB_Queue_Internal_OnTimeout(_QueueID);
+
+PROC
+LLLIB_Queue_Internal_OnTimeout((STRING)_QueueID)
 AND
 DB_LLLIB_Queue_Timeout(_QueueID, _TimerName, _TimeoutValue, _OnTimeoutEvent)
 AND
 IntegertoString(_TimeoutValue, _TimeoutValStr)
 THEN
+TimerCancel(_TimerName);
 LeaderLog_Log("DEBUG", "[LLLIB:QueueSystem:Timeout] Queue [",_QueueID,"] timed out after ",_TimeoutValStr,"ms. Starting next tick.");
 LLLIB_Queue_Internal_StartTimer(_QueueID);
+
+IF
+TimerFinished(_TimerName)
+AND
+DB_LLLIB_Queue_Timeout(_QueueID, _TimerName, _TimeoutValue, _OnTimeoutEvent)
+AND
+_OnTimeoutEvent == ""
+THEN
+LLLIB_Queue_Internal_OnTimeout(_QueueID);
 
 PROC
 LLLIB_Queue_Internal_CancelTimeoutTimer((STRING)_QueueID)

@@ -118,7 +118,6 @@ DB_LLLIB_Array_Temp_PopValue(_ArrayName, _Stat)
 THEN
 LLLIB_Treasure_CreateItemByStat_Internal_ProcessNextStat(_Character, _ArrayName, _Stat);
 
-
 PROC
 LLLIB_Treasure_CreateItemByStat_Internal_ProcessNextStat((CHARACTERGUID)_Character, (STRING)_ArrayName, (STRING)_Stat)
 AND

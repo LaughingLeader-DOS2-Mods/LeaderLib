@@ -32,7 +32,6 @@ INITSECTION
 //DB_LLLIB_Treasure_Temp_GenerateItem(_ID, _Object, _TreasureID, _ItemEntry, _CreatedAmount, _MaxAmount, _IsStat)
 //DB_LLLIB_Treasure_Temp_Queue_CountTemplate(_Object, _TreasureID, _ItemEntry, _GeneratedAmount, _RequirementID)
 //DB_LLLIB_Treasure_Temp_Queue_CountStat(_Object, _TreasureID, _ItemTemplate, _ItemEntry, _GeneratedAmount, _RequirementID)
-//DB_LLLIB_Treasure_Temp_StartGeneration(_Object, _TreasureID, _TimerName)
 /*GENERATION_QUEUE*/
 //DB_LLLIB_Array_Data("LLLIB_ItemGenerationQueue", _Index, _ID)
 //DB_LLLIB_Treasure_Temp_ItemGenerationQueue(_ID, _Object, _TreasureID, _GenerationType)

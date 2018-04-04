@@ -2,40 +2,85 @@ LeaderLib Mod for Divinity: Original Sin 2
 =======
 LeaderLib is a library mod used to provide common code to other mods.
 
-# Features
+# Main Features
 
 ## Mod Support
 LeaderLib is, at its core, a way for mods to work together. It provides:
 
-* A way to register and detect what mods are running.
-* A centralized "Mod Settings" menu for other mods to register their menus to. No longer is there a need for every mod to provide a separate settings book.
-* Helpers, such as logging commands, and a way to sort strings alphanumerically. 
-* A way to send general events, with no specific target in mind.
+#### Mod Menu
+LeaderLib includes a centralized "**Mod Menu**" for other mods to register dialog menus to. No longer is there a need for every individual mod to provide a separate settings book.
 
-### Dependency-Free Integration
-* Mods can add LeaderLib support with no dependencies required, thanks to LeaderLib's ModAPI system.
+#### Dependency-Free Integration
+Mods can add LeaderLib support with no dependencies required, thanks to LeaderLib's ModAPI system. Additional freatures include:
+* A way to see what mods were registered with LeaderLib.
+* A way to see what mods are currently active (provided they register in a way LeaderLib recognizes them). This lets mods work together without requiring a strict dependency.
 
 ## Treasure & Trader System
 LeaderLib features a script-based treasure and trader system, which can be used to spawn both treasure and loot dynamically, with a multitude of customization:
 
-* Requirements (party level or flag) can be created and set for specific treasure and trader spawning, preventing them from spawning until a requirement is met.
-* Events for when traders spawn, or treasure generates.
+* Requirements (party level, flag, or region) can be created and set for specific treasure and trader spawning, preventing them from spawning until a requirement is met.
+	* Flag requirements can be object or global flags, and can be set to true or false (if the flag is set or not set).
+* Events for when traders spawn and treasure generates.
+* A queue system for spawning, making spawning large amounts of objects less taxing on the game. The queue also has a timeout system in place, for when something goes wrong.
 
 ### Treasure-Specific
 * Various generation types to specify *when* treasure can generate.
-* Item templates, item stats, or treasure tables can be registered to specific "Treasure IDs".
-* Delta mods and runes (with optional randomization), can be assigned to treasure + item entries.
+* Item templates, item stats, and treasure tables can be registered to specific "Treasure IDs".
+* Delta mods and runes (with optional randomization), can be assigned to item entries.
+* Item levels can be configured to a specific character level, a range of levels (i.e. 5-13, 4-7), or the party's level.
+* Both traders and containers can be set to "generate endlessly" (i.e. every time the chest is opened, or the trader is talked to), provided the treasure requirements are met.
 
 ### Trader-Specific
 * Support for global characters or characters that need to be spawned first.
 * Starting gold for traders on specific levels.
-* Dialog for traders on specific levels, with an optional requirement.
+* Multiple dialogs for traders on specific levels (optional), with optional requirements.
 * Positions on specific levels can be assigned via coordinates, triggers, or objects (i.e. teleporting to a specific chair, or a character).
 * Seats can be assigned to traders, so they'll sit after spawning.
+* Traders can be set to generate treasure when dialog starts (rather than during trade generation by default).
 
-## "Retired Commander" Trader
-LeaderLib adds a new trader to the main campaign that persists through every act.
-He exists as a central trader for mod-specific items added by all my mods. 
+## Retired Trader
+LeaderLib adds a new trader to the main campaign that persists through every act. He exists as a central trader for mod-specific items added by all my mods. He also provides the "Mod Menu" book.
+
+# Additional Features
+
+### Mod Detection
+* Active, registered mods can be queried, with a "Mod Found" and "Mod Not Found" event specified.
+
+### Arrays and Dictionaries
+Index-based databases are useful for iterating through entries in a specific order. LeaderLib adds its own implemention of index-based databases through string-based arrays (array ID, index, string value) and dictionarys (array ID, index, string key, string value).
+
+These databases also come with self-managing lengths (the amount of entries in the arrays), iterators (DB_LLLIB_Array_Iterator(_ArrayID, _Index)) for iterating through the arrays in order, and set of helper-functions:
+
+* LLLIB_Array_GetFirstEntry
+	* Returns the entry with the smallest index in the array.
+* LLLIB_Array_Pop
+	* "Pops" the top entry in an array (index 0), shift all other entries up, and returns the entry. Used by the queue system to process entries one-by-one, in order.
+
+### Create Item by Stat
+* Items can be generated by stats, separately from the main generation queue, and equipped immediately.
+
+### Event Flow System
+When you want a specific set of events to take place in order, the Event Flow system is ideal. It consists of:
+
+* A "stack" which contains the default wait time between events, the default timeout time, and the event to send when the stack is complete.
+* An array of entries, which contain a "start" event to send out, and a "completion" event to listen for. When a stack entry is chosen, it sends out the start event and waits for the complete event before moving to the next entry in the stack.
+* A timeout timer that prevents the stack from getting stuck if a completion event never fires.
+
+Stacks may also have a customizable wait times for specific completion events, i.e., if you want the general wait time to be 50ms, but want the wait time between "Event A Completed" and "Event B Start" to be 500ms.
+
+### Queue System
+For when you want to process databases entries in a specific order, one by one, with a timeout timer making sure nothing gets stuck.
+
+Queues are configured the follow way:
+* Tick time to configure the time between each entry being processed.
+* Timeout time to configure how long to wait before triggering the timeout event and moving on.
+* "Process Entry" event is called when dealing with each queue entry.
+* "Process Complete" event tells the queue to continue.
+* "Process Timed Out" event to react when an entry times out.
+* "Queue Complete" when the queue is done processing entries, this event is sent out and the queue is cleaned up.
+
+### Dependency-Free Api
+Through flags, events, and databases, integration with LeaderLib can be done without actually setting it as a dependency in the editor. Read more on that here: [LeaderLib ModApi: Getting Started])(wiki/ModApi_GettingStarted).
 
 # Releases
 * [Nexus]()

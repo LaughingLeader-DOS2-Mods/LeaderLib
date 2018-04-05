@@ -94,6 +94,7 @@ LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] Running stress tests.");
 LL_DebugLevel_TreasureStressTest();
 
 //REGION TESTS
+/*
 IF
 StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_OnTraderSpawned")
 AND
@@ -101,6 +102,7 @@ GetVarString(_Trader, "LeaderLib_TraderID", "LLLIB_TestLevel_Trader")
 //DB_LLLIB_Traders_Spawned(_Trader, "LLLIB_TestLevel_Trader", _Level)
 THEN
 SetTag(_Trader, "LLLIB_Trader_GenerateOnDialog");
+*/
 
 PROC
 LLLIB_DebugLevel_TraderTest()
@@ -158,33 +160,33 @@ LLLIB_Treasure_Configure_AddRune("LLLIB_TestLevel_Chest2", "WPN_Cheat_Sword_1H_R
 PROC
 LLLIB_DebugLevel_ModMenuTest()
 THEN
-LeaderLib_RegisterModMenu("LLZ1", "[Zieonimus] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_RegisterModMenu("LLZ2", "[Zzznonom] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_RegisterModMenu("LLZ3", "[Zzaonimus] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_RegisterModMenu("LLZ4", "[Zaronimus] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_RegisterModMenu("LLZ5", "[Zironimus] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_RegisterModMenu("LLNWIZ", "[Naming Wizard] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_RegisterModMenu("LLEQSET", "[Equipment Sets] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_RegisterModMenu("LLDBT", "[Debug Tools] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_RegisterModMenu("LLZasd7", "[Blaaaabbbbbzter] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_RegisterModMenu("LLZasd6", "[Blaaaabbbbbzter] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_RegisterModMenu("LLasdZ92", "[Blaaaabbbbbzter9] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_RegisterModMenu("LLTest10", "Zeronimus", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_RegisterModMenu("LLTest7", "Bananas", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_RegisterModMenu("LLTest2", "Apples2", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_RegisterModMenu("LLTest1", "Apples1", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_RegisterModMenu("LLZZ2", "[ModMenu2] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_RegisterModMenu("LLZZ11", "[ModMenu11] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_RegisterModMenu("LLZZ3", "[ModMenu3] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_RegisterModMenu("LLZZ5", "[ModMenu5] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_RegisterModMenu("LLZZ7", "[ModMenu7] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_RegisterModMenu("LLZZ9", "[ModMenu9] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_RegisterModMenu("LLZZ10", "[ModMenu10] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_RegisterModMenu("LLZZ12", "[ModMenu12] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_RegisterModMenu("LLZZ1", "[ModMenu1] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_RegisterModMenu("LLZZ6", "[ModMenu6] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_RegisterModMenu("LLZZ4", "[ModMenu4] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_RegisterModMenu("LLZZ8", "[ModMenu8] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLZ1", "[Zieonimus] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLZ2", "[Zzznonom] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLZ3", "[Zzaonimus] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLZ4", "[Zaronimus] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLZ5", "[Zironimus] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLNWIZ", "[Naming Wizard] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLEQSET", "[Equipment Sets] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLDBT", "[Debug Tools] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLZasd7", "[Blaaaabbbbbzter] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLZasd6", "[Blaaaabbbbbzter] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLasdZ92", "[Blaaaabbbbbzter9] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLTest10", "Zeronimus", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLTest7", "Bananas", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLTest2", "Apples2", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLTest1", "Apples1", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLZZ2", "[ModMenu2] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLZZ11", "[ModMenu11] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLZZ3", "[ModMenu3] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLZZ5", "[ModMenu5] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLZZ7", "[ModMenu7] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLZZ9", "[ModMenu9] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLZZ10", "[ModMenu10] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLZZ12", "[ModMenu12] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLZZ1", "[ModMenu1] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLZZ6", "[ModMenu6] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLZZ4", "[ModMenu4] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLZZ8", "[ModMenu8] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 //END_REGION
 
 //REGION STRESS_TESTS

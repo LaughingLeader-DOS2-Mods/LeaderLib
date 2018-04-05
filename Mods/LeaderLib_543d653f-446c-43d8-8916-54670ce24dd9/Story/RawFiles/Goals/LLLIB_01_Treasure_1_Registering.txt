@@ -376,30 +376,30 @@ DB_LLLIB_Traders_StartingGold(_TraderID, _Level, _Amount, _Requirement);
 PROC
 LLLIB_Trader_Register_Dialog((STRING)_TraderID, (STRING)_Dialog)
 THEN
-LLLIB_Trader_Register_Dialog(_TraderID, "", _Dialog, "");
+LLLIB_Trader_Register_Dialog(_TraderID, _Dialog, "", "");
 
 PROC
-LLLIB_Trader_Register_Dialog((STRING)_TraderID, (STRING)_Level, (STRING)_Dialog)
+LLLIB_Trader_Register_Dialog((STRING)_TraderID, (STRING)_Dialog, (STRING)_Level)
 THEN
-LLLIB_Trader_Register_Dialog(_TraderID, _Level, _Dialog, "");
+LLLIB_Trader_Register_Dialog(_TraderID, _Dialog, _Level, "");
 
 PROC
-LLLIB_Trader_Register_Dialog((STRING)_TraderID, (STRING)_Level, (STRING)_Dialog, (STRING)_RequirementID)
+LLLIB_Trader_Register_Dialog((STRING)_TraderID, (STRING)_Dialog, (STRING)_Level, (STRING)_RequirementID)
 AND
-DB_LLLIB_Traders_Dialog(_TraderID, _Level, _Dialog, _PastRequirementID)
+DB_LLLIB_Traders_Dialog(_TraderID, _Dialog, _Level, _PastRequirementID)
 AND
 _PastRequirementID != _RequirementID
 THEN
-NOT DB_LLLIB_Traders_Dialog(_TraderID, _Level, _Dialog, _PastRequirementID);
-DB_LLLIB_Traders_Dialog(_TraderID, _Level, _Dialog, _RequirementID);
+NOT DB_LLLIB_Traders_Dialog(_TraderID, _Dialog, _Level, _PastRequirementID);
+DB_LLLIB_Traders_Dialog(_TraderID, _Dialog, _Level, _RequirementID);
 LeaderLog_Log("DEBUG", "[LLLIB:TraderSystem:Register_Dialog] Requirement for [",_TraderID,"][",_Level,"][",_Dialog,"] changed from [",_PastRequirementID,"] to [",_RequirementID,"].");
 
 PROC
-LLLIB_Trader_Register_Dialog((STRING)_TraderID, (STRING)_Level, (STRING)_Dialog, (STRING)_RequirementID)
+LLLIB_Trader_Register_Dialog((STRING)_TraderID, (STRING)_Dialog, (STRING)_Level, (STRING)_RequirementID)
 AND
-NOT DB_LLLIB_Traders_Dialog(_TraderID, _Level, _Dialog, _)
+NOT DB_LLLIB_Traders_Dialog(_TraderID, _Dialog, _Level, _)
 THEN
-DB_LLLIB_Traders_Dialog(_TraderID, _Level, _Dialog, _RequirementID);
+DB_LLLIB_Traders_Dialog(_TraderID, _Dialog, _Level, _RequirementID);
 
 PROC
 LLLIB_Trader_Register_Position((STRING)_TraderID, (STRING)_Level, (REAL)_x, (REAL)_y, (REAL)_z)

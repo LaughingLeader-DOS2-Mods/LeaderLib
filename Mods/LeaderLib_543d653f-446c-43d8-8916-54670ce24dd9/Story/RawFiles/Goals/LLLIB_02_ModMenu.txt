@@ -13,6 +13,7 @@ LLLIB_ModMenu_InitSettings();
 //Dynamic
 //DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _Index, _ID, _DisplayName)
 //DB_LLLIB_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModName, _Author)
+//DB_LLLIB_ModMenu_RegisteredMenu_OpenEvent(_ID, _OpenMenuEvent)
 //DB_LLLIB_ModMenu_CurrentPageIndex(_Player, _Page)
 //DB_LLLIB_ModMenu_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
 //DB_LLLIB_ModMenu_Temp_ActiveMenu(_Player, _ID, _Dialog)
@@ -20,13 +21,27 @@ LLLIB_ModMenu_InitSettings();
 KBSECTION
 //REGION MENU_REGISTERING
 PROC
-LeaderLib_RegisterModMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModName, (STRING)_Author)
+LeaderLib_Register_ModMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModName, (STRING)_Author)
 AND
 NOT DB_LLLIB_ModMenu_RegisteredMenuData(_ID,_,_,_,_)
 THEN
 LLLIB_StringExt_DetermineStringLength(_DisplayName);
 DB_LLLIB_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModName, _Author);
 LLLIB_ModMenu_Internal_StartSortIfNeeded();
+
+/*
+PROC
+LeaderLib_Register_ModMenuOpenEvent((STRING)_ID, (STRING)_OpenMenuEvent)
+AND
+DB_LLLIB_ModMenu_RegisteredMenu_OpenEvent(_ID, _LastOpenMenuEvent)
+THEN
+NOT DB_LLLIB_ModMenu_RegisteredMenu_OpenEvent(_ID, _LastOpenMenuEvent);
+*/
+
+PROC
+LeaderLib_Register_ModMenuOpenEvent((STRING)_ID, (STRING)_OpenMenuEvent)
+THEN
+DB_LLLIB_ModMenu_RegisteredMenu_OpenEvent(_ID, _OpenMenuEvent);
 //END_REGION
 
 //REGION PAGE_MAX_CALCULATION
@@ -582,6 +597,19 @@ AND
 DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
 AND
 DB_LLLIB_ModMenu_Temp_ActiveMenu(_Player, _ID, _Dialog)
+AND
+DB_LLLIB_ModMenu_RegisteredMenu_OpenEvent(_ID, _OpenMenuEvent)
+THEN
+SetStoryEvent(_Player, _OpenMenuEvent);
+
+IF
+DialogEnded("LLLIB_ModMenu", _Instance)
+AND
+DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
+AND
+DB_LLLIB_ModMenu_Temp_ActiveMenu(_Player, _ID, _Dialog)
+AND
+NOT DB_LLLIB_ModMenu_RegisteredMenu_OpenEvent(_ID, _)
 THEN
 Proc_StartDialog(0, _Dialog, _Player, _Player);
 
@@ -590,11 +618,9 @@ DialogEnded(_Dialog, _Instance)
 AND
 DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
 AND
-UserGetFlag(_Player, "LeaderLib_AutoOpenModMenu", 1)
-AND
-ObjectGetFlag(_Player, "LeaderLib_BlockModMenuReopen", 0)
+DB_LLLIB_ModMenu_Temp_ActiveMenu(_Player, _ID, _Dialog)
 THEN
-LLLIB_ModMenu_Reopen(_Player, _Dialog);
+LLLIB_ModMenu_Internal_AttemptToReopen(_Player, _Dialog);
 
 IF
 DialogEnded(_Dialog, _Instance)
@@ -606,6 +632,35 @@ THEN
 ObjectClearFlag(_Player, "LeaderLib_OpenModMenu");
 LLLIB_ModMenu_Reopen(_Player, _Dialog);
 
+IF
+StoryEvent((CHARACTERGUID)_Player, "LeaderLib_Commands_OpenModMenu")
+AND
+DB_LLLIB_ModMenu_Temp_ActiveMenu(_Player, _ID, _Dialog)
+THEN
+LLLIB_ModMenu_Internal_AttemptToReopen(_Player, _Dialog);
+
+PROC
+LLLIB_ModMenu_Internal_AttemptToReopen((CHARACTERGUID)_Player, (STRING)_Dialog)
+AND
+UserGetFlag(_Player, "LeaderLib_AutoOpenModMenu", 1)
+AND
+ObjectGetFlag(_Player, "LeaderLib_BlockModMenuReopen", 0)
+THEN
+LLLIB_ModMenu_Reopen(_Player, _Dialog);
+
+PROC
+LLLIB_ModMenu_Reopen((CHARACTERGUID)_Player, (STRING)_Dialog)
+AND
+DB_LLLIB_Settings_ItemTemplates("Book_ModMenu", _ItemTemplate)
+AND
+GetItemForItemTemplateInPartyInventory(_Player, _ItemTemplate, _MenuBook)
+AND
+DB_LLLIB_ModMenu_Temp_ActiveMenu(_Player, _ID, _Dialog)
+THEN
+NOT DB_LLLIB_ModMenu_Temp_ActiveMenu(_Player, _ID, _Dialog);
+Proc_StartDialog(0, "LLLIB_ModMenu", _MenuBook, _Player);
+
+//Book not found?
 PROC
 LLLIB_ModMenu_Reopen((CHARACTERGUID)_Player, (STRING)_Dialog)
 AND

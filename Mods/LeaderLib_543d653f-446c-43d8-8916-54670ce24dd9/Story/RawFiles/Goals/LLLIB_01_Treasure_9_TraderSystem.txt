@@ -100,7 +100,7 @@ NOT DB_LLLIB_Traders_Temp_DialogFound(_TraderID, _Dialog);
 PROC
 LLLIB_Traders_SetDialogToFirstAvailable((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
 AND
-DB_LLLIB_Traders_Dialog(_TraderID, _Level, _Dialog, _RequirementID)
+DB_LLLIB_Traders_Dialog(_TraderID, _Dialog, _Level, _RequirementID)
 AND
 _RequirementID != "" //Prioritize dialog with requirements
 AND
@@ -119,7 +119,7 @@ LLLIB_Traders_SetDialogToFirstAvailable((CHARACTERGUID)_Trader, (STRING)_TraderI
 AND
 NOT DB_LLLIB_Traders_Temp_DialogFound(_TraderID, _)
 AND
-DB_LLLIB_Traders_Dialog(_TraderID, _Level, _Dialog, _RequirementID)
+DB_LLLIB_Traders_Dialog(_TraderID, _Dialog, _Level, _RequirementID)
 AND
 _RequirementID == ""
 AND
@@ -800,7 +800,7 @@ LLLIB_Traders_SpawnIfRequirementsMet(_RequirementID);
 PROC
 LLLIB_Requirements_RequirementUnlocked((STRING)_RequirementID)
 AND
-DB_LLLIB_Traders_Dialog(_TraderID, _Level, _Dialog, _RequirementID)
+DB_LLLIB_Traders_Dialog(_TraderID, _Dialog, _Level, _RequirementID)
 AND
 DB_CurrentLevel(_Level)
 AND
@@ -811,7 +811,7 @@ LLLIB_Traders_SetDialog(_Trader, _Dialog);
 PROC
 LLLIB_Requirements_RequirementLocked((STRING)_RequirementID)
 AND
-DB_LLLIB_Traders_Dialog(_TraderID, _Level, _Dialog, _RequirementID)
+DB_LLLIB_Traders_Dialog(_TraderID, _Dialog, _Level, _RequirementID)
 AND
 DB_CurrentLevel(_Level)
 AND

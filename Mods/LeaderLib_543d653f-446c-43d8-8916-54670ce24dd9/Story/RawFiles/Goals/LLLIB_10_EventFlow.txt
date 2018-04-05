@@ -7,8 +7,27 @@ INITSECTION
 //DB_LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent)
 //DB_LLLIB_EventFlow_WaitTimer(_StackName, _TimerName)
 //DB_LLLIB_EventFlow_CustomWaitTime(_StackName, _OnCompleteEvent, _WaitTime)
-LLLIB_EventFlow_Init_LeaderLibStack();
+//DB_LLLIB_EventFlow_DefaultStackInitialized(_Val, _IsCharacterCreationLevel)
 KBSECTION
+IF
+RegionStarted(_Level)
+AND
+NOT DB_LLLIB_EventFlow_DefaultStackInitialized(_,_)
+AND
+IsCharacterCreationLevel(_Level, _IsCharacterCreationLevel)
+THEN
+DB_LLLIB_EventFlow_DefaultStackInitialized(1, _IsCharacterCreationLevel);
+LLLIB_EventFlow_Init_LeaderLibStack();
+
+IF
+RegionEnded(_Level)
+AND
+DB_LLLIB_EventFlow_DefaultStackInitialized(_Val, _IsCharacterCreationLevel)
+AND
+_IsCharacterCreationLevel > 0
+THEN
+NOT DB_LLLIB_EventFlow_DefaultStackInitialized(_Val, _IsCharacterCreationLevel);
+
 //REGION DEFAULT_FLOW
 PROC
 LLLIB_EventFlow_Init_LeaderLibStack()
@@ -20,11 +39,23 @@ LLLIB_EventFlow_ForceStop("LLLIB_DefaultEventFlow");
 PROC
 LLLIB_EventFlow_Init_LeaderLibStack()
 THEN
-LLLIB_Updater_SaveSettingsVersionData("LLLIB_Settings_EventFlowDefaultStack");
 LLLIB_EventFlow_Clear_StackData("LLLIB_DefaultEventFlow");
-LLLIB_EventFlow_AddStack("LLLIB_DefaultEventFlow", "LeaderLib_Events_OnDefaultEventFlowComplete", 500);
-LLLIB_EventFlow_SetCustomWaitTime("LLLIB_DefaultEventFlow", "LeaderLib_Events_OnTraderSpawnComplete", 1000);
+LLLIB_EventFlow_AddStack("LLLIB_DefaultEventFlow", "LeaderLib_Events_OnDefaultEventFlowComplete", 200);
+
+PROC
+LLLIB_EventFlow_Init_LeaderLibStack()
+AND
+LLLIB_ModMenu_QRY_SortNeeded()
+THEN
 LLLIB_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_SortMenus", "LeaderLib_Events_OnMenuSortComplete");
+
+PROC
+LLLIB_EventFlow_Init_LeaderLibStack()
+AND
+DB_LLLIB_EventFlow_DefaultStackInitialized(_Val, 0)
+THEN
+LLLIB_Updater_SaveSettingsVersionData("LLLIB_Settings_EventFlowDefaultStack");
+LLLIB_EventFlow_SetCustomWaitTime("LLLIB_DefaultEventFlow", "LeaderLib_Events_OnTraderSpawnComplete", 250);
 LLLIB_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_SpawnTraders", "LeaderLib_Events_OnTraderSpawnComplete");
 LLLIB_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_StartTreasureGeneration", "LeaderLib_Events_OnTreasureGenerationComplete");
 LLLIB_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_CheckTraders", "LeaderLib_Events_OnTraderCheckingComplete");
@@ -120,7 +151,7 @@ LLLIB_EventFlow_SetCurrentEvent((STRING)_StackName, (INTEGER)_Index)
 AND
 DB_LLLIB_EventFlow_CurrentEvent(_StackName, _Index)
 AND
-DB_LLLIB_Dictionary_Data("LLLIB_DefaultEventFlow", _Index, _StartEvent, _OnCompleteEvent)
+DB_LLLIB_Dictionary_Data(_StackName, _Index, _StartEvent, _OnCompleteEvent)
 THEN
 LLLIB_EventFlow_LaunchTimeoutTimer(_StackName, _OnCompleteEvent);
 LeaderLog_Log("DEBUG", "[LLLIB:EventFlow:SetCurrentEvent] Event flow [",_StackName,"] sent out StartEvent [",_StartEvent,"].");
@@ -129,7 +160,7 @@ LeaderLib_SendEvent(_StartEvent);
 PROC
 LLLIB_EventFlow_SetCurrentEvent((STRING)_StackName, (INTEGER)_Index)
 AND
-DB_LLLIB_Array_Length("LLLIB_DefaultEventFlow", _Length)
+DB_LLLIB_Array_Length(_StackName, _Length)
 AND
 _Index >= _Length
 THEN

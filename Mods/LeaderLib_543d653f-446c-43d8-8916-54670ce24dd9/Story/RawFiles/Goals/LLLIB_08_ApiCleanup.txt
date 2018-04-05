@@ -20,7 +20,7 @@ LLLIB_ModApi_RunCleanup()
 AND
 DB_LeaderLib_ModApi_RegisterMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModName, (STRING)_Author)
 THEN
-LeaderLib_RegisterModMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
+LeaderLib_Register_ModMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
 NOT DB_LeaderLib_ModApi_RegisterMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
 
 PROC

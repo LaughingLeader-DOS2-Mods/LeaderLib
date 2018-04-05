@@ -3,7 +3,7 @@ SubGoalCombiner SGC_AND
 INITSECTION
 //LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", "0.9.0.0");
 LeaderUpdater_Register_ActiveGoal("LeaderLib", "LaughingLeader", "LLLIB_ZZZ_Updater");
-LeaderLib_RegisterModMenu("LaughingLeader_LeaderLib", "[LeaderLib] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LaughingLeader_LeaderLib", "[LeaderLib] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LLLIB_Updater_RegisterDatabasesOnce();
 KBSECTION
 //REGION UPDATING

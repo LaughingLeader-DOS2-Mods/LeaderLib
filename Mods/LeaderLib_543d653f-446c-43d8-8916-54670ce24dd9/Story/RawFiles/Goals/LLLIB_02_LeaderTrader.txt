@@ -49,7 +49,7 @@ LLLIB_LeaderTrader_RegisterDialogSettings()
 AND
 DB_LLLIB_LeaderTrader_IntroDialogRequirements(_Level, _Dialog, _Flag, _RequirementID)
 THEN
-LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", _Level, _Dialog, _RequirementID);
+LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", _Dialog, _Level, _RequirementID);
 LLLIB_Requirements_AddFlagRequirement(_RequirementID, _Flag, "Object", 0);
 
 PROC
@@ -57,7 +57,7 @@ LLLIB_LeaderTrader_RegisterTraderSettings()
 THEN
 DB_LLLIB_LeaderTrader_CurrentAppearance("LLLIB_LeaderTrader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e");
 
-LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", "", "LLLIB_LeaderTrader_Default"); // Default
+LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", "LLLIB_LeaderTrader_Default"); // Default
 LLLIB_LeaderTrader_RegisterDialogSettings();
 
 LLLIB_Trader_Register_CreationEvent("LLLIB_LeaderTrader", "LeaderLib_Events_OnLeaderTradeSpawned");

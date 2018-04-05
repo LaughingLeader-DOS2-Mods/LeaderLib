@@ -24,7 +24,7 @@ LLLIB_LeaderLog_Internal_DisableInitialEnableFlag()
 AND
 DB_LeaderLog_InitialEnable(_Val)
 THEN
-GlobalClearFlag("LeaderLog_Debug_Enabled");
+//GlobalClearFlag("LeaderLog_Debug_Enabled");
 NOT DB_LeaderLog_InitialEnable(_Val);
 //END_REGION
 

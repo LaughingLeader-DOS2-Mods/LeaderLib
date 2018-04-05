@@ -11,7 +11,7 @@ INITSECTION
 //DB_LLLIB_DictionarySort_TimerRunning(_DictionaryID, _TimerName)
 //DB_LLLIB_DictionarySort_SortingComplete(_DictionaryID)
 /*TIMERS*/
-//DB_LLLIB_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent)
+//DB_LLLIB_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate)
 //DB_LLLIB_DictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex)
 /*DEBUG*/
 //DB_LLLIB_DictionarySort_TotalTime(_DictionaryID, _TimeTaken)
@@ -29,6 +29,11 @@ DB_LLLIB_DictionarySort_Temp_StringQueue(_DictionaryID, _ID, _StringEntry);
 //REGION START
 PROC
 LLLIB_DictionarySort_StartSorting((STRING)_DictionaryID, (INTEGER)_TickRate, (STRING)_CompleteEvent)
+THEN
+LLLIB_DictionarySort_StartSorting(_DictionaryID, _TickRate, _CompleteEvent, 0);
+
+PROC
+LLLIB_DictionarySort_StartSorting((STRING)_DictionaryID, (INTEGER)_TickRate, (STRING)_CompleteEvent, (INTEGER)_EntryTickRate)
 AND
 DB_LLLIB_DictionarySort_SortingComplete(_DictionaryID)
 THEN
@@ -36,34 +41,16 @@ LLLIB_DictionarySort_CleanupLastTrackedTime(_DictionaryID);
 NOT DB_LLLIB_DictionarySort_SortingComplete(_DictionaryID);
 
 PROC
-LLLIB_DictionarySort_StartSorting((STRING)_DictionaryID, (INTEGER)_TickRate, (STRING)_CompleteEvent)
+LLLIB_DictionarySort_StartSorting((STRING)_DictionaryID, (INTEGER)_TickRate, (STRING)_CompleteEvent, (INTEGER)_EntryTickRate)
 AND
 StringConcatenate("LLLIB_Timers_Sorter_SortDictionary_", _DictionaryID, _TimerName)
 THEN
-DB_LLLIB_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent);
+DB_LLLIB_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate);
 DB_LLLIB_DictionarySort_SortingStarted(_DictionaryID, 1);
-
-PROC
-LLLIB_DictionarySort_StartSorting((STRING)_DictionaryID, (INTEGER)_TickRate, (STRING)_CompleteEvent)
-AND
-DB_LLLIB_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent)
-AND
-_TickRate > 0
-THEN
-DB_LLLIB_DictionarySort_TimerRunning(_DictionaryID, _TimerName);
-TimerLaunch(_TimerName, _TickRate);
-
-PROC
-LLLIB_DictionarySort_StartSorting((STRING)_DictionaryID, (INTEGER)_TickRate, (STRING)_CompleteEvent)
-AND
-DB_LLLIB_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent)
-AND
-_TickRate <= 0
-THEN
 LLLIB_DictionarySort_Internal_OnTick(_DictionaryID);
 
 PROC
-LLLIB_DictionarySort_StartSorting((STRING)_DictionaryID, (INTEGER)_TickRate, (STRING)_CompleteEvent)
+LLLIB_DictionarySort_StartSorting((STRING)_DictionaryID, (INTEGER)_TickRate, (STRING)_CompleteEvent, (INTEGER)_EntryTickRate)
 AND
 IntegertoString(_TickRate, _TickRateStr)
 THEN
@@ -99,7 +86,7 @@ LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort:StopSorting] Sorting stopped for '
 PROC
 LLLIB_DictionarySort_SortingComplete((STRING)_DictionaryID)
 AND
-DB_LLLIB_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent)
+DB_LLLIB_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate)
 AND
 NOT DB_LLLIB_DictionarySort_SortingComplete(_DictionaryID)
 THEN
@@ -118,6 +105,8 @@ DB_LLLIB_DictionarySort_TotalTime(_DictionaryID, 0);
 
 PROC
 LLLIB_DictionarySort_Debug_AddTickToTotalTime((STRING)_DictionaryID, (INTEGER)_TickRate)
+AND
+_TickRate > 0
 AND
 DB_LLLIB_DictionarySort_TotalTime(_DictionaryID, _TimeTaken)
 AND
@@ -149,57 +138,66 @@ LLLIB_DictionarySort_CleanupJob(_DictionaryID);
 PROC
 LLLIB_DictionarySort_Internal_NextTick((STRING)_DictionaryID)
 AND
-DB_LLLIB_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent)
+DB_LLLIB_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate)
 AND
 NOT DB_LLLIB_DictionarySort_TimerRunning(_DictionaryID, _TimerName)
 AND
 _TickRate > 0
 THEN
 DB_LLLIB_DictionarySort_TimerRunning(_DictionaryID, _TimerName);
-//LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort] Starting next tick for '",_DictionaryID,"'.");
+//LeaderLog_Log("TRACE", "[LLLIB:DictionarySort] Starting next tick for '",_DictionaryID,"'.");
 LLLIB_DictionarySort_Debug_AddTickToTotalTime(_DictionaryID, _TickRate);
 TimerLaunch(_TimerName, _TickRate);
 
 PROC
 LLLIB_DictionarySort_Internal_NextTick((STRING)_DictionaryID)
 AND
-DB_LLLIB_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent)
+DB_LLLIB_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate)
 AND
 NOT DB_LLLIB_DictionarySort_TimerRunning(_DictionaryID, _TimerName)
 AND
 _TickRate <= 0
 THEN
-DB_LLLIB_DictionarySort_TimerRunning(_DictionaryID, _TimerName);
-//LLLIB_DictionarySort_Internal_OnTick(_DictionaryID);
 //Needs to be delayed by a frame to avoid recursive crashing
-LLLIB_DictionarySort_Debug_AddTickToTotalTime(_DictionaryID, 1);
-TimerLaunch(_TimerName, 1);
+DB_LLLIB_DictionarySort_TimerRunning(_DictionaryID, _TimerName);
+//LLLIB_DictionarySort_Debug_AddTickToTotalTime(_DictionaryID, 1);
+//TimerLaunch(_TimerName, 1);
+LeaderLib_SendEvent(_TimerName);
+
+IF
+StoryEvent(_, _TimerName)
+AND
+DB_LLLIB_DictionarySort_TimerRunning(_DictionaryID, _TimerName)
+THEN
+NOT DB_LLLIB_DictionarySort_TimerRunning(_DictionaryID, _TimerName);
+LLLIB_DictionarySort_Internal_OnTick(_DictionaryID);
 
 PROC
 LLLIB_DictionarySort_Internal_NextEntryTick((STRING)_DictionaryID, (STRING)_ID)
 AND
-DB_LLLIB_DictionarySort_Temp_SortJob(_DictionaryID, _, _TickRate, _)
+DB_LLLIB_DictionarySort_Temp_SortJob(_DictionaryID, _MainTimerName, _TickRate, _CompleteEvent, _EntryTickRate)
 AND
-_TickRate > 0
+_EntryTickRate > 0
 AND
 DB_LLLIB_DictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex)
 AND
 NOT DB_LLLIB_DictionarySort_TimerRunning(_DictionaryID, _TimerName)
 THEN
 DB_LLLIB_DictionarySort_TimerRunning(_DictionaryID, _TimerName);
-//LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort:NextEntryTick] Starting next entry tick for [",_DictionaryID,"][",_ID,"].");
-LLLIB_DictionarySort_Debug_AddTickToTotalTime(_DictionaryID, _TickRate);
-TimerLaunch(_TimerName, _TickRate);
+//LeaderLog_Log("TRACE", "[LLLIB:DictionarySort:NextEntryTick] Starting next entry tick for [",_DictionaryID,"][",_ID,"].");
+LLLIB_DictionarySort_Debug_AddTickToTotalTime(_DictionaryID, _EntryTickRate);
+TimerLaunch(_TimerName, _EntryTickRate);
 
 PROC
 LLLIB_DictionarySort_Internal_NextEntryTick((STRING)_DictionaryID, (STRING)_ID)
 AND
-DB_LLLIB_DictionarySort_Temp_SortJob(_DictionaryID, _, _TickRate, _)
+DB_LLLIB_DictionarySort_Temp_SortJob(_DictionaryID, _MainTimerName, _TickRate, _CompleteEvent, _EntryTickRate)
 AND
-_TickRate <= 0
+_EntryTickRate <= 0
 AND
 DB_LLLIB_DictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex)
 THEN
+//LeaderLog_Log("TRACE", "[LLLIB:DictionarySort:SortJob(TimerFinished)] Ticking entry [",_DictionaryID,"][",_ID,"].");
 LLLIB_DictionarySort_Internal_OnEntryTick(_DictionaryID, _ID);
 
 IF
@@ -212,9 +210,9 @@ NOT DB_LLLIB_DictionarySort_TimerRunning(_DictionaryID, _TimerName);
 IF
 TimerFinished(_TimerName)
 AND
-DB_LLLIB_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent)
+DB_LLLIB_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate)
 THEN
-//LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort:SortJob(TimerFinished)] Ticking '",_DictionaryID,"'.");
+//LeaderLog_Log("TRACE", "[LLLIB:DictionarySort:SortJob(TimerFinished)] Ticking '",_DictionaryID,"'.");
 LLLIB_DictionarySort_Internal_OnTick(_DictionaryID);
 
 IF
@@ -222,7 +220,7 @@ TimerFinished(_TimerName)
 AND
 DB_LLLIB_DictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex)
 THEN
-//LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort:SortJob(TimerFinished)] Ticking entry [",_DictionaryID,"][",_ID,"].");
+//LeaderLog_Log("TRACE", "[LLLIB:DictionarySort:SortJob(TimerFinished)] Ticking entry [",_DictionaryID,"][",_ID,"].");
 LLLIB_DictionarySort_Internal_OnEntryTick(_DictionaryID, _ID);
 
 PROC
@@ -260,14 +258,14 @@ DB_LLLIB_DictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEn
 THEN
 NOT DB_LLLIB_DictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex);
 TimerCancel(_TimerName);
-//LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort:OnMenuSorted] Menu '",_StringEntry,"' was sorted successfully.");
+//LeaderLog_Log("TRACE", "[LLLIB:DictionarySort:OnMenuSorted] Menu '",_StringEntry,"' was sorted successfully.");
 
 PROC
 LLLIB_DictionarySort_OnStringSorted((STRING)_DictionaryID, (STRING)_ID)
 AND
 LLLIB_DictionarySort_QRY_SortingNeeded()
 THEN
-//LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort:OnStringSorted] Starting sort timer. ");
+//LeaderLog_Log("TRACE", "[LLLIB:DictionarySort:OnStringSorted] Starting sort timer. ");
 LLLIB_DictionarySort_Internal_NextTick(_DictionaryID);
 
 PROC
@@ -323,7 +321,7 @@ DB_LeaderLog_Temp_CombinedString(_TimerName)
 THEN
 NOT DB_LeaderLog_Temp_CombinedString(_TimerName);
 DB_LLLIB_DictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, 0);
-//LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort] [",_DictionaryID,"] Finding sorted position for '",_StringEntry,"'.");
+//LeaderLog_Log("TRACE", "[LLLIB:DictionarySort] [",_DictionaryID,"] Finding sorted position for '",_StringEntry,"'.");
 LLLIB_Array_BuildArrayIterator(_DictionaryID);
 LLLIB_DictionarySort_Internal_FindNextEntryIndex(_DictionaryID, _ID, _StringEntry);
 
@@ -358,11 +356,7 @@ AND
 LLLIB_StringExt_QRY_CompareStrings(_DictionaryID, _StringEntry, _CheckDisplayName)
 AND
 DB_LLLIB_StringCompare_Results(_StringEntry, _CheckDisplayName, _ComparisonVal)
-//IntegerSum(0,0,_ComparisonVal)
-AND
-IntegertoString(_ComparisonVal, _CompValStr)
 THEN
-//LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort:ProcessCompareResults] Comparison value: '",_StringEntry,"' => '",_CheckDisplayName,"' = ",_CompValStr);
 LLLIB_DictionarySort_Internal_ProcessCompareResults(_DictionaryID, _ID, _StringEntry, _Index, _ComparisonVal);
 
 PROC
@@ -458,9 +452,9 @@ NOT DB_LLLIB_DictionarySort_Temp_StringQueue(_DictionaryID, _ID, _StringEntry);
 PROC
 LLLIB_DictionarySort_CleanupJob((STRING)_DictionaryID)
 AND
-DB_LLLIB_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent)
+DB_LLLIB_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate)
 THEN
-NOT DB_LLLIB_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent);
+NOT DB_LLLIB_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate);
 
 PROC
 LLLIB_DictionarySort_CleanupJob((STRING)_DictionaryID)
@@ -488,7 +482,18 @@ DB_LLLIB_Array_Length(_DictionaryID, _Length)
 AND
 IntegertoString(_Length, _LengthStr)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort:OnIterator] Iterating [",_DictionaryID,"][",_CurrentIndexStr,"/",_LengthStr,"] [",_ID,"] = ",_StringEntry);
+LeaderLog_Log("TRACE", "[LLLIB:DictionarySort:OnIterator] Iterating [",_DictionaryID,"][",_CurrentIndexStr,"/",_LengthStr,"] [",_ID,"] = ",_StringEntry);
+
+PROC
+LLLIB_DictionarySort_Internal_OnIterator((STRING)_DictionaryID, (STRING)_ID, (STRING)_StringEntry, (INTEGER)_Index)
+AND
+DB_LLLIB_Dictionary_Data(_DictionaryID, _Index, _CheckID, _CheckDisplayName)
+AND
+DB_LLLIB_StringCompare_Results(_StringEntry, _CheckDisplayName, _ComparisonVal)
+AND
+IntegertoString(_ComparisonVal, _CompValStr)
+THEN
+LeaderLog_Log("TRACE", "[LLLIB:DictionarySort:ProcessCompareResults] Comparison value: '",_StringEntry,"' => '",_CheckDisplayName,"' = ",_CompValStr);
 */
 //END_REGION
 
@@ -501,7 +506,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort",
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LLLIB_DictionarySort_CurrentlySorting", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LLLIB_DictionarySort_TimerRunning", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LLLIB_DictionarySort_SortingComplete", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LLLIB_DictionarySort_Temp_SortJob", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LLLIB_DictionarySort_Temp_SortJob", 5);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LLLIB_DictionarySort_EntrySortTimer", 5);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LLLIB_DictionarySort_TotalTime", 2);
 LeaderLog_Log("SYSTEM", "[LLLIB:DictionarySort] Databases registered.");

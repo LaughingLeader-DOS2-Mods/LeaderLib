@@ -19,6 +19,7 @@ THEN
 DB_LLLIB_EventFlow_DefaultStackInitialized(1, _IsCharacterCreationLevel);
 LLLIB_EventFlow_Init_LeaderLibStack();
 
+//Re-init after a character creation level
 IF
 RegionEnded(_Level)
 AND
@@ -39,8 +40,19 @@ LLLIB_EventFlow_ForceStop("LLLIB_DefaultEventFlow");
 PROC
 LLLIB_EventFlow_Init_LeaderLibStack()
 THEN
+LLLIB_Updater_SaveSettingsVersionData("LLLIB_Settings_EventFlowDefaultStack");
 LLLIB_EventFlow_Clear_StackData("LLLIB_DefaultEventFlow");
-LLLIB_EventFlow_AddStack("LLLIB_DefaultEventFlow", "LeaderLib_Events_OnDefaultEventFlowComplete", 200);
+LLLIB_EventFlow_AddStack("LLLIB_DefaultEventFlow", "LeaderLib_Events_OnDefaultEventFlowComplete", 100);
+
+PROC
+LLLIB_EventFlow_Init_LeaderLibStack()
+AND
+DB_LLLIB_EventFlow_DefaultStackInitialized(_Val, 0)
+THEN
+LLLIB_EventFlow_SetCustomWaitTime("LLLIB_DefaultEventFlow", "LeaderLib_Events_OnTraderSpawnComplete", 250);
+LLLIB_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_SpawnTraders", "LeaderLib_Events_OnTraderSpawnComplete");
+LLLIB_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_StartTreasureGeneration", "LeaderLib_Events_OnTreasureGenerationComplete");
+LLLIB_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_CheckTraders", "LeaderLib_Events_OnTraderCheckingComplete");
 
 PROC
 LLLIB_EventFlow_Init_LeaderLibStack()
@@ -48,17 +60,6 @@ AND
 LLLIB_ModMenu_QRY_SortNeeded()
 THEN
 LLLIB_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_SortMenus", "LeaderLib_Events_OnMenuSortComplete");
-
-PROC
-LLLIB_EventFlow_Init_LeaderLibStack()
-AND
-DB_LLLIB_EventFlow_DefaultStackInitialized(_Val, 0)
-THEN
-LLLIB_Updater_SaveSettingsVersionData("LLLIB_Settings_EventFlowDefaultStack");
-LLLIB_EventFlow_SetCustomWaitTime("LLLIB_DefaultEventFlow", "LeaderLib_Events_OnTraderSpawnComplete", 250);
-LLLIB_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_SpawnTraders", "LeaderLib_Events_OnTraderSpawnComplete");
-LLLIB_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_StartTreasureGeneration", "LeaderLib_Events_OnTreasureGenerationComplete");
-LLLIB_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_CheckTraders", "LeaderLib_Events_OnTraderCheckingComplete");
 //END_REGION
 
 //REGION DEFAULT_START

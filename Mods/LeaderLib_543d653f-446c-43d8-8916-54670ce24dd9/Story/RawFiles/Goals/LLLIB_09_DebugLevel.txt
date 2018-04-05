@@ -11,9 +11,11 @@ LLLIB_Requirements_AddFlagRequirement("LLLIB_DebugLevel_TraderRequirements1", "L
 LLLIB_Requirements_AddFlagRequirement("LLLIB_DebugLevel_NotTraderRequirements1", "LLLIB_DebugLevel_TalkedToTrader", "Object", 0);
 LLLIB_Requirements_AddFlagRequirement("LLLIB_DebugLevel_ChestRequirements1", "LLLIB_DebugLevel_OpenedChest", "Object", 1);
 LLLIB_Requirements_AddFlagRequirement("LLLIB_DebugLevel_NotChestRequirements1", "LLLIB_DebugLevel_OpenedChest", "Object", 0);
-//LL_DebugLevel_TreasureTest2();
+//LLLIB_DebugLevel_TraderTest();
+//LLLIB_DebugLevel_TreasureTest2();
+LLLIB_DebugLevel_ModMenuTest();
 //LLLIB_Treasure_Configure_DefaultGenerationType("LLLIB_TestLevel_Chest3", "LEVEL_LOADED");
-LL_DebugLevel_TreasureStressTest();
+//LLLIB_DebugLevel_TreasureStressTest();
 
 IF
 CharacterUsedItem(_Char, _Item)
@@ -91,7 +93,7 @@ IF
 TextEventSet("llstress")
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] Running stress tests.");
-LL_DebugLevel_TreasureStressTest();
+LLLIB_DebugLevel_TreasureStressTest();
 
 //REGION TESTS
 /*
@@ -143,7 +145,7 @@ LLLIB_Treasure_Configure_ItemLevel("LLLIB_TestLevel_Chest1", "WPN_Elves_Spear_2H
 //Sorting/Menu test
 
 PROC
-LL_DebugLevel_TreasureTest2()
+LLLIB_DebugLevel_TreasureTest2()
 THEN
 LLLIB_Treasure_Register_TreasureToObject("LLLIB_TestLevel_Chest2", ITEMGUID_LLLIB_DebugLevel_TestChest2_cde2491b-741c-4442-a016-74761b43f3c5);
 //LLLIB_Treasure_AddTreasureItemStat("LLLIB_TestLevel_Chest2", "WPN_Cheat_Sword_1H_RuneSlot2", 1, "LLLIB_DebugLevel_Trader1_SpawnFlag");
@@ -191,7 +193,7 @@ LeaderLib_Register_ModMenu("LLZZ8", "[ModMenu8] Settings", "LLLIB_SettingsMenu",
 
 //REGION STRESS_TESTS
 PROC
-LL_DebugLevel_TreasureStressTest()
+LLLIB_DebugLevel_TreasureStressTest()
 THEN
 LLLIB_Treasure_Register_TreasureToObject("LLLIB_TestLevel_Chest3", ITEMGUID_NDL_ArenaChest_000_60d1603d-606f-4b64-9863-7b962d456278);
 //DB_LLLIB_Treasure_GenerationSpeed("LLLIB_TestLevel_Chest3", 500);

@@ -229,6 +229,8 @@ LLLIB_Traders_CreateTraders((STRING)_Level)
 AND
 DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID)
 AND
+NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
+AND
 LLLIB_QRY_Requirements_AllMet(_RequirementID)
 THEN
 LLLIB_Traders_Internal_SetCurrentSpawnQueue(_Level);
@@ -247,6 +249,12 @@ AND
 NOT DB_LLLIB_Traders_RegisteredLevel(_, _Level, _)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Traders:CreateTraders] No registered traders for level [",_Level,"].");
+
+PROC
+LLLIB_Traders_CreateTraders((STRING)_Level)
+AND
+LLLIB_Traders_QRY_SpawnQueueEmpty(_Level)
+THEN
 LeaderLib_SendEvent("LeaderLib_Events_OnTraderSpawnComplete");
 
 QRY

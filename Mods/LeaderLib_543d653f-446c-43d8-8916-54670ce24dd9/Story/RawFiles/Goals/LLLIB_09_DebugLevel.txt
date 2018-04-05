@@ -12,7 +12,7 @@ LLLIB_Requirements_AddFlagRequirement("LLLIB_DebugLevel_NotTraderRequirements1",
 LLLIB_Requirements_AddFlagRequirement("LLLIB_DebugLevel_ChestRequirements1", "LLLIB_DebugLevel_OpenedChest", "Object", 1);
 LLLIB_Requirements_AddFlagRequirement("LLLIB_DebugLevel_NotChestRequirements1", "LLLIB_DebugLevel_OpenedChest", "Object", 0);
 //LL_DebugLevel_TreasureTest2();
-LLLIB_Treasure_Configure_DefaultGenerationType("LLLIB_TestLevel_Chest3", "LEVEL_LOADED");
+//LLLIB_Treasure_Configure_DefaultGenerationType("LLLIB_TestLevel_Chest3", "LEVEL_LOADED");
 LL_DebugLevel_TreasureStressTest();
 
 IF
@@ -37,6 +37,30 @@ AND
 DB_LLLIB_Traders_Spawned(_Trader, "LLLIB_TestLevel_Trader", _Level)
 THEN
 ObjectSetFlag(_Player, "LLLIB_DebugLevel_TalkedToTrader");
+
+IF
+TextEventSet("liblag")
+THEN
+ObjectSetFlag(ITEMGUID_NDL_ArenaChest_000_60d1603d-606f-4b64-9863-7b962d456278, "LLLIB_Treasure_GenerationEnded");
+
+IF
+TextEventSet("liblag")
+THEN
+TimerLaunch("LLLIB_Debug_GenTreasure", 1000);
+LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] Generating a ton of treasure in 1 second.");
+
+IF
+TimerFinished("LLLIB_Debug_GenTreasure")
+AND
+DB_LLLIB_Treasure_TreasureItemTemplates("LLLIB_TestLevel_Chest3", _ItemEntry, _Amount, _RequirementID)
+THEN
+ItemTemplateAddTo(_ItemEntry, ITEMGUID_NDL_ArenaChest_000_60d1603d-606f-4b64-9863-7b962d456278, _Amount);
+DB_LLLIB_Treasure_ItemDoneGenerating("LLLIB_TestLevel_Chest3", _ItemEntry);
+
+IF
+TimerFinished("LLLIB_Debug_GenTreasure")
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] Treasure generated.");
 
 IF
 TextEventSet("llspawn")

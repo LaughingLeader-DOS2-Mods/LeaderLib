@@ -159,11 +159,18 @@ THEN
 NOT DB_LeaderUpdater_LastSavedSettings(_ModName, _Author, _SettingsID, _Version);
 
 PROC
-LeaderUpdater_Clear_AllDatabases((STRING)_ModName, (STRING)_Author)
+LeaderUpdater_SysClear_AllDatabases((STRING)_ModName, (STRING)_Author)
 AND
 DB_LeaderUpdater_RegisteredDatabase(_ModName, _Author, _GoalTitle, _DatabaseName, _Arity)
 THEN
 SysClear(_DatabaseName, _Arity);
+
+PROC
+LeaderUpdater_Clear_AllRegisteredDatabases((STRING)_ModName, (STRING)_Author)
+AND
+DB_LeaderUpdater_RegisteredDatabase(_ModName, _Author, _ReferenceName, _DatabaseName, _Arity)
+THEN
+NOT DB_LeaderUpdater_RegisteredDatabase(_ModName, _Author, _ReferenceName, _DatabaseName, _Arity);
 
 PROC
 LeaderUpdater_Reset_AllGoals((STRING)_ModName, (STRING)_Author)
@@ -177,16 +184,10 @@ SysSetGoalSleeping(_GoalTitle);
 PROC
 LeaderUpdater_Clear_AllRegisteredData((STRING)_ModName, (STRING)_Author)
 THEN
-LeaderUpdater_Clear_AllDatabases(_ModName, _Author);
+LeaderUpdater_SysClear_AllDatabases(_ModName, _Author);
+LeaderUpdater_Clear_AllRegisteredDatabases(_ModName, _Author);
 LeaderUpdater_Clear_ActiveGoals(_ModName, _Author);
 LeaderUpdater_Clear_RegisteredModVersions(_ModName, _Author);
-
-PROC
-LeaderUpdater_Clear_AllRegisteredData((STRING)_ModName, (STRING)_Author)
-AND
-DB_LeaderUpdater_RegisteredDatabase(_ModName, _Author, _ReferenceName, _DatabaseName, _Arity)
-THEN
-NOT DB_LeaderUpdater_RegisteredDatabase(_ModName, _Author, _ReferenceName, _DatabaseName, _Arity);
 
 PROC
 LeaderUpdater_Clear_AllRegisteredData((STRING)_ModName, (STRING)_Author)

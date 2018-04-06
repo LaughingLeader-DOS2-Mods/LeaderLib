@@ -83,7 +83,7 @@ LLLIB_Updater_ClearFlags();
 LeaderLog_Log("SYSTEM", "[LLLIB:Updater:Uninstaller] Destroying all LeaderLib items.");
 LLLIB_Updater_DestroyItems();
 LeaderLog_Log("SYSTEM", "[LLLIB:Updater:Uninstaller] Clearing databases.");
-LeaderUpdater_Clear_AllDatabases("LeaderLib", "LaughingLeader");
+LeaderUpdater_SysClear_AllDatabases("LeaderLib", "LaughingLeader");
 LeaderLog_Log("SYSTEM", "[LLLIB:Updater:Uninstaller] Unregistering LeaderLib.");
 LeaderUpdater_UnregisterMod("LeaderLib", "LaughingLeader");
 

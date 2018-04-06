@@ -69,7 +69,7 @@ AND
 NOT LLLIB_EventFlow_QRY_CurrentlyRunning("LLLIB_DefaultEventFlow")
 THEN
 //Before starting the flow, let other mods do whatever they need to do for a few frames.
-TimerLaunch("LLLIB_Timers_StartDefaultFlow", 10);
+TimerLaunch("LLLIB_Timers_StartDefaultFlow", 50);
 
 IF
 TimerFinished("LLLIB_Timers_StartDefaultFlow")

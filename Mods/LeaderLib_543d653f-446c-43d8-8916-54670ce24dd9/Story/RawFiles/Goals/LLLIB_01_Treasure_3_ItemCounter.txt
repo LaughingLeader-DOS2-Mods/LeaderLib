@@ -98,7 +98,7 @@ LLLIB_QRY_Treasure_SkipAmountCheck((GUIDSTRING)_Object, (STRING)_TreasureID, (ST
 AND
 IsTagged(_Object, "LLLIB_Treasure_IgnoreAmountLimit", 0)
 AND
-NOT DB_LLLIB_Treasure_ItemDoneGenerating(_TreasureID, _ItemEntry)
+NOT DB_LLLIB_Treasure_ItemDoneGenerating(_Object, _TreasureID, _ItemEntry)
 THEN
 DB_NOOP(1);
 

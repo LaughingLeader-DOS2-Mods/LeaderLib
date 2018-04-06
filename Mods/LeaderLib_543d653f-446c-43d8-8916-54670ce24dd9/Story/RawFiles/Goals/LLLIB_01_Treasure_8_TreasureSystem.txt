@@ -4,7 +4,7 @@ INITSECTION
 //REGION REGISTERED
 //DB_LLLIB_Treasure_RegisteredObject(_TreasureID, _Object)
 //DB_LLLIB_Treasure_RegisteredObjectTemplate(_TreasureID, _Template)
-//DB_LLLIB_Treasure_RegisteredTrader(_TreasureID, _TraderID)
+//DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
 //DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel)
 
 //DB_LLLIB_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID)
@@ -19,6 +19,7 @@ INITSECTION
 
 //DB_LLLIB_Treasure_OnlyOnce(_TreasureID, _ItemEntryOrTreasureTable, _OnCompletionEvent)
 //DB_LLLIB_Treasure_GeneratedEvent(_TreasureID, _ItemEntry, _OnGeneratedEvent)
+//DB_LLLIB_Treasure_ItemDoneGenerating(_Object, _TreasureID, _ItemEntry)
 //END_REGION
 //DB_LLLIB_Treasure_StatToTemplate(_ItemEntry, _ItemTemplate)
 //DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
@@ -86,7 +87,7 @@ LLLIB_QRY_Treasure_GetTreasureID((GUIDSTRING)_Object)
 AND
 DB_LLLIB_Traders_Spawned((CHARACTERGUID)_Object, _TraderID, _Level)
 AND
-DB_LLLIB_Treasure_RegisteredTrader(_TreasureID, _TraderID)
+DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
 THEN
 DB_LLLIB_Treasure_Temp_MatchedTreasure((GUIDSTRING)_Object, _TreasureID);
 
@@ -119,7 +120,7 @@ DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
 QRY
 LLLIB_QRY_Treasure_GetTreasureObject((STRING)_TreasureID, (STRING)_GenerationType)
 AND
-DB_LLLIB_Treasure_RegisteredTrader(_TreasureID, _TraderID)
+DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
 AND
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
 THEN
@@ -161,7 +162,7 @@ LLLIB_QRY_Treasure_GetTreasureObject((STRING)_TreasureID)
 AND
 NOT DB_LLLIB_Treasure_Temp_MatchedTreasure(_, _TreasureID)
 AND
-DB_LLLIB_Treasure_RegisteredTrader(_TreasureID, _TraderID)
+DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
 AND
 DB_LLLIB_Traders_Spawned(_Object, _TraderID, _Level)
 THEN
@@ -240,7 +241,7 @@ LLLIB_QRY_Treasure_IsRegisteredObject((CHARACTERGUID)_Object)
 AND
 DB_LLLIB_Traders_Spawned(_Object, _TraderID, _Level)
 AND
-DB_LLLIB_Treasure_RegisteredTrader(_TreasureID, _TraderID)
+DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
 THEN
 DB_NOOP(1);
 
@@ -333,6 +334,31 @@ AND
 DB_LLLIB_Treasure_ItemGenerationType(_TreasureID, _, _GenerationType)
 THEN
 DB_NOOP(1);
+
+QRY
+LLLIB_QRY_Treasure_TreasureMatch((GUIDSTRING)_Object, (STRING)_TreasureID)
+AND
+DB_LLLIB_Treasure_RegisteredObject(_TreasureID, _Object)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_QRY_Treasure_TreasureMatch((GUIDSTRING)_Object, (STRING)_TreasureID)
+AND
+GetTemplate(_Object, _Template)
+AND
+DB_LLLIB_Treasure_RegisteredObjectTemplate(_TreasureID, _Template)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_QRY_Treasure_TreasureMatch((GUIDSTRING)_Object, (STRING)_TreasureID)
+AND
+DB_LLLIB_Traders_Spawned((CHARACTERGUID)_Object, _TraderID, _Level)
+AND
+DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION TREASURE_TABLE_GENERATION
@@ -412,7 +438,7 @@ DB_LLLIB_Treasure_Temp_TreasureQueue_Settings(_ID, _TreasureQueueID);
 PROC
 LLLIB_Treasure_Internal_AddItemEntryToTreasureQueue((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Amount, (STRING)_RequirementID, (STRING)_GenerationType, (INTEGER)_IsStat)
 AND
-NOT DB_LLLIB_Treasure_ItemDoneGenerating(_TreasureID, _ItemEntry)
+NOT DB_LLLIB_Treasure_ItemDoneGenerating(_Object, _TreasureID, _ItemEntry)
 AND
 DB_LLLIB_Treasure_Temp_TreasureQueue_Settings(_ID, _TreasureQueueID)
 THEN
@@ -699,19 +725,19 @@ LLLIB_Treasure_Internal_IncrementGeneratedItem((STRING)_ID, (GUIDSTRING)_Object,
 AND
 _NextAmount >= _MaxAmount
 THEN
-LLLIB_Treasure_Internal_FinishIfMaxAmount(_TreasureID, _ItemEntry, _NextAmount);
+LLLIB_Treasure_Internal_FinishIfMaxAmount(_Object, _TreasureID, _ItemEntry, _NextAmount);
 LLLIB_Treasure_Internal_MarkItemAsFinished(_ID, _Object, _TreasureID, _ItemEntry);
 
 PROC
-LLLIB_Treasure_Internal_FinishIfMaxAmount((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Amount)
+LLLIB_Treasure_Internal_FinishIfMaxAmount((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Amount)
 AND
-NOT DB_LLLIB_Treasure_ItemDoneGenerating(_TreasureID, _ItemEntry)
+NOT DB_LLLIB_Treasure_ItemDoneGenerating(_Object, _TreasureID, _ItemEntry)
 AND
 DB_LLLIB_Treasure_ItemMaxAmount(_TreasureID, _ItemEntry, _MaxAmount)
 AND
 _Amount >= _MaxAmount
 THEN
-DB_LLLIB_Treasure_ItemDoneGenerating(_TreasureID, _ItemEntry);
+DB_LLLIB_Treasure_ItemDoneGenerating(_Object, _TreasureID, _ItemEntry);
 //END_REGION
 
 
@@ -959,6 +985,7 @@ LLLIB_Treasure_Internal_OnGenerationFailed(_ID, _Object, _TreasureID, _Generatio
 PROC
 LLLIB_Treasure_Internal_OnGenerationFinished((STRING)_ID, (GUIDSTRING)_Object)
 THEN
+//Go to the next treasure in the queue
 LeaderLib_SendEvent("LLLIB_Events_OnTreasureGenerationComplete");
 
 IF
@@ -1314,7 +1341,7 @@ LLLIB_QRY_Treasure_GetTreasureID(_Object)
 AND
 DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
 THEN
-//LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:GenerateNow] Manually generating items for treasure with ID [",_TreasureID,"]");
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:GenerateNow] Manually generating items for treasure with ID [",_TreasureID,"]");
 LLLIB_Treasure_AddToGenerationQueue(_Object, _TreasureID, "MANUAL");
 NOT DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
 
@@ -1580,6 +1607,24 @@ ItemIsContainer((ITEMGUID)_Object, 1)
 THEN
 LLLIB_Treasure_DisableGenerationForObject((GUIDSTRING)_Object);
 ObjectClearFlag(_Object, "LLLIB_Treasure_GenerationSuccessful");
+//END_REGION
+
+//REGION DONE_GENERATING
+IF
+ItemTemplateRemovedFromCharacter(_ItemEntry, _Item, _Object)
+AND
+DB_LLLIB_Treasure_ItemDoneGenerating((GUIDSTRING)_Object, _TreasureID, _ItemEntry)
+THEN
+NOT DB_LLLIB_Treasure_ItemDoneGenerating(_Object, _TreasureID, _ItemEntry);
+
+IF
+ItemTemplateRemovedFromContainer(_ItemEntry, _Item, _Object)
+AND
+DB_LLLIB_Treasure_ItemDoneGenerating((GUIDSTRING)_Object, _TreasureID, _ItemEntry)
+AND
+IsTagged(_Object, "LLLIB_Treasure_GenerateEndlessly", 1)
+THEN
+NOT DB_LLLIB_Treasure_ItemDoneGenerating(_Object, _TreasureID, _ItemEntry);
 //END_REGION
 
 //REGION DEBUG

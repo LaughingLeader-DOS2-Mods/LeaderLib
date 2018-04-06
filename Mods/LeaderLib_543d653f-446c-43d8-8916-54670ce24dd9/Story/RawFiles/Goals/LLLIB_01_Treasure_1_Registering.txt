@@ -3,7 +3,7 @@ SubGoalCombiner SGC_AND
 INITSECTION
 //DB_LLLIB_Treasure_RegisteredObject(_TreasureID, _Object)
 //DB_LLLIB_Treasure_RegisteredObjectTemplate(_TreasureID, _Template)
-//DB_LLLIB_Treasure_RegisteredTrader(_TreasureID, _TraderID)
+//DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
 //DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel)
 
 //DB_LLLIB_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID)
@@ -22,7 +22,7 @@ INITSECTION
 
 //DB_LLLIB_Treasure_OnlyOnce(_TreasureID, _ItemEntryOrTreasureTable, _OnCompletionEvent)
 //DB_LLLIB_Treasure_GeneratedEvent(_TreasureID, _ItemEntry, _OnGeneratedEvent)
-//DB_LLLIB_Treasure_ItemDoneGenerating(_TreasureID, _ItemEntry)
+//DB_LLLIB_Treasure_ItemDoneGenerating(_Object, _TreasureID, _ItemEntry)
 KBSECTION
 //REGION TREASURE_REGISTERING
 PROC
@@ -38,7 +38,8 @@ DB_LLLIB_Treasure_RegisteredObjectTemplate(_TreasureID, _ObjectTemplate);
 PROC
 LLLIB_Treasure_Register_TreasureToTrader((STRING)_TreasureID, (STRING)_TraderID)
 THEN
-DB_LLLIB_Treasure_RegisteredTrader(_TreasureID, _TraderID);
+LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:Register_TreasureToTrader] [",_TreasureID,"] registered to [",_TraderID,"].");
+DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID);
 
 PROC
 LLLIB_Treasure_Register_TreasureTable((STRING)_TreasureID, (STRING)_TreaseTable, (STRING)_RequirementID)
@@ -231,9 +232,9 @@ NOT DB_LLLIB_Treasure_RegisteredObjectTemplate(_TreasureID, _Template);
 PROC
 LLLIB_Treasure_ClearAllEntriesForTreasure((STRING)_TreasureID)
 AND
-DB_LLLIB_Treasure_RegisteredTrader(_TreasureID, _TraderID)
+DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
 THEN
-NOT DB_LLLIB_Treasure_RegisteredTrader(_TreasureID, _TraderID);
+NOT DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID);
 
 PROC
 LLLIB_Treasure_ClearAllEntriesForTreasure((STRING)_TreasureID)
@@ -526,7 +527,7 @@ LLLIB_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_RegisteredObject", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_RegisteredObjectTemplate", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_RegisteredTrader", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_RegisteredTraderTreasure", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_RegisteredTreasureTable", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_RegisteredTreasureTable", 6);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_TreasureItemTemplates", 4);

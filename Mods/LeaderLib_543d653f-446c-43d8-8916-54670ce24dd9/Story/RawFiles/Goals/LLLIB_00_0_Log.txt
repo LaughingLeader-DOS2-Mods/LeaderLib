@@ -10,22 +10,14 @@ DB_LeaderLog_InitialEnable(1);
 KBSECTION
 //REGION EDITOR_DEBUG_ENABLE
 IF
-RegionStarted(_)
-THEN
-LLLIB_LeaderLog_Internal_DisableInitialEnableFlag();
-
-IF
-SavegameLoaded(_,_,_,_)
-THEN
-LLLIB_LeaderLog_Internal_DisableInitialEnableFlag();
-
-PROC
-LLLIB_LeaderLog_Internal_DisableInitialEnableFlag()
+StoryEvent(_, "LeaderLib_Initialized")
+AND
+GlobalGetFlag("LeaderLib_IsEditorMode", 0)
 AND
 DB_LeaderLog_InitialEnable(_Val)
 THEN
-//GlobalClearFlag("LeaderLog_Debug_Enabled");
 NOT DB_LeaderLog_InitialEnable(_Val);
+GlobalClearFlag("LeaderLog_Debug_Enabled");
 //END_REGION
 
 //REGION DISABLED_CHECK

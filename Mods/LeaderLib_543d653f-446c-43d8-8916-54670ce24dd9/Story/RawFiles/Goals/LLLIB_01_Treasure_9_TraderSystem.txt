@@ -137,7 +137,7 @@ LLLIB_Traders_SetDialogToFirstAvailable((CHARACTERGUID)_Trader, (STRING)_TraderI
 AND
 NOT DB_LLLIB_Traders_Temp_DialogFound(_TraderID,_)
 AND
-DB_LLLIB_Traders_Dialog(_TraderID, "", _Dialog, _RequirementID)
+DB_LLLIB_Traders_Dialog(_TraderID, _Dialog, "", _RequirementID)
 AND
 NOT DB_LLLIB_Traders_Temp_DialogFound(_TraderID,_)
 AND
@@ -148,6 +148,15 @@ THEN
 ProcRemoveAllDialogEntriesForSpeaker(_Trader);
 DB_Dialogs(_Trader, _Dialog);
 DB_LLLIB_Traders_Temp_DialogFound(_TraderID, _Dialog);
+
+PROC
+LLLIB_Traders_SetDialogToFirstAvailable((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
+AND
+NOT DB_LLLIB_Traders_Temp_DialogFound(_TraderID, _)
+AND
+NOT DB_Dialogs(_Trader, _)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Traders:SetDialogToFirstAvailable] No Dialog found for trader [",_TraderID,"].");
 
 PROC
 LLLIB_Traders_SetDialogToFirstAvailable((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
@@ -835,20 +844,38 @@ LLLIB_Traders_CreateTrader(_TraderID, _Level);
 
 //REGION TREASURE_GENERATION_STATUS
 IF
-StoryEvent((CHARACTERGUID)_Trader, "LLLIB_Events_Treasure_GenerationFinished")
+StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_OnGenerationComplete")
 AND
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
 THEN
-ApplyStatus(_Trader, "LLLIB_NEW_ITEMS", -1.0, 1);
+LLLIB_Traders_ApplyNewStockStatus(_Trader);
 
+PROC
+LLLIB_Traders_ApplyNewStockStatus((CHARACTERGUID)_Trader)
+AND
+IsTagged(_Trader, "LLLIB_Trader_DisableStockStatus", 0)
+AND
+HasActiveStatus(_Trader, "LLLIB_NEW_ITEMS", 0)
+THEN
+ApplyStatus(_Trader, "LLLIB_NEW_ITEMS", 180.0, 1);
+
+
+/*
 IF
 TradeEnds(_, _Trader)
 AND
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
 AND
+IsTagged(_Trader, "LLLIB_Trader_DisableStockStatus", 0)
+AND
 HasActiveStatus(_Trader, "LLLIB_NEW_ITEMS", 1)
+AND
+GetStatusTurns(_Trader, "LLLIB_NEW_ITEMS", -1)
 THEN
 RemoveStatus(_Trader, "LLLIB_NEW_ITEMS");
+ApplyStatus(_Trader, "LLLIB_NEW_ITEMS", 60.0); // Make it time-limited now.
+DisplayText(_Trader, " "); // Hide the status message
+*/
 //END_REGION
 
 //REGION UPDATER

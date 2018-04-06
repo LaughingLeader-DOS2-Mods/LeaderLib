@@ -57,7 +57,7 @@ AND
 DB_LLLIB_Treasure_TreasureItemTemplates("LLLIB_TestLevel_Chest3", _ItemEntry, _Amount, _RequirementID)
 THEN
 ItemTemplateAddTo(_ItemEntry, ITEMGUID_NDL_ArenaChest_000_60d1603d-606f-4b64-9863-7b962d456278, _Amount);
-DB_LLLIB_Treasure_ItemDoneGenerating("LLLIB_TestLevel_Chest3", _ItemEntry);
+DB_LLLIB_Treasure_ItemDoneGenerating(ITEMGUID_NDL_ArenaChest_000_60d1603d-606f-4b64-9863-7b962d456278, "LLLIB_TestLevel_Chest3", _ItemEntry);
 
 IF
 TimerFinished("LLLIB_Debug_GenTreasure")

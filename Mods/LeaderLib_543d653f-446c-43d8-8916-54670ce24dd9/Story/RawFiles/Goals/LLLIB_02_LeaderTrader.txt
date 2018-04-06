@@ -59,6 +59,7 @@ DB_LLLIB_LeaderTrader_CurrentAppearance("LLLIB_LeaderTrader_Default_e4cbf1f4-4ee
 
 LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", "LLLIB_LeaderTrader_Default"); // Default
 LLLIB_LeaderTrader_RegisterDialogSettings();
+LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", "LLLIB_LeaderTrader_Tutorial_Intro", "LeaderLib_TestLevel", "LLLIB_LeaderTrader_TUT_IntroPending");
 
 LLLIB_Trader_Register_CreationEvent("LLLIB_LeaderTrader", "LeaderLib_Events_OnLeaderTradeSpawned");
 
@@ -91,6 +92,10 @@ LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "Arx_Main", 13000);
 LLLIB_Treasure_Register_TreasureToTrader("LLLIB_LeaderTrader_Misc", "LLLIB_LeaderTrader");
 LLLIB_Treasure_Register_TreasureToTrader("LLLIB_LeaderTrader_ModItems", "LLLIB_LeaderTrader");
 LLLIB_Treasure_Register_TreasureToTrader("LLLIB_LeaderTrader_ModBooks", "LLLIB_LeaderTrader");
+
+LLLIB_Treasure_Configure_DefaultGenerationType("LLLIB_LeaderTrader_ModItems", "DIALOG_STARTED");
+LLLIB_Treasure_Configure_DefaultGenerationType("LLLIB_LeaderTrader_ModBooks", "DIALOG_STARTED");
+
 LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModBooks", "LLLIB_BOOK_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108", 1);
 //LLLIB_Treasure_Configure_GenerationType("LLLIB_LeaderTrader_ModBooks", "LLLIB_BOOK_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108", "DIALOG_STARTED");
 //LLLIB_Treasure_Register_TreasureTable("LLLIB_LeaderTrader_Misc", "ST_WeaponNormal", "LLLIB_RegionIsFortJoy", 1);
@@ -581,6 +586,52 @@ THEN
 LeaderLog_Log("DEBUG","[LLLIB:LeaderTrader] Hey! 'LLLIB_LeaderTrader_GaveIntroItems' was set on the wrong character! Wake up! ;)");
 ObjectClearFlag(_Character, "LLLIB_LeaderTrader_GaveIntroItems");
 ObjectSetFlag(_LeaderTrader, "LLLIB_LeaderTrader_GaveIntroItems");
+
+//Don't display "New Items in Stock" if an intro dialog is set.
+IF
+CharacterStatusApplied(_LeaderTrader, "LLLIB_NEW_ITEMS", _)
+AND
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+AND
+DB_Dialogs(_LeaderTrader, _Dialog)
+AND
+DB_LLLIB_LeaderTrader_IntroDialogRequirements(_Level, _Dialog, _Flag, _RequirementID)
+THEN
+RemoveStatus(_LeaderTrader, "LLLIB_NEW_ITEMS");
+DB_LLLIB_LeaderTrader_Temp_HasNewItems(1);
+
+IF
+DB_Dialogs(_LeaderTrader, _Dialog)
+AND
+DB_LLLIB_LeaderTrader((CHARACTERGUID)_LeaderTrader)
+AND
+DB_LLLIB_LeaderTrader_IntroDialogRequirements(_Level, _Dialog, _Flag, _RequirementID)
+AND
+HasActiveStatus(_LeaderTrader, "LLLIB_NEW_ITEMS", 1)
+THEN
+RemoveStatus(_LeaderTrader, "LLLIB_NEW_ITEMS");
+DB_LLLIB_LeaderTrader_Temp_HasNewItems(1);
+
+IF
+DB_Dialogs(_LeaderTrader, _Dialog)
+AND
+DB_LLLIB_LeaderTrader((CHARACTERGUID)_LeaderTrader)
+AND
+NOT DB_LLLIB_LeaderTrader_IntroDialogRequirements(_, _Dialog, _, _)
+AND
+DB_LLLIB_LeaderTrader_Temp_HasNewItems(1)
+AND
+HasActiveStatus(_LeaderTrader, "LLLIB_NEW_ITEMS", 0)
+THEN
+LLLIB_Traders_ApplyNewStockStatus(_LeaderTrader);
+LLLIB_LeaderTrader_Internal_ClearHasNewItems();
+
+PROC
+LLLIB_LeaderTrader_Internal_ClearHasNewItems()
+AND
+DB_LLLIB_LeaderTrader_Temp_HasNewItems(_Val)
+THEN
+NOT DB_LLLIB_LeaderTrader_Temp_HasNewItems(_Val);
 //END_REGION
 
 //REGION UPDATER

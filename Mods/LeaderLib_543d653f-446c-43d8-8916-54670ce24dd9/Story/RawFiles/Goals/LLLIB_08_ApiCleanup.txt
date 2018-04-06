@@ -67,10 +67,10 @@ NOT DB_LeaderLib_ModApi_ClearActiveGoals(_ModName, _Author);
 PROC
 LLLIB_ModApi_RunCleanup()
 AND
-DB_LeaderLib_ModApi_ClearAllDatabases((STRING)_ModName, (STRING)_Author)
+DB_LeaderLib_ModApi_SysClearAllDatabases((STRING)_ModName, (STRING)_Author)
 THEN
-LeaderUpdater_Clear_AllDatabases(_ModName, _Author);
-NOT DB_LeaderLib_ModApi_ClearAllDatabases(_ModName, _Author);
+LeaderUpdater_SysClear_AllDatabases(_ModName, _Author);
+NOT DB_LeaderLib_ModApi_SysClearAllDatabases(_ModName, _Author);
 
 PROC
 LLLIB_ModApi_RunCleanup()

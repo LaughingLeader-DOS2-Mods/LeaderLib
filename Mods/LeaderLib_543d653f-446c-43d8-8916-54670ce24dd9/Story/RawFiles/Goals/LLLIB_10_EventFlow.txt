@@ -95,7 +95,7 @@ LLLIB_EventFlow_AddStack(_StackName, _OnFlowCompleteEvent, _TimeBetweenEvents, 1
 PROC
 LLLIB_EventFlow_AddStack((STRING)_StackName, (STRING)_OnFlowCompleteEvent, (INTEGER)_TimeBetweenEvents, (INTEGER)_TimeoutValue)
 AND
-NOT DB_LLLIB_EventFlow_EventStack(_StackName, _, _, _, _)
+NOT DB_LLLIB_EventFlow_EventStack(_StackName, _, _, _)
 THEN
 DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _TimeBetweenEvents, _TimeoutValue);
 LLLIB_Array_NewArray(_StackName);

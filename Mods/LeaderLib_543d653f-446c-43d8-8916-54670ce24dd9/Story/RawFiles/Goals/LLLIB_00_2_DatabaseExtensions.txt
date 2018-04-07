@@ -448,20 +448,27 @@ LLLIB_Array_IncreaseArrayLength(_ID);
 PROC
 LLLIB_Array_AddToDictionaryAtIndex((STRING)_ID, (STRING)_Key, (STRING)_Value, (INTEGER)_Index)
 AND
-NOT DB_LLLIB_Dictionary_Data(_ID, _, _Key, _)
-AND
 NOT DB_LLLIB_Dictionary_Data(_ID, _Index, _, _)
 THEN
 DB_LLLIB_Dictionary_Data(_ID, _Index, _Key, _Value);
 LLLIB_Array_IncreaseArrayLength(_ID);
 //LLLIB_Array_RebuildArrayLength(_ID, "Dictionary");
 
+QRY
+LLLIB_Array_QRY_DictionaryEntryMatch((STRING)_ID, (STRING)_Key1, (STRING)_Value1, (STRING)_Key2, (STRING)_Value2)
+AND
+_Value1 == _Value2
+AND
+_Key1 == _Key2
+THEN
+DB_NOOP(1);
+
 PROC
 LLLIB_Array_AddToDictionaryAtIndex((STRING)_ID, (STRING)_Key, (STRING)_Value, (INTEGER)_Index)
 AND
-NOT DB_LLLIB_Dictionary_Data(_ID, _, _Key, _)
+DB_LLLIB_Dictionary_Data(_ID, _Index, _OtherKey, _OtherValue)
 AND
-DB_LLLIB_Dictionary_Data(_ID, _Index, _, _)
+NOT LLLIB_Array_QRY_DictionaryEntryMatch(_ID, _Key, _Value, _OtherKey, _OtherValue)
 THEN
 LLLIB_Array_ShiftDictionaryDown(_ID, _Index);
 DB_LLLIB_Dictionary_Data(_ID, _Index, _Key, _Value);

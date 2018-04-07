@@ -13,7 +13,7 @@ LLLIB_Requirements_AddFlagRequirement("LLLIB_DebugLevel_ChestRequirements1", "LL
 LLLIB_Requirements_AddFlagRequirement("LLLIB_DebugLevel_NotChestRequirements1", "LLLIB_DebugLevel_OpenedChest", "Object", 0);
 //LLLIB_DebugLevel_TraderTest();
 //LLLIB_DebugLevel_TreasureTest2();
-LLLIB_DebugLevel_ModMenuTest();
+//LLLIB_DebugLevel_ModMenuTest();
 //LLLIB_Treasure_Configure_DefaultGenerationType("LLLIB_TestLevel_Chest3", "LEVEL_LOADED");
 //LLLIB_DebugLevel_TreasureStressTest();
 
@@ -167,9 +167,9 @@ LeaderLib_Register_ModMenu("LLZ2", "[Zzznonom] Settings", "LLLIB_SettingsMenu", 
 LeaderLib_Register_ModMenu("LLZ3", "[Zzaonimus] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_Register_ModMenu("LLZ4", "[Zaronimus] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_Register_ModMenu("LLZ5", "[Zironimus] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_Register_ModMenu("LLNWIZ", "[Naming Wizard] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_Register_ModMenu("LLEQSET", "[Equipment Sets] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_Register_ModMenu("LLDBT", "[Debug Tools] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LaughingLeader_NamingWizard", "[Naming Wizard] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LaughingLeader_EquipmentSets", "[Equipment Sets] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LaughingLeader_DebugTools", "[Debug Tools] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_Register_ModMenu("LLZasd7", "[Blaaaabbbbbzter] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_Register_ModMenu("LLZasd6", "[Blaaaabbbbbzter] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_Register_ModMenu("LLasdZ92", "[Blaaaabbbbbzter9] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");

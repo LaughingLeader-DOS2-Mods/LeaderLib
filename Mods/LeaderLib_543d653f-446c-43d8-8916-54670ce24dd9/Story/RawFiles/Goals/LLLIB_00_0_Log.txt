@@ -12,7 +12,7 @@ KBSECTION
 IF
 StoryEvent(_, "LeaderLib_Initialized")
 AND
-GlobalGetFlag("LeaderLib_IsEditorMode", 0)
+NOT GlobalGetFlag("LeaderLib_IsEditorMode", 1)
 AND
 DB_LeaderLog_InitialEnable(_Val)
 THEN

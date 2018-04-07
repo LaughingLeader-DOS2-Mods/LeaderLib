@@ -40,6 +40,7 @@ LLLIB_EventFlow_ForceStop("LLLIB_DefaultEventFlow");
 PROC
 LLLIB_EventFlow_Init_LeaderLibStack()
 THEN
+GlobalClearFlag("LeaderLib_InitialEventFlowComplete");
 LLLIB_Updater_SaveSettingsVersionData("LLLIB_Settings_EventFlowDefaultStack");
 LLLIB_EventFlow_Clear_StackData("LLLIB_DefaultEventFlow");
 LLLIB_EventFlow_AddStack("LLLIB_DefaultEventFlow", "LeaderLib_Events_OnDefaultEventFlowComplete", 100);
@@ -83,12 +84,6 @@ NOT LLLIB_EventFlow_QRY_CurrentlyRunning("LLLIB_DefaultEventFlow")
 THEN
 GlobalSetFlag("LeaderLib_DefaultEventFlowRunning");
 LLLIB_EventFlow_Start("LLLIB_DefaultEventFlow");
-
-IF
-StoryEvent(_, "LeaderLib_Events_OnDefaultEventFlowComplete")
-THEN
-GlobalClearFlag("LeaderLib_DefaultEventFlowRunning");
-LeaderLog_Log("DEBUG", "[LLLIB:EventFlow] LeaderLib event flow complete.");
 //END_REGION
 
 //REGION ADD_AND_START
@@ -322,6 +317,13 @@ THEN
 LeaderLog_Log("DEBUG", "[LLLIB:EventFlow:OnEventFlowComplete] Event flow [",_StackName,"] completed. Clearing dictionary and sending completion event [",_OnFlowCompleteEvent,"].");
 LeaderLib_SendEvent(_OnFlowCompleteEvent);
 LLLIB_EventFlow_Clear_SessionData(_StackName);
+
+IF
+StoryEvent(_, "LeaderLib_Events_OnDefaultEventFlowComplete")
+THEN
+GlobalSetFlag("LeaderLib_InitialEventFlowComplete");
+GlobalClearFlag("LeaderLib_DefaultEventFlowRunning");
+LeaderLog_Log("DEBUG", "[LLLIB:EventFlow] LeaderLib event flow complete.");
 //END_REGION
 
 //REGION FORCE_STOP

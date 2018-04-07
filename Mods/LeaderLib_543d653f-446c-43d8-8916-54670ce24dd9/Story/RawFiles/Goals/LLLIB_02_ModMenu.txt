@@ -121,10 +121,17 @@ DB_LeaderLib_Initialized(1)
 AND
 GlobalGetFlag("LeaderLib_DefaultEventFlowRunning", 0)
 AND
+GlobalGetFlag("LeaderLib_InitialEventFlowComplete", 1)
+AND
 LLLIB_ModMenu_QRY_SortNeeded()
 THEN
 TimerCancel("LLLIB_ModMenu_StartManualSortTimer");
 TimerLaunch("LLLIB_ModMenu_StartManualSortTimer", 500);
+
+IF
+GlobalFlagSet("LeaderLib_DefaultEventFlowRunning")
+THEN
+TimerCancel("LLLIB_ModMenu_StartManualSortTimer");
 
 IF
 StoryEvent(_, "LeaderLib_Commands_SortMenus")
@@ -152,6 +159,13 @@ AND
 LLLIB_ModMenu_QRY_SortNeeded()
 THEN
 LLLIB_ModMenu_StartSorting();
+
+IF
+StoryEvent(_, "LeaderLib_Commands_SortMenus")
+AND
+NOT LLLIB_ModMenu_QRY_SortNeeded()
+THEN
+LeaderLib_SendEvent("LeaderLib_Events_OnMenuSortComplete");
 
 IF
 DB_LLLIB_EventFlow_StopEvent("LeaderLib_Commands_SortMenus")
@@ -217,8 +231,10 @@ LLLIB_DictionarySort_StartSorting("LLLIB_RegisteredMenus", _TickRate, "LeaderLib
 
 IF
 StoryEvent(_, "LeaderLib_Events_OnMenuSortComplete")
+AND
+DB_LLLIB_ModMenu_Temp_SortStarted(_Val)
 THEN
-NOT DB_LLLIB_ModMenu_Temp_SortStarted(1);
+NOT DB_LLLIB_ModMenu_Temp_SortStarted(_Val);
 LeaderLog_Log("DEBUG", "[LLLIB:ModMenu:SortingComplete] Menu sorting done.");
 TimerCancel("LLLIB_Timers_ModMenu_CalculateMaxPage");
 TimerLaunch("LLLIB_Timers_ModMenu_CalculateMaxPage", 200);

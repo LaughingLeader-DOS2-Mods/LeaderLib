@@ -21,12 +21,26 @@ KBSECTION
 PROC
 LLLIB_DictionarySort_AddString((STRING)_DictionaryID, (STRING)_ID, (STRING)_StringEntry)
 AND
-NOT DB_LLLIB_DictionarySort_Temp_StringQueue(_DictionaryID, _ID, _)
+NOT DB_LLLIB_DictionarySort_Temp_StringQueue(_DictionaryID, _ID, _StringEntry)
 THEN
 DB_LLLIB_DictionarySort_Temp_StringQueue(_DictionaryID, _ID, _StringEntry);
+
+QRY
+LLLIB_DictionarySort_QRY_QueueEmpty((STRING)_DictionaryID)
+AND
+NOT DB_LLLIB_DictionarySort_Temp_StringQueue(_DictionaryID, _, _)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION START
+PROC
+LLLIB_DictionarySort_StartSorting((STRING)_DictionaryID, (INTEGER)_TickRate, (STRING)_CompleteEvent, (INTEGER)_EntryTickRate)
+AND
+IntegertoString(_TickRate, _TickRateStr)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort:StartSorting] Started sorting dictionary '",_DictionaryID,"' at a tick rate of [",_TickRateStr,"].");
+
 PROC
 LLLIB_DictionarySort_StartSorting((STRING)_DictionaryID, (INTEGER)_TickRate, (STRING)_CompleteEvent)
 THEN
@@ -48,13 +62,6 @@ THEN
 DB_LLLIB_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate);
 DB_LLLIB_DictionarySort_SortingStarted(_DictionaryID, 1);
 LLLIB_DictionarySort_Internal_OnTick(_DictionaryID);
-
-PROC
-LLLIB_DictionarySort_StartSorting((STRING)_DictionaryID, (INTEGER)_TickRate, (STRING)_CompleteEvent, (INTEGER)_EntryTickRate)
-AND
-IntegertoString(_TickRate, _TickRateStr)
-THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort:StartSorting] Started sorting dictionary '",_DictionaryID,"' at a tick rate of [",_TickRateStr,"].");
 //END_REGION
 
 //REGION STOP
@@ -237,19 +244,42 @@ DB_LLLIB_DictionarySort_Temp_StringQueue(_DictionaryID, _ID, _StringEntry)
 AND
 NOT DB_LLLIB_DictionarySort_CurrentlySorting(_DictionaryID, _)
 AND
-NOT DB_LLLIB_Dictionary_Data(_DictionaryID, _, _ID, _)
+NOT DB_LLLIB_Dictionary_Data(_DictionaryID, _, _ID, _StringEntry)
 THEN
-LLLIB_DictionarySort_SortEntry(_DictionaryID, _ID, _StringEntry);
 DB_LLLIB_DictionarySort_CurrentlySorting(_DictionaryID, 1);
+LLLIB_DictionarySort_SortEntry(_DictionaryID, _ID, _StringEntry);
 
 PROC
 LLLIB_DictionarySort_Internal_OnTick((STRING)_DictionaryID)
 AND
-NOT DB_LLLIB_DictionarySort_Temp_StringQueue(_DictionaryID, _, _)
-AND
 NOT DB_LLLIB_DictionarySort_SortingComplete(_DictionaryID)
+AND
+NOT DB_LLLIB_DictionarySort_Temp_StringQueue(_DictionaryID, _, _)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort:OnTick] [ERROR] String queue for [",_DictionaryID,"] is empty!");
+
+PROC
+LLLIB_DictionarySort_Internal_OnTick((STRING)_DictionaryID)
+AND
+NOT DB_LLLIB_DictionarySort_SortingComplete(_DictionaryID)
+AND
+DB_LLLIB_DictionarySort_Temp_StringQueue(_DictionaryID, _ID, _StringEntry)
+AND
+NOT DB_LLLIB_DictionarySort_CurrentlySorting(_DictionaryID, _)
+AND
+DB_LLLIB_Dictionary_Data(_DictionaryID, _, _ID, _StringEntry)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort:OnTick] [ERROR] Queue entry [",_ID,"][",_StringEntry,"] is already in dictionary [",_DictionaryID,"].");
+
+PROC
+LLLIB_DictionarySort_Internal_OnTick((STRING)_DictionaryID)
+AND
+NOT DB_LLLIB_DictionarySort_SortingComplete(_DictionaryID)
+AND
+NOT DB_LLLIB_DictionarySort_CurrentlySorting(_DictionaryID, _)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort:OnTick] [ERROR] No entry was added for in this tick. Check the logs for an error. Completing sort for [",_DictionaryID,"].");
+LLLIB_DictionarySort_SortingComplete(_DictionaryID);
 
 PROC
 LLLIB_DictionarySort_OnStringSorted((STRING)_DictionaryID, (STRING)_ID)
@@ -287,7 +317,7 @@ LLLIB_DictionarySort_QRY_SortingNeeded()
 AND
 DB_LLLIB_DictionarySort_Temp_StringQueue(_DictionaryID, _ID, _StringEntry)
 AND
-NOT DB_LLLIB_Dictionary_Data(_DictionaryID, _, _ID, _)
+NOT DB_LLLIB_Dictionary_Data(_DictionaryID, _, _ID, _StringEntry)
 THEN
 DB_NOOP(1);
 
@@ -309,13 +339,13 @@ LeaderLog_Log("DEBUG", "[LLLIB:DictionarySort] [ERROR] Dictionary '",_Dictionary
 PROC
 LLLIB_DictionarySort_SortEntry((STRING)_DictionaryID, (STRING)_ID, (STRING)_StringEntry)
 AND
-NOT DB_LLLIB_Dictionary_Data(_DictionaryID, _, _ID, _)
+NOT DB_LLLIB_Dictionary_Data(_DictionaryID, _, _ID, _StringEntry)
 AND
 DB_LLLIB_Array_Length(_DictionaryID, _Length)
 AND
 _Length > 0
 AND
-LeaderLog_QRY_Log("COMBINE", "LLLIB_Timers_Sorter_SortEntry_", _DictionaryID, "_", _ID)
+LeaderLog_QRY_Log("COMBINE", "LLLIB_Timers_Sorter_SortEntry_", _DictionaryID, "_", _ID, "_", _StringEntry)
 AND
 DB_LeaderLog_Temp_CombinedString(_TimerName)
 THEN
@@ -349,7 +379,7 @@ LLLIB_DictionarySort_Internal_NextEntryTick(_DictionaryID, _ID);
 PROC
 LLLIB_DictionarySort_Internal_OnIterator((STRING)_DictionaryID, (STRING)_ID, (STRING)_StringEntry, (INTEGER)_Index)
 AND
-NOT DB_LLLIB_Dictionary_Data(_DictionaryID, _, _ID, _)
+NOT DB_LLLIB_Dictionary_Data(_DictionaryID, _, _ID, _StringEntry)
 AND
 DB_LLLIB_Dictionary_Data(_DictionaryID, _Index, _CheckID, _CheckDisplayName)
 AND
@@ -362,7 +392,7 @@ LLLIB_DictionarySort_Internal_ProcessCompareResults(_DictionaryID, _ID, _StringE
 PROC
 LLLIB_DictionarySort_Internal_OnIterator((STRING)_DictionaryID, (STRING)_ID, (STRING)_StringEntry, (INTEGER)_Index)
 AND
-NOT DB_LLLIB_Dictionary_Data(_DictionaryID, _, _ID, _)
+NOT DB_LLLIB_Dictionary_Data(_DictionaryID, _, _ID, _StringEntry)
 AND
 DB_LLLIB_Array_Length(_DictionaryID, _Length)
 AND
@@ -374,7 +404,7 @@ LLLIB_DictionarySort_OnStringSorted(_DictionaryID, _ID);
 PROC
 LLLIB_DictionarySort_Internal_ProcessCompareResults((STRING)_DictionaryID, (STRING)_ID, (STRING)_StringEntry, (INTEGER)_CurrentIndex, (INTEGER)_ComparisonVal)
 AND
-NOT DB_LLLIB_Dictionary_Data(_DictionaryID, _, _ID, _)
+NOT DB_LLLIB_Dictionary_Data(_DictionaryID, _, _ID, _StringEntry)
 AND
 _ComparisonVal <= 0
 THEN
@@ -384,7 +414,7 @@ LLLIB_DictionarySort_OnStringSorted(_DictionaryID, _ID);
 PROC
 LLLIB_DictionarySort_Internal_ProcessCompareResults((STRING)_DictionaryID, (STRING)_ID, (STRING)_StringEntry, (INTEGER)_CurrentIndex, (INTEGER)_ComparisonVal)
 AND
-NOT DB_LLLIB_Dictionary_Data(_DictionaryID, _, _ID, _)
+NOT DB_LLLIB_Dictionary_Data(_DictionaryID, _, _ID, _StringEntry)
 AND
 _ComparisonVal > 0
 AND
@@ -398,7 +428,7 @@ DB_NOOP(1);
 PROC
 LLLIB_DictionarySort_Internal_ProcessCompareResults((STRING)_DictionaryID, (STRING)_ID, (STRING)_StringEntry, (INTEGER)_CurrentIndex, (INTEGER)_ComparisonVal)
 AND
-NOT DB_LLLIB_Dictionary_Data(_DictionaryID, _, _ID, _)
+NOT DB_LLLIB_Dictionary_Data(_DictionaryID, _, _ID, _StringEntry)
 AND
 _ComparisonVal > 0
 AND

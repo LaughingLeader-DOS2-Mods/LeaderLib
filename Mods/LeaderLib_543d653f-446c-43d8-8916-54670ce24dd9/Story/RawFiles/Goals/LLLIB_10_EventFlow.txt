@@ -3,7 +3,7 @@ SubGoalCombiner SGC_AND
 INITSECTION
 //DB_LLLIB_Dictionary_Data("LLLIB_System_EventStack", _Index, _StartEvent, _CompleteEvent)
 //DB_LLLIB_EventFlow_CurrentEvent(_StackName, _Index)
-//DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime)
+//DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime, _TimeoutValue)
 //DB_LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent)
 //DB_LLLIB_EventFlow_WaitTimer(_StackName, _TimerName)
 //DB_LLLIB_EventFlow_CustomWaitTime(_StackName, _OnCompleteEvent, _WaitTime)
@@ -43,7 +43,7 @@ THEN
 GlobalClearFlag("LeaderLib_InitialEventFlowComplete");
 LLLIB_Updater_SaveSettingsVersionData("LLLIB_Settings_EventFlowDefaultStack");
 LLLIB_EventFlow_Clear_StackData("LLLIB_DefaultEventFlow");
-LLLIB_EventFlow_AddStack("LLLIB_DefaultEventFlow", "LeaderLib_Events_OnDefaultEventFlowComplete", 100);
+LLLIB_EventFlow_AddStack("LLLIB_DefaultEventFlow", "LeaderLib_Events_OnDefaultEventFlowComplete", 100, 20000);
 
 PROC
 LLLIB_EventFlow_Init_LeaderLibStack()
@@ -89,10 +89,15 @@ LLLIB_EventFlow_Start("LLLIB_DefaultEventFlow");
 //REGION ADD_AND_START
 PROC
 LLLIB_EventFlow_AddStack((STRING)_StackName, (STRING)_OnFlowCompleteEvent, (INTEGER)_TimeBetweenEvents)
-AND
-NOT DB_LLLIB_EventFlow_EventStack(_StackName, _, _)
 THEN
-DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _TimeBetweenEvents);
+LLLIB_EventFlow_AddStack(_StackName, _OnFlowCompleteEvent, _TimeBetweenEvents, 10000);
+
+PROC
+LLLIB_EventFlow_AddStack((STRING)_StackName, (STRING)_OnFlowCompleteEvent, (INTEGER)_TimeBetweenEvents, (INTEGER)_TimeoutValue)
+AND
+NOT DB_LLLIB_EventFlow_EventStack(_StackName, _, _, _, _)
+THEN
+DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _TimeBetweenEvents, _TimeoutValue);
 LLLIB_Array_NewArray(_StackName);
 
 PROC
@@ -176,13 +181,15 @@ LLLIB_EventFlow_SetCurrentEvent(_StackName, _NextIndex);
 PROC
 LLLIB_EventFlow_LaunchTimeoutTimer((STRING)_StackName, (STRING)_OnCompleteEvent)
 AND
+DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime, _TimeoutValue)
+AND
 LeaderLog_QRY_Log("COMBINE", "LLLIB_Timers_EventFlow_", _StackName, "_", _OnCompleteEvent)
 AND
 DB_LeaderLog_Temp_CombinedString(_TimerName)
 THEN
 NOT DB_LeaderLog_Temp_CombinedString(_TimerName);
 DB_LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent);
-TimerLaunch(_TimerName, 60000);
+TimerLaunch(_TimerName, _TimeoutValue);
 
 IF
 TimerFinished(_TimerName)
@@ -218,7 +225,7 @@ DB_LLLIB_Dictionary_Data(_StackName, _Index, _StartEvent, _OnCompleteEvent)
 AND
 LLLIB_EventFlow_QRY_CurrentlyRunning(_StackName)
 AND
-DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime)
+DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime, _TimeoutValue)
 AND
 NOT DB_LLLIB_EventFlow_CustomWaitTime(_StackName, _OnCompleteEvent, _)
 AND
@@ -235,7 +242,7 @@ DB_LLLIB_Dictionary_Data(_StackName, _Index, _StartEvent, _OnCompleteEvent)
 AND
 LLLIB_EventFlow_QRY_CurrentlyRunning(_StackName)
 AND
-DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime)
+DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime, _TimeoutValue)
 AND
 DB_LLLIB_EventFlow_CustomWaitTime(_StackName, _OnCompleteEvent, _CustomWaitTime)
 AND
@@ -275,10 +282,10 @@ NOT DB_LLLIB_EventFlow_WaitTimer(_StackName, _TimerName);
 PROC
 LLLIB_EventFlow_Clear_StackData((STRING)_StackName)
 AND
-DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime)
+DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime, _TimeoutValue)
 THEN
 LLLIB_Array_ClearDictionary(_StackName);
-NOT DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime);
+NOT DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime, _TimeoutValue);
 
 PROC
 LLLIB_EventFlow_Clear_StackData((STRING)_StackName)
@@ -312,7 +319,7 @@ LLLIB_EventFlow_StopTimeoutTimer(_StackName, _OnCompleteEvent);
 PROC
 LLLIB_EventFlow_OnEventFlowComplete((STRING)_StackName)
 AND
-DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime)
+DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime, _TimeoutValue)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:EventFlow:OnEventFlowComplete] Event flow [",_StackName,"] completed. Clearing dictionary and sending completion event [",_OnFlowCompleteEvent,"].");
 LeaderLib_SendEvent(_OnFlowCompleteEvent);
@@ -359,7 +366,7 @@ PROC
 LLLIB_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventFlow", "DB_LLLIB_EventFlow_CurrentEvent", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventFlow", "DB_LLLIB_EventFlow_EventStack", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventFlow", "DB_LLLIB_EventFlow_EventStack", 4);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventFlow", "DB_LLLIB_EventFlow_EventTimeout", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventFlow", "DB_LLLIB_EventFlow_WaitTimer", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventFlow", "DB_LLLIB_EventFlow_CustomWaitTime", 3);

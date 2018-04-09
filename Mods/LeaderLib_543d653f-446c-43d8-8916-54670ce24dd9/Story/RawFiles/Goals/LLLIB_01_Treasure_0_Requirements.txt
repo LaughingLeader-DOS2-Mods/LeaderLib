@@ -4,6 +4,7 @@ INITSECTION
 //Settings
 //DB_LLLIB_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel, _StrictMode)
 //DB_LLLIB_Requirements_Flag(_RequirementID, _Flag, _FlagType, _FlagVal)
+//DB_LLLIB_Requirements_FlagTarget(_RequirementID, _Flag, _Object)
 //DB_LLLIB_Requirements_Region(_RequirementID, _Region)
 //DB_LLLIB_Treasure_ItemMaxAmount(_TreasureID, _ItemEntry, _MaxAmount)
 //Dynamic
@@ -18,6 +19,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Requirements", "
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Requirements", "DB_LLLIB_Requirements_Region", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Requirements", "DB_LLLIB_Treasure_ItemMaxAmount", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Requirements", "DB_LLLIB_Requirements_IsUnlocked", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Requirements", "DB_LLLIB_Requirements_FlagTarget", 3);
 LeaderLog_Log("TRACE", "[LLLIB:Requirements] Databases registered.");
 //END_REGION
 
@@ -44,6 +46,27 @@ AND
 _RequirementID != ""
 THEN
 DB_LLLIB_Requirements_Flag(_RequirementID, _Flag, "Object", _FlagVal);
+
+PROC
+LLLIB_Requirements_AddFlagTarget((GUIDSTRING)_Object, (STRING)_RequirementID, (STRING)_Flag)
+AND
+NOT DB_LLLIB_Requirements_FlagTarget(_RequirementID, _Flag, _Object)
+THEN
+DB_LLLIB_Requirements_FlagTarget(_RequirementID, _Flag, _Object);
+
+PROC
+LLLIB_Requirements_Clear_FlagTarget((GUIDSTRING)_Object, (STRING)_RequirementID, (STRING)_Flag)
+AND
+DB_LLLIB_Requirements_FlagTarget(_RequirementID, _Flag, _Object)
+THEN
+NOT DB_LLLIB_Requirements_FlagTarget(_RequirementID, _Flag, _Object);
+
+PROC
+LLLIB_Requirements_Clear_FromAllTarget((GUIDSTRING)_Object)
+AND
+DB_LLLIB_Requirements_FlagTarget(_RequirementID, _Flag, _Object)
+THEN
+NOT DB_LLLIB_Requirements_FlagTarget(_RequirementID, _Flag, _Object);
 
 PROC
 LLLIB_Requirements_AddPartyLevelRequirement((STRING)_RequirementID, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
@@ -130,23 +153,52 @@ THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_QRY_Requirements_PartyFlagMet((STRING)_RequirementID)
+LLLIB_QRY_Requirements_FlagMet((STRING)_RequirementID)
 AND
 DB_LLLIB_Requirements_Flag(_RequirementID, _Flag, _FlagType, _FlagVal)
+AND
+LLLIB_QRY_Requirements_Internal_FlagSet(_RequirementID, _Flag, _FlagType, _FlagVal)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_QRY_Requirements_Internal_FlagSet((STRING)_RequirementID, (STRING)_Flag, "Global", (INTEGER)_FlagVal)
+AND
+LLLIB_Helper_QRY_GlobalFlagSet(_Flag, _FlagVal)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_QRY_Requirements_Internal_FlagSet((STRING)_RequirementID, (STRING)_Flag, (STRING)_FlagType, (INTEGER)_FlagVal)
+AND
+_FlagType != "Global"
+AND
+NOT DB_LLLIB_Requirements_FlagTarget(_RequirementID, _Flag, _)
 AND
 LLLIB_Helper_QRY_PartyFlagSet(_Flag, _FlagType, _FlagVal)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_QRY_Requirements_PartyFlagMet((STRING)_RequirementID)
+LLLIB_QRY_Requirements_Internal_FlagSet((STRING)_RequirementID, (STRING)_Flag, (STRING)_FlagType, (INTEGER)_FlagVal)
+AND
+_FlagType != "Global"
+AND
+DB_LLLIB_Requirements_FlagTarget(_RequirementID, _Flag, _Object)
+AND
+LLLIB_Helper_QRY_FlagSet(_Object, _Flag, _FlagType, _FlagVal)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_QRY_Requirements_FlagMet((STRING)_RequirementID)
 AND
 NOT DB_LLLIB_Requirements_Flag(_RequirementID,_,_,_)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_QRY_Requirements_PartyFlagMet((STRING)_RequirementID)
+LLLIB_QRY_Requirements_FlagMet((STRING)_RequirementID)
 AND
 _RequirementID == ""
 THEN
@@ -189,7 +241,7 @@ LLLIB_QRY_Requirements_AllMet((STRING)_RequirementID)
 AND
 _RequirementID != ""
 AND
-LLLIB_QRY_Requirements_PartyFlagMet(_RequirementID)
+LLLIB_QRY_Requirements_FlagMet(_RequirementID)
 AND
 LLLIB_QRY_Requirements_PartyLevelMet(_RequirementID)
 AND
@@ -305,7 +357,7 @@ NOT DB_LLLIB_Requirements_IsUnlocked(_RequirementID)
 AND
 LLLIB_QRY_Requirements_LevelMet(_Player, _MinLevel, _MaxLevel)
 AND
-LLLIB_QRY_Requirements_PartyFlagMet(_RequirementID)
+LLLIB_QRY_Requirements_FlagMet(_RequirementID)
 THEN
 LLLIB_Requirements_RequirementUnlocked(_RequirementID);
 

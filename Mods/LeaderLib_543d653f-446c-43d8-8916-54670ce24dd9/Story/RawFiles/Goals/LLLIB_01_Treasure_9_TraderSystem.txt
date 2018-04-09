@@ -28,7 +28,18 @@ INITSECTION
 
 //DB_LLLIB_Traders_Temp_DialogFound(_TraderID)
 KBSECTION
-//REGION QUERIES
+//REGION UPDATER
+PROC
+LLLIB_System_RegisterDatabases()
+THEN
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Spawned", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Temp_CurrentSpawnQueue", 6);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Temp_CurrentlySpawning", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Temp_DialogFound", 1);
+LeaderLog_Log("TRACE", "[LLLIB:TraderSystem] Databases registered.");
+//END_REGION
+
+//REGION GENERAL_QUERIES
 QRY
 LLLIB_QRY_Traders_HasPosition((STRING)_TraderID, (STRING)_Level)
 AND
@@ -107,6 +118,7 @@ DB_LLLIB_Traders_Dialog(_TraderID, _Dialog, _Level, _RequirementID)
 AND
 NOT DB_LLLIB_Traders_Temp_DialogFound(_TraderID, _)
 THEN
+//LeaderLog_Log("TRACE", "[LLLIB:TraderSystem] Processing dialog [",_TraderID,"][",_Level,"][",_Dialog,"] with requirement [",_RequirementID,"].");
 LLLIB_Traders_Internal_ProcessLevelDialog(_Trader, _TraderID, _RequirementID, _Dialog);
 
 //Prioritize dialog with requirements
@@ -182,6 +194,29 @@ AND
 LLLIB_QRY_Requirements_AllMet(_RequirementID)
 THEN
 CharacterAddGold(_Trader, _Amount);
+//END_REGION
+
+//REGION TRADER_QUERIES
+QRY
+LLLIB_Traders_QRY_HasDialog((STRING)_TraderID)
+AND
+DB_LLLIB_Traders_Dialog(_TraderID, _Dialog, _Level, _RequirementID)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_Traders_QRY_HasDialogForLevel((STRING)_TraderID, (STRING)_Level)
+AND
+DB_LLLIB_Traders_Dialog(_TraderID, _Dialog, _Level, _RequirementID)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_Traders_QRY_HasDialogWithRequirementForLevel((STRING)_TraderID, (STRING)_Level, (STRING)_RequirementID)
+AND
+DB_LLLIB_Traders_Dialog(_TraderID, _Dialog, _Level, _RequirementID)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION SPAWN_EVENTS
@@ -860,22 +895,22 @@ LLLIB_Traders_SpawnIfRequirementsMet(_RequirementID);
 PROC
 LLLIB_Requirements_RequirementUnlocked((STRING)_RequirementID)
 AND
-DB_LLLIB_Traders_Dialog(_TraderID, _Dialog, _Level, _RequirementID)
-AND
 DB_CurrentLevel(_Level)
 AND
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+AND
+LLLIB_Traders_QRY_HasDialogWithRequirementForLevel(_TraderID, _Level, _RequirementID)
 THEN
-LLLIB_Traders_SetDialog(_Trader, _Dialog);
+LLLIB_Traders_SetDialogToFirstAvailable(_Trader, _TraderID, _Level);
 
 PROC
 LLLIB_Requirements_RequirementLocked((STRING)_RequirementID)
 AND
-DB_LLLIB_Traders_Dialog(_TraderID, _Dialog, _Level, _RequirementID)
-AND
 DB_CurrentLevel(_Level)
 AND
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+AND
+LLLIB_Traders_QRY_HasDialogWithRequirementForLevel(_TraderID, _Level, _RequirementID)
 THEN
 LLLIB_Traders_SetDialogToFirstAvailable(_Trader, _TraderID, _Level);
 
@@ -935,15 +970,19 @@ DisplayText(_Trader, " "); // Hide the status message
 */
 //END_REGION
 
-//REGION UPDATER
+//REGION DEBUG
+/*
 PROC
-LLLIB_System_RegisterDatabases()
+LLLIB_Traders_Internal_ProcessLevelDialog((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_RequirementID, (STRING)_Dialog)
+AND
+NOT DB_LLLIB_Traders_Temp_DialogFound(_TraderID, _)
+AND
+_RequirementID != ""
+AND
+NOT LLLIB_QRY_Requirements_AllMet(_RequirementID)
 THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Spawned", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Temp_CurrentSpawnQueue", 6);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Temp_CurrentlySpawning", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Temp_DialogFound", 1);
-LeaderLog_Log("TRACE", "[LLLIB:TraderSystem] Databases registered.");
+LeaderLog_Log("DEBUG", "[LLLIB:TraderSystem] Requirement [",_RequirementID,"] not met for dialog [",_TraderID,"][",_Dialog,"].");
+*/
 //END_REGION
 EXITSECTION
 

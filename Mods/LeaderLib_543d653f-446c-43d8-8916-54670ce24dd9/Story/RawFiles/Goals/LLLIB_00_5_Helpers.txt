@@ -21,19 +21,18 @@ THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_Helper_QRY_PartyFlagSet((STRING)_Flag, (STRING)_FlagType, (INTEGER)_FlagVal)
+LLLIB_Helper_QRY_GlobalFlagSet((STRING)_Flag, 0)
 AND
-LLLIB_Helper_QRY_PartyFlag_ClearIterator()
-AND
-DB_IsPlayer(_Player)
-AND
-_Player != NULL_00000000-0000-0000-0000-000000000000
-AND
-NOT DB_LLLIB_Helper_Temp_StopIteratingForFlags(1)
-AND
-LLLIB_Helper_QRY_FlagSet(_Player, _Flag, _FlagType, _FlagVal)
+NOT GlobalGetFlag(_Flag, 1) // GlobalGetFlag(_Flag, 0) may not return anything if the global flag was never defined (i.e. from other mods)
 THEN
-DB_LLLIB_Helper_Temp_StopIteratingForFlags(1);
+DB_NOOP(1);
+
+QRY
+LLLIB_Helper_QRY_GlobalFlagSet((STRING)_Flag, 1)
+AND
+GlobalGetFlag(_Flag, 1)
+THEN
+DB_NOOP(1);
 
 QRY
 LLLIB_Helper_QRY_FlagSet((GUIDSTRING)_Object, (STRING)_Flag, "Object", (INTEGER)_FlagVal)
@@ -43,25 +42,49 @@ THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_Helper_QRY_FlagSet((CHARACTERGUID)_Player, (STRING)_Flag, "Character", (INTEGER)_FlagVal)
+LLLIB_Helper_QRY_FlagSet((GUIDSTRING)_Player, (STRING)_Flag, "Character", (INTEGER)_FlagVal)
 AND
-ObjectGetFlag(_Player, _Flag, _FlagVal)
+ObjectGetFlag((CHARACTERGUID)_Player, _Flag, _FlagVal)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_Helper_QRY_FlagSet((CHARACTERGUID)_Player, (STRING)_Flag, "User", (INTEGER)_FlagVal)
+LLLIB_Helper_QRY_FlagSet((GUIDSTRING)_Player, (STRING)_Flag, "User", (INTEGER)_FlagVal)
 AND
-UserGetFlag(_Player, _Flag, _FlagVal)
+UserGetFlag((CHARACTERGUID)_Player, _Flag, _FlagVal)
 THEN
 DB_NOOP(1);
 
 QRY
 LLLIB_Helper_QRY_FlagSet((GUIDSTRING)_Object, (STRING)_Flag, "Global", (INTEGER)_FlagVal)
 AND
-GlobalGetFlag(_Flag, _FlagVal)
+LLLIB_Helper_QRY_GlobalFlagSet(_Flag, _FlagVal)
 THEN
 DB_NOOP(1);
+
+QRY
+LLLIB_Helper_QRY_PartyFlagSet((STRING)_Flag, "Global", (INTEGER)_FlagVal)
+AND
+LLLIB_Helper_QRY_GlobalFlagSet(_Flag, _FlagVal)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_Helper_QRY_PartyFlagSet((STRING)_Flag, (STRING)_FlagType, (INTEGER)_FlagVal)
+AND
+_FlagType != "Global"
+AND
+LLLIB_Helper_QRY_PartyFlag_ClearIterator()
+AND
+DB_IsPlayer(_Player)
+AND
+_Player != NULL_00000000-0000-0000-0000-000000000000
+AND
+NOT DB_LLLIB_Helper_Temp_StopIteratingForFlags(1)
+AND
+LLLIB_Helper_QRY_FlagSet((GUIDSTRING)_Player, _Flag, _FlagType, _FlagVal)
+THEN
+DB_LLLIB_Helper_Temp_StopIteratingForFlags(1);
 
 QRY
 LLLIB_Helper_QRY_PartyMinLevelMet((INTEGER)_MinLevel)

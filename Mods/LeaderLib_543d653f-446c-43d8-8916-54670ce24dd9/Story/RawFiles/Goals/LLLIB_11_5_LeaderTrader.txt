@@ -50,7 +50,7 @@ AND
 DB_LLLIB_LeaderTrader_IntroDialogRequirements(_Level, _Dialog, _Flag, _RequirementID)
 THEN
 LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", _Dialog, _Level, _RequirementID);
-LLLIB_Requirements_AddFlagRequirement(_RequirementID, _Flag, "Object", 0);
+LLLIB_Requirements_AddFlagRequirement(_RequirementID, _Flag, "Global", 0);
 
 PROC
 LLLIB_LeaderTrader_RegisterTraderSettings()

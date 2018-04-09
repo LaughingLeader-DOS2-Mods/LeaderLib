@@ -1,7 +1,7 @@
 {
    "save" : {
       "header" : {
-         "time" : 1522718090,
+         "time" : 1523311947,
          "version" : "2.0.8.2"
       },
       "regions" : {
@@ -858,11 +858,8 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_LeaderTrader_Arx_IntroDone"},
-                                          "paramval" : {"type" : 4, "value" : 1},
-                                          "value" : {"type" : 19, "value" : 1}
-                                       }
-                                    ],"type" : {"type" : 22, "value" : "Character"}}
+                                          "name" : {"type" : 22, "value" : "LLLIB_LeaderTrader_Arx_IntroDone"},"value" : {"type" : 19, "value" : 1}}
+                                    ],"type" : {"type" : 22, "value" : "Global"}}
                               ]
                            }
                         ],

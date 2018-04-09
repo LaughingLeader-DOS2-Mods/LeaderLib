@@ -5,10 +5,17 @@ INITSECTION
 //DB_LeaderLog_Temp_NextLogTarget(_Player)
 //DB_LeaderLog_Temp_TargetOnce(_Player)
 //DB_LeaderLog_Temp_NextStatusColor(_Player, _Color, _Size)
-GlobalSetFlag("LeaderLog_Debug_Enabled"); // For tracing system logs before it's defaultly disabled
-DB_LeaderLog_InitialEnable(1);
+LLLIB_LeaderLog_SetInitialEnable();
 KBSECTION
 //REGION EDITOR_DEBUG_ENABLE
+PROC
+LLLIB_LeaderLog_SetInitialEnable()
+AND
+NOT DB_LeaderLog_InitialEnable(_)
+THEN
+GlobalSetFlag("LeaderLog_Debug_Enabled"); // For tracing system logs before it's defaultly disabled
+DB_LeaderLog_InitialEnable(1);
+
 IF
 StoryEvent(_, "LeaderLib_Initialized")
 AND

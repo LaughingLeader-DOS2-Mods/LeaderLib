@@ -17,6 +17,64 @@ LeaderUpdater_QRY_SettingsNeedsUpdate("LeaderLib", "LaughingLeader", _SettingsID
 THEN
 DB_NOOP(1);
 //END_REGION
+
+//REGION PLAYER_DATABASE_FIX
+IF
+GameStarted(_,1)
+AND
+NOT SysIsActive("GLOBAL_CharacterCreation") // If Origins isn't running
+THEN
+TimerLaunch("LLLIB_Debug_IteratePlayers", 1000);
+
+IF
+TimerFinished("LLLIB_Debug_IteratePlayers")
+AND
+NOT CharacterGetHostCharacter(_)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Init:LLLIB_Debug_IteratePlayers] No host found.");
+
+
+IF
+TimerFinished("LLLIB_Debug_IteratePlayers")
+AND
+CharacterGetHostCharacter(_Player)
+AND
+DB_IsPlayer(_Player)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Init:LLLIB_Debug_IteratePlayers] Host already added to DB_IsPlayer.");
+
+IF
+TimerFinished("LLLIB_Debug_IteratePlayers")
+AND
+CharacterGetHostCharacter(_Player)
+AND
+NOT DB_IsPlayer(_Player)
+THEN
+DB_IsPlayer(_Player);
+LeaderLog_Log("DEBUG", "[LLLIB:Init:LLLIB_Debug_IteratePlayers] Added host to DB_IsPlayer.");
+
+IF
+TimerFinished("LLLIB_Debug_IteratePlayers")
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Init:LLLIB_Debug_IteratePlayers] Searching for players.");
+CharacterLaunchIterator("LLLIB_Debug_AddPlayer");
+
+IF
+StoryEvent((CHARACTERGUID)_Player, "LLLIB_Debug_AddPlayer")
+AND
+CharacterIsPlayer(_Player, 1)
+AND
+NOT DB_IsPlayer(_Player)
+THEN
+DB_IsPlayer(_Player);
+LeaderLog_Log("DEBUG", "[LLLIB:Init:LLLIB_Debug_IteratePlayers] Added player to DB_IsPlayer.");
+
+IF
+StoryEvent(NULL_00000000-0000-0000-0000-000000000000, "LLLIB_Debug_AddPlayer")
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Init:LLLIB_Debug_IteratePlayers] Iteration complete.");
+LeaderLib_SendEvent("LeaderLib_Debug_PlayerDatabaseReady");
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

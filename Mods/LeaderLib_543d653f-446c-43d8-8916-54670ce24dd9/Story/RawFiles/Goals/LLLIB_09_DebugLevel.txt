@@ -374,36 +374,6 @@ THEN
 LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] String comparison: '",_Str1,"' and '",_Str2,"' = [",_CompareValStr,"]");
 */
 
-//REGION PLAYER_DATABASE_FIX
-IF
-GameStarted("LeaderLib_TestLevel",_)
-THEN
-TimerLaunch("LeaderLib_TestLevel_IteratorDelay", 500);
-
-IF
-TimerFinished("LeaderLib_TestLevel_IteratorDelay")
-THEN
-//LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] ","Searching for players.");
-CharacterLaunchIterator("LLLIB_Debug_AddPlayer");
-LeaderLib_SendEvent("LLLIB_Events_TestEvent");
-
-IF
-StoryEvent(_, "LLLIB_Events_TestEvent")
-THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] ","LLLIB_Events_TestEvent ran.");
-
-IF
-StoryEvent((CHARACTERGUID)_Player, "LLLIB_Debug_AddPlayer")
-AND
-CharacterIsPlayer(_Player, 1)
-AND
-NOT DB_IsPlayer(_Player)
-THEN
-DB_IsPlayer(_Player);
-//LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] ","Added player to DB_IsPlayer.");
-//ObjectClearFlag(_Player, "LLLIB_LeaderTrader_PlayerIntroducedSelf");
-//END_REGION
-
 IF
 SkillCast(_Player, _Skill, _)
 AND

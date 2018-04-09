@@ -49,6 +49,15 @@ DB_LLLIB_EquipmentSlots("Boots");
 DB_LLLIB_EquipmentSlots("Gloves");
 DB_LLLIB_EquipmentSlots("Amulet");
 DB_LLLIB_EquipmentSlots("Ring2");
+
+PROC
+LLLIB_Settings_InitEquipmentSlots()
+AND
+LLLIB_Array_QRY_EmptyLength("LeaderLib_EquipmentSlots")
+AND
+DB_LLLIB_EquipmentSlots(_Slot)
+THEN
+LLLIB_Array_AddToArray("LeaderLib_EquipmentSlots", _Slot);
 //END_REGION
 
 //REGION UPDATER

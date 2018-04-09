@@ -84,9 +84,9 @@ LLLIB_Requirements_AddRegionRequirement("LLLIB_RegionIsFortJoy", "FJ_FortJoy_Mai
 LLLIB_Requirements_AddRegionRequirement("LLLIB_RegionIsDebugLevel", "LeaderLib_TestLevel");
 
 LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "LeaderLib_TestLevel", 20000);
+LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "TUT_Tutorial_A", 50);
+LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "FJ_FortJoy_Main", 100);
 /*
-LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "TUT_Tutorial_A", 200);
-LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "FJ_FortJoy_Main", 500);
 LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "FJ_FortJoy_Main", 4000, "LLLIB_LeaderTrader_PartyFoundSeekerCamp");
 LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "LV_HoE_Main", 4500);
 LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "RC_Main", 5000);

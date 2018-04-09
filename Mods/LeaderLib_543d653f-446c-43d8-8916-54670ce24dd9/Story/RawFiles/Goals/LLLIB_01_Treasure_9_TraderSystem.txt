@@ -106,8 +106,6 @@ AND
 DB_LLLIB_Traders_Dialog(_TraderID, _Dialog, _Level, _RequirementID)
 AND
 NOT DB_LLLIB_Traders_Temp_DialogFound(_TraderID, _)
-AND
-NOT DB_Dialogs(_Trader, _Dialog)
 THEN
 LLLIB_Traders_Internal_ProcessLevelDialog(_Trader, _TraderID, _RequirementID, _Dialog);
 
@@ -142,8 +140,6 @@ NOT DB_LLLIB_Traders_Temp_DialogFound(_TraderID,_) // Prevent this rule if a dia
 AND
 DB_LLLIB_Traders_Dialog(_TraderID, _Dialog, "", _RequirementID)
 AND
-NOT DB_Dialogs(_Trader, _Dialog)
-AND
 NOT DB_LLLIB_Traders_Temp_DialogFound(_TraderID,_)  // Prevent setting again via iterating the DB
 AND
 LLLIB_QRY_Requirements_AllMet(_RequirementID)
@@ -170,6 +166,8 @@ NOT DB_LLLIB_Traders_Temp_DialogFound(_TraderID, _Dialog);
 
 PROC
 LLLIB_Traders_SetDialog((CHARACTERGUID)_Trader, (STRING)_Dialog)
+AND
+NOT DB_Dialogs(_Trader, _Dialog)
 THEN
 ProcRemoveAllDialogEntriesForSpeaker(_Trader);
 DB_Dialogs(_Trader, _Dialog);

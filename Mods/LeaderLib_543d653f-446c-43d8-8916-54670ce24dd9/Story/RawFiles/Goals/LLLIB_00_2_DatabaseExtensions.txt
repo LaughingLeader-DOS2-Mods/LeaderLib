@@ -632,7 +632,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensio
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LLLIB_Array_Temp_ArrayIteratorBuilder", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LLLIB_Array_Temp_PopValue", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LLLIB_Array_Temp_FirstEntry", 3);
-LeaderLog_Log("SYSTEM", "[LLLIB:DatabaseExtensions] Databases registered.");
+LeaderLog_Log("TRACE", "[LLLIB:DatabaseExtensions] Databases registered.");
 //END_REGION
 EXITSECTION
 

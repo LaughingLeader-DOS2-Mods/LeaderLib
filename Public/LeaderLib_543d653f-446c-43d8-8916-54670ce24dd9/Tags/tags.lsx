@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <save>
-    <header version="2" time="1521190494" />
+    <header version="2" time="1523307395" />
     <version major="3" minor="1" revision="7" build="0" />
     <region id="Tags">
         <node id="root">
@@ -47,6 +47,32 @@
                 <node id="Tag">
                     <attribute id="Description" value="Treasure generators tagged with this will ignore amount limits." type="23" />
                     <attribute id="Name" value="LLLIB_Treasure_NoAmountLimit" type="23" />
+                    <children>
+                        <node id="Categories">
+                            <children>
+                                <node id="Category">
+                                    <attribute id="Name" value="Code" type="23" />
+                                </node>
+                            </children>
+                        </node>
+                    </children>
+                </node>
+                <node id="Tag">
+                    <attribute id="Description" value='Prevents the &quot;New Items in Stock&quot; status from applying.' type="23" />
+                    <attribute id="Name" value="LLLIB_Trader_DisableStockStatus" type="23" />
+                    <children>
+                        <node id="Categories">
+                            <children>
+                                <node id="Category">
+                                    <attribute id="Name" value="Code" type="23" />
+                                </node>
+                            </children>
+                        </node>
+                    </children>
+                </node>
+                <node id="Tag">
+                    <attribute id="Description" value="Generated items after they&apos;ve been registered for the first time." type="23" />
+                    <attribute id="Name" value="LLLIB_Trader_GenerateOnNewlyRegistered" type="23" />
                     <children>
                         <node id="Categories">
                             <children>

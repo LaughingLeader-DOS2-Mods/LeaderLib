@@ -435,7 +435,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LL
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LLLIB_Helper_Temp_StopIteratingForMaxLevel", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LLLIB_Helper_Temp_PartyMemberOutsideOfLevelRange", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LLLIB_Helper_Temp_HighestLevelInParty", 1);
-LeaderLog_Log("SYSTEM", "[LLLIB:Helpers] Databases registered.");
+LeaderLog_Log("TRACE", "[LLLIB:Helpers] Databases registered.");
 //END_REGION
 EXITSECTION
 

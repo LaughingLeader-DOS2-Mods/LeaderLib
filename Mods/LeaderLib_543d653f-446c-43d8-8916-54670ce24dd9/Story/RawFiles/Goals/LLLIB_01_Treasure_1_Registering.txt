@@ -24,67 +24,97 @@ INITSECTION
 //DB_LLLIB_Treasure_GeneratedEvent(_TreasureID, _ItemEntry, _OnGeneratedEvent)
 //DB_LLLIB_Treasure_ItemDoneGenerating(_Object, _TreasureID, _ItemEntry)
 KBSECTION
+PROC
+LLLIB_Treasure_JustRegistered((STRING)_TreasureID, (STRING)_RegisteredVal, (STRING)_Type)
+THEN
+DB_NOOP(1);
+
+PROC
+LLLIB_Treasure_JustRegisteredObject((STRING)_TreasureID, (GUIDSTRING)_RegisteredVal, (STRING)_Type)
+AND
+String(_RegisteredVal, _Str)
+THEN
+LLLIB_Treasure_JustRegistered(_TreasureID, _Str, _Type);
+
 //REGION TREASURE_REGISTERING
 PROC
 LLLIB_Treasure_Register_TreasureToObject((STRING)_TreasureID, (GUIDSTRING)_Object)
+AND
+NOT DB_LLLIB_Treasure_RegisteredObject(_TreasureID, _Object)
 THEN
 DB_LLLIB_Treasure_RegisteredObject(_TreasureID, _Object);
+LLLIB_Treasure_JustRegisteredObject(_TreasureID, _Object, "Object");
 
 PROC
 LLLIB_Treasure_Register_TreasureToTemplate((STRING)_TreasureID, (STRING)_ObjectTemplate)
+AND
+NOT DB_LLLIB_Treasure_RegisteredObjectTemplate(_TreasureID, _ObjectTemplate)
 THEN
 DB_LLLIB_Treasure_RegisteredObjectTemplate(_TreasureID, _ObjectTemplate);
+LLLIB_Treasure_JustRegistered(_TreasureID, _ObjectTemplate, "ObjectTemplate");
 
 PROC
 LLLIB_Treasure_Register_TreasureToTrader((STRING)_TreasureID, (STRING)_TraderID)
+AND
+NOT DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:Register_TreasureToTrader] [",_TreasureID,"] registered to [",_TraderID,"].");
+//LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:Register_TreasureToTrader] [",_TreasureID,"] registered to [",_TraderID,"].");
 DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID);
+LLLIB_Treasure_JustRegistered(_TreasureID, _TraderID, "TraderTreasure");
 
 PROC
-LLLIB_Treasure_Register_TreasureTable((STRING)_TreasureID, (STRING)_TreaseTable, (STRING)_RequirementID)
+LLLIB_Treasure_Register_TreasureTable((STRING)_TreasureID, (STRING)_TreasureTable, (STRING)_RequirementID)
 THEN
-DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreaseTable, _RequirementID,1,1,1);
+LLLIB_Treasure_Register_TreasureTable(_TreasureID, _TreasureTable, _RequirementID,1,1,1);
 
 PROC
-LLLIB_Treasure_Register_TreasureTable((STRING)_TreasureID, (STRING)_TreaseTable, (STRING)_RequirementID, (INTEGER)_UsePartyLevel)
+LLLIB_Treasure_Register_TreasureTable((STRING)_TreasureID, (STRING)_TreasureTable, (STRING)_RequirementID, (INTEGER)_UsePartyLevel)
 THEN
-DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreaseTable, _RequirementID, _UsePartyLevel, 1, 1);
+LLLIB_Treasure_Register_TreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, 1, 1);
 
 PROC
-LLLIB_Treasure_Register_TreasureTable((STRING)_TreasureID, (STRING)_TreaseTable, (STRING)_RequirementID, (INTEGER)_UsePartyLevel, (INTEGER)_Level)
+LLLIB_Treasure_Register_TreasureTable((STRING)_TreasureID, (STRING)_TreasureTable, (STRING)_RequirementID, (INTEGER)_UsePartyLevel, (INTEGER)_Level)
 THEN
-DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreaseTable, _RequirementID, _UsePartyLevel, _Level, _Level);
+LLLIB_Treasure_Register_TreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _Level, _Level);
 
 PROC
-LLLIB_Treasure_Register_TreasureTable((STRING)_TreasureID, (STRING)_TreaseTable, (STRING)_RequirementID, (INTEGER)_UsePartyLevel, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
+LLLIB_Treasure_Register_TreasureTable((STRING)_TreasureID, (STRING)_TreasureTable, (STRING)_RequirementID, (INTEGER)_UsePartyLevel, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
+AND
+NOT DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel)
 THEN
-DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreaseTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel);
+DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel);
+LLLIB_Treasure_JustRegistered(_TreasureID, _TreasureTable, "TreasureTable");
 
 PROC
 LLLIB_Treasure_AddTreasureItemTemplate((STRING)_TreasureID, (STRING)_ItemEntry)
 THEN
-DB_LLLIB_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, 1, "");
+LLLIB_Treasure_AddTreasureItemTemplate(_TreasureID, _ItemEntry, 1, "");
 
 PROC
 LLLIB_Treasure_AddTreasureItemTemplate((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Amount)
 THEN
-DB_LLLIB_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, "");
+LLLIB_Treasure_AddTreasureItemTemplate(_TreasureID, _ItemEntry, _Amount, "");
 
 PROC
 LLLIB_Treasure_AddTreasureItemTemplate((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Amount, (STRING)_RequirementID)
+AND
+NOT DB_LLLIB_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID)
 THEN
 DB_LLLIB_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID);
+LLLIB_Treasure_JustRegistered(_TreasureID, _ItemEntry, "ItemTemplate");
 
 PROC
 LLLIB_Treasure_AddTreasureItemStat((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Amount)
 THEN
-DB_LLLIB_Treasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, "");
+LLLIB_Treasure_AddTreasureItemStat(_TreasureID, _ItemEntry, _Amount, "");
 
 PROC
 LLLIB_Treasure_AddTreasureItemStat((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Amount, (STRING)_RequirementID)
+AND
+NOT DB_LLLIB_Treasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID)
 THEN
 DB_LLLIB_Treasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID);
+LLLIB_Treasure_JustRegistered(_TreasureID, _ItemEntry, "ItemStat");
 
 /* Generation types:
 MANUAL
@@ -555,7 +585,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Register
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LLLIB_Traders_LevelPositionObject", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LLLIB_Traders_CreationEvents", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LLLIB_Traders_Seat", 4);
-LeaderLog_Log("SYSTEM", "[LLLIB:Treasure:Registering] Databases registered.");
+LeaderLog_Log("TRACE", "[LLLIB:Treasure:Registering] Databases registered.");
 //END_REGION
 EXITSECTION
 

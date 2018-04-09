@@ -608,7 +608,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderLog", "DB_
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderLog", "DB_LeaderLog_Temp_TargetOnce", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderLog", "DB_LeaderLog_Temp_NextStatusColor", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderLog", "DB_LeaderLog_InitialEnable", 1);
-LeaderLog_Log("SYSTEM", "[LLLIB:LeaderLog] Databases registered.");
+LeaderLog_Log("TRACE", "[LLLIB:LeaderLog] Databases registered.");
 //END_REGION
 EXITSECTION
 

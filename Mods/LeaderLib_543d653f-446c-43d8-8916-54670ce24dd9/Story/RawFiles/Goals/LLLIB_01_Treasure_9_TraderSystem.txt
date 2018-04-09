@@ -19,6 +19,9 @@ INITSECTION
 //DB_LLLIB_Array_Data(_ArrayID, _Index, _TraderID)
 //DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID, _SpawnEvent, _SpawnCompleteEvent, _SpawnQueueCompleteEvent, _TimeoutEvent)
 //DB_LLLIB_Traders_Temp_CurrentlySpawning(_ArrayID, _TraderID)
+/*JUST_REGISTERED*/
+//DB_LLLIB_Traders_Temp_TreasureJustRegistered(_TreasureID, _TraderID)
+//DB_LLLIB_Traders_Temp_JustRegisteredTimerActive(_Val)
 //Ref
 //DB_LLLIB_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel)
 //DB_LLLIB_Requirements_Flag(_RequirementID, _Flag, _FlagType, _FlagVal)
@@ -715,6 +718,49 @@ THEN
 ItemDestroy(_Item);
 //END_REGION
 
+//REGION GENERATE_ON_REGISTER
+PROC
+LLLIB_Treasure_JustRegistered((STRING)_TreasureID, (STRING)_RegisteredVal, (STRING)_Type)
+AND
+DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
+AND
+NOT DB_LLLIB_Traders_Temp_TreasureJustRegistered(_TreasureID, _TraderID)
+THEN
+DB_LLLIB_Traders_Temp_TreasureJustRegistered(_TreasureID, _TraderID);
+
+IF
+StoryEvent(_, "LeaderLib_Events_OnDefaultEventFlowComplete")
+AND
+NOT DB_LLLIB_Traders_Temp_JustRegisteredTimerActive(_)
+THEN
+DB_LLLIB_Traders_Temp_JustRegisteredTimerActive(1);
+TimerLaunch("LeaderLib_Timers_JustRegisteredTimer", 250);
+
+IF
+TimerFinished("LeaderLib_Timers_JustRegisteredTimer")
+AND
+DB_LLLIB_Traders_Temp_JustRegisteredTimerActive(_Val)
+THEN
+NOT DB_LLLIB_Traders_Temp_JustRegisteredTimerActive(_Val);
+
+IF
+TimerFinished("LeaderLib_Timers_JustRegisteredTimer")
+AND
+DB_LLLIB_Traders_Temp_TreasureJustRegistered(_TreasureID, _TraderID)
+THEN
+NOT DB_LLLIB_Traders_Temp_TreasureJustRegistered(_TreasureID, _TraderID);
+LLLIB_Traders_Internal_ProcessJustRegistered(_TreasureID, _TraderID);
+
+PROC
+LLLIB_Traders_Internal_ProcessJustRegistered((STRING)_TreasureID, (STRING)_TraderID)
+AND
+DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+AND
+IsTagged(_Trader, "LLLIB_Trader_GenerateOnNewlyRegistered", 1)
+THEN
+LLLIB_Treasure_AddToGenerationQueue(_Trader, _TreasureID, "MANUAL");
+//END_REGION
+
 //REGION CHECKING_ACTIVE_TRADERS
 IF
 StoryEvent(_, "LeaderLib_Commands_CheckTraders")
@@ -859,6 +905,12 @@ HasActiveStatus(_Trader, "LLLIB_NEW_ITEMS", 0)
 THEN
 ApplyStatus(_Trader, "LLLIB_NEW_ITEMS", 180.0, 1);
 
+PROC
+LLLIB_Traders_ApplyNewStockStatus((CHARACTERGUID)_Trader)
+AND
+IsTagged(_Trader, "LLLIB_Trader_DisableStockStatus", 1)
+THEN
+SetStoryEvent(_Trader, "LeaderLib_Events_NewItemsInStock");
 
 /*
 IF
@@ -886,7 +938,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Temp_CurrentSpawnQueue", 6);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Temp_CurrentlySpawning", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Temp_DialogFound", 1);
-LeaderLog_Log("SYSTEM", "[LLLIB:TraderSystem] Databases registered.");
+LeaderLog_Log("TRACE", "[LLLIB:TraderSystem] Databases registered.");
 //END_REGION
 EXITSECTION
 

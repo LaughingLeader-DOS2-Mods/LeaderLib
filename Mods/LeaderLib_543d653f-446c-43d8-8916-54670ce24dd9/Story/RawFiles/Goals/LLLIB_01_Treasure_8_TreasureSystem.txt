@@ -55,7 +55,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem",
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_Queue_CountTemplate", 5);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_Queue_CountStat", 6);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LLLIB_Treasure_Temp_ItemGenerationQueue", 4);
-LeaderLog_Log("SYSTEM", "[LLLIB:TreasureSystem] Databases registered.");
+LeaderLog_Log("TRACE", "[LLLIB:TreasureSystem] Databases registered.");
 //END_REGION
 
 //REGION GETTERS
@@ -915,7 +915,17 @@ LLLIB_Treasure_Internal_MarkAsFinished((STRING)_ID, (GUIDSTRING)_Object, (STRING
 AND
 NOT LLLIB_Treasure_QRY_StillGenerating(_ID, _Object, _TreasureID)
 THEN
+LLLIB_Treasure_Internal_RemoveFromJustRegistered((CHARACTERGUID)_Object, _TreasureID);
 LLLIB_Treasure_Internal_OnGenerationFinished(_ID, _Object);
+
+PROC
+LLLIB_Treasure_Internal_RemoveFromJustRegistered((CHARACTERGUID)_Trader, (STRING)_TreasureID)
+AND
+DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+AND
+DB_LLLIB_Traders_Temp_TreasureJustRegistered(_TreasureID, _TraderID)
+THEN
+NOT DB_LLLIB_Traders_Temp_TreasureJustRegistered(_TreasureID, _TraderID);
 
 PROC
 LLLIB_Treasure_Internal_OnGenerationFailed((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_GenerationType)
@@ -949,7 +959,7 @@ THEN
 LeaderLib_SendEvent("LeaderLib_Commands_StartTreasureGeneration");
 
 IF
-StoryEvent(_, "LeaderLib_Events_OnTreasureQueueComplete")
+StoryEvent(_, "LLLIB_Events_OnGenerationQueueComplete")
 AND
 GlobalGetFlag("LeaderLib_DefaultEventFlowRunning", 0)
 THEN

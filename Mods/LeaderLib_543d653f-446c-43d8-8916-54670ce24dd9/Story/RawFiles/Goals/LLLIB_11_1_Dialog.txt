@@ -59,7 +59,7 @@ THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LLLIB_DialogNames", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LLLIB_Dialog_AttitudeFlags", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LLLIB_Dialog_NameOverride", 2);
-LeaderLog_Log("SYSTEM", "[LLLIB:Dialog] Databases registered.");
+LeaderLog_Log("TRACE", "[LLLIB:Dialog] Databases registered.");
 //END_REGION
 
 //REGION NAME_VARS
@@ -216,4 +216,4 @@ StartTrade(_Player, _Object);
 EXITSECTION
 
 ENDEXITSECTION
-ParentTargetEdge "LaughingLeader__LeaderLib"
+ParentTargetEdge "LLLIB_11__Start"

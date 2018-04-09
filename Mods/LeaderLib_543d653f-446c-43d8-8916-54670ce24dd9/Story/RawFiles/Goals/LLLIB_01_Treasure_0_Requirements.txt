@@ -18,7 +18,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Requirements", "
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Requirements", "DB_LLLIB_Requirements_Region", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Requirements", "DB_LLLIB_Treasure_ItemMaxAmount", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Requirements", "DB_LLLIB_Requirements_IsUnlocked", 1);
-LeaderLog_Log("SYSTEM", "[LLLIB:Requirements] Databases registered.");
+LeaderLog_Log("TRACE", "[LLLIB:Requirements] Databases registered.");
 //END_REGION
 
 //REGION REGISTERING

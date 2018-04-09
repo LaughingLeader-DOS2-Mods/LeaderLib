@@ -730,9 +730,9 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModMenu", "DB_LL
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModMenu", "DB_LLLIB_ModMenu_Temp_ActiveMenu", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModMenu", "DB_LLLIB_ModMenu_Temp_IsChangingMenuPage", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModMenu", "DB_LLLIB_ModMenu_Temp_SortStarted", 1);
-LeaderLog_Log("SYSTEM", "[LLLIB:ModMenu] Databases registered.");
+LeaderLog_Log("TRACE", "[LLLIB:ModMenu] Databases registered.");
 //END_REGION
 EXITSECTION
 
 ENDEXITSECTION
-ParentTargetEdge "LaughingLeader__LeaderLib"
+ParentTargetEdge "LLLIB_11__Start"

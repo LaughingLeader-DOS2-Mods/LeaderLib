@@ -2,10 +2,14 @@ Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
 //LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", "0.9.0.0");
-LeaderUpdater_Register_ActiveGoal("LeaderLib", "LaughingLeader", "LLLIB_ZZZ_Updater");
-LeaderLib_Register_ModMenu("LaughingLeader_LeaderLib", "[LeaderLib] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LLLIB_Updater_RegisterDatabasesOnce();
 KBSECTION
+IF
+GameEventSet("GAMEEVENT_GameStarted")
+THEN
+LeaderLib_Register_ModMenu("LaughingLeader_LeaderLib", "[LeaderLib] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderUpdater_Register_ActiveGoal("LeaderLib", "LaughingLeader", "LLLIB_ZZZ_Updater");
+LLLIB_Updater_RegisterDatabasesOnce();
+
 //REGION UPDATING
 IF
 StoryEvent(_,"LLLIB_Events_OnUpdateSettings")
@@ -24,7 +28,7 @@ PROC
 LLLIB_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Updater", "DB_LLLIB_Updater_RegisteredDatabases", 1);
-LeaderLog_Log("SYSTEM", "[LLLIB:Updater] Databases registered.");
+LeaderLog_Log("TRACE", "[LLLIB:Updater] Databases registered.");
 
 /*
 PROC

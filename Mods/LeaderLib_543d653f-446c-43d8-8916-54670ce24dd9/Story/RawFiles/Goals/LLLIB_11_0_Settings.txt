@@ -6,8 +6,6 @@ LLLIB_Settings_InitSettings();
 //DB_LLLIB_Settings_ItemTemplates(_Name, _ItemTemplate)
 //DB_LLLIB_Settings_DialogVariables(_VariableName, _VariableValue)
 //DB_LLLIB_Settings_QueueRates(_ReferenceName, _TickRate, _TimeoutRate)
-
-//DB_LLLIB_Settings_Temp_IteratorCreator(_CurrentInt, _MaxInt)
 //DB_LLLIB_Settings_Temp_RegisteredModsList(_Str)
 //DB_LLLIB_Settings_Temp_ActiveModText(_ModName, _Author, _Str)
 KBSECTION
@@ -75,32 +73,9 @@ THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_QueueRates", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_ItemTemplates", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_DialogVariables", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_Iterator", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_Temp_IteratorCreator", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_Temp_RegisteredModsList", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_Temp_ActiveModText", 3);
-LeaderLog_Log("SYSTEM", "[LLLIB:Settings] Databases registered.");
-//END_REGION
-
-//REGION ITERATOR
-PROC
-LLLIB_Settings_CreateIterator((STRING)_IteratorName, (INTEGER)_MaxInt)
-THEN
-DB_LLLIB_Settings_Temp_IteratorCreator(_IteratorName, _MaxInt);
-DB_LLLIB_Settings_Temp_StartIteratorCreator(_IteratorName, 0);
-
-IF
-DB_LLLIB_Settings_Temp_StartIteratorCreator((STRING)_IteratorName, (INTEGER)_CurrentInt)
-AND
-DB_LLLIB_Settings_Temp_IteratorCreator(_IteratorName, _MaxInt)
-AND
-_CurrentInt < _MaxInt
-AND
-IntegerSum(_CurrentInt, 1, _NextInt)
-THEN
-DB_LLLIB_Iterator(_IteratorName, _CurrentInt);
-NOT DB_LLLIB_Settings_Temp_StartIteratorCreator(_IteratorName, _CurrentInt);
-DB_LLLIB_Settings_Temp_StartIteratorCreator(_IteratorName, _NextInt);
+LeaderLog_Log("TRACE", "[LLLIB:Settings] Databases registered.");
 //END_REGION
 
 //REGION MOD_DATA
@@ -192,4 +167,4 @@ LLLIB_Settings_BuildModList();
 EXITSECTION
 
 ENDEXITSECTION
-ParentTargetEdge "LaughingLeader__LeaderLib"
+ParentTargetEdge "LLLIB_11__Start"

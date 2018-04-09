@@ -558,7 +558,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "StringExtensions
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "StringExtensions", "DB_LLLIB_StringExt_Temp_CompareIterator", 4);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "StringExtensions", "DB_LLLIB_StringExt_Temp_StringCompare_Results", 4);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "StringExtensions", "DB_LLLIB_StringExt_Temp_StringCompare_StopIteration", 3);
-LeaderLog_Log("SYSTEM", "[LLLIB:StringExtensions] Databases registered.");
+LeaderLog_Log("TRACE", "[LLLIB:StringExtensions] Databases registered.");
 //END_REGION
 EXITSECTION
 

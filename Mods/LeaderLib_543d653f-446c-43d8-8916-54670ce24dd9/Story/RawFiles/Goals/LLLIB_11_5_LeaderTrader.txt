@@ -54,12 +54,17 @@ LLLIB_Requirements_AddFlagRequirement(_RequirementID, _Flag, "Object", 0);
 
 PROC
 LLLIB_LeaderTrader_RegisterTraderSettings()
+AND
+NOT DB_LLLIB_LeaderTrader_Registered(_)
 THEN
+LeaderLog_Log("DEBUG", "[LLLIB:LeaderTrader:RegisterTraderSettings] Registering LeaderTrader treasure/trader settings.");
+DB_LLLIB_LeaderTrader_Registered(1);
+
 DB_LLLIB_LeaderTrader_CurrentAppearance("LLLIB_LeaderTrader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e");
 
 LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", "LLLIB_LeaderTrader_Default"); // Default
 LLLIB_LeaderTrader_RegisterDialogSettings();
-LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", "LLLIB_LeaderTrader_Tutorial_Intro", "LeaderLib_TestLevel", "LLLIB_LeaderTrader_TUT_IntroPending");
+LLLIB_Trader_Register_Dialog("LLLIB_LeaderTrader", "LLLIB_LeaderTrader_Tutorial_Intro", "LeaderLib_TestLevel", "LLLIB_LeaderTrader_TUT_IntroPending"); // Debug
 
 LLLIB_Trader_Register_CreationEvent("LLLIB_LeaderTrader", "LeaderLib_Events_OnLeaderTradeSpawned");
 
@@ -93,10 +98,11 @@ LLLIB_Treasure_Register_TreasureToTrader("LLLIB_LeaderTrader_Misc", "LLLIB_Leade
 LLLIB_Treasure_Register_TreasureToTrader("LLLIB_LeaderTrader_ModItems", "LLLIB_LeaderTrader");
 LLLIB_Treasure_Register_TreasureToTrader("LLLIB_LeaderTrader_ModBooks", "LLLIB_LeaderTrader");
 
-LLLIB_Treasure_Configure_DefaultGenerationType("LLLIB_LeaderTrader_ModItems", "DIALOG_STARTED");
-LLLIB_Treasure_Configure_DefaultGenerationType("LLLIB_LeaderTrader_ModBooks", "DIALOG_STARTED");
+//LLLIB_Treasure_Configure_DefaultGenerationType("LLLIB_LeaderTrader_ModItems", "DIALOG_STARTED");
+//LLLIB_Treasure_Configure_DefaultGenerationType("LLLIB_LeaderTrader_ModBooks", "DIALOG_STARTED");
 
 LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModBooks", "LLLIB_BOOK_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108", 1);
+LLLIB_Treasure_Configure_AddMaxAmount("LLLIB_LeaderTrader_ModBooks", "LLLIB_BOOK_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108", 1);
 //LLLIB_Treasure_Configure_GenerationType("LLLIB_LeaderTrader_ModBooks", "LLLIB_BOOK_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108", "DIALOG_STARTED");
 //LLLIB_Treasure_Register_TreasureTable("LLLIB_LeaderTrader_Misc", "ST_WeaponNormal", "LLLIB_RegionIsFortJoy", 1);
 //LLLIB_Treasure_Register_TreasureTable("LLLIB_LeaderTrader_Misc", "TEST_Generation", "LLLIB_RegionIsDebugLevel", 1);
@@ -589,27 +595,12 @@ ObjectSetFlag(_LeaderTrader, "LLLIB_LeaderTrader_GaveIntroItems");
 
 //Don't display "New Items in Stock" if an intro dialog is set.
 IF
-CharacterStatusApplied(_LeaderTrader, "LLLIB_NEW_ITEMS", _)
+StoryEvent((CHARACTERGUID)_LeaderTrader, "LeaderLib_Events_NewItemsInStock")
 AND
 DB_LLLIB_LeaderTrader(_LeaderTrader)
 AND
-DB_Dialogs(_LeaderTrader, _Dialog)
-AND
-DB_LLLIB_LeaderTrader_IntroDialogRequirements(_Level, _Dialog, _Flag, _RequirementID)
+NOT DB_LLLIB_LeaderTrader_Temp_HasNewItems(_)
 THEN
-RemoveStatus(_LeaderTrader, "LLLIB_NEW_ITEMS");
-DB_LLLIB_LeaderTrader_Temp_HasNewItems(1);
-
-IF
-DB_Dialogs(_LeaderTrader, _Dialog)
-AND
-DB_LLLIB_LeaderTrader((CHARACTERGUID)_LeaderTrader)
-AND
-DB_LLLIB_LeaderTrader_IntroDialogRequirements(_Level, _Dialog, _Flag, _RequirementID)
-AND
-HasActiveStatus(_LeaderTrader, "LLLIB_NEW_ITEMS", 1)
-THEN
-RemoveStatus(_LeaderTrader, "LLLIB_NEW_ITEMS");
 DB_LLLIB_LeaderTrader_Temp_HasNewItems(1);
 
 IF
@@ -623,7 +614,7 @@ DB_LLLIB_LeaderTrader_Temp_HasNewItems(1)
 AND
 HasActiveStatus(_LeaderTrader, "LLLIB_NEW_ITEMS", 0)
 THEN
-LLLIB_Traders_ApplyNewStockStatus(_LeaderTrader);
+ApplyStatus(_LeaderTrader, "LLLIB_NEW_ITEMS", 180.0, 1);
 LLLIB_LeaderTrader_Internal_ClearHasNewItems();
 
 PROC
@@ -652,9 +643,10 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_Appearance", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_CurrentAppearance", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_IntroDialogRequirements", 4);
-LeaderLog_Log("SYSTEM", "[LLLIB:LeaderTrader] Databases registered.");
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_Registered", 1);
+LeaderLog_Log("TRACE", "[LLLIB:LeaderTrader] Databases registered.");
 //END_REGION
 EXITSECTION
 
 ENDEXITSECTION
-ParentTargetEdge "LaughingLeader__LeaderLib"
+ParentTargetEdge "LLLIB_11__Start"

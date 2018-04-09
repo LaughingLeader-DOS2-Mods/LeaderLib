@@ -179,6 +179,7 @@ DB_LeaderUpdater_RegisteredGoal(_ModName, _Author, _GoalTitle)
 AND
 SysIsCompleted(_GoalTitle)
 THEN
+LeaderLog_Log("DEBUG", "[LeaderUpdater:Reset:AllGoals] Set goal [",_GoalTitle,"] to sleeping for mod [",_ModName,"] by author [",_Author,"].");
 SysSetGoalSleeping(_GoalTitle);
 
 PROC
@@ -207,7 +208,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderUpdater", 
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderUpdater", "DB_LeaderUpdater_RegisteredDatabase", 5);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderUpdater", "DB_LeaderUpdater_RegisteredGoal", 3);
 */
-LeaderLog_Log("SYSTEM", "[LLLIB:LeaderUpdater] Databases registered.");
+LeaderLog_Log("TRACE", "[LLLIB:LeaderUpdater] Databases registered.");
 //END_REGION
 
 //REGION UNINSTALLING

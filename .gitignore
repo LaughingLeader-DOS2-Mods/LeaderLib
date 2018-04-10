@@ -1,8 +1,3 @@
-#TestLevel stuff. Nothing special here. Just a basic level.
-Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Levels/*
-Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Globals/*
-Editor/Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Levels/*
-
 #Story files that can be compiled by the user (only raw files needed).
 Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/meta.lsx
 Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/log.txt
@@ -25,6 +20,7 @@ Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/*
 StatsEditorConfig.xml
 DockPanel.config
 EditorBrowserMetadata.*
+EditorMetadata.*
 EffectEditorConfig.xml
 
 #Assets

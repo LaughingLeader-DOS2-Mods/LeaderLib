@@ -1,0 +1,21 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+KBSECTION
+IF
+StoryEvent(_, "LeaderLib_Initialized")
+AND
+NOT DB_TestMod_GithubExample_RegisteredLeaderLibSettings(_)
+THEN
+TestMod_GithubExample_LeaderLib_RegisterSettings();
+DB_TestMod_GithubExample_RegisteredLeaderLibSettings(1);
+
+PROC
+TestMod_GithubExample_LeaderLib_RegisterSettings()
+THEN
+DB_LeaderLib_ModApi_RegisterActiveGoal("TestMod_GithubExample", "CodeBuddy", "TestMod_GithubExample_ZZZ_Updater");
+DB_LeaderLib_ModApi_RegisterMenu("CodeBuddy_TestMod_GithubExample", "[TestMod - Github Example] Menu", ""TestMod_GithubExample_MainMenu", "TestMod_GithubExample", "CodeBuddy");
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "TestMod_GithubExample"

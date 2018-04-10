@@ -1,0 +1,47 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+TestMod_GithubExample_Updater_RegisterVersion("1.0.0.0");
+
+KBSECTION
+//REGION UPDATE_METHODS
+PROC
+TestMod_GithubExample_Updater_RegisterVersion((STRING)_Version)
+THEN
+TestMod_GithubExample_Updater_RemovePreviousVersions();
+DB_Mods_Registered("TestMod_GithubExample", "CodeBuddy", _Version);
+
+PROC
+TestMod_GithubExample_Updater_RemovePreviousVersions()
+AND
+DB_Mods_Registered("TestMod_GithubExample", "CodeBuddy", _Version)
+THEN
+NOT DB_Mods_Registered("TestMod_GithubExample", "CodeBuddy", _Version);
+
+QRY
+TestMod_GithubExample_Updater_UpdateNeeded((STRING)_Version)
+AND
+NOT DB_Mods_Registered("TestMod_GithubExample", "CodeBuddy", _Version)
+THEN
+DB_NOOP(1);
+
+PROC
+TestMod_GithubExample_Updater_StartUpdate()
+THEN
+DebugBreak("[TestMod_GithubExample:Updater] Version updated.");
+//END_REGION
+
+//REGION GAMESTARTED_EVENT
+IF
+GameStarted(_,_)
+AND
+TestMod_GithubExample_Updater_UpdateNeeded("1.0.0.0")
+THEN
+TestMod_GithubExample_Updater_RegisterVersion("1.0.0.0");
+TestMod_GithubExample_Updater_StartUpdate();
+//END_REGION
+
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "TestMod_GithubExample"

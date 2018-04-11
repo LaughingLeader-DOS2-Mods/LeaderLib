@@ -18,7 +18,7 @@ GoalCompleted;
 
 //If something truly funky happened
 IF
-DB_LeaderLib_GameStarted(1)
+DB_LeaderLib_GameStarted(_)
 THEN
 GoalCompleted;
 EXITSECTION

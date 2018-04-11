@@ -11,6 +11,18 @@ INITSECTION
 KBSECTION
 IF
 RegionStarted(_Level)
+THEN
+LLLIB_EventFlow_Internal_StartInit(_Level);
+
+IF
+SavegameLoaded(_,_,_,_)
+AND
+DB_CurrentLevel(_Level)
+THEN
+LLLIB_EventFlow_Internal_StartInit(_Level);
+
+PROC
+LLLIB_EventFlow_Internal_StartInit((STRING)_Level)
 AND
 NOT DB_LLLIB_EventFlow_DefaultStackInitialized(_,_)
 AND

@@ -13,6 +13,7 @@ LLLIB_Start_Internal_CompleteIfStarted()
 AND
 SysIsCompleted("__Start")
 THEN
+DebugBreak("[LLLIB:__Start] Existing save detected.");
 GoalCompleted;
 EXITSECTION
 

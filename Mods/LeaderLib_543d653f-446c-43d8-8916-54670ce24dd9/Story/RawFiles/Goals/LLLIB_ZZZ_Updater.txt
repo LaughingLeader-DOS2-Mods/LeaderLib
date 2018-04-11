@@ -4,10 +4,8 @@ INITSECTION
 //LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", "0.9.0.0");
 KBSECTION
 IF
-GameEventSet("GAMEEVENT_GameStarted")
+DB_LeaderLib_GameStarted(_Val)
 THEN
-LeaderLib_Register_ModMenu("LaughingLeader_LeaderLib", "[LeaderLib] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderUpdater_Register_ActiveGoal("LeaderLib", "LaughingLeader", "LLLIB_ZZZ_Updater");
 LLLIB_Updater_RegisterDatabasesOnce();
 
 //REGION UPDATING
@@ -27,6 +25,8 @@ DB_LLLIB_Updater_RegisteredDatabases(1);
 PROC
 LLLIB_System_RegisterDatabases()
 THEN
+LeaderLib_Register_ModMenu("LaughingLeader_LeaderLib", "[LeaderLib] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderUpdater_Register_ActiveGoal("LeaderLib", "LaughingLeader", "LLLIB_ZZZ_Updater");
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Updater", "DB_LLLIB_Updater_RegisteredDatabases", 1);
 LeaderLog_Log("TRACE", "[LLLIB:Updater] Databases registered.");
 

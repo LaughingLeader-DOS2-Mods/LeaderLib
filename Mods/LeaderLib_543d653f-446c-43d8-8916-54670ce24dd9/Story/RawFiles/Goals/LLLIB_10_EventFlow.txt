@@ -10,14 +10,10 @@ INITSECTION
 //DB_LLLIB_EventFlow_DefaultStackInitialized(_Val, _IsCharacterCreationLevel)
 KBSECTION
 IF
-RegionStarted(_Level) // Preferred
+GameStarted(_Level, _)
 THEN
 LLLIB_EventFlow_Internal_StartInit(_Level);
-
-IF
-GameStarted(_Level, _) // For existing saves
-THEN
-LLLIB_EventFlow_Internal_StartInit(_Level);
+LLLIB_EventFlow_Init_AddSortFlow();
 
 PROC
 LLLIB_EventFlow_Internal_StartInit((STRING)_Level)
@@ -66,9 +62,11 @@ LLLIB_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_StartT
 LLLIB_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_CheckTraders", "LeaderLib_Events_OnTraderCheckingComplete");
 
 PROC
-LLLIB_EventFlow_Init_LeaderLibStack()
+LLLIB_EventFlow_Init_AddSortFlow()
 AND
 LLLIB_ModMenu_QRY_SortNeeded()
+AND
+NOT DB_LLLIB_Array_Dictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_SortMenus", "LeaderLib_Events_OnMenuSortComplete")
 THEN
 LLLIB_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_SortMenus", "LeaderLib_Events_OnMenuSortComplete");
 //END_REGION

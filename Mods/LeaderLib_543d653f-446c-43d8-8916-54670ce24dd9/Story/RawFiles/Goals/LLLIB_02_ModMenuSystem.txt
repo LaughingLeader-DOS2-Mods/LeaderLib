@@ -18,6 +18,8 @@ LLLIB_ModMenu_InitSettings();
 //DB_LLLIB_ModMenu_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
 //DB_LLLIB_ModMenu_Temp_ActiveMenu(_Player, _ID, _Dialog)
 //DB_LLLIB_ModMenu_Temp_IsChangingMenuPage(_Player, _Instance)
+/*SORT_CHECKING*/
+
 KBSECTION
 //REGION MENU_REGISTERING
 PROC
@@ -91,6 +93,8 @@ LeaderLog_Log("DEBUG", "[LLLIB:ModMenu] Max page set: LastIndex[",_Str1,"] LastP
 //REGION SETTINGS
 PROC
 LLLIB_ModMenu_InitSettings()
+AND
+LLLIB_Updater_QRY_SettingsNeedsUpdate("LLLIB_Settings_ModMenu")
 THEN
 LLLIB_Updater_SaveSettingsVersionData("LLLIB_Settings_ModMenu");
 
@@ -109,6 +113,16 @@ DB_LLLIB_ModMenu_MenuVars(4, "LLLIB_ModMenu_Menu5_45148ce6-e8f3-4af4-81ed-a3b2e1
 DB_LLLIB_ModMenu_MenuVars(5, "LLLIB_ModMenu_Menu6_863af621-ff0c-454a-b6a3-7c9d3166a8a0", "LLLIB_ModMenu_SelectedMenu6", "LLLIB_ModMenu_MenuEmpty6");
 DB_LLLIB_ModMenu_MenuVars(6, "LLLIB_ModMenu_Menu7_888ce02f-83ff-4173-be8d-f41fd348358f", "LLLIB_ModMenu_SelectedMenu7", "LLLIB_ModMenu_MenuEmpty7");
 DB_LLLIB_ModMenu_MenuVars(7, "LLLIB_ModMenu_Menu8_a6aa98e6-cde4-491b-a2cb-2cd7d5d71f96", "LLLIB_ModMenu_SelectedMenu8", "LLLIB_ModMenu_MenuEmpty8");
+//END_REGION
+
+//REGION SORT_MANUAL_START
+// Existing Save Shenanigans 2 - The Revengening
+IF
+GameStarted(_,_)
+AND
+LLLIB_ModMenu_QRY_SortNeeded()
+THEN
+TimerLaunch("LLLIB_ModMenu_StartManualSortTimer", 3000);
 //END_REGION
 
 //REGION SORTING
@@ -142,6 +156,13 @@ IF
 TimerFinished("LLLIB_ModMenu_StartManualSortTimer")
 THEN
 LLLIB_ModMenu_StartSorting();
+
+QRY
+LLLIB_ModMenu_QRY_SortNeeded()
+AND
+LLLIB_Array_QRY_EmptyLength("LLLIB_RegisteredMenus")
+THEN
+DB_NOOP(1);
 
 QRY
 LLLIB_ModMenu_QRY_SortNeeded()
@@ -603,6 +624,32 @@ LLLIB_ModMenu_LoadPageVariables(_Player, _Instance);
 LLLIB_ModMenu_CheckPageCount(_Player);
 
 IF
+DialogStarted("LLLIB_ModMenu", _Instance)
+AND
+LLLIB_Array_QRY_EmptyLength("LLLIB_RegisteredMenus")
+AND
+DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
+THEN
+ObjectSetFlag(_Player, "LLLIB_ModMenu_IsEmpty");
+
+IF
+DialogEnded("LLLIB_ModMenu", _Instance)
+AND
+DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
+THEN
+ObjectClearFlag(_Player, "LLLIB_ModMenu_IsEmpty");
+
+IF
+DialogEnded("LLLIB_ModMenu", _Instance)
+AND
+DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
+AND
+ObjectGetFlag(_Player, "LeaderLib_OpenSettingsMenu", 1)
+THEN
+ObjectClearFlag(_Player, "LeaderLib_OpenSettingsMenu");
+Proc_StartDialog(0, "LLLIB_SettingsMenu", _Player, _Player);
+
+IF
 DialogEnded("LLLIB_ModMenu", _Instance)
 AND
 DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
@@ -735,4 +782,4 @@ LeaderLog_Log("TRACE", "[LLLIB:ModMenu] Databases registered.");
 EXITSECTION
 
 ENDEXITSECTION
-ParentTargetEdge "LLLIB_11__Start"
+ParentTargetEdge "LaughingLeader__LeaderLib"

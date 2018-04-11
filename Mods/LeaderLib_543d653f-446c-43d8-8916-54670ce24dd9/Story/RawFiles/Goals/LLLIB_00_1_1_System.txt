@@ -36,7 +36,7 @@ NOT DB_LeaderLib_GameStarted(_Val);
 IF
 SavegameLoaded(_,_,_,_)
 AND
-SysIsCompleted("__Start")
+DB_StoryStarted(_)
 THEN
 DB_LeaderLib_GameStarted(1);
 

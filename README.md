@@ -3,8 +3,12 @@ LeaderLib Mod for Divinity: Original Sin 2
 LeaderLib is a library mod used to provide common functionality to other mods.
 
 # Releases
-* [Nexus]()
-* [Steam Workshop]() 
+* Nexus (Coming Soon)
+* [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=1353333870) 
+
+# Mod Authors
+### Using LeaderLib
+Check out the [wiki](https://github.com/LaughingLeader-DOS2-Mods/LeaderLib/wiki) for information on using LeaderLib with your mod.
 
 # Main Features
 

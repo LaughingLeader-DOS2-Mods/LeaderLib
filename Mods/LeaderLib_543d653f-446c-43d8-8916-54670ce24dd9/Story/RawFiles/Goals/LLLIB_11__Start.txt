@@ -15,6 +15,12 @@ DB_StoryStarted(_)
 THEN
 DebugBreak("[LLLIB:__Start] Existing save detected.");
 GoalCompleted;
+
+//If something truly funky happened
+IF
+DB_LeaderLib_GameStarted(1)
+THEN
+GoalCompleted;
 EXITSECTION
 
 ENDEXITSECTION

@@ -4,7 +4,7 @@ INITSECTION
 //DB_LeaderLib_SendEvent(_EventName)
 //DB_LLLIB_EventParser_Spawned(_EventParser)
 KBSECTION
-//REGION HELPERS
+//REGION CREATE_NEW
 PROC
 LLLIB_EventParser_CreateNew()
 AND
@@ -13,6 +13,21 @@ AND
 ObjectExists(_EventParser, 0)
 THEN
 NOT DB_LLLIB_EventParser_Spawned(_EventParser);
+
+PROC
+LLLIB_EventParser_CreateNew()
+AND
+NOT CharacterGetHostCharacter(_)
+AND
+DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
+AND
+NOT DB_LLLIB_EventParser_Spawned(_)
+AND
+GetPosition(_Dummy, _x,_y,_z)
+AND
+CreateItemTemplateAtPosition("LLLIB_Scripting_EventParser_0f686d7d-2304-4f23-bd9a-8d402a6bdefe", _x,_y,_z, _EventParser)
+THEN
+DB_LLLIB_EventParser_Spawned(_EventParser);
 
 PROC
 LLLIB_EventParser_CreateNew()
@@ -40,7 +55,9 @@ QRY
 LLLIB_QRY_EventParser_CreateNew()
 THEN
 LLLIB_EventParser_CreateNew();
+//END_REGION
 
+//REGION HELPERS
 QRY
 LLLIB_QRY_EventParser_GlobalParserExists()
 AND
@@ -49,10 +66,18 @@ THEN
 DB_NOOP(1);
 
 PROC
+LLLIB_EventParser_ClearEvent((STRING)_EventName)
+AND
+DB_LeaderLib_SendEvent(_EventName)
+THEN
+NOT DB_LeaderLib_SendEvent(_EventName);
+
+PROC
 LLLIB_EventParser_Internal_RunEvent((STRING)_EventName)
 AND
 LLLIB_QRY_EventParser_GlobalParserExists()
 THEN
+LLLIB_EventParser_ClearEvent(_EventName);
 SetStoryEvent(S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, _EventName);
 
 PROC
@@ -64,6 +89,7 @@ LLLIB_QRY_EventParser_CreateNew()
 AND
 DB_LLLIB_EventParser_Spawned(_EventParser)
 THEN
+LLLIB_EventParser_ClearEvent(_EventName);
 SetStoryEvent(_EventParser, _EventName);
 //END_REGION
 
@@ -78,6 +104,8 @@ LeaderLog_Log("DEBUG", "[LLLIB:EventParser][ERROR] Global Event Parser doesn't e
 //Send out a general event, using the Event Parser object.
 PROC
 LeaderLib_SendEvent((STRING)_EventName)
+AND
+NOT DB_LeaderLib_SendEvent(_EventName)
 THEN
 DB_LeaderLib_SendEvent(_EventName);
 
@@ -85,8 +113,15 @@ IF
 DB_LeaderLib_SendEvent(_EventName)
 THEN
 LLLIB_EventParser_Internal_RunEvent(_EventName);
-NOT DB_LeaderLib_SendEvent(_EventName);
 
+//Events that were never sent
+IF
+DB_LLLIB_EventParser_Spawned(_EventParser)
+AND
+DB_LeaderLib_SendEvent(_EventName)
+THEN
+NOT DB_LeaderLib_SendEvent(_EventName);
+LLLIB_EventParser_Internal_RunEvent(_EventName);
 //REGION UPDATER
 PROC
 LLLIB_System_RegisterDatabases()

@@ -10,14 +10,12 @@ INITSECTION
 //DB_LLLIB_EventFlow_DefaultStackInitialized(_Val, _IsCharacterCreationLevel)
 KBSECTION
 IF
-RegionStarted(_Level)
+RegionStarted(_Level) // Preferred
 THEN
 LLLIB_EventFlow_Internal_StartInit(_Level);
 
 IF
-SavegameLoaded(_,_,_,_)
-AND
-DB_CurrentLevel(_Level)
+GameStarted(_Level, _) // For existing saves
 THEN
 LLLIB_EventFlow_Internal_StartInit(_Level);
 
@@ -77,11 +75,32 @@ LLLIB_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_SortMe
 
 //REGION DEFAULT_START
 IF
+GameStarted(_,_)
+THEN
+TimerCancel("LLLIB_Timers_EventFlow_SafetyTimer");
+TimerLaunch("LLLIB_Timers_EventFlow_SafetyTimer", 2000);
+
+IF
+TimerFinished("LLLIB_Timers_EventFlow_SafetyTimer")
+AND
+NOT LLLIB_EventFlow_QRY_CurrentlyRunning("LLLIB_DefaultEventFlow")
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:EventFlow] [ERROR] The timer 'LLLIB_Timers_EventFlow_SafetyTimer' finished. Check that the 'LeaderLib_Initialized' event actually fired.");
+TimerCancel("LLLIB_Timers_StartDefaultFlow");
+LeaderLib_SendEvent("LeaderLib_Commands_StartDefaultEventFlow");
+
+IF
+StoryEvent(_, "LeaderLib_Initialized")
+THEN
+TimerCancel("LLLIB_Timers_EventFlow_SafetyTimer");
+
+IF
 StoryEvent(_, "LeaderLib_Initialized")
 AND
 NOT LLLIB_EventFlow_QRY_CurrentlyRunning("LLLIB_DefaultEventFlow")
 THEN
 //Before starting the flow, let other mods do whatever they need to do for a few frames.
+TimerCancel("LLLIB_Timers_StartDefaultFlow");
 TimerLaunch("LLLIB_Timers_StartDefaultFlow", 50);
 
 IF

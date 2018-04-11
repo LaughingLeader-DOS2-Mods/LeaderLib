@@ -9,6 +9,7 @@ PROC
 LLLIB_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "System", "DB_LeaderLib_Initialized", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "System", "DB_LeaderLib_GameStarted", 1);
 LeaderLog_Log("TRACE", "[LLLIB:System] Databases registered.");
 //END_REGION
 
@@ -26,20 +27,23 @@ GlobalClearFlag("LeaderLib_IsEditorMode");
 
 //REGION INIT_EVENT
 IF
-GameStarted(_,_)
-THEN
-LLLIB_System_ResetInit();
-
-PROC
-LLLIB_System_ResetInit()
+SavegameLoaded(_,_,_,_)
 AND
-DB_LeaderLib_Initialized(_Val)
+DB_LeaderLib_GameStarted(_Val)
 THEN
-NOT DB_LeaderLib_Initialized(_Val);
+NOT DB_LeaderLib_GameStarted(_Val);
+
+IF
+SavegameLoaded(_,_,_,_)
+AND
+SysIsCompleted("__Start")
+THEN
+DB_LeaderLib_GameStarted(1);
 
 IF
 GameStarted(_,_)
 THEN
+LLLIB_System_ResetInit();
 TimerLaunch("LLLIB_Timers_LeaderLibInitialized", 1);
 
 IF
@@ -48,6 +52,20 @@ THEN
 DB_LeaderLib_Initialized(1);
 LeaderLog_Log("DEBUG", "[LLLIB:ModAPI] LeaderLib initialized.");
 LeaderLib_SendEvent("LeaderLib_Initialized");
+
+PROC
+LLLIB_System_ResetInit()
+AND
+DB_LeaderLib_GameStarted(_Val)
+THEN
+NOT DB_LeaderLib_GameStarted(_Val);
+
+PROC
+LLLIB_System_ResetInit()
+AND
+DB_LeaderLib_Initialized(_Val)
+THEN
+NOT DB_LeaderLib_Initialized(_Val);
 //END_REGION
 
 //REGION HOST_FLAGGING
@@ -118,7 +136,6 @@ AND
 NOT CharacterGetHostCharacter(_)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Init:LLLIB_Debug_IteratePlayers] No host found.");
-
 
 IF
 TimerFinished("LLLIB_Debug_IteratePlayers")

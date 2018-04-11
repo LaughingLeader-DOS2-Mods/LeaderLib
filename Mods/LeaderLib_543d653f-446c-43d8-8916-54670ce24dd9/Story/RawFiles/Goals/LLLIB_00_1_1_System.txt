@@ -8,7 +8,7 @@ KBSECTION
 PROC
 LLLIB_System_RegisterDatabases()
 THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_Initialized", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "System", "DB_LeaderLib_Initialized", 1);
 LeaderLog_Log("TRACE", "[LLLIB:System] Databases registered.");
 //END_REGION
 
@@ -27,6 +27,11 @@ GlobalClearFlag("LeaderLib_IsEditorMode");
 //REGION INIT_EVENT
 IF
 GameStarted(_,_)
+THEN
+LLLIB_System_ResetInit();
+
+PROC
+LLLIB_System_ResetInit()
 AND
 DB_LeaderLib_Initialized(_Val)
 THEN

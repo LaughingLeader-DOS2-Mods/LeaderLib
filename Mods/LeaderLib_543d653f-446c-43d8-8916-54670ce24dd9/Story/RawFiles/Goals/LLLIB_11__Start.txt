@@ -11,7 +11,7 @@ GoalCompleted;
 PROC
 LLLIB_Start_Internal_CompleteIfStarted()
 AND
-SysIsCompleted("__Start")
+DB_StoryStarted(_)
 THEN
 DebugBreak("[LLLIB:__Start] Existing save detected.");
 GoalCompleted;

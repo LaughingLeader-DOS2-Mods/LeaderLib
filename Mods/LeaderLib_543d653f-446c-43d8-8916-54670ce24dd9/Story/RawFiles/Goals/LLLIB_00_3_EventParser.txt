@@ -19,7 +19,11 @@ LLLIB_EventParser_CreateNew()
 AND
 NOT DB_LLLIB_EventParser_Spawned(_)
 AND
-CreateItemTemplateAtPosition("LLLIB_Scripting_EventParser_0f686d7d-2304-4f23-bd9a-8d402a6bdefe", 0.0, 0.0, 0.0, _EventParser)
+CharacterGetHostCharacter(_Host)
+AND
+GetPosition(_Host, _x,_y,_z)
+AND
+CreateItemTemplateAtPosition("LLLIB_Scripting_EventParser_0f686d7d-2304-4f23-bd9a-8d402a6bdefe", _x,_y,_z, _EventParser)
 THEN
 DB_LLLIB_EventParser_Spawned(_EventParser);
 
@@ -28,9 +32,7 @@ LLLIB_EventParser_CreateNew()
 AND
 NOT DB_LLLIB_EventParser_Spawned(_) // Creating a temporary event parser failed, use a player
 AND
-DB_IsPlayer(_Player)
-AND
-NOT DB_LLLIB_EventParser_Spawned(_) // So we don't keep iterating
+CharacterGetHostCharacter(_Player)
 THEN
 DB_LLLIB_EventParser_Spawned(_Player);
 

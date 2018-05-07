@@ -1,0 +1,177 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+//DB_LeaderLib_Combat_ActiveCombat(_CombatID)
+//DB_LeaderLib_Combat_PastCombat(_CombatID)
+//DB_LeaderLib_Combat_Rounds(_CombatID, _CurrentRound, _TotalRounds)
+//DB_LeaderLib_Combat_Objects(_CombatID, _Object)
+//DB_LeaderLib_Combat_ActiveObject(_CombatID, _Object)
+//DB_LeaderLib_Combat_DeadObjects(_CombatID, _Object)
+//DB_LeaderLib_Combat_Casualties(_CombatID, _Victim, _Attacker)
+KBSECTION
+//REGION CLEAR
+PROC
+LLLIB_Combat_Clear_CombatData((INTEGER)_CombatID)
+AND
+DB_LeaderLib_Combat_ActiveCombat(_CombatID)
+THEN
+NOT DB_LeaderLib_Combat_ActiveCombat(_CombatID);
+
+PROC
+LLLIB_Combat_Clear_CombatData((INTEGER)_CombatID)
+AND
+DB_LeaderLib_Combat_ActiveObject(_CombatID, _Object)
+THEN
+NOT DB_LeaderLib_Combat_ActiveObject(_CombatID, _Object);
+
+PROC
+LLLIB_Combat_Clear_CombatData((INTEGER)_CombatID)
+AND
+DB_LeaderLib_Combat_Objects(_CombatID, _Object)
+THEN
+NOT DB_LeaderLib_Combat_Objects(_CombatID, _Object);
+//END_REGION
+
+//REGION COMBAT_TRACKING
+IF
+CombatStarted(_CombatID)
+AND
+NOT DB_LeaderLib_Combat_ActiveCombat(_CombatID)
+THEN
+DB_LeaderLib_Combat_ActiveCombat(_CombatID);
+NOT DB_LeaderLib_Combat_PastCombat(_CombatID);
+
+IF
+CombatEnded(_CombatID)
+AND
+DB_LeaderLib_Combat_ActiveCombat(_CombatID)
+THEN
+NOT DB_LeaderLib_Combat_ActiveCombat(_CombatID);
+DB_LeaderLib_Combat_PastCombat(_CombatID);
+
+IF
+ObjectEnteredCombat(_Object, _CombatID)
+AND
+NOT DB_LeaderLib_Combat_Objects(_CombatID, _Object)
+THEN
+DB_LeaderLib_Combat_Objects(_CombatID, _Object);
+
+IF
+ObjectLeftCombat(_Object, _CombatID)
+AND
+DB_LeaderLib_Combat_Objects(_CombatID, _Object)
+THEN
+NOT DB_LeaderLib_Combat_Objects(_CombatID, _Object);
+LLLIB_Combat_Clear_ActiveTurn(_CombatID, _Object);
+//END_REGION
+
+//REGION COMBAT_ROUNDS
+IF
+CombatRoundStarted(_CombatID, _CurrentRound)
+AND
+DB_LeaderLib_Combat_Rounds(_CombatID, _LastRound, _LastTotalRounds)
+AND
+IntegerSum(_LastTotalRounds, 1, _TotalRounds)
+THEN
+NOT DB_LeaderLib_Combat_Rounds(_CombatID, _LastRound, _LastTotalRounds);
+DB_LeaderLib_Combat_Rounds(_CombatID, _CurrentRound, _TotalRounds);
+
+IF
+CombatRoundStarted(_CombatID, _CurrentRound)
+AND
+NOT DB_LeaderLib_Combat_Rounds(_CombatID, _, _)
+THEN
+DB_LeaderLib_Combat_Rounds(_CombatID, _CurrentRound, 1);
+
+IF
+CombatEnded(_CombatID)
+AND
+DB_LeaderLib_Combat_Rounds(_CombatID, _CurrentRound, _TotalRounds)
+THEN
+NOT DB_LeaderLib_Combat_Rounds(_CombatID, _CurrentRound, _TotalRounds);
+DB_LeaderLib_Combat_Rounds(_CombatID, -1, _TotalRounds);
+//END_REGION
+
+//REGION TURN_TRACKING
+IF
+ObjectTurnStarted(_Object)
+AND
+DB_LeaderLib_Combat_Objects(_CombatID, _Object)
+THEN
+LLLIB_Combat_Set_ActiveTurn(_CombatID, _Object);
+
+IF
+ObjectTurnEnded(_Object)
+AND
+DB_LeaderLib_Combat_Objects(_CombatID, _Object)
+THEN
+LLLIB_Combat_Clear_ActiveTurn(_CombatID, _Object);
+
+PROC
+LLLIB_Combat_Set_ActiveTurn((INTEGER)_CombatID, (GUIDSTRING)_Object)
+AND
+DB_LeaderLib_Combat_ActiveObject(_CombatID, _OtherObject)
+AND
+_OtherObject != _Object
+THEN
+NOT DB_LeaderLib_Combat_ActiveObject(_CombatID, _OtherObject);
+
+PROC
+LLLIB_Combat_Set_ActiveTurn((INTEGER)_CombatID, (GUIDSTRING)_Object)
+THEN
+DB_LeaderLib_Combat_ActiveObject(_CombatID, _Object);
+
+PROC
+LLLIB_Combat_Clear_ActiveTurn((INTEGER)_CombatID, (GUIDSTRING)_Object)
+AND
+DB_LeaderLib_Combat_ActiveObject(_CombatID, _Object)
+THEN
+NOT DB_LeaderLib_Combat_ActiveObject(_CombatID, _Object);
+//END_REGION
+
+//REGION THE_BIG_SLEEP(CASUALTIES)
+IF
+CharacterDied(_Object)
+AND
+DB_LeaderLib_Combat_Objects(_CombatID, (GUIDSTRING)_Object)
+THEN
+DB_LeaderLib_Combat_DeadObjects(_CombatID, _Object);
+
+IF
+ItemDestroyed(_Object)
+AND
+DB_LeaderLib_Combat_Objects(_CombatID, (GUIDSTRING)_Object)
+THEN
+DB_LeaderLib_Combat_DeadObjects(_CombatID, _Object);
+
+IF
+CharacterKilledBy(_Victim, _AttackOwner, _Attacker)
+AND
+_Attacker != NULL_00000000-0000-0000-0000-000000000000
+AND
+DB_LeaderLib_Combat_ActiveObject(_CombatID, (GUIDSTRING)_Victim)
+THEN
+DB_LeaderLib_Combat_Casualties(_CombatID, _Victim, _Attacker);
+
+IF
+CharacterKilledBy(_Victim, _AttackOwner, _Attacker)
+AND
+_AttackOwner != NULL_00000000-0000-0000-0000-000000000000
+AND
+DB_LeaderLib_Combat_ActiveObject(_CombatID, (GUIDSTRING)_Victim)
+AND
+NOT DB_LeaderLib_Combat_Casualties(_CombatID, _Victim, _AttackOwner)
+THEN
+DB_LeaderLib_Combat_Casualties(_CombatID, _Victim, _AttackOwner);
+
+IF
+CharacterDestroyedItem(_Attacker, _Victim)
+AND
+DB_LeaderLib_Combat_ActiveObject(_CombatID, (GUIDSTRING)_Victim)
+THEN
+DB_LeaderLib_Combat_Casualties(_CombatID, _Victim, _Attacker);
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

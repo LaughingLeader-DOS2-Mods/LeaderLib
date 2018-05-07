@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<save>
+    <header version="2" time="1521902916" />
+    <version major="3" minor="1" revision="7" build="0" />
+    <region id="IconUVList">
+        <node id="root">
+            <children>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="4eff09f8-40a2-4fab-a107-6372856d86c8_9300052115261631039-LLLIB_LeaderTrader_Act1_(Icon_Human_Male)" type="22" />
+                    <attribute id="U1" value="0.00390625" type="6" />
+                    <attribute id="U2" value="0.621094" type="6" />
+                    <attribute id="V1" value="0.00390625" type="6" />
+                    <attribute id="V2" value="0.777344" type="6" />
+                </node>
+            </children>
+        </node>
+    </region>
+    <region id="TextureAtlasInfo">
+        <node id="root">
+            <children>
+                <node id="TextureAtlasIconSize">
+                    <attribute id="Height" value="100" type="4" />
+                    <attribute id="Width" value="80" type="4" />
+                </node>
+                <node id="TextureAtlasPath">
+                    <attribute id="Path" value="Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Assets/Textures/Icons/Generated_543d653f-446c-43d8-8916-54670ce24dd9_Icons.dds" type="29" />
+                    <attribute id="UUID" value="7e32d155-843f-48ec-b3cf-331b26c3c73f" type="22" />
+                </node>
+                <node id="TextureAtlasTextureSize">
+                    <attribute id="Height" value="128" type="4" />
+                    <attribute id="Width" value="128" type="4" />
+                </node>
+            </children>
+        </node>
+    </region>
+</save>

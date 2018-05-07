@@ -1,29 +1,41 @@
-#Story files that can be compiled by the user (only raw files needed).
-Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/meta.lsx
-Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/log.txt
-Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/goals.div
-Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/goals.raw
-Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/story.div
-Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/story.div.osi
-Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/story_ac.dat
-Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/RawFiles/story_definitions.div
-Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/RawFiles/story_header.div
+# SourceControlGenerator #
+##########################
+SourceControlGenerator.json
 
-#Assets
-Editor/Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Assets/Effects/*
-Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Assets/*
-Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/*
+# Level Data         #
+######################
+Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Levels/*
+Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Globals/*
+Editor/Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Levels/*
 
-#Log files, etc
-*.log
-*.ailog
-StatsEditorConfig.xml
-DockPanel.config
+# Story files        #
+######################
+*.div
+*.raw
+*.osi
+story_ac.dat
+Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/Dialogs/Autosave/*
+Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/Dialogs/Recovered/*
+
+# Editor files       #
+######################
+*.config
+StatsEditorConfig.*
 EditorBrowserMetadata.*
 EditorMetadata.*
-EffectEditorConfig.xml
+EffectEditorConfig.*
+ResourceSelectorConfig.*
+RootTemplateSelectorConfig.*
 
-#Assets
+# Asset Folders      #
+######################
+Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Assets/*
+Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Content/*
+Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/RootTemplates/*
+Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Voice/*
+
+# Assets             #
+######################
 *.gr2
 *.dae
 *.swf
@@ -33,7 +45,14 @@ EffectEditorConfig.xml
 *.png
 *.ttf
 
-#Binary Files
+# Logs               #
+######################
+*.log
+*.ailog
+log.txt
+
+# Binary Files       #
+######################
 *.dat
 *.data
 *.bik
@@ -46,10 +65,42 @@ EffectEditorConfig.xml
 *.lsb
 *.lsf
 *.lsfx
+*.lsefx
 *.osi
 *.patch
 *.tmpl
 
-# Dump files
+# Dump files         #
+######################
 *.stackdump
 *.dmp
+
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Packages #
+############
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

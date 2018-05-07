@@ -28,19 +28,7 @@ AND
 NOT DB_LLLIB_Treasure_NextGeneratorDummy(_, _DummyID)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:CreateGeneratorDummy] Failed to create generator dummy. Make sure it's being created at a valid position.");
-/*
-PROC
-LLLIB_Treasure_Internal_CreateGeneratorDummy((STRING)_DummyID)
-AND
-NOT LLLIB_Treasure_Internal_QRY_IsDefaultDummyID(_DummyID)
-AND
-TemporaryCharacterCreateAtPosition(0.0,0.0,0.0,"LLLIB_GeneratorDummy_24a5d60b-680b-4fbc-9b2c-19061a261297", 0, _Dummy)
-THEN
-SetVarString(_Dummy, "LLLIB_DummyID", _DummyID);
-LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:CreateGeneratorDummy] Generator dummy created. Set ID to [",_DummyID,"].");
-DB_LLLIB_Treasure_GeneratorDummies(_Dummy);
-DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID);
-*/
+
 //END_REGION
 
 //REGION QUERIES

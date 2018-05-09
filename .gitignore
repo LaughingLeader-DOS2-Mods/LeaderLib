@@ -2,39 +2,30 @@
 ##########################
 SourceControlGenerator.json
 
-# Level Data         #
+#Levels
 ######################
 Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Levels/*
 Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Globals/*
 Editor/Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Levels/*
 
-# Story files        #
+#Compiled Story files
 ######################
 *.div
 *.raw
-*.osi
-story_ac.dat
-Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/Dialogs/Autosave/*
-Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/Dialogs/Recovered/*
 
-# Editor files       #
-######################
-*.config
-StatsEditorConfig.*
-EditorBrowserMetadata.*
-EditorMetadata.*
-EffectEditorConfig.*
-ResourceSelectorConfig.*
-RootTemplateSelectorConfig.*
-
-# Asset Folders      #
-######################
+#Assets
+######################*
 Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Assets/*
-Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Content/*
-Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/RootTemplates/*
-Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Voice/*
+#Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/*
 
-# Assets             #
+#Editor files
+######################
+StatsEditorConfig.xml
+EffectEditorConfig.xml
+DockPanel.config
+EditorBrowserMetadata.*
+
+#Assets
 ######################
 *.gr2
 *.dae
@@ -44,14 +35,23 @@ Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Voice/*
 *.tga
 *.png
 *.ttf
+*.lsb
+*.lsf
+*.lsfx
+*.lsefx
+*.lsx
+*.lsmg
 
-# Logs               #
+# Logs #
 ######################
 *.log
 *.ailog
 log.txt
+errors.txt
+dialoglog.txt
+personallog.txt
 
-# Binary Files       #
+#Binary Files
 ######################
 *.dat
 *.data
@@ -62,15 +62,11 @@ log.txt
 *.fnt
 *.iggy
 *.iggytex
-*.lsb
-*.lsf
-*.lsfx
-*.lsefx
 *.osi
 *.patch
 *.tmpl
 
-# Dump files         #
+# Dump files
 ######################
 *.stackdump
 *.dmp

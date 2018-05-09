@@ -1,0 +1,63 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+//DB_LLLIB_Skills_StatusToggleSkills(_Skill, _Status, _Duration, _Force)
+KBSECTION
+//REGION TOGGLE_SKILL
+PROC
+LeaderLib_Register_StatusToggleSkill((STRING)_Skill, (STRING)_Status)
+THEN
+LeaderLib_Register_StatusToggleSkill(_Skill, _Status, -1.0, 1);
+
+PROC
+LeaderLib_Register_StatusToggleSkill((STRING)_Skill, (STRING)_Status, (REAL)_Duration)
+THEN
+LeaderLib_Register_StatusToggleSkill(_Skill, _Status, _Duration, 1);
+
+PROC
+LeaderLib_Register_StatusToggleSkill((STRING)_Skill, (STRING)_Status, (REAL)_Duration, (INTEGER)_Force)
+AND
+DB_LLLIB_Skills_StatusToggleSkills(_Skill, _Status, _OtherDuration, _OtherForce)
+THEN
+NOT DB_LLLIB_Skills_StatusToggleSkills(_Skill, _Status, _OtherDuration, _OtherForce);
+
+PROC
+LeaderLib_Register_StatusToggleSkill((STRING)_Skill, (STRING)_Status, (REAL)_Duration, (INTEGER)_Force)
+THEN
+DB_LLLIB_Skills_StatusToggleSkills(_Skill, _Status, _Duration, _Force);
+
+IF
+SkillCast(_Character, _Skill, _)
+AND
+DB_LLLIB_Skills_StatusToggleSkills(_Skill, _Status, _Duration, _Force)
+AND
+NOT DB_LLLIB_Skills_Temp_JustToggledSkill(_Skill)
+AND
+HasActiveStatus(_Character, _Status, 0)
+THEN
+ApplyStatus(_Character, _Status, _Duration, 1);
+DB_LLMIME_JustToggledSkill(_Skill);
+
+IF
+SkillCast(_Character, _Skill, _)
+AND
+DB_LLLIB_Skills_StatusToggleSkills(_Skill, _Status, _Duration, _Force)
+AND
+NOT DB_LLLIB_Skills_Temp_JustToggledSkill(_Skill)
+AND
+HasActiveStatus(_Character, _Status, 1)
+THEN
+RemoveStatus(_Character, _Status);
+DB_LLMIME_JustToggledSkill(_Skill);
+
+IF
+SkillCast(_Character, _Skill, _)
+AND
+DB_LLLIB_Skills_Temp_JustToggledSkill(_Skill)
+THEN
+NOT DB_LLMIME_JustToggledSkill(_Skill);
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

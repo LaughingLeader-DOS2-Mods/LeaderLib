@@ -31,31 +31,31 @@ SkillCast(_Character, _Skill, _)
 AND
 DB_LLLIB_Skills_StatusToggleSkills(_Skill, _Status, _Duration, _Force)
 AND
-NOT DB_LLLIB_Skills_Temp_JustToggledSkill(_Skill)
+NOT DB_LLLIB_Skills_Temp_JustToggledSkillStatus(_Character, _Skill)
 AND
 HasActiveStatus(_Character, _Status, 0)
 THEN
 ApplyStatus(_Character, _Status, _Duration, 1);
-DB_LLMIME_JustToggledSkill(_Skill);
+DB_LLLIB_Skills_Temp_JustToggledSkillStatus(_Character, _Skill);
 
 IF
 SkillCast(_Character, _Skill, _)
 AND
 DB_LLLIB_Skills_StatusToggleSkills(_Skill, _Status, _Duration, _Force)
 AND
-NOT DB_LLLIB_Skills_Temp_JustToggledSkill(_Skill)
+NOT DB_LLLIB_Skills_Temp_JustToggledSkillStatus(_Character, _Skill)
 AND
 HasActiveStatus(_Character, _Status, 1)
 THEN
 RemoveStatus(_Character, _Status);
-DB_LLMIME_JustToggledSkill(_Skill);
+DB_LLLIB_Skills_Temp_JustToggledSkillStatus(_Character, _Skill);
 
 IF
 SkillCast(_Character, _Skill, _)
 AND
-DB_LLLIB_Skills_Temp_JustToggledSkill(_Skill)
+DB_LLLIB_Skills_Temp_JustToggledSkillStatus(_Character, _Skill)
 THEN
-NOT DB_LLMIME_JustToggledSkill(_Skill);
+NOT DB_LLLIB_Skills_Temp_JustToggledSkillStatus(_Character, _Skill);
 //END_REGION
 EXITSECTION
 

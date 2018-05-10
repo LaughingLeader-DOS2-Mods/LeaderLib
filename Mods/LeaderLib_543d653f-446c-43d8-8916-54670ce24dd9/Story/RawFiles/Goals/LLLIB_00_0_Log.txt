@@ -522,6 +522,15 @@ THEN
 LeaderLog_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _Str9, _Str10, _Str11, _Str12);
 //END_REGION
 
+//REGION LOG_BEHAVIOR_EVENTS
+IF
+StoryEvent(_Target, "LeaderLib_DebugLog")
+AND
+GetVarString(_Target, "LeaderLib_LogMessage", _Message)
+THEN
+LeaderLog_Log("DEBUG", _Message);
+//END_REGION
+
 //REGION FLAG_LOGS
 PROC
 LeaderLog_PrintFlag((CHARACTERGUID)_Player, (STRING)_FlagName1, (INTEGER)_FlagVal1)

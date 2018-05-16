@@ -15,6 +15,7 @@ LLLIB_Settings_InitSettings()
 THEN
 LLLIB_Updater_SaveSettingsVersionData("LLLIB_Settings_GeneralSettings");
 LLLIB_Settings_InitEquipmentSlots();
+LLLIB_Settings_InitStats();
 
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_Settings_QueueRates", 3);
 DB_LLLIB_Settings_QueueRates("TraderSpawn", 1000, 2000);
@@ -56,6 +57,64 @@ AND
 DB_LLLIB_EquipmentSlots(_Slot)
 THEN
 LLLIB_Array_AddToArray("LeaderLib_EquipmentSlots", _Slot);
+
+PROC
+LLLIB_Settings_InitStats()
+AND
+NOT DB_LLLIB_Attributes(_)
+THEN
+DB_LLLIB_Attributes("Strength");
+DB_LLLIB_Attributes("Finesse");
+DB_LLLIB_Attributes("Intelligence");
+DB_LLLIB_Attributes("Constitution");
+DB_LLLIB_Attributes("Memory");
+DB_LLLIB_Attributes("Wits");
+
+
+PROC
+LLLIB_Settings_InitStats()
+AND
+NOT DB_LLLIB_Abilities(_)
+THEN
+DB_LLLIB_Abilities("WarriorLore");
+DB_LLLIB_Abilities("RangerLore");
+DB_LLLIB_Abilities("RogueLore");
+DB_LLLIB_Abilities("SingleHanded");
+DB_LLLIB_Abilities("TwoHanded");
+DB_LLLIB_Abilities("Reflection");
+DB_LLLIB_Abilities("Ranged");
+DB_LLLIB_Abilities("Shield");
+DB_LLLIB_Abilities("Reflexes");
+DB_LLLIB_Abilities("PhysicalArmorMastery");
+DB_LLLIB_Abilities("Sourcery");
+DB_LLLIB_Abilities("Telekinesis");
+DB_LLLIB_Abilities("FireSpecialist");
+DB_LLLIB_Abilities("WaterSpecialist");
+DB_LLLIB_Abilities("AirSpecialist");
+DB_LLLIB_Abilities("EarthSpecialist");
+DB_LLLIB_Abilities("Necromancy");
+DB_LLLIB_Abilities("Summoning");
+DB_LLLIB_Abilities("Polymorph");
+DB_LLLIB_Abilities("Repair");
+DB_LLLIB_Abilities("Sneaking");
+DB_LLLIB_Abilities("Pickpocket");
+DB_LLLIB_Abilities("Thievery");
+DB_LLLIB_Abilities("Loremaster");
+DB_LLLIB_Abilities("Crafting");
+DB_LLLIB_Abilities("Barter");
+DB_LLLIB_Abilities("Charm");
+DB_LLLIB_Abilities("Intimidate");
+DB_LLLIB_Abilities("Reason");
+DB_LLLIB_Abilities("Persuasion");
+DB_LLLIB_Abilities("Leadership");
+DB_LLLIB_Abilities("Luck");
+DB_LLLIB_Abilities("DualWielding");
+DB_LLLIB_Abilities("Wand");
+DB_LLLIB_Abilities("MagicArmorMastery");
+DB_LLLIB_Abilities("VitalityMastery");
+DB_LLLIB_Abilities("Perseverance");
+DB_LLLIB_Abilities("Runecrafting");
+DB_LLLIB_Abilities("Brewmaster");
 //END_REGION
 
 //REGION UPDATER

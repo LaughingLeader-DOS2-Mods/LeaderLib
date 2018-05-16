@@ -449,6 +449,44 @@ THEN
 CharacterUnequipItem(_Character, _Item);
 //END_REGION
 
+//REGION CHARACTER_STATS
+PROC
+LLLIB_Helper_CopyStats((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
+THEN
+LLLIB_Helper_CopyAbilities(_CopyTo, _CopyFrom);
+LLLIB_Helper_CopyAttributes(_CopyTo, _CopyFrom);
+
+PROC
+LLLIB_Helper_CopyAbilities((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
+AND
+DB_LLLIB_Abilities(_Ability)
+AND
+CharacterGetAbility(_CopyFrom, _Ability, _Val)
+AND
+CharacterGetAbility(_CopyTo, _Ability, _CurrentVal)
+AND
+IntegerSubtract(_Val, _CurrentVal, _AddVal)
+AND
+_AddVal > 0
+THEN
+CharacterAddAbility(_CopyTo, _Ability, _AddVal);
+
+PROC
+LLLIB_Helper_CopyAttributes((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
+AND
+DB_LLLIB_Attributes(_Attribute)
+AND
+CharacterGetAttribute(_CopyFrom, _Attribute, _Val)
+AND
+CharacterGetAttribute(_CopyTo, _Attribute, _CurrentVal)
+AND
+IntegerSubtract(_Val, _CurrentVal, _AddVal)
+AND
+_AddVal > 0
+THEN
+CharacterAddAttribute(_CopyTo, _Attribute, _AddVal);
+//END_REGION
+
 //REGION UPDATER
 PROC
 LLLIB_System_RegisterDatabases()

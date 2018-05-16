@@ -126,3 +126,10 @@ The complete source for LeaderLib is updated here for learning purposes. I encou
 
 # Attribution
 * [Divinity: Original Sin 2](http://store.steampowered.com/app/435150/Divinity_Original_Sin_2/), a wonderful game from [Larian Studios](http://larian.com/)
+
+# Support
+If you're feeling generous, an easy way to show support is by tipping me a coffee:
+
+[![Tip Me a Coffee](https://i.imgur.com/NkmwXff.png)](https://ko-fi.com/LaughingLeader)
+
+All coffee goes toward fueling my development efforts. Thanks!

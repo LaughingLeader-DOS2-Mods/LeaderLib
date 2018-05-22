@@ -487,6 +487,45 @@ THEN
 CharacterAddAttribute(_CopyTo, _Attribute, _AddVal);
 //END_REGION
 
+//REGION TIMER_HELPER
+PROC
+LeaderLib_StartTargetTimer((GUIDSTRING)_Target, (INTEGER)_Time, (STRING)_TimerPrefix, (STRING)_CompleteEvent)
+AND
+GetUUID(_Target, _ID)
+AND
+StringConcatenate(_TimerPrefix, _ID, _TimerName)
+THEN
+DB_LLLIB_Helper_Temp_TargetTimer(_TimerName, _Target, _CompleteEvent);
+TimerLaunch(_TimerName, _Time);
+
+IF
+TimerFinished(_TimerName)
+AND
+DB_LLLIB_Helper_Temp_TargetTimer(_TimerName, _Target, _CompleteEvent)
+THEN
+NOT DB_LLLIB_Helper_Temp_TargetTimer(_TimerName, _Target, _CompleteEvent);
+SetStoryEvent(_Target, _CompleteEvent);
+//END_REGION
+
+//REGION BEHAVIOR_SCRIPT_HELPERS
+IF
+CharacterItemEvent(_Character, _Item, "LeaderLib_EquipItem")
+AND
+ItemIsEquipable(_Item, 1)
+THEN
+CharacterEquipItem(_Character, _Item);
+//CharacterUseItem(_Character, _Item, "");
+
+IF
+StoryEvent((CHARACTERGUID)_Character, "LeaderLib_UnequipItemInSlot")
+AND
+GetVarString(_Character, "LeaderLib_ItemSlot", _Slot)
+AND
+CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
+THEN
+CharacterUnequipItem(_Character, _Item);
+//END_REGION
+
 //REGION UPDATER
 PROC
 LLLIB_System_RegisterDatabases()

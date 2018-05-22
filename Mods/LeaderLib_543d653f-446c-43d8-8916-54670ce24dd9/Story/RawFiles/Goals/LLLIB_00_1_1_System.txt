@@ -27,20 +27,6 @@ GlobalClearFlag("LeaderLib_IsEditorMode");
 
 //REGION INIT_EVENT
 IF
-SavegameLoaded(_,_,_,_)
-AND
-DB_LeaderLib_GameStarted(_Val)
-THEN
-NOT DB_LeaderLib_GameStarted(_Val);
-
-IF
-SavegameLoaded(_,_,_,_)
-AND
-DB_StoryStarted(_)
-THEN
-DB_LeaderLib_GameStarted(1);
-
-IF
 GameStarted(_,_)
 THEN
 LLLIB_System_ResetInit();
@@ -50,22 +36,15 @@ IF
 TimerFinished("LLLIB_Timers_LeaderLibInitialized")
 THEN
 DB_LeaderLib_Initialized(1);
+GlobalSetFlag("LeaderLib_Initialized");
 LeaderLog_Log("DEBUG", "[LLLIB:ModAPI] LeaderLib initialized.");
 LeaderLib_SendEvent("LeaderLib_Initialized");
 
 PROC
 LLLIB_System_ResetInit()
-AND
-DB_LeaderLib_GameStarted(_Val)
 THEN
-NOT DB_LeaderLib_GameStarted(_Val);
-
-PROC
-LLLIB_System_ResetInit()
-AND
-DB_LeaderLib_Initialized(_Val)
-THEN
-NOT DB_LeaderLib_Initialized(_Val);
+SysClear("DB_LeaderLib_Initialized", 1);
+GlobalClearFlag("LeaderLib_Initialized");
 //END_REGION
 
 //REGION HOST_FLAGGING

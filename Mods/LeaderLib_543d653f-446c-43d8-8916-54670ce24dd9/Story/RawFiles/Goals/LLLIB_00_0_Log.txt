@@ -398,6 +398,70 @@ THEN
 LeaderLog_Internal_RunString(_Type, _Msg11);
 
 PROC
+LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10, (STRING)_Str11, (STRING)_Str12, (STRING)_Str13)
+AND
+LeaderLog_QRY_LogTypeEnabled(_Type)
+AND
+StringConcatenate(_Str1, _Str2, _Msg1)
+AND
+StringConcatenate(_Msg1, _Str3, _Msg2)
+AND
+StringConcatenate(_Msg2, _Str4, _Msg3)
+AND
+StringConcatenate(_Msg3, _Str5, _Msg4)
+AND
+StringConcatenate(_Msg4, _Str6, _Msg5)
+AND
+StringConcatenate(_Msg5, _Str7, _Msg6)
+AND
+StringConcatenate(_Msg6, _Str8, _Msg7)
+AND
+StringConcatenate(_Msg7, _Str9, _Msg8)
+AND
+StringConcatenate(_Msg8, _Str10, _Msg9)
+AND
+StringConcatenate(_Msg9, _Str11, _Msg10)
+AND
+StringConcatenate(_Msg10, _Str12, _Msg11)
+AND
+StringConcatenate(_Msg11, _Str13, _Msg12)
+THEN
+LeaderLog_Internal_RunString(_Type, _Msg12);
+
+PROC
+LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10, (STRING)_Str11, (STRING)_Str12, (STRING)_Str13, (STRING)_Str14)
+AND
+LeaderLog_QRY_LogTypeEnabled(_Type)
+AND
+StringConcatenate(_Str1, _Str2, _Msg1)
+AND
+StringConcatenate(_Msg1, _Str3, _Msg2)
+AND
+StringConcatenate(_Msg2, _Str4, _Msg3)
+AND
+StringConcatenate(_Msg3, _Str5, _Msg4)
+AND
+StringConcatenate(_Msg4, _Str6, _Msg5)
+AND
+StringConcatenate(_Msg5, _Str7, _Msg6)
+AND
+StringConcatenate(_Msg6, _Str8, _Msg7)
+AND
+StringConcatenate(_Msg7, _Str9, _Msg8)
+AND
+StringConcatenate(_Msg8, _Str10, _Msg9)
+AND
+StringConcatenate(_Msg9, _Str11, _Msg10)
+AND
+StringConcatenate(_Msg10, _Str12, _Msg11)
+AND
+StringConcatenate(_Msg11, _Str13, _Msg12)
+AND
+StringConcatenate(_Msg12, _Str14, _Msg13)
+THEN
+LeaderLog_Internal_RunString(_Type, _Msg13);
+
+PROC
 LeaderLog_Internal_RunString((STRING)_Type, (STRING)_Str)
 AND
 LeaderLog_QRY_IsStatusType(_Type)
@@ -529,6 +593,62 @@ AND
 GetVarString(_Target, "LeaderLib_LogMessage", _Message)
 THEN
 LeaderLog_Log("DEBUG", _Message);
+//END_REGION
+
+//REGION NUMBER_CONVERSION
+PROC
+LeaderLog_RealToString((STRING)_ID, (REAL)_a)
+AND
+Integer(_a, _ai)
+AND
+IntegertoString(_ai, _astr)
+THEN
+DB_LeaderLog_Temp_RealString(_ID, _astr);
+
+PROC
+LeaderLog_RealToString((STRING)_ID, (REAL)_a, (REAL)_b)
+AND
+Integer(_a, _ai)
+AND
+Integer(_b, _bi)
+AND
+IntegertoString(_ai, _astr)
+AND
+IntegertoString(_bi, _bstr)
+THEN
+DB_LeaderLog_Temp_RealString(_ID, _astr, _bstr);
+
+PROC
+LeaderLog_RealToString((STRING)_ID, (REAL)_a, (REAL)_b, (REAL)_c)
+AND
+Integer(_a, _ai)
+AND
+Integer(_b, _bi)
+AND
+Integer(_c, _ci)
+AND
+IntegertoString(_ai, _astr)
+AND
+IntegertoString(_bi, _bstr)
+AND
+IntegertoString(_ci, _cstr)
+THEN
+DB_LeaderLog_Temp_RealString(_ID, _astr, _bstr, _cstr);
+
+QRY
+LeaderLog_QRY_RealToString((STRING)_ID, (REAL)_a)
+THEN
+LeaderLog_RealToString(_ID, _a);
+
+QRY
+LeaderLog_QRY_RealToString((STRING)_ID, (REAL)_a, (REAL)_b)
+THEN
+LeaderLog_RealToString(_ID, _a, _b);
+
+QRY
+LeaderLog_QRY_RealToString((STRING)_ID, (REAL)_a, (REAL)_b, (REAL)_c)
+THEN
+LeaderLog_RealToString(_ID, _a, _b, _c);
 //END_REGION
 
 //REGION FLAG_LOGS

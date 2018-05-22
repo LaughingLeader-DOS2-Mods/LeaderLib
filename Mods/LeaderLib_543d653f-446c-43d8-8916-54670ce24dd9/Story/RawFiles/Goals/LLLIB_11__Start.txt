@@ -25,7 +25,9 @@ GoalCompleted;
 
 //If something truly funky happened
 IF
-DB_LeaderLib_GameStarted(_)
+SavegameLoaded(_,_,_,_)
+AND
+DB_StoryStarted(_)
 THEN
 GoalCompleted;
 EXITSECTION

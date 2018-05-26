@@ -505,6 +505,28 @@ DB_LLLIB_Helper_Temp_TargetTimer(_TimerName, _Target, _CompleteEvent)
 THEN
 NOT DB_LLLIB_Helper_Temp_TargetTimer(_TimerName, _Target, _CompleteEvent);
 SetStoryEvent(_Target, _CompleteEvent);
+
+PROC
+LeaderLib_StartCharacterItemTimer((CHARACTERGUID)_Char, (ITEMGUID)_Item, (INTEGER)_Time, (STRING)_TimerPrefix, (STRING)_CompleteEvent)
+AND
+GetUUID(_Char, _CharID)
+AND
+GetUUID(_Item, _ItemID)
+AND
+StringConcatenate(_CharID, _ItemID, _ID)
+AND
+StringConcatenate(_TimerPrefix, _ID, _TimerName)
+THEN
+DB_LLLIB_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent);
+TimerLaunch(_TimerName, _Time);
+
+IF
+TimerFinished(_TimerName)
+AND
+DB_LLLIB_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent)
+THEN
+NOT DB_LLLIB_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent);
+CharacterItemSetEvent(_Char, _Item, _CompleteEvent);
 //END_REGION
 
 //REGION BEHAVIOR_SCRIPT_HELPERS

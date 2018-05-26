@@ -1624,7 +1624,9 @@ ObjectClearFlag(_Object, "LLLIB_Treasure_GenerationSuccessful");
 IF
 ItemTemplateRemovedFromCharacter(_ItemEntry, _Item, _Object)
 AND
-DB_LLLIB_Treasure_ItemDoneGenerating((GUIDSTRING)_Object, _TreasureID, _ItemEntry)
+DB_LLLIB_Treasure_ItemDoneGenerating(_Object, _TreasureID, _ItemEntry)
+AND
+IsTagged(_Object, "LLLIB_Treasure_GenerateEndlessly", 1)
 THEN
 NOT DB_LLLIB_Treasure_ItemDoneGenerating(_Object, _TreasureID, _ItemEntry);
 

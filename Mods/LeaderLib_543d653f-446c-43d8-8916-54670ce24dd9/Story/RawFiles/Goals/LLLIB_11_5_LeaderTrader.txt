@@ -12,6 +12,9 @@ LLLIB_LeaderTrader_RegisterTraderSettings();
 //DB_LLLIB_LeaderTrader_IntroDialogRequirements(_Level, _Dialog, _Flag, _RequirementID)
 //Dynamic
 //DB_LLLIB_LeaderTrader_CurrentAppearance(_Template)
+/*Non-Global Workaround*/
+//DB_LLLIB_LeaderTrader_SetFlags(_Flag, _Val)
+//DB_LLLIB_LeaderTrader_SetTags(_Tag, _Val)
 KBSECTION
 //REGION INIT
 PROC
@@ -145,6 +148,7 @@ ObjectExists(CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a333
 THEN
 DB_LLLIB_LeaderTrader((CHARACTERGUID)CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574);
 LLLIB_Trader_Register_GlobalTrader("LLLIB_LeaderTrader", CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574);
+LeaderLog_Log("DEBUG","[LLLIB:LeaderTrader] Registered the global leader trader to the trader database.");
 
 //If the global version doesn't exist for some reason, use the template
 PROC
@@ -155,6 +159,8 @@ AND
 ObjectExists(CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, 0)
 THEN
 LLLIB_Trader_Register_Trader("LLLIB_LeaderTrader", "LLLIB_LeaderTrader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e", 0);
+LeaderLog_Log("DEBUG","[LLLIB:LeaderTrader] [ERROR] Global trader version doesn't exist! Using the template version.");
+GlobalSetFlag("LLLIB_LeaderTraderIsNotGlobal");
 //END_REGION
 
 //REGION SETTINGS_UPDATE
@@ -163,6 +169,86 @@ PROC
 LLLIB_LeaderTrader_UpdateSettings()
 THEN
 DB_NOOP(1);
+//END_REGION
+
+//REGION NON_GLOBAL_WORKAROUND
+IF
+ObjectFlagSet(_Flag, (CHARACTERGUID)_LeaderTrader, _)
+AND
+GlobalGetFlag("LLLIB_LeaderTraderIsNotGlobal", 1)
+AND
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+THEN
+DB_LLLIB_LeaderTrader_SetFlags(_Flag, 1);
+
+IF
+ObjectFlagCleared(_Flag, (CHARACTERGUID)_LeaderTrader, _)
+AND
+GlobalGetFlag("LLLIB_LeaderTraderIsNotGlobal", 1)
+AND
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+AND
+DB_LLLIB_LeaderTrader_SetFlags(_Flag, 1)
+THEN
+NOT DB_LLLIB_LeaderTrader_SetFlags(_Flag, 1);
+DB_LLLIB_LeaderTrader_SetFlags(_Flag, 0);
+
+IF
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+AND
+GlobalGetFlag("LLLIB_LeaderTraderIsNotGlobal", 1)
+AND
+DB_LLLIB_LeaderTrader_SetFlags(_Flag, 1)
+THEN
+ObjectSetFlag(_LeaderTrader, _Flag);
+
+IF
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+AND
+GlobalGetFlag("LLLIB_LeaderTraderIsNotGlobal", 1)
+AND
+DB_LLLIB_LeaderTrader_SetFlags(_Flag, 0)
+THEN
+ObjectClearFlag(_LeaderTrader, _Flag);
+
+IF
+ObjectWasTagged((CHARACTERGUID)_LeaderTrader, _Tag)
+AND
+GlobalGetFlag("LLLIB_LeaderTraderIsNotGlobal", 1)
+AND
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+THEN
+DB_LLLIB_LeaderTrader_SetTags(_Tag, 1);
+
+IF
+ObjectLostTag((CHARACTERGUID)_LeaderTrader, _Tag)
+AND
+GlobalGetFlag("LLLIB_LeaderTraderIsNotGlobal", 1)
+AND
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+AND
+DB_LLLIB_LeaderTrader_SetTags(_Tag, 1)
+THEN
+NOT DB_LLLIB_LeaderTrader_SetTags(_Tag, 1);
+DB_LLLIB_LeaderTrader_SetTags(_Tag, 0);
+
+IF
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+AND
+GlobalGetFlag("LLLIB_LeaderTraderIsNotGlobal", 1)
+AND
+DB_LLLIB_LeaderTrader_SetTags(_Tag, 1)
+THEN
+SetTag(_LeaderTrader, _Tag);
+
+IF
+DB_LLLIB_LeaderTrader(_LeaderTrader)
+AND
+GlobalGetFlag("LLLIB_LeaderTraderIsNotGlobal", 1)
+AND
+DB_LLLIB_LeaderTrader_SetTags(_Tag, 0)
+THEN
+ClearTag(_LeaderTrader, _Tag);
 //END_REGION
 
 //REGION DEFAULT_DIALOG_GREETING_CHANGE
@@ -644,6 +730,8 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_CurrentAppearance", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_IntroDialogRequirements", 4);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_Registered", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_SetFlags", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_SetTags", 2);
 LeaderLog_Log("TRACE", "[LLLIB:LeaderTrader] Databases registered.");
 //END_REGION
 EXITSECTION

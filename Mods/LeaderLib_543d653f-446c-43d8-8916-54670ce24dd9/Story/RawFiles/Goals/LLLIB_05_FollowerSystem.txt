@@ -38,12 +38,38 @@ CharacterAttachToGroup(_Follower, _Owner);
 SetStoryEvent(_Follower, "LeaderLib_Events_FollowerRecruited");
 
 PROC
-LeaderLib_Follower_DismissCharacter((CHARACTERGUID)_Owner, (CHARACTERGUID)_Follower)
+LeaderLib_Follower_DismissCharacter((CHARACTERGUID)_Follower)
+AND
+DB_LLLIB_PartyFollower(_Owner, _Follower)
 THEN
-LeaderLib_Follower_DismissCharacter(_Owner, _Follower, "RS3_FX_GP_ScriptedEvent_Teleport_GenericSmoke_01", 0);
+LeaderLib_Follower_DismissCharacterFromOwner(_Owner, _Follower);
 
 PROC
-LeaderLib_Follower_DismissCharacter((CHARACTERGUID)_Owner, (CHARACTERGUID)_Follower, (STRING)_Effect, (INTEGER)_SetOffStage)
+LeaderLib_Follower_DismissCharacter((CHARACTERGUID)_Follower, (STRING)_Effect)
+AND
+DB_LLLIB_PartyFollower(_Owner, _Follower)
+THEN
+LeaderLib_Follower_DismissCharacterFromOwner(_Owner, _Follower, _Effect, 0);
+
+PROC
+LeaderLib_Follower_DismissCharacter((CHARACTERGUID)_Follower, (STRING)_Effect, (INTEGER)_SetOffStage)
+AND
+DB_LLLIB_PartyFollower(_Owner, _Follower)
+THEN
+LeaderLib_Follower_DismissCharacterFromOwner(_Owner, _Follower, _Effect, _SetOffStage);
+
+PROC
+LeaderLib_Follower_DismissCharacterFromOwner((CHARACTERGUID)_Owner, (CHARACTERGUID)_Follower)
+THEN
+LeaderLib_Follower_DismissCharacterFromOwner(_Owner, _Follower, "RS3_FX_GP_ScriptedEvent_Teleport_GenericSmoke_01", 0);
+
+PROC
+LeaderLib_Follower_DismissCharacterFromOwner((CHARACTERGUID)_Owner, (CHARACTERGUID)_Follower, (STRING)_Effect)
+THEN
+LeaderLib_Follower_DismissCharacterFromOwner(_Owner, _Follower, _Effect, 0);
+
+PROC
+LeaderLib_Follower_DismissCharacterFromOwner((CHARACTERGUID)_Owner, (CHARACTERGUID)_Follower, (STRING)_Effect, (INTEGER)_SetOffStage)
 THEN
 NOT DB_LLLIB_PartyFollower(_Owner, _Follower);
 SetVarObject(_Follower, "LeaderLib_Follower_LastOwner", _Owner);
@@ -241,7 +267,7 @@ LLLIB_Helper_QRY_ClearObjectFlag(_Follower, "LeaderLib_DismissFollower")
 AND
 DB_LLLIB_PartyFollower(_Owner, _Follower)
 THEN
-LeaderLib_Follower_DismissCharacter(_Owner, _Follower);
+LeaderLib_Follower_DismissCharacterFromOwner(_Owner, _Follower);
 
 IF
 ObjectFlagSet("LeaderLib_FollowSpeaker", (CHARACTERGUID)_Follower, _Instance)

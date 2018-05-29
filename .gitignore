@@ -8,10 +8,11 @@ Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Levels/*
 Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Globals/*
 Editor/Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Levels/*
 
-#Compiled Story files
+#Story files
 ######################
 *.div
 *.raw
+*story_orphanqueries_ignore.txt
 
 #Assets
 ######################*

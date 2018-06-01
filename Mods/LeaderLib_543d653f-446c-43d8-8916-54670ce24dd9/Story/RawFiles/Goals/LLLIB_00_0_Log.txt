@@ -5,6 +5,9 @@ INITSECTION
 //DB_LeaderLog_Temp_NextLogTarget(_Player)
 //DB_LeaderLog_Temp_TargetOnce(_Player)
 //DB_LeaderLog_Temp_NextStatusColor(_Player, _Color, _Size)
+//DB_LeaderLog_Temp_RealString(_ID, _Str)
+//DB_LeaderLog_Temp_RealString(_ID, _Str1, _Str2)
+//DB_LeaderLog_Temp_RealString(_ID, _Str1, _Str2, _Str3)
 LLLIB_LeaderLog_SetInitialEnable();
 KBSECTION
 //REGION EDITOR_DEBUG_ENABLE

@@ -7,6 +7,7 @@ LLLIB_Dialog_InitSettings();
 //DB_LLLIB_Dialog_AttitudeFlags(_Flag, _Amount)
 //DB_LLLIB_Dialog_NameOverride(_Character, _Name)
 //DB_LLLIB_StatusFlags(_Flag, _Status, _Duration)
+//DB_LLLIB_AnimationFlags(_Flag, _Animation, _Loop)
 KBSECTION
 //REGION SETTINGS
 PROC
@@ -45,12 +46,15 @@ DB_LLLIB_DialogVars("PlayerName", "LLLIB_PlayerName_6c5b9559-53e3-47f7-8881-309a
 DB_LLLIB_DialogVars("LeaderTrader_Greeting", "LLLIB_LeaderTrader_Greeting_f143b90b-9afc-477e-b133-6a1574341261");
 
 LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_StatusFlags", 3);
-DB_LLLIB_StatusFlags("LeaderLib_ApplyKnockdown_-1", "KNOCKED_DOWN", -1.0);
-DB_LLLIB_StatusFlags("LeaderLib_ApplyKnockdown_0", "KNOCKED_DOWN", 0.0);
-DB_LLLIB_StatusFlags("LeaderLib_ApplyKnockdown_1", "KNOCKED_DOWN", 1.0);
-DB_LLLIB_StatusFlags("LeaderLib_ApplyKnockdown_3", "KNOCKED_DOWN", 3.0);
-DB_LLLIB_StatusFlags("LeaderLib_ApplyKnockdown_6", "KNOCKED_DOWN", 6.0);
-DB_LLLIB_StatusFlags("LeaderLib_ApplyKnockdown_9", "KNOCKED_DOWN", 9.0);
+DB_LLLIB_StatusFlags("LeaderLib_ApplyStatus_Knockdown_-1", "KNOCKED_DOWN", -1.0);
+DB_LLLIB_StatusFlags("LeaderLib_ApplyStatus_Knockdown_0", "KNOCKED_DOWN", 0.0);
+DB_LLLIB_StatusFlags("LeaderLib_ApplyStatus_Knockdown_1", "KNOCKED_DOWN", 1.0);
+DB_LLLIB_StatusFlags("LeaderLib_ApplyStatus_Knockdown_3", "KNOCKED_DOWN", 3.0);
+DB_LLLIB_StatusFlags("LeaderLib_ApplyStatus_Knockdown_6", "KNOCKED_DOWN", 6.0);
+DB_LLLIB_StatusFlags("LeaderLib_ApplyStatus_Knockdown_9", "KNOCKED_DOWN", 9.0);
+
+LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_AnimationFlags", 3);
+DB_LLLIB_AnimationFlags("LeaderLib_PlayAnimation_Knockdown_Loop", "knockdown_loop", 1);
 //END_REGION
 
 //REGION UPDATER
@@ -69,6 +73,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LLL
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LLLIB_Dialog_AttitudeFlags", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LLLIB_Dialog_NameOverride", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LLLIB_StatusFlags", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LLLIB_AnimationFlags", 3);
 LeaderLog_Log("TRACE", "[LLLIB:Dialog] Databases registered.");
 //END_REGION
 
@@ -256,6 +261,47 @@ ObjectGetFlag(_Object, "LeaderLib_ForceApplyStatus", _Force)
 THEN
 ObjectClearFlag(_Object, "LeaderLib_ForceApplyStatus");
 ApplyStatus(_Object, _Status, _Duration, _Force);
+
+/*
+IF
+ObjectFlagCleared(_Flag, (CHARACTERGUID)_Object, _Instance)
+AND
+DB_LLLIB_StatusFlags(_Flag, _Status, _Duration)
+AND
+HasActiveStatus(_Object, _Status, 1)
+THEN
+RemoveStatus(_Object, _Status);
+*/
+//END_REGION
+
+//REGION ANIMATION_FLAGS
+IF
+ObjectFlagSet(_Flag, (CHARACTERGUID)_Object, _Instance)
+AND
+DB_LLLIB_AnimationFlags(_Flag, _Animation, _Loop)
+AND
+_Loop > 0
+THEN
+CharacterSetAnimationOverride(_Object, _Animation);
+
+IF
+ObjectFlagSet(_Flag, (CHARACTERGUID)_Object, _Instance)
+AND
+DB_LLLIB_AnimationFlags(_Flag, _Animation, _Loop)
+AND
+_Loop <= 0
+THEN
+ObjectClearFlag(_Object, _Flag);
+PlayAnimation(_Object, _Animation);
+
+IF
+ObjectFlagCleared(_Flag, (CHARACTERGUID)_Object, _Instance)
+AND
+DB_LLLIB_AnimationFlags(_Flag, _Animation, _Loop)
+AND
+_Loop > 0
+THEN
+CharacterSetAnimationOverride(_Object, "");
 //END_REGION
 EXITSECTION
 

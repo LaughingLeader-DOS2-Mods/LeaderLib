@@ -200,41 +200,7 @@ DB_LeaderLib_Math_Factorial(_Factor, _Result);
 //END_REGION
 
 //REGION SQUARE_ROOT
-/*
-PROC
-LeaderLib_Math_SquareRoot((REAL)_Num)
-AND
-Random(999999, _Ran)
-AND
-IntegertoString(_Ran, _ID)
-AND
-StringConcatenate("LLLIB_Timers_SquareRootBuilder_", _ID, _TimerName)
-THEN
-DB_LLLIB_Temp_SquareRootBuilder(_Num, 0, _TimerName);
-TimerLaunch(_TimerName, 1);
 
-IF
-TimerFinished(_TimerName)
-AND
-DB_LLLIB_Temp_SquareRootBuilder(_Num, _Curr, _Power, _TimerName)
-AND
-_Curr < _Power
-AND
-IntegerSum(_Curr, 1, _Next)
-THEN
-NOT DB_LLLIB_Temp_SquareRootBuilder(_Num, _Curr, _Power, _TimerName);
-DB_LLLIB_Temp_SquareRootBuilder(_Num, _Next, _Power, _TimerName);
-DB_LLLIB_Temp_SquareRoot_Iterator(_Num, _Curr, _Curr);
-
-IF
-TimerFinished(_TimerName)
-AND
-DB_LLLIB_Temp_SquareRootBuilder(_Num, _Curr, _Power, _TimerName)
-AND
-_Curr >= _Power
-THEN
-NOT DB_LLLIB_Temp_SquareRootBuilder(_Num, _Curr, _Power, _TimerName);
-*/
 //END_REGION
 
 //REGION SINE
@@ -343,7 +309,7 @@ Real(_f1, _fr1)
 AND
 RealDivide(_p1, _fr1, _xp1)
 AND
-RealSubtract(_x, _xp1, _xblock1)
+RealSubtract(1.0, _xp1, _xblock1)
 AND
 //+ x^4/4!
 LeaderLib_Math_QRY_Power(_x, 4)

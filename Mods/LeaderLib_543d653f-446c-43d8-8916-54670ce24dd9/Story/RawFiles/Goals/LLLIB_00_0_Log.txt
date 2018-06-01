@@ -600,7 +600,7 @@ LeaderLog_Log("DEBUG", _Message);
 
 //REGION NUMBER_CONVERSION
 PROC
-LeaderLog_RealToString((STRING)_ID, (REAL)_a)
+LeaderLog_RealToIntToString((STRING)_ID, (REAL)_a)
 AND
 Integer(_a, _ai)
 AND
@@ -609,7 +609,7 @@ THEN
 DB_LeaderLog_Temp_RealString(_ID, _astr);
 
 PROC
-LeaderLog_RealToString((STRING)_ID, (REAL)_a, (REAL)_b)
+LeaderLog_RealToIntToString((STRING)_ID, (REAL)_a, (REAL)_b)
 AND
 Integer(_a, _ai)
 AND
@@ -622,7 +622,7 @@ THEN
 DB_LeaderLog_Temp_RealString(_ID, _astr, _bstr);
 
 PROC
-LeaderLog_RealToString((STRING)_ID, (REAL)_a, (REAL)_b, (REAL)_c)
+LeaderLog_RealToIntToString((STRING)_ID, (REAL)_a, (REAL)_b, (REAL)_c)
 AND
 Integer(_a, _ai)
 AND
@@ -639,19 +639,46 @@ THEN
 DB_LeaderLog_Temp_RealString(_ID, _astr, _bstr, _cstr);
 
 QRY
-LeaderLog_QRY_RealToString((STRING)_ID, (REAL)_a)
+LeaderLog_QRY_RealToIntToString((STRING)_ID, (REAL)_a)
 THEN
-LeaderLog_RealToString(_ID, _a);
+LeaderLog_RealToIntToString(_ID, _a);
 
 QRY
-LeaderLog_QRY_RealToString((STRING)_ID, (REAL)_a, (REAL)_b)
+LeaderLog_QRY_RealToIntToString((STRING)_ID, (REAL)_a, (REAL)_b)
 THEN
-LeaderLog_RealToString(_ID, _a, _b);
+LeaderLog_RealToIntToString(_ID, _a, _b);
 
 QRY
-LeaderLog_QRY_RealToString((STRING)_ID, (REAL)_a, (REAL)_b, (REAL)_c)
+LeaderLog_QRY_RealToIntToString((STRING)_ID, (REAL)_a, (REAL)_b, (REAL)_c)
 THEN
-LeaderLog_RealToString(_ID, _a, _b, _c);
+LeaderLog_RealToIntToString(_ID, _a, _b, _c);
+//END_REGION
+
+//REGION REAL_TO_STRING
+PROC
+LeaderLog_RealToString((CHARACTERGUID)_Char, (REAL)_Num, (STRING)_CompletionEvent)
+THEN
+SetVarFloat(_Char, "LeaderLog_RealValue", _Num);
+SetVarString(_Char, "LeaderLog_RealToString_CompletionEvent", _CompletionEvent);
+SetStoryEvent(_Char, "LeaderLog_Commands_RealToString");
+
+PROC
+LeaderLog_RealToString((REAL)_Num, (STRING)_CompletionEvent)
+AND
+LLLIB_QRY_EventParser_GlobalParserExists()
+THEN
+SetVarFloat(S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, "LeaderLog_RealValue", _Num);
+SetVarString(S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, "LeaderLog_RealToString_CompletionEvent", _CompletionEvent);
+SetStoryEvent(S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, "LeaderLog_Commands_RealToString");
+
+PROC
+LeaderLog_RealToString((REAL)_Num)
+AND
+LLLIB_QRY_EventParser_GlobalParserExists()
+THEN
+SetVarFloat(S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, "LeaderLog_RealValue", _Num);
+SetVarString(S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, "LeaderLog_RealToString_CompletionEvent", "LeaderLog_OnRealConverted");
+SetStoryEvent(S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, "LeaderLog_Commands_RealToString");
 //END_REGION
 
 //REGION FLAG_LOGS

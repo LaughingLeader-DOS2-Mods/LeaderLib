@@ -89,7 +89,7 @@ THEN
 	ENDIF
 ENDIF
 
-EVENT LLLIB_CombatLog
+EVENT LeaderLog_CombatLog
 VARS
 	CHARACTER:_Character
 	FIXEDSTRING:_Text
@@ -102,4 +102,22 @@ THEN
 	DisplayCombatInfoText(_Character, _Text, 0.0)
 	DisplayText(_Character, "", 0.0)
 	CharacterEvent(_Character, "LeaderLib_Events_OnCombatLog")
+ENDIF
+
+EVENT LeaderLog_RealToString
+VARS
+	CHARACTER:_Character
+	FLOAT:_RealVal
+	STRING:_Str
+	STRING:_CompletionEvent
+ON
+	OnCharacterEvent(_Character, "LeaderLog_Commands_RealToString")
+ACTIONS
+IF "c1&c2"
+	GetVar(_RealVal, _Character, "LeaderLog_RealValue")
+	GetVar(_CompletionEvent, _Character, "LeaderLog_RealToString_CompletionEvent")
+THEN
+	Print(_Str, "[1]", _RealVal)
+	SetVar(_Character, "LeaderLog_RealString", _Str)
+	CharacterEvent(_Character, _CompletionEvent)
 ENDIF

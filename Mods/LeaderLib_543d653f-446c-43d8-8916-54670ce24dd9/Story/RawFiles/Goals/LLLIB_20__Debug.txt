@@ -12,7 +12,8 @@ GoalCompleted;
 PROC
 LLLIB_Debug_RunTests()
 THEN
-LLLIB_Debug_MathTests();
+//LLLIB_Debug_MathTests();
+DB_NOOP(1);
 
 PROC
 LLLIB_Debug_MathTests()
@@ -21,7 +22,7 @@ LeaderLib_Math_QRY_Sine(90.0)
 AND
 DB_LeaderLib_Math_Sine(90.0, _SineResult)
 AND
-LeaderLog_QRY_RealToString("LLLIB.Debug.Sine", _SineResult)
+LeaderLog_QRY_RealToIntToString("LLLIB.Debug.Sine", _SineResult)
 AND
 DB_LeaderLog_Temp_RealString("LLLIB.Debug.Sine", _SineResultStr)
 THEN
@@ -35,7 +36,7 @@ LeaderLib_Math_QRY_Cosine(90.0)
 AND
 DB_LeaderLib_Math_Cosine(90.0, _CosineResult)
 AND
-LeaderLog_QRY_RealToString("LLLIB.Debug.Cosine", _CosineResult)
+LeaderLog_QRY_RealToIntToString("LLLIB.Debug.Cosine", _CosineResult)
 AND
 DB_LeaderLog_Temp_RealString("LLLIB.Debug.Cosine", _CosineResultStr)
 THEN

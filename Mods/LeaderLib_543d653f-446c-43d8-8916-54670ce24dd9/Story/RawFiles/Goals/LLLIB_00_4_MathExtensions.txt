@@ -4,7 +4,7 @@ INITSECTION
 //DB_LeaderLib_Math_Power(_Num, _Power, _Result)
 //DB_LeaderLib_Math_Sine(_Angle, _Result)
 //DB_LeaderLib_Math_Cosine(_Angle, _Result)
-//DB_LLLIB_Math_Factorial(_Factor, _Result)
+//DB_LeaderLib_Math_Factorial(_Factor, _Result)
 
 //DB_LLLIB_Math_Temp_FactorialOperation(_Factor, _MultiplyBy, _Result)
 KBSECTION

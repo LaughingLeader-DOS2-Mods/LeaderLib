@@ -8,6 +8,16 @@ LLLIB_Internal_StartLeaderLib()
 THEN
 DebugBreak("[LLLIB] LeaderLib starting.");
 GoalCompleted;
+
+/*
+For existing saves, where this goal was never completed 
+(or perhaps it was set back to sleeping)
+*/
+IF
+SavegameLoaded(_,_,_,_)
+THEN
+DebugBreak("[LLLIB] LeaderLib starting.");
+GoalCompleted;
 EXITSECTION
 
 ENDEXITSECTION

@@ -420,6 +420,47 @@ LeaderLog_Log("DEBUG", _Str3);
 //END_REGION
 
 //REGION EQUIPMENT_REFRESH
+IF
+StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Commands_RefreshEquipment_Delayed")
+AND
+CharacterGetDisplayName(_Character, _, _Name)
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:Helper:RefreshEquipment_Delayed] Refreshing equipment for [",_Name,"]");
+LLLIB_Helper_UnequipAllAndSave(_Character);
+LeaderLib_StartTargetTimer(_Character, 2500, "LLLIB_Timers_EquipItemsTimer_", "LeaderLib_Helper_OnEquipTimerFinished");
+
+IF
+StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Helper_OnEquipTimerFinished")
+AND
+DB_LLLIB_Helper_Temp_UnequippedItem(_Character, _Item)
+THEN
+NOT DB_LLLIB_Helper_Temp_UnequippedItem(_Character, _Item);
+CharacterEquipItem(_Character, _Item);
+
+PROC
+LLLIB_Helper_UnequipAllAndSave((CHARACTERGUID)_Character)
+AND
+DB_LLLIB_EquipmentSlots(_Slot)
+AND
+CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
+THEN
+CharacterUnequipItem(_Character, _Item);
+DB_LLLIB_Helper_Temp_UnequippedItem(_Character, _Item);
+
+PROC
+LLLIB_Helper_UnequipAll((CHARACTERGUID)_Character)
+AND
+DB_LLLIB_EquipmentSlots(_Slot)
+AND
+CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
+THEN
+CharacterUnequipItem(_Character, _Item);
+
+IF
+StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Commands_RefreshEquipment")
+THEN
+LLLIB_Helper_RefreshEquipment(_Character);
+
 PROC
 LLLIB_Helper_RefreshEquipment((CHARACTERGUID)_Character)
 AND

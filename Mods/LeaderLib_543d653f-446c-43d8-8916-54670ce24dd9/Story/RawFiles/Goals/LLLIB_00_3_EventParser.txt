@@ -101,6 +101,7 @@ THEN
 LeaderLog_Log("DEBUG", "[LLLIB:EventParser][ERROR] Global Event Parser doesn't exist for some reason.");
 //LLLIB_EventParser_CreateNew();
 
+//REGION SEND_EVENT
 //Send out a general event, using the Event Parser object.
 PROC
 LeaderLib_SendEvent((STRING)_EventName)
@@ -122,6 +123,17 @@ DB_LeaderLib_SendEvent(_EventName)
 THEN
 NOT DB_LeaderLib_SendEvent(_EventName);
 LLLIB_EventParser_Internal_RunEvent(_EventName);
+//END_REGION
+
+//REGION BEHAVIOR_EVENT_ADDITIONS
+IF
+ItemAddedToCharacter(_Item, _Character)
+AND
+IsTagged(_Character, "LeaderLib_ReceiveExtraEvents", 1)
+THEN
+CharacterItemSetEvent(_Character, _Item, "LeaderLib_ItemAddedToInventory");
+//END_REGION
+
 //REGION UPDATER
 PROC
 LLLIB_System_RegisterDatabases()

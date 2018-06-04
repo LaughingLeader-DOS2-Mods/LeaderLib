@@ -1,7 +1,7 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-//LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", "0.9.0.0");
+//See LLLIB_00_1_1_System for the actual version registration
 KBSECTION
 IF
 DB_LeaderLib_GameStarted(_Val)

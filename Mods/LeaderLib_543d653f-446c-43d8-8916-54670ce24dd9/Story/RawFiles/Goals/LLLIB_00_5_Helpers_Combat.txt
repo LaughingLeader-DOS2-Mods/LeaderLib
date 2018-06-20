@@ -176,11 +176,22 @@ DB_LeaderLib_Combat_Casualties(_CombatID, _Victim, _Attacker);
 QRY
 LeaderLib_Combat_QRY_HasAliveEnemies((CHARACTERGUID)_Character)
 AND
-DB_LeaderLib_Combat_ActiveObject(_CombatID, _Object)
+DB_LeaderLib_Combat_Objects(_CombatID, _Object)
+AND
+_Object != _Character
 AND
 CharacterIsEnemy((CHARACTERGUID)_Object, _Character, 1)
 AND
 CharacterIsDead(_Object, 0)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Combat_QRY_IsActiveTurn((CHARACTERGUID)_Character)
+AND
+CharacterIsInCombat(_Character, 1)
+AND
+DB_LeaderLib_Combat_ActiveObject(_CombatID, _Character)
 THEN
 DB_NOOP(1);
 //END_REGION

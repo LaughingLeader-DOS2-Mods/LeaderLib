@@ -35,7 +35,7 @@ ObjectSetFlag(_Follower, "LeaderLib_IsFollower");
 ObjectSetFlag(_Follower, "LeaderLib_CharacterIsFollowing");
 CharacterAddToPlayerCharacter(_Follower, _Owner);
 CharacterAttachToGroup(_Follower, _Owner);
-SetStoryEvent(_Follower, "LeaderLib_Events_FollowerRecruited");
+CharacterCharacterSetEvent(_Owner, _Follower, "LeaderLib_Events_FollowerRecruited");
 
 PROC
 LeaderLib_Follower_DismissCharacter((CHARACTERGUID)_Follower)
@@ -81,7 +81,7 @@ CharacterRemoveFromPlayerCharacter(_Follower, _Owner);
 CharacterDetachFromGroup(_Follower);
 LLLIB_Follower_Internal_SetOffStage(_Follower, _SetOffStage);
 LLLIB_Follower_Internal_ResetPositionIfEnabled(_Follower, _Effect);
-SetStoryEvent(_Follower, "LeaderLib_Events_FollowerDismissed");
+CharacterCharacterSetEvent(_Owner, _Follower, "LeaderLib_Events_FollowerDismissed");
 //ClearTag(_Follower, "SUMMON");
 
 PROC
@@ -257,6 +257,13 @@ AND
 LLLIB_Helper_QRY_ClearObjectFlag(_Follower, "LeaderLib_RecruitFollower")
 AND
 DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
+THEN
+CharacterCharacterSetEvent(_Player, _Follower, "LeaderLib_PlayerIsRecruitingCharacter"); // Pre-recruitment
+//Delay so other scripts can level the character up, since player followers seem immune to the CharacterLevelUp/CharacterLevelUpTo call.
+LeaderLib_StartCharacterCharacterTimer(_Player, _Follower, 250, "LeaderLib_Timers_RecruitFollowerDelayTimer_", "LeaderLib_Follower_RecruitDelayTimerEnded");
+
+IF
+CharacterCharacterEvent(_Player, _Follower, "LeaderLib_Follower_RecruitDelayTimerEnded")
 THEN
 LeaderLib_Follower_RecruitCharacter(_Player, _Follower);
 

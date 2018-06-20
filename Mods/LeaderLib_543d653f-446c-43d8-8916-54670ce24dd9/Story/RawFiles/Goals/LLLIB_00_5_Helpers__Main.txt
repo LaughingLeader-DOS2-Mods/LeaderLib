@@ -6,6 +6,10 @@ INITSECTION
 //DB_LLLIB_Helper_Temp_StopIteratingForMaxLevel(1)
 //DB_LLLIB_Helper_Temp_PartyMemberOutsideOfLevelRange(1)
 //DB_LLLIB_Helper_Temp_HighestLevelInParty(_Level)
+/*Timers*/
+//DB_LLLIB_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent)
+//DB_LLLIB_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent)
+//DB_LLLIB_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _CompleteEvent)
 KBSECTION
 //REGION QUERY_INFO
 QRY
@@ -427,7 +431,7 @@ CharacterGetDisplayName(_Character, _, _Name)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Helper:RefreshEquipment_Delayed] Refreshing equipment for [",_Name,"]");
 LLLIB_Helper_UnequipAllAndSave(_Character);
-LeaderLib_StartTargetTimer(_Character, 2500, "LLLIB_Timers_EquipItemsTimer_", "LeaderLib_Helper_OnEquipTimerFinished");
+LeaderLib_StartObjectTimer(_Character, 2500, "LLLIB_Timers_EquipItemsTimer_", "LeaderLib_Helper_OnEquipTimerFinished");
 
 IF
 StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Helper_OnEquipTimerFinished")
@@ -528,23 +532,23 @@ THEN
 CharacterAddAttribute(_CopyTo, _Attribute, _AddVal);
 //END_REGION
 
-//REGION TIMER_HELPER
+//REGION TIMER_HELPERS
 PROC
-LeaderLib_StartTargetTimer((GUIDSTRING)_Target, (INTEGER)_Time, (STRING)_TimerPrefix, (STRING)_CompleteEvent)
+LeaderLib_StartObjectTimer((GUIDSTRING)_Target, (INTEGER)_Time, (STRING)_TimerPrefix, (STRING)_CompleteEvent)
 AND
 GetUUID(_Target, _ID)
 AND
 StringConcatenate(_TimerPrefix, _ID, _TimerName)
 THEN
-DB_LLLIB_Helper_Temp_TargetTimer(_TimerName, _Target, _CompleteEvent);
+DB_LLLIB_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent);
 TimerLaunch(_TimerName, _Time);
 
 IF
 TimerFinished(_TimerName)
 AND
-DB_LLLIB_Helper_Temp_TargetTimer(_TimerName, _Target, _CompleteEvent)
+DB_LLLIB_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent)
 THEN
-NOT DB_LLLIB_Helper_Temp_TargetTimer(_TimerName, _Target, _CompleteEvent);
+NOT DB_LLLIB_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent);
 SetStoryEvent(_Target, _CompleteEvent);
 
 PROC
@@ -568,6 +572,28 @@ DB_LLLIB_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent)
 THEN
 NOT DB_LLLIB_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent);
 CharacterItemSetEvent(_Char, _Item, _CompleteEvent);
+
+PROC
+LeaderLib_StartCharacterCharacterTimer((CHARACTERGUID)_Char1, (CHARACTERGUID)_Char2, (INTEGER)_Time, (STRING)_TimerPrefix, (STRING)_CompleteEvent)
+AND
+GetUUID(_Char1, _Char1ID)
+AND
+GetUUID(_Char2, _Char2ID)
+AND
+StringConcatenate(_Char1ID, _Char2ID, _ID)
+AND
+StringConcatenate(_TimerPrefix, _ID, _TimerName)
+THEN
+DB_LLLIB_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _CompleteEvent);
+TimerLaunch(_TimerName, _Time);
+
+IF
+TimerFinished(_TimerName)
+AND
+DB_LLLIB_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _CompleteEvent)
+THEN
+NOT DB_LLLIB_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _CompleteEvent);
+CharacterCharacterSetEvent(_Char1, _Char2, _CompleteEvent);
 //END_REGION
 
 //REGION BEHAVIOR_SCRIPT_HELPERS

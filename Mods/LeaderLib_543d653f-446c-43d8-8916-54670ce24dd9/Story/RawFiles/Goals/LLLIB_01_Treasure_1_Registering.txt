@@ -63,13 +63,19 @@ DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID);
 LLLIB_Treasure_JustRegistered(_TreasureID, _TraderID, "TraderTreasure");
 
 PROC
+LLLIB_Treasure_Register_TreasureTable((STRING)_TreasureID, (STRING)_TreasureTable)
+THEN
+LLLIB_Treasure_Register_TreasureTable(_TreasureID, _TreasureTable, "",1,-1,-1);
+
+PROC
 LLLIB_Treasure_Register_TreasureTable((STRING)_TreasureID, (STRING)_TreasureTable, (STRING)_RequirementID)
 THEN
-LLLIB_Treasure_Register_TreasureTable(_TreasureID, _TreasureTable, _RequirementID,1,1,1);
+LLLIB_Treasure_Register_TreasureTable(_TreasureID, _TreasureTable, _RequirementID,1,-1,-1);
 
 PROC
 LLLIB_Treasure_Register_TreasureTable((STRING)_TreasureID, (STRING)_TreasureTable, (STRING)_RequirementID, (INTEGER)_UsePartyLevel)
 THEN
+// 1, 1 for the level range here, just in case _UsePartyLevel is 0
 LLLIB_Treasure_Register_TreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, 1, 1);
 
 PROC

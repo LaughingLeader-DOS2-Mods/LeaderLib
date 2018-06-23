@@ -36,7 +36,7 @@ LeaderLog_Log("TRACE", "[LLLIB:ModAPI] Databases registered.");
 //END_REGION
 
 //REGION DB_MODAPI
-/*Registering*/
+/*LeaderUpdater Registering*/
 IF
 DB_LeaderLib_ModApi_RegisterMod((STRING)_ModName, (STRING)_Author, (STRING)_Version)
 THEN
@@ -129,6 +129,38 @@ DB_LeaderLib_ModApi_StartSortQueue((STRING)_DictionaryID, (INTEGER)_TickRate, (S
 THEN
 LLLIB_DictionarySort_StartSorting(_DictionaryID, _TickRate, _CompleteEvent);
 NOT DB_LeaderLib_ModApi_StartSortQueue(_DictionaryID, _TickRate, _CompleteEvent);
+//END_REGION
+
+//REGION TREASURE_REGISTERING
+IF
+DB_LeaderLib_ModApi_Register_TreasureTable((STRING)_TreasureID, (STRING)_TreasureTable)
+THEN
+LLLIB_Treasure_Register_TreasureTable(_TreasureID, _TreasureTable);
+NOT DB_LeaderLib_ModApi_Register_TreasureTable(_TreasureID, _TreasureTable);
+
+IF
+DB_LeaderLib_ModApi_Register_TreasureTable((STRING)_TreasureID, (STRING)_TreasureTable, (STRING)_RequirementID)
+THEN
+LLLIB_Treasure_Register_TreasureTable(_TreasureID, _TreasureTable, _RequirementID);
+NOT DB_LeaderLib_ModApi_Register_TreasureTable(_TreasureID, _TreasureTable, _RequirementID);
+
+IF
+DB_LeaderLib_ModApi_Register_TreasureTable((STRING)_TreasureID, (STRING)_TreasureTable, (STRING)_RequirementID, (INTEGER)_UsePartyLevel)
+THEN
+LLLIB_Treasure_Register_TreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel);
+NOT DB_LeaderLib_ModApi_Register_TreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel);
+
+IF
+DB_LeaderLib_ModApi_Register_TreasureTable((STRING)_TreasureID, (STRING)_TreasureTable, (STRING)_RequirementID, (INTEGER)_UsePartyLevel, (INTEGER)_Level)
+THEN
+LLLIB_Treasure_Register_TreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _Level);
+NOT DB_LeaderLib_ModApi_Register_TreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _Level);
+
+IF
+DB_LeaderLib_ModApi_Register_TreasureTable((STRING)_TreasureID, (STRING)_TreasureTable, (STRING)_RequirementID, (INTEGER)_UsePartyLevel, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
+THEN
+LLLIB_Treasure_Register_TreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel);
+NOT DB_LeaderLib_ModApi_Register_TreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel);
 //END_REGION
 
 //REGION LOGGING

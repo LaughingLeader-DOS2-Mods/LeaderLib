@@ -143,6 +143,7 @@ AND
 DB_Mods_Registered(_ModName, _Author, _Version)
 THEN
 NOT DB_Mods_Registered(_ModName, _Author, _Version);
+DB_LeaderUpdater_Temp_PastRegistered(_ModName, _Author, _Version);
 
 PROC
 LeaderUpdater_Clear_ActiveGoals((STRING)_ModName, (STRING)_Author)
@@ -209,6 +210,27 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderUpdater", 
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderUpdater", "DB_LeaderUpdater_RegisteredGoal", 3);
 */
 LeaderLog_Log("TRACE", "[LLLIB:LeaderUpdater] Databases registered.");
+
+QRY
+LeaderUpdater_QRY_ModVersionsChanged()
+AND
+DB_LeaderUpdater_Temp_PastRegistered(_ModName, _Author, _Version)
+THEN
+DB_NOOP(1);
+
+IF
+StoryEvent(_, "LeaderLib_Initialized")
+AND
+LeaderUpdater_QRY_ModVersionsChanged()
+THEN
+LeaderLib_SendEvent("LeaderUpdater_ModVersionsChanged");
+TimerLaunch("LeaderLib_Timers_ClearPastModVersions", 1000);
+
+IF
+TimerFinished("LeaderLib_Timers_ClearPastModVersions")
+THEN
+LeaderLog_Log("DEBUG", "[LLLIB:LeaderUpdater:ClearPastModVersions] Clearing past mod versions database.");
+SysClear("DB_LeaderUpdater_Temp_PastRegistered", 3);
 //END_REGION
 
 //REGION UNINSTALLING

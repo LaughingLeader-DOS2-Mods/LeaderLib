@@ -1,0 +1,46 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+//REGION TEXT_EVENTS
+//Workaround for the GetTextEvent bug
+//http://larian.com/forums/ubbthreads.php?ubb=showflat&Number=643095
+IF
+TextEventSet(_Event)
+AND
+GetTextEventParamString(1, "leaderlib_anim") // What was formerly the text event name
+AND
+GetTextEventParamUUID(1, _Target)
+AND
+GetTextEventParamString(2, _Anim)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_anim] fired. Playing animation [",_Anim,"].");
+PlayAnimation(_Target, _Anim);
+
+IF
+TextEventSet(_Event)
+AND
+GetTextEventParamString(1, "leaderlib_animloop")
+AND
+GetTextEventParamUUID(1, (CHARACTERGUID)_Target)
+AND
+GetTextEventParamString(2, _Anim)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_animloop] fired. Setting animation override to [",_Anim,"].");
+CharacterSetAnimationOverride(_Target, _Anim);
+
+IF
+TextEventSet(_Event)
+AND
+GetTextEventParamString(1, "leaderlib_stopanims")
+AND
+GetTextEventParamUUID(1, (CHARACTERGUID)_Target)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_stopanims] fired. Clearing animation override.");
+CharacterSetAnimationOverride(_Target, "");
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

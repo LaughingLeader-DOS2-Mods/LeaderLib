@@ -615,6 +615,26 @@ THEN
 CharacterUnequipItem(_Character, _Item);
 //END_REGION
 
+//REGION ITEM_AUTO_LEVEL
+IF
+CharacterLeveledUp(_Character)
+AND
+CharacterGetLevel(_Character, _Level)
+AND
+CharacterFindTaggedItem(_Character, "LeaderLib_AutoLevel", _Item)
+THEN
+ItemLevelUpTo(_Item, _Level);
+
+IF
+ItemEquipped(_Item, _Character)
+AND
+IsTagged(_Item, "LeaderLib_AutoLevel", 1)
+AND
+CharacterGetLevel(_Character, _Level)
+THEN
+ItemLevelUpTo(_Item, _Level);
+//END_REGION
+
 //REGION UPDATER
 PROC
 LLLIB_System_RegisterDatabases()

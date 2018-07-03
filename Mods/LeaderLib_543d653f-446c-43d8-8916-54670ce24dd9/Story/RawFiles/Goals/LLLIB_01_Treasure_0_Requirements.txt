@@ -285,6 +285,30 @@ LeaderLog_Log("DEBUG", "[LLLIB:Requirements] Requirement [",_RequirementID,"] lo
 NOT DB_LLLIB_Requirements_IsUnlocked(_RequirementID);
 //END_REGION
 
+//REGION INITIAL_UNLOCK
+IF
+StoryEvent(_, "LeaderLib_Events_OnDefaultEventFlowComplete")
+AND
+DB_LLLIB_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel, _StrictMode)
+AND
+NOT DB_LLLIB_Requirements_IsUnlocked(_RequirementID)
+AND
+LLLIB_QRY_Requirements_AllMet(_RequirementID)
+THEN
+LLLIB_Requirements_RequirementUnlocked(_RequirementID);
+
+IF
+StoryEvent(_, "LeaderLib_Events_OnDefaultEventFlowComplete")
+AND
+DB_LLLIB_Requirements_Flag(_RequirementID, _Flag, _FlagType, _FlagVal)
+AND
+NOT DB_LLLIB_Requirements_IsUnlocked(_RequirementID)
+AND
+LLLIB_QRY_Requirements_AllMet(_RequirementID)
+THEN
+LLLIB_Requirements_RequirementUnlocked(_RequirementID);
+//END_REGION
+
 //REGION FLAG_UNLOCKING
 PROC
 LLLIB_Requirements_Internal_OnFlagSet((STRING)_RequirementID, (INTEGER)_TargetVal, (INTEGER)_CurrentVal)
@@ -343,13 +367,11 @@ THEN
 LLLIB_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 0);
 //END_REGION
 
-//REGION LEVEL_REQUIREMENT_UNLOCKED
+//REGION LEVEL_REQUIREMENT
 IF
 CharacterLeveledUp(_Player)
 AND
 CharacterIsPlayer(_Player, 1)
-AND
-DB_CurrentLevel(_Level)
 AND
 DB_LLLIB_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel, _StrictMode)
 AND
@@ -358,6 +380,8 @@ AND
 LLLIB_QRY_Requirements_LevelMet(_Player, _MinLevel, _MaxLevel)
 AND
 LLLIB_QRY_Requirements_FlagMet(_RequirementID)
+AND
+LLLIB_QRY_Requirements_RegionMet(_RequirementID)
 THEN
 LLLIB_Requirements_RequirementUnlocked(_RequirementID);
 
@@ -386,6 +410,10 @@ AND
 DB_LLLIB_Requirements_Region(_RequirementID, _Region)
 AND
 NOT DB_LLLIB_Requirements_IsUnlocked(_RequirementID)
+AND
+LLLIB_QRY_Requirements_PartyLevelMet(_RequirementID)
+AND
+LLLIB_QRY_Requirements_FlagMet(_RequirementID)
 THEN
 LLLIB_Requirements_RequirementUnlocked(_RequirementID);
 

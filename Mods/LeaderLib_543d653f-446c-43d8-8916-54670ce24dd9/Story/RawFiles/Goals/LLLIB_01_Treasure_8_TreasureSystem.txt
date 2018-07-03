@@ -279,6 +279,13 @@ DB_NOOP(1);
 QRY
 LLLIB_QRY_Treasure_ItemCanGenerateWithType((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_GenerationType)
 AND
+DB_LLLIB_Treasure_ItemGenerationType(_TreasureID, _ItemEntry, _GenerationType)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_QRY_Treasure_ItemCanGenerateWithType((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_GenerationType)
+AND
 NOT DB_LLLIB_Treasure_ItemGenerationType(_TreasureID, _ItemEntry, _)
 AND
 DB_LLLIB_Treasure_TreasureGenerationType(_TreasureID, _GenerationType)
@@ -361,15 +368,38 @@ THEN
 DB_NOOP(1);
 //END_REGION
 
+//REGION TREASURE_TABLE_QUERIES
+//Default to 1
+QRY
+LLLIB_Treasure_QRY_TreaureTableLimitReached((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_TreasureTable)
+AND
+NOT DB_LLLIB_Treasure_TreasureTableLimit(_TreasureID, _TreasureTable, _)
+AND
+DB_LLLIB_Treasure_GeneratedTreasureTableCount(_Object, _TreasureID, _TreasureTable, _Count)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_Treasure_QRY_TreaureTableLimitReached((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_TreasureTable)
+AND
+DB_LLLIB_Treasure_TreasureTableLimit(_TreasureID, _TreasureTable, _Limit)
+AND
+DB_LLLIB_Treasure_GeneratedTreasureTableCount(_Object, _TreasureID, _TreasureTable, _Count)
+AND
+_Count >= _Limit
+THEN
+DB_NOOP(1);
+//END_REGION
+
 //REGION TREASURE_TABLE_GENERATION
 PROC
 LLLIB_Treasure_GenerateItems((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_GenerationType)
 AND
 DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel)
 AND
-LLLIB_QRY_Requirements_AllMet(_RequirementID)
+NOT LLLIB_Treasure_QRY_TreaureTableLimitReached(_Object, _TreasureID, _TreasureTable)
 AND
-NOT DB_LLLIB_Treasure_TableWasGenerated(_Object, _TreasureID, _TreasureTable)
+LLLIB_QRY_Treasure_ItemCanGenerate(_TreasureID, _TreasureTable, _RequirementID, _GenerationType)
 AND
 _UsePartyLevel > 0
 AND
@@ -385,17 +415,17 @@ GenerateTreasure(_Backpack, _TreasureTable, _Level, NULL_00000000-0000-0000-0000
 MoveAllItemsTo(_Backpack, _Object, 0, 0, 1);
 ItemDestroy(_Backpack);
 SetOnStage(_Backpack, 0);
+LLLIB_Treasure_Internal_IncreaseTreasureTableCount(_Object, _TreasureID, _TreasureTable);
 LLLIB_Treasure_Internal_OnTreasureTableGenerated(_ID, _Object, _TreasureID, _TreasureTable);
-DB_LLLIB_Treasure_TableWasGenerated(_Object, _TreasureID, _TreasureTable);
 
 PROC
 LLLIB_Treasure_GenerateItems((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_GenerationType)
 AND
 DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel)
 AND
-LLLIB_QRY_Requirements_AllMet(_RequirementID)
+NOT LLLIB_Treasure_QRY_TreaureTableLimitReached(_Object, _TreasureID, _TreasureTable)
 AND
-NOT DB_LLLIB_Treasure_TableWasGenerated(_Object, _TreasureID, _TreasureTable)
+LLLIB_QRY_Treasure_ItemCanGenerate(_TreasureID, _TreasureTable, _RequirementID, _GenerationType)
 AND
 _UsePartyLevel <= 0
 AND
@@ -411,8 +441,8 @@ GenerateTreasure(_Backpack, _TreasureTable, _Level, NULL_00000000-0000-0000-0000
 MoveAllItemsTo(_Backpack, _Object, 0, 0, 1);
 ItemDestroy(_Backpack);
 SetOnStage(_Backpack, 0);
+LLLIB_Treasure_Internal_IncreaseTreasureTableCount(_Object, _TreasureID, _TreasureTable);
 LLLIB_Treasure_Internal_OnTreasureTableGenerated(_ID, _Object, _TreasureID, _TreasureTable);
-DB_LLLIB_Treasure_TableWasGenerated(_Object, _TreasureID, _TreasureTable);
 
 PROC
 LLLIB_Treasure_Internal_OnTreasureTableGenerated((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_TreasureTable)
@@ -421,6 +451,33 @@ NOT DB_LLLIB_Treasure_Temp_TreasureQueue_Entries(_ID, _Object, _TreasureID, _, _
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:OnTreasureTableGenerated] Generated treasure table [",_TreasureTable,"] for treasure [",_TreasureID,"].");
 LLLIB_Treasure_Internal_MarkAsFinished(_ID, _Object, _TreasureID);
+
+PROC
+LLLIB_Treasure_Internal_IncreaseTreasureTableCount((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_TreasureTable)
+AND
+DB_LLLIB_Treasure_GeneratedTreasureTableCount(_Object, _TreasureID, _TreasureTable, _Count)
+AND
+IntegerSum(_Count, 1, _NextCount)
+THEN
+NOT DB_LLLIB_Treasure_GeneratedTreasureTableCount(_Object, _TreasureID, _TreasureTable, _Count);
+DB_LLLIB_Treasure_GeneratedTreasureTableCount(_Object, _TreasureID, _TreasureTable, _NextCount);
+
+PROC
+LLLIB_Treasure_Internal_IncreaseTreasureTableCount((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_TreasureTable)
+AND
+NOT DB_LLLIB_Treasure_GeneratedTreasureTableCount(_Object, _TreasureID, _TreasureTable, _)
+THEN
+DB_LLLIB_Treasure_GeneratedTreasureTableCount(_Object, _TreasureID, _TreasureTable, 1);
+
+/*Older saves*/
+IF
+StoryEvent(_, "LeaderLib_Initialized")
+AND
+DB_LLLIB_Treasure_TableWasGenerated((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_TreasureTable)
+AND
+NOT DB_LLLIB_Treasure_GeneratedTreasureTableCount(_Object, _TreasureID, _TreasureTable, _)
+THEN
+DB_LLLIB_Treasure_GeneratedTreasureTableCount(_Object, _TreasureID, _TreasureTable, 1);
 //END_REGION
 
 //REGION INDIVIDUAL_TREASURE_GENERATION_QUEUE
@@ -580,7 +637,7 @@ NOT DB_LLLIB_Treasure_TreasureItemStats(_TreasureID, _, _, _)
 AND
 NOT DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _, _, _, _, _)
 THEN
-////LeaderLog_Log("TRACE", "[LLLIB:TreasureSystem:GenerateItems] Skipping generation for items with [",_ID,"]: No entries found for Treasure ID [",_TreasureID,"].");
+LeaderLog_Log("TRACE", "[LLLIB:TreasureSystem:GenerateItems] Skipping generation for items with [",_ID,"]: No entries found for Treasure ID [",_TreasureID,"].");
 LLLIB_Treasure_Internal_OnGenerationFinished(_ID, _Object);
 //LLLIB_Treasure_Internal_OnGenerationFailed(_ID, _Object, _TreasureID, _GenerationType);
 
@@ -596,7 +653,7 @@ LLLIB_Treasure_Internal_ProcessItemEntry((STRING)_ID, (GUIDSTRING)_Object, (STRI
 AND
 LLLIB_QRY_Treasure_ItemCanGenerate(_TreasureID, _ItemEntry, _RequirementID, _GenerationType)
 THEN
-////LeaderLog_Log("TRACE", "[LLLIB:TreasureSystem:ProcessItemEntry] Starting generation for [",_ID,"][",_ItemEntry,"].");
+LeaderLog_Log("TRACE", "[LLLIB:TreasureSystem:ProcessItemEntry] Starting generation for [",_ID,"][",_ItemEntry,"].");
 LLLIB_Treasure_Internal_StartItemGeneration(_ID, _Object, _TreasureID, _ItemEntry, _Amount, _RequirementID, _IsStat);
 
 PROC
@@ -604,7 +661,7 @@ LLLIB_Treasure_Internal_ProcessItemEntry((STRING)_ID, (GUIDSTRING)_Object, (STRI
 AND
 NOT LLLIB_QRY_Treasure_ItemCanGenerate(_TreasureID, _ItemEntry, _RequirementID, _GenerationType)
 THEN
-////LeaderLog_Log("TRACE", "[LLLIB:TreasureSystem:ProcessItemEntry] Skipping generation for [",_ID,"]. Treasure [",_TreasureID,"] does not pass the requirements.");
+LeaderLog_Log("TRACE", "[LLLIB:TreasureSystem:ProcessItemEntry] Skipping generation for [",_ID,"]. Treasure [",_TreasureID,"] does not pass the requirements.");
 LeaderLib_SendEvent("LLLIB_Events_OnItemGenerationComplete");
 
 PROC
@@ -612,7 +669,7 @@ LLLIB_Treasure_Internal_StartItemGeneration((STRING)_ID, (GUIDSTRING)_Object, (S
 AND
 LLLIB_QRY_Treasure_SkipAmountCheck(_Object, _TreasureID, _ItemEntry)
 THEN
-////LeaderLog_Log("TRACE", "[LLLIB:TreasureSystem:GenerateItems] Skipping amount check and generating item [",_TreasureID,"]:[",_ItemEntry,"].");
+LeaderLog_Log("TRACE", "[LLLIB:TreasureSystem:GenerateItems] Skipping amount check and generating item [",_TreasureID,"]:[",_ItemEntry,"].");
 ObjectSetFlag(_Object, "LLLIB_Treasure_IsGeneratingTreasure", 0);
 DB_LLLIB_Treasure_Temp_GenerateItem(_ID, _Object, _TreasureID, _ItemEntry, 0, _Amount, _IsStat);
 
@@ -632,7 +689,7 @@ NOT LLLIB_QRY_Treasure_SkipAmountCheck(_Object, _TreasureID, _ItemEntry)
 AND
 NOT DB_LLLIB_Treasure_StatToTemplate(_ItemEntry, _)
 THEN
-////LeaderLog_Log("TRACE", "[LLLIB:Treasure:StartItemGeneration] Object is missing stat-based [",_TreasureID,"]:[",_ItemEntry,"] item template. Skipping counting.");
+LeaderLog_Log("TRACE", "[LLLIB:Treasure:StartItemGeneration] Object is missing stat-based [",_TreasureID,"]:[",_ItemEntry,"] item template. Skipping counting.");
 ObjectSetFlag(_Object, "LLLIB_Treasure_IsGeneratingTreasure", 0);
 DB_LLLIB_Treasure_Temp_GenerateItem(_ID, _Object, _TreasureID, _ItemEntry, 0, _Amount, 1);
 
@@ -660,7 +717,7 @@ NOT LLLIB_QRY_Treasure_SkipAmountCheck(_Object, _TreasureID, _ItemEntry)
 AND
 LLLIB_QRY_Treasure_CountedItems(_Object, _TreasureID, _ItemEntry)
 THEN
-//LeaderLog_Log("TRACE", "[LLLIB:Treasure:StartItemGeneration] Object counting complete [",_TreasureID,"]:[",_ItemEntry,"].");
+LeaderLog_Log("TRACE", "[LLLIB:Treasure:StartItemGeneration] Object counting complete [",_TreasureID,"]:[",_ItemEntry,"].");
 LLLIB_Treasure_Internal_CountingComplete(_ID, _Object, _TreasureID, _ItemEntry);
 
 IF
@@ -740,8 +797,31 @@ AND
 DB_LLLIB_Treasure_ItemMaxAmount(_TreasureID, _ItemEntry, _MaxAmount)
 AND
 _Amount >= _MaxAmount
+AND
+NOT LLLIB_Treasure_QRY_CanKeepGenerating(_TreasureID, _ItemEntry)
+AND
+GetTemplate(_Object, _Template)
 THEN
+LeaderLog_Log("TRACE", "[LLLIB:Treasure:LLLIB_Treasure_Internal_FinishIfMaxAmount] [",_TreasureID,"]:[",_ItemEntry,"] reached the max item limit set, and is done generating on object [",_Template,"].");
 DB_LLLIB_Treasure_ItemDoneGenerating(_Object, _TreasureID, _ItemEntry);
+
+QRY
+LLLIB_Treasure_QRY_CanKeepGenerating((STRING)_TreasureID, (STRING)_ItemEntry)
+AND
+DB_LLLIB_Treasure_KeepGeneratingTreasure(_TreasureID)
+AND
+NOT DB_LLLIB_Treasure_KeepGeneratingItem(_TreasureID, _ItemEntry, 0)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_Treasure_QRY_CanKeepGenerating((STRING)_TreasureID, (STRING)_ItemEntry)
+AND
+NOT DB_LLLIB_Treasure_KeepGeneratingTreasure(_TreasureID)
+AND
+DB_LLLIB_Treasure_KeepGeneratingItem(_TreasureID, _ItemEntry, 1)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION GENERATING_BY_STAT
@@ -1204,10 +1284,20 @@ THEN
 NOT DB_LLLIB_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID);
 
 PROC
+LLLIB_Treasure_RemoveIfOnlyOnce((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_TreasureTable)
+AND
+DB_LLLIB_Treasure_OnlyOnce(_TreasureID, _TreasureTable, _OnCompletionEvent)
+AND
+DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel)
+THEN
+NOT DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel);
+
+PROC
 LLLIB_Treasure_RemoveIfOnlyOnce((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry)
 AND
 DB_LLLIB_Treasure_OnlyOnce(_TreasureID, _ItemEntry, _OnCompletionEvent)
 THEN
+//LLLIB_Treasure_ClearIfEmpty(_Object, _TreasureID, _ItemEntry);
 ObjectSetFlag(_Object, "LLLIB_Treasure_GenerationEnded");
 SetStoryEvent(_Object, _OnCompletionEvent);
 

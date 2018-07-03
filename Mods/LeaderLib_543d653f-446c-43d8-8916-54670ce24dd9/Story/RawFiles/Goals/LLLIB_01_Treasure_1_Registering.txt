@@ -23,6 +23,8 @@ INITSECTION
 //DB_LLLIB_Treasure_OnlyOnce(_TreasureID, _ItemEntryOrTreasureTable, _OnCompletionEvent)
 //DB_LLLIB_Treasure_GeneratedEvent(_TreasureID, _ItemEntry, _OnGeneratedEvent)
 //DB_LLLIB_Treasure_ItemDoneGenerating(_Object, _TreasureID, _ItemEntry)
+
+//DB_LLLIB_Treasure_TreasureTableLimit(_TreasureID, _TreasureTable, _Limit)
 KBSECTION
 PROC
 LLLIB_Treasure_JustRegistered((STRING)_TreasureID, (STRING)_RegisteredVal, (STRING)_Type)
@@ -122,6 +124,9 @@ THEN
 DB_LLLIB_Treasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID);
 LLLIB_Treasure_JustRegistered(_TreasureID, _ItemEntry, "ItemStat");
 
+//END_REGION
+
+//REGION CONFIGURATION
 /* Generation types:
 MANUAL
 TRADE_GENERATION_START
@@ -218,6 +223,39 @@ PROC
 LLLIB_Treasure_Configure_GenerateOnce((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_OnCompletionEvent)
 THEN
 DB_LLLIB_Treasure_OnlyOnce(_TreasureID, _ItemEntry, _OnCompletionEvent);
+
+//Default the treasure as a whole to keep generating, provided the max item limit isn't reached
+PROC
+LLLIB_Treasure_Configure_GenerateTreasureEndlessly((STRING)_TreasureID)
+AND
+NOT DB_LLLIB_Treasure_KeepGeneratingTreasure(_TreasureID)
+THEN
+DB_LLLIB_Treasure_KeepGeneratingTreasure(_TreasureID);
+
+PROC
+LLLIB_Treasure_Configure_GenerateItemEndlessly((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Active)
+AND
+DB_LLLIB_Treasure_KeepGeneratingItem(_TreasureID, _ItemEntry, _OtherVal)
+THEN
+NOT DB_LLLIB_Treasure_KeepGeneratingItem(_TreasureID, _ItemEntry, _OtherVal);
+
+//Keep generating the item on each generation event, provided the max limit isn't reached on the object
+PROC
+LLLIB_Treasure_Configure_GenerateEndlessly((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Active)
+THEN
+DB_LLLIB_Treasure_KeepGeneratingItem(_TreasureID, _ItemEntry, _Active);
+
+PROC
+LLLIB_Treasure_Configure_TreasureTable_Limit((STRING)_TreasureID, (STRING)_TreasureTable, (INTEGER)_Limit)
+AND
+DB_LLLIB_Treasure_TreasureTableLimit(_TreasureID, _TreasureTable, _OtherLimit)
+THEN
+NOT DB_LLLIB_Treasure_TreasureTableLimit(_TreasureID, _TreasureTable, _OtherLimit);
+
+PROC
+LLLIB_Treasure_Configure_TreasureTable_Limit((STRING)_TreasureID, (STRING)_TreasureTable, (INTEGER)_Limit)
+THEN
+DB_LLLIB_Treasure_TreasureTableLimit(_TreasureID, _TreasureTable, _Limit);
 //END_REGION
 
 //REGION INTERNAL_GENERATION_TYPES

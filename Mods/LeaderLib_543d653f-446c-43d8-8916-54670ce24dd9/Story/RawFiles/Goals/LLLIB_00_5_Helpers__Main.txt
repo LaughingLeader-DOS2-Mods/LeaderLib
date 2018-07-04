@@ -616,23 +616,81 @@ CharacterUnequipItem(_Character, _Item);
 //END_REGION
 
 //REGION ITEM_AUTO_LEVEL
-IF
-CharacterLeveledUp(_Character)
-AND
-CharacterGetLevel(_Character, _Level)
+QRY
+LLLIB_Helpers_QRY_HasAutoLevelItem((CHARACTERGUID)_Character)
 AND
 CharacterFindTaggedItem(_Character, "LeaderLib_AutoLevel", _Item)
 THEN
+DB_NOOP(1);
+
+IF
+CharacterLeveledUp(_Character)
+AND
+CharacterIsPlayer(_Character, 1)
+AND
+LLLIB_Helpers_QRY_HasAutoLevelItem(_Character)
+THEN
+SetStoryEvent(_Character, "LeaderLib_Events_AutoLevelItems_Start");
+
+IF
+StoryEvent((ITEMGUID)_Item, "LeaderLib_Commands_AutoLevelItem")
+AND
+ItemGetOwner(_Item, _Character)
+AND
+NOT GetVarInteger(_Item, "LeaderLib_ItemLevel", _)
+AND
+CharacterGetLevel(_Character, _Level)
+THEN
 ItemLevelUpTo(_Item, _Level);
+SetVarInteger(_Item, "LeaderLib_ItemLevel", _Level);
+CharacterItemSetEvent(_Character, _Item, "LeaderLib_Events_ItemLeveledUp");
+
+IF
+StoryEvent((ITEMGUID)_Item, "LeaderLib_Commands_AutoLevelItem")
+AND
+ItemGetOwner(_Item, _Character)
+AND
+GetVarInteger(_Item, "LeaderLib_ItemLevel", _ItemLevel)
+AND
+CharacterGetLevel(_Character, _Level)
+AND
+_ItemLevel < _Level
+THEN
+ItemLevelUpTo(_Item, _Level);
+SetVarInteger(_Item, "LeaderLib_ItemLevel", _Level);
+CharacterItemSetEvent(_Character, _Item, "LeaderLib_Events_ItemLeveledUp");
+
+IF
+CharacterItemEvent(_Character, _Item, "LeaderLib_Commands_AutoLevelItem")
+AND
+CharacterGetLevel(_Character, _Level)
+THEN
+ItemLevelUpTo(_Item, _Level);
+SetVarInteger(_Item, "LeaderLib_ItemLevel", _Level);
+CharacterItemSetEvent(_Character, _Item, "LeaderLib_Events_ItemLeveledUp");
 
 IF
 ItemEquipped(_Item, _Character)
 AND
 IsTagged(_Item, "LeaderLib_AutoLevel", 1)
-AND
-CharacterGetLevel(_Character, _Level)
 THEN
-ItemLevelUpTo(_Item, _Level);
+CharacterItemSetEvent(_Character, _Item, "LeaderLib_Commands_CheckItemLevel");
+//END_REGION
+
+//REGION STATUS_CHECK
+QRY
+LLLIB_Helper_QRY_HasStatus((CHARACTERGUID)_Character, (STRING)_Status)
+AND
+HasAppliedStatus(_Character, _Status, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_Helper_QRY_HasStatus((CHARACTERGUID)_Character, (STRING)_Status)
+AND
+HasActiveStatus(_Character, _Status, 1)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION UPDATER

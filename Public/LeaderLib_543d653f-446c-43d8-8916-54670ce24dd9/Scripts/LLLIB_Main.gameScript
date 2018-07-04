@@ -121,3 +121,52 @@ THEN
 	SetVar(_Character, "LeaderLog_RealString", _Str)
 	CharacterEvent(_Character, _CompletionEvent)
 ENDIF
+
+EVENT LeaderLib_AutoLevelItems_Start
+VARS
+	CHARACTER:_Character
+ON
+	OnCharacterEvent(_Character, "LeaderLib_Events_AutoLevelItems_Start")
+ACTIONS
+	IterateItemsInInventory(_Character, "LeaderLib_Iterator_AutoLevelItems", "LeaderLib_AutoLevel")
+
+EVENT LeaderLib_AutoLevelItems_Iterate
+VARS
+	ITEM:_Item
+	INT:_Level
+	FLOAT:_LevelF
+ON
+	OnIterateItem(_Item, "LeaderLib_Iterator_AutoLevelItems")
+ACTIONS
+IF "c1"
+	ItemGetStat(_LevelF, _Item, Level)
+THEN
+	Cast(_Level, _LevelF)
+	SetVar(_Item, "LeaderLib_ItemLevel", _Level)
+	ItemEvent(_Item, "LeaderLib_Commands_AutoLevelItem")
+ENDIF
+
+EVENT LeaderLib_AutoLevelItems_Single
+VARS
+	CHARACTER:_Character
+	ITEM:_Item
+	FLOAT:_CharLevel
+	FLOAT:_ItemLevel
+	STRING:_Str
+	FIXEDSTRING:_Message
+ON
+	OnCharacterItemEvent(_Character, _Item, "LeaderLib_Commands_CheckItemLevel")
+ACTIONS
+IF "c1&c2"
+	CharacterGetStat(_CharLevel, _Character, Level)
+	ItemGetStat(_ItemLevel, _Item, Level)
+THEN
+	IF "c1"
+		IsLessThen(_ItemLevel, _CharLevel)
+	THEN
+		CharacterItemEvent(_Character, _Item, "LeaderLib_Commands_AutoLevelItem")
+	ENDIF
+	Print(_Str, "Item level: [1] | Char Level: [2]", _ItemLevel, _CharLevel)
+	Cast(_Message, _Str)
+	StatusText(_Character, _Message)
+ENDIF

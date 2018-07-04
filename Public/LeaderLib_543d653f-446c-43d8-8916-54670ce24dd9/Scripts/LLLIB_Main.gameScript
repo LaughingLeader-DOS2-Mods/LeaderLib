@@ -166,7 +166,9 @@ THEN
 	THEN
 		CharacterItemEvent(_Character, _Item, "LeaderLib_Commands_AutoLevelItem")
 	ENDIF
+	/*
 	Print(_Str, "Item level: [1] | Char Level: [2]", _ItemLevel, _CharLevel)
 	Cast(_Message, _Str)
 	StatusText(_Character, _Message)
+	*/
 ENDIF

@@ -6,6 +6,7 @@ INITSECTION
 //DB_LLLIB_Helper_Temp_StopIteratingForMaxLevel(1)
 //DB_LLLIB_Helper_Temp_PartyMemberOutsideOfLevelRange(1)
 //DB_LLLIB_Helper_Temp_HighestLevelInParty(_Level)
+//DB_LLLIB_Helper_Temp_HighestPlayerLevel(_Level)
 /*Timers*/
 //DB_LLLIB_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent)
 //DB_LLLIB_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent)
@@ -158,54 +159,82 @@ THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_Helper_QRY_GetHighestLevelInParty()
+LLLIB_Helper_QRY_GetHighestPlayerLevel()
 AND
-DB_LLLIB_Helper_Temp_HighestLevelInParty(_Level)
+DB_LLLIB_Helper_Temp_HighestPlayerLevel(_Level)
 THEN
-NOT DB_LLLIB_Helper_Temp_HighestLevelInParty(_Level);
-DB_LLLIB_Helper_Temp_HighestLevelInParty(1);
+NOT DB_LLLIB_Helper_Temp_HighestPlayerLevel(_Level);
+DB_LLLIB_Helper_Temp_HighestPlayerLevel(1);
 
 QRY
-LLLIB_Helper_QRY_GetHighestLevelInParty()
+LLLIB_Helper_QRY_GetHighestPlayerLevel()
 AND
-NOT DB_LLLIB_Helper_Temp_HighestLevelInParty(_)
+NOT DB_LLLIB_Helper_Temp_HighestPlayerLevel(_)
 THEN
-DB_LLLIB_Helper_Temp_HighestLevelInParty(1);
+DB_LLLIB_Helper_Temp_HighestPlayerLevel(1);
 
 QRY
-LLLIB_Helper_QRY_GetHighestLevelInParty()
+LLLIB_Helper_QRY_GetHighestPlayerLevel()
 AND
 DB_IsPlayer(_Player)
 AND
-DB_LLLIB_Helper_Temp_HighestLevelInParty(_HighestLevel)
+DB_LLLIB_Helper_Temp_HighestPlayerLevel(_HighestLevel)
 AND
 CharacterGetLevel(_Player, _Level)
 AND
 _Level > _HighestLevel
 THEN
-NOT DB_LLLIB_Helper_Temp_HighestLevelInParty(_HighestLevel);
-DB_LLLIB_Helper_Temp_HighestLevelInParty(_Level);
+NOT DB_LLLIB_Helper_Temp_HighestPlayerLevel(_HighestLevel);
+DB_LLLIB_Helper_Temp_HighestPlayerLevel(_Level);
 
 QRY
-LLLIB_Helper_QRY_GetHighestLevelCharacterInParty()
+LLLIB_Helper_QRY_GetHighestLevelInParty((CHARACTERGUID)_PartyMember)
 AND
-DB_LLLIB_Helper_Temp_HighestLevelCharacterInParty(_Player, _Level)
+DB_LLLIB_Helper_Temp_HighestLevelInParty(_PartyMember, _Level)
 THEN
-NOT DB_LLLIB_Helper_Temp_HighestLevelCharacterInParty(_Player, _Level);
+NOT DB_LLLIB_Helper_Temp_HighestLevelInParty(_PartyMember, _Level);
+DB_LLLIB_Helper_Temp_HighestLevelInParty(_PartyMember, 1);
 
 QRY
-LLLIB_Helper_QRY_GetHighestLevelCharacterInParty()
+LLLIB_Helper_QRY_GetHighestLevelInParty((CHARACTERGUID)_PartyMember)
 AND
-LLLIB_Helper_QRY_GetHighestLevelInParty()
+NOT DB_LLLIB_Helper_Temp_HighestLevelInParty(_PartyMember, _)
+THEN
+DB_LLLIB_Helper_Temp_HighestLevelInParty(_PartyMember, 1);
+
+QRY
+LLLIB_Helper_QRY_GetHighestLevelInParty((CHARACTERGUID)_PartyMember)
 AND
-DB_LLLIB_Helper_Temp_HighestLevelInParty(_Level)
+DB_IsPlayer(_Player)
+AND
+DB_LLLIB_Helper_Temp_HighestLevelInParty(_PartyMember, _HighestLevel)
+AND
+CharacterGetLevel(_Player, _Level)
+AND
+_Level > _HighestLevel
+THEN
+NOT DB_LLLIB_Helper_Temp_HighestLevelInParty(_PartyMember, _HighestLevel);
+DB_LLLIB_Helper_Temp_HighestLevelInParty(_PartyMember, _Level);
+
+QRY
+LLLIB_Helper_QRY_GetHighestLevelPlayer()
+AND
+DB_LLLIB_Helper_Temp_HighestLevelPlayer(_Player, _Level)
+THEN
+NOT DB_LLLIB_Helper_Temp_HighestLevelPlayer(_Player, _Level);
+
+QRY
+LLLIB_Helper_QRY_GetHighestLevelPlayer()
+AND
+LLLIB_Helper_QRY_GetHighestPlayerLevel()
+AND
+DB_LLLIB_Helper_Temp_HighestPlayerLevel(_Level)
 AND
 DB_IsPlayer(_Player)
 AND
 CharacterGetLevel(_Player, _Level)
 THEN
-NOT DB_LLLIB_Helper_Temp_HighestLevelInParty(_Level);
-DB_LLLIB_Helper_Temp_HighestLevelCharacterInParty(_Player, _Level);
+DB_LLLIB_Helper_Temp_HighestLevelPlayer(_Player, _Level);
 
 QRY
 LLLIB_Helper_QRY_UserMatch((CHARACTERGUID)_Char1, (CHARACTERGUID)_Char2)
@@ -598,7 +627,7 @@ CharacterCharacterSetEvent(_Char1, _Char2, _CompleteEvent);
 
 //REGION BEHAVIOR_SCRIPT_HELPERS
 IF
-CharacterItemEvent(_Character, _Item, "LeaderLib_EquipItem")
+CharacterItemEvent(_Character, _Item, "LeaderLib_Commands_EquipItem")
 AND
 ItemIsEquipable(_Item, 1)
 THEN
@@ -606,13 +635,20 @@ CharacterEquipItem(_Character, _Item);
 //CharacterUseItem(_Character, _Item, "");
 
 IF
-StoryEvent((CHARACTERGUID)_Character, "LeaderLib_UnequipItemInSlot")
+StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Commands_UnequipItemInSlot")
 AND
 GetVarString(_Character, "LeaderLib_ItemSlot", _Slot)
 AND
 CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
 THEN
 CharacterUnequipItem(_Character, _Item);
+
+IF
+StoryEvent(_Item, "LeaderLib_Commands_RemoveItem")
+AND
+ObjectIsItem((ITEMGUID)_Item, 1)
+THEN
+ItemRemove(_Item);
 //END_REGION
 
 //REGION ITEM_AUTO_LEVEL
@@ -701,7 +737,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LL
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LLLIB_Helper_Temp_StopIteratingForMinLevel", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LLLIB_Helper_Temp_StopIteratingForMaxLevel", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LLLIB_Helper_Temp_PartyMemberOutsideOfLevelRange", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LLLIB_Helper_Temp_HighestLevelInParty", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LLLIB_Helper_Temp_HighestPlayerLevel", 1);
 LeaderLog_Log("TRACE", "[LLLIB:Helpers] Databases registered.");
 //END_REGION
 EXITSECTION

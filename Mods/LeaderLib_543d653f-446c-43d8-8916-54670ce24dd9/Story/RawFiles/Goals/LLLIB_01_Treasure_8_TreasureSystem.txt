@@ -403,9 +403,9 @@ LLLIB_QRY_Treasure_ItemCanGenerate(_TreasureID, _TreasureTable, _RequirementID, 
 AND
 _UsePartyLevel > 0
 AND
-LLLIB_Helper_QRY_GetHighestLevelInParty()
+LLLIB_Helper_QRY_GetHighestPlayerLevel()
 AND
-DB_LLLIB_Helper_Temp_HighestLevelInParty(_Level)
+DB_LLLIB_Helper_Temp_HighestPlayerLevel(_Level)
 AND
 GetPosition(_Object, _x, _y, _z)
 AND
@@ -417,6 +417,7 @@ ItemDestroy(_Backpack);
 SetOnStage(_Backpack, 0);
 LLLIB_Treasure_Internal_IncreaseTreasureTableCount(_Object, _TreasureID, _TreasureTable);
 LLLIB_Treasure_Internal_OnTreasureTableGenerated(_ID, _Object, _TreasureID, _TreasureTable);
+NOT DB_LLLIB_Helper_Temp_HighestPlayerLevel(_Level);
 
 PROC
 LLLIB_Treasure_GenerateItems((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_GenerationType)
@@ -1324,11 +1325,12 @@ DB_LLLIB_Treasure_ItemLevel(_TreasureID, _ItemEntry, _UsePartyLevel, _MinLevel, 
 AND
 _UsePartyLevel > 0
 AND
-LLLIB_Helper_QRY_GetHighestLevelInParty()
+LLLIB_Helper_QRY_GetHighestPlayerLevel()
 AND
-DB_LLLIB_Helper_Temp_HighestLevelInParty(_Level)
+DB_LLLIB_Helper_Temp_HighestPlayerLevel(_Level)
 THEN
 ItemLevelUpTo(_Item, _Level);
+NOT DB_LLLIB_Helper_Temp_HighestPlayerLevel(_Level);
 
 PROC
 LLLIB_Treasure_AdjustItemLevel((ITEMGUID)_Item, (STRING)_TreasureID, (STRING)_ItemEntry)

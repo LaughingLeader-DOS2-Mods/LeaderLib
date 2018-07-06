@@ -6,8 +6,8 @@ LLLIB_Dialog_InitSettings();
 //DB_LLLIB_DialogNames(_Dialog)
 //DB_LLLIB_Dialog_AttitudeFlags(_Flag, _Amount)
 //DB_LLLIB_Dialog_NameOverride(_Character, _Name)
-//DB_LLLIB_StatusFlags(_Flag, _Status, _Duration)
-//DB_LLLIB_AnimationFlags(_Flag, _Animation, _Loop)
+//DB_LLLIB_StatusFlags(_Group, _Flag, _Status, _Duration)
+//DB_LLLIB_AnimationFlags(_Group, _Flag, _Animation, _Loop)
 KBSECTION
 //REGION SETTINGS
 PROC
@@ -45,16 +45,38 @@ DB_LLLIB_DialogVars("SpeakerName", "LLLIB_SpeakerName_9fc648d4-7984-44e7-afa4-b8
 DB_LLLIB_DialogVars("PlayerName", "LLLIB_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3");
 DB_LLLIB_DialogVars("LeaderTrader_Greeting", "LLLIB_LeaderTrader_Greeting_f143b90b-9afc-477e-b133-6a1574341261");
 
-LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_StatusFlags", 3);
-DB_LLLIB_StatusFlags("LeaderLib_ApplyStatus_Knockdown_-1", "KNOCKED_DOWN", -1.0);
-DB_LLLIB_StatusFlags("LeaderLib_ApplyStatus_Knockdown_0", "KNOCKED_DOWN", 0.0);
-DB_LLLIB_StatusFlags("LeaderLib_ApplyStatus_Knockdown_1", "KNOCKED_DOWN", 1.0);
-DB_LLLIB_StatusFlags("LeaderLib_ApplyStatus_Knockdown_3", "KNOCKED_DOWN", 3.0);
-DB_LLLIB_StatusFlags("LeaderLib_ApplyStatus_Knockdown_6", "KNOCKED_DOWN", 6.0);
-DB_LLLIB_StatusFlags("LeaderLib_ApplyStatus_Knockdown_9", "KNOCKED_DOWN", 9.0);
+LeaderLib_Dialog_ClearStatusGroup("LeaderLib.Default");
+DB_LLLIB_StatusFlags("LeaderLib.Default", "LeaderLib_ApplyStatus_Knockdown_-1", "KNOCKED_DOWN", -1.0);
+DB_LLLIB_StatusFlags("LeaderLib.Default", "LeaderLib_ApplyStatus_Knockdown_0", "KNOCKED_DOWN", 0.0);
+DB_LLLIB_StatusFlags("LeaderLib.Default", "LeaderLib_ApplyStatus_Knockdown_1", "KNOCKED_DOWN", 1.0);
+DB_LLLIB_StatusFlags("LeaderLib.Default", "LeaderLib_ApplyStatus_Knockdown_3", "KNOCKED_DOWN", 3.0);
+DB_LLLIB_StatusFlags("LeaderLib.Default", "LeaderLib_ApplyStatus_Knockdown_6", "KNOCKED_DOWN", 6.0);
+DB_LLLIB_StatusFlags("LeaderLib.Default", "LeaderLib_ApplyStatus_Knockdown_9", "KNOCKED_DOWN", 9.0);
 
-LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_AnimationFlags", 3);
-DB_LLLIB_AnimationFlags("LeaderLib_PlayAnimation_Knockdown_Loop", "knockdown_loop", 1);
+LeaderLib_Dialog_ClearAnimationGroup("LeaderLib.Default");
+DB_LLLIB_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Knockdown_Loop", "knockdown_loop", 1);
+DB_LLLIB_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Blind_Loop", "stillblind", 1);
+DB_LLLIB_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Chilled_Loop", "stillchilled", 1);
+DB_LLLIB_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Crippled_Loop", "stillcrippled", 1);
+DB_LLLIB_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Diseased_Loop", "stilldiseased", 1);
+DB_LLLIB_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Drunk_Loop", "stilldrunk", 1);
+DB_LLLIB_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Electrified_Loop", "stillelectrified", 1);
+DB_LLLIB_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Mental_Loop", "stillmental", 1);
+DB_LLLIB_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Sneaking_Loop", "stillsneaking", 1);
+
+PROC
+LeaderLib_Dialog_ClearStatusGroup((STRING)_Group)
+AND
+DB_LLLIB_StatusFlags(_Group, _Flag, _Status, _Duration)
+THEN
+NOT DB_LLLIB_StatusFlags(_Group, _Flag, _Status, _Duration);
+
+PROC
+LeaderLib_Dialog_ClearAnimationGroup((STRING)_Group)
+AND
+DB_LLLIB_AnimationFlags(_Group, _Flag, _Animation, _Looped)
+THEN
+NOT DB_LLLIB_AnimationFlags(_Group, _Flag, _Animation, _Looped);
 //END_REGION
 
 //REGION UPDATER
@@ -242,7 +264,7 @@ LeaderLog_Log("DEBUG", "[LLLIB:Flag:LeaderLib_StopAnimation] Stopped animations 
 IF
 ObjectFlagSet(_Flag, (CHARACTERGUID)_Object, _Instance)
 AND
-DB_LLLIB_StatusFlags(_Flag, _Status, _Duration)
+DB_LLLIB_StatusFlags(_Group, _Flag, _Status, _Duration)
 AND
 LLLIB_Helper_QRY_ClearObjectFlag(_Object, _Flag)
 AND
@@ -253,7 +275,7 @@ ApplyStatus(_Object, _Status, _Duration, 0);
 IF
 ObjectFlagSet(_Flag, (CHARACTERGUID)_Object, _Instance)
 AND
-DB_LLLIB_StatusFlags(_Flag, _Status, _Duration)
+DB_LLLIB_StatusFlags(_Group, _Flag, _Status, _Duration)
 AND
 LLLIB_Helper_QRY_ClearObjectFlag(_Object, _Flag)
 AND
@@ -266,7 +288,7 @@ ApplyStatus(_Object, _Status, _Duration, _Force);
 IF
 ObjectFlagCleared(_Flag, (CHARACTERGUID)_Object, _Instance)
 AND
-DB_LLLIB_StatusFlags(_Flag, _Status, _Duration)
+DB_LLLIB_StatusFlags(_Group, _Flag, _Status, _Duration)
 AND
 HasActiveStatus(_Object, _Status, 1)
 THEN
@@ -278,7 +300,7 @@ RemoveStatus(_Object, _Status);
 IF
 ObjectFlagSet(_Flag, (CHARACTERGUID)_Object, _Instance)
 AND
-DB_LLLIB_AnimationFlags(_Flag, _Animation, _Loop)
+DB_LLLIB_AnimationFlags(_Group, _Flag, _Animation, _Loop)
 AND
 _Loop > 0
 THEN
@@ -287,7 +309,7 @@ CharacterSetAnimationOverride(_Object, _Animation);
 IF
 ObjectFlagSet(_Flag, (CHARACTERGUID)_Object, _Instance)
 AND
-DB_LLLIB_AnimationFlags(_Flag, _Animation, _Loop)
+DB_LLLIB_AnimationFlags(_Group, _Flag, _Animation, _Loop)
 AND
 _Loop <= 0
 THEN
@@ -297,7 +319,7 @@ PlayAnimation(_Object, _Animation);
 IF
 ObjectFlagCleared(_Flag, (CHARACTERGUID)_Object, _Instance)
 AND
-DB_LLLIB_AnimationFlags(_Flag, _Animation, _Loop)
+DB_LLLIB_AnimationFlags(_Group, _Flag, _Animation, _Loop)
 AND
 _Loop > 0
 THEN

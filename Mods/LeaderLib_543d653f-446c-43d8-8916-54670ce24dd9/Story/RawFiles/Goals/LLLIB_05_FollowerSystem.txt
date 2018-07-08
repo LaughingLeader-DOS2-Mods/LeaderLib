@@ -31,7 +31,8 @@ CharacterIsPartyMember(_Owner, 1)
 THEN
 DB_LLLIB_PartyFollower(_Owner, _Follower);
 SetVarObject(_Follower, "LeaderLib_Follower_Owner", _Owner);
-ObjectSetFlag(_Follower, "LeaderLib_IsFollower");
+//ObjectSetFlag(_Follower, "LeaderLib_IsFollower");
+SetTag(_Follower, "LeaderLib_IsFollower");
 ObjectSetFlag(_Follower, "LeaderLib_CharacterIsFollowing");
 CharacterAddToPlayerCharacter(_Follower, _Owner);
 CharacterAttachToGroup(_Follower, _Owner);
@@ -74,7 +75,8 @@ THEN
 NOT DB_LLLIB_PartyFollower(_Owner, _Follower);
 SetVarObject(_Follower, "LeaderLib_Follower_LastOwner", _Owner);
 ClearVarObject(_Follower, "LeaderLib_Follower_Owner");
-ObjectClearFlag(_Follower, "LeaderLib_IsFollower");
+//ObjectClearFlag(_Follower, "LeaderLib_IsFollower");
+ClearTag(_Follower, "LeaderLib_IsFollower");
 ObjectClearFlag(_Follower, "LeaderLib_CharacterIsFollowing");
 ProcCharacterStopFollow(_Follower);
 CharacterRemoveFromPlayerCharacter(_Follower, _Owner);
@@ -165,7 +167,7 @@ AND
 GetPosition(_Follower,_X,_Y,_Z)
 THEN
 PlayEffectAtPosition(_Effect, _X,_Y,_Z);
-//REGION
+//END_REGION
 
 //REGION DIALOG_FLAGS
 IF
@@ -298,11 +300,10 @@ CharacterDetachFromGroup(_Follower);
 ObjectClearFlag(_Follower, "LeaderLib_CharacterIsFollowing");
 ObjectClearFlag(_Follower, "LeaderLib_IsFollowingSpeaker");
 
-
 IF
 DB_Following(_Follower, _Owner)
 AND
-ObjectGetFlag(_Follower, "LeaderLib_IsFollower", 1)
+IsTagged(_Follower, "LeaderLib_IsFollower", 1)
 THEN
 ObjectSetFlag(_Follower, "LeaderLib_CharacterIsFollowing");
 //END_REGION

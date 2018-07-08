@@ -100,6 +100,9 @@ LLLIB_Trader_Register_StartingGold("LLLIB_LeaderTrader", "Arx_Main", 13000);
 LLLIB_Treasure_Register_TreasureToTrader("LLLIB_LeaderTrader_Misc", "LLLIB_LeaderTrader");
 LLLIB_Treasure_Register_TreasureToTrader("LLLIB_LeaderTrader_ModItems", "LLLIB_LeaderTrader");
 LLLIB_Treasure_Register_TreasureToTrader("LLLIB_LeaderTrader_ModBooks", "LLLIB_LeaderTrader");
+LLLIB_Treasure_Register_TreasureToTrader("LeaderLib.LeaderTrader.Skillbooks", "LLLIB_LeaderTrader");
+
+LLLIB_Treasure_AddTreasureItemTemplate("LeaderLib.LeaderTrader.Skillbooks", "BOOK_Skill_LLLIB_ControlSummon_832058fd-fd40-47d0-bea3-0e108761d4e4", 1);
 
 //LLLIB_Treasure_Configure_DefaultGenerationType("LLLIB_LeaderTrader_ModItems", "DIALOG_STARTED");
 //LLLIB_Treasure_Configure_DefaultGenerationType("LLLIB_LeaderTrader_ModBooks", "DIALOG_STARTED");
@@ -168,7 +171,15 @@ GlobalSetFlag("LLLIB_LeaderTraderIsNotGlobal");
 PROC
 LLLIB_LeaderTrader_UpdateSettings()
 THEN
-DB_NOOP(1);
+LLLIB_LeaderTrader_Internal_RegisterNewTreasure();
+
+PROC
+LLLIB_LeaderTrader_Internal_RegisterNewTreasure()
+AND
+NOT DB_LLLIB_Treasure_RegisteredTraderTreasure("LeaderLib.LeaderTrader.Skillbooks", "LLLIB_LeaderTrader")
+THEN
+LLLIB_Treasure_Register_TreasureToTrader("LeaderLib.LeaderTrader.Skillbooks", "LLLIB_LeaderTrader");
+LLLIB_Treasure_AddTreasureItemTemplate("LeaderLib.LeaderTrader.Skillbooks", "BOOK_Skill_LLLIB_ControlSummon_832058fd-fd40-47d0-bea3-0e108761d4e4", 1);
 //END_REGION
 
 //REGION NON_GLOBAL_WORKAROUND

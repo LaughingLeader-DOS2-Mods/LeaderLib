@@ -25,3 +25,13 @@ data "Value" "0"
 data "Weight" "0"
 data "Unique" "1"
 
+new entry "SKILLBOOK_LLLIB_ControlSummon"
+type "Object"
+using "_Skillbooks"
+data "RootTemplate" "832058fd-fd40-47d0-bea3-0e108761d4e4"
+data "Act part" "5"
+data "Value" "100"
+data "MinAmount" "1"
+data "MaxAmount" "1"
+data "Priority" "1"
+

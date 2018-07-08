@@ -39,6 +39,40 @@ GetTextEventParamUUID(1, (CHARACTERGUID)_Target)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_stopanims] fired. Clearing animation override.");
 CharacterSetAnimationOverride(_Target, "");
+
+IF
+TextEventSet("leaderlib_anim")
+AND
+GetTextEventParamString(1, _Anim)
+AND
+DB_IsPlayer(_Player)
+AND
+CharacterIsControlled(_Player, 1)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_anim] fired. Playing animation [",_Anim,"] on controlled character.");
+PlayAnimation(_Player, _Anim);
+
+IF
+TextEventSet("leaderlib_animloop")
+AND
+GetTextEventParamString(1, _Anim)
+AND
+DB_IsPlayer(_Player)
+AND
+CharacterIsControlled(_Player, 1)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_animloop] fired. Setting animation override to [",_Anim,"] on controlled character.");
+CharacterSetAnimationOverride(_Player, _Anim);
+
+IF
+TextEventSet("leaderlib_stopanims")
+AND
+DB_IsPlayer(_Player)
+AND
+CharacterIsControlled(_Player, 1)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_stopanims] fired. Clearing animation override on controlled character.");
+CharacterSetAnimationOverride(_Player, "");
 //END_REGION
 
 //REGION STATS_TEXT_EVENTS
@@ -89,6 +123,22 @@ CharacterIsControlled(_Player, 1)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_addpoints] fired. Adding [",_AmountStr,"] civil points to controller character.");
 CharacterAddCivilAbilityPoint(_Player, _Amount);
+
+IF
+TextEventSet("leaderlib_addpoints")
+AND
+GetTextEventParamString(1, "talent")
+AND
+GetTextEventParamInteger(2, _Amount)
+AND
+IntegertoString(_Amount, _AmountStr)
+AND
+DB_IsPlayer(_Player)
+AND
+CharacterIsControlled(_Player, 1)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_addpoints] fired. Adding [",_AmountStr,"] talent points to controller character.");
+CharacterAddTalentPoint(_Player, _Amount);
 //END_REGION
 EXITSECTION
 

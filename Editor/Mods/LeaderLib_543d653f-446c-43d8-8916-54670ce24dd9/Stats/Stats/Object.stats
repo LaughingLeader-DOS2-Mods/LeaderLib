@@ -32,5 +32,17 @@
         <field name="Unique" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="1" />
       </fields>
     </stat_object>
+    <stat_object index="2" is_substat="false">
+      <fields>
+        <field name="Name" type="NameStatObjectFieldDefinition" clear_inherited_value="false" value="SKILLBOOK_LLLIB_ControlSummon" />
+        <field name="Using" type="BaseClassStatObjectFieldDefinition" clear_inherited_value="false" value="_Skillbooks" />
+        <field name="RootTemplate" type="RootTemplateStatObjectFieldDefinition" clear_inherited_value="false" value="832058fd-fd40-47d0-bea3-0e108761d4e4" />
+        <field name="Act part" type="EnumerationStatObjectFieldDefinition" clear_inherited_value="false" value="5" enumeration_type_name="ActPart" />
+        <field name="Value" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="100" />
+        <field name="MinAmount" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="1" />
+        <field name="MaxAmount" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="1" />
+        <field name="Priority" type="IntegerStatObjectFieldDefinition" clear_inherited_value="false" value="1" />
+      </fields>
+    </stat_object>
   </stat_objects>
 </stats>

@@ -713,6 +713,17 @@ THEN
 CharacterItemSetEvent(_Character, _Item, "LeaderLib_Commands_CheckItemLevel");
 //END_REGION
 
+//REGION ITEM_QUERIES
+QRY
+LLLIB_Helper_QRY_ItemHasDeltaModifier((ITEMGUID)_Item, (STRING)_Deltamod)
+AND
+ItemHasDeltaModifier(_Item, _DeltaMod, _Count)
+AND
+_Count > 0
+THEN
+DB_NOOP(1);
+//END_REGION
+
 //REGION STATUS_CHECK
 QRY
 LLLIB_Helper_QRY_HasStatus((CHARACTERGUID)_Character, (STRING)_Status)

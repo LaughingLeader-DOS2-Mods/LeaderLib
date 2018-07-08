@@ -18,6 +18,24 @@ LLLIB_Requirements_AddFlagRequirement("LLLIB_DebugLevel_NotChestRequirements1", 
 //LLLIB_DebugLevel_TreasureStressTest();
 
 IF
+CharacterUsedItem(_Char, ITEMGUID_LLLIB_Debug_TestLever1_81a66e97-515d-4786-be33-8a9cadae23f7)
+THEN
+CharacterItemSetEvent(_Char, ITEMGUID_LLLIB_Debug_TestLever1_81a66e97-515d-4786-be33-8a9cadae23f7, "LLLIB_Events_Debug_TestPressurePlate1");
+
+IF
+CharacterItemEvent(_Char, _Item, "LLLIB_Events_Debug_TestPressurePlate1")
+THEN
+ApplyStatus(_Char, "ETHEREAL_SOLES", 20.0, 1);
+ApplyStatus(_Char, "FAVOURABLE_WIND", 20.0, 1);
+ApplyStatus(_Char, "CLEAR_MINDED", 20.0, 1);
+ApplyStatus(_Char, "VAMPIRISM", 20.0, 1);
+ApplyStatus(_Char, "MAGIC_SHELL", 20.0, 1);
+ApplyStatus(_Char, "FORTIFIED", 20.0, 1);
+ApplyStatus(_Char, "HASTED", 20.0, 1);
+ApplyStatus(_Char, "MEND_METAL", 20.0, 1);
+ApplyStatus(_Char, "FROST_AURA", 20.0, 1);
+
+IF
 CharacterUsedItem(_Char, _Item)
 AND
 GetTemplate(_Item, _Template)

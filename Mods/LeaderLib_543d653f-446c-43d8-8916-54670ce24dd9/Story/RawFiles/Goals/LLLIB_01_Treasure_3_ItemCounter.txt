@@ -6,12 +6,12 @@ INITSECTION
 KBSECTION
 //REGION COUNTING
 QRY
-LLLIB_QRY_Treasure_CountTemplate((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate)
+LeaderLib_Treasure_QRY_CountTemplate((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate)
 THEN
 DB_LLLIB_Treasure_Temp_ItemTemplateAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, 0);
 
 QRY
-LLLIB_QRY_Treasure_CountTemplate((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate)
+LeaderLib_Treasure_QRY_CountTemplate((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate)
 AND
 ObjectIsCharacter(_Object, 1)
 AND
@@ -21,7 +21,7 @@ NOT DB_LLLIB_Treasure_Temp_ItemTemplateAmount((GUIDSTRING)_Object, _TreasureID, 
 DB_LLLIB_Treasure_Temp_ItemTemplateAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _Amount);
 
 QRY
-LLLIB_QRY_Treasure_CountTemplate((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate)
+LeaderLib_Treasure_QRY_CountTemplate((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate)
 AND
 ObjectIsItem(_Object, 1)
 AND
@@ -33,12 +33,12 @@ NOT DB_LLLIB_Treasure_Temp_ItemTemplateAmount((GUIDSTRING)_Object, _TreasureID, 
 DB_LLLIB_Treasure_Temp_ItemTemplateAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _Amount);
 
 QRY
-LLLIB_QRY_Treasure_CountTemplateWithStat((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate, (STRING)_GeneratedStat)
+LeaderLib_Treasure_QRY_CountTemplateWithStat((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate, (STRING)_GeneratedStat)
 THEN
 DB_LLLIB_Treasure_Temp_ItemStatAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _GeneratedStat, 0);
 
 QRY
-LLLIB_QRY_Treasure_CountTemplateWithStat((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate, (STRING)_GeneratedStat)
+LeaderLib_Treasure_QRY_CountTemplateWithStat((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate, (STRING)_GeneratedStat)
 AND
 ObjectIsCharacter(_Object, 1)
 AND
@@ -53,7 +53,7 @@ DB_LLLIB_Treasure_Temp_ItemStatAmount((GUIDSTRING)_Object, _TreasureID, _ItemTem
 LeaderLog_Log("DEBUG", "[LLLIB:Treasure:CountTemplateWithStat] Found item template with stat on character. [",_TreasureID,"]:[",_GeneratedStat,"]:[",_ItemTemplate,"].");
 
 QRY
-LLLIB_QRY_Treasure_CountTemplateWithStat((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate, (STRING)_GeneratedStat)
+LeaderLib_Treasure_QRY_CountTemplateWithStat((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate, (STRING)_GeneratedStat)
 AND
 ObjectIsItem(_Object, 1)
 AND
@@ -63,7 +63,7 @@ ItemTemplateIsInContainer(_Object, _ItemTemplate, _Amount)
 AND
 _Amount > 0
 AND
-LLLIB_QRY_Treasure_PrepareGeneratorDummy((GUIDSTRING)_Object, _ID)
+LeaderLib_Treasure_QRY_PrepareGeneratorDummy((GUIDSTRING)_Object, _ID)
 AND
 DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _ID)
 THEN
@@ -75,7 +75,7 @@ LLLIB_Treasure_Internal_CountItemsOnDummy(_ID, _Dummy, _Object, _TreasureID, _It
 PROC
 LLLIB_Treasure_Internal_CountItemsOnDummy((STRING)_ID, (GUIDSTRING)_Dummy, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate, (STRING)_GeneratedStat)
 AND
-LLLIB_QRY_Treasure_CountTemplateWithStat(_ID, _Dummy, _TreasureID, _ItemTemplate, _GeneratedStat)
+LeaderLib_Treasure_QRY_CountTemplateWithStat(_ID, _Dummy, _TreasureID, _ItemTemplate, _GeneratedStat)
 AND
 DB_LLLIB_Treasure_Temp_ItemStatAmount(_Dummy, _TreasureID, _ItemTemplate, _GeneratedStat, _Amount)
 THEN
@@ -87,14 +87,14 @@ LeaderLog_Log("DEBUG", "[LLLIB:Treasure:CountTemplateWithStat] Counting finished
 
 //REGION QUERIES
 QRY
-LLLIB_QRY_Treasure_SkipAmountCheck((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry)
+LeaderLib_Treasure_QRY_SkipAmountCheck((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry)
 AND
 IsTagged(_Object, "LeaderLib_Treasure_IgnoreAmountLimit", 1)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_QRY_Treasure_SkipAmountCheck((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry)
+LeaderLib_Treasure_QRY_SkipAmountCheck((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry)
 AND
 IsTagged(_Object, "LeaderLib_Treasure_IgnoreAmountLimit", 0)
 AND
@@ -103,7 +103,7 @@ THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_QRY_Treasure_ItemLimitNotMet((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_RequirementID, (INTEGER)_GeneratedAmount, (INTEGER)_CurrentAmount)
+LeaderLib_Treasure_QRY_ItemLimitNotMet((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_RequirementID, (INTEGER)_GeneratedAmount, (INTEGER)_CurrentAmount)
 AND
 _RequirementID != ""
 AND
@@ -116,7 +116,7 @@ THEN
 DB_LLLIB_Treasure_Temp_AmountToCreate(_Object, _ItemEntry, _AmountToCreate);
 
 QRY
-LLLIB_QRY_Treasure_ItemLimitNotMet((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_RequirementID, (INTEGER)_GeneratedAmount, (INTEGER)_CurrentAmount)
+LeaderLib_Treasure_QRY_ItemLimitNotMet((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_RequirementID, (INTEGER)_GeneratedAmount, (INTEGER)_CurrentAmount)
 AND
 _RequirementID != ""
 AND
@@ -129,7 +129,7 @@ THEN
 DB_LLLIB_Treasure_Temp_AmountToCreate(_Object, _ItemEntry, _AmountToCreate);
 
 QRY
-LLLIB_QRY_Treasure_ItemLimitNotMet((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_RequirementID, (INTEGER)_GeneratedAmount, (INTEGER)_CurrentAmount)
+LeaderLib_Treasure_QRY_ItemLimitNotMet((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_RequirementID, (INTEGER)_GeneratedAmount, (INTEGER)_CurrentAmount)
 AND
 _RequirementID == ""
 AND
@@ -140,14 +140,14 @@ THEN
 DB_LLLIB_Treasure_Temp_AmountToCreate(_Object, _ItemEntry, _AmountToCreate);
 
 QRY
-LLLIB_QRY_Treasure_CountedItems((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry)
+LeaderLib_Treasure_QRY_CountedItems((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry)
 AND
 DB_LLLIB_Treasure_Temp_ItemTemplateAmount(_Object, _TreasureID, _ItemEntry,_)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_QRY_Treasure_CountedItems((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry)
+LeaderLib_Treasure_QRY_CountedItems((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry)
 AND
 DB_LLLIB_Treasure_Temp_ItemStatAmount(_Object, _TreasureID, _, _ItemEntry, _)
 THEN

@@ -60,21 +60,21 @@ LeaderLog_Log("TRACE", "[LLLIB:TreasureSystem] Databases registered.");
 
 //REGION GETTERS
 QRY
-LLLIB_QRY_Treasure_GetTreasureID((GUIDSTRING)_Object)
+LeaderLib_Treasure_QRY_GetTreasureID((GUIDSTRING)_Object)
 AND
 DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
 THEN
 NOT DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
 
 QRY
-LLLIB_QRY_Treasure_GetTreasureID((GUIDSTRING)_Object)
+LeaderLib_Treasure_QRY_GetTreasureID((GUIDSTRING)_Object)
 AND
 DB_LLLIB_Treasure_RegisteredObject(_TreasureID, _Object)
 THEN
 DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
 
 QRY
-LLLIB_QRY_Treasure_GetTreasureID((GUIDSTRING)_Object)
+LeaderLib_Treasure_QRY_GetTreasureID((GUIDSTRING)_Object)
 AND
 GetTemplate(_Object, _Template)
 AND
@@ -83,7 +83,7 @@ THEN
 DB_LLLIB_Treasure_Temp_MatchedTreasure((GUIDSTRING)_Object, _TreasureID);
 
 QRY
-LLLIB_QRY_Treasure_GetTreasureID((GUIDSTRING)_Object)
+LeaderLib_Treasure_QRY_GetTreasureID((GUIDSTRING)_Object)
 AND
 DB_LLLIB_Traders_Spawned((CHARACTERGUID)_Object, _TraderID, _Level)
 AND
@@ -92,7 +92,7 @@ THEN
 DB_LLLIB_Treasure_Temp_MatchedTreasure((GUIDSTRING)_Object, _TreasureID);
 
 QRY
-LLLIB_QRY_Treasure_GetTreasureObject((STRING)_TreasureID, (STRING)_GenerationType)
+LeaderLib_Treasure_QRY_GetTreasureObject((STRING)_TreasureID, (STRING)_GenerationType)
 THEN
 LLLIB_Treasure_Internal_GetTreasureObject_ClearPreviousTemp(_TreasureID, _GenerationType);
 
@@ -111,14 +111,14 @@ THEN
 NOT DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
 
 QRY
-LLLIB_QRY_Treasure_GetTreasureObject((STRING)_TreasureID, (STRING)_GenerationType)
+LeaderLib_Treasure_QRY_GetTreasureObject((STRING)_TreasureID, (STRING)_GenerationType)
 AND
 DB_LLLIB_Treasure_RegisteredObject(_TreasureID, _Object)
 THEN
 DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
 
 QRY
-LLLIB_QRY_Treasure_GetTreasureObject((STRING)_TreasureID, (STRING)_GenerationType)
+LeaderLib_Treasure_QRY_GetTreasureObject((STRING)_TreasureID, (STRING)_GenerationType)
 AND
 DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
 AND
@@ -127,7 +127,7 @@ THEN
 DB_LLLIB_Treasure_Temp_MatchedTreasure(_Trader, _TreasureID);
 
 QRY
-LLLIB_QRY_Treasure_GetTreasureObject((STRING)_TreasureID, (STRING)_GenerationType)
+LeaderLib_Treasure_QRY_GetTreasureObject((STRING)_TreasureID, (STRING)_GenerationType)
 AND
 DB_LLLIB_Treasure_RegisteredObjectTemplate(_TreasureID, _Template)
 AND
@@ -158,7 +158,7 @@ NOT DB_LLLIB_Treasure_Temp_MatchTemplate(_TreasureID, _Template);
 */
 
 QRY
-LLLIB_QRY_Treasure_GetTreasureObject((STRING)_TreasureID)
+LeaderLib_Treasure_QRY_GetTreasureObject((STRING)_TreasureID)
 AND
 NOT DB_LLLIB_Treasure_Temp_MatchedTreasure(_, _TreasureID)
 AND
@@ -169,14 +169,14 @@ THEN
 DB_LLLIB_Treasure_Temp_MatchedTreasure((GUIDSTRING)_Object, _TreasureID);
 
 QRY
-LLLIB_QRY_Treasure_GetTreasureByGenerationType((STRING)_GenerationType)
+LeaderLib_Treasure_QRY_GetTreasureByGenerationType((STRING)_GenerationType)
 AND
 DB_LLLIB_Treasure_Temp_GenerationTypeToTreasure(_GenerationType, _TreasureID)
 THEN
 NOT DB_LLLIB_Treasure_Temp_GenerationTypeToTreasure(_GenerationType, _TreasureID);
 
 QRY
-LLLIB_QRY_Treasure_GetTreasureByGenerationType((STRING)_GenerationType)
+LeaderLib_Treasure_QRY_GetTreasureByGenerationType((STRING)_GenerationType)
 AND
 DB_LLLIB_Treasure_TreasureGenerationType(_TreasureID, _GenerationType)
 AND
@@ -185,7 +185,7 @@ THEN
 DB_LLLIB_Treasure_Temp_GenerationTypeToTreasure(_GenerationType, _TreasureID);
 
 QRY
-LLLIB_QRY_Treasure_GetTreasureByGenerationType((STRING)_GenerationType)
+LeaderLib_Treasure_QRY_GetTreasureByGenerationType((STRING)_GenerationType)
 AND
 DB_LLLIB_Treasure_ItemGenerationType(_TreasureID, _ItemEntry, _GenerationType)
 AND
@@ -194,14 +194,14 @@ THEN
 DB_LLLIB_Treasure_Temp_GenerationTypeToTreasure(_GenerationType, _TreasureID);
 
 QRY
-LLLIB_QRY_Treasure_GetTreasureByRequirement((STRING)_RequirementID)
+LeaderLib_Treasure_QRY_GetTreasureByRequirement((STRING)_RequirementID)
 AND
 DB_LLLIB_Treasure_Temp_MatchedRequirementTreasure(_TreasureID, _RequirementID)
 THEN
 NOT DB_LLLIB_Treasure_Temp_MatchedRequirementTreasure(_TreasureID, _RequirementID);
 
 QRY
-LLLIB_QRY_Treasure_GetTreasureByRequirement((STRING)_RequirementID)
+LeaderLib_Treasure_QRY_GetTreasureByRequirement((STRING)_RequirementID)
 AND
 DB_LLLIB_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID)
 AND
@@ -210,7 +210,7 @@ THEN
 DB_LLLIB_Treasure_Temp_MatchedRequirementTreasure(_TreasureID, _RequirementID);
 
 QRY
-LLLIB_QRY_Treasure_GetTreasureByRequirement((STRING)_RequirementID)
+LeaderLib_Treasure_QRY_GetTreasureByRequirement((STRING)_RequirementID)
 AND
 DB_LLLIB_Treasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID)
 AND
@@ -219,7 +219,7 @@ THEN
 DB_LLLIB_Treasure_Temp_MatchedRequirementTreasure(_TreasureID, _RequirementID);
 
 QRY
-LLLIB_QRY_Treasure_GetTreasureByRequirement((STRING)_RequirementID)
+LeaderLib_Treasure_QRY_GetTreasureByRequirement((STRING)_RequirementID)
 AND
 DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel)
 AND
@@ -230,14 +230,14 @@ DB_LLLIB_Treasure_Temp_MatchedRequirementTreasure(_TreasureID, _RequirementID);
 
 //REGION QUERIES_CHECKS
 QRY
-LLLIB_QRY_Treasure_IsRegisteredObject((GUIDSTRING)_Object)
+LeaderLib_Treasure_QRY_IsRegisteredObject((GUIDSTRING)_Object)
 AND
 DB_LLLIB_Treasure_RegisteredObject(_TreasureID, _Object)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_QRY_Treasure_IsRegisteredObject((CHARACTERGUID)_Object)
+LeaderLib_Treasure_QRY_IsRegisteredObject((CHARACTERGUID)_Object)
 AND
 DB_LLLIB_Traders_Spawned(_Object, _TraderID, _Level)
 AND
@@ -246,7 +246,7 @@ THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_QRY_Treasure_IsRegisteredObject((GUIDSTRING)_Object)
+LeaderLib_Treasure_QRY_IsRegisteredObject((GUIDSTRING)_Object)
 AND
 NOT DB_LLLIB_Treasure_RegisteredObject(_, _Object)
 AND
@@ -257,34 +257,34 @@ THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_QRY_Treasure_GenerationTypeIsDefault("DEFAULT")
+LeaderLib_Treasure_QRY_GenerationTypeIsDefault("DEFAULT")
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_QRY_Treasure_GenerationTypeIsDefault("MANUAL")
+LeaderLib_Treasure_QRY_GenerationTypeIsDefault("MANUAL")
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_QRY_Treasure_GenerationTypeIsDefault("OPENED")
+LeaderLib_Treasure_QRY_GenerationTypeIsDefault("OPENED")
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_QRY_Treasure_GenerationTypeIsDefault("TRADE_GENERATION_END")
+LeaderLib_Treasure_QRY_GenerationTypeIsDefault("TRADE_GENERATION_END")
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_QRY_Treasure_ItemCanGenerateWithType((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_GenerationType)
+LeaderLib_Treasure_QRY_ItemCanGenerateWithType((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_GenerationType)
 AND
 DB_LLLIB_Treasure_ItemGenerationType(_TreasureID, _ItemEntry, _GenerationType)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_QRY_Treasure_ItemCanGenerateWithType((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_GenerationType)
+LeaderLib_Treasure_QRY_ItemCanGenerateWithType((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_GenerationType)
 AND
 NOT DB_LLLIB_Treasure_ItemGenerationType(_TreasureID, _ItemEntry, _)
 AND
@@ -293,34 +293,34 @@ THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_QRY_Treasure_ItemCanGenerateWithType((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_GenerationType)
+LeaderLib_Treasure_QRY_ItemCanGenerateWithType((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_GenerationType)
 AND
 NOT DB_LLLIB_Treasure_ItemGenerationType(_TreasureID, _ItemEntry, _)
 AND
 NOT DB_LLLIB_Treasure_TreasureGenerationType(_TreasureID, _GenerationType)
 AND
-LLLIB_QRY_Treasure_GenerationTypeIsDefault(_GenerationType)
+LeaderLib_Treasure_QRY_GenerationTypeIsDefault(_GenerationType)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_QRY_Treasure_ItemCanGenerate((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_RequirementID, "MANUAL")
+LeaderLib_Treasure_QRY_ItemCanGenerate((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_RequirementID, "MANUAL")
 AND
 LeaderLib_Requirements_QRY_AllMet(_RequirementID)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_QRY_Treasure_ItemCanGenerate((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_RequirementID, (STRING)_GenerationType)
+LeaderLib_Treasure_QRY_ItemCanGenerate((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_RequirementID, (STRING)_GenerationType)
 AND
-LLLIB_QRY_Treasure_ItemCanGenerateWithType(_TreasureID, _ItemEntry, _GenerationType)
+LeaderLib_Treasure_QRY_ItemCanGenerateWithType(_TreasureID, _ItemEntry, _GenerationType)
 AND
 LeaderLib_Requirements_QRY_AllMet(_RequirementID)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_QRY_Treasure_ObjectCanStartGeneration((GUIDSTRING)_Object)
+LeaderLib_Treasure_QRY_ObjectCanStartGeneration((GUIDSTRING)_Object)
 AND
 ObjectGetFlag(_Object, "LLLIB_Treasure_GenerationEnded", 0)
 AND
@@ -329,28 +329,28 @@ THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_QRY_Treasure_TreasureHasGenerationType((STRING)_TreasureID, (STRING)_GenerationType)
+LeaderLib_Treasure_QRY_TreasureHasGenerationType((STRING)_TreasureID, (STRING)_GenerationType)
 AND
 DB_LLLIB_Treasure_TreasureGenerationType(_TreasureID, _GenerationType)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_QRY_Treasure_TreasureHasGenerationType((STRING)_TreasureID, (STRING)_GenerationType)
+LeaderLib_Treasure_QRY_TreasureHasGenerationType((STRING)_TreasureID, (STRING)_GenerationType)
 AND
 DB_LLLIB_Treasure_ItemGenerationType(_TreasureID, _, _GenerationType)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_QRY_Treasure_TreasureMatch((GUIDSTRING)_Object, (STRING)_TreasureID)
+LeaderLib_Treasure_QRY_TreasureMatch((GUIDSTRING)_Object, (STRING)_TreasureID)
 AND
 DB_LLLIB_Treasure_RegisteredObject(_TreasureID, _Object)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_QRY_Treasure_TreasureMatch((GUIDSTRING)_Object, (STRING)_TreasureID)
+LeaderLib_Treasure_QRY_TreasureMatch((GUIDSTRING)_Object, (STRING)_TreasureID)
 AND
 GetTemplate(_Object, _Template)
 AND
@@ -359,7 +359,7 @@ THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_QRY_Treasure_TreasureMatch((GUIDSTRING)_Object, (STRING)_TreasureID)
+LeaderLib_Treasure_QRY_TreasureMatch((GUIDSTRING)_Object, (STRING)_TreasureID)
 AND
 DB_LLLIB_Traders_Spawned((CHARACTERGUID)_Object, _TraderID, _Level)
 AND
@@ -371,7 +371,7 @@ DB_NOOP(1);
 //REGION TREASURE_TABLE_QUERIES
 //Default to 1
 QRY
-LLLIB_Treasure_QRY_TreaureTableLimitReached((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_TreasureTable)
+LeaderLib_Treasure_QRY_TreaureTableLimitReached((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_TreasureTable)
 AND
 NOT DB_LLLIB_Treasure_TreasureTableLimit(_TreasureID, _TreasureTable, _)
 AND
@@ -380,7 +380,7 @@ THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_Treasure_QRY_TreaureTableLimitReached((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_TreasureTable)
+LeaderLib_Treasure_QRY_TreaureTableLimitReached((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_TreasureTable)
 AND
 DB_LLLIB_Treasure_TreasureTableLimit(_TreasureID, _TreasureTable, _Limit)
 AND
@@ -397,9 +397,9 @@ LLLIB_Treasure_GenerateItems((STRING)_ID, (GUIDSTRING)_Object, (STRING)_Treasure
 AND
 DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel)
 AND
-NOT LLLIB_Treasure_QRY_TreaureTableLimitReached(_Object, _TreasureID, _TreasureTable)
+NOT LeaderLib_Treasure_QRY_TreaureTableLimitReached(_Object, _TreasureID, _TreasureTable)
 AND
-LLLIB_QRY_Treasure_ItemCanGenerate(_TreasureID, _TreasureTable, _RequirementID, _GenerationType)
+LeaderLib_Treasure_QRY_ItemCanGenerate(_TreasureID, _TreasureTable, _RequirementID, _GenerationType)
 AND
 _UsePartyLevel > 0
 AND
@@ -424,9 +424,9 @@ LLLIB_Treasure_GenerateItems((STRING)_ID, (GUIDSTRING)_Object, (STRING)_Treasure
 AND
 DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel)
 AND
-NOT LLLIB_Treasure_QRY_TreaureTableLimitReached(_Object, _TreasureID, _TreasureTable)
+NOT LeaderLib_Treasure_QRY_TreaureTableLimitReached(_Object, _TreasureID, _TreasureTable)
 AND
-LLLIB_QRY_Treasure_ItemCanGenerate(_TreasureID, _TreasureTable, _RequirementID, _GenerationType)
+LeaderLib_Treasure_QRY_ItemCanGenerate(_TreasureID, _TreasureTable, _RequirementID, _GenerationType)
 AND
 _UsePartyLevel <= 0
 AND
@@ -504,7 +504,7 @@ NOT DB_LLLIB_Treasure_ItemDoneGenerating(_Object, _TreasureID, _ItemEntry)
 AND
 DB_LLLIB_Treasure_Temp_TreasureQueue_Settings(_ID, _TreasureQueueID)
 THEN
-LLLIB_Array_AddToArray(_TreasureQueueID, _ItemEntry);
+LeaderLib_Array_AddToArray(_TreasureQueueID, _ItemEntry);
 DB_LLLIB_Treasure_Temp_TreasureQueue_Entries(_ID, _Object, _TreasureID, _ItemEntry, _Amount, _RequirementID, _GenerationType, _IsStat);
 
 PROC
@@ -559,7 +559,7 @@ LLLIB_Treasure_Internal_StartTreasureQueueWithRates((STRING)_ID, (STRING)_Treasu
 AND
 _TickRate <= 0
 THEN
-LLLIB_Array_ClearArray(_TreasureQueueID);
+LeaderLib_Array_ClearArray(_TreasureQueueID);
 NOT DB_LLLIB_Treasure_Temp_TreasureQueue_Settings(_ID, _TreasureQueueID);
 LeaderLib_SendEvent("LLLIB_Events_OnTreasureQueueComplete");
 
@@ -652,7 +652,7 @@ DB_LLLIB_Treasure_Temp_GenerateItem(_ID, _Object, _TreasureID, _ItemEntry, 0, _A
 PROC
 LLLIB_Treasure_Internal_ProcessItemEntry((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Amount, (STRING)_RequirementID, (STRING)_GenerationType, (INTEGER)_IsStat)
 AND
-LLLIB_QRY_Treasure_ItemCanGenerate(_TreasureID, _ItemEntry, _RequirementID, _GenerationType)
+LeaderLib_Treasure_QRY_ItemCanGenerate(_TreasureID, _ItemEntry, _RequirementID, _GenerationType)
 THEN
 LeaderLog_Log("TRACE", "[LLLIB:TreasureSystem:ProcessItemEntry] Starting generation for [",_ID,"][",_ItemEntry,"].");
 LLLIB_Treasure_Internal_StartItemGeneration(_ID, _Object, _TreasureID, _ItemEntry, _Amount, _RequirementID, _IsStat);
@@ -660,7 +660,7 @@ LLLIB_Treasure_Internal_StartItemGeneration(_ID, _Object, _TreasureID, _ItemEntr
 PROC
 LLLIB_Treasure_Internal_ProcessItemEntry((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Amount, (STRING)_RequirementID, (STRING)_GenerationType, (INTEGER)_IsStat)
 AND
-NOT LLLIB_QRY_Treasure_ItemCanGenerate(_TreasureID, _ItemEntry, _RequirementID, _GenerationType)
+NOT LeaderLib_Treasure_QRY_ItemCanGenerate(_TreasureID, _ItemEntry, _RequirementID, _GenerationType)
 THEN
 LeaderLog_Log("TRACE", "[LLLIB:TreasureSystem:ProcessItemEntry] Skipping generation for [",_ID,"]. Treasure [",_TreasureID,"] does not pass the requirements.");
 LeaderLib_SendEvent("LLLIB_Events_OnItemGenerationComplete");
@@ -668,7 +668,7 @@ LeaderLib_SendEvent("LLLIB_Events_OnItemGenerationComplete");
 PROC
 LLLIB_Treasure_Internal_StartItemGeneration((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Amount, (STRING)_RequirementID, (INTEGER)_IsStat)
 AND
-LLLIB_QRY_Treasure_SkipAmountCheck(_Object, _TreasureID, _ItemEntry)
+LeaderLib_Treasure_QRY_SkipAmountCheck(_Object, _TreasureID, _ItemEntry)
 THEN
 LeaderLog_Log("TRACE", "[LLLIB:TreasureSystem:GenerateItems] Skipping amount check and generating item [",_TreasureID,"]:[",_ItemEntry,"].");
 ObjectSetFlag(_Object, "LLLIB_Treasure_IsGeneratingTreasure", 0);
@@ -677,16 +677,16 @@ DB_LLLIB_Treasure_Temp_GenerateItem(_ID, _Object, _TreasureID, _ItemEntry, 0, _A
 PROC
 LLLIB_Treasure_Internal_StartItemGeneration((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Amount, (STRING)_RequirementID, 0)
 AND
-NOT LLLIB_QRY_Treasure_SkipAmountCheck(_Object, _TreasureID, _ItemEntry)
+NOT LeaderLib_Treasure_QRY_SkipAmountCheck(_Object, _TreasureID, _ItemEntry)
 AND
-LLLIB_QRY_Treasure_CountTemplate(_ID, _Object, _TreasureID, _ItemEntry)
+LeaderLib_Treasure_QRY_CountTemplate(_ID, _Object, _TreasureID, _ItemEntry)
 THEN
 DB_LLLIB_Treasure_Temp_Queue_CountTemplate(_ID, _Object, _TreasureID, _ItemEntry, _Amount, _RequirementID);
 
 PROC
 LLLIB_Treasure_Internal_StartItemGeneration((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Amount, (STRING)_RequirementID, 1)
 AND
-NOT LLLIB_QRY_Treasure_SkipAmountCheck(_Object, _TreasureID, _ItemEntry)
+NOT LeaderLib_Treasure_QRY_SkipAmountCheck(_Object, _TreasureID, _ItemEntry)
 AND
 NOT DB_LLLIB_Treasure_StatToTemplate(_ItemEntry, _)
 THEN
@@ -697,16 +697,16 @@ DB_LLLIB_Treasure_Temp_GenerateItem(_ID, _Object, _TreasureID, _ItemEntry, 0, _A
 PROC
 LLLIB_Treasure_Internal_StartItemGeneration((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Amount, (STRING)_RequirementID, 1)
 AND
-NOT LLLIB_QRY_Treasure_SkipAmountCheck(_Object, _TreasureID, _ItemEntry)
+NOT LeaderLib_Treasure_QRY_SkipAmountCheck(_Object, _TreasureID, _ItemEntry)
 AND
 DB_LLLIB_Treasure_StatToTemplate(_ItemEntry, _ItemTemplate)
 AND
-LLLIB_QRY_Treasure_CountTemplate(_ID, _Object, _TreasureID, _ItemTemplate)
+LeaderLib_Treasure_QRY_CountTemplate(_ID, _Object, _TreasureID, _ItemTemplate)
 THEN
 DB_LLLIB_Treasure_Temp_Queue_CountStat(_ID, _Object, _TreasureID, _ItemTemplate, _ItemEntry, _Amount, _RequirementID);
 /*
 AND
-LLLIB_QRY_Treasure_CountTemplateWithStat(_ID, _Object, _TreasureID, _ItemTemplate, _ItemEntry)
+LeaderLib_Treasure_QRY_CountTemplateWithStat(_ID, _Object, _TreasureID, _ItemTemplate, _ItemEntry)
 THEN
 DB_LLLIB_Treasure_Temp_Queue_CountStat(_ID, _Object, _TreasureID, _ItemTemplate, _ItemEntry, _Amount, _RequirementID);
 */
@@ -714,9 +714,9 @@ DB_LLLIB_Treasure_Temp_Queue_CountStat(_ID, _Object, _TreasureID, _ItemTemplate,
 PROC
 LLLIB_Treasure_Internal_StartItemGeneration((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Amount, (STRING)_RequirementID, (INTEGER)_IsStat)
 AND
-NOT LLLIB_QRY_Treasure_SkipAmountCheck(_Object, _TreasureID, _ItemEntry)
+NOT LeaderLib_Treasure_QRY_SkipAmountCheck(_Object, _TreasureID, _ItemEntry)
 AND
-LLLIB_QRY_Treasure_CountedItems(_Object, _TreasureID, _ItemEntry)
+LeaderLib_Treasure_QRY_CountedItems(_Object, _TreasureID, _ItemEntry)
 THEN
 LeaderLog_Log("TRACE", "[LLLIB:Treasure:StartItemGeneration] Object counting complete [",_TreasureID,"]:[",_ItemEntry,"].");
 LLLIB_Treasure_Internal_CountingComplete(_ID, _Object, _TreasureID, _ItemEntry);
@@ -799,7 +799,7 @@ DB_LLLIB_Treasure_ItemMaxAmount(_TreasureID, _ItemEntry, _MaxAmount)
 AND
 _Amount >= _MaxAmount
 AND
-NOT LLLIB_Treasure_QRY_CanKeepGenerating(_TreasureID, _ItemEntry)
+NOT LeaderLib_Treasure_QRY_CanKeepGenerating(_TreasureID, _ItemEntry)
 AND
 GetTemplate(_Object, _Template)
 THEN
@@ -807,7 +807,7 @@ LeaderLog_Log("TRACE", "[LLLIB:Treasure:LLLIB_Treasure_Internal_FinishIfMaxAmoun
 DB_LLLIB_Treasure_ItemDoneGenerating(_Object, _TreasureID, _ItemEntry);
 
 QRY
-LLLIB_Treasure_QRY_CanKeepGenerating((STRING)_TreasureID, (STRING)_ItemEntry)
+LeaderLib_Treasure_QRY_CanKeepGenerating((STRING)_TreasureID, (STRING)_ItemEntry)
 AND
 DB_LLLIB_Treasure_KeepGeneratingTreasure(_TreasureID)
 AND
@@ -816,7 +816,7 @@ THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_Treasure_QRY_CanKeepGenerating((STRING)_TreasureID, (STRING)_ItemEntry)
+LeaderLib_Treasure_QRY_CanKeepGenerating((STRING)_TreasureID, (STRING)_ItemEntry)
 AND
 NOT DB_LLLIB_Treasure_KeepGeneratingTreasure(_TreasureID)
 AND
@@ -837,7 +837,7 @@ DB_LeaderLog_Temp_CombinedString(_DummyID)
 AND
 LeaderLog_QRY_ClearCombinedString(_DummyID)
 AND
-LLLIB_QRY_Treasure_PrepareGeneratorDummy(_Object, _DummyID)
+LeaderLib_Treasure_QRY_PrepareGeneratorDummy(_Object, _DummyID)
 AND
 DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID)
 THEN
@@ -870,7 +870,7 @@ ItemGetAmount(_Item, _Amount)
 THEN
 NOT DB_LLLIB_Treasure_Temp_DummyTarget(_Object, _Dummy, _TreasureID, _ItemEntry, _DummyID, _QueueEntryID);
 //LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:StatItem] Stat item [",_ItemEntry,"] sent to target.");
-LLLIB_Treasure_ResetDummy(_Dummy);
+LeaderLib_Treasure_ResetDummy(_Dummy);
 SetVarFixedString(_Dummy, "LeaderLib_CreateByStat_NextStatToCreate", "");
 
 LLLIB_Treasure_AdjustItemLevel(_Item, _TreasureID, _ItemEntry);
@@ -893,14 +893,14 @@ LLLIB_Treasure_Internal_IncrementGeneratedItem(_ID, _Object, _TreasureID, _ItemE
 
 //REGION GENERATION_QUEUE_QUERIES
 QRY
-LLLIB_Treasure_QRY_StillInQueue((GUIDSTRING)_Object)
+LeaderLib_Treasure_QRY_StillInQueue((GUIDSTRING)_Object)
 AND
 DB_LLLIB_Treasure_Temp_ItemGenerationQueue(_, _Object, _, _)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_Treasure_QRY_StillGenerating((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID)
+LeaderLib_Treasure_QRY_StillGenerating((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID)
 AND
 DB_LLLIB_Treasure_Temp_GenerateItem(_ID, _Object, _TreasureID, _ItemEntry, _CreatedAmount, _MaxAmount, _IsStat)
 THEN
@@ -925,18 +925,18 @@ DB_LeaderLog_Temp_CombinedString(_ID)
 THEN
 NOT DB_LeaderLog_Temp_CombinedString(_ID);
 LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:AddToGenerationQueue] Added [",_ID,"] to generation queue.");
-LLLIB_Array_AddToArray("LLLIB_ItemGenerationQueue", _ID);
+LeaderLib_Array_AddToArray("LLLIB_ItemGenerationQueue", _ID);
 DB_LLLIB_Treasure_Temp_ItemGenerationQueue(_ID, _Object, _TreasureID, _GenerationType);
 
 PROC
-LLLIB_Treasure_StartQueue()
+LeaderLib_Treasure_StartQueue()
 AND
 LeaderLib_Array_QRY_EmptyLength("LLLIB_ItemGenerationQueue")
 THEN
 LeaderLib_SendEvent("LLLIB_Events_OnGenerationQueueComplete");
 
 PROC
-LLLIB_Treasure_StartQueue()
+LeaderLib_Treasure_StartQueue()
 AND
 DB_LLLIB_Array_Length("LLLIB_ItemGenerationQueue", _Length)
 AND
@@ -948,11 +948,11 @@ DB_LLLIB_Array_Data("LLLIB_ItemGenerationQueue", _Index, _ID)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:StartQueue] Single entry detected. Skipping queue and generating [",_ID,"] directly.");
 LLLIB_Treasure_Internal_ProcessQueueItem(_ID);
-LLLIB_Array_RemoveFromArray("LLLIB_ItemGenerationQueue", _ID);
+LeaderLib_Array_RemoveFromArray("LLLIB_ItemGenerationQueue", _ID);
 LeaderLib_SendEvent("LLLIB_Events_OnGenerationQueueComplete");
 
 PROC
-LLLIB_Treasure_StartQueue()
+LeaderLib_Treasure_StartQueue()
 AND
 DB_LLLIB_Array_Length("LLLIB_ItemGenerationQueue", _Length)
 AND
@@ -986,18 +986,18 @@ NOT DB_LLLIB_Treasure_Temp_CurrentTreasure(_ID, _Object, _TreasureID);
 PROC
 LLLIB_Treasure_Internal_MarkAsFinished((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID)
 AND
-NOT LLLIB_Treasure_QRY_StillInQueue(_Object)
+NOT LeaderLib_Treasure_QRY_StillInQueue(_Object)
 AND
-NOT LLLIB_Treasure_QRY_StillGenerating(_ID, _Object, _TreasureID)
+NOT LeaderLib_Treasure_QRY_StillGenerating(_ID, _Object, _TreasureID)
 THEN
-LLLIB_Treasure_ResetDummyByID(_ID);
+LeaderLib_Treasure_ResetDummyByID(_ID);
 LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:MarkAsFinished] Generation finished for [",_ID,"]. Setting 'LLLIB_Treasure_GenerationSuccessful' flag to true.");
 ObjectSetFlag(_Object, "LLLIB_Treasure_GenerationSuccessful");
 
 PROC
 LLLIB_Treasure_Internal_MarkAsFinished((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID)
 AND
-NOT LLLIB_Treasure_QRY_StillGenerating(_ID, _Object, _TreasureID)
+NOT LeaderLib_Treasure_QRY_StillGenerating(_ID, _Object, _TreasureID)
 THEN
 LLLIB_Treasure_Internal_RemoveFromJustRegistered((CHARACTERGUID)_Object, _TreasureID);
 LLLIB_Treasure_Internal_OnGenerationFinished(_ID, _Object);
@@ -1054,7 +1054,7 @@ LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:OnTreasureQueueComplete] Treasure 
 IF
 StoryEvent(_, "LeaderLib_Commands_StartTreasureGeneration")
 THEN
-LLLIB_Treasure_StartQueue();
+LeaderLib_Treasure_StartQueue();
 
 IF
 StoryEvent(_, "LLLIB_Events_Treasure_ProcessTreasure")
@@ -1149,9 +1149,9 @@ DB_LLLIB_Treasure_Temp_Queue_CountTemplate(_ID, _Object, _TreasureID, _ItemEntry
 AND
 DB_LLLIB_Treasure_Temp_ItemTemplateAmount(_Object, _TreasureID, _ItemEntry, _CurrentAmount)
 AND
-LLLIB_QRY_Treasure_Debug_CompareAmounts(_TreasureID, _ItemEntry, _GeneratedAmount, _CurrentAmount)
+LeaderLib_Treasure_QRY_Debug_CompareAmounts(_TreasureID, _ItemEntry, _GeneratedAmount, _CurrentAmount)
 AND
-LLLIB_QRY_Treasure_ItemLimitNotMet(_Object, _TreasureID, _ItemEntry, _RequirementID, _GeneratedAmount, _CurrentAmount)
+LeaderLib_Treasure_QRY_ItemLimitNotMet(_Object, _TreasureID, _ItemEntry, _RequirementID, _GeneratedAmount, _CurrentAmount)
 AND
 DB_LLLIB_Treasure_Temp_AmountToCreate(_Object, _ItemEntry, _AmountToCreate)
 THEN
@@ -1170,7 +1170,7 @@ AND
 DB_LLLIB_Treasure_Temp_ItemTemplateAmount(_Object, _TreasureID, _ItemTemplate, _CurrentAmount)
 //DB_LLLIB_Treasure_Temp_ItemStatAmount(_Object, _TreasureID, _ItemTemplate, _ItemEntry, _CurrentAmount)
 AND
-LLLIB_QRY_Treasure_ItemLimitNotMet(_Object, _TreasureID, _ItemEntry, _RequirementID, _GeneratedAmount, _CurrentAmount)
+LeaderLib_Treasure_QRY_ItemLimitNotMet(_Object, _TreasureID, _ItemEntry, _RequirementID, _GeneratedAmount, _CurrentAmount)
 AND
 DB_LLLIB_Treasure_Temp_AmountToCreate(_Object, _ItemEntry, _AmountToCreate)
 THEN
@@ -1190,7 +1190,7 @@ ItemAddedToCharacter(_Item, _Object)
 AND
 ObjectGetFlag(_Object, "LLLIB_Treasure_IsGeneratingTreasure", 1)
 AND
-LLLIB_QRY_Treasure_GetTreasureID((GUIDSTRING)_Object)
+LeaderLib_Treasure_QRY_GetTreasureID((GUIDSTRING)_Object)
 AND
 DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
 THEN
@@ -1201,7 +1201,7 @@ ItemAddedToContainer(_Item, _Object)
 AND
 ObjectGetFlag(_Object, "LLLIB_Treasure_IsGeneratingTreasure", 1)
 AND
-LLLIB_QRY_Treasure_GetTreasureID((GUIDSTRING)_Object)
+LeaderLib_Treasure_QRY_GetTreasureID((GUIDSTRING)_Object)
 AND
 DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
 THEN
@@ -1375,7 +1375,7 @@ DB_LLLIB_Treasure_ItemRunes(_TreasureID, _ItemEntry, _Rune, _Chance)
 AND
 DB_LLLIB_Treaasure_Temp_RuneSlot(_Item, _Slot)
 AND
-LLLIB_Treasure_QRY_InsertRuneInSlot(_Item, _Rune, _Slot, _Chance)
+LeaderLib_Treasure_QRY_InsertRuneInSlot(_Item, _Rune, _Slot, _Chance)
 AND
 IntegerSum(_Slot, 1, _NextSlot)
 THEN
@@ -1383,7 +1383,7 @@ NOT DB_LLLIB_Treaasure_Temp_RuneSlot(_Item, _Slot);
 DB_LLLIB_Treaasure_Temp_RuneSlot(_Item, _NextSlot);
 
 QRY
-LLLIB_Treasure_QRY_InsertRuneInSlot((ITEMGUID)_Item, (STRING)_Rune, (INTEGER)_Slot, (INTEGER)_Chance)
+LeaderLib_Treasure_QRY_InsertRuneInSlot((ITEMGUID)_Item, (STRING)_Rune, (INTEGER)_Slot, (INTEGER)_Chance)
 AND
 NOT ItemGetRuneItemTemplate(_Item, _Slot, _)
 AND
@@ -1419,11 +1419,11 @@ CharacterUsedItem(_, _Object)
 AND
 IsTagged(_Object, "LLLIB_Item_IgnoreOpened", 0)
 AND
-LLLIB_QRY_Treasure_ObjectCanStartGeneration((GUIDSTRING)_Object)
+LeaderLib_Treasure_QRY_ObjectCanStartGeneration((GUIDSTRING)_Object)
 AND
 ItemIsContainer((ITEMGUID)_Object, 1)
 AND
-LLLIB_QRY_Treasure_GetTreasureID((GUIDSTRING)_Object)
+LeaderLib_Treasure_QRY_GetTreasureID((GUIDSTRING)_Object)
 AND
 DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
 //AND
@@ -1439,7 +1439,7 @@ LeaderLib_Helper_QRY_ClearObjectFlag(_Object, "LeaderLib_Treasure_GenerateNow")
 AND
 ObjectGetFlag(_Object, "LLLIB_Treasure_IsGeneratingTreasure", 0)
 AND
-LLLIB_QRY_Treasure_GetTreasureID(_Object)
+LeaderLib_Treasure_QRY_GetTreasureID(_Object)
 AND
 DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
 THEN
@@ -1454,13 +1454,13 @@ DB_LLLIB_Treasure_RegisteredGenerationTypes("TRADE_GENERATION_START")
 AND
 IsTagged(_Object, "LeaderLib_Trader_IgnoreTradeGeneration", 0)
 AND
-LLLIB_QRY_Treasure_ObjectCanStartGeneration((GUIDSTRING)_Object)
+LeaderLib_Treasure_QRY_ObjectCanStartGeneration((GUIDSTRING)_Object)
 AND
-LLLIB_QRY_Treasure_GetTreasureID(_Object)
+LeaderLib_Treasure_QRY_GetTreasureID(_Object)
 AND
 DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
 AND
-LLLIB_QRY_Treasure_TreasureHasGenerationType(_TreasureID, "TRADE_GENERATION_START")
+LeaderLib_Treasure_QRY_TreasureHasGenerationType(_TreasureID, "TRADE_GENERATION_START")
 THEN
 LeaderLib_Treasure_AddToGenerationQueue(_Object, _TreasureID, "TRADE_GENERATION_START");
 NOT DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
@@ -1470,14 +1470,14 @@ TradeGenerationEnded(_Object)
 AND
 IsTagged(_Object, "LeaderLib_Trader_IgnoreTradeGeneration", 0)
 AND
-LLLIB_QRY_Treasure_ObjectCanStartGeneration((GUIDSTRING)_Object)
+LeaderLib_Treasure_QRY_ObjectCanStartGeneration((GUIDSTRING)_Object)
 AND
-LLLIB_QRY_Treasure_GetTreasureID(_Object)
+LeaderLib_Treasure_QRY_GetTreasureID(_Object)
 AND
 DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
 //AND
 //Skip this check since it's the default generation for traders
-//LLLIB_QRY_Treasure_TreasureHasGenerationType(_TreasureID, "TRADE_GENERATION_END")
+//LeaderLib_Treasure_QRY_TreasureHasGenerationType(_TreasureID, "TRADE_GENERATION_END")
 THEN
 LeaderLib_Treasure_AddToGenerationQueue(_Object, _TreasureID, "TRADE_GENERATION_END");
 NOT DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
@@ -1489,13 +1489,13 @@ DB_LLLIB_Treasure_RegisteredGenerationTypes("DIALOG_STARTED")
 AND
 DialogGetInvolvedNPC(_Instance, 1, _Object)
 AND
-LLLIB_QRY_Treasure_ObjectCanStartGeneration(_Object)
+LeaderLib_Treasure_QRY_ObjectCanStartGeneration(_Object)
 AND
-LLLIB_QRY_Treasure_GetTreasureID(_Object)
+LeaderLib_Treasure_QRY_GetTreasureID(_Object)
 AND
 DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
 AND
-LLLIB_QRY_Treasure_TreasureHasGenerationType(_TreasureID, "DIALOG_STARTED")
+LeaderLib_Treasure_QRY_TreasureHasGenerationType(_TreasureID, "DIALOG_STARTED")
 THEN
 LeaderLib_Treasure_AddToGenerationQueue(_Object, _TreasureID, "DIALOG_STARTED");
 NOT DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
@@ -1507,13 +1507,13 @@ DB_LLLIB_Treasure_RegisteredGenerationTypes("DIALOG_ENDED")
 AND
 DialogGetInvolvedNPC(_Instance, 1, _Object)
 AND
-LLLIB_QRY_Treasure_ObjectCanStartGeneration(_Object)
+LeaderLib_Treasure_QRY_ObjectCanStartGeneration(_Object)
 AND
-LLLIB_QRY_Treasure_GetTreasureID(_Object)
+LeaderLib_Treasure_QRY_GetTreasureID(_Object)
 AND
 DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
 AND
-LLLIB_QRY_Treasure_TreasureHasGenerationType(_TreasureID, "DIALOG_ENDED")
+LeaderLib_Treasure_QRY_TreasureHasGenerationType(_TreasureID, "DIALOG_ENDED")
 THEN
 LeaderLib_Treasure_AddToGenerationQueue(_Object, _TreasureID, "DIALOG_ENDED");
 NOT DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
@@ -1557,11 +1557,11 @@ DB_LLLIB_Treasure_Temp_LevelLoaded(_Level)
 AND
 DB_LLLIB_Treasure_RegisteredGenerationTypes("LEVEL_LOADED")
 AND
-LLLIB_QRY_Treasure_GetTreasureByGenerationType("LEVEL_LOADED")
+LeaderLib_Treasure_QRY_GetTreasureByGenerationType("LEVEL_LOADED")
 AND
 DB_LLLIB_Treasure_Temp_GenerationTypeToTreasure("LEVEL_LOADED", _TreasureID)
 AND
-LLLIB_QRY_Treasure_GetTreasureObject(_TreasureID, "LEVEL_LOADED")
+LeaderLib_Treasure_QRY_GetTreasureObject(_TreasureID, "LEVEL_LOADED")
 AND
 DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
 THEN
@@ -1590,11 +1590,11 @@ TimerFinished("LLLIB_Timers_Treasure_LevelUpTreasureTimer")
 AND
 DB_LLLIB_Treasure_RegisteredGenerationTypes("PARTY_LEVELED_UP")
 AND
-LLLIB_QRY_Treasure_GetTreasureByGenerationType("PARTY_LEVELED_UP")
+LeaderLib_Treasure_QRY_GetTreasureByGenerationType("PARTY_LEVELED_UP")
 AND
 DB_LLLIB_Treasure_Temp_GenerationTypeToTreasure("PARTY_LEVELED_UP", _TreasureID)
 AND
-LLLIB_QRY_Treasure_GetTreasureObject(_TreasureID, "PARTY_LEVELED_UP")
+LeaderLib_Treasure_QRY_GetTreasureObject(_TreasureID, "PARTY_LEVELED_UP")
 AND
 DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
 AND
@@ -1645,13 +1645,13 @@ LLLIB_Treasure_Internal_GenerateFromRequirement((STRING)_RequirementID)
 AND
 DB_LLLIB_Treasure_RegisteredGenerationTypes("REQUIREMENT_UNLOCKED")
 AND
-LLLIB_QRY_Treasure_GetTreasureByRequirement(_RequirementID)
+LeaderLib_Treasure_QRY_GetTreasureByRequirement(_RequirementID)
 AND
 DB_LLLIB_Treasure_Temp_MatchedRequirementTreasure(_TreasureID, _RequirementID)
 AND
-LLLIB_QRY_Treasure_TreasureHasGenerationType(_TreasureID, "REQUIREMENT_UNLOCKED")
+LeaderLib_Treasure_QRY_TreasureHasGenerationType(_TreasureID, "REQUIREMENT_UNLOCKED")
 AND
-LLLIB_QRY_Treasure_GetTreasureObject(_TreasureID, "REQUIREMENT_UNLOCKED")
+LeaderLib_Treasure_QRY_GetTreasureObject(_TreasureID, "REQUIREMENT_UNLOCKED")
 AND
 DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
 THEN
@@ -1669,14 +1669,14 @@ NOT DB_LLLIB_Treasure_Temp_MatchedRequirementTreasure(_TreasureID, _RequirementI
 
 //REGION TREASURE_FLAG_GEN
 QRY
-LLLIB_QRY_Treasure_IsGenerationFlag((STRING)_Flag, (STRING)_FlagType)
+LeaderLib_Treasure_QRY_IsGenerationFlag((STRING)_Flag, (STRING)_FlagType)
 AND
 DB_LLLIB_Treasure_Temp_FlagToTreasure(_Flag, _FlagType, _TreasureID)
 THEN
 NOT DB_LLLIB_Treasure_Temp_FlagToTreasure(_Flag, _FlagType, _TreasureID);
 
 QRY
-LLLIB_QRY_Treasure_IsGenerationFlag((STRING)_Flag, (STRING)_FlagType)
+LeaderLib_Treasure_QRY_IsGenerationFlag((STRING)_Flag, (STRING)_FlagType)
 AND
 DB_LLLIB_Treasure_ItemGenerationFlag(_TreasureID, _ItemEntry, _Flag, _FlagType)
 AND
@@ -1689,11 +1689,11 @@ LLLIB_Treasure_Internal_GenerateByFlag((STRING)_Flag, (STRING)_FlagType)
 AND
 DB_LLLIB_Treasure_RegisteredGenerationTypes("FLAG")
 AND
-LLLIB_QRY_Treasure_IsGenerationFlag(_Flag, _FlagType)
+LeaderLib_Treasure_QRY_IsGenerationFlag(_Flag, _FlagType)
 AND
 DB_LLLIB_Treasure_Temp_FlagToTreasure(_Flag, _FlagType, _TreasureID)
 AND
-LLLIB_QRY_Treasure_GetTreasureObject(_TreasureID, "FLAG")
+LeaderLib_Treasure_QRY_GetTreasureObject(_TreasureID, "FLAG")
 AND
 DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
 THEN
@@ -1734,7 +1734,7 @@ NOT DB_LLLIB_Treasure_ItemDoneGenerating(_Object, _TreasureID, _ItemEntry);
 //REGION DEBUG
 /*
 QRY
-LLLIB_QRY_Treasure_Debug_CompareAmounts((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_GeneratedAmount, (INTEGER)_CurrentAmount)
+LeaderLib_Treasure_QRY_Debug_CompareAmounts((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_GeneratedAmount, (INTEGER)_CurrentAmount)
 AND
 IntegertoString(_GeneratedAmount, _GenStr)
 AND
@@ -1744,7 +1744,7 @@ LeaderLog_Log("DEBUG", "[LLLIB:Treasure:Debug] Comparing item amounts for [",_Tr
 */
 
 QRY
-LLLIB_QRY_Treasure_Debug_CompareAmounts((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_GeneratedAmount, (INTEGER)_CurrentAmount)
+LeaderLib_Treasure_QRY_Debug_CompareAmounts((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_GeneratedAmount, (INTEGER)_CurrentAmount)
 THEN
 DB_NOOP(1);
 

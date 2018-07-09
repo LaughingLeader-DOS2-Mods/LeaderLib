@@ -57,9 +57,9 @@ AND
 DB_LLLIB_EventFlow_DefaultStackInitialized(_Val, 0)
 THEN
 LLLIB_EventFlow_SetCustomWaitTime("LLLIB_DefaultEventFlow", "LeaderLib_Events_OnTraderSpawnComplete", 250);
-LLLIB_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_SpawnTraders", "LeaderLib_Events_OnTraderSpawnComplete");
-LLLIB_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_StartTreasureGeneration", "LeaderLib_Events_OnTreasureGenerationComplete");
-LLLIB_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_CheckTraders", "LeaderLib_Events_OnTraderCheckingComplete");
+LeaderLib_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_SpawnTraders", "LeaderLib_Events_OnTraderSpawnComplete");
+LeaderLib_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_StartTreasureGeneration", "LeaderLib_Events_OnTreasureGenerationComplete");
+LeaderLib_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_CheckTraders", "LeaderLib_Events_OnTraderCheckingComplete");
 
 PROC
 LLLIB_EventFlow_Init_AddSortFlow()
@@ -68,7 +68,7 @@ LLLIB_ModMenu_QRY_SortNeeded()
 AND
 NOT DB_LLLIB_Array_Dictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_SortMenus", "LeaderLib_Events_OnMenuSortComplete")
 THEN
-LLLIB_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_SortMenus", "LeaderLib_Events_OnMenuSortComplete");
+LeaderLib_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_SortMenus", "LeaderLib_Events_OnMenuSortComplete");
 //END_REGION
 
 //REGION DEFAULT_START
@@ -127,7 +127,7 @@ AND
 NOT DB_LLLIB_EventFlow_EventStack(_StackName, _, _, _)
 THEN
 DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _TimeBetweenEvents, _TimeoutValue);
-LLLIB_Array_NewArray(_StackName);
+LeaderLib_Array_NewArray(_StackName);
 
 PROC
 LLLIB_EventFlow_Start((STRING)_StackName)
@@ -313,7 +313,7 @@ LLLIB_EventFlow_Clear_StackData((STRING)_StackName)
 AND
 DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime, _TimeoutValue)
 THEN
-LLLIB_Array_ClearDictionary(_StackName);
+LeaderLib_Array_ClearDictionary(_StackName);
 NOT DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime, _TimeoutValue);
 
 PROC

@@ -27,7 +27,7 @@ LeaderLib_Register_ModMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (
 AND
 NOT DB_LLLIB_ModMenu_RegisteredMenuData(_ID,_,_,_,_)
 THEN
-LLLIB_StringExt_DetermineStringLength(_DisplayName);
+LeaderLib_StringExt_DetermineStringLength(_DisplayName);
 DB_LLLIB_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModName, _Author);
 LLLIB_ModMenu_Internal_StartSortIfNeeded();
 
@@ -191,7 +191,7 @@ LeaderLib_SendEvent("LeaderLib_Events_OnMenuSortComplete");
 IF
 DB_LLLIB_EventFlow_StopEvent("LeaderLib_Commands_SortMenus")
 THEN
-LLLIB_DictionarySort_StopSorting("LLLIB_RegisteredMenus");
+LeaderLib_DictionarySort_StopSorting("LLLIB_RegisteredMenus");
 NOT DB_LLLIB_EventFlow_StopEvent("LeaderLib_Commands_SortMenus");
 
 PROC
@@ -215,7 +215,7 @@ NOT DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _, _ID, _)
 AND
 NOT DB_LLLIB_DictionarySort_Temp_StringQueue("LLLIB_RegisteredMenus", _ID, _DisplayName)
 THEN
-LLLIB_DictionarySort_AddString("LLLIB_RegisteredMenus", _ID, _DisplayName);
+LeaderLib_DictionarySort_AddString("LLLIB_RegisteredMenus", _ID, _DisplayName);
 
 PROC
 LLLIB_ModMenu_StartSorting()
@@ -248,7 +248,7 @@ DB_LLLIB_ModMenu_SortTickRate(_TickRate)
 THEN
 DB_LLLIB_ModMenu_Temp_SortStarted(1);
 LeaderLog_Log("DEBUG", "[LLLIB:ModMenu:Sorting] Starting menu sorting.");
-LLLIB_DictionarySort_StartSorting("LLLIB_RegisteredMenus", _TickRate, "LeaderLib_Events_OnMenuSortComplete", 0);
+LeaderLib_DictionarySort_StartSorting("LLLIB_RegisteredMenus", _TickRate, "LeaderLib_Events_OnMenuSortComplete", 0);
 
 IF
 StoryEvent(_, "LeaderLib_Events_OnMenuSortComplete")

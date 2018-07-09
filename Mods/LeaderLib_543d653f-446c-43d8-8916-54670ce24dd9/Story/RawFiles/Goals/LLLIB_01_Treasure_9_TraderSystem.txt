@@ -41,35 +41,35 @@ LeaderLog_Log("TRACE", "[LLLIB:TraderSystem] Databases registered.");
 
 //REGION GENERAL_QUERIES
 QRY
-LLLIB_QRY_Traders_HasPosition((STRING)_TraderID, (STRING)_Level)
+LeaderLib_Traders_QRY_HasPosition((STRING)_TraderID, (STRING)_Level)
 AND
 DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _PosX, _PosY, _PosZ)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_QRY_Traders_HasPosition((STRING)_TraderID, (STRING)_Level)
+LeaderLib_Traders_QRY_HasPosition((STRING)_TraderID, (STRING)_Level)
 AND
 DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_QRY_Traders_HasPosition((STRING)_TraderID, (STRING)_Level)
+LeaderLib_Traders_QRY_HasPosition((STRING)_TraderID, (STRING)_Level)
 AND
 DB_LLLIB_Traders_LevelPositionObject(_TraderID, _Level, _Object)
 THEN
 DB_NOOP(1);
 
 QRY
-DB_LLLIB_QRY_Traders_CantSit((STRING)_TraderID, (STRING)_Level)
+LeaderLib_Traders_QRY_CantSit((STRING)_TraderID, (STRING)_Level)
 AND
 NOT DB_LLLIB_Traders_Seat(_TraderID, _Level, _, _)
 THEN
 DB_NOOP(1);
 
 QRY
-DB_LLLIB_QRY_Traders_CantSit((STRING)_TraderID, (STRING)_Level)
+LeaderLib_Traders_QRY_CantSit((STRING)_TraderID, (STRING)_Level)
 AND
 DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID)
 AND
@@ -78,7 +78,7 @@ THEN
 DB_NOOP(1);
 
 QRY
-DB_LLLIB_QRY_Traders_CantSit((STRING)_TraderID, (STRING)_Level)
+LeaderLib_Traders_QRY_CantSit((STRING)_TraderID, (STRING)_Level)
 AND
 DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID)
 AND
@@ -89,14 +89,14 @@ THEN
 DB_NOOP(1);
 
 QRY
-DB_LLLIB_QRY_Traders_IsRegistered((STRING)_TraderID)
+LeaderLib_Traders_QRY_IsRegistered((STRING)_TraderID)
 AND
 DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn)
 THEN
 DB_NOOP(1);
 
 QRY
-DB_LLLIB_QRY_Traders_IsRegistered((STRING)_TraderID)
+LeaderLib_Traders_QRY_IsRegistered((STRING)_TraderID)
 AND
 DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader)
 THEN
@@ -346,7 +346,7 @@ AND
 DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID, _SpawnEvent, _SpawnCompleteEvent, _SpawnQueueCompleteEvent, _TimeoutEvent)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Traders:AddToSpawnQueue] Added trader [",_TraderID,"] to spawn queue [",_ArrayID,"] for level [",_Level,"].");
-LLLIB_Array_AddToArray(_ArrayID, _TraderID);
+LeaderLib_Array_AddToArray(_ArrayID, _TraderID);
 
 PROC
 LLLIB_Traders_Internal_StartSpawnQueue()
@@ -462,7 +462,7 @@ DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID, _SpawnEvent, _SpawnCom
 THEN
 LeaderLib_Queue_Stop(_ArrayID);
 LeaderLib_Queue_ClearQueue(_ArrayID);
-LLLIB_Array_ClearArray(_ArrayID);
+LeaderLib_Array_ClearArray(_ArrayID);
 NOT DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID, _SpawnEvent, _SpawnCompleteEvent, _SpawnQueueCompleteEvent, _TimeoutEvent);
 //END_REGION
 
@@ -484,21 +484,21 @@ LLLIB_Traders_Internal_ClearSpawnQueue(_ArrayID);
 //REGION SPAWNING
 /*
 QRY
-LLLIB_QRY_Traders_Debug_TraceRequirement((STRING)_TraderID, (STRING)_Level, (STRING)_RequirementID)
+LeaderLib_Traders_QRY_Debug_TraceRequirement((STRING)_TraderID, (STRING)_Level, (STRING)_RequirementID)
 AND
 LeaderLib_Requirements_QRY_AllMet(_RequirementID)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Traders] Trader[",_TraderID,"] requirement[",_RequirementID,"] met for level [",_Level,"].");
 
 QRY
-LLLIB_QRY_Traders_Debug_TraceRequirement((STRING)_TraderID, (STRING)_Level, (STRING)_RequirementID)
+LeaderLib_Traders_QRY_Debug_TraceRequirement((STRING)_TraderID, (STRING)_Level, (STRING)_RequirementID)
 AND
 NOT LeaderLib_Requirements_QRY_AllMet(_RequirementID)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Traders] Trader[",_TraderID,"] requirement[",_RequirementID,"] not met for level [",_Level,"].");
 */
 QRY
-LLLIB_QRY_Traders_Debug_TraceRequirement((STRING)_TraderID, (STRING)_Level, (STRING)_RequirementID)
+LeaderLib_Traders_QRY_Debug_TraceRequirement((STRING)_TraderID, (STRING)_Level, (STRING)_RequirementID)
 THEN
 DB_NOOP(1);
 
@@ -509,7 +509,7 @@ DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn)
 AND
 NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
 AND
-LLLIB_QRY_Traders_HasPosition(_TraderID, _Level)
+LeaderLib_Traders_QRY_HasPosition(_TraderID, _Level)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Traders] Creating new character for trader [",_TraderID,"] in level [",_Level,"].");
 LLLIB_Traders_SpawnTrader(_TraderID, _Level, _Template, _PlaySpawn);
@@ -523,7 +523,7 @@ ObjectExists(_Trader, 1)
 AND
 NOT DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
 AND
-LLLIB_QRY_Traders_HasPosition(_TraderID, _Level)
+LeaderLib_Traders_QRY_HasPosition(_TraderID, _Level)
 AND
 String(_Trader, _TraderStr)
 THEN
@@ -537,7 +537,7 @@ DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn)
 AND
 NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
 AND
-NOT LLLIB_QRY_Traders_HasPosition(_TraderID, _Level)
+NOT LeaderLib_Traders_QRY_HasPosition(_TraderID, _Level)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Traders][ERROR] Trader [",_TraderID,"] does not have a registered position in level [",_Level,"].");
 
@@ -806,7 +806,7 @@ LLLIB_Traders_Internal_StartCheckingTraders()
 AND
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
 THEN
-LLLIB_Array_AddToArray("LLLIB_Traders_CheckQueue_TraderList", _TraderID);
+LeaderLib_Array_AddToArray("LLLIB_Traders_CheckQueue_TraderList", _TraderID);
 
 PROC
 LLLIB_Traders_Internal_StartCheckingTraders()

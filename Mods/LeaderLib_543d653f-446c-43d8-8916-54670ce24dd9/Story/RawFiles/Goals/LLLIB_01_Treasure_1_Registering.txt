@@ -520,7 +520,7 @@ DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID);
 PROC
 LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
 AND
-DB_LLLIB_QRY_Traders_IsRegistered(_TraderID)
+LeaderLib_Traders_QRY_IsRegistered(_TraderID)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Traders] Trader [",_TraderID,"] removed from all associated databases.");
 

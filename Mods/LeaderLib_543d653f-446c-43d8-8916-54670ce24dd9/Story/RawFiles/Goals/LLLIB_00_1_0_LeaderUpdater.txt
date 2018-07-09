@@ -126,7 +126,7 @@ LeaderUpdater_QRY_ModVersionIsInWrongColumn((STRING)_ModName, (STRING)_Author)
 AND
 DB_Mods_Registered(_ModName, _Author, _Version)
 AND
-NOT LLLIB_StringExt_QRY_IsVersionString(_Version)
+NOT LeaderLib_StringExt_QRY_IsVersionString(_Version)
 THEN
 DB_NOOP(1);
 

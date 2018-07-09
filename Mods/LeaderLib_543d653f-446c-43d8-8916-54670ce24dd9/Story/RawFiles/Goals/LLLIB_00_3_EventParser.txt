@@ -6,7 +6,7 @@ INITSECTION
 KBSECTION
 //REGION CREATE_NEW
 PROC
-LLLIB_EventParser_CreateNew()
+LLLIB_EventParser_Internal_CreateNew()
 AND
 DB_LLLIB_EventParser_Spawned(_EventParser)
 AND
@@ -15,7 +15,7 @@ THEN
 NOT DB_LLLIB_EventParser_Spawned(_EventParser);
 
 PROC
-LLLIB_EventParser_CreateNew()
+LLLIB_EventParser_Internal_CreateNew()
 AND
 NOT CharacterGetHostCharacter(_)
 AND
@@ -30,7 +30,7 @@ THEN
 DB_LLLIB_EventParser_Spawned(_EventParser);
 
 PROC
-LLLIB_EventParser_CreateNew()
+LLLIB_EventParser_Internal_CreateNew()
 AND
 NOT DB_LLLIB_EventParser_Spawned(_)
 AND
@@ -43,7 +43,7 @@ THEN
 DB_LLLIB_EventParser_Spawned(_EventParser);
 
 PROC
-LLLIB_EventParser_CreateNew()
+LLLIB_EventParser_Internal_CreateNew()
 AND
 NOT DB_LLLIB_EventParser_Spawned(_) // Creating a temporary event parser failed, use a player
 AND
@@ -54,7 +54,7 @@ DB_LLLIB_EventParser_Spawned(_Player);
 QRY
 LLLIB_QRY_EventParser_CreateNew()
 THEN
-LLLIB_EventParser_CreateNew();
+LLLIB_EventParser_Internal_CreateNew();
 //END_REGION
 
 //REGION HELPERS
@@ -66,7 +66,7 @@ THEN
 DB_NOOP(1);
 
 PROC
-LLLIB_EventParser_ClearEvent((STRING)_EventName)
+LLLIB_EventParser_Internal_ClearEvent((STRING)_EventName)
 AND
 DB_LeaderLib_SendEvent(_EventName)
 THEN
@@ -77,7 +77,7 @@ LLLIB_EventParser_Internal_RunEvent((STRING)_EventName)
 AND
 LLLIB_QRY_EventParser_GlobalParserExists()
 THEN
-LLLIB_EventParser_ClearEvent(_EventName);
+LLLIB_EventParser_Internal_ClearEvent(_EventName);
 SetStoryEvent(S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, _EventName);
 
 PROC
@@ -89,7 +89,7 @@ LLLIB_QRY_EventParser_CreateNew()
 AND
 DB_LLLIB_EventParser_Spawned(_EventParser)
 THEN
-LLLIB_EventParser_ClearEvent(_EventName);
+LLLIB_EventParser_Internal_ClearEvent(_EventName);
 SetStoryEvent(_EventParser, _EventName);
 //END_REGION
 
@@ -99,7 +99,7 @@ AND
 NOT LLLIB_QRY_EventParser_GlobalParserExists()
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:EventParser][ERROR] Global Event Parser doesn't exist for some reason.");
-//LLLIB_EventParser_CreateNew();
+//LLLIB_EventParser_Internal_CreateNew();
 
 //REGION SEND_EVENT
 //Send out a general event, using the Event Parser object.

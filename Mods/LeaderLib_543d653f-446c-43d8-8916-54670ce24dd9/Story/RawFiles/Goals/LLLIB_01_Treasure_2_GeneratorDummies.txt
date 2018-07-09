@@ -66,7 +66,7 @@ DB_NOOP(1);
 
 //REGION RESET
 PROC
-LLLIB_Treasure_ResetDummyByID((STRING)_DummyID)
+LeaderLib_Treasure_ResetDummyByID((STRING)_DummyID)
 AND
 DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
 AND
@@ -77,7 +77,7 @@ LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:ResetDummyByID] Dummy with ID [",_
 LLLIB_Treasure_RemoveNextDummy(_Dummy);
 
 PROC
-LLLIB_Treasure_ResetDummy((CHARACTERGUID)_Dummy)
+LeaderLib_Treasure_ResetDummy((CHARACTERGUID)_Dummy)
 AND
 DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
 THEN
@@ -96,7 +96,7 @@ LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:ResetDummy] Dummy with ID [",_Dumm
 
 //REGION PREPARE
 QRY
-LLLIB_QRY_Treasure_PrepareGeneratorDummy()
+LeaderLib_Treasure_QRY_PrepareGeneratorDummy()
 AND
 DB_IsPlayer(_Player)
 AND
@@ -105,12 +105,12 @@ THEN
 LLLIB_Treasure_PrepareGeneratorDummy((GUIDSTRING)_Player, "");
 
 QRY
-LLLIB_QRY_Treasure_PrepareGeneratorDummy((GUIDSTRING)_AtObject)
+LeaderLib_Treasure_QRY_PrepareGeneratorDummy((GUIDSTRING)_AtObject)
 THEN
 LLLIB_Treasure_PrepareGeneratorDummy(_AtObject, "");
 
 QRY
-LLLIB_QRY_Treasure_PrepareGeneratorDummy((GUIDSTRING)_AtObject, (STRING)_DummyID)
+LeaderLib_Treasure_QRY_PrepareGeneratorDummy((GUIDSTRING)_AtObject, (STRING)_DummyID)
 THEN
 LLLIB_Treasure_PrepareGeneratorDummy(_AtObject, _DummyID);
 
@@ -128,7 +128,7 @@ AND
 ObjectExists(_Dummy, 0)
 THEN
 NOT DB_LLLIB_Treasure_GeneratorDummies(_Dummy);
-LLLIB_Treasure_ResetDummy(_Dummy);
+LeaderLib_Treasure_ResetDummy(_Dummy);
 
 PROC
 LLLIB_Treasure_Internal_DummyCheck()

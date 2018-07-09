@@ -167,7 +167,7 @@ DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _Iterat
 THEN
 TimerCancel(_TimerName);
 LLLIB_Queue_Internal_ClearCurrentEntry(_QueueID);
-LLLIB_Array_ClearArray(_ArrayID);
+LeaderLib_Array_ClearArray(_ArrayID);
 NOT DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent);
 
 PROC

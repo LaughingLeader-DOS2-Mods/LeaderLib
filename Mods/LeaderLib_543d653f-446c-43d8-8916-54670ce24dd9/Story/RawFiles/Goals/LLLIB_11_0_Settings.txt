@@ -56,7 +56,7 @@ LeaderLib_Array_QRY_EmptyLength("LeaderLib_EquipmentSlots")
 AND
 DB_LLLIB_EquipmentSlots(_Slot)
 THEN
-LLLIB_Array_AddToArray("LeaderLib_EquipmentSlots", _Slot);
+LeaderLib_Array_AddToArray("LeaderLib_EquipmentSlots", _Slot);
 
 PROC
 LLLIB_Settings_InitStats()

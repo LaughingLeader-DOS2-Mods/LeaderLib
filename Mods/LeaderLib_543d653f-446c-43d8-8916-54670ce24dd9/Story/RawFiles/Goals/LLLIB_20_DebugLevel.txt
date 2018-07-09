@@ -373,7 +373,7 @@ LeaderLib_Treasure_AddTreasureItemTemplate("LLLIB_TestLevel_Chest3", "WPN_Lizard
 IF
 StoryEvent(_, "LeaderLib_Initialized")
 AND
-LLLIB_StringExt_QRY_CompareStrings("Test", "[ModMenu2] Settings", "[ModMenu10] Settings")
+LeaderLib_StringExt_QRY_CompareStrings("Test", "[ModMenu2] Settings", "[ModMenu10] Settings")
 AND
 DB_LLLIB_DictionarySort_Temp_StringCompare_Results("Test", _Str1, _Str2, _CompareVal)
 AND

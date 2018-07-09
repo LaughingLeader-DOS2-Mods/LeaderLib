@@ -21,7 +21,7 @@ INITSECTION
 KBSECTION
 //REGION STRING_COMPARE_HELPERS
 QRY
-LLLIB_StringExt_Internal_CompareStrings_QRY_EndReached((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2, (INTEGER)_Index)
+LeaderLib_StringExt_Internal_CompareStrings_QRY_EndReached((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2, (INTEGER)_Index)
 AND
 DB_LLLIB_StringLength(_Str1, _Str1Length)
 AND
@@ -30,7 +30,7 @@ THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_StringExt_Internal_CompareStrings_QRY_EndReached((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2, (INTEGER)_Index)
+LeaderLib_StringExt_Internal_CompareStrings_QRY_EndReached((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2, (INTEGER)_Index)
 AND
 DB_LLLIB_StringLength(_Str2, _Str2Length)
 AND
@@ -39,35 +39,35 @@ THEN
 DB_NOOP(1);
 
 PROC
-LLLIB_StringExt_Internal_CompareStrings_SetCompareValue((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2, (INTEGER)_Val)
+LeaderLib_StringExt_Internal_CompareStrings_SetCompareValue((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2, (INTEGER)_Val)
 AND
 _Val > 0
 THEN
 DB_LLLIB_StringExt_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, 1);
 
 PROC
-LLLIB_StringExt_Internal_CompareStrings_SetCompareValue((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2, (INTEGER)_Val)
+LeaderLib_StringExt_Internal_CompareStrings_SetCompareValue((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2, (INTEGER)_Val)
 AND
 _Val < 0
 THEN
 DB_LLLIB_StringExt_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, -1);
 
 PROC
-LLLIB_StringExt_Internal_CompareStrings_SetCompareValue((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2, (INTEGER)_Val)
+LeaderLib_StringExt_Internal_CompareStrings_SetCompareValue((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2, (INTEGER)_Val)
 AND
 _Val == 0
 THEN
 DB_LLLIB_StringExt_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, 0);
 
 QRY
-LLLIB_StringExt_CompareStrings_QRY_HasResult((STRING)_Str1, (STRING)_Str2)
+LeaderLib_StringExt_CompareStrings_QRY_HasResult((STRING)_Str1, (STRING)_Str2)
 AND
 DB_LLLIB_StringCompare_Results(_Str1, _Str2, _Val)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_StringExt_CompareStrings_QRY_HasResult((STRING)_Str1, (STRING)_Str2)
+LeaderLib_StringExt_CompareStrings_QRY_HasResult((STRING)_Str1, (STRING)_Str2)
 AND
 DB_LLLIB_StringCompare_Results(_Str2, _Str1, _Val)
 THEN
@@ -76,63 +76,63 @@ DB_NOOP(1);
 
 //REGION STRING_COMPARE
 QRY
-LLLIB_StringExt_QRY_CompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+LeaderLib_StringExt_QRY_CompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
 THEN
-LLLIB_StringExt_CompareStrings(_SessionID, _Str1, _Str2);
+LeaderLib_StringExt_CompareStrings(_SessionID, _Str1, _Str2);
 
 PROC
-LLLIB_StringExt_CompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+LeaderLib_StringExt_CompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
 AND
-LLLIB_StringExt_CompareStrings_Internal_QRY_SkipCompareIfEqual(_Str1, _Str2)
+LeaderLib_StringExt_CompareStrings_Internal_QRY_SkipCompareIfEqual(_Str1, _Str2)
 AND
-NOT LLLIB_StringExt_CompareStrings_QRY_HasResult(_Str1, _Str2)
+NOT LeaderLib_StringExt_CompareStrings_QRY_HasResult(_Str1, _Str2)
 THEN
-LLLIB_StringExt_Internal_StartCompareStrings(_SessionID, _Str1, _Str2);
+LeaderLib_StringExt_Internal_StartCompareStrings(_SessionID, _Str1, _Str2);
 
 QRY
-LLLIB_StringExt_CompareStrings_Internal_QRY_SkipCompareIfEqual((STRING)_Str1, (STRING)_Str2)
+LeaderLib_StringExt_CompareStrings_Internal_QRY_SkipCompareIfEqual((STRING)_Str1, (STRING)_Str2)
 AND
-NOT LLLIB_StringExt_CompareStrings_QRY_HasResult(_Str1, _Str2)
+NOT LeaderLib_StringExt_CompareStrings_QRY_HasResult(_Str1, _Str2)
 AND
 _Str1 == _Str2
 THEN
 DB_LLLIB_StringCompare_Results(_Str1, _Str2, 0);
 
 QRY
-LLLIB_StringExt_CompareStrings_Internal_QRY_SkipCompareIfEqual((STRING)_Str1, (STRING)_Str2)
+LeaderLib_StringExt_CompareStrings_Internal_QRY_SkipCompareIfEqual((STRING)_Str1, (STRING)_Str2)
 THEN
 DB_NOOP(1);
 
 PROC
-LLLIB_StringExt_Internal_StartCompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+LeaderLib_StringExt_Internal_StartCompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
 AND
 NOT DB_LLLIB_StringLength(_Str1, _)
 THEN
-LLLIB_StringExt_DetermineStringLength(_Str1);
+LeaderLib_StringExt_DetermineStringLength(_Str1);
 
 PROC
-LLLIB_StringExt_Internal_StartCompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+LeaderLib_StringExt_Internal_StartCompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
 AND
 NOT DB_LLLIB_StringLength(_Str2, _)
 THEN
-LLLIB_StringExt_DetermineStringLength(_Str2);
+LeaderLib_StringExt_DetermineStringLength(_Str2);
 
 PROC
-LLLIB_StringExt_Internal_StartCompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+LeaderLib_StringExt_Internal_StartCompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
 AND
 DB_LLLIB_StringExt_Temp_StringCompare_StopIteration(_SessionID, _Str1, _Str2)
 THEN
 NOT DB_LLLIB_StringExt_Temp_StringCompare_StopIteration(_SessionID, _Str1, _Str2);
 
 PROC
-LLLIB_StringExt_Internal_StartCompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+LeaderLib_StringExt_Internal_StartCompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
 THEN
 DB_LLLIB_StringExt_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, 0);
 DB_LLLIB_StringExt_Temp_CompareIterator(_SessionID, _Str1, _Str2, 0);
-LLLIB_StringExt_Internal_CompareStrings(_SessionID, _Str1, _Str2);
+LeaderLib_StringExt_Internal_CompareStrings(_SessionID, _Str1, _Str2);
 
 PROC
-LLLIB_StringExt_Internal_CompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+LeaderLib_StringExt_Internal_CompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
 AND
 NOT DB_LLLIB_StringExt_Temp_StringCompare_StopIteration(_SessionID, _Str1, _Str2)
 AND
@@ -153,40 +153,40 @@ AND
 DB_LLLIB_StringExt_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _PastVal)
 THEN
 NOT DB_LLLIB_StringExt_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _PastVal);
-LLLIB_StringExt_Internal_CompareStrings_SetCompareValue(_SessionID, _Str1, _Str2, _Comparison);
-LLLIB_StringExt_Internal_CompareStrings_ReturnCompareValue(_SessionID, _Str1, _Str2);
+LeaderLib_StringExt_Internal_CompareStrings_SetCompareValue(_SessionID, _Str1, _Str2, _Comparison);
+LeaderLib_StringExt_Internal_CompareStrings_ReturnCompareValue(_SessionID, _Str1, _Str2);
 DB_LLLIB_StringExt_Temp_StringCompare_StopIteration(_SessionID, _Str1, _Str2);
 
 PROC
-LLLIB_StringExt_Internal_CompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+LeaderLib_StringExt_Internal_CompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
 AND
 NOT DB_LLLIB_StringExt_Temp_StringCompare_StopIteration(_SessionID, _Str1, _Str2)
 AND
 DB_LLLIB_StringExt_Temp_CompareIterator(_SessionID, _Str1, _Str2, _Index)
 AND
-NOT LLLIB_StringExt_Internal_CompareStrings_QRY_EndReached(_SessionID, _Str1, _Str2, _Index)
+NOT LeaderLib_StringExt_Internal_CompareStrings_QRY_EndReached(_SessionID, _Str1, _Str2, _Index)
 AND
 IntegerSum(_Index, 1, _NextIndex)
 THEN
 NOT DB_LLLIB_StringExt_Temp_CompareIterator(_SessionID, _Str1, _Str2, _Index);
 DB_LLLIB_StringExt_Temp_CompareIterator(_SessionID, _Str1, _Str2, _NextIndex);
-LLLIB_StringExt_Internal_CompareStrings(_SessionID, _Str1, _Str2);
+LeaderLib_StringExt_Internal_CompareStrings(_SessionID, _Str1, _Str2);
 
 PROC
-LLLIB_StringExt_Internal_CompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+LeaderLib_StringExt_Internal_CompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
 AND
 NOT DB_LLLIB_StringExt_Temp_StringCompare_StopIteration(_SessionID, _Str1, _Str2)
 AND
 DB_LLLIB_StringExt_Temp_CompareIterator(_SessionID, _Str1, _Str2, _Index)
 AND
-LLLIB_StringExt_Internal_CompareStrings_QRY_EndReached(_SessionID, _Str1, _Str2, _Index)
+LeaderLib_StringExt_Internal_CompareStrings_QRY_EndReached(_SessionID, _Str1, _Str2, _Index)
 THEN
-LLLIB_StringExt_Internal_CompareStrings_ReturnFinalValue(_SessionID, _Str1, _Str2);
+LeaderLib_StringExt_Internal_CompareStrings_ReturnFinalValue(_SessionID, _Str1, _Str2);
 
 PROC
-LLLIB_StringExt_Internal_CompareStrings_ReturnFinalValue((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+LeaderLib_StringExt_Internal_CompareStrings_ReturnFinalValue((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
 AND
-NOT LLLIB_StringExt_CompareStrings_QRY_HasResult(_Str1, _Str2)
+NOT LeaderLib_StringExt_CompareStrings_QRY_HasResult(_Str1, _Str2)
 AND
 DB_LLLIB_StringLength(_Str1, _Str1Length)
 AND
@@ -200,9 +200,9 @@ NOT DB_LLLIB_StringExt_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _Pas
 DB_LLLIB_StringCompare_Results(_Str1, _Str2, 1);
 
 PROC
-LLLIB_StringExt_Internal_CompareStrings_ReturnFinalValue((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+LeaderLib_StringExt_Internal_CompareStrings_ReturnFinalValue((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
 AND
-NOT LLLIB_StringExt_CompareStrings_QRY_HasResult(_Str1, _Str2)
+NOT LeaderLib_StringExt_CompareStrings_QRY_HasResult(_Str1, _Str2)
 AND
 DB_LLLIB_StringLength(_Str1, _Str1Length)
 AND
@@ -216,9 +216,9 @@ NOT DB_LLLIB_StringExt_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _Pas
 DB_LLLIB_StringCompare_Results(_Str1, _Str2, -1);
 
 PROC
-LLLIB_StringExt_Internal_CompareStrings_ReturnFinalValue((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+LeaderLib_StringExt_Internal_CompareStrings_ReturnFinalValue((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
 AND
-NOT LLLIB_StringExt_CompareStrings_QRY_HasResult(_Str1, _Str2)
+NOT LeaderLib_StringExt_CompareStrings_QRY_HasResult(_Str1, _Str2)
 AND
 DB_LLLIB_StringExt_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _PastVal)
 THEN
@@ -226,9 +226,9 @@ NOT DB_LLLIB_StringExt_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _Pas
 DB_LLLIB_StringCompare_Results(_Str1, _Str2, 0);
 
 PROC
-LLLIB_StringExt_Internal_CompareStrings_ReturnCompareValue((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+LeaderLib_StringExt_Internal_CompareStrings_ReturnCompareValue((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
 AND
-NOT LLLIB_StringExt_CompareStrings_QRY_HasResult(_Str1, _Str2)
+NOT LeaderLib_StringExt_CompareStrings_QRY_HasResult(_Str1, _Str2)
 AND
 DB_LLLIB_StringExt_Temp_StringCompare_Results(_SessionID, _Str1, _Str2, _Val)
 THEN
@@ -247,20 +247,20 @@ DB_LLLIB_StringCompare_Results(_Str2, _Str1, _OtherVal);
 
 //REGION STRING_LENGTH
 QRY
-LLLIB_StringExt_GetStringLength((STRING)_Str)
+LeaderLib_StringExt_GetStringLength((STRING)_Str)
 THEN
-LLLIB_StringExt_DetermineStringLength(_Str);
+LeaderLib_StringExt_DetermineStringLength(_Str);
 
 PROC
-LLLIB_StringExt_DetermineStringLength((STRING)_Str)
+LeaderLib_StringExt_DetermineStringLength((STRING)_Str)
 AND
 NOT DB_LLLIB_StringLength(_Str, _)
 THEN
 DB_LLLIB_StringLength(_Str, 0);
-LLLIB_StringExt_Internal_DetermineStringLength(_Str);
+LeaderLib_StringExt_Internal_DetermineStringLength(_Str);
 
 PROC
-LLLIB_StringExt_Internal_DetermineStringLength((STRING)_Str)
+LeaderLib_StringExt_Internal_DetermineStringLength((STRING)_Str)
 AND
 DB_LLLIB_Codex_Iterator(_Index)
 AND
@@ -277,7 +277,7 @@ DB_LLLIB_StringLength(_Str, _NextLength);
 
 /*
 PROC
-LLLIB_StringExt_DetermineStringLength((STRING)_Str)
+LeaderLib_StringExt_DetermineStringLength((STRING)_Str)
 AND
 DB_LLLIB_StringLength(_Str, _Length)
 AND
@@ -289,31 +289,31 @@ LeaderLog_Log("DEBUG", "[LLLIB:Sorter:DetermineStringLength] Length of '",_Str,"
 
 //REGION STRING_ITERATOR
 QRY
-LLLIB_StringExt_QRY_BuildIteratorByLength((STRING)_Str)
+LeaderLib_StringExt_QRY_BuildIteratorByLength((STRING)_Str)
 THEN
-LLLIB_StringExt_BuildIteratorByLength(_Str);
+LeaderLib_StringExt_BuildIteratorByLength(_Str);
 
 PROC
-LLLIB_StringExt_BuildIteratorByLength((STRING)_Str)
+LeaderLib_StringExt_BuildIteratorByLength((STRING)_Str)
 AND
 NOT DB_LLLIB_StringExt_StringIterator(_Str, _)
 AND
 NOT DB_LLLIB_StringLength(_Str, _)
 THEN
-LLLIB_StringExt_DetermineStringLength(_Str);
+LeaderLib_StringExt_DetermineStringLength(_Str);
 
 PROC
-LLLIB_StringExt_BuildIteratorByLength((STRING)_Str)
+LeaderLib_StringExt_BuildIteratorByLength((STRING)_Str)
 AND
 NOT DB_LLLIB_StringExt_StringIterator(_Str, _)
 AND
 DB_LLLIB_StringLength(_Str, _Length)
 THEN
 DB_LLLIB_StringExt_Temp_IteratorBuilder(_Str, 0);
-LLLIB_StringExt_Internal_BuildIterator(_Str);
+LeaderLib_StringExt_Internal_BuildIterator(_Str);
 
 PROC
-LLLIB_StringExt_Internal_BuildIterator((STRING)_Str)
+LeaderLib_StringExt_Internal_BuildIterator((STRING)_Str)
 AND
 DB_LLLIB_StringExt_Temp_IteratorBuilder(_Str, _CurrentIndex)
 AND
@@ -326,37 +326,37 @@ THEN
 DB_LLLIB_StringExt_StringIterator(_Str, _CurrentIndex);
 NOT DB_LLLIB_StringExt_Temp_IteratorBuilder(_Str, _CurrentIndex);
 DB_LLLIB_StringExt_Temp_IteratorBuilder(_Str, _NextIndex);
-LLLIB_StringExt_Internal_BuildIterator(_Str);
+LeaderLib_StringExt_Internal_BuildIterator(_Str);
 //END_REGION
 
 //REGION VERSION_STRING
 QRY
-LLLIB_StringExt_QRY_IsVersionString((STRING)_Str)
+LeaderLib_StringExt_QRY_IsVersionString((STRING)_Str)
 AND
 StringContains(_Str, ".", 1)
 AND
-LLLIB_StringExt_QRY_ProcessVersionString(_Str)
+LeaderLib_StringExt_QRY_ProcessVersionString(_Str)
 AND
-LLLIB_StringExt_QRY_IsValidVersionString(_Str)
+LeaderLib_StringExt_QRY_IsValidVersionString(_Str)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:StringExt:IsVersionString] [",_Str,"] is a valid version string.");
 
 PROC
-LLLIB_StringExt_Debug_PrintVersionString((STRING)_Str)
+LeaderLib_StringExt_Debug_PrintVersionString((STRING)_Str)
 AND
 DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _Minor, _Revision, _Build)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:StringExt:Debug_PrintVersionString] [",_Str,"] = Major[",_Major,"] Minor[",_Minor,"] Revision[",_Revision,"] Build[",_Build,"]");
 
 PROC
-LLLIB_StringExt_Debug_PrintVersionString((STRING)_Str)
+LeaderLib_StringExt_Debug_PrintVersionString((STRING)_Str)
 AND
 NOT DB_LLLIB_StringExt_Temp_Version_String(_Str, _, _, _, _)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:StringExt:Debug_PrintVersionString] [",_Str,"] is not a valid version string.");
 
 QRY
-LLLIB_StringExt_QRY_IsValidVersionString((STRING)_Str)
+LeaderLib_StringExt_QRY_IsValidVersionString((STRING)_Str)
 AND
 DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _Minor, _Revision, _Build)
 AND
@@ -371,40 +371,40 @@ THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_StringExt_QRY_ProcessVersionString((STRING)_Str)
+LeaderLib_StringExt_QRY_ProcessVersionString((STRING)_Str)
 THEN
-LLLIB_StringExt_ProcessVersionString(_Str);
+LeaderLib_StringExt_ProcessVersionString(_Str);
 
 PROC
-LLLIB_StringExt_ProcessVersionString((STRING)_Str)
+LeaderLib_StringExt_ProcessVersionString((STRING)_Str)
 AND
 NOT DB_LLLIB_StringExt_Temp_Version_String(_Str, _, _, _, _)
 THEN
-LLLIB_StringExt_BuildIteratorByLength(_Str);
-LLLIB_StringExt_ClearPreviousVersionData(_Str);
+LeaderLib_StringExt_BuildIteratorByLength(_Str);
+LeaderLib_StringExt_ClearPreviousVersionData(_Str);
 DB_LLLIB_StringExt_Temp_Version_FoundPeriod(_Str, 0);
-LLLIB_StringExt_Internal_ProcessVersionString(_Str);
+LeaderLib_StringExt_Internal_ProcessVersionString(_Str);
 
 PROC
-LLLIB_StringExt_Internal_ProcessVersionString((STRING)_Str)
+LeaderLib_StringExt_Internal_ProcessVersionString((STRING)_Str)
 AND
 DB_LLLIB_StringExt_StringIterator(_Str, _Index)
 AND
 NOT DB_LLLIB_StringExt_Temp_Version_Complete(_Str)
 THEN
-LLLIB_StringExt_Internal_Version_OnIteratingVersionString(_Str, _Index);
+LeaderLib_StringExt_Internal_Version_OnIteratingVersionString(_Str, _Index);
 
 PROC
-LLLIB_StringExt_Internal_Version_OnIteratingVersionString((STRING)_Str, (INTEGER)_Index)
+LeaderLib_StringExt_Internal_Version_OnIteratingVersionString((STRING)_Str, (INTEGER)_Index)
 AND
 _Index > 0
 AND
 StringSub(_Str, _Index, 1, ".")
 THEN
-LLLIB_StringExt_Internal_Version_FoundPeriod(_Str, _Index);
+LeaderLib_StringExt_Internal_Version_FoundPeriod(_Str, _Index);
 
 PROC
-LLLIB_StringExt_Internal_Version_FoundPeriod((STRING)_Str, (INTEGER)_Index)
+LeaderLib_StringExt_Internal_Version_FoundPeriod((STRING)_Str, (INTEGER)_Index)
 AND
 DB_LLLIB_StringExt_Temp_Version_FoundPeriod(_Str, _TotalFound)
 AND
@@ -416,7 +416,7 @@ NOT DB_LLLIB_StringExt_Temp_Version_FoundPeriod(_Str, _TotalFound);
 DB_LLLIB_StringExt_Temp_Version_FoundPeriod(_Str, _NextAmount);
 
 PROC
-LLLIB_StringExt_Internal_Version_FoundPeriod((STRING)_Str, (INTEGER)_Index)
+LeaderLib_StringExt_Internal_Version_FoundPeriod((STRING)_Str, (INTEGER)_Index)
 AND
 DB_LLLIB_StringExt_Temp_Version_FoundPeriod(_Str, _TotalFound)
 AND
@@ -431,7 +431,7 @@ DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, "", "", "");
 DB_LLLIB_StringExt_Temp_Version_Index(_Str, _Index, -1, -1, -1);
 
 PROC
-LLLIB_StringExt_Internal_Version_FoundPeriod((STRING)_Str, (INTEGER)_Index)
+LeaderLib_StringExt_Internal_Version_FoundPeriod((STRING)_Str, (INTEGER)_Index)
 AND
 DB_LLLIB_StringExt_Temp_Version_FoundPeriod(_Str, _TotalFound)
 AND
@@ -458,7 +458,7 @@ DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _Minor, _Revision, _Build);
 DB_LLLIB_StringExt_Temp_Version_Index(_Str, _MajorIndex, _Index, _RevisionIndex, _BuildIndex);
 
 PROC
-LLLIB_StringExt_Internal_Version_FoundPeriod((STRING)_Str, (INTEGER)_Index)
+LeaderLib_StringExt_Internal_Version_FoundPeriod((STRING)_Str, (INTEGER)_Index)
 AND
 DB_LLLIB_StringExt_Temp_Version_FoundPeriod(_Str, _TotalFound)
 AND
@@ -485,17 +485,17 @@ DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _Minor, _Revision, _Build);
 DB_LLLIB_StringExt_Temp_Version_Index(_Str, _MajorIndex, _MinorIndex, _Index, _BuildIndex);
 
 PROC
-LLLIB_StringExt_Internal_Version_FoundPeriod((STRING)_Str, (INTEGER)_Index)
+LeaderLib_StringExt_Internal_Version_FoundPeriod((STRING)_Str, (INTEGER)_Index)
 AND
 DB_LLLIB_StringExt_Temp_Version_FoundPeriod(_Str, _TotalFound)
 AND
 _TotalFound >= 3
 THEN
-LLLIB_StringExt_Internal_Version_GetBuild(_Str, _Index);
+LeaderLib_StringExt_Internal_Version_GetBuild(_Str, _Index);
 
 //0.9.0.0
 PROC
-LLLIB_StringExt_Internal_Version_GetBuild((STRING)_Str, (INTEGER)_Index)
+LeaderLib_StringExt_Internal_Version_GetBuild((STRING)_Str, (INTEGER)_Index)
 AND
 DB_LLLIB_StringLength(_Str, _Length)
 AND
@@ -521,28 +521,28 @@ DB_LLLIB_StringExt_Temp_Version_Index(_Str, _MajorIndex, _MinorIndex, _RevisionI
 DB_LLLIB_StringExt_Temp_Version_Complete(_Str);
 
 PROC
-LLLIB_StringExt_ClearPreviousVersionData((STRING)_Str)
+LeaderLib_StringExt_ClearPreviousVersionData((STRING)_Str)
 AND
 DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _Minor, _Revision, _Build)
 THEN
 NOT DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _Minor, _Revision, _Build);
 
 PROC
-LLLIB_StringExt_ClearPreviousVersionData((STRING)_Str)
+LeaderLib_StringExt_ClearPreviousVersionData((STRING)_Str)
 AND
 DB_LLLIB_StringExt_Temp_Version_Index(_Str, _MajorIndex, _MinorIndex, _RevisionIndex, _BuildIndex)
 THEN
 NOT DB_LLLIB_StringExt_Temp_Version_Index(_Str, _MajorIndex, _MinorIndex, _RevisionIndex, _BuildIndex);
 
 PROC
-LLLIB_StringExt_ClearPreviousVersionData((STRING)_Str)
+LeaderLib_StringExt_ClearPreviousVersionData((STRING)_Str)
 AND
 DB_LLLIB_StringExt_Temp_Version_FoundPeriod(_Str, _TotalFound)
 THEN
 NOT DB_LLLIB_StringExt_Temp_Version_FoundPeriod(_Str, _TotalFound);
 
 PROC
-LLLIB_StringExt_ClearPreviousVersionData((STRING)_Str)
+LeaderLib_StringExt_ClearPreviousVersionData((STRING)_Str)
 AND
 DB_LLLIB_StringExt_Temp_Version_Complete(_Str)
 THEN

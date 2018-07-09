@@ -121,13 +121,13 @@ NOT DB_LeaderLib_ModApi_ModIsActive(_ModName, _Author, _ActiveEvent, _InactiveEv
 IF
 DB_LeaderLib_ModApi_AddToSortQueue((STRING)_DictionaryID, (STRING)_ID, (STRING)_String)
 THEN
-LLLIB_DictionarySort_AddString(_DictionaryID, _ID, _String);
+LeaderLib_DictionarySort_AddString(_DictionaryID, _ID, _String);
 NOT DB_LeaderLib_ModApi_AddToSortQueue(_DictionaryID, _ID, _String);
 
 IF
 DB_LeaderLib_ModApi_StartSortQueue((STRING)_DictionaryID, (INTEGER)_TickRate, (STRING)_CompleteEvent)
 THEN
-LLLIB_DictionarySort_StartSorting(_DictionaryID, _TickRate, _CompleteEvent);
+LeaderLib_DictionarySort_StartSorting(_DictionaryID, _TickRate, _CompleteEvent);
 NOT DB_LeaderLib_ModApi_StartSortQueue(_DictionaryID, _TickRate, _CompleteEvent);
 //END_REGION
 

@@ -13,7 +13,7 @@ KBSECTION
 PROC
 LLLIB_Dialog_InitSettings()
 THEN
-LLLIB_Updater_SaveSettingsVersionData("LLLIB_Settings_Dialog");
+LeaderUpdater_SaveSettingsVersionData("LLLIB_Settings_Dialog");
 
 LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLib_Dialog_DialogFiles", 1);
 DB_LeaderLib_Dialog_DialogFiles("LLLIB_ModMenu");
@@ -115,7 +115,7 @@ LLLIB_System_RegisterDatabases();
 IF
 StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
 AND
-LeaderLib_Updater_QRY_SettingsNeedsUpdate("LLLIB_Settings_Dialog")
+LeaderUpdater_QRY_SettingsNeedsUpdate("LLLIB_Settings_Dialog")
 THEN
 LLLIB_Dialog_InitSettings();
 LeaderLog_Log("SYSTEM", "[LLLIB:Dialog] Settings updated.");

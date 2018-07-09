@@ -112,7 +112,7 @@ DB_LLLIB_Treasure_Temp_CreateItemByStat_CharacterArray(_Character, _ArrayName)
 AND
 NOT DB_LLLIB_Array_Temp_PopValue(_ArrayName, _)
 AND
-LLLIB_Array_QRY_Pop(_ArrayName)
+LeaderLib_Array_QRY_Pop(_ArrayName)
 AND
 DB_LLLIB_Array_Temp_PopValue(_ArrayName, _Stat)
 THEN

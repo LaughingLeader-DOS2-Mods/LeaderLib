@@ -94,9 +94,9 @@ LeaderLog_Log("DEBUG", "[LLLIB:ModMenu] Max page set: LastIndex[",_Str1,"] LastP
 PROC
 LLLIB_ModMenu_InitSettings()
 AND
-LeaderLib_Updater_QRY_SettingsNeedsUpdate("LLLIB_Settings_ModMenu")
+LeaderUpdater_QRY_SettingsNeedsUpdate("LLLIB_Settings_ModMenu")
 THEN
-LLLIB_Updater_SaveSettingsVersionData("LLLIB_Settings_ModMenu");
+LeaderUpdater_SaveSettingsVersionData("LLLIB_Settings_ModMenu");
 
 //LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_ModMenu_SortTickRate", 1);
 //DB_LLLIB_ModMenu_SortTickRate(0);
@@ -160,7 +160,7 @@ LLLIB_ModMenu_StartSorting();
 QRY
 LLLIB_ModMenu_QRY_SortNeeded()
 AND
-LLLIB_Array_QRY_EmptyLength("LLLIB_RegisteredMenus")
+LeaderLib_Array_QRY_EmptyLength("LLLIB_RegisteredMenus")
 THEN
 DB_NOOP(1);
 
@@ -626,7 +626,7 @@ LLLIB_ModMenu_CheckPageCount(_Player);
 IF
 DialogStarted("LLLIB_ModMenu", _Instance)
 AND
-LLLIB_Array_QRY_EmptyLength("LLLIB_RegisteredMenus")
+LeaderLib_Array_QRY_EmptyLength("LLLIB_RegisteredMenus")
 AND
 DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
 THEN
@@ -761,7 +761,7 @@ Proc_StartDialog(0, "LLLIB_ModMenu", _Book, _Player);
 IF
 StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
 AND
-LeaderLib_Updater_QRY_SettingsNeedsUpdate("LLLIB_Settings_ModMenu")
+LeaderUpdater_QRY_SettingsNeedsUpdate("LLLIB_Settings_ModMenu")
 THEN
 LLLIB_ModMenu_InitSettings();
 LeaderLog_Log("SYSTEM", "[LLLIB:ModMenu] Settings updated.");

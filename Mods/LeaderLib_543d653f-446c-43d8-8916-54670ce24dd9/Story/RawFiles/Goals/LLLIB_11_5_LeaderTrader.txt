@@ -20,7 +20,7 @@ KBSECTION
 PROC
 LLLIB_LeaderTrader_InitSettings()
 THEN
-LLLIB_Updater_SaveSettingsVersionData("LLLIB_Settings_LeaderTrader");
+LeaderUpdater_SaveSettingsVersionData("LLLIB_Settings_LeaderTrader");
 
 LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_LeaderTrader_Dialog", 2);
 DB_LLLIB_LeaderTrader_Dialog("Default", "LLLIB_LeaderTrader_Default");
@@ -726,7 +726,7 @@ NOT DB_LLLIB_LeaderTrader_Temp_HasNewItems(_Val);
 IF
 StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
 AND
-LeaderLib_Updater_QRY_SettingsNeedsUpdate("LLLIB_Settings_LeaderTrader")
+LeaderUpdater_QRY_SettingsNeedsUpdate("LLLIB_Settings_LeaderTrader")
 THEN
 LLLIB_LeaderTrader_InitSettings();
 LeaderLog_Log("SYSTEM", "[LLLIB:LeaderTrader] Settings updated.");

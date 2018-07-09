@@ -11,7 +11,7 @@ INITSECTION
 KBSECTION
 //REGION ARRAY_LENGTH
 QRY
-LLLIB_Array_QRY_RebuildArrayLength((STRING)_ID, (STRING)_ArrayType)
+LeaderLib_Array_QRY_RebuildArrayLength((STRING)_ID, (STRING)_ArrayType)
 THEN
 LLLIB_Array_RebuildArrayLength(_ID, _ArrayType);
 
@@ -165,7 +165,7 @@ LLLIB_Array_RemoveFromArray(_ID, _Value);
 //REGION ARRAY_FIRST_ENTRY
 
 QRY
-LLLIB_Array_QRY_GetFirstEntry((STRING)_ID)
+LeaderLib_Array_QRY_GetFirstEntry((STRING)_ID)
 THEN
 LLLIB_Array_GetFirstEntry(_ID);
 
@@ -209,7 +209,7 @@ DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value);
 
 //REGION ARRAY_POP
 QRY
-LLLIB_Array_QRY_Pop((STRING)_ID)
+LeaderLib_Array_QRY_Pop((STRING)_ID)
 THEN
 LLLIB_Array_Pop(_ID);
 
@@ -267,7 +267,7 @@ LLLIB_Array_RemoveFromArray(_ID, _Value);
 
 //REGION ARRAY_CLEAR
 QRY
-LLLIB_Array_QRY_ClearArrayEntries((STRING)_ID)
+LeaderLib_Array_QRY_ClearArrayEntries((STRING)_ID)
 THEN
 LLLIB_Array_ClearArrayEntries(_ID);
 
@@ -323,7 +323,7 @@ NOT DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value);
 
 //REGION ARRAY_ITERATOR
 QRY
-LLLIB_Array_QRY_BuildArrayIterator((STRING)_ID)
+LeaderLib_Array_QRY_BuildArrayIterator((STRING)_ID)
 THEN
 LLLIB_Array_BuildArrayIterator(_ID);
 
@@ -399,14 +399,14 @@ LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:ArrayIterator] Added [",_Index
 
 //REGION ARRAY_QUERIES
 QRY
-LLLIB_Array_QRY_DataExists((STRING)_ID)
+LeaderLib_Array_QRY_DataExists((STRING)_ID)
 AND
 DB_LLLIB_Array_Data(_ID, _, _)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_Array_QRY_EmptyLength((STRING)_ID)
+LeaderLib_Array_QRY_EmptyLength((STRING)_ID)
 AND
 DB_LLLIB_Array_Length(_ID, _Length)
 AND
@@ -415,14 +415,14 @@ THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_Array_QRY_EmptyLength((STRING)_ID)
+LeaderLib_Array_QRY_EmptyLength((STRING)_ID)
 AND
 NOT DB_LLLIB_Array_Length(_ID, _)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_Array_QRY_DictionaryDataExists((STRING)_ID)
+LeaderLib_Array_QRY_DictionaryDataExists((STRING)_ID)
 AND
 DB_LLLIB_Dictionary_Data(_ID, _, _, _)
 THEN
@@ -455,7 +455,7 @@ LLLIB_Array_IncreaseArrayLength(_ID);
 //LLLIB_Array_RebuildArrayLength(_ID, "Dictionary");
 
 QRY
-LLLIB_Array_QRY_DictionaryEntryMatch((STRING)_ID, (STRING)_Key1, (STRING)_Value1, (STRING)_Key2, (STRING)_Value2)
+LeaderLib_Array_QRY_DictionaryEntryMatch((STRING)_ID, (STRING)_Key1, (STRING)_Value1, (STRING)_Key2, (STRING)_Value2)
 AND
 _Value1 == _Value2
 AND
@@ -468,7 +468,7 @@ LLLIB_Array_AddToDictionaryAtIndex((STRING)_ID, (STRING)_Key, (STRING)_Value, (I
 AND
 DB_LLLIB_Dictionary_Data(_ID, _Index, _OtherKey, _OtherValue)
 AND
-NOT LLLIB_Array_QRY_DictionaryEntryMatch(_ID, _Key, _Value, _OtherKey, _OtherValue)
+NOT LeaderLib_Array_QRY_DictionaryEntryMatch(_ID, _Key, _Value, _OtherKey, _OtherValue)
 THEN
 LLLIB_Array_ShiftDictionaryDown(_ID, _Index);
 DB_LLLIB_Dictionary_Data(_ID, _Index, _Key, _Value);
@@ -502,7 +502,7 @@ DB_LLLIB_Dictionary_Data(_ID, _NextIndex, _Key, _Value);
 
 //REGION DICTIONARY_CLEAR
 QRY
-LLLIB_Array_QRY_ClearDictionaryEntries((STRING)_ID)
+LeaderLib_Array_QRY_ClearDictionaryEntries((STRING)_ID)
 THEN
 LLLIB_Array_ClearDictionaryEntries(_ID);
 

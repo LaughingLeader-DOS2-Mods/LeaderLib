@@ -47,7 +47,7 @@ PROC
 LLLIB_EventFlow_Init_LeaderLibStack()
 THEN
 GlobalClearFlag("LeaderLib_InitialEventFlowComplete");
-LLLIB_Updater_SaveSettingsVersionData("LLLIB_Settings_EventFlowDefaultStack");
+LeaderUpdater_SaveSettingsVersionData("LLLIB_Settings_EventFlowDefaultStack");
 LLLIB_EventFlow_Clear_StackData("LLLIB_DefaultEventFlow");
 LLLIB_EventFlow_AddStack("LLLIB_DefaultEventFlow", "LeaderLib_Events_OnDefaultEventFlowComplete", 100, 20000);
 
@@ -387,7 +387,7 @@ LLLIB_EventFlow_Clear_SessionData(_StackName);
 IF
 StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
 AND
-LeaderLib_Updater_QRY_SettingsNeedsUpdate("LLLIB_Settings_EventFlowDefaultStack")
+LeaderUpdater_QRY_SettingsNeedsUpdate("LLLIB_Settings_EventFlowDefaultStack")
 THEN
 LLLIB_EventFlow_Init_LeaderLibStack();
 

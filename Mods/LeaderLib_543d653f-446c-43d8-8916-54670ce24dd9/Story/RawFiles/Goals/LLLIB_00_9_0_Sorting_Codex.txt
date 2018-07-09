@@ -10,7 +10,7 @@ KBSECTION
 PROC
 LLLIB_Codex_InitSettings()
 THEN
-LLLIB_Updater_SaveSettingsVersionData("LLLIB_Settings_Codex");
+LeaderUpdater_SaveSettingsVersionData("LLLIB_Settings_Codex");
 LLLIB_Codex_BuildIterator(256);
 LLLIB_Codex_BuildCodex();
 
@@ -149,7 +149,7 @@ DB_LLLIB_Temp_BuildSortIterator(_NextIndex, _Max);
 IF
 StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
 AND
-LeaderLib_Updater_QRY_SettingsNeedsUpdate("LLLIB_Settings_Codex")
+LeaderUpdater_QRY_SettingsNeedsUpdate("LLLIB_Settings_Codex")
 THEN
 LLLIB_Codex_InitSettings();
 LeaderLog_Log("SYSTEM", "[LLLIB:Codex] Settings updated.");

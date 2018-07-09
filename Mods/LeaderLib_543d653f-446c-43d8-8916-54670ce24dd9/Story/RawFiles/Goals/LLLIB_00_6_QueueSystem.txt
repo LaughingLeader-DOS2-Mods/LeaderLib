@@ -9,22 +9,22 @@ INITSECTION
 KBSECTION
 //REGION CREATE_START
 PROC
-LLLIB_Queue_Create((STRING)_QueueID, (STRING)_ArrayID, (STRING)_TimerName, (INTEGER)_TickRate, (STRING)_IterateEvent, (STRING)_IterateCompletionEvent, (STRING)_OnCompletionEvent)
+LeaderLib_Queue_Create((STRING)_QueueID, (STRING)_ArrayID, (STRING)_TimerName, (INTEGER)_TickRate, (STRING)_IterateEvent, (STRING)_IterateCompletionEvent, (STRING)_OnCompletionEvent)
 THEN
 DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent);
 
 PROC
-LLLIB_Queue_SetTimeout((STRING)_QueueID, (STRING)_TimerName, (INTEGER)_TimeoutValue)
+LeaderLib_Queue_SetTimeout((STRING)_QueueID, (STRING)_TimerName, (INTEGER)_TimeoutValue)
 THEN
-LLLIB_Queue_SetTimeout(_QueueID, _TimerName, _TimeoutValue, "");
+LeaderLib_Queue_SetTimeout(_QueueID, _TimerName, _TimeoutValue, "");
 
 PROC
-LLLIB_Queue_SetTimeout((STRING)_QueueID, (STRING)_TimerName, (INTEGER)_TimeoutValue, (STRING)_OnTimeoutEvent)
+LeaderLib_Queue_SetTimeout((STRING)_QueueID, (STRING)_TimerName, (INTEGER)_TimeoutValue, (STRING)_OnTimeoutEvent)
 THEN
 DB_LLLIB_Queue_Timeout(_QueueID, _TimerName, _TimeoutValue, _OnTimeoutEvent);
 
 PROC
-LLLIB_Queue_Start((STRING)_QueueID)
+LeaderLib_Queue_Start((STRING)_QueueID)
 AND
 DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 THEN
@@ -32,7 +32,7 @@ LeaderLog_Log("DEBUG", "[LLLIB:QueueSystem:Start] Starting queue [",_QueueID,"].
 LLLIB_Queue_Internal_NextTick(_QueueID);
 
 PROC
-LLLIB_Queue_Stop((STRING)_QueueID)
+LeaderLib_Queue_Stop((STRING)_QueueID)
 AND
 DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 THEN
@@ -42,7 +42,7 @@ LLLIB_Queue_Internal_CancelTimeoutTimer(_QueueID);
 
 //REGION QUERIES
 QRY
-LLLIB_Queue_QRY_IsRunning((STRING)_QueueID)
+LeaderLib_Queue_QRY_IsRunning((STRING)_QueueID)
 AND
 DB_LLLIB_Queue_Temp_TimerRunning(_QueueID)
 THEN
@@ -78,7 +78,7 @@ DB_LLLIB_Array_Length(_ArrayID, _Length)
 AND
 _Length > 0
 AND
-LLLIB_Array_QRY_Pop(_ArrayID)
+LeaderLib_Array_QRY_Pop(_ArrayID)
 AND
 DB_LLLIB_Array_Temp_PopValue(_ArrayID, _Entry)
 THEN
@@ -103,7 +103,7 @@ NOT DB_LLLIB_Queue_Temp_CurrentEntry(_QueueID, _)
 AND
 DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 AND
-LLLIB_Array_QRY_EmptyLength(_ArrayID)
+LeaderLib_Array_QRY_EmptyLength(_ArrayID)
 THEN
 LLLIB_Queue_Internal_OnComplete(_QueueID);
 
@@ -155,13 +155,13 @@ DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _Iterat
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:QueueSystem:OnComplete] Queue [",_QueueID,"] complete. Sending event [",_OnCompletionEvent,"].");
 LeaderLib_SendEvent(_OnCompletionEvent);
-LLLIB_Queue_Stop(_QueueID); // Stop timers, if they're still running for some reason
-LLLIB_Queue_ClearQueue(_QueueID);
+LeaderLib_Queue_Stop(_QueueID); // Stop timers, if they're still running for some reason
+LeaderLib_Queue_ClearQueue(_QueueID);
 //END_REGION
 
 //REGION CLEAR
 PROC
-LLLIB_Queue_ClearQueue((STRING)_QueueID)
+LeaderLib_Queue_ClearQueue((STRING)_QueueID)
 AND
 DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 THEN
@@ -171,7 +171,7 @@ LLLIB_Array_ClearArray(_ArrayID);
 NOT DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent);
 
 PROC
-LLLIB_Queue_ClearQueue((STRING)_QueueID)
+LeaderLib_Queue_ClearQueue((STRING)_QueueID)
 AND
 DB_LLLIB_Queue_Timeout(_QueueID, _TimerName, _TimeoutValue, _OnTimeoutEvent)
 THEN

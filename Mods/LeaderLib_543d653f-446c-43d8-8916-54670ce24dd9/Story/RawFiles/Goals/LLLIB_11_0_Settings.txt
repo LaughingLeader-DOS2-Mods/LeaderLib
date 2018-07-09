@@ -13,7 +13,7 @@ KBSECTION
 PROC
 LLLIB_Settings_InitSettings()
 THEN
-LLLIB_Updater_SaveSettingsVersionData("LLLIB_Settings_GeneralSettings");
+LeaderUpdater_SaveSettingsVersionData("LLLIB_Settings_GeneralSettings");
 LLLIB_Settings_InitEquipmentSlots();
 LLLIB_Settings_InitStats();
 
@@ -52,7 +52,7 @@ DB_LLLIB_EquipmentSlots("Ring2");
 PROC
 LLLIB_Settings_InitEquipmentSlots()
 AND
-LLLIB_Array_QRY_EmptyLength("LeaderLib_EquipmentSlots")
+LeaderLib_Array_QRY_EmptyLength("LeaderLib_EquipmentSlots")
 AND
 DB_LLLIB_EquipmentSlots(_Slot)
 THEN
@@ -121,7 +121,7 @@ DB_LLLIB_Abilities("Brewmaster");
 IF
 StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
 AND
-LeaderLib_Updater_QRY_SettingsNeedsUpdate("LLLIB_Settings_GeneralSettings")
+LeaderUpdater_QRY_SettingsNeedsUpdate("LLLIB_Settings_GeneralSettings")
 THEN
 LLLIB_Settings_InitSettings();
 LeaderLog_Log("SYSTEM", "[LLLIB:Settings] Settings updated.");

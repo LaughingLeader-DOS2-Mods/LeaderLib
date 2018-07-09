@@ -152,6 +152,7 @@ VARS
 	ITEM:_Item
 	FLOAT:_CharLevel
 	FLOAT:_ItemLevel
+	INT:_ItemLevelVar
 	STRING:_Str
 	FIXEDSTRING:_Message
 ON
@@ -161,11 +162,14 @@ IF "c1&c2"
 	CharacterGetStat(_CharLevel, _Character, Level)
 	ItemGetStat(_ItemLevel, _Item, Level)
 THEN
+	Cast(_ItemLevelVar, _ItemLevel)
+	SetVar(_Item, "LeaderLib_ItemLevel", _ItemLevelVar)
 	IF "c1"
 		IsLessThen(_ItemLevel, _CharLevel)
 	THEN
 		CharacterItemEvent(_Character, _Item, "LeaderLib_Commands_AutoLevelItem")
 	ENDIF
+	CharacterItemEvent(_Character, _Item, "LeaderLib_Events_ItemLevelCheckFinished")
 	/*
 	Print(_Str, "Item level: [1] | Char Level: [2]", _ItemLevel, _CharLevel)
 	Cast(_Message, _Str)

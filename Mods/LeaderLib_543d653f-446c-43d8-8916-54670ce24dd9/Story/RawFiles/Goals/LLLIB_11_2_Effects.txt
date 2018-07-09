@@ -3,16 +3,44 @@ SubGoalCombiner SGC_AND
 INITSECTION
 LLLIB_EffectFlags_InitSettings();
 
-//DB_LLLIB_EffectFlags_Effects(_Group, _Flag, _Effect, _Loop, _BoneName)
-//DB_LLLIB_EffectFlags_StopGroupFlags(_Group, _StopFlag)
+//DB_LeaderLib_Effects_EffectFlags(_ID, _Group, _Flag, _Effect, _Loop, _BoneName)
+//DB_LeaderLib_Effects_StopGroupFlags(_ID, _Group, _StopFlag)
 KBSECTION
 //REGION SETTINGS
 PROC
 LLLIB_EffectFlags_InitSettings()
 THEN
-DB_LLLIB_EffectFlags_StopGroupFlags("CameraShake", "LeaderLib_Effects_StopCameraShake");
+LLLIB_Updater_SaveSettingsVersionData("LLLIB_Settings_Effects");
+LeaderLib_Effects_Register_StopGroupFlag("LeaderLib.Default", "CameraShake", "LeaderLib_Effects_StopCameraShake");
+LeaderLib_Effects_Register_EffectFlag("LeaderLib.Default", "CameraShake", "LeaderLib_Effects_CameraShake_Loop_Normal", "RS3_FX_GP_ScriptedEvent_CameraShake_Loop_00-50", 1, "");
+//END_REGION
 
-DB_LLLIB_EffectFlags_Effects("CameraShake", "LeaderLib_Effects_CameraShake_Loop_Normal", "RS3_FX_GP_ScriptedEvent_CameraShake_Loop_00-50", 1, "");
+//REGION UPDATING
+IF
+StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
+AND
+LeaderLib_Updater_QRY_SettingsNeedsUpdate("LLLIB_Settings_Effects")
+THEN
+LLLIB_EffectFlags_InitSettings();
+//END_REGION
+
+//REGION REGISTERING
+PROC
+LeaderLib_Effects_Register_EffectFlag((STRING)_ID, (STRING)_Group, (STRING)_Flag, (STRING)_Effect, (INTEGER)_Loop, (STRING)_BoneName)
+AND
+DB_LeaderLib_Effects_EffectFlags(_OtherID, _OtherGroup, _Flag, _OtherEffect, _OtherLoop, _OtherBoneName)
+THEN
+NOT DB_LeaderLib_Effects_EffectFlags(_OtherID, _OtherGroup, _Flag, _OtherEffect, _OtherLoop, _OtherBoneName);
+
+PROC
+LeaderLib_Effects_Register_EffectFlag((STRING)_ID, (STRING)_Group, (STRING)_Flag, (STRING)_Effect, (INTEGER)_Loop, (STRING)_BoneName)
+THEN
+DB_LeaderLib_Effects_EffectFlags(_ID, _Group, _Flag, _Effect, _Loop, _BoneName);
+
+PROC
+LeaderLib_Effects_Register_StopGroupFlag((STRING)_ID, (STRING)_Group, (STRING)_Flag)
+THEN
+DB_LeaderLib_Effects_StopGroupFlags(_ID, _Group, _Flag);
 //END_REGION
 
 //REGION EFFECT_PROCS
@@ -67,21 +95,21 @@ PROC_StopLoopEffect(_Target, _ID);
 IF
 ObjectFlagSet(_Flag, _Target, _)
 AND
-DB_LLLIB_EffectFlags_Effects(_Group, _Flag, _Effect, _Loop, _BoneName)
+DB_LeaderLib_Effects_EffectFlags(_ID, _Group, _Flag, _Effect, _Loop, _BoneName)
 THEN
 LLLIB_Effects_Internal_ParseEffect(_Target, _Effect, _Loop, _BoneName);
 
 IF
 ObjectFlagCleared(_Flag, _Target, _)
 AND
-DB_LLLIB_EffectFlags_Effects(_Group, _Flag, _Effect, _Loop, _BoneName)
+DB_LeaderLib_Effects_EffectFlags(_ID, _Group, _Flag, _Effect, _Loop, _BoneName)
 THEN
 LeaderLib_Effects_StopEffect(_Target, _Effect, _BoneName);
 
 IF
 ObjectFlagSet(_StopFlag, _Target, _)
 AND
-DB_LLLIB_EffectFlags_StopGroupFlags(_Group, _StopFlag)
+DB_LeaderLib_Effects_StopGroupFlags(_ID, _Group, _StopFlag)
 THEN
 ObjectClearFlag(_Target, _StopFlag);
 LeaderLib_Effects_StopGroupEffects(_Target, _Group);

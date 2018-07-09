@@ -1,243 +1,245 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-//DB_LLLIB_Helper_Temp_StopIteratingForFlags(1)
-//DB_LLLIB_Helper_Temp_StopIteratingForMinLevel(1)
-//DB_LLLIB_Helper_Temp_StopIteratingForMaxLevel(1)
-//DB_LLLIB_Helper_Temp_PartyMemberOutsideOfLevelRange(1)
-//DB_LLLIB_Helper_Temp_HighestLevelInParty(_Level)
-//DB_LLLIB_Helper_Temp_HighestPlayerLevel(_Level)
+/*Temp*/
+//DB_LeaderLib_Temp_RandomResult(_Ran)
+//DB_LeaderLib_Helper_Temp_StopIteratingForFlags(1)
+//DB_LeaderLib_Helper_Temp_StopIteratingForMinLevel(1)
+//DB_LeaderLib_Helper_Temp_StopIteratingForMaxLevel(1)
+//DB_LeaderLib_Helper_Temp_PartyMemberOutsideOfLevelRange(1)
+//DB_LeaderLib_Helper_Temp_HighestLevelInParty(_Level)
+//DB_LeaderLib_Helper_Temp_HighestPlayerLevel(_Level)
 /*Timers*/
-//DB_LLLIB_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent)
-//DB_LLLIB_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent)
-//DB_LLLIB_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _CompleteEvent)
+//DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent)
+//DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent)
+//DB_LeaderLib_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _CompleteEvent)
 KBSECTION
 //REGION QUERY_INFO
 QRY
-LLLIB_Helper_QRY_PartyFlag_ClearIterator()
+LeaderLib_Helper_QRY_PartyFlag_ClearIterator()
 AND
-DB_LLLIB_Helper_Temp_StopIteratingForFlags(_Val)
+DB_LeaderLib_Helper_Temp_StopIteratingForFlags(_Val)
 THEN
-NOT DB_LLLIB_Helper_Temp_StopIteratingForFlags(_Val);
+NOT DB_LeaderLib_Helper_Temp_StopIteratingForFlags(_Val);
 
 QRY
-LLLIB_Helper_QRY_PartyFlag_ClearIterator()
+LeaderLib_Helper_QRY_PartyFlag_ClearIterator()
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_Helper_QRY_GlobalFlagSet((STRING)_Flag, 0)
+LeaderLib_Helper_QRY_GlobalFlagSet((STRING)_Flag, 0)
 AND
 NOT GlobalGetFlag(_Flag, 1) // GlobalGetFlag(_Flag, 0) may not return anything if the global flag was never defined (i.e. from other mods)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_Helper_QRY_GlobalFlagSet((STRING)_Flag, 1)
+LeaderLib_Helper_QRY_GlobalFlagSet((STRING)_Flag, 1)
 AND
 GlobalGetFlag(_Flag, 1)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_Helper_QRY_FlagSet((GUIDSTRING)_Object, (STRING)_Flag, "Object", (INTEGER)_FlagVal)
+LeaderLib_Helper_QRY_FlagSet((GUIDSTRING)_Object, (STRING)_Flag, "Object", (INTEGER)_FlagVal)
 AND
 ObjectGetFlag(_Object, _Flag, _FlagVal)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_Helper_QRY_FlagSet((GUIDSTRING)_Player, (STRING)_Flag, "Character", (INTEGER)_FlagVal)
+LeaderLib_Helper_QRY_FlagSet((GUIDSTRING)_Player, (STRING)_Flag, "Character", (INTEGER)_FlagVal)
 AND
 ObjectGetFlag((CHARACTERGUID)_Player, _Flag, _FlagVal)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_Helper_QRY_FlagSet((GUIDSTRING)_Player, (STRING)_Flag, "User", (INTEGER)_FlagVal)
+LeaderLib_Helper_QRY_FlagSet((GUIDSTRING)_Player, (STRING)_Flag, "User", (INTEGER)_FlagVal)
 AND
 UserGetFlag((CHARACTERGUID)_Player, _Flag, _FlagVal)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_Helper_QRY_FlagSet((GUIDSTRING)_Object, (STRING)_Flag, "Global", (INTEGER)_FlagVal)
+LeaderLib_Helper_QRY_FlagSet((GUIDSTRING)_Object, (STRING)_Flag, "Global", (INTEGER)_FlagVal)
 AND
-LLLIB_Helper_QRY_GlobalFlagSet(_Flag, _FlagVal)
+LeaderLib_Helper_QRY_GlobalFlagSet(_Flag, _FlagVal)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_Helper_QRY_PartyFlagSet((STRING)_Flag, "Global", (INTEGER)_FlagVal)
+LeaderLib_Helper_QRY_PartyFlagSet((STRING)_Flag, "Global", (INTEGER)_FlagVal)
 AND
-LLLIB_Helper_QRY_GlobalFlagSet(_Flag, _FlagVal)
+LeaderLib_Helper_QRY_GlobalFlagSet(_Flag, _FlagVal)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_Helper_QRY_PartyFlagSet((STRING)_Flag, (STRING)_FlagType, (INTEGER)_FlagVal)
+LeaderLib_Helper_QRY_PartyFlagSet((STRING)_Flag, (STRING)_FlagType, (INTEGER)_FlagVal)
 AND
 _FlagType != "Global"
 AND
-LLLIB_Helper_QRY_PartyFlag_ClearIterator()
+LeaderLib_Helper_QRY_PartyFlag_ClearIterator()
 AND
 DB_IsPlayer(_Player)
 AND
 _Player != NULL_00000000-0000-0000-0000-000000000000
 AND
-NOT DB_LLLIB_Helper_Temp_StopIteratingForFlags(1)
+NOT DB_LeaderLib_Helper_Temp_StopIteratingForFlags(1)
 AND
-LLLIB_Helper_QRY_FlagSet((GUIDSTRING)_Player, _Flag, _FlagType, _FlagVal)
+LeaderLib_Helper_QRY_FlagSet((GUIDSTRING)_Player, _Flag, _FlagType, _FlagVal)
 THEN
-DB_LLLIB_Helper_Temp_StopIteratingForFlags(1);
+DB_LeaderLib_Helper_Temp_StopIteratingForFlags(1);
 
 QRY
-LLLIB_Helper_QRY_PartyMinLevelMet((INTEGER)_MinLevel)
+LeaderLib_Helper_QRY_PartyMinLevelMet((INTEGER)_MinLevel)
 AND
 _MinLevel <= 0
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_Helper_QRY_PartyMinLevelMet((INTEGER)_MinLevel)
+LeaderLib_Helper_QRY_PartyMinLevelMet((INTEGER)_MinLevel)
 AND
-DB_LLLIB_Helper_Temp_StopIteratingForMinLevel(_Val)
+DB_LeaderLib_Helper_Temp_StopIteratingForMinLevel(_Val)
 THEN
-NOT DB_LLLIB_Helper_Temp_StopIteratingForMinLevel(_Val);
+NOT DB_LeaderLib_Helper_Temp_StopIteratingForMinLevel(_Val);
 
 QRY
-LLLIB_Helper_QRY_PartyMinLevelMet((INTEGER)_MinLevel)
+LeaderLib_Helper_QRY_PartyMinLevelMet((INTEGER)_MinLevel)
 AND
 _MinLevel > 0
 AND
 DB_IsPlayer(_Player)
 AND
-NOT DB_LLLIB_Helper_Temp_StopIteratingForMinLevel(1)
+NOT DB_LeaderLib_Helper_Temp_StopIteratingForMinLevel(1)
 AND
 CharacterGetLevel(_Player, _Level)
 AND
 _Level >= _MinLevel
 THEN
-DB_LLLIB_Helper_Temp_StopIteratingForMinLevel(1);
+DB_LeaderLib_Helper_Temp_StopIteratingForMinLevel(1);
 
 QRY
-LLLIB_Helper_QRY_PartyMaxLevelMet((INTEGER)_MaxLevel)
+LeaderLib_Helper_QRY_PartyMaxLevelMet((INTEGER)_MaxLevel)
 AND
 _MaxLevel <= 0
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_Helper_QRY_PartyMaxLevelMet((INTEGER)_MaxLevel)
+LeaderLib_Helper_QRY_PartyMaxLevelMet((INTEGER)_MaxLevel)
 AND
-DB_LLLIB_Helper_Temp_StopIteratingForMaxLevel(_Val)
+DB_LeaderLib_Helper_Temp_StopIteratingForMaxLevel(_Val)
 THEN
-NOT DB_LLLIB_Helper_Temp_StopIteratingForMaxLevel(_Val);
+NOT DB_LeaderLib_Helper_Temp_StopIteratingForMaxLevel(_Val);
 
 QRY
-LLLIB_Helper_QRY_PartyMaxLevelMet((INTEGER)_MaxLevel)
+LeaderLib_Helper_QRY_PartyMaxLevelMet((INTEGER)_MaxLevel)
 AND
 _MaxLevel > 0
 AND
 DB_IsPlayer(_Player)
 AND
-NOT DB_LLLIB_Helper_Temp_StopIteratingForMaxLevel(1)
+NOT DB_LeaderLib_Helper_Temp_StopIteratingForMaxLevel(1)
 AND
 CharacterGetLevel(_Player, _Level)
 AND
 _Level <= _MaxLevel
 THEN
-DB_LLLIB_Helper_Temp_StopIteratingForMaxLevel(1);
+DB_LeaderLib_Helper_Temp_StopIteratingForMaxLevel(1);
 
 QRY
-LLLIB_Helper_QRY_PartyLevelRangeMet((INTEGER)_MinLevel, (INTEGER)_MaxLevel)
+LeaderLib_Helper_QRY_PartyLevelRangeMet((INTEGER)_MinLevel, (INTEGER)_MaxLevel)
 AND
-LLLIB_Helper_QRY_PartyMinLevelMet(_MinLevel)
+LeaderLib_Helper_QRY_PartyMinLevelMet(_MinLevel)
 AND
-LLLIB_Helper_QRY_PartyMaxLevelMet(_MaxLevel)
+LeaderLib_Helper_QRY_PartyMaxLevelMet(_MaxLevel)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_Helper_QRY_GetHighestPlayerLevel()
+LeaderLib_Helper_QRY_GetHighestPlayerLevel()
 AND
-DB_LLLIB_Helper_Temp_HighestPlayerLevel(_Level)
+DB_LeaderLib_Helper_Temp_HighestPlayerLevel(_Level)
 THEN
-NOT DB_LLLIB_Helper_Temp_HighestPlayerLevel(_Level);
-DB_LLLIB_Helper_Temp_HighestPlayerLevel(1);
+NOT DB_LeaderLib_Helper_Temp_HighestPlayerLevel(_Level);
+DB_LeaderLib_Helper_Temp_HighestPlayerLevel(1);
 
 QRY
-LLLIB_Helper_QRY_GetHighestPlayerLevel()
+LeaderLib_Helper_QRY_GetHighestPlayerLevel()
 AND
-NOT DB_LLLIB_Helper_Temp_HighestPlayerLevel(_)
+NOT DB_LeaderLib_Helper_Temp_HighestPlayerLevel(_)
 THEN
-DB_LLLIB_Helper_Temp_HighestPlayerLevel(1);
+DB_LeaderLib_Helper_Temp_HighestPlayerLevel(1);
 
 QRY
-LLLIB_Helper_QRY_GetHighestPlayerLevel()
+LeaderLib_Helper_QRY_GetHighestPlayerLevel()
 AND
 DB_IsPlayer(_Player)
 AND
-DB_LLLIB_Helper_Temp_HighestPlayerLevel(_HighestLevel)
+DB_LeaderLib_Helper_Temp_HighestPlayerLevel(_HighestLevel)
 AND
 CharacterGetLevel(_Player, _Level)
 AND
 _Level > _HighestLevel
 THEN
-NOT DB_LLLIB_Helper_Temp_HighestPlayerLevel(_HighestLevel);
-DB_LLLIB_Helper_Temp_HighestPlayerLevel(_Level);
+NOT DB_LeaderLib_Helper_Temp_HighestPlayerLevel(_HighestLevel);
+DB_LeaderLib_Helper_Temp_HighestPlayerLevel(_Level);
 
 QRY
-LLLIB_Helper_QRY_GetHighestLevelInParty((CHARACTERGUID)_PartyMember)
+LeaderLib_Helper_QRY_GetHighestLevelInParty((CHARACTERGUID)_PartyMember)
 AND
-DB_LLLIB_Helper_Temp_HighestLevelInParty(_PartyMember, _Level)
+DB_LeaderLib_Helper_Temp_HighestLevelInParty(_PartyMember, _Level)
 THEN
-NOT DB_LLLIB_Helper_Temp_HighestLevelInParty(_PartyMember, _Level);
-DB_LLLIB_Helper_Temp_HighestLevelInParty(_PartyMember, 1);
+NOT DB_LeaderLib_Helper_Temp_HighestLevelInParty(_PartyMember, _Level);
+DB_LeaderLib_Helper_Temp_HighestLevelInParty(_PartyMember, 1);
 
 QRY
-LLLIB_Helper_QRY_GetHighestLevelInParty((CHARACTERGUID)_PartyMember)
+LeaderLib_Helper_QRY_GetHighestLevelInParty((CHARACTERGUID)_PartyMember)
 AND
-NOT DB_LLLIB_Helper_Temp_HighestLevelInParty(_PartyMember, _)
+NOT DB_LeaderLib_Helper_Temp_HighestLevelInParty(_PartyMember, _)
 THEN
-DB_LLLIB_Helper_Temp_HighestLevelInParty(_PartyMember, 1);
+DB_LeaderLib_Helper_Temp_HighestLevelInParty(_PartyMember, 1);
 
 QRY
-LLLIB_Helper_QRY_GetHighestLevelInParty((CHARACTERGUID)_PartyMember)
+LeaderLib_Helper_QRY_GetHighestLevelInParty((CHARACTERGUID)_PartyMember)
 AND
 DB_IsPlayer(_Player)
 AND
-DB_LLLIB_Helper_Temp_HighestLevelInParty(_PartyMember, _HighestLevel)
+DB_LeaderLib_Helper_Temp_HighestLevelInParty(_PartyMember, _HighestLevel)
 AND
 CharacterGetLevel(_Player, _Level)
 AND
 _Level > _HighestLevel
 THEN
-NOT DB_LLLIB_Helper_Temp_HighestLevelInParty(_PartyMember, _HighestLevel);
-DB_LLLIB_Helper_Temp_HighestLevelInParty(_PartyMember, _Level);
+NOT DB_LeaderLib_Helper_Temp_HighestLevelInParty(_PartyMember, _HighestLevel);
+DB_LeaderLib_Helper_Temp_HighestLevelInParty(_PartyMember, _Level);
 
 QRY
-LLLIB_Helper_QRY_GetHighestLevelPlayer()
+LeaderLib_Helper_QRY_GetHighestLevelPlayer()
 AND
-DB_LLLIB_Helper_Temp_HighestLevelPlayer(_Player, _Level)
+DB_LeaderLib_Helper_Temp_HighestLevelPlayer(_Player, _Level)
 THEN
-NOT DB_LLLIB_Helper_Temp_HighestLevelPlayer(_Player, _Level);
+NOT DB_LeaderLib_Helper_Temp_HighestLevelPlayer(_Player, _Level);
 
 QRY
-LLLIB_Helper_QRY_GetHighestLevelPlayer()
+LeaderLib_Helper_QRY_GetHighestLevelPlayer()
 AND
-LLLIB_Helper_QRY_GetHighestPlayerLevel()
+LeaderLib_Helper_QRY_GetHighestPlayerLevel()
 AND
-DB_LLLIB_Helper_Temp_HighestPlayerLevel(_Level)
+DB_LeaderLib_Helper_Temp_HighestPlayerLevel(_Level)
 AND
 DB_IsPlayer(_Player)
 AND
 CharacterGetLevel(_Player, _Level)
 THEN
-DB_LLLIB_Helper_Temp_HighestLevelPlayer(_Player, _Level);
+DB_LeaderLib_Helper_Temp_HighestLevelPlayer(_Player, _Level);
 
 QRY
-LLLIB_Helper_QRY_UserMatch((CHARACTERGUID)_Char1, (CHARACTERGUID)_Char2)
+LeaderLib_Helper_QRY_UserMatch((CHARACTERGUID)_Char1, (CHARACTERGUID)_Char2)
 AND
 CharacterGetReservedUserID(_Char1, _ID)
 AND
@@ -248,89 +250,89 @@ DB_NOOP(1);
 
 //REGION PARTY_LEVELRANGE_STRICT
 QRY
-LLLIB_Helper_QRY_PartyMinLevelMet_Strict((INTEGER)_MinLevel)
+LeaderLib_Helper_QRY_PartyMinLevelMet_Strict((INTEGER)_MinLevel)
 AND
 _MinLevel <= 0
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_Helper_QRY_PartyMinLevelMet_Strict((INTEGER)_MinLevel)
+LeaderLib_Helper_QRY_PartyMinLevelMet_Strict((INTEGER)_MinLevel)
 AND
-DB_LLLIB_Helper_Temp_PartyMemberOutsideOfLevelRange(_Val)
+DB_LeaderLib_Helper_Temp_PartyMemberOutsideOfLevelRange(_Val)
 THEN
-NOT DB_LLLIB_Helper_Temp_PartyMemberOutsideOfLevelRange(_Val);
+NOT DB_LeaderLib_Helper_Temp_PartyMemberOutsideOfLevelRange(_Val);
 
 QRY
-LLLIB_Helper_QRY_PartyMinLevelMet_Strict((INTEGER)_MinLevel)
+LeaderLib_Helper_QRY_PartyMinLevelMet_Strict((INTEGER)_MinLevel)
 AND
 _MinLevel > 0
 AND
 DB_IsPlayer(_Player)
 AND
-NOT DB_LLLIB_Helper_Temp_PartyMemberOutsideOfLevelRange(1)
+NOT DB_LeaderLib_Helper_Temp_PartyMemberOutsideOfLevelRange(1)
 AND
 CharacterGetLevel(_Player, _Level)
 AND
 _Level < _MinLevel
 THEN
-DB_LLLIB_Helper_Temp_PartyMemberOutsideOfLevelRange(1);
+DB_LeaderLib_Helper_Temp_PartyMemberOutsideOfLevelRange(1);
 
 QRY
-LLLIB_Helper_QRY_PartyMaxLevelMet_Strict((INTEGER)_MaxLevel)
+LeaderLib_Helper_QRY_PartyMaxLevelMet_Strict((INTEGER)_MaxLevel)
 AND
 _MaxLevel <= 0
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_Helper_QRY_PartyMaxLevelMet_Strict((INTEGER)_MaxLevel)
+LeaderLib_Helper_QRY_PartyMaxLevelMet_Strict((INTEGER)_MaxLevel)
 AND
-DB_LLLIB_Helper_Temp_StopIteratingForMaxLevel(_Val)
+DB_LeaderLib_Helper_Temp_StopIteratingForMaxLevel(_Val)
 THEN
-NOT DB_LLLIB_Helper_Temp_StopIteratingForMaxLevel(_Val);
+NOT DB_LeaderLib_Helper_Temp_StopIteratingForMaxLevel(_Val);
 
 QRY
-LLLIB_Helper_QRY_PartyMaxLevelMet_Strict((INTEGER)_MaxLevel)
+LeaderLib_Helper_QRY_PartyMaxLevelMet_Strict((INTEGER)_MaxLevel)
 AND
 _MaxLevel > 0
 AND
 DB_IsPlayer(_Player)
 AND
-NOT DB_LLLIB_Helper_Temp_PartyMemberOutsideOfLevelRange(1)
+NOT DB_LeaderLib_Helper_Temp_PartyMemberOutsideOfLevelRange(1)
 AND
 CharacterGetLevel(_Player, _Level)
 AND
 _Level > _MaxLevel
 THEN
-DB_LLLIB_Helper_Temp_PartyMemberOutsideOfLevelRange(1);
+DB_LeaderLib_Helper_Temp_PartyMemberOutsideOfLevelRange(1);
 
 //Checks to make sure the whole party fits the range
 QRY
-LLLIB_Helper_QRY_PartyLevelRangeMet_Strict((INTEGER)_MinLevel, (INTEGER)_MaxLevel)
+LeaderLib_Helper_QRY_PartyLevelRangeMet_Strict((INTEGER)_MinLevel, (INTEGER)_MaxLevel)
 AND
-LLLIB_Helper_QRY_PartyMinLevelMet_Strict(_MinLevel)
+LeaderLib_Helper_QRY_PartyMinLevelMet_Strict(_MinLevel)
 AND
-LLLIB_Helper_QRY_PartyMaxLevelMet_Strict(_MaxLevel)
+LeaderLib_Helper_QRY_PartyMaxLevelMet_Strict(_MaxLevel)
 AND
-NOT DB_LLLIB_Helper_Temp_PartyMemberOutsideOfLevelRange(1)
+NOT DB_LeaderLib_Helper_Temp_PartyMemberOutsideOfLevelRange(1)
 THEN
 DB_NOOP(1);
 //END_REGION
 
 //REGION FLAG_HELPERS
 QRY
-LLLIB_Helper_QRY_ClearObjectFlag((GUIDSTRING)_Object, (STRING)_Flag)
+LeaderLib_Helper_QRY_ClearObjectFlag((GUIDSTRING)_Object, (STRING)_Flag)
 THEN
 ObjectClearFlag(_Object, _Flag);
 
 QRY
-LLLIB_Helper_QRY_ClearUserFlag((CHARACTERGUID)_Object, (STRING)_Flag)
+LeaderLib_Helper_QRY_ClearUserFlag((CHARACTERGUID)_Object, (STRING)_Flag)
 THEN
 UserClearFlag(_Object, _Flag, 0);
 
 QRY
-LLLIB_Helper_QRY_ClearGlobalFlag((STRING)_Flag)
+LeaderLib_Helper_QRY_ClearGlobalFlag((STRING)_Flag)
 THEN
 GlobalClearFlag(_Flag);
 //END_REGION
@@ -338,76 +340,71 @@ GlobalClearFlag(_Flag);
 //REGION RANDOM
 //Thanks to Norbyte for this chunk
 QRY
-LLLIB_Random_QRY_AdjustSeed()
+LeaderLib_Random_QRY_AdjustSeed()
 AND
-NOT DB_LLLIB_Random_Seed(_)
+NOT DB_LeaderLib_Random_Seed(_)
 AND
 Random(99999, _Seed)
 THEN
-DB_LLLIB_Random_Seed(_Seed);
+DB_LeaderLib_Random_Seed(_Seed);
 
 QRY
-LLLIB_Random_QRY_AdjustSeed()
+LeaderLib_Random_QRY_AdjustSeed()
 THEN
 DB_NOOP(1);
 
-/*
 QRY
-LLLIB_Random_QRY_AdjustSeed()
-AND
-DB_LLLIB_Random_Seed(_Seed)
-AND
-IntegerProduct(_Seed, 1664525, _SeedLCG1)
-AND
-IntegerSum(_SeedLCG1, 1013904223, _SeedLCG2)
+LeaderLib_Random_QRY((INTEGER)_Modulo)
 THEN
-NOT DB_LLLIB_Random_Seed(_Seed);
-DB_LLLIB_Random_Seed(_SeedLCG2);
-*/
+LeaderLib_Random(_Modulo);
 
-QRY
-LLLIB_Random((INTEGER)_Modulo)
+PROC
+LeaderLib_Random((INTEGER)_Modulo)
 AND
-DB_LLLIB_Temp_RandomResult(_OldRand)
+DB_LeaderLib_Temp_RandomResult(_OldRand)
 THEN
-NOT DB_LLLIB_Temp_RandomResult(_OldRand);
+NOT DB_LeaderLib_Temp_RandomResult(_OldRand);
 
-QRY
-LLLIB_Random((INTEGER)_Modulo)
+PROC
+LeaderLib_Random((INTEGER)_Modulo)
 AND
-LLLIB_Random_QRY_AdjustSeed()
+LeaderLib_Random_QRY_AdjustSeed()
 AND
-DB_LLLIB_Random_Seed(_Seed)
+DB_LeaderLib_Random_Seed(_Seed)
 AND
 Random(_Seed, _Ran)
 AND
 IntegerModulo(_Ran, _Modulo, _Rand)
 THEN
-DB_LLLIB_Temp_RandomResult(_Rand);
-
-//Random range
-QRY
-LLLIB_Random((INTEGER)_MinRan, (INTEGER)_MaxRan)
-AND
-NOT DB_LLLIB_Random_Seed(_)
-AND
-Random(99999, _Seed)
-THEN
-DB_LLLIB_Random_Seed(_Seed);
-
+DB_LeaderLib_Temp_RandomResult(_Rand);
 //END_REGION
 
 //REGION RANDOM_RANGE
 QRY
-LLLIB_Random((INTEGER)_MinRan, (INTEGER)_MaxRan)
-AND
-DB_LLLIB_Temp_RandomResult(_OldRand)
+LeaderLib_Random_QRY((INTEGER)_MinRan, (INTEGER)_MaxRan)
 THEN
-NOT DB_LLLIB_Temp_RandomResult(_OldRand);
+LeaderLib_Random(_MinRan, _MaxRan);
+
+//Random range
+PROC
+LeaderLib_Random((INTEGER)_MinRan, (INTEGER)_MaxRan)
+AND
+NOT DB_LeaderLib_Random_Seed(_)
+AND
+Random(99999, _Seed)
+THEN
+DB_LeaderLib_Random_Seed(_Seed);
+
+PROC
+LeaderLib_Random((INTEGER)_MinRan, (INTEGER)_MaxRan)
+AND
+DB_LeaderLib_Temp_RandomResult(_OldRand)
+THEN
+NOT DB_LeaderLib_Temp_RandomResult(_OldRand);
 
 //min + rand() / (RAND_MAX / (max - min + 1) + 1)
-QRY
-LLLIB_Random((INTEGER)_MinRan, (INTEGER)_MaxRan)
+PROC
+LeaderLib_Random((INTEGER)_MinRan, (INTEGER)_MaxRan)
 AND
 Random(99999, _RanSeed)
 AND
@@ -423,12 +420,12 @@ IntegerDivide(_RanSeed, _Ran4, _Ran5)
 AND
 IntegerSum(_Ran5, _MinRan, _Val)
 THEN
-DB_LLLIB_Temp_RandomResult(_Val);
+DB_LeaderLib_Temp_RandomResult(_Val);
 //END_REGION
 
 //REGION DATABASE_HELPERS
 PROC
-LLLIB_Helper_ClearExistingDatabase((STRING)_DatabaseName, (INTEGER)_Arity)
+LeaderLib_Helper_ClearExistingDatabase((STRING)_DatabaseName, (INTEGER)_Arity)
 AND
 SysCount(_DatabaseName, _Arity, _Count)
 AND
@@ -437,7 +434,7 @@ THEN
 SysClear(_DatabaseName, _Arity);
 
 PROC
-LLLIB_Helper_DatabaseCount((STRING)_DatabaseName, (INTEGER)_Arity)
+LeaderLib_Helper_DatabaseCount((STRING)_DatabaseName, (INTEGER)_Arity)
 AND
 SysCount(_DatabaseName, _Arity, _Total)
 AND
@@ -459,29 +456,29 @@ AND
 CharacterGetDisplayName(_Character, _, _Name)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Helper:RefreshEquipment_Delayed] Refreshing equipment for [",_Name,"]");
-LLLIB_Helper_UnequipAllAndSave(_Character);
+LeaderLib_Helper_UnequipAllAndSave(_Character);
 LeaderLib_StartObjectTimer(_Character, 2500, "LLLIB_Timers_EquipItemsTimer_", "LeaderLib_Helper_OnEquipTimerFinished");
 
 IF
 StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Helper_OnEquipTimerFinished")
 AND
-DB_LLLIB_Helper_Temp_UnequippedItem(_Character, _Item)
+DB_LeaderLib_Helper_Temp_UnequippedItem(_Character, _Item)
 THEN
-NOT DB_LLLIB_Helper_Temp_UnequippedItem(_Character, _Item);
+NOT DB_LeaderLib_Helper_Temp_UnequippedItem(_Character, _Item);
 CharacterEquipItem(_Character, _Item);
 
 PROC
-LLLIB_Helper_UnequipAllAndSave((CHARACTERGUID)_Character)
+LeaderLib_Helper_UnequipAllAndSave((CHARACTERGUID)_Character)
 AND
 DB_LLLIB_EquipmentSlots(_Slot)
 AND
 CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
 THEN
 CharacterUnequipItem(_Character, _Item);
-DB_LLLIB_Helper_Temp_UnequippedItem(_Character, _Item);
+DB_LeaderLib_Helper_Temp_UnequippedItem(_Character, _Item);
 
 PROC
-LLLIB_Helper_UnequipAll((CHARACTERGUID)_Character)
+LeaderLib_Helper_UnequipAll((CHARACTERGUID)_Character)
 AND
 DB_LLLIB_EquipmentSlots(_Slot)
 AND
@@ -492,10 +489,10 @@ CharacterUnequipItem(_Character, _Item);
 IF
 StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Commands_RefreshEquipment")
 THEN
-LLLIB_Helper_RefreshEquipment(_Character);
+LeaderLib_Helper_RefreshEquipment(_Character);
 
 PROC
-LLLIB_Helper_RefreshEquipment((CHARACTERGUID)_Character)
+LeaderLib_Helper_RefreshEquipment((CHARACTERGUID)_Character)
 AND
 DB_LLLIB_EquipmentSlots(_Slot)
 AND
@@ -505,14 +502,14 @@ CharacterUnequipItem(_Character, _Item);
 CharacterEquipItem(_Character, _Item);
 
 PROC
-LLLIB_Helper_UnequipWeapons((CHARACTERGUID)_Character)
+LeaderLib_Helper_UnequipWeapons((CHARACTERGUID)_Character)
 AND
 CharacterGetEquippedWeapon(_Character, (ITEMGUID)_Item)
 THEN
 CharacterUnequipItem(_Character, _Item);
 
 PROC
-LLLIB_Helper_UnequipWeapons((CHARACTERGUID)_Character)
+LeaderLib_Helper_UnequipWeapons((CHARACTERGUID)_Character)
 AND
 CharacterGetEquippedShield(_Character, (ITEMGUID)_Item)
 AND
@@ -525,13 +522,13 @@ CharacterUnequipItem(_Character, _Item);
 
 //REGION CHARACTER_STATS
 PROC
-LLLIB_Helper_CopyStats((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
+LeaderLib_Helper_CopyStats((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
 THEN
-LLLIB_Helper_CopyAbilities(_CopyTo, _CopyFrom);
-LLLIB_Helper_CopyAttributes(_CopyTo, _CopyFrom);
+LeaderLib_Helper_CopyAbilities(_CopyTo, _CopyFrom);
+LeaderLib_Helper_CopyAttributes(_CopyTo, _CopyFrom);
 
 PROC
-LLLIB_Helper_CopyAbilities((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
+LeaderLib_Helper_CopyAbilities((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
 AND
 DB_LLLIB_Abilities(_Ability)
 AND
@@ -546,7 +543,7 @@ THEN
 CharacterAddAbility(_CopyTo, _Ability, _AddVal);
 
 PROC
-LLLIB_Helper_CopyAttributes((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
+LeaderLib_Helper_CopyAttributes((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
 AND
 DB_LLLIB_Attributes(_Attribute)
 AND
@@ -569,15 +566,15 @@ GetUUID(_Target, _ID)
 AND
 StringConcatenate(_TimerPrefix, _ID, _TimerName)
 THEN
-DB_LLLIB_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent);
+DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent);
 TimerLaunch(_TimerName, _Time);
 
 IF
 TimerFinished(_TimerName)
 AND
-DB_LLLIB_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent)
+DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent)
 THEN
-NOT DB_LLLIB_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent);
+NOT DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent);
 SetStoryEvent(_Target, _CompleteEvent);
 
 PROC
@@ -591,15 +588,15 @@ StringConcatenate(_CharID, _ItemID, _ID)
 AND
 StringConcatenate(_TimerPrefix, _ID, _TimerName)
 THEN
-DB_LLLIB_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent);
+DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent);
 TimerLaunch(_TimerName, _Time);
 
 IF
 TimerFinished(_TimerName)
 AND
-DB_LLLIB_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent)
+DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent)
 THEN
-NOT DB_LLLIB_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent);
+NOT DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent);
 CharacterItemSetEvent(_Char, _Item, _CompleteEvent);
 
 PROC
@@ -613,15 +610,15 @@ StringConcatenate(_Char1ID, _Char2ID, _ID)
 AND
 StringConcatenate(_TimerPrefix, _ID, _TimerName)
 THEN
-DB_LLLIB_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _CompleteEvent);
+DB_LeaderLib_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _CompleteEvent);
 TimerLaunch(_TimerName, _Time);
 
 IF
 TimerFinished(_TimerName)
 AND
-DB_LLLIB_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _CompleteEvent)
+DB_LeaderLib_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _CompleteEvent)
 THEN
-NOT DB_LLLIB_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _CompleteEvent);
+NOT DB_LeaderLib_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _CompleteEvent);
 CharacterCharacterSetEvent(_Char1, _Char2, _CompleteEvent);
 //END_REGION
 
@@ -653,7 +650,7 @@ ItemRemove(_Item);
 
 //REGION ITEM_AUTO_LEVEL
 QRY
-LLLIB_Helpers_QRY_HasAutoLevelItem((CHARACTERGUID)_Character)
+LeaderLib_Helpers_QRY_HasAutoLevelItem((CHARACTERGUID)_Character)
 AND
 CharacterFindTaggedItem(_Character, "LeaderLib_AutoLevel", _Item)
 THEN
@@ -664,7 +661,7 @@ CharacterLeveledUp(_Character)
 AND
 CharacterIsPlayer(_Character, 1)
 AND
-LLLIB_Helpers_QRY_HasAutoLevelItem(_Character)
+LeaderLib_Helpers_QRY_HasAutoLevelItem(_Character)
 THEN
 SetStoryEvent(_Character, "LeaderLib_Events_AutoLevelItems_Start");
 
@@ -715,7 +712,7 @@ CharacterItemSetEvent(_Character, _Item, "LeaderLib_Commands_CheckItemLevel");
 
 //REGION ITEM_QUERIES
 QRY
-LLLIB_Helper_QRY_ItemHasDeltaModifier((ITEMGUID)_Item, (STRING)_Deltamod)
+LeaderLib_Helper_QRY_ItemHasDeltaModifier((ITEMGUID)_Item, (STRING)_Deltamod)
 AND
 ItemHasDeltaModifier(_Item, _DeltaMod, _Count)
 AND
@@ -726,14 +723,14 @@ DB_NOOP(1);
 
 //REGION STATUS_CHECK
 QRY
-LLLIB_Helper_QRY_HasStatus((CHARACTERGUID)_Character, (STRING)_Status)
+LeaderLib_Helper_QRY_HasStatus((CHARACTERGUID)_Character, (STRING)_Status)
 AND
 HasAppliedStatus(_Character, _Status, 1)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_Helper_QRY_HasStatus((CHARACTERGUID)_Character, (STRING)_Status)
+LeaderLib_Helper_QRY_HasStatus((CHARACTERGUID)_Character, (STRING)_Status)
 AND
 HasActiveStatus(_Character, _Status, 1)
 THEN
@@ -744,11 +741,11 @@ DB_NOOP(1);
 PROC
 LLLIB_System_RegisterDatabases()
 THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LLLIB_Helper_Temp_StopIteratingForFlags", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LLLIB_Helper_Temp_StopIteratingForMinLevel", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LLLIB_Helper_Temp_StopIteratingForMaxLevel", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LLLIB_Helper_Temp_PartyMemberOutsideOfLevelRange", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LLLIB_Helper_Temp_HighestPlayerLevel", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LeaderLib_Helper_Temp_StopIteratingForFlags", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LeaderLib_Helper_Temp_StopIteratingForMinLevel", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LeaderLib_Helper_Temp_StopIteratingForMaxLevel", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LeaderLib_Helper_Temp_PartyMemberOutsideOfLevelRange", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LeaderLib_Helper_Temp_HighestPlayerLevel", 1);
 LeaderLog_Log("TRACE", "[LLLIB:Helpers] Databases registered.");
 //END_REGION
 EXITSECTION

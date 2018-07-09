@@ -55,7 +55,7 @@ LLLIB_ModMenu_CalculateMaxPage();
 PROC
 LLLIB_ModMenu_CalculateMaxPage()
 THEN
-LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_ModMenu_PageMax", 3);
+LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_ModMenu_PageMax", 3);
 
 PROC
 LLLIB_ModMenu_CalculateMaxPage()
@@ -94,17 +94,17 @@ LeaderLog_Log("DEBUG", "[LLLIB:ModMenu] Max page set: LastIndex[",_Str1,"] LastP
 PROC
 LLLIB_ModMenu_InitSettings()
 AND
-LLLIB_Updater_QRY_SettingsNeedsUpdate("LLLIB_Settings_ModMenu")
+LeaderLib_Updater_QRY_SettingsNeedsUpdate("LLLIB_Settings_ModMenu")
 THEN
 LLLIB_Updater_SaveSettingsVersionData("LLLIB_Settings_ModMenu");
 
-//LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_ModMenu_SortTickRate", 1);
+//LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_ModMenu_SortTickRate", 1);
 //DB_LLLIB_ModMenu_SortTickRate(0);
 
-LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_ModMenu_MenusPerPage", 1);
+LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_ModMenu_MenusPerPage", 1);
 DB_LLLIB_ModMenu_MenusPerPage(8);
 
-LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_ModMenu_MenuVars", 4);
+LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_ModMenu_MenuVars", 4);
 DB_LLLIB_ModMenu_MenuVars(0, "LLLIB_ModMenu_Menu1_783ec14d-2861-4345-8dbc-45974fa34e15", "LLLIB_ModMenu_SelectedMenu1", "LLLIB_ModMenu_MenuEmpty1");
 DB_LLLIB_ModMenu_MenuVars(1, "LLLIB_ModMenu_Menu2_9a2d2990-5cff-420e-ba8a-37f9510ab9e1", "LLLIB_ModMenu_SelectedMenu2", "LLLIB_ModMenu_MenuEmpty2");
 DB_LLLIB_ModMenu_MenuVars(2, "LLLIB_ModMenu_Menu3_cf00a8c6-02d2-4fda-a766-4f533ac93b2d", "LLLIB_ModMenu_SelectedMenu3", "LLLIB_ModMenu_MenuEmpty3");
@@ -565,7 +565,7 @@ ObjectFlagSet(_SelectFlag, (CHARACTERGUID)_Player, _Instance)
 AND
 DB_LLLIB_ModMenu_MenuVars(_MenuIndex, _DialogVar, _SelectFlag, _DisabledFlag)
 AND
-LLLIB_Helper_QRY_ClearObjectFlag(_Player, _SelectFlag)
+LeaderLib_Helper_QRY_ClearObjectFlag(_Player, _SelectFlag)
 AND
 DB_LLLIB_MenuSettings_Temp_MenuVariableValue(_MenuIndex, _ID)
 AND
@@ -579,7 +579,7 @@ LLLIB_ModMenu_SetNextMenu(_Player, _ID, _Dialog);
 IF
 ObjectFlagSet("LLLIB_ModMenu_NextPage", (CHARACTERGUID)_Player, _Instance)
 AND
-LLLIB_Helper_QRY_ClearObjectFlag(_Player, "LLLIB_ModMenu_NextPage")
+LeaderLib_Helper_QRY_ClearObjectFlag(_Player, "LLLIB_ModMenu_NextPage")
 THEN
 DB_LLLIB_ModMenu_Temp_IsChangingMenuPage(_Player, _Instance);
 LLLIB_ModMenu_NextPage(_Player, _Instance);
@@ -588,7 +588,7 @@ LLLIB_ModMenu_LoadPageVariables(_Player, _Instance);
 IF
 ObjectFlagSet("LLLIB_ModMenu_PreviousPage", (CHARACTERGUID)_Player, _Instance)
 AND
-LLLIB_Helper_QRY_ClearObjectFlag(_Player, "LLLIB_ModMenu_PreviousPage")
+LeaderLib_Helper_QRY_ClearObjectFlag(_Player, "LLLIB_ModMenu_PreviousPage")
 THEN
 DB_LLLIB_ModMenu_Temp_IsChangingMenuPage(_Player, _Instance);
 LLLIB_ModMenu_PreviousPage(_Player, _Instance);
@@ -597,7 +597,7 @@ LLLIB_ModMenu_LoadPageVariables(_Player, _Instance);
 IF
 ObjectFlagSet("LLLIB_ModMenu_FirstPage", (CHARACTERGUID)_Player, _Instance)
 AND
-LLLIB_Helper_QRY_ClearObjectFlag(_Player, "LLLIB_ModMenu_FirstPage")
+LeaderLib_Helper_QRY_ClearObjectFlag(_Player, "LLLIB_ModMenu_FirstPage")
 THEN
 LLLIB_ModMenu_SetPage(_Player, 0, _Instance);
 LLLIB_ModMenu_LoadPageVariables(_Player, _Instance);
@@ -605,7 +605,7 @@ LLLIB_ModMenu_LoadPageVariables(_Player, _Instance);
 IF
 ObjectFlagSet("LLLIB_ModMenu_LastPage", (CHARACTERGUID)_Player, _Instance)
 AND
-LLLIB_Helper_QRY_ClearObjectFlag(_Player, "LLLIB_ModMenu_LastPage")
+LeaderLib_Helper_QRY_ClearObjectFlag(_Player, "LLLIB_ModMenu_LastPage")
 AND
 DB_LLLIB_ModMenu_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
 THEN
@@ -730,7 +730,7 @@ Proc_StartDialog(0, "LLLIB_ModMenu", _Player, _Player);
 IF
 ObjectFlagSet("LeaderLib_ModMenu_ClearMemory", (CHARACTERGUID)_Player, _)
 AND
-LLLIB_Helper_QRY_ClearObjectFlag(_Player, "LeaderLib_ModMenu_ClearMemory")
+LeaderLib_Helper_QRY_ClearObjectFlag(_Player, "LeaderLib_ModMenu_ClearMemory")
 AND
 DB_LLLIB_ModMenu_Temp_ActiveMenu(_Player, _ID, _Dialog)
 THEN
@@ -759,9 +759,9 @@ Proc_StartDialog(0, "LLLIB_ModMenu", _Book, _Player);
 
 //REGION UPDATER
 IF
-StoryEvent(_,"LLLIB_Events_OnUpdateSettings")
+StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
 AND
-LLLIB_Updater_QRY_SettingsNeedsUpdate("LLLIB_Settings_ModMenu")
+LeaderLib_Updater_QRY_SettingsNeedsUpdate("LLLIB_Settings_ModMenu")
 THEN
 LLLIB_ModMenu_InitSettings();
 LeaderLog_Log("SYSTEM", "[LLLIB:ModMenu] Settings updated.");

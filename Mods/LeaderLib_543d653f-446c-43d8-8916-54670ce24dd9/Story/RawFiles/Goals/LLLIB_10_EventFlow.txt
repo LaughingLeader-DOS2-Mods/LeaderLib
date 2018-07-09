@@ -385,9 +385,9 @@ LLLIB_EventFlow_Clear_SessionData(_StackName);
 
 //REGION UPDATER
 IF
-StoryEvent(_,"LLLIB_Events_OnUpdateSettings")
+StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
 AND
-LLLIB_Updater_QRY_SettingsNeedsUpdate("LLLIB_Settings_EventFlowDefaultStack")
+LeaderLib_Updater_QRY_SettingsNeedsUpdate("LLLIB_Settings_EventFlowDefaultStack")
 THEN
 LLLIB_EventFlow_Init_LeaderLibStack();
 

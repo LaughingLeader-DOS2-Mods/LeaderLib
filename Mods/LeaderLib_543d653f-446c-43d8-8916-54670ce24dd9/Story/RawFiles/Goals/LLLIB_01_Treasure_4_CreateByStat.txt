@@ -147,7 +147,7 @@ NOT DB_LLLIB_Array_Temp_PopValue(_ArrayName, _Stat);
 IF
 ItemAddedToCharacter(_Item, _Dummy)
 AND
-GetVarString(_Dummy, "LLLIB_DummyID", _DummyID)
+GetVarString(_Dummy, "LeaderLib_DummyID", _DummyID)
 AND
 DB_LLLIB_Treasure_Temp_CreateItemByStat_DummyTarget(_DummyID, _Character, _Dummy, _Stat)
 AND
@@ -280,7 +280,7 @@ ItemAddedToCharacter(_Item, _Dummy)
 AND
 GetTemplate(_Dummy, "LLLIB_GeneratorDummy_24a5d60b-680b-4fbc-9b2c-19061a261297")
 AND
-GetVarString(_Dummy, "LLLIB_DummyID", _DummyID)
+GetVarString(_Dummy, "LeaderLib_DummyID", _DummyID)
 THEN
 //LeaderLog_Log("TRACE", "[LLLIB:Treasure:CreateItemByStat] Item added to dummy with ID [",_DummyID,"].");
 */

@@ -89,14 +89,14 @@ LeaderLog_Log("DEBUG", "[LLLIB:Treasure:CountTemplateWithStat] Counting finished
 QRY
 LLLIB_QRY_Treasure_SkipAmountCheck((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry)
 AND
-IsTagged(_Object, "LLLIB_Treasure_IgnoreAmountLimit", 1)
+IsTagged(_Object, "LeaderLib_Treasure_IgnoreAmountLimit", 1)
 THEN
 DB_NOOP(1);
 
 QRY
 LLLIB_QRY_Treasure_SkipAmountCheck((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry)
 AND
-IsTagged(_Object, "LLLIB_Treasure_IgnoreAmountLimit", 0)
+IsTagged(_Object, "LeaderLib_Treasure_IgnoreAmountLimit", 0)
 AND
 NOT DB_LLLIB_Treasure_ItemDoneGenerating(_Object, _TreasureID, _ItemEntry)
 THEN

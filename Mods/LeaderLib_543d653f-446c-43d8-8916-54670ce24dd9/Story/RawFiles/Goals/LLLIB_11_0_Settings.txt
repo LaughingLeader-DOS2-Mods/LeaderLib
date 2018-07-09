@@ -17,16 +17,16 @@ LLLIB_Updater_SaveSettingsVersionData("LLLIB_Settings_GeneralSettings");
 LLLIB_Settings_InitEquipmentSlots();
 LLLIB_Settings_InitStats();
 
-LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_Settings_QueueRates", 3);
+LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_Settings_QueueRates", 3);
 DB_LLLIB_Settings_QueueRates("TraderSpawn", 1000, 2000);
 DB_LLLIB_Settings_QueueRates("TraderCheck", 100, 500);
 DB_LLLIB_Settings_QueueRates("Treasure", 100, 60000);
 DB_LLLIB_Settings_QueueRates("ItemGeneration", 0, 2000);
 
-LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_Settings_ItemTemplates", 2);
+LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_Settings_ItemTemplates", 2);
 DB_LLLIB_Settings_ItemTemplates("Book_ModMenu", "LLLIB_BOOK_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108");
 
-LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_Settings_DialogVariables", 2);
+LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_Settings_DialogVariables", 2);
 DB_LLLIB_Settings_DialogVariables("PlayerName", "LLLIB_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3");
 DB_LLLIB_Settings_DialogVariables("SpeakerName", "LLLIB_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b");
 DB_LLLIB_Settings_DialogVariables("ModMenu_PageInfo", "LLLIB_ModMenu_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156");
@@ -119,9 +119,9 @@ DB_LLLIB_Abilities("Brewmaster");
 
 //REGION UPDATER
 IF
-StoryEvent(_,"LLLIB_Events_OnUpdateSettings")
+StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
 AND
-LLLIB_Updater_QRY_SettingsNeedsUpdate("LLLIB_Settings_GeneralSettings")
+LeaderLib_Updater_QRY_SettingsNeedsUpdate("LLLIB_Settings_GeneralSettings")
 THEN
 LLLIB_Settings_InitSettings();
 LeaderLog_Log("SYSTEM", "[LLLIB:Settings] Settings updated.");
@@ -141,7 +141,7 @@ LeaderLog_Log("TRACE", "[LLLIB:Settings] Databases registered.");
 IF
 ObjectFlagSet("LLLIB_Settings_ListMods", _Player, _Instance)
 AND
-LLLIB_Helper_QRY_ClearObjectFlag(_Player, "LLLIB_Settings_ListMods")
+LeaderLib_Helper_QRY_ClearObjectFlag(_Player, "LLLIB_Settings_ListMods")
 THEN
 LLLIB_Settings_BuildModList();
 

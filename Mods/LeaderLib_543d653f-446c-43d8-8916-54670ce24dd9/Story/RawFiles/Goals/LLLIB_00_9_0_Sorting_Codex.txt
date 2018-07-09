@@ -147,9 +147,9 @@ DB_LLLIB_Temp_BuildSortIterator(_NextIndex, _Max);
 
 //REGION UPDATER
 IF
-StoryEvent(_,"LLLIB_Events_OnUpdateSettings")
+StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
 AND
-LLLIB_Updater_QRY_SettingsNeedsUpdate("LLLIB_Settings_Codex")
+LeaderLib_Updater_QRY_SettingsNeedsUpdate("LLLIB_Settings_Codex")
 THEN
 LLLIB_Codex_InitSettings();
 LeaderLog_Log("SYSTEM", "[LLLIB:Codex] Settings updated.");

@@ -84,7 +84,7 @@ DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID)
 AND
 ObjectExists(_Seat, 1)
 AND
-NOT LLLIB_QRY_Requirements_AllMet(_RequirementID)
+NOT LeaderLib_Requirements_QRY_AllMet(_RequirementID)
 THEN
 DB_NOOP(1);
 
@@ -129,7 +129,7 @@ NOT DB_LLLIB_Traders_Temp_DialogFound(_TraderID, _)
 AND
 _RequirementID != ""
 AND
-LLLIB_QRY_Requirements_AllMet(_RequirementID)
+LeaderLib_Requirements_QRY_AllMet(_RequirementID)
 THEN
 LLLIB_Traders_SetDialog(_Trader, _Dialog);
 DB_LLLIB_Traders_Temp_DialogFound(_TraderID, _Dialog);
@@ -154,7 +154,7 @@ DB_LLLIB_Traders_Dialog(_TraderID, _Dialog, "", _RequirementID)
 AND
 NOT DB_LLLIB_Traders_Temp_DialogFound(_TraderID,_)  // Prevent setting again via iterating the DB
 AND
-LLLIB_QRY_Requirements_AllMet(_RequirementID)
+LeaderLib_Requirements_QRY_AllMet(_RequirementID)
 THEN
 LLLIB_Traders_SetDialog(_Trader, _Dialog);
 DB_LLLIB_Traders_Temp_DialogFound(_TraderID, _Dialog);
@@ -191,7 +191,7 @@ LLLIB_Traders_AddStartingGold((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING
 AND
 DB_LLLIB_Traders_StartingGold(_TraderID, _Level, _Amount, _RequirementID)
 AND
-LLLIB_QRY_Requirements_AllMet(_RequirementID)
+LeaderLib_Requirements_QRY_AllMet(_RequirementID)
 THEN
 CharacterAddGold(_Trader, _Amount);
 //END_REGION
@@ -277,7 +277,7 @@ DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID)
 AND
 NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
 AND
-LLLIB_QRY_Requirements_AllMet(_RequirementID)
+LeaderLib_Requirements_QRY_AllMet(_RequirementID)
 THEN
 LLLIB_Traders_Internal_SetCurrentSpawnQueue(_Level);
 LLLIB_Traders_Internal_AddToSpawnQueue(_TraderID);
@@ -486,14 +486,14 @@ LLLIB_Traders_Internal_ClearSpawnQueue(_ArrayID);
 QRY
 LLLIB_QRY_Traders_Debug_TraceRequirement((STRING)_TraderID, (STRING)_Level, (STRING)_RequirementID)
 AND
-LLLIB_QRY_Requirements_AllMet(_RequirementID)
+LeaderLib_Requirements_QRY_AllMet(_RequirementID)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Traders] Trader[",_TraderID,"] requirement[",_RequirementID,"] met for level [",_Level,"].");
 
 QRY
 LLLIB_QRY_Traders_Debug_TraceRequirement((STRING)_TraderID, (STRING)_Level, (STRING)_RequirementID)
 AND
-NOT LLLIB_QRY_Requirements_AllMet(_RequirementID)
+NOT LeaderLib_Requirements_QRY_AllMet(_RequirementID)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:Traders] Trader[",_TraderID,"] requirement[",_RequirementID,"] not met for level [",_Level,"].");
 */
@@ -737,12 +737,12 @@ ObjectSetFlag(_Trader, "LeaderLib_Treasure_GenerateNow", 0); // Generate via the
 PROC
 LLLIB_Traders_Internal_GenerateInitialTradeTreasure((CHARACTERGUID)_Trader)
 AND
-LLLIB_Helper_QRY_GetHighestLevelPlayer()
+LeaderLib_Helper_QRY_GetHighestLevelPlayer()
 AND
-DB_LLLIB_Helper_Temp_HighestLevelPlayer(_Player, _Level)
+DB_LeaderLib_Helper_Temp_HighestLevelPlayer(_Player, _Level)
 THEN
 GenerateItems(_Player, _Trader);
-NOT DB_LLLIB_Helper_Temp_HighestLevelPlayer(_Player, _Level);
+NOT DB_LeaderLib_Helper_Temp_HighestLevelPlayer(_Player, _Level);
 
 IF
 ItemAddedToCharacter(_Item, _Trader)
@@ -754,7 +754,7 @@ ItemDestroy(_Item);
 
 //REGION GENERATE_ON_REGISTER
 PROC
-LLLIB_Treasure_JustRegistered((STRING)_TreasureID, (STRING)_RegisteredVal, (STRING)_Type)
+LeaderLib_Treasure_JustRegistered((STRING)_TreasureID, (STRING)_RegisteredVal, (STRING)_Type)
 AND
 DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
 AND
@@ -790,9 +790,9 @@ LLLIB_Traders_Internal_ProcessJustRegistered((STRING)_TreasureID, (STRING)_Trade
 AND
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
 AND
-IsTagged(_Trader, "LLLIB_Trader_GenerateOnNewlyRegistered", 1)
+IsTagged(_Trader, "LeaderLib_Trader_GenerateOnNewlyRegistered", 1)
 THEN
-LLLIB_Treasure_AddToGenerationQueue(_Trader, _TreasureID, "MANUAL");
+LeaderLib_Treasure_AddToGenerationQueue(_Trader, _TreasureID, "MANUAL");
 //END_REGION
 
 //REGION CHECKING_ACTIVE_TRADERS
@@ -834,7 +834,7 @@ DB_Dialogs(_Trader, _Dialog)
 AND
 DB_LLLIB_Traders_Dialog(_TraderID, _Level, _Dialog, _RequirementID)
 AND
-NOT LLLIB_QRY_Requirements_AllMet(_RequirementID)
+NOT LeaderLib_Requirements_QRY_AllMet(_RequirementID)
 THEN
 LLLIB_Traders_SetDialogToFirstAvailable(_Trader, _TraderID, _Level);
 
@@ -872,7 +872,7 @@ DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID)
 AND
 ObjectExists(_Seat, 1)
 AND
-LLLIB_QRY_Requirements_AllMet(_RequirementID)
+LeaderLib_Requirements_QRY_AllMet(_RequirementID)
 THEN
 SetVarObject(_Trader, "Seat", _Seat);
 CharacterUseItem(_Trader, _Seat, "LeaderLib_Events_OnTraderSit");
@@ -888,12 +888,12 @@ ClearVarObject(_Trader, "Seat");
 
 //REGION REQUIREMENTS
 PROC
-LLLIB_Requirements_RequirementUnlocked((STRING)_RequirementID)
+LeaderLib_Requirements_RequirementUnlocked((STRING)_RequirementID)
 THEN
 LLLIB_Traders_SpawnIfRequirementsMet(_RequirementID);
 
 PROC
-LLLIB_Requirements_RequirementUnlocked((STRING)_RequirementID)
+LeaderLib_Requirements_RequirementUnlocked((STRING)_RequirementID)
 AND
 DB_CurrentLevel(_Level)
 AND
@@ -904,7 +904,7 @@ THEN
 LLLIB_Traders_SetDialogToFirstAvailable(_Trader, _TraderID, _Level);
 
 PROC
-LLLIB_Requirements_RequirementLocked((STRING)_RequirementID)
+LeaderLib_Requirements_RequirementLocked((STRING)_RequirementID)
 AND
 DB_CurrentLevel(_Level)
 AND
@@ -921,7 +921,7 @@ DB_CurrentLevel(_Level)
 AND
 DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID)
 AND
-LLLIB_QRY_Requirements_AllMet(_RequirementID)
+LeaderLib_Requirements_QRY_AllMet(_RequirementID)
 AND
 NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
 THEN
@@ -939,7 +939,7 @@ LLLIB_Traders_ApplyNewStockStatus(_Trader);
 PROC
 LLLIB_Traders_ApplyNewStockStatus((CHARACTERGUID)_Trader)
 AND
-IsTagged(_Trader, "LLLIB_Trader_DisableStockStatus", 0)
+IsTagged(_Trader, "LeaderLib_Trader_DisableStockStatus", 0)
 AND
 HasActiveStatus(_Trader, "LLLIB_NEW_ITEMS", 0)
 THEN
@@ -948,7 +948,7 @@ ApplyStatus(_Trader, "LLLIB_NEW_ITEMS", 180.0, 1);
 PROC
 LLLIB_Traders_ApplyNewStockStatus((CHARACTERGUID)_Trader)
 AND
-IsTagged(_Trader, "LLLIB_Trader_DisableStockStatus", 1)
+IsTagged(_Trader, "LeaderLib_Trader_DisableStockStatus", 1)
 THEN
 SetStoryEvent(_Trader, "LeaderLib_Events_NewItemsInStock");
 
@@ -958,7 +958,7 @@ TradeEnds(_, _Trader)
 AND
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
 AND
-IsTagged(_Trader, "LLLIB_Trader_DisableStockStatus", 0)
+IsTagged(_Trader, "LeaderLib_Trader_DisableStockStatus", 0)
 AND
 HasActiveStatus(_Trader, "LLLIB_NEW_ITEMS", 1)
 AND
@@ -979,7 +979,7 @@ NOT DB_LLLIB_Traders_Temp_DialogFound(_TraderID, _)
 AND
 _RequirementID != ""
 AND
-NOT LLLIB_QRY_Requirements_AllMet(_RequirementID)
+NOT LeaderLib_Requirements_QRY_AllMet(_RequirementID)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:TraderSystem] Requirement [",_RequirementID,"] not met for dialog [",_TraderID,"][",_Dialog,"].");
 */

@@ -96,13 +96,13 @@ NOT DB_LeaderLib_ModApi_ResetAllGoals(_ModName, _Author);
 IF
 DB_LeaderLib_ModApi_AddItemToLeaderTrader((STRING)_Template, (INTEGER)_Amount)
 THEN
-LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModItems", _Template, _Amount);
+LeaderLib_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModItems", _Template, _Amount);
 NOT DB_LeaderLib_ModApi_AddItemToLeaderTrader(_Template, _Amount);
 
 IF
 DB_LeaderLib_ModApi_AddBookToLeaderTrader((STRING)_Template, (INTEGER)_Amount)
 THEN
-LLLIB_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModBooks", _Template, _Amount);
+LeaderLib_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModBooks", _Template, _Amount);
 NOT DB_LeaderLib_ModApi_AddBookToLeaderTrader(_Template, _Amount);
 
 IF
@@ -135,31 +135,31 @@ NOT DB_LeaderLib_ModApi_StartSortQueue(_DictionaryID, _TickRate, _CompleteEvent)
 IF
 DB_LeaderLib_ModApi_Register_TreasureTable((STRING)_TreasureID, (STRING)_TreasureTable)
 THEN
-LLLIB_Treasure_Register_TreasureTable(_TreasureID, _TreasureTable);
+LeaderLib_Treasure_Register_TreasureTable(_TreasureID, _TreasureTable);
 NOT DB_LeaderLib_ModApi_Register_TreasureTable(_TreasureID, _TreasureTable);
 
 IF
 DB_LeaderLib_ModApi_Register_TreasureTable((STRING)_TreasureID, (STRING)_TreasureTable, (STRING)_RequirementID)
 THEN
-LLLIB_Treasure_Register_TreasureTable(_TreasureID, _TreasureTable, _RequirementID);
+LeaderLib_Treasure_Register_TreasureTable(_TreasureID, _TreasureTable, _RequirementID);
 NOT DB_LeaderLib_ModApi_Register_TreasureTable(_TreasureID, _TreasureTable, _RequirementID);
 
 IF
 DB_LeaderLib_ModApi_Register_TreasureTable((STRING)_TreasureID, (STRING)_TreasureTable, (STRING)_RequirementID, (INTEGER)_UsePartyLevel)
 THEN
-LLLIB_Treasure_Register_TreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel);
+LeaderLib_Treasure_Register_TreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel);
 NOT DB_LeaderLib_ModApi_Register_TreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel);
 
 IF
 DB_LeaderLib_ModApi_Register_TreasureTable((STRING)_TreasureID, (STRING)_TreasureTable, (STRING)_RequirementID, (INTEGER)_UsePartyLevel, (INTEGER)_Level)
 THEN
-LLLIB_Treasure_Register_TreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _Level);
+LeaderLib_Treasure_Register_TreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _Level);
 NOT DB_LeaderLib_ModApi_Register_TreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _Level);
 
 IF
 DB_LeaderLib_ModApi_Register_TreasureTable((STRING)_TreasureID, (STRING)_TreasureTable, (STRING)_RequirementID, (INTEGER)_UsePartyLevel, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
 THEN
-LLLIB_Treasure_Register_TreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel);
+LeaderLib_Treasure_Register_TreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel);
 NOT DB_LeaderLib_ModApi_Register_TreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel);
 //END_REGION
 

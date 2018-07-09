@@ -1,5 +1,9 @@
 LeaderLib Changelog
 =======
+# 0.9.2.0
+* Added a new "Editor Helper" script
+	* Contains new text events for playing animations and adding character stat points (attribute, ability, civil, talent, source/source max)
+
 # 0.9.1.0
 * Added new helper scripts
 	* Combat Helpers

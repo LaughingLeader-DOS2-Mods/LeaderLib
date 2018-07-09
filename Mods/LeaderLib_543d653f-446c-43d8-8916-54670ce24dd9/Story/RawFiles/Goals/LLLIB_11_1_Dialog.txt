@@ -3,11 +3,11 @@ SubGoalCombiner SGC_AND
 INITSECTION
 LLLIB_Dialog_InitSettings();
 
-//DB_LLLIB_DialogNames(_Dialog)
-//DB_LLLIB_Dialog_AttitudeFlags(_Flag, _Amount)
-//DB_LLLIB_Dialog_NameOverride(_Character, _Name)
-//DB_LLLIB_StatusFlags(_Group, _Flag, _Status, _Duration)
-//DB_LLLIB_AnimationFlags(_Group, _Flag, _Animation, _Loop)
+//DB_LeaderLib_Dialog_DialogFiles(_Dialog)
+//DB_LeaderLib_Dialog_AttitudeFlags(_Flag, _Amount)
+//DB_LeaderLib_Dialog_NameOverride(_Character, _Name)
+//DB_LeaderLib_Dialog_StatusFlags(_Group, _Flag, _Status, _Duration)
+//DB_LeaderLib_Dialog_AnimationFlags(_Group, _Flag, _Animation, _Loop)
 KBSECTION
 //REGION SETTINGS
 PROC
@@ -15,75 +15,107 @@ LLLIB_Dialog_InitSettings()
 THEN
 LLLIB_Updater_SaveSettingsVersionData("LLLIB_Settings_Dialog");
 
-LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_DialogNames", 1);
-DB_LLLIB_DialogNames("LLLIB_ModMenu");
-DB_LLLIB_DialogNames("LLLIB_LeaderTrader_Default");
-DB_LLLIB_DialogNames("LLLIB_LeaderTrader_FortJoy_Intro");
-DB_LLLIB_DialogNames("LLLIB_LeaderTrader_LadyVengeance_Intro");
-DB_LLLIB_DialogNames("LLLIB_LeaderTrader_Tutorial_Intro");
-DB_LLLIB_DialogNames("LLLIB_LeaderTrader_AttackResponse");
-DB_LLLIB_DialogNames("LLLIB_SettingsMenu");
+LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLib_Dialog_DialogFiles", 1);
+DB_LeaderLib_Dialog_DialogFiles("LLLIB_ModMenu");
+DB_LeaderLib_Dialog_DialogFiles("LLLIB_LeaderTrader_Default");
+DB_LeaderLib_Dialog_DialogFiles("LLLIB_LeaderTrader_FortJoy_Intro");
+DB_LeaderLib_Dialog_DialogFiles("LLLIB_LeaderTrader_LadyVengeance_Intro");
+DB_LeaderLib_Dialog_DialogFiles("LLLIB_LeaderTrader_Tutorial_Intro");
+DB_LeaderLib_Dialog_DialogFiles("LLLIB_LeaderTrader_AttackResponse");
+DB_LeaderLib_Dialog_DialogFiles("LLLIB_SettingsMenu");
 
-LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_Dialog_AttitudeFlags", 2);
-DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_IncreaseAttitude_5", 5);
-DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_IncreaseAttitude_10", 10);
-DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_IncreaseAttitude_25", 25);
-DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_IncreaseAttitude_50", 50);
-DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_IncreaseAttitude_75", 75);
-DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_IncreaseAttitude_100", 100);
-DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_DecreaseAttitude_5", -5);
-DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_DecreaseAttitude_10", -10);
-DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_DecreaseAttitude_25", -25);
-DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_DecreaseAttitude_50", -50);
-DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_DecreaseAttitude_75", -75);
-DB_LLLIB_Dialog_AttitudeFlags("LeaderLib_DecreaseAttitude_100", -100);
+LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLib_Dialog_AttitudeFlags", 2);
+DB_LeaderLib_Dialog_AttitudeFlags("LeaderLib_IncreaseAttitude_5", 5);
+DB_LeaderLib_Dialog_AttitudeFlags("LeaderLib_IncreaseAttitude_10", 10);
+DB_LeaderLib_Dialog_AttitudeFlags("LeaderLib_IncreaseAttitude_25", 25);
+DB_LeaderLib_Dialog_AttitudeFlags("LeaderLib_IncreaseAttitude_50", 50);
+DB_LeaderLib_Dialog_AttitudeFlags("LeaderLib_IncreaseAttitude_75", 75);
+DB_LeaderLib_Dialog_AttitudeFlags("LeaderLib_IncreaseAttitude_100", 100);
+DB_LeaderLib_Dialog_AttitudeFlags("LeaderLib_DecreaseAttitude_5", -5);
+DB_LeaderLib_Dialog_AttitudeFlags("LeaderLib_DecreaseAttitude_10", -10);
+DB_LeaderLib_Dialog_AttitudeFlags("LeaderLib_DecreaseAttitude_25", -25);
+DB_LeaderLib_Dialog_AttitudeFlags("LeaderLib_DecreaseAttitude_50", -50);
+DB_LeaderLib_Dialog_AttitudeFlags("LeaderLib_DecreaseAttitude_75", -75);
+DB_LeaderLib_Dialog_AttitudeFlags("LeaderLib_DecreaseAttitude_100", -100);
 
-LLLIB_Helper_ClearExistingDatabase("DB_LLLIB_DialogVars", 2);
-DB_LLLIB_DialogVars("ModMenu_PageInfo", "LLLIB_ModMenu_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156");
-DB_LLLIB_DialogVars("Settings_ModList", "LLLIB_Settings_ModList_50c55fbe-ad1e-490e-92d1-8836ca42ca12");
-DB_LLLIB_DialogVars("SpeakerName", "LLLIB_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b");
-DB_LLLIB_DialogVars("PlayerName", "LLLIB_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3");
-DB_LLLIB_DialogVars("LeaderTrader_Greeting", "LLLIB_LeaderTrader_Greeting_f143b90b-9afc-477e-b133-6a1574341261");
+LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLib_Dialog_Vars", 2);
+DB_LeaderLib_Dialog_Vars("ModMenu_PageInfo", "LLLIB_ModMenu_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156");
+DB_LeaderLib_Dialog_Vars("Settings_ModList", "LLLIB_Settings_ModList_50c55fbe-ad1e-490e-92d1-8836ca42ca12");
+DB_LeaderLib_Dialog_Vars("SpeakerName", "LLLIB_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b");
+DB_LeaderLib_Dialog_Vars("PlayerName", "LLLIB_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3");
+DB_LeaderLib_Dialog_Vars("LeaderTrader_Greeting", "LLLIB_LeaderTrader_Greeting_f143b90b-9afc-477e-b133-6a1574341261");
 
 LeaderLib_Dialog_ClearStatusGroup("LeaderLib.Default");
-DB_LLLIB_StatusFlags("LeaderLib.Default", "LeaderLib_ApplyStatus_Knockdown_-1", "KNOCKED_DOWN", -1.0);
-DB_LLLIB_StatusFlags("LeaderLib.Default", "LeaderLib_ApplyStatus_Knockdown_0", "KNOCKED_DOWN", 0.0);
-DB_LLLIB_StatusFlags("LeaderLib.Default", "LeaderLib_ApplyStatus_Knockdown_1", "KNOCKED_DOWN", 1.0);
-DB_LLLIB_StatusFlags("LeaderLib.Default", "LeaderLib_ApplyStatus_Knockdown_3", "KNOCKED_DOWN", 3.0);
-DB_LLLIB_StatusFlags("LeaderLib.Default", "LeaderLib_ApplyStatus_Knockdown_6", "KNOCKED_DOWN", 6.0);
-DB_LLLIB_StatusFlags("LeaderLib.Default", "LeaderLib_ApplyStatus_Knockdown_9", "KNOCKED_DOWN", 9.0);
+DB_LeaderLib_Dialog_StatusFlags("LeaderLib.Default", "LeaderLib_ApplyStatus_Knockdown_-1", "KNOCKED_DOWN", -1.0);
+DB_LeaderLib_Dialog_StatusFlags("LeaderLib.Default", "LeaderLib_ApplyStatus_Knockdown_0", "KNOCKED_DOWN", 0.0);
+DB_LeaderLib_Dialog_StatusFlags("LeaderLib.Default", "LeaderLib_ApplyStatus_Knockdown_1", "KNOCKED_DOWN", 1.0);
+DB_LeaderLib_Dialog_StatusFlags("LeaderLib.Default", "LeaderLib_ApplyStatus_Knockdown_3", "KNOCKED_DOWN", 3.0);
+DB_LeaderLib_Dialog_StatusFlags("LeaderLib.Default", "LeaderLib_ApplyStatus_Knockdown_6", "KNOCKED_DOWN", 6.0);
+DB_LeaderLib_Dialog_StatusFlags("LeaderLib.Default", "LeaderLib_ApplyStatus_Knockdown_9", "KNOCKED_DOWN", 9.0);
 
 LeaderLib_Dialog_ClearAnimationGroup("LeaderLib.Default");
-DB_LLLIB_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Knockdown_Loop", "knockdown_loop", 1);
-DB_LLLIB_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Blind_Loop", "stillblind", 1);
-DB_LLLIB_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Chilled_Loop", "stillchilled", 1);
-DB_LLLIB_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Crippled_Loop", "stillcrippled", 1);
-DB_LLLIB_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Diseased_Loop", "stilldiseased", 1);
-DB_LLLIB_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Drunk_Loop", "stilldrunk", 1);
-DB_LLLIB_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Electrified_Loop", "stillelectrified", 1);
-DB_LLLIB_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Mental_Loop", "stillmental", 1);
-DB_LLLIB_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Sneaking_Loop", "stillsneaking", 1);
+DB_LeaderLib_Dialog_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Knockdown_Loop", "knockdown_loop", 1);
+DB_LeaderLib_Dialog_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Blind_Loop", "stillblind", 1);
+DB_LeaderLib_Dialog_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Chilled_Loop", "stillchilled", 1);
+DB_LeaderLib_Dialog_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Crippled_Loop", "stillcrippled", 1);
+DB_LeaderLib_Dialog_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Diseased_Loop", "stilldiseased", 1);
+DB_LeaderLib_Dialog_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Drunk_Loop", "stilldrunk", 1);
+DB_LeaderLib_Dialog_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Electrified_Loop", "stillelectrified", 1);
+DB_LeaderLib_Dialog_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Mental_Loop", "stillmental", 1);
+DB_LeaderLib_Dialog_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Sneaking_Loop", "stillsneaking", 1);
 
 PROC
 LeaderLib_Dialog_ClearStatusGroup((STRING)_Group)
 AND
-DB_LLLIB_StatusFlags(_Group, _Flag, _Status, _Duration)
+DB_LeaderLib_Dialog_StatusFlags(_Group, _Flag, _Status, _Duration)
 THEN
-NOT DB_LLLIB_StatusFlags(_Group, _Flag, _Status, _Duration);
+NOT DB_LeaderLib_Dialog_StatusFlags(_Group, _Flag, _Status, _Duration);
 
 PROC
 LeaderLib_Dialog_ClearAnimationGroup((STRING)_Group)
 AND
-DB_LLLIB_AnimationFlags(_Group, _Flag, _Animation, _Looped)
+DB_LeaderLib_Dialog_AnimationFlags(_Group, _Flag, _Animation, _Looped)
 THEN
-NOT DB_LLLIB_AnimationFlags(_Group, _Flag, _Animation, _Looped);
+NOT DB_LeaderLib_Dialog_AnimationFlags(_Group, _Flag, _Animation, _Looped);
 //END_REGION
 
 //REGION UPDATER
+QRY
+LLLIB_Dialog_QRY_Internal_OldVersion("0.9.0.0")
+THEN
+DB_NOOP(1);
+
+QRY
+LLLIB_Dialog_QRY_Internal_OldVersion("0.9.1.0")
+THEN
+DB_NOOP(1);
+
 IF
-StoryEvent(_,"LLLIB_Events_OnUpdateSettings")
+StoryEvent(_, "LeaderUpdater_ModVersionsChanged")
 AND
-LLLIB_Updater_QRY_SettingsNeedsUpdate("LLLIB_Settings_Dialog")
+DB_LeaderUpdater_Temp_PastRegistered("LeaderLib", "LaughingLeader", _Version)
+AND
+LLLIB_Dialog_QRY_Internal_OldVersion(_Version)
+THEN
+LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LLLIB_DialogNames");
+LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_DialogNames", 1);
+LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LLLIB_DialogVars");
+LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_DialogVars", 2);
+LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LLLIB_Dialog_AttitudeFlags");
+LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_Dialog_AttitudeFlags", 2);
+LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LLLIB_Dialog_NameOverride");
+LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_Dialog_NameOverride", 2);
+LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LLLIB_StatusFlags");
+LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_StatusFlags", 2);
+LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LLLIB_AnimationFlags");
+LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_AnimationFlags", 2);
+LeaderLog_Log("SYSTEM", "[LLLIB:Dialog] Cleared old databases from version [",_Version,"].");
+LLLIB_System_RegisterDatabases();
+
+IF
+StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
+AND
+LeaderLib_Updater_QRY_SettingsNeedsUpdate("LLLIB_Settings_Dialog")
 THEN
 LLLIB_Dialog_InitSettings();
 LeaderLog_Log("SYSTEM", "[LLLIB:Dialog] Settings updated.");
@@ -91,11 +123,11 @@ LeaderLog_Log("SYSTEM", "[LLLIB:Dialog] Settings updated.");
 PROC
 LLLIB_System_RegisterDatabases()
 THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LLLIB_DialogNames", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LLLIB_Dialog_AttitudeFlags", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LLLIB_Dialog_NameOverride", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LLLIB_StatusFlags", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LLLIB_AnimationFlags", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LeaderLib_Dialog_DialogFiles", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LeaderLib_Dialog_AttitudeFlags", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LeaderLib_Dialog_NameOverride", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LeaderLib_Dialog_StatusFlags", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LeaderLib_Dialog_AnimationFlags", 3);
 LeaderLog_Log("TRACE", "[LLLIB:Dialog] Databases registered.");
 //END_REGION
 
@@ -103,21 +135,21 @@ LeaderLog_Log("TRACE", "[LLLIB:Dialog] Databases registered.");
 PROC
 LLLIB_Dialog_SetNameOverride((CHARACTERGUID)_Character, (STRING)_Name)
 AND
-DB_LLLIB_Dialog_NameOverride(_Character, (STRING)_PastName)
+DB_LeaderLib_Dialog_NameOverride(_Character, (STRING)_PastName)
 AND
 _Name != _PastName
 THEN
-NOT DB_LLLIB_Dialog_NameOverride(_Character, _PastName);
+NOT DB_LeaderLib_Dialog_NameOverride(_Character, _PastName);
 
 PROC
 LLLIB_Dialog_SetNameOverride((CHARACTERGUID)_Character, (STRING)_Name)
 THEN
-DB_LLLIB_Dialog_NameOverride(_Character, _Name);
+DB_LeaderLib_Dialog_NameOverride(_Character, _Name);
 
 IF
 DialogStarted(_Dialog, _Instance)
 AND
-DB_LLLIB_DialogNames(_Dialog)
+DB_LeaderLib_Dialog_DialogFiles(_Dialog)
 AND
 DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
 AND
@@ -129,7 +161,7 @@ LLIB_Dialog_SetNPCName(_NPC, _Instance);
 PROC
 LLIB_Dialog_SetPlayerName((CHARACTERGUID)_Player, (INTEGER)_Instance)
 AND
-NOT DB_LLLIB_Dialog_NameOverride(_Player, _)
+NOT DB_LeaderLib_Dialog_NameOverride(_Player, _)
 AND
 GetVarString(_Player, "LLNWIZ_CustomName", _CustomName)
 AND
@@ -140,7 +172,7 @@ DialogSetVariableStringForInstance(_Instance, _PlayerVar, _CustomName);
 PROC
 LLIB_Dialog_SetPlayerName((CHARACTERGUID)_Player, (INTEGER)_Instance)
 AND
-NOT DB_LLLIB_Dialog_NameOverride(_Player, _)
+NOT DB_LeaderLib_Dialog_NameOverride(_Player, _)
 AND
 NOT GetVarString(_Player, "LLNWIZ_CustomName", _)
 AND
@@ -153,7 +185,7 @@ DialogSetVariableStringForInstance(_Instance, _PlayerVar, _PlayerName);
 PROC
 LLIB_Dialog_SetPlayerName((CHARACTERGUID)_Player, (INTEGER)_Instance)
 AND
-DB_LLLIB_Dialog_NameOverride(_Player, _Name)
+DB_LeaderLib_Dialog_NameOverride(_Player, _Name)
 AND
 DB_LLLIB_Settings_DialogVariables("PlayerName", _PlayerVar)
 THEN
@@ -162,7 +194,7 @@ DialogSetVariableStringForInstance(_Instance, _PlayerVar, _Name);
 PROC
 LLIB_Dialog_SetNPCName((CHARACTERGUID)_Character, (INTEGER)_Instance)
 AND
-NOT DB_LLLIB_Dialog_NameOverride(_Character, _)
+NOT DB_LeaderLib_Dialog_NameOverride(_Character, _)
 AND
 GetVarString(_Character, "LLNWIZ_CustomName", _CustomName)
 AND
@@ -173,7 +205,7 @@ DialogSetVariableStringForInstance(_Instance, _SpeakerVar, _CustomName);
 PROC
 LLIB_Dialog_SetNPCName((CHARACTERGUID)_Character, (INTEGER)_Instance)
 AND
-NOT DB_LLLIB_Dialog_NameOverride(_Character, _)
+NOT DB_LeaderLib_Dialog_NameOverride(_Character, _)
 AND
 NOT GetVarString(_Character, "LLNWIZ_CustomName", _)
 AND
@@ -186,7 +218,7 @@ DialogSetVariableStringForInstance(_Instance, _SpeakerVar, _SpeakerName);
 PROC
 LLIB_Dialog_SetNPCName((CHARACTERGUID)_Character, (INTEGER)_Instance)
 AND
-DB_LLLIB_Dialog_NameOverride(_Character, _Name)
+DB_LeaderLib_Dialog_NameOverride(_Character, _Name)
 AND
 DB_LLLIB_Settings_DialogVariables("SpeakerName", _SpeakerVar)
 THEN
@@ -197,7 +229,7 @@ DialogSetVariableStringForInstance(_Instance, _SpeakerVar, _Name);
 IF
 ObjectFlagSet("LeaderLib_GrantModMenuBook", _Object, _Instance)
 AND
-LLLIB_Helper_QRY_ClearObjectFlag(_Object, "LeaderLib_GrantModMenuBook")
+LeaderLib_Helper_QRY_ClearObjectFlag(_Object, "LeaderLib_GrantModMenuBook")
 AND
 DB_LLLIB_Settings_ItemTemplates("Book_ModMenu", _ItemTemplate)
 THEN
@@ -207,7 +239,7 @@ ItemTemplateAddTo(_ItemTemplate, _Object, 1);
 IF
 ObjectFlagSet(_Flag, (CHARACTERGUID)_Character, _Instance)
 AND
-DB_LLLIB_Dialog_AttitudeFlags(_Flag, _Amount)
+DB_LeaderLib_Dialog_AttitudeFlags(_Flag, _Amount)
 AND
 DialogGetInvolvedNPC(_Instance, 1, (CHARACTERGUID)_NPC)
 THEN
@@ -244,7 +276,7 @@ CharacterStatusText(_Target, _StatusText);
 IF
 ObjectFlagSet("LeaderLib_OpenTrade", (CHARACTERGUID)_Object, _Instance)
 AND
-LLLIB_Helper_QRY_ClearObjectFlag(_Object, "LeaderLib_OpenTrade")
+LeaderLib_Helper_QRY_ClearObjectFlag(_Object, "LeaderLib_OpenTrade")
 AND
 DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
 THEN
@@ -253,7 +285,7 @@ StartTrade(_Player, _Object);
 IF
 ObjectFlagSet("LeaderLib_StopAnimation", (CHARACTERGUID)_Object, _Instance)
 AND
-LLLIB_Helper_QRY_ClearObjectFlag(_Object, "LeaderLib_StopAnimation")
+LeaderLib_Helper_QRY_ClearObjectFlag(_Object, "LeaderLib_StopAnimation")
 THEN
 PlayAnimation(_Object, "");
 CharacterSetAnimationOverride(_Object, "");
@@ -264,9 +296,9 @@ LeaderLog_Log("DEBUG", "[LLLIB:Flag:LeaderLib_StopAnimation] Stopped animations 
 IF
 ObjectFlagSet(_Flag, (CHARACTERGUID)_Object, _Instance)
 AND
-DB_LLLIB_StatusFlags(_Group, _Flag, _Status, _Duration)
+DB_LeaderLib_Dialog_StatusFlags(_Group, _Flag, _Status, _Duration)
 AND
-LLLIB_Helper_QRY_ClearObjectFlag(_Object, _Flag)
+LeaderLib_Helper_QRY_ClearObjectFlag(_Object, _Flag)
 AND
 NOT ObjectGetFlag(_Object, "LeaderLib_ForceApplyStatus", _)
 THEN
@@ -275,9 +307,9 @@ ApplyStatus(_Object, _Status, _Duration, 0);
 IF
 ObjectFlagSet(_Flag, (CHARACTERGUID)_Object, _Instance)
 AND
-DB_LLLIB_StatusFlags(_Group, _Flag, _Status, _Duration)
+DB_LeaderLib_Dialog_StatusFlags(_Group, _Flag, _Status, _Duration)
 AND
-LLLIB_Helper_QRY_ClearObjectFlag(_Object, _Flag)
+LeaderLib_Helper_QRY_ClearObjectFlag(_Object, _Flag)
 AND
 ObjectGetFlag(_Object, "LeaderLib_ForceApplyStatus", _Force)
 THEN
@@ -288,7 +320,7 @@ ApplyStatus(_Object, _Status, _Duration, _Force);
 IF
 ObjectFlagCleared(_Flag, (CHARACTERGUID)_Object, _Instance)
 AND
-DB_LLLIB_StatusFlags(_Group, _Flag, _Status, _Duration)
+DB_LeaderLib_Dialog_StatusFlags(_Group, _Flag, _Status, _Duration)
 AND
 HasActiveStatus(_Object, _Status, 1)
 THEN
@@ -300,7 +332,7 @@ RemoveStatus(_Object, _Status);
 IF
 ObjectFlagSet(_Flag, (CHARACTERGUID)_Object, _Instance)
 AND
-DB_LLLIB_AnimationFlags(_Group, _Flag, _Animation, _Loop)
+DB_LeaderLib_Dialog_AnimationFlags(_Group, _Flag, _Animation, _Loop)
 AND
 _Loop > 0
 THEN
@@ -309,7 +341,7 @@ CharacterSetAnimationOverride(_Object, _Animation);
 IF
 ObjectFlagSet(_Flag, (CHARACTERGUID)_Object, _Instance)
 AND
-DB_LLLIB_AnimationFlags(_Group, _Flag, _Animation, _Loop)
+DB_LeaderLib_Dialog_AnimationFlags(_Group, _Flag, _Animation, _Loop)
 AND
 _Loop <= 0
 THEN
@@ -319,7 +351,7 @@ PlayAnimation(_Object, _Animation);
 IF
 ObjectFlagCleared(_Flag, (CHARACTERGUID)_Object, _Instance)
 AND
-DB_LLLIB_AnimationFlags(_Group, _Flag, _Animation, _Loop)
+DB_LeaderLib_Dialog_AnimationFlags(_Group, _Flag, _Animation, _Loop)
 AND
 _Loop > 0
 THEN

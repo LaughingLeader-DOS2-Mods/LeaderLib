@@ -18,7 +18,7 @@ AND
 TemporaryCharacterCreateAtPosition(_x,_y,_z,"LLLIB_GeneratorDummy_24a5d60b-680b-4fbc-9b2c-19061a261297", 0, _Dummy)
 THEN
 LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:CreateGeneratorDummy] Generator dummy created. Set ID to [",_DummyID,"].");
-SetVarString(_Dummy, "LLLIB_DummyID", _DummyID);
+SetVarString(_Dummy, "LeaderLib_DummyID", _DummyID);
 DB_LLLIB_Treasure_GeneratorDummies(_Dummy);
 DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID);
 
@@ -45,7 +45,7 @@ DB_NOOP(1);
 QRY
 LLLIB_Treasure_Internal_QRY_IsDefaultOrMatchesDummyID((CHARACTERGUID)_Dummy, (STRING)_CheckID)
 AND
-GetVarString(_Dummy, "LLLIB_DummyID", _CurrentID)
+GetVarString(_Dummy, "LeaderLib_DummyID", _CurrentID)
 AND
 LLLIB_Treasure_Internal_QRY_IsDefaultDummyID(_CurrentID)
 THEN
@@ -54,7 +54,7 @@ DB_NOOP(1);
 QRY
 LLLIB_Treasure_Internal_QRY_IsDefaultOrMatchesDummyID((CHARACTERGUID)_Dummy, (STRING)_CheckID)
 AND
-GetVarString(_Dummy, "LLLIB_DummyID", _CurrentID)
+GetVarString(_Dummy, "LeaderLib_DummyID", _CurrentID)
 AND
 NOT LLLIB_Treasure_Internal_QRY_IsDefaultDummyID(_CurrentID)
 AND
@@ -70,9 +70,9 @@ LLLIB_Treasure_ResetDummyByID((STRING)_DummyID)
 AND
 DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
 AND
-GetVarString(_Dummy, "LLLIB_DummyID", _DummyID)
+GetVarString(_Dummy, "LeaderLib_DummyID", _DummyID)
 THEN
-SetVarString(_Dummy, "LLLIB_DummyID", "");
+SetVarString(_Dummy, "LeaderLib_DummyID", "");
 LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:ResetDummyByID] Dummy with ID [",_DummyID,"] reset.");
 LLLIB_Treasure_RemoveNextDummy(_Dummy);
 
@@ -81,7 +81,7 @@ LLLIB_Treasure_ResetDummy((CHARACTERGUID)_Dummy)
 AND
 DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
 THEN
-SetVarString(_Dummy, "LLLIB_DummyID", "");
+SetVarString(_Dummy, "LeaderLib_DummyID", "");
 LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:ResetDummy] Dummy ID reset.");
 LLLIB_Treasure_RemoveNextDummy(_Dummy);
 
@@ -157,7 +157,7 @@ LLLIB_Treasure_Internal_QRY_IsDefaultOrMatchesDummyID(_Dummy, _DummyID)
 THEN
 TeleportTo(_Dummy, _AtObject, "", 0);
 LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:GetNextDummy] Dummy found. Set ID to [",_DummyID,"] and setting as the next dummy.");
-SetVarString(_Dummy, "LLLIB_DummyID", _DummyID);
+SetVarString(_Dummy, "LeaderLib_DummyID", _DummyID);
 DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID);
 
 PROC

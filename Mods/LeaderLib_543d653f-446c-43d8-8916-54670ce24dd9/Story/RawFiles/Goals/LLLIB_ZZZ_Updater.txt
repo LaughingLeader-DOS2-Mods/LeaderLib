@@ -10,7 +10,7 @@ LLLIB_Updater_RegisterDatabasesOnce();
 
 //REGION UPDATING
 IF
-StoryEvent(_,"LLLIB_Events_OnUpdateSettings")
+StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
 THEN
 LeaderLog_Log("SYSTEM", "[LLLIB:Updater] Settings updated.");
 
@@ -36,7 +36,7 @@ LLLIB_Updater_ResetDatabases()
 THEN
 LeaderUpdater_Clear_AllDatabases("LeaderLib", "LaughingLeader");
 LeaderUpdater_Clear_AllSavedSettings("LeaderLib", "LaughingLeader");
-LeaderLib_SendEvent("LLLIB_Events_OnUpdateSettings");
+LeaderLib_SendEvent("LeaderLib_Events_Internal_OnUpdateSettings");
 LeaderLog_Log("SYSTEM", "[LLLIB:Updater] Databases cleared and re-initialized.");
 */
 
@@ -62,7 +62,7 @@ LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", "0.9.1.0")
 THEN
 LeaderLog_Log("SYSTEM", "[LLLIB:Updater] Updating LeaderLib to version [0.9.1.0].");
 LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", "0.9.1.0");
-LeaderLib_SendEvent("LLLIB_Events_OnUpdateSettings");
+LeaderLib_SendEvent("LeaderLib_Events_Internal_OnUpdateSettings");
 //END_REGION
 
 //REGION UNINSTALLING

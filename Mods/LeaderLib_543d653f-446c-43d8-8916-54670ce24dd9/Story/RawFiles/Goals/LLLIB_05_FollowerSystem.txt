@@ -256,7 +256,7 @@ ObjectClearFlag(_Follower, "LeaderLib_IsFollowingSpeaker");
 IF
 ObjectFlagSet("LeaderLib_RecruitFollower", (CHARACTERGUID)_Follower, _Instance)
 AND
-LLLIB_Helper_QRY_ClearObjectFlag(_Follower, "LeaderLib_RecruitFollower")
+LeaderLib_Helper_QRY_ClearObjectFlag(_Follower, "LeaderLib_RecruitFollower")
 AND
 DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
 THEN
@@ -272,7 +272,7 @@ LeaderLib_Follower_RecruitCharacter(_Player, _Follower);
 IF
 ObjectFlagSet("LeaderLib_DismissFollower", (CHARACTERGUID)_Follower, _Instance)
 AND
-LLLIB_Helper_QRY_ClearObjectFlag(_Follower, "LeaderLib_DismissFollower")
+LeaderLib_Helper_QRY_ClearObjectFlag(_Follower, "LeaderLib_DismissFollower")
 AND
 DB_LLLIB_PartyFollower(_Owner, _Follower)
 THEN
@@ -281,7 +281,7 @@ LeaderLib_Follower_DismissCharacterFromOwner(_Owner, _Follower);
 IF
 ObjectFlagSet("LeaderLib_FollowSpeaker", (CHARACTERGUID)_Follower, _Instance)
 AND
-LLLIB_Helper_QRY_ClearObjectFlag(_Follower, "LeaderLib_FollowSpeaker")
+LeaderLib_Helper_QRY_ClearObjectFlag(_Follower, "LeaderLib_FollowSpeaker")
 AND
 DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
 THEN
@@ -293,7 +293,7 @@ ObjectSetFlag(_Follower, "LeaderLib_IsFollowingSpeaker");
 IF
 ObjectFlagSet("LeaderLib_StopFollowingSpeaker", (CHARACTERGUID)_Follower, _Instance)
 AND
-LLLIB_Helper_QRY_ClearObjectFlag(_Follower, "LeaderLib_StopFollowingSpeaker")
+LeaderLib_Helper_QRY_ClearObjectFlag(_Follower, "LeaderLib_StopFollowingSpeaker")
 THEN
 ProcCharacterStopFollow(_Follower);
 CharacterDetachFromGroup(_Follower);

@@ -1,26 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <save>
-    <header version="2" time="1531079371" />
+    <header version="2" time="1531172424" />
     <version major="3" minor="1" revision="8" build="0" />
     <region id="Tags">
         <node id="root">
             <children>
                 <node id="Tag">
-                    <attribute id="Description" value="Generated trade treasure when dialog is started with a registered trader." type="23" />
-                    <attribute id="Name" value="LLLIB_Trader_GenerateOnDialog" type="23" />
-                    <children>
-                        <node id="Categories">
-                            <children>
-                                <node id="Category">
-                                    <attribute id="Name" value="Code" type="23" />
-                                </node>
-                            </children>
-                        </node>
-                    </children>
-                </node>
-                <node id="Tag">
-                    <attribute id="Description" value="Treasure will generate on each event, rather than be limited by a max amount." type="23" />
-                    <attribute id="Name" value="LLLIB_Treasure_GenerateEndlessly" type="23" />
+                    <attribute id="Description" value="Treasure will keep generating, rather than generating once." type="23" />
+                    <attribute id="Name" value="LeaderLib_Treasure_GenerateEndlessly" type="23" />
                     <children>
                         <node id="Categories">
                             <children>
@@ -33,7 +20,7 @@
                 </node>
                 <node id="Tag">
                     <attribute id="Description" value="Treasure won&apos;t generate on the TradeGenerationEnded event." type="23" />
-                    <attribute id="Name" value="LLLIB_Trader_IgnoreTradeGeneration" type="23" />
+                    <attribute id="Name" value="LeaderLib_Trader_IgnoreTradeGeneration" type="23" />
                     <children>
                         <node id="Categories">
                             <children>
@@ -46,7 +33,7 @@
                 </node>
                 <node id="Tag">
                     <attribute id="Description" value="Treasure generators tagged with this will ignore amount limits." type="23" />
-                    <attribute id="Name" value="LLLIB_Treasure_NoAmountLimit" type="23" />
+                    <attribute id="Name" value="LeaderLib_Treasure_IgnoreAmountLimit" type="23" />
                     <children>
                         <node id="Categories">
                             <children>
@@ -59,7 +46,7 @@
                 </node>
                 <node id="Tag">
                     <attribute id="Description" value='Prevents the &quot;New Items in Stock&quot; status from applying.' type="23" />
-                    <attribute id="Name" value="LLLIB_Trader_DisableStockStatus" type="23" />
+                    <attribute id="Name" value="LeaderLib_Trader_DisableStockStatus" type="23" />
                     <children>
                         <node id="Categories">
                             <children>
@@ -72,7 +59,7 @@
                 </node>
                 <node id="Tag">
                     <attribute id="Description" value="Generated items after they&apos;ve been registered for the first time." type="23" />
-                    <attribute id="Name" value="LLLIB_Trader_GenerateOnNewlyRegistered" type="23" />
+                    <attribute id="Name" value="LeaderLib_Trader_GenerateOnNewlyRegistered" type="23" />
                     <children>
                         <node id="Categories">
                             <children>

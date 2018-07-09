@@ -37,6 +37,22 @@ THEN
 DB_LeaderUpdater_RegisteredGoal(_ModName, _Author, _GoalTitle);
 //END_REGION
 
+//REGION CLEAR_REGISTERED
+PROC
+LeaderUpdater_Clear_RegisteredDatabase((STRING)_ModName, (STRING)_Author, (STRING)_DatabaseName)
+AND
+DB_LeaderUpdater_RegisteredDatabase(_ModName, _Author, _ReferenceName, _DatabaseName, _Arity)
+THEN
+NOT DB_LeaderUpdater_RegisteredDatabase(_ModName, _Author, _ReferenceName, _DatabaseName, _Arity);
+
+PROC
+LeaderUpdater_Clear_RegisteredGoal((STRING)_ModName, (STRING)_Author, (STRING)_GoalTitle)
+AND
+DB_LeaderUpdater_RegisteredGoal(_ModName, _Author, _GoalTitle)
+THEN
+NOT DB_LeaderUpdater_RegisteredGoal(_ModName, _Author, _GoalTitle);
+//END_REGION
+
 //REGION VERSION_DATA
 PROC
 LeaderUpdater_SaveSettingsVersionData((STRING)_ModName, (STRING)_Author, (STRING)_SettingsID)

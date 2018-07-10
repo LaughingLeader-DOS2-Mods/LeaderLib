@@ -108,7 +108,7 @@ LeaderLib_Treasure_AddTreasureItemTemplate("LeaderLib.LeaderTrader.Skillbooks", 
 //LeaderLib_Treasure_Configure_DefaultGenerationType("LLLIB_LeaderTrader_ModBooks", "DIALOG_STARTED");
 
 LeaderLib_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModBooks", "LLLIB_BOOK_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108", 1);
-LeaderLib_Treasure_Configure_AddMaxAmount("LLLIB_LeaderTrader_ModBooks", "LLLIB_BOOK_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108", 1);
+LeaderLib_Treasure_Configure_AddMaxAmount("LLLIB_LeaderTrader_ModBooks", "LLLIB_BOOK_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108", 4);
 //LeaderLib_Treasure_Configure_GenerationType("LLLIB_LeaderTrader_ModBooks", "LLLIB_BOOK_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108", "DIALOG_STARTED");
 //LeaderLib_Treasure_Register_TreasureTable("LLLIB_LeaderTrader_Misc", "ST_WeaponNormal", "LLLIB_RegionIsFortJoy", 1);
 //LeaderLib_Treasure_Register_TreasureTable("LLLIB_LeaderTrader_Misc", "TEST_Generation", "LLLIB_RegionIsDebugLevel", 1);

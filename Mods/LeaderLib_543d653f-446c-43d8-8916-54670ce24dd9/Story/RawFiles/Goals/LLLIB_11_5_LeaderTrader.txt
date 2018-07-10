@@ -109,6 +109,8 @@ LeaderLib_Treasure_Register_ItemTemplate("LeaderLib.LeaderTrader.Skillbooks", "B
 
 LeaderLib_Treasure_Register_ItemTemplate("LLLIB_LeaderTrader_ModBooks", "LLLIB_BOOK_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108", 1);
 LeaderLib_Treasure_Configure_AddMaxAmount("LLLIB_LeaderTrader_ModBooks", "LLLIB_BOOK_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108", 4);
+LeaderLib_Treasure_Configure_GenerateTreasureEndlessly("LLLIB_LeaderTrader_ModBooks");
+
 //LeaderLib_Treasure_Configure_GenerationType("LLLIB_LeaderTrader_ModBooks", "LLLIB_BOOK_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108", "DIALOG_STARTED");
 //LeaderLib_Treasure_Register_TreasureTable("LLLIB_LeaderTrader_Misc", "ST_WeaponNormal", "LLLIB_RegionIsFortJoy", 1);
 //LeaderLib_Treasure_Register_TreasureTable("LLLIB_LeaderTrader_Misc", "TEST_Generation", "LLLIB_RegionIsDebugLevel", 1);
@@ -140,7 +142,6 @@ IF
 GameStarted(_,_)
 THEN
 LLLIB_LeaderTrader_RegisterTrader();
-LLLIB_LeaderTrader_UpdateSettings();
 
 PROC
 LLLIB_LeaderTrader_RegisterTrader()
@@ -167,17 +168,29 @@ GlobalSetFlag("LLLIB_LeaderTraderIsNotGlobal");
 //END_REGION
 
 //REGION SETTINGS_UPDATE
+IF
+StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
+AND
+LeaderUpdater_QRY_SettingsNeedsUpdate("LLLIB_Settings_LeaderTrader")
+THEN
+LLLIB_LeaderTrader_UpdateSettings();
+LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader] Updated LeaderTrader settings.");
+
+PROC
+LLLIB_LeaderTrader_UpdateSettings()
+AND
+DB_LLLIB_Treasure_KeepGeneratingTreasure("LLLIB_LeaderTrader_ModBooks")
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader:UpdateSettings] Made the ModBooks treasure group generate endlessly.");
+LeaderLib_Treasure_Configure_GenerateTreasureEndlessly("LLLIB_LeaderTrader_ModBooks");
+
 //For updating treasure/trader settings on existing saves
 PROC
 LLLIB_LeaderTrader_UpdateSettings()
-THEN
-LLLIB_LeaderTrader_Internal_RegisterNewTreasure();
-
-PROC
-LLLIB_LeaderTrader_Internal_RegisterNewTreasure()
 AND
 NOT DB_LLLIB_Treasure_RegisteredTraderTreasure("LeaderLib.LeaderTrader.Skillbooks", "LLLIB_LeaderTrader")
 THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader:UpdateSettings] Added new skillbooks treasure to LeaderTrader.");
 LeaderLib_Treasure_Register_TreasureToTrader("LeaderLib.LeaderTrader.Skillbooks", "LLLIB_LeaderTrader");
 LeaderLib_Treasure_Register_ItemTemplate("LeaderLib.LeaderTrader.Skillbooks", "BOOK_Skill_LLLIB_ControlSummon_832058fd-fd40-47d0-bea3-0e108761d4e4", 2);
 //END_REGION

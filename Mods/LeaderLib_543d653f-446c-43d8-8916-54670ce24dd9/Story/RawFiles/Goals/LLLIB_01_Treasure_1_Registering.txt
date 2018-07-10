@@ -241,7 +241,7 @@ NOT DB_LLLIB_Treasure_KeepGeneratingItem(_TreasureID, _ItemEntry, _OtherVal);
 
 //Keep generating the item on each generation event, provided the max limit isn't reached on the object
 PROC
-LeaderLib_Treasure_Configure_GenerateEndlessly((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Active)
+LeaderLib_Treasure_Configure_GenerateItemEndlessly((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Active)
 THEN
 DB_LLLIB_Treasure_KeepGeneratingItem(_TreasureID, _ItemEntry, _Active);
 

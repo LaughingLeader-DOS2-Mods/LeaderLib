@@ -493,7 +493,6 @@ _TotalFound >= 3
 THEN
 LeaderLib_StringExt_Internal_Version_GetBuild(_Str, _Index);
 
-//0.9.0.0
 PROC
 LeaderLib_StringExt_Internal_Version_GetBuild((STRING)_Str, (INTEGER)_Index)
 AND

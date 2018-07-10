@@ -7,6 +7,7 @@ LeaderLib Changelog
 * Added a new system for auto-leveling items
 	* Also allows deltamods to be applied when an item reaches a specific level, allowing for equipment that gets stronger as the player levels up.
 * Added a "Control Summon" skill for making a controlled summon or follower, in response to a current portrait bug making multiple summons unselectable
+* Added a new character script (LLLIB_Follower) for disabling the auto-follow behavior found in summons/followers.
 * Refactored procs/queries for clarity
 
 # 0.9.1.0

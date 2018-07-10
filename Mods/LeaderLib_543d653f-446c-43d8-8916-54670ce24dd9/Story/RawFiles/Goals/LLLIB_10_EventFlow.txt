@@ -83,7 +83,7 @@ TimerFinished("LLLIB_Timers_EventFlow_SafetyTimer")
 AND
 NOT LLLIB_EventFlow_QRY_CurrentlyRunning("LLLIB_DefaultEventFlow")
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:EventFlow] [ERROR] The timer 'LLLIB_Timers_EventFlow_SafetyTimer' finished. Check that the 'LeaderLib_Initialized' event actually fired.");
+LeaderLog_Log("DEBUG", "[LeaderLib:EventFlow] [ERROR] The timer 'LLLIB_Timers_EventFlow_SafetyTimer' finished. Check that the 'LeaderLib_Initialized' event actually fired.");
 TimerCancel("LLLIB_Timers_StartDefaultFlow");
 LeaderLib_SendEvent("LeaderLib_Commands_StartDefaultEventFlow");
 
@@ -184,7 +184,7 @@ AND
 DB_LLLIB_Dictionary_Data(_StackName, _Index, _StartEvent, _OnCompleteEvent)
 THEN
 LLLIB_EventFlow_LaunchTimeoutTimer(_StackName, _OnCompleteEvent);
-LeaderLog_Log("DEBUG", "[LLLIB:EventFlow:SetCurrentEvent] Event flow [",_StackName,"] sent out StartEvent [",_StartEvent,"].");
+LeaderLog_Log("DEBUG", "[LeaderLib:EventFlow:SetCurrentEvent] Event flow [",_StackName,"] sent out StartEvent [",_StartEvent,"].");
 LeaderLib_SendEvent(_StartEvent);
 
 PROC
@@ -225,7 +225,7 @@ TimerFinished(_TimerName)
 AND
 DB_LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:EventFlow:Timeout] Event flow [",_StackName,"] timed out (completion event [",_OnCompleteEvent,"] never fired). Starting next event in the stack.");
+LeaderLog_Log("DEBUG", "[LeaderLib:EventFlow:Timeout] Event flow [",_StackName,"] timed out (completion event [",_OnCompleteEvent,"] never fired). Starting next event in the stack.");
 NOT DB_LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent);
 LLLIB_EventFlow_NextEvent(_StackName);
 
@@ -260,7 +260,7 @@ NOT DB_LLLIB_EventFlow_CustomWaitTime(_StackName, _OnCompleteEvent, _)
 AND
 NOT DB_LLLIB_EventFlow_WaitTimer(_StackName, _)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:EventFlow:OnEventComplete] Event flow [",_StackName,"] received OnCompleteEvent [",_OnCompleteEvent,"]. Starting wait timer for next event.");
+LeaderLog_Log("DEBUG", "[LeaderLib:EventFlow:OnEventComplete] Event flow [",_StackName,"] received OnCompleteEvent [",_OnCompleteEvent,"]. Starting wait timer for next event.");
 LLLIB_EventFlow_StopTimeoutTimer(_StackName, _OnCompleteEvent);
 LLLIB_EventFlow_StartWaitTimer(_StackName, _WaitTime);
 
@@ -277,7 +277,7 @@ DB_LLLIB_EventFlow_CustomWaitTime(_StackName, _OnCompleteEvent, _CustomWaitTime)
 AND
 NOT DB_LLLIB_EventFlow_WaitTimer(_StackName, _)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:EventFlow:OnEventComplete] Event flow [",_StackName,"] received OnCompleteEvent [",_OnCompleteEvent,"]. Starting wait timer for next event, and using a custom wait time.");
+LeaderLog_Log("DEBUG", "[LeaderLib:EventFlow:OnEventComplete] Event flow [",_StackName,"] received OnCompleteEvent [",_OnCompleteEvent,"]. Starting wait timer for next event, and using a custom wait time.");
 LLLIB_EventFlow_StopTimeoutTimer(_StackName, _OnCompleteEvent);
 LLLIB_EventFlow_StartWaitTimer(_StackName, _CustomWaitTime);
 
@@ -295,7 +295,7 @@ AND
 DB_LLLIB_EventFlow_WaitTimer(_StackName, _TimerName)
 THEN
 NOT DB_LLLIB_EventFlow_WaitTimer(_StackName, _TimerName);
-LeaderLog_Log("DEBUG", "[LLLIB:EventFlow:WaitTimer] Event flow [",_StackName,"] wait timer finished. Sending next event.");
+LeaderLog_Log("DEBUG", "[LeaderLib:EventFlow:WaitTimer] Event flow [",_StackName,"] wait timer finished. Sending next event.");
 LLLIB_EventFlow_NextEvent(_StackName);
 
 PROC
@@ -350,7 +350,7 @@ LLLIB_EventFlow_OnEventFlowComplete((STRING)_StackName)
 AND
 DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime, _TimeoutValue)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:EventFlow:OnEventFlowComplete] Event flow [",_StackName,"] completed. Clearing dictionary and sending completion event [",_OnFlowCompleteEvent,"].");
+LeaderLog_Log("DEBUG", "[LeaderLib:EventFlow:OnEventFlowComplete] Event flow [",_StackName,"] completed. Clearing dictionary and sending completion event [",_OnFlowCompleteEvent,"].");
 LeaderLib_SendEvent(_OnFlowCompleteEvent);
 LLLIB_EventFlow_Clear_SessionData(_StackName);
 
@@ -359,14 +359,14 @@ StoryEvent(_, "LeaderLib_Events_OnDefaultEventFlowComplete")
 THEN
 GlobalSetFlag("LeaderLib_InitialEventFlowComplete");
 GlobalClearFlag("LeaderLib_DefaultEventFlowRunning");
-LeaderLog_Log("DEBUG", "[LLLIB:EventFlow] LeaderLib event flow complete.");
+LeaderLog_Log("DEBUG", "[LeaderLib:EventFlow] LeaderLib event flow complete.");
 //END_REGION
 
 //REGION FORCE_STOP
 PROC
 LLLIB_EventFlow_ForceStop((STRING)_StackName)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:EventFlow:ForceStop] Forcefully stopping event flow [",_StackName,"]. Sending stop events for all entries in the stack.");
+LeaderLog_Log("DEBUG", "[LeaderLib:EventFlow:ForceStop] Forcefully stopping event flow [",_StackName,"]. Sending stop events for all entries in the stack.");
 LLLIB_EventFlow_CancelAllTimeoutTimers(_StackName);
 LLLIB_EventFlow_CancelWaitTimer(_StackName);
 
@@ -399,7 +399,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventFlow", "DB_
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventFlow", "DB_LLLIB_EventFlow_EventTimeout", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventFlow", "DB_LLLIB_EventFlow_WaitTimer", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventFlow", "DB_LLLIB_EventFlow_CustomWaitTime", 3);
-LeaderLog_Log("TRACE", "[LLLIB:EventFlow] Databases registered.");
+LeaderLog_Log("TRACE", "[LeaderLib:EventFlow] Databases registered.");
 //END_REGION
 EXITSECTION
 

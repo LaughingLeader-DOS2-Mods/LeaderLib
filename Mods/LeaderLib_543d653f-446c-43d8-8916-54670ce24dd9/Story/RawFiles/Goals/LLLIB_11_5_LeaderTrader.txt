@@ -60,7 +60,7 @@ LLLIB_LeaderTrader_RegisterTraderSettings()
 AND
 NOT DB_LLLIB_LeaderTrader_Registered(_)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:LeaderTrader:RegisterTraderSettings] Registering LeaderTrader treasure/trader settings.");
+LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader:RegisterTraderSettings] Registering LeaderTrader treasure/trader settings.");
 DB_LLLIB_LeaderTrader_Registered(1);
 
 DB_LLLIB_LeaderTrader_CurrentAppearance("LLLIB_LeaderTrader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e");
@@ -151,7 +151,7 @@ ObjectExists(CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a333
 THEN
 DB_LLLIB_LeaderTrader((CHARACTERGUID)CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574);
 LeaderLib_Trader_Register_GlobalTrader("LLLIB_LeaderTrader", CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574);
-LeaderLog_Log("DEBUG","[LLLIB:LeaderTrader] Registered the global leader trader to the trader database.");
+LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader] Registered the global leader trader to the trader database.");
 
 //If the global version doesn't exist for some reason, use the template
 PROC
@@ -162,7 +162,7 @@ AND
 ObjectExists(CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, 0)
 THEN
 LeaderLib_Trader_Register_Trader("LLLIB_LeaderTrader", "LLLIB_LeaderTrader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e", 0);
-LeaderLog_Log("DEBUG","[LLLIB:LeaderTrader] [ERROR] Global trader version doesn't exist! Using the template version.");
+LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader] [ERROR] Global trader version doesn't exist! Using the template version.");
 GlobalSetFlag("LLLIB_LeaderTraderIsNotGlobal");
 //END_REGION
 
@@ -428,7 +428,7 @@ StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_OnLeaderTradeSpawned")
 AND
 DB_CurrentLevel("FJ_FortJoy_Main")
 THEN
-LeaderLog_Log("DEBUG","[LLLIB:LeaderTrader] Walking to position in FortJoy.");
+LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader] Walking to position in FortJoy.");
 CharacterMoveToPosition(_Trader, 220.01, -16.79, 362.97, 0, "LLLIB_Events_LeaderTraderFinishedMoving");
 TimerLaunch("LLLIB_LeaderTrader_MoveFailsafeTimer", 10000);
 
@@ -494,7 +494,7 @@ StoryEvent((CHARACTERGUID)_LeaderTrader, "LeaderLib_Events_GenerationComplete")
 AND
 DB_LLLIB_LeaderTrader(_LeaderTrader)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:LeaderTrader] Treasure generation complete.");
+LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader] Treasure generation complete.");
 
 PROC
 LLLIB_LeaderTrader_OnSpawned((CHARACTERGUID)_LeaderTrader, (STRING)_Level)
@@ -686,7 +686,7 @@ DB_LLLIB_LeaderTrader(_LeaderTrader)
 AND
 _Character != _LeaderTrader
 THEN
-LeaderLog_Log("DEBUG","[LLLIB:LeaderTrader] Hey! 'LLLIB_LeaderTrader_GaveIntroItems' was set on the wrong character! Wake up! ;)");
+LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader] Hey! 'LLLIB_LeaderTrader_GaveIntroItems' was set on the wrong character! Wake up! ;)");
 ObjectClearFlag(_Character, "LLLIB_LeaderTrader_GaveIntroItems");
 ObjectSetFlag(_LeaderTrader, "LLLIB_LeaderTrader_GaveIntroItems");
 
@@ -729,7 +729,7 @@ AND
 LeaderUpdater_QRY_SettingsNeedsUpdate("LLLIB_Settings_LeaderTrader")
 THEN
 LLLIB_LeaderTrader_InitSettings();
-LeaderLog_Log("SYSTEM", "[LLLIB:LeaderTrader] Settings updated.");
+LeaderLog_Log("SYSTEM", "[LeaderLib:LeaderTrader] Settings updated.");
 
 PROC
 LLLIB_System_RegisterDatabases()
@@ -743,7 +743,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_Registered", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_SetFlags", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_SetTags", 2);
-LeaderLog_Log("TRACE", "[LLLIB:LeaderTrader] Databases registered.");
+LeaderLog_Log("TRACE", "[LeaderLib:LeaderTrader] Databases registered.");
 //END_REGION
 EXITSECTION
 

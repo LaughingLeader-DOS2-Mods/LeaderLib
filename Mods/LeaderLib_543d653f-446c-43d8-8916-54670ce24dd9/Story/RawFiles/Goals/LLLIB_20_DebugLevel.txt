@@ -67,7 +67,7 @@ IF
 TextEventSet("liblag")
 THEN
 TimerLaunch("LLLIB_Debug_GenTreasure", 1000);
-LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] Generating a ton of treasure in 1 second.");
+LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel] Generating a ton of treasure in 1 second.");
 
 IF
 TimerFinished("LLLIB_Debug_GenTreasure")
@@ -80,37 +80,37 @@ DB_LLLIB_Treasure_ItemDoneGenerating(ITEMGUID_NDL_ArenaChest_000_60d1603d-606f-4
 IF
 TimerFinished("LLLIB_Debug_GenTreasure")
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] Treasure generated.");
+LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel] Treasure generated.");
 
 IF
 TextEventSet("llspawn")
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] Set trader spawn flag to true.");
+LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel] Set trader spawn flag to true.");
 GlobalSetFlag("LLLIB_DebugLevel_SpawnTrader1");
 
 IF
 TextEventSet("lltest1")
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] Registered debug trader.");
+LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel] Registered debug trader.");
 LLLIB_DebugLevel_TraderTest();
 LeaderLib_SendEvent("LeaderLib_Commands_SpawnTraders");
 
 IF
 TextEventSet("lltest2")
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] Registered a bunch of treasure.");
+LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel] Registered a bunch of treasure.");
 LLLIB_DebugLevel_TreasureTest();
 
 IF
 TextEventSet("lltest3")
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] Registered a bunch of mod menus.");
+LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel] Registered a bunch of mod menus.");
 LLLIB_DebugLevel_ModMenuTest();
 
 IF
 TextEventSet("llstress")
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] Running stress tests.");
+LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel] Running stress tests.");
 LLLIB_DebugLevel_TreasureStressTest();
 
 //REGION TESTS
@@ -379,7 +379,7 @@ DB_LLLIB_DictionarySort_Temp_StringCompare_Results("Test", _Str1, _Str2, _Compar
 AND
 IntegertoString(_CompareVal, _CompareValStr)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel] String comparison: '",_Str1,"' and '",_Str2,"' = [",_CompareValStr,"]");
+LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel] String comparison: '",_Str1,"' and '",_Str2,"' = [",_CompareValStr,"]");
 */
 
 IF
@@ -394,7 +394,7 @@ StoryEvent((CHARACTERGUID)_Char, "LeaderLib_Events_OnCombatLog")
 THEN
 LeaderLog_SetOneshotTarget(_Char);
 LeaderLog_SetNextStatusColor(_Char, "#FF0000", "30");
-LeaderLog_Log("STATUS", "[LLLIB:Debug] Color text!");
+LeaderLog_Log("STATUS", "[LeaderLib:Debug] Color text!");
 
 /*
 IF
@@ -416,7 +416,7 @@ NOT DB_LLLIB_Debug_TestCombat(_CombatID)
 AND
 IntegertoString(_CombatID, _CombatStr)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel:CombatRandomTest] Combat [",_CombatStr,"] started. Starting timer [LeaderLib_Debug_Timers_CombatRandomTest].");
+LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel:CombatRandomTest] Combat [",_CombatStr,"] started. Starting timer [LeaderLib_Debug_Timers_CombatRandomTest].");
 DB_LLLIB_Debug_TestCombat(_CombatID);
 TimerCancel("LeaderLib_Debug_Timers_CombatRandomTest");
 TimerLaunch("LeaderLib_Debug_Timers_CombatRandomTest", 750);
@@ -428,7 +428,7 @@ DB_LLLIB_Debug_TestCombat(_CombatID)
 AND
 IntegertoString(_CombatID, _CombatStr)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel:CombatRandomTest] Combat [",_CombatStr,"] ended.");
+LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel:CombatRandomTest] Combat [",_CombatStr,"] ended.");
 NOT DB_LLLIB_Debug_TestCombat(_CombatID);
 
 IF
@@ -436,7 +436,7 @@ CombatEnded(_CombatID)
 AND
 NOT DB_LLLIB_Debug_TestCombat(_)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel:CombatRandomTest] No active combat. Stopping timer [LeaderLib_Debug_Timers_CombatRandomTest].");
+LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel:CombatRandomTest] No active combat. Stopping timer [LeaderLib_Debug_Timers_CombatRandomTest].");
 TimerCancel("LeaderLib_Debug_Timers_CombatRandomTest");
 
 IF
@@ -455,7 +455,7 @@ NOT DB_LeaderLib_Combat_Temp_RandomCharacter(_CombatID, _, _)
 AND
 IntegertoString(_CombatID, _CombatStr)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel:CombatRandomTest] Combat [",_CombatStr,"]: Could not find random character.");
+LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel:CombatRandomTest] Combat [",_CombatStr,"]: Could not find random character.");
 
 IF
 TimerFinished("LeaderLib_Debug_Timers_CombatRandomTest")
@@ -472,7 +472,7 @@ ObjectIsCharacter((CHARACTERGUID)_Object, 1)
 AND
 CharacterGetDisplayName(_Object, _, _Name)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel:CombatRandomTest] Combat [",_CombatStr,"]: Character [",_Name,"] is in combat.");
+LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel:CombatRandomTest] Combat [",_CombatStr,"]: Character [",_Name,"] is in combat.");
 
 IF
 TimerFinished("LeaderLib_Debug_Timers_CombatRandomTest")
@@ -493,7 +493,7 @@ IntegertoString(_FontSize, _FontSizeStr)
 AND
 GetPosition(_Character, _x, _y, _z)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel:CombatRandomTest] Combat [",_CombatStr,"]: Selected a random character [",_Name,"].");
+LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel:CombatRandomTest] Combat [",_CombatStr,"]: Selected a random character [",_Name,"].");
 LeaderLog_SetOneshotTarget(_Character);
 LeaderLog_SetNextStatusColor(_Character, "#87CEEB", _FontSizeStr);
 LeaderLog_Log("STATUS", "*Slip*");
@@ -506,7 +506,7 @@ TimerFinished("LeaderLib_Debug_Timers_CombatRandomTest")
 AND
 LLLIB_Debug_TestLevel_QRY_TestCombatAvailable()
 THEN
-//LeaderLog_Log("DEBUG", "[LLLIB:DebugLevel:CombatRandomTest] Restarting timer [LeaderLib_Debug_Timers_CombatRandomTest].");
+//LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel:CombatRandomTest] Restarting timer [LeaderLib_Debug_Timers_CombatRandomTest].");
 TimerLaunch("LeaderLib_Debug_Timers_CombatRandomTest", 4000);
 
 QRY
@@ -534,7 +534,7 @@ AND
 IntegertoString(_Ran, _RanStr)
 THEN
 NOT DB_LeaderLib_Temp_RandomResult(_Ran);
-LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem] Random range result: ",_RanStr," | Min: 1 Max: 19");
+LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem] Random range result: ",_RanStr," | Min: 1 Max: 19");
 */
 
 /*
@@ -580,7 +580,7 @@ THEN
 RemoveStatus(_Char, "TEST_BONUSTALENT");
 DB_MyMod_Toggle(1);
 //LeaderLog_SetOneshotTarget(_Char);
-//LeaderLog_Log("COMBAT", "[LLLIB:Debug] Testing the combat log!");
+//LeaderLog_Log("COMBAT", "[LeaderLib:Debug] Testing the combat log!");
 
 IF
 DB_MyMod_Toggle(_Var)

@@ -60,7 +60,7 @@ LeaderLib_Treasure_Register_TreasureToTrader((STRING)_TreasureID, (STRING)_Trade
 AND
 NOT DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
 THEN
-//LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem:Register_TreasureToTrader] [",_TreasureID,"] registered to [",_TraderID,"].");
+//LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:Register_TreasureToTrader] [",_TreasureID,"] registered to [",_TraderID,"].");
 DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID);
 LeaderLib_Treasure_JustRegistered(_TreasureID, _TraderID, "TraderTreasure");
 
@@ -190,7 +190,7 @@ DB_LLLIB_Treasure_ItemLevel(_TreasureID, _ItemEntry, _PrevVal, _PrevMin, _PrevMa
 THEN
 NOT DB_LLLIB_Treasure_ItemLevel(_TreasureID, _ItemEntry, _PrevVal, _PrevMin, _PrevMax);
 DB_LLLIB_Treasure_ItemLevel(_TreasureID, _ItemEntry, _UsePartyLevel, _MinLevel, _MaxLevel);
-//LeaderLog_Log("DEBUG", "[LLLIB:TreasureSystem] Previous settings for ",_TreasureID,":",_ItemEntry," were overwritten.");
+//LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem] Previous settings for ",_TreasureID,":",_ItemEntry," were overwritten.");
 
 PROC
 LeaderLib_Treasure_Configure_ItemLevel((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_UsePartyLevel, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
@@ -400,7 +400,7 @@ LeaderLib_Trader_Register_Trader((STRING)_TraderID, (STRING)_Template, (INTEGER)
 AND
 DB_LLLIB_Traders_RegisteredTrader(_TraderID,_,_)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Trader][ERROR] Error adding trader with ID '", _TraderID, "': Trader already exists!");
+LeaderLog_Log("DEBUG", "[LeaderLib:Trader][ERROR] Error adding trader with ID '", _TraderID, "': Trader already exists!");
 
 PROC
 LeaderLib_Trader_Register_Trader((STRING)_TraderID, (STRING)_Template, (INTEGER)_PlaySpawn)
@@ -467,7 +467,7 @@ _PastRequirementID != _RequirementID
 THEN
 NOT DB_LLLIB_Traders_Dialog(_TraderID, _Dialog, _Level, _PastRequirementID);
 DB_LLLIB_Traders_Dialog(_TraderID, _Dialog, _Level, _RequirementID);
-LeaderLog_Log("DEBUG", "[LLLIB:TraderSystem:Register_Dialog] Requirement for [",_TraderID,"][",_Level,"][",_Dialog,"] changed from [",_PastRequirementID,"] to [",_RequirementID,"].");
+LeaderLog_Log("DEBUG", "[LeaderLib:TraderSystem:Register_Dialog] Requirement for [",_TraderID,"][",_Level,"][",_Dialog,"] changed from [",_PastRequirementID,"] to [",_RequirementID,"].");
 
 PROC
 LeaderLib_Trader_Register_Dialog((STRING)_TraderID, (STRING)_Dialog, (STRING)_Level, (STRING)_RequirementID)
@@ -522,7 +522,7 @@ LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
 AND
 LeaderLib_Traders_QRY_IsRegistered(_TraderID)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Traders] Trader [",_TraderID,"] removed from all associated databases.");
+LeaderLog_Log("DEBUG", "[LeaderLib:Traders] Trader [",_TraderID,"] removed from all associated databases.");
 
 PROC
 LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
@@ -629,7 +629,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Register
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LLLIB_Traders_LevelPositionObject", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LLLIB_Traders_CreationEvents", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LLLIB_Traders_Seat", 4);
-LeaderLog_Log("TRACE", "[LLLIB:Treasure:Registering] Databases registered.");
+LeaderLog_Log("TRACE", "[LeaderLib:Treasure:Registering] Databases registered.");
 //END_REGION
 EXITSECTION
 

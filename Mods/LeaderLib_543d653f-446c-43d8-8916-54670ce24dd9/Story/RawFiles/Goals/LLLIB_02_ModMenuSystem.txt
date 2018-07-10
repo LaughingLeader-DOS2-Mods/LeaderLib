@@ -86,7 +86,7 @@ IntegertoString(_LastPageIndex, _Str2)
 AND
 IntegertoString(_MaxPage, _Str3)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:ModMenu] Max page set: LastIndex[",_Str1,"] LastPageIndex[",_Str2,"] MaxPage[",_Str3,"]");
+LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu] Max page set: LastIndex[",_Str1,"] LastPageIndex[",_Str2,"] MaxPage[",_Str3,"]");
 */
 //END_REGION
 
@@ -226,7 +226,7 @@ _Length < 100
 AND
 IntegertoString(_Length, _TotalStr)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:ModMenu:Sorting] Total menus = [",_TotalStr,"]. Setting sort tick rate to 1.");
+LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu:Sorting] Total menus = [",_TotalStr,"]. Setting sort tick rate to 1.");
 LLLIB_ModMenu_SetSortTickRate(1);
 
 PROC
@@ -238,7 +238,7 @@ _Length >= 100
 AND
 IntegertoString(_Length, _TotalStr)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:ModMenu:Sorting] Total menus = [",_TotalStr,"]. Setting sort tick rate to 2.");
+LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu:Sorting] Total menus = [",_TotalStr,"]. Setting sort tick rate to 2.");
 LLLIB_ModMenu_SetSortTickRate(2);
 
 PROC
@@ -247,7 +247,7 @@ AND
 DB_LLLIB_ModMenu_SortTickRate(_TickRate)
 THEN
 DB_LLLIB_ModMenu_Temp_SortStarted(1);
-LeaderLog_Log("DEBUG", "[LLLIB:ModMenu:Sorting] Starting menu sorting.");
+LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu:Sorting] Starting menu sorting.");
 LeaderLib_DictionarySort_StartSorting("LLLIB_RegisteredMenus", _TickRate, "LeaderLib_Events_OnMenuSortComplete", 0);
 
 IF
@@ -256,7 +256,7 @@ AND
 DB_LLLIB_ModMenu_Temp_SortStarted(_Val)
 THEN
 NOT DB_LLLIB_ModMenu_Temp_SortStarted(_Val);
-LeaderLog_Log("DEBUG", "[LLLIB:ModMenu:SortingComplete] Menu sorting done.");
+LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu:SortingComplete] Menu sorting done.");
 TimerCancel("LLLIB_Timers_ModMenu_CalculateMaxPage");
 TimerLaunch("LLLIB_Timers_ModMenu_CalculateMaxPage", 200);
 //END_REGION
@@ -302,7 +302,7 @@ AND
 _MaxPage == 2
 THEN
 ObjectSetFlag(_Player, "LLLIB_ModMenu_HideNextPageButton", _Instance);
-LeaderLog_Log("DEBUG", "[LLLIB:ModMenu] Hid next page button");
+LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu] Hid next page button");
 
 /*
 PROC
@@ -395,7 +395,7 @@ LLLIB_ModMenu_LoadPageVariables((CHARACTERGUID)_Player, (INTEGER)_Instance)
 AND
 NOT DB_LLLIB_ModMenu_PageMax(_,_,_)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:ModMenu][ERROR] ", "Max page settings not set. Reconfiguring.");
+LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu][ERROR] ", "Max page settings not set. Reconfiguring.");
 LLLIB_ModMenu_CalculateMaxPage();
 
 PROC
@@ -404,7 +404,7 @@ AND
 NOT DB_LLLIB_ModMenu_CurrentPageIndex(_Player, _)
 THEN
 LLLIB_ModMenu_SetPage(_Player, 0, _Instance);
-LeaderLog_Log("DEBUG", "[LLLIB:ModMenu][ERROR] ", "Page not set for some reason. Setting to page 0.");
+LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu][ERROR] ", "Page not set for some reason. Setting to page 0.");
 
 PROC
 LLLIB_ModMenu_LoadPageVariables((CHARACTERGUID)_Player, (INTEGER)_Instance)
@@ -524,7 +524,7 @@ LLLIB_ModMenu_CheckPageCount((CHARACTERGUID)_Player)
 AND
 NOT DB_LLLIB_ModMenu_PageMax(_, _, _)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:ModMenu] Page max not set?");
+LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu] Page max not set?");
 
 PROC
 LLLIB_ModMenu_CheckPageCount((CHARACTERGUID)_Player)
@@ -534,7 +534,7 @@ AND
 _MaxPage > 1
 THEN
 ObjectSetFlag(_Player, "LLLIB_ModMenu_HasMultiplePages", 0);
-//LeaderLog_Log("DEBUG", "[LLLIB:ModMenu] Multiple pages available.");
+//LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu] Multiple pages available.");
 
 PROC
 LLLIB_ModMenu_CheckPageCount((CHARACTERGUID)_Player)
@@ -544,7 +544,7 @@ AND
 _MaxPage <= 1
 THEN
 ObjectClearFlag(_Player, "LLLIB_ModMenu_HasMultiplePages");
-//LeaderLog_Log("DEBUG", "[LLLIB:ModMenu] Only one page available.");
+//LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu] Only one page available.");
 //END_REGION
 
 //REGION FLAG_ACTIONS
@@ -764,7 +764,7 @@ AND
 LeaderUpdater_QRY_SettingsNeedsUpdate("LLLIB_Settings_ModMenu")
 THEN
 LLLIB_ModMenu_InitSettings();
-LeaderLog_Log("SYSTEM", "[LLLIB:ModMenu] Settings updated.");
+LeaderLog_Log("SYSTEM", "[LeaderLib:ModMenu] Settings updated.");
 
 PROC
 LLLIB_System_RegisterDatabases()
@@ -777,7 +777,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModMenu", "DB_LL
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModMenu", "DB_LLLIB_ModMenu_Temp_ActiveMenu", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModMenu", "DB_LLLIB_ModMenu_Temp_IsChangingMenuPage", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModMenu", "DB_LLLIB_ModMenu_Temp_SortStarted", 1);
-LeaderLog_Log("TRACE", "[LLLIB:ModMenu] Databases registered.");
+LeaderLog_Log("TRACE", "[LeaderLib:ModMenu] Databases registered.");
 //END_REGION
 EXITSECTION
 

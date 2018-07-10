@@ -174,14 +174,14 @@ LeaderLib_Array_GetFirstEntry((STRING)_ID)
 AND
 NOT DB_LLLIB_Array_Iterator(_ID, _)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:GetFirstEntry] [ERROR] No iterator found for array [",_ID,"]!");
+LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:GetFirstEntry] [ERROR] No iterator found for array [",_ID,"]!");
 
 PROC
 LeaderLib_Array_GetFirstEntry((STRING)_ID)
 AND
 NOT DB_LLLIB_Array_Data(_ID, _, _)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:GetFirstEntry] [ERROR] No entries found for array [",_ID,"]!");
+LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:GetFirstEntry] [ERROR] No entries found for array [",_ID,"]!");
 
 PROC
 LeaderLib_Array_GetFirstEntry((STRING)_ID)
@@ -199,11 +199,11 @@ NOT DB_LLLIB_Array_Temp_FirstEntry(_ID, _, _)
 //AND
 //IntegertoString(_Index, _IndexStr)
 //AND
-//LeaderLog_QRY_Log("DEBUG", "[LLLIB:DatabaseExtensions:GetFirstEntry] Checking index [",_IndexStr,"] in array [",_ID,"]")
+//LeaderLog_QRY_Log("DEBUG", "[LeaderLib:DatabaseExtensions:GetFirstEntry] Checking index [",_IndexStr,"] in array [",_ID,"]")
 AND
 DB_LLLIB_Array_Data(_ID, _Index, _Value)
 THEN
-//LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:GetFirstEntry] First entry for array [",_ID,"] set to [",_IndexStr,"](",_Value,").");
+//LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:GetFirstEntry] First entry for array [",_ID,"] set to [",_IndexStr,"](",_Value,").");
 DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value);
 //END_REGION
 
@@ -238,21 +238,21 @@ _Length <= 0
 AND
 IntegertoString(_Length, _LengthStr)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:Pop] [ERROR] Error popping array [",_ID,"]: length is [",_LengthStr,"]!");
+LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:Pop] [ERROR] Error popping array [",_ID,"]: length is [",_LengthStr,"]!");
 
 PROC
 LeaderLib_Array_Internal_Pop((STRING)_ID)
 AND
 NOT DB_LLLIB_Array_Length(_ID, _)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:Pop] [ERROR] Error popping array [",_ID,"]: length is null!");
+LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:Pop] [ERROR] Error popping array [",_ID,"]: length is null!");
 
 PROC
 LeaderLib_Array_Internal_Pop((STRING)_ID)
 AND
 NOT DB_LLLIB_Array_Temp_FirstEntry(_ID, _, _)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:Pop] [ERROR] No first entry found for array [",_ID,"]!");
+LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:Pop] [ERROR] No first entry found for array [",_ID,"]!");
 
 PROC
 LeaderLib_Array_Internal_Pop((STRING)_ID)
@@ -261,7 +261,7 @@ DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value)
 THEN
 DB_LLLIB_Array_Temp_PopValue(_ID, _Value);
 NOT DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value);
-//LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:Pop] Popped [",_Value,"] from array [",_ID,"].");
+//LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:Pop] Popped [",_Value,"] from array [",_ID,"].");
 LeaderLib_Array_RemoveFromArray(_ID, _Value);
 //END_REGION
 
@@ -352,7 +352,7 @@ DB_LLLIB_Array_Length(_ID, _Length)
 AND
 NOT DB_LLLIB_Array_Iterator(_ID, _Length)
 THEN
-//LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:BuildArrayIterator] Building array iterator for [",_ID,"].");
+//LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:BuildArrayIterator] Building array iterator for [",_ID,"].");
 LeaderLib_Array_Internal_StartArrayIteratorBuilder(_ID);
 
 PROC
@@ -393,7 +393,7 @@ DB_LLLIB_Array_Iterator(_ID, _Index)
 AND
 IntegertoString(_Index, _IndexStr)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:ArrayIterator] Added [",_IndexStr,"] to array iterator [",_ID,"][",_SessionID,"].");
+LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:ArrayIterator] Added [",_IndexStr,"] to array iterator [",_ID,"][",_SessionID,"].");
 */
 //END_REGION
 
@@ -567,7 +567,7 @@ IntegerSubtract(_Length, 1, _AddedIndex)
 AND
 IntegertoString(_AddedIndex, _AddedIndexStr)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:AddToArray] Added '",_Value,"' to array [",_ID,"] at index [",_AddedIndexStr,"].");
+LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:AddToArray] Added '",_Value,"' to array [",_ID,"] at index [",_AddedIndexStr,"].");
 */
 
 /*
@@ -578,7 +578,7 @@ DB_LLLIB_Dictionary_Data(_ID, _Index, _Key, _Value)
 AND
 IntegertoString(_Index, _IndexStr)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:AddToArray] Added [",_Key,"] = '",_Value,"' to dictionary [",_ID,"] at index [",_IndexStr,"].");
+LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:AddToArray] Added [",_Key,"] = '",_Value,"' to dictionary [",_ID,"] at index [",_IndexStr,"].");
 
 PROC
 LeaderLib_Array_AddToDictionary((STRING)_ID, (STRING)_Key, (STRING)_Value)
@@ -589,7 +589,7 @@ IntegerSubtract(_Length, 1, _AddedIndex)
 AND
 IntegertoString(_AddedIndex, _AddedIndexStr)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:AddToArray] Added '",_Value,"' to array [",_ID,"] at index [",_AddedIndexStr,"].");
+LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:AddToArray] Added '",_Value,"' to array [",_ID,"] at index [",_AddedIndexStr,"].");
 */
 
 /*
@@ -604,7 +604,7 @@ IntegertoString(_Index, _IndexStr)
 AND
 IntegertoString(_AtIndex, _AtIndexStr)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:ShiftArrayDown(",_AtIndexStr,")] Shifted '",_Value,"' in array [",_ID,"] down, to index [",_IndexStr,"].");
+LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:ShiftArrayDown(",_AtIndexStr,")] Shifted '",_Value,"' in array [",_ID,"] down, to index [",_IndexStr,"].");
 
 PROC
 LeaderLib_Array_ShiftArrayUp((STRING)_ID, (INTEGER)_StartIndex)
@@ -617,7 +617,7 @@ IntegertoString(_Index, _IndexStr)
 AND
 IntegertoString(_StartIndex, _StartIndexStr)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:DatabaseExtensions:ShiftArrayUp(",_StartIndexStr,")] Shifted '",_Value,"' in array [",_ID,"] up, to index [",_IndexStr,"].");
+LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:ShiftArrayUp(",_StartIndexStr,")] Shifted '",_Value,"' in array [",_ID,"] up, to index [",_IndexStr,"].");
 */
 //END_REGION
 
@@ -632,7 +632,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensio
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LLLIB_Array_Temp_ArrayIteratorBuilder", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LLLIB_Array_Temp_PopValue", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LLLIB_Array_Temp_FirstEntry", 3);
-LeaderLog_Log("TRACE", "[LLLIB:DatabaseExtensions] Databases registered.");
+LeaderLog_Log("TRACE", "[LeaderLib:DatabaseExtensions] Databases registered.");
 //END_REGION
 EXITSECTION
 

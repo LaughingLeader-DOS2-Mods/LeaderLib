@@ -98,7 +98,7 @@ GameStarted(_,_)
 AND
 NOT LLLIB_QRY_EventParser_GlobalParserExists()
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:EventParser][ERROR] Global Event Parser doesn't exist for some reason.");
+LeaderLog_Log("DEBUG", "[LeaderLib:EventParser][ERROR] Global Event Parser doesn't exist for some reason.");
 //LLLIB_EventParser_Internal_CreateNew();
 
 //REGION SEND_EVENT
@@ -140,7 +140,7 @@ LLLIB_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventParser", "DB_LeaderLib_SendEvent", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventParser", "DB_LLLIB_EventParser_Spawned", 1);
-LeaderLog_Log("TRACE", "[LLLIB:EventParser] Databases registered.");
+LeaderLog_Log("TRACE", "[LeaderLib:EventParser] Databases registered.");
 //END_REGION
 EXITSECTION
 

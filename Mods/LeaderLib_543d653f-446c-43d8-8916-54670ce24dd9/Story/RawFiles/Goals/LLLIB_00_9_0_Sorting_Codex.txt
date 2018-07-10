@@ -152,7 +152,7 @@ AND
 LeaderUpdater_QRY_SettingsNeedsUpdate("LLLIB_Settings_Codex")
 THEN
 LLLIB_Codex_InitSettings();
-LeaderLog_Log("SYSTEM", "[LLLIB:Codex] Settings updated.");
+LeaderLog_Log("SYSTEM", "[LeaderLib:Codex] Settings updated.");
 
 PROC
 LLLIB_System_RegisterDatabases()
@@ -160,7 +160,7 @@ THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Codex", "DB_LLLIB_Codex", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Codex", "DB_LLLIB_Codex_Iterator", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Codex", "DB_LLLIB_CodexCount", 1);
-LeaderLog_Log("TRACE", "[LLLIB:Codex] Databases registered.");
+LeaderLog_Log("TRACE", "[LeaderLib:Codex] Databases registered.");
 //END_REGION
 EXITSECTION
 

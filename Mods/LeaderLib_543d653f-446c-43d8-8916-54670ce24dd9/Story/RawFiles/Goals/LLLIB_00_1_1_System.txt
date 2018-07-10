@@ -10,7 +10,7 @@ LLLIB_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "System", "DB_LeaderLib_Initialized", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "System", "DB_LeaderLib_GameStarted", 1);
-LeaderLog_Log("TRACE", "[LLLIB:System] Databases registered.");
+LeaderLog_Log("TRACE", "[LeaderLib:System] Databases registered.");
 //END_REGION
 
 //REGION EDITOR_FLAGGING
@@ -37,7 +37,7 @@ TimerFinished("LLLIB_Timers_LeaderLibInitialized")
 THEN
 DB_LeaderLib_Initialized(1);
 GlobalSetFlag("LeaderLib_Initialized");
-LeaderLog_Log("DEBUG", "[LLLIB:ModAPI] LeaderLib initialized.");
+LeaderLog_Log("DEBUG", "[LeaderLib:ModAPI] LeaderLib initialized.");
 LeaderLib_SendEvent("LeaderLib_Initialized");
 
 PROC
@@ -60,7 +60,7 @@ CharacterGetHostCharacter(_Host)
 AND
 UserGetFlag(_Host, "LeaderLib_IsHost", 0)
 THEN
-LeaderLog_Log("DEBUG","[LLLIB:System] Flagged host user.");
+LeaderLog_Log("DEBUG", "[LeaderLib:System] Flagged host user.");
 UserSetFlag(_Host, "LeaderLib_IsHost", 0);
 
 PROC
@@ -76,7 +76,7 @@ NOT LeaderLib_Helper_QRY_UserMatch(_Player, _Host)
 AND
 UserGetFlag(_Player, "LeaderLib_IsHost", 1)
 THEN
-LeaderLog_Log("DEBUG","[LLLIB:System] Cleared host flag from non-host user.");
+LeaderLog_Log("DEBUG", "[LeaderLib:System] Cleared host flag from non-host user.");
 UserClearFlag(_Player, "LeaderLib_IsHost", 0);
 
 PROC
@@ -84,7 +84,7 @@ LLLIB_System_MarkHost()
 AND
 NOT CharacterGetHostCharacter(_)
 THEN
-LeaderLog_Log("DEBUG","[LLLIB:System][ERROR] No host character found.");
+LeaderLog_Log("DEBUG", "[LeaderLib:System][ERROR] No host character found.");
 //END_REGION
 
 //REGION LEADER_UPDATER_ALIASES
@@ -114,7 +114,7 @@ TimerFinished("LLLIB_Debug_IteratePlayers")
 AND
 NOT CharacterGetHostCharacter(_)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Init:LLLIB_Debug_IteratePlayers] No host found.");
+LeaderLog_Log("DEBUG", "[LeaderLib:Init:LLLIB_Debug_IteratePlayers] No host found.");
 
 IF
 TimerFinished("LLLIB_Debug_IteratePlayers")
@@ -123,7 +123,7 @@ CharacterGetHostCharacter(_Player)
 AND
 DB_IsPlayer(_Player)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Init:LLLIB_Debug_IteratePlayers] Host already added to DB_IsPlayer.");
+LeaderLog_Log("DEBUG", "[LeaderLib:Init:LLLIB_Debug_IteratePlayers] Host already added to DB_IsPlayer.");
 
 IF
 TimerFinished("LLLIB_Debug_IteratePlayers")
@@ -133,12 +133,12 @@ AND
 NOT DB_IsPlayer(_Player)
 THEN
 DB_IsPlayer(_Player);
-LeaderLog_Log("DEBUG", "[LLLIB:Init:LLLIB_Debug_IteratePlayers] Added host to DB_IsPlayer.");
+LeaderLog_Log("DEBUG", "[LeaderLib:Init:LLLIB_Debug_IteratePlayers] Added host to DB_IsPlayer.");
 
 IF
 TimerFinished("LLLIB_Debug_IteratePlayers")
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Init:LLLIB_Debug_IteratePlayers] Searching for players.");
+LeaderLog_Log("DEBUG", "[LeaderLib:Init:LLLIB_Debug_IteratePlayers] Searching for players.");
 CharacterLaunchIterator("LLLIB_Debug_AddPlayer");
 
 IF
@@ -149,12 +149,12 @@ AND
 NOT DB_IsPlayer(_Player)
 THEN
 DB_IsPlayer(_Player);
-LeaderLog_Log("DEBUG", "[LLLIB:Init:LLLIB_Debug_IteratePlayers] Added player to DB_IsPlayer.");
+LeaderLog_Log("DEBUG", "[LeaderLib:Init:LLLIB_Debug_IteratePlayers] Added player to DB_IsPlayer.");
 
 IF
 StoryEvent(NULL_00000000-0000-0000-0000-000000000000, "LLLIB_Debug_AddPlayer")
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Init:LLLIB_Debug_IteratePlayers] Iteration complete.");
+LeaderLog_Log("DEBUG", "[LeaderLib:Init:LLLIB_Debug_IteratePlayers] Iteration complete.");
 LeaderLib_SendEvent("LeaderLib_Debug_PlayerDatabaseReady");
 //END_REGION
 

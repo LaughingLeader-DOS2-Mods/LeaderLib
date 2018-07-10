@@ -32,7 +32,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_Lea
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_Log_SetTarget", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_Log_ClearTarget", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_Log", 2); // Should go up to 11
-LeaderLog_Log("TRACE", "[LLLIB:ModAPI] Databases registered.");
+LeaderLog_Log("TRACE", "[LeaderLib:ModAPI] Databases registered.");
 //END_REGION
 
 //REGION DB_MODAPI
@@ -247,7 +247,7 @@ TimerLaunch("LLLIB_Timers_LeaderLib_ModApiCleanup", 500);
 IF
 TimerFinished("LLLIB_Timers_LeaderLib_ModApiCleanup")
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:ModAPI] ModApi cleanup started. Running ModAPI databases.");
+LeaderLog_Log("DEBUG", "[LeaderLib:ModAPI] ModApi cleanup started. Running ModAPI databases.");
 LLLIB_ModApi_RunCleanup();
 
 PROC

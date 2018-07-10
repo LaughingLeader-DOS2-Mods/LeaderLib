@@ -28,7 +28,7 @@ LeaderLib_Queue_Start((STRING)_QueueID)
 AND
 DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:QueueSystem:Start] Starting queue [",_QueueID,"].");
+LeaderLog_Log("DEBUG", "[LeaderLib:QueueSystem:Start] Starting queue [",_QueueID,"].");
 LLLIB_Queue_Internal_NextTick(_QueueID);
 
 PROC
@@ -131,7 +131,7 @@ _Length > 0
 AND
 NOT DB_LLLIB_Queue_Temp_PopSuccess(_QueueID)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:QueueSystem:NextTick] [ERROR] Queue [",_QueueID,"] had an error popping a value from array [",_ArrayID,"].");
+LeaderLog_Log("DEBUG", "[LeaderLib:QueueSystem:NextTick] [ERROR] Queue [",_QueueID,"] had an error popping a value from array [",_ArrayID,"].");
 
 PROC
 LLLIB_Queue_Internal_CheckForErrors((STRING)_QueueID)
@@ -144,7 +144,7 @@ NOT DB_LLLIB_Array_Length(_ArrayID, _)
 AND
 NOT DB_LLLIB_Queue_Temp_CurrentEntry(_QueueID, _)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:QueueSystem:NextTick] [ERROR] Queue [",_QueueID,"] array [",_ArrayID,"] is missing a length entry!.");
+LeaderLog_Log("DEBUG", "[LeaderLib:QueueSystem:NextTick] [ERROR] Queue [",_QueueID,"] array [",_ArrayID,"] is missing a length entry!.");
 //END_REGION
 
 //REGION ON_COMPLETE
@@ -153,7 +153,7 @@ LLLIB_Queue_Internal_OnComplete((STRING)_QueueID)
 AND
 DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:QueueSystem:OnComplete] Queue [",_QueueID,"] complete. Sending event [",_OnCompletionEvent,"].");
+LeaderLog_Log("DEBUG", "[LeaderLib:QueueSystem:OnComplete] Queue [",_QueueID,"] complete. Sending event [",_OnCompletionEvent,"].");
 LeaderLib_SendEvent(_OnCompletionEvent);
 LeaderLib_Queue_Stop(_QueueID); // Stop timers, if they're still running for some reason
 LeaderLib_Queue_ClearQueue(_QueueID);
@@ -219,7 +219,7 @@ AND
 IntegertoString(_TimeoutValue, _TimeoutValStr)
 THEN
 TimerCancel(_TimerName);
-LeaderLog_Log("DEBUG", "[LLLIB:QueueSystem:Timeout] Queue [",_QueueID,"] timed out after ",_TimeoutValStr,"ms. Starting next tick.");
+LeaderLog_Log("DEBUG", "[LeaderLib:QueueSystem:Timeout] Queue [",_QueueID,"] timed out after ",_TimeoutValStr,"ms. Starting next tick.");
 LLLIB_Queue_Internal_StartTimer(_QueueID);
 
 IF
@@ -248,7 +248,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "QueueSystem", "D
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "QueueSystem", "DB_LLLIB_Queue_Temp_CurrentEntry", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "QueueSystem", "DB_LLLIB_Queue_Temp_TimerRunning", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "QueueSystem", "DB_LLLIB_Queue_Temp_PopSuccess", 1);
-LeaderLog_Log("TRACE", "[LLLIB:QueueSystem] Databases registered.");
+LeaderLog_Log("TRACE", "[LeaderLib:QueueSystem] Databases registered.");
 //END_REGION
 EXITSECTION
 

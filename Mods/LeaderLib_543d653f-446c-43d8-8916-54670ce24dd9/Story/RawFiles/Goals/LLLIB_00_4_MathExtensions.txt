@@ -138,7 +138,7 @@ LeaderLib_Math_Internal_CalculatePower((REAL)_Num, (INTEGER)_Power)
 AND
 _Power >= 10
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Math:Power] [ERROR] Powers above 10 are not implemented yet!");
+LeaderLog_Log("DEBUG", "[LeaderLib:Math:Power] [ERROR] Powers above 10 are not implemented yet!");
 //END_REGION
 
 //REGION FACTORIAL

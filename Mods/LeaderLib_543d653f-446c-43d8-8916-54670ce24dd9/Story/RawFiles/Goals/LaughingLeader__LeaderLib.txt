@@ -6,7 +6,7 @@ KBSECTION
 PROC
 LLLIB_Internal_StartLeaderLib()
 THEN
-DebugBreak("[LLLIB] LeaderLib starting.");
+DebugBreak("[LaughingLeader__LeaderLib] LeaderLib starting.");
 GoalCompleted;
 
 /*
@@ -16,7 +16,7 @@ For existing saves, where this goal was never completed
 IF
 SavegameLoaded(_,_,_,_)
 THEN
-DebugBreak("[LLLIB] LeaderLib starting.");
+DebugBreak("[LaughingLeader__LeaderLib] LeaderLib starting.");
 GoalCompleted;
 EXITSECTION
 

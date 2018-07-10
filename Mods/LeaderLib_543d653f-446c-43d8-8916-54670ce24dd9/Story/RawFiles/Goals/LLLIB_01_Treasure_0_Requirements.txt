@@ -20,7 +20,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Requirements", "
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Requirements", "DB_LLLIB_Treasure_ItemMaxAmount", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Requirements", "DB_LLLIB_Requirements_IsUnlocked", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Requirements", "DB_LLLIB_Requirements_FlagTarget", 3);
-LeaderLog_Log("TRACE", "[LLLIB:Requirements] Databases registered.");
+LeaderLog_Log("TRACE", "[LeaderLib:Requirements] Databases registered.");
 //END_REGION
 
 //REGION REGISTERING
@@ -254,7 +254,7 @@ DB_NOOP(1);
 PROC
 LeaderLib_Requirements_RequirementUnlocked((STRING)_RequirementID)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Requirements] Requirement [",_RequirementID,"] unlocked.");
+LeaderLog_Log("DEBUG", "[LeaderLib:Requirements] Requirement [",_RequirementID,"] unlocked.");
 DB_LLLIB_Requirements_IsUnlocked(_RequirementID);
 
 PROC
@@ -281,7 +281,7 @@ NOT DB_LLLIB_Requirements_Temp_RemoveJustUnlocked(_TimerName, _RequirementID);
 PROC
 LeaderLib_Requirements_RequirementLocked((STRING)_RequirementID)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Requirements] Requirement [",_RequirementID,"] locked.");
+LeaderLog_Log("DEBUG", "[LeaderLib:Requirements] Requirement [",_RequirementID,"] locked.");
 NOT DB_LLLIB_Requirements_IsUnlocked(_RequirementID);
 //END_REGION
 

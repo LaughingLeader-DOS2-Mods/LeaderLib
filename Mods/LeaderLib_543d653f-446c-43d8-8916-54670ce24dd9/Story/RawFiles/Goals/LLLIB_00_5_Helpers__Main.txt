@@ -455,7 +455,7 @@ StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Commands_RefreshEquipment_Delay
 AND
 CharacterGetDisplayName(_Character, _, _Name)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Helper:RefreshEquipment_Delayed] Refreshing equipment for [",_Name,"]");
+LeaderLog_Log("DEBUG", "[LeaderLib:Helper:RefreshEquipment_Delayed] Refreshing equipment for [",_Name,"]");
 LeaderLib_Helper_UnequipAllAndSave(_Character);
 LeaderLib_StartObjectTimer(_Character, 2500, "LLLIB_Timers_EquipItemsTimer_", "LeaderLib_Helper_OnEquipTimerFinished");
 
@@ -746,7 +746,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_Le
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LeaderLib_Helper_Temp_StopIteratingForMaxLevel", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LeaderLib_Helper_Temp_PartyMemberOutsideOfLevelRange", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LeaderLib_Helper_Temp_HighestPlayerLevel", 1);
-LeaderLog_Log("TRACE", "[LLLIB:Helpers] Databases registered.");
+LeaderLog_Log("TRACE", "[LeaderLib:Helpers] Databases registered.");
 //END_REGION
 EXITSECTION
 

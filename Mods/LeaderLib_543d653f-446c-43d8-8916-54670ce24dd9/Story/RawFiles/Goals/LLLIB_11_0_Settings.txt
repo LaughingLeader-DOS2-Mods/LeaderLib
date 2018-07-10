@@ -124,7 +124,7 @@ AND
 LeaderUpdater_QRY_SettingsNeedsUpdate("LLLIB_Settings_GeneralSettings")
 THEN
 LLLIB_Settings_InitSettings();
-LeaderLog_Log("SYSTEM", "[LLLIB:Settings] Settings updated.");
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Settings updated.");
 
 PROC
 LLLIB_System_RegisterDatabases()
@@ -134,7 +134,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_L
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_DialogVariables", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_Temp_RegisteredModsList", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LLLIB_Settings_Temp_ActiveModText", 3);
-LeaderLog_Log("TRACE", "[LLLIB:Settings] Databases registered.");
+LeaderLog_Log("TRACE", "[LeaderLib:Settings] Databases registered.");
 //END_REGION
 
 //REGION MOD_DATA

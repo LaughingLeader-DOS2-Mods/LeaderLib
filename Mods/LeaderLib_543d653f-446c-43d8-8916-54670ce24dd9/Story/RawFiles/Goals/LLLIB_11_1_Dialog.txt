@@ -109,7 +109,7 @@ LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LLLIB_
 LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_StatusFlags", 2);
 LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LLLIB_AnimationFlags");
 LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_AnimationFlags", 2);
-LeaderLog_Log("SYSTEM", "[LLLIB:Dialog] Cleared old databases from version [",_Version,"].");
+LeaderLog_Log("SYSTEM", "[LeaderLib:Dialog] Cleared old databases from version [",_Version,"].");
 LLLIB_System_RegisterDatabases();
 
 IF
@@ -118,7 +118,7 @@ AND
 LeaderUpdater_QRY_SettingsNeedsUpdate("LLLIB_Settings_Dialog")
 THEN
 LLLIB_Dialog_InitSettings();
-LeaderLog_Log("SYSTEM", "[LLLIB:Dialog] Settings updated.");
+LeaderLog_Log("SYSTEM", "[LeaderLib:Dialog] Settings updated.");
 
 PROC
 LLLIB_System_RegisterDatabases()
@@ -128,7 +128,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_Lea
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LeaderLib_Dialog_NameOverride", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LeaderLib_Dialog_StatusFlags", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LeaderLib_Dialog_AnimationFlags", 3);
-LeaderLog_Log("TRACE", "[LLLIB:Dialog] Databases registered.");
+LeaderLog_Log("TRACE", "[LeaderLib:Dialog] Databases registered.");
 //END_REGION
 
 //REGION NAME_VARS
@@ -289,7 +289,7 @@ LeaderLib_Helper_QRY_ClearObjectFlag(_Object, "LeaderLib_StopAnimation")
 THEN
 PlayAnimation(_Object, "");
 CharacterSetAnimationOverride(_Object, "");
-LeaderLog_Log("DEBUG", "[LLLIB:Flag:LeaderLib_StopAnimation] Stopped animations in character.");
+LeaderLog_Log("DEBUG", "[LeaderLib:Flag:LeaderLib_StopAnimation] Stopped animations in character.");
 //END_REGION
 
 //REGION STATUS_FLAGS

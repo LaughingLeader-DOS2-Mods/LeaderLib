@@ -50,7 +50,7 @@ ItemGetAmount(_Item, _Amount)
 THEN
 NOT DB_LLLIB_Treasure_Temp_ItemStatAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _GeneratedStat, 0);
 DB_LLLIB_Treasure_Temp_ItemStatAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _GeneratedStat, _Amount);
-LeaderLog_Log("DEBUG", "[LLLIB:Treasure:CountTemplateWithStat] Found item template with stat on character. [",_TreasureID,"]:[",_GeneratedStat,"]:[",_ItemTemplate,"].");
+LeaderLog_Log("DEBUG", "[LeaderLib:Treasure:CountTemplateWithStat] Found item template with stat on character. [",_TreasureID,"]:[",_GeneratedStat,"]:[",_ItemTemplate,"].");
 
 QRY
 LeaderLib_Treasure_QRY_CountTemplateWithStat((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate, (STRING)_GeneratedStat)
@@ -67,7 +67,7 @@ LeaderLib_Treasure_QRY_PrepareGeneratorDummy((GUIDSTRING)_Object, _ID)
 AND
 DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _ID)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Treasure:CountTemplateWithStat] Moved all items to dummy for counting. [",_TreasureID,"]:[",_GeneratedStat,"].");
+LeaderLog_Log("DEBUG", "[LeaderLib:Treasure:CountTemplateWithStat] Moved all items to dummy for counting. [",_TreasureID,"]:[",_GeneratedStat,"].");
 MoveAllItemsTo(_Object, _Dummy);
 LLLIB_Treasure_Internal_CountItemsOnDummy(_ID, _Dummy, _Object, _TreasureID, _ItemTemplate, _GeneratedStat);
 
@@ -82,7 +82,7 @@ THEN
 NOT DB_LLLIB_Treasure_Temp_ItemStatAmount(_Dummy, _TreasureID, _ItemTemplate, _GeneratedStat, _Amount);
 DB_LLLIB_Treasure_Temp_ItemStatAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _GeneratedStat, _Amount);
 MoveAllItemsTo(_Dummy, _Object);
-LeaderLog_Log("DEBUG", "[LLLIB:Treasure:CountTemplateWithStat] Counting finished. Moved items from dummy to object. [",_TreasureID,"]:[",_GeneratedStat,"].");
+LeaderLog_Log("DEBUG", "[LeaderLib:Treasure:CountTemplateWithStat] Counting finished. Moved items from dummy to object. [",_TreasureID,"]:[",_GeneratedStat,"].");
 //END_REGION
 
 //REGION QUERIES
@@ -160,7 +160,7 @@ LLLIB_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_ItemCounter", "DB_LLLIB_Treasure_Temp_ItemTemplateAmount", 4);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_ItemCounter", "DB_LLLIB_Treasure_Temp_ItemStatAmount", 5);
-LeaderLog_Log("TRACE", "[LLLIB:Treasure_ItemCounter] Databases registered.");
+LeaderLog_Log("TRACE", "[LeaderLib:Treasure_ItemCounter] Databases registered.");
 //END_REGION
 EXITSECTION
 

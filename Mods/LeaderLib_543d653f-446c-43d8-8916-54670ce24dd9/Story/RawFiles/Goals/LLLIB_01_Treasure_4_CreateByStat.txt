@@ -37,14 +37,14 @@ AND
 StringConcatenate("LLLIB_CreateByStat_", _RanStr, _ArrayName)
 THEN
 DB_LLLIB_Treasure_Temp_CreateItemByStat_CharacterArray(_Character, _ArrayName);
-//LeaderLog_Log("TRACE", "[LLLIB:Treasure:CreateItemByStat:AddToQueue] Assigned array name [",_ArrayName,"] to character [",_ID,"].");
+//LeaderLog_Log("TRACE", "[LeaderLib:Treasure:CreateItemByStat:AddToQueue] Assigned array name [",_ArrayName,"] to character [",_ID,"].");
 
 PROC
 LeaderLib_Treasure_CreateItemByStat_AddToQueue((CHARACTERGUID)_Character, (STRING)_Stat, (INTEGER)_Amount, (INTEGER)_ShowInTrade, (INTEGER)_Equip)
 AND
 DB_LLLIB_Treasure_Temp_CreateItemByStat_CharacterArray(_Character, _ArrayName)
 THEN
-//LeaderLog_Log("TRACE", "[LLLIB:Treasure:CreateItemByStat:AddToQueue] Adding stat [",_Stat,"] to item queue for session [",_ArrayName,"].");
+//LeaderLog_Log("TRACE", "[LeaderLib:Treasure:CreateItemByStat:AddToQueue] Adding stat [",_Stat,"] to item queue for session [",_ArrayName,"].");
 DB_LLLIB_Treasure_Temp_CreateItemByStat_ItemQueue(_Character, _ArrayName, _Stat, _Equip, _ShowInTrade, _Amount);
 LeaderLib_Array_AddToArray(_ArrayName, _Stat);
 
@@ -57,7 +57,7 @@ GetUUID(_Character, _ID)
 AND
 StringConcatenate("LLLIB_Timers_Treasure_CreateByStat_", _ID, _TimerName)
 THEN
-//LeaderLog_Log("TRACE", "[LLLIB:Treasure:CreateItemByStat:Start] Timer [",_TimerName,"] created for [",_ID,"]. Starting queue.");
+//LeaderLog_Log("TRACE", "[LeaderLib:Treasure:CreateItemByStat:Start] Timer [",_TimerName,"] created for [",_ID,"]. Starting queue.");
 DB_LLLIB_Treasure_Temp_CreateItemByStat_QueueTimer(_Character, _TimerName, _TickRate);
 //LeaderLib_Treasure_CreateItemByStat_Internal_CreateNextStatItem(_Character);
 LeaderLib_Treasure_CreateItemByStat_Internal_StartNextTick(_Character);
@@ -69,7 +69,7 @@ NOT DB_LLLIB_Treasure_Temp_CreateItemByStat_QueueTimer(_Character, _, _)
 AND
 GetUUID(_Character, _ID)
 THEN
-LeaderLog_Log("TRACE", "[LLLIB:Treasure:CreateItemByStat:Start] [ERROR] Error starting queue for [",_ID,"]. No timer was created?");
+LeaderLog_Log("TRACE", "[LeaderLib:Treasure:CreateItemByStat:Start] [ERROR] Error starting queue for [",_ID,"]. No timer was created?");
 
 QRY
 LeaderLib_Treasure_CreateItemByStat_QRY_JobDone((CHARACTERGUID)_Character)
@@ -127,7 +127,7 @@ LeaderLib_Treasure_QRY_PrepareGeneratorDummy((GUIDSTRING)_Character, _ArrayName)
 AND
 DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _ArrayName)
 THEN
-//LeaderLog_Log("TRACE", "[LLLIB:Treasure:CreateItemByStat] Creating [",_Stat,"] on dummy with ID [",_ArrayName,"]");
+//LeaderLog_Log("TRACE", "[LeaderLib:Treasure:CreateItemByStat] Creating [",_Stat,"] on dummy with ID [",_ArrayName,"]");
 DB_LLLIB_Treasure_Temp_CreateItemByStat_DummyTarget(_ArrayName, (CHARACTERGUID)_Character, _Dummy, _Stat);
 SetVarFixedString(_Dummy, "LeaderLib_CreateByStat_NextStatToCreate", _Stat);
 //SetVarFixedString(_Dummy, "LeaderLib_CreateByStat_FlagToSet", "LLLIB_GeneratorDummy_CreatedItem");
@@ -153,7 +153,7 @@ DB_LLLIB_Treasure_Temp_CreateItemByStat_DummyTarget(_DummyID, _Character, _Dummy
 AND
 GetTemplate(_Item, _ItemTemplate)
 THEN
-//LeaderLog_Log("TRACE", "[LLLIB:Treasure:CreateItemByStat] Created [",_ItemTemplate,"] from stat [",_Stat,"] on dummy [",_DummyID,"].");
+//LeaderLog_Log("TRACE", "[LeaderLib:Treasure:CreateItemByStat] Created [",_ItemTemplate,"] from stat [",_Stat,"] on dummy [",_DummyID,"].");
 NOT DB_LLLIB_Treasure_Temp_CreateItemByStat_DummyTarget(_DummyID, _Character, _Dummy, _Stat);
 LeaderLib_Treasure_CreateItemByStat_Internal_CancelTimeoutTimer(_Character, _Stat);
 SetVarFixedString(_Item, "LeaderLib_GeneratedItemStat", _Stat);
@@ -179,7 +179,7 @@ LeaderLib_Treasure_CreateItemByStat_QRY_JobDone(_Character)
 AND
 DB_LLLIB_Treasure_Temp_CreateItemByStat_CharacterArray(_Character, _ArrayName)
 THEN
-//LeaderLog_Log("TRACE", "[LLLIB:Treasure:CreateItemByStat] Job finished. Cleaning up databases.");
+//LeaderLog_Log("TRACE", "[LeaderLib:Treasure:CreateItemByStat] Job finished. Cleaning up databases.");
 LeaderLib_Array_ClearArray(_ArrayName);
 LeaderLib_Treasure_ResetDummyByID(_ArrayName);
 NOT DB_LLLIB_Treasure_Temp_CreateItemByStat_CharacterArray(_Character, _ArrayName);
@@ -221,7 +221,7 @@ DB_LLLIB_Treasure_Temp_CreateItemByStat_TimeoutTimer(_Character, _Stat, _TimerNa
 THEN
 NOT DB_LLLIB_Treasure_Temp_CreateItemByStat_TimeoutTimer(_Character, _Stat, _TimerName);
 LeaderLib_Treasure_CreateItemByStat_Internal_ClearFromQueue(_Character, _Stat);
-//LeaderLog_Log("TRACE", "[LLLIB:Treasure:CreateItemByStat] Failed to create item by stat [",_Stat,"](timeout timer finished). Starting next tick.");
+//LeaderLog_Log("TRACE", "[LeaderLib:Treasure:CreateItemByStat] Failed to create item by stat [",_Stat,"](timeout timer finished). Starting next tick.");
 LeaderLib_Treasure_CreateItemByStat_Internal_StartNextTick(_Character);
 //END_REGION
 
@@ -282,7 +282,7 @@ GetTemplate(_Dummy, "LLLIB_GeneratorDummy_24a5d60b-680b-4fbc-9b2c-19061a261297")
 AND
 GetVarString(_Dummy, "LeaderLib_DummyID", _DummyID)
 THEN
-//LeaderLog_Log("TRACE", "[LLLIB:Treasure:CreateItemByStat] Item added to dummy with ID [",_DummyID,"].");
+//LeaderLog_Log("TRACE", "[LeaderLib:Treasure:CreateItemByStat] Item added to dummy with ID [",_DummyID,"].");
 */
 
 /*
@@ -295,7 +295,7 @@ NOT DB_LLLIB_Array_Temp_PopValue(_ArrayName, _)
 AND
 GetUUID(_Character, _ID)
 THEN
-//LeaderLog_Log("TRACE", "[LLLIB:Treasure:CreateItemByStat] [ERROR] No pop value for array [",_ArrayName,"] assigned to [",_ID,"].");
+//LeaderLog_Log("TRACE", "[LeaderLib:Treasure:CreateItemByStat] [ERROR] No pop value for array [",_ArrayName,"] assigned to [",_ID,"].");
 */
 
 /*
@@ -304,7 +304,7 @@ LeaderLib_Treasure_CreateItemByStat_Internal_ProcessNextStat((CHARACTERGUID)_Cha
 AND
 GetUUID(_Character, _ID)
 THEN
-//LeaderLog_Log("TRACE", "[LLLIB:Treasure:ProcessNextStat] Processing [",_Stat,"] on character [",_ID,"] with array [",_ArrayName,"]");
+//LeaderLog_Log("TRACE", "[LeaderLib:Treasure:ProcessNextStat] Processing [",_Stat,"] on character [",_ID,"] with array [",_ArrayName,"]");
 
 PROC
 LeaderLib_Treasure_CreateItemByStat_Internal_ProcessNextStat((CHARACTERGUID)_Character, (STRING)_ArrayName, (STRING)_Stat)
@@ -315,7 +315,7 @@ NOT DB_LLLIB_Treasure_NextGeneratorDummy(_, _ArrayName)
 AND
 GetUUID(_Character, _ID)
 THEN
-//LeaderLog_Log("TRACE", "[LLLIB:Treasure:CreateItemByStat:ProcessNextStat] [ERROR] No dummy was assigned to [",_ArrayName,"] for character [",_ID,"].");
+//LeaderLog_Log("TRACE", "[LeaderLib:Treasure:CreateItemByStat:ProcessNextStat] [ERROR] No dummy was assigned to [",_ArrayName,"] for character [",_ID,"].");
 
 QRY
 LeaderLib_Treasure_CreateItemByStat_Internal_QRY_CheckForErrors((CHARACTERGUID)_Character)
@@ -324,7 +324,7 @@ NOT DB_LLLIB_Treasure_Temp_CreateItemByStat_CharacterArray(_Character, _)
 AND
 GetUUID(_Character, _ID)
 THEN
-//LeaderLog_Log("TRACE", "[LLLIB:Treasure:CreateItemByStat] [ERROR] No array assigned to [",_ID,"].");
+//LeaderLog_Log("TRACE", "[LeaderLib:Treasure:CreateItemByStat] [ERROR] No array assigned to [",_ID,"].");
 */
 
 QRY
@@ -342,7 +342,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_CreateB
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_CreateByStat", "DB_LLLIB_Treasure_Temp_CreateItemByStat_QueueTimer", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_CreateByStat", "DB_LLLIB_Treasure_Temp_CreateItemByStat_TimeoutTimer", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_CreateByStat", "DB_LLLIB_Treasure_Temp_CreateItemByStat_DummyTarget", 4);
-LeaderLog_Log("TRACE", "[LLLIB:Treasure_CreateByStat] Databases registered.");
+LeaderLog_Log("TRACE", "[LeaderLib:Treasure_CreateByStat] Databases registered.");
 //END_REGION
 EXITSECTION
 

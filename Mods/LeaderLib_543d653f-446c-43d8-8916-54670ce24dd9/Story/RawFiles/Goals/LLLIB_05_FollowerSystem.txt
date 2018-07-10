@@ -316,8 +316,8 @@ AND
 DB_LLLIB_PartyFollower(_Owner, _Follower)
 THEN
 //TeleportTo(_Follower, _Owner, "", 1);
-//LeaderLog_Log("DEBUG", "[LLLIB:FollowerSystem:Teleported] Owner teleported. Skill[",_Skill,"]");
-LeaderLog_Log("DEBUG", "[LLLIB:FollowerSystem:Debug] Owner event fired: [",_Event,"]");
+//LeaderLog_Log("DEBUG", "[LeaderLib:FollowerSystem:Teleported] Owner teleported. Skill[",_Skill,"]");
+LeaderLog_Log("DEBUG", "[LeaderLib:FollowerSystem:Debug] Owner event fired: [",_Event,"]");
 //END_REGION
 EXITSECTION
 

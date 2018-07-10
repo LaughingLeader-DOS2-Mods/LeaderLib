@@ -102,7 +102,7 @@ LeaderLib_Treasure_Register_TreasureToTrader("LLLIB_LeaderTrader_ModItems", "LLL
 LeaderLib_Treasure_Register_TreasureToTrader("LLLIB_LeaderTrader_ModBooks", "LLLIB_LeaderTrader");
 LeaderLib_Treasure_Register_TreasureToTrader("LeaderLib.LeaderTrader.Skillbooks", "LLLIB_LeaderTrader");
 
-LeaderLib_Treasure_AddTreasureItemTemplate("LeaderLib.LeaderTrader.Skillbooks", "BOOK_Skill_LLLIB_ControlSummon_832058fd-fd40-47d0-bea3-0e108761d4e4", 1);
+LeaderLib_Treasure_AddTreasureItemTemplate("LeaderLib.LeaderTrader.Skillbooks", "BOOK_Skill_LLLIB_ControlSummon_832058fd-fd40-47d0-bea3-0e108761d4e4", 2);
 
 //LeaderLib_Treasure_Configure_DefaultGenerationType("LLLIB_LeaderTrader_ModItems", "DIALOG_STARTED");
 //LeaderLib_Treasure_Configure_DefaultGenerationType("LLLIB_LeaderTrader_ModBooks", "DIALOG_STARTED");
@@ -179,7 +179,7 @@ AND
 NOT DB_LLLIB_Treasure_RegisteredTraderTreasure("LeaderLib.LeaderTrader.Skillbooks", "LLLIB_LeaderTrader")
 THEN
 LeaderLib_Treasure_Register_TreasureToTrader("LeaderLib.LeaderTrader.Skillbooks", "LLLIB_LeaderTrader");
-LeaderLib_Treasure_AddTreasureItemTemplate("LeaderLib.LeaderTrader.Skillbooks", "BOOK_Skill_LLLIB_ControlSummon_832058fd-fd40-47d0-bea3-0e108761d4e4", 1);
+LeaderLib_Treasure_AddTreasureItemTemplate("LeaderLib.LeaderTrader.Skillbooks", "BOOK_Skill_LLLIB_ControlSummon_832058fd-fd40-47d0-bea3-0e108761d4e4", 2);
 //END_REGION
 
 //REGION NON_GLOBAL_WORKAROUND

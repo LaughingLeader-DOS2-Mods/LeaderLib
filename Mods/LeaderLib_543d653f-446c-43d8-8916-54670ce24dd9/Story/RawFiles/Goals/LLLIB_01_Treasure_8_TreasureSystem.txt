@@ -518,6 +518,7 @@ NOT DB_LLLIB_Treasure_GenerationSpeed(_TreasureID, _)
 AND
 DB_LLLIB_Settings_QueueRates("ItemGeneration", _TickRate, _TimeoutRate)
 THEN
+LeaderLog_Log("TRACE", "[LeaderLib:TreasureSystem:StartTreasureQueue] Starting treasure queue with a set _TickRate and _TimeoutRate for treasure [",_TreasureID,"].");
 LLLIB_Treasure_Internal_StartTreasureQueueWithRates(_ID, _TreasureQueueID, _TickRate, _TimeoutRate);
 
 PROC
@@ -531,6 +532,7 @@ DB_LLLIB_Treasure_GenerationSpeed(_TreasureID, _TickRate)
 AND
 DB_LLLIB_Settings_QueueRates("ItemGeneration", _, _TimeoutRate)
 THEN
+LeaderLog_Log("TRACE", "[LeaderLib:TreasureSystem:StartTreasureQueue] Starting treasure queue with a set _TimeoutRate for treasure [",_TreasureID,"].");
 LLLIB_Treasure_Internal_StartTreasureQueueWithRates(_ID, _TreasureQueueID, _TickRate, _TimeoutRate);
 
 PROC
@@ -538,6 +540,7 @@ LLLIB_Treasure_Internal_StartTreasureQueueWithRates((STRING)_ID, (STRING)_Treasu
 AND
 _TickRate > 0
 THEN
+LeaderLog_Log("TRACE", "[LeaderLib:TreasureSystem:StartTreasureQueueWithRates] Starting treasure queue [",_TreasureQueueID,"].");
 LeaderLib_Queue_Create(_TreasureQueueID, _TreasureQueueID, "LLLIB_Timers_Treasure_TreasureQueue", _TickRate, "LLLIB_Events_Treasure_ProcessTreasureItem", "LLLIB_Events_OnItemGenerationComplete", "LLLIB_Events_OnTreasureQueueComplete");
 LeaderLib_Queue_SetTimeout(_TreasureQueueID, "LLLIB_Timers_Treasure_ItemQueueTimeout", _TimeoutRate, "LLLIB_Events_OnItemGenerationTimeout");
 LeaderLib_Queue_Start(_TreasureQueueID);
@@ -559,6 +562,7 @@ LLLIB_Treasure_Internal_StartTreasureQueueWithRates((STRING)_ID, (STRING)_Treasu
 AND
 _TickRate <= 0
 THEN
+LeaderLog_Log("TRACE", "[LeaderLib:TreasureSystem:StartTreasureQueueWithRates] Treasure queue [",_TreasureQueueID,"] _TickRate was less than 0. Completed queue instantly.");
 LeaderLib_Array_ClearArray(_TreasureQueueID);
 NOT DB_LLLIB_Treasure_Temp_TreasureQueue_Settings(_ID, _TreasureQueueID);
 LeaderLib_SendEvent("LLLIB_Events_OnTreasureQueueComplete");
@@ -599,6 +603,7 @@ StoryEvent(_, "LLLIB_Events_OnTreasureQueueComplete")
 AND
 DB_LLLIB_Treasure_Temp_CurrentTreasure(_ID, _Object, _TreasureID)
 THEN
+LeaderLog_Log("TRACE", "[LeaderLib:TreasureSystem:OnTreasureQueueComplete] Treasure queue [",_TreasureID,"] complete.");
 LLLIB_Treasure_Internal_MarkAsFinished(_ID, _Object, _TreasureID);
 
 PROC
@@ -642,12 +647,10 @@ LeaderLog_Log("TRACE", "[LeaderLib:TreasureSystem:GenerateItems] Skipping genera
 LLLIB_Treasure_Internal_OnGenerationFinished(_ID, _Object);
 //LLLIB_Treasure_Internal_OnGenerationFailed(_ID, _Object, _TreasureID, _GenerationType);
 
-/*
 PROC
 LLLIB_Treasure_Internal_ProcessItemEntry((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Amount, (STRING)_RequirementID, (STRING)_GenerationType, (INTEGER)_IsStat)
 THEN
-DB_LLLIB_Treasure_Temp_GenerateItem(_ID, _Object, _TreasureID, _ItemEntry, 0, _Amount, _IsStat);
-*/
+LeaderLog_Log("TRACE", "[LeaderLib:TreasureSystem:ProcessItemEntry] Processing item entry [",_ItemEntry,"] for treasure [",_TreasureID,"].");
 
 PROC
 LLLIB_Treasure_Internal_ProcessItemEntry((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Amount, (STRING)_RequirementID, (STRING)_GenerationType, (INTEGER)_IsStat)
@@ -704,12 +707,6 @@ AND
 LeaderLib_Treasure_QRY_CountTemplate(_ID, _Object, _TreasureID, _ItemTemplate)
 THEN
 DB_LLLIB_Treasure_Temp_Queue_CountStat(_ID, _Object, _TreasureID, _ItemTemplate, _ItemEntry, _Amount, _RequirementID);
-/*
-AND
-LeaderLib_Treasure_QRY_CountTemplateWithStat(_ID, _Object, _TreasureID, _ItemTemplate, _ItemEntry)
-THEN
-DB_LLLIB_Treasure_Temp_Queue_CountStat(_ID, _Object, _TreasureID, _ItemTemplate, _ItemEntry, _Amount, _RequirementID);
-*/
 
 PROC
 LLLIB_Treasure_Internal_StartItemGeneration((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Amount, (STRING)_RequirementID, (INTEGER)_IsStat)
@@ -726,7 +723,6 @@ DB_LLLIB_Treasure_Temp_GenerateItem((STRING)_ID, (GUIDSTRING)_Object, (STRING)_T
 THEN
 LLLIB_Treasure_Internal_GenerateItemNow(_ID, _Object, _TreasureID, _ItemEntry, _CreatedAmount, _MaxAmount, _IsStat);
 
-/*
 PROC
 LLLIB_Treasure_Internal_GenerateItemNow((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_CreatedAmount, (INTEGER)_MaxAmount, (INTEGER)_IsStat)
 AND
@@ -741,7 +737,6 @@ AND
 IntegertoString(_MaxAmount, _MaxAmountStr)
 THEN
 LeaderLog_Log("TRACE", "[LeaderLib:TreasureSystem:GenerateItems] Generating item [",_TreasureID,"]:[",_ItemEntry,"] [",_AmountStr,"/",_MaxAmountStr,"].");
-*/
 
 PROC
 LLLIB_Treasure_Internal_GenerateItemNow((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_CreatedAmount, (INTEGER)_MaxAmount, (INTEGER)_IsStat)

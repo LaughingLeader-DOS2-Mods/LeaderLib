@@ -96,13 +96,13 @@ NOT DB_LeaderLib_ModApi_ResetAllGoals(_ModName, _Author);
 IF
 DB_LeaderLib_ModApi_AddItemToLeaderTrader((STRING)_Template, (INTEGER)_Amount)
 THEN
-LeaderLib_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModItems", _Template, _Amount);
+LeaderLib_Treasure_Register_ItemTemplate("LLLIB_LeaderTrader_ModItems", _Template, _Amount);
 NOT DB_LeaderLib_ModApi_AddItemToLeaderTrader(_Template, _Amount);
 
 IF
 DB_LeaderLib_ModApi_AddBookToLeaderTrader((STRING)_Template, (INTEGER)_Amount)
 THEN
-LeaderLib_Treasure_AddTreasureItemTemplate("LLLIB_LeaderTrader_ModBooks", _Template, _Amount);
+LeaderLib_Treasure_Register_ItemTemplate("LLLIB_LeaderTrader_ModBooks", _Template, _Amount);
 NOT DB_LeaderLib_ModApi_AddBookToLeaderTrader(_Template, _Amount);
 
 IF

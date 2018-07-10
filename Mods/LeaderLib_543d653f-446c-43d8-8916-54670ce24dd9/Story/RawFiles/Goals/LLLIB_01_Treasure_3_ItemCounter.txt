@@ -98,6 +98,8 @@ LeaderLib_Treasure_QRY_SkipAmountCheck((GUIDSTRING)_Object, (STRING)_TreasureID,
 AND
 IsTagged(_Object, "LeaderLib_Treasure_IgnoreAmountLimit", 0)
 AND
+ObjectIsItem(_Object, 1)
+AND
 NOT DB_LLLIB_Treasure_ItemDoneGenerating(_Object, _TreasureID, _ItemEntry)
 THEN
 DB_NOOP(1);

@@ -3,6 +3,11 @@ LeaderLib Changelog
 # 0.9.2.0
 * Added a new "Editor Helper" script
 	* Contains new text events for playing animations and adding character stat points (attribute, ability, civil, talent, source/source max)
+* Moved item helpers to a standalone script
+* Added a new system for auto-leveling items
+	* Also allows deltamods to be applied when an item reaches a specific level, allowing for equipment that gets stronger as the player levels up.
+* Added a "Control Summon" skill for making a controlled summon or follower, in response to a current portrait bug making multiple summons unselectable
+* Refactored procs/queries for clarity
 
 # 0.9.1.0
 * Added new helper scripts

@@ -127,7 +127,7 @@ _ItemLevel >= _MinLevel
 AND
 NOT LeaderLib_Helper_QRY_ItemHasDeltaModifier(_Item, _DeltaMod)
 THEN
-LeaderLog_Log("DEBUG", "[LLMIME:ItemSystem:ApplyDeltaMods] Added deltamod [",_DeltaMod,"] to item.");
+LeaderLog_Log("DEBUG", "[LeaderLib:ItemGrowth:ApplyDeltaMods] Added deltamod [",_DeltaMod,"] to item.");
 LeaderLib_ItemGrowth_Internal_ApplyDeltaModTag(_Item);
 ItemAddDeltaModifier(_Item, _DeltaMod);
 
@@ -144,7 +144,7 @@ _ItemLevel >= _MinLevel
 AND
 NOT LeaderLib_Helper_QRY_ItemHasDeltaModifier(_Item, _DeltaMod)
 THEN
-LeaderLog_Log("DEBUG", "[LLMIME:ItemSystem:ApplyDeltaMods] Added deltamod [",_DeltaMod,"] to item.");
+LeaderLog_Log("DEBUG", "[LeaderLib:ItemGrowth:ApplyDeltaMods] Added deltamod [",_DeltaMod,"] to item.");
 LeaderLib_ItemGrowth_Internal_ApplyDeltaModTag(_Item);
 ItemAddDeltaModifier(_Item, _DeltaMod);
 

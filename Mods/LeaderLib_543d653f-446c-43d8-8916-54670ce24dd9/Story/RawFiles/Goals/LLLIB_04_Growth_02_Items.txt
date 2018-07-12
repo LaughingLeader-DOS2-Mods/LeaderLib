@@ -30,8 +30,6 @@ DB_NOOP(1);
 IF
 CharacterLeveledUp(_Character)
 AND
-CharacterIsPlayer(_Character, 1)
-AND
 LeaderLib_Growth_Items_QRY_HasAutoLevelItem(_Character)
 THEN
 SetStoryEvent(_Character, "LeaderLib_Events_AutoLevelItems_Start");

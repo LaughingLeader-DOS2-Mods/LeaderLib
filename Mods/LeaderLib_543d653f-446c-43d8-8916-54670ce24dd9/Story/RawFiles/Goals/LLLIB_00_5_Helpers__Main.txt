@@ -551,6 +551,18 @@ NOT DB_LeaderLib_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _Complete
 CharacterCharacterSetEvent(_Char1, _Char2, _CompleteEvent);
 //END_REGION
 
+//REGION TIMERS_BEHAVIOR_SCRIPT
+IF
+StoryEvent(_Object, "LeaderLib_Commands_StartObjectTimer")
+AND
+GetVarString(_Object, "LeaderLib_Timer_CompleteEvent", _CompleteEvent)
+AND
+GetVarInteger(_Object, "LeaderLib_Timer_Delay", _TimerDelay)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Main:LeaderLib_Commands_StartObjectTimer] Starting object timer with complete event [",_CompleteEvent,"].");
+LeaderLib_StartObjectTimer(_Object, _TimerDelay, "LeaderLib_Timers_BehaviorScriptTimer_", _CompleteEvent);
+//END_REGION
+
 //REGION STATUS_CHECK
 QRY
 LeaderLib_Helper_QRY_HasStatus((CHARACTERGUID)_Character, (STRING)_Status)

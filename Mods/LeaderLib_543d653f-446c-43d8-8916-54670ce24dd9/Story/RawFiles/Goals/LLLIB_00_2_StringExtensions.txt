@@ -237,6 +237,11 @@ DB_LLLIB_StringCompare_Results(_Str1, _Str2, _Val);
 
 IF
 DB_LLLIB_StringCompare_Results(_Str1, _Str2, _Val)
+THEN
+LeaderLib_StringExt_Internal_AddReverseResult(_Str1, _Str2, _Val);
+
+PROC
+LeaderLib_StringExt_Internal_AddReverseResult((STRING)_Str1, (STRING)_Str2, (INTEGER)_Val)
 AND
 NOT DB_LLLIB_StringCompare_Results(_Str2, _Str1, _)
 AND

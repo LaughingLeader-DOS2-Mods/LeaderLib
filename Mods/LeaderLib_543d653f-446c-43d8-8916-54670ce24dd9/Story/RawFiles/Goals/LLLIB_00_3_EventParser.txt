@@ -3,6 +3,7 @@ SubGoalCombiner SGC_AND
 INITSECTION
 //DB_LeaderLib_SendEvent(_EventName)
 //DB_LLLIB_EventParser_Spawned(_EventParser)
+//DB_LeaderLib_EventParser(_EventParser)
 KBSECTION
 //REGION CREATE_NEW
 PROC
@@ -57,7 +58,7 @@ THEN
 LLLIB_EventParser_Internal_CreateNew();
 //END_REGION
 
-//REGION HELPERS
+//REGION GET_PARSER
 QRY
 LLLIB_QRY_EventParser_GlobalParserExists()
 AND
@@ -65,6 +66,39 @@ ObjectExists(ITEMGUID_S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e
 THEN
 DB_NOOP(1);
 
+QRY
+LeaderLib_Events_QRY_GetEventParser()
+AND
+DB_LeaderLib_EventParser(_EventParser)
+AND
+ObjectExists(_EventParser, 0)
+THEN
+NOT DB_LeaderLib_EventParser(_EventParser);
+
+QRY
+LeaderLib_Events_QRY_GetEventParser()
+AND
+NOT DB_LeaderLib_EventParser(_)
+AND
+LLLIB_QRY_EventParser_GlobalParserExists()
+THEN
+DB_LeaderLib_EventParser(ITEMGUID_S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6);
+
+QRY
+LeaderLib_Events_QRY_GetEventParser()
+AND
+NOT DB_LeaderLib_EventParser(_)
+AND
+NOT LLLIB_QRY_EventParser_GlobalParserExists()
+AND
+LLLIB_QRY_EventParser_CreateNew()
+AND
+DB_LLLIB_EventParser_Spawned(_EventParser)
+THEN
+DB_LeaderLib_EventParser(_EventParser);
+//END_REGION
+
+//REGION EVENTS
 PROC
 LLLIB_EventParser_Internal_ClearEvent((STRING)_EventName)
 AND
@@ -75,24 +109,15 @@ NOT DB_LeaderLib_SendEvent(_EventName);
 PROC
 LLLIB_EventParser_Internal_RunEvent((STRING)_EventName)
 AND
-LLLIB_QRY_EventParser_GlobalParserExists()
-THEN
-LLLIB_EventParser_Internal_ClearEvent(_EventName);
-SetStoryEvent(S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, _EventName);
-
-PROC
-LLLIB_EventParser_Internal_RunEvent((STRING)_EventName)
+LeaderLib_Events_QRY_GetEventParser()
 AND
-NOT LLLIB_QRY_EventParser_GlobalParserExists()
-AND
-LLLIB_QRY_EventParser_CreateNew()
-AND
-DB_LLLIB_EventParser_Spawned(_EventParser)
+DB_LeaderLib_EventParser(_EventParser)
 THEN
 LLLIB_EventParser_Internal_ClearEvent(_EventName);
 SetStoryEvent(_EventParser, _EventName);
 //END_REGION
 
+//REGION GAME_STARTED
 IF
 GameStarted(_,_)
 AND
@@ -100,6 +125,7 @@ NOT LLLIB_QRY_EventParser_GlobalParserExists()
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:EventParser][ERROR] Global Event Parser doesn't exist for some reason.");
 //LLLIB_EventParser_Internal_CreateNew();
+//END_REGION
 
 //REGION SEND_EVENT
 //Send out a general event, using the Event Parser object.
@@ -117,7 +143,7 @@ LLLIB_EventParser_Internal_RunEvent(_EventName);
 
 //Events that were never sent
 IF
-DB_LLLIB_EventParser_Spawned(_EventParser)
+StoryEvent(_, "LeaderLib_Initialized")
 AND
 DB_LeaderLib_SendEvent(_EventName)
 THEN
@@ -134,11 +160,43 @@ THEN
 CharacterItemSetEvent(_Character, _Item, "LeaderLib_ItemAddedToInventory");
 //END_REGION
 
+//REGION ITERATORS
+PROC
+LeaderLib_EventParser_LaunchCharacterIterator((STRING)_CharacterEvent, (STRING)_Tag)
+AND
+LeaderLib_Events_QRY_GetEventParser()
+AND
+DB_LeaderLib_EventParser(_EventParser)
+THEN
+SetVarString(_EventParser, "LeaderLib_IteratorEvent", _CharacterEvent);
+SetVarFixedString(_EventParser, "LeaderLib_IteratorTag", _Tag);
+SetStoryEvent(_EventParser, "LeaderLib_Commands_StartCharacterIterator");
+
+PROC
+LeaderLib_EventParser_LaunchItemIterator((STRING)_ItemEvent, (STRING)_Tag)
+AND
+LeaderLib_Events_QRY_GetEventParser()
+AND
+DB_LeaderLib_EventParser(_EventParser)
+THEN
+SetVarString(_EventParser, "LeaderLib_IteratorEvent", _ItemEvent);
+SetVarFixedString(_EventParser, "LeaderLib_IteratorTag", _Tag);
+SetStoryEvent(_EventParser, "LeaderLib_Commands_StartItemIterator");
+
+PROC
+LeaderLib_EventParser_LaunchInventoryIterator((GUIDSTRING)_TargetObject, (STRING)_ItemEvent, (STRING)_Tag)
+THEN
+SetVarString(_TargetObject, "LeaderLib_IteratorEvent", _ItemEvent);
+SetVarFixedString(_TargetObject, "LeaderLib_IteratorTag", _Tag);
+SetStoryEvent(_TargetObject, "LeaderLib_Commands_StartInventoryIterator");
+//END_REGION
+
 //REGION UPDATER
 PROC
 LLLIB_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventParser", "DB_LeaderLib_SendEvent", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventParser", "DB_LeaderLib_EventParser", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventParser", "DB_LLLIB_EventParser_Spawned", 1);
 LeaderLog_Log("TRACE", "[LeaderLib:EventParser] Databases registered.");
 //END_REGION

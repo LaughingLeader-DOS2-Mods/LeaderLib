@@ -1,27 +1,27 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-//DB_LLLIB_ItemGrowth_DeltaMods(_ID, _MinLevel, _DeltaMod, _MatchType, _MatchValue)
+//DB_LLLIB_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, _MatchType, _MatchValue)
 KBSECTION
 //REGION REGISTERING
 PROC
-LeaderLib_ItemGrowth_Register_DeltaMod((STRING)_ID, (INTEGER)_MinLevel, (STRING)_DeltaMod, (STRING)_MatchType, (STRING)_MatchValue)
+LeaderLib_Growth_Items_Register_DeltaMod((STRING)_ID, (INTEGER)_MinLevel, (STRING)_DeltaMod, (STRING)_MatchType, (STRING)_MatchValue)
 THEN
-DB_LLLIB_ItemGrowth_DeltaMods(_ID, _MinLevel, _DeltaMod, _MatchType, _MatchValue);
+DB_LLLIB_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, _MatchType, _MatchValue);
 //END_REGION
 
 //REGION CLEARING
 PROC
-LeaderLib_ItemGrowth_Clear_ByEntriesID((STRING)_ID)
+LeaderLib_Growth_Items_Clear_ByEntriesID((STRING)_ID)
 AND
-DB_LLLIB_ItemGrowth_DeltaMods(_ID, _MinLevel, _DeltaMod, _MatchType, _MatchValue)
+DB_LLLIB_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, _MatchType, _MatchValue)
 THEN
-NOT DB_LLLIB_ItemGrowth_DeltaMods(_ID, _MinLevel, _DeltaMod, _MatchType, _MatchValue);
+NOT DB_LLLIB_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, _MatchType, _MatchValue);
 //END_REGION
 
 //REGION ITEM_AUTO_LEVEL
 QRY
-LeaderLib_ItemGrowth_QRY_HasAutoLevelItem((CHARACTERGUID)_Character)
+LeaderLib_Growth_Items_QRY_HasAutoLevelItem((CHARACTERGUID)_Character)
 AND
 CharacterFindTaggedItem(_Character, "LeaderLib_AutoLevel", _Item)
 THEN
@@ -32,7 +32,7 @@ CharacterLeveledUp(_Character)
 AND
 CharacterIsPlayer(_Character, 1)
 AND
-LeaderLib_ItemGrowth_QRY_HasAutoLevelItem(_Character)
+LeaderLib_Growth_Items_QRY_HasAutoLevelItem(_Character)
 THEN
 SetStoryEvent(_Character, "LeaderLib_Events_AutoLevelItems_Start");
 
@@ -83,18 +83,18 @@ CharacterItemSetEvent(_Character, _Item, "LeaderLib_Commands_CheckItemLevel");
 
 //REGION DELTA_MODS
 QRY
-LeaderLib_ItemGrowth_QRY_ItemHasDeltaMods((ITEMGUID)_Item)
+LeaderLib_Growth_Items_QRY_ItemHasDeltaMods((ITEMGUID)_Item)
 AND
 GetTemplate(_Item, _Template)
 AND
-DB_LLLIB_ItemGrowth_DeltaMods(_ID, _MinLevel, _DeltaMod, "Template", _Template)
+DB_LLLIB_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, "Template", _Template)
 THEN
 DB_NOOP(1);
 
 QRY
-LeaderLib_ItemGrowth_QRY_ItemHasDeltaMods((ITEMGUID)_Item)
+LeaderLib_Growth_Items_QRY_ItemHasDeltaMods((ITEMGUID)_Item)
 AND
-DB_LLLIB_ItemGrowth_DeltaMods(_ID, _MinLevel, _DeltaMod, "Tag", _Tag)
+DB_LLLIB_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, "Tag", _Tag)
 AND
 IsTagged(_Item, _Tag, 1)
 THEN
@@ -103,23 +103,23 @@ DB_NOOP(1);
 IF
 CharacterItemEvent(_Character, _Item, "LeaderLib_Events_ItemLeveledUp")
 THEN
-LeaderLib_ItemGrowth_ApplyDeltaMods(_Item);
+LeaderLib_Growth_Items_ApplyDeltaMods(_Item);
 
 IF
 CharacterItemEvent(_Character, _Item, "LeaderLib_Events_ItemLevelCheckFinished")
 AND
-NOT IsTagged(_Item, "LeaderLib_ItemGrowth_AppliedDeltaMods", 1)
+NOT IsTagged(_Item, "LeaderLib_Growth_AppliedDeltaMods", 1)
 AND
-LeaderLib_ItemGrowth_QRY_ItemHasDeltaMods(_Item)
+LeaderLib_Growth_Items_QRY_ItemHasDeltaMods(_Item)
 THEN
-LeaderLib_ItemGrowth_ApplyDeltaMods(_Item);
+LeaderLib_Growth_Items_ApplyDeltaMods(_Item);
 
 PROC
-LeaderLib_ItemGrowth_ApplyDeltaMods((ITEMGUID)_Item)
+LeaderLib_Growth_Items_ApplyDeltaMods((ITEMGUID)_Item)
 AND
 GetVarInteger(_Item, "LeaderLib_ItemLevel", _ItemLevel)
 AND
-DB_LLLIB_ItemGrowth_DeltaMods(_ID, _MinLevel, _DeltaMod, "Tag", _Tag)
+DB_LLLIB_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, "Tag", _Tag)
 AND
 IsTagged(_Item, _Tag, 1)
 AND
@@ -127,33 +127,33 @@ _ItemLevel >= _MinLevel
 AND
 NOT LeaderLib_Helper_QRY_ItemHasDeltaModifier(_Item, _DeltaMod)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:ItemGrowth:ApplyDeltaMods] Added deltamod [",_DeltaMod,"] to item.");
-LeaderLib_ItemGrowth_Internal_ApplyDeltaModTag(_Item);
+LeaderLog_Log("DEBUG", "[LeaderLib:Growth_Items:ApplyDeltaMods] Added deltamod [",_DeltaMod,"] to item.");
+LeaderLib_Growth_Items_Internal_ApplyDeltaModTag(_Item);
 ItemAddDeltaModifier(_Item, _DeltaMod);
 
 PROC
-LeaderLib_ItemGrowth_ApplyDeltaMods((ITEMGUID)_Item)
+LeaderLib_Growth_Items_ApplyDeltaMods((ITEMGUID)_Item)
 AND
 GetVarInteger(_Item, "LeaderLib_ItemLevel", _ItemLevel)
 AND
 GetTemplate(_Item, _Template)
 AND
-DB_LLLIB_ItemGrowth_DeltaMods(_ID, _MinLevel, _DeltaMod, "Template", _Template)
+DB_LLLIB_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, "Template", _Template)
 AND
 _ItemLevel >= _MinLevel
 AND
 NOT LeaderLib_Helper_QRY_ItemHasDeltaModifier(_Item, _DeltaMod)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:ItemGrowth:ApplyDeltaMods] Added deltamod [",_DeltaMod,"] to item.");
-LeaderLib_ItemGrowth_Internal_ApplyDeltaModTag(_Item);
+LeaderLog_Log("DEBUG", "[LeaderLib:Growth_Items:ApplyDeltaMods] Added deltamod [",_DeltaMod,"] to item.");
+LeaderLib_Growth_Items_Internal_ApplyDeltaModTag(_Item);
 ItemAddDeltaModifier(_Item, _DeltaMod);
 
 PROC
-LeaderLib_ItemGrowth_Internal_ApplyDeltaModTag((ITEMGUID)_Item)
+LeaderLib_Growth_Items_Internal_ApplyDeltaModTag((ITEMGUID)_Item)
 AND
-NOT IsTagged(_Item, "LeaderLib_ItemGrowth_AppliedDeltaMods", 1)
+NOT IsTagged(_Item, "LeaderLib_Growth_AppliedDeltaMods", 1)
 THEN
-SetTag(_Item, "LeaderLib_ItemGrowth_AppliedDeltaMods");
+SetTag(_Item, "LeaderLib_Growth_AppliedDeltaMods");
 //END_REGION
 EXITSECTION
 

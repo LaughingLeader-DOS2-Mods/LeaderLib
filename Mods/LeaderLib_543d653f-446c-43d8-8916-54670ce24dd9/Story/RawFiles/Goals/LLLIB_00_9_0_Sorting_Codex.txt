@@ -131,10 +131,10 @@ DB_LLLIB_Temp_BuildSortIterator(0, _Max);
 IF
 DB_LLLIB_Temp_BuildSortIterator(_Index, _Max)
 THEN
-DB_LLLIB_Codex_OnSortIterator(_Index, _Max);
+LLLIB_Codex_OnSortIterator(_Index, _Max);
 
 PROC
-DB_LLLIB_Codex_OnSortIterator((INTEGER)_Index, (INTEGER)_Max)
+LLLIB_Codex_OnSortIterator((INTEGER)_Index, (INTEGER)_Max)
 AND
 _Index < _Max
 AND

@@ -3,6 +3,15 @@ INIT
 	INT:%EmptyInt=0
 	INT:%DefaultShowInTrade=1
 	INT:%DefaultAmount=1
+	
+	STRING:%CharacterIterator_CharacterEvent = ""
+	FIXEDSTRING:%CharacterIterator_Tag = ""
+	
+	STRING:%ItemIterator_ItemEvent = ""
+	FIXEDSTRING:%ItemIterator_Tag = ""
+	
+	STRING:%InventoryIterator_ItemEvent = ""
+	FIXEDSTRING:%InventoryIterator_Tag = ""
 EVENTS
 
 EVENT LLLIB_AddTreasureTable
@@ -175,4 +184,99 @@ THEN
 	Cast(_Message, _Str)
 	StatusText(_Character, _Message)
 	*/
+ENDIF
+
+EVENT LLLIB_CharacterIterator
+VARS
+	ITEM:_EventParser
+ON
+	OnItemEvent(_EventParser, "LeaderLib_Commands_StartCharacterIterator")
+ACTIONS
+IF "c1&c2&!c3"
+	GetVar(%CharacterIterator_CharacterEvent, _EventParser, "LeaderLib_IteratorEvent")
+	GetVar(%CharacterIterator_Tag, _EventParser, "LeaderLib_IteratorTag")
+	IsEqual(%CharacterIterator_CharacterEvent, null)
+THEN
+	IterateCharacters("LeaderLib_Events_Iterate_OnIterateCharacter", null, null, %CharacterIterator_Tag)
+ENDIF
+
+EVENT LLLIB_OnIterateCharacter
+VARS
+	CHARACTER:_Char
+ON
+	OnIterateCharacter(_Char, "LeaderLib_Events_Iterate_OnIterateCharacter")
+ACTIONS
+IF "!c1&!c2"
+	IsEqual(%CharacterIterator_CharacterEvent, "")
+	IsEqual(%CharacterIterator_CharacterEvent, null)
+THEN
+	CharacterEvent(_Char, %CharacterIterator_CharacterEvent)
+ENDIF
+
+EVENT LLLIB_ItemIterator
+VARS
+	ITEM:_EventParser
+ON
+	OnItemEvent(_EventParser, "LeaderLib_Commands_StartItemIterator")
+ACTIONS
+IF "c1&c2&!c3"
+	GetVar(%ItemIterator_ItemEvent, _EventParser, "LeaderLib_IteratorEvent")
+	GetVar(%ItemIterator_Tag, _EventParser, "LeaderLib_IteratorTag")
+	IsEqual(%ItemIterator_ItemEvent, null)
+THEN
+	IterateItems("LeaderLib_Events_Iterate_OnIterateItem", %ItemIterator_Tag)
+ENDIF
+
+EVENT LLLIB_OnIterateItem
+VARS
+	ITEM:_Item
+ON
+	OnIterateItem(_Item, "LeaderLib_Events_Iterate_OnIterateItem")
+ACTIONS
+IF "!c1&!c2"
+	IsEqual(%ItemIterator_ItemEvent, "")
+	IsEqual(%ItemIterator_ItemEvent, null)
+THEN
+	ItemEvent(_Item, %ItemIterator_ItemEvent)
+ENDIF
+
+EVENT LLLIB_InventoryIterator_Character
+VARS
+	CHARACTER:_Target
+ON
+	OnCharacterEvent(_Target, "LeaderLib_Commands_StartInventoryIterator")
+ACTIONS
+IF "c1&c2&!c3"
+	GetVar(%InventoryIterator_ItemEvent, _Target, "LeaderLib_IteratorEvent")
+	GetVar(%InventoryIterator_Tag, _Target, "LeaderLib_IteratorTag")
+	IsEqual(%InventoryIterator_ItemEvent, null)
+THEN
+	IterateItemsInInventory(_Target, "LeaderLib_Events_Iterate_OnIterateItemInInventory", %ItemIterator_Tag)
+ENDIF
+
+EVENT LLLIB_InventoryIterator_Item
+VARS
+	ITEM:_Target
+ON
+	OnItemEvent(_Target, "LeaderLib_Commands_StartInventoryIterator")
+ACTIONS
+IF "c1&c2&!c3"
+	GetVar(%InventoryIterator_ItemEvent, _Target, "LeaderLib_IteratorEvent")
+	GetVar(%InventoryIterator_Tag, _Target, "LeaderLib_IteratorTag")
+	IsEqual(%InventoryIterator_ItemEvent, null)
+THEN
+	IterateItemsInInventory(_Target, "LeaderLib_Events_Iterate_OnIterateItemInInventory", %ItemIterator_Tag)
+ENDIF
+
+EVENT LLLIB_InventoryIterator_OnIterateItem
+VARS
+	ITEM:_Item
+ON
+	OnIterateItem(_Item, "LeaderLib_Events_Iterate_OnIterateItemInInventory")
+ACTIONS
+IF "!c1&!c2"
+	IsEqual(%InventoryIterator_ItemEvent, "")
+	IsEqual(%InventoryIterator_ItemEvent, null)
+THEN
+	ItemEvent(_Item, %InventoryIterator_ItemEvent)
 ENDIF

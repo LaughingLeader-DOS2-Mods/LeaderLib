@@ -82,6 +82,8 @@ IF
 TimerFinished("LLLIB_Timers_EventFlow_SafetyTimer")
 AND
 NOT LLLIB_EventFlow_QRY_CurrentlyRunning("LLLIB_DefaultEventFlow")
+AND
+NOT GlobalGetFlag("LeaderLib_InitialEventFlowComplete", 1)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:EventFlow] [ERROR] The timer 'LLLIB_Timers_EventFlow_SafetyTimer' finished. Check that the 'LeaderLib_Initialized' event actually fired.");
 TimerCancel("LLLIB_Timers_StartDefaultFlow");

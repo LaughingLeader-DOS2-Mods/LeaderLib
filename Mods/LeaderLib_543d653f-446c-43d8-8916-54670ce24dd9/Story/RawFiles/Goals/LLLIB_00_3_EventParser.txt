@@ -68,6 +68,11 @@ DB_NOOP(1);
 
 QRY
 LeaderLib_Events_QRY_GetEventParser()
+THEN
+LeaderLib_Events_Internal_GetEventParser();
+
+PROC
+LeaderLib_Events_Internal_GetEventParser()
 AND
 DB_LeaderLib_EventParser(_EventParser)
 AND
@@ -75,8 +80,8 @@ ObjectExists(_EventParser, 0)
 THEN
 NOT DB_LeaderLib_EventParser(_EventParser);
 
-QRY
-LeaderLib_Events_QRY_GetEventParser()
+PROC
+LeaderLib_Events_Internal_GetEventParser()
 AND
 NOT DB_LeaderLib_EventParser(_)
 AND
@@ -84,8 +89,8 @@ LLLIB_QRY_EventParser_GlobalParserExists()
 THEN
 DB_LeaderLib_EventParser(ITEMGUID_S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6);
 
-QRY
-LeaderLib_Events_QRY_GetEventParser()
+PROC
+LeaderLib_Events_Internal_GetEventParser()
 AND
 NOT DB_LeaderLib_EventParser(_)
 AND
@@ -131,14 +136,8 @@ LeaderLog_Log("DEBUG", "[LeaderLib:EventParser][ERROR] Global Event Parser doesn
 //Send out a general event, using the Event Parser object.
 PROC
 LeaderLib_SendEvent((STRING)_EventName)
-AND
-NOT DB_LeaderLib_SendEvent(_EventName)
 THEN
 DB_LeaderLib_SendEvent(_EventName);
-
-IF
-DB_LeaderLib_SendEvent(_EventName)
-THEN
 LLLIB_EventParser_Internal_RunEvent(_EventName);
 
 //Events that were never sent
@@ -146,9 +145,17 @@ IF
 StoryEvent(_, "LeaderLib_Initialized")
 AND
 DB_LeaderLib_SendEvent(_EventName)
+AND
+_EventName != "LeaderLib_Initialized"
+THEN
+LLLIB_EventParser_Internal_RunEvent(_EventName);
+
+IF
+StoryEvent(_, "LeaderLib_Initialized")
+AND
+DB_LeaderLib_SendEvent(_EventName)
 THEN
 NOT DB_LeaderLib_SendEvent(_EventName);
-LLLIB_EventParser_Internal_RunEvent(_EventName);
 //END_REGION
 
 //REGION BEHAVIOR_EVENT_ADDITIONS

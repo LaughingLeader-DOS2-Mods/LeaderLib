@@ -89,7 +89,7 @@ DB_IsPlayer(_Player)
 AND
 CharacterIsControlled(_Player, 1)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_addpoints] fired. Adding [",_AmountStr,"] attribute points to controller character.");
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_addpoints] fired. Adding [",_AmountStr,"] attribute points to controller characters.");
 CharacterAddAttributePoint(_Player, _Amount);
 
 IF
@@ -105,7 +105,7 @@ DB_IsPlayer(_Player)
 AND
 CharacterIsControlled(_Player, 1)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_addpoints] fired. Adding [",_AmountStr,"] ability points to controller character.");
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_addpoints] fired. Adding [",_AmountStr,"] ability points to controller characters.");
 CharacterAddAbilityPoint(_Player, _Amount);
 
 IF
@@ -121,7 +121,7 @@ DB_IsPlayer(_Player)
 AND
 CharacterIsControlled(_Player, 1)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_addpoints] fired. Adding [",_AmountStr,"] civil points to controller character.");
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_addpoints] fired. Adding [",_AmountStr,"] civil points to controller characters.");
 CharacterAddCivilAbilityPoint(_Player, _Amount);
 
 IF
@@ -137,7 +137,7 @@ DB_IsPlayer(_Player)
 AND
 CharacterIsControlled(_Player, 1)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_addpoints] fired. Adding [",_AmountStr,"] talent points to controller character.");
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_addpoints] fired. Adding [",_AmountStr,"] talent points to controller characters.");
 CharacterAddTalentPoint(_Player, _Amount);
 
 IF
@@ -153,7 +153,7 @@ DB_IsPlayer(_Player)
 AND
 CharacterIsControlled(_Player, 1)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_addpoints] fired. Adding [",_AmountStr,"] source points to controller character.");
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_addpoints] fired. Adding [",_AmountStr,"] source points to controller characters.");
 CharacterAddSourcePoints(_Player, _Amount);
 
 IF
@@ -173,7 +173,7 @@ CharacterGetMaxSourcePoints(_Player, _BaseMax)
 AND
 IntegerSum(_BaseMax, _Amount, _MaxAmount)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_addpoints] fired. Adding [",_AmountStr,"] max source points to controller character.");
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_addpoints] fired. Adding [",_AmountStr,"] max source points to controller characters.");
 CharacterOverrideMaxSourcePoints(_Player, _MaxAmount);
 //END_REGION
 EXITSECTION

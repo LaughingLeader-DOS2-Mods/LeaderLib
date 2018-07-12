@@ -35,6 +35,7 @@ TimerLaunch("LLLIB_Timers_LeaderLibInitialized", 1);
 IF
 TimerFinished("LLLIB_Timers_LeaderLibInitialized")
 THEN
+LeaderLog_Log("TRACE", "[LeaderLib:System:TimerFinished(LLLIB_Timers_LeaderLibInitialized)] Running default event [LeaderLib_Initialized].");
 DB_LeaderLib_Initialized(1);
 GlobalSetFlag("LeaderLib_Initialized");
 LeaderLog_Log("DEBUG", "[LeaderLib:ModAPI] LeaderLib initialized.");

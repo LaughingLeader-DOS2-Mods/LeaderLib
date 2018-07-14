@@ -1303,7 +1303,7 @@ LeaderLib_Treasure_Internal_QRY_HasPostGenerationApplyBonuses(_Object, _Treasure
 AND
 LeaderLib_QRY_ObjectTimerStarted(_Object, "LeaderLib_Timers_Treasure_ApplyBonusesTimer_")
 THEN
-LeaderLib_ResetObjectTimer(_Object, "LeaderLib_Timers_Treasure_ApplyBonusesTimer_", 250);
+LeaderLib_ResetObjectTimer(_Object, "LeaderLib_Timers_Treasure_ApplyBonusesTimer_", 25);
 
 PROC
 LeaderLib_Treasure_Internal_ApplyPostGenerationBonuses((GUIDSTRING)_Object, (STRING)_TreasureID)
@@ -1312,7 +1312,7 @@ LeaderLib_Treasure_Internal_QRY_HasPostGenerationApplyBonuses(_Object, _Treasure
 AND
 NOT LeaderLib_QRY_ObjectTimerStarted(_Object, "LeaderLib_Timers_Treasure_ApplyBonusesTimer_")
 THEN
-LeaderLib_StartObjectTimer(_Object, 250, "LeaderLib_Timers_Treasure_ApplyBonusesTimer_", "LeaderLib_Events_Internal_ApplyPostGenBonuses");
+LeaderLib_StartObjectTimer(_Object, 25, "LeaderLib_Timers_Treasure_ApplyBonusesTimer_", "LeaderLib_Events_Internal_ApplyPostGenBonuses");
 
 IF
 StoryEvent(_Object, "LeaderLib_Events_Internal_ApplyPostGenBonuses")

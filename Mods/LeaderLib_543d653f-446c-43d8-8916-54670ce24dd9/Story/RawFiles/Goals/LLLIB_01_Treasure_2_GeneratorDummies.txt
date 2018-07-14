@@ -92,6 +92,38 @@ DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID)
 THEN
 NOT DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID);
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:ResetDummy] Dummy with ID [",_DummyID,"] removed from 'NextGeneratorDummy' database.");
+
+PROC
+LeaderLib_Treasure_ResetDummyAfterDelay((CHARACTERGUID)_Dummy, (INTEGER)_Delay, (STRING)_ResetEvent)
+AND
+DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
+AND
+NOT LeaderLib_QRY_ObjectTimerStarted((GUIDSTRING)_Dummy, "LeaderLib_Timers_Treasure_ResetDummyAfterDelay_")
+THEN
+SetVarString(_Dummy, "LeaderLib_DummyResetEvent", _ResetEvent);
+
+PROC
+LeaderLib_Treasure_ResetDummyAfterDelay((CHARACTERGUID)_Dummy, (INTEGER)_Delay)
+AND
+DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
+AND
+NOT LeaderLib_QRY_ObjectTimerStarted((GUIDSTRING)_Dummy, "LeaderLib_Timers_Treasure_ResetDummyAfterDelay_")
+THEN
+LeaderLib_StartObjectTimer((CHARACTERGUID)_Dummy, _Delay, "LeaderLib_Timers_Treasure_ResetDummyAfterDelay_", "LeaderLib_Events_ResetDummy");
+
+IF
+StoryEvent(_Dummy, "LeaderLib_Events_ResetDummy")
+AND
+GetVarString(_Dummy, "LeaderLib_DummyResetEvent", _ResetEvent)
+AND
+_ResetEvent != ""
+THEN
+SetStoryEvent(_Dummy, _ResetEvent);
+
+IF
+StoryEvent((CHARACTERGUID)_Dummy, "LeaderLib_Events_ResetDummy")
+THEN
+LeaderLib_Treasure_ResetDummy(_Dummy);
 //END_REGION
 
 //REGION PREPARE

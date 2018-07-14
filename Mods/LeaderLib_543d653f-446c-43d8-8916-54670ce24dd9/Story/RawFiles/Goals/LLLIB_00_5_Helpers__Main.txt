@@ -488,6 +488,27 @@ CharacterAddAttribute(_CopyTo, _Attribute, _AddVal);
 //END_REGION
 
 //REGION TIMER_HELPERS
+QRY
+LeaderLib_QRY_ObjectTimerStarted((GUIDSTRING)_Target)
+AND
+DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent, _TimerPrefix)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_QRY_ObjectTimerStarted((GUIDSTRING)_Target, (STRING)_TimerPrefix)
+AND
+DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent, _TimerPrefix)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_QRY_ObjectTimerStarted((GUIDSTRING)_Target, (STRING)_TimerPrefix, (STRING)_CompleteEvent)
+AND
+DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent, _TimerPrefix)
+THEN
+DB_NOOP(1);
+
 PROC
 LeaderLib_StartObjectTimer((GUIDSTRING)_Target, (INTEGER)_Time, (STRING)_TimerPrefix, (STRING)_CompleteEvent)
 AND
@@ -495,16 +516,40 @@ GetUUID(_Target, _ID)
 AND
 StringConcatenate(_TimerPrefix, _ID, _TimerName)
 THEN
-DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent);
+DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent, _TimerPrefix);
+TimerLaunch(_TimerName, _Time);
+
+PROC
+LeaderLib_ResetObjectTimer((GUIDSTRING)_Target, (STRING)_TimerPrefix, (INTEGER)_Time)
+AND
+DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent, _TimerPrefix)
+THEN
+TimerCancel(_TimerName);
 TimerLaunch(_TimerName, _Time);
 
 IF
 TimerFinished(_TimerName)
 AND
-DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent)
+DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent, _TimerPrefix)
 THEN
-NOT DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent);
+NOT DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent, _TimerPrefix);
 SetStoryEvent(_Target, _CompleteEvent);
+
+PROC
+LeaderLib_CancelObjectTimer((GUIDSTRING)_Target, (STRING)_TimerPrefix)
+AND
+DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent, _TimerPrefix)
+THEN
+TimerCancel(_TimerName);
+NOT DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent, _TimerPrefix);
+
+PROC
+LeaderLib_CancelObjectTimerByEvent((GUIDSTRING)_Target, (STRING)_CompleteEvent)
+AND
+DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent, _TimerPrefix)
+THEN
+TimerCancel(_TimerName);
+NOT DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent, _TimerPrefix);
 
 PROC
 LeaderLib_StartCharacterItemTimer((CHARACTERGUID)_Char, (ITEMGUID)_Item, (INTEGER)_Time, (STRING)_TimerPrefix, (STRING)_CompleteEvent)
@@ -517,15 +562,15 @@ StringConcatenate(_CharID, _ItemID, _ID)
 AND
 StringConcatenate(_TimerPrefix, _ID, _TimerName)
 THEN
-DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent);
+DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent, _TimerPrefix);
 TimerLaunch(_TimerName, _Time);
 
 IF
 TimerFinished(_TimerName)
 AND
-DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent)
+DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent, _TimerPrefix)
 THEN
-NOT DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent);
+NOT DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent, _TimerPrefix);
 CharacterItemSetEvent(_Char, _Item, _CompleteEvent);
 
 PROC
@@ -539,15 +584,15 @@ StringConcatenate(_Char1ID, _Char2ID, _ID)
 AND
 StringConcatenate(_TimerPrefix, _ID, _TimerName)
 THEN
-DB_LeaderLib_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _CompleteEvent);
+DB_LeaderLib_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _CompleteEvent, _TimerPrefix);
 TimerLaunch(_TimerName, _Time);
 
 IF
 TimerFinished(_TimerName)
 AND
-DB_LeaderLib_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _CompleteEvent)
+DB_LeaderLib_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _CompleteEvent, _TimerPrefix)
 THEN
-NOT DB_LeaderLib_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _CompleteEvent);
+NOT DB_LeaderLib_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _CompleteEvent, _TimerPrefix);
 CharacterCharacterSetEvent(_Char1, _Char2, _CompleteEvent);
 //END_REGION
 

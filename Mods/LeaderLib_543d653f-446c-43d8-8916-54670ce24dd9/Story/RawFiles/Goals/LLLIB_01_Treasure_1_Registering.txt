@@ -16,8 +16,8 @@ INITSECTION
 //DB_LLLIB_Treasure_GenerationSpeed(_TreasureID, _TickRate)
 
 //DB_LLLIB_Treasure_ItemLevel(_TreasureID, _ItemEntry, _MinLevel, _MaxLevel, _UsePartyLevel)
-//DB_LLLIB_Treasure_ItemDeltaMods(_TreasureID, _ItemEntry, _Deltamod, _Chance)
-//DB_LLLIB_Treasure_ItemRunes(_TreasureID, _ItemEntry, _Rune, _Chance)
+//DB_LLLIB_Treasure_ItemDeltaMods(_ID, _TreasureID, _ItemEntry, _Deltamod, _Chance)
+//DB_LLLIB_Treasure_ItemRunes(_ID, _TreasureID, _ItemEntry, _Rune, _Chance)
 //DB_LLLIB_Treasure_ItemMaxAmount(_TreasureID, _ItemEntry, _MaxAmount)
 
 //DB_LLLIB_Treasure_OnlyOnce(_TreasureID, _ItemEntryOrTreasureTable, _OnCompletionEvent)
@@ -189,25 +189,62 @@ AND
 DB_LLLIB_Treasure_ItemLevel(_TreasureID, _ItemEntry, _PrevVal, _PrevMin, _PrevMax)
 THEN
 NOT DB_LLLIB_Treasure_ItemLevel(_TreasureID, _ItemEntry, _PrevVal, _PrevMin, _PrevMax);
-DB_LLLIB_Treasure_ItemLevel(_TreasureID, _ItemEntry, _UsePartyLevel, _MinLevel, _MaxLevel);
-//LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem] Previous settings for ",_TreasureID,":",_ItemEntry," were overwritten.");
+LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem] Previous item level settings for ",_TreasureID,":",_ItemEntry," were removed.");
 
 PROC
 LeaderLib_Treasure_Configure_ItemLevel((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_UsePartyLevel, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
-AND
-NOT DB_LLLIB_Treasure_ItemLevel(_TreasureID, _ItemEntry,_,_,_)
 THEN
 DB_LLLIB_Treasure_ItemLevel(_TreasureID, _ItemEntry, _UsePartyLevel, _MinLevel, _MaxLevel);
 
 PROC
 LeaderLib_Treasure_Configure_AddDeltaMod((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_Deltamod, (INTEGER)_Chance)
+AND
+Random(999999, _Ran)
+AND
+IntegertoString(_Ran, _RanStr)
+AND
+LeaderLog_QRY_Log("COMBINE", _TreasureID, _ItemEntry, _DeltaMod, _RanStr)
+AND
+DB_LeaderLog_Temp_CombinedString(_Str)
 THEN
-DB_LLLIB_Treasure_ItemDeltaMods(_TreasureID, _ItemEntry, _Deltamod, _Chance);
+NOT DB_LeaderLog_Temp_CombinedString(_Str);
+LeaderLib_Treasure_Configure_AddDeltaMod(_Str, _TreasureID, _ItemEntry, _Deltamod, _Chance);
+
+PROC
+LeaderLib_Treasure_Configure_AddDeltaMod((STRING)_ID, (STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_Deltamod, (INTEGER)_Chance)
+THEN
+DB_LLLIB_Treasure_ItemDeltaMods(_ID, _TreasureID, _ItemEntry, _Deltamod, _Chance);
+
+PROC
+LeaderLib_Treasure_Configure_DeltaModLimit((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_Deltamod, (INTEGER)_Max)
+AND
+DB_LLLIB_Treasure_DeltaModLimit(_TreasureID, _ItemEntry, _Deltamod, _LastMax)
+THEN
+NOT DB_LLLIB_Treasure_DeltaModLimit(_TreasureID, _ItemEntry, _Deltamod, _LastMax);
+
+PROC
+LeaderLib_Treasure_Configure_DeltaModLimit((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_Deltamod, (INTEGER)_Max)
+THEN
+DB_LLLIB_Treasure_DeltaModLimit(_TreasureID, _ItemEntry, _Deltamod, _Max);
 
 PROC
 LeaderLib_Treasure_Configure_AddRune((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_Rune, (INTEGER)_Chance)
+AND
+Random(999999, _Ran)
+AND
+IntegertoString(_Ran, _RanStr)
+AND
+LeaderLog_QRY_Log("COMBINE", _TreasureID, _ItemEntry, _Rune, _RanStr)
+AND
+DB_LeaderLog_Temp_CombinedString(_Str)
 THEN
-DB_LLLIB_Treasure_ItemRunes(_TreasureID, _ItemEntry, _Rune, _Chance);
+NOT DB_LeaderLog_Temp_CombinedString(_Str);
+LeaderLib_Treasure_Configure_AddRune(_Str, _TreasureID, _ItemEntry, _Rune, _Chance);
+
+PROC
+LeaderLib_Treasure_Configure_AddRune((STRING)_ID, (STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_Rune, (INTEGER)_Chance)
+THEN
+DB_LLLIB_Treasure_ItemRunes(_ID, _TreasureID, _ItemEntry, _Rune, _Chance);
 
 PROC
 LeaderLib_Treasure_Configure_AddMaxAmount((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_MaxAmount)
@@ -256,6 +293,18 @@ PROC
 LeaderLib_Treasure_Configure_TreasureTable_Limit((STRING)_TreasureID, (STRING)_TreasureTable, (INTEGER)_Limit)
 THEN
 DB_LLLIB_Treasure_TreasureTableLimit(_TreasureID, _TreasureTable, _Limit);
+
+PROC
+LeaderLib_Treasure_Configure_TreasureTable_UseTemplateAsItemEntry((STRING)_TreasureID, (STRING)_TreasureTable, (INTEGER)_IsEnabled)
+AND
+DB_LLLIB_Treasure_TreasureTableItemEntryMode(_TreasureID, _TreasureTable, _PreviousIsEnabled)
+THEN
+NOT DB_LLLIB_Treasure_TreasureTableItemEntryMode(_TreasureID, _TreasureTable, _PreviousIsEnabled);
+
+PROC
+LeaderLib_Treasure_Configure_TreasureTable_UseTemplateAsItemEntry((STRING)_TreasureID, (STRING)_TreasureTable, (INTEGER)_IsEnabled)
+THEN
+DB_LLLIB_Treasure_TreasureTableItemEntryMode(_TreasureID, _TreasureTable, _IsEnabled);
 //END_REGION
 
 //REGION INTERNAL_GENERATION_TYPES
@@ -361,16 +410,16 @@ NOT DB_LLLIB_Treasure_ItemGenerationFlag(_TreasureID, _ItemEntry, _Flag, _FlagTy
 PROC
 LeaderLib_Treasure_Clear_AllItemsForTreasure((STRING)_TreasureID)
 AND
-DB_LLLIB_Treasure_ItemDeltaMods(_TreasureID, _ItemEntry, _Deltamod, _Chance)
+DB_LLLIB_Treasure_ItemDeltaMods(_ID, _TreasureID, _ItemEntry, _Deltamod, _Chance)
 THEN
-NOT DB_LLLIB_Treasure_ItemDeltaMods(_TreasureID, _ItemEntry, _Deltamod, _Chance);
+NOT DB_LLLIB_Treasure_ItemDeltaMods(_ID, _TreasureID, _ItemEntry, _Deltamod, _Chance);
 
 PROC
 LeaderLib_Treasure_Clear_AllItemsForTreasure((STRING)_TreasureID)
 AND
-DB_LLLIB_Treasure_ItemRunes(_TreasureID, _ItemEntry, _Rune, _Chance)
+DB_LLLIB_Treasure_ItemRunes(_ID, _TreasureID, _ItemEntry, _Rune, _Chance)
 THEN
-NOT DB_LLLIB_Treasure_ItemRunes(_TreasureID, _ItemEntry, _Rune, _Chance);
+NOT DB_LLLIB_Treasure_ItemRunes(_ID, _TreasureID, _ItemEntry, _Rune, _Chance);
 
 PROC
 LeaderLib_Treasure_Clear_AllItemsForTreasure((STRING)_TreasureID)
@@ -611,8 +660,8 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registe
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_TreasureGenerationType", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_RegisteredGenerationTypes", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_ItemGenerationFlag", 4);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_ItemDeltaMods", 4);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_ItemRunes", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_ItemDeltaMods", 5);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_ItemRunes", 5);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_ItemMaxAmount", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_OnlyOnce", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_GeneratedEvent", 3);

@@ -13,7 +13,7 @@ DB_TestMod_GithubExample_RegisteredLeaderLibSettings(1);
 PROC
 TestMod_GithubExample_LeaderLib_RegisterSettings()
 THEN
-DB_LeaderLib_ModApi_RegisterActiveGoal("TestMod_GithubExample", "CodeBuddy", "TestMod_GithubExample_ZZZ_Updater");
+DB_LeaderLib_ModApi_RegisterActiveGoal("TestMod_GithubExample", "CodeBuddy", "DependencyFree_TestMod_ZZZ_Updater");
 DB_LeaderLib_ModApi_RegisterMenu("CodeBuddy_TestMod_GithubExample", "[TestMod - Github Example] Menu", ""TestMod_GithubExample_MainMenu", "TestMod_GithubExample", "CodeBuddy");
 EXITSECTION
 

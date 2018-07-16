@@ -2,7 +2,7 @@ Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
 LeaderUpdater_Register_Mod("MyModName", "Username", "1.0.0.0");
-LeaderUpdater_Register_ActiveGoal("MyModName", "Username", "TestMod_ZZZ_Updater");
+LeaderUpdater_Register_ActiveGoal("MyModName", "Username", "LeaderLibDependencyMod_ZZZ_Updater");
 
 KBSECTION
 //REGION UPDATE_EVENT

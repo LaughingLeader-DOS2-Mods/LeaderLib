@@ -144,6 +144,7 @@ VARS
 	ITEM:_Item
 	INT:_Level
 	FLOAT:_LevelF
+	STRING:_Str
 ON
 	OnIterateItem(_Item, "LeaderLib_Iterator_AutoLevelItems")
 ACTIONS
@@ -152,10 +153,15 @@ IF "c1"
 THEN
 	Cast(_Level, _LevelF)
 	SetVar(_Item, "LeaderLib_ItemLevel", _Level)
+	/*
+	Print(_Str, "[LeaderLib:LLLIB_Main:AutoLevelItemsIterate] Item's level is [1]", _LevelF)
+	SetVar(_Item, "LeaderLog_Message", _Str)
+	ItemEvent(_Item, "LeaderLog_Commands_Log")
+	*/
 ENDIF
 	//If we couldn't get the level stat for some reason, it'll default to the character's level (in story).
 	ItemEvent(_Item, "LeaderLib_Commands_AutoLevelItem")
-
+	
 EVENT LeaderLib_AutoLevelItems_Single
 VARS
 	CHARACTER:_Character

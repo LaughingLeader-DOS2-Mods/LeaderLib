@@ -176,6 +176,39 @@ THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_addpoints] fired. Adding [",_AmountStr,"] max source points to controller characters.");
 CharacterOverrideMaxSourcePoints(_Player, _MaxAmount);
 //END_REGION
+
+//REGION DEBUG_FLAGS
+IF
+ObjectFlagSet("LeaderLib_Debug_IsCompanion", (CHARACTERGUID)_Companion, _Instance)
+AND
+DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Recruiter)
+AND
+CharacterGetDisplayName(_Companion, _, _Name)
+THEN
+CharacterMakePlayer(_Companion, _Recruiter);
+//CharacterMakePlayer(_Companion);
+DB_IsPlayer(_Companion);
+//CharacterStopFollow(_Companion);
+//CharacterDetachFromGroup(_Companion);
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:LeaderLib_Debug_IsCompanion(Set)] Added character [",_Name,"] to the party.");
+
+IF
+ObjectFlagCleared("LeaderLib_Debug_IsCompanion", (CHARACTERGUID)_Companion, _Instance)
+AND
+CharacterGetDisplayName(_Companion, _, _Name)
+THEN
+//CharacterDetachFromGroup(_Companion);
+CharacterMakeNPC(_Companion);
+NOT DB_IsPlayer(_Companion);
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:LeaderLib_Debug_IsCompanion(Cleared)] Removed character [",_Name,"] from the party.");
+
+PROC
+PROC_GLOBAL_DialogStartRequested(_Companion, _Player)
+AND
+ObjectGetFlag(_Companion, "LeaderLib_Debug_IsCompanion", 1)
+THEN
+Proc_StartDialog(0, "LLLIB_Debug_RecruitCharacter", _Companion, _Player);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

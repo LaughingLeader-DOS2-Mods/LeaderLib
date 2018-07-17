@@ -591,11 +591,22 @@ LeaderLog_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _St
 
 //REGION LOG_BEHAVIOR_EVENTS
 IF
-StoryEvent(_Target, "LeaderLib_DebugLog")
+StoryEvent(_Target, "LeaderLog_Commands_Log")
 AND
-GetVarString(_Target, "LeaderLib_LogMessage", _Message)
+GetVarString(_Target, "LeaderLog_Message", _Message)
+AND
+NOT GetVarString(_Target, "LeaderLog_Type", _)
 THEN
 LeaderLog_Log("DEBUG", _Message);
+
+IF
+StoryEvent(_Target, "LeaderLog_Commands_Log")
+AND
+GetVarString(_Target, "LeaderLog_Message", _Message)
+AND
+GetVarString(_Target, "LeaderLog_Type", _Type)
+THEN
+LeaderLog_Log(_Type, _Message);
 //END_REGION
 
 //REGION NUMBER_CONVERSION

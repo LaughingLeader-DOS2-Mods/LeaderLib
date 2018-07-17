@@ -737,12 +737,11 @@ ObjectSetFlag(_Trader, "LeaderLib_Treasure_GenerateNow", 0); // Generate via the
 PROC
 LLLIB_Traders_Internal_GenerateInitialTradeTreasure((CHARACTERGUID)_Trader)
 AND
-LeaderLib_Helper_QRY_GetHighestLevelPlayer()
+LeaderLib_Helper_QRY_GetHighestPlayerLevel()
 AND
 DB_LeaderLib_Helper_Temp_HighestLevelPlayer(_Player, _Level)
 THEN
 GenerateItems(_Player, _Trader);
-NOT DB_LeaderLib_Helper_Temp_HighestLevelPlayer(_Player, _Level);
 
 IF
 ItemAddedToCharacter(_Item, _Trader)

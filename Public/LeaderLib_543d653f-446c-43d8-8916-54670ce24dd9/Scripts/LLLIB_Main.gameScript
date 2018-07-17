@@ -152,11 +152,10 @@ IF "c1"
 THEN
 	Cast(_Level, _LevelF)
 	SetVar(_Item, "LeaderLib_ItemLevel", _Level)
-	ItemEvent(_Item, "LeaderLib_Commands_AutoLevelItem")
 ELSE
-	//If we couldn't get the level stat for some reason, go by the character's level instead.
-	ItemEvent(_Item, "LeaderLib_Commands_AutoLevelItem")
+	//If we couldn't get the level stat for some reason, it'll default to the character's level.
 ENDIF
+	ItemEvent(_Item, "LeaderLib_Commands_AutoLevelItem")
 
 EVENT LeaderLib_AutoLevelItems_Single
 VARS

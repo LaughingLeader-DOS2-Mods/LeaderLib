@@ -27,7 +27,7 @@ NOT DB_LLLIB_Growth_Items_Temp_FoundItem(_Character)
 AND
 CharacterFindTaggedItem(_Character, "LeaderLib_AutoLevel", _Item)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:HasAutoLevelItem(CharacterFindTaggedItem)] Found tagged item.");
+LeaderLog_Log("TRACE", "[LeaderLib:Growth:Items:HasAutoLevelItem(CharacterFindTaggedItem)] Found tagged item.");
 DB_LLLIB_Growth_Items_Temp_FoundItem(_Character);
 
 //Equipment doesn't return with `CharacterFindTaggedItem`
@@ -44,7 +44,7 @@ CharacterGetEquippedItem(_Character, _Slot, _Item)
 AND
 IsTagged(_Item, "LeaderLib_AutoLevel", 1)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:HasAutoLevelItem] Found tagged equipment in slot [",_Slot,"].");
+LeaderLog_Log("TRACE", "[LeaderLib:Growth:Items:HasAutoLevelItem] Found tagged equipment in slot [",_Slot,"].");
 DB_LLLIB_Growth_Items_Temp_FoundItem(_Character);
 
 QRY
@@ -59,7 +59,7 @@ CharacterLeveledUp(_Character)
 AND
 LeaderLib_Growth_Items_QRY_HasAutoLevelItem(_Character)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:CharacterLeveledUp] Leveling up character equipment.");
+LeaderLog_Log("TRACE", "[LeaderLib:Growth:Items:CharacterLeveledUp] Leveling up character equipment.");
 SetStoryEvent(_Character, "LeaderLib_Events_AutoLevelItems_Start");
 
 //Equipment doesn't work with `IterateItemsInInventory`

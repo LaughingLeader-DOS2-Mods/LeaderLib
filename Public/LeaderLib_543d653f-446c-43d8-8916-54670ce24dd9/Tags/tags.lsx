@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <save>
-    <header version="2" time="1531172424" />
+    <header version="2" time="1531792919" />
     <version major="3" minor="1" revision="8" build="0" />
     <region id="Tags">
         <node id="root">
@@ -58,7 +58,7 @@
                     </children>
                 </node>
                 <node id="Tag">
-                    <attribute id="Description" value="Generated items after they&apos;ve been registered for the first time." type="23" />
+                    <attribute id="Description" value="Generates items after they&apos;ve been registered for the first time." type="23" />
                     <attribute id="Name" value="LeaderLib_Trader_GenerateOnNewlyRegistered" type="23" />
                     <children>
                         <node id="Categories">

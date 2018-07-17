@@ -18,6 +18,11 @@ LeaderLib_Requirements_Add_FlagRequirement("LLLIB_DebugLevel_NotChestRequirement
 //LLLIB_DebugLevel_TreasureStressTest();
 
 IF
+GameStarted("LeaderLib_TestLevel", 1)
+THEN
+GlobalSetFlag("LeaderLog_Trace_Enabled");
+
+IF
 CharacterUsedItem(_Char, ITEMGUID_LLLIB_Debug_TestLever1_81a66e97-515d-4786-be33-8a9cadae23f7)
 THEN
 CharacterItemSetEvent(_Char, ITEMGUID_LLLIB_Debug_TestLever1_81a66e97-515d-4786-be33-8a9cadae23f7, "LLLIB_Events_Debug_TestPressurePlate1");

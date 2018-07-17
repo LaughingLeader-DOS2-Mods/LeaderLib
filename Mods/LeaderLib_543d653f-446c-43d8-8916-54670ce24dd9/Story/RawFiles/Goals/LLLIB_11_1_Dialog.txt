@@ -90,10 +90,8 @@ LLLIB_Dialog_QRY_Internal_OldVersion("0.9.1.0")
 THEN
 DB_NOOP(1);
 
-IF
-StoryEvent(_, "LeaderUpdater_ModVersionsChanged")
-AND
-DB_LeaderUpdater_Temp_PastRegistered("LeaderLib", "LaughingLeader", _Version)
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", _Version)
 AND
 LLLIB_Dialog_QRY_Internal_OldVersion(_Version)
 THEN

@@ -238,15 +238,16 @@ IF
 StoryEvent(_, "LeaderLib_Initialized")
 AND
 LeaderUpdater_QRY_ModVersionsChanged()
+AND
+DB_LeaderUpdater_Temp_PastRegistered(_ModName, _Author, _Version)
 THEN
-LeaderLib_SendEvent("LeaderUpdater_ModVersionsChanged");
-TimerLaunch("LeaderLib_Timers_ClearPastModVersions", 1000);
+LeaderUpdater_ModUpdated(_ModName, _Author, _Version);
+NOT DB_LeaderUpdater_Temp_PastRegistered(_ModName, _Author, _Version);
 
-IF
-TimerFinished("LeaderLib_Timers_ClearPastModVersions")
+PROC
+LeaderUpdater_ModUpdated((STRING)_ModName, (STRING)_Author, (STRING)_PastVersion)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:LeaderUpdater:ClearPastModVersions] Clearing past mod versions database.");
-SysClear("DB_LeaderUpdater_Temp_PastRegistered", 3);
+DB_NOOP(1);
 //END_REGION
 
 //REGION UNINSTALLING

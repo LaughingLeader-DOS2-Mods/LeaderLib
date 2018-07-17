@@ -34,6 +34,8 @@ DB_LLLIB_Growth_Items_Temp_FoundItem(_Character);
 QRY
 LeaderLib_Growth_Items_QRY_HasAutoLevelItem((CHARACTERGUID)_Character)
 AND
+NOT DB_LLLIB_Growth_Items_Temp_FoundItem(_Character)
+AND
 DB_LLLIB_EquipmentSlots(_Slot)
 AND
 NOT DB_LLLIB_Growth_Items_Temp_FoundItem(_Character)

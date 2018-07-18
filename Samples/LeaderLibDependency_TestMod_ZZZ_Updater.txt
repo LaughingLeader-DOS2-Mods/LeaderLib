@@ -9,10 +9,18 @@ KBSECTION
 IF
 GameStarted(_,_)
 AND
-LeaderUpdater_QRY_ModUpdateNeeded("MyModName", "Username", "1.0.0.0")
+LeaderUpdater_QRY_ModUpdateNeeded("MyModName", "Author", "1.0.0.0")
 THEN
-LeaderUpdater_Register_Mod("MyModName", "Username", "1.0.0.0");
-LeaderLib_SendEvent("MyMod_Events_UpdateSettings");
+LeaderUpdater_Register_Mod("MyModName", "Author", "1.0.0.0");
+
+/*
+PROC
+LeaderUpdater_ModUpdated("MyModName", "Author", _PastVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 0, 0, 0)
+THEN
+LeaderLog_Log("SYSTEM", "[MyModName:Updater] Updated MyModName from version [",_PastVersion,"] to [1.0.0.0].");
+*/
 //END_REGION
 EXITSECTION
 

@@ -2,9 +2,9 @@ Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
 //DB_LeaderLog_Temp_CombinedString(_CombinedStr)
-//DB_LeaderLog_Temp_NextLogTarget(_Player)
-//DB_LeaderLog_Temp_TargetOnce(_Player)
-//DB_LeaderLog_Temp_NextStatusColor(_Player, _Color, _Size)
+//DB_LeaderLog_Temp_NextLogTarget(_Target)
+//DB_LeaderLog_Temp_TargetOnce(_Target)
+//DB_LeaderLog_Temp_NextStatusColor(_Target, _Color, _Size)
 //DB_LeaderLog_Temp_RealString(_ID, _Str)
 //DB_LeaderLog_Temp_RealString(_ID, _Str1, _Str2)
 //DB_LeaderLog_Temp_RealString(_ID, _Str1, _Str2, _Str3)
@@ -125,62 +125,72 @@ DB_NOOP(1);
 
 //REGION PLAYER_LOG_TARGETING
 QRY
-LeaderLog_QRY_SetTarget((CHARACTERGUID)_Player)
+LeaderLog_QRY_SetTarget((GUIDSTRING)_Target)
 THEN
-LeaderLog_SetTarget(_Player);
+LeaderLog_SetTarget(_Target);
 
 PROC
-LeaderLog_SetTarget((CHARACTERGUID)_Player)
+LeaderLog_SetTarget((GUIDSTRING)_Target)
 AND
-NOT DB_LeaderLog_Temp_NextLogTarget(_Player)
+NOT DB_LeaderLog_Temp_NextLogTarget(_Target)
 THEN
-DB_LeaderLog_Temp_NextLogTarget(_Player);
+DB_LeaderLog_Temp_NextLogTarget(_Target);
 
 QRY
-LeaderLog_QRY_SetOneshotTarget((CHARACTERGUID)_Player)
+LeaderLog_QRY_SetOneshotTarget((GUIDSTRING)_Target)
 THEN
-LeaderLog_SetOneshotTarget(_Player);
+LeaderLog_SetOneshotTarget(_Target);
 
 PROC
-LeaderLog_SetOneshotTarget((CHARACTERGUID)_Player)
+LeaderLog_SetOneshotTarget((GUIDSTRING)_Target)
 THEN
-LeaderLog_SetTarget(_Player);
-DB_LeaderLog_Temp_TargetOnce(_Player);
+LeaderLog_SetTarget(_Target);
+DB_LeaderLog_Temp_TargetOnce(_Target);
 
 PROC
-LeaderLog_Internal_ClearTargetIfOneshot((CHARACTERGUID)_Player)
+LeaderLog_Internal_ClearTargetIfOneshot((GUIDSTRING)_Target)
 AND
-DB_LeaderLog_Temp_NextLogTarget(_Player)
+DB_LeaderLog_Temp_NextLogTarget(_Target)
 AND
-DB_LeaderLog_Temp_TargetOnce(_Player)
+DB_LeaderLog_Temp_TargetOnce(_Target)
 THEN
-NOT DB_LeaderLog_Temp_NextLogTarget(_Player);
+NOT DB_LeaderLog_Temp_NextLogTarget(_Target);
 
 PROC
-LeaderLog_Internal_ClearTargetIfOneshot((CHARACTERGUID)_Player)
+LeaderLog_Internal_ClearTargetIfOneshot((GUIDSTRING)_Target)
 AND
-DB_LeaderLog_Temp_TargetOnce(_Player)
+DB_LeaderLog_Temp_TargetOnce(_Target)
 THEN
-NOT DB_LeaderLog_Temp_TargetOnce(_Player);
+NOT DB_LeaderLog_Temp_TargetOnce(_Target);
 //END_REGION
 
 //REGION COLOR
 PROC
-LeaderLog_SetNextStatusColor((CHARACTERGUID)_Player, (STRING)_Color)
+LeaderLog_SetNextStatusColor((GUIDSTRING)_Target, (STRING)_Color)
 THEN
-LeaderLog_SetNextStatusColor(_Player, _Color, "20");
+LeaderLog_SetNextStatusColor(_Target, _Color, "20");
+
+QRY
+LeaderLog_QRY_SetNextStatusColor((GUIDSTRING)_Target, (STRING)_Color)
+THEN
+LeaderLog_SetNextStatusColor(_Target, _Color);
 
 PROC
-LeaderLog_SetNextStatusColor((CHARACTERGUID)_Player, (STRING)_Color, (STRING)_Size)
+LeaderLog_SetNextStatusColor((GUIDSTRING)_Target, (STRING)_Color, (STRING)_Size)
 THEN
-DB_LeaderLog_Temp_NextStatusColor(_Player, _Color, _Size);
+DB_LeaderLog_Temp_NextStatusColor(_Target, _Color, _Size);
+
+QRY
+LeaderLog_QRY_SetNextStatusColor((GUIDSTRING)_Target, (STRING)_Color, (STRING)_Size)
+THEN
+LeaderLog_SetNextStatusColor(_Target, _Color, _Size);
 
 PROC
-LeaderLog_ClearStatusColor((CHARACTERGUID)_Player)
+LeaderLog_ClearStatusColor((GUIDSTRING)_Target)
 AND
-DB_LeaderLog_Temp_NextStatusColor(_Player, _Color, _Size)
+DB_LeaderLog_Temp_NextStatusColor(_Target, _Color, _Size)
 THEN
-NOT DB_LeaderLog_Temp_NextStatusColor(_Player, _Color, _Size);
+NOT DB_LeaderLog_Temp_NextStatusColor(_Target, _Color, _Size);
 //END_REGION
 
 //REGION LOGGING
@@ -469,21 +479,21 @@ LeaderLog_Internal_RunString((STRING)_Type, (STRING)_Str)
 AND
 LeaderLog_QRY_IsStatusType(_Type)
 AND
-DB_LeaderLog_Temp_NextLogTarget(_Player)
+DB_LeaderLog_Temp_NextLogTarget(_Target)
 AND
-NOT DB_LeaderLog_Temp_NextStatusColor(_Player, _, _)
+NOT DB_LeaderLog_Temp_NextStatusColor(_Target, _, _)
 THEN
-CharacterStatusText(_Player, _Str);
-LeaderLog_Internal_ClearTargetIfOneshot(_Player);
+LeaderLog_Internal_DisplayStatusText(_Target, _Str);
+LeaderLog_Internal_ClearTargetIfOneshot(_Target);
 
 PROC
 LeaderLog_Internal_RunString((STRING)_Type, (STRING)_Str)
 AND
 LeaderLog_QRY_IsStatusType(_Type)
 AND
-DB_LeaderLog_Temp_NextLogTarget(_Player)
+DB_LeaderLog_Temp_NextLogTarget(_Target)
 AND
-DB_LeaderLog_Temp_NextStatusColor(_Player, _Color, _Size)
+DB_LeaderLog_Temp_NextStatusColor(_Target, _Color, _Size)
 AND
 StringConcatenate("<font color='", _Color, _ColorStr1)
 AND
@@ -497,9 +507,38 @@ StringConcatenate(_ColorStr4, _Str, _ColorStr5)
 AND
 StringConcatenate(_ColorStr5, "</font>", _ColorStr6)
 THEN
-CharacterStatusText(_Player, _ColorStr6);
-NOT DB_LeaderLog_Temp_NextStatusColor(_Player, _Color, _Size);
-LeaderLog_Internal_ClearTargetIfOneshot(_Player);
+LeaderLog_Internal_DisplayStatusText(_Target, _ColorStr6);
+NOT DB_LeaderLog_Temp_NextStatusColor(_Target, _Color, _Size);
+LeaderLog_Internal_ClearTargetIfOneshot(_Target);
+
+PROC
+LeaderLog_Internal_DisplayStatusText((GUIDSTRING)_Target, (STRING)_Str)
+AND
+ObjectIsCharacter(_Target, 1)
+THEN
+CharacterStatusText((CHARACTERGUID)_Target, _Str);
+
+//Use the behavior script version of StatusText, since it supports items
+PROC
+LeaderLog_Internal_DisplayStatusText((GUIDSTRING)_Target, (STRING)_Str)
+AND
+ObjectIsCharacter(_Target, 0)
+AND
+ObjectIsItem(_Target, 1)
+THEN
+SetVarFixedString(_Target, "LeaderLog_Internal_StatusText", _Str);
+SetStoryEvent(_Target, "LeaderLog_Commands_DisplayStatusText");
+
+PROC
+LeaderLog_Internal_DisplayStatusText((GUIDSTRING)_Target, (STRING)_Str)
+AND
+ObjectIsCharacter(_Target, 0)
+AND
+ObjectIsItem(_Target, 0)
+AND
+StringConcatenate("[LeaderLog:ERROR] No valid target set! | ", _Str, _Msg)
+THEN
+LeaderLog_Internal_RunString("DEBUG", _Msg);
 
 PROC
 LeaderLog_Internal_RunString((STRING)_Type, (STRING)_Str)
@@ -513,11 +552,25 @@ LeaderLog_Internal_RunString((STRING)_Type, (STRING)_Str)
 AND
 _Type == "COMBAT"
 AND
-DB_LeaderLog_Temp_NextLogTarget(_Player)
+NOT DB_LeaderLog_Temp_NextLogTarget(_)
+AND
+LeaderLib_Events_QRY_GetEventParser()
+AND
+DB_LeaderLib_EventParser(_EventParser)
 THEN
-SetVarFixedString(_Player, "LeaderLog_CombatLogText", _Str);
-SetStoryEvent(_Player, "LeaderLib_Commands_LogToCombatLog");
-LeaderLog_Internal_ClearTargetIfOneshot(_Player);
+SetVarFixedString(_EventParser, "LeaderLog_CombatLogText", _Str);
+SetStoryEvent(_EventParser, "LeaderLib_Commands_LogToCombatLog");
+
+PROC
+LeaderLog_Internal_RunString((STRING)_Type, (STRING)_Str)
+AND
+_Type == "COMBAT"
+AND
+DB_LeaderLog_Temp_NextLogTarget(_Target)
+THEN
+SetVarFixedString(_Target, "LeaderLog_CombatLogText", _Str);
+SetStoryEvent(_Target, "LeaderLib_Commands_LogToCombatLog");
+LeaderLog_Internal_ClearTargetIfOneshot(_Target);
 
 PROC
 LeaderLog_Internal_RunString((STRING)_Type, (STRING)_Str)
@@ -667,54 +720,81 @@ LeaderLog_RealToIntToString(_ID, _a, _b, _c);
 
 //REGION REAL_TO_STRING
 PROC
-LeaderLog_RealToString((CHARACTERGUID)_Char, (REAL)_Num, (STRING)_CompletionEvent)
+LeaderLog_RealToString((GUIDSTRING)_Target, (REAL)_Num, (STRING)_CompletionEvent)
 THEN
-SetVarFloat(_Char, "LeaderLog_RealValue", _Num);
-SetVarString(_Char, "LeaderLog_RealToString_CompletionEvent", _CompletionEvent);
-SetStoryEvent(_Char, "LeaderLog_Commands_RealToString");
+SetVarFloat(_Target, "LeaderLog_RealValue", _Num);
+SetVarString(_Target, "LeaderLog_RealToString_CompletionEvent", _CompletionEvent);
+SetStoryEvent(_Target, "LeaderLog_Commands_RealToString");
+
+QRY
+LeaderLog_QRY_RealToString((GUIDSTRING)_Target, (REAL)_Num, (STRING)_CompletionEvent)
+THEN
+LeaderLog_RealToString(_Target, _Num, _CompletionEvent);
 
 PROC
 LeaderLog_RealToString((REAL)_Num, (STRING)_CompletionEvent)
 AND
-LLLIB_QRY_EventParser_GlobalParserExists()
+LeaderLib_Events_QRY_GetEventParser()
+AND
+DB_LeaderLib_EventParser(_EventParser)
 THEN
-SetVarFloat(S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, "LeaderLog_RealValue", _Num);
-SetVarString(S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, "LeaderLog_RealToString_CompletionEvent", _CompletionEvent);
-SetStoryEvent(S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, "LeaderLog_Commands_RealToString");
+SetVarFloat(_EventParser, "LeaderLog_RealValue", _Num);
+SetVarString(_EventParser, "LeaderLog_RealToString_CompletionEvent", _CompletionEvent);
+SetStoryEvent(_EventParser, "LeaderLog_Commands_RealToString");
+
+QRY
+LeaderLog_QRY_RealToString((REAL)_Num, (STRING)_CompletionEvent)
+THEN
+LeaderLog_RealToString(_Num, _CompletionEvent);
 
 PROC
 LeaderLog_RealToString((REAL)_Num)
 AND
-LLLIB_QRY_EventParser_GlobalParserExists()
+LeaderLib_Events_QRY_GetEventParser()
+AND
+DB_LeaderLib_EventParser(_EventParser)
 THEN
-SetVarFloat(S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, "LeaderLog_RealValue", _Num);
-SetVarString(S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, "LeaderLog_RealToString_CompletionEvent", "LeaderLog_OnRealConverted");
-SetStoryEvent(S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, "LeaderLog_Commands_RealToString");
+SetVarFloat(_EventParser, "LeaderLog_RealValue", _Num);
+SetVarString(_EventParser, "LeaderLog_RealToString_CompletionEvent", "LeaderLog_Events_OnRealConverted");
+SetStoryEvent(_EventParser, "LeaderLog_Commands_RealToString");
+
+QRY
+LeaderLog_QRY_RealToString((REAL)_Num)
+THEN
+LeaderLog_RealToString(_Num);
+
+//Default event, if not set
+IF
+StoryEvent(_Target, "LeaderLog_Events_OnRealConverted")
+AND
+GetVarString(_Target, "LeaderLog_RealString", _Str)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLog:LeaderLog_Events_OnRealConverted] Real value: [",_Str,"].");
 //END_REGION
 
 //REGION FLAG_LOGS
 PROC
-LeaderLog_PrintFlag((CHARACTERGUID)_Player, (STRING)_FlagName1, (INTEGER)_FlagVal1)
+LeaderLog_PrintFlag((GUIDSTRING)_Target, (STRING)_FlagName1, (INTEGER)_FlagVal1)
 AND
 LeaderLog_QRY_LogTypeEnabled("PRINT")
 AND
 IntegertoString(_FlagVal1, _FlagVal1Str)
 THEN
-LeaderLog_SetTarget(_Player);
+LeaderLog_SetTarget(_Target);
 LeaderLog_Log("PRINT", "[LeaderLog:PrintFlag] ", _FlagName1, " = ", _FlagVal1Str);
 
 PROC
-LeaderLog_LogFlag((CHARACTERGUID)_Player, (STRING)_FlagName1, (INTEGER)_FlagVal1)
+LeaderLog_LogFlag((GUIDSTRING)_Target, (STRING)_FlagName1, (INTEGER)_FlagVal1)
 AND
 LeaderLog_QRY_LogTypeEnabled("COMBAT")
 AND
 IntegertoString(_FlagVal1, _FlagVal1Str)
 THEN
-LeaderLog_SetTarget(_Player);
+LeaderLog_SetTarget(_Target);
 LeaderLog_Log("COMBAT", "[LeaderLog:LogFlag] ", _FlagName1, " = ", _FlagVal1Str);
 
 PROC
-LeaderLog_LogFlag((CHARACTERGUID)_Player, (STRING)_FlagName1, (INTEGER)_FlagVal1, (STRING)_FlagName2, (INTEGER)_FlagVal2)
+LeaderLog_LogFlag((GUIDSTRING)_Target, (STRING)_FlagName1, (INTEGER)_FlagVal1, (STRING)_FlagName2, (INTEGER)_FlagVal2)
 AND
 LeaderLog_QRY_LogTypeEnabled("COMBAT")
 AND
@@ -722,7 +802,7 @@ IntegertoString(_FlagVal1, _FlagVal1Str)
 AND
 IntegertoString(_FlagVal2, _FlagVal2Str)
 THEN
-LeaderLog_SetTarget(_Player);
+LeaderLog_SetTarget(_Target);
 LeaderLog_Log("COMBAT", "[LeaderLog:LogFlag] ", _FlagName1, " = ", _FlagVal1Str, " | ", _FlagName2, " = ", _FlagVal2Str);
 //END_REGION
 
@@ -752,25 +832,25 @@ THEN
 NOT DB_LeaderLog_Temp_CombinedString(_CombinedStr);
 
 PROC
-LeaderLog_ClearTarget((CHARACTERGUID)_Player)
+LeaderLog_ClearTarget((GUIDSTRING)_Target)
 AND
-DB_LeaderLog_Temp_NextLogTarget(_Player)
+DB_LeaderLog_Temp_NextLogTarget(_Target)
 THEN
-NOT DB_LeaderLog_Temp_NextLogTarget(_Player);
+NOT DB_LeaderLog_Temp_NextLogTarget(_Target);
+
+PROC
+LeaderLog_QRY_ClearTarget((GUIDSTRING)_Target)
+THEN
+LeaderLog_ClearTarget(_Target);
 
 PROC
 LeaderLog_ClearAllTargets()
 AND
-DB_LeaderLog_Temp_NextLogTarget(_Player)
+DB_LeaderLog_Temp_NextLogTarget(_Target)
 THEN
-NOT DB_LeaderLog_Temp_NextLogTarget(_Player);
+NOT DB_LeaderLog_Temp_NextLogTarget(_Target);
 
-PROC
-LeaderLog_QRY_ClearTarget((CHARACTERGUID)_Player)
-THEN
-LeaderLog_ClearTarget(_Player);
-
-PROC
+QRY
 LeaderLog_QRY_ClearAllTargets()
 THEN
 LeaderLog_ClearAllTargets();

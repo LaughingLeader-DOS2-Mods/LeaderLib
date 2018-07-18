@@ -98,7 +98,7 @@ THEN
 	ENDIF
 ENDIF
 
-EVENT LeaderLog_CombatLog
+EVENT LeaderLog_CombatLog_Character
 VARS
 	CHARACTER:_Character
 	FIXEDSTRING:_Text
@@ -113,22 +113,83 @@ THEN
 	CharacterEvent(_Character, "LeaderLib_Events_OnCombatLog")
 ENDIF
 
-EVENT LeaderLog_RealToString
+EVENT LeaderLog_CombatLog_Item
 VARS
-	CHARACTER:_Character
+	ITEM:_Item
+	FIXEDSTRING:_Text
+ON
+	OnItemEvent(_Item, "LeaderLib_Commands_LogToCombatLog")
+ACTIONS
+IF "c1"
+	GetVar(_Text, _Item, "LeaderLog_CombatLogText")
+THEN
+	DisplayCombatInfoText(_Item, _Text, 0.0)
+	DisplayText(_Item, "", 0.0)
+	ItemEvent(_Item, "LeaderLib_Events_OnCombatLog")
+ENDIF
+
+EVENT LeaderLog_DisplayStatusText_Character
+VARS
+	CHARACTER:_Target
+	FIXEDSTRING:_Text
+ON
+	OnCharacterEvent(_Target, "LeaderLog_Commands_DisplayStatusText")
+ACTIONS
+IF "c1"
+	GetVar(_Text, _Target, "LeaderLog_Internal_StatusText")
+THEN
+	StatusText(_Target, _Text)
+	SetVar(_Target, "LeaderLog_Internal_StatusText", FIXEDSTRING:"")
+ENDIF
+
+EVENT LeaderLog_DisplayStatusText_Item
+VARS
+	ITEM:_Target
+	FIXEDSTRING:_Text
+ON
+	OnItemEvent(_Target, "LeaderLog_Commands_DisplayStatusText")
+ACTIONS
+IF "c1"
+	GetVar(_Text, _Target, "LeaderLog_Internal_StatusText")
+THEN
+	StatusText(_Target, _Text)
+	SetVar(_Target, "LeaderLog_Internal_StatusText", FIXEDSTRING:"")
+ENDIF
+
+EVENT LeaderLog_RealToString_Target
+VARS
+	CHARACTER:_Target
 	FLOAT:_RealVal
 	STRING:_Str
 	STRING:_CompletionEvent
 ON
-	OnCharacterEvent(_Character, "LeaderLog_Commands_RealToString")
+	OnCharacterEvent(_Target, "LeaderLog_Commands_RealToString")
 ACTIONS
 IF "c1&c2"
-	GetVar(_RealVal, _Character, "LeaderLog_RealValue")
-	GetVar(_CompletionEvent, _Character, "LeaderLog_RealToString_CompletionEvent")
+	GetVar(_RealVal, _Target, "LeaderLog_RealValue")
+	GetVar(_CompletionEvent, _Target, "LeaderLog_RealToString_CompletionEvent")
 THEN
 	Print(_Str, "[1]", _RealVal)
-	SetVar(_Character, "LeaderLog_RealString", _Str)
-	CharacterEvent(_Character, _CompletionEvent)
+	SetVar(_Target, "LeaderLog_RealString", _Str)
+	CharacterEvent(_Target, _CompletionEvent)
+ENDIF
+
+EVENT LeaderLog_RealToString_Item
+VARS
+	ITEM:_Target
+	FLOAT:_RealVal
+	STRING:_Str
+	STRING:_CompletionEvent
+ON
+	OnItemEvent(_Target, "LeaderLog_Commands_RealToString")
+ACTIONS
+IF "c1&c2"
+	GetVar(_RealVal, _Target, "LeaderLog_RealValue")
+	GetVar(_CompletionEvent, _Target, "LeaderLog_RealToString_CompletionEvent")
+THEN
+	Print(_Str, "[1]", _RealVal)
+	SetVar(_Target, "LeaderLog_RealString", _Str)
+	ItemEvent(_Target, _CompletionEvent)
 ENDIF
 
 EVENT LeaderLib_AutoLevelItems_Start

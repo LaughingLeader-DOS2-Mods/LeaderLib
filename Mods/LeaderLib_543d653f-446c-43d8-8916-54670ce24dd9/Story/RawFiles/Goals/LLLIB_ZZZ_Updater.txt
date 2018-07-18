@@ -58,11 +58,20 @@ LLLIB_Updater_ClearOutdatedDatabases();
 IF
 GameStarted(_,_)
 AND
-LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", "0.9.2.0")
+LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", "0.9.3.0")
 THEN
-LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Updating LeaderLib to version [0.9.2.0].");
-LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", "0.9.2.0");
+LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Updating LeaderLib to latest version.");
+LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", "0.9.3.0");
 LeaderLib_SendEvent("LeaderLib_Events_Internal_OnUpdateSettings");
+
+/*
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", _PastVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 0, 9, 3, 0)
+THEN
+LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Updated LeaderLib from version [",_PastVersion,"] to [0.9.3.0].");
+*/
 //END_REGION
 
 //REGION UNINSTALLING

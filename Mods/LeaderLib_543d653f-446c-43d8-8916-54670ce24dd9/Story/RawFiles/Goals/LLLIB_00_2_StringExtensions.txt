@@ -2,7 +2,7 @@ Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
 //DB_LLLIB_Codex(_Index, _Char)
-//DB_LLLIB_Codex_Iterator(_Index)
+//DB_LLLIB_Codex_Iterator(_Index, _IndexStr)
 /*STRING_COMPARISON*/
 //DB_LLLIB_StringLength(_Str, _Length)
 //DB_LLLIB_StringCompare_Results(_Str1, _Str2, _Val)
@@ -267,7 +267,7 @@ LeaderLib_StringExt_Internal_DetermineStringLength(_Str);
 PROC
 LeaderLib_StringExt_Internal_DetermineStringLength((STRING)_Str)
 AND
-DB_LLLIB_Codex_Iterator(_Index)
+DB_LLLIB_Codex_Iterator(_Index, _)
 AND
 StringSub(_Str, _Index, 1, _Char)
 AND
@@ -334,7 +334,7 @@ DB_LLLIB_StringExt_Temp_IteratorBuilder(_Str, _NextIndex);
 LeaderLib_StringExt_Internal_BuildIterator(_Str);
 //END_REGION
 
-//REGION VERSION_STRING
+//REGION VERSION_STRING_PARSING
 QRY
 LeaderLib_StringExt_QRY_IsVersionString((STRING)_Str)
 AND
@@ -431,7 +431,7 @@ StringSub(_Str, 0, _Index, _Major)
 AND
 IntegertoString(_Index, _IndexStr)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:StringExt:Version_FoundPeriod] Setting _MajorIndex to [",_IndexStr,"].");
+LeaderLog_Log("TRACE", "[LeaderLib:StringExt:Version_FoundPeriod] Setting _MajorIndex to [",_IndexStr,"].");
 DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, "", "", "");
 DB_LLLIB_StringExt_Temp_Version_Index(_Str, _Index, -1, -1, -1);
 
@@ -456,7 +456,7 @@ StringSub(_Str, _MinorStartIndex, _Count, _Minor)
 AND
 IntegertoString(_Index, _IndexStr)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:StringExt:Version_FoundPeriod] Setting _MinorIndex to [",_IndexStr,"].");
+LeaderLog_Log("TRACE", "[LeaderLib:StringExt:Version_FoundPeriod] Setting _MinorIndex to [",_IndexStr,"].");
 NOT DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _PastMinor, _Revision, _Build);
 NOT DB_LLLIB_StringExt_Temp_Version_Index(_Str, _MajorIndex, _MinorIndex, _RevisionIndex, _BuildIndex);
 DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _Minor, _Revision, _Build);
@@ -483,7 +483,7 @@ StringSub(_Str, _RevStartIndex, _Count, _Revision)
 AND
 IntegertoString(_Index, _IndexStr)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:StringExt:Version_FoundPeriod] Setting _RevisionIndex to [",_IndexStr,"].");
+LeaderLog_Log("TRACE", "[LeaderLib:StringExt:Version_FoundPeriod] Setting _RevisionIndex to [",_IndexStr,"].");
 NOT DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _Minor, _PastRevision, _Build);
 NOT DB_LLLIB_StringExt_Temp_Version_Index(_Str, _MajorIndex, _MinorIndex, _RevisionIndex, _BuildIndex);
 DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _Minor, _Revision, _Build);
@@ -517,19 +517,22 @@ IntegertoString(_BuildStartIndex, _IndexStr)
 AND
 IntegertoString(_Count, _CountStr)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:StringExt:Version_GetBuild] Setting _BuildIndex to [",_IndexStr,"] with a count of [",_CountStr,"].");
+LeaderLog_Log("TRACE", "[LeaderLib:StringExt:Version_GetBuild] Setting _BuildIndex to [",_IndexStr,"] with a count of [",_CountStr,"].");
 NOT DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _Minor, _Revision, _PastBuild);
 NOT DB_LLLIB_StringExt_Temp_Version_Index(_Str, _MajorIndex, _MinorIndex, _RevisionIndex, _BuildIndex);
 DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _Minor, _Revision, _Build);
 DB_LLLIB_StringExt_Temp_Version_Index(_Str, _MajorIndex, _MinorIndex, _RevisionIndex, _Length);
 DB_LLLIB_StringExt_Temp_Version_Complete(_Str);
 
+/*
+Keep this so we don't have to repeat the same process
 PROC
 LeaderLib_StringExt_ClearPreviousVersionData((STRING)_Str)
 AND
 DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _Minor, _Revision, _Build)
 THEN
 NOT DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _Minor, _Revision, _Build);
+*/
 
 PROC
 LeaderLib_StringExt_ClearPreviousVersionData((STRING)_Str)
@@ -551,6 +554,107 @@ AND
 DB_LLLIB_StringExt_Temp_Version_Complete(_Str)
 THEN
 NOT DB_LLLIB_StringExt_Temp_Version_Complete(_Str);
+//END_REGION
+
+//REGION VERSION_COMPARISON
+QRY
+LeaderLib_StringExt_Internal_QRY_VersionNotSupported((INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherBuild, (INTEGER)_OtherRevision)
+AND
+_OtherMajor > 256
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_StringExt_Internal_QRY_VersionNotSupported((INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherBuild, (INTEGER)_OtherRevision)
+AND
+_OtherMinor > 256
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_StringExt_Internal_QRY_VersionNotSupported((INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherBuild, (INTEGER)_OtherRevision)
+AND
+_OtherBuild > 256
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_StringExt_Internal_QRY_VersionNotSupported((INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherBuild, (INTEGER)_OtherRevision)
+AND
+_OtherRevision > 256
+THEN
+DB_NOOP(1);
+
+// No numbers over 256!
+QRY
+LeaderLib_StringExt_QRY_VersionIsLessThan((STRING)_Version, (INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherBuild, (INTEGER)_OtherRevision)
+AND
+LeaderLib_StringExt_QRY_ProcessVersionString(_Version)
+AND
+DB_LLLIB_StringExt_Temp_Version_String(_Version, _MajorStr, _MinorStr, _RevisionStr, _BuildStr)
+AND
+DB_LLLIB_Codex_Iterator(_Major, _MajorStr)
+AND
+DB_LLLIB_Codex_Iterator(_Minor, _MinorStr)
+AND
+DB_LLLIB_Codex_Iterator(_Revision, _RevisionStr)
+AND
+DB_LLLIB_Codex_Iterator(_Build, _BuildStr)
+AND
+LeaderLib_StringExt_Internal_QRY_VersionIsLessThan(_Major, _Minor, _Revision, _Build, _OtherMajor, _OtherMinor, _OtherBuild, _OtherRevision)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_StringExt_QRY_VersionIsLessThan((STRING)_Version, (INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherBuild, (INTEGER)_OtherRevision)
+AND
+LeaderLib_StringExt_Internal_QRY_VersionNotSupported(_OtherMajor, _OtherMinor, _OtherBuild, _OtherRevision)
+AND
+LeaderLog_QRY_Log("DEBUG", "[LeaderLib:StringExt:VersionIsLessThan(QRY)] Numbers above 256 are not supported! Sorry!")
+AND
+DB_LLLIB_Codex(999999999999, _NonExistentString) // Need this query to return false
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_StringExt_Internal_QRY_VersionIsLessThan((INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Build, (INTEGER)_Revision, (INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherBuild, (INTEGER)_OtherRevision)
+AND
+_Major < _OtherMajor
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_StringExt_Internal_QRY_VersionIsLessThan((INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Build, (INTEGER)_Revision, (INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherBuild, (INTEGER)_OtherRevision)
+AND
+_Major <= _OtherMajor
+AND
+_Minor < _OtherMinor
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_StringExt_Internal_QRY_VersionIsLessThan((INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Build, (INTEGER)_Revision, (INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherBuild, (INTEGER)_OtherRevision)
+AND
+_Major <= _OtherMajor
+AND
+_Minor <= _OtherMinor
+AND
+_Build < _OtherBuild
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_StringExt_Internal_QRY_VersionIsLessThan((INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Build, (INTEGER)_Revision, (INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherBuild, (INTEGER)_OtherRevision)
+AND
+_Major <= _OtherMajor
+AND
+_Minor <= _OtherMinor
+AND
+_Build <= _OtherBuild
+AND
+_Revision < _OtherRevision
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION UPDATER

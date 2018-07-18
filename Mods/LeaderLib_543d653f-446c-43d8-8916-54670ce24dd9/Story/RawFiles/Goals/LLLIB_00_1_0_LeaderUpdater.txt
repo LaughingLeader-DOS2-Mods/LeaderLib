@@ -143,6 +143,15 @@ AND
 NOT LeaderUpdater_QRY_ModIsActive(_ModID, _Author)
 THEN
 LeaderLib_SendEvent(_NotActiveEvent);
+
+QRY
+LeaderUpdater_QRY_RegisteredVersionIsLessThan((STRING)_ModID, (STRING)_Author, (INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherBuild, (INTEGER)_OtherRevision)
+AND
+DB_Mods_Registered(_ModID, _Author, _Version)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_Version, _OtherMajor, _OtherMinor, _OtherBuild, _OtherRevision)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION RESET
@@ -236,8 +245,6 @@ DB_NOOP(1);
 
 IF
 StoryEvent(_, "LeaderLib_Initialized")
-AND
-LeaderUpdater_QRY_ModVersionsChanged()
 AND
 DB_LeaderUpdater_Temp_PastRegistered(_ModID, _Author, _Version)
 THEN

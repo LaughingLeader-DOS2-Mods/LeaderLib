@@ -2,7 +2,7 @@ Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
 //DB_LLLIB_Codex(_Index, _Char)
-//DB_LLLIB_Codex_Iterator(_Index)
+//DB_LLLIB_Codex_Iterator(_Index, _IndexStr)
 /*Input*/
 //DB_LLLIB_DictionarySort_Temp_StringQueue(_DictionaryID, _ID, _StringEntry)
 /*Sorting Vars*/

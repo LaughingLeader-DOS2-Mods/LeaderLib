@@ -33,11 +33,11 @@ CharacterSetAnimationOverride(_Target, _Anim);
 IF
 TextEventSet(_Event)
 AND
-GetTextEventParamString(1, "leaderlib_stopanims")
+GetTextEventParamString(1, "leaderlib_animstop")
 AND
 GetTextEventParamUUID(1, (CHARACTERGUID)_Target)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_stopanims] fired. Clearing animation override.");
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_animstop] fired. Clearing animation override.");
 CharacterSetAnimationOverride(_Target, "");
 
 IF
@@ -65,13 +65,13 @@ LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib
 CharacterSetAnimationOverride(_Player, _Anim);
 
 IF
-TextEventSet("leaderlib_stopanims")
+TextEventSet("leaderlib_animstop")
 AND
 DB_IsPlayer(_Player)
 AND
 CharacterIsControlled(_Player, 1)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_stopanims] fired. Clearing animation override on controlled character.");
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_animstop] fired. Clearing animation override on controlled character.");
 CharacterSetAnimationOverride(_Player, "");
 //END_REGION
 

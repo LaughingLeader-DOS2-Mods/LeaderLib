@@ -558,36 +558,23 @@ NOT DB_LLLIB_StringExt_Temp_Version_Complete(_Str);
 
 //REGION VERSION_COMPARISON
 QRY
-LeaderLib_StringExt_Internal_QRY_VersionNotSupported((INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherBuild, (INTEGER)_OtherRevision)
+LeaderLib_StringExt_Internal_QRY_VersionSupported((INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherBuild, (INTEGER)_OtherRevision)
 AND
-_OtherMajor > 256
-THEN
-DB_NOOP(1);
-
-QRY
-LeaderLib_StringExt_Internal_QRY_VersionNotSupported((INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherBuild, (INTEGER)_OtherRevision)
+_OtherMajor <= 256
 AND
-_OtherMinor > 256
-THEN
-DB_NOOP(1);
-
-QRY
-LeaderLib_StringExt_Internal_QRY_VersionNotSupported((INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherBuild, (INTEGER)_OtherRevision)
+_OtherMinor <= 256
 AND
-_OtherBuild > 256
-THEN
-DB_NOOP(1);
-
-QRY
-LeaderLib_StringExt_Internal_QRY_VersionNotSupported((INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherBuild, (INTEGER)_OtherRevision)
+_OtherBuild <= 256
 AND
-_OtherRevision > 256
+_OtherRevision <= 256
 THEN
 DB_NOOP(1);
 
 // No numbers over 256!
 QRY
 LeaderLib_StringExt_QRY_VersionIsLessThan((STRING)_Version, (INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherBuild, (INTEGER)_OtherRevision)
+AND
+LeaderLib_StringExt_Internal_QRY_VersionSupported(_OtherMajor, _OtherMinor, _OtherBuild, _OtherRevision)
 AND
 LeaderLib_StringExt_QRY_ProcessVersionString(_Version)
 AND
@@ -602,17 +589,6 @@ AND
 DB_LLLIB_Codex_Iterator(_Build, _BuildStr)
 AND
 LeaderLib_StringExt_Internal_QRY_VersionIsLessThan(_Major, _Minor, _Revision, _Build, _OtherMajor, _OtherMinor, _OtherBuild, _OtherRevision)
-THEN
-DB_NOOP(1);
-
-QRY
-LeaderLib_StringExt_QRY_VersionIsLessThan((STRING)_Version, (INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherBuild, (INTEGER)_OtherRevision)
-AND
-LeaderLib_StringExt_Internal_QRY_VersionNotSupported(_OtherMajor, _OtherMinor, _OtherBuild, _OtherRevision)
-AND
-LeaderLog_QRY_Log("DEBUG", "[LeaderLib:StringExt:VersionIsLessThan(QRY)] Numbers above 256 are not supported! Sorry!")
-AND
-DB_LLLIB_Codex(999999999999, _NonExistentString) // Need this query to return false
 THEN
 DB_NOOP(1);
 

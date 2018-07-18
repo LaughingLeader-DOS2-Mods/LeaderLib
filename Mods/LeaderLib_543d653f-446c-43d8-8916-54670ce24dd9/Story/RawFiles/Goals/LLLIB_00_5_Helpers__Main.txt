@@ -250,7 +250,7 @@ NOT DB_LeaderLib_Helper_Temp_HighestLevelInParty(_PartyMember, _HighestLevel);
 DB_LeaderLib_Helper_Temp_HighestLevelInParty(_PartyMember, _Level);
 //END_REGION
 
-//REGION
+//REGION QUERY_USER
 QRY
 LeaderLib_Helper_QRY_UserMatch((CHARACTERGUID)_Char1, (CHARACTERGUID)_Char2)
 AND
@@ -498,6 +498,21 @@ AND
 _AddVal > 0
 THEN
 CharacterAddAttribute(_CopyTo, _Attribute, _AddVal);
+
+IF
+CharacterCharacterEvent(((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom, "LeaderLib_Commands_CopyStats")
+THEN
+LeaderLib_Helper_CopyStats(_CopyTo, _CopyFrom);
+
+IF
+CharacterCharacterEvent(((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom, "LeaderLib_Commands_CopyAbilities")
+THEN
+LeaderLib_Helper_CopyAbilities(_CopyTo, _CopyFrom);
+
+IF
+CharacterCharacterEvent(((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom, "LeaderLib_Commands_CopyAttributes")
+THEN
+LeaderLib_Helper_CopyAttributes(_CopyTo, _CopyFrom);
 //END_REGION
 
 //REGION TIMER_HELPERS

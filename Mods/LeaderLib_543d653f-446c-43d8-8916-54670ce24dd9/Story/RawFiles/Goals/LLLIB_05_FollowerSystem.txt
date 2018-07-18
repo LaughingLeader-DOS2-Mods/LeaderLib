@@ -260,9 +260,14 @@ LeaderLib_Helper_QRY_ClearObjectFlag(_Follower, "LeaderLib_RecruitFollower")
 AND
 DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
 THEN
-CharacterCharacterSetEvent(_Player, _Follower, "LeaderLib_PlayerIsRecruitingCharacter"); // Pre-recruitment
-//Delay so other scripts can level the character up, since player followers seem immune to the CharacterLevelUp/CharacterLevelUpTo call.
-LeaderLib_StartCharacterCharacterTimer(_Player, _Follower, 250, "LeaderLib_Timers_RecruitFollowerDelayTimer_", "LeaderLib_Follower_RecruitDelayTimerEnded");
+CharacterCharacterSetEvent(_Player, _Follower, "LeaderLib_Commands_RecruitFollower");
+
+IF
+CharacterCharacterEvent(_Owner, _Follower, "LeaderLib_Commands_RecruitFollower")
+THEN
+CharacterCharacterSetEvent(_Owner, _Follower, "LeaderLib_PlayerIsRecruitingCharacter"); // Pre-recruitment
+//Delay so other scripts can level the character up, since player followers seem resistant to the CharacterLevelUp/CharacterLevelUpTo call.
+LeaderLib_StartCharacterCharacterTimer(_Owner, _Follower, 250, "LeaderLib_Timers_RecruitFollowerDelayTimer_", "LeaderLib_Follower_RecruitDelayTimerEnded");
 
 IF
 CharacterCharacterEvent(_Player, _Follower, "LeaderLib_Follower_RecruitDelayTimerEnded")
@@ -273,6 +278,13 @@ IF
 ObjectFlagSet("LeaderLib_DismissFollower", (CHARACTERGUID)_Follower, _Instance)
 AND
 LeaderLib_Helper_QRY_ClearObjectFlag(_Follower, "LeaderLib_DismissFollower")
+AND
+DB_LLLIB_PartyFollower(_Owner, _Follower)
+THEN
+LeaderLib_Follower_DismissCharacterFromOwner(_Owner, _Follower);
+
+IF
+CharacterCharacterEvent(_Owner, _Follower, "LeaderLib_Commands_DismissFollower")
 AND
 DB_LLLIB_PartyFollower(_Owner, _Follower)
 THEN
@@ -291,9 +303,28 @@ ObjectSetFlag(_Follower, "LeaderLib_CharacterIsFollowing");
 ObjectSetFlag(_Follower, "LeaderLib_IsFollowingSpeaker");
 
 IF
+StoryEvent((CHARACTERGUID)_Follower, "LeaderLib_Commands_FollowOwner")
+AND
+DB_LLLIB_PartyFollower(_Owner, _Follower)
+THEN
+CharacterAttachToGroup(_Follower, _Owner);
+ObjectSetFlag(_Follower, "LeaderLib_CharacterIsFollowing");
+ObjectSetFlag(_Follower, "LeaderLib_IsFollowingSpeaker");
+
+IF
 ObjectFlagSet("LeaderLib_StopFollowingSpeaker", (CHARACTERGUID)_Follower, _Instance)
 AND
 LeaderLib_Helper_QRY_ClearObjectFlag(_Follower, "LeaderLib_StopFollowingSpeaker")
+THEN
+ProcCharacterStopFollow(_Follower);
+CharacterDetachFromGroup(_Follower);
+ObjectClearFlag(_Follower, "LeaderLib_CharacterIsFollowing");
+ObjectClearFlag(_Follower, "LeaderLib_IsFollowingSpeaker");
+
+IF
+StoryEvent((CHARACTERGUID)_Follower, "LeaderLib_Commands_StopFollowingOwner")
+AND
+DB_LLLIB_PartyFollower(_Owner, _Follower)
 THEN
 ProcCharacterStopFollow(_Follower);
 CharacterDetachFromGroup(_Follower);

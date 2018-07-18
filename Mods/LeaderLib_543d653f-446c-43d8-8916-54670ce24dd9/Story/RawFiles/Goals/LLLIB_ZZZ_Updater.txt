@@ -43,9 +43,9 @@ LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Databases cleared and re-initialize
 PROC
 LLLIB_Updater_ClearOutdatedDatabases()
 AND
-DB_Registered_Mod((STRING)_ModName, (STRING)_Version, "LaughingLeader")
+DB_Registered_Mod((STRING)_ModID, (STRING)_Version, "LaughingLeader")
 THEN
-NOT DB_Registered_Mod(_ModName, _Version, "LaughingLeader");
+NOT DB_Registered_Mod(_ModID, _Version, "LaughingLeader");
 //END_REGION
 
 //REGION UPDATE_EVENT

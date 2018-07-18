@@ -5,7 +5,7 @@ INITSECTION
 //DB_LeaderLib_ModApi_AddItemToLeaderTrader(_Template, _Amount)
 //DB_LeaderLib_ModApi_AddBookToLeaderTrader(_Template, _Amount)
 //DB_LeaderLib_ModApi_SendEvent(_EventName)
-//DB_LeaderLib_ModApi_RegisterMod(_ModName, _Version, _Author)
+//DB_LeaderLib_ModApi_RegisterMod(_ModID, _Version, _Author)
 
 //DB_LeaderLib_ModApi_Log_SetTarget(_Target)
 //DB_LeaderLib_ModApi_Log_ClearTarget(_Target)
@@ -38,59 +38,59 @@ LeaderLog_Log("TRACE", "[LeaderLib:ModAPI] Databases registered.");
 //REGION DB_MODAPI
 /*LeaderUpdater Registering*/
 IF
-DB_LeaderLib_ModApi_RegisterMod((STRING)_ModName, (STRING)_Author, (STRING)_Version)
+DB_LeaderLib_ModApi_RegisterMod((STRING)_ModID, (STRING)_Author, (STRING)_Version)
 THEN
-LeaderUpdater_Register_Mod(_ModName, _Author, _Version);
-NOT DB_LeaderLib_ModApi_RegisterMod(_ModName, _Author, _Version);
+LeaderUpdater_Register_Mod(_ModID, _Author, _Version);
+NOT DB_LeaderLib_ModApi_RegisterMod(_ModID, _Author, _Version);
 
 IF
-DB_LeaderLib_ModApi_RegisterMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModName, (STRING)_Author)
+DB_LeaderLib_ModApi_RegisterMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModID, (STRING)_Author)
 THEN
-LeaderLib_Register_ModMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
-NOT DB_LeaderLib_ModApi_RegisterMenu(_ID, _DisplayName, _Dialog, _ModName, _Author);
+LeaderLib_Register_ModMenu(_ID, _DisplayName, _Dialog, _ModID, _Author);
+NOT DB_LeaderLib_ModApi_RegisterMenu(_ID, _DisplayName, _Dialog, _ModID, _Author);
 
 IF
-DB_LeaderLib_ModApi_RegisterActiveGoal((STRING)_ModName, (STRING)_Author, (STRING)_GoalTitle)
+DB_LeaderLib_ModApi_RegisterActiveGoal((STRING)_ModID, (STRING)_Author, (STRING)_GoalTitle)
 THEN
-LeaderUpdater_Register_ActiveGoal(_ModName, _Author, _GoalTitle);
-NOT DB_LeaderLib_ModApi_RegisterActiveGoal(_ModName, _Author, _GoalTitle);
+LeaderUpdater_Register_ActiveGoal(_ModID, _Author, _GoalTitle);
+NOT DB_LeaderLib_ModApi_RegisterActiveGoal(_ModID, _Author, _GoalTitle);
 
 IF
-DB_LeaderLib_ModApi_RegisterDatabase((STRING)_ModName, (STRING)_Author, (STRING)_ReferenceName, (STRING)_DatabaseName, (INTEGER)_Arity)
+DB_LeaderLib_ModApi_RegisterDatabase((STRING)_ModID, (STRING)_Author, (STRING)_ReferenceName, (STRING)_DatabaseName, (INTEGER)_Arity)
 THEN
-LeaderUpdater_Register_Database(_ModName, _Author, _ReferenceName, _DatabaseName, _Arity);
-NOT DB_LeaderLib_ModApi_RegisterDatabase(_ModName, _Author, _ReferenceName, _DatabaseName, _Arity);
+LeaderUpdater_Register_Database(_ModID, _Author, _ReferenceName, _DatabaseName, _Arity);
+NOT DB_LeaderLib_ModApi_RegisterDatabase(_ModID, _Author, _ReferenceName, _DatabaseName, _Arity);
 
 IF
-DB_LeaderLib_ModApi_RegisterGoal((STRING)_ModName, (STRING)_Author, (STRING)_GoalTitle)
+DB_LeaderLib_ModApi_RegisterGoal((STRING)_ModID, (STRING)_Author, (STRING)_GoalTitle)
 THEN
-LeaderUpdater_Register_Goal(_ModName, _Author, _GoalTitle);
-NOT DB_LeaderLib_ModApi_RegisterGoal(_ModName, _Author, _GoalTitle);
+LeaderUpdater_Register_Goal(_ModID, _Author, _GoalTitle);
+NOT DB_LeaderLib_ModApi_RegisterGoal(_ModID, _Author, _GoalTitle);
 
 /*Clear Commands*/
 IF
-DB_LeaderLib_ModApi_ClearRegisteredModVersions((STRING)_ModName, (STRING)_Author)
+DB_LeaderLib_ModApi_ClearRegisteredModVersions((STRING)_ModID, (STRING)_Author)
 THEN
-LeaderUpdater_Clear_RegisteredModVersions(_ModName, _Author);
-NOT DB_LeaderLib_ModApi_ClearRegisteredModVersions(_ModName, _Author);
+LeaderUpdater_Clear_RegisteredModVersions(_ModID, _Author);
+NOT DB_LeaderLib_ModApi_ClearRegisteredModVersions(_ModID, _Author);
 
 IF
-DB_LeaderLib_ModApi_ClearActiveGoals((STRING)_ModName, (STRING)_Author)
+DB_LeaderLib_ModApi_ClearActiveGoals((STRING)_ModID, (STRING)_Author)
 THEN
-LeaderUpdater_Clear_ActiveGoals(_ModName, _Author);
-NOT DB_LeaderLib_ModApi_ClearActiveGoals(_ModName, _Author);
+LeaderUpdater_Clear_ActiveGoals(_ModID, _Author);
+NOT DB_LeaderLib_ModApi_ClearActiveGoals(_ModID, _Author);
 
 IF
-DB_LeaderLib_ModApi_SysClearAllDatabases((STRING)_ModName, (STRING)_Author)
+DB_LeaderLib_ModApi_SysClearAllDatabases((STRING)_ModID, (STRING)_Author)
 THEN
-LeaderUpdater_SysClear_AllDatabases(_ModName, _Author);
-NOT DB_LeaderLib_ModApi_SysClearAllDatabases(_ModName, _Author);
+LeaderUpdater_SysClear_AllDatabases(_ModID, _Author);
+NOT DB_LeaderLib_ModApi_SysClearAllDatabases(_ModID, _Author);
 
 IF
-DB_LeaderLib_ModApi_ResetAllGoals((STRING)_ModName, (STRING)_Author)
+DB_LeaderLib_ModApi_ResetAllGoals((STRING)_ModID, (STRING)_Author)
 THEN
-LeaderUpdater_Reset_AllGoals(_ModName, _Author);
-NOT DB_LeaderLib_ModApi_ResetAllGoals(_ModName, _Author);
+LeaderUpdater_Reset_AllGoals(_ModID, _Author);
+NOT DB_LeaderLib_ModApi_ResetAllGoals(_ModID, _Author);
 
 /*Misc Commands*/
 IF
@@ -112,10 +112,10 @@ LLLIB_EventParser_Internal_RunEvent(_EventName);
 NOT DB_LeaderLib_ModApi_SendEvent(_EventName);
 
 IF
-DB_LeaderLib_ModApi_ModIsActive((STRING)_ModName, (STRING)_Author, (STRING)_ActiveEvent, (STRING)_InactiveEvent)
+DB_LeaderLib_ModApi_ModIsActive((STRING)_ModID, (STRING)_Author, (STRING)_ActiveEvent, (STRING)_InactiveEvent)
 THEN
-LeaderUpdater_CheckIfModIsActive(_ModName, _Author, _ActiveEvent, _InactiveEvent);
-NOT DB_LeaderLib_ModApi_ModIsActive(_ModName, _Author, _ActiveEvent, _InactiveEvent);
+LeaderUpdater_CheckIfModIsActive(_ModID, _Author, _ActiveEvent, _InactiveEvent);
+NOT DB_LeaderLib_ModApi_ModIsActive(_ModID, _Author, _ActiveEvent, _InactiveEvent);
 
 /*Sorting*/
 IF

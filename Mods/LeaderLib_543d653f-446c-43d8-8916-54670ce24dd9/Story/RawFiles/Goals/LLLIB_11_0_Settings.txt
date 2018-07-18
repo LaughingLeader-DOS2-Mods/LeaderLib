@@ -7,7 +7,7 @@ LLLIB_Settings_InitSettings();
 //DB_LLLIB_Settings_DialogVariables(_VariableName, _VariableValue)
 //DB_LLLIB_Settings_QueueRates(_ReferenceName, _TickRate, _TimeoutRate)
 //DB_LLLIB_Settings_Temp_RegisteredModsList(_Str)
-//DB_LLLIB_Settings_Temp_ActiveModText(_ModName, _Author, _Str)
+//DB_LLLIB_Settings_Temp_ActiveModText(_ModID, _Author, _Str)
 KBSECTION
 //REGION SETTINGS
 PROC
@@ -148,9 +148,9 @@ LLLIB_Settings_BuildModList();
 PROC
 LLLIB_Settings_BuildModList()
 AND
-DB_LLLIB_Settings_Temp_ActiveModText(_ModName, _Author, _Str)
+DB_LLLIB_Settings_Temp_ActiveModText(_ModID, _Author, _Str)
 THEN
-NOT DB_LLLIB_Settings_Temp_ActiveModText(_ModName, _Author, _Str);
+NOT DB_LLLIB_Settings_Temp_ActiveModText(_ModID, _Author, _Str);
 
 PROC
 LLLIB_Settings_BuildModList()
@@ -160,42 +160,42 @@ THEN
 DB_LLLIB_Settings_Temp_RegisteredModsList("");
 
 QRY
-LLLIB_Settings_QRY_SetActiveText((STRING)_ModName, (STRING)_Author)
+LLLIB_Settings_QRY_SetActiveText((STRING)_ModID, (STRING)_Author)
 AND
-LeaderUpdater_QRY_ModRegisteredActiveGoal(_ModName, _Author)
+LeaderUpdater_QRY_ModRegisteredActiveGoal(_ModID, _Author)
 AND
-LeaderUpdater_QRY_ModIsActive(_ModName, _Author)
+LeaderUpdater_QRY_ModIsActive(_ModID, _Author)
 THEN
-DB_LLLIB_Settings_Temp_ActiveModText(_ModName, _Author, " <b>(Active)</b>");
+DB_LLLIB_Settings_Temp_ActiveModText(_ModID, _Author, " <b>(Active)</b>");
 
 QRY
-LLLIB_Settings_QRY_SetActiveText((STRING)_ModName, (STRING)_Author)
+LLLIB_Settings_QRY_SetActiveText((STRING)_ModID, (STRING)_Author)
 AND
-LeaderUpdater_QRY_ModRegisteredActiveGoal(_ModName, _Author)
+LeaderUpdater_QRY_ModRegisteredActiveGoal(_ModID, _Author)
 AND
-NOT LeaderUpdater_QRY_ModIsActive(_ModName, _Author)
+NOT LeaderUpdater_QRY_ModIsActive(_ModID, _Author)
 THEN
-DB_LLLIB_Settings_Temp_ActiveModText(_ModName, _Author, " <b>(Deactivated)</b>");
+DB_LLLIB_Settings_Temp_ActiveModText(_ModID, _Author, " <b>(Deactivated)</b>");
 
 QRY
-LLLIB_Settings_QRY_SetActiveText((STRING)_ModName, (STRING)_Author)
+LLLIB_Settings_QRY_SetActiveText((STRING)_ModID, (STRING)_Author)
 AND
-NOT LeaderUpdater_QRY_ModRegisteredActiveGoal(_ModName, _Author)
+NOT LeaderUpdater_QRY_ModRegisteredActiveGoal(_ModID, _Author)
 THEN
-DB_LLLIB_Settings_Temp_ActiveModText(_ModName, _Author, " <b>(No Active Goal Registered)</b>");
+DB_LLLIB_Settings_Temp_ActiveModText(_ModID, _Author, " <b>(No Active Goal Registered)</b>");
 
 PROC
 LLLIB_Settings_BuildModList()
 AND
-DB_Mods_Registered(_ModName, _Author, _Version)
+DB_Mods_Registered(_ModID, _Author, _Version)
 AND
 DB_LLLIB_Settings_Temp_RegisteredModsList(_Str)
 AND
-StringConcatenate("<b>", _ModName, _NameStr)
+StringConcatenate("<b>", _ModID, _NameStr)
 AND
-LLLIB_Settings_QRY_SetActiveText(_ModName, _Author)
+LLLIB_Settings_QRY_SetActiveText(_ModID, _Author)
 AND
-DB_LLLIB_Settings_Temp_ActiveModText(_ModName, _Author, _ActiveStr)
+DB_LLLIB_Settings_Temp_ActiveModText(_ModID, _Author, _ActiveStr)
 AND
 LeaderLog_QRY_Log("COMBINE", _Str, _NameStr, "</b> (", _Version, ") by ",_Author, _ActiveStr, "<br>")
 AND
@@ -204,7 +204,7 @@ THEN
 NOT DB_LLLIB_Settings_Temp_RegisteredModsList(_Str);
 DB_LLLIB_Settings_Temp_RegisteredModsList(_CombinedStr);
 NOT DB_LeaderLog_Temp_CombinedString(_CombinedStr);
-NOT DB_LLLIB_Settings_Temp_ActiveModText(_ModName, _Author, _ActiveStr);
+NOT DB_LLLIB_Settings_Temp_ActiveModText(_ModID, _Author, _ActiveStr);
 
 PROC
 LLLIB_Settings_BuildModList()

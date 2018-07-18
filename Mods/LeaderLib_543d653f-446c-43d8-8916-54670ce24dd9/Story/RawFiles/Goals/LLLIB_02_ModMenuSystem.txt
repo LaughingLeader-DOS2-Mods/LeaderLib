@@ -12,7 +12,7 @@ LLLIB_ModMenu_InitSettings();
 
 //Dynamic
 //DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _Index, _ID, _DisplayName)
-//DB_LLLIB_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModName, _Author)
+//DB_LLLIB_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author)
 //DB_LLLIB_ModMenu_RegisteredMenu_OpenEvent(_ID, _OpenMenuEvent)
 //DB_LLLIB_ModMenu_CurrentPageIndex(_Player, _Page)
 //DB_LLLIB_ModMenu_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
@@ -23,12 +23,12 @@ LLLIB_ModMenu_InitSettings();
 KBSECTION
 //REGION MENU_REGISTERING
 PROC
-LeaderLib_Register_ModMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModName, (STRING)_Author)
+LeaderLib_Register_ModMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModID, (STRING)_Author)
 AND
 NOT DB_LLLIB_ModMenu_RegisteredMenuData(_ID,_,_,_,_)
 THEN
 LeaderLib_StringExt_DetermineStringLength(_DisplayName);
-DB_LLLIB_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModName, _Author);
+DB_LLLIB_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author);
 LLLIB_ModMenu_Internal_StartSortIfNeeded();
 
 /*
@@ -167,7 +167,7 @@ DB_NOOP(1);
 QRY
 LLLIB_ModMenu_QRY_SortNeeded()
 AND
-DB_LLLIB_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModName, _Author)
+DB_LLLIB_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author)
 AND
 NOT DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _, _ID, _)
 THEN
@@ -209,7 +209,7 @@ DB_LLLIB_ModMenu_SortTickRate(_TickRate);
 PROC
 LLLIB_ModMenu_StartSorting()
 AND
-DB_LLLIB_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModName, _Author)
+DB_LLLIB_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author)
 AND
 NOT DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _, _ID, _)
 AND
@@ -429,7 +429,7 @@ AND
 LLLIB_QRY_WordMenus_DisableMenuIfNotAvailable(_Player, _Index, _DisabledFlag)
 AND
 DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _Index, _ID, _DisplayName)
-//DB_LLLIB_ModMenu_RegisteredMenu(_Index, _ID, _DisplayName, _Dialog, _ModName, _Author)
+//DB_LLLIB_ModMenu_RegisteredMenu(_Index, _ID, _DisplayName, _Dialog, _ModID, _Author)
 AND
 NOT DB_LLLIB_MenuSettings_Temp_MenuVariableValue(_MenuIndex, _)
 THEN
@@ -493,11 +493,11 @@ LLLIB_QRY_WordMenus_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_
 AND
 DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _Index, _ID, _DisplayName)
 AND
-DB_LLLIB_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModName, _Author)
+DB_LLLIB_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author)
 AND
 ObjectGetFlag(_Player, _DisabledFlag, 0)
 AND
-NOT LeaderUpdater_QRY_ModIsActive(_ModName, _Author)
+NOT LeaderUpdater_QRY_ModIsActive(_ModID, _Author)
 THEN
 ObjectSetFlag(_Player, _DisabledFlag);
 
@@ -506,11 +506,11 @@ LLLIB_QRY_WordMenus_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_
 AND
 DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _Index, _ID, _DisplayName)
 AND
-DB_LLLIB_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModName, _Author)
+DB_LLLIB_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author)
 AND
 ObjectGetFlag(_Player, _DisabledFlag, 1)
 AND
-LeaderUpdater_QRY_ModIsActive(_ModName, _Author)
+LeaderUpdater_QRY_ModIsActive(_ModID, _Author)
 THEN
 ObjectClearFlag(_Player, _DisabledFlag);
 
@@ -571,7 +571,7 @@ DB_LLLIB_MenuSettings_Temp_MenuVariableValue(_MenuIndex, _ID)
 AND
 DB_LLLIB_Dictionary_Data("LLLIB_RegisteredMenus", _MenuIndex, _ID, _DisplayName)
 AND
-DB_LLLIB_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModName, _Author)
+DB_LLLIB_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author)
 THEN
 //LeaderLog_Log("DEBUG", "[LLLIB] Loading menu for ", _ID);
 LLLIB_ModMenu_SetNextMenu(_Player, _ID, _Dialog);

@@ -1,218 +1,218 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-//DB_Mods_Registered(_ModName, _Author, _Version)
-//DB_Mods_ActiveGoal(_ModName, _Author, _GoalTitle)
-//DB_LeaderUpdater_RegisteredDatabase(_ModName, _Author, _ReferenceName, _DatabaseName, _Arity)
-//DB_LeaderUpdater_RegisteredGoal(_ModName, _Author, _GoalTitle)
-//DB_LeaderUpdater_LastSavedSettings(_ModName, _Author, _SettingsID, _Version)
+//DB_Mods_Registered(_ModID, _Author, _Version)
+//DB_Mods_ActiveGoal(_ModID, _Author, _GoalTitle)
+//DB_LeaderUpdater_RegisteredDatabase(_ModID, _Author, _ReferenceName, _DatabaseName, _Arity)
+//DB_LeaderUpdater_RegisteredGoal(_ModID, _Author, _GoalTitle)
+//DB_LeaderUpdater_LastSavedSettings(_ModID, _Author, _SettingsID, _Version)
 KBSECTION
 //REGION REGISTERING
 PROC
-LeaderUpdater_Register_Mod((STRING)_ModName, (STRING)_Author, (STRING)_Version)
+LeaderUpdater_Register_Mod((STRING)_ModID, (STRING)_Author, (STRING)_Version)
 AND
-NOT DB_Mods_Registered(_ModName, _Author, _Version)
+NOT DB_Mods_Registered(_ModID, _Author, _Version)
 THEN
-LeaderUpdater_Clear_RegisteredModVersions(_ModName, _Author);
-DB_Mods_Registered(_ModName, _Author, _Version);
-LeaderLog_Log("DEBUG", "[LeaderUpdater:RegisterMod] Registered mod [",_ModName,"] by author [",_Author,"] with version [",_Version,"].");
+LeaderUpdater_Clear_RegisteredModVersions(_ModID, _Author);
+DB_Mods_Registered(_ModID, _Author, _Version);
+LeaderLog_Log("DEBUG", "[LeaderUpdater:RegisterMod] Registered mod [",_ModID,"] by author [",_Author,"] with version [",_Version,"].");
 
 PROC
-LeaderUpdater_Register_ActiveGoal((STRING)_ModName, (STRING)_Author, (STRING)_GoalTitle)
+LeaderUpdater_Register_ActiveGoal((STRING)_ModID, (STRING)_Author, (STRING)_GoalTitle)
 AND
-NOT DB_Mods_ActiveGoal(_ModName, _Author, _GoalTitle)
+NOT DB_Mods_ActiveGoal(_ModID, _Author, _GoalTitle)
 THEN
-DB_Mods_ActiveGoal(_ModName, _Author, _GoalTitle);
+DB_Mods_ActiveGoal(_ModID, _Author, _GoalTitle);
 
 PROC
-LeaderUpdater_Register_Database((STRING)_ModName, (STRING)_Author, (STRING)_ReferenceName, (STRING)_DatabaseName, (INTEGER)_Arity)
+LeaderUpdater_Register_Database((STRING)_ModID, (STRING)_Author, (STRING)_ReferenceName, (STRING)_DatabaseName, (INTEGER)_Arity)
 AND
-NOT DB_LeaderUpdater_RegisteredDatabase(_ModName, _Author, _, _DatabaseName, _Arity)
+NOT DB_LeaderUpdater_RegisteredDatabase(_ModID, _Author, _, _DatabaseName, _Arity)
 THEN
-DB_LeaderUpdater_RegisteredDatabase(_ModName, _Author, _ReferenceName, _DatabaseName, _Arity);
+DB_LeaderUpdater_RegisteredDatabase(_ModID, _Author, _ReferenceName, _DatabaseName, _Arity);
 
 PROC
-LeaderUpdater_Register_Goal((STRING)_ModName, (STRING)_Author, (STRING)_GoalTitle)
+LeaderUpdater_Register_Goal((STRING)_ModID, (STRING)_Author, (STRING)_GoalTitle)
 THEN
-DB_LeaderUpdater_RegisteredGoal(_ModName, _Author, _GoalTitle);
+DB_LeaderUpdater_RegisteredGoal(_ModID, _Author, _GoalTitle);
 //END_REGION
 
 //REGION CLEAR_REGISTERED
 PROC
-LeaderUpdater_Clear_RegisteredDatabase((STRING)_ModName, (STRING)_Author, (STRING)_DatabaseName)
+LeaderUpdater_Clear_RegisteredDatabase((STRING)_ModID, (STRING)_Author, (STRING)_DatabaseName)
 AND
-DB_LeaderUpdater_RegisteredDatabase(_ModName, _Author, _ReferenceName, _DatabaseName, _Arity)
+DB_LeaderUpdater_RegisteredDatabase(_ModID, _Author, _ReferenceName, _DatabaseName, _Arity)
 THEN
-NOT DB_LeaderUpdater_RegisteredDatabase(_ModName, _Author, _ReferenceName, _DatabaseName, _Arity);
+NOT DB_LeaderUpdater_RegisteredDatabase(_ModID, _Author, _ReferenceName, _DatabaseName, _Arity);
 
 PROC
-LeaderUpdater_Clear_RegisteredGoal((STRING)_ModName, (STRING)_Author, (STRING)_GoalTitle)
+LeaderUpdater_Clear_RegisteredGoal((STRING)_ModID, (STRING)_Author, (STRING)_GoalTitle)
 AND
-DB_LeaderUpdater_RegisteredGoal(_ModName, _Author, _GoalTitle)
+DB_LeaderUpdater_RegisteredGoal(_ModID, _Author, _GoalTitle)
 THEN
-NOT DB_LeaderUpdater_RegisteredGoal(_ModName, _Author, _GoalTitle);
+NOT DB_LeaderUpdater_RegisteredGoal(_ModID, _Author, _GoalTitle);
 //END_REGION
 
 //REGION VERSION_DATA
 PROC
-LeaderUpdater_SaveSettingsVersionData((STRING)_ModName, (STRING)_Author, (STRING)_SettingsID)
+LeaderUpdater_SaveSettingsVersionData((STRING)_ModID, (STRING)_Author, (STRING)_SettingsID)
 AND
-DB_LeaderUpdater_LastSavedSettings(_ModName, _Author, _SettingsID, _PastVersion)
+DB_LeaderUpdater_LastSavedSettings(_ModID, _Author, _SettingsID, _PastVersion)
 THEN
-NOT DB_LeaderUpdater_LastSavedSettings(_ModName, _Author, _SettingsID, _PastVersion);
+NOT DB_LeaderUpdater_LastSavedSettings(_ModID, _Author, _SettingsID, _PastVersion);
 
 /*Saves the current version for a particular SettingsID. Useful so newer settings, introduced in the current version, don't "update".*/
 PROC
-LeaderUpdater_SaveSettingsVersionData((STRING)_ModName, (STRING)_Author, (STRING)_SettingsID)
+LeaderUpdater_SaveSettingsVersionData((STRING)_ModID, (STRING)_Author, (STRING)_SettingsID)
 AND
-DB_Mods_Registered(_ModName, _Author, _Version)
+DB_Mods_Registered(_ModID, _Author, _Version)
 THEN
-DB_LeaderUpdater_LastSavedSettings(_ModName, _Author, _SettingsID, _Version);
+DB_LeaderUpdater_LastSavedSettings(_ModID, _Author, _SettingsID, _Version);
 
 QRY
-LeaderUpdater_QRY_SettingsNeedsUpdate((STRING)_ModName, (STRING)_Author, (STRING)_SettingsID)
+LeaderUpdater_QRY_SettingsNeedsUpdate((STRING)_ModID, (STRING)_Author, (STRING)_SettingsID)
 AND
-DB_LeaderUpdater_LastSavedSettings(_ModName, _Author, _SettingsID, _PastVersion)
+DB_LeaderUpdater_LastSavedSettings(_ModID, _Author, _SettingsID, _PastVersion)
 AND
-DB_Mods_Registered(_ModName, _Author, _Version)
+DB_Mods_Registered(_ModID, _Author, _Version)
 AND
 _PastVersion != _Version
 THEN
 DB_NOOP(1);
 
 QRY
-LeaderUpdater_QRY_SettingsNeedsUpdate((STRING)_ModName, (STRING)_Author, (STRING)_SettingsID)
+LeaderUpdater_QRY_SettingsNeedsUpdate((STRING)_ModID, (STRING)_Author, (STRING)_SettingsID)
 AND
-NOT DB_LeaderUpdater_LastSavedSettings(_ModName, _Author, _SettingsID, _)
+NOT DB_LeaderUpdater_LastSavedSettings(_ModID, _Author, _SettingsID, _)
 THEN
 DB_NOOP(1);
 //END_REGION
 
 //REGION QUERIES
 QRY
-LeaderUpdater_QRY_ModIsRegistered((STRING)_ModName, (STRING)_Author)
+LeaderUpdater_QRY_ModIsRegistered((STRING)_ModID, (STRING)_Author)
 AND
-DB_Mods_Registered(_ModName, _Author, _Version)
+DB_Mods_Registered(_ModID, _Author, _Version)
 THEN
 DB_NOOP(1);
 
 QRY
-LeaderUpdater_QRY_ModUpdateNeeded((STRING)_ModName, (STRING)_Author, (STRING)_Version)
+LeaderUpdater_QRY_ModUpdateNeeded((STRING)_ModID, (STRING)_Author, (STRING)_Version)
 AND
-NOT DB_Mods_Registered(_ModName, _Author, _Version)
+NOT DB_Mods_Registered(_ModID, _Author, _Version)
 THEN
 DB_NOOP(1);
 
 QRY
-LeaderUpdater_QRY_ModIsActive((STRING)_ModName, (STRING)_Author)
+LeaderUpdater_QRY_ModIsActive((STRING)_ModID, (STRING)_Author)
 AND
-DB_Mods_Registered(_ModName, _Author, _Version)
+DB_Mods_Registered(_ModID, _Author, _Version)
 AND
-DB_Mods_ActiveGoal(_ModName, _Author, _GoalTitle)
+DB_Mods_ActiveGoal(_ModID, _Author, _GoalTitle)
 AND
 SysIsActive(_GoalTitle)
 THEN
 DB_NOOP(1);
 
 QRY
-LeaderUpdater_QRY_ModRegisteredActiveGoal((STRING)_ModName, (STRING)_Author)
+LeaderUpdater_QRY_ModRegisteredActiveGoal((STRING)_ModID, (STRING)_Author)
 AND
-DB_Mods_ActiveGoal(_ModName, _Author, _GoalTitle)
+DB_Mods_ActiveGoal(_ModID, _Author, _GoalTitle)
 THEN
 DB_NOOP(1);
 
 QRY
-LeaderUpdater_QRY_ModVersionIsInWrongColumn((STRING)_ModName, (STRING)_Author)
+LeaderUpdater_QRY_ModVersionIsInWrongColumn((STRING)_ModID, (STRING)_Author)
 AND
-DB_Mods_Registered(_ModName, _Author, _Version)
+DB_Mods_Registered(_ModID, _Author, _Version)
 AND
 NOT LeaderLib_StringExt_QRY_IsVersionString(_Version)
 THEN
 DB_NOOP(1);
 
 PROC
-LeaderUpdater_CheckIfModIsActive((STRING)_ModName, (STRING)_Author, (STRING)_ActiveEvent, (STRING)_NotActiveEvent)
+LeaderUpdater_CheckIfModIsActive((STRING)_ModID, (STRING)_Author, (STRING)_ActiveEvent, (STRING)_NotActiveEvent)
 AND
-LeaderUpdater_QRY_ModIsActive(_ModName, _Author)
+LeaderUpdater_QRY_ModIsActive(_ModID, _Author)
 THEN
 LeaderLib_SendEvent(_ActiveEvent);
 
 PROC
-LeaderUpdater_CheckIfModIsActive((STRING)_ModName, (STRING)_Author, (STRING)_ActiveEvent, (STRING)_NotActiveEvent)
+LeaderUpdater_CheckIfModIsActive((STRING)_ModID, (STRING)_Author, (STRING)_ActiveEvent, (STRING)_NotActiveEvent)
 AND
-NOT LeaderUpdater_QRY_ModIsActive(_ModName, _Author)
+NOT LeaderUpdater_QRY_ModIsActive(_ModID, _Author)
 THEN
 LeaderLib_SendEvent(_NotActiveEvent);
 //END_REGION
 
 //REGION RESET
 PROC
-LeaderUpdater_Clear_RegisteredModVersions((STRING)_ModName, (STRING)_Author)
+LeaderUpdater_Clear_RegisteredModVersions((STRING)_ModID, (STRING)_Author)
 AND
-LeaderUpdater_QRY_ModIsRegistered(_ModName, _Author)
+LeaderUpdater_QRY_ModIsRegistered(_ModID, _Author)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderUpdater:RegisterMod] Removing registered versions of mod [",_ModName,"] by author [",_Author,"].");
+LeaderLog_Log("DEBUG", "[LeaderUpdater:RegisterMod] Removing registered versions of mod [",_ModID,"] by author [",_Author,"].");
 
 PROC
-LeaderUpdater_Clear_RegisteredModVersions((STRING)_ModName, (STRING)_Author)
+LeaderUpdater_Clear_RegisteredModVersions((STRING)_ModID, (STRING)_Author)
 AND
-DB_Mods_Registered(_ModName, _Author, _Version)
+DB_Mods_Registered(_ModID, _Author, _Version)
 THEN
-NOT DB_Mods_Registered(_ModName, _Author, _Version);
-DB_LeaderUpdater_Temp_PastRegistered(_ModName, _Author, _Version);
+NOT DB_Mods_Registered(_ModID, _Author, _Version);
+DB_LeaderUpdater_Temp_PastRegistered(_ModID, _Author, _Version);
 
 PROC
-LeaderUpdater_Clear_ActiveGoals((STRING)_ModName, (STRING)_Author)
+LeaderUpdater_Clear_ActiveGoals((STRING)_ModID, (STRING)_Author)
 AND
-DB_Mods_ActiveGoal(_ModName, _Author, _GoalTitle)
+DB_Mods_ActiveGoal(_ModID, _Author, _GoalTitle)
 THEN
-NOT DB_Mods_ActiveGoal(_ModName, _Author, _GoalTitle);
+NOT DB_Mods_ActiveGoal(_ModID, _Author, _GoalTitle);
 
 PROC
-LeaderUpdater_Clear_AllSavedSettings((STRING)_ModName, (STRING)_Author)
+LeaderUpdater_Clear_AllSavedSettings((STRING)_ModID, (STRING)_Author)
 AND
-DB_LeaderUpdater_LastSavedSettings(_ModName, _Author, _SettingsID, _Version)
+DB_LeaderUpdater_LastSavedSettings(_ModID, _Author, _SettingsID, _Version)
 THEN
-NOT DB_LeaderUpdater_LastSavedSettings(_ModName, _Author, _SettingsID, _Version);
+NOT DB_LeaderUpdater_LastSavedSettings(_ModID, _Author, _SettingsID, _Version);
 
 PROC
-LeaderUpdater_SysClear_AllDatabases((STRING)_ModName, (STRING)_Author)
+LeaderUpdater_SysClear_AllDatabases((STRING)_ModID, (STRING)_Author)
 AND
-DB_LeaderUpdater_RegisteredDatabase(_ModName, _Author, _GoalTitle, _DatabaseName, _Arity)
+DB_LeaderUpdater_RegisteredDatabase(_ModID, _Author, _GoalTitle, _DatabaseName, _Arity)
 THEN
 SysClear(_DatabaseName, _Arity);
 
 PROC
-LeaderUpdater_Clear_AllRegisteredDatabases((STRING)_ModName, (STRING)_Author)
+LeaderUpdater_Clear_AllRegisteredDatabases((STRING)_ModID, (STRING)_Author)
 AND
-DB_LeaderUpdater_RegisteredDatabase(_ModName, _Author, _ReferenceName, _DatabaseName, _Arity)
+DB_LeaderUpdater_RegisteredDatabase(_ModID, _Author, _ReferenceName, _DatabaseName, _Arity)
 THEN
-NOT DB_LeaderUpdater_RegisteredDatabase(_ModName, _Author, _ReferenceName, _DatabaseName, _Arity);
+NOT DB_LeaderUpdater_RegisteredDatabase(_ModID, _Author, _ReferenceName, _DatabaseName, _Arity);
 
 PROC
-LeaderUpdater_Reset_AllGoals((STRING)_ModName, (STRING)_Author)
+LeaderUpdater_Reset_AllGoals((STRING)_ModID, (STRING)_Author)
 AND
-DB_LeaderUpdater_RegisteredGoal(_ModName, _Author, _GoalTitle)
+DB_LeaderUpdater_RegisteredGoal(_ModID, _Author, _GoalTitle)
 AND
 SysIsCompleted(_GoalTitle)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderUpdater:Reset:AllGoals] Set goal [",_GoalTitle,"] to sleeping for mod [",_ModName,"] by author [",_Author,"].");
+LeaderLog_Log("DEBUG", "[LeaderUpdater:Reset:AllGoals] Set goal [",_GoalTitle,"] to sleeping for mod [",_ModID,"] by author [",_Author,"].");
 SysSetGoalSleeping(_GoalTitle);
 
 PROC
-LeaderUpdater_Clear_AllRegisteredData((STRING)_ModName, (STRING)_Author)
+LeaderUpdater_Clear_AllRegisteredData((STRING)_ModID, (STRING)_Author)
 THEN
-LeaderUpdater_SysClear_AllDatabases(_ModName, _Author);
-LeaderUpdater_Clear_AllRegisteredDatabases(_ModName, _Author);
-LeaderUpdater_Clear_ActiveGoals(_ModName, _Author);
-LeaderUpdater_Clear_RegisteredModVersions(_ModName, _Author);
+LeaderUpdater_SysClear_AllDatabases(_ModID, _Author);
+LeaderUpdater_Clear_AllRegisteredDatabases(_ModID, _Author);
+LeaderUpdater_Clear_ActiveGoals(_ModID, _Author);
+LeaderUpdater_Clear_RegisteredModVersions(_ModID, _Author);
 
 PROC
-LeaderUpdater_Clear_AllRegisteredData((STRING)_ModName, (STRING)_Author)
+LeaderUpdater_Clear_AllRegisteredData((STRING)_ModID, (STRING)_Author)
 AND
-DB_LeaderUpdater_RegisteredGoal(_ModName, _Author, _GoalTitle)
+DB_LeaderUpdater_RegisteredGoal(_ModID, _Author, _GoalTitle)
 THEN
-NOT DB_LeaderUpdater_RegisteredGoal(_ModName, _Author, _GoalTitle);
+NOT DB_LeaderUpdater_RegisteredGoal(_ModID, _Author, _GoalTitle);
 //END_REGION
 
 //REGION UPDATER
@@ -230,7 +230,7 @@ LeaderLog_Log("TRACE", "[LeaderLib:LeaderUpdater] Databases registered.");
 QRY
 LeaderUpdater_QRY_ModVersionsChanged()
 AND
-DB_LeaderUpdater_Temp_PastRegistered(_ModName, _Author, _Version)
+DB_LeaderUpdater_Temp_PastRegistered(_ModID, _Author, _Version)
 THEN
 DB_NOOP(1);
 
@@ -239,27 +239,27 @@ StoryEvent(_, "LeaderLib_Initialized")
 AND
 LeaderUpdater_QRY_ModVersionsChanged()
 AND
-DB_LeaderUpdater_Temp_PastRegistered(_ModName, _Author, _Version)
+DB_LeaderUpdater_Temp_PastRegistered(_ModID, _Author, _Version)
 THEN
-LeaderUpdater_ModUpdated(_ModName, _Author, _Version);
-NOT DB_LeaderUpdater_Temp_PastRegistered(_ModName, _Author, _Version);
+LeaderUpdater_ModUpdated(_ModID, _Author, _Version);
+NOT DB_LeaderUpdater_Temp_PastRegistered(_ModID, _Author, _Version);
 
 PROC
-LeaderUpdater_ModUpdated((STRING)_ModName, (STRING)_Author, (STRING)_PastVersion)
+LeaderUpdater_ModUpdated((STRING)_ModID, (STRING)_Author, (STRING)_PastVersion)
 THEN
 DB_NOOP(1);
 //END_REGION
 
 //REGION UNINSTALLING
 PROC
-LeaderUpdater_UnregisterMod((STRING)_ModName, (STRING)_Author)
+LeaderUpdater_UnregisterMod((STRING)_ModID, (STRING)_Author)
 AND
-DB_Mods_Registered(_ModName, _Author, _Version)
+DB_Mods_Registered(_ModID, _Author, _Version)
 THEN
-NOT DB_Mods_Registered(_ModName, _Author, _Version);
+NOT DB_Mods_Registered(_ModID, _Author, _Version);
 
 PROC
-LeaderUpdater_UninstallMod((STRING)_ModName, (STRING)_Author)
+LeaderUpdater_UninstallMod((STRING)_ModID, (STRING)_Author)
 THEN
 //Currently unimplemented
 DB_NOOP(1);

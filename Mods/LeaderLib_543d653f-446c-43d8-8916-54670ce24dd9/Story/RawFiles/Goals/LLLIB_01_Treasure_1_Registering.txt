@@ -308,15 +308,15 @@ DB_LLLIB_Treasure_TreasureTableItemEntryMode(_TreasureID, _TreasureTable, _IsEna
 //END_REGION
 
 //REGION INTERNAL_GENERATION_TYPES
-PROC
-LeaderLib_Treasure_Configure_DefaultGenerationType((STRING)_TreasureID, (STRING)_GenerationType)
+IF
+DB_LLLIB_Treasure_TreasureGenerationType(_TreasureID, _GenerationType)
 AND
 NOT DB_LLLIB_Treasure_RegisteredGenerationTypes(_GenerationType)
 THEN
 DB_LLLIB_Treasure_RegisteredGenerationTypes(_GenerationType);
 
-PROC
-LeaderLib_Treasure_Configure_GenerationType((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_GenerationType)
+IF
+DB_LLLIB_Treasure_ItemGenerationType(_TreasureID, _ItemEntry, _GenerationType)
 AND
 NOT DB_LLLIB_Treasure_RegisteredGenerationTypes(_GenerationType)
 THEN
@@ -326,6 +326,15 @@ PROC
 LLLIB_Treasure_RebuildRegisteredGenerationTypes()
 THEN
 SysClear("DB_LLLIB_Treasure_RegisteredGenerationTypes", 1);
+
+PROC
+LLLIB_Treasure_RebuildRegisteredGenerationTypes()
+AND
+DB_LLLIB_Treasure_TreasureGenerationType(_TreasureID, _GenerationType)
+AND
+NOT DB_LLLIB_Treasure_RegisteredGenerationTypes(_GenerationType)
+THEN
+DB_LLLIB_Treasure_RegisteredGenerationTypes(_GenerationType);
 
 PROC
 LLLIB_Treasure_RebuildRegisteredGenerationTypes()

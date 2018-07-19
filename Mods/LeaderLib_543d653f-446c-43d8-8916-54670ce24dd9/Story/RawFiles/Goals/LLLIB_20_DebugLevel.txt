@@ -151,30 +151,33 @@ LeaderLib_Trader_Register_Dialog("MyMod.Debug.TestTrader", "LLLIB_Debug_Trader")
 LeaderLib_Treasure_Register_TreasureToTrader("MyMod.Debug.TestTrader.InitialItems", "MyMod.Debug.TestTrader");
 LeaderLib_Treasure_Register_TreasureTable("MyMod.Debug.TestTrader.InitialItems", "TEST_Generation", "", 1);
 
+//Generation Type Config
+LeaderLib_Treasure_Configure_DefaultGenerationType("MyMod.Debug.TestTrader.InitialItems", "DIALOG_STARTED");
+
 //ItemStat / Rune Example
 LeaderLib_Treasure_Register_ItemStat("MyMod.Debug.TestTrader.InitialItems", "WPN_Cheat_Sword_1H_RuneSlot2", 2);
 LeaderLib_Treasure_Configure_ItemLevel("MyMod.Debug.TestTrader.InitialItems", "WPN_Cheat_Sword_1H_RuneSlot2", 1); // _UsePartyLevel = True (1)
-LeaderLib_Treasure_Configure_AddRune("MyMod.Debug.TestTrader.InitialItems", "WPN_Cheat_Sword_1H_RuneSlot2", "LOOT_Rune_Flame_Large_9ac874d8-a7e5-48b1-954a-b11b46f6f390", -1);
-LeaderLib_Treasure_Configure_AddRune("MyMod.Debug.TestTrader.InitialItems", "WPN_Cheat_Sword_1H_RuneSlot2", "LOOT_Rune_Masterwork_Small_8a53fce8-01b2-42e6-bdd5-1aa370d74eb6", -1);
-LeaderLib_Treasure_Configure_AddRune("MyMod.Debug.TestTrader.InitialItems", "WPN_Cheat_Sword_1H_RuneSlot2", "LOOT_Rune_Masterwork_Large_7e16d9af-6865-4f0f-a67a-144b8ef2da26", -1);
+LeaderLib_Treasure_Configure_AddDeltaMod("MyMod.Debug.TestTrader.InitialItems", "WPN_Cheat_Sword_1H_RuneSlot2", "Boost_Weapon_Rune_LOOT_Rune_Flame_Giant", 23);
+LeaderLib_Treasure_Configure_AddDeltaMod("MyMod.Debug.TestTrader.InitialItems", "WPN_Cheat_Sword_1H_RuneSlot2", "Boost_Weapon_Rune_LOOT_Rune_Masterwork_Giant", 75);
+LeaderLib_Treasure_Configure_AddDeltaMod("MyMod.Debug.TestTrader.InitialItems", "WPN_Cheat_Sword_1H_RuneSlot2", "Boost_Weapon_Rune_LOOT_Rune_Venom_Large", 61);
 
-LeaderLib_Treasure_Register_ItemTemplate("MyMod.Debug.TestTrader.InitialItems", "LOOT_MagicAmulet_Blue_6de34a88-3046-4fef-8933-b4f634d794ae", 1);
-LeaderLib_Treasure_Configure_AddRune("MyMod.Debug.TestTrader.InitialItems", "LOOT_MagicAmulet_Blue_6de34a88-3046-4fef-8933-b4f634d794ae", "LOOT_Rune_Masterwork_Large_7e16d9af-6865-4f0f-a67a-144b8ef2da26", -1);
+LeaderLib_Treasure_Register_ItemTemplate("MyMod.Debug.TestTrader.InitialItems", "LOOT_MagicAmulet_Blue_6de34a88-3046-4fef-8933-b4f634d794ae", 2);
+LeaderLib_Treasure_Configure_AddDeltaMod("MyMod.Debug.TestTrader.InitialItems", "LOOT_MagicAmulet_Blue_6de34a88-3046-4fef-8933-b4f634d794ae", "Boost_Armor_Amulet_Rune_LOOT_Rune_Thunder_Small", 75);
 
-LeaderLib_Treasure_Register_ItemTemplate("MyMod.Debug.TestTrader.InitialItems", "EQ_Armor_Chainmail_Upperbody_B_9ffce0ea-5d02-47fe-ae49-63b19b8f6f36", 1);
-LeaderLib_Treasure_Configure_AddRune("MyMod.Debug.TestTrader.InitialItems", "EQ_Armor_Chainmail_Upperbody_B_9ffce0ea-5d02-47fe-ae49-63b19b8f6f36", "LOOT_Rune_Masterwork_Large_7e16d9af-6865-4f0f-a67a-144b8ef2da26", -1);
+LeaderLib_Treasure_Register_ItemTemplate("MyMod.Debug.TestTrader.InitialItems", "EQ_Armor_Chainmail_Upperbody_B_9ffce0ea-5d02-47fe-ae49-63b19b8f6f36", 3);
+LeaderLib_Treasure_Configure_AddDeltaMod("MyMod.Debug.TestTrader.InitialItems", "EQ_Armor_Chainmail_Upperbody_B_9ffce0ea-5d02-47fe-ae49-63b19b8f6f36", "Boost_Armor_Amulet_Rune_LOOT_Rune_Masterwork_Giant", 41);
 
 //Item Template / Delta Mod Example
 LeaderLib_Treasure_Register_ItemTemplate("MyMod.Debug.TestTrader.InitialItems", "WPN_Common_Spear_2H_A_15b17f97-4354-4f6e-98e9-818f87fe95f7", 4);
 LeaderLib_Treasure_Configure_ItemLevel("MyMod.Debug.TestTrader.InitialItems", "WPN_Common_Spear_2H_A_15b17f97-4354-4f6e-98e9-818f87fe95f7", 0, 4, 8); // Will spawn anywhere from level 4 to 8
-LeaderLib_Treasure_Configure_AddDeltaMod("MyMod.Debug.TestTrader.InitialItems", "WPN_Common_Spear_2H_A_15b17f97-4354-4f6e-98e9-818f87fe95f7", "Boost_Weapon_Damage_ArmourPiercing_Small_Spear", -1);
-LeaderLib_Treasure_Configure_AddDeltaMod("MyMod.Debug.TestTrader.InitialItems", "WPN_Common_Spear_2H_A_15b17f97-4354-4f6e-98e9-818f87fe95f7", "Boost_Weapon_Primary_Finesse_Medium", -1);
-LeaderLib_Treasure_Configure_AddDeltaMod("MyMod.Debug.TestTrader.InitialItems", "WPN_Common_Spear_2H_A_15b17f97-4354-4f6e-98e9-818f87fe95f7", "Boost_Weapon_Damage_Bonus_Large", -1);
-LeaderLib_Treasure_Configure_AddRune("MyMod.Debug.TestTrader.InitialItems", "WPN_Common_Spear_2H_A_15b17f97-4354-4f6e-98e9-818f87fe95f7", "LOOT_Rune_Masterwork_Large_7e16d9af-6865-4f0f-a67a-144b8ef2da26", -1);
-LeaderLib_Treasure_Configure_AddRune("MyMod.Debug.TestTrader.InitialItems", "WPN_Common_Spear_2H_A_15b17f97-4354-4f6e-98e9-818f87fe95f7", "LOOT_Rune_Masterwork_Small_8a53fce8-01b2-42e6-bdd5-1aa370d74eb6", 50);
+LeaderLib_Treasure_Configure_AddDeltaMod("MyMod.Debug.TestTrader.InitialItems", "WPN_Common_Spear_2H_A_15b17f97-4354-4f6e-98e9-818f87fe95f7", "Boost_Weapon_Damage_ArmourPiercing_Small_Spear", 25);
+LeaderLib_Treasure_Configure_AddDeltaMod("MyMod.Debug.TestTrader.InitialItems", "WPN_Common_Spear_2H_A_15b17f97-4354-4f6e-98e9-818f87fe95f7", "Boost_Weapon_Primary_Finesse_Medium", 69);
+LeaderLib_Treasure_Configure_AddDeltaMod("MyMod.Debug.TestTrader.InitialItems", "WPN_Common_Spear_2H_A_15b17f97-4354-4f6e-98e9-818f87fe95f7", "Boost_Weapon_Damage_Bonus_Large", -1);// Guaranteed to be applied
+LeaderLib_Treasure_Configure_AddDeltaMod("MyMod.Debug.TestTrader.InitialItems", "WPN_Common_Spear_2H_A_15b17f97-4354-4f6e-98e9-818f87fe95f7", "Boost_Weapon_LifeSteal_Large_TwoHanded", 47);
+LeaderLib_Treasure_Configure_AddDeltaMod("MyMod.Debug.TestTrader.InitialItems", "WPN_Common_Spear_2H_A_15b17f97-4354-4f6e-98e9-818f87fe95f7", "Boost_Weapon_Rune_LOOT_Rune_Masterwork_Small", 82);
 
 //Requirement Example
-LeaderLib_Requirements_Add_PartyLevelRequirement("MyMod.Debug.TraderRequirements1", 2); // Unlocked when the party is level 2
+LeaderLib_Requirements_Add_PartyLevelRequirement("MyMod.Debug.TraderRequirements1", 3); // Unlocked when the party is level 3
 LeaderLib_Treasure_Register_ItemTemplate("MyMod.Debug.TestTrader.InitialItems", "LOOT_Source_Orb_106a7107-cf36-4331-b5b5-6de71969f370", 1, "MyMod.Debug.TraderRequirements1");
 //END_REGION
 

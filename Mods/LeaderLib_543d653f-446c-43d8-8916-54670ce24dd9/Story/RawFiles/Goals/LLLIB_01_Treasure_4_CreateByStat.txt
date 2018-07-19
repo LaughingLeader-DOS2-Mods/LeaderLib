@@ -153,7 +153,7 @@ DB_LLLIB_Treasure_Temp_CreateItemByStat_DummyTarget(_DummyID, _Character, _Dummy
 AND
 GetTemplate(_Item, _ItemTemplate)
 THEN
-//LeaderLog_Log("TRACE", "[LeaderLib:Treasure:CreateItemByStat] Created [",_ItemTemplate,"] from stat [",_Stat,"] on dummy [",_DummyID,"].");
+LeaderLog_Log("TRACE", "[LeaderLib:Treasure:CreateItemByStat] Created [",_ItemTemplate,"] from stat [",_Stat,"] on dummy [",_DummyID,"].");
 NOT DB_LLLIB_Treasure_Temp_CreateItemByStat_DummyTarget(_DummyID, _Character, _Dummy, _Stat);
 LeaderLib_Treasure_CreateItemByStat_Internal_CancelTimeoutTimer(_Character, _Stat);
 SetVarFixedString(_Item, "LeaderLib_GeneratedItemStat", _Stat);

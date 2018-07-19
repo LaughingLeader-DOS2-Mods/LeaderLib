@@ -465,27 +465,26 @@ DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader);
 
 PROC
 LeaderLib_Trader_Register_Level((STRING)_TraderID, (STRING)_Level)
-AND
-NOT DB_LLLIB_Traders_RegisteredLevel(_TraderID,_Level,_)
 THEN
 LeaderLib_Trader_Register_Level(_TraderID, _Level, "");
 
 PROC
-LeaderLib_Trader_Register_Level((STRING)_TraderID, (STRING)_Level, (STRING)_Requirement)
+LeaderLib_Trader_Register_Level((STRING)_TraderID, (STRING)_Level, (STRING)_RequirementID)
 AND
 DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _LastRequirement)
 AND
-_LastRequirement != _Requirement
+_LastRequirement != _RequirementID
+AND
+_RequirementID != ""
 THEN
 NOT DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _LastRequirement);
-DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _Requirement);
 
 PROC
-LeaderLib_Trader_Register_Level((STRING)_TraderID, (STRING)_Level, (STRING)_Requirement)
+LeaderLib_Trader_Register_Level((STRING)_TraderID, (STRING)_Level, (STRING)_RequirementID)
 AND
-NOT DB_LLLIB_Traders_RegisteredLevel(_TraderID,_Level,_)
+NOT DB_LLLIB_Traders_RegisteredLevel(_TraderID,_Level, _)
 THEN
-DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _Requirement);
+DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID);
 
 PROC
 LeaderLib_Trader_Register_StartingGold((STRING)_TraderID, (STRING)_Level, (INTEGER)_Amount)
@@ -493,9 +492,9 @@ THEN
 LeaderLib_Trader_Register_StartingGold(_TraderID, _Level, _Amount, "");
 
 PROC
-LeaderLib_Trader_Register_StartingGold((STRING)_TraderID, (STRING)_Level, (INTEGER)_Amount, (STRING)_Requirement)
+LeaderLib_Trader_Register_StartingGold((STRING)_TraderID, (STRING)_Level, (INTEGER)_Amount, (STRING)_RequirementID)
 THEN
-DB_LLLIB_Traders_StartingGold(_TraderID, _Level, _Amount, _Requirement);
+DB_LLLIB_Traders_StartingGold(_TraderID, _Level, _Amount, _RequirementID);
 
 PROC
 LeaderLib_Trader_Register_Dialog((STRING)_TraderID, (STRING)_Dialog)
@@ -562,6 +561,7 @@ LeaderLib_Trader_Register_Seat(_TraderID, _Level, _Seat, "");
 PROC
 LeaderLib_Trader_Register_Seat((STRING)_TraderID, (STRING)_Level, (ITEMGUID)_Seat, (STRING)_RequirementID)
 THEN
+LeaderLib_Trader_Register_PositionObject(_TraderID, _Level, _Seat);
 DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID);
 //END_REGION
 

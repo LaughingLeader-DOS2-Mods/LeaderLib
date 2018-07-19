@@ -189,11 +189,45 @@ DB_Dialogs(_Trader, _Dialog);
 PROC
 LeaderLib_Traders_AddStartingGold((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
 AND
+ObjectGetFlag(_Trader, "LeaderLib_Traders_StartingGoldAdded", 0)
+AND
 DB_LLLIB_Traders_StartingGold(_TraderID, _Level, _Amount, _RequirementID)
 AND
 LeaderLib_Requirements_QRY_AllMet(_RequirementID)
 THEN
+LeaderLib_Traders_AddStartingGold(_Trader, _TraderID, _Level, _Amount);
+
+PROC
+LeaderLib_Traders_AddStartingGold((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level, (INTEGER)_Amount)
+AND
+ObjectGetFlag(_Trader, "LeaderLib_Traders_StartingGoldAdded", 0)
+THEN
 CharacterAddGold(_Trader, _Amount);
+ObjectSetFlag(_Trader, "LeaderLib_Traders_StartingGoldAdded");
+
+PROC
+LeaderLib_Traders_Internal_OnLevelEnded((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
+AND
+ObjectGetFlag(_Trader, "LeaderLib_Traders_StartingGoldAdded", 1)
+THEN
+ObjectClearFlag(_Trader, "LeaderLib_Traders_StartingGoldAdded");
+
+PROC
+LeaderLib_Traders_Internal_OnLevelEnded((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
+AND
+DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader)
+THEN
+NOT DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
+LeaderLog_Log("DEBUG", "[LeaderLib:Traders] Level ",_Level," ending. Removed global trader [",_TraderID,"] from spawned database.");
+
+PROC
+LeaderLib_Traders_Internal_OnLevelEnded((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
+AND
+GlobalGetFlag("LeaderLib_IsEditorMode", 1)
+THEN
+NOT DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
+SetOnStage(_Trader, 0);
+LeaderLog_Log("DEBUG", "[LeaderLib:Traders] Level ",_Level," ending and editor mode is enabled. Remove trader [",_TraderID,"] from spawned database and setting off stage.");
 //END_REGION
 
 //REGION TRADER_QUERIES
@@ -251,22 +285,8 @@ IF
 RegionEnded(_Level)
 AND
 DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
-AND
-DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader)
 THEN
-NOT DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
-LeaderLog_Log("DEBUG", "[LeaderLib:Traders] Level ",_Level," ending. Removed global trader [",_TraderID,"] from spawned database.");
-
-IF
-RegionEnded(_Level)
-AND
-GlobalGetFlag("LeaderLib_IsEditorMode", 1)
-AND
-DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
-THEN
-NOT DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
-SetOnStage(_Trader, 0);
-LeaderLog_Log("DEBUG", "[LeaderLib:Traders] Level ",_Level," ending and editor mode is enabled. Remove trader [",_TraderID,"] from spawned database and setting off stage.");
+LeaderLib_Traders_Internal_OnLevelEnded(_Trader, _TraderID, _Level);
 //END_REGION
 
 //REGION SPAWN_QUEUE
@@ -546,7 +566,25 @@ LLLIB_Traders_Internal_SpawnTrader((STRING)_TraderID, (STRING)_Level, (STRING)_T
 AND
 NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
 AND
+DB_LLLIB_Traders_LevelPositionObject(_TraderID, _Level, _Object)
+AND
+ObjectExists(_Object, 1)
+AND
+GetPosition(_Object, _x, _y, _z)
+AND
+CharacterCreateAtPosition(_x,_y,_z, _Template, _PlaySpawn, _Trader)
+THEN
+DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
+SetStoryEvent(_Trader, "LeaderLib_Events_OnTraderCreated");
+
+PROC
+LLLIB_Traders_Internal_SpawnTrader((STRING)_TraderID, (STRING)_Level, (STRING)_Template, (INTEGER)_PlaySpawn)
+AND
+NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
+AND
 DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger)
+AND
+ObjectExists(_Trigger, 1)
 AND
 GetPosition(_Trigger,_x,_y,_z)
 AND
@@ -561,20 +599,6 @@ AND
 NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
 AND
 DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z)
-AND
-CharacterCreateAtPosition(_x,_y,_z, _Template, _PlaySpawn, _Trader)
-THEN
-DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
-SetStoryEvent(_Trader, "LeaderLib_Events_OnTraderCreated");
-
-PROC
-LLLIB_Traders_Internal_SpawnTrader((STRING)_TraderID, (STRING)_Level, (STRING)_Template, (INTEGER)_PlaySpawn)
-AND
-NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
-AND
-DB_LLLIB_Traders_LevelPositionObject(_TraderID, _Level, _Object)
-AND
-GetPosition(_Object, _x, _y, _z)
 AND
 CharacterCreateAtPosition(_x,_y,_z, _Template, _PlaySpawn, _Trader)
 THEN
@@ -890,6 +914,19 @@ PROC
 LeaderLib_Requirements_RequirementUnlocked((STRING)_RequirementID)
 THEN
 LLLIB_Traders_Internal_SpawnIfRequirementsMet(_RequirementID);
+
+PROC
+LeaderLib_Requirements_RequirementUnlocked((STRING)_RequirementID)
+AND
+DB_CurrentLevel(_Level)
+AND
+DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+AND
+ObjectGetFlag(_Trader, "LeaderLib_Traders_StartingGoldAdded", 0)
+AND
+DB_LLLIB_Traders_StartingGold(_TraderID, _Level, _Amount, _RequirementID)
+THEN
+LeaderLib_Traders_AddStartingGold(_Trader, _TraderID, _Level, _Amount);
 
 PROC
 LeaderLib_Requirements_RequirementUnlocked((STRING)_RequirementID)

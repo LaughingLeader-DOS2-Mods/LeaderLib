@@ -135,7 +135,7 @@ AND
 NOT DB_LLLIB_Traders_Seat("LLLIB_LeaderTrader", _LevelName, _, _)
 THEN
 LeaderLib_Trader_Register_Level("LLLIB_LeaderTrader", _LevelName, _RequirementID);
-LeaderLib_Trader_Register_PositionObject("LLLIB_LeaderTrader", _LevelName, (GUIDSTRING)_Seat);
+//LeaderLib_Trader_Register_PositionObject("LLLIB_LeaderTrader", _LevelName, (GUIDSTRING)_Seat);
 LeaderLib_Trader_Register_Seat("LLLIB_LeaderTrader", _LevelName, (ITEMGUID)_Seat);
 
 IF

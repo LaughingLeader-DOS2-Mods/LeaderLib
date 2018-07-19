@@ -500,17 +500,17 @@ THEN
 CharacterAddAttribute(_CopyTo, _Attribute, _AddVal);
 
 IF
-CharacterCharacterEvent(((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom, "LeaderLib_Commands_CopyStats")
+CharacterCharacterEvent((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom, "LeaderLib_Commands_CopyStats")
 THEN
 LeaderLib_Helper_CopyStats(_CopyTo, _CopyFrom);
 
 IF
-CharacterCharacterEvent(((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom, "LeaderLib_Commands_CopyAbilities")
+CharacterCharacterEvent((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom, "LeaderLib_Commands_CopyAbilities")
 THEN
 LeaderLib_Helper_CopyAbilities(_CopyTo, _CopyFrom);
 
 IF
-CharacterCharacterEvent(((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom, "LeaderLib_Commands_CopyAttributes")
+CharacterCharacterEvent((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom, "LeaderLib_Commands_CopyAttributes")
 THEN
 LeaderLib_Helper_CopyAttributes(_CopyTo, _CopyFrom);
 //END_REGION

@@ -1,0 +1,23 @@
+new deltamod "Boost_LLLIB_Armor_LowerBody_EmptyRuneSlot"
+param "BoostType" "RuneEmpty"
+param "MinLevel" "1"
+param "Frequency" "1"
+param "ModifierType" "Armor"
+param "SlotType" "Leggings"
+new boost "_Boost_Armor_All_EmptyRuneSlot",1
+
+new deltamod "Boost_LLLIB_Armor_Arms_EmptyRuneSlot"
+param "BoostType" "RuneEmpty"
+param "MinLevel" "1"
+param "Frequency" "1"
+param "ModifierType" "Armor"
+param "SlotType" "Gloves"
+new boost "_Boost_Armor_All_EmptyRuneSlot",1
+
+new deltamod "Boost_LLLIB_Armor_Boots_EmptyRuneSlot"
+param "BoostType" "RuneEmpty"
+param "MinLevel" "1"
+param "Frequency" "1"
+param "ModifierType" "Armor"
+param "SlotType" "Boots"
+new boost "_Boost_Armor_All_EmptyRuneSlot",1

@@ -140,9 +140,8 @@ LeaderLog_Log("TRACE", "[LeaderLib:Settings] Databases registered.");
 //REGION MOD_DATA
 IF
 ObjectFlagSet("LLLIB_Settings_ListMods", _Player, _Instance)
-AND
-LeaderLib_Helper_QRY_ClearObjectFlag(_Player, "LLLIB_Settings_ListMods")
 THEN
+ObjectClearFlag(_Player, "LLLIB_Settings_ListMods");
 LLLIB_Settings_BuildModList();
 
 PROC

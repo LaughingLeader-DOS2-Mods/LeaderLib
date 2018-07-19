@@ -663,6 +663,22 @@ LeaderLog_Log(_Type, _Message);
 //END_REGION
 
 //REGION NUMBER_CONVERSION
+QRY
+LeaderLog_QRY_LogInt((STRING)_Type, (STRING)_Prefix, (INTEGER)_Num, (STRING)_Suffix)
+AND
+IntegertoString(_Num, _NumStr)
+THEN
+LeaderLog_Log(_Type, _Prefix, _NumStr, _Suffix);
+
+QRY
+LeaderLog_QRY_LogInt((STRING)_Type, (STRING)_Prefix, (INTEGER)_Num, (STRING)_Prefix2, (INTEGER)_Num2, (STRING)_Suffix)
+AND
+IntegertoString(_Num, _NumStr)
+AND
+IntegertoString(_Num2, _Num2Str)
+THEN
+LeaderLog_Log(_Type, _Prefix, _NumStr, _Prefix2, _Num2Str, _Suffix);
+
 PROC
 LeaderLog_RealToIntToString((STRING)_ID, (REAL)_a)
 AND

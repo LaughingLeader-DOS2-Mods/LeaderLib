@@ -69,6 +69,13 @@ THEN
 NOT DB_LLLIB_Requirements_FlagTarget(_RequirementID, _Flag, _Object);
 
 PROC
+LeaderLib_Requirements_Add_PartyLevelRequirement((STRING)_RequirementID, (INTEGER)_Level)
+AND
+_RequirementID != ""
+THEN
+LeaderLib_Requirements_Add_PartyLevelRequirement(_RequirementID, _Level, _Level, 0);
+
+PROC
 LeaderLib_Requirements_Add_PartyLevelRequirement((STRING)_RequirementID, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
 AND
 _RequirementID != ""

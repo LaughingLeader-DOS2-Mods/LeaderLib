@@ -1,6 +1,7 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
+//REGION TREASURE
 //DB_LLLIB_Treasure_RegisteredObject(_TreasureID, _Object)
 //DB_LLLIB_Treasure_RegisteredObjectTemplate(_TreasureID, _Template)
 //DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
@@ -25,6 +26,13 @@ INITSECTION
 //DB_LLLIB_Treasure_ItemDoneGenerating(_Object, _TreasureID, _ItemEntry)
 
 //DB_LLLIB_Treasure_TreasureTableLimit(_TreasureID, _TreasureTable, _Limit)
+//END_REGION
+
+//REGION TRADER
+//DB_LLLIB_Traders_RegisteredTraderTemplate(_TraderID, _Template, _PlaySpawn)
+//DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader)
+//DB_LLLIB_Traders_RegisteredTraderInstance(_TraderID, _Trader, _Level)
+//END_REGION
 KBSECTION
 PROC
 LeaderLib_Treasure_JustRegistered((STRING)_TreasureID, (STRING)_RegisteredVal, (STRING)_Type)
@@ -447,30 +455,40 @@ NOT DB_LLLIB_Treasure_GeneratedEvent(_TreasureID, _ItemEntry, _OnGeneratedEvent)
 
 //REGION TRADER_REGISTERING
 PROC
-LeaderLib_Trader_Register_Trader((STRING)_TraderID, (STRING)_Template)
+LeaderLib_Trader_Register_TraderTemplate((STRING)_TraderID, (STRING)_Template)
 AND
-NOT DB_LLLIB_Traders_RegisteredTrader(_TraderID,_,_)
+NOT DB_LLLIB_Traders_RegisteredTraderTemplate(_TraderID,_,_)
 THEN
-DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, 0);
+DB_LLLIB_Traders_RegisteredTraderTemplate(_TraderID, _Template, 0);
 
 PROC
-LeaderLib_Trader_Register_Trader((STRING)_TraderID, (STRING)_Template, (INTEGER)_PlaySpawn)
+LeaderLib_Trader_Register_TraderTemplate((STRING)_TraderID, (STRING)_Template, (INTEGER)_PlaySpawn)
 AND
-DB_LLLIB_Traders_RegisteredTrader(_TraderID,_,_)
+DB_LLLIB_Traders_RegisteredTraderTemplate(_TraderID,_,_)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Trader][ERROR] Error adding trader with ID '", _TraderID, "': Trader already exists!");
 
 PROC
-LeaderLib_Trader_Register_Trader((STRING)_TraderID, (STRING)_Template, (INTEGER)_PlaySpawn)
+LeaderLib_Trader_Register_TraderTemplate((STRING)_TraderID, (STRING)_Template, (INTEGER)_PlaySpawn)
 AND
-NOT DB_LLLIB_Traders_RegisteredTrader(_TraderID,_,_)
+NOT DB_LLLIB_Traders_RegisteredTraderTemplate(_TraderID,_,_)
 THEN
-DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn);
+DB_LLLIB_Traders_RegisteredTraderTemplate(_TraderID, _Template, _PlaySpawn);
 
 PROC
 LeaderLib_Trader_Register_GlobalTrader((STRING)_TraderID, (CHARACTERGUID)_Trader)
+AND
+NOT DB_LLLIB_Traders_RegisteredGlobalTrader(_, _Trader)
 THEN
 DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader);
+
+PROC
+LeaderLib_Trader_Register_TraderInstance((STRING)_TraderID, (CHARACTERGUID)_Character, (STRING)_Level)
+AND
+NOT DB_LLLIB_Traders_RegisteredTraderInstance(_, _Character, _Level)
+THEN
+LeaderLib_Trader_Register_Level(_TraderID, _Level);
+DB_LLLIB_Traders_RegisteredTraderInstance(_TraderID, _Character, _Level);
 
 PROC
 LeaderLib_Trader_Register_Level((STRING)_TraderID, (STRING)_Level)
@@ -585,9 +603,9 @@ LeaderLog_Log("DEBUG", "[LeaderLib:Traders] Trader [",_TraderID,"] removed from 
 PROC
 LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
 AND
-DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn)
+DB_LLLIB_Traders_RegisteredTraderTemplate(_TraderID, _Template, _PlaySpawn)
 THEN
-NOT DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn);
+NOT DB_LLLIB_Traders_RegisteredTraderTemplate(_TraderID, _Template, _PlaySpawn);
 
 PROC
 LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
@@ -653,7 +671,31 @@ THEN
 NOT DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID);
 //END_REGION
 
-//REGION UPDATER
+//REGION UPDATE_OLD_DATA
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", _PastVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 0, 9, 3, 0)
+THEN
+LeaderLog_Log("SYSTEM", "[LeaderLib:Treasure:Registering] Updated treasure databases from version [",_PastVersion,"] to [0.9.3.0].");
+LeaderLib_Internal_Treasure_UpdateDatabases();
+
+PROC
+LeaderLib_Internal_Treasure_UpdateDatabases()
+AND
+DB_LLLIB_Traders_RegisteredTrader((STRING)_TraderID, (STRING)_Template, (INTEGER)_PlaySpawn)
+THEN
+NOT DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn);
+DB_LLLIB_Traders_RegisteredTraderTemplate(_TraderID, _Template, _PlaySpawn);
+
+PROC
+LeaderLib_Internal_Treasure_UpdateDatabases()
+THEN
+LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LLLIB_Traders_RegisteredTrader");
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LLLIB_Traders_RegisteredTraderTemplate", 3);
+//END_REGION
+
+//REGION REGISTER_DATABASES
 PROC
 LLLIB_System_RegisterDatabases()
 THEN
@@ -677,7 +719,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registe
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_ItemDoneGenerating", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_GenerationSpeed", 2);
 
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LLLIB_Traders_RegisteredTrader", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LLLIB_Traders_RegisteredTraderTemplate", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LLLIB_Traders_RegisteredGlobalTrader", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LLLIB_Traders_RegisteredLevel", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LLLIB_Traders_StartingGold", 4);

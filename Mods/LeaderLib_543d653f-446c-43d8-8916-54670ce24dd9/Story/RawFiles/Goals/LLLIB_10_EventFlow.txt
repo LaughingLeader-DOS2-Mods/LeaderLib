@@ -12,18 +12,18 @@ KBSECTION
 IF
 GameStarted(_Level, _)
 THEN
-LLLIB_EventFlow_Internal_StartInit(_Level);
-LLLIB_EventFlow_Init_AddSortFlow();
+LeaderLib_EventFlow_Internal_StartInit(_Level);
+LeaderLib_EventFlow_Init_AddSortFlow();
 
 PROC
-LLLIB_EventFlow_Internal_StartInit((STRING)_Level)
+LeaderLib_EventFlow_Internal_StartInit((STRING)_Level)
 AND
 NOT DB_LLLIB_EventFlow_DefaultStackInitialized(_,_)
 AND
 IsCharacterCreationLevel(_Level, _IsCharacterCreationLevel)
 THEN
 DB_LLLIB_EventFlow_DefaultStackInitialized(1, _IsCharacterCreationLevel);
-LLLIB_EventFlow_Init_LeaderLibStack();
+LeaderLib_EventFlow_Init_LeaderLibStack();
 
 //Re-init after a character creation level
 IF
@@ -37,32 +37,32 @@ NOT DB_LLLIB_EventFlow_DefaultStackInitialized(_Val, _IsCharacterCreationLevel);
 
 //REGION DEFAULT_FLOW
 PROC
-LLLIB_EventFlow_Init_LeaderLibStack()
+LeaderLib_EventFlow_Init_LeaderLibStack()
 AND
-LLLIB_EventFlow_QRY_CurrentlyRunning("LLLIB_DefaultEventFlow")
+LeaderLib_EventFlow_QRY_CurrentlyRunning("LLLIB_DefaultEventFlow")
 THEN
-LLLIB_EventFlow_ForceStop("LLLIB_DefaultEventFlow");
+LeaderLib_EventFlow_ForceStop("LLLIB_DefaultEventFlow");
 
 PROC
-LLLIB_EventFlow_Init_LeaderLibStack()
+LeaderLib_EventFlow_Init_LeaderLibStack()
 THEN
 GlobalClearFlag("LeaderLib_InitialEventFlowComplete");
 LeaderUpdater_SaveSettingsVersionData("LLLIB_Settings_EventFlowDefaultStack");
-LLLIB_EventFlow_Clear_StackData("LLLIB_DefaultEventFlow");
-LLLIB_EventFlow_AddStack("LLLIB_DefaultEventFlow", "LeaderLib_Events_OnDefaultEventFlowComplete", 100, 20000);
+LeaderLib_EventFlow_Clear_StackData("LLLIB_DefaultEventFlow");
+LeaderLib_EventFlow_AddStack("LLLIB_DefaultEventFlow", "LeaderLib_Events_OnDefaultEventFlowComplete", 100, 90000);
 
 PROC
-LLLIB_EventFlow_Init_LeaderLibStack()
+LeaderLib_EventFlow_Init_LeaderLibStack()
 AND
 DB_LLLIB_EventFlow_DefaultStackInitialized(_Val, 0)
 THEN
-LLLIB_EventFlow_SetCustomWaitTime("LLLIB_DefaultEventFlow", "LeaderLib_Events_OnTraderSpawnComplete", 250);
+LeaderLib_EventFlow_SetCustomWaitTime("LLLIB_DefaultEventFlow", "LeaderLib_Events_OnTraderSpawnComplete", 250);
 LeaderLib_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_SpawnTraders", "LeaderLib_Events_OnTraderSpawnComplete");
 LeaderLib_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_StartTreasureGeneration", "LeaderLib_Events_OnTreasureGenerationComplete");
 LeaderLib_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_CheckTraders", "LeaderLib_Events_OnTraderCheckingComplete");
 
 PROC
-LLLIB_EventFlow_Init_AddSortFlow()
+LeaderLib_EventFlow_Init_AddSortFlow()
 AND
 LLLIB_ModMenu_QRY_SortNeeded()
 AND
@@ -81,7 +81,7 @@ TimerLaunch("LLLIB_Timers_EventFlow_SafetyTimer", 2000);
 IF
 TimerFinished("LLLIB_Timers_EventFlow_SafetyTimer")
 AND
-NOT LLLIB_EventFlow_QRY_CurrentlyRunning("LLLIB_DefaultEventFlow")
+NOT LeaderLib_EventFlow_QRY_CurrentlyRunning("LLLIB_DefaultEventFlow")
 AND
 NOT GlobalGetFlag("LeaderLib_InitialEventFlowComplete", 1)
 THEN
@@ -97,7 +97,7 @@ TimerCancel("LLLIB_Timers_EventFlow_SafetyTimer");
 IF
 StoryEvent(_, "LeaderLib_Initialized")
 AND
-NOT LLLIB_EventFlow_QRY_CurrentlyRunning("LLLIB_DefaultEventFlow")
+NOT LeaderLib_EventFlow_QRY_CurrentlyRunning("LLLIB_DefaultEventFlow")
 THEN
 //Before starting the flow, let other mods do whatever they need to do for a few frames.
 TimerCancel("LLLIB_Timers_StartDefaultFlow");
@@ -111,20 +111,20 @@ LeaderLib_SendEvent("LeaderLib_Commands_StartDefaultEventFlow");
 IF
 StoryEvent(_, "LeaderLib_Commands_StartDefaultEventFlow")
 AND
-NOT LLLIB_EventFlow_QRY_CurrentlyRunning("LLLIB_DefaultEventFlow")
+NOT LeaderLib_EventFlow_QRY_CurrentlyRunning("LLLIB_DefaultEventFlow")
 THEN
 GlobalSetFlag("LeaderLib_DefaultEventFlowRunning");
-LLLIB_EventFlow_Start("LLLIB_DefaultEventFlow");
+LeaderLib_EventFlow_Start("LLLIB_DefaultEventFlow");
 //END_REGION
 
 //REGION ADD_AND_START
 PROC
-LLLIB_EventFlow_AddStack((STRING)_StackName, (STRING)_OnFlowCompleteEvent, (INTEGER)_TimeBetweenEvents)
+LeaderLib_EventFlow_AddStack((STRING)_StackName, (STRING)_OnFlowCompleteEvent, (INTEGER)_TimeBetweenEvents)
 THEN
-LLLIB_EventFlow_AddStack(_StackName, _OnFlowCompleteEvent, _TimeBetweenEvents, 10000);
+LeaderLib_EventFlow_AddStack(_StackName, _OnFlowCompleteEvent, _TimeBetweenEvents, 10000);
 
 PROC
-LLLIB_EventFlow_AddStack((STRING)_StackName, (STRING)_OnFlowCompleteEvent, (INTEGER)_TimeBetweenEvents, (INTEGER)_TimeoutValue)
+LeaderLib_EventFlow_AddStack((STRING)_StackName, (STRING)_OnFlowCompleteEvent, (INTEGER)_TimeBetweenEvents, (INTEGER)_TimeoutValue)
 AND
 NOT DB_LLLIB_EventFlow_EventStack(_StackName, _, _, _)
 THEN
@@ -132,14 +132,14 @@ DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _TimeBetweenEven
 LeaderLib_Array_NewArray(_StackName);
 
 PROC
-LLLIB_EventFlow_Start((STRING)_StackName)
+LeaderLib_EventFlow_Start((STRING)_StackName)
 AND
-NOT LLLIB_EventFlow_QRY_CurrentlyRunning(_StackName)
+NOT LeaderLib_EventFlow_QRY_CurrentlyRunning(_StackName)
 THEN
-LLLIB_EventFlow_SetCurrentEvent(_StackName, 0);
+LeaderLib_EventFlow_SetCurrentEvent(_StackName, 0);
 
 PROC
-LLLIB_EventFlow_SetCustomWaitTime((STRING)_StackName, (STRING)_CompleteEvent, (INTEGER)_WaitTime)
+LeaderLib_EventFlow_SetCustomWaitTime((STRING)_StackName, (STRING)_CompleteEvent, (INTEGER)_WaitTime)
 AND
 DB_LLLIB_EventFlow_CustomWaitTime(_StackName, _CompleteEvent, _LastWaitTime)
 AND
@@ -148,14 +148,14 @@ THEN
 NOT DB_LLLIB_EventFlow_CustomWaitTime(_StackName, _CompleteEvent, _LastWaitTime);
 
 PROC
-LLLIB_EventFlow_SetCustomWaitTime((STRING)_StackName, (STRING)_CompleteEvent, (INTEGER)_WaitTime)
+LeaderLib_EventFlow_SetCustomWaitTime((STRING)_StackName, (STRING)_CompleteEvent, (INTEGER)_WaitTime)
 THEN
 DB_LLLIB_EventFlow_CustomWaitTime(_StackName, _CompleteEvent, _WaitTime);
 //END_REGION
 
 //REGION QUERIES
 QRY
-LLLIB_EventFlow_QRY_CurrentlyRunning((STRING)_StackName)
+LeaderLib_EventFlow_QRY_CurrentlyRunning((STRING)_StackName)
 AND
 DB_LLLIB_EventFlow_CurrentEvent(_StackName, _Index)
 THEN
@@ -164,7 +164,7 @@ DB_NOOP(1);
 
 //REGION SET_CURRENT_EVENT
 PROC
-LLLIB_EventFlow_SetCurrentEvent((STRING)_StackName, (INTEGER)_Index)
+LeaderLib_EventFlow_SetCurrentEvent((STRING)_StackName, (INTEGER)_Index)
 AND
 DB_LLLIB_EventFlow_CurrentEvent(_StackName, _CurrentIndex)
 AND
@@ -174,43 +174,43 @@ NOT DB_LLLIB_EventFlow_CurrentEvent(_StackName, _CurrentIndex);
 DB_LLLIB_EventFlow_CurrentEvent(_StackName, _Index);
 
 PROC
-LLLIB_EventFlow_SetCurrentEvent((STRING)_StackName, (INTEGER)_Index)
+LeaderLib_EventFlow_SetCurrentEvent((STRING)_StackName, (INTEGER)_Index)
 THEN
 DB_LLLIB_EventFlow_CurrentEvent(_StackName, _Index);
 
 PROC
-LLLIB_EventFlow_SetCurrentEvent((STRING)_StackName, (INTEGER)_Index)
+LeaderLib_EventFlow_SetCurrentEvent((STRING)_StackName, (INTEGER)_Index)
 AND
 DB_LLLIB_EventFlow_CurrentEvent(_StackName, _Index)
 AND
 DB_LLLIB_Dictionary_Data(_StackName, _Index, _StartEvent, _OnCompleteEvent)
 THEN
-LLLIB_EventFlow_LaunchTimeoutTimer(_StackName, _OnCompleteEvent);
+LeaderLib_EventFlow_LaunchTimeoutTimer(_StackName, _OnCompleteEvent);
 LeaderLog_Log("DEBUG", "[LeaderLib:EventFlow:SetCurrentEvent] Event flow [",_StackName,"] sent out StartEvent [",_StartEvent,"].");
 LeaderLib_SendEvent(_StartEvent);
 
 PROC
-LLLIB_EventFlow_SetCurrentEvent((STRING)_StackName, (INTEGER)_Index)
+LeaderLib_EventFlow_SetCurrentEvent((STRING)_StackName, (INTEGER)_Index)
 AND
 DB_LLLIB_Array_Length(_StackName, _Length)
 AND
 _Index >= _Length
 THEN
-LLLIB_EventFlow_OnEventFlowComplete(_StackName);
+LeaderLib_EventFlow_OnEventFlowComplete(_StackName);
 
 PROC
-LLLIB_EventFlow_NextEvent((STRING)_StackName)
+LeaderLib_EventFlow_NextEvent((STRING)_StackName)
 AND
 DB_LLLIB_EventFlow_CurrentEvent(_StackName, _Index)
 AND
 IntegerSum(_Index, 1, _NextIndex)
 THEN
-LLLIB_EventFlow_SetCurrentEvent(_StackName, _NextIndex);
+LeaderLib_EventFlow_SetCurrentEvent(_StackName, _NextIndex);
 //END_REGION
 
 //REGION TIMEOUT
 PROC
-LLLIB_EventFlow_LaunchTimeoutTimer((STRING)_StackName, (STRING)_OnCompleteEvent)
+LeaderLib_EventFlow_LaunchTimeoutTimer((STRING)_StackName, (STRING)_OnCompleteEvent)
 AND
 DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime, _TimeoutValue)
 AND
@@ -229,10 +229,10 @@ DB_LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:EventFlow:Timeout] Event flow [",_StackName,"] timed out (completion event [",_OnCompleteEvent,"] never fired). Starting next event in the stack.");
 NOT DB_LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent);
-LLLIB_EventFlow_NextEvent(_StackName);
+LeaderLib_EventFlow_NextEvent(_StackName);
 
 PROC
-LLLIB_EventFlow_StopTimeoutTimer((STRING)_StackName, (STRING)_OnCompleteEvent)
+LeaderLib_EventFlow_StopTimeoutTimer((STRING)_StackName, (STRING)_OnCompleteEvent)
 AND
 DB_LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent)
 THEN
@@ -240,7 +240,7 @@ NOT DB_LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent);
 TimerCancel(_TimerName);
 
 PROC
-LLLIB_EventFlow_CancelAllTimeoutTimers((STRING)_StackName)
+LeaderLib_EventFlow_CancelAllTimeoutTimers((STRING)_StackName)
 AND
 DB_LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent)
 THEN
@@ -254,7 +254,7 @@ StoryEvent(_, _OnCompleteEvent)
 AND
 DB_LLLIB_Dictionary_Data(_StackName, _Index, _StartEvent, _OnCompleteEvent)
 AND
-LLLIB_EventFlow_QRY_CurrentlyRunning(_StackName)
+LeaderLib_EventFlow_QRY_CurrentlyRunning(_StackName)
 AND
 DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime, _TimeoutValue)
 AND
@@ -263,15 +263,15 @@ AND
 NOT DB_LLLIB_EventFlow_WaitTimer(_StackName, _)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:EventFlow:OnEventComplete] Event flow [",_StackName,"] received OnCompleteEvent [",_OnCompleteEvent,"]. Starting wait timer for next event.");
-LLLIB_EventFlow_StopTimeoutTimer(_StackName, _OnCompleteEvent);
-LLLIB_EventFlow_StartWaitTimer(_StackName, _WaitTime);
+LeaderLib_EventFlow_StopTimeoutTimer(_StackName, _OnCompleteEvent);
+LeaderLib_EventFlow_StartWaitTimer(_StackName, _WaitTime);
 
 IF
 StoryEvent(_, _OnCompleteEvent)
 AND
 DB_LLLIB_Dictionary_Data(_StackName, _Index, _StartEvent, _OnCompleteEvent)
 AND
-LLLIB_EventFlow_QRY_CurrentlyRunning(_StackName)
+LeaderLib_EventFlow_QRY_CurrentlyRunning(_StackName)
 AND
 DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime, _TimeoutValue)
 AND
@@ -280,11 +280,11 @@ AND
 NOT DB_LLLIB_EventFlow_WaitTimer(_StackName, _)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:EventFlow:OnEventComplete] Event flow [",_StackName,"] received OnCompleteEvent [",_OnCompleteEvent,"]. Starting wait timer for next event, and using a custom wait time.");
-LLLIB_EventFlow_StopTimeoutTimer(_StackName, _OnCompleteEvent);
-LLLIB_EventFlow_StartWaitTimer(_StackName, _CustomWaitTime);
+LeaderLib_EventFlow_StopTimeoutTimer(_StackName, _OnCompleteEvent);
+LeaderLib_EventFlow_StartWaitTimer(_StackName, _CustomWaitTime);
 
 PROC
-LLLIB_EventFlow_StartWaitTimer((STRING)_StackName, (INTEGER)_WaitTime)
+LeaderLib_EventFlow_StartWaitTimer((STRING)_StackName, (INTEGER)_WaitTime)
 AND
 StringConcatenate("LLLIB_Timers_EventFlow_WaitTimer_", _StackName, _TimerName)
 THEN
@@ -298,10 +298,10 @@ DB_LLLIB_EventFlow_WaitTimer(_StackName, _TimerName)
 THEN
 NOT DB_LLLIB_EventFlow_WaitTimer(_StackName, _TimerName);
 LeaderLog_Log("DEBUG", "[LeaderLib:EventFlow:WaitTimer] Event flow [",_StackName,"] wait timer finished. Sending next event.");
-LLLIB_EventFlow_NextEvent(_StackName);
+LeaderLib_EventFlow_NextEvent(_StackName);
 
 PROC
-LLLIB_EventFlow_CancelWaitTimer((STRING)_StackName)
+LeaderLib_EventFlow_CancelWaitTimer((STRING)_StackName)
 AND
 DB_LLLIB_EventFlow_WaitTimer(_StackName, _TimerName)
 THEN
@@ -311,7 +311,7 @@ NOT DB_LLLIB_EventFlow_WaitTimer(_StackName, _TimerName);
 
 //REGION CLEAR
 PROC
-LLLIB_EventFlow_Clear_StackData((STRING)_StackName)
+LeaderLib_EventFlow_Clear_StackData((STRING)_StackName)
 AND
 DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime, _TimeoutValue)
 THEN
@@ -319,19 +319,19 @@ LeaderLib_Array_ClearDictionary(_StackName);
 NOT DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime, _TimeoutValue);
 
 PROC
-LLLIB_EventFlow_Clear_StackData((STRING)_StackName)
+LeaderLib_EventFlow_Clear_StackData((STRING)_StackName)
 THEN
-LLLIB_EventFlow_Clear_SessionData(_StackName);
+LeaderLib_EventFlow_Clear_SessionData(_StackName);
 
 PROC
-LLLIB_EventFlow_Clear_SessionData((STRING)_StackName)
+LeaderLib_EventFlow_Clear_SessionData((STRING)_StackName)
 AND
 DB_LLLIB_EventFlow_CurrentEvent(_StackName, _Index)
 THEN
 NOT DB_LLLIB_EventFlow_CurrentEvent(_StackName, _Index);
 
 PROC
-LLLIB_EventFlow_Clear_SessionData((STRING)_StackName)
+LeaderLib_EventFlow_Clear_SessionData((STRING)_StackName)
 AND
 DB_LLLIB_EventFlow_WaitTimer(_StackName, _TimerName)
 THEN
@@ -339,22 +339,22 @@ TimerCancel(_TimerName);
 NOT DB_LLLIB_EventFlow_WaitTimer(_StackName, _TimerName);
 
 PROC
-LLLIB_EventFlow_Clear_SessionData((STRING)_StackName)
+LeaderLib_EventFlow_Clear_SessionData((STRING)_StackName)
 AND
 DB_LLLIB_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent)
 THEN
-LLLIB_EventFlow_StopTimeoutTimer(_StackName, _OnCompleteEvent);
+LeaderLib_EventFlow_StopTimeoutTimer(_StackName, _OnCompleteEvent);
 //END_REGION
 
 //REGION COMPLETE
 PROC
-LLLIB_EventFlow_OnEventFlowComplete((STRING)_StackName)
+LeaderLib_EventFlow_OnEventFlowComplete((STRING)_StackName)
 AND
 DB_LLLIB_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime, _TimeoutValue)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:EventFlow:OnEventFlowComplete] Event flow [",_StackName,"] completed. Clearing dictionary and sending completion event [",_OnFlowCompleteEvent,"].");
 LeaderLib_SendEvent(_OnFlowCompleteEvent);
-LLLIB_EventFlow_Clear_SessionData(_StackName);
+LeaderLib_EventFlow_Clear_SessionData(_StackName);
 
 IF
 StoryEvent(_, "LeaderLib_Events_OnDefaultEventFlowComplete")
@@ -366,23 +366,23 @@ LeaderLog_Log("DEBUG", "[LeaderLib:EventFlow] LeaderLib event flow complete.");
 
 //REGION FORCE_STOP
 PROC
-LLLIB_EventFlow_ForceStop((STRING)_StackName)
+LeaderLib_EventFlow_ForceStop((STRING)_StackName)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:EventFlow:ForceStop] Forcefully stopping event flow [",_StackName,"]. Sending stop events for all entries in the stack.");
-LLLIB_EventFlow_CancelAllTimeoutTimers(_StackName);
-LLLIB_EventFlow_CancelWaitTimer(_StackName);
+LeaderLib_EventFlow_CancelAllTimeoutTimers(_StackName);
+LeaderLib_EventFlow_CancelWaitTimer(_StackName);
 
 PROC
-LLLIB_EventFlow_ForceStop((STRING)_StackName)
+LeaderLib_EventFlow_ForceStop((STRING)_StackName)
 AND
 DB_LLLIB_Dictionary_Data("LLLIB_System_EventStack", _Index, _StartEvent, _CompleteEvent)
 THEN
 DB_LLLIB_EventFlow_StopEvent(_StartEvent);
 
 PROC
-LLLIB_EventFlow_ForceStop((STRING)_StackName)
+LeaderLib_EventFlow_ForceStop((STRING)_StackName)
 THEN
-LLLIB_EventFlow_Clear_SessionData(_StackName);
+LeaderLib_EventFlow_Clear_SessionData(_StackName);
 //END_REGION
 
 //REGION UPDATER
@@ -391,7 +391,7 @@ StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
 AND
 LeaderUpdater_QRY_SettingsNeedsUpdate("LLLIB_Settings_EventFlowDefaultStack")
 THEN
-LLLIB_EventFlow_Init_LeaderLibStack();
+LeaderLib_EventFlow_Init_LeaderLibStack();
 
 PROC
 LLLIB_System_RegisterDatabases()

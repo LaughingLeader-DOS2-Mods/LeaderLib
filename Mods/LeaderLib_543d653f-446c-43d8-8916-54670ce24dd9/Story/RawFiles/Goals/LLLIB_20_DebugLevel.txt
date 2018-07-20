@@ -17,10 +17,6 @@ LeaderLib_Requirements_Add_FlagRequirement("LLLIB_DebugLevel_NotChestRequirement
 //LLLIB_DebugLevel_ModMenuTest();
 //LeaderLib_Treasure_Configure_DefaultGenerationType("LLLIB_TestLevel_Chest3", "LEVEL_LOADED");
 //LLLIB_DebugLevel_TreasureStressTest();
-
-IF
-GameStarted("LeaderLib_TestLevel", _)
-THEN
 LLLIB_DebugLevel_WikiExample_TraderTest();
 
 IF
@@ -28,12 +24,14 @@ GameStarted("LeaderLib_TestLevel", 1)
 THEN
 GlobalSetFlag("LeaderLog_Trace_Enabled");
 
+/*
 IF
 GameStarted("LeaderLib_TestLevel", 1)
 AND
 LeaderUpdater_QRY_RegisteredVersionIsLessThan("LeaderLib", "LaughingLeader", 1, 0, 0, 0)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel:ModVersionIsLessThan] Mod version [0.9.2.0] is less than [1.0.0.0]!");
+*/
 
 IF
 CharacterUsedItem(_Char, ITEMGUID_LLLIB_Debug_TestLever1_81a66e97-515d-4786-be33-8a9cadae23f7)
@@ -137,22 +135,27 @@ LLLIB_DebugLevel_TreasureStressTest();
 //REGION WikIExample
 PROC
 LLLIB_DebugLevel_WikiExample_TraderTest()
+AND
+NOT DB_LLLIB_Debug_RegisteredWikiTraders(_)
 THEN
+DB_LLLIB_Debug_RegisteredWikiTraders(1);
 //Trader Setup
-LeaderLib_Trader_Register_Trader("MyMod.Debug.TestTrader", "Dwarves_Male_Clothing_b1dd34cb-2a28-46d2-8f72-dfa8171b5aa0", 0);
+LeaderLib_Trader_Register_TraderTemplate("MyMod.Debug.TestTrader", "Dwarves_Male_Clothing_b1dd34cb-2a28-46d2-8f72-dfa8171b5aa0", 0);
+
 LeaderLib_Trader_Register_Position("MyMod.Debug.TestTrader", "LeaderLib_TestLevel", 10.0, 0.0, 5.0);
 LeaderLib_Trader_Register_PositionObject("MyMod.Debug.TestTrader", "LeaderLib_TestLevel", ITEMGUID_LLLIB_Debug_TestChest_ff6c9edf-aa21-447a-8bb2-2a647a8dae46);
 
 //Trader Config
-LeaderLib_Trader_Register_StartingGold("LLLIB_LeaderTrader", "LeaderLib_TestLevel", 20000);
+LeaderLib_Trader_Register_StartingGold("MyMod.Debug.TestTrader", "LeaderLib_TestLevel", 20000);
 LeaderLib_Trader_Register_Dialog("MyMod.Debug.TestTrader", "LLLIB_Debug_Trader");
 
 //Trader Treasure
 LeaderLib_Treasure_Register_TreasureToTrader("MyMod.Debug.TestTrader.InitialItems", "MyMod.Debug.TestTrader");
+
 LeaderLib_Treasure_Register_TreasureTable("MyMod.Debug.TestTrader.InitialItems", "TEST_Generation", "", 1);
 
 //Generation Type Config
-LeaderLib_Treasure_Configure_DefaultGenerationType("MyMod.Debug.TestTrader.InitialItems", "DIALOG_STARTED");
+//LeaderLib_Treasure_Configure_DefaultGenerationType("MyMod.Debug.TestTrader.InitialItems", "DIALOG_STARTED");
 
 //ItemStat / Rune Example
 LeaderLib_Treasure_Register_ItemStat("MyMod.Debug.TestTrader.InitialItems", "WPN_Cheat_Sword_1H_RuneSlot2", 2);
@@ -177,15 +180,21 @@ LeaderLib_Treasure_Configure_AddDeltaMod("MyMod.Debug.TestTrader.InitialItems", 
 LeaderLib_Treasure_Configure_AddDeltaMod("MyMod.Debug.TestTrader.InitialItems", "WPN_Common_Spear_2H_A_15b17f97-4354-4f6e-98e9-818f87fe95f7", "Boost_Weapon_Rune_LOOT_Rune_Masterwork_Small", 82);
 
 //Requirement Example
-LeaderLib_Requirements_Add_PartyLevelRequirement("MyMod.Debug.TraderRequirements1", 3); // Unlocked when the party is level 3
+LeaderLib_Requirements_Add_PartyLevelRequirement("MyMod.Debug.TraderRequirements1", 9); // Unlocked when the party is level 9
 LeaderLib_Treasure_Register_ItemTemplate("MyMod.Debug.TestTrader.InitialItems", "LOOT_Source_Orb_106a7107-cf36-4331-b5b5-6de71969f370", 1, "MyMod.Debug.TraderRequirements1");
+
+//Pre-Instanced Trader
+LeaderLib_Trader_Register_TraderInstance("MyMod.Debug.TestGoblinTrader", CHARACTERGUID_LLLIB_Debug_GoblinMerchant_A_6e718e8d-82bf-4f32-b95a-6a6c714892fe, "LeaderLib_TestLevel");
+LeaderLib_Treasure_Register_TreasureToTrader("MyMod.Debug.TestTrader.InitialItems", "MyMod.Debug.TestGoblinTrader");
+LeaderLib_Trader_Register_StartingGold("MyMod.Debug.TestGoblinTrader", "LeaderLib_TestLevel", 20000);
+LeaderLib_Trader_Register_Dialog("MyMod.Debug.TestGoblinTrader", "LLLIB_Debug_Trader");
 //END_REGION
 
 //REGION TESTS
 PROC
 LLLIB_DebugLevel_TraderTest()
 THEN
-LeaderLib_Trader_Register_Trader("LLLIB_TestLevel_Trader", "Elves_Female_Clothing_3ba29ecd-4849-494d-a9a6-6221eea6761c", 1);
+LeaderLib_Trader_Register_TraderTemplate("LLLIB_TestLevel_Trader", "Elves_Female_Clothing_3ba29ecd-4849-494d-a9a6-6221eea6761c", 1);
 LeaderLib_Trader_Register_Level("LLLIB_TestLevel_Trader", "LeaderLib_TestLevel", "LLLIB_DebugLevel_Trader1_SpawnFlag");
 LeaderLib_Trader_Register_PositionObject("LLLIB_TestLevel_Trader", "LeaderLib_TestLevel", ITEMGUID_LLLIB_Debug_TestChest_ff6c9edf-aa21-447a-8bb2-2a647a8dae46);
 LeaderLib_Trader_Register_Dialog("LLLIB_TestLevel_Trader", "LLLIB_LeaderTrader_Default");

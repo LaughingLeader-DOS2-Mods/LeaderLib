@@ -162,7 +162,7 @@ NOT DB_LLLIB_LeaderTrader(_)
 AND
 ObjectExists(CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, 0)
 THEN
-LeaderLib_Trader_Register_Trader("LLLIB_LeaderTrader", "LLLIB_LeaderTrader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e", 0);
+LeaderLib_Trader_Register_TraderTemplate("LLLIB_LeaderTrader", "LLLIB_LeaderTrader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e", 0);
 LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader] [ERROR] Global trader version doesn't exist! Using the template version.");
 GlobalSetFlag("LLLIB_LeaderTraderIsNotGlobal");
 //END_REGION

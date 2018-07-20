@@ -1083,6 +1083,7 @@ PROC
 LLLIB_Treasure_Internal_OnGenerationFailed((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_GenerationType)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:OnGenerationFailed] Failed to generate items for [",_ID,"]. Going to next item in queue.");
+SetStoryEvent(_Object, "LeaderLib_Events_ResetGeneratingFlag");
 //END_REGION
 
 //REGION GENERATION_QUEUE_MANUAL_MODE

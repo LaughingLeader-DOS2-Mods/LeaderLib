@@ -2,8 +2,9 @@ Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
 //Settings
-//DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn)
+//DB_LLLIB_Traders_RegisteredTraderTemplate(_TraderID, _Template, _PlaySpawn)
 //DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader)
+//DB_LLLIB_Traders_RegisteredTraderInstance(_TraderID, _Trader, _Level)
 //DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID)
 //DB_LLLIB_Traders_StartingGold(_TraderID, _Level, _Amount, _RequirementID)
 //DB_LLLIB_Traders_Dialog(_TraderID, _Level, _Dialog, _RequirementID)
@@ -91,7 +92,7 @@ DB_NOOP(1);
 QRY
 LeaderLib_Traders_QRY_IsRegistered((STRING)_TraderID)
 AND
-DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn)
+DB_LLLIB_Traders_RegisteredTraderTemplate(_TraderID, _Template, _PlaySpawn)
 THEN
 DB_NOOP(1);
 
@@ -99,6 +100,15 @@ QRY
 LeaderLib_Traders_QRY_IsRegistered((STRING)_TraderID)
 AND
 DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Traders_QRY_IsRegistered((STRING)_TraderID)
+AND
+DB_LLLIB_Traders_RegisteredTraderInstance(_TraderID, _Trader, _Level)
+AND
+DB_CurrentLevel(_Level)
 THEN
 DB_NOOP(1);
 //END_REGION
@@ -525,7 +535,7 @@ DB_NOOP(1);
 PROC
 LLLIB_Traders_Internal_CreateTrader((STRING)_TraderID, (STRING)_Level)
 AND
-DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn)
+DB_LLLIB_Traders_RegisteredTraderTemplate(_TraderID, _Template, _PlaySpawn)
 AND
 NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
 AND
@@ -553,13 +563,38 @@ LLLIB_Traders_Internal_TeleportToPosition(_TraderID, _Level, _Trader);
 PROC
 LLLIB_Traders_Internal_CreateTrader((STRING)_TraderID, (STRING)_Level)
 AND
-DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn)
+DB_LLLIB_Traders_RegisteredTraderInstance(_TraderID, _Trader, _Level)
+AND
+ObjectExists(_Trader, 1)
+AND
+NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Traders] Pre-existing character found for trader ID [",_TraderID,"].");
+DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
+
+PROC
+LLLIB_Traders_Internal_CreateTrader((STRING)_TraderID, (STRING)_Level)
+AND
+DB_LLLIB_Traders_RegisteredTraderTemplate(_TraderID, _Template, _PlaySpawn)
 AND
 NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
 AND
 NOT LeaderLib_Traders_QRY_HasPosition(_TraderID, _Level)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Traders][ERROR] Trader [",_TraderID,"] does not have a registered position in level [",_Level,"].");
+
+PROC
+LLLIB_Traders_Internal_CreateTrader((STRING)_TraderID, (STRING)_Level)
+AND
+DB_LLLIB_Traders_RegisteredTraderInstance(_TraderID, _Trader, _Level)
+AND
+ObjectExists(_Trader, 0)
+AND
+NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
+AND
+String(_Trader, _UUID)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Traders][ERROR] Trader [",_TraderID,"] with UUID [",_UUID,"] does not exist in level [",_Level,"].");
 
 PROC
 LLLIB_Traders_Internal_SpawnTrader((STRING)_TraderID, (STRING)_Level, (STRING)_Template, (INTEGER)_PlaySpawn)

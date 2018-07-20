@@ -163,7 +163,6 @@ LeaderLib_Array_RemoveFromArray(_ID, _Value);
 //END_REGION
 
 //REGION ARRAY_FIRST_ENTRY
-
 QRY
 LeaderLib_Array_QRY_GetFirstEntry((STRING)_ID)
 THEN
@@ -205,6 +204,33 @@ DB_LLLIB_Array_Data(_ID, _Index, _Value)
 THEN
 //LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:GetFirstEntry] First entry for array [",_ID,"] set to [",_IndexStr,"](",_Value,").");
 DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value);
+//END_REGION
+
+//REGION LAST_ENTRY
+QRY
+LeaderLib_Array_QRY_GetLastEntry((STRING)_ID)
+AND
+LeaderLib_Array_Internal_QRY_ClearLastEntry(_ID)
+AND
+DB_LLLIB_Array_Length(_ID, _Length)
+AND
+IntegerSubtract(_Length, 1, _LastIndex)
+AND
+DB_LLLIB_Array_Data(_ID, _Index, _Value)
+THEN
+DB_LLLIB_Array_Temp_LastEntry(_ID, _Index, _Value);
+
+QRY
+LeaderLib_Array_Internal_QRY_ClearLastEntry((STRING)_ID)
+THEN
+LeaderLib_Array_Internal_ClearLastEntry(_ID);
+
+PROC
+LeaderLib_Array_Internal_ClearLastEntry((STRING)_ID)
+AND
+DB_LLLIB_Array_Temp_LastEntry(_ID, _Index, _Value)
+THEN
+NOT DB_LLLIB_Array_Temp_LastEntry(_ID, _Index, _Value);
 //END_REGION
 
 //REGION ARRAY_POP

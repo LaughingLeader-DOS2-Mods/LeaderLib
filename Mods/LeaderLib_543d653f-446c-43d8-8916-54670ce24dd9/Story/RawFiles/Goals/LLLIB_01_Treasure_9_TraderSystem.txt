@@ -305,6 +305,8 @@ LLLIB_Traders_Internal_CreateTraders((STRING)_Level)
 AND
 DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID)
 AND
+LeaderLib_Traders_QRY_IsRegistered(_TraderID)
+AND
 NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
 AND
 LeaderLib_Requirements_QRY_AllMet(_RequirementID)

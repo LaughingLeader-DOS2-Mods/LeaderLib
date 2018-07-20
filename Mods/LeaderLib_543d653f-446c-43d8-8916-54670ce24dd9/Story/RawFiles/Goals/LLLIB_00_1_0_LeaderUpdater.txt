@@ -192,7 +192,14 @@ THEN
 SysClear(_DatabaseName, _Arity);
 
 PROC
-LeaderUpdater_Clear_AllRegisteredDatabases((STRING)_ModID, (STRING)_Author)
+LeaderUpdater_Clear_AllRegisteredDatabasesFromModAndAuthor((STRING)_ModID, (STRING)_Author)
+AND
+DB_LeaderUpdater_RegisteredDatabase(_ModID, _Author, _ReferenceName, _DatabaseName, _Arity)
+THEN
+NOT DB_LeaderUpdater_RegisteredDatabase(_ModID, _Author, _ReferenceName, _DatabaseName, _Arity);
+
+PROC
+LeaderUpdater_Clear_AllRegisteredDatabasesWithReferenceName((STRING)_ModID, (STRING)_Author, (STRING)_ReferenceName)
 AND
 DB_LeaderUpdater_RegisteredDatabase(_ModID, _Author, _ReferenceName, _DatabaseName, _Arity)
 THEN
@@ -212,7 +219,7 @@ PROC
 LeaderUpdater_Clear_AllRegisteredData((STRING)_ModID, (STRING)_Author)
 THEN
 LeaderUpdater_SysClear_AllDatabases(_ModID, _Author);
-LeaderUpdater_Clear_AllRegisteredDatabases(_ModID, _Author);
+LeaderUpdater_Clear_AllRegisteredDatabasesFromModAndAuthor(_ModID, _Author);
 LeaderUpdater_Clear_ActiveGoals(_ModID, _Author);
 LeaderUpdater_Clear_RegisteredModVersions(_ModID, _Author);
 

@@ -32,6 +32,14 @@ LeaderLog_Log("DEBUG", "[LeaderLib:QueueSystem:Start] Starting queue [",_QueueID
 LLLIB_Queue_Internal_NextTick(_QueueID);
 
 PROC
+LeaderLib_Queue_Start((STRING)_QueueID)
+AND
+NOT DB_LLLIB_Queue(_QueueID, _, _, _, _, _, _)
+THEN
+LeaderLog_Log("ERROR", "[LeaderLib:QueueSystem:Start] [ERROR] No queue with ID [",_QueueID,"] exists!.");
+LLLIB_Queue_Internal_NextTick(_QueueID);
+
+PROC
 LeaderLib_Queue_Stop((STRING)_QueueID)
 AND
 DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
@@ -154,9 +162,9 @@ AND
 DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:QueueSystem:OnComplete] Queue [",_QueueID,"] complete. Sending event [",_OnCompletionEvent,"].");
-LeaderLib_SendEvent(_OnCompletionEvent);
 LeaderLib_Queue_Stop(_QueueID); // Stop timers, if they're still running for some reason
 LeaderLib_Queue_ClearQueue(_QueueID);
+LeaderLib_SendEvent(_OnCompletionEvent);
 //END_REGION
 
 //REGION CLEAR

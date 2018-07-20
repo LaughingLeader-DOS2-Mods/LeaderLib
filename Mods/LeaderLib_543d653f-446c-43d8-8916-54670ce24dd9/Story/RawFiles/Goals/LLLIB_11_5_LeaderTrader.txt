@@ -528,20 +528,20 @@ LLLIB_LeaderTrader_SetAppearance(_LeaderTrader, _Template);
 PROC
 LLLIB_LeaderTrader_OnSpawned((CHARACTERGUID)_LeaderTrader, "TUT_Tutorial_A")
 THEN
-LeaderLib_Treasure_CreateItemByStat_Cleanup(_LeaderTrader);
-LeaderLib_Treasure_CreateItemByStat_AddToQueue(_LeaderTrader, "ARM_Purge_UpperBody", 1, 0, 1);
-LeaderLib_Treasure_CreateItemByStat_AddToQueue(_LeaderTrader, "ARM_Purge_LowerBody", 1, 0, 1);
-LeaderLib_Treasure_CreateItemByStat_Start(_LeaderTrader, 100);
+LeaderLib_CreateByStat_CreateQueue(_LeaderTrader, "LeaderLib_LeaderTrader_PurgedEquipmentCreation_", 100, 500, "LeaderLib_Events_OnLeaderTraderTutorialItemsCreated");
+LeaderLib_CreateByStat_AddToQueue(_LeaderTrader, "LeaderLib_LeaderTrader_PurgedEquipmentCreation_", "ARM_Purge_UpperBody", 1, 0, 1);
+LeaderLib_CreateByStat_AddToQueue(_LeaderTrader, "LeaderLib_LeaderTrader_PurgedEquipmentCreation_", "ARM_Purge_LowerBody", 1, 0, 1);
+LeaderLib_CreateByStat_Start(_LeaderTrader, "LeaderLib_LeaderTrader_PurgedEquipmentCreation_");
 DB_TUT_LowerDeck_WindegoSpareCharacters(_LeaderTrader); // To avoid exploding
 
 PROC
 LLLIB_LeaderTrader_OnSpawned((CHARACTERGUID)_LeaderTrader, "LeaderLib_TestLevel")
 THEN
-LeaderLib_Treasure_CreateItemByStat_Cleanup(_LeaderTrader);
 //CharacterTransform(_LeaderTrader, "LLLIB_LeaderTrader_Act1_da17fca2-fe16-46d9-80b3-08971a8c8d49", 1, 1, 1, 1, 1, 1, 0);
-LeaderLib_Treasure_CreateItemByStat_AddToQueue(_LeaderTrader, "ARM_Purge_UpperBody", 1, 0, 1);
-LeaderLib_Treasure_CreateItemByStat_AddToQueue(_LeaderTrader, "ARM_Purge_LowerBody", 1, 0, 1);
-LeaderLib_Treasure_CreateItemByStat_Start(_LeaderTrader, 100);
+LeaderLib_CreateByStat_CreateQueue(_LeaderTrader, "LeaderLib_LeaderTrader_PurgedEquipmentCreation_", 100, 500, "LeaderLib_Events_OnLeaderTraderTutorialItemsCreated");
+LeaderLib_CreateByStat_AddToQueue(_LeaderTrader, "LeaderLib_LeaderTrader_PurgedEquipmentCreation_", "ARM_Purge_UpperBody", 1, 0, 1);
+LeaderLib_CreateByStat_AddToQueue(_LeaderTrader, "LeaderLib_LeaderTrader_PurgedEquipmentCreation_", "ARM_Purge_LowerBody", 1, 0, 1);
+LeaderLib_CreateByStat_Start(_LeaderTrader, "LeaderLib_LeaderTrader_PurgedEquipmentCreation_");
 
 PROC
 LLLIB_LeaderTrader_OnSpawned((CHARACTERGUID)_LeaderTrader, (STRING)_Level)

@@ -140,7 +140,7 @@ NOT DB_LLLIB_Debug_RegisteredWikiTraders(_)
 THEN
 DB_LLLIB_Debug_RegisteredWikiTraders(1);
 //Trader Setup
-LeaderLib_Trader_Register_TraderTemplate("MyMod.Debug.TestTrader", "Dwarves_Male_Clothing_b1dd34cb-2a28-46d2-8f72-dfa8171b5aa0", 0);
+//LeaderLib_Trader_Register_TraderTemplate("MyMod.Debug.TestTrader", "Dwarves_Male_Clothing_b1dd34cb-2a28-46d2-8f72-dfa8171b5aa0", 0);
 
 LeaderLib_Trader_Register_Position("MyMod.Debug.TestTrader", "LeaderLib_TestLevel", 10.0, 0.0, 5.0);
 LeaderLib_Trader_Register_PositionObject("MyMod.Debug.TestTrader", "LeaderLib_TestLevel", ITEMGUID_LLLIB_Debug_TestChest_ff6c9edf-aa21-447a-8bb2-2a647a8dae46);
@@ -152,10 +152,10 @@ LeaderLib_Trader_Register_Dialog("MyMod.Debug.TestTrader", "LLLIB_Debug_Trader")
 //Trader Treasure
 LeaderLib_Treasure_Register_TreasureToTrader("MyMod.Debug.TestTrader.InitialItems", "MyMod.Debug.TestTrader");
 
-LeaderLib_Treasure_Register_TreasureTable("MyMod.Debug.TestTrader.InitialItems", "TEST_Generation", "", 1);
+//LeaderLib_Treasure_Register_TreasureTable("MyMod.Debug.TestTrader.InitialItems", "TEST_Generation", "", 1);
 
 //Generation Type Config
-//LeaderLib_Treasure_Configure_DefaultGenerationType("MyMod.Debug.TestTrader.InitialItems", "DIALOG_STARTED");
+LeaderLib_Treasure_Configure_DefaultGenerationType("MyMod.Debug.TestTrader.InitialItems", "DIALOG_STARTED");
 
 //ItemStat / Rune Example
 LeaderLib_Treasure_Register_ItemStat("MyMod.Debug.TestTrader.InitialItems", "WPN_Cheat_Sword_1H_RuneSlot2", 2);
@@ -164,6 +164,7 @@ LeaderLib_Treasure_Configure_AddDeltaMod("MyMod.Debug.TestTrader.InitialItems", 
 LeaderLib_Treasure_Configure_AddDeltaMod("MyMod.Debug.TestTrader.InitialItems", "WPN_Cheat_Sword_1H_RuneSlot2", "Boost_Weapon_Rune_LOOT_Rune_Masterwork_Giant", 75);
 LeaderLib_Treasure_Configure_AddDeltaMod("MyMod.Debug.TestTrader.InitialItems", "WPN_Cheat_Sword_1H_RuneSlot2", "Boost_Weapon_Rune_LOOT_Rune_Venom_Large", 61);
 
+/*
 LeaderLib_Treasure_Register_ItemTemplate("MyMod.Debug.TestTrader.InitialItems", "LOOT_MagicAmulet_Blue_6de34a88-3046-4fef-8933-b4f634d794ae", 2);
 LeaderLib_Treasure_Configure_AddDeltaMod("MyMod.Debug.TestTrader.InitialItems", "LOOT_MagicAmulet_Blue_6de34a88-3046-4fef-8933-b4f634d794ae", "Boost_Armor_Amulet_Rune_LOOT_Rune_Thunder_Small", 75);
 
@@ -178,6 +179,7 @@ LeaderLib_Treasure_Configure_AddDeltaMod("MyMod.Debug.TestTrader.InitialItems", 
 LeaderLib_Treasure_Configure_AddDeltaMod("MyMod.Debug.TestTrader.InitialItems", "WPN_Common_Spear_2H_A_15b17f97-4354-4f6e-98e9-818f87fe95f7", "Boost_Weapon_Damage_Bonus_Large", -1);// Guaranteed to be applied
 LeaderLib_Treasure_Configure_AddDeltaMod("MyMod.Debug.TestTrader.InitialItems", "WPN_Common_Spear_2H_A_15b17f97-4354-4f6e-98e9-818f87fe95f7", "Boost_Weapon_LifeSteal_Large_TwoHanded", 47);
 LeaderLib_Treasure_Configure_AddDeltaMod("MyMod.Debug.TestTrader.InitialItems", "WPN_Common_Spear_2H_A_15b17f97-4354-4f6e-98e9-818f87fe95f7", "Boost_Weapon_Rune_LOOT_Rune_Masterwork_Small", 82);
+*/
 
 //Requirement Example
 LeaderLib_Requirements_Add_PartyLevelRequirement("MyMod.Debug.TraderRequirements1", 9); // Unlocked when the party is level 9

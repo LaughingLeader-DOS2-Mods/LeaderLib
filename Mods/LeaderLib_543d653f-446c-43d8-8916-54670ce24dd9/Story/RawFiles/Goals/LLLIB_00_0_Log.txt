@@ -60,6 +60,11 @@ THEN
 DB_NOOP(1);
 
 QRY
+LeaderLog_QRY_LogTypeEnabled("ERROR")
+THEN
+DB_NOOP(1);
+
+QRY
 LeaderLog_QRY_LogTypeEnabled("DEBUG")
 AND
 GlobalGetFlag("LeaderLog_Debug_Enabled", 1)
@@ -109,6 +114,11 @@ DB_NOOP(1);
 
 QRY
 LeaderLog_QRY_IsDebugType("DEBUG")
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLog_QRY_IsDebugType("ERROR")
 THEN
 DB_NOOP(1);
 

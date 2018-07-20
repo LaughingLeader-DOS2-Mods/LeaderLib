@@ -101,6 +101,7 @@ AND
 NOT LeaderLib_QRY_ObjectTimerStarted((GUIDSTRING)_Dummy, "LeaderLib_Timers_Treasure_ResetDummyAfterDelay_")
 THEN
 SetVarString(_Dummy, "LeaderLib_DummyResetEvent", _ResetEvent);
+LeaderLib_StartObjectTimer((CHARACTERGUID)_Dummy, _Delay, "LeaderLib_Timers_Treasure_ResetDummyAfterDelay_", "LeaderLib_Events_ResetDummy");
 
 PROC
 LeaderLib_Treasure_ResetDummyAfterDelay((CHARACTERGUID)_Dummy, (INTEGER)_Delay)

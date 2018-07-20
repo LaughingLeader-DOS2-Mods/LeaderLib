@@ -48,7 +48,7 @@ PROC
 LeaderLib_Treasure_CountTemplateWithStat((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate, (STRING)_GeneratedStat)
 THEN
 DB_LLLIB_Treasure_Temp_ItemStatAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _GeneratedStat, 0);
-LeaderLib_StartObjectTimer(_Object, 50, _ID, "LeaderLib_Events_Treasure_Internal_StatCountingComplete");
+LeaderLib_StartObjectTimer(_Object, 500, _ID, "LeaderLib_Events_Treasure_Internal_StatCountingComplete");
 
 QRY
 LeaderLib_Treasure_Internal_QRY_StatMatch((ITEMGUID)_Item, (STRING)_GeneratedStat)
@@ -82,11 +82,48 @@ DB_NOOP(1);
 PROC
 LeaderLib_Treasure_CountTemplateWithStat((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate, (STRING)_GeneratedStat)
 AND
-ObjectIsCharacter(_Object, 1)
+NOT DB_LLLLIB_Treasure_Temp_TemplateIterator(_ID, _Object, _TreasureID, _ItemTemplate, _GeneratedStat, _, _)
 AND
-GetItemForItemTemplateInInventory((CHARACTERGUID)_Object, _ItemTemplate, _Item)
+LeaderLog_QRY_Log("COMBINE", "LeaderLib_IterateTemplate_", _ItemTemplate, "_", _ID)
 AND
-String(_Item, _UUID)
+DB_LeaderLog_Temp_CombinedString(_IterateEvent)
+AND
+StringConcatenate(_IterateEvent, "_Complete", _CompletionEvent)
+THEN
+NOT DB_LeaderLog_Temp_CombinedString(_IterateEvent);
+DB_LLLLIB_Treasure_Temp_TemplateIterator(_ID, _Object, _TreasureID, _ItemTemplate, _GeneratedStat, _IterateEvent, _CompletionEvent);
+InventoryLaunchTemplateIterator(_Object, _ItemTemplate, _IterateEvent, _CompletionEvent);
+
+IF
+StoryEvent(_, _CompletionEvent)
+AND
+DB_LLLLIB_Treasure_Temp_TemplateIterator(_ID, _Object, _TreasureID, _ItemTemplate, _GeneratedStat, _IterateEvent, _CompletionEvent)
+AND
+DB_LLLIB_Treasure_Temp_ItemStatAmount(_Object, _TreasureID, _ItemTemplate, _GeneratedStat, _Total)
+AND
+_Total > 0
+AND
+IntegertoString(_Total, _TotalStr)
+AND
+String(_Object, _ID)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Treasure:CountTemplateWithStat] Found [",_TotalStr,"] item template(s) with stat [",_GeneratedStat,"] on object [",_ID,"]. Treasure [",_TreasureID,"] | ItemTemplate [",_ItemTemplate,"].");
+
+IF
+StoryEvent(_, _CompletionEvent)
+AND
+DB_LLLLIB_Treasure_Temp_TemplateIterator(_ID, _Object, _TreasureID, _ItemTemplate, _GeneratedStat, _IterateEvent, _CompletionEvent)
+THEN
+NOT DB_LLLLIB_Treasure_Temp_TemplateIterator(_ID, _Object, _TreasureID, _ItemTemplate, _GeneratedStat, _IterateEvent, _CompletionEvent);
+LeaderLib_CancelObjectTimer(_Object, _ID);
+SetStoryEvent(_Object, "LeaderLib_Events_Treasure_Internal_StatCountingComplete");
+
+IF
+StoryEvent((ITEMGUID)_Item, _IterateEvent)
+AND
+DB_LLLLIB_Treasure_Temp_TemplateIterator(_ID, _Object, _TreasureID, _ItemTemplate, _GeneratedStat, _IterateEvent, _CompletionEvent)
+AND
+String(_Object, _UUID)
 AND
 LeaderLog_QRY_Log("DEBUG", "[LeaderLib:DebugNow] Found template [",_ItemTemplate,"] in character inventory with ITEMGUID [",_UUID,"]. Checking for item stat [", _GeneratedStat, "].")
 AND
@@ -106,97 +143,6 @@ IntegerSum(_CurrentAmount, _Amount, _NextAmount)
 THEN
 NOT DB_LLLIB_Treasure_Temp_ItemStatAmount(_Object, _TreasureID, _ItemTemplate, _GeneratedStat, _CurrentAmount);
 DB_LLLIB_Treasure_Temp_ItemStatAmount(_Object, _TreasureID, _ItemTemplate, _GeneratedStat, _NextAmount);
-
-PROC
-LeaderLib_Treasure_CountTemplateWithStat((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate, (STRING)_GeneratedStat)
-AND
-ObjectIsCharacter(_Object, 1)
-AND
-DB_LLLIB_Treasure_Temp_ItemStatAmount(_Object, _TreasureID, _ItemTemplate, _GeneratedStat, _Total)
-AND
-_Total > 0
-AND
-IntegertoString(_Total, _TotalStr)
-AND
-CharacterGetDisplayName((CHARACTERGUID)_Object, _, _Name)
-THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Treasure:CountTemplateWithStat] Found [",_TotalStr,"] item template(s) with stat [",_GeneratedStat,"] on character [",_Name,"]. Treasure [",_TreasureID,"] | ItemTemplate [",_ItemTemplate,"].");
-
-PROC
-LeaderLib_Treasure_CountTemplateWithStat((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate, (STRING)_GeneratedStat)
-AND
-ObjectIsItem(_Object, 1)
-AND
-ItemIsContainer((ITEMGUID)_Object, 1)
-AND
-ItemTemplateIsInContainer(_Object, _ItemTemplate, _Amount)
-AND
-_Amount > 0
-THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Treasure:CountTemplateWithStat] Found item template in container [",_TreasureID,"]:[",_GeneratedStat,"]:[",_ItemTemplate,"]. Starting inventory iterator.");
-SetVarString(_Object, "LeaderLib_IteratorEvent", "LeaderLib_Events_Internal_Treasure_CheckItem");
-SetStoryEvent(_Object, "LeaderLib_Commands_StartInventoryIterator");
-
-IF
-StoryEvent((ITEMGUID)_Item, "LeaderLib_Events_Internal_Treasure_CheckItem")
-AND
-GetVarFixedString(_Item, "LeaderLib_GeneratedItemStat", _GeneratedStat)
-AND
-GetTemplate(_Item, _ItemTemplate)
-AND
-ItemGetAmount(_Item, _Amount)
-AND
-GetInventoryOwner(_Item, _Object)
-AND
-GetVarString(_Object, "LeaderLib_Internal_TreasureQueueID", _ID)
-AND
-GetVarString(_Object, "LeaderLib_Internal_TreasureID", _TreasureID)
-THEN
-LeaderLib_Treasure_Counter_Internal_IncrementAmount(_ID, _Object, _TreasureID, _ItemTemplate, _GeneratedStat, _Amount);
-
-PROC
-LeaderLib_Treasure_Counter_Internal_IncrementAmount((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate, (STRING)_GeneratedStat, (INTEGER)_AddAmount)
-AND
-DB_LLLIB_Treasure_Temp_ItemStatAmount(_Object, _TreasureID, _ItemTemplate, _GeneratedStat, _CurrentAmount)
-AND
-IntegerSum(_CurrentAmount, _AddAmount, _NextAmount)
-THEN
-NOT DB_LLLIB_Treasure_Temp_ItemStatAmount(_Object, _TreasureID, _ItemTemplate, _GeneratedStat, _CurrentAmount);
-DB_LLLIB_Treasure_Temp_ItemStatAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _GeneratedStat, _NextAmount);
-
-/*
-QRY
-LeaderLib_Treasure_QRY_CountTemplateWithStat((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate, (STRING)_GeneratedStat)
-AND
-ObjectIsItem(_Object, 1)
-AND
-ItemIsContainer((ITEMGUID)_Object, 1)
-AND
-ItemTemplateIsInContainer(_Object, _ItemTemplate, _Amount)
-AND
-_Amount > 0
-AND
-LeaderLib_Treasure_QRY_PrepareGeneratorDummy((GUIDSTRING)_Object, _ID)
-AND
-DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _ID)
-THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Treasure:CountTemplateWithStat] Moved all items to dummy for counting. [",_TreasureID,"]:[",_GeneratedStat,"].");
-MoveAllItemsTo(_Object, _Dummy);
-LLLIB_Treasure_Internal_CountItemsOnDummy(_ID, _Dummy, _Object, _TreasureID, _ItemTemplate, _GeneratedStat);
-*/
-
-//Move the items to a dummy character so we can actually get the item by the item template
-PROC
-LLLIB_Treasure_Internal_CountItemsOnDummy((STRING)_ID, (GUIDSTRING)_Dummy, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate, (STRING)_GeneratedStat)
-AND
-LeaderLib_Treasure_QRY_CountTemplateWithStat(_ID, _Dummy, _TreasureID, _ItemTemplate, _GeneratedStat)
-AND
-DB_LLLIB_Treasure_Temp_ItemStatAmount(_Dummy, _TreasureID, _ItemTemplate, _GeneratedStat, _Amount)
-THEN
-NOT DB_LLLIB_Treasure_Temp_ItemStatAmount(_Dummy, _TreasureID, _ItemTemplate, _GeneratedStat, _Amount);
-DB_LLLIB_Treasure_Temp_ItemStatAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _GeneratedStat, _Amount);
-MoveAllItemsTo(_Dummy, _Object);
-LeaderLog_Log("DEBUG", "[LeaderLib:Treasure:CountTemplateWithStat] Counting finished. Moved items from dummy to object. [",_TreasureID,"]:[",_GeneratedStat,"].");
 //END_REGION
 
 //REGION QUERIES

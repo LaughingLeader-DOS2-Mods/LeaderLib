@@ -15,7 +15,7 @@ INITSECTION
 //DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID)
 
 //Dynamic
-//DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+//DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 /*SPAWN_QUEUE*/
 //DB_LLLIB_Array_Data(_ArrayID, _Index, _TraderID)
 //DB_LLLIB_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID, _SpawnEvent, _SpawnCompleteEvent, _SpawnQueueCompleteEvent, _TimeoutEvent)
@@ -33,7 +33,7 @@ KBSECTION
 PROC
 LLLIB_System_RegisterDatabases()
 THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Spawned", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LeaderLib_Traders_Active", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Temp_CurrentSpawnQueue", 6);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Temp_CurrentlySpawning", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LLLIB_Traders_Temp_DialogFound", 1);
@@ -109,6 +109,27 @@ AND
 DB_LLLIB_Traders_RegisteredTraderInstance(_TraderID, _Trader, _Level)
 AND
 DB_CurrentLevel(_Level)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Traders_QRY_IsTrader((CHARACTERGUID)_Trader)
+AND
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Traders_QRY_IsTrader((CHARACTERGUID)_Trader)
+AND
+DB_LLLIB_Traders_RegisteredTraderInstance(_TraderID, _Trader, _Level)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Traders_QRY_IsTrader((CHARACTERGUID)_Trader)
+AND
+DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader)
 THEN
 DB_NOOP(1);
 //END_REGION
@@ -227,7 +248,7 @@ LeaderLib_Traders_Internal_OnLevelEnded((CHARACTERGUID)_Trader, (STRING)_TraderI
 AND
 DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader)
 THEN
-NOT DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
+NOT DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level);
 LeaderLog_Log("DEBUG", "[LeaderLib:Traders] Level ",_Level," ending. Removed global trader [",_TraderID,"] from spawned database.");
 
 PROC
@@ -235,7 +256,7 @@ LeaderLib_Traders_Internal_OnLevelEnded((CHARACTERGUID)_Trader, (STRING)_TraderI
 AND
 GlobalGetFlag("LeaderLib_IsEditorMode", 1)
 THEN
-NOT DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
+NOT DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level);
 SetOnStage(_Trader, 0);
 LeaderLog_Log("DEBUG", "[LeaderLib:Traders] Level ",_Level," ending and editor mode is enabled. Remove trader [",_TraderID,"] from spawned database and setting off stage.");
 //END_REGION
@@ -294,7 +315,7 @@ LLLIB_Traders_Internal_CreateTraders(_Level);
 IF
 RegionEnded(_Level)
 AND
-DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 THEN
 LeaderLib_Traders_Internal_OnLevelEnded(_Trader, _TraderID, _Level);
 //END_REGION
@@ -307,7 +328,7 @@ DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID)
 AND
 LeaderLib_Traders_QRY_IsRegistered(_TraderID)
 AND
-NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
+NOT DB_LeaderLib_Traders_Active(_, _TraderID, _Level)
 AND
 LeaderLib_Requirements_QRY_AllMet(_RequirementID)
 THEN
@@ -455,7 +476,7 @@ NOT DB_LLLIB_Queue_Temp_CurrentEntry(_ArrayID, _TraderID);
 IF
 StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_OnTraderSpawned")
 AND
-DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 AND
 DB_LLLIB_Traders_Temp_CurrentlySpawning(_ArrayID, _TraderID)
 AND
@@ -539,7 +560,7 @@ LLLIB_Traders_Internal_CreateTrader((STRING)_TraderID, (STRING)_Level)
 AND
 DB_LLLIB_Traders_RegisteredTraderTemplate(_TraderID, _Template, _PlaySpawn)
 AND
-NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
+NOT DB_LeaderLib_Traders_Active(_, _TraderID, _Level)
 AND
 LeaderLib_Traders_QRY_HasPosition(_TraderID, _Level)
 THEN
@@ -553,7 +574,7 @@ DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader)
 AND
 ObjectExists(_Trader, 1)
 AND
-NOT DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+NOT DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 AND
 LeaderLib_Traders_QRY_HasPosition(_TraderID, _Level)
 AND
@@ -569,17 +590,17 @@ DB_LLLIB_Traders_RegisteredTraderInstance(_TraderID, _Trader, _Level)
 AND
 ObjectExists(_Trader, 1)
 AND
-NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
+NOT DB_LeaderLib_Traders_Active(_, _TraderID, _Level)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Traders] Pre-existing character found for trader ID [",_TraderID,"].");
-DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level);
 
 PROC
 LLLIB_Traders_Internal_CreateTrader((STRING)_TraderID, (STRING)_Level)
 AND
 DB_LLLIB_Traders_RegisteredTraderTemplate(_TraderID, _Template, _PlaySpawn)
 AND
-NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
+NOT DB_LeaderLib_Traders_Active(_, _TraderID, _Level)
 AND
 NOT LeaderLib_Traders_QRY_HasPosition(_TraderID, _Level)
 THEN
@@ -592,7 +613,7 @@ DB_LLLIB_Traders_RegisteredTraderInstance(_TraderID, _Trader, _Level)
 AND
 ObjectExists(_Trader, 0)
 AND
-NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
+NOT DB_LeaderLib_Traders_Active(_, _TraderID, _Level)
 AND
 String(_Trader, _UUID)
 THEN
@@ -601,7 +622,7 @@ LeaderLog_Log("DEBUG", "[LeaderLib:Traders][ERROR] Trader [",_TraderID,"] with U
 PROC
 LLLIB_Traders_Internal_SpawnTrader((STRING)_TraderID, (STRING)_Level, (STRING)_Template, (INTEGER)_PlaySpawn)
 AND
-NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
+NOT DB_LeaderLib_Traders_Active(_, _TraderID, _Level)
 AND
 DB_LLLIB_Traders_LevelPositionObject(_TraderID, _Level, _Object)
 AND
@@ -611,13 +632,13 @@ GetPosition(_Object, _x, _y, _z)
 AND
 CharacterCreateAtPosition(_x,_y,_z, _Template, _PlaySpawn, _Trader)
 THEN
-DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level);
 SetStoryEvent(_Trader, "LeaderLib_Events_OnTraderCreated");
 
 PROC
 LLLIB_Traders_Internal_SpawnTrader((STRING)_TraderID, (STRING)_Level, (STRING)_Template, (INTEGER)_PlaySpawn)
 AND
-NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
+NOT DB_LeaderLib_Traders_Active(_, _TraderID, _Level)
 AND
 DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger)
 AND
@@ -627,19 +648,19 @@ GetPosition(_Trigger,_x,_y,_z)
 AND
 CharacterCreateAtPosition(_x,_y,_z, _Template, _PlaySpawn, _Trader)
 THEN
-DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level);
 SetStoryEvent(_Trader, "LeaderLib_Events_OnTraderCreated");
 
 PROC
 LLLIB_Traders_Internal_SpawnTrader((STRING)_TraderID, (STRING)_Level, (STRING)_Template, (INTEGER)_PlaySpawn)
 AND
-NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
+NOT DB_LeaderLib_Traders_Active(_, _TraderID, _Level)
 AND
 DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z)
 AND
 CharacterCreateAtPosition(_x,_y,_z, _Template, _PlaySpawn, _Trader)
 THEN
-DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level);
 SetStoryEvent(_Trader, "LeaderLib_Events_OnTraderCreated");
 
 /*
@@ -666,18 +687,18 @@ LeaderLog_Log("DEBUG", "[LeaderLib:Traders] Global trader [",_TraderID,"] pre-tp
 PROC
 LLLIB_Traders_Internal_TeleportToPosition((STRING)_TraderID, (STRING)_Level, (CHARACTERGUID)_Trader)
 AND
-NOT DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+NOT DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 AND
 DB_LLLIB_Traders_LevelPositionObject(_TraderID, _Level, _Object)
 THEN
 //DB_LLLIB_Debug_TraceEvent(_TraderID, "LeaderLib_Events_OnTraderTeleported", "object");
 TeleportTo(_Trader, _Object, "LeaderLib_Events_OnTraderTeleported", 0);
-DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level);
 
 PROC
 LLLIB_Traders_Internal_TeleportToPosition((STRING)_TraderID, (STRING)_Level, (CHARACTERGUID)_Trader)
 AND
-NOT DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+NOT DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 AND
 DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger)
 //AND
@@ -685,12 +706,12 @@ DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger)
 THEN
 //DB_LLLIB_Debug_TraceEvent(_TraderID, "LeaderLib_Events_OnTraderTeleported", "trigger");
 TeleportTo(_Trader, _Trigger, "LeaderLib_Events_OnTraderTeleported", 0);
-DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level);
 
 PROC
 LLLIB_Traders_Internal_TeleportToPosition((STRING)_TraderID, (STRING)_Level, (CHARACTERGUID)_Trader)
 AND
-NOT DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+NOT DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 AND
 DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z)
 THEN
@@ -699,7 +720,7 @@ THEN
 TeleportToPosition(ITEMGUID_S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, 0.0, 0.0, 0.0, "", 0);
 TeleportTo(_Trader, ITEMGUID_S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, "", 0);
 TeleportToPosition(_Trader, _x,_y,_z, "LeaderLib_Events_OnTraderTeleported", 0);
-DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level);
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level);
 
 IF
 StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_OnTraderTeleported")
@@ -734,7 +755,7 @@ NOT DB_LLLIB_Debug_TraceEvent(_TraderID, "LeaderLib_Events_OnTraderTeleported", 
 IF
 StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_OnTraderTeleported")
 AND
-DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 AND
 DB_LLLIB_Traders_CreationEvents(_TraderID, _EventName)
 THEN
@@ -744,21 +765,21 @@ SetStoryEvent(_Trader, _EventName);
 IF
 StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_OnTraderCreated")
 AND
-DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 THEN
 SetStoryEvent(_Trader, "LeaderLib_Commands_Trader_StartSitting");
 
 IF
 StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_OnTraderTeleported")
 AND
-DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 THEN
 SetStoryEvent(_Trader, "LeaderLib_Commands_Trader_StartSitting");
 //END_REGION
 
 //REGION ON_SPAWN
 IF
-DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 THEN
 LeaderLib_Traders_OnSpawned(_Trader, _TraderID, _Level);
 
@@ -766,10 +787,10 @@ PROC
 LeaderLib_Traders_OnSpawned((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
 THEN
 SetVarString(_Trader, "LeaderLib_TraderID", _TraderID);
-
-PROC
-LeaderLib_Traders_OnSpawned((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
-THEN
+SetTag(_Trader, "LeaderLib_RegisteredTrader");
+LeaderLib_Traders_SetDialogToFirstAvailable(_Trader, _TraderID, _Level);
+LeaderLib_Traders_AddStartingGold(_Trader, _TraderID, _Level);
+LLLIB_Traders_Internal_GenerateInitialTradeTreasure(_Trader); // Generate via DOS2's trade treasure system
 SetStoryEvent(_Trader, "LeaderLib_Events_OnTraderSpawned");
 
 PROC
@@ -781,19 +802,17 @@ SetStoryEvent(_Trader, _EventName);
 
 PROC
 LeaderLib_Traders_OnSpawned((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
+AND
+ObjectIsOnStage(_Trader, 0)
 THEN
-LeaderLib_Traders_SetDialogToFirstAvailable(_Trader, _TraderID, _Level);
-LeaderLib_Traders_AddStartingGold(_Trader, _TraderID, _Level);
+SetOnStage(_Trader, 1);
 
-//Generate treasure on spawn
 PROC
 LeaderLib_Traders_OnSpawned((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
+AND
+GlobalGetFlag("LeaderLib_InitialEventFlowComplete", 1)
 THEN
-//ItemTemplateAddTo("LLLIB_Dummy_InventoryInit_a76d007d-48d7-4aa6-b741-7b9fcd125de3", _Trader, 1);
-SetVisible(_Trader, 1);
-SetOnStage(_Trader, 1);
-LLLIB_Traders_Internal_GenerateInitialTradeTreasure(_Trader); // Generate via DOS2's trade treasure system
-ObjectSetFlag(_Trader, "LeaderLib_Treasure_GenerateNow", 0); // Generate via the scripted treasure system
+ObjectSetFlag(_Trader, "LeaderLib_Treasure_GenerateNow"); // Generate via the scripted treasure system
 
 PROC
 LLLIB_Traders_Internal_GenerateInitialTradeTreasure((CHARACTERGUID)_Trader)
@@ -848,7 +867,7 @@ LLLIB_Traders_Internal_ProcessJustRegistered(_TreasureID, _TraderID);
 PROC
 LLLIB_Traders_Internal_ProcessJustRegistered((STRING)_TreasureID, (STRING)_TraderID)
 AND
-DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 AND
 IsTagged(_Trader, "LeaderLib_Trader_GenerateOnNewlyRegistered", 1)
 THEN
@@ -864,7 +883,7 @@ LLLIB_Traders_Internal_StartCheckingTraders();
 PROC
 LLLIB_Traders_Internal_StartCheckingTraders()
 AND
-DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 THEN
 LeaderLib_Array_AddToArray("LLLIB_Traders_CheckQueue_TraderList", _TraderID);
 
@@ -882,7 +901,7 @@ StoryEvent(_, "LLLIB_Events_OnCheckTrader")
 AND
 DB_LLLIB_Queue_Temp_CurrentEntry(_QueueID, _TraderID)
 AND
-DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 THEN
 LeaderLib_Traders_CheckTrader(_Trader, _TraderID, _Level);
 LeaderLib_SendEvent("LLLIB_Events_OnCheckTraderComplete");
@@ -921,7 +940,7 @@ LeaderLib_Queue_ClearQueue("LLLIB_Traders_CheckQueue");
 IF
 StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Commands_Trader_StartSitting")
 AND
-DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 THEN
 LeaderLib_Traders_SetSeat(_Trader, _TraderID, _Level);
 
@@ -957,7 +976,7 @@ LeaderLib_Requirements_RequirementUnlocked((STRING)_RequirementID)
 AND
 DB_CurrentLevel(_Level)
 AND
-DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 AND
 ObjectGetFlag(_Trader, "LeaderLib_Traders_StartingGoldAdded", 0)
 AND
@@ -970,7 +989,7 @@ LeaderLib_Requirements_RequirementUnlocked((STRING)_RequirementID)
 AND
 DB_CurrentLevel(_Level)
 AND
-DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 AND
 LeaderLib_Traders_QRY_HasDialogWithRequirementForLevel(_TraderID, _Level, _RequirementID)
 THEN
@@ -981,7 +1000,7 @@ LeaderLib_Requirements_RequirementLocked((STRING)_RequirementID)
 AND
 DB_CurrentLevel(_Level)
 AND
-DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 AND
 LeaderLib_Traders_QRY_HasDialogWithRequirementForLevel(_TraderID, _Level, _RequirementID)
 THEN
@@ -996,7 +1015,7 @@ DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID)
 AND
 LeaderLib_Requirements_QRY_AllMet(_RequirementID)
 AND
-NOT DB_LLLIB_Traders_Spawned(_, _TraderID, _Level)
+NOT DB_LeaderLib_Traders_Active(_, _TraderID, _Level)
 THEN
 LLLIB_Traders_Internal_CreateTrader(_TraderID, _Level);
 //END_REGION
@@ -1005,7 +1024,7 @@ LLLIB_Traders_Internal_CreateTrader(_TraderID, _Level);
 IF
 StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_OnGenerationComplete")
 AND
-DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 THEN
 LeaderLib_Traders_ApplyNewStockStatus(_Trader);
 
@@ -1029,7 +1048,7 @@ SetStoryEvent(_Trader, "LeaderLib_Events_NewItemsInStock");
 IF
 TradeEnds(_, _Trader)
 AND
-DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 AND
 IsTagged(_Trader, "LeaderLib_Trader_DisableStockStatus", 0)
 AND
@@ -1041,6 +1060,24 @@ RemoveStatus(_Trader, "LLLIB_NEW_ITEMS");
 ApplyStatus(_Trader, "LLLIB_NEW_ITEMS", 60.0); // Make it time-limited now.
 DisplayText(_Trader, " "); // Hide the status message
 */
+//END_REGION
+
+//REGION UPDATE
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", _PastVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 0, 9, 3, 0)
+THEN
+LeaderLog_Log("SYSTEM", "[LeaderLib:TraderSystem:ModUpdated] Updated [DB_LLLIB_Traders_Spawned] to [DB_LeaderLib_Traders_Active].");
+LeaderLib_Internal_TraderSystem_UpdateOldDatabases();
+
+PROC
+LeaderLib_Internal_TraderSystem_UpdateOldDatabases()
+AND
+DB_LLLIB_Traders_Spawned((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
+THEN
+NOT DB_LLLIB_Traders_Spawned((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level);
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level);
 //END_REGION
 
 //REGION DEBUG

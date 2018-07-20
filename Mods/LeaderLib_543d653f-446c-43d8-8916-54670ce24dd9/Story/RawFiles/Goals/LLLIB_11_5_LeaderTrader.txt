@@ -391,7 +391,7 @@ ObjectFlagCleared("LLLIB_LeaderTrader_WasHiding", (CHARACTERGUID)_LeaderTrader, 
 AND
 DB_LLLIB_LeaderTrader(_LeaderTrader)
 AND
-DB_LLLIB_Traders_Spawned(_LeaderTrader, _TraderID, _Level)
+DB_LeaderLib_Traders_Active(_LeaderTrader, _TraderID, _Level)
 AND
 DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID)
 THEN
@@ -461,7 +461,7 @@ THEN
 CharacterMoveToPosition(_LeaderTrader, _x,_y,_z, 0, "");
 
 IF
-DB_LLLIB_Traders_Spawned(_LeaderTrader, "LLLIB_LeaderTrader", _Level)
+DB_LeaderLib_Traders_Active(_LeaderTrader, "LLLIB_LeaderTrader", _Level)
 THEN
 LLLIB_LeaderTrader_Set(_LeaderTrader);
 
@@ -561,7 +561,7 @@ NOT DB_LLLIB_LeaderTrader_CurrentAppearance(_Template);
 IF
 GlobalFlagSet("TUT_LowerDeck_WindegoHasCastSpell")
 AND
-DB_LLLIB_Traders_Spawned(_LeaderTrader, "LLLIB_LeaderTrader", _Level)
+DB_LeaderLib_Traders_Active(_LeaderTrader, "LLLIB_LeaderTrader", _Level)
 THEN
 DisplayText(_LeaderTrader, "Hrmph. Best to avoid trouble...");
 CharacterUseSkill(_LeaderTrader, "Shout_ChameleonSkin", _LeaderTrader, 0, 1, 1);
@@ -570,9 +570,9 @@ TimerLaunch("LLLIB_Timeers_LeaderTrader_TUTDisappear", 2000);
 IF
 TimerFinished("LLLIB_Timeers_LeaderTrader_TUTDisappear")
 AND
-DB_LLLIB_Traders_Spawned(_LeaderTrader, "LLLIB_LeaderTrader", "TUT_Tutorial_A")
+DB_LeaderLib_Traders_Active(_LeaderTrader, "LLLIB_LeaderTrader", "TUT_Tutorial_A")
 THEN
-NOT DB_LLLIB_Traders_Spawned(_LeaderTrader, "LLLIB_LeaderTrader", "TUT_Tutorial_A");
+NOT DB_LeaderLib_Traders_Active(_LeaderTrader, "LLLIB_LeaderTrader", "TUT_Tutorial_A");
 
 IF
 TimerFinished("LLLIB_Timeers_LeaderTrader_TUTDisappear")

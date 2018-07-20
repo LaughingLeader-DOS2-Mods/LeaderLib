@@ -192,6 +192,17 @@ NOT DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value);
 PROC
 LeaderLib_Array_GetFirstEntry((STRING)_ID)
 AND
+DB_LLLIB_Array_Length(_ID, 1)
+AND
+DB_LLLIB_Array_Data(_ID, 0, _Value)
+THEN
+DB_LLLIB_Array_Temp_FirstEntry(_ID, 0, _Value);
+
+PROC
+LeaderLib_Array_GetFirstEntry((STRING)_ID)
+AND
+NOT DB_LLLIB_Array_Temp_FirstEntry(_ID, _, _)
+AND
 DB_LLLIB_Array_Iterator(_ID, _Index)
 AND
 NOT DB_LLLIB_Array_Temp_FirstEntry(_ID, _, _)

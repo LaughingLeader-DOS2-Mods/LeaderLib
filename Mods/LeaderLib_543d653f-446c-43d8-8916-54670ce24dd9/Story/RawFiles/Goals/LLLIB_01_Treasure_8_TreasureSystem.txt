@@ -85,7 +85,7 @@ DB_LLLIB_Treasure_Temp_MatchedTreasure((GUIDSTRING)_Object, _TreasureID);
 QRY
 LeaderLib_Treasure_QRY_GetTreasureID((GUIDSTRING)_Object)
 AND
-DB_LLLIB_Traders_Spawned((CHARACTERGUID)_Object, _TraderID, _Level)
+DB_LeaderLib_Traders_Active((CHARACTERGUID)_Object, _TraderID, _Level)
 AND
 DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
 THEN
@@ -122,7 +122,7 @@ LeaderLib_Treasure_QRY_GetTreasureObject((STRING)_TreasureID, (STRING)_Generatio
 AND
 DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
 AND
-DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 THEN
 DB_LLLIB_Treasure_Temp_MatchedTreasure(_Trader, _TreasureID);
 
@@ -164,7 +164,7 @@ NOT DB_LLLIB_Treasure_Temp_MatchedTreasure(_, _TreasureID)
 AND
 DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
 AND
-DB_LLLIB_Traders_Spawned(_Object, _TraderID, _Level)
+DB_LeaderLib_Traders_Active(_Object, _TraderID, _Level)
 THEN
 DB_LLLIB_Treasure_Temp_MatchedTreasure((GUIDSTRING)_Object, _TreasureID);
 
@@ -239,7 +239,7 @@ DB_NOOP(1);
 QRY
 LeaderLib_Treasure_QRY_IsRegisteredObject((CHARACTERGUID)_Object)
 AND
-DB_LLLIB_Traders_Spawned(_Object, _TraderID, _Level)
+DB_LeaderLib_Traders_Active(_Object, _TraderID, _Level)
 AND
 DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
 THEN
@@ -361,7 +361,7 @@ DB_NOOP(1);
 QRY
 LeaderLib_Treasure_QRY_TreasureMatch((GUIDSTRING)_Object, (STRING)_TreasureID)
 AND
-DB_LLLIB_Traders_Spawned((CHARACTERGUID)_Object, _TraderID, _Level)
+DB_LeaderLib_Traders_Active((CHARACTERGUID)_Object, _TraderID, _Level)
 AND
 DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
 THEN
@@ -939,6 +939,20 @@ THEN
 LeaderLog_Log("TRACE", "[LeaderLib:Treasure:LLLIB_Treasure_Internal_FinishIfMaxAmount] [",_TreasureID,"]:[",_ItemEntry,"] reached the max item limit set, and is done generating on object [",_Template,"].");
 DB_LLLIB_Treasure_ItemDoneGenerating(_Object, _TreasureID, _ItemEntry);
 
+PROC
+LLLIB_Treasure_Internal_FinishIfMaxAmount((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Amount)
+AND
+NOT DB_LLLIB_Treasure_ItemDoneGenerating(_Object, _TreasureID, _ItemEntry)
+AND
+NOT DB_LLLIB_Treasure_ItemMaxAmount(_TreasureID, _ItemEntry, _)
+AND
+IsTagged(_Object, "LeaderLib_Treasure_GenerateEndlessly", 0)
+AND
+NOT LeaderLib_Treasure_QRY_CanKeepGenerating(_TreasureID, _ItemEntry)
+THEN
+LeaderLog_Log("TRACE", "[LeaderLib:Treasure:LLLIB_Treasure_Internal_FinishIfMaxAmount] [",_TreasureID,"]:[",_ItemEntry,"] has no max limit set, and the tag [LeaderLib_Treasure_GenerateEndlessly] is not set. Finialized generating ItemEntry on object.");
+DB_LLLIB_Treasure_ItemDoneGenerating(_Object, _TreasureID, _ItemEntry);
+
 QRY
 LeaderLib_Treasure_QRY_CanKeepGenerating((STRING)_TreasureID, (STRING)_ItemEntry)
 AND
@@ -1046,7 +1060,7 @@ LLLIB_Treasure_Internal_StartTreasureQueue(_ID, _Object, _TreasureID, _Generatio
 PROC
 LLLIB_Treasure_Internal_RemoveFromJustRegistered((CHARACTERGUID)_Trader, (STRING)_TreasureID)
 AND
-DB_LLLIB_Traders_Spawned(_Trader, _TraderID, _Level)
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 AND
 DB_LLLIB_Traders_Temp_TreasureJustRegistered(_TreasureID, _TraderID)
 THEN
@@ -1653,40 +1667,57 @@ LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:GenerateNow] Manually generati
 LeaderLib_Treasure_AddToGenerationQueue(_Object, _TreasureID, "MANUAL");
 NOT DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
 
+QRY
+LeaderLib_Trader_QRY_DefaultTradeGenerationIgnored((CHARACTERGUID)_Trader)
+AND
+IsTagged(_Trader, "LeaderLib_Trader_IgnoreTradeGeneration", 1)
+THEN
+DB_NOOP(1);
+
+//Disable trade generation events if some other type is registered
+QRY
+LeaderLib_Trader_QRY_DefaultTradeGenerationIgnored((CHARACTERGUID)_Trader)
+AND
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
+AND
+DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
+AND
+DB_LLLIB_Treasure_TreasureGenerationType(_TreasureID, _GenerationType)
+AND
+_GenerationType != "TRADE_GENERATION_END"
+THEN
+DB_NOOP(1);
+
 IF
-TradeGenerationStarted(_Object)
+TradeGenerationStarted(_Trader)
 AND
-DB_LLLIB_Treasure_RegisteredGenerationTypes("TRADE_GENERATION_START")
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 AND
-IsTagged(_Object, "LeaderLib_Trader_IgnoreTradeGeneration", 0)
+LeaderLib_Treasure_QRY_ObjectCanStartGeneration(_Trader)
 AND
-LeaderLib_Treasure_QRY_ObjectCanStartGeneration((GUIDSTRING)_Object)
-AND
-LeaderLib_Treasure_QRY_GetTreasureID(_Object)
-AND
-DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
+DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
 AND
 LeaderLib_Treasure_QRY_TreasureHasGenerationType(_TreasureID, "TRADE_GENERATION_START")
 THEN
-LeaderLib_Treasure_AddToGenerationQueue(_Object, _TreasureID, "TRADE_GENERATION_START");
-NOT DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
+LeaderLib_Treasure_AddToGenerationQueue(_Trader, _TreasureID, "TRADE_GENERATION_START");
+NOT DB_LLLIB_Treasure_Temp_MatchedTreasure(_Trader, _TreasureID);
 
 IF
-TradeGenerationEnded(_Object)
+TradeGenerationEnded(_Trader)
 AND
-IsTagged(_Object, "LeaderLib_Trader_IgnoreTradeGeneration", 0)
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 AND
-LeaderLib_Treasure_QRY_ObjectCanStartGeneration((GUIDSTRING)_Object)
+LeaderLib_Treasure_QRY_ObjectCanStartGeneration(_Trader)
 AND
-LeaderLib_Treasure_QRY_GetTreasureID(_Object)
+NOT LeaderLib_Trader_QRY_DefaultTradeGenerationIgnored(_Trader)
 AND
-DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
+DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
 //AND
-//Skip this check since it's the default generation for traders
+//Skip this check since it's the default generation type for traders
 //LeaderLib_Treasure_QRY_TreasureHasGenerationType(_TreasureID, "TRADE_GENERATION_END")
 THEN
-LeaderLib_Treasure_AddToGenerationQueue(_Object, _TreasureID, "TRADE_GENERATION_END");
-NOT DB_LLLIB_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
+LeaderLib_Treasure_AddToGenerationQueue(_Trader, _TreasureID, "TRADE_GENERATION_END");
+NOT DB_LLLIB_Treasure_Temp_MatchedTreasure(_Trader, _TreasureID);
 
 IF
 DialogStarted(_Dialog, _Instance)

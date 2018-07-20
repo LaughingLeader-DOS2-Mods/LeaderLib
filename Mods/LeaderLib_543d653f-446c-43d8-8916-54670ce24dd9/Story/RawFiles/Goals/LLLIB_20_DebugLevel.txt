@@ -63,14 +63,14 @@ ObjectSetFlag(_Char, "LLLIB_DebugLevel_OpenedChest");
 IF
 TradeEnds(_Player, _Trader)
 AND
-DB_LLLIB_Traders_Spawned(_Trader, "LLLIB_TestLevel_Trader", _Level)
+DB_LeaderLib_Traders_Active(_Trader, "LLLIB_TestLevel_Trader", _Level)
 THEN
 ObjectSetFlag(_Player, "LLLIB_DebugLevel_TalkedToTrader");
 
 IF
 RequestTrade(_Player, _Trader)
 AND
-DB_LLLIB_Traders_Spawned(_Trader, "LLLIB_TestLevel_Trader", _Level)
+DB_LeaderLib_Traders_Active(_Trader, "LLLIB_TestLevel_Trader", _Level)
 THEN
 ObjectSetFlag(_Player, "LLLIB_DebugLevel_TalkedToTrader");
 //END_REGION

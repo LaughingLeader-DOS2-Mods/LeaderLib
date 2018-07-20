@@ -8,7 +8,7 @@ LeaderLib is a library mod used to provide common functionality to other mods.
 
 # Mod Authors
 ### Using LeaderLib
-Check out the [wiki](https://github.com/LaughingLeader-DOS2-Mods/LeaderLib/wiki) for information on using LeaderLib with your mod.
+Check the [Leaderlib Wiki](https://github.com/LaughingLeader-DOS2-Mods/LeaderLib/wiki) for information on using LeaderLib with your mod.
 
 # Main Features
 

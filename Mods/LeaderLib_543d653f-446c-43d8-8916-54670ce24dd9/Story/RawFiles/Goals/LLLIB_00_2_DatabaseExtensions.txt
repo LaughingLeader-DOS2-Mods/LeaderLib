@@ -146,7 +146,7 @@ DB_LLLIB_Array_Data(_ID, _NextIndex, _Value);
 
 //REGION ARRAY_REMOVE
 PROC
-LeaderLib_Array_RemoveFromArray((STRING)_ID, (STRING)_Value)
+LeaderLib_Array_RemoveFromArray((STRING)_ID, (INTEGER)_Index, (STRING)_Value)
 AND
 DB_LLLIB_Array_Data(_ID, _Index, _Value)
 THEN
@@ -159,7 +159,18 @@ LeaderLib_Array_RemoveFromArrayAtIndex((STRING)_ID, (INTEGER)_Index)
 AND
 DB_LLLIB_Array_Data(_ID, _Index, _Value)
 THEN
-LeaderLib_Array_RemoveFromArray(_ID, _Value);
+NOT DB_LLLIB_Array_Data(_ID, _Index, _Value);
+LeaderLib_Array_DecreaseArrayLength(_ID);
+LeaderLib_Array_ShiftArrayUp(_ID, _Index);
+
+PROC
+LeaderLib_Array_RemoveValueFromArray((STRING)_ID, (STRING)_Value)
+AND
+DB_LLLIB_Array_Data(_ID, _Index, _Value)
+THEN
+NOT DB_LLLIB_Array_Data(_ID, _Index, _Value);
+LeaderLib_Array_DecreaseArrayLength(_ID);
+LeaderLib_Array_ShiftArrayUp(_ID, _Index);
 //END_REGION
 
 //REGION ARRAY_FIRST_ENTRY
@@ -214,10 +225,10 @@ DB_LLLIB_Array_Iterator(_ID, _Index)
 AND
 NOT DB_LLLIB_Array_Temp_FirstEntry(_ID, _, _) // Skip if set during iteration
 AND
-//IntegertoString(_Index, _IndexStr)
-//AND
-//LeaderLog_QRY_Log("TRACE", "[LeaderLib:DatabaseExtensions:GetFirstEntry] Checking index [",_IndexStr,"] in array [",_ID,"]")
-//AND
+IntegertoString(_Index, _IndexStr)
+AND
+LeaderLog_QRY_Log("TRACE", "[LeaderLib:DatabaseExtensions:GetFirstEntry] Checking index [",_IndexStr,"] in array [",_ID,"]")
+AND
 DB_LLLIB_Array_Data(_ID, _Index, _Value)
 THEN
 LeaderLog_Log("TRACE", "[LeaderLib:DatabaseExtensions:GetFirstEntry] First entry for array [",_ID,"] set to [",_IndexStr,"](",_Value,").");
@@ -307,7 +318,7 @@ NOT DB_LLLIB_Array_Temp_PopValue(_ID, _)
 THEN
 DB_LLLIB_Array_Temp_PopValue(_ID, _Value);
 NOT DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value);
-LeaderLib_Array_RemoveFromArray(_ID, _Value);
+LeaderLib_Array_RemoveFromArray(_ID, _Index, _Value); // Important in case two entries have the same string value
 LeaderLog_Log("TRACE", "[LeaderLib:DatabaseExtensions:Pop] Popped [",_Value,"] from array [",_ID,"].");
 //END_REGION
 

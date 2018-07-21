@@ -136,6 +136,8 @@ LeaderLog_Log("DEBUG", "[LeaderLib:EventParser][ERROR] Global Event Parser doesn
 //Send out a general event, using the Event Parser object.
 PROC
 LeaderLib_SendEvent((STRING)_EventName)
+AND
+_EventName != ""
 THEN
 DB_LeaderLib_SendEvent(_EventName);
 LLLIB_EventParser_Internal_RunEvent(_EventName);

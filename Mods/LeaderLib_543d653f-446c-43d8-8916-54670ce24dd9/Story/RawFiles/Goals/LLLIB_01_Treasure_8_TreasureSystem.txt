@@ -909,7 +909,7 @@ AND
 StringConcatenate("LeaderLib_Events_Treasure_OnStatItemsGenerated_", _ID, _CompletionEvent)
 THEN
 LeaderLog_Log("TRACE", "[LeaderLib:TreasureSystem:GenerateItems] Generating stat item [",_TreasureID,"]:[",_ItemEntry,"] via [LeaderLib_Treasure_CreateItemByStat].");
-LeaderLib_CreateByStat_CreateQueue(_Object, _ArrayPrefix, 5, 500, _CompletionEvent);
+LeaderLib_CreateByStat_CreateQueue(_Object, _ArrayPrefix, 5, 2500, _CompletionEvent);
 DB_LLLIB_Treasure_Temp_CreatingByStat(_ID, _Object, _TreasureID, _ItemEntry, _MaxAmount, _ArrayPrefix, _CompletionEvent);
 LeaderLib_CreateByStat_AddToQueue(_Object, _ArrayPrefix, _ItemEntry, _MaxAmount, 1, 0);
 LeaderLib_CreateByStat_Start(_Object, _ArrayPrefix);
@@ -1029,7 +1029,7 @@ DB_LLLIB_Array_Data("LLLIB_ItemGenerationQueue", _Index, _ID)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:StartQueue] Single entry detected. Skipping queue and generating [",_ID,"] directly.");
 LLLIB_Treasure_Internal_ProcessQueueItem(_ID);
-LeaderLib_Array_RemoveFromArray("LLLIB_ItemGenerationQueue", _ID);
+LeaderLib_Array_RemoveFromArray("LLLIB_ItemGenerationQueue", _Index, _ID);
 LeaderLib_SendEvent("LLLIB_Events_OnGenerationQueueComplete");
 
 PROC

@@ -56,7 +56,7 @@ LeaderLib_EventFlow_Init_LeaderLibStack()
 AND
 DB_LLLIB_EventFlow_DefaultStackInitialized(_Val, 0)
 THEN
-LeaderLib_EventFlow_SetCustomWaitTime("LLLIB_DefaultEventFlow", "LeaderLib_Events_OnTraderSpawnComplete", 250);
+LeaderLib_EventFlow_SetCustomWaitTime("LLLIB_DefaultEventFlow", "LeaderLib_Events_OnTraderSpawnComplete", 200);
 LeaderLib_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_SpawnTraders", "LeaderLib_Events_OnTraderSpawnComplete");
 LeaderLib_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_StartTreasureGeneration", "LeaderLib_Events_OnTreasureGenerationComplete");
 LeaderLib_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_CheckTraders", "LeaderLib_Events_OnTraderCheckingComplete");

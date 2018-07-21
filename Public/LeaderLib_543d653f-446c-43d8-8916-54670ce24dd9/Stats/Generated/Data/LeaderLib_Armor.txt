@@ -1,0 +1,5 @@
+new entry "LeaderLib_ArmorVisualsDisabled"
+type "Armor"
+using "_Overhead"
+data "Act part" "1"
+data "ItemGroup" "LeaderLib_ArmorVisualsDisabled"

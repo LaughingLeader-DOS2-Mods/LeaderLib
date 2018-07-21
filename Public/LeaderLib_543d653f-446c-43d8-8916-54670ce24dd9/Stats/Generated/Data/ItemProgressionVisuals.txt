@@ -1,0 +1,5 @@
+new itemgroup "LeaderLib_ArmorVisualsDisabled"
+
+add levelgroup 0,0,"All"
+add rootgroup "94ef2c7b-099b-4ccb-ac16-d79db4314381",""
+add namegroup "EMPTY","",""

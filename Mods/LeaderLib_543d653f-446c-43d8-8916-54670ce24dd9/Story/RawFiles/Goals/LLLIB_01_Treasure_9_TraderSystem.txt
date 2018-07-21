@@ -870,8 +870,12 @@ AND
 DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 AND
 IsTagged(_Trader, "LeaderLib_Trader_GenerateOnNewlyRegistered", 1)
+AND
+LeaderLib_Treasure_QRY_ObjectCanStartGeneration(_Trader)
+AND
+NOT ObjectGetFlag(_Trader, "LeaderLib_Treasure_JustGeneratedTreasure", 1)
 THEN
-LeaderLib_Treasure_AddToGenerationQueue(_Trader, _TreasureID, "MANUAL");
+ObjectSetFlag(_Trader, "LeaderLib_Treasure_GenerateNow");
 //END_REGION
 
 //REGION CHECKING_ACTIVE_TRADERS

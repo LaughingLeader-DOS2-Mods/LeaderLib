@@ -258,6 +258,22 @@ THEN
 	*/
 ENDIF
 
+EVENT LeaderLib_GetItemLevel
+VARS
+	ITEM:_Item
+	FLOAT:_ItemLevel
+	INT:_ItemLevelVar
+ON
+	OnItemEvent(_Item, "LeaderLib_Commands_GetItemLevel")
+ACTIONS
+IF "c1"
+	ItemGetStat(_ItemLevel, _Item, Level)
+THEN
+	Cast(_ItemLevelVar, _ItemLevel)
+	SetVar(_Item, "LeaderLib_ItemLevel", _ItemLevelVar)
+	ItemEvent(_Item, "LeaderLib_Events_ItemLevelStored")
+ENDIF
+
 EVENT LLLIB_CharacterIterator
 VARS
 	ITEM:_EventParser

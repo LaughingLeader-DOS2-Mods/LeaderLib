@@ -10,6 +10,8 @@ KBSECTION
 //REGION CREATE_START
 PROC
 LeaderLib_Queue_Create((STRING)_QueueID, (STRING)_ArrayID, (STRING)_TimerName, (INTEGER)_TickRate, (STRING)_IterateEvent, (STRING)_IterateCompletionEvent, (STRING)_OnCompletionEvent)
+AND
+NOT LeaderLib_Queue_QRY_Exists(_QueueID)
 THEN
 DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent);
 
@@ -23,23 +25,36 @@ LeaderLib_Queue_SetTimeout((STRING)_QueueID, (STRING)_TimerName, (INTEGER)_Timeo
 THEN
 DB_LLLIB_Queue_Timeout(_QueueID, _TimerName, _TimeoutValue, _OnTimeoutEvent);
 
+/*
 PROC
 LeaderLib_Queue_Start((STRING)_QueueID)
-AND
-DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
-AND
-NOT DB_LLLIB_Queue_Temp_Started(_QueueID)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:QueueSystem:Start] Starting queue [",_QueueID,"].");
-DB_LLLIB_Queue_Temp_Started(_QueueID);
-LLLIB_Queue_Internal_NextTick(_QueueID);
+LeaderLog_Log("TRACE", "[LeaderLib:QueueSystem:Start] Attempting to start queue [",_QueueID,"].");
+*/
 
 PROC
 LeaderLib_Queue_Start((STRING)_QueueID)
 AND
-NOT DB_LLLIB_Queue(_QueueID, _, _, _, _, _, _)
+DB_LLLIB_Queue_Temp_Started(_QueueID)
+THEN
+LeaderLog_Log("ERROR", "[LeaderLib:QueueSystem:Start] Queue [",_QueueID,"] already started?");
+
+PROC
+LeaderLib_Queue_Start((STRING)_QueueID)
+AND
+NOT LeaderLib_Queue_QRY_Exists(_QueueID)
 THEN
 LeaderLog_Log("ERROR", "[LeaderLib:QueueSystem:Start] [ERROR] No queue with ID [",_QueueID,"] exists!.");
+
+PROC
+LeaderLib_Queue_Start((STRING)_QueueID)
+AND
+LeaderLib_Queue_QRY_Exists(_QueueID)
+AND
+NOT DB_LLLIB_Queue_Temp_Started(_QueueID)
+THEN
+LeaderLog_Log("TRACE", "[LeaderLib:QueueSystem:Start] Starting queue [",_QueueID,"].");
+DB_LLLIB_Queue_Temp_Started(_QueueID);
 LLLIB_Queue_Internal_NextTick(_QueueID);
 
 PROC
@@ -53,6 +68,13 @@ LLLIB_Queue_Internal_CancelTimeoutTimer(_QueueID);
 //END_REGION
 
 //REGION QUERIES
+QRY
+LeaderLib_Queue_QRY_Exists((STRING)_QueueID)
+AND
+DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
+THEN
+DB_NOOP(1);
+
 QRY
 LeaderLib_Queue_QRY_IsRunning((STRING)_QueueID)
 AND
@@ -75,8 +97,10 @@ AND
 DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 AND
 NOT DB_LLLIB_Queue_Temp_TimerRunning(_QueueID)
+AND
+_TickRate > 0
 THEN
-LeaderLog_Log("ERROR", "[LeaderLog:Queue:Internal:StartTimer] Launching tick timer for queue [",_QueueID,"].");
+LeaderLog_Log("TRACE", "[LeaderLog:Queue:Internal:StartTimer] Launching tick timer for queue [",_QueueID,"].");
 TimerLaunch(_TimerName, _TickRate);
 DB_LLLIB_Queue_Temp_TimerRunning(_QueueID);
 
@@ -86,15 +110,23 @@ AND
 DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 AND
 NOT DB_LLLIB_Queue_Temp_TimerRunning(_QueueID)
+AND
+_TickRate <= 0
 THEN
-LeaderLog_Log("ERROR", "[LeaderLog:Queue:Internal:StartTimer] [ERROR] Timer for [",_QueueID,"] was never started!");
+LeaderLog_Log("TRACE", "[LeaderLog:Queue:Internal:StartTimer] TickRate is <= 0 for queue [",_QueueID,"]. Skipping timer.");
+DB_LLLIB_Queue_Temp_TimerRunning(_QueueID);
+LLLIB_Queue_Internal_OnTimerFinished(_TimerName);
 
 PROC
 LLLIB_Queue_Internal_StartTimer((STRING)_QueueID)
 AND
-NOT DB_LLLIB_Queue(_QueueID, _, _, _, _, _, _)
+DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
+AND
+NOT DB_LLLIB_Queue_Temp_TimerRunning(_QueueID)
+AND
+_TickRate > 0
 THEN
-LeaderLog_Log("ERROR", "[LeaderLog:Queue:Internal:StartTimer] [ERROR] Queue [",_QueueID,"] does not exist!");
+LeaderLog_Log("ERROR", "[LeaderLog:Queue:Internal:StartTimer] [ERROR] Timer for [",_QueueID,"] was never started!");
 
 PROC
 LLLIB_Queue_Internal_CancelTimer((STRING)_QueueID)
@@ -106,6 +138,13 @@ NOT DB_LLLIB_Queue_Temp_TimerRunning(_QueueID);
 
 IF
 TimerFinished(_TimerName)
+AND
+DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
+THEN
+LLLIB_Queue_Internal_OnTimerFinished(_TimerName);
+
+PROC
+LLLIB_Queue_Internal_OnTimerFinished((STRING)_TimerName)
 AND
 DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 THEN
@@ -176,7 +215,7 @@ _Length > 0
 AND
 NOT DB_LLLIB_Queue_Temp_PopSuccess(_QueueID)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:QueueSystem:NextTick] [ERROR] Queue [",_QueueID,"] had an error popping a value from array [",_ArrayID,"].");
+LeaderLog_Log("ERROR", "[LeaderLib:QueueSystem:NextTick] [ERROR] Queue [",_QueueID,"] had an error popping a value from array [",_ArrayID,"].");
 
 PROC
 LLLIB_Queue_Internal_CheckForErrors((STRING)_QueueID)
@@ -189,7 +228,7 @@ NOT DB_LLLIB_Array_Length(_ArrayID, _)
 AND
 NOT DB_LLLIB_Queue_Temp_CurrentEntry(_QueueID, _)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:QueueSystem:NextTick] [ERROR] Queue [",_QueueID,"] array [",_ArrayID,"] is missing a length entry!.");
+LeaderLog_Log("ERROR", "[LeaderLib:QueueSystem:NextTick] [ERROR] Queue [",_QueueID,"] array [",_ArrayID,"] is missing a length entry!.");
 //END_REGION
 
 //REGION ON_COMPLETE
@@ -216,6 +255,7 @@ LeaderLib_Queue_ClearQueue((STRING)_QueueID)
 AND
 DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:QueueSystem:ClearQueue] Queue [",_QueueID,"] was cleared.");
 NOT DB_LLLIB_Queue_Temp_Started(_QueueID);
 TimerCancel(_TimerName);
 LLLIB_Queue_Internal_ClearCurrentEntry(_QueueID);
@@ -263,7 +303,7 @@ AND
 IntegertoString(_TimeoutValue, _TimeoutValStr)
 THEN
 TimerCancel(_TimerName);
-LeaderLog_Log("DEBUG", "[LeaderLib:QueueSystem:Timeout] Queue [",_QueueID,"] timed out after ",_TimeoutValStr,"ms. Starting next tick.");
+LeaderLog_Log("ERROR", "[LeaderLib:QueueSystem:Timeout] Queue [",_QueueID,"] timed out after ",_TimeoutValStr,"ms. Starting next tick.");
 LLLIB_Queue_Internal_CancelTimer(_QueueID);
 LLLIB_Queue_Internal_StartTimer(_QueueID);
 

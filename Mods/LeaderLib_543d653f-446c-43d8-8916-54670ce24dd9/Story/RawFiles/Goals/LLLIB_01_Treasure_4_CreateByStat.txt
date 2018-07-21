@@ -3,8 +3,7 @@ SubGoalCombiner SGC_AND
 INITSECTION
 /*
 DB_LLLIB_CBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateItemEvent, _ItemTransferredEvent, _CompletionEvent, _TimeoutEvent)
-DB_LLLIB_CBS_Temp_StatSettings(_ArrayID, _Stat, _Equip, _ShowInTrade, _Amount)
-
+DB_LLLIB_CBS_Temp_StatSettings(_ArrayID, _Stat, _Amount, _Equip, _ShowInTrade)
 */
 KBSECTION
 //REGION SETUP
@@ -60,7 +59,7 @@ AND
 NOT LeaderLib_CreateByStat_Internal_QRY_StatIsNotStackable(_Stat, _Amount)
 THEN
 LeaderLib_Array_AddToArray(_ArrayID, _Stat);
-LeaderLib_CreateByStat_SetStatSettings(_ArrayID, _Stat, _Equip, _ShowInTrade, _Amount);
+LeaderLib_CreateByStat_SetStatSettings(_ArrayID, _Stat, _Amount, _Equip, _ShowInTrade);
 LeaderLog_Log("TRACE", "[LeaderLib:CreateItemByStat:AddToQueue] Adding stat [",_Stat,"] to item queue for array [",_ArrayID,"].");
 
 PROC
@@ -255,13 +254,13 @@ NOT DB_LLLIB_CBS_Temp_DummyTarget(_DummyID, _Object, _Dummy, _Stat, _ItemTransfe
 DB_LLLIB_Treasure_StatToTemplate(_Stat, _ItemTemplate);
 SetVarFixedString(_Item, "LeaderLib_GeneratedItemStat", _Stat);
 SetStoryEvent(_Item, "LeaderLib_Events_StatItemGenerated");
+LeaderLib_CreateByStat_Internal_PrepareItemForEquipping(_Object, _ArrayID, _Item, _Stat);
 ItemToInventory(_Item, _Object, _Amount, 0, 1);
-LeaderLib_CreateByStat_Internal_EquipCreatedStatItem(_Object, _ArrayID, _Item, _Stat);
 LeaderLib_Treasure_ResetDummyAfterDelay(_Dummy, 900);
 LeaderLib_SendEvent(_ItemTransferredEvent);
 
 PROC
-LeaderLib_CreateByStat_Internal_EquipCreatedStatItem((GUIDSTRING)_Object, (STRING)_ArrayID, (ITEMGUID)_Item, (STRING)_Stat)
+LeaderLib_CreateByStat_Internal_PrepareItemForEquipping((GUIDSTRING)_Object, (STRING)_ArrayID, (ITEMGUID)_Item, (STRING)_Stat)
 AND
 DB_LLLIB_CBS_Temp_StatSettings(_ArrayID, _Stat, _Amount, _Equip, _ShowInTrade)
 AND
@@ -269,6 +268,14 @@ _Equip > 0
 AND
 ObjectIsCharacter((CHARACTERGUID)_Object, 1)
 THEN
+DB_LLLIB_CBS_Temp_EquipItem(_Object, _Item);
+
+IF
+ItemAddedToCharacter(_Item, _Object)
+AND
+DB_LLLIB_CBS_Temp_EquipItem(_Object, _Item)
+THEN
+NOT DB_LLLIB_CBS_Temp_EquipItem(_Object, _Item);
 CharacterEquipItem(_Object, _Item);
 //END_REGION
 

@@ -104,8 +104,8 @@ LeaderLib_Treasure_Register_TreasureToTrader("LeaderLib.LeaderTrader.Skillbooks"
 
 LeaderLib_Treasure_Register_ItemTemplate("LeaderLib.LeaderTrader.Skillbooks", "BOOK_Skill_LLLIB_ControlSummon_832058fd-fd40-47d0-bea3-0e108761d4e4", 2);
 
-//LeaderLib_Treasure_Configure_DefaultGenerationType("LLLIB_LeaderTrader_ModItems", "DIALOG_STARTED");
-//LeaderLib_Treasure_Configure_DefaultGenerationType("LLLIB_LeaderTrader_ModBooks", "DIALOG_STARTED");
+LeaderLib_Treasure_Configure_DefaultGenerationType("LLLIB_LeaderTrader_ModItems", "DIALOG_STARTED");
+LeaderLib_Treasure_Configure_DefaultGenerationType("LLLIB_LeaderTrader_ModBooks", "DIALOG_STARTED");
 
 LeaderLib_Treasure_Register_ItemTemplate("LLLIB_LeaderTrader_ModBooks", "LLLIB_BOOK_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108", 1);
 LeaderLib_Treasure_Configure_AddMaxAmount("LLLIB_LeaderTrader_ModBooks", "LLLIB_BOOK_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108", 4);

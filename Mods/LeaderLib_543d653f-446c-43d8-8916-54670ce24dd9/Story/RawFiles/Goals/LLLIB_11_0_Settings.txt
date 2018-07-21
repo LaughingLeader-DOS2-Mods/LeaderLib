@@ -13,15 +13,14 @@ KBSECTION
 PROC
 LLLIB_Settings_InitSettings()
 THEN
-LeaderUpdater_SaveSettingsVersionData("LLLIB_Settings_GeneralSettings");
 LLLIB_Settings_InitEquipmentSlots();
 LLLIB_Settings_InitStats();
 
 LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_Settings_QueueRates", 3);
-DB_LLLIB_Settings_QueueRates("TraderSpawn", 1000, 2000);
+DB_LLLIB_Settings_QueueRates("TraderSpawn", 500, 2000);
 DB_LLLIB_Settings_QueueRates("TraderCheck", 100, 500);
 DB_LLLIB_Settings_QueueRates("Treasure", 100, 60000);
-DB_LLLIB_Settings_QueueRates("ItemGeneration", 1, 5000);
+DB_LLLIB_Settings_QueueRates("ItemGeneration", 0, 5000);
 
 LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_Settings_ItemTemplates", 2);
 DB_LLLIB_Settings_ItemTemplates("Book_ModMenu", "LLLIB_BOOK_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108");
@@ -118,13 +117,13 @@ DB_LLLIB_Abilities("Brewmaster");
 //END_REGION
 
 //REGION UPDATER
-IF
-StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", _PastVersion)
 AND
-LeaderUpdater_QRY_SettingsNeedsUpdate("LLLIB_Settings_GeneralSettings")
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 0, 9, 3, 0)
 THEN
 LLLIB_Settings_InitSettings();
-LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Settings updated.");
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
 
 PROC
 LLLIB_System_RegisterDatabases()

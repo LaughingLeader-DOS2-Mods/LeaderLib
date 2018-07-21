@@ -74,7 +74,7 @@ ObjectSetFlag(_Player, "LLLIB_DebugLevel_TalkedToTrader");
 IF
 TextEventSet("liblag")
 THEN
-ObjectSetFlag(ITEMGUID_NDL_ArenaChest_000_60d1603d-606f-4b64-9863-7b962d456278, "LLLIB_Treasure_GenerationEnded");
+ObjectSetFlag(ITEMGUID_NDL_ArenaChest_000_60d1603d-606f-4b64-9863-7b962d456278, "LeaderLib_Treasure_GenerationEnded");
 
 IF
 TextEventSet("liblag")
@@ -147,7 +147,7 @@ LeaderLib_Trader_Register_Dialog("MyMod.Debug.TestTrader", "LLLIB_Debug_Trader")
 //Trader Treasure
 LeaderLib_Treasure_Register_TreasureToTrader("MyMod.Debug.TestTrader.InitialItems", "MyMod.Debug.TestTrader");
 
-//LeaderLib_Treasure_Register_TreasureTable("MyMod.Debug.TestTrader.InitialItems", "TEST_Generation", "", 1);
+LeaderLib_Treasure_Register_TreasureTable("MyMod.Debug.TestTrader.InitialItems", "TEST_Generation", "", 1);
 
 //Generation Type Config
 LeaderLib_Treasure_Configure_DefaultGenerationType("MyMod.Debug.TestTrader.InitialItems", "DIALOG_STARTED");

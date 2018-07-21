@@ -14,6 +14,8 @@ INITSECTION
 //DB_LLLIB_StringExt_Temp_IteratorBuilder(_Str1, _CurrentIndex)
 //DB_LLLIB_StringExt_StringIterator(_Str, _Index)
 /*VERSION STRINGS*/
+//Comparison "Cache"
+//DB_LLLIB_StringExt_VersionIsLessThan(_Version, _OtherMajor, _OtherMinor, _OtherBuild, _OtherRevision)
 //DB_LLLIB_StringExt_Temp_Version_String(_Str, _Major, _Minor, _Revision, _Build)
 //DB_LLLIB_StringExt_Temp_Version_Index(_Str, _MajorIndex, _MinorIndex, _RevisionIndex, _BuildIndex)
 //DB_LLLIB_StringExt_Temp_Version_FoundPeriod(_Str, _TotalFound)
@@ -570,9 +572,18 @@ _OtherRevision <= 256
 THEN
 DB_NOOP(1);
 
+QRY
+LeaderLib_StringExt_QRY_VersionIsLessThan((STRING)_Version, (INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherBuild, (INTEGER)_OtherRevision)
+AND
+DB_LLLIB_StringExt_VersionIsLessThan(_Version, _OtherMajor, _OtherMinor, _OtherBuild, _OtherRevision)
+THEN
+DB_NOOP(1);
+
 // No numbers over 256!
 QRY
 LeaderLib_StringExt_QRY_VersionIsLessThan((STRING)_Version, (INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherBuild, (INTEGER)_OtherRevision)
+AND
+NOT DB_LLLIB_StringExt_VersionIsLessThan(_Version, _OtherMajor, _OtherMinor, _OtherBuild, _OtherRevision)
 AND
 LeaderLib_StringExt_Internal_QRY_VersionSupported(_OtherMajor, _OtherMinor, _OtherBuild, _OtherRevision)
 AND
@@ -590,7 +601,7 @@ DB_LLLIB_Codex_Iterator(_Build, _BuildStr)
 AND
 LeaderLib_StringExt_Internal_QRY_VersionIsLessThan(_Major, _Minor, _Revision, _Build, _OtherMajor, _OtherMinor, _OtherBuild, _OtherRevision)
 THEN
-DB_NOOP(1);
+DB_LLLIB_StringExt_VersionIsLessThan(_Version, _OtherMajor, _OtherMinor, _OtherBuild, _OtherRevision);
 
 QRY
 LeaderLib_StringExt_Internal_QRY_VersionIsLessThan((INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Build, (INTEGER)_Revision, (INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherBuild, (INTEGER)_OtherRevision)

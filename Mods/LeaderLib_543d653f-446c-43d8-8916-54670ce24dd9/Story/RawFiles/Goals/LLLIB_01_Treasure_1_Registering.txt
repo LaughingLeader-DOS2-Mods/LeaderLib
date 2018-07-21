@@ -5,10 +5,10 @@ INITSECTION
 //DB_LLLIB_Treasure_RegisteredObject(_TreasureID, _Object)
 //DB_LLLIB_Treasure_RegisteredObjectTemplate(_TreasureID, _Template)
 //DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
-//DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel)
 
 //DB_LLLIB_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID)
 //DB_LLLIB_Treasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID)
+//DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel)
 
 //DB_LLLIB_Treasure_ItemGenerationType(_TreasureID, _ItemEntry, _GenerationType)
 //DB_LLLIB_Treasure_TreasureGenerationType(_TreasureID, _GenerationType)
@@ -730,6 +730,29 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Register
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LLLIB_Traders_CreationEvents", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LLLIB_Traders_Seat", 4);
 LeaderLog_Log("TRACE", "[LeaderLib:Treasure:Registering] Databases registered.");
+//END_REGION
+
+//REGION QUERIES
+QRY
+LeaderLib_Treasure_QRY_HasRegisteredItems((STRING)_TreasureID)
+AND
+DB_LLLIB_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Treasure_QRY_HasRegisteredItems((STRING)_TreasureID)
+AND
+DB_LLLIB_Treasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Treasure_QRY_HasRegisteredItems((STRING)_TreasureID)
+AND
+DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel)
+THEN
+DB_NOOP(1);
 //END_REGION
 EXITSECTION
 

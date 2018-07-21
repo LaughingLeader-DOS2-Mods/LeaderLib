@@ -90,6 +90,7 @@ LeaderLib_Array_QRY_Pop(_ArrayID)
 AND
 DB_LLLIB_Array_Temp_PopValue(_ArrayID, _Entry)
 THEN
+LeaderLog_Log("TRACE", "[LeaderLog:Queue:NextTick] Sending event [",_IterateEvent,"] for popped array item [",_Entry,"].");
 NOT DB_LLLIB_Array_Temp_PopValue(_ArrayID, _Entry);
 DB_LLLIB_Queue_Temp_PopSuccess(_QueueID);
 LLLIB_Queue_Internal_ClearCurrentEntry(_QueueID);
@@ -113,6 +114,7 @@ DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _Iterat
 AND
 LeaderLib_Array_QRY_EmptyLength(_ArrayID)
 THEN
+LeaderLog_Log("TRACE", "[LeaderLog:Queue:NextTick] Array [",_ArrayID,"] is empty. Completing queue [",_QueueID,"].");
 LLLIB_Queue_Internal_OnComplete(_QueueID);
 
 IF
@@ -120,6 +122,7 @@ StoryEvent(_, _IterateCompletionEvent)
 AND
 DB_LLLIB_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 THEN
+LeaderLog_Log("TRACE", "[LeaderLog:Queue:IterateCompletionEvent] Received iteration completion event [",_IterateCompletionEvent,"] for queue [",_QueueID,"]. Starting next tick after timer.");
 LLLIB_Queue_Internal_ClearCurrentEntry(_QueueID);
 LLLIB_Queue_Internal_CancelTimeoutTimer(_QueueID);
 LLLIB_Queue_Internal_StartTimer(_QueueID);

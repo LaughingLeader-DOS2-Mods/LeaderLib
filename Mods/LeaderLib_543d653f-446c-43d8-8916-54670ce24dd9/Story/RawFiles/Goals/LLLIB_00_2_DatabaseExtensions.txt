@@ -163,10 +163,22 @@ LeaderLib_Array_RemoveFromArray(_ID, _Value);
 //END_REGION
 
 //REGION ARRAY_FIRST_ENTRY
+PROC
+LeaderLib_Array_ClearFirstEntry((STRING)_ID)
+AND
+DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value)
+THEN
+NOT DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value);
+
 QRY
 LeaderLib_Array_QRY_GetFirstEntry((STRING)_ID)
 THEN
 LeaderLib_Array_GetFirstEntry(_ID);
+
+PROC
+LeaderLib_Array_GetFirstEntry((STRING)_ID)
+THEN
+LeaderLib_Array_ClearFirstEntry(_ID);
 
 PROC
 LeaderLib_Array_GetFirstEntry((STRING)_ID)
@@ -182,38 +194,33 @@ NOT DB_LLLIB_Array_Data(_ID, _, _)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:GetFirstEntry] [ERROR] No entries found for array [",_ID,"]!");
 
+//The first entry should always be at 0 in most cases, if Pop is used
 PROC
 LeaderLib_Array_GetFirstEntry((STRING)_ID)
 AND
-DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value)
-THEN
-NOT DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value);
-
-PROC
-LeaderLib_Array_GetFirstEntry((STRING)_ID)
-AND
-DB_LLLIB_Array_Length(_ID, 1)
+NOT DB_LLLIB_Array_Temp_FirstEntry(_ID, _, _)
 AND
 DB_LLLIB_Array_Data(_ID, 0, _Value)
 THEN
 DB_LLLIB_Array_Temp_FirstEntry(_ID, 0, _Value);
+LeaderLog_Log("TRACE", "[LeaderLib:DatabaseExtensions:GetFirstEntry] Set first entry for array [",_ID,"] to index [0](",_Value,").");
 
 PROC
 LeaderLib_Array_GetFirstEntry((STRING)_ID)
 AND
-NOT DB_LLLIB_Array_Temp_FirstEntry(_ID, _, _)
+NOT DB_LLLIB_Array_Temp_FirstEntry(_ID, _, _) // Skip if already set
 AND
 DB_LLLIB_Array_Iterator(_ID, _Index)
 AND
-NOT DB_LLLIB_Array_Temp_FirstEntry(_ID, _, _)
-//AND
+NOT DB_LLLIB_Array_Temp_FirstEntry(_ID, _, _) // Skip if set during iteration
+AND
 //IntegertoString(_Index, _IndexStr)
 //AND
-//LeaderLog_QRY_Log("DEBUG", "[LeaderLib:DatabaseExtensions:GetFirstEntry] Checking index [",_IndexStr,"] in array [",_ID,"]")
-AND
+//LeaderLog_QRY_Log("TRACE", "[LeaderLib:DatabaseExtensions:GetFirstEntry] Checking index [",_IndexStr,"] in array [",_ID,"]")
+//AND
 DB_LLLIB_Array_Data(_ID, _Index, _Value)
 THEN
-//LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:GetFirstEntry] First entry for array [",_ID,"] set to [",_IndexStr,"](",_Value,").");
+LeaderLog_Log("TRACE", "[LeaderLib:DatabaseExtensions:GetFirstEntry] First entry for array [",_ID,"] set to [",_IndexStr,"](",_Value,").");
 DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value);
 //END_REGION
 
@@ -295,11 +302,13 @@ PROC
 LeaderLib_Array_Internal_Pop((STRING)_ID)
 AND
 DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value)
+AND
+NOT DB_LLLIB_Array_Temp_PopValue(_ID, _)
 THEN
 DB_LLLIB_Array_Temp_PopValue(_ID, _Value);
 NOT DB_LLLIB_Array_Temp_FirstEntry(_ID, _Index, _Value);
-//LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:Pop] Popped [",_Value,"] from array [",_ID,"].");
 LeaderLib_Array_RemoveFromArray(_ID, _Value);
+LeaderLog_Log("TRACE", "[LeaderLib:DatabaseExtensions:Pop] Popped [",_Value,"] from array [",_ID,"].");
 //END_REGION
 
 //REGION ARRAY_CLEAR

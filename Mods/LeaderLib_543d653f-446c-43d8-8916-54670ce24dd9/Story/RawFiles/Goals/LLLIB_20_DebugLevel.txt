@@ -19,11 +19,6 @@ LeaderLib_Requirements_Add_FlagRequirement("LLLIB_DebugLevel_NotChestRequirement
 //LLLIB_DebugLevel_TreasureStressTest();
 LLLIB_DebugLevel_WikiExample_TraderTest();
 
-IF
-GameStarted("LeaderLib_TestLevel", 1)
-THEN
-GlobalSetFlag("LeaderLog_Trace_Enabled");
-
 /*
 IF
 GameStarted("LeaderLib_TestLevel", 1)
@@ -132,7 +127,7 @@ LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel] Running stress tests.");
 LLLIB_DebugLevel_TreasureStressTest();
 //END_REGION
 
-//REGION WikIExample
+//REGION WIKI_EXAMPLE
 PROC
 LLLIB_DebugLevel_WikiExample_TraderTest()
 AND
@@ -162,8 +157,7 @@ LeaderLib_Treasure_Register_ItemStat("MyMod.Debug.TestTrader.InitialItems", "WPN
 LeaderLib_Treasure_Configure_ItemLevel("MyMod.Debug.TestTrader.InitialItems", "WPN_Cheat_Sword_1H_RuneSlot2", 1); // _UsePartyLevel = True (1)
 LeaderLib_Treasure_Configure_AddDeltaMod("MyMod.Debug.TestTrader.InitialItems", "WPN_Cheat_Sword_1H_RuneSlot2", "Boost_Weapon_Rune_LOOT_Rune_Flame_Giant", 23);
 LeaderLib_Treasure_Configure_AddDeltaMod("MyMod.Debug.TestTrader.InitialItems", "WPN_Cheat_Sword_1H_RuneSlot2", "Boost_Weapon_Rune_LOOT_Rune_Masterwork_Giant", 75);
-LeaderLib_Treasure_Configure_AddDeltaMod("MyMod.Debug.TestTrader.InitialItems", "WPN_Cheat_Sword_1H_RuneSlot2", "Boost_Weapon_Rune_LOOT_Rune_Venom_Large", 61);
-
+LeaderLib_Treasure_Configure_AddDeltaMod("MyMod.Debug.TestTrader.InitialItems", "WPN_Cheat_Sword_1H_RuneSlot2", "Boost_Weapon_Rune_LOOT_Rune_Venom_Large", -1);
 
 LeaderLib_Treasure_Register_ItemTemplate("MyMod.Debug.TestTrader.InitialItems", "LOOT_MagicAmulet_Blue_6de34a88-3046-4fef-8933-b4f634d794ae", 2);
 LeaderLib_Treasure_Configure_AddDeltaMod("MyMod.Debug.TestTrader.InitialItems", "LOOT_MagicAmulet_Blue_6de34a88-3046-4fef-8933-b4f634d794ae", "Boost_Armor_Amulet_Rune_LOOT_Rune_Thunder_Small", 75);

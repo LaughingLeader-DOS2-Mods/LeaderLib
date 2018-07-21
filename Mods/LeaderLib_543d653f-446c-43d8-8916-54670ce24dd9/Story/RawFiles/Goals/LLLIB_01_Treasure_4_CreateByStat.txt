@@ -254,6 +254,7 @@ LeaderLog_Log("TRACE", "[LeaderLib:CreateItemByStat] Created [",_ItemTemplate,"]
 NOT DB_LLLIB_CBS_Temp_DummyTarget(_DummyID, _Object, _Dummy, _Stat, _ItemTransferredEvent, _ArrayID);
 DB_LLLIB_Treasure_StatToTemplate(_Stat, _ItemTemplate);
 SetVarFixedString(_Item, "LeaderLib_GeneratedItemStat", _Stat);
+SetStoryEvent(_Item, "LeaderLib_Events_StatItemGenerated");
 ItemToInventory(_Item, _Object, _Amount, 0, 1);
 LeaderLib_CreateByStat_Internal_EquipCreatedStatItem(_Object, _ArrayID, _Item, _Stat);
 LeaderLib_Treasure_ResetDummyAfterDelay(_Dummy, 900);

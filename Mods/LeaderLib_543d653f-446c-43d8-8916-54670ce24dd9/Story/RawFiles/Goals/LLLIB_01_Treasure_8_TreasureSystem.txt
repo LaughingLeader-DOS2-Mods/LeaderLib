@@ -915,6 +915,15 @@ LeaderLib_CreateByStat_AddToQueue(_Object, _ArrayPrefix, _ItemEntry, _MaxAmount,
 LeaderLib_CreateByStat_Start(_Object, _ArrayPrefix);
 
 IF
+StoryEvent((ITEMGUID)_Item, "LeaderLib_Events_StatItemGenerated")
+AND
+GetVarFixedString(_Item, "LeaderLib_GeneratedItemStat", _ItemEntry)
+AND
+DB_LLLIB_Treasure_Temp_CreatingByStat(_ID, _Object, _TreasureID, _ItemEntry, _MaxAmount, _ArrayPrefix, _CompletionEvent)
+THEN
+LeaderLib_Treasure_Internal_CheckPostGenBonuses(_Object, _Item, _TreasureID, _ItemEntry);
+
+IF
 StoryEvent(_Object, _CompletionEvent)
 AND
 DB_LLLIB_Treasure_Temp_CreatingByStat(_ID, _Object, _TreasureID, _ItemEntry, _MaxAmount, _ArrayPrefix, _CompletionEvent)

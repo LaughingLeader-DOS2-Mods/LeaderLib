@@ -3,6 +3,57 @@ SubGoalCombiner SGC_AND
 INITSECTION
 //DB_LLLIB_Treasure_Temp_ActiveTraderDialog(_Trader, _Instance)
 KBSECTION
+//REGION ORIGINS
+IF
+RegionStarted("LeaderLib_TestLevel")
+THEN
+//MyMod_SetupEditorCharacter((CHARACTERGUID)CHARACTERGUID_Trailer_Humans_Female_Lohse_000_145810cc-7e46-43e7-9fdf-ab9bb8ffcdc0, "Conjurer");
+DB_NOOP(1);
+
+PROC
+MyMod_SetupEditorCharacter((CHARACTERGUID)_Org, (STRING)_Preset)
+AND
+CharacterIsPlayer(_Org, 0)
+THEN
+CharacterMakePlayer(_Org, NULL_00000000-0000-0000-0000-000000000000);
+DB_IsPlayer(_Org);
+SetTag(_Org,"AVATAR");
+LeaderLog_Log("DEBUG", "[LeaderLib:Debug:SetupEditorCharacter] Setting up origin character for the editor.");
+
+PROC
+MyMod_SetupEditorCharacter((CHARACTERGUID)_Org, (STRING)_Preset)
+AND
+ObjectExists(CHARACTERGUID_S_GLO_CharacterCreationDummy_001_da072fe7-fdd5-42ae-9139-8bd4b9fca406, 1)
+AND
+ObjectIsOnStage(CHARACTERGUID_S_GLO_CharacterCreationDummy_001_da072fe7-fdd5-42ae-9139-8bd4b9fca406, 1)
+THEN
+SetOnStage(_Org,1);
+TeleportTo(_Org, CHARACTERGUID_S_GLO_CharacterCreationDummy_001_da072fe7-fdd5-42ae-9139-8bd4b9fca406, "MyMod_DebugCommand_RemoveDummy", 1);
+LeaderLog_Log("DEBUG", "[LeaderLib:Debug:SetupEditorCharacter] Teleporting origin character to the default dummy.");
+
+PROC
+MyMod_SetupEditorCharacter((CHARACTERGUID)_Org, (STRING)_Preset)
+AND
+ObjectIsOnStage(_Org, 0)
+THEN
+SetOnStage(_Org,1);
+TeleportToPosition(_Org, 0.0, 0.0, 0.0, "MyMod_DebugCommand_RemoveDummy", 1);
+LeaderLog_Log("DEBUG", "[LeaderLib:Debug:SetupEditorCharacter] Teleporting origin character to [0,0,0]. Make sure this is a valid position!");
+
+IF
+StoryEvent(_, "MyMod_DebugCommand_RemoveDummy")
+AND
+ObjectExists(CHARACTERGUID_S_GLO_CharacterCreationDummy_001_da072fe7-fdd5-42ae-9139-8bd4b9fca406, 1)
+AND
+CharacterIsPlayer(CHARACTERGUID_S_GLO_CharacterCreationDummy_001_da072fe7-fdd5-42ae-9139-8bd4b9fca406, 1)
+THEN
+SetOnStage(CHARACTERGUID_S_GLO_CharacterCreationDummy_001_da072fe7-fdd5-42ae-9139-8bd4b9fca406, 0);
+CharacterRemoveFromParty(CHARACTERGUID_S_GLO_CharacterCreationDummy_001_da072fe7-fdd5-42ae-9139-8bd4b9fca406);
+CharacterMakeNPC(CHARACTERGUID_S_GLO_CharacterCreationDummy_001_da072fe7-fdd5-42ae-9139-8bd4b9fca406);
+NOT DB_IsPlayer(CHARACTERGUID_S_GLO_CharacterCreationDummy_001_da072fe7-fdd5-42ae-9139-8bd4b9fca406);
+LeaderLog_Log("DEBUG", "[LeaderLib:Debug:SetupEditorCharacter] Removed default editor dummy.");
+//END_REGION
+
 //REGION DEBUG_STARTED
 IF
 RegionStarted("LeaderLib_TestLevel")
@@ -17,7 +68,7 @@ LeaderLib_Requirements_Add_FlagRequirement("LLLIB_DebugLevel_NotChestRequirement
 //LLLIB_DebugLevel_ModMenuTest();
 //LeaderLib_Treasure_Configure_DefaultGenerationType("LLLIB_TestLevel_Chest3", "LEVEL_LOADED");
 //LLLIB_DebugLevel_TreasureStressTest();
-LLLIB_DebugLevel_WikiExample_TraderTest();
+//LLLIB_DebugLevel_WikiExample_TraderTest();
 
 /*
 IF

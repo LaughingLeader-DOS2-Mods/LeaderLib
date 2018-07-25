@@ -5,24 +5,24 @@ INITSECTION
 KBSECTION
 //REGION TOGGLE_SKILL
 PROC
-LeaderLib_Register_StatusToggleSkill((STRING)_Skill, (STRING)_Status)
+LeaderLib_Skills_Register_StatusToggleSkill((STRING)_Skill, (STRING)_Status)
 THEN
-LeaderLib_Register_StatusToggleSkill(_Skill, _Status, -1.0, 1);
+LeaderLib_Skills_Register_StatusToggleSkill(_Skill, _Status, -1.0, 1);
 
 PROC
-LeaderLib_Register_StatusToggleSkill((STRING)_Skill, (STRING)_Status, (REAL)_Duration)
+LeaderLib_Skills_Register_StatusToggleSkill((STRING)_Skill, (STRING)_Status, (REAL)_Duration)
 THEN
-LeaderLib_Register_StatusToggleSkill(_Skill, _Status, _Duration, 1);
+LeaderLib_Skills_Register_StatusToggleSkill(_Skill, _Status, _Duration, 1);
 
 PROC
-LeaderLib_Register_StatusToggleSkill((STRING)_Skill, (STRING)_Status, (REAL)_Duration, (INTEGER)_Force)
+LeaderLib_Skills_Register_StatusToggleSkill((STRING)_Skill, (STRING)_Status, (REAL)_Duration, (INTEGER)_Force)
 AND
 DB_LLLIB_Skills_StatusToggleSkills(_Skill, _Status, _OtherDuration, _OtherForce)
 THEN
 NOT DB_LLLIB_Skills_StatusToggleSkills(_Skill, _Status, _OtherDuration, _OtherForce);
 
 PROC
-LeaderLib_Register_StatusToggleSkill((STRING)_Skill, (STRING)_Status, (REAL)_Duration, (INTEGER)_Force)
+LeaderLib_Skills_Register_StatusToggleSkill((STRING)_Skill, (STRING)_Status, (REAL)_Duration, (INTEGER)_Force)
 THEN
 DB_LLLIB_Skills_StatusToggleSkills(_Skill, _Status, _Duration, _Force);
 
@@ -30,6 +30,19 @@ IF
 SkillCast(_Character, _Skill, _)
 AND
 DB_LLLIB_Skills_StatusToggleSkills(_Skill, _Status, _Duration, _Force)
+THEN
+LeaderLib_Skills_BlockStatusToggle(_Character, _Skill, _Status);
+LeaderLib_Skills_Internal_ProcessStatusToggle(_Character, _Skill, _Status, _Duration, _Force);
+
+PROC
+LeaderLib_Skills_BlockStatusToggle((CHARACTERGUID)_Character, (STRING)_Skill, (STRING)_Status)
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_Skills_Internal_ProcessStatusToggle((CHARACTERGUID)_Character, (STRING)_Skill, (STRING)_Status, (REAL)_Duration, (INTEGER)_Force)
+AND
+NOT DB_LeaderLib_Skills_BlockStatusToggle(_Character, _Skill, _Status)
 AND
 NOT DB_LLLIB_Skills_Temp_JustToggledSkillStatus(_Character, _Skill)
 AND
@@ -38,10 +51,10 @@ THEN
 ApplyStatus(_Character, _Status, _Duration, 1);
 DB_LLLIB_Skills_Temp_JustToggledSkillStatus(_Character, _Skill);
 
-IF
-SkillCast(_Character, _Skill, _)
+PROC
+LeaderLib_Skills_Internal_ProcessStatusToggle((CHARACTERGUID)_Character, (STRING)_Skill, (STRING)_Status, (REAL)_Duration, (INTEGER)_Force)
 AND
-DB_LLLIB_Skills_StatusToggleSkills(_Skill, _Status, _Duration, _Force)
+NOT DB_LeaderLib_Skills_BlockStatusToggle(_Character, _Skill, _Status)
 AND
 NOT DB_LLLIB_Skills_Temp_JustToggledSkillStatus(_Character, _Skill)
 AND
@@ -50,12 +63,20 @@ THEN
 RemoveStatus(_Character, _Status);
 DB_LLLIB_Skills_Temp_JustToggledSkillStatus(_Character, _Skill);
 
-IF
-SkillCast(_Character, _Skill, _)
+//Clear
+PROC
+LeaderLib_Skills_Internal_ProcessStatusToggle((CHARACTERGUID)_Character, (STRING)_Skill, (STRING)_Status, (REAL)_Duration, (INTEGER)_Force)
 AND
 DB_LLLIB_Skills_Temp_JustToggledSkillStatus(_Character, _Skill)
 THEN
 NOT DB_LLLIB_Skills_Temp_JustToggledSkillStatus(_Character, _Skill);
+
+PROC
+LeaderLib_Skills_Internal_ProcessStatusToggle((CHARACTERGUID)_Character, (STRING)_Skill, (STRING)_Status, (REAL)_Duration, (INTEGER)_Force)
+AND
+DB_LeaderLib_Skills_BlockStatusToggle(_Character, _Skill, _Status)
+THEN
+NOT DB_LeaderLib_Skills_BlockStatusToggle(_Character, _Skill, _Status);
 //END_REGION
 EXITSECTION
 

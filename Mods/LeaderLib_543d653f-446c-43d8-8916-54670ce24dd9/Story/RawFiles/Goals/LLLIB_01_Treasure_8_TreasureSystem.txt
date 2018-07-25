@@ -1541,6 +1541,7 @@ NOT ItemHasDeltaModifier(_Item, _Deltamod, _)
 THEN
 DB_NOOP(1);
 
+//If a max is set, allow more than one count of a deltamod
 QRY
 LeaderLib_Treasure_QRY_Internal_CanApplyDeltamod((ITEMGUID)_Item, (STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_Deltamod)
 AND

@@ -258,7 +258,7 @@ GlobalGetFlag("LeaderLib_IsEditorMode", 1)
 THEN
 NOT DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level);
 SetOnStage(_Trader, 0);
-LeaderLog_Log("DEBUG", "[LeaderLib:Traders] Level ",_Level," ending and editor mode is enabled. Remove trader [",_TraderID,"] from spawned database and setting off stage.");
+LeaderLog_Log("DEBUG", "[LeaderLib:Traders] Level ",_Level," ending and editor mode is enabled. Removed trader [",_TraderID,"] from spawned database and setting off stage.");
 //END_REGION
 
 //REGION TRADER_QUERIES

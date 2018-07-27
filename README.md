@@ -6,6 +6,13 @@ LeaderLib is a library mod used to provide common functionality to other mods.
 * Nexus (Coming soon, probably after the release of the DOS2 Definitive Edition)
 * [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=1353333870) 
 
+# Support
+If you're feeling generous, an easy way to show support is by tipping me a coffee:
+
+[![Tip Me a Coffee](https://i.imgur.com/NkmwXff.png)](https://ko-fi.com/LaughingLeader)
+
+All coffee goes toward fueling my development efforts. Thanks!
+
 # Mod Authors
 ### Using LeaderLib
 Check the [Leaderlib Wiki](https://github.com/LaughingLeader-DOS2-Mods/LeaderLib/wiki) for information on using LeaderLib with your mod.
@@ -126,10 +133,3 @@ The complete source for LeaderLib is updated here for learning purposes. I encou
 
 # Attribution
 * [Divinity: Original Sin 2](http://store.steampowered.com/app/435150/Divinity_Original_Sin_2/), a wonderful game from [Larian Studios](http://larian.com/)
-
-# Support
-If you're feeling generous, an easy way to show support is by tipping me a coffee:
-
-[![Tip Me a Coffee](https://i.imgur.com/NkmwXff.png)](https://ko-fi.com/LaughingLeader)
-
-All coffee goes toward fueling my development efforts. Thanks!

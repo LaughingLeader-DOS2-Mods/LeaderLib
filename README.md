@@ -11,7 +11,7 @@ If you're feeling generous, an easy way to show support is by tipping me a coffe
 
 [![Tip Me a Coffee](https://i.imgur.com/NkmwXff.png)](https://ko-fi.com/LaughingLeader)
 
-All coffee goes toward fueling my development efforts. Thanks!
+All coffee goes toward fueling future and current development efforts. Thanks!
 
 # Mod Authors
 ### Using LeaderLib

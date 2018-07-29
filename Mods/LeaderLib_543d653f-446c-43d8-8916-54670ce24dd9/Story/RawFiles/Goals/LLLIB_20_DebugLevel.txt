@@ -649,8 +649,26 @@ DB_NOOP(1);
 //REGION LEVERS
 IF
 CharacterUsedItem(_Character, ITEMGUID_LLLIB_Debug_TestLeverB_65136f61-80ec-4965-bce9-5789eea56aca)
+AND
+Random(2, _Ran)
 THEN
-LeaderLib_Treasure_AddToGenerationQueue(CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, "LLLIB_LeaderTrader_ModBooks", "MANUAL");
+//LeaderLib_Treasure_AddToGenerationQueue(CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, "LLLIB_LeaderTrader_ModBooks", "MANUAL");
+LLLIB_Debug_PlatformTest(_Character, _Ran);
+
+PROC
+LLLIB_Debug_PlatformTest((CHARACTERGUID)_Character, 0)
+THEN
+LeaderLIb_Platforms_SpawnPlatform_Small("LeaderLib.TestPlatform1", 3000, _Character);
+
+PROC
+LLLIB_Debug_PlatformTest((CHARACTERGUID)_Character, 1)
+THEN
+LeaderLIb_Platforms_SpawnPlatform_Medium("LeaderLib.TestPlatform2", 3000, _Character);
+
+PROC
+LLLIB_Debug_PlatformTest((CHARACTERGUID)_Character, 2)
+THEN
+LeaderLIb_Platforms_SpawnPlatform_Large("LeaderLib.TestPlatform2", 3000, _Character);
 
 /*
 IF

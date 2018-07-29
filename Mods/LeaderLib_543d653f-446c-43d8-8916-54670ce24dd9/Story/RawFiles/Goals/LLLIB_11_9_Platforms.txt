@@ -2,6 +2,7 @@ Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
 LLLIB_Platforms_InitSettings();
+//DB_LeaderLib_Platforms(_ID, _Platform)
 KBSECTION
 //REGION PLATFORM_CREATION
 PROC
@@ -14,12 +15,22 @@ LeaderLIb_Platforms_SpawnPlatform(_ID, _Size, _LifeTime, _x, _y, _z);
 PROC
 LeaderLIb_Platforms_SpawnPlatform((STRING)_ID, (STRING)_Size, (INTEGER)_LifeTime, (REAL)_x, (REAL)_y, (REAL)_z)
 AND
-DB_LeaderLib_Platforms_Sizes(_Size, _Template)
+DB_LeaderLib_Platforms_Sizes(_Size, _Template, _Index)
 AND
 CreateItemTemplateAtPosition(_Template, _x, _y, _z, _Platform)
 THEN
 DB_LeaderLib_Platforms(_ID, _Platform);
 LeaderLIb_Platforms_Internal_StartPlatformTimer(_ID, _Platform, _LifeTime);
+
+QRY
+LeaderLIb_Platforms_QRY_SpawnPlatform((STRING)_ID, (STRING)_Size, (INTEGER)_LifeTime, (GUIDSTRING)_Target)
+THEN
+LeaderLIb_Platforms_SpawnPlatform(_ID, _Size, _LifeTime, _Target);
+
+QRY
+LeaderLIb_Platforms_QRY_SpawnPlatform((STRING)_ID, (STRING)_Size, (INTEGER)_LifeTime, (REAL)_x, (REAL)_y, (REAL)_z)
+THEN
+LeaderLIb_Platforms_SpawnPlatform(_ID, _Size, _LifeTime, _x, _y, _z);
 
 PROC
 LeaderLIb_Platforms_Internal_StartPlatformTimer((STRING)_ID, (ITEMGUID)_Platform, (INTEGER)_LifeTime)
@@ -30,11 +41,8 @@ LeaderLib_StartObjectTimer(_Platform, _LifeTime, "LeaderLib_Timers_RemovePlatfor
 
 IF
 StoryEvent((ITEMGUID)_Platform, "LeaderLib_Events_RemovePlatform")
-AND
-DB_LeaderLib_Platforms(_ID, _Platform)
 THEN
-ItemRemove(_Platform);
-NOT DB_LeaderLib_Platforms(_ID, _Platform);
+LeaderLib_Platforms_RemovePlatform(_Platform);
 
 IF
 RegionStarted(_)
@@ -47,6 +55,40 @@ NOT DB_LeaderLib_Platforms(_ID, _Platform);
 //END_REGION
 
 //REGION SPAWN_ALIASES
+QRY
+LeaderLIb_Platforms_QRY_SpawnPlatform_Random((STRING)_ID, (INTEGER)_LifeTime, (GUIDSTRING)_Target)
+THEN
+LeaderLIb_Platforms_SpawnPlatform_Random(_ID, _LifeTime, _Target);
+
+QRY
+LeaderLIb_Platforms_QRY_SpawnPlatform_Random((STRING)_ID, (INTEGER)_LifeTime, (REAL)_x, (REAL)_y, (REAL)_z)
+THEN
+LeaderLIb_Platforms_SpawnPlatform_Random(_ID, _LifeTime, _x, _y, _z);
+
+PROC
+LeaderLIb_Platforms_SpawnPlatform_Random((STRING)_ID, (INTEGER)_LifeTime, (GUIDSTRING)_Target)
+AND
+LeaderLib_Random_QRY(2)
+AND
+DB_LeaderLib_Temp_RandomResult(_Index)
+AND
+DB_LeaderLib_Platforms_Sizes(_Size, _Template, _Index)
+THEN
+NOT DB_LeaderLib_Temp_RandomResult(_Index);
+LeaderLIb_Platforms_SpawnPlatform(_ID, _Size, _LifeTime, _Target);
+
+PROC
+LeaderLIb_Platforms_SpawnPlatform_Random((STRING)_ID, (INTEGER)_LifeTime, (REAL)_x, (REAL)_y, (REAL)_z)
+AND
+LeaderLib_Random_QRY(2)
+AND
+DB_LeaderLib_Temp_RandomResult(_Index)
+AND
+DB_LeaderLib_Platforms_Sizes(_Size, _Template, _Index)
+THEN
+NOT DB_LeaderLib_Temp_RandomResult(_Index);
+LeaderLIb_Platforms_SpawnPlatform(_ID, "Small", _LifeTime, _x, _y, _z);
+
 PROC
 LeaderLIb_Platforms_SpawnPlatform_Small((STRING)_ID, (INTEGER)_LifeTime, (GUIDSTRING)_Target)
 THEN
@@ -78,14 +120,24 @@ THEN
 LeaderLIb_Platforms_SpawnPlatform(_ID, "Large", _LifeTime, _x, _y, _z);
 //END_REGION
 
+//REGION CLEAR
+PROC
+LeaderLib_Platforms_RemovePlatform((ITEMGUID)_Platform)
+AND
+DB_LeaderLib_Platforms(_ID, _Platform)
+THEN
+ItemRemove(_Platform);
+NOT DB_LeaderLib_Platforms(_ID, _Platform);
+//END_REGION
+
 //REGION SETTINGS
 PROC
 LLLIB_Platforms_InitSettings()
 THEN
 SysClear("DB_LeaderLib_Platforms_Sizes", 2);
-DB_LeaderLib_Platforms_Sizes("Small", "S_LLLIB_Platform_Small_80416d7e-84d3-4551-92d2-b134f5d336e5");
-DB_LeaderLib_Platforms_Sizes("Medium", "S_LLLIB_Platform_Medium_288874ae-0c2f-4f67-8661-0ea001f49bf2");
-DB_LeaderLib_Platforms_Sizes("Large", "S_LLLIB_Platform_Large_81d0b457-3569-4c6b-bfbc-e954a768472a");
+DB_LeaderLib_Platforms_Sizes("Small", "S_LLLIB_Platform_Small_80416d7e-84d3-4551-92d2-b134f5d336e5", 0);
+DB_LeaderLib_Platforms_Sizes("Medium", "S_LLLIB_Platform_Medium_288874ae-0c2f-4f67-8661-0ea001f49bf2", 1);
+DB_LeaderLib_Platforms_Sizes("Large", "S_LLLIB_Platform_Large_81d0b457-3569-4c6b-bfbc-e954a768472a", 2);
 //END_REGION
 
 //REGION UPDATING

@@ -648,7 +648,7 @@ DB_NOOP(1);
 
 //REGION LEVERS
 IF
-CharacterUsedItem(_Character, ITEMGUID_LLLIB_Debug_TestLeverB_65136f61-80ec-4965-bce9-5789eea56aca)
+CharacterUsedItem(_Character, ITEMGUID_LLLIB_DebugLever_TestRandom_d3152baa-c6d4-4e8e-a622-a6bb9c149b3e)
 AND
 Random(2, _Ran)
 THEN
@@ -670,6 +670,7 @@ LLLIB_Debug_PlatformTest((CHARACTERGUID)_Character, 2)
 THEN
 LeaderLIb_Platforms_SpawnPlatform_Large("LeaderLib.TestPlatform2", 3000, _Character);
 
+
 /*
 IF
 CharacterUsedItem(_, ITEMGUID_LLLIB_DebugLever_TestRandom_d3152baa-c6d4-4e8e-a622-a6bb9c149b3e)
@@ -683,6 +684,50 @@ THEN
 NOT DB_LeaderLib_Temp_RandomResult(_Ran);
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem] Random range result: ",_RanStr," | Min: 1 Max: 19");
 */
+
+IF
+CharacterUsedItem(_Character, ITEMGUID_LLLIB_Debug_TestLeverB_65136f61-80ec-4965-bce9-5789eea56aca)
+AND
+DB_LLLIB_EquipmentSlots(_Slot)
+AND
+CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
+AND
+LLLIB_Debug_QRY_TraceRunes(_Item, 0)
+AND
+LLLIB_Debug_QRY_TraceRunes(_Item, 1)
+AND
+LLLIB_Debug_QRY_TraceRunes(_Item, 2)
+AND
+String(_Item, _Name)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:RuneTest] Item[",_Name,"] Rune check complete.");
+
+QRY
+LLLIB_Debug_QRY_TraceRunes((ITEMGUID)_Item, (INTEGER)_Slot)
+THEN
+LLLIB_Debug_TraceRunes(_Item, _Slot);
+
+PROC
+LLLIB_Debug_TraceRunes((ITEMGUID)_Item, (INTEGER)_Slot)
+AND
+ItemGetRuneItemTemplate(_Item, _Slot, _Template)
+AND
+IntegertoString(_Slot, _SlotStr)
+AND
+String(_Item, _Name)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:RuneTest] Item[",_Name,"] Slot[",_SlotStr,"] Rune [",_Template,"]");
+
+PROC
+LLLIB_Debug_TraceRunes((ITEMGUID)_Item, (INTEGER)_Slot)
+AND
+NOT ItemGetRuneItemTemplate(_Item, _Slot, _)
+AND
+IntegertoString(_Slot, _SlotStr)
+AND
+String(_Item, _Name)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:RuneTest] Item[",_Name,"] Slot[",_SlotStr,"] Rune [NONE]");
 
 /*
 IF

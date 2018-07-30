@@ -1,0 +1,92 @@
+INIT
+	ITEM:__Me
+	EXTERN FIXEDSTRING:%Text = ""
+	EXTERN FLOAT:%DisplayTime = 5.0
+	EXTERN FLOAT:%Delay = -1.0
+	FIXEDSTRING:%LLLIB_DisplayTimerName = "LeaderLib_Timers_HoveringText_Display"
+	FIXEDSTRING:%LLLIB_DelayTimerName = "LeaderLib_Timers_HoveringText_Delay"
+	INT:%Delaying = 0
+EVENTS
+
+EVENT LLLIB_HoveringText_GetUUID
+ON
+	OnInit()
+	//OnItemEvent(_, "LeaderLib_Initialized")
+ACTIONS
+	StartTimer("LLLIB_Timers_HoverText_Init", 0.5, 0)
+	//ItemEvent(__Me, "LeaderLib_Commands_GetUUID")
+	
+EVENT LLLIB_HoveringText_Test
+ON
+	OnTimer("LLLIB_Timers_HoverText_Init")
+ACTIONS
+	ItemEvent(__Me, "LeaderLib_Commands_GetUUID")
+	
+EVENT LLLIB_HoveringText_UUIDSet
+VARS
+	STRING:_UUID
+	STRING:_DisplayTimerName
+	STRING:_DelayTimerName
+ON
+	OnItemEvent(__Me, "LeaderLib_Events_UUIDSet")
+ACTIONS
+IF "c1&!c2"
+	GetVar(_UUID, __Me, "LeaderLib_UUID")
+	IsEqual(_UUID, "")
+THEN
+	Print(_DisplayTimerName, "LeaderLib_Timers_HoveringText_Display_[1]", _UUID)
+	Print(_DelayTimerName, "LeaderLib_Timers_HoveringText_Delay_[1]", _UUID)
+	Cast(%LLLIB_DisplayTimerName, _DisplayTimerName)
+	Cast(%LLLIB_DelayTimerName, _DelayTimerName)
+	ItemEvent(__Me, "LeaderLib_HoveringText_StartNextCycle")
+ENDIF
+	
+EVENT LLLIB_HoveringText_Init
+ON
+	OnItemEvent(__Me, "LeaderLib_HoveringText_StartNextCycle")
+ACTIONS
+IF "c1&c2"
+	IsGreaterThen(%Delay, 0)
+	IsEqual(%Delaying, 0)
+THEN
+	Set(%Delaying, 1)
+	StartTimer(%LLLIB_DelayTimerName, %Delay, 0)
+ELSE
+	ItemEvent(__Me, "LeaderLib_HoveringText_DisplayText")
+ENDIF
+
+EVENT LLLIB_HoveringText_DisplayText
+VARS
+	FLOAT:_DisplayTimerDelay
+ON
+	OnItemEvent(__Me, "LeaderLib_HoveringText_DisplayText")
+ACTIONS
+IF "!c1&c2&!c3"
+	IsEqual(%Text, "")
+	IsEqual(%Delaying, 0)
+	IsEqual(%DisplayTime, 0)
+THEN
+	Set(%Delaying, 1)
+	DisplayText(__Me, %Text, %DisplayTime)
+	IF "c1"
+		IsGreaterThen(%DisplayTime, 0)
+	THEN
+		Set(_DisplayTimerDelay, %DisplayTime)
+		Subtract(_DisplayTimerDelay, 2)
+		StartTimer(%LLLIB_DisplayTimerName, _DisplayTimerDelay, 0)
+	ENDIF
+ENDIF
+
+EVENT LLLIB_HoveringText_DisplayTimerFinished
+ON
+	OnTimer(%LLLIB_DisplayTimerName)
+ACTIONS
+	Set(%Delaying, 0)
+	ItemEvent(__Me, "LeaderLib_HoveringText_StartNextCycle")
+
+EVENT LLLIB_HoveringText_StopDelaying
+ON
+	OnTimer(%LLLIB_DelayTimerName)
+ACTIONS
+	Set(%Delaying, 0)
+	ItemEvent(__Me, "LeaderLib_HoveringText_DisplayText")

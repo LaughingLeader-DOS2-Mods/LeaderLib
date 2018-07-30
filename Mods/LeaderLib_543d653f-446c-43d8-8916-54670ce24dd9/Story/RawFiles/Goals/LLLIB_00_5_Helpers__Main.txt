@@ -624,7 +624,7 @@ NOT DB_LeaderLib_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _Complete
 CharacterCharacterSetEvent(_Char1, _Char2, _CompleteEvent);
 //END_REGION
 
-//REGION TIMERS_BEHAVIOR_SCRIPT
+//REGION BEHAVIOR_SCRIPT_HELPERS
 IF
 StoryEvent(_Object, "LeaderLib_Commands_StartObjectTimer")
 AND
@@ -634,6 +634,16 @@ GetVarInteger(_Object, "LeaderLib_Timer_Delay", _TimerDelay)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Main:LeaderLib_Commands_StartObjectTimer] Starting object timer with complete event [",_CompleteEvent,"].");
 LeaderLib_StartObjectTimer(_Object, _TimerDelay, "LeaderLib_Timers_BehaviorScriptTimer_", _CompleteEvent);
+
+//Behavior can't cast an object to a string
+IF
+StoryEvent(_Object, "LeaderLib_Commands_GetUUID")
+AND
+GetUUID(_Object, _UUID)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:LeaderLib_Commands_GetUUID] Set variable [LeaderLib_UUID] on object to [",_UUID,"].");
+SetVarString(_Object, "LeaderLib_UUID", _UUID);
+SetStoryEvent(_Object, "LeaderLib_Events_UUIDSet");
 //END_REGION
 
 //REGION STATUS_CHECK

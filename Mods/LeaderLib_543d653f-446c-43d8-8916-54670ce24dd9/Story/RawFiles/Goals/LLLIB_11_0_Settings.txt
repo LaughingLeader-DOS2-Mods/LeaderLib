@@ -3,6 +3,7 @@ SubGoalCombiner SGC_AND
 INITSECTION
 LLLIB_Settings_InitSettings();
 
+//DB_LLLIB_EquipmentSlots(_Slot)
 //DB_LLLIB_Settings_ItemTemplates(_Name, _ItemTemplate)
 //DB_LLLIB_Settings_DialogVariables(_VariableName, _VariableValue)
 //DB_LLLIB_Settings_QueueRates(_ReferenceName, _TickRate, _TimeoutRate)

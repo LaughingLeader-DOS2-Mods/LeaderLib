@@ -14,7 +14,7 @@ INITSECTION
 //DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent)
 //DB_LeaderLib_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _CompleteEvent)
 KBSECTION
-//REGION QUERY_INFO
+//REGION QUERY_FLAGS
 QRY
 LeaderLib_Helper_QRY_PartyFlag_ClearIterator()
 AND
@@ -92,7 +92,9 @@ AND
 LeaderLib_Helper_QRY_FlagSet((GUIDSTRING)_Player, _Flag, _FlagType, _FlagVal)
 THEN
 DB_LeaderLib_Helper_Temp_StopIteratingForFlags(1);
+//END_REGION
 
+//REGION QUERY_LEVELS
 QRY
 LeaderLib_Helper_QRY_PartyMinLevelMet((INTEGER)_MinLevel)
 AND
@@ -250,17 +252,6 @@ NOT DB_LeaderLib_Helper_Temp_HighestLevelInParty(_PartyMember, _HighestLevel);
 DB_LeaderLib_Helper_Temp_HighestLevelInParty(_PartyMember, _Level);
 //END_REGION
 
-//REGION QUERY_USER
-QRY
-LeaderLib_Helper_QRY_UserMatch((CHARACTERGUID)_Char1, (CHARACTERGUID)_Char2)
-AND
-CharacterGetReservedUserID(_Char1, _ID)
-AND
-CharacterGetReservedUserID(_Char2, _ID)
-THEN
-DB_NOOP(1);
-//END_REGION
-
 //REGION PARTY_LEVELRANGE_STRICT
 QRY
 LeaderLib_Helper_QRY_PartyMinLevelMet_Strict((INTEGER)_MinLevel)
@@ -329,6 +320,41 @@ AND
 LeaderLib_Helper_QRY_PartyMaxLevelMet_Strict(_MaxLevel)
 AND
 NOT DB_LeaderLib_Helper_Temp_PartyMemberOutsideOfLevelRange(1)
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION QUERY_USER
+QRY
+LeaderLib_Helper_QRY_UserMatch((CHARACTERGUID)_Char1, (CHARACTERGUID)_Char2)
+AND
+CharacterGetReservedUserID(_Char1, _ID)
+AND
+CharacterGetReservedUserID(_Char2, _ID)
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION QUERY_STATS
+QRY
+LeaderLib_Helper_QRY_AttributeIsGreater((CHARACTERGUID)_Char1, (CHARACTERGUID)_Char2, (STRING)_Attribute)
+AND
+CharacterGetAttribute(_Char1, _Attribute, _Val1)
+AND
+CharacterGetAttribute(_Char2, _Attribute, _Val2)
+AND
+_Val1 > _Val2
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_AbilityIsGreater((CHARACTERGUID)_Char1, (CHARACTERGUID)_Char2, (STRING)_Ability)
+AND
+CharacterGetAbility(_Char1, _Ability, _Val1)
+AND
+CharacterGetAbility(_Char2, _Ability, _Val2)
+AND
+_Val1 > _Val2
 THEN
 DB_NOOP(1);
 //END_REGION

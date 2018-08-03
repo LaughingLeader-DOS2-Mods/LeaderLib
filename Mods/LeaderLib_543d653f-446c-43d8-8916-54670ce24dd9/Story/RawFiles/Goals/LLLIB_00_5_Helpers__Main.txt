@@ -380,17 +380,17 @@ GlobalClearFlag(_Flag);
 //Thanks to Norbyte for this chunk
 QRY
 LeaderLib_Random_QRY_AdjustSeed()
+THEN
+LeaderLib_Random_AdjustSeed();
+
+PROC
+LeaderLib_Random_AdjustSeed()
 AND
 NOT DB_LeaderLib_Random_Seed(_)
 AND
 Random(99999, _Seed)
 THEN
 DB_LeaderLib_Random_Seed(_Seed);
-
-QRY
-LeaderLib_Random_QRY_AdjustSeed()
-THEN
-DB_NOOP(1);
 
 QRY
 LeaderLib_Random_QRY((INTEGER)_Modulo)
@@ -423,16 +423,6 @@ QRY
 LeaderLib_Random_QRY((INTEGER)_MinRan, (INTEGER)_MaxRan)
 THEN
 LeaderLib_Random(_MinRan, _MaxRan);
-
-//Random range
-PROC
-LeaderLib_Random((INTEGER)_MinRan, (INTEGER)_MaxRan)
-AND
-NOT DB_LeaderLib_Random_Seed(_)
-AND
-Random(99999, _Seed)
-THEN
-DB_LeaderLib_Random_Seed(_Seed);
 
 PROC
 LeaderLib_Random((INTEGER)_MinRan, (INTEGER)_MaxRan)

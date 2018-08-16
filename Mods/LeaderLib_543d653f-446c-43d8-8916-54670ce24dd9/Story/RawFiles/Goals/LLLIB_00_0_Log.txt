@@ -172,6 +172,28 @@ AND
 DB_LeaderLog_Temp_TargetOnce(_Target)
 THEN
 NOT DB_LeaderLog_Temp_TargetOnce(_Target);
+
+PROC
+LeaderLog_SetNextOneshotStatus((GUIDSTRING)_Target, (STRING)_Color)
+THEN
+LeaderLog_SetOneshotTarget(_Target);
+LeaderLog_SetNextStatusColor(_Target, _Color);
+
+PROC
+LeaderLog_SetNextOneshotStatus((GUIDSTRING)_Target, (STRING)_Color, (STRING)_Size)
+THEN
+LeaderLog_SetOneshotTarget(_Target);
+LeaderLog_SetNextStatusColor(_Target, _Color, _Size);
+
+QRY
+LeaderLog_QRY_SetNextOneshotStatus((GUIDSTRING)_Target, (STRING)_Color, (STRING)_Size)
+THEN
+LeaderLog_SetNextOneshotStatus(_Target, _Color, _Size);
+
+QRY
+LeaderLog_QRY_SetNextOneshotStatus((GUIDSTRING)_Target, (STRING)_Color)
+THEN
+LeaderLog_SetNextOneshotStatus(_Target, _Color);
 //END_REGION
 
 //REGION COLOR

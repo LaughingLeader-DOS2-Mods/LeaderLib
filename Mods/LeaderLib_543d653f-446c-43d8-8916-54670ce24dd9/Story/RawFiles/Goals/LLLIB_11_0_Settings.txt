@@ -17,16 +17,16 @@ THEN
 LLLIB_Settings_InitEquipmentSlots();
 LLLIB_Settings_InitStats();
 
-LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_Settings_QueueRates", 3);
+SysClear("DB_LLLIB_Settings_QueueRates", 3);
 DB_LLLIB_Settings_QueueRates("TraderSpawn", 500, 2000);
 DB_LLLIB_Settings_QueueRates("TraderCheck", 100, 500);
 DB_LLLIB_Settings_QueueRates("Treasure", 100, 60000);
 DB_LLLIB_Settings_QueueRates("ItemGeneration", 0, 5000);
 
-LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_Settings_ItemTemplates", 2);
+SysClear("DB_LLLIB_Settings_ItemTemplates", 2);
 DB_LLLIB_Settings_ItemTemplates("Book_ModMenu", "LLLIB_BOOK_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108");
 
-LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_Settings_DialogVariables", 2);
+SysClear("DB_LLLIB_Settings_DialogVariables", 2);
 DB_LLLIB_Settings_DialogVariables("PlayerName", "LLLIB_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3");
 DB_LLLIB_Settings_DialogVariables("SpeakerName", "LLLIB_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b");
 DB_LLLIB_Settings_DialogVariables("ModMenu_PageInfo", "LLLIB_ModMenu_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156");

@@ -480,6 +480,13 @@ LeaderLog_Log("DEBUG", _Str3);
 
 //REGION CHARACTER_STATS
 PROC
+LeaderLib_Helper_CopyLevel((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
+AND
+CharacterGetLevel(_CopyFrom, _TargetLevel)
+THEN
+CharacterLevelUpTo(_CopyTo, _TargetLevel);
+
+PROC
 LeaderLib_Helper_CopyStats((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
 THEN
 LeaderLib_Helper_CopyAbilities(_CopyTo, _CopyFrom);

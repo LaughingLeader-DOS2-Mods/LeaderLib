@@ -63,7 +63,7 @@
                                                 "TagText" : {
                                                    "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
                                                    "type" : 28,
-                                                   "value" : "Hey, [LLLIB_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3]! We made it off that dreadful island!"
+                                                   "value" : "Hey, [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3]! We made it off that dreadful island!"
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -83,7 +83,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_LeaderTrader_KnowsPlayer"},
+                                          "name" : {"type" : 22, "value" : "LeaderLib_LeaderTrader_KnowsPlayer"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
@@ -284,7 +284,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_LeaderTrader_KnowsPlayer"},
+                                          "name" : {"type" : 22, "value" : "LeaderLib_LeaderTrader_KnowsPlayer"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
@@ -395,7 +395,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_LeaderTrader_GaveIntroItems"},
+                                          "name" : {"type" : 22, "value" : "LeaderLib_LeaderTrader_GaveIntroItems"},
                                           "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
@@ -737,7 +737,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_LeaderTrader_LadyVengeance_IntroDone"},
+                                          "name" : {"type" : 22, "value" : "LeaderLib_LeaderTrader_LadyVengeance_IntroDone"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
@@ -808,7 +808,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_LeaderTrader_KnowsPlayer"},
+                                          "name" : {"type" : 22, "value" : "LeaderLib_LeaderTrader_KnowsPlayer"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
@@ -919,7 +919,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_LeaderTrader_KnowsPlayer"},
+                                          "name" : {"type" : 22, "value" : "LeaderLib_LeaderTrader_KnowsPlayer"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
@@ -1018,7 +1018,7 @@
                                                 "TagText" : {
                                                    "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
                                                    "type" : 28,
-                                                   "value" : "*He straightens his posture before speaking.* You may call me [LLLIB_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b]. Pleasure to meet you, [LLLIB_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3]."
+                                                   "value" : "*He straightens his posture before speaking.* You may call me [LeaderLib_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b]. Pleasure to meet you, [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3]."
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -1149,7 +1149,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_LeaderTrader_GaveIntroItems"},
+                                          "name" : {"type" : 22, "value" : "LeaderLib_LeaderTrader_GaveIntroItems"},
                                           "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
@@ -1300,12 +1300,12 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_LeaderTrader_GaveIntroItems"},
+                                          "name" : {"type" : 22, "value" : "LeaderLib_LeaderTrader_GaveIntroItems"},
                                           "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        },
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_LeaderTrader_GiveIntroItems"},
+                                          "name" : {"type" : 22, "value" : "LeaderLib_LeaderTrader_GiveIntroItems"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
@@ -1581,7 +1581,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_LeaderTrader_PlayerIntroducedSelf"},
+                                          "name" : {"type" : 22, "value" : "LeaderLib_LeaderTrader_PlayerIntroducedSelf"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 0}
                                        }

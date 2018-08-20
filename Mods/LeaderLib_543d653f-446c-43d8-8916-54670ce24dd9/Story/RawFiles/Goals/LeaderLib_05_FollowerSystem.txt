@@ -1,0 +1,356 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+//DB_LeaderLib_PartyFollower(_Owner, _Follower)
+//DB_LeaderLib_FollowerPositions(_Follower, _Region, _x, _y, _z, _TeleportEvent)
+KBSECTION
+//REGION REGISTER
+PROC
+LeaderLib_Follower_RegisterPosition((CHARACTERGUID)_Follower, (STRING)_Region, (REAL)_x, (REAL)_y, (REAL)_z)
+THEN
+LeaderLib_Follower_RegisterPosition(_Follower, _Region, _x, _y, _z, "");
+
+PROC
+LeaderLib_Follower_RegisterPosition((CHARACTERGUID)_Follower, (STRING)_Region, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_TeleportEvent)
+AND
+DB_LeaderLib_FollowerPositions(_Follower, _Region, _lx, _ly, _lz, _OtherTeleportEvent)
+THEN
+NOT DB_LeaderLib_FollowerPositions(_Follower, _Region, _lx, _ly, _lz, _OtherTeleportEvent);
+
+PROC
+LeaderLib_Follower_RegisterPosition((CHARACTERGUID)_Follower, (STRING)_Region, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_TeleportEvent)
+THEN
+DB_LeaderLib_FollowerPositions(_Follower, _Region, _x, _y, _z, _TeleportEvent);
+//END_REGION
+
+//REGION RECRUIT_AND_DISMISS
+PROC
+LeaderLib_Follower_RecruitCharacter((CHARACTERGUID)_Owner, (CHARACTERGUID)_Follower)
+AND
+CharacterIsPartyMember(_Owner, 1)
+THEN
+DB_LeaderLib_PartyFollower(_Owner, _Follower);
+SetVarObject(_Follower, "LeaderLib_Follower_Owner", _Owner);
+//ObjectSetFlag(_Follower, "LeaderLib_IsFollower");
+SetTag(_Follower, "LeaderLib_IsFollower");
+ObjectSetFlag(_Follower, "LeaderLib_CharacterIsFollowing");
+CharacterAddToPlayerCharacter(_Follower, _Owner);
+CharacterAttachToGroup(_Follower, _Owner);
+CharacterCharacterSetEvent(_Owner, _Follower, "LeaderLib_Events_FollowerRecruited");
+
+PROC
+LeaderLib_Follower_DismissCharacter((CHARACTERGUID)_Follower)
+AND
+DB_LeaderLib_PartyFollower(_Owner, _Follower)
+THEN
+LeaderLib_Follower_DismissCharacterFromOwner(_Owner, _Follower);
+
+PROC
+LeaderLib_Follower_DismissCharacter((CHARACTERGUID)_Follower, (STRING)_Effect)
+AND
+DB_LeaderLib_PartyFollower(_Owner, _Follower)
+THEN
+LeaderLib_Follower_DismissCharacterFromOwner(_Owner, _Follower, _Effect, 0);
+
+PROC
+LeaderLib_Follower_DismissCharacter((CHARACTERGUID)_Follower, (STRING)_Effect, (INTEGER)_SetOffStage)
+AND
+DB_LeaderLib_PartyFollower(_Owner, _Follower)
+THEN
+LeaderLib_Follower_DismissCharacterFromOwner(_Owner, _Follower, _Effect, _SetOffStage);
+
+PROC
+LeaderLib_Follower_DismissCharacterFromOwner((CHARACTERGUID)_Owner, (CHARACTERGUID)_Follower)
+THEN
+LeaderLib_Follower_DismissCharacterFromOwner(_Owner, _Follower, "RS3_FX_GP_ScriptedEvent_Teleport_GenericSmoke_01", 0);
+
+PROC
+LeaderLib_Follower_DismissCharacterFromOwner((CHARACTERGUID)_Owner, (CHARACTERGUID)_Follower, (STRING)_Effect)
+THEN
+LeaderLib_Follower_DismissCharacterFromOwner(_Owner, _Follower, _Effect, 0);
+
+PROC
+LeaderLib_Follower_DismissCharacterFromOwner((CHARACTERGUID)_Owner, (CHARACTERGUID)_Follower, (STRING)_Effect, (INTEGER)_SetOffStage)
+THEN
+NOT DB_LeaderLib_PartyFollower(_Owner, _Follower);
+SetVarObject(_Follower, "LeaderLib_Follower_LastOwner", _Owner);
+ClearVarObject(_Follower, "LeaderLib_Follower_Owner");
+//ObjectClearFlag(_Follower, "LeaderLib_IsFollower");
+ClearTag(_Follower, "LeaderLib_IsFollower");
+ObjectClearFlag(_Follower, "LeaderLib_CharacterIsFollowing");
+ProcCharacterStopFollow(_Follower);
+CharacterRemoveFromPlayerCharacter(_Follower, _Owner);
+CharacterDetachFromGroup(_Follower);
+LeaderLib_Follower_Internal_SetOffStage(_Follower, _SetOffStage);
+LeaderLib_Follower_Internal_ResetPositionIfEnabled(_Follower, _Effect);
+CharacterCharacterSetEvent(_Owner, _Follower, "LeaderLib_Events_FollowerDismissed");
+//ClearTag(_Follower, "SUMMON");
+
+PROC
+LeaderLib_Follower_Internal_SetOffStage((CHARACTERGUID)_Follower, 1)
+THEN
+SetOnStage(_Follower, 0);
+
+PROC
+LeaderLib_Follower_Internal_ResetPositionIfEnabled((CHARACTERGUID)_Follower, (STRING)_Effect)
+AND
+NOT IsTagged(_Follower, "LeaderLib_Follower_DisableAutoResetPosition", 1)
+THEN
+LeaderLib_Follower_ResetPosition(_Follower, _Effect);
+
+IF
+CharacterCharacterEvent(_Follower, _Owner, "LeaderLib_Follower_AutoFollow")
+AND
+CharacterIsControlled(_Follower, 0)
+THEN
+ProcCharacterFollowCharacter(_Follower, _Owner);
+
+IF
+CharacterCharacterEvent(_Follower, _Owner, "LeaderLib_Follower_AutoFollow")
+AND
+CharacterIsControlled(_Follower, 1)
+THEN
+ProcCharacterStopFollow(_Follower);
+//END_REGION
+
+//REGION HELPERS
+PROC
+LeaderLib_Follower_ResetPosition((CHARACTERGUID)_Follower)
+THEN
+LeaderLib_Follower_ResetPosition(_Follower, "");
+
+PROC
+LeaderLib_Follower_ResetPosition((CHARACTERGUID)_Follower, (STRING)_Effect)
+AND
+NOT DB_LeaderLib_Follower_Temp_PositionReset(_Follower)
+AND
+DB_CurrentLevel(_Region)
+AND
+DB_LeaderLib_FollowerPositions(_Follower, _Region, _x, _y, _z, _TeleportEvent)
+AND
+GetDistanceToPosition(_Follower,  _x, _y, _z, _Dist)
+AND
+_Dist < 30
+THEN
+CharacterMoveToPosition(_Follower, _x, _y, _z, 1, _TeleportEvent);
+DB_LeaderLib_Follower_Temp_PositionReset(_Follower);
+
+PROC
+LeaderLib_Follower_ResetPosition((CHARACTERGUID)_Follower, (STRING)_Effect)
+AND
+NOT DB_LeaderLib_Follower_Temp_PositionReset(_Follower)
+AND
+DB_CurrentLevel(_Region)
+AND
+DB_LeaderLib_FollowerPositions(_Follower, _Region, _x, _y, _z, _TeleportEvent)
+AND
+GetDistanceToPosition(_Follower,  _x, _y, _z, _Dist)
+AND
+_Dist >= 30
+THEN
+LeaderLib_Follower_Internal_PlayDisappearEffect(_Follower, _Effect);
+TeleportToPosition(_Follower, _x, _y, _z, _TeleportEvent, 1);
+DB_LeaderLib_Follower_Temp_PositionReset(_Follower);
+
+PROC
+LeaderLib_Follower_ResetPosition((CHARACTERGUID)_Follower, (STRING)_Effect)
+AND
+DB_LeaderLib_Follower_Temp_PositionReset(_Follower)
+THEN
+NOT DB_LeaderLib_Follower_Temp_PositionReset(_Follower);
+
+PROC
+LeaderLib_Follower_Internal_PlayDisappearEffect((CHARACTERGUID)_Follower, (STRING)_Effect)
+AND
+_Effect != ""
+AND
+GetPosition(_Follower,_X,_Y,_Z)
+THEN
+PlayEffectAtPosition(_Effect, _X,_Y,_Z);
+//END_REGION
+
+//REGION DIALOG_FLAGS
+IF
+DialogStarted(_, _Instance)
+AND
+DialogGetInvolvedNPC(_Instance, 1, (CHARACTERGUID)_Follower)
+AND
+DB_LeaderLib_PartyFollower(_Owner, _Follower)
+AND
+DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Owner)
+THEN
+ObjectSetFlag(_Owner, "LeaderLib_SpeakerIsFollowerOwner");
+
+IF
+DialogStarted(_, _Instance)
+AND
+DialogGetInvolvedNPC(_Instance, 1, (CHARACTERGUID)_Follower)
+AND
+DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Owner)
+AND
+NOT DB_LeaderLib_PartyFollower(_Owner, _Follower)
+AND
+ObjectGetFlag(_Owner, "LeaderLib_SpeakerIsFollowerOwner", 1)
+THEN
+ObjectClearFlag(_Owner, "LeaderLib_SpeakerIsFollowerOwner");
+
+IF
+DialogEnded(_, _Instance)
+AND
+DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Owner)
+AND
+ObjectGetFlag(_Owner, "LeaderLib_SpeakerIsFollowerOwner", 1)
+THEN
+ObjectClearFlag(_Owner, "LeaderLib_SpeakerIsFollowerOwner");
+
+IF
+DialogStarted(_, _Instance)
+AND
+DialogGetInvolvedNPC(_Instance, 1, (CHARACTERGUID)_Follower)
+AND
+//DB_Following(_Follower, _Owner)
+ObjectGetFlag(_Follower, "LeaderLib_CharacterIsFollowing", 1)
+AND
+GetVarObject(_Follower, "LeaderLib_Follower_Owner", _Owner)
+AND
+DialogGetInvolvedPlayer(_Instance, 1, _Owner)
+THEN
+ObjectSetFlag(_Follower, "LeaderLib_IsFollowingSpeaker");
+
+IF
+DialogStarted(_, _Instance)
+AND
+DialogGetInvolvedNPC(_Instance, 1, (CHARACTERGUID)_Follower)
+AND
+//NOT DB_Following(_Follower, _)
+ObjectGetFlag(_Follower, "LeaderLib_CharacterIsFollowing", 1)
+AND
+GetVarObject(_Follower, "LeaderLib_Follower_Owner", _Owner)
+AND
+NOT DialogGetInvolvedPlayer(_Instance, 1, _Owner)
+THEN
+ObjectClearFlag(_Follower, "LeaderLib_IsFollowingSpeaker");
+
+IF
+DialogStarted(_, _Instance)
+AND
+DialogGetInvolvedNPC(_Instance, 1, (CHARACTERGUID)_Follower)
+AND
+ObjectGetFlag(_Follower, "LeaderLib_CharacterIsFollowing", 0)
+AND
+ObjectGetFlag(_Follower, "LeaderLib_IsFollowingSpeaker", 1)
+THEN
+ObjectClearFlag(_Follower, "LeaderLib_IsFollowingSpeaker");
+
+IF
+DialogEnded(_, _Instance)
+AND
+DialogGetInvolvedNPC(_Instance, 1, (CHARACTERGUID)_Follower)
+AND
+ObjectGetFlag(_Follower, "LeaderLib_IsFollowingSpeaker", 1)
+THEN
+ObjectClearFlag(_Follower, "LeaderLib_IsFollowingSpeaker");
+//END_REGION
+
+//REGION FLAG_EVENTS
+IF
+ObjectFlagSet("LeaderLib_RecruitFollower", (CHARACTERGUID)_Follower, _Instance)
+AND
+LeaderLib_Helper_QRY_ClearObjectFlag(_Follower, "LeaderLib_RecruitFollower")
+AND
+DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
+THEN
+CharacterCharacterSetEvent(_Player, _Follower, "LeaderLib_Commands_RecruitFollower");
+
+IF
+CharacterCharacterEvent(_Owner, _Follower, "LeaderLib_Commands_RecruitFollower")
+THEN
+CharacterCharacterSetEvent(_Owner, _Follower, "LeaderLib_PlayerIsRecruitingCharacter"); // Pre-recruitment
+//Delay so other scripts can level the character up, since player followers seem resistant to the CharacterLevelUp/CharacterLevelUpTo call.
+LeaderLib_StartCharacterCharacterTimer(_Owner, _Follower, 250, "LeaderLib_Timers_RecruitFollowerDelayTimer_", "LeaderLib_Follower_RecruitDelayTimerEnded");
+
+IF
+CharacterCharacterEvent(_Player, _Follower, "LeaderLib_Follower_RecruitDelayTimerEnded")
+THEN
+LeaderLib_Follower_RecruitCharacter(_Player, _Follower);
+
+IF
+ObjectFlagSet("LeaderLib_DismissFollower", (CHARACTERGUID)_Follower, _Instance)
+AND
+LeaderLib_Helper_QRY_ClearObjectFlag(_Follower, "LeaderLib_DismissFollower")
+AND
+DB_LeaderLib_PartyFollower(_Owner, _Follower)
+THEN
+LeaderLib_Follower_DismissCharacterFromOwner(_Owner, _Follower);
+
+IF
+CharacterCharacterEvent(_Owner, _Follower, "LeaderLib_Commands_DismissFollower")
+AND
+DB_LeaderLib_PartyFollower(_Owner, _Follower)
+THEN
+LeaderLib_Follower_DismissCharacterFromOwner(_Owner, _Follower);
+
+IF
+ObjectFlagSet("LeaderLib_FollowSpeaker", (CHARACTERGUID)_Follower, _Instance)
+AND
+LeaderLib_Helper_QRY_ClearObjectFlag(_Follower, "LeaderLib_FollowSpeaker")
+AND
+DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
+THEN
+//ProcCharacterFollowCharacter(_Follower, _Player);
+CharacterAttachToGroup(_Follower, _Player);
+ObjectSetFlag(_Follower, "LeaderLib_CharacterIsFollowing");
+ObjectSetFlag(_Follower, "LeaderLib_IsFollowingSpeaker");
+
+IF
+StoryEvent((CHARACTERGUID)_Follower, "LeaderLib_Commands_FollowOwner")
+AND
+DB_LeaderLib_PartyFollower(_Owner, _Follower)
+THEN
+CharacterAttachToGroup(_Follower, _Owner);
+ObjectSetFlag(_Follower, "LeaderLib_CharacterIsFollowing");
+ObjectSetFlag(_Follower, "LeaderLib_IsFollowingSpeaker");
+
+IF
+ObjectFlagSet("LeaderLib_StopFollowingSpeaker", (CHARACTERGUID)_Follower, _Instance)
+AND
+LeaderLib_Helper_QRY_ClearObjectFlag(_Follower, "LeaderLib_StopFollowingSpeaker")
+THEN
+ProcCharacterStopFollow(_Follower);
+CharacterDetachFromGroup(_Follower);
+ObjectClearFlag(_Follower, "LeaderLib_CharacterIsFollowing");
+ObjectClearFlag(_Follower, "LeaderLib_IsFollowingSpeaker");
+
+IF
+StoryEvent((CHARACTERGUID)_Follower, "LeaderLib_Commands_StopFollowingOwner")
+AND
+DB_LeaderLib_PartyFollower(_Owner, _Follower)
+THEN
+ProcCharacterStopFollow(_Follower);
+CharacterDetachFromGroup(_Follower);
+ObjectClearFlag(_Follower, "LeaderLib_CharacterIsFollowing");
+ObjectClearFlag(_Follower, "LeaderLib_IsFollowingSpeaker");
+
+IF
+DB_Following(_Follower, _Owner)
+AND
+IsTagged(_Follower, "LeaderLib_IsFollower", 1)
+THEN
+ObjectSetFlag(_Follower, "LeaderLib_CharacterIsFollowing");
+//END_REGION
+
+//REGION TELEPORT_EVENTS
+IF
+//CharacterTeleported(_Owner, _Cause, _oldX,_oldY,_oldZ,_x,_y,_z,_Skill)
+StoryEvent((CHARACTERGUID)_Owner, _Event)
+AND
+DB_LeaderLib_PartyFollower(_Owner, _Follower)
+THEN
+//TeleportTo(_Follower, _Owner, "", 1);
+//LeaderLog_Log("DEBUG", "[LeaderLib:FollowerSystem:Teleported] Owner teleported. Skill[",_Skill,"]");
+LeaderLog_Log("DEBUG", "[LeaderLib:FollowerSystem:Debug] Owner event fired: [",_Event,"]");
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

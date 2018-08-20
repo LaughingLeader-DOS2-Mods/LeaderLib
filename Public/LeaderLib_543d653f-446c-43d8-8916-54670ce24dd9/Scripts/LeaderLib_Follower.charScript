@@ -1,0 +1,25 @@
+INIT
+	CHARACTER:__Me
+	EXTERN INT:%LLLIB_FollowDisabled = 0
+EVENTS
+
+EVENT LeaderLib_Reset_Follow_Priority
+ON
+	OnCharacterFlagSet("LeaderLib_CharacterIsFollowing", __Me)
+	OnInit()
+ACTIONS
+IF "c1"
+	IsEqual(%LLLIB_FollowDisabled, 1)
+THEN
+	//SetVar(__Me, "Following", INT:1)
+	Set(%LLLIB_FollowDisabled, INT:0)
+	SetPriority("StartFollow", 10)
+ENDIF
+	
+EVENT LeaderLib_Activate_Follow_Priority
+ON
+	OnCharacterFlagCleared("LeaderLib_CharacterIsFollowing", __Me)
+ACTIONS
+	SetPriority("StartFollow", 0)
+	SetVar(__Me, "Following", INT:0)
+	Set(%LLLIB_FollowDisabled, INT:1)

@@ -1,0 +1,97 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+//DB_LeaderLib_Skills_StatusToggleSkills(_Skill, _Status, _Duration, _Force)
+KBSECTION
+//REGION TOGGLE_SKILL
+PROC
+LeaderLib_Skills_Register_StatusToggleSkill((STRING)_Skill, (STRING)_Status)
+THEN
+LeaderLib_Skills_Register_StatusToggleSkill(_Skill, _Status, -1.0, 1, 0);
+
+PROC
+LeaderLib_Skills_Register_StatusToggleSkill((STRING)_Skill, (STRING)_Status, (REAL)_Duration)
+THEN
+LeaderLib_Skills_Register_StatusToggleSkill(_Skill, _Status, _Duration, 1, 0);
+
+PROC
+LeaderLib_Skills_Register_StatusToggleSkill((STRING)_Skill, (STRING)_Status, (REAL)_Duration, (INTEGER)_Force)
+THEN
+LeaderLib_Skills_Register_StatusToggleSkill(_Skill, _Status, _Duration, _Force, 0);
+
+PROC
+LeaderLib_Skills_Register_StatusToggleSkill((STRING)_Skill, (STRING)_Status, (REAL)_Duration, (INTEGER)_Force, (INTEGER)_OnUse)
+AND
+DB_LeaderLib_Skills_StatusToggleSkills(_Skill, _Status, _OtherDuration, _OtherForce, _OtherOnUse)
+THEN
+NOT DB_LeaderLib_Skills_StatusToggleSkills(_Skill, _Status, _OtherDuration, _OtherForce, _OtherOnUse);
+
+PROC
+LeaderLib_Skills_Register_StatusToggleSkill((STRING)_Skill, (STRING)_Status, (REAL)_Duration, (INTEGER)_Force, (INTEGER)_OnUse)
+THEN
+DB_LeaderLib_Skills_StatusToggleSkills(_Skill, _Status, _Duration, _Force, _OnUse);
+
+IF
+CharacterUsedSkill(_Character, _Skill, _, _)
+AND
+DB_LeaderLib_Skills_StatusToggleSkills(_Skill, _Status, _Duration, _Force, 1)
+THEN
+LeaderLib_Skills_BlockStatusToggle(_Character, _Skill, _Status);
+LeaderLib_Skills_Internal_ProcessStatusToggle(_Character, _Skill, _Status, _Duration, _Force);
+
+IF
+SkillCast(_Character, _Skill, _, _)
+AND
+DB_LeaderLib_Skills_StatusToggleSkills(_Skill, _Status, _Duration, _Force, 0)
+THEN
+LeaderLib_Skills_BlockStatusToggle(_Character, _Skill, _Status);
+LeaderLib_Skills_Internal_ProcessStatusToggle(_Character, _Skill, _Status, _Duration, _Force);
+
+PROC
+LeaderLib_Skills_BlockStatusToggle((CHARACTERGUID)_Character, (STRING)_Skill, (STRING)_Status)
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_Skills_Internal_ProcessStatusToggle((CHARACTERGUID)_Character, (STRING)_Skill, (STRING)_Status, (REAL)_Duration, (INTEGER)_Force)
+AND
+NOT DB_LeaderLib_Skills_BlockStatusToggle(_Character, _Skill, _Status)
+AND
+NOT DB_LeaderLib_Skills_Temp_JustToggledSkillStatus(_Character, _Skill)
+AND
+HasActiveStatus(_Character, _Status, 0)
+THEN
+ApplyStatus(_Character, _Status, _Duration, 1);
+DB_LeaderLib_Skills_Temp_JustToggledSkillStatus(_Character, _Skill);
+
+PROC
+LeaderLib_Skills_Internal_ProcessStatusToggle((CHARACTERGUID)_Character, (STRING)_Skill, (STRING)_Status, (REAL)_Duration, (INTEGER)_Force)
+AND
+NOT DB_LeaderLib_Skills_BlockStatusToggle(_Character, _Skill, _Status)
+AND
+NOT DB_LeaderLib_Skills_Temp_JustToggledSkillStatus(_Character, _Skill)
+AND
+HasActiveStatus(_Character, _Status, 1)
+THEN
+RemoveStatus(_Character, _Status);
+DB_LeaderLib_Skills_Temp_JustToggledSkillStatus(_Character, _Skill);
+
+//Clear
+PROC
+LeaderLib_Skills_Internal_ProcessStatusToggle((CHARACTERGUID)_Character, (STRING)_Skill, (STRING)_Status, (REAL)_Duration, (INTEGER)_Force)
+AND
+DB_LeaderLib_Skills_Temp_JustToggledSkillStatus(_Character, _Skill)
+THEN
+NOT DB_LeaderLib_Skills_Temp_JustToggledSkillStatus(_Character, _Skill);
+
+PROC
+LeaderLib_Skills_Internal_ProcessStatusToggle((CHARACTERGUID)_Character, (STRING)_Skill, (STRING)_Status, (REAL)_Duration, (INTEGER)_Force)
+AND
+DB_LeaderLib_Skills_BlockStatusToggle(_Character, _Skill, _Status)
+THEN
+NOT DB_LeaderLib_Skills_BlockStatusToggle(_Character, _Skill, _Status);
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

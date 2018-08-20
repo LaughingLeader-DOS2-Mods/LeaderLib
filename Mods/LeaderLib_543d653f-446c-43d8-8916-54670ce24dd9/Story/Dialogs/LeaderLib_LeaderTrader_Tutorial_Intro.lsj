@@ -303,7 +303,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_LeaderTrader_TUT_IntroDone"},"value" : {"type" : 19, "value" : 1}}
+                                          "name" : {"type" : 22, "value" : "LeaderLib_LeaderTrader_TUT_IntroDone"},"value" : {"type" : 19, "value" : 1}}
                                     ],"type" : {"type" : 22, "value" : "Global"}}
                               ]
                            }
@@ -610,12 +610,12 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_LeaderTrader_GaveIntroItems"},
+                                          "name" : {"type" : 22, "value" : "LeaderLib_LeaderTrader_GaveIntroItems"},
                                           "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        },
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_LeaderTrader_GiveIntroItems"},
+                                          "name" : {"type" : 22, "value" : "LeaderLib_LeaderTrader_GiveIntroItems"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
@@ -1232,7 +1232,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LLLIB_LeaderTrader_PlayerIntroducedSelf"},
+                                          "name" : {"type" : 22, "value" : "LeaderLib_LeaderTrader_PlayerIntroducedSelf"},
                                           "paramval" : {"type" : 4, "value" : 1},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
@@ -1389,7 +1389,7 @@
                                                 "TagText" : {
                                                    "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
                                                    "type" : 28,
-                                                   "value" : "It's a pleasure to meet you [LLLIB_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3]. You may call me [LLLIB_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b]."
+                                                   "value" : "It's a pleasure to meet you [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3]. You may call me [LeaderLib_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b]."
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }

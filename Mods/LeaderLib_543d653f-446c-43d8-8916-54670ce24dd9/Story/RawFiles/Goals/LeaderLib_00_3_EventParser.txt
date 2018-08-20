@@ -1,0 +1,215 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+//DB_LeaderLib_SendEvent(_EventName)
+//DB_LeaderLib_EventParser_Spawned(_EventParser)
+//DB_LeaderLib_EventParser(_EventParser)
+KBSECTION
+//REGION CREATE_NEW
+PROC
+LeaderLib_EventParser_Internal_CreateNew()
+AND
+DB_LeaderLib_EventParser_Spawned(_EventParser)
+AND
+ObjectExists(_EventParser, 0)
+THEN
+NOT DB_LeaderLib_EventParser_Spawned(_EventParser);
+
+PROC
+LeaderLib_EventParser_Internal_CreateNew()
+AND
+NOT CharacterGetHostCharacter(_)
+AND
+DB_LeaderLib_Treasure_GeneratorDummies(_Dummy)
+AND
+NOT DB_LeaderLib_EventParser_Spawned(_)
+AND
+GetPosition(_Dummy, _x,_y,_z)
+AND
+CreateItemTemplateAtPosition("S_LeaderLib_EventParser_0f686d7d-2304-4f23-bd9a-8d402a6bdefe", _x,_y,_z, _EventParser)
+THEN
+DB_LeaderLib_EventParser_Spawned(_EventParser);
+
+PROC
+LeaderLib_EventParser_Internal_CreateNew()
+AND
+NOT DB_LeaderLib_EventParser_Spawned(_)
+AND
+CharacterGetHostCharacter(_Host)
+AND
+GetPosition(_Host, _x,_y,_z)
+AND
+CreateItemTemplateAtPosition("S_LeaderLib_EventParser_0f686d7d-2304-4f23-bd9a-8d402a6bdefe", _x,_y,_z, _EventParser)
+THEN
+DB_LeaderLib_EventParser_Spawned(_EventParser);
+
+PROC
+LeaderLib_EventParser_Internal_CreateNew()
+AND
+NOT DB_LeaderLib_EventParser_Spawned(_) // Creating a temporary event parser failed, use a player
+AND
+CharacterGetHostCharacter(_Player)
+THEN
+DB_LeaderLib_EventParser_Spawned(_Player);
+
+QRY
+LeaderLib_QRY_EventParser_CreateNew()
+THEN
+LeaderLib_EventParser_Internal_CreateNew();
+//END_REGION
+
+//REGION GET_PARSER
+QRY
+LeaderLib_QRY_EventParser_GlobalParserExists()
+AND
+ObjectExists(ITEMGUID_S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Events_QRY_GetEventParser()
+THEN
+LeaderLib_Events_Internal_GetEventParser();
+
+PROC
+LeaderLib_Events_Internal_GetEventParser()
+AND
+DB_LeaderLib_EventParser(_EventParser)
+AND
+ObjectExists(_EventParser, 0)
+THEN
+NOT DB_LeaderLib_EventParser(_EventParser);
+
+PROC
+LeaderLib_Events_Internal_GetEventParser()
+AND
+NOT DB_LeaderLib_EventParser(_)
+AND
+LeaderLib_QRY_EventParser_GlobalParserExists()
+THEN
+DB_LeaderLib_EventParser(ITEMGUID_S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6);
+
+PROC
+LeaderLib_Events_Internal_GetEventParser()
+AND
+NOT DB_LeaderLib_EventParser(_)
+AND
+NOT LeaderLib_QRY_EventParser_GlobalParserExists()
+AND
+LeaderLib_QRY_EventParser_CreateNew()
+AND
+DB_LeaderLib_EventParser_Spawned(_EventParser)
+THEN
+DB_LeaderLib_EventParser(_EventParser);
+//END_REGION
+
+//REGION EVENTS
+PROC
+LeaderLib_EventParser_Internal_ClearEvent((STRING)_EventName)
+AND
+DB_LeaderLib_SendEvent(_EventName)
+THEN
+NOT DB_LeaderLib_SendEvent(_EventName);
+
+PROC
+LeaderLib_EventParser_Internal_RunEvent((STRING)_EventName)
+AND
+LeaderLib_Events_QRY_GetEventParser()
+AND
+DB_LeaderLib_EventParser(_EventParser)
+THEN
+LeaderLib_EventParser_Internal_ClearEvent(_EventName);
+SetStoryEvent(_EventParser, _EventName);
+//END_REGION
+
+//REGION GAME_STARTED
+IF
+GameStarted(_,_)
+AND
+NOT LeaderLib_QRY_EventParser_GlobalParserExists()
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:EventParser][ERROR] Global Event Parser doesn't exist for some reason.");
+//LLLIB_EventParser_Internal_CreateNew();
+//END_REGION
+
+//REGION SEND_EVENT
+//Send out a general event, using the Event Parser object.
+PROC
+LeaderLib_SendEvent((STRING)_EventName)
+AND
+_EventName != ""
+THEN
+DB_LeaderLib_SendEvent(_EventName);
+LeaderLib_EventParser_Internal_RunEvent(_EventName);
+
+//Events that were never sent
+IF
+StoryEvent(_, "LeaderLib_Initialized")
+AND
+DB_LeaderLib_SendEvent(_EventName)
+AND
+_EventName != "LeaderLib_Initialized"
+THEN
+LeaderLib_EventParser_Internal_RunEvent(_EventName);
+
+IF
+StoryEvent(_, "LeaderLib_Initialized")
+AND
+DB_LeaderLib_SendEvent(_EventName)
+THEN
+NOT DB_LeaderLib_SendEvent(_EventName);
+//END_REGION
+
+//REGION BEHAVIOR_EVENT_ADDITIONS
+IF
+ItemAddedToCharacter(_Item, _Character)
+AND
+IsTagged(_Character, "LeaderLib_ReceiveExtraEvents", 1)
+THEN
+CharacterItemSetEvent(_Character, _Item, "LeaderLib_ItemAddedToInventory");
+//END_REGION
+
+//REGION ITERATORS
+PROC
+LeaderLib_EventParser_LaunchCharacterIterator((STRING)_CharacterEvent, (STRING)_Tag)
+AND
+LeaderLib_Events_QRY_GetEventParser()
+AND
+DB_LeaderLib_EventParser(_EventParser)
+THEN
+SetVarString(_EventParser, "LeaderLib_IteratorEvent", _CharacterEvent);
+SetVarFixedString(_EventParser, "LeaderLib_IteratorTag", _Tag);
+SetStoryEvent(_EventParser, "LeaderLib_Commands_StartCharacterIterator");
+
+PROC
+LeaderLib_EventParser_LaunchItemIterator((STRING)_ItemEvent, (STRING)_Tag)
+AND
+LeaderLib_Events_QRY_GetEventParser()
+AND
+DB_LeaderLib_EventParser(_EventParser)
+THEN
+SetVarString(_EventParser, "LeaderLib_IteratorEvent", _ItemEvent);
+SetVarFixedString(_EventParser, "LeaderLib_IteratorTag", _Tag);
+SetStoryEvent(_EventParser, "LeaderLib_Commands_StartItemIterator");
+
+PROC
+LeaderLib_EventParser_LaunchInventoryIterator((GUIDSTRING)_TargetObject, (STRING)_ItemEvent, (STRING)_Tag)
+THEN
+SetVarString(_TargetObject, "LeaderLib_IteratorEvent", _ItemEvent);
+SetVarFixedString(_TargetObject, "LeaderLib_IteratorTag", _Tag);
+SetStoryEvent(_TargetObject, "LeaderLib_Commands_StartInventoryIterator");
+//END_REGION
+
+//REGION UPDATER
+PROC
+LeaderLib_System_RegisterDatabases()
+THEN
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventParser", "DB_LeaderLib_SendEvent", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventParser", "DB_LeaderLib_EventParser", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventParser", "DB_LeaderLib_EventParser_Spawned", 1);
+LeaderLog_Log("TRACE", "[LeaderLib:EventParser] Databases registered.");
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

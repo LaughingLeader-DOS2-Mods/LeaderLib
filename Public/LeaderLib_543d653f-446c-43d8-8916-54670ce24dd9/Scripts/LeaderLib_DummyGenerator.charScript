@@ -1,0 +1,13 @@
+INIT
+	CHARACTER:__Me
+	FIXEDSTRING:%EmptyString=""
+	INT:%EmptyInt=0
+	INT:%DefaultShowInTrade=1
+	INT:%DefaultAmount=1
+EVENTS
+
+EVENT Init_Register
+ON
+	OnInit()
+ACTIONS
+	CharacterEvent(__Me, "LLLIB_Events_GeneratorDummyInitialized")

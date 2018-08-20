@@ -1,0 +1,441 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+//Settings
+//DB_LeaderLib_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel, _StrictMode)
+//DB_LeaderLib_Requirements_Flag(_RequirementID, _Flag, _FlagType, _FlagVal)
+//DB_LeaderLib_Requirements_FlagTarget(_RequirementID, _Flag, _Object)
+//DB_LeaderLib_Requirements_Region(_RequirementID, _Region)
+//DB_LeaderLib_Treasure_ItemMaxAmount(_TreasureID, _ItemEntry, _MaxAmount)
+//Dynamic
+//DB_LeaderLib_Requirements_IsUnlocked(_RequirementID)
+KBSECTION
+//REGION UPDATER
+PROC
+LeaderLib_System_RegisterDatabases()
+THEN
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Requirements", "DB_LeaderLib_Requirements_PartyLevel", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Requirements", "DB_LeaderLib_Requirements_Flag", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Requirements", "DB_LeaderLib_Requirements_Region", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Requirements", "DB_LeaderLib_Treasure_ItemMaxAmount", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Requirements", "DB_LeaderLib_Requirements_IsUnlocked", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Requirements", "DB_LeaderLib_Requirements_FlagTarget", 3);
+LeaderLog_Log("TRACE", "[LeaderLib:Requirements] Databases registered.");
+//END_REGION
+
+//REGION REGISTERING
+PROC
+LeaderLib_Requirements_Add_FlagRequirement((STRING)_RequirementID, (STRING)_Flag, (STRING)_FlagType)
+AND
+_RequirementID != ""
+THEN
+LeaderLib_Requirements_Add_FlagRequirement(_RequirementID, _Flag, _FlagType, 1);
+
+PROC
+LeaderLib_Requirements_Add_FlagRequirement((STRING)_RequirementID, (STRING)_Flag, (STRING)_FlagType, (INTEGER)_FlagVal)
+AND
+_FlagType != "Character"
+AND
+_RequirementID != ""
+THEN
+DB_LeaderLib_Requirements_Flag(_RequirementID, _Flag, _FlagType, _FlagVal);
+
+PROC
+LeaderLib_Requirements_Add_FlagRequirement((STRING)_RequirementID, (STRING)_Flag, "Character", (INTEGER)_FlagVal)
+AND
+_RequirementID != ""
+THEN
+DB_LeaderLib_Requirements_Flag(_RequirementID, _Flag, "Object", _FlagVal);
+
+PROC
+LeaderLib_Requirements_Add_FlagTarget((GUIDSTRING)_Object, (STRING)_RequirementID, (STRING)_Flag)
+AND
+NOT DB_LeaderLib_Requirements_FlagTarget(_RequirementID, _Flag, _Object)
+THEN
+DB_LeaderLib_Requirements_FlagTarget(_RequirementID, _Flag, _Object);
+
+PROC
+LeaderLib_Requirements_Clear_FlagTarget((GUIDSTRING)_Object, (STRING)_RequirementID, (STRING)_Flag)
+AND
+DB_LeaderLib_Requirements_FlagTarget(_RequirementID, _Flag, _Object)
+THEN
+NOT DB_LeaderLib_Requirements_FlagTarget(_RequirementID, _Flag, _Object);
+
+PROC
+LeaderLib_Requirements_Clear_FromAllTarget((GUIDSTRING)_Object)
+AND
+DB_LeaderLib_Requirements_FlagTarget(_RequirementID, _Flag, _Object)
+THEN
+NOT DB_LeaderLib_Requirements_FlagTarget(_RequirementID, _Flag, _Object);
+
+PROC
+LeaderLib_Requirements_Add_PartyLevelRequirement((STRING)_RequirementID, (INTEGER)_Level)
+AND
+_RequirementID != ""
+THEN
+LeaderLib_Requirements_Add_PartyLevelRequirement(_RequirementID, _Level, _Level, 0);
+
+PROC
+LeaderLib_Requirements_Add_PartyLevelRequirement((STRING)_RequirementID, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
+AND
+_RequirementID != ""
+THEN
+LeaderLib_Requirements_Add_PartyLevelRequirement(_RequirementID, _MinLevel, _MaxLevel, 0);
+
+PROC
+LeaderLib_Requirements_Add_PartyLevelRequirement((STRING)_RequirementID, (INTEGER)_MinLevel, (INTEGER)_MaxLevel, (INTEGER)_StrictMode)
+AND
+_RequirementID != ""
+THEN
+DB_LeaderLib_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel, _StrictMode);
+
+PROC
+LeaderLib_Requirements_Add_RegionRequirement((STRING)_RequirementID, (STRING)_Region)
+AND
+_RequirementID != ""
+THEN
+DB_LeaderLib_Requirements_Region(_RequirementID, _Region);
+//END_REGION
+
+//REGION REQUIREMENT_CHECK
+QRY
+LeaderLib_Requirements_QRY_LevelMet((CHARACTERGUID)_Character, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
+AND
+CharacterGetLevel(_Character, _Level)
+AND
+_Level >= _MinLevel
+AND
+LeaderLib_Requirements_QRY_Internal_MaxLevelCheck(_Level, _MaxLevel)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Requirements_QRY_Internal_MaxLevelCheck((INTEGER)_Level, (INTEGER)_MaxLevel)
+AND
+_Level <= _MaxLevel
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Requirements_QRY_Internal_MaxLevelCheck((INTEGER)_Level, (INTEGER)_MaxLevel)
+AND
+_MaxLevel <= 0
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Requirements_QRY_PartyLevelMet((STRING)_RequirementID)
+AND
+DB_LeaderLib_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel, _StrictMode)
+AND
+_StrictMode <= 0
+AND
+LeaderLib_Helper_QRY_PartyLevelRangeMet(_MinLevel, _MaxLevel)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Requirements_QRY_PartyLevelMet((STRING)_RequirementID)
+AND
+DB_LeaderLib_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel, _StrictMode)
+AND
+_StrictMode >= 1
+AND
+LeaderLib_Helper_QRY_PartyLevelRangeMet_Strict(_MinLevel, _MaxLevel)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Requirements_QRY_PartyLevelMet((STRING)_RequirementID)
+AND
+NOT DB_LeaderLib_Requirements_PartyLevel(_RequirementID, _, _, _)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Requirements_QRY_PartyLevelMet((STRING)_RequirementID)
+AND
+_RequirementID == ""
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Requirements_QRY_FlagMet((STRING)_RequirementID)
+AND
+DB_LeaderLib_Requirements_Flag(_RequirementID, _Flag, _FlagType, _FlagVal)
+AND
+LeaderLib_Requirements_QRY_Internal_FlagSet(_RequirementID, _Flag, _FlagType, _FlagVal)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Requirements_QRY_Internal_FlagSet((STRING)_RequirementID, (STRING)_Flag, "Global", (INTEGER)_FlagVal)
+AND
+LeaderLib_Helper_QRY_GlobalFlagSet(_Flag, _FlagVal)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Requirements_QRY_Internal_FlagSet((STRING)_RequirementID, (STRING)_Flag, (STRING)_FlagType, (INTEGER)_FlagVal)
+AND
+_FlagType != "Global"
+AND
+NOT DB_LeaderLib_Requirements_FlagTarget(_RequirementID, _Flag, _)
+AND
+LeaderLib_Helper_QRY_PartyFlagSet(_Flag, _FlagType, _FlagVal)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Requirements_QRY_Internal_FlagSet((STRING)_RequirementID, (STRING)_Flag, (STRING)_FlagType, (INTEGER)_FlagVal)
+AND
+_FlagType != "Global"
+AND
+DB_LeaderLib_Requirements_FlagTarget(_RequirementID, _Flag, _Object)
+AND
+LeaderLib_Helper_QRY_FlagSet(_Object, _Flag, _FlagType, _FlagVal)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Requirements_QRY_FlagMet((STRING)_RequirementID)
+AND
+NOT DB_LeaderLib_Requirements_Flag(_RequirementID,_,_,_)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Requirements_QRY_FlagMet((STRING)_RequirementID)
+AND
+_RequirementID == ""
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Requirements_QRY_RegionMet((STRING)_RequirementID)
+AND
+_RequirementID == ""
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Requirements_QRY_RegionMet((STRING)_RequirementID)
+AND
+NOT DB_LeaderLib_Requirements_Region(_RequirementID, _)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Requirements_QRY_RegionMet((STRING)_RequirementID)
+AND
+_RequirementID != ""
+AND
+DB_LeaderLib_Requirements_Region(_RequirementID, _Region)
+AND
+DB_CurrentLevel(_Region)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Requirements_QRY_AllMet((STRING)_RequirementID)
+AND
+_RequirementID == ""
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Requirements_QRY_AllMet((STRING)_RequirementID)
+AND
+_RequirementID != ""
+AND
+LeaderLib_Requirements_QRY_FlagMet(_RequirementID)
+AND
+LeaderLib_Requirements_QRY_PartyLevelMet(_RequirementID)
+AND
+LeaderLib_Requirements_QRY_RegionMet(_RequirementID)
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION LOCK_UNLOCK_PROC_EVENTS
+PROC
+LeaderLib_Requirements_RequirementUnlocked((STRING)_RequirementID)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Requirements] Requirement [",_RequirementID,"] unlocked.");
+DB_LeaderLib_Requirements_IsUnlocked(_RequirementID);
+
+PROC
+LeaderLib_Requirements_RequirementUnlocked((STRING)_RequirementID)
+AND
+_RequirementID != ""
+AND
+NOT DB_LeaderLib_Requirements_JustUnlocked(_RequirementID)
+AND
+StringConcatenate("LeaderLib_Timers_Requirements_RemoveJustUnlocked_", _RequirementID, _TimerName)
+THEN
+DB_LeaderLib_Requirements_JustUnlocked(_RequirementID);
+DB_LeaderLib_Requirements_Temp_RemoveJustUnlocked(_TimerName, _RequirementID);
+TimerLaunch(_TimerName, 1000);
+
+IF
+TimerFinished(_TimerName)
+AND
+DB_LeaderLib_Requirements_Temp_RemoveJustUnlocked(_TimerName, _RequirementID)
+THEN
+NOT DB_LeaderLib_Requirements_JustUnlocked(_RequirementID);
+NOT DB_LeaderLib_Requirements_Temp_RemoveJustUnlocked(_TimerName, _RequirementID);
+
+PROC
+LeaderLib_Requirements_RequirementLocked((STRING)_RequirementID)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Requirements] Requirement [",_RequirementID,"] locked.");
+NOT DB_LeaderLib_Requirements_IsUnlocked(_RequirementID);
+//END_REGION
+
+//REGION INITIAL_UNLOCK
+IF
+StoryEvent(_, "LeaderLib_Events_OnDefaultEventFlowComplete")
+AND
+DB_LeaderLib_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel, _StrictMode)
+AND
+NOT DB_LeaderLib_Requirements_IsUnlocked(_RequirementID)
+AND
+LeaderLib_Requirements_QRY_AllMet(_RequirementID)
+THEN
+LeaderLib_Requirements_RequirementUnlocked(_RequirementID);
+
+IF
+StoryEvent(_, "LeaderLib_Events_OnDefaultEventFlowComplete")
+AND
+DB_LeaderLib_Requirements_Flag(_RequirementID, _Flag, _FlagType, _FlagVal)
+AND
+NOT DB_LeaderLib_Requirements_IsUnlocked(_RequirementID)
+AND
+LeaderLib_Requirements_QRY_AllMet(_RequirementID)
+THEN
+LeaderLib_Requirements_RequirementUnlocked(_RequirementID);
+//END_REGION
+
+//REGION FLAG_UNLOCKING
+PROC
+LeaderLib_Requirements_Internal_OnFlagSet((STRING)_RequirementID, (INTEGER)_TargetVal, (INTEGER)_CurrentVal)
+AND
+_TargetVal != _CurrentVal
+THEN
+LeaderLib_Requirements_RequirementLocked(_RequirementID);
+
+PROC
+LeaderLib_Requirements_Internal_OnFlagSet((STRING)_RequirementID, (INTEGER)_TargetVal, (INTEGER)_CurrentVal)
+AND
+_TargetVal == _CurrentVal
+THEN
+LeaderLib_Requirements_RequirementUnlocked(_RequirementID);
+
+IF
+ObjectFlagSet(_Flag, _Object, _)
+AND
+DB_LeaderLib_Requirements_Flag(_RequirementID, _Flag, "Object", _TargetVal)
+THEN
+LeaderLib_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 1);
+
+IF
+ObjectFlagCleared(_Flag, _Object, _)
+AND
+DB_LeaderLib_Requirements_Flag(_RequirementID, _Flag, "Object", _TargetVal)
+THEN
+LeaderLib_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 0);
+
+IF
+ObjectFlagSet(_Flag, (CHARACTERGUID)_Object, _)
+AND
+DB_LeaderLib_Requirements_Flag(_RequirementID, _Flag, "User", _TargetVal)
+THEN
+LeaderLib_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 1);
+
+IF
+ObjectFlagCleared(_Flag, (CHARACTERGUID)_Object, _)
+AND
+DB_LeaderLib_Requirements_Flag(_RequirementID, _Flag, "User", _TargetVal)
+THEN
+LeaderLib_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 0);
+
+IF
+GlobalFlagSet(_Flag)
+AND
+DB_LeaderLib_Requirements_Flag(_RequirementID, _Flag, "Global", _TargetVal)
+THEN
+LeaderLib_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 1);
+
+IF
+GlobalFlagCleared(_Flag)
+AND
+DB_LeaderLib_Requirements_Flag(_RequirementID, _Flag, "Global", _TargetVal)
+THEN
+LeaderLib_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 0);
+//END_REGION
+
+//REGION LEVEL_REQUIREMENT
+IF
+CharacterLeveledUp(_Player)
+AND
+CharacterIsPlayer(_Player, 1)
+AND
+DB_LeaderLib_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel, _StrictMode)
+AND
+NOT DB_LeaderLib_Requirements_IsUnlocked(_RequirementID)
+AND
+LeaderLib_Requirements_QRY_LevelMet(_Player, _MinLevel, _MaxLevel)
+AND
+LeaderLib_Requirements_QRY_FlagMet(_RequirementID)
+AND
+LeaderLib_Requirements_QRY_RegionMet(_RequirementID)
+THEN
+LeaderLib_Requirements_RequirementUnlocked(_RequirementID);
+
+IF
+CharacterLeveledUp(_Player)
+AND
+CharacterIsPlayer(_Player, 1)
+AND
+DB_CurrentLevel(_Level)
+AND
+DB_LeaderLib_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel, _StrictMode)
+AND
+DB_LeaderLib_Requirements_IsUnlocked(_RequirementID)
+AND
+_StrictMode > 0
+AND
+NOT LeaderLib_Requirements_QRY_LevelMet(_Player, _MinLevel, _MaxLevel)
+THEN
+LeaderLib_Requirements_RequirementLocked(_RequirementID);
+//END_REGION
+
+//REGION REGION_REQUIREMENT
+IF
+GameStarted(_Region, _)
+AND
+DB_LeaderLib_Requirements_Region(_RequirementID, _Region)
+AND
+NOT DB_LeaderLib_Requirements_IsUnlocked(_RequirementID)
+AND
+LeaderLib_Requirements_QRY_PartyLevelMet(_RequirementID)
+AND
+LeaderLib_Requirements_QRY_FlagMet(_RequirementID)
+THEN
+LeaderLib_Requirements_RequirementUnlocked(_RequirementID);
+
+IF
+GameStarted(_Level, _)
+AND
+DB_LeaderLib_Requirements_Region(_RequirementID, _Region)
+AND
+_Level != _Region
+AND
+DB_LeaderLib_Requirements_IsUnlocked(_RequirementID)
+THEN
+LeaderLib_Requirements_RequirementLocked(_RequirementID);
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

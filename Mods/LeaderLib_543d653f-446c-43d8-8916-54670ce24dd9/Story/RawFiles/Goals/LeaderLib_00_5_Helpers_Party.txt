@@ -1,0 +1,170 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+IF
+StoryEvent(_, "LeaderLib_Initialized")
+AND
+NOT GlobalGetFlag("LeaderLib_CountedParties", 1)
+THEN
+TimerLaunch("LeaderLib_Timers_StartCountingParty", 500);
+
+IF
+TimerFinished("LeaderLib_Timers_StartCountingParty")
+THEN
+LeaderLib_Party_CountParties();
+
+QRY
+LeaderLib_Party_QRY_CountParties()
+THEN
+LeaderLib_Party_CountParties();
+
+PROC
+LeaderLib_Party_CountParties()
+THEN
+GlobalSetFlag("LeaderLib_CountedParties");
+SysClear("DB_LeaderLib_Temp_PartyCheck", 2);
+IterateParties("LeaderLib_Events_ResetPartyCount");
+IterateParties("LeaderLib_Events_AddToPartyCheck");
+FireOsirisEvents();
+
+IF
+StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Events_ResetPartyCount")
+THEN
+SetVarInteger(_Character, "LeaderLib_PartyCount", 1);
+PartyClearFlag(_Character, "LeaderLib_PartyCounted", 0);
+
+IF
+StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Events_AddToPartyCheck")
+AND
+PartyGetFlag(_Character, "LeaderLib_PartyCounted", 0)
+AND
+GetUUID(_Character, _ID)
+AND
+StringConcatenate("LeaderLib_Events_CheckParty_", _ID, _EventName)
+THEN
+PartySetFlag(_Character, "LeaderLib_PartyCounted");
+DB_LeaderLib_Temp_PartyCheck(_Character, _EventName);
+IterateParty(_Character, _EventName);
+LeaderLib_StartObjectTimer(_Character, 250, "LeaderLib_Timers_ResetPartyDB_", "LeaderLib_PartyCountFinished");
+
+IF
+StoryEvent((CHARACTERGUID)_Player, "LeaderLib_PartyCountFinished")
+AND
+DB_LeaderLib_Temp_PartyCheck(_Character, _EventName)
+THEN
+NOT DB_LeaderLib_Temp_PartyCheck(_Character, _EventName);
+
+IF
+StoryEvent((CHARACTERGUID)_Character, _EventName)
+AND
+DB_LeaderLib_Temp_PartyCheck(_Leader, _EventName)
+AND
+_Character != _Leader
+THEN
+LeaderLib_Party_IncreaseCount(_Leader);
+LeaderLib_Party_IncreaseCount(_Character);
+
+PROC
+LeaderLib_Party_IncreaseCount((CHARACTERGUID)_Character)
+AND
+NOT GetVarInteger(_Character, "LeaderLib_PartyCount", _)
+THEN
+SetVarInteger(_Character, "LeaderLib_PartyCount", 1);
+
+PROC
+LeaderLib_Party_IncreaseCount((CHARACTERGUID)_Character)
+AND
+GetVarInteger(_Character, "LeaderLib_PartyCount", _Count)
+AND
+IntegerSum(_Count, 1, _NextCount)
+THEN
+SetVarInteger(_Character, "LeaderLib_PartyCount", _NextCount);
+
+PROC
+LeaderLib_Party_DecreaseCount((CHARACTERGUID)_Character)
+AND
+GetVarInteger(_Character, "LeaderLib_PartyCount", _Count)
+AND
+_Count > 1
+AND
+IntegerSubtract(_Count, 1, _NextCount)
+THEN
+SetVarInteger(_Character, "LeaderLib_PartyCount", _NextCount);
+
+QRY
+LeaderLib_Party_QRY_CountNotSet((CHARACTERGUID)_Character)
+AND
+NOT GetVarInteger(_Character, "LeaderLib_PartyCount", _)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Party_QRY_CountNotSet((CHARACTERGUID)_Character)
+AND
+GetVarInteger(_Character, "LeaderLib_PartyCount", 0)
+THEN
+DB_NOOP(1);
+
+//REGION EVENTS
+IF
+CharacterJoinedParty(_Character)
+AND
+NOT DB_LeaderLib_Temp_PartyCheck(_, _)
+AND
+DB_IsPlayer(_Player)
+AND
+_Character != _Player
+AND
+CharacterIsInPartyWith(_Character, _Player, 1)
+THEN
+LeaderLib_Party_IncreaseCount(_Player);
+DB_LeaderLib_PartyMembers(_Player, _Character);
+DB_LeaderLib_PartyMembers(_Character, _Player);
+
+IF
+CharacterJoinedParty(_Character)
+AND
+LeaderLib_Party_QRY_CountNotSet(_Character)
+AND
+DB_IsPlayer(_Player)
+AND
+_Player != _Character
+AND
+CharacterIsInPartyWith(_Character, _Player, 1)
+AND
+LeaderLib_Party_QRY_CountNotSet(_Character)
+AND
+GetVarInteger(_Player, "LeaderLib_PartyCount", _Count)
+THEN
+SetVarInteger(_Player, "LeaderLib_PartyCount", _Count);
+
+IF
+CharacterLeftParty(_Character)
+AND
+DB_IsPlayer(_Player)
+AND
+_Player != _Character
+AND
+DB_LeaderLib_PartyMembers(_Player, _Character)
+THEN
+LeaderLib_Party_DecreaseCount(_Player);
+NOT DB_LeaderLib_PartyMembers(_Player, _Character);
+
+IF
+CharacterLeftParty(_Character)
+THEN
+SetVarInteger(_Character, "LeaderLib_PartyCount", 1);
+
+IF
+CharacterLeftParty(_Character)
+AND
+DB_LeaderLib_PartyMembers(_Character, _Player)
+THEN
+NOT DB_LeaderLib_PartyMembers(_Character, _Player);
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

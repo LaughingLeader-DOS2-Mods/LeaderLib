@@ -1,0 +1,116 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+//REGION ITEM_QUERIES
+QRY
+LeaderLib_Helper_QRY_ItemHasDeltaModifier((ITEMGUID)_Item, (STRING)_Deltamod)
+AND
+ItemHasDeltaModifier(_Item, _DeltaMod, _Count)
+AND
+_Count > 0
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION EQUIPMENT_REFRESH
+IF
+StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Commands_RefreshEquipment_Delayed")
+AND
+CharacterGetDisplayName(_Character, _, _Name)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Helper:RefreshEquipment_Delayed] Refreshing equipment for [",_Name,"]");
+LeaderLib_Helper_UnequipAllAndSave(_Character);
+LeaderLib_StartObjectTimer(_Character, 2500, "LeaderLib_Timers_EquipItemsTimer_", "LeaderLib_Helper_OnEquipTimerFinished");
+
+IF
+StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Helper_OnEquipTimerFinished")
+AND
+DB_LeaderLib_Helper_Temp_UnequippedItem(_Character, _Item)
+THEN
+NOT DB_LeaderLib_Helper_Temp_UnequippedItem(_Character, _Item);
+CharacterEquipItem(_Character, _Item);
+
+PROC
+LeaderLib_Helper_UnequipAllAndSave((CHARACTERGUID)_Character)
+AND
+DB_LeaderLib_EquipmentSlots(_Slot)
+AND
+CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
+THEN
+CharacterUnequipItem(_Character, _Item);
+DB_LeaderLib_Helper_Temp_UnequippedItem(_Character, _Item);
+
+PROC
+LeaderLib_Helper_UnequipAll((CHARACTERGUID)_Character)
+AND
+DB_LeaderLib_EquipmentSlots(_Slot)
+AND
+CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
+THEN
+CharacterUnequipItem(_Character, _Item);
+
+IF
+StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Commands_RefreshEquipment")
+THEN
+LeaderLib_Helper_RefreshEquipment(_Character);
+
+PROC
+LeaderLib_Helper_RefreshEquipment((CHARACTERGUID)_Character)
+AND
+DB_LeaderLib_EquipmentSlots(_Slot)
+AND
+CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
+THEN
+CharacterUnequipItem(_Character, _Item);
+CharacterEquipItem(_Character, _Item);
+
+PROC
+LeaderLib_Helper_UnequipWeapons((CHARACTERGUID)_Character)
+AND
+CharacterGetEquippedWeapon(_Character, (ITEMGUID)_Item)
+THEN
+CharacterUnequipItem(_Character, _Item);
+
+PROC
+LeaderLib_Helper_UnequipWeapons((CHARACTERGUID)_Character)
+AND
+CharacterGetEquippedShield(_Character, (ITEMGUID)_Item)
+AND
+GetTemplate(_Item, _Template)
+AND
+StringContains(_Template, "WPN", 1)
+THEN
+CharacterUnequipItem(_Character, _Item);
+//END_REGION
+
+//REGION BEHAVIOR_SCRIPT_HELPERS
+IF
+CharacterItemEvent(_Character, _Item, "LeaderLib_Commands_EquipItem")
+AND
+ItemIsEquipable(_Item, 1)
+THEN
+CharacterEquipItem(_Character, _Item);
+//CharacterUseItem(_Character, _Item, "");
+
+IF
+StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Commands_UnequipItemInSlot")
+AND
+GetVarString(_Character, "LeaderLib_ItemSlot", _Slot)
+AND
+CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
+THEN
+CharacterUnequipItem(_Character, _Item);
+
+IF
+StoryEvent(_Item, "LeaderLib_Commands_RemoveItem")
+AND
+ObjectIsItem((ITEMGUID)_Item, 1)
+THEN
+ItemRemove(_Item);
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

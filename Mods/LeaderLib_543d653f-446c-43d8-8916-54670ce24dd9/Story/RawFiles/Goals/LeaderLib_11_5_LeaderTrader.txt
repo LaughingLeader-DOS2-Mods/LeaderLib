@@ -97,27 +97,27 @@ LeaderLib_Trader_Register_StartingGold("LeaderLib_LeaderTrader", "CoS_Main", 100
 LeaderLib_Trader_Register_StartingGold("LeaderLib_LeaderTrader", "Arx_Main", 13000);
 */
 
-LeaderLib_Treasure_Register_TreasureToTrader("LeaderLib_LeaderTrader_Misc", "LeaderLib_LeaderTrader");
-LeaderLib_Treasure_Register_TreasureToTrader("LeaderLib_LeaderTrader_ModItems", "LeaderLib_LeaderTrader");
-LeaderLib_Treasure_Register_TreasureToTrader("LeaderLib_LeaderTrader_ModBooks", "LeaderLib_LeaderTrader");
+LeaderLib_Treasure_Register_TreasureToTrader("LeaderLib.LeaderTrader.Misc", "LeaderLib_LeaderTrader");
+LeaderLib_Treasure_Register_TreasureToTrader("LeaderLib.LeaderTrader.ModItems", "LeaderLib_LeaderTrader");
+LeaderLib_Treasure_Register_TreasureToTrader("LeaderLib.LeaderTrader.ModBooks", "LeaderLib_LeaderTrader");
 LeaderLib_Treasure_Register_TreasureToTrader("LeaderLib.LeaderTrader.Skillbooks", "LeaderLib_LeaderTrader");
 
-LeaderLib_Treasure_Register_ItemTemplate("LeaderLib.LeaderTrader.Skillbooks", "BOOK_Skill_LLLIB_ControlSummon_832058fd-fd40-47d0-bea3-0e108761d4e4", 2);
+LeaderLib_Treasure_Register_ItemTemplate("LeaderLib.LeaderTrader.Skillbooks", "BOOK_Skill_LeaderLib_ControlSummon_832058fd-fd40-47d0-bea3-0e108761d4e4", 2);
 
-LeaderLib_Treasure_Configure_DefaultGenerationType("LeaderLib_LeaderTrader_ModItems", "DIALOG_STARTED");
-LeaderLib_Treasure_Configure_DefaultGenerationType("LeaderLib_LeaderTrader_ModBooks", "DIALOG_STARTED");
+LeaderLib_Treasure_Configure_DefaultGenerationType("LeaderLib.LeaderTrader.ModItems", "DIALOG_STARTED");
+LeaderLib_Treasure_Configure_DefaultGenerationType("LeaderLib.LeaderTrader.ModBooks", "DIALOG_STARTED");
 
-LeaderLib_Treasure_Register_ItemTemplate("LeaderLib_LeaderTrader_ModBooks", "LeaderLib_BOOK_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108", 1);
-LeaderLib_Treasure_Configure_AddMaxAmount("LeaderLib_LeaderTrader_ModBooks", "LeaderLib_BOOK_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108", 4);
-LeaderLib_Treasure_Configure_GenerateTreasureEndlessly("LeaderLib_LeaderTrader_ModBooks");
+LeaderLib_Treasure_Register_ItemTemplate("LeaderLib.LeaderTrader.ModBooks", "BOOK_LeaderLib_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108", 1);
+LeaderLib_Treasure_Configure_AddMaxAmount("LeaderLib.LeaderTrader.ModBooks", "BOOK_LeaderLib_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108", 4);
+LeaderLib_Treasure_Configure_GenerateTreasureEndlessly("LeaderLib.LeaderTrader.ModBooks");
 
-//LeaderLib_Treasure_Configure_GenerationType("LeaderLib_LeaderTrader_ModBooks", "LeaderLib_BOOK_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108", "DIALOG_STARTED");
-//LeaderLib_Treasure_Register_TreasureTable("LeaderLib_LeaderTrader_Misc", "ST_WeaponNormal", "LeaderLib_RegionIsFortJoy", 1);
-//LeaderLib_Treasure_Register_TreasureTable("LeaderLib_LeaderTrader_Misc", "TEST_Generation", "LeaderLib_RegionIsDebugLevel", 1);
-//LeaderLib_Treasure_Register_ItemTemplate("LeaderLib_LeaderTrader_ModBooks", "CON_Potion_Fire_Res_A_e78b642c-0216-4df4-b691-a41ff4747b6a", 8);
-//LeaderLib_Treasure_Register_ItemStat("LeaderLib_LeaderTrader_ModBooks", "WPN_Cheat_Sword_1H_RuneSlot2", 1);
+//LeaderLib_Treasure_Configure_GenerationType("LeaderLib.LeaderTrader.ModBooks", "BOOK_LeaderLib_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108", "DIALOG_STARTED");
+//LeaderLib_Treasure_Register_TreasureTable("LeaderLib.LeaderTrader.Misc", "ST_WeaponNormal", "LeaderLib_RegionIsFortJoy", 1);
+//LeaderLib_Treasure_Register_TreasureTable("LeaderLib.LeaderTrader.Misc", "TEST_Generation", "LeaderLib_RegionIsDebugLevel", 1);
+//LeaderLib_Treasure_Register_ItemTemplate("LeaderLib.LeaderTrader.ModBooks", "CON_Potion_Fire_Res_A_e78b642c-0216-4df4-b691-a41ff4747b6a", 8);
+//LeaderLib_Treasure_Register_ItemStat("LeaderLib.LeaderTrader.ModBooks", "WPN_Cheat_Sword_1H_RuneSlot2", 1);
 
-LeaderLib_LeaderTrader_RegisterDeckSeat("LeaderLib_TestLevel", ITEMGUID_LLLIB_DebugLevel_TraderChair_8468a5fd-00a4-42c2-aa15-1b1a25e46738);
+LeaderLib_LeaderTrader_RegisterDeckSeat("LeaderLib_TestLevel", ITEMGUID_LeaderLib_DebugLevel_TraderChair_8468a5fd-00a4-42c2-aa15-1b1a25e46738);
 LeaderLib_LeaderTrader_RegisterDeckSeat("TUT_Tutorial_A", ITEMGUID_S_TUT_KitchenBench_e628d79a-8f7b-4681-a55f-57f0b42a29db, "LeaderLib_LeaderTrader_WindegoHasNotCastSpell");
 LeaderLib_LeaderTrader_RegisterDeckSeat("LV_HoE_Main", ITEMGUID_FUR_Humans_Citz_Stool_C_005_a2a11ad5-645b-4719-bfd5-be04f32fbb2a);
 LeaderLib_LeaderTrader_RegisterDeckSeat("RC_Main", ITEMGUID_FUR_Humans_Citz_Stool_C_005_a2a11ad5-645b-4719-bfd5-be04f32fbb2a);
@@ -148,10 +148,10 @@ LeaderLib_LeaderTrader_RegisterTrader()
 AND
 NOT DB_LeaderLib_LeaderTrader(_)
 AND
-ObjectExists(CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, 1)
+ObjectExists(CHARACTERGUID_S_LeaderLib_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, 1)
 THEN
-DB_LeaderLib_LeaderTrader((CHARACTERGUID)CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574);
-LeaderLib_Trader_Register_GlobalTrader("LeaderLib_LeaderTrader", CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574);
+DB_LeaderLib_LeaderTrader((CHARACTERGUID)CHARACTERGUID_S_LeaderLib_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574);
+LeaderLib_Trader_Register_GlobalTrader("LeaderLib_LeaderTrader", CHARACTERGUID_S_LeaderLib_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574);
 LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader] Registered the global leader trader to the trader database.");
 
 //If the global version doesn't exist for some reason, use the template
@@ -160,7 +160,7 @@ LeaderLib_LeaderTrader_RegisterTrader()
 AND
 NOT DB_LeaderLib_LeaderTrader(_)
 AND
-ObjectExists(CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, 0)
+ObjectExists(CHARACTERGUID_S_LeaderLib_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, 0)
 THEN
 LeaderLib_Trader_Register_TraderTemplate("LeaderLib_LeaderTrader", "LeaderLib_LeaderTrader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e", 0);
 LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader] [ERROR] Global trader version doesn't exist! Using the template version.");
@@ -179,10 +179,10 @@ LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader] Updated LeaderTrader settings."
 PROC
 LeaderLib_LeaderTrader_UpdateSettings()
 AND
-DB_LeaderLib_Treasure_KeepGeneratingTreasure("LeaderLib_LeaderTrader_ModBooks")
+DB_LeaderLib_Treasure_KeepGeneratingTreasure("LeaderLib.LeaderTrader.ModBooks")
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader:UpdateSettings] Made the ModBooks treasure group generate endlessly.");
-LeaderLib_Treasure_Configure_GenerateTreasureEndlessly("LeaderLib_LeaderTrader_ModBooks");
+LeaderLib_Treasure_Configure_GenerateTreasureEndlessly("LeaderLib.LeaderTrader.ModBooks");
 
 //For updating treasure/trader settings on existing saves
 PROC
@@ -192,7 +192,7 @@ NOT DB_LeaderLib_Treasure_RegisteredTraderTreasure("LeaderLib.LeaderTrader.Skill
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader:UpdateSettings] Added new skillbooks treasure to LeaderTrader.");
 LeaderLib_Treasure_Register_TreasureToTrader("LeaderLib.LeaderTrader.Skillbooks", "LeaderLib_LeaderTrader");
-LeaderLib_Treasure_Register_ItemTemplate("LeaderLib.LeaderTrader.Skillbooks", "BOOK_Skill_LLLIB_ControlSummon_832058fd-fd40-47d0-bea3-0e108761d4e4", 2);
+LeaderLib_Treasure_Register_ItemTemplate("LeaderLib.LeaderTrader.Skillbooks", "BOOK_Skill_LeaderLib_ControlSummon_832058fd-fd40-47d0-bea3-0e108761d4e4", 2);
 //END_REGION
 
 //REGION NON_GLOBAL_WORKAROUND

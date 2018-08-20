@@ -135,9 +135,9 @@ PROC
 LeaderLib_Platforms_InitSettings()
 THEN
 SysClear("DB_LeaderLib_Platforms_Sizes", 2);
-DB_LeaderLib_Platforms_Sizes("Small", "S_LLLIB_Platform_Small_80416d7e-84d3-4551-92d2-b134f5d336e5", 0);
-DB_LeaderLib_Platforms_Sizes("Medium", "S_LLLIB_Platform_Medium_288874ae-0c2f-4f67-8661-0ea001f49bf2", 1);
-DB_LeaderLib_Platforms_Sizes("Large", "S_LLLIB_Platform_Large_81d0b457-3569-4c6b-bfbc-e954a768472a", 2);
+DB_LeaderLib_Platforms_Sizes("Small", "S_LeaderLib_Platform_Small_80416d7e-84d3-4551-92d2-b134f5d336e5", 0);
+DB_LeaderLib_Platforms_Sizes("Medium", "S_LeaderLib_Platform_Medium_288874ae-0c2f-4f67-8661-0ea001f49bf2", 1);
+DB_LeaderLib_Platforms_Sizes("Large", "S_LeaderLib_Platform_Large_81d0b457-3569-4c6b-bfbc-e954a768472a", 2);
 //END_REGION
 
 //REGION UPDATING

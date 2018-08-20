@@ -304,19 +304,6 @@ THEN
 ObjectSetFlag(_Player, "LeaderLib_ModMenu_HideNextPageButton", _Instance);
 LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu] Hid next page button");
 
-/*
-PROC
-LeaderLib_ModMenu_SetPage((CHARACTERGUID)_Player, (INTEGER)_Page, (INTEGER)_Instance)
-AND
-DB_LeaderLib_ModMenu_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
-AND
-IntegertoString(_LastPageIndex, _LastIndexStr)
-AND
-IntegertoString(_MaxPage, _MaxPageStr)
-THEN
-LeaderLog_Log("DEBUG", "[LLLIB] ", "Test: LastIndex: ", _LastIndexStr," | Max: ",_MaxPageStr);
-*/
-
 PROC
 LeaderLib_ModMenu_SetPage((CHARACTERGUID)_Player, (INTEGER)_Page, (INTEGER)_Instance)
 AND
@@ -573,7 +560,7 @@ DB_LeaderLib_Dictionary_Data("LeaderLib_RegisteredMenus", _MenuIndex, _ID, _Disp
 AND
 DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author)
 THEN
-//LeaderLog_Log("DEBUG", "[LLLIB] Loading menu for ", _ID);
+//LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu:ObjectFlagSet] Loading menu for ", _ID);
 LeaderLib_ModMenu_SetNextMenu(_Player, _ID, _Dialog);
 
 IF

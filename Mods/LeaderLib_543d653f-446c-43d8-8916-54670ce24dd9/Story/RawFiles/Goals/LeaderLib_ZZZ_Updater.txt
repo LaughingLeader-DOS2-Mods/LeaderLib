@@ -1,7 +1,7 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-//See LLLIB_00_1_1_System for the actual version registration
+//The version is registered in LeaderLib_00_1_1_System, so other mods will be able to see if LeaderLib is registered.
 KBSECTION
 IF
 DB_LeaderLib_GameStarted(_Val)

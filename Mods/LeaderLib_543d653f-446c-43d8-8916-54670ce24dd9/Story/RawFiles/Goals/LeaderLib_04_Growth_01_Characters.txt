@@ -45,7 +45,7 @@ IntegerProduct(_MultBy, 250, _TimerDelay)
 AND
 StringConcatenate("LeaderLib_Timers_Growth_Characters_StartTagIterator_", _Tag, _TimerName)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Growth:Characters:NewTagAdded] Adding tag [",_Tag,"][",_TimerName,"] to [DB_LeaderLib_Growth_Characters_Temp_NewTags].");
+LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Characters:NewTagAdded] Adding tag [",_Tag,"][",_TimerName,"] to [DB_LeaderLib_Growth_Characters_Temp_NewTags].");
 DB_LeaderLib_Growth_Characters_Temp_NewTags(_Tag, _TimerName, _TimerDelay);
 
 IF
@@ -55,7 +55,7 @@ GlobalGetFlag("LeaderLib_Initialized", 1)
 AND
 IntegertoString(_TimerDelay, _TimerDelayStr)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Growth:Characters:NewTagAdded(Already Initialized)] Starting character tag iterator for tag [",_Tag,"] after [",_TimerDelayStr,"] ms.");
+LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Characters:NewTagAdded(Already Initialized)] Starting character tag iterator for tag [",_Tag,"] after [",_TimerDelayStr,"] ms.");
 TimerLaunch(_TimerName, _TimerDelay);
 
 IF
@@ -65,7 +65,7 @@ DB_LeaderLib_Growth_Characters_Temp_NewTags(_Tag, _TimerName, _TimerDelay)
 AND
 IntegertoString(_TimerDelay, _TimerDelayStr)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Growth:Characters:NewTagAdded(JustInitialzed)] Starting character tag iterator for tag [",_Tag,"] after [",_TimerDelayStr,"] ms.");
+LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Characters:NewTagAdded(JustInitialzed)] Starting character tag iterator for tag [",_Tag,"] after [",_TimerDelayStr,"] ms.");
 TimerLaunch(_TimerName, _TimerDelay);
 
 IF

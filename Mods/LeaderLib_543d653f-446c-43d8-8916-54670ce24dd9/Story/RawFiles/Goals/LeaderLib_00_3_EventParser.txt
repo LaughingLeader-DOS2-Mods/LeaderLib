@@ -62,7 +62,7 @@ LeaderLib_EventParser_Internal_CreateNew();
 QRY
 LeaderLib_QRY_EventParser_GlobalParserExists()
 AND
-ObjectExists(ITEMGUID_S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, 1)
+ObjectExists(ITEMGUID_S_LeaderLib_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, 1)
 THEN
 DB_NOOP(1);
 
@@ -87,7 +87,7 @@ NOT DB_LeaderLib_EventParser(_)
 AND
 LeaderLib_QRY_EventParser_GlobalParserExists()
 THEN
-DB_LeaderLib_EventParser(ITEMGUID_S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6);
+DB_LeaderLib_EventParser(ITEMGUID_S_LeaderLib_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6);
 
 PROC
 LeaderLib_Events_Internal_GetEventParser()
@@ -129,7 +129,6 @@ AND
 NOT LeaderLib_QRY_EventParser_GlobalParserExists()
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:EventParser][ERROR] Global Event Parser doesn't exist for some reason.");
-//LLLIB_EventParser_Internal_CreateNew();
 //END_REGION
 
 //REGION SEND_EVENT

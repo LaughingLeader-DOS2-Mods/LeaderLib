@@ -23,11 +23,11 @@ LeaderLib_Math_QRY_Sine(90.0)
 AND
 DB_LeaderLib_Math_Sine(90.0, _SineResult)
 AND
-LeaderLog_QRY_RealToIntToString("LLLIB.Debug.Sine", _SineResult)
+LeaderLog_QRY_RealToIntToString("LeaderLib.Debug.Sine", _SineResult)
 AND
-DB_LeaderLog_Temp_RealString("LLLIB.Debug.Sine", _SineResultStr)
+DB_LeaderLog_Temp_RealString("LeaderLib.Debug.Sine", _SineResultStr)
 THEN
-NOT DB_LeaderLog_Temp_RealString("LLLIB.Debug.Sine", _SineResultStr);
+NOT DB_LeaderLog_Temp_RealString("LeaderLib.Debug.Sine", _SineResultStr);
 LeaderLog_Log("DEBUG", "[LeaderLog:Debug:Math] Sine | Angle [90] = [",_SineResultStr,"]");
 
 PROC
@@ -37,11 +37,11 @@ LeaderLib_Math_QRY_Cosine(90.0)
 AND
 DB_LeaderLib_Math_Cosine(90.0, _CosineResult)
 AND
-LeaderLog_QRY_RealToIntToString("LLLIB.Debug.Cosine", _CosineResult)
+LeaderLog_QRY_RealToIntToString("LeaderLib.Debug.Cosine", _CosineResult)
 AND
-DB_LeaderLog_Temp_RealString("LLLIB.Debug.Cosine", _CosineResultStr)
+DB_LeaderLog_Temp_RealString("LeaderLib.Debug.Cosine", _CosineResultStr)
 THEN
-NOT DB_LeaderLog_Temp_RealString("LLLIB.Debug.Cosine", _CosineResultStr);
+NOT DB_LeaderLog_Temp_RealString("LeaderLib.Debug.Cosine", _CosineResultStr);
 LeaderLog_Log("DEBUG", "[LeaderLog:Debug:Math] Cosine | Angle [90] = [",_CosineResultStr,"]");
 
 PROC

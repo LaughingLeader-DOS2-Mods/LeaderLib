@@ -714,13 +714,24 @@ AND
 NOT DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 AND
 DB_LeaderLib_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z)
+AND
+CharacterGetHostCharacter(_Host)
 THEN
 //DB_LeaderLib_Debug_TraceEvent(_TraderID, "LeaderLib_Events_OnTraderTeleported", "position");
 //Workaround for global characters not showing up after teleporting to a position
-TeleportToPosition(ITEMGUID_S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, 0.0, 0.0, 0.0, "", 0);
-TeleportTo(_Trader, ITEMGUID_S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, "", 0);
+ObjectSetFlag(_Trader, "LeaderLib_Internal_TeleportWorkaroundActive");
+SetVisible(_Trader, 0);
+TeleportTo(_Trader, _Host, "", 0);
 TeleportToPosition(_Trader, _x,_y,_z, "LeaderLib_Events_OnTraderTeleported", 0);
 DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level);
+
+IF
+StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_OnTraderTeleported")
+AND
+ObjectGetFlag(_Trader, "LeaderLib_Internal_TeleportWorkaroundActive", 1)
+THEN
+SetVisible(_Trader, 1);
+ObjectClearFlag(_Trader, "LeaderLib_Internal_TeleportWorkaroundActive");
 
 IF
 StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_OnTraderTeleported")

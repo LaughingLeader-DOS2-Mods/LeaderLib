@@ -20,7 +20,7 @@ LeaderLib_Start_Internal_CompleteIfStarted()
 AND
 DB_StoryStarted(_)
 THEN
-DebugBreak("[LLLIB:__Start] Existing save detected.");
+DebugBreak("[LeaderLib:__Start] Existing save detected.");
 GoalCompleted;
 
 //If something truly funky happened

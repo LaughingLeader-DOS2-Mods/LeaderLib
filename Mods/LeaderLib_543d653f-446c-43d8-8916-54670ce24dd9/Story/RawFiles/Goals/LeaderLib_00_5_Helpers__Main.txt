@@ -469,7 +469,7 @@ SysCount(_DatabaseName, _Arity, _Total)
 AND
 IntegertoString(_Total, _TotalStr)
 AND
-StringConcatenate("[LLLIB:Helpers(DatabaseCount)] '", _DatabaseName, _Str1)
+StringConcatenate("[LeaderLib:Helpers(DatabaseCount)] '", _DatabaseName, _Str1)
 AND
 StringConcatenate(_Str1, "' Total Entries: ", _Str2)
 AND

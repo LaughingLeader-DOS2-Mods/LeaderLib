@@ -1,6 +1,6 @@
 INIT
 	CHARACTER:__Me
-	EXTERN INT:%LLLIB_FollowDisabled = 0
+	EXTERN INT:%LeaderLib_FollowDisabled = 0
 EVENTS
 
 EVENT LeaderLib_Reset_Follow_Priority
@@ -9,10 +9,10 @@ ON
 	OnInit()
 ACTIONS
 IF "c1"
-	IsEqual(%LLLIB_FollowDisabled, 1)
+	IsEqual(%LeaderLib_FollowDisabled, 1)
 THEN
 	//SetVar(__Me, "Following", INT:1)
-	Set(%LLLIB_FollowDisabled, INT:0)
+	Set(%LeaderLib_FollowDisabled, INT:0)
 	SetPriority("StartFollow", 10)
 ENDIF
 	
@@ -22,4 +22,4 @@ ON
 ACTIONS
 	SetPriority("StartFollow", 0)
 	SetVar(__Me, "Following", INT:0)
-	Set(%LLLIB_FollowDisabled, INT:1)
+	Set(%LeaderLib_FollowDisabled, INT:1)

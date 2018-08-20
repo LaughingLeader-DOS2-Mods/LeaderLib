@@ -10,4 +10,4 @@ EVENT Init_Register
 ON
 	OnInit()
 ACTIONS
-	CharacterEvent(__Me, "LLLIB_Events_GeneratorDummyInitialized")
+	CharacterEvent(__Me, "LeaderLib_Events_GeneratorDummyInitialized")

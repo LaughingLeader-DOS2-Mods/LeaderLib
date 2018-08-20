@@ -16,7 +16,7 @@ INIT
 	CHARACTER:%LeaderLib_CreateByStat_Dummy = null
 EVENTS
 
-EVENT LeaderLib_AddTreasureTable
+EVENT LeaderLib_Events_AddTreasureTable
 VARS
 	CHARACTER:_Target
 	FIXEDSTRING:_TableName
@@ -31,7 +31,7 @@ THEN
 	//SetVar(_Target, "LeaderLib_TreasureTableToAdd", %LeaderLib_EmptyString)
 ENDIF
 
-EVENT LeaderLib_RemoveTreasureTable
+EVENT LeaderLib_Events_RemoveTreasureTable
 VARS
 	CHARACTER:_Target
 	FIXEDSTRING:_TableName
@@ -46,7 +46,7 @@ THEN
 	//SetVar(_Target, "LeaderLib_TreasureTableToRemove", %LeaderLib_EmptyString)
 ENDIF
 
-EVENT LeaderLib_ClearTreasureTables
+EVENT LeaderLib_Events_ClearTreasureTables
 VARS
 	CHARACTER:_Target
 	FIXEDSTRING:_TableName
@@ -56,7 +56,7 @@ ACTIONS
 	CharacterClearTreasureTables(_Target)
 	CharacterEvent(_Target, "LeaderLib_Events_OnTreasureTablesCleared")
 	
-EVENT LeaderLib_GenerateItemByStat
+EVENT LeaderLib_Events_GenerateItemByStat
 VARS
 	FIXEDSTRING:_StatName
 	CHARACTER:_Character
@@ -196,7 +196,7 @@ THEN
 	ItemEvent(_Target, _CompletionEvent)
 ENDIF
 
-EVENT LeaderLib_AutoLevelItems_Start
+EVENT LeaderLib_Events_AutoLevelItems_Start
 VARS
 	CHARACTER:_Character
 ON
@@ -204,7 +204,7 @@ ON
 ACTIONS
 	IterateItemsInInventory(_Character, "LeaderLib_Iterator_AutoLevelItems", "LeaderLib_AutoLevel")
 
-EVENT LeaderLib_AutoLevelItems_Iterate
+EVENT LeaderLib_Events_AutoLevelItems_Iterate
 VARS
 	ITEM:_Item
 	INT:_Level
@@ -227,7 +227,7 @@ ENDIF
 	//If we couldn't get the level stat for some reason, it'll default to the character's level (in story).
 	ItemEvent(_Item, "LeaderLib_Commands_AutoLevelItem")
 	
-EVENT LeaderLib_AutoLevelItems_Single
+EVENT LeaderLib_Events_AutoLevelItems_Single
 VARS
 	CHARACTER:_Character
 	ITEM:_Item
@@ -258,7 +258,7 @@ THEN
 	*/
 ENDIF
 
-EVENT LeaderLib_GetItemLevel
+EVENT LeaderLib_Events_GetItemLevel
 VARS
 	ITEM:_Item
 	FLOAT:_ItemLevel
@@ -274,7 +274,7 @@ THEN
 	ItemEvent(_Item, "LeaderLib_Events_ItemLevelStored")
 ENDIF
 
-EVENT LeaderLib_CharacterIterator
+EVENT LeaderLib_Events_CharacterIterator
 VARS
 	ITEM:_EventParser
 ON
@@ -288,7 +288,7 @@ THEN
 	IterateCharacters("LeaderLib_Events_Iterate_OnIterateCharacter", null, null, %CharacterIterator_Tag)
 ENDIF
 
-EVENT LeaderLib_OnIterateCharacter
+EVENT LeaderLib_Events_OnIterateCharacter
 VARS
 	CHARACTER:_Char
 ON
@@ -301,7 +301,7 @@ THEN
 	CharacterEvent(_Char, %LeaderLib_CharacterIterator_CharacterEvent)
 ENDIF
 
-EVENT LeaderLib_ItemIterator
+EVENT LeaderLib_Events_ItemIterator
 VARS
 	ITEM:_EventParser
 ON
@@ -315,7 +315,7 @@ THEN
 	IterateItems("LeaderLib_Events_Iterate_OnIterateItem", %ItemIterator_Tag)
 ENDIF
 
-EVENT LeaderLib_OnIterateItem
+EVENT LeaderLib_Events_OnIterateItem
 VARS
 	ITEM:_Item
 ON
@@ -328,7 +328,7 @@ THEN
 	ItemEvent(_Item, %ItemIterator_ItemEvent)
 ENDIF
 
-EVENT LeaderLib_InventoryIterator_Character
+EVENT LeaderLib_Events_InventoryIterator_Character
 VARS
 	CHARACTER:_Target
 ON
@@ -342,7 +342,7 @@ THEN
 	IterateItemsInInventory(_Target, "LeaderLib_Events_Iterate_OnIterateItemInInventory", %ItemIterator_Tag)
 ENDIF
 
-EVENT LeaderLib_InventoryIterator_Item
+EVENT LeaderLib_Events_InventoryIterator_Item
 VARS
 	ITEM:_Target
 ON
@@ -356,7 +356,7 @@ THEN
 	IterateItemsInInventory(_Target, "LeaderLib_Events_Iterate_OnIterateItemInInventory", %ItemIterator_Tag)
 ENDIF
 
-EVENT LeaderLib_InventoryIterator_OnIterateItem
+EVENT LeaderLib_Events_InventoryIterator_OnIterateItem
 VARS
 	ITEM:_Item
 ON

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<save>
+    <header version="2" time="1520493272" />
+    <version major="3" minor="1" revision="7" build="0" />
+    <region id="MetaData">
+        <node id="root">
+            <attribute id="Description" value="" type="23" />
+            <attribute id="IsTemplate" value="0" type="19" />
+            <attribute id="Path" value="" type="23" />
+        </node>
+    </region>
+</save>

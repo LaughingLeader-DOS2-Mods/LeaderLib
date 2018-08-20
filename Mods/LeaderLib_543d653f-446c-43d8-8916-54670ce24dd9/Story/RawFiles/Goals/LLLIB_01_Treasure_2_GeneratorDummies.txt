@@ -1,8 +1,8 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-//DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
-//DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID)
+//DB_LeaderLibTreasure_GeneratorDummies(_Dummy)
+//DB_LeaderLibTreasure_NextGeneratorDummy(_Dummy, _DummyID)
 KBSECTION
 //REGION CREATION
 QRY
@@ -19,13 +19,13 @@ TemporaryCharacterCreateAtPosition(_x,_y,_z,"LLLIB_GeneratorDummy_24a5d60b-680b-
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:CreateGeneratorDummy] Generator dummy created. Set ID to [",_DummyID,"].");
 SetVarString(_Dummy, "LeaderLib_DummyID", _DummyID);
-DB_LLLIB_Treasure_GeneratorDummies(_Dummy);
-DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID);
+DB_LeaderLibTreasure_GeneratorDummies(_Dummy);
+DB_LeaderLibTreasure_NextGeneratorDummy(_Dummy, _DummyID);
 
 PROC
 LLLIB_Treasure_Internal_CreateGeneratorDummy((GUIDSTRING)_AtObject, (STRING)_DummyID)
 AND
-NOT DB_LLLIB_Treasure_NextGeneratorDummy(_, _DummyID)
+NOT DB_LeaderLibTreasure_NextGeneratorDummy(_, _DummyID)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:CreateGeneratorDummy] Failed to create generator dummy. Make sure it's being created at a valid position.");
 
@@ -68,7 +68,7 @@ DB_NOOP(1);
 PROC
 LeaderLib_Treasure_ResetDummyByID((STRING)_DummyID)
 AND
-DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
+DB_LeaderLibTreasure_GeneratorDummies(_Dummy)
 AND
 GetVarString(_Dummy, "LeaderLib_DummyID", _DummyID)
 THEN
@@ -79,7 +79,7 @@ LLLIB_Treasure_RemoveNextDummy(_Dummy);
 PROC
 LeaderLib_Treasure_ResetDummy((CHARACTERGUID)_Dummy)
 AND
-DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
+DB_LeaderLibTreasure_GeneratorDummies(_Dummy)
 THEN
 SetVarString(_Dummy, "LeaderLib_DummyID", "");
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:ResetDummy] Dummy ID reset.");
@@ -88,15 +88,15 @@ LLLIB_Treasure_RemoveNextDummy(_Dummy);
 PROC
 LLLIB_Treasure_RemoveNextDummy((CHARACTERGUID)_Dummy)
 AND
-DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID)
+DB_LeaderLibTreasure_NextGeneratorDummy(_Dummy, _DummyID)
 THEN
-NOT DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID);
+NOT DB_LeaderLibTreasure_NextGeneratorDummy(_Dummy, _DummyID);
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:ResetDummy] Dummy with ID [",_DummyID,"] removed from 'NextGeneratorDummy' database.");
 
 PROC
 LeaderLib_Treasure_ResetDummyAfterDelay((CHARACTERGUID)_Dummy, (INTEGER)_Delay, (STRING)_ResetEvent)
 AND
-DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
+DB_LeaderLibTreasure_GeneratorDummies(_Dummy)
 AND
 NOT LeaderLib_QRY_ObjectTimerStarted((GUIDSTRING)_Dummy, "LeaderLib_Timers_Treasure_ResetDummyAfterDelay_")
 THEN
@@ -106,7 +106,7 @@ LeaderLib_StartObjectTimer((CHARACTERGUID)_Dummy, _Delay, "LeaderLib_Timers_Trea
 PROC
 LeaderLib_Treasure_ResetDummyAfterDelay((CHARACTERGUID)_Dummy, (INTEGER)_Delay)
 AND
-DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
+DB_LeaderLibTreasure_GeneratorDummies(_Dummy)
 AND
 NOT LeaderLib_QRY_ObjectTimerStarted((GUIDSTRING)_Dummy, "LeaderLib_Timers_Treasure_ResetDummyAfterDelay_")
 THEN
@@ -133,7 +133,7 @@ LeaderLib_Treasure_QRY_PrepareGeneratorDummy()
 AND
 DB_IsPlayer(_Player)
 AND
-NOT DB_LLLIB_Treasure_NextGeneratorDummy(_, "")
+NOT DB_LeaderLibTreasure_NextGeneratorDummy(_, "")
 THEN
 LLLIB_Treasure_PrepareGeneratorDummy((GUIDSTRING)_Player, "");
 
@@ -156,17 +156,17 @@ LLLIB_Treasure_Internal_GetNextDummy(_AtObject, _DummyID);
 PROC
 LLLIB_Treasure_Internal_DummyCheck()
 AND
-DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
+DB_LeaderLibTreasure_GeneratorDummies(_Dummy)
 AND
 ObjectExists(_Dummy, 0)
 THEN
-NOT DB_LLLIB_Treasure_GeneratorDummies(_Dummy);
+NOT DB_LeaderLibTreasure_GeneratorDummies(_Dummy);
 LeaderLib_Treasure_ResetDummy(_Dummy);
 
 PROC
 LLLIB_Treasure_Internal_DummyCheck()
 AND
-DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
+DB_LeaderLibTreasure_GeneratorDummies(_Dummy)
 AND
 ObjectExists(_Dummy, 1)
 AND
@@ -182,21 +182,21 @@ LLLIB_Treasure_Internal_FindNextDummy(_AtObject, _DummyID);
 PROC
 LLLIB_Treasure_Internal_FindNextDummy((GUIDSTRING)_AtObject, (STRING)_DummyID)
 AND
-DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
+DB_LeaderLibTreasure_GeneratorDummies(_Dummy)
 AND
-NOT DB_LLLIB_Treasure_NextGeneratorDummy(_, _DummyID)
+NOT DB_LeaderLibTreasure_NextGeneratorDummy(_, _DummyID)
 AND
 LLLIB_Treasure_Internal_QRY_IsDefaultOrMatchesDummyID(_Dummy, _DummyID)
 THEN
 TeleportTo(_Dummy, _AtObject, "", 0);
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:GetNextDummy] Dummy found. Set ID to [",_DummyID,"] and setting as the next dummy.");
 SetVarString(_Dummy, "LeaderLib_DummyID", _DummyID);
-DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _DummyID);
+DB_LeaderLibTreasure_NextGeneratorDummy(_Dummy, _DummyID);
 
 PROC
 LLLIB_Treasure_Internal_GetNextDummy((GUIDSTRING)_AtObject, (STRING)_DummyID)
 AND
-NOT DB_LLLIB_Treasure_NextGeneratorDummy(_, _DummyID)
+NOT DB_LeaderLibTreasure_NextGeneratorDummy(_, _DummyID)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:GetNextDummy] No dummy found for ID [",_DummyID,"]. Creating new dummy.");
 LLLIB_Treasure_Internal_CreateGeneratorDummy(_AtObject, _DummyID);
@@ -207,18 +207,18 @@ LLLIB_Treasure_Internal_FindNextDummy(_AtObject, _DummyID);
 IF
 StoryEvent((CHARACTERGUID)_Dummy, "LLLIB_Events_GeneratorDummyInitialized")
 AND
-NOT DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
+NOT DB_LeaderLibTreasure_GeneratorDummies(_Dummy)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:GeneratorDummyInitialized] Unregistered generator dummy initialized. Added to database.");
-DB_LLLIB_Treasure_GeneratorDummies(_Dummy);
+DB_LeaderLibTreasure_GeneratorDummies(_Dummy);
 //END_REGION
 
 //REGION UPDATER
 PROC
 LLLIB_System_RegisterDatabases()
 THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "GeneratorDummies", "DB_LLLIB_Treasure_GeneratorDummies", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "GeneratorDummies", "DB_LLLIB_Treasure_NextGeneratorDummy", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "GeneratorDummies", "DB_LeaderLibTreasure_GeneratorDummies", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "GeneratorDummies", "DB_LeaderLibTreasure_NextGeneratorDummy", 2);
 LeaderLog_Log("TRACE", "[LeaderLib:GeneratorDummies] Databases registered.");
 //END_REGION
 EXITSECTION

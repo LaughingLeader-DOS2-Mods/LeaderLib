@@ -2,15 +2,15 @@ Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
 /*
-DB_LLLIB_CBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateItemEvent, _ItemTransferredEvent, _CompletionEvent, _TimeoutEvent)
-DB_LLLIB_CBS_Temp_StatSettings(_ArrayID, _Stat, _Amount, _Equip, _ShowInTrade)
+DB_LeaderLibCBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateItemEvent, _ItemTransferredEvent, _CompletionEvent, _TimeoutEvent)
+DB_LeaderLibCBS_Temp_StatSettings(_ArrayID, _Stat, _Amount, _Equip, _ShowInTrade)
 */
 KBSECTION
 //REGION SETUP
 PROC
 LeaderLib_CreateByStat_CreateQueue((GUIDSTRING)_Object, (STRING)_ArrayPrefix, (INTEGER)_TickRate, (INTEGER)_TimeoutRate, (STRING)_CompletionEvent)
 AND
-NOT DB_LLLIB_CBS_Temp_Queue(_Object, _ArrayPrefix, _, _, _, _, _, _)
+NOT DB_LeaderLibCBS_Temp_Queue(_Object, _ArrayPrefix, _, _, _, _, _, _)
 AND
 GetUUID(_Object, _UUID)
 AND
@@ -34,7 +34,7 @@ StringConcatenate("LeaderLib_Timers_CBS_QueueTimeoutTimer_", _ArrayID, _TimeoutT
 THEN
 LeaderLib_Queue_Create(_QueueID, _ArrayID, _QueueTimerName, _TickRate, _CreateItemEvent, _ItemTransferredEvent, "");
 LeaderLib_Queue_SetTimeout(_ArrayID, _TimeoutTimerName, _TimeoutRate, _TimeoutEvent);
-DB_LLLIB_CBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateItemEvent, _ItemTransferredEvent, _CompletionEvent, _TimeoutEvent);
+DB_LeaderLibCBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateItemEvent, _ItemTransferredEvent, _CompletionEvent, _TimeoutEvent);
 
 PROC
 LeaderLib_CreateByStat_AddToQueue((GUIDSTRING)_Object, (STRING)_ArrayPrefix, (STRING)_Stat)
@@ -54,7 +54,7 @@ LeaderLib_CreateByStat_AddToQueue(_Object, _ArrayPrefix, _Stat, _Amount, _ShowIn
 PROC
 LeaderLib_CreateByStat_AddToQueue((GUIDSTRING)_Object, (STRING)_ArrayPrefix, (STRING)_Stat, (INTEGER)_Amount, (INTEGER)_ShowInTrade, (INTEGER)_Equip)
 AND
-DB_LLLIB_CBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateItemEvent, _ItemTransferredEvent, _CompletionEvent, _TimeoutEvent)
+DB_LeaderLibCBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateItemEvent, _ItemTransferredEvent, _CompletionEvent, _TimeoutEvent)
 AND
 NOT LeaderLib_CreateByStat_Internal_QRY_StatIsNotStackable(_Stat, _Amount)
 THEN
@@ -65,14 +65,14 @@ LeaderLog_Log("TRACE", "[LeaderLib:CreateItemByStat:AddToQueue] Adding stat [",_
 PROC
 LeaderLib_CreateByStat_SetStatSettings((STRING)_ArrayID, (STRING)_Stat, (INTEGER)_Amount, (INTEGER)_Equip, (INTEGER)_ShowInTrade)
 AND
-NOT DB_LLLIB_CBS_Temp_StatSettings(_ArrayID, _Stat, _, _, _)
+NOT DB_LeaderLibCBS_Temp_StatSettings(_ArrayID, _Stat, _, _, _)
 THEN
-DB_LLLIB_CBS_Temp_StatSettings(_ArrayID, _Stat, _Amount, _Equip, _ShowInTrade);
+DB_LeaderLibCBS_Temp_StatSettings(_ArrayID, _Stat, _Amount, _Equip, _ShowInTrade);
 
 PROC
 LeaderLib_CreateByStat_AddToQueue((GUIDSTRING)_Object,  (STRING)_ArrayPrefix, (STRING)_Stat, (INTEGER)_Amount, (INTEGER)_ShowInTrade, (INTEGER)_Equip)
 AND
-DB_LLLIB_CBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateItemEvent, _ItemTransferredEvent, _CompletionEvent, _TimeoutEvent)
+DB_LeaderLibCBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateItemEvent, _ItemTransferredEvent, _CompletionEvent, _TimeoutEvent)
 AND
 LeaderLib_CreateByStat_Internal_QRY_StatIsNotStackable(_Stat, _Amount)
 AND
@@ -134,9 +134,9 @@ DB_NOOP(1);
 PROC
 LeaderLib_CreateByStat_Start((GUIDSTRING)_Object, (STRING)_ArrayPrefix)
 AND
-DB_LLLIB_CBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateItemEvent, _ItemTransferredEvent, _CompletionEvent, _TimeoutEvent)
+DB_LeaderLibCBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateItemEvent, _ItemTransferredEvent, _CompletionEvent, _TimeoutEvent)
 AND
-DB_LLLIB_Array_Data(_ArrayID, _Index, _Value)
+DB_LeaderLibArray_Data(_ArrayID, _Index, _Value)
 AND
 IntegertoString(_Index, _IndexStr)
 THEN
@@ -146,7 +146,7 @@ LeaderLog_Log("DEBUG", "[LeaderLib:CreateByStat:Start] Queue [",_QueueID,"] arra
 PROC
 LeaderLib_CreateByStat_Start((GUIDSTRING)_Object, (STRING)_ArrayPrefix)
 AND
-DB_LLLIB_CBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateItemEvent, _ItemTransferredEvent, _CompletionEvent, _TimeoutEvent)
+DB_LeaderLibCBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateItemEvent, _ItemTransferredEvent, _CompletionEvent, _TimeoutEvent)
 AND
 NOT LeaderLib_Queue_QRY_HasStarted(_QueueID)
 THEN
@@ -156,25 +156,25 @@ LeaderLib_Queue_Start(_QueueID);
 PROC
 LeaderLib_Treasure_CreateByStat_Internal_ClearQueueData((GUIDSTRING)_Object, (STRING)_ArrayPrefix)
 AND
-DB_LLLIB_CBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateItemEvent, _ItemTransferredEvent, _CompletionEvent, _TimeoutEvent)
+DB_LeaderLibCBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateItemEvent, _ItemTransferredEvent, _CompletionEvent, _TimeoutEvent)
 THEN
-NOT DB_LLLIB_CBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateItemEvent, _ItemTransferredEvent, _CompletionEvent, _TimeoutEvent);
+NOT DB_LeaderLibCBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateItemEvent, _ItemTransferredEvent, _CompletionEvent, _TimeoutEvent);
 
 PROC
 LeaderLib_Treasure_CreateByStat_Internal_ClearStatSettings((STRING)_ArrayID)
 AND
-DB_LLLIB_CBS_Temp_StatSettings(_ArrayID, _Stat, _Amount, _Equip, _ShowInTrade)
+DB_LeaderLibCBS_Temp_StatSettings(_ArrayID, _Stat, _Amount, _Equip, _ShowInTrade)
 THEN
-NOT DB_LLLIB_CBS_Temp_StatSettings(_ArrayID, _Stat, _Amount, _Equip, _ShowInTrade);
+NOT DB_LeaderLibCBS_Temp_StatSettings(_ArrayID, _Stat, _Amount, _Equip, _ShowInTrade);
 //END_REGION
 
 //REGION QUEUE EVENTS
 IF
 StoryEvent(_, _CreateItemEvent)
 AND
-DB_LLLIB_CBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateItemEvent, _ItemTransferredEvent, _CompletionEvent, _TimeoutEvent)
+DB_LeaderLibCBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateItemEvent, _ItemTransferredEvent, _CompletionEvent, _TimeoutEvent)
 AND
-DB_LLLIB_Queue_Temp_CurrentEntry(_QueueID, _Stat)
+DB_LeaderLibQueue_Temp_CurrentEntry(_QueueID, _Stat)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:CreateByStat:CreateItemEvent] Processing next item [",_Stat,"] for queue [",_QueueID,"].");
 LeaderLib_CreateByStat_Internal_ProcessNextStat(_Object, _ArrayID, _Stat, _ItemTransferredEvent);
@@ -182,19 +182,19 @@ LeaderLib_CreateByStat_Internal_ProcessNextStat(_Object, _ArrayID, _Stat, _ItemT
 PROC
 LeaderLib_Queue_OnTimedOut((STRING)_QueueID)
 AND
-DB_LLLIB_CBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateItemEvent, _ItemTransferredEvent, _CompletionEvent, _TimeoutEvent)
+DB_LeaderLibCBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateItemEvent, _ItemTransferredEvent, _CompletionEvent, _TimeoutEvent)
 AND
-DB_LLLIB_CBS_Temp_DummyTarget(_DummyID, _Object, _Dummy, _Stat, _ItemTransferredEvent, _ArrayID)
+DB_LeaderLibCBS_Temp_DummyTarget(_DummyID, _Object, _Dummy, _Stat, _ItemTransferredEvent, _ArrayID)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:CreateByStat:Timeout] Queue [",_QueueID,"] timed out.");
-NOT DB_LLLIB_CBS_Temp_DummyTarget(_DummyID, _Object, _Dummy, _Stat, _ItemTransferredEvent, _ArrayID);
+NOT DB_LeaderLibCBS_Temp_DummyTarget(_DummyID, _Object, _Dummy, _Stat, _ItemTransferredEvent, _ArrayID);
 LeaderLib_Treasure_ResetDummyAfterDelay(_Dummy, 900);
 LeaderLib_SendEvent(_ItemTransferredEvent);
 
 PROC
 LeaderLib_Queue_QueueCompleted((STRING)_QueueID)
 AND
-DB_LLLIB_CBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateItemEvent, _ItemTransferredEvent, _CompletionEvent, _TimeoutEvent)
+DB_LeaderLibCBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateItemEvent, _ItemTransferredEvent, _CompletionEvent, _TimeoutEvent)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:CreateByStat:Complete] Queue [",_QueueID,"] was completed.");
 LeaderLib_Treasure_CreateByStat_Internal_ClearQueueData(_Object, _ArrayPrefix);
@@ -206,18 +206,18 @@ SetStoryEvent(_Object, _CompletionEvent);
 PROC
 LeaderLib_CreateByStat_Internal_ProcessNextStat((GUIDSTRING)_Object, (STRING)_ArrayID, (STRING)_Stat, (STRING)_ItemTransferredEvent)
 AND
-DB_LLLIB_CBS_Temp_StatSettings(_ArrayID, _Stat, _Amount, _Equip, _ShowInTrade)
+DB_LeaderLibCBS_Temp_StatSettings(_ArrayID, _Stat, _Amount, _Equip, _ShowInTrade)
 AND
-NOT DB_LLLIB_CBS_Temp_DummyTarget(_ArrayID, _Object, _, _Stat, _ItemTransferredEvent, _ArrayID)
+NOT DB_LeaderLibCBS_Temp_DummyTarget(_ArrayID, _Object, _, _Stat, _ItemTransferredEvent, _ArrayID)
 AND
 LeaderLib_Treasure_QRY_PrepareGeneratorDummy((GUIDSTRING)_Object, _ArrayID)
 AND
-DB_LLLIB_Treasure_NextGeneratorDummy(_Dummy, _ArrayID)
+DB_LeaderLibTreasure_NextGeneratorDummy(_Dummy, _ArrayID)
 AND
 ObjectGetFlag(_Dummy, "LeaderLib_CreateByStat_Generating", 0)
 THEN
 LeaderLog_Log("TRACE", "[LeaderLib:CreateItemByStat] Creating [",_Stat,"] on dummy with ID [",_ArrayID,"]");
-DB_LLLIB_CBS_Temp_DummyTarget(_ArrayID, (GUIDSTRING)_Object, _Dummy, _Stat, _ItemTransferredEvent, _ArrayID);
+DB_LeaderLibCBS_Temp_DummyTarget(_ArrayID, (GUIDSTRING)_Object, _Dummy, _Stat, _ItemTransferredEvent, _ArrayID);
 ObjectSetFlag(_Dummy, "LeaderLib_CreateByStat_Generating");
 SetVarFixedString(_Dummy, "LeaderLib_CreateByStat_NextStatToCreate", _Stat);
 //SetVarFixedString(_Dummy, "LeaderLib_CreateByStat_FlagToSet", "LLLIB_GeneratorDummy_CreatedItem");
@@ -229,7 +229,7 @@ SetStoryEvent(_Dummy, "LeaderLib_Commands_CreateItemByStat");
 IF
 ItemAddedToCharacter(_Item, _Dummy)
 AND
-DB_LLLIB_CBS_Temp_DummyTarget(_DummyID, _Object, _Dummy, _Stat, _ItemTransferredEvent, _ArrayID)
+DB_LeaderLibCBS_Temp_DummyTarget(_DummyID, _Object, _Dummy, _Stat, _ItemTransferredEvent, _ArrayID)
 AND
 GetTemplate(_Item, _ItemTemplate)
 THEN
@@ -240,7 +240,7 @@ ItemAddedToCharacter(_Item, _Dummy)
 AND
 GetVarString(_Dummy, "LeaderLib_DummyID", _DummyID)
 AND
-DB_LLLIB_CBS_Temp_DummyTarget(_DummyID, _Object, _Dummy, _Stat, _ItemTransferredEvent, _ArrayID)
+DB_LeaderLibCBS_Temp_DummyTarget(_DummyID, _Object, _Dummy, _Stat, _ItemTransferredEvent, _ArrayID)
 AND
 GetTemplate(_Item, _ItemTemplate)
 AND
@@ -250,8 +250,8 @@ IntegertoString(_Amount, _AmountStr)
 THEN
 ObjectClearFlag(_Dummy, "LeaderLib_CreateByStat_Generating");
 LeaderLog_Log("TRACE", "[LeaderLib:CreateItemByStat] Created [",_ItemTemplate,"] from stat [",_Stat,"] on dummy. Transferring [",_AmountStr,"].");
-NOT DB_LLLIB_CBS_Temp_DummyTarget(_DummyID, _Object, _Dummy, _Stat, _ItemTransferredEvent, _ArrayID);
-DB_LLLIB_Treasure_StatToTemplate(_Stat, _ItemTemplate);
+NOT DB_LeaderLibCBS_Temp_DummyTarget(_DummyID, _Object, _Dummy, _Stat, _ItemTransferredEvent, _ArrayID);
+DB_LeaderLibTreasure_StatToTemplate(_Stat, _ItemTemplate);
 SetVarFixedString(_Item, "LeaderLib_GeneratedItemStat", _Stat);
 SetStoryEvent(_Item, "LeaderLib_Events_StatItemGenerated");
 LeaderLib_CreateByStat_Internal_PrepareItemForEquipping(_Object, _ArrayID, _Item, _Stat);
@@ -262,20 +262,20 @@ LeaderLib_SendEvent(_ItemTransferredEvent);
 PROC
 LeaderLib_CreateByStat_Internal_PrepareItemForEquipping((GUIDSTRING)_Object, (STRING)_ArrayID, (ITEMGUID)_Item, (STRING)_Stat)
 AND
-DB_LLLIB_CBS_Temp_StatSettings(_ArrayID, _Stat, _Amount, _Equip, _ShowInTrade)
+DB_LeaderLibCBS_Temp_StatSettings(_ArrayID, _Stat, _Amount, _Equip, _ShowInTrade)
 AND
 _Equip > 0
 AND
 ObjectIsCharacter((CHARACTERGUID)_Object, 1)
 THEN
-DB_LLLIB_CBS_Temp_EquipItem(_Object, _Item);
+DB_LeaderLibCBS_Temp_EquipItem(_Object, _Item);
 
 IF
 ItemAddedToCharacter(_Item, _Object)
 AND
-DB_LLLIB_CBS_Temp_EquipItem(_Object, _Item)
+DB_LeaderLibCBS_Temp_EquipItem(_Object, _Item)
 THEN
-NOT DB_LLLIB_CBS_Temp_EquipItem(_Object, _Item);
+NOT DB_LeaderLibCBS_Temp_EquipItem(_Object, _Item);
 CharacterEquipItem(_Object, _Item);
 //END_REGION
 
@@ -292,9 +292,9 @@ LLLIB_System_RegisterDatabases();
 PROC
 LLLIB_System_RegisterDatabases()
 THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_CreateByStat", "DB_LLLIB_CBS_Temp_Queue", 8);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_CreateByStat", "DB_LLLIB_CBS_Temp_StatSettings", 5);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_CreateByStat", "DB_LLLIB_CBS_Temp_DummyTarget", 5);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_CreateByStat", "DB_LeaderLibCBS_Temp_Queue", 8);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_CreateByStat", "DB_LeaderLibCBS_Temp_StatSettings", 5);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_CreateByStat", "DB_LeaderLibCBS_Temp_DummyTarget", 5);
 LeaderLog_Log("TRACE", "[LeaderLib:Treasure_CreateByStat] Databases registered.");
 //END_REGION
 EXITSECTION

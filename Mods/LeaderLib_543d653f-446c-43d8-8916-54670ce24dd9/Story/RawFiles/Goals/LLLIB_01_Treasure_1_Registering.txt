@@ -2,36 +2,36 @@ Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
 //REGION TREASURE
-//DB_LLLIB_Treasure_RegisteredObject(_TreasureID, _Object)
-//DB_LLLIB_Treasure_RegisteredObjectTemplate(_TreasureID, _Template)
-//DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
+//DB_LeaderLibTreasure_RegisteredObject(_TreasureID, _Object)
+//DB_LeaderLibTreasure_RegisteredObjectTemplate(_TreasureID, _Template)
+//DB_LeaderLibTreasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
 
-//DB_LLLIB_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID)
-//DB_LLLIB_Treasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID)
-//DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel)
+//DB_LeaderLibTreasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID)
+//DB_LeaderLibTreasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID)
+//DB_LeaderLibTreasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel)
 
-//DB_LLLIB_Treasure_ItemGenerationType(_TreasureID, _ItemEntry, _GenerationType)
-//DB_LLLIB_Treasure_TreasureGenerationType(_TreasureID, _GenerationType)
-//DB_LLLIB_Treasure_RegisteredGenerationTypes(_GenerationType)
-//DB_LLLIB_Treasure_ItemGenerationFlag(_TreasureID, _ItemEntry, _Flag, _FlagType)
-//DB_LLLIB_Treasure_GenerationSpeed(_TreasureID, _TickRate)
+//DB_LeaderLibTreasure_ItemGenerationType(_TreasureID, _ItemEntry, _GenerationType)
+//DB_LeaderLibTreasure_TreasureGenerationType(_TreasureID, _GenerationType)
+//DB_LeaderLibTreasure_RegisteredGenerationTypes(_GenerationType)
+//DB_LeaderLibTreasure_ItemGenerationFlag(_TreasureID, _ItemEntry, _Flag, _FlagType)
+//DB_LeaderLibTreasure_GenerationSpeed(_TreasureID, _TickRate)
 
-//DB_LLLIB_Treasure_ItemLevel(_TreasureID, _ItemEntry, _MinLevel, _MaxLevel, _UsePartyLevel)
-//DB_LLLIB_Treasure_ItemDeltaMods(_ID, _TreasureID, _ItemEntry, _Deltamod, _Chance)
-//DB_LLLIB_Treasure_ItemRunes(_ID, _TreasureID, _ItemEntry, _Rune, _Chance)
-//DB_LLLIB_Treasure_ItemMaxAmount(_TreasureID, _ItemEntry, _MaxAmount)
+//DB_LeaderLibTreasure_ItemLevel(_TreasureID, _ItemEntry, _MinLevel, _MaxLevel, _UsePartyLevel)
+//DB_LeaderLibTreasure_ItemDeltaMods(_ID, _TreasureID, _ItemEntry, _Deltamod, _Chance)
+//DB_LeaderLibTreasure_ItemRunes(_ID, _TreasureID, _ItemEntry, _Rune, _Chance)
+//DB_LeaderLibTreasure_ItemMaxAmount(_TreasureID, _ItemEntry, _MaxAmount)
 
-//DB_LLLIB_Treasure_OnlyOnce(_TreasureID, _ItemEntryOrTreasureTable, _OnCompletionEvent)
-//DB_LLLIB_Treasure_GeneratedEvent(_TreasureID, _ItemEntry, _OnGeneratedEvent)
-//DB_LLLIB_Treasure_ItemDoneGenerating(_Object, _TreasureID, _ItemEntry)
+//DB_LeaderLibTreasure_OnlyOnce(_TreasureID, _ItemEntryOrTreasureTable, _OnCompletionEvent)
+//DB_LeaderLibTreasure_GeneratedEvent(_TreasureID, _ItemEntry, _OnGeneratedEvent)
+//DB_LeaderLibTreasure_ItemDoneGenerating(_Object, _TreasureID, _ItemEntry)
 
-//DB_LLLIB_Treasure_TreasureTableLimit(_TreasureID, _TreasureTable, _Limit)
+//DB_LeaderLibTreasure_TreasureTableLimit(_TreasureID, _TreasureTable, _Limit)
 //END_REGION
 
 //REGION TRADER
-//DB_LLLIB_Traders_RegisteredTraderTemplate(_TraderID, _Template, _PlaySpawn)
-//DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader)
-//DB_LLLIB_Traders_RegisteredTraderInstance(_TraderID, _Trader, _Level)
+//DB_LeaderLibTraders_RegisteredTraderTemplate(_TraderID, _Template, _PlaySpawn)
+//DB_LeaderLibTraders_RegisteredGlobalTrader(_TraderID, _Trader)
+//DB_LeaderLibTraders_RegisteredTraderInstance(_TraderID, _Trader, _Level)
 //END_REGION
 KBSECTION
 PROC
@@ -50,26 +50,26 @@ LeaderLib_Treasure_JustRegistered(_TreasureID, _Str, _Type);
 PROC
 LeaderLib_Treasure_Register_TreasureToObject((STRING)_TreasureID, (GUIDSTRING)_Object)
 AND
-NOT DB_LLLIB_Treasure_RegisteredObject(_TreasureID, _Object)
+NOT DB_LeaderLibTreasure_RegisteredObject(_TreasureID, _Object)
 THEN
-DB_LLLIB_Treasure_RegisteredObject(_TreasureID, _Object);
+DB_LeaderLibTreasure_RegisteredObject(_TreasureID, _Object);
 LeaderLib_Treasure_JustRegisteredObject(_TreasureID, _Object, "Object");
 
 PROC
 LeaderLib_Treasure_Register_TreasureToTemplate((STRING)_TreasureID, (STRING)_ObjectTemplate)
 AND
-NOT DB_LLLIB_Treasure_RegisteredObjectTemplate(_TreasureID, _ObjectTemplate)
+NOT DB_LeaderLibTreasure_RegisteredObjectTemplate(_TreasureID, _ObjectTemplate)
 THEN
-DB_LLLIB_Treasure_RegisteredObjectTemplate(_TreasureID, _ObjectTemplate);
+DB_LeaderLibTreasure_RegisteredObjectTemplate(_TreasureID, _ObjectTemplate);
 LeaderLib_Treasure_JustRegistered(_TreasureID, _ObjectTemplate, "ObjectTemplate");
 
 PROC
 LeaderLib_Treasure_Register_TreasureToTrader((STRING)_TreasureID, (STRING)_TraderID)
 AND
-NOT DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
+NOT DB_LeaderLibTreasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
 THEN
 //LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:Register_TreasureToTrader] [",_TreasureID,"] registered to [",_TraderID,"].");
-DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID);
+DB_LeaderLibTreasure_RegisteredTraderTreasure(_TreasureID, _TraderID);
 LeaderLib_Treasure_JustRegistered(_TreasureID, _TraderID, "TraderTreasure");
 
 PROC
@@ -96,9 +96,9 @@ LeaderLib_Treasure_Register_TreasureTable(_TreasureID, _TreasureTable, _Requirem
 PROC
 LeaderLib_Treasure_Register_TreasureTable((STRING)_TreasureID, (STRING)_TreasureTable, (STRING)_RequirementID, (INTEGER)_UsePartyLevel, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
 AND
-NOT DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel)
+NOT DB_LeaderLibTreasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel)
 THEN
-DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel);
+DB_LeaderLibTreasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel);
 LeaderLib_Treasure_JustRegistered(_TreasureID, _TreasureTable, "TreasureTable");
 
 PROC
@@ -114,9 +114,9 @@ LeaderLib_Treasure_Register_ItemTemplate(_TreasureID, _ItemEntry, _Amount, "");
 PROC
 LeaderLib_Treasure_Register_ItemTemplate((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Amount, (STRING)_RequirementID)
 AND
-NOT DB_LLLIB_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID)
+NOT DB_LeaderLibTreasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID)
 THEN
-DB_LLLIB_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID);
+DB_LeaderLibTreasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID);
 LeaderLib_Treasure_JustRegistered(_TreasureID, _ItemEntry, "ItemTemplate");
 
 PROC
@@ -127,9 +127,9 @@ LeaderLib_Treasure_Register_ItemStat(_TreasureID, _ItemEntry, _Amount, "");
 PROC
 LeaderLib_Treasure_Register_ItemStat((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Amount, (STRING)_RequirementID)
 AND
-NOT DB_LLLIB_Treasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID)
+NOT DB_LeaderLibTreasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID)
 THEN
-DB_LLLIB_Treasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID);
+DB_LeaderLibTreasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID);
 LeaderLib_Treasure_JustRegistered(_TreasureID, _ItemEntry, "ItemStat");
 
 //END_REGION
@@ -150,36 +150,36 @@ PARTY_LEVELED_UP
 PROC
 LeaderLib_Treasure_Configure_GenerationType((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_GenerationType)
 AND
-NOT DB_LLLIB_Treasure_ItemGenerationType(_TreasureID, _ItemEntry, _GenerationType)
+NOT DB_LeaderLibTreasure_ItemGenerationType(_TreasureID, _ItemEntry, _GenerationType)
 THEN
-DB_LLLIB_Treasure_ItemGenerationType(_TreasureID, _ItemEntry, _GenerationType);
+DB_LeaderLibTreasure_ItemGenerationType(_TreasureID, _ItemEntry, _GenerationType);
 
 PROC
 LeaderLib_Treasure_Configure_DefaultGenerationType((STRING)_TreasureID, (STRING)_GenerationType)
 AND
-NOT DB_LLLIB_Treasure_TreasureGenerationType(_TreasureID, _GenerationType)
+NOT DB_LeaderLibTreasure_TreasureGenerationType(_TreasureID, _GenerationType)
 THEN
-DB_LLLIB_Treasure_TreasureGenerationType(_TreasureID, _GenerationType);
+DB_LeaderLibTreasure_TreasureGenerationType(_TreasureID, _GenerationType);
 
 PROC
 LeaderLib_Treasure_Configure_GenerationFlag((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_Flag, (STRING)_FlagType)
 AND
-NOT DB_LLLIB_Treasure_ItemGenerationFlag(_TreasureID, _ItemEntry, _Flag, _FlagType)
+NOT DB_LeaderLibTreasure_ItemGenerationFlag(_TreasureID, _ItemEntry, _Flag, _FlagType)
 THEN
 LeaderLib_Treasure_Configure_GenerationType(_TreasureID, _ItemEntry, "FLAG");
-DB_LLLIB_Treasure_ItemGenerationFlag(_TreasureID, _ItemEntry, _Flag, _FlagType);
+DB_LeaderLibTreasure_ItemGenerationFlag(_TreasureID, _ItemEntry, _Flag, _FlagType);
 
 PROC
 LeaderLib_Treasure_Configure_GenerationSpeed((STRING)_TreasureID, (INTEGER)_TickRate)
 AND
-DB_LLLIB_Treasure_GenerationSpeed(_TreasureID, _TickRate)
+DB_LeaderLibTreasure_GenerationSpeed(_TreasureID, _TickRate)
 THEN
-NOT DB_LLLIB_Treasure_GenerationSpeed(_TreasureID, _TickRate);
+NOT DB_LeaderLibTreasure_GenerationSpeed(_TreasureID, _TickRate);
 
 PROC
 LeaderLib_Treasure_Configure_GenerationSpeed((STRING)_TreasureID, (INTEGER)_TickRate)
 THEN
-DB_LLLIB_Treasure_GenerationSpeed(_TreasureID, _TickRate);
+DB_LeaderLibTreasure_GenerationSpeed(_TreasureID, _TickRate);
 
 PROC
 LeaderLib_Treasure_Configure_ItemLevel((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_UsePartyLevel)
@@ -194,15 +194,15 @@ LeaderLib_Treasure_Configure_ItemLevel(_TreasureID, _ItemEntry, _UsePartyLevel, 
 PROC
 LeaderLib_Treasure_Configure_ItemLevel((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_UsePartyLevel, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
 AND
-DB_LLLIB_Treasure_ItemLevel(_TreasureID, _ItemEntry, _PrevVal, _PrevMin, _PrevMax)
+DB_LeaderLibTreasure_ItemLevel(_TreasureID, _ItemEntry, _PrevVal, _PrevMin, _PrevMax)
 THEN
-NOT DB_LLLIB_Treasure_ItemLevel(_TreasureID, _ItemEntry, _PrevVal, _PrevMin, _PrevMax);
+NOT DB_LeaderLibTreasure_ItemLevel(_TreasureID, _ItemEntry, _PrevVal, _PrevMin, _PrevMax);
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem] Previous item level settings for ",_TreasureID,":",_ItemEntry," were removed.");
 
 PROC
 LeaderLib_Treasure_Configure_ItemLevel((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_UsePartyLevel, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
 THEN
-DB_LLLIB_Treasure_ItemLevel(_TreasureID, _ItemEntry, _UsePartyLevel, _MinLevel, _MaxLevel);
+DB_LeaderLibTreasure_ItemLevel(_TreasureID, _ItemEntry, _UsePartyLevel, _MinLevel, _MaxLevel);
 
 PROC
 LeaderLib_Treasure_Configure_AddDeltaMod((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_Deltamod, (INTEGER)_Chance)
@@ -221,19 +221,19 @@ LeaderLib_Treasure_Configure_AddDeltaMod(_Str, _TreasureID, _ItemEntry, _Deltamo
 PROC
 LeaderLib_Treasure_Configure_AddDeltaMod((STRING)_ID, (STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_Deltamod, (INTEGER)_Chance)
 THEN
-DB_LLLIB_Treasure_ItemDeltaMods(_ID, _TreasureID, _ItemEntry, _Deltamod, _Chance);
+DB_LeaderLibTreasure_ItemDeltaMods(_ID, _TreasureID, _ItemEntry, _Deltamod, _Chance);
 
 PROC
 LeaderLib_Treasure_Configure_DeltaModLimit((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_Deltamod, (INTEGER)_Max)
 AND
-DB_LLLIB_Treasure_DeltaModLimit(_TreasureID, _ItemEntry, _Deltamod, _LastMax)
+DB_LeaderLibTreasure_DeltaModLimit(_TreasureID, _ItemEntry, _Deltamod, _LastMax)
 THEN
-NOT DB_LLLIB_Treasure_DeltaModLimit(_TreasureID, _ItemEntry, _Deltamod, _LastMax);
+NOT DB_LeaderLibTreasure_DeltaModLimit(_TreasureID, _ItemEntry, _Deltamod, _LastMax);
 
 PROC
 LeaderLib_Treasure_Configure_DeltaModLimit((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_Deltamod, (INTEGER)_Max)
 THEN
-DB_LLLIB_Treasure_DeltaModLimit(_TreasureID, _ItemEntry, _Deltamod, _Max);
+DB_LeaderLibTreasure_DeltaModLimit(_TreasureID, _ItemEntry, _Deltamod, _Max);
 
 PROC
 LeaderLib_Treasure_Configure_AddRune((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_Rune, (INTEGER)_Chance)
@@ -252,136 +252,136 @@ LeaderLib_Treasure_Configure_AddRune(_Str, _TreasureID, _ItemEntry, _Rune, _Chan
 PROC
 LeaderLib_Treasure_Configure_AddRune((STRING)_ID, (STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_Rune, (INTEGER)_Chance)
 THEN
-DB_LLLIB_Treasure_ItemRunes(_ID, _TreasureID, _ItemEntry, _Rune, _Chance);
+DB_LeaderLibTreasure_ItemRunes(_ID, _TreasureID, _ItemEntry, _Rune, _Chance);
 
 PROC
 LeaderLib_Treasure_Configure_AddMaxAmount((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_MaxAmount)
 THEN
-DB_LLLIB_Treasure_ItemMaxAmount(_TreasureID, _ItemEntry, _MaxAmount);
+DB_LeaderLibTreasure_ItemMaxAmount(_TreasureID, _ItemEntry, _MaxAmount);
 
 PROC
 LeaderLib_Treasure_Configure_GenerationEvent((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_OnGeneratedEvent)
 THEN
-DB_LLLIB_Treasure_GeneratedEvent(_TreasureID, _ItemEntry, _OnGeneratedEvent);
+DB_LeaderLibTreasure_GeneratedEvent(_TreasureID, _ItemEntry, _OnGeneratedEvent);
 
 PROC
 LeaderLib_Treasure_Configure_GenerateOnce((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_OnCompletionEvent)
 THEN
-DB_LLLIB_Treasure_OnlyOnce(_TreasureID, _ItemEntry, _OnCompletionEvent);
+DB_LeaderLibTreasure_OnlyOnce(_TreasureID, _ItemEntry, _OnCompletionEvent);
 
 //Default the treasure as a whole to keep generating, provided the max item limit isn't reached
 PROC
 LeaderLib_Treasure_Configure_GenerateTreasureEndlessly((STRING)_TreasureID)
 AND
-NOT DB_LLLIB_Treasure_KeepGeneratingTreasure(_TreasureID)
+NOT DB_LeaderLibTreasure_KeepGeneratingTreasure(_TreasureID)
 THEN
-DB_LLLIB_Treasure_KeepGeneratingTreasure(_TreasureID);
+DB_LeaderLibTreasure_KeepGeneratingTreasure(_TreasureID);
 
 PROC
 LeaderLib_Treasure_Configure_GenerateItemEndlessly((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Active)
 AND
-DB_LLLIB_Treasure_KeepGeneratingItem(_TreasureID, _ItemEntry, _OtherVal)
+DB_LeaderLibTreasure_KeepGeneratingItem(_TreasureID, _ItemEntry, _OtherVal)
 THEN
-NOT DB_LLLIB_Treasure_KeepGeneratingItem(_TreasureID, _ItemEntry, _OtherVal);
+NOT DB_LeaderLibTreasure_KeepGeneratingItem(_TreasureID, _ItemEntry, _OtherVal);
 
 //Keep generating the item on each generation event, provided the max limit isn't reached on the object
 PROC
 LeaderLib_Treasure_Configure_GenerateItemEndlessly((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Active)
 THEN
-DB_LLLIB_Treasure_KeepGeneratingItem(_TreasureID, _ItemEntry, _Active);
+DB_LeaderLibTreasure_KeepGeneratingItem(_TreasureID, _ItemEntry, _Active);
 
 PROC
 LeaderLib_Treasure_Configure_TreasureTable_Limit((STRING)_TreasureID, (STRING)_TreasureTable, (INTEGER)_Limit)
 AND
-DB_LLLIB_Treasure_TreasureTableLimit(_TreasureID, _TreasureTable, _OtherLimit)
+DB_LeaderLibTreasure_TreasureTableLimit(_TreasureID, _TreasureTable, _OtherLimit)
 THEN
-NOT DB_LLLIB_Treasure_TreasureTableLimit(_TreasureID, _TreasureTable, _OtherLimit);
+NOT DB_LeaderLibTreasure_TreasureTableLimit(_TreasureID, _TreasureTable, _OtherLimit);
 
 PROC
 LeaderLib_Treasure_Configure_TreasureTable_Limit((STRING)_TreasureID, (STRING)_TreasureTable, (INTEGER)_Limit)
 THEN
-DB_LLLIB_Treasure_TreasureTableLimit(_TreasureID, _TreasureTable, _Limit);
+DB_LeaderLibTreasure_TreasureTableLimit(_TreasureID, _TreasureTable, _Limit);
 
 PROC
 LeaderLib_Treasure_Configure_TreasureTable_UseTemplateAsItemEntry((STRING)_TreasureID, (STRING)_TreasureTable, (INTEGER)_IsEnabled)
 AND
-DB_LLLIB_Treasure_TreasureTableItemEntryMode(_TreasureID, _TreasureTable, _PreviousIsEnabled)
+DB_LeaderLibTreasure_TreasureTableItemEntryMode(_TreasureID, _TreasureTable, _PreviousIsEnabled)
 THEN
-NOT DB_LLLIB_Treasure_TreasureTableItemEntryMode(_TreasureID, _TreasureTable, _PreviousIsEnabled);
+NOT DB_LeaderLibTreasure_TreasureTableItemEntryMode(_TreasureID, _TreasureTable, _PreviousIsEnabled);
 
 PROC
 LeaderLib_Treasure_Configure_TreasureTable_UseTemplateAsItemEntry((STRING)_TreasureID, (STRING)_TreasureTable, (INTEGER)_IsEnabled)
 THEN
-DB_LLLIB_Treasure_TreasureTableItemEntryMode(_TreasureID, _TreasureTable, _IsEnabled);
+DB_LeaderLibTreasure_TreasureTableItemEntryMode(_TreasureID, _TreasureTable, _IsEnabled);
 //END_REGION
 
 //REGION INTERNAL_GENERATION_TYPES
 IF
-DB_LLLIB_Treasure_TreasureGenerationType(_TreasureID, _GenerationType)
+DB_LeaderLibTreasure_TreasureGenerationType(_TreasureID, _GenerationType)
 AND
-NOT DB_LLLIB_Treasure_RegisteredGenerationTypes(_GenerationType)
+NOT DB_LeaderLibTreasure_RegisteredGenerationTypes(_GenerationType)
 THEN
-DB_LLLIB_Treasure_RegisteredGenerationTypes(_GenerationType);
+DB_LeaderLibTreasure_RegisteredGenerationTypes(_GenerationType);
 
 IF
-DB_LLLIB_Treasure_ItemGenerationType(_TreasureID, _ItemEntry, _GenerationType)
+DB_LeaderLibTreasure_ItemGenerationType(_TreasureID, _ItemEntry, _GenerationType)
 AND
-NOT DB_LLLIB_Treasure_RegisteredGenerationTypes(_GenerationType)
+NOT DB_LeaderLibTreasure_RegisteredGenerationTypes(_GenerationType)
 THEN
-DB_LLLIB_Treasure_RegisteredGenerationTypes(_GenerationType);
+DB_LeaderLibTreasure_RegisteredGenerationTypes(_GenerationType);
 
 PROC
 LLLIB_Treasure_RebuildRegisteredGenerationTypes()
 THEN
-SysClear("DB_LLLIB_Treasure_RegisteredGenerationTypes", 1);
+SysClear("DB_LeaderLibTreasure_RegisteredGenerationTypes", 1);
 
 PROC
 LLLIB_Treasure_RebuildRegisteredGenerationTypes()
 AND
-DB_LLLIB_Treasure_TreasureGenerationType(_TreasureID, _GenerationType)
+DB_LeaderLibTreasure_TreasureGenerationType(_TreasureID, _GenerationType)
 AND
-NOT DB_LLLIB_Treasure_RegisteredGenerationTypes(_GenerationType)
+NOT DB_LeaderLibTreasure_RegisteredGenerationTypes(_GenerationType)
 THEN
-DB_LLLIB_Treasure_RegisteredGenerationTypes(_GenerationType);
+DB_LeaderLibTreasure_RegisteredGenerationTypes(_GenerationType);
 
 PROC
 LLLIB_Treasure_RebuildRegisteredGenerationTypes()
 AND
-DB_LLLIB_Treasure_ItemGenerationType(_TreasureID, _ItemEntry, _GenerationType)
+DB_LeaderLibTreasure_ItemGenerationType(_TreasureID, _ItemEntry, _GenerationType)
 AND
-NOT DB_LLLIB_Treasure_RegisteredGenerationTypes(_GenerationType)
+NOT DB_LeaderLibTreasure_RegisteredGenerationTypes(_GenerationType)
 THEN
-DB_LLLIB_Treasure_RegisteredGenerationTypes(_GenerationType);
+DB_LeaderLibTreasure_RegisteredGenerationTypes(_GenerationType);
 //END_REGION
 
 //REGION CLEARING_TREASURE
 PROC
 LeaderLib_Treasure_Clear_AllEntriesForTreasure((STRING)_TreasureID)
 AND
-DB_LLLIB_Treasure_RegisteredObject(_TreasureID, _Object)
+DB_LeaderLibTreasure_RegisteredObject(_TreasureID, _Object)
 THEN
-NOT DB_LLLIB_Treasure_RegisteredObject(_TreasureID, _Object);
+NOT DB_LeaderLibTreasure_RegisteredObject(_TreasureID, _Object);
 
 PROC
 LeaderLib_Treasure_Clear_AllEntriesForTreasure((STRING)_TreasureID)
 AND
-DB_LLLIB_Treasure_RegisteredObjectTemplate(_TreasureID, _Template)
+DB_LeaderLibTreasure_RegisteredObjectTemplate(_TreasureID, _Template)
 THEN
-NOT DB_LLLIB_Treasure_RegisteredObjectTemplate(_TreasureID, _Template);
+NOT DB_LeaderLibTreasure_RegisteredObjectTemplate(_TreasureID, _Template);
 
 PROC
 LeaderLib_Treasure_Clear_AllEntriesForTreasure((STRING)_TreasureID)
 AND
-DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
+DB_LeaderLibTreasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
 THEN
-NOT DB_LLLIB_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID);
+NOT DB_LeaderLibTreasure_RegisteredTraderTreasure(_TreasureID, _TraderID);
 
 PROC
 LeaderLib_Treasure_Clear_AllEntriesForTreasure((STRING)_TreasureID)
 AND
-DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel)
+DB_LeaderLibTreasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel)
 THEN
-NOT DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel);
+NOT DB_LeaderLibTreasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel);
 
 PROC
 LeaderLib_Treasure_Clear_AllEntriesForTreasure((STRING)_TreasureID)
@@ -392,103 +392,103 @@ LLLIB_Treasure_RebuildRegisteredGenerationTypes();
 PROC
 LeaderLib_Treasure_Clear_AllItemsForTreasure((STRING)_TreasureID)
 AND
-DB_LLLIB_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID)
+DB_LeaderLibTreasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID)
 THEN
-NOT DB_LLLIB_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID);
+NOT DB_LeaderLibTreasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID);
 
 PROC
 LeaderLib_Treasure_Clear_AllItemsForTreasure((STRING)_TreasureID)
 AND
-DB_LLLIB_Treasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID)
+DB_LeaderLibTreasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID)
 THEN
-NOT DB_LLLIB_Treasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID);
+NOT DB_LeaderLibTreasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID);
 
 PROC
 LeaderLib_Treasure_Clear_AllItemsForTreasure((STRING)_TreasureID)
 AND
-DB_LLLIB_Treasure_ItemLevel(_TreasureID, _ItemEntry, _MinLevel, _MaxLevel, _UsePartyLevel)
+DB_LeaderLibTreasure_ItemLevel(_TreasureID, _ItemEntry, _MinLevel, _MaxLevel, _UsePartyLevel)
 THEN
-NOT DB_LLLIB_Treasure_ItemLevel(_TreasureID, _ItemEntry, _MinLevel, _MaxLevel, _UsePartyLevel);
+NOT DB_LeaderLibTreasure_ItemLevel(_TreasureID, _ItemEntry, _MinLevel, _MaxLevel, _UsePartyLevel);
 
 PROC
 LeaderLib_Treasure_Clear_AllItemsForTreasure((STRING)_TreasureID)
 AND
-DB_LLLIB_Treasure_ItemGenerationType(_TreasureID, _ItemEntry, _GenerationType)
+DB_LeaderLibTreasure_ItemGenerationType(_TreasureID, _ItemEntry, _GenerationType)
 THEN
-NOT DB_LLLIB_Treasure_ItemGenerationType(_TreasureID, _ItemEntry, _GenerationType);
+NOT DB_LeaderLibTreasure_ItemGenerationType(_TreasureID, _ItemEntry, _GenerationType);
 
 PROC
 LeaderLib_Treasure_Clear_AllItemsForTreasure((STRING)_TreasureID)
 AND
-DB_LLLIB_Treasure_ItemGenerationFlag(_TreasureID, _ItemEntry, _Flag, _FlagType)
+DB_LeaderLibTreasure_ItemGenerationFlag(_TreasureID, _ItemEntry, _Flag, _FlagType)
 THEN
-NOT DB_LLLIB_Treasure_ItemGenerationFlag(_TreasureID, _ItemEntry, _Flag, _FlagType);
+NOT DB_LeaderLibTreasure_ItemGenerationFlag(_TreasureID, _ItemEntry, _Flag, _FlagType);
 
 PROC
 LeaderLib_Treasure_Clear_AllItemsForTreasure((STRING)_TreasureID)
 AND
-DB_LLLIB_Treasure_ItemDeltaMods(_ID, _TreasureID, _ItemEntry, _Deltamod, _Chance)
+DB_LeaderLibTreasure_ItemDeltaMods(_ID, _TreasureID, _ItemEntry, _Deltamod, _Chance)
 THEN
-NOT DB_LLLIB_Treasure_ItemDeltaMods(_ID, _TreasureID, _ItemEntry, _Deltamod, _Chance);
+NOT DB_LeaderLibTreasure_ItemDeltaMods(_ID, _TreasureID, _ItemEntry, _Deltamod, _Chance);
 
 PROC
 LeaderLib_Treasure_Clear_AllItemsForTreasure((STRING)_TreasureID)
 AND
-DB_LLLIB_Treasure_ItemRunes(_ID, _TreasureID, _ItemEntry, _Rune, _Chance)
+DB_LeaderLibTreasure_ItemRunes(_ID, _TreasureID, _ItemEntry, _Rune, _Chance)
 THEN
-NOT DB_LLLIB_Treasure_ItemRunes(_ID, _TreasureID, _ItemEntry, _Rune, _Chance);
+NOT DB_LeaderLibTreasure_ItemRunes(_ID, _TreasureID, _ItemEntry, _Rune, _Chance);
 
 PROC
 LeaderLib_Treasure_Clear_AllItemsForTreasure((STRING)_TreasureID)
 AND
-DB_LLLIB_Treasure_OnlyOnce(_TreasureID, _ItemEntryOrTreasureTable, _OnCompletionEvent)
+DB_LeaderLibTreasure_OnlyOnce(_TreasureID, _ItemEntryOrTreasureTable, _OnCompletionEvent)
 THEN
-NOT DB_LLLIB_Treasure_OnlyOnce(_TreasureID, _ItemEntryOrTreasureTable, _OnCompletionEvent);
+NOT DB_LeaderLibTreasure_OnlyOnce(_TreasureID, _ItemEntryOrTreasureTable, _OnCompletionEvent);
 
 PROC
 LeaderLib_Treasure_Clear_AllItemsForTreasure((STRING)_TreasureID)
 AND
-DB_LLLIB_Treasure_GeneratedEvent(_TreasureID, _ItemEntry, _OnGeneratedEvent)
+DB_LeaderLibTreasure_GeneratedEvent(_TreasureID, _ItemEntry, _OnGeneratedEvent)
 THEN
-NOT DB_LLLIB_Treasure_GeneratedEvent(_TreasureID, _ItemEntry, _OnGeneratedEvent);
+NOT DB_LeaderLibTreasure_GeneratedEvent(_TreasureID, _ItemEntry, _OnGeneratedEvent);
 //END_REGION
 
 //REGION TRADER_REGISTERING
 PROC
 LeaderLib_Trader_Register_TraderTemplate((STRING)_TraderID, (STRING)_Template)
 AND
-NOT DB_LLLIB_Traders_RegisteredTraderTemplate(_TraderID,_,_)
+NOT DB_LeaderLibTraders_RegisteredTraderTemplate(_TraderID,_,_)
 THEN
-DB_LLLIB_Traders_RegisteredTraderTemplate(_TraderID, _Template, 0);
+DB_LeaderLibTraders_RegisteredTraderTemplate(_TraderID, _Template, 0);
 
 PROC
 LeaderLib_Trader_Register_TraderTemplate((STRING)_TraderID, (STRING)_Template, (INTEGER)_PlaySpawn)
 AND
-DB_LLLIB_Traders_RegisteredTraderTemplate(_TraderID,_,_)
+DB_LeaderLibTraders_RegisteredTraderTemplate(_TraderID,_,_)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Trader][ERROR] Error adding trader with ID '", _TraderID, "': Trader already exists!");
 
 PROC
 LeaderLib_Trader_Register_TraderTemplate((STRING)_TraderID, (STRING)_Template, (INTEGER)_PlaySpawn)
 AND
-NOT DB_LLLIB_Traders_RegisteredTraderTemplate(_TraderID,_,_)
+NOT DB_LeaderLibTraders_RegisteredTraderTemplate(_TraderID,_,_)
 THEN
-DB_LLLIB_Traders_RegisteredTraderTemplate(_TraderID, _Template, _PlaySpawn);
+DB_LeaderLibTraders_RegisteredTraderTemplate(_TraderID, _Template, _PlaySpawn);
 
 PROC
 LeaderLib_Trader_Register_GlobalTrader((STRING)_TraderID, (CHARACTERGUID)_Trader)
 AND
-NOT DB_LLLIB_Traders_RegisteredGlobalTrader(_, _Trader)
+NOT DB_LeaderLibTraders_RegisteredGlobalTrader(_, _Trader)
 THEN
-DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader);
+DB_LeaderLibTraders_RegisteredGlobalTrader(_TraderID, _Trader);
 
 PROC
 LeaderLib_Trader_Register_TraderInstance((STRING)_TraderID, (CHARACTERGUID)_Character, (STRING)_Level)
 AND
-NOT DB_LLLIB_Traders_RegisteredTraderInstance(_, _Character, _Level)
+NOT DB_LeaderLibTraders_RegisteredTraderInstance(_, _Character, _Level)
 THEN
 LeaderLib_Trader_Register_Level(_TraderID, _Level);
-DB_LLLIB_Traders_RegisteredTraderInstance(_TraderID, _Character, _Level);
+DB_LeaderLibTraders_RegisteredTraderInstance(_TraderID, _Character, _Level);
 
 PROC
 LeaderLib_Trader_Register_Level((STRING)_TraderID, (STRING)_Level)
@@ -498,20 +498,20 @@ LeaderLib_Trader_Register_Level(_TraderID, _Level, "");
 PROC
 LeaderLib_Trader_Register_Level((STRING)_TraderID, (STRING)_Level, (STRING)_RequirementID)
 AND
-DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _LastRequirement)
+DB_LeaderLibTraders_RegisteredLevel(_TraderID, _Level, _LastRequirement)
 AND
 _LastRequirement != _RequirementID
 AND
 _RequirementID != ""
 THEN
-NOT DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _LastRequirement);
+NOT DB_LeaderLibTraders_RegisteredLevel(_TraderID, _Level, _LastRequirement);
 
 PROC
 LeaderLib_Trader_Register_Level((STRING)_TraderID, (STRING)_Level, (STRING)_RequirementID)
 AND
-NOT DB_LLLIB_Traders_RegisteredLevel(_TraderID,_Level, _)
+NOT DB_LeaderLibTraders_RegisteredLevel(_TraderID,_Level, _)
 THEN
-DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID);
+DB_LeaderLibTraders_RegisteredLevel(_TraderID, _Level, _RequirementID);
 
 PROC
 LeaderLib_Trader_Register_StartingGold((STRING)_TraderID, (STRING)_Level, (INTEGER)_Amount)
@@ -521,7 +521,7 @@ LeaderLib_Trader_Register_StartingGold(_TraderID, _Level, _Amount, "");
 PROC
 LeaderLib_Trader_Register_StartingGold((STRING)_TraderID, (STRING)_Level, (INTEGER)_Amount, (STRING)_RequirementID)
 THEN
-DB_LLLIB_Traders_StartingGold(_TraderID, _Level, _Amount, _RequirementID);
+DB_LeaderLibTraders_StartingGold(_TraderID, _Level, _Amount, _RequirementID);
 
 PROC
 LeaderLib_Trader_Register_Dialog((STRING)_TraderID, (STRING)_Dialog)
@@ -536,49 +536,49 @@ LeaderLib_Trader_Register_Dialog(_TraderID, _Dialog, _Level, "");
 PROC
 LeaderLib_Trader_Register_Dialog((STRING)_TraderID, (STRING)_Dialog, (STRING)_Level, (STRING)_RequirementID)
 AND
-DB_LLLIB_Traders_Dialog(_TraderID, _Dialog, _Level, _PastRequirementID)
+DB_LeaderLibTraders_Dialog(_TraderID, _Dialog, _Level, _PastRequirementID)
 AND
 _PastRequirementID != _RequirementID
 THEN
-NOT DB_LLLIB_Traders_Dialog(_TraderID, _Dialog, _Level, _PastRequirementID);
-DB_LLLIB_Traders_Dialog(_TraderID, _Dialog, _Level, _RequirementID);
+NOT DB_LeaderLibTraders_Dialog(_TraderID, _Dialog, _Level, _PastRequirementID);
+DB_LeaderLibTraders_Dialog(_TraderID, _Dialog, _Level, _RequirementID);
 LeaderLog_Log("DEBUG", "[LeaderLib:TraderSystem:Register_Dialog] Requirement for [",_TraderID,"][",_Level,"][",_Dialog,"] changed from [",_PastRequirementID,"] to [",_RequirementID,"].");
 
 PROC
 LeaderLib_Trader_Register_Dialog((STRING)_TraderID, (STRING)_Dialog, (STRING)_Level, (STRING)_RequirementID)
 AND
-NOT DB_LLLIB_Traders_Dialog(_TraderID, _Dialog, _Level, _)
+NOT DB_LeaderLibTraders_Dialog(_TraderID, _Dialog, _Level, _)
 THEN
-DB_LLLIB_Traders_Dialog(_TraderID, _Dialog, _Level, _RequirementID);
+DB_LeaderLibTraders_Dialog(_TraderID, _Dialog, _Level, _RequirementID);
 
 PROC
 LeaderLib_Trader_Register_Position((STRING)_TraderID, (STRING)_Level, (REAL)_x, (REAL)_y, (REAL)_z)
 AND
-NOT DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _,_,_)
+NOT DB_LeaderLibTraders_LevelPosition(_TraderID, _Level, _,_,_)
 THEN
 LeaderLib_Trader_Register_Level(_TraderID, _Level);
-DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z);
+DB_LeaderLibTraders_LevelPosition(_TraderID, _Level, _x, _y, _z);
 
 PROC
 LeaderLib_Trader_Register_PositionTrigger((STRING)_TraderID, (STRING)_Level, (TRIGGERGUID)_Trigger)
 AND
-NOT DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _)
+NOT DB_LeaderLibTraders_LevelPositionTrigger(_TraderID, _Level, _)
 THEN
 LeaderLib_Trader_Register_Level(_TraderID, _Level);
-DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger);
+DB_LeaderLibTraders_LevelPositionTrigger(_TraderID, _Level, _Trigger);
 
 PROC
 LeaderLib_Trader_Register_PositionObject((STRING)_TraderID, (STRING)_Level, (GUIDSTRING)_Object)
 AND
-NOT DB_LLLIB_Traders_LevelPositionObject(_TraderID, _Level, _)
+NOT DB_LeaderLibTraders_LevelPositionObject(_TraderID, _Level, _)
 THEN
 LeaderLib_Trader_Register_Level(_TraderID, _Level);
-DB_LLLIB_Traders_LevelPositionObject(_TraderID, _Level, _Object);
+DB_LeaderLibTraders_LevelPositionObject(_TraderID, _Level, _Object);
 
 PROC
 LeaderLib_Trader_Register_CreationEvent((STRING)_TraderID, (STRING)_EventName)
 THEN
-DB_LLLIB_Traders_CreationEvents(_TraderID, _EventName);
+DB_LeaderLibTraders_CreationEvents(_TraderID, _EventName);
 
 PROC
 LeaderLib_Trader_Register_Seat((STRING)_TraderID, (STRING)_Level, (ITEMGUID)_Seat)
@@ -589,7 +589,7 @@ PROC
 LeaderLib_Trader_Register_Seat((STRING)_TraderID, (STRING)_Level, (ITEMGUID)_Seat, (STRING)_RequirementID)
 THEN
 LeaderLib_Trader_Register_PositionObject(_TraderID, _Level, _Seat);
-DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID);
+DB_LeaderLibTraders_Seat(_TraderID, _Level, _Seat, _RequirementID);
 //END_REGION
 
 //REGION TRADER_CLEARING
@@ -603,72 +603,72 @@ LeaderLog_Log("DEBUG", "[LeaderLib:Traders] Trader [",_TraderID,"] removed from 
 PROC
 LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
 AND
-DB_LLLIB_Traders_RegisteredTraderTemplate(_TraderID, _Template, _PlaySpawn)
+DB_LeaderLibTraders_RegisteredTraderTemplate(_TraderID, _Template, _PlaySpawn)
 THEN
-NOT DB_LLLIB_Traders_RegisteredTraderTemplate(_TraderID, _Template, _PlaySpawn);
+NOT DB_LeaderLibTraders_RegisteredTraderTemplate(_TraderID, _Template, _PlaySpawn);
 
 PROC
 LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
 AND
-DB_LLLIB_Traders_StartingGold(_TraderID, _Level, _Amount, _RequirementID)
+DB_LeaderLibTraders_StartingGold(_TraderID, _Level, _Amount, _RequirementID)
 THEN
-NOT DB_LLLIB_Traders_StartingGold(_TraderID, _Level, _Amount, _RequirementID);
+NOT DB_LeaderLibTraders_StartingGold(_TraderID, _Level, _Amount, _RequirementID);
 
 PROC
 LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
 AND
-DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader)
+DB_LeaderLibTraders_RegisteredGlobalTrader(_TraderID, _Trader)
 THEN
-NOT DB_LLLIB_Traders_RegisteredGlobalTrader(_TraderID, _Trader);
+NOT DB_LeaderLibTraders_RegisteredGlobalTrader(_TraderID, _Trader);
 
 PROC
 LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
 AND
-DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID)
+DB_LeaderLibTraders_RegisteredLevel(_TraderID, _Level, _RequirementID)
 THEN
-NOT DB_LLLIB_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID);
+NOT DB_LeaderLibTraders_RegisteredLevel(_TraderID, _Level, _RequirementID);
 
 PROC
 LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
 AND
-DB_LLLIB_Traders_Dialog(_TraderID, _Level, _Dialog, _RequirementID)
+DB_LeaderLibTraders_Dialog(_TraderID, _Level, _Dialog, _RequirementID)
 THEN
-NOT DB_LLLIB_Traders_Dialog(_TraderID, _Level, _Dialog, _RequirementID);
+NOT DB_LeaderLibTraders_Dialog(_TraderID, _Level, _Dialog, _RequirementID);
 
 PROC
 LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
 AND
-DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z)
+DB_LeaderLibTraders_LevelPosition(_TraderID, _Level, _x, _y, _z)
 THEN
-NOT DB_LLLIB_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z);
+NOT DB_LeaderLibTraders_LevelPosition(_TraderID, _Level, _x, _y, _z);
 
 PROC
 LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
 AND
-DB_LLLIB_Traders_LevelPositionObject(_TraderID, _Level, _Object)
+DB_LeaderLibTraders_LevelPositionObject(_TraderID, _Level, _Object)
 THEN
-NOT DB_LLLIB_Traders_LevelPositionObject(_TraderID, _Level, _Object);
+NOT DB_LeaderLibTraders_LevelPositionObject(_TraderID, _Level, _Object);
 
 PROC
 LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
 AND
-DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger)
+DB_LeaderLibTraders_LevelPositionTrigger(_TraderID, _Level, _Trigger)
 THEN
-NOT DB_LLLIB_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger);
+NOT DB_LeaderLibTraders_LevelPositionTrigger(_TraderID, _Level, _Trigger);
 
 PROC
 LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
 AND
-DB_LLLIB_Traders_CreationEvents(_TraderID, _EventName)
+DB_LeaderLibTraders_CreationEvents(_TraderID, _EventName)
 THEN
-NOT DB_LLLIB_Traders_CreationEvents(_TraderID, _EventName);
+NOT DB_LeaderLibTraders_CreationEvents(_TraderID, _EventName);
 
 PROC
 LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
 AND
-DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID)
+DB_LeaderLibTraders_Seat(_TraderID, _Level, _Seat, _RequirementID)
 THEN
-NOT DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID);
+NOT DB_LeaderLibTraders_Seat(_TraderID, _Level, _Seat, _RequirementID);
 //END_REGION
 
 //REGION UPDATE_OLD_DATA
@@ -683,52 +683,52 @@ LeaderLib_Internal_Treasure_UpdateDatabases();
 PROC
 LeaderLib_Internal_Treasure_UpdateDatabases()
 AND
-DB_LLLIB_Traders_RegisteredTrader((STRING)_TraderID, (STRING)_Template, (INTEGER)_PlaySpawn)
+DB_LeaderLibTraders_RegisteredTrader((STRING)_TraderID, (STRING)_Template, (INTEGER)_PlaySpawn)
 THEN
-NOT DB_LLLIB_Traders_RegisteredTrader(_TraderID, _Template, _PlaySpawn);
-DB_LLLIB_Traders_RegisteredTraderTemplate(_TraderID, _Template, _PlaySpawn);
+NOT DB_LeaderLibTraders_RegisteredTrader(_TraderID, _Template, _PlaySpawn);
+DB_LeaderLibTraders_RegisteredTraderTemplate(_TraderID, _Template, _PlaySpawn);
 
 PROC
 LeaderLib_Internal_Treasure_UpdateDatabases()
 THEN
-LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LLLIB_Traders_RegisteredTrader");
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LLLIB_Traders_RegisteredTraderTemplate", 3);
+LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LeaderLibTraders_RegisteredTrader");
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LeaderLibTraders_RegisteredTraderTemplate", 3);
 //END_REGION
 
 //REGION REGISTER_DATABASES
 PROC
 LLLIB_System_RegisterDatabases()
 THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_RegisteredObject", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_RegisteredObjectTemplate", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_RegisteredTraderTreasure", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_RegisteredTreasureTable", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_RegisteredTreasureTable", 6);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_TreasureItemTemplates", 4);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_TreasureItemStats", 4);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_ItemLevel", 5);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_ItemGenerationType", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_TreasureGenerationType", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_RegisteredGenerationTypes", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_ItemGenerationFlag", 4);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_ItemDeltaMods", 5);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_ItemRunes", 5);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_ItemMaxAmount", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_OnlyOnce", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_GeneratedEvent", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_ItemDoneGenerating", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LLLIB_Treasure_GenerationSpeed", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LeaderLibTreasure_RegisteredObject", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LeaderLibTreasure_RegisteredObjectTemplate", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LeaderLibTreasure_RegisteredTraderTreasure", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LeaderLibTreasure_RegisteredTreasureTable", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LeaderLibTreasure_RegisteredTreasureTable", 6);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LeaderLibTreasure_TreasureItemTemplates", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LeaderLibTreasure_TreasureItemStats", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LeaderLibTreasure_ItemLevel", 5);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LeaderLibTreasure_ItemGenerationType", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LeaderLibTreasure_TreasureGenerationType", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LeaderLibTreasure_RegisteredGenerationTypes", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LeaderLibTreasure_ItemGenerationFlag", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LeaderLibTreasure_ItemDeltaMods", 5);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LeaderLibTreasure_ItemRunes", 5);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LeaderLibTreasure_ItemMaxAmount", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LeaderLibTreasure_OnlyOnce", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LeaderLibTreasure_GeneratedEvent", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LeaderLibTreasure_ItemDoneGenerating", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LeaderLibTreasure_GenerationSpeed", 2);
 
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LLLIB_Traders_RegisteredTraderTemplate", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LLLIB_Traders_RegisteredGlobalTrader", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LLLIB_Traders_RegisteredLevel", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LLLIB_Traders_StartingGold", 4);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LLLIB_Traders_Dialog", 4);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LLLIB_Traders_LevelPosition", 5);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LLLIB_Traders_LevelPositionTrigger", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LLLIB_Traders_LevelPositionObject", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LLLIB_Traders_CreationEvents", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LLLIB_Traders_Seat", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LeaderLibTraders_RegisteredTraderTemplate", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LeaderLibTraders_RegisteredGlobalTrader", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LeaderLibTraders_RegisteredLevel", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LeaderLibTraders_StartingGold", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LeaderLibTraders_Dialog", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LeaderLibTraders_LevelPosition", 5);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LeaderLibTraders_LevelPositionTrigger", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LeaderLibTraders_LevelPositionObject", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LeaderLibTraders_CreationEvents", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Registering", "DB_LeaderLibTraders_Seat", 4);
 LeaderLog_Log("TRACE", "[LeaderLib:Treasure:Registering] Databases registered.");
 //END_REGION
 
@@ -736,21 +736,21 @@ LeaderLog_Log("TRACE", "[LeaderLib:Treasure:Registering] Databases registered.")
 QRY
 LeaderLib_Treasure_QRY_HasRegisteredItems((STRING)_TreasureID)
 AND
-DB_LLLIB_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID)
+DB_LeaderLibTreasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID)
 THEN
 DB_NOOP(1);
 
 QRY
 LeaderLib_Treasure_QRY_HasRegisteredItems((STRING)_TreasureID)
 AND
-DB_LLLIB_Treasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID)
+DB_LeaderLibTreasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID)
 THEN
 DB_NOOP(1);
 
 QRY
 LeaderLib_Treasure_QRY_HasRegisteredItems((STRING)_TreasureID)
 AND
-DB_LLLIB_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel)
+DB_LeaderLibTreasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel)
 THEN
 DB_NOOP(1);
 //END_REGION

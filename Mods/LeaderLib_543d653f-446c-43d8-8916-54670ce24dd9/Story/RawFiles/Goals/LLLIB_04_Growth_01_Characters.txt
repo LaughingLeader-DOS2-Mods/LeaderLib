@@ -1,7 +1,7 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-//DB_LLLIB_Growth_Characters_Skills(_ID, _MinLevel, _Skill, _MatchType, _MatchValue)
+//DB_LeaderLibGrowth_Characters_Skills(_ID, _MinLevel, _Skill, _MatchType, _MatchValue)
 KBSECTION
 //REGION REGISTERING
 /* _MatchType Values:
@@ -12,32 +12,32 @@ KBSECTION
 PROC
 LeaderLib_Growth_Characters_Register_Skill((STRING)_ID, (INTEGER)_MinLevel, (STRING)_Skill, (STRING)_MatchType, (STRING)_MatchValue)
 THEN
-DB_LLLIB_Growth_Characters_Skills(_ID, _MinLevel, _Skill, _MatchType, _MatchValue);
+DB_LeaderLibGrowth_Characters_Skills(_ID, _MinLevel, _Skill, _MatchType, _MatchValue);
 //END_REGION
 
 //REGION CLEARING
 PROC
 LeaderLib_Growth_Characters_Clear_ByEntriesID((STRING)_ID)
 AND
-DB_LLLIB_Growth_Characters_Skills(_ID, _MinLevel, _Skill, _MatchType, _MatchValue)
+DB_LeaderLibGrowth_Characters_Skills(_ID, _MinLevel, _Skill, _MatchType, _MatchValue)
 THEN
-NOT DB_LLLIB_Growth_Characters_Skills(_ID, _MinLevel, _Skill, _MatchType, _MatchValue);
+NOT DB_LeaderLibGrowth_Characters_Skills(_ID, _MinLevel, _Skill, _MatchType, _MatchValue);
 //END_REGION
 
 //REGION ITERATOR_START
 QRY
 LLLIB_Growth_Characters_QRY_NewTagAlreadyExists((STRING)_Tag)
 AND
-DB_LLLIB_Growth_Characters_Temp_NewTags(_Tag, _TimerName, _TimerDelay)
+DB_LeaderLibGrowth_Characters_Temp_NewTags(_Tag, _TimerName, _TimerDelay)
 THEN
 DB_NOOP(1);
 
 IF
-DB_LLLIB_Growth_Characters_Skills(_ID, _MinLevel, _Skill, "Tag", _Tag)
+DB_LeaderLibGrowth_Characters_Skills(_ID, _MinLevel, _Skill, "Tag", _Tag)
 AND
 NOT LLLIB_Growth_Characters_QRY_NewTagAlreadyExists(_Tag)
 AND
-SysCount("DB_LLLIB_Growth_Characters_Temp_NewTags", 3, _Count)
+SysCount("DB_LeaderLibGrowth_Characters_Temp_NewTags", 3, _Count)
 AND
 IntegerSum(_Count, 1, _MultBy)
 AND
@@ -45,11 +45,11 @@ IntegerProduct(_MultBy, 250, _TimerDelay)
 AND
 StringConcatenate("LeaderLib_Timers_Growth_Characters_StartTagIterator_", _Tag, _TimerName)
 THEN
-LeaderLog_Log("DEBUG", "[LLLIB:Growth:Characters:NewTagAdded] Adding tag [",_Tag,"][",_TimerName,"] to [DB_LLLIB_Growth_Characters_Temp_NewTags].");
-DB_LLLIB_Growth_Characters_Temp_NewTags(_Tag, _TimerName, _TimerDelay);
+LeaderLog_Log("DEBUG", "[LLLIB:Growth:Characters:NewTagAdded] Adding tag [",_Tag,"][",_TimerName,"] to [DB_LeaderLibGrowth_Characters_Temp_NewTags].");
+DB_LeaderLibGrowth_Characters_Temp_NewTags(_Tag, _TimerName, _TimerDelay);
 
 IF
-DB_LLLIB_Growth_Characters_Temp_NewTags(_Tag, _TimerName, _TimerDelay)
+DB_LeaderLibGrowth_Characters_Temp_NewTags(_Tag, _TimerName, _TimerDelay)
 AND
 GlobalGetFlag("LeaderLib_Initialized", 1)
 AND
@@ -61,7 +61,7 @@ TimerLaunch(_TimerName, _TimerDelay);
 IF
 GlobalFlagSet("LeaderLib_Initialized")
 AND
-DB_LLLIB_Growth_Characters_Temp_NewTags(_Tag, _TimerName, _TimerDelay)
+DB_LeaderLibGrowth_Characters_Temp_NewTags(_Tag, _TimerName, _TimerDelay)
 AND
 IntegertoString(_TimerDelay, _TimerDelayStr)
 THEN
@@ -71,9 +71,9 @@ TimerLaunch(_TimerName, _TimerDelay);
 IF
 TimerFinished(_TimerName)
 AND
-DB_LLLIB_Growth_Characters_Temp_NewTags(_Tag, _TimerName, _TimerDelay)
+DB_LeaderLibGrowth_Characters_Temp_NewTags(_Tag, _TimerName, _TimerDelay)
 THEN
-NOT DB_LLLIB_Growth_Characters_Temp_NewTags(_Tag, _TimerName, _TimerDelay);
+NOT DB_LeaderLibGrowth_Characters_Temp_NewTags(_Tag, _TimerName, _TimerDelay);
 LeaderLib_EventParser_LaunchCharacterIterator("LeaderLib_Commands_AddGrowthSkills", _Tag);
 //END_REGION
 
@@ -83,14 +83,14 @@ LeaderLib_Growth_Characters_QRY_CharacterHasSkills((CHARACTERGUID)_Character)
 AND
 GetTemplate(_Character, _Template)
 AND
-DB_LLLIB_Growth_Characters_Skills(_ID, _MinLevel, _Skill, "Template", _Template)
+DB_LeaderLibGrowth_Characters_Skills(_ID, _MinLevel, _Skill, "Template", _Template)
 THEN
 DB_NOOP(1);
 
 QRY
 LeaderLib_Growth_Characters_QRY_CharacterHasSkills((CHARACTERGUID)_Character)
 AND
-DB_LLLIB_Growth_Characters_Skills(_ID, _MinLevel, _Skill, "Tag", _Tag)
+DB_LeaderLibGrowth_Characters_Skills(_ID, _MinLevel, _Skill, "Tag", _Tag)
 AND
 IsTagged(_Character, _Tag, 1)
 THEN
@@ -133,7 +133,7 @@ LeaderLib_Growth_Characters_AddSkills((CHARACTERGUID)_Character)
 AND
 CharacterGetLevel(_Character, _CharacterLevel)
 AND
-DB_LLLIB_Growth_Characters_Skills(_ID, _MinLevel, _Skill, "Tag", _Tag)
+DB_LeaderLibGrowth_Characters_Skills(_ID, _MinLevel, _Skill, "Tag", _Tag)
 AND
 IsTagged(_Character, _Tag, 1)
 AND
@@ -153,7 +153,7 @@ CharacterGetLevel(_Character, _CharacterLevel)
 AND
 GetTemplate(_Character, _Template)
 AND
-DB_LLLIB_Growth_Characters_Skills(_ID, _MinLevel, _Skill, "Template", _Template)
+DB_LeaderLibGrowth_Characters_Skills(_ID, _MinLevel, _Skill, "Template", _Template)
 AND
 _CharacterLevel >= _MinLevel
 AND
@@ -171,7 +171,7 @@ CharacterGetLevel(_Character, _CharacterLevel)
 AND
 GetUUID(_Character, _UUID)
 AND
-DB_LLLIB_Growth_Characters_Skills(_ID, _MinLevel, _Skill, "UUID", _UUID)
+DB_LeaderLibGrowth_Characters_Skills(_ID, _MinLevel, _Skill, "UUID", _UUID)
 AND
 _CharacterLevel >= _MinLevel
 AND

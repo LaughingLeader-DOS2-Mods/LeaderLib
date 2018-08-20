@@ -95,18 +95,18 @@ LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", _Version)
 AND
 LLLIB_Dialog_QRY_Internal_OldVersion(_Version)
 THEN
-LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LLLIB_DialogNames");
-LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_DialogNames", 1);
-LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LLLIB_DialogVars");
-LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_DialogVars", 2);
-LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LLLIB_Dialog_AttitudeFlags");
-LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_Dialog_AttitudeFlags", 2);
-LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LLLIB_Dialog_NameOverride");
-LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_Dialog_NameOverride", 2);
-LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LLLIB_StatusFlags");
-LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_StatusFlags", 2);
-LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LLLIB_AnimationFlags");
-LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_AnimationFlags", 2);
+LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LeaderLibDialogNames");
+LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLibDialogNames", 1);
+LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LeaderLibDialogVars");
+LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLibDialogVars", 2);
+LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LeaderLibDialog_AttitudeFlags");
+LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLibDialog_AttitudeFlags", 2);
+LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LeaderLibDialog_NameOverride");
+LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLibDialog_NameOverride", 2);
+LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LeaderLibStatusFlags");
+LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLibStatusFlags", 2);
+LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LeaderLibAnimationFlags");
+LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLibAnimationFlags", 2);
 LeaderLog_Log("SYSTEM", "[LeaderLib:Dialog] Cleared old databases from version [",_Version,"].");
 LLLIB_System_RegisterDatabases();
 
@@ -163,7 +163,7 @@ NOT DB_LeaderLib_Dialog_NameOverride(_Player, _)
 AND
 GetVarString(_Player, "LLNWIZ_CustomName", _CustomName)
 AND
-DB_LLLIB_Settings_DialogVariables("PlayerName", _PlayerVar)
+DB_LeaderLibSettings_DialogVariables("PlayerName", _PlayerVar)
 THEN
 DialogSetVariableStringForInstance(_Instance, _PlayerVar, _CustomName);
 
@@ -176,7 +176,7 @@ NOT GetVarString(_Player, "LLNWIZ_CustomName", _)
 AND
 CharacterGetDisplayName(_Player, _, _PlayerName)
 AND
-DB_LLLIB_Settings_DialogVariables("PlayerName", _PlayerVar)
+DB_LeaderLibSettings_DialogVariables("PlayerName", _PlayerVar)
 THEN
 DialogSetVariableStringForInstance(_Instance, _PlayerVar, _PlayerName);
 
@@ -185,7 +185,7 @@ LLIB_Dialog_SetPlayerName((CHARACTERGUID)_Player, (INTEGER)_Instance)
 AND
 DB_LeaderLib_Dialog_NameOverride(_Player, _Name)
 AND
-DB_LLLIB_Settings_DialogVariables("PlayerName", _PlayerVar)
+DB_LeaderLibSettings_DialogVariables("PlayerName", _PlayerVar)
 THEN
 DialogSetVariableStringForInstance(_Instance, _PlayerVar, _Name);
 
@@ -196,7 +196,7 @@ NOT DB_LeaderLib_Dialog_NameOverride(_Character, _)
 AND
 GetVarString(_Character, "LLNWIZ_CustomName", _CustomName)
 AND
-DB_LLLIB_Settings_DialogVariables("SpeakerName", _SpeakerVar)
+DB_LeaderLibSettings_DialogVariables("SpeakerName", _SpeakerVar)
 THEN
 DialogSetVariableStringForInstance(_Instance, _SpeakerVar, _CustomName);
 
@@ -209,7 +209,7 @@ NOT GetVarString(_Character, "LLNWIZ_CustomName", _)
 AND
 CharacterGetDisplayName(_Character, _, _SpeakerName)
 AND
-DB_LLLIB_Settings_DialogVariables("SpeakerName", _SpeakerVar)
+DB_LeaderLibSettings_DialogVariables("SpeakerName", _SpeakerVar)
 THEN
 DialogSetVariableStringForInstance(_Instance, _SpeakerVar, _SpeakerName);
 
@@ -218,7 +218,7 @@ LLIB_Dialog_SetNPCName((CHARACTERGUID)_Character, (INTEGER)_Instance)
 AND
 DB_LeaderLib_Dialog_NameOverride(_Character, _Name)
 AND
-DB_LLLIB_Settings_DialogVariables("SpeakerName", _SpeakerVar)
+DB_LeaderLibSettings_DialogVariables("SpeakerName", _SpeakerVar)
 THEN
 DialogSetVariableStringForInstance(_Instance, _SpeakerVar, _Name);
 //END_REGION
@@ -229,7 +229,7 @@ ObjectFlagSet("LeaderLib_GrantModMenuBook", _Object, _Instance)
 AND
 LeaderLib_Helper_QRY_ClearObjectFlag(_Object, "LeaderLib_GrantModMenuBook")
 AND
-DB_LLLIB_Settings_ItemTemplates("Book_ModMenu", _ItemTemplate)
+DB_LeaderLibSettings_ItemTemplates("Book_ModMenu", _ItemTemplate)
 THEN
 ItemTemplateAddTo(_ItemTemplate, _Object, 1);
 
@@ -241,12 +241,12 @@ DB_LeaderLib_Dialog_AttitudeFlags(_Flag, _Amount)
 AND
 DialogGetInvolvedNPC(_Instance, 1, (CHARACTERGUID)_NPC)
 THEN
-DB_LLLIB_Dialog_AttitudeStatusText(_NPC, _Amount);
+DB_LeaderLibDialog_AttitudeStatusText(_NPC, _Amount);
 CharacterAddAttitudeTowardsPlayer(_NPC, _Character, _Amount);
 ObjectClearFlag(_Character, _Flag);
 
 PROC
-DB_LLLIB_Dialog_AttitudeStatusText((CHARACTERGUID)_Target, (INTEGER)_Amount)
+DB_LeaderLibDialog_AttitudeStatusText((CHARACTERGUID)_Target, (INTEGER)_Amount)
 AND
 _Amount > 0
 AND
@@ -259,7 +259,7 @@ THEN
 CharacterStatusText(_Target, _StatusText);
 
 PROC
-DB_LLLIB_Dialog_AttitudeStatusText((CHARACTERGUID)_Target, (INTEGER)_Amount)
+DB_LeaderLibDialog_AttitudeStatusText((CHARACTERGUID)_Target, (INTEGER)_Amount)
 AND
 _Amount < 0
 AND

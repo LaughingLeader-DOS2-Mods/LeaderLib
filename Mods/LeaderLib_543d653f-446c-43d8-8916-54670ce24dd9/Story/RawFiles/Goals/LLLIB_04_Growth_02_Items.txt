@@ -1,58 +1,58 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-//DB_LLLIB_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, _MatchType, _MatchValue)
+//DB_LeaderLibGrowth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, _MatchType, _MatchValue)
 KBSECTION
 //REGION REGISTERING
 PROC
 LeaderLib_Growth_Items_Register_DeltaMod((STRING)_ID, (INTEGER)_MinLevel, (STRING)_DeltaMod, (STRING)_MatchType, (STRING)_MatchValue)
 THEN
-DB_LLLIB_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, _MatchType, _MatchValue);
+DB_LeaderLibGrowth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, _MatchType, _MatchValue);
 //END_REGION
 
 //REGION CLEARING
 PROC
 LeaderLib_Growth_Items_Clear_ByEntriesID((STRING)_ID)
 AND
-DB_LLLIB_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, _MatchType, _MatchValue)
+DB_LeaderLibGrowth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, _MatchType, _MatchValue)
 THEN
-NOT DB_LLLIB_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, _MatchType, _MatchValue);
+NOT DB_LeaderLibGrowth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, _MatchType, _MatchValue);
 //END_REGION
 
 //REGION ITEM_AUTO_LEVEL
 QRY
 LeaderLib_Growth_Items_QRY_HasAutoLevelItem((CHARACTERGUID)_Character)
 AND
-NOT DB_LLLIB_Growth_Items_Temp_FoundItem(_Character)
+NOT DB_LeaderLibGrowth_Items_Temp_FoundItem(_Character)
 AND
 CharacterFindTaggedItem(_Character, "LeaderLib_AutoLevel", _Item)
 THEN
 LeaderLog_Log("TRACE", "[LeaderLib:Growth:Items:HasAutoLevelItem(CharacterFindTaggedItem)] Found tagged item.");
-DB_LLLIB_Growth_Items_Temp_FoundItem(_Character);
+DB_LeaderLibGrowth_Items_Temp_FoundItem(_Character);
 
 //Equipment doesn't return with `CharacterFindTaggedItem`
 QRY
 LeaderLib_Growth_Items_QRY_HasAutoLevelItem((CHARACTERGUID)_Character)
 AND
-NOT DB_LLLIB_Growth_Items_Temp_FoundItem(_Character)
+NOT DB_LeaderLibGrowth_Items_Temp_FoundItem(_Character)
 AND
-DB_LLLIB_EquipmentSlots(_Slot)
+DB_LeaderLibEquipmentSlots(_Slot)
 AND
-NOT DB_LLLIB_Growth_Items_Temp_FoundItem(_Character)
+NOT DB_LeaderLibGrowth_Items_Temp_FoundItem(_Character)
 AND
 CharacterGetEquippedItem(_Character, _Slot, _Item)
 AND
 IsTagged(_Item, "LeaderLib_AutoLevel", 1)
 THEN
 LeaderLog_Log("TRACE", "[LeaderLib:Growth:Items:HasAutoLevelItem] Found tagged equipment in slot [",_Slot,"].");
-DB_LLLIB_Growth_Items_Temp_FoundItem(_Character);
+DB_LeaderLibGrowth_Items_Temp_FoundItem(_Character);
 
 QRY
 LeaderLib_Growth_Items_QRY_HasAutoLevelItem((CHARACTERGUID)_Character)
 AND
-DB_LLLIB_Growth_Items_Temp_FoundItem(_Character)
+DB_LeaderLibGrowth_Items_Temp_FoundItem(_Character)
 THEN
-NOT DB_LLLIB_Growth_Items_Temp_FoundItem(_Character);
+NOT DB_LeaderLibGrowth_Items_Temp_FoundItem(_Character);
 
 IF
 CharacterLeveledUp(_Character)
@@ -66,7 +66,7 @@ SetStoryEvent(_Character, "LeaderLib_Events_AutoLevelItems_Start");
 IF
 StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Events_AutoLevelItems_Start")
 AND
-DB_LLLIB_EquipmentSlots(_Slot)
+DB_LeaderLibEquipmentSlots(_Slot)
 AND
 CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
 AND
@@ -125,14 +125,14 @@ LeaderLib_Growth_Items_QRY_ItemHasDeltaMods((ITEMGUID)_Item)
 AND
 GetTemplate(_Item, _Template)
 AND
-DB_LLLIB_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, "Template", _Template)
+DB_LeaderLibGrowth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, "Template", _Template)
 THEN
 DB_NOOP(1);
 
 QRY
 LeaderLib_Growth_Items_QRY_ItemHasDeltaMods((ITEMGUID)_Item)
 AND
-DB_LLLIB_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, "Tag", _Tag)
+DB_LeaderLibGrowth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, "Tag", _Tag)
 AND
 IsTagged(_Item, _Tag, 1)
 THEN
@@ -157,7 +157,7 @@ LeaderLib_Growth_Items_ApplyDeltaMods((ITEMGUID)_Item)
 AND
 GetVarInteger(_Item, "LeaderLib_ItemLevel", _ItemLevel)
 AND
-DB_LLLIB_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, "Tag", _Tag)
+DB_LeaderLibGrowth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, "Tag", _Tag)
 AND
 IsTagged(_Item, _Tag, 1)
 AND
@@ -176,7 +176,7 @@ GetVarInteger(_Item, "LeaderLib_ItemLevel", _ItemLevel)
 AND
 GetTemplate(_Item, _Template)
 AND
-DB_LLLIB_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, "Template", _Template)
+DB_LeaderLibGrowth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, "Template", _Template)
 AND
 _ItemLevel >= _MinLevel
 AND

@@ -495,7 +495,7 @@ LeaderLib_Helper_CopyAttributes(_CopyTo, _CopyFrom);
 PROC
 LeaderLib_Helper_CopyAbilities((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
 AND
-DB_LLLIB_Abilities(_Ability)
+DB_LeaderLib_Abilities(_Ability)
 AND
 CharacterGetAbility(_CopyFrom, _Ability, _Val)
 AND
@@ -510,7 +510,7 @@ CharacterAddAbility(_CopyTo, _Ability, _AddVal);
 PROC
 LeaderLib_Helper_CopyAttributes((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
 AND
-DB_LLLIB_Attributes(_Attribute)
+DB_LeaderLib_Attributes(_Attribute)
 AND
 CharacterGetAttribute(_CopyFrom, _Attribute, _Val)
 AND

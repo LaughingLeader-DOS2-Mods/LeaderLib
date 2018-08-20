@@ -2,38 +2,38 @@ Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
 //DB_LeaderLib_SendEvent(_EventName)
-//DB_LLLIB_EventParser_Spawned(_EventParser)
+//DB_LeaderLibEventParser_Spawned(_EventParser)
 //DB_LeaderLib_EventParser(_EventParser)
 KBSECTION
 //REGION CREATE_NEW
 PROC
 LLLIB_EventParser_Internal_CreateNew()
 AND
-DB_LLLIB_EventParser_Spawned(_EventParser)
+DB_LeaderLibEventParser_Spawned(_EventParser)
 AND
 ObjectExists(_EventParser, 0)
 THEN
-NOT DB_LLLIB_EventParser_Spawned(_EventParser);
+NOT DB_LeaderLibEventParser_Spawned(_EventParser);
 
 PROC
 LLLIB_EventParser_Internal_CreateNew()
 AND
 NOT CharacterGetHostCharacter(_)
 AND
-DB_LLLIB_Treasure_GeneratorDummies(_Dummy)
+DB_LeaderLibTreasure_GeneratorDummies(_Dummy)
 AND
-NOT DB_LLLIB_EventParser_Spawned(_)
+NOT DB_LeaderLibEventParser_Spawned(_)
 AND
 GetPosition(_Dummy, _x,_y,_z)
 AND
 CreateItemTemplateAtPosition("LLLIB_Scripting_EventParser_0f686d7d-2304-4f23-bd9a-8d402a6bdefe", _x,_y,_z, _EventParser)
 THEN
-DB_LLLIB_EventParser_Spawned(_EventParser);
+DB_LeaderLibEventParser_Spawned(_EventParser);
 
 PROC
 LLLIB_EventParser_Internal_CreateNew()
 AND
-NOT DB_LLLIB_EventParser_Spawned(_)
+NOT DB_LeaderLibEventParser_Spawned(_)
 AND
 CharacterGetHostCharacter(_Host)
 AND
@@ -41,16 +41,16 @@ GetPosition(_Host, _x,_y,_z)
 AND
 CreateItemTemplateAtPosition("LLLIB_Scripting_EventParser_0f686d7d-2304-4f23-bd9a-8d402a6bdefe", _x,_y,_z, _EventParser)
 THEN
-DB_LLLIB_EventParser_Spawned(_EventParser);
+DB_LeaderLibEventParser_Spawned(_EventParser);
 
 PROC
 LLLIB_EventParser_Internal_CreateNew()
 AND
-NOT DB_LLLIB_EventParser_Spawned(_) // Creating a temporary event parser failed, use a player
+NOT DB_LeaderLibEventParser_Spawned(_) // Creating a temporary event parser failed, use a player
 AND
 CharacterGetHostCharacter(_Player)
 THEN
-DB_LLLIB_EventParser_Spawned(_Player);
+DB_LeaderLibEventParser_Spawned(_Player);
 
 QRY
 LLLIB_QRY_EventParser_CreateNew()
@@ -98,7 +98,7 @@ NOT LLLIB_QRY_EventParser_GlobalParserExists()
 AND
 LLLIB_QRY_EventParser_CreateNew()
 AND
-DB_LLLIB_EventParser_Spawned(_EventParser)
+DB_LeaderLibEventParser_Spawned(_EventParser)
 THEN
 DB_LeaderLib_EventParser(_EventParser);
 //END_REGION
@@ -206,7 +206,7 @@ LLLIB_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventParser", "DB_LeaderLib_SendEvent", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventParser", "DB_LeaderLib_EventParser", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventParser", "DB_LLLIB_EventParser_Spawned", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventParser", "DB_LeaderLibEventParser_Spawned", 1);
 LeaderLog_Log("TRACE", "[LeaderLib:EventParser] Databases registered.");
 //END_REGION
 EXITSECTION

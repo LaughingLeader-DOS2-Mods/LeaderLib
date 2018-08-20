@@ -3,18 +3,18 @@ SubGoalCombiner SGC_AND
 INITSECTION
 LLLIB_LeaderTrader_InitSettings();
 LLLIB_LeaderTrader_RegisterTraderSettings();
-//DB_LLLIB_LeaderTrader(_LeaderTrader)
-//DB_LLLIB_LeaderTrader_MetPlayer(_Player)
+//DB_LeaderLibLeaderTrader(_LeaderTrader)
+//DB_LeaderLibLeaderTrader_MetPlayer(_Player)
 
 //Settings
-//DB_LLLIB_LeaderTrader_Dialog(_ReferenceName, _Dialog)
-//DB_LLLIB_LeaderTrader_Appearance(_Level, _Template)
-//DB_LLLIB_LeaderTrader_IntroDialogRequirements(_Level, _Dialog, _Flag, _RequirementID)
+//DB_LeaderLibLeaderTrader_Dialog(_ReferenceName, _Dialog)
+//DB_LeaderLibLeaderTrader_Appearance(_Level, _Template)
+//DB_LeaderLibLeaderTrader_IntroDialogRequirements(_Level, _Dialog, _Flag, _RequirementID)
 //Dynamic
-//DB_LLLIB_LeaderTrader_CurrentAppearance(_Template)
+//DB_LeaderLibLeaderTrader_CurrentAppearance(_Template)
 /*Non-Global Workaround*/
-//DB_LLLIB_LeaderTrader_SetFlags(_Flag, _Val)
-//DB_LLLIB_LeaderTrader_SetTags(_Tag, _Val)
+//DB_LeaderLibLeaderTrader_SetFlags(_Flag, _Val)
+//DB_LeaderLibLeaderTrader_SetTags(_Tag, _Val)
 KBSECTION
 //REGION INIT
 PROC
@@ -22,27 +22,27 @@ LLLIB_LeaderTrader_InitSettings()
 THEN
 LeaderUpdater_SaveSettingsVersionData("LLLIB_Settings_LeaderTrader");
 
-LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_LeaderTrader_Dialog", 2);
-DB_LLLIB_LeaderTrader_Dialog("Default", "LLLIB_LeaderTrader_Default");
-DB_LLLIB_LeaderTrader_Dialog("Tutorial_Intro", "LLLIB_LeaderTrader_Tutorial_Intro");
-DB_LLLIB_LeaderTrader_Dialog("FortJoy_Intro", "LLLIB_LeaderTrader_FortJoy_Intro");
-DB_LLLIB_LeaderTrader_Dialog("LV_Intro", "LLLIB_LeaderTrader_LadyVengeance_Intro");
-DB_LLLIB_LeaderTrader_Dialog("Arx_Intro", "LLLIB_LeaderTrader_Arx_Intro");
+LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLibLeaderTrader_Dialog", 2);
+DB_LeaderLibLeaderTrader_Dialog("Default", "LLLIB_LeaderTrader_Default");
+DB_LeaderLibLeaderTrader_Dialog("Tutorial_Intro", "LLLIB_LeaderTrader_Tutorial_Intro");
+DB_LeaderLibLeaderTrader_Dialog("FortJoy_Intro", "LLLIB_LeaderTrader_FortJoy_Intro");
+DB_LeaderLibLeaderTrader_Dialog("LV_Intro", "LLLIB_LeaderTrader_LadyVengeance_Intro");
+DB_LeaderLibLeaderTrader_Dialog("Arx_Intro", "LLLIB_LeaderTrader_Arx_Intro");
 
-LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_LeaderTrader_Appearance", 2);
+LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLibLeaderTrader_Appearance", 2);
 //Naked version
-DB_LLLIB_LeaderTrader_Appearance("TUT_Tutorial_A", "LLLIB_LeaderTrader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e");
-DB_LLLIB_LeaderTrader_Appearance("LeaderLib_TestLevel", "LLLIB_LeaderTrader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e");
+DB_LeaderLibLeaderTrader_Appearance("TUT_Tutorial_A", "LLLIB_LeaderTrader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e");
+DB_LeaderLibLeaderTrader_Appearance("LeaderLib_TestLevel", "LLLIB_LeaderTrader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e");
 //For other acts
-DB_LLLIB_LeaderTrader_Appearance("Default", "LLLIB_LeaderTrader_Casual_da17fca2-fe16-46d9-80b3-08971a8c8d49");
+DB_LeaderLibLeaderTrader_Appearance("Default", "LLLIB_LeaderTrader_Casual_da17fca2-fe16-46d9-80b3-08971a8c8d49");
 
-LeaderLib_Helper_ClearExistingDatabase("DB_LLLIB_LeaderTrader_IntroDialogRequirements", 4);
-DB_LLLIB_LeaderTrader_IntroDialogRequirements("TUT_Tutorial_A", "LLLIB_LeaderTrader_Tutorial_Intro", "LLLIB_LeaderTrader_TUT_IntroDone", "LLLIB_LeaderTrader_TUT_IntroPending");
-DB_LLLIB_LeaderTrader_IntroDialogRequirements("FJ_FortJoy_Main", "LLLIB_LeaderTrader_FortJoy_Intro", "LLLIB_LeaderTrader_FTJ_IntroDone", "LLLIB_LeaderTrader_FTJ_IntroPending");
-DB_LLLIB_LeaderTrader_IntroDialogRequirements("LV_HoE_Main", "LLLIB_LeaderTrader_LadyVengeance_Intro", "LLLIB_LeaderTrader_LadyVengeance_IntroDone", "LLLIB_LeaderTrader_LadyVengeance_IntroPending");
-DB_LLLIB_LeaderTrader_IntroDialogRequirements("RC_Main", "LLLIB_LeaderTrader_LadyVengeance_Intro", "LLLIB_LeaderTrader_LadyVengeance_IntroDone", "LLLIB_LeaderTrader_LadyVengeance_IntroPending");
-DB_LLLIB_LeaderTrader_IntroDialogRequirements("CoS_Main", "LLLIB_LeaderTrader_LadyVengeance_Intro", "LLLIB_LeaderTrader_LadyVengeance_IntroDone", "LLLIB_LeaderTrader_LadyVengeance_IntroPending");
-DB_LLLIB_LeaderTrader_IntroDialogRequirements("Arx_Main", "LLLIB_LeaderTrader_Arx_Intro", "LLLIB_LeaderTrader_Arx_IntroDone", "LLLIB_LeaderTrader_Arx_IntroPending");
+LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLibLeaderTrader_IntroDialogRequirements", 4);
+DB_LeaderLibLeaderTrader_IntroDialogRequirements("TUT_Tutorial_A", "LLLIB_LeaderTrader_Tutorial_Intro", "LLLIB_LeaderTrader_TUT_IntroDone", "LLLIB_LeaderTrader_TUT_IntroPending");
+DB_LeaderLibLeaderTrader_IntroDialogRequirements("FJ_FortJoy_Main", "LLLIB_LeaderTrader_FortJoy_Intro", "LLLIB_LeaderTrader_FTJ_IntroDone", "LLLIB_LeaderTrader_FTJ_IntroPending");
+DB_LeaderLibLeaderTrader_IntroDialogRequirements("LV_HoE_Main", "LLLIB_LeaderTrader_LadyVengeance_Intro", "LLLIB_LeaderTrader_LadyVengeance_IntroDone", "LLLIB_LeaderTrader_LadyVengeance_IntroPending");
+DB_LeaderLibLeaderTrader_IntroDialogRequirements("RC_Main", "LLLIB_LeaderTrader_LadyVengeance_Intro", "LLLIB_LeaderTrader_LadyVengeance_IntroDone", "LLLIB_LeaderTrader_LadyVengeance_IntroPending");
+DB_LeaderLibLeaderTrader_IntroDialogRequirements("CoS_Main", "LLLIB_LeaderTrader_LadyVengeance_Intro", "LLLIB_LeaderTrader_LadyVengeance_IntroDone", "LLLIB_LeaderTrader_LadyVengeance_IntroPending");
+DB_LeaderLibLeaderTrader_IntroDialogRequirements("Arx_Main", "LLLIB_LeaderTrader_Arx_Intro", "LLLIB_LeaderTrader_Arx_IntroDone", "LLLIB_LeaderTrader_Arx_IntroPending");
 //END_REGION
 
 //REGION REGISTER
@@ -50,7 +50,7 @@ DB_LLLIB_LeaderTrader_IntroDialogRequirements("Arx_Main", "LLLIB_LeaderTrader_Ar
 PROC
 LLLIB_LeaderTrader_RegisterDialogSettings()
 AND
-DB_LLLIB_LeaderTrader_IntroDialogRequirements(_Level, _Dialog, _Flag, _RequirementID)
+DB_LeaderLibLeaderTrader_IntroDialogRequirements(_Level, _Dialog, _Flag, _RequirementID)
 THEN
 LeaderLib_Trader_Register_Dialog("LLLIB_LeaderTrader", _Dialog, _Level, _RequirementID);
 LeaderLib_Requirements_Add_FlagRequirement(_RequirementID, _Flag, "Global", 0);
@@ -58,12 +58,12 @@ LeaderLib_Requirements_Add_FlagRequirement(_RequirementID, _Flag, "Global", 0);
 PROC
 LLLIB_LeaderTrader_RegisterTraderSettings()
 AND
-NOT DB_LLLIB_LeaderTrader_Registered(_)
+NOT DB_LeaderLibLeaderTrader_Registered(_)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader:RegisterTraderSettings] Registering LeaderTrader treasure/trader settings.");
-DB_LLLIB_LeaderTrader_Registered(1);
+DB_LeaderLibLeaderTrader_Registered(1);
 
-DB_LLLIB_LeaderTrader_CurrentAppearance("LLLIB_LeaderTrader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e");
+DB_LeaderLibLeaderTrader_CurrentAppearance("LLLIB_LeaderTrader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e");
 
 LeaderLib_Trader_Register_Dialog("LLLIB_LeaderTrader", "LLLIB_LeaderTrader_Default"); // Default
 LLLIB_LeaderTrader_RegisterDialogSettings();
@@ -132,7 +132,7 @@ LLLIB_LeaderTrader_RegisterDeckSeat(_LevelName, _Seat, "");
 PROC
 LLLIB_LeaderTrader_RegisterDeckSeat((STRING)_LevelName, (ITEMGUID)_Seat, (STRING)_RequirementID)
 AND
-NOT DB_LLLIB_Traders_Seat("LLLIB_LeaderTrader", _LevelName, _, _)
+NOT DB_LeaderLibTraders_Seat("LLLIB_LeaderTrader", _LevelName, _, _)
 THEN
 LeaderLib_Trader_Register_Level("LLLIB_LeaderTrader", _LevelName, _RequirementID);
 //LeaderLib_Trader_Register_PositionObject("LLLIB_LeaderTrader", _LevelName, (GUIDSTRING)_Seat);
@@ -146,11 +146,11 @@ LLLIB_LeaderTrader_RegisterTrader();
 PROC
 LLLIB_LeaderTrader_RegisterTrader()
 AND
-NOT DB_LLLIB_LeaderTrader(_)
+NOT DB_LeaderLibLeaderTrader(_)
 AND
 ObjectExists(CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, 1)
 THEN
-DB_LLLIB_LeaderTrader((CHARACTERGUID)CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574);
+DB_LeaderLibLeaderTrader((CHARACTERGUID)CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574);
 LeaderLib_Trader_Register_GlobalTrader("LLLIB_LeaderTrader", CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574);
 LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader] Registered the global leader trader to the trader database.");
 
@@ -158,7 +158,7 @@ LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader] Registered the global leader tr
 PROC
 LLLIB_LeaderTrader_RegisterTrader()
 AND
-NOT DB_LLLIB_LeaderTrader(_)
+NOT DB_LeaderLibLeaderTrader(_)
 AND
 ObjectExists(CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, 0)
 THEN
@@ -179,7 +179,7 @@ LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader] Updated LeaderTrader settings."
 PROC
 LLLIB_LeaderTrader_UpdateSettings()
 AND
-DB_LLLIB_Treasure_KeepGeneratingTreasure("LLLIB_LeaderTrader_ModBooks")
+DB_LeaderLibTreasure_KeepGeneratingTreasure("LLLIB_LeaderTrader_ModBooks")
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader:UpdateSettings] Made the ModBooks treasure group generate endlessly.");
 LeaderLib_Treasure_Configure_GenerateTreasureEndlessly("LLLIB_LeaderTrader_ModBooks");
@@ -188,7 +188,7 @@ LeaderLib_Treasure_Configure_GenerateTreasureEndlessly("LLLIB_LeaderTrader_ModBo
 PROC
 LLLIB_LeaderTrader_UpdateSettings()
 AND
-NOT DB_LLLIB_Treasure_RegisteredTraderTreasure("LeaderLib.LeaderTrader.Skillbooks", "LLLIB_LeaderTrader")
+NOT DB_LeaderLibTreasure_RegisteredTraderTreasure("LeaderLib.LeaderTrader.Skillbooks", "LLLIB_LeaderTrader")
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader:UpdateSettings] Added new skillbooks treasure to LeaderTrader.");
 LeaderLib_Treasure_Register_TreasureToTrader("LeaderLib.LeaderTrader.Skillbooks", "LLLIB_LeaderTrader");
@@ -201,37 +201,37 @@ ObjectFlagSet(_Flag, (CHARACTERGUID)_LeaderTrader, _)
 AND
 GlobalGetFlag("LLLIB_LeaderTraderIsNotGlobal", 1)
 AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
+DB_LeaderLibLeaderTrader(_LeaderTrader)
 THEN
-DB_LLLIB_LeaderTrader_SetFlags(_Flag, 1);
+DB_LeaderLibLeaderTrader_SetFlags(_Flag, 1);
 
 IF
 ObjectFlagCleared(_Flag, (CHARACTERGUID)_LeaderTrader, _)
 AND
 GlobalGetFlag("LLLIB_LeaderTraderIsNotGlobal", 1)
 AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
+DB_LeaderLibLeaderTrader(_LeaderTrader)
 AND
-DB_LLLIB_LeaderTrader_SetFlags(_Flag, 1)
+DB_LeaderLibLeaderTrader_SetFlags(_Flag, 1)
 THEN
-NOT DB_LLLIB_LeaderTrader_SetFlags(_Flag, 1);
-DB_LLLIB_LeaderTrader_SetFlags(_Flag, 0);
+NOT DB_LeaderLibLeaderTrader_SetFlags(_Flag, 1);
+DB_LeaderLibLeaderTrader_SetFlags(_Flag, 0);
 
 IF
-DB_LLLIB_LeaderTrader(_LeaderTrader)
+DB_LeaderLibLeaderTrader(_LeaderTrader)
 AND
 GlobalGetFlag("LLLIB_LeaderTraderIsNotGlobal", 1)
 AND
-DB_LLLIB_LeaderTrader_SetFlags(_Flag, 1)
+DB_LeaderLibLeaderTrader_SetFlags(_Flag, 1)
 THEN
 ObjectSetFlag(_LeaderTrader, _Flag);
 
 IF
-DB_LLLIB_LeaderTrader(_LeaderTrader)
+DB_LeaderLibLeaderTrader(_LeaderTrader)
 AND
 GlobalGetFlag("LLLIB_LeaderTraderIsNotGlobal", 1)
 AND
-DB_LLLIB_LeaderTrader_SetFlags(_Flag, 0)
+DB_LeaderLibLeaderTrader_SetFlags(_Flag, 0)
 THEN
 ObjectClearFlag(_LeaderTrader, _Flag);
 
@@ -240,37 +240,37 @@ ObjectWasTagged((CHARACTERGUID)_LeaderTrader, _Tag)
 AND
 GlobalGetFlag("LLLIB_LeaderTraderIsNotGlobal", 1)
 AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
+DB_LeaderLibLeaderTrader(_LeaderTrader)
 THEN
-DB_LLLIB_LeaderTrader_SetTags(_Tag, 1);
+DB_LeaderLibLeaderTrader_SetTags(_Tag, 1);
 
 IF
 ObjectLostTag((CHARACTERGUID)_LeaderTrader, _Tag)
 AND
 GlobalGetFlag("LLLIB_LeaderTraderIsNotGlobal", 1)
 AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
+DB_LeaderLibLeaderTrader(_LeaderTrader)
 AND
-DB_LLLIB_LeaderTrader_SetTags(_Tag, 1)
+DB_LeaderLibLeaderTrader_SetTags(_Tag, 1)
 THEN
-NOT DB_LLLIB_LeaderTrader_SetTags(_Tag, 1);
-DB_LLLIB_LeaderTrader_SetTags(_Tag, 0);
+NOT DB_LeaderLibLeaderTrader_SetTags(_Tag, 1);
+DB_LeaderLibLeaderTrader_SetTags(_Tag, 0);
 
 IF
-DB_LLLIB_LeaderTrader(_LeaderTrader)
+DB_LeaderLibLeaderTrader(_LeaderTrader)
 AND
 GlobalGetFlag("LLLIB_LeaderTraderIsNotGlobal", 1)
 AND
-DB_LLLIB_LeaderTrader_SetTags(_Tag, 1)
+DB_LeaderLibLeaderTrader_SetTags(_Tag, 1)
 THEN
 SetTag(_LeaderTrader, _Tag);
 
 IF
-DB_LLLIB_LeaderTrader(_LeaderTrader)
+DB_LeaderLibLeaderTrader(_LeaderTrader)
 AND
 GlobalGetFlag("LLLIB_LeaderTraderIsNotGlobal", 1)
 AND
-DB_LLLIB_LeaderTrader_SetTags(_Tag, 0)
+DB_LeaderLibLeaderTrader_SetTags(_Tag, 0)
 THEN
 ClearTag(_LeaderTrader, _Tag);
 //END_REGION
@@ -279,17 +279,17 @@ ClearTag(_LeaderTrader, _Tag);
 IF
 DialogStarted(_Dialog, _Instance)
 AND
-DB_LLLIB_LeaderTrader_Dialog("Default", _Dialog)
+DB_LeaderLibLeaderTrader_Dialog("Default", _Dialog)
 AND
 DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
 THEN
-DB_LLLIB_LeaderTrader_Temp_ActiveDialog(_Player, _Instance);
+DB_LeaderLibLeaderTrader_Temp_ActiveDialog(_Player, _Instance);
 LLLIB_LeaderTrader_AdjustGreeting(_Instance, _Player);
 
 PROC
 LLLIB_LeaderTrader_AdjustGreeting((INTEGER)_Instance, (CHARACTERGUID)_Player)
 AND
-DB_LLLIB_LeaderTrader_MetPlayer(_Player)
+DB_LeaderLibLeaderTrader_MetPlayer(_Player)
 AND
 DB_LeaderLib_Dialog_Vars("LeaderTrader_Greeting", _Var)
 THEN
@@ -298,7 +298,7 @@ DialogSetVariableStringForInstance(_Instance, _Var, "Welcome back! Looking to tr
 PROC
 LLLIB_LeaderTrader_AdjustGreeting((INTEGER)_Instance, (CHARACTERGUID)_Player)
 AND
-NOT DB_LLLIB_LeaderTrader_MetPlayer(_Player)
+NOT DB_LeaderLibLeaderTrader_MetPlayer(_Player)
 AND
 DB_LeaderLib_Dialog_Vars("LeaderTrader_Greeting", _Var)
 THEN
@@ -307,7 +307,7 @@ DialogSetVariableStringForInstance(_Instance, _Var, "Hello! Looking to trade?");
 IF
 ObjectFlagSet("StartTrade", (CHARACTERGUID)_Player, _Instance)
 AND
-DB_LLLIB_LeaderTrader_Temp_ActiveDialog(_Player, _Instance)
+DB_LeaderLibLeaderTrader_Temp_ActiveDialog(_Player, _Instance)
 AND
 DB_LeaderLib_Dialog_Vars("LeaderTrader_Greeting", _Var)
 THEN
@@ -316,9 +316,9 @@ DialogSetVariableStringForInstance(_Instance, _Var, "Anything else?");
 IF
 RequestTrade(_Player, _LeaderTrader)
 AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
+DB_LeaderLibLeaderTrader(_LeaderTrader)
 AND
-DB_LLLIB_LeaderTrader_Temp_ActiveDialog(_Player, _Instance)
+DB_LeaderLibLeaderTrader_Temp_ActiveDialog(_Player, _Instance)
 AND
 DB_LeaderLib_Dialog_Vars("LeaderTrader_Greeting", _Var)
 THEN
@@ -327,16 +327,16 @@ DialogSetVariableStringForInstance(_Instance, _Var, "Anything else?");
 IF
 DialogEnded(_Dialog, _Instance)
 AND
-DB_LLLIB_LeaderTrader_Temp_ActiveDialog(_Player, _Instance)
+DB_LeaderLibLeaderTrader_Temp_ActiveDialog(_Player, _Instance)
 THEN
-NOT DB_LLLIB_LeaderTrader_Temp_ActiveDialog(_Player, _Instance);
+NOT DB_LeaderLibLeaderTrader_Temp_ActiveDialog(_Player, _Instance);
 //END_REGION
 
 //REGION AVOID_COMBAT
 IF
 CombatStarted(_CombatID)
 AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
+DB_LeaderLibLeaderTrader(_LeaderTrader)
 AND
 CharacterIsInCombat(_LeaderTrader, 1)
 AND
@@ -344,7 +344,7 @@ CombatGetIDForCharacter(_LeaderTrader, _CombatID)
 AND
 ObjectGetFlag(_LeaderTrader, "LLLIB_LeaderTrader_Hiding", 0)
 THEN
-DB_LLLIB_LeaderTrader_AvoidingCombat(_CombatID);
+DB_LeaderLibLeaderTrader_AvoidingCombat(_CombatID);
 DisplayText(_LeaderTrader, "I'm retired! Leave me be.");
 CharacterUseSkill(_LeaderTrader, "Shout_ChameleonSkin", _LeaderTrader, 0, 1, 1);
 ObjectSetFlag(_LeaderTrader, "LLLIB_LeaderTrader_Hiding", 0);
@@ -352,7 +352,7 @@ ObjectSetFlag(_LeaderTrader, "LLLIB_LeaderTrader_Hiding", 0);
 IF
 CharacterStatusApplied(_LeaderTrader, "INVISIBLE", _)
 AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
+DB_LeaderLibLeaderTrader(_LeaderTrader)
 AND
 ObjectGetFlag(_LeaderTrader, "LLLIB_LeaderTrader_Hiding", 1)
 THEN
@@ -361,15 +361,15 @@ SetOnStage(_LeaderTrader, 0);
 IF
 CombatEnded(_CombatID)
 AND
-DB_LLLIB_LeaderTrader_AvoidingCombat(_CombatID)
+DB_LeaderLibLeaderTrader_AvoidingCombat(_CombatID)
 THEN
 TimerLaunch("LLLIB_Timers_LeaderTrader_CombatEnded", 3000);
-NOT DB_LLLIB_LeaderTrader_AvoidingCombat(_CombatID);
+NOT DB_LeaderLibLeaderTrader_AvoidingCombat(_CombatID);
 
 IF
 TimerFinished("LLLIB_Timers_LeaderTrader_CombatEnded")
 AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
+DB_LeaderLibLeaderTrader(_LeaderTrader)
 THEN
 SetOnStage(_LeaderTrader, 1);
 ObjectClearFlag(_LeaderTrader, "LLLIB_LeaderTrader_Hiding");
@@ -379,7 +379,7 @@ ApplyStatus(_LeaderTrader, "INVISIBLE", 6.0, 1);
 IF
 CharacterStatusRemoved(_LeaderTrader, "INVISIBLE", _)
 AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
+DB_LeaderLibLeaderTrader(_LeaderTrader)
 AND
 ObjectGetFlag(_LeaderTrader, "LLLIB_LeaderTrader_WasHiding", 1)
 THEN
@@ -389,11 +389,11 @@ ObjectClearFlag(_LeaderTrader, "LLLIB_LeaderTrader_WasHiding");
 IF
 ObjectFlagCleared("LLLIB_LeaderTrader_WasHiding", (CHARACTERGUID)_LeaderTrader, _)
 AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
+DB_LeaderLibLeaderTrader(_LeaderTrader)
 AND
 DB_LeaderLib_Traders_Active(_LeaderTrader, _TraderID, _Level)
 AND
-DB_LLLIB_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID)
+DB_LeaderLibTraders_Seat(_TraderID, _Level, _Seat, _RequirementID)
 THEN
 //Reset the chair logic
 ClearVarObject(_LeaderTrader, "Seat");
@@ -404,21 +404,21 @@ SetVarObject(_LeaderTrader, "Seat", _Seat);
 IF
 AttackedByObject((CHARACTERGUID)_LeaderTrader, (CHARACTERGUID)_AttackerOwner, _Attacker, _DamageType, _DamageSource)
 AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
+DB_LeaderLibLeaderTrader(_LeaderTrader)
 AND
 CharacterIsPlayer(_AttackerOwner, 1)
 AND
-NOT DB_LLLIB_LeaderTrader_IsRespondingToAttack(_)
+NOT DB_LeaderLibLeaderTrader_IsRespondingToAttack(_)
 THEN
-DB_LLLIB_LeaderTrader_IsRespondingToAttack(1);
+DB_LeaderLibLeaderTrader_IsRespondingToAttack(1);
 Proc_StartDialog(1, "LLLIB_LeaderTrader_AttackResponse", _LeaderTrader);
 
 IF
 AutomatedDialogEnded("LLLIB_LeaderTrader_AttackResponse", _Instance)
 AND
-DB_LLLIB_LeaderTrader_IsRespondingToAttack(_Val)
+DB_LeaderLibLeaderTrader_IsRespondingToAttack(_Val)
 THEN
-NOT DB_LLLIB_LeaderTrader_IsRespondingToAttack(_Val);
+NOT DB_LeaderLibLeaderTrader_IsRespondingToAttack(_Val);
 //END_REGION
 
 //REGION SPAWN_EVENT
@@ -453,7 +453,7 @@ TimerCancel("LLLIB_LeaderTrader_MoveFailsafeTimer");
 IF
 TimerFinished("LLLIB_LeaderTrader_MoveFailsafeTimer")
 AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
+DB_LeaderLibLeaderTrader(_LeaderTrader)
 AND
 GetPosition(_LeaderTrader, _x,_y,_z)
 THEN
@@ -468,60 +468,60 @@ LLLIB_LeaderTrader_Set(_LeaderTrader);
 PROC
 LLLIB_LeaderTrader_Set((CHARACTERGUID)_Character)
 AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
+DB_LeaderLibLeaderTrader(_LeaderTrader)
 AND
 _Character != _LeaderTrader
 AND
 ObjectExists(_LeaderTrader, 0)
 THEN
-NOT DB_LLLIB_LeaderTrader(_LeaderTrader);
+NOT DB_LeaderLibLeaderTrader(_LeaderTrader);
 
 PROC
 LLLIB_LeaderTrader_Set((CHARACTERGUID)_Character)
 AND
-NOT DB_LLLIB_LeaderTrader(_)
+NOT DB_LeaderLibLeaderTrader(_)
 THEN
-DB_LLLIB_LeaderTrader(_Character);
+DB_LeaderLibLeaderTrader(_Character);
 //END_REGION
 
 //REGION APPEARANCE_CHANGING
 PROC
 LLLIB_LeaderTrader_SetAppearance((CHARACTERGUID)_LeaderTrader, (STRING)_NextTemplate)
 AND
-DB_LLLIB_LeaderTrader_CurrentAppearance(_Template)
+DB_LeaderLibLeaderTrader_CurrentAppearance(_Template)
 AND
 _NextTemplate != _Template
 THEN
-NOT DB_LLLIB_LeaderTrader_CurrentAppearance(_Template);
+NOT DB_LeaderLibLeaderTrader_CurrentAppearance(_Template);
 
 PROC
 LLLIB_LeaderTrader_SetAppearance((CHARACTERGUID)_LeaderTrader, (STRING)_Template)
 AND
-NOT DB_LLLIB_LeaderTrader_CurrentAppearance(_Template)
+NOT DB_LeaderLibLeaderTrader_CurrentAppearance(_Template)
 THEN
 CharacterTransform(_LeaderTrader, _Template, 1, 1, 1, 1, 1, 1, 0);
-DB_LLLIB_LeaderTrader_CurrentAppearance(_Template);
+DB_LeaderLibLeaderTrader_CurrentAppearance(_Template);
 
 IF
 StoryEvent((CHARACTERGUID)_LeaderTrader, "LeaderLib_Events_GenerationComplete")
 AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
+DB_LeaderLibLeaderTrader(_LeaderTrader)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader] Treasure generation complete.");
 
 PROC
 LLLIB_LeaderTrader_OnSpawned((CHARACTERGUID)_LeaderTrader, (STRING)_Level)
 AND
-DB_LLLIB_LeaderTrader_Appearance(_Level, _Template)
+DB_LeaderLibLeaderTrader_Appearance(_Level, _Template)
 THEN
 LLLIB_LeaderTrader_SetAppearance(_LeaderTrader, _Template);
 
 PROC
 LLLIB_LeaderTrader_OnSpawned((CHARACTERGUID)_LeaderTrader, (STRING)_Level)
 AND
-NOT DB_LLLIB_LeaderTrader_Appearance(_Level, _)
+NOT DB_LeaderLibLeaderTrader_Appearance(_Level, _)
 AND
-DB_LLLIB_LeaderTrader_Appearance("Default", _Template)
+DB_LeaderLibLeaderTrader_Appearance("Default", _Template)
 THEN
 LLLIB_LeaderTrader_SetAppearance(_LeaderTrader, _Template);
 
@@ -552,9 +552,9 @@ LeaderLib_Helper_RefreshEquipment(_LeaderTrader);
 IF
 RegionEnded(_Level)
 AND
-DB_LLLIB_LeaderTrader_CurrentAppearance(_Template)
+DB_LeaderLibLeaderTrader_CurrentAppearance(_Template)
 THEN
-NOT DB_LLLIB_LeaderTrader_CurrentAppearance(_Template);
+NOT DB_LeaderLibLeaderTrader_CurrentAppearance(_Template);
 //END_REGION
 
 //REGION TUTORIAL
@@ -577,14 +577,14 @@ NOT DB_LeaderLib_Traders_Active(_LeaderTrader, "LLLIB_LeaderTrader", "TUT_Tutori
 IF
 TimerFinished("LLLIB_Timeers_LeaderTrader_TUTDisappear")
 AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
+DB_LeaderLibLeaderTrader(_LeaderTrader)
 THEN
 SetOnStage(_LeaderTrader, 0);
 
 IF
 RegionEnded("TUT_Tutorial_A")
 AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
+DB_LeaderLibLeaderTrader(_LeaderTrader)
 AND
 DB_TUT_LowerDeck_WindegoSpareCharacters(_LeaderTrader)
 THEN
@@ -595,18 +595,18 @@ NOT DB_TUT_LowerDeck_WindegoSpareCharacters(_LeaderTrader);
 IF
 DialogEnded(_Dialog, _Instance)
 AND
-DB_LLLIB_LeaderTrader_Dialog(_ReferenceName, _Dialog)
+DB_LeaderLibLeaderTrader_Dialog(_ReferenceName, _Dialog)
 AND
 DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
 AND
-NOT DB_LLLIB_LeaderTrader_MetPlayer(_Player)
+NOT DB_LeaderLibLeaderTrader_MetPlayer(_Player)
 THEN
-DB_LLLIB_LeaderTrader_MetPlayer(_Player);
+DB_LeaderLibLeaderTrader_MetPlayer(_Player);
 
 IF
 ObjectFlagSet(_Flag, _Speaker, _Instance)
 AND
-DB_LLLIB_LeaderTrader_IntroDialogRequirements(_Level, _Dialog, _Flag, _RequirementID)
+DB_LeaderLibLeaderTrader_IntroDialogRequirements(_Level, _Dialog, _Flag, _RequirementID)
 AND
 ObjectGetFlag(_Speaker, "LLLIB_LeaderTrader_PlayerIntroducedSelf", 1)
 THEN
@@ -618,16 +618,16 @@ ObjectSetFlag(_Speaker, "LLLIB_LeaderTrader_KnowsPlayer");
 IF
 DB_Dialogs(_LeaderTrader, _Dialog)
 AND
-DB_LLLIB_LeaderTrader((CHARACTERGUID)_LeaderTrader)
+DB_LeaderLibLeaderTrader((CHARACTERGUID)_LeaderTrader)
 AND
-DB_LLLIB_LeaderTrader_IntroDialogRequirements(_Level, _Dialog, _Flag, _RequirementID)
+DB_LeaderLibLeaderTrader_IntroDialogRequirements(_Level, _Dialog, _Flag, _RequirementID)
 THEN
 CharacterSetCanTrade(_LeaderTrader, 0);
 
 IF
 DB_Dialogs(_LeaderTrader, "LLLIB_LeaderTrader_Default")
 AND
-DB_LLLIB_LeaderTrader((CHARACTERGUID)_LeaderTrader)
+DB_LeaderLibLeaderTrader((CHARACTERGUID)_LeaderTrader)
 THEN
 CharacterSetCanTrade(_LeaderTrader, 1);
 //END_REGION
@@ -644,7 +644,7 @@ LLLIB_Dialog_SetNameOverride(_LeaderTrader, "Lothar, Retired Commander");
 IF
 GlobalFlagSet("LeaderLib_DiscoveredLeaderTraderBackground")
 AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
+DB_LeaderLibLeaderTrader(_LeaderTrader)
 THEN
 CharacterSetCustomName(_LeaderTrader, "Lothar, Retired Commander");
 LLLIB_Dialog_SetNameOverride(_LeaderTrader, "Lothar, Retired Commander");
@@ -667,7 +667,7 @@ LLLIB_LeaderTrader_GiveIntroItems(_Speaker);
 PROC
 LLLIB_LeaderTrader_GiveIntroItems((CHARACTERGUID)_Speaker)
 AND
-DB_LLLIB_Settings_ItemTemplates("Book_ModMenu", _ModMenuBookTemplate)
+DB_LeaderLibSettings_ItemTemplates("Book_ModMenu", _ModMenuBookTemplate)
 AND
 ItemTemplateIsInUserInventory(_Speaker, _ModMenuBookTemplate, 0, 0)
 THEN
@@ -676,7 +676,7 @@ ItemTemplateAddTo(_ModMenuBookTemplate, _Speaker, 1);
 PROC
 LLLIB_LeaderTrader_GiveIntroItems((CHARACTERGUID)_Speaker)
 AND
-DB_LLLIB_Settings_ItemTemplates("Book_ModMenu", _ModMenuBookTemplate)
+DB_LeaderLibSettings_ItemTemplates("Book_ModMenu", _ModMenuBookTemplate)
 AND
 DB_IsPlayer(_Player)
 AND
@@ -695,7 +695,7 @@ ItemTemplateAddTo(_ModMenuBookTemplate, _Player, 1);
 IF
 ObjectFlagSet("LLLIB_LeaderTrader_GaveIntroItems", (CHARACTERGUID)_Character, _)
 AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
+DB_LeaderLibLeaderTrader(_LeaderTrader)
 AND
 _Character != _LeaderTrader
 THEN
@@ -707,20 +707,20 @@ ObjectSetFlag(_LeaderTrader, "LLLIB_LeaderTrader_GaveIntroItems");
 IF
 StoryEvent((CHARACTERGUID)_LeaderTrader, "LeaderLib_Events_NewItemsInStock")
 AND
-DB_LLLIB_LeaderTrader(_LeaderTrader)
+DB_LeaderLibLeaderTrader(_LeaderTrader)
 AND
-NOT DB_LLLIB_LeaderTrader_Temp_HasNewItems(_)
+NOT DB_LeaderLibLeaderTrader_Temp_HasNewItems(_)
 THEN
-DB_LLLIB_LeaderTrader_Temp_HasNewItems(1);
+DB_LeaderLibLeaderTrader_Temp_HasNewItems(1);
 
 IF
 DB_Dialogs(_LeaderTrader, _Dialog)
 AND
-DB_LLLIB_LeaderTrader((CHARACTERGUID)_LeaderTrader)
+DB_LeaderLibLeaderTrader((CHARACTERGUID)_LeaderTrader)
 AND
-NOT DB_LLLIB_LeaderTrader_IntroDialogRequirements(_, _Dialog, _, _)
+NOT DB_LeaderLibLeaderTrader_IntroDialogRequirements(_, _Dialog, _, _)
 AND
-DB_LLLIB_LeaderTrader_Temp_HasNewItems(1)
+DB_LeaderLibLeaderTrader_Temp_HasNewItems(1)
 AND
 HasActiveStatus(_LeaderTrader, "LLLIB_NEW_ITEMS", 0)
 THEN
@@ -730,9 +730,9 @@ LLLIB_LeaderTrader_Internal_ClearHasNewItems();
 PROC
 LLLIB_LeaderTrader_Internal_ClearHasNewItems()
 AND
-DB_LLLIB_LeaderTrader_Temp_HasNewItems(_Val)
+DB_LeaderLibLeaderTrader_Temp_HasNewItems(_Val)
 THEN
-NOT DB_LLLIB_LeaderTrader_Temp_HasNewItems(_Val);
+NOT DB_LeaderLibLeaderTrader_Temp_HasNewItems(_Val);
 //END_REGION
 
 //REGION UPDATER
@@ -747,15 +747,15 @@ LeaderLog_Log("SYSTEM", "[LeaderLib:LeaderTrader] Settings updated.");
 PROC
 LLLIB_System_RegisterDatabases()
 THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_MetPlayer", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_Dialog", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_Appearance", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_CurrentAppearance", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_IntroDialogRequirements", 4);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_Registered", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_SetFlags", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LLLIB_LeaderTrader_SetTags", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LeaderLibLeaderTrader", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LeaderLibLeaderTrader_MetPlayer", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LeaderLibLeaderTrader_Dialog", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LeaderLibLeaderTrader_Appearance", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LeaderLibLeaderTrader_CurrentAppearance", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LeaderLibLeaderTrader_IntroDialogRequirements", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LeaderLibLeaderTrader_Registered", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LeaderLibLeaderTrader_SetFlags", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LeaderLibLeaderTrader_SetTags", 2);
 LeaderLog_Log("TRACE", "[LeaderLib:LeaderTrader] Databases registered.");
 //END_REGION
 EXITSECTION

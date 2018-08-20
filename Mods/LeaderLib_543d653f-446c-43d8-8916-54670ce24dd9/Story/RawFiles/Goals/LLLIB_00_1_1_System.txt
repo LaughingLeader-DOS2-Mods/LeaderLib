@@ -163,21 +163,21 @@ LeaderLib_SendEvent("LeaderLib_Debug_PlayerDatabaseReady");
 PROC
 LLLIB_CreateIterator((STRING)_IteratorName, (INTEGER)_MaxInt)
 THEN
-DB_LLLIB_System_Temp_IteratorCreator(_IteratorName, _MaxInt);
-DB_LLLIB_System_Temp_StartIteratorCreator(_IteratorName, 0);
+DB_LeaderLibSystem_Temp_IteratorCreator(_IteratorName, _MaxInt);
+DB_LeaderLibSystem_Temp_StartIteratorCreator(_IteratorName, 0);
 
 IF
-DB_LLLIB_System_Temp_StartIteratorCreator((STRING)_IteratorName, (INTEGER)_CurrentInt)
+DB_LeaderLibSystem_Temp_StartIteratorCreator((STRING)_IteratorName, (INTEGER)_CurrentInt)
 AND
-DB_LLLIB_System_Temp_IteratorCreator(_IteratorName, _MaxInt)
+DB_LeaderLibSystem_Temp_IteratorCreator(_IteratorName, _MaxInt)
 AND
 _CurrentInt < _MaxInt
 AND
 IntegerSum(_CurrentInt, 1, _NextInt)
 THEN
-DB_LLLIB_Iterator(_IteratorName, _CurrentInt);
-NOT DB_LLLIB_System_Temp_StartIteratorCreator(_IteratorName, _CurrentInt);
-DB_LLLIB_System_Temp_StartIteratorCreator(_IteratorName, _NextInt);
+DB_LeaderLibIterator(_IteratorName, _CurrentInt);
+NOT DB_LeaderLibSystem_Temp_StartIteratorCreator(_IteratorName, _CurrentInt);
+DB_LeaderLibSystem_Temp_StartIteratorCreator(_IteratorName, _NextInt);
 //END_REGION
 EXITSECTION
 

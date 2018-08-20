@@ -5,7 +5,7 @@ INITSECTION
 KBSECTION
 //REGION SUMMON_CONTROL
 IF
-CharacterUsedSkillOnTarget(_Player, (CHARACTERGUID)_Summon, "Target_LLLIB_ControlSummon", _)
+CharacterUsedSkillOnTarget(_Player, (CHARACTERGUID)_Summon, "Target_LLLIB_ControlSummon", _, _)
 AND
 CharacterIsSummon(_Summon, 1)
 AND
@@ -14,7 +14,7 @@ THEN
 MakePlayerActive(_Summon);
 
 IF
-CharacterUsedSkillOnTarget(_Player, (CHARACTERGUID)_Follower, "Target_LLLIB_ControlSummon", _)
+CharacterUsedSkillOnTarget(_Player, (CHARACTERGUID)_Follower, "Target_LLLIB_ControlSummon", _, _)
 AND
 CharacterIsSummon(_Follower, 0)
 AND

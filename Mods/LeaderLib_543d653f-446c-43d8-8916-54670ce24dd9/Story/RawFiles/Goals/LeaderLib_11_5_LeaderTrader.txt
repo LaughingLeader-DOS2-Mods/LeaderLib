@@ -32,7 +32,7 @@ DB_LeaderLib_LeaderTrader_Dialog("Arx_Intro", "LeaderLib_LeaderTrader_Arx_Intro"
 LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLib_LeaderTrader_Appearance", 2);
 //Naked version
 DB_LeaderLib_LeaderTrader_Appearance("TUT_Tutorial_A", "LeaderLib_LeaderTrader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e");
-DB_LeaderLib_LeaderTrader_Appearance("LeaderLib_TestLevel", "LeaderLib_LeaderTrader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e");
+DB_LeaderLib_LeaderTrader_Appearance("TestLevel_LL_LeaderLib", "LeaderLib_LeaderTrader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e");
 //For other acts
 DB_LeaderLib_LeaderTrader_Appearance("Default", "LeaderLib_LeaderTrader_Casual_da17fca2-fe16-46d9-80b3-08971a8c8d49");
 
@@ -67,7 +67,7 @@ DB_LeaderLib_LeaderTrader_CurrentAppearance("LeaderLib_LeaderTrader_Default_e4cb
 
 LeaderLib_Trader_Register_Dialog("LeaderLib_LeaderTrader", "LeaderLib_LeaderTrader_Default"); // Default
 LeaderLib_LeaderTrader_RegisterDialogSettings();
-LeaderLib_Trader_Register_Dialog("LeaderLib_LeaderTrader", "LeaderLib_LeaderTrader_Tutorial_Intro", "LeaderLib_TestLevel", "LeaderLib_LeaderTrader_TUT_IntroPending"); // Debug
+LeaderLib_Trader_Register_Dialog("LeaderLib_LeaderTrader", "LeaderLib_LeaderTrader_Tutorial_Intro", "TestLevel_LL_LeaderLib", "LeaderLib_LeaderTrader_TUT_IntroPending"); // Debug
 
 LeaderLib_Trader_Register_CreationEvent("LeaderLib_LeaderTrader", "LeaderLib_Events_OnLeaderTradeSpawned");
 
@@ -84,9 +84,9 @@ LeaderLib_Trader_Register_PositionObject("LeaderLib_LeaderTrader", "FJ_FortJoy_M
 LeaderLib_Requirements_Add_FlagRequirement("LeaderLib_LeaderTrader_WindegoHasNotCastSpell", "TUT_LowerDeck_WindegoHasCastSpell", "Global", 0);
 LeaderLib_Requirements_Add_FlagRequirement("LeaderLib_LeaderTrader_PartyFoundSeekerCamp", "FTJ_SW_BeenToShelter", "Object", 1);
 LeaderLib_Requirements_Add_RegionRequirement("LeaderLib_RegionIsFortJoy", "FJ_FortJoy_Main");
-LeaderLib_Requirements_Add_RegionRequirement("LeaderLib_RegionIsDebugLevel", "LeaderLib_TestLevel");
+LeaderLib_Requirements_Add_RegionRequirement("LeaderLib_RegionIsDebugLevel", "TestLevel_LL_LeaderLib");
 
-LeaderLib_Trader_Register_StartingGold("LeaderLib_LeaderTrader", "LeaderLib_TestLevel", 20000);
+LeaderLib_Trader_Register_StartingGold("LeaderLib_LeaderTrader", "TestLevel_LL_LeaderLib", 20000);
 LeaderLib_Trader_Register_StartingGold("LeaderLib_LeaderTrader", "TUT_Tutorial_A", 50);
 LeaderLib_Trader_Register_StartingGold("LeaderLib_LeaderTrader", "FJ_FortJoy_Main", 100);
 /*
@@ -117,7 +117,7 @@ LeaderLib_Treasure_Configure_GenerateTreasureEndlessly("LeaderLib.LeaderTrader.M
 //LeaderLib_Treasure_Register_ItemTemplate("LeaderLib.LeaderTrader.ModBooks", "CON_Potion_Fire_Res_A_e78b642c-0216-4df4-b691-a41ff4747b6a", 8);
 //LeaderLib_Treasure_Register_ItemStat("LeaderLib.LeaderTrader.ModBooks", "WPN_Cheat_Sword_1H_RuneSlot2", 1);
 
-LeaderLib_LeaderTrader_RegisterDeckSeat("LeaderLib_TestLevel", ITEMGUID_LeaderLib_DebugLevel_TraderChair_8468a5fd-00a4-42c2-aa15-1b1a25e46738);
+LeaderLib_LeaderTrader_RegisterDeckSeat("TestLevel_LL_LeaderLib", ITEMGUID_LeaderLib_DebugLevel_TraderChair_8468a5fd-00a4-42c2-aa15-1b1a25e46738);
 LeaderLib_LeaderTrader_RegisterDeckSeat("TUT_Tutorial_A", ITEMGUID_S_TUT_KitchenBench_e628d79a-8f7b-4681-a55f-57f0b42a29db, "LeaderLib_LeaderTrader_WindegoHasNotCastSpell");
 LeaderLib_LeaderTrader_RegisterDeckSeat("LV_HoE_Main", ITEMGUID_FUR_Humans_Citz_Stool_C_005_a2a11ad5-645b-4719-bfd5-be04f32fbb2a);
 LeaderLib_LeaderTrader_RegisterDeckSeat("RC_Main", ITEMGUID_FUR_Humans_Citz_Stool_C_005_a2a11ad5-645b-4719-bfd5-be04f32fbb2a);
@@ -535,7 +535,7 @@ LeaderLib_CreateByStat_Start(_LeaderTrader, "LeaderLib_LeaderTrader_PurgedEquipm
 DB_TUT_LowerDeck_WindegoSpareCharacters(_LeaderTrader); // To avoid exploding
 
 PROC
-LeaderLib_LeaderTrader_OnSpawned((CHARACTERGUID)_LeaderTrader, "LeaderLib_TestLevel")
+LeaderLib_LeaderTrader_OnSpawned((CHARACTERGUID)_LeaderTrader, "TestLevel_LL_LeaderLib")
 THEN
 //CharacterTransform(_LeaderTrader, "LeaderLib_LeaderTrader_Act1_da17fca2-fe16-46d9-80b3-08971a8c8d49", 1, 1, 1, 1, 1, 1, 0);
 LeaderLib_CreateByStat_CreateQueue(_LeaderTrader, "LeaderLib_LeaderTrader_PurgedEquipmentCreation_", 100, 500, "LeaderLib_Events_OnLeaderTraderTutorialItemsCreated");

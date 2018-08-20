@@ -4,7 +4,14 @@ INITSECTION
 LeaderLib_Debug_RunTests();
 KBSECTION
 IF
-RegionStarted("LeaderLib_TestLevel")
+GameModeStarted(_GameMode, 1)
+AND
+NOT DB_Origins(_)
+THEN
+DB_Origins((CHARACTERGUID)S_GLO_CharacterCreationDummy_001_da072fe7-fdd5-42ae-9139-8bd4b9fca406);
+
+IF
+RegionStarted("TestLevel_LL_LeaderLib")
 THEN
 GlobalSetFlag("LeaderLog_Debug_Enabled");
 GlobalSetFlag("LeaderLog_Trace_Enabled");

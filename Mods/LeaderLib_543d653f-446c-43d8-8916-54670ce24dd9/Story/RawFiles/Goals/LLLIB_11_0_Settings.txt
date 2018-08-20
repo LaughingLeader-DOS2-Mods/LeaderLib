@@ -3,12 +3,12 @@ SubGoalCombiner SGC_AND
 INITSECTION
 LeaderLib_Settings_InitSettings();
 
-//DB_LeaderLibEquipmentSlots(_Slot)
-//DB_LeaderLibSettings_ItemTemplates(_Name, _ItemTemplate)
-//DB_LeaderLibSettings_DialogVariables(_VariableName, _VariableValue)
-//DB_LeaderLibSettings_QueueRates(_ReferenceName, _TickRate, _TimeoutRate)
-//DB_LeaderLibSettings_Temp_RegisteredModsList(_Str)
-//DB_LeaderLibSettings_Temp_ActiveModText(_ModID, _Author, _Str)
+//DB_LeaderLib_EquipmentSlots(_Slot)
+//DB_LeaderLib_Settings_ItemTemplates(_Name, _ItemTemplate)
+//DB_LeaderLib_Settings_DialogVariables(_VariableName, _VariableValue)
+//DB_LeaderLib_Settings_QueueRates(_ReferenceName, _TickRate, _TimeoutRate)
+//DB_LeaderLib_Settings_Temp_RegisteredModsList(_Str)
+//DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, _Str)
 KBSECTION
 //REGION SETTINGS
 PROC
@@ -17,104 +17,104 @@ THEN
 LeaderLib_Settings_InitEquipmentSlots();
 LeaderLib_Settings_InitStats();
 
-SysClear("DB_LeaderLibSettings_QueueRates", 3);
-DB_LeaderLibSettings_QueueRates("TraderSpawn", 500, 2000);
-DB_LeaderLibSettings_QueueRates("TraderCheck", 100, 500);
-DB_LeaderLibSettings_QueueRates("Treasure", 100, 60000);
-DB_LeaderLibSettings_QueueRates("ItemGeneration", 0, 5000);
+SysClear("DB_LeaderLib_Settings_QueueRates", 3);
+DB_LeaderLib_Settings_QueueRates("TraderSpawn", 500, 2000);
+DB_LeaderLib_Settings_QueueRates("TraderCheck", 100, 500);
+DB_LeaderLib_Settings_QueueRates("Treasure", 100, 60000);
+DB_LeaderLib_Settings_QueueRates("ItemGeneration", 0, 5000);
 
-SysClear("DB_LeaderLibSettings_ItemTemplates", 2);
-DB_LeaderLibSettings_ItemTemplates("Book_ModMenu", "LLLIB_BOOK_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108");
+SysClear("DB_LeaderLib_Settings_ItemTemplates", 2);
+DB_LeaderLib_Settings_ItemTemplates("Book_ModMenu", "LLLIB_BOOK_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108");
 
-SysClear("DB_LeaderLibSettings_DialogVariables", 2);
-DB_LeaderLibSettings_DialogVariables("PlayerName", "LLLIB_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3");
-DB_LeaderLibSettings_DialogVariables("SpeakerName", "LLLIB_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b");
-DB_LeaderLibSettings_DialogVariables("ModMenu_PageInfo", "LLLIB_ModMenu_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156");
-DB_LeaderLibSettings_DialogVariables("ModList", "LLLIB_Settings_ModList_50c55fbe-ad1e-490e-92d1-8836ca42ca12");
+SysClear("DB_LeaderLib_Settings_DialogVariables", 2);
+DB_LeaderLib_Settings_DialogVariables("PlayerName", "LLLIB_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3");
+DB_LeaderLib_Settings_DialogVariables("SpeakerName", "LLLIB_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b");
+DB_LeaderLib_Settings_DialogVariables("ModMenu_PageInfo", "LLLIB_ModMenu_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156");
+DB_LeaderLib_Settings_DialogVariables("ModList", "LLLIB_Settings_ModList_50c55fbe-ad1e-490e-92d1-8836ca42ca12");
 
 PROC
 LeaderLib_Settings_InitEquipmentSlots()
 AND
-NOT DB_LeaderLibEquipmentSlots(_)
+NOT DB_LeaderLib_EquipmentSlots(_)
 THEN
-DB_LeaderLibEquipmentSlots("Weapon");
-DB_LeaderLibEquipmentSlots("Shield");
-DB_LeaderLibEquipmentSlots("Helmet");
-DB_LeaderLibEquipmentSlots("Breast");
-DB_LeaderLibEquipmentSlots("Leggings");
-DB_LeaderLibEquipmentSlots("Ring");
-DB_LeaderLibEquipmentSlots("Belt");
-DB_LeaderLibEquipmentSlots("Boots");
-DB_LeaderLibEquipmentSlots("Gloves");
-DB_LeaderLibEquipmentSlots("Amulet");
-DB_LeaderLibEquipmentSlots("Ring2");
+DB_LeaderLib_EquipmentSlots("Weapon");
+DB_LeaderLib_EquipmentSlots("Shield");
+DB_LeaderLib_EquipmentSlots("Helmet");
+DB_LeaderLib_EquipmentSlots("Breast");
+DB_LeaderLib_EquipmentSlots("Leggings");
+DB_LeaderLib_EquipmentSlots("Ring");
+DB_LeaderLib_EquipmentSlots("Belt");
+DB_LeaderLib_EquipmentSlots("Boots");
+DB_LeaderLib_EquipmentSlots("Gloves");
+DB_LeaderLib_EquipmentSlots("Amulet");
+DB_LeaderLib_EquipmentSlots("Ring2");
 
 PROC
 LeaderLib_Settings_InitEquipmentSlots()
 AND
 LeaderLib_Array_QRY_EmptyLength("LeaderLib_EquipmentSlots")
 AND
-DB_LeaderLibEquipmentSlots(_Slot)
+DB_LeaderLib_EquipmentSlots(_Slot)
 THEN
 LeaderLib_Array_AddToArray("LeaderLib_EquipmentSlots", _Slot);
 
 PROC
 LeaderLib_Settings_InitStats()
 AND
-NOT DB_LeaderLibAttributes(_)
+NOT DB_LeaderLib_Attributes(_)
 THEN
-DB_LeaderLibAttributes("Strength");
-DB_LeaderLibAttributes("Finesse");
-DB_LeaderLibAttributes("Intelligence");
-DB_LeaderLibAttributes("Constitution");
-DB_LeaderLibAttributes("Memory");
-DB_LeaderLibAttributes("Wits");
+DB_LeaderLib_Attributes("Strength");
+DB_LeaderLib_Attributes("Finesse");
+DB_LeaderLib_Attributes("Intelligence");
+DB_LeaderLib_Attributes("Constitution");
+DB_LeaderLib_Attributes("Memory");
+DB_LeaderLib_Attributes("Wits");
 
 
 PROC
 LeaderLib_Settings_InitStats()
 AND
-NOT DB_LeaderLibAbilities(_)
+NOT DB_LeaderLib_Abilities(_)
 THEN
-DB_LeaderLibAbilities("WarriorLore");
-DB_LeaderLibAbilities("RangerLore");
-DB_LeaderLibAbilities("RogueLore");
-DB_LeaderLibAbilities("SingleHanded");
-DB_LeaderLibAbilities("TwoHanded");
-DB_LeaderLibAbilities("Reflection");
-DB_LeaderLibAbilities("Ranged");
-DB_LeaderLibAbilities("Shield");
-DB_LeaderLibAbilities("Reflexes");
-DB_LeaderLibAbilities("PhysicalArmorMastery");
-DB_LeaderLibAbilities("Sourcery");
-DB_LeaderLibAbilities("Telekinesis");
-DB_LeaderLibAbilities("FireSpecialist");
-DB_LeaderLibAbilities("WaterSpecialist");
-DB_LeaderLibAbilities("AirSpecialist");
-DB_LeaderLibAbilities("EarthSpecialist");
-DB_LeaderLibAbilities("Necromancy");
-DB_LeaderLibAbilities("Summoning");
-DB_LeaderLibAbilities("Polymorph");
-DB_LeaderLibAbilities("Repair");
-DB_LeaderLibAbilities("Sneaking");
-DB_LeaderLibAbilities("Pickpocket");
-DB_LeaderLibAbilities("Thievery");
-DB_LeaderLibAbilities("Loremaster");
-DB_LeaderLibAbilities("Crafting");
-DB_LeaderLibAbilities("Barter");
-DB_LeaderLibAbilities("Charm");
-DB_LeaderLibAbilities("Intimidate");
-DB_LeaderLibAbilities("Reason");
-DB_LeaderLibAbilities("Persuasion");
-DB_LeaderLibAbilities("Leadership");
-DB_LeaderLibAbilities("Luck");
-DB_LeaderLibAbilities("DualWielding");
-DB_LeaderLibAbilities("Wand");
-DB_LeaderLibAbilities("MagicArmorMastery");
-DB_LeaderLibAbilities("VitalityMastery");
-DB_LeaderLibAbilities("Perseverance");
-DB_LeaderLibAbilities("Runecrafting");
-DB_LeaderLibAbilities("Brewmaster");
+DB_LeaderLib_Abilities("WarriorLore");
+DB_LeaderLib_Abilities("RangerLore");
+DB_LeaderLib_Abilities("RogueLore");
+DB_LeaderLib_Abilities("SingleHanded");
+DB_LeaderLib_Abilities("TwoHanded");
+DB_LeaderLib_Abilities("Reflection");
+DB_LeaderLib_Abilities("Ranged");
+DB_LeaderLib_Abilities("Shield");
+DB_LeaderLib_Abilities("Reflexes");
+DB_LeaderLib_Abilities("PhysicalArmorMastery");
+DB_LeaderLib_Abilities("Sourcery");
+DB_LeaderLib_Abilities("Telekinesis");
+DB_LeaderLib_Abilities("FireSpecialist");
+DB_LeaderLib_Abilities("WaterSpecialist");
+DB_LeaderLib_Abilities("AirSpecialist");
+DB_LeaderLib_Abilities("EarthSpecialist");
+DB_LeaderLib_Abilities("Necromancy");
+DB_LeaderLib_Abilities("Summoning");
+DB_LeaderLib_Abilities("Polymorph");
+DB_LeaderLib_Abilities("Repair");
+DB_LeaderLib_Abilities("Sneaking");
+DB_LeaderLib_Abilities("Pickpocket");
+DB_LeaderLib_Abilities("Thievery");
+DB_LeaderLib_Abilities("Loremaster");
+DB_LeaderLib_Abilities("Crafting");
+DB_LeaderLib_Abilities("Barter");
+DB_LeaderLib_Abilities("Charm");
+DB_LeaderLib_Abilities("Intimidate");
+DB_LeaderLib_Abilities("Reason");
+DB_LeaderLib_Abilities("Persuasion");
+DB_LeaderLib_Abilities("Leadership");
+DB_LeaderLib_Abilities("Luck");
+DB_LeaderLib_Abilities("DualWielding");
+DB_LeaderLib_Abilities("Wand");
+DB_LeaderLib_Abilities("MagicArmorMastery");
+DB_LeaderLib_Abilities("VitalityMastery");
+DB_LeaderLib_Abilities("Perseverance");
+DB_LeaderLib_Abilities("Runecrafting");
+DB_LeaderLib_Abilities("Brewmaster");
 //END_REGION
 
 //REGION UPDATER
@@ -129,11 +129,11 @@ LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_
 PROC
 LeaderLib_System_RegisterDatabases()
 THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LeaderLibSettings_QueueRates", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LeaderLibSettings_ItemTemplates", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LeaderLibSettings_DialogVariables", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LeaderLibSettings_Temp_RegisteredModsList", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LeaderLibSettings_Temp_ActiveModText", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LeaderLib_Settings_QueueRates", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LeaderLib_Settings_ItemTemplates", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LeaderLib_Settings_DialogVariables", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LeaderLib_Settings_Temp_RegisteredModsList", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LeaderLib_Settings_Temp_ActiveModText", 3);
 LeaderLog_Log("TRACE", "[LeaderLib:Settings] Databases registered.");
 //END_REGION
 
@@ -147,16 +147,16 @@ LeaderLib_Settings_BuildModList();
 PROC
 LeaderLib_Settings_BuildModList()
 AND
-DB_LeaderLibSettings_Temp_ActiveModText(_ModID, _Author, _Str)
+DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, _Str)
 THEN
-NOT DB_LeaderLibSettings_Temp_ActiveModText(_ModID, _Author, _Str);
+NOT DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, _Str);
 
 PROC
 LeaderLib_Settings_BuildModList()
 AND
-NOT DB_LeaderLibSettings_Temp_RegisteredModsList(_)
+NOT DB_LeaderLib_Settings_Temp_RegisteredModsList(_)
 THEN
-DB_LeaderLibSettings_Temp_RegisteredModsList("");
+DB_LeaderLib_Settings_Temp_RegisteredModsList("");
 
 QRY
 LeaderLib_Settings_QRY_SetActiveText((STRING)_ModID, (STRING)_Author)
@@ -165,7 +165,7 @@ LeaderUpdater_QRY_ModRegisteredActiveGoal(_ModID, _Author)
 AND
 LeaderUpdater_QRY_ModIsActive(_ModID, _Author)
 THEN
-DB_LeaderLibSettings_Temp_ActiveModText(_ModID, _Author, " <b>(Active)</b>");
+DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, " <b>(Active)</b>");
 
 QRY
 LeaderLib_Settings_QRY_SetActiveText((STRING)_ModID, (STRING)_Author)
@@ -174,46 +174,46 @@ LeaderUpdater_QRY_ModRegisteredActiveGoal(_ModID, _Author)
 AND
 NOT LeaderUpdater_QRY_ModIsActive(_ModID, _Author)
 THEN
-DB_LeaderLibSettings_Temp_ActiveModText(_ModID, _Author, " <b>(Deactivated)</b>");
+DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, " <b>(Deactivated)</b>");
 
 QRY
 LeaderLib_Settings_QRY_SetActiveText((STRING)_ModID, (STRING)_Author)
 AND
 NOT LeaderUpdater_QRY_ModRegisteredActiveGoal(_ModID, _Author)
 THEN
-DB_LeaderLibSettings_Temp_ActiveModText(_ModID, _Author, " <b>(No Active Goal Registered)</b>");
+DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, " <b>(No Active Goal Registered)</b>");
 
 PROC
 LeaderLib_Settings_BuildModList()
 AND
 DB_Mods_Registered(_ModID, _Author, _Version)
 AND
-DB_LeaderLibSettings_Temp_RegisteredModsList(_Str)
+DB_LeaderLib_Settings_Temp_RegisteredModsList(_Str)
 AND
 StringConcatenate("<b>", _ModID, _NameStr)
 AND
 LeaderLib_Settings_QRY_SetActiveText(_ModID, _Author)
 AND
-DB_LeaderLibSettings_Temp_ActiveModText(_ModID, _Author, _ActiveStr)
+DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, _ActiveStr)
 AND
 LeaderLog_QRY_Log("COMBINE", _Str, _NameStr, "</b> (", _Version, ") by ",_Author, _ActiveStr, "<br>")
 AND
 DB_LeaderLog_Temp_CombinedString(_CombinedStr)
 THEN
-NOT DB_LeaderLibSettings_Temp_RegisteredModsList(_Str);
-DB_LeaderLibSettings_Temp_RegisteredModsList(_CombinedStr);
+NOT DB_LeaderLib_Settings_Temp_RegisteredModsList(_Str);
+DB_LeaderLib_Settings_Temp_RegisteredModsList(_CombinedStr);
 NOT DB_LeaderLog_Temp_CombinedString(_CombinedStr);
-NOT DB_LeaderLibSettings_Temp_ActiveModText(_ModID, _Author, _ActiveStr);
+NOT DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, _ActiveStr);
 
 PROC
 LeaderLib_Settings_BuildModList()
 AND
-DB_LeaderLibSettings_DialogVariables("ModList", _DialogVar)
+DB_LeaderLib_Settings_DialogVariables("ModList", _DialogVar)
 AND
-DB_LeaderLibSettings_Temp_RegisteredModsList(_Str)
+DB_LeaderLib_Settings_Temp_RegisteredModsList(_Str)
 THEN
 DialogSetVariableString("LLLIB_SettingsMenu", _DialogVar, _Str);
-NOT DB_LeaderLibSettings_Temp_RegisteredModsList(_Str);
+NOT DB_LeaderLib_Settings_Temp_RegisteredModsList(_Str);
 //END_REGION
 
 //REGION SETTINGS_MENU

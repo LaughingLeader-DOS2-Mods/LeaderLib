@@ -17,17 +17,17 @@ LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Settings updated.");
 PROC
 LeaderLib_Updater_RegisterDatabasesOnce()
 AND
-NOT DB_LeaderLibUpdater_RegisteredDatabases(_)
+NOT DB_LeaderLib_Updater_RegisteredDatabases(_)
 THEN
 LeaderLib_System_RegisterDatabases();
-DB_LeaderLibUpdater_RegisteredDatabases(1);
+DB_LeaderLib_Updater_RegisteredDatabases(1);
 
 PROC
 LeaderLib_System_RegisterDatabases()
 THEN
 LeaderLib_Register_ModMenu("LaughingLeader_LeaderLib", "[LeaderLib] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderUpdater_Register_ActiveGoal("LeaderLib", "LaughingLeader", "LLLIB_ZZZ_Updater");
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Updater", "DB_LeaderLibUpdater_RegisteredDatabases", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Updater", "DB_LeaderLib_Updater_RegisteredDatabases", 1);
 LeaderLog_Log("TRACE", "[LeaderLib:Updater] Databases registered.");
 
 /*
@@ -109,7 +109,7 @@ DB_NOOP(1);
 PROC
 LeaderLib_Updater_CloseDialogs()
 AND
-DB_LeaderLibActiveDialogs(_Instance)
+DB_LeaderLib_ActiveDialogs(_Instance)
 AND
 DialogGetInvolvedPlayer(_Instance, 1, _Player)
 THEN
@@ -146,7 +146,7 @@ LeaderLib_Updater_DestroyItems()
 AND
 DB_IsPlayer(_Player)
 AND
-DB_LeaderLibItemTemplates(_Name, _Template)
+DB_LeaderLib_ItemTemplates(_Name, _Template)
 AND
 GetItemForItemTemplateInInventory(_Player, _Template, _Item)
 THEN

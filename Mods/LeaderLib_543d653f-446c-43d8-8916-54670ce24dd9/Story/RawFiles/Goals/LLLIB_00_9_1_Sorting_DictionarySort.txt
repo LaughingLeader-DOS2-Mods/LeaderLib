@@ -1,34 +1,34 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-//DB_LeaderLibCodex(_Index, _Char)
-//DB_LeaderLibCodex_Iterator(_Index, _IndexStr)
+//DB_LeaderLib_Codex(_Index, _Char)
+//DB_LeaderLib_Codex_Iterator(_Index, _IndexStr)
 /*Input*/
-//DB_LeaderLibDictionarySort_Temp_StringQueue(_DictionaryID, _ID, _StringEntry)
+//DB_LeaderLib_DictionarySort_Temp_StringQueue(_DictionaryID, _ID, _StringEntry)
 /*Sorting Vars*/
-//DB_LeaderLibDictionarySort_SortingStarted(_DictionaryID, _Val)
-//DB_LeaderLibDictionarySort_CurrentlySorting(_DictionaryID, _Val)
-//DB_LeaderLibDictionarySort_TimerRunning(_DictionaryID, _TimerName)
-//DB_LeaderLibDictionarySort_SortingComplete(_DictionaryID)
+//DB_LeaderLib_DictionarySort_SortingStarted(_DictionaryID, _Val)
+//DB_LeaderLib_DictionarySort_CurrentlySorting(_DictionaryID, _Val)
+//DB_LeaderLib_DictionarySort_TimerRunning(_DictionaryID, _TimerName)
+//DB_LeaderLib_DictionarySort_SortingComplete(_DictionaryID)
 /*TIMERS*/
-//DB_LeaderLibDictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate)
-//DB_LeaderLibDictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex)
+//DB_LeaderLib_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate)
+//DB_LeaderLib_DictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex)
 /*DEBUG*/
-//DB_LeaderLibDictionarySort_TotalTime(_DictionaryID, _TimeTaken)
+//DB_LeaderLib_DictionarySort_TotalTime(_DictionaryID, _TimeTaken)
 KBSECTION
 //REGION STRING_ADDING
 //Run this first to add strings to sort.
 PROC
 LeaderLib_DictionarySort_AddString((STRING)_DictionaryID, (STRING)_ID, (STRING)_StringEntry)
 AND
-NOT DB_LeaderLibDictionarySort_Temp_StringQueue(_DictionaryID, _ID, _StringEntry)
+NOT DB_LeaderLib_DictionarySort_Temp_StringQueue(_DictionaryID, _ID, _StringEntry)
 THEN
-DB_LeaderLibDictionarySort_Temp_StringQueue(_DictionaryID, _ID, _StringEntry);
+DB_LeaderLib_DictionarySort_Temp_StringQueue(_DictionaryID, _ID, _StringEntry);
 
 QRY
 LeaderLib_DictionarySort_QRY_QueueEmpty((STRING)_DictionaryID)
 AND
-NOT DB_LeaderLibDictionarySort_Temp_StringQueue(_DictionaryID, _, _)
+NOT DB_LeaderLib_DictionarySort_Temp_StringQueue(_DictionaryID, _, _)
 THEN
 DB_NOOP(1);
 //END_REGION
@@ -49,18 +49,18 @@ LeaderLib_DictionarySort_StartSorting(_DictionaryID, _TickRate, _CompleteEvent, 
 PROC
 LeaderLib_DictionarySort_StartSorting((STRING)_DictionaryID, (INTEGER)_TickRate, (STRING)_CompleteEvent, (INTEGER)_EntryTickRate)
 AND
-DB_LeaderLibDictionarySort_SortingComplete(_DictionaryID)
+DB_LeaderLib_DictionarySort_SortingComplete(_DictionaryID)
 THEN
 LeaderLib_DictionarySort_CleanupLastTrackedTime(_DictionaryID);
-NOT DB_LeaderLibDictionarySort_SortingComplete(_DictionaryID);
+NOT DB_LeaderLib_DictionarySort_SortingComplete(_DictionaryID);
 
 PROC
 LeaderLib_DictionarySort_StartSorting((STRING)_DictionaryID, (INTEGER)_TickRate, (STRING)_CompleteEvent, (INTEGER)_EntryTickRate)
 AND
 StringConcatenate("LLLIB_Timers_Sorter_SortDictionary_", _DictionaryID, _TimerName)
 THEN
-DB_LeaderLibDictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate);
-DB_LeaderLibDictionarySort_SortingStarted(_DictionaryID, 1);
+DB_LeaderLib_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate);
+DB_LeaderLib_DictionarySort_SortingStarted(_DictionaryID, 1);
 LeaderLib_DictionarySort_Internal_OnTick(_DictionaryID);
 //END_REGION
 
@@ -68,21 +68,21 @@ LeaderLib_DictionarySort_Internal_OnTick(_DictionaryID);
 PROC
 LeaderLib_DictionarySort_StopSorting((STRING)_DictionaryID)
 AND
-DB_LeaderLibDictionarySort_TimerRunning(_DictionaryID, _TimerName)
+DB_LeaderLib_DictionarySort_TimerRunning(_DictionaryID, _TimerName)
 THEN
 TimerCancel(_TimerName);
 
 PROC
 LeaderLib_DictionarySort_StopSorting((STRING)_DictionaryID)
 AND
-DB_LeaderLibDictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex)
+DB_LeaderLib_DictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex)
 THEN
 TimerCancel(_TimerName);
 
 PROC
 LeaderLib_DictionarySort_StopSorting((STRING)_DictionaryID)
 AND
-DB_LeaderLibDictionarySort_SortingStarted(_DictionaryID, _)
+DB_LeaderLib_DictionarySort_SortingStarted(_DictionaryID, _)
 THEN
 LeaderLib_DictionarySort_CleanupJob(_DictionaryID);
 LeaderLib_DictionarySort_CleanupLastTrackedTime(_DictionaryID);
@@ -93,11 +93,11 @@ LeaderLog_Log("DEBUG", "[LeaderLib:DictionarySort:StopSorting] Sorting stopped f
 PROC
 LeaderLib_DictionarySort_SortingComplete((STRING)_DictionaryID)
 AND
-DB_LeaderLibDictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate)
+DB_LeaderLib_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate)
 AND
-NOT DB_LeaderLibDictionarySort_SortingComplete(_DictionaryID)
+NOT DB_LeaderLib_DictionarySort_SortingComplete(_DictionaryID)
 THEN
-DB_LeaderLibDictionarySort_SortingComplete(_DictionaryID);
+DB_LeaderLib_DictionarySort_SortingComplete(_DictionaryID);
 LeaderLog_Log("DEBUG", "[LeaderLib:DictionarySort:SortingComplete] Sorting complete for '",_DictionaryID,"'. Sending completion event [",_CompleteEvent,"].");
 LeaderLib_SendEvent(_CompleteEvent);
 //END_REGION
@@ -106,28 +106,28 @@ LeaderLib_SendEvent(_CompleteEvent);
 PROC
 LeaderLib_DictionarySort_Debug_AddTickToTotalTime((STRING)_DictionaryID, (INTEGER)_TickRate)
 AND
-NOT DB_LeaderLibDictionarySort_TotalTime(_DictionaryID, _)
+NOT DB_LeaderLib_DictionarySort_TotalTime(_DictionaryID, _)
 THEN
-DB_LeaderLibDictionarySort_TotalTime(_DictionaryID, 0);
+DB_LeaderLib_DictionarySort_TotalTime(_DictionaryID, 0);
 
 PROC
 LeaderLib_DictionarySort_Debug_AddTickToTotalTime((STRING)_DictionaryID, (INTEGER)_TickRate)
 AND
 _TickRate > 0
 AND
-DB_LeaderLibDictionarySort_TotalTime(_DictionaryID, _TimeTaken)
+DB_LeaderLib_DictionarySort_TotalTime(_DictionaryID, _TimeTaken)
 AND
 IntegerSum(_TimeTaken, _TickRate, _NewTime)
 THEN
-NOT DB_LeaderLibDictionarySort_TotalTime(_DictionaryID, _TimeTaken);
-DB_LeaderLibDictionarySort_TotalTime(_DictionaryID, _NewTime);
+NOT DB_LeaderLib_DictionarySort_TotalTime(_DictionaryID, _TimeTaken);
+DB_LeaderLib_DictionarySort_TotalTime(_DictionaryID, _NewTime);
 
 PROC
 LeaderLib_DictionarySort_SortingComplete((STRING)_DictionaryID)
 AND
-DB_LeaderLibDictionarySort_TotalTime(_DictionaryID, _TimeTaken)
+DB_LeaderLib_DictionarySort_TotalTime(_DictionaryID, _TimeTaken)
 AND
-DB_LeaderLibArray_Length(_DictionaryID, _Length)
+DB_LeaderLib_Array_Length(_DictionaryID, _Length)
 AND
 IntegertoString(_TimeTaken, _TimeStr)
 AND
@@ -145,13 +145,13 @@ LeaderLib_DictionarySort_CleanupJob(_DictionaryID);
 PROC
 LeaderLib_DictionarySort_Internal_NextTick((STRING)_DictionaryID)
 AND
-DB_LeaderLibDictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate)
+DB_LeaderLib_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate)
 AND
-NOT DB_LeaderLibDictionarySort_TimerRunning(_DictionaryID, _TimerName)
+NOT DB_LeaderLib_DictionarySort_TimerRunning(_DictionaryID, _TimerName)
 AND
 _TickRate > 0
 THEN
-DB_LeaderLibDictionarySort_TimerRunning(_DictionaryID, _TimerName);
+DB_LeaderLib_DictionarySort_TimerRunning(_DictionaryID, _TimerName);
 //LeaderLog_Log("TRACE", "[LeaderLib:DictionarySort] Starting next tick for '",_DictionaryID,"'.");
 LeaderLib_DictionarySort_Debug_AddTickToTotalTime(_DictionaryID, _TickRate);
 TimerLaunch(_TimerName, _TickRate);
@@ -159,14 +159,14 @@ TimerLaunch(_TimerName, _TickRate);
 PROC
 LeaderLib_DictionarySort_Internal_NextTick((STRING)_DictionaryID)
 AND
-DB_LeaderLibDictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate)
+DB_LeaderLib_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate)
 AND
-NOT DB_LeaderLibDictionarySort_TimerRunning(_DictionaryID, _TimerName)
+NOT DB_LeaderLib_DictionarySort_TimerRunning(_DictionaryID, _TimerName)
 AND
 _TickRate <= 0
 THEN
 //Needs to be delayed by a frame to avoid recursive crashing
-DB_LeaderLibDictionarySort_TimerRunning(_DictionaryID, _TimerName);
+DB_LeaderLib_DictionarySort_TimerRunning(_DictionaryID, _TimerName);
 //LeaderLib_DictionarySort_Debug_AddTickToTotalTime(_DictionaryID, 1);
 //TimerLaunch(_TimerName, 1);
 LeaderLib_SendEvent(_TimerName);
@@ -174,23 +174,23 @@ LeaderLib_SendEvent(_TimerName);
 IF
 StoryEvent(_, _TimerName)
 AND
-DB_LeaderLibDictionarySort_TimerRunning(_DictionaryID, _TimerName)
+DB_LeaderLib_DictionarySort_TimerRunning(_DictionaryID, _TimerName)
 THEN
-NOT DB_LeaderLibDictionarySort_TimerRunning(_DictionaryID, _TimerName);
+NOT DB_LeaderLib_DictionarySort_TimerRunning(_DictionaryID, _TimerName);
 LeaderLib_DictionarySort_Internal_OnTick(_DictionaryID);
 
 PROC
 LeaderLib_DictionarySort_Internal_NextEntryTick((STRING)_DictionaryID, (STRING)_ID)
 AND
-DB_LeaderLibDictionarySort_Temp_SortJob(_DictionaryID, _MainTimerName, _TickRate, _CompleteEvent, _EntryTickRate)
+DB_LeaderLib_DictionarySort_Temp_SortJob(_DictionaryID, _MainTimerName, _TickRate, _CompleteEvent, _EntryTickRate)
 AND
 _EntryTickRate > 0
 AND
-DB_LeaderLibDictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex)
+DB_LeaderLib_DictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex)
 AND
-NOT DB_LeaderLibDictionarySort_TimerRunning(_DictionaryID, _TimerName)
+NOT DB_LeaderLib_DictionarySort_TimerRunning(_DictionaryID, _TimerName)
 THEN
-DB_LeaderLibDictionarySort_TimerRunning(_DictionaryID, _TimerName);
+DB_LeaderLib_DictionarySort_TimerRunning(_DictionaryID, _TimerName);
 //LeaderLog_Log("TRACE", "[LeaderLib:DictionarySort:NextEntryTick] Starting next entry tick for [",_DictionaryID,"][",_ID,"].");
 LeaderLib_DictionarySort_Debug_AddTickToTotalTime(_DictionaryID, _EntryTickRate);
 TimerLaunch(_TimerName, _EntryTickRate);
@@ -198,11 +198,11 @@ TimerLaunch(_TimerName, _EntryTickRate);
 PROC
 LeaderLib_DictionarySort_Internal_NextEntryTick((STRING)_DictionaryID, (STRING)_ID)
 AND
-DB_LeaderLibDictionarySort_Temp_SortJob(_DictionaryID, _MainTimerName, _TickRate, _CompleteEvent, _EntryTickRate)
+DB_LeaderLib_DictionarySort_Temp_SortJob(_DictionaryID, _MainTimerName, _TickRate, _CompleteEvent, _EntryTickRate)
 AND
 _EntryTickRate <= 0
 AND
-DB_LeaderLibDictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex)
+DB_LeaderLib_DictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex)
 THEN
 //LeaderLog_Log("TRACE", "[LeaderLib:DictionarySort:SortJob(TimerFinished)] Ticking entry [",_DictionaryID,"][",_ID,"].");
 LeaderLib_DictionarySort_Internal_OnEntryTick(_DictionaryID, _ID);
@@ -210,14 +210,14 @@ LeaderLib_DictionarySort_Internal_OnEntryTick(_DictionaryID, _ID);
 IF
 TimerFinished(_TimerName)
 AND
-DB_LeaderLibDictionarySort_TimerRunning(_DictionaryID, _TimerName)
+DB_LeaderLib_DictionarySort_TimerRunning(_DictionaryID, _TimerName)
 THEN
-NOT DB_LeaderLibDictionarySort_TimerRunning(_DictionaryID, _TimerName);
+NOT DB_LeaderLib_DictionarySort_TimerRunning(_DictionaryID, _TimerName);
 
 IF
 TimerFinished(_TimerName)
 AND
-DB_LeaderLibDictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate)
+DB_LeaderLib_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate)
 THEN
 //LeaderLog_Log("TRACE", "[LeaderLib:DictionarySort:SortJob(TimerFinished)] Ticking '",_DictionaryID,"'.");
 LeaderLib_DictionarySort_Internal_OnTick(_DictionaryID);
@@ -225,7 +225,7 @@ LeaderLib_DictionarySort_Internal_OnTick(_DictionaryID);
 IF
 TimerFinished(_TimerName)
 AND
-DB_LeaderLibDictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex)
+DB_LeaderLib_DictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex)
 THEN
 //LeaderLog_Log("TRACE", "[LeaderLib:DictionarySort:SortJob(TimerFinished)] Ticking entry [",_DictionaryID,"][",_ID,"].");
 LeaderLib_DictionarySort_Internal_OnEntryTick(_DictionaryID, _ID);
@@ -233,50 +233,50 @@ LeaderLib_DictionarySort_Internal_OnEntryTick(_DictionaryID, _ID);
 PROC
 LeaderLib_DictionarySort_Internal_OnTick((STRING)_DictionaryID)
 AND
-DB_LeaderLibDictionarySort_CurrentlySorting(_DictionaryID, _Val)
+DB_LeaderLib_DictionarySort_CurrentlySorting(_DictionaryID, _Val)
 THEN
-NOT DB_LeaderLibDictionarySort_CurrentlySorting(_DictionaryID, _Val);
+NOT DB_LeaderLib_DictionarySort_CurrentlySorting(_DictionaryID, _Val);
 
 PROC
 LeaderLib_DictionarySort_Internal_OnTick((STRING)_DictionaryID)
 AND
-DB_LeaderLibDictionarySort_Temp_StringQueue(_DictionaryID, _ID, _StringEntry)
+DB_LeaderLib_DictionarySort_Temp_StringQueue(_DictionaryID, _ID, _StringEntry)
 AND
-NOT DB_LeaderLibDictionarySort_CurrentlySorting(_DictionaryID, _)
+NOT DB_LeaderLib_DictionarySort_CurrentlySorting(_DictionaryID, _)
 AND
-NOT DB_LeaderLibDictionary_Data(_DictionaryID, _, _ID, _StringEntry)
+NOT DB_LeaderLib_Dictionary_Data(_DictionaryID, _, _ID, _StringEntry)
 THEN
-DB_LeaderLibDictionarySort_CurrentlySorting(_DictionaryID, 1);
+DB_LeaderLib_DictionarySort_CurrentlySorting(_DictionaryID, 1);
 LeaderLib_DictionarySort_SortEntry(_DictionaryID, _ID, _StringEntry);
 
 PROC
 LeaderLib_DictionarySort_Internal_OnTick((STRING)_DictionaryID)
 AND
-NOT DB_LeaderLibDictionarySort_SortingComplete(_DictionaryID)
+NOT DB_LeaderLib_DictionarySort_SortingComplete(_DictionaryID)
 AND
-NOT DB_LeaderLibDictionarySort_Temp_StringQueue(_DictionaryID, _, _)
+NOT DB_LeaderLib_DictionarySort_Temp_StringQueue(_DictionaryID, _, _)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:DictionarySort:OnTick] [ERROR] String queue for [",_DictionaryID,"] is empty!");
 
 PROC
 LeaderLib_DictionarySort_Internal_OnTick((STRING)_DictionaryID)
 AND
-NOT DB_LeaderLibDictionarySort_SortingComplete(_DictionaryID)
+NOT DB_LeaderLib_DictionarySort_SortingComplete(_DictionaryID)
 AND
-DB_LeaderLibDictionarySort_Temp_StringQueue(_DictionaryID, _ID, _StringEntry)
+DB_LeaderLib_DictionarySort_Temp_StringQueue(_DictionaryID, _ID, _StringEntry)
 AND
-NOT DB_LeaderLibDictionarySort_CurrentlySorting(_DictionaryID, _)
+NOT DB_LeaderLib_DictionarySort_CurrentlySorting(_DictionaryID, _)
 AND
-DB_LeaderLibDictionary_Data(_DictionaryID, _, _ID, _StringEntry)
+DB_LeaderLib_Dictionary_Data(_DictionaryID, _, _ID, _StringEntry)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:DictionarySort:OnTick] [ERROR] Queue entry [",_ID,"][",_StringEntry,"] is already in dictionary [",_DictionaryID,"].");
 
 PROC
 LeaderLib_DictionarySort_Internal_OnTick((STRING)_DictionaryID)
 AND
-NOT DB_LeaderLibDictionarySort_SortingComplete(_DictionaryID)
+NOT DB_LeaderLib_DictionarySort_SortingComplete(_DictionaryID)
 AND
-NOT DB_LeaderLibDictionarySort_CurrentlySorting(_DictionaryID, _)
+NOT DB_LeaderLib_DictionarySort_CurrentlySorting(_DictionaryID, _)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:DictionarySort:OnTick] [ERROR] No entry was added for in this tick. Check the logs for an error. Completing sort for [",_DictionaryID,"].");
 LeaderLib_DictionarySort_SortingComplete(_DictionaryID);
@@ -284,9 +284,9 @@ LeaderLib_DictionarySort_SortingComplete(_DictionaryID);
 PROC
 LeaderLib_DictionarySort_OnStringSorted((STRING)_DictionaryID, (STRING)_ID)
 AND
-DB_LeaderLibDictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex)
+DB_LeaderLib_DictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex)
 THEN
-NOT DB_LeaderLibDictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex);
+NOT DB_LeaderLib_DictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex);
 TimerCancel(_TimerName);
 //LeaderLog_Log("TRACE", "[LeaderLib:DictionarySort:OnMenuSorted] Menu '",_StringEntry,"' was sorted successfully.");
 
@@ -301,9 +301,9 @@ LeaderLib_DictionarySort_Internal_NextTick(_DictionaryID);
 PROC
 LeaderLib_DictionarySort_OnStringSorted((STRING)_DictionaryID, (STRING)_ID)
 AND
-DB_LeaderLibDictionarySort_CurrentlySorting(_DictionaryID, _Val)
+DB_LeaderLib_DictionarySort_CurrentlySorting(_DictionaryID, _Val)
 THEN
-NOT DB_LeaderLibDictionarySort_CurrentlySorting(_DictionaryID, _Val);
+NOT DB_LeaderLib_DictionarySort_CurrentlySorting(_DictionaryID, _Val);
 
 PROC
 LeaderLib_DictionarySort_OnStringSorted((STRING)_DictionaryID, (STRING)_ID)
@@ -315,16 +315,16 @@ LeaderLib_DictionarySort_SortingComplete(_DictionaryID);
 QRY
 LeaderLib_DictionarySort_QRY_SortingNeeded()
 AND
-DB_LeaderLibDictionarySort_Temp_StringQueue(_DictionaryID, _ID, _StringEntry)
+DB_LeaderLib_DictionarySort_Temp_StringQueue(_DictionaryID, _ID, _StringEntry)
 AND
-NOT DB_LeaderLibDictionary_Data(_DictionaryID, _, _ID, _StringEntry)
+NOT DB_LeaderLib_Dictionary_Data(_DictionaryID, _, _ID, _StringEntry)
 THEN
 DB_NOOP(1);
 
 PROC
 LeaderLib_DictionarySort_SortEntry((STRING)_DictionaryID, (STRING)_ID, (STRING)_StringEntry)
 AND
-NOT DB_LeaderLibDictionary_Data(_DictionaryID, _, _, _)
+NOT DB_LeaderLib_Dictionary_Data(_DictionaryID, _, _, _)
 THEN
 LeaderLib_Array_AddToDictionary(_DictionaryID, _ID, _StringEntry);
 LeaderLib_DictionarySort_OnStringSorted(_DictionaryID, _ID);
@@ -332,16 +332,16 @@ LeaderLib_DictionarySort_OnStringSorted(_DictionaryID, _ID);
 PROC
 LeaderLib_DictionarySort_SortEntry((STRING)_DictionaryID, (STRING)_ID, (STRING)_StringEntry)
 AND
-NOT DB_LeaderLibArray_Length(_DictionaryID, _)
+NOT DB_LeaderLib_Array_Length(_DictionaryID, _)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:DictionarySort] [ERROR] Dictionary '",_DictionaryID,"' has no length!");
 
 PROC
 LeaderLib_DictionarySort_SortEntry((STRING)_DictionaryID, (STRING)_ID, (STRING)_StringEntry)
 AND
-NOT DB_LeaderLibDictionary_Data(_DictionaryID, _, _ID, _StringEntry)
+NOT DB_LeaderLib_Dictionary_Data(_DictionaryID, _, _ID, _StringEntry)
 AND
-DB_LeaderLibArray_Length(_DictionaryID, _Length)
+DB_LeaderLib_Array_Length(_DictionaryID, _Length)
 AND
 _Length > 0
 AND
@@ -350,7 +350,7 @@ AND
 DB_LeaderLog_Temp_CombinedString(_TimerName)
 THEN
 NOT DB_LeaderLog_Temp_CombinedString(_TimerName);
-DB_LeaderLibDictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, 0);
+DB_LeaderLib_DictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, 0);
 //LeaderLog_Log("TRACE", "[LeaderLib:DictionarySort] [",_DictionaryID,"] Finding sorted position for '",_StringEntry,"'.");
 LeaderLib_Array_BuildArrayIterator(_DictionaryID);
 LeaderLib_DictionarySort_Internal_FindNextEntryIndex(_DictionaryID, _ID, _StringEntry);
@@ -358,20 +358,20 @@ LeaderLib_DictionarySort_Internal_FindNextEntryIndex(_DictionaryID, _ID, _String
 PROC
 LeaderLib_DictionarySort_Internal_OnEntryTick((STRING)_DictionaryID, (STRING)_ID)
 AND
-DB_LeaderLibDictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex)
+DB_LeaderLib_DictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex)
 AND
 IntegerSum(_CurrentIndex, 1, _NextIndex)
 THEN
-NOT DB_LeaderLibDictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex);
-DB_LeaderLibDictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _NextIndex);
+NOT DB_LeaderLib_DictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex);
+DB_LeaderLib_DictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _NextIndex);
 LeaderLib_DictionarySort_Internal_FindNextEntryIndex(_DictionaryID, _ID, _StringEntry);
 
 PROC
 LeaderLib_DictionarySort_Internal_FindNextEntryIndex((STRING)_DictionaryID, (STRING)_ID, (STRING)_StringEntry)
 AND
-DB_LeaderLibDictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _Index)
+DB_LeaderLib_DictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _Index)
 AND
-NOT DB_LeaderLibDictionary_Data(_DictionaryID, _, _ID, _StringEntry)
+NOT DB_LeaderLib_Dictionary_Data(_DictionaryID, _, _ID, _StringEntry)
 THEN
 LeaderLib_DictionarySort_Internal_OnIterator(_DictionaryID, _ID, _StringEntry, _Index);
 LeaderLib_DictionarySort_Internal_NextEntryTick(_DictionaryID, _ID);
@@ -379,22 +379,22 @@ LeaderLib_DictionarySort_Internal_NextEntryTick(_DictionaryID, _ID);
 PROC
 LeaderLib_DictionarySort_Internal_OnIterator((STRING)_DictionaryID, (STRING)_ID, (STRING)_StringEntry, (INTEGER)_Index)
 AND
-NOT DB_LeaderLibDictionary_Data(_DictionaryID, _, _ID, _StringEntry)
+NOT DB_LeaderLib_Dictionary_Data(_DictionaryID, _, _ID, _StringEntry)
 AND
-DB_LeaderLibDictionary_Data(_DictionaryID, _Index, _CheckID, _CheckDisplayName)
+DB_LeaderLib_Dictionary_Data(_DictionaryID, _Index, _CheckID, _CheckDisplayName)
 AND
 LeaderLib_StringExt_QRY_CompareStrings(_DictionaryID, _StringEntry, _CheckDisplayName)
 AND
-DB_LeaderLibStringCompare_Results(_StringEntry, _CheckDisplayName, _ComparisonVal)
+DB_LeaderLib_StringCompare_Results(_StringEntry, _CheckDisplayName, _ComparisonVal)
 THEN
 LeaderLib_DictionarySort_Internal_ProcessCompareResults(_DictionaryID, _ID, _StringEntry, _Index, _ComparisonVal);
 
 PROC
 LeaderLib_DictionarySort_Internal_OnIterator((STRING)_DictionaryID, (STRING)_ID, (STRING)_StringEntry, (INTEGER)_Index)
 AND
-NOT DB_LeaderLibDictionary_Data(_DictionaryID, _, _ID, _StringEntry)
+NOT DB_LeaderLib_Dictionary_Data(_DictionaryID, _, _ID, _StringEntry)
 AND
-DB_LeaderLibArray_Length(_DictionaryID, _Length)
+DB_LeaderLib_Array_Length(_DictionaryID, _Length)
 AND
 _Index >= _Length
 THEN
@@ -404,7 +404,7 @@ LeaderLib_DictionarySort_OnStringSorted(_DictionaryID, _ID);
 PROC
 LeaderLib_DictionarySort_Internal_ProcessCompareResults((STRING)_DictionaryID, (STRING)_ID, (STRING)_StringEntry, (INTEGER)_CurrentIndex, (INTEGER)_ComparisonVal)
 AND
-NOT DB_LeaderLibDictionary_Data(_DictionaryID, _, _ID, _StringEntry)
+NOT DB_LeaderLib_Dictionary_Data(_DictionaryID, _, _ID, _StringEntry)
 AND
 _ComparisonVal <= 0
 THEN
@@ -414,11 +414,11 @@ LeaderLib_DictionarySort_OnStringSorted(_DictionaryID, _ID);
 PROC
 LeaderLib_DictionarySort_Internal_ProcessCompareResults((STRING)_DictionaryID, (STRING)_ID, (STRING)_StringEntry, (INTEGER)_CurrentIndex, (INTEGER)_ComparisonVal)
 AND
-NOT DB_LeaderLibDictionary_Data(_DictionaryID, _, _ID, _StringEntry)
+NOT DB_LeaderLib_Dictionary_Data(_DictionaryID, _, _ID, _StringEntry)
 AND
 _ComparisonVal > 0
 AND
-DB_LeaderLibArray_Length(_DictionaryID, _Length)
+DB_LeaderLib_Array_Length(_DictionaryID, _Length)
 AND
 _CurrentIndex < _Length
 THEN
@@ -428,11 +428,11 @@ DB_NOOP(1);
 PROC
 LeaderLib_DictionarySort_Internal_ProcessCompareResults((STRING)_DictionaryID, (STRING)_ID, (STRING)_StringEntry, (INTEGER)_CurrentIndex, (INTEGER)_ComparisonVal)
 AND
-NOT DB_LeaderLibDictionary_Data(_DictionaryID, _, _ID, _StringEntry)
+NOT DB_LeaderLib_Dictionary_Data(_DictionaryID, _, _ID, _StringEntry)
 AND
 _ComparisonVal > 0
 AND
-DB_LeaderLibArray_Length(_DictionaryID, _Length)
+DB_LeaderLib_Array_Length(_DictionaryID, _Length)
 AND
 _CurrentIndex >= _Length
 THEN
@@ -445,60 +445,60 @@ LeaderLib_DictionarySort_OnStringSorted(_DictionaryID, _ID);
 PROC
 LeaderLib_DictionarySort_CleanupJob((STRING)_DictionaryID)
 AND
-DB_LeaderLibDictionarySort_SortingStarted(_DictionaryID, _Val)
+DB_LeaderLib_DictionarySort_SortingStarted(_DictionaryID, _Val)
 THEN
-NOT DB_LeaderLibDictionarySort_SortingStarted(_DictionaryID, _Val);
+NOT DB_LeaderLib_DictionarySort_SortingStarted(_DictionaryID, _Val);
 
 PROC
 LeaderLib_DictionarySort_CleanupJob((STRING)_DictionaryID)
 AND
-DB_LeaderLibDictionarySort_CurrentlySorting(_DictionaryID, _Val)
+DB_LeaderLib_DictionarySort_CurrentlySorting(_DictionaryID, _Val)
 THEN
-NOT DB_LeaderLibDictionarySort_CurrentlySorting(_DictionaryID, _Val);
+NOT DB_LeaderLib_DictionarySort_CurrentlySorting(_DictionaryID, _Val);
 
 PROC
 LeaderLib_DictionarySort_CleanupJob((STRING)_DictionaryID)
 AND
-DB_LeaderLibDictionarySort_TimerRunning(_DictionaryID, _TimerName)
+DB_LeaderLib_DictionarySort_TimerRunning(_DictionaryID, _TimerName)
 THEN
-NOT DB_LeaderLibDictionarySort_TimerRunning(_DictionaryID, _TimerName);
+NOT DB_LeaderLib_DictionarySort_TimerRunning(_DictionaryID, _TimerName);
 
 /*
 PROC
 LeaderLib_DictionarySort_CleanupJob((STRING)_DictionaryID)
 AND
-DB_LeaderLibDictionarySort_SortingComplete(_DictionaryID)
+DB_LeaderLib_DictionarySort_SortingComplete(_DictionaryID)
 THEN
-NOT DB_LeaderLibDictionarySort_SortingComplete(_DictionaryID);
+NOT DB_LeaderLib_DictionarySort_SortingComplete(_DictionaryID);
 */
 
 PROC
 LeaderLib_DictionarySort_CleanupJob((STRING)_DictionaryID)
 AND
-DB_LeaderLibDictionarySort_Temp_StringQueue(_DictionaryID, _ID, _StringEntry)
+DB_LeaderLib_DictionarySort_Temp_StringQueue(_DictionaryID, _ID, _StringEntry)
 THEN
-NOT DB_LeaderLibDictionarySort_Temp_StringQueue(_DictionaryID, _ID, _StringEntry);
+NOT DB_LeaderLib_DictionarySort_Temp_StringQueue(_DictionaryID, _ID, _StringEntry);
 
 PROC
 LeaderLib_DictionarySort_CleanupJob((STRING)_DictionaryID)
 AND
-DB_LeaderLibDictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate)
+DB_LeaderLib_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate)
 THEN
-NOT DB_LeaderLibDictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate);
+NOT DB_LeaderLib_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate);
 
 PROC
 LeaderLib_DictionarySort_CleanupJob((STRING)_DictionaryID)
 AND
-DB_LeaderLibDictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex)
+DB_LeaderLib_DictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex)
 THEN
-NOT DB_LeaderLibDictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex);
+NOT DB_LeaderLib_DictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, _CurrentIndex);
 
 PROC
 LeaderLib_DictionarySort_CleanupLastTrackedTime((STRING)_DictionaryID)
 AND
-DB_LeaderLibDictionarySort_TotalTime(_DictionaryID, _TimeTaken)
+DB_LeaderLib_DictionarySort_TotalTime(_DictionaryID, _TimeTaken)
 THEN
-NOT DB_LeaderLibDictionarySort_TotalTime(_DictionaryID, _TimeTaken);
+NOT DB_LeaderLib_DictionarySort_TotalTime(_DictionaryID, _TimeTaken);
 //END_REGION
 
 //REGION DEBUG
@@ -508,7 +508,7 @@ LeaderLib_DictionarySort_Internal_OnIterator((STRING)_DictionaryID, (STRING)_ID,
 AND
 IntegertoString(_Index, _CurrentIndexStr)
 AND
-DB_LeaderLibArray_Length(_DictionaryID, _Length)
+DB_LeaderLib_Array_Length(_DictionaryID, _Length)
 AND
 IntegertoString(_Length, _LengthStr)
 THEN
@@ -517,9 +517,9 @@ LeaderLog_Log("TRACE", "[LeaderLib:DictionarySort:OnIterator] Iterating [",_Dict
 PROC
 LeaderLib_DictionarySort_Internal_OnIterator((STRING)_DictionaryID, (STRING)_ID, (STRING)_StringEntry, (INTEGER)_Index)
 AND
-DB_LeaderLibDictionary_Data(_DictionaryID, _Index, _CheckID, _CheckDisplayName)
+DB_LeaderLib_Dictionary_Data(_DictionaryID, _Index, _CheckID, _CheckDisplayName)
 AND
-DB_LeaderLibStringCompare_Results(_StringEntry, _CheckDisplayName, _ComparisonVal)
+DB_LeaderLib_StringCompare_Results(_StringEntry, _CheckDisplayName, _ComparisonVal)
 AND
 IntegertoString(_ComparisonVal, _CompValStr)
 THEN
@@ -531,14 +531,14 @@ LeaderLog_Log("TRACE", "[LeaderLib:DictionarySort:ProcessCompareResults] Compari
 PROC
 LeaderLib_System_RegisterDatabases()
 THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LeaderLibDictionarySort_Temp_StringQueue", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LeaderLibDictionarySort_SortingStarted", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LeaderLibDictionarySort_CurrentlySorting", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LeaderLibDictionarySort_TimerRunning", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LeaderLibDictionarySort_SortingComplete", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LeaderLibDictionarySort_Temp_SortJob", 5);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LeaderLibDictionarySort_EntrySortTimer", 5);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LeaderLibDictionarySort_TotalTime", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LeaderLib_DictionarySort_Temp_StringQueue", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LeaderLib_DictionarySort_SortingStarted", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LeaderLib_DictionarySort_CurrentlySorting", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LeaderLib_DictionarySort_TimerRunning", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LeaderLib_DictionarySort_SortingComplete", 1);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LeaderLib_DictionarySort_Temp_SortJob", 5);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LeaderLib_DictionarySort_EntrySortTimer", 5);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LeaderLib_DictionarySort_TotalTime", 2);
 LeaderLog_Log("TRACE", "[LeaderLib:DictionarySort] Databases registered.");
 //END_REGION
 EXITSECTION

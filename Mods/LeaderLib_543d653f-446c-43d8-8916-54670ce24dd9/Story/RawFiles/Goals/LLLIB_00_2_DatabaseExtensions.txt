@@ -1,16 +1,16 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-//DB_LeaderLibArray_Length(_ID, _Length)
-//DB_LeaderLibArray_Data(_ID, _Index, _Value)
-//DB_LeaderLibDictionary_Data(_ID, _Index, _Key, _Value)
-//DB_LeaderLibArray_Iterator(_ID, _CurrentIndex)
+//DB_LeaderLib_Array_Length(_ID, _Length)
+//DB_LeaderLib_Array_Data(_ID, _Index, _Value)
+//DB_LeaderLib_Dictionary_Data(_ID, _Index, _Key, _Value)
+//DB_LeaderLib_Array_Iterator(_ID, _CurrentIndex)
 
 /*Temp*/
 //DB_LeaderLib_Array_Temp_RandomResult(_ID, _Index, _Value)
-//DB_LeaderLibArray_Temp_ArrayIteratorBuilder(_ID, _CurrentIndex, _Length)
-//DB_LeaderLibArray_Temp_PopValue(_ID, _Value)
-//DB_LeaderLibArray_Temp_FirstEntry(_ID, _Index, _Value)
+//DB_LeaderLib_Array_Temp_ArrayIteratorBuilder(_ID, _CurrentIndex, _Length)
+//DB_LeaderLib_Array_Temp_PopValue(_ID, _Value)
+//DB_LeaderLib_Array_Temp_FirstEntry(_ID, _Index, _Value)
 KBSECTION
 //REGION ARRAY_LENGTH
 QRY
@@ -21,165 +21,165 @@ LeaderLib_Array_RebuildArrayLength(_ID, _ArrayType);
 PROC
 LeaderLib_Array_RebuildArrayLength((STRING)_ID, (STRING)_ArrayType)
 AND
-DB_LeaderLibArray_Length(_ID, _Length)
+DB_LeaderLib_Array_Length(_ID, _Length)
 THEN
-NOT DB_LeaderLibArray_Length(_ID, _Length);
+NOT DB_LeaderLib_Array_Length(_ID, _Length);
 
 PROC
 LeaderLib_Array_RebuildArrayLength((STRING)_ID, (STRING)_ArrayType)
 THEN
-DB_LeaderLibArray_Length(_ID, 0);
+DB_LeaderLib_Array_Length(_ID, 0);
 
 PROC
 LeaderLib_Array_RebuildArrayLength((STRING)_ID, "Array")
 AND
-DB_LeaderLibArray_Data(_ID, _Index, _Value)
+DB_LeaderLib_Array_Data(_ID, _Index, _Value)
 AND
-DB_LeaderLibArray_Length(_ID, _Total)
+DB_LeaderLib_Array_Length(_ID, _Total)
 AND
 IntegerSum(_Total, 1, _NewTotal)
 THEN
-NOT DB_LeaderLibArray_Length(_ID, _Total);
-DB_LeaderLibArray_Length(_ID, _NewTotal);
+NOT DB_LeaderLib_Array_Length(_ID, _Total);
+DB_LeaderLib_Array_Length(_ID, _NewTotal);
 
 PROC
 LeaderLib_Array_RebuildArrayLength((STRING)_ID, "Dictionary")
 AND
-DB_LeaderLibDictionary_Data(_ID, _Index, _Key, _Value)
+DB_LeaderLib_Dictionary_Data(_ID, _Index, _Key, _Value)
 AND
-DB_LeaderLibArray_Length(_ID, _Total)
+DB_LeaderLib_Array_Length(_ID, _Total)
 AND
 IntegerSum(_Total, 1, _NewTotal)
 THEN
-NOT DB_LeaderLibArray_Length(_ID, _Total);
-DB_LeaderLibArray_Length(_ID, _NewTotal);
+NOT DB_LeaderLib_Array_Length(_ID, _Total);
+DB_LeaderLib_Array_Length(_ID, _NewTotal);
 
 PROC
 LeaderLib_Array_IncreaseArrayLength((STRING)_ID)
 AND
-DB_LeaderLibArray_Length(_ID, _Length)
+DB_LeaderLib_Array_Length(_ID, _Length)
 AND
 IntegerSum(_Length, 1, _NextLength)
 THEN
-NOT DB_LeaderLibArray_Length(_ID, _Length);
-DB_LeaderLibArray_Length(_ID, _NextLength);
-DB_LeaderLibArray_Iterator(_ID, _NextLength);
+NOT DB_LeaderLib_Array_Length(_ID, _Length);
+DB_LeaderLib_Array_Length(_ID, _NextLength);
+DB_LeaderLib_Array_Iterator(_ID, _NextLength);
 
 PROC
 LeaderLib_Array_DecreaseArrayLength((STRING)_ID)
 AND
-DB_LeaderLibArray_Length(_ID, _Length)
+DB_LeaderLib_Array_Length(_ID, _Length)
 AND
 IntegerSubtract(_Length, 1, _NextLength)
 THEN
-NOT DB_LeaderLibArray_Length(_ID, _Length);
-NOT DB_LeaderLibArray_Iterator(_ID, _Length);
-DB_LeaderLibArray_Length(_ID, _NextLength);
+NOT DB_LeaderLib_Array_Length(_ID, _Length);
+NOT DB_LeaderLib_Array_Iterator(_ID, _Length);
+DB_LeaderLib_Array_Length(_ID, _NextLength);
 //END_REGION
 
 //REGION ARRAY_NEW
 PROC
 LeaderLib_Array_NewArray((STRING)_ID)
 AND
-NOT DB_LeaderLibArray_Length(_ID, _)
+NOT DB_LeaderLib_Array_Length(_ID, _)
 THEN
-DB_LeaderLibArray_Length(_ID, 0);
-DB_LeaderLibArray_Iterator(_ID, 0);
+DB_LeaderLib_Array_Length(_ID, 0);
+DB_LeaderLib_Array_Iterator(_ID, 0);
 //END_REGION
 
 //REGION ARRAY_ADD
 PROC
 LeaderLib_Array_AddToArray((STRING)_ID, (STRING)_Value)
 AND
-NOT DB_LeaderLibArray_Length(_ID, _)
+NOT DB_LeaderLib_Array_Length(_ID, _)
 THEN
 LeaderLib_Array_NewArray(_ID);
 
 PROC
 LeaderLib_Array_AddToArray((STRING)_ID, (STRING)_Value)
 AND
-DB_LeaderLibArray_Length(_ID, _NextIndex)
+DB_LeaderLib_Array_Length(_ID, _NextIndex)
 THEN
-DB_LeaderLibArray_Data(_ID, _NextIndex, _Value);
+DB_LeaderLib_Array_Data(_ID, _NextIndex, _Value);
 LeaderLib_Array_IncreaseArrayLength(_ID);
 
 PROC
 LeaderLib_Array_AddToArrayAtIndex((STRING)_ID, (STRING)_Value, (INTEGER)_Index)
 AND
-NOT DB_LeaderLibArray_Temp_Added(_ID, _Value, _Index)
+NOT DB_LeaderLib_Array_Temp_Added(_ID, _Value, _Index)
 AND
-NOT DB_LeaderLibArray_Data(_ID, _, _)
+NOT DB_LeaderLib_Array_Data(_ID, _, _)
 THEN
 LeaderLib_Array_AddToArray(_ID, _Value);
-DB_LeaderLibArray_Temp_Added(_ID, _Value, _Index);
+DB_LeaderLib_Array_Temp_Added(_ID, _Value, _Index);
 
 PROC
 LeaderLib_Array_AddToArrayAtIndex((STRING)_ID, (STRING)_Value, (INTEGER)_Index)
 AND
-NOT DB_LeaderLibArray_Temp_Added(_ID, _Value, _Index)
+NOT DB_LeaderLib_Array_Temp_Added(_ID, _Value, _Index)
 THEN
 LeaderLib_Array_ShiftArrayDown(_ID, _Index);
-DB_LeaderLibArray_Data(_ID, _Index, _Value);
+DB_LeaderLib_Array_Data(_ID, _Index, _Value);
 LeaderLib_Array_IncreaseArrayLength(_ID);
-DB_LeaderLibArray_Temp_Added(_ID, _Value, _Index);
+DB_LeaderLib_Array_Temp_Added(_ID, _Value, _Index);
 
 PROC
 LeaderLib_Array_AddToArrayAtIndex((STRING)_ID, (STRING)_Value, (INTEGER)_Index)
 AND
-DB_LeaderLibArray_Temp_Added(_ID, _Value, _Index)
+DB_LeaderLib_Array_Temp_Added(_ID, _Value, _Index)
 THEN
-NOT DB_LeaderLibArray_Temp_Added(_ID, _Value, _Index);
+NOT DB_LeaderLib_Array_Temp_Added(_ID, _Value, _Index);
 
 PROC
 LeaderLib_Array_ShiftArrayDown((STRING)_ID, (INTEGER)_AtIndex)
 AND
-DB_LeaderLibArray_Data(_ID, _Index, _Value)
+DB_LeaderLib_Array_Data(_ID, _Index, _Value)
 AND
 _Index >= _AtIndex
 AND
 IntegerSum(_Index, 1, _NextIndex)
 THEN
-NOT DB_LeaderLibArray_Data(_ID, _Index, _Value);
-DB_LeaderLibArray_Data(_ID, _NextIndex, _Value);
+NOT DB_LeaderLib_Array_Data(_ID, _Index, _Value);
+DB_LeaderLib_Array_Data(_ID, _NextIndex, _Value);
 
 PROC
 LeaderLib_Array_ShiftArrayUp((STRING)_ID, (INTEGER)_StartIndex)
 AND
-DB_LeaderLibArray_Data(_ID, _Index, _Value)
+DB_LeaderLib_Array_Data(_ID, _Index, _Value)
 AND
 _Index > _StartIndex
 AND
 IntegerSubtract(_Index, 1, _NextIndex)
 THEN
-NOT DB_LeaderLibArray_Data(_ID, _Index, _Value);
-DB_LeaderLibArray_Data(_ID, _NextIndex, _Value);
+NOT DB_LeaderLib_Array_Data(_ID, _Index, _Value);
+DB_LeaderLib_Array_Data(_ID, _NextIndex, _Value);
 //END_REGION
 
 //REGION ARRAY_REMOVE
 PROC
 LeaderLib_Array_RemoveFromArray((STRING)_ID, (INTEGER)_Index, (STRING)_Value)
 AND
-DB_LeaderLibArray_Data(_ID, _Index, _Value)
+DB_LeaderLib_Array_Data(_ID, _Index, _Value)
 THEN
-NOT DB_LeaderLibArray_Data(_ID, _Index, _Value);
+NOT DB_LeaderLib_Array_Data(_ID, _Index, _Value);
 LeaderLib_Array_DecreaseArrayLength(_ID);
 LeaderLib_Array_ShiftArrayUp(_ID, _Index);
 
 PROC
 LeaderLib_Array_RemoveFromArrayAtIndex((STRING)_ID, (INTEGER)_Index)
 AND
-DB_LeaderLibArray_Data(_ID, _Index, _Value)
+DB_LeaderLib_Array_Data(_ID, _Index, _Value)
 THEN
-NOT DB_LeaderLibArray_Data(_ID, _Index, _Value);
+NOT DB_LeaderLib_Array_Data(_ID, _Index, _Value);
 LeaderLib_Array_DecreaseArrayLength(_ID);
 LeaderLib_Array_ShiftArrayUp(_ID, _Index);
 
 PROC
 LeaderLib_Array_RemoveValueFromArray((STRING)_ID, (STRING)_Value)
 AND
-DB_LeaderLibArray_Data(_ID, _Index, _Value)
+DB_LeaderLib_Array_Data(_ID, _Index, _Value)
 THEN
-NOT DB_LeaderLibArray_Data(_ID, _Index, _Value);
+NOT DB_LeaderLib_Array_Data(_ID, _Index, _Value);
 LeaderLib_Array_DecreaseArrayLength(_ID);
 LeaderLib_Array_ShiftArrayUp(_ID, _Index);
 //END_REGION
@@ -188,9 +188,9 @@ LeaderLib_Array_ShiftArrayUp(_ID, _Index);
 PROC
 LeaderLib_Array_ClearFirstEntry((STRING)_ID)
 AND
-DB_LeaderLibArray_Temp_FirstEntry(_ID, _Index, _Value)
+DB_LeaderLib_Array_Temp_FirstEntry(_ID, _Index, _Value)
 THEN
-NOT DB_LeaderLibArray_Temp_FirstEntry(_ID, _Index, _Value);
+NOT DB_LeaderLib_Array_Temp_FirstEntry(_ID, _Index, _Value);
 
 QRY
 LeaderLib_Array_QRY_GetFirstEntry((STRING)_ID)
@@ -205,14 +205,14 @@ LeaderLib_Array_ClearFirstEntry(_ID);
 PROC
 LeaderLib_Array_GetFirstEntry((STRING)_ID)
 AND
-NOT DB_LeaderLibArray_Iterator(_ID, _)
+NOT DB_LeaderLib_Array_Iterator(_ID, _)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:GetFirstEntry] [ERROR] No iterator found for array [",_ID,"]!");
 
 PROC
 LeaderLib_Array_GetFirstEntry((STRING)_ID)
 AND
-NOT DB_LeaderLibArray_Data(_ID, _, _)
+NOT DB_LeaderLib_Array_Data(_ID, _, _)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:GetFirstEntry] [ERROR] No entries found for array [",_ID,"]!");
 
@@ -220,30 +220,30 @@ LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:GetFirstEntry] [ERROR] No 
 PROC
 LeaderLib_Array_GetFirstEntry((STRING)_ID)
 AND
-NOT DB_LeaderLibArray_Temp_FirstEntry(_ID, _, _)
+NOT DB_LeaderLib_Array_Temp_FirstEntry(_ID, _, _)
 AND
-DB_LeaderLibArray_Data(_ID, 0, _Value)
+DB_LeaderLib_Array_Data(_ID, 0, _Value)
 THEN
-DB_LeaderLibArray_Temp_FirstEntry(_ID, 0, _Value);
+DB_LeaderLib_Array_Temp_FirstEntry(_ID, 0, _Value);
 LeaderLog_Log("TRACE", "[LeaderLib:DatabaseExtensions:GetFirstEntry] Set first entry for array [",_ID,"] to index [0](",_Value,").");
 
 PROC
 LeaderLib_Array_GetFirstEntry((STRING)_ID)
 AND
-NOT DB_LeaderLibArray_Temp_FirstEntry(_ID, _, _) // Skip if already set
+NOT DB_LeaderLib_Array_Temp_FirstEntry(_ID, _, _) // Skip if already set
 AND
-DB_LeaderLibArray_Iterator(_ID, _Index)
+DB_LeaderLib_Array_Iterator(_ID, _Index)
 AND
-NOT DB_LeaderLibArray_Temp_FirstEntry(_ID, _, _) // Skip if set during iteration
+NOT DB_LeaderLib_Array_Temp_FirstEntry(_ID, _, _) // Skip if set during iteration
 AND
 IntegertoString(_Index, _IndexStr)
 AND
 LeaderLog_QRY_Log("TRACE", "[LeaderLib:DatabaseExtensions:GetFirstEntry] Checking index [",_IndexStr,"] in array [",_ID,"]")
 AND
-DB_LeaderLibArray_Data(_ID, _Index, _Value)
+DB_LeaderLib_Array_Data(_ID, _Index, _Value)
 THEN
 LeaderLog_Log("TRACE", "[LeaderLib:DatabaseExtensions:GetFirstEntry] First entry for array [",_ID,"] set to [",_IndexStr,"](",_Value,").");
-DB_LeaderLibArray_Temp_FirstEntry(_ID, _Index, _Value);
+DB_LeaderLib_Array_Temp_FirstEntry(_ID, _Index, _Value);
 //END_REGION
 
 //REGION LAST_ENTRY
@@ -252,13 +252,13 @@ LeaderLib_Array_QRY_GetLastEntry((STRING)_ID)
 AND
 LeaderLib_Array_Internal_QRY_ClearLastEntry(_ID)
 AND
-DB_LeaderLibArray_Length(_ID, _Length)
+DB_LeaderLib_Array_Length(_ID, _Length)
 AND
 IntegerSubtract(_Length, 1, _LastIndex)
 AND
-DB_LeaderLibArray_Data(_ID, _Index, _Value)
+DB_LeaderLib_Array_Data(_ID, _Index, _Value)
 THEN
-DB_LeaderLibArray_Temp_LastEntry(_ID, _Index, _Value);
+DB_LeaderLib_Array_Temp_LastEntry(_ID, _Index, _Value);
 
 QRY
 LeaderLib_Array_Internal_QRY_ClearLastEntry((STRING)_ID)
@@ -268,9 +268,9 @@ LeaderLib_Array_Internal_ClearLastEntry(_ID);
 PROC
 LeaderLib_Array_Internal_ClearLastEntry((STRING)_ID)
 AND
-DB_LeaderLibArray_Temp_LastEntry(_ID, _Index, _Value)
+DB_LeaderLib_Array_Temp_LastEntry(_ID, _Index, _Value)
 THEN
-NOT DB_LeaderLibArray_Temp_LastEntry(_ID, _Index, _Value);
+NOT DB_LeaderLib_Array_Temp_LastEntry(_ID, _Index, _Value);
 //END_REGION
 
 //REGION ARRAY_POP
@@ -279,7 +279,7 @@ LeaderLib_Array_QRY_Pop((STRING)_ID)
 THEN
 LeaderLib_Array_Pop(_ID);
 
-/* Stack-like behavior. Removed the top entry at index 0, shifts all other entries up one, and sets DB_LeaderLibArray_Temp_PopValue(_ID, _Value)
+/* Stack-like behavior. Removed the top entry at index 0, shifts all other entries up one, and sets DB_LeaderLib_Array_Temp_PopValue(_ID, _Value)
 */
 PROC
 LeaderLib_Array_Pop((STRING)_ID)
@@ -291,14 +291,14 @@ LeaderLib_Array_Internal_Pop(_ID);
 PROC
 LeaderLib_Array_Internal_ClearPreviousPop((STRING)_ID)
 AND
-DB_LeaderLibArray_Temp_PopValue(_ID, _Value)
+DB_LeaderLib_Array_Temp_PopValue(_ID, _Value)
 THEN
-NOT DB_LeaderLibArray_Temp_PopValue(_ID, _Value);
+NOT DB_LeaderLib_Array_Temp_PopValue(_ID, _Value);
 
 PROC
 LeaderLib_Array_Internal_Pop((STRING)_ID)
 AND
-DB_LeaderLibArray_Length(_ID, _Length)
+DB_LeaderLib_Array_Length(_ID, _Length)
 AND
 _Length <= 0
 AND
@@ -309,26 +309,26 @@ LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:Pop] [ERROR] Error popping
 PROC
 LeaderLib_Array_Internal_Pop((STRING)_ID)
 AND
-NOT DB_LeaderLibArray_Length(_ID, _)
+NOT DB_LeaderLib_Array_Length(_ID, _)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:Pop] [ERROR] Error popping array [",_ID,"]: length is null!");
 
 PROC
 LeaderLib_Array_Internal_Pop((STRING)_ID)
 AND
-NOT DB_LeaderLibArray_Temp_FirstEntry(_ID, _, _)
+NOT DB_LeaderLib_Array_Temp_FirstEntry(_ID, _, _)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:Pop] [ERROR] No first entry found for array [",_ID,"]!");
 
 PROC
 LeaderLib_Array_Internal_Pop((STRING)_ID)
 AND
-DB_LeaderLibArray_Temp_FirstEntry(_ID, _Index, _Value)
+DB_LeaderLib_Array_Temp_FirstEntry(_ID, _Index, _Value)
 AND
-NOT DB_LeaderLibArray_Temp_PopValue(_ID, _)
+NOT DB_LeaderLib_Array_Temp_PopValue(_ID, _)
 THEN
-DB_LeaderLibArray_Temp_PopValue(_ID, _Value);
-NOT DB_LeaderLibArray_Temp_FirstEntry(_ID, _Index, _Value);
+DB_LeaderLib_Array_Temp_PopValue(_ID, _Value);
+NOT DB_LeaderLib_Array_Temp_FirstEntry(_ID, _Index, _Value);
 LeaderLib_Array_RemoveFromArray(_ID, _Index, _Value); // Important in case two entries have the same string value
 LeaderLog_Log("TRACE", "[LeaderLib:DatabaseExtensions:Pop] Popped [",_Value,"] from array [",_ID,"].");
 //END_REGION
@@ -351,7 +351,7 @@ LeaderLib_Array_Random((STRING)_ID)
 AND
 LeaderLib_Array_QRY_ArrayIsPopulated(_ID)
 AND
-DB_LeaderLibArray_Length(_ID, _Length)
+DB_LeaderLib_Array_Length(_ID, _Length)
 AND
 IntegerSubtract(_Length, 1, _LastIndex)
 AND
@@ -359,7 +359,7 @@ LeaderLib_Random_QRY(0, _LastIndex)
 AND
 DB_LeaderLib_Temp_RandomResult(_Index)
 AND
-DB_LeaderLibArray_Data(_ID, _Index, _Value)
+DB_LeaderLib_Array_Data(_ID, _Index, _Value)
 THEN
 NOT DB_LeaderLib_Temp_RandomResult(_Index);
 DB_LeaderLib_Array_Temp_RandomResult(_ID, _Index, _Value);
@@ -374,30 +374,30 @@ LeaderLib_Array_ClearArrayEntries(_ID);
 PROC
 LeaderLib_Array_ClearArrayEntries((STRING)_ID)
 AND
-DB_LeaderLibArray_Data(_ID, _Index, _Value)
+DB_LeaderLib_Array_Data(_ID, _Index, _Value)
 THEN
-NOT DB_LeaderLibArray_Data(_ID, _Index, _Value);
+NOT DB_LeaderLib_Array_Data(_ID, _Index, _Value);
 
 PROC
 LeaderLib_Array_ClearArrayLength((STRING)_ID)
 AND
-DB_LeaderLibArray_Length(_ID, _Length)
+DB_LeaderLib_Array_Length(_ID, _Length)
 THEN
-NOT DB_LeaderLibArray_Length(_ID, _Length);
+NOT DB_LeaderLib_Array_Length(_ID, _Length);
 
 PROC
 LeaderLib_Array_ClearArrayIterators((STRING)_ID)
 AND
-DB_LeaderLibArray_Iterator(_ID, _CurrentIndex)
+DB_LeaderLib_Array_Iterator(_ID, _CurrentIndex)
 THEN
-NOT DB_LeaderLibArray_Iterator(_ID, _CurrentIndex);
+NOT DB_LeaderLib_Array_Iterator(_ID, _CurrentIndex);
 
 PROC
 LeaderLib_Array_ClearArrayIterators((STRING)_ID)
 AND
-DB_LeaderLibArray_Temp_ArrayIteratorBuilder(_ID, _CurrentIndex, _Length)
+DB_LeaderLib_Array_Temp_ArrayIteratorBuilder(_ID, _CurrentIndex, _Length)
 THEN
-NOT DB_LeaderLibArray_Temp_ArrayIteratorBuilder(_ID, _CurrentIndex, _Length);
+NOT DB_LeaderLib_Array_Temp_ArrayIteratorBuilder(_ID, _CurrentIndex, _Length);
 
 PROC
 LeaderLib_Array_ClearArray((STRING)_ID)
@@ -409,16 +409,16 @@ LeaderLib_Array_ClearArrayLength(_ID);
 PROC
 LeaderLib_Array_ClearArray((STRING)_ID)
 AND
-DB_LeaderLibArray_Temp_PopValue(_ID, _Value)
+DB_LeaderLib_Array_Temp_PopValue(_ID, _Value)
 THEN
-NOT DB_LeaderLibArray_Temp_PopValue(_ID, _Value);
+NOT DB_LeaderLib_Array_Temp_PopValue(_ID, _Value);
 
 PROC
 LeaderLib_Array_ClearArray((STRING)_ID)
 AND
-DB_LeaderLibArray_Temp_FirstEntry(_ID, _Index, _Value)
+DB_LeaderLib_Array_Temp_FirstEntry(_ID, _Index, _Value)
 THEN
-NOT DB_LeaderLibArray_Temp_FirstEntry(_ID, _Index, _Value);
+NOT DB_LeaderLib_Array_Temp_FirstEntry(_ID, _Index, _Value);
 //END_REGION
 
 //REGION ARRAY_ITERATOR
@@ -432,25 +432,25 @@ LeaderLib_Array_BuildArrayIterator(_ID);
 PROC
 LeaderLib_Array_BuildArrayIterator((STRING)_ID)
 AND
-DB_LeaderLibArray_Iterator(_ID, _CurrentIndex)
+DB_LeaderLib_Array_Iterator(_ID, _CurrentIndex)
 THEN
-NOT DB_LeaderLibArray_Iterator(_ID, _CurrentIndex);
+NOT DB_LeaderLib_Array_Iterator(_ID, _CurrentIndex);
 */
 
 //Clear2
 PROC
 LeaderLib_Array_BuildArrayIterator((STRING)_ID)
 AND
-DB_LeaderLibArray_Temp_ArrayIteratorBuilder(_ID, _CurrentIndex, _Length)
+DB_LeaderLib_Array_Temp_ArrayIteratorBuilder(_ID, _CurrentIndex, _Length)
 THEN
-NOT DB_LeaderLibArray_Temp_ArrayIteratorBuilder(_ID, _CurrentIndex, _Length);
+NOT DB_LeaderLib_Array_Temp_ArrayIteratorBuilder(_ID, _CurrentIndex, _Length);
 
 PROC
 LeaderLib_Array_BuildArrayIterator((STRING)_ID)
 AND
-DB_LeaderLibArray_Length(_ID, _Length)
+DB_LeaderLib_Array_Length(_ID, _Length)
 AND
-NOT DB_LeaderLibArray_Iterator(_ID, _Length)
+NOT DB_LeaderLib_Array_Iterator(_ID, _Length)
 THEN
 //LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:BuildArrayIterator] Building array iterator for [",_ID,"].");
 LeaderLib_Array_Internal_StartArrayIteratorBuilder(_ID);
@@ -458,38 +458,38 @@ LeaderLib_Array_Internal_StartArrayIteratorBuilder(_ID);
 PROC
 LeaderLib_Array_Internal_StartArrayIteratorBuilder((STRING)_ID)
 AND
-DB_LeaderLibArray_Length(_ID, _Length)
+DB_LeaderLib_Array_Length(_ID, _Length)
 THEN
-DB_LeaderLibArray_Temp_ArrayIteratorBuilder(_ID, 0, _Length);
+DB_LeaderLib_Array_Temp_ArrayIteratorBuilder(_ID, 0, _Length);
 LeaderLib_Array_Internal_OnBuildArrayIterator(_ID);
 
 PROC
 LeaderLib_Array_Internal_OnBuildArrayIterator((STRING)_ID)
 AND
-DB_LeaderLibArray_Temp_ArrayIteratorBuilder(_ID, _CurrentIndex, _Length)
+DB_LeaderLib_Array_Temp_ArrayIteratorBuilder(_ID, _CurrentIndex, _Length)
 AND
 _CurrentIndex <= _Length
 AND
-NOT DB_LeaderLibArray_Iterator(_ID, _CurrentIndex)
+NOT DB_LeaderLib_Array_Iterator(_ID, _CurrentIndex)
 THEN
-DB_LeaderLibArray_Iterator(_ID, _CurrentIndex);
+DB_LeaderLib_Array_Iterator(_ID, _CurrentIndex);
 
 PROC
 LeaderLib_Array_Internal_OnBuildArrayIterator((STRING)_ID)
 AND
-DB_LeaderLibArray_Temp_ArrayIteratorBuilder(_ID, _CurrentIndex, _Length)
+DB_LeaderLib_Array_Temp_ArrayIteratorBuilder(_ID, _CurrentIndex, _Length)
 AND
 _CurrentIndex <= _Length
 AND
 IntegerSum(_CurrentIndex, 1, _NextIndex)
 THEN
-NOT DB_LeaderLibArray_Temp_ArrayIteratorBuilder(_ID, _CurrentIndex, _Length);
-DB_LeaderLibArray_Temp_ArrayIteratorBuilder(_ID, _NextIndex, _Length);
+NOT DB_LeaderLib_Array_Temp_ArrayIteratorBuilder(_ID, _CurrentIndex, _Length);
+DB_LeaderLib_Array_Temp_ArrayIteratorBuilder(_ID, _NextIndex, _Length);
 LeaderLib_Array_Internal_OnBuildArrayIterator(_ID);
 
 /*
 IF
-DB_LeaderLibArray_Iterator(_ID, _Index)
+DB_LeaderLib_Array_Iterator(_ID, _Index)
 AND
 IntegertoString(_Index, _IndexStr)
 THEN
@@ -501,14 +501,14 @@ LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:ArrayIterator] Added [",_I
 QRY
 LeaderLib_Array_QRY_DataExists((STRING)_ID)
 AND
-DB_LeaderLibArray_Data(_ID, _, _)
+DB_LeaderLib_Array_Data(_ID, _, _)
 THEN
 DB_NOOP(1);
 
 QRY
 LeaderLib_Array_QRY_EmptyLength((STRING)_ID)
 AND
-DB_LeaderLibArray_Length(_ID, _Length)
+DB_LeaderLib_Array_Length(_ID, _Length)
 AND
 _Length <= 0
 THEN
@@ -517,7 +517,7 @@ DB_NOOP(1);
 QRY
 LeaderLib_Array_QRY_EmptyLength((STRING)_ID)
 AND
-NOT DB_LeaderLibArray_Length(_ID, _)
+NOT DB_LeaderLib_Array_Length(_ID, _)
 THEN
 DB_NOOP(1);
 
@@ -533,7 +533,7 @@ DB_NOOP(1);
 QRY
 LeaderLib_Array_QRY_DictionaryDataExists((STRING)_ID)
 AND
-DB_LeaderLibDictionary_Data(_ID, _, _, _)
+DB_LeaderLib_Dictionary_Data(_ID, _, _, _)
 THEN
 DB_NOOP(1);
 //END_REGION
@@ -542,24 +542,24 @@ DB_NOOP(1);
 PROC
 LeaderLib_Array_AddToDictionary((STRING)_ID, (STRING)_Key, (STRING)_Value)
 AND
-NOT DB_LeaderLibArray_Length(_ID, _)
+NOT DB_LeaderLib_Array_Length(_ID, _)
 THEN
 LeaderLib_Array_NewArray(_ID);
 
 PROC
 LeaderLib_Array_AddToDictionary((STRING)_ID, (STRING)_Key, (STRING)_Value)
 AND
-DB_LeaderLibArray_Length(_ID, _NextIndex)
+DB_LeaderLib_Array_Length(_ID, _NextIndex)
 THEN
-DB_LeaderLibDictionary_Data(_ID, _NextIndex, _Key, _Value);
+DB_LeaderLib_Dictionary_Data(_ID, _NextIndex, _Key, _Value);
 LeaderLib_Array_IncreaseArrayLength(_ID);
 
 PROC
 LeaderLib_Array_AddToDictionaryAtIndex((STRING)_ID, (STRING)_Key, (STRING)_Value, (INTEGER)_Index)
 AND
-NOT DB_LeaderLibDictionary_Data(_ID, _Index, _, _)
+NOT DB_LeaderLib_Dictionary_Data(_ID, _Index, _, _)
 THEN
-DB_LeaderLibDictionary_Data(_ID, _Index, _Key, _Value);
+DB_LeaderLib_Dictionary_Data(_ID, _Index, _Key, _Value);
 LeaderLib_Array_IncreaseArrayLength(_ID);
 //LeaderLib_Array_RebuildArrayLength(_ID, "Dictionary");
 
@@ -575,38 +575,38 @@ DB_NOOP(1);
 PROC
 LeaderLib_Array_AddToDictionaryAtIndex((STRING)_ID, (STRING)_Key, (STRING)_Value, (INTEGER)_Index)
 AND
-DB_LeaderLibDictionary_Data(_ID, _Index, _OtherKey, _OtherValue)
+DB_LeaderLib_Dictionary_Data(_ID, _Index, _OtherKey, _OtherValue)
 AND
 NOT LeaderLib_Array_QRY_DictionaryEntryMatch(_ID, _Key, _Value, _OtherKey, _OtherValue)
 THEN
 LeaderLib_Array_ShiftDictionaryDown(_ID, _Index);
-DB_LeaderLibDictionary_Data(_ID, _Index, _Key, _Value);
+DB_LeaderLib_Dictionary_Data(_ID, _Index, _Key, _Value);
 LeaderLib_Array_IncreaseArrayLength(_ID);
 //LeaderLib_Array_RebuildArrayLength(_ID, "Dictionary");
 
 PROC
 LeaderLib_Array_ShiftDictionaryDown((STRING)_ID, (INTEGER)_AtIndex)
 AND
-DB_LeaderLibDictionary_Data(_ID, _Index, _Key, _Value)
+DB_LeaderLib_Dictionary_Data(_ID, _Index, _Key, _Value)
 AND
 _Index >= _AtIndex
 AND
 IntegerSum(_Index, 1, _NextIndex)
 THEN
-NOT DB_LeaderLibDictionary_Data(_ID, _Index, _Key, _Value);
-DB_LeaderLibDictionary_Data(_ID, _NextIndex, _Key, _Value);
+NOT DB_LeaderLib_Dictionary_Data(_ID, _Index, _Key, _Value);
+DB_LeaderLib_Dictionary_Data(_ID, _NextIndex, _Key, _Value);
 
 PROC
 LeaderLib_Array_ShiftDictionaryUp((STRING)_ID, (INTEGER)_StartIndex)
 AND
-DB_LeaderLibDictionary_Data(_ID, _Index, _Key, _Value)
+DB_LeaderLib_Dictionary_Data(_ID, _Index, _Key, _Value)
 AND
 _Index > _StartIndex
 AND
 IntegerSubtract(_Index, 1, _NextIndex)
 THEN
-NOT DB_LeaderLibDictionary_Data(_ID, _Index, _Key, _Value);
-DB_LeaderLibDictionary_Data(_ID, _NextIndex, _Key, _Value);
+NOT DB_LeaderLib_Dictionary_Data(_ID, _Index, _Key, _Value);
+DB_LeaderLib_Dictionary_Data(_ID, _NextIndex, _Key, _Value);
 //END_REGION
 
 //REGION DICTIONARY_CLEAR
@@ -618,30 +618,30 @@ LeaderLib_Array_ClearDictionaryEntries(_ID);
 PROC
 LeaderLib_Array_ClearDictionaryEntries((STRING)_ID)
 AND
-DB_LeaderLibDictionary_Data(_ID, _Index, _Key, _Value)
+DB_LeaderLib_Dictionary_Data(_ID, _Index, _Key, _Value)
 THEN
-NOT DB_LeaderLibDictionary_Data(_ID, _Index, _Key, _Value);
+NOT DB_LeaderLib_Dictionary_Data(_ID, _Index, _Key, _Value);
 
 PROC
 LeaderLib_Array_ClearDictionaryLength((STRING)_ID)
 AND
-DB_LeaderLibArray_Length(_ID, _Length)
+DB_LeaderLib_Array_Length(_ID, _Length)
 THEN
-NOT DB_LeaderLibArray_Length(_ID, _Length);
+NOT DB_LeaderLib_Array_Length(_ID, _Length);
 
 PROC
 LeaderLib_Array_ClearDictionaryIterators((STRING)_ID)
 AND
-DB_LeaderLibArray_Iterator(_ID, _CurrentIndex)
+DB_LeaderLib_Array_Iterator(_ID, _CurrentIndex)
 THEN
-NOT DB_LeaderLibArray_Iterator(_ID, _CurrentIndex);
+NOT DB_LeaderLib_Array_Iterator(_ID, _CurrentIndex);
 
 PROC
 LeaderLib_Array_ClearDictionaryIterators((STRING)_ID)
 AND
-DB_LeaderLibArray_Temp_ArrayIteratorBuilder(_ID, _CurrentIndex, _Length)
+DB_LeaderLib_Array_Temp_ArrayIteratorBuilder(_ID, _CurrentIndex, _Length)
 THEN
-NOT DB_LeaderLibArray_Temp_ArrayIteratorBuilder(_ID, _CurrentIndex, _Length);
+NOT DB_LeaderLib_Array_Temp_ArrayIteratorBuilder(_ID, _CurrentIndex, _Length);
 
 PROC
 LeaderLib_Array_ClearDictionary((STRING)_ID)
@@ -653,16 +653,16 @@ LeaderLib_Array_ClearDictionaryLength(_ID);
 PROC
 LeaderLib_Array_ClearDictionary((STRING)_ID)
 AND
-DB_LeaderLibArray_Temp_PopValue(_ID, _Value)
+DB_LeaderLib_Array_Temp_PopValue(_ID, _Value)
 THEN
-NOT DB_LeaderLibArray_Temp_PopValue(_ID, _Value);
+NOT DB_LeaderLib_Array_Temp_PopValue(_ID, _Value);
 
 PROC
 LeaderLib_Array_ClearDictionary((STRING)_ID)
 AND
-DB_LeaderLibArray_Temp_FirstEntry(_ID, _Index, _Value)
+DB_LeaderLib_Array_Temp_FirstEntry(_ID, _Index, _Value)
 THEN
-NOT DB_LeaderLibArray_Temp_FirstEntry(_ID, _Index, _Value);
+NOT DB_LeaderLib_Array_Temp_FirstEntry(_ID, _Index, _Value);
 //END_REGION
 
 //REGION DEBUG
@@ -670,7 +670,7 @@ NOT DB_LeaderLibArray_Temp_FirstEntry(_ID, _Index, _Value);
 PROC
 LeaderLib_Array_AddToArray((STRING)_ID, (STRING)_Value)
 AND
-DB_LeaderLibArray_Length(_ID, _Length)
+DB_LeaderLib_Array_Length(_ID, _Length)
 AND
 IntegerSubtract(_Length, 1, _AddedIndex)
 AND
@@ -683,7 +683,7 @@ LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:AddToArray] Added '",_Valu
 PROC
 LeaderLib_Array_AddToDictionaryAtIndex((STRING)_ID, (STRING)_Key, (STRING)_Value, (INTEGER)_Index)
 AND
-DB_LeaderLibDictionary_Data(_ID, _Index, _Key, _Value)
+DB_LeaderLib_Dictionary_Data(_ID, _Index, _Key, _Value)
 AND
 IntegertoString(_Index, _IndexStr)
 THEN
@@ -692,7 +692,7 @@ LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:AddToArray] Added [",_Key,
 PROC
 LeaderLib_Array_AddToDictionary((STRING)_ID, (STRING)_Key, (STRING)_Value)
 AND
-DB_LeaderLibArray_Length(_ID, _Length)
+DB_LeaderLib_Array_Length(_ID, _Length)
 AND
 IntegerSubtract(_Length, 1, _AddedIndex)
 AND
@@ -705,7 +705,7 @@ LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:AddToArray] Added '",_Valu
 PROC
 LeaderLib_Array_ShiftArrayDown((STRING)_ID, (INTEGER)_AtIndex)
 AND
-DB_LeaderLibArray_Data(_ID, _Index, _Value)
+DB_LeaderLib_Array_Data(_ID, _Index, _Value)
 AND
 _Index > _AtIndex
 AND
@@ -718,7 +718,7 @@ LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:ShiftArrayDown(",_AtIndexS
 PROC
 LeaderLib_Array_ShiftArrayUp((STRING)_ID, (INTEGER)_StartIndex)
 AND
-DB_LeaderLibArray_Data(_ID, _Index, _Value)
+DB_LeaderLib_Array_Data(_ID, _Index, _Value)
 AND
 _Index >= _StartIndex
 AND
@@ -734,13 +734,13 @@ LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:ShiftArrayUp(",_StartIndex
 PROC
 LeaderLib_System_RegisterDatabases()
 THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LeaderLibArray_Length", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LeaderLibArray_Data", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LeaderLibDictionary_Data", 4);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LeaderLibArray_Iterator", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LeaderLibArray_Temp_ArrayIteratorBuilder", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LeaderLibArray_Temp_PopValue", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LeaderLibArray_Temp_FirstEntry", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LeaderLib_Array_Length", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LeaderLib_Array_Data", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LeaderLib_Dictionary_Data", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LeaderLib_Array_Iterator", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LeaderLib_Array_Temp_ArrayIteratorBuilder", 3);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LeaderLib_Array_Temp_PopValue", 2);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LeaderLib_Array_Temp_FirstEntry", 3);
 LeaderLog_Log("TRACE", "[LeaderLib:DatabaseExtensions] Databases registered.");
 //END_REGION
 EXITSECTION

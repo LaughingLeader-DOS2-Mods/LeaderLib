@@ -6,7 +6,7 @@ INITSECTION
 //DB_LeaderLib_Math_Cosine(_Angle, _Result)
 //DB_LeaderLib_Math_Factorial(_Factor, _Result)
 
-//DB_LeaderLibMath_Temp_FactorialOperation(_Factor, _MultiplyBy, _Result)
+//DB_LeaderLib_Math_Temp_FactorialOperation(_Factor, _MultiplyBy, _Result)
 KBSECTION
 //REGION POWER
 QRY
@@ -170,8 +170,8 @@ _MultiplyBy > 0
 AND
 IntegerProduct(_CurrentResult, _MultiplyBy, _Result)
 THEN
-NOT DB_LeaderLibMath_Temp_FactorialOperation(_Factor, _CurrentFactor, _CurrentResult);
-DB_LeaderLibMath_Temp_FactorialOperation(_Factor, _MultiplyBy, _Result);
+NOT DB_LeaderLib_Math_Temp_FactorialOperation(_Factor, _CurrentFactor, _CurrentResult);
+DB_LeaderLib_Math_Temp_FactorialOperation(_Factor, _MultiplyBy, _Result);
 LeaderLib_Math_Internal_CheckNextFactorial(_Factor, _MultiplyBy, _Result);
 
 PROC
@@ -193,9 +193,9 @@ LeaderLib_Math_Internal_ProcessFactorialResult((INTEGER)_Factor)
 AND
 NOT DB_LeaderLib_Math_Factorial(_Factor, _)
 AND
-DB_LeaderLibMath_Temp_FactorialOperation(_Factor, _MultiplyBy, _Result)
+DB_LeaderLib_Math_Temp_FactorialOperation(_Factor, _MultiplyBy, _Result)
 THEN
-NOT DB_LeaderLibMath_Temp_FactorialOperation(_Factor, _MultiplyBy, _Result);
+NOT DB_LeaderLib_Math_Temp_FactorialOperation(_Factor, _MultiplyBy, _Result);
 DB_LeaderLib_Math_Factorial(_Factor, _Result);
 //END_REGION
 

@@ -24,7 +24,7 @@ PROC
 LeaderLib_Party_CountParties()
 THEN
 GlobalSetFlag("LeaderLib_CountedParties");
-SysClear("DB_LeaderLibTemp_PartyCheck", 2);
+SysClear("DB_LeaderLib_Temp_PartyCheck", 2);
 IterateParties("LeaderLib_Events_ResetPartyCount");
 IterateParties("LeaderLib_Events_AddToPartyCheck");
 FireOsirisEvents();
@@ -45,21 +45,21 @@ AND
 StringConcatenate("LeaderLib_Events_CheckParty_", _ID, _EventName)
 THEN
 PartySetFlag(_Character, "LeaderLib_PartyCounted");
-DB_LeaderLibTemp_PartyCheck(_Character, _EventName);
+DB_LeaderLib_Temp_PartyCheck(_Character, _EventName);
 IterateParty(_Character, _EventName);
 LeaderLib_StartObjectTimer(_Character, 250, "LLLIB_Timers_ResetPartyDB_", "LeaderLib_PartyCountFinished");
 
 IF
 StoryEvent((CHARACTERGUID)_Player, "LeaderLib_PartyCountFinished")
 AND
-DB_LeaderLibTemp_PartyCheck(_Character, _EventName)
+DB_LeaderLib_Temp_PartyCheck(_Character, _EventName)
 THEN
-NOT DB_LeaderLibTemp_PartyCheck(_Character, _EventName);
+NOT DB_LeaderLib_Temp_PartyCheck(_Character, _EventName);
 
 IF
 StoryEvent((CHARACTERGUID)_Character, _EventName)
 AND
-DB_LeaderLibTemp_PartyCheck(_Leader, _EventName)
+DB_LeaderLib_Temp_PartyCheck(_Leader, _EventName)
 AND
 _Character != _Leader
 THEN
@@ -111,7 +111,7 @@ DB_NOOP(1);
 IF
 CharacterJoinedParty(_Character)
 AND
-NOT DB_LeaderLibTemp_PartyCheck(_, _)
+NOT DB_LeaderLib_Temp_PartyCheck(_, _)
 AND
 DB_IsPlayer(_Player)
 AND

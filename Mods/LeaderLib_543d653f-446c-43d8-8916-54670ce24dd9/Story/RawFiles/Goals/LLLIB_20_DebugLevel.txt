@@ -1,7 +1,7 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-//DB_LeaderLibTreasure_Temp_ActiveTraderDialog(_Trader, _Instance)
+//DB_LeaderLib_Treasure_Temp_ActiveTraderDialog(_Trader, _Instance)
 KBSECTION
 //REGION ORIGINS
 IF
@@ -136,10 +136,10 @@ LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel] Generating a ton of treasure in 1
 IF
 TimerFinished("LLLIB_Debug_GenTreasure")
 AND
-DB_LeaderLibTreasure_TreasureItemTemplates("LLLIB_TestLevel_Chest3", _ItemEntry, _Amount, _RequirementID)
+DB_LeaderLib_Treasure_TreasureItemTemplates("LLLIB_TestLevel_Chest3", _ItemEntry, _Amount, _RequirementID)
 THEN
 ItemTemplateAddTo(_ItemEntry, ITEMGUID_NDL_ArenaChest_000_60d1603d-606f-4b64-9863-7b962d456278, _Amount);
-DB_LeaderLibTreasure_ItemDoneGenerating(ITEMGUID_NDL_ArenaChest_000_60d1603d-606f-4b64-9863-7b962d456278, "LLLIB_TestLevel_Chest3", _ItemEntry);
+DB_LeaderLib_Treasure_ItemDoneGenerating(ITEMGUID_NDL_ArenaChest_000_60d1603d-606f-4b64-9863-7b962d456278, "LLLIB_TestLevel_Chest3", _ItemEntry);
 
 IF
 TimerFinished("LLLIB_Debug_GenTreasure")
@@ -182,9 +182,9 @@ LeaderLib_DebugLevel_TreasureStressTest();
 PROC
 LeaderLib_DebugLevel_WikiExample_TraderTest()
 AND
-NOT DB_LeaderLibDebug_RegisteredWikiTraders(_)
+NOT DB_LeaderLib_Debug_RegisteredWikiTraders(_)
 THEN
-DB_LeaderLibDebug_RegisteredWikiTraders(1);
+DB_LeaderLib_Debug_RegisteredWikiTraders(1);
 //Trader Setup
 LeaderLib_Trader_Register_TraderTemplate("MyMod.Debug.TestTrader", "Dwarves_Male_Clothing_b1dd34cb-2a28-46d2-8f72-dfa8171b5aa0", 0);
 
@@ -328,7 +328,7 @@ PROC
 LeaderLib_DebugLevel_TreasureStressTest()
 THEN
 LeaderLib_Treasure_Register_TreasureToObject("LLLIB_TestLevel_Chest3", ITEMGUID_NDL_ArenaChest_000_60d1603d-606f-4b64-9863-7b962d456278);
-//DB_LeaderLibTreasure_GenerationSpeed("LLLIB_TestLevel_Chest3", 500);
+//DB_LeaderLib_Treasure_GenerationSpeed("LLLIB_TestLevel_Chest3", 500);
 LeaderLib_Treasure_Register_ItemTemplate("LLLIB_TestLevel_Chest3", "WPN_Dwarves_Sword_2H_B_03f8fb7a-59cf-47eb-9298-79cedaf744e5", 5);
 LeaderLib_Treasure_Register_ItemTemplate("LLLIB_TestLevel_Chest3", "WPN_Common_Axe_1H_A_7f229a2e-dc16-4b79-baeb-203e4c00fff5");
 LeaderLib_Treasure_Register_ItemTemplate("LLLIB_TestLevel_Chest3", "WPN_Common_Axe_1H_B_e80bdd9f-f5e3-4f81-b96d-25565af65f34");
@@ -509,7 +509,7 @@ StoryEvent(_, "LeaderLib_Initialized")
 AND
 LeaderLib_StringExt_QRY_CompareStrings("Test", "[ModMenu2] Settings", "[ModMenu10] Settings")
 AND
-DB_LeaderLibDictionarySort_Temp_StringCompare_Results("Test", _Str1, _Str2, _CompareVal)
+DB_LeaderLib_DictionarySort_Temp_StringCompare_Results("Test", _Str1, _Str2, _CompareVal)
 AND
 IntegertoString(_CompareVal, _CompareValStr)
 THEN
@@ -528,7 +528,7 @@ LeaderLog_Log("STATUS", "[LeaderLib:Debug] Color text!");
 IF
 RegionEnded(_Level)
 AND
-DB_LeaderLibLeaderTrader(_LeaderTrader)
+DB_LeaderLib_LeaderTrader(_LeaderTrader)
 AND
 CharacterIsPlayer(_LeaderTrader, 1)
 THEN
@@ -541,29 +541,29 @@ CharacterRemoveFromParty(_LeaderTrader);
 IF
 CombatStarted(_CombatID)
 AND
-NOT DB_LeaderLibDebug_TestCombat(_CombatID)
+NOT DB_LeaderLib_Debug_TestCombat(_CombatID)
 AND
 IntegertoString(_CombatID, _CombatStr)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel:CombatRandomTest] Combat [",_CombatStr,"] started. Starting timer [LeaderLib_Debug_Timers_CombatRandomTest].");
-DB_LeaderLibDebug_TestCombat(_CombatID);
+DB_LeaderLib_Debug_TestCombat(_CombatID);
 TimerCancel("LeaderLib_Debug_Timers_CombatRandomTest");
 TimerLaunch("LeaderLib_Debug_Timers_CombatRandomTest", 750);
 
 IF
 CombatEnded(_CombatID)
 AND
-DB_LeaderLibDebug_TestCombat(_CombatID)
+DB_LeaderLib_Debug_TestCombat(_CombatID)
 AND
 IntegertoString(_CombatID, _CombatStr)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel:CombatRandomTest] Combat [",_CombatStr,"] ended.");
-NOT DB_LeaderLibDebug_TestCombat(_CombatID);
+NOT DB_LeaderLib_Debug_TestCombat(_CombatID);
 
 IF
 CombatEnded(_CombatID)
 AND
-NOT DB_LeaderLibDebug_TestCombat(_)
+NOT DB_LeaderLib_Debug_TestCombat(_)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel:CombatRandomTest] No active combat. Stopping timer [LeaderLib_Debug_Timers_CombatRandomTest].");
 TimerCancel("LeaderLib_Debug_Timers_CombatRandomTest");
@@ -571,14 +571,14 @@ TimerCancel("LeaderLib_Debug_Timers_CombatRandomTest");
 IF
 TimerFinished("LeaderLib_Debug_Timers_CombatRandomTest")
 AND
-DB_LeaderLibDebug_TestCombat(_CombatID)
+DB_LeaderLib_Debug_TestCombat(_CombatID)
 THEN
 LeaderLib_Combat_GetRandomCharacter(_CombatID);
 
 IF
 TimerFinished("LeaderLib_Debug_Timers_CombatRandomTest")
 AND
-DB_LeaderLibDebug_TestCombat(_CombatID)
+DB_LeaderLib_Debug_TestCombat(_CombatID)
 AND
 NOT DB_LeaderLib_Combat_Temp_RandomCharacter(_CombatID, _, _)
 AND
@@ -589,7 +589,7 @@ LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel:CombatRandomTest] Combat [",_Comba
 IF
 TimerFinished("LeaderLib_Debug_Timers_CombatRandomTest")
 AND
-DB_LeaderLibDebug_TestCombat(_CombatID)
+DB_LeaderLib_Debug_TestCombat(_CombatID)
 AND
 NOT DB_LeaderLib_Combat_Temp_RandomCharacter(_CombatID, _, _)
 AND
@@ -606,7 +606,7 @@ LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel:CombatRandomTest] Combat [",_Comba
 IF
 TimerFinished("LeaderLib_Debug_Timers_CombatRandomTest")
 AND
-DB_LeaderLibDebug_TestCombat(_CombatID)
+DB_LeaderLib_Debug_TestCombat(_CombatID)
 AND
 DB_LeaderLib_Combat_Temp_RandomCharacter(_CombatID, _Character, _Index)
 AND
@@ -641,7 +641,7 @@ TimerLaunch("LeaderLib_Debug_Timers_CombatRandomTest", 4000);
 QRY
 LeaderLib_Debug_TestLevel_QRY_TestCombatAvailable()
 AND
-DB_LeaderLibDebug_TestCombat(_)
+DB_LeaderLib_Debug_TestCombat(_)
 THEN
 DB_NOOP(1);
 //END_REGION
@@ -688,7 +688,7 @@ LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem] Random range result: ",_RanSt
 IF
 CharacterUsedItem(_Character, ITEMGUID_LLLIB_Debug_TestLeverB_65136f61-80ec-4965-bce9-5789eea56aca)
 AND
-DB_LeaderLibEquipmentSlots(_Slot)
+DB_LeaderLib_EquipmentSlots(_Slot)
 AND
 CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
 AND

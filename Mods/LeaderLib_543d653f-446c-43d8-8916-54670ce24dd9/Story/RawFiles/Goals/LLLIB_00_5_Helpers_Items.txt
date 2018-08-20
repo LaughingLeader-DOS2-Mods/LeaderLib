@@ -35,7 +35,7 @@ CharacterEquipItem(_Character, _Item);
 PROC
 LeaderLib_Helper_UnequipAllAndSave((CHARACTERGUID)_Character)
 AND
-DB_LeaderLibEquipmentSlots(_Slot)
+DB_LeaderLib_EquipmentSlots(_Slot)
 AND
 CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
 THEN
@@ -45,7 +45,7 @@ DB_LeaderLib_Helper_Temp_UnequippedItem(_Character, _Item);
 PROC
 LeaderLib_Helper_UnequipAll((CHARACTERGUID)_Character)
 AND
-DB_LeaderLibEquipmentSlots(_Slot)
+DB_LeaderLib_EquipmentSlots(_Slot)
 AND
 CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
 THEN
@@ -59,7 +59,7 @@ LeaderLib_Helper_RefreshEquipment(_Character);
 PROC
 LeaderLib_Helper_RefreshEquipment((CHARACTERGUID)_Character)
 AND
-DB_LeaderLibEquipmentSlots(_Slot)
+DB_LeaderLib_EquipmentSlots(_Slot)
 AND
 CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
 THEN

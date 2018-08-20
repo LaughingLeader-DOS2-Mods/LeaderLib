@@ -1,21 +1,21 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-//DB_LeaderLibTreasure_Temp_ItemTemplateAmount(_Object, _TreasureID, _ItemTemplate, _Amount)
-//DB_LeaderLibTreasure_Temp_ItemStatAmount(_Object, _TreasureID, _ItemTemplate, _GeneratedStat, _Amount)
+//DB_LeaderLib_Treasure_Temp_ItemTemplateAmount(_Object, _TreasureID, _ItemTemplate, _Amount)
+//DB_LeaderLib_Treasure_Temp_ItemStatAmount(_Object, _TreasureID, _ItemTemplate, _GeneratedStat, _Amount)
 KBSECTION
 //REGION COUNTING
 QRY
 LeaderLib_Treasure_QRY_CountTemplate((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate)
 AND
-DB_LeaderLibTreasure_Temp_ItemTemplateAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _PastAmount)
+DB_LeaderLib_Treasure_Temp_ItemTemplateAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _PastAmount)
 THEN
-NOT DB_LeaderLibTreasure_Temp_ItemTemplateAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _PastAmount);
+NOT DB_LeaderLib_Treasure_Temp_ItemTemplateAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _PastAmount);
 
 QRY
 LeaderLib_Treasure_QRY_CountTemplate((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate)
 THEN
-DB_LeaderLibTreasure_Temp_ItemTemplateAmount(_Object, _TreasureID, _ItemTemplate, 0);
+DB_LeaderLib_Treasure_Temp_ItemTemplateAmount(_Object, _TreasureID, _ItemTemplate, 0);
 
 QRY
 LeaderLib_Treasure_QRY_CountTemplate((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate)
@@ -24,8 +24,8 @@ ObjectIsCharacter(_Object, 1)
 AND
 ItemTemplateIsInCharacterInventory((CHARACTERGUID)_Object, _ItemTemplate, _Amount)
 THEN
-NOT DB_LeaderLibTreasure_Temp_ItemTemplateAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, 0);
-DB_LeaderLibTreasure_Temp_ItemTemplateAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _Amount);
+NOT DB_LeaderLib_Treasure_Temp_ItemTemplateAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, 0);
+DB_LeaderLib_Treasure_Temp_ItemTemplateAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _Amount);
 
 QRY
 LeaderLib_Treasure_QRY_CountTemplate((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate)
@@ -36,8 +36,8 @@ ItemIsContainer((ITEMGUID)_Object, 1)
 AND
 ItemTemplateIsInContainer(_Object, _ItemTemplate, _Amount)
 THEN
-NOT DB_LeaderLibTreasure_Temp_ItemTemplateAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, 0);
-DB_LeaderLibTreasure_Temp_ItemTemplateAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _Amount);
+NOT DB_LeaderLib_Treasure_Temp_ItemTemplateAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, 0);
+DB_LeaderLib_Treasure_Temp_ItemTemplateAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _Amount);
 
 QRY
 LeaderLib_Treasure_QRY_CountTemplateWithStat((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate, (STRING)_GeneratedStat)
@@ -47,7 +47,7 @@ LeaderLib_Treasure_CountTemplateWithStat(_ID, _Object, _TreasureID, _ItemTemplat
 PROC
 LeaderLib_Treasure_CountTemplateWithStat((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate, (STRING)_GeneratedStat)
 THEN
-DB_LeaderLibTreasure_Temp_ItemStatAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _GeneratedStat, 0);
+DB_LeaderLib_Treasure_Temp_ItemStatAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _GeneratedStat, 0);
 LeaderLib_StartObjectTimer(_Object, 500, _ID, "LeaderLib_Events_Treasure_Internal_StatCountingComplete");
 
 QRY
@@ -99,7 +99,7 @@ StoryEvent(_, _CompletionEvent)
 AND
 DB_LeaderLib_Treasure_Temp_TemplateIterator(_ID, _Object, _TreasureID, _ItemTemplate, _GeneratedStat, _IterateEvent, _CompletionEvent)
 AND
-DB_LeaderLibTreasure_Temp_ItemStatAmount(_Object, _TreasureID, _ItemTemplate, _GeneratedStat, _Total)
+DB_LeaderLib_Treasure_Temp_ItemStatAmount(_Object, _TreasureID, _ItemTemplate, _GeneratedStat, _Total)
 AND
 _Total > 0
 AND
@@ -137,12 +137,12 @@ IntegertoString(_Amount, _AmountStr)
 AND
 LeaderLog_QRY_Log("DEBUG", "[LeaderLib:DebugNow] Incrementing amount by [",_AmountStr,"].")
 AND
-DB_LeaderLibTreasure_Temp_ItemStatAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _GeneratedStat, _CurrentAmount)
+DB_LeaderLib_Treasure_Temp_ItemStatAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _GeneratedStat, _CurrentAmount)
 AND
 IntegerSum(_CurrentAmount, _Amount, _NextAmount)
 THEN
-NOT DB_LeaderLibTreasure_Temp_ItemStatAmount(_Object, _TreasureID, _ItemTemplate, _GeneratedStat, _CurrentAmount);
-DB_LeaderLibTreasure_Temp_ItemStatAmount(_Object, _TreasureID, _ItemTemplate, _GeneratedStat, _NextAmount);
+NOT DB_LeaderLib_Treasure_Temp_ItemStatAmount(_Object, _TreasureID, _ItemTemplate, _GeneratedStat, _CurrentAmount);
+DB_LeaderLib_Treasure_Temp_ItemStatAmount(_Object, _TreasureID, _ItemTemplate, _GeneratedStat, _NextAmount);
 //END_REGION
 
 //REGION QUERIES
@@ -160,7 +160,7 @@ IsTagged(_Object, "LeaderLib_Treasure_IgnoreAmountLimit", 0)
 AND
 ObjectIsItem(_Object, 1)
 AND
-NOT DB_LeaderLibTreasure_ItemDoneGenerating(_Object, _TreasureID, _ItemEntry)
+NOT DB_LeaderLib_Treasure_ItemDoneGenerating(_Object, _TreasureID, _ItemEntry)
 THEN
 DB_NOOP(1);
 
@@ -169,7 +169,7 @@ LeaderLib_Treasure_QRY_ItemLimitNotMet((GUIDSTRING)_Object, (STRING)_TreasureID,
 AND
 _RequirementID != ""
 AND
-DB_LeaderLibTreasure_ItemMaxAmount(_TreasureID, _ItemEntry, _MaxAmount)
+DB_LeaderLib_Treasure_ItemMaxAmount(_TreasureID, _ItemEntry, _MaxAmount)
 AND
 _CurrentAmount < _MaxAmount
 AND
@@ -177,14 +177,14 @@ IntegerSubtract(_GeneratedAmount, _MaxAmount, _AmountToCreate)
 AND
 _AmountToCreate > 0
 THEN
-DB_LeaderLibTreasure_Temp_AmountToCreate(_Object, _ItemEntry, _AmountToCreate);
+DB_LeaderLib_Treasure_Temp_AmountToCreate(_Object, _ItemEntry, _AmountToCreate);
 
 QRY
 LeaderLib_Treasure_QRY_ItemLimitNotMet((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_RequirementID, (INTEGER)_GeneratedAmount, (INTEGER)_CurrentAmount)
 AND
 _RequirementID != ""
 AND
-NOT DB_LeaderLibTreasure_ItemMaxAmount(_TreasureID, _ItemEntry, _)
+NOT DB_LeaderLib_Treasure_ItemMaxAmount(_TreasureID, _ItemEntry, _)
 AND
 _CurrentAmount < _GeneratedAmount
 AND
@@ -192,7 +192,7 @@ IntegerSubtract(_GeneratedAmount, _CurrentAmount, _AmountToCreate)
 AND
 _AmountToCreate > 0
 THEN
-DB_LeaderLibTreasure_Temp_AmountToCreate(_Object, _ItemEntry, _AmountToCreate);
+DB_LeaderLib_Treasure_Temp_AmountToCreate(_Object, _ItemEntry, _AmountToCreate);
 
 QRY
 LeaderLib_Treasure_QRY_ItemLimitNotMet((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_RequirementID, (INTEGER)_GeneratedAmount, (INTEGER)_CurrentAmount)
@@ -205,19 +205,19 @@ IntegerSubtract(_GeneratedAmount, _CurrentAmount, _AmountToCreate)
 AND
 _AmountToCreate > 0
 THEN
-DB_LeaderLibTreasure_Temp_AmountToCreate(_Object, _ItemEntry, _AmountToCreate);
+DB_LeaderLib_Treasure_Temp_AmountToCreate(_Object, _ItemEntry, _AmountToCreate);
 
 QRY
 LeaderLib_Treasure_QRY_CountedItems((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry)
 AND
-DB_LeaderLibTreasure_Temp_ItemTemplateAmount(_Object, _TreasureID, _ItemEntry, _Amount)
+DB_LeaderLib_Treasure_Temp_ItemTemplateAmount(_Object, _TreasureID, _ItemEntry, _Amount)
 THEN
 DB_NOOP(1);
 
 QRY
 LeaderLib_Treasure_QRY_CountedItems((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry)
 AND
-DB_LeaderLibTreasure_Temp_ItemStatAmount(_Object, _TreasureID, _ItemTemplate, _ItemEntry, _Amount)
+DB_LeaderLib_Treasure_Temp_ItemStatAmount(_Object, _TreasureID, _ItemTemplate, _ItemEntry, _Amount)
 THEN
 DB_NOOP(1);
 //END_REGION
@@ -226,8 +226,8 @@ DB_NOOP(1);
 PROC
 LeaderLib_System_RegisterDatabases()
 THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_ItemCounter", "DB_LeaderLibTreasure_Temp_ItemTemplateAmount", 4);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_ItemCounter", "DB_LeaderLibTreasure_Temp_ItemStatAmount", 5);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_ItemCounter", "DB_LeaderLib_Treasure_Temp_ItemTemplateAmount", 4);
+LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_ItemCounter", "DB_LeaderLib_Treasure_Temp_ItemStatAmount", 5);
 LeaderLog_Log("TRACE", "[LeaderLib:Treasure_ItemCounter] Databases registered.");
 //END_REGION
 EXITSECTION

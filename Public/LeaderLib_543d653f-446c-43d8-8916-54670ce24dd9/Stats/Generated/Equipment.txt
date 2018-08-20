@@ -1,8 +1,8 @@
-new equipment "LLLIB_LeaderTrader_Act1"
+new equipment "LeaderLib_LeaderTrader_Act1"
 add equipmentgroup
 add equipment entry "TOOL_FishingRod_A"
 
-new equipment "LLLIB_LeaderTrader_Armed"
+new equipment "LeaderLib_LeaderTrader_Armed"
 add equipmentgroup
 add equipment entry "ARM_Leather_Helmet_Arena"
 add equipmentgroup
@@ -16,7 +16,7 @@ add equipment entry "ARM_Knight_Boots"
 add equipmentgroup
 add equipment entry "WPN_Knight_Sword_2H_Humans"
 
-new equipment "LLLIB_LeaderTrader_Prisoner"
+new equipment "LeaderLib_LeaderTrader_Prisoner"
 add equipmentgroup
 add equipment entry "ARM_Purge_UpperBody"
 add equipmentgroup

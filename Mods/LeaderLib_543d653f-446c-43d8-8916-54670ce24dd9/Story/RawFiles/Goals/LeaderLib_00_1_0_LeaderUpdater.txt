@@ -53,41 +53,6 @@ THEN
 NOT DB_LeaderUpdater_RegisteredGoal(_ModID, _Author, _GoalTitle);
 //END_REGION
 
-//REGION VERSION_DATA
-PROC
-LeaderUpdater_SaveSettingsVersionData((STRING)_ModID, (STRING)_Author, (STRING)_SettingsID)
-AND
-DB_LeaderUpdater_LastSavedSettings(_ModID, _Author, _SettingsID, _PastVersion)
-THEN
-NOT DB_LeaderUpdater_LastSavedSettings(_ModID, _Author, _SettingsID, _PastVersion);
-
-/*Saves the current version for a particular SettingsID. Useful so newer settings, introduced in the current version, don't "update".*/
-PROC
-LeaderUpdater_SaveSettingsVersionData((STRING)_ModID, (STRING)_Author, (STRING)_SettingsID)
-AND
-DB_Mods_Registered(_ModID, _Author, _Version)
-THEN
-DB_LeaderUpdater_LastSavedSettings(_ModID, _Author, _SettingsID, _Version);
-
-QRY
-LeaderUpdater_QRY_SettingsNeedsUpdate((STRING)_ModID, (STRING)_Author, (STRING)_SettingsID)
-AND
-DB_LeaderUpdater_LastSavedSettings(_ModID, _Author, _SettingsID, _PastVersion)
-AND
-DB_Mods_Registered(_ModID, _Author, _Version)
-AND
-_PastVersion != _Version
-THEN
-DB_NOOP(1);
-
-QRY
-LeaderUpdater_QRY_SettingsNeedsUpdate((STRING)_ModID, (STRING)_Author, (STRING)_SettingsID)
-AND
-NOT DB_LeaderUpdater_LastSavedSettings(_ModID, _Author, _SettingsID, _)
-THEN
-DB_NOOP(1);
-//END_REGION
-
 //REGION QUERIES
 QRY
 LeaderUpdater_QRY_ModIsRegistered((STRING)_ModID, (STRING)_Author)
@@ -178,13 +143,6 @@ THEN
 NOT DB_Mods_ActiveGoal(_ModID, _Author, _GoalTitle);
 
 PROC
-LeaderUpdater_Clear_AllSavedSettings((STRING)_ModID, (STRING)_Author)
-AND
-DB_LeaderUpdater_LastSavedSettings(_ModID, _Author, _SettingsID, _Version)
-THEN
-NOT DB_LeaderUpdater_LastSavedSettings(_ModID, _Author, _SettingsID, _Version);
-
-PROC
 LeaderUpdater_SysClear_AllDatabases((STRING)_ModID, (STRING)_Author)
 AND
 DB_LeaderUpdater_RegisteredDatabase(_ModID, _Author, _GoalTitle, _DatabaseName, _Arity)
@@ -232,17 +190,6 @@ NOT DB_LeaderUpdater_RegisteredGoal(_ModID, _Author, _GoalTitle);
 //END_REGION
 
 //REGION UPDATER
-PROC
-LeaderLib_System_RegisterDatabases()
-THEN
-/* Probably don't want to actually clear these.
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderUpdater", "DB_Mods_Registered", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderUpdater", "DB_Mods_ActiveGoal", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderUpdater", "DB_LeaderUpdater_RegisteredDatabase", 5);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderUpdater", "DB_LeaderUpdater_RegisteredGoal", 3);
-*/
-LeaderLog_Log("TRACE", "[LeaderLib:LeaderUpdater] Databases registered.");
-
 QRY
 LeaderUpdater_QRY_ModVersionsChanged()
 AND

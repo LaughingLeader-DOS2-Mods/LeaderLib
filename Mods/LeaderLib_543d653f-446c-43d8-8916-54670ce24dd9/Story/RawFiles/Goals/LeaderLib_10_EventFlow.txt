@@ -47,7 +47,6 @@ PROC
 LeaderLib_EventFlow_Init_LeaderLibStack()
 THEN
 GlobalClearFlag("LeaderLib_InitialEventFlowComplete");
-LeaderUpdater_SaveSettingsVersionData("LeaderLib_Settings_EventFlowDefaultStack");
 LeaderLib_EventFlow_Clear_StackData("LeaderLib_DefaultEventFlow");
 LeaderLib_EventFlow_AddStack("LeaderLib_DefaultEventFlow", "LeaderLib_Events_OnDefaultEventFlowComplete", 50, 90000);
 
@@ -383,25 +382,6 @@ PROC
 LeaderLib_EventFlow_ForceStop((STRING)_StackName)
 THEN
 LeaderLib_EventFlow_Clear_SessionData(_StackName);
-//END_REGION
-
-//REGION UPDATER
-IF
-StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
-AND
-LeaderUpdater_QRY_SettingsNeedsUpdate("LeaderLib_Settings_EventFlowDefaultStack")
-THEN
-LeaderLib_EventFlow_Init_LeaderLibStack();
-
-PROC
-LeaderLib_System_RegisterDatabases()
-THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventFlow", "DB_LeaderLib_EventFlow_CurrentEvent", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventFlow", "DB_LeaderLib_EventFlow_EventStack", 4);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventFlow", "DB_LeaderLib_EventFlow_EventTimeout", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventFlow", "DB_LeaderLib_EventFlow_WaitTimer", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventFlow", "DB_LeaderLib_EventFlow_CustomWaitTime", 3);
-LeaderLog_Log("TRACE", "[LeaderLib:EventFlow] Databases registered.");
 //END_REGION
 EXITSECTION
 

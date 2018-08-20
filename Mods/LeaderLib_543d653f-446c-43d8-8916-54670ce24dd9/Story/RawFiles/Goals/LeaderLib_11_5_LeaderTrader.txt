@@ -20,23 +20,18 @@ KBSECTION
 PROC
 LeaderLib_LeaderTrader_InitSettings()
 THEN
-LeaderUpdater_SaveSettingsVersionData("LeaderLib_Settings_LeaderTrader");
-
-LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLib_LeaderTrader_Dialog", 2);
 DB_LeaderLib_LeaderTrader_Dialog("Default", "LeaderLib_LeaderTrader_Default");
 DB_LeaderLib_LeaderTrader_Dialog("Tutorial_Intro", "LeaderLib_LeaderTrader_Tutorial_Intro");
 DB_LeaderLib_LeaderTrader_Dialog("FortJoy_Intro", "LeaderLib_LeaderTrader_FortJoy_Intro");
 DB_LeaderLib_LeaderTrader_Dialog("LV_Intro", "LeaderLib_LeaderTrader_LadyVengeance_Intro");
 DB_LeaderLib_LeaderTrader_Dialog("Arx_Intro", "LeaderLib_LeaderTrader_Arx_Intro");
 
-LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLib_LeaderTrader_Appearance", 2);
 //Naked version
 DB_LeaderLib_LeaderTrader_Appearance("TUT_Tutorial_A", "LeaderLib_LeaderTrader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e");
 DB_LeaderLib_LeaderTrader_Appearance("TestLevel_LL_LeaderLib", "LeaderLib_LeaderTrader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e");
 //For other acts
 DB_LeaderLib_LeaderTrader_Appearance("Default", "LeaderLib_LeaderTrader_Casual_da17fca2-fe16-46d9-80b3-08971a8c8d49");
 
-LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLib_LeaderTrader_IntroDialogRequirements", 4);
 DB_LeaderLib_LeaderTrader_IntroDialogRequirements("TUT_Tutorial_A", "LeaderLib_LeaderTrader_Tutorial_Intro", "LeaderLib_LeaderTrader_TUT_IntroDone", "LeaderLib_LeaderTrader_TUT_IntroPending");
 DB_LeaderLib_LeaderTrader_IntroDialogRequirements("FJ_FortJoy_Main", "LeaderLib_LeaderTrader_FortJoy_Intro", "LeaderLib_LeaderTrader_FTJ_IntroDone", "LeaderLib_LeaderTrader_FTJ_IntroPending");
 DB_LeaderLib_LeaderTrader_IntroDialogRequirements("LV_HoE_Main", "LeaderLib_LeaderTrader_LadyVengeance_Intro", "LeaderLib_LeaderTrader_LadyVengeance_IntroDone", "LeaderLib_LeaderTrader_LadyVengeance_IntroPending");
@@ -165,34 +160,6 @@ THEN
 LeaderLib_Trader_Register_TraderTemplate("LeaderLib_LeaderTrader", "LeaderLib_LeaderTrader_Default_e4cbf1f4-4eea-457c-93a3-ded05ae3605e", 0);
 LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader] [ERROR] Global trader version doesn't exist! Using the template version.");
 GlobalSetFlag("LeaderLib_LeaderTraderIsNotGlobal");
-//END_REGION
-
-//REGION SETTINGS_UPDATE
-IF
-StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
-AND
-LeaderUpdater_QRY_SettingsNeedsUpdate("LeaderLib_Settings_LeaderTrader")
-THEN
-LeaderLib_LeaderTrader_UpdateSettings();
-LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader] Updated LeaderTrader settings.");
-
-PROC
-LeaderLib_LeaderTrader_UpdateSettings()
-AND
-DB_LeaderLib_Treasure_KeepGeneratingTreasure("LeaderLib.LeaderTrader.ModBooks")
-THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader:UpdateSettings] Made the ModBooks treasure group generate endlessly.");
-LeaderLib_Treasure_Configure_GenerateTreasureEndlessly("LeaderLib.LeaderTrader.ModBooks");
-
-//For updating treasure/trader settings on existing saves
-PROC
-LeaderLib_LeaderTrader_UpdateSettings()
-AND
-NOT DB_LeaderLib_Treasure_RegisteredTraderTreasure("LeaderLib.LeaderTrader.Skillbooks", "LeaderLib_LeaderTrader")
-THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader:UpdateSettings] Added new skillbooks treasure to LeaderTrader.");
-LeaderLib_Treasure_Register_TreasureToTrader("LeaderLib.LeaderTrader.Skillbooks", "LeaderLib_LeaderTrader");
-LeaderLib_Treasure_Register_ItemTemplate("LeaderLib.LeaderTrader.Skillbooks", "BOOK_Skill_LeaderLib_ControlSummon_832058fd-fd40-47d0-bea3-0e108761d4e4", 2);
 //END_REGION
 
 //REGION NON_GLOBAL_WORKAROUND
@@ -733,30 +700,6 @@ AND
 DB_LeaderLib_LeaderTrader_Temp_HasNewItems(_Val)
 THEN
 NOT DB_LeaderLib_LeaderTrader_Temp_HasNewItems(_Val);
-//END_REGION
-
-//REGION UPDATER
-IF
-StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
-AND
-LeaderUpdater_QRY_SettingsNeedsUpdate("LeaderLib_Settings_LeaderTrader")
-THEN
-LeaderLib_LeaderTrader_InitSettings();
-LeaderLog_Log("SYSTEM", "[LeaderLib:LeaderTrader] Settings updated.");
-
-PROC
-LeaderLib_System_RegisterDatabases()
-THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LeaderLib_LeaderTrader", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LeaderLib_LeaderTrader_MetPlayer", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LeaderLib_LeaderTrader_Dialog", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LeaderLib_LeaderTrader_Appearance", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LeaderLib_LeaderTrader_CurrentAppearance", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LeaderLib_LeaderTrader_IntroDialogRequirements", 4);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LeaderLib_LeaderTrader_Registered", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LeaderLib_LeaderTrader_SetFlags", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderTrader", "DB_LeaderLib_LeaderTrader_SetTags", 2);
-LeaderLog_Log("TRACE", "[LeaderLib:LeaderTrader] Databases registered.");
 //END_REGION
 EXITSECTION
 

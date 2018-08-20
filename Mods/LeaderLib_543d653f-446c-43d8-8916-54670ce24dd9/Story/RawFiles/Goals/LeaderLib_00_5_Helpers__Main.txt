@@ -722,18 +722,6 @@ LeaderLib_Helper_QRY_Internal_IsDamageStatus("DAMAGE_ON_MOVE")
 THEN
 DB_NOOP(1);
 //END_REGION
-
-//REGION UPDATER
-PROC
-LeaderLib_System_RegisterDatabases()
-THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LeaderLib_Helper_Temp_StopIteratingForFlags", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LeaderLib_Helper_Temp_StopIteratingForMinLevel", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LeaderLib_Helper_Temp_StopIteratingForMaxLevel", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LeaderLib_Helper_Temp_PartyMemberOutsideOfLevelRange", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LeaderLib_Helper_Temp_HighestPlayerLevel", 1);
-LeaderLog_Log("TRACE", "[LeaderLib:Helpers] Databases registered.");
-//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

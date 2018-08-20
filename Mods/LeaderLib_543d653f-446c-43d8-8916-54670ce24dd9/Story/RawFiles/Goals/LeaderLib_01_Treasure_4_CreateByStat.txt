@@ -280,22 +280,14 @@ CharacterEquipItem(_Object, _Item);
 //END_REGION
 
 //REGION UPDATER
+/*
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", _PastVersion)
 AND
 LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 0, 9, 3, 0)
 THEN
 LeaderLog_Log("SYSTEM", "[LeaderLib:CreateByStat] Updated LeaderLib from version [",_PastVersion,"] to [0.9.3.0].");
-LeaderUpdater_Clear_AllRegisteredDatabasesWithReferenceName("LeaderLib", "LaughingLeader", "Treasure_CreateByStat");
-LeaderLib_System_RegisterDatabases();
-
-PROC
-LeaderLib_System_RegisterDatabases()
-THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_CreateByStat", "DB_LeaderLib_CBS_Temp_Queue", 8);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_CreateByStat", "DB_LeaderLib_CBS_Temp_StatSettings", 5);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_CreateByStat", "DB_LeaderLib_CBS_Temp_DummyTarget", 5);
-LeaderLog_Log("TRACE", "[LeaderLib:Treasure_CreateByStat] Databases registered.");
+*/
 //END_REGION
 EXITSECTION
 

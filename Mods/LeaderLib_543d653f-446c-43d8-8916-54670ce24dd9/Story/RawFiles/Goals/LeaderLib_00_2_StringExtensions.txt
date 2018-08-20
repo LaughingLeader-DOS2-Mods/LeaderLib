@@ -643,18 +643,6 @@ _Revision < _OtherRevision
 THEN
 DB_NOOP(1);
 //END_REGION
-
-//REGION UPDATER
-PROC
-LeaderLib_System_RegisterDatabases()
-THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "StringExtensions", "DB_LeaderLib_StringLength", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "StringExtensions", "DB_LeaderLib_StringCompare_Results", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "StringExtensions", "DB_LeaderLib_StringExt_Temp_CompareIterator", 4);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "StringExtensions", "DB_LeaderLib_StringExt_Temp_StringCompare_Results", 4);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "StringExtensions", "DB_LeaderLib_StringExt_Temp_StringCompare_StopIteration", 3);
-LeaderLog_Log("TRACE", "[LeaderLib:StringExtensions] Databases registered.");
-//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

@@ -3,49 +3,11 @@ SubGoalCombiner SGC_AND
 INITSECTION
 //The version is registered in LeaderLib_00_1_1_System, so other mods will be able to see if LeaderLib is registered.
 KBSECTION
-IF
-DB_LeaderLib_GameStarted(_Val)
-THEN
-LeaderLib_Updater_RegisterDatabasesOnce();
-
 //REGION UPDATING
 IF
 StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
 THEN
 LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Settings updated.");
-
-PROC
-LeaderLib_Updater_RegisterDatabasesOnce()
-AND
-NOT DB_LeaderLib_Updater_RegisteredDatabases(_)
-THEN
-LeaderLib_System_RegisterDatabases();
-DB_LeaderLib_Updater_RegisteredDatabases(1);
-
-PROC
-LeaderLib_System_RegisterDatabases()
-THEN
-LeaderLib_Register_ModMenu("LaughingLeader_LeaderLib", "[LeaderLib] Settings", "LeaderLib_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderUpdater_Register_ActiveGoal("LeaderLib", "LaughingLeader", "LeaderLib_ZZZ_Updater");
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Updater", "DB_LeaderLib_Updater_RegisteredDatabases", 1);
-LeaderLog_Log("TRACE", "[LeaderLib:Updater] Databases registered.");
-
-/*
-PROC
-LeaderLib_Updater_ResetDatabases()
-THEN
-LeaderUpdater_Clear_AllDatabases("LeaderLib", "LaughingLeader");
-LeaderUpdater_Clear_AllSavedSettings("LeaderLib", "LaughingLeader");
-LeaderLib_SendEvent("LeaderLib_Events_Internal_OnUpdateSettings");
-LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Databases cleared and re-initialized.");
-*/
-
-PROC
-LeaderLib_Updater_ClearOutdatedDatabases()
-AND
-DB_Registered_Mod((STRING)_ModID, (STRING)_Version, "LaughingLeader")
-THEN
-NOT DB_Registered_Mod(_ModID, _Version, "LaughingLeader");
 //END_REGION
 
 //REGION UPDATE_EVENT
@@ -53,106 +15,15 @@ IF
 GameStarted(_,_)
 THEN
 LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Game started.");
-LeaderLib_Updater_ClearOutdatedDatabases();
 
 IF
 GameStarted(_,_)
 AND
-LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", "0.9.3.0")
+LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", "1.0.0.0")
 THEN
 LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Updating LeaderLib to latest version.");
-LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", "0.9.3.0");
+LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", "1.0.0.0");
 LeaderLib_SendEvent("LeaderLib_Events_Internal_OnUpdateSettings");
-
-/*
-PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", _PastVersion)
-AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 0, 9, 3, 0)
-THEN
-LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Updated LeaderLib from version [",_PastVersion,"] to [0.9.3.0].");
-*/
-//END_REGION
-
-//REGION UNINSTALLING
-PROC
-LeaderUpdater_UnregisterMod("LeaderLib", "LaughingLeader")
-THEN
-GlobalClearFlag("LeaderLib_Active");
-
-PROC
-LeaderUpdater_UninstallMod("LeaderLib", "LaughingLeader")
-THEN
-LeaderLog_Log("SYSTEM", "[LeaderLib:Updater:Uninstaller] Uninstalling LeaderLib.");
-LeaderLog_Log("SYSTEM", "[LeaderLib:Updater:Uninstaller] Attempting to end all LeaderLib dialogs. Resuming in 2 seconds.");
-LeaderLib_Updater_CloseDialogs();
-TimerLaunch("LeaderLib_Timers_Updater_UninstallerPhase2", 2000);
-
-IF
-TimerFinished("LeaderLib_Timers_Updater_UninstallerPhase2")
-THEN
-LeaderLog_Log("SYSTEM", "[LeaderLib:Updater:Uninstaller] Clearing all flags.");
-LeaderLib_Updater_ClearFlags();
-LeaderLog_Log("SYSTEM", "[LeaderLib:Updater:Uninstaller] Destroying all LeaderLib items.");
-LeaderLib_Updater_DestroyItems();
-LeaderLog_Log("SYSTEM", "[LeaderLib:Updater:Uninstaller] Clearing databases.");
-LeaderUpdater_SysClear_AllDatabases("LeaderLib", "LaughingLeader");
-LeaderLog_Log("SYSTEM", "[LeaderLib:Updater:Uninstaller] Unregistering LeaderLib.");
-LeaderUpdater_UnregisterMod("LeaderLib", "LaughingLeader");
-
-PROC
-LeaderLib_Updater_CloseDialogs()
-THEN
-DB_NOOP(1);
-
-/*
-PROC
-LeaderLib_Updater_CloseDialogs()
-AND
-DB_LeaderLib_ActiveDialogs(_Instance)
-AND
-DialogGetInvolvedPlayer(_Instance, 1, _Player)
-THEN
-DialogRequestStop(_Player);
-*/
-
-PROC
-LeaderLib_Updater_ClearFlags()
-THEN
-DB_NOOP(1);
-
-PROC
-LeaderLib_Updater_ClearFlags()
-AND
-DB_IsPlayer(_Player)
-THEN
-DB_NOOP(1);
-
-PROC
-LeaderLib_Updater_UnequipItem((CHARACTERGUID)_Player, (ITEMGUID)_Item)
-AND
-ItemIsEquipable(_Item, 1)
-THEN
-CharacterUnequipItem(_Player, _Item);
-
-PROC
-LeaderLib_Updater_DestroyItems()
-THEN
-DB_NOOP(1);
-
-/*
-PROC
-LeaderLib_Updater_DestroyItems()
-AND
-DB_IsPlayer(_Player)
-AND
-DB_LeaderLib_ItemTemplates(_Name, _Template)
-AND
-GetItemForItemTemplateInInventory(_Player, _Template, _Item)
-THEN
-LeaderLib_Updater_UnequipItem(_Player, _Item);
-ItemDestroy(_Item);
-*/
 //END_REGION
 
 //REGION ACTIVE_FLAG

@@ -526,21 +526,6 @@ THEN
 LeaderLog_Log("TRACE", "[LeaderLib:DictionarySort:ProcessCompareResults] Comparison value: '",_StringEntry,"' => '",_CheckDisplayName,"' = ",_CompValStr);
 */
 //END_REGION
-
-//REGION UPDATER
-PROC
-LeaderLib_System_RegisterDatabases()
-THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LeaderLib_DictionarySort_Temp_StringQueue", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LeaderLib_DictionarySort_SortingStarted", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LeaderLib_DictionarySort_CurrentlySorting", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LeaderLib_DictionarySort_TimerRunning", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LeaderLib_DictionarySort_SortingComplete", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LeaderLib_DictionarySort_Temp_SortJob", 5);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LeaderLib_DictionarySort_EntrySortTimer", 5);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LeaderLib_DictionarySort_TotalTime", 2);
-LeaderLog_Log("TRACE", "[LeaderLib:DictionarySort] Databases registered.");
-//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

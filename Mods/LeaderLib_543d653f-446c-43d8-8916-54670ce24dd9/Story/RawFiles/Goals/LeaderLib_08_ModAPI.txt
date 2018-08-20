@@ -20,21 +20,6 @@ INITSECTION
 //DB_LeaderLib_ModApi_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _Str9)
 //DB_LeaderLib_ModApi_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _Str9, _Str10)
 KBSECTION
-//REGION UPDATER
-PROC
-LeaderLib_System_RegisterDatabases()
-THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_RegisterMenu", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_AddItemToLeaderTrader", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_AddBookToLeaderTrader", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_SendEvent", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_RegisterMod", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_Log_SetTarget", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_Log_ClearTarget", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_Log", 2); // Should go up to 11
-LeaderLog_Log("TRACE", "[LeaderLib:ModAPI] Databases registered.");
-//END_REGION
-
 //REGION DB_MODAPI
 /*LeaderUpdater Registering*/
 IF

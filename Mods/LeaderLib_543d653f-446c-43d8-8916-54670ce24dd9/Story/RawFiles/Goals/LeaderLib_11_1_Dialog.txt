@@ -12,10 +12,9 @@ KBSECTION
 //REGION SETTINGS
 PROC
 LeaderLib_Dialog_InitSettings()
+AND
+NOT DB_LeaderLib_Dialog_DialogFiles(_)
 THEN
-LeaderUpdater_SaveSettingsVersionData("LeaderLib_Settings_Dialog");
-
-LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLib_Dialog_DialogFiles", 1);
 DB_LeaderLib_Dialog_DialogFiles("LeaderLib_ModMenu");
 DB_LeaderLib_Dialog_DialogFiles("LeaderLib_LeaderTrader_Default");
 DB_LeaderLib_Dialog_DialogFiles("LeaderLib_LeaderTrader_FortJoy_Intro");
@@ -24,7 +23,11 @@ DB_LeaderLib_Dialog_DialogFiles("LeaderLib_LeaderTrader_Tutorial_Intro");
 DB_LeaderLib_Dialog_DialogFiles("LeaderLib_LeaderTrader_AttackResponse");
 DB_LeaderLib_Dialog_DialogFiles("LeaderLib_SettingsMenu");
 
-LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLib_Dialog_AttitudeFlags", 2);
+PROC
+LeaderLib_Dialog_InitSettings()
+AND
+NOT DB_LeaderLib_Dialog_AttitudeFlags(_,_)
+THEN
 DB_LeaderLib_Dialog_AttitudeFlags("LeaderLib_IncreaseAttitude_5", 5);
 DB_LeaderLib_Dialog_AttitudeFlags("LeaderLib_IncreaseAttitude_10", 10);
 DB_LeaderLib_Dialog_AttitudeFlags("LeaderLib_IncreaseAttitude_25", 25);
@@ -38,13 +41,20 @@ DB_LeaderLib_Dialog_AttitudeFlags("LeaderLib_DecreaseAttitude_50", -50);
 DB_LeaderLib_Dialog_AttitudeFlags("LeaderLib_DecreaseAttitude_75", -75);
 DB_LeaderLib_Dialog_AttitudeFlags("LeaderLib_DecreaseAttitude_100", -100);
 
-LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLib_Dialog_Vars", 2);
+PROC
+LeaderLib_Dialog_InitSettings()
+AND
+NOT DB_LeaderLib_Dialog_Vars(_,_)
+THEN
 DB_LeaderLib_Dialog_Vars("ModMenu_PageInfo", "LeaderLib_ModMenu_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156");
 DB_LeaderLib_Dialog_Vars("Settings_ModList", "LeaderLib_Settings_ModList_50c55fbe-ad1e-490e-92d1-8836ca42ca12");
 DB_LeaderLib_Dialog_Vars("SpeakerName", "LeaderLib_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b");
 DB_LeaderLib_Dialog_Vars("PlayerName", "LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3");
 DB_LeaderLib_Dialog_Vars("LeaderTrader_Greeting", "LeaderLib_LeaderTrader_Greeting_f143b90b-9afc-477e-b133-6a1574341261");
 
+PROC
+LeaderLib_Dialog_InitSettings()
+THEN
 LeaderLib_Dialog_ClearStatusGroup("LeaderLib.Default");
 DB_LeaderLib_Dialog_StatusFlags("LeaderLib.Default", "LeaderLib_ApplyStatus_Knockdown_-1", "KNOCKED_DOWN", -1.0);
 DB_LeaderLib_Dialog_StatusFlags("LeaderLib.Default", "LeaderLib_ApplyStatus_Knockdown_0", "KNOCKED_DOWN", 0.0);
@@ -80,53 +90,7 @@ NOT DB_LeaderLib_Dialog_AnimationFlags(_Group, _Flag, _Animation, _Looped);
 //END_REGION
 
 //REGION UPDATER
-QRY
-LeaderLib_Dialog_QRY_Internal_OldVersion("0.9.0.0")
-THEN
-DB_NOOP(1);
 
-QRY
-LeaderLib_Dialog_QRY_Internal_OldVersion("0.9.1.0")
-THEN
-DB_NOOP(1);
-
-PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", _Version)
-AND
-LeaderLib_Dialog_QRY_Internal_OldVersion(_Version)
-THEN
-LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LeaderLib_DialogNames");
-LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLib_DialogNames", 1);
-LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LeaderLib_DialogVars");
-LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLib_DialogVars", 2);
-LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LeaderLib_Dialog_AttitudeFlags");
-LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLib_Dialog_AttitudeFlags", 2);
-LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LeaderLib_Dialog_NameOverride");
-LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLib_Dialog_NameOverride", 2);
-LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LeaderLib_StatusFlags");
-LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLib_StatusFlags", 2);
-LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LeaderLib_AnimationFlags");
-LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLib_AnimationFlags", 2);
-LeaderLog_Log("SYSTEM", "[LeaderLib:Dialog] Cleared old databases from version [",_Version,"].");
-LeaderLib_System_RegisterDatabases();
-
-IF
-StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
-AND
-LeaderUpdater_QRY_SettingsNeedsUpdate("LeaderLib_Settings_Dialog")
-THEN
-LeaderLib_Dialog_InitSettings();
-LeaderLog_Log("SYSTEM", "[LeaderLib:Dialog] Settings updated.");
-
-PROC
-LeaderLib_System_RegisterDatabases()
-THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LeaderLib_Dialog_DialogFiles", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LeaderLib_Dialog_AttitudeFlags", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LeaderLib_Dialog_NameOverride", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LeaderLib_Dialog_StatusFlags", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LeaderLib_Dialog_AnimationFlags", 3);
-LeaderLog_Log("TRACE", "[LeaderLib:Dialog] Databases registered.");
 //END_REGION
 
 //REGION NAME_VARS

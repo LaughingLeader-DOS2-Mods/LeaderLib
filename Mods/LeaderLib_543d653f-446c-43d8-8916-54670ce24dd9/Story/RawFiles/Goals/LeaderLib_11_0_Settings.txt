@@ -118,23 +118,14 @@ DB_LeaderLib_Abilities("Brewmaster");
 //END_REGION
 
 //REGION UPDATER
+/*
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", _PastVersion)
 AND
 LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 0, 9, 3, 0)
 THEN
-LeaderLib_Settings_InitSettings();
 LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
-
-PROC
-LeaderLib_System_RegisterDatabases()
-THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LeaderLib_Settings_QueueRates", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LeaderLib_Settings_ItemTemplates", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LeaderLib_Settings_DialogVariables", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LeaderLib_Settings_Temp_RegisteredModsList", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LeaderLib_Settings_Temp_ActiveModText", 3);
-LeaderLog_Log("TRACE", "[LeaderLib:Settings] Databases registered.");
+*/
 //END_REGION
 
 //REGION MOD_DATA

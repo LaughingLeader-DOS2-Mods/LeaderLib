@@ -198,16 +198,6 @@ SetVarString(_TargetObject, "LeaderLib_IteratorEvent", _ItemEvent);
 SetVarFixedString(_TargetObject, "LeaderLib_IteratorTag", _Tag);
 SetStoryEvent(_TargetObject, "LeaderLib_Commands_StartInventoryIterator");
 //END_REGION
-
-//REGION UPDATER
-PROC
-LeaderLib_System_RegisterDatabases()
-THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventParser", "DB_LeaderLib_SendEvent", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventParser", "DB_LeaderLib_EventParser", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventParser", "DB_LeaderLib_EventParser_Spawned", 1);
-LeaderLog_Log("TRACE", "[LeaderLib:EventParser] Databases registered.");
-//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

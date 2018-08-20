@@ -729,20 +729,6 @@ THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:ShiftArrayUp(",_StartIndexStr,")] Shifted '",_Value,"' in array [",_ID,"] up, to index [",_IndexStr,"].");
 */
 //END_REGION
-
-//REGION UPDATER
-PROC
-LeaderLib_System_RegisterDatabases()
-THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LeaderLib_Array_Length", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LeaderLib_Array_Data", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LeaderLib_Dictionary_Data", 4);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LeaderLib_Array_Iterator", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LeaderLib_Array_Temp_ArrayIteratorBuilder", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LeaderLib_Array_Temp_PopValue", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LeaderLib_Array_Temp_FirstEntry", 3);
-LeaderLog_Log("TRACE", "[LeaderLib:DatabaseExtensions] Databases registered.");
-//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

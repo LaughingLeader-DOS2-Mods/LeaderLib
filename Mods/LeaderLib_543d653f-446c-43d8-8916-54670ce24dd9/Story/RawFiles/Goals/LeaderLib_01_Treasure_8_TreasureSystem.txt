@@ -40,24 +40,6 @@ INITSECTION
 //DB_LeaderLib_Treasure_Temp_TreasureQueue_Settings(_ID, _TreasureQueueID)
 //DB_LeaderLib_Treasure_Temp_TreasureQueue_Entries(_ID, _Object, _TreasureID, _ItemEntry, _Amount, _RequirementID, _GenerationType, _IsStat)
 KBSECTION
-//REGION UPDATER
-PROC
-LeaderLib_System_RegisterDatabases()
-THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LeaderLib_Treasure_StatToTemplate", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LeaderLib_Treasure_Temp_DummyTarget", 6);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LeaderLib_Treasure_Temp_MatchedTreasure", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LeaderLib_Treasure_Temp_MatchedRequirementTreasure", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LeaderLib_Treasure_Temp_FlagToTreasure", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LeaderLib_Treasure_Temp_GenerationTypeToTreasure", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LeaderLib_Treasure_Temp_AmountToCreate", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LeaderLib_Treasure_Temp_GenerateItem", 7);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LeaderLib_Treasure_Temp_Queue_CountTemplate", 5);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LeaderLib_Treasure_Temp_Queue_CountStat", 6);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TreasureSystem", "DB_LeaderLib_Treasure_Temp_ItemGenerationQueue", 4);
-LeaderLog_Log("TRACE", "[LeaderLib:TreasureSystem] Databases registered.");
-//END_REGION
-
 //REGION GETTERS
 QRY
 LeaderLib_Treasure_QRY_GetTreasureID((GUIDSTRING)_Object)

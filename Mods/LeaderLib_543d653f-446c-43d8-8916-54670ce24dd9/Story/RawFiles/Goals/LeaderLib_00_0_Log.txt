@@ -905,15 +905,7 @@ LeaderLog_ClearAllTargets();
 //END_REGION
 
 //REGION UPDATER
-PROC
-LeaderLib_System_RegisterDatabases()
-THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderLog", "DB_LeaderLog_Temp_CombinedString", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderLog", "DB_LeaderLog_Temp_NextLogTarget", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderLog", "DB_LeaderLog_Temp_TargetOnce", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderLog", "DB_LeaderLog_Temp_NextStatusColor", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderLog", "DB_LeaderLog_InitialEnable", 1);
-LeaderLog_Log("TRACE", "[LeaderLib:LeaderLog] Databases registered.");
+
 //END_REGION
 EXITSECTION
 

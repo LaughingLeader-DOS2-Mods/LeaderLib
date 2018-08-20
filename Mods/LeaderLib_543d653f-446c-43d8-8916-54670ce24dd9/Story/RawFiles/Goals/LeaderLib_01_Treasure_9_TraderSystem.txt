@@ -29,17 +29,6 @@ INITSECTION
 
 //DB_LeaderLib_Traders_Temp_DialogFound(_TraderID)
 KBSECTION
-//REGION UPDATER
-PROC
-LeaderLib_System_RegisterDatabases()
-THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LeaderLib_Traders_Active", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LeaderLib_Traders_Temp_CurrentSpawnQueue", 6);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LeaderLib_Traders_Temp_CurrentlySpawning", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "TraderSystem", "DB_LeaderLib_Traders_Temp_DialogFound", 1);
-LeaderLog_Log("TRACE", "[LeaderLib:TraderSystem] Databases registered.");
-//END_REGION
-
 //REGION GENERAL_QUERIES
 QRY
 LeaderLib_Traders_QRY_HasPosition((STRING)_TraderID, (STRING)_Level)
@@ -1088,21 +1077,14 @@ DisplayText(_Trader, " "); // Hide the status message
 //END_REGION
 
 //REGION UPDATE
+/*
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", _PastVersion)
 AND
 LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 0, 9, 3, 0)
 THEN
 LeaderLog_Log("SYSTEM", "[LeaderLib:TraderSystem:ModUpdated] Updated [DB_LeaderLib_Traders_Spawned] to [DB_LeaderLib_Traders_Active].");
-LeaderLib_Internal_TraderSystem_UpdateOldDatabases();
-
-PROC
-LeaderLib_Internal_TraderSystem_UpdateOldDatabases()
-AND
-DB_LeaderLib_Traders_Spawned((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
-THEN
-NOT DB_LeaderLib_Traders_Spawned((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level);
-DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level);
+*/
 //END_REGION
 
 //REGION DEBUG

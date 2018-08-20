@@ -10,18 +10,8 @@ KBSECTION
 PROC
 LeaderLib_EffectFlags_InitSettings()
 THEN
-LeaderUpdater_SaveSettingsVersionData("LeaderLib_Settings_Effects");
 LeaderLib_Effects_Register_StopGroupFlag("LeaderLib.Default", "CameraShake", "LeaderLib_Effects_StopCameraShake");
 LeaderLib_Effects_Register_EffectFlag("LeaderLib.Default", "CameraShake", "LeaderLib_Effects_CameraShake_Loop_Normal", "RS3_FX_GP_ScriptedEvent_CameraShake_Loop_00-50", 1, "");
-//END_REGION
-
-//REGION UPDATING
-IF
-StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
-AND
-LeaderUpdater_QRY_SettingsNeedsUpdate("LeaderLib_Settings_Effects")
-THEN
-LeaderLib_EffectFlags_InitSettings();
 //END_REGION
 
 //REGION REGISTERING

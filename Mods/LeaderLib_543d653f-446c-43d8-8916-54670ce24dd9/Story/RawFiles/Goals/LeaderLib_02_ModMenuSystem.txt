@@ -55,7 +55,7 @@ LeaderLib_ModMenu_CalculateMaxPage();
 PROC
 LeaderLib_ModMenu_CalculateMaxPage()
 THEN
-LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLib_ModMenu_PageMax", 3);
+SysClear("DB_LeaderLib_ModMenu_PageMax", 3);
 
 PROC
 LeaderLib_ModMenu_CalculateMaxPage()
@@ -94,17 +94,15 @@ LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu] Max page set: LastIndex[",_Str1,"] L
 PROC
 LeaderLib_ModMenu_InitSettings()
 AND
-LeaderUpdater_QRY_SettingsNeedsUpdate("LeaderLib_Settings_ModMenu")
+NOT DB_LeaderLib_ModMenu_MenusPerPage(_)
 THEN
-LeaderUpdater_SaveSettingsVersionData("LeaderLib_Settings_ModMenu");
-
-//LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLib_ModMenu_SortTickRate", 1);
-//DB_LeaderLib_ModMenu_SortTickRate(0);
-
-LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLib_ModMenu_MenusPerPage", 1);
 DB_LeaderLib_ModMenu_MenusPerPage(8);
 
-LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLib_ModMenu_MenuVars", 4);
+PROC
+LeaderLib_ModMenu_InitSettings()
+AND
+NOT DB_LeaderLib_ModMenu_MenuVars(_,_,_,_)
+THEN
 DB_LeaderLib_ModMenu_MenuVars(0, "LeaderLib_ModMenu_Menu1_783ec14d-2861-4345-8dbc-45974fa34e15", "LeaderLib_ModMenu_SelectedMenu1", "LeaderLib_ModMenu_MenuEmpty1");
 DB_LeaderLib_ModMenu_MenuVars(1, "LeaderLib_ModMenu_Menu2_9a2d2990-5cff-420e-ba8a-37f9510ab9e1", "LeaderLib_ModMenu_SelectedMenu2", "LeaderLib_ModMenu_MenuEmpty2");
 DB_LeaderLib_ModMenu_MenuVars(2, "LeaderLib_ModMenu_Menu3_cf00a8c6-02d2-4fda-a766-4f533ac93b2d", "LeaderLib_ModMenu_SelectedMenu3", "LeaderLib_ModMenu_MenuEmpty3");
@@ -742,29 +740,6 @@ AND
 CharacterIsInCombat(_Player, 0)
 THEN
 Proc_StartDialog(0, "LeaderLib_ModMenu", _Book, _Player);
-//END_REGION
-
-//REGION UPDATER
-IF
-StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
-AND
-LeaderUpdater_QRY_SettingsNeedsUpdate("LeaderLib_Settings_ModMenu")
-THEN
-LeaderLib_ModMenu_InitSettings();
-LeaderLog_Log("SYSTEM", "[LeaderLib:ModMenu] Settings updated.");
-
-PROC
-LeaderLib_System_RegisterDatabases()
-THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModMenu", "DB_LeaderLib_ModMenu_MenuVars", 4);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModMenu", "DB_LeaderLib_ModMenu_MenusPerPage", 1);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModMenu", "DB_LeaderLib_ModMenu_RegisteredMenuData", 5);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModMenu", "DB_LeaderLib_ModMenu_CurrentPageIndex", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModMenu", "DB_LeaderLib_ModMenu_PageMax", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModMenu", "DB_LeaderLib_ModMenu_Temp_ActiveMenu", 3);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModMenu", "DB_LeaderLib_ModMenu_Temp_IsChangingMenuPage", 2);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModMenu", "DB_LeaderLib_ModMenu_Temp_SortStarted", 1);
-LeaderLog_Log("TRACE", "[LeaderLib:ModMenu] Databases registered.");
 //END_REGION
 EXITSECTION
 

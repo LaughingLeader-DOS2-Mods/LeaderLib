@@ -221,15 +221,6 @@ DB_LeaderLib_Treasure_Temp_ItemStatAmount(_Object, _TreasureID, _ItemTemplate, _
 THEN
 DB_NOOP(1);
 //END_REGION
-
-//REGION UPDATER
-PROC
-LeaderLib_System_RegisterDatabases()
-THEN
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_ItemCounter", "DB_LeaderLib_Treasure_Temp_ItemTemplateAmount", 4);
-LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_ItemCounter", "DB_LeaderLib_Treasure_Temp_ItemStatAmount", 5);
-LeaderLog_Log("TRACE", "[LeaderLib:Treasure_ItemCounter] Databases registered.");
-//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

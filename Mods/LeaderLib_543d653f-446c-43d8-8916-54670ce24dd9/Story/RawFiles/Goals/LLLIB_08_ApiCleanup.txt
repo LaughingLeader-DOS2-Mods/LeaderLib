@@ -8,7 +8,7 @@ Parse databases that were set before LeaderLib was loaded, then clear them.
 */
 /*Registering*/
 PROC
-LLLIB_ModApi_RunCleanup()
+LeaderLib_ModApi_RunCleanup()
 AND
 DB_LeaderLib_ModApi_RegisterMod((STRING)_ModID, (STRING)_Author, (STRING)_Version)
 THEN
@@ -16,7 +16,7 @@ LeaderUpdater_Register_Mod(_ModID, _Author, _Version);
 NOT DB_LeaderLib_ModApi_RegisterMod(_ModID, _Author, _Version);
 
 PROC
-LLLIB_ModApi_RunCleanup()
+LeaderLib_ModApi_RunCleanup()
 AND
 DB_LeaderLib_ModApi_RegisterMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModID, (STRING)_Author)
 THEN
@@ -24,7 +24,7 @@ LeaderLib_Register_ModMenu(_ID, _DisplayName, _Dialog, _ModID, _Author);
 NOT DB_LeaderLib_ModApi_RegisterMenu(_ID, _DisplayName, _Dialog, _ModID, _Author);
 
 PROC
-LLLIB_ModApi_RunCleanup()
+LeaderLib_ModApi_RunCleanup()
 AND
 DB_LeaderLib_ModApi_RegisterActiveGoal((STRING)_ModID, (STRING)_Author, (STRING)_GoalTitle)
 THEN
@@ -32,7 +32,7 @@ LeaderUpdater_Register_ActiveGoal(_ModID, _Author, _GoalTitle);
 NOT DB_LeaderLib_ModApi_RegisterActiveGoal(_ModID, _Author, _GoalTitle);
 
 PROC
-LLLIB_ModApi_RunCleanup()
+LeaderLib_ModApi_RunCleanup()
 AND
 DB_LeaderLib_ModApi_RegisterDatabase((STRING)_ModID, (STRING)_Author, (STRING)_ReferenceName, (STRING)_DatabaseName, (INTEGER)_Arity)
 THEN
@@ -40,7 +40,7 @@ LeaderUpdater_Register_Database(_ModID, _Author, _ReferenceName, _DatabaseName, 
 NOT DB_LeaderLib_ModApi_RegisterDatabase(_ModID, _Author, _ReferenceName, _DatabaseName, _Arity);
 
 PROC
-LLLIB_ModApi_RunCleanup()
+LeaderLib_ModApi_RunCleanup()
 AND
 DB_LeaderLib_ModApi_RegisterGoal((STRING)_ModID, (STRING)_Author, (STRING)_GoalTitle)
 THEN
@@ -49,7 +49,7 @@ NOT DB_LeaderLib_ModApi_RegisterGoal(_ModID, _Author, _GoalTitle);
 
 /*Clear Commands*/
 PROC
-LLLIB_ModApi_RunCleanup()
+LeaderLib_ModApi_RunCleanup()
 AND
 DB_LeaderLib_ModApi_ClearRegisteredModVersions((STRING)_ModID, (STRING)_Author)
 THEN
@@ -57,7 +57,7 @@ LeaderUpdater_Clear_RegisteredModVersions(_ModID, _Author);
 NOT DB_LeaderLib_ModApi_ClearRegisteredModVersions(_ModID, _Author);
 
 PROC
-LLLIB_ModApi_RunCleanup()
+LeaderLib_ModApi_RunCleanup()
 AND
 DB_LeaderLib_ModApi_ClearActiveGoals((STRING)_ModID, (STRING)_Author)
 THEN
@@ -65,7 +65,7 @@ LeaderUpdater_Clear_ActiveGoals(_ModID, _Author);
 NOT DB_LeaderLib_ModApi_ClearActiveGoals(_ModID, _Author);
 
 PROC
-LLLIB_ModApi_RunCleanup()
+LeaderLib_ModApi_RunCleanup()
 AND
 DB_LeaderLib_ModApi_SysClearAllDatabases((STRING)_ModID, (STRING)_Author)
 THEN
@@ -73,7 +73,7 @@ LeaderUpdater_SysClear_AllDatabases(_ModID, _Author);
 NOT DB_LeaderLib_ModApi_SysClearAllDatabases(_ModID, _Author);
 
 PROC
-LLLIB_ModApi_RunCleanup()
+LeaderLib_ModApi_RunCleanup()
 AND
 DB_LeaderLib_ModApi_ResetAllGoals((STRING)_ModID, (STRING)_Author)
 THEN
@@ -82,7 +82,7 @@ NOT DB_LeaderLib_ModApi_ResetAllGoals(_ModID, _Author);
 
 /*Misc Commands*/
 PROC
-LLLIB_ModApi_RunCleanup()
+LeaderLib_ModApi_RunCleanup()
 AND
 DB_LeaderLib_ModApi_AddItemToLeaderTrader((STRING)_Template, (INTEGER)_Amount)
 THEN
@@ -90,7 +90,7 @@ LeaderLib_Treasure_Register_ItemTemplate("LLLIB_LeaderTrader_ModItems", _Templat
 NOT DB_LeaderLib_ModApi_AddItemToLeaderTrader(_Template, _Amount);
 
 PROC
-LLLIB_ModApi_RunCleanup()
+LeaderLib_ModApi_RunCleanup()
 AND
 DB_LeaderLib_ModApi_AddBookToLeaderTrader((STRING)_Template, (INTEGER)_Amount)
 THEN
@@ -98,15 +98,15 @@ LeaderLib_Treasure_Register_ItemTemplate("LLLIB_LeaderTrader_ModBooks", _Templat
 NOT DB_LeaderLib_ModApi_AddBookToLeaderTrader(_Template, _Amount);
 
 PROC
-LLLIB_ModApi_RunCleanup()
+LeaderLib_ModApi_RunCleanup()
 AND
 DB_LeaderLib_ModApi_SendEvent((STRING)_EventName)
 THEN
-LLLIB_EventParser_Internal_RunEvent(_EventName);
+LeaderLib_EventParser_Internal_RunEvent(_EventName);
 NOT DB_LeaderLib_ModApi_SendEvent(_EventName);
 
 PROC
-LLLIB_ModApi_RunCleanup()
+LeaderLib_ModApi_RunCleanup()
 AND
 DB_LeaderLib_ModApi_ModIsActive((STRING)_ModID, (STRING)_Author, (STRING)_ActiveEvent, (STRING)_InactiveEvent)
 THEN
@@ -115,7 +115,7 @@ NOT DB_LeaderLib_ModApi_ModIsActive(_ModID, _Author, _ActiveEvent, _InactiveEven
 
 /*Sorting*/
 PROC
-LLLIB_ModApi_RunCleanup()
+LeaderLib_ModApi_RunCleanup()
 AND
 DB_LeaderLib_ModApi_AddToSortQueue((STRING)_DictionaryID, (STRING)_ID, (STRING)_String)
 THEN
@@ -123,7 +123,7 @@ LeaderLib_DictionarySort_AddString(_DictionaryID, _ID, _String);
 NOT DB_LeaderLib_ModApi_AddToSortQueue(_DictionaryID, _ID, _String);
 
 PROC
-LLLIB_ModApi_RunCleanup()
+LeaderLib_ModApi_RunCleanup()
 AND
 DB_LeaderLib_ModApi_StartSortQueue((STRING)_DictionaryID, (INTEGER)_TickRate, (STRING)_CompleteEvent)
 THEN

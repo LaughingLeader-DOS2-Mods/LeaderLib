@@ -7,7 +7,7 @@ INITSECTION
 KBSECTION
 //REGION CREATE_NEW
 PROC
-LLLIB_EventParser_Internal_CreateNew()
+LeaderLib_EventParser_Internal_CreateNew()
 AND
 DB_LeaderLibEventParser_Spawned(_EventParser)
 AND
@@ -16,7 +16,7 @@ THEN
 NOT DB_LeaderLibEventParser_Spawned(_EventParser);
 
 PROC
-LLLIB_EventParser_Internal_CreateNew()
+LeaderLib_EventParser_Internal_CreateNew()
 AND
 NOT CharacterGetHostCharacter(_)
 AND
@@ -31,7 +31,7 @@ THEN
 DB_LeaderLibEventParser_Spawned(_EventParser);
 
 PROC
-LLLIB_EventParser_Internal_CreateNew()
+LeaderLib_EventParser_Internal_CreateNew()
 AND
 NOT DB_LeaderLibEventParser_Spawned(_)
 AND
@@ -44,7 +44,7 @@ THEN
 DB_LeaderLibEventParser_Spawned(_EventParser);
 
 PROC
-LLLIB_EventParser_Internal_CreateNew()
+LeaderLib_EventParser_Internal_CreateNew()
 AND
 NOT DB_LeaderLibEventParser_Spawned(_) // Creating a temporary event parser failed, use a player
 AND
@@ -53,14 +53,14 @@ THEN
 DB_LeaderLibEventParser_Spawned(_Player);
 
 QRY
-LLLIB_QRY_EventParser_CreateNew()
+LeaderLib_QRY_EventParser_CreateNew()
 THEN
-LLLIB_EventParser_Internal_CreateNew();
+LeaderLib_EventParser_Internal_CreateNew();
 //END_REGION
 
 //REGION GET_PARSER
 QRY
-LLLIB_QRY_EventParser_GlobalParserExists()
+LeaderLib_QRY_EventParser_GlobalParserExists()
 AND
 ObjectExists(ITEMGUID_S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, 1)
 THEN
@@ -85,7 +85,7 @@ LeaderLib_Events_Internal_GetEventParser()
 AND
 NOT DB_LeaderLib_EventParser(_)
 AND
-LLLIB_QRY_EventParser_GlobalParserExists()
+LeaderLib_QRY_EventParser_GlobalParserExists()
 THEN
 DB_LeaderLib_EventParser(ITEMGUID_S_LLLIB_Scripting_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6);
 
@@ -96,7 +96,7 @@ NOT DB_LeaderLib_EventParser(_)
 AND
 NOT LLLIB_QRY_EventParser_GlobalParserExists()
 AND
-LLLIB_QRY_EventParser_CreateNew()
+LeaderLib_QRY_EventParser_CreateNew()
 AND
 DB_LeaderLibEventParser_Spawned(_EventParser)
 THEN
@@ -105,20 +105,20 @@ DB_LeaderLib_EventParser(_EventParser);
 
 //REGION EVENTS
 PROC
-LLLIB_EventParser_Internal_ClearEvent((STRING)_EventName)
+LeaderLib_EventParser_Internal_ClearEvent((STRING)_EventName)
 AND
 DB_LeaderLib_SendEvent(_EventName)
 THEN
 NOT DB_LeaderLib_SendEvent(_EventName);
 
 PROC
-LLLIB_EventParser_Internal_RunEvent((STRING)_EventName)
+LeaderLib_EventParser_Internal_RunEvent((STRING)_EventName)
 AND
 LeaderLib_Events_QRY_GetEventParser()
 AND
 DB_LeaderLib_EventParser(_EventParser)
 THEN
-LLLIB_EventParser_Internal_ClearEvent(_EventName);
+LeaderLib_EventParser_Internal_ClearEvent(_EventName);
 SetStoryEvent(_EventParser, _EventName);
 //END_REGION
 
@@ -140,7 +140,7 @@ AND
 _EventName != ""
 THEN
 DB_LeaderLib_SendEvent(_EventName);
-LLLIB_EventParser_Internal_RunEvent(_EventName);
+LeaderLib_EventParser_Internal_RunEvent(_EventName);
 
 //Events that were never sent
 IF
@@ -150,7 +150,7 @@ DB_LeaderLib_SendEvent(_EventName)
 AND
 _EventName != "LeaderLib_Initialized"
 THEN
-LLLIB_EventParser_Internal_RunEvent(_EventName);
+LeaderLib_EventParser_Internal_RunEvent(_EventName);
 
 IF
 StoryEvent(_, "LeaderLib_Initialized")
@@ -202,7 +202,7 @@ SetStoryEvent(_TargetObject, "LeaderLib_Commands_StartInventoryIterator");
 
 //REGION UPDATER
 PROC
-LLLIB_System_RegisterDatabases()
+LeaderLib_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventParser", "DB_LeaderLib_SendEvent", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventParser", "DB_LeaderLib_EventParser", 1);

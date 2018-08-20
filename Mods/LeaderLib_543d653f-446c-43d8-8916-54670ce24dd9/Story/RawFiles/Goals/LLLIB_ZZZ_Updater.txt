@@ -6,7 +6,7 @@ KBSECTION
 IF
 DB_LeaderLib_GameStarted(_Val)
 THEN
-LLLIB_Updater_RegisterDatabasesOnce();
+LeaderLib_Updater_RegisterDatabasesOnce();
 
 //REGION UPDATING
 IF
@@ -15,15 +15,15 @@ THEN
 LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Settings updated.");
 
 PROC
-LLLIB_Updater_RegisterDatabasesOnce()
+LeaderLib_Updater_RegisterDatabasesOnce()
 AND
 NOT DB_LeaderLibUpdater_RegisteredDatabases(_)
 THEN
-LLLIB_System_RegisterDatabases();
+LeaderLib_System_RegisterDatabases();
 DB_LeaderLibUpdater_RegisteredDatabases(1);
 
 PROC
-LLLIB_System_RegisterDatabases()
+LeaderLib_System_RegisterDatabases()
 THEN
 LeaderLib_Register_ModMenu("LaughingLeader_LeaderLib", "[LeaderLib] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderUpdater_Register_ActiveGoal("LeaderLib", "LaughingLeader", "LLLIB_ZZZ_Updater");
@@ -32,7 +32,7 @@ LeaderLog_Log("TRACE", "[LeaderLib:Updater] Databases registered.");
 
 /*
 PROC
-LLLIB_Updater_ResetDatabases()
+LeaderLib_Updater_ResetDatabases()
 THEN
 LeaderUpdater_Clear_AllDatabases("LeaderLib", "LaughingLeader");
 LeaderUpdater_Clear_AllSavedSettings("LeaderLib", "LaughingLeader");
@@ -41,7 +41,7 @@ LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Databases cleared and re-initialize
 */
 
 PROC
-LLLIB_Updater_ClearOutdatedDatabases()
+LeaderLib_Updater_ClearOutdatedDatabases()
 AND
 DB_Registered_Mod((STRING)_ModID, (STRING)_Version, "LaughingLeader")
 THEN
@@ -53,7 +53,7 @@ IF
 GameStarted(_,_)
 THEN
 LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Game started.");
-LLLIB_Updater_ClearOutdatedDatabases();
+LeaderLib_Updater_ClearOutdatedDatabases();
 
 IF
 GameStarted(_,_)
@@ -85,29 +85,29 @@ LeaderUpdater_UninstallMod("LeaderLib", "LaughingLeader")
 THEN
 LeaderLog_Log("SYSTEM", "[LeaderLib:Updater:Uninstaller] Uninstalling LeaderLib.");
 LeaderLog_Log("SYSTEM", "[LeaderLib:Updater:Uninstaller] Attempting to end all LeaderLib dialogs. Resuming in 2 seconds.");
-LLLIB_Updater_CloseDialogs();
+LeaderLib_Updater_CloseDialogs();
 TimerLaunch("LLLIB_Timers_Updater_UninstallerPhase2", 2000);
 
 IF
 TimerFinished("LLLIB_Timers_Updater_UninstallerPhase2")
 THEN
 LeaderLog_Log("SYSTEM", "[LeaderLib:Updater:Uninstaller] Clearing all flags.");
-LLLIB_Updater_ClearFlags();
+LeaderLib_Updater_ClearFlags();
 LeaderLog_Log("SYSTEM", "[LeaderLib:Updater:Uninstaller] Destroying all LeaderLib items.");
-LLLIB_Updater_DestroyItems();
+LeaderLib_Updater_DestroyItems();
 LeaderLog_Log("SYSTEM", "[LeaderLib:Updater:Uninstaller] Clearing databases.");
 LeaderUpdater_SysClear_AllDatabases("LeaderLib", "LaughingLeader");
 LeaderLog_Log("SYSTEM", "[LeaderLib:Updater:Uninstaller] Unregistering LeaderLib.");
 LeaderUpdater_UnregisterMod("LeaderLib", "LaughingLeader");
 
 PROC
-LLLIB_Updater_CloseDialogs()
+LeaderLib_Updater_CloseDialogs()
 THEN
 DB_NOOP(1);
 
 /*
 PROC
-LLLIB_Updater_CloseDialogs()
+LeaderLib_Updater_CloseDialogs()
 AND
 DB_LeaderLibActiveDialogs(_Instance)
 AND
@@ -117,32 +117,32 @@ DialogRequestStop(_Player);
 */
 
 PROC
-LLLIB_Updater_ClearFlags()
+LeaderLib_Updater_ClearFlags()
 THEN
 DB_NOOP(1);
 
 PROC
-LLLIB_Updater_ClearFlags()
+LeaderLib_Updater_ClearFlags()
 AND
 DB_IsPlayer(_Player)
 THEN
 DB_NOOP(1);
 
 PROC
-LLLIB_Updater_UnequipItem((CHARACTERGUID)_Player, (ITEMGUID)_Item)
+LeaderLib_Updater_UnequipItem((CHARACTERGUID)_Player, (ITEMGUID)_Item)
 AND
 ItemIsEquipable(_Item, 1)
 THEN
 CharacterUnequipItem(_Player, _Item);
 
 PROC
-LLLIB_Updater_DestroyItems()
+LeaderLib_Updater_DestroyItems()
 THEN
 DB_NOOP(1);
 
 /*
 PROC
-LLLIB_Updater_DestroyItems()
+LeaderLib_Updater_DestroyItems()
 AND
 DB_IsPlayer(_Player)
 AND
@@ -150,7 +150,7 @@ DB_LeaderLibItemTemplates(_Name, _Template)
 AND
 GetItemForItemTemplateInInventory(_Player, _Template, _Item)
 THEN
-LLLIB_Updater_UnequipItem(_Player, _Item);
+LeaderLib_Updater_UnequipItem(_Player, _Item);
 ItemDestroy(_Item);
 */
 //END_REGION

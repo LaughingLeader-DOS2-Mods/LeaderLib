@@ -1,7 +1,7 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-LLLIB_Dialog_InitSettings();
+LeaderLib_Dialog_InitSettings();
 
 //DB_LeaderLib_Dialog_DialogFiles(_Dialog)
 //DB_LeaderLib_Dialog_AttitudeFlags(_Flag, _Amount)
@@ -11,7 +11,7 @@ LLLIB_Dialog_InitSettings();
 KBSECTION
 //REGION SETTINGS
 PROC
-LLLIB_Dialog_InitSettings()
+LeaderLib_Dialog_InitSettings()
 THEN
 LeaderUpdater_SaveSettingsVersionData("LLLIB_Settings_Dialog");
 
@@ -81,19 +81,19 @@ NOT DB_LeaderLib_Dialog_AnimationFlags(_Group, _Flag, _Animation, _Looped);
 
 //REGION UPDATER
 QRY
-LLLIB_Dialog_QRY_Internal_OldVersion("0.9.0.0")
+LeaderLib_Dialog_QRY_Internal_OldVersion("0.9.0.0")
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_Dialog_QRY_Internal_OldVersion("0.9.1.0")
+LeaderLib_Dialog_QRY_Internal_OldVersion("0.9.1.0")
 THEN
 DB_NOOP(1);
 
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", _Version)
 AND
-LLLIB_Dialog_QRY_Internal_OldVersion(_Version)
+LeaderLib_Dialog_QRY_Internal_OldVersion(_Version)
 THEN
 LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LeaderLibDialogNames");
 LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLibDialogNames", 1);
@@ -108,18 +108,18 @@ LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLibStatusFlags", 2);
 LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_LeaderLibAnimationFlags");
 LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLibAnimationFlags", 2);
 LeaderLog_Log("SYSTEM", "[LeaderLib:Dialog] Cleared old databases from version [",_Version,"].");
-LLLIB_System_RegisterDatabases();
+LeaderLib_System_RegisterDatabases();
 
 IF
 StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
 AND
 LeaderUpdater_QRY_SettingsNeedsUpdate("LLLIB_Settings_Dialog")
 THEN
-LLLIB_Dialog_InitSettings();
+LeaderLib_Dialog_InitSettings();
 LeaderLog_Log("SYSTEM", "[LeaderLib:Dialog] Settings updated.");
 
 PROC
-LLLIB_System_RegisterDatabases()
+LeaderLib_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LeaderLib_Dialog_DialogFiles", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Dialog", "DB_LeaderLib_Dialog_AttitudeFlags", 2);
@@ -131,7 +131,7 @@ LeaderLog_Log("TRACE", "[LeaderLib:Dialog] Databases registered.");
 
 //REGION NAME_VARS
 PROC
-LLLIB_Dialog_SetNameOverride((CHARACTERGUID)_Character, (STRING)_Name)
+LeaderLib_Dialog_SetNameOverride((CHARACTERGUID)_Character, (STRING)_Name)
 AND
 DB_LeaderLib_Dialog_NameOverride(_Character, (STRING)_PastName)
 AND
@@ -140,7 +140,7 @@ THEN
 NOT DB_LeaderLib_Dialog_NameOverride(_Character, _PastName);
 
 PROC
-LLLIB_Dialog_SetNameOverride((CHARACTERGUID)_Character, (STRING)_Name)
+LeaderLib_Dialog_SetNameOverride((CHARACTERGUID)_Character, (STRING)_Name)
 THEN
 DB_LeaderLib_Dialog_NameOverride(_Character, _Name);
 

@@ -1,7 +1,7 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-LLLIB_Platforms_InitSettings();
+LeaderLib_Platforms_InitSettings();
 //DB_LeaderLib_Platforms(_ID, _Platform)
 KBSECTION
 //REGION PLATFORM_CREATION
@@ -132,7 +132,7 @@ NOT DB_LeaderLib_Platforms(_ID, _Platform);
 
 //REGION SETTINGS
 PROC
-LLLIB_Platforms_InitSettings()
+LeaderLib_Platforms_InitSettings()
 THEN
 SysClear("DB_LeaderLib_Platforms_Sizes", 2);
 DB_LeaderLib_Platforms_Sizes("Small", "S_LLLIB_Platform_Small_80416d7e-84d3-4551-92d2-b134f5d336e5", 0);
@@ -146,7 +146,7 @@ StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
 AND
 LeaderUpdater_QRY_SettingsNeedsUpdate("LLLIB_Settings_Effects")
 THEN
-LLLIB_EffectFlags_InitSettings();
+LeaderLib_EffectFlags_InitSettings();
 //END_REGION
 EXITSECTION
 

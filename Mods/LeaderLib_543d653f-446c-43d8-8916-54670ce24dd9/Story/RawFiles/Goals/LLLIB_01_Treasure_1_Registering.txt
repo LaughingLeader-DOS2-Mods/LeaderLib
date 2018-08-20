@@ -331,12 +331,12 @@ THEN
 DB_LeaderLibTreasure_RegisteredGenerationTypes(_GenerationType);
 
 PROC
-LLLIB_Treasure_RebuildRegisteredGenerationTypes()
+LeaderLib_Treasure_RebuildRegisteredGenerationTypes()
 THEN
 SysClear("DB_LeaderLibTreasure_RegisteredGenerationTypes", 1);
 
 PROC
-LLLIB_Treasure_RebuildRegisteredGenerationTypes()
+LeaderLib_Treasure_RebuildRegisteredGenerationTypes()
 AND
 DB_LeaderLibTreasure_TreasureGenerationType(_TreasureID, _GenerationType)
 AND
@@ -345,7 +345,7 @@ THEN
 DB_LeaderLibTreasure_RegisteredGenerationTypes(_GenerationType);
 
 PROC
-LLLIB_Treasure_RebuildRegisteredGenerationTypes()
+LeaderLib_Treasure_RebuildRegisteredGenerationTypes()
 AND
 DB_LeaderLibTreasure_ItemGenerationType(_TreasureID, _ItemEntry, _GenerationType)
 AND
@@ -387,7 +387,7 @@ PROC
 LeaderLib_Treasure_Clear_AllEntriesForTreasure((STRING)_TreasureID)
 THEN
 LeaderLib_Treasure_Clear_AllItemsForTreasure(_TreasureID);
-LLLIB_Treasure_RebuildRegisteredGenerationTypes();
+LeaderLib_Treasure_RebuildRegisteredGenerationTypes();
 
 PROC
 LeaderLib_Treasure_Clear_AllItemsForTreasure((STRING)_TreasureID)
@@ -697,7 +697,7 @@ LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Traders_Register
 
 //REGION REGISTER_DATABASES
 PROC
-LLLIB_System_RegisterDatabases()
+LeaderLib_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LeaderLibTreasure_RegisteredObject", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_Registering", "DB_LeaderLibTreasure_RegisteredObjectTemplate", 2);

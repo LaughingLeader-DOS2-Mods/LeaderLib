@@ -233,7 +233,7 @@ NOT DB_LeaderUpdater_RegisteredGoal(_ModID, _Author, _GoalTitle);
 
 //REGION UPDATER
 PROC
-LLLIB_System_RegisterDatabases()
+LeaderLib_System_RegisterDatabases()
 THEN
 /* Probably don't want to actually clear these.
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderUpdater", "DB_Mods_Registered", 3);

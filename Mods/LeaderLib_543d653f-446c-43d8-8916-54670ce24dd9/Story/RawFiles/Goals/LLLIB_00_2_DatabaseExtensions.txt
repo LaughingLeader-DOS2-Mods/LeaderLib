@@ -732,7 +732,7 @@ LeaderLog_Log("DEBUG", "[LeaderLib:DatabaseExtensions:ShiftArrayUp(",_StartIndex
 
 //REGION UPDATER
 PROC
-LLLIB_System_RegisterDatabases()
+LeaderLib_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LeaderLibArray_Length", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DatabaseExtensions", "DB_LeaderLibArray_Data", 3);

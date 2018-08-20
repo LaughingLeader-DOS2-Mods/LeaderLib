@@ -19,21 +19,21 @@ INITSECTION
 KBSECTION
 //REGION CLEAR
 PROC
-LLLIB_Combat_Clear_CombatData((INTEGER)_CombatID)
+LeaderLib_Combat_Clear_CombatData((INTEGER)_CombatID)
 AND
 DB_LeaderLib_Combat_ActiveCombat(_CombatID)
 THEN
 NOT DB_LeaderLib_Combat_ActiveCombat(_CombatID);
 
 PROC
-LLLIB_Combat_Clear_CombatData((INTEGER)_CombatID)
+LeaderLib_Combat_Clear_CombatData((INTEGER)_CombatID)
 AND
 DB_LeaderLib_Combat_ActiveObject(_CombatID, _Object)
 THEN
 NOT DB_LeaderLib_Combat_ActiveObject(_CombatID, _Object);
 
 PROC
-LLLIB_Combat_Clear_CombatData((INTEGER)_CombatID)
+LeaderLib_Combat_Clear_CombatData((INTEGER)_CombatID)
 AND
 DB_LeaderLib_Combat_Objects(_CombatID, _Object)
 THEN
@@ -70,7 +70,7 @@ AND
 DB_LeaderLib_Combat_Objects(_CombatID, _Object)
 THEN
 NOT DB_LeaderLib_Combat_Objects(_CombatID, _Object);
-LLLIB_Combat_Clear_ActiveTurn(_CombatID, _Object);
+LeaderLib_Combat_Clear_ActiveTurn(_CombatID, _Object);
 //END_REGION
 
 //REGION COMBAT_ROUNDS
@@ -106,17 +106,17 @@ ObjectTurnStarted(_Object)
 AND
 DB_LeaderLib_Combat_Objects(_CombatID, _Object)
 THEN
-LLLIB_Combat_Set_ActiveTurn(_CombatID, _Object);
+LeaderLib_Combat_Set_ActiveTurn(_CombatID, _Object);
 
 IF
 ObjectTurnEnded(_Object)
 AND
 DB_LeaderLib_Combat_Objects(_CombatID, _Object)
 THEN
-LLLIB_Combat_Clear_ActiveTurn(_CombatID, _Object);
+LeaderLib_Combat_Clear_ActiveTurn(_CombatID, _Object);
 
 PROC
-LLLIB_Combat_Set_ActiveTurn((INTEGER)_CombatID, (GUIDSTRING)_Object)
+LeaderLib_Combat_Set_ActiveTurn((INTEGER)_CombatID, (GUIDSTRING)_Object)
 AND
 DB_LeaderLib_Combat_ActiveObject(_CombatID, _OtherObject)
 AND
@@ -125,12 +125,12 @@ THEN
 NOT DB_LeaderLib_Combat_ActiveObject(_CombatID, _OtherObject);
 
 PROC
-LLLIB_Combat_Set_ActiveTurn((INTEGER)_CombatID, (GUIDSTRING)_Object)
+LeaderLib_Combat_Set_ActiveTurn((INTEGER)_CombatID, (GUIDSTRING)_Object)
 THEN
 DB_LeaderLib_Combat_ActiveObject(_CombatID, _Object);
 
 PROC
-LLLIB_Combat_Clear_ActiveTurn((INTEGER)_CombatID, (GUIDSTRING)_Object)
+LeaderLib_Combat_Clear_ActiveTurn((INTEGER)_CombatID, (GUIDSTRING)_Object)
 AND
 DB_LeaderLib_Combat_ActiveObject(_CombatID, _Object)
 THEN

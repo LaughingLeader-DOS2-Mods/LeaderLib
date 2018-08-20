@@ -1,10 +1,10 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-LLLIB_Internal_StartLeaderLib();
+LeaderLib_Internal_StartLeaderLib();
 KBSECTION
 PROC
-LLLIB_Internal_StartLeaderLib()
+LeaderLib_Internal_StartLeaderLib()
 THEN
 DebugBreak("[LaughingLeader__LeaderLib] LeaderLib starting.");
 GoalCompleted;

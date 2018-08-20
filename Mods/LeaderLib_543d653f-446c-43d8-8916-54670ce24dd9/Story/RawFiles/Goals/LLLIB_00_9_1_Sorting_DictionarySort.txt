@@ -529,7 +529,7 @@ LeaderLog_Log("TRACE", "[LeaderLib:DictionarySort:ProcessCompareResults] Compari
 
 //REGION UPDATER
 PROC
-LLLIB_System_RegisterDatabases()
+LeaderLib_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LeaderLibDictionarySort_Temp_StringQueue", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "DictionarySort", "DB_LeaderLibDictionarySort_SortingStarted", 2);

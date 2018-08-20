@@ -1,22 +1,22 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-LLLIB_Codex_InitSettings();
+LeaderLib_Codex_InitSettings();
 
 //DB_LeaderLibCodex(_Index,_AlphanumericChar)
 //DB_LeaderLibCodex_Iterator(_Index, _IndexStr)
 //DB_LeaderLibCodexCount(_Max)
 KBSECTION
 PROC
-LLLIB_Codex_InitSettings()
+LeaderLib_Codex_InitSettings()
 THEN
 LeaderUpdater_SaveSettingsVersionData("LLLIB_Settings_Codex");
-LLLIB_Codex_BuildIterator(256);
-LLLIB_Codex_BuildCodex();
+LeaderLib_Codex_BuildIterator(256);
+LeaderLib_Codex_BuildCodex();
 
 //REGION CODEX
 PROC
-LLLIB_Codex_AddToCodex((STRING)_AlphanumericChar)
+LeaderLib_Codex_AddToCodex((STRING)_AlphanumericChar)
 AND
 NOT DB_LeaderLibCodex(_,_AlphanumericChar)
 AND
@@ -25,7 +25,7 @@ THEN
 DB_LeaderLibCodex(_Index, _AlphanumericChar);
 
 PROC
-LLLIB_Codex_BuildCodex()
+LeaderLib_Codex_BuildCodex()
 AND
 NOT DB_LeaderLibCodex(_,_)
 THEN
@@ -35,84 +35,84 @@ Numbers
 Letters
 */
 
-LLLIB_Codex_AddToCodex(" ");
-LLLIB_Codex_AddToCodex("!");
+LeaderLib_Codex_AddToCodex(" ");
+LeaderLib_Codex_AddToCodex("!");
 //LLLIB_Codex_AddToCodex('"');
-LLLIB_Codex_AddToCodex("#");
-LLLIB_Codex_AddToCodex("$");
-LLLIB_Codex_AddToCodex("%");
-LLLIB_Codex_AddToCodex("&");
-LLLIB_Codex_AddToCodex("'");
-LLLIB_Codex_AddToCodex("(");
-LLLIB_Codex_AddToCodex(")");
-LLLIB_Codex_AddToCodex("*");
-LLLIB_Codex_AddToCodex("+");
-LLLIB_Codex_AddToCodex(",");
-LLLIB_Codex_AddToCodex("-");
-LLLIB_Codex_AddToCodex(".");
-LLLIB_Codex_AddToCodex("/");
+LeaderLib_Codex_AddToCodex("#");
+LeaderLib_Codex_AddToCodex("$");
+LeaderLib_Codex_AddToCodex("%");
+LeaderLib_Codex_AddToCodex("&");
+LeaderLib_Codex_AddToCodex("'");
+LeaderLib_Codex_AddToCodex("(");
+LeaderLib_Codex_AddToCodex(")");
+LeaderLib_Codex_AddToCodex("*");
+LeaderLib_Codex_AddToCodex("+");
+LeaderLib_Codex_AddToCodex(",");
+LeaderLib_Codex_AddToCodex("-");
+LeaderLib_Codex_AddToCodex(".");
+LeaderLib_Codex_AddToCodex("/");
 
-LLLIB_Codex_AddToCodex(":");
-LLLIB_Codex_AddToCodex(";");
-LLLIB_Codex_AddToCodex("<");
-LLLIB_Codex_AddToCodex("=");
-LLLIB_Codex_AddToCodex(">");
-LLLIB_Codex_AddToCodex("?");
-LLLIB_Codex_AddToCodex("@");
+LeaderLib_Codex_AddToCodex(":");
+LeaderLib_Codex_AddToCodex(";");
+LeaderLib_Codex_AddToCodex("<");
+LeaderLib_Codex_AddToCodex("=");
+LeaderLib_Codex_AddToCodex(">");
+LeaderLib_Codex_AddToCodex("?");
+LeaderLib_Codex_AddToCodex("@");
 
-LLLIB_Codex_AddToCodex("[");
+LeaderLib_Codex_AddToCodex("[");
 //LLLIB_Codex_AddToCodex("\");
-LLLIB_Codex_AddToCodex("]");
+LeaderLib_Codex_AddToCodex("]");
 //LLLIB_Codex_AddToCodex("^");
-LLLIB_Codex_AddToCodex("_");
-LLLIB_Codex_AddToCodex("`");
+LeaderLib_Codex_AddToCodex("_");
+LeaderLib_Codex_AddToCodex("`");
 
-LLLIB_Codex_AddToCodex("}");
-LLLIB_Codex_AddToCodex("|");
-LLLIB_Codex_AddToCodex("{");
-LLLIB_Codex_AddToCodex("~");
+LeaderLib_Codex_AddToCodex("}");
+LeaderLib_Codex_AddToCodex("|");
+LeaderLib_Codex_AddToCodex("{");
+LeaderLib_Codex_AddToCodex("~");
 
-LLLIB_Codex_AddToCodex("0");
-LLLIB_Codex_AddToCodex("1");
-LLLIB_Codex_AddToCodex("2");
-LLLIB_Codex_AddToCodex("3");
-LLLIB_Codex_AddToCodex("4");
-LLLIB_Codex_AddToCodex("5");
-LLLIB_Codex_AddToCodex("6");
-LLLIB_Codex_AddToCodex("7");
-LLLIB_Codex_AddToCodex("8");
-LLLIB_Codex_AddToCodex("9");
+LeaderLib_Codex_AddToCodex("0");
+LeaderLib_Codex_AddToCodex("1");
+LeaderLib_Codex_AddToCodex("2");
+LeaderLib_Codex_AddToCodex("3");
+LeaderLib_Codex_AddToCodex("4");
+LeaderLib_Codex_AddToCodex("5");
+LeaderLib_Codex_AddToCodex("6");
+LeaderLib_Codex_AddToCodex("7");
+LeaderLib_Codex_AddToCodex("8");
+LeaderLib_Codex_AddToCodex("9");
 
 //String Sub isn't case-sensitive for some reason
-LLLIB_Codex_AddToCodex("A");
-LLLIB_Codex_AddToCodex("B");
-LLLIB_Codex_AddToCodex("C");
-LLLIB_Codex_AddToCodex("D");
-LLLIB_Codex_AddToCodex("E");
-LLLIB_Codex_AddToCodex("F");
-LLLIB_Codex_AddToCodex("G");
-LLLIB_Codex_AddToCodex("H");
-LLLIB_Codex_AddToCodex("I");
-LLLIB_Codex_AddToCodex("J");
-LLLIB_Codex_AddToCodex("K");
-LLLIB_Codex_AddToCodex("L");
-LLLIB_Codex_AddToCodex("M");
-LLLIB_Codex_AddToCodex("N");
-LLLIB_Codex_AddToCodex("O");
-LLLIB_Codex_AddToCodex("P");
-LLLIB_Codex_AddToCodex("Q");
-LLLIB_Codex_AddToCodex("R");
-LLLIB_Codex_AddToCodex("S");
-LLLIB_Codex_AddToCodex("T");
-LLLIB_Codex_AddToCodex("U");
-LLLIB_Codex_AddToCodex("V");
-LLLIB_Codex_AddToCodex("W");
-LLLIB_Codex_AddToCodex("X");
-LLLIB_Codex_AddToCodex("Y");
-LLLIB_Codex_AddToCodex("Z");
+LeaderLib_Codex_AddToCodex("A");
+LeaderLib_Codex_AddToCodex("B");
+LeaderLib_Codex_AddToCodex("C");
+LeaderLib_Codex_AddToCodex("D");
+LeaderLib_Codex_AddToCodex("E");
+LeaderLib_Codex_AddToCodex("F");
+LeaderLib_Codex_AddToCodex("G");
+LeaderLib_Codex_AddToCodex("H");
+LeaderLib_Codex_AddToCodex("I");
+LeaderLib_Codex_AddToCodex("J");
+LeaderLib_Codex_AddToCodex("K");
+LeaderLib_Codex_AddToCodex("L");
+LeaderLib_Codex_AddToCodex("M");
+LeaderLib_Codex_AddToCodex("N");
+LeaderLib_Codex_AddToCodex("O");
+LeaderLib_Codex_AddToCodex("P");
+LeaderLib_Codex_AddToCodex("Q");
+LeaderLib_Codex_AddToCodex("R");
+LeaderLib_Codex_AddToCodex("S");
+LeaderLib_Codex_AddToCodex("T");
+LeaderLib_Codex_AddToCodex("U");
+LeaderLib_Codex_AddToCodex("V");
+LeaderLib_Codex_AddToCodex("W");
+LeaderLib_Codex_AddToCodex("X");
+LeaderLib_Codex_AddToCodex("Y");
+LeaderLib_Codex_AddToCodex("Z");
 
 PROC
-LLLIB_Codex_BuildCodex()
+LeaderLib_Codex_BuildCodex()
 AND
 SysCount("DB_LeaderLibCodex", 2, _Max)
 THEN
@@ -122,7 +122,7 @@ DB_LeaderLibCodexCount(_Max);
 
 //REGION CHAR_ITERATOR
 PROC
-LLLIB_Codex_Internal_ClearOldIterator()
+LeaderLib_Codex_Internal_ClearOldIterator()
 AND
 SysCount("DB_LeaderLibCodex_Iterator", 1, _Count)
 AND
@@ -133,21 +133,21 @@ LeaderUpdater_Clear_RegisteredDatabase("LeaderLib", "LaughingLeader", "DB_Leader
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Codex", "DB_LeaderLibCodex_Iterator", 2);
 
 PROC
-LLLIB_Codex_BuildIterator((INTEGER)_Max)
+LeaderLib_Codex_BuildIterator((INTEGER)_Max)
 AND
 NOT DB_LeaderLibCodex_Iterator(_,_)
 THEN
-LLLIB_Codex_Internal_ClearOldIterator();
+LeaderLib_Codex_Internal_ClearOldIterator();
 SysClear("DB_LeaderLibTemp_BuildSortIterator", 2);
 DB_LeaderLibTemp_BuildSortIterator(0, _Max);
 
 IF
 DB_LeaderLibTemp_BuildSortIterator(_Index, _Max)
 THEN
-LLLIB_Codex_OnSortIterator(_Index, _Max);
+LeaderLib_Codex_OnSortIterator(_Index, _Max);
 
 PROC
-LLLIB_Codex_OnSortIterator((INTEGER)_Index, (INTEGER)_Max)
+LeaderLib_Codex_OnSortIterator((INTEGER)_Index, (INTEGER)_Max)
 AND
 _Index < _Max
 AND
@@ -160,7 +160,7 @@ NOT DB_LeaderLibTemp_BuildSortIterator(_Index, _Max);
 DB_LeaderLibTemp_BuildSortIterator(_NextIndex, _Max);
 
 PROC
-LLLIB_Codex_OnSortIterator((INTEGER)_Index, (INTEGER)_Max)
+LeaderLib_Codex_OnSortIterator((INTEGER)_Index, (INTEGER)_Max)
 AND
 _Index >= _Max
 AND
@@ -175,11 +175,11 @@ StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
 AND
 LeaderUpdater_QRY_SettingsNeedsUpdate("LLLIB_Settings_Codex")
 THEN
-LLLIB_Codex_InitSettings();
+LeaderLib_Codex_InitSettings();
 LeaderLog_Log("SYSTEM", "[LeaderLib:Codex] Settings updated.");
 
 PROC
-LLLIB_System_RegisterDatabases()
+LeaderLib_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Codex", "DB_LeaderLibCodex", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Codex", "DB_LeaderLibCodex_Iterator", 2);

@@ -22,7 +22,7 @@ INITSECTION
 KBSECTION
 //REGION UPDATER
 PROC
-LLLIB_System_RegisterDatabases()
+LeaderLib_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_RegisterMenu", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModAPI", "DB_LeaderLib_ModApi_AddItemToLeaderTrader", 2);
@@ -108,7 +108,7 @@ NOT DB_LeaderLib_ModApi_AddBookToLeaderTrader(_Template, _Amount);
 IF
 DB_LeaderLib_ModApi_SendEvent((STRING)_EventName)
 THEN
-LLLIB_EventParser_Internal_RunEvent(_EventName);
+LeaderLib_EventParser_Internal_RunEvent(_EventName);
 NOT DB_LeaderLib_ModApi_SendEvent(_EventName);
 
 IF
@@ -248,10 +248,10 @@ IF
 TimerFinished("LLLIB_Timers_LeaderLib_ModApiCleanup")
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:ModAPI] ModApi cleanup started. Running ModAPI databases.");
-LLLIB_ModApi_RunCleanup();
+LeaderLib_ModApi_RunCleanup();
 
 PROC
-LLLIB_ModApi_RunCleanup()
+LeaderLib_ModApi_RunCleanup()
 THEN
 //Clear logs that are still remaining
 SysClear("DB_LeaderLib_ModApi_Log_SetTarget", 1);

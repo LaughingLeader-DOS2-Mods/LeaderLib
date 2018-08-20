@@ -1,7 +1,7 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-LLLIB_Start_Internal_CompleteIfStarted(); // Existing saves
+LeaderLib_Start_Internal_CompleteIfStarted(); // Existing saves
 KBSECTION
 IF
 GameEventSet("GAMEEVENT_GameStarted")
@@ -16,7 +16,7 @@ THEN
 GoalCompleted;
 
 PROC
-LLLIB_Start_Internal_CompleteIfStarted()
+LeaderLib_Start_Internal_CompleteIfStarted()
 AND
 DB_StoryStarted(_)
 THEN

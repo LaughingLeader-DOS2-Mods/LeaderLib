@@ -156,31 +156,31 @@ IF
 TextEventSet("lltest1")
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel] Registered debug trader.");
-LLLIB_DebugLevel_TraderTest();
+LeaderLib_DebugLevel_TraderTest();
 LeaderLib_SendEvent("LeaderLib_Commands_SpawnTraders");
 
 IF
 TextEventSet("lltest2")
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel] Registered a bunch of treasure.");
-LLLIB_DebugLevel_TreasureTest();
+LeaderLib_DebugLevel_TreasureTest();
 
 IF
 TextEventSet("lltest3")
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel] Registered a bunch of mod menus.");
-LLLIB_DebugLevel_ModMenuTest();
+LeaderLib_DebugLevel_ModMenuTest();
 
 IF
 TextEventSet("llstress")
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel] Running stress tests.");
-LLLIB_DebugLevel_TreasureStressTest();
+LeaderLib_DebugLevel_TreasureStressTest();
 //END_REGION
 
 //REGION WIKI_EXAMPLE
 PROC
-LLLIB_DebugLevel_WikiExample_TraderTest()
+LeaderLib_DebugLevel_WikiExample_TraderTest()
 AND
 NOT DB_LeaderLibDebug_RegisteredWikiTraders(_)
 THEN
@@ -238,7 +238,7 @@ LeaderLib_Trader_Register_Dialog("MyMod.Debug.TestGoblinTrader", "LLLIB_Debug_Tr
 
 //REGION TESTS
 PROC
-LLLIB_DebugLevel_TraderTest()
+LeaderLib_DebugLevel_TraderTest()
 THEN
 LeaderLib_Trader_Register_TraderTemplate("LLLIB_TestLevel_Trader", "Elves_Female_Clothing_3ba29ecd-4849-494d-a9a6-6221eea6761c", 1);
 LeaderLib_Trader_Register_Level("LLLIB_TestLevel_Trader", "LeaderLib_TestLevel", "LLLIB_DebugLevel_Trader1_SpawnFlag");
@@ -260,7 +260,7 @@ LeaderLib_Treasure_Register_TreasureTable("LLLIB_TestLevel_Trader", "TEST_Genera
 //LeaderLib_Treasure_Register_ItemStat("LLLIB_LeaderTrader_ModBooks", "WPN_Cheat_Sword_1H_RuneSlot2", 1);
 
 PROC
-LLLIB_DebugLevel_TreasureTest()
+LeaderLib_DebugLevel_TreasureTest()
 THEN
 LeaderLib_Treasure_Register_TreasureToObject("LLLIB_TestLevel_Chest1", ITEMGUID_LLLIB_Debug_TestChest_ff6c9edf-aa21-447a-8bb2-2a647a8dae46);
 LeaderLib_Treasure_Register_TreasureTable("LLLIB_TestLevel_Chest1", "TEST_Generation", "LLLIB_DebugLevel_TraderRequirements1", 1);
@@ -277,7 +277,7 @@ LeaderLib_Treasure_Configure_ItemLevel("LLLIB_TestLevel_Chest1", "WPN_Elves_Spea
 //Sorting/Menu test
 
 PROC
-LLLIB_DebugLevel_TreasureTest2()
+LeaderLib_DebugLevel_TreasureTest2()
 THEN
 LeaderLib_Treasure_Register_TreasureToObject("LLLIB_TestLevel_Chest2", ITEMGUID_LLLIB_DebugLevel_TestChest2_cde2491b-741c-4442-a016-74761b43f3c5);
 //LeaderLib_Treasure_Register_ItemStat("LLLIB_TestLevel_Chest2", "WPN_Cheat_Sword_1H_RuneSlot2", 1, "LLLIB_DebugLevel_Trader1_SpawnFlag");
@@ -292,7 +292,7 @@ LeaderLib_Treasure_Configure_AddRune("LLLIB_TestLevel_Chest2", "WPN_Cheat_Sword_
 //LeaderLib_Treasure_Configure_GenerationType("LLLIB_TestLevel_Chest2", "WPN_Cheat_Sword_1H_RuneSlot2", "REQUIREMENT_UNLOCKED");
 
 PROC
-LLLIB_DebugLevel_ModMenuTest()
+LeaderLib_DebugLevel_ModMenuTest()
 THEN
 LeaderLib_Register_ModMenu("LLZ1", "[Zieonimus] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_Register_ModMenu("LLZ2", "[Zzznonom] Settings", "LLLIB_SettingsMenu", "LeaderLib", "LaughingLeader");
@@ -325,7 +325,7 @@ LeaderLib_Register_ModMenu("LLZZ8", "[ModMenu8] Settings", "LLLIB_SettingsMenu",
 
 //REGION STRESS_TESTS
 PROC
-LLLIB_DebugLevel_TreasureStressTest()
+LeaderLib_DebugLevel_TreasureStressTest()
 THEN
 LeaderLib_Treasure_Register_TreasureToObject("LLLIB_TestLevel_Chest3", ITEMGUID_NDL_ArenaChest_000_60d1603d-606f-4b64-9863-7b962d456278);
 //DB_LeaderLibTreasure_GenerationSpeed("LLLIB_TestLevel_Chest3", 500);
@@ -633,13 +633,13 @@ NOT DB_LeaderLib_Combat_Temp_RandomCharacter(_CombatID, _Character, _Index);
 IF
 TimerFinished("LeaderLib_Debug_Timers_CombatRandomTest")
 AND
-LLLIB_Debug_TestLevel_QRY_TestCombatAvailable()
+LeaderLib_Debug_TestLevel_QRY_TestCombatAvailable()
 THEN
 //LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel:CombatRandomTest] Restarting timer [LeaderLib_Debug_Timers_CombatRandomTest].");
 TimerLaunch("LeaderLib_Debug_Timers_CombatRandomTest", 4000);
 
 QRY
-LLLIB_Debug_TestLevel_QRY_TestCombatAvailable()
+LeaderLib_Debug_TestLevel_QRY_TestCombatAvailable()
 AND
 DB_LeaderLibDebug_TestCombat(_)
 THEN
@@ -653,20 +653,20 @@ AND
 Random(2, _Ran)
 THEN
 //LeaderLib_Treasure_AddToGenerationQueue(CHARACTERGUID_S_LLLIB_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, "LLLIB_LeaderTrader_ModBooks", "MANUAL");
-LLLIB_Debug_PlatformTest(_Character, _Ran);
+LeaderLib_Debug_PlatformTest(_Character, _Ran);
 
 PROC
-LLLIB_Debug_PlatformTest((CHARACTERGUID)_Character, 0)
+LeaderLib_Debug_PlatformTest((CHARACTERGUID)_Character, 0)
 THEN
 LeaderLIb_Platforms_SpawnPlatform_Small("LeaderLib.TestPlatform1", 3000, _Character);
 
 PROC
-LLLIB_Debug_PlatformTest((CHARACTERGUID)_Character, 1)
+LeaderLib_Debug_PlatformTest((CHARACTERGUID)_Character, 1)
 THEN
 LeaderLIb_Platforms_SpawnPlatform_Medium("LeaderLib.TestPlatform2", 3000, _Character);
 
 PROC
-LLLIB_Debug_PlatformTest((CHARACTERGUID)_Character, 2)
+LeaderLib_Debug_PlatformTest((CHARACTERGUID)_Character, 2)
 THEN
 LeaderLIb_Platforms_SpawnPlatform_Large("LeaderLib.TestPlatform2", 3000, _Character);
 
@@ -692,23 +692,23 @@ DB_LeaderLibEquipmentSlots(_Slot)
 AND
 CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
 AND
-LLLIB_Debug_QRY_TraceRunes(_Item, 0)
+LeaderLib_Debug_QRY_TraceRunes(_Item, 0)
 AND
-LLLIB_Debug_QRY_TraceRunes(_Item, 1)
+LeaderLib_Debug_QRY_TraceRunes(_Item, 1)
 AND
-LLLIB_Debug_QRY_TraceRunes(_Item, 2)
+LeaderLib_Debug_QRY_TraceRunes(_Item, 2)
 AND
 String(_Item, _Name)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:RuneTest] Item[",_Name,"] Rune check complete.");
 
 QRY
-LLLIB_Debug_QRY_TraceRunes((ITEMGUID)_Item, (INTEGER)_Slot)
+LeaderLib_Debug_QRY_TraceRunes((ITEMGUID)_Item, (INTEGER)_Slot)
 THEN
-LLLIB_Debug_TraceRunes(_Item, _Slot);
+LeaderLib_Debug_TraceRunes(_Item, _Slot);
 
 PROC
-LLLIB_Debug_TraceRunes((ITEMGUID)_Item, (INTEGER)_Slot)
+LeaderLib_Debug_TraceRunes((ITEMGUID)_Item, (INTEGER)_Slot)
 AND
 ItemGetRuneItemTemplate(_Item, _Slot, _Template)
 AND
@@ -719,7 +719,7 @@ THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:RuneTest] Item[",_Name,"] Slot[",_SlotStr,"] Rune [",_Template,"]");
 
 PROC
-LLLIB_Debug_TraceRunes((ITEMGUID)_Item, (INTEGER)_Slot)
+LeaderLib_Debug_TraceRunes((ITEMGUID)_Item, (INTEGER)_Slot)
 AND
 NOT ItemGetRuneItemTemplate(_Item, _Slot, _)
 AND

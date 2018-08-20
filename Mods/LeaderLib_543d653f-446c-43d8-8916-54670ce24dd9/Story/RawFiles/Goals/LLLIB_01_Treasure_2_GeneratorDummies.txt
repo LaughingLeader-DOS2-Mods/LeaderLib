@@ -6,12 +6,12 @@ INITSECTION
 KBSECTION
 //REGION CREATION
 QRY
-LLLIB_Treasure_Internal_QRY_CreateGeneratorDummy((GUIDSTRING)_AtObject, (STRING)_DummyID)
+LeaderLib_Treasure_Internal_QRY_CreateGeneratorDummy((GUIDSTRING)_AtObject, (STRING)_DummyID)
 THEN
-LLLIB_Treasure_Internal_CreateGeneratorDummy(_AtObject, _DummyID);
+LeaderLib_Treasure_Internal_CreateGeneratorDummy(_AtObject, _DummyID);
 
 PROC
-LLLIB_Treasure_Internal_CreateGeneratorDummy((GUIDSTRING)_AtObject, (STRING)_DummyID)
+LeaderLib_Treasure_Internal_CreateGeneratorDummy((GUIDSTRING)_AtObject, (STRING)_DummyID)
 AND
 GetPosition(_AtObject, _x,_y,_z)
 AND
@@ -23,7 +23,7 @@ DB_LeaderLibTreasure_GeneratorDummies(_Dummy);
 DB_LeaderLibTreasure_NextGeneratorDummy(_Dummy, _DummyID);
 
 PROC
-LLLIB_Treasure_Internal_CreateGeneratorDummy((GUIDSTRING)_AtObject, (STRING)_DummyID)
+LeaderLib_Treasure_Internal_CreateGeneratorDummy((GUIDSTRING)_AtObject, (STRING)_DummyID)
 AND
 NOT DB_LeaderLibTreasure_NextGeneratorDummy(_, _DummyID)
 THEN
@@ -33,26 +33,26 @@ LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:CreateGeneratorDummy] Failed t
 
 //REGION QUERIES
 QRY
-LLLIB_Treasure_Internal_QRY_IsDefaultDummyID("")
+LeaderLib_Treasure_Internal_QRY_IsDefaultDummyID("")
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_Treasure_Internal_QRY_IsDefaultDummyID("Default")
+LeaderLib_Treasure_Internal_QRY_IsDefaultDummyID("Default")
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_Treasure_Internal_QRY_IsDefaultOrMatchesDummyID((CHARACTERGUID)_Dummy, (STRING)_CheckID)
+LeaderLib_Treasure_Internal_QRY_IsDefaultOrMatchesDummyID((CHARACTERGUID)_Dummy, (STRING)_CheckID)
 AND
 GetVarString(_Dummy, "LeaderLib_DummyID", _CurrentID)
 AND
-LLLIB_Treasure_Internal_QRY_IsDefaultDummyID(_CurrentID)
+LeaderLib_Treasure_Internal_QRY_IsDefaultDummyID(_CurrentID)
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_Treasure_Internal_QRY_IsDefaultOrMatchesDummyID((CHARACTERGUID)_Dummy, (STRING)_CheckID)
+LeaderLib_Treasure_Internal_QRY_IsDefaultOrMatchesDummyID((CHARACTERGUID)_Dummy, (STRING)_CheckID)
 AND
 GetVarString(_Dummy, "LeaderLib_DummyID", _CurrentID)
 AND
@@ -74,7 +74,7 @@ GetVarString(_Dummy, "LeaderLib_DummyID", _DummyID)
 THEN
 SetVarString(_Dummy, "LeaderLib_DummyID", "");
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:ResetDummyByID] Dummy with ID [",_DummyID,"] reset.");
-LLLIB_Treasure_RemoveNextDummy(_Dummy);
+LeaderLib_Treasure_RemoveNextDummy(_Dummy);
 
 PROC
 LeaderLib_Treasure_ResetDummy((CHARACTERGUID)_Dummy)
@@ -83,10 +83,10 @@ DB_LeaderLibTreasure_GeneratorDummies(_Dummy)
 THEN
 SetVarString(_Dummy, "LeaderLib_DummyID", "");
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:ResetDummy] Dummy ID reset.");
-LLLIB_Treasure_RemoveNextDummy(_Dummy);
+LeaderLib_Treasure_RemoveNextDummy(_Dummy);
 
 PROC
-LLLIB_Treasure_RemoveNextDummy((CHARACTERGUID)_Dummy)
+LeaderLib_Treasure_RemoveNextDummy((CHARACTERGUID)_Dummy)
 AND
 DB_LeaderLibTreasure_NextGeneratorDummy(_Dummy, _DummyID)
 THEN
@@ -135,26 +135,26 @@ DB_IsPlayer(_Player)
 AND
 NOT DB_LeaderLibTreasure_NextGeneratorDummy(_, "")
 THEN
-LLLIB_Treasure_PrepareGeneratorDummy((GUIDSTRING)_Player, "");
+LeaderLib_Treasure_PrepareGeneratorDummy((GUIDSTRING)_Player, "");
 
 QRY
 LeaderLib_Treasure_QRY_PrepareGeneratorDummy((GUIDSTRING)_AtObject)
 THEN
-LLLIB_Treasure_PrepareGeneratorDummy(_AtObject, "");
+LeaderLib_Treasure_PrepareGeneratorDummy(_AtObject, "");
 
 QRY
 LeaderLib_Treasure_QRY_PrepareGeneratorDummy((GUIDSTRING)_AtObject, (STRING)_DummyID)
 THEN
-LLLIB_Treasure_PrepareGeneratorDummy(_AtObject, _DummyID);
+LeaderLib_Treasure_PrepareGeneratorDummy(_AtObject, _DummyID);
 
 PROC
-LLLIB_Treasure_PrepareGeneratorDummy((GUIDSTRING)_AtObject, (STRING)_DummyID)
+LeaderLib_Treasure_PrepareGeneratorDummy((GUIDSTRING)_AtObject, (STRING)_DummyID)
 THEN
-LLLIB_Treasure_Internal_DummyCheck();
-LLLIB_Treasure_Internal_GetNextDummy(_AtObject, _DummyID);
+LeaderLib_Treasure_Internal_DummyCheck();
+LeaderLib_Treasure_Internal_GetNextDummy(_AtObject, _DummyID);
 
 PROC
-LLLIB_Treasure_Internal_DummyCheck()
+LeaderLib_Treasure_Internal_DummyCheck()
 AND
 DB_LeaderLibTreasure_GeneratorDummies(_Dummy)
 AND
@@ -164,7 +164,7 @@ NOT DB_LeaderLibTreasure_GeneratorDummies(_Dummy);
 LeaderLib_Treasure_ResetDummy(_Dummy);
 
 PROC
-LLLIB_Treasure_Internal_DummyCheck()
+LeaderLib_Treasure_Internal_DummyCheck()
 AND
 DB_LeaderLibTreasure_GeneratorDummies(_Dummy)
 AND
@@ -175,18 +175,18 @@ THEN
 SetOnStage(_Dummy, 1);
 
 PROC
-LLLIB_Treasure_Internal_GetNextDummy((GUIDSTRING)_AtObject, (STRING)_DummyID)
+LeaderLib_Treasure_Internal_GetNextDummy((GUIDSTRING)_AtObject, (STRING)_DummyID)
 THEN
-LLLIB_Treasure_Internal_FindNextDummy(_AtObject, _DummyID);
+LeaderLib_Treasure_Internal_FindNextDummy(_AtObject, _DummyID);
 
 PROC
-LLLIB_Treasure_Internal_FindNextDummy((GUIDSTRING)_AtObject, (STRING)_DummyID)
+LeaderLib_Treasure_Internal_FindNextDummy((GUIDSTRING)_AtObject, (STRING)_DummyID)
 AND
 DB_LeaderLibTreasure_GeneratorDummies(_Dummy)
 AND
 NOT DB_LeaderLibTreasure_NextGeneratorDummy(_, _DummyID)
 AND
-LLLIB_Treasure_Internal_QRY_IsDefaultOrMatchesDummyID(_Dummy, _DummyID)
+LeaderLib_Treasure_Internal_QRY_IsDefaultOrMatchesDummyID(_Dummy, _DummyID)
 THEN
 TeleportTo(_Dummy, _AtObject, "", 0);
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:GetNextDummy] Dummy found. Set ID to [",_DummyID,"] and setting as the next dummy.");
@@ -194,13 +194,13 @@ SetVarString(_Dummy, "LeaderLib_DummyID", _DummyID);
 DB_LeaderLibTreasure_NextGeneratorDummy(_Dummy, _DummyID);
 
 PROC
-LLLIB_Treasure_Internal_GetNextDummy((GUIDSTRING)_AtObject, (STRING)_DummyID)
+LeaderLib_Treasure_Internal_GetNextDummy((GUIDSTRING)_AtObject, (STRING)_DummyID)
 AND
 NOT DB_LeaderLibTreasure_NextGeneratorDummy(_, _DummyID)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:GetNextDummy] No dummy found for ID [",_DummyID,"]. Creating new dummy.");
-LLLIB_Treasure_Internal_CreateGeneratorDummy(_AtObject, _DummyID);
-LLLIB_Treasure_Internal_FindNextDummy(_AtObject, _DummyID);
+LeaderLib_Treasure_Internal_CreateGeneratorDummy(_AtObject, _DummyID);
+LeaderLib_Treasure_Internal_FindNextDummy(_AtObject, _DummyID);
 //END_REGION
 
 //REGION CLEANUP
@@ -215,7 +215,7 @@ DB_LeaderLibTreasure_GeneratorDummies(_Dummy);
 
 //REGION UPDATER
 PROC
-LLLIB_System_RegisterDatabases()
+LeaderLib_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "GeneratorDummies", "DB_LeaderLibTreasure_GeneratorDummies", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "GeneratorDummies", "DB_LeaderLibTreasure_NextGeneratorDummy", 2);

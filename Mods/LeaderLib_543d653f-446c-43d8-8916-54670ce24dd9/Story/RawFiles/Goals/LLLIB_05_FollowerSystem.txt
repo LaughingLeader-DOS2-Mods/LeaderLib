@@ -81,22 +81,22 @@ ObjectClearFlag(_Follower, "LeaderLib_CharacterIsFollowing");
 ProcCharacterStopFollow(_Follower);
 CharacterRemoveFromPlayerCharacter(_Follower, _Owner);
 CharacterDetachFromGroup(_Follower);
-LLLIB_Follower_Internal_SetOffStage(_Follower, _SetOffStage);
-LLLIB_Follower_Internal_ResetPositionIfEnabled(_Follower, _Effect);
+LeaderLib_Follower_Internal_SetOffStage(_Follower, _SetOffStage);
+LeaderLib_Follower_Internal_ResetPositionIfEnabled(_Follower, _Effect);
 CharacterCharacterSetEvent(_Owner, _Follower, "LeaderLib_Events_FollowerDismissed");
 //ClearTag(_Follower, "SUMMON");
 
 PROC
-LLLIB_Follower_Internal_SetOffStage((CHARACTERGUID)_Follower, 1)
+LeaderLib_Follower_Internal_SetOffStage((CHARACTERGUID)_Follower, 1)
 THEN
 SetOnStage(_Follower, 0);
 
 PROC
-LLLIB_Follower_Internal_ResetPositionIfEnabled((CHARACTERGUID)_Follower, (STRING)_Effect)
+LeaderLib_Follower_Internal_ResetPositionIfEnabled((CHARACTERGUID)_Follower, (STRING)_Effect)
 AND
 NOT IsTagged(_Follower, "LeaderLib_Follower_DisableAutoResetPosition", 1)
 THEN
-LLLIB_Follower_ResetPosition(_Follower, _Effect);
+LeaderLib_Follower_ResetPosition(_Follower, _Effect);
 
 IF
 CharacterCharacterEvent(_Follower, _Owner, "LeaderLib_Follower_AutoFollow")
@@ -115,12 +115,12 @@ ProcCharacterStopFollow(_Follower);
 
 //REGION HELPERS
 PROC
-LLLIB_Follower_ResetPosition((CHARACTERGUID)_Follower)
+LeaderLib_Follower_ResetPosition((CHARACTERGUID)_Follower)
 THEN
-LLLIB_Follower_ResetPosition(_Follower, "");
+LeaderLib_Follower_ResetPosition(_Follower, "");
 
 PROC
-LLLIB_Follower_ResetPosition((CHARACTERGUID)_Follower, (STRING)_Effect)
+LeaderLib_Follower_ResetPosition((CHARACTERGUID)_Follower, (STRING)_Effect)
 AND
 NOT DB_LeaderLibFollower_Temp_PositionReset(_Follower)
 AND
@@ -136,7 +136,7 @@ CharacterMoveToPosition(_Follower, _x, _y, _z, 1, _TeleportEvent);
 DB_LeaderLibFollower_Temp_PositionReset(_Follower);
 
 PROC
-LLLIB_Follower_ResetPosition((CHARACTERGUID)_Follower, (STRING)_Effect)
+LeaderLib_Follower_ResetPosition((CHARACTERGUID)_Follower, (STRING)_Effect)
 AND
 NOT DB_LeaderLibFollower_Temp_PositionReset(_Follower)
 AND
@@ -148,19 +148,19 @@ GetDistanceToPosition(_Follower,  _x, _y, _z, _Dist)
 AND
 _Dist >= 30
 THEN
-LLLIB_Follower_Internal_PlayDisappearEffect(_Follower, _Effect);
+LeaderLib_Follower_Internal_PlayDisappearEffect(_Follower, _Effect);
 TeleportToPosition(_Follower, _x, _y, _z, _TeleportEvent, 1);
 DB_LeaderLibFollower_Temp_PositionReset(_Follower);
 
 PROC
-LLLIB_Follower_ResetPosition((CHARACTERGUID)_Follower, (STRING)_Effect)
+LeaderLib_Follower_ResetPosition((CHARACTERGUID)_Follower, (STRING)_Effect)
 AND
 DB_LeaderLibFollower_Temp_PositionReset(_Follower)
 THEN
 NOT DB_LeaderLibFollower_Temp_PositionReset(_Follower);
 
 PROC
-LLLIB_Follower_Internal_PlayDisappearEffect((CHARACTERGUID)_Follower, (STRING)_Effect)
+LeaderLib_Follower_Internal_PlayDisappearEffect((CHARACTERGUID)_Follower, (STRING)_Effect)
 AND
 _Effect != ""
 AND

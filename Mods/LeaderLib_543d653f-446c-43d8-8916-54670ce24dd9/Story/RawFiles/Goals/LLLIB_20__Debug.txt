@@ -1,7 +1,7 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-LLLIB_Debug_RunTests();
+LeaderLib_Debug_RunTests();
 KBSECTION
 IF
 RegionStarted("LeaderLib_TestLevel")
@@ -11,13 +11,13 @@ GlobalSetFlag("LeaderLog_Trace_Enabled");
 GoalCompleted;
 
 PROC
-LLLIB_Debug_RunTests()
+LeaderLib_Debug_RunTests()
 THEN
 //LLLIB_Debug_MathTests();
 DB_NOOP(1);
 
 PROC
-LLLIB_Debug_MathTests()
+LeaderLib_Debug_MathTests()
 AND
 LeaderLib_Math_QRY_Sine(90.0)
 AND
@@ -31,7 +31,7 @@ NOT DB_LeaderLog_Temp_RealString("LLLIB.Debug.Sine", _SineResultStr);
 LeaderLog_Log("DEBUG", "[LeaderLog:Debug:Math] Sine | Angle [90] = [",_SineResultStr,"]");
 
 PROC
-LLLIB_Debug_MathTests()
+LeaderLib_Debug_MathTests()
 AND
 LeaderLib_Math_QRY_Cosine(90.0)
 AND
@@ -45,7 +45,7 @@ NOT DB_LeaderLog_Temp_RealString("LLLIB.Debug.Cosine", _CosineResultStr);
 LeaderLog_Log("DEBUG", "[LeaderLog:Debug:Math] Cosine | Angle [90] = [",_CosineResultStr,"]");
 
 PROC
-LLLIB_Debug_MathTests()
+LeaderLib_Debug_MathTests()
 AND
 LeaderLib_Math_QRY_Factorial(5)
 AND

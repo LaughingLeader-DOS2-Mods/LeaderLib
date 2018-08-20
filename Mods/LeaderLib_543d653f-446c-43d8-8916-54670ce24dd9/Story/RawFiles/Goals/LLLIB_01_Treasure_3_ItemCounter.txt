@@ -224,7 +224,7 @@ DB_NOOP(1);
 
 //REGION UPDATER
 PROC
-LLLIB_System_RegisterDatabases()
+LeaderLib_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_ItemCounter", "DB_LeaderLibTreasure_Temp_ItemTemplateAmount", 4);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_ItemCounter", "DB_LeaderLibTreasure_Temp_ItemStatAmount", 5);

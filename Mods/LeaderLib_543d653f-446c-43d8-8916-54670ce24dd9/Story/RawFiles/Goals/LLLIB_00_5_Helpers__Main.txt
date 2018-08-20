@@ -725,7 +725,7 @@ DB_NOOP(1);
 
 //REGION UPDATER
 PROC
-LLLIB_System_RegisterDatabases()
+LeaderLib_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LeaderLib_Helper_Temp_StopIteratingForFlags", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Helpers", "DB_LeaderLib_Helper_Temp_StopIteratingForMinLevel", 1);

@@ -64,7 +64,7 @@ LeaderLib_Array_AddToDictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_Ch
 PROC
 LeaderLib_EventFlow_Init_AddSortFlow()
 AND
-LLLIB_ModMenu_QRY_SortNeeded()
+LeaderLib_ModMenu_QRY_SortNeeded()
 AND
 NOT DB_LeaderLibArray_Dictionary("LLLIB_DefaultEventFlow", "LeaderLib_Commands_SortMenus", "LeaderLib_Events_OnMenuSortComplete")
 THEN
@@ -394,7 +394,7 @@ THEN
 LeaderLib_EventFlow_Init_LeaderLibStack();
 
 PROC
-LLLIB_System_RegisterDatabases()
+LeaderLib_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventFlow", "DB_LeaderLibEventFlow_CurrentEvent", 2);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "EventFlow", "DB_LeaderLibEventFlow_EventStack", 4);

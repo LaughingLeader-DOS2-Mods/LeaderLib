@@ -79,10 +79,10 @@ AND
 LeaderLog_QRY_Log("TRACE", "[LeaderLib:CreateItemByStat:AddToQueue] Stat [",_Stat,"] is not stackable. Adding by 1 each to the array [",_ArrayID,"].")
 THEN
 LeaderLib_CreateByStat_SetStatSettings(_ArrayID, _Stat, 1, _Equip, _ShowInTrade);
-LLLIB_Treasure_CreateItemByStat_Internal_AddIndividualItems(_Object, _ArrayID, _Stat, _Equip, _ShowInTrade, _Amount);
+LeaderLib_Treasure_CreateItemByStat_Internal_AddIndividualItems(_Object, _ArrayID, _Stat, _Equip, _ShowInTrade, _Amount);
 
 PROC
-LLLIB_Treasure_CreateItemByStat_Internal_AddIndividualItems((GUIDSTRING)_Object, (STRING)_ArrayID, (STRING)_Stat, (INTEGER)_Equip, (INTEGER)_ShowInTrade, (INTEGER)_Amount)
+LeaderLib_Treasure_CreateItemByStat_Internal_AddIndividualItems((GUIDSTRING)_Object, (STRING)_ArrayID, (STRING)_Stat, (INTEGER)_Equip, (INTEGER)_ShowInTrade, (INTEGER)_Amount)
 AND
 IntegerSubtract(_Amount, 1, _NextAmount)
 AND
@@ -90,7 +90,7 @@ _NextAmount >= 0
 THEN
 LeaderLib_Array_AddToArray(_ArrayID, _Stat);
 LeaderLog_Log("TRACE", "[LeaderLib:CreateItemByStat] Adding [",_Stat,"] to array [",_ArrayID,"].");
-LLLIB_Treasure_CreateItemByStat_Internal_AddIndividualItems(_Object, _ArrayID, _Stat, _Equip, _ShowInTrade, _NextAmount);
+LeaderLib_Treasure_CreateItemByStat_Internal_AddIndividualItems(_Object, _ArrayID, _Stat, _Equip, _ShowInTrade, _NextAmount);
 
 QRY
 LeaderLib_CreateByStat_Internal_QRY_StatIsNotStackable((STRING)_Stat, (INTEGER)_Amount)
@@ -287,10 +287,10 @@ LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 0, 9, 3, 0)
 THEN
 LeaderLog_Log("SYSTEM", "[LeaderLib:CreateByStat] Updated LeaderLib from version [",_PastVersion,"] to [0.9.3.0].");
 LeaderUpdater_Clear_AllRegisteredDatabasesWithReferenceName("LeaderLib", "LaughingLeader", "Treasure_CreateByStat");
-LLLIB_System_RegisterDatabases();
+LeaderLib_System_RegisterDatabases();
 
 PROC
-LLLIB_System_RegisterDatabases()
+LeaderLib_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_CreateByStat", "DB_LeaderLibCBS_Temp_Queue", 8);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Treasure_CreateByStat", "DB_LeaderLibCBS_Temp_StatSettings", 5);

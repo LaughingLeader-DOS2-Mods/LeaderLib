@@ -6,7 +6,7 @@ LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", "0.9.3.0");
 KBSECTION
 //REGION UPDATER
 PROC
-LLLIB_System_RegisterDatabases()
+LeaderLib_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "System", "DB_LeaderLib_Initialized", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "System", "DB_LeaderLib_GameStarted", 1);
@@ -29,7 +29,7 @@ GlobalClearFlag("LeaderLib_IsEditorMode");
 IF
 GameStarted(_,_)
 THEN
-LLLIB_System_ResetInit();
+LeaderLib_System_ResetInit();
 TimerLaunch("LLLIB_Timers_LeaderLibInitialized", 1);
 
 IF
@@ -42,7 +42,7 @@ LeaderLog_Log("DEBUG", "[LeaderLib:ModAPI] LeaderLib initialized.");
 LeaderLib_SendEvent("LeaderLib_Initialized");
 
 PROC
-LLLIB_System_ResetInit()
+LeaderLib_System_ResetInit()
 THEN
 SysClear("DB_LeaderLib_Initialized", 1);
 GlobalClearFlag("LeaderLib_Initialized");
@@ -52,10 +52,10 @@ GlobalClearFlag("LeaderLib_Initialized");
 IF
 StoryEvent(_,"LeaderLib_Initialized")
 THEN
-LLLIB_System_MarkHost();
+LeaderLib_System_MarkHost();
 
 PROC
-LLLIB_System_MarkHost()
+LeaderLib_System_MarkHost()
 AND
 CharacterGetHostCharacter(_Host)
 AND
@@ -65,7 +65,7 @@ LeaderLog_Log("DEBUG", "[LeaderLib:System] Flagged host user.");
 UserSetFlag(_Host, "LeaderLib_IsHost", 0);
 
 PROC
-LLLIB_System_MarkHost()
+LeaderLib_System_MarkHost()
 AND
 CharacterGetHostCharacter(_Host)
 AND
@@ -81,7 +81,7 @@ LeaderLog_Log("DEBUG", "[LeaderLib:System] Cleared host flag from non-host user.
 UserClearFlag(_Player, "LeaderLib_IsHost", 0);
 
 PROC
-LLLIB_System_MarkHost()
+LeaderLib_System_MarkHost()
 AND
 NOT CharacterGetHostCharacter(_)
 THEN
@@ -161,7 +161,7 @@ LeaderLib_SendEvent("LeaderLib_Debug_PlayerDatabaseReady");
 
 //REGION ITERATOR
 PROC
-LLLIB_CreateIterator((STRING)_IteratorName, (INTEGER)_MaxInt)
+LeaderLib_CreateIterator((STRING)_IteratorName, (INTEGER)_MaxInt)
 THEN
 DB_LeaderLibSystem_Temp_IteratorCreator(_IteratorName, _MaxInt);
 DB_LeaderLibSystem_Temp_StartIteratorCreator(_IteratorName, 0);

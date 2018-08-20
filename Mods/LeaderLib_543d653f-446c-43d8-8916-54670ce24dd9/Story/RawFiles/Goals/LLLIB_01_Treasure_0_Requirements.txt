@@ -12,7 +12,7 @@ INITSECTION
 KBSECTION
 //REGION UPDATER
 PROC
-LLLIB_System_RegisterDatabases()
+LeaderLib_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Requirements", "DB_LeaderLibRequirements_PartyLevel", 4);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Requirements", "DB_LeaderLibRequirements_Flag", 4);
@@ -318,14 +318,14 @@ LeaderLib_Requirements_RequirementUnlocked(_RequirementID);
 
 //REGION FLAG_UNLOCKING
 PROC
-LLLIB_Requirements_Internal_OnFlagSet((STRING)_RequirementID, (INTEGER)_TargetVal, (INTEGER)_CurrentVal)
+LeaderLib_Requirements_Internal_OnFlagSet((STRING)_RequirementID, (INTEGER)_TargetVal, (INTEGER)_CurrentVal)
 AND
 _TargetVal != _CurrentVal
 THEN
 LeaderLib_Requirements_RequirementLocked(_RequirementID);
 
 PROC
-LLLIB_Requirements_Internal_OnFlagSet((STRING)_RequirementID, (INTEGER)_TargetVal, (INTEGER)_CurrentVal)
+LeaderLib_Requirements_Internal_OnFlagSet((STRING)_RequirementID, (INTEGER)_TargetVal, (INTEGER)_CurrentVal)
 AND
 _TargetVal == _CurrentVal
 THEN
@@ -336,42 +336,42 @@ ObjectFlagSet(_Flag, _Object, _)
 AND
 DB_LeaderLibRequirements_Flag(_RequirementID, _Flag, "Object", _TargetVal)
 THEN
-LLLIB_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 1);
+LeaderLib_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 1);
 
 IF
 ObjectFlagCleared(_Flag, _Object, _)
 AND
 DB_LeaderLibRequirements_Flag(_RequirementID, _Flag, "Object", _TargetVal)
 THEN
-LLLIB_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 0);
+LeaderLib_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 0);
 
 IF
 ObjectFlagSet(_Flag, (CHARACTERGUID)_Object, _)
 AND
 DB_LeaderLibRequirements_Flag(_RequirementID, _Flag, "User", _TargetVal)
 THEN
-LLLIB_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 1);
+LeaderLib_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 1);
 
 IF
 ObjectFlagCleared(_Flag, (CHARACTERGUID)_Object, _)
 AND
 DB_LeaderLibRequirements_Flag(_RequirementID, _Flag, "User", _TargetVal)
 THEN
-LLLIB_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 0);
+LeaderLib_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 0);
 
 IF
 GlobalFlagSet(_Flag)
 AND
 DB_LeaderLibRequirements_Flag(_RequirementID, _Flag, "Global", _TargetVal)
 THEN
-LLLIB_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 1);
+LeaderLib_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 1);
 
 IF
 GlobalFlagCleared(_Flag)
 AND
 DB_LeaderLibRequirements_Flag(_RequirementID, _Flag, "Global", _TargetVal)
 THEN
-LLLIB_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 0);
+LeaderLib_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 0);
 //END_REGION
 
 //REGION LEVEL_REQUIREMENT

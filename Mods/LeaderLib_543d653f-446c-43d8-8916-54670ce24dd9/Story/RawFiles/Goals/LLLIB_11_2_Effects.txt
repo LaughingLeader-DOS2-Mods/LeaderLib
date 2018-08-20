@@ -1,14 +1,14 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-LLLIB_EffectFlags_InitSettings();
+LeaderLib_EffectFlags_InitSettings();
 
 //DB_LeaderLib_Effects_EffectFlags(_ID, _Group, _Flag, _Effect, _Loop, _BoneName)
 //DB_LeaderLib_Effects_StopGroupFlags(_ID, _Group, _StopFlag)
 KBSECTION
 //REGION SETTINGS
 PROC
-LLLIB_EffectFlags_InitSettings()
+LeaderLib_EffectFlags_InitSettings()
 THEN
 LeaderUpdater_SaveSettingsVersionData("LLLIB_Settings_Effects");
 LeaderLib_Effects_Register_StopGroupFlag("LeaderLib.Default", "CameraShake", "LeaderLib_Effects_StopCameraShake");
@@ -21,7 +21,7 @@ StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
 AND
 LeaderUpdater_QRY_SettingsNeedsUpdate("LLLIB_Settings_Effects")
 THEN
-LLLIB_EffectFlags_InitSettings();
+LeaderLib_EffectFlags_InitSettings();
 //END_REGION
 
 //REGION REGISTERING
@@ -45,7 +45,7 @@ DB_LeaderLib_Effects_StopGroupFlags(_ID, _Group, _Flag);
 
 //REGION EFFECT_PROCS
 PROC
-LLLIB_Effects_Internal_ParseEffect((GUIDSTRING)_Target, (STRING)_Effect, (INTEGER)_Loop, (STRING)_BoneName)
+LeaderLib_Effects_Internal_ParseEffect((GUIDSTRING)_Target, (STRING)_Effect, (INTEGER)_Loop, (STRING)_BoneName)
 AND
 _Loop > 0
 AND
@@ -62,7 +62,7 @@ LeaderLog_Log("DEBUG", "[LeaderLib:EffectFlags:ParseEffect] Playing loop effect 
 PROC_LoopEffect(_Effect, _Target, _ID, _Region, _BoneName);
 
 PROC
-LLLIB_Effects_Internal_ParseEffect((GUIDSTRING)_Target, (STRING)_Effect, (INTEGER)_Loop, (STRING)_BoneName)
+LeaderLib_Effects_Internal_ParseEffect((GUIDSTRING)_Target, (STRING)_Effect, (INTEGER)_Loop, (STRING)_BoneName)
 AND
 _Loop <= 0
 THEN
@@ -97,7 +97,7 @@ ObjectFlagSet(_Flag, _Target, _)
 AND
 DB_LeaderLib_Effects_EffectFlags(_ID, _Group, _Flag, _Effect, _Loop, _BoneName)
 THEN
-LLLIB_Effects_Internal_ParseEffect(_Target, _Effect, _Loop, _BoneName);
+LeaderLib_Effects_Internal_ParseEffect(_Target, _Effect, _Loop, _BoneName);
 
 IF
 ObjectFlagCleared(_Flag, _Target, _)

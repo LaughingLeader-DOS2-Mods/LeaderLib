@@ -55,7 +55,7 @@ NOT DB_LeaderLibQueue_Temp_Started(_QueueID)
 THEN
 LeaderLog_Log("TRACE", "[LeaderLib:QueueSystem:Start] Starting queue [",_QueueID,"].");
 DB_LeaderLibQueue_Temp_Started(_QueueID);
-LLLIB_Queue_Internal_NextTick(_QueueID);
+LeaderLib_Queue_Internal_NextTick(_QueueID);
 
 PROC
 LeaderLib_Queue_Stop((STRING)_QueueID)
@@ -64,7 +64,7 @@ DB_LeaderLibQueue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _Ite
 THEN
 NOT DB_LeaderLibQueue_Temp_Started(_QueueID);
 TimerCancel(_TimerName);
-LLLIB_Queue_Internal_CancelTimeoutTimer(_QueueID);
+LeaderLib_Queue_Internal_CancelTimeoutTimer(_QueueID);
 //END_REGION
 
 //REGION QUERIES
@@ -92,7 +92,7 @@ DB_NOOP(1);
 
 //REGION TICK_LOOP
 PROC
-LLLIB_Queue_Internal_StartTimer((STRING)_QueueID)
+LeaderLib_Queue_Internal_StartTimer((STRING)_QueueID)
 AND
 DB_LeaderLibQueue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 AND
@@ -105,7 +105,7 @@ TimerLaunch(_TimerName, _TickRate);
 DB_LeaderLibQueue_Temp_TimerRunning(_QueueID);
 
 PROC
-LLLIB_Queue_Internal_StartTimer((STRING)_QueueID)
+LeaderLib_Queue_Internal_StartTimer((STRING)_QueueID)
 AND
 DB_LeaderLibQueue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 AND
@@ -115,10 +115,10 @@ _TickRate <= 0
 THEN
 LeaderLog_Log("TRACE", "[LeaderLog:Queue:Internal:StartTimer] TickRate is <= 0 for queue [",_QueueID,"]. Skipping timer.");
 DB_LeaderLibQueue_Temp_TimerRunning(_QueueID);
-LLLIB_Queue_Internal_OnTimerFinished(_TimerName);
+LeaderLib_Queue_Internal_OnTimerFinished(_TimerName);
 
 PROC
-LLLIB_Queue_Internal_StartTimer((STRING)_QueueID)
+LeaderLib_Queue_Internal_StartTimer((STRING)_QueueID)
 AND
 DB_LeaderLibQueue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 AND
@@ -129,7 +129,7 @@ THEN
 LeaderLog_Log("ERROR", "[LeaderLog:Queue:Internal:StartTimer] [ERROR] Timer for [",_QueueID,"] was never started!");
 
 PROC
-LLLIB_Queue_Internal_CancelTimer((STRING)_QueueID)
+LeaderLib_Queue_Internal_CancelTimer((STRING)_QueueID)
 AND
 DB_LeaderLibQueue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 THEN
@@ -141,19 +141,19 @@ TimerFinished(_TimerName)
 AND
 DB_LeaderLibQueue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 THEN
-LLLIB_Queue_Internal_OnTimerFinished(_TimerName);
+LeaderLib_Queue_Internal_OnTimerFinished(_TimerName);
 
 PROC
-LLLIB_Queue_Internal_OnTimerFinished((STRING)_TimerName)
+LeaderLib_Queue_Internal_OnTimerFinished((STRING)_TimerName)
 AND
 DB_LeaderLibQueue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 THEN
 NOT DB_LeaderLibQueue_Temp_TimerRunning(_QueueID);
 NOT DB_LeaderLibQueue_Temp_PopSuccess(_QueueID);
-LLLIB_Queue_Internal_NextTick(_QueueID);
+LeaderLib_Queue_Internal_NextTick(_QueueID);
 
 PROC
-LLLIB_Queue_Internal_NextTick((STRING)_QueueID)
+LeaderLib_Queue_Internal_NextTick((STRING)_QueueID)
 AND
 DB_LeaderLibQueue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 AND
@@ -166,20 +166,20 @@ THEN
 LeaderLog_Log("TRACE", "[LeaderLog:Queue:NextTick] Sending event [",_IterateEvent,"] for popped array item [",_Entry,"].");
 NOT DB_LeaderLibArray_Temp_PopValue(_ArrayID, _Entry);
 DB_LeaderLibQueue_Temp_PopSuccess(_QueueID);
-LLLIB_Queue_Internal_ClearCurrentEntry(_QueueID);
+LeaderLib_Queue_Internal_ClearCurrentEntry(_QueueID);
 DB_LeaderLibQueue_Temp_CurrentEntry(_QueueID, _Entry);
-LLLIB_Queue_Internal_StartTimeoutTimer(_QueueID);
+LeaderLib_Queue_Internal_StartTimeoutTimer(_QueueID);
 LeaderLib_SendEvent(_IterateEvent);
 
 PROC
-LLLIB_Queue_Internal_NextTick((STRING)_QueueID)
+LeaderLib_Queue_Internal_NextTick((STRING)_QueueID)
 AND
 NOT DB_LeaderLibQueue_Temp_PopSuccess(_QueueID)
 THEN
-LLLIB_Queue_Internal_CheckForErrors(_QueueID);
+LeaderLib_Queue_Internal_CheckForErrors(_QueueID);
 
 PROC
-LLLIB_Queue_Internal_NextTick((STRING)_QueueID)
+LeaderLib_Queue_Internal_NextTick((STRING)_QueueID)
 AND
 NOT DB_LeaderLibQueue_Temp_PopSuccess(_QueueID)
 AND
@@ -188,7 +188,7 @@ AND
 NOT LeaderLib_Array_QRY_DataExists(_ArrayID)
 THEN
 LeaderLog_Log("TRACE", "[LeaderLog:Queue:NextTick] Array [",_ArrayID,"] is empty. Completing queue [",_QueueID,"].");
-LLLIB_Queue_Internal_OnComplete(_QueueID);
+LeaderLib_Queue_Internal_OnComplete(_QueueID);
 
 IF
 StoryEvent(_, _IterateCompletionEvent)
@@ -196,14 +196,14 @@ AND
 DB_LeaderLibQueue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 THEN
 LeaderLog_Log("TRACE", "[LeaderLog:Queue:IterateCompletionEvent] Received iteration completion event [",_IterateCompletionEvent,"] for queue [",_QueueID,"]. Starting next tick after timer.");
-LLLIB_Queue_Internal_ClearCurrentEntry(_QueueID);
-LLLIB_Queue_Internal_CancelTimeoutTimer(_QueueID);
-LLLIB_Queue_Internal_StartTimer(_QueueID);
+LeaderLib_Queue_Internal_ClearCurrentEntry(_QueueID);
+LeaderLib_Queue_Internal_CancelTimeoutTimer(_QueueID);
+LeaderLib_Queue_Internal_StartTimer(_QueueID);
 //END_REGION
 
 //REGION ERROR_CHECKING
 PROC
-LLLIB_Queue_Internal_CheckForErrors((STRING)_QueueID)
+LeaderLib_Queue_Internal_CheckForErrors((STRING)_QueueID)
 AND
 NOT DB_LeaderLibQueue_Temp_CurrentEntry(_QueueID, _)
 AND
@@ -218,7 +218,7 @@ THEN
 LeaderLog_Log("ERROR", "[LeaderLib:QueueSystem:NextTick] [ERROR] Queue [",_QueueID,"] had an error popping a value from array [",_ArrayID,"].");
 
 PROC
-LLLIB_Queue_Internal_CheckForErrors((STRING)_QueueID)
+LeaderLib_Queue_Internal_CheckForErrors((STRING)_QueueID)
 AND
 NOT DB_LeaderLibQueue_Temp_CurrentEntry(_QueueID, _)
 AND
@@ -233,7 +233,7 @@ LeaderLog_Log("ERROR", "[LeaderLib:QueueSystem:NextTick] [ERROR] Queue [",_Queue
 
 //REGION ON_COMPLETE
 PROC
-LLLIB_Queue_Internal_OnComplete((STRING)_QueueID)
+LeaderLib_Queue_Internal_OnComplete((STRING)_QueueID)
 AND
 DB_LeaderLibQueue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 THEN
@@ -258,7 +258,7 @@ THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:QueueSystem:ClearQueue] Queue [",_QueueID,"] was cleared.");
 NOT DB_LeaderLibQueue_Temp_Started(_QueueID);
 TimerCancel(_TimerName);
-LLLIB_Queue_Internal_ClearCurrentEntry(_QueueID);
+LeaderLib_Queue_Internal_ClearCurrentEntry(_QueueID);
 LeaderLib_Array_ClearArray(_ArrayID);
 NOT DB_LeaderLibQueue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent);
 
@@ -271,7 +271,7 @@ TimerCancel(_TimerName);
 NOT DB_LeaderLibQueue_Timeout(_QueueID, _TimerName, _TimeoutValue, _OnTimeoutEvent);
 
 PROC
-LLLIB_Queue_Internal_ClearCurrentEntry((STRING)_QueueID)
+LeaderLib_Queue_Internal_ClearCurrentEntry((STRING)_QueueID)
 AND
 DB_LeaderLibQueue_Temp_CurrentEntry(_QueueID, _Entry)
 THEN
@@ -280,7 +280,7 @@ NOT DB_LeaderLibQueue_Temp_CurrentEntry(_QueueID, _Entry);
 
 //REGION TIMEOUT
 PROC
-LLLIB_Queue_Internal_StartTimeoutTimer((STRING)_QueueID)
+LeaderLib_Queue_Internal_StartTimeoutTimer((STRING)_QueueID)
 AND
 DB_LeaderLibQueue_Timeout(_QueueID, _TimerName, _TimeoutValue, _OnTimeoutEvent)
 THEN
@@ -304,11 +304,11 @@ IntegertoString(_TimeoutValue, _TimeoutValStr)
 THEN
 TimerCancel(_TimerName);
 LeaderLog_Log("ERROR", "[LeaderLib:QueueSystem:Timeout] Queue [",_QueueID,"] timed out after ",_TimeoutValStr,"ms. Starting next tick.");
-LLLIB_Queue_Internal_CancelTimer(_QueueID);
-LLLIB_Queue_Internal_StartTimer(_QueueID);
+LeaderLib_Queue_Internal_CancelTimer(_QueueID);
+LeaderLib_Queue_Internal_StartTimer(_QueueID);
 
 PROC
-LLLIB_Queue_Internal_CancelTimeoutTimer((STRING)_QueueID)
+LeaderLib_Queue_Internal_CancelTimeoutTimer((STRING)_QueueID)
 AND
 DB_LeaderLibQueue_Timeout(_QueueID, _TimerName, _TimeoutValue, _OnTimeoutEvent)
 THEN
@@ -317,7 +317,7 @@ TimerCancel(_TimerName);
 
 //REGION UPDATER
 PROC
-LLLIB_System_RegisterDatabases()
+LeaderLib_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "QueueSystem", "DB_LeaderLibQueue", 7);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "QueueSystem", "DB_LeaderLibQueue_Timeout", 4);

@@ -26,7 +26,7 @@ NOT DB_LeaderLibGrowth_Characters_Skills(_ID, _MinLevel, _Skill, _MatchType, _Ma
 
 //REGION ITERATOR_START
 QRY
-LLLIB_Growth_Characters_QRY_NewTagAlreadyExists((STRING)_Tag)
+LeaderLib_Growth_Characters_QRY_NewTagAlreadyExists((STRING)_Tag)
 AND
 DB_LeaderLibGrowth_Characters_Temp_NewTags(_Tag, _TimerName, _TimerDelay)
 THEN

@@ -1,7 +1,7 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-LLLIB_ModMenu_InitSettings();
+LeaderLib_ModMenu_InitSettings();
 
 //Settings
 //DB_LeaderLibSettings_DialogVariables(_VariableName, _VariableValue)
@@ -29,7 +29,7 @@ NOT DB_LeaderLibModMenu_RegisteredMenuData(_ID,_,_,_,_)
 THEN
 LeaderLib_StringExt_DetermineStringLength(_DisplayName);
 DB_LeaderLibModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author);
-LLLIB_ModMenu_Internal_StartSortIfNeeded();
+LeaderLib_ModMenu_Internal_StartSortIfNeeded();
 
 /*
 PROC
@@ -50,15 +50,15 @@ DB_LeaderLibModMenu_RegisteredMenu_OpenEvent(_ID, _OpenMenuEvent);
 IF
 TimerFinished("LLLIB_Timers_ModMenu_CalculateMaxPage")
 THEN
-LLLIB_ModMenu_CalculateMaxPage();
+LeaderLib_ModMenu_CalculateMaxPage();
 
 PROC
-LLLIB_ModMenu_CalculateMaxPage()
+LeaderLib_ModMenu_CalculateMaxPage()
 THEN
 LeaderLib_Helper_ClearExistingDatabase("DB_LeaderLibModMenu_PageMax", 3);
 
 PROC
-LLLIB_ModMenu_CalculateMaxPage()
+LeaderLib_ModMenu_CalculateMaxPage()
 AND
 SysCount("DB_LeaderLibModMenu_RegisteredMenuData", 5, _TotalMenus)
 AND
@@ -92,7 +92,7 @@ LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu] Max page set: LastIndex[",_Str1,"] L
 
 //REGION SETTINGS
 PROC
-LLLIB_ModMenu_InitSettings()
+LeaderLib_ModMenu_InitSettings()
 AND
 LeaderUpdater_QRY_SettingsNeedsUpdate("LLLIB_Settings_ModMenu")
 THEN
@@ -120,14 +120,14 @@ DB_LeaderLibModMenu_MenuVars(7, "LLLIB_ModMenu_Menu8_a6aa98e6-cde4-491b-a2cb-2cd
 IF
 GameStarted(_,_)
 AND
-LLLIB_ModMenu_QRY_SortNeeded()
+LeaderLib_ModMenu_QRY_SortNeeded()
 THEN
 TimerLaunch("LLLIB_ModMenu_StartManualSortTimer", 3000);
 //END_REGION
 
 //REGION SORTING
 PROC
-LLLIB_ModMenu_Internal_StartSortIfNeeded()
+LeaderLib_ModMenu_Internal_StartSortIfNeeded()
 AND
 NOT DB_LeaderLibModMenu_Temp_SortStarted(_)
 AND
@@ -137,7 +137,7 @@ GlobalGetFlag("LeaderLib_DefaultEventFlowRunning", 0)
 AND
 GlobalGetFlag("LeaderLib_InitialEventFlowComplete", 1)
 AND
-LLLIB_ModMenu_QRY_SortNeeded()
+LeaderLib_ModMenu_QRY_SortNeeded()
 THEN
 TimerCancel("LLLIB_ModMenu_StartManualSortTimer");
 TimerLaunch("LLLIB_ModMenu_StartManualSortTimer", 500);
@@ -155,17 +155,17 @@ TimerCancel("LLLIB_ModMenu_StartManualSortTimer");
 IF
 TimerFinished("LLLIB_ModMenu_StartManualSortTimer")
 THEN
-LLLIB_ModMenu_StartSorting();
+LeaderLib_ModMenu_StartSorting();
 
 QRY
-LLLIB_ModMenu_QRY_SortNeeded()
+LeaderLib_ModMenu_QRY_SortNeeded()
 AND
 LeaderLib_Array_QRY_EmptyLength("LLLIB_RegisteredMenus")
 THEN
 DB_NOOP(1);
 
 QRY
-LLLIB_ModMenu_QRY_SortNeeded()
+LeaderLib_ModMenu_QRY_SortNeeded()
 AND
 DB_LeaderLibModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author)
 AND
@@ -177,9 +177,9 @@ DB_NOOP(1);
 IF
 StoryEvent(_, "LeaderLib_Commands_SortMenus")
 AND
-LLLIB_ModMenu_QRY_SortNeeded()
+LeaderLib_ModMenu_QRY_SortNeeded()
 THEN
-LLLIB_ModMenu_StartSorting();
+LeaderLib_ModMenu_StartSorting();
 
 IF
 StoryEvent(_, "LeaderLib_Commands_SortMenus")
@@ -195,19 +195,19 @@ LeaderLib_DictionarySort_StopSorting("LLLIB_RegisteredMenus");
 NOT DB_LeaderLibEventFlow_StopEvent("LeaderLib_Commands_SortMenus");
 
 PROC
-LLLIB_ModMenu_SetSortTickRate((INTEGER)_TickRate)
+LeaderLib_ModMenu_SetSortTickRate((INTEGER)_TickRate)
 AND
 DB_LeaderLibModMenu_SortTickRate(_OtherTickRate)
 THEN
 NOT DB_LeaderLibModMenu_SortTickRate(_OtherTickRate);
 
 PROC
-LLLIB_ModMenu_SetSortTickRate((INTEGER)_TickRate)
+LeaderLib_ModMenu_SetSortTickRate((INTEGER)_TickRate)
 THEN
 DB_LeaderLibModMenu_SortTickRate(_TickRate);
 
 PROC
-LLLIB_ModMenu_StartSorting()
+LeaderLib_ModMenu_StartSorting()
 AND
 DB_LeaderLibModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author)
 AND
@@ -218,7 +218,7 @@ THEN
 LeaderLib_DictionarySort_AddString("LLLIB_RegisteredMenus", _ID, _DisplayName);
 
 PROC
-LLLIB_ModMenu_StartSorting()
+LeaderLib_ModMenu_StartSorting()
 AND
 SysCount("DB_LeaderLibModMenu_RegisteredMenuData", 5, _Length)
 AND
@@ -227,10 +227,10 @@ AND
 IntegertoString(_Length, _TotalStr)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu:Sorting] Total menus = [",_TotalStr,"]. Setting sort tick rate to 1.");
-LLLIB_ModMenu_SetSortTickRate(1);
+LeaderLib_ModMenu_SetSortTickRate(1);
 
 PROC
-LLLIB_ModMenu_StartSorting()
+LeaderLib_ModMenu_StartSorting()
 AND
 SysCount("DB_LeaderLibModMenu_RegisteredMenuData", 5, _Length)
 AND
@@ -239,10 +239,10 @@ AND
 IntegertoString(_Length, _TotalStr)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu:Sorting] Total menus = [",_TotalStr,"]. Setting sort tick rate to 2.");
-LLLIB_ModMenu_SetSortTickRate(2);
+LeaderLib_ModMenu_SetSortTickRate(2);
 
 PROC
-LLLIB_ModMenu_StartSorting()
+LeaderLib_ModMenu_StartSorting()
 AND
 DB_LeaderLibModMenu_SortTickRate(_TickRate)
 THEN
@@ -263,37 +263,37 @@ TimerLaunch("LLLIB_Timers_ModMenu_CalculateMaxPage", 200);
 
 //REGION CLEAR
 PROC
-LLLIB_ModMenu_ResetPlayerPage((CHARACTERGUID)_Player, (INTEGER)_Instance)
+LeaderLib_ModMenu_ResetPlayerPage((CHARACTERGUID)_Player, (INTEGER)_Instance)
 AND
 DB_LeaderLibModMenu_CurrentPageIndex(_Player, _Page)
 THEN
 NOT DB_LeaderLibModMenu_CurrentPageIndex(_Player, _Page);
 
 PROC
-LLLIB_ModMenu_ResetPlayerPage((CHARACTERGUID)_Player, (INTEGER)_Instance)
+LeaderLib_ModMenu_ResetPlayerPage((CHARACTERGUID)_Player, (INTEGER)_Instance)
 AND
 NOT DB_LeaderLibModMenu_CurrentPageIndex(_Player, _)
 THEN
-LLLIB_ModMenu_SetPage(_Player, 0, _Instance);
+LeaderLib_ModMenu_SetPage(_Player, 0, _Instance);
 //END_REGION
 
 //REGION PAGE_TURNING
 PROC
-LLLIB_ModMenu_SetPage((CHARACTERGUID)_Player, (INTEGER)_Page, (INTEGER)_Instance)
+LeaderLib_ModMenu_SetPage((CHARACTERGUID)_Player, (INTEGER)_Page, (INTEGER)_Instance)
 AND
 DB_LeaderLibModMenu_CurrentPageIndex(_Player, _CurrentPage)
 THEN
 NOT DB_LeaderLibModMenu_CurrentPageIndex(_Player, _CurrentPage);
 
 PROC
-LLLIB_ModMenu_SetPage((CHARACTERGUID)_Player, (INTEGER)_Page, (INTEGER)_Instance)
+LeaderLib_ModMenu_SetPage((CHARACTERGUID)_Player, (INTEGER)_Page, (INTEGER)_Instance)
 THEN
 DB_LeaderLibModMenu_CurrentPageIndex(_Player, _Page);
 ObjectClearFlag(_Player, "LLLIB_ModMenu_HideNextPageButton");
 ObjectClearFlag(_Player, "LLLIB_ModMenu_HidePreviousPageButton");
 
 PROC
-LLLIB_ModMenu_SetPage((CHARACTERGUID)_Player, (INTEGER)_Page, (INTEGER)_Instance)
+LeaderLib_ModMenu_SetPage((CHARACTERGUID)_Player, (INTEGER)_Page, (INTEGER)_Instance)
 AND
 DB_LeaderLibModMenu_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
 AND
@@ -306,7 +306,7 @@ LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu] Hid next page button");
 
 /*
 PROC
-LLLIB_ModMenu_SetPage((CHARACTERGUID)_Player, (INTEGER)_Page, (INTEGER)_Instance)
+LeaderLib_ModMenu_SetPage((CHARACTERGUID)_Player, (INTEGER)_Page, (INTEGER)_Instance)
 AND
 DB_LeaderLibModMenu_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
 AND
@@ -318,7 +318,7 @@ LeaderLog_Log("DEBUG", "[LLLIB] ", "Test: LastIndex: ", _LastIndexStr," | Max: "
 */
 
 PROC
-LLLIB_ModMenu_SetPage((CHARACTERGUID)_Player, (INTEGER)_Page, (INTEGER)_Instance)
+LeaderLib_ModMenu_SetPage((CHARACTERGUID)_Player, (INTEGER)_Page, (INTEGER)_Instance)
 AND
 DB_LeaderLibModMenu_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
 AND
@@ -329,7 +329,7 @@ THEN
 ObjectSetFlag(_Player, "LLLIB_ModMenu_HidePreviousPageButton", _Instance);
 
 PROC
-LLLIB_ModMenu_NextPage((CHARACTERGUID)_Player, (INTEGER)_Instance)
+LeaderLib_ModMenu_NextPage((CHARACTERGUID)_Player, (INTEGER)_Instance)
 AND
 DB_LeaderLibModMenu_Temp_IsChangingMenuPage(_Player, _Instance)
 AND
@@ -341,11 +341,11 @@ _Page < _LastPageIndex
 AND
 IntegerSum(_Page, 1, _NextPage)
 THEN
-LLLIB_ModMenu_SetPage(_Player, _NextPage, _Instance);
+LeaderLib_ModMenu_SetPage(_Player, _NextPage, _Instance);
 NOT DB_LeaderLibModMenu_Temp_IsChangingMenuPage(_Player, _Instance);
 
 PROC
-LLLIB_ModMenu_NextPage((CHARACTERGUID)_Player, (INTEGER)_Instance)
+LeaderLib_ModMenu_NextPage((CHARACTERGUID)_Player, (INTEGER)_Instance)
 AND
 DB_LeaderLibModMenu_Temp_IsChangingMenuPage(_Player, _Instance)
 AND
@@ -355,11 +355,11 @@ DB_LeaderLibModMenu_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
 AND
 _Page >= _LastPageIndex
 THEN
-LLLIB_ModMenu_SetPage(_Player, 0, _Instance);
+LeaderLib_ModMenu_SetPage(_Player, 0, _Instance);
 NOT DB_LeaderLibModMenu_Temp_IsChangingMenuPage(_Player, _Instance);
 
 PROC
-LLLIB_ModMenu_PreviousPage((CHARACTERGUID)_Player, (INTEGER)_Instance)
+LeaderLib_ModMenu_PreviousPage((CHARACTERGUID)_Player, (INTEGER)_Instance)
 AND
 DB_LeaderLibModMenu_Temp_IsChangingMenuPage(_Player, _Instance)
 AND
@@ -369,11 +369,11 @@ _Page <= 0
 AND
 DB_LeaderLibModMenu_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
 THEN
-LLLIB_ModMenu_SetPage(_Player, _LastPageIndex, _Instance);
+LeaderLib_ModMenu_SetPage(_Player, _LastPageIndex, _Instance);
 NOT DB_LeaderLibModMenu_Temp_IsChangingMenuPage(_Player, _Instance);
 
 PROC
-LLLIB_ModMenu_PreviousPage((CHARACTERGUID)_Player, (INTEGER)_Instance)
+LeaderLib_ModMenu_PreviousPage((CHARACTERGUID)_Player, (INTEGER)_Instance)
 AND
 DB_LeaderLibModMenu_Temp_IsChangingMenuPage(_Player, _Instance)
 AND
@@ -385,36 +385,36 @@ DB_LeaderLibModMenu_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
 AND
 IntegerSubtract(_Page, 1, _NextPage)
 THEN
-LLLIB_ModMenu_SetPage(_Player, _NextPage, _Instance);
+LeaderLib_ModMenu_SetPage(_Player, _NextPage, _Instance);
 NOT DB_LeaderLibModMenu_Temp_IsChangingMenuPage(_Player, _Instance);
 //END_REGION
 
 //REGION PAGE_VARIABLES
 PROC
-LLLIB_ModMenu_LoadPageVariables((CHARACTERGUID)_Player, (INTEGER)_Instance)
+LeaderLib_ModMenu_LoadPageVariables((CHARACTERGUID)_Player, (INTEGER)_Instance)
 AND
 NOT DB_LeaderLibModMenu_PageMax(_,_,_)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu][ERROR] ", "Max page settings not set. Reconfiguring.");
-LLLIB_ModMenu_CalculateMaxPage();
+LeaderLib_ModMenu_CalculateMaxPage();
 
 PROC
-LLLIB_ModMenu_LoadPageVariables((CHARACTERGUID)_Player, (INTEGER)_Instance)
+LeaderLib_ModMenu_LoadPageVariables((CHARACTERGUID)_Player, (INTEGER)_Instance)
 AND
 NOT DB_LeaderLibModMenu_CurrentPageIndex(_Player, _)
 THEN
-LLLIB_ModMenu_SetPage(_Player, 0, _Instance);
+LeaderLib_ModMenu_SetPage(_Player, 0, _Instance);
 LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu][ERROR] ", "Page not set for some reason. Setting to page 0.");
 
 PROC
-LLLIB_ModMenu_LoadPageVariables((CHARACTERGUID)_Player, (INTEGER)_Instance)
+LeaderLib_ModMenu_LoadPageVariables((CHARACTERGUID)_Player, (INTEGER)_Instance)
 AND
 DB_LeaderLibMenuSettings_Temp_MenuVariableValue(_MenuIndex, _ID)
 THEN
 NOT DB_LeaderLibMenuSettings_Temp_MenuVariableValue(_MenuIndex, _ID);
 
 PROC
-LLLIB_ModMenu_LoadPageVariables((CHARACTERGUID)_Player, (INTEGER)_Instance)
+LeaderLib_ModMenu_LoadPageVariables((CHARACTERGUID)_Player, (INTEGER)_Instance)
 AND
 DB_LeaderLibModMenu_CurrentPageIndex(_Player, _Page)
 AND
@@ -426,7 +426,7 @@ DB_LeaderLibModMenu_MenuVars(_MenuIndex, _DialogVar, _SelectFlag, _DisabledFlag)
 AND
 IntegerSum(_MenuIndex, _StartIndex, _Index)
 AND
-LLLIB_QRY_WordMenus_DisableMenuIfNotAvailable(_Player, _Index, _DisabledFlag)
+LeaderLib_QRY_WordMenus_DisableMenuIfNotAvailable(_Player, _Index, _DisabledFlag)
 AND
 DB_LeaderLibDictionary_Data("LLLIB_RegisteredMenus", _Index, _ID, _DisplayName)
 //DB_LeaderLibModMenu_RegisteredMenu(_Index, _ID, _DisplayName, _Dialog, _ModID, _Author)
@@ -437,12 +437,12 @@ DialogSetVariableStringForInstance(_Instance, _DialogVar, _DisplayName);
 DB_LeaderLibMenuSettings_Temp_MenuVariableValue(_MenuIndex, _ID);
 
 PROC
-LLLIB_ModMenu_LoadPageVariables((CHARACTERGUID)_Player, (INTEGER)_Instance)
+LeaderLib_ModMenu_LoadPageVariables((CHARACTERGUID)_Player, (INTEGER)_Instance)
 THEN
-LLLIB_ModMenu_UpdatePageDisplay(_Player, _Instance);
+LeaderLib_ModMenu_UpdatePageDisplay(_Player, _Instance);
 
 PROC
-LLLIB_ModMenu_UpdatePageDisplay((CHARACTERGUID)_Player, (INTEGER)_Instance)
+LeaderLib_ModMenu_UpdatePageDisplay((CHARACTERGUID)_Player, (INTEGER)_Instance)
 AND
 DB_LeaderLibModMenu_CurrentPageIndex(_Player, _Page)
 AND
@@ -467,7 +467,7 @@ THEN
 DialogSetVariableStringForInstance(_Instance, _VariableValue, _FinalStr);
 
 PROC
-LLLIB_ModMenu_UpdatePageDisplay((CHARACTERGUID)_Player, (INTEGER)_Instance)
+LeaderLib_ModMenu_UpdatePageDisplay((CHARACTERGUID)_Player, (INTEGER)_Instance)
 AND
 DB_LeaderLibModMenu_CurrentPageIndex(_Player, _Page)
 AND
@@ -480,7 +480,7 @@ THEN
 DialogSetVariableStringForInstance(_Instance, _VariableValue, "");
 
 QRY
-LLLIB_QRY_WordMenus_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_DisabledFlag)
+LeaderLib_QRY_WordMenus_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_DisabledFlag)
 AND
 NOT DB_LeaderLibDictionary_Data("LLLIB_RegisteredMenus", _Index, _, _)
 AND
@@ -489,7 +489,7 @@ THEN
 ObjectSetFlag(_Player, _DisabledFlag);
 
 QRY
-LLLIB_QRY_WordMenus_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_DisabledFlag)
+LeaderLib_QRY_WordMenus_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_DisabledFlag)
 AND
 DB_LeaderLibDictionary_Data("LLLIB_RegisteredMenus", _Index, _ID, _DisplayName)
 AND
@@ -502,7 +502,7 @@ THEN
 ObjectSetFlag(_Player, _DisabledFlag);
 
 QRY
-LLLIB_QRY_WordMenus_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_DisabledFlag)
+LeaderLib_QRY_WordMenus_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_DisabledFlag)
 AND
 DB_LeaderLibDictionary_Data("LLLIB_RegisteredMenus", _Index, _ID, _DisplayName)
 AND
@@ -515,19 +515,19 @@ THEN
 ObjectClearFlag(_Player, _DisabledFlag);
 
 QRY
-LLLIB_QRY_WordMenus_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_DisabledFlag)
+LeaderLib_QRY_WordMenus_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_DisabledFlag)
 THEN
 DB_NOOP(1);
 
 PROC
-LLLIB_ModMenu_CheckPageCount((CHARACTERGUID)_Player)
+LeaderLib_ModMenu_CheckPageCount((CHARACTERGUID)_Player)
 AND
 NOT DB_LeaderLibModMenu_PageMax(_, _, _)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu] Page max not set?");
 
 PROC
-LLLIB_ModMenu_CheckPageCount((CHARACTERGUID)_Player)
+LeaderLib_ModMenu_CheckPageCount((CHARACTERGUID)_Player)
 AND
 DB_LeaderLibModMenu_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
 AND
@@ -537,7 +537,7 @@ ObjectSetFlag(_Player, "LLLIB_ModMenu_HasMultiplePages", 0);
 //LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu] Multiple pages available.");
 
 PROC
-LLLIB_ModMenu_CheckPageCount((CHARACTERGUID)_Player)
+LeaderLib_ModMenu_CheckPageCount((CHARACTERGUID)_Player)
 AND
 DB_LeaderLibModMenu_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
 AND
@@ -549,14 +549,14 @@ ObjectClearFlag(_Player, "LLLIB_ModMenu_HasMultiplePages");
 
 //REGION FLAG_ACTIONS
 PROC
-LLLIB_ModMenu_SetNextMenu((CHARACTERGUID)_Player, (STRING)_ID, (STRING)_Dialog)
+LeaderLib_ModMenu_SetNextMenu((CHARACTERGUID)_Player, (STRING)_ID, (STRING)_Dialog)
 AND
 DB_LeaderLibModMenu_Temp_ActiveMenu(_Player, _LastID, _LastDialog)
 THEN
 NOT DB_LeaderLibModMenu_Temp_ActiveMenu(_Player, _LastID, _LastDialog);
 
 PROC
-LLLIB_ModMenu_SetNextMenu((CHARACTERGUID)_Player, (STRING)_ID, (STRING)_Dialog)
+LeaderLib_ModMenu_SetNextMenu((CHARACTERGUID)_Player, (STRING)_ID, (STRING)_Dialog)
 THEN
 DB_LeaderLibModMenu_Temp_ActiveMenu(_Player, _ID, _Dialog);
 
@@ -574,7 +574,7 @@ AND
 DB_LeaderLibModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author)
 THEN
 //LeaderLog_Log("DEBUG", "[LLLIB] Loading menu for ", _ID);
-LLLIB_ModMenu_SetNextMenu(_Player, _ID, _Dialog);
+LeaderLib_ModMenu_SetNextMenu(_Player, _ID, _Dialog);
 
 IF
 ObjectFlagSet("LLLIB_ModMenu_NextPage", (CHARACTERGUID)_Player, _Instance)
@@ -582,8 +582,8 @@ AND
 LeaderLib_Helper_QRY_ClearObjectFlag(_Player, "LLLIB_ModMenu_NextPage")
 THEN
 DB_LeaderLibModMenu_Temp_IsChangingMenuPage(_Player, _Instance);
-LLLIB_ModMenu_NextPage(_Player, _Instance);
-LLLIB_ModMenu_LoadPageVariables(_Player, _Instance);
+LeaderLib_ModMenu_NextPage(_Player, _Instance);
+LeaderLib_ModMenu_LoadPageVariables(_Player, _Instance);
 
 IF
 ObjectFlagSet("LLLIB_ModMenu_PreviousPage", (CHARACTERGUID)_Player, _Instance)
@@ -591,16 +591,16 @@ AND
 LeaderLib_Helper_QRY_ClearObjectFlag(_Player, "LLLIB_ModMenu_PreviousPage")
 THEN
 DB_LeaderLibModMenu_Temp_IsChangingMenuPage(_Player, _Instance);
-LLLIB_ModMenu_PreviousPage(_Player, _Instance);
-LLLIB_ModMenu_LoadPageVariables(_Player, _Instance);
+LeaderLib_ModMenu_PreviousPage(_Player, _Instance);
+LeaderLib_ModMenu_LoadPageVariables(_Player, _Instance);
 
 IF
 ObjectFlagSet("LLLIB_ModMenu_FirstPage", (CHARACTERGUID)_Player, _Instance)
 AND
 LeaderLib_Helper_QRY_ClearObjectFlag(_Player, "LLLIB_ModMenu_FirstPage")
 THEN
-LLLIB_ModMenu_SetPage(_Player, 0, _Instance);
-LLLIB_ModMenu_LoadPageVariables(_Player, _Instance);
+LeaderLib_ModMenu_SetPage(_Player, 0, _Instance);
+LeaderLib_ModMenu_LoadPageVariables(_Player, _Instance);
 
 IF
 ObjectFlagSet("LLLIB_ModMenu_LastPage", (CHARACTERGUID)_Player, _Instance)
@@ -609,8 +609,8 @@ LeaderLib_Helper_QRY_ClearObjectFlag(_Player, "LLLIB_ModMenu_LastPage")
 AND
 DB_LeaderLibModMenu_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
 THEN
-LLLIB_ModMenu_SetPage(_Player, _LastPageIndex, _Instance);
-LLLIB_ModMenu_LoadPageVariables(_Player, _Instance);
+LeaderLib_ModMenu_SetPage(_Player, _LastPageIndex, _Instance);
+LeaderLib_ModMenu_LoadPageVariables(_Player, _Instance);
 //END_REGION
 
 //REGION DIALOG_EVENTS
@@ -619,9 +619,9 @@ DialogStarted("LLLIB_ModMenu", _Instance)
 AND
 DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
 THEN
-LLLIB_ModMenu_ResetPlayerPage(_Player, _Instance);
-LLLIB_ModMenu_LoadPageVariables(_Player, _Instance);
-LLLIB_ModMenu_CheckPageCount(_Player);
+LeaderLib_ModMenu_ResetPlayerPage(_Player, _Instance);
+LeaderLib_ModMenu_LoadPageVariables(_Player, _Instance);
+LeaderLib_ModMenu_CheckPageCount(_Player);
 
 IF
 DialogStarted("LLLIB_ModMenu", _Instance)
@@ -678,7 +678,7 @@ DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
 AND
 DB_LeaderLibModMenu_Temp_ActiveMenu(_Player, _ID, _Dialog)
 THEN
-LLLIB_ModMenu_Internal_AttemptToReopen(_Player, _Dialog);
+LeaderLib_ModMenu_Internal_AttemptToReopen(_Player, _Dialog);
 
 IF
 DialogEnded(_Dialog, _Instance)
@@ -688,26 +688,26 @@ AND
 ObjectGetFlag(_Player, "LeaderLib_OpenModMenu", 1)
 THEN
 ObjectClearFlag(_Player, "LeaderLib_OpenModMenu");
-LLLIB_ModMenu_Reopen(_Player, _Dialog);
+LeaderLib_ModMenu_Reopen(_Player, _Dialog);
 
 IF
 StoryEvent((CHARACTERGUID)_Player, "LeaderLib_Commands_OpenModMenu")
 AND
 DB_LeaderLibModMenu_Temp_ActiveMenu(_Player, _ID, _Dialog)
 THEN
-LLLIB_ModMenu_Internal_AttemptToReopen(_Player, _Dialog);
+LeaderLib_ModMenu_Internal_AttemptToReopen(_Player, _Dialog);
 
 PROC
-LLLIB_ModMenu_Internal_AttemptToReopen((CHARACTERGUID)_Player, (STRING)_Dialog)
+LeaderLib_ModMenu_Internal_AttemptToReopen((CHARACTERGUID)_Player, (STRING)_Dialog)
 AND
 UserGetFlag(_Player, "LeaderLib_AutoOpenModMenu", 1)
 AND
 ObjectGetFlag(_Player, "LeaderLib_BlockModMenuReopen", 0)
 THEN
-LLLIB_ModMenu_Reopen(_Player, _Dialog);
+LeaderLib_ModMenu_Reopen(_Player, _Dialog);
 
 PROC
-LLLIB_ModMenu_Reopen((CHARACTERGUID)_Player, (STRING)_Dialog)
+LeaderLib_ModMenu_Reopen((CHARACTERGUID)_Player, (STRING)_Dialog)
 AND
 DB_LeaderLibSettings_ItemTemplates("Book_ModMenu", _ItemTemplate)
 AND
@@ -720,7 +720,7 @@ Proc_StartDialog(0, "LLLIB_ModMenu", _MenuBook, _Player);
 
 //Book not found?
 PROC
-LLLIB_ModMenu_Reopen((CHARACTERGUID)_Player, (STRING)_Dialog)
+LeaderLib_ModMenu_Reopen((CHARACTERGUID)_Player, (STRING)_Dialog)
 AND
 DB_LeaderLibModMenu_Temp_ActiveMenu(_Player, _ID, _Dialog)
 THEN
@@ -763,11 +763,11 @@ StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
 AND
 LeaderUpdater_QRY_SettingsNeedsUpdate("LLLIB_Settings_ModMenu")
 THEN
-LLLIB_ModMenu_InitSettings();
+LeaderLib_ModMenu_InitSettings();
 LeaderLog_Log("SYSTEM", "[LeaderLib:ModMenu] Settings updated.");
 
 PROC
-LLLIB_System_RegisterDatabases()
+LeaderLib_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModMenu", "DB_LeaderLibModMenu_MenuVars", 4);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "ModMenu", "DB_LeaderLibModMenu_MenusPerPage", 1);

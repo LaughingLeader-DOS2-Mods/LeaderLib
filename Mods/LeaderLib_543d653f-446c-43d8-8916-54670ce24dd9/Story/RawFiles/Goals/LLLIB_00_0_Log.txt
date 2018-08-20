@@ -8,11 +8,11 @@ INITSECTION
 //DB_LeaderLog_Temp_RealString(_ID, _Str)
 //DB_LeaderLog_Temp_RealString(_ID, _Str1, _Str2)
 //DB_LeaderLog_Temp_RealString(_ID, _Str1, _Str2, _Str3)
-LLLIB_LeaderLog_SetInitialEnable();
+LeaderLib_LeaderLog_SetInitialEnable();
 KBSECTION
 //REGION EDITOR_DEBUG_ENABLE
 PROC
-LLLIB_LeaderLog_SetInitialEnable()
+LeaderLib_LeaderLog_SetInitialEnable()
 AND
 NOT DB_LeaderLog_InitialEnable(_)
 THEN
@@ -906,7 +906,7 @@ LeaderLog_ClearAllTargets();
 
 //REGION UPDATER
 PROC
-LLLIB_System_RegisterDatabases()
+LeaderLib_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderLog", "DB_LeaderLog_Temp_CombinedString", 1);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "LeaderLog", "DB_LeaderLog_Temp_NextLogTarget", 1);

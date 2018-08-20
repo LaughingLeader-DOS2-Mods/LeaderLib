@@ -1,7 +1,7 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-LLLIB_Settings_InitSettings();
+LeaderLib_Settings_InitSettings();
 
 //DB_LeaderLibEquipmentSlots(_Slot)
 //DB_LeaderLibSettings_ItemTemplates(_Name, _ItemTemplate)
@@ -12,10 +12,10 @@ LLLIB_Settings_InitSettings();
 KBSECTION
 //REGION SETTINGS
 PROC
-LLLIB_Settings_InitSettings()
+LeaderLib_Settings_InitSettings()
 THEN
-LLLIB_Settings_InitEquipmentSlots();
-LLLIB_Settings_InitStats();
+LeaderLib_Settings_InitEquipmentSlots();
+LeaderLib_Settings_InitStats();
 
 SysClear("DB_LeaderLibSettings_QueueRates", 3);
 DB_LeaderLibSettings_QueueRates("TraderSpawn", 500, 2000);
@@ -33,7 +33,7 @@ DB_LeaderLibSettings_DialogVariables("ModMenu_PageInfo", "LLLIB_ModMenu_PageInfo
 DB_LeaderLibSettings_DialogVariables("ModList", "LLLIB_Settings_ModList_50c55fbe-ad1e-490e-92d1-8836ca42ca12");
 
 PROC
-LLLIB_Settings_InitEquipmentSlots()
+LeaderLib_Settings_InitEquipmentSlots()
 AND
 NOT DB_LeaderLibEquipmentSlots(_)
 THEN
@@ -50,7 +50,7 @@ DB_LeaderLibEquipmentSlots("Amulet");
 DB_LeaderLibEquipmentSlots("Ring2");
 
 PROC
-LLLIB_Settings_InitEquipmentSlots()
+LeaderLib_Settings_InitEquipmentSlots()
 AND
 LeaderLib_Array_QRY_EmptyLength("LeaderLib_EquipmentSlots")
 AND
@@ -59,7 +59,7 @@ THEN
 LeaderLib_Array_AddToArray("LeaderLib_EquipmentSlots", _Slot);
 
 PROC
-LLLIB_Settings_InitStats()
+LeaderLib_Settings_InitStats()
 AND
 NOT DB_LeaderLibAttributes(_)
 THEN
@@ -72,7 +72,7 @@ DB_LeaderLibAttributes("Wits");
 
 
 PROC
-LLLIB_Settings_InitStats()
+LeaderLib_Settings_InitStats()
 AND
 NOT DB_LeaderLibAbilities(_)
 THEN
@@ -123,11 +123,11 @@ LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", _PastVersion)
 AND
 LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 0, 9, 3, 0)
 THEN
-LLLIB_Settings_InitSettings();
+LeaderLib_Settings_InitSettings();
 LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
 
 PROC
-LLLIB_System_RegisterDatabases()
+LeaderLib_System_RegisterDatabases()
 THEN
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LeaderLibSettings_QueueRates", 3);
 LeaderUpdater_Register_Database("LeaderLib", "LaughingLeader", "Settings", "DB_LeaderLibSettings_ItemTemplates", 2);
@@ -142,24 +142,24 @@ IF
 ObjectFlagSet("LLLIB_Settings_ListMods", _Player, _Instance)
 THEN
 ObjectClearFlag(_Player, "LLLIB_Settings_ListMods");
-LLLIB_Settings_BuildModList();
+LeaderLib_Settings_BuildModList();
 
 PROC
-LLLIB_Settings_BuildModList()
+LeaderLib_Settings_BuildModList()
 AND
 DB_LeaderLibSettings_Temp_ActiveModText(_ModID, _Author, _Str)
 THEN
 NOT DB_LeaderLibSettings_Temp_ActiveModText(_ModID, _Author, _Str);
 
 PROC
-LLLIB_Settings_BuildModList()
+LeaderLib_Settings_BuildModList()
 AND
 NOT DB_LeaderLibSettings_Temp_RegisteredModsList(_)
 THEN
 DB_LeaderLibSettings_Temp_RegisteredModsList("");
 
 QRY
-LLLIB_Settings_QRY_SetActiveText((STRING)_ModID, (STRING)_Author)
+LeaderLib_Settings_QRY_SetActiveText((STRING)_ModID, (STRING)_Author)
 AND
 LeaderUpdater_QRY_ModRegisteredActiveGoal(_ModID, _Author)
 AND
@@ -168,7 +168,7 @@ THEN
 DB_LeaderLibSettings_Temp_ActiveModText(_ModID, _Author, " <b>(Active)</b>");
 
 QRY
-LLLIB_Settings_QRY_SetActiveText((STRING)_ModID, (STRING)_Author)
+LeaderLib_Settings_QRY_SetActiveText((STRING)_ModID, (STRING)_Author)
 AND
 LeaderUpdater_QRY_ModRegisteredActiveGoal(_ModID, _Author)
 AND
@@ -177,14 +177,14 @@ THEN
 DB_LeaderLibSettings_Temp_ActiveModText(_ModID, _Author, " <b>(Deactivated)</b>");
 
 QRY
-LLLIB_Settings_QRY_SetActiveText((STRING)_ModID, (STRING)_Author)
+LeaderLib_Settings_QRY_SetActiveText((STRING)_ModID, (STRING)_Author)
 AND
 NOT LeaderUpdater_QRY_ModRegisteredActiveGoal(_ModID, _Author)
 THEN
 DB_LeaderLibSettings_Temp_ActiveModText(_ModID, _Author, " <b>(No Active Goal Registered)</b>");
 
 PROC
-LLLIB_Settings_BuildModList()
+LeaderLib_Settings_BuildModList()
 AND
 DB_Mods_Registered(_ModID, _Author, _Version)
 AND
@@ -192,7 +192,7 @@ DB_LeaderLibSettings_Temp_RegisteredModsList(_Str)
 AND
 StringConcatenate("<b>", _ModID, _NameStr)
 AND
-LLLIB_Settings_QRY_SetActiveText(_ModID, _Author)
+LeaderLib_Settings_QRY_SetActiveText(_ModID, _Author)
 AND
 DB_LeaderLibSettings_Temp_ActiveModText(_ModID, _Author, _ActiveStr)
 AND
@@ -206,7 +206,7 @@ NOT DB_LeaderLog_Temp_CombinedString(_CombinedStr);
 NOT DB_LeaderLibSettings_Temp_ActiveModText(_ModID, _Author, _ActiveStr);
 
 PROC
-LLLIB_Settings_BuildModList()
+LeaderLib_Settings_BuildModList()
 AND
 DB_LeaderLibSettings_DialogVariables("ModList", _DialogVar)
 AND
@@ -220,7 +220,7 @@ NOT DB_LeaderLibSettings_Temp_RegisteredModsList(_Str);
 IF
 DialogStarted("LLLIB_SettingsMenu", _Instance)
 THEN
-LLLIB_Settings_BuildModList();
+LeaderLib_Settings_BuildModList();
 //END_REGION
 EXITSECTION
 

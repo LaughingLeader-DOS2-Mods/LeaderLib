@@ -7,13 +7,12 @@ StoryEvent(_, "LeaderLib_Initialized")
 AND
 NOT DB_TestMod_GithubExample_RegisteredLeaderLibSettings(_)
 THEN
-TestMod_GithubExample_LeaderLib_RegisterSettings();
 DB_TestMod_GithubExample_RegisteredLeaderLibSettings(1);
 
-PROC
-TestMod_GithubExample_LeaderLib_RegisterSettings()
+IF
+DB_TestMod_GithubExample_RegisteredLeaderLibSettings(1);
 THEN
-DB_LeaderLib_ModApi_RegisterActiveGoal("TestMod_GithubExample", "CodeBuddy", "DependencyFree_TestMod_ZZZ_Updater");
+DB_LeaderLib_ModApi_RegisterActiveGoal("TestMod_GithubExample", "CodeBuddy", "DependencyFree_TestMod_LeaderLib");
 DB_LeaderLib_ModApi_RegisterMenu("CodeBuddy_TestMod_GithubExample", "[TestMod - Github Example] Menu", ""TestMod_GithubExample_MainMenu", "TestMod_GithubExample", "CodeBuddy");
 EXITSECTION
 

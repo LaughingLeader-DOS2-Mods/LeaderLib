@@ -357,11 +357,11 @@ IntegerSubtract(_Length, 1, _LastIndex)
 AND
 LeaderLib_Random_QRY(0, _LastIndex)
 AND
-DB_LeaderLib_Temp_RandomResult(_Index)
+DB_LeaderLib_Random(_Index)
 AND
 DB_LeaderLib_Array_Data(_ID, _Index, _Value)
 THEN
-NOT DB_LeaderLib_Temp_RandomResult(_Index);
+NOT DB_LeaderLib_Random(_Index);
 DB_LeaderLib_Array_Temp_RandomResult(_ID, _Index, _Value);
 //END_REGION
 

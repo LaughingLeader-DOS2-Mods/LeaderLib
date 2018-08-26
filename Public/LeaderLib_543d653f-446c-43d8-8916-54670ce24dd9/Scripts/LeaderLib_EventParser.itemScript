@@ -10,7 +10,7 @@ ACTIONS
 	SetCanJoinCombat(__Me, 0)
 	SetInvulnerable(__Me, 1)
 IF "!c1"
-	ItemHasStatus(__Me, LeaderLib_DUMMY_INVULNERABLE)
+	ItemHasStatus(__Me, LEADERLIB_DUMMY_INVULNERABLE)
 THEN
-	ItemApplyStatus(__Me, LeaderLib_DUMMY_INVULNERABLE, -1.0, 1)
+	ItemApplyStatus(__Me, LEADERLIB_DUMMY_INVULNERABLE, -1.0, 1)
 ENDIF

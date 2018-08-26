@@ -70,11 +70,11 @@ LeaderLIb_Platforms_SpawnPlatform_Random((STRING)_ID, (INTEGER)_LifeTime, (GUIDS
 AND
 LeaderLib_Random_QRY(2)
 AND
-DB_LeaderLib_Temp_RandomResult(_Index)
+DB_LeaderLib_Random(_Index)
 AND
 DB_LeaderLib_Platforms_Sizes(_Size, _Template, _Index)
 THEN
-NOT DB_LeaderLib_Temp_RandomResult(_Index);
+NOT DB_LeaderLib_Random(_Index);
 LeaderLIb_Platforms_SpawnPlatform(_ID, _Size, _LifeTime, _Target);
 
 PROC
@@ -82,11 +82,11 @@ LeaderLIb_Platforms_SpawnPlatform_Random((STRING)_ID, (INTEGER)_LifeTime, (REAL)
 AND
 LeaderLib_Random_QRY(2)
 AND
-DB_LeaderLib_Temp_RandomResult(_Index)
+DB_LeaderLib_Random(_Index)
 AND
 DB_LeaderLib_Platforms_Sizes(_Size, _Template, _Index)
 THEN
-NOT DB_LeaderLib_Temp_RandomResult(_Index);
+NOT DB_LeaderLib_Random(_Index);
 LeaderLIb_Platforms_SpawnPlatform(_ID, "Small", _LifeTime, _x, _y, _z);
 
 PROC

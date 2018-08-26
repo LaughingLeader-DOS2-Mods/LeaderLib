@@ -437,9 +437,9 @@ _UsePartyLevel <= 0
 AND
 LeaderLib_Random_QRY(_MinLevel, _MaxLevel)
 AND
-DB_LeaderLib_Temp_RandomResult(_Level)
+DB_LeaderLib_Random(_Level)
 THEN
-NOT DB_LeaderLib_Temp_RandomResult(_Level);
+NOT DB_LeaderLib_Random(_Level);
 LeaderLib_Treasure_Internal_GenerateTreasureTable(_ID, _Object, _TreasureID, _GenerationType, _Level, _TreasureTable);
 
 PROC
@@ -1480,10 +1480,10 @@ _UsePartyLevel <= 0
 AND
 LeaderLib_Random_QRY(_MinLevel, _MaxLevel)
 AND
-DB_LeaderLib_Temp_RandomResult(_Level)
+DB_LeaderLib_Random(_Level)
 THEN
 ItemLevelUpTo(_Item, _Level);
-NOT DB_LeaderLib_Temp_RandomResult(_Level);
+NOT DB_LeaderLib_Random(_Level);
 
 QRY
 LeaderLib_Treasure_QRY_Internal_RollSucceeded((INTEGER)_Chance)
@@ -1508,13 +1508,13 @@ _Chance < 100
 AND
 LeaderLib_Random_QRY(100)
 AND
-DB_LeaderLib_Temp_RandomResult(_Roll)
+DB_LeaderLib_Random(_Roll)
 AND
 LeaderLog_QRY_LogInt("TRACE", "[LeaderLib:TreasureSystem:Internal:RollSucceeded] Rolled: [",_Roll,"/",_Chance,"].")
 AND
 _Roll <= _Chance
 THEN
-NOT DB_LeaderLib_Temp_RandomResult(_Roll); // Also cleared by LeaderLib_Random_QRY
+NOT DB_LeaderLib_Random(_Roll); // Also cleared by LeaderLib_Random_QRY
 
 QRY
 LeaderLib_Treasure_QRY_Internal_CanApplyDeltamod((ITEMGUID)_Item, (STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_Deltamod)

@@ -1047,9 +1047,9 @@ LeaderLib_Traders_ApplyNewStockStatus((CHARACTERGUID)_Trader)
 AND
 IsTagged(_Trader, "LeaderLib_Trader_DisableStockStatus", 0)
 AND
-HasActiveStatus(_Trader, "LeaderLib_NEW_ITEMS", 0)
+HasActiveStatus(_Trader, "LEADERLIB_NEW_ITEMS", 0)
 THEN
-ApplyStatus(_Trader, "LeaderLib_NEW_ITEMS", 180.0, 1);
+ApplyStatus(_Trader, "LEADERLIB_NEW_ITEMS", 180.0, 1);
 
 PROC
 LeaderLib_Traders_ApplyNewStockStatus((CHARACTERGUID)_Trader)
@@ -1066,12 +1066,12 @@ DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 AND
 IsTagged(_Trader, "LeaderLib_Trader_DisableStockStatus", 0)
 AND
-HasActiveStatus(_Trader, "LeaderLib_NEW_ITEMS", 1)
+HasActiveStatus(_Trader, "LEADERLIB_NEW_ITEMS", 1)
 AND
-GetStatusTurns(_Trader, "LeaderLib_NEW_ITEMS", -1)
+GetStatusTurns(_Trader, "LEADERLIB_NEW_ITEMS", -1)
 THEN
-RemoveStatus(_Trader, "LeaderLib_NEW_ITEMS");
-ApplyStatus(_Trader, "LeaderLib_NEW_ITEMS", 60.0); // Make it time-limited now.
+RemoveStatus(_Trader, "LEADERLIB_NEW_ITEMS");
+ApplyStatus(_Trader, "LEADERLIB_NEW_ITEMS", 60.0); // Make it time-limited now.
 DisplayText(_Trader, " "); // Hide the status message
 */
 //END_REGION

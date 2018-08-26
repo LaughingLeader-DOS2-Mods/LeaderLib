@@ -2,7 +2,7 @@ Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
 /*Temp*/
-//DB_LeaderLib_Temp_RandomResult(_Ran)
+//DB_LeaderLib_Random(_Ran)
 //DB_LeaderLib_Helper_Temp_StopIteratingForFlags(1)
 //DB_LeaderLib_Helper_Temp_StopIteratingForMinLevel(1)
 //DB_LeaderLib_Helper_Temp_StopIteratingForMaxLevel(1)
@@ -400,9 +400,9 @@ LeaderLib_Random(_Modulo);
 PROC
 LeaderLib_Random((INTEGER)_Modulo)
 AND
-DB_LeaderLib_Temp_RandomResult(_OldRand)
+DB_LeaderLib_Random(_OldRand)
 THEN
-NOT DB_LeaderLib_Temp_RandomResult(_OldRand);
+NOT DB_LeaderLib_Random(_OldRand);
 
 PROC
 LeaderLib_Random((INTEGER)_Modulo)
@@ -415,7 +415,7 @@ Random(_Seed, _Ran)
 AND
 IntegerModulo(_Ran, _Modulo, _Rand)
 THEN
-DB_LeaderLib_Temp_RandomResult(_Rand);
+DB_LeaderLib_Random(_Rand);
 //END_REGION
 
 //REGION RANDOM_RANGE
@@ -427,9 +427,9 @@ LeaderLib_Random(_MinRan, _MaxRan);
 PROC
 LeaderLib_Random((INTEGER)_MinRan, (INTEGER)_MaxRan)
 AND
-DB_LeaderLib_Temp_RandomResult(_OldRand)
+DB_LeaderLib_Random(_OldRand)
 THEN
-NOT DB_LeaderLib_Temp_RandomResult(_OldRand);
+NOT DB_LeaderLib_Random(_OldRand);
 
 //min + rand() / (RAND_MAX / (max - min + 1) + 1)
 PROC
@@ -449,7 +449,7 @@ IntegerDivide(_RanSeed, _Ran4, _Ran5)
 AND
 IntegerSum(_Ran5, _MinRan, _Val)
 THEN
-DB_LeaderLib_Temp_RandomResult(_Val);
+DB_LeaderLib_Random(_Val);
 //END_REGION
 
 //REGION DATABASE_HELPERS

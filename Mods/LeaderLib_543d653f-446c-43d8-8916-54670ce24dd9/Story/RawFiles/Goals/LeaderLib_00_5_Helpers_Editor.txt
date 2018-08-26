@@ -75,6 +75,39 @@ LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib
 CharacterSetAnimationOverride(_Player, "");
 //END_REGION
 
+//REGION FX_TEXT_EVENTS
+IF
+TextEventSet("leaderlib_fxloop")
+AND
+GetTextEventParamString(1, _EffectName)
+AND
+GetTextEventParamString(2, _BoneName)
+AND
+DB_IsPlayer(_Player)
+AND
+CharacterIsControlled(_Player, 1)
+AND
+DB_CurrentLevel(_Region)
+AND
+StringConcatenate("LeaderLib.Debug.TextEvent.LoopEffect.", _EffectName, _ID)
+THEN
+PROC_LoopEffect(_EffectName, _Player, _ID, _Region, _BoneName);
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_effectloop] fired. Playing looped effect [",_EffectName,"]:[",_BoneName,"] on controlled character.");
+
+IF
+TextEventSet("leaderlib_fxstop")
+AND
+DB_IsPlayer(_Player)
+AND
+CharacterIsControlled(_Player, 1)
+AND
+DB_LoopEffect(_Player, _fxHandle, _ID, _Region, _effect, _BoneName)
+THEN
+PROC_StopLoopEffect(_Player, _ID);
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_fxstop] fired. Stopped all looped effects on controlled character.");
+//END_REGION
+//END_REGION
+
 //REGION STATS_TEXT_EVENTS
 IF
 TextEventSet("leaderlib_addpoints")

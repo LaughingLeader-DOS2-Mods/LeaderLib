@@ -677,11 +677,11 @@ CharacterUsedItem(_, ITEMGUID_LeaderLib_DebugLever_TestRandom_d3152baa-c6d4-4e8e
 AND
 LeaderLib_Random_QRY(1, 19)
 AND
-DB_LeaderLib_Temp_RandomResult(_Ran)
+DB_LeaderLib_Random(_Ran)
 AND
 IntegertoString(_Ran, _RanStr)
 THEN
-NOT DB_LeaderLib_Temp_RandomResult(_Ran);
+NOT DB_LeaderLib_Random(_Ran);
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem] Random range result: ",_RanStr," | Min: 1 Max: 19");
 */
 

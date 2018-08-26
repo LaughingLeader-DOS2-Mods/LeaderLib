@@ -237,12 +237,12 @@ IntegerSubtract(_Total, 1, _LastIndex)
 AND
 LeaderLib_Random_QRY(0, _LastIndex)
 AND
-DB_LeaderLib_Temp_RandomResult(_Index)
+DB_LeaderLib_Random(_Index)
 AND
 DB_LeaderLib_Combat_Temp_CharacterCombatList(_Index, _Enemy, _CombatID)
 THEN
 DB_LeaderLib_Combat_Temp_RandomEnemy(_CombatID, _Ally, _Enemy, _Index);
-NOT DB_LeaderLib_Temp_RandomResult(_Index);
+NOT DB_LeaderLib_Random(_Index);
 
 QRY
 LeaderLib_Combat_QRY_GetRandomCharacter((INTEGER)_CombatID)
@@ -272,12 +272,12 @@ IntegerSubtract(_Total, 1, _LastIndex)
 AND
 LeaderLib_Random_QRY(0, _LastIndex)
 AND
-DB_LeaderLib_Temp_RandomResult(_Index)
+DB_LeaderLib_Random(_Index)
 AND
 DB_LeaderLib_Combat_Temp_CharacterCombatList(_Index, _Character, _CombatID)
 THEN
 DB_LeaderLib_Combat_Temp_RandomCharacter(_CombatID, _Character, _Index);
-NOT DB_LeaderLib_Temp_RandomResult(_Index);
+NOT DB_LeaderLib_Random(_Index);
 
 QRY
 LeaderLib_Combat_QRY_GetRandomItem((INTEGER)_CombatID)
@@ -307,12 +307,12 @@ IntegerSubtract(_Total, 1, _LastIndex)
 AND
 LeaderLib_Random_QRY(0, _LastIndex)
 AND
-DB_LeaderLib_Temp_RandomResult(_Index)
+DB_LeaderLib_Random(_Index)
 AND
 DB_LeaderLib_Combat_Temp_ItemCombatList(_Index, _Item, _CombatID)
 THEN
 DB_LeaderLib_Combat_Temp_RandomItem(_CombatID, _Item, _Index);
-NOT DB_LeaderLib_Temp_RandomResult(_Index);
+NOT DB_LeaderLib_Random(_Index);
 
 QRY
 LeaderLib_Combat_QRY_GetRandomObject((INTEGER)_CombatID)
@@ -340,12 +340,12 @@ IntegerSubtract(_Total, 1, _LastIndex)
 AND
 LeaderLib_Random_QRY(0, _LastIndex)
 AND
-DB_LeaderLib_Temp_RandomResult(_Index)
+DB_LeaderLib_Random(_Index)
 AND
 DB_LeaderLib_Combat_Temp_ObjectCombatList(_Index, _Object, _CombatID)
 THEN
 DB_LeaderLib_Combat_Temp_RandomObject(_CombatID, _Object, _Index);
-NOT DB_LeaderLib_Temp_RandomResult(_Index);
+NOT DB_LeaderLib_Random(_Index);
 //END_REGION
 
 //REGION COMBAT_LIST

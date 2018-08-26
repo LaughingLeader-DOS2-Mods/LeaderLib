@@ -18,9 +18,7 @@ add equipment entry "WPN_Knight_Sword_2H_Humans"
 
 new equipment "LeaderLib_LeaderTrader_Prisoner"
 add equipmentgroup
-add equipment entry "ARM_Purge_UpperBody"
+add equipment entry "CON_Herb_Tea_A"
 add equipmentgroup
-add equipment entry "ARM_Purge_LowerBody"
-add equipmentgroup
-add equipment entry "ARM_Purge_Gloves"
+add equipment entry "FOOD_FishA"
 

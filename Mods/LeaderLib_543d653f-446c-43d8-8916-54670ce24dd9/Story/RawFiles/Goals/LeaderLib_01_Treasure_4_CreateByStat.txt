@@ -140,7 +140,7 @@ DB_LeaderLib_Array_Data(_ArrayID, _Index, _Value)
 AND
 IntegertoString(_Index, _IndexStr)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:CreateByStat:Start] Queue [",_QueueID,"] array index [",_IndexStr,"] == [",_Value,"].");
+LeaderLog_Log("TRACE", "[LeaderLib:CreateByStat:Start] Queue [",_QueueID,"] array index [",_IndexStr,"] == [",_Value,"].");
 */
 
 PROC
@@ -150,7 +150,7 @@ DB_LeaderLib_CBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateIt
 AND
 NOT LeaderLib_Queue_QRY_HasStarted(_QueueID)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:CreateByStat:Start] Starting queue [",_QueueID,"] with ArrayPrefix [",_ArrayPrefix,"].");
+LeaderLog_Log("TRACE", "[LeaderLib:CreateByStat:Start] Starting queue [",_QueueID,"] with ArrayPrefix [",_ArrayPrefix,"].");
 LeaderLib_Queue_Start(_QueueID);
 
 PROC
@@ -176,7 +176,7 @@ DB_LeaderLib_CBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateIt
 AND
 DB_LeaderLib_Queue_Temp_CurrentEntry(_QueueID, _Stat)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:CreateByStat:CreateItemEvent] Processing next item [",_Stat,"] for queue [",_QueueID,"].");
+LeaderLog_Log("TRACE", "[LeaderLib:CreateByStat:CreateItemEvent] Processing next item [",_Stat,"] for queue [",_QueueID,"].");
 LeaderLib_CreateByStat_Internal_ProcessNextStat(_Object, _ArrayID, _Stat, _ItemTransferredEvent);
 
 PROC
@@ -186,7 +186,7 @@ DB_LeaderLib_CBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateIt
 AND
 DB_LeaderLib_CBS_Temp_DummyTarget(_DummyID, _Object, _Dummy, _Stat, _ItemTransferredEvent, _ArrayID)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:CreateByStat:Timeout] Queue [",_QueueID,"] timed out.");
+LeaderLog_Log("TRACE", "[LeaderLib:CreateByStat:Timeout] Queue [",_QueueID,"] timed out.");
 NOT DB_LeaderLib_CBS_Temp_DummyTarget(_DummyID, _Object, _Dummy, _Stat, _ItemTransferredEvent, _ArrayID);
 LeaderLib_Treasure_ResetDummyAfterDelay(_Dummy, 900);
 LeaderLib_SendEvent(_ItemTransferredEvent);
@@ -196,7 +196,7 @@ LeaderLib_Queue_QueueCompleted((STRING)_QueueID)
 AND
 DB_LeaderLib_CBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateItemEvent, _ItemTransferredEvent, _CompletionEvent, _TimeoutEvent)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:CreateByStat:Complete] Queue [",_QueueID,"] was completed.");
+LeaderLog_Log("TRACE", "[LeaderLib:CreateByStat:Complete] Queue [",_QueueID,"] was completed.");
 LeaderLib_Treasure_CreateByStat_Internal_ClearQueueData(_Object, _ArrayPrefix);
 LeaderLib_Treasure_CreateByStat_Internal_ClearStatSettings(_ArrayID);
 SetStoryEvent(_Object, _CompletionEvent);

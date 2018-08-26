@@ -120,6 +120,7 @@ GameStarted(_,_)
 AND
 LeaderLib_ModMenu_QRY_SortNeeded()
 THEN
+TimerCancel("LeaderLib_ModMenu_StartManualSortTimer");
 TimerLaunch("LeaderLib_ModMenu_StartManualSortTimer", 3000);
 //END_REGION
 

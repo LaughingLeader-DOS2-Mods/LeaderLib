@@ -281,7 +281,20 @@ NOT DB_LeaderLib_Requirements_IsUnlocked(_RequirementID);
 
 //REGION INITIAL_UNLOCK
 IF
-StoryEvent(_, "LeaderLib_Events_OnDefaultEventFlowComplete")
+//StoryEvent(_, "LeaderLib_Events_OnDefaultEventFlowComplete")
+StoryEvent(_, "LeaderLib_Commands_StartDefaultEventFlow")
+THEN
+LeaderLib_Requirements_CheckForRequirementUnlocks();
+
+/*
+IF
+StoryEvent(_, "LeaderLib_Events_OnTraderSpawnComplete")
+THEN
+LeaderLib_Requirements_CheckForRequirementUnlocks();
+*/
+
+PROC
+LeaderLib_Requirements_CheckForRequirementUnlocks()
 AND
 DB_LeaderLib_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel, _StrictMode)
 AND
@@ -291,8 +304,8 @@ LeaderLib_Requirements_QRY_AllMet(_RequirementID)
 THEN
 LeaderLib_Requirements_RequirementUnlocked(_RequirementID);
 
-IF
-StoryEvent(_, "LeaderLib_Events_OnDefaultEventFlowComplete")
+PROC
+LeaderLib_Requirements_CheckForRequirementUnlocks()
 AND
 DB_LeaderLib_Requirements_Flag(_RequirementID, _Flag, _FlagType, _FlagVal)
 AND

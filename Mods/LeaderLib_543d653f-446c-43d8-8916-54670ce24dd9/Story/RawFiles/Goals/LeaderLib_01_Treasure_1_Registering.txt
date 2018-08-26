@@ -146,6 +146,7 @@ FLAG
 OPENED
 LEVEL_LOADED
 PARTY_LEVELED_UP
+REQUIREMENT_UNLOCKED
 */
 PROC
 LeaderLib_Treasure_Configure_GenerationType((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_GenerationType)

@@ -105,14 +105,9 @@ DB_NOOP(1);
 QRY
 LeaderLib_Helper_QRY_PartyMinLevelMet((INTEGER)_MinLevel)
 AND
-DB_LeaderLib_Helper_Temp_StopIteratingForMinLevel(_Val)
-THEN
-NOT DB_LeaderLib_Helper_Temp_StopIteratingForMinLevel(_Val);
-
-QRY
-LeaderLib_Helper_QRY_PartyMinLevelMet((INTEGER)_MinLevel)
-AND
 _MinLevel > 0
+AND
+LeaderLib_Helper_Internal_QRY_ClearMinLevelVar()
 AND
 DB_IsPlayer(_Player)
 AND
@@ -125,6 +120,18 @@ THEN
 DB_LeaderLib_Helper_Temp_StopIteratingForMinLevel(1);
 
 QRY
+LeaderLib_Helper_Internal_QRY_ClearMinLevelVar()
+THEN
+LeaderLib_Helper_Internal_ClearMinLevelVar();
+
+PROC
+LeaderLib_Helper_Internal_ClearMinLevelVar()
+AND
+DB_LeaderLib_Helper_Temp_StopIteratingForMinLevel(1)
+THEN
+NOT DB_LeaderLib_Helper_Temp_StopIteratingForMinLevel(1);
+
+QRY
 LeaderLib_Helper_QRY_PartyMaxLevelMet((INTEGER)_MaxLevel)
 AND
 _MaxLevel <= 0
@@ -134,14 +141,9 @@ DB_NOOP(1);
 QRY
 LeaderLib_Helper_QRY_PartyMaxLevelMet((INTEGER)_MaxLevel)
 AND
-DB_LeaderLib_Helper_Temp_StopIteratingForMaxLevel(_Val)
-THEN
-NOT DB_LeaderLib_Helper_Temp_StopIteratingForMaxLevel(_Val);
-
-QRY
-LeaderLib_Helper_QRY_PartyMaxLevelMet((INTEGER)_MaxLevel)
-AND
 _MaxLevel > 0
+AND
+LeaderLib_Helper_Internal_QRY_ClearMaxLevelVar()
 AND
 DB_IsPlayer(_Player)
 AND
@@ -152,6 +154,18 @@ AND
 _Level <= _MaxLevel
 THEN
 DB_LeaderLib_Helper_Temp_StopIteratingForMaxLevel(1);
+
+QRY
+LeaderLib_Helper_Internal_QRY_ClearMaxLevelVar()
+THEN
+LeaderLib_Helper_Internal_ClearMaxLevelVar();
+
+PROC
+LeaderLib_Helper_Internal_ClearMaxLevelVar()
+AND
+DB_LeaderLib_Helper_Temp_StopIteratingForMaxLevel(_Val)
+THEN
+NOT DB_LeaderLib_Helper_Temp_StopIteratingForMaxLevel(_Val);
 
 QRY
 LeaderLib_Helper_QRY_PartyLevelRangeMet((INTEGER)_MinLevel, (INTEGER)_MaxLevel)

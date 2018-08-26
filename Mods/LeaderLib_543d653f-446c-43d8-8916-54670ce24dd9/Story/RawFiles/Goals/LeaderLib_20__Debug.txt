@@ -14,7 +14,7 @@ IF
 RegionStarted("TestLevel_LL_LeaderLib")
 THEN
 GlobalSetFlag("LeaderLog_Debug_Enabled");
-GlobalSetFlag("LeaderLog_Trace_Enabled");
+//GlobalSetFlag("LeaderLog_Trace_Enabled");
 GoalCompleted;
 
 PROC

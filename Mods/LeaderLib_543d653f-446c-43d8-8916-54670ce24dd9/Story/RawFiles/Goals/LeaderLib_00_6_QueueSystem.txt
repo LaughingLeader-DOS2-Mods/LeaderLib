@@ -237,7 +237,7 @@ LeaderLib_Queue_Internal_OnComplete((STRING)_QueueID)
 AND
 DB_LeaderLib_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:QueueSystem:OnComplete] Queue [",_QueueID,"] complete. Sending event [",_OnCompletionEvent,"].");
+LeaderLog_Log("TRACE", "[LeaderLib:QueueSystem:OnComplete] Queue [",_QueueID,"] complete. Sending event [",_OnCompletionEvent,"].");
 LeaderLib_Queue_Stop(_QueueID); // Stop timers, if they're still running for some reason
 LeaderLib_Queue_ClearQueue(_QueueID);
 LeaderLib_SendEvent(_OnCompletionEvent);
@@ -255,7 +255,7 @@ LeaderLib_Queue_ClearQueue((STRING)_QueueID)
 AND
 DB_LeaderLib_Queue(_QueueID, _ArrayID, _TimerName, _TickRate, _IterateEvent, _IterateCompletionEvent, _OnCompletionEvent)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:QueueSystem:ClearQueue] Queue [",_QueueID,"] was cleared.");
+LeaderLog_Log("TRACE", "[LeaderLib:QueueSystem:ClearQueue] Queue [",_QueueID,"] was cleared.");
 NOT DB_LeaderLib_Queue_Temp_Started(_QueueID);
 TimerCancel(_TimerName);
 LeaderLib_Queue_Internal_ClearCurrentEntry(_QueueID);

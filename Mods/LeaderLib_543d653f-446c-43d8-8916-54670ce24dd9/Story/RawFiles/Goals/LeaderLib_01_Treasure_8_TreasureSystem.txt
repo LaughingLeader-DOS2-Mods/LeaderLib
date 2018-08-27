@@ -1149,7 +1149,7 @@ LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:OnTreasureQueueComplete] Treas
 IF
 StoryEvent(_, "LeaderLib_Commands_StartTreasureGeneration")
 THEN
-GlobalSetFlag("LeaderLib_EventFlow_GeneratingTreasure");
+GlobalSetFlag("LeaderLib_EventFlow_TreasureGenerationActive");
 LeaderLib_Treasure_StartQueue();
 
 IF
@@ -1179,7 +1179,7 @@ LeaderLib_SendEvent("LeaderLib_Internal_OnTreasureQueueComplete");
 IF
 StoryEvent(_, "LeaderLib_Events_OnGenerationQueueComplete")
 THEN
-GlobalClearFlag("LeaderLib_EventFlow_GeneratingTreasure");
+GlobalClearFlag("LeaderLib_EventFlow_TreasureGenerationActive");
 LeaderLib_Queue_Stop("LeaderLib_ItemGenerationQueue");
 LeaderLib_Queue_ClearQueue("LeaderLib_ItemGenerationQueue");
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:OnGenerationFinished] Item generation queue complete. Stopped and cleared queue [LeaderLib_ItemGenerationQueue].");

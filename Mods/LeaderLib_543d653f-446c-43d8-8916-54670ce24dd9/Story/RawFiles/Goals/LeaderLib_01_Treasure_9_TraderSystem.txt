@@ -841,23 +841,55 @@ NOT DB_LeaderLib_Traders_Temp_TreasureJustRegistered(_TreasureID, _TraderID)
 THEN
 DB_LeaderLib_Traders_Temp_TreasureJustRegistered(_TreasureID, _TraderID);
 
+QRY
+LeaderLib_Trader_QRY_JustRegisteredTreasureAvailable()
+AND
+SysCount("DB_LeaderLib_Traders_Temp_TreasureJustRegistered", 2, _Count)
+AND
+_Count > 0
+THEN
+DB_NOOP(1);
+
 IF
 StoryEvent(_, "LeaderLib_Events_OnDefaultEventFlowComplete")
 AND
+DB_CurrentLevel(_Level)
+AND
+IsCharacterCreationLevel(_Level, 0)
+AND
 NOT DB_LeaderLib_Traders_Temp_JustRegisteredTimerActive(_)
+AND
+LeaderLib_Trader_QRY_JustRegisteredTreasureAvailable()
 THEN
 DB_LeaderLib_Traders_Temp_JustRegisteredTimerActive(1);
+TimerCancel("LeaderLib_Timers_JustRegisteredTimer");
 TimerLaunch("LeaderLib_Timers_JustRegisteredTimer", 250);
 
 IF
 TimerFinished("LeaderLib_Timers_JustRegisteredTimer")
 AND
+GlobalGetFlag("LeaderLib_EventFlow_TreasureGenerationActive", 1)
+AND
+LeaderLib_Trader_QRY_JustRegisteredTreasureAvailable()
+THEN
+TimerLaunch("LeaderLib_Timers_JustRegisteredTimer", 1000);
+
+IF
+TimerFinished("LeaderLib_Timers_JustRegisteredTimer")
+AND
+GlobalGetFlag("LeaderLib_EventFlow_TreasureGenerationActive", 0)
+THEN
+LeaderLib_Traders_Internal_OnJustRegisteredTimerFinished();
+
+PROC
+LeaderLib_Traders_Internal_OnJustRegisteredTimerFinished()
+AND
 DB_LeaderLib_Traders_Temp_JustRegisteredTimerActive(_Val)
 THEN
 NOT DB_LeaderLib_Traders_Temp_JustRegisteredTimerActive(_Val);
 
-IF
-TimerFinished("LeaderLib_Timers_JustRegisteredTimer")
+PROC
+LeaderLib_Traders_Internal_OnJustRegisteredTimerFinished()
 AND
 DB_LeaderLib_Traders_Temp_TreasureJustRegistered(_TreasureID, _TraderID)
 THEN
@@ -869,10 +901,18 @@ DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 AND
 DB_LeaderLib_Traders_Temp_TreasureJustRegistered(_TreasureID, _TraderID)
 AND
-GlobalGetFlag("LeaderLib_EventFlow_GeneratingTreasure", 0)
+GlobalGetFlag("LeaderLib_EventFlow_TreasureGenerationActive", 0)
 THEN
 NOT DB_LeaderLib_Traders_Temp_TreasureJustRegistered(_TreasureID, _TraderID);
 LeaderLib_Traders_Internal_ProcessJustRegistered(_TreasureID, _TraderID);
+
+PROC
+LeaderLib_Traders_Internal_ProcessJustRegistered((STRING)_TreasureID, (STRING)_TraderID)
+AND
+DB_LeaderLib_Traders_Temp_JustRegisteredTimerActive(1)
+THEN
+TimerCancel("LeaderLib_Timers_JustRegisteredTimer");
+TimerLaunch("LeaderLib_Timers_JustRegisteredTimer", 500);
 
 PROC
 LeaderLib_Traders_Internal_ProcessJustRegistered((STRING)_TreasureID, (STRING)_TraderID)

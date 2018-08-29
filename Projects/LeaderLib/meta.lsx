@@ -4,10 +4,10 @@
     <version major="3" minor="6" revision="0" build="3" />
     <region id="MetaData">
         <node id="root">
-            <attribute id="Module" value="543d653f-446c-43d8-8916-54670ce24dd9" type="23" />
+            <attribute id="Module" value="7e737d2f-31d2-4751-963f-be6ccc59cd0c" type="23" />
             <attribute id="Name" value="LeaderLib" type="23" />
             <attribute id="Type" value="Add-on" type="23" />
-            <attribute id="UUID" value="5550a701-b721-4d2e-8196-ed49ce61707c" type="23" />
+            <attribute id="UUID" value="c65dd231-a7e4-4cd9-be15-40fe1a17fa5e" type="23" />
         </node>
     </region>
 </save>

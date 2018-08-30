@@ -1,5 +1,13 @@
 LeaderLib Changelog
 =======
+# 1.0.0.0 (Coming Soon!)
+* Definitive Edition Release
+* Refactored all LLLIB prefixed strings, databases, etc to LeaderLib.
+* Bug fixes / tweaks to the treasure/trader systems.
+* New helpers.
+* Small optimizations to the event flow system.
+
+
 # 0.9.2.0
 * Added a new "Editor Helper" script
 	* Contains new text events for playing animations and adding character stat points (attribute, ability, civil, talent, source/source max)

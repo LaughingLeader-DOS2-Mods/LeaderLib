@@ -6,6 +6,10 @@ KBSECTION
 IF
 StoryEvent(_, "LeaderLib_Initialized")
 AND
+DB_CurrentLevel(_Level)
+AND
+IsCharacterCreationLevel(_Level, 0)
+AND
 NOT GlobalGetFlag("LeaderLib_CountedParties", 1)
 THEN
 TimerLaunch("LeaderLib_Timers_StartCountingParty", 500);
@@ -33,6 +37,12 @@ IF
 StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Events_ResetPartyCount")
 THEN
 SetVarInteger(_Character, "LeaderLib_PartyCount", 1);
+
+IF
+StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Events_ResetPartyCount")
+AND
+PartyGetFlag(_Character, "LeaderLib_PartyCounted", 1)
+THEN
 PartyClearFlag(_Character, "LeaderLib_PartyCounted", 0);
 
 IF
@@ -122,6 +132,15 @@ THEN
 LeaderLib_Party_IncreaseCount(_Player);
 DB_LeaderLib_PartyMembers(_Player, _Character);
 DB_LeaderLib_PartyMembers(_Character, _Player);
+LeaderLib_Party_Internal_CopyPartyCount(_Character, _Player);
+
+PROC
+LeaderLib_Party_Internal_CopyPartyCount((CHARACTERGUID)_Character, (CHARACTERGUID)_Player)
+AND
+GetVarInteger(_Player, "LeaderLib_PartyCount", _Count)
+THEN
+SetVarInteger(_Character, "LeaderLib_PartyCount", _Count);
+LeaderLib_Party_OnCharacterJoinedParty(_Character, _Player, _Count);
 
 IF
 CharacterJoinedParty(_Character)
@@ -139,6 +158,11 @@ AND
 GetVarInteger(_Player, "LeaderLib_PartyCount", _Count)
 THEN
 SetVarInteger(_Player, "LeaderLib_PartyCount", _Count);
+
+PROC
+LeaderLib_Party_OnCharacterJoinedParty((CHARACTERGUID)_JoiningCharacter, (CHARACTERGUID)_PartyMember, (INTEGER)_PartyCount)
+THEN
+DB_NOOP(1);
 
 IF
 CharacterLeftParty(_Character)
@@ -161,8 +185,40 @@ IF
 CharacterLeftParty(_Character)
 AND
 DB_LeaderLib_PartyMembers(_Character, _Player)
+AND
+GetVarInteger(_Player, "LeaderLib_PartyCount", _Count)
 THEN
 NOT DB_LeaderLib_PartyMembers(_Character, _Player);
+LeaderLib_Party_OnCharacterLeftParty(_Character, _Player, _Count);
+
+PROC
+LeaderLib_Party_OnCharacterLeftParty((CHARACTERGUID)_LeavingCharacter, (CHARACTERGUID)_FormerPartyMember, (INTEGER)_PartyCount)
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION TRACING
+PROC
+LeaderLib_Party_OnCharacterJoinedParty((CHARACTERGUID)_JoiningCharacter, (CHARACTERGUID)_PartyMember, (INTEGER)_PartyCount)
+AND
+CharacterGetDisplayName(_JoiningCharacter, _, _JoiningCharacterName)
+AND
+CharacterGetDisplayName(_PartyMember, _, _PartyMemberName)
+AND
+IntegertoString(_PartyCount, _CountStr)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Party:OnCharacterJoinedParty] [",_JoiningCharacterName,"] is now in a party with [",_PartyMemberName,"]. Party Count [",_CountStr,"].");
+
+PROC
+LeaderLib_Party_OnCharacterLeftParty((CHARACTERGUID)_LeavingCharacter, (CHARACTERGUID)_FormerPartyMember, (INTEGER)_PartyCount)
+AND
+CharacterGetDisplayName(_LeavingCharacter, _, _LeavingCharacterName)
+AND
+CharacterGetDisplayName(_FormerPartyMember, _, _FormerPartyMemberName)
+AND
+IntegertoString(_PartyCount, _CountStr)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Party:OnCharacterLeftParty] [",_LeavingCharacterName,"] is no longer in a party with [",_FormerPartyMemberName,"]. Party Count [",_CountStr,"].");
 //END_REGION
 EXITSECTION
 

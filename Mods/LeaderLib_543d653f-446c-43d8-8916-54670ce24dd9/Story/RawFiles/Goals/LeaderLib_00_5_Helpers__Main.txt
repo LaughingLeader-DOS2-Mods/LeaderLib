@@ -659,6 +659,33 @@ DB_LeaderLib_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _CompleteEven
 THEN
 NOT DB_LeaderLib_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _CompleteEvent, _TimerPrefix);
 CharacterCharacterSetEvent(_Char1, _Char2, _CompleteEvent);
+
+PROC
+LeaderLib_StartObjectObjectTimer((GUIDSTRING)_Obj1, (GUIDSTRING)_Obj2, (INTEGER)_Time, (STRING)_TimerPrefix, (STRING)_CompleteEvent)
+AND
+GetUUID(_Obj1, _UUID1)
+AND
+GetUUID(_Obj1, _UUID2)
+AND
+StringConcatenate(_UUID1, _UUID2, _ID)
+AND
+StringConcatenate(_TimerPrefix, _ID, _TimerName)
+THEN
+DB_LeaderLib_Helper_Temp_ObjectObjectTimer(_TimerName, _Obj1, _Obj2, _CompleteEvent, _TimerPrefix);
+TimerLaunch(_TimerName, _Time);
+
+IF
+TimerFinished(_TimerName)
+AND
+DB_LeaderLib_Helper_Temp_ObjectObjectTimer(_TimerName, _Obj1, _Obj2, _CompleteEvent, _TimerPrefix)
+THEN
+NOT DB_LeaderLib_Helper_Temp_ObjectObjectTimer(_TimerName, _Obj1, _Obj2, _CompleteEvent, _TimerPrefix);
+LeaderLib_ObjectObjectTimerFinished(_Obj1, _Obj2, _CompleteEvent);
+
+PROC
+LeaderLib_ObjectObjectTimerFinished((GUIDSTRING)_Obj1, (GUIDSTRING)_Obj2, (STRING)_CompleteEvent)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION BEHAVIOR_SCRIPT_HELPERS
@@ -685,16 +712,16 @@ SetStoryEvent(_Object, "LeaderLib_Events_UUIDSet");
 
 //REGION STATUS_CHECK
 QRY
-LeaderLib_Helper_QRY_HasStatus((CHARACTERGUID)_Character, (STRING)_Status)
+LeaderLib_Helper_QRY_HasStatus((GUIDSTRING)_Object, (STRING)_Status)
 AND
-HasAppliedStatus(_Character, _Status, 1)
+HasAppliedStatus(_Object, _Status, 1)
 THEN
 DB_NOOP(1);
 
 QRY
-LeaderLib_Helper_QRY_HasStatus((CHARACTERGUID)_Character, (STRING)_Status)
+LeaderLib_Helper_QRY_HasStatus((GUIDSTRING)_Object, (STRING)_Status)
 AND
-HasActiveStatus(_Character, _Status, 1)
+HasActiveStatus(_Object, _Status, 1)
 THEN
 DB_NOOP(1);
 

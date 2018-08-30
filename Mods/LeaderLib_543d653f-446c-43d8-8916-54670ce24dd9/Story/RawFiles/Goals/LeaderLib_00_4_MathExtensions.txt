@@ -5,6 +5,8 @@ INITSECTION
 //DB_LeaderLib_Math_Sine(_Angle, _Result)
 //DB_LeaderLib_Math_Cosine(_Angle, _Result)
 //DB_LeaderLib_Math_Factorial(_Factor, _Result)
+//DB_LeaderLib_Math_AbsoluteValue(_Num, _Result)
+//DB_LeaderLib_Math_AbsoluteValueInt(_Num, _Result)
 
 //DB_LeaderLib_Math_Temp_FactorialOperation(_Factor, _MultiplyBy, _Result)
 KBSECTION
@@ -357,6 +359,58 @@ AND
 RealSum(_xblock3, _xp4, _xblock4)
 THEN
 DB_LeaderLib_Math_Cosine(_Angle, _xblock4);
+//END_REGION
+
+//REGION ABSOLUTE
+QRY
+LeaderLib_Math_QRY_AbsoluteValue((REAL)_Num)
+THEN
+LeaderLib_Math_Internal_AbsoluteValue(_Num);
+
+PROC
+LeaderLib_Math_Internal_AbsoluteValue((REAL)_Num)
+AND
+NOT DB_LeaderLib_Math_AbsoluteValue(_Num, _)
+AND
+_Num < 0
+AND
+RealProduct(_Num, -1.0, _AbsNum)
+THEN
+DB_LeaderLib_Math_AbsoluteValue(_Num, _AbsNum);
+
+PROC
+LeaderLib_Math_Internal_AbsoluteValue((REAL)_Num)
+AND
+NOT DB_LeaderLib_Math_AbsoluteValue(_Num, _)
+AND
+_Num >= 0
+THEN
+DB_LeaderLib_Math_AbsoluteValue(_Num, _Num);
+
+QRY
+LeaderLib_Math_QRY_AbsoluteValue((REAL)_Num)
+THEN
+LeaderLib_Math_Internal_AbsoluteValue(_Num);
+
+PROC
+LeaderLib_Math_Internal_AbsoluteValueInt((INTEGER)_Num)
+AND
+NOT DB_LeaderLib_Math_AbsoluteValueInt(_Num, _)
+AND
+_Num < 0
+AND
+IntegerProduct(_Num, -1, _AbsNum)
+THEN
+DB_LeaderLib_Math_AbsoluteValueInt(_Num, _AbsNum);
+
+PROC
+LeaderLib_Math_Internal_AbsoluteValueInt((INTEGER)_Num)
+AND
+NOT DB_LeaderLib_Math_AbsoluteValueInt(_Num, _)
+AND
+_Num >= 0
+THEN
+DB_LeaderLib_Math_AbsoluteValueInt(_Num, _Num);
 //END_REGION
 EXITSECTION
 

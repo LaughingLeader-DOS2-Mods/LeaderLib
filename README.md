@@ -1,4 +1,4 @@
-LeaderLib Mod for Divinity: Original Sin 2
+LeaderLib Mod for Divinity: Original Sin 2 - Definitive Edition
 =======
 LeaderLib is a library mod used to provide common functionality to other mods.
 

@@ -79,10 +79,13 @@ StoryEvent((ITEMGUID)_Item, "LeaderLib_Commands_AutoLevelItem")
 AND
 ItemGetOwner(_Item, _Character)
 AND
+NOT DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character)
+AND
 NOT GetVarInteger(_Item, "LeaderLib_ItemLevel", _)
 AND
 CharacterGetLevel(_Character, _Level)
 THEN
+DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character);
 ItemLevelUpTo(_Item, _Level);
 SetVarInteger(_Item, "LeaderLib_ItemLevel", _Level);
 CharacterItemSetEvent(_Character, _Item, "LeaderLib_Events_ItemLeveledUp");
@@ -92,12 +95,15 @@ StoryEvent((ITEMGUID)_Item, "LeaderLib_Commands_AutoLevelItem")
 AND
 ItemGetOwner(_Item, _Character)
 AND
+NOT DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character)
+AND
 GetVarInteger(_Item, "LeaderLib_ItemLevel", _ItemLevel)
 AND
 CharacterGetLevel(_Character, _Level)
 AND
 _ItemLevel < _Level
 THEN
+DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character);
 ItemLevelUpTo(_Item, _Level);
 SetVarInteger(_Item, "LeaderLib_ItemLevel", _Level);
 CharacterItemSetEvent(_Character, _Item, "LeaderLib_Events_ItemLeveledUp");
@@ -105,8 +111,11 @@ CharacterItemSetEvent(_Character, _Item, "LeaderLib_Events_ItemLeveledUp");
 IF
 CharacterItemEvent(_Character, _Item, "LeaderLib_Commands_AutoLevelItem")
 AND
+NOT DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character)
+AND
 CharacterGetLevel(_Character, _Level)
 THEN
+DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character);
 ItemLevelUpTo(_Item, _Level);
 SetVarInteger(_Item, "LeaderLib_ItemLevel", _Level);
 CharacterItemSetEvent(_Character, _Item, "LeaderLib_Events_ItemLeveledUp");
@@ -117,6 +126,18 @@ AND
 IsTagged(_Item, "LeaderLib_AutoLevel", 1)
 THEN
 CharacterItemSetEvent(_Character, _Item, "LeaderLib_Commands_CheckItemLevel");
+
+IF
+DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character)
+THEN
+LeaderLib_StartCharacterItemTimer(_Character, _Item, 500, "LeaderLib_Timers_ResetAutoLeveledItemDatabase", "LeaderLib_Events_ResetAutoLeveledItemDatabase");
+
+IF
+CharacterItemEvent(_Character, _Item, "LeaderLib_Events_ResetAutoLeveledItemDatabase")
+AND
+DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character)
+THEN
+NOT DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character);
 //END_REGION
 
 //REGION DELTA_MODS
@@ -140,17 +161,33 @@ DB_NOOP(1);
 
 IF
 CharacterItemEvent(_Character, _Item, "LeaderLib_Events_ItemLeveledUp")
+AND
+NOT DB_LeaderLib_Growth_Items_Temp_AppliedDeltaMods(_Character, _Item)
 THEN
+DB_LeaderLib_Growth_Items_Temp_AppliedDeltaMods(_Character, _Item);
 LeaderLib_Growth_Items_ApplyDeltaMods(_Item);
 
 IF
 CharacterItemEvent(_Character, _Item, "LeaderLib_Events_ItemLevelCheckFinished")
 AND
-NOT IsTagged(_Item, "LeaderLib_Growth_AppliedDeltaMods", 1)
+NOT DB_LeaderLib_Growth_Items_Temp_AppliedDeltaMods(_Character, _Item)
 AND
 LeaderLib_Growth_Items_QRY_ItemHasDeltaMods(_Item)
 THEN
+DB_LeaderLib_Growth_Items_Temp_AppliedDeltaMods(_Character, _Item);
 LeaderLib_Growth_Items_ApplyDeltaMods(_Item);
+
+IF
+DB_LeaderLib_Growth_Items_Temp_AppliedDeltaMods(_Character, _Item)
+THEN
+LeaderLib_StartCharacterItemTimer(_Character, _Item, 500, "LeaderLib_Timers_Growth_ResetAppliedDeltaModsDatabase", "LeaderLib_Events_Growth_ResetAppliedDeltaModsDatabase");
+
+IF
+CharacterItemEvent(_Character, _Item, "LeaderLib_Events_Growth_ResetAppliedDeltaModsDatabase")
+AND
+DB_LeaderLib_Growth_Items_Temp_AppliedDeltaMods(_Character, _Item)
+THEN
+NOT DB_LeaderLib_Growth_Items_Temp_AppliedDeltaMods(_Character, _Item);
 
 PROC
 LeaderLib_Growth_Items_ApplyDeltaMods((ITEMGUID)_Item)
@@ -166,7 +203,6 @@ AND
 NOT LeaderLib_Helper_QRY_ItemHasDeltaModifier(_Item, _DeltaMod)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Growth_Items:ApplyDeltaMods] Added deltamod [",_DeltaMod,"] to item.");
-LeaderLib_Growth_Items_Internal_ApplyDeltaModTag(_Item);
 ItemAddDeltaModifier(_Item, _DeltaMod);
 
 PROC
@@ -183,15 +219,22 @@ AND
 NOT LeaderLib_Helper_QRY_ItemHasDeltaModifier(_Item, _DeltaMod)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Growth_Items:ApplyDeltaMods] Added deltamod [",_DeltaMod,"] to item.");
-LeaderLib_Growth_Items_Internal_ApplyDeltaModTag(_Item);
 ItemAddDeltaModifier(_Item, _DeltaMod);
+//END_REGION
 
+//REGION DELTAMOD_CHECK
 PROC
-LeaderLib_Growth_Items_Internal_ApplyDeltaModTag((ITEMGUID)_Item)
+LeaderLibGrowth_Items_CheckEquipmentForMissingDeltamods((CHARACTERGUID)_Character)
 AND
-NOT IsTagged(_Item, "LeaderLib_Growth_AppliedDeltaMods", 1)
+DB_LeaderLib_EquipmentSlots(_Slot)
+AND
+CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
+AND
+_Item != NULL_00000000-0000-0000-0000-000000000000
+AND
+LeaderLib_Growth_Items_QRY_ItemHasDeltaMods(_Item)
 THEN
-SetTag(_Item, "LeaderLib_Growth_AppliedDeltaMods");
+LeaderLib_Growth_Items_ApplyDeltaMods(_Item);
 //END_REGION
 EXITSECTION
 

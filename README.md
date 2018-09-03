@@ -4,8 +4,8 @@ LeaderLib is a library mod used to provide common functionality to other mods.
 
 # Releases
 * [GitHub Release](https://github.com/LaughingLeader-DOS2-Mods/LeaderLib/releases/tag/mod-releases)
-* Nexus (Coming Soon)
-* Steam Workshop (Coming Soon)
+* [Nexus](https://www.nexusmods.com/divinityoriginalsin2definitiveedition/mods/10)
+* [Steam Workshop](https://steamcommunity.com/workshop/filedetails/?id=1499447796)
 
 # Support
 If you're feeling generous, an easy way to show support is by tipping me a coffee:

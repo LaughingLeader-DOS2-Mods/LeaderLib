@@ -1,6 +1,9 @@
 LeaderLib Changelog
 =======
-# 1.0.0.0 (Coming Soon!)
+# 1.0.0.9  
+* Reworked the LeaderTrader's "avoid combat" behavior, as he may has started assaulting players in certain situations, despite his Pacifist ways. ;)
+
+# 1.0.0.0
 * Definitive Edition Release
 * Refactored all LLLIB prefixed strings, databases, etc to LeaderLib.
 * Bug fixes / tweaks to the treasure/trader systems.

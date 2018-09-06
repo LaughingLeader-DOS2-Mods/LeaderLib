@@ -237,6 +237,15 @@ AND
 NOT GlobalGetFlag("LeaderLib_AddedInitialModMenuBooks", 1)
 THEN
 GlobalSetFlag("LeaderLib_AddedInitialModMenuBooks");
+
+IF
+ObjectFlagSet("LeaderLib_Commands_GiveModMenuBook", _Object, _Instance)
+AND
+LeaderLib_Helper_QRY_ClearObjectFlag(_Object, "LeaderLib_Commands_GiveModMenuBook")
+AND
+DB_LeaderLib_Settings_ItemTemplates("Book_ModMenu", _ModMenuBookTemplate)
+THEN
+ItemTemplateAddTo(_ModMenuBookTemplate, _Object, 1, 1);
 //END_REGION
 EXITSECTION
 

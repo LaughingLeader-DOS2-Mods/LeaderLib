@@ -23,6 +23,8 @@ AND
 ObjectIsCharacter(_Object, 1)
 AND
 ItemTemplateIsInCharacterInventory((CHARACTERGUID)_Object, _ItemTemplate, _Amount)
+AND
+_Amount != 0
 THEN
 NOT DB_LeaderLib_Treasure_Temp_ItemTemplateAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, 0);
 DB_LeaderLib_Treasure_Temp_ItemTemplateAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _Amount);
@@ -35,6 +37,8 @@ AND
 ItemIsContainer((ITEMGUID)_Object, 1)
 AND
 ItemTemplateIsInContainer(_Object, _ItemTemplate, _Amount)
+AND
+_Amount != 0
 THEN
 NOT DB_LeaderLib_Treasure_Temp_ItemTemplateAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, 0);
 DB_LeaderLib_Treasure_Temp_ItemTemplateAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _Amount);
@@ -191,11 +195,24 @@ NOT LeaderLib_Treasure_QRY_SkipItemLimitCheck(_CurrentAmount, _RequestedAmount, 
 AND
 _CurrentAmount < _MaxAmount
 AND
-IntegerSubtract(_RequestedAmount, _MaxAmount, _AmountToCreate)
+IntegerSum(_CurrentAmount, _RequestedAmount, _NextAmount)
 AND
-_AmountToCreate > 0
+NOT LeaderLib_Treasure_QRY_Internal_ClampAmount(_Object, _ItemEntry, _CurrentAmount, _NextAmount, _MaxAmount)
 THEN
-DB_LeaderLib_Treasure_Temp_AmountToCreate(_Object, _ItemEntry, _AmountToCreate);
+DB_LeaderLib_Treasure_Temp_AmountToCreate(_Object, _ItemEntry, _RequestedAmount);
+
+QRY
+LeaderLib_Treasure_QRY_Internal_ClampAmount((GUIDSTRING)_Object, (STRING)_ItemEntry, (INTEGER)_CurrentAmount, (INTEGER)_NextAmount, (INTEGER)_MaxAmount)
+AND
+_NextAmount > _MaxAmount
+AND
+IntegerSubtract(_NextAmount, _MaxAmount, _AmountToGenerate)
+AND
+IntegerSum(_AmountToGenerate, _CurrentAmount, _NextGeneratedAmount)
+AND
+_NextGeneratedAmount <= _MaxAmount
+THEN
+DB_LeaderLib_Treasure_Temp_AmountToCreate(_Object, _ItemEntry, _AmountToGenerate);
 
 QRY
 LeaderLib_Treasure_QRY_ItemLimitNotMet((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_RequestedAmount, (INTEGER)_CurrentAmount)

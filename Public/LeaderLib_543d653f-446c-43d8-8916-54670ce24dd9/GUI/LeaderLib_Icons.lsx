@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <save>
-    <header version="2" time="1521909963" />
-    <version major="3" minor="1" revision="7" build="0" />
+    <header version="2" time="1536207920" />
+    <version major="3" minor="6" revision="0" build="4" />
     <region id="IconUVList">
         <node id="root">
             <children>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLLIB_Icons_ModSettingsBook" type="22" />
+                    <attribute id="MapKey" value="LeaderLib_Icons_Items_ModMenuBook" type="22" />
                     <attribute id="U1" value="0.000976563" type="6" />
                     <attribute id="U2" value="0.124023" type="6" />
                     <attribute id="V1" value="0.000976563" type="6" />
@@ -23,7 +23,7 @@
                     <attribute id="Width" value="64" type="4" />
                 </node>
                 <node id="TextureAtlasPath">
-                    <attribute id="Path" value="Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Assets/Textures/Icons/LeaderLib_Icons.dds" type="29" />
+                    <attribute id="Path" value="Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Assets/Textures/Icons/LeaderLib_Icons.dds" type="20" />
                     <attribute id="UUID" value="e95f2b10-0c7c-4992-b944-6f17e46e542a" type="22" />
                 </node>
                 <node id="TextureAtlasTextureSize">

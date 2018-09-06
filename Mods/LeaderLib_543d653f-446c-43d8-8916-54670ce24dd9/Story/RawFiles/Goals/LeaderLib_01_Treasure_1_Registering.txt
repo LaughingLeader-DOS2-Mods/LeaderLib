@@ -355,103 +355,129 @@ THEN
 DB_LeaderLib_Treasure_RegisteredGenerationTypes(_GenerationType);
 //END_REGION
 
-//REGION CLEARING_TREASURE
+//REGION CLEAR_ENTRY
 PROC
-LeaderLib_Treasure_Clear_AllEntriesForTreasure((STRING)_TreasureID)
-AND
-DB_LeaderLib_Treasure_RegisteredObject(_TreasureID, _Object)
-THEN
-NOT DB_LeaderLib_Treasure_RegisteredObject(_TreasureID, _Object);
-
-PROC
-LeaderLib_Treasure_Clear_AllEntriesForTreasure((STRING)_TreasureID)
-AND
-DB_LeaderLib_Treasure_RegisteredObjectTemplate(_TreasureID, _Template)
-THEN
-NOT DB_LeaderLib_Treasure_RegisteredObjectTemplate(_TreasureID, _Template);
-
-PROC
-LeaderLib_Treasure_Clear_AllEntriesForTreasure((STRING)_TreasureID)
-AND
-DB_LeaderLib_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
-THEN
-NOT DB_LeaderLib_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID);
-
-PROC
-LeaderLib_Treasure_Clear_AllEntriesForTreasure((STRING)_TreasureID)
-AND
-DB_LeaderLib_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel)
-THEN
-NOT DB_LeaderLib_Treasure_RegisteredTreasureTable(_TreasureID, _TreasureTable, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel);
-
-PROC
-LeaderLib_Treasure_Clear_AllEntriesForTreasure((STRING)_TreasureID)
-THEN
-LeaderLib_Treasure_Clear_AllItemsForTreasure(_TreasureID);
-LeaderLib_Treasure_RebuildRegisteredGenerationTypes();
-
-PROC
-LeaderLib_Treasure_Clear_AllItemsForTreasure((STRING)_TreasureID)
+LeaderLib_Treasure_Clear_AllDataForItemEntry((STRING)_TreasureID, (STRING)_ItemEntry)
 AND
 DB_LeaderLib_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID)
 THEN
 NOT DB_LeaderLib_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID);
 
 PROC
-LeaderLib_Treasure_Clear_AllItemsForTreasure((STRING)_TreasureID)
+LeaderLib_Treasure_Clear_AllDataForItemEntry((STRING)_TreasureID, (STRING)_ItemEntry)
 AND
 DB_LeaderLib_Treasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID)
 THEN
 NOT DB_LeaderLib_Treasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID);
 
 PROC
-LeaderLib_Treasure_Clear_AllItemsForTreasure((STRING)_TreasureID)
+LeaderLib_Treasure_Clear_AllDataForItemEntry((STRING)_TreasureID, (STRING)_ItemEntry)
+AND
+DB_LeaderLib_Treasure_RegisteredTreasureTable(_TreasureID, _ItemEntry, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel)
+THEN
+NOT DB_LeaderLib_Treasure_RegisteredTreasureTable(_TreasureID, _ItemEntry, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel);
+
+PROC
+LeaderLib_Treasure_Clear_AllDataForItemEntry((STRING)_TreasureID, (STRING)_ItemEntry)
 AND
 DB_LeaderLib_Treasure_ItemLevel(_TreasureID, _ItemEntry, _MinLevel, _MaxLevel, _UsePartyLevel)
 THEN
 NOT DB_LeaderLib_Treasure_ItemLevel(_TreasureID, _ItemEntry, _MinLevel, _MaxLevel, _UsePartyLevel);
 
 PROC
-LeaderLib_Treasure_Clear_AllItemsForTreasure((STRING)_TreasureID)
+LeaderLib_Treasure_Clear_AllDataForItemEntry((STRING)_TreasureID, (STRING)_ItemEntry)
 AND
 DB_LeaderLib_Treasure_ItemGenerationType(_TreasureID, _ItemEntry, _GenerationType)
 THEN
 NOT DB_LeaderLib_Treasure_ItemGenerationType(_TreasureID, _ItemEntry, _GenerationType);
 
 PROC
-LeaderLib_Treasure_Clear_AllItemsForTreasure((STRING)_TreasureID)
+LeaderLib_Treasure_Clear_AllDataForItemEntry((STRING)_TreasureID, (STRING)_ItemEntry)
 AND
 DB_LeaderLib_Treasure_ItemGenerationFlag(_TreasureID, _ItemEntry, _Flag, _FlagType)
 THEN
 NOT DB_LeaderLib_Treasure_ItemGenerationFlag(_TreasureID, _ItemEntry, _Flag, _FlagType);
 
 PROC
-LeaderLib_Treasure_Clear_AllItemsForTreasure((STRING)_TreasureID)
+LeaderLib_Treasure_Clear_AllDataForItemEntry((STRING)_TreasureID, (STRING)_ItemEntry)
 AND
 DB_LeaderLib_Treasure_ItemDeltaMods(_ID, _TreasureID, _ItemEntry, _Deltamod, _Chance)
 THEN
 NOT DB_LeaderLib_Treasure_ItemDeltaMods(_ID, _TreasureID, _ItemEntry, _Deltamod, _Chance);
 
 PROC
-LeaderLib_Treasure_Clear_AllItemsForTreasure((STRING)_TreasureID)
+LeaderLib_Treasure_Clear_AllDataForItemEntry((STRING)_TreasureID, (STRING)_ItemEntry)
 AND
 DB_LeaderLib_Treasure_ItemRunes(_ID, _TreasureID, _ItemEntry, _Rune, _Chance)
 THEN
 NOT DB_LeaderLib_Treasure_ItemRunes(_ID, _TreasureID, _ItemEntry, _Rune, _Chance);
 
 PROC
-LeaderLib_Treasure_Clear_AllItemsForTreasure((STRING)_TreasureID)
+LeaderLib_Treasure_Clear_AllDataForItemEntry((STRING)_TreasureID, (STRING)_ItemEntry)
 AND
-DB_LeaderLib_Treasure_OnlyOnce(_TreasureID, _ItemEntryOrTreasureTable, _OnCompletionEvent)
+DB_LeaderLib_Treasure_OnlyOnce(_TreasureID, _ItemEntry, _OnCompletionEvent)
 THEN
-NOT DB_LeaderLib_Treasure_OnlyOnce(_TreasureID, _ItemEntryOrTreasureTable, _OnCompletionEvent);
+NOT DB_LeaderLib_Treasure_OnlyOnce(_TreasureID, _ItemEntry, _OnCompletionEvent);
 
 PROC
-LeaderLib_Treasure_Clear_AllItemsForTreasure((STRING)_TreasureID)
+LeaderLib_Treasure_Clear_AllDataForItemEntry((STRING)_TreasureID, (STRING)_ItemEntry)
 AND
 DB_LeaderLib_Treasure_GeneratedEvent(_TreasureID, _ItemEntry, _OnGeneratedEvent)
 THEN
 NOT DB_LeaderLib_Treasure_GeneratedEvent(_TreasureID, _ItemEntry, _OnGeneratedEvent);
+//END_REGION
+
+//REGION CLEARING_TREASURE_ALL
+PROC
+LeaderLib_Treasure_Clear_AllDataForTreasure((STRING)_TreasureID)
+AND
+DB_LeaderLib_Treasure_RegisteredObject(_TreasureID, _Object)
+THEN
+NOT DB_LeaderLib_Treasure_RegisteredObject(_TreasureID, _Object);
+
+PROC
+LeaderLib_Treasure_Clear_AllDataForTreasure((STRING)_TreasureID)
+AND
+DB_LeaderLib_Treasure_RegisteredObjectTemplate(_TreasureID, _Template)
+THEN
+NOT DB_LeaderLib_Treasure_RegisteredObjectTemplate(_TreasureID, _Template);
+
+PROC
+LeaderLib_Treasure_Clear_AllDataForTreasure((STRING)_TreasureID)
+AND
+DB_LeaderLib_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
+THEN
+NOT DB_LeaderLib_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID);
+
+PROC
+LeaderLib_Treasure_Clear_AllDataForTreasure((STRING)_TreasureID)
+THEN
+LeaderLib_Treasure_Clear_AllEntriesForTreasure(_TreasureID);
+LeaderLib_Treasure_RebuildRegisteredGenerationTypes();
+
+PROC
+LeaderLib_Treasure_Clear_AllEntriesForTreasure((STRING)_TreasureID)
+AND
+DB_LeaderLib_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID)
+THEN
+NOT DB_LeaderLib_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID);
+LeaderLib_Treasure_Clear_AllDataForItemEntry(_TreasureID, _ItemEntry);
+
+PROC
+LeaderLib_Treasure_Clear_AllEntriesForTreasure((STRING)_TreasureID)
+AND
+DB_LeaderLib_Treasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID)
+THEN
+NOT DB_LeaderLib_Treasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID);
+LeaderLib_Treasure_Clear_AllDataForItemEntry(_TreasureID, _ItemEntry);
+
+PROC
+LeaderLib_Treasure_Clear_AllEntriesForTreasure((STRING)_TreasureID)
+AND
+DB_LeaderLib_Treasure_RegisteredTreasureTable(_TreasureID, _ItemEntry, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel)
+THEN
+NOT DB_LeaderLib_Treasure_RegisteredTreasureTable(_TreasureID, _ItemEntry, _RequirementID, _UsePartyLevel, _MinLevel, _MaxLevel);
+LeaderLib_Treasure_Clear_AllDataForItemEntry(_TreasureID, _ItemEntry);
 //END_REGION
 
 //REGION TRADER_REGISTERING

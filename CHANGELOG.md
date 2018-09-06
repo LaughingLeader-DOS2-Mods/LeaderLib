@@ -6,7 +6,7 @@ LeaderLib Changelog
 	* Swapped the Mod Menu icon for a default DOS2 one, to hopefully mitigate the current icon limitations.
 		* Icon Limitations (DOS2DE v3.6.29.390): 7 texture atlases max in one UI. Multiple mods icons in the same UI, even if that mod only adds 1, make icons disappear from limitations in the engine.
 * Treasure System
-	* Fixed a small math mistake (1 - 4 = -3) when determining how many items to generate in certain situations.
+	* Fixed a small math ordering mistake (1 - 4 = -3) when determining how many items to generate in certain situations.
 
 # 1.0.0.9  
 * Reworked the LeaderTrader's "avoid combat" behavior, as he may has started assaulting players in certain situations, despite his Pacifist ways. ;)

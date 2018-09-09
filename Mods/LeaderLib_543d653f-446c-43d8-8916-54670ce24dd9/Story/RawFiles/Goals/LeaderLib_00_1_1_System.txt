@@ -2,7 +2,7 @@ Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
 //Initializing the mod version here, so settings will use this version
-LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", "1.0.1.0");
+LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", "1.0.1.2");
 LeaderLib_Register_ModMenu("LaughingLeader.LeaderLib", "[LeaderLib] Settings", "LeaderLib_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderUpdater_Register_ActiveGoal("LeaderLib", "LaughingLeader", "LeaderLib_ZZZ_Updater");
 KBSECTION

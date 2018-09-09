@@ -91,6 +91,132 @@ DB_LeaderLib_Skills_BlockStatusToggle(_Character, _Skill, _Status)
 THEN
 NOT DB_LeaderLib_Skills_BlockStatusToggle(_Character, _Skill, _Status);
 //END_REGION
+
+//REGION SKILL_DUMMIES
+PROC
+LeaderLib_Skills_UseSkillOnTarget((CHARACTERGUID)_Caster, (GUIDSTRING)_Target, (STRING)_Skill, (INTEGER)_CopyStats, (INTEGER)_CopyEquipment)
+AND
+GetUUID(_Caster, _UUID)
+AND
+GetUUID(_Target, _UUID2)
+AND
+StringConcatenate(_Skill, _UUID, _Str1)
+AND
+StringConcatenate(_Str1, _UUID2, _ID)
+AND
+LeaderLib_Skills_QRY_PrepareSkillDummy(_ID, _Caster, _CopyStats, _CopyEquipment)
+AND
+DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy)
+THEN
+DB_LeaderLib_Skills_Temp_SkillDummyData(_Dummy, _Caster, _Target, _Skill);
+
+IF
+StoryEvent((CHARACTERGUID)_Dummy, "LeaderLib_Events_SkillDummyTeleported")
+AND
+DB_LeaderLib_Skills_Temp_SkillDummyData(_Dummy, _Caster, _Target, _Skill)
+AND
+GetVarString(_Dummy, "LeaderLib_SkillDummyID", _ID)
+THEN
+CharacterSetRelationIndivFactionToIndivFaction(_Dummy, _Caster, 100);
+NOT DB_LeaderLib_Skills_Temp_SkillDummyData(_Dummy, _Caster, _Target, _Skill);
+CharacterSetDetached(_Dummy, 0);
+CharacterUseSkill(_Dummy, _Skill, _Target, 1, 1, 1);
+LeaderLib_Skills_MarkDummyForReset(_Dummy, 2000);
+LeaderLog_Log("DEBUG", "[LeaderLib:Skills:SkillDummyTeleported] Skill dummy used skill [",_Skill,"] on target. Dummy ID: [",_ID,"]");
+
+IF
+SkillCast(_Dummy, _Skill, _, _)
+AND
+ObjectGetFlag(_Dummy, "LeaderLib_IsSkillDummy", 1)
+THEN
+LeaderLib_Skills_MarkDummyForReset(_Dummy, 2500);
+LeaderLog_Log("DEBUG", "[LeaderLib:Skills:SkillCast(Dummy)] Skill dummy cast skill [",_Skill,"]. Resetting dummy after 2500ms.");
+//END_REGION
+
+//REGION DUMMY_PREPARATION
+QRY
+LeaderLib_Skills_QRY_PrepareSkillDummy((STRING)_ID, (CHARACTERGUID)_Caster, (INTEGER)_CopyStats, (INTEGER)_CopyEquipment)
+THEN
+LeaderLib_Skills_PrepareSkillDummy(_ID, _Caster, _CopyStats, _CopyEquipment);
+
+PROC
+LeaderLib_Skills_PrepareSkillDummy((STRING)_ID, (CHARACTERGUID)_Caster, (INTEGER)_CopyStats, (INTEGER)_CopyEquipment)
+AND
+DB_LeaderLib_Skills_SkillDummies("", (CHARACTERGUID)_Dummy)
+AND
+ObjectExists(_Dummy, 1)
+AND
+GetPosition(_Caster, _x, _y, _z)
+THEN
+LeaderLib_Skills_Internal_PrepareDummyStats(_Dummy, _Caster, _CopyStats, _CopyEquipment);
+CharacterSetDetached(_Dummy, 1);
+TeleportToPosition(_Dummy, _x, _y, _z, "LeaderLib_Events_SkillDummyTeleported", 0, 0);
+SetOnStage(_Dummy, 1);
+SetVarString(_Dummy, "LeaderLib_SkillDummyID", _ID);
+DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy);
+
+PROC
+LeaderLib_Skills_PrepareSkillDummy((STRING)_ID, (CHARACTERGUID)_Caster, (INTEGER)_CopyStats, (INTEGER)_CopyEquipment)
+AND
+NOT DB_LeaderLib_Skills_SkillDummies(_,_)
+AND
+GetPosition(_Caster, _x, _y, _z)
+AND
+TemporaryCharacterCreateAtPosition(_x, _y, _z, "LeaderLib_SkillDummy_94668062-11ea-4ecf-807c-4cc225cbb236", 0, _Dummy)
+THEN
+LeaderLib_Skills_Internal_PrepareDummyStats(_Dummy, _Caster, _CopyStats, _CopyEquipment);
+ObjectSetFlag(_Dummy, "LeaderLib_IsSkillDummy");
+CharacterMakeStoryNpc(_Dummy, 1);
+SetVisible(_Dummy, 0);
+CharacterSetDetached(_Dummy, 1);
+TeleportToPosition(_Dummy, _x, _y, _z, "LeaderLib_Events_SkillDummyTeleported", 0, 0);
+SetVarString(_Dummy, "LeaderLib_SkillDummyID", _ID);
+DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy);
+
+PROC
+LeaderLib_Skills_Internal_PrepareDummyStats((CHARACTERGUID)_Dummy, (CHARACTERGUID)_Caster, (INTEGER)_CopyStats, (INTEGER)_CopyEquipment)
+THEN
+CharacterTransformAppearanceTo(_Dummy, _Caster, _CopyEquipment, 1);
+
+PROC
+LeaderLib_Skills_Internal_PrepareDummyStats((CHARACTERGUID)_Dummy, (CHARACTERGUID)_Caster, 1)
+THEN
+LeaderLib_Helper_CopyStats(_Dummy, _Caster, 1, 1, 1, 1);
+
+PROC
+LeaderLib_Skills_MarkDummyForReset((CHARACTERGUID)_Dummy, (INTEGER)_Duration)
+THEN
+ProcObjectTimerCancel(_Dummy, "LeaderLib_Timers_ResetSkillDummy");
+ProcObjectTimer(_Dummy, "LeaderLib_Timers_ResetSkillDummy", _Duration);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Dummy, "LeaderLib_Timers_ResetSkillDummy")
+AND
+DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy)
+THEN
+NOT DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy);
+DB_LeaderLib_Skills_SkillDummies("", _Dummy);
+SetVarString(_Dummy, "LeaderLib_SkillDummyID", "");
+SetOnStage(_Dummy, 0);
+
+IF
+RegionEnded(_)
+AND
+DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy)
+AND
+ObjectExists(_Dummy, 1)
+THEN
+CharacterMakeStoryNpc(_Dummy, 0);
+SetOnStage(_Dummy, 0);
+CharacterDieImmediate(_Dummy, 0, "", _Dummy);
+
+IF
+RegionEnded(_)
+AND
+DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy)
+THEN
+NOT DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

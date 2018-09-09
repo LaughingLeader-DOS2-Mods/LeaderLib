@@ -173,21 +173,22 @@ LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader:ModUpdated(1.0.0.0)] Cleared all
 //END_REGION
 
 //REGION NON_GLOBAL_WORKAROUND
+/*
 IF
 ObjectFlagSet(_Flag, (CHARACTERGUID)_LeaderTrader, _)
 AND
-GlobalGetFlag("LeaderLib_LeaderTraderIsNotGlobal", 1)
-AND
 DB_LeaderLib_LeaderTrader(_LeaderTrader)
+AND
+GlobalGetFlag("LeaderLib_LeaderTraderIsNotGlobal", 1)
 THEN
 DB_LeaderLib_LeaderTrader_SetFlags(_Flag, 1);
 
 IF
 ObjectFlagCleared(_Flag, (CHARACTERGUID)_LeaderTrader, _)
 AND
-GlobalGetFlag("LeaderLib_LeaderTraderIsNotGlobal", 1)
-AND
 DB_LeaderLib_LeaderTrader(_LeaderTrader)
+AND
+GlobalGetFlag("LeaderLib_LeaderTraderIsNotGlobal", 1)
 AND
 DB_LeaderLib_LeaderTrader_SetFlags(_Flag, 1)
 THEN
@@ -215,9 +216,9 @@ ObjectClearFlag(_LeaderTrader, _Flag);
 IF
 ObjectWasTagged((CHARACTERGUID)_LeaderTrader, _Tag)
 AND
-GlobalGetFlag("LeaderLib_LeaderTraderIsNotGlobal", 1)
-AND
 DB_LeaderLib_LeaderTrader(_LeaderTrader)
+AND
+GlobalGetFlag("LeaderLib_LeaderTraderIsNotGlobal", 1)
 THEN
 DB_LeaderLib_LeaderTrader_SetTags(_Tag, 1);
 
@@ -250,6 +251,7 @@ AND
 DB_LeaderLib_LeaderTrader_SetTags(_Tag, 0)
 THEN
 ClearTag(_LeaderTrader, _Tag);
+*/
 //END_REGION
 
 //REGION DEFAULT_DIALOG_GREETING_CHANGE

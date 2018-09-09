@@ -115,17 +115,128 @@ DB_LeaderLib_Abilities("VitalityMastery");
 DB_LeaderLib_Abilities("Perseverance");
 DB_LeaderLib_Abilities("Runecrafting");
 DB_LeaderLib_Abilities("Brewmaster");
+
+PROC
+LeaderLib_Settings_InitStats()
+AND
+NOT DB_LeaderLib_Talents(_)
+THEN
+DB_LeaderLib_Talents("ActionPoints");
+DB_LeaderLib_Talents("ActionPoints2");
+DB_LeaderLib_Talents("AirSpells");
+DB_LeaderLib_Talents("AnimalEmpathy");
+DB_LeaderLib_Talents("AttackOfOpportunity	Opportunist");
+DB_LeaderLib_Talents("AvoidDetection");
+DB_LeaderLib_Talents("Awareness");
+DB_LeaderLib_Talents("Backstab");
+DB_LeaderLib_Talents("Beastmaster");
+DB_LeaderLib_Talents("Bully");
+DB_LeaderLib_Talents("Carry");
+DB_LeaderLib_Talents("ChanceToHitMelee");
+DB_LeaderLib_Talents("ChanceToHitRanged");
+DB_LeaderLib_Talents("Charm");
+DB_LeaderLib_Talents("Courageous");
+DB_LeaderLib_Talents("Criticals");
+DB_LeaderLib_Talents("Damage");
+DB_LeaderLib_Talents("Demon");
+DB_LeaderLib_Talents("DualWieldingDodging");
+DB_LeaderLib_Talents("Durability");
+DB_LeaderLib_Talents("Dwarf_Sneaki");
+DB_LeaderLib_Talents("Dwarf_Strength");
+DB_LeaderLib_Talents("EarthSpells");
+DB_LeaderLib_Talents("ElementalAffinity");
+DB_LeaderLib_Talents("ElementalRanger");
+DB_LeaderLib_Talents("Elf_CorpseEating");
+DB_LeaderLib_Talents("Elf_Finesse");
+DB_LeaderLib_Talents("Escapist");
+DB_LeaderLib_Talents("Executioner");
+DB_LeaderLib_Talents("ExpGain");
+DB_LeaderLib_Talents("ExtraSkillPoints");
+DB_LeaderLib_Talents("ExtraStatPoints");
+DB_LeaderLib_Talents("ExtraWandCharge");
+DB_LeaderLib_Talents("FaroutDude");
+DB_LeaderLib_Talents("FireSpells");
+DB_LeaderLib_Talents("FiveStarRestaurant");
+DB_LeaderLib_Talents("Flanking");
+DB_LeaderLib_Talents("FolkDancer");
+DB_LeaderLib_Talents("GoldenMage");
+DB_LeaderLib_Talents("Human_Civil");
+DB_LeaderLib_Talents("Human_Wits");
+DB_LeaderLib_Talents("IceKing");
+DB_LeaderLib_Talents("IncreasedArmor");
+DB_LeaderLib_Talents("Initiative");
+DB_LeaderLib_Talents("Intimidate");
+DB_LeaderLib_Talents("InventoryAccess");
+DB_LeaderLib_Talents("ItemCreation");
+DB_LeaderLib_Talents("ItemMovement");
+DB_LeaderLib_Talents("Kickstarter");
+DB_LeaderLib_Talents("Kinetics");
+DB_LeaderLib_Talents("Leech");
+DB_LeaderLib_Talents("LightStep");
+DB_LeaderLib_Talents("LightningRod");
+DB_LeaderLib_Talents("Lizard_Intelligence");
+DB_LeaderLib_Talents("Lizard_Persuasion");
+DB_LeaderLib_Talents("Lockpick");
+DB_LeaderLib_Talents("LoneWolf");
+DB_LeaderLib_Talents("Luck");
+DB_LeaderLib_Talents("Memory");
+DB_LeaderLib_Talents("MrKnowItAll");
+DB_LeaderLib_Talents("NoAttackOfOpportunity");
+DB_LeaderLib_Talents("Perfectionist");
+DB_LeaderLib_Talents("Politician");
+DB_LeaderLib_Talents("Quest_GhostTree");
+DB_LeaderLib_Talents("Quest_SpidersKiss_Int");
+DB_LeaderLib_Talents("Quest_SpidersKiss_Null");
+DB_LeaderLib_Talents("Quest_SpidersKiss_Per");
+DB_LeaderLib_Talents("Quest_SpidersKiss_Str");
+DB_LeaderLib_Talents("Quest_TradeSecrets");
+DB_LeaderLib_Talents("QuickStep");
+DB_LeaderLib_Talents("Raistlin");
+DB_LeaderLib_Talents("RangerLoreArrowRecover");
+DB_LeaderLib_Talents("RangerLoreEvasionBonus");
+DB_LeaderLib_Talents("RangerLoreRangedAPBonus");
+DB_LeaderLib_Talents("Reason");
+DB_LeaderLib_Talents("Repair");
+DB_LeaderLib_Talents("ResistDead");
+DB_LeaderLib_Talents("ResistFear");
+DB_LeaderLib_Talents("ResistKnockdown");
+DB_LeaderLib_Talents("ResistPoison");
+DB_LeaderLib_Talents("ResistSilence");
+DB_LeaderLib_Talents("ResistStun");
+DB_LeaderLib_Talents("ResurrectToFullHealth");
+DB_LeaderLib_Talents("RogueLoreDaggerAPBonus");
+DB_LeaderLib_Talents("RogueLoreDaggerBackStab");
+DB_LeaderLib_Talents("RogueLoreGrenadePrecision");
+DB_LeaderLib_Talents("RogueLoreHoldResistance");
+DB_LeaderLib_Talents("RogueLoreMovementBonus");
+DB_LeaderLib_Talents("Scientist");
+DB_LeaderLib_Talents("Sight");
+DB_LeaderLib_Talents("SpillNoBlood");
+DB_LeaderLib_Talents("StandYourGround");
+DB_LeaderLib_Talents("Stench");
+DB_LeaderLib_Talents("SurpriseAttack");
+DB_LeaderLib_Talents("Trade");
+DB_LeaderLib_Talents("ViolentMagic");
+DB_LeaderLib_Talents("Vitality");
+DB_LeaderLib_Talents("WalkItOff");
+DB_LeaderLib_Talents("WarriorLoreGrenadeRange");
+DB_LeaderLib_Talents("WarriorLoreN");
+DB_LeaderLib_Talents("WarriorLoreNaturalHealth");
+DB_LeaderLib_Talents("WarriorLoreNaturalResistance");
+DB_LeaderLib_Talents("WaterSpells");
+DB_LeaderLib_Talents("WeatherProof");
+DB_LeaderLib_Talents("WhatARush");
+DB_LeaderLib_Talents("Zombie");
 //END_REGION
 
 //REGION UPDATER
-/*
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", _PastVersion)
 AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 0, 9, 3, 0)
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 0, 1, 1)
 THEN
 LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
-*/
+LeaderLib_Settings_InitStats();
 //END_REGION
 
 //REGION MOD_DATA
@@ -246,6 +357,7 @@ AND
 DB_LeaderLib_Settings_ItemTemplates("Book_ModMenu", _ModMenuBookTemplate)
 THEN
 ItemTemplateAddTo(_ModMenuBookTemplate, _Object, 1, 1);
+
 //END_REGION
 EXITSECTION
 

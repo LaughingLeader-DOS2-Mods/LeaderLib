@@ -24,6 +24,8 @@ data "UseAPCost" "0"
 data "Value" "0"
 data "Weight" "0"
 data "Unique" "1"
+data "AddToBottomBar" "Yes"
+data "InventoryTab" "Magical"
 
 new entry "SKILLBOOK_LeaderLib_ControlSummon"
 type "Object"

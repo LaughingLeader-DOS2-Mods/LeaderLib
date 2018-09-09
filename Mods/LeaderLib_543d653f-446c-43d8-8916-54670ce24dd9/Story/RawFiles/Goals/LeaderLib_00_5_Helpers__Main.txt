@@ -494,17 +494,39 @@ LeaderLog_Log("DEBUG", _Str3);
 
 //REGION CHARACTER_STATS
 PROC
+LeaderLib_Helper_CopyStats((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom, (INTEGER)_CopyLevel, (INTEGER)_CopyAttributes, (INTEGER)_CopyAbilities, (INTEGER)_CopyTalents)
+THEN
+LeaderLib_Helper_Internal_CopyLevel(_CopyTo, _CopyFrom, _CopyLevel);
+LeaderLib_Helper_Internal_CopyAttributes(_CopyTo, _CopyFrom, _CopyAbilities);
+LeaderLib_Helper_Internal_CopyAbilities(_CopyTo, _CopyFrom, _CopyAttributes);
+LeaderLib_Helper_Internal_CopyTalents(_CopyTo, _CopyFrom, _CopyTalents);
+
+PROC
+LeaderLib_Helper_Internal_CopyLevel((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom, 1)
+THEN
+LeaderLib_Helper_CopyLevel(_CopyTo, _CopyFrom);
+
+PROC
+LeaderLib_Helper_Internal_CopyAttributes((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom, 1)
+THEN
+LeaderLib_Helper_CopyAttributes(_CopyTo, _CopyFrom);
+
+PROC
+LeaderLib_Helper_Internal_CopyAbilities((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom, 1)
+THEN
+LeaderLib_Helper_CopyAbilities(_CopyTo, _CopyFrom);
+
+PROC
+LeaderLib_Helper_Internal_CopyTalents((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom, 1)
+THEN
+LeaderLib_Helper_CopyTalents(_CopyTo, _CopyFrom);
+
+PROC
 LeaderLib_Helper_CopyLevel((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
 AND
 CharacterGetLevel(_CopyFrom, _TargetLevel)
 THEN
 CharacterLevelUpTo(_CopyTo, _TargetLevel);
-
-PROC
-LeaderLib_Helper_CopyStats((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
-THEN
-LeaderLib_Helper_CopyAbilities(_CopyTo, _CopyFrom);
-LeaderLib_Helper_CopyAttributes(_CopyTo, _CopyFrom);
 
 PROC
 LeaderLib_Helper_CopyAbilities((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
@@ -536,10 +558,20 @@ _AddVal > 0
 THEN
 CharacterAddAttribute(_CopyTo, _Attribute, _AddVal);
 
-IF
-CharacterCharacterEvent((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom, "LeaderLib_Commands_CopyStats")
+
+PROC
+LeaderLib_Helper_CopyTalents((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
+AND
+DB_LeaderLib_Talents(_Talent)
+AND
+CharacterHasTalent(_CopyFrom, _Talent, 1)
 THEN
-LeaderLib_Helper_CopyStats(_CopyTo, _CopyFrom);
+CharacterAddTalent(_CopyTo, _Talent);
+
+IF
+CharacterCharacterEvent((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom, "LeaderLib_Commands_CopyAllStats")
+THEN
+LeaderLib_Helper_CopyStats(_CopyTo, _CopyFrom, 1, 1, 1, 1);
 
 IF
 CharacterCharacterEvent((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom, "LeaderLib_Commands_CopyAbilities")

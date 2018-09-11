@@ -664,6 +664,7 @@ DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
 AND
 DB_LeaderLib_ModMenu_Temp_ActiveMenu(_Player, _ID, _Dialog)
 THEN
+NOT DB_LeaderLib_ModMenu_Temp_ActiveMenu(_Player, _ID, _Dialog);
 LeaderLib_ModMenu_Internal_AttemptToReopen(_Player, _Dialog);
 
 IF
@@ -672,9 +673,11 @@ AND
 DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
 AND
 ObjectGetFlag(_Player, "LeaderLib_OpenModMenu", 1)
+AND
+DB_LeaderLib_ModMenu_Temp_ActiveMenu(_Player, _ID, _Dialog)
 THEN
 ObjectClearFlag(_Player, "LeaderLib_OpenModMenu");
-LeaderLib_ModMenu_Reopen(_Player, _Dialog);
+LeaderLib_ModMenu_Reopen(_Player);
 
 IF
 StoryEvent((CHARACTERGUID)_Player, "LeaderLib_Commands_OpenModMenu")
@@ -688,30 +691,31 @@ LeaderLib_ModMenu_Internal_AttemptToReopen((CHARACTERGUID)_Player, (STRING)_Dial
 AND
 UserGetFlag(_Player, "LeaderLib_AutoOpenModMenu", 1)
 AND
-ObjectGetFlag(_Player, "LeaderLib_BlockModMenuReopen", 0)
+NOT ObjectGetFlag(_Player, "LeaderLib_BlockModMenuReopen", 1)
 THEN
-LeaderLib_ModMenu_Reopen(_Player, _Dialog);
+LeaderLib_ModMenu_Reopen(_Player);
 
 PROC
-LeaderLib_ModMenu_Reopen((CHARACTERGUID)_Player, (STRING)_Dialog)
+LeaderLib_ModMenu_Reopen((CHARACTERGUID)_Player)
 AND
 DB_LeaderLib_Settings_ItemTemplates("Book_ModMenu", _ItemTemplate)
 AND
 GetItemForItemTemplateInPartyInventory(_Player, _ItemTemplate, _MenuBook)
-AND
-DB_LeaderLib_ModMenu_Temp_ActiveMenu(_Player, _ID, _Dialog)
 THEN
-NOT DB_LeaderLib_ModMenu_Temp_ActiveMenu(_Player, _ID, _Dialog);
 Proc_StartDialog(0, "LeaderLib_ModMenu", _MenuBook, _Player);
 
 //Book not found?
 PROC
-LeaderLib_ModMenu_Reopen((CHARACTERGUID)_Player, (STRING)_Dialog)
+LeaderLib_ModMenu_Reopen((CHARACTERGUID)_Player)
 AND
-DB_LeaderLib_ModMenu_Temp_ActiveMenu(_Player, _ID, _Dialog)
+LeaderLib_ModMenu_QRY_HasMenuSelected(_Player)
 THEN
-NOT DB_LeaderLib_ModMenu_Temp_ActiveMenu(_Player, _ID, _Dialog);
 Proc_StartDialog(0, "LeaderLib_ModMenu", _Player, _Player);
+
+PROC
+LeaderLib_ModMenu_Reopen((CHARACTERGUID)_Player)
+THEN
+ObjectSetFlag(_Player, "LeaderLib_ModMenu_ClearMemory");
 
 IF
 ObjectFlagSet("LeaderLib_ModMenu_ClearMemory", (CHARACTERGUID)_Player, _)
@@ -721,6 +725,13 @@ AND
 DB_LeaderLib_ModMenu_Temp_ActiveMenu(_Player, _ID, _Dialog)
 THEN
 NOT DB_LeaderLib_ModMenu_Temp_ActiveMenu(_Player, _ID, _Dialog);
+
+QRY
+LeaderLib_ModMenu_QRY_HasMenuSelected((CHARACTERGUID)_Player)
+AND
+DB_LeaderLib_ModMenu_Temp_ActiveMenu(_Player, _ID, _Dialog)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION ITEM_USE

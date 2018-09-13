@@ -1,7 +1,7 @@
 {
    "save" : {
       "header" : {
-         "time" : 1523311947,
+         "time" : 1536852929,
          "version" : "2.0.8.2"
       },
       "regions" : {
@@ -29,13 +29,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -87,6 +81,10 @@
                            {
                               "data" : [
                                  {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N1"}
+                                 },
+                                 {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
                                  },
@@ -127,13 +125,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -188,6 +180,10 @@
                            {
                               "data" : [
                                  {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N2"}
+                                 },
+                                 {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
                                  },
@@ -228,13 +224,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -286,6 +276,10 @@
                            {
                               "data" : [
                                  {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N3"}
+                                 },
+                                 {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
                                  },
@@ -326,13 +320,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -384,6 +372,10 @@
                            {
                               "data" : [
                                  {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N4"}
+                                 },
+                                 {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
                                  },
@@ -424,13 +416,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -495,6 +481,10 @@
                            {
                               "data" : [
                                  {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N5"}
+                                 },
+                                 {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
                                  },
@@ -536,6 +526,10 @@
                            {
                               "data" : [
                                  {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N7"}
+                                 },
+                                 {
                                     "key" : {"type" : 22, "value" : "collapsed"},
                                     "val" : {"type" : 23, "value" : "False"}
                                  },
@@ -571,13 +565,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -647,6 +635,10 @@
                            {
                               "data" : [
                                  {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N8"}
+                                 },
+                                 {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
                                  },
@@ -687,13 +679,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -737,6 +723,10 @@
                            {
                               "data" : [
                                  {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N9"}
+                                 },
+                                 {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
                                  },
@@ -777,13 +767,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -826,6 +810,10 @@
                         "editorData" : [
                            {
                               "data" : [
+                                 {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N10"}
+                                 },
                                  {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
@@ -877,13 +865,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -948,6 +930,10 @@
                            {
                               "data" : [
                                  {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N11"}
+                                 },
+                                 {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
                                  },
@@ -988,13 +974,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -1017,7 +997,7 @@
                                                 "TagText" : {
                                                    "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
                                                    "type" : 28,
-                                                   "value" : "Since you seem real interesting, I'll give you this for free, as a gesture of goodwill towards all future trading."
+                                                   "value" : "Before I get set up... Here. I have a few extra copies of this book I bet you'd like. It's on the house."
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -1059,6 +1039,10 @@
                            {
                               "data" : [
                                  {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N12"}
+                                 },
+                                 {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
                                  },
@@ -1099,13 +1083,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -1166,6 +1144,10 @@
                            {
                               "data" : [
                                  {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N13"}
+                                 },
+                                 {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
                                  },
@@ -1206,13 +1188,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -1277,6 +1253,10 @@
                            {
                               "data" : [
                                  {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N14"}
+                                 },
+                                 {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
                                  },
@@ -1317,13 +1297,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -1388,6 +1362,10 @@
                            {
                               "data" : [
                                  {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N15"}
+                                 },
+                                 {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
                                  },
@@ -1428,13 +1406,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -1485,6 +1457,10 @@
                         "editorData" : [
                            {
                               "data" : [
+                                 {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N16"}
+                                 },
                                  {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
@@ -1544,13 +1520,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -1610,6 +1580,10 @@
                            {
                               "data" : [
                                  {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N17"}
+                                 },
+                                 {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
                                  },
@@ -1663,13 +1637,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -1734,6 +1702,10 @@
                            {
                               "data" : [
                                  {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N18"}
+                                 },
+                                 {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
                                  },
@@ -1774,13 +1746,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -1832,6 +1798,10 @@
                            {
                               "data" : [
                                  {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N19"}
+                                 },
+                                 {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
                                  },
@@ -1882,7 +1852,8 @@
             ]
          },
          "editorData" : {
-            "needLayout" : {"type" : 19, "value" : 0}
+            "needLayout" : {"type" : 19, "value" : 0},
+            "nextNodeId" : {"type" : 5, "value" : 21}
          }
       }
    }

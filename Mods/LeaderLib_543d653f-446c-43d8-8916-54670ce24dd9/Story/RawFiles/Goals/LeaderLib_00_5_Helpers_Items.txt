@@ -69,14 +69,14 @@ CharacterEquipItem(_Character, _Item);
 PROC
 LeaderLib_Helper_UnequipWeapons((CHARACTERGUID)_Character)
 AND
-CharacterGetEquippedWeapon(_Character, (ITEMGUID)_Item)
+CharacterGetEquippedItem(_Character, "Weapon", (ITEMGUID)_Item)
 THEN
 CharacterUnequipItem(_Character, _Item);
 
 PROC
 LeaderLib_Helper_UnequipWeapons((CHARACTERGUID)_Character)
 AND
-CharacterGetEquippedShield(_Character, (ITEMGUID)_Item)
+CharacterGetEquippedItem(_Character, "Shield", (ITEMGUID)_Item)
 AND
 GetTemplate(_Item, _Template)
 AND

@@ -1,5 +1,14 @@
 LeaderLib Changelog
 =======
+# 1.0.1.6
+* Quick fix for Lothar's name not being visible in a specific dialog line.
+
+# 1.0.1.5
+* Small fix for a mod menu re-opening bug, found in rare cases.
+
+# 1.0.1.4
+* Combined all LeaderLib dependency mod icons into one texture atlas, as a workaround to mitigate the 7 atlas limit present in DOS2 and DOS2DE.
+
 # 1.0.1.0
 * Mod Menu Book
 	* Made the Mod Menu book available for free by request from Old Man Lothar.

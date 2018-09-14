@@ -682,6 +682,69 @@ THEN
 ItemTemplateAddTo(_ModMenuBookTemplate, _Player, 1);
 //END_REGION
 
+//REGION DIALOG_SAFETY_CHECK
+IF
+SavegameLoaded(_,_,_,_)
+AND
+DB_LeaderLib_LeaderTrader(_LeaderTrader)
+AND
+NOT DB_Dialogs(_LeaderTrader, _)
+AND
+DB_CurrentLevel(_Level)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader] [ERROR] LeaderTrader has no dialog set in level [",_Level,"]! Setting to default.");
+LeaderLib_Traders_SetDialogToFirstAvailable(_LeaderTrader, "LeaderLib.LeaderTrader", _Level);
+ProcObjectTimer(_LeaderTrader, "LeaderLib_Timers_CheckLeaderTraderDialog", 500);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_LeaderTrader, "LeaderLib_Timers_CheckLeaderTraderDialog")
+AND
+NOT DB_Dialogs(_LeaderTrader, _)
+AND
+DB_LeaderLib_LeaderTrader_Dialog("Default", _Dialog)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader] [ERROR] LeaderTrader was unable to set a dialog via [LeaderLib_Traders_SetDialogToFirstAvailable]. Setting to default value in [DB_LeaderLib_LeaderTrader_Dialog].");
+DB_Dialogs(_LeaderTrader, _Dialog);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_LeaderTrader, "LeaderLib_Timers_CheckLeaderTraderDialog")
+AND
+NOT DB_Dialogs(_LeaderTrader, _)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader] [ERROR] LeaderTrader was unable to set a dialog via [LeaderLib_Traders_SetDialogToFirstAvailable], and failed to retrieve default dialog from [DB_LeaderLib_LeaderTrader_Dialog]. Setting to [LeaderLib_LeaderTrader_Default].");
+DB_Dialogs(_LeaderTrader, "LeaderLib_LeaderTrader_Default");
+//END_REGION
+
+//REGION SPAWN_SAFETY_CHECK
+IF
+SavegameLoaded(_,_,_,_)
+AND
+DB_LeaderLib_LeaderTrader(_LeaderTrader)
+AND
+DB_GlobalFlag("LeaderLib_InitialEventFlowComplete")
+AND
+NOT DB_LeaderLib_Traders_Active(_LeaderTrader, _, _)
+AND
+DB_CurrentLevel(_Level)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader] [ERROR] LeaderTrader hasn't spawned in level [",_Level,"]! Attempting to spawn manually.");
+LeaderLib_Traders_Internal_CreateTrader("LeaderLib.LeaderTrader", _Level);
+ProcObjectTimer(_LeaderTrader, "LeaderLib_Timers_CheckLeaderTraderSpawn", 2000);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_LeaderTrader, "LeaderLib_Timers_CheckLeaderTraderSpawn")
+AND
+NOT DB_LeaderLib_Traders_Active(_LeaderTrader, _, _)
+AND
+DB_CurrentLevel(_Level)
+AND
+DB_LeaderLib_Traders_LevelPosition("LeaderLib.LeaderTrader", _Level, _x, _y, _z)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader] [ERROR] LeaderTrader was unable to spawn via [LeaderLib_Traders_Internal_CreateTrader]! Attempting to teleport to position manually.");
+TeleportToPosition(_LeaderTrader, _x, _y, _z, "LeaderLib_Events_OnTraderTeleported", 0);
+DB_LeaderLib_Traders_Active(_LeaderTrader, "LeaderLib.LeaderTrader", _Level);
+//END_REGION
+
 //REGION FIXES
 IF
 ObjectFlagSet("LeaderLib_LeaderTrader_GaveIntroItems", (CHARACTERGUID)_Character, _)

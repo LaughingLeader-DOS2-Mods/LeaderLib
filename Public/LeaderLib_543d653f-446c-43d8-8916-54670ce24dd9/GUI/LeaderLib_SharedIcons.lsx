@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <save>
-    <header version="2" time="1536566713" />
-    <version major="3" minor="6" revision="0" build="4" />
+    <header version="2" time="1536960377" />
+    <version major="3" minor="6" revision="0" build="5" />
     <region id="IconUVList">
         <node id="root">
             <children>
@@ -363,6 +363,20 @@
                     <attribute id="V2" value="0.0155029" type="6" />
                 </node>
                 <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Rock_A" type="22" />
+                    <attribute id="U1" value="0.828247" type="6" />
+                    <attribute id="U2" value="0.843628" type="6" />
+                    <attribute id="V1" value="0.00012207" type="6" />
+                    <attribute id="V2" value="0.0155029" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Shuriken_A" type="22" />
+                    <attribute id="U1" value="0.812622" type="6" />
+                    <attribute id="U2" value="0.828003" type="6" />
+                    <attribute id="V1" value="0.00012207" type="6" />
+                    <attribute id="V2" value="0.0155029" type="6" />
+                </node>
+                <node id="IconUV">
                     <attribute id="MapKey" value="LeaderLib_Items_ModMenuBook" type="22" />
                     <attribute id="U1" value="0.00012207" type="6" />
                     <attribute id="U2" value="0.0155029" type="6" />
@@ -380,7 +394,7 @@
                     <attribute id="Width" value="64" type="4" />
                 </node>
                 <node id="TextureAtlasPath">
-                    <attribute id="Path" value="Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Assets/Textures/Icons/LeaderLib_SharedIcons.dds" type="20" />
+                    <attribute id="Path" value="Assets/Textures/Icons/LeaderLib_SharedIcons.dds" type="20" />
                     <attribute id="UUID" value="7edbcc6f-1325-4566-8f47-e014dedec2fb" type="22" />
                 </node>
                 <node id="TextureAtlasTextureSize">

@@ -795,6 +795,15 @@ LeaderLib_Helper_QRY_Internal_IsDamageStatus("DAMAGE_ON_MOVE")
 THEN
 DB_NOOP(1);
 //END_REGION
+
+QRY
+LeaderLib_Helper_QRY_IsLobby((STRING)_Level)
+AND
+_Level == "Arena_Lobby"
+THEN
+DB_NOOP(1);
+
+
 EXITSECTION
 
 ENDEXITSECTION

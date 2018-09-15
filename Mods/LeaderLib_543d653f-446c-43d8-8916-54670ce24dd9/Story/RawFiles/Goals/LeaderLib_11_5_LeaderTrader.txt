@@ -686,6 +686,8 @@ ItemTemplateAddTo(_ModMenuBookTemplate, _Player, 1);
 IF
 SavegameLoaded(_,_,_,_)
 AND
+DB_GlobalFlag("LeaderLib_InitialEventFlowComplete")
+AND
 DB_LeaderLib_LeaderTrader(_LeaderTrader)
 AND
 NOT DB_Dialogs(_LeaderTrader, _)
@@ -719,9 +721,9 @@ DB_Dialogs(_LeaderTrader, "LeaderLib_LeaderTrader_Default");
 IF
 SavegameLoaded(_,_,_,_)
 AND
-DB_LeaderLib_LeaderTrader(_LeaderTrader)
-AND
 DB_GlobalFlag("LeaderLib_InitialEventFlowComplete")
+AND
+DB_LeaderLib_LeaderTrader(_LeaderTrader)
 AND
 NOT DB_LeaderLib_Traders_Active(_LeaderTrader, _, _)
 AND

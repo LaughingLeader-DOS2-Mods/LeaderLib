@@ -11,6 +11,8 @@ INITSECTION
 KBSECTION
 IF
 RegionStarted(_Level)
+AND
+NOT LeaderLib_Helper_QRY_IsLobby(_Level)
 THEN
 LeaderLib_EventFlow_Internal_StartInit(_Level);
 LeaderLib_EventFlow_Init_AddSortFlow();
@@ -74,7 +76,7 @@ LeaderLib_Array_AddToDictionary("LeaderLib_DefaultEventFlow", "LeaderLib_Command
 IF
 GameStarted(_Level,_)
 AND
-IsCharacterCreationLevel(_Level, 0)
+IsGameLevel(_Level, 1)
 THEN
 TimerCancel("LeaderLib_Timers_EventFlow_SafetyTimer");
 TimerLaunch("LeaderLib_Timers_EventFlow_SafetyTimer", 2000);
@@ -84,7 +86,7 @@ TimerFinished("LeaderLib_Timers_EventFlow_SafetyTimer")
 AND
 DB_CurrentLevel(_Level)
 AND
-IsCharacterCreationLevel(_Level, 0)
+IsGameLevel(_Level, 1)
 AND
 NOT LeaderLib_EventFlow_QRY_CurrentlyRunning("LeaderLib_DefaultEventFlow")
 AND

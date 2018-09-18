@@ -34,13 +34,6 @@ NOT DB_LeaderLib_Combat_ActiveObject(_CombatID, _Object);
 PROC
 LeaderLib_Combat_Clear_CombatData((INTEGER)_CombatID)
 AND
-DB_LeaderLib_Combat_Objects(_CombatID, _Object)
-THEN
-NOT DB_LeaderLib_Combat_Objects(_CombatID, _Object);
-
-PROC
-LeaderLib_Combat_Clear_CombatData((INTEGER)_CombatID)
-AND
 DB_LeaderLib_Combat_DeadObjects(_CombatID, _Object)
 THEN
 NOT DB_LeaderLib_Combat_DeadObjects(_CombatID, _Object);
@@ -69,18 +62,8 @@ THEN
 NOT DB_LeaderLib_Combat_ActiveCombat(_CombatID);
 
 IF
-ObjectEnteredCombat(_Object, _CombatID)
-AND
-NOT DB_LeaderLib_Combat_Objects(_CombatID, _Object)
-THEN
-DB_LeaderLib_Combat_Objects(_CombatID, _Object);
-
-IF
 ObjectLeftCombat(_Object, _CombatID)
-AND
-DB_LeaderLib_Combat_Objects(_CombatID, _Object)
 THEN
-NOT DB_LeaderLib_Combat_Objects(_CombatID, _Object);
 LeaderLib_Combat_Clear_ActiveTurn(_CombatID, _Object);
 //END_REGION
 
@@ -120,14 +103,14 @@ DB_NOOP(1);
 IF
 ObjectTurnStarted(_Object)
 AND
-DB_LeaderLib_Combat_Objects(_CombatID, _Object)
+DB_CombatObjects(_Object, _CombatID)
 THEN
 LeaderLib_Combat_Set_ActiveTurn(_CombatID, _Object);
 
 IF
 ObjectTurnEnded(_Object)
 AND
-DB_LeaderLib_Combat_Objects(_CombatID, _Object)
+DB_CombatObjects(_Object, _CombatID)
 THEN
 LeaderLib_Combat_Clear_ActiveTurn(_CombatID, _Object);
 
@@ -162,19 +145,25 @@ DB_LeaderLib_Combat_Casualties(_CombatID, _Victim, _AttackOwner);
 IF
 CharacterDied(_Object)
 AND
-DB_LeaderLib_Combat_Objects(_CombatID, (GUIDSTRING)_Object)
+GlobalGetFlag("LeaderLib_Combat_TrackDeadObjects", 1)
+AND
+DB_CombatObjects(_Object, _CombatID)
 THEN
 DB_LeaderLib_Combat_DeadObjects(_CombatID, (GUIDSTRING)_Object);
 
 IF
 ItemDestroyed(_Object)
 AND
-DB_LeaderLib_Combat_Objects(_CombatID, (GUIDSTRING)_Object)
+GlobalGetFlag("LeaderLib_Combat_TrackDeadObjects", 1)
+AND
+DB_CombatObjects(_Object, _CombatID)
 THEN
 DB_LeaderLib_Combat_DeadObjects(_CombatID, (GUIDSTRING)_Object);
 
 IF
 CharacterKilledBy(_Victim, _AttackOwner, _Attacker)
+AND
+GlobalGetFlag("LeaderLib_Combat_TrackDeadObjects", 1)
 AND
 _Attacker != NULL_00000000-0000-0000-0000-000000000000
 AND
@@ -184,6 +173,8 @@ LeaderLib_Combat_AddCasualty(_CombatID, _Victim, _Attacker);
 
 IF
 CharacterKilledBy(_Victim, _AttackOwner, _Attacker)
+AND
+GlobalGetFlag("LeaderLib_Combat_TrackDeadObjects", 1)
 AND
 _AttackOwner != NULL_00000000-0000-0000-0000-000000000000
 AND
@@ -196,17 +187,18 @@ LeaderLib_Combat_AddCasualty(_CombatID, _Victim, _AttackOwner);
 IF
 CharacterDestroyedItem(_Attacker, _Victim)
 AND
+GlobalGetFlag("LeaderLib_Combat_TrackDeadObjects", 1)
+AND
 DB_LeaderLib_Combat_ActiveObject(_CombatID, (GUIDSTRING)_Victim)
 THEN
 LeaderLib_Combat_AddCasualty(_CombatID, _Victim, _Attacker);
-
 //END_REGION
 
 //REGION QUERIES
 QRY
 LeaderLib_Combat_QRY_HasAliveEnemies((CHARACTERGUID)_Character)
 AND
-DB_LeaderLib_Combat_Objects(_CombatID, _Object)
+DB_CombatObjects(_Object, _CombatID)
 AND
 _Object != _Character
 AND
@@ -240,9 +232,7 @@ LeaderLib_Combat_ClearRandomEnemyData(_Ally, _CombatID);
 PROC
 LeaderLib_Combat_GetRandomEnemy((CHARACTERGUID)_Ally, (INTEGER)_CombatID)
 AND
-DB_LeaderLib_Combat_Objects(_CombatID, _Character)
-AND
-ObjectIsCharacter((CHARACTERGUID)_Character, 1)
+DB_CombatCharacters(_Character, _CombatID)
 AND
 _Character != _Ally
 AND
@@ -279,9 +269,7 @@ LeaderLib_Combat_ClearRandomCharacterData(_CombatID);
 PROC
 LeaderLib_Combat_GetRandomCharacter((INTEGER)_CombatID)
 AND
-DB_LeaderLib_Combat_Objects(_CombatID, _Character)
-AND
-ObjectIsCharacter((CHARACTERGUID)_Character, 1)
+DB_CombatCharacters(_Character, _CombatID)
 THEN
 LeaderLib_Combat_Internal_AddToCharacterList(_Character, _CombatID);
 
@@ -314,11 +302,11 @@ LeaderLib_Combat_ClearRandomItemData(_CombatID);
 PROC
 LeaderLib_Combat_GetRandomItem((INTEGER)_CombatID)
 AND
-DB_LeaderLib_Combat_Objects(_CombatID, _Item)
+DB_CombatObjects(_Object, _CombatID)
 AND
-ObjectIsItem((ITEMGUID)_Item, 1)
+ObjectIsItem((ITEMGUID)_Object, 1)
 THEN
-LeaderLib_Combat_Internal_AddToItemList(_Item, _CombatID);
+LeaderLib_Combat_Internal_AddToItemList(_Object, _CombatID);
 
 PROC
 LeaderLib_Combat_GetRandomItem((INTEGER)_CombatID)
@@ -349,7 +337,7 @@ LeaderLib_Combat_ClearRandomObjectData(_CombatID);
 PROC
 LeaderLib_Combat_GetRandomObject((INTEGER)_CombatID)
 AND
-DB_LeaderLib_Combat_Objects(_CombatID, _Object)
+DB_CombatObjects(_Object, _CombatID)
 THEN
 LeaderLib_Combat_Internal_AddToObjectList(_Object, _CombatID);
 
@@ -451,6 +439,7 @@ THEN
 SysClear("DB_LeaderLib_Combat_Casualties", 3);
 //Deprecated
 SysClear("DB_LeaderLib_Combat_PastCombat", 1);
+SysClear("DB_LeaderLib_Combat_Objects", 2); // Use DB_CombatObjects instead.
 
 IF
 CombatEnded(_CombatID)

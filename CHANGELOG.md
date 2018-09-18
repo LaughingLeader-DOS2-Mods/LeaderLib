@@ -1,5 +1,10 @@
 LeaderLib Changelog
 =======
+# 1.0.2.0
+* New helpers (Random rolling, dummy helpers).
+* Cleaned up combat helper data, disabled some features by default.
+* Added icons for some mods getting closer to release (Mimicry & Weapon Expansion).
+
 # 1.0.1.6
 * Quick fix for Lothar's name not being visible in a specific dialog line.
 

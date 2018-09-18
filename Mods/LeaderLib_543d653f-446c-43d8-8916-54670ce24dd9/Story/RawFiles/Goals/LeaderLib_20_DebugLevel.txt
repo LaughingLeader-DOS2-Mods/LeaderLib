@@ -595,9 +595,7 @@ NOT DB_LeaderLib_Combat_Temp_RandomCharacter(_CombatID, _, _)
 AND
 IntegertoString(_CombatID, _CombatStr)
 AND
-DB_LeaderLib_Combat_Objects(_CombatID, _Object)
-AND
-ObjectIsCharacter((CHARACTERGUID)_Object, 1)
+DB_CombatCharacters(_Object, _CombatID)
 AND
 CharacterGetDisplayName(_Object, _, _Name)
 THEN

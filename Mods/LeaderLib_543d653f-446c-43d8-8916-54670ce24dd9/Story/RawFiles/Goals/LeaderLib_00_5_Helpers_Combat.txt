@@ -2,7 +2,6 @@ Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
 //DB_LeaderLib_Combat_ActiveCombat(_CombatID)
-//DB_LeaderLib_Combat_PastCombat(_CombatID)
 //DB_LeaderLib_Combat_Rounds(_CombatID, _CurrentRound, _TotalRounds)
 //DB_LeaderLib_Combat_Objects(_CombatID, _Object)
 //DB_LeaderLib_Combat_ActiveObject(_CombatID, _Object)
@@ -38,6 +37,20 @@ AND
 DB_LeaderLib_Combat_Objects(_CombatID, _Object)
 THEN
 NOT DB_LeaderLib_Combat_Objects(_CombatID, _Object);
+
+PROC
+LeaderLib_Combat_Clear_CombatData((INTEGER)_CombatID)
+AND
+DB_LeaderLib_Combat_DeadObjects(_CombatID, _Object)
+THEN
+NOT DB_LeaderLib_Combat_DeadObjects(_CombatID, _Object);
+
+PROC
+LeaderLib_Combat_Clear_CombatData((INTEGER)_CombatID)
+AND
+DB_LeaderLib_Combat_Casualties(_CombatID, _Victim, _AttackOwner)
+THEN
+NOT DB_LeaderLib_Combat_Casualties(_CombatID, _Victim, _AttackOwner);
 //END_REGION
 
 //REGION COMBAT_TRACKING
@@ -47,7 +60,6 @@ AND
 NOT DB_LeaderLib_Combat_ActiveCombat(_CombatID)
 THEN
 DB_LeaderLib_Combat_ActiveCombat(_CombatID);
-NOT DB_LeaderLib_Combat_PastCombat(_CombatID);
 
 IF
 CombatEnded(_CombatID)
@@ -55,7 +67,6 @@ AND
 DB_LeaderLib_Combat_ActiveCombat(_CombatID)
 THEN
 NOT DB_LeaderLib_Combat_ActiveCombat(_CombatID);
-DB_LeaderLib_Combat_PastCombat(_CombatID);
 
 IF
 ObjectEnteredCombat(_Object, _CombatID)
@@ -97,7 +108,12 @@ AND
 DB_LeaderLib_Combat_Rounds(_CombatID, _CurrentRound, _TotalRounds)
 THEN
 NOT DB_LeaderLib_Combat_Rounds(_CombatID, _CurrentRound, _TotalRounds);
-DB_LeaderLib_Combat_Rounds(_CombatID, -1, _TotalRounds);
+LeaderLib_Combat_OnCombatEnded(_CombatID, _TotalRounds);
+
+PROC
+LeaderLib_Combat_OnCombatEnded((INTEGER)_CombatID, (INTEGER)_TotalRounds)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION TURN_TRACKING
@@ -183,6 +199,7 @@ AND
 DB_LeaderLib_Combat_ActiveObject(_CombatID, (GUIDSTRING)_Victim)
 THEN
 LeaderLib_Combat_AddCasualty(_CombatID, _Victim, _Attacker);
+
 //END_REGION
 
 //REGION QUERIES
@@ -422,6 +439,23 @@ AND
 SysCount("DB_LeaderLib_Combat_Temp_ItemCombatList", 3, _Index)
 THEN
 DB_LeaderLib_Combat_Temp_ItemCombatList(_Index, _Item, _CombatID);
+//END_REGION
+
+//REGION CLEANUP
+//Cleanup past data
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 0, 2, 0)
+THEN
+SysClear("DB_LeaderLib_Combat_Casualties", 3);
+//Deprecated
+SysClear("DB_LeaderLib_Combat_PastCombat", 1);
+
+IF
+CombatEnded(_CombatID)
+THEN
+LeaderLib_Combat_Clear_CombatData(_CombatID);
 //END_REGION
 EXITSECTION
 

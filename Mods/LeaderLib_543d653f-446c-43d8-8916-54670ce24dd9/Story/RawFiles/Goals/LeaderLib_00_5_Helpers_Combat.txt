@@ -3,7 +3,6 @@ SubGoalCombiner SGC_AND
 INITSECTION
 //DB_LeaderLib_Combat_ActiveCombat(_CombatID)
 //DB_LeaderLib_Combat_Rounds(_CombatID, _CurrentRound, _TotalRounds)
-//DB_LeaderLib_Combat_Objects(_CombatID, _Object)
 //DB_LeaderLib_Combat_ActiveObject(_CombatID, _Object)
 //DB_LeaderLib_Combat_DeadObjects(_CombatID, _Object)
 //DB_LeaderLib_Combat_Casualties(_CombatID, _Victim, _Attacker)

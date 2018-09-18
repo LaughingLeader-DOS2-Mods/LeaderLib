@@ -1489,15 +1489,13 @@ _Chance > 0
 AND
 _Chance < 100
 AND
-LeaderLib_Random_QRY(100)
+LeaderLib_Roll_QRY(_Chance)
 AND
 DB_LeaderLib_Random(_Roll)
 AND
 LeaderLog_QRY_LogInt("TRACE", "[LeaderLib:TreasureSystem:Internal:RollSucceeded] Rolled: [",_Roll,"/",_Chance,"].")
-AND
-_Roll <= _Chance
 THEN
-NOT DB_LeaderLib_Random(_Roll); // Also cleared by LeaderLib_Random_QRY
+NOT DB_LeaderLib_Random(_Roll);
 
 QRY
 LeaderLib_Treasure_QRY_Internal_CanApplyDeltamod((ITEMGUID)_Item, (STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_Deltamod)

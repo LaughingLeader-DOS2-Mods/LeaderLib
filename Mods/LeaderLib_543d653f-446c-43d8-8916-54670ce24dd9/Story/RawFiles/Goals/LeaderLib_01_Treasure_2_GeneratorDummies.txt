@@ -17,6 +17,8 @@ GetPosition(_AtObject, _x,_y,_z)
 AND
 TemporaryCharacterCreateAtPosition(_x,_y,_z,"LeaderLib_GeneratorDummy_24a5d60b-680b-4fbc-9b2c-19061a261297", 0, _Dummy)
 THEN
+SetStoryNpc(_Dummy, 1);
+CharacterSetDetached(_Dummy, 1);
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:CreateGeneratorDummy] Generator dummy created. Set ID to [",_DummyID,"].");
 SetVarString(_Dummy, "LeaderLib_DummyID", _DummyID);
 DB_LeaderLib_Treasure_GeneratorDummies(_Dummy);
@@ -75,6 +77,7 @@ THEN
 SetVarString(_Dummy, "LeaderLib_DummyID", "");
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:ResetDummyByID] Dummy with ID [",_DummyID,"] reset.");
 LeaderLib_Treasure_RemoveNextDummy(_Dummy);
+SetOnStage(_Dummy, 0);
 
 PROC
 LeaderLib_Treasure_ResetDummy((CHARACTERGUID)_Dummy)
@@ -84,6 +87,7 @@ THEN
 SetVarString(_Dummy, "LeaderLib_DummyID", "");
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:ResetDummy] Dummy ID reset.");
 LeaderLib_Treasure_RemoveNextDummy(_Dummy);
+SetOnStage(_Dummy, 0);
 
 PROC
 LeaderLib_Treasure_RemoveNextDummy((CHARACTERGUID)_Dummy)
@@ -172,6 +176,7 @@ ObjectExists(_Dummy, 1)
 AND
 ObjectIsOnStage(_Dummy, 0)
 THEN
+LeaderLib_Helper_SetupDummy(_Dummy);
 SetOnStage(_Dummy, 1);
 
 PROC
@@ -211,6 +216,15 @@ NOT DB_LeaderLib_Treasure_GeneratorDummies(_Dummy)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:GeneratorDummyInitialized] Unregistered generator dummy initialized. Added to database.");
 DB_LeaderLib_Treasure_GeneratorDummies(_Dummy);
+
+IF
+RegionEnded(_Region)
+AND
+DB_LeaderLib_Treasure_GeneratorDummies(_Dummy)
+THEN
+NOT DB_LeaderLib_Treasure_GeneratorDummies(_Dummy);
+LeaderLib_Helper_ResetDummy(_Dummy);
+SetOnStage(_Dummy, 0);
 //END_REGION
 EXITSECTION
 

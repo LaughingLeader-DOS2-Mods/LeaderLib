@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <save>
-    <header version="2" time="1536960377" />
+    <header version="2" time="1537242001" />
     <version major="3" minor="6" revision="0" build="5" />
     <region id="IconUVList">
         <node id="root">
@@ -258,6 +258,13 @@
                     <attribute id="V2" value="0.0155029" type="6" />
                 </node>
                 <node id="IconUV">
+                    <attribute id="MapKey" value="LLMIME_Status_CounterThrow" type="22" />
+                    <attribute id="U1" value="0.937622" type="6" />
+                    <attribute id="U2" value="0.953003" type="6" />
+                    <attribute id="V1" value="0.00012207" type="6" />
+                    <attribute id="V2" value="0.0155029" type="6" />
+                </node>
+                <node id="IconUV">
                     <attribute id="MapKey" value="LLMIME_Status_Decoy" type="22" />
                     <attribute id="U1" value="0.562622" type="6" />
                     <attribute id="U2" value="0.578003" type="6" />
@@ -373,6 +380,48 @@
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Shuriken_A" type="22" />
                     <attribute id="U1" value="0.812622" type="6" />
                     <attribute id="U2" value="0.828003" type="6" />
+                    <attribute id="V1" value="0.00012207" type="6" />
+                    <attribute id="V2" value="0.0155029" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Shuriken_A_Explosive" type="22" />
+                    <attribute id="U1" value="0.906372" type="6" />
+                    <attribute id="U2" value="0.921753" type="6" />
+                    <attribute id="V1" value="0.00012207" type="6" />
+                    <attribute id="V2" value="0.0155029" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Shuriken_A_Poison" type="22" />
+                    <attribute id="U1" value="0.921997" type="6" />
+                    <attribute id="U2" value="0.937378" type="6" />
+                    <attribute id="V1" value="0.00012207" type="6" />
+                    <attribute id="V2" value="0.0155029" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_Kevin_A" type="22" />
+                    <attribute id="U1" value="0.890747" type="6" />
+                    <attribute id="U2" value="0.906128" type="6" />
+                    <attribute id="V1" value="0.00012207" type="6" />
+                    <attribute id="V2" value="0.0155029" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_Kevin_Nails" type="22" />
+                    <attribute id="U1" value="0.875122" type="6" />
+                    <attribute id="U2" value="0.890503" type="6" />
+                    <attribute id="V1" value="0.00012207" type="6" />
+                    <attribute id="V2" value="0.0155029" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_Kevin_Oil" type="22" />
+                    <attribute id="U1" value="0.843872" type="6" />
+                    <attribute id="U2" value="0.859253" type="6" />
+                    <attribute id="V1" value="0.00012207" type="6" />
+                    <attribute id="V2" value="0.0155029" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_Kevin_Poison" type="22" />
+                    <attribute id="U1" value="0.859497" type="6" />
+                    <attribute id="U2" value="0.874878" type="6" />
                     <attribute id="V1" value="0.00012207" type="6" />
                     <attribute id="V2" value="0.0155029" type="6" />
                 </node>

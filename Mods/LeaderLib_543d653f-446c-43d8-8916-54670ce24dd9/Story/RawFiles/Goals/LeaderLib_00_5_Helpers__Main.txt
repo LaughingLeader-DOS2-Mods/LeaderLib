@@ -466,6 +466,42 @@ THEN
 DB_LeaderLib_Random(_Val);
 //END_REGION
 
+//REGION RANDOM_ROLL
+QRY
+LeaderLib_Helper_QRY_RollSucceeded((INTEGER)_Roll, (INTEGER)_Target, (INTEGER)_MaxRoll)
+AND
+_Roll >= _MaxRoll
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_RollSucceeded((INTEGER)_Roll, (INTEGER)_Target, (INTEGER)_MaxRoll)
+AND
+_Roll > 0
+AND
+_Roll <= _Target
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Roll_QRY((INTEGER)_Target)
+AND
+LeaderLib_Roll_QRY(_Target, 100)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Roll_QRY((INTEGER)_Target, (INTEGER)_MaxRoll)
+AND
+LeaderLib_Random_QRY(0, _MaxRoll)
+AND
+DB_LeaderLib_Random(_Ran)
+AND
+LeaderLib_Helper_QRY_RollSucceeded(_Ran, _Target, _MaxRoll)
+THEN
+DB_NOOP(1);
+//END_REGION
+
 //REGION DATABASE_HELPERS
 PROC
 LeaderLib_Helper_ClearExistingDatabase((STRING)_DatabaseName, (INTEGER)_Arity)
@@ -803,6 +839,23 @@ _Level == "Arena_Lobby"
 THEN
 DB_NOOP(1);
 
+//REGION DUMMY_HELPERS
+PROC
+LeaderLib_Helper_SetupDummy((CHARACTERGUID)_Dummy)
+THEN
+SetStoryNpc(_Dummy, 1);
+CharacterSetDetached(_Dummy, 1);
+SetCanJoinCombat(_Dummy, 0);
+SetCanFight(_Dummy, 0);
+
+PROC
+LeaderLib_Helper_ResetDummy((CHARACTERGUID)_Dummy)
+THEN
+SetStoryNpc(_Dummy, 0);
+CharacterSetDetached(_Dummy, 0);
+SetCanJoinCombat(_Dummy, 1);
+SetCanFight(_Dummy, 1);
+//END_REGION
 
 EXITSECTION
 

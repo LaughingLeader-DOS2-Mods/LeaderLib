@@ -12,6 +12,26 @@ AND
 _Count > 0
 THEN
 DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_ItemIsPoisoned((ITEMGUID)_Item)
+AND
+IsTagged(_Item, "POISONED", 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_ItemIsPoisoned((ITEMGUID)_Item)
+AND
+IsTagged(_Item, "POISONED", 0)
+AND
+GetTemplate(_Item, _Template)
+AND
+StringContains(_Template, "Poison", 1)
+AND
+StringContains(_Template, "_Res_", 0)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION EQUIPMENT_REFRESH

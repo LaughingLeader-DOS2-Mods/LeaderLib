@@ -11,6 +11,16 @@ THEN
 DB_Origins((CHARACTERGUID)S_GLO_CharacterCreationDummy_001_da072fe7-fdd5-42ae-9139-8bd4b9fca406);
 
 IF
+GameModeStarted(_GameMode, 1)
+AND
+NOT DB_UndeadRacePresets(_,_)
+THEN
+DB_UndeadRacePresets(0,"Undead_Dwarf");
+DB_UndeadRacePresets(1,"Undead_Elf");
+DB_UndeadRacePresets(2,"Undead_Human");
+DB_UndeadRacePresets(3,"Undead_Lizard");
+
+IF
 RegionStarted("TestLevel_LL_LeaderLib")
 THEN
 GlobalSetFlag("LeaderLog_Debug_Enabled");

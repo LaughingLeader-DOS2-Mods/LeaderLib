@@ -43,15 +43,6 @@ CreateItemTemplateAtPosition("S_LeaderLib_EventParser_0f686d7d-2304-4f23-bd9a-8d
 THEN
 DB_LeaderLib_EventParser_Spawned(_EventParser);
 
-PROC
-LeaderLib_EventParser_Internal_CreateNew()
-AND
-NOT DB_LeaderLib_EventParser_Spawned(_) // Creating a temporary event parser failed, use a player
-AND
-CharacterGetHostCharacter(_Player)
-THEN
-DB_LeaderLib_EventParser_Spawned(_Player);
-
 QRY
 LeaderLib_QRY_EventParser_CreateNew()
 THEN

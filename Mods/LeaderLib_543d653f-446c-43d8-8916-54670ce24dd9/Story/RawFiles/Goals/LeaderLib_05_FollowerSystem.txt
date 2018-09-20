@@ -72,6 +72,17 @@ LeaderLib_Follower_DismissCharacterFromOwner(_Owner, _Follower, _Effect, 0);
 PROC
 LeaderLib_Follower_DismissCharacterFromOwner((CHARACTERGUID)_Owner, (CHARACTERGUID)_Follower, (STRING)_Effect, (INTEGER)_SetOffStage)
 THEN
+LeaderLib_Follower_Internal_ClearFollowerData(_Owner, _Follower);
+LeaderLib_Follower_Internal_SetOffStage(_Follower, _SetOffStage);
+LeaderLib_Follower_Internal_ResetPositionIfEnabled(_Follower, _Effect);
+CharacterCharacterSetEvent(_Owner, _Follower, "LeaderLib_Events_FollowerDismissed");
+//ClearTag(_Follower, "SUMMON");
+
+PROC
+LeaderLib_Follower_Internal_ClearFollowerData((CHARACTERGUID)_Owner, (CHARACTERGUID)_Follower)
+AND
+DB_LeaderLib_PartyFollower(_Owner, _Follower)
+THEN
 NOT DB_LeaderLib_PartyFollower(_Owner, _Follower);
 SetVarObject(_Follower, "LeaderLib_Follower_LastOwner", _Owner);
 ClearVarObject(_Follower, "LeaderLib_Follower_Owner");
@@ -81,10 +92,6 @@ ObjectClearFlag(_Follower, "LeaderLib_CharacterIsFollowing");
 ProcCharacterStopFollow(_Follower);
 CharacterRemoveFromPlayerCharacter(_Follower, _Owner);
 CharacterDetachFromGroup(_Follower);
-LeaderLib_Follower_Internal_SetOffStage(_Follower, _SetOffStage);
-LeaderLib_Follower_Internal_ResetPositionIfEnabled(_Follower, _Effect);
-CharacterCharacterSetEvent(_Owner, _Follower, "LeaderLib_Events_FollowerDismissed");
-//ClearTag(_Follower, "SUMMON");
 
 PROC
 LeaderLib_Follower_Internal_SetOffStage((CHARACTERGUID)_Follower, 1)
@@ -111,6 +118,51 @@ AND
 CharacterIsControlled(_Follower, 1)
 THEN
 ProcCharacterStopFollow(_Follower);
+//END_REGION
+
+//REGION OWNER_LEFT_PARTY
+PROC
+LeaderLib_Party_OnCharacterLeftParty((CHARACTERGUID)_LeavingCharacter, (CHARACTERGUID)_FormerPartyMember, (INTEGER)_PartyCount)
+AND
+CharacterIsControlled(_LeavingCharacter, 0)
+AND
+DB_LeaderLib_PartyFollower(_LeavingCharacter, _Follower)
+THEN
+LeaderLib_Follower_Internal_ClearFollowerData(_LeavingCharacter, _Follower);
+LeaderLib_Follower_Internal_ReAttachToNearestPartyMember(_Follower, _FormerPartyMember, _LeavingCharacter);
+
+PROC
+LeaderLib_Follower_Internal_ReAttachToNearestPartyMember((CHARACTERGUID)_Follower, (CHARACTERGUID)_PartyMember, (CHARACTERGUID)_FormerOwner)
+AND
+GetClosestPlayer(_Follower, _Player, _Dist)
+AND
+CharacterIsInPartyWith(_Player, _PartyMember, 1)
+THEN
+LeaderLib_Follower_RecruitCharacter(_Player, _Follower);
+
+//Failsafe
+PROC
+LeaderLib_Follower_Internal_ReAttachToNearestPartyMember((CHARACTERGUID)_Follower, (CHARACTERGUID)_PartyMember, (CHARACTERGUID)_FormerOwner)
+AND
+NOT DB_LeaderLib_PartyFollower(_, _Follower)
+AND
+DB_IsPlayer(_Player)
+AND
+CharacterIsInPartyWith(_Player, _PartyMember, 1)
+AND
+NOT DB_LeaderLib_PartyFollower(_, _Follower)
+THEN
+LeaderLib_Follower_RecruitCharacter(_Player, _Follower);
+
+//No players found
+PROC
+LeaderLib_Follower_Internal_ReAttachToNearestPartyMember((CHARACTERGUID)_Follower, (CHARACTERGUID)_PartyMember, (CHARACTERGUID)_FormerOwner)
+AND
+NOT DB_LeaderLib_PartyFollower(_, _Follower)
+THEN
+LeaderLib_Follower_Internal_SetOffStage(_Follower, 0);
+LeaderLib_Follower_Internal_ResetPositionIfEnabled(_Follower, "");
+CharacterCharacterSetEvent(_FormerOwner, _Follower, "LeaderLib_Events_FollowerDismissed");
 //END_REGION
 
 //REGION HELPERS

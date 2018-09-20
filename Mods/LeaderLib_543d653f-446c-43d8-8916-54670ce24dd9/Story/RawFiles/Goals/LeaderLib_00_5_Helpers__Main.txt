@@ -832,12 +832,29 @@ THEN
 DB_NOOP(1);
 //END_REGION
 
+//REGION QUERIES_MISC
 QRY
 LeaderLib_Helper_QRY_IsLobby((STRING)_Level)
 AND
 _Level == "Arena_Lobby"
 THEN
 DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_ObjectIsAlive((GUIDSTRING)_Object)
+AND
+CharacterIsDead((CHARACTERGUID)_Object, 0)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_ObjectIsAlive((GUIDSTRING)_Object)
+AND
+ItemIsDestroyed((ITEMGUID)_Object, 0)
+THEN
+DB_NOOP(1);
+
+//END_REGION
 
 //REGION DUMMY_HELPERS
 PROC

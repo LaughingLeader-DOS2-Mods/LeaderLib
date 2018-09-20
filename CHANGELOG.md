@@ -1,5 +1,11 @@
 LeaderLib Changelog
 =======
+# 1.0.3.0
+* Minor fix for treasure item counting.
+* Tweaked the dummy helper call.
+* Tweaked the manual treasure generation timer speed.
+* Added an invisible backpack for treasure/container shenanigans.
+
 # 1.0.2.0
 * New helpers (Random rolling, dummy helpers).
 * Cleaned up combat helper data, disabled some features by default.

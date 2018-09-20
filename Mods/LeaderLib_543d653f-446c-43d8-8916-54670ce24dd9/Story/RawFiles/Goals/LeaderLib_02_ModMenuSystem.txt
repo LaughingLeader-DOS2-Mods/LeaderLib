@@ -693,6 +693,16 @@ UserGetFlag(_Player, "LeaderLib_AutoOpenModMenu", 1)
 AND
 NOT ObjectGetFlag(_Player, "LeaderLib_BlockModMenuReopen", 1)
 THEN
+//Delay in case another mod is already opening another menu.
+ProcObjectTimer(_Player, "LeaderLib_Timers_AttemptToOpenModMenu", 500);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_AttemptToOpenModMenu")
+AND
+NOT DB_DialogPlayers(_, _Player, _)
+AND
+QRY_SpeakerIsAvailable(_Player)
+THEN
 LeaderLib_ModMenu_Reopen(_Player);
 
 PROC

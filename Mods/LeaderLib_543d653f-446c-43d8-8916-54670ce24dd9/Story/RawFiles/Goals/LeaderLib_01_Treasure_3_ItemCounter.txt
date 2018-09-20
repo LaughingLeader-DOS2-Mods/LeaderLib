@@ -206,11 +206,9 @@ LeaderLib_Treasure_QRY_Internal_ClampAmount((GUIDSTRING)_Object, (STRING)_ItemEn
 AND
 _NextAmount > _MaxAmount
 AND
-IntegerSubtract(_NextAmount, _MaxAmount, _AmountToGenerate)
+IntegerSubtract(_MaxAmount, _CurrentAmount, _AmountToGenerate)
 AND
-IntegerSum(_AmountToGenerate, _CurrentAmount, _NextGeneratedAmount)
-AND
-_NextGeneratedAmount <= _MaxAmount
+_AmountToGenerate > 0
 THEN
 DB_LeaderLib_Treasure_Temp_AmountToCreate(_Object, _ItemEntry, _AmountToGenerate);
 
@@ -226,6 +224,13 @@ AND
 _AmountToCreate > 0
 THEN
 DB_LeaderLib_Treasure_Temp_AmountToCreate(_Object, _ItemEntry, _AmountToCreate);
+
+QRY
+LeaderLib_Treasure_QRY_ItemLimitNotMet((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_RequestedAmount, (INTEGER)_CurrentAmount)
+AND
+DB_LeaderLib_Treasure_ItemMaxAmount(_TreasureID, _ItemEntry, _AmountToGenerate)
+THEN
+DB_NOOP(1);
 
 QRY
 LeaderLib_Treasure_QRY_CountedItems((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry)

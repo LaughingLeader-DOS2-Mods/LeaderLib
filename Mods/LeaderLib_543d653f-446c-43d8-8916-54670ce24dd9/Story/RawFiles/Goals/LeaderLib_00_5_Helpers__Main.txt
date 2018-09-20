@@ -847,6 +847,7 @@ SetStoryNpc(_Dummy, 1);
 CharacterSetDetached(_Dummy, 1);
 SetCanJoinCombat(_Dummy, 0);
 SetCanFight(_Dummy, 0);
+SetVisible(_Dummy, 0); // Disable Physics
 
 PROC
 LeaderLib_Helper_ResetDummy((CHARACTERGUID)_Dummy)
@@ -855,6 +856,7 @@ SetStoryNpc(_Dummy, 0);
 CharacterSetDetached(_Dummy, 0);
 SetCanJoinCombat(_Dummy, 1);
 SetCanFight(_Dummy, 1);
+SetVisible(_Dummy, 1);
 //END_REGION
 
 EXITSECTION

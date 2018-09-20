@@ -447,7 +447,7 @@ LeaderLib_Treasure_Internal_GenerateTreasureTable((STRING)_ID, (GUIDSTRING)_Obje
 AND
 GetPosition(_Object, _x, _y, _z)
 AND
-CreateItemTemplateAtPosition("LOOT_BackPack_A_6c70c298-aa29-418f-a659-f8e0b5f5fa60", _x, _y, _z, _Backpack)
+CreateItemTemplateAtPosition("LOOT_LeaderLib_BackPack_Invisible_98fa7688-0810-4113-ba94-9a8c8463f830", _x, _y, _z, _Backpack)
 THEN
 SetTag(_Backpack, "LeaderLib_Internal_TreasureTableContainer");
 SetVarString(_Backpack, "LeaderLib_Internal_TreasureID", _TreasureID);
@@ -1107,10 +1107,29 @@ AND
 GlobalGetFlag("LeaderLib_DefaultEventFlowRunning", 0)
 AND
 NOT LeaderLib_Queue_QRY_IsRunning("LeaderLib_ItemGenerationQueue")
+AND
+GlobalGetFlag("LeaderLib_InitialEventFlowComplete", _InitComplete)
 THEN
-LeaderLog_Log("DEBUG", "LeaderLib:TreasureSystem:AddToGenerationQueue] Starting manual generation timer.");
+LeaderLib_Treasure_Internal_StartManualTimer(_InitComplete);
+
+PROC
+LeaderLib_Treasure_Internal_StartManualTimer(0)
+AND
+NOT DB_LeaderLib_Treasure_Temp_ManualTimerRunning(_)
+THEN
+LeaderLog_Log("DEBUG", "LeaderLib:TreasureSystem:AddToGenerationQueue] Starting manual generation timer after 2.5 seconds.");
 TimerCancel("LeaderLib_Timers_Treasure_ManualGenerationTimer");
 TimerLaunch("LeaderLib_Timers_Treasure_ManualGenerationTimer", 2500);
+DB_LeaderLib_Treasure_Temp_ManualTimerRunning(1);
+
+PROC
+LeaderLib_Treasure_Internal_StartManualTimer(1)
+AND
+NOT DB_LeaderLib_Treasure_Temp_ManualTimerRunning(_)
+THEN
+LeaderLog_Log("DEBUG", "LeaderLib:TreasureSystem:AddToGenerationQueue] Starting manual generation timer after 250ms.");
+TimerCancel("LeaderLib_Timers_Treasure_ManualGenerationTimer");
+TimerLaunch("LeaderLib_Timers_Treasure_ManualGenerationTimer", 250);
 DB_LeaderLib_Treasure_Temp_ManualTimerRunning(1);
 
 IF
@@ -1271,18 +1290,60 @@ NOT DB_LeaderLib_Treasure_Temp_AmountToCreate(_Object, _ItemEntry, _AmountToCrea
 NOT DB_LeaderLib_Treasure_Temp_ItemTemplateAmount(_Object, _TreasureID, _ItemEntry, _CurrentAmount);
 NOT DB_LeaderLib_Treasure_Temp_Queue_CountTemplate(_ID, _Object, _TreasureID, _ItemEntry, _GeneratedAmount, _RequirementID);
 
+QRY
+LeaderLib_Treasure_Internal_QRY_SkipGeneration((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Type)
+AND
+NOT DB_LeaderLib_Treasure_Temp_AmountToCreate(_Object, _ItemEntry, _)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Treasure_Internal_QRY_SkipGeneration((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Type)
+AND
+DB_LeaderLib_Treasure_Temp_AmountToCreate(_Object, _ItemEntry, _AmountToCreate)
+AND
+_AmountToCreate <= 0
+THEN
+NOT DB_LeaderLib_Treasure_Temp_AmountToCreate(_Object, _ItemEntry, _AmountToCreate);
+
+QRY
+LeaderLib_Treasure_Internal_QRY_SkipGeneration((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, 0)
+AND
+NOT DB_LeaderLib_Treasure_Temp_ItemTemplateAmount(_Object, _TreasureID, _ItemEntry, _)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Treasure_Internal_QRY_SkipGeneration((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, 1)
+AND
+NOT DB_LeaderLib_Treasure_Temp_ItemStatAmount(_Object, _TreasureID, _, _ItemEntry, _)
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_Treasure_Internal_ClearItemEntryAmount((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_ItemTemplate)
+AND
+DB_LeaderLib_Treasure_Temp_ItemTemplateAmount(_Object, _TreasureID, _ItemEntry, _CurrentAmount)
+THEN
+NOT DB_LeaderLib_Treasure_Temp_ItemTemplateAmount(_Object, _TreasureID, _ItemEntry, _CurrentAmount);
+
+PROC
+LeaderLib_Treasure_Internal_ClearItemEntryAmount((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_ItemTemplate)
+AND
+DB_LeaderLib_Treasure_Temp_ItemStatAmount(_Object, _TreasureID, _ItemTemplate, _ItemEntry, _CurrentAmount)
+THEN
+NOT DB_LeaderLib_Treasure_Temp_ItemStatAmount(_Object, _TreasureID, _ItemTemplate, _ItemEntry, _CurrentAmount);
+
 PROC
 LeaderLib_Treasure_Internal_CountingComplete((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemEntry, 0)
 AND
 DB_LeaderLib_Treasure_Temp_Queue_CountTemplate(_ID, _Object, _TreasureID, _ItemEntry, _GeneratedAmount, _RequirementID)
 AND
-DB_LeaderLib_Treasure_Temp_ItemTemplateAmount(_Object, _TreasureID, _ItemEntry, _CurrentAmount)
-AND
-NOT LeaderLib_Treasure_QRY_ItemLimitNotMet(_Object, _TreasureID, _ItemEntry, _GeneratedAmount, _CurrentAmount)
+LeaderLib_Treasure_Internal_QRY_SkipGeneration(_Object, _TreasureID, _ItemEntry, 0)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:CountingComplete] Item limit met for [",_TreasureID,"]:[",_ItemEntry,"]. Marking as finished.");
 NOT DB_LeaderLib_Treasure_Temp_Queue_CountTemplate(_ID, _Object, _TreasureID, _ItemEntry, _GeneratedAmount, _RequirementID);
-NOT DB_LeaderLib_Treasure_Temp_ItemTemplateAmount(_Object, _TreasureID, _ItemEntry, _CurrentAmount);
+LeaderLib_Treasure_Internal_ClearItemEntryAmount(_Object, _TreasureID, _ItemEntry, "");
 LeaderLib_Treasure_Internal_MarkItemAsFinished(_ID, _Object, _TreasureID, _ItemEntry);
 
 PROC
@@ -1315,12 +1376,10 @@ LeaderLib_Treasure_Internal_CountingComplete((STRING)_ID, (GUIDSTRING)_Object, (
 AND
 DB_LeaderLib_Treasure_Temp_Queue_CountStat(_ID, _Object, _TreasureID, _ItemTemplate, _ItemEntry, _GeneratedAmount, _RequirementID)
 AND
-DB_LeaderLib_Treasure_Temp_ItemStatAmount(_Object, _TreasureID, _ItemTemplate, _ItemEntry, _CurrentAmount)
-AND
-NOT LeaderLib_Treasure_QRY_ItemLimitNotMet(_Object, _TreasureID, _ItemEntry, _GeneratedAmount, _CurrentAmount)
+LeaderLib_Treasure_Internal_QRY_SkipGeneration(_Object, _TreasureID, _ItemEntry, 1)
 THEN
 NOT DB_LeaderLib_Treasure_Temp_Queue_CountStat(_ID, _Object, _TreasureID, _ItemTemplate, _ItemEntry, _GeneratedAmount, _RequirementID);
-NOT DB_LeaderLib_Treasure_Temp_ItemStatAmount(_Object, _TreasureID, _ItemTemplate, _ItemEntry, _CurrentAmount);
+LeaderLib_Treasure_Internal_ClearItemEntryAmount(_Object, _TreasureID, _ItemEntry, _ItemTemplate);
 LeaderLib_Treasure_Internal_MarkItemAsFinished(_ID, _Object, _TreasureID, _ItemEntry);
 //END_REGION
 

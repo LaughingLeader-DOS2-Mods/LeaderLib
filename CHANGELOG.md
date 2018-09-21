@@ -1,5 +1,10 @@
 LeaderLib Changelog
 =======
+# 1.0.4.0
+* LeaderLib now sets/clears a global flag when a mod is active/not active, i.e. if EquipmentSets is active, an EquipmentSets_IsActive flag is set.
+* Updated all the LeaderTrader dialog to skip the book-giving text if the party already has a mod menu book (more can be granted for free). The trader will also go right into his default dialog after the intro dialog.
+* The LeaderUpdater_ModUpdated proc now passes in the new mod version, as well as the old version, when a mod is updated.
+
 # 1.0.3.0
 * Minor fix for treasure item counting.
 * Tweaked the dummy helper call.

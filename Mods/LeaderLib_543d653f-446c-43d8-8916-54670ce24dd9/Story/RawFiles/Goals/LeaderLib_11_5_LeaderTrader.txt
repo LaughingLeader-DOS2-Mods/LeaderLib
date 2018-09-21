@@ -62,7 +62,7 @@ DB_LeaderLib_LeaderTrader_CurrentAppearance("LeaderLib_LeaderTrader_Default_e4cb
 
 LeaderLib_Trader_Register_Dialog("LeaderLib.LeaderTrader", "LeaderLib_LeaderTrader_Default"); // Default
 LeaderLib_LeaderTrader_RegisterDialogSettings();
-LeaderLib_Trader_Register_Dialog("LeaderLib.LeaderTrader", "LeaderLib_LeaderTrader_Tutorial_Intro", "TestLevel_LL_LeaderLib", "LeaderLib_LeaderTrader_TUT_IntroPending"); // Debug
+LeaderLib_Trader_Register_Dialog("LeaderLib.LeaderTrader", "LeaderLib_LeaderTrader_FortJoy_Intro", "TestLevel_LL_LeaderLib", "LeaderLib_LeaderTrader_FTJ_IntroPending"); // Debug
 
 LeaderLib_Trader_Register_CreationEvent("LeaderLib.LeaderTrader", "LeaderLib_Events_OnLeaderTradeSpawned");
 
@@ -164,7 +164,7 @@ GlobalSetFlag("LeaderLib_LeaderTraderIsNotGlobal");
 
 //REGION UPDATING
 PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", "1.0.0.0")
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", "1.0.0.0", (STRING)_NewVersion)
 AND
 DB_LeaderLib_Treasure_TreasureItemTemplates("LeaderLib.LeaderTrader.ModBooks", "BOOK_LeaderLib_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108", _Amount, _RequirementID)
 THEN
@@ -252,6 +252,23 @@ DB_LeaderLib_LeaderTrader_SetTags(_Tag, 0)
 THEN
 ClearTag(_LeaderTrader, _Tag);
 */
+//END_REGION
+
+//REGION INTRO_ITEM_FLAG
+IF
+DialogStarted(_Dialog, _Instance)
+AND
+DB_LeaderLib_LeaderTrader_Dialog(_, _Dialog)
+AND
+NOT DB_GlobalFlag("LeaderLib_LeaderTrader_GaveIntroItems")
+AND
+DB_LeaderLib_LeaderTrader(_LeaderTrader)
+AND
+DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
+AND
+NOT ItemTemplateIsInPartyInventory(_Player, "BOOK_LeaderLib_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108", 0, 0)
+THEN
+GlobalSetFlag("LeaderLib_LeaderTrader_GaveIntroItems");
 //END_REGION
 
 //REGION DEFAULT_DIALOG_GREETING_CHANGE

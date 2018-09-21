@@ -431,7 +431,7 @@ DB_LeaderLib_Combat_Temp_ItemCombatList(_Index, _Item, _CombatID);
 //REGION CLEANUP
 //Cleanup past data
 PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion)
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND
 LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 0, 2, 0)
 THEN

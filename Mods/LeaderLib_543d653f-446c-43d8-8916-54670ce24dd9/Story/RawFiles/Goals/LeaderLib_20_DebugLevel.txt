@@ -123,6 +123,54 @@ ObjectSetFlag(_Player, "LeaderLib_DebugLevel_TalkedToTrader");
 
 //REGION DEBUG_TEXT_EVENTS
 IF
+TextEventSet("leaderlib_summontest")
+AND
+GetPosition(CHARACTERGUID_Trailer_Humans_Female_Lohse_000_145810cc-7e46-43e7-9fdf-ab9bb8ffcdc0, _x, _y, _z)
+AND
+RealSum(_z, 2.0, _tz)
+THEN
+CharacterUseSkillAtPosition(CHARACTERGUID_Trailer_Humans_Female_Lohse_000_145810cc-7e46-43e7-9fdf-ab9bb8ffcdc0, "Summon_TotemFromSurface", _x, _y, _tz, 1, 1);
+ProcObjectTimer(CHARACTERGUID_Trailer_Humans_Female_Lohse_000_145810cc-7e46-43e7-9fdf-ab9bb8ffcdc0, "LeaderLib_Timers_Debug_Summon2", 2000);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Character, "LeaderLib_Timers_Debug_Summon2")
+AND
+GetPosition(_Character, _x, _y, _z)
+AND
+RealSum(_x, 2.0, _tx)
+THEN
+CharacterUseSkillAtPosition(_Character, "Summon_LeaderLib_Debug_SummonTest", _tx, _y, _z, 1, 1);
+
+IF
+CharacterJoinedParty(_Summon)
+AND
+CharacterIsSummon(_Summon, 1)
+AND
+CharacterGetDisplayName(_Summon, _, _Name)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel:CharacterJoinedParty] Summon [",_Name,"] joined the party.");
+
+IF
+ObjectWasTagged((CHARACTERGUID)_Summon, _Tag)
+AND
+CharacterIsSummon(_Summon, 1)
+AND
+CharacterGetDisplayName(_Summon, _, _Name)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel:ObjectWasTagged] Summon [",_Name,"] was tagged with [",_Tag,"].");
+
+IF
+CharacterStatusApplied(_Summon, _Status, _Causee)
+AND
+CharacterIsSummon(_Summon, 1)
+AND
+CharacterGetDisplayName(_Summon, _, _Name)
+AND
+String(_Causee, _CauseeStr)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel:CharacterStatusApplied] Summon [",_Name,"] has applied status [",_Status,"] from [",_CauseeStr,"].");
+
+IF
 TextEventSet("liblag")
 THEN
 ObjectSetFlag(ITEMGUID_NDL_ArenaChest_000_60d1603d-606f-4b64-9863-7b962d456278, "LeaderLib_Treasure_GenerationEnded");

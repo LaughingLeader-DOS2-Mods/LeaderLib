@@ -71,8 +71,6 @@ DB_NOOP(1);
 QRY
 LeaderUpdater_QRY_ModIsActive((STRING)_ModID, (STRING)_Author)
 AND
-DB_Mods_Registered(_ModID, _Author, _Version)
-AND
 DB_Mods_ActiveGoal(_ModID, _Author, _GoalTitle)
 AND
 SysIsActive(_GoalTitle)
@@ -200,15 +198,58 @@ DB_NOOP(1);
 IF
 StoryEvent(_, "LeaderLib_Initialized")
 AND
-DB_LeaderUpdater_Temp_PastRegistered(_ModID, _Author, _Version)
+DB_LeaderUpdater_Temp_PastRegistered(_ModID, _Author, _OldVersion)
+AND
+DB_Mods_Registered(_ModID, _Author, _CurrentVersion)
 THEN
-LeaderUpdater_ModUpdated(_ModID, _Author, _Version);
-NOT DB_LeaderUpdater_Temp_PastRegistered(_ModID, _Author, _Version);
+NOT DB_LeaderUpdater_Temp_PastRegistered(_ModID, _Author, _OldVersion);
+LeaderUpdater_ModUpdated(_ModID, _Author, _OldVersion, _CurrentVersion);
+
+//Fail-safe
+IF
+StoryEvent(_, "LeaderLib_Initialized")
+AND
+DB_LeaderUpdater_Temp_PastRegistered(_ModID, _Author, _OldVersion)
+AND
+NOT DB_Mods_Registered(_ModID, _Author, _)
+THEN
+NOT DB_LeaderUpdater_Temp_PastRegistered(_ModID, _Author, _OldVersion);
+LeaderUpdater_ModUpdated(_ModID, _Author, _OldVersion, "");
 
 PROC
-LeaderUpdater_ModUpdated((STRING)_ModID, (STRING)_Author, (STRING)_PastVersion)
+LeaderUpdater_ModUpdated((STRING)_ModID, (STRING)_Author, (STRING)_PastVersion, (STRING)_NewVersion)
 THEN
 DB_NOOP(1);
+
+//Active flag
+IF
+StoryEvent(_, "LeaderLib_Initialized")
+AND
+DB_Mods_ActiveGoal(_ModID, _Author, _GoalTitle)
+AND
+StringConcatenate(_ModID, "_IsActive", _Flag)
+THEN
+LeaderUpdater_SetModActiveFlag(_ModID, _Author, _GoalTitle, _Flag);
+
+PROC
+LeaderUpdater_SetModActiveFlag((STRING)_ModID, (STRING)_Author, (STRING)_GoalTitle, (STRING)_Flag)
+AND
+SysIsActive(_GoalTitle)
+AND
+NOT DB_GlobalFlag(_Flag)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderUpdater:SetModActiveFlag] Mod [",_ModID,"] by [",_Author,"] is active [",_GoalTitle,"]. Setting global flag [",_Flag,"].");
+GlobalSetFlag(_Flag);
+
+PROC
+LeaderUpdater_SetModActiveFlag((STRING)_ModID, (STRING)_Author, (STRING)_GoalTitle, (STRING)_Flag)
+AND
+NOT SysIsActive(_GoalTitle)
+AND
+DB_GlobalFlag(_Flag)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderUpdater:SetModActiveFlag] Mod [",_ModID,"] by [",_Author,"] is no longer active [",_GoalTitle,"]. Clearing global flag [",_Flag,"].");
+GlobalClearFlag(_Flag);
 //END_REGION
 
 //REGION UNINSTALLING

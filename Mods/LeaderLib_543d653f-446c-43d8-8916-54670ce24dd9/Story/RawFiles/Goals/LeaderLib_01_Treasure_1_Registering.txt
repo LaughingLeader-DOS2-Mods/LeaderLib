@@ -701,7 +701,7 @@ NOT DB_LeaderLib_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID);
 //REGION UPDATE_OLD_DATA
 /*
 PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", _PastVersion)
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND
 LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 0, 9, 3, 0)
 THEN

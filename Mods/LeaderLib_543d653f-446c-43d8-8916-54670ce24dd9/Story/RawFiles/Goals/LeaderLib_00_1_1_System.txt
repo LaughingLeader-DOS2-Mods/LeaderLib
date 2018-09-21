@@ -14,13 +14,17 @@ GlobalSetFlag("LeaderLib_IsEditorMode");
 
 IF
 GameStarted(_, 0)
+AND
+DB_GlobalFlag("LeaderLib_IsEditorMode")
 THEN
 GlobalClearFlag("LeaderLib_IsEditorMode");
 //END_REGION
 
 //REGION INIT_EVENT
 IF
-GameStarted(_,_)
+GameStarted(_Level,_)
+AND
+IsGameLevel(_Level, 1)
 THEN
 LeaderLib_System_ResetInit();
 TimerLaunch("LeaderLib_Timers_LeaderLibInitialized", 1);

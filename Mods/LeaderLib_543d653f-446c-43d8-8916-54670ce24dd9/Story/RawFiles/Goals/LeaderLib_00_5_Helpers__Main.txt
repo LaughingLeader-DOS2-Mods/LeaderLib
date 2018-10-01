@@ -707,6 +707,22 @@ NOT DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEv
 CharacterItemSetEvent(_Char, _Item, _CompleteEvent);
 
 PROC
+LeaderLib_CancelCharacterItemTimer((CHARACTERGUID)_Char, (ITEMGUID)_Item, (STRING)_TimerPrefix)
+AND
+DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent, _TimerPrefix)
+THEN
+NOT DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent, _TimerPrefix);
+TimerCancel(_TimerName);
+
+PROC
+LeaderLib_CancelCharacterItemTimerForCharacter((CHARACTERGUID)_Char, (STRING)_TimerPrefix)
+AND
+DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent, _TimerPrefix)
+THEN
+NOT DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent, _TimerPrefix);
+TimerCancel(_TimerName);
+
+PROC
 LeaderLib_StartCharacterCharacterTimer((CHARACTERGUID)_Char1, (CHARACTERGUID)_Char2, (INTEGER)_Time, (STRING)_TimerPrefix, (STRING)_CompleteEvent)
 AND
 GetUUID(_Char1, _Char1ID)

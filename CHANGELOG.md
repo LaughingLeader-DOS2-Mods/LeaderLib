@@ -1,7 +1,7 @@
 LeaderLib Changelog
 =======
 # 1.1.0.0
-* New "Surface Lists" helpers, for creating a list of surfaces to randomly choose from [(used in the upcoming Weapon Expansion mod)](https://gfycat.com/CornyPreciousKid).
+* New "Surface List" helpers, for creating a list of surfaces to randomly choose from [(used in the upcoming Weapon Expansion mod)](https://gfycat.com/CornyPreciousKid).
 * Switched the empty rune slot deltamods to the "ItemCombo" from "RuneEmpty", to hopefully prevent them from spawning randomly.
 * Added more "IsGameLevel" checks for a few rules running when the GameStarted event is called, and prevented the Mod Menu book from auto-adding when inside the editor.
 

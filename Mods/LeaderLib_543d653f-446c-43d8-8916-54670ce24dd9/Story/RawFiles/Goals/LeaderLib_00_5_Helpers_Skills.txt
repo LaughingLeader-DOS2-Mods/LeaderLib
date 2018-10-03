@@ -207,7 +207,9 @@ AND
 ObjectExists(_Dummy, 1)
 THEN
 CharacterMakeStoryNpc(_Dummy, 0);
-RemoveTemporaryCharacter(_Dummy);
+//RemoveTemporaryCharacter(_Dummy); Not in the main game yet
+SetOnStage(_Dummy, 0);
+CharacterDieImmediate(_Dummy, 0, "", _Dummy);
 
 IF
 RegionEnded(_)

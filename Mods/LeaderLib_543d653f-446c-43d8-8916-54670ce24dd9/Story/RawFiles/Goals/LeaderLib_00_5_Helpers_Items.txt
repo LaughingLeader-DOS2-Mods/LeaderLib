@@ -130,6 +130,15 @@ ObjectIsItem((ITEMGUID)_Item, 1)
 THEN
 ItemRemove(_Item);
 //END_REGION
+
+//REGION AUTO_IDENTIFY
+IF
+ItemOpened(_Item)
+AND
+IsTagged(_Item, "LeaderLib_AutoIdentify", 1)
+THEN
+ContainerIdentifyAll(_Item);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

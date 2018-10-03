@@ -224,7 +224,8 @@ DB_LeaderLib_Treasure_GeneratorDummies(_Dummy)
 THEN
 NOT DB_LeaderLib_Treasure_GeneratorDummies(_Dummy);
 LeaderLib_Helper_ResetDummy(_Dummy);
-RemoveTemporaryCharacter(_Dummy);
+//RemoveTemporaryCharacter(_Dummy);
+SetOnStage(_Dummy, 0);
 //END_REGION
 EXITSECTION
 

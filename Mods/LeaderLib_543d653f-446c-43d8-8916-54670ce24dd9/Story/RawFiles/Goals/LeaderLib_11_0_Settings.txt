@@ -16,6 +16,7 @@ LeaderLib_Settings_InitSettings()
 THEN
 LeaderLib_Settings_InitEquipmentSlots();
 LeaderLib_Settings_InitStats();
+LeaderLib_Settings_InitSurfaces();
 
 SysClear("DB_LeaderLib_Settings_QueueRates", 3);
 DB_LeaderLib_Settings_QueueRates("TraderSpawn", 500, 2000);
@@ -31,6 +32,13 @@ DB_LeaderLib_Settings_DialogVariables("PlayerName", "LeaderLib_PlayerName_6c5b95
 DB_LeaderLib_Settings_DialogVariables("SpeakerName", "LeaderLib_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b");
 DB_LeaderLib_Settings_DialogVariables("ModMenu_PageInfo", "LeaderLib_ModMenu_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156");
 DB_LeaderLib_Settings_DialogVariables("ModList", "LeaderLib_Settings_ModList_50c55fbe-ad1e-490e-92d1-8836ca42ca12");
+
+LeaderLib_Settings_SettingsInitialized();
+
+PROC
+LeaderLib_Settings_SettingsInitialized()
+THEN
+DB_LeaderLib_Settings_Initialized(1);
 
 PROC
 LeaderLib_Settings_InitEquipmentSlots()
@@ -69,7 +77,6 @@ DB_LeaderLib_Attributes("Intelligence");
 DB_LeaderLib_Attributes("Constitution");
 DB_LeaderLib_Attributes("Memory");
 DB_LeaderLib_Attributes("Wits");
-
 
 PROC
 LeaderLib_Settings_InitStats()
@@ -227,6 +234,122 @@ DB_LeaderLib_Talents("WaterSpells");
 DB_LeaderLib_Talents("WeatherProof");
 DB_LeaderLib_Talents("WhatARush");
 DB_LeaderLib_Talents("Zombie");
+
+PROC
+LeaderLib_Settings_InitSurfaces()
+AND
+NOT DB_LeaderLib_Surfaces(_,_)
+THEN
+LeaderLib_Settings_RegisterSurface("SurfaceNone", "None");
+LeaderLib_Settings_RegisterSurface("SurfaceFire", "Ground", "Standard");
+LeaderLib_Settings_RegisterSurface("SurfaceFireBlessed", "Ground", "Blessed");
+LeaderLib_Settings_RegisterSurface("SurfaceFireCursed", "Ground", "Cursed");
+LeaderLib_Settings_RegisterSurface("SurfaceFirePurified", "Ground", "Purified");
+LeaderLib_Settings_RegisterSurface("SurfaceWater", "Ground", "Standard");
+LeaderLib_Settings_RegisterSurface("SurfaceWaterElectrified", "Ground", "Standard", "Electrified");
+LeaderLib_Settings_RegisterSurface("SurfaceWaterFrozen", "Ground", "Standard");
+LeaderLib_Settings_RegisterSurface("SurfaceWaterBlessed", "Ground", "Blessed");
+LeaderLib_Settings_RegisterSurface("SurfaceWaterElectrifiedBlessed", "Ground", "Blessed", "Electrified");
+LeaderLib_Settings_RegisterSurface("SurfaceWaterFrozenBlessed", "Ground", "Blessed");
+LeaderLib_Settings_RegisterSurface("SurfaceWaterCursed", "Ground", "Cursed");
+LeaderLib_Settings_RegisterSurface("SurfaceWaterElectrifiedCursed", "Ground", "Cursed", "Electrified");
+LeaderLib_Settings_RegisterSurface("SurfaceWaterFrozenCursed", "Ground", "Cursed");
+LeaderLib_Settings_RegisterSurface("SurfaceWaterPurified", "Ground", "Purified");
+LeaderLib_Settings_RegisterSurface("SurfaceWaterElectrifiedPurified", "Ground", "Purified", "Electrified");
+LeaderLib_Settings_RegisterSurface("SurfaceWaterFrozenPurified", "Ground", "Purified");
+LeaderLib_Settings_RegisterSurface("SurfaceBlood", "Ground", "Standard");
+LeaderLib_Settings_RegisterSurface("SurfaceBloodElectrified", "Ground", "Standard", "Electrified");
+LeaderLib_Settings_RegisterSurface("SurfaceBloodFrozen", "Ground", "Standard");
+LeaderLib_Settings_RegisterSurface("SurfaceBloodBlessed", "Ground", "Blessed");
+LeaderLib_Settings_RegisterSurface("SurfaceBloodElectrifiedBlessed", "Ground", "Blessed", "Electrified");
+LeaderLib_Settings_RegisterSurface("SurfaceBloodFrozenBlessed", "Ground", "Blessed");
+LeaderLib_Settings_RegisterSurface("SurfaceBloodCursed", "Ground", "Cursed");
+LeaderLib_Settings_RegisterSurface("SurfaceBloodElectrifiedCursed", "Ground", "Cursed", "Electrified");
+LeaderLib_Settings_RegisterSurface("SurfaceBloodFrozenCursed", "Ground", "Cursed");
+LeaderLib_Settings_RegisterSurface("SurfaceBloodPurified", "Ground", "Purified");
+LeaderLib_Settings_RegisterSurface("SurfaceBloodElectrifiedPurified", "Ground", "Purified", "Electrified");
+LeaderLib_Settings_RegisterSurface("SurfaceBloodFrozenPurified", "Ground", "Purified");
+LeaderLib_Settings_RegisterSurface("SurfacePoison", "Ground", "Standard");
+LeaderLib_Settings_RegisterSurface("SurfacePoisonBlessed", "Ground", "Blessed");
+LeaderLib_Settings_RegisterSurface("SurfacePoisonCursed", "Ground", "Cursed");
+LeaderLib_Settings_RegisterSurface("SurfacePoisonPurified", "Ground", "Purified");
+LeaderLib_Settings_RegisterSurface("SurfaceOil", "Ground", "Standard");
+LeaderLib_Settings_RegisterSurface("SurfaceOilBlessed", "Ground", "Blessed");
+LeaderLib_Settings_RegisterSurface("SurfaceOilCursed", "Ground", "Cursed");
+LeaderLib_Settings_RegisterSurface("SurfaceOilPurified", "Ground", "Purified");
+LeaderLib_Settings_RegisterSurface("SurfaceLava", "Ground", "Special");
+LeaderLib_Settings_RegisterSurface("SurfaceSource", "Ground", "Special");
+LeaderLib_Settings_RegisterSurface("SurfaceWeb", "Ground", "Web");
+LeaderLib_Settings_RegisterSurface("SurfaceWebBlessed", "Ground", "Web", "Blessed");
+LeaderLib_Settings_RegisterSurface("SurfaceWebCursed", "Ground", "Web", "Cursed");
+LeaderLib_Settings_RegisterSurface("SurfaceWebPurified", "Ground", "Web", "Purified");
+LeaderLib_Settings_RegisterSurface("SurfaceDeepwater", "Ground", "Special");
+LeaderLib_Settings_RegisterSurface("SurfaceFireCloud", "Standard", "Cloud");
+LeaderLib_Settings_RegisterSurface("SurfaceFireCloudBlessed", "Cloud", "Blessed");
+LeaderLib_Settings_RegisterSurface("SurfaceFireCloudCursed", "Cloud", "Cursed");
+LeaderLib_Settings_RegisterSurface("SurfaceFireCloudPurified", "Cloud", "Purified");
+LeaderLib_Settings_RegisterSurface("SurfaceWaterCloud", "Standard", "Cloud");
+LeaderLib_Settings_RegisterSurface("SurfaceWaterCloudElectrified", "Standard", "Cloud", "Electrified");
+LeaderLib_Settings_RegisterSurface("SurfaceWaterCloudBlessed", "Cloud", "Blessed");
+LeaderLib_Settings_RegisterSurface("SurfaceWaterCloudElectrifiedBlessed", "Cloud", "Blessed", "Electrified");
+LeaderLib_Settings_RegisterSurface("SurfaceWaterCloudCursed", "Cloud", "Cursed");
+LeaderLib_Settings_RegisterSurface("SurfaceWaterCloudElectrifiedCursed", "Cloud", "Cursed", "Electrified");
+LeaderLib_Settings_RegisterSurface("SurfaceWaterCloudPurified", "Cloud", "Purified");
+LeaderLib_Settings_RegisterSurface("SurfaceWaterCloudElectrifiedPurified", "Cloud", "Purified", "Electrified");
+LeaderLib_Settings_RegisterSurface("SurfaceBloodCloud", "Standard", "Cloud");
+LeaderLib_Settings_RegisterSurface("SurfaceBloodCloudElectrified", "Standard", "Cloud", "Electrified");
+LeaderLib_Settings_RegisterSurface("SurfaceBloodCloudBlessed", "Cloud", "Blessed");
+LeaderLib_Settings_RegisterSurface("SurfaceBloodCloudElectrifiedBlessed", "Cloud", "Blessed", "Electrified");
+LeaderLib_Settings_RegisterSurface("SurfaceBloodCloudCursed", "Cloud", "Cursed");
+LeaderLib_Settings_RegisterSurface("SurfaceBloodCloudElectrifiedCursed", "Cloud", "Cursed", "Electrified");
+LeaderLib_Settings_RegisterSurface("SurfaceBloodCloudPurified", "Cloud", "Purified");
+LeaderLib_Settings_RegisterSurface("SurfaceBloodCloudElectrifiedPurified", "Cloud", "Purified", "Electrified");
+LeaderLib_Settings_RegisterSurface("SurfacePoisonCloud", "Standard", "Cloud");
+LeaderLib_Settings_RegisterSurface("SurfacePoisonCloudBlessed", "Cloud", "Blessed");
+LeaderLib_Settings_RegisterSurface("SurfacePoisonCloudCursed", "Cloud", "Cursed");
+LeaderLib_Settings_RegisterSurface("SurfacePoisonCloudPurified", "Cloud", "Purified");
+LeaderLib_Settings_RegisterSurface("SurfaceSmokeCloud", "Standard", "Cloud");
+LeaderLib_Settings_RegisterSurface("SurfaceSmokeCloudBlessed", "Cloud", "Blessed");
+LeaderLib_Settings_RegisterSurface("SurfaceSmokeCloudCursed", "Cloud", "Cursed");
+LeaderLib_Settings_RegisterSurface("SurfaceSmokeCloudPurified", "Cloud", "Purified");
+LeaderLib_Settings_RegisterSurface("SurfaceExplosionCloud", "Special", "Cloud");
+LeaderLib_Settings_RegisterSurface("SurfaceFrostCloud", "Standard", "Cloud");
+LeaderLib_Settings_RegisterSurface("SurfaceDeathfogCloud", "Deathfog", "Cloud");
+
+PROC
+LeaderLib_Settings_RegisterSurface((STRING)_Surface)
+THEN
+LeaderLib_Settings_RegisterSurface(_Surface, "");
+
+PROC
+LeaderLib_Settings_RegisterSurface((STRING)_Surface, (STRING)_Group)
+THEN
+LeaderLib_Settings_RegisterSurface(_Surface, _Group, "", "");
+
+PROC
+LeaderLib_Settings_RegisterSurface((STRING)_Surface, (STRING)_Group1, (STRING)_Group2)
+THEN
+LeaderLib_Settings_RegisterSurface(_Surface, _Group1, _Group2, "");
+
+PROC
+LeaderLib_Settings_RegisterSurface((STRING)_Surface, (STRING)_Group1, (STRING)_Group2, (STRING)_Group3)
+AND
+_Surface != ""
+AND
+SysCount("DB_LeaderLib_Surfaces", 2, _Index)
+THEN
+DB_LeaderLib_Surfaces(_Index, _Surface);
+LeaderLib_Settings_AddSurfaceToGroup(_Surface, _Group1);
+LeaderLib_Settings_AddSurfaceToGroup(_Surface, _Group2);
+LeaderLib_Settings_AddSurfaceToGroup(_Surface, _Group3);
+
+PROC
+LeaderLib_Settings_AddSurfaceToGroup((STRING)_Surface, (STRING)_Group)
+AND
+_Group != ""
+THEN
+DB_LeaderLib_SurfaceGroup(_Surface, _Group);
+//LeaderLog_Log("DEBUG", "[LeaderLib:Settings:AddSurfaceToGroup] Added surface [",_Surface,"] to group [",_Group,"]");
 //END_REGION
 
 //REGION UPDATER
@@ -237,6 +360,15 @@ LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 0, 1, 1)
 THEN
 LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
 LeaderLib_Settings_InitStats();
+
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 0, 0)
+THEN
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
+LeaderLib_Settings_InitSurfaces();
+LeaderLib_Settings_SettingsInitialized();
 //END_REGION
 
 //REGION MOD_DATA
@@ -327,11 +459,11 @@ LeaderLib_Settings_BuildModList();
 
 //REGION INITIAL_MOD_BOOKS
 IF
-GameStarted(_Level,_)
+GameStarted(_Level, 1)
 AND
-IsCharacterCreationLevel(_Level, 0)
+IsGameLevel(_Level, 1)
 AND
-NOT GlobalGetFlag("LeaderLib_AddedInitialModMenuBooks", 1)
+NOT DB_GlobalFlag("LeaderLib_AddedInitialModMenuBooks")
 AND
 DB_LeaderLib_Settings_ItemTemplates("Book_ModMenu", _ModMenuBookTemplate)
 AND

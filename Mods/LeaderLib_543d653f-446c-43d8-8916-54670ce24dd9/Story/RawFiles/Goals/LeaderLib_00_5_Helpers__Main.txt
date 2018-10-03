@@ -783,6 +783,13 @@ THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Main:LeaderLib_Commands_StartObjectTimer] Starting object timer with complete event [",_CompleteEvent,"].");
 LeaderLib_StartObjectTimer(_Object, _TimerDelay, "LeaderLib_Timers_BehaviorScriptTimer_", _CompleteEvent);
 
+IF
+StoryEvent(_Object, "LeaderLib_Commands_CancelObjectTimer")
+AND
+GetVarString(_Object, "LeaderLib_Timer_CompleteEvent", _CompleteEvent)
+THEN
+LeaderLib_CancelObjectTimerByEvent(_Object, _CompleteEvent);
+
 //Behavior can't cast an object to a string
 IF
 StoryEvent(_Object, "LeaderLib_Commands_GetUUID")
@@ -869,7 +876,6 @@ AND
 ItemIsDestroyed((ITEMGUID)_Object, 0)
 THEN
 DB_NOOP(1);
-
 //END_REGION
 
 //REGION DUMMY_HELPERS
@@ -890,6 +896,169 @@ CharacterSetDetached(_Dummy, 0);
 SetCanJoinCombat(_Dummy, 1);
 SetCanFight(_Dummy, 1);
 SetVisible(_Dummy, 1);
+//END_REGION
+
+//REGION SURFACE_LIST
+QRY
+LeaderLib_Helper_QRY_SurfaceDoesNotMatchGroup((STRING)_Surface, "")
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_SurfaceDoesNotMatchGroup((STRING)_Surface, (STRING)_Group)
+AND
+_Group != ""
+AND
+NOT DB_LeaderLib_SurfaceGroup(_Surface, _Group)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_SurfaceMatchesGroup((STRING)_Surface, "")
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_SurfaceMatchesGroup((STRING)_Surface, (STRING)_Group)
+AND
+_Group != ""
+AND
+DB_LeaderLib_SurfaceGroup(_Surface, _Group)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_SurfaceMatchesAnyGroup((STRING)_Surface, (STRING)_Group1, (STRING)_Group2, (STRING)_Group3)
+AND
+_Group1 != ""
+AND
+DB_LeaderLib_SurfaceGroup(_Surface, _Group1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_SurfaceMatchesAnyGroup((STRING)_Surface, (STRING)_Group1, (STRING)_Group2, (STRING)_Group3)
+AND
+_Group2 != ""
+AND
+DB_LeaderLib_SurfaceGroup(_Surface, _Group2)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_SurfaceMatchesAnyGroup((STRING)_Surface, (STRING)_Group1, (STRING)_Group2, (STRING)_Group3)
+AND
+_Group3 != ""
+AND
+DB_LeaderLib_SurfaceGroup(_Surface, _Group3)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_SurfaceMatchesAllGroups((STRING)_Surface, (STRING)_Group1, (STRING)_Group2, (STRING)_Group3)
+AND
+LeaderLib_Helper_QRY_SurfaceMatchesGroup(_Surface, _Group1)
+AND
+LeaderLib_Helper_QRY_SurfaceMatchesGroup(_Surface, _Group2)
+AND
+LeaderLib_Helper_QRY_SurfaceMatchesGroup(_Surface, _Group3)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_SurfaceMatchesAllGroupsWithIgnored((STRING)_Surface, (STRING)_Group1, (STRING)_Group2, (STRING)_Group3, (STRING)_IgnoreGroup1)
+AND
+LeaderLib_Helper_QRY_SurfaceDoesNotMatchGroup(_Surface, _IgnoreGroup1)
+AND
+LeaderLib_Helper_QRY_SurfaceMatchesGroup(_Surface, _Group1)
+AND
+LeaderLib_Helper_QRY_SurfaceMatchesGroup(_Surface, _Group2)
+AND
+LeaderLib_Helper_QRY_SurfaceMatchesGroup(_Surface, _Group3)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_SurfaceMatchesAllGroupsWithIgnored((STRING)_Surface, (STRING)_Group1, (STRING)_Group2, (STRING)_Group3, (STRING)_IgnoreGroup1, (STRING)_IgnoreGroup2)
+AND
+LeaderLib_Helper_QRY_SurfaceDoesNotMatchGroup(_Surface, _IgnoreGroup1)
+AND
+LeaderLib_Helper_QRY_SurfaceDoesNotMatchGroup(_Surface, _IgnoreGroup2)
+AND
+LeaderLib_Helper_QRY_SurfaceMatchesGroup(_Surface, _Group1)
+AND
+LeaderLib_Helper_QRY_SurfaceMatchesGroup(_Surface, _Group2)
+AND
+LeaderLib_Helper_QRY_SurfaceMatchesGroup(_Surface, _Group3)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_SurfaceMatchesAllGroupsWithIgnored((STRING)_Surface, (STRING)_Group1, (STRING)_Group2, (STRING)_Group3, (STRING)_IgnoreGroup1, (STRING)_IgnoreGroup2, (STRING)_IgnoreGroup3)
+AND
+LeaderLib_Helper_QRY_SurfaceDoesNotMatchGroup(_Surface, _IgnoreGroup1)
+AND
+LeaderLib_Helper_QRY_SurfaceDoesNotMatchGroup(_Surface, _IgnoreGroup2)
+AND
+LeaderLib_Helper_QRY_SurfaceDoesNotMatchGroup(_Surface, _IgnoreGroup3)
+AND
+LeaderLib_Helper_QRY_SurfaceMatchesGroup(_Surface, _Group1)
+AND
+LeaderLib_Helper_QRY_SurfaceMatchesGroup(_Surface, _Group2)
+AND
+LeaderLib_Helper_QRY_SurfaceMatchesGroup(_Surface, _Group3)
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_Helper_ClearSurfaceList((STRING)_ID)
+AND
+LeaderLib_Array_QRY_DataExists(_ID)
+THEN
+LeaderLib_Array_ClearArray(_ID);
+
+PROC
+LeaderLib_Helper_BuildSurfaceList((STRING)_ID, (STRING)_Group1, (INTEGER)_StrictMatch)
+THEN
+LeaderLib_Helper_BuildSurfaceList(_ID, _Group1, "", "", _StrictMatch);
+
+PROC
+LeaderLib_Helper_BuildSurfaceList((STRING)_ID, (STRING)_Group1, (STRING)_Group2, (INTEGER)_StrictMatch)
+THEN
+LeaderLib_Helper_BuildSurfaceList(_ID, _Group1, _Group2, "", _StrictMatch);
+
+PROC
+LeaderLib_Helper_BuildSurfaceList((STRING)_ID, (STRING)_Group1, (STRING)_Group2, (STRING)_Group3, 1)
+AND
+DB_LeaderLib_Surfaces(_Index, _Surface)
+AND
+LeaderLib_Helper_QRY_SurfaceMatchesAllGroups(_Surface, _Group1, _Group2, _Group3)
+THEN
+LeaderLib_Array_AddToArray(_ID, _Surface);
+
+PROC
+LeaderLib_Helper_BuildSurfaceList((STRING)_ID, (STRING)_Group1, (STRING)_Group2, (STRING)_Group3, 0)
+AND
+DB_LeaderLib_Surfaces(_Index, _Surface)
+AND
+LeaderLib_Helper_QRY_SurfaceMatchesAnyGroup(_Surface, _Group1, _Group2, _Group3)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Helper:BuildSurfaceList] Added surface [",_Surface,"] to array [",_ID,"]");
+LeaderLib_Array_AddToArray(_ID, _Surface);
+
+PROC
+LeaderLib_Helper_BuildSurfaceListAndIgnore((STRING)_ID, (STRING)_Group1, (STRING)_Group2, (STRING)_Group3, (STRING)_IgnoreGroup1, (STRING)_IgnoreGroup2, (STRING)_IgnoreGroup3)
+THEN
+LeaderLib_Helper_ClearSurfaceList(_ID);
+
+PROC
+LeaderLib_Helper_BuildSurfaceListAndIgnore((STRING)_ID, (STRING)_Group1, (STRING)_Group2, (STRING)_Group3, (STRING)_Group3, (STRING)_IgnoreGroup1, (STRING)_IgnoreGroup2, (STRING)_IgnoreGroup3)
+AND
+DB_LeaderLib_Surfaces(_Index, _Surface)
+AND
+LeaderLib_Helper_QRY_SurfaceMatchesAllGroupsWithIgnored(_Surface, _Group1, _Group2, _Group3, _IgnoreGroup1, _IgnoreGroup2, _IgnoreGroup3)
+THEN
+LeaderLib_Array_AddToArray(_ID, _Surface);
 //END_REGION
 
 EXITSECTION

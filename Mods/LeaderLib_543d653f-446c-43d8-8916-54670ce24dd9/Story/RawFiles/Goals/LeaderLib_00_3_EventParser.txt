@@ -115,7 +115,9 @@ SetStoryEvent(_EventParser, _EventName);
 
 //REGION GAME_STARTED
 IF
-GameStarted(_,_)
+GameStarted(_Level,_)
+AND
+IsGameLevel(_Level, 1)
 AND
 NOT LeaderLib_QRY_EventParser_GlobalParserExists()
 THEN

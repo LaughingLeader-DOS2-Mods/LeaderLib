@@ -459,7 +459,7 @@ LeaderLib_Settings_BuildModList();
 
 //REGION INITIAL_MOD_BOOKS
 IF
-GameStarted(_Level, 1)
+GameStarted(_Level, 0)
 AND
 IsGameLevel(_Level, 1)
 AND

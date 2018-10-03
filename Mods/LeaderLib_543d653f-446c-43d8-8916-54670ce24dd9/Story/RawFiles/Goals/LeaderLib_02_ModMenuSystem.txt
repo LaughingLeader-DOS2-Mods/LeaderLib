@@ -116,7 +116,9 @@ DB_LeaderLib_ModMenu_MenuVars(7, "LeaderLib_ModMenu_Menu8_a6aa98e6-cde4-491b-a2c
 //REGION SORT_MANUAL_START
 // Existing Save Shenanigans 2 - The Revengening
 IF
-GameStarted(_,_)
+GameStarted(_Level, _)
+AND
+IsGameLevel(_Level, 1)
 AND
 LeaderLib_ModMenu_QRY_SortNeeded()
 THEN

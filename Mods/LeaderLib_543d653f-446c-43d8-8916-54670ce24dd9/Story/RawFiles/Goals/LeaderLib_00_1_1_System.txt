@@ -8,7 +8,7 @@ LeaderUpdater_Register_ActiveGoal("LeaderLib", "LaughingLeader", "LeaderLib_ZZZ_
 KBSECTION
 //REGION EDITOR_FLAGGING
 IF
-GameStarted(_, 1)
+GameStarted(_,1)
 THEN
 GlobalSetFlag("LeaderLib_IsEditorMode");
 
@@ -87,7 +87,9 @@ LeaderLog_Log("DEBUG", "[LeaderLib:System][ERROR] No host character found.");
 
 //REGION PLAYER_DATABASE_FIX
 IF
-GameStarted(_,1)
+GameStarted(_Level, 1)
+AND
+IsCharacterCreationLevel(_Level, 0)
 AND
 NOT SysIsActive("GLOBAL_CharacterCreation") // If Origins isn't running
 THEN

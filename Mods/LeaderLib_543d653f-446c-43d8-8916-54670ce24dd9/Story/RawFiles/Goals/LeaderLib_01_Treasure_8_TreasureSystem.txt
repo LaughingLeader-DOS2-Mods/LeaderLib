@@ -1895,7 +1895,7 @@ LeaderLib_Treasure_Internal_GenerateByFlag(_Flag, "Global");
 IF
 RegionStarted(_Level)
 AND
-IsCharacterCreationLevel(_Level, 0)
+IsGameLevel(_Level, 1)
 THEN
 DB_LeaderLib_Treasure_Temp_LevelLoaded(_Level);
 

@@ -257,9 +257,9 @@ LeaderLib_Settings_RegisterSurface("SurfaceWaterFrozenCursed", "Ground", "Cursed
 LeaderLib_Settings_RegisterSurface("SurfaceWaterPurified", "Ground", "Purified");
 LeaderLib_Settings_RegisterSurface("SurfaceWaterElectrifiedPurified", "Ground", "Purified", "Electrified");
 LeaderLib_Settings_RegisterSurface("SurfaceWaterFrozenPurified", "Ground", "Purified");
-LeaderLib_Settings_RegisterSurface("SurfaceBlood", "Ground", "Standard");
-LeaderLib_Settings_RegisterSurface("SurfaceBloodElectrified", "Ground", "Standard", "Electrified");
-LeaderLib_Settings_RegisterSurface("SurfaceBloodFrozen", "Ground", "Standard");
+LeaderLib_Settings_RegisterSurface("SurfaceBlood", "Ground", "Standard", "BloodStandard");
+LeaderLib_Settings_RegisterSurface("SurfaceBloodElectrified", "Ground", "Electrified", "BloodStandard");
+LeaderLib_Settings_RegisterSurface("SurfaceBloodFrozen", "Ground", "BloodStandard");
 LeaderLib_Settings_RegisterSurface("SurfaceBloodBlessed", "Ground", "Blessed");
 LeaderLib_Settings_RegisterSurface("SurfaceBloodElectrifiedBlessed", "Ground", "Blessed", "Electrified");
 LeaderLib_Settings_RegisterSurface("SurfaceBloodFrozenBlessed", "Ground", "Blessed");
@@ -297,7 +297,7 @@ LeaderLib_Settings_RegisterSurface("SurfaceWaterCloudElectrifiedCursed", "Cloud"
 LeaderLib_Settings_RegisterSurface("SurfaceWaterCloudPurified", "Cloud", "Purified");
 LeaderLib_Settings_RegisterSurface("SurfaceWaterCloudElectrifiedPurified", "Cloud", "Purified", "Electrified");
 LeaderLib_Settings_RegisterSurface("SurfaceBloodCloud", "Standard", "Cloud");
-LeaderLib_Settings_RegisterSurface("SurfaceBloodCloudElectrified", "Standard", "Cloud", "Electrified");
+LeaderLib_Settings_RegisterSurface("SurfaceBloodCloudElectrified", "BloodStandard", "Cloud", "Electrified");
 LeaderLib_Settings_RegisterSurface("SurfaceBloodCloudBlessed", "Cloud", "Blessed");
 LeaderLib_Settings_RegisterSurface("SurfaceBloodCloudElectrifiedBlessed", "Cloud", "Blessed", "Electrified");
 LeaderLib_Settings_RegisterSurface("SurfaceBloodCloudCursed", "Cloud", "Cursed");
@@ -360,6 +360,18 @@ LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 0, 1, 1)
 THEN
 LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
 LeaderLib_Settings_InitStats();
+
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", "1.1.0.0", (STRING)_NewVersion)
+THEN
+NOT DB_LeaderLib_SurfaceGroup("SurfaceBloodFrozen", "Standard");
+NOT DB_LeaderLib_SurfaceGroup("SurfaceBloodElectrified", "Standard");
+NOT DB_LeaderLib_SurfaceGroup("SurfaceBloodCloudElectrified", "Standard");
+DB_LeaderLib_SurfaceGroup("SurfaceBlood", "BloodStandard");
+DB_LeaderLib_SurfaceGroup("SurfaceBloodFrozen", "BloodStandard");
+DB_LeaderLib_SurfaceGroup("SurfaceBloodElectrified", "BloodStandard");
+DB_LeaderLib_SurfaceGroup("SurfaceBloodCloudElectrified", "BloodStandard");
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updating surface settings from version [1.1.0.0].");
 
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)

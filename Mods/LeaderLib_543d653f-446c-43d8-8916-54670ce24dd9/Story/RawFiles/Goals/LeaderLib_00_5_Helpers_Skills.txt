@@ -100,29 +100,98 @@ GetUUID(_Caster, _UUID)
 AND
 GetUUID(_Target, _UUID2)
 AND
-StringConcatenate(_Skill, _UUID, _Str1)
+Random(999999, _Ran)
 AND
-StringConcatenate(_Str1, _UUID2, _ID)
+IntegertoString(_Ran, _RanStr)
+AND
+LeaderLog_QRY_Log("COMBINE", _Skill, "_", _UUID, "_", _UUID2, "_", _RanStr)
+AND
+DB_LeaderLog_Temp_CombinedString(_ID)
+AND
+LeaderLib_Skills_QRY_PrepareSkillDummy(_ID, _Caster, _CopyStats, _CopyEquipment)
+AND
+DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy)
+AND
+GetPosition(_Caster, _x, _y, _z)
+THEN
+NOT DB_LeaderLog_Temp_CombinedString(_ID);
+//LeaderLog_Log("DEBUG", "[LeaderLib:Skills:UseSkillOnTarget] Got dummy with ID [",_ID,"]. Casting [",_Skill,"] after teleport.");
+DB_LeaderLib_Skills_Temp_SkillDummyData(_Dummy, _Caster, _Target, _Skill);
+DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z);
+TeleportToPosition(_Dummy, _x, _y, _z, "LeaderLib_Events_SkillDummyTeleported", 0, 0);
+
+PROC
+LeaderLib_Skills_UseSkillOnTargetFromPosition((CHARACTERGUID)_Caster, (GUIDSTRING)_Target, (STRING)_Skill, (REAL)_x, (REAL)_y, (REAL)_z, (INTEGER)_CopyStats, (INTEGER)_CopyEquipment)
+AND
+GetUUID(_Caster, _UUID)
+AND
+GetUUID(_Target, _UUID2)
+AND
+Random(999999, _Ran)
+AND
+IntegertoString(_Ran, _RanStr)
+AND
+LeaderLog_QRY_Log("COMBINE", _Skill, "_", _UUID, "_", _UUID2, "_", _RanStr)
+AND
+DB_LeaderLog_Temp_CombinedString(_ID)
 AND
 LeaderLib_Skills_QRY_PrepareSkillDummy(_ID, _Caster, _CopyStats, _CopyEquipment)
 AND
 DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy)
 THEN
+NOT DB_LeaderLog_Temp_CombinedString(_ID);
 DB_LeaderLib_Skills_Temp_SkillDummyData(_Dummy, _Caster, _Target, _Skill);
+DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z);
+TeleportToPosition(_Dummy, _x, _y, _z, "LeaderLib_Events_SkillDummyTeleported", 0, 0);
 
 IF
 StoryEvent((CHARACTERGUID)_Dummy, "LeaderLib_Events_SkillDummyTeleported")
+AND
+DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z)
+THEN
+NOT DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z);
+CharacterMoveToPosition(_Dummy, _x, _y, _z, 1, "LeaderLib_Events_SkillDummyArrived");
+
+//Failsafe
+IF
+StoryEvent((CHARACTERGUID)_Dummy, "LeaderLib_Events_SkillDummyTeleported")
+THEN
+LeaderLib_StartObjectTimer(_Dummy, 1000, "LeaderLib_Timers_Skills_StartSkillDummyCasting", "LeaderLib_Events_SkillDummyArrived");
+
+IF
+StoryEvent((CHARACTERGUID)_Dummy, "LeaderLib_Events_SkillDummyArrived")
+AND
+DB_LeaderLib_Skills_Temp_SkillDummyData(_Dummy, _Caster, _Target, _Skill)
+AND
+ObjectIsCharacter(_Target, 1)
+THEN
+MakeWar(_Dummy, (CHARACTERGUID)_Target, 0);
+
+IF
+StoryEvent((CHARACTERGUID)_Dummy, "LeaderLib_Events_SkillDummyArrived")
 AND
 DB_LeaderLib_Skills_Temp_SkillDummyData(_Dummy, _Caster, _Target, _Skill)
 AND
 GetVarString(_Dummy, "LeaderLib_SkillDummyID", _ID)
 THEN
-CharacterSetRelationIndivFactionToIndivFaction(_Dummy, _Caster, 100);
 NOT DB_LeaderLib_Skills_Temp_SkillDummyData(_Dummy, _Caster, _Target, _Skill);
-CharacterSetDetached(_Dummy, 0);
+LeaderLib_CancelObjectTimer(_Dummy, "LeaderLib_Timers_Skills_StartSkillDummyCasting");
+//CharacterSetDetached(_Dummy, 0);
+//SetVisible(_Dummy, 1);
 CharacterUseSkill(_Dummy, _Skill, _Target, 1, 1, 1);
-LeaderLib_Skills_MarkDummyForReset(_Dummy, 2000);
+LeaderLib_Skills_MarkDummyForReset(_Dummy, 3000);
 LeaderLog_Log("DEBUG", "[LeaderLib:Skills:SkillDummyTeleported] Skill dummy used skill [",_Skill,"] on target. Dummy ID: [",_ID,"]");
+
+IF
+SkillCast(_Dummy, _Skill, _, _)
+AND
+ObjectGetFlag(_Dummy, "LeaderLib_IsSkillDummy", 1)
+AND
+CharacterGetLevel(_Dummy, _Level)
+AND
+IntegertoString(_Level, _LevelStr)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Skills:UseSkillOnTarget] Dummy is level [",_LevelStr,"].");
 
 IF
 SkillCast(_Dummy, _Skill, _, _)
@@ -142,15 +211,15 @@ LeaderLib_Skills_PrepareSkillDummy(_ID, _Caster, _CopyStats, _CopyEquipment);
 PROC
 LeaderLib_Skills_PrepareSkillDummy((STRING)_ID, (CHARACTERGUID)_Caster, (INTEGER)_CopyStats, (INTEGER)_CopyEquipment)
 AND
-DB_LeaderLib_Skills_SkillDummies("", (CHARACTERGUID)_Dummy)
+DB_LeaderLib_Skills_InactiveSkillDummies((CHARACTERGUID)_Dummy)
 AND
 ObjectExists(_Dummy, 1)
 AND
 GetPosition(_Caster, _x, _y, _z)
 THEN
+NOT DB_LeaderLib_Skills_InactiveSkillDummies(_Dummy);
 LeaderLib_Skills_Internal_PrepareDummyStats(_Dummy, _Caster, _CopyStats, _CopyEquipment);
 CharacterSetDetached(_Dummy, 1);
-TeleportToPosition(_Dummy, _x, _y, _z, "LeaderLib_Events_SkillDummyTeleported", 0, 0);
 SetOnStage(_Dummy, 1);
 SetVarString(_Dummy, "LeaderLib_SkillDummyID", _ID);
 DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy);
@@ -158,7 +227,7 @@ DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy);
 PROC
 LeaderLib_Skills_PrepareSkillDummy((STRING)_ID, (CHARACTERGUID)_Caster, (INTEGER)_CopyStats, (INTEGER)_CopyEquipment)
 AND
-NOT DB_LeaderLib_Skills_SkillDummies(_,_)
+NOT DB_LeaderLib_Skills_SkillDummies(_ID,_)
 AND
 GetPosition(_Caster, _x, _y, _z)
 AND
@@ -169,19 +238,39 @@ ObjectSetFlag(_Dummy, "LeaderLib_IsSkillDummy");
 CharacterMakeStoryNpc(_Dummy, 1);
 SetVisible(_Dummy, 0);
 CharacterSetDetached(_Dummy, 1);
-TeleportToPosition(_Dummy, _x, _y, _z, "LeaderLib_Events_SkillDummyTeleported", 0, 0);
 SetVarString(_Dummy, "LeaderLib_SkillDummyID", _ID);
 DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy);
 
 PROC
 LeaderLib_Skills_Internal_PrepareDummyStats((CHARACTERGUID)_Dummy, (CHARACTERGUID)_Caster, (INTEGER)_CopyStats, (INTEGER)_CopyEquipment)
 THEN
-CharacterTransformAppearanceTo(_Dummy, _Caster, _CopyEquipment, 1);
+//CharacterTransformAppearanceTo(_Dummy, _Caster, _CopyEquipment, 1);
+CharacterTransformFromCharacter(_Dummy, _Caster, 0, 1, _CopyStats, _CopyEquipment, _CopyStats, 1, 0);
+//LeaderLib_StartCharacterCharacterTimer(_Dummy, _Caster, 50, "LeaderLib_Timers_SkillDummy_CopyStats", "LeaderLib_Commands_SkillDummy_CopyStats")
 
 PROC
-LeaderLib_Skills_Internal_PrepareDummyStats((CHARACTERGUID)_Dummy, (CHARACTERGUID)_Caster, 1)
+LeaderLib_Skills_Internal_PrepareDummyStats((CHARACTERGUID)_Dummy, (CHARACTERGUID)_Caster, 1, (INTEGER)_CopyEquipment)
 THEN
 LeaderLib_Helper_CopyStats(_Dummy, _Caster, 1, 1, 1, 1);
+
+PROC
+LeaderLib_Skills_Internal_PrepareDummyStats((CHARACTERGUID)_Dummy, (CHARACTERGUID)_Caster, (INTEGER)_CopyStats, (INTEGER)_CopyEquipment)
+AND
+CharacterIsPlayer(_Caster, 1)
+THEN
+CharacterSetRelationIndivFactionToFaction(_Dummy, "Evil NPC", 0);
+CharacterSetRelationIndivFactionToIndivFaction(_Dummy, _Caster, 100);
+CharacterAddAttitudeTowardsPlayer(_Dummy, _Caster, 100);
+
+PROC
+LeaderLib_Skills_Internal_PrepareDummyStats((CHARACTERGUID)_Dummy, (CHARACTERGUID)_Caster, (INTEGER)_CopyStats, (INTEGER)_CopyEquipment)
+AND
+CharacterIsPlayer(_Caster, 0)
+AND
+GetFaction(_Caster, _Faction)
+THEN
+//CharacterSetRelationIndivFactionToIndivFaction(_Dummy, _Caster, 100);
+SetFaction(_Dummy, _Faction);
 
 PROC
 LeaderLib_Skills_MarkDummyForReset((CHARACTERGUID)_Dummy, (INTEGER)_Duration)
@@ -195,7 +284,7 @@ AND
 DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy)
 THEN
 NOT DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy);
-DB_LeaderLib_Skills_SkillDummies("", _Dummy);
+DB_LeaderLib_Skills_InactiveSkillDummies(_Dummy);
 SetVarString(_Dummy, "LeaderLib_SkillDummyID", "");
 SetOnStage(_Dummy, 0);
 
@@ -217,6 +306,25 @@ AND
 DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy)
 THEN
 NOT DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy);
+
+IF
+RegionEnded(_)
+AND
+DB_LeaderLib_Skills_InactiveSkillDummies(_Dummy)
+AND
+ObjectExists(_Dummy, 1)
+THEN
+CharacterMakeStoryNpc(_Dummy, 0);
+//RemoveTemporaryCharacter(_Dummy); Not in the main game yet
+SetOnStage(_Dummy, 0);
+CharacterDieImmediate(_Dummy, 0, "", _Dummy);
+
+IF
+RegionEnded(_)
+AND
+DB_LeaderLib_Skills_InactiveSkillDummies(_Dummy)
+THEN
+NOT DB_LeaderLib_Skills_InactiveSkillDummies(_Dummy);
 //END_REGION
 EXITSECTION
 

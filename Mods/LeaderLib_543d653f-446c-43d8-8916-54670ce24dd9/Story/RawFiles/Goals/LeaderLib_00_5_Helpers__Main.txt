@@ -594,7 +594,6 @@ _AddVal > 0
 THEN
 CharacterAddAttribute(_CopyTo, _Attribute, _AddVal);
 
-
 PROC
 LeaderLib_Helper_CopyTalents((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
 AND

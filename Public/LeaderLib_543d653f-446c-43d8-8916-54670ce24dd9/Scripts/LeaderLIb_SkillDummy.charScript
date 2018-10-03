@@ -5,7 +5,7 @@ EVENTS
 
 EVENT LeaderLib_SkillDummy_Init
 ON
-	OnInit()
+	OnCharacterEvent(__Me, "LeaderLib_Events_SkillDummyArrived")
 ACTIONS
-	//SetMaterial(__Me, "8c46ff9c-f39b-43fa-a2bf-4a10f47db0d3", -1, 1, 1, 1, 1, 1, 1, 1, 0, 0)
-	//SetVisible(__Me, 0)
+	CharacterSetWalkSpeedOverride(__Me, 1, 20.0)
+	CharacterSetRunSpeedOverride(__Me, 1, 20.0)

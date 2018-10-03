@@ -1,5 +1,10 @@
 LeaderLib Changelog
 =======
+# 1.1.0.0
+* New "Surface Lists" helpers, for creating a list of surfaces to randomly choose from [(used in the upcoming Weapon Expansion mod)](https://gfycat.com/CornyPreciousKid).
+* Switched the empty rune slot deltamods to the "ItemCombo" from "RuneEmpty", to hopefully prevent them from spawning randomly.
+* Added more "IsGameLevel" checks for a few rules running when the GameStarted event is called, and prevented the Mod Menu book from auto-adding when inside the editor.
+
 # 1.0.4.0
 * LeaderLib now sets/clears a global flag when a mod is active/not active, i.e. if EquipmentSets is active, an EquipmentSets_IsActive flag is set.
 * Updated all the LeaderTrader dialog to skip the book-giving text if the party already has a mod menu book (more can be granted for free). The trader will also go right into his default dialog after the intro dialog.

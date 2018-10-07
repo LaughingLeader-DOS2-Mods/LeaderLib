@@ -816,6 +816,20 @@ THEN
 DB_NOOP(1);
 
 QRY
+LeaderLib_Helper_QRY_HasAnyStatus((GUIDSTRING)_Object, (STRING)_Status1, (STRING)_Status2)
+AND
+LeaderLib_Helper_QRY_HasStatus(_Object, _Status1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_HasAnyStatus((GUIDSTRING)_Object, (STRING)_Status1, (STRING)_Status2)
+AND
+LeaderLib_Helper_QRY_HasStatus(_Object, _Status2)
+THEN
+DB_NOOP(1);
+
+QRY
 LeaderLib_Helper_QRY_IsStunningStatus((STRING)_Status)
 AND
 GetStatusType(_Status, _Type)

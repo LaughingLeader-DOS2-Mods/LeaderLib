@@ -391,6 +391,16 @@ GlobalClearFlag(_Flag);
 //END_REGION
 
 //REGION RANDOM
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_CurrentVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 0, 2)
+AND
+DB_LeaderLib_Random_Seed(_Seed)
+THEN
+NOT DB_LeaderLib_Random_Seed(_Seed);
+LeaderLib_Random_AdjustSeed();
+
 //Thanks to Norbyte for this chunk
 QRY
 LeaderLib_Random_QRY_AdjustSeed()
@@ -402,10 +412,29 @@ LeaderLib_Random_AdjustSeed()
 AND
 NOT DB_LeaderLib_Random_Seed(_)
 AND
-Random(99999, _Seed)
+Random(9999, _Seed) // Stay below 2,147,483,647, otherwise problems occur
+AND
+IntegerProduct(_Seed, 214013, _SeedLCG1)
+AND
+IntegerSum(_SeedLCG1, 2531011, _SeedLCG2)
+THEN
+DB_LeaderLib_Random_Seed(_SeedLCG2);
+
+/*
+PROC
+LeaderLib_Random_AdjustSeed()
+AND
+NOT DB_LeaderLib_Random_Seed(_)
+THEN
+LeaderLib_SendEvent("LeaderLib_Commands_GenerateRandomSeed");
+
+IF
+StoryEvent(_EventParser, "LeaderLib_Events_RandomSeedGenerated")
+AND
+GetVarInteger(_EventParser, "LeaderLib_RandomSeed", _Seed)
 THEN
 DB_LeaderLib_Random_Seed(_Seed);
-
+*/
 QRY
 LeaderLib_Random_QRY((INTEGER)_Modulo)
 THEN
@@ -428,6 +457,16 @@ AND
 Random(_Seed, _Ran)
 AND
 IntegerModulo(_Ran, _Modulo, _Rand)
+/*
+AND
+IntegertoString(_Ran, _RanStr)
+AND
+IntegertoString(_Modulo, _ModuloStr)
+AND
+IntegertoString(_Rand, _RandStr)
+AND
+LeaderLog_QRY_Log("DEBUG", "[LeaderLib:Random] _Ran is [",_RanStr,"], _Modulo is [",_ModuloStr,"], _Rand is [",_RandStr,"]")
+*/
 THEN
 DB_LeaderLib_Random(_Rand);
 //END_REGION

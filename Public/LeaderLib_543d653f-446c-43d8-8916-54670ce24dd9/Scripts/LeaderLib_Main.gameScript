@@ -368,3 +368,17 @@ IF "!c1&!c2"
 THEN
 	ItemEvent(_Item, %LeaderLib_InventoryIterator_ItemEvent)
 ENDIF
+
+EVENT LeaderLib_Events_RandomSeed
+VARS
+	ITEM:_Item
+	INT:_Seed
+ON
+	OnItemEvent(_Item, "LeaderLib_Commands_GenerateRandomSeed")
+ACTIONS
+	GetRandomBetween(_Seed, 0, 161803398)
+	Multiply(_Seed, 214013)
+	Add(_Seed, 2531011)
+	Clamp(_Seed, _Seed, 2147483647)
+	SetVar(_Item, "LeaderLib_RandomSeed", _Seed)
+	ItemEvent(_Item, "LeaderLib_Events_RandomSeedGenerated")

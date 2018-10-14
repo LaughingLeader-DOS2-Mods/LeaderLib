@@ -401,18 +401,24 @@ THEN
 NOT DB_LeaderLib_Random_Seed(_Seed);
 LeaderLib_Random_AdjustSeed();
 
-//Thanks to Norbyte for this chunk
 QRY
 LeaderLib_Random_QRY_AdjustSeed()
 THEN
 LeaderLib_Random_AdjustSeed();
 
+/*
+Thanks to Norbyte for the initial MSVCRT rand idea.
+A msvcrt-rand-like implementation.
+9999 is our max _Modulo for determining the seed at the moment,
+since we're unable to clamp or compare integers above the INT32 Max (2,147,483,647).
+9,999 x 214,013 + 2,531,011 = 2,142,446,998
+*/
 PROC
 LeaderLib_Random_AdjustSeed()
 AND
 NOT DB_LeaderLib_Random_Seed(_)
 AND
-Random(9999, _Seed) // Stay below 2,147,483,647, otherwise problems occur
+Random(9999, _Seed)
 AND
 IntegerProduct(_Seed, 214013, _SeedLCG1)
 AND

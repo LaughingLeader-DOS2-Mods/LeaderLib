@@ -392,29 +392,29 @@ GlobalClearFlag(_Flag);
 
 //REGION RANDOM
 PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_CurrentVersion)
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, "1.1.1.0")
 AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 0, 2)
-AND
+//LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 1, 0)
+//AND
 DB_LeaderLib_Random_Seed(_Seed)
 THEN
 NOT DB_LeaderLib_Random_Seed(_Seed);
-LeaderLib_Random_AdjustSeed();
+LeaderLib_Random_Internal_InitSeed();
 
 QRY
-LeaderLib_Random_QRY_AdjustSeed()
+LeaderLib_Random_QRY_Internal_InitSeed()
 THEN
-LeaderLib_Random_AdjustSeed();
+LeaderLib_Random_Internal_InitSeed();
 
 /*
-Thanks to Norbyte for the initial MSVCRT rand idea.
 A msvcrt-rand-like implementation.
 9999 is our max _Modulo for determining the seed at the moment,
 since we're unable to clamp or compare integers above the INT32 Max (2,147,483,647).
 9,999 x 214,013 + 2,531,011 = 2,142,446,998
+(Thanks to Norbyte for the initial MSVCRT rand idea)
 */
 PROC
-LeaderLib_Random_AdjustSeed()
+LeaderLib_Random_Internal_InitSeed()
 AND
 NOT DB_LeaderLib_Random_Seed(_)
 AND
@@ -441,7 +441,7 @@ NOT DB_LeaderLib_Random(_OldRand);
 PROC
 LeaderLib_Random((INTEGER)_Modulo)
 AND
-LeaderLib_Random_QRY_AdjustSeed()
+LeaderLib_Random_QRY_Internal_InitSeed()
 AND
 DB_LeaderLib_Random_Seed(_Seed)
 AND
@@ -450,6 +450,31 @@ AND
 IntegerModulo(_Ran, _Modulo, _Rand)
 THEN
 DB_LeaderLib_Random(_Rand);
+
+PROC
+LeaderLib_Random_CreateSeed()
+THEN
+LeaderLib_Random_CreateSeed(9999);
+
+PROC
+LeaderLib_Random_CreateSeed((INTEGER)_RanMax)
+AND
+DB_LeaderLib_Random_Seed(_Seed)
+THEN
+NOT DB_LeaderLib_Random_Seed(_Seed);
+
+PROC
+LeaderLib_Random_CreateSeed((INTEGER)_RanMax)
+AND
+IntegerMin(_RanMax, 9999, _Min)
+AND
+Random(_Min, _Seed)
+AND
+IntegerProduct(_Seed, 214013, _SeedLCG1)
+AND
+IntegerSum(_SeedLCG1, 2531011, _SeedLCG2)
+THEN
+DB_LeaderLib_Random_Seed(_SeedLCG2);
 //END_REGION
 
 //REGION RANDOM_RANGE

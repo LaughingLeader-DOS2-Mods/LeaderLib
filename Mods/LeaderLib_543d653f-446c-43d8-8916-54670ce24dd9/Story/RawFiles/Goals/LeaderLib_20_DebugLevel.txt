@@ -831,17 +831,18 @@ NOT DB_MyMod_Toggle(_Var);
 IF
 TextEventSet("leaderlib_ranseedreset")
 AND
-DB_LeaderLib_Random_Seed(_Seed)
+NOT GetTextEventParamInteger(1, _)
 THEN
-NOT DB_LeaderLib_Random_Seed(_Seed);
+DB_LeaderLib_Debug_TraceSeed(1);
+LeaderLib_Random_CreateSeed();
 
 IF
 TextEventSet("leaderlib_ranseedreset")
 AND
-NOT GetTextEventParamInteger(1, _)
+GetTextEventParamInteger(1, _RanMax)
 THEN
 DB_LeaderLib_Debug_TraceSeed(1);
-LeaderLib_Random_AdjustSeed();
+LeaderLib_Random_CreateSeed(_RanMax);
 
 IF
 DB_LeaderLib_Random_Seed(_Seed)
@@ -854,29 +855,40 @@ LeaderLog_Log("DEBUG", "[Leaderib:Random:SeedReset] Seed is now [",_SeedStr,"]")
 NOT DB_LeaderLib_Debug_TraceSeed(1);
 
 IF
-TextEventSet("leaderlib_ranseedreset")
+TextEventSet("leaderlib_ran")
 AND
-GetTextEventParamInteger(1, _Seed)
+GetTextEventParamInteger(1, _RanMax)
 AND
-IntegertoString(_Seed, _SeedStr)
+GetTextEventParamInteger(2, _Rolls)
 THEN
-DB_LeaderLib_Random_Seed(_Seed);
-LeaderLog_Log("DEBUG", "[Leaderib:Random:SeedReset] Seed is now [",_SeedStr,"]");
+DB_LeaderLib_Debug_RanTest(_RanMax, 1, _Rolls);
 
 IF
 TextEventSet("leaderlib_ran")
+AND
+GetTextEventParamInteger(1, _RanMax)
+AND
+NOT GetTextEventParamInteger(2, _)
 THEN
-DB_LeaderLib_Debug_RanTest(6);
-LeaderLib_Debug_RunRanTest();
+DB_LeaderLib_Debug_RanTest(_RanMax, 1, 6);
+
+IF
+TextEventSet("leaderlib_ran")
+AND
+NOT GetTextEventParamInteger(1, _)
+AND
+NOT GetTextEventParamInteger(2, _)
+THEN
+DB_LeaderLib_Debug_RanTest(99, 1, 6);
 
 PROC
 LeaderLib_Debug_RunRanTest()
 AND
-DB_LeaderLib_Debug_RanTest(_Var)
+DB_LeaderLib_Debug_RanTest(_RanMax, _Roll, _TotalRolls)
 AND
-IntegerSubtract(_Var, 1, _NextVar)
+IntegerSum(_Roll, 1, _NextRoll)
 AND
-LeaderLib_Random_QRY(99)
+LeaderLib_Random_QRY(_RanMax)
 AND
 DB_LeaderLib_Random(_Ran)
 AND
@@ -885,24 +897,28 @@ AND
 IntegertoString(_Ran, _RanStr)
 AND
 IntegertoString(_Seed, _SeedStr)
+AND
+IntegertoString(_RanMax, _RanMaxStr)
+AND
+IntegertoString(_Roll, _RollStr)
 THEN
-NOT DB_LeaderLib_Debug_RanTest(_Var);
-LeaderLog_Log("DEBUG", "[Leaderib:Random] Rolled a [",_RanStr,"]/99. Seed is [",_SeedStr,"]");
-DB_LeaderLib_Debug_RanTest(_NextVar);
+NOT DB_LeaderLib_Debug_RanTest(_RanMax, _Roll, _TotalRolls);
+LeaderLog_Log("DEBUG", "[Leaderib:Debug:TextEventSet('leaderlib_ran')] [",_RollStr,"] Rolled [",_RanStr,"/",_RanMaxStr,"]. Seed is [",_SeedStr,"]");
+DB_LeaderLib_Debug_RanTest(_RanMax, _NextRoll, _TotalRolls);
 
 IF
-DB_LeaderLib_Debug_RanTest(_Var)
+DB_LeaderLib_Debug_RanTest(_RanMax, _NextRoll, _TotalRolls)
 AND
-_Var > 0
+_NextRoll <= _TotalRolls
 THEN
 LeaderLib_Debug_RunRanTest();
 
 IF
-DB_LeaderLib_Debug_RanTest(_Var)
+DB_LeaderLib_Debug_RanTest(_RanMax, _NextRoll, _TotalRolls)
 AND
-_Var <= 0
+_NextRoll > _TotalRolls
 THEN
-NOT DB_LeaderLib_Debug_RanTest(_Var);
+NOT DB_LeaderLib_Debug_RanTest(_RanMax, _NextRoll, _TotalRolls);
 
 IF
 TextEventSet("leaderlib_mintest")

@@ -1,5 +1,9 @@
 LeaderLib Changelog
 =======
+# 1.1.2.0
+* Quick fix for opening mod menus on pages greater than 1.
+* Added a helper for tracing object positions.
+
 # 1.1.0.0
 * New "Surface List" helpers, for creating a list of surfaces to randomly choose from [(used in the upcoming Weapon Expansion mod)](https://gfycat.com/CornyPreciousKid).
 * Switched the empty rune slot deltamods to the "ItemCombo" from "RuneEmpty", to hopefully prevent them from spawning randomly.

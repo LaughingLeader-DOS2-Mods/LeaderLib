@@ -788,6 +788,20 @@ THEN
 NOT DB_LeaderLib_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _CompleteEvent, _TimerPrefix);
 CharacterCharacterSetEvent(_Char1, _Char2, _CompleteEvent);
 
+QRY
+LeaderLib_QRY_ObjectObjectTimerStarted((GUIDSTRING)_Obj1, (GUIDSTRING)_Obj2, (STRING)_TimerPrefix)
+AND
+DB_LeaderLib_Helper_Temp_ObjectObjectTimer(_TimerName, _Obj1, _Obj2, _CompleteEvent, _TimerPrefix)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_QRY_ObjectObjectTimerStartedWithEvent((GUIDSTRING)_Obj1, (GUIDSTRING)_Obj2, (STRING)_CompleteEvent)
+AND
+DB_LeaderLib_Helper_Temp_ObjectObjectTimer(_TimerName, _Obj1, _Obj2, _CompleteEvent, _TimerPrefix)
+THEN
+DB_NOOP(1);
+
 PROC
 LeaderLib_StartObjectObjectTimer((GUIDSTRING)_Obj1, (GUIDSTRING)_Obj2, (INTEGER)_Time, (STRING)_TimerPrefix, (STRING)_CompleteEvent)
 AND
@@ -795,7 +809,9 @@ GetUUID(_Obj1, _UUID1)
 AND
 GetUUID(_Obj1, _UUID2)
 AND
-StringConcatenate(_UUID1, _UUID2, _ID)
+StringConcatenate(_UUID1, "_", _Str1)
+AND
+StringConcatenate(_Str1, _UUID2, _ID)
 AND
 StringConcatenate(_TimerPrefix, _ID, _TimerName)
 THEN

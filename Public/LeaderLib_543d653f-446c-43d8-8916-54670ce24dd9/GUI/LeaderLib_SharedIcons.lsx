@@ -370,6 +370,27 @@
                     <attribute id="V2" value="0.0155029" type="6" />
                 </node>
                 <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Grimoire_Mimicry_A" type="22" />
+                    <attribute id="U1" value="0.703247" type="6" />
+                    <attribute id="U2" value="0.718628" type="6" />
+                    <attribute id="V1" value="0.0157471" type="6" />
+                    <attribute id="V2" value="0.0311279" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Grimoire_Swap_A" type="22" />
+                    <attribute id="U1" value="0.687622" type="6" />
+                    <attribute id="U2" value="0.703003" type="6" />
+                    <attribute id="V1" value="0.0157471" type="6" />
+                    <attribute id="V2" value="0.0311279" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Grimoire_Wind_A" type="22" />
+                    <attribute id="U1" value="0.718872" type="6" />
+                    <attribute id="U2" value="0.734253" type="6" />
+                    <attribute id="V1" value="0.0157471" type="6" />
+                    <attribute id="V2" value="0.0311279" type="6" />
+                </node>
+                <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Hammer_Runesmith_A" type="22" />
                     <attribute id="U1" value="0.625122" type="6" />
                     <attribute id="U2" value="0.640503" type="6" />

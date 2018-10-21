@@ -818,6 +818,13 @@ AND
 GetVarString(_Target, "LeaderLog_RealString", _Str)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLog:LeaderLog_Events_OnRealConverted] Real value: [",_Str,"].");
+
+QRY
+LeaderLog_QRY_TracePosition((GUIDSTRING)_Object, (STRING)_Prefix, (STRING)_Suffix)
+THEN
+SetVarString(_Object, "LeaderLog_PositionToString_Prefix", _Prefix);
+SetVarString(_Object, "LeaderLog_PositionToString_Suffix", _Suffix);
+SetStoryEvent(_Object, "LeaderLog_Commands_PositionToString");
 //END_REGION
 
 //REGION FLAG_LOGS

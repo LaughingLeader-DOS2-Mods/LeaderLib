@@ -557,11 +557,9 @@ LeaderLib_Helper_QRY_ClearObjectFlag(_Player, _SelectFlag)
 AND
 DB_LeaderLib_MenuSettings_Temp_MenuVariableValue(_MenuIndex, _ID)
 AND
-DB_LeaderLib_Dictionary_Data("LeaderLib_RegisteredMenus", _MenuIndex, _ID, _DisplayName)
-AND
 DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author)
 THEN
-//LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu:ObjectFlagSet] Loading menu for ", _ID);
+LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu:ObjectFlagSet] Loading menu [",_ID,"][",_DisplayName,"][",_Dialog,"][",_ModID,"][",_Author,"]");
 LeaderLib_ModMenu_SetNextMenu(_Player, _ID, _Dialog);
 
 IF

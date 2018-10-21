@@ -347,9 +347,9 @@ LeaderLib_Register_ModMenu("LLZ2", "[Zzznonom] Settings", "LeaderLib_SettingsMen
 LeaderLib_Register_ModMenu("LLZ3", "[Zzaonimus] Settings", "LeaderLib_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_Register_ModMenu("LLZ4", "[Zaronimus] Settings", "LeaderLib_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_Register_ModMenu("LLZ5", "[Zironimus] Settings", "LeaderLib_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_Register_ModMenu("LaughingLeader_NamingWizard", "[Naming Wizard] Settings", "LeaderLib_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_Register_ModMenu("LaughingLeader_EquipmentSets", "[Equipment Sets] Settings", "LeaderLib_SettingsMenu", "LeaderLib", "LaughingLeader");
-LeaderLib_Register_ModMenu("LaughingLeader_DebugTools", "[Debug Tools] Settings", "LeaderLib_SettingsMenu", "LeaderLib", "LaughingLeader");
+//LeaderLib_Register_ModMenu("LaughingLeader_NamingWizard", "[Naming Wizard] Settings", "LeaderLib_SettingsMenu", "LeaderLib", "LaughingLeader");
+//LeaderLib_Register_ModMenu("LaughingLeader_EquipmentSets", "[Equipment Sets] Settings", "LeaderLib_SettingsMenu", "LeaderLib", "LaughingLeader");
+//LeaderLib_Register_ModMenu("LaughingLeader_DebugTools", "[Debug Tools] Settings", "LeaderLib_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_Register_ModMenu("LLZasd7", "[Blaaaabbbbbzter] Settings", "LeaderLib_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_Register_ModMenu("LLZasd6", "[Blaaaabbbbbzter] Settings", "LeaderLib_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderLib_Register_ModMenu("LLasdZ92", "[Blaaaabbbbbzter9] Settings", "LeaderLib_SettingsMenu", "LeaderLib", "LaughingLeader");

@@ -196,6 +196,52 @@ THEN
 	ItemEvent(_Target, _CompletionEvent)
 ENDIF
 
+EVENT LeaderLog_PositionToString_Character
+VARS
+	CHARACTER:_Target
+	FLOAT3:_Pos
+	STRING:_Prefix
+	STRING:_Suffix
+	STRING:_Str
+	FIXEDSTRING:_StrF
+ON
+	OnCharacterEvent(_Target, "LeaderLog_Commands_PositionToString")
+ACTIONS
+IF "c1&c2&c3"
+	GetVar(_Prefix, _Target, "LeaderLog_PositionToString_Prefix")
+	GetVar(_Suffix, _Target, "LeaderLog_PositionToString_Suffix")
+	GetPosition(_Target, _Pos)
+THEN
+	//Assert("[1][2][3]", _Prefix, _Pos, _Suffix)
+	Print(_Str, "[1][2][3]", _Prefix, _Pos, _Suffix)
+	SetVar(_Target, "LeaderLog_Type", STRING:"Debug")
+	SetVar(_Target, "LeaderLog_Message", _Str)
+	CharacterEvent(_Target, "LeaderLog_Commands_Log")
+ENDIF
+
+EVENT LeaderLog_PositionToString_Item
+VARS
+	ITEM:_Target
+	FLOAT3:_Pos
+	STRING:_Prefix
+	STRING:_Suffix
+	STRING:_Str
+	FIXEDSTRING:_StrF
+ON
+	OnItemEvent(_Target, "LeaderLog_Commands_PositionToString")
+ACTIONS
+IF "c1&c2&c3"
+	GetVar(_Prefix, _Target, "LeaderLog_PositionToString_Prefix")
+	GetVar(_Suffix, _Target, "LeaderLog_PositionToString_Suffix")
+	GetPosition(_Target, _Pos)
+THEN
+	//Assert("[1][2][3]", _Prefix, _Pos, _Suffix)
+	Print(_Str, "[1][2][3]", _Prefix, _Pos, _Suffix)
+	SetVar(_Target, "LeaderLog_Type", STRING:"Debug")
+	SetVar(_Target, "LeaderLog_Message", _Str)
+	ItemEvent(_Target, "LeaderLog_Commands_Log")
+ENDIF
+
 EVENT LeaderLib_Events_AutoLevelItems_Start
 VARS
 	CHARACTER:_Character

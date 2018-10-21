@@ -363,6 +363,18 @@ DB_LeaderLib_Math_Cosine(_Angle, _xblock4);
 
 //REGION ABSOLUTE
 QRY
+LeaderLib_Math_QRY_ClearAbsoluteValues()
+THEN
+LeaderLib_Math_ClearAbsoluteValues();
+
+PROC
+LeaderLib_Math_ClearAbsoluteValues()
+AND
+DB_LeaderLib_Math_AbsoluteValue(_Num, _AbsNum)
+THEN
+NOT DB_LeaderLib_Math_AbsoluteValue(_Num, _AbsNum);
+
+QRY
 LeaderLib_Math_QRY_AbsoluteValue((REAL)_Num)
 THEN
 LeaderLib_Math_Internal_AbsoluteValue(_Num);

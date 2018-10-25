@@ -242,6 +242,26 @@ ObjectGetFlag(_Companion, "LeaderLib_Debug_IsCompanion", 1)
 THEN
 Proc_StartDialog(0, "LeaderLib_Debug_RecruitCharacter", _Companion, _Player);
 //END_REGION
+
+//REGION TREASURE_TESTING
+IF
+TextEventSet("leaderlib_tradegen")
+AND
+DB_TraderGeneratedTreasureForLevel(_Trader, _OldLevel)
+THEN
+DB_LeaderLib_Editor_Temp_GenerateTradeItems(_Trader);
+ProcClearTradeFacts(_Trader);
+
+IF
+TextEventSet("leaderlib_tradegen")
+AND
+CharacterGetHostCharacter(_Player)
+AND
+DB_LeaderLib_Editor_Temp_GenerateTradeItems(_Trader)
+THEN
+GenTradeItems(_Player, _Trader);
+NOT DB_LeaderLib_Editor_Temp_GenerateTradeItems(_Trader);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

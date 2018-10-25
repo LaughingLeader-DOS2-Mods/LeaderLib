@@ -1,0 +1,331 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+PROC
+LeaderLib_Dialog_Menu_Register_Menu((STRING)_ID, (INTEGER)_EntriesPerPage)
+AND
+StringConcatenate("LeaderLib_MenuVars_", _ID, _VarArrayID)
+THEN
+LeaderLib_Array_NewArray(_ID);
+LeaderLib_Array_NewArray(_VarArrayID);
+DB_LeaderLib_Dialog_Menu_Settings(_ID, _VarArrayID, _EntriesPerPage, 0, 0);
+
+PROC
+LeaderLib_Dialog_Menu_Register_PageFlags((STRING)_ID, (STRING)_HasMultiplePagesFlag, (STRING)_NextPageFlag, (STRING)_PreviousPageFlag)
+THEN
+DB_LeaderLib_Dialog_Menu_Flags(_ID, _HasMultiplePagesFlag, _NextPageFlag, _PreviousPageFlag, "", "");
+
+PROC
+LeaderLib_Dialog_Menu_Register_PageFlags((STRING)_ID, (STRING)_HasMultiplePagesFlag, (STRING)_NextPageFlag, (STRING)_PreviousPageFlag, (STRING)_FirstPageFlag, (STRING)_LastPageFlag)
+THEN
+DB_LeaderLib_Dialog_Menu_Flags(_ID, _HasMultiplePagesFlag, _NextPageFlag, _PreviousPageFlag, _FirstPageFlag, _LastPageFlag);
+
+PROC
+LeaderLib_Dialog_Menu_Add_VariableEntry((STRING)_ID, (STRING)_DialogVar, (STRING)_AvailableFlag, (STRING)_SelectedFlag)
+AND
+DB_LeaderLib_Dialog_Menu_Settings(_ID, _VarArrayID, _EntriesPerPage, _PreviousLastPageIndex, _PreviousMaxPage)
+AND
+NOT DB_LeaderLib_Dialog_Menu_Variable(_ID, _DialogVar, _, _)
+THEN
+LeaderLib_Array_AddToArray(_VarArrayID, _DialogVar);
+DB_LeaderLib_Dialog_Menu_Variable(_ID, _DialogVar, _AvailableFlag, _SelectedFlag);
+
+PROC
+LeaderLib_Dialog_Menu_Remove_VariableEntry((STRING)_ID, (STRING)_DialogVar)
+AND
+DB_LeaderLib_Dialog_Menu_Variable(_ID, _DialogVar, _AvailableFlag, _SelectedFlag)
+AND
+DB_LeaderLib_Dialog_Menu_Settings(_ID, _VarArrayID, _EntriesPerPage, _PreviousLastPageIndex, _PreviousMaxPage)
+THEN
+NOT DB_LeaderLib_Dialog_Menu_Variable(_ID, _DialogVar, _AvailableFlag, _SelectedFlag);
+LeaderLib_Array_RemoveValueFromArray(_VarArrayID, _DialogVar);
+
+PROC
+LeaderLib_Dialog_Menu_Add_Entry((STRING)_ID, (STRING)_Key, (STRING)_DisplayText)
+THEN
+LeaderLib_Array_AddToDictionary(_ID, _Key, _DisplayText);
+LeaderLib_Dialog_Menu_CalculatePageValues(_ID);
+
+PROC
+LeaderLib_Dialog_Menu_Remove_Entry((STRING)_ID, (STRING)_Key)
+THEN
+LeaderLib_Array_RemoveKeyFromDictionary(_ID, _Key);
+LeaderLib_Dialog_Menu_CalculatePageValues(_ID);
+
+PROC
+LeaderLib_Dialog_Menu_CalculatePageValues((STRING)_ID)
+AND
+DB_LeaderLib_Dialog_Menu_Settings(_ID, _VarArrayID, _EntriesPerPage, _PreviousLastPageIndex, _PreviousMaxPage)
+AND
+DB_LeaderLib_Array_Length(_ID, _TotalEntries)
+AND
+IntegerSubtract(_EntriesPerPage, 1, _Variance)
+AND
+IntegerSum(_TotalEntries, _Variance, _PageNumToDivide)
+AND
+IntegerDivide(_PageNumToDivide, _EntriesPerPage, _MaxPage)
+AND
+IntegerSubtract(_TotalEntries, 1, _LastIndex)
+AND
+IntegerSubtract(_MaxPage, 1, _LastPageIndex)
+THEN
+NOT DB_LeaderLib_Dialog_Menu_Settings(_ID, _VarArrayID, _EntriesPerPage, _PreviousLastPageIndex, _PreviousMaxPage);
+DB_LeaderLib_Dialog_Menu_Settings(_ID, _VarArrayID, _EntriesPerPage, _LastPageIndex, _MaxPage);
+
+PROC
+LeaderLib_Dialog_Menu_InitMenu((STRING)_ID, (INTEGER)_Instance)
+AND
+DB_LeaderLib_Dialog_Menu_Temp_InstanceVars(_ID, _Instance, _CurrentPage)
+THEN
+NOT DB_LeaderLib_Dialog_Menu_Temp_InstanceVars(_ID, _Instance, _CurrentPage);
+
+PROC
+LeaderLib_Dialog_Menu_InitMenu((STRING)_ID, (INTEGER)_Instance)
+AND
+DB_LeaderLib_Dialog_Menu_Settings(_ID, _VarArrayID, _EntriesPerPage, _LastPageIndex, _MaxPage)
+THEN
+DB_LeaderLib_Dialog_Menu_Temp_InstanceVars(_ID, _Instance, 0);
+LeaderLib_Dialog_Menu_LoadPageVariables(_ID, _Instance);
+
+PROC
+LeaderLib_Dialog_Menu_InitMenu((STRING)_ID, (INTEGER)_Instance)
+AND
+DB_LeaderLib_Dialog_Menu_Settings(_ID, _VarArrayID, _EntriesPerPage, _LastPageIndex, _MaxPage)
+AND
+_LastPageIndex > 0
+AND
+DB_LeaderLib_Dialog_Menu_Flags(_ID, _HasMultiplePagesFlag, _NextPageFlag, _PreviousPageFlag, _FirstPageFlag, _LastPageFlag)
+AND
+DialogGetInvolvedPlayer(_Instance, 1, _Player)
+THEN
+ObjectSetFlag(_Player, _HasMultiplePagesFlag, _Instance);
+
+//REGION PAGE_VARIABLES
+PROC
+LeaderLib_Dialog_Menu_LoadPageVariables((STRING)_ID, (INTEGER)_Instance)
+AND
+DB_LeaderLib_Dialog_Menu_Temp_MenuVariableValue(_ID, _Instance, _EntryIndex, _EntryKey)
+THEN
+NOT DB_LeaderLib_Dialog_Menu_Temp_MenuVariableValue(_ID, _Instance, _EntryIndex, _EntryKey);
+
+PROC
+LeaderLib_Dialog_Menu_LoadPageVariables((STRING)_ID, (INTEGER)_Instance)
+AND
+DB_LeaderLib_Dialog_Menu_Settings(_ID, _VarArrayID, _EntriesPerPage, _LastPageIndex, _MaxPage)
+AND
+DB_LeaderLib_Dialog_Menu_Temp_InstanceVars(_ID, _Instance, _CurrentPage)
+AND
+IntegerProduct(_CurrentPage, _EntriesPerPage, _StartIndex)
+AND
+DB_LeaderLib_Array_Data(_VarArrayID, _VarIndex, _DialogVar)
+AND
+DB_LeaderLib_Dialog_Menu_Variable(_ID, _DialogVar, _AvailableFlag, _SelectedFlag)
+AND
+IntegerSum(_StartIndex, _VarIndex, _EntryIndex)
+AND
+LeaderLib_Dialog_Menu_Internal_QRY_DisableEntryIfNotAvailable(_ID, _Instance, _EntryIndex, _AvailableFlag)
+AND
+DB_LeaderLib_Dictionary_Data(_ID, _EntryIndex, _EntryKey, _DisplayText)
+AND
+DialogGetInvolvedPlayer(_Instance, 1, _Player)
+THEN
+ObjectSetFlag(_Player, _AvailableFlag, _Instance);
+DialogSetVariableStringForInstance(_Instance, _DialogVar, _DisplayText);
+DB_LeaderLib_Dialog_Menu_Temp_MenuVariableValue(_ID, _Instance, _VarIndex, _EntryKey);
+LeaderLib_Dialog_Menu_OnEntryValueSet(_Player, _ID, _DialogVar, _AvailableFlag, _Instance, _EntryKey, _DisplayText);
+
+//Helper in case a mod needs to modify the default result
+PROC
+LeaderLib_Dialog_Menu_OnEntryValueSet((GUIDSTRING)_Player, (STRING)_ID, (STRING)_DialogVar, (STRING)_AvailableFlag, (INTEGER)_Instance, (STRING)_EntryKey, (STRING)_DisplayText)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Dialog_Menu_Internal_QRY_DisableEntryIfNotAvailable((STRING)_ID, (INTEGER)_Instance, (INTEGER)_Index, (STRING)_AvailableFlag)
+THEN
+LeaderLib_Dialog_Menu_Internal_DisableEntryIfNotAvailable(_ID, _Instance, _Index, _AvailableFlag);
+
+PROC
+LeaderLib_Dialog_Menu_Internal_DisableEntryIfNotAvailable((STRING)_ID, (INTEGER)_Instance, (INTEGER)_Index, (STRING)_AvailableFlag)
+AND
+NOT DB_LeaderLib_Dictionary_Data(_ID, _Index, _, _)
+AND
+DialogGetInvolvedPlayer(_Instance, 1, _Player)
+THEN
+ObjectClearFlag(_Player, _AvailableFlag, _Instance);
+//END_REGION
+
+//REGION PAGE_CHANGING
+IF
+ObjectFlagSet(_NextPageFlag, _Player, _Instance)
+AND
+DB_LeaderLib_Dialog_Menu_Flags(_ID, _HasMultiplePagesFlag, _NextPageFlag, _PreviousPageFlag, _FirstPageFlag, _LastPageFlag)
+AND
+LeaderLib_Helper_QRY_ClearObjectFlag(_Player, _NextPageFlag)
+AND
+DB_LeaderLib_Dialog_Menu_Temp_InstanceVars(_ID, _Instance, _CurrentPage)
+THEN
+LeaderLib_Dialog_Menu_ChangePage(_ID, _Instance, 1);
+
+IF
+ObjectFlagSet(_PreviousPageFlag, _Player, _Instance)
+AND
+DB_LeaderLib_Dialog_Menu_Flags(_ID, _HasMultiplePagesFlag, _NextPageFlag, _PreviousPageFlag, _FirstPageFlag, _LastPageFlag)
+AND
+LeaderLib_Helper_QRY_ClearObjectFlag(_Player, _PreviousPageFlag)
+AND
+DB_LeaderLib_Dialog_Menu_Temp_InstanceVars(_ID, _Instance, _CurrentPage)
+THEN
+LeaderLib_Dialog_Menu_ChangePage(_ID, _Instance, -1);
+
+IF
+ObjectFlagSet(_FirstPageFlag, _Player, _Instance)
+AND
+DB_LeaderLib_Dialog_Menu_Flags(_ID, _HasMultiplePagesFlag, _NextPageFlag, _PreviousPageFlag, _FirstPageFlag, _LastPageFlag)
+AND
+_FirstPageFlag != ""
+AND
+LeaderLib_Helper_QRY_ClearObjectFlag(_Player, _FirstPageFlag)
+AND
+DB_LeaderLib_Dialog_Menu_Temp_InstanceVars(_ID, _Instance, _CurrentPage)
+THEN
+LeaderLib_Dialog_Menu_SetPage(_ID, _Instance, 0);
+
+IF
+ObjectFlagSet(_LastPageFlag, _Player, _Instance)
+AND
+DB_LeaderLib_Dialog_Menu_Flags(_ID, _HasMultiplePagesFlag, _NextPageFlag, _PreviousPageFlag, _FirstPageFlag, _LastPageFlag)
+AND
+_LastPageFlag != ""
+AND
+LeaderLib_Helper_QRY_ClearObjectFlag(_Player, _LastPageFlag)
+AND
+DB_LeaderLib_Dialog_Menu_Temp_InstanceVars(_ID, _Instance, _CurrentPage)
+AND
+DB_LeaderLib_Dialog_Menu_Settings(_ID, _VarArrayID, _EntriesPerPage, _LastPageIndex, _MaxPage)
+THEN
+LeaderLib_Dialog_Menu_SetPage(_ID, _Instance, _LastPageIndex);
+
+PROC
+LeaderLib_Dialog_Menu_ChangePage((STRING)_ID, (INTEGER)_Instance, (INTEGER)_ByAmount)
+AND
+NOT DB_LeaderLib_Dialog_Menu_Temp_PageChanged(_ID, _Instance)
+AND
+DB_LeaderLib_Dialog_Menu_Settings(_ID, _VarArrayID, _EntriesPerPage, _LastPageIndex, _MaxPage)
+AND
+DB_LeaderLib_Dialog_Menu_Temp_InstanceVars(_ID, _Instance, _CurrentPage)
+AND
+IntegerSum(_CurrentPage, _ByAmount, _NextPage)
+THEN
+NOT DB_LeaderLib_Dialog_Menu_Temp_InstanceVars(_ID, _Instance, _CurrentPage);
+DB_LeaderLib_Dialog_Menu_Temp_InstanceVars(_ID, _Instance, _NextPage);
+DB_LeaderLib_Dialog_Menu_Temp_PageChanged(_ID, _Instance);
+LeaderLib_Dialog_Menu_ClampPage(_ID, _Instance, _NextPage, _LastPageIndex);
+LeaderLib_Dialog_Menu_LoadPageVariables(_ID, _Instance);
+
+PROC
+LeaderLib_Dialog_Menu_ChangePage((STRING)_ID, (INTEGER)_Instance, (INTEGER)_ByAmount)
+AND
+DB_LeaderLib_Dialog_Menu_Temp_PageChanged(_ID, _Instance)
+THEN
+NOT DB_LeaderLib_Dialog_Menu_Temp_PageChanged(_ID, _Instance);
+
+PROC
+LeaderLib_Dialog_Menu_SetPage((STRING)_ID, (INTEGER)_Instance, (INTEGER)_PageIndex)
+AND
+NOT DB_LeaderLib_Dialog_Menu_Temp_PageChanged(_ID, _Instance)
+AND
+DB_LeaderLib_Dialog_Menu_Settings(_ID, _VarArrayID, _EntriesPerPage, _LastPageIndex, _MaxPage)
+AND
+DB_LeaderLib_Dialog_Menu_Temp_InstanceVars(_ID, _Instance, _CurrentPage)
+THEN
+NOT DB_LeaderLib_Dialog_Menu_Temp_InstanceVars(_ID, _Instance, _CurrentPage);
+DB_LeaderLib_Dialog_Menu_Temp_InstanceVars(_ID, _Instance, _PageIndex);
+DB_LeaderLib_Dialog_Menu_Temp_PageChanged(_ID, _Instance);
+LeaderLib_Dialog_Menu_ClampPage(_ID, _Instance, _PageIndex, _LastPageIndex);
+LeaderLib_Dialog_Menu_LoadPageVariables(_ID, _Instance);
+
+PROC
+LeaderLib_Dialog_Menu_SetPage((STRING)_ID, (INTEGER)_Instance, (INTEGER)_PageIndex)
+AND
+DB_LeaderLib_Dialog_Menu_Temp_PageChanged(_ID, _Instance)
+THEN
+NOT DB_LeaderLib_Dialog_Menu_Temp_PageChanged(_ID, _Instance);
+
+PROC
+LeaderLib_Dialog_Menu_ClampPage((STRING)_ID, (INTEGER)_Instance, (INTEGER)_CurrentPage, (INTEGER)_LastPageIndex)
+AND
+_CurrentPage > _LastPageIndex
+THEN
+NOT DB_LeaderLib_Dialog_Menu_Temp_InstanceVars(_ID, _Instance, _CurrentPage);
+DB_LeaderLib_Dialog_Menu_Temp_InstanceVars(_ID, _Instance, _CurrentPage);
+
+PROC
+LeaderLib_Dialog_Menu_ClampPage((STRING)_ID, (INTEGER)_Instance, (INTEGER)_CurrentPage, (INTEGER)_LastPageIndex)
+AND
+_CurrentPage < 0
+THEN
+NOT DB_LeaderLib_Dialog_Menu_Temp_InstanceVars(_ID, _Instance, _CurrentPage);
+DB_LeaderLib_Dialog_Menu_Temp_InstanceVars(_ID, _Instance, _LastPageIndex);
+//END_REGION
+
+//REGION ENTRY_SELECTED
+IF
+ObjectFlagSet(_SelectedFlag, _Player, _Instance)
+AND
+DB_LeaderLib_Dialog_Menu_Variable(_ID, _DialogVar, _AvailableFlag, _SelectedFlag)
+AND
+LeaderLib_Helper_QRY_ClearObjectFlag(_Player, _SelectedFlag)
+AND
+DB_LeaderLib_Dialog_Menu_Settings(_ID, _VarArrayID, _EntriesPerPage, _LastPageIndex, _MaxPage)
+AND
+DB_LeaderLib_Array_Data(_VarArrayID, _Index, _DialogVar)
+AND
+DB_LeaderLib_Dialog_Menu_Temp_MenuVariableValue(_ID, _Instance, _Index, _EntryKey)
+THEN
+LeaderLib_Dialog_Menu_OnEntrySelected(_ID, _Player, _Instance, _EntryKey);
+
+PROC
+LeaderLib_Dialog_Menu_OnEntrySelected((STRING)_ID, (GUIDSTRING)_Player, (INTEGER)_Instance, (STRING)_EntryKey)
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION CLEANUP
+IF
+DialogEnded(_Dialog, _Instance)
+AND
+DB_LeaderLib_Dialog_Menu_Temp_InstanceVars(_ID, _Instance, _CurrentPage)
+AND
+DialogGetInvolvedPlayer(_Instance, 1, _Player)
+THEN
+LeaderLib_Dialog_Menu_OnMenuClosed(_ID, _Player, _Instance);
+
+IF
+DialogEnded(_Dialog, _Instance)
+AND
+DB_LeaderLib_Dialog_Menu_Temp_InstanceVars(_ID, _Instance, _CurrentPage)
+THEN
+NOT DB_LeaderLib_Dialog_Menu_Temp_InstanceVars(_ID, _Instance, _CurrentPage);
+
+PROC
+LeaderLib_Dialog_Menu_OnMenuClosed((STRING)_ID, (GUIDSTRING)_Player, (INTEGER)_Instance)
+AND
+DB_LeaderLib_Dialog_Menu_Variable(_ID, _DialogVar, _AvailableFlag, _SelectedFlag)
+THEN
+ObjectClearFlag(_Player, _AvailableFlag, _Instance);
+
+PROC
+LeaderLib_Dialog_Menu_OnMenuClosed((STRING)_ID, (GUIDSTRING)_Player, (INTEGER)_Instance)
+AND
+DB_LeaderLib_Dialog_Menu_Flags(_ID, _HasMultiplePagesFlag, _NextPageFlag, _PreviousPageFlag, _FirstPageFlag, _LastPageFlag)
+THEN
+ObjectClearFlag(_Player, _HasMultiplePagesFlag, _Instance);
+//END_REGION
+
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

@@ -132,6 +132,24 @@ THEN
 DB_LeaderLib_Treasure_TreasureItemStats(_TreasureID, _ItemEntry, _Amount, _RequirementID);
 LeaderLib_Treasure_JustRegistered(_TreasureID, _ItemEntry, "ItemStat");
 
+//Shortcut for registering a template and configuring it to generate only once.
+PROC
+LeaderLib_Treasure_Register_UniqueItemTemplate((STRING)_TreasureID, (STRING)_ItemEntry)
+THEN
+LeaderLib_Treasure_Register_UniqueItemTemplate(_TreasureID, _ItemEntry, 1, "", "");
+
+PROC
+LeaderLib_Treasure_Register_UniqueItemTemplate((STRING)_TreasureID, (STRING)_ItemEntry, (STRING)_RequirementID)
+THEN
+LeaderLib_Treasure_Register_UniqueItemTemplate(_TreasureID, _ItemEntry, 1, _RequirementID, "");
+
+PROC
+LeaderLib_Treasure_Register_UniqueItemTemplate((STRING)_TreasureID, (STRING)_ItemEntry, (INTEGER)_Amount, (STRING)_RequirementID, (STRING)_CompletionEvent)
+THEN
+DB_LeaderLib_Treasure_TreasureItemTemplates(_TreasureID, _ItemEntry, _Amount, _RequirementID);
+LeaderLib_Treasure_Configure_GenerateOnce(_TreasureID, _ItemEntry, _CompletionEvent);
+LeaderLib_Treasure_JustRegistered(_TreasureID, _ItemEntry, "ItemTemplate");
+
 //END_REGION
 
 //REGION CONFIGURATION
@@ -603,6 +621,23 @@ LeaderLib_Trader_Register_Level(_TraderID, _Level);
 DB_LeaderLib_Traders_LevelPositionObject(_TraderID, _Level, _Object);
 
 PROC
+LeaderLib_Trader_Register_Rotation_Position((STRING)_TraderID, (STRING)_Level, (REAL)_xr, (REAL)_yr, (REAL)_zr)
+AND
+DB_LeaderLib_Traders_Rotation_Position(_TraderID, _Level, _OldRotationX, _OldRotationY, _OldRotationZ)
+THEN
+NOT DB_LeaderLib_Traders_Rotation_Position(_TraderID, _Level, _OldRotationX, _OldRotationY, _OldRotationZ);
+
+PROC
+LeaderLib_Trader_Register_Rotation_Position((STRING)_TraderID, (STRING)_Level, (REAL)_xr, (REAL)_yr, (REAL)_zr)
+THEN
+DB_LeaderLib_Traders_Rotation_Position(_TraderID, _Level, _xr, _yr, _zr);
+
+PROC
+LeaderLib_Trader_Register_Rotation_Object((STRING)_TraderID, (STRING)_Level, (GUIDSTRING)_Object)
+THEN
+DB_LeaderLib_Traders_Rotation_Object(_TraderID, _Level, _Object);
+
+PROC
 LeaderLib_Trader_Register_CreationEvent((STRING)_TraderID, (STRING)_EventName)
 THEN
 DB_LeaderLib_Traders_CreationEvents(_TraderID, _EventName);
@@ -682,6 +717,20 @@ AND
 DB_LeaderLib_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger)
 THEN
 NOT DB_LeaderLib_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger);
+
+PROC
+LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
+AND
+DB_LeaderLib_Traders_Rotation_Position(_TraderID, _Level, _xr, _yr, _zr)
+THEN
+NOT DB_LeaderLib_Traders_Rotation_Position(_TraderID, _Level, _xr, _yr, _zr);
+
+PROC
+LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
+AND
+DB_LeaderLib_Traders_Rotation_Object(_TraderID, _Level, _Object)
+THEN
+NOT DB_LeaderLib_Traders_Rotation_Object(_TraderID, _Level, _Object);
 
 PROC
 LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)

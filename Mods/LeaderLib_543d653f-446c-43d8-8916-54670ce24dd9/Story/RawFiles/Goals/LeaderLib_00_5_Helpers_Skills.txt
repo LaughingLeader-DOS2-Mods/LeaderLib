@@ -189,6 +189,7 @@ LeaderLib_CancelObjectTimer(_Dummy, "LeaderLib_Timers_Skills_StartSkillDummyCast
 CharacterUseSkill(_Dummy, _Skill, _Target, 1, 1, 1);
 LeaderLib_Skills_MarkDummyForReset(_Dummy, 3000);
 
+/*
 IF
 SkillCast(_Dummy, _Skill, _, _)
 AND
@@ -199,6 +200,7 @@ AND
 IntegertoString(_Level, _LevelStr)
 THEN
 LeaderLog_Log("TRACE", "[LeaderLib:Skills:UseSkillOnTarget] Dummy is level [",_LevelStr,"].");
+*/
 
 IF
 SkillCast(_Dummy, _Skill, _, _)

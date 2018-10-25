@@ -1,0 +1,65 @@
+INIT
+	CHARACTER:__Me
+	EXTERN INT:%LeaderLib_SnapRotation = 1
+	EXTERN INT:%LeaderLib_RotationAngleTolerance = 0
+STORY
+
+SCRIPTFRAME LeaderLib_RotateToPosition
+VARS
+	FLOAT3:_Position
+ACTIONS
+IF "c1"
+	GetVar(_Position, __Me, "LeaderLib_RotationPosition")
+THEN
+	CharacterLookAt(_Position, %LeaderLib_SnapRotation, %LeaderLib_RotationAngleTolerance)
+ENDIF
+
+SCRIPTFRAME LeaderLib_RotateToTarget_Character
+VARS
+	CHARACTER:_RotationTarget
+ACTIONS
+IF "c1"
+	GetVar(_RotationTarget, __Me, "LeaderLib_RotationTarget")
+THEN
+	CharacterLookAt(_RotationTarget, %LeaderLib_SnapRotation, %LeaderLib_RotationAngleTolerance)
+ENDIF
+
+SCRIPTFRAME LeaderLib_RotateToTarget_Item
+VARS
+	ITEM:_RotationTarget
+ACTIONS
+IF "c1"
+	GetVar(_RotationTarget, __Me, "LeaderLib_RotationTarget")
+THEN
+	CharacterLookAt(_RotationTarget, %LeaderLib_SnapRotation, %LeaderLib_RotationAngleTolerance)
+ENDIF
+
+SCRIPTFRAME LeaderLib_RotateToTarget_Trigger
+VARS
+	TRIGGER:_RotationTarget
+ACTIONS
+IF "c1"
+	GetVar(_RotationTarget, __Me, "LeaderLib_RotationTarget")
+THEN
+	CharacterLookAt(_RotationTarget, %LeaderLib_SnapRotation, %LeaderLib_RotationAngleTolerance)
+ENDIF
+
+SCRIPTFRAME LeaderLib_RotateToTarget_Spline
+VARS
+	SPLINE:_RotationTarget
+ACTIONS
+IF "c1"
+	GetVar(_RotationTarget, __Me, "LeaderLib_RotationTarget")
+THEN
+	CharacterLookAt(_RotationTarget, %LeaderLib_SnapRotation, %LeaderLib_RotationAngleTolerance)
+ENDIF
+
+SCRIPTFRAME LeaderLib_RotateFromTarget
+VARS
+	CHARACTER:_RotationTarget
+ACTIONS
+IF "c1"
+	GetVar(_RotationTarget, __Me, "LeaderLib_RotationTarget")
+THEN
+	CharacterLookFrom(_RotationTarget, %LeaderLib_SnapRotation)
+ENDIF

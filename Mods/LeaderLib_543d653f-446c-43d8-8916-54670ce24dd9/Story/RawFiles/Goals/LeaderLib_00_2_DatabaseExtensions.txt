@@ -609,6 +609,44 @@ NOT DB_LeaderLib_Dictionary_Data(_ID, _Index, _Key, _Value);
 DB_LeaderLib_Dictionary_Data(_ID, _NextIndex, _Key, _Value);
 //END_REGION
 
+//REGION DICTIONARY_REMOVE
+PROC
+LeaderLib_Array_RemoveFromDictionary((STRING)_ID, (INTEGER)_Index, (STRING)_Key, (STRING)_Value)
+AND
+DB_LeaderLib_Dictionary_Data(_ID, _Index, _Key, _Value)
+THEN
+NOT DB_LeaderLib_Dictionary_Data(_ID, _Index, _Key, _Value);
+LeaderLib_Array_DecreaseArrayLength(_ID);
+LeaderLib_Array_ShiftDictionaryUp(_ID, _Index);
+
+PROC
+LeaderLib_Array_RemoveFromDictionaryAtIndex((STRING)_ID, (INTEGER)_Index)
+AND
+DB_LeaderLib_Dictionary_Data(_ID, _Index, _Key, _Value)
+THEN
+NOT DB_LeaderLib_Dictionary_Data(_ID, _Index, _Key, _Value);
+LeaderLib_Array_DecreaseArrayLength(_ID);
+LeaderLib_Array_ShiftDictionaryUp(_ID, _Index);
+
+PROC
+LeaderLib_Array_RemoveKeyFromDictionary((STRING)_ID, (STRING)_Key)
+AND
+DB_LeaderLib_Dictionary_Data(_ID, _Index, _Key, _Value)
+THEN
+NOT DB_LeaderLib_Dictionary_Data(_ID, _Index, _Key, _Value);
+LeaderLib_Array_DecreaseArrayLength(_ID);
+LeaderLib_Array_ShiftDictionaryUp(_ID, _Index);
+
+PROC
+LeaderLib_Array_RemoveValueFromDictionary((STRING)_ID, (STRING)_Value)
+AND
+DB_LeaderLib_Dictionary_Data(_ID, _Index, _Key, _Value)
+THEN
+NOT DB_LeaderLib_Dictionary_Data(_ID, _Index, _Key, _Value);
+LeaderLib_Array_DecreaseArrayLength(_ID);
+LeaderLib_Array_ShiftDictionaryUp(_ID, _Index);
+//END_REGION
+
 //REGION DICTIONARY_CLEAR
 QRY
 LeaderLib_Array_QRY_ClearDictionaryEntries((STRING)_ID)

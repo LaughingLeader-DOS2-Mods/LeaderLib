@@ -55,12 +55,13 @@ DB_LeaderLib_Requirements_FlagTarget(_RequirementID, _Flag, _Object)
 THEN
 NOT DB_LeaderLib_Requirements_FlagTarget(_RequirementID, _Flag, _Object);
 
+//Max Level defaults to -1, which means it's skipped
 PROC
 LeaderLib_Requirements_Add_PartyLevelRequirement((STRING)_RequirementID, (INTEGER)_Level)
 AND
 _RequirementID != ""
 THEN
-LeaderLib_Requirements_Add_PartyLevelRequirement(_RequirementID, _Level, _Level, 0);
+LeaderLib_Requirements_Add_PartyLevelRequirement(_RequirementID, _Level, -1, 0);
 
 PROC
 LeaderLib_Requirements_Add_PartyLevelRequirement((STRING)_RequirementID, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
@@ -375,6 +376,22 @@ LeaderLib_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 0);
 //END_REGION
 
 //REGION LEVEL_REQUIREMENT
+//Initial unlocking
+IF
+DB_LeaderLib_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel, _StrictMode)
+AND
+DB_IsPlayer(_Player)
+AND
+NOT DB_LeaderLib_Requirements_IsUnlocked(_RequirementID)
+AND
+LeaderLib_Requirements_QRY_LevelMet(_Player, _MinLevel, _MaxLevel)
+AND
+LeaderLib_Requirements_QRY_FlagMet(_RequirementID)
+AND
+LeaderLib_Requirements_QRY_RegionMet(_RequirementID)
+THEN
+LeaderLib_Requirements_RequirementUnlocked(_RequirementID);
+
 IF
 CharacterLeveledUp(_Player)
 AND

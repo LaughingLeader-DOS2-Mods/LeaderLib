@@ -811,6 +811,82 @@ ObjectIsOnStage(_Trader, 0)
 THEN
 SetOnStage(_Trader, 1);
 
+QRY
+LeaderLib_Trader_Internal_QRY_GetRotationScriptframe((GUIDSTRING)_Object)
+AND
+NOT DB_LeaderLib_Traders_Temp_ScriptFrame(_Object, _)
+AND
+ObjectIsCharacter(_Object, 1)
+THEN
+DB_LeaderLib_Traders_Temp_ScriptFrame(_Object, "LeaderLib_RotateToTarget_Character");
+
+QRY
+LeaderLib_Trader_Internal_QRY_GetRotationScriptframe((GUIDSTRING)_Object)
+AND
+NOT DB_LeaderLib_Traders_Temp_ScriptFrame(_Object, _)
+AND
+ObjectIsItem(_Object, 1)
+THEN
+DB_LeaderLib_Traders_Temp_ScriptFrame(_Object, "LeaderLib_RotateToTarget_Item");
+
+QRY
+LeaderLib_Trader_Internal_QRY_GetRotationScriptframe((GUIDSTRING)_Object)
+AND
+NOT DB_LeaderLib_Traders_Temp_ScriptFrame(_Object, _)
+AND
+ObjectExists((TRIGGERGUID)_Object, 1)
+THEN
+DB_LeaderLib_Traders_Temp_ScriptFrame(_Object, "LeaderLib_RotateToTarget_Trigger");
+
+QRY
+LeaderLib_Trader_Internal_QRY_GetRotationScriptframe((GUIDSTRING)_Object)
+AND
+NOT DB_LeaderLib_Traders_Temp_ScriptFrame(_Object, _)
+AND
+ObjectExists((SPLINEGUID)_Object, 1)
+THEN
+DB_LeaderLib_Traders_Temp_ScriptFrame(_Object, "LeaderLib_RotateToTarget_Spline");
+
+PROC
+LeaderLib_Traders_OnSpawned((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
+AND
+NOT DB_LeaderLib_Traders_Temp_Rotated(_Trader)
+AND
+NOT LeaderLib_Traders_QRY_SeatIsAvailable(_TraderID, _Level)
+AND
+DB_LeaderLib_Traders_Rotation_Object(_TraderID, _Level, _Object)
+AND
+ObjectExists(_Object, 1)
+AND
+LeaderLib_Trader_Internal_QRY_GetRotationScriptframe(_Object)
+AND
+DB_LeaderLib_Traders_Temp_ScriptFrame(_Object, _Scriptframe)
+THEN
+NOT DB_LeaderLib_Traders_Temp_ScriptFrame(_Object, _Scriptframe);
+SetVarObject(_Trader, "LeaderLib_RotationTarget", _Object);
+SetScriptframe(_Trader, _Scriptframe);
+DB_LeaderLib_Traders_Temp_Rotated(_Trader);
+
+PROC
+LeaderLib_Traders_OnSpawned((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
+AND
+NOT DB_LeaderLib_Traders_Temp_Rotated(_Trader)
+AND
+NOT LeaderLib_Traders_QRY_SeatIsAvailable(_TraderID, _Level)
+AND
+DB_LeaderLib_Traders_Rotation_Position(_TraderID, _Level, _xr, _yr, _zr)
+THEN
+SetVarFloat3(_Trader, "LeaderLib_RotationPosition", _xr, _yr, _zr);
+SetScriptframe(_Trader, "LeaderLib_RotateToPosition");
+DB_LeaderLib_Traders_Temp_Rotated(_Trader);
+
+PROC
+LeaderLib_Traders_OnSpawned((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
+AND
+DB_LeaderLib_Traders_Temp_Rotated(_Trader)
+THEN
+NOT DB_LeaderLib_Traders_Temp_Rotated(_Trader);
+
 PROC
 LeaderLib_Traders_OnSpawned((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
 AND
@@ -929,7 +1005,7 @@ LeaderLib_Treasure_QRY_ObjectCanStartGeneration(_Trader)
 AND
 NOT ObjectGetFlag(_Trader, "LeaderLib_Treasure_JustGeneratedTreasure", 1)
 THEN
-ObjectSetFlag(_Trader, "LeaderLib_Treasure_GenerateNow");
+LeaderLib_Treasure_GenerateOnNewlyRegistered(_Trader, _TreasureID);
 //END_REGION
 
 //REGION CHECKING_ACTIVE_TRADERS
@@ -1005,6 +1081,15 @@ LeaderLib_Queue_ClearQueue("LeaderLib_Traders_CheckQueue");
 //END_REGION
 
 //REGION SITTING
+QRY
+LeaderLib_Traders_QRY_SeatIsAvailable((STRING)_TraderID, (STRING)_Level)
+AND
+DB_LeaderLib_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID)
+AND
+ObjectExists(_Seat, 1)
+THEN
+DB_NOOP(1);
+
 IF
 StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Commands_Trader_StartSitting")
 AND

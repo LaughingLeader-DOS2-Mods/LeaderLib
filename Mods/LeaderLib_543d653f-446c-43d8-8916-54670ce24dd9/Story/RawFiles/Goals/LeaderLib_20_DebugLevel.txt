@@ -964,6 +964,81 @@ THEN
 LeaderLog_Log("DEBUG", "[Leaderib:Debug:MinTest] Int: [",_IntStr,"] (3592446025 -> Real -> Int)");
 //END_REGION
 
+//REGION SKILLS_ADDED
+IF
+TextEventSet("leaderlib_cloneskillstest")
+AND
+GetTextEventParamInteger(1, _MemorizedOnlyVal)
+AND
+IntegerMax(_MemorizedOnlyVal, 0, _MemorizedOnly)
+AND
+CharacterGetHostCharacter(_Host)
+THEN
+CharacterCloneSkillsTo(CHARACTERGUID_Trailer_Humans_Female_Lohse_000_145810cc-7e46-43e7-9fdf-ab9bb8ffcdc0, _Host, _MemorizedOnly);
+
+IF
+TextEventSet("leaderlib_cloneskillstest_npc")
+AND
+GetTextEventParamInteger(1, _MemorizedOnlyVal)
+AND
+IntegerMax(_MemorizedOnlyVal, 0, _MemorizedOnly)
+AND
+CharacterGetHostCharacter(_Host)
+THEN
+CharacterCloneSkillsTo(_Host, CHARACTERGUID_Trailer_Humans_Female_Lohse_000_145810cc-7e46-43e7-9fdf-ab9bb8ffcdc0, _MemorizedOnly);
+
+IF
+TextEventSet("leaderlib_addskilltest")
+AND
+CharacterGetHostCharacter(_Host)
+THEN
+CharacterAddSkill(_Host, "Target_DummyTargetSkill", 0);
+ProcObjectTimer(_Host, "LeaderLib_Timers_Debug_RemoveDummyTargetSkill", 500);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Host, "LeaderLib_Timers_Debug_RemoveDummyTargetSkill")
+THEN
+CharacterRemoveSkill(_Host, "Target_DummyTargetSkill");
+
+IF
+SkillAdded(_Character, _Skill, _Learned)
+AND
+CharacterGetDisplayName(_Character, _, _Name)
+AND
+GetTemplate(_Character, _Template)
+AND
+IntegertoString(_Learned, _LearnedStr)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Debug:Skills:SkillAdded] Skill [",_Skill,"](",_LearnedStr,") was added to Character [",_Name,"](",_Template,").");
+
+IF
+CharacterLearnedSkill(_Character, _Skill)
+AND
+CharacterGetDisplayName(_Character, _, _Name)
+AND
+GetTemplate(_Character, _Template)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Debug:Skills:CharacterLearnedSkill] Skill [",_Skill,"] was learned by Character [",_Name,"](",_Template,").");
+
+IF
+SkillActivated(_Character, _Skill)
+AND
+CharacterGetDisplayName(_Character, _, _Name)
+AND
+GetTemplate(_Character, _Template)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Debug:Skills:SkillActivated] Skill [",_Skill,"] was activated by Character [",_Name,"](",_Template,").");
+
+IF
+SkillDeactivated(_Character, _Skill)
+AND
+CharacterGetDisplayName(_Character, _, _Name)
+AND
+GetTemplate(_Character, _Template)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Debug:Skills:SkillDeactivated] Skill [",_Skill,"] was deactivated by Character [",_Name,"](",_Template,").");
+//END_REGION
+
 EXITSECTION
 
 ENDEXITSECTION

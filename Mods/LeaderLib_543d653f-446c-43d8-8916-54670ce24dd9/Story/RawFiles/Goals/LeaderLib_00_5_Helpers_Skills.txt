@@ -115,7 +115,7 @@ AND
 GetPosition(_Caster, _x, _y, _z)
 THEN
 NOT DB_LeaderLog_Temp_CombinedString(_ID);
-//LeaderLog_Log("DEBUG", "[LeaderLib:Skills:UseSkillOnTarget] Got dummy with ID [",_ID,"]. Casting [",_Skill,"] after teleport.");
+//LeaderLog_Log("TRACE", "[LeaderLib:Skills:UseSkillOnTarget] Got dummy with ID [",_ID,"]. Casting [",_Skill,"] after teleport.");
 DB_LeaderLib_Skills_Temp_SkillDummyData(_Dummy, _Caster, _Target, _Skill);
 DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z);
 TeleportToPosition(_Dummy, _x, _y, _z, "LeaderLib_Events_SkillDummyTeleported", 0, 0);
@@ -142,6 +142,7 @@ THEN
 NOT DB_LeaderLog_Temp_CombinedString(_ID);
 DB_LeaderLib_Skills_Temp_SkillDummyData(_Dummy, _Caster, _Target, _Skill);
 DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z);
+LeaderLog_Log("TRACE", "[LeaderLib:Skills:UseSkillOnTargetFromPosition] Teleporting skill dummy for skill [",_Skill,"] to position. Dummy ID: [",_ID,"]");
 TeleportToPosition(_Dummy, _x, _y, _z, "LeaderLib_Events_SkillDummyTeleported", 0, 0);
 
 IF
@@ -150,6 +151,7 @@ AND
 DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z)
 THEN
 NOT DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z);
+LeaderLog_Log("TRACE", "[LeaderLib:Skills:SkillDummyTeleported] Skill dummy teleported to position. Moving to position as a failsafe.");
 CharacterMoveToPosition(_Dummy, _x, _y, _z, 1, "LeaderLib_Events_SkillDummyArrived");
 
 //Failsafe
@@ -157,6 +159,13 @@ IF
 StoryEvent((CHARACTERGUID)_Dummy, "LeaderLib_Events_SkillDummyTeleported")
 THEN
 LeaderLib_StartObjectTimer(_Dummy, 1000, "LeaderLib_Timers_Skills_StartSkillDummyCasting", "LeaderLib_Events_SkillDummyArrived");
+
+IF
+StoryEvent((CHARACTERGUID)_Dummy, "LeaderLib_Events_SkillDummyArrived")
+AND
+DB_LeaderLib_Skills_Temp_SkillDummyData(_Dummy, _Caster, _Target, _Skill)
+THEN
+LeaderLog_Log("TRACE", "[LeaderLib:Skills:SkillDummyTeleported] Skill dummy for skill [",_Skill,"] teleported to position. Moving to position as a failsafe.");
 
 IF
 StoryEvent((CHARACTERGUID)_Dummy, "LeaderLib_Events_SkillDummyArrived")
@@ -171,16 +180,14 @@ IF
 StoryEvent((CHARACTERGUID)_Dummy, "LeaderLib_Events_SkillDummyArrived")
 AND
 DB_LeaderLib_Skills_Temp_SkillDummyData(_Dummy, _Caster, _Target, _Skill)
-AND
-GetVarString(_Dummy, "LeaderLib_SkillDummyID", _ID)
 THEN
 NOT DB_LeaderLib_Skills_Temp_SkillDummyData(_Dummy, _Caster, _Target, _Skill);
+LeaderLog_Log("TRACE", "[LeaderLib:Skills:SkillDummyArrived] Skill dummy is using skill [",_Skill,"] on target.");
 LeaderLib_CancelObjectTimer(_Dummy, "LeaderLib_Timers_Skills_StartSkillDummyCasting");
 //CharacterSetDetached(_Dummy, 0);
 //SetVisible(_Dummy, 1);
 CharacterUseSkill(_Dummy, _Skill, _Target, 1, 1, 1);
 LeaderLib_Skills_MarkDummyForReset(_Dummy, 3000);
-LeaderLog_Log("DEBUG", "[LeaderLib:Skills:SkillDummyTeleported] Skill dummy used skill [",_Skill,"] on target. Dummy ID: [",_ID,"]");
 
 IF
 SkillCast(_Dummy, _Skill, _, _)
@@ -191,7 +198,7 @@ CharacterGetLevel(_Dummy, _Level)
 AND
 IntegertoString(_Level, _LevelStr)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Skills:UseSkillOnTarget] Dummy is level [",_LevelStr,"].");
+LeaderLog_Log("TRACE", "[LeaderLib:Skills:UseSkillOnTarget] Dummy is level [",_LevelStr,"].");
 
 IF
 SkillCast(_Dummy, _Skill, _, _)
@@ -199,7 +206,7 @@ AND
 ObjectGetFlag(_Dummy, "LeaderLib_IsSkillDummy", 1)
 THEN
 LeaderLib_Skills_MarkDummyForReset(_Dummy, 2500);
-LeaderLog_Log("DEBUG", "[LeaderLib:Skills:SkillCast(Dummy)] Skill dummy cast skill [",_Skill,"]. Resetting dummy after 2500ms.");
+LeaderLog_Log("TRACE", "[LeaderLib:Skills:SkillCast(Dummy)] Skill dummy cast skill [",_Skill,"]. Resetting dummy after 2500ms.");
 //END_REGION
 
 //REGION DUMMY_PREPARATION
@@ -283,6 +290,13 @@ ProcObjectTimerFinished((CHARACTERGUID)_Dummy, "LeaderLib_Timers_ResetSkillDummy
 AND
 DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy)
 THEN
+LeaderLib_Skills_ResetDummy(_Dummy);
+
+PROC
+LeaderLib_Skills_ResetDummy((CHARACTERGUID)_Dummy)
+AND
+DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy)
+THEN
 NOT DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy);
 DB_LeaderLib_Skills_InactiveSkillDummies(_Dummy);
 SetVarString(_Dummy, "LeaderLib_SkillDummyID", "");
@@ -296,9 +310,8 @@ AND
 ObjectExists(_Dummy, 1)
 THEN
 CharacterMakeStoryNpc(_Dummy, 0);
-//RemoveTemporaryCharacter(_Dummy); Not in the main game yet
-SetOnStage(_Dummy, 0);
-CharacterDieImmediate(_Dummy, 0, "", _Dummy);
+RemoveTemporaryCharacter(_Dummy);
+NOT DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy);
 
 IF
 RegionEnded(_)
@@ -315,9 +328,12 @@ AND
 ObjectExists(_Dummy, 1)
 THEN
 CharacterMakeStoryNpc(_Dummy, 0);
-//RemoveTemporaryCharacter(_Dummy); Not in the main game yet
+RemoveTemporaryCharacter(_Dummy);
+NOT DB_LeaderLib_Skills_InactiveSkillDummies(_Dummy);
+/*
 SetOnStage(_Dummy, 0);
 CharacterDieImmediate(_Dummy, 0, "", _Dummy);
+*/
 
 IF
 RegionEnded(_)

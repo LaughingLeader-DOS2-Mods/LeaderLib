@@ -142,6 +142,17 @@ LeaderLib_Dialog_Menu_OnEntryValueSet((GUIDSTRING)_Player, (STRING)_ID, (STRING)
 THEN
 DB_NOOP(1);
 
+PROC
+LeaderLib_Dialog_Menu_LoadPageVariables((STRING)_ID, (INTEGER)_Instance)
+AND
+DB_LeaderLib_Dialog_Menu_Settings(_ID, _VarArrayID, _EntriesPerPage, _LastPageIndex, _MaxPage)
+AND
+DB_LeaderLib_Dialog_Menu_Temp_InstanceVars(_ID, _Instance, _CurrentPage)
+AND
+DialogGetInvolvedPlayer(_Instance, 1, _Player)
+THEN
+LeaderLib_Dialog_Menu_PageLoaded(_ID, _Player, _CurrentPage, _LastPageIndex, _Instance);
+
 QRY
 LeaderLib_Dialog_Menu_Internal_QRY_DisableEntryIfNotAvailable((STRING)_ID, (INTEGER)_Instance, (INTEGER)_Index, (STRING)_AvailableFlag)
 THEN
@@ -260,7 +271,7 @@ AND
 _CurrentPage > _LastPageIndex
 THEN
 NOT DB_LeaderLib_Dialog_Menu_Temp_InstanceVars(_ID, _Instance, _CurrentPage);
-DB_LeaderLib_Dialog_Menu_Temp_InstanceVars(_ID, _Instance, _CurrentPage);
+DB_LeaderLib_Dialog_Menu_Temp_InstanceVars(_ID, _Instance, 0);
 
 PROC
 LeaderLib_Dialog_Menu_ClampPage((STRING)_ID, (INTEGER)_Instance, (INTEGER)_CurrentPage, (INTEGER)_LastPageIndex)
@@ -269,6 +280,32 @@ _CurrentPage < 0
 THEN
 NOT DB_LeaderLib_Dialog_Menu_Temp_InstanceVars(_ID, _Instance, _CurrentPage);
 DB_LeaderLib_Dialog_Menu_Temp_InstanceVars(_ID, _Instance, _LastPageIndex);
+
+PROC
+LeaderLib_Dialog_Menu_PageLoaded((STRING)_ID, (GUIDSTRING)_Player, (INTEGER)_CurrentPage, (INTEGER)_LastPageIndex, (INTEGER)_Instance)
+AND
+_CurrentPage == 0
+THEN
+ObjectSetFlag(_Player, "LeaderLib_DialogMenu_IsFirstPage", _Instance);
+ObjectClearFlag(_Player, "LeaderLib_DialogMenu_IsLastPage", _Instance);
+
+PROC
+LeaderLib_Dialog_Menu_PageLoaded((STRING)_ID, (GUIDSTRING)_Player, (INTEGER)_CurrentPage, (INTEGER)_LastPageIndex, (INTEGER)_Instance)
+AND
+_CurrentPage == _LastPageIndex
+THEN
+ObjectClearFlag(_Player, "LeaderLib_DialogMenu_IsFirstPage", _Instance);
+ObjectSetFlag(_Player, "LeaderLib_DialogMenu_IsLastPage", _Instance);
+
+PROC
+LeaderLib_Dialog_Menu_PageLoaded((STRING)_ID, (GUIDSTRING)_Player, (INTEGER)_CurrentPage, (INTEGER)_LastPageIndex, (INTEGER)_Instance)
+AND
+_CurrentPage != 0
+AND
+_CurrentPage != _LastPageIndex
+THEN
+ObjectClearFlag(_Player, "LeaderLib_DialogMenu_IsFirstPage", _Instance);
+ObjectClearFlag(_Player, "LeaderLib_DialogMenu_IsLastPage", _Instance);
 //END_REGION
 
 //REGION ENTRY_SELECTED
@@ -323,6 +360,12 @@ AND
 DB_LeaderLib_Dialog_Menu_Flags(_ID, _HasMultiplePagesFlag, _NextPageFlag, _PreviousPageFlag, _FirstPageFlag, _LastPageFlag)
 THEN
 ObjectClearFlag(_Player, _HasMultiplePagesFlag, _Instance);
+
+PROC
+LeaderLib_Dialog_Menu_OnMenuClosed((STRING)_ID, (GUIDSTRING)_Player, (INTEGER)_Instance)
+THEN
+ObjectClearFlag(_Player, "LeaderLib_DialogMenu_IsFirstPage", _Instance);
+ObjectClearFlag(_Player, "LeaderLib_DialogMenu_IsLastPage", _Instance);
 //END_REGION
 
 EXITSECTION

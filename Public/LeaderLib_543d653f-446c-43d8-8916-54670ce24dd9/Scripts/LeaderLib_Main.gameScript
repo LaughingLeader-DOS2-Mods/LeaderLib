@@ -160,14 +160,14 @@ THEN
 	SetVar(_Target, "LeaderLog_Internal_StatusText", FIXEDSTRING:"")
 ENDIF
 
-EVENT LeaderLog_RealToString_Target
+EVENT LeaderLog_RealToStringWithEvent_Character
 VARS
 	CHARACTER:_Target
 	FLOAT:_RealVal
 	STRING:_Str
 	STRING:_CompletionEvent
 ON
-	OnCharacterEvent(_Target, "LeaderLog_Commands_RealToString")
+	OnCharacterEvent(_Target, "LeaderLog_Commands_RealToStringWithEvent")
 ACTIONS
 IF "c1&c2"
 	GetVar(_RealVal, _Target, "LeaderLog_RealValue")
@@ -178,14 +178,14 @@ THEN
 	CharacterEvent(_Target, _CompletionEvent)
 ENDIF
 
-EVENT LeaderLog_RealToString_Item
+EVENT LeaderLog_RealToStringWithEvent_Item
 VARS
 	ITEM:_Target
 	FLOAT:_RealVal
 	STRING:_Str
 	STRING:_CompletionEvent
 ON
-	OnItemEvent(_Target, "LeaderLog_Commands_RealToString")
+	OnItemEvent(_Target, "LeaderLog_Commands_RealToStringWithEvent")
 ACTIONS
 IF "c1&c2"
 	GetVar(_RealVal, _Target, "LeaderLog_RealValue")
@@ -194,6 +194,48 @@ THEN
 	Print(_Str, "[1]", _RealVal)
 	SetVar(_Target, "LeaderLog_RealString", _Str)
 	ItemEvent(_Target, _CompletionEvent)
+ENDIF
+
+EVENT LeaderLog_RealToString_Character
+VARS
+	CHARACTER:_Target
+	FLOAT:_RealVal
+	STRING:_Prefix
+	STRING:_Suffix
+	STRING:_Str
+ON
+	OnCharacterEvent(_Target, "LeaderLog_Commands_RealToString")
+ACTIONS
+IF "c1&c2&c3"
+	GetVar(_Prefix, _Target, "LeaderLog_RealToString_Prefix")
+	GetVar(_Suffix, _Target, "LeaderLog_RealToString_Suffix")
+	GetVar(_RealVal, _Target, "LeaderLog_RealToString_Value")
+THEN
+	Print(_Str, "[1][2][3]", _Prefix, _RealVal, _Suffix)
+	SetVar(_Target, "LeaderLog_Type", STRING:"Debug")
+	SetVar(_Target, "LeaderLog_Message", _Str)
+	CharacterEvent(_Target, "LeaderLog_Commands_Log")
+ENDIF
+
+EVENT LeaderLog_RealToString_Item
+VARS
+	ITEM:_Target
+	FLOAT:_RealVal
+	STRING:_Prefix
+	STRING:_Suffix
+	STRING:_Str
+ON
+	OnItemEvent(_Target, "LeaderLog_Commands_RealToString")
+ACTIONS
+IF "c1&c2&c3"
+	GetVar(_Prefix, _Target, "LeaderLog_RealToString_Prefix")
+	GetVar(_Suffix, _Target, "LeaderLog_RealToString_Suffix")
+	GetVar(_RealVal, _Target, "LeaderLog_RealToString_Value")
+THEN
+	Print(_Str, "[1][2][3]", _Prefix, _RealVal, _Suffix)
+	SetVar(_Target, "LeaderLog_Type", STRING:"Debug")
+	SetVar(_Target, "LeaderLog_Message", _Str)
+	ItemEvent(_Target, "LeaderLog_Commands_Log")
 ENDIF
 
 EVENT LeaderLog_PositionToString_Character
@@ -207,11 +249,15 @@ VARS
 ON
 	OnCharacterEvent(_Target, "LeaderLog_Commands_PositionToString")
 ACTIONS
-IF "c1&c2&c3"
+IF "c1&c2&((c3&!c4)|(c4&c5))"
 	GetVar(_Prefix, _Target, "LeaderLog_PositionToString_Prefix")
 	GetVar(_Suffix, _Target, "LeaderLog_PositionToString_Suffix")
+	
+	GetVar(_Pos, _Target, "LeaderLog_PositionToString_Position")
+	IsEqual(_Pos, null)
 	GetPosition(_Target, _Pos)
 THEN
+	SetVar(_Target, "LeaderLog_PositionToString_Position", FLOAT3:null)
 	//Assert("[1][2][3]", _Prefix, _Pos, _Suffix)
 	Print(_Str, "[1][2][3]", _Prefix, _Pos, _Suffix)
 	SetVar(_Target, "LeaderLog_Type", STRING:"Debug")
@@ -230,11 +276,15 @@ VARS
 ON
 	OnItemEvent(_Target, "LeaderLog_Commands_PositionToString")
 ACTIONS
-IF "c1&c2&c3"
+IF "c1&c2&((c3&!c4)|(c4&c5))"
 	GetVar(_Prefix, _Target, "LeaderLog_PositionToString_Prefix")
 	GetVar(_Suffix, _Target, "LeaderLog_PositionToString_Suffix")
+	
+	GetVar(_Pos, _Target, "LeaderLog_PositionToString_Position")
+	IsEqual(_Pos, null)
 	GetPosition(_Target, _Pos)
 THEN
+	SetVar(_Target, "LeaderLog_PositionToString_Position", FLOAT3:null)
 	//Assert("[1][2][3]", _Prefix, _Pos, _Suffix)
 	Print(_Str, "[1][2][3]", _Prefix, _Pos, _Suffix)
 	SetVar(_Target, "LeaderLog_Type", STRING:"Debug")

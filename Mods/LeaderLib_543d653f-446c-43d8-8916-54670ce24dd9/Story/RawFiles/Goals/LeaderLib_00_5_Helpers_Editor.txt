@@ -105,7 +105,32 @@ DB_LoopEffect(_Player, _fxHandle, _ID, _Region, _effect, _BoneName)
 THEN
 PROC_StopLoopEffect(_Player, _ID);
 LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_fxstop] fired. Stopped all looped effects on controlled character.");
-//END_REGION
+
+IF
+TextEventSet("leaderlib_playfx")
+AND
+GetTextEventParamString(1, _EffectName)
+AND
+GetTextEventParamString(2, _Bone)
+AND
+DB_IsPlayer(_Player)
+AND
+CharacterIsControlled(_Player, 1)
+THEN
+PlayEffect(_Player, _EffectName, _Bone);
+
+IF
+TextEventSet("leaderlib_playfxpos")
+AND
+GetTextEventParamString(1, _EffectName)
+AND
+GetTextEventParamReal(2, _x)
+AND
+GetTextEventParamReal(3, _y)
+AND
+GetTextEventParamReal(4, _z)
+THEN
+PlayEffectAtPosition(_EffectName, _x, _y, _z);
 //END_REGION
 
 //REGION STATS_TEXT_EVENTS

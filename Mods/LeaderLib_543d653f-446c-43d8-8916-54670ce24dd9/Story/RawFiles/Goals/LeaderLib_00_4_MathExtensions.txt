@@ -424,6 +424,83 @@ _Num >= 0
 THEN
 DB_LeaderLib_Math_AbsoluteValueInt(_Num, _Num);
 //END_REGION
+
+//REGION 2D_ROTATION
+PROC
+LeaderLib_Math_ConvertAngle((REAL)_Angle)
+AND
+_Angle < 0.0
+AND
+RealProduct(_Angle, -1.0, _a1)
+AND
+RealSum(_a1, 270.0, _a2)
+THEN
+DB_LeaderLib_Math_Angle(_Angle, _a2);
+
+PROC
+LeaderLib_Math_ConvertAngle((REAL)_Angle)
+AND
+_Angle >= 0.0
+THEN
+DB_LeaderLib_Math_Angle(_Angle, _Angle);
+
+QRY
+LeaderLib_Math_QRY_ConvertAngle((REAL)_Angle)
+THEN
+LeaderLib_Math_ConvertAngle(_Angle);
+
+QRY
+LeaderLib_Math_QRY_RotatePoint((REAL)_x1, (REAL)_z1, (REAL)_Angle, (INTEGER)_BoolConvertAngleTo360Degrees)
+THEN
+LeaderLib_Math_RotatePoint(_x1, _z1, _Angle, _BoolConvertAngleTo360Degrees);
+
+PROC
+LeaderLib_Math_RotatePoint((REAL)_x1, (REAL)_z1, (REAL)_Angle, 1)
+AND
+NOT DB_LeaderLib_Math_RotatedPoint(_x1, _z1, _Angle, _, _)
+AND
+LeaderLib_Math_QRY_ConvertAngle(_Angle)
+AND
+DB_LeaderLib_Math_Angle(_Angle, _a2)
+THEN
+NOT DB_LeaderLib_Math_Angle(_Angle, _a2);
+LeaderLib_Math_Internal_RotatePoint(_x1, _z1, _Angle, _a2);
+
+PROC
+LeaderLib_Math_RotatePoint((REAL)_x1, (REAL)_z1, (REAL)_Angle, 0)
+AND
+NOT DB_LeaderLib_Math_RotatedPoint(_x1, _z1, _Angle, _, _)
+THEN
+LeaderLib_Math_Internal_RotatePoint(_x1, _z1, _Angle, _Angle);
+
+PROC
+LeaderLib_Math_Internal_RotatePoint((REAL)_x1, (REAL)_z1, (REAL)_OriginalAngle, (REAL)_Angle)
+AND
+LeaderLib_Math_QRY_Sine(_Angle)
+AND
+LeaderLib_Math_QRY_Cosine(_Angle)
+AND
+DB_LeaderLib_Math_Sine(_Angle, _sine)
+AND
+DB_LeaderLib_Math_Cosine(_Angle, _cos)
+AND
+RealProduct(_x1, _cos, _tx1)
+AND
+RealProduct(_z1, _sine, _tx2)
+AND
+RealSubtract(_tx1, _tx2, _x2)
+AND
+RealProduct(_x1, _sine, _tz1)
+AND
+RealProduct(_z1, _cos, _tz2)
+AND
+RealSum(_tz1, _tz2, _z2)
+THEN
+NOT DB_LeaderLib_Math_Sine(_Angle, _sine);
+NOT DB_LeaderLib_Math_Sine(_Angle, _cos);
+DB_LeaderLib_Math_RotatedPoint(_x1, _z1, _OriginalAngle, _x2, _z2);
+//END_REGION
+
 EXITSECTION
 
 ENDEXITSECTION

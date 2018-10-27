@@ -696,29 +696,74 @@ LeaderLog_Log(_Type, _Message);
 
 //REGION NUMBER_CONVERSION
 QRY
-LeaderLog_QRY_LogInt((STRING)_Type, (STRING)_Prefix, (INTEGER)_Num, (STRING)_Suffix)
+LeaderLog_QRY_IntegerToString((INTEGER)_Num)
+AND
+_Num >= 0
 AND
 IntegertoString(_Num, _NumStr)
 THEN
+DB_LeaderLog_IntString(_Num, _NumStr);
+
+//Negative integers aren't converted to strings correctly
+QRY
+LeaderLog_QRY_IntegerToString((INTEGER)_Num)
+AND
+_Num < 0
+AND
+IntegerProduct(_Num, -1, _TraceNum)
+AND
+IntegertoString(_TraceNum, _NumStr)
+AND
+StringConcatenate("-", _NumStr, _NegativeNumStr)
+THEN
+DB_LeaderLog_IntString(_Num, _NegativeNumStr);
+
+PROC
+LeaderLog_LogInt((STRING)_Type, (STRING)_Prefix, (INTEGER)_Num, (STRING)_Suffix)
+AND
+LeaderLog_QRY_IntegerToString(_Num)
+AND
+DB_LeaderLog_IntString(_Num, _NumStr)
+THEN
+NOT DB_LeaderLog_IntString(_Num, _NumStr);
 LeaderLog_Log(_Type, _Prefix, _NumStr, _Suffix);
+
+PROC
+LeaderLog_LogInt((STRING)_Type, (STRING)_Prefix, (INTEGER)_Num, (STRING)_Prefix2, (INTEGER)_Num2, (STRING)_Suffix)
+AND
+LeaderLog_QRY_IntegerToString(_Num)
+AND
+DB_LeaderLog_IntString(_Num, _NumStr)
+AND
+LeaderLog_QRY_IntegerToString(_Num2)
+AND
+DB_LeaderLog_IntString(_Num2, _Num2Str)
+THEN
+NOT DB_LeaderLog_IntString(_Num, _NumStr);
+NOT DB_LeaderLog_IntString(_Num2, _Num2Str);
+LeaderLog_Log(_Type, _Prefix, _NumStr, _Prefix2, _Num2Str, _Suffix);
+
+QRY
+LeaderLog_QRY_LogInt((STRING)_Type, (STRING)_Prefix, (INTEGER)_Num, (STRING)_Suffix)
+THEN
+LeaderLog_LogInt(_Type, _Prefix, _Num, _Suffix);
 
 QRY
 LeaderLog_QRY_LogInt((STRING)_Type, (STRING)_Prefix, (INTEGER)_Num, (STRING)_Prefix2, (INTEGER)_Num2, (STRING)_Suffix)
-AND
-IntegertoString(_Num, _NumStr)
-AND
-IntegertoString(_Num2, _Num2Str)
 THEN
-LeaderLog_Log(_Type, _Prefix, _NumStr, _Prefix2, _Num2Str, _Suffix);
+LeaderLog_LogInt(_Type, _Prefix, _Num, _Prefix2, _Num2, _Suffix);
 
 PROC
 LeaderLog_RealToIntToString((STRING)_ID, (REAL)_a)
 AND
 Integer(_a, _ai)
 AND
-IntegertoString(_ai, _astr)
+LeaderLog_QRY_IntegerToString(_ai)
+AND
+DB_LeaderLog_IntString(_ai, _NumStr)
 THEN
-DB_LeaderLog_Temp_RealString(_ID, _astr);
+NOT DB_LeaderLog_IntString(_ai, _NumStr);
+DB_LeaderLog_Temp_RealString(_ID, _NumStr);
 
 PROC
 LeaderLog_RealToIntToString((STRING)_ID, (REAL)_a, (REAL)_b)
@@ -727,11 +772,17 @@ Integer(_a, _ai)
 AND
 Integer(_b, _bi)
 AND
-IntegertoString(_ai, _astr)
+LeaderLog_QRY_IntegerToString(_ai)
 AND
-IntegertoString(_bi, _bstr)
+DB_LeaderLog_IntString(_ai, _NumStr)
+AND
+LeaderLog_QRY_IntegerToString(_bi)
+AND
+DB_LeaderLog_IntString(_bi, _Num2Str)
 THEN
-DB_LeaderLog_Temp_RealString(_ID, _astr, _bstr);
+NOT DB_LeaderLog_IntString(_ai, _NumStr);
+NOT DB_LeaderLog_IntString(_bi, _Num2Str);
+DB_LeaderLog_Temp_RealString(_ID, _NumStr, _Num2Str);
 
 PROC
 LeaderLog_RealToIntToString((STRING)_ID, (REAL)_a, (REAL)_b, (REAL)_c)
@@ -742,13 +793,22 @@ Integer(_b, _bi)
 AND
 Integer(_c, _ci)
 AND
-IntegertoString(_ai, _astr)
+LeaderLog_QRY_IntegerToString(_ai)
 AND
-IntegertoString(_bi, _bstr)
+DB_LeaderLog_IntString(_ai, _NumStr)
 AND
-IntegertoString(_ci, _cstr)
+LeaderLog_QRY_IntegerToString(_bi)
+AND
+DB_LeaderLog_IntString(_bi, _Num2Str)
+AND
+LeaderLog_QRY_IntegerToString(_ci)
+AND
+DB_LeaderLog_IntString(_ci, _Num3Str)
 THEN
-DB_LeaderLog_Temp_RealString(_ID, _astr, _bstr, _cstr);
+NOT DB_LeaderLog_IntString(_ai, _NumStr);
+NOT DB_LeaderLog_IntString(_bi, _Num2Str);
+NOT DB_LeaderLog_IntString(_ci, _Num3Str);
+DB_LeaderLog_Temp_RealString(_ID, _NumStr, _Num2Str, _Num3Str);
 
 QRY
 LeaderLog_QRY_RealToIntToString((STRING)_ID, (REAL)_a)
@@ -768,19 +828,19 @@ LeaderLog_RealToIntToString(_ID, _a, _b, _c);
 
 //REGION REAL_TO_STRING
 PROC
-LeaderLog_RealToString((GUIDSTRING)_Target, (REAL)_Num, (STRING)_CompletionEvent)
+LeaderLog_RealToStringWithEvent((GUIDSTRING)_Target, (REAL)_Num, (STRING)_CompletionEvent)
 THEN
 SetVarFloat(_Target, "LeaderLog_RealValue", _Num);
 SetVarString(_Target, "LeaderLog_RealToString_CompletionEvent", _CompletionEvent);
-SetStoryEvent(_Target, "LeaderLog_Commands_RealToString");
+SetStoryEvent(_Target, "LeaderLog_Commands_RealToStringWithEvent");
 
 QRY
-LeaderLog_QRY_RealToString((GUIDSTRING)_Target, (REAL)_Num, (STRING)_CompletionEvent)
+LeaderLog_QRY_RealToStringWithEvent((GUIDSTRING)_Target, (REAL)_Num, (STRING)_CompletionEvent)
 THEN
-LeaderLog_RealToString(_Target, _Num, _CompletionEvent);
+LeaderLog_RealToStringWithEvent(_Target, _Num, _CompletionEvent);
 
 PROC
-LeaderLog_RealToString((REAL)_Num, (STRING)_CompletionEvent)
+LeaderLog_RealToStringWithEvent((REAL)_Num, (STRING)_CompletionEvent)
 AND
 LeaderLib_Events_QRY_GetEventParser()
 AND
@@ -788,28 +848,12 @@ DB_LeaderLib_EventParser(_EventParser)
 THEN
 SetVarFloat(_EventParser, "LeaderLog_RealValue", _Num);
 SetVarString(_EventParser, "LeaderLog_RealToString_CompletionEvent", _CompletionEvent);
-SetStoryEvent(_EventParser, "LeaderLog_Commands_RealToString");
+SetStoryEvent(_EventParser, "LeaderLog_Commands_RealToStringWithEvent");
 
 QRY
-LeaderLog_QRY_RealToString((REAL)_Num, (STRING)_CompletionEvent)
+LeaderLog_QRY_RealToStringWithEvent((REAL)_Num, (STRING)_CompletionEvent)
 THEN
-LeaderLog_RealToString(_Num, _CompletionEvent);
-
-PROC
-LeaderLog_RealToString((REAL)_Num)
-AND
-LeaderLib_Events_QRY_GetEventParser()
-AND
-DB_LeaderLib_EventParser(_EventParser)
-THEN
-SetVarFloat(_EventParser, "LeaderLog_RealValue", _Num);
-SetVarString(_EventParser, "LeaderLog_RealToString_CompletionEvent", "LeaderLog_Events_OnRealConverted");
-SetStoryEvent(_EventParser, "LeaderLog_Commands_RealToString");
-
-QRY
-LeaderLog_QRY_RealToString((REAL)_Num)
-THEN
-LeaderLog_RealToString(_Num);
+LeaderLog_RealToStringWithEvent(_Num, _CompletionEvent);
 
 //Default event, if not set
 IF
@@ -819,12 +863,60 @@ GetVarString(_Target, "LeaderLog_RealString", _Str)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLog:LeaderLog_Events_OnRealConverted] Real value: [",_Str,"].");
 
+PROC
+LeaderLog_RealToString((REAL)_Num, (STRING)_Prefix, (STRING)_Suffix)
+AND
+LeaderLib_Events_QRY_GetEventParser()
+AND
+DB_LeaderLib_EventParser(_EventParser)
+THEN
+LeaderLog_RealToString(_EventParser, _Num, _Prefix, _Suffix);
+
 QRY
-LeaderLog_QRY_TracePosition((GUIDSTRING)_Object, (STRING)_Prefix, (STRING)_Suffix)
+LeaderLog_QRY_RealToString((REAL)_Num, (STRING)_Prefix, (STRING)_Suffix)
+THEN
+LeaderLog_RealToString(_Num, _Prefix, _Suffix);
+
+PROC
+LeaderLog_RealToString((GUIDSTRING)_Object, (REAL)_Num, (STRING)_Prefix, (STRING)_Suffix)
+THEN
+SetVarString(_Object, "LeaderLog_RealToString_Prefix", _Prefix);
+SetVarString(_Object, "LeaderLog_RealToString_Suffix", _Suffix);
+SetVarFloat(_Object, "LeaderLog_RealToString_Value", _Num);
+SetStoryEvent(_Object, "LeaderLog_Commands_RealToString");
+
+QRY
+LeaderLog_QRY_RealToString((GUIDSTRING)_Object, (REAL)_Num, (STRING)_Prefix, (STRING)_Suffix)
+THEN
+LeaderLog_RealToString(_Object, _Num, _Prefix, _Suffix);
+
+PROC
+LeaderLog_TracePosition((GUIDSTRING)_Object, (STRING)_Prefix, (STRING)_Suffix)
+AND
+GetPosition(_Object, _x, _y, _z)
 THEN
 SetVarString(_Object, "LeaderLog_PositionToString_Prefix", _Prefix);
 SetVarString(_Object, "LeaderLog_PositionToString_Suffix", _Suffix);
+SetVarFloat3(_Object, "LeaderLog_PositionToString_Position", _x, _y, _z);
 SetStoryEvent(_Object, "LeaderLog_Commands_PositionToString");
+
+PROC
+LeaderLog_TracePosition((GUIDSTRING)_Object, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_Prefix, (STRING)_Suffix)
+THEN
+SetVarString(_Object, "LeaderLog_PositionToString_Prefix", _Prefix);
+SetVarString(_Object, "LeaderLog_PositionToString_Suffix", _Suffix);
+SetVarFloat3(_Object, "LeaderLog_PositionToString_Position", _x, _y, _z);
+SetStoryEvent(_Object, "LeaderLog_Commands_PositionToString");
+
+QRY
+LeaderLog_QRY_TracePosition((GUIDSTRING)_Object, (STRING)_Prefix, (STRING)_Suffix)
+THEN
+LeaderLog_TracePosition(_Object, _Prefix, _Suffix);
+
+QRY
+LeaderLog_QRY_TracePosition((GUIDSTRING)_Object, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_Prefix, (STRING)_Suffix)
+THEN
+LeaderLog_TracePosition(_Object, _x, _y, _z, _Prefix, _Suffix);
 //END_REGION
 
 //REGION FLAG_LOGS

@@ -227,6 +227,7 @@ AND
 GetPosition(_Caster, _x, _y, _z)
 THEN
 NOT DB_LeaderLib_Skills_InactiveSkillDummies(_Dummy);
+LeaderLib_Skills_Internal_TransformDummy(_Dummy, _Caster, _CopyStats, _CopyEquipment);
 LeaderLib_Skills_Internal_PrepareDummyStats(_Dummy, _Caster, _CopyStats, _CopyEquipment);
 CharacterSetDetached(_Dummy, 1);
 SetOnStage(_Dummy, 1);
@@ -242,6 +243,7 @@ GetPosition(_Caster, _x, _y, _z)
 AND
 TemporaryCharacterCreateAtPosition(_x, _y, _z, "LeaderLib_SkillDummy_94668062-11ea-4ecf-807c-4cc225cbb236", 0, _Dummy)
 THEN
+LeaderLib_Skills_Internal_TransformDummy(_Dummy, _Caster, _CopyStats, _CopyEquipment);
 LeaderLib_Skills_Internal_PrepareDummyStats(_Dummy, _Caster, _CopyStats, _CopyEquipment);
 ObjectSetFlag(_Dummy, "LeaderLib_IsSkillDummy");
 CharacterMakeStoryNpc(_Dummy, 1);
@@ -251,7 +253,7 @@ SetVarString(_Dummy, "LeaderLib_SkillDummyID", _ID);
 DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy);
 
 PROC
-LeaderLib_Skills_Internal_PrepareDummyStats((CHARACTERGUID)_Dummy, (CHARACTERGUID)_Caster, (INTEGER)_CopyStats, (INTEGER)_CopyEquipment)
+LeaderLib_Skills_Internal_TransformDummy((CHARACTERGUID)_Dummy, (CHARACTERGUID)_Caster, (INTEGER)_CopyStats, (INTEGER)_CopyEquipment)
 THEN
 //CharacterTransformAppearanceTo(_Dummy, _Caster, _CopyEquipment, 1);
 CharacterTransformFromCharacter(_Dummy, _Caster, 0, 1, _CopyStats, _CopyEquipment, _CopyStats, 1, 0);
@@ -261,36 +263,172 @@ PROC
 LeaderLib_Skills_Internal_PrepareDummyStats((CHARACTERGUID)_Dummy, (CHARACTERGUID)_Caster, 1, (INTEGER)_CopyEquipment)
 THEN
 LeaderLib_Helper_CopyStats(_Dummy, _Caster, 1, 1, 1, 1);
+LeaderLib_Helper_CopyFaction(_Dummy, _Caster);
+//END_REGION
+
+//REGION TARGET_DUMMY
+PROC
+LeaderLib_Skills_CreateTargetDummy((STRING)_ID, (REAL)_x, (REAL)_y, (REAL)_z)
+THEN
+LeaderLib_Skills_CreateTargetDummy(_ID, _x, _y, _z, "", 5000, 1, 0);
 
 PROC
-LeaderLib_Skills_Internal_PrepareDummyStats((CHARACTERGUID)_Dummy, (CHARACTERGUID)_Caster, (INTEGER)_CopyStats, (INTEGER)_CopyEquipment)
-AND
-CharacterIsPlayer(_Caster, 1)
+LeaderLib_Skills_CreateTargetDummy((STRING)_ID, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_ReadyEvent)
 THEN
-CharacterSetRelationIndivFactionToFaction(_Dummy, "Evil NPC", 0);
-CharacterSetRelationIndivFactionToIndivFaction(_Dummy, _Caster, 100);
-CharacterAddAttitudeTowardsPlayer(_Dummy, _Caster, 100);
+LeaderLib_Skills_CreateTargetDummy(_ID, _x, _y, _z, _ReadyEvent, 5000, 1, 0);
 
 PROC
-LeaderLib_Skills_Internal_PrepareDummyStats((CHARACTERGUID)_Dummy, (CHARACTERGUID)_Caster, (INTEGER)_CopyStats, (INTEGER)_CopyEquipment)
-AND
-CharacterIsPlayer(_Caster, 0)
-AND
-GetFaction(_Caster, _Faction)
+LeaderLib_Skills_CreateTargetDummy((STRING)_ID, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_ReadyEvent, (INTEGER)_Timeout)
 THEN
-//CharacterSetRelationIndivFactionToIndivFaction(_Dummy, _Caster, 100);
-SetFaction(_Dummy, _Faction);
+LeaderLib_Skills_CreateTargetDummy(_ID, _x, _y, _z, _ReadyEvent, _Timeout, 1, 0);
 
+PROC
+LeaderLib_Skills_CreateTargetDummy((STRING)_ID, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_ReadyEvent, (INTEGER)_Timeout, (INTEGER)_Invulnerable, (INTEGER)_Visible)
+AND
+TemporaryCharacterCreateAtPosition(_x, _y, _z, "LeaderLib_SkillDummy_94668062-11ea-4ecf-807c-4cc225cbb236", 0, _Dummy)
+THEN
+LeaderLib_Skills_Internal_SetTargetDummyID(_ID, _Dummy);
+SetVarInteger(_Dummy, "LeaderLib_TargetDummyTimeout", _Timeout);
+SetVarString(_Dummy, "LeaderLib_TargetDummyReadyEvent", _ReadyEvent);
+LeaderLib_Skills_Internal_PrepareTargetDummy(_Dummy, _Invulnerable, _Visible);
+DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z);
+LeaderLib_StartObjectTimer(_Dummy, 1000, "LeaderLib_Timers_Skills_TargetDummyFailsafe", "LeaderLib_Events_TargetDummyReady");
+TeleportToPosition(_Dummy, _x, _y, _z, "LeaderLib_Events_TargetDummyTeleported", 0, 0);
+
+PROC
+LeaderLib_Skills_Internal_PrepareTargetDummy((CHARACTERGUID)_Dummy, (INTEGER)_Invulnerable, (INTEGER)_Visible)
+THEN
+CharacterMakeStoryNpc(_Dummy, _Invulnerable);
+SetVisible(_Dummy, _Visible);
+CharacterSetDetached(_Dummy, _Invulnerable);
+
+PROC
+LeaderLib_Skills_Internal_SetTargetDummyID("", (CHARACTERGUID)_Dummy)
+AND
+NOT DB_LeaderLib_Skills_TargetDummies(_, _Dummy)
+AND
+GetUUID(_Dummy, _ID)
+THEN
+DB_LeaderLib_Skills_TargetDummies(_ID, _Dummy);
+SetVarString(_Dummy, "LeaderLib_TargetDummyID", _ID);
+
+PROC
+LeaderLib_Skills_Internal_SetTargetDummyID((STRING)_ID, (CHARACTERGUID)_Dummy)
+AND
+NOT DB_LeaderLib_Skills_TargetDummies(_, _Dummy)
+AND
+_ID != ""
+THEN
+DB_LeaderLib_Skills_TargetDummies(_ID, _Dummy);
+SetVarString(_Dummy, "LeaderLib_TargetDummyID", _ID);
+
+QRY
+LeaderLib_Skills_QRY_CreateTargetDummy((STRING)_ID, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_ReadyEvent, (INTEGER)_Timeout, (INTEGER)_Invulnerable, (INTEGER)_Visible)
+THEN
+LeaderLib_Skills_CreateTargetDummy(_ID, _x, _y, _z, _ReadyEvent, _Timeout, _Invulnerable, _Visible);
+
+QRY
+LeaderLib_Skills_QRY_CreateTargetDummy((STRING)_ID, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_ReadyEvent, (INTEGER)_Timeout)
+THEN
+LeaderLib_Skills_CreateTargetDummy(_ID, _x, _y, _z, _ReadyEvent, _Timeout);
+
+QRY
+LeaderLib_Skills_QRY_CreateTargetDummy((STRING)_ID, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_ReadyEvent)
+THEN
+LeaderLib_Skills_CreateTargetDummy(_ID, _x, _y, _z, _ReadyEvent);
+
+QRY
+LeaderLib_Skills_QRY_CreateTargetDummy((STRING)_ID, (REAL)_x, (REAL)_y, (REAL)_z)
+THEN
+LeaderLib_Skills_CreateTargetDummy(_ID, _x, _y, _z, "");
+
+PROC
+LeaderLib_Skills_CreateTargetDummyAtObject((STRING)_ID, (GUIDSTRING)_Target, (STRING)_ReadyEvent)
+AND
+GetPosition(_Target, _x, _y, _z)
+THEN
+LeaderLib_Skills_CreateTargetDummy(_ID, _x, _y, _z, _ReadyEvent, 2000, 1, 0);
+
+PROC
+LeaderLib_Skills_CreateTargetDummyAtObject((STRING)_ID, (GUIDSTRING)_Target, (STRING)_ReadyEvent, (INTEGER)_Timeout)
+AND
+GetPosition(_Target, _x, _y, _z)
+THEN
+LeaderLib_Skills_CreateTargetDummy(_ID, _x, _y, _z, _ReadyEvent, _Timeout, 1, 0);
+
+QRY
+LeaderLib_Skills_QRY_CreateTargetDummyAtObject((STRING)_ID, (GUIDSTRING)_Target, (STRING)_ReadyEvent, (INTEGER)_Timeout)
+THEN
+LeaderLib_Skills_CreateTargetDummyAtObject(_ID, _Target, _ReadyEvent, _Timeout);
+
+QRY
+LeaderLib_Skills_QRY_CreateTargetDummyAtObject((STRING)_ID, (GUIDSTRING)_Target, (STRING)_ReadyEvent)
+THEN
+LeaderLib_Skills_CreateTargetDummyAtObject(_ID, _Target, _ReadyEvent);
+
+QRY
+LeaderLib_Skills_QRY_CreateTargetDummyAtObject((STRING)_ID, (GUIDSTRING)_Target)
+THEN
+LeaderLib_Skills_CreateTargetDummyAtObject(_ID, _Target, "");
+
+IF
+StoryEvent((CHARACTERGUID)_Dummy, "LeaderLib_Events_TargetDummyTeleported")
+AND
+DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z)
+THEN
+NOT DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z);
+LeaderLog_Log("TRACE", "[LeaderLib:Skills:TargetDummyTeleported] Target dummy teleported to position. Moving to position.");
+CharacterMoveToPosition(_Dummy, _x, _y, _z, 1, "LeaderLib_Events_TargetDummyReady");
+
+IF
+StoryEvent((CHARACTERGUID)_Dummy, "LeaderLib_Events_TargetDummyReady")
+AND
+GetVarString(_Dummy, "LeaderLib_TargetDummyReadyEvent", _ReadyEvent)
+AND
+_ReadyEvent != ""
+THEN
+SetStoryEvent(_Dummy, _ReadyEvent);
+
+IF
+StoryEvent((CHARACTERGUID)_Dummy, "LeaderLib_Events_TargetDummyReady")
+THEN
+LeaderLib_CancelObjectTimer(_Dummy, "LeaderLib_Timers_Skills_TargetDummyFailsafe");
+
+IF
+StoryEvent((CHARACTERGUID)_Dummy, "LeaderLib_Events_TargetDummyReady")
+AND
+DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z)
+THEN
+NOT DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z);
+
+IF
+StoryEvent((CHARACTERGUID)_Dummy, "LeaderLib_Events_TargetDummyReady")
+AND
+GetVarInteger(_Dummy, "LeaderLib_TargetDummyTimeout", _Timeout)
+AND
+_Timeout > 0
+THEN
+LeaderLib_Skills_MarkDummyForReset(_Dummy, _Timeout);
+
+IF
+StoryEvent((CHARACTERGUID)_Dummy, "LeaderLib_Events_TargetDummyReady")
+AND
+GetVarInteger(_Dummy, "LeaderLib_TargetDummyTimeout", _Timeout)
+AND
+_Timeout == 0
+THEN
+LeaderLib_Skills_ResetDummy(_Dummy);
+//END_REGION
+
+//REGION DUMMY_RESET
 PROC
 LeaderLib_Skills_MarkDummyForReset((CHARACTERGUID)_Dummy, (INTEGER)_Duration)
 THEN
-ProcObjectTimerCancel(_Dummy, "LeaderLib_Timers_ResetSkillDummy");
-ProcObjectTimer(_Dummy, "LeaderLib_Timers_ResetSkillDummy", _Duration);
+ProcObjectTimerCancel(_Dummy, "LeaderLib_Timers_Skills_ResetDummy");
+ProcObjectTimer(_Dummy, "LeaderLib_Timers_Skills_ResetDummy", _Duration);
 
 PROC
-ProcObjectTimerFinished((CHARACTERGUID)_Dummy, "LeaderLib_Timers_ResetSkillDummy")
-AND
-DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy)
+ProcObjectTimerFinished((CHARACTERGUID)_Dummy, "LeaderLib_Timers_Skills_ResetDummy")
 THEN
 LeaderLib_Skills_ResetDummy(_Dummy);
 
@@ -304,6 +442,15 @@ DB_LeaderLib_Skills_InactiveSkillDummies(_Dummy);
 SetVarString(_Dummy, "LeaderLib_SkillDummyID", "");
 SetOnStage(_Dummy, 0);
 
+PROC
+LeaderLib_Skills_ResetDummy((CHARACTERGUID)_Dummy)
+AND
+DB_LeaderLib_Skills_TargetDummies(_ID, _Dummy)
+THEN
+NOT DB_LeaderLib_Skills_TargetDummies(_ID, _Dummy);
+CharacterMakeStoryNpc(_Dummy, 0);
+RemoveTemporaryCharacter(_Dummy);
+
 IF
 RegionEnded(_)
 AND
@@ -318,9 +465,13 @@ NOT DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy);
 IF
 RegionEnded(_)
 AND
-DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy)
+DB_LeaderLib_Skills_TargetDummies(_ID, _Dummy)
+AND
+ObjectExists(_Dummy, 1)
 THEN
-NOT DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy);
+CharacterMakeStoryNpc(_Dummy, 0);
+RemoveTemporaryCharacter(_Dummy);
+NOT DB_LeaderLib_Skills_TargetDummies(_ID, _Dummy);
 
 IF
 RegionEnded(_)
@@ -332,17 +483,13 @@ THEN
 CharacterMakeStoryNpc(_Dummy, 0);
 RemoveTemporaryCharacter(_Dummy);
 NOT DB_LeaderLib_Skills_InactiveSkillDummies(_Dummy);
-/*
-SetOnStage(_Dummy, 0);
-CharacterDieImmediate(_Dummy, 0, "", _Dummy);
-*/
 
 IF
 RegionEnded(_)
-AND
-DB_LeaderLib_Skills_InactiveSkillDummies(_Dummy)
 THEN
-NOT DB_LeaderLib_Skills_InactiveSkillDummies(_Dummy);
+SysClear("DB_LeaderLib_Skills_SkillDummies", 2);
+SysClear("DB_LeaderLib_Skills_TargetDummies", 2);
+SysClear("DB_LeaderLib_Skills_InactiveSkillDummies", 1);
 //END_REGION
 EXITSECTION
 

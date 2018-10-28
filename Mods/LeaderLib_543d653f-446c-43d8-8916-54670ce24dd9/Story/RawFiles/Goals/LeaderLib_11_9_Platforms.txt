@@ -6,34 +6,34 @@ LeaderLib_Platforms_InitSettings();
 KBSECTION
 //REGION PLATFORM_CREATION
 PROC
-LeaderLIb_Platforms_SpawnPlatform((STRING)_ID, (STRING)_Size, (INTEGER)_LifeTime, (GUIDSTRING)_Target)
+LeaderLib_Platforms_SpawnPlatform((STRING)_ID, (STRING)_Size, (INTEGER)_LifeTime, (GUIDSTRING)_Target)
 AND
 GetPosition(_Target, _x, _y, _z)
 THEN
-LeaderLIb_Platforms_SpawnPlatform(_ID, _Size, _LifeTime, _x, _y, _z);
+LeaderLib_Platforms_SpawnPlatform(_ID, _Size, _LifeTime, _x, _y, _z);
 
 PROC
-LeaderLIb_Platforms_SpawnPlatform((STRING)_ID, (STRING)_Size, (INTEGER)_LifeTime, (REAL)_x, (REAL)_y, (REAL)_z)
+LeaderLib_Platforms_SpawnPlatform((STRING)_ID, (STRING)_Size, (INTEGER)_LifeTime, (REAL)_x, (REAL)_y, (REAL)_z)
 AND
 DB_LeaderLib_Platforms_Sizes(_Size, _Template, _Index)
 AND
 CreateItemTemplateAtPosition(_Template, _x, _y, _z, _Platform)
 THEN
 DB_LeaderLib_Platforms(_ID, _Platform);
-LeaderLIb_Platforms_Internal_StartPlatformTimer(_ID, _Platform, _LifeTime);
+LeaderLib_Platforms_Internal_StartPlatformTimer(_ID, _Platform, _LifeTime);
 
 QRY
-LeaderLIb_Platforms_QRY_SpawnPlatform((STRING)_ID, (STRING)_Size, (INTEGER)_LifeTime, (GUIDSTRING)_Target)
+LeaderLib_Platforms_QRY_SpawnPlatform((STRING)_ID, (STRING)_Size, (INTEGER)_LifeTime, (GUIDSTRING)_Target)
 THEN
-LeaderLIb_Platforms_SpawnPlatform(_ID, _Size, _LifeTime, _Target);
+LeaderLib_Platforms_SpawnPlatform(_ID, _Size, _LifeTime, _Target);
 
 QRY
-LeaderLIb_Platforms_QRY_SpawnPlatform((STRING)_ID, (STRING)_Size, (INTEGER)_LifeTime, (REAL)_x, (REAL)_y, (REAL)_z)
+LeaderLib_Platforms_QRY_SpawnPlatform((STRING)_ID, (STRING)_Size, (INTEGER)_LifeTime, (REAL)_x, (REAL)_y, (REAL)_z)
 THEN
-LeaderLIb_Platforms_SpawnPlatform(_ID, _Size, _LifeTime, _x, _y, _z);
+LeaderLib_Platforms_SpawnPlatform(_ID, _Size, _LifeTime, _x, _y, _z);
 
 PROC
-LeaderLIb_Platforms_Internal_StartPlatformTimer((STRING)_ID, (ITEMGUID)_Platform, (INTEGER)_LifeTime)
+LeaderLib_Platforms_Internal_StartPlatformTimer((STRING)_ID, (ITEMGUID)_Platform, (INTEGER)_LifeTime)
 AND
 _LifeTime > 0
 THEN
@@ -56,17 +56,17 @@ NOT DB_LeaderLib_Platforms(_ID, _Platform);
 
 //REGION SPAWN_ALIASES
 QRY
-LeaderLIb_Platforms_QRY_SpawnPlatform_Random((STRING)_ID, (INTEGER)_LifeTime, (GUIDSTRING)_Target)
+LeaderLib_Platforms_QRY_SpawnPlatform_Random((STRING)_ID, (INTEGER)_LifeTime, (GUIDSTRING)_Target)
 THEN
-LeaderLIb_Platforms_SpawnPlatform_Random(_ID, _LifeTime, _Target);
+LeaderLib_Platforms_SpawnPlatform_Random(_ID, _LifeTime, _Target);
 
 QRY
-LeaderLIb_Platforms_QRY_SpawnPlatform_Random((STRING)_ID, (INTEGER)_LifeTime, (REAL)_x, (REAL)_y, (REAL)_z)
+LeaderLib_Platforms_QRY_SpawnPlatform_Random((STRING)_ID, (INTEGER)_LifeTime, (REAL)_x, (REAL)_y, (REAL)_z)
 THEN
-LeaderLIb_Platforms_SpawnPlatform_Random(_ID, _LifeTime, _x, _y, _z);
+LeaderLib_Platforms_SpawnPlatform_Random(_ID, _LifeTime, _x, _y, _z);
 
 PROC
-LeaderLIb_Platforms_SpawnPlatform_Random((STRING)_ID, (INTEGER)_LifeTime, (GUIDSTRING)_Target)
+LeaderLib_Platforms_SpawnPlatform_Random((STRING)_ID, (INTEGER)_LifeTime, (GUIDSTRING)_Target)
 AND
 LeaderLib_Random_QRY(2)
 AND
@@ -75,10 +75,10 @@ AND
 DB_LeaderLib_Platforms_Sizes(_Size, _Template, _Index)
 THEN
 NOT DB_LeaderLib_Random(_Index);
-LeaderLIb_Platforms_SpawnPlatform(_ID, _Size, _LifeTime, _Target);
+LeaderLib_Platforms_SpawnPlatform(_ID, _Size, _LifeTime, _Target);
 
 PROC
-LeaderLIb_Platforms_SpawnPlatform_Random((STRING)_ID, (INTEGER)_LifeTime, (REAL)_x, (REAL)_y, (REAL)_z)
+LeaderLib_Platforms_SpawnPlatform_Random((STRING)_ID, (INTEGER)_LifeTime, (REAL)_x, (REAL)_y, (REAL)_z)
 AND
 LeaderLib_Random_QRY(2)
 AND
@@ -87,37 +87,37 @@ AND
 DB_LeaderLib_Platforms_Sizes(_Size, _Template, _Index)
 THEN
 NOT DB_LeaderLib_Random(_Index);
-LeaderLIb_Platforms_SpawnPlatform(_ID, _Size, _LifeTime, _x, _y, _z);
+LeaderLib_Platforms_SpawnPlatform(_ID, _Size, _LifeTime, _x, _y, _z);
 
 PROC
-LeaderLIb_Platforms_SpawnPlatform_Small((STRING)_ID, (INTEGER)_LifeTime, (GUIDSTRING)_Target)
+LeaderLib_Platforms_SpawnPlatform_Small((STRING)_ID, (INTEGER)_LifeTime, (GUIDSTRING)_Target)
 THEN
-LeaderLIb_Platforms_SpawnPlatform(_ID, "Small", _LifeTime, _Target);
+LeaderLib_Platforms_SpawnPlatform(_ID, "Small", _LifeTime, _Target);
 
 PROC
-LeaderLIb_Platforms_SpawnPlatform_Small((STRING)_ID, (INTEGER)_LifeTime, (REAL)_x, (REAL)_y, (REAL)_z)
+LeaderLib_Platforms_SpawnPlatform_Small((STRING)_ID, (INTEGER)_LifeTime, (REAL)_x, (REAL)_y, (REAL)_z)
 THEN
-LeaderLIb_Platforms_SpawnPlatform(_ID, "Small", _LifeTime, _x, _y, _z);
+LeaderLib_Platforms_SpawnPlatform(_ID, "Small", _LifeTime, _x, _y, _z);
 
 PROC
-LeaderLIb_Platforms_SpawnPlatform_Medium((STRING)_ID, (INTEGER)_LifeTime, (GUIDSTRING)_Target)
+LeaderLib_Platforms_SpawnPlatform_Medium((STRING)_ID, (INTEGER)_LifeTime, (GUIDSTRING)_Target)
 THEN
-LeaderLIb_Platforms_SpawnPlatform(_ID, "Medium", _LifeTime, _Target);
+LeaderLib_Platforms_SpawnPlatform(_ID, "Medium", _LifeTime, _Target);
 
 PROC
-LeaderLIb_Platforms_SpawnPlatform_Medium((STRING)_ID, (INTEGER)_LifeTime, (REAL)_x, (REAL)_y, (REAL)_z)
+LeaderLib_Platforms_SpawnPlatform_Medium((STRING)_ID, (INTEGER)_LifeTime, (REAL)_x, (REAL)_y, (REAL)_z)
 THEN
-LeaderLIb_Platforms_SpawnPlatform(_ID, "Medium", _LifeTime, _x, _y, _z);
+LeaderLib_Platforms_SpawnPlatform(_ID, "Medium", _LifeTime, _x, _y, _z);
 
 PROC
-LeaderLIb_Platforms_SpawnPlatform_Large((STRING)_ID, (INTEGER)_LifeTime, (GUIDSTRING)_Target)
+LeaderLib_Platforms_SpawnPlatform_Large((STRING)_ID, (INTEGER)_LifeTime, (GUIDSTRING)_Target)
 THEN
-LeaderLIb_Platforms_SpawnPlatform(_ID, "Large", _LifeTime, _Target);
+LeaderLib_Platforms_SpawnPlatform(_ID, "Large", _LifeTime, _Target);
 
 PROC
-LeaderLIb_Platforms_SpawnPlatform_Large((STRING)_ID, (INTEGER)_LifeTime, (REAL)_x, (REAL)_y, (REAL)_z)
+LeaderLib_Platforms_SpawnPlatform_Large((STRING)_ID, (INTEGER)_LifeTime, (REAL)_x, (REAL)_y, (REAL)_z)
 THEN
-LeaderLIb_Platforms_SpawnPlatform(_ID, "Large", _LifeTime, _x, _y, _z);
+LeaderLib_Platforms_SpawnPlatform(_ID, "Large", _LifeTime, _x, _y, _z);
 //END_REGION
 
 //REGION CLEAR

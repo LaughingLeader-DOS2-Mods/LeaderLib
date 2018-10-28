@@ -866,11 +866,15 @@ LeaderLog_Log("DEBUG", "[LeaderLog:LeaderLog_Events_OnRealConverted] Real value:
 PROC
 LeaderLog_RealToString((REAL)_Num, (STRING)_Prefix, (STRING)_Suffix)
 AND
-LeaderLib_Events_QRY_GetEventParser()
+CharacterGetHostCharacter(_Host)
 AND
-DB_LeaderLib_EventParser(_EventParser)
+GetPosition(_Host, _x,_y,_z)
+AND
+CreateItemTemplateAtPosition("LOOT_LeaderLib_BackPack_Invisible_98fa7688-0810-4113-ba94-9a8c8463f830", _x, _y, _z, _Dummy)
 THEN
-LeaderLog_RealToString(_EventParser, _Num, _Prefix, _Suffix);
+SetInvulnerable_UseProcSetInvulnerable(_Dummy, 1);
+DB_LeaderLog_Temp_TraceDummy((GUIDSTRING)_Dummy);
+LeaderLog_RealToString(_Dummy, _Num, _Prefix, _Suffix);
 
 QRY
 LeaderLog_QRY_RealToString((REAL)_Num, (STRING)_Prefix, (STRING)_Suffix)
@@ -917,6 +921,23 @@ QRY
 LeaderLog_QRY_TracePosition((GUIDSTRING)_Object, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_Prefix, (STRING)_Suffix)
 THEN
 LeaderLog_TracePosition(_Object, _x, _y, _z, _Prefix, _Suffix);
+
+QRY
+LeaderLog_QRY_TracePositionWithoutObject((REAL)_x, (REAL)_y, (REAL)_z, (STRING)_Prefix, (STRING)_Suffix)
+THEN
+LeaderLog_TracePositionWithoutObject(_x, _y, _z, _Prefix, _Suffix);
+
+PROC
+LeaderLog_TracePositionWithoutObject((REAL)_x, (REAL)_y, (REAL)_z, (STRING)_Prefix, (STRING)_Suffix)
+AND
+CreateItemTemplateAtPosition("LOOT_LeaderLib_BackPack_Invisible_98fa7688-0810-4113-ba94-9a8c8463f830", _x, _y, _z, _Object)
+THEN
+SetInvulnerable_UseProcSetInvulnerable(_Object, 1);
+DB_LeaderLog_Temp_TraceDummy((GUIDSTRING)_Object);
+SetVarString(_Object, "LeaderLog_PositionToString_Prefix", _Prefix);
+SetVarString(_Object, "LeaderLog_PositionToString_Suffix", _Suffix);
+SetVarFloat3(_Object, "LeaderLog_PositionToString_Position", _x, _y, _z);
+SetStoryEvent(_Object, "LeaderLog_Commands_PositionToString");
 //END_REGION
 
 //REGION FLAG_LOGS
@@ -1001,6 +1022,19 @@ QRY
 LeaderLog_QRY_ClearAllTargets()
 THEN
 LeaderLog_ClearAllTargets();
+//END_REGION
+
+//REGION DUMMY_CLEANUP
+IF
+StoryEvent(_Dummy, "LeaderLog_Commands_Log")
+AND
+DB_LeaderLog_Temp_TraceDummy(_Dummy)
+AND
+ObjectIsItem((ITEMGUID)_Dummy, 1)
+THEN
+SetInvulnerable_UseProcSetInvulnerable(_Dummy, 0);
+ItemRemove(_Dummy);
+NOT DB_LeaderLog_Temp_TraceDummy(_Dummy);
 //END_REGION
 
 //REGION UPDATER

@@ -112,6 +112,19 @@
                         </node>
                     </children>
                 </node>
+                <node id="Tag">
+                    <attribute id="Description" value="Character is a dummy used by scripts." type="23" />
+                    <attribute id="Name" value="LeaderLib_Dummy" type="23" />
+                    <children>
+                        <node id="Categories">
+                            <children>
+                                <node id="Category">
+                                    <attribute id="Name" value="Code" type="23" />
+                                </node>
+                            </children>
+                        </node>
+                    </children>
+                </node>
             </children>
         </node>
     </region>

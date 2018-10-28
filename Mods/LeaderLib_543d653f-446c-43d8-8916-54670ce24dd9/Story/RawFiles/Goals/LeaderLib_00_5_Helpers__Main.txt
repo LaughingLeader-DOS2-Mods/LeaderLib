@@ -575,6 +575,25 @@ LeaderLog_Log("DEBUG", _Str3);
 
 //REGION CHARACTER_STATS
 PROC
+LeaderLib_Helper_CopyFaction((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
+AND
+CharacterIsPlayer(_CopyFrom, 1)
+THEN
+CharacterSetRelationIndivFactionToFaction(_CopyTo, "Evil NPC", 0);
+CharacterSetRelationIndivFactionToIndivFaction(_CopyTo, _CopyFrom, 100);
+CharacterAddAttitudeTowardsPlayer(_CopyTo, _CopyFrom, 100);
+
+PROC
+LeaderLib_Helper_CopyFaction((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
+AND
+CharacterIsPlayer(_CopyFrom, 0)
+AND
+GetFaction(_CopyTo, _Faction)
+THEN
+//CharacterSetRelationIndivFactionToIndivFaction(_CopyFrom, _CopyTo, 100);
+SetFaction(_CopyFrom, _Faction);
+
+PROC
 LeaderLib_Helper_CopyStats((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom, (INTEGER)_CopyLevel, (INTEGER)_CopyAttributes, (INTEGER)_CopyAbilities, (INTEGER)_CopyTalents)
 THEN
 LeaderLib_Helper_Internal_CopyLevel(_CopyTo, _CopyFrom, _CopyLevel);

@@ -129,6 +129,28 @@ AND
 ObjectIsItem((ITEMGUID)_Item, 1)
 THEN
 ItemRemove(_Item);
+
+IF
+StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Commands_GetItemInSlot")
+AND
+GetVarString(_Character, "LeaderLib_ItemSlot", _Slot)
+AND
+CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
+AND
+GetVarString(_Character, "LeaderLib_EquippedItemFoundEvent", _Event)
+THEN
+CharacterItemSetEvent(_Character, _Item, _Event);
+
+IF
+StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Commands_GetItemInSlot")
+AND
+GetVarString(_Character, "LeaderLib_ItemSlot", _Slot)
+AND
+NOT CharacterGetEquippedItem(_Character, _Slot, _)
+AND
+GetVarString(_Character, "LeaderLib_EquippedItemNotFoundEvent", _Event)
+THEN
+SetStoryEvent(_Character, _Event);
 //END_REGION
 
 //REGION AUTO_IDENTIFY

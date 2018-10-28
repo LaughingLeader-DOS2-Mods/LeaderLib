@@ -287,6 +287,31 @@ THEN
 GenTradeItems(_Player, _Trader);
 NOT DB_LeaderLib_Editor_Temp_GenerateTradeItems(_Trader);
 //END_REGION
+
+//REGION PRESETS
+IF
+TextEventSet("leaderlib_applypreset")
+AND
+GetTextEventParamString(1, _Preset)
+AND
+DB_IsPlayer(_Player)
+AND
+CharacterIsControlled(_Player, 1)
+THEN
+CharacterApplyPreset(_Player, _Preset);
+
+IF
+TextEventSet("leaderlib_applyrace")
+AND
+GetTextEventParamString(1, _Preset)
+AND
+DB_IsPlayer(_Player)
+AND
+CharacterIsControlled(_Player, 1)
+THEN
+CharacterApplyRacePreset(_Player, _Preset);
+//END_REGION
+
 EXITSECTION
 
 ENDEXITSECTION

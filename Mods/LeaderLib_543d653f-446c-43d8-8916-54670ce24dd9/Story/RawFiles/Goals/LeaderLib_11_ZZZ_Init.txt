@@ -1,0 +1,199 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+//REGION INIT_EVENT
+IF
+GameStarted(_Level,_)
+AND
+IsGameLevel(_Level, 1)
+THEN
+LeaderLib_System_ResetInit();
+// This timer starts twice in the editor?
+TimerCancel("LeaderLib_Timers_LeaderLibInitialized");
+TimerLaunch("LeaderLib_Timers_LeaderLibInitialized", 1);
+
+IF
+TimerFinished("LeaderLib_Timers_LeaderLibInitialized")
+THEN
+LeaderLog_Log("TRACE", "[LeaderLib:System:TimerFinished(LeaderLib_Timers_LeaderLibInitialized)] Running default event [LeaderLib_Initialized].");
+DB_LeaderLib_Initialized(1);
+GlobalSetFlag("LeaderLib_Initialized");
+LeaderLog_Log("DEBUG", "[LeaderLib:ModAPI] LeaderLib initialized.");
+LeaderLib_SendEvent("LeaderLib_Initialized");
+//END_REGION
+
+//REGION INITIAL_REQUIREMENT_UNLOCKING
+
+//Region requirements
+IF
+GameStarted(_Region, _)
+AND
+DB_LeaderLib_Requirements_Region(_RequirementID, _Region)
+AND
+NOT DB_LeaderLib_Requirements_IsUnlocked(_RequirementID)
+AND
+LeaderLib_Requirements_QRY_AllMet(_RequirementID)
+THEN
+LeaderLib_Requirements_RequirementUnlocked(_RequirementID);
+
+IF
+GameStarted(_Level, _)
+AND
+DB_LeaderLib_Requirements_Region(_RequirementID, _Region)
+AND
+_Level != _Region
+AND
+DB_LeaderLib_Requirements_IsUnlocked(_RequirementID)
+THEN
+LeaderLib_Requirements_RequirementLocked(_RequirementID);
+
+//Mod requirements
+IF
+GameStarted(_Level, _)
+AND
+DB_LeaderLib_Requirements_Mod(_RequirementID, _ModID, _Author)
+AND
+DB_LeaderLib_Requirements_IsUnlocked(_RequirementID)
+AND
+NOT LeaderUpdater_QRY_ModIsActive(_ModID, _Author)
+THEN
+LeaderLib_Requirements_RequirementLocked(_RequirementID);
+//END_REGION
+
+//REGION TREASURE_LEVEL_LOADED
+IF
+RegionStarted(_Level)
+AND
+IsGameLevel(_Level, 1)
+THEN
+DB_LeaderLib_Treasure_Temp_LevelLoaded(_Level);
+
+IF
+GameStarted(_Level,_)
+AND
+DB_LeaderLib_Treasure_Temp_LevelLoaded(_Level)
+AND
+DB_LeaderLib_Treasure_RegisteredGenerationTypes("LEVEL_LOADED")
+AND
+LeaderLib_Treasure_QRY_GetTreasureByGenerationType("LEVEL_LOADED")
+AND
+DB_LeaderLib_Treasure_Temp_GenerationTypeToTreasure("LEVEL_LOADED", _TreasureID)
+AND
+LeaderLib_Treasure_QRY_GetTreasureObject(_TreasureID, "LEVEL_LOADED")
+AND
+DB_LeaderLib_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:Level_Loaded] Added treasure [",_TreasureID,"] to generation queue for [LEVEL_LOADED] generation type.");
+LeaderLib_Treasure_AddToGenerationQueue(_Object, _TreasureID, "LEVEL_LOADED");
+NOT DB_LeaderLib_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
+NOT DB_LeaderLib_Treasure_Temp_GenerationTypeToTreasure("LEVEL_LOADED", _TreasureID);
+
+IF
+GameStarted(_Level,_)
+AND
+DB_LeaderLib_Treasure_Temp_LevelLoaded(_Level)
+THEN
+NOT DB_LeaderLib_Treasure_Temp_LevelLoaded(_Level);
+//END_REGION
+
+//REGION MOD_MENU_SORT_MANUAL_START
+// Existing Save Shenanigans 2 - The Revengening
+IF
+GameStarted(_Level, _)
+AND
+IsGameLevel(_Level, 1)
+AND
+LeaderLib_ModMenu_QRY_SortNeeded()
+THEN
+TimerCancel("LeaderLib_ModMenu_StartManualSortTimer");
+TimerLaunch("LeaderLib_ModMenu_StartManualSortTimer", 3000);
+//END_REGION
+
+//REGION EVENT_FLOW_SAFETY_TIMER
+IF
+GameStarted(_Level, _)
+AND
+IsGameLevel(_Level, 1)
+THEN
+TimerCancel("LeaderLib_Timers_EventFlow_SafetyTimer");
+TimerLaunch("LeaderLib_Timers_EventFlow_SafetyTimer", 2000);
+//END_REGION
+
+//REGION DB_IsPlayer_EDITOR
+IF
+GameStarted(_Level, 1)
+AND
+IsGameLevel(_Level, 1)
+AND
+NOT SysIsActive("GLOBAL_CharacterCreation") // If Origins isn't running
+THEN
+TimerLaunch("LeaderLib_Debug_IteratePlayers", 1000);
+
+IF
+TimerFinished("LeaderLib_Debug_IteratePlayers")
+AND
+NOT CharacterGetHostCharacter(_)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Init:LeaderLib_Debug_IteratePlayers] No host found.");
+
+IF
+TimerFinished("LeaderLib_Debug_IteratePlayers")
+AND
+CharacterGetHostCharacter(_Player)
+AND
+DB_IsPlayer(_Player)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Init:LeaderLib_Debug_IteratePlayers] Host already added to DB_IsPlayer.");
+
+IF
+TimerFinished("LeaderLib_Debug_IteratePlayers")
+AND
+CharacterGetHostCharacter(_Player)
+AND
+NOT DB_IsPlayer(_Player)
+THEN
+DB_IsPlayer(_Player);
+LeaderLog_Log("DEBUG", "[LeaderLib:Init:LeaderLib_Debug_IteratePlayers] Added host to DB_IsPlayer.");
+
+IF
+TimerFinished("LeaderLib_Debug_IteratePlayers")
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Init:LeaderLib_Debug_IteratePlayers] Searching for players.");
+CharacterLaunchIterator("LeaderLib_Debug_AddPlayer");
+
+IF
+StoryEvent((CHARACTERGUID)_Player, "LeaderLib_Debug_AddPlayer")
+AND
+CharacterIsPlayer(_Player, 1)
+AND
+NOT DB_IsPlayer(_Player)
+THEN
+DB_IsPlayer(_Player);
+LeaderLog_Log("DEBUG", "[LeaderLib:Init:LeaderLib_Debug_IteratePlayers] Added player to DB_IsPlayer.");
+
+IF
+StoryEvent(NULL_00000000-0000-0000-0000-000000000000, "LeaderLib_Debug_AddPlayer")
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Init:LeaderLib_Debug_IteratePlayers] Iteration complete.");
+LeaderLib_SendEvent("LeaderLib_Debug_PlayerDatabaseReady");
+//END_REGION
+
+//REGION EDITOR_FLAGGING
+IF
+GameStarted(_,1)
+THEN
+GlobalSetFlag("LeaderLib_IsEditorMode");
+
+IF
+GameStarted(_, 0)
+AND
+DB_GlobalFlag("LeaderLib_IsEditorMode")
+THEN
+GlobalClearFlag("LeaderLib_IsEditorMode");
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_11__Start"

@@ -113,19 +113,6 @@ DB_LeaderLib_ModMenu_MenuVars(6, "LeaderLib_ModMenu_Menu7_888ce02f-83ff-4173-be8
 DB_LeaderLib_ModMenu_MenuVars(7, "LeaderLib_ModMenu_Menu8_a6aa98e6-cde4-491b-a2cb-2cd7d5d71f96", "LeaderLib_ModMenu_SelectedMenu8", "LeaderLib_ModMenu_MenuEmpty8");
 //END_REGION
 
-//REGION SORT_MANUAL_START
-// Existing Save Shenanigans 2 - The Revengening
-IF
-GameStarted(_Level, _)
-AND
-IsGameLevel(_Level, 1)
-AND
-LeaderLib_ModMenu_QRY_SortNeeded()
-THEN
-TimerCancel("LeaderLib_ModMenu_StartManualSortTimer");
-TimerLaunch("LeaderLib_ModMenu_StartManualSortTimer", 3000);
-//END_REGION
-
 //REGION SORTING
 PROC
 LeaderLib_ModMenu_Internal_StartSortIfNeeded()

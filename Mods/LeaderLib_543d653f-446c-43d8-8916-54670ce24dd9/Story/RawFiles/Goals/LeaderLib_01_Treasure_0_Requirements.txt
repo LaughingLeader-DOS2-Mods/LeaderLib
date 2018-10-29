@@ -450,30 +450,6 @@ THEN
 LeaderLib_Requirements_RequirementLocked(_RequirementID);
 //END_REGION
 
-//REGION REGION_REQUIREMENT
-IF
-GameStarted(_Region, _)
-AND
-DB_LeaderLib_Requirements_Region(_RequirementID, _Region)
-AND
-NOT DB_LeaderLib_Requirements_IsUnlocked(_RequirementID)
-AND
-LeaderLib_Requirements_QRY_AllMet(_RequirementID)
-THEN
-LeaderLib_Requirements_RequirementUnlocked(_RequirementID);
-
-IF
-GameStarted(_Level, _)
-AND
-DB_LeaderLib_Requirements_Region(_RequirementID, _Region)
-AND
-_Level != _Region
-AND
-DB_LeaderLib_Requirements_IsUnlocked(_RequirementID)
-THEN
-LeaderLib_Requirements_RequirementLocked(_RequirementID);
-//END_REGION
-
 //REGION MOD_REQUIREMENT
 IF
 DB_LeaderLib_Requirements_Mod(_RequirementID, _ModID, _Author)
@@ -500,19 +476,7 @@ AND
 LeaderLib_Requirements_QRY_AllMet(_RequirementID)
 THEN
 LeaderLib_Requirements_RequirementUnlocked(_RequirementID);
-
-IF
-GameStarted(_Level, _)
-AND
-DB_LeaderLib_Requirements_Mod(_RequirementID, _ModID, _Author)
-AND
-DB_LeaderLib_Requirements_IsUnlocked(_RequirementID)
-AND
-NOT LeaderUpdater_QRY_ModIsActive(_ModID, _Author)
-THEN
-LeaderLib_Requirements_RequirementLocked(_RequirementID);
 //END_REGION
-
 EXITSECTION
 
 ENDEXITSECTION

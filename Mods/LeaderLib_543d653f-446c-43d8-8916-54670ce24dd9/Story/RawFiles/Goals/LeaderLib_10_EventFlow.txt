@@ -73,14 +73,7 @@ LeaderLib_Array_AddToDictionary("LeaderLib_DefaultEventFlow", "LeaderLib_Command
 //END_REGION
 
 //REGION DEFAULT_START
-IF
-GameStarted(_Level,_)
-AND
-IsGameLevel(_Level, 1)
-THEN
-TimerCancel("LeaderLib_Timers_EventFlow_SafetyTimer");
-TimerLaunch("LeaderLib_Timers_EventFlow_SafetyTimer", 2000);
-
+//This timer is started in LeaderLib_11_ZZZ_Init
 IF
 TimerFinished("LeaderLib_Timers_EventFlow_SafetyTimer")
 AND

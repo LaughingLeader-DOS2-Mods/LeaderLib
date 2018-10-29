@@ -1939,40 +1939,6 @@ THEN
 LeaderLib_Treasure_Internal_GenerateByFlag(_Flag, "Global");
 
 IF
-RegionStarted(_Level)
-AND
-IsGameLevel(_Level, 1)
-THEN
-DB_LeaderLib_Treasure_Temp_LevelLoaded(_Level);
-
-IF
-GameStarted(_Level,_)
-AND
-DB_LeaderLib_Treasure_Temp_LevelLoaded(_Level)
-AND
-DB_LeaderLib_Treasure_RegisteredGenerationTypes("LEVEL_LOADED")
-AND
-LeaderLib_Treasure_QRY_GetTreasureByGenerationType("LEVEL_LOADED")
-AND
-DB_LeaderLib_Treasure_Temp_GenerationTypeToTreasure("LEVEL_LOADED", _TreasureID)
-AND
-LeaderLib_Treasure_QRY_GetTreasureObject(_TreasureID, "LEVEL_LOADED")
-AND
-DB_LeaderLib_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
-THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:Level_Loaded] Added treasure [",_TreasureID,"] to generation queue for [LEVEL_LOADED] generation type.");
-LeaderLib_Treasure_AddToGenerationQueue(_Object, _TreasureID, "LEVEL_LOADED");
-NOT DB_LeaderLib_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
-NOT DB_LeaderLib_Treasure_Temp_GenerationTypeToTreasure("LEVEL_LOADED", _TreasureID);
-
-IF
-GameStarted(_Level,_)
-AND
-DB_LeaderLib_Treasure_Temp_LevelLoaded(_Level)
-THEN
-NOT DB_LeaderLib_Treasure_Temp_LevelLoaded(_Level);
-
-IF
 CharacterLeveledUp(_Player)
 AND
 CharacterIsPlayer(_Player, 1)

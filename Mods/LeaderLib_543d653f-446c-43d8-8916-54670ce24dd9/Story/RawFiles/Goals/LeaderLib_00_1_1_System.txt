@@ -6,37 +6,8 @@ LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", "1.1.1.0");
 LeaderLib_Register_ModMenu("LaughingLeader.LeaderLib", "[LeaderLib] Settings", "LeaderLib_SettingsMenu", "LeaderLib", "LaughingLeader");
 LeaderUpdater_Register_ActiveGoal("LeaderLib", "LaughingLeader", "LeaderLib_ZZZ_Updater");
 KBSECTION
-//REGION EDITOR_FLAGGING
-IF
-GameStarted(_,1)
-THEN
-GlobalSetFlag("LeaderLib_IsEditorMode");
-
-IF
-GameStarted(_, 0)
-AND
-DB_GlobalFlag("LeaderLib_IsEditorMode")
-THEN
-GlobalClearFlag("LeaderLib_IsEditorMode");
-//END_REGION
-
 //REGION INIT_EVENT
-IF
-GameStarted(_Level,_)
-AND
-IsGameLevel(_Level, 1)
-THEN
-LeaderLib_System_ResetInit();
-TimerLaunch("LeaderLib_Timers_LeaderLibInitialized", 1);
-
-IF
-TimerFinished("LeaderLib_Timers_LeaderLibInitialized")
-THEN
-LeaderLog_Log("TRACE", "[LeaderLib:System:TimerFinished(LeaderLib_Timers_LeaderLibInitialized)] Running default event [LeaderLib_Initialized].");
-DB_LeaderLib_Initialized(1);
-GlobalSetFlag("LeaderLib_Initialized");
-LeaderLog_Log("DEBUG", "[LeaderLib:ModAPI] LeaderLib initialized.");
-LeaderLib_SendEvent("LeaderLib_Initialized");
+//Moved the init rules to LeaderLib_11_ZZZ_Init, so it only fires once per GameStarted event
 
 PROC
 LeaderLib_System_ResetInit()
@@ -83,65 +54,6 @@ AND
 NOT CharacterGetHostCharacter(_)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:System][ERROR] No host character found.");
-//END_REGION
-
-//REGION PLAYER_DATABASE_FIX
-IF
-GameStarted(_Level, 1)
-AND
-IsCharacterCreationLevel(_Level, 0)
-AND
-NOT SysIsActive("GLOBAL_CharacterCreation") // If Origins isn't running
-THEN
-TimerLaunch("LeaderLib_Debug_IteratePlayers", 1000);
-
-IF
-TimerFinished("LeaderLib_Debug_IteratePlayers")
-AND
-NOT CharacterGetHostCharacter(_)
-THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Init:LeaderLib_Debug_IteratePlayers] No host found.");
-
-IF
-TimerFinished("LeaderLib_Debug_IteratePlayers")
-AND
-CharacterGetHostCharacter(_Player)
-AND
-DB_IsPlayer(_Player)
-THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Init:LeaderLib_Debug_IteratePlayers] Host already added to DB_IsPlayer.");
-
-IF
-TimerFinished("LeaderLib_Debug_IteratePlayers")
-AND
-CharacterGetHostCharacter(_Player)
-AND
-NOT DB_IsPlayer(_Player)
-THEN
-DB_IsPlayer(_Player);
-LeaderLog_Log("DEBUG", "[LeaderLib:Init:LeaderLib_Debug_IteratePlayers] Added host to DB_IsPlayer.");
-
-IF
-TimerFinished("LeaderLib_Debug_IteratePlayers")
-THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Init:LeaderLib_Debug_IteratePlayers] Searching for players.");
-CharacterLaunchIterator("LeaderLib_Debug_AddPlayer");
-
-IF
-StoryEvent((CHARACTERGUID)_Player, "LeaderLib_Debug_AddPlayer")
-AND
-CharacterIsPlayer(_Player, 1)
-AND
-NOT DB_IsPlayer(_Player)
-THEN
-DB_IsPlayer(_Player);
-LeaderLog_Log("DEBUG", "[LeaderLib:Init:LeaderLib_Debug_IteratePlayers] Added player to DB_IsPlayer.");
-
-IF
-StoryEvent(NULL_00000000-0000-0000-0000-000000000000, "LeaderLib_Debug_AddPlayer")
-THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Init:LeaderLib_Debug_IteratePlayers] Iteration complete.");
-LeaderLib_SendEvent("LeaderLib_Debug_PlayerDatabaseReady");
 //END_REGION
 
 //REGION ITERATOR

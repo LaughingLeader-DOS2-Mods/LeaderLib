@@ -35,6 +35,271 @@ PROC
 LeaderUpdater_Register_Goal((STRING)_ModID, (STRING)_Author, (STRING)_GoalTitle)
 THEN
 DB_LeaderUpdater_RegisteredGoal(_ModID, _Author, _GoalTitle);
+
+PROC
+LeaderUpdater_Register_Dependency((STRING)_ModID, (STRING)_Author, (STRING)_DependencyModID, (STRING)_DependencyModAuthor, (INTEGER)_NotifyWhenMissing)
+THEN
+DB_LeaderUpdater_Dependency(_ModID, _Author, _DependencyModID, _DependencyModAuthor, _NotifyWhenMissing);
+//END_REGION
+
+//REGION DEPENDENCY_CHECKING
+IF
+StoryEvent(_, "LeaderLib_Initialized")
+THEN
+TimerCancel("LeaderUpdater_Timers_CheckDependencies");
+TimerLaunch("LeaderUpdater_Timers_CheckDependencies", 250);
+
+IF
+TimerFinished("LeaderUpdater_Timers_CheckDependencies")
+THEN
+GlobalClearFlag("LeaderLib_ModDependenciesMissing");
+LeaderUpdater_CheckForMissingMods();
+
+PROC
+LeaderUpdater_CheckForMissingMods()
+AND
+DB_LeaderUpdater_Dependency(_ModID, _Author, _DependencyModID, _DependencyModAuthor, 1)
+AND
+LeaderUpdater_QRY_ModIsActive(_ModID, _Author)
+AND
+NOT LeaderUpdater_QRY_ModIsActive(_DependencyModID, _DependencyModAuthor)
+THEN
+LeaderUpdater_Internal_AddToDictionary(_ModID, _Author, _DependencyModID, _DependencyModAuthor);
+
+PROC
+LeaderUpdater_Internal_AddToDictionary((STRING)_ModID, (STRING)_Author, (STRING)_DependencyModID, (STRING)_DependencyModAuthor)
+AND
+NOT DB_LeaderUpdater_Temp_MissingMods(_, _ModID, _Author)
+AND
+StringConcatenate("LeaderUpdater_MissingMods_", _ModID, _ArrayID)
+THEN
+DB_LeaderUpdater_Temp_MissingMods(_ArrayID, _ModID, _Author);
+
+PROC
+LeaderUpdater_Internal_AddToDictionary((STRING)_ModID, (STRING)_Author, (STRING)_DependencyModID, (STRING)_DependencyModAuthor)
+AND
+DB_LeaderUpdater_Temp_MissingMods(_ArrayID, _ModID, _Author)
+THEN
+LeaderLib_Array_AddToDictionary(_ArrayID, _DependencyModID, _DependencyModAuthor);
+
+PROC
+LeaderUpdater_CheckForMissingMods()
+AND
+SysCount("DB_LeaderUpdater_Temp_MissingMods", 3, _Count)
+AND
+_Count > 0
+THEN
+GlobalSetFlag("LeaderLib_ModDependenciesMissing");
+SysClear("DB_LeaderUpdater_Temp_MissingModMessage", 2);
+DB_LeaderUpdater_Temp_MissingModMessage("", 0);
+
+PROC
+LeaderUpdater_CheckForMissingMods()
+AND
+DB_LeaderUpdater_Temp_MissingMods(_ArrayID, _ModID, _Author)
+AND
+LeaderLib_Array_QRY_DictionaryDataExists(_ArrayID)
+THEN
+LeaderUpdater_Internal_BuildMissingModString(_ArrayID);
+
+PROC
+LeaderUpdater_Internal_BuildMissingModString((STRING)_ArrayID)
+AND
+DB_LeaderLib_Dictionary_Data(_ArrayID, _Index, _ModID, _AuthorID)
+AND
+DB_LeaderUpdater_Temp_MissingModMessage(_Str, _IsFinal)
+AND
+LeaderUpdater_QRY_Internal_BuildRequiredByString(_ModID, _AuthorID)
+AND
+DB_LeaderUpdater_Temp_RequiredByString(_ModID, _AuthorID, _RequiredByString)
+AND
+StringConcatenate("<font color='#FF00FF'>", _ModID, _Str1)
+AND
+StringConcatenate(_Str1, "</font>", _ColoredModName)
+AND
+LeaderLog_QRY_Log("COMBINE", _Str, "<br>", _ColoredModName, " by ", _AuthorID, _RequiredByString)
+AND
+DB_LeaderLog_Temp_CombinedString(_CombinedStr)
+THEN
+NOT DB_LeaderUpdater_Temp_RequiredByString(_ModID, _AuthorID, _RequiredByString);
+NOT DB_LeaderLog_Temp_CombinedString(_CombinedStr);
+NOT DB_LeaderUpdater_Temp_MissingModMessage(_Str, _IsFinal);
+DB_LeaderUpdater_Temp_MissingModMessage(_CombinedStr, _IsFinal);
+DB_LeaderUpdater_Temp_CombatLog_Messages(_ModID);
+
+QRY
+LeaderUpdater_QRY_Internal_BuildRequiredByString((STRING)_DependencyModID, (STRING)_DependencyModAuthor)
+THEN
+LeaderUpdater_Internal_BuildRequiredByString(_DependencyModID, _DependencyModAuthor);
+
+PROC
+LeaderUpdater_Internal_BuildRequiredByString((STRING)_DependencyModID, (STRING)_DependencyModAuthor)
+AND
+DB_LeaderUpdater_Dependency(_ModID, _Author, _DependencyModID, _DependencyModAuthor, _Notify)
+THEN
+DB_LeaderUpdater_Temp_RequiredBy(_DependencyModID, _DependencyModAuthor, _ModID);
+
+PROC
+LeaderUpdater_Internal_BuildRequiredByString((STRING)_DependencyModID, (STRING)_DependencyModAuthor)
+THEN
+DB_LeaderUpdater_Temp_RequiredByString(_DependencyModID, _DependencyModAuthor, " (Required by ");
+
+PROC
+LeaderUpdater_Internal_BuildRequiredByString((STRING)_DependencyModID, (STRING)_DependencyModAuthor)
+AND
+DB_LeaderUpdater_Temp_RequiredBy(_DependencyModID, _DependencyModAuthor, _ModID)
+AND
+DB_LeaderUpdater_Temp_RequiredByString(_DependencyModID, _DependencyModAuthor, _Str)
+AND
+StringConcatenate("<font color='#fcd203'>", _ModID, _Str1)
+AND
+StringConcatenate(_Str1, "</font>", _Str2)
+AND
+StringConcatenate(_Str, _Str2, _NextString)
+THEN
+NOT DB_LeaderUpdater_Temp_RequiredBy(_DependencyModID, _DependencyModAuthor, _ModID);
+NOT DB_LeaderUpdater_Temp_RequiredByString(_DependencyModID, _DependencyModAuthor, _Str);
+DB_LeaderUpdater_Temp_RequiredByString(_DependencyModID, _DependencyModAuthor, _NextString);
+LeaderUpdater_Internal_RequiredByString_AddCommas(_DependencyModID, _DependencyModAuthor);
+
+PROC
+LeaderUpdater_Internal_BuildRequiredByString((STRING)_DependencyModID, (STRING)_DependencyModAuthor)
+AND
+DB_LeaderUpdater_Temp_RequiredByString(_DependencyModID, _DependencyModAuthor, _Str)
+AND
+StringConcatenate(_Str, ")", _NextStr)
+THEN
+NOT DB_LeaderUpdater_Temp_RequiredByString(_DependencyModID, _DependencyModAuthor, _Str);
+DB_LeaderUpdater_Temp_RequiredByString(_DependencyModID, _DependencyModAuthor, _NextStr);
+
+PROC
+LeaderUpdater_Internal_RequiredByString_AddCommas((STRING)_DependencyModID, (STRING)_DependencyModAuthor)
+AND
+LeaderUpdater_QRY_Internal_RequiredByString_HasOtherMods(_DependencyModID, _DependencyModAuthor)
+AND
+DB_LeaderUpdater_Temp_RequiredByString(_DependencyModID, _DependencyModAuthor, _Str)
+AND
+StringConcatenate(_Str, ", ", _NextStr)
+THEN
+NOT DB_LeaderUpdater_Temp_RequiredByString(_DependencyModID, _DependencyModAuthor, _Str);
+DB_LeaderUpdater_Temp_RequiredByString(_DependencyModID, _DependencyModAuthor, _NextStr);
+
+QRY
+LeaderUpdater_QRY_Internal_RequiredByString_HasOtherMods((STRING)_DependencyModID, (STRING)_DependencyModAuthor)
+AND
+DB_LeaderUpdater_Temp_RequiredBy(_DependencyModID, _DependencyModAuthor, _ModID)
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderUpdater_CheckForMissingMods()
+AND
+DB_LeaderUpdater_Temp_MissingModMessage(_Str, 0)
+THEN
+NOT DB_LeaderUpdater_Temp_MissingModMessage(_Str, 0);
+DB_LeaderUpdater_Temp_MissingModMessage(_Str, 1);
+
+PROC
+LeaderUpdater_CheckForMissingMods()
+AND
+DB_LeaderUpdater_Temp_MissingModMessage(_Str, 1)
+AND
+DB_GlobalFlag("LeaderLib_IsEditorMode")
+THEN
+TimerCancel("LeaderUpdater_Timers_NotifyMissingMods");
+TimerLaunch("LeaderUpdater_Timers_NotifyMissingMods", 1000);
+
+PROC
+LeaderUpdater_CheckForMissingMods()
+AND
+DB_LeaderUpdater_Temp_MissingModMessage(_Str, 1)
+AND
+NOT DB_GlobalFlag("LeaderLib_IsEditorMode")
+THEN
+TimerCancel("LeaderUpdater_Timers_NotifyMissingMods");
+TimerLaunch("LeaderUpdater_Timers_NotifyMissingMods", 10000);
+
+IF
+TimerFinished("LeaderUpdater_Timers_NotifyMissingMods")
+AND
+DB_LeaderUpdater_Temp_MissingModMessage(_Str, _IsFinal)
+AND
+CharacterGetHostCharacter(_Host)
+AND
+QRY_SpeakerIsAvailable(_Host)
+AND
+NOT DB_CharacterMoveToAndTalk_CharacerIsMoving(_, _Host, _, _) // No incoming dialogs
+THEN
+NOT DB_LeaderUpdater_Temp_MissingModMessage(_Str, _IsFinal);
+//ShowNotification(_Host, _Str);
+//OpenMessageBoxChoice(_Host, _Str, "OK", "Stop Notifications");
+//OpenMessageBox(_Host, _Str); // For translated string keys - Strings > 255 characters cause a crash from the event.
+OpenMessageBoxChoice(_Host, "LeaderLib_MessageBox_MissingModDependendencies", "LeaderLib_MessageBox_CheckMissingMods", "LeaderLib_MessageBox_SkipCheck");
+DialogSetVariableString("LeaderLib_MissingModDependencyList", "LeaderLib_MissingModDependencyText_24356ba8-a1c7-4ad9-86fe-de1c834ec789", _Str);
+//LeaderLog_SetOneshotTarget(_Host);
+DB_LeaderUpdater_Temp_CombatLog_WritingToLog(1);
+LeaderLog_LogTarget("COMBAT", _Host, "<font color='#00FF00'>[LeaderLib]</font> <font color='#FF0000'>Missing mods:</font>");
+LeaderUpdater_Internal_ClearMissingModData();
+
+IF
+StoryEvent((CHARACTERGUID)_Host, "LeaderLib_Events_OnCombatLog")
+AND
+DB_LeaderUpdater_Temp_CombatLog_WritingToLog(1)
+THEN
+NOT DB_LeaderUpdater_Temp_CombatLog_WritingToLog(1);
+LeaderUpdater_Internal_DisplayMissingModsInCombatLog(_Host);
+
+PROC
+LeaderUpdater_Internal_DisplayMissingModsInCombatLog((CHARACTERGUID)_Host)
+AND
+DB_LeaderUpdater_Temp_CombatLog_Messages(_Str)
+AND
+NOT DB_LeaderUpdater_Temp_CombatLog_WritingToLog(_)
+THEN
+NOT DB_LeaderUpdater_Temp_CombatLog_Messages(_Str);
+DB_LeaderUpdater_Temp_CombatLog_WritingToLog(1);
+LeaderLog_LogTarget("COMBAT", _Host, "<font color='#FF00FF'>", _Str, "</font>");
+
+PROC
+LeaderUpdater_Internal_DisplayMissingModsInCombatLog()
+AND
+NOT DB_LeaderUpdater_Temp_CombatLog_Messages(_)
+THEN
+NOT DB_LeaderUpdater_Temp_CombatLog_WritingToLog(1);
+
+IF
+MessageBoxChoiceClosed(_Player, "LeaderLib_MessageBox_MissingModDependendencies", "LeaderLib_MessageBox_CheckMissingMods")
+THEN
+Proc_StartDialog(0, "LeaderLib_MissingModDependencyList", _Player, _Player);
+
+IF
+MessageBoxChoiceClosed(_Player, "LeaderLib_MessageBox_MissingModDependendencies", "LeaderLib_MessageBox_SkipCheck")
+THEN
+DB_NOOP(1);
+
+//Message wasn't sent for some reason.
+IF
+TimerFinished("LeaderUpdater_Timers_NotifyMissingMods")
+AND
+DB_LeaderUpdater_Temp_MissingModMessage(_Str, _IsFinal)
+THEN
+TimerLaunch("LeaderUpdater_Timers_NotifyMissingMods", 1000);
+
+PROC
+LeaderUpdater_Internal_ClearMissingModData()
+AND
+DB_LeaderUpdater_Temp_MissingModMessage(_Str, _IsFinal)
+THEN
+NOT DB_LeaderUpdater_Temp_MissingModMessage(_Str, _IsFinal);
+LeaderLib_SendEvent("LeaderLib_MissingModsMessageFinished");
+
+PROC
+LeaderUpdater_Internal_ClearMissingModData()
+AND
+DB_LeaderUpdater_Temp_MissingMods(_ArrayID, _ModID, _Author)
+THEN
+NOT DB_LeaderUpdater_Temp_MissingMods(_ArrayID, _ModID, _Author);
+LeaderLib_Array_ClearDictionary(_ArrayID);
 //END_REGION
 
 //REGION CLEAR_REGISTERED

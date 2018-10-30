@@ -284,6 +284,55 @@ LeaderLib_Trader_Register_StartingGold("MyMod.Debug.TestGoblinTrader", "TestLeve
 LeaderLib_Trader_Register_Dialog("MyMod.Debug.TestGoblinTrader", "LeaderLib_Debug_Trader");
 //END_REGION
 
+//REGION DEPENDENCY_TEST
+IF
+TextEventSet("leaderlib_testmessagebox")
+AND
+CharacterGetHostCharacter(_Host)
+AND
+GetTextEventParamString(1, _String)
+THEN
+OpenMessageBox(_Host, _String);
+
+IF
+TextEventSet("leaderlib_dependencytest")
+THEN
+DB_LeaderUpdater_Temp_Debug_TestingDependency(1);
+DB_LeaderUpdater_Dependency("LeaderLib", "LaughingLeader", "TheBestModEver", "KaijuModder", 1);
+DB_LeaderUpdater_Dependency("LeaderLib", "LaughingLeader", "TheSecondBestModEver", "KaijuModder", 1);
+DB_LeaderUpdater_Dependency("LeaderLib", "LaughingLeader", "ClassExpansion", "SirDustsAlot", 1);
+TimerCancel("LeaderUpdater_Timers_CheckDependencies");
+TimerLaunch("LeaderUpdater_Timers_CheckDependencies", 250);
+
+IF
+StoryEvent(_, "LeaderLib_MissingModsMessageFinished")
+AND
+DB_LeaderUpdater_Temp_Debug_TestingDependency(1)
+THEN
+NOT DB_LeaderUpdater_Dependency("LeaderLib", "LaughingLeader", "TheBestModEver", "KaijuModder", 1);
+NOT DB_LeaderUpdater_Dependency("LeaderLib", "LaughingLeader", "TheSecondBestModEver", "KaijuModder", 1);
+NOT DB_LeaderUpdater_Dependency("LeaderLib", "LaughingLeader", "ClassExpansion", "SirDustsAlot", 1);
+
+//Can be used to test things in the main game
+IF
+StoryEvent(_, "LeaderLib_Initialized")
+AND
+NOT DB_GlobalFlag("LeaderLib_IsEditorMode")
+AND
+CharacterGetHostCharacter(_Host)
+AND
+CharacterGetReservedUserID(_Host, _User)
+AND
+GetUserName(_User, _ProfileName)
+AND
+StringContains(_ProfileName, "Debug", 1)
+THEN
+DB_LeaderUpdater_Temp_Debug_TestingDependency(1);
+DB_LeaderUpdater_Dependency("LeaderLib", "LaughingLeader", "TheBestModEver", "KaijuModder", 1);
+DB_LeaderUpdater_Dependency("LeaderLib", "LaughingLeader", "TheSecondBestModEver", "KaijuModder", 1);
+DB_LeaderUpdater_Dependency("LeaderLib", "LaughingLeader", "ClassExpansion", "SirDustsAlot", 1);
+//END_REGION
+
 //REGION TESTS
 PROC
 LeaderLib_DebugLevel_TraderTest()

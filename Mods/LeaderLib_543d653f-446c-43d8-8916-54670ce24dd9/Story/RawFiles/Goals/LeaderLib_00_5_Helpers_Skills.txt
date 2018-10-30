@@ -423,9 +423,18 @@ LeaderLib_Skills_ResetDummy(_Dummy);
 //REGION DUMMY_RESET
 PROC
 LeaderLib_Skills_MarkDummyForReset((CHARACTERGUID)_Dummy, (INTEGER)_Duration)
+AND
+_Duration > 0
 THEN
 ProcObjectTimerCancel(_Dummy, "LeaderLib_Timers_Skills_ResetDummy");
 ProcObjectTimer(_Dummy, "LeaderLib_Timers_Skills_ResetDummy", _Duration);
+
+PROC
+LeaderLib_Skills_MarkDummyForReset((CHARACTERGUID)_Dummy, (INTEGER)_Duration)
+AND
+_Duration <= 0
+THEN
+ProcObjectTimerFinished(_Dummy, "LeaderLib_Timers_Skills_ResetDummy");
 
 PROC
 ProcObjectTimerFinished((CHARACTERGUID)_Dummy, "LeaderLib_Timers_Skills_ResetDummy")
@@ -450,6 +459,13 @@ THEN
 NOT DB_LeaderLib_Skills_TargetDummies(_ID, _Dummy);
 CharacterMakeStoryNpc(_Dummy, 0);
 RemoveTemporaryCharacter(_Dummy);
+
+PROC
+LeaderLib_Skills_ResetDummyByID((STRING)_ID)
+AND
+DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy)
+THEN
+LeaderLib_Skills_ResetDummy(_Dummy);
 
 IF
 RegionEnded(_)

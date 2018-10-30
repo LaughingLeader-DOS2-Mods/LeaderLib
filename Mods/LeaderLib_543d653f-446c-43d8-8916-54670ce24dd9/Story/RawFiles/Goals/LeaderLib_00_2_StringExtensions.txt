@@ -254,7 +254,7 @@ DB_LeaderLib_StringCompare_Results(_Str2, _Str1, _OtherVal);
 
 //REGION STRING_LENGTH
 QRY
-LeaderLib_StringExt_GetStringLength((STRING)_Str)
+LeaderLib_StringExt_QRY_GetStringLength((STRING)_Str)
 THEN
 LeaderLib_StringExt_DetermineStringLength(_Str);
 

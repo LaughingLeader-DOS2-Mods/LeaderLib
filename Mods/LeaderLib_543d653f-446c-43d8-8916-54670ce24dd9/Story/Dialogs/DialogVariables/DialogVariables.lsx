@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <save>
-    <header version="2" time="1534784012" />
-    <version major="3" minor="6" revision="0" build="3" />
+    <header version="2" />
+    <version major="3" minor="6" revision="1" build="0" />
     <region id="DialogVariables">
         <node id="root">
             <children>
@@ -10,6 +10,13 @@
                     <attribute id="Description" value="" type="23" />
                     <attribute id="UUID" value="f143b90b-9afc-477e-b133-6a1574341261" type="31" />
                     <attribute id="name" value="LeaderLib_LeaderTrader_Greeting" type="22" />
+                    <attribute id="type" value="String" type="23" />
+                </node>
+                <node id="DialogVariable">
+                    <attribute id="DefaultValue" value="" type="23" />
+                    <attribute id="Description" value="" type="23" />
+                    <attribute id="UUID" value="24356ba8-a1c7-4ad9-86fe-de1c834ec789" type="31" />
+                    <attribute id="name" value="LeaderLib_MissingModDependencyText" type="22" />
                     <attribute id="type" value="String" type="23" />
                 </node>
                 <node id="DialogVariable">

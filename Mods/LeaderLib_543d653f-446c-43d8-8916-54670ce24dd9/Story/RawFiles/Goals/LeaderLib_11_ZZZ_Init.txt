@@ -180,7 +180,7 @@ LeaderLog_Log("DEBUG", "[LeaderLib:Init:LeaderLib_Debug_IteratePlayers] Iteratio
 LeaderLib_SendEvent("LeaderLib_Debug_PlayerDatabaseReady");
 //END_REGION
 
-//REGION EDITOR_FLAGGING
+//REGION EDITOR_MODE
 IF
 GameStarted(_,1)
 THEN

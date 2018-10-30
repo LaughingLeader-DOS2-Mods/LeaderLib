@@ -238,7 +238,7 @@ OpenMessageBoxChoice(_Host, "LeaderLib_MessageBox_MissingModDependendencies", "L
 DialogSetVariableString("LeaderLib_MissingModDependencyList", "LeaderLib_MissingModDependencyText_24356ba8-a1c7-4ad9-86fe-de1c834ec789", _Str);
 //LeaderLog_SetOneshotTarget(_Host);
 DB_LeaderUpdater_Temp_CombatLog_WritingToLog(1);
-LeaderLog_LogTarget("COMBAT", _Host, "<font color='#00FF00'>[LeaderLib]</font> <font color='#FF0000'>Missing mods:</font>");
+LeaderLog_LogTarget("COMBAT", _Host, "<font color='#00FF00'>[LeaderLib]</font> <font color='#FF0000'>Missing required mods:</font>");
 LeaderUpdater_Internal_ClearMissingModData();
 
 IF

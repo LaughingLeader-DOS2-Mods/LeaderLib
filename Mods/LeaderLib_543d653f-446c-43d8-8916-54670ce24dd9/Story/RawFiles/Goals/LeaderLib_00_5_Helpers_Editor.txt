@@ -323,6 +323,19 @@ THEN
 CharacterTransformAppearanceToWithEquipmentSet(_Player, _Player, _Equipment, 0);
 //END_REGION
 
+//REGION MESSAGE_BOXES
+IF
+TextEventSet("leaderlib_notification")
+AND
+GetTextEventParamString(1, _Message)
+AND
+DB_IsPlayer(_Player)
+AND
+CharacterIsControlled(_Player, 1)
+THEN
+ShowNotification(_Player, _Message);
+//END_REGION
+
 EXITSECTION
 
 ENDEXITSECTION

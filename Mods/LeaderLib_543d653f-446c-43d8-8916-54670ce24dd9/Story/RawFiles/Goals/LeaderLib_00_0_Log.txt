@@ -630,6 +630,30 @@ SetStoryEvent(_Object, "LeaderLib_Commands_LogToCombatLog");
 LeaderLog_Internal_ClearTargetIfOneshot(_Object);
 
 PROC
+LeaderLog_Internal_LogToNotification((CHARACTERGUID)_Target, (STRING)_Str)
+AND
+DB_LeaderLib_StringLength(_Str, _Length)
+AND
+_Length >= 255
+AND
+StringSub(_Str, 0, 254, _SubbedStr)
+THEN
+NOT DB_LeaderLib_StringLength(_Str, _Length);
+ShowNotification(_Target, _SubbedStr);
+LeaderLog_Internal_ClearTargetIfOneshot(_Target);
+
+PROC
+LeaderLog_Internal_LogToNotification((CHARACTERGUID)_Target, (STRING)_Str)
+AND
+DB_LeaderLib_StringLength(_Str, _Length)
+AND
+_Length < 255 // Strings greater than 255 characters can cause a crash
+THEN
+NOT DB_LeaderLib_StringLength(_Str, _Length);
+ShowNotification(_Target, _Str);
+LeaderLog_Internal_ClearTargetIfOneshot(_Target);
+
+PROC
 LeaderLog_Internal_RunString((STRING)_Type, (STRING)_Str)
 AND
 _Type == "COMBINE"
@@ -1027,6 +1051,26 @@ _Type == "COMBAT"
 THEN
 LeaderLib_StringExt_DetermineStringLength(_Str);
 LeaderLog_Internal_LogToCombatLog(_Target, _Str);
+
+//255 character limit as well
+PROC
+LeaderLog_Internal_RunStringOnTarget((STRING)_Type, (GUIDSTRING)_Target, (STRING)_Str)
+AND
+_Type == "NOTIFICATION"
+AND
+ObjectIsCharacter((CHARACTERGUID)_Target, 1)
+THEN
+LeaderLib_StringExt_DetermineStringLength(_Str);
+LeaderLog_Internal_LogToNotification(_Target, _Str);
+
+PROC
+LeaderLog_Internal_RunStringOnTarget((STRING)_Type, (GUIDSTRING)_Target, (STRING)_Str)
+AND
+_Type == "NOTIFICATION"
+AND
+ObjectIsCharacter(_Target, 0)
+THEN
+LeaderLog_Internal_DisplayStatusText(_Target, _Str);
 
 PROC
 LeaderLog_Internal_RunStringOnTarget((STRING)_Type, (GUIDSTRING)_Target, (STRING)_Str)

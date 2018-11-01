@@ -430,39 +430,33 @@ DB_LeaderLib_Combat_Temp_ItemCombatList(_Index, _Item, _CombatID);
 
 //REGION FRIENDLY_FIRE
 IF
+GlobalFlagSet("LeaderLib_FriendlyFireEnabled")
+THEN
+CharacterLaunchOsirisOnlyIterator("LeaderLib_SetFriendlyFireTag");
+
+IF
+StoryEvent((CHARACTERGUID)_Character, "LeaderLib_SetFriendlyFireTag")
+THEN
+SetTag(_Character, "LeaderLib_FriendlyFireEnabled");
+
+IF
+GlobalFlagCleared("LeaderLib_FriendlyFireEnabled")
+THEN
+CharacterLaunchOsirisOnlyIterator("LeaderLib_ClearFriendlyFireTag");
+
+IF
+StoryEvent((CHARACTERGUID)_Character, "LeaderLib_ClearFriendlyFireTag")
+THEN
+ClearTag(_Character, "LeaderLib_FriendlyFireEnabled");
+
+//For summons/etc which may enter battle later
+IF
 DB_CombatCharacters(_Character, _CombatID)
 AND
 DB_GlobalFlag("LeaderLib_FriendlyFireEnabled")
 THEN
 SetTag(_Character, "LeaderLib_FriendlyFireEnabled");
 
-IF
-GlobalFlagSet("LeaderLib_FriendlyFireEnabled")
-AND
-DB_IsPlayer(_Character)
-THEN
-SetTag(_Character, "LeaderLib_FriendlyFireEnabled");
-
-IF
-GlobalFlagCleared("LeaderLib_FriendlyFireEnabled")
-AND
-DB_IsPlayer(_Character)
-THEN
-ClearTag(_Character, "LeaderLib_FriendlyFireEnabled");
-
-IF
-GlobalFlagSet("LeaderLib_FriendlyFireEnabled")
-AND
-DB_CombatCharacters(_Character, _CombatID)
-THEN
-SetTag(_Character, "LeaderLib_FriendlyFireEnabled");
-
-IF
-GlobalFlagCleared("LeaderLib_FriendlyFireEnabled")
-AND
-DB_CombatCharacters(_Character, _CombatID)
-THEN
-ClearTag(_Character, "LeaderLib_FriendlyFireEnabled");
 //END_REGION
 
 //REGION CLEANUP

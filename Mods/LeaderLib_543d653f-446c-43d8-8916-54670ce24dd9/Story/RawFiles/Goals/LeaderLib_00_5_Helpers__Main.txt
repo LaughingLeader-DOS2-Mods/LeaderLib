@@ -865,9 +865,10 @@ LeaderLib_StartObjectTimer(_Object, _TimerDelay, "LeaderLib_Timers_BehaviorScrip
 IF
 StoryEvent(_Object, "LeaderLib_Commands_CancelObjectTimer")
 AND
-GetVarString(_Object, "LeaderLib_Timer_CompleteEvent", _CompleteEvent)
+GetVarString(_Object, "LeaderLib_Timer_CancelByEventEvent", _CompleteEvent)
 THEN
 LeaderLib_CancelObjectTimerByEvent(_Object, _CompleteEvent);
+SetVarString(_Object, "LeaderLib_Timer_CancelByEventEvent", "");
 
 //Behavior can't cast an object to a string
 IF

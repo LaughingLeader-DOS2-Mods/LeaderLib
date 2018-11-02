@@ -258,6 +258,13 @@ GlobalClearFlag("LeaderLib_Commands_AutosaveNow");
 LeaderLib_Autosaving_Save();
 LeaderLib_Autosaving_Stop();
 LeaderLib_Autosaving_Start();
+
+IF
+GlobalFlagCleared("LeaderLib_Commands_AutosaveNow")
+AND
+DB_DialogName("LeaderLib_AutosaveMenu", _Instance)
+THEN
+LeaderLib_Autosaving_Internal_UpdateDialogVar(_Instance);
 //END_REGION
 
 //REGION MENU
@@ -368,7 +375,7 @@ DB_LeaderLib_Settings_DialogVariables("CurrentAutosaveInterval", _CurrentValVar)
 AND
 DB_LeaderLib_Dictionary_Data("LeaderLib.Autosave.IntervalSettings", _EntryIndex, _CurrentGlobalFlag, _DisplayText)
 AND
-LeaderLog_QRY_Log("COMBINE", "Autosaving <font color='#00FF00'>Enabled</font> | Interval: <font color='#00FFFF'>", _DisplayText, "</font> | Timer Not Started")
+LeaderLog_QRY_Log("COMBINE", "Autosaving <font color='#00FF00'>Enabled</font> | Interval: <font color='#00FFFF'>", _DisplayText, "</font> | <font color='#FFA500'>Timer not started. Enable/Disable autosaving to restart the timer.</font>")
 AND
 DB_LeaderLog_Temp_CombinedString(_Str)
 THEN

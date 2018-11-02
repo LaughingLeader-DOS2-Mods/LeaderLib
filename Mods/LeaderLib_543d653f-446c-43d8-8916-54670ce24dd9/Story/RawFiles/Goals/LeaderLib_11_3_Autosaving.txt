@@ -52,7 +52,7 @@ DB_LeaderLib_Autosaving_CurrentInterval("LeaderLib_Autosave_Interval_15");
 
 //REGION COMMANDS
 IF
-DB_GlobalFlag("LeaderLib_AutosavingEnabled")
+GlobalFlagSet("LeaderLib_AutosavingEnabled")
 THEN
 LeaderLib_SendEvent("LeaderLib_Commands_StartAutosaving");
 
@@ -119,18 +119,56 @@ LeaderLib_SendEvent("LeaderLib_Commands_StartAutosaving");
 
 IF
 StoryEvent(_, "LeaderLib_Commands_AutosaveNow")
+AND
+NOT DB_GlobalFlag("LeaderLib_DisableAutosavingInCombat")
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Autosaving:LeaderLib_Commands_AutosaveNow] Autosaving now.");
 AutoSave();
 
 IF
-StoryEvent(_, "LeaderLib_Commands_StopAutosaving")
+StoryEvent(_, "LeaderLib_Commands_AutosaveNow")
 AND
-LeaderLib_Events_QRY_GetEventParser()
+DB_GlobalFlag("LeaderLib_DisableAutosavingInCombat")
 AND
-DB_LeaderLib_EventParser(_EventParser)
+CharacterGetHostCharacter(_Player)
+AND
+CharacterIsInCombat(_Player, 0)
 THEN
-ClearScriptframe(_EventParser);
+LeaderLog_Log("DEBUG", "[LeaderLib:Autosaving:LeaderLib_Commands_AutosaveNow] Autosaving now.");
+AutoSave();
+
+IF
+StoryEvent(_, "LeaderLib_Commands_AutosaveNow")
+AND
+DB_GlobalFlag("LeaderLib_DisableAutosavingInCombat")
+AND
+CharacterGetHostCharacter(_Player)
+AND
+CharacterIsInCombat(_Player, 0)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Autosaving:LeaderLib_Commands_AutosaveNow] Host is in combat. Delaying autosave until combat ends.");
+DB_LeaderLib_Autosaving_Temp_SaveAfterCombat(1);
+
+IF
+CombatEnded(_CombatID)
+AND
+DB_LeaderLib_Autosaving_Temp_SaveAfterCombat(1)
+AND
+CharacterGetHostCharacter(_Player)
+AND
+CharacterIsInCombat(_Player, 0)
+THEN
+NOT DB_LeaderLib_Autosaving_Temp_SaveAfterCombat(1);
+LeaderLog_Log("DEBUG", "[LeaderLib:Autosaving:CombatEnded] Host left combat. Autosaving.");
+AutoSave();
+//Reset timer
+LeaderLib_SendEvent("LeaderLib_Commands_StartAutosaving");
+
+IF
+GlobalFlagSet("LeaderLib_Commands_AutosaveNow")
+THEN
+GlobalClearFlag("LeaderLib_Commands_AutosaveNow");
+LeaderLib_SendEvent("LeaderLib_Commands_AutosaveNow");
 //END_REGION
 
 //REGION MENU
@@ -139,8 +177,24 @@ DialogStarted("LeaderLib_AutosaveMenu", _Instance)
 THEN
 LeaderLib_Autosaving_Internal_UpdateDialogVar(_Instance);
 
+IF
+DB_GlobalFlag("LeaderLib_AutosavingEnabled")
+AND
+DB_DialogName("LeaderLib_AutosaveMenu", _Instance)
+THEN
+LeaderLib_Autosaving_Internal_UpdateDialogVar(_Instance);
+
+IF
+GlobalFlagCleared("LeaderLib_AutosavingEnabled")
+AND
+DB_DialogName("LeaderLib_AutosaveMenu", _Instance)
+THEN
+LeaderLib_Autosaving_Internal_UpdateDialogVar(_Instance);
+
 PROC
 LeaderLib_Autosaving_Internal_UpdateDialogVar((INTEGER)_Instance)
+AND
+DB_GlobalFlag("LeaderLib_AutosavingEnabled")
 AND
 DB_LeaderLib_Autosaving_CurrentInterval(_CurrentGlobalFlag)
 AND
@@ -148,9 +202,28 @@ DB_LeaderLib_Settings_DialogVariables("CurrentAutosaveInterval", _CurrentValVar)
 AND
 DB_LeaderLib_Dictionary_Data("LeaderLib.Autosave.IntervalSettings", _EntryIndex, _CurrentGlobalFlag, _DisplayText)
 AND
-StringConcatenate("Current Interval: ", _DisplayText, _Str)
+StringConcatenate("Autosaving <font color='#00FF00'>Enabled</font> | Interval: <font color='#00FFFF'>", _DisplayText, _Str1)
+AND
+StringConcatenate(_Str1, "</font>", _Str2)
 THEN
-DialogSetVariableStringForInstance(_Instance, _CurrentValVar, _Str);
+DialogSetVariableStringForInstance(_Instance, _CurrentValVar, _Str2);
+
+PROC
+LeaderLib_Autosaving_Internal_UpdateDialogVar((INTEGER)_Instance)
+AND
+NOT DB_GlobalFlag("LeaderLib_AutosavingEnabled")
+AND
+DB_LeaderLib_Autosaving_CurrentInterval(_CurrentGlobalFlag)
+AND
+DB_LeaderLib_Settings_DialogVariables("CurrentAutosaveInterval", _CurrentValVar)
+AND
+DB_LeaderLib_Dictionary_Data("LeaderLib.Autosave.IntervalSettings", _EntryIndex, _CurrentGlobalFlag, _DisplayText)
+AND
+StringConcatenate("Autosaving <font color='#FF0000'>Disabled</font> | Interval: <font color='#00FFFF'>", _DisplayText, _Str1)
+AND
+StringConcatenate(_Str1, "</font>", _Str2)
+THEN
+DialogSetVariableStringForInstance(_Instance, _CurrentValVar, _Str2);
 
 PROC
 LeaderLib_DynamicMenu_OnEntryValueSet((GUIDSTRING)_Player, "LeaderLib.Autosave.IntervalSettings", (STRING)_DialogVar, (STRING)_AvailableFlag, (INTEGER)_Instance, (STRING)_GlobalFlag, (STRING)_DisplayText)

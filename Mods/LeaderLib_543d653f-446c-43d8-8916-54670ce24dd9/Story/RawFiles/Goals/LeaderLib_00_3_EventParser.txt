@@ -122,6 +122,38 @@ AND
 NOT LeaderLib_QRY_EventParser_GlobalParserExists()
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:EventParser][ERROR] Global Event Parser doesn't exist for some reason.");
+
+//Bring the EventParser into the current level, so its itemScript works
+IF
+StoryEvent(_EventParser, "LeaderLib_Initialized")
+AND
+ObjectGetFlag(_EventParser, "LeaderLib_EventParser_EnteredLevel", 0)
+AND
+CharacterGetHostCharacter(_Player)
+THEN
+TeleportTo(_EventParser, _Player, "", 0, 1);
+ObjectSetFlag(_EventParser, "LeaderLib_EventParser_EnteredLevel");
+
+IF
+SavegameLoaded(_,_,_,_)
+AND
+DB_LeaderLib_EventParser(_EventParser)
+AND
+ObjectGetFlag(_EventParser, "LeaderLib_EventParser_EnteredLevel", 0)
+AND
+CharacterGetHostCharacter(_Player)
+THEN
+TeleportTo(_EventParser, _Player, "", 0, 1);
+ObjectSetFlag(_EventParser, "LeaderLib_EventParser_EnteredLevel");
+
+IF
+RegionEnded(_)
+AND
+DB_LeaderLib_EventParser(_EventParser)
+AND
+ObjectGetFlag(_EventParser, "LeaderLib_EventParser_EnteredLevel", 1)
+THEN
+ObjectClearFlag(_EventParser, "LeaderLib_EventParser_EnteredLevel");
 //END_REGION
 
 //REGION SEND_EVENT

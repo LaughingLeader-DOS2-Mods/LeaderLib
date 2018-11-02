@@ -256,6 +256,8 @@ GlobalFlagSet("LeaderLib_Commands_AutosaveNow")
 THEN
 GlobalClearFlag("LeaderLib_Commands_AutosaveNow");
 LeaderLib_Autosaving_Save();
+LeaderLib_Autosaving_Stop();
+LeaderLib_Autosaving_Start();
 //END_REGION
 
 //REGION MENU
@@ -283,20 +285,101 @@ LeaderLib_Autosaving_Internal_UpdateDialogVar((INTEGER)_Instance)
 AND
 DB_GlobalFlag("LeaderLib_AutosavingEnabled")
 AND
+DB_LeaderLib_AutoSaving_Temp_TimerStarted(1)
+AND
+DB_LeaderLib_Autosaving_Temp_Countdown(_Minutes)
+AND
+_Minutes > 1
+AND
+IntegertoString(_Minutes, _MinutesLeft)
+AND
 DB_LeaderLib_Autosaving_CurrentInterval(_CurrentGlobalFlag)
 AND
 DB_LeaderLib_Settings_DialogVariables("CurrentAutosaveInterval", _CurrentValVar)
 AND
 DB_LeaderLib_Dictionary_Data("LeaderLib.Autosave.IntervalSettings", _EntryIndex, _CurrentGlobalFlag, _DisplayText)
 AND
-StringConcatenate("Autosaving <font color='#00FF00'>Enabled</font> | Interval: <font color='#00FFFF'>", _DisplayText, _Str1)
+LeaderLog_QRY_Log("COMBINE", "Autosaving <font color='#00FF00'>Enabled</font> | Interval: <font color='#00FFFF'>", _DisplayText, "</font> | Time Left: <font color='#FF69B4'>", _MinutesLeft, " Minutes</font>")
 AND
-StringConcatenate(_Str1, "</font>", _Str2)
+DB_LeaderLog_Temp_CombinedString(_Str)
 THEN
-DialogSetVariableStringForInstance(_Instance, _CurrentValVar, _Str2);
+NOT DB_LeaderLog_Temp_CombinedString(_Str);
+DialogSetVariableStringForInstance(_Instance, _CurrentValVar, _Str);
 
 PROC
 LeaderLib_Autosaving_Internal_UpdateDialogVar((INTEGER)_Instance)
+AND
+NOT DB_LeaderLib_AutoSaving_Temp_DialogVarSet(1)
+AND
+DB_GlobalFlag("LeaderLib_AutosavingEnabled")
+AND
+DB_LeaderLib_AutoSaving_Temp_TimerStarted(1)
+AND
+DB_LeaderLib_Autosaving_Temp_Countdown(_Minutes)
+AND
+_Minutes == 1
+AND
+IntegertoString(_Minutes, _MinutesLeft)
+AND
+DB_LeaderLib_Autosaving_CurrentInterval(_CurrentGlobalFlag)
+AND
+DB_LeaderLib_Settings_DialogVariables("CurrentAutosaveInterval", _CurrentValVar)
+AND
+DB_LeaderLib_Dictionary_Data("LeaderLib.Autosave.IntervalSettings", _EntryIndex, _CurrentGlobalFlag, _DisplayText)
+AND
+LeaderLog_QRY_Log("COMBINE", "Autosaving <font color='#00FF00'>Enabled</font> | Interval: <font color='#00FFFF'>", _DisplayText, "</font> | Time Left: Less Than <font color='#FF69B4'>1 Minute</font>")
+AND
+DB_LeaderLog_Temp_CombinedString(_Str)
+THEN
+NOT DB_LeaderLog_Temp_CombinedString(_Str);
+DialogSetVariableStringForInstance(_Instance, _CurrentValVar, _Str);
+DB_LeaderLib_AutoSaving_Temp_DialogVarSet(1);
+
+QRY
+LeaderLib_Autosaving_QRY_TimerDone()
+AND
+NOT DB_LeaderLib_AutoSaving_Temp_TimerStarted(1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Autosaving_QRY_TimerDone()
+AND
+DB_LeaderLib_AutoSaving_Temp_TimerStarted(1)
+AND
+DB_LeaderLib_Autosaving_Temp_Countdown(_Minutes)
+AND
+_Minutes <= 0
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_Autosaving_Internal_UpdateDialogVar((INTEGER)_Instance)
+AND
+NOT DB_LeaderLib_AutoSaving_Temp_DialogVarSet(1)
+AND
+DB_GlobalFlag("LeaderLib_AutosavingEnabled")
+AND
+LeaderLib_Autosaving_QRY_TimerDone()
+AND
+DB_LeaderLib_Autosaving_CurrentInterval(_CurrentGlobalFlag)
+AND
+DB_LeaderLib_Settings_DialogVariables("CurrentAutosaveInterval", _CurrentValVar)
+AND
+DB_LeaderLib_Dictionary_Data("LeaderLib.Autosave.IntervalSettings", _EntryIndex, _CurrentGlobalFlag, _DisplayText)
+AND
+LeaderLog_QRY_Log("COMBINE", "Autosaving <font color='#00FF00'>Enabled</font> | Interval: <font color='#00FFFF'>", _DisplayText, "</font> | Timer Not Started")
+AND
+DB_LeaderLog_Temp_CombinedString(_Str)
+THEN
+NOT DB_LeaderLog_Temp_CombinedString(_Str);
+DialogSetVariableStringForInstance(_Instance, _CurrentValVar, _Str);
+DB_LeaderLib_AutoSaving_Temp_DialogVarSet(1);
+
+PROC
+LeaderLib_Autosaving_Internal_UpdateDialogVar((INTEGER)_Instance)
+AND
+NOT DB_LeaderLib_AutoSaving_Temp_DialogVarSet(1)
 AND
 NOT DB_GlobalFlag("LeaderLib_AutosavingEnabled")
 AND
@@ -311,6 +394,14 @@ AND
 StringConcatenate(_Str1, "</font>", _Str2)
 THEN
 DialogSetVariableStringForInstance(_Instance, _CurrentValVar, _Str2);
+DB_LeaderLib_AutoSaving_Temp_DialogVarSet(1);
+
+PROC
+LeaderLib_Autosaving_Internal_UpdateDialogVar((INTEGER)_Instance)
+AND
+DB_LeaderLib_AutoSaving_Temp_DialogVarSet(1)
+THEN
+NOT DB_LeaderLib_AutoSaving_Temp_DialogVarSet(1);
 
 PROC
 LeaderLib_DynamicMenu_OnEntryValueSet((GUIDSTRING)_Player, "LeaderLib.Autosave.IntervalSettings", (STRING)_DialogVar, (STRING)_AvailableFlag, (INTEGER)_Instance, (STRING)_GlobalFlag, (STRING)_DisplayText)

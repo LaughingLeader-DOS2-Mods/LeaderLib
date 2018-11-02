@@ -187,6 +187,7 @@ ItemSetStoryItem(_EventParser, 1);
 SetCanFight(_EventParser, 0);
 SetVisible(_EventParser, 0);
 
+/*
 //This bit is important so the EventParser's script/timers stay active
 PROC
 LeaderLib_EventParser_Internal_Initialize((GUIDSTRING)_EventParser)
@@ -197,7 +198,7 @@ ObjectGetFlag(_EventParser, "LeaderLib_ForceSyncEnabled", 0)
 THEN
 ItemSetForceSynch(_EventParser, 1);
 ObjectSetFlag(_EventParser, "LeaderLib_ForceSyncEnabled");
-
+*/
 /*
 IF
 GlobalFlagCleared("LeaderLib_AutosavingEnabled")

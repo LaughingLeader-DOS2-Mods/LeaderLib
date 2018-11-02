@@ -6,6 +6,69 @@
         <node id="root">
             <children>
                 <node id="DialogVariable">
+                    <attribute id="DefaultValue" value="" type="23" />
+                    <attribute id="Description" value="" type="23" />
+                    <attribute id="UUID" value="b48918b6-4864-4aae-88fd-53d658ccb082" type="31" />
+                    <attribute id="name" value="LeaderLib_AutosaveMenu_CurrentSettings" type="22" />
+                    <attribute id="type" value="String" type="23" />
+                </node>
+                <node id="DialogVariable">
+                    <attribute id="DefaultValue" value="" type="23" />
+                    <attribute id="Description" value="" type="23" />
+                    <attribute id="UUID" value="1f7c9690-58b3-4cf6-b17e-0da478b15e0e" type="31" />
+                    <attribute id="name" value="LeaderLib_DynamicMenu_MenuOption1" type="22" />
+                    <attribute id="type" value="String" type="23" />
+                </node>
+                <node id="DialogVariable">
+                    <attribute id="DefaultValue" value="" type="23" />
+                    <attribute id="Description" value="" type="23" />
+                    <attribute id="UUID" value="9df56ce3-cd42-421b-81b6-91ffe91042fd" type="31" />
+                    <attribute id="name" value="LeaderLib_DynamicMenu_MenuOption2" type="22" />
+                    <attribute id="type" value="String" type="23" />
+                </node>
+                <node id="DialogVariable">
+                    <attribute id="DefaultValue" value="" type="23" />
+                    <attribute id="Description" value="" type="23" />
+                    <attribute id="UUID" value="58379c79-1cf1-4129-bcf5-579f40a9ad11" type="31" />
+                    <attribute id="name" value="LeaderLib_DynamicMenu_MenuOption3" type="22" />
+                    <attribute id="type" value="String" type="23" />
+                </node>
+                <node id="DialogVariable">
+                    <attribute id="DefaultValue" value="" type="23" />
+                    <attribute id="Description" value="" type="23" />
+                    <attribute id="UUID" value="e6bea606-b29a-4bfe-8959-94e8be8330cb" type="31" />
+                    <attribute id="name" value="LeaderLib_DynamicMenu_MenuOption4" type="22" />
+                    <attribute id="type" value="String" type="23" />
+                </node>
+                <node id="DialogVariable">
+                    <attribute id="DefaultValue" value="" type="23" />
+                    <attribute id="Description" value="" type="23" />
+                    <attribute id="UUID" value="f450c0eb-c308-4755-9718-f6a1e87305bd" type="31" />
+                    <attribute id="name" value="LeaderLib_DynamicMenu_MenuOption5" type="22" />
+                    <attribute id="type" value="String" type="23" />
+                </node>
+                <node id="DialogVariable">
+                    <attribute id="DefaultValue" value="" type="23" />
+                    <attribute id="Description" value="" type="23" />
+                    <attribute id="UUID" value="ea90e3a6-30da-411c-8ab5-cae95373ae93" type="31" />
+                    <attribute id="name" value="LeaderLib_DynamicMenu_MenuOption6" type="22" />
+                    <attribute id="type" value="String" type="23" />
+                </node>
+                <node id="DialogVariable">
+                    <attribute id="DefaultValue" value="" type="23" />
+                    <attribute id="Description" value="" type="23" />
+                    <attribute id="UUID" value="36c11cee-0a1b-4f4b-bd66-3bf0d100439b" type="31" />
+                    <attribute id="name" value="LeaderLib_DynamicMenu_MenuOption7" type="22" />
+                    <attribute id="type" value="String" type="23" />
+                </node>
+                <node id="DialogVariable">
+                    <attribute id="DefaultValue" value="" type="23" />
+                    <attribute id="Description" value="" type="23" />
+                    <attribute id="UUID" value="f5ef1f68-8995-4c14-8e62-cf5f330cb31a" type="31" />
+                    <attribute id="name" value="LeaderLib_DynamicMenu_MenuOption8" type="22" />
+                    <attribute id="type" value="String" type="23" />
+                </node>
+                <node id="DialogVariable">
                     <attribute id="DefaultValue" value="Welcome! Looking to trade?" type="23" />
                     <attribute id="Description" value="" type="23" />
                     <attribute id="UUID" value="f143b90b-9afc-477e-b133-6a1574341261" type="31" />

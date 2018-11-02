@@ -32,6 +32,7 @@ DB_LeaderLib_Settings_DialogVariables("PlayerName", "LeaderLib_PlayerName_6c5b95
 DB_LeaderLib_Settings_DialogVariables("SpeakerName", "LeaderLib_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b");
 DB_LeaderLib_Settings_DialogVariables("ModMenu_PageInfo", "LeaderLib_ModMenu_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156");
 DB_LeaderLib_Settings_DialogVariables("ModList", "LeaderLib_Settings_ModList_50c55fbe-ad1e-490e-92d1-8836ca42ca12");
+DB_LeaderLib_Settings_DialogVariables("CurrentAutosaveInterval", "LeaderLib_AutosaveMenu_CurrentSettings_b48918b6-4864-4aae-88fd-53d658ccb082");
 
 LeaderLib_Settings_SettingsInitialized();
 
@@ -353,6 +354,14 @@ DB_LeaderLib_SurfaceGroup(_Surface, _Group);
 //END_REGION
 
 //REGION UPDATER
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 0, 5, 0)
+THEN
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updating dialog variables from version [",_PastVersion,"].");
+DB_LeaderLib_Settings_DialogVariables("CurrentAutosaveInterval", "LeaderLib_AutosaveMenu_CurrentSettings_b48918b6-4864-4aae-88fd-53d658ccb082");
+
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND

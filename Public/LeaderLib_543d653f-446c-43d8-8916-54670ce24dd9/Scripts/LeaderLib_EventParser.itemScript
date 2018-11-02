@@ -1,8 +1,9 @@
 INIT
 	ITEM:__Me
+	INT:%LeaderLib_Autosaving_Minutes = -1
 EVENTS
 
-EVENT Set_Invulnerability
+EVENT LeaderLib_EventParser_SetInvulnerability
 ON
 	OnInit()
 ACTIONS
@@ -13,4 +14,51 @@ IF "!c1"
 	ItemHasStatus(__Me, LEADERLIB_DUMMY_INVULNERABLE)
 THEN
 	ItemApplyStatus(__Me, LEADERLIB_DUMMY_INVULNERABLE, -1.0, 1)
+ENDIF
+
+EVENT LeaderLib_EventParser_AutosaveTimerFinished
+ON
+	OnTimer("LeaderLib_EventParser_AutosaveTimer")
+ACTIONS
+	ItemEvent(__Me, "LeaderLib_Commands_AutosaveNow")
+	
+EVENT LeaderLib_EventParser_CancelAutosaveTimer
+ON
+	OnItemEvent(__Me, "LeaderLib_Commands_StopAutosaving")
+ACTIONS
+	StopTimer("LeaderLib_EventParser_AutosaveTimer")
+	SetVar(__Me, "LeaderLog_Type", STRING:"Debug")
+	SetVar(__Me, "LeaderLog_Message", STRING:"[LeaderLib:Autosaving:EventParser:StopAutosaving] Stopped timer [LeaderLib_EventParser_AutosaveTimer].")
+	ItemEvent(__Me, "LeaderLog_Commands_Log")
+
+EVENT LeaderLib_EventParser_StartAutosaving
+VARS
+	INT:_IsGameLevel
+	INT:_Seconds
+	FLOAT:_SecondsF
+	STRING:_Str
+ON	
+	OnItemEvent(__Me, "LeaderLib_EventParser_StartAutosaving")
+ACTIONS
+IF "c1"
+	IsGreaterThen(%LeaderLib_Autosaving_Minutes, 0)
+THEN
+	Set(_Seconds, %LeaderLib_Autosaving_Minutes)
+	Multiply(_Seconds, 60)
+	Cast(_SecondsF, _Seconds)
+	IF "c1"
+		IsGreaterThen(_SecondsF, 0)
+	THEN
+		StopTimer("LeaderLib_EventParser_AutosaveTimer")
+		StartTimer("LeaderLib_EventParser_AutosaveTimer", _SecondsF, -1)
+	ENDIF
+	Print(_Str, "[LeaderLib:Autosaving:EventParser:StartAutoSaving] Autosaving after [1] seconds.", _SecondsF)
+	SetVar(__Me, "LeaderLog_Type", STRING:"Debug")
+	SetVar(__Me, "LeaderLog_Message", _Str)
+	ItemEvent(__Me, "LeaderLog_Commands_Log")
+ELSE
+	Print(_Str, "[LeaderLib:Autosaving:EventParser:StartAutoSaving] [ERROR] Autosaving minutes set to [1] seconds.", %LeaderLib_Autosaving_Minutes)
+	SetVar(__Me, "LeaderLog_Type", STRING:"Debug")
+	SetVar(__Me, "LeaderLog_Message", _Str)
+	ItemEvent(__Me, "LeaderLog_Commands_Log")
 ENDIF

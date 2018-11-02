@@ -1,0 +1,452 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+
+//REGION REGISTERING_AND_CONFIG
+PROC
+LeaderLib_DynamicMenu_Register_DefaultMenu((STRING)_ID)
+THEN
+LeaderLib_DynamicMenu_Register_DefaultMenu(_ID, 8);
+
+PROC
+LeaderLib_DynamicMenu_Register_DefaultMenu((STRING)_ID, (INTEGER)_EntriesPerPage)
+AND
+StringConcatenate("LeaderLib_MenuVars_", _ID, _VarArrayID)
+THEN
+LeaderLib_Array_NewArray(_ID);
+LeaderLib_Array_NewArray(_VarArrayID);
+DB_LeaderLib_DynamicMenu_Settings(_ID, _VarArrayID, _EntriesPerPage, 0, 0);
+LeaderLib_DynamicMenu_Register_PageFlags(_ID, "LeaderLib_DynamicMenu_HasMultiplePages", "LeaderLib_DynamicMenu_NextPage", "LeaderLib_DynamicMenu_PreviousPage", "LeaderLib_DynamicMenu_FirstPage", "LeaderLib_DynamicMenu_LastPage");
+
+LeaderLib_DynamicMenu_Register_Variable(_ID, "LeaderLib_DynamicMenu_MenuOption1_1f7c9690-58b3-4cf6-b17e-0da478b15e0e", "LeaderLib_DynamicMenu_MenuOption1_Available", "LeaderLib_DynamicMenu_Select_MenuOption1"); 
+LeaderLib_DynamicMenu_Register_Variable(_ID, "LeaderLib_DynamicMenu_MenuOption2_9df56ce3-cd42-421b-81b6-91ffe91042fd", "LeaderLib_DynamicMenu_MenuOption2_Available", "LeaderLib_DynamicMenu_Select_MenuOption2"); 
+LeaderLib_DynamicMenu_Register_Variable(_ID, "LeaderLib_DynamicMenu_MenuOption3_58379c79-1cf1-4129-bcf5-579f40a9ad11", "LeaderLib_DynamicMenu_MenuOption3_Available", "LeaderLib_DynamicMenu_Select_MenuOption3"); 
+LeaderLib_DynamicMenu_Register_Variable(_ID, "LeaderLib_DynamicMenu_MenuOption4_e6bea606-b29a-4bfe-8959-94e8be8330cb", "LeaderLib_DynamicMenu_MenuOption4_Available", "LeaderLib_DynamicMenu_Select_MenuOption4"); 
+LeaderLib_DynamicMenu_Register_Variable(_ID, "LeaderLib_DynamicMenu_MenuOption5_f450c0eb-c308-4755-9718-f6a1e87305bd", "LeaderLib_DynamicMenu_MenuOption5_Available", "LeaderLib_DynamicMenu_Select_MenuOption5"); 
+LeaderLib_DynamicMenu_Register_Variable(_ID, "LeaderLib_DynamicMenu_MenuOption6_ea90e3a6-30da-411c-8ab5-cae95373ae93", "LeaderLib_DynamicMenu_MenuOption6_Available", "LeaderLib_DynamicMenu_Select_MenuOption6"); 
+LeaderLib_DynamicMenu_Register_Variable(_ID, "LeaderLib_DynamicMenu_MenuOption7_36c11cee-0a1b-4f4b-bd66-3bf0d100439b", "LeaderLib_DynamicMenu_MenuOption7_Available", "LeaderLib_DynamicMenu_Select_MenuOption7"); 
+LeaderLib_DynamicMenu_Register_Variable(_ID, "LeaderLib_DynamicMenu_MenuOption8_f5ef1f68-8995-4c14-8e62-cf5f330cb31a", "LeaderLib_DynamicMenu_MenuOption8_Available", "LeaderLib_DynamicMenu_Select_MenuOption8");
+
+PROC
+LeaderLib_DynamicMenu_Register_Menu((STRING)_ID, (INTEGER)_EntriesPerPage)
+AND
+StringConcatenate("LeaderLib_MenuVars_", _ID, _VarArrayID)
+THEN
+LeaderLib_Array_NewArray(_ID);
+LeaderLib_Array_NewArray(_VarArrayID);
+DB_LeaderLib_DynamicMenu_Settings(_ID, _VarArrayID, _EntriesPerPage, 0, 0);
+
+PROC
+LeaderLib_DynamicMenu_Register_Dialog((STRING)_ID, (STRING)_Dialog)
+THEN
+DB_LeaderLib_DynamicMenu_Dialog(_ID, _Dialog);
+
+PROC
+LeaderLib_DynamicMenu_Register_PageFlags((STRING)_ID, (STRING)_HasMultiplePagesFlag, (STRING)_NextPageFlag, (STRING)_PreviousPageFlag)
+THEN
+DB_LeaderLib_DynamicMenu_Flags(_ID, _HasMultiplePagesFlag, _NextPageFlag, _PreviousPageFlag, "", "");
+
+PROC
+LeaderLib_DynamicMenu_Register_PageFlags((STRING)_ID, (STRING)_HasMultiplePagesFlag, (STRING)_NextPageFlag, (STRING)_PreviousPageFlag, (STRING)_FirstPageFlag, (STRING)_LastPageFlag)
+THEN
+DB_LeaderLib_DynamicMenu_Flags(_ID, _HasMultiplePagesFlag, _NextPageFlag, _PreviousPageFlag, _FirstPageFlag, _LastPageFlag);
+
+PROC
+LeaderLib_DynamicMenu_Register_Variable((STRING)_ID, (STRING)_DialogVar, (STRING)_AvailableFlag, (STRING)_SelectedFlag)
+AND
+DB_LeaderLib_DynamicMenu_Settings(_ID, _VarArrayID, _EntriesPerPage, _PreviousLastPageIndex, _PreviousMaxPage)
+AND
+NOT DB_LeaderLib_DynamicMenu_Variable(_ID, _DialogVar, _, _)
+THEN
+LeaderLib_Array_AddToArray(_VarArrayID, _DialogVar);
+DB_LeaderLib_DynamicMenu_Variable(_ID, _DialogVar, _AvailableFlag, _SelectedFlag);
+
+PROC
+LeaderLib_DynamicMenu_Remove_Variable((STRING)_ID, (STRING)_DialogVar)
+AND
+DB_LeaderLib_DynamicMenu_Variable(_ID, _DialogVar, _AvailableFlag, _SelectedFlag)
+AND
+DB_LeaderLib_DynamicMenu_Settings(_ID, _VarArrayID, _EntriesPerPage, _PreviousLastPageIndex, _PreviousMaxPage)
+THEN
+NOT DB_LeaderLib_DynamicMenu_Variable(_ID, _DialogVar, _AvailableFlag, _SelectedFlag);
+LeaderLib_Array_RemoveValueFromArray(_VarArrayID, _DialogVar);
+
+PROC
+LeaderLib_DynamicMenu_Register_Entry((STRING)_ID, (STRING)_Key, (STRING)_DisplayText)
+THEN
+LeaderLib_Array_AddToDictionary(_ID, _Key, _DisplayText);
+LeaderLib_DynamicMenu_Internal_CalculatePageValues(_ID);
+
+PROC
+LeaderLib_DynamicMenu_Remove_Entry((STRING)_ID, (STRING)_Key)
+THEN
+LeaderLib_Array_RemoveKeyFromDictionary(_ID, _Key);
+LeaderLib_DynamicMenu_Internal_CalculatePageValues(_ID);
+//END_REGION
+
+//REGION INIT
+IF
+DialogStarted(_Dialog, _Instance)
+AND
+DB_LeaderLib_DynamicMenu_Dialog(_ID, _Dialog)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:DynamicMenu:DialogStarted(",_Dialog,")] Initializing dynamic menu with ID [",_ID,"].");
+LeaderLib_DynamicMenu_InitMenu(_ID, _Instance);
+
+PROC
+LeaderLib_DynamicMenu_Internal_CalculatePageValues((STRING)_ID)
+AND
+DB_LeaderLib_DynamicMenu_Settings(_ID, _VarArrayID, _EntriesPerPage, _PreviousLastPageIndex, _PreviousMaxPage)
+AND
+DB_LeaderLib_Array_Length(_ID, _TotalEntries)
+AND
+IntegerSubtract(_EntriesPerPage, 1, _Variance)
+AND
+IntegerSum(_TotalEntries, _Variance, _PageNumToDivide)
+AND
+IntegerDivide(_PageNumToDivide, _EntriesPerPage, _MaxPage)
+AND
+IntegerSubtract(_TotalEntries, 1, _LastIndex)
+AND
+IntegerSubtract(_MaxPage, 1, _LastPageIndex)
+THEN
+NOT DB_LeaderLib_DynamicMenu_Settings(_ID, _VarArrayID, _EntriesPerPage, _PreviousLastPageIndex, _PreviousMaxPage);
+DB_LeaderLib_DynamicMenu_Settings(_ID, _VarArrayID, _EntriesPerPage, _LastPageIndex, _MaxPage);
+
+PROC
+LeaderLib_DynamicMenu_InitMenu((STRING)_ID, (INTEGER)_Instance)
+AND
+DB_LeaderLib_DynamicMenu_Temp_InstanceVars(_ID, _Instance, _CurrentPage)
+THEN
+NOT DB_LeaderLib_DynamicMenu_Temp_InstanceVars(_ID, _Instance, _CurrentPage);
+
+PROC
+LeaderLib_DynamicMenu_InitMenu((STRING)_ID, (INTEGER)_Instance)
+AND
+DB_LeaderLib_DynamicMenu_Settings(_ID, _VarArrayID, _EntriesPerPage, _LastPageIndex, _MaxPage)
+THEN
+DB_LeaderLib_DynamicMenu_Temp_InstanceVars(_ID, _Instance, 0);
+LeaderLib_DynamicMenu_Internal_LoadPageVariables(_ID, _Instance);
+
+PROC
+LeaderLib_DynamicMenu_InitMenu((STRING)_ID, (INTEGER)_Instance)
+AND
+DB_LeaderLib_DynamicMenu_Settings(_ID, _VarArrayID, _EntriesPerPage, _LastPageIndex, _MaxPage)
+AND
+_LastPageIndex > 0
+AND
+DB_LeaderLib_DynamicMenu_Flags(_ID, _HasMultiplePagesFlag, _NextPageFlag, _PreviousPageFlag, _FirstPageFlag, _LastPageFlag)
+AND
+DialogGetInvolvedPlayer(_Instance, 1, _Player)
+THEN
+ObjectSetFlag(_Player, _HasMultiplePagesFlag, _Instance);
+//END_REGION
+
+//REGION PAGE_VARIABLES
+PROC
+LeaderLib_DynamicMenu_Internal_LoadPageVariables((STRING)_ID, (INTEGER)_Instance)
+AND
+DB_LeaderLib_DynamicMenu_Temp_MenuVariableValue(_ID, _Instance, _EntryIndex, _EntryKey)
+THEN
+NOT DB_LeaderLib_DynamicMenu_Temp_MenuVariableValue(_ID, _Instance, _EntryIndex, _EntryKey);
+
+PROC
+LeaderLib_DynamicMenu_Internal_LoadPageVariables((STRING)_ID, (INTEGER)_Instance)
+AND
+DB_LeaderLib_DynamicMenu_Settings(_ID, _VarArrayID, _EntriesPerPage, _LastPageIndex, _MaxPage)
+AND
+DB_LeaderLib_DynamicMenu_Temp_InstanceVars(_ID, _Instance, _CurrentPage)
+AND
+IntegerProduct(_CurrentPage, _EntriesPerPage, _StartIndex)
+AND
+DB_LeaderLib_Array_Data(_VarArrayID, _VarIndex, _DialogVar)
+AND
+DB_LeaderLib_DynamicMenu_Variable(_ID, _DialogVar, _AvailableFlag, _SelectedFlag)
+AND
+IntegerSum(_StartIndex, _VarIndex, _EntryIndex)
+AND
+LeaderLib_DynamicMenu_Internal_QRY_DisableEntryIfNotAvailable(_ID, _Instance, _EntryIndex, _AvailableFlag)
+AND
+DB_LeaderLib_Dictionary_Data(_ID, _EntryIndex, _EntryKey, _DisplayText)
+AND
+DialogGetInvolvedPlayer(_Instance, 1, _Player)
+THEN
+//LeaderLog_Log("DEBUG", "[LeaderLib:DynamicMenu:Internal:LoadPageVariables] Setting dialog variable [",_DialogVar,"] to [",_DisplayText,"] for menu [",_ID,"].");
+ObjectSetFlag(_Player, _AvailableFlag, _Instance);
+DialogSetVariableStringForInstance(_Instance, _DialogVar, _DisplayText);
+DB_LeaderLib_DynamicMenu_Temp_MenuVariableValue(_ID, _Instance, _VarIndex, _EntryKey);
+LeaderLib_DynamicMenu_OnEntryValueSet(_Player, _ID, _DialogVar, _AvailableFlag, _Instance, _EntryKey, _DisplayText);
+
+//Helper in case a mod needs to modify the default result
+PROC
+LeaderLib_DynamicMenu_OnEntryValueSet((GUIDSTRING)_Player, (STRING)_ID, (STRING)_DialogVar, (STRING)_AvailableFlag, (INTEGER)_Instance, (STRING)_EntryKey, (STRING)_DisplayText)
+THEN
+DB_NOOP(1);
+
+//Force another call to OnEntryValueSet, using the entry key value
+PROC
+LeaderLib_DynamicMenu_UpdateEntryValue((STRING)_ID, (INTEGER)_Instance, (STRING)_EntryKey)
+AND
+DialogGetInvolvedPlayer(_Instance, 1, _Player)
+AND
+DB_LeaderLib_DynamicMenu_Temp_MenuVariableValue(_ID, _Instance, _VarIndex, _EntryKey)
+AND
+DB_LeaderLib_Array_Data(_VarArrayID, _VarIndex, _DialogVar)
+AND
+DB_LeaderLib_DynamicMenu_Variable(_ID, _DialogVar, _AvailableFlag, _SelectedFlag)
+AND
+DB_LeaderLib_Dictionary_Data(_ID, _EntryIndex, _EntryKey, _DisplayText)
+THEN
+LeaderLib_DynamicMenu_OnEntryValueSet(_Player, _ID, _DialogVar, _AvailableFlag, _Instance, _EntryKey, _DisplayText);
+
+//Helper to get the current dialog variable for an entry
+PROC
+LeaderLib_DynamicMenu_FetchDialogVariableByKey((STRING)_ID, (INTEGER)_Instance, (STRING)_EntryKey)
+AND
+DB_LeaderLib_DynamicMenu_Temp_MenuVariableValue(_ID, _Instance, _VarIndex, _EntryKey)
+AND
+DB_LeaderLib_Array_Data(_VarArrayID, _VarIndex, _DialogVar)
+AND
+DB_LeaderLib_DynamicMenu_Variable(_ID, _DialogVar, _AvailableFlag, _SelectedFlag)
+AND
+DB_LeaderLib_Dictionary_Data(_ID, _EntryIndex, _EntryKey, _DisplayText)
+THEN
+LeaderLib_DynamicMenu_OnFetchDialogVariable(_ID, _DialogVar, _AvailableFlag, _Instance, _EntryKey, _DisplayText);
+
+PROC
+LeaderLib_DynamicMenu_OnFetchDialogVariable((STRING)_ID, (STRING)_DialogVar, (STRING)_AvailableFlag, (INTEGER)_Instance, (STRING)_EntryKey, (STRING)_DisplayText)
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_DynamicMenu_Internal_LoadPageVariables((STRING)_ID, (INTEGER)_Instance)
+AND
+DB_LeaderLib_DynamicMenu_Settings(_ID, _VarArrayID, _EntriesPerPage, _LastPageIndex, _MaxPage)
+AND
+DB_LeaderLib_DynamicMenu_Temp_InstanceVars(_ID, _Instance, _CurrentPage)
+AND
+DialogGetInvolvedPlayer(_Instance, 1, _Player)
+THEN
+LeaderLib_DynamicMenu_Internal_PageLoaded(_ID, _Player, _CurrentPage, _LastPageIndex, _Instance);
+
+QRY
+LeaderLib_DynamicMenu_Internal_QRY_DisableEntryIfNotAvailable((STRING)_ID, (INTEGER)_Instance, (INTEGER)_Index, (STRING)_AvailableFlag)
+THEN
+LeaderLib_DynamicMenu_Internal_DisableEntryIfNotAvailable(_ID, _Instance, _Index, _AvailableFlag);
+
+PROC
+LeaderLib_DynamicMenu_Internal_DisableEntryIfNotAvailable((STRING)_ID, (INTEGER)_Instance, (INTEGER)_Index, (STRING)_AvailableFlag)
+AND
+NOT DB_LeaderLib_Dictionary_Data(_ID, _Index, _, _)
+AND
+DialogGetInvolvedPlayer(_Instance, 1, _Player)
+THEN
+ObjectClearFlag(_Player, _AvailableFlag, _Instance);
+//END_REGION
+
+//REGION PAGE_CHANGING
+IF
+ObjectFlagSet(_NextPageFlag, _Player, _Instance)
+AND
+DB_LeaderLib_DynamicMenu_Flags(_ID, _HasMultiplePagesFlag, _NextPageFlag, _PreviousPageFlag, _FirstPageFlag, _LastPageFlag)
+AND
+LeaderLib_Helper_QRY_ClearObjectFlag(_Player, _NextPageFlag)
+AND
+DB_LeaderLib_DynamicMenu_Temp_InstanceVars(_ID, _Instance, _CurrentPage)
+THEN
+LeaderLib_DynamicMenu_Internal_ChangePage(_ID, _Instance, 1);
+
+IF
+ObjectFlagSet(_PreviousPageFlag, _Player, _Instance)
+AND
+DB_LeaderLib_DynamicMenu_Flags(_ID, _HasMultiplePagesFlag, _NextPageFlag, _PreviousPageFlag, _FirstPageFlag, _LastPageFlag)
+AND
+LeaderLib_Helper_QRY_ClearObjectFlag(_Player, _PreviousPageFlag)
+AND
+DB_LeaderLib_DynamicMenu_Temp_InstanceVars(_ID, _Instance, _CurrentPage)
+THEN
+LeaderLib_DynamicMenu_Internal_ChangePage(_ID, _Instance, -1);
+
+IF
+ObjectFlagSet(_FirstPageFlag, _Player, _Instance)
+AND
+DB_LeaderLib_DynamicMenu_Flags(_ID, _HasMultiplePagesFlag, _NextPageFlag, _PreviousPageFlag, _FirstPageFlag, _LastPageFlag)
+AND
+_FirstPageFlag != ""
+AND
+LeaderLib_Helper_QRY_ClearObjectFlag(_Player, _FirstPageFlag)
+AND
+DB_LeaderLib_DynamicMenu_Temp_InstanceVars(_ID, _Instance, _CurrentPage)
+THEN
+LeaderLib_DynamicMenu_Internal_SetPage(_ID, _Instance, 0);
+
+IF
+ObjectFlagSet(_LastPageFlag, _Player, _Instance)
+AND
+DB_LeaderLib_DynamicMenu_Flags(_ID, _HasMultiplePagesFlag, _NextPageFlag, _PreviousPageFlag, _FirstPageFlag, _LastPageFlag)
+AND
+_LastPageFlag != ""
+AND
+LeaderLib_Helper_QRY_ClearObjectFlag(_Player, _LastPageFlag)
+AND
+DB_LeaderLib_DynamicMenu_Temp_InstanceVars(_ID, _Instance, _CurrentPage)
+AND
+DB_LeaderLib_DynamicMenu_Settings(_ID, _VarArrayID, _EntriesPerPage, _LastPageIndex, _MaxPage)
+THEN
+LeaderLib_DynamicMenu_Internal_SetPage(_ID, _Instance, _LastPageIndex);
+
+PROC
+LeaderLib_DynamicMenu_Internal_ChangePage((STRING)_ID, (INTEGER)_Instance, (INTEGER)_ByAmount)
+AND
+NOT DB_LeaderLib_DynamicMenu_Temp_PageChanged(_ID, _Instance)
+AND
+DB_LeaderLib_DynamicMenu_Settings(_ID, _VarArrayID, _EntriesPerPage, _LastPageIndex, _MaxPage)
+AND
+DB_LeaderLib_DynamicMenu_Temp_InstanceVars(_ID, _Instance, _CurrentPage)
+AND
+IntegerSum(_CurrentPage, _ByAmount, _NextPage)
+THEN
+NOT DB_LeaderLib_DynamicMenu_Temp_InstanceVars(_ID, _Instance, _CurrentPage);
+DB_LeaderLib_DynamicMenu_Temp_InstanceVars(_ID, _Instance, _NextPage);
+DB_LeaderLib_DynamicMenu_Temp_PageChanged(_ID, _Instance);
+LeaderLib_DynamicMenu_Internal_ClampPage(_ID, _Instance, _NextPage, _LastPageIndex);
+LeaderLib_DynamicMenu_Internal_LoadPageVariables(_ID, _Instance);
+
+PROC
+LeaderLib_DynamicMenu_Internal_ChangePage((STRING)_ID, (INTEGER)_Instance, (INTEGER)_ByAmount)
+AND
+DB_LeaderLib_DynamicMenu_Temp_PageChanged(_ID, _Instance)
+THEN
+NOT DB_LeaderLib_DynamicMenu_Temp_PageChanged(_ID, _Instance);
+
+PROC
+LeaderLib_DynamicMenu_Internal_SetPage((STRING)_ID, (INTEGER)_Instance, (INTEGER)_PageIndex)
+AND
+NOT DB_LeaderLib_DynamicMenu_Temp_PageChanged(_ID, _Instance)
+AND
+DB_LeaderLib_DynamicMenu_Settings(_ID, _VarArrayID, _EntriesPerPage, _LastPageIndex, _MaxPage)
+AND
+DB_LeaderLib_DynamicMenu_Temp_InstanceVars(_ID, _Instance, _CurrentPage)
+THEN
+NOT DB_LeaderLib_DynamicMenu_Temp_InstanceVars(_ID, _Instance, _CurrentPage);
+DB_LeaderLib_DynamicMenu_Temp_InstanceVars(_ID, _Instance, _PageIndex);
+DB_LeaderLib_DynamicMenu_Temp_PageChanged(_ID, _Instance);
+LeaderLib_DynamicMenu_Internal_ClampPage(_ID, _Instance, _PageIndex, _LastPageIndex);
+LeaderLib_DynamicMenu_Internal_LoadPageVariables(_ID, _Instance);
+
+PROC
+LeaderLib_DynamicMenu_Internal_SetPage((STRING)_ID, (INTEGER)_Instance, (INTEGER)_PageIndex)
+AND
+DB_LeaderLib_DynamicMenu_Temp_PageChanged(_ID, _Instance)
+THEN
+NOT DB_LeaderLib_DynamicMenu_Temp_PageChanged(_ID, _Instance);
+
+PROC
+LeaderLib_DynamicMenu_Internal_ClampPage((STRING)_ID, (INTEGER)_Instance, (INTEGER)_CurrentPage, (INTEGER)_LastPageIndex)
+AND
+_CurrentPage > _LastPageIndex
+THEN
+NOT DB_LeaderLib_DynamicMenu_Temp_InstanceVars(_ID, _Instance, _CurrentPage);
+DB_LeaderLib_DynamicMenu_Temp_InstanceVars(_ID, _Instance, 0);
+
+PROC
+LeaderLib_DynamicMenu_Internal_ClampPage((STRING)_ID, (INTEGER)_Instance, (INTEGER)_CurrentPage, (INTEGER)_LastPageIndex)
+AND
+_CurrentPage < 0
+THEN
+NOT DB_LeaderLib_DynamicMenu_Temp_InstanceVars(_ID, _Instance, _CurrentPage);
+DB_LeaderLib_DynamicMenu_Temp_InstanceVars(_ID, _Instance, _LastPageIndex);
+
+PROC
+LeaderLib_DynamicMenu_Internal_PageLoaded((STRING)_ID, (GUIDSTRING)_Player, (INTEGER)_CurrentPage, (INTEGER)_LastPageIndex, (INTEGER)_Instance)
+AND
+_CurrentPage == 0
+THEN
+ObjectSetFlag(_Player, "LeaderLib_DynamicMenu_IsFirstPage", _Instance);
+ObjectClearFlag(_Player, "LeaderLib_DynamicMenu_IsLastPage", _Instance);
+
+PROC
+LeaderLib_DynamicMenu_Internal_PageLoaded((STRING)_ID, (GUIDSTRING)_Player, (INTEGER)_CurrentPage, (INTEGER)_LastPageIndex, (INTEGER)_Instance)
+AND
+_CurrentPage == _LastPageIndex
+THEN
+ObjectClearFlag(_Player, "LeaderLib_DynamicMenu_IsFirstPage", _Instance);
+ObjectSetFlag(_Player, "LeaderLib_DynamicMenu_IsLastPage", _Instance);
+
+PROC
+LeaderLib_DynamicMenu_Internal_PageLoaded((STRING)_ID, (GUIDSTRING)_Player, (INTEGER)_CurrentPage, (INTEGER)_LastPageIndex, (INTEGER)_Instance)
+AND
+_CurrentPage != 0
+AND
+_CurrentPage != _LastPageIndex
+THEN
+ObjectClearFlag(_Player, "LeaderLib_DynamicMenu_IsFirstPage", _Instance);
+ObjectClearFlag(_Player, "LeaderLib_DynamicMenu_IsLastPage", _Instance);
+//END_REGION
+
+//REGION ENTRY_SELECTED
+IF
+ObjectFlagSet(_SelectedFlag, _Player, _Instance)
+AND
+DB_LeaderLib_DynamicMenu_Variable(_ID, _DialogVar, _AvailableFlag, _SelectedFlag)
+AND
+LeaderLib_Helper_QRY_ClearObjectFlag(_Player, _SelectedFlag)
+AND
+DB_LeaderLib_DynamicMenu_Settings(_ID, _VarArrayID, _EntriesPerPage, _LastPageIndex, _MaxPage)
+AND
+DB_LeaderLib_Array_Data(_VarArrayID, _Index, _DialogVar)
+AND
+DB_LeaderLib_DynamicMenu_Temp_MenuVariableValue(_ID, _Instance, _Index, _EntryKey)
+THEN
+LeaderLib_DynamicMenu_OnEntrySelected(_ID, _Player, _Instance, _EntryKey);
+
+PROC
+LeaderLib_DynamicMenu_OnEntrySelected((STRING)_ID, (GUIDSTRING)_Player, (INTEGER)_Instance, (STRING)_EntryKey)
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION CLEANUP
+IF
+DialogEnded(_Dialog, _Instance)
+AND
+DB_LeaderLib_DynamicMenu_Temp_InstanceVars(_ID, _Instance, _CurrentPage)
+AND
+DialogGetInvolvedPlayer(_Instance, 1, _Player)
+THEN
+LeaderLib_DynamicMenu_OnMenuClosed(_ID, _Player, _Instance);
+
+IF
+DialogEnded(_Dialog, _Instance)
+AND
+DB_LeaderLib_DynamicMenu_Temp_InstanceVars(_ID, _Instance, _CurrentPage)
+THEN
+NOT DB_LeaderLib_DynamicMenu_Temp_InstanceVars(_ID, _Instance, _CurrentPage);
+
+PROC
+LeaderLib_DynamicMenu_OnMenuClosed((STRING)_ID, (GUIDSTRING)_Player, (INTEGER)_Instance)
+AND
+DB_LeaderLib_DynamicMenu_Variable(_ID, _DialogVar, _AvailableFlag, _SelectedFlag)
+THEN
+ObjectClearFlag(_Player, _AvailableFlag, _Instance);
+
+PROC
+LeaderLib_DynamicMenu_OnMenuClosed((STRING)_ID, (GUIDSTRING)_Player, (INTEGER)_Instance)
+AND
+DB_LeaderLib_DynamicMenu_Flags(_ID, _HasMultiplePagesFlag, _NextPageFlag, _PreviousPageFlag, _FirstPageFlag, _LastPageFlag)
+THEN
+ObjectClearFlag(_Player, _HasMultiplePagesFlag, _Instance);
+
+PROC
+LeaderLib_DynamicMenu_OnMenuClosed((STRING)_ID, (GUIDSTRING)_Player, (INTEGER)_Instance)
+THEN
+ObjectClearFlag(_Player, "LeaderLib_DialogMenu_IsFirstPage", _Instance);
+ObjectClearFlag(_Player, "LeaderLib_DialogMenu_IsLastPage", _Instance);
+//END_REGION
+
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

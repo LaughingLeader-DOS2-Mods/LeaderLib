@@ -1,0 +1,187 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+LeaderLib_Autosaving_InitSettings();
+KBSECTION
+//REGION SETTINGS
+PROC
+LeaderLib_Autosaving_InitSettings()
+THEN
+LeaderLib_DynamicMenu_Register_DefaultMenu("LeaderLib.Autosave.IntervalSettings");
+LeaderLib_DynamicMenu_Register_Dialog("LeaderLib.Autosave.IntervalSettings", "LeaderLib_AutosaveMenu");
+
+LeaderLib_DynamicMenu_Register_Entry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_2", "2 Minutes");
+LeaderLib_DynamicMenu_Register_Entry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_5", "5 Minutes");
+LeaderLib_DynamicMenu_Register_Entry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_10", "10 Minutes");
+LeaderLib_DynamicMenu_Register_Entry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_15", "15 Minutes");
+LeaderLib_DynamicMenu_Register_Entry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_20", "20 Minutes");
+LeaderLib_DynamicMenu_Register_Entry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_25", "25 Minutes");
+LeaderLib_DynamicMenu_Register_Entry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_30", "30 Minutes");
+LeaderLib_DynamicMenu_Register_Entry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_35", "35 Minutes");
+LeaderLib_DynamicMenu_Register_Entry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_40", "40 Minutes");
+LeaderLib_DynamicMenu_Register_Entry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_45", "45 Minutes");
+LeaderLib_DynamicMenu_Register_Entry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_60", "60 Minutes");
+LeaderLib_DynamicMenu_Register_Entry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_90", "90 Minutes");
+LeaderLib_DynamicMenu_Register_Entry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_120", "2 Hours");
+LeaderLib_DynamicMenu_Register_Entry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_180", "3 Hours");
+LeaderLib_DynamicMenu_Register_Entry("LeaderLib.Autosave.IntervalSettings", "LeaderLib_Autosave_Interval_240", "4 Hours");
+
+DB_LeaderLib_Autosaving_Interval("LeaderLib_Autosave_Interval_2", 2);
+DB_LeaderLib_Autosaving_Interval("LeaderLib_Autosave_Interval_5", 5);
+DB_LeaderLib_Autosaving_Interval("LeaderLib_Autosave_Interval_10", 10);
+DB_LeaderLib_Autosaving_Interval("LeaderLib_Autosave_Interval_15", 15);
+DB_LeaderLib_Autosaving_Interval("LeaderLib_Autosave_Interval_20", 20);
+DB_LeaderLib_Autosaving_Interval("LeaderLib_Autosave_Interval_25", 25);
+DB_LeaderLib_Autosaving_Interval("LeaderLib_Autosave_Interval_30", 30);
+DB_LeaderLib_Autosaving_Interval("LeaderLib_Autosave_Interval_35", 35);
+DB_LeaderLib_Autosaving_Interval("LeaderLib_Autosave_Interval_40", 40);
+DB_LeaderLib_Autosaving_Interval("LeaderLib_Autosave_Interval_45", 45);
+DB_LeaderLib_Autosaving_Interval("LeaderLib_Autosave_Interval_60", 60);
+DB_LeaderLib_Autosaving_Interval("LeaderLib_Autosave_Interval_90", 90);
+DB_LeaderLib_Autosaving_Interval("LeaderLib_Autosave_Interval_120", 120);
+DB_LeaderLib_Autosaving_Interval("LeaderLib_Autosave_Interval_180", 180);
+DB_LeaderLib_Autosaving_Interval("LeaderLib_Autosave_Interval_240", 240);
+
+IF
+GameStarted(_,_)
+AND
+NOT DB_LeaderLib_Autosaving_CurrentInterval(_)
+THEN
+DB_LeaderLib_Autosaving_CurrentInterval("LeaderLib_Autosave_Interval_15");
+//END_REGION
+
+//REGION COMMANDS
+IF
+DB_GlobalFlag("LeaderLib_AutosavingEnabled")
+THEN
+LeaderLib_SendEvent("LeaderLib_Commands_StartAutosaving");
+
+IF
+GlobalFlagCleared("LeaderLib_AutosavingEnabled")
+THEN
+LeaderLib_SendEvent("LeaderLib_Commands_StopAutosaving");
+
+IF
+DB_LeaderLib_Autosaving_CurrentInterval(_Flag)
+AND
+DB_LeaderLib_Autosaving_Interval(_Flag, _Minutes)
+AND
+DB_GlobalFlag("LeaderLib_AutosavingEnabled")
+THEN
+LeaderLib_SendEvent("LeaderLib_Commands_StartAutosaving");
+
+IF
+StoryEvent(_EventParser, "LeaderLib_Commands_StartAutosaving")
+AND
+DB_CurrentLevel(_Level)
+AND
+IsGameLevel(_Level, 1)
+AND
+DB_LeaderLib_Autosaving_CurrentInterval(_Flag)
+AND
+DB_LeaderLib_Autosaving_Interval(_Flag, _Minutes)
+THEN
+LeaderLog_LogInt("DEBUG", "[LeaderLib:Autosaving:LeaderLib_Commands_StartAutosaving] Autosaving after [",_Minutes,"] minutes.");
+SetVarInteger(_EventParser, "LeaderLib_Autosaving_Minutes", _Minutes);
+SetStoryEvent(_EventParser, "LeaderLib_EventParser_StartAutosaving");
+
+IF
+TextEventSet("leaderlib_autosavetest")
+AND
+GetTextEventParamInteger(1, _Minutes)
+AND
+DB_LeaderLib_EventParser(_EventParser)
+THEN
+LeaderLog_LogInt("DEBUG", "[LeaderLib:Autosaving:LeaderLib_Commands_StartAutosaving] Autosaving after [",_Minutes,"] minutes.");
+SetVarInteger(_EventParser, "LeaderLib_Autosaving_Minutes", _Minutes);
+SetStoryEvent(_EventParser, "LeaderLib_EventParser_StartAutosaving");
+
+IF
+StoryEvent(_EventParser, "LeaderLib_Commands_StartAutosaving")
+AND
+DB_CurrentLevel(_Level)
+AND
+IsGameLevel(_Level, 0)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Autosaving:LeaderLib_Commands_StartAutosaving] Current level is not a game level. Delaying autosaving until a game level is started.");
+DB_LeaderLib_Autosaving_Temp_StartAtGameLevel(1);
+
+IF
+GameStarted(_Region, _)
+AND
+IsGameLevel(_Region, 1)
+AND
+DB_LeaderLib_Autosaving_Temp_StartAtGameLevel(1)
+THEN
+NOT DB_LeaderLib_Autosaving_Temp_StartAtGameLevel(1);
+LeaderLog_Log("DEBUG", "[LeaderLib:Autosaving:StartAtGameLevel(1)] Game level started. Starting autosaving.");
+LeaderLib_SendEvent("LeaderLib_Commands_StartAutosaving");
+
+IF
+StoryEvent(_, "LeaderLib_Commands_AutosaveNow")
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Autosaving:LeaderLib_Commands_AutosaveNow] Autosaving now.");
+AutoSave();
+
+IF
+StoryEvent(_, "LeaderLib_Commands_StopAutosaving")
+AND
+LeaderLib_Events_QRY_GetEventParser()
+AND
+DB_LeaderLib_EventParser(_EventParser)
+THEN
+ClearScriptframe(_EventParser);
+//END_REGION
+
+//REGION MENU
+IF
+DialogStarted("LeaderLib_AutosaveMenu", _Instance)
+THEN
+LeaderLib_Autosaving_Internal_UpdateDialogVar(_Instance);
+
+PROC
+LeaderLib_Autosaving_Internal_UpdateDialogVar((INTEGER)_Instance)
+AND
+DB_LeaderLib_Autosaving_CurrentInterval(_CurrentGlobalFlag)
+AND
+DB_LeaderLib_Settings_DialogVariables("CurrentAutosaveInterval", _CurrentValVar)
+AND
+DB_LeaderLib_Dictionary_Data("LeaderLib.Autosave.IntervalSettings", _EntryIndex, _CurrentGlobalFlag, _DisplayText)
+AND
+StringConcatenate("Current Interval: ", _DisplayText, _Str)
+THEN
+DialogSetVariableStringForInstance(_Instance, _CurrentValVar, _Str);
+
+PROC
+LeaderLib_DynamicMenu_OnEntryValueSet((GUIDSTRING)_Player, "LeaderLib.Autosave.IntervalSettings", (STRING)_DialogVar, (STRING)_AvailableFlag, (INTEGER)_Instance, (STRING)_GlobalFlag, (STRING)_DisplayText)
+AND
+DB_LeaderLib_Autosaving_CurrentInterval(_GlobalFlag)
+AND
+StringConcatenate(_DisplayText, " <b>*Current*</b>", _SelectedText)
+THEN
+DialogSetVariableStringForInstance(_Instance, _DialogVar, _SelectedText);
+
+PROC
+LeaderLib_DynamicMenu_OnEntrySelected("LeaderLib.Autosave.IntervalSettings", (GUIDSTRING)_Player, (INTEGER)_Instance, (STRING)_GlobalFlag)
+AND
+DB_LeaderLib_Autosaving_CurrentInterval(_LastGlobalFlag)
+THEN
+NOT DB_LeaderLib_Autosaving_CurrentInterval(_LastGlobalFlag);
+DB_LeaderLib_Autosaving_CurrentInterval(_GlobalFlag);
+LeaderLog_Log("DEBUG", "[LeaderLib:Autosaving:OnEntrySelected('LeaderLib.Autosave.IntervalSettings')] Autosave interval global flag [",_GlobalFlag,"] was selected. Previous setting: [",_LastGlobalFlag,"]");
+GlobalClearFlag(_LastGlobalFlag);
+GlobalSetFlag(_GlobalFlag);
+LeaderLib_Autosaving_Internal_UpdateDialogVar(_Instance);
+LeaderLib_DynamicMenu_UpdateEntryValue("LeaderLib.Autosave.IntervalSettings", _Instance, _GlobalFlag);
+LeaderLib_DynamicMenu_FetchDialogVariableByKey("LeaderLib.Autosave.IntervalSettings", _Instance, _LastGlobalFlag);
+
+//Reset the *Current* text for the previous interval flag
+PROC
+LeaderLib_DynamicMenu_OnFetchDialogVariable("LeaderLib.Autosave.IntervalSettings", (STRING)_DialogVar, (STRING)_AvailableFlag, (INTEGER)_Instance, (STRING)_EntryKey, (STRING)_DisplayText)
+THEN
+DialogSetVariableStringForInstance(_Instance, _DialogVar, _DisplayText);
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_11__Start"

@@ -3,6 +3,7 @@ SubGoalCombiner SGC_AND
 INITSECTION
 //DB_LeaderLib_Skills_StatusToggleSkills(_Skill, _Status, _Duration, _Force)
 KBSECTION
+
 //REGION TOGGLE_SKILL
 PROC
 LeaderLib_Skills_Register_StatusToggleSkill((STRING)_Skill, (STRING)_Status)

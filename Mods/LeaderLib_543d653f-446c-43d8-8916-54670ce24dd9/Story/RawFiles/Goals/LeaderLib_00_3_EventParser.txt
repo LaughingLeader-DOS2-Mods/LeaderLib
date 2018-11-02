@@ -29,6 +29,7 @@ AND
 CreateItemTemplateAtPosition("S_LeaderLib_EventParser_0f686d7d-2304-4f23-bd9a-8d402a6bdefe", _x,_y,_z, _EventParser)
 THEN
 DB_LeaderLib_EventParser_Spawned(_EventParser);
+//SetStoryEvent(_EventParser, "LeaderLib_EventParser_Initialize");
 
 PROC
 LeaderLib_EventParser_Internal_CreateNew()
@@ -154,6 +155,60 @@ AND
 ObjectGetFlag(_EventParser, "LeaderLib_EventParser_EnteredLevel", 1)
 THEN
 ObjectClearFlag(_EventParser, "LeaderLib_EventParser_EnteredLevel");
+
+IF
+StoryEvent(_EventParser, "LeaderLib_EventParser_Initialize")
+AND
+ObjectGetFlag(_EventParser, "LeaderLib_EventParser_Initialized", 0)
+THEN
+LeaderLib_EventParser_Internal_Initialize(_EventParser);
+ObjectSetFlag(_EventParser, "LeaderLib_EventParser_Initialized");
+
+IF
+SavegameLoaded(_,_,_,_)
+AND
+DB_LeaderLib_EventParser(_EventParser)
+AND
+ObjectGetFlag(_EventParser, "LeaderLib_EventParser_Initialized", 0)
+THEN
+LeaderLib_EventParser_Internal_Initialize(_EventParser);
+ObjectSetFlag(_EventParser, "LeaderLib_EventParser_Initialized");
+
+PROC
+LeaderLib_EventParser_Internal_Initialize((GUIDSTRING)_EventParser)
+AND
+DB_LeaderLib_EventParser((ITEMGUID)_EventParser)
+THEN
+SetInvulnerable_UseProcSetInvulnerable(_EventParser, 1);
+SetCanJoinCombat(_EventParser, 0);
+ItemSetCanInteract(_EventParser, 0);
+ItemSetCanPickUp(_EventParser, 0);
+ItemSetStoryItem(_EventParser, 1);
+SetCanFight(_EventParser, 0);
+SetVisible(_EventParser, 0);
+
+//This bit is important so the EventParser's script/timers stay active
+PROC
+LeaderLib_EventParser_Internal_Initialize((GUIDSTRING)_EventParser)
+AND
+DB_LeaderLib_EventParser((ITEMGUID)_EventParser)
+AND
+ObjectGetFlag(_EventParser, "LeaderLib_ForceSyncEnabled", 0)
+THEN
+ItemSetForceSynch(_EventParser, 1);
+ObjectSetFlag(_EventParser, "LeaderLib_ForceSyncEnabled");
+
+/*
+IF
+GlobalFlagCleared("LeaderLib_AutosavingEnabled")
+AND
+DB_LeaderLib_EventParser((ITEMGUID)_EventParser)
+AND
+ObjectGetFlag(_EventParser, "LeaderLib_ForceSyncEnabled", 1)
+THEN
+ItemSetForceSynch(_EventParser, 0);
+ObjectClearFlag(_EventParser, "LeaderLib_ForceSyncEnabled");
+*/
 //END_REGION
 
 //REGION SEND_EVENT

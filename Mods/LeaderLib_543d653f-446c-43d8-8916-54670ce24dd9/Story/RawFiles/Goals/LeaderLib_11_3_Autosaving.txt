@@ -50,28 +50,11 @@ THEN
 DB_LeaderLib_Autosaving_CurrentInterval("LeaderLib_Autosave_Interval_15");
 //END_REGION
 
-//REGION COMMANDS
-IF
-GlobalFlagSet("LeaderLib_AutosavingEnabled")
-THEN
-LeaderLib_SendEvent("LeaderLib_Commands_StartAutosaving");
-
-IF
-GlobalFlagCleared("LeaderLib_AutosavingEnabled")
-THEN
-LeaderLib_SendEvent("LeaderLib_Commands_StopAutosaving");
-
-IF
-DB_LeaderLib_Autosaving_CurrentInterval(_Flag)
+//REGION INIT_TIMER
+PROC
+LeaderLib_Autosaving_Start()
 AND
-DB_LeaderLib_Autosaving_Interval(_Flag, _Minutes)
-AND
-DB_GlobalFlag("LeaderLib_AutosavingEnabled")
-THEN
-LeaderLib_SendEvent("LeaderLib_Commands_StartAutosaving");
-
-IF
-StoryEvent(_EventParser, "LeaderLib_Commands_StartAutosaving")
+NOT DB_LeaderLib_AutoSaving_Temp_TimerStarted(1)
 AND
 DB_CurrentLevel(_Level)
 AND
@@ -82,26 +65,16 @@ AND
 DB_LeaderLib_Autosaving_Interval(_Flag, _Minutes)
 THEN
 LeaderLog_LogInt("DEBUG", "[LeaderLib:Autosaving:LeaderLib_Commands_StartAutosaving] Autosaving after [",_Minutes,"] minutes.");
-SetVarInteger(_EventParser, "LeaderLib_Autosaving_Minutes", _Minutes);
-SetStoryEvent(_EventParser, "LeaderLib_EventParser_StartAutosaving");
+LeaderLib_Autosaving_InitTimer(_Minutes);
 
-IF
-TextEventSet("leaderlib_autosavetest")
+PROC
+LeaderLib_Autosaving_Start()
 AND
-GetTextEventParamInteger(1, _Minutes)
+NOT DB_LeaderLib_AutoSaving_Temp_TimerStarted(1)
 AND
-DB_LeaderLib_EventParser(_EventParser)
-THEN
-LeaderLog_LogInt("DEBUG", "[LeaderLib:Autosaving:LeaderLib_Commands_StartAutosaving] Autosaving after [",_Minutes,"] minutes.");
-SetVarInteger(_EventParser, "LeaderLib_Autosaving_Minutes", _Minutes);
-SetStoryEvent(_EventParser, "LeaderLib_EventParser_StartAutosaving");
-
-IF
-StoryEvent(_EventParser, "LeaderLib_Commands_StartAutosaving")
+DB_CurrentLevel(_Region)
 AND
-DB_CurrentLevel(_Level)
-AND
-IsGameLevel(_Level, 0)
+IsGameLevel(_Region, 0)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Autosaving:LeaderLib_Commands_StartAutosaving] Current level is not a game level. Delaying autosaving until a game level is started.");
 DB_LeaderLib_Autosaving_Temp_StartAtGameLevel(1);
@@ -115,18 +88,132 @@ DB_LeaderLib_Autosaving_Temp_StartAtGameLevel(1)
 THEN
 NOT DB_LeaderLib_Autosaving_Temp_StartAtGameLevel(1);
 LeaderLog_Log("DEBUG", "[LeaderLib:Autosaving:StartAtGameLevel(1)] Game level started. Starting autosaving.");
-LeaderLib_SendEvent("LeaderLib_Commands_StartAutosaving");
+LeaderLib_Autosaving_Start();
+
+PROC
+LeaderLib_Autosaving_InitTimer((INTEGER)_Minutes)
+AND
+DB_LeaderLib_Autosaving_Temp_Countdown(_LastMinutes)
+THEN
+NOT DB_LeaderLib_Autosaving_Temp_Countdown(_LastMinutes);
+TimerCancel("LeaderLib_Timers_Autosaving");
+
+PROC
+LeaderLib_Autosaving_InitTimer((INTEGER)_Minutes)
+THEN
+DB_LeaderLib_Autosaving_Temp_Countdown(_Minutes);
+LeaderLib_Autosaving_StartTimer();
+//END_REGION
+
+//REGION TIMER
+IF
+TimerFinished("LeaderLib_Timers_Autosaving")
+THEN
+NOT DB_LeaderLib_AutoSaving_Temp_TimerStarted(1);
 
 IF
-StoryEvent(_, "LeaderLib_Commands_AutosaveNow")
+TimerFinished("LeaderLib_Timers_Autosaving")
+AND
+DB_LeaderLib_Autosaving_Temp_Countdown(_Minutes)
+AND
+IntegerSubtract(_Minutes, 1, _RemainingMinutes)
+THEN
+NOT DB_LeaderLib_Autosaving_Temp_Countdown(_Minutes);
+DB_LeaderLib_Autosaving_Temp_Countdown(_RemainingMinutes);
+LeaderLog_LogInt("DEBUG", "[LeaderLib:Autosaving:LeaderLib_Timers_Autosaving] Autosaving after [",_RemainingMinutes,"] minute(s).");
+LeaderLib_Autosaving_StartTimer();
+
+PROC
+LeaderLib_Autosaving_StartTimer()
+AND
+DB_LeaderLib_Autosaving_Temp_Countdown(_Minutes)
+AND
+_Minutes > 0
+THEN
+TimerLaunch("LeaderLib_Timers_Autosaving", 60000);
+DB_LeaderLib_AutoSaving_Temp_TimerStarted(1);
+
+PROC
+LeaderLib_Autosaving_StartTimer()
+AND
+DB_LeaderLib_Autosaving_Temp_Countdown(_Minutes)
+AND
+_Minutes <= 0
+THEN
+LeaderLib_Autosaving_Save();
+LeaderLib_Autosaving_Start();
+
+PROC
+LeaderLib_Autosaving_Stop()
+AND
+DB_LeaderLib_AutoSaving_Temp_TimerStarted(1)
+AND
+DB_LeaderLib_Autosaving_Temp_Countdown(_Minutes)
+THEN
+NOT DB_LeaderLib_AutoSaving_Temp_TimerStarted(1);
+NOT DB_LeaderLib_Autosaving_Temp_Countdown(_Minutes);
+TimerCancel("LeaderLib_Timers_Autosaving");
+//END_REGION
+
+//REGION PAUSING
+IF
+CombatStarted(_)
+AND
+DB_GlobalFlag("LeaderLib_DisableAutosavingInCombat")
+AND
+CharacterGetHostCharacter(_Player)
+AND
+CharacterIsInCombat(_Player, 1)
+THEN
+TimerPause("LeaderLib_Timers_Autosaving");
+DB_LeaderLib_AutoSaving_Temp_TimerPaused(1);
+
+IF
+CombatEnded(_)
+AND
+DB_LeaderLib_AutoSaving_Temp_TimerPaused(1)
+AND
+CharacterGetHostCharacter(_Player)
+AND
+CharacterIsInCombat(_Player, 0)
+THEN
+NOT DB_LeaderLib_AutoSaving_Temp_TimerPaused(1);
+TimerUnpause("LeaderLib_Timers_Autosaving");
+//END_REGION
+
+//REGION START_EVENTS
+IF
+GlobalFlagSet("LeaderLib_AutosavingEnabled")
+THEN
+LeaderLib_Autosaving_Start();
+
+IF
+GlobalFlagCleared("LeaderLib_AutosavingEnabled")
+THEN
+LeaderLib_Autosaving_Stop();
+
+IF
+DB_LeaderLib_Autosaving_CurrentInterval(_Flag)
+AND
+DB_LeaderLib_Autosaving_Interval(_Flag, _Minutes)
+AND
+DB_GlobalFlag("LeaderLib_AutosavingEnabled")
+THEN
+LeaderLib_Autosaving_Stop();
+LeaderLib_Autosaving_Start();
+//END_REGION
+
+//REGION AUTOSAVING
+PROC
+LeaderLib_Autosaving_Save()
 AND
 NOT DB_GlobalFlag("LeaderLib_DisableAutosavingInCombat")
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Autosaving:LeaderLib_Commands_AutosaveNow] Autosaving now.");
 AutoSave();
 
-IF
-StoryEvent(_, "LeaderLib_Commands_AutosaveNow")
+PROC
+LeaderLib_Autosaving_Save()
 AND
 DB_GlobalFlag("LeaderLib_DisableAutosavingInCombat")
 AND
@@ -137,8 +224,8 @@ THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Autosaving:LeaderLib_Commands_AutosaveNow] Autosaving now.");
 AutoSave();
 
-IF
-StoryEvent(_, "LeaderLib_Commands_AutosaveNow")
+PROC
+LeaderLib_Autosaving_Save()
 AND
 DB_GlobalFlag("LeaderLib_DisableAutosavingInCombat")
 AND
@@ -162,13 +249,13 @@ NOT DB_LeaderLib_Autosaving_Temp_SaveAfterCombat(1);
 LeaderLog_Log("DEBUG", "[LeaderLib:Autosaving:CombatEnded] Host left combat. Autosaving.");
 AutoSave();
 //Reset timer
-LeaderLib_SendEvent("LeaderLib_Commands_StartAutosaving");
+LeaderLib_Autosaving_Start();
 
 IF
 GlobalFlagSet("LeaderLib_Commands_AutosaveNow")
 THEN
 GlobalClearFlag("LeaderLib_Commands_AutosaveNow");
-LeaderLib_SendEvent("LeaderLib_Commands_AutosaveNow");
+LeaderLib_Autosaving_Save();
 //END_REGION
 
 //REGION MENU
@@ -238,6 +325,8 @@ PROC
 LeaderLib_DynamicMenu_OnEntrySelected("LeaderLib.Autosave.IntervalSettings", (GUIDSTRING)_Player, (INTEGER)_Instance, (STRING)_GlobalFlag)
 AND
 DB_LeaderLib_Autosaving_CurrentInterval(_LastGlobalFlag)
+AND
+_GlobalFlag != _LastGlobalFlag
 THEN
 NOT DB_LeaderLib_Autosaving_CurrentInterval(_LastGlobalFlag);
 DB_LeaderLib_Autosaving_CurrentInterval(_GlobalFlag);

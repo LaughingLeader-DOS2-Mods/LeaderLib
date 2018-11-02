@@ -3,19 +3,13 @@ INIT
 	INT:%LeaderLib_Autosaving_Minutes = -1
 EVENTS
 
-EVENT LeaderLib_EventParser_SetInvulnerability
+EVENT LeaderLib_EventParser_Initialize
 ON
 	OnInit()
 ACTIONS
-	SetCanFight(__Me, 0)
-	SetCanJoinCombat(__Me, 0)
-	SetInvulnerable(__Me, 1)
-IF "!c1"
-	ItemHasStatus(__Me, LEADERLIB_DUMMY_INVULNERABLE)
-THEN
-	ItemApplyStatus(__Me, LEADERLIB_DUMMY_INVULNERABLE, -1.0, 1)
-ENDIF
+	ItemEvent(__Me, "LeaderLib_EventParser_Initialize")
 
+/*
 EVENT LeaderLib_EventParser_AutosaveTimerFinished
 ON
 	OnTimer("LeaderLib_EventParser_AutosaveTimer")
@@ -51,6 +45,7 @@ THEN
 	THEN
 		StopTimer("LeaderLib_EventParser_AutosaveTimer")
 		StartTimer("LeaderLib_EventParser_AutosaveTimer", _SecondsF, -1)
+		ItemEvent(__Me, "LeaderLib_EventParser_AutoSaveTimerStarted")
 	ENDIF
 	Print(_Str, "[LeaderLib:Autosaving:EventParser:StartAutoSaving] Autosaving after [1] seconds.", _SecondsF)
 	SetVar(__Me, "LeaderLog_Type", STRING:"Debug")
@@ -62,3 +57,4 @@ ELSE
 	SetVar(__Me, "LeaderLog_Message", _Str)
 	ItemEvent(__Me, "LeaderLog_Commands_Log")
 ENDIF
+*/

@@ -244,6 +244,13 @@
                     <attribute id="V2" value="0.0155029" type="6" />
                 </node>
                 <node id="IconUV">
+                    <attribute id="MapKey" value="LLMIME_Skills_SealEvil" type="22" />
+                    <attribute id="U1" value="0.906372" type="6" />
+                    <attribute id="U2" value="0.921753" type="6" />
+                    <attribute id="V1" value="0.0157471" type="6" />
+                    <attribute id="V2" value="0.0311279" type="6" />
+                </node>
+                <node id="IconUV">
                     <attribute id="MapKey" value="LLMIME_Skills_SilencingStare" type="22" />
                     <attribute id="U1" value="0.546997" type="6" />
                     <attribute id="U2" value="0.562378" type="6" />

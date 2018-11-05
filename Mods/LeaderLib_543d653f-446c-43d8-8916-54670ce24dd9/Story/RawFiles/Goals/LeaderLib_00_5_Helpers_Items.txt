@@ -32,6 +32,20 @@ AND
 StringContains(_Template, "_Res_", 0)
 THEN
 DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_WeaponIsEquipped((CHARACTERGUID)_Character, (ITEMGUID)_Item)
+AND
+CharacterGetEquippedItem(_Character, "Weapon", _Item)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_WeaponIsEquipped((CHARACTERGUID)_Character, (ITEMGUID)_Item)
+AND
+CharacterGetEquippedItem(_Character, "Shield", _Item)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION EQUIPMENT_REFRESH
@@ -84,6 +98,7 @@ AND
 CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
 THEN
 CharacterUnequipItem(_Character, _Item);
+//LeaderLib_StartCharacterItemTimer(_Character, _Item, 50, "LeaderLib_Timers_RefreshEquipment_EquipItem_", "LeaderLib_Commands_EquipItem");
 CharacterEquipItem(_Character, _Item);
 
 PROC

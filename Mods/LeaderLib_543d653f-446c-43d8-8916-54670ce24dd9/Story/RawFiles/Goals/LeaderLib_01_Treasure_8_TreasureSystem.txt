@@ -1854,6 +1854,8 @@ DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 AND
 DB_LeaderLib_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
 AND
+NOT DB_LeaderLib_Treasure_TreasureGenerationType(_TreasureID, "TRADE_GENERATION_END")
+AND
 DB_LeaderLib_Treasure_TreasureGenerationType(_TreasureID, _GenerationType)
 AND
 _GenerationType != "TRADE_GENERATION_END"
@@ -2014,9 +2016,9 @@ DB_LeaderLib_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
 AND
 LeaderLog_QRY_Log("DEBUG", "[LeaderLib:TreasureSystem:RequirementUnlocked] Found object for [", _RequirementID,"][",_TreasureID,"]")
 THEN
+NOT DB_LeaderLib_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem] Generating [",_TreasureID,"] due to requirement [",_RequirementID,"] unlocking.");
 LeaderLib_Treasure_AddToGenerationQueue(_Object, _TreasureID, "REQUIREMENT_UNLOCKED");
-NOT DB_LeaderLib_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
 
 PROC
 LeaderLib_Requirements_RequirementUnlocked((STRING)_RequirementID)

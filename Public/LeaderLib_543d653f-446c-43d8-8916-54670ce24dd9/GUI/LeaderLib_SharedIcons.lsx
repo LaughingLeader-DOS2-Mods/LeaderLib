@@ -552,6 +552,20 @@
                     <attribute id="V2" value="0.0311279" type="6" />
                 </node>
                 <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Greatbow_CushionForce" type="22" />
+                    <attribute id="U1" value="0.937622" type="6" />
+                    <attribute id="U2" value="0.953003" type="6" />
+                    <attribute id="V1" value="0.0157471" type="6" />
+                    <attribute id="V2" value="0.0311279" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Greatbow_DragonsBane" type="22" />
+                    <attribute id="U1" value="0.921997" type="6" />
+                    <attribute id="U2" value="0.937378" type="6" />
+                    <attribute id="V1" value="0.0157471" type="6" />
+                    <attribute id="V2" value="0.0311279" type="6" />
+                </node>
+                <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Grimoire_Activate_Mimicry" type="22" />
                     <attribute id="U1" value="0.218872" type="6" />
                     <attribute id="U2" value="0.234253" type="6" />

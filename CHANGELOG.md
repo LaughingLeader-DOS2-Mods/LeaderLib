@@ -1,5 +1,10 @@
 LeaderLib Changelog
 =======
+# 1.1.5.1
+* New Timed Autosave System
+	* Available from the settings menu, autosaves can now be created after a selected amount of time (anywhere between 2 minutes and 4 hours).
+* Added additional helpers for mods, including a friendly fire tag for use within skills (for allowing "friendly fire" when an option is enabled).
+	
 # 1.1.2.0
 * Quick fix for opening mod menus on pages greater than 1.
 * Added a helper for tracing object positions.

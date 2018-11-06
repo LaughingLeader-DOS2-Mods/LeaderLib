@@ -46,6 +46,47 @@ AND
 CharacterGetEquippedItem(_Character, "Shield", _Item)
 THEN
 DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IsNonMagicalRangedWeapon((ITEMGUID)_Item)
+AND
+GetTemplate(_Item, _Template)
+AND
+StringContains(_Template, "_Bow_", 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IsNonMagicalRangedWeapon((ITEMGUID)_Item)
+AND
+GetTemplate(_Item, _Template)
+AND
+StringContains(_Template, "_Crossbow_", 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IsMagicalRangedWeapon((ITEMGUID)_Item)
+AND
+GetTemplate(_Item, _Template)
+AND
+StringContains(_Template, "_Wand_", 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IsRangedWeapon((ITEMGUID)_Item)
+AND
+LeaderLib_Helper_QRY_IsNonMagicalRangedWeapon(_Item)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IsRangedWeapon((ITEMGUID)_Item)
+AND
+LeaderLib_Helper_QRY_IsMagicalRangedWeapon(_Item)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION EQUIPMENT_REFRESH

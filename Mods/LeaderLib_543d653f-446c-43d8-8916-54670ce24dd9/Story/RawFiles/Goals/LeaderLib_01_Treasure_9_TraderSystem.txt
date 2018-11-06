@@ -444,23 +444,23 @@ LeaderLib_Queue_Start(_ArrayID);
 IF
 StoryEvent(_, _SpawnEvent)
 AND
-DB_LeaderLib_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID, _SpawnEvent, _SpawnCompleteEvent, _SpawnQueueCompleteEvent, _TimeoutEvent)
+DB_LeaderLib_Traders_Temp_CurrentSpawnQueue(_Level, _QueueID, _SpawnEvent, _SpawnCompleteEvent, _SpawnQueueCompleteEvent, _TimeoutEvent)
 AND
-DB_LeaderLib_Queue_Temp_CurrentEntry(_ArrayID, _TraderID)
+DB_LeaderLib_Queue_Temp_CurrentEntry(_QueueID, _TraderID)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Traders:OnSpawnTrader] Spawning [",_TraderID,"] in queue for level [",_Level,"].");
-DB_LeaderLib_Traders_Temp_CurrentlySpawning(_ArrayID, _TraderID);
+DB_LeaderLib_Traders_Temp_CurrentlySpawning(_QueueID, _TraderID);
 LeaderLib_Traders_Internal_CreateTrader(_TraderID, _Level);
 
 IF
 StoryEvent(_, _TimeoutEvent)
 AND
-DB_LeaderLib_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID, _SpawnEvent, _SpawnCompleteEvent, _SpawnQueueCompleteEvent, _TimeoutEvent)
+DB_LeaderLib_Traders_Temp_CurrentSpawnQueue(_Level, _QueueID, _SpawnEvent, _SpawnCompleteEvent, _SpawnQueueCompleteEvent, _TimeoutEvent)
 AND
-DB_LeaderLib_Queue_Temp_CurrentEntry(_ArrayID, _TraderID)
+DB_LeaderLib_Queue_Temp_CurrentEntry(_QueueID, _TraderID)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Traders:SpawnQueueTimeout] [",_TraderID,"] spawned timed out for queue [",_ArrayID,"].");
-NOT DB_LeaderLib_Queue_Temp_CurrentEntry(_ArrayID, _TraderID);
+LeaderLog_Log("DEBUG", "[LeaderLib:Traders:SpawnQueueTimeout] [",_TraderID,"] spawned timed out for queue [",_QueueID,"].");
+NOT DB_LeaderLib_Queue_Temp_CurrentEntry(_QueueID, _TraderID);
 
 IF
 StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_OnTraderSpawned")

@@ -46,6 +46,15 @@ NOT DB_LeaderLib_Combat_Casualties(_CombatID, _Victim, _AttackOwner);
 //END_REGION
 
 //REGION COMBAT_TRACKING
+//For immediately reacting to a combat setting up
+IF
+ObjectEnteredCombat(_Object, _CombatID)
+AND
+NOT DB_LeaderLib_Combat_ActiveCombat(_CombatID)
+THEN
+DB_LeaderLib_Combat_ActiveCombat(_CombatID);
+
+//Fires after objects enter combat
 IF
 CombatStarted(_CombatID)
 AND

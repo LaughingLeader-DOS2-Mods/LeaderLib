@@ -37,7 +37,7 @@ LeaderLib_Queue_Start((STRING)_QueueID)
 AND
 DB_LeaderLib_Queue_Temp_Started(_QueueID)
 THEN
-LeaderLog_Log("ERROR", "[LeaderLib:QueueSystem:Start] Queue [",_QueueID,"] already started?");
+LeaderLog_Log("ERROR", "[LeaderLib:QueueSystem:Start] Queue [",_QueueID,"] already started.");
 
 PROC
 LeaderLib_Queue_Start((STRING)_QueueID)

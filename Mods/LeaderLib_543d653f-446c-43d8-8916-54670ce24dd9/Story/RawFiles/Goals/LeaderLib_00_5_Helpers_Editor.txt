@@ -357,6 +357,15 @@ ShowNotification(_Player, _Message);
 //END_REGION
 
 IF
+TextEventSet("leaderlib_jumptoturn")
+AND
+DB_IsPlayer(_Player)
+AND
+CharacterIsControlled(_Player, 1)
+THEN
+JumpToTurn(_Player);
+
+IF
 TextEventSet("leaderlib_setname")
 AND
 GetTextEventParamString(1, _Name)

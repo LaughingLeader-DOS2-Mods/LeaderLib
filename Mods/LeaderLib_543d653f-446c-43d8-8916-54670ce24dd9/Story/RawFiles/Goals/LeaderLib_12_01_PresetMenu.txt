@@ -1,0 +1,423 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+LeaderLib_PresetMenu_InitSettings();
+KBSECTION
+PROC
+//REGION SETTINGS
+LeaderLib_PresetMenu_InitSettings()
+THEN
+LeaderLib_DynamicMenu_Register_DefaultMenu("LeaderLib.Settings.PresetMenu");
+LeaderLib_DynamicMenu_Register_Dialog("LeaderLib.Settings.PresetMenu", "LeaderLib_PresetMenu");
+
+PROC
+LeaderLib_PresetMenu_RegisterPreset((STRING)_Preset, (STRING)_DisplayName, (STRING)_EnabledGlobalFlag)
+AND
+NOT DB_LeaderLib_PresetMenu_RegisteredPreset(_Preset, _)
+THEN
+LeaderLib_DynamicMenu_Register_Entry("LeaderLib.Settings.PresetMenu", _Preset, _DisplayName);
+DB_LeaderLib_PresetMenu_RegisteredPreset(_Preset, _EnabledGlobalFlag);
+
+PROC
+LeaderLib_PresetMenu_RegisterPreset((STRING)_Preset, (STRING)_DisplayName, (STRING)_EnabledGlobalFlag)
+AND
+_EnabledGlobalFlag != "LeaderLib_PresetMenu_IsAct1"
+THEN
+LeaderLib_PresetMenu_StartSorting();
+
+PROC
+LeaderLib_PresetMenu_StartSorting()
+THEN
+TimerCancel("LeaderLib_Timers_SortPresetMenu");
+TimerLaunch("LeaderLib_Timers_SortPresetMenu", 500);
+
+IF
+TimerFinished("LeaderLib_Timers_SortPresetMenu")
+AND
+DB_LeaderLib_Dictionary_Data("LeaderLib.Settings.PresetMenu", _Index, _Preset, _DisplayName)
+THEN
+LeaderLib_DictionarySort_AddString("LeaderLib.Settings.PresetMenu.Sorted", _Preset, _DisplayName);
+
+IF
+TimerFinished("LeaderLib_Timers_SortPresetMenu")
+THEN
+LeaderLib_DictionarySort_StartSorting("LeaderLib.Settings.PresetMenu.Sorted", 50, "LeaderLib_Events_OnPresetMenuSortComplete", 0);
+
+IF
+StoryEvent(_, "LeaderLib_Events_OnPresetMenuSortComplete")
+AND
+DB_LeaderLib_Dictionary_Data("LeaderLib.Settings.PresetMenu", _Index, _Key, _Value)
+THEN
+NOT DB_LeaderLib_Dictionary_Data("LeaderLib.Settings.PresetMenu", _Index, _Key, _Value);
+//Failsafe
+DB_LeaderLib_PresetMenu_Temp_PreSortedValues(_Key, _Value);
+
+IF
+StoryEvent(_, "LeaderLib_Events_OnPresetMenuSortComplete")
+AND
+DB_LeaderLib_Dictionary_Data("LeaderLib.Settings.PresetMenu.Sorted", _Index, _Preset, _DisplayName)
+THEN
+DB_LeaderLib_Dictionary_Data("LeaderLib.Settings.PresetMenu", _Index, _Preset, _DisplayName);
+
+IF
+StoryEvent(_, "LeaderLib_Events_OnPresetMenuSortComplete")
+AND
+DB_LeaderLib_PresetMenu_Temp_PreSortedValues(_Preset, _DisplayName)
+AND
+NOT DB_LeaderLib_Dictionary_Data("LeaderLib.Settings.PresetMenu", _, _Preset, _DisplayName)
+THEN
+NOT DB_LeaderLib_PresetMenu_Temp_PreSortedValues(_Preset, _DisplayName);
+LeaderLib_Array_AddToDictionary("LeaderLib.Settings.PresetMenu", _Preset, _DisplayName);
+LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:OnPresetMenuSortComplete] [ERROR] Preset [",_Preset,"] with DisplayName [",_DisplayName,"] was never added to the post-sorted dictionary! Adding manually.");
+DB_LeaderLib_PresetMenu_Temp_RebuildLength(1);
+
+IF
+StoryEvent(_, "LeaderLib_Events_OnPresetMenuSortComplete")
+AND
+DB_LeaderLib_PresetMenu_Temp_RebuildLength(1)
+THEN
+NOT DB_LeaderLib_PresetMenu_Temp_RebuildLength(1);
+LeaderLib_Array_RebuildArrayLength("LeaderLib.Settings.PresetMenu", "Dictionary");
+LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:OnPresetMenuSortComplete] Rebuild dictionary length.");
+
+IF
+StoryEvent(_, "LeaderLib_Events_OnPresetMenuSortComplete")
+THEN
+SysClear("DB_LeaderLib_PresetMenu_Temp_PreSortedValues", 2);
+LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:OnPresetMenuSortComplete] The Preset Menu was sorted successfully.");
+//END_REGION
+
+//REGION DEFAULT_PRESETS
+IF
+GameStarted(_, 1)
+THEN
+GlobalSetFlag("LeaderLib_PresetMenu_IsNotAct1");
+
+IF
+RegionStarted("TUT_Tutorial_A")
+AND
+NOT DB_GlobalFlag("LeaderLib_PresetMenu_IsAct1")
+THEN
+GlobalSetFlag("LeaderLib_PresetMenu_IsAct1");
+
+IF
+RegionStarted("FJ_FortJoy_Main")
+AND
+NOT DB_GlobalFlag("LeaderLib_PresetMenu_IsAct1")
+THEN
+GlobalSetFlag("LeaderLib_PresetMenu_IsAct1");
+
+IF
+RegionEnded("FJ_FortJoy_Main")
+AND
+DB_GlobalFlag("LeaderLib_PresetMenu_IsAct1")
+THEN
+GlobalClearFlag("LeaderLib_PresetMenu_IsAct1");
+
+IF
+GlobalFlagSet("LeaderLib_PresetMenu_IsAct1")
+AND
+NOT DB_LeaderLib_PresetMenu_RegisteredPreset(_, "LeaderLib_PresetMenu_IsAct1")
+THEN
+GlobalClearFlag("LeaderLib_PresetMenu_IsNotAct1");
+LeaderLib_PresetMenu_RegisterPreset("Battlemage", "Battlemage [DOS2]", "LeaderLib_PresetMenu_IsAct1");
+LeaderLib_PresetMenu_RegisterPreset("Cleric", "Cleric [DOS2]", "LeaderLib_PresetMenu_IsAct1");
+LeaderLib_PresetMenu_RegisterPreset("Conjurer", "Conjurer [DOS2]", "LeaderLib_PresetMenu_IsAct1");
+LeaderLib_PresetMenu_RegisterPreset("Enchanter", "Enchanter [DOS2]", "LeaderLib_PresetMenu_IsAct1");
+LeaderLib_PresetMenu_RegisterPreset("Fighter", "Fighter [DOS2]", "LeaderLib_PresetMenu_IsAct1");
+LeaderLib_PresetMenu_RegisterPreset("Inquisitor", "Inquisitor [DOS2]", "LeaderLib_PresetMenu_IsAct1");
+LeaderLib_PresetMenu_RegisterPreset("Knight", "Knight [DOS2]", "LeaderLib_PresetMenu_IsAct1");
+LeaderLib_PresetMenu_RegisterPreset("Metamorph", "Metamorph [DOS2]", "LeaderLib_PresetMenu_IsAct1");
+LeaderLib_PresetMenu_RegisterPreset("Ranger", "Ranger [DOS2]", "LeaderLib_PresetMenu_IsAct1");
+LeaderLib_PresetMenu_RegisterPreset("Rogue", "Rogue [DOS2]", "LeaderLib_PresetMenu_IsAct1");
+LeaderLib_PresetMenu_RegisterPreset("Shadowblade", "Shadowblade [DOS2]", "LeaderLib_PresetMenu_IsAct1");
+LeaderLib_PresetMenu_RegisterPreset("Wayfarer", "Wayfarer [DOS2]", "LeaderLib_PresetMenu_IsAct1");
+LeaderLib_PresetMenu_RegisterPreset("Witch", "Witch [DOS2]", "LeaderLib_PresetMenu_IsAct1");
+LeaderLib_PresetMenu_RegisterPreset("Wizard", "Wizard [DOS2]", "LeaderLib_PresetMenu_IsAct1");
+
+IF
+GlobalFlagCleared("LeaderLib_PresetMenu_IsAct1")
+AND
+DB_LeaderLib_PresetMenu_RegisteredPreset(_Preset, "LeaderLib_PresetMenu_IsAct1")
+THEN
+LeaderLib_DynamicMenu_Remove_Entry("LeaderLib.Settings.PresetMenu", _Preset);
+NOT DB_LeaderLib_PresetMenu_RegisteredPreset(_Preset, "LeaderLib_PresetMenu_IsAct1");
+
+IF
+GlobalFlagCleared("LeaderLib_PresetMenu_IsAct1")
+THEN
+GlobalSetFlag("LeaderLib_PresetMenu_IsNotAct1");
+
+IF
+GlobalFlagSet("LeaderLib_PresetMenu_IsNotAct1")
+AND
+NOT DB_LeaderLib_PresetMenu_RegisteredPreset(_, "LeaderLib_PresetMenu_IsNotAct1")
+THEN
+LeaderLib_PresetMenu_RegisterPreset("Battlemage_Act2", "Battlemage [DOS2]", "LeaderLib_PresetMenu_IsNotAct1");
+LeaderLib_PresetMenu_RegisterPreset("Cleric_Act2", "Cleric [DOS2]", "LeaderLib_PresetMenu_IsNotAct1");
+LeaderLib_PresetMenu_RegisterPreset("Conjurer_Act2", "Conjurer [DOS2]", "LeaderLib_PresetMenu_IsNotAct1");
+LeaderLib_PresetMenu_RegisterPreset("Enchanter_Act2", "Enchanter [DOS2]", "LeaderLib_PresetMenu_IsNotAct1");
+LeaderLib_PresetMenu_RegisterPreset("Fighter_Act2", "Fighter [DOS2]", "LeaderLib_PresetMenu_IsNotAct1");
+LeaderLib_PresetMenu_RegisterPreset("Inquisitor_Act2", "Inquisitor [DOS2]", "LeaderLib_PresetMenu_IsNotAct1");
+LeaderLib_PresetMenu_RegisterPreset("Knight_Act2", "Knight [DOS2]", "LeaderLib_PresetMenu_IsNotAct1");
+LeaderLib_PresetMenu_RegisterPreset("Metamorph_Act2", "Metamorph [DOS2]", "LeaderLib_PresetMenu_IsNotAct1");
+LeaderLib_PresetMenu_RegisterPreset("Ranger_Act2", "Ranger [DOS2]", "LeaderLib_PresetMenu_IsNotAct1");
+LeaderLib_PresetMenu_RegisterPreset("Rogue_Act2", "Rogue [DOS2]", "LeaderLib_PresetMenu_IsNotAct1");
+LeaderLib_PresetMenu_RegisterPreset("Shadowblade_Act2", "Shadowblade [DOS2]", "LeaderLib_PresetMenu_IsNotAct1");
+LeaderLib_PresetMenu_RegisterPreset("Wayfarer_Act2", "Wayfarer [DOS2]", "LeaderLib_PresetMenu_IsNotAct1");
+LeaderLib_PresetMenu_RegisterPreset("Witch_Act2", "Witch [DOS2]", "LeaderLib_PresetMenu_IsNotAct1");
+LeaderLib_PresetMenu_RegisterPreset("Wizard_Act2", "Wizard [DOS2]", "LeaderLib_PresetMenu_IsNotAct1");
+//END_REGION
+
+//REGION PRESET_MENU
+IF
+DialogStarted("LeaderLib_PresetMenu", _Instance)
+THEN
+DialogSetVariableStringForInstance(_Instance, "LeaderLib_PresetMenu_CurrentPreset_2e904bf9-1a93-447a-8f07-5383aea20068", "None");
+
+IF
+DialogEnded("LeaderLib_PresetMenu", _Instance)
+AND
+DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _LastPreset, _Instance)
+THEN
+ObjectClearFlag(_Player, "LeaderLib_PresetMenu_PresetSelected", _Instance);
+NOT DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _LastPreset, _Instance);
+
+PROC
+LeaderLib_DynamicMenu_BlockEntry((GUIDSTRING)_Player, "LeaderLib.Settings.PresetMenu", (STRING)_DialogVar, (STRING)_AvailableFlag, (INTEGER)_Instance, (STRING)_Preset, (STRING)_DisplayText)
+AND
+DB_LeaderLib_PresetMenu_RegisteredPreset(_Preset, _GlobalFlag)
+AND
+NOT GlobalGetFlag(_GlobalFlag, 1)
+THEN
+DB_LeaderLib_DynamicMenu_EntryBlocked(_Player, "LeaderLib.Settings.PresetMenu", _Preset, _Instance);
+
+PROC
+LeaderLib_DynamicMenu_OnEntrySelected("LeaderLib.Settings.PresetMenu", (GUIDSTRING)_Player, (INTEGER)_Instance, (STRING)_Preset)
+AND
+DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _LastPreset, _Instance)
+THEN
+NOT DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _LastPreset, _Instance);
+
+PROC
+LeaderLib_DynamicMenu_OnEntrySelected("LeaderLib.Settings.PresetMenu", (GUIDSTRING)_Player, (INTEGER)_Instance, (STRING)_Preset)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:OnEntrySelected] Player selected preset [",_Preset,"].");
+DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _Preset, _Instance);
+ObjectSetFlag(_Player, "LeaderLib_PresetMenu_PresetSelected", _Instance);
+LeaderLib_DynamicMenu_FetchDialogVariableByKey("LeaderLib.Settings.PresetMenu", _Instance, _Preset);
+
+PROC
+LeaderLib_DynamicMenu_OnFetchDialogVariable("LeaderLib.Settings.PresetMenu", (STRING)_DialogVar, (STRING)_AvailableFlag, (INTEGER)_Instance, (STRING)_EntryKey, (STRING)_DisplayText)
+THEN
+DialogSetVariableStringForInstance(_Instance, "LeaderLib_PresetMenu_CurrentPreset_2e904bf9-1a93-447a-8f07-5383aea20068", _DisplayText);
+//END_REGION
+
+//REGION PRESET_APPLYING
+IF
+ObjectFlagSet("LeaderLib_PresetMenu_ConfirmSelection", (CHARACTERGUID)_Player, _Instance)
+AND
+LeaderLib_Helper_QRY_ClearObjectFlag(_Player, "LeaderLib_PresetMenu_ConfirmSelection")
+AND
+DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _Preset, _Instance)
+AND
+GetPosition(_Player, _x, _y, _z)
+AND
+CreateItemTemplateAtPosition("LOOT_LeaderLib_BackPack_Invisible_98fa7688-0810-4113-ba94-9a8c8463f830", _x, _y, _z, _Backpack)
+AND
+GetUUID(_Player, _UUID)
+AND
+StringConcatenate("LeaderLib_Array_PrePresetTalents_", _UUID, _ArrayID)
+THEN
+ObjectClearFlag(_Player, "LeaderLib_PresetMenu_PresetSelected", _Instance);
+DB_LeaderLib_PresetMenu_Temp_ItemBackpack(_Player, _Backpack);
+DB_LeaderLib_PresetMenu_Temp_TalentArray(_Player, _ArrayID);
+LeaderLib_PresetMenu_RecordEquipment(_Player, _Backpack);
+MoveAllItemsTo(_Player, _Backpack, 1, 1, 0);
+LeaderLib_PresetMenu_RecordTalents(_Player, _ArrayID);
+LeaderLib_PresetMenu_RecordSkills(_Player);
+ProcObjectTimer(_Player, "LeaderLib_Timers_PresetMenu_ApplyPreset", 500);
+
+PROC
+LeaderLib_PresetMenu_RecordEquipment((CHARACTERGUID)_Player, (ITEMGUID)_Backpack)
+AND
+DB_LeaderLib_EquipmentSlots(_Slot)
+AND
+CharacterGetEquippedItem(_Player, _Slot, _Item)
+AND
+_Item != NULL_00000000-0000-0000-0000-000000000000
+THEN
+DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, _Slot, (ITEMGUID)_Item);
+
+PROC
+LeaderLib_PresetMenu_RecordTalents((CHARACTERGUID)_Player, (STRING)_ArrayID)
+AND
+DB_LeaderLib_Talents(_Talent)
+AND
+CharacterHasTalent(_Player, _Talent, 1)
+THEN
+LeaderLib_Array_AddToArray(_ArrayID, _Talent);
+LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:RecordTalents] Adding talent [",_Talent,"] to pre-talent array.");
+
+PROC
+LeaderLib_PresetMenu_RecordTalents((CHARACTERGUID)_Player, (STRING)_ArrayID)
+AND
+DB_LeaderLib_QuestTalents(_Talent)
+AND
+CharacterHasTalent(_Player, _Talent, 1)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:RecordTalents] Adding talent [",_Talent,"] to quest talents to add.");
+DB_LeaderLib_PresetMenu_Temp_QuestTalents(_Player, _Talent);
+
+PROC
+LeaderLib_PresetMenu_RecordSkills((CHARACTERGUID)_Player)
+AND
+GetUUID(_Player, _ID)
+AND
+LeaderLib_Skills_QRY_CreateTargetDummyAtObject(_ID, _Player, "", 2000)
+AND
+DB_LeaderLib_Skills_TargetDummies(_ID, _Dummy)
+THEN
+DB_LeaderLib_PresetMenu_Temp_CopySkills(_Dummy, _Player);
+CharacterCloneSkillsTo(_Player, _Dummy, 0);
+
+IF
+SkillAdded(_Dummy, _Skill, 1)
+AND
+DB_LeaderLib_PresetMenu_Temp_CopySkills(_Dummy, _Player)
+THEN
+DB_LeaderLib_PresetMenu_Temp_Skills(_Player, _Skill);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_ApplyPreset")
+AND
+DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _Preset, _Instance)
+THEN
+NOT DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _Preset, _Instance);
+CharacterApplyPreset(_Player, _Preset);
+ProcObjectTimer(_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied", 250);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_ApplyPreset")
+AND
+DB_LeaderLib_Skills_TargetDummies(_ID, _Dummy)
+THEN
+NOT DB_LeaderLib_Skills_TargetDummies(_ID, _Dummy);
+
+//Equipment/Items
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied")
+AND
+DB_LeaderLib_PresetMenu_Temp_ItemBackpack(_Player, _Backpack)
+THEN
+MoveAllItemsTo(_Backpack, _Player, 1, 1, 0);
+ProcObjectTimer(_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied_EquipItems", 250);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied_EquipItems")
+AND
+DB_LeaderLib_PresetMenu_Temp_ItemBackpack(_Player, _Backpack)
+THEN
+NOT DB_LeaderLib_PresetMenu_Temp_ItemBackpack(_Player, _Backpack);
+ItemRemove(_Backpack);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied_EquipItems")
+AND
+DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, _Slot, (ITEMGUID)_Item)
+AND
+_Slot != "Weapon"
+AND
+_Slot != "Shield"
+THEN
+NOT DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, _Slot, (ITEMGUID)_Item);
+CharacterEquipItem(_Player, _Item);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied_EquipItems")
+AND
+DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, _Slot, (ITEMGUID)_Item)
+THEN
+NOT DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, _Slot, (ITEMGUID)_Item);
+
+//Skills
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied")
+AND
+DB_LeaderLib_PresetMenu_Temp_Skills(_Player, _Skill)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:OnPresetApplied] Adding skill [",_Skill,"] to player.");
+CharacterAddSkill(_Player, _Skill);
+NOT DB_LeaderLib_PresetMenu_Temp_Skills(_Player, _Skill);
+
+//Talents
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied")
+AND
+GetUUID(_Player, _UUID)
+AND
+StringConcatenate("LeaderLib_Array_PostPresetTalents_", _UUID, _PostArrayID)
+THEN
+LeaderLib_PresetMenu_Internal_RecordNewTalents(_Player, _PostArrayID);
+DB_LeaderLib_PresetMenu_Temp_PostTalentArray(_Player, _PostArrayID);
+ProcObjectTimer(_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied_RestoreTalents", 250);
+
+PROC
+LeaderLib_PresetMenu_Internal_RecordNewTalents((CHARACTERGUID)_Player, (STRING)_PostArrayID)
+AND
+DB_LeaderLib_Talents(_Talent)
+AND
+CharacterHasTalent(_Player, _Talent, 1)
+THEN
+LeaderLib_Array_AddToArray(_PostArrayID, _Talent);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied_RestoreTalents")
+THEN
+LeaderLib_PresetMenu_Internal_RestoreTalents(_Player);
+
+PROC
+LeaderLib_PresetMenu_Internal_RestoreTalents((CHARACTERGUID)_Player)
+AND
+DB_LeaderLib_PresetMenu_Temp_QuestTalents(_Player, _Talent)
+THEN
+NOT DB_LeaderLib_PresetMenu_Temp_QuestTalents(_Player, _Talent);
+CharacterAddTalent(_Player, _Talent);
+
+PROC
+LeaderLib_PresetMenu_Internal_RestoreTalents((CHARACTERGUID)_Player)
+AND
+DB_LeaderLib_PresetMenu_Temp_PostTalentArray(_Player, _PostArrayID)
+AND
+DB_LeaderLib_PresetMenu_Temp_TalentArray(_Player, _PreArrayID)
+AND
+DB_LeaderLib_Array_Length(_PreArrayID, _Total)
+AND
+DB_LeaderLib_Array_Length(_PostArrayID, _NewTotal)
+AND
+IntegerSubtract(_Total, _NewTotal, _PointsToAdd)
+AND
+_PointsToAdd > 0
+AND
+IntegertoString(_PointsToAdd, _PointsStr)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:RestoreTalentPoints] Adding [",_PointsStr,"] talent points to Player.");
+CharacterAddTalentPoint(_Player, _PointsToAdd);
+
+PROC
+LeaderLib_PresetMenu_Internal_RestoreTalents((CHARACTERGUID)_Player)
+AND
+DB_LeaderLib_PresetMenu_Temp_PostTalentArray(_Player, _PostArrayID)
+AND
+DB_LeaderLib_PresetMenu_Temp_TalentArray(_Player, _PreArrayID)
+THEN
+NOT DB_LeaderLib_PresetMenu_Temp_TalentArray(_Player, _PreArrayID);
+LeaderLib_Array_ClearArray(_PreArrayID);
+NOT DB_LeaderLib_PresetMenu_Temp_PostTalentArray(_Player, _PostArrayID);
+LeaderLib_Array_ClearArray(_PostArrayID);
+
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_11__Start"

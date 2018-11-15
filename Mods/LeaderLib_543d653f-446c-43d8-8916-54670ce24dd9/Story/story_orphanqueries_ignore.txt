@@ -327,4 +327,4 @@ DB_LeaderLog_Temp_RealString 4
 DB_LastManInCombatKilledBy 2
 DB_TUT_PlayOnEasy 1
 DB_LeaderLib_Combat_PastCombat 1
-DB_LeaderLib_Settings_Initialized 1DB_LLBARTER_DialogBlacklist 2
+DB_LeaderLib_Settings_Initialized 1DB_LLBARTER_DialogBlacklist 2DB_LeaderLib_RaceTalents 1

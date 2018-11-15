@@ -167,6 +167,13 @@
                     <attribute id="type" value="String" type="23" />
                 </node>
                 <node id="DialogVariable">
+                    <attribute id="DefaultValue" value="None" type="23" />
+                    <attribute id="Description" value="" type="23" />
+                    <attribute id="UUID" value="2e904bf9-1a93-447a-8f07-5383aea20068" type="31" />
+                    <attribute id="name" value="LeaderLib_PresetMenu_CurrentPreset" type="22" />
+                    <attribute id="type" value="String" type="23" />
+                </node>
+                <node id="DialogVariable">
                     <attribute id="DefaultValue" value="" type="23" />
                     <attribute id="Description" value="Mods that were registered to DB_Mods_Registered." type="23" />
                     <attribute id="UUID" value="50c55fbe-ad1e-490e-92d1-8836ca42ca12" type="31" />

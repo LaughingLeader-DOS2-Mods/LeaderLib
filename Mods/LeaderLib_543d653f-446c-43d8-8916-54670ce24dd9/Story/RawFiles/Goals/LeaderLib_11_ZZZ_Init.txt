@@ -24,6 +24,33 @@ LeaderLog_Log("DEBUG", "[LeaderLib:ModAPI] LeaderLib initialized.");
 LeaderLib_SendEvent("LeaderLib_Initialized");
 //END_REGION
 
+//REGION INITIAL_MOD_BOOKS
+IF
+StoryEvent(_, "LeaderLib_Initialized")
+AND
+DB_CurrentLevel(_Level)
+AND
+IsGameLevel(_Level, 1)
+AND
+NOT DB_GlobalFlag("LeaderLib_AddedInitialModMenuBooks")
+AND
+DB_LeaderLib_Settings_ItemTemplates("Book_ModMenu", _ModMenuBookTemplate)
+AND
+DB_IsPlayer(_Player)
+AND
+ItemTemplateIsInUserInventory(_Player, _ModMenuBookTemplate, 0, 0)
+THEN
+ItemTemplateAddTo(_ModMenuBookTemplate, _Player, 1);
+LeaderLib_Init_Internal_OnModMenuBooksAddedToParty();
+
+PROC
+LeaderLib_Init_Internal_OnModMenuBooksAddedToParty()
+AND
+NOT GlobalGetFlag("LeaderLib_AddedInitialModMenuBooks", 1)
+THEN
+GlobalSetFlag("LeaderLib_AddedInitialModMenuBooks");
+//END_REGION
+
 //REGION INITIAL_REQUIREMENT_UNLOCKING
 
 //Region requirements

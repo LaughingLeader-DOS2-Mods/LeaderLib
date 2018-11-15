@@ -173,17 +173,32 @@ DB_LeaderLib_Dictionary_Data(_ID, _EntryIndex, _EntryKey, _DisplayText)
 AND
 DialogGetInvolvedPlayer(_Instance, 1, _Player)
 THEN
+LeaderLib_DynamicMenu_BlockEntry(_Player, _ID, _DialogVar, _AvailableFlag, _Instance, _EntryKey, _DisplayText);
+LeaderLib_DynamicMenu_SetAvailableFlag(_Player, _ID, _DialogVar, _AvailableFlag, _Instance, _EntryKey, _DisplayText);
 //LeaderLog_Log("DEBUG", "[LeaderLib:DynamicMenu:Internal:LoadPageVariables] Setting dialog variable [",_DialogVar,"] to [",_DisplayText,"] for menu [",_ID,"].");
-ObjectSetFlag(_Player, _AvailableFlag, _Instance);
 DialogSetVariableStringForInstance(_Instance, _DialogVar, _DisplayText);
 DB_LeaderLib_DynamicMenu_Temp_MenuVariableValue(_ID, _Instance, _VarIndex, _EntryKey);
 LeaderLib_DynamicMenu_OnEntryValueSet(_Player, _ID, _DialogVar, _AvailableFlag, _Instance, _EntryKey, _DisplayText);
 
 //Helper in case a mod needs to modify the default result
 PROC
-LeaderLib_DynamicMenu_OnEntryValueSet((GUIDSTRING)_Player, (STRING)_ID, (STRING)_DialogVar, (STRING)_AvailableFlag, (INTEGER)_Instance, (STRING)_EntryKey, (STRING)_DisplayText)
+LeaderLib_DynamicMenu_BlockEntry((GUIDSTRING)_Player, (STRING)_ID, (STRING)_DialogVar, (STRING)_AvailableFlag, (INTEGER)_Instance, (STRING)_EntryKey, (STRING)_DisplayText)
 THEN
 DB_NOOP(1);
+
+PROC
+LeaderLib_DynamicMenu_SetAvailableFlag((GUIDSTRING)_Player, (STRING)_ID, (STRING)_DialogVar, (STRING)_AvailableFlag, (INTEGER)_Instance, (STRING)_EntryKey, (STRING)_DisplayText)
+AND
+NOT DB_LeaderLib_DynamicMenu_EntryBlocked(_Player, _ID, _EntryKey, _Instance)
+THEN
+ObjectSetFlag(_Player, _AvailableFlag, _Instance);
+
+PROC
+LeaderLib_DynamicMenu_OnEntryValueSet((GUIDSTRING)_Player, (STRING)_ID, (STRING)_DialogVar, (STRING)_AvailableFlag, (INTEGER)_Instance, (STRING)_EntryKey, (STRING)_DisplayText)
+AND
+DB_LeaderLib_DynamicMenu_EntryBlocked(_Player, _ID, _EntryKey, _Instance)
+THEN
+NOT DB_LeaderLib_DynamicMenu_EntryBlocked(_Player, _ID, _EntryKey, _Instance);
 
 //Force another call to OnEntryValueSet, using the entry key value
 PROC

@@ -13,10 +13,18 @@ KBSECTION
 //REGION SETTINGS
 PROC
 LeaderLib_Settings_InitSettings()
+AND
+DB_LeaderLib_Settings_Initialized(1)
+THEN
+NOT DB_LeaderLib_Settings_Initialized(1);
+
+PROC
+LeaderLib_Settings_InitSettings()
 THEN
 LeaderLib_Settings_InitEquipmentSlots();
 LeaderLib_Settings_InitStats();
 LeaderLib_Settings_InitSurfaces();
+LeaderLib_Settings_InitRaceData();
 
 SysClear("DB_LeaderLib_Settings_QueueRates", 3);
 DB_LeaderLib_Settings_QueueRates("TraderSpawn", 500, 2000);
@@ -138,7 +146,7 @@ DB_LeaderLib_Talents("ActionPoints");
 DB_LeaderLib_Talents("ActionPoints2");
 DB_LeaderLib_Talents("AirSpells");
 DB_LeaderLib_Talents("AnimalEmpathy");
-DB_LeaderLib_Talents("AttackOfOpportunity	Opportunist");
+DB_LeaderLib_Talents("AttackOfOpportunity");
 DB_LeaderLib_Talents("AvoidDetection");
 DB_LeaderLib_Talents("Awareness");
 DB_LeaderLib_Talents("Backstab");
@@ -154,13 +162,9 @@ DB_LeaderLib_Talents("Damage");
 DB_LeaderLib_Talents("Demon");
 DB_LeaderLib_Talents("DualWieldingDodging");
 DB_LeaderLib_Talents("Durability");
-DB_LeaderLib_Talents("Dwarf_Sneaki");
-DB_LeaderLib_Talents("Dwarf_Strength");
 DB_LeaderLib_Talents("EarthSpells");
 DB_LeaderLib_Talents("ElementalAffinity");
 DB_LeaderLib_Talents("ElementalRanger");
-DB_LeaderLib_Talents("Elf_CorpseEating");
-DB_LeaderLib_Talents("Elf_Finesse");
 DB_LeaderLib_Talents("Escapist");
 DB_LeaderLib_Talents("Executioner");
 DB_LeaderLib_Talents("ExpGain");
@@ -173,8 +177,6 @@ DB_LeaderLib_Talents("FiveStarRestaurant");
 DB_LeaderLib_Talents("Flanking");
 DB_LeaderLib_Talents("FolkDancer");
 DB_LeaderLib_Talents("GoldenMage");
-DB_LeaderLib_Talents("Human_Civil");
-DB_LeaderLib_Talents("Human_Wits");
 DB_LeaderLib_Talents("IceKing");
 DB_LeaderLib_Talents("IncreasedArmor");
 DB_LeaderLib_Talents("Initiative");
@@ -187,8 +189,6 @@ DB_LeaderLib_Talents("Kinetics");
 DB_LeaderLib_Talents("Leech");
 DB_LeaderLib_Talents("LightStep");
 DB_LeaderLib_Talents("LightningRod");
-DB_LeaderLib_Talents("Lizard_Intelligence");
-DB_LeaderLib_Talents("Lizard_Persuasion");
 DB_LeaderLib_Talents("Lockpick");
 DB_LeaderLib_Talents("LoneWolf");
 DB_LeaderLib_Talents("Luck");
@@ -197,12 +197,6 @@ DB_LeaderLib_Talents("MrKnowItAll");
 DB_LeaderLib_Talents("NoAttackOfOpportunity");
 DB_LeaderLib_Talents("Perfectionist");
 DB_LeaderLib_Talents("Politician");
-DB_LeaderLib_Talents("Quest_GhostTree");
-DB_LeaderLib_Talents("Quest_SpidersKiss_Int");
-DB_LeaderLib_Talents("Quest_SpidersKiss_Null");
-DB_LeaderLib_Talents("Quest_SpidersKiss_Per");
-DB_LeaderLib_Talents("Quest_SpidersKiss_Str");
-DB_LeaderLib_Talents("Quest_TradeSecrets");
 DB_LeaderLib_Talents("QuickStep");
 DB_LeaderLib_Talents("Raistlin");
 DB_LeaderLib_Talents("RangerLoreArrowRecover");
@@ -233,13 +227,40 @@ DB_LeaderLib_Talents("ViolentMagic");
 DB_LeaderLib_Talents("Vitality");
 DB_LeaderLib_Talents("WalkItOff");
 DB_LeaderLib_Talents("WarriorLoreGrenadeRange");
-DB_LeaderLib_Talents("WarriorLoreN");
+DB_LeaderLib_Talents("WarriorLoreNaturalArmor");
 DB_LeaderLib_Talents("WarriorLoreNaturalHealth");
 DB_LeaderLib_Talents("WarriorLoreNaturalResistance");
 DB_LeaderLib_Talents("WaterSpells");
 DB_LeaderLib_Talents("WeatherProof");
 DB_LeaderLib_Talents("WhatARush");
-DB_LeaderLib_Talents("Zombie");
+
+PROC
+LeaderLib_Settings_InitStats()
+AND
+NOT DB_LeaderLib_RaceTalents(_)
+THEN
+//Racial Talents
+DB_LeaderLib_RaceTalents("Dwarf_Sneaki");
+DB_LeaderLib_RaceTalents("Dwarf_Strength");
+DB_LeaderLib_RaceTalents("Elf_CorpseEating");
+DB_LeaderLib_RaceTalents("Elf_Finesse");
+DB_LeaderLib_RaceTalents("Human_Civil");
+DB_LeaderLib_RaceTalents("Human_Wits");
+DB_LeaderLib_RaceTalents("Lizard_Intelligence");
+DB_LeaderLib_RaceTalents("Lizard_Persuasion");
+DB_LeaderLib_RaceTalents("Zombie");
+
+PROC
+LeaderLib_Settings_InitStats()
+AND
+NOT DB_LeaderLib_QuestTalents(_)
+THEN
+DB_LeaderLib_QuestTalents("Quest_GhostTree");
+DB_LeaderLib_QuestTalents("Quest_SpidersKiss_Int");
+DB_LeaderLib_QuestTalents("Quest_SpidersKiss_Null");
+DB_LeaderLib_QuestTalents("Quest_SpidersKiss_Per");
+DB_LeaderLib_QuestTalents("Quest_SpidersKiss_Str");
+DB_LeaderLib_QuestTalents("Quest_TradeSecrets");
 
 PROC
 LeaderLib_Settings_InitSurfaces()
@@ -356,26 +377,63 @@ _Group != ""
 THEN
 DB_LeaderLib_SurfaceGroup(_Surface, _Group);
 //LeaderLog_Log("DEBUG", "[LeaderLib:Settings:AddSurfaceToGroup] Added surface [",_Surface,"] to group [",_Group,"]");
+
+PROC
+LeaderLib_Settings_InitRaceData()
+AND
+NOT DB_LeaderLib_RaceTags(_,_)
+THEN
+//_Race, _Tag
+DB_LeaderLib_RaceTags("Dwarf", "DWARF");
+DB_LeaderLib_RaceTags("Human", "HUMAN");
+DB_LeaderLib_RaceTags("Elf", "ELF");
+DB_LeaderLib_RaceTags("Lizard", "LIZARD");
+DB_LeaderLib_RaceTags("Undead_Dwarf", "DWARF");
+DB_LeaderLib_RaceTags("Undead_Human", "HUMAN");
+DB_LeaderLib_RaceTags("Undead_Elf", "ELF");
+DB_LeaderLib_RaceTags("Undead_Lizard", "LIZARD");
+
+PROC
+LeaderLib_Settings_InitRaceData()
+AND
+NOT DB_LeaderLib_RaceTemplates(_,_,_,_)
+THEN
+//DB_LeaderLib_RaceTemplates(_RaceTag, _Undead, _Female, _Template)
+DB_LeaderLib_RaceTemplates("DWARF", 0, 1,"Dwarves_Hero_Female_c1c58707-b06e-499e-9c43-91a90be602b0");
+DB_LeaderLib_RaceTemplates("DWARF", 0, 0,"Dwarves_Hero_Male_024d1763-b2aa-46ec-b705-6338059838be");
+DB_LeaderLib_RaceTemplates("DWARF", 1, 1,"Dwarves_Hero_Female_Undead_373a1966-a54d-4a3e-be70-e779a654c914");
+DB_LeaderLib_RaceTemplates("DWARF", 1, 0,"Dwarves_Hero_Male_Undead_726442a5-6856-4b0d-91ed-5d2f003b8a0c");
+DB_LeaderLib_RaceTemplates("ELF", 0, 1,"Elves_Hero_Female_7ef846f5-34dc-450c-815e-a58dfc190a7b");
+DB_LeaderLib_RaceTemplates("ELF", 0, 0,"Elves_Hero_Male_19913083-924e-45ec-8b5b-119d5913722f");
+DB_LeaderLib_RaceTemplates("ELF", 1, 1,"Elves_Hero_Female_Undead_7f366172-9fd1-45df-8719-a6d14cb534b3");
+DB_LeaderLib_RaceTemplates("ELF", 1, 0,"Elves_Hero_Male_Undead_9eeaaafd-c47d-4650-9200-b00430d61e83");
+DB_LeaderLib_RaceTemplates("HUMAN", 0, 1,"Humans_Hero_Female_de8ea39b-6989-4b93-b34a-81e549c540f2");
+DB_LeaderLib_RaceTemplates("HUMAN", 0, 0,"Humans_Hero_Male_25611432-e5e4-482a-8f5d-196c9e90001e");
+DB_LeaderLib_RaceTemplates("HUMAN", 1, 1,"Humans_Hero_Female_Undead_3bd0693d-0b0a-4f6d-93e2-aea9be654bee");
+DB_LeaderLib_RaceTemplates("HUMAN", 1, 0,"Humans_Hero_Male_Undead_5ab5d036-4606-4265-962e-c2e4d2d2408b");
+DB_LeaderLib_RaceTemplates("LIZARD", 0, 1,"Lizards_Hero_Female_e4a6bcfa-ecd6-4e56-8592-cd16b85a1c50");
+DB_LeaderLib_RaceTemplates("LIZARD", 0, 0,"Lizards_Hero_Male_fa12e21f-0a10-47dd-af46-ab2c9a53cf6d");
+DB_LeaderLib_RaceTemplates("LIZARD", 1, 1,"Lizards_Hero_Female_Undead_725f9a47-a3d4-41d2-92cf-017d18c2b212");
+DB_LeaderLib_RaceTemplates("LIZARD", 1, 0,"Lizards_Hero_Male_Undead_57b70554-36bf-4b86-b9aa-8f7cc3944153");
+
+/*
+These two databases can be used in combination like so:
+AND
+CharacterGetRace(_Player, 1, _Race)
+AND
+DB_LeaderLib_RaceTags(_Race, _RaceTag)
+AND
+IsTagged(_Player, "UNDEAD", _Undead)
+AND
+CharacterIsFemale(_Player, _Female)
+AND
+DB_LeaderLib_RaceTemplates(_RaceTag, _Undead, _Female, _Template)
+THEN
+CharacterTransform(_Player, _Template, 1, 1, 1, 1, 1, 1, 0);
+*/
 //END_REGION
 
-//REGION UPDATER
-PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
-AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 5, 1)
-THEN
-DB_LLBARTER_DialogBlacklist("LeaderLib", "LeaderLib_AutosaveMenu");
-LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updating dialog variables from version [",_PastVersion,"].");
-DB_LeaderLib_Settings_DialogVariables("CurrentAutosaveInterval", "LeaderLib_AutosaveMenu_CurrentSettings_b48918b6-4864-4aae-88fd-53d658ccb082");
-
-PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
-AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 0, 1, 1)
-THEN
-LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
-LeaderLib_Settings_InitStats();
-
+//REGION UPDATES
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", "1.1.0.0", (STRING)_NewVersion)
 THEN
@@ -396,6 +454,25 @@ THEN
 LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
 LeaderLib_Settings_InitSurfaces();
 LeaderLib_Settings_SettingsInitialized();
+
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+NOT DB_LLBARTER_DialogBlacklist("LeaderLib", _PastVersion)
+THEN
+DB_LLBARTER_DialogBlacklist("LeaderLib", "LeaderLib_AutosaveMenu");
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updating dialog variables from version [",_PastVersion,"].");
+DB_LeaderLib_Settings_DialogVariables("CurrentAutosaveInterval", "LeaderLib_AutosaveMenu_CurrentSettings_b48918b6-4864-4aae-88fd-53d658ccb082");
+SysClear("DB_LeaderLib_Talents", 1);
+LeaderLib_Settings_InitStats();
+
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 6, 0)
+THEN
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
+LeaderLib_Settings_InitRaceData();
 //END_REGION
 
 //REGION MOD_DATA
@@ -484,30 +561,7 @@ THEN
 LeaderLib_Settings_BuildModList();
 //END_REGION
 
-//REGION INITIAL_MOD_BOOKS
-IF
-GameStarted(_Level, 0)
-AND
-IsGameLevel(_Level, 1)
-AND
-NOT DB_GlobalFlag("LeaderLib_AddedInitialModMenuBooks")
-AND
-DB_LeaderLib_Settings_ItemTemplates("Book_ModMenu", _ModMenuBookTemplate)
-AND
-DB_IsPlayer(_Player)
-AND
-ItemTemplateIsInUserInventory(_Player, _ModMenuBookTemplate, 0, 0)
-THEN
-ItemTemplateAddTo(_ModMenuBookTemplate, _Player, 1);
-LeaderLib_Settings_Internal_OnModMenuBooksAddedToParty();
-
-PROC
-LeaderLib_Settings_Internal_OnModMenuBooksAddedToParty()
-AND
-NOT GlobalGetFlag("LeaderLib_AddedInitialModMenuBooks", 1)
-THEN
-GlobalSetFlag("LeaderLib_AddedInitialModMenuBooks");
-
+//REGION MODMENU_BOOK
 IF
 ObjectFlagSet("LeaderLib_Commands_GiveModMenuBook", _Object, _Instance)
 AND
@@ -516,7 +570,6 @@ AND
 DB_LeaderLib_Settings_ItemTemplates("Book_ModMenu", _ModMenuBookTemplate)
 THEN
 ItemTemplateAddTo(_ModMenuBookTemplate, _Object, 1, 1);
-
 //END_REGION
 EXITSECTION
 

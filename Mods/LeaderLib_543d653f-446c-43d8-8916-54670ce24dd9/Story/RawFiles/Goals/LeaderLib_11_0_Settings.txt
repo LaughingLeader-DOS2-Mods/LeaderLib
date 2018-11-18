@@ -25,6 +25,7 @@ LeaderLib_Settings_InitEquipmentSlots();
 LeaderLib_Settings_InitStats();
 LeaderLib_Settings_InitSurfaces();
 LeaderLib_Settings_InitRaceData();
+LeaderLib_Settings_InitStatusData();
 
 SysClear("DB_LeaderLib_Settings_QueueRates", 3);
 DB_LeaderLib_Settings_QueueRates("TraderSpawn", 500, 2000);
@@ -431,6 +432,43 @@ DB_LeaderLib_RaceTemplates(_RaceTag, _Undead, _Female, _Template)
 THEN
 CharacterTransform(_Player, _Template, 1, 1, 1, 1, 1, 1, 0);
 */
+
+PROC
+LeaderLib_Settings_InitStatusData()
+AND
+NOT DB_LeaderLib_EngineStatus(_)
+THEN
+DB_LeaderLib_EngineStatus("ATTACKOFOPP");
+DB_LeaderLib_EngineStatus("CLIMBING");
+DB_LeaderLib_EngineStatus("DYING");
+DB_LeaderLib_EngineStatus("ENCUMBERED");
+DB_LeaderLib_EngineStatus("EXPLODE");
+DB_LeaderLib_EngineStatus("FALLING");
+DB_LeaderLib_EngineStatus("FLANKED");
+DB_LeaderLib_EngineStatus("HEAL");
+DB_LeaderLib_EngineStatus("HEALING");
+DB_LeaderLib_EngineStatus("HEAL_SHARING");
+DB_LeaderLib_EngineStatus("HEAL_SHARING_CASTER");
+DB_LeaderLib_EngineStatus("HIT");
+DB_LeaderLib_EngineStatus("INSURFACE");
+DB_LeaderLib_EngineStatus("LEADERSHIP");
+DB_LeaderLib_EngineStatus("LYING");
+DB_LeaderLib_EngineStatus("MATERIAL");
+DB_LeaderLib_EngineStatus("POST_PHYS_CONTROL");
+DB_LeaderLib_EngineStatus("ROTATE");
+DB_LeaderLib_EngineStatus("SHACKLES_OF_PAIN");
+DB_LeaderLib_EngineStatus("SHACKLES_OF_PAIN_CASTER");
+DB_LeaderLib_EngineStatus("SITTING");
+DB_LeaderLib_EngineStatus("SMELLY");
+DB_LeaderLib_EngineStatus("SNEAKING");
+DB_LeaderLib_EngineStatus("SOURCE_MUTED");
+DB_LeaderLib_EngineStatus("SPIRIT");
+DB_LeaderLib_EngineStatus("SPIRIT_VISION");
+DB_LeaderLib_EngineStatus("STORY_FROZEN");
+DB_LeaderLib_EngineStatus("SUMMONING");
+DB_LeaderLib_EngineStatus("THROWN");
+DB_LeaderLib_EngineStatus("TUTORIAL_BED");
+DB_LeaderLib_EngineStatus("UNSHEATHED");
 //END_REGION
 
 //REGION UPDATES
@@ -473,6 +511,14 @@ LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 6, 0)
 THEN
 LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
 LeaderLib_Settings_InitRaceData();
+
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+NOT DB_LeaderLib_EngineStatus(_)
+THEN
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updating [DB_LeaderLib_EngineStatus] from version [",_PastVersion,"].");
+LeaderLib_Settings_InitStatusData();
 //END_REGION
 
 //REGION MOD_DATA

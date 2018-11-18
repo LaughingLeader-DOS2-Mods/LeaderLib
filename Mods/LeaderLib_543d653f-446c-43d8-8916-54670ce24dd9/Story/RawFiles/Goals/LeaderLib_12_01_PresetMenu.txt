@@ -270,6 +270,16 @@ LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:RecordTalents] Adding talent [",_T
 DB_LeaderLib_PresetMenu_Temp_QuestTalents(_Player, _Talent);
 
 PROC
+LeaderLib_PresetMenu_RecordTalents((CHARACTERGUID)_Player, (STRING)_ArrayID)
+AND
+CharacterGetTalentPoints(_Player, _TalentPoints)
+AND
+_TalentPoints > 0
+THEN
+LeaderLog_LogInt("DEBUG", "[LeaderLib:PresetMenu:RecordTalents] Character has [",_TalentPoints,"] talent points.");
+DB_LeaderLib_PresetMenu_Temp_TalentPoints(_Player, _TalentPoints);
+
+PROC
 LeaderLib_PresetMenu_RecordSkills((CHARACTERGUID)_Player)
 AND
 GetUUID(_Player, _ID)
@@ -379,6 +389,29 @@ LeaderLib_PresetMenu_Internal_RestoreTalents(_Player);
 PROC
 LeaderLib_PresetMenu_Internal_RestoreTalents((CHARACTERGUID)_Player)
 AND
+DB_LeaderLib_PresetMenu_Temp_TalentPoints(_Player, _TalentPoints)
+AND
+CharacterGetTalentPoints(_Player, _CurrentTalentPoints)
+AND
+_CurrentTalentPoints < _TalentPoints
+AND
+IntegerSubtract(_TalentPoints, _CurrentTalentPoints, _AddPoints)
+AND
+_AddPoints > 0
+THEN
+CharacterAddTalentPoint(_Player, _AddPoints);
+NOT DB_LeaderLib_PresetMenu_Temp_TalentPoints(_Player, _TalentPoints);
+
+PROC
+LeaderLib_PresetMenu_Internal_RestoreTalents((CHARACTERGUID)_Player)
+AND
+DB_LeaderLib_PresetMenu_Temp_TalentPoints(_Player, _TalentPoints)
+THEN
+NOT DB_LeaderLib_PresetMenu_Temp_TalentPoints(_Player, _TalentPoints);
+
+PROC
+LeaderLib_PresetMenu_Internal_RestoreTalents((CHARACTERGUID)_Player)
+AND
 DB_LeaderLib_PresetMenu_Temp_QuestTalents(_Player, _Talent)
 THEN
 NOT DB_LeaderLib_PresetMenu_Temp_QuestTalents(_Player, _Talent);
@@ -415,7 +448,6 @@ NOT DB_LeaderLib_PresetMenu_Temp_TalentArray(_Player, _PreArrayID);
 LeaderLib_Array_ClearArray(_PreArrayID);
 NOT DB_LeaderLib_PresetMenu_Temp_PostTalentArray(_Player, _PostArrayID);
 LeaderLib_Array_ClearArray(_PostArrayID);
-
 //END_REGION
 EXITSECTION
 

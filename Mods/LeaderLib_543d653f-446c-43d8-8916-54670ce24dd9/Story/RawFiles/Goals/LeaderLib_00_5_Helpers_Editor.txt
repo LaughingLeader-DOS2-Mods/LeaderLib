@@ -286,6 +286,28 @@ DB_LeaderLib_Editor_Temp_GenerateTradeItems(_Trader)
 THEN
 GenTradeItems(_Player, _Trader);
 NOT DB_LeaderLib_Editor_Temp_GenerateTradeItems(_Trader);
+
+IF
+TextEventSet("leaderlib_generatetreasure")
+AND
+GetTextEventParamString(1, _Treasure)
+AND
+CharacterGetHostCharacter(_Player)
+AND
+GetPosition(_Player, _x, _y, _z)
+AND
+CreateItemTemplateAtPosition("LOOT_LeaderLib_BackPack_Invisible_98fa7688-0810-4113-ba94-9a8c8463f830", _x, _y, _z, _Backpack)
+AND
+CharacterGetLevel(_Player, _Level)
+THEN
+GenerateTreasure(_Backpack, _Treasure, _Level, _Player);
+MoveAllItemsTo(_Backpack, _Player, 1, 1, 1);
+ProcObjectTimer(_Backpack, "LeaderLib_Timers_TextEvent_RemoveGenTreasureBackpack", 250);
+
+PROC
+ProcObjectTimerFinished((ITEMGUID)_Backpack, "LeaderLib_Timers_TextEvent_RemoveGenTreasureBackpack")
+THEN
+ItemRemove(_Backpack);
 //END_REGION
 
 //REGION PRESETS

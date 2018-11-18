@@ -571,6 +571,20 @@ AND
 StringConcatenate(_Str2, _TotalStr, _Str3)
 THEN
 LeaderLog_Log("DEBUG", _Str3);
+
+QRY
+LeaderLib_Helper_QRY_DatabaseIsEmpty((STRING)_DatabaseName, (INTEGER)_Arity)
+AND
+SysCount(_DatabaseName, _Arity, 0)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_DatabaseIsEmpty((STRING)_DatabaseName, (INTEGER)_Arity)
+AND
+NOT SysCount(_DatabaseName, _Arity, _)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION CHARACTER_STATS

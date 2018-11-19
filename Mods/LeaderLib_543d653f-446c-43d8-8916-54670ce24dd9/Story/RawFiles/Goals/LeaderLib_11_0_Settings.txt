@@ -466,6 +466,7 @@ DB_LeaderLib_EngineStatus("SPIRIT");
 DB_LeaderLib_EngineStatus("SPIRIT_VISION");
 DB_LeaderLib_EngineStatus("STORY_FROZEN");
 DB_LeaderLib_EngineStatus("SUMMONING");
+DB_LeaderLib_EngineStatus("TELEPORT_FALLING");
 DB_LeaderLib_EngineStatus("THROWN");
 DB_LeaderLib_EngineStatus("TUTORIAL_BED");
 DB_LeaderLib_EngineStatus("UNSHEATHED");

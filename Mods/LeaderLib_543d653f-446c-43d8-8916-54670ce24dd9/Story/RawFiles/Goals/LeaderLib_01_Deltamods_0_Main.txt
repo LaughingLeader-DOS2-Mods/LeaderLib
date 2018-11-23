@@ -1,0 +1,245 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+LeaderLib_Deltamods_InitSettings();
+
+KBSECTION
+/*This script is primarily for using scripting to apply deltamods to weapons that go beyond the available weapon types.*/
+
+//REGION SETTINGS
+PROC
+LeaderLib_Deltamods_InitSettings()
+AND
+NOT
+DB_LeaderLib_Deltamods_Rarities(_,_)
+THEN
+//Used to associate item rarity with relevant deltamods
+DB_LeaderLib_Deltamods_Rarities("Common", "Common");
+DB_LeaderLib_Deltamods_Rarities("Common", "RuneEmpty");
+
+DB_LeaderLib_Deltamods_Rarities("Unique", "Unique");
+
+DB_LeaderLib_Deltamods_Rarities("Uncommon", "Uncommon");
+DB_LeaderLib_Deltamods_Rarities("Uncommon", "Normal");
+DB_LeaderLib_Deltamods_Rarities("Uncommon", "RuneEmpty");
+
+DB_LeaderLib_Deltamods_Rarities("Rare", "Rare");
+DB_LeaderLib_Deltamods_Rarities("Rare", "Primary");
+DB_LeaderLib_Deltamods_Rarities("Rare", "RuneEmpty");
+
+DB_LeaderLib_Deltamods_Rarities("Epic", "Epic");
+DB_LeaderLib_Deltamods_Rarities("Epic", "Legendary");
+DB_LeaderLib_Deltamods_Rarities("Epic", "Primary");
+DB_LeaderLib_Deltamods_Rarities("Epic", "Normal");
+DB_LeaderLib_Deltamods_Rarities("Epic", "RuneEmpty");
+
+DB_LeaderLib_Deltamods_Rarities("Legendary", "Legendary");
+DB_LeaderLib_Deltamods_Rarities("Legendary", "Primary");
+DB_LeaderLib_Deltamods_Rarities("Legendary", "Large");
+DB_LeaderLib_Deltamods_Rarities("Legendary", "Normal");
+DB_LeaderLib_Deltamods_Rarities("Legendary", "Small");
+DB_LeaderLib_Deltamods_Rarities("Legendary", "RuneEmpty");
+
+DB_LeaderLib_Deltamods_Rarities("Divine", "Divine");
+DB_LeaderLib_Deltamods_Rarities("Divine", "Legendary");
+DB_LeaderLib_Deltamods_Rarities("Divine", "Primary");
+DB_LeaderLib_Deltamods_Rarities("Divine", "Large");
+DB_LeaderLib_Deltamods_Rarities("Divine", "Normal");
+DB_LeaderLib_Deltamods_Rarities("Divine", "Small");
+DB_LeaderLib_Deltamods_Rarities("Divine", "RuneEmpty");
+//END_REGION
+
+//REGION REGISTERING
+PROC
+LeaderLib_Deltamods_Register_Group((STRING)_Group, (INTEGER)_AutoApply)
+THEN
+DB_LeaderLib_Deltamods_Groups(_Group, _AutoApply);
+//LeaderLib_Deltamods_Internal_OnGroupRegistered(_AutoApply);
+
+/*
+PROC
+LeaderLib_Deltamods_Internal_OnGroupRegistered(1)
+THEN
+GlobalSetFlag("LeaderLib_AutoApplyDeltamods");
+
+PROC
+LeaderLib_Deltamods_Internal_OnGroupRegistered(0)
+AND
+NOT DB_LeaderLib_Deltamods_Groups(_, 1)
+THEN
+GlobalClearFlag("LeaderLib_AutoApplyDeltamods");
+*/
+
+/*
+PROC
+LeaderLib_Deltamods_Register_Template((STRING)_Group, (STRING)_Template)
+THEN
+DB_LeaderLib_Deltamods_Templates(_Group, _Template);
+*/
+
+PROC
+LeaderLib_Deltamods_Add((STRING)_Group, (STRING)_Rarity, (STRING)_Deltamod, (INTEGER)_Chance, (INTEGER)_MinLevel)
+THEN
+LeaderLib_Deltamods_Add(_Group, _Rarity, _Deltamod, _Chance, _MinLevel, -1);
+
+PROC
+LeaderLib_Deltamods_Add((STRING)_Group, (STRING)_Rarity, (STRING)_Deltamod, (INTEGER)_Chance, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
+AND
+NOT DB_LeaderLib_Deltamods_Groups(_Group, _)
+THEN
+LeaderLib_Deltamods_Register_Group((STRING)_Group, 0);
+
+PROC
+LeaderLib_Deltamods_Add((STRING)_Group, (STRING)_Rarity, (STRING)_Deltamod, (INTEGER)_Chance, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
+THEN
+DB_LeaderLib_Deltamods_RegisteredDeltamods(_Group, _Rarity, _Deltamod, _Chance, _MinLevel, _MaxLevel);
+
+QRY
+LeaderLib_Deltamods_QRY_RaritySet((ITEMGUID)_Item)
+AND
+GetVarFixedString(_Item, "LeaderLib_Rarity", _Rarity)
+AND
+_Rarity != ""
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION APPLY_BY_GROUP
+PROC
+LeaderLib_Deltamods_ApplyDeltamodsByGroup((ITEMGUID)_Item, (STRING)_Group)
+AND
+LeaderLib_Deltamods_QRY_RaritySet(_Item)
+AND
+GetVarFixedString(_Item, "LeaderLib_Rarity", _Rarity)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Deltamods:ApplyDeltamodsByGroup] Attempting to apply deltamods with group [",_Group,"] to item with rarity [",_Rarity,"].");
+LeaderLib_Deltamods_Internal_ApplyDeltamodsByGroup(_Item, _Group, _Rarity);
+
+PROC
+LeaderLib_Deltamods_ApplyDeltamodsByGroup((ITEMGUID)_Item, (STRING)_Group)
+AND
+NOT LeaderLib_Deltamods_QRY_RaritySet(_Item)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Deltamods:ApplyDeltamodsByGroup[",_Group,"]] Item rarity not set. Fetching level and rarity.");
+DB_LeaderLib_Deltamods_Temp_WaitingForRarity(_Item, _Group);
+SetVarString(_Item, "LeaderLib_ItemVariablesSetEvent", "LeaderLib_Deltamods_VariablesSet");
+SetStoryEvent(_Item, "LeaderLib_Commands_SetItemVariables");
+
+IF
+StoryEvent((ITEMGUID)_Item, "LeaderLib_Deltamods_VariablesSet")
+AND
+DB_LeaderLib_Deltamods_Temp_WaitingForRarity(_Item, _Group)
+AND
+GetVarFixedString(_Item, "LeaderLib_Rarity", _Rarity)
+THEN
+NOT DB_LeaderLib_Deltamods_Temp_WaitingForRarity(_Item, _Group);
+LeaderLog_Log("DEBUG", "[LeaderLib:Deltamods:LeaderLib_Deltamods_VariablesSet[",_Group,"]] Item rarity is [",_Rarity,"]. Applying deltamod by group.");
+LeaderLib_Deltamods_Internal_ApplyDeltamodsByGroup(_Item, _Group, _Rarity);
+
+PROC
+LeaderLib_Deltamods_Internal_ApplyDeltamodsByGroup((ITEMGUID)_Item, (STRING)_Group, (STRING)_BaseRarity)
+AND
+DB_LeaderLib_Deltamods_Rarities(_BaseRarity, _AssociatedRarity)
+AND
+DB_LeaderLib_Deltamods_RegisteredDeltamods(_Group, _AssociatedRarity, _Deltamod, _Chance, _MinLevel, _MaxLevel)
+AND
+NOT LeaderLib_Helper_QRY_ItemHasDeltaModifier(_Item, _Deltamod)
+AND
+GetVarInteger(_Item, "LeaderLib_Level", _Level)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Deltamods:Internal:ApplyDeltamodsByGroup] Attempting to apply deltamod [",_Group,"][",_BaseRarity, " (", _AssociatedRarity,")][",_Deltamod,"] to item.");
+LeaderLib_Deltamods_Internal_ApplyDeltamod(_Item, _Deltamod, _Chance, _Level, _MinLevel, _MaxLevel);
+//END_REGION
+
+//REGION APPLYING_MODE
+/*
+PROC
+LeaderLib_Deltamods_ApplyDeltamodsByMode((ITEMGUID)_Item, (STRING)_Mode)
+AND
+LeaderLib_Deltamods_QRY_RaritySet(_Item)
+AND
+GetVarFixedString(_Item, "LeaderLib_Rarity", _Rarity)
+THEN
+LeaderLib_Deltamods_Internal_ApplyDeltamodsByMode(_Item, _Rarity, _Mode);
+
+PROC
+LeaderLib_Deltamods_ApplyDeltamodsByMode((ITEMGUID)_Item, (STRING)_Mode)
+AND
+NOT LeaderLib_Deltamods_QRY_RaritySet(_Item)
+THEN
+DB_LeaderLib_Deltamods_Temp_WaitingForRarity(_Item, _Mode);
+SetVarString(_Item, "LeaderLib_ItemVariablesSetEvent", "LeaderLib_Deltamods_VariablesSet");
+SetStoryEvent(_Item, "LeaderLib_Commands_SetItemVariables");
+
+IF
+StoryEvent((ITEMGUID)_Item, "LeaderLib_Deltamods_VariablesSet")
+AND
+DB_LeaderLib_Deltamods_Temp_WaitingForRarity(_Item, _Mode)
+AND
+GetVarFixedString(_Item, "LeaderLib_Rarity", _Rarity)
+THEN
+NOT DB_LeaderLib_Deltamods_Temp_WaitingForRarity(_Item, _Mode);
+LeaderLib_Deltamods_Internal_ApplyDeltamodsByMode(_Item, _Rarity, _Mode);
+
+PROC
+LeaderLib_Deltamods_Internal_ApplyDeltamodsByMode((ITEMGUID)_Item, (STRING)_BaseRarity, "Template")
+AND
+GetTemplate(_Item, _Template)
+AND
+DB_LeaderLib_Deltamods_Templates(_Group, _Template)
+AND
+DB_LeaderLib_Deltamods_Rarities(_BaseRarity, _AssociatedRarity)
+AND
+DB_LeaderLib_Deltamods_RegisteredDeltamods(_Group, _AssociatedRarity, _Deltamod, _Chance, _MinLevel, _MaxLevel)
+AND
+ItemHasDeltaModifier(_Item, _Deltamod, 0)
+AND
+GetVarInteger(_Item, "LeaderLib_Level", _Level)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Deltamods:Internal:ApplyDeltamodsByMode] Attempting to apply deltamod [",_Group,"][",_Rarity,"][",_Deltamod,"] to item.");
+LeaderLib_Deltamods_Internal_ApplyDeltamod(_Item, _Deltamod, _Chance, _Level, _MinLevel, _MaxLevel);
+*/
+//END_REGION
+
+//REGION FINALLY_APPLYING
+PROC
+LeaderLib_Deltamods_Internal_ApplyDeltamod((ITEMGUID)_Item, (STRING)_Deltamod, (INTEGER)_Chance, (INTEGER)_Level, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
+AND
+LeaderLib_Helper_QRY_LevelRangeMet(_Level, _MinLevel, _MaxLevel)
+AND
+LeaderLib_Random_QRY(999)
+AND
+DB_LeaderLib_Random(_Ran)
+AND
+LeaderLog_QRY_LogInt("DEBUG", "[LeaderLib:Deltamods:Internal:ApplyDeltamod] Roll [", _Ran, " / ", _Chance, "]")
+AND
+_Ran <= _Chance
+//AND
+//LeaderLib_Roll_QRY(_Chance, 999)
+THEN
+NOT DB_LeaderLib_Random(_Ran);
+LeaderLog_Log("DEBUG", "[LeaderLib:Deltamods:Internal:ApplyDeltamod] Applied deltamod [",_Deltamod,"] to item.");
+ItemAddDeltaModifier(_Item, _Deltamod);
+//END_REGION
+
+/*
+//REGION SCRIPT_TOGGLING
+IF
+GlobalFlagSet("LeaderLib_AutoApplyDeltamods")
+AND
+NOT SysIsActive("LeaderLib_01_Deltamods_1_AutoApplying")
+THEN
+SysActivateGoal("LeaderLib_01_Deltamods_1_AutoApplying");
+
+IF
+GlobalFlagCleared("LeaderLib_AutoApplyDeltamods")
+AND
+SysIsActive("LeaderLib_01_Deltamods_1_AutoApplying")
+THEN
+SysCompleteGoal("LeaderLib_01_Deltamods_1_AutoApplying");
+//END_REGION
+*/
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

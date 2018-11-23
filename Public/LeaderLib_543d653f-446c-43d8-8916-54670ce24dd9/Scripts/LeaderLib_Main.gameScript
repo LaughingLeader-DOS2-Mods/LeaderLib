@@ -354,20 +354,32 @@ THEN
 	*/
 ENDIF
 
-EVENT LeaderLib_Events_GetItemLevel
+EVENT LeaderLib_Events_SetItemVariables
 VARS
 	ITEM:_Item
 	FLOAT:_ItemLevel
 	INT:_ItemLevelVar
+	FIXEDSTRING:_Rarity
+	STRING:_CompletionEventName
 ON
-	OnItemEvent(_Item, "LeaderLib_Commands_GetItemLevel")
+	OnItemEvent(_Item, "LeaderLib_Commands_SetItemVariables")
 ACTIONS
 IF "c1"
 	ItemGetStat(_ItemLevel, _Item, Level)
 THEN
 	Cast(_ItemLevelVar, _ItemLevel)
-	SetVar(_Item, "LeaderLib_ItemLevel", _ItemLevelVar)
-	ItemEvent(_Item, "LeaderLib_Events_ItemLevelStored")
+	SetVar(_Item, "LeaderLib_Level", _ItemLevelVar)
+ENDIF
+IF "c1"
+	ItemGetItemType(_Item, _Rarity)
+THEN
+	SetVar(_Item, "LeaderLib_Rarity", _Rarity)
+ENDIF
+	ItemEvent(_Item, "LeaderLib_Events_ItemVariablesSet")
+IF "c1"
+	GetVar(_CompletionEventName, _Item, "LeaderLib_ItemVariablesSetEvent")
+THEN
+	ItemEvent(_Item, _CompletionEventName)
 ENDIF
 
 EVENT LeaderLib_Events_CharacterIterator

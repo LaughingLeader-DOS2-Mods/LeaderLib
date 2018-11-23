@@ -94,6 +94,49 @@ THEN
 DB_LeaderLib_Helper_Temp_StopIteratingForFlags(1);
 //END_REGION
 
+//REGION QUERY_LEVEL_RANGE
+QRY
+LeaderLib_Helper_QRY_LevelRangeMet((INTEGER)_Level, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
+AND
+LeaderLib_Helper_QRY_LevelIsGreaterThan(_Level, _MinLevel)
+AND
+LeaderLib_Helper_QRY_LevelIsLessThan(_Level, _MaxLevel)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_LevelIsLessThan((INTEGER)_Level, (INTEGER)_TargetLevel)
+AND
+_TargetLevel <= 0
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_LevelIsLessThan((INTEGER)_Level, (INTEGER)_TargetLevel)
+AND
+_TargetLevel > 0
+AND
+_Level < _TargetLevel
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_LevelIsGreaterThan((INTEGER)_Level, (INTEGER)_TargetLevel)
+AND
+_TargetLevel <= 0
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_LevelIsGreaterThan((INTEGER)_Level, (INTEGER)_TargetLevel)
+AND
+_TargetLevel > 0
+AND
+_Level > _TargetLevel
+THEN
+DB_NOOP(1);
+//END_REGION
+
 //REGION QUERY_LEVELS
 QRY
 LeaderLib_Helper_QRY_PartyMinLevelMet((INTEGER)_MinLevel)

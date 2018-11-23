@@ -433,6 +433,20 @@
                     <attribute id="V2" value="0.0155029" type="6" />
                 </node>
                 <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_DualShields_Lizards_C" type="22" />
+                    <attribute id="U1" value="0.968872" type="6" />
+                    <attribute id="U2" value="0.984253" type="6" />
+                    <attribute id="V1" value="0.0157471" type="6" />
+                    <attribute id="V2" value="0.0311279" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_DualShields_Lizards_D" type="22" />
+                    <attribute id="U1" value="0.953247" type="6" />
+                    <attribute id="U2" value="0.968628" type="6" />
+                    <attribute id="V1" value="0.0157471" type="6" />
+                    <attribute id="V2" value="0.0311279" type="6" />
+                </node>
+                <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Grimoire_Mimicry_A" type="22" />
                     <attribute id="U1" value="0.953247" type="6" />
                     <attribute id="U2" value="0.968628" type="6" />

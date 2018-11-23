@@ -454,6 +454,7 @@ DB_LeaderLib_EngineStatus("INSURFACE");
 DB_LeaderLib_EngineStatus("LEADERSHIP");
 DB_LeaderLib_EngineStatus("LYING");
 DB_LeaderLib_EngineStatus("MATERIAL");
+DB_LeaderLib_EngineStatus("POST_MAGIC_CONTROL");
 DB_LeaderLib_EngineStatus("POST_PHYS_CONTROL");
 DB_LeaderLib_EngineStatus("ROTATE");
 DB_LeaderLib_EngineStatus("SHACKLES_OF_PAIN");

@@ -81,13 +81,13 @@ ItemGetOwner(_Item, _Character)
 AND
 NOT DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character)
 AND
-NOT GetVarInteger(_Item, "LeaderLib_ItemLevel", _)
+NOT GetVarInteger(_Item, "LeaderLib_Level", _)
 AND
 CharacterGetLevel(_Character, _Level)
 THEN
 DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character);
 ItemLevelUpTo(_Item, _Level);
-SetVarInteger(_Item, "LeaderLib_ItemLevel", _Level);
+SetVarInteger(_Item, "LeaderLib_Level", _Level);
 CharacterItemSetEvent(_Character, _Item, "LeaderLib_Events_ItemLeveledUp");
 
 IF
@@ -97,7 +97,7 @@ ItemGetOwner(_Item, _Character)
 AND
 NOT DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character)
 AND
-GetVarInteger(_Item, "LeaderLib_ItemLevel", _ItemLevel)
+GetVarInteger(_Item, "LeaderLib_Level", _ItemLevel)
 AND
 CharacterGetLevel(_Character, _Level)
 AND
@@ -105,7 +105,7 @@ _ItemLevel < _Level
 THEN
 DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character);
 ItemLevelUpTo(_Item, _Level);
-SetVarInteger(_Item, "LeaderLib_ItemLevel", _Level);
+SetVarInteger(_Item, "LeaderLib_Level", _Level);
 CharacterItemSetEvent(_Character, _Item, "LeaderLib_Events_ItemLeveledUp");
 
 IF
@@ -117,7 +117,7 @@ CharacterGetLevel(_Character, _Level)
 THEN
 DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character);
 ItemLevelUpTo(_Item, _Level);
-SetVarInteger(_Item, "LeaderLib_ItemLevel", _Level);
+SetVarInteger(_Item, "LeaderLib_Level", _Level);
 CharacterItemSetEvent(_Character, _Item, "LeaderLib_Events_ItemLeveledUp");
 
 IF
@@ -192,7 +192,7 @@ NOT DB_LeaderLib_Growth_Items_Temp_AppliedDeltaMods(_Character, _Item);
 PROC
 LeaderLib_Growth_Items_ApplyDeltaMods((ITEMGUID)_Item)
 AND
-GetVarInteger(_Item, "LeaderLib_ItemLevel", _ItemLevel)
+GetVarInteger(_Item, "LeaderLib_Level", _ItemLevel)
 AND
 DB_LeaderLib_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, "Tag", _Tag)
 AND
@@ -208,7 +208,7 @@ ItemAddDeltaModifier(_Item, _DeltaMod);
 PROC
 LeaderLib_Growth_Items_ApplyDeltaMods((ITEMGUID)_Item)
 AND
-GetVarInteger(_Item, "LeaderLib_ItemLevel", _ItemLevel)
+GetVarInteger(_Item, "LeaderLib_Level", _ItemLevel)
 AND
 GetTemplate(_Item, _Template)
 AND

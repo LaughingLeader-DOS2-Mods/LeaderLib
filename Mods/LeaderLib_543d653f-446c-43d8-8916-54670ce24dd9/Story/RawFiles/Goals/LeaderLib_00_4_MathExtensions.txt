@@ -10,6 +10,104 @@ INITSECTION
 
 //DB_LeaderLib_Math_Temp_FactorialOperation(_Factor, _MultiplyBy, _Result)
 KBSECTION
+//REGION NORMALIZE
+
+//R = tMin + (X - oMin) * (tMax - tMin) / (oMax - oMin)
+/*
+tMin = _TargetRangeMin
+tMax = _TargetRangeMax
+oMin = _OriginalRangeMin
+oMax = _OriginalRangeMax
+X = _Input
+R = Result
+-----------
+Example:
+R = 0 + (596 - 0) * (2 - 0) / (999 - 0)
+R = 1184 / 999
+R = 1.185
+*/
+QRY
+LeaderLib_Math_QRY_NormalizeReal((REAL)_Input, (REAL)_TargetRangeMin, (REAL)_TargetRangeMax, (REAL)_OriginalRangeMin, (REAL)_OriginalRangeMax)
+THEN
+LeaderLib_Math_NormalizeReal(_Input, _TargetRangeMin, _TargetRangeMax, _OriginalRangeMin, _OriginalRangeMax);
+
+PROC
+LeaderLib_Math_NormalizeReal((REAL)_Input, (REAL)_TargetRangeMin, (REAL)_TargetRangeMax, (REAL)_OriginalRangeMin, (REAL)_OriginalRangeMax)
+AND
+RealSubtract(_Input, _OriginalRangeMin, _FirstGroup) // (X - oMin)
+AND
+RealSubtract(_TargetRangeMax, _TargetRangeMin, _SecondGroup) // (tMax - tMin)
+AND
+RealSubtract(_OriginalRangeMax, _OriginalRangeMin, _ThirdGroup) // (oMax - oMin)
+AND
+RealProduct(_FirstGroup, _SecondGroup, _LeftSide)
+AND
+RealDivide(_LeftSide, _ThirdGroup, _RightSide) 
+AND
+RealSum(_TargetRangeMin, _RightSide, _Result)
+THEN
+DB_LeaderLib_Math_NormalizeReal(_Input, _Result);
+
+QRY
+LeaderLib_Math_QRY_NormalizeInt((INTEGER)_Input, (INTEGER)_TargetRangeMin, (INTEGER)_TargetRangeMax, (INTEGER)_OriginalRangeMin, (INTEGER)_OriginalRangeMax)
+THEN
+LeaderLib_Math_NormalizeInt(_Input, _TargetRangeMin, _TargetRangeMax, _OriginalRangeMin, _OriginalRangeMax);
+
+PROC
+LeaderLib_Math_NormalizeInt((INTEGER)_Input, (INTEGER)_TargetRangeMin, (INTEGER)_TargetRangeMax, (INTEGER)_OriginalRangeMin, (INTEGER)_OriginalRangeMax)
+AND
+Real(_TargetRangeMin, _TargetRangeMinR)
+AND
+Real(_TargetRangeMax, _TargetRangeMaxR)
+AND
+Real(_OriginalRangeMin, _OriginalRangeMinR)
+AND
+Real(_OriginalRangeMax, _OriginalRangeMaxR)
+AND
+Real(_Input, _InputR)
+AND
+LeaderLib_Math_QRY_NormalizeReal(_InputR, _TargetRangeMinR, _TargetRangeMaxR, _OriginalRangeMinR, _OriginalRangeMaxR)
+AND
+DB_LeaderLib_Math_NormalizeReal(_InputR, _ResultR)
+AND
+Integer(_ResultR, _ResultInt)
+THEN
+NOT DB_LeaderLib_Math_NormalizeReal(_InputR, _ResultR);
+LeaderLib_Math_Normalize_Internal_Ceiling(_Input, _ResultR, _ResultInt);
+
+PROC
+LeaderLib_Math_Normalize_Internal_Ceiling((INTEGER)_Input, (REAL)_ResultR, (INTEGER)_ResultInt)
+AND
+Real(_ResultInt, _ResultIntR)
+AND
+_ResultIntR == _ResultR
+THEN
+DB_LeaderLib_Math_NormalizeInt(_Input, _ResultInt);
+
+PROC
+LeaderLib_Math_Normalize_Internal_Ceiling((INTEGER)_Input, (REAL)_ResultR, (INTEGER)_ResultInt)
+AND
+NOT DB_LeaderLib_Math_NormalizeInt(_Input, _)
+AND
+IntegerSum(_ResultInt, 1, _Result)
+THEN
+DB_LeaderLib_Math_NormalizeInt(_Input, _Result);
+
+PROC
+LeaderLib_Math_Normalize_ClearData()
+AND
+DB_LeaderLib_Math_NormalizeReal(_Input, _Result)
+THEN
+NOT DB_LeaderLib_Math_NormalizeReal(_Input, _Result);
+
+PROC
+LeaderLib_Math_Normalize_ClearData()
+AND
+DB_LeaderLib_Math_NormalizeInt(_Input, _Result)
+THEN
+NOT DB_LeaderLib_Math_NormalizeInt(_Input, _Result);
+//END_REGION
+
 //REGION POWER
 QRY
 LeaderLib_Math_QRY_Power((REAL)_Num, (INTEGER)_Power)

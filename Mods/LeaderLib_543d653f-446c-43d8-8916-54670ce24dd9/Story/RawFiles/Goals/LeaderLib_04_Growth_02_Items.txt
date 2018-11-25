@@ -224,7 +224,7 @@ ItemAddDeltaModifier(_Item, _DeltaMod);
 
 //REGION DELTAMOD_CHECK
 PROC
-LeaderLibGrowth_Items_CheckEquipmentForMissingDeltamods((CHARACTERGUID)_Character)
+LeaderLib_Growth_Items_CheckEquipmentForMissingDeltamods((CHARACTERGUID)_Character)
 AND
 DB_LeaderLib_EquipmentSlots(_Slot)
 AND

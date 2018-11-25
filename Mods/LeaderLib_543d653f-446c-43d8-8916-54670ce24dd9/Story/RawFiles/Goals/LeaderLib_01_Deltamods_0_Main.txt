@@ -21,31 +21,31 @@ DB_LeaderLib_Deltamods_Rarities("Unique", "Unique");
 
 DB_LeaderLib_Deltamods_Rarities("Uncommon", "Uncommon");
 DB_LeaderLib_Deltamods_Rarities("Uncommon", "Normal");
+DB_LeaderLib_Deltamods_Rarities("Uncommon", "NonEpic");
 DB_LeaderLib_Deltamods_Rarities("Uncommon", "RuneEmpty");
 
 DB_LeaderLib_Deltamods_Rarities("Rare", "Rare");
-DB_LeaderLib_Deltamods_Rarities("Rare", "Primary");
+DB_LeaderLib_Deltamods_Rarities("Rare", "Exceptional");
+DB_LeaderLib_Deltamods_Rarities("Rare", "NonLegendary");
+DB_LeaderLib_Deltamods_Rarities("Rare", "Normal");
+DB_LeaderLib_Deltamods_Rarities("Rare", "NonEpic");
 DB_LeaderLib_Deltamods_Rarities("Rare", "RuneEmpty");
 
 DB_LeaderLib_Deltamods_Rarities("Epic", "Epic");
-DB_LeaderLib_Deltamods_Rarities("Epic", "Legendary");
-DB_LeaderLib_Deltamods_Rarities("Epic", "Primary");
+DB_LeaderLib_Deltamods_Rarities("Epic", "Exceptional");
+DB_LeaderLib_Deltamods_Rarities("Epic", "NonLegendary");
 DB_LeaderLib_Deltamods_Rarities("Epic", "Normal");
 DB_LeaderLib_Deltamods_Rarities("Epic", "RuneEmpty");
 
 DB_LeaderLib_Deltamods_Rarities("Legendary", "Legendary");
-DB_LeaderLib_Deltamods_Rarities("Legendary", "Primary");
-DB_LeaderLib_Deltamods_Rarities("Legendary", "Large");
+DB_LeaderLib_Deltamods_Rarities("Legendary", "Exceptional");
 DB_LeaderLib_Deltamods_Rarities("Legendary", "Normal");
-DB_LeaderLib_Deltamods_Rarities("Legendary", "Small");
 DB_LeaderLib_Deltamods_Rarities("Legendary", "RuneEmpty");
 
 DB_LeaderLib_Deltamods_Rarities("Divine", "Divine");
 DB_LeaderLib_Deltamods_Rarities("Divine", "Legendary");
-DB_LeaderLib_Deltamods_Rarities("Divine", "Primary");
-DB_LeaderLib_Deltamods_Rarities("Divine", "Large");
+DB_LeaderLib_Deltamods_Rarities("Divine", "Exceptional");
 DB_LeaderLib_Deltamods_Rarities("Divine", "Normal");
-DB_LeaderLib_Deltamods_Rarities("Divine", "Small");
 DB_LeaderLib_Deltamods_Rarities("Divine", "RuneEmpty");
 //END_REGION
 
@@ -56,43 +56,53 @@ THEN
 DB_LeaderLib_Deltamods_Groups(_Group, _AutoApply);
 //LeaderLib_Deltamods_Internal_OnGroupRegistered(_AutoApply);
 
-/*
 PROC
-LeaderLib_Deltamods_Internal_OnGroupRegistered(1)
-THEN
-GlobalSetFlag("LeaderLib_AutoApplyDeltamods");
-
-PROC
-LeaderLib_Deltamods_Internal_OnGroupRegistered(0)
+LeaderLib_Deltamods_Register_MaxGuaranteedForGroup((STRING)_Group, (INTEGER)_TotalRolls)
 AND
-NOT DB_LeaderLib_Deltamods_Groups(_, 1)
+DB_LeaderLib_Deltamods_MaxGuaranteedDeltamods(_Group, _TotalRolls)
 THEN
-GlobalClearFlag("LeaderLib_AutoApplyDeltamods");
-*/
-
-/*
-PROC
-LeaderLib_Deltamods_Register_Template((STRING)_Group, (STRING)_Template)
-THEN
-DB_LeaderLib_Deltamods_Templates(_Group, _Template);
-*/
+NOT DB_LeaderLib_Deltamods_MaxGuaranteedDeltamods(_Group, _TotalRolls);
 
 PROC
-LeaderLib_Deltamods_Add((STRING)_Group, (STRING)_Rarity, (STRING)_Deltamod, (INTEGER)_Chance, (INTEGER)_MinLevel)
+LeaderLib_Deltamods_Register_MaxGuaranteedForGroup((STRING)_Group, (INTEGER)_TotalRolls)
 THEN
-LeaderLib_Deltamods_Add(_Group, _Rarity, _Deltamod, _Chance, _MinLevel, -1);
+DB_LeaderLib_Deltamods_MaxGuaranteedDeltamods(_Group, _TotalRolls);
+
+//These deltamods require a roll lower or equal to the chance specified (out of 999)
+PROC
+LeaderLib_Deltamods_Add_Chance((STRING)_Group, (STRING)_Rarity, (STRING)_Deltamod, (INTEGER)_Chance, (INTEGER)_MinLevel)
+THEN
+LeaderLib_Deltamods_Add_Chance(_Group, _Rarity, _Deltamod, _Chance, _MinLevel, -1);
 
 PROC
-LeaderLib_Deltamods_Add((STRING)_Group, (STRING)_Rarity, (STRING)_Deltamod, (INTEGER)_Chance, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
+LeaderLib_Deltamods_Add_Chance((STRING)_Group, (STRING)_Rarity, (STRING)_Deltamod, (INTEGER)_Chance, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
 AND
 NOT DB_LeaderLib_Deltamods_Groups(_Group, _)
 THEN
 LeaderLib_Deltamods_Register_Group((STRING)_Group, 0);
 
 PROC
-LeaderLib_Deltamods_Add((STRING)_Group, (STRING)_Rarity, (STRING)_Deltamod, (INTEGER)_Chance, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
+LeaderLib_Deltamods_Add_Chance((STRING)_Group, (STRING)_Rarity, (STRING)_Deltamod, (INTEGER)_Chance, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
 THEN
-DB_LeaderLib_Deltamods_RegisteredDeltamods(_Group, _Rarity, _Deltamod, _Chance, _MinLevel, _MaxLevel);
+DB_LeaderLib_Deltamods_WithChance(_Group, _Rarity, _Deltamod, _Chance, _MinLevel, _MaxLevel);
+
+//One or more of these deltamods are guaranteed, provided the rarity/level range fits.
+PROC
+LeaderLib_Deltamods_Add_List((STRING)_Group, (STRING)_Rarity, (STRING)_Deltamod, (INTEGER)_MinLevel)
+THEN
+LeaderLib_Deltamods_Add_List(_Group, _Rarity, _Deltamod, _MinLevel, -1);
+
+PROC
+LeaderLib_Deltamods_Add_List((STRING)_Group, (STRING)_Rarity, (STRING)_Deltamod, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
+AND
+NOT DB_LeaderLib_Deltamods_Groups(_Group, _)
+THEN
+LeaderLib_Deltamods_Register_Group((STRING)_Group, 0);
+
+PROC
+LeaderLib_Deltamods_Add_List((STRING)_Group, (STRING)_Rarity, (STRING)_Deltamod, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
+THEN
+DB_LeaderLib_Deltamods_List(_Group, _Rarity, _Deltamod, _MinLevel, _MaxLevel);
 
 QRY
 LeaderLib_Deltamods_QRY_RaritySet((ITEMGUID)_Item)
@@ -140,15 +150,58 @@ PROC
 LeaderLib_Deltamods_Internal_ApplyDeltamodsByGroup((ITEMGUID)_Item, (STRING)_Group, (STRING)_BaseRarity)
 AND
 DB_LeaderLib_Deltamods_Rarities(_BaseRarity, _AssociatedRarity)
+THEN
+LeaderLib_Deltamods_Internal_ApplyDeltamodsWithRarity(_Item, _Group, _AssociatedRarity);
+
+PROC
+LeaderLib_Deltamods_Internal_ApplyDeltamodsWithRarity((ITEMGUID)_Item, (STRING)_Group, (STRING)_Rarity)
 AND
-DB_LeaderLib_Deltamods_RegisteredDeltamods(_Group, _AssociatedRarity, _Deltamod, _Chance, _MinLevel, _MaxLevel)
+DB_LeaderLib_Deltamods_WithChance(_Group, _Rarity, _Deltamod, _Chance, _MinLevel, _MaxLevel)
 AND
 NOT LeaderLib_Helper_QRY_ItemHasDeltaModifier(_Item, _Deltamod)
 AND
 GetVarInteger(_Item, "LeaderLib_Level", _Level)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Deltamods:Internal:ApplyDeltamodsByGroup] Attempting to apply deltamod [",_Group,"][",_BaseRarity, " (", _AssociatedRarity,")][",_Deltamod,"] to item.");
-LeaderLib_Deltamods_Internal_ApplyDeltamod(_Item, _Deltamod, _Chance, _Level, _MinLevel, _MaxLevel);
+LeaderLog_Log("DEBUG", "[LeaderLib:Deltamods:Internal:ApplyDeltamodsWithRarity] Attempting to apply deltamod [",_Group,"][",_Rarity,"][",_Deltamod,"] to item.");
+LeaderLib_Deltamods_Internal_RollForDeltamod(_Item, _Deltamod, _Chance, _Level, _MinLevel, _MaxLevel);
+
+PROC
+LeaderLib_Deltamods_Internal_ApplyDeltamodsWithRarity((ITEMGUID)_Item, (STRING)_Group, (STRING)_Rarity)
+AND
+GetUUID(_Item, _ID)
+AND
+StringConcatenate("LeaderLib_Array_Deltamods_", _ID, _ArrayID)
+AND
+DB_LeaderLib_Deltamods_List(_Group, _Rarity, _Deltamod, _MinLevel, _MaxLevel)
+AND
+NOT LeaderLib_Helper_QRY_ItemHasDeltaModifier(_Item, _Deltamod)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Deltamods:Internal:ApplyDeltamodsWithRarity] Adding deltamod [",_Group,"][",_Rarity,"][",_Deltamod,"] to temporary list.");
+DB_LeaderLib_Deltamods_Temp_DeltamodList(_Item, _Group, _ArrayID, _Deltamod, _MinLevel, _MaxLevel);
+LeaderLib_Array_AddToArray(_ArrayID, _Deltamod);
+
+QRY
+LeaderLib_Deltamods_QRY_ListIsPopulated((ITEMGUID)_Item, (STRING)_Group)
+AND
+DB_LeaderLib_Deltamods_Temp_DeltamodList(_Item, _Group, _ArrayID, _Deltamod, _MinLevel, _MaxLevel)
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_Deltamods_Internal_ApplyDeltamodsByGroup((ITEMGUID)_Item, (STRING)_Group, (STRING)_BaseRarity)
+AND
+LeaderLib_Deltamods_QRY_ListIsPopulated(_Item, _Group)
+AND
+DB_LeaderLib_Deltamods_MaxGuaranteedDeltamods(_Group, _TotalRolls)
+AND
+GetUUID(_Item, _ID)
+AND
+StringConcatenate("LeaderLib_Array_Deltamods_", _ID, _ArrayID)
+AND
+GetVarInteger(_Item, "LeaderLib_Level", _Level)
+THEN
+DB_LeaderLib_Deltamods_Temp_RollingForDeltamods(_Item, _Group, _TotalRolls, _Level);
+LeaderLib_Deltamods_Internal_ApplyDeltamodsByList(_Item, _Group, _ArrayID, _TotalRolls, _Level);
 //END_REGION
 
 //REGION APPLYING_MODE
@@ -190,7 +243,7 @@ DB_LeaderLib_Deltamods_Templates(_Group, _Template)
 AND
 DB_LeaderLib_Deltamods_Rarities(_BaseRarity, _AssociatedRarity)
 AND
-DB_LeaderLib_Deltamods_RegisteredDeltamods(_Group, _AssociatedRarity, _Deltamod, _Chance, _MinLevel, _MaxLevel)
+DB_LeaderLib_Deltamods_WithChance(_Group, _AssociatedRarity, _Deltamod, _Chance, _MinLevel, _MaxLevel)
 AND
 ItemHasDeltaModifier(_Item, _Deltamod, 0)
 AND
@@ -203,7 +256,7 @@ LeaderLib_Deltamods_Internal_ApplyDeltamod(_Item, _Deltamod, _Chance, _Level, _M
 
 //REGION FINALLY_APPLYING
 PROC
-LeaderLib_Deltamods_Internal_ApplyDeltamod((ITEMGUID)_Item, (STRING)_Deltamod, (INTEGER)_Chance, (INTEGER)_Level, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
+LeaderLib_Deltamods_Internal_RollForDeltamod((ITEMGUID)_Item, (STRING)_Deltamod, (INTEGER)_Chance, (INTEGER)_Level, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)
 AND
 LeaderLib_Helper_QRY_LevelRangeMet(_Level, _MinLevel, _MaxLevel)
 AND
@@ -214,12 +267,89 @@ AND
 LeaderLog_QRY_LogInt("DEBUG", "[LeaderLib:Deltamods:Internal:ApplyDeltamod] Roll [", _Ran, " / ", _Chance, "]")
 AND
 _Ran <= _Chance
-//AND
-//LeaderLib_Roll_QRY(_Chance, 999)
 THEN
 NOT DB_LeaderLib_Random(_Ran);
 LeaderLog_Log("DEBUG", "[LeaderLib:Deltamods:Internal:ApplyDeltamod] Applied deltamod [",_Deltamod,"] to item.");
 ItemAddDeltaModifier(_Item, _Deltamod);
+
+PROC
+LeaderLib_Deltamods_Internal_ApplyDeltamodsByList((ITEMGUID)_Item, (STRING)_Group, (STRING)_ArrayID, (INTEGER)_TotalRolls, (INTEGER)_ItemLevel)
+AND
+_TotalRolls > 0
+AND
+DB_LeaderLib_Array_Length(_ArrayID, _Total)
+AND
+IntegerSubtract(_Total, 1, _LastIndex)
+AND
+LeaderLib_Random_QRY(999)
+AND
+DB_LeaderLib_Random(_Ran)
+AND
+LeaderLib_Math_QRY_NormalizeInt(_Ran, 0, _LastIndex, 0, 999)
+AND
+DB_LeaderLib_Math_NormalizeInt(_Ran, _Index)
+AND
+LeaderLog_QRY_LogInt("DEBUG", "[LeaderLib:Deltamods:Internal:ApplyDeltamodsByList] LastIndex [", _LastIndex, "] Total [", _Total, "]")
+AND
+LeaderLog_QRY_LogInt("DEBUG", "[LeaderLib:Deltamods:Internal:ApplyDeltamodsByList] Normalized int [", _Ran, "] = Index [", _Index, "]")
+AND
+DB_LeaderLib_Array_Data(_ArrayID, _Index, _Deltamod)
+AND
+DB_LeaderLib_Deltamods_Temp_DeltamodList(_Item, _Group, _ArrayID, _Deltamod, _MinLevel, _MaxLevel)
+AND
+LeaderLib_Helper_QRY_LevelRangeMet(_ItemLevel, _MinLevel, _MaxLevel)
+THEN
+NOT DB_LeaderLib_Random(_Ran);
+NOT DB_LeaderLib_Math_NormalizeInt(_Ran, _Index);
+NOT DB_LeaderLib_Deltamods_Temp_DeltamodList(_Item, _Group, _ArrayID, _Deltamod, _MinLevel, _MaxLevel);
+LeaderLib_Array_RemoveFromArray(_ArrayID, _Index, _Deltamod);
+LeaderLog_Log("DEBUG", "[LeaderLib:Deltamods:Internal:ApplyDeltamodsByList] Applied deltamod [",_Deltamod,"] to item.");
+ItemAddDeltaModifier(_Item, _Deltamod);
+
+PROC
+LeaderLib_Deltamods_Internal_ApplyDeltamodsByList((ITEMGUID)_Item, (STRING)_Group, (STRING)_ArrayID, (INTEGER)_TotalRolls, (INTEGER)_ItemLevel)
+AND
+DB_LeaderLib_Deltamods_Temp_RollingForDeltamods(_Item, _Group, _TotalRolls, _ItemLevel)
+AND
+IntegerSubtract(_TotalRolls, 1, _NextTotalRolls)
+THEN
+NOT DB_LeaderLib_Deltamods_Temp_RollingForDeltamods(_Item, _Group, _TotalRolls, _ItemLevel);
+DB_LeaderLib_Deltamods_Temp_RollingForDeltamods(_Item, _Group, _NextTotalRolls, _ItemLevel);
+LeaderLib_Deltamods_Internal_RollForNextInList(_Item, _Group, _ArrayID, _NextTotalRolls, _ItemLevel);
+
+PROC
+LeaderLib_Deltamods_Internal_RollForNextInList((ITEMGUID)_Item, (STRING)_Group, (STRING)_ArrayID, (INTEGER)_NextTotalRolls, (INTEGER)_ItemLevel)
+AND
+_NextTotalRolls > 0
+THEN
+LeaderLib_Deltamods_Internal_ApplyDeltamodsByList(_Item, _Group, _ArrayID, _NextTotalRolls, _ItemLevel);
+
+PROC
+LeaderLib_Deltamods_Internal_RollForNextInList((ITEMGUID)_Item, (STRING)_Group, (STRING)_ArrayID, (INTEGER)_NextTotalRolls, (INTEGER)_ItemLevel)
+AND
+_NextTotalRolls <= 0
+THEN
+LeaderLib_Deltamods_Internal_ClearDeltamodListData(_Item, _Group, _ArrayID);
+
+PROC
+LeaderLib_Deltamods_Internal_ClearDeltamodListData((ITEMGUID)_Item, (STRING)_Group, (STRING)_ArrayID)
+AND
+DB_LeaderLib_Deltamods_Temp_RollingForDeltamods(_Item, _Group, _TotalRolls, _ItemLevel)
+THEN
+NOT DB_LeaderLib_Deltamods_Temp_RollingForDeltamods(_Item, _Group, _TotalRolls, _ItemLevel);
+
+PROC
+LeaderLib_Deltamods_Internal_ClearDeltamodListData((ITEMGUID)_Item, (STRING)_Group, (STRING)_ArrayID)
+AND
+DB_LeaderLib_Deltamods_Temp_DeltamodList(_Item, _Group, _ArrayID, _Deltamod, _MinLevel, _MaxLevel)
+THEN
+NOT DB_LeaderLib_Deltamods_Temp_DeltamodList(_Item, _Group, _ArrayID, _Deltamod, _MinLevel, _MaxLevel);
+
+PROC
+LeaderLib_Deltamods_Internal_ClearDeltamodListData((ITEMGUID)_Item, (STRING)_Group, (STRING)_ArrayID)
+THEN
+LeaderLib_Array_ClearArray(_ArrayID);
+LeaderLib_Math_Normalize_ClearData();
 //END_REGION
 
 /*

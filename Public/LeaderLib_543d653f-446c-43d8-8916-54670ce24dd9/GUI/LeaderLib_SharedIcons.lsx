@@ -433,6 +433,41 @@
                     <attribute id="V2" value="0.0155029" type="6" />
                 </node>
                 <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_DualShields_Blackring_A" type="22" />
+                    <attribute id="U1" value="0.0313721" type="6" />
+                    <attribute id="U2" value="0.0467529" type="6" />
+                    <attribute id="V1" value="0.0313721" type="6" />
+                    <attribute id="V2" value="0.0467529" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_DualShields_Common_A" type="22" />
+                    <attribute id="U1" value="0.00012207" type="6" />
+                    <attribute id="U2" value="0.0155029" type="6" />
+                    <attribute id="V1" value="0.0313721" type="6" />
+                    <attribute id="V2" value="0.0467529" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_DualShields_Dwarves_A" type="22" />
+                    <attribute id="U1" value="0.0469971" type="6" />
+                    <attribute id="U2" value="0.0623779" type="6" />
+                    <attribute id="V1" value="0.0313721" type="6" />
+                    <attribute id="V2" value="0.0467529" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_DualShields_Elves_B" type="22" />
+                    <attribute id="U1" value="0.0157471" type="6" />
+                    <attribute id="U2" value="0.0311279" type="6" />
+                    <attribute id="V1" value="0.0313721" type="6" />
+                    <attribute id="V2" value="0.0467529" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_DualShields_Humans_A" type="22" />
+                    <attribute id="U1" value="0.984497" type="6" />
+                    <attribute id="U2" value="0.999878" type="6" />
+                    <attribute id="V1" value="0.0157471" type="6" />
+                    <attribute id="V2" value="0.0311279" type="6" />
+                </node>
+                <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_DualShields_Lizards_C" type="22" />
                     <attribute id="U1" value="0.968872" type="6" />
                     <attribute id="U2" value="0.984253" type="6" />

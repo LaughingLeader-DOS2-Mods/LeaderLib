@@ -510,6 +510,27 @@
                     <attribute id="V2" value="0.0311279" type="6" />
                 </node>
                 <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Katana_1H_A" type="22" />
+                    <attribute id="U1" value="0.187622" type="6" />
+                    <attribute id="U2" value="0.203003" type="6" />
+                    <attribute id="V1" value="0.0313721" type="6" />
+                    <attribute id="V2" value="0.0467529" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Katana_2H_A" type="22" />
+                    <attribute id="U1" value="0.203247" type="6" />
+                    <attribute id="U2" value="0.218628" type="6" />
+                    <attribute id="V1" value="0.0313721" type="6" />
+                    <attribute id="V2" value="0.0467529" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Katana_2H_Unique_Muramasa_A" type="22" />
+                    <attribute id="U1" value="0.218872" type="6" />
+                    <attribute id="U2" value="0.234253" type="6" />
+                    <attribute id="V1" value="0.0313721" type="6" />
+                    <attribute id="V2" value="0.0467529" type="6" />
+                </node>
+                <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Quarterstaff_Metal_A" type="22" />
                     <attribute id="U1" value="0.140747" type="6" />
                     <attribute id="U2" value="0.156128" type="6" />
@@ -522,6 +543,13 @@
                     <attribute id="U2" value="0.171753" type="6" />
                     <attribute id="V1" value="0.0157471" type="6" />
                     <attribute id="V2" value="0.0311279" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Quarterstaff_Unique_PowerPole" type="22" />
+                    <attribute id="U1" value="0.234497" type="6" />
+                    <attribute id="U2" value="0.249878" type="6" />
+                    <attribute id="V1" value="0.0313721" type="6" />
+                    <attribute id="V2" value="0.0467529" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Quarterstaff_Wood_A" type="22" />

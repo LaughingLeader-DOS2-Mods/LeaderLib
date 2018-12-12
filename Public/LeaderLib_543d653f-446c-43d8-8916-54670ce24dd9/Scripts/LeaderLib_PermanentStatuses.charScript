@@ -1,0 +1,184 @@
+INIT
+	CHARACTER:__Me
+	EXTERN STATUS:%LeaderLib_PermaStatus1 = DRUNK
+	EXTERN STATUS:%LeaderLib_PermaStatus2 = null
+	EXTERN STATUS:%LeaderLib_PermaStatus3 = null
+	EXTERN STATUS:%LeaderLib_PermaStatus4 = null
+	EXTERN STATUS:%LeaderLib_PermaStatus5 = null
+	EXTERN INT:%LeaderLib_PermaStatus_ForceOnInit=1
+	EXTERN INT:%LeaderLib_PermaStatus_ReApplyOnRemove=0
+	EXTERN INT:%LeaderLib_PermaStatus_RemoveOnCombat=0
+	
+	LIST<STATUS>:%LeaderLib_PermaStatus_Statuses
+	INT:%LeaderLib_PermaStatus_TimerActive=0
+	INT:%LeaderLib_PermaStatus_Applying=0
+EVENTS
+
+EVENT LeaderLib_PermaStatus_Init
+ON
+	OnInit()
+ACTIONS
+	ListClear(%LeaderLib_PermaStatus_Statuses)
+IF "!c1"
+	IsEqual(%LeaderLib_PermaStatus1, null)
+THEN
+	ListAdd(%LeaderLib_PermaStatus_Statuses, %LeaderLib_PermaStatus1)
+	SetPriority("LeaderLib_PermaStatus_OnStatusRemoved1", 99999)
+ENDIF
+IF "!c1"
+	IsEqual(%LeaderLib_PermaStatus2, null)
+THEN
+	ListAdd(%LeaderLib_PermaStatus_Statuses, %LeaderLib_PermaStatus2)
+	SetPriority("LeaderLib_PermaStatus_OnStatusRemoved2", 99998)
+ENDIF
+IF "!c1"
+	IsEqual(%LeaderLib_PermaStatus3, null)
+THEN
+	ListAdd(%LeaderLib_PermaStatus_Statuses, %LeaderLib_PermaStatus3)
+	SetPriority("LeaderLib_PermaStatus_OnStatusRemoved3", 99997)
+ENDIF
+IF "!c1"
+	IsEqual(%LeaderLib_PermaStatus4, null)
+THEN
+	ListAdd(%LeaderLib_PermaStatus_Statuses, %LeaderLib_PermaStatus4)
+	SetPriority("LeaderLib_PermaStatus_OnStatusRemoved4", 99996)
+ENDIF
+IF "!c1"
+	IsEqual(%LeaderLib_PermaStatus5, null)
+THEN
+	ListAdd(%LeaderLib_PermaStatus_Statuses, %LeaderLib_PermaStatus5)
+	SetPriority("LeaderLib_PermaStatus_OnStatusRemoved5", 99995)
+ENDIF
+IF "c1"
+	IsEqual(%LeaderLib_PermaStatus_ForceOnInit, 1)
+THEN
+	CharacterEvent(__Me, "LeaderLib_PermaStatus_ApplyPermanentStatuses")
+ENDIF
+
+EVENT LeaderLib_PermaStatus_ApplyStatuses
+VARS
+	INT:_Size
+	INT:_Index
+	STATUS:_Status
+ON
+	OnCharacterEvent(__Me, "LeaderLib_PermaStatus_ApplyPermanentStatuses")
+ACTIONS
+	StatusText(__Me, "Applying statuses")
+	Set(%LeaderLib_PermaStatus_Applying, 1)
+IF "c1&c2"
+	ListGetSize(%LeaderLib_PermaStatus_Statuses, _Size)
+	IsGreaterThen(_Size, 0)
+THEN
+	Set(_Index, 1)
+	WHILE "!c1"
+		IsGreaterThen(_Index, _Size)
+	DO
+		IF "c1"
+			ListGet(%LeaderLib_PermaStatus_Statuses, _Index, _Status)
+		THEN
+			CharacterApplyStatus(__Me, _Status, -1, %LeaderLib_PermaStatus_ForceOnInit, __Me)
+		ENDIF
+	Add(_Index, 1)
+	ENDWHILE
+ENDIF
+	Set(%LeaderLib_PermaStatus_Applying, 0)
+
+EVENT LeaderLib_PermaStatus_RemoveStatuses
+VARS
+	INT:_Size
+	INT:_Index
+	STATUS:_Status
+ON
+	OnCharacterEvent(__Me, "LeaderLib_PermaStatus_RemovePermanentStatuses")
+ACTIONS
+IF "c1&c2"
+	ListGetSize(%LeaderLib_PermaStatus_Statuses, _Size)
+	IsGreaterThen(_Size, 0)
+THEN
+	Set(_Index, 1)
+	WHILE "!c1"
+		IsGreaterThen(_Index, _Size)
+	DO
+		IF "c1"
+			ListGet(%LeaderLib_PermaStatus_Statuses, _Index, _Status)
+		THEN
+			CharacterRemoveStatus(__Me, _Status, null, 0)
+		ENDIF
+	Add(_Index, 1)
+	ENDWHILE
+ENDIF
+
+EVENT LeaderLib_PermaStatus_RemoveStatusOnCombat
+ON
+	OnEnteredCombat(__Me,_)
+ACTIONS
+	IF "!c1"
+		IsEqual(%LeaderLib_PermaStatus_RemoveOnCombat, 0)
+	THEN
+		CharacterEvent(__Me, "LeaderLib_PermaStatus_RemovePermanentStatuses")
+	ENDIF
+
+EVENT LeaderLib_PermaStatus_OnStatusRemoved_StartTimer
+ON
+	OnFunction("LeaderLib_PermaStatus_StartReapplyTimer")
+ACTIONS
+IF "c1&c2"
+	IsEqual(%LeaderLib_PermaStatus_TimerActive, 0)
+	IsEqual(%LeaderLib_PermaStatus_Applying, 0)
+THEN
+	IF "c1&(c2|(!c2&!c3))"
+		IsEqual(%LeaderLib_PermaStatus_ReApplyOnRemove, 1)
+		IsEqual(%LeaderLib_PermaStatus_RemoveOnCombat, 0)
+		IsInCombat(__Me)
+	THEN
+		Set(%LeaderLib_PermaStatus_TimerActive, 1)
+		StartTimer("LeaderLib_PermaStatus_Reapply", 0.5, 0)
+	ENDIF
+ENDIF
+
+EVENT LeaderLib_PermaStatus_ReapplyTimerDone
+ON
+	OnTimer("LeaderLib_PermaStatus_Reapply")
+ACTIONS
+	StopTimer("LeaderLib_PermaStatus_Reapply")
+	Set(%LeaderLib_PermaStatus_TimerActive, 0)
+	CharacterEvent(__Me, "LeaderLib_PermaStatus_ApplyPermanentStatuses")
+	
+BEHAVIOUR
+
+/* These reactions are only enabled if the status is not null.*/
+
+REACTION LeaderLib_PermaStatus_OnStatusRemoved1,0
+USAGE ALL
+CHECK "!c1"
+	CharacterHasStatus(__Me, %LeaderLib_PermaStatus1)
+ACTIONS
+	CallFunction("LeaderLib_PermaStatus_StartReapplyTimer")
+	
+REACTION LeaderLib_PermaStatus_OnStatusRemoved2,0
+USAGE ALL
+CHECK "!c1"
+	CharacterHasStatus(__Me, %LeaderLib_PermaStatus2)
+ACTIONS
+	CallFunction("LeaderLib_PermaStatus_StartReapplyTimer")
+	
+REACTION LeaderLib_PermaStatus_OnStatusRemoved3,0
+USAGE ALL
+CHECK "!c1"
+	CharacterHasStatus(__Me, %LeaderLib_PermaStatus3)
+ACTIONS
+	CallFunction("LeaderLib_PermaStatus_StartReapplyTimer")	
+	
+REACTION LeaderLib_PermaStatus_OnStatusRemoved4,0
+USAGE ALL
+CHECK "!c1"
+	CharacterHasStatus(__Me, %LeaderLib_PermaStatus4)
+ACTIONS
+	CallFunction("LeaderLib_PermaStatus_StartReapplyTimer")	
+	
+REACTION LeaderLib_PermaStatus_OnStatusRemoved5,0
+USAGE ALL
+CHECK "!c1"
+	CharacterHasStatus(__Me, %LeaderLib_PermaStatus5)
+ACTIONS
+	CallFunction("LeaderLib_PermaStatus_StartReapplyTimer")

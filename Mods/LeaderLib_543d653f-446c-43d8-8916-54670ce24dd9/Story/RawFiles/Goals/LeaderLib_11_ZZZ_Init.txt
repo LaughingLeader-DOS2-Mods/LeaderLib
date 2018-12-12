@@ -195,6 +195,8 @@ StoryEvent((CHARACTERGUID)_Player, "LeaderLib_Debug_AddPlayer")
 AND
 CharacterIsPlayer(_Player, 1)
 AND
+CharacterIsSummon(_Player, 0)
+AND
 NOT DB_IsPlayer(_Player)
 THEN
 DB_IsPlayer(_Player);

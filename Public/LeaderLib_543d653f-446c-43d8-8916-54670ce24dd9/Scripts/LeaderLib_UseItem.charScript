@@ -1,0 +1,40 @@
+INIT
+	CHARACTER:__Me
+	EXTERN FIXEDSTRING:%LeaderLib_UseItem_StatsMatch = ""
+	EXTERN FIXEDSTRING:%LeaderLib_UseItem_TagMatch = ""
+	EXTERN INT:%LeaderLib_UseItem_Equipped = 0
+	EXTERN FLOAT:%LeaderLib_UseItem_Timeout = 10.0
+EVENTS
+
+EVENT LeaderLib_UseItem_TimeoutStart
+ON
+    OnFunction("LeaderLib_UseItem_Timeout")
+ACTIONS
+    SetPriority("LeaderLib_UseItem_Check", 0)
+    StartTimer("LeaderLib_Timers_ResetItemUseTimeout", %LeaderLib_UseItem_Timeout, 0)
+
+EVENT LeaderLib_UseItem_ResetReaction
+ON
+    OnTimer("LeaderLib_Timers_ResetItemUseTimeout")
+ACTIONS
+    SetPriority("LeaderLib_UseItem_Check", 99999)
+
+BEHAVIOUR
+
+REACTION LeaderLib_UseItem_Check,99999
+VARS
+    ITEM:_Item
+USAGE ALL
+CHECK "c1&c2"
+    ItemGetFromInventory(_Item, __Me, %LeaderLib_UseItem_StatsMatch, %LeaderLib_UseItem_TagMatch, %LeaderLib_UseItem_Equipped)
+    CharacterCanUseItemInInventory(__Me, _Item)
+ACTIONS
+    CharacterUseItem(_Item)
+IF "c1"
+	IsGreaterThen(%LeaderLib_UseItem_Timeout, 0)
+THEN
+    CallFunction("LeaderLib_UseItem_Timeout")
+ENDIF
+INTERRUPT
+ACTIONS
+     Reset()

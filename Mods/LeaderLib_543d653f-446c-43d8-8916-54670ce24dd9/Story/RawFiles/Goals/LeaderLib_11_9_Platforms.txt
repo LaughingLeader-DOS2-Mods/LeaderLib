@@ -4,6 +4,25 @@ INITSECTION
 LeaderLib_Platforms_InitSettings();
 //DB_LeaderLib_Platforms(_ID, _Platform)
 KBSECTION
+//REGION SETTINGS
+PROC
+LeaderLib_Platforms_InitSettings()
+THEN
+SysClear("DB_LeaderLib_Platforms_Sizes", 2);
+DB_LeaderLib_Platforms_Sizes("Tiny", "S_LeaderLib_Platform_Tiny_794a3781-7937-43f1-9025-070615614725", 0);
+DB_LeaderLib_Platforms_Sizes("Small", "S_LeaderLib_Platform_Small_80416d7e-84d3-4551-92d2-b134f5d336e5", 1);
+DB_LeaderLib_Platforms_Sizes("Medium", "S_LeaderLib_Platform_Medium_288874ae-0c2f-4f67-8661-0ea001f49bf2", 2);
+DB_LeaderLib_Platforms_Sizes("Large", "S_LeaderLib_Platform_Large_81d0b457-3569-4c6b-bfbc-e954a768472a", 3);
+//END_REGION
+
+//REGION UPDATES
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, "1.1.8.0")
+THEN
+LeaderLog_Log("SYSTEM", "[LeaderLib:Platforms] Updating settings from version [",_PastVersion,"].");
+LeaderLib_Platforms_InitSettings();
+//END_REGION
+
 //REGION PLATFORM_CREATION
 PROC
 LeaderLib_Platforms_SpawnPlatform((STRING)_ID, (STRING)_Size, (INTEGER)_LifeTime, (GUIDSTRING)_Target)
@@ -21,6 +40,7 @@ CreateItemTemplateAtPosition(_Template, _x, _y, _z, _Platform)
 THEN
 DB_LeaderLib_Platforms(_ID, _Platform);
 LeaderLib_Platforms_Internal_StartPlatformTimer(_ID, _Platform, _LifeTime);
+LeaderLog_Log("DEBUG", "[LeaderLib:Platforms:SpawnPlatform] Spawned platform [",_ID,"] with size [",_Size,"].");
 
 QRY
 LeaderLib_Platforms_QRY_SpawnPlatform((STRING)_ID, (STRING)_Size, (INTEGER)_LifeTime, (GUIDSTRING)_Target)
@@ -68,7 +88,7 @@ LeaderLib_Platforms_SpawnPlatform_Random(_ID, _LifeTime, _x, _y, _z);
 PROC
 LeaderLib_Platforms_SpawnPlatform_Random((STRING)_ID, (INTEGER)_LifeTime, (GUIDSTRING)_Target)
 AND
-LeaderLib_Random_QRY(2)
+LeaderLib_Random_QRY(3)
 AND
 DB_LeaderLib_Random(_Index)
 AND
@@ -80,7 +100,7 @@ LeaderLib_Platforms_SpawnPlatform(_ID, _Size, _LifeTime, _Target);
 PROC
 LeaderLib_Platforms_SpawnPlatform_Random((STRING)_ID, (INTEGER)_LifeTime, (REAL)_x, (REAL)_y, (REAL)_z)
 AND
-LeaderLib_Random_QRY(2)
+LeaderLib_Random_QRY(3)
 AND
 DB_LeaderLib_Random(_Index)
 AND
@@ -88,6 +108,16 @@ DB_LeaderLib_Platforms_Sizes(_Size, _Template, _Index)
 THEN
 NOT DB_LeaderLib_Random(_Index);
 LeaderLib_Platforms_SpawnPlatform(_ID, _Size, _LifeTime, _x, _y, _z);
+
+PROC
+LeaderLib_Platforms_SpawnPlatform_Tiny((STRING)_ID, (INTEGER)_LifeTime, (GUIDSTRING)_Target)
+THEN
+LeaderLib_Platforms_SpawnPlatform(_ID, "Tiny", _LifeTime, _Target);
+
+PROC
+LeaderLib_Platforms_SpawnPlatform_Tiny((STRING)_ID, (INTEGER)_LifeTime, (REAL)_x, (REAL)_y, (REAL)_z)
+THEN
+LeaderLib_Platforms_SpawnPlatform(_ID, "Tiny", _LifeTime, _x, _y, _z);
 
 PROC
 LeaderLib_Platforms_SpawnPlatform_Small((STRING)_ID, (INTEGER)_LifeTime, (GUIDSTRING)_Target)
@@ -120,6 +150,123 @@ THEN
 LeaderLib_Platforms_SpawnPlatform(_ID, "Large", _LifeTime, _x, _y, _z);
 //END_REGION
 
+//REGION ELEVATOR
+PROC
+LeaderLib_Platforms_MoveObjectWithPlatform((GUIDSTRING)_Object, (ITEMGUID)_Platform, (STRING)_ID, (REAL)_TargetX, (REAL)_TargetY, (REAL)_TargetZ, (REAL)_Speed, (REAL)_Acceleration, (INTEGER)_TeleportSpeed, (STRING)_CompletionEvent, (INTEGER)_LifeTime, (INTEGER)_DoHits)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Platforms:MoveCharacterWithPlatform] Moving character with platform [",_ID,"].");
+LeaderLib_CancelObjectTimer(_Platform, "LeaderLib_Timers_RemovePlatform_");
+DB_LeaderLib_Platforms_Temp_ActiveMovement(_ID, _Object, _Platform, _TeleportSpeed, _CompletionEvent, _LifeTime);
+ProcObjectTimer(_Object, "LeaderLib_Timers_MoveWithPlatform_Teleport", _TeleportSpeed);
+ItemMoveToPosition(_Platform, _TargetX, _TargetY, _TargetZ, _Speed, _Acceleration, _CompletionEvent, _DoHits);
+
+PROC
+ProcObjectTimerFinished((GUIDSTRING)_Object, "LeaderLib_Timers_MoveWithPlatform_Teleport")
+AND
+DB_LeaderLib_Platforms_Temp_ActiveMovement(_ID, _Object, _Platform, _TeleportSpeed, _CompletionEvent, _LifeTime)
+AND
+GetPosition(_Platform, _x, _y, _z)
+THEN
+TeleportToPosition(_Object, _x, _y, _z, "", 0, 0);
+
+PROC
+ProcObjectTimerFinished((GUIDSTRING)_Object, "LeaderLib_Timers_MoveWithPlatform_Teleport")
+AND
+DB_LeaderLib_Platforms_Temp_ActiveMovement(_ID, _Object, _Platform, _TeleportSpeed, _CompletionEvent, _LifeTime)
+THEN
+ProcObjectTimer(_Object, "LeaderLib_Timers_MoveWithPlatform_Teleport", _TeleportSpeed);
+
+IF
+StoryEvent((ITEMGUID)_Platform, _CompletionEvent)
+AND
+DB_LeaderLib_Platforms_Temp_ActiveMovement(_ID, _Object, _Platform, _TeleportSpeed, _CompletionEvent, _LifeTime)
+AND
+GetPosition(_Platform, _x, _y, _z)
+THEN
+NOT DB_LeaderLib_Platforms_Temp_ActiveMovement(_ID, _Object, _Platform, _TeleportSpeed, _CompletionEvent, _LifeTime);
+ProcObjectTimerCancel(_Object, "LeaderLib_Timers_MoveWithPlatform_Teleport");
+TeleportToPosition(_Object, _x, _y, _z, "", 0, 0);
+LeaderLib_Platforms_Internal_StartPlatformTimer(_ID, _Platform, _LifeTime);
+LeaderLib_Platforms_OnMovementFinished(_Object, _Platform, _ID, _CompletionEvent);
+
+PROC
+LeaderLib_Platforms_OnMovementFinished((GUIDSTRING)_Object, (ITEMGUID)_Platform, (STRING)_ID, (STRING)_CompletionEvent)
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION LAUNCHING
+PROC
+LeaderLib_Platforms_Launch((GUIDSTRING)_Object, (STRING)_CompletionEvent, (REAL)_Height)
+THEN
+LeaderLib_Platforms_Launch(_Object, _CompletionEvent, _Height, 15.0, 1.0, 0);
+
+PROC
+LeaderLib_Platforms_Launch((GUIDSTRING)_Object, (STRING)_CompletionEvent, (REAL)_Height, (REAL)_LaunchAcceleration, (REAL)_GravityMult, (INTEGER)_Collision)
+AND
+GetPosition(_Object, _x, _y, _z)
+AND
+RealProduct(_Height, 0.9, _PreApex)
+AND
+RealSum(_y, _PreApex, _ty)
+AND
+RealDivide(_Height, _LaunchAcceleration, _A)
+AND
+RealProduct(_A, 8.0, _LaunchSpeed)
+AND
+GetUUID(_Object, _UUID)
+AND
+StringConcatenate("LeaderLib_Platforms_Launch_", _UUID, _ID)
+AND
+StringConcatenate("LeaderLib_Platforms_Launch_InitialMovement_", _UUID, _LaunchCompletionEvent)
+AND
+StringConcatenate("LeaderLib_Platforms_Launch_SlowUpwards_", _UUID, _SlowUpCompletionEvent)
+AND
+LeaderLib_Platforms_QRY_SpawnPlatform(_ID, "Tiny", 0, _Object)
+AND
+DB_LeaderLib_Platforms(_ID, _Platform)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Platforms:Launch] Launching character up into the air with completion event [",_CompletionEvent,"], and initial event [",_LaunchCompletionEvent,"].");
+DB_LeaderLib_Platforms_Temp_Launching(_Object, _ID, _x, _y, _z, _Height, _GravityMult, _Collision, _LaunchCompletionEvent, _SlowUpCompletionEvent, _CompletionEvent);
+LeaderLib_Platforms_MoveObjectWithPlatform(_Object, _Platform, _ID, _x, _ty, _z, _LaunchSpeed, _LaunchAcceleration, 1, _LaunchCompletionEvent, 0, _Collision);
+
+PROC
+LeaderLib_Platforms_OnMovementFinished((GUIDSTRING)_Object, (ITEMGUID)_Platform, (STRING)_ID, (STRING)_LaunchCompletionEvent)
+AND
+DB_LeaderLib_Platforms_Temp_Launching(_Object, _ID, _x, _y, _z, _Height, _GravityMult, _Collision, _LaunchCompletionEvent, _SlowUpCompletionEvent, _CompletionEvent)
+AND
+GetPosition(_Platform, _px, _py, _pz)
+AND
+RealSum(_y, _Height, _ty)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Platforms:Launch(OnMovementFinished)] Reaching the apex of the launch height. Slowing down. [",_SlowUpCompletionEvent,"].");
+LeaderLib_Platforms_MoveObjectWithPlatform(_Object, _Platform, _ID, _px, _ty, _pz, 8.0, -1.0, 1, _SlowUpCompletionEvent, 0, _Collision);
+
+PROC
+LeaderLib_Platforms_OnMovementFinished((GUIDSTRING)_Object, (ITEMGUID)_Platform, (STRING)_ID, (STRING)_SlowUpCompletionEvent)
+AND
+DB_LeaderLib_Platforms_Temp_Launching(_Object, _ID, _x, _y, _z, _Height, _GravityMult, _Collision, _LaunchCompletionEvent, _SlowUpCompletionEvent, _CompletionEvent)
+AND
+RealProduct(18.0, _GravityMult, _Gravity)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Platforms:Launch(OnMovementFinished)] Apex reached. Falling down. [",_CompletionEvent,"].");
+LeaderLib_Platforms_MoveObjectWithPlatform(_Object, _Platform, _ID, _x, _y, _z, 4.0, _Gravity, 1, _CompletionEvent, 0, _Collision);
+
+PROC
+LeaderLib_Platforms_OnMovementFinished((GUIDSTRING)_Object, (ITEMGUID)_Platform, (STRING)_ID, (STRING)_CompletionEvent)
+AND
+DB_LeaderLib_Platforms_Temp_Launching(_Object, _ID, _x, _y, _z, _Height, _GravityMult, _Collision, _LaunchCompletionEvent, _SlowUpCompletionEvent, _CompletionEvent)
+THEN
+NOT DB_LeaderLib_Platforms_Temp_Launching(_Object, _ID, _x, _y, _z, _Height, _GravityMult, _Collision, _LaunchCompletionEvent, _SlowUpCompletionEvent, _CompletionEvent);
+LeaderLib_Platforms_OnLaunchFinished(_Object, _CompletionEvent);
+LeaderLib_Platforms_RemovePlatform(_Platform);
+
+PROC
+LeaderLib_Platforms_OnLaunchFinished((GUIDSTRING)_Object, (STRING)_CompletionEvent)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Platforms:OnLaunchFinished] Launching done. [",_CompletionEvent,"].");
+//END_REGION
+
 //REGION CLEAR
 PROC
 LeaderLib_Platforms_RemovePlatform((ITEMGUID)_Platform)
@@ -128,16 +275,6 @@ DB_LeaderLib_Platforms(_ID, _Platform)
 THEN
 ItemRemove(_Platform);
 NOT DB_LeaderLib_Platforms(_ID, _Platform);
-//END_REGION
-
-//REGION SETTINGS
-PROC
-LeaderLib_Platforms_InitSettings()
-THEN
-SysClear("DB_LeaderLib_Platforms_Sizes", 2);
-DB_LeaderLib_Platforms_Sizes("Small", "S_LeaderLib_Platform_Small_80416d7e-84d3-4551-92d2-b134f5d336e5", 0);
-DB_LeaderLib_Platforms_Sizes("Medium", "S_LeaderLib_Platform_Medium_288874ae-0c2f-4f67-8661-0ea001f49bf2", 1);
-DB_LeaderLib_Platforms_Sizes("Large", "S_LeaderLib_Platform_Large_81d0b457-3569-4c6b-bfbc-e954a768472a", 2);
 //END_REGION
 EXITSECTION
 

@@ -133,6 +133,30 @@ THEN
 PlayEffectAtPosition(_EffectName, _x, _y, _z);
 //END_REGION
 
+//REGION SOUND
+IF
+TextEventSet("leaderlib_playsfx")
+AND
+GetTextEventParamUUID(1, _Sound)
+AND
+DB_IsPlayer(_Player)
+AND
+CharacterIsControlled(_Player, 1)
+THEN
+PlaySoundResource(_Player, _Sound);
+
+IF
+TextEventSet("leaderlib_playhudsfx")
+AND
+GetTextEventParamUUID(1, _Sound)
+AND
+DB_IsPlayer(_Player)
+AND
+CharacterIsControlled(_Player, 1)
+THEN
+CharacterPlayHUDSoundResource(_Player, _Sound);
+//END_REGION
+
 //REGION STATS_TEXT_EVENTS
 IF
 TextEventSet("leaderlib_addpoints")

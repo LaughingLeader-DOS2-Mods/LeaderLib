@@ -630,7 +630,7 @@ THEN
 DB_NOOP(1);
 //END_REGION
 
-//REGION CHARACTER_STATS
+//REGION CHARACTER_COPY
 PROC
 LeaderLib_Helper_CopyFaction((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
 AND
@@ -738,6 +738,126 @@ IF
 CharacterCharacterEvent((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom, "LeaderLib_Commands_CopyAttributes")
 THEN
 LeaderLib_Helper_CopyAttributes(_CopyTo, _CopyFrom);
+
+//END_REGION
+
+//REGION COPY_EQUIPMENT
+PROC
+LeaderLib_Helper_Blacklist_TemplateFromCopying((STRING)_Group, (STRING)_Template)
+THEN
+DB_LeaderLib_Helper_EquipmentCopyBlacklist_Templates(_Group, _Template);
+
+PROC
+LeaderLib_Helper_Blacklist_TagFromCopying((STRING)_Group, (STRING)_Tag)
+THEN
+DB_LeaderLib_Helper_EquipmentCopyBlacklist_Tags(_Group, _Tag);
+
+PROC
+LeaderLib_Helper_Blacklist_ClearGroup((STRING)_Group)
+AND
+DB_LeaderLib_Helper_EquipmentCopyBlacklist_Templates(_Group, _Template)
+THEN
+NOT DB_LeaderLib_Helper_EquipmentCopyBlacklist_Templates(_Group, _Template);
+
+PROC
+LeaderLib_Helper_Blacklist_ClearGroup((STRING)_Group)
+AND
+DB_LeaderLib_Helper_EquipmentCopyBlacklist_Tags(_Group, _Tag)
+THEN
+NOT DB_LeaderLib_Helper_EquipmentCopyBlacklist_Tags(_Group, _Tag);
+
+PROC
+LeaderLib_Helper_CopyEquipment((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
+AND
+GetPosition(_CopyFrom, _x, _y, _z)
+AND
+TemporaryCharacterCreateAtPosition(_x, _y, _z, "LeaderLib_SkillDummy_94668062-11ea-4ecf-807c-4cc225cbb236", 0, _Dummy)
+THEN
+LeaderLib_Helper_SetupDummy(_Dummy);
+CharacterTransformFromCharacter(_Dummy, _CopyFrom, 0, 0, 0, 1, 0, 0, 0);
+DB_LeaderLib_Helper_Temp_CopyEquipment(_CopyTo, _CopyFrom, _Dummy);
+ProcObjectTimer(_Dummy, "LeaderLib_Timers_CopyEquipment", 250);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Dummy, "LeaderLib_Timers_CopyEquipment")
+THEN
+ProcObjectTimer(_Dummy, "LeaderLib_Timers_CopyEquipmentDone", 250);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Dummy, "LeaderLib_Timers_CopyEquipment")
+AND
+DB_LeaderLib_EquipmentSlots(_Slot)
+AND
+CharacterGetEquippedItem(_Dummy, _Slot, (ITEMGUID)_Item)
+AND
+_Item != NULL_00000000-0000-0000-0000-000000000000
+AND
+GetTemplate(_Item, _Template)
+THEN
+LeaderLib_Helper_Internal_CheckItemForBlacklist(_Dummy, _Item, _Template);
+
+PROC
+LeaderLib_Helper_Internal_CheckItemForBlacklist((CHARACTERGUID)_Dummy, (ITEMGUID)_Item, (STRING)_Template)
+AND
+DB_LeaderLib_Helper_EquipmentCopyBlacklist_Templates(_Group, _Template)
+THEN
+ItemRemove(_Item);
+DB_LeaderLib_Helper_Temp_ItemBlacklisted(_Item);
+
+PROC
+LeaderLib_Helper_Internal_CheckItemForBlacklist((CHARACTERGUID)_Dummy, (ITEMGUID)_Item, (STRING)_Template)
+AND
+NOT DB_LeaderLib_Helper_Temp_ItemBlacklisted(_Item)
+AND
+DB_LeaderLib_Helper_EquipmentCopyBlacklist_Tags(_Group, _Tag)
+AND
+IsTagged(_Item, _Tag, 1)
+THEN
+ItemRemove(_Item);
+DB_LeaderLib_Helper_Temp_ItemBlacklisted(_Item);
+
+PROC
+LeaderLib_Helper_Internal_CheckItemForBlacklist((CHARACTERGUID)_Dummy, (ITEMGUID)_Item, (STRING)_Template)
+AND
+NOT DB_LeaderLib_Helper_Temp_ItemBlacklisted(_Item)
+THEN
+DB_LeaderLib_Helper_Temp_EquipmentCopy(_Dummy, _Item);
+
+PROC
+LeaderLib_Helper_Internal_CheckItemForBlacklist((CHARACTERGUID)_Dummy, (ITEMGUID)_Item, (STRING)_Template)
+AND
+DB_LeaderLib_Helper_Temp_ItemBlacklisted(_Item)
+THEN
+NOT DB_LeaderLib_Helper_Temp_ItemBlacklisted(_Item);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Dummy, "LeaderLib_Timers_CopyEquipmentDone")
+AND
+DB_LeaderLib_Helper_Temp_CopyEquipment(_CopyTo, _CopyFrom, _Dummy)
+THEN
+NOT DB_LeaderLib_Helper_Temp_CopyEquipment(_CopyTo, _CopyFrom, _Dummy);
+MoveAllItemsTo(_Dummy, _CopyTo, 1, 1, 1);
+LeaderLib_Helper_Internal_EquipCopiedEquipment(_CopyTo, _Dummy);
+LeaderLib_Helper_OnCopyEquipmentFinished(_CopyTo, _CopyFrom);
+ProcObjectTimer(_Dummy, "LeaderLib_Timers_CopyEquipment_RemoveDummy", 250);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Dummy, "LeaderLib_Timers_CopyEquipment_RemoveDummy")
+THEN
+RemoveTemporaryCharacter(_Dummy);
+
+PROC
+LeaderLib_Helper_Internal_EquipCopiedEquipment((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_Dummy)
+AND
+DB_LeaderLib_Helper_Temp_EquipmentCopy(_Dummy, _Item)
+THEN
+CharacterEquipItem(_CopyTo, _Item);
+NOT DB_LeaderLib_Helper_Temp_EquipmentCopy(_Dummy, _Item);
+
+PROC
+LeaderLib_Helper_OnCopyEquipmentFinished((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION TIMER_HELPERS

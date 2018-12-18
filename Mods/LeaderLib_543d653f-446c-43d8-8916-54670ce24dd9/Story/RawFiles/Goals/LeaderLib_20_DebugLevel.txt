@@ -635,6 +635,7 @@ CharacterRemoveFromParty(_LeaderTrader);
 //END_REGION
 
 //REGION COMBAT_RANDOM_TEST
+/*
 IF
 CombatStarted(_CombatID)
 AND
@@ -739,6 +740,7 @@ AND
 DB_LeaderLib_Debug_TestCombat(_)
 THEN
 DB_NOOP(1);
+*/
 //END_REGION
 
 //REGION LEVERS
@@ -1087,6 +1089,12 @@ GetTemplate(_Character, _Template)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Debug:Skills:SkillDeactivated] Skill [",_Skill,"] was deactivated by Character [",_Name,"](",_Template,").");
 //END_REGION
+
+IF
+RegionEnded("TestLevel_LL_LeaderLib")
+THEN
+GoalCompleted;
+SysActivateGoal("LeaderLib_20__Debug");
 
 EXITSECTION
 

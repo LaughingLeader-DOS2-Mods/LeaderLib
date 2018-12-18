@@ -240,6 +240,7 @@ AND
 RealSum(_y, _Height, _ty)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Platforms:Launch(OnMovementFinished)] Reaching the apex of the launch height. Slowing down. [",_SlowUpCompletionEvent,"].");
+LeaderLib_Platforms_OnPreApexReached(_Object, _CompletionEvent);
 LeaderLib_Platforms_MoveObjectWithPlatform(_Object, _Platform, _ID, _px, _ty, _pz, 8.0, -1.0, 1, _SlowUpCompletionEvent, 0, _Collision);
 
 PROC
@@ -250,6 +251,7 @@ AND
 RealProduct(18.0, _GravityMult, _Gravity)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Platforms:Launch(OnMovementFinished)] Apex reached. Falling down. [",_CompletionEvent,"].");
+LeaderLib_Platforms_OnApexReached(_Object, _CompletionEvent);
 LeaderLib_Platforms_MoveObjectWithPlatform(_Object, _Platform, _ID, _x, _y, _z, 4.0, _Gravity, 1, _CompletionEvent, 0, _Collision);
 
 PROC
@@ -260,6 +262,16 @@ THEN
 NOT DB_LeaderLib_Platforms_Temp_Launching(_Object, _ID, _x, _y, _z, _Height, _GravityMult, _Collision, _LaunchCompletionEvent, _SlowUpCompletionEvent, _CompletionEvent);
 LeaderLib_Platforms_OnLaunchFinished(_Object, _CompletionEvent);
 LeaderLib_Platforms_RemovePlatform(_Platform);
+
+PROC
+LeaderLib_Platforms_OnPreApexReached((GUIDSTRING)_Object, (STRING)_CompletionEvent)
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_Platforms_OnApexReached((GUIDSTRING)_Object, (STRING)_CompletionEvent)
+THEN
+DB_NOOP(1);
 
 PROC
 LeaderLib_Platforms_OnLaunchFinished((GUIDSTRING)_Object, (STRING)_CompletionEvent)

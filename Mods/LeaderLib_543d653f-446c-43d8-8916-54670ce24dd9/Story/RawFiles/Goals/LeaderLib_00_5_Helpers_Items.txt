@@ -113,6 +113,8 @@ AND
 DB_LeaderLib_EquipmentSlots(_Slot)
 AND
 CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
+AND
+_Item != NULL_00000000-0000-0000-0000-000000000000
 THEN
 CharacterUnequipItem(_Character, _Item);
 DB_LeaderLib_Helper_Temp_UnequippedItem(_Character, _Item);
@@ -123,6 +125,8 @@ AND
 DB_LeaderLib_EquipmentSlots(_Slot)
 AND
 CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
+AND
+_Item != NULL_00000000-0000-0000-0000-000000000000
 THEN
 CharacterUnequipItem(_Character, _Item);
 
@@ -131,16 +135,84 @@ StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Commands_RefreshEquipment")
 THEN
 LeaderLib_Helper_RefreshEquipment(_Character);
 
+IF
+CharacterItemEvent(_Character, _Item, "LeaderLib_Commands_EquipItem")
+AND
+ObjectExists(_Item, 1)
+AND
+CharacterIsDead(_Character, 0)
+AND
+ItemIsEquipable(_Item, 1)
+THEN
+LeaderLib_Helper_CanRefreshItem(_Character, _Item);
+LeaderLib_Helper_Internal_EquipItem(_Character, _Item);
+
+PROC
+LeaderLib_Helper_CanRefreshItem((CHARACTERGUID)_Character, (ITEMGUID)_Item)
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_Helper_Internal_EquipItem((CHARACTERGUID)_Character, (ITEMGUID)_Item)
+AND
+NOT DB_CustomUseItemResponse(_Character, _Item, 0)
+THEN
+CharacterEquipItem(_Character, _Item);
+
 PROC
 LeaderLib_Helper_RefreshEquipment((CHARACTERGUID)_Character)
 AND
 DB_LeaderLib_EquipmentSlots(_Slot)
 AND
 CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
+AND
+_Item != NULL_00000000-0000-0000-0000-000000000000
 THEN
 CharacterUnequipItem(_Character, _Item);
-//LeaderLib_StartCharacterItemTimer(_Character, _Item, 50, "LeaderLib_Timers_RefreshEquipment_EquipItem_", "LeaderLib_Commands_EquipItem");
-CharacterEquipItem(_Character, _Item);
+LeaderLib_Helper_CanRefreshItem(_Character, _Item);
+LeaderLib_Helper_Internal_EquipItem(_Character, _Item);
+
+PROC
+LeaderLib_Helper_RefreshWeapons((CHARACTERGUID)_Character)
+AND
+CharacterGetEquippedItem(_Character, "Weapon", (ITEMGUID)_Item)
+AND
+_Item != NULL_00000000-0000-0000-0000-000000000000
+THEN
+CharacterUnequipItem(_Character, _Item);
+LeaderLib_Helper_CanRefreshItem(_Character, _Item);
+LeaderLib_Helper_Internal_EquipItem(_Character, _Item);
+
+PROC
+LeaderLib_Helper_RefreshWeapons((CHARACTERGUID)_Character)
+AND
+CharacterGetEquippedItem(_Character, "Shield", (ITEMGUID)_Item)
+AND
+_Item != NULL_00000000-0000-0000-0000-000000000000
+THEN
+CharacterUnequipItem(_Character, _Item);
+LeaderLib_Helper_CanRefreshItem(_Character, _Item);
+LeaderLib_Helper_Internal_EquipItem(_Character, _Item);
+
+PROC
+LeaderLib_Helper_RefreshWeapons((CHARACTERGUID)_Character, (INTEGER)_Delay, (INTEGER)_OffhandDelay)
+AND
+CharacterGetEquippedItem(_Character, "Shield", (ITEMGUID)_Item)
+AND
+_Item != NULL_00000000-0000-0000-0000-000000000000
+THEN
+CharacterUnequipItem(_Character, _Item);
+LeaderLib_StartCharacterItemTimer(_Character, _Item, _OffhandDelay, "LeaderLib_Timers_RefreshWeapon_", "LeaderLib_Commands_EquipItem");
+
+PROC
+LeaderLib_Helper_RefreshWeapons((CHARACTERGUID)_Character, (INTEGER)_Delay, (INTEGER)_OffhandDelay)
+AND
+CharacterGetEquippedItem(_Character, "Weapon", (ITEMGUID)_Item)
+AND
+_Item != NULL_00000000-0000-0000-0000-000000000000
+THEN
+CharacterUnequipItem(_Character, _Item);
+LeaderLib_StartCharacterItemTimer(_Character, _Item, _Delay, "LeaderLib_Timers_RefreshWeapon_", "LeaderLib_Commands_EquipItem");
 
 PROC
 LeaderLib_Helper_UnequipWeapons((CHARACTERGUID)_Character)

@@ -121,6 +121,10 @@ DB_NOOP(1);
 IF
 CharacterJoinedParty(_Character)
 AND
+CharacterIsPartyFollower(_Character, 0)
+AND
+CharacterIsSummon(_Character, 0)
+AND
 NOT DB_LeaderLib_Temp_PartyCheck(_, _)
 AND
 DB_IsPlayer(_Player)

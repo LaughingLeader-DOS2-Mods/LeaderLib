@@ -8,6 +8,11 @@ PROC
 LeaderLib_Growth_Items_Register_DeltaMod((STRING)_ID, (INTEGER)_MinLevel, (STRING)_DeltaMod, (STRING)_MatchType, (STRING)_MatchValue)
 THEN
 DB_LeaderLib_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, _MatchType, _MatchValue);
+
+PROC
+LeaderLib_Growth_Items_Register_Template((STRING)_ID, (STRING)_Template)
+THEN
+DB_LeaderLib_Growth_Items_TemplateID(_ID, _Template);
 //END_REGION
 
 //REGION CLEARING
@@ -17,6 +22,13 @@ AND
 DB_LeaderLib_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, _MatchType, _MatchValue)
 THEN
 NOT DB_LeaderLib_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, _MatchType, _MatchValue);
+
+PROC
+LeaderLib_Growth_Items_Clear_Template((STRING)_ID)
+AND
+DB_LeaderLib_Growth_Items_TemplateID(_ID, _Template)
+THEN
+NOT DB_LeaderLib_Growth_Items_TemplateID(_ID, _Template);
 //END_REGION
 
 //REGION ITEM_AUTO_LEVEL
@@ -142,13 +154,35 @@ NOT DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character);
 
 //REGION DELTA_MODS
 QRY
+LeaderLib_Growth_Items_QRY_Internal_TemplateMatch((ITEMGUID)_Item, (STRING)_Template)
+AND
+DB_LeaderLib_Growth_Items_TemplateID(_ID, _Template)
+AND
+DB_LeaderLib_Growth_Items_DeltaMods(_GroupID, _MinLevel, _DeltaMod, "ID", _ID)
+AND
+NOT DB_LeaderLib_Growth_Items_Temp_TemplateMatch(_Item, _Template)
+THEN
+DB_LeaderLib_Growth_Items_Temp_TemplateMatch(_Item, _Template);
+
+QRY
+LeaderLib_Growth_Items_QRY_Internal_TemplateMatch((ITEMGUID)_Item, (STRING)_Template)
+AND
+NOT DB_LeaderLib_Growth_Items_Temp_TemplateMatch(_Item, _Template)
+AND
+DB_LeaderLib_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, "Template", _Template)
+AND
+NOT DB_LeaderLib_Growth_Items_Temp_TemplateMatch(_Item, _Template)
+THEN
+DB_LeaderLib_Growth_Items_Temp_TemplateMatch(_Item, _Template);
+
+QRY
 LeaderLib_Growth_Items_QRY_ItemHasDeltaMods((ITEMGUID)_Item)
 AND
 GetTemplate(_Item, _Template)
 AND
-DB_LeaderLib_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, "Template", _Template)
+LeaderLib_Growth_Items_QRY_Internal_TemplateMatch(_Item, _Template)
 THEN
-DB_NOOP(1);
+NOT DB_LeaderLib_Growth_Items_Temp_TemplateMatch(_Item, _Template);
 
 QRY
 LeaderLib_Growth_Items_QRY_ItemHasDeltaMods((ITEMGUID)_Item)
@@ -205,6 +239,41 @@ THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Growth_Items:ApplyDeltaMods] Added deltamod [",_DeltaMod,"] to item.");
 ItemAddDeltaModifier(_Item, _DeltaMod);
 
+QRY
+LeaderLib_Growth_Items_QRY_Internal_GetID((ITEMGUID)_Item)
+AND
+GetTemplate(_Item, _Template)
+AND
+DB_LeaderLib_Growth_Items_TemplateID(_ID, _Template)
+THEN
+DB_LeaderLib_Growth_Items_Temp_MatchedID(_Item, _ID);
+
+PROC
+LeaderLib_Growth_Items_ApplyDeltaMods((ITEMGUID)_Item)
+AND
+GetVarInteger(_Item, "LeaderLib_Level", _ItemLevel)
+AND
+LeaderLib_Growth_Items_QRY_Internal_GetID(_Item)
+AND
+DB_LeaderLib_Growth_Items_Temp_MatchedID(_Item, _ID)
+AND
+DB_LeaderLib_Growth_Items_DeltaMods(_GroupID, _MinLevel, _DeltaMod, "ID", _ID)
+AND
+_ItemLevel >= _MinLevel
+AND
+NOT LeaderLib_Helper_QRY_ItemHasDeltaModifier(_Item, _DeltaMod)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Growth_Items:ApplyDeltaMods] Added deltamod [",_DeltaMod,"] to item via matched ID [",_ID,"].");
+ItemAddDeltaModifier(_Item, _DeltaMod);
+
+PROC
+LeaderLib_Growth_Items_ApplyDeltaMods((ITEMGUID)_Item)
+AND
+DB_LeaderLib_Growth_Items_Temp_MatchedID(_Item, _ID)
+THEN
+NOT DB_LeaderLib_Growth_Items_Temp_MatchedID(_Item, _ID);
+
+//Old template method
 PROC
 LeaderLib_Growth_Items_ApplyDeltaMods((ITEMGUID)_Item)
 AND

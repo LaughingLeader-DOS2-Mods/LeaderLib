@@ -392,6 +392,7 @@ ObjectSetFlag(_Follower, "LeaderLib_CharacterIsFollowing");
 //END_REGION
 
 //REGION TELEPORT_EVENTS
+/*
 IF
 //CharacterTeleported(_Owner, _Cause, _oldX,_oldY,_oldZ,_x,_y,_z,_Skill)
 StoryEvent((CHARACTERGUID)_Owner, _Event)
@@ -401,6 +402,7 @@ THEN
 //TeleportTo(_Follower, _Owner, "", 1);
 //LeaderLog_Log("DEBUG", "[LeaderLib:FollowerSystem:Teleported] Owner teleported. Skill[",_Skill,"]");
 LeaderLog_Log("DEBUG", "[LeaderLib:FollowerSystem:Debug] Owner event fired: [",_Event,"]");
+*/
 //END_REGION
 EXITSECTION
 

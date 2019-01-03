@@ -1,0 +1,66 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_AutoPartyExperience", "LeaderLib_AutoBalancePartyExperience");
+
+KBSECTION
+
+//REGION REGISTERING
+PROC
+LeaderLib_ToggleScripts_Register_Script((STRING)_GoalTitle, (STRING)_GlobalFlag)
+THEN
+DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag);
+
+PROC
+LeaderLib_ToggleScripts_OnGoalRegistered((STRING)_GoalTitle, (STRING)_GlobalFlag)
+AND
+DB_GlobalFlag(_GlobalFlag)
+THEN
+SysActivateGoal(_GoalTitle);
+//END_REGION
+
+//REGION CLEARING
+PROC
+LeaderLib_ToggleScripts_Clear_ByGoal((STRING)_GoalTitle)
+AND
+DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag)
+THEN
+NOT DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag);
+LeaderLib_ToggleScripts_OnGoalCleared(_GoalTitle, _GlobalFlag);
+
+PROC
+LeaderLib_ToggleScripts_Clear_ByFlag((STRING)_GoalTitle)
+AND
+DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag)
+THEN
+NOT DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag);
+LeaderLib_ToggleScripts_OnGoalCleared(_GoalTitle, _GlobalFlag);
+
+PROC
+LeaderLib_ToggleScripts_OnGoalCleared((STRING)_GoalTitle, (STRING)_GlobalFlag)
+THEN
+SysCompleteGoal(_GoalTitle);
+//END_REGION
+
+//REGION TOGGLING_ON
+IF
+GlobalFlagSet(_GlobalFlag)
+AND
+DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag)
+THEN
+SysActivateGoal(_GoalTitle);
+//END_REGION
+
+//REGION TOGGLING_OFF
+IF
+GlobalFlagCleared(_GlobalFlag)
+AND
+DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag)
+THEN
+SysCompleteGoal(_GoalTitle);
+//END_REGION
+
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_11__Start"

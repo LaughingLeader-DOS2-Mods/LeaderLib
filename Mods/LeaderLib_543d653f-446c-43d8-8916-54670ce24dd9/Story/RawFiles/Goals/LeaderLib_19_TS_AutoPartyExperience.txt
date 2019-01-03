@@ -1,0 +1,69 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+//Fired via _GLOBAL_TutorialMessages when a player levels up
+PROC
+PROC_CheckPlayTut(_Player, "TUT_LevelUp")
+AND
+NOT DB_LeaderLib_AutoPartyExperience_Temp_TimerStarted(_)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:ToggledScripts:AutoPartyExperience] Player leveled up. Starting xp balancer.");
+DB_LeaderLib_AutoPartyExperience_Temp_TimerStarted(1);
+TimerCancel("LeaderLib_Timers_CheckPartyExperience");
+TimerLaunch("LeaderLib_Timers_CheckPartyExperience", 250);
+
+IF
+TimerFinished("LeaderLib_Timers_CheckPartyExperience")
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:ToggledScripts:AutoPartyExperience] Finding highest player level.");
+DB_LeaderLib_AutoPartyExperience_Temp_TargetLevel(0);
+IterateParties("LeaderLib_FindHighestPlayerLevel");
+TimerCancel("LeaderLib_Timers_BalancePartyExperience");
+TimerLaunch("LeaderLib_Timers_BalancePartyExperience", 250);
+
+IF
+StoryEvent((CHARACTERGUID)_Player, "LeaderLib_FindHighestPlayerLevel")
+AND
+DB_IsPlayer(_Player)
+AND
+DB_LeaderLib_AutoPartyExperience_Temp_TargetLevel(_TargetLevel)
+AND
+CharacterGetLevel(_Player, _Level)
+AND
+_Level > _TargetLevel
+THEN
+NOT DB_LeaderLib_AutoPartyExperience_Temp_TargetLevel(_TargetLevel);
+DB_LeaderLib_AutoPartyExperience_Temp_TargetLevel(_Level);
+
+IF
+TimerFinished("LeaderLib_Timers_BalancePartyExperience")
+AND
+DB_LeaderLib_AutoPartyExperience_Temp_TargetLevel(_TargetLevel)
+THEN
+LeaderLog_LogInt("DEBUG", "[LeaderLib:ToggledScripts:AutoPartyExperience] Highest player level is [",_TargetLevel,"]. Leveling up all players.");
+IterateParties("LeaderLib_Commands_LevelUpPlayers");
+TimerCancel("LeaderLib_Timers_ResetPartyExperienceValues");
+TimerLaunch("LeaderLib_Timers_ResetPartyExperienceValues", 1000);
+
+IF
+StoryEvent((CHARACTERGUID)_Player, "LeaderLib_Commands_LevelUpPlayers")
+AND
+DB_IsPlayer(_Player)
+AND
+DB_LeaderLib_AutoPartyExperience_Temp_TargetLevel(_TargetLevel)
+THEN
+CharacterLevelUpTo(_Player, _TargetLevel);
+
+IF
+TimerFinished("LeaderLib_Timers_ResetPartyExperienceValues")
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:ToggledScripts:AutoPartyExperience] Experience balancing finished.");
+SysClear("DB_LeaderLib_AutoPartyExperience_Temp_TimerStarted", 1);
+SysClear("DB_LeaderLib_AutoPartyExperience_Temp_TargetLevel", 1);
+
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

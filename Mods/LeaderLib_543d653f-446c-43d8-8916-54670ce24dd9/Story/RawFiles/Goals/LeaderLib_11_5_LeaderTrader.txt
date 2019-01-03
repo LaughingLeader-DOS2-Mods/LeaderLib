@@ -573,17 +573,17 @@ DB_LeaderLib_Traders_Active(_LeaderTrader, "LeaderLib.LeaderTrader", _Level)
 THEN
 DisplayText(_LeaderTrader, "Hrmph. Best to avoid trouble...");
 CharacterUseSkill(_LeaderTrader, "Shout_ChameleonSkin", _LeaderTrader, 0, 1, 1);
-TimerLaunch("LeaderLib_Timeers_LeaderTrader_TUTDisappear", 2000);
+TimerLaunch("LeaderLib_Timers_LeaderTrader_TUTDisappear", 2000);
 
 IF
-TimerFinished("LeaderLib_Timeers_LeaderTrader_TUTDisappear")
+TimerFinished("LeaderLib_Timers_LeaderTrader_TUTDisappear")
 AND
 DB_LeaderLib_Traders_Active(_LeaderTrader, "LeaderLib.LeaderTrader", "TUT_Tutorial_A")
 THEN
 NOT DB_LeaderLib_Traders_Active(_LeaderTrader, "LeaderLib.LeaderTrader", "TUT_Tutorial_A");
 
 IF
-TimerFinished("LeaderLib_Timeers_LeaderTrader_TUTDisappear")
+TimerFinished("LeaderLib_Timers_LeaderTrader_TUTDisappear")
 AND
 DB_LeaderLib_LeaderTrader(_LeaderTrader)
 THEN

@@ -233,8 +233,8 @@ AND
 IsTagged(_Item, _Tag, 1)
 AND
 _ItemLevel >= _MinLevel
-AND
-NOT LeaderLib_Helper_QRY_ItemHasDeltaModifier(_Item, _DeltaMod)
+//AND
+//NOT LeaderLib_Helper_QRY_ItemHasDeltaModifier(_Item, _DeltaMod)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Growth_Items:ApplyDeltaMods] Added deltamod [",_DeltaMod,"] to item.");
 ItemAddDeltaModifier(_Item, _DeltaMod);
@@ -260,8 +260,8 @@ AND
 DB_LeaderLib_Growth_Items_DeltaMods(_GroupID, _MinLevel, _DeltaMod, "ID", _ID)
 AND
 _ItemLevel >= _MinLevel
-AND
-NOT LeaderLib_Helper_QRY_ItemHasDeltaModifier(_Item, _DeltaMod)
+//AND
+//NOT LeaderLib_Helper_QRY_ItemHasDeltaModifier(_Item, _DeltaMod)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Growth_Items:ApplyDeltaMods] Added deltamod [",_DeltaMod,"] to item via matched ID [",_ID,"].");
 ItemAddDeltaModifier(_Item, _DeltaMod);
@@ -284,8 +284,8 @@ AND
 DB_LeaderLib_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, "Template", _Template)
 AND
 _ItemLevel >= _MinLevel
-AND
-NOT LeaderLib_Helper_QRY_ItemHasDeltaModifier(_Item, _DeltaMod)
+//AND
+//NOT LeaderLib_Helper_QRY_ItemHasDeltaModifier(_Item, _DeltaMod)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Growth_Items:ApplyDeltaMods] Added deltamod [",_DeltaMod,"] to item.");
 ItemAddDeltaModifier(_Item, _DeltaMod);

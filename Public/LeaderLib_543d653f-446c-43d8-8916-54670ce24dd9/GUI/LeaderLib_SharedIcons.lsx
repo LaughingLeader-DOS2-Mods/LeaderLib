@@ -580,6 +580,27 @@
                     <attribute id="V2" value="0.0311279" type="6" />
                 </node>
                 <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Rapier_Common_A" type="22" />
+                    <attribute id="U1" value="0.328247" type="6" />
+                    <attribute id="U2" value="0.343628" type="6" />
+                    <attribute id="V1" value="0.0313721" type="6" />
+                    <attribute id="V2" value="0.0467529" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Rapier_Common_B" type="22" />
+                    <attribute id="U1" value="0.343872" type="6" />
+                    <attribute id="U2" value="0.359253" type="6" />
+                    <attribute id="V1" value="0.0313721" type="6" />
+                    <attribute id="V2" value="0.0467529" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Rapier_Unique_Runeblade_Ice" type="22" />
+                    <attribute id="U1" value="0.359497" type="6" />
+                    <attribute id="U2" value="0.374878" type="6" />
+                    <attribute id="V1" value="0.0313721" type="6" />
+                    <attribute id="V2" value="0.0467529" type="6" />
+                </node>
+                <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Rock_A" type="22" />
                     <attribute id="U1" value="0.203247" type="6" />
                     <attribute id="U2" value="0.218628" type="6" />

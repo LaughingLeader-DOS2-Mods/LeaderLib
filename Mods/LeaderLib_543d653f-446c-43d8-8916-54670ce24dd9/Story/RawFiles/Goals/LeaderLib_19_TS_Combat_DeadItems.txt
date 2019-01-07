@@ -1,0 +1,24 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+
+IF
+ItemDestroyed(_Object)
+AND
+DB_CombatObjects(_Object, _CombatID)
+THEN
+DB_LeaderLib_Combat_DeadObjects(_CombatID, (GUIDSTRING)_Object);
+
+IF
+CharacterDestroyedItem(_Attacker, _Victim)
+AND
+DB_LeaderLib_Combat_ActiveObject(_CombatID, (GUIDSTRING)_Victim)
+THEN
+LeaderLib_Combat_AddCasualty(_CombatID, _Victim, _Attacker);
+
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

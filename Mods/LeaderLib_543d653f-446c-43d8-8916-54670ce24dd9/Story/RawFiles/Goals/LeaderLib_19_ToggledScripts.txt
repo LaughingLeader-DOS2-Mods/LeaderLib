@@ -12,8 +12,12 @@ NOT DB_LeaderLib_ToggleScripts_Initialized(_)
 THEN
 DB_LeaderLib_ToggleScripts_Initialized(1);
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_AutoPartyExperience", "LeaderLib_AutoBalancePartyExperience");
+
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_StatusEvents__Main", "LeaderLib_StatusEvents_MainScriptEnabled");
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_StatusEvents_Disables", "LeaderLib_StatusEvents_DisableScriptEnabled");
+
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Combat_DeadCharacters", "LeaderLib_Combat_TrackDeadCharacters");
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Combat_DeadItems", "LeaderLib_Combat_TrackDeadItems");
 
 //REGION REGISTERING
 PROC
@@ -100,16 +104,38 @@ NOT DB_LeaderLib_ToggleScripts_Temp_ActiveScripts("LeaderLib_AutoBalancePartyExp
 //REGION STATUS_EVENTS_MAIN
 PROC
 LeaderLib_ToggleScripts_DisableAllStatusEvents()
-THEN
-GlobalClearFlag("LeaderLib_StatusEvents_MainScriptEnabled");
-GlobalClearFlag("LeaderLib_StatusEvents_DisableScriptEnabled");
-
-IF
-GlobalFlagSet("LeaderLib_StatusEvents_DisableScriptEnabled")
 AND
-NOT DB_GlobalFlag("LeaderLib_StatusEvents_MainScriptEnabled")
+DB_LeaderLib_ToggleScripts_Temp_ActiveScripts("LeaderLib_StatusEvents_DisableScriptEnabled", _EnablingModID)
 THEN
-GlobalSetFlag("LeaderLib_StatusEvents_MainScriptEnabled");
+LeaderLib_ToggleScripts_DisableScript("LeaderLib_StatusEvents_DisableScriptEnabled", _EnablingModID);
+
+PROC
+LeaderLib_ToggleScripts_DisableAllStatusEvents()
+AND
+DB_LeaderLib_ToggleScripts_Temp_ActiveScripts("LeaderLib_StatusEvents_MainScriptEnabled", _EnablingModID)
+THEN
+LeaderLib_ToggleScripts_DisableScript("LeaderLib_StatusEvents_MainScriptEnabled", _EnablingModID);
+
+PROC
+LeaderLib_ToggleScripts_DisableAllStatusEvents((STRING)_EnablingModID)
+AND
+DB_LeaderLib_ToggleScripts_Temp_ActiveScripts("LeaderLib_StatusEvents_DisableScriptEnabled", _EnablingModID)
+THEN
+LeaderLib_ToggleScripts_DisableScript("LeaderLib_StatusEvents_DisableScriptEnabled", _EnablingModID);
+
+PROC
+LeaderLib_ToggleScripts_DisableAllStatusEvents((STRING)_EnablingModID)
+AND
+DB_LeaderLib_ToggleScripts_Temp_ActiveScripts("LeaderLib_StatusEvents_MainScriptEnabled", _EnablingModID)
+THEN
+LeaderLib_ToggleScripts_DisableScript("LeaderLib_StatusEvents_MainScriptEnabled", _EnablingModID);
+
+PROC
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_StatusEvents_DisableScriptEnabled", (STRING)_EnablingModID)
+AND
+NOT DB_LeaderLib_ToggleScripts_Temp_ActiveScripts("LeaderLib_StatusEvents_MainScriptEnabled", _EnablingModID)
+THEN
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_StatusEvents_MainScriptEnabled", _EnablingModID);
 //END_REGION
 
 //REGION TOGGLING_ON

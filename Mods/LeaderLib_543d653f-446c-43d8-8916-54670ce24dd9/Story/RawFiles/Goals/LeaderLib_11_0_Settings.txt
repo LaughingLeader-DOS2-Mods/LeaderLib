@@ -442,39 +442,56 @@ LeaderLib_Settings_InitStatusData()
 AND
 NOT DB_LeaderLib_EngineStatus(_)
 THEN
-DB_LeaderLib_EngineStatus("ATTACKOFOPP");
+//These are statuses with their own type
+DB_LeaderLib_EngineStatus("HIT");
 DB_LeaderLib_EngineStatus("CLIMBING");
 DB_LeaderLib_EngineStatus("DYING");
 DB_LeaderLib_EngineStatus("ENCUMBERED");
 DB_LeaderLib_EngineStatus("EXPLODE");
-DB_LeaderLib_EngineStatus("FALLING");
-DB_LeaderLib_EngineStatus("FLANKED");
-DB_LeaderLib_EngineStatus("HEAL");
 DB_LeaderLib_EngineStatus("HEALING");
-DB_LeaderLib_EngineStatus("HEAL_SHARING");
-DB_LeaderLib_EngineStatus("HEAL_SHARING_CASTER");
-DB_LeaderLib_EngineStatus("HIT");
+DB_LeaderLib_EngineStatus("FLANKED");
 DB_LeaderLib_EngineStatus("INSURFACE");
-DB_LeaderLib_EngineStatus("LEADERSHIP");
 DB_LeaderLib_EngineStatus("LYING");
 DB_LeaderLib_EngineStatus("MATERIAL");
-DB_LeaderLib_EngineStatus("POST_MAGIC_CONTROL");
-DB_LeaderLib_EngineStatus("POST_PHYS_CONTROL");
-DB_LeaderLib_EngineStatus("ROTATE");
-DB_LeaderLib_EngineStatus("SHACKLES_OF_PAIN");
+DB_LeaderLib_EngineStatus("POST_MAGIC_CONTROL"); // HEAL type
+DB_LeaderLib_EngineStatus("POST_PHYS_CONTROL"); // HEAL type
+//DB_LeaderLib_EngineStatus("SHACKLES_OF_PAIN");
 DB_LeaderLib_EngineStatus("SHACKLES_OF_PAIN_CASTER");
+DB_LeaderLib_EngineStatus("ROTATE");
 DB_LeaderLib_EngineStatus("SITTING");
 DB_LeaderLib_EngineStatus("SMELLY");
 DB_LeaderLib_EngineStatus("SNEAKING");
-DB_LeaderLib_EngineStatus("SOURCE_MUTED");
 DB_LeaderLib_EngineStatus("SPIRIT");
 DB_LeaderLib_EngineStatus("SPIRIT_VISION");
-DB_LeaderLib_EngineStatus("STORY_FROZEN");
+DB_LeaderLib_EngineStatus("SOURCE_MUTED");
 DB_LeaderLib_EngineStatus("SUMMONING");
 DB_LeaderLib_EngineStatus("TELEPORT_FALLING");
 DB_LeaderLib_EngineStatus("THROWN");
 DB_LeaderLib_EngineStatus("TUTORIAL_BED");
 DB_LeaderLib_EngineStatus("UNSHEATHED");
+
+//Auras to ignore, or aura statuses that can be resisted, and result in event spam
+PROC
+LeaderLib_Settings_InitStatusData()
+AND
+NOT DB_LeaderLib_AuraStatus("LeaderLib", _)
+THEN
+DB_LeaderLib_AuraStatus("LeaderLib", "HEAL_SHARING");
+DB_LeaderLib_AuraStatus("LeaderLib", "HEAL_SHARING_CASTER");
+DB_LeaderLib_AuraStatus("LeaderLib", "LEADERSHIP");
+DB_LeaderLib_AuraStatus("LeaderLib", "PROTECTION_CIRCLE");
+DB_LeaderLib_AuraStatus("LeaderLib", "FAVOURABLE_WIND");
+
+//AuraEnemies
+DB_LeaderLib_AuraStatus("LeaderLib", "QUEST_PAIN");
+/*
+DB_LeaderLib_AuraStatus("LeaderLib", "POISONED");
+DB_LeaderLib_AuraStatus("LeaderLib", "BLIND");
+DB_LeaderLib_AuraStatus("LeaderLib", "FEAR");
+DB_LeaderLib_AuraStatus("LeaderLib", "MUTED");
+DB_LeaderLib_AuraStatus("LeaderLib", "SUFFOCATING");
+DB_LeaderLib_AuraStatus("LeaderLib", "PETRIFIED");
+*/
 
 PROC
 LeaderLib_Settings_InitStatusData()
@@ -485,6 +502,7 @@ THEN
 DB_LeaderLib_DisableStatuses("LeaderLib", "CHICKEN");
 DB_LeaderLib_DisableStatuses("LeaderLib", "COW");
 DB_LeaderLib_DisableStatuses("LeaderLib", "MADNESS");
+DB_LeaderLib_DisableStatuses("LeaderLib", "STORY_FROZEN");
 DB_LeaderLib_DisableStatuses("LeaderLib", "TAUNTED");
 DB_LeaderLib_DisableStatuses("LeaderLib", "ZOMBIE_CHICKEN");
 
@@ -507,6 +525,7 @@ LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (S
 AND
 LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 9, 2)
 THEN
+SysClear("DB_LeaderLib_EngineStatus", 1);
 LeaderLib_Settings_InitStatusData();
 DB_NeutralTagIgnore("LeaderLib_Dummy");
 LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");

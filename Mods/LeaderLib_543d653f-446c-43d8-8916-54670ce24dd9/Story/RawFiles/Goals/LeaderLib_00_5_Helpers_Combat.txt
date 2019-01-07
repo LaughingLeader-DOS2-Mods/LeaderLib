@@ -149,57 +149,6 @@ PROC
 LeaderLib_Combat_AddCasualty((INTEGER)_CombatID, (GUIDSTRING)_Victim, (CHARACTERGUID)_AttackOwner)
 THEN
 DB_LeaderLib_Combat_Casualties(_CombatID, _Victim, _AttackOwner);
-
-IF
-CharacterDied(_Object)
-AND
-GlobalGetFlag("LeaderLib_Combat_TrackDeadObjects", 1)
-AND
-DB_CombatObjects(_Object, _CombatID)
-THEN
-DB_LeaderLib_Combat_DeadObjects(_CombatID, (GUIDSTRING)_Object);
-
-IF
-ItemDestroyed(_Object)
-AND
-GlobalGetFlag("LeaderLib_Combat_TrackDeadObjects", 1)
-AND
-DB_CombatObjects(_Object, _CombatID)
-THEN
-DB_LeaderLib_Combat_DeadObjects(_CombatID, (GUIDSTRING)_Object);
-
-IF
-CharacterKilledBy(_Victim, _AttackOwner, _Attacker)
-AND
-GlobalGetFlag("LeaderLib_Combat_TrackDeadObjects", 1)
-AND
-_Attacker != NULL_00000000-0000-0000-0000-000000000000
-AND
-DB_LeaderLib_Combat_ActiveObject(_CombatID, (GUIDSTRING)_Victim)
-THEN
-LeaderLib_Combat_AddCasualty(_CombatID, _Victim, _Attacker);
-
-IF
-CharacterKilledBy(_Victim, _AttackOwner, _Attacker)
-AND
-GlobalGetFlag("LeaderLib_Combat_TrackDeadObjects", 1)
-AND
-_AttackOwner != NULL_00000000-0000-0000-0000-000000000000
-AND
-DB_LeaderLib_Combat_ActiveObject(_CombatID, (GUIDSTRING)_Victim)
-AND
-NOT DB_LeaderLib_Combat_Casualties(_CombatID, _Victim, _AttackOwner)
-THEN
-LeaderLib_Combat_AddCasualty(_CombatID, _Victim, _AttackOwner);
-
-IF
-CharacterDestroyedItem(_Attacker, _Victim)
-AND
-GlobalGetFlag("LeaderLib_Combat_TrackDeadObjects", 1)
-AND
-DB_LeaderLib_Combat_ActiveObject(_CombatID, (GUIDSTRING)_Victim)
-THEN
-LeaderLib_Combat_AddCasualty(_CombatID, _Victim, _Attacker);
 //END_REGION
 
 //REGION QUERIES

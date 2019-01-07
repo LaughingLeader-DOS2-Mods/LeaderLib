@@ -6,9 +6,9 @@ KBSECTION
 PROC
 LeaderLib_StatusEvents_OnStatusApplied((CHARACTERGUID)_Character, (GUIDSTRING)_Cause, (STRING)_Status, (STRING)_Type)
 AND
-NOT DB_LeaderLib_StatusEvents_Temp_DisableMatch(_Character)
-AND
 DB_LeaderLib_DisablingStatusTypes(_Type)
+AND
+NOT DB_LeaderLib_StatusEvents_Temp_DisableMatch(_Character)
 THEN
 DB_LeaderLib_StatusEvents_Temp_DisableMatch(_Character);
 LeaderLib_StatusEvents_OnDisablingStatusApplied(_Character, _Cause, _Status, _Type);
@@ -19,15 +19,19 @@ AND
 NOT DB_LeaderLib_StatusEvents_Temp_DisableMatch(_Character)
 AND
 DB_LeaderLib_DisableStatuses(_Group, _Status)
+AND
+NOT DB_LeaderLib_StatusEvents_Temp_DisableMatch(_Character)
 THEN
 DB_LeaderLib_StatusEvents_Temp_DisableMatch(_Character);
 LeaderLib_StatusEvents_OnDisablingStatusApplied(_Character, _Cause, _Status, _Type);
 
 PROC
 LeaderLib_StatusEvents_OnDisablingStatusApplied((CHARACTERGUID)_Character, (GUIDSTRING)_Cause, (STRING)_Status, (STRING)_Type)
+AND
+DB_LeaderLib_StatusEvents_Temp_DisableMatch(_Character)
 THEN
 NOT DB_LeaderLib_StatusEvents_Temp_DisableMatch(_Character);
-LeaderLog_Log("DEBUG", "[LeaderLib:StatusEvents_Disables:OnDisablingStatusApplied] Status [",_Status,"](",_Type,") was applied to character.");
+//LeaderLog_Log("DEBUG", "[LeaderLib:StatusEvents_Disables:OnDisablingStatusApplied] Status [",_Status,"](",_Type,") was applied to character.");
 EXITSECTION
 
 ENDEXITSECTION

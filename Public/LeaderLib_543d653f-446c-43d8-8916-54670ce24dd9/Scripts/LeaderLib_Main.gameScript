@@ -16,6 +16,19 @@ INIT
 	CHARACTER:%LeaderLib_CreateByStat_Dummy = null
 EVENTS
 
+EVENT LeaderLib_CC_SelectedPreset
+VARS
+	CHARACTER:_Player
+	FIXEDSTRING:_Class
+ON
+	OnCharacterClassChanged(_Player, _Class)
+ACTIONS
+IF "!c1"
+	IsEqual(_Player, null)
+THEN
+	SetVar(_Player, "LeaderLib_CharacterCreationPreset", _Class)
+ENDIF
+
 EVENT LeaderLib_Events_AddTreasureTable
 VARS
 	CHARACTER:_Target

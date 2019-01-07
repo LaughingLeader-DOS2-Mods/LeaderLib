@@ -302,6 +302,8 @@ THEN
 CharacterMakeStoryNpc(_Dummy, _Invulnerable);
 SetVisible(_Dummy, _Visible);
 CharacterSetDetached(_Dummy, _Invulnerable);
+CharacterDisableAllCrimes(_Dummy);
+//SetTag(_Dummy, "ANIMAL");
 
 PROC
 LeaderLib_Skills_Internal_SetTargetDummyID("", (CHARACTERGUID)_Dummy)

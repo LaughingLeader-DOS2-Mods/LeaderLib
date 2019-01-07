@@ -48,6 +48,10 @@ DB_LLBARTER_DialogBlacklist("LeaderLib", "LeaderLib_ModMenu");
 DB_LLBARTER_DialogBlacklist("LeaderLib", "LeaderLib_SettingsMenu");
 DB_LLBARTER_DialogBlacklist("LeaderLib", "LeaderLib_AutosaveMenu");
 
+//Dummies
+//Crime stuff is ignored when something attacks a dummy
+DB_NeutralTagIgnore("LeaderLib_Dummy");
+
 LeaderLib_Settings_SettingsInitialized();
 
 PROC
@@ -474,6 +478,12 @@ DB_LeaderLib_EngineStatus("UNSHEATHED");
 //END_REGION
 
 //REGION UPDATES
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, "1.1.9.1")
+THEN
+DB_NeutralTagIgnore("LeaderLib_Dummy");
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Added [LeaderLib_Dummy] to DB_NeutralTagIgnore.");
+
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", "1.1.0.0", (STRING)_NewVersion)
 THEN

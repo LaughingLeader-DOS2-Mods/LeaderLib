@@ -16,10 +16,12 @@ INIT
 	CHARACTER:%LeaderLib_CreateByStat_Dummy = null
 EVENTS
 
-EVENT LeaderLib_CC_SelectedPreset
+/* This event doesn't seem to fire
+EVENT LeaderLib_CC_SelectedPresetChanged
 VARS
 	CHARACTER:_Player
 	FIXEDSTRING:_Class
+	STRING:_Str
 ON
 	OnCharacterClassChanged(_Player, _Class)
 ACTIONS
@@ -27,6 +29,26 @@ IF "!c1"
 	IsEqual(_Player, null)
 THEN
 	SetVar(_Player, "LeaderLib_CharacterCreationPreset", _Class)
+	
+	Print(_Str, "[LeaderLib:LeaderLib_Main:OnCharacterClassChanged] Selected preset is ([1]).", _Class)
+	SetVar(_Player, "LeaderLog_Message", _Str)
+	CharacterEvent(_Player, "LeaderLog_Commands_Log")
+ENDIF
+*/
+
+EVENT LeaderLib_CC_SetPreset
+VARS
+	CHARACTER:_Player
+	FIXEDSTRING:_Class
+ON
+	OnCharacterEvent(_Player, "LeaderLib_CC_SetPreset")
+ACTIONS
+IF "c1&c2"
+	CharacterInCreation(_Player, _)
+	CharacterGetCreationClass(_Player, _Class)
+THEN
+	SetVar(_Player, "LeaderLib_CharacterCreationPreset", _Class)
+	CharacterEvent(_Player, "LeaderLib_Events_OnPresetSet")
 ENDIF
 
 EVENT LeaderLib_Events_AddTreasureTable

@@ -1,9 +1,19 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_AutoPartyExperience", "LeaderLib_AutoBalancePartyExperience");
+LeaderLig_ToggleScripts_Internal_InitRegistration();
 
 KBSECTION
+
+PROC
+LeaderLig_ToggleScripts_Internal_InitRegistration()
+AND
+NOT DB_LeaderLib_ToggleScripts_Initialized(_)
+THEN
+DB_LeaderLib_ToggleScripts_Initialized(1);
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_AutoPartyExperience", "LeaderLib_AutoBalancePartyExperience");
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_StatusEvents__Main", "LeaderLib_StatusEvents_MainScriptEnabled");
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_StatusEvents_Disables", "LeaderLib_StatusEvents_DisableScriptEnabled");
 
 //REGION REGISTERING
 PROC
@@ -42,13 +52,76 @@ THEN
 SysCompleteGoal(_GoalTitle);
 //END_REGION
 
+//REGION ENABLING_DISABLING
+PROC
+LeaderLib_ToggleScripts_EnableScript((STRING)_GlobalFlag, (STRING)_EnablingModID)
+AND
+NOT DB_GlobalFlag(_GlobalFlag)
+THEN
+GlobalSetFlag(_GlobalFlag);
+
+PROC
+LeaderLib_ToggleScripts_EnableScript((STRING)_GlobalFlag, (STRING)_EnablingModID)
+THEN
+DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_GlobalFlag, _EnablingModID);
+
+PROC
+LeaderLib_ToggleScripts_DisableScript((STRING)_GlobalFlag, (STRING)_EnablingModID)
+AND
+DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_GlobalFlag, _EnablingModID)
+THEN
+NOT DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_GlobalFlag, _EnablingModID);
+
+//Only clear the flag if no other mods are using this script
+PROC
+LeaderLib_ToggleScripts_DisableScript((STRING)_GlobalFlag, (STRING)_EnablingModID)
+AND
+NOT DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_GlobalFlag, _)
+THEN
+GlobalClearFlag(_GlobalFlag);
+//END_REGION
+
+//REGION LEADERLIB_ENABLE_SCRIPT
+IF
+GlobalFlagSet("LeaderLib_AutoBalancePartyExperience")
+AND
+DB_DialogName("LeaderLib_SettingsMenu", _)
+THEN
+DB_LeaderLib_ToggleScripts_Temp_ActiveScripts("LeaderLib_AutoBalancePartyExperience", "LeaderLib");
+
+IF
+GlobalFlagCleared("LeaderLib_AutoBalancePartyExperience")
+AND
+DB_DialogName("LeaderLib_SettingsMenu", _)
+THEN
+NOT DB_LeaderLib_ToggleScripts_Temp_ActiveScripts("LeaderLib_AutoBalancePartyExperience", "LeaderLib");
+//END_REGION
+
+//REGION STATUS_EVENTS_MAIN
+PROC
+LeaderLib_ToggleScripts_DisableAllStatusEvents()
+THEN
+GlobalClearFlag("LeaderLib_StatusEvents_MainScriptEnabled");
+GlobalClearFlag("LeaderLib_StatusEvents_DisableScriptEnabled");
+
+IF
+GlobalFlagSet("LeaderLib_StatusEvents_DisableScriptEnabled")
+AND
+NOT DB_GlobalFlag("LeaderLib_StatusEvents_MainScriptEnabled")
+THEN
+GlobalSetFlag("LeaderLib_StatusEvents_MainScriptEnabled");
+//END_REGION
+
 //REGION TOGGLING_ON
 IF
 GlobalFlagSet(_GlobalFlag)
 AND
 DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag)
+AND
+NOT SysIsActive(_GoalTitle)
 THEN
 SysActivateGoal(_GoalTitle);
+LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:GlobalFlagSet] Global flag [",_GlobalFlag,"] was set. Activating goal [",_GoalTitle,"].");
 //END_REGION
 
 //REGION TOGGLING_OFF
@@ -56,11 +129,14 @@ IF
 GlobalFlagCleared(_GlobalFlag)
 AND
 DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag)
+AND
+SysIsActive(_GoalTitle)
 THEN
 SysCompleteGoal(_GoalTitle);
+LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:GlobalFlagCleared] Global flag [",_GlobalFlag,"] was cleared. Deactivating goal [",_GoalTitle,"].");
 //END_REGION
 
 EXITSECTION
 
 ENDEXITSECTION
-ParentTargetEdge "LeaderLib_11__Start"
+ParentTargetEdge "LaughingLeader__LeaderLib"

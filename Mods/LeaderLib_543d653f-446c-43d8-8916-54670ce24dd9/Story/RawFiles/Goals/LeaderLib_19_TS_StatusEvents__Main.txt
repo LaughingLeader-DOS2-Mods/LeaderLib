@@ -1,0 +1,38 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+IF
+CharacterStatusApplied(_Character, _Status, _)
+AND
+DB_LeaderLib_EngineStatus(_Status)
+THEN
+DB_LeaderLib_StatusEvents_Temp_Ignore(_Character);
+
+IF
+CharacterStatusApplied(_Character, _Status, _Cause)
+AND
+NOT DB_LeaderLib_StatusEvents_Temp_Ignore(_Character)
+AND
+GetStatusType(_Status, _Type)
+THEN
+LeaderLib_StatusEvents_OnStatusApplied(_Character, _Cause, _Status, _Type);
+
+PROC
+LeaderLib_StatusEvents_OnStatusApplied((CHARACTERGUID)_Character, (GUIDSTRING)_Cause, (STRING)_Status, (STRING)_Type)
+THEN
+DB_NOOP(1);
+LeaderLog_Log("DEBUG", "[LeaderLib:StatusEvents__Main:OnStatusApplied] Status [",_Status,"](",_Type,") was applied to character.");
+
+IF
+CharacterStatusApplied(_Character, _Status, _)
+AND
+DB_LeaderLib_StatusEvents_Temp_Ignore(_Character)
+THEN
+NOT DB_LeaderLib_StatusEvents_Temp_Ignore(_Character);
+
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

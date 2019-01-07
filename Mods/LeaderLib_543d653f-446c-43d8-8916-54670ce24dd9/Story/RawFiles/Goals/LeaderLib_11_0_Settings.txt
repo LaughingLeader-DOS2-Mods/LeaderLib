@@ -475,14 +475,41 @@ DB_LeaderLib_EngineStatus("TELEPORT_FALLING");
 DB_LeaderLib_EngineStatus("THROWN");
 DB_LeaderLib_EngineStatus("TUTORIAL_BED");
 DB_LeaderLib_EngineStatus("UNSHEATHED");
+
+PROC
+LeaderLib_Settings_InitStatusData()
+AND
+NOT DB_LeaderLib_DisableStatuses("LeaderLib", _)
+THEN
+//Statuses with LoseControl set to Yes
+DB_LeaderLib_DisableStatuses("LeaderLib", "CHICKEN");
+DB_LeaderLib_DisableStatuses("LeaderLib", "COW");
+DB_LeaderLib_DisableStatuses("LeaderLib", "MADNESS");
+DB_LeaderLib_DisableStatuses("LeaderLib", "TAUNTED");
+DB_LeaderLib_DisableStatuses("LeaderLib", "ZOMBIE_CHICKEN");
+
+PROC
+LeaderLib_Settings_InitStatusData()
+AND
+NOT DB_LeaderLib_DisablingStatusTypes(_)
+THEN
+DB_LeaderLib_DisablingStatusTypes("DEACTIVATED");
+DB_LeaderLib_DisablingStatusTypes("CHARMED");
+DB_LeaderLib_DisablingStatusTypes("FEAR");
+DB_LeaderLib_DisablingStatusTypes("INCAPACITATED");
+DB_LeaderLib_DisablingStatusTypes("KNOCKED_DOWN");
+DB_LeaderLib_DisablingStatusTypes("PLAY_DEAD");
 //END_REGION
 
 //REGION UPDATES
 PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, "1.1.9.1")
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 9, 2)
 THEN
+LeaderLib_Settings_InitStatusData();
 DB_NeutralTagIgnore("LeaderLib_Dummy");
-LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Added [LeaderLib_Dummy] to DB_NeutralTagIgnore.");
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
 
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", "1.1.0.0", (STRING)_NewVersion)

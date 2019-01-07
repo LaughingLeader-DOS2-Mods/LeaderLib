@@ -1,0 +1,34 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+PROC
+LeaderLib_StatusEvents_OnStatusApplied((CHARACTERGUID)_Character, (GUIDSTRING)_Cause, (STRING)_Status, (STRING)_Type)
+AND
+NOT DB_LeaderLib_StatusEvents_Temp_DisableMatch(_Character)
+AND
+DB_LeaderLib_DisablingStatusTypes(_Type)
+THEN
+DB_LeaderLib_StatusEvents_Temp_DisableMatch(_Character);
+LeaderLib_StatusEvents_OnDisablingStatusApplied(_Character, _Cause, _Status, _Type);
+
+PROC
+LeaderLib_StatusEvents_OnStatusApplied((CHARACTERGUID)_Character, (GUIDSTRING)_Cause, (STRING)_Status, (STRING)_Type)
+AND
+NOT DB_LeaderLib_StatusEvents_Temp_DisableMatch(_Character)
+AND
+DB_LeaderLib_DisableStatuses(_Group, _Status)
+THEN
+DB_LeaderLib_StatusEvents_Temp_DisableMatch(_Character);
+LeaderLib_StatusEvents_OnDisablingStatusApplied(_Character, _Cause, _Status, _Type);
+
+PROC
+LeaderLib_StatusEvents_OnDisablingStatusApplied((CHARACTERGUID)_Character, (GUIDSTRING)_Cause, (STRING)_Status, (STRING)_Type)
+THEN
+NOT DB_LeaderLib_StatusEvents_Temp_DisableMatch(_Character);
+LeaderLog_Log("DEBUG", "[LeaderLib:StatusEvents_Disables:OnDisablingStatusApplied] Status [",_Status,"](",_Type,") was applied to character.");
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

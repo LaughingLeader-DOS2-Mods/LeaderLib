@@ -62,8 +62,14 @@ NOT DB_LeaderLib_Skills_Temp_JustToggledSkillStatus(_Character, _Skill)
 AND
 HasActiveStatus(_Character, _Status, 0)
 THEN
-ApplyStatus(_Character, _Status, _Duration, 1);
+ApplyStatus(_Character, _Status, _Duration, 1, _Character);
+LeaderLib_Skills_OnStatusToggleApplied(_Character, _Skill, _Status);
 DB_LeaderLib_Skills_Temp_JustToggledSkillStatus(_Character, _Skill);
+
+PROC
+LeaderLib_Skills_OnStatusToggleApplied((CHARACTERGUID)_Character, (STRING)_Skill, (STRING)_Status)
+THEN
+DB_NOOP(1);
 
 PROC
 LeaderLib_Skills_Internal_ProcessStatusToggle((CHARACTERGUID)_Character, (STRING)_Skill, (STRING)_Status, (REAL)_Duration, (INTEGER)_Force)
@@ -75,7 +81,13 @@ AND
 HasActiveStatus(_Character, _Status, 1)
 THEN
 RemoveStatus(_Character, _Status);
+LeaderLib_Skills_OnStatusToggleRemoved(_Character, _Skill, _Status);
 DB_LeaderLib_Skills_Temp_JustToggledSkillStatus(_Character, _Skill);
+
+PROC
+LeaderLib_Skills_OnStatusToggleRemoved((CHARACTERGUID)_Character, (STRING)_Skill, (STRING)_Status)
+THEN
+DB_NOOP(1);
 
 //Clear
 PROC

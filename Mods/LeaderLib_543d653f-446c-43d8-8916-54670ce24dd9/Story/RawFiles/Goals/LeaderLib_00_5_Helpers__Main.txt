@@ -1124,6 +1124,17 @@ QRY
 LeaderLib_Helper_QRY_Internal_IsDamageStatus("DAMAGE_ON_MOVE")
 THEN
 DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_HasPermanentStatus((GUIDSTRING)_Object, (STRING)_Status)
+AND
+LeaderLib_Helper_QRY_HasStatus(_Object, _Status)
+AND
+GetStatusTurns(_Object, _Status, _Turns)
+AND
+_Turns == -1
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION QUERIES_MISC

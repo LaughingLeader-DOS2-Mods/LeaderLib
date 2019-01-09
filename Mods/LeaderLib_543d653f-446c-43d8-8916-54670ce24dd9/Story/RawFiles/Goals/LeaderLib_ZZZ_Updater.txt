@@ -19,10 +19,19 @@ LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Game started.");
 IF
 GameStarted(_,_)
 AND
-LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", "1.1.9.5")
+LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", "1.1.10.0")
 THEN
 LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Updating LeaderLib to latest version.");
-LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", "1.1.9.5");
+LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", "1.1.10.0");
+LeaderLib_SendEvent("LeaderLib_Events_Internal_OnUpdateSettings");
+
+IF
+TextEventSet("llupdatetest")
+AND
+LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", "9.9.9.9")
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Updater:DEBUG] Updating LeaderLib to latest version.");
+LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", "9.9.9.9");
 LeaderLib_SendEvent("LeaderLib_Events_Internal_OnUpdateSettings");
 //END_REGION
 

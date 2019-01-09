@@ -731,24 +731,30 @@ THEN
 DB_NOOP(1);
 //END_REGION
 
-//REGION ITEM_USE
+//REGION OPEN_MOD_MENU
 IF
-CharacterUsedItemTemplate(_Player, _ItemTemplate, _)
+CharacterUsedItemTemplate(_Player, "BOOK_LeaderLib_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108", _)
 AND
-DB_LeaderLib_Settings_ItemTemplates("Book_ModMenu", _ItemTemplate)
+NOT QRY_SpeakerIsAvailable(_Player)
 AND
 CharacterIsInCombat(_Player, 1)
 THEN
 CharacterStatusText(_Player, "<font color='#FF0000'>Unable to open Mod Settings menu in combat.</font>");
 
 IF
-CharacterUsedItemTemplate(_Player, _ItemTemplate, _Book)
+CharacterUsedItemTemplate(_Player, "BOOK_LeaderLib_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108", _Book)
 AND
-DB_LeaderLib_Settings_ItemTemplates("Book_ModMenu", _ItemTemplate)
-AND
-CharacterIsInCombat(_Player, 0)
+QRY_SpeakerIsAvailable(_Player)
 THEN
 Proc_StartDialog(0, "LeaderLib_ModMenu", _Book, _Player);
+
+IF
+CharacterUsedSkill(_Player, "Shout_LeaderLib_OpenModMenu", _, _)
+AND
+QRY_SpeakerIsAvailable(_Player)
+THEN
+Proc_StartDialog(0, "LeaderLib_ModMenu", _Player, _Player);
+
 //END_REGION
 EXITSECTION
 

@@ -408,7 +408,9 @@ LeaderLib_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 0);
 
 //REGION LEVEL_REQUIREMENT
 PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", "1.1.4.0", (STRING)_NewVersion)
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 4, 0)
 AND
 DB_LeaderLib_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel, _StrictMode)
 AND

@@ -531,7 +531,9 @@ DB_NeutralTagIgnore("LeaderLib_Dummy");
 LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
 
 PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", "1.1.0.0", (STRING)_NewVersion)
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 0, 0)
 THEN
 NOT DB_LeaderLib_SurfaceGroup("SurfaceBloodFrozen", "Standard");
 NOT DB_LeaderLib_SurfaceGroup("SurfaceBloodElectrified", "Standard");
@@ -675,6 +677,27 @@ DB_LeaderLib_Settings_ItemTemplates("Book_ModMenu", _ModMenuBookTemplate)
 THEN
 ItemTemplateAddTo(_ModMenuBookTemplate, _Object, 1, 1);
 //END_REGION
+
+//REGION COMMANDS
+IF
+ObjectFlagSet("LeaderLib_Commands_CheckTraders", (CHARACTERGUID)_Player, _)
+THEN
+ObjectClearFlag(_Player, "LeaderLib_Commands_CheckTraders");
+LeaderLib_Traders_Internal_StartCheckingTraders();
+
+IF
+ObjectFlagSet("LeaderLib_Commands_AddModMenuSkill", (CHARACTERGUID)_Player, _)
+THEN
+ObjectClearFlag(_Player, "LeaderLib_Commands_AddModMenuSkill");
+CharacterAddSkill(_Player, "Shout_LeaderLib_OpenModMenu", 1);
+
+IF
+ObjectFlagSet("LeaderLib_Commands_RemoveModMenuSkill", (CHARACTERGUID)_Player, _)
+THEN
+ObjectClearFlag(_Player, "LeaderLib_Commands_RemoveModMenuSkill");
+CharacterRemoveSkill(_Player, "Shout_LeaderLib_OpenModMenu");
+//END_REGION
+
 EXITSECTION
 
 ENDEXITSECTION

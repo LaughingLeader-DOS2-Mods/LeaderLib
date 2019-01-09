@@ -146,6 +146,7 @@ THEN
 SetVarInteger(_Character, "LeaderLib_PartyCount", _Count);
 LeaderLib_Party_OnCharacterJoinedParty(_Character, _Player, _Count);
 
+/*
 IF
 CharacterJoinedParty(_Character)
 AND
@@ -162,6 +163,7 @@ AND
 GetVarInteger(_Player, "LeaderLib_PartyCount", _Count)
 THEN
 SetVarInteger(_Player, "LeaderLib_PartyCount", _Count);
+*/
 
 PROC
 LeaderLib_Party_OnCharacterJoinedParty((CHARACTERGUID)_JoiningCharacter, (CHARACTERGUID)_PartyMember, (INTEGER)_PartyCount)

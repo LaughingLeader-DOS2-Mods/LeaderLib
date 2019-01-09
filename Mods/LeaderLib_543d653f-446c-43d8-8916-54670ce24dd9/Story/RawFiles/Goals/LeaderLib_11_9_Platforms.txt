@@ -17,7 +17,9 @@ DB_LeaderLib_Platforms_Sizes("Large", "S_LeaderLib_Platform_Large_81d0b457-3569-
 
 //REGION UPDATES
 PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, "1.1.8.0")
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 8, 0)
 THEN
 LeaderLog_Log("SYSTEM", "[LeaderLib:Platforms] Updating settings from version [",_PastVersion,"].");
 LeaderLib_Platforms_InitSettings();

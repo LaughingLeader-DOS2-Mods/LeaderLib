@@ -102,6 +102,13 @@ THEN
 DB_NOOP(1);
 
 QRY
+LeaderLib_Traders_QRY_LevelHasTrader((STRING)_Level)
+AND
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
+THEN
+DB_NOOP(1);
+
+QRY
 LeaderLib_Traders_QRY_IsTrader((CHARACTERGUID)_Trader)
 AND
 DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
@@ -119,6 +126,22 @@ QRY
 LeaderLib_Traders_QRY_IsTrader((CHARACTERGUID)_Trader)
 AND
 DB_LeaderLib_Traders_RegisteredGlobalTrader(_TraderID, _Trader)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Traders_QRY_CharacterTraderHasDialog((CHARACTERGUID)_Trader)
+AND
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
+AND
+DB_LeaderLib_Traders_Dialog(_TraderID, _Level, _Dialog, _RequirementID)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Traders_QRY_TraderHasDialog((STRING)_TradeID)
+AND
+DB_LeaderLib_Traders_Dialog(_TraderID, _Level, _Dialog, _RequirementID)
 THEN
 DB_NOOP(1);
 //END_REGION
@@ -1010,6 +1033,15 @@ LeaderLib_Treasure_GenerateOnNewlyRegistered(_Trader, _TreasureID);
 
 //REGION CHECKING_ACTIVE_TRADERS
 IF
+SavegameLoaded(_,_,_,_)
+AND
+DB_CurrentLevel(_Level)
+AND
+LeaderLib_Traders_QRY_LevelHasTrader(_Level)
+THEN
+LeaderLib_Traders_Internal_StartCheckingTraders();
+
+IF
 StoryEvent(_, "LeaderLib_Commands_CheckTraders")
 THEN
 LeaderLib_Traders_Internal_StartCheckingTraders();
@@ -1060,6 +1092,34 @@ AND
 NOT LeaderLib_Requirements_QRY_AllMet(_RequirementID)
 THEN
 LeaderLib_Traders_SetDialogToFirstAvailable(_Trader, _TraderID, _Level);
+DB_LeaderLib_Traders_Temp_SettingDialog(_Trader);
+
+PROC
+LeaderLib_Traders_CheckTrader((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
+AND
+NOT DB_LeaderLib_Traders_Temp_SettingDialog(_Trader)
+AND
+NOT DB_Dialogs(_Trader, _)
+AND
+LeaderLib_Traders_QRY_TraderHasDialog(_TraderID)
+THEN
+LeaderLib_Traders_SetDialogToFirstAvailable(_Trader, _TraderID, _Level);
+DB_LeaderLib_Traders_Temp_SettingDialog(_Trader);
+
+PROC
+LeaderLib_Traders_CheckTrader((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
+AND
+DB_LeaderLib_Traders_Temp_SettingDialog(_Trader)
+THEN
+NOT DB_LeaderLib_Traders_Temp_SettingDialog(_Trader);
+
+//Existing saves where LeaderLib was disabled
+PROC
+LeaderLib_Traders_CheckTrader((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
+AND
+DB_Dialogs(_Trader, _Dialog)
+THEN
+SetHasDialog(_Trader, 1);
 
 IF
 StoryEvent(_, "LeaderLib_Events_OnCheckTraderQueueComplete")

@@ -431,14 +431,19 @@ QRY
 LeaderLib_Helper_QRY_ClearGlobalFlag((STRING)_Flag)
 THEN
 GlobalClearFlag(_Flag);
+
+QRY
+LeaderLib_Helper_QRY_SetGlobalFlag((STRING)_Flag)
+THEN
+GlobalSetFlag(_Flag);
 //END_REGION
 
 //REGION RANDOM
 PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, "1.1.1.0")
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND
-//LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 1, 0)
-//AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 1, 0)
+AND
 DB_LeaderLib_Random_Seed(_Seed)
 THEN
 NOT DB_LeaderLib_Random_Seed(_Seed);

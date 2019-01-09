@@ -14,6 +14,7 @@ Editor/Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Levels/*
 *.raw
 Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/Dialogs/Recovered/*
 Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/Dialogs/Autosave/*
+story.debugInfo
 
 #Assets
 ######################*
@@ -26,6 +27,7 @@ StatsEditorConfig.xml
 EffectEditorConfig.xml
 DockPanel.config
 EditorBrowserMetadata.*
+ReConHistory.txt
 
 #Assets
 ######################
@@ -102,4 +104,3 @@ personallog.txt
 .Trashes
 ehthumbs.db
 Thumbs.db
-Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/story.debugInfo

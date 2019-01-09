@@ -49,6 +49,35 @@ AND
 NOT GlobalGetFlag("LeaderLib_AddedInitialModMenuBooks", 1)
 THEN
 GlobalSetFlag("LeaderLib_AddedInitialModMenuBooks");
+
+IF
+StoryEvent(_, "LeaderLib_Initialized")
+AND
+DB_CurrentLevel(_Level)
+AND
+IsGameLevel(_Level, 1)
+AND
+NOT DB_GlobalFlag("LeaderLib_AddedInitialModMenuSkills")
+THEN
+GlobalSetFlag("LeaderLib_AddedInitialModMenuSkills");
+LeaderLib_Settings_AddModMenuSkillToParty();
+
+PROC
+LeaderLib_Settings_AddModMenuSkillToParty()
+AND
+DB_IsPlayer(_Player)
+THEN
+CharacterRemoveSkill(_Player, "Shout_LeaderLib_OpenModMenu");
+CharacterAddSkill(_Player, "Shout_LeaderLib_OpenModMenu", 0);
+ObjectSetFlag(_Player, "LeaderLib_ModMenuSkillWasAdded");
+
+PROC
+LeaderLib_Party_OnCharacterJoinedParty((CHARACTERGUID)_JoiningCharacter, (CHARACTERGUID)_PartyMember, (INTEGER)_PartyCount)
+AND
+ObjectGetFlag(_JoiningCharacter, "LeaderLib_ModMenuSkillWasAdded", 0)
+THEN
+CharacterAddSkill(_JoiningCharacter, "Shout_LeaderLib_OpenModMenu", 0);
+ObjectSetFlag(_JoiningCharacter, "LeaderLib_ModMenuSkillWasAdded");
 //END_REGION
 
 //REGION INITIAL_REQUIREMENT_UNLOCKING

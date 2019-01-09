@@ -13,6 +13,11 @@ PROC
 LeaderLib_Growth_Items_Register_Template((STRING)_ID, (STRING)_Template)
 THEN
 DB_LeaderLib_Growth_Items_TemplateID(_ID, _Template);
+
+PROC
+LeaderLib_Growth_Items_Register_Transformation((STRING)_ID, (INTEGER)_MinLevel, (STRING)_TransformTemplate, (STRING)_TransformedFlag)
+THEN
+DB_LeaderLib_Growth_Items_Transformations(_ID, _MinLevel, _TransformTemplate, _TransformedFlag);
 //END_REGION
 
 //REGION CLEARING
@@ -29,6 +34,20 @@ AND
 DB_LeaderLib_Growth_Items_TemplateID(_ID, _Template)
 THEN
 NOT DB_LeaderLib_Growth_Items_TemplateID(_ID, _Template);
+
+PROC
+LeaderLib_Growth_Items_Clear_Transformation((STRING)_ID, (STRING)_TransformTemplate)
+AND
+DB_LeaderLib_Growth_Items_Transformations(_ID, _MinLevel, _TransformTemplate, _TransformedFlag)
+THEN
+NOT DB_LeaderLib_Growth_Items_Transformations(_ID, _MinLevel, _TransformTemplate, _TransformedFlag);
+
+PROC
+LeaderLib_Growth_Items_Clear_AllTransformations((STRING)_ID)
+AND
+DB_LeaderLib_Growth_Items_Transformations(_ID, _MinLevel, _TransformTemplate, _TransformedFlag)
+THEN
+NOT DB_LeaderLib_Growth_Items_Transformations(_ID, _MinLevel, _TransformTemplate, _TransformedFlag);
 //END_REGION
 
 //REGION ITEM_AUTO_LEVEL
@@ -69,20 +88,66 @@ NOT DB_LeaderLib_Growth_Items_Temp_FoundItem(_Character);
 IF
 CharacterLeveledUp(_Character)
 AND
+DB_IsPlayer(_Character)
+AND
 LeaderLib_Growth_Items_QRY_HasAutoLevelItem(_Character)
 THEN
 LeaderLog_Log("TRACE", "[LeaderLib:Growth:Items:CharacterLeveledUp] Leveling up character equipment.");
-SetStoryEvent(_Character, "LeaderLib_Events_AutoLevelItems_Start");
+LeaderLib_Growth_Items_LevelUpItems(_Character);
 
 //Equipment doesn't work with `IterateItemsInInventory`
-IF
-StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Events_AutoLevelItems_Start")
+PROC
+LeaderLib_Growth_Items_LevelUpItems((CHARACTERGUID)_Character)
 AND
 DB_LeaderLib_EquipmentSlots(_Slot)
 AND
 CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
 AND
+_Item != NULL_00000000-0000-0000-0000-000000000000
+AND
 IsTagged(_Item, "LeaderLib_AutoLevel", 1)
+THEN
+LeaderLib_Growth_Items_LevelUpItem(_Character, _Item);
+
+IF
+ItemEquipped(_Item, _Character)
+AND
+IsTagged(_Item, "LeaderLib_AutoLevel", 1)
+THEN
+LeaderLib_Growth_Items_LevelUpItem(_Character, _Item);
+
+QRY
+LeaderLib_Growtn_Items_QRY_ItemShouldLevelUp((CHARACTERGUID)_Character, (ITEMGUID)_Item)
+AND
+GetVarInteger(_Item, "LeaderLib_Level", _ItemLevel)
+AND
+CharacterGetLevel(_Character, _Level)
+AND
+_ItemLevel < _Level
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Growtn_Items_QRY_ItemShouldLevelUp((CHARACTERGUID)_Character, (ITEMGUID)_Item)
+AND
+NOT GetVarInteger(_Item, "LeaderLib_Level", _)
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_Growth_Items_LevelUpItem((CHARACTERGUID)_Character, (ITEMGUID)_Item)
+AND
+NOT DB_LeaderLib_Growth_Items_Temp_EquipAfterTransform(_Character, _Item)
+AND
+LeaderLib_Growtn_Items_QRY_ItemShouldLevelUp(_Character, _Item)
+THEN
+LeaderLib_Growth_Items_TransformItem(_Character, _Item);
+LeaderLib_Growth_Items_Internal_CheckItemLevel(_Character, _Item);
+
+PROC
+LeaderLib_Growth_Items_Internal_CheckItemLevel((CHARACTERGUID)_Character, (ITEMGUID)_Item)
+AND
+NOT DB_LeaderLib_Growth_Items_Temp_EquipAfterTransform(_Character, _Item)
 THEN
 CharacterItemSetEvent(_Character, _Item, "LeaderLib_Commands_CheckItemLevel");
 
@@ -98,6 +163,7 @@ AND
 CharacterGetLevel(_Character, _Level)
 THEN
 DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character);
+LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:LeaderLib_Commands_AutoLevelItem] Item variable not set. Using Character's level.");
 ItemLevelUpTo(_Item, _Level);
 SetVarInteger(_Item, "LeaderLib_Level", _Level);
 CharacterItemSetEvent(_Character, _Item, "LeaderLib_Events_ItemLeveledUp");
@@ -116,6 +182,7 @@ AND
 _ItemLevel < _Level
 THEN
 DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character);
+LeaderLog_LogInt("DEBUG", "[LeaderLib:Growth:Items:LeaderLib_Commands_AutoLevelItem] Leveling up item from level [",_ItemLevel,"] to [",_Level,"].");
 ItemLevelUpTo(_Item, _Level);
 SetVarInteger(_Item, "LeaderLib_Level", _Level);
 CharacterItemSetEvent(_Character, _Item, "LeaderLib_Events_ItemLeveledUp");
@@ -128,16 +195,10 @@ AND
 CharacterGetLevel(_Character, _Level)
 THEN
 DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character);
+LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:LeaderLib_Commands_AutoLevelItem] Item hasn't leveled up yet. Using Character's level.");
 ItemLevelUpTo(_Item, _Level);
 SetVarInteger(_Item, "LeaderLib_Level", _Level);
 CharacterItemSetEvent(_Character, _Item, "LeaderLib_Events_ItemLeveledUp");
-
-IF
-ItemEquipped(_Item, _Character)
-AND
-IsTagged(_Item, "LeaderLib_AutoLevel", 1)
-THEN
-CharacterItemSetEvent(_Character, _Item, "LeaderLib_Commands_CheckItemLevel");
 
 IF
 DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character)
@@ -236,7 +297,7 @@ _ItemLevel >= _MinLevel
 //AND
 //NOT LeaderLib_Helper_QRY_ItemHasDeltaModifier(_Item, _DeltaMod)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Growth_Items:ApplyDeltaMods] Added deltamod [",_DeltaMod,"] to item.");
+LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:ApplyDeltaMods] Added deltamod [",_DeltaMod,"] to item.");
 ItemAddDeltaModifier(_Item, _DeltaMod);
 
 QRY
@@ -263,7 +324,7 @@ _ItemLevel >= _MinLevel
 //AND
 //NOT LeaderLib_Helper_QRY_ItemHasDeltaModifier(_Item, _DeltaMod)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Growth_Items:ApplyDeltaMods] Added deltamod [",_DeltaMod,"] to item via matched ID [",_ID,"].");
+LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:ApplyDeltaMods] Added deltamod [",_DeltaMod,"] to item via matched ID [",_ID,"].");
 ItemAddDeltaModifier(_Item, _DeltaMod);
 
 PROC
@@ -287,7 +348,7 @@ _ItemLevel >= _MinLevel
 //AND
 //NOT LeaderLib_Helper_QRY_ItemHasDeltaModifier(_Item, _DeltaMod)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Growth_Items:ApplyDeltaMods] Added deltamod [",_DeltaMod,"] to item.");
+LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:ApplyDeltaMods] Added deltamod [",_DeltaMod,"] to item.");
 ItemAddDeltaModifier(_Item, _DeltaMod);
 //END_REGION
 
@@ -305,6 +366,119 @@ LeaderLib_Growth_Items_QRY_ItemHasDeltaMods(_Item)
 THEN
 LeaderLib_Growth_Items_ApplyDeltaMods(_Item);
 //END_REGION
+
+//REGION TRANSFORMATIONS
+//Transformation should happen before leveling up the item and applying deltamods
+
+PROC
+LeaderLib_Growth_Items_TransformItem((CHARACTERGUID)_Character, (ITEMGUID)_Item)
+AND
+GetTemplate(_Item, _Template)
+AND
+DB_LeaderLib_Growth_Items_TemplateID(_ID, _Template)
+AND
+CharacterGetLevel(_Character, _Level)
+THEN
+LeaderLib_Growth_Items_TransformItem(_Character, _Item, _ID, _Level);
+
+PROC
+LeaderLib_Growth_Items_TransformItem((CHARACTERGUID)_Character, (ITEMGUID)_Item, (INTEGER)_Level)
+AND
+GetTemplate(_Item, _Template)
+AND
+DB_LeaderLib_Growth_Items_TemplateID(_ID, _Template)
+THEN
+LeaderLib_Growth_Items_TransformItem(_Character, _Item, _ID, _Level);
+
+PROC
+LeaderLib_Growth_Items_TransformItem((CHARACTERGUID)_Character, (ITEMGUID)_Item, (STRING)_ID, (INTEGER)_Level)
+AND
+DB_LeaderLib_Growth_Items_Transformations(_ID, _MinLevel, _TransformTemplate, _TransformedFlag)
+AND
+_Level >= _MinLevel
+AND
+ObjectGetFlag(_Item, _TransformedFlag, 0)
+THEN
+LeaderLib_Growth_Items_Internal_SetNextTransform(_Character, _Item, _ID, _TransformTemplate, _TransformedFlag);
+
+PROC
+LeaderLib_Growth_Items_TransformItem((CHARACTERGUID)_Character, (ITEMGUID)_Item, (STRING)_ID, (INTEGER)_Level)
+AND
+DB_LeaderLib_Growth_Items_Temp_NextTransform(_Character, _Item, _ID, _Template, _TransformedFlag)
+THEN
+NOT DB_LeaderLib_Growth_Items_Temp_NextTransform(_Character, _Item, _ID, _Template, _TransformedFlag);
+LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:TransformItem] Transforming item [",_ID,"] to template [",_Template,"] with flag [",_TransformedFlag,"].");
+DB_LeaderLib_Growth_Items_Temp_EquipAfterTransform(_Character, _Item);
+CharacterUnequipItem(_Character, _Item);
+Transform(_Item, _Template, 0, 1, 1);
+
+PROC
+LeaderLib_Growth_Items_Internal_SetNextTransform((CHARACTERGUID)_Character, (ITEMGUID)_Item, (STRING)_ID, (STRING)_Template, (STRING)_TransformedFlag)
+AND
+DB_LeaderLib_Growth_Items_Temp_NextTransform(_Character, _Item, _ID, _OtherTemplate, _OtherTransformedFlag)
+THEN
+NOT DB_LeaderLib_Growth_Items_Temp_NextTransform(_Character, _Item, _ID, _OtherTemplate, _OtherTransformedFlag);
+
+PROC
+LeaderLib_Growth_Items_Internal_SetNextTransform((CHARACTERGUID)_Character, (ITEMGUID)_Item, (STRING)_ID, (STRING)_Template, (STRING)_TransformedFlag)
+THEN
+DB_LeaderLib_Growth_Items_Temp_NextTransform(_Character, _Item, _ID, _Template, _TransformedFlag);
+ObjectSetFlag(_Item, _TransformedFlag);
+
+IF
+ObjectTransformed((ITEMGUID)_Item, _Template)
+AND
+DB_LeaderLib_Growth_Items_Temp_EquipAfterTransform(_Character, _Item)
+THEN
+CharacterEquipItem(_Character, _Item);
+LeaderLib_StartCharacterItemTimer(_Character, _Item, 50, "LeaderLib_Timers_OnGrowthItemTransformed", "LeaderLib_OnGrowthItemTransformed");
+
+IF
+CharacterItemEvent(_Character, _Item, "LeaderLib_OnGrowthItemTransformed")
+THEN
+NOT DB_LeaderLib_Growth_Items_Temp_EquipAfterTransform(_Character, _Item);
+LeaderLib_Growth_Items_LevelUpItem(_Character, _Item);
+//END_REGION
+
+//REGION RESETTING_ITEMS
+PROC
+LeaderLib_Growth_Items_ResetEquippedItem((CHARACTERGUID)_Character, (ITEMGUID)_Item)
+AND
+GetTemplate(_Item, _Template)
+THEN
+DB_LeaderLib_Growth_Items_Temp_EquipAfterTransform(_Character, _Item);
+CharacterUnequipItem(_Character, _Item);
+Transform(_Item, _Template);
+
+PROC
+LeaderLib_Growth_Items_ResetItemsByID((STRING)_ID)
+AND
+DB_LeaderLib_Growth_Items_TemplateID(_ID, _Template)
+AND
+DB_IsPlayer(_Player)
+AND
+LeaderLib_Growth_Items_QRY_ResetEquippedItems(_Player, _Template)
+AND
+GetItemForItemTemplateInPartyInventory(_Player, _Template, _Item)
+THEN
+Transform(_Item, _Template);
+
+QRY
+LeaderLib_Growth_Items_QRY_ResetEquippedItems((CHARACTERGUID)_Character, (STRING)_Template)
+AND
+DB_LeaderLib_EquipmentSlots(_Slot)
+AND
+CharacterGetEquippedItem(_Character, _Slot, _Item)
+AND
+_Item != NULL_00000000-0000-0000-0000-000000000000
+AND
+GetTemplate((ITEMGUID)_Item, _Template)
+THEN
+DB_LeaderLib_Growth_Items_Temp_EquipAfterTransform(_Character, _Item);
+CharacterUnequipItem(_Character, _Item);
+Transform(_Item, _Template);
+//END_REGION
+
 EXITSECTION
 
 ENDEXITSECTION

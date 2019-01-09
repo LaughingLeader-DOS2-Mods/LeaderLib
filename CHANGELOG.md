@@ -1,5 +1,13 @@
 LeaderLib Changelog
 =======
+# 1.1.10.0
+* Added a "Mod Menu" skill, for players who don't want to deal with a book. This is automatically added once (and when a party member joins once). Mod menu skills can be removed by the LeaderLib Settings menu (via the Commands submenu).
+* Added a "Commands" submenu to the LeaderLib Settings menu.
+* Fix for players who are unable to talk to the LeaderLib Trader (Lothar). This happens if you save while LeaderLib is disabled, and then re-enable it. NPCs added by mods who undergo this have their "HasDialog" check disabled, and have to have their dialog availability manually reset.
+
+# 1.1.9.5
+* Added a new "Toggle Script" system. More generalized events that don't need to always be active go inside a toggle script, which is disabled by default, and manually activated/deactivated when a global flag is set/cleared.
+
 # 1.1.5.1
 * New Timed Autosave System
 	* Available from the settings menu, autosaves can now be created after a selected amount of time (anywhere between 2 minutes and 4 hours).

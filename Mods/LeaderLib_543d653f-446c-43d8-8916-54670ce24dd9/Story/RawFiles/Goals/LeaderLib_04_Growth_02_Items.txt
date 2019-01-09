@@ -405,12 +405,15 @@ PROC
 LeaderLib_Growth_Items_TransformItem((CHARACTERGUID)_Character, (ITEMGUID)_Item, (STRING)_ID, (INTEGER)_Level)
 AND
 DB_LeaderLib_Growth_Items_Temp_NextTransform(_Character, _Item, _ID, _Template, _TransformedFlag)
+AND
+ItemGetOwner(_Item, _Owner)
 THEN
 NOT DB_LeaderLib_Growth_Items_Temp_NextTransform(_Character, _Item, _ID, _Template, _TransformedFlag);
 LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:TransformItem] Transforming item [",_ID,"] to template [",_Template,"] with flag [",_TransformedFlag,"].");
 DB_LeaderLib_Growth_Items_Temp_EquipAfterTransform(_Character, _Item);
 CharacterUnequipItem(_Character, _Item);
 Transform(_Item, _Template, 0, 1, 1);
+ItemSetOwner(_Item, _Owner);
 
 PROC
 LeaderLib_Growth_Items_Internal_SetNextTransform((CHARACTERGUID)_Character, (ITEMGUID)_Item, (STRING)_ID, (STRING)_Template, (STRING)_TransformedFlag)
@@ -473,10 +476,13 @@ AND
 _Item != NULL_00000000-0000-0000-0000-000000000000
 AND
 GetTemplate((ITEMGUID)_Item, _Template)
+AND
+ItemGetOwner(_Item, _Owner)
 THEN
 DB_LeaderLib_Growth_Items_Temp_EquipAfterTransform(_Character, _Item);
 CharacterUnequipItem(_Character, _Item);
 Transform(_Item, _Template);
+ItemSetOwner(_Item, _Owner);
 //END_REGION
 
 EXITSECTION

@@ -478,11 +478,15 @@ AND
 GetTemplate((ITEMGUID)_Item, _Template)
 AND
 ItemGetOwner(_Item, _Owner)
+AND
+GetPosition(_Character, _x, _y, _z)
+AND
+CreateItemTemplateAtPosition(_Template, _x, _y, _z, _NewItem)
 THEN
-DB_LeaderLib_Growth_Items_Temp_EquipAfterTransform(_Character, _Item);
-CharacterUnequipItem(_Character, _Item);
-Transform(_Item, _Template);
-ItemSetOwner(_Item, _Owner);
+//CharacterUnequipItem(_Character, _Item);
+ItemRemove(_Item);
+ItemSetOwner(_NewItem, _Owner);
+CharacterEquipItem(_Character, _NewItem);
 //END_REGION
 
 EXITSECTION

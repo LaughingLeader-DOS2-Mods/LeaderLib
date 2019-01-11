@@ -43,13 +43,13 @@ VARS
 ON
 	OnCharacterEvent(_Player, "LeaderLib_CC_SetPreset")
 ACTIONS
-IF "c1&c2"
-	CharacterInCreation(_Player, _)
+IF "c1&!c2"
 	CharacterGetCreationClass(_Player, _Class)
+	IsEqual(_Class, null)
 THEN
 	SetVar(_Player, "LeaderLib_CharacterCreationPreset", _Class)
-	CharacterEvent(_Player, "LeaderLib_Events_OnPresetSet")
 ENDIF
+	CharacterEvent(_Player, "LeaderLib_Events_OnPresetSet")
 
 EVENT LeaderLib_Events_AddTreasureTable
 VARS

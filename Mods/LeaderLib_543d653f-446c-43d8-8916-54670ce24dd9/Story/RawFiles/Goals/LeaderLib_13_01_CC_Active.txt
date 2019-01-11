@@ -14,32 +14,45 @@ ProcObjectTimer(_Player, "LeaderLib_Timers_UpdateSelectedPreset", 50);
 
 PROC
 ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_UpdateSelectedPreset")
-AND
-DB_SelectedCC(_Player, _UserProfile)
+//AND
+//DB_SelectedCC(_Player, _UserProfile)
 THEN
 SetStoryEvent(_Player, "LeaderLib_CC_SetPreset");
 
 IF
 StoryEvent((CHARACTERGUID)_Player, "LeaderLib_Events_OnPresetSet")
-AND
-CharacterGetReservedUserID(_Player, _UserID)
+THEN
+LeaderLib_CC_SetSelectedPreset(_Player);
+
+PROC
+LeaderLib_CC_ClearLastSelectedPreset((INTEGER)_UserID)
 AND
 DB_LeaderLib_CC_Temp_SelectedPreset(_UserID, _Preset)
 THEN
 NOT DB_LeaderLib_CC_Temp_SelectedPreset(_UserID, _Preset);
 
-IF
-StoryEvent((CHARACTERGUID)_Player, "LeaderLib_Events_OnPresetSet")
+PROC
+LeaderLib_CC_SetSelectedPreset((CHARACTERGUID)_Player)
 AND
 GetVarFixedString(_Player, "LeaderLib_CharacterCreationPreset", _Preset)
 AND
 CharacterGetReservedUserID(_Player, _UserID)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:CC:LeaderLib_Events_OnPresetSet] Player's selected preset [",_Preset,"] in Character Creation.");
+LeaderLib_CC_ClearLastSelectedPreset(_UserID);
 DB_LeaderLib_CC_Temp_SelectedPreset(_UserID, _Preset);
 
+PROC
+LeaderLib_CC_SetSelectedPreset((CHARACTERGUID)_Player)
+AND
+NOT GetVarFixedString(_Player, "LeaderLib_CharacterCreationPreset", _)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:CC:LeaderLib_Events_OnPresetSet] [ERROR] Variable [LeaderLib_CharacterCreationPreset] is null!");
+
 IF
-RegionEnded(_)
+RegionStarted(_Level)
+AND
+IsGameLevel(_Level, 1)
 THEN
 GoalCompleted;
 

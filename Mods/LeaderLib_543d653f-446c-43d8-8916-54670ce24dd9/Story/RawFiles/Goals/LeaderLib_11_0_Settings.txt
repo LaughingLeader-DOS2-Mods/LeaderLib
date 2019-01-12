@@ -21,6 +21,7 @@ NOT DB_LeaderLib_Settings_Initialized(1);
 PROC
 LeaderLib_Settings_InitSettings()
 THEN
+LeaderLib_PresetMenu_InitSettings();
 LeaderLib_Settings_InitEquipmentSlots();
 LeaderLib_Settings_InitStats();
 LeaderLib_Settings_InitSurfaces();
@@ -73,6 +74,19 @@ DB_LeaderLib_RacialSkills("UNDEAD_DWARF", "Shout_PlayDead");
 DB_LeaderLib_RacialSkills("UNDEAD_ELF", "Shout_PlayDead");
 DB_LeaderLib_RacialSkills("UNDEAD_HUMAN", "Shout_PlayDead");
 DB_LeaderLib_RacialSkills("UNDEAD_LIZARD", "Shout_PlayDead");
+
+PROC
+LeaderLib_Settings_InitSkillData()
+AND
+NOT DB_LeaderLib_OriginSkills(_,_)
+THEN
+DB_LeaderLib_OriginSkills("IFAN", "Summon_SoulWolf");
+DB_LeaderLib_OriginSkills("LOHSE", "Target_MaddeningSong");
+DB_LeaderLib_OriginSkills("REDPRINCE", "Target_DemonicStare");
+DB_LeaderLib_OriginSkills("SEBILLE", "Shout_BreakTheShackles");
+DB_LeaderLib_OriginSkills("BEAST", "Target_Squall");
+DB_LeaderLib_OriginSkills("FANE", "Target_TimeWarp");
+DB_LeaderLib_OriginSkills("GENERIC", "Dome_CircleOfProtection");
 
 PROC
 LeaderLib_Settings_InitEquipmentSlots()

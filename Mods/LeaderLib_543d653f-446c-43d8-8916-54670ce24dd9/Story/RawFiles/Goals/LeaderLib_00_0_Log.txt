@@ -91,6 +91,11 @@ THEN
 DB_NOOP(1);
 
 QRY
+LeaderLog_QRY_LogTypeEnabled("NOTIFICATION")
+THEN
+DB_NOOP(1);
+
+QRY
 LeaderLog_QRY_LogTypeEnabled("COMBINE")
 THEN
 DB_NOOP(1);

@@ -178,10 +178,10 @@ DialogSetVariableStringForInstance(_Instance, "LeaderLib_PresetMenu_CurrentPrese
 IF
 DialogEnded("LeaderLib_PresetMenu", _Instance)
 AND
-DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _LastPreset, _Instance)
+DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _LastPreset, _Instance, _IsRace)
 THEN
 ObjectClearFlag(_Player, "LeaderLib_PresetMenu_PresetSelected", _Instance);
-NOT DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _LastPreset, _Instance);
+NOT DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _LastPreset, _Instance, _IsRace);
 
 PROC
 LeaderLib_DynamicMenu_BlockEntry((GUIDSTRING)_Player, "LeaderLib.Settings.PresetMenu", (STRING)_DialogVar, (STRING)_AvailableFlag, (INTEGER)_Instance, (STRING)_Preset, (STRING)_DisplayText)
@@ -195,15 +195,15 @@ DB_LeaderLib_DynamicMenu_EntryBlocked(_Player, "LeaderLib.Settings.PresetMenu", 
 PROC
 LeaderLib_DynamicMenu_OnEntrySelected("LeaderLib.Settings.PresetMenu", (GUIDSTRING)_Player, (INTEGER)_Instance, (STRING)_Preset)
 AND
-DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _LastPreset, _Instance)
+DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _LastPreset, _Instance, _IsRace)
 THEN
-NOT DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _LastPreset, _Instance);
+NOT DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _LastPreset, _Instance, _IsRace);
 
 PROC
 LeaderLib_DynamicMenu_OnEntrySelected("LeaderLib.Settings.PresetMenu", (GUIDSTRING)_Player, (INTEGER)_Instance, (STRING)_Preset)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:OnEntrySelected] Player selected preset [",_Preset,"].");
-DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _Preset, _Instance);
+DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _Preset, _Instance, 0);
 ObjectSetFlag(_Player, "LeaderLib_PresetMenu_PresetSelected", _Instance);
 LeaderLib_DynamicMenu_FetchDialogVariableByKey("LeaderLib.Settings.PresetMenu", _Instance, _Preset);
 
@@ -219,7 +219,20 @@ ObjectFlagSet("LeaderLib_PresetMenu_ConfirmSelection", (CHARACTERGUID)_Player, _
 AND
 LeaderLib_Helper_QRY_ClearObjectFlag(_Player, "LeaderLib_PresetMenu_ConfirmSelection")
 AND
-DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _Preset, _Instance)
+DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _Preset, _Instance, _IsRace)
+THEN
+ObjectClearFlag(_Player, "LeaderLib_PresetMenu_PresetSelected", _Instance);
+LeaderLib_PresetMenu_StartApplyingPreset(_Player, _Preset, _IsRace);
+
+PROC
+LeaderLib_PresetMenu_StartApplyingPreset((CHARACTERGUID)_Player, (STRING)_Preset, (INTEGER)_IsRace)
+AND
+NOT DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _, _, _)
+THEN
+DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _Preset, -1, _IsRace);
+
+PROC
+LeaderLib_PresetMenu_StartApplyingPreset((CHARACTERGUID)_Player, (STRING)_Preset, (INTEGER)_IsRace)
 AND
 GetPosition(_Player, _x, _y, _z)
 AND
@@ -229,26 +242,60 @@ GetUUID(_Player, _UUID)
 AND
 StringConcatenate("LeaderLib_Array_PrePresetTalents_", _UUID, _ArrayID)
 THEN
-ObjectClearFlag(_Player, "LeaderLib_PresetMenu_PresetSelected", _Instance);
 DB_LeaderLib_PresetMenu_Temp_ItemBackpack(_Player, _Backpack);
 DB_LeaderLib_PresetMenu_Temp_TalentArray(_Player, _ArrayID);
 LeaderLib_PresetMenu_RecordEquipment(_Player, _Backpack);
-MoveAllItemsTo(_Player, _Backpack, 1, 1, 0);
+MoveAllItemsTo(_Player, _Backpack, 0, 0, 0);
+LeaderLib_PresetMenu_RecordSourceMax(_Player, _IsRace);
 LeaderLib_PresetMenu_RecordTalents(_Player, _ArrayID);
-LeaderLib_PresetMenu_RecordSkills(_Player);
+LeaderLib_PresetMenu_RecordSkills(_Player, _Preset, _IsRace);
 ProcObjectTimerCancel(_Player, "LeaderLib_Timers_PresetMenu_ApplyPreset");
 ProcObjectTimer(_Player, "LeaderLib_Timers_PresetMenu_ApplyPreset", 500);
+//END_REGION
+
+//REGION SAVING_PREAPPLYING_DATA
+PROC
+LeaderLib_PresetMenu_RecordSourceMax((CHARACTERGUID)_Player, 1)
+AND
+CharacterGetMaxSourcePoints(_Player, _MaxSP)
+THEN
+DB_LeaderLib_PresetMenu_Temp_MaxSourcePoints(_Player, _MaxSP);
+
+PROC
+LeaderLib_PresetMenu_RecordEquipment((CHARACTERGUID)_Player, (ITEMGUID)_Backpack)
+AND
+GetItemForItemTemplateInInventory(_Player, "RC_FTJ_Amulet_SourceCollar_8bf8b97c-556e-4e69-8fc7-39241783dcc1", _Item)
+THEN
+ItemLockUnEquip(_Item, 0);
+DB_LeaderLib_PresetMenu_Temp_HadSourceCollar(_Player, _Item);
+ItemToInventory(_Item, _Backpack);
+
+PROC
+LeaderLib_PresetMenu_RecordEquipment((CHARACTERGUID)_Player, (ITEMGUID)_Backpack)
+AND
+CharacterGetEquippedItem(_Player, "Amulet", (ITEMGUID)_Item)
+AND
+_Item != NULL_00000000-0000-0000-0000-000000000000
+AND
+GetTemplate(_Item, "RC_FTJ_Amulet_SourceCollar_8bf8b97c-556e-4e69-8fc7-39241783dcc1")
+THEN
+ItemLockUnEquip(_Item, 0);
+DB_LeaderLib_PresetMenu_Temp_HadSourceCollar(_Player, _Item);
+ItemToInventory(_Item, _Backpack);
 
 PROC
 LeaderLib_PresetMenu_RecordEquipment((CHARACTERGUID)_Player, (ITEMGUID)_Backpack)
 AND
 DB_LeaderLib_EquipmentSlots(_Slot)
 AND
-CharacterGetEquippedItem(_Player, _Slot, _Item)
+CharacterGetEquippedItem(_Player, _Slot, (ITEMGUID)_Item)
 AND
 _Item != NULL_00000000-0000-0000-0000-000000000000
+AND
+NOT GetTemplate(_Item, "RC_FTJ_Amulet_SourceCollar_8bf8b97c-556e-4e69-8fc7-39241783dcc1")
 THEN
-DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, _Slot, (ITEMGUID)_Item);
+DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, _Slot, _Item);
+ItemToInventory(_Item, _Backpack);
 
 PROC
 LeaderLib_PresetMenu_RecordTalents((CHARACTERGUID)_Player, (STRING)_ArrayID)
@@ -281,7 +328,7 @@ LeaderLog_LogInt("DEBUG", "[LeaderLib:PresetMenu:RecordTalents] Character has ["
 DB_LeaderLib_PresetMenu_Temp_TalentPoints(_Player, _TalentPoints);
 
 PROC
-LeaderLib_PresetMenu_RecordSkills((CHARACTERGUID)_Player)
+LeaderLib_PresetMenu_RecordSkills((CHARACTERGUID)_Player, (STRING)_Preset, (INTEGER)_IsRace)
 AND
 GetUUID(_Player, _ID)
 AND
@@ -291,31 +338,61 @@ LeaderLib_Skills_QRY_CreateTargetDummyAtObject(_DummyID, _Player, "", 2000)
 AND
 DB_LeaderLib_Skills_TargetDummies(_DummyID, _Dummy)
 THEN
-DB_LeaderLib_PresetMenu_Temp_CopySkills(_DummyID, _Dummy, _Player);
+DB_LeaderLib_PresetMenu_Temp_CopySkills(_DummyID, _Dummy, _Player, _Preset, _IsRace);
 CharacterCloneSkillsTo(_Player, _Dummy, 0);
 
 IF
 SkillAdded(_Dummy, _Skill, 1)
 AND
-DB_LeaderLib_PresetMenu_Temp_CopySkills(_DummyID, _Dummy, _Player)
+DB_LeaderLib_PresetMenu_Temp_CopySkills(_DummyID, _Dummy, _Player, _Preset, _IsRace)
+AND
+NOT DB_LeaderLib_RacialSkills(_, _Skill)
+THEN
+DB_LeaderLib_PresetMenu_Temp_Skills(_Player, _Skill);
+
+//Only copy racial skills if the race matches
+IF
+SkillAdded(_Dummy, _Skill, 1)
+AND
+DB_LeaderLib_PresetMenu_Temp_CopySkills(_DummyID, _Dummy, _Player, _Preset, 1)
+THEN
+LeaderLib_PresetMenu_Internal_CheckRaceSkill(_Player, _Preset, _Skill);
+
+PROC
+LeaderLib_PresetMenu_Internal_CheckRaceSkill((CHARACTERGUID)_Player, (STRING)_Race, (STRING)_Skill)
+AND
+DB_LeaderLib_RacialSkills(_RaceTag, _Skill)
+AND
+DB_LeaderLib_RaceTags(_Race, _RaceTag, _BaseRaceTag) // The target race matches, so save this skill
 THEN
 DB_LeaderLib_PresetMenu_Temp_Skills(_Player, _Skill);
 
 PROC
 ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_ApplyPreset")
 AND
-NOT DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _, _)
+NOT DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _, _, _)
 THEN
 LeaderLog_Log("ERROR", "[LeaderLib:PresetMenu:LeaderLib_Timers_PresetMenu_ApplyPreset] [ERROR] No preset selected?");
 
 PROC
 ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_ApplyPreset")
 AND
-DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _Preset, _Instance)
+DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _Preset, _Instance, 0)
 THEN
-NOT DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _Preset, _Instance);
+NOT DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _Preset, _Instance, 0);
 CharacterApplyPreset(_Player, _Preset);
-LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:LeaderLib_Timers_PresetMenu_ApplyPreset] Applying preset [",_Preset,"] to player.");
+DB_LeaderLib_PresetMenu_Temp_AppliedPreset(_Player, _Preset, 0);
+LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:LeaderLib_Timers_PresetMenu_ApplyPreset] Applying class preset [",_Preset,"] to player.");
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_ApplyPreset")
+AND
+DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _Preset, _Instance, 1)
+THEN
+NOT DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _Preset, _Instance, 1);
+CharacterApplyRacePreset(_Player, _Preset);
+DB_LeaderLib_PresetMenu_Temp_AppliedPreset(_Player, _Preset, 1);
+LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:LeaderLib_Timers_PresetMenu_ApplyPreset] Applying race preset [",_Preset,"] to player.");
 
 PROC
 ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_ApplyPreset")
@@ -325,9 +402,9 @@ ProcObjectTimer(_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied", 250);
 PROC
 ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_ApplyPreset")
 AND
-DB_LeaderLib_PresetMenu_Temp_CopySkills(_DummyID, _Dummy, _Player)
+DB_LeaderLib_PresetMenu_Temp_CopySkills(_DummyID, _Dummy, _Player, _Preset, _IsRace)
 THEN
-NOT DB_LeaderLib_PresetMenu_Temp_CopySkills(_DummyID, _Dummy, _Player);
+NOT DB_LeaderLib_PresetMenu_Temp_CopySkills(_DummyID, _Dummy, _Player, _Preset, _IsRace);
 LeaderLib_Skills_ResetDummy(_Dummy);
 LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:LeaderLib_Timers_PresetMenu_ApplyPreset] Reset skill dummy (used to copy pre-preset skills).");
 
@@ -374,6 +451,16 @@ THEN
 NOT DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, _Slot, (ITEMGUID)_Item);
 LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:LeaderLib_Timers_PresetMenu_OnPresetApplied_EquipItems] Equipped previous armor.");
 
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied_EquipItems")
+AND
+DB_LeaderLib_PresetMenu_Temp_HadSourceCollar(_Player, _Item)
+THEN
+NOT DB_LeaderLib_PresetMenu_Temp_HadSourceCollar(_Player, _Item);
+LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:LeaderLib_Timers_PresetMenu_OnPresetApplied_EquipItems] Character had a source collar on. Re-equipping and locking.");
+CharacterEquipItem(_Player, _Item);
+ItemLockUnEquip(_Item, 1);
+
 //Skills
 PROC
 ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied")
@@ -411,6 +498,37 @@ ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_OnP
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:LeaderLib_Timers_PresetMenu_OnPresetApplied_RestoreTalents] Restoring pre-preset talent points.");
 LeaderLib_PresetMenu_Internal_RestoreTalents(_Player);
+
+//Race presets/transformations may reset the max SP
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied_RestoreTalents")
+AND
+DB_LeaderLib_PresetMenu_Temp_MaxSourcePoints(_Player, _MaxSP)
+THEN
+NOT DB_LeaderLib_PresetMenu_Temp_MaxSourcePoints(_Player, _MaxSP);
+CharacterOverrideMaxSourcePoints(_Player, _MaxSP);
+LeaderLog_LogInt("DEBUG", "[LeaderLib:PresetMenu:LeaderLib_Timers_PresetMenu_OnPresetApplied_RestoreTalents] Reset max source points to [",_MaxSP,"].");
+//Proc_UnlockSourcePointsAndPowers(_Player, _Host);
+
+/*
+PROC
+Proc_UnlockSourcePointsAndPowers((CHARACTERGUID)_Companion, (CHARACTERGUID)_Avatar)
+THEN
+DB_NOOP(1);
+*/
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied_RestoreTalents")
+AND
+DB_LeaderLib_PresetMenu_Temp_AppliedPreset(_Player, _Preset, _IsRace)
+THEN
+NOT DB_LeaderLib_PresetMenu_Temp_AppliedPreset(_Player, _Preset, _IsRace);
+LeaderLib_PresetApplied(_Player, _Preset, _IsRace);
+
+PROC
+LeaderLib_PresetApplied((CHARACTERGUID)_Player, (STRING)_Preset, (INTEGER)_IsRace)
+THEN
+DB_NOOP(1);
 
 PROC
 LeaderLib_PresetMenu_Internal_RestoreTalents((CHARACTERGUID)_Player)

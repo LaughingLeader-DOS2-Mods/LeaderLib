@@ -266,6 +266,28 @@ IntegerSum(_BaseMax, _Amount, _MaxAmount)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_addpoints] fired. Adding [",_AmountStr,"] max source points to controller characters.");
 CharacterOverrideMaxSourcePoints(_Player, _MaxAmount);
+
+IF
+TextEventSet("leaderlib_sourcemax")
+AND
+GetTextEventParamInteger(1, _Amount)
+AND
+DB_IsPlayer(_Player)
+AND
+CharacterIsControlled(_Player, 1)
+THEN
+LeaderLog_LogInt("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_sourcemax] fired. Setting max source points to [",_Amount,"].");
+CharacterOverrideMaxSourcePoints(_Player, _Amount);
+
+IF
+TextEventSet("leaderlib_sourcemaxreset")
+AND
+DB_IsPlayer(_Player)
+AND
+CharacterIsControlled(_Player, 1)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_sourcemaxreset] fired. Reseting max source points.");
+CharacterRemoveMaxSourcePointsOverride(_Player);
 //END_REGION
 
 //REGION DEBUG_FLAGS

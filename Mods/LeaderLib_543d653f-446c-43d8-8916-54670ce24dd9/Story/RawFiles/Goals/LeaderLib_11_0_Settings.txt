@@ -24,6 +24,7 @@ THEN
 LeaderLib_Settings_InitEquipmentSlots();
 LeaderLib_Settings_InitStats();
 LeaderLib_Settings_InitSurfaces();
+LeaderLib_Settings_InitSkillData();
 LeaderLib_Settings_InitRaceData();
 LeaderLib_Settings_InitStatusData();
 
@@ -58,6 +59,20 @@ PROC
 LeaderLib_Settings_SettingsInitialized()
 THEN
 DB_LeaderLib_Settings_Initialized(1);
+
+PROC
+LeaderLib_Settings_InitSkillData()
+AND
+NOT DB_LeaderLib_RacialSkills(_,_)
+THEN
+DB_LeaderLib_RacialSkills("DWARF", "Target_PetrifyingTouch");
+DB_LeaderLib_RacialSkills("ELF", "Shout_FleshSacrifice");
+DB_LeaderLib_RacialSkills("HUMAN", "Shout_InspireStart");
+DB_LeaderLib_RacialSkills("LIZARD", "Cone_Flamebreath");
+DB_LeaderLib_RacialSkills("UNDEAD_DWARF", "Shout_PlayDead");
+DB_LeaderLib_RacialSkills("UNDEAD_ELF", "Shout_PlayDead");
+DB_LeaderLib_RacialSkills("UNDEAD_HUMAN", "Shout_PlayDead");
+DB_LeaderLib_RacialSkills("UNDEAD_LIZARD", "Shout_PlayDead");
 
 PROC
 LeaderLib_Settings_InitEquipmentSlots()
@@ -386,17 +401,17 @@ DB_LeaderLib_SurfaceGroup(_Surface, _Group);
 PROC
 LeaderLib_Settings_InitRaceData()
 AND
-NOT DB_LeaderLib_RaceTags(_,_)
+NOT DB_LeaderLib_RaceTags(_,_,_)
 THEN
 //_Race, _Tag
-DB_LeaderLib_RaceTags("Dwarf", "DWARF");
-DB_LeaderLib_RaceTags("Human", "HUMAN");
-DB_LeaderLib_RaceTags("Elf", "ELF");
-DB_LeaderLib_RaceTags("Lizard", "LIZARD");
-DB_LeaderLib_RaceTags("Undead_Dwarf", "DWARF");
-DB_LeaderLib_RaceTags("Undead_Human", "HUMAN");
-DB_LeaderLib_RaceTags("Undead_Elf", "ELF");
-DB_LeaderLib_RaceTags("Undead_Lizard", "LIZARD");
+DB_LeaderLib_RaceTags("Dwarf", "DWARF", "");
+DB_LeaderLib_RaceTags("Elf", "ELF", "");
+DB_LeaderLib_RaceTags("Human", "HUMAN", "");
+DB_LeaderLib_RaceTags("Lizard", "LIZARD", "");
+DB_LeaderLib_RaceTags("Undead_Dwarf", "UNDEAD_DWARF", "DWARF");
+DB_LeaderLib_RaceTags("Undead_Elf", "UNDEAD_ELF", "ELF");
+DB_LeaderLib_RaceTags("Undead_Human", "UNDEAD_HUMAN", "HUMAN");
+DB_LeaderLib_RaceTags("Undead_Lizard", "UNDEAD_LIZARD", "LIZARD");
 
 PROC
 LeaderLib_Settings_InitRaceData()
@@ -426,7 +441,7 @@ These two databases can be used in combination like so:
 AND
 CharacterGetRace(_Player, 1, _Race)
 AND
-DB_LeaderLib_RaceTags(_Race, _RaceTag)
+DB_LeaderLib_RaceTags(_Race, _RaceTag, _BaseRaceTag)
 AND
 IsTagged(_Player, "UNDEAD", _Undead)
 AND
@@ -520,6 +535,16 @@ DB_LeaderLib_DisablingStatusTypes("PLAY_DEAD");
 //END_REGION
 
 //REGION UPDATES
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 11, 0)
+THEN
+SysClear("DB_LeaderLib_RaceTags", 2);
+LeaderLib_Settings_InitSkillData();
+LeaderLib_Settings_InitRaceData();
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
+
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND

@@ -581,7 +581,7 @@ DB_LeaderLib_SurfaceGroup("SurfaceBlood", "BloodStandard");
 DB_LeaderLib_SurfaceGroup("SurfaceBloodFrozen", "BloodStandard");
 DB_LeaderLib_SurfaceGroup("SurfaceBloodElectrified", "BloodStandard");
 DB_LeaderLib_SurfaceGroup("SurfaceBloodCloudElectrified", "BloodStandard");
-LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updating surface settings from version [1.1.0.0].");
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updating surface settings from version [",_PastVersion,"].");
 
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)

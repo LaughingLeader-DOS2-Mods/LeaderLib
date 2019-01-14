@@ -47,8 +47,10 @@ DB_LeaderLib_Settings_DialogVariables("CurrentAutosaveInterval", "LeaderLib_Auto
 
 //Bartering Tweaks
 DB_LLBARTER_DialogBlacklist("LeaderLib", "LeaderLib_ModMenu");
-DB_LLBARTER_DialogBlacklist("LeaderLib", "LeaderLib_SettingsMenu");
 DB_LLBARTER_DialogBlacklist("LeaderLib", "LeaderLib_AutosaveMenu");
+DB_LLBARTER_DialogBlacklist("LeaderLib", "LeaderLib_CommandsMenu");
+DB_LLBARTER_DialogBlacklist("LeaderLib", "LeaderLib_PresetMenu");
+DB_LLBARTER_DialogBlacklist("LeaderLib", "LeaderLib_SettingsMenu");
 
 //Dummies
 //Crime stuff is ignored when something attacks a dummy

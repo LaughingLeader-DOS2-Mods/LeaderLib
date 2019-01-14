@@ -1,0 +1,12 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+/*
+This goal should never be completed.
+Child scripts are activated via LeaderLib_19_ToggledScripts
+*/
+EXITSECTION
+
+ENDEXITSECTION

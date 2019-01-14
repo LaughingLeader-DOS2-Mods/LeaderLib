@@ -1,0 +1,83 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+//REGION Procs that call RemoveHarmfulStatuses
+//Shared/_Greevers_Little_Helpers
+PROC
+Proc_PlayerFullRestore((CHARACTERGUID)_Player)
+AND
+DB_IsPlayer(_Player)
+THEN
+LeaderLib_TS_Internal_RemoveHarmfulStatusesCalled(_Player);
+
+//Shared/GLO_Arena - When a character gets "knocked out" in a non-lethal arena
+PROC
+Proc_GLO_Arena_NonLethal_RemoveTalents((CHARACTERGUID)_Player)
+AND
+DB_IsPlayer(_Player)
+THEN
+LeaderLib_TS_Internal_RemoveHarmfulStatusesCalled(_Player);
+
+//Shared/GLO_Arena
+PROC
+Proc_Arena_Win_TeleportOut()
+AND
+DB_Arena_PlayerParticipants(_,_,_Player,_)
+THEN
+LeaderLib_TS_Internal_RemoveHarmfulStatusesCalled(_Player);
+
+//Shared/GLO_Arena_LMS
+PROC
+Proc_Arena_SetUp_LastManStanding_RemoveChar((CHARACTERGUID)_Player)
+AND
+DB_IsPlayer(_Player)
+THEN
+LeaderLib_TS_Internal_RemoveHarmfulStatusesCalled(_Player);
+//END_REGION
+
+//REGION ORIGINS
+//Origins/EndGame_Arena
+IF
+DB_EG_DivinityCompetitorTeleported((CHARACTERGUID)_Player)
+THEN
+LeaderLib_TS_Internal_RemoveHarmfulStatusesCalled(_Player);
+
+//Origins/EndGame_Epilogue
+PROC
+PROC_EG_Epilogue_Setup()
+AND
+DB_IsPlayer(_Player)
+THEN
+LeaderLib_TS_Internal_RemoveHarmfulStatusesCalled(_Player);
+
+//Origin/EndGame_TheChoice
+IF
+TimerFinished("EG_TheChoiceTimer")
+AND
+DB_EG_MakingTheChoice((CHARACTERGUID)_Player)
+THEN
+LeaderLib_TS_Internal_RemoveHarmfulStatusesCalled(_Player);
+//END_REGION
+
+PROC
+LeaderLib_TS_Internal_RemoveHarmfulStatusesCalled((CHARACTERGUID)_Player)
+THEN
+ProcObjectTimerCancel(_Player, "LeaderLib_Timers_ReapplyPermanentStatuses");
+ProcObjectTimer(_Player, "LeaderLib_Timers_ReapplyPermanentStatuses", 250);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_ReapplyPermanentStatuses")
+AND
+DB_LeaderLib_Statuses_PermanentStatus(_ModID, _ID, _Status, _Flag)
+AND
+ObjectGetFlag(_Player, _Flag, 1)
+AND
+HasActiveStatus(_Player, _Status, 0)
+THEN
+ApplyStatus(_Player, _Status, -1.0, 0, _Player);
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

@@ -5,6 +5,7 @@ LeaderLig_ToggleScripts_Internal_InitRegistration();
 
 KBSECTION
 
+//REGION INIT
 PROC
 LeaderLig_ToggleScripts_Internal_InitRegistration()
 AND
@@ -19,14 +20,27 @@ LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_StatusEvents_Disables",
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Combat_DeadCharacters", "LeaderLib_Combat_TrackDeadCharacters");
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Combat_DeadItems", "LeaderLib_Combat_TrackDeadItems");
 
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Listeners_RemoveHarmfulStatuses", "LeaderLib_TS_RemoveHarmfulStatusesEnabled");
+//END_REGION
+
+//REGION UPDATING
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 11, 2)
+THEN
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Listeners_RemoveHarmfulStatuses", "LeaderLib_TS_RemoveHarmfulStatusesEnabled");
+//END_REGION
+
 //REGION REGISTERING
 PROC
 LeaderLib_ToggleScripts_Register_Script((STRING)_GoalTitle, (STRING)_GlobalFlag)
 THEN
 DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag);
+LeaderLib_ToggleScripts_OnScriptRegistered(_GoalTitle, _GlobalFlag);
 
 PROC
-LeaderLib_ToggleScripts_OnGoalRegistered((STRING)_GoalTitle, (STRING)_GlobalFlag)
+LeaderLib_ToggleScripts_OnScriptRegistered((STRING)_GoalTitle, (STRING)_GlobalFlag)
 AND
 DB_GlobalFlag(_GlobalFlag)
 THEN

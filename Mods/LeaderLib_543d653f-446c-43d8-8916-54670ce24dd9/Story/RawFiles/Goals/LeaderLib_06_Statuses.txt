@@ -1,0 +1,105 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+
+//REGION REGISTERING
+PROC
+LeaderLib_Statuses_Register_PermanentStatus((STRING)_ModID, (STRING)_Group, (STRING)_Status, (STRING)_Flag)
+THEN
+DB_LeaderLib_Statuses_PermanentStatus(_ModID, _Group, _Status, _Flag);
+//END_REGION
+
+//REGION CLEARING
+PROC
+LeaderLib_Statuses_Clear_PermanentStatus((STRING)_Group, (STRING)_Status)
+AND
+DB_LeaderLib_Statuses_PermanentStatus(_ModID, _Group, _Status, _Flag)
+THEN
+NOT DB_LeaderLib_Statuses_PermanentStatus(_ModID, _Group, _Status, _Flag);
+
+PROC
+LeaderLib_Statuses_Clear_Group((STRING)_Group)
+AND
+DB_LeaderLib_Statuses_PermanentStatus(_ModID, _Group, _Status, _Flag)
+THEN
+NOT DB_LeaderLib_Statuses_PermanentStatus(_ModID, _Group, _Status, _Flag);
+
+PROC
+LeaderLib_Statuses_Clear_Mod((STRING)_ModID)
+AND
+DB_LeaderLib_Statuses_PermanentStatus(_ModID, _Group, _Status, _Flag)
+THEN
+NOT DB_LeaderLib_Statuses_PermanentStatus(_ModID, _Group, _Status, _Flag);
+//END_REGION
+
+PROC
+LeaderLib_Statuses_OnPermanentStatusRegistered((STRING)_ModID, (STRING)_Group, (STRING)_Status, (STRING)_Flag)
+AND
+DB_GlobalFlag("LeaderLib_Initialized")
+THEN
+LeaderLib_Statuses_Internal_ToggleWorkaroundScripts(_ModID);
+
+PROC
+LeaderLib_Statuses_OnPermanentStatusRegistered((STRING)_ModID, (STRING)_Group, (STRING)_Status, (STRING)_Flag)
+AND
+NOT DB_GlobalFlag("LeaderLib_Initialized")
+THEN
+DB_LeaderLib_Statuses_Temp_CheckModsOnInit(1);
+
+//REGION TOGGLED_SCRIPT_ACTIVATION
+PROC
+LeaderLib_Statuses_Internal_ToggleWorkaroundScripts((STRING)_ModID)
+AND
+NOT DB_GlobalFlag("LeaderLib_TS_RemoveHarmfulStatusesEnabled")
+AND
+LeaderUpdater_QRY_ModIsActive(_ModID)
+THEN
+GlobalSetFlag("LeaderLib_TS_RemoveHarmfulStatusesEnabled");
+
+PROC
+LeaderLib_Statuses_Internal_ToggleWorkaroundScripts()
+AND
+NOT DB_GlobalFlag("LeaderLib_TS_RemoveHarmfulStatusesEnabled")
+AND
+DB_LeaderLib_Statuses_PermanentStatus(_ModID, _Group, _Status, _Flag)
+AND
+LeaderUpdater_QRY_ModIsActive(_ModID)
+AND
+NOT DB_GlobalFlag("LeaderLib_TS_RemoveHarmfulStatusesEnabled")
+THEN
+GlobalSetFlag("LeaderLib_TS_RemoveHarmfulStatusesEnabled");
+
+IF
+StoryEvent(_, "LeaderLib_Initialized")
+AND
+DB_LeaderLib_Statuses_Temp_CheckModsOnInit(1)
+THEN
+NOT DB_LeaderLib_Statuses_Temp_CheckModsOnInit(1);
+LeaderLib_Statuses_Internal_ToggleWorkaroundScripts();
+
+QRY
+LeaderLib_Statuses_QRY_Internal_RegisteredModsAreActive()
+AND
+DB_LeaderLib_Statuses_PermanentStatus(_ModID, _Group, _Status, _Flag)
+AND
+LeaderUpdater_QRY_ModIsActive(_ModID)
+THEN
+DB_NOOP(1);
+
+//Registered mods becoming deactivated
+PROC
+LeaderUpdater_OnModNotActive((STRING)_ModID, (STRING)_Author, (STRING)_GoalTitle)
+AND
+DB_GlobalFlag("LeaderLib_TS_RemoveHarmfulStatusesEnabled")
+AND
+NOT LeaderLib_Statuses_QRY_Internal_RegisteredModsAreActive()
+THEN
+GlobalClearFlag("LeaderLib_TS_RemoveHarmfulStatusesEnabled");
+//END_REGION
+
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

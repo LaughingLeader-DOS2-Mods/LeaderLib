@@ -42,6 +42,22 @@ THEN
 DB_LeaderUpdater_Dependency(_ModID, _Author, _DependencyModID, _DependencyModAuthor, _NotifyWhenMissing);
 //END_REGION
 
+//REGION MOD_NOT_ACTIVE_EVENTS
+PROC
+LeaderUpdater_CheckForMissingMods()
+AND
+DB_LeaderUpdater_RegisteredGoal(_ModID, _Author, _GoalTitle)
+AND
+NOT SysIsActive(_GoalTitle)
+THEN
+LeaderUpdater_OnModNotActive(_ModID, _Author, _GoalTitle);
+
+PROC
+LeaderUpdater_OnModNotActive((STRING)_ModID, (STRING)_Author, (STRING)_GoalTitle)
+THEN
+DB_NOOP(1);
+//END_REGION
+
 //REGION DEPENDENCY_CHECKING
 IF
 StoryEvent(_, "LeaderLib_Initialized")
@@ -54,9 +70,10 @@ TimerFinished("LeaderUpdater_Timers_CheckDependencies")
 THEN
 GlobalClearFlag("LeaderLib_ModDependenciesMissing");
 LeaderUpdater_CheckForMissingMods();
+LeaderUpdater_CheckForMissingDependencies();
 
 PROC
-LeaderUpdater_CheckForMissingMods()
+LeaderUpdater_CheckForMissingDependencies()
 AND
 DB_LeaderUpdater_Dependency(_ModID, _Author, _DependencyModID, _DependencyModAuthor, 1)
 AND
@@ -83,7 +100,7 @@ THEN
 LeaderLib_Array_AddToDictionary(_ArrayID, _DependencyModID, _DependencyModAuthor);
 
 PROC
-LeaderUpdater_CheckForMissingMods()
+LeaderUpdater_CheckForMissingDependencies()
 AND
 SysCount("DB_LeaderUpdater_Temp_MissingMods", 3, _Count)
 AND
@@ -94,7 +111,7 @@ SysClear("DB_LeaderUpdater_Temp_MissingModMessage", 2);
 DB_LeaderUpdater_Temp_MissingModMessage("", 0);
 
 PROC
-LeaderUpdater_CheckForMissingMods()
+LeaderUpdater_CheckForMissingDependencies()
 AND
 DB_LeaderUpdater_Temp_MissingMods(_ArrayID, _ModID, _Author)
 AND
@@ -192,7 +209,7 @@ THEN
 DB_NOOP(1);
 
 PROC
-LeaderUpdater_CheckForMissingMods()
+LeaderUpdater_CheckForMissingDependencies()
 AND
 DB_LeaderUpdater_Temp_MissingModMessage(_Str, 0)
 THEN
@@ -200,7 +217,7 @@ NOT DB_LeaderUpdater_Temp_MissingModMessage(_Str, 0);
 DB_LeaderUpdater_Temp_MissingModMessage(_Str, 1);
 
 PROC
-LeaderUpdater_CheckForMissingMods()
+LeaderUpdater_CheckForMissingDependencies()
 AND
 DB_LeaderUpdater_Temp_MissingModMessage(_Str, 1)
 AND
@@ -210,7 +227,7 @@ TimerCancel("LeaderUpdater_Timers_NotifyMissingMods");
 TimerLaunch("LeaderUpdater_Timers_NotifyMissingMods", 1000);
 
 PROC
-LeaderUpdater_CheckForMissingMods()
+LeaderUpdater_CheckForMissingDependencies()
 AND
 DB_LeaderUpdater_Temp_MissingModMessage(_Str, 1)
 AND
@@ -330,6 +347,15 @@ QRY
 LeaderUpdater_QRY_ModUpdateNeeded((STRING)_ModID, (STRING)_Author, (STRING)_Version)
 AND
 NOT DB_Mods_Registered(_ModID, _Author, _Version)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderUpdater_QRY_ModIsActive((STRING)_ModID)
+AND
+DB_Mods_ActiveGoal(_ModID, _Author, _GoalTitle)
+AND
+SysIsActive(_GoalTitle)
 THEN
 DB_NOOP(1);
 

@@ -1163,6 +1163,20 @@ AND
 ItemIsDestroyed((ITEMGUID)_Object, 0)
 THEN
 DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IsRaceOrOriginSkill((STRING)_Skill)
+AND
+DB_LeaderLib_RacialSkills(_, _Skill)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IsRaceOrOriginSkill((STRING)_Skill)
+AND
+DB_LeaderLib_OriginSkills(_, _Skill)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION DUMMY_HELPERS

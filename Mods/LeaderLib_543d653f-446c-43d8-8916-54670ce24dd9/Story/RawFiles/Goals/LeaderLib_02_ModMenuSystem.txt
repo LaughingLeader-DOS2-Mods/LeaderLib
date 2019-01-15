@@ -746,10 +746,16 @@ CharacterUsedItemTemplate(_Player, "BOOK_LeaderLib_ModMenu_646a1194-3383-47fa-a3
 AND
 QRY_SpeakerIsAvailable(_Player)
 THEN
-Proc_StartDialog(0, "LeaderLib_ModMenu", _Book, _Player);
+Proc_StartDialog(0, "LeaderLib_ModMenu", _Player, _Player);
 
 IF
 CharacterUsedSkill(_Player, "Shout_LeaderLib_OpenModMenu", _, _)
+THEN
+ProcObjectTimerCancel(_Player, "LeaderLib_Timers_OpenModMenu_Skill");
+ProcObjectTimer(_Player, "LeaderLib_Timers_OpenModMenu_Skill", 50);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_OpenModMenu_Skill")
 AND
 QRY_SpeakerIsAvailable(_Player)
 THEN

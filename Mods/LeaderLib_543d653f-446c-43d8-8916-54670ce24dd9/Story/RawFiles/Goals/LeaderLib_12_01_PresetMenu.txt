@@ -367,6 +367,8 @@ DB_NOOP(1);
 PROC
 LeaderLib_PresetMenu_Internal_AddSkill((CHARACTERGUID)_Player, (STRING)_Preset, (STRING)_Skill, (INTEGER)_ChangingRace)
 AND
+NOT DB_LeaderLib_BlockedSkill(_Skill) // Globally blocked
+AND
 NOT DB_LeaderLib_PresetMenu_Temp_BlockSkill(_Player, _Skill)
 AND
 NOT LeaderLib_Helper_QRY_IsRaceOrOriginSkill(_Skill)

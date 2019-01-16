@@ -127,7 +127,7 @@
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 1},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -263,7 +263,7 @@
                         "exclusive" : {"type" : 19, "value" : 0},
                         "optional" : {"type" : 19, "value" : 0},
                         "setflags" : [ {} ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 1},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -470,7 +470,7 @@
                         "exclusive" : {"type" : 19, "value" : 0},
                         "optional" : {"type" : 19, "value" : 0},
                         "setflags" : [ {} ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -870,7 +870,7 @@
                         "exclusive" : {"type" : 19, "value" : 0},
                         "optional" : {"type" : 19, "value" : 0},
                         "setflags" : [ {} ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 1},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -1036,7 +1036,7 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_IsHost"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "User"}}
@@ -1087,7 +1087,7 @@
                         "exclusive" : {"type" : 19, "value" : 0},
                         "optional" : {"type" : 19, "value" : 0},
                         "setflags" : [ {} ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -1279,7 +1279,7 @@
                         "exclusive" : {"type" : 19, "value" : 0},
                         "optional" : {"type" : 19, "value" : 0},
                         "setflags" : [ {} ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -1395,7 +1395,7 @@
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -1491,7 +1491,7 @@
                         "exclusive" : {"type" : 19, "value" : 0},
                         "optional" : {"type" : 19, "value" : 0},
                         "setflags" : [ {} ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 1},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -1687,7 +1687,7 @@
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 1},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -1831,7 +1831,7 @@
                         "exclusive" : {"type" : 19, "value" : 0},
                         "optional" : {"type" : 19, "value" : 0},
                         "setflags" : [ {} ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -1889,7 +1889,7 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_AutoOpenModMenu"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "User"}}
@@ -1946,14 +1946,14 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_AutoOpenModMenu"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
                                     ],"type" : {"type" : 22, "value" : "User"}}
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 1},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -2069,7 +2069,7 @@
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -2127,7 +2127,7 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_AutoOpenModMenu"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
                                     ],"type" : {"type" : 22, "value" : "User"}}
@@ -2184,14 +2184,14 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_AutoOpenModMenu"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "User"}}
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 1},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -2287,7 +2287,7 @@
                         "exclusive" : {"type" : 19, "value" : 0},
                         "optional" : {"type" : 19, "value" : 0},
                         "setflags" : [ {} ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 1},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -2403,7 +2403,7 @@
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -2587,7 +2587,7 @@
                         "exclusive" : {"type" : 19, "value" : 0},
                         "optional" : {"type" : 19, "value" : 0},
                         "setflags" : [ {} ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -2683,7 +2683,7 @@
                         "exclusive" : {"type" : 19, "value" : 0},
                         "optional" : {"type" : 19, "value" : 0},
                         "setflags" : [ {} ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 1},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -2913,7 +2913,7 @@
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 1},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -3029,7 +3029,7 @@
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 1},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -3145,7 +3145,7 @@
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 1},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -3252,7 +3252,7 @@
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "15;15"}
+                                    "val" : {"type" : 23, "value" : "15;-423"}
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "sourcetemplate"},
@@ -3323,7 +3323,7 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_IsHost"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "User"}}
@@ -3374,7 +3374,7 @@
                         "exclusive" : {"type" : 19, "value" : 0},
                         "optional" : {"type" : 19, "value" : 0},
                         "setflags" : [ {} ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -3664,7 +3664,7 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_IsHost"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "User"}}
@@ -3715,7 +3715,7 @@
                         "exclusive" : {"type" : 19, "value" : 0},
                         "optional" : {"type" : 19, "value" : 0},
                         "setflags" : [ {} ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 1},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -3831,7 +3831,7 @@
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 1},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -4049,7 +4049,7 @@
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -4063,10 +4063,6 @@
                      {
                         "index" : {"type" : 22, "value" : "0"},
                         "list" : {"type" : 23, "value" : "e0d1ff71-04a8-4340-ae64-9684d846eb83"}
-                     },
-                     {
-                        "index" : {"type" : 22, "value" : "1"},
-                        "list" : {"type" : 23, "value" : "e0d1ff71-04a8-4340-ae64-9684d846eb83"}
                      }
                   ]
                }
@@ -4074,7 +4070,7 @@
          },
          "editorData" : {
             "needLayout" : {"type" : 19, "value" : 0},
-            "nextNodeId" : {"type" : 5, "value" : 142}
+            "nextNodeId" : {"type" : 5, "value" : 154}
          }
       }
    }

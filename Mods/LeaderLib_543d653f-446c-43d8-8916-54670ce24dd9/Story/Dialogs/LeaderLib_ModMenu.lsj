@@ -1,7 +1,6 @@
 {
    "save" : {
       "header" : {
-         "time" : 1523449374,
          "version" : "2.0.8.2"
       },
       "regions" : {
@@ -26,13 +25,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -81,7 +74,7 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_ModMenu_MenuEmpty3"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
@@ -101,6 +94,10 @@
                         "editorData" : [
                            {
                               "data" : [
+                                 {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N1"}
+                                 },
                                  {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
@@ -134,14 +131,14 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_ModMenu_SelectedMenu3"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -155,13 +152,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -213,6 +204,10 @@
                            {
                               "data" : [
                                  {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N2"}
+                                 },
+                                 {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
                                  },
@@ -245,7 +240,7 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_OpenSettingsMenu"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
@@ -266,13 +261,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -321,7 +310,7 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_ModMenu_MenuEmpty1"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
@@ -341,6 +330,10 @@
                         "editorData" : [
                            {
                               "data" : [
+                                 {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N3"}
+                                 },
                                  {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
@@ -374,14 +367,14 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_ModMenu_SelectedMenu1"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -395,13 +388,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -450,7 +437,7 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_ModMenu_MenuEmpty4"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
@@ -470,6 +457,10 @@
                         "editorData" : [
                            {
                               "data" : [
+                                 {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N4"}
+                                 },
                                  {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
@@ -503,14 +494,14 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_ModMenu_SelectedMenu4"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -524,13 +515,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -574,6 +559,10 @@
                            {
                               "data" : [
                                  {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N5"}
+                                 },
+                                 {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
                                  },
@@ -614,13 +603,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -669,7 +652,7 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_ModMenu_MenuEmpty7"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
@@ -689,6 +672,10 @@
                         "editorData" : [
                            {
                               "data" : [
+                                 {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N6"}
+                                 },
                                  {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
@@ -722,14 +709,14 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_ModMenu_SelectedMenu7"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -743,13 +730,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -793,7 +774,7 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_ModMenu_IsEmpty"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
@@ -813,6 +794,10 @@
                         "editorData" : [
                            {
                               "data" : [
+                                 {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N7"}
+                                 },
                                  {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
@@ -840,7 +825,7 @@
                         "exclusive" : {"type" : 19, "value" : 0},
                         "optional" : {"type" : 19, "value" : 0},
                         "setflags" : [ {} ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 1},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -854,13 +839,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -909,7 +888,7 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_ModMenu_MenuEmpty6"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
@@ -929,6 +908,10 @@
                         "editorData" : [
                            {
                               "data" : [
+                                 {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N8"}
+                                 },
                                  {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
@@ -962,14 +945,14 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_ModMenu_SelectedMenu6"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -983,13 +966,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -1038,7 +1015,7 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_ModMenu_MenuEmpty2"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
@@ -1058,6 +1035,10 @@
                         "editorData" : [
                            {
                               "data" : [
+                                 {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N9"}
+                                 },
                                  {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
@@ -1091,14 +1072,14 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_ModMenu_SelectedMenu2"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -1112,13 +1093,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -1167,7 +1142,7 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_ModMenu_MenuEmpty8"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
@@ -1187,6 +1162,10 @@
                         "editorData" : [
                            {
                               "data" : [
+                                 {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N10"}
+                                 },
                                  {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
@@ -1220,14 +1199,14 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_ModMenu_SelectedMenu8"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -1241,13 +1220,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -1291,12 +1264,12 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_ModMenu_HasMultiplePages"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        },
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_ModMenu_HidePreviousPageButton"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
@@ -1316,6 +1289,10 @@
                         "editorData" : [
                            {
                               "data" : [
+                                 {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N11"}
+                                 },
                                  {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
@@ -1349,14 +1326,14 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_ModMenu_PreviousPage"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -1370,13 +1347,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -1420,12 +1391,12 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_ModMenu_HasMultiplePages"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        },
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_ModMenu_HideNextPageButton"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
@@ -1445,6 +1416,10 @@
                         "editorData" : [
                            {
                               "data" : [
+                                 {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N12"}
+                                 },
                                  {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
@@ -1478,14 +1453,14 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_ModMenu_NextPage"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -1499,13 +1474,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -1557,6 +1526,10 @@
                            {
                               "data" : [
                                  {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N13"}
+                                 },
+                                 {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
                                  },
@@ -1597,13 +1570,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -1652,7 +1619,7 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_ModMenu_MenuEmpty5"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
@@ -1672,6 +1639,10 @@
                         "editorData" : [
                            {
                               "data" : [
+                                 {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N14"}
+                                 },
                                  {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
@@ -1705,14 +1676,14 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_ModMenu_SelectedMenu5"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -1726,13 +1697,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -1776,6 +1741,10 @@
                            {
                               "data" : [
                                  {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N15"}
+                                 },
+                                 {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
                                  },
@@ -1802,7 +1771,7 @@
                         "exclusive" : {"type" : 19, "value" : 0},
                         "optional" : {"type" : 19, "value" : 0},
                         "setflags" : [ {} ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 1},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -1816,13 +1785,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -1912,6 +1875,10 @@
                            {
                               "data" : [
                                  {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N16"}
+                                 },
+                                 {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
                                  },
@@ -1925,7 +1892,7 @@
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "-305;15"}
+                                    "val" : {"type" : 23, "value" : "-305;-423"}
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "sourcetemplate"},
@@ -1952,13 +1919,7 @@
                               "Emotion" : {"type" : 23, "value" : "Default"},
                               "ExtraWaitTime" : {"type" : 4, "value" : 0},
                               "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [
-                                 {
-                                    "OriginOnly" : {"type" : 22, "value" : ""},
-                                    "OriginTheme" : {"type" : 22, "value" : ""},
-                                    "OriginThemeAddInstrument" : {"type" : 19, "value" : 0}
-                                 }
-                              ],
+                              "OriginSound" : [ {} ],
                               "SoundEvent" : {"type" : 23, "value" : ""}
                            }
                         ],
@@ -2002,6 +1963,10 @@
                            {
                               "data" : [
                                  {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N17"}
+                                 },
+                                 {
                                     "key" : {"type" : 22, "value" : "NodeContext"},
                                     "val" : {"type" : 23, "value" : ""}
                                  },
@@ -2043,6 +2008,10 @@
                            {
                               "data" : [
                                  {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N19"}
+                                 },
+                                 {
                                     "key" : {"type" : 22, "value" : "collapsed"},
                                     "val" : {"type" : 23, "value" : "False"}
                                  },
@@ -2077,10 +2046,6 @@
                   "speaker" : [
                      {
                         "index" : {"type" : 22, "value" : "0"},
-                        "list" : {"type" : 23, "value" : "02c45912-4bff-4eef-ab96-9686f0dbb02d;e0d1ff71-04a8-4340-ae64-9684d846eb83"}
-                     },
-                     {
-                        "index" : {"type" : 22, "value" : "1"},
                         "list" : {"type" : 23, "value" : "e0d1ff71-04a8-4340-ae64-9684d846eb83"}
                      }
                   ]
@@ -2088,7 +2053,8 @@
             ]
          },
          "editorData" : {
-            "needLayout" : {"type" : 19, "value" : 0}
+            "needLayout" : {"type" : 19, "value" : 0},
+            "nextNodeId" : {"type" : 5, "value" : 19}
          }
       }
    }

@@ -272,13 +272,13 @@ AND
 DB_LeaderLib_ModMenu_CurrentPageIndex(_Player, _CurrentPage)
 THEN
 NOT DB_LeaderLib_ModMenu_CurrentPageIndex(_Player, _CurrentPage);
+ObjectClearFlag(_Player, "LeaderLib_ModMenu_HideNextPageButton", 0);
+ObjectClearFlag(_Player, "LeaderLib_ModMenu_HidePreviousPageButton", 0);
 
 PROC
 LeaderLib_ModMenu_SetPage((CHARACTERGUID)_Player, (INTEGER)_Page, (INTEGER)_Instance)
 THEN
 DB_LeaderLib_ModMenu_CurrentPageIndex(_Player, _Page);
-ObjectClearFlag(_Player, "LeaderLib_ModMenu_HideNextPageButton");
-ObjectClearFlag(_Player, "LeaderLib_ModMenu_HidePreviousPageButton");
 
 PROC
 LeaderLib_ModMenu_SetPage((CHARACTERGUID)_Player, (INTEGER)_Page, (INTEGER)_Instance)
@@ -487,7 +487,7 @@ ObjectGetFlag(_Player, _DisabledFlag, 1)
 AND
 LeaderUpdater_QRY_ModIsActive(_ModID, _Author)
 THEN
-ObjectClearFlag(_Player, _DisabledFlag);
+ObjectClearFlag(_Player, _DisabledFlag, 0);
 
 QRY
 LeaderLib_QRY_WordMenus_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_DisabledFlag)
@@ -518,7 +518,7 @@ DB_LeaderLib_ModMenu_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
 AND
 _MaxPage <= 1
 THEN
-ObjectClearFlag(_Player, "LeaderLib_ModMenu_HasMultiplePages");
+ObjectClearFlag(_Player, "LeaderLib_ModMenu_HasMultiplePages", 0);
 //LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu] Only one page available.");
 //END_REGION
 
@@ -610,7 +610,7 @@ DialogEnded("LeaderLib_ModMenu", _Instance)
 AND
 DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
 THEN
-ObjectClearFlag(_Player, "LeaderLib_ModMenu_IsEmpty");
+ObjectClearFlag(_Player, "LeaderLib_ModMenu_IsEmpty", 0);
 
 IF
 DialogEnded("LeaderLib_ModMenu", _Instance)
@@ -619,8 +619,8 @@ DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
 AND
 ObjectGetFlag(_Player, "LeaderLib_OpenSettingsMenu", 1)
 THEN
-ObjectClearFlag(_Player, "LeaderLib_OpenSettingsMenu");
-Proc_StartDialog(0, "LeaderLib_SettingsMenu", _Player, _Player);
+ObjectClearFlag(_Player, "LeaderLib_OpenSettingsMenu", 0);
+Proc_StartDialog(0, "LeaderLib_SettingsMenu", _Player);
 
 IF
 DialogEnded("LeaderLib_ModMenu", _Instance)
@@ -663,7 +663,7 @@ ObjectGetFlag(_Player, "LeaderLib_OpenModMenu", 1)
 AND
 DB_LeaderLib_ModMenu_Temp_ActiveMenu(_Player, _ID, _Dialog)
 THEN
-ObjectClearFlag(_Player, "LeaderLib_OpenModMenu");
+ObjectClearFlag(_Player, "LeaderLib_OpenModMenu", 0);
 LeaderLib_ModMenu_Reopen(_Player);
 
 IF
@@ -746,7 +746,7 @@ CharacterUsedItemTemplate(_Player, "BOOK_LeaderLib_ModMenu_646a1194-3383-47fa-a3
 AND
 QRY_SpeakerIsAvailable(_Player)
 THEN
-Proc_StartDialog(0, "LeaderLib_ModMenu", _Player, _Player);
+Proc_StartDialog(0, "LeaderLib_ModMenu", _Player);
 
 IF
 CharacterUsedSkill(_Player, "Shout_LeaderLib_OpenModMenu", _, _)
@@ -759,9 +759,37 @@ ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_OpenModMenu_Sk
 AND
 QRY_SpeakerIsAvailable(_Player)
 THEN
-Proc_StartDialog(0, "LeaderLib_ModMenu", _Player, _Player);
+Proc_StartDialog(0, "LeaderLib_ModMenu", _Player);
 
 //END_REGION
+
+//REGION SHARED_FLAG_WORKAROUND_FIX
+/*
+When Origin companions open the mod menu within their recruitment area, clearing flags in the mod menu suddenly created endless feedback loops thanks to __AAA_Shared_FirstGoal
+Not really sure why this is happening now.
+*/
+IF
+DB_GLO_AllDialogObjectFlagsShared(_Instance)
+AND
+DB_DialogName("LeaderLib_ModMenu", _Instance)
+THEN
+LeaderLib_ModMenu_Internal_PreventSharedDialog(_Instance);
+
+IF
+DB_GLO_AllDialogObjectFlagsShared(_Instance)
+AND
+DB_DialogName(_Dialog, _Instance)
+AND
+DB_LeaderLib_ModMenu_Temp_ActiveMenu(_Player, _ID, _Dialog)
+THEN
+LeaderLib_ModMenu_Internal_PreventSharedDialog(_Instance);
+
+PROC
+LeaderLib_ModMenu_Internal_PreventSharedDialog((INTEGER)_Instance)
+THEN
+NOT DB_GLO_AllDialogObjectFlagsShared(_Instance);
+//END_REGION
+
 EXITSECTION
 
 ENDEXITSECTION

@@ -170,7 +170,7 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_DynamicMenu_MenuOption3_Available"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
@@ -227,14 +227,14 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_DynamicMenu_Select_MenuOption3"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -357,7 +357,7 @@
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "655;234"}
+                                    "val" : {"type" : 23, "value" : "655;453"}
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "sourcetemplate"},
@@ -433,7 +433,7 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_DynamicMenu_MenuOption6_Available"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
@@ -490,14 +490,14 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_DynamicMenu_Select_MenuOption6"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -590,7 +590,7 @@
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "335;453"}
+                                    "val" : {"type" : 23, "value" : "335;672"}
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "sourcetemplate"},
@@ -613,7 +613,7 @@
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -676,7 +676,7 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_DynamicMenu_MenuOption8_Available"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
@@ -733,14 +733,14 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_DynamicMenu_Select_MenuOption8"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -803,7 +803,7 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_DynamicMenu_MenuOption7_Available"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
@@ -860,14 +860,14 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_DynamicMenu_Select_MenuOption7"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -930,7 +930,7 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_DynamicMenu_MenuOption1_Available"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
@@ -987,14 +987,14 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_DynamicMenu_Select_MenuOption1"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -1057,7 +1057,7 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_DynamicMenu_MenuOption2_Available"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
@@ -1114,14 +1114,14 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_DynamicMenu_Select_MenuOption2"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -1149,7 +1149,7 @@
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "975;234"}
+                                    "val" : {"type" : 23, "value" : "975;453"}
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "sourcetemplate"},
@@ -1244,7 +1244,7 @@
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "655;1110"}
+                                    "val" : {"type" : 23, "value" : "655;1329"}
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "sourcetemplate"},
@@ -1385,7 +1385,7 @@
                         "exclusive" : {"type" : 19, "value" : 0},
                         "optional" : {"type" : 19, "value" : 0},
                         "setflags" : [ {} ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -1542,6 +1542,9 @@
                            {
                               "child" : [
                                  {
+                                    "UUID" : {"type" : 22, "value" : "9e970ce4-dbdf-4131-a7d2-fa1d2f85ffa5"}
+                                 },
+                                 {
                                     "UUID" : {"type" : 22, "value" : "d50e2e00-674c-48ae-a920-0963e7dc03e7"}
                                  },
                                  {
@@ -1558,9 +1561,6 @@
                                  },
                                  {
                                     "UUID" : {"type" : 22, "value" : "a08ed8ca-4663-4130-bc09-46f8cc4fe4d6"}
-                                 },
-                                 {
-                                    "UUID" : {"type" : 22, "value" : "9e970ce4-dbdf-4131-a7d2-fa1d2f85ffa5"}
                                  }
                               ]
                            }
@@ -1658,12 +1658,12 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_DynamicMenu_HasMultiplePages"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        },
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_DynamicMenu_IsLastPage"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
@@ -1720,14 +1720,14 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_DynamicMenu_LastPage"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -1901,7 +1901,7 @@
                                                 "TagText" : {
                                                    "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
                                                    "type" : 28,
-                                                   "value" : "[Exit]"
+                                                   "value" : "[Back]"
                                                 },
                                                 "stub" : {"type" : 19, "value" : 1}
                                              }
@@ -1939,7 +1939,7 @@
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "335;1329"}
+                                    "val" : {"type" : 23, "value" : "335;15"}
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "sourcetemplate"},
@@ -1952,7 +1952,7 @@
                         "exclusive" : {"type" : 19, "value" : 0},
                         "optional" : {"type" : 19, "value" : 0},
                         "setflags" : [ {} ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -2035,7 +2035,7 @@
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "335;1110"}
+                                    "val" : {"type" : 23, "value" : "335;1329"}
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "sourcetemplate"},
@@ -2058,7 +2058,7 @@
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -2116,7 +2116,7 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_DynamicMenu_HasMultiplePages"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
@@ -2173,14 +2173,14 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_DynamicMenu_NextPage"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -2273,7 +2273,7 @@
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "335;891"}
+                                    "val" : {"type" : 23, "value" : "335;1110"}
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "sourcetemplate"},
@@ -2296,7 +2296,7 @@
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -2389,7 +2389,7 @@
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "335;234"}
+                                    "val" : {"type" : 23, "value" : "335;453"}
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "sourcetemplate"},
@@ -2412,7 +2412,7 @@
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -2505,7 +2505,7 @@
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "335;672"}
+                                    "val" : {"type" : 23, "value" : "335;891"}
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "sourcetemplate"},
@@ -2528,7 +2528,7 @@
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -2586,12 +2586,12 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_DynamicMenu_HasMultiplePages"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        },
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_DynamicMenu_IsFirstPage"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 0}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
@@ -2648,14 +2648,14 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_DynamicMenu_FirstPage"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -2751,7 +2751,7 @@
                         "exclusive" : {"type" : 19, "value" : 0},
                         "optional" : {"type" : 19, "value" : 0},
                         "setflags" : [ {} ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -2814,7 +2814,7 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_DynamicMenu_MenuOption5_Available"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
@@ -2871,14 +2871,14 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_DynamicMenu_Select_MenuOption5"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -2961,7 +2961,7 @@
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "335;15"}
+                                    "val" : {"type" : 23, "value" : "335;234"}
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "sourcetemplate"},
@@ -2974,7 +2974,7 @@
                         "exclusive" : {"type" : 19, "value" : 0},
                         "optional" : {"type" : 19, "value" : 0},
                         "setflags" : [ {} ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -3037,7 +3037,7 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_DynamicMenu_MenuOption4_Available"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
@@ -3094,14 +3094,14 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_DynamicMenu_Select_MenuOption4"},
-                                          "paramval" : {"type" : 4, "value" : 1},
+                                          "paramval" : {"type" : 4, "value" : 0},
                                           "value" : {"type" : 19, "value" : 1}
                                        }
                                     ],"type" : {"type" : 22, "value" : "Character"}}
                               ]
                            }
                         ],
-                        "speaker" : {"type" : 4, "value" : 1},
+                        "speaker" : {"type" : 4, "value" : 0},
                         "stub" : {"type" : 19, "value" : 0},
                         "transitionmode" : {"type" : 1, "value" : 0},
                         "waittime" : {"type" : 6, "value" : -1.0}
@@ -3115,10 +3115,6 @@
                      {
                         "index" : {"type" : 22, "value" : "0"},
                         "list" : {"type" : 23, "value" : "e0d1ff71-04a8-4340-ae64-9684d846eb83"}
-                     },
-                     {
-                        "index" : {"type" : 22, "value" : "1"},
-                        "list" : {"type" : 23, "value" : "e0d1ff71-04a8-4340-ae64-9684d846eb83"}
                      }
                   ]
                }
@@ -3126,7 +3122,7 @@
          },
          "editorData" : {
             "needLayout" : {"type" : 19, "value" : 0},
-            "nextNodeId" : {"type" : 5, "value" : 115}
+            "nextNodeId" : {"type" : 5, "value" : 121}
          }
       }
    }

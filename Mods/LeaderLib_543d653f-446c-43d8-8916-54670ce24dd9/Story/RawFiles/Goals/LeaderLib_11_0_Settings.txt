@@ -626,7 +626,7 @@ LeaderLib_Settings_InitStatusData();
 IF
 ObjectFlagSet("LeaderLib_Settings_ListMods", _Player, _Instance)
 THEN
-ObjectClearFlag(_Player, "LeaderLib_Settings_ListMods");
+ObjectClearFlag(_Player, "LeaderLib_Settings_ListMods", 0);
 LeaderLib_Settings_BuildModList();
 
 PROC
@@ -723,19 +723,19 @@ ItemTemplateAddTo(_ModMenuBookTemplate, _Object, 1, 1);
 IF
 ObjectFlagSet("LeaderLib_Commands_CheckTraders", (CHARACTERGUID)_Player, _)
 THEN
-ObjectClearFlag(_Player, "LeaderLib_Commands_CheckTraders");
+ObjectClearFlag(_Player, "LeaderLib_Commands_CheckTraders", 0);
 LeaderLib_Traders_Internal_StartCheckingTraders();
 
 IF
 ObjectFlagSet("LeaderLib_Commands_AddModMenuSkill", (CHARACTERGUID)_Player, _)
 THEN
-ObjectClearFlag(_Player, "LeaderLib_Commands_AddModMenuSkill");
+ObjectClearFlag(_Player, "LeaderLib_Commands_AddModMenuSkill", 0);
 CharacterAddSkill(_Player, "Shout_LeaderLib_OpenModMenu", 1);
 
 IF
 ObjectFlagSet("LeaderLib_Commands_RemoveModMenuSkill", (CHARACTERGUID)_Player, _)
 THEN
-ObjectClearFlag(_Player, "LeaderLib_Commands_RemoveModMenuSkill");
+ObjectClearFlag(_Player, "LeaderLib_Commands_RemoveModMenuSkill", 0);
 CharacterRemoveSkill(_Player, "Shout_LeaderLib_OpenModMenu");
 //END_REGION
 

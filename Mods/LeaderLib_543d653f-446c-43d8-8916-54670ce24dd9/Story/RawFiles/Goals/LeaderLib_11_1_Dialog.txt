@@ -16,6 +16,8 @@ AND
 NOT DB_LeaderLib_Dialog_DialogFiles(_)
 THEN
 DB_LeaderLib_Dialog_DialogFiles("LeaderLib_AD_TestFollower");
+DB_LeaderLib_Dialog_DialogFiles("LeaderLib_AutosaveMenu");
+DB_LeaderLib_Dialog_DialogFiles("LeaderLib_CommandsMenu");
 DB_LeaderLib_Dialog_DialogFiles("LeaderLib_Debug_RecruitCharacter");
 DB_LeaderLib_Dialog_DialogFiles("LeaderLib_Debug_Trader");
 DB_LeaderLib_Dialog_DialogFiles("LeaderLib_LeaderTrader_Arx_Intro");
@@ -24,7 +26,9 @@ DB_LeaderLib_Dialog_DialogFiles("LeaderLib_LeaderTrader_Default");
 DB_LeaderLib_Dialog_DialogFiles("LeaderLib_LeaderTrader_FortJoy_Intro");
 DB_LeaderLib_Dialog_DialogFiles("LeaderLib_LeaderTrader_LadyVengeance_Intro");
 DB_LeaderLib_Dialog_DialogFiles("LeaderLib_LeaderTrader_Tutorial_Intro");
+DB_LeaderLib_Dialog_DialogFiles("LeaderLib_MissingModDependencyList");
 DB_LeaderLib_Dialog_DialogFiles("LeaderLib_ModMenu");
+DB_LeaderLib_Dialog_DialogFiles("LeaderLib_PresetMenu");
 DB_LeaderLib_Dialog_DialogFiles("LeaderLib_SettingsMenu");
 
 PROC
@@ -93,8 +97,28 @@ THEN
 NOT DB_LeaderLib_Dialog_AnimationFlags(_Group, _Flag, _Animation, _Looped);
 //END_REGION
 
-//REGION UPDATER
+//REGION UPDATES
+//_Player, _Player dialogs became singular _Player ones
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 12, 0)
+THEN
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updating surface settings from version [",_PastVersion,"].");
+SysClear("DB_LeaderLib_Dialog_DialogFiles", 1);
+LeaderLib_Dialog_InitSettings();
+LeaderLib_Dialog_Internal_RemovePlayersFromDialog();
 
+PROC
+LeaderLib_Dialog_Internal_RemovePlayersFromDialog()
+AND
+DB_LeaderLib_Dialog_DialogFiles(_Dialog)
+AND
+DB_DialogName(_Dialog, _Instance)
+AND
+DB_IsPlayer(_Player)
+THEN
+DialogRequestStopForDialog(_Dialog, _Player);
 //END_REGION
 
 //REGION NAME_VARS
@@ -292,7 +316,7 @@ LeaderLib_Helper_QRY_ClearObjectFlag(_Object, _Flag)
 AND
 ObjectGetFlag(_Object, "LeaderLib_ForceApplyStatus", _Force)
 THEN
-ObjectClearFlag(_Object, "LeaderLib_ForceApplyStatus");
+ObjectClearFlag(_Object, "LeaderLib_ForceApplyStatus", 0);
 ApplyStatus(_Object, _Status, _Duration, _Force);
 
 /*

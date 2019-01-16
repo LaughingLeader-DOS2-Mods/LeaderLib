@@ -133,7 +133,7 @@ AND
 CharacterGetHostCharacter(_Player)
 THEN
 TeleportTo(_EventParser, _Player, "", 0, 1);
-ObjectSetFlag(_EventParser, "LeaderLib_EventParser_EnteredLevel");
+ObjectSetFlag(_EventParser, "LeaderLib_EventParser_EnteredLevel", 0);
 
 IF
 SavegameLoaded(_,_,_,_)
@@ -145,7 +145,7 @@ AND
 CharacterGetHostCharacter(_Player)
 THEN
 TeleportTo(_EventParser, _Player, "", 0, 1);
-ObjectSetFlag(_EventParser, "LeaderLib_EventParser_EnteredLevel");
+ObjectSetFlag(_EventParser, "LeaderLib_EventParser_EnteredLevel", 0);
 
 IF
 RegionEnded(_)
@@ -154,7 +154,7 @@ DB_LeaderLib_EventParser(_EventParser)
 AND
 ObjectGetFlag(_EventParser, "LeaderLib_EventParser_EnteredLevel", 1)
 THEN
-ObjectClearFlag(_EventParser, "LeaderLib_EventParser_EnteredLevel");
+ObjectClearFlag(_EventParser, "LeaderLib_EventParser_EnteredLevel", 0);
 
 IF
 StoryEvent(_EventParser, "LeaderLib_EventParser_Initialize")
@@ -162,7 +162,7 @@ AND
 ObjectGetFlag(_EventParser, "LeaderLib_EventParser_Initialized", 0)
 THEN
 LeaderLib_EventParser_Internal_Initialize(_EventParser);
-ObjectSetFlag(_EventParser, "LeaderLib_EventParser_Initialized");
+ObjectSetFlag(_EventParser, "LeaderLib_EventParser_Initialized", 0);
 
 IF
 SavegameLoaded(_,_,_,_)
@@ -172,7 +172,7 @@ AND
 ObjectGetFlag(_EventParser, "LeaderLib_EventParser_Initialized", 0)
 THEN
 LeaderLib_EventParser_Internal_Initialize(_EventParser);
-ObjectSetFlag(_EventParser, "LeaderLib_EventParser_Initialized");
+ObjectSetFlag(_EventParser, "LeaderLib_EventParser_Initialized", 0);
 
 PROC
 LeaderLib_EventParser_Internal_Initialize((GUIDSTRING)_EventParser)
@@ -197,7 +197,7 @@ AND
 ObjectGetFlag(_EventParser, "LeaderLib_ForceSyncEnabled", 0)
 THEN
 ItemSetForceSynch(_EventParser, 1);
-ObjectSetFlag(_EventParser, "LeaderLib_ForceSyncEnabled");
+ObjectSetFlag(_EventParser, "LeaderLib_ForceSyncEnabled", 0);
 */
 /*
 IF
@@ -208,7 +208,7 @@ AND
 ObjectGetFlag(_EventParser, "LeaderLib_ForceSyncEnabled", 1)
 THEN
 ItemSetForceSynch(_EventParser, 0);
-ObjectClearFlag(_EventParser, "LeaderLib_ForceSyncEnabled");
+ObjectClearFlag(_EventParser, "LeaderLib_ForceSyncEnabled", 0);
 */
 //END_REGION
 

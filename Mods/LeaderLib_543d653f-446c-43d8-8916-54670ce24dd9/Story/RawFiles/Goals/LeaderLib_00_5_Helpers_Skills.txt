@@ -258,7 +258,7 @@ TemporaryCharacterCreateAtPosition(_x, _y, _z, "LeaderLib_SkillDummy_94668062-11
 THEN
 LeaderLib_Skills_Internal_TransformDummy(_Dummy, _Caster, _CopyStats, _CopyEquipment);
 LeaderLib_Skills_Internal_PrepareDummyStats(_Dummy, _Caster, _CopyStats, _CopyEquipment);
-ObjectSetFlag(_Dummy, "LeaderLib_IsSkillDummy");
+ObjectSetFlag(_Dummy, "LeaderLib_IsSkillDummy", 0);
 CharacterMakeStoryNpc(_Dummy, 1);
 SetVisible(_Dummy, 0);
 CharacterSetDetached(_Dummy, 1);

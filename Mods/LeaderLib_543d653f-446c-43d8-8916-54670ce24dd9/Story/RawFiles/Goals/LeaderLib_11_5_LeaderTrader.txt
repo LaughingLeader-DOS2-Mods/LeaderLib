@@ -392,7 +392,7 @@ PlayEffectAtPosition("RS3_FX_Skills_Arrow_SmokeScreen_Impact_01", _x, _y, _z);
 SetOnStage(_LeaderTrader, 1);
 SetCanJoinCombat(_LeaderTrader, 1);
 DisplayText(_LeaderTrader, "Hrmph...");
-ObjectClearFlag(_LeaderTrader, "LeaderLib_LeaderTrader_Hiding");
+ObjectClearFlag(_LeaderTrader, "LeaderLib_LeaderTrader_Hiding", 0);
 
 IF
 ObjectFlagCleared("LeaderLib_LeaderTrader_Hiding", (CHARACTERGUID)_LeaderTrader, _)
@@ -618,7 +618,7 @@ DB_LeaderLib_LeaderTrader_IntroDialogRequirements(_Level, _Dialog, _Flag, _Requi
 AND
 ObjectGetFlag(_Speaker, "LeaderLib_LeaderTrader_PlayerIntroducedSelf", 1)
 THEN
-ObjectSetFlag(_Speaker, "LeaderLib_LeaderTrader_KnowsPlayer");
+ObjectSetFlag(_Speaker, "LeaderLib_LeaderTrader_KnowsPlayer", 0);
 //END_REGION
 
 //REGION DIALOG_TRADE_TOGGLING
@@ -669,7 +669,7 @@ LeaderLib_Dialog_SetNameOverride(_LeaderTrader, "Lothar");
 IF
 ObjectFlagSet("LeaderLib_LeaderTrader_GiveIntroItems", (CHARACTERGUID)_Speaker, _)
 THEN
-ObjectClearFlag(_Speaker, "LeaderLib_LeaderTrader_GiveIntroItems");
+ObjectClearFlag(_Speaker, "LeaderLib_LeaderTrader_GiveIntroItems", 0);
 LeaderLib_LeaderTrader_GiveIntroItems(_Speaker);
 
 PROC
@@ -773,8 +773,8 @@ AND
 _Character != _LeaderTrader
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:LeaderTrader] Hey! 'LeaderLib_LeaderTrader_GaveIntroItems' was set on the wrong character! Wake up! ;)");
-ObjectClearFlag(_Character, "LeaderLib_LeaderTrader_GaveIntroItems");
-ObjectSetFlag(_LeaderTrader, "LeaderLib_LeaderTrader_GaveIntroItems");
+ObjectClearFlag(_Character, "LeaderLib_LeaderTrader_GaveIntroItems", 0);
+ObjectSetFlag(_LeaderTrader, "LeaderLib_LeaderTrader_GaveIntroItems", 0);
 
 //Don't display "New Items in Stock" if an intro dialog is set.
 IF

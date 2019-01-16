@@ -218,12 +218,12 @@ ObjectGetFlag(_Dummy, "LeaderLib_CreateByStat_Generating", 0)
 THEN
 LeaderLog_Log("TRACE", "[LeaderLib:CreateItemByStat] Creating [",_Stat,"] on dummy with ID [",_ArrayID,"]");
 DB_LeaderLib_CBS_Temp_DummyTarget(_ArrayID, (GUIDSTRING)_Object, _Dummy, _Stat, _ItemTransferredEvent, _ArrayID);
-ObjectSetFlag(_Dummy, "LeaderLib_CreateByStat_Generating");
+ObjectSetFlag(_Dummy, "LeaderLib_CreateByStat_Generating", 0);
 SetVarFixedString(_Dummy, "LeaderLib_CreateByStat_NextStatToCreate", _Stat);
 //SetVarFixedString(_Dummy, "LeaderLib_CreateByStat_FlagToSet", "LeaderLib_GeneratorDummy_CreatedItem");
 SetVarInteger(_Dummy, "LeaderLib_CreateByStat_ShowInTrade", _ShowInTrade);
 SetVarInteger(_Dummy, "LeaderLib_CreateByStat_AmountToCreate", _Amount);
-ObjectSetFlag(_Dummy, "LeaderLib_CreateByStat_ResetVars");
+ObjectSetFlag(_Dummy, "LeaderLib_CreateByStat_ResetVars", 0);
 SetStoryEvent(_Dummy, "LeaderLib_Commands_CreateItemByStat");
 
 IF
@@ -248,7 +248,7 @@ ItemGetAmount(_Item, _Amount)
 AND
 IntegertoString(_Amount, _AmountStr)
 THEN
-ObjectClearFlag(_Dummy, "LeaderLib_CreateByStat_Generating");
+ObjectClearFlag(_Dummy, "LeaderLib_CreateByStat_Generating", 0);
 LeaderLog_Log("TRACE", "[LeaderLib:CreateItemByStat] Created [",_ItemTemplate,"] from stat [",_Stat,"] on dummy. Transferring [",_AmountStr,"].");
 NOT DB_LeaderLib_CBS_Temp_DummyTarget(_DummyID, _Object, _Dummy, _Stat, _ItemTransferredEvent, _ArrayID);
 DB_LeaderLib_Treasure_StatToTemplate(_Stat, _ItemTemplate);

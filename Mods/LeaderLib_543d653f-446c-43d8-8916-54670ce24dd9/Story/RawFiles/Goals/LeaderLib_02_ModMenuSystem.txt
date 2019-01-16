@@ -603,7 +603,7 @@ LeaderLib_Array_QRY_EmptyLength("LeaderLib_RegisteredMenus")
 AND
 DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
 THEN
-ObjectSetFlag(_Player, "LeaderLib_ModMenu_IsEmpty");
+ObjectSetFlag(_Player, "LeaderLib_ModMenu_IsEmpty", 0);
 
 IF
 DialogEnded("LeaderLib_ModMenu", _Instance)
@@ -712,7 +712,7 @@ Proc_StartDialog(0, "LeaderLib_ModMenu", _Player, _Player);
 PROC
 LeaderLib_ModMenu_Reopen((CHARACTERGUID)_Player)
 THEN
-ObjectSetFlag(_Player, "LeaderLib_ModMenu_ClearMemory");
+ObjectSetFlag(_Player, "LeaderLib_ModMenu_ClearMemory", 0);
 
 IF
 ObjectFlagSet("LeaderLib_ModMenu_ClearMemory", (CHARACTERGUID)_Player, _)
@@ -775,6 +775,7 @@ DB_DialogName("LeaderLib_ModMenu", _Instance)
 THEN
 LeaderLib_ModMenu_Internal_PreventSharedDialog(_Instance);
 
+/*
 IF
 DB_GLO_AllDialogObjectFlagsShared(_Instance)
 AND
@@ -783,6 +784,7 @@ AND
 DB_LeaderLib_ModMenu_Temp_ActiveMenu(_Player, _ID, _Dialog)
 THEN
 LeaderLib_ModMenu_Internal_PreventSharedDialog(_Instance);
+*/
 
 PROC
 LeaderLib_ModMenu_Internal_PreventSharedDialog((INTEGER)_Instance)

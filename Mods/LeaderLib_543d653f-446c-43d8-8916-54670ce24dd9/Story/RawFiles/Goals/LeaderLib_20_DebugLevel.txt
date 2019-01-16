@@ -104,21 +104,21 @@ GetTemplate(_Item, _Template)
 AND
 StringContains(_Template, "Chest", 1)
 THEN
-ObjectSetFlag(_Char, "LeaderLib_DebugLevel_OpenedChest");
+ObjectSetFlag(_Char, "LeaderLib_DebugLevel_OpenedChest", 0);
 
 IF
 TradeEnds(_Player, _Trader)
 AND
 DB_LeaderLib_Traders_Active(_Trader, "TestLevel_LL_LeaderLib_Trader", _Level)
 THEN
-ObjectSetFlag(_Player, "LeaderLib_DebugLevel_TalkedToTrader");
+ObjectSetFlag(_Player, "LeaderLib_DebugLevel_TalkedToTrader", 0);
 
 IF
 RequestTrade(_Player, _Trader)
 AND
 DB_LeaderLib_Traders_Active(_Trader, "TestLevel_LL_LeaderLib_Trader", _Level)
 THEN
-ObjectSetFlag(_Player, "LeaderLib_DebugLevel_TalkedToTrader");
+ObjectSetFlag(_Player, "LeaderLib_DebugLevel_TalkedToTrader", 0);
 //END_REGION
 
 //REGION DEBUG_TEXT_EVENTS
@@ -173,7 +173,7 @@ LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel:CharacterStatusApplied] Summon [",
 IF
 TextEventSet("liblag")
 THEN
-ObjectSetFlag(ITEMGUID_NDL_ArenaChest_000_60d1603d-606f-4b64-9863-7b962d456278, "LeaderLib_Treasure_GenerationEnded");
+ObjectSetFlag(ITEMGUID_NDL_ArenaChest_000_60d1603d-606f-4b64-9863-7b962d456278, "LeaderLib_Treasure_GenerationEnded", 0);
 
 IF
 TextEventSet("liblag")

@@ -1758,7 +1758,7 @@
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "335;2205"}
+                                    "val" : {"type" : 23, "value" : "335;1986"}
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "sourcetemplate"},
@@ -2054,7 +2054,7 @@
          },
          "editorData" : {
             "needLayout" : {"type" : 19, "value" : 0},
-            "nextNodeId" : {"type" : 5, "value" : 19}
+            "nextNodeId" : {"type" : 5, "value" : 20}
          }
       }
    }

@@ -246,14 +246,14 @@ AND
 ObjectGetFlag(_Trader, "LeaderLib_Traders_StartingGoldAdded", 0)
 THEN
 CharacterAddGold(_Trader, _Amount);
-ObjectSetFlag(_Trader, "LeaderLib_Traders_StartingGoldAdded");
+ObjectSetFlag(_Trader, "LeaderLib_Traders_StartingGoldAdded", 0);
 
 PROC
 LeaderLib_Traders_Internal_OnLevelEnded((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
 AND
 ObjectGetFlag(_Trader, "LeaderLib_Traders_StartingGoldAdded", 1)
 THEN
-ObjectClearFlag(_Trader, "LeaderLib_Traders_StartingGoldAdded");
+ObjectClearFlag(_Trader, "LeaderLib_Traders_StartingGoldAdded", 0);
 
 PROC
 LeaderLib_Traders_Internal_OnLevelEnded((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
@@ -731,7 +731,7 @@ CharacterGetHostCharacter(_Host)
 THEN
 //DB_LeaderLib_Debug_TraceEvent(_TraderID, "LeaderLib_Events_OnTraderTeleported", "position");
 //Workaround for global characters not showing up after teleporting to a position
-ObjectSetFlag(_Trader, "LeaderLib_Internal_TeleportWorkaroundActive");
+ObjectSetFlag(_Trader, "LeaderLib_Internal_TeleportWorkaroundActive", 0);
 SetVisible(_Trader, 0);
 TeleportTo(_Trader, _Host, "", 0);
 TeleportToPosition(_Trader, _x,_y,_z, "LeaderLib_Events_OnTraderTeleported", 0);
@@ -743,7 +743,7 @@ AND
 ObjectGetFlag(_Trader, "LeaderLib_Internal_TeleportWorkaroundActive", 1)
 THEN
 SetVisible(_Trader, 1);
-ObjectClearFlag(_Trader, "LeaderLib_Internal_TeleportWorkaroundActive");
+ObjectClearFlag(_Trader, "LeaderLib_Internal_TeleportWorkaroundActive", 0);
 
 IF
 StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_OnTraderTeleported")
@@ -915,7 +915,7 @@ LeaderLib_Traders_OnSpawned((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_
 AND
 GlobalGetFlag("LeaderLib_InitialEventFlowComplete", 1)
 THEN
-ObjectSetFlag(_Trader, "LeaderLib_Treasure_GenerateNow"); // Generate via the scripted treasure system
+ObjectSetFlag(_Trader, "LeaderLib_Treasure_GenerateNow", 0); // Generate via the scripted treasure system
 
 PROC
 LeaderLib_Traders_Internal_GenerateInitialTradeTreasure((CHARACTERGUID)_Trader)

@@ -98,7 +98,6 @@ NOT DB_LeaderLib_Dialog_AnimationFlags(_Group, _Flag, _Animation, _Looped);
 //END_REGION
 
 //REGION UPDATES
-//_Player, _Player dialogs became singular _Player ones
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND
@@ -109,6 +108,7 @@ SysClear("DB_LeaderLib_Dialog_DialogFiles", 1);
 LeaderLib_Dialog_InitSettings();
 LeaderLib_Dialog_Internal_RemovePlayersFromDialog();
 
+//_Player, _Player dialogs became singular _Player ones
 PROC
 LeaderLib_Dialog_Internal_RemovePlayersFromDialog()
 AND

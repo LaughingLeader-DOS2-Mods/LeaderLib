@@ -224,6 +224,25 @@ TextEventSet("llstress")
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel] Running stress tests.");
 LeaderLib_DebugLevel_TreasureStressTest();
+
+IF
+TextEventSet("leaderlib_sharedtest")
+THEN
+DB_LeaderLib_Debug_Temp_ShareModMenu(1);
+
+IF
+DialogStarted("LeaderLib_ModMenu", _Instance)
+AND
+DB_LeaderLib_Debug_Temp_ShareModMenu(1)
+THEN
+DB_GLO_AllDialogObjectFlagsShared(_Instance);
+
+PROC
+LeaderLib_ModMenu_Internal_PreventSharedDialog((INTEGER)_Instance)
+AND
+DB_LeaderLib_Debug_Temp_ShareModMenu(1)
+THEN
+DB_GLO_AllDialogObjectFlagsShared(_Instance);
 //END_REGION
 
 //REGION WIKI_EXAMPLE

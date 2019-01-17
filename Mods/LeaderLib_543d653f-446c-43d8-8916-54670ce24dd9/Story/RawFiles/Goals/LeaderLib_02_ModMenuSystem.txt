@@ -267,21 +267,14 @@ LeaderLib_ModMenu_SetPage(_Player, 0, _Instance);
 
 //REGION PAGE_TURNING
 PROC
-LeaderLib_ModMenu_SetPage((CHARACTERGUID)_Player, (INTEGER)_Page, (INTEGER)_Instance)
+LeaderLib_ModMenu_Internal_ClearPreviousSelectedPage((CHARACTERGUID)_Player)
 AND
 DB_LeaderLib_ModMenu_CurrentPageIndex(_Player, _CurrentPage)
 THEN
 NOT DB_LeaderLib_ModMenu_CurrentPageIndex(_Player, _CurrentPage);
-ObjectClearFlag(_Player, "LeaderLib_ModMenu_HideNextPageButton", 0);
-ObjectClearFlag(_Player, "LeaderLib_ModMenu_HidePreviousPageButton", 0);
 
 PROC
-LeaderLib_ModMenu_SetPage((CHARACTERGUID)_Player, (INTEGER)_Page, (INTEGER)_Instance)
-THEN
-DB_LeaderLib_ModMenu_CurrentPageIndex(_Player, _Page);
-
-PROC
-LeaderLib_ModMenu_SetPage((CHARACTERGUID)_Player, (INTEGER)_Page, (INTEGER)_Instance)
+LeaderLib_ModMenu_Internal_UpdatePageFlags((CHARACTERGUID)_Player, (INTEGER)_Page, (INTEGER)_Instance)
 AND
 DB_LeaderLib_ModMenu_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
 AND
@@ -289,11 +282,11 @@ _Page >= _LastPageIndex
 AND
 _MaxPage == 2
 THEN
-ObjectSetFlag(_Player, "LeaderLib_ModMenu_HideNextPageButton", _Instance);
-LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu] Hid next page button");
+DB_LeaderLib_ModMenu_Temp_NextPageHidden(_Player, _Instance);
+LeaderLib_ModMenu_Internal_SetHideFlag(_Player, _Instance, "LeaderLib_ModMenu_HideNextPageButton");
 
 PROC
-LeaderLib_ModMenu_SetPage((CHARACTERGUID)_Player, (INTEGER)_Page, (INTEGER)_Instance)
+LeaderLib_ModMenu_Internal_UpdatePageFlags((CHARACTERGUID)_Player, (INTEGER)_Page, (INTEGER)_Instance)
 AND
 DB_LeaderLib_ModMenu_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
 AND
@@ -301,7 +294,46 @@ _Page <= 0
 AND
 _MaxPage == 2
 THEN
-ObjectSetFlag(_Player, "LeaderLib_ModMenu_HidePreviousPageButton", _Instance);
+DB_LeaderLib_ModMenu_Temp_PreviousPageHidden(_Player, _Instance);
+LeaderLib_ModMenu_Internal_SetHideFlag(_Player, _Instance, "LeaderLib_ModMenu_HidePreviousPageButton");
+
+PROC
+LeaderLib_ModMenu_Internal_SetHideFlag((CHARACTERGUID)_Player, (INTEGER)_Instance, (STRING)_Flag)
+AND
+ObjectGetFlag(_Player, _Flag, 0)
+THEN
+ObjectSetFlag(_Player, _Flag, _Instance);
+
+PROC
+LeaderLib_ModMenu_Internal_UpdatePageFlags((CHARACTERGUID)_Player, (INTEGER)_Instance)
+AND
+NOT DB_LeaderLib_ModMenu_Temp_NextPageHidden(_Player, _Instance)
+AND
+ObjectGetFlag(_Player, "LeaderLib_ModMenu_HideNextPageButton", 1)
+THEN
+ObjectClearFlag(_Player, "LeaderLib_ModMenu_HideNextPageButton", _Instance);
+
+PROC
+LeaderLib_ModMenu_Internal_UpdatePageFlags((CHARACTERGUID)_Player, (INTEGER)_Instance)
+AND
+NOT DB_LeaderLib_ModMenu_Temp_PreviousPageHidden(_Player, _Instance)
+AND
+ObjectGetFlag(_Player, "LeaderLib_ModMenu_HidePreviousPageButton", 1)
+THEN
+ObjectClearFlag(_Player, "LeaderLib_ModMenu_HidePreviousPageButton", _Instance);
+
+PROC
+LeaderLib_ModMenu_Internal_UpdatePageFlags((CHARACTERGUID)_Player, (INTEGER)_Instance)
+THEN
+NOT DB_LeaderLib_ModMenu_Temp_NextPageHidden(_Player, _Instance);
+NOT DB_LeaderLib_ModMenu_Temp_PreviousPageHidden(_Player, _Instance);
+
+PROC
+LeaderLib_ModMenu_SetPage((CHARACTERGUID)_Player, (INTEGER)_Page, (INTEGER)_Instance)
+THEN
+LeaderLib_ModMenu_Internal_ClearPreviousSelectedPage(_Player);
+DB_LeaderLib_ModMenu_CurrentPageIndex(_Player, _Page);
+LeaderLib_ModMenu_Internal_UpdatePageFlags(_Player, _Page, _Instance);
 
 PROC
 LeaderLib_ModMenu_NextPage((CHARACTERGUID)_Player, (INTEGER)_Instance)
@@ -603,14 +635,16 @@ LeaderLib_Array_QRY_EmptyLength("LeaderLib_RegisteredMenus")
 AND
 DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
 THEN
-ObjectSetFlag(_Player, "LeaderLib_ModMenu_IsEmpty", 0);
+ObjectSetFlag(_Player, "LeaderLib_ModMenu_IsEmpty", _Instance);
 
 IF
 DialogEnded("LeaderLib_ModMenu", _Instance)
 AND
 DialogGetInvolvedPlayer(_Instance, 1, (CHARACTERGUID)_Player)
 THEN
-ObjectClearFlag(_Player, "LeaderLib_ModMenu_IsEmpty", 0);
+ObjectClearFlag(_Player, "LeaderLib_ModMenu_IsEmpty", _Instance);
+ObjectClearFlag(_Player, "LeaderLib_ModMenu_HideNextPageButton", _Instance);
+ObjectClearFlag(_Player, "LeaderLib_ModMenu_HidePreviousPageButton", _Instance);
 
 IF
 DialogEnded("LeaderLib_ModMenu", _Instance)

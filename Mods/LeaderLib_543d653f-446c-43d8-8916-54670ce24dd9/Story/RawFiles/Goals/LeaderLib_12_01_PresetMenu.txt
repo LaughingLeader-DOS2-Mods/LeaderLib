@@ -564,8 +564,16 @@ AND
 DB_LeaderLib_PresetMenu_Temp_AppliedPreset(_Player, _Preset, 1)
 AND
 DB_LeaderLib_PresetMenu_Temp_OriginTags(_Player, _Tag)
+THEN
+SetTag(_Player, _Tag);
+
+//Fallback
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied_RestoreTalents")
 AND
-DB_LeaderLib_OriginSkills(_Tag, _Skill)
+DB_Origins_OriginTag(_Player, _Tag)
+AND
+IsTagged(_Player, _Tag, 0)
 THEN
 SetTag(_Player, _Tag);
 

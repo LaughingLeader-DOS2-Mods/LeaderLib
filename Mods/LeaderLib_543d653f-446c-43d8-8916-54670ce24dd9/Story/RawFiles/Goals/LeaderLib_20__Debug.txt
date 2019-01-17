@@ -3,15 +3,15 @@ SubGoalCombiner SGC_AND
 INITSECTION
 LeaderLib_Debug_RunTests();
 KBSECTION
-IF
-GameModeStarted(_GameMode, 1)
+PROC
+PROC_Z_Shared_GameModeStarted("Campaign", 1)
 AND
 NOT DB_Origins(_)
 THEN
 DB_Origins((CHARACTERGUID)S_GLO_CharacterCreationDummy_001_da072fe7-fdd5-42ae-9139-8bd4b9fca406);
 
-IF
-GameModeStarted(_GameMode, 1)
+PROC
+PROC_Z_Shared_GameModeStarted("Campaign", 1)
 AND
 NOT DB_UndeadRacePresets(_,_)
 THEN

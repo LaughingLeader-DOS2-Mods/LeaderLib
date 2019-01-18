@@ -52,6 +52,13 @@ THEN
 LeaderUpdater_Register_Goal(_ModID, _Author, _GoalTitle);
 NOT DB_LeaderLib_ModApi_RegisterGoal(_ModID, _Author, _GoalTitle);
 
+/*Presets*/
+IF
+DB_LeaderLib_ModApi_RegisterPreset((STRING)_Preset, (STRING)_DisplayName, (STRING)_EnabledGlobalFlag)
+THEN
+LeaderLib_PresetMenu_RegisterPreset(_Preset, _DisplayName, _EnabledGlobalFlag);
+NOT DB_LeaderLib_ModApi_RegisterPreset(_Preset, _DisplayName, _EnabledGlobalFlag);
+
 /*Clear Commands*/
 IF
 DB_LeaderLib_ModApi_ClearRegisteredModVersions((STRING)_ModID, (STRING)_Author)

@@ -745,6 +745,7 @@ THEN
 SetVisible(_Trader, 1);
 ObjectClearFlag(_Trader, "LeaderLib_Internal_TeleportWorkaroundActive", 0);
 
+/*
 IF
 StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Events_OnTraderTeleported")
 AND
@@ -777,6 +778,7 @@ DB_LeaderLib_Debug_TraceEvent(_TraderID, "LeaderLib_Events_OnTraderTeleported", 
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Traders] Teleported global trader [",_TraderID,"] to ",_TypeStr,".");
 NOT DB_LeaderLib_Debug_TraceEvent(_TraderID, "LeaderLib_Events_OnTraderTeleported", _TypeStr);
+*/
 
 /*
 IF

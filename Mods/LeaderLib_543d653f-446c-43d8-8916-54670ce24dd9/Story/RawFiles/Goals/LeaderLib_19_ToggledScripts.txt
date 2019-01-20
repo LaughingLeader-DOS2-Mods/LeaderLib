@@ -21,6 +21,9 @@ LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Combat_DeadCharacters",
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Combat_DeadItems", "LeaderLib_Combat_TrackDeadItems");
 
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Listeners_RemoveHarmfulStatuses", "LeaderLib_TS_RemoveHarmfulStatusesEnabled");
+
+//Treasure/trader events
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_TreasureEvents_Dialog", "LeaderLib_TS_TreasureEvents_Dialog_Enabled");
 //END_REGION
 
 //REGION UPDATING

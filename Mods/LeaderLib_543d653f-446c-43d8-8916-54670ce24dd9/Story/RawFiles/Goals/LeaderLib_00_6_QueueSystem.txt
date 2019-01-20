@@ -101,6 +101,7 @@ AND
 _TickRate > 0
 THEN
 LeaderLog_Log("TRACE", "[LeaderLog:Queue:Internal:StartTimer] Launching tick timer for queue [",_QueueID,"].");
+TimerCancel(_TimerName);
 TimerLaunch(_TimerName, _TickRate);
 DB_LeaderLib_Queue_Temp_TimerRunning(_QueueID);
 

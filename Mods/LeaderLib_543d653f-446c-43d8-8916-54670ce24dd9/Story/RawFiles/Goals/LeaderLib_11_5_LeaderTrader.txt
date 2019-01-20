@@ -100,7 +100,9 @@ LeaderLib_Treasure_Register_TreasureToTrader("LeaderLib.LeaderTrader.Skillbooks"
 
 LeaderLib_Treasure_Register_ItemTemplate("LeaderLib.LeaderTrader.Skillbooks", "BOOK_Skill_LeaderLib_ControlSummon_832058fd-fd40-47d0-bea3-0e108761d4e4", 2);
 
+LeaderLib_Treasure_Configure_DefaultGenerationType("LeaderLib.LeaderTrader.ModItems", "REGISTERED");
 LeaderLib_Treasure_Configure_DefaultGenerationType("LeaderLib.LeaderTrader.ModItems", "DIALOG_STARTED");
+LeaderLib_Treasure_Configure_DefaultGenerationType("LeaderLib.LeaderTrader.ModBooks", "REGISTERED");
 LeaderLib_Treasure_Configure_DefaultGenerationType("LeaderLib.LeaderTrader.ModBooks", "DIALOG_STARTED");
 
 //LeaderLib_Treasure_Register_ItemTemplate("LeaderLib.LeaderTrader.ModBooks", "BOOK_LeaderLib_ModMenu_646a1194-3383-47fa-a379-ebefa3d2b108", 1);

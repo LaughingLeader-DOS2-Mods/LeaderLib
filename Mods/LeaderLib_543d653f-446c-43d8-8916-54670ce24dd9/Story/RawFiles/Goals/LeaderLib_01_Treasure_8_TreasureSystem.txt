@@ -1132,7 +1132,7 @@ DB_LeaderLib_Array_Length("LeaderLib_ItemGenerationQueue", _Length)
 AND
 _Length > 0
 AND
-GlobalGetFlag("LeaderLib_DefaultEventFlowRunning", 0)
+NOT DB_GlobalFlag("LeaderLib_DefaultEventFlowRunning")
 AND
 NOT LeaderLib_Queue_QRY_IsRunning("LeaderLib_ItemGenerationQueue")
 AND

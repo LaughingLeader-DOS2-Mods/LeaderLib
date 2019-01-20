@@ -1,0 +1,38 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+
+IF
+CharacterLeveledUp(_Player)
+AND
+DB_IsPlayer(_Player)
+AND
+DB_LeaderLib_Treasure_RegisteredGenerationTypes("PARTY_LEVELED_UP")
+THEN
+TimerCancel("LeaderLib_Timers_Treasure_LevelUpTreasureTimer");
+TimerLaunch("LeaderLib_Timers_Treasure_LevelUpTreasureTimer", 250);
+
+IF
+TimerFinished("LeaderLib_Timers_Treasure_LevelUpTreasureTimer")
+AND
+LeaderLib_Treasure_QRY_GetTreasureByGenerationType("PARTY_LEVELED_UP")
+AND
+DB_LeaderLib_Treasure_Temp_GenerationTypeToTreasure("PARTY_LEVELED_UP", _TreasureID)
+AND
+LeaderLib_Treasure_QRY_GetTreasureObject(_TreasureID, "PARTY_LEVELED_UP")
+AND
+DB_LeaderLib_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
+AND
+NOT DB_LeaderLib_Treasure_Temp_PartyLeveledUpGenerationTimer(_, _TreasureID)
+THEN
+LeaderLib_Treasure_AddToGenerationQueue(_Object, _TreasureID, "PARTY_LEVELED_UP");
+NOT DB_LeaderLib_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
+NOT DB_LeaderLib_Treasure_Temp_GenerationTypeToTreasure("PARTY_LEVELED_UP", _TreasureID);
+
+
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

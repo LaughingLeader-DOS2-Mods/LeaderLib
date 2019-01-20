@@ -1,0 +1,25 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+//Containers
+IF
+//ItemOpened(_Object)
+CharacterUsedItem(_, _Object)
+AND
+IsTagged(_Object, "LeaderLib_Item_IgnoreOpened", 0)
+AND
+ItemIsContainer(_Object, 1)
+AND
+LeaderLib_Treasure_QRY_ObjectCanStartGeneration(_Object)
+AND
+DB_LeaderLib_Treasure_RegisteredObject(_TreasureID, _Object)
+//AND
+//Don't check the IteMGenerationType database since this is the default way for containers
+THEN
+LeaderLib_Treasure_AddToGenerationQueue(_Object, _TreasureID, "OPENED");
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

@@ -1126,6 +1126,8 @@ LeaderLib_Treasure_AddToGenerationQueue((GUIDSTRING)_Object, (STRING)_TreasureID
 AND
 NOT DB_LeaderLib_Treasure_Temp_ManualTimerRunning(_)
 AND
+NOT LeaderLib_Queue_QRY_IsRunning("LeaderLib_ItemGenerationQueue")
+AND
 DB_LeaderLib_Initialized(_)
 AND
 DB_LeaderLib_Array_Length("LeaderLib_ItemGenerationQueue", _Length)
@@ -1134,38 +1136,43 @@ _Length > 0
 AND
 NOT DB_GlobalFlag("LeaderLib_DefaultEventFlowRunning")
 AND
-NOT LeaderLib_Queue_QRY_IsRunning("LeaderLib_ItemGenerationQueue")
-AND
 GlobalGetFlag("LeaderLib_InitialEventFlowComplete", _InitComplete)
 THEN
 LeaderLib_Treasure_Internal_StartManualTimer(_InitComplete);
+
+PROC
+LeaderLib_Treasure_AddToGenerationQueue((GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_GenerationType)
+AND
+LeaderLib_Queue_QRY_IsRunning("LeaderLib_ItemGenerationQueue")
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:AddToGenerationQueue] [LeaderLib_ItemGenerationQueue] is already running.");
 
 PROC
 LeaderLib_Treasure_Internal_StartManualTimer(0)
 AND
 NOT DB_LeaderLib_Treasure_Temp_ManualTimerRunning(_)
 THEN
-LeaderLog_Log("DEBUG", "LeaderLib:TreasureSystem:AddToGenerationQueue] Starting manual generation timer after 2.5 seconds.");
+DB_LeaderLib_Treasure_Temp_ManualTimerRunning(1);
+LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:AddToGenerationQueue] Starting manual generation timer after 2.5 seconds.");
 TimerCancel("LeaderLib_Timers_Treasure_ManualGenerationTimer");
 TimerLaunch("LeaderLib_Timers_Treasure_ManualGenerationTimer", 2500);
-DB_LeaderLib_Treasure_Temp_ManualTimerRunning(1);
 
 PROC
 LeaderLib_Treasure_Internal_StartManualTimer(1)
 AND
 NOT DB_LeaderLib_Treasure_Temp_ManualTimerRunning(_)
 THEN
-LeaderLog_Log("DEBUG", "LeaderLib:TreasureSystem:AddToGenerationQueue] Starting manual generation timer after 250ms.");
+DB_LeaderLib_Treasure_Temp_ManualTimerRunning(1);
+LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:AddToGenerationQueue] Starting manual generation timer after 250ms.");
 TimerCancel("LeaderLib_Timers_Treasure_ManualGenerationTimer");
 TimerLaunch("LeaderLib_Timers_Treasure_ManualGenerationTimer", 250);
-DB_LeaderLib_Treasure_Temp_ManualTimerRunning(1);
 
 IF
 GlobalFlagSet("LeaderLib_DefaultEventFlowRunning")
 AND
 DB_LeaderLib_Treasure_Temp_ManualTimerRunning(_Var)
 THEN
-LeaderLog_Log("DEBUG", "LeaderLib:TreasureSystem:LeaderLib_DefaultEventFlowRunning] Canceling manual generation timer.");
+LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:LeaderLib_DefaultEventFlowRunning] Canceling manual generation timer.");
 NOT DB_LeaderLib_Treasure_Temp_ManualTimerRunning(_Var);
 TimerCancel("LeaderLib_Timers_Treasure_ManualGenerationTimer");
 
@@ -1175,6 +1182,13 @@ AND
 DB_LeaderLib_Treasure_Temp_ManualTimerRunning(_Var)
 THEN
 NOT DB_LeaderLib_Treasure_Temp_ManualTimerRunning(_Var);
+
+IF
+TimerFinished("LeaderLib_Timers_Treasure_ManualGenerationTimer")
+AND
+LeaderLib_Queue_QRY_IsRunning("LeaderLib_ItemGenerationQueue")
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:ManualGenerationTimer] Queue [LeaderLib_ItemGenerationQueue] is already running.");
 
 IF
 TimerFinished("LeaderLib_Timers_Treasure_ManualGenerationTimer")
@@ -1794,26 +1808,6 @@ IsTagged(_Object, "LeaderLib_Treasure_GenerateEndlessly", 1)
 THEN
 DB_NOOP(1);
 
-//Containers
-IF
-//ItemOpened(_Object)
-CharacterUsedItem(_, _Object)
-AND
-IsTagged(_Object, "LeaderLib_Item_IgnoreOpened", 0)
-AND
-LeaderLib_Treasure_QRY_ObjectCanStartGeneration((GUIDSTRING)_Object)
-AND
-ItemIsContainer((ITEMGUID)_Object, 1)
-AND
-LeaderLib_Treasure_QRY_GetTreasureID((GUIDSTRING)_Object)
-AND
-DB_LeaderLib_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
-//AND
-//Don't check the IteMGenerationType database since this is the default way for containers
-THEN
-LeaderLib_Treasure_AddToGenerationQueue(_Object, _TreasureID, "OPENED");
-NOT DB_LeaderLib_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
-
 PROC
 LeaderLib_Treasure_GenerateOnNewlyRegistered((GUIDSTRING)_Object, (STRING)_TreasureID)
 AND
@@ -1863,20 +1857,6 @@ THEN
 DB_NOOP(1);
 
 IF
-TradeGenerationStarted(_Trader)
-AND
-DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
-AND
-LeaderLib_Treasure_QRY_ObjectCanStartGeneration(_Trader)
-AND
-DB_LeaderLib_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
-AND
-LeaderLib_Treasure_QRY_TreasureHasGenerationType(_TreasureID, "TRADE_GENERATION_START")
-THEN
-LeaderLib_Treasure_AddToGenerationQueue(_Trader, _TreasureID, "TRADE_GENERATION_START");
-NOT DB_LeaderLib_Treasure_Temp_MatchedTreasure(_Trader, _TreasureID);
-
-IF
 TradeGenerationEnded(_Trader)
 AND
 DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
@@ -1892,80 +1872,6 @@ DB_LeaderLib_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
 THEN
 LeaderLib_Treasure_AddToGenerationQueue(_Trader, _TreasureID, "TRADE_GENERATION_END");
 NOT DB_LeaderLib_Treasure_Temp_MatchedTreasure(_Trader, _TreasureID);
-
-IF
-DialogStarted(_Dialog, _Instance)
-AND
-DB_LeaderLib_Treasure_RegisteredGenerationTypes("DIALOG_STARTED")
-AND
-DialogGetInvolvedNPC(_Instance, 1, _Object)
-AND
-LeaderLib_Treasure_QRY_ObjectCanStartGeneration(_Object)
-AND
-LeaderLib_Treasure_QRY_GetTreasureID(_Object)
-AND
-DB_LeaderLib_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
-AND
-LeaderLib_Treasure_QRY_TreasureHasGenerationType(_TreasureID, "DIALOG_STARTED")
-THEN
-LeaderLog_Log("DEBUG","[LeaderLib:TreasureSystem:DialogStarted] Starting generation queue for object with TreasureID [",_TreasureID,"].");
-LeaderLib_Treasure_AddToGenerationQueue(_Object, _TreasureID, "DIALOG_STARTED");
-NOT DB_LeaderLib_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
-
-IF
-DialogEnded(_Dialog, _Instance)
-AND
-DB_LeaderLib_Treasure_RegisteredGenerationTypes("DIALOG_ENDED")
-AND
-DialogGetInvolvedNPC(_Instance, 1, _Object)
-AND
-LeaderLib_Treasure_QRY_ObjectCanStartGeneration(_Object)
-AND
-LeaderLib_Treasure_QRY_GetTreasureID(_Object)
-AND
-DB_LeaderLib_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
-AND
-LeaderLib_Treasure_QRY_TreasureHasGenerationType(_TreasureID, "DIALOG_ENDED")
-THEN
-LeaderLib_Treasure_AddToGenerationQueue(_Object, _TreasureID, "DIALOG_ENDED");
-NOT DB_LeaderLib_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
-
-IF
-ObjectFlagSet(_Flag, _, _)
-THEN
-LeaderLib_Treasure_Internal_GenerateByFlag(_Flag, "Object");
-
-IF
-GlobalFlagSet(_Flag)
-THEN
-LeaderLib_Treasure_Internal_GenerateByFlag(_Flag, "Global");
-
-IF
-CharacterLeveledUp(_Player)
-AND
-DB_IsPlayer(_Player)
-AND
-DB_LeaderLib_Treasure_RegisteredGenerationTypes("PARTY_LEVELED_UP")
-THEN
-TimerCancel("LeaderLib_Timers_Treasure_LevelUpTreasureTimer");
-TimerLaunch("LeaderLib_Timers_Treasure_LevelUpTreasureTimer", 250);
-
-IF
-TimerFinished("LeaderLib_Timers_Treasure_LevelUpTreasureTimer")
-AND
-LeaderLib_Treasure_QRY_GetTreasureByGenerationType("PARTY_LEVELED_UP")
-AND
-DB_LeaderLib_Treasure_Temp_GenerationTypeToTreasure("PARTY_LEVELED_UP", _TreasureID)
-AND
-LeaderLib_Treasure_QRY_GetTreasureObject(_TreasureID, "PARTY_LEVELED_UP")
-AND
-DB_LeaderLib_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
-AND
-NOT DB_LeaderLib_Treasure_Temp_PartyLeveledUpGenerationTimer(_, _TreasureID)
-THEN
-LeaderLib_Treasure_AddToGenerationQueue(_Object, _TreasureID, "PARTY_LEVELED_UP");
-NOT DB_LeaderLib_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
-NOT DB_LeaderLib_Treasure_Temp_GenerationTypeToTreasure("PARTY_LEVELED_UP", _TreasureID);
 
 //When an object is found by its registered treasure ID and template
 IF

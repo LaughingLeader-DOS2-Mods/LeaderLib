@@ -1,0 +1,22 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+
+IF
+ObjectFlagSet(_Flag, _Object, _ID)
+AND
+NOT DB_GLO_AllDialogObjectFlagsShared(_ID)
+THEN
+LeaderLib_Treasure_Internal_GenerateByFlag(_Flag, "Object");
+
+IF
+DB_GlobalFlag(_Flag)
+THEN
+LeaderLib_Treasure_Internal_GenerateByFlag(_Flag, "Global");
+
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

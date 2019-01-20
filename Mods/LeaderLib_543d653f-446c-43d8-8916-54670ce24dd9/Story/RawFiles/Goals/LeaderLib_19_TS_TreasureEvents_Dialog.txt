@@ -18,7 +18,7 @@ DB_LeaderLib_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
 AND
 LeaderLib_Treasure_QRY_TreasureHasGenerationType(_TreasureID, "DIALOG_STARTED")
 THEN
-LeaderLog_Log("DEBUG","[LeaderLib:TreasureSystem:DialogStarted] Starting generation queue for trader with TreasureID [",_TreasureID,"].");
+//LeaderLog_Log("DEBUG","[LeaderLib:TreasureSystem:DialogStarted] Adding trader to generation queue with TreasureID [",_TreasureID,"].");
 LeaderLib_Treasure_AddToGenerationQueue(_Trader, _TreasureID, "DIALOG_STARTED");
 
 //Called when dialog ends
@@ -35,7 +35,7 @@ DB_LeaderLib_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
 AND
 LeaderLib_Treasure_QRY_TreasureHasGenerationType(_TreasureID, "DIALOG_ENDED")
 THEN
-LeaderLog_Log("DEBUG","[LeaderLib:TreasureSystem:DialogEnded] Starting generation queue for trader with TreasureID [",_TreasureID,"].");
+//LeaderLog_Log("DEBUG","[LeaderLib:TreasureSystem:DialogEnded] Adding trader to generation queue with TreasureID [",_TreasureID,"].");
 LeaderLib_Treasure_AddToGenerationQueue(_Trader, _TreasureID, "DIALOG_ENDED");
 EXITSECTION
 

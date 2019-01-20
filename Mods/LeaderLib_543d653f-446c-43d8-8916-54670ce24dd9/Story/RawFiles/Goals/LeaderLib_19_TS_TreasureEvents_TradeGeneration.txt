@@ -1,0 +1,24 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+
+IF
+TradeGenerationStarted(_Trader)
+AND
+DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
+AND
+LeaderLib_Treasure_QRY_ObjectCanStartGeneration(_Trader)
+AND
+DB_LeaderLib_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
+AND
+LeaderLib_Treasure_QRY_TreasureHasGenerationType(_TreasureID, "TRADE_GENERATION_START")
+THEN
+LeaderLib_Treasure_AddToGenerationQueue(_Trader, _TreasureID, "TRADE_GENERATION_START");
+NOT DB_LeaderLib_Treasure_Temp_MatchedTreasure(_Trader, _TreasureID);
+
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

@@ -166,7 +166,82 @@ THEN
 CharacterPlayHUDSoundResource(_Player, _Sound);
 //END_REGION
 
+//REGION EXPERIENCE
+QRY
+LeaderLib_Helper_TextEvent_QRY_IntParamSetOrSkipped((INTEGER)_Index, (INTEGER)_TargetValue)
+AND
+NOT GetTextEventParamInteger(_Index, _)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_TextEvent_QRY_IntParamSetOrSkipped((INTEGER)_Index, (INTEGER)_TargetValue)
+AND
+GetTextEventParamInteger(_Index, _TargetValue)
+THEN
+DB_NOOP(1);
+
+IF
+TextEventSet("leaderlib_addxp")
+AND
+LeaderLib_Helper_TextEvent_QRY_IntParamSetOrSkipped(1, 1)
+AND
+GetTextEventParamInteger(2, _Amount)
+AND
+IntegertoString(_Amount, _AmountStr)
+AND
+CharacterGetHostCharacter(_Player)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_addxp] fired. Adding [",_AmountStr,"] actual experience to party.");
+PartyAddActualExperience(_Player, _Amount);
+
+IF
+TextEventSet("leaderlib_addxp")
+AND
+GetTextEventParamInteger(1, 2)
+AND
+GetTextEventParamInteger(2, _Act)
+AND
+GetTextEventParamInteger(3, _ActPart)
+AND
+GetTextEventParamInteger(4, _Gain)
+AND
+IntegertoString(_Act, _ActStr)
+AND
+IntegertoString(_ActPart, _ActPartStr)
+AND
+IntegertoString(_Gain, _GainStr)
+AND
+DB_IsPlayer(_Player)
+AND
+CharacterIsControlled(_Player, 1)
+AND
+String(_Player, _PlayerID)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_addxp] fired. Act [",_ActStr,"] Act Part [",_ActPartStr,"] Gain [",_GainStr,"]. Adding exploration experience to [",_PlayerID,"]. ");
+CharacterAddExplorationExperience(_Player, _Act, _ActPart, _Gain);
+//END_REGION
+
 //REGION STATS_TEXT_EVENTS
+IF
+TextEventSet("leaderlib_addpoints")
+AND
+GetTextEventParamString(1, "all")
+AND
+GetTextEventParamInteger(2, _Amount)
+AND
+IntegertoString(_Amount, _AmountStr)
+AND
+DB_IsPlayer(_Player)
+AND
+CharacterIsControlled(_Player, 1)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_addpoints] fired. Adding [",_AmountStr,"] attribute/ability/civil/talent points to controller characters.");
+CharacterAddAttributePoint(_Player, _Amount);
+CharacterAddAbilityPoint(_Player, _Amount);
+CharacterAddCivilAbilityPoint(_Player, _Amount);
+CharacterAddTalentPoint(_Player, _Amount);
+
 IF
 TextEventSet("leaderlib_addpoints")
 AND

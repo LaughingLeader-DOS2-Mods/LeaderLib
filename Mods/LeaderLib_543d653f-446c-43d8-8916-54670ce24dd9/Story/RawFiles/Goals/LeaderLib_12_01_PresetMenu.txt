@@ -407,10 +407,31 @@ LeaderLog_Log("ERROR", "[LeaderLib:PresetMenu:LeaderLib_Timers_PresetMenu_ApplyP
 PROC
 ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_ApplyPreset")
 AND
+DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _Preset, _Instance, _IsRace)
+AND
+NOT GetVarString(_Player, "LeaderLib_CurrentPreset", _)
+AND
+GetVarFixedString(_Player, "LeaderLib_CharacterCreationPreset", _CurrentPreset)
+THEN
+SetVarString(_Player, "LeaderLib_LastAppliedPreset", _CurrentPreset);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_ApplyPreset")
+AND
+DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _Preset, _Instance, 0)
+AND
+GetVarString(_Player, "LeaderLib_CurrentPreset", _CurrentPreset)
+THEN
+SetVarString(_Player, "LeaderLib_LastAppliedPreset", _CurrentPreset);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_ApplyPreset")
+AND
 DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _Preset, _Instance, 0)
 THEN
 NOT DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _Preset, _Instance, 0);
 CharacterApplyPreset(_Player, _Preset);
+SetVarString(_Player, "LeaderLib_CurrentPreset", _Preset);
 DB_LeaderLib_PresetMenu_Temp_AppliedPreset(_Player, _Preset, 0);
 LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:LeaderLib_Timers_PresetMenu_ApplyPreset] Applying class preset [",_Preset,"] to player.");
 
@@ -423,6 +444,15 @@ NOT DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _Preset, _Instance, 1);
 CharacterApplyRacePreset(_Player, _Preset);
 DB_LeaderLib_PresetMenu_Temp_AppliedPreset(_Player, _Preset, 1);
 LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:LeaderLib_Timers_PresetMenu_ApplyPreset] Applying race preset [",_Preset,"] to player.");
+
+//When _RaceOrPreset is not 1 or 0 (skip applying)
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_ApplyPreset")
+AND
+DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _Preset, _Instance, _RaceOrPreset)
+THEN
+DB_LeaderLib_PresetMenu_Temp_AppliedPreset(_Player, _Preset, _RaceOrPreset);
+NOT DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _Preset, _Instance, _RaceOrPreset);
 
 PROC
 ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_ApplyPreset")
@@ -472,6 +502,51 @@ _Slot != "Shield"
 THEN
 NOT DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, _Slot, (ITEMGUID)_Item);
 CharacterEquipItem(_Player, _Item);
+
+QRY
+LeaderLib_PresetMenu_Internal_QRY_WeaponsSaved((CHARACTERGUID)_Player)
+AND
+DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, "Weapon", (ITEMGUID)_Item)
+AND
+_Item != NULL_00000000-0000-0000-0000-000000000000
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_PresetMenu_Internal_QRY_WeaponsSaved((CHARACTERGUID)_Player)
+AND
+DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, "Shield", (ITEMGUID)_Item)
+AND
+_Item != NULL_00000000-0000-0000-0000-000000000000
+THEN
+DB_NOOP(1);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied_EquipItems")
+AND
+GetVarString(_Player, "LeaderLib_LastAppliedPreset", _Preset)
+AND
+GetVarString(_Player, "LeaderLib_CurrentPreset", _Preset)
+AND
+LeaderLib_PresetMenu_Internal_QRY_WeaponsSaved(_Player)
+THEN
+LeaderLib_Helper_UnequipWeapons(_Player);
+LeaderLib_PresetMenu_Internal_EquipWeapons(_Player);
+
+PROC
+LeaderLib_PresetMenu_Internal_EquipWeapons((CHARACTERGUID)_Player)
+AND
+DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, "Weapon", (ITEMGUID)_Item)
+THEN
+CharacterEquipItem(_Player, _Item);
+
+PROC
+LeaderLib_PresetMenu_Internal_EquipWeapons((CHARACTERGUID)_Player)
+AND
+DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, "Shield", (ITEMGUID)_Item)
+THEN
+//CharacterEquipItem(_Player, _Item);
+LeaderLib_StartCharacterItemTimer(_Player, _Item, 250, "LeaderLib_Timers_PresetMenu_EquipShield", "LeaderLib_Commands_EquipItem");
 
 PROC
 ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied_EquipItems")

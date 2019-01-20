@@ -245,6 +245,57 @@ THEN
 DB_GLO_AllDialogObjectFlagsShared(_Instance);
 //END_REGION
 
+IF
+TextEventSet("leaderlib_addxptest")
+THEN
+DB_LeaderLib_Debug_Temp_HighestExperience(0);
+LeaderLib_SendEvent("LeaderLib_Commands_SetPartyExperienceVariable");
+TimerLaunch("LeaderLib_Timers_Debug_ExperienceTest_Calculate", 50);
+
+IF
+TimerFinished("LeaderLib_Timers_Debug_ExperienceTest_Calculate")
+AND
+DB_IsPlayer(_Player)
+AND
+GetVarInteger(_Player, "LeaderLib_CurrentExperience", _Experience)
+AND
+DB_LeaderLib_Debug_Temp_HighestExperience(_LastHighest)
+AND
+_Experience > _LastHighest
+THEN
+NOT DB_LeaderLib_Debug_Temp_HighestExperience(_LastHighest);
+DB_LeaderLib_Debug_Temp_HighestExperience(_Experience);
+
+IF
+TimerFinished("LeaderLib_Timers_Debug_ExperienceTest_Calculate")
+AND
+CharacterGetHostCharacter(_Player)
+AND
+GetVarInteger(_Player, "LeaderLib_CurrentExperience", _Experience)
+AND
+IntegerProduct(_Experience, -1, _RemoveExperience)
+THEN
+PartyAddActualExperience(_Player, _RemoveExperience);
+TimerLaunch("LeaderLib_Timers_Debug_ExperienceTest_BalanceExperience", 50);
+
+IF
+TimerFinished("LeaderLib_Timers_Debug_ExperienceTest_BalanceExperience")
+AND
+DB_IsPlayer(_Player)
+AND
+CharacterGetLevel(_Player, _Level)
+THEN
+CharacterLevelUpTo(_Player, _Level);
+
+IF
+TimerFinished("LeaderLib_Timers_Debug_ExperienceTest_BalanceExperience")
+AND
+DB_LeaderLib_Debug_Temp_HighestExperience(_LastHighest)
+AND
+CharacterGetHostCharacter(_Player)
+THEN
+NOT DB_LeaderLib_Debug_Temp_HighestExperience(_LastHighest);
+PartyAddActualExperience(_Player, _LastHighest);
 //REGION WIKI_EXAMPLE
 PROC
 LeaderLib_DebugLevel_WikiExample_TraderTest()

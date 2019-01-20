@@ -525,3 +525,34 @@ ACTIONS
 	Clamp(_Seed, _Seed, 2147483647)
 	SetVar(_Item, "LeaderLib_RandomSeed", _Seed)
 	ItemEvent(_Item, "LeaderLib_Events_RandomSeedGenerated")
+	
+EVENT LeaderLib_Events_GetHighestExperience_Start_General
+VARS
+	ITEM:_Item
+ON
+	OnItemEvent(_Item, "LeaderLib_Commands_SetPartyExperienceVariable")
+ACTIONS
+	IterateParty("LeaderLib_Iterator_GetHighestExperience")
+
+EVENT LeaderLib_Events_GetHighestExperience_Start_Player
+VARS
+	CHARACTER:_Player
+ON
+	OnCharacterEvent(_Player, "LeaderLib_Commands_SetPartyExperienceVariable")
+ACTIONS
+	IterateParty("LeaderLib_Iterator_SetPartyExperienceVariable", null, null, _Player)
+
+EVENT LeaderLib_Events_GetHighestExperience_Iterate
+VARS
+	CHARACTER:_Player
+	FLOAT:_ExpF
+	INT:_Exp
+ON
+	OnIterateCharacter(_Player, "LeaderLib_Iterator_SetPartyExperienceVariable")
+ACTIONS
+IF "c1"
+	CharacterGetStat(_ExpF, _Player, Experience)
+THEN
+	Cast(_Exp, _ExpF)
+	SetVar(_Player, "LeaderLib_CurrentExperience", _Exp)
+ENDIF

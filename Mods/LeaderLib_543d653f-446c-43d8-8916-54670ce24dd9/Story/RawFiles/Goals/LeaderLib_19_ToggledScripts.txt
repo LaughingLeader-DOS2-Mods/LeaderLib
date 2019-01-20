@@ -70,6 +70,7 @@ LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 13, 0)
 THEN
 LeaderLig_ToggleScripts_Internal_UpdateScriptFlags();
 LeaderLig_ToggleScripts_Internal_InitRegistration();
+LeaderLib_Queue_ClearQueue("LeaderLib_ItemGenerationQueue");
 
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)

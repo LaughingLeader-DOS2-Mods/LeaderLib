@@ -12,7 +12,7 @@ IsTagged(_Object, "LeaderLib_Item_IgnoreOpened", 0)
 AND
 ItemIsContainer(_Object, 1)
 AND
-LeaderLib_Treasure_QRY_ObjectCanStartGeneration(_Object)
+LeaderLib_Treasure_QRY_ObjectCanStartGeneration((GUIDSTRING)_Object)
 AND
 DB_LeaderLib_Treasure_RegisteredObject(_TreasureID, _Object)
 //AND

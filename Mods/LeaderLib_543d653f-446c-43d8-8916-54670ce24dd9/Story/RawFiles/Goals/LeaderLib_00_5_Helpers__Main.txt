@@ -773,27 +773,70 @@ NOT DB_LeaderLib_Helper_EquipmentCopyBlacklist_Tags(_Group, _Tag);
 
 PROC
 LeaderLib_Helper_CopyEquipment((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
+THEN
+LeaderLib_Helper_CopyEquipment(_CopyTo, _CopyFrom, 0);
+
+PROC
+LeaderLib_Helper_CopyEquipment((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom, (INTEGER)_WeaponsOnly)
 AND
 GetPosition(_CopyFrom, _x, _y, _z)
 AND
-TemporaryCharacterCreateAtPosition(_x, _y, _z, "LeaderLib_SkillDummy_94668062-11ea-4ecf-807c-4cc225cbb236", 0, _Dummy)
+//TemporaryCharacterCreateOutOfSightToObject([in](STRING)_TemplateId, [in](CHARACTERGUID)_ToTarget, [in](GUIDSTRING)_FromObject, [in](INTEGER)_PlaySpawn, [in](STRING)_Event, [out](CHARACTERGUID)_Created)
+//TemporaryCharacterCreateAtPosition(_x, _y, _z, "LeaderLib_SkillDummy_94668062-11ea-4ecf-807c-4cc225cbb236", 0, _Dummy)
+//TemporaryCharacterCreateAtPositionOutOfSightTo(_x, _y, _z, "LeaderLib_SkillDummy_94668062-11ea-4ecf-807c-4cc225cbb236", 180, 0, "", _Dummy)
+TemporaryCharacterCreateOutOfSightToObject("LeaderLib_SkillDummy_94668062-11ea-4ecf-807c-4cc225cbb236", _CopyFrom, _CopyTo, 0, "", _Dummy)
+//TemporaryCharacterCreateAtPositionOutOfSightTo([in](REAL)_X, [in](REAL)_Y, [in](REAL)_Z, [in](STRING)_TemplateId, [in](INTEGER)_Angle, [in](INTEGER)_PlaySpawn, [in](STRING)_Event, [out](CHARACTERGUID)_Created)
 THEN
-LeaderLib_Helper_SetupDummy(_Dummy);
+//LeaderLib_Helper_SetupDummy(_Dummy);
+//SetDetached and SetVisible seem to make the dummy appear for a moment as it fades away (in the editor at least)
+SetStoryNpc(_Dummy, 1);
+SetCanJoinCombat(_Dummy, 0);
+SetCanFight(_Dummy, 0);
+DB_LeaderLib_Helper_Temp_CopyEquipment(_CopyTo, _CopyFrom, _Dummy, _WeaponsOnly);
 CharacterTransformFromCharacter(_Dummy, _CopyFrom, 0, 0, 0, 1, 0, 0, 0);
-DB_LeaderLib_Helper_Temp_CopyEquipment(_CopyTo, _CopyFrom, _Dummy);
-ProcObjectTimer(_Dummy, "LeaderLib_Timers_CopyEquipment", 250);
+ProcObjectTimer(_Dummy, "LeaderLib_Timers_CopyEquipment", 10);
 
 PROC
 ProcObjectTimerFinished((CHARACTERGUID)_Dummy, "LeaderLib_Timers_CopyEquipment")
 THEN
-ProcObjectTimer(_Dummy, "LeaderLib_Timers_CopyEquipmentDone", 250);
+ProcObjectTimer(_Dummy, "LeaderLib_Timers_CopyEquipmentDone", 25);
 
 PROC
 ProcObjectTimerFinished((CHARACTERGUID)_Dummy, "LeaderLib_Timers_CopyEquipment")
+AND
+DB_LeaderLib_Helper_Temp_CopyEquipment(_CopyTo, _CopyFrom, _Dummy, 0)
 AND
 DB_LeaderLib_EquipmentSlots(_Slot)
 AND
 CharacterGetEquippedItem(_Dummy, _Slot, (ITEMGUID)_Item)
+AND
+_Item != NULL_00000000-0000-0000-0000-000000000000
+AND
+GetTemplate(_Item, _Template)
+THEN
+LeaderLib_Helper_Internal_CheckItemForBlacklist(_Dummy, _Item, _Template);
+
+//Weapons Only
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Dummy, "LeaderLib_Timers_CopyEquipment")
+AND
+DB_LeaderLib_Helper_Temp_CopyEquipment(_CopyTo, _CopyFrom, _Dummy, 1)
+AND
+CharacterGetEquippedItem(_Dummy, "Weapon", (ITEMGUID)_Item)
+AND
+_Item != NULL_00000000-0000-0000-0000-000000000000
+AND
+GetTemplate(_Item, _Template)
+THEN
+LeaderLib_Helper_Internal_CheckItemForBlacklist(_Dummy, _Item, _Template);
+
+//Weapons Only
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Dummy, "LeaderLib_Timers_CopyEquipment")
+AND
+DB_LeaderLib_Helper_Temp_CopyEquipment(_CopyTo, _CopyFrom, _Dummy, 1)
+AND
+CharacterGetEquippedItem(_Dummy, "Shield", (ITEMGUID)_Item)
 AND
 _Item != NULL_00000000-0000-0000-0000-000000000000
 AND
@@ -838,9 +881,9 @@ NOT DB_LeaderLib_Helper_Temp_ItemBlacklisted(_Item);
 PROC
 ProcObjectTimerFinished((CHARACTERGUID)_Dummy, "LeaderLib_Timers_CopyEquipmentDone")
 AND
-DB_LeaderLib_Helper_Temp_CopyEquipment(_CopyTo, _CopyFrom, _Dummy)
+DB_LeaderLib_Helper_Temp_CopyEquipment(_CopyTo, _CopyFrom, _Dummy, _WeaponsOnly)
 THEN
-NOT DB_LeaderLib_Helper_Temp_CopyEquipment(_CopyTo, _CopyFrom, _Dummy);
+NOT DB_LeaderLib_Helper_Temp_CopyEquipment(_CopyTo, _CopyFrom, _Dummy, _WeaponsOnly);
 MoveAllItemsTo(_Dummy, _CopyTo, 1, 1, 1);
 LeaderLib_Helper_Internal_EquipCopiedEquipment(_CopyTo, _Dummy);
 LeaderLib_Helper_OnCopyEquipmentFinished(_CopyTo, _CopyFrom);

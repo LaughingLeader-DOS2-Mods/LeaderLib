@@ -3,6 +3,12 @@ INIT
 
 EVENTS
 
+EVENT LeaderLib_SkillDummy_Init_Invisible
+ON
+	OnInit()
+ACTIONS
+	SetMaterial(__Me, "8c46ff9c-f39b-43fa-a2bf-4a10f47db0d3", -1, 1, 1, 1, 1, 1, 1, 1)
+	
 EVENT LeaderLib_SkillDummy_Init
 ON
 	OnCharacterEvent(__Me, "LeaderLib_Events_SkillDummyArrived")

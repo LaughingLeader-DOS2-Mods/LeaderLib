@@ -1861,9 +1861,9 @@ TradeGenerationEnded(_Trader)
 AND
 DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 AND
-LeaderLib_Treasure_QRY_ObjectCanStartGeneration(_Trader)
+LeaderLib_Treasure_QRY_ObjectCanStartGeneration((GUIDSTRING)_Trader)
 AND
-NOT LeaderLib_Trader_QRY_DefaultTradeGenerationIgnored(_Trader)
+NOT LeaderLib_Trader_QRY_DefaultTradeGenerationIgnored((CHARACTERGUID)_Trader)
 AND
 DB_LeaderLib_Treasure_RegisteredTraderTreasure(_TreasureID, _TraderID)
 //AND

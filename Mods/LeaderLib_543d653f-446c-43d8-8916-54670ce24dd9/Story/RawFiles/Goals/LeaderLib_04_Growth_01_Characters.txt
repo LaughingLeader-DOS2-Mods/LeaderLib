@@ -13,6 +13,17 @@ PROC
 LeaderLib_Growth_Characters_Register_Skill((STRING)_ID, (INTEGER)_MinLevel, (STRING)_Skill, (STRING)_MatchType, (STRING)_MatchValue)
 THEN
 DB_LeaderLib_Growth_Characters_Skills(_ID, _MinLevel, _Skill, _MatchType, _MatchValue);
+
+PROC
+LeaderLib_Growth_Characters_Register_Skill((STRING)_ID, (INTEGER)_MinLevel, (STRING)_Skill, (STRING)_MatchType, (STRING)_MatchValue)
+AND
+NOT DB_GlobalFlag("LeaderLib_TS_GrowthEvents_Character_Enabled")
+AND
+DB_CurrentLevel(_Level)
+AND
+IsGameLevel(_Level, 1)
+THEN
+GlobalSetFlag("LeaderLib_TS_GrowthEvents_Character_Enabled");
 //END_REGION
 
 //REGION CLEARING
@@ -61,6 +72,10 @@ TimerLaunch(_TimerName, _TimerDelay);
 IF
 GlobalFlagSet("LeaderLib_Initialized")
 AND
+DB_CurrentLevel(_Level)
+AND
+IsGameLevel(_Level, 1)
+AND
 DB_LeaderLib_Growth_Characters_Temp_NewTags(_Tag, _TimerName, _TimerDelay)
 AND
 IntegertoString(_TimerDelay, _TimerDelayStr)
@@ -95,29 +110,6 @@ AND
 IsTagged(_Character, _Tag, 1)
 THEN
 DB_NOOP(1);
-
-IF
-CharacterLeveledUp(_Character)
-AND
-IsTagged(_Character, "LeaderLib_Growth_AddedSkillsThisLevel", 1)
-THEN
-ClearTag(_Character, "LeaderLib_Growth_AddedSkillsThisLevel");
-
-IF
-CharacterLeveledUp(_Character)
-AND
-LeaderLib_Growth_Characters_QRY_CharacterHasSkills(_Character)
-THEN
-LeaderLib_Growth_Characters_AddSkills(_Character);
-
-IF
-CharacterJoinedParty(_Character)
-AND
-NOT IsTagged(_Character, "LeaderLib_Growth_AddedSkillsThisLevel", 1)
-AND
-LeaderLib_Growth_Characters_QRY_CharacterHasSkills(_Character)
-THEN
-LeaderLib_Growth_Characters_AddSkills(_Character);
 
 IF
 StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Commands_AddGrowthSkills")

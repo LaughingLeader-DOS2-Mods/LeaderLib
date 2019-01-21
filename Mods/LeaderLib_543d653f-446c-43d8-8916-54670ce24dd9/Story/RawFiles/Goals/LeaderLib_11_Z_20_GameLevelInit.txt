@@ -1,0 +1,20 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+
+IF
+GameStarted(_Level,_)
+AND
+IsGameLevel(_Level, 1)
+THEN
+//Enable script flags that should be otherwise disabled when not in a game level.
+LeaderLib_ToggleScripts_Internal_UpdateScriptFlags();
+
+GoalCompleted;
+
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_11__Start"

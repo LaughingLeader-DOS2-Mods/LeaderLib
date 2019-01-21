@@ -1,13 +1,13 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-LeaderLig_ToggleScripts_Internal_InitRegistration();
+LeaderLib_ToggleScripts_Internal_InitRegistration();
 
 KBSECTION
 
 //REGION INIT
 PROC
-LeaderLig_ToggleScripts_Internal_InitRegistration()
+LeaderLib_ToggleScripts_Internal_InitRegistration()
 THEN
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_AutoPartyExperience", "LeaderLib_AutoBalancePartyExperience");
 
@@ -26,40 +26,51 @@ LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_TreasureEvents_PartyLev
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_TreasureEvents_UsedItem", "LeaderLib_TS_TreasureEvents_UsedItem_Enabled");
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_TreasureEvents_TradeGeneration", "LeaderLib_TS_TreasureEvents_TradeGeneration_Enabled");
 
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_GrowthEvents_Character", "LeaderLib_TS_GrowthEvents_Character_Enabled");
+
 PROC
-LeaderLig_ToggleScripts_Internal_UpdateScriptFlags()
+LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
 AND
 DB_LeaderLib_Treasure_RegisteredGenerationTypes("DIALOG_STARTED")
 THEN
 GlobalSetFlag("LeaderLib_TS_TreasureEvents_Dialog_Enabled");
 
 PROC
-LeaderLig_ToggleScripts_Internal_UpdateScriptFlags()
+LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
 AND
 DB_LeaderLib_Treasure_RegisteredGenerationTypes("PARTY_LEVELED_UP")
 THEN
 GlobalSetFlag("LeaderLib_TS_TreasureEvents_PartyLeveledUp_Enabled");
 
 PROC
-LeaderLig_ToggleScripts_Internal_UpdateScriptFlags()
+LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
 AND
 DB_LeaderLib_Treasure_RegisteredGenerationTypes("FLAG")
 THEN
 GlobalSetFlag("LeaderLib_TS_TreasureEvents_Flags_Enabled");
 
 PROC
-LeaderLig_ToggleScripts_Internal_UpdateScriptFlags()
+LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
 AND
 DB_LeaderLib_Treasure_RegisteredGenerationTypes("OPENED")
 THEN
 GlobalSetFlag("LeaderLib_TS_TreasureEvents_UsedItem_Enabled");
 
 PROC
-LeaderLig_ToggleScripts_Internal_UpdateScriptFlags()
+LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
 AND
 DB_LeaderLib_Treasure_RegisteredGenerationTypes("TRADE_GENERATION_START")
 THEN
 GlobalSetFlag("LeaderLib_TS_TreasureEvents_TradeGeneration_Enabled");
+
+PROC
+LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
+AND
+SysCount("DB_LeaderLib_Growth_Characters_Skills", 5, _Count)
+AND
+_Count > 0
+THEN
+GlobalSetFlag("LeaderLib_TS_GrowthEvents_Character_Enabled");
 //END_REGION
 
 //REGION UPDATING
@@ -68,8 +79,8 @@ LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (S
 AND
 LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 13, 0)
 THEN
-LeaderLig_ToggleScripts_Internal_UpdateScriptFlags();
-LeaderLig_ToggleScripts_Internal_InitRegistration();
+LeaderLib_ToggleScripts_Internal_UpdateScriptFlags();
+LeaderLib_ToggleScripts_Internal_InitRegistration();
 LeaderLib_Queue_ClearQueue("LeaderLib_ItemGenerationQueue");
 
 PROC

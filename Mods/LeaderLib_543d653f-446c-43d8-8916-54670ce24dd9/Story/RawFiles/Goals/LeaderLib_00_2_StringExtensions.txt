@@ -572,6 +572,7 @@ _OtherRevision <= 256
 THEN
 DB_NOOP(1);
 
+//DB_LeaderLib_StringExt_VersionIsLessThan should hopefully be "cached" by not clearing the DB.
 QRY
 LeaderLib_StringExt_QRY_VersionIsLessThan((STRING)_Version, (INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherBuild, (INTEGER)_OtherRevision)
 AND

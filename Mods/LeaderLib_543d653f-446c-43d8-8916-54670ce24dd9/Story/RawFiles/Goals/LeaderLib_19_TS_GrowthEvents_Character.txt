@@ -1,0 +1,31 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+IF
+CharacterLeveledUp(_Character)
+AND
+IsTagged(_Character, "LeaderLib_Growth_AddedSkillsThisLevel", 1)
+THEN
+ClearTag(_Character, "LeaderLib_Growth_AddedSkillsThisLevel");
+
+IF
+CharacterLeveledUp(_Character)
+AND
+LeaderLib_Growth_Characters_QRY_CharacterHasSkills(_Character)
+THEN
+LeaderLib_Growth_Characters_AddSkills(_Character);
+
+IF
+CharacterJoinedParty(_Character)
+AND
+NOT IsTagged(_Character, "LeaderLib_Growth_AddedSkillsThisLevel", 1)
+AND
+LeaderLib_Growth_Characters_QRY_CharacterHasSkills(_Character)
+THEN
+LeaderLib_Growth_Characters_AddSkills(_Character);
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

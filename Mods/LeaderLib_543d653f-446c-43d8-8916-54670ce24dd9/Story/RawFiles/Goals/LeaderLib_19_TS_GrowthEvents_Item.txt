@@ -1,0 +1,25 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+IF
+CharacterLeveledUp(_Character)
+AND
+DB_IsPlayer(_Character)
+AND
+LeaderLib_Growth_Items_QRY_HasAutoLevelItem(_Character)
+THEN
+LeaderLog_Log("TRACE", "[LeaderLib:Growth:Items:CharacterLeveledUp] Leveling up character equipment.");
+LeaderLib_Growth_Items_LevelUpItems(_Character);
+
+IF
+ItemEquipped(_Item, _Character)
+AND
+IsTagged(_Item, "LeaderLib_AutoLevel", 1)
+THEN
+LeaderLib_Growth_Items_LevelUpItem(_Character, _Item);
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

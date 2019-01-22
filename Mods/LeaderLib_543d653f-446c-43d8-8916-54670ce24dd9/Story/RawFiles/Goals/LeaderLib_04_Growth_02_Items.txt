@@ -85,16 +85,6 @@ DB_LeaderLib_Growth_Items_Temp_FoundItem(_Character)
 THEN
 NOT DB_LeaderLib_Growth_Items_Temp_FoundItem(_Character);
 
-IF
-CharacterLeveledUp(_Character)
-AND
-DB_IsPlayer(_Character)
-AND
-LeaderLib_Growth_Items_QRY_HasAutoLevelItem(_Character)
-THEN
-LeaderLog_Log("TRACE", "[LeaderLib:Growth:Items:CharacterLeveledUp] Leveling up character equipment.");
-LeaderLib_Growth_Items_LevelUpItems(_Character);
-
 //Equipment doesn't work with `IterateItemsInInventory`
 PROC
 LeaderLib_Growth_Items_LevelUpItems((CHARACTERGUID)_Character)
@@ -104,13 +94,6 @@ AND
 CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
 AND
 _Item != NULL_00000000-0000-0000-0000-000000000000
-AND
-IsTagged(_Item, "LeaderLib_AutoLevel", 1)
-THEN
-LeaderLib_Growth_Items_LevelUpItem(_Character, _Item);
-
-IF
-ItemEquipped(_Item, _Character)
 AND
 IsTagged(_Item, "LeaderLib_AutoLevel", 1)
 THEN

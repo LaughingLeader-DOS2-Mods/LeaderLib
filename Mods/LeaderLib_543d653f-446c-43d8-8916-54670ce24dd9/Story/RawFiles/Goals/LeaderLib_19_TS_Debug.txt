@@ -1,0 +1,15 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+IF
+CharacterJoinedParty(_Character)
+AND
+CharacterIsSummon(_Character, 0)
+THEN
+DB_IsPlayer(_Character);
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

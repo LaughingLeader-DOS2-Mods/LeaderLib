@@ -28,6 +28,8 @@ LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_TreasureEvents_TradeGen
 
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_GrowthEvents_Character", "LeaderLib_TS_GrowthEvents_Character_Enabled");
 
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Debug", "LeaderLib_IsEditorMode");
+
 PROC
 LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
 AND

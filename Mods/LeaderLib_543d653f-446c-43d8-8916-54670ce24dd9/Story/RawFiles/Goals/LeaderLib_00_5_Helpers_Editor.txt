@@ -520,12 +520,14 @@ GetTextEventParamInteger(3, _Turns)
 AND
 _Turns > 0
 AND
+GetTextEventParamInteger(4, _Force)
+AND
 IntegerProduct(_Turns, 6, _DurationInt)
 AND
 Real(_DurationInt, _Duration)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_applystatus] fired. Applying status [",_Status,"].");
-ApplyStatus(_Target, _Status, _Duration, 0, _Target);
+ApplyStatus(_Target, _Status, _Duration, _Force, _Target);
 
 IF
 TextEventSet("leaderlib_statusapply")
@@ -538,10 +540,12 @@ GetTextEventParamInteger(3, _Turns)
 AND
 _Turns <= 0
 AND
+GetTextEventParamInteger(4, _Force)
+AND
 Real(_Turns, _Duration)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_applystatus] fired. Applying status [",_Status,"].");
-ApplyStatus(_Target, _Status, _Duration, 0, _Target);
+ApplyStatus(_Target, _Status, _Duration, _Force, _Target);
 
 IF
 TextEventSet("leaderlib_statusremove")
@@ -590,6 +594,23 @@ THEN
 RemoveHarmfulStatuses(_Object);
 //END_REGION
 
+//REGION TAG_CHECK
+IF
+TextEventSet("leaderlib_checktag")
+AND
+GetTextEventParamString(1, _Tag)
+AND
+DB_IsPlayer(_Player)
+AND
+String(_Player, _PlayerStr)
+AND
+IsTagged(_Player, _Tag, _IsTagged)
+AND
+IntegertoString(_IsTagged, _IsTaggedStr)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_checktag] fired. Tag [",_Tag,"] is [",_IsTaggedStr,"] on [",_PlayerStr,"]");
+
+//END_REGION
 IF
 TextEventSet("leaderlib_jumptoturn")
 AND

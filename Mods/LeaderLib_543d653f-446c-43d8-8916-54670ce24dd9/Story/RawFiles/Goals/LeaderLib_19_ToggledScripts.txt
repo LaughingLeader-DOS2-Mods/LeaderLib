@@ -32,70 +32,13 @@ LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_GrowthEvents_Item", "Le
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Debug", "LeaderLib_IsEditorMode");
 //END_REGION
 
-//REGION UPDATE_SCRIPT_ENABLE
-PROC
-LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
-AND
-DB_LeaderLib_Treasure_RegisteredGenerationTypes("DIALOG_STARTED")
-THEN
-LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_TreasureEvents_Dialog_Enabled", "LeaderLib");
-
-PROC
-LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
-AND
-DB_LeaderLib_Treasure_RegisteredGenerationTypes("PARTY_LEVELED_UP")
-THEN
-LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_TreasureEvents_PartyLeveledUp_Enabled", "LeaderLib");
-
-PROC
-LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
-AND
-DB_LeaderLib_Treasure_RegisteredGenerationTypes("FLAG")
-THEN
-LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_TreasureEvents_Flags_Enabled", "LeaderLib");
-
-PROC
-LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
-AND
-DB_LeaderLib_Treasure_RegisteredGenerationTypes("OPENED")
-THEN
-LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_TreasureEvents_UsedItem_Enabled", "LeaderLib");
-
-PROC
-LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
-AND
-DB_LeaderLib_Treasure_RegisteredGenerationTypes("TRADE_GENERATION_START")
-THEN
-LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_TreasureEvents_TradeGeneration_Enabled", "LeaderLib");
-
-PROC
-LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
-AND
-SysCount("DB_LeaderLib_Growth_Characters_Skills", 5, _Count)
-AND
-_Count > 0
-THEN
-LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_GrowthEvents_Character_Enabled", "LeaderLib");
-
-PROC
-LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
-AND
-CharacterGetHostCharacter(_Player)
-AND
-PartyFindTaggedItem(_Player, "LeaderLib_AutoLevel", 0, _Item)
-AND
-_Item != NULL_00000000-0000-0000-0000-000000000000
-THEN
-LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_GrowthEvents_Item_Enabled", "LeaderLib");
-//END_REGION
-
 //REGION UPDATE_SCRIPT_DISABLE
 PROC
 LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
 AND
 SysCount("DB_LeaderLib_Growth_Characters_Skills", 5, 0)
 THEN
-LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_GrowthEvents_Character_Enabled", "LeaderLib");
+LeaderLib_ToggleScripts_DisableScript("LeaderLib_TS_GrowthEvents_Character_Enabled", "LeaderLib");
 
 PROC
 LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
@@ -113,6 +56,77 @@ AND
 NOT PartyFindTaggedItem(_Player, "LeaderLib_AutoLevel", 0, _)
 THEN
 LeaderLib_ToggleScripts_DisableScript("LeaderLib_TS_GrowthEvents_Item_Enabled", "LeaderLib");
+//END_REGION
+
+//REGION UPDATE_SCRIPT_ENABLE
+PROC
+LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
+AND
+NOT DB_LeaderLib_ToggleScripts_Temp_ActiveScripts("LeaderLib_TS_TreasureEvents_Dialog_Enabled", "LeaderLib")
+AND
+DB_LeaderLib_Treasure_RegisteredGenerationTypes("DIALOG_STARTED")
+THEN
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_TreasureEvents_Dialog_Enabled", "LeaderLib");
+
+PROC
+LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
+AND
+NOT DB_LeaderLib_ToggleScripts_Temp_ActiveScripts("LeaderLib_TS_TreasureEvents_PartyLeveledUp_Enabled", "LeaderLib")
+AND
+DB_LeaderLib_Treasure_RegisteredGenerationTypes("PARTY_LEVELED_UP")
+THEN
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_TreasureEvents_PartyLeveledUp_Enabled", "LeaderLib");
+
+PROC
+LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
+AND
+NOT DB_LeaderLib_ToggleScripts_Temp_ActiveScripts("LeaderLib_TS_TreasureEvents_Flags_Enabled", "LeaderLib")
+AND
+DB_LeaderLib_Treasure_RegisteredGenerationTypes("FLAG")
+THEN
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_TreasureEvents_Flags_Enabled", "LeaderLib");
+
+PROC
+LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
+AND
+NOT DB_LeaderLib_ToggleScripts_Temp_ActiveScripts("LeaderLib_TS_TreasureEvents_UsedItem_Enabled", "LeaderLib")
+AND
+DB_LeaderLib_Treasure_RegisteredGenerationTypes("OPENED")
+THEN
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_TreasureEvents_UsedItem_Enabled", "LeaderLib");
+
+PROC
+LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
+AND
+NOT DB_LeaderLib_ToggleScripts_Temp_ActiveScripts("LeaderLib_TS_TreasureEvents_TradeGeneration_Enabled", "LeaderLib")
+AND
+DB_LeaderLib_Treasure_RegisteredGenerationTypes("TRADE_GENERATION_START")
+THEN
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_TreasureEvents_TradeGeneration_Enabled", "LeaderLib");
+
+PROC
+LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
+AND
+NOT DB_LeaderLib_ToggleScripts_Temp_ActiveScripts("LeaderLib_TS_GrowthEvents_Character_Enabled", "LeaderLib")
+AND
+SysCount("DB_LeaderLib_Growth_Characters_Skills", 5, _Count)
+AND
+_Count > 0
+THEN
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_GrowthEvents_Character_Enabled", "LeaderLib");
+
+PROC
+LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
+AND
+NOT DB_LeaderLib_ToggleScripts_Temp_ActiveScripts("LeaderLib_TS_GrowthEvents_Item_Enabled", "LeaderLib")
+AND
+CharacterGetHostCharacter(_Player)
+AND
+PartyFindTaggedItem(_Player, "LeaderLib_AutoLevel", 0, _Item)
+AND
+_Item != NULL_00000000-0000-0000-0000-000000000000
+THEN
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_GrowthEvents_Item_Enabled", "LeaderLib");
 //END_REGION
 
 //REGION UPDATING

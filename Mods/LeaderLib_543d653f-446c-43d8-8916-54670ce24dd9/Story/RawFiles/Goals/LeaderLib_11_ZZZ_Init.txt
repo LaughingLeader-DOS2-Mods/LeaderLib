@@ -237,20 +237,6 @@ THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Init:LeaderLib_Debug_IteratePlayers] Iteration complete.");
 LeaderLib_SendEvent("LeaderLib_Debug_PlayerDatabaseReady");
 //END_REGION
-
-//REGION EDITOR_MODE
-IF
-GameStarted(_,1)
-THEN
-GlobalSetFlag("LeaderLib_IsEditorMode");
-
-IF
-GameStarted(_, 0)
-AND
-DB_GlobalFlag("LeaderLib_IsEditorMode")
-THEN
-GlobalClearFlag("LeaderLib_IsEditorMode");
-//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

@@ -5,6 +5,11 @@ LeaderLib_Debug_RunTests();
 KBSECTION
 PROC
 PROC_Z_Shared_GameModeStarted("Campaign", 1)
+THEN
+GlobalSetFlag("LeaderLib_IsEditorMode");
+
+PROC
+PROC_Z_Shared_GameModeStarted("Campaign", 1)
 AND
 NOT DB_Origins(_)
 THEN
@@ -23,6 +28,7 @@ DB_UndeadRacePresets(3,"Undead_Lizard");
 IF
 RegionStarted("TestLevel_LL_LeaderLib")
 THEN
+GlobalSetFlag("LeaderLib_IsEditorMode");
 GlobalSetFlag("LeaderLog_Debug_Enabled");
 //GlobalSetFlag("LeaderLog_Trace_Enabled");
 GoalCompleted;

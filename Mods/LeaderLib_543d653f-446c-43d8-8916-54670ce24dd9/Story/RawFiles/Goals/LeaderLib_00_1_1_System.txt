@@ -76,6 +76,13 @@ DB_LeaderLib_Iterator(_IteratorName, _CurrentInt);
 NOT DB_LeaderLib_System_Temp_StartIteratorCreator(_IteratorName, _CurrentInt);
 DB_LeaderLib_System_Temp_StartIteratorCreator(_IteratorName, _NextInt);
 //END_REGION
+
+//REGION EDITOR_MODE_FLAG
+IF
+GameModeStarted(_, 1)
+THEN
+GlobalSetFlag("LeaderLib_IsEditorMode");
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

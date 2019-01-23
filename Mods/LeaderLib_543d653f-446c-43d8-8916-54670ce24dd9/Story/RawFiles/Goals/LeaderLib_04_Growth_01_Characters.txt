@@ -17,13 +17,13 @@ DB_LeaderLib_Growth_Characters_Skills(_ID, _MinLevel, _Skill, _MatchType, _Match
 PROC
 LeaderLib_Growth_Characters_Register_Skill((STRING)_ID, (INTEGER)_MinLevel, (STRING)_Skill, (STRING)_MatchType, (STRING)_MatchValue)
 AND
-NOT DB_GlobalFlag("LeaderLib_TS_GrowthEvents_Character_Enabled")
+NOT DB_LeaderLib_ToggleScripts_Temp_ActiveScripts("LeaderLib_TS_GrowthEvents_Character_Enabled", "LeaderLib")
 AND
 DB_CurrentLevel(_Level)
 AND
 IsGameLevel(_Level, 1)
 THEN
-GlobalSetFlag("LeaderLib_TS_GrowthEvents_Character_Enabled");
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_GrowthEvents_Character_Enabled", "LeaderLib");
 //END_REGION
 
 //REGION CLEARING

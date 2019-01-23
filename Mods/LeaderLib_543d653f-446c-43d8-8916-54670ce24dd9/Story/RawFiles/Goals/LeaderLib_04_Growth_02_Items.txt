@@ -8,16 +8,26 @@ PROC
 LeaderLib_Growth_Items_Register_DeltaMod((STRING)_ID, (INTEGER)_MinLevel, (STRING)_DeltaMod, (STRING)_MatchType, (STRING)_MatchValue)
 THEN
 DB_LeaderLib_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, _MatchType, _MatchValue);
+LeaderLib_Growth_Items_Internal_OnRegistered();
 
 PROC
 LeaderLib_Growth_Items_Register_Template((STRING)_ID, (STRING)_Template)
 THEN
 DB_LeaderLib_Growth_Items_TemplateID(_ID, _Template);
+LeaderLib_Growth_Items_Internal_OnRegistered();
 
 PROC
 LeaderLib_Growth_Items_Register_Transformation((STRING)_ID, (INTEGER)_MinLevel, (STRING)_TransformTemplate, (STRING)_TransformedFlag)
 THEN
 DB_LeaderLib_Growth_Items_Transformations(_ID, _MinLevel, _TransformTemplate, _TransformedFlag);
+LeaderLib_Growth_Items_Internal_OnRegistered();
+
+PROC
+LeaderLib_Growth_Items_Internal_OnRegistered()
+AND
+NOT DB_LeaderLib_ToggleScripts_Temp_ActiveScripts("LeaderLib_TS_GrowthEvents_Character_Enabled", "LeaderLib")
+THEN
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_GrowthEvents_Item_Enabled", "LeaderLib");
 //END_REGION
 
 //REGION CLEARING
@@ -48,6 +58,19 @@ AND
 DB_LeaderLib_Growth_Items_Transformations(_ID, _MinLevel, _TransformTemplate, _TransformedFlag)
 THEN
 NOT DB_LeaderLib_Growth_Items_Transformations(_ID, _MinLevel, _TransformTemplate, _TransformedFlag);
+
+PROC
+LeaderLib_Growth_Items_Clear_ByEntriesID((STRING)_ID)
+AND
+DB_LeaderLib_ToggleScripts_Temp_ActiveScripts("LeaderLib_TS_GrowthEvents_Character_Enabled", "LeaderLib")
+AND
+SysCount("DB_LeaderLib_Growth_Items_TemplateID", 2, 0)
+AND
+SysCount("DB_LeaderLib_Growth_Items_Transformations", 4, 0)
+AND
+SysCount("DB_LeaderLib_Growth_Items_DeltaMods", 4, 0)
+THEN
+LeaderLib_ToggleScripts_DisableScript("LeaderLib_TS_GrowthEvents_Item_Enabled", "LeaderLib");
 //END_REGION
 
 //REGION ITEM_AUTO_LEVEL

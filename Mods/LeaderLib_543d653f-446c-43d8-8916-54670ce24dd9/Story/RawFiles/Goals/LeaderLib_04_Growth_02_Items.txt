@@ -2,6 +2,7 @@ Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
 //DB_LeaderLib_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, _MatchType, _MatchValue)
+
 KBSECTION
 //REGION REGISTERING
 PROC

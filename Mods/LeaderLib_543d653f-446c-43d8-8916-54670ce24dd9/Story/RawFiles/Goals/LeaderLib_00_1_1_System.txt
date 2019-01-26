@@ -83,6 +83,14 @@ GameModeStarted(_, 1)
 THEN
 GlobalSetFlag("LeaderLib_IsEditorMode");
 //END_REGION
+
+//REGION GAME_MODE_VALUES
+IF
+GameModeStarted(_Mode, _IsEditorMode)
+THEN
+SysClear("DB_LeaderLib_GameMode", 2);
+DB_LeaderLib_GameMode(_Mode, _IsEditorMode);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

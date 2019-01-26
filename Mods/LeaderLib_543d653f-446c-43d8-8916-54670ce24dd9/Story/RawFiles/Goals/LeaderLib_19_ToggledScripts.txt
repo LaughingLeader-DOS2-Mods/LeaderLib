@@ -30,6 +30,8 @@ LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_GrowthEvents_Character"
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_GrowthEvents_Item", "LeaderLib_TS_GrowthEvents_Item_Enabled");
 
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Debug", "LeaderLib_IsEditorMode");
+
+//LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_GrowthEvents_Item_Enabled", "LeaderLib");
 //END_REGION
 
 //REGION UPDATE_SCRIPT_DISABLE

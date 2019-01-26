@@ -168,3 +168,4 @@ DB_EG_DivinityCompetitorTeleported 1
 DB_EG_MakingTheChoice 1
 DB_LeaderLib_PresetMenu_Temp_BlockSkill 2
 DB_LeaderLib_BlockedSkill 1
+DB_LeaderLib_GameMode 2

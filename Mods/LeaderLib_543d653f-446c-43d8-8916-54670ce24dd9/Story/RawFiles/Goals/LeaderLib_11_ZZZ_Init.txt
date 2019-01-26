@@ -24,6 +24,14 @@ LeaderLog_Log("DEBUG", "[LeaderLib:ModAPI] LeaderLib initialized.");
 LeaderLib_SendEvent("LeaderLib_Initialized");
 //END_REGION
 
+//REGION ENDING_EVENT
+//Sent so behavior can react to a level ending
+IF
+RegionEnded(_)
+THEN
+LeaderLib_SendEvent("LeaderLib_RegionEnded");
+//END_REGION
+
 //REGION INITIAL_MOD_BOOKS
 IF
 StoryEvent(_, "LeaderLib_Initialized")

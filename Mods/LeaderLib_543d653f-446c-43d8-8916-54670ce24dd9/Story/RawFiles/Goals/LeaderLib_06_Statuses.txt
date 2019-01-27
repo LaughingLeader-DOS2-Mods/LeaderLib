@@ -4,14 +4,32 @@ INITSECTION
 
 KBSECTION
 
-//REGION REGISTERING
+//Applying the passive status and setting the associated flag should be handled by mods directly.
+//What LeaderLib does is reapply that status if the flag is set, when RemoveHarmfulStatuses is called, or when the character is resurrected.
+
+//REGION REGISTER_PERMANENT_STATUS
 PROC
 LeaderLib_Statuses_Register_PermanentStatus((STRING)_ModID, (STRING)_Group, (STRING)_Status, (STRING)_Flag)
 THEN
 DB_LeaderLib_Statuses_PermanentStatus(_ModID, _Group, _Status, _Flag);
+LeaderLib_Statuses_OnPermanentStatusRegistered(_ModID, _Group, _Status, _Flag);
+
+PROC
+LeaderLib_Statuses_OnPermanentStatusRegistered((STRING)_ModID, (STRING)_Group, (STRING)_Status, (STRING)_Flag)
+AND
+DB_GlobalFlag("LeaderLib_Initialized")
+THEN
+LeaderLib_Statuses_Internal_ToggleWorkaroundScripts(_ModID);
+
+PROC
+LeaderLib_Statuses_OnPermanentStatusRegistered((STRING)_ModID, (STRING)_Group, (STRING)_Status, (STRING)_Flag)
+AND
+NOT DB_GlobalFlag("LeaderLib_Initialized")
+THEN
+DB_LeaderLib_Statuses_Temp_CheckModsOnInit(1);
 //END_REGION
 
-//REGION CLEARING
+//REGION PERMANENT_STATUS_CLEAR_ENTRIES
 PROC
 LeaderLib_Statuses_Clear_PermanentStatus((STRING)_Group, (STRING)_Status)
 AND
@@ -33,20 +51,6 @@ DB_LeaderLib_Statuses_PermanentStatus(_ModID, _Group, _Status, _Flag)
 THEN
 NOT DB_LeaderLib_Statuses_PermanentStatus(_ModID, _Group, _Status, _Flag);
 //END_REGION
-
-PROC
-LeaderLib_Statuses_OnPermanentStatusRegistered((STRING)_ModID, (STRING)_Group, (STRING)_Status, (STRING)_Flag)
-AND
-DB_GlobalFlag("LeaderLib_Initialized")
-THEN
-LeaderLib_Statuses_Internal_ToggleWorkaroundScripts(_ModID);
-
-PROC
-LeaderLib_Statuses_OnPermanentStatusRegistered((STRING)_ModID, (STRING)_Group, (STRING)_Status, (STRING)_Flag)
-AND
-NOT DB_GlobalFlag("LeaderLib_Initialized")
-THEN
-DB_LeaderLib_Statuses_Temp_CheckModsOnInit(1);
 
 //REGION TOGGLED_SCRIPT_ACTIVATION
 PROC
@@ -97,6 +101,54 @@ AND
 NOT LeaderLib_Statuses_QRY_Internal_RegisteredModsAreActive()
 THEN
 GlobalClearFlag("LeaderLib_TS_RemoveHarmfulStatusesEnabled");
+//END_REGION
+
+//REGION REMOVE_HARMFUL_STATUSES_WORKAROUND
+PROC
+LeaderLib_TS_Internal_RemoveHarmfulStatusesCalled((CHARACTERGUID)_Character)
+THEN
+ProcObjectTimerCancel(_Character, "LeaderLib_Timers_ReapplyPermanentStatuses");
+ProcObjectTimer(_Character, "LeaderLib_Timers_ReapplyPermanentStatuses", 250);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Character, "LeaderLib_Timers_ReapplyPermanentStatuses")
+THEN
+LeaderLib_Statuses_ApplyPermanentStatuses(_Character);
+
+PROC
+LeaderLib_Statuses_BlockPermanentStatus((CHARACTERGUID)_Character, (STRING)_Status, (STRING)_Flag)
+THEN
+//DB_LeaderLib_Statuses_PermanentStatusBlocked(_Character, _Status, _Flag)
+DB_NOOP(1);
+
+PROC
+LeaderLib_Statuses_ApplyPermanentStatuses((CHARACTERGUID)_Character)
+AND
+DB_LeaderLib_Statuses_PermanentStatus(_ModID, _ID, _Status, _Flag)
+AND
+LeaderUpdater_QRY_ModIsActive(_ModID)
+AND
+ObjectGetFlag(_Character, _Flag, 1)
+AND
+//HasActiveStatus(_Character, _Status, 0)
+NOT LeaderLib_Helper_QRY_HasStatus(_Character, _Status)
+THEN
+LeaderLib_Statuses_BlockPermanentStatus(_Character, _Status, _Flag);
+LeaderLib_Statuses_ApplyPermanentStatus(_Character, _Status, _Flag);
+
+PROC
+LeaderLib_Statuses_ApplyPermanentStatus((CHARACTERGUID)_Character, (STRING)_Status, (STRING)_Flag)
+AND
+NOT DB_LeaderLib_Statuses_PermanentStatusBlocked(_Character, _Status, _Flag)
+THEN
+ApplyStatus(_Character, _Status, -1.0, 0, _Character);
+
+PROC
+LeaderLib_Statuses_ApplyPermanentStatus((CHARACTERGUID)_Character, (STRING)_Status, (STRING)_Flag)
+AND
+DB_LeaderLib_Statuses_PermanentStatusBlocked(_Character, _Status, _Flag)
+THEN
+NOT DB_LeaderLib_Statuses_PermanentStatusBlocked(_Character, _Status, _Flag);
 //END_REGION
 
 EXITSECTION

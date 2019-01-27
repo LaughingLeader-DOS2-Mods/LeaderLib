@@ -568,6 +568,7 @@ ObjectExists(_Target, 1)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_statusremoveharmful] fired. Calling [RemoveHarmfulStatuses] on target.");
 RemoveHarmfulStatuses(_Target);
+LeaderLib_TS_Internal_RemoveHarmfulStatusesCalled((CHARACTERGUID)_Target);
 
 IF
 TextEventSet("leaderlib_statusremoveharmful")
@@ -580,21 +581,40 @@ CharacterIsControlled(_Player, 1)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_statusremoveharmful] fired. Calling [RemoveHarmfulStatuses] on controlled players.");
 RemoveHarmfulStatuses(_Player);
+LeaderLib_TS_Internal_RemoveHarmfulStatusesCalled(_Player);
 
 IF
 TextEventSet("leaderlib_statusremoveharmfulall")
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_statusremoveharmfulall] fired. Calling [RemoveHarmfulStatuses] on all characters.");
 CharacterLaunchOsirisOnlyIterator("LeaderLib_Debug_Iterator_RemoveHarmfulStatuses");
-ItemLaunchIterator("LeaderLib_Debug_Iterator_RemoveHarmfulStatuses");
+ItemLaunchIterator("LeaderLib_Debug_Iterator_RemoveHarmfulStatuses_Item");
 
 IF
-StoryEvent(_Object, "LeaderLib_Debug_Iterator_RemoveHarmfulStatuses")
+StoryEvent((CHARACTERGUID)_Object, "LeaderLib_Debug_Iterator_RemoveHarmfulStatuses")
+THEN
+RemoveHarmfulStatuses(_Object);
+LeaderLib_TS_Internal_RemoveHarmfulStatusesCalled(_Object);
+
+IF
+StoryEvent((CHARACTERGUID)_Object, "LeaderLib_Debug_Iterator_RemoveHarmfulStatuses_Item")
 THEN
 RemoveHarmfulStatuses(_Object);
 //END_REGION
 
 //REGION TAG_CHECK
+
+//REGION RECIPES
+IF
+TextEventSet("leaderlib_addrecipe")
+AND
+GetTextEventParamString(1, _Recipe)
+AND
+DB_IsPlayer(_Player)
+THEN
+CharacterUnlockRecipe(_Player, _Recipe, 1);
+//END_REGION
+
 IF
 TextEventSet("leaderlib_checktag")
 AND

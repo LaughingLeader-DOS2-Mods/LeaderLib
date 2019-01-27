@@ -13,6 +13,7 @@ LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_AutoPartyExperience", "
 
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_StatusEvents__Main", "LeaderLib_StatusEvents_MainScriptEnabled");
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_StatusEvents_Disables", "LeaderLib_StatusEvents_DisableScriptEnabled");
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_StatusEvents_ToggleSkill", "LeaderLib_StatusEvents_ToggleSkillsEnabled");
 
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Combat_DeadCharacters", "LeaderLib_Combat_TrackDeadCharacters");
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Combat_DeadItems", "LeaderLib_Combat_TrackDeadItems");
@@ -61,6 +62,17 @@ LeaderLib_ToggleScripts_DisableScript("LeaderLib_TS_GrowthEvents_Item_Enabled", 
 //END_REGION
 
 //REGION UPDATE_SCRIPT_ENABLE
+PROC
+LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
+AND
+NOT DB_LeaderLib_ToggleScripts_Temp_ActiveScripts("LeaderLib_StatusEvents_ToggleSkillsEnabled", "LeaderLib")
+AND
+SysCount("DB_LeaderLib_Skills_StatusToggleSkills", 5, _Count)
+AND
+_Count > 0
+THEN
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_StatusEvents_ToggleSkillsEnabled", "LeaderLib");
+
 PROC
 LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
 AND

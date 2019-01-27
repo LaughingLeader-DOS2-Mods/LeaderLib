@@ -1,0 +1,89 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+
+//REGION STATUS_CHECK
+QRY
+LeaderLib_Helper_QRY_HasStatus((GUIDSTRING)_Object, (STRING)_Status)
+AND
+HasAppliedStatus(_Object, _Status, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_HasStatus((GUIDSTRING)_Object, (STRING)_Status)
+AND
+HasActiveStatus(_Object, _Status, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_HasAnyStatus((GUIDSTRING)_Object, (STRING)_Status1, (STRING)_Status2)
+AND
+LeaderLib_Helper_QRY_HasStatus(_Object, _Status1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_HasAnyStatus((GUIDSTRING)_Object, (STRING)_Status1, (STRING)_Status2)
+AND
+LeaderLib_Helper_QRY_HasStatus(_Object, _Status2)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IsStunningStatus((STRING)_Status)
+AND
+GetStatusType(_Status, _Type)
+AND
+LeaderLib_Helper_QRY_Internal_IsStunningStatus(_Type)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_Internal_IsStunningStatus("INCAPACITATED")
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_Internal_IsStunningStatus("KNOCKED_DOWN")
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IsDamageStatus((STRING)_Status)
+AND
+GetStatusType(_Status, _Type)
+AND
+LeaderLib_Helper_QRY_Internal_IsDamageStatus(_Type)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_Internal_IsDamageStatus("DAMAGE")
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_Internal_IsDamageStatus("DAMAGE_ON_MOVE")
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_HasPermanentStatus((GUIDSTRING)_Object, (STRING)_Status)
+AND
+LeaderLib_Helper_QRY_HasStatus(_Object, _Status)
+AND
+GetStatusTurns(_Object, _Status, _Turns)
+AND
+_Turns == -1
+THEN
+DB_NOOP(1);
+//END_REGION
+
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

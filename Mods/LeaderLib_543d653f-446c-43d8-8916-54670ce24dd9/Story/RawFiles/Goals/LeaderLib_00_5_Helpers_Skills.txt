@@ -4,7 +4,7 @@ INITSECTION
 //DB_LeaderLib_Skills_StatusToggleSkills(_Skill, _Status, _Duration, _Force)
 KBSECTION
 
-//REGION TOGGLE_SKILL
+//REGION TOGGLE_STATUS_SKILL
 PROC
 LeaderLib_Skills_Register_StatusToggleSkill((STRING)_Skill, (STRING)_Status)
 THEN
@@ -32,21 +32,12 @@ LeaderLib_Skills_Register_StatusToggleSkill((STRING)_Skill, (STRING)_Status, (RE
 THEN
 DB_LeaderLib_Skills_StatusToggleSkills(_Skill, _Status, _Duration, _Force, _OnUse);
 
-IF
-CharacterUsedSkill(_Character, _Skill, _, _)
+PROC
+LeaderLib_Skills_Register_StatusToggleSkill((STRING)_Skill, (STRING)_Status, (REAL)_Duration, (INTEGER)_Force, (INTEGER)_OnUse)
 AND
-DB_LeaderLib_Skills_StatusToggleSkills(_Skill, _Status, _Duration, _Force, 1)
+NOT DB_LeaderLib_ToggleScripts_Temp_ActiveScripts("LeaderLib_StatusEvents_ToggleSkillsEnabled", "LeaderLib")
 THEN
-LeaderLib_Skills_BlockStatusToggle(_Character, _Skill, _Status);
-LeaderLib_Skills_Internal_ProcessStatusToggle(_Character, _Skill, _Status, _Duration, _Force);
-
-IF
-SkillCast(_Character, _Skill, _, _)
-AND
-DB_LeaderLib_Skills_StatusToggleSkills(_Skill, _Status, _Duration, _Force, 0)
-THEN
-LeaderLib_Skills_BlockStatusToggle(_Character, _Skill, _Status);
-LeaderLib_Skills_Internal_ProcessStatusToggle(_Character, _Skill, _Status, _Duration, _Force);
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_StatusEvents_ToggleSkillsEnabled", "LeaderLib");
 
 PROC
 LeaderLib_Skills_BlockStatusToggle((CHARACTERGUID)_Character, (STRING)_Skill, (STRING)_Status)
@@ -68,8 +59,10 @@ DB_LeaderLib_Skills_Temp_JustToggledSkillStatus(_Character, _Skill);
 
 PROC
 LeaderLib_Skills_OnStatusToggleApplied((CHARACTERGUID)_Character, (STRING)_Skill, (STRING)_Status)
+AND
+DB_LeaderLib_Statuses_PermanentStatus(_ModID, _Group, _Status, _Flag)
 THEN
-DB_NOOP(1);
+ObjectSetFlag(_Character, _Flag, 0);
 
 PROC
 LeaderLib_Skills_Internal_ProcessStatusToggle((CHARACTERGUID)_Character, (STRING)_Skill, (STRING)_Status, (REAL)_Duration, (INTEGER)_Force)
@@ -86,8 +79,10 @@ DB_LeaderLib_Skills_Temp_JustToggledSkillStatus(_Character, _Skill);
 
 PROC
 LeaderLib_Skills_OnStatusToggleRemoved((CHARACTERGUID)_Character, (STRING)_Skill, (STRING)_Status)
+AND
+DB_LeaderLib_Statuses_PermanentStatus(_ModID, _Group, _Status, _Flag)
 THEN
-DB_NOOP(1);
+ObjectClearFlag(_Character, _Flag, 0);
 
 //Clear
 PROC

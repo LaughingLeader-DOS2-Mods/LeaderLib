@@ -61,22 +61,14 @@ THEN
 LeaderLib_TS_Internal_RemoveHarmfulStatusesCalled(_Player);
 //END_REGION
 
-PROC
-LeaderLib_TS_Internal_RemoveHarmfulStatusesCalled((CHARACTERGUID)_Player)
+//REGION RESURRECTION
+IF
+CharacterStatusRemoved(_Player, "RESURRECT", _)
+AND
+DB_IsPlayer(_Player)
 THEN
-ProcObjectTimerCancel(_Player, "LeaderLib_Timers_ReapplyPermanentStatuses");
-ProcObjectTimer(_Player, "LeaderLib_Timers_ReapplyPermanentStatuses", 250);
-
-PROC
-ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_ReapplyPermanentStatuses")
-AND
-DB_LeaderLib_Statuses_PermanentStatus(_ModID, _ID, _Status, _Flag)
-AND
-ObjectGetFlag(_Player, _Flag, 1)
-AND
-HasActiveStatus(_Player, _Status, 0)
-THEN
-ApplyStatus(_Player, _Status, -1.0, 0, _Player);
+LeaderLib_Statuses_ApplyPermanentStatuses(_Player);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

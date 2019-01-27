@@ -1,0 +1,26 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+
+IF
+CharacterUsedSkill(_Character, _Skill, _, _)
+AND
+DB_LeaderLib_Skills_StatusToggleSkills(_Skill, _Status, _Duration, _Force, 1)
+THEN
+LeaderLib_Skills_BlockStatusToggle(_Character, _Skill, _Status);
+LeaderLib_Skills_Internal_ProcessStatusToggle(_Character, _Skill, _Status, _Duration, _Force);
+
+IF
+SkillCast(_Character, _Skill, _, _)
+AND
+DB_LeaderLib_Skills_StatusToggleSkills(_Skill, _Status, _Duration, _Force, 0)
+THEN
+LeaderLib_Skills_BlockStatusToggle(_Character, _Skill, _Status);
+LeaderLib_Skills_Internal_ProcessStatusToggle(_Character, _Skill, _Status, _Duration, _Force);
+
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

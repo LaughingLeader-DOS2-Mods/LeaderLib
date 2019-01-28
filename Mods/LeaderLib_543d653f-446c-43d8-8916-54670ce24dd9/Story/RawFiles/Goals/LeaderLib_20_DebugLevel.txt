@@ -123,6 +123,15 @@ ObjectSetFlag(_Player, "LeaderLib_DebugLevel_TalkedToTrader", 0);
 
 //REGION DEBUG_TEXT_EVENTS
 IF
+TextEventSet("llupdatetest")
+AND
+LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", "9.9.9.9")
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Updater:DEBUG] Updating LeaderLib to latest version.");
+LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", "9.9.9.9");
+LeaderLib_SendEvent("LeaderLib_Events_Internal_OnUpdateSettings");
+
+IF
 TextEventSet("leaderlib_summontest")
 AND
 GetPosition(CHARACTERGUID_Trailer_Humans_Female_Lohse_000_145810cc-7e46-43e7-9fdf-ab9bb8ffcdc0, _x, _y, _z)

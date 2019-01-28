@@ -559,6 +559,16 @@ NOT DB_LeaderLib_StringExt_Temp_Version_Complete(_Str);
 //END_REGION
 
 //REGION VERSION_COMPARISON
+PROC
+LeaderLib_StringExt_Internal_ClearCache_Lazy((INTEGER)_MaxCount)
+AND
+SysCount("DB_LeaderLib_StringExt_VersionIsLessThan", 5, _Count)
+AND
+_Count > _MaxCount
+THEN
+SysClear("DB_LeaderLib_StringExt_VersionIsLessThan", 5);
+LeaderLog_LogInt("DEBUG", "[LeaderLib:StringExt:ClearCache_Lazy] Cleared [DB_LeaderLib_StringExt_VersionIsLessThan]. Entry Count: [",_Count,"]/[",_MaxCount,"].");
+
 QRY
 LeaderLib_StringExt_Internal_QRY_VersionSupported((INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherBuild, (INTEGER)_OtherRevision)
 AND

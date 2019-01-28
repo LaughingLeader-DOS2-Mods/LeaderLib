@@ -7,6 +7,8 @@ IF
 CharacterJoinedParty(_Character)
 AND
 CharacterIsSummon(_Character, 0)
+AND
+CharacterIsPartyFollower(_Character, 0)
 THEN
 DB_IsPlayer(_Character);
 EXITSECTION

@@ -193,6 +193,7 @@ IsGameLevel(_Level, 1)
 AND
 NOT SysIsActive("GLOBAL_CharacterCreation") // If Origins isn't running
 THEN
+TimerCancel("LeaderLib_Debug_IteratePlayers");
 TimerLaunch("LeaderLib_Debug_IteratePlayers", 1000);
 
 IF

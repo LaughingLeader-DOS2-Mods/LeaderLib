@@ -16,6 +16,7 @@ GameStarted(_,_)
 THEN
 LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Game started.");
 
+
 IF
 GameStarted(_,_)
 AND

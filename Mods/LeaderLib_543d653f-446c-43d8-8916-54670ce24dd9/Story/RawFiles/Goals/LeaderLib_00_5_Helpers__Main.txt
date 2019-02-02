@@ -908,174 +908,6 @@ THEN
 DB_NOOP(1);
 //END_REGION
 
-//REGION TIMER_HELPERS
-QRY
-LeaderLib_QRY_ObjectTimerStarted((GUIDSTRING)_Target)
-AND
-DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent, _TimerPrefix)
-THEN
-DB_NOOP(1);
-
-QRY
-LeaderLib_QRY_ObjectTimerStarted((GUIDSTRING)_Target, (STRING)_TimerPrefix)
-AND
-DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent, _TimerPrefix)
-THEN
-DB_NOOP(1);
-
-QRY
-LeaderLib_QRY_ObjectTimerStarted((GUIDSTRING)_Target, (STRING)_TimerPrefix, (STRING)_CompleteEvent)
-AND
-DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent, _TimerPrefix)
-THEN
-DB_NOOP(1);
-
-PROC
-LeaderLib_StartObjectTimer((GUIDSTRING)_Target, (INTEGER)_Time, (STRING)_TimerPrefix, (STRING)_CompleteEvent)
-AND
-GetUUID(_Target, _ID)
-AND
-StringConcatenate(_TimerPrefix, _ID, _TimerName)
-THEN
-DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent, _TimerPrefix);
-TimerLaunch(_TimerName, _Time);
-
-PROC
-LeaderLib_ResetObjectTimer((GUIDSTRING)_Target, (STRING)_TimerPrefix, (INTEGER)_Time)
-AND
-DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent, _TimerPrefix)
-THEN
-TimerCancel(_TimerName);
-TimerLaunch(_TimerName, _Time);
-
-IF
-TimerFinished(_TimerName)
-AND
-DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent, _TimerPrefix)
-THEN
-NOT DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent, _TimerPrefix);
-SetStoryEvent(_Target, _CompleteEvent);
-
-PROC
-LeaderLib_CancelObjectTimer((GUIDSTRING)_Target, (STRING)_TimerPrefix)
-AND
-DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent, _TimerPrefix)
-THEN
-TimerCancel(_TimerName);
-NOT DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent, _TimerPrefix);
-
-PROC
-LeaderLib_CancelObjectTimerByEvent((GUIDSTRING)_Target, (STRING)_CompleteEvent)
-AND
-DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent, _TimerPrefix)
-THEN
-TimerCancel(_TimerName);
-NOT DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent, _TimerPrefix);
-
-PROC
-LeaderLib_StartCharacterItemTimer((CHARACTERGUID)_Char, (ITEMGUID)_Item, (INTEGER)_Time, (STRING)_TimerPrefix, (STRING)_CompleteEvent)
-AND
-GetUUID(_Char, _CharID)
-AND
-GetUUID(_Item, _ItemID)
-AND
-StringConcatenate(_CharID, _ItemID, _ID)
-AND
-StringConcatenate(_TimerPrefix, _ID, _TimerName)
-THEN
-DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent, _TimerPrefix);
-TimerLaunch(_TimerName, _Time);
-
-IF
-TimerFinished(_TimerName)
-AND
-DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent, _TimerPrefix)
-THEN
-NOT DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent, _TimerPrefix);
-CharacterItemSetEvent(_Char, _Item, _CompleteEvent);
-
-PROC
-LeaderLib_CancelCharacterItemTimer((CHARACTERGUID)_Char, (ITEMGUID)_Item, (STRING)_TimerPrefix)
-AND
-DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent, _TimerPrefix)
-THEN
-NOT DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent, _TimerPrefix);
-TimerCancel(_TimerName);
-
-PROC
-LeaderLib_CancelCharacterItemTimerForCharacter((CHARACTERGUID)_Char, (STRING)_TimerPrefix)
-AND
-DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent, _TimerPrefix)
-THEN
-NOT DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent, _TimerPrefix);
-TimerCancel(_TimerName);
-
-PROC
-LeaderLib_StartCharacterCharacterTimer((CHARACTERGUID)_Char1, (CHARACTERGUID)_Char2, (INTEGER)_Time, (STRING)_TimerPrefix, (STRING)_CompleteEvent)
-AND
-GetUUID(_Char1, _Char1ID)
-AND
-GetUUID(_Char2, _Char2ID)
-AND
-StringConcatenate(_Char1ID, _Char2ID, _ID)
-AND
-StringConcatenate(_TimerPrefix, _ID, _TimerName)
-THEN
-DB_LeaderLib_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _CompleteEvent, _TimerPrefix);
-TimerLaunch(_TimerName, _Time);
-
-IF
-TimerFinished(_TimerName)
-AND
-DB_LeaderLib_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _CompleteEvent, _TimerPrefix)
-THEN
-NOT DB_LeaderLib_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _CompleteEvent, _TimerPrefix);
-CharacterCharacterSetEvent(_Char1, _Char2, _CompleteEvent);
-
-QRY
-LeaderLib_QRY_ObjectObjectTimerStarted((GUIDSTRING)_Obj1, (GUIDSTRING)_Obj2, (STRING)_TimerPrefix)
-AND
-DB_LeaderLib_Helper_Temp_ObjectObjectTimer(_TimerName, _Obj1, _Obj2, _CompleteEvent, _TimerPrefix)
-THEN
-DB_NOOP(1);
-
-QRY
-LeaderLib_QRY_ObjectObjectTimerStartedWithEvent((GUIDSTRING)_Obj1, (GUIDSTRING)_Obj2, (STRING)_CompleteEvent)
-AND
-DB_LeaderLib_Helper_Temp_ObjectObjectTimer(_TimerName, _Obj1, _Obj2, _CompleteEvent, _TimerPrefix)
-THEN
-DB_NOOP(1);
-
-PROC
-LeaderLib_StartObjectObjectTimer((GUIDSTRING)_Obj1, (GUIDSTRING)_Obj2, (INTEGER)_Time, (STRING)_TimerPrefix, (STRING)_CompleteEvent)
-AND
-GetUUID(_Obj1, _UUID1)
-AND
-GetUUID(_Obj1, _UUID2)
-AND
-StringConcatenate(_UUID1, "_", _Str1)
-AND
-StringConcatenate(_Str1, _UUID2, _ID)
-AND
-StringConcatenate(_TimerPrefix, _ID, _TimerName)
-THEN
-DB_LeaderLib_Helper_Temp_ObjectObjectTimer(_TimerName, _Obj1, _Obj2, _CompleteEvent, _TimerPrefix);
-TimerLaunch(_TimerName, _Time);
-
-IF
-TimerFinished(_TimerName)
-AND
-DB_LeaderLib_Helper_Temp_ObjectObjectTimer(_TimerName, _Obj1, _Obj2, _CompleteEvent, _TimerPrefix)
-THEN
-NOT DB_LeaderLib_Helper_Temp_ObjectObjectTimer(_TimerName, _Obj1, _Obj2, _CompleteEvent, _TimerPrefix);
-LeaderLib_ObjectObjectTimerFinished(_Obj1, _Obj2, _CompleteEvent);
-
-PROC
-LeaderLib_ObjectObjectTimerFinished((GUIDSTRING)_Obj1, (GUIDSTRING)_Obj2, (STRING)_CompleteEvent)
-THEN
-DB_NOOP(1);
-//END_REGION
-
 //REGION BEHAVIOR_SCRIPT_HELPERS
 IF
 StoryEvent(_Object, "LeaderLib_Commands_StartObjectTimer")
@@ -1139,6 +971,16 @@ QRY
 LeaderLib_Helper_QRY_IsRaceOrOriginSkill((STRING)_Skill)
 AND
 DB_LeaderLib_OriginSkills(_, _Skill)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_EitherCharacterMatches((CHARACTERGUID)_Char1, (CHARACTERGUID)_Char1, (CHARACTERGUID)_Char2)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_EitherCharacterMatches((CHARACTERGUID)_Char2, (CHARACTERGUID)_Char1, (CHARACTERGUID)_Char2)
 THEN
 DB_NOOP(1);
 //END_REGION

@@ -83,6 +83,14 @@ THEN
 DB_NOOP(1);
 //END_REGION
 
+//Checks if the object is null before actually calling RemoveStatus
+PROC
+LeaderLib_Statuses_SafeRemoval((GUIDSTRING)_Object, (STRING)_Status)
+AND
+_Object != NULL_00000000-0000-0000-0000-000000000000
+THEN
+RemoveStatus(_Object, _Status);
+
 EXITSECTION
 
 ENDEXITSECTION

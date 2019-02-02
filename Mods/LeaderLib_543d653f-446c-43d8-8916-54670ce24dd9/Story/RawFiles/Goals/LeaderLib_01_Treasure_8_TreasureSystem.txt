@@ -1286,7 +1286,7 @@ ObjectGetFlag(_Object, "LeaderLib_Treasure_JustGeneratedTreasure", 1)
 AND
 LeaderLib_QRY_ObjectTimerStarted(_Object, "LeaderLib_Timers_Treasure_ResetGeneratingFlag_", "LeaderLib_Events_ResetGeneratingFlag")
 THEN
-LeaderLib_ResetObjectTimer(_Object, "LeaderLib_Timers_Treasure_ResetGeneratingFlag_", 750);
+LeaderLib_RestartObjectTimer(_Object, "LeaderLib_Timers_Treasure_ResetGeneratingFlag_", 750);
 
 PROC
 LeaderLib_Treasure_Internal_OnGenerationFinished((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID)
@@ -1496,7 +1496,7 @@ LeaderLib_Treasure_Internal_QRY_HasPostGenerationApplyBonuses(_Object, _Treasure
 AND
 LeaderLib_QRY_ObjectTimerStarted(_Object, "LeaderLib_Timers_Treasure_ApplyBonusesTimer_")
 THEN
-LeaderLib_ResetObjectTimer(_Object, "LeaderLib_Timers_Treasure_ApplyBonusesTimer_", 25);
+LeaderLib_RestartObjectTimer(_Object, "LeaderLib_Timers_Treasure_ApplyBonusesTimer_", 25);
 
 PROC
 LeaderLib_Treasure_Internal_ApplyPostGenerationBonuses((GUIDSTRING)_Object, (STRING)_TreasureID)

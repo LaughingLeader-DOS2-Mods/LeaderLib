@@ -1204,6 +1204,8 @@ DB_LeaderLog_IntString(_Num, _NegativeNumStr);
 PROC
 LeaderLog_LogInt((STRING)_Type, (STRING)_Prefix, (INTEGER)_Num, (STRING)_Suffix)
 AND
+LeaderLog_QRY_LogTypeEnabled(_Type)
+AND
 LeaderLog_QRY_IntegerToString(_Num)
 AND
 DB_LeaderLog_IntString(_Num, _NumStr)
@@ -1213,6 +1215,8 @@ LeaderLog_Log(_Type, _Prefix, _NumStr, _Suffix);
 
 PROC
 LeaderLog_LogInt((STRING)_Type, (STRING)_Prefix, (INTEGER)_Num, (STRING)_Prefix2, (INTEGER)_Num2, (STRING)_Suffix)
+AND
+LeaderLog_QRY_LogTypeEnabled(_Type)
 AND
 LeaderLog_QRY_IntegerToString(_Num)
 AND

@@ -287,8 +287,16 @@ LeaderLib_Platforms_RemovePlatform((ITEMGUID)_Platform)
 AND
 DB_LeaderLib_Platforms(_ID, _Platform)
 THEN
-ItemRemove(_Platform);
 NOT DB_LeaderLib_Platforms(_ID, _Platform);
+ItemRemove(_Platform);
+
+PROC
+LeaderLib_Platforms_RemovePlatformByID((STRING)_ID)
+AND
+DB_LeaderLib_Platforms(_ID, _Platform)
+THEN
+NOT DB_LeaderLib_Platforms(_ID, _Platform);
+ItemRemove(_Platform);
 //END_REGION
 EXITSECTION
 

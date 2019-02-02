@@ -35,6 +35,7 @@ data "Material" "8c46ff9c-f39b-43fa-a2bf-4a10f47db0d3"
 data "MaterialApplyBody" "Yes"
 data "MaterialApplyArmor" "Yes"
 data "MaterialApplyWeapon" "Yes"
+data "MaterialApplyNormalMap" "Yes"
 data "StackId" "Stack_LeaderLib_NoVisual"
 
 new entry "LEADERLIB_HIDE_ARMOR"

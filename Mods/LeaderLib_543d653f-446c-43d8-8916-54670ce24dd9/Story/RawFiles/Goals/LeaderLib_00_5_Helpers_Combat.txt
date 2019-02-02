@@ -155,11 +155,11 @@ DB_LeaderLib_Combat_Casualties(_CombatID, _Victim, _AttackOwner);
 QRY
 LeaderLib_Combat_QRY_HasAliveEnemies((CHARACTERGUID)_Character)
 AND
-DB_CombatObjects(_Object, _CombatID)
+DB_CombatCharacters(_Object, _CombatID)
 AND
 _Object != _Character
 AND
-CharacterIsEnemy((CHARACTERGUID)_Object, _Character, 1)
+CharacterIsEnemy(_Object, _Character, 1)
 AND
 CharacterIsDead(_Object, 0)
 THEN

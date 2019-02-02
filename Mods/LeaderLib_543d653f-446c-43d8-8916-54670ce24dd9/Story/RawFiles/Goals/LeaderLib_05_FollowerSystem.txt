@@ -27,6 +27,8 @@ DB_LeaderLib_FollowerPositions(_Follower, _Region, _x, _y, _z, _TeleportEvent);
 PROC
 LeaderLib_Follower_RecruitCharacter((CHARACTERGUID)_Owner, (CHARACTERGUID)_Follower)
 AND
+NOT DB_LeaderLib_Follower_BlockRecruitment(_Follower)
+AND
 CharacterIsPartyMember(_Owner, 1)
 THEN
 DB_LeaderLib_PartyFollower(_Owner, _Follower);
@@ -131,6 +133,12 @@ THEN
 LeaderLib_Follower_Internal_ClearFollowerData(_LeavingCharacter, _Follower);
 LeaderLib_Follower_Internal_ReAttachToNearestPartyMember(_Follower, _FormerPartyMember, _LeavingCharacter);
 
+//Add the follower to DB_LeaderLib_Follower_BlockRecruitment to block
+PROC
+LeaderLib_Follower_BlockAttachToPartyMember((CHARACTERGUID)_Follower, (CHARACTERGUID)_PartyMember, (CHARACTERGUID)_FormerOwner)
+THEN
+DB_NOOP(1);
+
 PROC
 LeaderLib_Follower_Internal_ReAttachToNearestPartyMember((CHARACTERGUID)_Follower, (CHARACTERGUID)_PartyMember, (CHARACTERGUID)_FormerOwner)
 AND
@@ -138,11 +146,14 @@ GetClosestPlayer(_Follower, _Player, _Dist)
 AND
 CharacterIsInPartyWith(_Player, _PartyMember, 1)
 THEN
+LeaderLib_Follower_BlockAttachToPartyMember(_Follower, _Player, _FormerOwner);
 LeaderLib_Follower_RecruitCharacter(_Player, _Follower);
 
 //Failsafe
 PROC
 LeaderLib_Follower_Internal_ReAttachToNearestPartyMember((CHARACTERGUID)_Follower, (CHARACTERGUID)_PartyMember, (CHARACTERGUID)_FormerOwner)
+AND
+NOT DB_LeaderLib_Follower_BlockRecruitment(_Follower)
 AND
 NOT DB_LeaderLib_PartyFollower(_, _Follower)
 AND
@@ -152,14 +163,16 @@ CharacterIsInPartyWith(_Player, _PartyMember, 1)
 AND
 NOT DB_LeaderLib_PartyFollower(_, _Follower)
 THEN
+LeaderLib_Follower_BlockAttachToPartyMember(_Follower, _Player, _FormerOwner);
 LeaderLib_Follower_RecruitCharacter(_Player, _Follower);
 
-//No players found
+//No players found, or recruitment is blocked
 PROC
 LeaderLib_Follower_Internal_ReAttachToNearestPartyMember((CHARACTERGUID)_Follower, (CHARACTERGUID)_PartyMember, (CHARACTERGUID)_FormerOwner)
 AND
 NOT DB_LeaderLib_PartyFollower(_, _Follower)
 THEN
+NOT DB_LeaderLib_Follower_BlockRecruitment(_Follower);
 LeaderLib_Follower_Internal_SetOffStage(_Follower, 0);
 LeaderLib_Follower_Internal_ResetPositionIfEnabled(_Follower, "");
 CharacterCharacterSetEvent(_FormerOwner, _Follower, "LeaderLib_Events_FollowerDismissed");

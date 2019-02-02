@@ -205,3 +205,4 @@ DB_LeaderLib_Skills_BlockStatusToggle 3
 DB_LeaderLib_Statuses_PermanentStatusBlocked 3
 DB_LeaderLog_Temp_RealString 3
 DB_LeaderLog_Temp_RealString 4
+DB_LeaderLib_Follower_BlockRecruitment 1

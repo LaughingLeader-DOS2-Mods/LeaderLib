@@ -34,6 +34,7 @@ AND
 StringConcatenate(_TimerPrefix, _ID, _TimerName)
 THEN
 DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent, _TimerPrefix);
+TimerCancel(_TimerName);
 TimerLaunch(_TimerName, _Time);
 
 IF

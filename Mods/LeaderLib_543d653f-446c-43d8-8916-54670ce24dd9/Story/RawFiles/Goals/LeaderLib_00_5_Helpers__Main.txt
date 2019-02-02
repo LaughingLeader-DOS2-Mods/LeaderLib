@@ -917,14 +917,14 @@ AND
 GetVarInteger(_Object, "LeaderLib_Timer_Delay", _TimerDelay)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Main:LeaderLib_Commands_StartObjectTimer] Starting object timer with complete event [",_CompleteEvent,"].");
-LeaderLib_StartObjectTimer(_Object, _TimerDelay, "LeaderLib_Timers_BehaviorScriptTimer_", _CompleteEvent);
+LeaderLib_Timers_StartObjectTimer(_Object, _TimerDelay, "LeaderLib_Timers_BehaviorScriptTimer_", _CompleteEvent);
 
 IF
 StoryEvent(_Object, "LeaderLib_Commands_CancelObjectTimer")
 AND
 GetVarString(_Object, "LeaderLib_Timer_CancelByEventEvent", _CompleteEvent)
 THEN
-LeaderLib_CancelObjectTimerByEvent(_Object, _CompleteEvent);
+LeaderLib_Timers_CancelObjectTimerByEvent(_Object, _CompleteEvent);
 SetVarString(_Object, "LeaderLib_Timer_CancelByEventEvent", "");
 
 //Behavior can't cast an object to a string

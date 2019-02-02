@@ -59,7 +59,7 @@ LeaderLib_Platforms_Internal_StartPlatformTimer((STRING)_ID, (ITEMGUID)_Platform
 AND
 _LifeTime > 0
 THEN
-LeaderLib_StartObjectTimer(_Platform, _LifeTime, "LeaderLib_Timers_RemovePlatform_", "LeaderLib_Events_RemovePlatform");
+LeaderLib_Timers_StartObjectTimer(_Platform, _LifeTime, "LeaderLib_Timers_RemovePlatform_", "LeaderLib_Events_RemovePlatform");
 
 IF
 StoryEvent((ITEMGUID)_Platform, "LeaderLib_Events_RemovePlatform")
@@ -157,7 +157,7 @@ PROC
 LeaderLib_Platforms_MoveObjectWithPlatform((GUIDSTRING)_Object, (ITEMGUID)_Platform, (STRING)_ID, (REAL)_TargetX, (REAL)_TargetY, (REAL)_TargetZ, (REAL)_Speed, (REAL)_Acceleration, (INTEGER)_TeleportSpeed, (STRING)_CompletionEvent, (INTEGER)_LifeTime, (INTEGER)_DoHits)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Platforms:MoveCharacterWithPlatform] Moving character with platform [",_ID,"].");
-LeaderLib_CancelObjectTimer(_Platform, "LeaderLib_Timers_RemovePlatform_");
+LeaderLib_Timers_CancelObjectTimer(_Platform, "LeaderLib_Timers_RemovePlatform_");
 DB_LeaderLib_Platforms_Temp_ActiveMovement(_ID, _Object, _Platform, _TeleportSpeed, _CompletionEvent, _LifeTime);
 ProcObjectTimer(_Object, "LeaderLib_Timers_MoveWithPlatform_Teleport", _TeleportSpeed);
 ItemMoveToPosition(_Platform, _TargetX, _TargetY, _TargetZ, _Speed, _Acceleration, _CompletionEvent, _DoHits);

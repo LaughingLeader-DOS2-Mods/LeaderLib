@@ -102,19 +102,19 @@ LeaderLib_Treasure_ResetDummyAfterDelay((CHARACTERGUID)_Dummy, (INTEGER)_Delay, 
 AND
 DB_LeaderLib_Treasure_GeneratorDummies(_Dummy)
 AND
-NOT LeaderLib_QRY_ObjectTimerStarted((GUIDSTRING)_Dummy, "LeaderLib_Timers_Treasure_ResetDummyAfterDelay_")
+NOT LeaderLib_Timers_QRY_ObjectTimerStarted((GUIDSTRING)_Dummy, "LeaderLib_Timers_Treasure_ResetDummyAfterDelay_")
 THEN
 SetVarString(_Dummy, "LeaderLib_DummyResetEvent", _ResetEvent);
-LeaderLib_StartObjectTimer((CHARACTERGUID)_Dummy, _Delay, "LeaderLib_Timers_Treasure_ResetDummyAfterDelay_", "LeaderLib_Events_ResetDummy");
+LeaderLib_Timers_StartObjectTimer((CHARACTERGUID)_Dummy, _Delay, "LeaderLib_Timers_Treasure_ResetDummyAfterDelay_", "LeaderLib_Events_ResetDummy");
 
 PROC
 LeaderLib_Treasure_ResetDummyAfterDelay((CHARACTERGUID)_Dummy, (INTEGER)_Delay)
 AND
 DB_LeaderLib_Treasure_GeneratorDummies(_Dummy)
 AND
-NOT LeaderLib_QRY_ObjectTimerStarted((GUIDSTRING)_Dummy, "LeaderLib_Timers_Treasure_ResetDummyAfterDelay_")
+NOT LeaderLib_Timers_QRY_ObjectTimerStarted((GUIDSTRING)_Dummy, "LeaderLib_Timers_Treasure_ResetDummyAfterDelay_")
 THEN
-LeaderLib_StartObjectTimer((CHARACTERGUID)_Dummy, _Delay, "LeaderLib_Timers_Treasure_ResetDummyAfterDelay_", "LeaderLib_Events_ResetDummy");
+LeaderLib_Timers_StartObjectTimer((CHARACTERGUID)_Dummy, _Delay, "LeaderLib_Timers_Treasure_ResetDummyAfterDelay_", "LeaderLib_Events_ResetDummy");
 
 IF
 StoryEvent(_Dummy, "LeaderLib_Events_ResetDummy")

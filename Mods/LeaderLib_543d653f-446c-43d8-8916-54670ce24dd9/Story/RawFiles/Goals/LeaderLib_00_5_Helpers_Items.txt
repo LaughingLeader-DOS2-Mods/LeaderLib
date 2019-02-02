@@ -97,7 +97,7 @@ CharacterGetDisplayName(_Character, _, _Name)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Helper:RefreshEquipment_Delayed] Refreshing equipment for [",_Name,"]");
 LeaderLib_Helper_UnequipAllAndSave(_Character);
-LeaderLib_StartObjectTimer(_Character, 2500, "LeaderLib_Timers_EquipItemsTimer_", "LeaderLib_Helper_OnEquipTimerFinished");
+LeaderLib_Timers_StartObjectTimer(_Character, 2500, "LeaderLib_Timers_EquipItemsTimer_", "LeaderLib_Helper_OnEquipTimerFinished");
 
 IF
 StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Helper_OnEquipTimerFinished")
@@ -202,7 +202,7 @@ AND
 _Item != NULL_00000000-0000-0000-0000-000000000000
 THEN
 CharacterUnequipItem(_Character, _Item);
-LeaderLib_StartCharacterItemTimer(_Character, _Item, _OffhandDelay, "LeaderLib_Timers_RefreshWeapon_", "LeaderLib_Commands_EquipItem");
+LeaderLib_Timers_StartCharacterItemTimer(_Character, _Item, _OffhandDelay, "LeaderLib_Timers_RefreshWeapon_", "LeaderLib_Commands_EquipItem");
 
 PROC
 LeaderLib_Helper_RefreshWeapons((CHARACTERGUID)_Character, (INTEGER)_Delay, (INTEGER)_OffhandDelay)
@@ -212,7 +212,7 @@ AND
 _Item != NULL_00000000-0000-0000-0000-000000000000
 THEN
 CharacterUnequipItem(_Character, _Item);
-LeaderLib_StartCharacterItemTimer(_Character, _Item, _Delay, "LeaderLib_Timers_RefreshWeapon_", "LeaderLib_Commands_EquipItem");
+LeaderLib_Timers_StartCharacterItemTimer(_Character, _Item, _Delay, "LeaderLib_Timers_RefreshWeapon_", "LeaderLib_Commands_EquipItem");
 
 PROC
 LeaderLib_Helper_UnequipWeapons((CHARACTERGUID)_Character)

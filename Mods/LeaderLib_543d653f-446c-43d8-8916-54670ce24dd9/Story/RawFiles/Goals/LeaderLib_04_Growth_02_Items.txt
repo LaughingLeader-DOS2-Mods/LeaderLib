@@ -210,7 +210,7 @@ CharacterItemSetEvent(_Character, _Item, "LeaderLib_Events_ItemLeveledUp");
 IF
 DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character)
 THEN
-LeaderLib_StartCharacterItemTimer(_Character, _Item, 500, "LeaderLib_Timers_ResetAutoLeveledItemDatabase", "LeaderLib_Events_ResetAutoLeveledItemDatabase");
+LeaderLib_Timers_StartCharacterItemTimer(_Character, _Item, 500, "LeaderLib_Timers_ResetAutoLeveledItemDatabase", "LeaderLib_Events_ResetAutoLeveledItemDatabase");
 
 IF
 CharacterItemEvent(_Character, _Item, "LeaderLib_Events_ResetAutoLeveledItemDatabase")
@@ -282,7 +282,7 @@ LeaderLib_Growth_Items_ApplyDeltaMods(_Item);
 IF
 DB_LeaderLib_Growth_Items_Temp_AppliedDeltaMods(_Character, _Item)
 THEN
-LeaderLib_StartCharacterItemTimer(_Character, _Item, 500, "LeaderLib_Timers_Growth_ResetAppliedDeltaModsDatabase", "LeaderLib_Events_Growth_ResetAppliedDeltaModsDatabase");
+LeaderLib_Timers_StartCharacterItemTimer(_Character, _Item, 500, "LeaderLib_Timers_Growth_ResetAppliedDeltaModsDatabase", "LeaderLib_Events_Growth_ResetAppliedDeltaModsDatabase");
 
 IF
 CharacterItemEvent(_Character, _Item, "LeaderLib_Events_Growth_ResetAppliedDeltaModsDatabase")
@@ -441,7 +441,7 @@ AND
 DB_LeaderLib_Growth_Items_Temp_EquipAfterTransform(_Character, _Item)
 THEN
 CharacterEquipItem(_Character, _Item);
-LeaderLib_StartCharacterItemTimer(_Character, _Item, 50, "LeaderLib_Timers_OnGrowthItemTransformed", "LeaderLib_OnGrowthItemTransformed");
+LeaderLib_Timers_StartCharacterItemTimer(_Character, _Item, 50, "LeaderLib_Timers_OnGrowthItemTransformed", "LeaderLib_OnGrowthItemTransformed");
 
 IF
 CharacterItemEvent(_Character, _Item, "LeaderLib_OnGrowthItemTransformed")

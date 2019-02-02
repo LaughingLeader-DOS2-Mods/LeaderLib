@@ -319,7 +319,7 @@ CharacterCharacterEvent(_Owner, _Follower, "LeaderLib_Commands_RecruitFollower")
 THEN
 CharacterCharacterSetEvent(_Owner, _Follower, "LeaderLib_PlayerIsRecruitingCharacter"); // Pre-recruitment
 //Delay so other scripts can level the character up, since player followers seem resistant to the CharacterLevelUp/CharacterLevelUpTo call.
-LeaderLib_StartCharacterCharacterTimer(_Owner, _Follower, 250, "LeaderLib_Timers_RecruitFollowerDelayTimer_", "LeaderLib_Follower_RecruitDelayTimerEnded");
+LeaderLib_Timers_StartCharacterCharacterTimer(_Owner, _Follower, 250, "LeaderLib_Timers_RecruitFollowerDelayTimer_", "LeaderLib_Follower_RecruitDelayTimerEnded");
 
 IF
 CharacterCharacterEvent(_Player, _Follower, "LeaderLib_Follower_RecruitDelayTimerEnded")

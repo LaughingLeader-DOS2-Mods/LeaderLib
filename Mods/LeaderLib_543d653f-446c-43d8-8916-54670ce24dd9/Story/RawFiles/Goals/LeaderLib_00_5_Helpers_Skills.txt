@@ -166,7 +166,7 @@ CharacterMoveToPosition(_Dummy, _x, _y, _z, 1, "LeaderLib_Events_SkillDummyArriv
 IF
 StoryEvent((CHARACTERGUID)_Dummy, "LeaderLib_Events_SkillDummyTeleported")
 THEN
-LeaderLib_StartObjectTimer(_Dummy, 1000, "LeaderLib_Timers_Skills_StartSkillDummyCasting", "LeaderLib_Events_SkillDummyArrived");
+LeaderLib_Timers_StartObjectTimer(_Dummy, 1000, "LeaderLib_Timers_Skills_StartSkillDummyCasting", "LeaderLib_Events_SkillDummyArrived");
 
 IF
 StoryEvent((CHARACTERGUID)_Dummy, "LeaderLib_Events_SkillDummyArrived")
@@ -191,7 +191,7 @@ DB_LeaderLib_Skills_Temp_SkillDummyData(_Dummy, _Caster, _Target, _Skill)
 THEN
 NOT DB_LeaderLib_Skills_Temp_SkillDummyData(_Dummy, _Caster, _Target, _Skill);
 LeaderLog_Log("TRACE", "[LeaderLib:Skills:SkillDummyArrived] Skill dummy is using skill [",_Skill,"] on target.");
-LeaderLib_CancelObjectTimer(_Dummy, "LeaderLib_Timers_Skills_StartSkillDummyCasting");
+LeaderLib_Timers_CancelObjectTimer(_Dummy, "LeaderLib_Timers_Skills_StartSkillDummyCasting");
 //CharacterSetDetached(_Dummy, 0);
 //SetVisible(_Dummy, 1);
 CharacterUseSkill(_Dummy, _Skill, _Target, 1, 1, 1);
@@ -265,7 +265,7 @@ LeaderLib_Skills_Internal_TransformDummy((CHARACTERGUID)_Dummy, (CHARACTERGUID)_
 THEN
 //CharacterTransformAppearanceTo(_Dummy, _Caster, _CopyEquipment, 1);
 CharacterTransformFromCharacter(_Dummy, _Caster, 0, 1, _CopyStats, _CopyEquipment, _CopyStats, 1, 0);
-//LeaderLib_StartCharacterCharacterTimer(_Dummy, _Caster, 50, "LeaderLib_Timers_SkillDummy_CopyStats", "LeaderLib_Commands_SkillDummy_CopyStats")
+//LeaderLib_Timers_StartCharacterCharacterTimer(_Dummy, _Caster, 50, "LeaderLib_Timers_SkillDummy_CopyStats", "LeaderLib_Commands_SkillDummy_CopyStats")
 
 PROC
 LeaderLib_Skills_Internal_PrepareDummyStats((CHARACTERGUID)_Dummy, (CHARACTERGUID)_Caster, 1, (INTEGER)_CopyEquipment)
@@ -300,7 +300,7 @@ SetVarInteger(_Dummy, "LeaderLib_TargetDummyTimeout", _Timeout);
 SetVarString(_Dummy, "LeaderLib_TargetDummyReadyEvent", _ReadyEvent);
 LeaderLib_Skills_Internal_PrepareTargetDummy(_Dummy, _Invulnerable, _Visible);
 DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z);
-LeaderLib_StartObjectTimer(_Dummy, 1000, "LeaderLib_Timers_Skills_TargetDummyFailsafe", "LeaderLib_Events_TargetDummyReady");
+LeaderLib_Timers_StartObjectTimer(_Dummy, 1000, "LeaderLib_Timers_Skills_TargetDummyFailsafe", "LeaderLib_Events_TargetDummyReady");
 TeleportToPosition(_Dummy, _x, _y, _z, "LeaderLib_Events_TargetDummyTeleported", 0, 0);
 
 PROC
@@ -402,7 +402,7 @@ SetStoryEvent(_Dummy, _ReadyEvent);
 IF
 StoryEvent((CHARACTERGUID)_Dummy, "LeaderLib_Events_TargetDummyReady")
 THEN
-LeaderLib_CancelObjectTimer(_Dummy, "LeaderLib_Timers_Skills_TargetDummyFailsafe");
+LeaderLib_Timers_CancelObjectTimer(_Dummy, "LeaderLib_Timers_Skills_TargetDummyFailsafe");
 
 IF
 StoryEvent((CHARACTERGUID)_Dummy, "LeaderLib_Events_TargetDummyReady")

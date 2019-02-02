@@ -52,7 +52,7 @@ PROC
 LeaderLib_Treasure_CountTemplateWithStat((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID, (STRING)_ItemTemplate, (STRING)_GeneratedStat)
 THEN
 DB_LeaderLib_Treasure_Temp_ItemStatAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _GeneratedStat, 0);
-LeaderLib_StartObjectTimer(_Object, 500, _ID, "LeaderLib_Events_Treasure_Internal_StatCountingComplete");
+LeaderLib_Timers_StartObjectTimer(_Object, 500, _ID, "LeaderLib_Events_Treasure_Internal_StatCountingComplete");
 
 QRY
 LeaderLib_Treasure_Internal_QRY_StatMatch((ITEMGUID)_Item, (STRING)_GeneratedStat)
@@ -119,7 +119,7 @@ AND
 DB_LeaderLib_Treasure_Temp_TemplateIterator(_ID, _Object, _TreasureID, _ItemTemplate, _GeneratedStat, _IterateEvent, _CompletionEvent)
 THEN
 NOT DB_LeaderLib_Treasure_Temp_TemplateIterator(_ID, _Object, _TreasureID, _ItemTemplate, _GeneratedStat, _IterateEvent, _CompletionEvent);
-LeaderLib_CancelObjectTimer(_Object, _ID);
+LeaderLib_Timers_CancelObjectTimer(_Object, _ID);
 SetStoryEvent(_Object, "LeaderLib_Events_Treasure_Internal_StatCountingComplete");
 
 IF

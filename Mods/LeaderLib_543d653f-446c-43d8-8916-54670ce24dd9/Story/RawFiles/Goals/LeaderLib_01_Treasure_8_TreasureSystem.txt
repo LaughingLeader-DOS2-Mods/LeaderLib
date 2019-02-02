@@ -491,7 +491,7 @@ THEN
 SetTag(_Backpack, "LeaderLib_Internal_TreasureTableContainer");
 DB_LeaderLib_Treasure_Temp_TreasureTableBackpack(_Object, _Backpack, _TreasureID, _TreasureTable, _ID);
 GenerateTreasure(_Backpack, _TreasureTable, _Level, _Player);
-//LeaderLib_StartObjectTimer(_Backpack, 100, "LeaderLib_Timers_Internal_MoveTreasureTableItems_", "LeaderLib_Events_Internal_MoveTreasureTableItems");
+//LeaderLib_Timers_StartObjectTimer(_Backpack, 100, "LeaderLib_Timers_Internal_MoveTreasureTableItems_", "LeaderLib_Events_Internal_MoveTreasureTableItems");
 SetStoryEvent(_Backpack, "LeaderLib_Events_Internal_MoveTreasureTableItems"); // So the ItemAdded events can fire first
 
 IF
@@ -1284,18 +1284,18 @@ LeaderLib_Treasure_Internal_OnGenerationFinished((STRING)_ID, (GUIDSTRING)_Objec
 AND
 ObjectGetFlag(_Object, "LeaderLib_Treasure_JustGeneratedTreasure", 1)
 AND
-LeaderLib_QRY_ObjectTimerStarted(_Object, "LeaderLib_Timers_Treasure_ResetGeneratingFlag_", "LeaderLib_Events_ResetGeneratingFlag")
+LeaderLib_Timers_QRY_ObjectTimerStarted(_Object, "LeaderLib_Timers_Treasure_ResetGeneratingFlag_", "LeaderLib_Events_ResetGeneratingFlag")
 THEN
-LeaderLib_RestartObjectTimer(_Object, "LeaderLib_Timers_Treasure_ResetGeneratingFlag_", 750);
+LeaderLib_Timers_RestartObjectTimer(_Object, "LeaderLib_Timers_Treasure_ResetGeneratingFlag_", 750);
 
 PROC
 LeaderLib_Treasure_Internal_OnGenerationFinished((STRING)_ID, (GUIDSTRING)_Object, (STRING)_TreasureID)
 AND
 ObjectGetFlag(_Object, "LeaderLib_Treasure_JustGeneratedTreasure", 1)
 AND
-NOT LeaderLib_QRY_ObjectTimerStarted(_Object, "LeaderLib_Timers_Treasure_ResetGeneratingFlag_", "LeaderLib_Events_ResetGeneratingFlag")
+NOT LeaderLib_Timers_QRY_ObjectTimerStarted(_Object, "LeaderLib_Timers_Treasure_ResetGeneratingFlag_", "LeaderLib_Events_ResetGeneratingFlag")
 THEN
-LeaderLib_StartObjectTimer(_Object, 750, "LeaderLib_Timers_Treasure_ResetGeneratingFlag_", "LeaderLib_Events_ResetGeneratingFlag");
+LeaderLib_Timers_StartObjectTimer(_Object, 750, "LeaderLib_Timers_Treasure_ResetGeneratingFlag_", "LeaderLib_Events_ResetGeneratingFlag");
 
 IF
 StoryEvent(_Object, "LeaderLib_Events_ResetGeneratingFlag")
@@ -1494,18 +1494,18 @@ LeaderLib_Treasure_Internal_ApplyPostGenerationBonuses((GUIDSTRING)_Object, (STR
 AND
 LeaderLib_Treasure_Internal_QRY_HasPostGenerationApplyBonuses(_Object, _TreasureID)
 AND
-LeaderLib_QRY_ObjectTimerStarted(_Object, "LeaderLib_Timers_Treasure_ApplyBonusesTimer_")
+LeaderLib_Timers_QRY_ObjectTimerStarted(_Object, "LeaderLib_Timers_Treasure_ApplyBonusesTimer_")
 THEN
-LeaderLib_RestartObjectTimer(_Object, "LeaderLib_Timers_Treasure_ApplyBonusesTimer_", 25);
+LeaderLib_Timers_RestartObjectTimer(_Object, "LeaderLib_Timers_Treasure_ApplyBonusesTimer_", 25);
 
 PROC
 LeaderLib_Treasure_Internal_ApplyPostGenerationBonuses((GUIDSTRING)_Object, (STRING)_TreasureID)
 AND
 LeaderLib_Treasure_Internal_QRY_HasPostGenerationApplyBonuses(_Object, _TreasureID)
 AND
-NOT LeaderLib_QRY_ObjectTimerStarted(_Object, "LeaderLib_Timers_Treasure_ApplyBonusesTimer_")
+NOT LeaderLib_Timers_QRY_ObjectTimerStarted(_Object, "LeaderLib_Timers_Treasure_ApplyBonusesTimer_")
 THEN
-LeaderLib_StartObjectTimer(_Object, 25, "LeaderLib_Timers_Treasure_ApplyBonusesTimer_", "LeaderLib_Events_Internal_ApplyPostGenBonuses");
+LeaderLib_Timers_StartObjectTimer(_Object, 25, "LeaderLib_Timers_Treasure_ApplyBonusesTimer_", "LeaderLib_Events_Internal_ApplyPostGenBonuses");
 
 IF
 StoryEvent(_Object, "LeaderLib_Events_Internal_ApplyPostGenBonuses")

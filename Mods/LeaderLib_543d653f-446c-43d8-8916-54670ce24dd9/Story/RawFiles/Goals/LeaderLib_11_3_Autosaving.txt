@@ -147,12 +147,27 @@ PROC
 LeaderLib_Autosaving_Stop()
 AND
 DB_LeaderLib_AutoSaving_Temp_TimerStarted(1)
+THEN
+NOT DB_LeaderLib_AutoSaving_Temp_TimerStarted(1);
+
+PROC
+LeaderLib_Autosaving_Stop()
 AND
 DB_LeaderLib_Autosaving_Temp_Countdown(_Minutes)
 THEN
-NOT DB_LeaderLib_AutoSaving_Temp_TimerStarted(1);
 NOT DB_LeaderLib_Autosaving_Temp_Countdown(_Minutes);
+
+PROC
+LeaderLib_Autosaving_Stop()
+THEN
 TimerCancel("LeaderLib_Timers_Autosaving");
+
+PROC
+LeaderLib_Autosaving_Restart()
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_11_3_Autosaving:Restart] Restarting autosave timer.");
+LeaderLib_Autosaving_Stop();
+LeaderLib_Autosaving_Start();
 //END_REGION
 
 //REGION PAUSING
@@ -199,8 +214,7 @@ DB_LeaderLib_Autosaving_Interval(_Flag, _Minutes)
 AND
 DB_GlobalFlag("LeaderLib_AutosavingEnabled")
 THEN
-LeaderLib_Autosaving_Stop();
-LeaderLib_Autosaving_Start();
+LeaderLib_Autosaving_Restart();
 //END_REGION
 
 //REGION AUTOSAVING
@@ -256,8 +270,7 @@ GlobalFlagSet("LeaderLib_Commands_AutosaveNow")
 THEN
 GlobalClearFlag("LeaderLib_Commands_AutosaveNow");
 LeaderLib_Autosaving_Save();
-LeaderLib_Autosaving_Stop();
-LeaderLib_Autosaving_Start();
+LeaderLib_Autosaving_Restart();
 
 IF
 GlobalFlagCleared("LeaderLib_Commands_AutosaveNow")
@@ -265,6 +278,20 @@ AND
 DB_DialogName("LeaderLib_AutosaveMenu", _Instance)
 THEN
 LeaderLib_Autosaving_Internal_UpdateDialogVar(_Instance);
+//END_REGION
+
+//REGION SAVE_LOADED_RESTART
+IF
+SavegameLoaded(_,_,_,_)
+AND
+DB_LeaderLib_AutoSaving_Temp_TimerStarted(1)
+AND
+DB_LeaderLib_Autosaving_Temp_Countdown(_Minutes)
+AND
+_Minutes <= 25
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_11_3_Autosaving:SavegameLoaded] Save loaded. Restarting autosave timer.");
+LeaderLib_Autosaving_Restart();
 //END_REGION
 
 //REGION MENU

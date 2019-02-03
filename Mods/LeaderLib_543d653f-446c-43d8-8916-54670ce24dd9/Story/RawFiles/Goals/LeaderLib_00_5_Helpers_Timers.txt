@@ -83,6 +83,7 @@ AND
 StringConcatenate(_TimerPrefix, _ID, _TimerName)
 THEN
 DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent, _TimerPrefix);
+TimerCancel(_TimerName);
 TimerLaunch(_TimerName, _Time);
 
 IF
@@ -139,6 +140,7 @@ AND
 StringConcatenate(_TimerPrefix, _ID, _TimerName)
 THEN
 DB_LeaderLib_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _CompleteEvent, _TimerPrefix);
+TimerCancel(_TimerName);
 TimerLaunch(_TimerName, _Time);
 
 PROC
@@ -225,6 +227,7 @@ AND
 StringConcatenate(_TimerPrefix, _ID, _TimerName)
 THEN
 DB_LeaderLib_Helper_Temp_ObjectObjectTimer(_TimerName, _Obj1, _Obj2, _CompleteEvent, _TimerPrefix);
+TimerCancel(_TimerName);
 TimerLaunch(_TimerName, _Time);
 
 IF

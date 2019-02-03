@@ -1168,6 +1168,92 @@ THEN
 LeaderLib_Array_AddToArray(_ID, _Surface);
 //END_REGION
 
+//REGION TELEPORT_HELPERS
+PROC
+LeaderLib_Helper_SafeTeleport((GUIDSTRING)_Object, (GUIDSTRING)_Target)
+AND
+GetPosition(_Target, _x, _y, _z)
+THEN
+LeaderLib_Helper_SafeTeleportToPosition(_Object, _x, _y, _z, "", 8.0, 0, 0, 0);
+
+PROC
+LeaderLib_Helper_SafeTeleport((GUIDSTRING)_Object, (GUIDSTRING)_Target, (STRING)_TeleportEvent)
+AND
+GetPosition(_Target, _x, _y, _z)
+THEN
+LeaderLib_Helper_SafeTeleportToPosition(_Object, _x, _y, _z, _TeleportEvent, 8.0, 0, 0, 0);
+
+PROC
+LeaderLib_Helper_SafeTeleport((GUIDSTRING)_Object, (GUIDSTRING)_Target, (STRING)_TeleportEvent, (REAL)_Radius)
+AND
+GetPosition(_Target, _x, _y, _z)
+THEN
+LeaderLib_Helper_SafeTeleportToPosition(_Object, _x, _y, _z, _TeleportEvent, _Radius, 0, 0, 0);
+
+PROC
+LeaderLib_Helper_SafeTeleport((GUIDSTRING)_Object, (GUIDSTRING)_Target, (STRING)_TeleportEvent, (REAL)_Radius, (INTEGER)_TeleportLinkedCharacters)
+AND
+GetPosition(_Target, _x, _y, _z)
+THEN
+LeaderLib_Helper_SafeTeleportToPosition(_Object, _x, _y, _z, _TeleportEvent, _Radius, _TeleportLinkedCharacters, 0, 0);
+
+PROC
+LeaderLib_Helper_SafeTeleport((GUIDSTRING)_Object, (GUIDSTRING)_Target, (STRING)_TeleportEvent, (REAL)_Radius, (INTEGER)_TeleportLinkedCharacters, (INTEGER)_ExcludePartyFollowers)
+AND
+GetPosition(_Target, _x, _y, _z)
+THEN
+LeaderLib_Helper_SafeTeleportToPosition(_Object, _x, _y, _z, _TeleportEvent, _Radius, _TeleportLinkedCharacters, _ExcludePartyFollowers, 0);
+
+PROC
+LeaderLib_Helper_SafeTeleport((GUIDSTRING)_Object, (GUIDSTRING)_Target, (STRING)_TeleportEvent, (REAL)_Radius, (INTEGER)_TeleportLinkedCharacters, (INTEGER)_ExcludePartyFollowers, (INTEGER)_LeaveCombat)
+AND
+GetPosition(_Target, _x, _y, _z)
+THEN
+LeaderLib_Helper_SafeTeleportToPosition(_Object, _x, _y, _z, _TeleportEvent, _Radius, _TeleportLinkedCharacters, _ExcludePartyFollowers, _LeaveCombat);
+
+PROC
+LeaderLib_Helper_SafeTeleportToPosition((GUIDSTRING)_Object, (REAL)_x, (REAL)_y, (REAL)_z)
+THEN
+LeaderLib_Helper_SafeTeleportToPosition(_Object, _x, _y, _z, "", 8.0, 0, 0, 0);
+
+PROC
+LeaderLib_Helper_SafeTeleportToPosition((GUIDSTRING)_Object, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_TeleportEvent)
+THEN
+LeaderLib_Helper_SafeTeleportToPosition(_Object, _x, _y, _z, _TeleportEvent, 8.0, 0, 0, 0);
+
+PROC
+LeaderLib_Helper_SafeTeleportToPosition((GUIDSTRING)_Object, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_TeleportEvent, (REAL)_Radius, (INTEGER)_TeleportLinkedCharacters, (INTEGER)_ExcludePartyFollowers, (INTEGER)_LeaveCombat)
+AND
+NOT DB_LeaderLib_Helper_Temp_TeleportResolved(_Object)
+AND
+FindValidPosition(_x, _y, _z, _Radius, _Object, _tx, _ty, _tz)
+THEN
+DB_LeaderLib_Helper_Temp_TeleportResolved(_Object);
+TeleportToPosition(_Object, _tx, _ty, _tz, _TeleportEvent, _TeleportLinkedCharacters, _ExcludePartyFollowers);
+
+PROC
+LeaderLib_Helper_SafeTeleportToPosition((GUIDSTRING)_Object, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_TeleportEvent, (REAL)_Radius, (INTEGER)_TeleportLinkedCharacters, (INTEGER)_ExcludePartyFollowers, (INTEGER)_LeaveCombat)
+AND
+NOT DB_LeaderLib_Helper_Temp_TeleportResolved(_Object)
+THEN
+DB_LeaderLib_Helper_Temp_TeleportResolved(_Object);
+TeleportToPosition(_Object, _x, _y, _z, _TeleportEvent, _TeleportLinkedCharacters, _ExcludePartyFollowers);
+
+PROC
+LeaderLib_Helper_SafeTeleportToPosition((GUIDSTRING)_Object, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_TeleportEvent, (REAL)_Radius, (INTEGER)_TeleportLinkedCharacters, (INTEGER)_ExcludePartyFollowers, (INTEGER)_LeaveCombat)
+AND
+_LeaveCombat > 0
+THEN
+LeaveCombat(_Object);
+
+PROC
+LeaderLib_Helper_SafeTeleportToPosition((GUIDSTRING)_Object, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_TeleportEvent, (REAL)_Radius, (INTEGER)_TeleportLinkedCharacters, (INTEGER)_ExcludePartyFollowers, (INTEGER)_LeaveCombat)
+AND
+DB_LeaderLib_Helper_Temp_TeleportResolved(_Object)
+THEN
+NOT DB_LeaderLib_Helper_Temp_TeleportResolved(_Object);
+//END_REGION
+
 EXITSECTION
 
 ENDEXITSECTION

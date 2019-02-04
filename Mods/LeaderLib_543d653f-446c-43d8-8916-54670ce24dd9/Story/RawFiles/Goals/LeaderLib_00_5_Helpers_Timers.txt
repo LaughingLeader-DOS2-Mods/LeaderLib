@@ -244,6 +244,14 @@ THEN
 DB_NOOP(1);
 
 PROC
+LeaderLib_Timers_RestartObjectObjectTimer((GUIDSTRING)_Obj1, (GUIDSTRING)_Obj2, (STRING)_TimerPrefix, (INTEGER)_Time)
+AND
+DB_LeaderLib_Helper_Temp_ObjectObjectTimer(_TimerName, _Obj1, _Obj2, _CompleteEvent, _TimerPrefix)
+THEN
+TimerCancel(_TimerName);
+TimerLaunch(_TimerName, _Time);
+
+PROC
 LeaderLib_Timers_RestartObjectObjectTimer((GUIDSTRING)_Obj1, (STRING)_TimerPrefix, (INTEGER)_Time)
 AND
 NOT DB_LeaderLib_Timers_Temp_RestartedObjObjTimer(_TimerPrefix)

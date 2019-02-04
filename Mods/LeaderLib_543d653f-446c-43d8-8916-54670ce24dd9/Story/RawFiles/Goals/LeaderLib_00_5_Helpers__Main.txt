@@ -814,6 +814,7 @@ _Item != NULL_00000000-0000-0000-0000-000000000000
 AND
 GetTemplate(_Item, _Template)
 THEN
+LeaderLib_Helper_BlockEquipmentFromCopying(_Dummy, _Item, _Template);
 LeaderLib_Helper_Internal_CheckItemForBlacklist(_Dummy, _Item, _Template);
 
 //Weapons Only
@@ -828,6 +829,7 @@ _Item != NULL_00000000-0000-0000-0000-000000000000
 AND
 GetTemplate(_Item, _Template)
 THEN
+LeaderLib_Helper_BlockEquipmentFromCopying(_Dummy, _Item, _Template);
 LeaderLib_Helper_Internal_CheckItemForBlacklist(_Dummy, _Item, _Template);
 
 //Weapons Only
@@ -842,10 +844,22 @@ _Item != NULL_00000000-0000-0000-0000-000000000000
 AND
 GetTemplate(_Item, _Template)
 THEN
+LeaderLib_Helper_BlockEquipmentFromCopying(_Dummy, _Item, _Template);
 LeaderLib_Helper_Internal_CheckItemForBlacklist(_Dummy, _Item, _Template);
+LeaderLib_Helper_Internal_ProcessCopiedItem(_Dummy, _Item);
+
+PROC
+LeaderLib_Helper_BlockEquipmentFromCopying((CHARACTERGUID)_Dummy, (ITEMGUID)_Item, (STRING)_Template)
+THEN
+//DB_LeaderLib_Helper_Temp_ItemBlacklisted(_Item);
+DB_NOOP(1);
 
 PROC
 LeaderLib_Helper_Internal_CheckItemForBlacklist((CHARACTERGUID)_Dummy, (ITEMGUID)_Item, (STRING)_Template)
+AND
+NOT DB_LeaderLib_Helper_Temp_EquipmentCopy(_Dummy, _Item)
+AND
+NOT DB_LeaderLib_Helper_Temp_ItemBlacklisted(_Item)
 AND
 DB_LeaderLib_Helper_EquipmentCopyBlacklist_Templates(_Group, _Template)
 THEN
@@ -854,6 +868,8 @@ DB_LeaderLib_Helper_Temp_ItemBlacklisted(_Item);
 
 PROC
 LeaderLib_Helper_Internal_CheckItemForBlacklist((CHARACTERGUID)_Dummy, (ITEMGUID)_Item, (STRING)_Template)
+AND
+NOT DB_LeaderLib_Helper_Temp_EquipmentCopy(_Dummy, _Item)
 AND
 NOT DB_LeaderLib_Helper_Temp_ItemBlacklisted(_Item)
 AND
@@ -865,14 +881,16 @@ ItemRemove(_Item);
 DB_LeaderLib_Helper_Temp_ItemBlacklisted(_Item);
 
 PROC
-LeaderLib_Helper_Internal_CheckItemForBlacklist((CHARACTERGUID)_Dummy, (ITEMGUID)_Item, (STRING)_Template)
+LeaderLib_Helper_Internal_ProcessCopiedItem((CHARACTERGUID)_Dummy, (ITEMGUID)_Item)
 AND
 NOT DB_LeaderLib_Helper_Temp_ItemBlacklisted(_Item)
+AND
+NOT DB_LeaderLib_Helper_Temp_EquipmentCopy(_Dummy, _Item)
 THEN
 DB_LeaderLib_Helper_Temp_EquipmentCopy(_Dummy, _Item);
 
 PROC
-LeaderLib_Helper_Internal_CheckItemForBlacklist((CHARACTERGUID)_Dummy, (ITEMGUID)_Item, (STRING)_Template)
+LeaderLib_Helper_Internal_ProcessCopiedItem((CHARACTERGUID)_Dummy, (ITEMGUID)_Item)
 AND
 DB_LeaderLib_Helper_Temp_ItemBlacklisted(_Item)
 THEN

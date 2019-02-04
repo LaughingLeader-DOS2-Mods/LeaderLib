@@ -233,6 +233,22 @@ THEN
 CharacterUnequipItem(_Character, _Item);
 //END_REGION
 
+//REGION UNEQUIP_HELPERS
+QRY
+LeaderLib_Helper_QRY_UnequipInSlot((CHARACTERGUID)_Character, (STRING)_SLot)
+THEN
+LeaderLib_Helper_UnequipInSlot(_Character, _Slot);
+
+PROC
+LeaderLib_Helper_UnequipInSlot((CHARACTERGUID)_Character, (STRING)_SLot)
+AND
+CharacterGetEquippedItem(_Character, _Slot, _Item)
+AND
+_Item != NULL_00000000-0000-0000-0000-000000000000
+THEN
+CharacterUnequipItem(_Character, (ITEMGUID)_Item);
+//END_REGION
+
 //REGION BEHAVIOR_SCRIPT_HELPERS
 IF
 CharacterItemEvent(_Character, _Item, "LeaderLib_Commands_EquipItem")

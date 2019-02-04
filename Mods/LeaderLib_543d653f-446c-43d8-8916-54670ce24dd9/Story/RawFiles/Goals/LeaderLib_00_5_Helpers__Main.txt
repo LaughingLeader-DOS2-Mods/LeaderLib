@@ -816,8 +816,8 @@ GetTemplate(_Item, _Template)
 THEN
 LeaderLib_Helper_BlockEquipmentFromCopying(_Dummy, _Item, _Template);
 LeaderLib_Helper_Internal_CheckItemForBlacklist(_Dummy, _Item, _Template);
+LeaderLib_Helper_Internal_ProcessCopiedItem(_Dummy, _Item, _Slot);
 
-//Weapons Only
 PROC
 ProcObjectTimerFinished((CHARACTERGUID)_Dummy, "LeaderLib_Timers_CopyEquipment")
 AND
@@ -831,8 +831,8 @@ GetTemplate(_Item, _Template)
 THEN
 LeaderLib_Helper_BlockEquipmentFromCopying(_Dummy, _Item, _Template);
 LeaderLib_Helper_Internal_CheckItemForBlacklist(_Dummy, _Item, _Template);
+LeaderLib_Helper_Internal_ProcessCopiedItem(_Dummy, _Item, "Weapon");
 
-//Weapons Only
 PROC
 ProcObjectTimerFinished((CHARACTERGUID)_Dummy, "LeaderLib_Timers_CopyEquipment")
 AND
@@ -846,7 +846,7 @@ GetTemplate(_Item, _Template)
 THEN
 LeaderLib_Helper_BlockEquipmentFromCopying(_Dummy, _Item, _Template);
 LeaderLib_Helper_Internal_CheckItemForBlacklist(_Dummy, _Item, _Template);
-LeaderLib_Helper_Internal_ProcessCopiedItem(_Dummy, _Item);
+LeaderLib_Helper_Internal_ProcessCopiedItem(_Dummy, _Item, "Shield");
 
 PROC
 LeaderLib_Helper_BlockEquipmentFromCopying((CHARACTERGUID)_Dummy, (ITEMGUID)_Item, (STRING)_Template)
@@ -857,7 +857,7 @@ DB_NOOP(1);
 PROC
 LeaderLib_Helper_Internal_CheckItemForBlacklist((CHARACTERGUID)_Dummy, (ITEMGUID)_Item, (STRING)_Template)
 AND
-NOT DB_LeaderLib_Helper_Temp_EquipmentCopy(_Dummy, _Item)
+NOT DB_LeaderLib_Helper_Temp_EquipmentCopy(_Dummy, _Item, _)
 AND
 NOT DB_LeaderLib_Helper_Temp_ItemBlacklisted(_Item)
 AND
@@ -869,7 +869,7 @@ DB_LeaderLib_Helper_Temp_ItemBlacklisted(_Item);
 PROC
 LeaderLib_Helper_Internal_CheckItemForBlacklist((CHARACTERGUID)_Dummy, (ITEMGUID)_Item, (STRING)_Template)
 AND
-NOT DB_LeaderLib_Helper_Temp_EquipmentCopy(_Dummy, _Item)
+NOT DB_LeaderLib_Helper_Temp_EquipmentCopy(_Dummy, _Item, _)
 AND
 NOT DB_LeaderLib_Helper_Temp_ItemBlacklisted(_Item)
 AND
@@ -881,16 +881,16 @@ ItemRemove(_Item);
 DB_LeaderLib_Helper_Temp_ItemBlacklisted(_Item);
 
 PROC
-LeaderLib_Helper_Internal_ProcessCopiedItem((CHARACTERGUID)_Dummy, (ITEMGUID)_Item)
+LeaderLib_Helper_Internal_ProcessCopiedItem((CHARACTERGUID)_Dummy, (ITEMGUID)_Item, (STRING)_SLot)
 AND
 NOT DB_LeaderLib_Helper_Temp_ItemBlacklisted(_Item)
 AND
-NOT DB_LeaderLib_Helper_Temp_EquipmentCopy(_Dummy, _Item)
+NOT DB_LeaderLib_Helper_Temp_EquipmentCopy(_Dummy, _Item, _SLot)
 THEN
-DB_LeaderLib_Helper_Temp_EquipmentCopy(_Dummy, _Item);
+DB_LeaderLib_Helper_Temp_EquipmentCopy(_Dummy, _Item, _SLot);
 
 PROC
-LeaderLib_Helper_Internal_ProcessCopiedItem((CHARACTERGUID)_Dummy, (ITEMGUID)_Item)
+LeaderLib_Helper_Internal_ProcessCopiedItem((CHARACTERGUID)_Dummy, (ITEMGUID)_Item, (STRING)_SLot)
 AND
 DB_LeaderLib_Helper_Temp_ItemBlacklisted(_Item)
 THEN
@@ -902,23 +902,31 @@ AND
 DB_LeaderLib_Helper_Temp_CopyEquipment(_CopyTo, _CopyFrom, _Dummy, _WeaponsOnly)
 THEN
 NOT DB_LeaderLib_Helper_Temp_CopyEquipment(_CopyTo, _CopyFrom, _Dummy, _WeaponsOnly);
-MoveAllItemsTo(_Dummy, _CopyTo, 1, 1, 1);
 LeaderLib_Helper_Internal_EquipCopiedEquipment(_CopyTo, _Dummy);
-LeaderLib_Helper_OnCopyEquipmentFinished(_CopyTo, _CopyFrom);
+LeaderLib_Timers_StartCharacterCharacterTimer(_CopyTo, _CopyFrom, 50, "LeaderLib_Timers_CopyEquipment_Finished", "LeaderLib_Helpers_CopyEquipment_Finished");
 ProcObjectTimer(_Dummy, "LeaderLib_Timers_CopyEquipment_RemoveDummy", 250);
+
+IF
+CharacterCharacterEvent(_CopyTo, _CopyFrom, "LeaderLib_Helpers_CopyEquipment_Finished")
+THEN
+LeaderLib_Helper_OnCopyEquipmentFinished(_CopyTo, _CopyFrom);
 
 PROC
 ProcObjectTimerFinished((CHARACTERGUID)_Dummy, "LeaderLib_Timers_CopyEquipment_RemoveDummy")
+AND
+_Dummy != NULL_00000000-0000-0000-0000-000000000000
 THEN
 RemoveTemporaryCharacter(_Dummy);
 
 PROC
 LeaderLib_Helper_Internal_EquipCopiedEquipment((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_Dummy)
 AND
-DB_LeaderLib_Helper_Temp_EquipmentCopy(_Dummy, _Item)
+DB_LeaderLib_Helper_Temp_EquipmentCopy(_Dummy, _Item, _SLot)
+AND
+LeaderLib_Helper_QRY_UnequipInSlot(_CopyTo, _SLot) // Prevent moving unequipped items to the Dummy
 THEN
 CharacterEquipItem(_CopyTo, _Item);
-NOT DB_LeaderLib_Helper_Temp_EquipmentCopy(_Dummy, _Item);
+NOT DB_LeaderLib_Helper_Temp_EquipmentCopy(_Dummy, _Item, _SLot);
 
 PROC
 LeaderLib_Helper_OnCopyEquipmentFinished((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)

@@ -635,6 +635,18 @@ THEN
 DB_NOOP(1);
 //END_REGION
 
+//REGION HELPER_DUMMY_REMOVAL
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Dummy, "LeaderLib_Timers_Helper_RemoveTemporaryDummy")
+AND
+_Dummy != NULL_00000000-0000-0000-0000-000000000000
+AND
+ObjectExists(_Dummy, 1)
+THEN
+SetStoryNpc(_Dummy, 0);
+RemoveTemporaryCharacter(_Dummy);
+//END_REGION
+
 //REGION CHARACTER_COPY
 PROC
 LeaderLib_Helper_CopyFaction((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
@@ -744,6 +756,76 @@ CharacterCharacterEvent((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom, "Leade
 THEN
 LeaderLib_Helper_CopyAttributes(_CopyTo, _CopyFrom);
 
+PROC
+LeaderLib_Helper_CopySkills((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
+AND
+GetPosition(_CopyFrom, _x, _y, _z)
+AND
+TemporaryCharacterCreateOutOfSightToObject("LeaderLib_SkillDummy_94668062-11ea-4ecf-807c-4cc225cbb236", _CopyFrom, _CopyTo, 0, "", _Dummy)
+THEN
+SetStoryNpc(_Dummy, 1);
+SetCanJoinCombat(_Dummy, 0);
+SetCanFight(_Dummy, 0);
+DB_LeaderLib_Helper_Temp_SkillCopy(_CopyTo, _CopyFrom, _Dummy);
+CharacterCloneSkillsTo(_CopyFrom, _Dummy, 0);
+LeaderLib_Timers_StartCharacterCharacterTimer(_CopyTo, _CopyFrom, 50, "LeaderLib_Timers_Helper_AddCopiedSkills", "LeaderLib_Helper_Internal_AddCopiedSkills");
+
+IF
+SkillAdded(_Dummy, _Skill, _Learned)
+AND
+DB_LeaderLib_Helper_Temp_SkillCopy(_CopyTo, _CopyFrom, _Dummy)
+AND
+NOT DB_LeaderLib_BlockedSkill(_Skill)
+THEN
+LeaderLib_Helper_BlockSkillCopying(_CopyTo, _CopyFrom, _Skill, _Learned);
+LeaderLib_Helper_Internal_ProcessCopiedSkill(_CopyTo, _CopyFrom, _Skill);
+
+
+PROC
+LeaderLib_Helper_BlockSkillCopying((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom, (STRING)_Skill, (INTEGER)_Learned)
+THEN
+//DB_LeaderLib_Helper_Temp_BlockedSkill(_CopyTo, _CopyFrom, _Skill)
+DB_NOOP(1);
+
+PROC
+LeaderLib_Helper_Internal_ProcessCopiedSkill((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom, (STRING)_Skill)
+AND
+NOT DB_LeaderLib_Helper_Temp_BlockedSkill(_CopyTo, _CopyFrom, _Skill)
+THEN
+DB_LeaderLib_Helper_Temp_CopiedSkill(_CopyTo, _CopyFrom, _Skill);
+
+PROC
+LeaderLib_Helper_Internal_ProcessCopiedSkill((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom, (STRING)_Skill)
+AND
+DB_LeaderLib_Helper_Temp_BlockedSkill(_CopyTo, _CopyFrom, _Skill)
+THEN
+NOT DB_LeaderLib_Helper_Temp_BlockedSkill(_CopyTo, _CopyFrom, _Skill);
+
+IF
+CharacterCharacterEvent(_CopyTo, _CopyFrom, "LeaderLib_Helper_Internal_AddCopiedSkills")
+AND
+DB_LeaderLib_Helper_Temp_CopiedSkill(_CopyTo, _CopyFrom, _Skill)
+THEN
+NOT DB_LeaderLib_Helper_Temp_CopiedSkill(_CopyTo, _CopyFrom, _Skill);
+CharacterAddSkill(_CopyTo, _Skill, 0);
+
+IF
+CharacterCharacterEvent(_CopyTo, _CopyFrom, "LeaderLib_Helper_Internal_AddCopiedSkills")
+THEN
+LeaderLib_Helper_OnSkillsCopied(_CopyTo, _CopyFrom);
+
+PROC
+LeaderLib_Helper_OnSkillsCopied((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
+THEN
+DB_NOOP(1);
+
+IF
+CharacterCharacterEvent(_CopyTo, _CopyFrom, "LeaderLib_Helper_Internal_AddCopiedSkills")
+AND
+DB_LeaderLib_Helper_Temp_SkillCopy(_CopyTo, _CopyFrom, _Dummy)
+THEN
+NOT DB_LeaderLib_Helper_Temp_SkillCopy(_CopyTo, _CopyFrom, _Dummy);
+ProcObjectTimer(_Dummy, "LeaderLib_Timers_Helper_RemoveTemporaryDummy", 250);
 //END_REGION
 
 //REGION COPY_EQUIPMENT
@@ -904,19 +986,12 @@ THEN
 NOT DB_LeaderLib_Helper_Temp_CopyEquipment(_CopyTo, _CopyFrom, _Dummy, _WeaponsOnly);
 LeaderLib_Helper_Internal_EquipCopiedEquipment(_CopyTo, _Dummy);
 LeaderLib_Timers_StartCharacterCharacterTimer(_CopyTo, _CopyFrom, 50, "LeaderLib_Timers_CopyEquipment_Finished", "LeaderLib_Helpers_CopyEquipment_Finished");
-ProcObjectTimer(_Dummy, "LeaderLib_Timers_CopyEquipment_RemoveDummy", 250);
+ProcObjectTimer(_Dummy, "LeaderLib_Timers_Helper_RemoveTemporaryDummy", 250);
 
 IF
 CharacterCharacterEvent(_CopyTo, _CopyFrom, "LeaderLib_Helpers_CopyEquipment_Finished")
 THEN
 LeaderLib_Helper_OnCopyEquipmentFinished(_CopyTo, _CopyFrom);
-
-PROC
-ProcObjectTimerFinished((CHARACTERGUID)_Dummy, "LeaderLib_Timers_CopyEquipment_RemoveDummy")
-AND
-_Dummy != NULL_00000000-0000-0000-0000-000000000000
-THEN
-RemoveTemporaryCharacter(_Dummy);
 
 PROC
 LeaderLib_Helper_Internal_EquipCopiedEquipment((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_Dummy)

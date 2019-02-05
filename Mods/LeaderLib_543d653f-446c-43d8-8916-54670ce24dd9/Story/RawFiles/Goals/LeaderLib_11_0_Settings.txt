@@ -419,11 +419,11 @@ LeaderLib_Settings_InitRaceData()
 AND
 NOT DB_LeaderLib_RaceTags(_,_,_)
 THEN
-//_Race, _Tag
-DB_LeaderLib_RaceTags("Dwarf", "DWARF", "");
-DB_LeaderLib_RaceTags("Elf", "ELF", "");
-DB_LeaderLib_RaceTags("Human", "HUMAN", "");
-DB_LeaderLib_RaceTags("Lizard", "LIZARD", "");
+//_Race, _Tag, _BaseRace
+DB_LeaderLib_RaceTags("Dwarf", "DWARF", "DWARF");
+DB_LeaderLib_RaceTags("Elf", "ELF", "ELF");
+DB_LeaderLib_RaceTags("Human", "HUMAN", "HUMAN");
+DB_LeaderLib_RaceTags("Lizard", "LIZARD", "LIZARD");
 DB_LeaderLib_RaceTags("Undead_Dwarf", "UNDEAD_DWARF", "DWARF");
 DB_LeaderLib_RaceTags("Undead_Elf", "UNDEAD_ELF", "ELF");
 DB_LeaderLib_RaceTags("Undead_Human", "UNDEAD_HUMAN", "HUMAN");
@@ -551,6 +551,16 @@ DB_LeaderLib_DisablingStatusTypes("PLAY_DEAD");
 //END_REGION
 
 //REGION UPDATES
+//Add missing _BaseTag to regular races
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 13, 11)
+THEN
+SysClear("DB_LeaderLib_RaceTags", 3);
+LeaderLib_Settings_InitRaceData();
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
+
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND

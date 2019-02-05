@@ -13,12 +13,16 @@ ClearTag(_Character, "LeaderLib_Growth_AddedSkillsThisLevel");
 IF
 CharacterLeveledUp(_Character)
 AND
+NOT LeaderLib_Helper_QRY_IsDummy(_Character)
+AND
 LeaderLib_Growth_Characters_QRY_CharacterHasSkills(_Character)
 THEN
 LeaderLib_Growth_Characters_AddSkills(_Character);
 
 IF
 CharacterJoinedParty(_Character)
+AND
+NOT LeaderLib_Helper_QRY_IsDummy(_Character)
 AND
 NOT IsTagged(_Character, "LeaderLib_Growth_AddedSkillsThisLevel", 1)
 AND

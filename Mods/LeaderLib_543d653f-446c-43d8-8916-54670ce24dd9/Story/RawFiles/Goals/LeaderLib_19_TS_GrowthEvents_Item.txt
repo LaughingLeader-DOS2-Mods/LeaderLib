@@ -17,6 +17,8 @@ IF
 ItemEquipped(_Item, _Character)
 AND
 IsTagged(_Item, "LeaderLib_AutoLevel", 1)
+AND
+NOT LeaderLib_Helper_QRY_IsDummy(_Character)
 THEN
 LeaderLib_Growth_Items_LevelUpItem(_Character, _Item);
 EXITSECTION

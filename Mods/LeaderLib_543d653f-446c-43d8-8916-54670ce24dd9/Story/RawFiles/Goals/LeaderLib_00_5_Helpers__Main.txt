@@ -1084,6 +1084,20 @@ QRY
 LeaderLib_Helper_QRY_EitherCharacterMatches((CHARACTERGUID)_Char2, (CHARACTERGUID)_Char1, (CHARACTERGUID)_Char2)
 THEN
 DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IsDummy((CHARACTERGUID)_Character)
+AND
+IsTagged(_Character, "LeaderLib_Dummy", 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IsDummy((CHARACTERGUID)_Character)
+AND
+IsTagged(_Character, "ANIMAL", 1)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION DUMMY_HELPERS

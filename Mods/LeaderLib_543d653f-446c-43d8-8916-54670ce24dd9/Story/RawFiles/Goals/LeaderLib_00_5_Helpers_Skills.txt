@@ -264,7 +264,11 @@ PROC
 LeaderLib_Skills_Internal_TransformDummy((CHARACTERGUID)_Dummy, (CHARACTERGUID)_Caster, (INTEGER)_CopyStats, (INTEGER)_CopyEquipment)
 THEN
 //CharacterTransformAppearanceTo(_Dummy, _Caster, _CopyEquipment, 1);
+ObjectSetFlag(_Dummy, "LEADERLIB_IGNORE", 0);
 CharacterTransformFromCharacter(_Dummy, _Caster, 0, 1, _CopyStats, _CopyEquipment, _CopyStats, 1, 0);
+SetCanJoinCombat(_Dummy, 0);
+SetCanFight(_Dummy, 0);
+SetTag(_Dummy, "LeaderLib_Dummy");
 //LeaderLib_Timers_StartCharacterCharacterTimer(_Dummy, _Caster, 50, "LeaderLib_Timers_SkillDummy_CopyStats", "LeaderLib_Commands_SkillDummy_CopyStats")
 
 PROC

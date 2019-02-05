@@ -23,6 +23,15 @@ DB_LeaderLib_IgnoreTag_Item(_Group, _Tag);
 QRY
 LeaderLib_Helper_QRY_IgnoreItem((ITEMGUID)_Item)
 AND
+ObjectGetFlag(_Item, "LEADERLIB_IGNORE", 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IgnoreItem((ITEMGUID)_Item)
+AND
+ObjectGetFlag(_Item, "LEADERLIB_IGNORE", 0)
+AND
 DB_LeaderLib_IgnoreTag_Item(_Group, _Tag)
 AND
 IsTagged(_Item, _Tag, 1)
@@ -35,11 +44,20 @@ THEN
 DB_LeaderLib_IgnoreTag_Character(_Group, _Tag);
 
 QRY
-LeaderLib_Helper_QRY_IgnoreCharacter((CHARACTERGUID)_Item)
+LeaderLib_Helper_QRY_IgnoreCharacter((CHARACTERGUID)_Character)
+AND
+ObjectGetFlag(_Character, "LEADERLIB_IGNORE", 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IgnoreCharacter((CHARACTERGUID)_Character)
+AND
+ObjectGetFlag(_Character, "LEADERLIB_IGNORE", 0)
 AND
 DB_LeaderLib_IgnoreTag_Character(_Group, _Tag)
 AND
-IsTagged(_Item, _Tag, 1)
+IsTagged(_Character, _Tag, 1)
 THEN
 DB_NOOP(1);
 //END_REGION
@@ -903,10 +921,11 @@ THEN
 //LeaderLib_Helper_SetupDummy(_Dummy);
 //SetDetached and SetVisible seem to make the dummy appear for a moment as it fades away (in the editor at least)
 SetStoryNpc(_Dummy, 1);
+DB_LeaderLib_Helper_Temp_CopyEquipment(_CopyTo, _CopyFrom, _Dummy, _WeaponsOnly);
+ObjectSetFlag(_Dummy, "LEADERLIB_IGNORE", 0);
+CharacterTransformFromCharacter(_Dummy, _CopyFrom, 0, 0, 0, 1, 0, 0, 0);
 SetCanJoinCombat(_Dummy, 0);
 SetCanFight(_Dummy, 0);
-DB_LeaderLib_Helper_Temp_CopyEquipment(_CopyTo, _CopyFrom, _Dummy, _WeaponsOnly);
-CharacterTransformFromCharacter(_Dummy, _CopyFrom, 0, 0, 0, 1, 0, 0, 0);
 SetFaction(_Dummy, "Good NPC");
 SetTag(_Dummy, "LeaderLib_Dummy");
 ProcObjectTimer(_Dummy, "LeaderLib_Timers_CopyEquipment", 10);

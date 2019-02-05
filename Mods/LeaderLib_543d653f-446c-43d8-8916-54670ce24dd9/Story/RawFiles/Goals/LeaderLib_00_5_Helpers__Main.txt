@@ -796,6 +796,7 @@ THEN
 SetStoryNpc(_Dummy, 1);
 SetCanJoinCombat(_Dummy, 0);
 SetCanFight(_Dummy, 0);
+SetFaction(_Dummy, "Good NPC");
 DB_LeaderLib_Helper_Temp_SkillCopy(_CopyTo, _CopyFrom, _Dummy);
 CharacterCloneSkillsTo(_CopyFrom, _Dummy, 0);
 LeaderLib_Timers_StartCharacterCharacterTimer(_CopyTo, _CopyFrom, 50, "LeaderLib_Timers_Helper_AddCopiedSkills", "LeaderLib_Helper_Internal_AddCopiedSkills");
@@ -906,6 +907,7 @@ SetCanJoinCombat(_Dummy, 0);
 SetCanFight(_Dummy, 0);
 DB_LeaderLib_Helper_Temp_CopyEquipment(_CopyTo, _CopyFrom, _Dummy, _WeaponsOnly);
 CharacterTransformFromCharacter(_Dummy, _CopyFrom, 0, 0, 0, 1, 0, 0, 0);
+SetFaction(_Dummy, "Good NPC");
 SetTag(_Dummy, "LeaderLib_Dummy");
 ProcObjectTimer(_Dummy, "LeaderLib_Timers_CopyEquipment", 10);
 

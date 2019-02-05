@@ -14,6 +14,36 @@ INITSECTION
 //DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent)
 //DB_LeaderLib_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _CompleteEvent)
 KBSECTION
+//REGION QUERY_BLOCKERS
+PROC
+LeaderLib_Helper_Register_IgnoreTag_Item((STRING)_Group, (STRING)_Tag)
+THEN
+DB_LeaderLib_IgnoreTag_Item(_Group, _Tag);
+
+QRY
+LeaderLib_Helper_QRY_IgnoreItem((ITEMGUID)_Item)
+AND
+DB_LeaderLib_IgnoreTag_Item(_Group, _Tag)
+AND
+IsTagged(_Item, _Tag, 1)
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_Helper_Register_IgnoreTag_Character((STRING)_Group, (STRING)_Tag)
+THEN
+DB_LeaderLib_IgnoreTag_Character(_Group, _Tag);
+
+QRY
+LeaderLib_Helper_QRY_IgnoreCharacter((CHARACTERGUID)_Item)
+AND
+DB_LeaderLib_IgnoreTag_Character(_Group, _Tag)
+AND
+IsTagged(_Item, _Tag, 1)
+THEN
+DB_NOOP(1);
+//END_REGION
+
 //REGION QUERY_FLAGS
 QRY
 LeaderLib_Helper_QRY_PartyFlag_ClearIterator()
@@ -876,6 +906,7 @@ SetCanJoinCombat(_Dummy, 0);
 SetCanFight(_Dummy, 0);
 DB_LeaderLib_Helper_Temp_CopyEquipment(_CopyTo, _CopyFrom, _Dummy, _WeaponsOnly);
 CharacterTransformFromCharacter(_Dummy, _CopyFrom, 0, 0, 0, 1, 0, 0, 0);
+SetTag(_Dummy, "LeaderLib_Dummy");
 ProcObjectTimer(_Dummy, "LeaderLib_Timers_CopyEquipment", 10);
 
 PROC
@@ -1082,20 +1113,6 @@ DB_NOOP(1);
 
 QRY
 LeaderLib_Helper_QRY_EitherCharacterMatches((CHARACTERGUID)_Char2, (CHARACTERGUID)_Char1, (CHARACTERGUID)_Char2)
-THEN
-DB_NOOP(1);
-
-QRY
-LeaderLib_Helper_QRY_IsDummy((CHARACTERGUID)_Character)
-AND
-IsTagged(_Character, "LeaderLib_Dummy", 1)
-THEN
-DB_NOOP(1);
-
-QRY
-LeaderLib_Helper_QRY_IsDummy((CHARACTERGUID)_Character)
-AND
-IsTagged(_Character, "ANIMAL", 1)
 THEN
 DB_NOOP(1);
 //END_REGION

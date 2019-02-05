@@ -81,6 +81,8 @@ AND
 NOT DB_LeaderLib_Growth_Items_Temp_FoundItem(_Character)
 AND
 CharacterFindTaggedItem(_Character, "LeaderLib_AutoLevel", _Item)
+AND
+NOT LeaderLib_Helper_QRY_IgnoreItem(_Item)
 THEN
 LeaderLog_Log("TRACE", "[LeaderLib:Growth:Items:HasAutoLevelItem(CharacterFindTaggedItem)] Found tagged item.");
 DB_LeaderLib_Growth_Items_Temp_FoundItem(_Character);
@@ -95,9 +97,13 @@ DB_LeaderLib_EquipmentSlots(_Slot)
 AND
 NOT DB_LeaderLib_Growth_Items_Temp_FoundItem(_Character)
 AND
-CharacterGetEquippedItem(_Character, _Slot, _Item)
+CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
+AND
+_Item != NULL_00000000-0000-0000-0000-000000000000
 AND
 IsTagged(_Item, "LeaderLib_AutoLevel", 1)
+AND
+NOT LeaderLib_Helper_QRY_IgnoreItem(_Item)
 THEN
 LeaderLog_Log("TRACE", "[LeaderLib:Growth:Items:HasAutoLevelItem] Found tagged equipment in slot [",_Slot,"].");
 DB_LeaderLib_Growth_Items_Temp_FoundItem(_Character);

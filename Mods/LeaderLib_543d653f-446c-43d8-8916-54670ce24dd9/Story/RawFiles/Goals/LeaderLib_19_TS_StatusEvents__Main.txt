@@ -10,6 +10,8 @@ NOT DB_LeaderLib_EngineStatus(_Status)
 AND
 NOT DB_LeaderLib_AuraStatus(_, _Status)
 AND
+NOT LeaderLib_Helper_QRY_IgnoreCharacter(_Character)
+AND
 GetStatusType(_Status, _Type)
 THEN
 LeaderLib_StatusEvents_OnStatusApplied(_Character, _Cause, _Status, _Type);

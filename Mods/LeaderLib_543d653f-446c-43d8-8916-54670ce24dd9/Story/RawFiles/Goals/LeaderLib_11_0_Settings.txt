@@ -550,15 +550,23 @@ DB_LeaderLib_DisablingStatusTypes("KNOCKED_DOWN");
 DB_LeaderLib_DisablingStatusTypes("PLAY_DEAD");
 //END_REGION
 
+//REGION IGNORE_TAGS
+PROC
+LeaderLib_Settings_InitSettings()
+THEN
+LeaderLib_Helper_Register_IgnoreTag_Character("LeaderLib", "LeaderLib_Dummy");
+//END_REGION
+
 //REGION UPDATES
 //Add missing _BaseTag to regular races
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 13, 11)
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 13, 12)
 THEN
 SysClear("DB_LeaderLib_RaceTags", 3);
 LeaderLib_Settings_InitRaceData();
+LeaderLib_Helper_Register_IgnoreTag_Character("LeaderLib", "LeaderLib_Dummy");
 LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
 
 PROC

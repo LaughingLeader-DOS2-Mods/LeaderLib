@@ -30,6 +30,8 @@ LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_TreasureEvents_TradeGen
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_GrowthEvents_Character", "LeaderLib_TS_GrowthEvents_Character_Enabled");
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_GrowthEvents_Item", "LeaderLib_TS_GrowthEvents_Item_Enabled");
 
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Follower_TeleportEvents", "LeaderLib_Follower_Active");
+
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Debug", "LeaderLib_IsEditorMode");
 
 //LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_GrowthEvents_Item_Enabled", "LeaderLib");
@@ -62,6 +64,17 @@ LeaderLib_ToggleScripts_DisableScript("LeaderLib_TS_GrowthEvents_Item_Enabled", 
 //END_REGION
 
 //REGION UPDATE_SCRIPT_ENABLE
+PROC
+LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
+AND
+NOT DB_LeaderLib_ToggleScripts_Temp_ActiveScripts("LeaderLib_Follower_Active", "LeaderLib")
+AND
+SysCount("DB_LeaderLib_PartyFollower", 2, _Count)
+AND
+_Count > 0
+THEN
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_Follower_Active", "LeaderLib");
+
 PROC
 LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
 AND

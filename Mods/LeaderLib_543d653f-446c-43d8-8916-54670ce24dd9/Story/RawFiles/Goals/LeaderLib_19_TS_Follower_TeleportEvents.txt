@@ -1,0 +1,86 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+
+/*
+This script handles automatically teleporting a follower after their owner when the owner teleports by waypoint, fleeing, 
+the arena, or just in general (items, etc.)
+Set the flag "LeaderLib_Follower_TeleportDisabled" on the follower to disable teleportation.
+*/
+
+//REGION TELEPORT_EVENTS
+IF
+CharacterTeleportToFleeWaypoint(_Owner, _)
+AND
+DB_LeaderLib_PartyFollower(_Owner, _Follower)
+AND
+ObjectGetFlag(_Follower, "LeaderLib_Follower_TeleportDisabled", 0)
+AND
+LeaderLib_Follower_QRY_FollowerShouldTeleportToOwner(_Owner, _Follower)
+THEN
+//LeaderLib_Helper_SafeTeleport(_Follower, _Owner, "LeaderLib_Events_Follower_FollowerTeleportedToOwner", 12.0, 1, 0, 1);
+TeleportTo(_Follower, _Owner, "LeaderLib_Events_Follower_FollowerTeleportedToOwner", 1, 0, 1);
+
+IF
+CharacterTeleportToWaypoint(_Owner, _)
+AND
+DB_LeaderLib_PartyFollower(_Owner, _Follower)
+AND
+ObjectGetFlag(_Follower, "LeaderLib_Follower_TeleportDisabled", 0)
+AND
+LeaderLib_Follower_QRY_FollowerShouldTeleportToOwner(_Owner, _Follower)
+THEN
+TeleportTo(_Follower, _Owner, "LeaderLib_Events_Follower_FollowerTeleportedToOwner", 1, 0, 1);
+
+IF
+CharacterTeleported(_Owner, _Cause, _OldX, _OldY, _OldZ, _NewX, _NewY, _NewZ, _Skill)
+AND
+DB_LeaderLib_PartyFollower(_Owner, _Follower)
+AND
+ObjectGetFlag(_Follower, "LeaderLib_Follower_TeleportDisabled", 0)
+AND
+LeaderLib_Follower_QRY_FollowerShouldTeleportToOwner(_Owner, _Follower)
+THEN
+TeleportTo(_Follower, _Owner, "LeaderLib_Events_Follower_FollowerTeleportedToOwner", 1, 0, 1);
+//END_REGION
+
+//REGION ARENA_TELEPORT_EVENTS
+PROC
+Proc_Arena_Initiate((INTEGER)_Inst)
+AND
+DB_LeaderLib_PartyFollower(_Owner, _Follower)
+AND
+CharacterIsDead(_Follower, 0)
+AND
+DB_Arena_PlayerParticipants(_Arena,_Inst,_Owner,_Team)
+AND
+ObjectGetFlag(_Follower, "LeaderLib_Follower_ArenaDisabled", 0)
+AND
+ObjectGetFlag(_Follower, "LeaderLib_Follower_TeleportDisabled", 0)
+AND
+DB_ArenaPresets_Player((STRING)_Arena,(STRING)_Team,(TRIGGERGUID)_Trig)
+AND
+GetFaction(_Follower,_Faction)
+THEN
+DB_Arena_PlayerParticipants(_Arena,_Inst,_Follower,_Team);
+DB_Arena_PreviousFaction(_Follower,_Faction);
+DB_Arena_CharIsAlive(_Team,_Follower);
+TeleportTo(_Follower, _Trig, "LeaderLib_Events_Follower_FollowerTeleportedToArena", 1, 0, 1);
+SetInArena(_Follower,1);
+SetFaction(_Follower,_Team); 
+
+/* Disabled for now, as the arena script automatically teleports player participants out.
+IF
+StoryEvent((CHARACTERGUID)_Owner, "Arena_CharacterTeleportedOutOfArena")
+AND
+DB_LeaderLib_PartyFollower(_Owner, _Follower)
+THEN
+TeleportTo(_Follower, _Owner, "LeaderLib_Events_Follower_FollowerTeleportedToOwner", 1, 0, 1);
+*/
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

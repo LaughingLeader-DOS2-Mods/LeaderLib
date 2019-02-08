@@ -5,6 +5,9 @@ INITSECTION
 //DB_LeaderLib_FollowerPositions(_Follower, _Region, _x, _y, _z, _TeleportEvent)
 KBSECTION
 //REGION REGISTER
+/* Fallback positions when a follower is dismissed.
+The follower will first run away out of sight, and then teleport to this position.
+ */
 PROC
 LeaderLib_Follower_RegisterPosition((CHARACTERGUID)_Follower, (STRING)_Region, (REAL)_x, (REAL)_y, (REAL)_z)
 THEN
@@ -31,6 +34,8 @@ NOT DB_LeaderLib_Follower_BlockRecruitment(_Follower)
 AND
 CharacterIsPartyMember(_Owner, 1)
 THEN
+TimerCancel("LeaderLib_Timers_Follower_DisableToggleScript");
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_Follower_Active", "LeaderLib");
 DB_LeaderLib_PartyFollower(_Owner, _Follower);
 SetVarObject(_Follower, "LeaderLib_Follower_Owner", _Owner);
 //ObjectSetFlag(_Follower, "LeaderLib_IsFollower", 0);
@@ -94,6 +99,21 @@ ObjectClearFlag(_Follower, "LeaderLib_CharacterIsFollowing", 0);
 ProcCharacterStopFollow(_Follower);
 CharacterRemoveFromPlayerCharacter(_Follower, _Owner);
 CharacterDetachFromGroup(_Follower);
+
+PROC
+LeaderLib_Follower_Internal_ClearFollowerData((CHARACTERGUID)_Owner, (CHARACTERGUID)_Follower)
+AND
+NOT DB_LeaderLib_PartyFollower(_,_)
+THEN
+TimerCancel("LeaderLib_Timers_Follower_DisableToggleScript");
+TimerLaunch("LeaderLib_Timers_Follower_DisableToggleScript", 1500);
+
+IF
+TimerFinished("LeaderLib_Timers_Follower_DisableToggleScript")
+AND
+NOT DB_LeaderLib_PartyFollower(_,_)
+THEN
+LeaderLib_ToggleScripts_DisableScript("LeaderLib_Follower_Active", "LeaderLib");
 
 PROC
 LeaderLib_Follower_Internal_SetOffStage((CHARACTERGUID)_Follower, 1)
@@ -402,6 +422,49 @@ AND
 IsTagged(_Follower, "LeaderLib_IsFollower", 1)
 THEN
 ObjectSetFlag(_Follower, "LeaderLib_CharacterIsFollowing", 0);
+//END_REGION
+
+//REGION QUERIES
+QRY
+LeaderLib_Follower_QRY_FollowerCanTeleport((CHARACTERGUID)_Owner, (CHARACTERGUID)_Follower)
+AND
+ObjectGetFlag(_Follower, "LeaderLib_Follower_TeleportDisabled", 0)
+THEN
+LeaderLib_Follower_BlockFollowerTeleport(_Owner, _Follower);
+
+//Add follower to DB_LeaderLib_Follower_BlockTeleport to prevent teleporting to their owner
+PROC
+LeaderLib_Follower_BlockFollowerTeleport((CHARACTERGUID)_Owner, (CHARACTERGUID)_Follower)
+THEN
+//DB_LeaderLib_Follower_BlockTeleport(_Follower)
+DB_NOOP(1);
+
+QRY
+LeaderLib_Follower_QRY_FollowerIsTooFar((CHARACTERGUID)_Owner, (CHARACTERGUID)_Follower)
+AND
+CharacterCanSee(_Owner, _Follower, 0)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Follower_QRY_FollowerIsTooFar((CHARACTERGUID)_Owner, (CHARACTERGUID)_Follower)
+AND
+GetDistanceTo(_Owner, _Follower, _Dist)
+AND
+_Dist >= 30
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Follower_QRY_FollowerShouldTeleportToOwner((CHARACTERGUID)_Owner, (CHARACTERGUID)_Follower)
+AND
+CharacterIsDeadOrFeign(_Follower, 0)
+AND
+CharacterIsInCombat(_Follower, 0)
+AND
+LeaderLib_Follower_QRY_FollowerIsTooFar(_Owner, _Follower)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION TELEPORT_EVENTS

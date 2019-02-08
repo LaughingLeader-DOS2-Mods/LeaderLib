@@ -207,3 +207,4 @@ DB_LeaderLog_Temp_RealString 3
 DB_LeaderLog_Temp_RealString 4
 DB_LeaderLib_Follower_BlockRecruitment 1
 DB_LeaderLib_Helper_Temp_BlockedSkill 3
+DB_LeaderLib_Follower_BlockTeleport 1

@@ -426,20 +426,6 @@ ObjectSetFlag(_Follower, "LeaderLib_CharacterIsFollowing", 0);
 
 //REGION QUERIES
 QRY
-LeaderLib_Follower_QRY_FollowerCanTeleport((CHARACTERGUID)_Owner, (CHARACTERGUID)_Follower)
-AND
-ObjectGetFlag(_Follower, "LeaderLib_Follower_TeleportDisabled", 0)
-THEN
-LeaderLib_Follower_BlockFollowerTeleport(_Owner, _Follower);
-
-//Add follower to DB_LeaderLib_Follower_BlockTeleport to prevent teleporting to their owner
-PROC
-LeaderLib_Follower_BlockFollowerTeleport((CHARACTERGUID)_Owner, (CHARACTERGUID)_Follower)
-THEN
-//DB_LeaderLib_Follower_BlockTeleport(_Follower)
-DB_NOOP(1);
-
-QRY
 LeaderLib_Follower_QRY_FollowerIsTooFar((CHARACTERGUID)_Owner, (CHARACTERGUID)_Follower)
 AND
 CharacterCanSee(_Owner, _Follower, 0)
@@ -451,7 +437,7 @@ LeaderLib_Follower_QRY_FollowerIsTooFar((CHARACTERGUID)_Owner, (CHARACTERGUID)_F
 AND
 GetDistanceTo(_Owner, _Follower, _Dist)
 AND
-_Dist >= 30
+_Dist >= 30.0
 THEN
 DB_NOOP(1);
 

@@ -160,18 +160,16 @@ LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_GrowthEvents_Item_Enabled", "
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 13, 2)
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 13, 13)
 THEN
-LeaderLib_ToggleScripts_Internal_UpdateScriptFlags();
 LeaderLib_ToggleScripts_Internal_InitRegistration();
+LeaderLib_ToggleScripts_Internal_UpdateScriptFlags();
 
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND
 LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 13, 0)
 THEN
-LeaderLib_ToggleScripts_Internal_UpdateScriptFlags();
-LeaderLib_ToggleScripts_Internal_InitRegistration();
 LeaderLib_Queue_ClearQueue("LeaderLib_ItemGenerationQueue");
 
 PROC

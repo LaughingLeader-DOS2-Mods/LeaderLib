@@ -3,20 +3,29 @@ SubGoalCombiner SGC_AND
 INITSECTION
 LeaderLib_Debug_RunTests();
 KBSECTION
-PROC
-PROC_Z_Shared_GameModeStarted("Campaign", 1)
+IF
+GameModeStarted(_, 1)
 THEN
-GlobalSetFlag("LeaderLib_IsEditorMode");
+DebugBreak("[LeaderLib_20__Debug:GameModeStarted] Starting [DB_Origins] registration.");
+LeaderLib_Debug_RegisterDebugPlayer();
+LeaderLib_Debug_Internal_RegisterDebugPlayer_Fallback();
+
+//For other mods to register an Origin character before LeaderLib does.
+PROC
+LeaderLib_Debug_RegisterDebugPlayer()
+THEN
+DB_NOOP(1);
 
 PROC
-PROC_Z_Shared_GameModeStarted("Campaign", 1)
+LeaderLib_Debug_Internal_RegisterDebugPlayer_Fallback()
 AND
 NOT DB_Origins(_)
 THEN
+DebugBreak("[LeaderLib_20__Debug:RegisterDebugPlayer_Fallback] No character found in [DB_Origins]. Adding default dummy.");
 DB_Origins((CHARACTERGUID)S_GLO_CharacterCreationDummy_001_da072fe7-fdd5-42ae-9139-8bd4b9fca406);
 
-PROC
-PROC_Z_Shared_GameModeStarted("Campaign", 1)
+IF
+GameModeStarted(_, 1)
 AND
 NOT DB_UndeadRacePresets(_,_)
 THEN

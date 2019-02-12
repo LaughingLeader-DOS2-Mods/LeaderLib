@@ -23,6 +23,7 @@ LeaderLib_Settings_InitSettings()
 THEN
 LeaderLib_PresetMenu_InitSettings();
 LeaderLib_Settings_InitEquipmentSlots();
+LeaderLib_Settings_InitTalents();
 LeaderLib_Settings_InitStats();
 LeaderLib_Settings_InitSurfaces();
 LeaderLib_Settings_InitSkillData();
@@ -174,13 +175,22 @@ DB_LeaderLib_Abilities("Runecrafting");
 DB_LeaderLib_Abilities("Brewmaster");
 
 PROC
-LeaderLib_Settings_InitStats()
+LeaderLib_Settings_Internal_UpdateTalents()
+THEN
+SysClear("DB_LeaderLib_Talents", 1);
+SysClear("DB_LeaderLib_RaceTalents", 1);
+SysClear("DB_LeaderLib_QuestTalents", 1);
+LeaderLib_Settings_InitTalents();
+
+PROC
+LeaderLib_Settings_InitTalents()
 AND
 NOT DB_LeaderLib_Talents(_)
 THEN
-DB_LeaderLib_Talents("ActionPoints");
 DB_LeaderLib_Talents("ActionPoints2");
+DB_LeaderLib_Talents("ActionPoints");
 DB_LeaderLib_Talents("AirSpells");
+DB_LeaderLib_Talents("Ambidextrous");
 DB_LeaderLib_Talents("AnimalEmpathy");
 DB_LeaderLib_Talents("AttackOfOpportunity");
 DB_LeaderLib_Talents("AvoidDetection");
@@ -196,6 +206,7 @@ DB_LeaderLib_Talents("Courageous");
 DB_LeaderLib_Talents("Criticals");
 DB_LeaderLib_Talents("Damage");
 DB_LeaderLib_Talents("Demon");
+DB_LeaderLib_Talents("DualWieldingBlock");
 DB_LeaderLib_Talents("DualWieldingDodging");
 DB_LeaderLib_Talents("Durability");
 DB_LeaderLib_Talents("EarthSpells");
@@ -221,15 +232,16 @@ DB_LeaderLib_Talents("InventoryAccess");
 DB_LeaderLib_Talents("ItemCreation");
 DB_LeaderLib_Talents("ItemMovement");
 DB_LeaderLib_Talents("Kickstarter");
-DB_LeaderLib_Talents("Kinetics");
 DB_LeaderLib_Talents("Leech");
 DB_LeaderLib_Talents("LightStep");
 DB_LeaderLib_Talents("LightningRod");
+DB_LeaderLib_Talents("LivingArmor");
 DB_LeaderLib_Talents("Lockpick");
 DB_LeaderLib_Talents("LoneWolf");
 DB_LeaderLib_Talents("Luck");
 DB_LeaderLib_Talents("Memory");
 DB_LeaderLib_Talents("MrKnowItAll");
+DB_LeaderLib_Talents("NaturalConductor");
 DB_LeaderLib_Talents("NoAttackOfOpportunity");
 DB_LeaderLib_Talents("Perfectionist");
 DB_LeaderLib_Talents("Politician");
@@ -246,6 +258,7 @@ DB_LeaderLib_Talents("ResistKnockdown");
 DB_LeaderLib_Talents("ResistPoison");
 DB_LeaderLib_Talents("ResistSilence");
 DB_LeaderLib_Talents("ResistStun");
+DB_LeaderLib_Talents("ResurrectExtraHealth");
 DB_LeaderLib_Talents("ResurrectToFullHealth");
 DB_LeaderLib_Talents("RogueLoreDaggerAPBonus");
 DB_LeaderLib_Talents("RogueLoreDaggerBackStab");
@@ -258,10 +271,14 @@ DB_LeaderLib_Talents("SpillNoBlood");
 DB_LeaderLib_Talents("StandYourGround");
 DB_LeaderLib_Talents("Stench");
 DB_LeaderLib_Talents("SurpriseAttack");
+DB_LeaderLib_Talents("Throwing");
+DB_LeaderLib_Talents("Torturer");
 DB_LeaderLib_Talents("Trade");
+DB_LeaderLib_Talents("Unstable");
 DB_LeaderLib_Talents("ViolentMagic");
-DB_LeaderLib_Talents("Vitality");
+DB_LeaderLib_Talents("Vitalty");
 DB_LeaderLib_Talents("WalkItOff");
+DB_LeaderLib_Talents("WandCharge");
 DB_LeaderLib_Talents("WarriorLoreGrenadeRange");
 DB_LeaderLib_Talents("WarriorLoreNaturalArmor");
 DB_LeaderLib_Talents("WarriorLoreNaturalHealth");
@@ -271,7 +288,7 @@ DB_LeaderLib_Talents("WeatherProof");
 DB_LeaderLib_Talents("WhatARush");
 
 PROC
-LeaderLib_Settings_InitStats()
+LeaderLib_Settings_InitTalents()
 AND
 NOT DB_LeaderLib_RaceTalents(_)
 THEN
@@ -287,7 +304,7 @@ DB_LeaderLib_RaceTalents("Lizard_Persuasion");
 DB_LeaderLib_RaceTalents("Zombie");
 
 PROC
-LeaderLib_Settings_InitStats()
+LeaderLib_Settings_InitTalents()
 AND
 NOT DB_LeaderLib_QuestTalents(_)
 THEN
@@ -297,6 +314,7 @@ DB_LeaderLib_QuestTalents("Quest_SpidersKiss_Null");
 DB_LeaderLib_QuestTalents("Quest_SpidersKiss_Per");
 DB_LeaderLib_QuestTalents("Quest_SpidersKiss_Str");
 DB_LeaderLib_QuestTalents("Quest_TradeSecrets");
+DB_LeaderLib_QuestTalents("Quest_Rooted");
 
 PROC
 LeaderLib_Settings_InitSurfaces()
@@ -558,6 +576,15 @@ LeaderLib_Helper_Register_IgnoreTag_Character("LeaderLib", "LeaderLib_Dummy");
 //END_REGION
 
 //REGION UPDATES
+//Add missing _BaseTag to regular races
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,1,14,0)
+THEN
+LeaderLib_Settings_Internal_UpdateTalents();
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
+
 //Add missing _BaseTag to regular races
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)

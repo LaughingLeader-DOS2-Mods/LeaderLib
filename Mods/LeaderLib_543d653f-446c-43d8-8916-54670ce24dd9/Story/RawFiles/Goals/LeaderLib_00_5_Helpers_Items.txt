@@ -34,6 +34,29 @@ THEN
 DB_NOOP(1);
 
 QRY
+LeaderLib_Helper_QRY_HasItemInSlot((CHARACTERGUID)_Character, (STRING)_Slot)
+AND
+CharacterGetEquippedItem(_Character, _Slot, _Item)
+AND
+_Item != NULL_00000000-0000-0000-0000-000000000000
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_HasEmptyWeaponSlot((CHARACTERGUID)_Character)
+AND
+NOT LeaderLib_Helper_QRY_HasItemInSlot(_Character, "Weapon")
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_HasEmptyWeaponSlot((CHARACTERGUID)_Character)
+AND
+NOT LeaderLib_Helper_QRY_HasItemInSlot(_Character, "Shield")
+THEN
+DB_NOOP(1);
+
+QRY
 LeaderLib_Helper_QRY_WeaponIsEquipped((CHARACTERGUID)_Character, (ITEMGUID)_Item)
 AND
 CharacterGetEquippedItem(_Character, "Weapon", _Item)

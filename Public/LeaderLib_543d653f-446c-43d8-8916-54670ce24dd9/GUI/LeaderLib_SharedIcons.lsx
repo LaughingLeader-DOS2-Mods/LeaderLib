@@ -545,6 +545,13 @@
                     <attribute id="V2" value="0.0311279" type="6" />
                 </node>
                 <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Greatbow_Unique_Lightning_A" type="22" />
+                    <attribute id="U1" value="0.593872" type="6" />
+                    <attribute id="U2" value="0.609253" type="6" />
+                    <attribute id="V1" value="0.0313721" type="6" />
+                    <attribute id="V2" value="0.0467529" type="6" />
+                </node>
+                <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Grimoire_Death_A" type="22" />
                     <attribute id="U1" value="0.265747" type="6" />
                     <attribute id="U2" value="0.281128" type="6" />
@@ -753,6 +760,13 @@
                     <attribute id="U2" value="0.374878" type="6" />
                     <attribute id="V1" value="0.0157471" type="6" />
                     <attribute id="V2" value="0.0311279" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Sword_2H_Unique_Beholder_A" type="22" />
+                    <attribute id="U1" value="0.578247" type="6" />
+                    <attribute id="U2" value="0.593628" type="6" />
+                    <attribute id="V1" value="0.0313721" type="6" />
+                    <attribute id="V2" value="0.0467529" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_Kevin_A" type="22" />

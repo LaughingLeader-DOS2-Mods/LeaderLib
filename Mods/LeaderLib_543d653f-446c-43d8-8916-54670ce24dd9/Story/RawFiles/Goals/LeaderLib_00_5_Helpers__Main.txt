@@ -1138,6 +1138,85 @@ THEN
 DB_NOOP(1);
 //END_REGION
 
+//REGION QUERIES_CHARACTERS
+QRY
+LeaderLib_Helper_QRY_EitherCharacterIsDead((CHARACTERGUID)_Char1, (CHARACTERGUID)_Char2)
+AND
+CharacterIsDead(_Char1, _IsDead1)
+AND
+CharacterIsDead(_Char2, _IsDead2)
+AND
+IntegerMax(_IsDead1, _IsDead2, 1)
+THEN
+DB_NOOP(1);
+
+//Feign Allowed
+QRY
+LeaderLib_Helper_QRY_EitherCharacterIsDeadOrFeign((CHARACTERGUID)_Char1, (CHARACTERGUID)_Char2)
+AND
+CharacterIsDeadOrFeign(_Char1, _IsDead1)
+AND
+CharacterIsDeadOrFeign(_Char2, _IsDead2)
+AND
+IntegerMax(_IsDead1, _IsDead2, 1)
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION QUERIES_DISTANCE
+QRY
+LeaderLib_Helper_QRY_PartyOutsideOfRange((GUIDSTRING)_Object, (REAL)_Range)
+AND
+DB_IsPlayer(_Player)
+AND
+CharacterIsDead(_Player, 0)
+AND
+GetDistanceTo(_Object, _Player, _Dist)
+AND
+_Dist > _Range
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_PartyOutsideOfRange((GUIDSTRING)_Object, (REAL)_Range)
+AND
+DB_LeaderLib_PartyFollower(_Owner, _Follower)
+AND
+CharacterIsDead(_Follower, 0)
+AND
+GetDistanceTo(_Object, _Follower, _Dist)
+AND
+_Dist > _Range
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_PartyOutsideOfRange((REAL)_x, (REAL)_y, (REAL)_z, (REAL)_Range)
+AND
+DB_IsPlayer(_Player)
+AND
+CharacterIsDead(_Player, 0)
+AND
+GetDistanceToPosition(_Player, _x, _y, _z, _Dist)
+AND
+_Dist > _Range
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_PartyOutsideOfRange((REAL)_x, (REAL)_y, (REAL)_z, (REAL)_Range)
+AND
+DB_LeaderLib_PartyFollower(_Owner, _Follower)
+AND
+CharacterIsDead(_Follower, 0)
+AND
+GetDistanceToPosition(_Follower, _x, _y, _z, _Dist)
+AND
+_Dist > _Range
+THEN
+DB_NOOP(1);
+//END_REGION
+
 //REGION DUMMY_HELPERS
 PROC
 LeaderLib_Helper_SetupDummy((CHARACTERGUID)_Dummy)

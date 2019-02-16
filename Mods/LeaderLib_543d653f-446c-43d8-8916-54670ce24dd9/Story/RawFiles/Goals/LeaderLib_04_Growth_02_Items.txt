@@ -5,12 +5,24 @@ INITSECTION
 
 KBSECTION
 //REGION REGISTERING
+
+/*Register a deltamod to the growth system.
+_MatchType: "ID", "Template", "Tag"
+*/
 PROC
 LeaderLib_Growth_Items_Register_DeltaMod((STRING)_ID, (INTEGER)_MinLevel, (STRING)_DeltaMod, (STRING)_MatchType, (STRING)_MatchValue)
 THEN
 DB_LeaderLib_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, _MatchType, _MatchValue);
 LeaderLib_Growth_Items_Internal_OnRegistered();
 
+//Register a deltamod using the ID as the match value.
+PROC
+LeaderLib_Growth_Items_Register_DeltaModByID((STRING)_ID, (INTEGER)_MinLevel, (STRING)_DeltaMod)
+THEN
+DB_LeaderLib_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, "ID", _ID);
+LeaderLib_Growth_Items_Internal_OnRegistered();
+
+//Register a template to an ID.
 PROC
 LeaderLib_Growth_Items_Register_Template((STRING)_ID, (STRING)_Template)
 THEN

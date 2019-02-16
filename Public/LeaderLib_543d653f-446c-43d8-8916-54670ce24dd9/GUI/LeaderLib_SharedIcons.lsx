@@ -496,6 +496,13 @@
                     <attribute id="V2" value="0.0467529" type="6" />
                 </node>
                 <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Axe_1H_Unique_Throwing_A_Water" type="22" />
+                    <attribute id="U1" value="0.703247" type="6" />
+                    <attribute id="U2" value="0.718628" type="6" />
+                    <attribute id="V1" value="0.0313721" type="6" />
+                    <attribute id="V2" value="0.0467529" type="6" />
+                </node>
+                <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_DualShields_Blackring_A" type="22" />
                     <attribute id="U1" value="0.968872" type="6" />
                     <attribute id="U2" value="0.984253" type="6" />
@@ -632,6 +639,27 @@
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Katana_2H_Unique_Raizan_3_A" type="22" />
                     <attribute id="U1" value="0.609497" type="6" />
                     <attribute id="U2" value="0.624878" type="6" />
+                    <attribute id="V1" value="0.0313721" type="6" />
+                    <attribute id="V2" value="0.0467529" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Orb_Thunder_A" type="22" />
+                    <attribute id="U1" value="0.656372" type="6" />
+                    <attribute id="U2" value="0.671753" type="6" />
+                    <attribute id="V1" value="0.0313721" type="6" />
+                    <attribute id="V2" value="0.0467529" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Orb_Thunder_B" type="22" />
+                    <attribute id="U1" value="0.671997" type="6" />
+                    <attribute id="U2" value="0.687378" type="6" />
+                    <attribute id="V1" value="0.0313721" type="6" />
+                    <attribute id="V2" value="0.0467529" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Orb_Thunder_C" type="22" />
+                    <attribute id="U1" value="0.687622" type="6" />
+                    <attribute id="U2" value="0.703003" type="6" />
                     <attribute id="V1" value="0.0313721" type="6" />
                     <attribute id="V2" value="0.0467529" type="6" />
                 </node>
@@ -816,6 +844,13 @@
                     <attribute id="U2" value="0.437378" type="6" />
                     <attribute id="V1" value="0.0157471" type="6" />
                     <attribute id="V2" value="0.0311279" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Recipes_Orb_Upgrade_A" type="22" />
+                    <attribute id="U1" value="0.718872" type="6" />
+                    <attribute id="U2" value="0.734253" type="6" />
+                    <attribute id="V1" value="0.0313721" type="6" />
+                    <attribute id="V2" value="0.0467529" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Greatbow_CushionForce" type="22" />

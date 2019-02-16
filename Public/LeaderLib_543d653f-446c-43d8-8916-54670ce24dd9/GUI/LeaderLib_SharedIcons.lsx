@@ -818,6 +818,34 @@
                     <attribute id="V2" value="0.0467529" type="6" />
                 </node>
                 <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Token_A_Finesse" type="22" />
+                    <attribute id="U1" value="0.765747" type="6" />
+                    <attribute id="U2" value="0.781128" type="6" />
+                    <attribute id="V1" value="0.0313721" type="6" />
+                    <attribute id="V2" value="0.0467529" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Token_A_Intelligence" type="22" />
+                    <attribute id="U1" value="0.734497" type="6" />
+                    <attribute id="U2" value="0.749878" type="6" />
+                    <attribute id="V1" value="0.0313721" type="6" />
+                    <attribute id="V2" value="0.0467529" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Token_A_Reset" type="22" />
+                    <attribute id="U1" value="0.781372" type="6" />
+                    <attribute id="U2" value="0.796753" type="6" />
+                    <attribute id="V1" value="0.0313721" type="6" />
+                    <attribute id="V2" value="0.0467529" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Token_A_Strength" type="22" />
+                    <attribute id="U1" value="0.750122" type="6" />
+                    <attribute id="U2" value="0.765503" type="6" />
+                    <attribute id="V1" value="0.0313721" type="6" />
+                    <attribute id="V2" value="0.0467529" type="6" />
+                </node>
+                <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_Kevin_A" type="22" />
                     <attribute id="U1" value="0.375122" type="6" />
                     <attribute id="U2" value="0.390503" type="6" />

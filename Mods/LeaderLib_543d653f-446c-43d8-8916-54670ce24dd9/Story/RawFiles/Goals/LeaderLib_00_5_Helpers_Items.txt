@@ -57,6 +57,15 @@ THEN
 DB_NOOP(1);
 
 QRY
+LeaderLib_Helper_QRY_HasEmptyHands((CHARACTERGUID)_Character)
+AND
+NOT LeaderLib_Helper_QRY_HasItemInSlot(_Character, "Weapon")
+AND
+NOT LeaderLib_Helper_QRY_HasItemInSlot(_Character, "Shield")
+THEN
+DB_NOOP(1);
+
+QRY
 LeaderLib_Helper_QRY_WeaponIsEquipped((CHARACTERGUID)_Character, (ITEMGUID)_Item)
 AND
 CharacterGetEquippedItem(_Character, "Weapon", _Item)
@@ -327,6 +336,33 @@ AND
 IsTagged(_Item, "LeaderLib_AutoIdentify", 1)
 THEN
 ContainerIdentifyAll(_Item);
+//END_REGION
+
+//REGION COMBO_HELPERS
+QRY
+LeaderLib_Helper_QRY_ComboTemplateMatch((STRING)_Template, (STRING)_T1, (STRING)_T2, (STRING)_T3, (STRING)_T4, (STRING)_T5)
+AND
+StringContains(_T1, _Template, _x1)
+AND
+StringContains(_T2, _Template, _x2)
+AND
+StringContains(_T3, _Template, _x3)
+AND
+StringContains(_T4, _Template, _x4)
+AND
+StringContains(_T5, _Template, _x5)
+AND
+IntegerSum(_x1, _x2, _r1)
+AND
+IntegerSum(_x3, _r1, _r2)
+AND
+IntegerSum(_x4, _r2, _r3)
+AND
+IntegerSum(_x5, _r3, _r4)
+AND
+_r4 > 0
+THEN
+DB_NOOP(1);
 //END_REGION
 EXITSECTION
 

@@ -245,6 +245,38 @@ AND
 NOT DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_GlobalFlag, _)
 THEN
 GlobalClearFlag(_GlobalFlag);
+
+PROC
+LeaderLib_ToggleScripts_DisableScriptAfterDelay((STRING)_GlobalFlag, (STRING)_ModID, (INTEGER)_Delay)
+AND
+StringConcatenate("LeaderLib_Timers_ToggleScripts_DeactivateScript_", _GlobalFlag, _TimerName)
+THEN
+DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByMod(_GlobalFlag, _ModID);
+DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptTimer(_TimerName, _GlobalFlag);
+TimerCancel(_TimerName);
+TimerLaunch(_TimerName, _Delay);
+
+PROC
+LeaderLib_ToggleScripts_EnableScript((STRING)_GlobalFlag, (STRING)_ModID)
+AND
+DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByMod(_GlobalFlag, _ModID)
+THEN
+NOT DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByMod(_GlobalFlag, _ModID);
+
+IF
+TimerFinished(_TimerName)
+AND
+DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByMod(_GlobalFlag, _ModID)
+THEN
+NOT DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByMod(_GlobalFlag, _ModID);
+LeaderLib_ToggleScripts_DisableScript(_GlobalFlag, _ModID);
+
+IF
+TimerFinished(_TimerName)
+AND
+DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptTimer(_TimerName, _GlobalFlag)
+THEN
+NOT DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptTimer(_TimerName, _GlobalFlag);
 //END_REGION
 
 //REGION LEADERLIB_ENABLE_SCRIPT

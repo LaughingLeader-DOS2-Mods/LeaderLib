@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <save>
     <header version="2" />
-    <version major="3" minor="6" revision="1" build="0" />
+    <version major="3" minor="6" revision="4" build="0" />
     <region id="Tags">
         <node id="root">
             <children>

@@ -631,6 +631,37 @@ THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_checktag] fired. Tag [",_Tag,"] is [",_IsTaggedStr,"] on [",_PlayerStr,"]");
 
 //END_REGION
+
+//REGION SPAWN_CHARACTER
+IF
+TextEventSet("leaderlib_addplayer")
+AND
+GetTextEventParamString(1, _Template)
+AND
+_Template != ""
+AND
+CharacterGetHostCharacter(_Host)
+AND
+GetPosition(_Host, _x, _y, _z)
+AND
+CharacterCreateAtPosition(_x, _y, _z, _Template, 1, _NewPlayer)
+AND
+GetFaction(_Host, _PlayerFaction)
+THEN
+CharacterRecruitCharacter(_NewPlayer,_Host);
+ProcCharacterDisableAllCrimes(_NewPlayer);
+ProcAssignCharacterToPlayer(_NewPlayer,_Host);
+ProcRegisterPlayerTriggers(_NewPlayer);
+SetFaction(_NewPlayer,_PlayerFaction);
+DB_IsPlayer(_NewPlayer);
+ProcRemoveAllDialogEntriesForSpeaker(_NewPlayer);
+SetHasDialog(_NewPlayer,0);
+CharacterAttachToGroup(_NewPlayer,_Host);
+SetTag(_NewPlayer,"AVATAR");
+Proc_CheckPartyFull();
+//END_REGION
+
+//REGION MISC
 IF
 TextEventSet("leaderlib_jumptoturn")
 AND
@@ -661,6 +692,8 @@ THEN
 CharacterSetCustomName(_Player, "Leader");
 CharacterApplyRacePreset(_Player, "Elf");
 CharacterApplyPreset(_Player, "Fighter_Act2");
+//END_REGION
+
 EXITSECTION
 
 ENDEXITSECTION

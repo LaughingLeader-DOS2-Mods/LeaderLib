@@ -1000,6 +1000,13 @@
                     <attribute id="V2" value="0.0311279" type="6" />
                 </node>
                 <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_TormentSoul" type="22" />
+                    <attribute id="U1" value="0.796997" type="6" />
+                    <attribute id="U2" value="0.812378" type="6" />
+                    <attribute id="V1" value="0.0313721" type="6" />
+                    <attribute id="V2" value="0.0467529" type="6" />
+                </node>
+                <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Status_Cooldown_Dust" type="22" />
                     <attribute id="U1" value="0.609497" type="6" />
                     <attribute id="U2" value="0.624878" type="6" />

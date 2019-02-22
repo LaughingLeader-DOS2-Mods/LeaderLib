@@ -296,6 +296,8 @@ AND
 GetVarString(_Character, "LeaderLib_ItemSlot", _Slot)
 AND
 CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
+AND
+_Item != NULL_00000000-0000-0000-0000-000000000000
 THEN
 CharacterUnequipItem(_Character, _Item);
 
@@ -313,20 +315,28 @@ GetVarString(_Character, "LeaderLib_ItemSlot", _Slot)
 AND
 CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
 AND
+_Item != NULL_00000000-0000-0000-0000-000000000000
+AND
 GetVarString(_Character, "LeaderLib_EquippedItemFoundEvent", _Event)
 THEN
+DB_LeaderLib_Helper_Temp_ItemFoundInSlot(_Character, _Slot, _Item);
 CharacterItemSetEvent(_Character, _Item, _Event);
 
 IF
 StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Commands_GetItemInSlot")
 AND
-GetVarString(_Character, "LeaderLib_ItemSlot", _Slot)
-AND
-NOT CharacterGetEquippedItem(_Character, _Slot, _)
+NOT DB_LeaderLib_Helper_Temp_ItemFoundInSlot(_Character, _, _)
 AND
 GetVarString(_Character, "LeaderLib_EquippedItemNotFoundEvent", _Event)
 THEN
 SetStoryEvent(_Character, _Event);
+
+IF
+StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Commands_GetItemInSlot")
+AND
+DB_LeaderLib_Helper_Temp_ItemFoundInSlot(_Character, _Slot, _Item)
+THEN
+NOT DB_LeaderLib_Helper_Temp_ItemFoundInSlot(_Character, _Slot, _Item);
 //END_REGION
 
 //REGION AUTO_IDENTIFY
@@ -340,7 +350,7 @@ ContainerIdentifyAll(_Item);
 
 //REGION COMBO_HELPERS
 QRY
-LeaderLib_Helper_QRY_ComboTemplateMatch((STRING)_Template, (STRING)_T1, (STRING)_T2, (STRING)_T3, (STRING)_T4, (STRING)_T5)
+LeaderLib_Helper_QRY_Combo_TemplateMatch((STRING)_Template, (STRING)_T1, (STRING)_T2, (STRING)_T3, (STRING)_T4, (STRING)_T5)
 AND
 StringContains(_T1, _Template, _x1)
 AND
@@ -361,6 +371,137 @@ AND
 IntegerSum(_x5, _r3, _r4)
 AND
 _r4 > 0
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_Combo_TemplateMatch_FromItem((STRING)_Template, (ITEMGUID)_T1, (ITEMGUID)_T2, (ITEMGUID)_T3, (ITEMGUID)_T4, (ITEMGUID)_T5)
+AND
+GetTemplate(_T1, _Template1)
+AND
+GetTemplate(_T2, _Template2)
+AND
+GetTemplate(_T3, _Template3)
+AND
+GetTemplate(_T4, _Template4)
+AND
+GetTemplate(_T5, _Template5)
+AND
+LeaderLib_Helper_QRY_Combo_TemplateMatch(_Template, _Template1, _Template2, _Template3, _Template4, _Template5)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_Combo_HasTag((STRING)_Tag, (ITEMGUID)_T1, (ITEMGUID)_T2, (ITEMGUID)_T3, (ITEMGUID)_T4, (ITEMGUID)_T5)
+AND
+IsTagged(_T1, _Tag, _x1)
+AND
+IsTagged(_T2, _Tag, _x2)
+AND
+IsTagged(_T3, _Tag, _x3)
+AND
+IsTagged(_T4, _Tag, _x4)
+AND
+IsTagged(_T5, _Tag, _x5)
+AND
+IntegerSum(_x1, _x2, _r1)
+AND
+IntegerSum(_x3, _r1, _r2)
+AND
+IntegerSum(_x4, _r2, _r3)
+AND
+IntegerSum(_x5, _r3, _r4)
+AND
+_r4 > 0
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_Internal_QRY_Combo_ClearTagged((STRING)_Tag)
+THEN
+LeaderLib_Helper_Internal_Combo_ClearTagged(_Tag);
+
+PROC
+LeaderLib_Helper_Internal_Combo_ClearTagged((STRING)_Tag)
+AND
+DB_LeaderLib_Helper_Temp_Combo_FoundTaggedItem(_Tag, _Last)
+THEN
+NOT DB_LeaderLib_Helper_Temp_Combo_FoundTaggedItem(_Tag, _Last);
+
+QRY
+LeaderLib_Helper_QRY_Combo_FindTagged((STRING)_Tag, (ITEMGUID)_T1, (ITEMGUID)_T2, (ITEMGUID)_T3, (ITEMGUID)_T4, (ITEMGUID)_T5)
+AND
+IsTagged(_T1, _Tag, 1)
+THEN
+DB_LeaderLib_Helper_Temp_Combo_FoundTaggedItem(_Tag, _T1);
+
+QRY
+LeaderLib_Helper_QRY_Combo_FindTagged((STRING)_Tag, (ITEMGUID)_T1, (ITEMGUID)_T2, (ITEMGUID)_T3, (ITEMGUID)_T4, (ITEMGUID)_T5)
+AND
+IsTagged(_T2, _Tag, 1)
+THEN
+DB_LeaderLib_Helper_Temp_Combo_FoundTaggedItem(_Tag, _T2);
+
+QRY
+LeaderLib_Helper_QRY_Combo_FindTagged((STRING)_Tag, (ITEMGUID)_T1, (ITEMGUID)_T2, (ITEMGUID)_T3, (ITEMGUID)_T4, (ITEMGUID)_T5)
+AND
+IsTagged(_T3, _Tag, 1)
+THEN
+DB_LeaderLib_Helper_Temp_Combo_FoundTaggedItem(_Tag, _T3);
+
+QRY
+LeaderLib_Helper_QRY_Combo_FindTagged((STRING)_Tag, (ITEMGUID)_T1, (ITEMGUID)_T2, (ITEMGUID)_T3, (ITEMGUID)_T4, (ITEMGUID)_T5)
+AND
+IsTagged(_T4, _Tag, 1)
+THEN
+DB_LeaderLib_Helper_Temp_Combo_FoundTaggedItem(_Tag, _T4);
+
+QRY
+LeaderLib_Helper_QRY_Combo_FindTagged((STRING)_Tag, (ITEMGUID)_T1, (ITEMGUID)_T2, (ITEMGUID)_T3, (ITEMGUID)_T4, (ITEMGUID)_T5)
+AND
+IsTagged(_T5, _Tag, 1)
+THEN
+DB_LeaderLib_Helper_Temp_Combo_FoundTaggedItem(_Tag, _T5);
+
+QRY
+LeaderLib_Helper_QRY_Combo_ItemMatch((ITEMGUID)_Item, (ITEMGUID)_T1, (ITEMGUID)_T2, (ITEMGUID)_T3, (ITEMGUID)_T4, (ITEMGUID)_T5)
+AND
+_Item == _T1
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_Combo_ItemMatch((ITEMGUID)_Item, (ITEMGUID)_T1, (ITEMGUID)_T2, (ITEMGUID)_T3, (ITEMGUID)_T4, (ITEMGUID)_T5)
+AND
+_Item == _T1
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_Combo_ItemMatch((ITEMGUID)_Item, (ITEMGUID)_T1, (ITEMGUID)_T2, (ITEMGUID)_T3, (ITEMGUID)_T4, (ITEMGUID)_T5)
+AND
+_Item == _T2
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_Combo_ItemMatch((ITEMGUID)_Item, (ITEMGUID)_T1, (ITEMGUID)_T2, (ITEMGUID)_T3, (ITEMGUID)_T4, (ITEMGUID)_T5)
+AND
+_Item == _T3
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_Combo_ItemMatch((ITEMGUID)_Item, (ITEMGUID)_T1, (ITEMGUID)_T2, (ITEMGUID)_T3, (ITEMGUID)_T4, (ITEMGUID)_T5)
+AND
+_Item == _T4
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_Combo_ItemMatch((ITEMGUID)_Item, (ITEMGUID)_T1, (ITEMGUID)_T2, (ITEMGUID)_T3, (ITEMGUID)_T4, (ITEMGUID)_T5)
+AND
+_Item == _T5
 THEN
 DB_NOOP(1);
 //END_REGION

@@ -1,0 +1,131 @@
+INIT
+	ITEM:__Me
+	EXTERN FIXEDSTRING:%Animation1="idle"
+	EXTERN FIXEDSTRING:%Animation2="idle2"
+	EXTERN FIXEDSTRING:%Animation3=null
+	EXTERN FIXEDSTRING:%Animation4=null
+	EXTERN FIXEDSTRING:%Animation5=null
+	
+	LIST<FIXEDSTRING>:%Animations
+	INT:%AnimationsSize = 0
+	
+	FIXEDSTRING:%CurrentAnim=null
+	
+	EXTERN FLOAT:%DefaultDelay = 2.0
+	EXTERN FLOAT:%DelayMax = 4.0
+	EXTERN INT:%RandomizeInterval = 1
+	
+	INT:%LastAnimIndex = 1
+	INT:%TimerActive = 0
+EVENTS
+
+EVENT LeaderLib_CycleAnims_Init
+ON
+	OnInit()
+ACTIONS
+IF "!c1"
+	IsEqual(%Animation1, null)
+THEN
+	ListAdd(%Animations, %Animation1)
+	Add(%AnimationsSize, 1)
+	
+	Set(%LastAnimIndex, 1)
+	Set(%CurrentAnim, %Animation1)
+	SetPriority("LeaderLib_CycleAnims_PlayAnimation", 1)
+ENDIF
+IF "!c1"
+	IsEqual(%Animation2, null)
+THEN
+	ListAdd(%Animations, %Animation2)
+	Add(%AnimationsSize, 1)
+ENDIF
+IF "!c1"
+	IsEqual(%Animation3, null)
+THEN
+	ListAdd(%Animations, %Animation3)
+	Add(%AnimationsSize, 1)
+ENDIF
+IF "!c1"
+	IsEqual(%Animation4, null)
+THEN
+	ListAdd(%Animations, %Animation4)
+	Add(%AnimationsSize, 1)
+ENDIF
+IF "!c1"
+	IsEqual(%Animation5, null)
+THEN
+	ListAdd(%Animations, %Animation5)
+	Add(%AnimationsSize, 1)
+ENDIF
+
+EVENT LeaderLib_CycleAnims_StartTimer
+VARS
+	FLOAT:_Delay
+	FLOAT:_DelayMult
+ON
+	OnFunction("llcycleanims_start")
+ACTIONS
+	Set(_Delay, %DefaultDelay)
+IF "c1"
+	IsEqual(%RandomizeInterval, 1)
+THEN
+	GetRandomBetween(_Delay, %DefaultDelay, %DelayMax)
+ENDIF
+	StartTimer("llcycleanims_cycletimer", _Delay, 0)
+	Set(%TimerActive, 1)
+	
+EVENT LeaderLib_CycleAnims_TimerDone
+VARS
+ON
+	OnTimer("llcycleanims_cycletimer")
+ACTIONS
+	Set(%TimerActive, 0)
+	CallFunction("llcycleanims_cycle")
+
+EVENT LeaderLib_CycleAnims_Cycle
+VARS
+	INT:_Index
+	FIXEDSTRING:_NextAnim
+ON
+	OnFunction("llcycleanims_cycle")
+ACTIONS
+IF "c1"
+	IsGreaterThen(%AnimationsSize, 1)
+THEN
+	GetRandomBetween(_Index, 1, %AnimationsSize)
+	IF "c1"
+		IsEqual(_Index, %LastAnimIndex)
+	THEN
+		WHILE "c1"
+			IsEqual(_Index, %LastAnimIndex)
+		DO
+			GetRandomBetween(_Index, 1, 5)
+		ENDWHILE
+	ENDIF
+ELSE
+	Set(_Index, 1)
+ENDIF
+IF "c1&!c2"
+	ListGet(%Animations, _Index, _NextAnim)
+	IsEqual(_NextAnim, null)
+THEN
+	Set(%CurrentAnim, _NextAnim)
+	Set(%LastAnimIndex, _Index)
+	Interrupt(LeaderLib_CycleAnims_PlayAnimation)
+ENDIF
+
+BEHAVIOUR
+
+REACTION LeaderLib_CycleAnims_PlayAnimation, 0
+USAGE ALL
+ACTIONS
+	//StatusText(__Me, %CurrentAnim)
+	ItemPlayAnimation(%CurrentAnim)
+IF "c1"
+	IsEqual(%TimerActive, 0)
+THEN
+	CallFunction("llcycleanims_start")
+ENDIF
+INTERRUPT
+ACTIONS
+	Reset()

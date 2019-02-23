@@ -548,6 +548,26 @@ LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib
 ApplyStatus(_Target, _Status, _Duration, _Force, _Target);
 
 IF
+TextEventSet("leaderlib_statusapply_nosource")
+AND
+GetTextEventParamUUID(1, _Target)
+AND
+GetTextEventParamString(2, _Status)
+AND
+GetTextEventParamInteger(3, _Turns)
+AND
+_Turns > 0
+AND
+GetTextEventParamInteger(4, _Force)
+AND
+IntegerProduct(_Turns, 6, _DurationInt)
+AND
+Real(_DurationInt, _Duration)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_statusapply_nosource] fired. Applying status [",_Status,"].");
+ApplyStatus(_Target, _Status, _Duration, _Force, NULL_00000000-0000-0000-0000-000000000000);
+
+IF
 TextEventSet("leaderlib_statusremove")
 AND
 GetTextEventParamUUID(1, _Target)

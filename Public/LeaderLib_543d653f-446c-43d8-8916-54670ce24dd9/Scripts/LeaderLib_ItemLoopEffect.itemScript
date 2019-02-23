@@ -1,0 +1,45 @@
+INIT
+	ITEM:__Me
+	EXTERN STRING:%LLFX_EffectName = null
+	EXTERN FIXEDSTRING:%LLFX_BoneName = ""
+	INT64:%LLFX_LoopEffectHandle = null
+	
+	EXTERN FIXEDSTRING:%LLFX_Material_UUID = null
+	EXTERN INT:%LLFX_Material_Duration = -1
+	EXTERN INT:%LLFX_Material_ApplyOnBody = 1
+	EXTERN INT:%LLFX_Material_ApplyOnArmor = 1
+	EXTERN INT:%LLFX_Material_ApplyOnWings = 0
+	EXTERN INT:%LLFX_Material_ApplyOnHorns = 0
+	EXTERN INT:%LLFX_Material_ApplyOnOverhead = 0
+	EXTERN INT:%LLFX_Material_ApplyOnWeapon = 0
+	EXTERN INT:%LLFX_Material_ApplyOnNM = 0
+	EXTERN INT:%LLFX_Material_IsOverlay = 0
+	EXTERN INT:%LLFX_Material_IsFading = 0	
+
+EVENTS
+EVENT LLFX_InitFX
+ON
+	OnInit()
+ACTIONS
+IF "!c1&!c2"
+	IsEqual(%LLFX_Material_UUID, null)
+	IsEqual(%LLFX_Material_UUID, "")
+THEN
+	SetMaterial(__Me, %LLFX_Material_UUID, %LLFX_Material_ApplyOnBody, %LLFX_Material_ApplyOnBody, %LLFX_Material_ApplyOnArmor, %LLFX_Material_ApplyOnWings, %LLFX_Material_ApplyOnHorns, %LLFX_Material_ApplyOnOverhead, %LLFX_Material_ApplyOnWeapon, %LLFX_Material_ApplyOnNM, %LLFX_Material_IsOverlay, %LLFX_Material_IsFading)
+ENDIF
+IF "!c1&!c2"
+	IsEqual(%LLFX_EffectName, null)
+	IsEqual(%LLFX_EffectName, "")
+THEN
+	ItemPlayLoopEffect(%LLFX_LoopEffectHandle, __Me, %LLFX_EffectName, %LLFX_BoneName)
+ENDIF
+
+EVENT LLFX_Shutdown
+ON
+	OnShutdown()
+ACTIONS
+IF "!c1"
+	IsEqual(%LLFX_LoopEffectHandle, null)
+THEN
+	StopLoopEffect(%LLFX_LoopEffectHandle)
+ENDIF

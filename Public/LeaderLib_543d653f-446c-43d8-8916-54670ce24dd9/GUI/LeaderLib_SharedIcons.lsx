@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <save>
     <header version="2" />
-    <version major="3" minor="6" revision="1" build="0" />
+    <version major="3" minor="6" revision="3" build="1" />
     <region id="IconUVList">
         <node id="root">
             <children>
@@ -466,6 +466,13 @@
                     <attribute id="U2" value="0.968628" type="6" />
                     <attribute id="V1" value="0.00012207" type="6" />
                     <attribute id="V2" value="0.0155029" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Armor_Unique_DemonGauntlet_A" type="22" />
+                    <attribute id="U1" value="0.812622" type="6" />
+                    <attribute id="U2" value="0.828003" type="6" />
+                    <attribute id="V1" value="0.0313721" type="6" />
+                    <attribute id="V2" value="0.0467529" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Axe_1H_Unique_Throwing_A_Air" type="22" />

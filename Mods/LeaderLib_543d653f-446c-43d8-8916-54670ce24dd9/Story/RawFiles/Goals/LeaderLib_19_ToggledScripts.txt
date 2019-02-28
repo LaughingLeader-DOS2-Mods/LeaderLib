@@ -20,6 +20,8 @@ LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Combat_DeadItems", "Lea
 
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Listeners_RemoveHarmfulStatuses", "LeaderLib_TS_RemoveHarmfulStatusesEnabled");
 
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_TagPreserver", "LeaderLib_TS_TagPreserverEnabled");
+
 //Treasure/trader events
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_TreasureEvents_Dialog", "LeaderLib_TS_TreasureEvents_Dialog_Enabled");
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_TreasureEvents_Flags", "LeaderLib_TS_TreasureEvents_Flags_Enabled");
@@ -160,7 +162,7 @@ LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_GrowthEvents_Item_Enabled", "
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 13, 13)
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 15, 0)
 THEN
 LeaderLib_ToggleScripts_Internal_InitRegistration();
 LeaderLib_ToggleScripts_Internal_UpdateScriptFlags();

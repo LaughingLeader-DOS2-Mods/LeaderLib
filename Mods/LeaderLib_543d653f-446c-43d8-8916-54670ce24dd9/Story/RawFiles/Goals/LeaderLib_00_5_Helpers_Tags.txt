@@ -1,0 +1,36 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+PROC
+LeaderLib_Helper_Tags_PreserveTag((STRING)_Group, (STRING)_Tag)
+AND
+NOT DB_LeaderLib_PreserveTag(_, _Tag)
+THEN
+DB_LeaderLib_PreserveTag(_Group, _Tag);
+
+PROC
+LeaderLib_Helper_Tags_RemovePreservedTag((STRING)_Tag)
+AND
+DB_LeaderLib_PreserveTag(_Group, _Tag)
+THEN
+NOT DB_LeaderLib_PreserveTag(_Group, _Tag);
+
+PROC
+LeaderLib_Helper_Tags_RemovePreservedTag((STRING)_Group, (STRING)_Tag)
+AND
+DB_LeaderLib_PreserveTag(_Group, _Tag)
+THEN
+NOT DB_LeaderLib_PreserveTag(_Group, _Tag);
+
+PROC
+LeaderLib_Helper_Tags_RemovePreservedTagsForGroup((STRING)_Group)
+AND
+DB_LeaderLib_PreserveTag(_Group, _Tag)
+THEN
+NOT DB_LeaderLib_PreserveTag(_Group, _Tag);
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

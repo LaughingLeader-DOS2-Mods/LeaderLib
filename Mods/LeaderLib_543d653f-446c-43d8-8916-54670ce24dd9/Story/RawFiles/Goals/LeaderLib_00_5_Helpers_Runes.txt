@@ -1,0 +1,58 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+
+PROC
+LeaderLib_Helper_Runes_Register_RuneTemplate((STRING)_ID, (STRING)_RuneTemplate)
+THEN
+DB_LeaderLib_Helper_Runes_Templates(_ID, _RuneTemplate);
+
+PROC
+LeaderLib_Helper_Runes_Register_TagRestriction((STRING)_ID, (STRING)_Tag)
+THEN
+DB_LeaderLib_Helper_Runes_Restrictions(_ID, "Tag", _Tag);
+
+PROC
+LeaderLib_Helper_Runes_Register_TemplateRestriction((STRING)_ID, (STRING)_Template)
+THEN
+DB_LeaderLib_Helper_Runes_Restrictions(_ID, "Template", _Template);
+
+PROC
+LeaderLib_Helper_Runes_Internal_CheckForRestriction((CHARACTERGUID)_Player, (ITEMGUID)_Item, (STRING)_ID, (STRING)_RuneTemplate, "Template", (STRING)_Template, (INTEGER)_Slot)
+AND
+NOT GetTemplate(_Item, _Template)
+THEN
+DB_LeaderLib_Helper_Runes_Temp_RuneBlocked(_Player, _Item, _Slot);
+
+PROC
+LeaderLib_Helper_Runes_Internal_CheckForRestriction((CHARACTERGUID)_Player, (ITEMGUID)_Item, (STRING)_ID, (STRING)_RuneTemplate, "Tag", (STRING)_Tag, (INTEGER)_Slot)
+AND
+IsTagged(_Item, _Tag, 0)
+THEN
+DB_LeaderLib_Helper_Runes_Temp_RuneBlocked(_Player, _Item, _Slot);
+
+PROC
+LeaderLib_Helper_Runes_Internal_CheckForRestriction((CHARACTERGUID)_Player, (ITEMGUID)_Item, (STRING)_ID, (STRING)_RuneTemplate, (STRING)_MatchType, (STRING)_MatchValue, (INTEGER)_Slot)
+AND
+DB_LeaderLib_Helper_Runes_Temp_RuneBlocked(_Player, _Item, _Slot)
+AND
+ItemRemoveRune(_Player, _Item, _Slot, _Rune)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_00_5_Helpers_Runes:Internal:CheckForRestriction] Rune [",_ID,"][",_RuneTemplate,"] is blocked from item via [",_MatchType,"][",_MatchValue,"]. Removing.");
+LeaderLib_Timers_StartCharacterItemTimer(_Player, _Item, 250, "LeaderLib_Timers_RuneBlocker_RemoveRune_", "LeaderLib_RuneBlocker_RemoveRune");
+
+IF
+CharacterItemEvent(_Player, _Item, "LeaderLib_RuneBlocker_RemoveRune")
+AND
+DB_LeaderLib_Helper_Runes_Temp_RuneBlocked(_Player, _Item, _Slot)
+AND
+ItemRemoveRune(_Player, _Item, _Slot, _Rune)
+THEN
+NOT DB_LeaderLib_Helper_Runes_Temp_RuneBlocked(_Player, _Item, _Slot);
+LeaderLog_LogInt("DEBUG", "[LeaderLib_00_5_Helpers_Runes:LeaderLib_RuneBlocker_RemoveRune] Removed rune from slot [",_Slot,"].");
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

@@ -1,0 +1,29 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+IF
+ObjectTransformed(_Player, _)
+AND
+DB_LeaderLib_TagPreserver_AssignedTags(_Player, _Tag)
+THEN
+SetTag(_Player, _Tag);
+
+IF
+CharacterPolymorphedInto(_Player, _)
+AND
+DB_LeaderLib_TagPreserver_AssignedTags((GUIDSTRING)_Player, _Tag)
+THEN
+SetTag(_Player, _Tag);
+
+IF
+CharacterStoppedPolymorph(_Player)
+AND
+DB_LeaderLib_TagPreserver_AssignedTags((GUIDSTRING)_Player, _Tag)
+THEN
+SetTag(_Player, _Tag);
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

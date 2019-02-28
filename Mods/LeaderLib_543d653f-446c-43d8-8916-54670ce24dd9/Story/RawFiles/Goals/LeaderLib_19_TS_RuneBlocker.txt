@@ -10,7 +10,7 @@ DB_LeaderLib_Helper_Runes_Templates(_ID, _RuneTemplate)
 AND
 DB_LeaderLib_Helper_Runes_Restrictions(_ID, _MatchType, _MatchValue)
 AND
-NOT DB_LeaderLib_Helper_Runes_Temp_RuneBlocked(_Player, _Item, _Slot)
+NOT DB_LeaderLib_Helper_Runes_Temp_RuneBlocked(_Player, _Item, _Slot, _, _)
 THEN
 LeaderLib_Helper_Runes_Internal_CheckForRestriction(_Player, _Item, _ID, _RuneTemplate, _MatchType, _MatchValue, _Slot);
 EXITSECTION

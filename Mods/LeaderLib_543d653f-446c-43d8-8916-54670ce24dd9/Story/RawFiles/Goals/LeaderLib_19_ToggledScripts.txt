@@ -20,7 +20,9 @@ LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Combat_DeadItems", "Lea
 
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Listeners_RemoveHarmfulStatuses", "LeaderLib_TS_RemoveHarmfulStatusesEnabled");
 
-LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_TagPreserver", "LeaderLib_TS_TagPreserverEnabled");
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Tags_ReapplyEvents", "LeaderLib_TS_TagReapplyEventsEnabled");
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Tags_AutoPreserve", "LeaderLib_TS_AutoTagPreserverEnabled");
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_RuneBlocker", "LeaderLib_TS_RuneBlockingEnabled");
 
 //Treasure/trader events
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_TreasureEvents_Dialog", "LeaderLib_TS_TreasureEvents_Dialog_Enabled");
@@ -219,6 +221,13 @@ LeaderLib_ToggleScripts_OnGoalCleared((STRING)_GoalTitle, (STRING)_GlobalFlag)
 THEN
 SysCompleteGoal(_GoalTitle);
 //END_REGION
+
+QRY
+LeaderLib_ToggleScripts_QRY_ScriptIsEnabled((STRING)_GlobalFlag)
+AND
+DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_GlobalFlag, _EnablingModID)
+THEN
+DB_NOOP(1);
 
 //REGION ENABLING_DISABLING
 PROC

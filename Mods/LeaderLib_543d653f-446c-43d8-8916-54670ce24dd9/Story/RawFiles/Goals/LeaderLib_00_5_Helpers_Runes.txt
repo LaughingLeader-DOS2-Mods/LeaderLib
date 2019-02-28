@@ -24,19 +24,19 @@ LeaderLib_Helper_Runes_Internal_CheckForRestriction((CHARACTERGUID)_Player, (ITE
 AND
 NOT GetTemplate(_Item, _Template)
 THEN
-DB_LeaderLib_Helper_Runes_Temp_RuneBlocked(_Player, _Item, _Slot);
+DB_LeaderLib_Helper_Runes_Temp_RuneBlocked(_Player, _Item, _Slot, _ID, _RuneTemplate);
 
 PROC
 LeaderLib_Helper_Runes_Internal_CheckForRestriction((CHARACTERGUID)_Player, (ITEMGUID)_Item, (STRING)_ID, (STRING)_RuneTemplate, "Tag", (STRING)_Tag, (INTEGER)_Slot)
 AND
 IsTagged(_Item, _Tag, 0)
 THEN
-DB_LeaderLib_Helper_Runes_Temp_RuneBlocked(_Player, _Item, _Slot);
+DB_LeaderLib_Helper_Runes_Temp_RuneBlocked(_Player, _Item, _Slot, _ID, _RuneTemplate);
 
 PROC
 LeaderLib_Helper_Runes_Internal_CheckForRestriction((CHARACTERGUID)_Player, (ITEMGUID)_Item, (STRING)_ID, (STRING)_RuneTemplate, (STRING)_MatchType, (STRING)_MatchValue, (INTEGER)_Slot)
 AND
-DB_LeaderLib_Helper_Runes_Temp_RuneBlocked(_Player, _Item, _Slot)
+DB_LeaderLib_Helper_Runes_Temp_RuneBlocked(_Player, _Item, _Slot, _ID, _RuneTemplate)
 AND
 ItemRemoveRune(_Player, _Item, _Slot, _Rune)
 THEN
@@ -46,12 +46,18 @@ LeaderLib_Timers_StartCharacterItemTimer(_Player, _Item, 250, "LeaderLib_Timers_
 IF
 CharacterItemEvent(_Player, _Item, "LeaderLib_RuneBlocker_RemoveRune")
 AND
-DB_LeaderLib_Helper_Runes_Temp_RuneBlocked(_Player, _Item, _Slot)
+DB_LeaderLib_Helper_Runes_Temp_RuneBlocked(_Player, _Item, _Slot, _ID, _RuneTemplate)
 AND
 ItemRemoveRune(_Player, _Item, _Slot, _Rune)
 THEN
-NOT DB_LeaderLib_Helper_Runes_Temp_RuneBlocked(_Player, _Item, _Slot);
+NOT DB_LeaderLib_Helper_Runes_Temp_RuneBlocked(_Player, _Item, _Slot, _ID, _RuneTemplate);
 LeaderLog_LogInt("DEBUG", "[LeaderLib_00_5_Helpers_Runes:LeaderLib_RuneBlocker_RemoveRune] Removed rune from slot [",_Slot,"].");
+LeaderLib_Helper_Runes_RuneBlocked(_Player, _Item, _ID, _RuneTemplate);
+
+PROC
+LeaderLib_Helper_Runes_RuneBlocked((CHARACTERGUID)_Player, (ITEMGUID)_Item, (STRING)_ID, (STRING)_RuneTemplate)
+THEN
+DB_NOOP(1);
 EXITSECTION
 
 ENDEXITSECTION

@@ -66,6 +66,28 @@ THEN
 DB_NOOP(1);
 
 QRY
+LeaderLib_Helper_QRY_WeaponIsEquipped((CHARACTERGUID)_Character)
+AND
+CharacterGetEquippedItem(_Character, "Weapon", (ITEMGUID)_Item)
+AND
+_Item != NULL_00000000-0000-0000-0000-000000000000
+AND
+NOT LeaderLib_Helper_QRY_IgnoreItem(_Item)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_WeaponIsEquipped((CHARACTERGUID)_Character)
+AND
+CharacterGetEquippedItem(_Character, "Shield", (ITEMGUID)_Item)
+AND
+_Item != NULL_00000000-0000-0000-0000-000000000000
+AND
+NOT LeaderLib_Helper_QRY_IgnoreItem(_Item)
+THEN
+DB_NOOP(1);
+
+QRY
 LeaderLib_Helper_QRY_WeaponIsEquipped((CHARACTERGUID)_Character, (ITEMGUID)_Item)
 AND
 CharacterGetEquippedItem(_Character, "Weapon", _Item)

@@ -3,33 +3,82 @@ SubGoalCombiner SGC_AND
 INITSECTION
 
 KBSECTION
+//REGION AUTO_PRESERVE
 PROC
-LeaderLib_Helper_Tags_PreserveTag((STRING)_Group, (STRING)_Tag)
+LeaderLib_Tags_Register_AutoPreserveTag((STRING)_Group, (STRING)_Tag)
 AND
 NOT DB_LeaderLib_PreserveTag(_, _Tag)
 THEN
 DB_LeaderLib_PreserveTag(_Group, _Tag);
 
 PROC
-LeaderLib_Helper_Tags_RemovePreservedTag((STRING)_Tag)
+LeaderLib_Tags_Register_AutoPreserveTag((STRING)_Group, (STRING)_Tag)
+AND
+NOT LeaderLib_ToggleScripts_QRY_ScriptIsEnabled("LeaderLib_TS_AutoTagPreserverEnabled")
+THEN
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_AutoTagPreserverEnabled", "LeaderLib");
+
+PROC
+LeaderLib_Tags_Remove_AutoPreservedTag((STRING)_Tag)
 AND
 DB_LeaderLib_PreserveTag(_Group, _Tag)
 THEN
 NOT DB_LeaderLib_PreserveTag(_Group, _Tag);
 
 PROC
-LeaderLib_Helper_Tags_RemovePreservedTag((STRING)_Group, (STRING)_Tag)
+LeaderLib_Tags_Remove_AutoPreservedTag((STRING)_Group, (STRING)_Tag)
 AND
 DB_LeaderLib_PreserveTag(_Group, _Tag)
 THEN
 NOT DB_LeaderLib_PreserveTag(_Group, _Tag);
 
 PROC
-LeaderLib_Helper_Tags_RemovePreservedTagsForGroup((STRING)_Group)
+LeaderLib_Tags_Remove_AutoPreservedTagForGroup((STRING)_Group)
 AND
 DB_LeaderLib_PreserveTag(_Group, _Tag)
 THEN
 NOT DB_LeaderLib_PreserveTag(_Group, _Tag);
+
+PROC
+LeaderLib_Tags_Internal_TagRemoved()
+AND
+NOT DB_LeaderLib_PreserveTag(_,_)
+AND
+DB_LeaderLib_ToggleScripts_Temp_ActiveScripts("LeaderLib_TS_AutoTagPreserverEnabled", "LeaderLib")
+THEN
+LeaderLib_ToggleScripts_DisableScriptAfterDelay("LeaderLib_TS_AutoTagPreserverEnabled", "LeaderLib", 250);
+//END_REGION
+
+//REGION MANUAL_PRESERVE
+PROC
+LeaderLib_Tags_PreserveTag((GUIDSTRING)_Object, (STRING)_Tag)
+THEN
+DB_LeaderLib_TagPreserver_AssignedTags(_Object, _Tag);
+SetTag(_Object, _Tag);
+
+PROC
+LeaderLib_Tags_PreserveTag((GUIDSTRING)_Object, (STRING)_Tag)
+AND
+NOT LeaderLib_ToggleScripts_QRY_ScriptIsEnabled("LeaderLib_TS_TagReapplyEventsEnabled")
+THEN
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_TagReapplyEventsEnabled", "LeaderLib");
+
+PROC
+LeaderLib_Tags_ClearPreservedTag((GUIDSTRING)_Object, (STRING)_Tag)
+THEN
+NOT DB_LeaderLib_TagPreserver_AssignedTags(_Object, _Tag);
+ClearTag(_Object, _Tag);
+
+PROC
+LeaderLib_Tags_ClearPreservedTag((GUIDSTRING)_Object, (STRING)_Tag)
+AND
+NOT DB_LeaderLib_TagPreserver_AssignedTags(_,_)
+AND
+DB_LeaderLib_ToggleScripts_Temp_ActiveScripts("LeaderLib_TS_TagReapplyEventsEnabled", "LeaderLib")
+THEN
+LeaderLib_ToggleScripts_DisableScriptAfterDelay("LeaderLib_TS_TagReapplyEventsEnabled", "LeaderLib", 1000);
+//END_REGION
+
 EXITSECTION
 
 ENDEXITSECTION

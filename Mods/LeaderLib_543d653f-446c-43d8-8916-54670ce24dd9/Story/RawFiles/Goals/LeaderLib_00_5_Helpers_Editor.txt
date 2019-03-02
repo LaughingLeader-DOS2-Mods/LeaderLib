@@ -5,6 +5,18 @@ INITSECTION
 KBSECTION
 //REGION RECON_PARAM_HELPERS
 QRY
+LeaderLib_Recon_QRY_IsValidUUID((GUIDSTRING)_UUID)
+AND
+ObjectExists(_UUID, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Recon_QRY_IsValidUUID(NULL_00000000-0000-0000-0000-000000000000)
+THEN
+DB_NOOP(1);
+
+QRY
 LeaderLib_Recon_QRY_GetUUID((STRING)_Command, (INTEGER)_ParamIndex, (GUIDSTRING)_FallbackValue)
 THEN
 LeaderLib_Recon_SetUUID(_Command, _ParamIndex, _FallbackValue);
@@ -13,6 +25,8 @@ PROC
 LeaderLib_Recon_SetUUID((STRING)_Command, (INTEGER)_ParamIndex, (GUIDSTRING)_FallbackValue)
 AND
 GetTextEventParamUUID(_ParamIndex, _Value)
+AND
+LeaderLib_Recon_QRY_IsValidUUID(_Value)
 AND
 IntegerSum(_ParamIndex, 1, _NextParamIndex)
 THEN
@@ -87,6 +101,12 @@ AND
 NOT DB_LeaderLib_Recon_Temp_CommandParameters_Real(_Command, _, _)
 THEN
 DB_LeaderLib_Recon_Temp_CommandParameters_Real(_Command, _FallbackValue, _ParamIndex);
+
+
+QRY
+LeaderLib_Recon_QRY_ClearParams((STRING)_Command)
+THEN
+LeaderLib_Recon_ClearParams(_Command);
 
 PROC
 LeaderLib_Recon_ClearParams((STRING)_Command)
@@ -641,6 +661,8 @@ AND
 LeaderLib_Recon_QRY_GetInt("leaderlib_statusapply", _NextParamIndex2, 1)
 AND
 DB_LeaderLib_Recon_Temp_CommandParameters_Int("leaderlib_statusapply", _Turns, _NextParamIndex3)
+AND
+LeaderLib_Recon_QRY_ClearParams("leaderlib_statusapply")
 AND
 LeaderLib_Recon_QRY_GetInt("leaderlib_statusapply", _NextParamIndex3, 0)
 AND

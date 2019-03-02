@@ -3,6 +3,120 @@ SubGoalCombiner SGC_AND
 INITSECTION
 
 KBSECTION
+//REGION RECON_PARAM_HELPERS
+QRY
+LeaderLib_Recon_QRY_GetUUID((STRING)_Command, (INTEGER)_ParamIndex, (GUIDSTRING)_FallbackValue)
+THEN
+LeaderLib_Recon_SetUUID(_Command, _ParamIndex, _FallbackValue);
+
+PROC
+LeaderLib_Recon_SetUUID((STRING)_Command, (INTEGER)_ParamIndex, (GUIDSTRING)_FallbackValue)
+AND
+GetTextEventParamUUID(_ParamIndex, _Value)
+AND
+IntegerSum(_ParamIndex, 1, _NextParamIndex)
+THEN
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID(_Command, _Value, _NextParamIndex);
+
+PROC
+LeaderLib_Recon_SetUUID((STRING)_Command, (INTEGER)_ParamIndex, (GUIDSTRING)_FallbackValue)
+AND
+NOT DB_LeaderLib_Recon_Temp_CommandParameters_UUID(_Command, _, _)
+THEN
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID(_Command, _FallbackValue, _ParamIndex);
+
+QRY
+LeaderLib_Recon_QRY_GetString((STRING)_Command, (INTEGER)_ParamIndex, (STRING)_FallbackValue)
+THEN
+LeaderLib_Recon_SetString(_Command, _ParamIndex, _FallbackValue);
+
+PROC
+LeaderLib_Recon_SetString((STRING)_Command, (INTEGER)_ParamIndex, (STRING)_FallbackValue)
+AND
+GetTextEventParamString(_ParamIndex, _Value)
+AND
+IntegerSum(_ParamIndex, 1, _NextParamIndex)
+THEN
+DB_LeaderLib_Recon_Temp_CommandParameters_String(_Command, _Value, _NextParamIndex);
+
+PROC
+LeaderLib_Recon_SetString((STRING)_Command, (INTEGER)_ParamIndex, (STRING)_FallbackValue)
+AND
+NOT DB_LeaderLib_Recon_Temp_CommandParameters_String(_Command, _, _)
+THEN
+DB_LeaderLib_Recon_Temp_CommandParameters_String(_Command, _FallbackValue, _ParamIndex);
+
+QRY
+LeaderLib_Recon_QRY_GetInt((STRING)_Command, (INTEGER)_ParamIndex, (INTEGER)_FallbackValue)
+THEN
+LeaderLib_Recon_SetInt(_Command, _ParamIndex, _FallbackValue);
+
+PROC
+LeaderLib_Recon_SetInt((STRING)_Command, (INTEGER)_ParamIndex, (INTEGER)_FallbackValue)
+AND
+GetTextEventParamInteger(_ParamIndex, _Value)
+AND
+IntegerSum(_ParamIndex, 1, _NextParamIndex)
+THEN
+DB_LeaderLib_Recon_Temp_CommandParameters_Int(_Command, _Value, _NextParamIndex);
+
+PROC
+LeaderLib_Recon_SetInt((STRING)_Command, (INTEGER)_ParamIndex, (INTEGER)_FallbackValue)
+AND
+NOT DB_LeaderLib_Recon_Temp_CommandParameters_Int(_Command, _, _)
+THEN
+DB_LeaderLib_Recon_Temp_CommandParameters_Int(_Command, _FallbackValue, _ParamIndex);
+
+QRY
+LeaderLib_Recon_QRY_GetReal((STRING)_Command, (INTEGER)_ParamIndex, (REAL)_FallbackValue)
+THEN
+LeaderLib_Recon_SetReal(_Command, _ParamIndex, _FallbackValue);
+
+PROC
+LeaderLib_Recon_SetReal((STRING)_Command, (INTEGER)_ParamIndex, (REAL)_FallbackValue)
+AND
+GetTextEventParamReal(_ParamIndex, _Value)
+AND
+IntegerSum(_ParamIndex, 1, _NextParamIndex)
+THEN
+DB_LeaderLib_Recon_Temp_CommandParameters_Real(_Command, _Value, _NextParamIndex);
+
+PROC
+LeaderLib_Recon_SetReal((STRING)_Command, (INTEGER)_ParamIndex, (REAL)_FallbackValue)
+AND
+NOT DB_LeaderLib_Recon_Temp_CommandParameters_Real(_Command, _, _)
+THEN
+DB_LeaderLib_Recon_Temp_CommandParameters_Real(_Command, _FallbackValue, _ParamIndex);
+
+PROC
+LeaderLib_Recon_ClearParams((STRING)_Command)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID(_Command, _Value, _NextParamIndex)
+THEN
+NOT DB_LeaderLib_Recon_Temp_CommandParameters_UUID(_Command, _Value, _NextParamIndex);
+
+PROC
+LeaderLib_Recon_ClearParams((STRING)_Command)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_String(_Command, _Value, _ParamIndex)
+THEN
+NOT DB_LeaderLib_Recon_Temp_CommandParameters_String(_Command, _Value, _ParamIndex);
+
+PROC
+LeaderLib_Recon_ClearParams((STRING)_Command)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_Int(_Command, _Value, _ParamIndex)
+THEN
+NOT DB_LeaderLib_Recon_Temp_CommandParameters_Int(_Command, _Value, _ParamIndex);
+
+PROC
+LeaderLib_Recon_ClearParams((STRING)_Command)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_Real(_Command, _Value, _ParamIndex)
+THEN
+NOT DB_LeaderLib_Recon_Temp_CommandParameters_Real(_Command, _Value, _ParamIndex);
+//END_REGION
+
 //REGION ANIM_TEXT_EVENTS
 //Workaround for the GetTextEvent bug
 //http://larian.com/forums/ubbthreads.php?ubb=showflat&Number=643095
@@ -446,6 +560,8 @@ TextEventSet("leaderlib_applypreset")
 AND
 GetTextEventParamString(1, _Preset)
 AND
+DB_LeaderLib_PresetMenu_RegisteredPreset(_Preset, _EnabledGlobalFlag)
+AND
 DB_IsPlayer(_Player)
 AND
 CharacterIsControlled(_Player, 1)
@@ -512,96 +628,111 @@ ShowNotification(_Player, _Message);
 IF
 TextEventSet("leaderlib_statusapply")
 AND
-GetTextEventParamUUID(1, _Target)
+CharacterGetHostCharacter(_Player)
 AND
-GetTextEventParamString(2, _Status)
+LeaderLib_Recon_QRY_GetUUID("leaderlib_statusapply", 1, _Player)
 AND
-GetTextEventParamInteger(3, _Turns)
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_statusapply", _Target, _NextParamIndex)
+AND
+LeaderLib_Recon_QRY_GetString("leaderlib_statusapply", _NextParamIndex, "HASTED")
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_statusapply", _Status, _NextParamIndex2)
+AND
+LeaderLib_Recon_QRY_GetInt("leaderlib_statusapply", _NextParamIndex2, 1)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_Int("leaderlib_statusapply", _Turns, _NextParamIndex3)
+AND
+LeaderLib_Recon_QRY_GetInt("leaderlib_statusapply", _NextParamIndex3, 0)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_Int("leaderlib_statusapply", _Force, _NextParamIndex4)
+AND
+LeaderLib_Recon_QRY_GetUUID("leaderlib_statusapply", _NextParamIndex4, _Player)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_statusapply", _Source, _NextParamIndex5)
+THEN
+LeaderLib_Helper_ReCon_ApplyStatus(_Target, _Status, _Turns, _Force, _Source);
+
+IF
+TextEventSet("leaderlib_statusapply")
+THEN
+LeaderLib_Recon_ClearParams("leaderlib_statusapply");
+
+PROC
+LeaderLib_Helper_ReCon_ApplyStatus((GUIDSTRING)_Target, (STRING)_Status, (INTEGER)_Turns, (INTEGER)_Force, (GUIDSTRING)_Source)
 AND
 _Turns > 0
-AND
-GetTextEventParamInteger(4, _Force)
 AND
 IntegerProduct(_Turns, 6, _DurationInt)
 AND
 Real(_DurationInt, _Duration)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_applystatus] fired. Applying status [",_Status,"].");
-ApplyStatus(_Target, _Status, _Duration, _Force, _Target);
+ApplyStatus(_Target, _Status, _Duration, _Force, _Source);
 
-IF
-TextEventSet("leaderlib_statusapply")
-AND
-GetTextEventParamUUID(1, _Target)
-AND
-GetTextEventParamString(2, _Status)
-AND
-GetTextEventParamInteger(3, _Turns)
+PROC
+LeaderLib_Helper_ReCon_ApplyStatus((GUIDSTRING)_Target, (STRING)_Status, (INTEGER)_Turns, (INTEGER)_Force, (GUIDSTRING)_Source)
 AND
 _Turns <= 0
-AND
-GetTextEventParamInteger(4, _Force)
 AND
 Real(_Turns, _Duration)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_applystatus] fired. Applying status [",_Status,"].");
-ApplyStatus(_Target, _Status, _Duration, _Force, _Target);
-
-IF
-TextEventSet("leaderlib_statusapply_nosource")
-AND
-GetTextEventParamUUID(1, _Target)
-AND
-GetTextEventParamString(2, _Status)
-AND
-GetTextEventParamInteger(3, _Turns)
-AND
-_Turns > 0
-AND
-GetTextEventParamInteger(4, _Force)
-AND
-IntegerProduct(_Turns, 6, _DurationInt)
-AND
-Real(_DurationInt, _Duration)
-THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_statusapply_nosource] fired. Applying status [",_Status,"].");
-ApplyStatus(_Target, _Status, _Duration, _Force, NULL_00000000-0000-0000-0000-000000000000);
+ApplyStatus(_Target, _Status, _Duration, _Force, _Source);
 
 IF
 TextEventSet("leaderlib_statusremove")
 AND
-GetTextEventParamUUID(1, _Target)
+CharacterGetHostCharacter(_Player)
 AND
-GetTextEventParamString(2, _Status)
+LeaderLib_Recon_QRY_GetUUID("leaderlib_statusremove", 1, _Player)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_statusremove", _Target, _NextParamIndex)
+AND
+LeaderLib_Recon_QRY_GetString("leaderlib_statusremove", _NextParamIndex, "HASTED")
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_statusremove", _Status, _NextParamIndex2)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_removestatus] fired. Removing status [",_Status,"].");
 RemoveStatus(_Target, _Status);
 
 IF
-TextEventSet("leaderlib_statusremoveharmful")
-AND
-GetTextEventParamUUID(1, _Target)
-AND
-_Target != NULL_00000000-0000-0000-0000-000000000000
-AND
-ObjectExists(_Target, 1)
+TextEventSet("leaderlib_statusremove")
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_statusremoveharmful] fired. Calling [RemoveHarmfulStatuses] on target.");
-RemoveHarmfulStatuses(_Target);
-LeaderLib_TS_Internal_RemoveHarmfulStatusesCalled((CHARACTERGUID)_Target);
+LeaderLib_Recon_ClearParams("leaderlib_statusremove");
 
 IF
 TextEventSet("leaderlib_statusremoveharmful")
 AND
-NOT GetTextEventParamUUID(1, _)
+CharacterGetHostCharacter(_Player)
+AND
+LeaderLib_Recon_QRY_GetUUID("leaderlib_statusremoveharmful", 1, _Player)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_statusremoveharmful", _Target, _NextParamIndex)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_statusremoveharmful] fired. Calling [RemoveHarmfulStatuses] on target.");
+RemoveHarmfulStatuses(_Target);
+
+IF
+TextEventSet("leaderlib_statusremoveharmful")
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_statusremoveharmful", _Target, _NextParamIndex)
+AND
+ObjectIsCharacter((CHARACTERGUID)_Target, 1)
+THEN
+LeaderLib_TS_Internal_RemoveHarmfulStatusesCalled((CHARACTERGUID)_Target);
+
+IF
+TextEventSet("leaderlib_statusremoveharmful")
+THEN
+LeaderLib_Recon_ClearParams("leaderlib_statusremoveharmful");
+
+IF
+TextEventSet("leaderlib_statusremoveharmfulparty")
 AND
 DB_IsPlayer(_Player)
-AND
-CharacterIsControlled(_Player, 1)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_statusremoveharmful] fired. Calling [RemoveHarmfulStatuses] on controlled players.");
-RemoveHarmfulStatuses(_Player);
-LeaderLib_TS_Internal_RemoveHarmfulStatusesCalled(_Player);
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_statusremoveharmfulparty] fired. Calling [RemoveHarmfulStatuses] on party.");
+CharacterLaunchOsirisOnlyIterator("LeaderLib_Debug_Iterator_RemoveHarmfulStatuses");
 
 IF
 TextEventSet("leaderlib_statusremoveharmfulall")

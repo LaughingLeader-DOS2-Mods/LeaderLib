@@ -202,6 +202,13 @@
                     <attribute id="V2" value="0.0155029" type="6" />
                 </node>
                 <node id="IconUV">
+                    <attribute id="MapKey" value="LLMIME_Skills_FaceDirection" type="22" />
+                    <attribute id="U1" value="0.984497" type="6" />
+                    <attribute id="U2" value="0.999878" type="6" />
+                    <attribute id="V1" value="0.0313721" type="6" />
+                    <attribute id="V2" value="0.0467529" type="6" />
+                </node>
+                <node id="IconUV">
                     <attribute id="MapKey" value="LLMIME_Skills_FinalWish" type="22" />
                     <attribute id="U1" value="0.421997" type="6" />
                     <attribute id="U2" value="0.437378" type="6" />

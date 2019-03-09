@@ -102,6 +102,15 @@ THEN
 DB_NOOP(1);
 
 QRY
+LeaderLib_Helper_QRY_ItemIsEquipped((CHARACTERGUID)_Character, (ITEMGUID)_Item)
+AND
+DB_LeaderLib_EquipmentSlots(_Slot)
+AND
+CharacterGetEquippedItem(_Character, _Slot, _Item)
+THEN
+DB_NOOP(1);
+
+QRY
 LeaderLib_Helper_QRY_IsNonMagicalRangedWeapon((ITEMGUID)_Item)
 AND
 GetTemplate(_Item, _Template)

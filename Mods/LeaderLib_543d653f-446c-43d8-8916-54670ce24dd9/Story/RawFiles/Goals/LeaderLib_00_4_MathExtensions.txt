@@ -599,6 +599,70 @@ NOT DB_LeaderLib_Math_Sine(_Angle, _cos);
 DB_LeaderLib_Math_RotatedPoint(_x1, _z1, _OriginalAngle, _x2, _z2);
 //END_REGION
 
+//REGION MATCH_QUERIES
+QRY
+LeaderLib_Math_QRY_IsEqualToAny((INTEGER)_Num, (INTEGER)_Match1, (INTEGER)_Match2)
+AND
+_Num == _Match1
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Math_QRY_IsEqualToAny((INTEGER)_Num, (INTEGER)_Match1, (INTEGER)_Match2)
+AND
+_Num == _Match2
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Math_QRY_IsEqualToAny((INTEGER)_Num, (INTEGER)_Match1, (INTEGER)_Match2, (INTEGER)_Match3)
+AND
+_Num == _Match1
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Math_QRY_IsEqualToAny((INTEGER)_Num, (INTEGER)_Match1, (INTEGER)_Match2, (INTEGER)_Match3)
+AND
+_Num == _Match2
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Math_QRY_IsEqualToAny((INTEGER)_Num, (INTEGER)_Match1, (INTEGER)_Match2, (INTEGER)_Match3)
+AND
+_Num == _Match3
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Math_QRY_IsEqualToAny((INTEGER)_Num, (INTEGER)_Match1, (INTEGER)_Match2, (INTEGER)_Match3, (INTEGER)_Match4)
+AND
+_Num == _Match1
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Math_QRY_IsEqualToAny((INTEGER)_Num, (INTEGER)_Match1, (INTEGER)_Match2, (INTEGER)_Match3, (INTEGER)_Match4)
+AND
+_Num == _Match2
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Math_QRY_IsEqualToAny((INTEGER)_Num, (INTEGER)_Match1, (INTEGER)_Match2, (INTEGER)_Match3, (INTEGER)_Match4)
+AND
+_Num == _Match3
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Math_QRY_IsEqualToAny((INTEGER)_Num, (INTEGER)_Match1, (INTEGER)_Match2, (INTEGER)_Match3, (INTEGER)_Match4)
+AND
+_Num == _Match4
+THEN
+DB_NOOP(1);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

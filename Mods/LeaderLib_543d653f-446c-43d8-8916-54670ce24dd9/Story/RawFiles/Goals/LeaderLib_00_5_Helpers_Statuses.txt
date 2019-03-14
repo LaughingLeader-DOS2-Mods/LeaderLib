@@ -88,6 +88,17 @@ PROC
 LeaderLib_Statuses_SafeRemoval((GUIDSTRING)_Object, (STRING)_Status)
 AND
 _Object != NULL_00000000-0000-0000-0000-000000000000
+AND
+ObjectExists(_Object, 1)
+THEN
+RemoveStatus(_Object, _Status);
+
+PROC
+LeaderLib_Statuses_RemoveIfActive((GUIDSTRING)_Object, (STRING)_Status)
+AND
+ObjectExists(_Object, 1)
+AND
+HasActiveStatus(_Object, _Status, 1)
 THEN
 RemoveStatus(_Object, _Status);
 

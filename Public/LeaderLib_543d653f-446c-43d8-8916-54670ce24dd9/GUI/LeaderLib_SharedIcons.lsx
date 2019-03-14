@@ -1126,6 +1126,69 @@
                     <attribute id="V2" value="0.0311279" type="6" />
                 </node>
                 <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_KatanaCombo01" type="22" />
+                    <attribute id="U1" value="0.00012207" type="6" />
+                    <attribute id="U2" value="0.0155029" type="6" />
+                    <attribute id="V1" value="0.0469971" type="6" />
+                    <attribute id="V2" value="0.0623779" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_KatanaCombo02" type="22" />
+                    <attribute id="U1" value="0.0157471" type="6" />
+                    <attribute id="U2" value="0.0311279" type="6" />
+                    <attribute id="V1" value="0.0469971" type="6" />
+                    <attribute id="V2" value="0.0623779" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_KatanaCombo03" type="22" />
+                    <attribute id="U1" value="0.0313721" type="6" />
+                    <attribute id="U2" value="0.0467529" type="6" />
+                    <attribute id="V1" value="0.0469971" type="6" />
+                    <attribute id="V2" value="0.0623779" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_KatanaCombo04" type="22" />
+                    <attribute id="U1" value="0.0469971" type="6" />
+                    <attribute id="U2" value="0.0623779" type="6" />
+                    <attribute id="V1" value="0.0469971" type="6" />
+                    <attribute id="V2" value="0.0623779" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_KatanaCombo05" type="22" />
+                    <attribute id="U1" value="0.0626221" type="6" />
+                    <attribute id="U2" value="0.0780029" type="6" />
+                    <attribute id="V1" value="0.0469971" type="6" />
+                    <attribute id="V2" value="0.0623779" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_KatanaCombo06" type="22" />
+                    <attribute id="U1" value="0.0782471" type="6" />
+                    <attribute id="U2" value="0.0936279" type="6" />
+                    <attribute id="V1" value="0.0469971" type="6" />
+                    <attribute id="V2" value="0.0623779" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_KatanaCombo07" type="22" />
+                    <attribute id="U1" value="0.0938721" type="6" />
+                    <attribute id="U2" value="0.109253" type="6" />
+                    <attribute id="V1" value="0.0469971" type="6" />
+                    <attribute id="V2" value="0.0623779" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_KatanaCombo08" type="22" />
+                    <attribute id="U1" value="0.109497" type="6" />
+                    <attribute id="U2" value="0.124878" type="6" />
+                    <attribute id="V1" value="0.0469971" type="6" />
+                    <attribute id="V2" value="0.0623779" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_KatanaCombo09" type="22" />
+                    <attribute id="U1" value="0.125122" type="6" />
+                    <attribute id="U2" value="0.140503" type="6" />
+                    <attribute id="V1" value="0.0469971" type="6" />
+                    <attribute id="V2" value="0.0623779" type="6" />
+                </node>
+                <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Status_Revenant" type="22" />
                     <attribute id="U1" value="0.687622" type="6" />
                     <attribute id="U2" value="0.703003" type="6" />

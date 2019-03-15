@@ -292,24 +292,30 @@ LeaderLib_Skills_CreateTargetDummy(_ID, _x, _y, _z, _ReadyEvent, 5000, 1, 0);
 PROC
 LeaderLib_Skills_CreateTargetDummy((STRING)_ID, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_ReadyEvent, (INTEGER)_Timeout)
 THEN
-LeaderLib_Skills_CreateTargetDummy(_ID, _x, _y, _z, _ReadyEvent, _Timeout, 1, 0);
+LeaderLib_Skills_CreateTargetDummy(_ID, _x, _y, _z, _ReadyEvent, _Timeout, 1, 0, 0);
 
 PROC
 LeaderLib_Skills_CreateTargetDummy((STRING)_ID, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_ReadyEvent, (INTEGER)_Timeout, (INTEGER)_Invulnerable, (INTEGER)_Visible)
+THEN
+LeaderLib_Skills_CreateTargetDummy(_ID, _x, _y, _z, _ReadyEvent, _Timeout, _Invulnerable, _Visible, 0);
+
+PROC
+LeaderLib_Skills_CreateTargetDummy((STRING)_ID, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_ReadyEvent, (INTEGER)_Timeout, (INTEGER)_Invulnerable, (INTEGER)_Visible, (INTEGER)_Immortal)
 AND
 TemporaryCharacterCreateAtPosition(_x, _y, _z, "LeaderLib_SkillDummy_94668062-11ea-4ecf-807c-4cc225cbb236", 0, _Dummy)
 THEN
 LeaderLib_Skills_Internal_SetTargetDummyID(_ID, _Dummy);
 SetVarInteger(_Dummy, "LeaderLib_TargetDummyTimeout", _Timeout);
 SetVarString(_Dummy, "LeaderLib_TargetDummyReadyEvent", _ReadyEvent);
-LeaderLib_Skills_Internal_PrepareTargetDummy(_Dummy, _Invulnerable, _Visible);
+LeaderLib_Skills_Internal_PrepareTargetDummy(_Dummy, _Invulnerable, _Visible, _Immortal);
 DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z);
 LeaderLib_Timers_StartObjectTimer(_Dummy, 1000, "LeaderLib_Timers_Skills_TargetDummyFailsafe", "LeaderLib_Events_TargetDummyReady");
 TeleportToPosition(_Dummy, _x, _y, _z, "LeaderLib_Events_TargetDummyTeleported", 0, 0);
 
 PROC
-LeaderLib_Skills_Internal_PrepareTargetDummy((CHARACTERGUID)_Dummy, (INTEGER)_Invulnerable, (INTEGER)_Visible)
+LeaderLib_Skills_Internal_PrepareTargetDummy((CHARACTERGUID)_Dummy, (INTEGER)_Invulnerable, (INTEGER)_Visible, (INTEGER)_Immortal)
 THEN
+CharacterSetImmortal(_Dummy, _Immortal);
 CharacterMakeStoryNpc(_Dummy, _Invulnerable);
 SetVisible(_Dummy, _Visible);
 CharacterSetDetached(_Dummy, _Invulnerable);
@@ -335,6 +341,11 @@ _ID != ""
 THEN
 DB_LeaderLib_Skills_TargetDummies(_ID, _Dummy);
 SetVarString(_Dummy, "LeaderLib_TargetDummyID", _ID);
+
+QRY
+LeaderLib_Skills_QRY_CreateTargetDummy((STRING)_ID, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_ReadyEvent, (INTEGER)_Timeout, (INTEGER)_Invulnerable, (INTEGER)_Visible, (INTEGER)_Immortal)
+THEN
+LeaderLib_Skills_CreateTargetDummy(_ID, _x, _y, _z, _ReadyEvent, _Timeout, _Invulnerable, _Visible, _Immortal);
 
 QRY
 LeaderLib_Skills_QRY_CreateTargetDummy((STRING)_ID, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_ReadyEvent, (INTEGER)_Timeout, (INTEGER)_Invulnerable, (INTEGER)_Visible)
@@ -369,6 +380,42 @@ AND
 GetPosition(_Target, _x, _y, _z)
 THEN
 LeaderLib_Skills_CreateTargetDummy(_ID, _x, _y, _z, _ReadyEvent, _Timeout, 1, 0);
+
+PROC
+LeaderLib_Skills_CreateTargetDummyAtObject((STRING)_ID, (GUIDSTRING)_Target, (STRING)_ReadyEvent, (INTEGER)_Timeout, (INTEGER)_Invulnerable)
+AND
+GetPosition(_Target, _x, _y, _z)
+THEN
+LeaderLib_Skills_CreateTargetDummy(_ID, _x, _y, _z, _ReadyEvent, _Timeout, _Invulnerable, 0);
+
+PROC
+LeaderLib_Skills_CreateTargetDummyAtObject((STRING)_ID, (GUIDSTRING)_Target, (STRING)_ReadyEvent, (INTEGER)_Timeout, (INTEGER)_Invulnerable, (INTEGER)_Visible)
+AND
+GetPosition(_Target, _x, _y, _z)
+THEN
+LeaderLib_Skills_CreateTargetDummy(_ID, _x, _y, _z, _ReadyEvent, _Timeout, _Invulnerable, _Visible);
+
+PROC
+LeaderLib_Skills_CreateTargetDummyAtObject((STRING)_ID, (GUIDSTRING)_Target, (STRING)_ReadyEvent, (INTEGER)_Timeout, (INTEGER)_Invulnerable, (INTEGER)_Visible, (INTEGER)_Immortal)
+AND
+GetPosition(_Target, _x, _y, _z)
+THEN
+LeaderLib_Skills_CreateTargetDummy(_ID, _x, _y, _z, _ReadyEvent, _Timeout, _Invulnerable, _Visible, _Immortal);
+
+QRY
+LeaderLib_Skills_QRY_CreateTargetDummyAtObject((STRING)_ID, (GUIDSTRING)_Target, (STRING)_ReadyEvent, (INTEGER)_Timeout, (INTEGER)_Invulnerable, (INTEGER)_Visible, (INTEGER)_Immortal)
+THEN
+LeaderLib_Skills_CreateTargetDummyAtObject(_ID, _Target, _ReadyEvent, _Timeout, _Invulnerable, _Visible, _Immortal);
+
+QRY
+LeaderLib_Skills_QRY_CreateTargetDummyAtObject((STRING)_ID, (GUIDSTRING)_Target, (STRING)_ReadyEvent, (INTEGER)_Timeout, (INTEGER)_Invulnerable, (INTEGER)_Visible)
+THEN
+LeaderLib_Skills_CreateTargetDummyAtObject(_ID, _Target, _ReadyEvent, _Timeout, _Invulnerable, _Visible);
+
+QRY
+LeaderLib_Skills_QRY_CreateTargetDummyAtObject((STRING)_ID, (GUIDSTRING)_Target, (STRING)_ReadyEvent, (INTEGER)_Timeout, (INTEGER)_Invulnerable)
+THEN
+LeaderLib_Skills_CreateTargetDummyAtObject(_ID, _Target, _ReadyEvent, _Timeout, _Invulnerable);
 
 QRY
 LeaderLib_Skills_QRY_CreateTargetDummyAtObject((STRING)_ID, (GUIDSTRING)_Target, (STRING)_ReadyEvent, (INTEGER)_Timeout)

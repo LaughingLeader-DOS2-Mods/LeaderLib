@@ -173,6 +173,31 @@ AND
 DB_LeaderLib_Combat_ActiveObject(_CombatID, _Character)
 THEN
 DB_NOOP(1);
+
+QRY
+LeaderLib_Combat_QRY_IsEnemy((CHARACTERGUID)_Character, (GUIDSTRING)_Target)
+AND
+LeaderLib_Combat_QRY_IsEnemy(_Character, _Target, 0)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Combat_QRY_IsEnemy((CHARACTERGUID)_Character, (GUIDSTRING)_Target, (INTEGER)_IncludeItems)
+AND
+ObjectIsCharacter((CHARACTERGUID)_Target, 1)
+AND
+CharacterIsEnemy(_Character, _Target, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Combat_QRY_IsEnemy((CHARACTERGUID)_Character, (GUIDSTRING)_Target, 1)
+AND
+ObjectIsItem((ITEMGUID)_Target, 1)
+AND
+ItemIsDestructible(_Target, 1)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION RANDOM

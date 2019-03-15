@@ -611,13 +611,6 @@ DB_LeaderLib_Random(_Val);
 QRY
 LeaderLib_Helper_QRY_RollSucceeded((INTEGER)_Roll, (INTEGER)_Target, (INTEGER)_MaxRoll)
 AND
-_Roll >= _MaxRoll
-THEN
-DB_NOOP(1);
-
-QRY
-LeaderLib_Helper_QRY_RollSucceeded((INTEGER)_Roll, (INTEGER)_Target, (INTEGER)_MaxRoll)
-AND
 _Roll > 0
 AND
 _Roll <= _Target
@@ -627,7 +620,7 @@ DB_NOOP(1);
 QRY
 LeaderLib_Roll_QRY((INTEGER)_Target)
 AND
-LeaderLib_Roll_QRY(_Target, 100)
+LeaderLib_Roll_QRY(_Target, 999)
 THEN
 DB_NOOP(1);
 

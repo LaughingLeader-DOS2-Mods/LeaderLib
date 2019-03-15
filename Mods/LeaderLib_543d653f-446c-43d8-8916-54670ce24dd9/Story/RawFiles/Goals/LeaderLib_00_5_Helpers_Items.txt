@@ -551,10 +551,25 @@ DB_NOOP(1);
 PROC
 LeaderLib_Helpers_CopyItemTransform((ITEMGUID)_Item, (ITEMGUID)_Target)
 THEN
-LeaderLib_Helpers_CopyItemTransform(_Item, _Target, 1);
+LeaderLib_Helpers_CopyItemTransform(_Item, _Target, 0);
+
+//Find a valid position, or use the given position if no valid one is found.
+QRY
+LeaderLib_Helpers_QRY_FindValidPosition((GUIDSTRING)_Object, (REAL)_x, (REAL)_y, (REAL)_z, (REAL)_Radius)
+AND
+FindValidPosition(_x, _y, _z, _Radius, _Object, _tx, _ty, _tz)
+THEN
+DB_LeaderLib_Helpers_Temp_ValidPosition(_Object, _x, _y, _z, _tx, _ty, _tz);
+
+QRY
+LeaderLib_Helpers_QRY_FindValidPosition((GUIDSTRING)_Object, (REAL)_x, (REAL)_y, (REAL)_z, (REAL)_Radius)
+AND
+NOT DB_LeaderLib_Helpers_Temp_ValidPosition(_Object, _x, _y, _z, _, _, _)
+THEN
+DB_LeaderLib_Helpers_Temp_ValidPosition(_Object, _x, _y, _z, _x, _y, _z);
 
 PROC
-LeaderLib_Helpers_CopyItemTransform((ITEMGUID)_Item, (ITEMGUID)_Target, 1)
+LeaderLib_Helpers_CopyItemTransform((ITEMGUID)_Item, (ITEMGUID)_Target, 0)
 AND
 GetPosition(_Target, _x, _y, _z)
 AND
@@ -571,6 +586,31 @@ AND
 ItemGetOwner(_Item, _Owner)
 THEN
 ItemToTransform(_Item, _x, _y, _z, _Pitch, _Yaw, _Roll, _Amount, _Owner);
+
+//Use valid position
+PROC
+LeaderLib_Helpers_CopyItemTransform((ITEMGUID)_Item, (ITEMGUID)_Target, 1)
+AND
+GetPosition(_Target, _x, _y, _z)
+AND
+LeaderLib_Helpers_QRY_FindValidPosition(_Item, _x, _y, _z, 1.0)
+AND
+DB_LeaderLib_Helpers_Temp_ValidPosition(_Object, _x, _y, _z, _tx, _ty, _tz)
+AND
+GetRotation(_Target, _PitchDegree, _YawDegree, _RollDegree)
+AND
+RealProduct(_PitchDegree, 0.0174533, _Pitch)
+AND
+RealProduct(_YawDegree, 0.0174533, _Yaw)
+AND
+RealProduct(_RollDegree, 0.0174533, _Roll)
+AND
+ItemGetAmount(_Item, _Amount)
+AND
+ItemGetOwner(_Item, _Owner)
+THEN
+NOT DB_LeaderLib_Helpers_Temp_ValidPosition(_Object, _x, _y, _z, _tx, _ty, _tz);
+ItemToTransform(_Item, _x, _ty, _z, _Pitch, _Yaw, _Roll, _Amount, _Owner);
 
 EXITSECTION
 

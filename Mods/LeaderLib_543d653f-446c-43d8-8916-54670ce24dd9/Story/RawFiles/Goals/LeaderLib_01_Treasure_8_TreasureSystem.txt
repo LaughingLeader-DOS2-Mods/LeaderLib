@@ -1598,11 +1598,13 @@ _Chance > 0
 AND
 _Chance < 100
 AND
-LeaderLib_Roll_QRY(_Chance)
+IntegerProduct(_Chance, 100, _Target) // Ranged out of 999 are more random than 100 max
+AND
+LeaderLib_Roll_QRY(_Target)
 AND
 DB_LeaderLib_Random(_Roll)
 AND
-LeaderLog_QRY_LogInt("TRACE", "[LeaderLib:TreasureSystem:Internal:RollSucceeded] Rolled: [",_Roll,"/",_Chance,"].")
+LeaderLog_QRY_LogInt("TRACE", "[LeaderLib:TreasureSystem:Internal:RollSucceeded] Rolled: [",_Roll,"/",_Target,"].")
 THEN
 NOT DB_LeaderLib_Random(_Roll);
 

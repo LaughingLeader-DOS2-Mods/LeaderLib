@@ -1,0 +1,17 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+QRY
+LeaderLib_Helper_QRY_ObjectVariableSet((GUIDSTRING)_Object, (STRING)_Var)
+AND
+GetVarObject(_Object, _Var, _Val)
+AND
+_Val != NULL_00000000-0000-0000-0000-000000000000
+THEN
+DB_NOOP(1);
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

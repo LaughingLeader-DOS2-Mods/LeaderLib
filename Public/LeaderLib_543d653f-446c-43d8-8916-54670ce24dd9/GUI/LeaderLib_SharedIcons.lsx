@@ -475,6 +475,13 @@
                     <attribute id="V2" value="0.0155029" type="6" />
                 </node>
                 <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Armor_Unique_Backpack_Demolition_A" type="22" />
+                    <attribute id="U1" value="0.140747" type="6" />
+                    <attribute id="U2" value="0.156128" type="6" />
+                    <attribute id="V1" value="0.0469971" type="6" />
+                    <attribute id="V2" value="0.0623779" type="6" />
+                </node>
+                <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Armor_Unique_DemonGauntlet_A" type="22" />
                     <attribute id="U1" value="0.812622" type="6" />
                     <attribute id="U2" value="0.828003" type="6" />
@@ -1185,6 +1192,13 @@
                     <attribute id="MapKey" value="LLWEAPONEX_Status_KatanaCombo09" type="22" />
                     <attribute id="U1" value="0.125122" type="6" />
                     <attribute id="U2" value="0.140503" type="6" />
+                    <attribute id="V1" value="0.0469971" type="6" />
+                    <attribute id="V2" value="0.0623779" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_RemoteMine_Recharging" type="22" />
+                    <attribute id="U1" value="0.156372" type="6" />
+                    <attribute id="U2" value="0.171753" type="6" />
                     <attribute id="V1" value="0.0469971" type="6" />
                     <attribute id="V2" value="0.0623779" type="6" />
                 </node>

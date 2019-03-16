@@ -1231,6 +1231,18 @@ NOT DB_LeaderLog_IntString(_Num2, _Num2Str);
 LeaderLog_Log(_Type, _Prefix, _NumStr, _Prefix2, _Num2Str, _Suffix);
 
 PROC
+LeaderLog_LogIntWithString((STRING)_Type, (STRING)_Prefix, (STRING)_Str1, (STRING)_Prefix2, (INTEGER)_Num, (STRING)_Suffix)
+AND
+LeaderLog_QRY_LogTypeEnabled(_Type)
+AND
+LeaderLog_QRY_IntegerToString(_Num)
+AND
+DB_LeaderLog_IntString(_Num, _NumStr)
+THEN
+NOT DB_LeaderLog_IntString(_Num, _NumStr);
+LeaderLog_Log(_Type, _Prefix, _Str1, _Prefix2,_NumStr, _Suffix);
+
+PROC
 LeaderLog_LogIntWithString((STRING)_Type, (STRING)_Prefix, (STRING)_Str1, (STRING)_Prefix2, (INTEGER)_Num, (STRING)_Prefix3, (INTEGER)_Num2, (STRING)_Suffix)
 AND
 LeaderLog_QRY_LogTypeEnabled(_Type)

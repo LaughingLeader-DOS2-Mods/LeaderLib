@@ -569,27 +569,35 @@ THEN
 DB_LeaderLib_Helpers_Temp_ValidPosition(_Object, _x, _y, _z, _x, _y, _z);
 
 PROC
-LeaderLib_Helpers_CopyItemTransform((ITEMGUID)_Item, (ITEMGUID)_Target, 0)
-AND
-GetPosition(_Target, _x, _y, _z)
-AND
-GetRotation(_Target, _PitchDegree, _YawDegree, _RollDegree)
-AND
-RealProduct(_PitchDegree, 0.0174533, _Pitch)
-AND
-RealProduct(_YawDegree, 0.0174533, _Yaw)
-AND
-RealProduct(_RollDegree, 0.0174533, _Roll)
+LeaderLib_Helpers_CopyItemTransform((ITEMGUID)_Item, (ITEMGUID)_Target)
 AND
 ItemGetAmount(_Item, _Amount)
 AND
 ItemGetOwner(_Item, _Owner)
 THEN
-ItemToTransform(_Item, _x, _y, _z, _Pitch, _Yaw, _Roll, _Amount, _Owner);
+LeaderLib_Helpers_CopyItemTransform(_Item, _Target, 0, _Amount, _Owner);
+
+PROC
+LeaderLib_Helpers_CopyItemTransform((ITEMGUID)_Item, (ITEMGUID)_Target, (INTEGER)_UseValidPosition)
+AND
+ItemGetAmount(_Item, _Amount)
+AND
+ItemGetOwner(_Item, _Owner)
+THEN
+LeaderLib_Helpers_CopyItemTransform(_Item, _Target, _UseValidPosition, _Amount, _Owner);
+
+PROC
+LeaderLib_Helpers_CopyItemTransform((ITEMGUID)_Item, (ITEMGUID)_Target, (INTEGER)_UseValidPosition, (INTEGER)_Amount)
+AND
+ItemGetOwner(_Item, _Owner)
+THEN
+LeaderLib_Helpers_CopyItemTransform(_Item, _Target, _UseValidPosition, _Amount, _Owner);
 
 //Use valid position
 PROC
-LeaderLib_Helpers_CopyItemTransform((ITEMGUID)_Item, (ITEMGUID)_Target, 1)
+LeaderLib_Helpers_CopyItemTransform((ITEMGUID)_Item, (ITEMGUID)_Target, (INTEGER)_UseValidPosition, (INTEGER)_Amount, (CHARACTERGUID)_Owner)
+AND
+_UseValidPosition != 0
 AND
 GetPosition(_Target, _x, _y, _z)
 AND
@@ -611,6 +619,21 @@ ItemGetOwner(_Item, _Owner)
 THEN
 NOT DB_LeaderLib_Helpers_Temp_ValidPosition(_Object, _x, _y, _z, _tx, _ty, _tz);
 ItemToTransform(_Item, _x, _ty, _z, _Pitch, _Yaw, _Roll, _Amount, _Owner);
+
+PROC
+LeaderLib_Helpers_CopyItemTransform((ITEMGUID)_Item, (ITEMGUID)_Target, 0, (INTEGER)_Amount, (CHARACTERGUID)_Owner)
+AND
+GetPosition(_Target, _x, _y, _z)
+AND
+GetRotation(_Target, _PitchDegree, _YawDegree, _RollDegree)
+AND
+RealProduct(_PitchDegree, 0.0174533, _Pitch)
+AND
+RealProduct(_YawDegree, 0.0174533, _Yaw)
+AND
+RealProduct(_RollDegree, 0.0174533, _Roll)
+THEN
+ItemToTransform(_Item, _x, _y, _z, _Pitch, _Yaw, _Roll, _Amount, _Owner);
 
 EXITSECTION
 

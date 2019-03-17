@@ -162,6 +162,29 @@ NOT DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z);
 LeaderLog_Log("TRACE", "[LeaderLib:Skills:SkillDummyTeleported] Skill dummy teleported to position. Moving to position as a failsafe.");
 CharacterMoveToPosition(_Dummy, _x, _y, _z, 1, "LeaderLib_Events_SkillDummyArrived");
 
+PROC
+LeaderLib_Skills_UseSkillAtPosition((CHARACTERGUID)_Caster, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_Skill, (INTEGER)_CopyStats, (INTEGER)_CopyEquipment)
+AND
+GetUUID(_Caster, _UUID)
+AND
+Random(999999, _Ran)
+AND
+IntegertoString(_Ran, _RanStr)
+AND
+LeaderLog_QRY_Log("COMBINE", _Skill, "_", _UUID, "_", _RanStr)
+AND
+DB_LeaderLog_Temp_CombinedString(_ID)
+AND
+LeaderLib_Skills_QRY_PrepareSkillDummy(_ID, _Caster, _CopyStats, _CopyEquipment)
+AND
+DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy)
+THEN
+NOT DB_LeaderLog_Temp_CombinedString(_ID);
+//LeaderLog_Log("TRACE", "[LeaderLib:Skills:UseSkillOnTarget] Got dummy with ID [",_ID,"]. Casting [",_Skill,"] after teleport.");
+DB_LeaderLib_Skills_Temp_SkillDummyData(_Dummy, _Caster, _x, _y, _z, _Skill);
+DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z);
+TeleportToPosition(_Dummy, _x, _y, _z, "LeaderLib_Events_SkillDummyTeleported", 0, 0);
+
 //Failsafe
 IF
 StoryEvent((CHARACTERGUID)_Dummy, "LeaderLib_Events_SkillDummyTeleported")
@@ -195,6 +218,17 @@ LeaderLib_Timers_CancelObjectTimer(_Dummy, "LeaderLib_Timers_Skills_StartSkillDu
 //CharacterSetDetached(_Dummy, 0);
 //SetVisible(_Dummy, 1);
 CharacterUseSkill(_Dummy, _Skill, _Target, 1, 1, 1);
+LeaderLib_Skills_MarkDummyForReset(_Dummy, 3000);
+
+IF
+StoryEvent((CHARACTERGUID)_Dummy, "LeaderLib_Events_SkillDummyArrived")
+AND
+DB_LeaderLib_Skills_Temp_SkillDummyData(_Dummy, _Caster, _x, _y, _z, _Skill)
+THEN
+NOT DB_LeaderLib_Skills_Temp_SkillDummyData(_Dummy, _Caster, _x, _y, _z, _Skill);
+LeaderLog_Log("TRACE", "[LeaderLib:Skills:SkillDummyArrived] Skill dummy is using skill [",_Skill,"] at position.");
+LeaderLib_Timers_CancelObjectTimer(_Dummy, "LeaderLib_Timers_Skills_StartSkillDummyCasting");
+CharacterUseSkillAtPosition(_Dummy, _Skill, _x, _y, _z, 1, 1);
 LeaderLib_Skills_MarkDummyForReset(_Dummy, 3000);
 
 /*

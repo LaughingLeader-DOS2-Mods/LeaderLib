@@ -29,6 +29,7 @@ LeaderLib_Settings_InitSurfaces();
 LeaderLib_Settings_InitSkillData();
 LeaderLib_Settings_InitRaceData();
 LeaderLib_Settings_InitStatusData();
+LeaderLib_Settings_InitCCData();
 
 SysClear("DB_LeaderLib_Settings_QueueRates", 3);
 DB_LeaderLib_Settings_QueueRates("TraderSpawn", 500, 2000);
@@ -568,6 +569,52 @@ DB_LeaderLib_DisablingStatusTypes("KNOCKED_DOWN");
 DB_LeaderLib_DisablingStatusTypes("PLAY_DEAD");
 //END_REGION
 
+//REGION CC_DATA
+PROC
+LeaderLib_Settings_InitCCData()
+THEN
+LeaderLib_Settings_Register_PortraitTrigger(1, "Dwarf", 0, 0, TRIGGERGUID_Icon_Dwarf_Male_1_dc7ab589-9a70-4a9c-b566-a98127835a42);
+LeaderLib_Settings_Register_PortraitTrigger(2, "Dwarf", 0, 0, TRIGGERGUID_Icon_Dwarf_Male_2_ccb34018-1625-4f78-aed0-8a8aefd406ba);
+LeaderLib_Settings_Register_PortraitTrigger(1, "Dwarf", 0, 1, TRIGGERGUID_Icon_Undead_Dwarf_Male_1_8df7aeab-9aa2-4772-9c04-dc70d5d43cfe);
+LeaderLib_Settings_Register_PortraitTrigger(2, "Dwarf", 0, 1, TRIGGERGUID_Icon_Undead_Dwarf_Male_2_42d9a235-2614-497f-bd96-6b3e161245e2);
+LeaderLib_Settings_Register_PortraitTrigger(1, "Dwarf", 1, 0, TRIGGERGUID_Icon_Dwarf_Female_1_c79ab02b-ee28-4bde-8e73-c985395c50f7);
+LeaderLib_Settings_Register_PortraitTrigger(2, "Dwarf", 1, 0, TRIGGERGUID_Icon_Dwarf_Female_2_a77d5868-eff2-4310-85bf-2ee746d8e38c);
+LeaderLib_Settings_Register_PortraitTrigger(1, "Dwarf", 1, 1, TRIGGERGUID_Icon_Undead_Dwarf_Female_1_1bf3e8c5-3cce-47e9-8186-75bc4e2ba752);
+LeaderLib_Settings_Register_PortraitTrigger(2, "Dwarf", 1, 1, TRIGGERGUID_Icon_Undead_Dwarf_Female_2_84aa42f6-1b5f-4384-a553-933682dbb506);
+
+LeaderLib_Settings_Register_PortraitTrigger(1, "Elf", 0, 0, TRIGGERGUID_Icon_Elf_Male_1_c7cd3724-a597-45e8-89ab-78005b3f0d7b);
+LeaderLib_Settings_Register_PortraitTrigger(2, "Elf", 0, 0, TRIGGERGUID_Icon_Elf_Male_2_4f7b4564-5e49-4076-9d04-a9eee6cbc148);
+LeaderLib_Settings_Register_PortraitTrigger(1, "Elf", 0, 1, TRIGGERGUID_Icon_Undead_Elf_Male_1_8775bee6-f2fd-4b2b-a40e-381568481c44);
+LeaderLib_Settings_Register_PortraitTrigger(2, "Elf", 0, 1, TRIGGERGUID_Icon_Undead_Elf_Male_2_4a54900b-f088-4d75-a370-1242e8ab36ea);
+LeaderLib_Settings_Register_PortraitTrigger(1, "Elf", 1, 0, TRIGGERGUID_Icon_Elf_Female_1_a96c9b77-2bbd-4015-be1d-7ea614a3be9d);
+LeaderLib_Settings_Register_PortraitTrigger(2, "Elf", 1, 0, TRIGGERGUID_Icon_Elf_Female_2_5c307b23-c61b-4aec-98e0-23d06a401d53);
+LeaderLib_Settings_Register_PortraitTrigger(1, "Elf", 1, 1, TRIGGERGUID_Icon_Undead_Elf_Female_1_281d30d1-7af0-45f5-aab0-19444e55dd5f);
+LeaderLib_Settings_Register_PortraitTrigger(2, "Elf", 1, 1, TRIGGERGUID_Icon_Undead_Elf_Female_2_922b2e54-8366-4442-a7a0-ae02c178a5b9);
+
+LeaderLib_Settings_Register_PortraitTrigger(1, "Human", 0, 0, TRIGGERGUID_Icon_Human_Male_1_a14240ca-15af-4e24-8b03-a66a796aa4d8);
+LeaderLib_Settings_Register_PortraitTrigger(2, "Human", 0, 0, TRIGGERGUID_Icon_Human_Male_2_f10e2e7b-5d99-40ef-a71b-5683e4756194);
+LeaderLib_Settings_Register_PortraitTrigger(1, "Human", 0, 1, TRIGGERGUID_Icon_Undead_Human_Male_1_7a033763-156b-4e2b-b8d8-3c6c37eeb5fe);
+LeaderLib_Settings_Register_PortraitTrigger(2, "Human", 0, 1, TRIGGERGUID_Icon_Undead_Human_Male_2_5ffc1380-41aa-40ca-a854-e6babcee3600);
+LeaderLib_Settings_Register_PortraitTrigger(1, "Human", 1, 0, TRIGGERGUID_Icon_Human_Female_1_acd03bb5-3047-4255-af22-cce5a4975d82);
+LeaderLib_Settings_Register_PortraitTrigger(2, "Human", 1, 0, TRIGGERGUID_Icon_Human_Female_2_23921554-b031-482f-82ca-91ae558f99e8);
+LeaderLib_Settings_Register_PortraitTrigger(1, "Human", 1, 1, TRIGGERGUID_Icon_Undead_Human_Female_1_8cc8b6b9-fa44-48a3-9545-2936a9220554);
+LeaderLib_Settings_Register_PortraitTrigger(2, "Human", 1, 1, TRIGGERGUID_Icon_Undead_Human_Female_2_61f40733-afeb-4dda-99d4-4b120b07b15f);
+
+LeaderLib_Settings_Register_PortraitTrigger(1, "Lizard", 0, 0, TRIGGERGUID_Icon_Lizard_Male_1_a0161ddd-9219-463e-b8d1-bfa70a7c6f34);
+LeaderLib_Settings_Register_PortraitTrigger(2, "Lizard", 0, 0, TRIGGERGUID_Icon_Lizard_Male_2_05b6a99c-3ce8-4c57-80a2-16445a27b570);
+LeaderLib_Settings_Register_PortraitTrigger(1, "Lizard", 0, 1, TRIGGERGUID_Icon_Undead_Lizard_Male_1_6bc53bf2-b434-46bb-9201-562b49edab8d);
+LeaderLib_Settings_Register_PortraitTrigger(2, "Lizard", 0, 1, TRIGGERGUID_Icon_Undead_Lizard_Male_2_73c91b27-e396-4124-a9da-197f6461379b);
+LeaderLib_Settings_Register_PortraitTrigger(1, "Lizard", 1, 0, TRIGGERGUID_Icon_Lizard_Female_1_de0a1dab-02d9-468e-9f27-c24b7385c6e8);
+LeaderLib_Settings_Register_PortraitTrigger(2, "Lizard", 1, 0, TRIGGERGUID_Icon_Lizard_Female_2_79a3b0ed-1807-4d38-b12d-158d507dd243);
+LeaderLib_Settings_Register_PortraitTrigger(1, "Lizard", 1, 1, TRIGGERGUID_Icon_Undead_Lizard_Female_1_7d1a7f9e-5401-4a0a-90ed-db57e12878c4);
+LeaderLib_Settings_Register_PortraitTrigger(2, "Lizard", 1, 1, TRIGGERGUID_Icon_Undead_Lizard_Female_2_86f3ca5d-6267-4618-8589-b9179424becf);
+
+PROC
+LeaderLib_Settings_Register_PortraitTrigger((INTEGER)_Index, (STRING)_Race, (INTEGER)_IsFemale, (INTEGER)_IsUndead, (TRIGGERGUID)_Trigger)
+THEN
+DB_LeaderLib_CC_PortraitTriggers(_Index, _Race, _IsFemale, _IsUndead, _Trigger);
+//END_REGION
+
 //REGION IGNORE_TAGS
 PROC
 LeaderLib_Settings_InitSettings()
@@ -576,6 +623,14 @@ LeaderLib_Helper_Register_IgnoreTag_Character("LeaderLib", "LeaderLib_Dummy");
 //END_REGION
 
 //REGION UPDATES
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,1,17,0)
+THEN
+LeaderLib_Settings_InitCCData();
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
+
 //Add missing _BaseTag to regular races
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)

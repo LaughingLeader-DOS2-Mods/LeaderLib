@@ -141,6 +141,13 @@ IsTagged(_Item, "LeaderLib_AutoLevel", 1)
 THEN
 LeaderLib_Growth_Items_LevelUpItem(_Character, _Item);
 
+PROC
+LeaderLib_Growth_Items_LevelUpItems((CHARACTERGUID)_Character)
+THEN
+//InventoryLaunchTagIterator(_Character, "LeaderLib_AutoLevel", "", "LeaderLib_Commands_AutoLevelItem", "");
+//Handled in LeaderLib_Main.gameScript, iterates an inventory and gets the item's level stat
+SetStoryEvent(_Character, "LeaderLib_Events_AutoLevelItems_Start");
+
 QRY
 LeaderLib_Growtn_Items_QRY_ItemShouldLevelUp((CHARACTERGUID)_Character, (ITEMGUID)_Item)
 AND
@@ -424,6 +431,31 @@ AND
 ObjectGetFlag(_Item, _TransformedFlag, 0)
 THEN
 LeaderLib_Growth_Items_Internal_SetNextTransform(_Character, _Item, _ID, _TransformTemplate, _TransformedFlag);
+LeaderLib_Growth_Items_BlockEquipAfterTransform(_Character, _Item, _ID, _TransformTemplate, _Level);
+
+//Set DB_LeaderLib_Growth_Items_Temp_BlockEquip(_Character, _Item) to block
+PROC
+LeaderLib_Growth_Items_BlockEquipAfterTransform((CHARACTERGUID)_Character, (ITEMGUID)_Item, (STRING)_ID, (STRING)_TransformTemplate, (INTEGER)_Level)
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_Growth_Items_TransformItem((CHARACTERGUID)_Character, (ITEMGUID)_Item, (STRING)_ID, (INTEGER)_Level)
+AND
+DB_LeaderLib_Growth_Items_Temp_NextTransform(_Character, _Item, _ID, _Template, _TransformedFlag)
+AND
+ItemIsEquipable(_Item, 1)
+AND
+NOT DB_LeaderLib_Growth_Items_Temp_BlockEquip(_Character, _Item)
+THEN
+DB_LeaderLib_Growth_Items_Temp_EquipAfterTransform(_Character, _Item);
+
+PROC
+LeaderLib_Growth_Items_TransformItem((CHARACTERGUID)_Character, (ITEMGUID)_Item, (STRING)_ID, (INTEGER)_Level)
+AND
+DB_LeaderLib_Growth_Items_Temp_BlockEquip(_Character, _Item)
+THEN
+NOT DB_LeaderLib_Growth_Items_Temp_BlockEquip(_Character, _Item);
 
 PROC
 LeaderLib_Growth_Items_TransformItem((CHARACTERGUID)_Character, (ITEMGUID)_Item, (STRING)_ID, (INTEGER)_Level)
@@ -433,11 +465,12 @@ AND
 ItemGetOwner(_Item, _Owner)
 THEN
 NOT DB_LeaderLib_Growth_Items_Temp_NextTransform(_Character, _Item, _ID, _Template, _TransformedFlag);
+DB_LeaderLib_Growth_Items_Temp_Transforming(_Character, _Item, _ID, _Template, _TransformedFlag);
 LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:TransformItem] Transforming item [",_ID,"] to template [",_Template,"] with flag [",_TransformedFlag,"].");
-DB_LeaderLib_Growth_Items_Temp_EquipAfterTransform(_Character, _Item);
 LeaderLib_Growth_Items_Internal_Transform_UnequipItem(_Character, _Item);
 Transform(_Item, _Template, 0, 1, 1);
 ItemSetOwner(_Item, _Owner);
+LeaderLib_Timers_StartCharacterItemTimer(_Character, _Item, 50, "LeaderLib_Timers_OnGrowthItemTransformed", "LeaderLib_OnGrowthItemTransformed");
 
 PROC
 LeaderLib_Growth_Items_Internal_Transform_UnequipItem((CHARACTERGUID)_Character, (ITEMGUID)_Item)
@@ -465,8 +498,8 @@ ObjectTransformed((ITEMGUID)_Item, _Template)
 AND
 DB_LeaderLib_Growth_Items_Temp_EquipAfterTransform(_Character, _Item)
 THEN
+NOT DB_LeaderLib_Growth_Items_Temp_EquipAfterTransform(_Character, _Item);
 LeaderLib_Growth_Items_Internal_Transform_EquipItem(_Character, _Item);
-LeaderLib_Timers_StartCharacterItemTimer(_Character, _Item, 50, "LeaderLib_Timers_OnGrowthItemTransformed", "LeaderLib_OnGrowthItemTransformed");
 
 PROC
 LeaderLib_Growth_Items_Internal_Transform_EquipItem((CHARACTERGUID)_Character, (ITEMGUID)_Item)
@@ -478,9 +511,17 @@ CharacterEquipItem(_Character, _Item);
 
 IF
 CharacterItemEvent(_Character, _Item, "LeaderLib_OnGrowthItemTransformed")
+AND
+DB_LeaderLib_Growth_Items_Temp_Transforming(_Character, _Item, _ID, _Template, _TransformedFlag)
 THEN
-NOT DB_LeaderLib_Growth_Items_Temp_EquipAfterTransform(_Character, _Item);
+NOT DB_LeaderLib_Growth_Items_Temp_Transforming(_Character, _Item, _ID, _Template, _TransformedFlag);
 LeaderLib_Growth_Items_LevelUpItem(_Character, _Item);
+LeaderLib_Growth_Items_ItemTransformed(_Character, _Item, _ID, _Template, _TransformedFlag);
+
+PROC
+LeaderLib_Growth_Items_ItemTransformed((CHARACTERGUID)_Character, (ITEMGUID)_Item, (STRING)_ID, (STRING)_TransformTemplate, (STRING)_TransformedFlag)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION RESETTING_ITEMS

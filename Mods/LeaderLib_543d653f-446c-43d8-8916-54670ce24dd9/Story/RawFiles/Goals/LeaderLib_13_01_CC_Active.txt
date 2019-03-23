@@ -25,11 +25,19 @@ THEN
 LeaderLib_CC_SetSelectedPreset(_Player);
 
 PROC
-LeaderLib_CC_ClearLastSelectedPreset((INTEGER)_UserID)
+LeaderLib_CC_ClearLastSelectedPreset((CHARACTERGUID)_Player, (INTEGER)_UserID, (STRING)_NextPreset)
+AND
+NOT DB_LeaderLib_CC_Temp_SelectedPreset(_UserID, _)
+THEN
+LeaderLib_CC_OnPresetChanged(_Player, "", _NextPreset);
+
+PROC
+LeaderLib_CC_ClearLastSelectedPreset((CHARACTERGUID)_Player, (INTEGER)_UserID, (STRING)_NextPreset)
 AND
 DB_LeaderLib_CC_Temp_SelectedPreset(_UserID, _Preset)
 THEN
 NOT DB_LeaderLib_CC_Temp_SelectedPreset(_UserID, _Preset);
+LeaderLib_CC_OnPresetChanged(_Player, _Preset, _NextPreset);
 
 PROC
 LeaderLib_CC_SetSelectedPreset((CHARACTERGUID)_Player)
@@ -38,9 +46,13 @@ GetVarFixedString(_Player, "LeaderLib_CharacterCreationPreset", _Preset)
 AND
 CharacterGetReservedUserID(_Player, _UserID)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:CC:LeaderLib_Events_OnPresetSet] Player's selected preset [",_Preset,"] in Character Creation.");
-LeaderLib_CC_ClearLastSelectedPreset(_UserID);
+LeaderLib_CC_ClearLastSelectedPreset(_Player, _UserID, _Preset);
 DB_LeaderLib_CC_Temp_SelectedPreset(_UserID, _Preset);
+
+PROC
+LeaderLib_CC_OnPresetChanged((CHARACTERGUID)_Player, (STRING)_LastPreset, (STRING)_Preset)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:CC:LeaderLib_CC_OnPresetChanged] Player's preset changed from [",_LastPreset,"] to [",_Preset,"] in Character Creation.");
 
 PROC
 LeaderLib_CC_SetSelectedPreset((CHARACTERGUID)_Player)

@@ -186,7 +186,13 @@ LeaderLib_Combat_QRY_IsEnemy((CHARACTERGUID)_Character, (GUIDSTRING)_Target, (IN
 AND
 ObjectIsCharacter((CHARACTERGUID)_Target, 1)
 AND
-CharacterIsEnemy(_Character, _Target, 1)
+CharacterIsEnemy(_Character, _Target, _a)
+AND
+IsTagged(_Target, "LeaderLib_FriendlyFireEnabled", _b)
+AND
+IntegerSum(_a, _b, _c)
+AND
+_c > 0
 THEN
 DB_NOOP(1);
 

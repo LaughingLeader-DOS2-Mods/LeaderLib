@@ -161,6 +161,24 @@ AND
 _Current >= _Max
 THEN
 DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_HasTaggedWeapon((CHARACTERGUID)_Character, (STRING)_Tag)
+AND
+CharacterGetEquippedItem(_Character, "Weapon", _Weapon)
+AND
+IsTagged(_Weapon, _Tag, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_HasTaggedWeapon((CHARACTERGUID)_Character, (STRING)_Tag)
+AND
+CharacterGetEquippedItem(_Character, "Shield", _Weapon)
+AND
+IsTagged(_Weapon, _Tag, 1)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION EQUIPMENT_REFRESH

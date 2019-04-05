@@ -15,7 +15,7 @@ THEN
 	SetPriority("StartFollow", 10)
 ENDIF
 	
-EVENT LeaderLib_Activate_Follow_Priority
+EVENT LeaderLib_Deactivate_Follow_Priority
 ON
 	OnCharacterFlagCleared("LeaderLib_CharacterIsFollowing", __Me)
 ACTIONS

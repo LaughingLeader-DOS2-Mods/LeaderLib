@@ -295,6 +295,14 @@ DB_LeaderLib_Helper_Temp_ObjectObjectTimer(_TimerName, _Obj1, _Obj2, _CompleteEv
 THEN
 NOT DB_LeaderLib_Helper_Temp_ObjectObjectTimer(_TimerName, _Obj1, _Obj2, _CompleteEvent, _TimerPrefix);
 TimerCancel(_TimerName);
+
+PROC
+LeaderLib_Timers_CancelObjectObjectTimer((GUIDSTRING)_Obj1, (GUIDSTRING)_Obj2, (STRING)_TimerPrefix)
+AND
+DB_LeaderLib_Helper_Temp_ObjectObjectTimer(_TimerName, _Obj1, _Obj2, _CompleteEvent, _TimerPrefix)
+THEN
+NOT DB_LeaderLib_Helper_Temp_ObjectObjectTimer(_TimerName, _Obj1, _Obj2, _CompleteEvent, _TimerPrefix);
+TimerCancel(_TimerName);
 EXITSECTION
 
 ENDEXITSECTION

@@ -12,7 +12,7 @@ NOT LeaderLib_Helper_QRY_IgnoreCharacter(_Character)
 AND
 LeaderLib_Growth_Items_QRY_HasAutoLevelItem(_Character)
 THEN
-LeaderLog_Log("TRACE", "[LeaderLib:Growth:Items:CharacterLeveledUp] Leveling up character equipment.");
+LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:CharacterLeveledUp] Leveling up character equipment.");
 LeaderLib_Growth_Items_LevelUpItems(_Character);
 
 IF
@@ -25,6 +25,17 @@ AND
 NOT LeaderLib_Helper_QRY_IgnoreCharacter(_Character)
 THEN
 LeaderLib_Growth_Items_LevelUpItem(_Character, _Item);
+
+//Transformed items
+IF
+ItemTemplateCombinedWithItemTemplate(_,_,_,_,_,_Player, _Item)
+AND
+IsTagged(_Item, "LeaderLib_AutoLevel", 1)
+AND
+NOT LeaderLib_Helper_QRY_IgnoreItem(_Item)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:ItemTemplateCombinedWithItemTemplate] Combination item is set to auto-level. Checking level.");
+CharacterItemSetEvent(_Player, _Item, "LeaderLib_Commands_CheckItemLevel");
 EXITSECTION
 
 ENDEXITSECTION

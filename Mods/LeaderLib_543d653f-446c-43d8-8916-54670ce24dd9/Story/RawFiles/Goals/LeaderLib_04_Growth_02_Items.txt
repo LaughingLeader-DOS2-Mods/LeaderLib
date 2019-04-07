@@ -291,8 +291,9 @@ CharacterItemEvent(_Character, _Item, "LeaderLib_Events_ItemLeveledUp")
 AND
 NOT DB_LeaderLib_Growth_Items_Temp_AppliedDeltaMods(_Character, _Item)
 THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:LeaderLib_Events_ItemLeveledUp] Applying deltamods to item.");
 DB_LeaderLib_Growth_Items_Temp_AppliedDeltaMods(_Character, _Item);
-LeaderLib_Growth_Items_ApplyDeltaMods(_Item);
+LeaderLib_Growth_Items_ApplyDeltaMods(_Character, _Item);
 
 IF
 CharacterItemEvent(_Character, _Item, "LeaderLib_Events_ItemLevelCheckFinished")
@@ -301,13 +302,14 @@ NOT DB_LeaderLib_Growth_Items_Temp_AppliedDeltaMods(_Character, _Item)
 AND
 LeaderLib_Growth_Items_QRY_ItemHasDeltaMods(_Item)
 THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:LeaderLib_Events_ItemLevelCheckFinished] Applying deltamods to item.");
 DB_LeaderLib_Growth_Items_Temp_AppliedDeltaMods(_Character, _Item);
-LeaderLib_Growth_Items_ApplyDeltaMods(_Item);
+LeaderLib_Growth_Items_ApplyDeltaMods(_Character, _Item);
 
 IF
 DB_LeaderLib_Growth_Items_Temp_AppliedDeltaMods(_Character, _Item)
 THEN
-LeaderLib_Timers_StartCharacterItemTimer(_Character, _Item, 500, "LeaderLib_Timers_Growth_ResetAppliedDeltaModsDatabase", "LeaderLib_Events_Growth_ResetAppliedDeltaModsDatabase");
+LeaderLib_Timers_StartCharacterItemTimer(_Character, _Item, 250, "LeaderLib_Timers_Growth_ResetAppliedDeltaModsDatabase", "LeaderLib_Events_Growth_ResetAppliedDeltaModsDatabase");
 
 IF
 CharacterItemEvent(_Character, _Item, "LeaderLib_Events_Growth_ResetAppliedDeltaModsDatabase")
@@ -318,6 +320,24 @@ NOT DB_LeaderLib_Growth_Items_Temp_AppliedDeltaMods(_Character, _Item);
 
 PROC
 LeaderLib_Growth_Items_ApplyDeltaMods((ITEMGUID)_Item)
+AND
+ItemGetOwner(_Item, _Owner)
+AND
+_Owner != NULL_00000000-0000-0000-0000-000000000000
+THEN
+LeaderLib_Growth_Items_ApplyDeltaMods(_Owner, _Item);
+
+PROC
+LeaderLib_Growth_Items_ApplyDeltaMods((CHARACTERGUID)_Character, (ITEMGUID)_Item)
+AND
+NOT GetVarInteger(_Item, "LeaderLib_Level", _)
+AND
+CharacterGetLevel(_Character, _Level)
+THEN
+SetVarInteger(_Item, "LeaderLib_Level", _Level);
+
+PROC
+LeaderLib_Growth_Items_ApplyDeltaMods((CHARACTERGUID)_Character, (ITEMGUID)_Item)
 AND
 GetVarInteger(_Item, "LeaderLib_Level", _ItemLevel)
 AND
@@ -342,7 +362,7 @@ THEN
 DB_LeaderLib_Growth_Items_Temp_MatchedID(_Item, _ID);
 
 PROC
-LeaderLib_Growth_Items_ApplyDeltaMods((ITEMGUID)_Item)
+LeaderLib_Growth_Items_ApplyDeltaMods((CHARACTERGUID)_Character, (ITEMGUID)_Item)
 AND
 GetVarInteger(_Item, "LeaderLib_Level", _ItemLevel)
 AND
@@ -360,7 +380,7 @@ LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:ApplyDeltaMods] Added deltamod [
 ItemAddDeltaModifier(_Item, _DeltaMod);
 
 PROC
-LeaderLib_Growth_Items_ApplyDeltaMods((ITEMGUID)_Item)
+LeaderLib_Growth_Items_ApplyDeltaMods((CHARACTERGUID)_Character, (ITEMGUID)_Item)
 AND
 DB_LeaderLib_Growth_Items_Temp_MatchedID(_Item, _ID)
 THEN
@@ -368,7 +388,7 @@ NOT DB_LeaderLib_Growth_Items_Temp_MatchedID(_Item, _ID);
 
 //Old template method
 PROC
-LeaderLib_Growth_Items_ApplyDeltaMods((ITEMGUID)_Item)
+LeaderLib_Growth_Items_ApplyDeltaMods((CHARACTERGUID)_Character, (ITEMGUID)_Item)
 AND
 GetVarInteger(_Item, "LeaderLib_Level", _ItemLevel)
 AND
@@ -396,7 +416,7 @@ _Item != NULL_00000000-0000-0000-0000-000000000000
 AND
 LeaderLib_Growth_Items_QRY_ItemHasDeltaMods(_Item)
 THEN
-LeaderLib_Growth_Items_ApplyDeltaMods(_Item);
+LeaderLib_Growth_Items_ApplyDeltaMods(_Character, _Item);
 //END_REGION
 
 //REGION TRANSFORMATIONS

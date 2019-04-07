@@ -47,7 +47,7 @@ LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
 AND
 SysCount("DB_LeaderLib_Growth_Characters_Skills", 5, 0)
 THEN
-LeaderLib_ToggleScripts_DisableScript("LeaderLib_TS_GrowthEvents_Character_Enabled", "LeaderLib");
+LeaderLib_ToggleScripts_DisableScriptAfterDelay("LeaderLib_TS_GrowthEvents_Character_Enabled", "LeaderLib", 1000);
 
 PROC
 LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
@@ -64,7 +64,7 @@ CharacterGetHostCharacter(_Player)
 AND
 NOT PartyFindTaggedItem(_Player, "LeaderLib_AutoLevel", 0, _)
 THEN
-LeaderLib_ToggleScripts_DisableScript("LeaderLib_TS_GrowthEvents_Item_Enabled", "LeaderLib");
+LeaderLib_ToggleScripts_DisableScriptAfterDelay("LeaderLib_TS_GrowthEvents_Item_Enabled", "LeaderLib", 1000);
 //END_REGION
 
 //REGION UPDATE_SCRIPT_ENABLE

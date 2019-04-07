@@ -575,6 +575,15 @@ PROC
 ProcObjectTimerFinished((ITEMGUID)_Backpack, "LeaderLib_Timers_TextEvent_RemoveGenTreasureBackpack")
 THEN
 ItemRemove(_Backpack);
+
+IF
+TextEventSet("leaderlib_addtreasure")
+AND
+GetTextEventParamString(1, _Treasure)
+AND
+CharacterGetHostCharacter(_Player)
+THEN
+CharacterGiveReward(_Player, _Treasure, 1);
 //END_REGION
 
 //REGION PRESETS

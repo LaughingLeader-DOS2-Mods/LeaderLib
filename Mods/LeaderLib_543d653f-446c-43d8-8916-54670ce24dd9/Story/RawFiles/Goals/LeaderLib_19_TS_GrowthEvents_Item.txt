@@ -3,6 +3,7 @@ SubGoalCombiner SGC_AND
 INITSECTION
 
 KBSECTION
+//REGION LEVEL_UP_EVENTS
 IF
 CharacterLeveledUp(_Character)
 AND
@@ -26,6 +27,19 @@ NOT LeaderLib_Helper_QRY_IgnoreCharacter(_Character)
 THEN
 LeaderLib_Growth_Items_LevelUpItem(_Character, _Item);
 
+/*
+IF
+ItemAddedToCharacter(_Item, _Character)
+AND
+IsTagged(_Item, "LeaderLib_AutoLevel", 1)
+AND
+NOT LeaderLib_Helper_QRY_IgnoreItem(_Item)
+AND
+NOT LeaderLib_Helper_QRY_IgnoreCharacter(_Character)
+THEN
+LeaderLib_Growth_Items_LevelUpItem(_Character, _Item);
+*/
+
 //Transformed items
 IF
 ItemTemplateCombinedWithItemTemplate(_,_,_,_,_,_Player, _Item)
@@ -36,6 +50,20 @@ NOT LeaderLib_Helper_QRY_IgnoreItem(_Item)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:ItemTemplateCombinedWithItemTemplate] Combination item is set to auto-level. Checking level.");
 CharacterItemSetEvent(_Player, _Item, "LeaderLib_Commands_CheckItemLevel");
+//END_REGION
+
+//REGION DESTRUCTION_EVENTS
+IF
+ItemUnEquipped(_Item, _Character)
+AND
+IsTagged(_Item, "LeaderLib_RemoveAfterUnequip", 1)
+AND
+ItemIsDestroyed(_Item, 0)
+AND
+ItemIsStoryItem(_Item, 0)
+THEN
+ItemRemove(_Item);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

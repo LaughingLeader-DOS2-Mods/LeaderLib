@@ -1,0 +1,768 @@
+INIT
+
+EVENTS
+
+/*
+**LeaderLib_Events_CreateSurface**
+	The following character/item event converts surface names to a SURFACE type variable.
+Start Event: 
+	LeaderLib_CreateSurface
+Vars:
+	LeaderLib_StringToSurface_Surface
+		This is the SURFACE type var to use. Set with behavior scripting or [LeaderLib_StringToSurface].
+	LeaderLib_CreateSurface_Target FLOAT3
+		The target position of the surface.
+		DEFAULT: The position of the object.
+	LeaderLib_CreateSurface_Owner
+		The owner of the surface. 
+		DEFAULT: The event object.
+	LeaderLib_CreateSurface_Radius FLOAT
+		The radius of the surface.
+		DEFAULT: 1.0
+	LeaderLib_CreateSurface_Turns	INT
+		The lifetime of the surface, in turns.
+		DEFAULT: 2
+Result:
+	LeaderLib_StringToSurface_Surface
+		The resulting SURFACE variable.
+*/
+EVENT LeaderLib_Events_CreateSurface_Character
+VARS
+	CHARACTER:_Obj
+	CHARACTER:_Owner
+	FLOAT3:_Pos
+	SURFACE:_Surface
+	INT:_Turns
+	FLOAT:_Radius
+	STRING:_LogStr
+ON
+	OnCharacterEvent(_Obj, "LeaderLib_CreateSurface")
+ACTIONS
+IF "c1&!c2"
+	GetVar(_Surface, _Obj, "LeaderLib_StringToSurface_Surface")
+	IsEqual(_Surface, null)
+THEN
+	IF "c1&!c2"
+		GetVar(_Pos, _Obj, "LeaderLib_CreateSurface_Target")
+		IsEqual(_Pos, null)
+	THEN
+	ELIF "c1"
+		GetPosition(_Obj, _Pos)
+	THEN
+
+	ENDIF
+
+	IF "c1&!c2"
+		GetVar(_Owner, _Obj, "LeaderLib_CreateSurface_Owner")
+		IsEqual(_Owner, null)
+	THEN
+	ELSE
+		Set(_Owner, _Obj)
+	ENDIF
+
+	IF "c1&!c2"
+		GetVar(_Radius, _Obj, "LeaderLib_CreateSurface_Radius")
+		IsEqual(_Radius, null)
+	THEN
+	ELSE
+		Set(_Radius, 1.0)
+	ENDIF
+
+	IF "c1&!c2"
+		GetVar(_Turns, _Obj, "LeaderLib_CreateSurface_Turns")
+		IsEqual(_Turns, null)
+	THEN
+	ELSE
+		Set(_Turns, 2)
+	ENDIF
+	CreateSurfaceAt(_Pos, _Surface, _Radius, _Turns, _Owner)
+ELSE
+	Print(_LogStr, "[LeaderLib:LeaderLib_TypeHelpers:LeaderLib_CreateSurface] [ERROR] Variable [LeaderLib_StringToSurface_Surface] is not set for object ([1]).", _Obj)
+	SetVar(_Obj, "LeaderLog_Type", STRING:"Error")
+	SetVar(_Obj, "LeaderLog_Message", _LogStr)
+	CharacterEvent(_Obj, "LeaderLog_Commands_Log")
+ENDIF
+
+/*
+**LeaderLib_StringToSurface**
+	The following character/item event converts surface names to a SURFACE type variable.
+Start Event: 
+	LeaderLib_StringToSurface
+Vars:
+	LeaderLib_StringToSurface_String
+		The name of the surface. This gets turned into the behavior script equivalent.
+	LeaderLib_StringToSurface_CompletionEvent
+		The event to call when the conversion is done.
+		Default: LeaderLib_StringToSurface_Done
+Result:
+	LeaderLib_StringToSurface_Surface
+		The resulting SURFACE variable.
+*/
+
+EVENT LeaderLib_Events_StringToSurface_Character
+VARS
+	CHARACTER:_Obj
+	STRING:_SurfaceStr
+	SURFACE:_Surface
+	STRING:_CompletionEvent
+ON
+	OnCharacterEvent(_Obj, "LeaderLib_StringToSurface")
+ACTIONS
+IF "c1&!c2"
+	GetVar(_SurfaceStr, _Obj, "LeaderLib_StringToSurface_String")
+	IsEqual(_SurfaceStr, null)
+THEN
+	//REGION SURFACE_STRING_TO_SURFACE
+	IF "c1"
+		IsEqual(_SurfaceStr, "SurfaceNone")
+	THEN
+		Set(_Surface, SurfaceNone)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceFire")
+	THEN
+		Set(_Surface, SurfaceFire)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceFireBlessed")
+	THEN
+		Set(_Surface, SurfaceFireBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceFireCursed")
+	THEN
+		Set(_Surface, SurfaceFireCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceFirePurified")
+	THEN
+		Set(_Surface, SurfaceFirePurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWater")
+	THEN
+		Set(_Surface, SurfaceWater)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterElectrified")
+	THEN
+		Set(_Surface, SurfaceWaterElectrified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterFrozen")
+	THEN
+		Set(_Surface, SurfaceWaterFrozen)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterBlessed")
+	THEN
+		Set(_Surface, SurfaceWaterBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterElectrifiedBlessed")
+	THEN
+		Set(_Surface, SurfaceWaterElectrifiedBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterFrozenBlessed")
+	THEN
+		Set(_Surface, SurfaceWaterFrozenBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterCursed")
+	THEN
+		Set(_Surface, SurfaceWaterCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterElectrifiedCursed")
+	THEN
+		Set(_Surface, SurfaceWaterElectrifiedCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterFrozenCursed")
+	THEN
+		Set(_Surface, SurfaceWaterFrozenCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterPurified")
+	THEN
+		Set(_Surface, SurfaceWaterPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterElectrifiedPurified")
+	THEN
+		Set(_Surface, SurfaceWaterElectrifiedPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterFrozenPurified")
+	THEN
+		Set(_Surface, SurfaceWaterFrozenPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBlood")
+	THEN
+		Set(_Surface, SurfaceBlood)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodElectrified")
+	THEN
+		Set(_Surface, SurfaceBloodElectrified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodFrozen")
+	THEN
+		Set(_Surface, SurfaceBloodFrozen)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodBlessed")
+	THEN
+		Set(_Surface, SurfaceBloodBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodElectrifiedBlessed")
+	THEN
+		Set(_Surface, SurfaceBloodElectrifiedBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodFrozenBlessed")
+	THEN
+		Set(_Surface, SurfaceBloodFrozenBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodCursed")
+	THEN
+		Set(_Surface, SurfaceBloodCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodElectrifiedCursed")
+	THEN
+		Set(_Surface, SurfaceBloodElectrifiedCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodFrozenCursed")
+	THEN
+		Set(_Surface, SurfaceBloodFrozenCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodPurified")
+	THEN
+		Set(_Surface, SurfaceBloodPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodElectrifiedPurified")
+	THEN
+		Set(_Surface, SurfaceBloodElectrifiedPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodFrozenPurified")
+	THEN
+		Set(_Surface, SurfaceBloodFrozenPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfacePoison")
+	THEN
+		Set(_Surface, SurfacePoison)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfacePoisonBlessed")
+	THEN
+		Set(_Surface, SurfacePoisonBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfacePoisonCursed")
+	THEN
+		Set(_Surface, SurfacePoisonCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfacePoisonPurified")
+	THEN
+		Set(_Surface, SurfacePoisonPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceOil")
+	THEN
+		Set(_Surface, SurfaceOil)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceOilBlessed")
+	THEN
+		Set(_Surface, SurfaceOilBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceOilCursed")
+	THEN
+		Set(_Surface, SurfaceOilCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceOilPurified")
+	THEN
+		Set(_Surface, SurfaceOilPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceLava")
+	THEN
+		Set(_Surface, SurfaceLava)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceSource")
+	THEN
+		Set(_Surface, SurfaceSource)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWeb")
+	THEN
+		Set(_Surface, SurfaceWeb)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWebBlessed")
+	THEN
+		Set(_Surface, SurfaceWebBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWebCursed")
+	THEN
+		Set(_Surface, SurfaceWebCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWebPurified")
+	THEN
+		Set(_Surface, SurfaceWebPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceDeepwater")
+	THEN
+		Set(_Surface, SurfaceDeepwater)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceFireCloud")
+	THEN
+		Set(_Surface, SurfaceFireCloud)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceFireCloudBlessed")
+	THEN
+		Set(_Surface, SurfaceFireCloudBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceFireCloudCursed")
+	THEN
+		Set(_Surface, SurfaceFireCloudCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceFireCloudPurified")
+	THEN
+		Set(_Surface, SurfaceFireCloudPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterCloud")
+	THEN
+		Set(_Surface, SurfaceWaterCloud)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterCloudElectrified")
+	THEN
+		Set(_Surface, SurfaceWaterCloudElectrified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterCloudBlessed")
+	THEN
+		Set(_Surface, SurfaceWaterCloudBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterCloudElectrifiedBlessed")
+	THEN
+		Set(_Surface, SurfaceWaterCloudElectrifiedBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterCloudCursed")
+	THEN
+		Set(_Surface, SurfaceWaterCloudCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterCloudElectrifiedCursed")
+	THEN
+		Set(_Surface, SurfaceWaterCloudElectrifiedCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterCloudPurified")
+	THEN
+		Set(_Surface, SurfaceWaterCloudPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterCloudElectrifiedPurified")
+	THEN
+		Set(_Surface, SurfaceWaterCloudElectrifiedPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodCloud")
+	THEN
+		Set(_Surface, SurfaceBloodCloud)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodCloudElectrified")
+	THEN
+		Set(_Surface, SurfaceBloodCloudElectrified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodCloudBlessed")
+	THEN
+		Set(_Surface, SurfaceBloodCloudBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodCloudElectrifiedBlessed")
+	THEN
+		Set(_Surface, SurfaceBloodCloudElectrifiedBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodCloudCursed")
+	THEN
+		Set(_Surface, SurfaceBloodCloudCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodCloudElectrifiedCursed")
+	THEN
+		Set(_Surface, SurfaceBloodCloudElectrifiedCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodCloudPurified")
+	THEN
+		Set(_Surface, SurfaceBloodCloudPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodCloudElectrifiedPurified")
+	THEN
+		Set(_Surface, SurfaceBloodCloudElectrifiedPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfacePoisonCloud")
+	THEN
+		Set(_Surface, SurfacePoisonCloud)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfacePoisonCloudBlessed")
+	THEN
+		Set(_Surface, SurfacePoisonCloudBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfacePoisonCloudCursed")
+	THEN
+		Set(_Surface, SurfacePoisonCloudCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfacePoisonCloudPurified")
+	THEN
+		Set(_Surface, SurfacePoisonCloudPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceSmokeCloud")
+	THEN
+		Set(_Surface, SurfaceSmokeCloud)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceSmokeCloudBlessed")
+	THEN
+		Set(_Surface, SurfaceSmokeCloudBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceSmokeCloudCursed")
+	THEN
+		Set(_Surface, SurfaceSmokeCloudCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceSmokeCloudPurified")
+	THEN
+		Set(_Surface, SurfaceSmokeCloudPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceExplosionCloud")
+	THEN
+		Set(_Surface, SurfaceExplosionCloud)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceFrostCloud")
+	THEN
+		Set(_Surface, SurfaceFrostCloud)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceDeathfogCloud")
+	THEN
+		Set(_Surface, SurfaceDeathfogCloud)
+	ELSE
+		Set(_Surface, SurfaceNone)
+	ENDIF
+	//END_REGION
+ENDIF
+IF "c1"
+	IsEqual(_Surface, null)
+THEN
+	Set(_Surface, SurfaceNone)
+ENDIF
+	SetVar(_Obj, "LeaderLib_StringToSurface_Surface", _Surface)
+IF "c1&!c2"
+	GetVar(_CompletionEvent, _Obj, "LeaderLib_StringToSurface_CompletionEvent")
+	IsEqual(_CompletionEvent, null)
+THEN
+	CharacterEvent(_Obj, _CompletionEvent)
+ELSE
+	CharacterEvent(_Obj, "LeaderLib_StringToSurface_Done")
+ENDIF
+
+EVENT LeaderLib_Events_StringToSurface_Item
+VARS
+	ITEM:_Obj
+	STRING:_SurfaceStr
+	SURFACE:_Surface
+	STRING:_CompletionEvent
+ON
+	OnItemEvent(_Obj, "LeaderLib_StringToSurface")
+ACTIONS
+IF "c1&!c2"
+	GetVar(_SurfaceStr, _Obj, "LeaderLib_StringToSurface_String")
+	IsEqual(_SurfaceStr, null)
+THEN
+	//REGION SURFACE_STRING_TO_SURFACE
+	IF "c1"
+		IsEqual(_SurfaceStr, "SurfaceNone")
+	THEN
+		Set(_Surface, SurfaceNone)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceFire")
+	THEN
+		Set(_Surface, SurfaceFire)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceFireBlessed")
+	THEN
+		Set(_Surface, SurfaceFireBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceFireCursed")
+	THEN
+		Set(_Surface, SurfaceFireCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceFirePurified")
+	THEN
+		Set(_Surface, SurfaceFirePurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWater")
+	THEN
+		Set(_Surface, SurfaceWater)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterElectrified")
+	THEN
+		Set(_Surface, SurfaceWaterElectrified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterFrozen")
+	THEN
+		Set(_Surface, SurfaceWaterFrozen)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterBlessed")
+	THEN
+		Set(_Surface, SurfaceWaterBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterElectrifiedBlessed")
+	THEN
+		Set(_Surface, SurfaceWaterElectrifiedBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterFrozenBlessed")
+	THEN
+		Set(_Surface, SurfaceWaterFrozenBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterCursed")
+	THEN
+		Set(_Surface, SurfaceWaterCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterElectrifiedCursed")
+	THEN
+		Set(_Surface, SurfaceWaterElectrifiedCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterFrozenCursed")
+	THEN
+		Set(_Surface, SurfaceWaterFrozenCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterPurified")
+	THEN
+		Set(_Surface, SurfaceWaterPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterElectrifiedPurified")
+	THEN
+		Set(_Surface, SurfaceWaterElectrifiedPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterFrozenPurified")
+	THEN
+		Set(_Surface, SurfaceWaterFrozenPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBlood")
+	THEN
+		Set(_Surface, SurfaceBlood)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodElectrified")
+	THEN
+		Set(_Surface, SurfaceBloodElectrified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodFrozen")
+	THEN
+		Set(_Surface, SurfaceBloodFrozen)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodBlessed")
+	THEN
+		Set(_Surface, SurfaceBloodBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodElectrifiedBlessed")
+	THEN
+		Set(_Surface, SurfaceBloodElectrifiedBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodFrozenBlessed")
+	THEN
+		Set(_Surface, SurfaceBloodFrozenBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodCursed")
+	THEN
+		Set(_Surface, SurfaceBloodCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodElectrifiedCursed")
+	THEN
+		Set(_Surface, SurfaceBloodElectrifiedCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodFrozenCursed")
+	THEN
+		Set(_Surface, SurfaceBloodFrozenCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodPurified")
+	THEN
+		Set(_Surface, SurfaceBloodPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodElectrifiedPurified")
+	THEN
+		Set(_Surface, SurfaceBloodElectrifiedPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodFrozenPurified")
+	THEN
+		Set(_Surface, SurfaceBloodFrozenPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfacePoison")
+	THEN
+		Set(_Surface, SurfacePoison)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfacePoisonBlessed")
+	THEN
+		Set(_Surface, SurfacePoisonBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfacePoisonCursed")
+	THEN
+		Set(_Surface, SurfacePoisonCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfacePoisonPurified")
+	THEN
+		Set(_Surface, SurfacePoisonPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceOil")
+	THEN
+		Set(_Surface, SurfaceOil)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceOilBlessed")
+	THEN
+		Set(_Surface, SurfaceOilBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceOilCursed")
+	THEN
+		Set(_Surface, SurfaceOilCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceOilPurified")
+	THEN
+		Set(_Surface, SurfaceOilPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceLava")
+	THEN
+		Set(_Surface, SurfaceLava)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceSource")
+	THEN
+		Set(_Surface, SurfaceSource)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWeb")
+	THEN
+		Set(_Surface, SurfaceWeb)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWebBlessed")
+	THEN
+		Set(_Surface, SurfaceWebBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWebCursed")
+	THEN
+		Set(_Surface, SurfaceWebCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWebPurified")
+	THEN
+		Set(_Surface, SurfaceWebPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceDeepwater")
+	THEN
+		Set(_Surface, SurfaceDeepwater)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceFireCloud")
+	THEN
+		Set(_Surface, SurfaceFireCloud)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceFireCloudBlessed")
+	THEN
+		Set(_Surface, SurfaceFireCloudBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceFireCloudCursed")
+	THEN
+		Set(_Surface, SurfaceFireCloudCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceFireCloudPurified")
+	THEN
+		Set(_Surface, SurfaceFireCloudPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterCloud")
+	THEN
+		Set(_Surface, SurfaceWaterCloud)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterCloudElectrified")
+	THEN
+		Set(_Surface, SurfaceWaterCloudElectrified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterCloudBlessed")
+	THEN
+		Set(_Surface, SurfaceWaterCloudBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterCloudElectrifiedBlessed")
+	THEN
+		Set(_Surface, SurfaceWaterCloudElectrifiedBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterCloudCursed")
+	THEN
+		Set(_Surface, SurfaceWaterCloudCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterCloudElectrifiedCursed")
+	THEN
+		Set(_Surface, SurfaceWaterCloudElectrifiedCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterCloudPurified")
+	THEN
+		Set(_Surface, SurfaceWaterCloudPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceWaterCloudElectrifiedPurified")
+	THEN
+		Set(_Surface, SurfaceWaterCloudElectrifiedPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodCloud")
+	THEN
+		Set(_Surface, SurfaceBloodCloud)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodCloudElectrified")
+	THEN
+		Set(_Surface, SurfaceBloodCloudElectrified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodCloudBlessed")
+	THEN
+		Set(_Surface, SurfaceBloodCloudBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodCloudElectrifiedBlessed")
+	THEN
+		Set(_Surface, SurfaceBloodCloudElectrifiedBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodCloudCursed")
+	THEN
+		Set(_Surface, SurfaceBloodCloudCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodCloudElectrifiedCursed")
+	THEN
+		Set(_Surface, SurfaceBloodCloudElectrifiedCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodCloudPurified")
+	THEN
+		Set(_Surface, SurfaceBloodCloudPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceBloodCloudElectrifiedPurified")
+	THEN
+		Set(_Surface, SurfaceBloodCloudElectrifiedPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfacePoisonCloud")
+	THEN
+		Set(_Surface, SurfacePoisonCloud)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfacePoisonCloudBlessed")
+	THEN
+		Set(_Surface, SurfacePoisonCloudBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfacePoisonCloudCursed")
+	THEN
+		Set(_Surface, SurfacePoisonCloudCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfacePoisonCloudPurified")
+	THEN
+		Set(_Surface, SurfacePoisonCloudPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceSmokeCloud")
+	THEN
+		Set(_Surface, SurfaceSmokeCloud)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceSmokeCloudBlessed")
+	THEN
+		Set(_Surface, SurfaceSmokeCloudBlessed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceSmokeCloudCursed")
+	THEN
+		Set(_Surface, SurfaceSmokeCloudCursed)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceSmokeCloudPurified")
+	THEN
+		Set(_Surface, SurfaceSmokeCloudPurified)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceExplosionCloud")
+	THEN
+		Set(_Surface, SurfaceExplosionCloud)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceFrostCloud")
+	THEN
+		Set(_Surface, SurfaceFrostCloud)
+	ELIF "c1"
+		IsEqual(_SurfaceStr, "SurfaceDeathfogCloud")
+	THEN
+		Set(_Surface, SurfaceDeathfogCloud)
+	ELSE
+		Set(_Surface, SurfaceNone)
+	ENDIF
+	//END_REGION
+ENDIF
+IF "c1"
+	IsEqual(_Surface, null)
+THEN
+	Set(_Surface, SurfaceNone)
+ENDIF
+	SetVar(_Obj, "LeaderLib_StringToSurface_Surface", _Surface)
+IF "c1&!c2"
+	GetVar(_CompletionEvent, _Obj, "LeaderLib_StringToSurface_CompletionEvent")
+	IsEqual(_CompletionEvent, null)
+THEN
+	ItemEvent(_Obj, _CompletionEvent)
+ELSE
+	ItemEvent(_Obj, "LeaderLib_StringToSurface_Done")
+ENDIF

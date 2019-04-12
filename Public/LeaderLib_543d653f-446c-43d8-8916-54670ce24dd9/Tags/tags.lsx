@@ -84,6 +84,19 @@
                     </children>
                 </node>
                 <node id="Tag">
+                    <attribute id="Description" value="This item is automatically removed whe nunequipped." type="23" />
+                    <attribute id="Name" value="LeaderLib_RemoveAfterUnequip" type="23" />
+                    <children>
+                        <node id="Categories">
+                            <children>
+                                <node id="Category">
+                                    <attribute id="Name" value="Code" type="23" />
+                                </node>
+                            </children>
+                        </node>
+                    </children>
+                </node>
+                <node id="Tag">
                     <attribute id="Description" value="Character is a recruited follower of a player." type="23" />
                     <attribute id="Name" value="LeaderLib_IsFollower" type="23" />
                     <children>

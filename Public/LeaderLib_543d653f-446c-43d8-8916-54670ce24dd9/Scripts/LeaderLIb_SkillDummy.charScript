@@ -1,6 +1,7 @@
 INIT
 	CHARACTER:__Me
-
+	FLOAT:%LeaderLib_SkillDummy_WalkSpeed = 20.0
+	FLOAT:%LeaderLib_SkillDummy_RunSpeed = 20.0
 EVENTS
 
 EVENT LeaderLib_SkillDummy_Init_Invisible
@@ -13,5 +14,5 @@ EVENT LeaderLib_SkillDummy_Init
 ON
 	OnCharacterEvent(__Me, "LeaderLib_Events_SkillDummyArrived")
 ACTIONS
-	CharacterSetWalkSpeedOverride(__Me, 1, 20.0)
-	CharacterSetRunSpeedOverride(__Me, 1, 20.0)
+	CharacterSetWalkSpeedOverride(__Me, 1, %LeaderLib_SkillDummy_WalkSpeed)
+	CharacterSetRunSpeedOverride(__Me, 1, %LeaderLib_SkillDummy_RunSpeed)

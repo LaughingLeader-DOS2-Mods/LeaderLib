@@ -11,6 +11,42 @@ AND
 _Val != NULL_00000000-0000-0000-0000-000000000000
 THEN
 DB_NOOP(1);
+
+PROC
+LeaderLib_Helper_CreateSurfaceWithOwner((CHARACTERGUID)_Owner, (STRING)_Surface)
+AND
+GetPosition(_Owner, _x, _y, _z)
+THEN
+LeaderLib_Helper_CreateSurfaceWithOwnerAtPosition(_Owner, _x, _y, _z, _Surface, 1.0, 2);
+
+PROC
+LeaderLib_Helper_CreateSurfaceWithOwner((CHARACTERGUID)_Owner, (GUIDSTRING)_Target, (STRING)_Surface)
+AND
+GetPosition(_Target, _x, _y, _z)
+THEN
+LeaderLib_Helper_CreateSurfaceWithOwnerAtPosition(_Owner, _x, _y, _z, _Surface, 1.0, 2);
+
+PROC
+LeaderLib_Helper_CreateSurfaceWithOwnerAtPosition((CHARACTERGUID)_Owner, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_Surface)
+THEN
+LeaderLib_Helper_CreateSurfaceWithOwnerAtPosition(_Owner, _x, _y, _z, _Surface, 1.0, 2);
+
+PROC
+LeaderLib_Helper_CreateSurfaceWithOwnerAtPosition((CHARACTERGUID)_Owner, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_Surface, (REAL)_Radius)
+THEN
+LeaderLib_Helper_CreateSurfaceWithOwnerAtPosition(_Owner, _x, _y, _z, _Surface, 1.0);
+
+PROC
+LeaderLib_Helper_CreateSurfaceWithOwnerAtPosition((CHARACTERGUID)_Owner, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_Surface, (REAL)_Radius, (INTEGER)_Turns)
+THEN
+SetVarFloat(_Owner, "LeaderLib_CreateSurface_Radius", _Radius);
+SetVarInteger(_Owner, "LeaderLib_CreateSurface_Turns", _Turns);
+SetVarFloat3(_Owner, "LeaderLib_CreateSurface_Target", _x, _y, _z);
+SetVarObject(_Owner, "LeaderLib_CreateSurface_Owner", _Owner);
+
+SetVarString(_Owner, "LeaderLib_StringToSurface_String", _Surface);
+SetVarString(_Owner, "LeaderLib_StringToSurface_CompletionEvent", "LeaderLib_CreateSurface");
+SetStoryEvent(_Owner, "LeaderLib_StringToSurface");
 EXITSECTION
 
 ENDEXITSECTION

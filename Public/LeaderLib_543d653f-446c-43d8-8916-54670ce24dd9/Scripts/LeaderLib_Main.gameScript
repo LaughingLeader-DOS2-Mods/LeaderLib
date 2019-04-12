@@ -1,3 +1,5 @@
+#INCLUDE LeaderLib_TypeHelpers
+
 INIT
 	FIXEDSTRING:%LeaderLib_EmptyString=""
 	INT:%LeaderLib_EmptyInt=0
@@ -14,6 +16,8 @@ INIT
 	FIXEDSTRING:%LeaderLib_InventoryIterator_Tag = ""
 	
 	CHARACTER:%LeaderLib_CreateByStat_Dummy = null
+	
+	USING LeaderLib_TypeHelpers
 EVENTS
 
 /* This event doesn't seem to fire

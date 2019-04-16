@@ -1126,6 +1126,13 @@
                     <attribute id="V2" value="0.0467529" type="6" />
                 </node>
                 <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Grimoire_Activate_Fire" type="22" />
+                    <attribute id="U1" value="0.515747" type="6" />
+                    <attribute id="U2" value="0.531128" type="6" />
+                    <attribute id="V1" value="0.0469971" type="6" />
+                    <attribute id="V2" value="0.0623779" type="6" />
+                </node>
+                <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Grimoire_Activate_Mimicry" type="22" />
                     <attribute id="U1" value="0.468872" type="6" />
                     <attribute id="U2" value="0.484253" type="6" />
@@ -1145,6 +1152,13 @@
                     <attribute id="U2" value="0.515503" type="6" />
                     <attribute id="V1" value="0.0157471" type="6" />
                     <attribute id="V2" value="0.0311279" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Grimoire_Magic_Spark" type="22" />
+                    <attribute id="U1" value="0.500122" type="6" />
+                    <attribute id="U2" value="0.515503" type="6" />
+                    <attribute id="V1" value="0.0469971" type="6" />
+                    <attribute id="V2" value="0.0623779" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_Katana_HelmSplitter" type="22" />

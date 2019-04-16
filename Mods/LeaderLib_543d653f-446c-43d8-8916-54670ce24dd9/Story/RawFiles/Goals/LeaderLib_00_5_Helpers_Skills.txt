@@ -4,6 +4,9 @@ INITSECTION
 //DB_LeaderLib_Skills_StatusToggleSkills(_Skill, _Status, _Duration, _Force)
 KBSECTION
 
+/* If a permanent status is registered, and a skill is registered to toggle it, 
+the flag set in the permanent status will be set/cleared automatically when the skill is used.
+*/
 //REGION TOGGLE_STATUS_SKILL
 PROC
 LeaderLib_Skills_Register_StatusToggleSkill((STRING)_Skill, (STRING)_Status)

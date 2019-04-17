@@ -352,7 +352,7 @@ IF "c1"
 	ItemGetStat(_LevelF, _Item, Level)
 THEN
 	Cast(_Level, _LevelF)
-	SetVar(_Item, "LeaderLib_ItemLevel", _Level)
+	SetVar(_Item, "LeaderLib_Level", _Level)
 	/*
 	Print(_Str, "[LeaderLib:LeaderLib_Main:AutoLevelItemsIterate] Item's level is [1]", _LevelF)
 	SetVar(_Item, "LeaderLog_Message", _Str)
@@ -379,7 +379,7 @@ IF "c1&c2"
 	ItemGetStat(_ItemLevel, _Item, Level)
 THEN
 	Cast(_ItemLevelVar, _ItemLevel)
-	SetVar(_Item, "LeaderLib_ItemLevel", _ItemLevelVar)
+	SetVar(_Item, "LeaderLib_Level", _ItemLevelVar)
 	IF "c1"
 		IsLessThen(_ItemLevel, _CharLevel)
 	THEN

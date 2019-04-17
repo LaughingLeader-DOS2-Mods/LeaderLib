@@ -11,6 +11,12 @@ THEN
 LeaderLib_DynamicMenu_Register_DefaultMenu("LeaderLib.Settings.PresetMenu");
 LeaderLib_DynamicMenu_Register_Dialog("LeaderLib.Settings.PresetMenu", "LeaderLib_PresetMenu");
 
+//Old
+PROC
+LeaderLib_PresetMenu_RegisterPreset((STRING)_Preset, (STRING)_DisplayName, (STRING)_EnabledGlobalFlag)
+THEN
+LeaderLib_PresetMenu_RegisterPreset(_EnabledGlobalFlag, _Preset, _DisplayName, _EnabledGlobalFlag);
+
 PROC
 LeaderLib_PresetMenu_RegisterPreset((STRING)_Group, (STRING)_Preset, (STRING)_DisplayName, (STRING)_EnabledGlobalFlag)
 AND
@@ -20,9 +26,9 @@ LeaderLib_DynamicMenu_Register_Entry("LeaderLib.Settings.PresetMenu", _Preset, _
 DB_LeaderLib_PresetMenu_RegisteredPreset(_Group, _Preset, _EnabledGlobalFlag);
 
 PROC
-LeaderLib_PresetMenu_RegisterPreset((STRING)_Preset, (STRING)_DisplayName, (STRING)_EnabledGlobalFlag)
+LeaderLib_PresetMenu_RegisterPreset((STRING)_Group, (STRING)_Preset, (STRING)_DisplayName, (STRING)_EnabledGlobalFlag)
 AND
-_EnabledGlobalFlag != "LeaderLib_PresetMenu_IsAct1"
+_Group != "DOS2_Act1"
 THEN
 LeaderLib_PresetMenu_StartSorting();
 
@@ -104,16 +110,6 @@ StoryEvent(_, "LeaderLib_Events_OnPresetMenuSortComplete")
 THEN
 SysClear("DB_LeaderLib_PresetMenu_Temp_PreSortedValues", 2);
 LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:OnPresetMenuSortComplete] The Preset Menu was sorted successfully.");
-//END_REGION
-
-//REGION SETTINGS_OLD
-PROC
-LeaderLib_PresetMenu_RegisterPreset((STRING)_Preset, (STRING)_DisplayName, (STRING)_EnabledGlobalFlag)
-AND
-NOT DB_LeaderLib_PresetMenu_RegisteredPreset(_, _Preset, _)
-THEN
-LeaderLib_DynamicMenu_Register_Entry("LeaderLib.Settings.PresetMenu", _Preset, _DisplayName);
-DB_LeaderLib_PresetMenu_RegisteredPreset(_EnabledGlobalFlag, _Preset, _EnabledGlobalFlag);
 //END_REGION
 
 //REGION UPDATES

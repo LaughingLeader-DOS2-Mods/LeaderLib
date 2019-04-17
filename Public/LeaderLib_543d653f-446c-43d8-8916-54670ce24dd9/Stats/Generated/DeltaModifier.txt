@@ -47,7 +47,7 @@ param "SlotType" "Boots"
 new boost "_Boost_Armor_All_EmptyRuneSlot",1
 
 new deltamod "Boost_LeaderLib_Armor_UpperBody_EmptyRuneSlot"
-param "BoostType" "RuneEmpty"
+param "BoostType" "ItemCombo"
 param "MinLevel" "1"
 param "Frequency" "1"
 param "ModifierType" "Armor"
@@ -55,7 +55,7 @@ param "SlotType" "Breast"
 new boost "_Boost_Armor_All_EmptyRuneSlot",1
 
 new deltamod "Boost_LeaderLib_Armor_UpperBody_EmptyRuneSlot2"
-param "BoostType" "RuneEmpty"
+param "BoostType" "ItemCombo"
 param "MinLevel" "1"
 param "Frequency" "1"
 param "ModifierType" "Armor"

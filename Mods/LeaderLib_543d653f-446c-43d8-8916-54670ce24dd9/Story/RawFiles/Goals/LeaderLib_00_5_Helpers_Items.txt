@@ -368,6 +368,13 @@ ObjectIsItem((ITEMGUID)_Item, 1)
 THEN
 ItemRemove(_Item);
 
+PROC
+ProcObjectTimerFinished((ITEMGUID)_Item, "LeaderLib_Commands_RemoveItem")
+AND
+ObjectExists(_Item, 1)
+THEN
+ItemRemove(_Item);
+
 IF
 StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Commands_GetItemInSlot")
 AND
@@ -562,6 +569,34 @@ QRY
 LeaderLib_Helper_QRY_Combo_ItemMatch((ITEMGUID)_Item, (ITEMGUID)_T1, (ITEMGUID)_T2, (ITEMGUID)_T3, (ITEMGUID)_T4, (ITEMGUID)_T5)
 AND
 _Item == _T5
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION RUNE_HELPERS
+QRY
+LeaderLib_Helper_QRY_RemoveRunes((CHARACTERGUID)_Player, (ITEMGUID)_Item)
+THEN
+LeaderLib_Helper_RemoveRunes(_Player, _Item);
+
+PROC
+LeaderLib_Helper_RemoveRunes((CHARACTERGUID)_Player, (ITEMGUID)_Item)
+AND
+ItemRemoveRune(_Player, _Item, 0, _Rune)
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_Helper_RemoveRunes((CHARACTERGUID)_Player, (ITEMGUID)_Item)
+AND
+ItemRemoveRune(_Player, _Item, 1, _Rune)
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_Helper_RemoveRunes((CHARACTERGUID)_Player, (ITEMGUID)_Item)
+AND
+ItemRemoveRune(_Player, _Item, 2, _Rune)
 THEN
 DB_NOOP(1);
 //END_REGION

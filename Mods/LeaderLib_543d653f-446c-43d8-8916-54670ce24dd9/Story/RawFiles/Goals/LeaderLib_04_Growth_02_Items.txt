@@ -632,11 +632,13 @@ LeaderLib_Growth_Items_QRY_ResetEquippedItems((CHARACTERGUID)_Character, (STRING
 AND
 DB_LeaderLib_EquipmentSlots(_Slot)
 AND
-CharacterGetEquippedItem(_Character, _Slot, _Item)
+CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
 AND
 _Item != NULL_00000000-0000-0000-0000-000000000000
 AND
-GetTemplate((ITEMGUID)_Item, _Template)
+LeaderLib_Helper_QRY_RemoveRunes(_Character, _Item)
+AND
+GetTemplate(_Item, _Template)
 AND
 ItemGetOwner(_Item, _Owner)
 AND
@@ -644,8 +646,7 @@ GetPosition(_Character, _x, _y, _z)
 AND
 CreateItemTemplateAtPosition(_Template, _x, _y, _z, _NewItem)
 THEN
-//CharacterUnequipItem(_Character, _Item);
-ItemRemove(_Item);
+ProcObjectTimer(_Item, "LeaderLib_Commands_RemoveItem", 50);
 ItemSetOwner(_NewItem, _Owner);
 LeaderLib_Growth_Items_Internal_Transform_EquipResetItem(_Character, _NewItem);
 

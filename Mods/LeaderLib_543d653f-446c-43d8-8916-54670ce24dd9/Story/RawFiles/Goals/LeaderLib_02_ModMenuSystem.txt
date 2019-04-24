@@ -809,6 +809,20 @@ DB_DialogName("LeaderLib_ModMenu", _Instance)
 THEN
 LeaderLib_ModMenu_Internal_PreventSharedDialog(_Instance);
 
+IF
+DB_GLO_AllDialogObjectFlagsShared(_Instance)
+AND
+DB_DialogName("LeaderLib_PresetMenu", _Instance)
+THEN
+LeaderLib_ModMenu_Internal_PreventSharedDialog(_Instance);
+
+IF
+DB_GLO_AllDialogObjectFlagsShared(_Instance)
+AND
+DB_DialogName("LeaderLib_CommandsMenu", _Instance)
+THEN
+LeaderLib_ModMenu_Internal_PreventSharedDialog(_Instance);
+
 /*
 IF
 DB_GLO_AllDialogObjectFlagsShared(_Instance)

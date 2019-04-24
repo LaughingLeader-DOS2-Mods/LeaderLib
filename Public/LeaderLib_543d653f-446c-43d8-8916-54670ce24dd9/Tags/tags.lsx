@@ -138,6 +138,19 @@
                         </node>
                     </children>
                 </node>
+                <node id="Tag">
+                    <attribute id="Description" value="Prevents the item from receiving  deltamods from the item growth system." type="23" />
+                    <attribute id="Name" value="LeaderLib_DisableDeltamods" type="23" />
+                    <children>
+                        <node id="Categories">
+                            <children>
+                                <node id="Category">
+                                    <attribute id="Name" value="Code" type="23" />
+                                </node>
+                            </children>
+                        </node>
+                    </children>
+                </node>
             </children>
         </node>
     </region>

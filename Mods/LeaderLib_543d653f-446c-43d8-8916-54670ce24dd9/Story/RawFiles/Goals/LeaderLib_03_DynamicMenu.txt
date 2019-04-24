@@ -116,6 +116,16 @@ NOT DB_LeaderLib_DynamicMenu_Settings(_ID, _VarArrayID, _EntriesPerPage, _Previo
 DB_LeaderLib_DynamicMenu_Settings(_ID, _VarArrayID, _EntriesPerPage, _LastPageIndex, _MaxPage);
 
 PROC
+LeaderLib_DynamicMenu_Internal_CalculatePageValues((STRING)_ID)
+AND
+LeaderLib_Array_QRY_EmptyLength(_ID)
+AND
+DB_LeaderLib_DynamicMenu_Settings(_ID, _VarArrayID, _EntriesPerPage, _PreviousLastPageIndex, _PreviousMaxPage)
+THEN
+NOT DB_LeaderLib_DynamicMenu_Settings(_ID, _VarArrayID, _EntriesPerPage, _PreviousLastPageIndex, _PreviousMaxPage);
+DB_LeaderLib_DynamicMenu_Settings(_ID, _VarArrayID, _EntriesPerPage, 0, 1);
+
+PROC
 LeaderLib_DynamicMenu_InitMenu((STRING)_ID, (INTEGER)_Instance)
 AND
 DB_LeaderLib_DynamicMenu_Temp_InstanceVars(_ID, _Instance, _CurrentPage)
@@ -126,6 +136,8 @@ PROC
 LeaderLib_DynamicMenu_InitMenu((STRING)_ID, (INTEGER)_Instance)
 AND
 DB_LeaderLib_DynamicMenu_Settings(_ID, _VarArrayID, _EntriesPerPage, _LastPageIndex, _MaxPage)
+AND
+NOT LeaderLib_Array_QRY_EmptyLength(_ID)
 THEN
 DB_LeaderLib_DynamicMenu_Temp_InstanceVars(_ID, _Instance, 0);
 LeaderLib_DynamicMenu_Internal_LoadPageVariables(_ID, _Instance);
@@ -134,6 +146,8 @@ PROC
 LeaderLib_DynamicMenu_InitMenu((STRING)_ID, (INTEGER)_Instance)
 AND
 DB_LeaderLib_DynamicMenu_Settings(_ID, _VarArrayID, _EntriesPerPage, _LastPageIndex, _MaxPage)
+AND
+NOT LeaderLib_Array_QRY_EmptyLength(_ID)
 AND
 _LastPageIndex > 0
 AND
@@ -155,6 +169,8 @@ NOT DB_LeaderLib_DynamicMenu_Temp_MenuVariableValue(_ID, _Instance, _EntryIndex,
 PROC
 LeaderLib_DynamicMenu_Internal_LoadPageVariables((STRING)_ID, (INTEGER)_Instance)
 AND
+DialogGetInvolvedPlayer(_Instance, 1, _Player)
+AND
 DB_LeaderLib_DynamicMenu_Settings(_ID, _VarArrayID, _EntriesPerPage, _LastPageIndex, _MaxPage)
 AND
 DB_LeaderLib_DynamicMenu_Temp_InstanceVars(_ID, _Instance, _CurrentPage)
@@ -170,8 +186,6 @@ AND
 LeaderLib_DynamicMenu_Internal_QRY_DisableEntryIfNotAvailable(_ID, _Instance, _EntryIndex, _AvailableFlag)
 AND
 DB_LeaderLib_Dictionary_Data(_ID, _EntryIndex, _EntryKey, _DisplayText)
-AND
-DialogGetInvolvedPlayer(_Instance, 1, _Player)
 THEN
 LeaderLib_DynamicMenu_BlockEntry(_Player, _ID, _DialogVar, _AvailableFlag, _Instance, _EntryKey, _DisplayText);
 LeaderLib_DynamicMenu_SetAvailableFlag(_Player, _ID, _DialogVar, _AvailableFlag, _Instance, _EntryKey, _DisplayText);

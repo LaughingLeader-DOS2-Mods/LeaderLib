@@ -54,7 +54,8 @@ PROC
 LeaderLib_PresetMenu_StartSorting()
 THEN
 TimerCancel("LeaderLib_Timers_SortPresetMenu");
-TimerLaunch("LeaderLib_Timers_SortPresetMenu", 500);
+TimerLaunch("LeaderLib_Timers_SortPresetMenu", 50);
+GlobalSetFlag("LeaderLib_PresetMenu_LockOpening");
 
 IF
 TimerFinished("LeaderLib_Timers_SortPresetMenu")
@@ -108,6 +109,7 @@ LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:OnPresetMenuSortComplete] Rebuild 
 IF
 StoryEvent(_, "LeaderLib_Events_OnPresetMenuSortComplete")
 THEN
+GlobalClearFlag("LeaderLib_PresetMenu_LockOpening");
 SysClear("DB_LeaderLib_PresetMenu_Temp_PreSortedValues", 2);
 LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:OnPresetMenuSortComplete] The Preset Menu was sorted successfully.");
 //END_REGION

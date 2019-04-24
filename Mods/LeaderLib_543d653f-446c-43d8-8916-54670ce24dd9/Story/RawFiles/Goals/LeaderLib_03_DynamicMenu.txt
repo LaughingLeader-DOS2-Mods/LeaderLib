@@ -155,7 +155,7 @@ DB_LeaderLib_DynamicMenu_Flags(_ID, _HasMultiplePagesFlag, _NextPageFlag, _Previ
 AND
 DialogGetInvolvedPlayer(_Instance, 1, _Player)
 THEN
-ObjectSetFlag(_Player, _HasMultiplePagesFlag, _Instance);
+ObjectSetFlag(_Player, _HasMultiplePagesFlag, 0);
 //END_REGION
 
 //REGION PAGE_VARIABLES
@@ -205,7 +205,7 @@ LeaderLib_DynamicMenu_SetAvailableFlag((GUIDSTRING)_Player, (STRING)_ID, (STRING
 AND
 NOT DB_LeaderLib_DynamicMenu_EntryBlocked(_Player, _ID, _EntryKey, _Instance)
 THEN
-ObjectSetFlag(_Player, _AvailableFlag, _Instance);
+ObjectSetFlag(_Player, _AvailableFlag, 0);
 
 PROC
 LeaderLib_DynamicMenu_OnEntryValueSet((GUIDSTRING)_Player, (STRING)_ID, (STRING)_DialogVar, (STRING)_AvailableFlag, (INTEGER)_Instance, (STRING)_EntryKey, (STRING)_DisplayText)
@@ -272,7 +272,7 @@ NOT DB_LeaderLib_Dictionary_Data(_ID, _Index, _, _)
 AND
 DialogGetInvolvedPlayer(_Instance, 1, _Player)
 THEN
-ObjectClearFlag(_Player, _AvailableFlag, _Instance);
+ObjectClearFlag(_Player, _AvailableFlag, 0);
 //END_REGION
 
 //REGION PAGE_CHANGING
@@ -392,27 +392,58 @@ PROC
 LeaderLib_DynamicMenu_Internal_PageLoaded((STRING)_ID, (GUIDSTRING)_Player, (INTEGER)_CurrentPage, (INTEGER)_LastPageIndex, (INTEGER)_Instance)
 AND
 _CurrentPage == 0
+AND
+_LastPageIndex > 0
 THEN
-ObjectSetFlag(_Player, "LeaderLib_DynamicMenu_IsFirstPage", _Instance);
-ObjectClearFlag(_Player, "LeaderLib_DynamicMenu_IsLastPage", _Instance);
+DB_LeaderLib_DynamicMenu_Temp_PageFlagResolved(_Player, _Instance);
+ObjectSetFlag(_Player, "LeaderLib_DynamicMenu_IsFirstPage", 0);
+ObjectClearFlag(_Player, "LeaderLib_DynamicMenu_IsLastPage", 0);
 
 PROC
 LeaderLib_DynamicMenu_Internal_PageLoaded((STRING)_ID, (GUIDSTRING)_Player, (INTEGER)_CurrentPage, (INTEGER)_LastPageIndex, (INTEGER)_Instance)
 AND
+NOT DB_LeaderLib_DynamicMenu_Temp_PageFlagResolved(_Player, _Instance)
+AND
 _CurrentPage == _LastPageIndex
+AND
+_CurrentPage > 0
 THEN
-ObjectClearFlag(_Player, "LeaderLib_DynamicMenu_IsFirstPage", _Instance);
-ObjectSetFlag(_Player, "LeaderLib_DynamicMenu_IsLastPage", _Instance);
+DB_LeaderLib_DynamicMenu_Temp_PageFlagResolved(_Player, _Instance);
+ObjectClearFlag(_Player, "LeaderLib_DynamicMenu_IsFirstPage", 0);
+ObjectSetFlag(_Player, "LeaderLib_DynamicMenu_IsLastPage", 0);
 
 PROC
 LeaderLib_DynamicMenu_Internal_PageLoaded((STRING)_ID, (GUIDSTRING)_Player, (INTEGER)_CurrentPage, (INTEGER)_LastPageIndex, (INTEGER)_Instance)
+AND
+NOT DB_LeaderLib_DynamicMenu_Temp_PageFlagResolved(_Player, _Instance)
 AND
 _CurrentPage != 0
 AND
 _CurrentPage != _LastPageIndex
 THEN
-ObjectClearFlag(_Player, "LeaderLib_DynamicMenu_IsFirstPage", _Instance);
-ObjectClearFlag(_Player, "LeaderLib_DynamicMenu_IsLastPage", _Instance);
+DB_LeaderLib_DynamicMenu_Temp_PageFlagResolved(_Player, _Instance);
+ObjectClearFlag(_Player, "LeaderLib_DynamicMenu_IsFirstPage", 0);
+ObjectClearFlag(_Player, "LeaderLib_DynamicMenu_IsLastPage", 0);
+
+PROC
+LeaderLib_DynamicMenu_Internal_PageLoaded((STRING)_ID, (GUIDSTRING)_Player, (INTEGER)_CurrentPage, (INTEGER)_LastPageIndex, (INTEGER)_Instance)
+AND
+NOT DB_LeaderLib_DynamicMenu_Temp_PageFlagResolved(_Player, _Instance)
+AND
+_CurrentPage == 0
+AND
+_LastPageIndex == 0
+THEN
+DB_LeaderLib_DynamicMenu_Temp_PageFlagResolved(_Player, _Instance);
+ObjectClearFlag(_Player, "LeaderLib_DynamicMenu_IsFirstPage", 0);
+ObjectClearFlag(_Player, "LeaderLib_DynamicMenu_IsLastPage", 0);
+
+PROC
+LeaderLib_DynamicMenu_Internal_PageLoaded((STRING)_ID, (GUIDSTRING)_Player, (INTEGER)_CurrentPage, (INTEGER)_LastPageIndex, (INTEGER)_Instance)
+AND
+DB_LeaderLib_DynamicMenu_Temp_PageFlagResolved(_Player, _Instance)
+THEN
+NOT DB_LeaderLib_DynamicMenu_Temp_PageFlagResolved(_Player, _Instance);
 //END_REGION
 
 //REGION ENTRY_SELECTED
@@ -459,20 +490,20 @@ LeaderLib_DynamicMenu_OnMenuClosed((STRING)_ID, (GUIDSTRING)_Player, (INTEGER)_I
 AND
 DB_LeaderLib_DynamicMenu_Variable(_ID, _DialogVar, _AvailableFlag, _SelectedFlag)
 THEN
-ObjectClearFlag(_Player, _AvailableFlag, _Instance);
+ObjectClearFlag(_Player, _AvailableFlag, 0);
 
 PROC
 LeaderLib_DynamicMenu_OnMenuClosed((STRING)_ID, (GUIDSTRING)_Player, (INTEGER)_Instance)
 AND
 DB_LeaderLib_DynamicMenu_Flags(_ID, _HasMultiplePagesFlag, _NextPageFlag, _PreviousPageFlag, _FirstPageFlag, _LastPageFlag)
 THEN
-ObjectClearFlag(_Player, _HasMultiplePagesFlag, _Instance);
+ObjectClearFlag(_Player, _HasMultiplePagesFlag, 0);
 
 PROC
 LeaderLib_DynamicMenu_OnMenuClosed((STRING)_ID, (GUIDSTRING)_Player, (INTEGER)_Instance)
 THEN
-ObjectClearFlag(_Player, "LeaderLib_DialogMenu_IsFirstPage", _Instance);
-ObjectClearFlag(_Player, "LeaderLib_DialogMenu_IsLastPage", _Instance);
+ObjectClearFlag(_Player, "LeaderLib_DialogMenu_IsFirstPage", 0);
+ObjectClearFlag(_Player, "LeaderLib_DialogMenu_IsLastPage", 0);
 //END_REGION
 
 EXITSECTION

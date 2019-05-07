@@ -484,6 +484,26 @@ QRY
 LeaderLib_Helper_QRY_SetGlobalFlag((STRING)_Flag)
 THEN
 GlobalSetFlag(_Flag);
+
+//Skip Check
+QRY
+LeaderLib_Helper_QRY_ObjectFlagEquals((GUIDSTRING)_Object, (STRING)_Flag, -1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_ObjectFlagEquals((GUIDSTRING)_Object, (STRING)_Flag, 0)
+AND
+ObjectGetFlag(_Object, _Flag, 0)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_ObjectFlagEquals((GUIDSTRING)_Object, (STRING)_Flag, 1)
+AND
+ObjectGetFlag(_Object, _Flag, 1)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION RANDOM

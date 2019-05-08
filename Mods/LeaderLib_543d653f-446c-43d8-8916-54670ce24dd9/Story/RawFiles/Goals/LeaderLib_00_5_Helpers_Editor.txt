@@ -18,11 +18,20 @@ DB_NOOP(1);
 
 QRY
 LeaderLib_Recon_QRY_GetUUID((STRING)_Command, (INTEGER)_ParamIndex, (GUIDSTRING)_FallbackValue)
+AND
+IntegertoString(_ParamIndex, _ParamIndexStr)
+AND
+StringConcatenate("Param", _ParamIndexStr, _ParamID)
 THEN
-LeaderLib_Recon_SetUUID(_Command, _ParamIndex, _FallbackValue);
+LeaderLib_Recon_SetUUID(_Command, _ParamID, _ParamIndex, _FallbackValue);
+
+QRY
+LeaderLib_Recon_QRY_GetUUID((STRING)_Command, (STRING)_ParamID, (INTEGER)_ParamIndex, (GUIDSTRING)_FallbackValue)
+THEN
+LeaderLib_Recon_SetUUID(_Command, _ParamID, _ParamIndex, _FallbackValue);
 
 PROC
-LeaderLib_Recon_SetUUID((STRING)_Command, (INTEGER)_ParamIndex, (GUIDSTRING)_FallbackValue)
+LeaderLib_Recon_SetUUID((STRING)_Command, (STRING)_ParamID, (INTEGER)_ParamIndex, (GUIDSTRING)_FallbackValue)
 AND
 GetTextEventParamUUID(_ParamIndex, _Value)
 AND
@@ -30,78 +39,104 @@ LeaderLib_Recon_QRY_IsValidUUID(_Value)
 AND
 IntegerSum(_ParamIndex, 1, _NextParamIndex)
 THEN
-DB_LeaderLib_Recon_Temp_CommandParameters_UUID(_Command, _Value, _NextParamIndex);
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID(_Command, _ParamID, _Value, _NextParamIndex);
 
 PROC
-LeaderLib_Recon_SetUUID((STRING)_Command, (INTEGER)_ParamIndex, (GUIDSTRING)_FallbackValue)
+LeaderLib_Recon_SetUUID((STRING)_Command, (STRING)_ParamID, (INTEGER)_ParamIndex, (GUIDSTRING)_FallbackValue)
 AND
-NOT DB_LeaderLib_Recon_Temp_CommandParameters_UUID(_Command, _, _)
+NOT DB_LeaderLib_Recon_Temp_CommandParameters_UUID(_Command, _ParamID, _, _)
 THEN
-DB_LeaderLib_Recon_Temp_CommandParameters_UUID(_Command, _FallbackValue, _ParamIndex);
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID(_Command, _ParamID, _FallbackValue, _ParamIndex);
 
 QRY
 LeaderLib_Recon_QRY_GetString((STRING)_Command, (INTEGER)_ParamIndex, (STRING)_FallbackValue)
+AND
+IntegertoString(_ParamIndex, _ParamIndexStr)
+AND
+StringConcatenate("Param", _ParamIndexStr, _ParamID)
 THEN
-LeaderLib_Recon_SetString(_Command, _ParamIndex, _FallbackValue);
+LeaderLib_Recon_SetString(_Command, _ParamID, _ParamIndex, _FallbackValue);
+
+QRY
+LeaderLib_Recon_QRY_GetString((STRING)_Command, (STRING)_ParamID, (INTEGER)_ParamIndex, (STRING)_FallbackValue)
+THEN
+LeaderLib_Recon_SetString(_Command, _ParamID, _ParamIndex, _FallbackValue);
 
 PROC
-LeaderLib_Recon_SetString((STRING)_Command, (INTEGER)_ParamIndex, (STRING)_FallbackValue)
+LeaderLib_Recon_SetString((STRING)_Command, (STRING)_ParamID, (INTEGER)_ParamIndex, (STRING)_FallbackValue)
 AND
 GetTextEventParamString(_ParamIndex, _Value)
 AND
 IntegerSum(_ParamIndex, 1, _NextParamIndex)
 THEN
-DB_LeaderLib_Recon_Temp_CommandParameters_String(_Command, _Value, _NextParamIndex);
+DB_LeaderLib_Recon_Temp_CommandParameters_String(_Command, _ParamID, _Value, _NextParamIndex);
 
 PROC
-LeaderLib_Recon_SetString((STRING)_Command, (INTEGER)_ParamIndex, (STRING)_FallbackValue)
+LeaderLib_Recon_SetString((STRING)_Command, (STRING)_ParamID, (INTEGER)_ParamIndex, (STRING)_FallbackValue)
 AND
-NOT DB_LeaderLib_Recon_Temp_CommandParameters_String(_Command, _, _)
+NOT DB_LeaderLib_Recon_Temp_CommandParameters_String(_Command, _ParamID, _, _)
 THEN
-DB_LeaderLib_Recon_Temp_CommandParameters_String(_Command, _FallbackValue, _ParamIndex);
+DB_LeaderLib_Recon_Temp_CommandParameters_String(_Command, _ParamID, _FallbackValue, _ParamIndex);
 
 QRY
 LeaderLib_Recon_QRY_GetInt((STRING)_Command, (INTEGER)_ParamIndex, (INTEGER)_FallbackValue)
+AND
+IntegertoString(_ParamIndex, _ParamIndexStr)
+AND
+StringConcatenate("Param", _ParamIndexStr, _ParamID)
 THEN
-LeaderLib_Recon_SetInt(_Command, _ParamIndex, _FallbackValue);
+LeaderLib_Recon_SetInt(_Command, _ParamID, _ParamIndex, _FallbackValue);
+
+QRY
+LeaderLib_Recon_QRY_GetInt((STRING)_Command, (STRING)_ParamID, (INTEGER)_ParamIndex, (INTEGER)_FallbackValue)
+THEN
+LeaderLib_Recon_SetInt(_Command, _ParamID, _ParamIndex, _FallbackValue);
 
 PROC
-LeaderLib_Recon_SetInt((STRING)_Command, (INTEGER)_ParamIndex, (INTEGER)_FallbackValue)
+LeaderLib_Recon_SetInt((STRING)_Command, (STRING)_ParamID, (INTEGER)_ParamIndex, (INTEGER)_FallbackValue)
 AND
 GetTextEventParamInteger(_ParamIndex, _Value)
 AND
 IntegerSum(_ParamIndex, 1, _NextParamIndex)
 THEN
-DB_LeaderLib_Recon_Temp_CommandParameters_Int(_Command, _Value, _NextParamIndex);
+DB_LeaderLib_Recon_Temp_CommandParameters_Int(_Command, _ParamID, _Value, _NextParamIndex);
 
 PROC
-LeaderLib_Recon_SetInt((STRING)_Command, (INTEGER)_ParamIndex, (INTEGER)_FallbackValue)
+LeaderLib_Recon_SetInt((STRING)_Command, (STRING)_ParamID, (INTEGER)_ParamIndex, (INTEGER)_FallbackValue)
 AND
-NOT DB_LeaderLib_Recon_Temp_CommandParameters_Int(_Command, _, _)
+NOT DB_LeaderLib_Recon_Temp_CommandParameters_Int(_Command, _ParamID, _, _)
 THEN
-DB_LeaderLib_Recon_Temp_CommandParameters_Int(_Command, _FallbackValue, _ParamIndex);
+DB_LeaderLib_Recon_Temp_CommandParameters_Int(_Command, _ParamID, _FallbackValue, _ParamIndex);
 
 QRY
 LeaderLib_Recon_QRY_GetReal((STRING)_Command, (INTEGER)_ParamIndex, (REAL)_FallbackValue)
+AND
+IntegertoString(_ParamIndex, _ParamIndexStr)
+AND
+StringConcatenate("Param", _ParamIndexStr, _ParamID)
 THEN
-LeaderLib_Recon_SetReal(_Command, _ParamIndex, _FallbackValue);
+LeaderLib_Recon_SetReal(_Command, _ParamID, _ParamIndex, _FallbackValue);
+
+QRY
+LeaderLib_Recon_QRY_GetReal((STRING)_Command, (STRING)_ParamID, (INTEGER)_ParamIndex, (REAL)_FallbackValue)
+THEN
+LeaderLib_Recon_SetReal(_Command, _ParamID, _ParamIndex, _FallbackValue);
 
 PROC
-LeaderLib_Recon_SetReal((STRING)_Command, (INTEGER)_ParamIndex, (REAL)_FallbackValue)
+LeaderLib_Recon_SetReal((STRING)_Command, (STRING)_ParamID, (INTEGER)_ParamIndex, (REAL)_FallbackValue)
 AND
 GetTextEventParamReal(_ParamIndex, _Value)
 AND
 IntegerSum(_ParamIndex, 1, _NextParamIndex)
 THEN
-DB_LeaderLib_Recon_Temp_CommandParameters_Real(_Command, _Value, _NextParamIndex);
+DB_LeaderLib_Recon_Temp_CommandParameters_Real(_Command, _ParamID, _Value, _NextParamIndex);
 
 PROC
-LeaderLib_Recon_SetReal((STRING)_Command, (INTEGER)_ParamIndex, (REAL)_FallbackValue)
+LeaderLib_Recon_SetReal((STRING)_Command, (STRING)_ParamID, (INTEGER)_ParamIndex, (REAL)_FallbackValue)
 AND
-NOT DB_LeaderLib_Recon_Temp_CommandParameters_Real(_Command, _, _)
+NOT DB_LeaderLib_Recon_Temp_CommandParameters_Real(_Command, _ParamID, _, _)
 THEN
-DB_LeaderLib_Recon_Temp_CommandParameters_Real(_Command, _FallbackValue, _ParamIndex);
-
+DB_LeaderLib_Recon_Temp_CommandParameters_Real(_Command, _ParamID, _FallbackValue, _ParamIndex);
 
 QRY
 LeaderLib_Recon_QRY_ClearParams((STRING)_Command)
@@ -111,30 +146,30 @@ LeaderLib_Recon_ClearParams(_Command);
 PROC
 LeaderLib_Recon_ClearParams((STRING)_Command)
 AND
-DB_LeaderLib_Recon_Temp_CommandParameters_UUID(_Command, _Value, _NextParamIndex)
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID(_Command, _ParamID, _Value, _NextParamIndex)
 THEN
-NOT DB_LeaderLib_Recon_Temp_CommandParameters_UUID(_Command, _Value, _NextParamIndex);
+NOT DB_LeaderLib_Recon_Temp_CommandParameters_UUID(_Command, _ParamID, _Value, _NextParamIndex);
 
 PROC
 LeaderLib_Recon_ClearParams((STRING)_Command)
 AND
-DB_LeaderLib_Recon_Temp_CommandParameters_String(_Command, _Value, _ParamIndex)
+DB_LeaderLib_Recon_Temp_CommandParameters_String(_Command, _ParamID, _Value, _ParamIndex)
 THEN
-NOT DB_LeaderLib_Recon_Temp_CommandParameters_String(_Command, _Value, _ParamIndex);
+NOT DB_LeaderLib_Recon_Temp_CommandParameters_String(_Command, _ParamID, _Value, _ParamIndex);
 
 PROC
 LeaderLib_Recon_ClearParams((STRING)_Command)
 AND
-DB_LeaderLib_Recon_Temp_CommandParameters_Int(_Command, _Value, _ParamIndex)
+DB_LeaderLib_Recon_Temp_CommandParameters_Int(_Command, _ParamID, _Value, _ParamIndex)
 THEN
-NOT DB_LeaderLib_Recon_Temp_CommandParameters_Int(_Command, _Value, _ParamIndex);
+NOT DB_LeaderLib_Recon_Temp_CommandParameters_Int(_Command, _ParamID, _Value, _ParamIndex);
 
 PROC
 LeaderLib_Recon_ClearParams((STRING)_Command)
 AND
-DB_LeaderLib_Recon_Temp_CommandParameters_Real(_Command, _Value, _ParamIndex)
+DB_LeaderLib_Recon_Temp_CommandParameters_Real(_Command, _ParamID, _Value, _ParamIndex)
 THEN
-NOT DB_LeaderLib_Recon_Temp_CommandParameters_Real(_Command, _Value, _ParamIndex);
+NOT DB_LeaderLib_Recon_Temp_CommandParameters_Real(_Command, _ParamID, _Value, _ParamIndex);
 //END_REGION
 
 //REGION ANIM_TEXT_EVENTS
@@ -258,11 +293,11 @@ GetTextEventParamString(2, _Bone)
 AND
 CharacterGetHostCharacter(_Player)
 AND
-LeaderLib_Recon_QRY_GetUUID("leaderlib_playfx", 1, _Player)
+LeaderLib_Recon_QRY_GetUUID("leaderlib_playfx", "target", 1, _Player)
 AND
-DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_playfx", _Target, _NextParamIndex)
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_playfx", "target", _Target, _NextParamIndex)
 THEN
-NOT DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_playfx", _Target, _NextParamIndex);
+NOT DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_playfx", "target", _Target, _NextParamIndex);
 PlayEffect(_Target, _EffectName, _Bone);
 
 IF
@@ -664,31 +699,25 @@ CharacterGetHostCharacter(_Player)
 AND
 LeaderLib_Recon_QRY_GetUUID("leaderlib_statusapply", 1, _Player)
 AND
-DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_statusapply", _Target, _NextParamIndex)
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_statusapply", "target", _Target, _NextParamIndex)
 AND
-LeaderLib_Recon_QRY_GetString("leaderlib_statusapply", _NextParamIndex, "HASTED")
+LeaderLib_Recon_QRY_GetString("leaderlib_statusapply", "target", _NextParamIndex, "HASTED")
 AND
-DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_statusapply", _Status, _NextParamIndex2)
+DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_statusapply", "status", _Status, _NextParamIndex2)
 AND
-LeaderLib_Recon_QRY_GetInt("leaderlib_statusapply", _NextParamIndex2, 1)
+LeaderLib_Recon_QRY_GetInt("leaderlib_statusapply", "turns", _NextParamIndex2, 1)
 AND
-DB_LeaderLib_Recon_Temp_CommandParameters_Int("leaderlib_statusapply", _Turns, _NextParamIndex3)
+DB_LeaderLib_Recon_Temp_CommandParameters_Int("leaderlib_statusapply", "turns", _Turns, _NextParamIndex3)
 AND
-LeaderLib_Recon_QRY_ClearParams("leaderlib_statusapply")
+LeaderLib_Recon_QRY_GetInt("leaderlib_statusapply", "force", _NextParamIndex3, 0)
 AND
-LeaderLib_Recon_QRY_GetInt("leaderlib_statusapply", _NextParamIndex3, 0)
+DB_LeaderLib_Recon_Temp_CommandParameters_Int("leaderlib_statusapply", "force", _Force, _NextParamIndex4)
 AND
-DB_LeaderLib_Recon_Temp_CommandParameters_Int("leaderlib_statusapply", _Force, _NextParamIndex4)
+LeaderLib_Recon_QRY_GetUUID("leaderlib_statusapply", "cause", _NextParamIndex4, _Player)
 AND
-LeaderLib_Recon_QRY_GetUUID("leaderlib_statusapply", _NextParamIndex4, _Player)
-AND
-DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_statusapply", _Source, _NextParamIndex5)
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_statusapply", "cause", _Source, _NextParamIndex5)
 THEN
 LeaderLib_Helper_ReCon_ApplyStatus(_Target, _Status, _Turns, _Force, _Source);
-
-IF
-TextEventSet("leaderlib_statusapply")
-THEN
 LeaderLib_Recon_ClearParams("leaderlib_statusapply");
 
 PROC
@@ -718,20 +747,16 @@ TextEventSet("leaderlib_statusremove")
 AND
 CharacterGetHostCharacter(_Player)
 AND
-LeaderLib_Recon_QRY_GetUUID("leaderlib_statusremove", 1, _Player)
+LeaderLib_Recon_QRY_GetUUID("leaderlib_statusremove", "target", 1, _Player)
 AND
-DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_statusremove", _Target, _NextParamIndex)
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_statusremove", "target", _Target, _NextParamIndex)
 AND
-LeaderLib_Recon_QRY_GetString("leaderlib_statusremove", _NextParamIndex, "HASTED")
+LeaderLib_Recon_QRY_GetString("leaderlib_statusremove", "status", _NextParamIndex, "HASTED")
 AND
-DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_statusremove", _Status, _NextParamIndex2)
+DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_statusremove", "status", _Status, _NextParamIndex2)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_removestatus] fired. Removing status [",_Status,"].");
 RemoveStatus(_Target, _Status);
-
-IF
-TextEventSet("leaderlib_statusremove")
-THEN
 LeaderLib_Recon_ClearParams("leaderlib_statusremove");
 
 IF
@@ -739,9 +764,9 @@ TextEventSet("leaderlib_statusremoveharmful")
 AND
 CharacterGetHostCharacter(_Player)
 AND
-LeaderLib_Recon_QRY_GetUUID("leaderlib_statusremoveharmful", 1, _Player)
+LeaderLib_Recon_QRY_GetUUID("leaderlib_statusremoveharmful", "target", 1, _Player)
 AND
-DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_statusremoveharmful", _Target, _NextParamIndex)
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_statusremoveharmful", "target", _Target, _NextParamIndex)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_statusremoveharmful] fired. Calling [RemoveHarmfulStatuses] on target.");
 RemoveHarmfulStatuses(_Target);
@@ -749,7 +774,7 @@ RemoveHarmfulStatuses(_Target);
 IF
 TextEventSet("leaderlib_statusremoveharmful")
 AND
-DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_statusremoveharmful", _Target, _NextParamIndex)
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_statusremoveharmful", "target", _Target, _NextParamIndex)
 AND
 ObjectIsCharacter((CHARACTERGUID)_Target, 1)
 THEN
@@ -785,6 +810,60 @@ IF
 StoryEvent((CHARACTERGUID)_Object, "LeaderLib_Debug_Iterator_RemoveHarmfulStatuses_Item")
 THEN
 RemoveHarmfulStatuses(_Object);
+//END_REGION
+
+//REGION SURFACES
+IF
+TextEventSet("leaderlib_surface")
+AND
+CharacterGetHostCharacter(_Player)
+AND
+LeaderLib_Recon_QRY_GetUUID("leaderlib_surface", "target", 1, _Player)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_surface", "target", _Target, _NextParamIndex)
+AND
+LeaderLib_Recon_QRY_GetString("leaderlib_surface", "surface", _NextParamIndex, "SurfaceWater")
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_surface", "surface", _Surface, _NextParamIndex2)
+AND
+LeaderLib_Recon_QRY_GetReal("leaderlib_surface", "radius", _NextParamIndex2, 2.0)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_Real("leaderlib_surface", "radius", _Radius, _NextParamIndex3)
+AND
+LeaderLib_Recon_QRY_GetReal("leaderlib_surface", "lifetime", _NextParamIndex3, 12.0)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_Real("leaderlib_surface", "lifetime", _Lifetime, _NextParamIndex4)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_surface] fired. Creating surface [",_Surface,"].");
+LeaderLib_Recon_ClearParams("leaderlib_surface");
+CreateSurface(_Target, _Surface, _Radius, _Lifetime);
+
+IF
+TextEventSet("leaderlib_surfaceat")
+AND
+CharacterGetHostCharacter(_Player)
+AND
+LeaderLib_Recon_QRY_GetUUID("leaderlib_surfaceat", "target", 1, _Player)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_surfaceat", "target", _Target, _NextParamIndex)
+AND
+LeaderLib_Recon_QRY_GetString("leaderlib_surfaceat", "surface", _NextParamIndex, "SurfaceWater")
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_surfaceat", "surface", _Surface, _NextParamIndex2)
+AND
+LeaderLib_Recon_QRY_GetReal("leaderlib_surfaceat", "radius", _NextParamIndex2, 2.0)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_Real("leaderlib_surfaceat", "radius", _Radius, _NextParamIndex3)
+AND
+LeaderLib_Recon_QRY_GetReal("leaderlib_surfaceat", "lifetime", _NextParamIndex3, 12.0)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_Real("leaderlib_surfaceat", "lifetime", _Lifetime, _NextParamIndex4)
+AND
+GetPosition(_Target, _x, _y, _z)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_surfaceat] fired. Creating surface [",_Surface,"] at position of target.");
+LeaderLib_Recon_ClearParams("leaderlib_surfaceat");
+CreateSurfaceAtPosition(_x, _y, _z, _Surface, _Radius, _Lifetime);
 //END_REGION
 
 //REGION TAG_CHECK

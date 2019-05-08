@@ -40,6 +40,7 @@ AND
 IntegerSum(_ParamIndex, 1, _NextParamIndex)
 THEN
 DB_LeaderLib_Recon_Temp_CommandParameters_UUID(_Command, _ParamID, _Value, _NextParamIndex);
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:Recon_SetUUID] UUID param[",_ParamID,"] set for command [",_Command,"].");
 
 PROC
 LeaderLib_Recon_SetUUID((STRING)_Command, (STRING)_ParamID, (INTEGER)_ParamIndex, (GUIDSTRING)_FallbackValue)
@@ -47,6 +48,7 @@ AND
 NOT DB_LeaderLib_Recon_Temp_CommandParameters_UUID(_Command, _ParamID, _, _)
 THEN
 DB_LeaderLib_Recon_Temp_CommandParameters_UUID(_Command, _ParamID, _FallbackValue, _ParamIndex);
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:Recon_SetUUID] Setting UUID param [",_ParamID,"] to fallback value for command [",_Command,"].");
 
 QRY
 LeaderLib_Recon_QRY_GetString((STRING)_Command, (INTEGER)_ParamIndex, (STRING)_FallbackValue)
@@ -70,6 +72,7 @@ AND
 IntegerSum(_ParamIndex, 1, _NextParamIndex)
 THEN
 DB_LeaderLib_Recon_Temp_CommandParameters_String(_Command, _ParamID, _Value, _NextParamIndex);
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:Recon_SeString] String param [",_ParamID,"] set to [",_Value,"] for command [",_Command,"].");
 
 PROC
 LeaderLib_Recon_SetString((STRING)_Command, (STRING)_ParamID, (INTEGER)_ParamIndex, (STRING)_FallbackValue)
@@ -77,6 +80,7 @@ AND
 NOT DB_LeaderLib_Recon_Temp_CommandParameters_String(_Command, _ParamID, _, _)
 THEN
 DB_LeaderLib_Recon_Temp_CommandParameters_String(_Command, _ParamID, _FallbackValue, _ParamIndex);
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:Recon_SeString] String param [",_ParamID,"] set to fallback value [",_FallbackValue,"] for command [",_Command,"].");
 
 QRY
 LeaderLib_Recon_QRY_GetInt((STRING)_Command, (INTEGER)_ParamIndex, (INTEGER)_FallbackValue)
@@ -98,15 +102,21 @@ AND
 GetTextEventParamInteger(_ParamIndex, _Value)
 AND
 IntegerSum(_ParamIndex, 1, _NextParamIndex)
+AND
+IntegertoString(_Value, _ValueStr)
 THEN
 DB_LeaderLib_Recon_Temp_CommandParameters_Int(_Command, _ParamID, _Value, _NextParamIndex);
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:Recon_SetInt] Integer param [",_ParamID,"] set to value [",_ValueStr,"] for command [",_Command,"].");
 
 PROC
 LeaderLib_Recon_SetInt((STRING)_Command, (STRING)_ParamID, (INTEGER)_ParamIndex, (INTEGER)_FallbackValue)
 AND
 NOT DB_LeaderLib_Recon_Temp_CommandParameters_Int(_Command, _ParamID, _, _)
+AND
+IntegertoString(_FallbackValue, _ValueStr)
 THEN
 DB_LeaderLib_Recon_Temp_CommandParameters_Int(_Command, _ParamID, _FallbackValue, _ParamIndex);
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:Recon_SetInt] Integer param [",_ParamID,"] set to fallback value [",_ValueStr,"] for command [",_Command,"].");
 
 QRY
 LeaderLib_Recon_QRY_GetReal((STRING)_Command, (INTEGER)_ParamIndex, (REAL)_FallbackValue)
@@ -130,6 +140,7 @@ AND
 IntegerSum(_ParamIndex, 1, _NextParamIndex)
 THEN
 DB_LeaderLib_Recon_Temp_CommandParameters_Real(_Command, _ParamID, _Value, _NextParamIndex);
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:Recon_SetReal] Real param [",_ParamID,"] set for command [",_Command,"].");
 
 PROC
 LeaderLib_Recon_SetReal((STRING)_Command, (STRING)_ParamID, (INTEGER)_ParamIndex, (REAL)_FallbackValue)
@@ -137,6 +148,7 @@ AND
 NOT DB_LeaderLib_Recon_Temp_CommandParameters_Real(_Command, _ParamID, _, _)
 THEN
 DB_LeaderLib_Recon_Temp_CommandParameters_Real(_Command, _ParamID, _FallbackValue, _ParamIndex);
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:Recon_SetReal] Real param [",_ParamID,"] set to fallback value for command [",_Command,"].");
 
 QRY
 LeaderLib_Recon_QRY_ClearParams((STRING)_Command)
@@ -697,11 +709,11 @@ TextEventSet("leaderlib_statusapply")
 AND
 CharacterGetHostCharacter(_Player)
 AND
-LeaderLib_Recon_QRY_GetUUID("leaderlib_statusapply", 1, _Player)
+LeaderLib_Recon_QRY_GetUUID("leaderlib_statusapply", "target", 1, _Player)
 AND
 DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_statusapply", "target", _Target, _NextParamIndex)
 AND
-LeaderLib_Recon_QRY_GetString("leaderlib_statusapply", "target", _NextParamIndex, "HASTED")
+LeaderLib_Recon_QRY_GetString("leaderlib_statusapply", "status", _NextParamIndex, "HASTED")
 AND
 DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_statusapply", "status", _Status, _NextParamIndex2)
 AND

@@ -1581,6 +1581,41 @@
                     <attribute id="V2" value="0.0467529" type="6" />
                 </node>
                 <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_SparkBonus01" type="22" />
+                    <attribute id="U1" value="0.546997" type="6" />
+                    <attribute id="U2" value="0.562378" type="6" />
+                    <attribute id="V1" value="0.0469971" type="6" />
+                    <attribute id="V2" value="0.0623779" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_SparkBonus02" type="22" />
+                    <attribute id="U1" value="0.562622" type="6" />
+                    <attribute id="U2" value="0.578003" type="6" />
+                    <attribute id="V1" value="0.0469971" type="6" />
+                    <attribute id="V2" value="0.0623779" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_SparkBonus03" type="22" />
+                    <attribute id="U1" value="0.578247" type="6" />
+                    <attribute id="U2" value="0.593628" type="6" />
+                    <attribute id="V1" value="0.0469971" type="6" />
+                    <attribute id="V2" value="0.0623779" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_SparkBonus04" type="22" />
+                    <attribute id="U1" value="0.593872" type="6" />
+                    <attribute id="U2" value="0.609253" type="6" />
+                    <attribute id="V1" value="0.0469971" type="6" />
+                    <attribute id="V2" value="0.0623779" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Status_SparkBonus05" type="22" />
+                    <attribute id="U1" value="0.609497" type="6" />
+                    <attribute id="U2" value="0.624878" type="6" />
+                    <attribute id="V1" value="0.0469971" type="6" />
+                    <attribute id="V2" value="0.0623779" type="6" />
+                </node>
+                <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Status_WeaponMastery_Runeblade_A" type="22" />
                     <attribute id="U1" value="0.156372" type="6" />
                     <attribute id="U2" value="0.171753" type="6" />

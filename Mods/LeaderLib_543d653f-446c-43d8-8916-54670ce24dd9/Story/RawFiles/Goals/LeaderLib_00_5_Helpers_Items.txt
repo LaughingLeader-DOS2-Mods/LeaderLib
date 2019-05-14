@@ -339,6 +339,13 @@ AND
 _Item != NULL_00000000-0000-0000-0000-000000000000
 THEN
 CharacterUnequipItem(_Character, (ITEMGUID)_Item);
+
+PROC
+LeaderLib_Helper_UnequipIfEquipped((CHARACTERGUID)_Character, (ITEMGUID)_Item)
+AND
+LeaderLib_Helper_QRY_ItemIsEquipped(_Character, _Item)
+THEN
+CharacterUnequipItem(_Character, _Item);
 //END_REGION
 
 //REGION BEHAVIOR_SCRIPT_HELPERS

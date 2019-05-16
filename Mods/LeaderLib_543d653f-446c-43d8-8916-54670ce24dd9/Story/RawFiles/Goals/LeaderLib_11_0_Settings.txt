@@ -438,7 +438,7 @@ LeaderLib_Settings_InitRaceData()
 AND
 NOT DB_LeaderLib_RaceTags(_,_,_)
 THEN
-//_Race, _Tag, _BaseRace
+//DB_LeaderLib_RaceTags(_Race, _Tag, _BaseRace)
 DB_LeaderLib_RaceTags("Dwarf", "DWARF", "DWARF");
 DB_LeaderLib_RaceTags("Elf", "ELF", "ELF");
 DB_LeaderLib_RaceTags("Human", "HUMAN", "HUMAN");

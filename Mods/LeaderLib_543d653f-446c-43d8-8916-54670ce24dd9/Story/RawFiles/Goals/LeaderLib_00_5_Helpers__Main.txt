@@ -1174,6 +1174,15 @@ AND
 IntegerMax(_IsDead1, _IsDead2, 1)
 THEN
 DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_CharacterIsHumanoid((CHARACTERGUID)_Char)
+AND
+DB_LeaderLib_RaceTags(_Race, _Tag, _BaseRace)
+AND
+IsTagged(_Char, _Tag, 1)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION QUERIES_DISTANCE

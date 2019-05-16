@@ -220,8 +220,34 @@ LeaderLog_Log("TRACE", "[LeaderLib:Skills:SkillDummyArrived] Skill dummy is usin
 LeaderLib_Timers_CancelObjectTimer(_Dummy, "LeaderLib_Timers_Skills_StartSkillDummyCasting");
 //CharacterSetDetached(_Dummy, 0);
 //SetVisible(_Dummy, 1);
+DB_LeaderLib_Skills_Temp_ListenForTargetCast(_Dummy, _Caster, _Target, _Skill);
 CharacterUseSkill(_Dummy, _Skill, _Target, 1, 1, 1);
 LeaderLib_Skills_MarkDummyForReset(_Dummy, 3000);
+
+IF
+CharacterUsedSkillOnTarget(_Dummy, _Target, _Skill, _Skilltype, _SkillElement)
+AND
+DB_LeaderLib_Skills_Temp_ListenForTargetCast(_Dummy, _Caster, _, _Skill)
+THEN
+LeaderLib_Skills_OnDummyUsedSkillOnTarget(_Dummy, _Caster, _Skill, _Target, _Skilltype, _SkillElement);
+
+PROC
+LeaderLib_Skills_OnDummyUsedSkillOnTarget((CHARACTERGUID)_Dummy, (CHARACTERGUID)_Caster, (STRING)_Skill, (GUIDSTRING)_Target, (STRING)_Skilltype, (STRING)_SkillElement)
+THEN
+DB_NOOP(1);
+
+IF
+SkillCast(_Dummy, _Skill, _Skilltype, _SkillElement)
+AND
+DB_LeaderLib_Skills_Temp_ListenForTargetCast(_Dummy, _Caster, _Target, _Skill)
+THEN
+NOT DB_LeaderLib_Skills_Temp_ListenForTargetCast(_Dummy, _Caster, _Target, _Skill);
+LeaderLib_Skills_OnDummyCastSkillOnTarget(_Dummy, _Caster, _Skill, _Target, _Skilltype, _SkillElement);
+
+PROC
+LeaderLib_Skills_OnDummyCastSkillOnTarget((CHARACTERGUID)_Dummy, (CHARACTERGUID)_Caster, (STRING)_Skill, (GUIDSTRING)_Target, (STRING)_Skilltype, (STRING)_SkillElement)
+THEN
+DB_NOOP(1);
 
 IF
 StoryEvent((CHARACTERGUID)_Dummy, "LeaderLib_Events_SkillDummyArrived")
@@ -231,9 +257,34 @@ THEN
 NOT DB_LeaderLib_Skills_Temp_SkillDummyData(_Dummy, _Caster, _x, _y, _z, _Skill);
 LeaderLog_Log("TRACE", "[LeaderLib:Skills:SkillDummyArrived] Skill dummy is using skill [",_Skill,"] at position.");
 LeaderLib_Timers_CancelObjectTimer(_Dummy, "LeaderLib_Timers_Skills_StartSkillDummyCasting");
+DB_LeaderLib_Skills_Temp_ListenForPositionCast(_Dummy, _Caster, _x, _y, _z, _Skill);
 CharacterUseSkillAtPosition(_Dummy, _Skill, _x, _y, _z, 1, 1);
 LeaderLib_Skills_MarkDummyForReset(_Dummy, 3000);
 
+IF
+CharacterUsedSkillAtPosition(_Dummy, _x, _y, _z, _Skill, _Skilltype, _SkillElement)
+AND
+DB_LeaderLib_Skills_Temp_ListenForPositionCast(_Dummy, _Caster, _, _, _, _Skill)
+THEN
+LeaderLib_Skills_OnDummyUsedSkillAtPosition(_Dummy, _Caster, _Skill, _x, _y, _z, _Skilltype, _SkillElement);
+
+PROC
+LeaderLib_Skills_OnDummyUsedSkillAtPosition((CHARACTERGUID)_Dummy, (CHARACTERGUID)_Caster, (STRING)_Skill, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_Skilltype, (STRING)_SkillElement)
+THEN
+DB_NOOP(1);
+
+IF
+SkillCast(_Dummy, _Skill, _Skilltype, _SkillElement)
+AND
+DB_LeaderLib_Skills_Temp_ListenForPositionCast(_Dummy, _Caster, _x, _y, _z, _Skill)
+THEN
+NOT DB_LeaderLib_Skills_Temp_ListenForPositionCast(_Dummy, _Caster, _x, _y, _z, _Skill);
+LeaderLib_Skills_OnDummyCastSkillAtPosition(_Dummy, _Caster, _Skill, _x, _y, _z, _Skilltype, _SkillElement);
+
+PROC
+LeaderLib_Skills_OnDummyCastSkillAtPosition((CHARACTERGUID)_Dummy, (CHARACTERGUID)_Caster, (STRING)_Skill, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_Skilltype, (STRING)_SkillElement)
+THEN
+DB_NOOP(1);
 /*
 IF
 SkillCast(_Dummy, _Skill, _, _)
@@ -548,6 +599,20 @@ NOT DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy);
 DB_LeaderLib_Skills_InactiveSkillDummies(_Dummy);
 SetVarString(_Dummy, "LeaderLib_SkillDummyID", "");
 SetOnStage(_Dummy, 0);
+
+PROC
+LeaderLib_Skills_ResetDummy((CHARACTERGUID)_Dummy)
+AND
+DB_LeaderLib_Skills_Temp_ListenForTargetCast(_Dummy, _Caster, _Target, _Skill)
+THEN
+NOT DB_LeaderLib_Skills_Temp_ListenForTargetCast(_Dummy, _Caster, _Target, _Skill);
+
+PROC
+LeaderLib_Skills_ResetDummy((CHARACTERGUID)_Dummy)
+AND
+DB_LeaderLib_Skills_Temp_ListenForPositionCast(_Dummy, _Caster, _x, _y, _z, _Skill)
+THEN
+NOT DB_LeaderLib_Skills_Temp_ListenForPositionCast(_Dummy, _Caster, _x, _y, _z, _Skill);
 
 PROC
 LeaderLib_Skills_ResetDummy((CHARACTERGUID)_Dummy)

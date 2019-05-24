@@ -229,6 +229,19 @@ LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel] Registered a bunch of mod menus."
 LeaderLib_DebugLevel_ModMenuTest();
 
 IF
+TextEventSet("llmodmenu_2pages")
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel] Registered a bunch of mod menus.");
+LeaderLib_Register_ModMenu("LLZ1", "[Zieonimus] Settings", "LeaderLib_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLZ2", "[Zzznonom] Settings", "LeaderLib_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLZ3", "[Zzaonimus] Settings", "LeaderLib_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLZ4", "[Zaronimus] Settings", "LeaderLib_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLZ5", "[Zironimus] Settings", "LeaderLib_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLZasd7", "[Blaaaabbbbbzter] Settings", "LeaderLib_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLZasd6", "[Blaaaabbbbbzter] Settings", "LeaderLib_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("LLasdZ92", "[Blaaaabbbbbzter9] Settings", "LeaderLib_SettingsMenu", "LeaderLib", "LaughingLeader");
+
+IF
 TextEventSet("llstress")
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel] Running stress tests.");

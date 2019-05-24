@@ -284,6 +284,7 @@ _MaxPage == 2
 THEN
 DB_LeaderLib_ModMenu_Temp_NextPageHidden(_Player, _Instance);
 LeaderLib_ModMenu_Internal_SetHideFlag(_Player, _Instance, "LeaderLib_ModMenu_HideNextPageButton");
+LeaderLog_LogInt("DEBUG", "[LeaderLib_02_ModMenuSystem:UpdatePageFlags] Hiding next page button [",_Page,"]/[",_MaxPage,"].");
 
 PROC
 LeaderLib_ModMenu_Internal_UpdatePageFlags((CHARACTERGUID)_Player, (INTEGER)_Page, (INTEGER)_Instance)
@@ -296,6 +297,7 @@ _MaxPage == 2
 THEN
 DB_LeaderLib_ModMenu_Temp_PreviousPageHidden(_Player, _Instance);
 LeaderLib_ModMenu_Internal_SetHideFlag(_Player, _Instance, "LeaderLib_ModMenu_HidePreviousPageButton");
+LeaderLog_LogInt("DEBUG", "[LeaderLib_02_ModMenuSystem:UpdatePageFlags] Hiding previous page button [",_Page,"]/[",_MaxPage,"].");
 
 PROC
 LeaderLib_ModMenu_Internal_SetHideFlag((CHARACTERGUID)_Player, (INTEGER)_Instance, (STRING)_Flag)
@@ -305,26 +307,29 @@ THEN
 ObjectSetFlag(_Player, _Flag, _Instance);
 
 PROC
-LeaderLib_ModMenu_Internal_UpdatePageFlags((CHARACTERGUID)_Player, (INTEGER)_Instance)
+LeaderLib_ModMenu_Internal_UpdatePageFlags((CHARACTERGUID)_Player, (INTEGER)_Page, (INTEGER)_Instance)
 AND
 NOT DB_LeaderLib_ModMenu_Temp_NextPageHidden(_Player, _Instance)
 AND
 ObjectGetFlag(_Player, "LeaderLib_ModMenu_HideNextPageButton", 1)
 THEN
 ObjectClearFlag(_Player, "LeaderLib_ModMenu_HideNextPageButton", _Instance);
+LeaderLog_Log("DEBUG", "[LeaderLib_02_ModMenuSystem:UpdatePageFlags] Showing next page button.");
 
 PROC
-LeaderLib_ModMenu_Internal_UpdatePageFlags((CHARACTERGUID)_Player, (INTEGER)_Instance)
+LeaderLib_ModMenu_Internal_UpdatePageFlags((CHARACTERGUID)_Player, (INTEGER)_Page, (INTEGER)_Instance)
 AND
 NOT DB_LeaderLib_ModMenu_Temp_PreviousPageHidden(_Player, _Instance)
 AND
 ObjectGetFlag(_Player, "LeaderLib_ModMenu_HidePreviousPageButton", 1)
 THEN
 ObjectClearFlag(_Player, "LeaderLib_ModMenu_HidePreviousPageButton", _Instance);
+LeaderLog_Log("DEBUG", "[LeaderLib_02_ModMenuSystem:UpdatePageFlags] Showing previous page button.");
 
 PROC
-LeaderLib_ModMenu_Internal_UpdatePageFlags((CHARACTERGUID)_Player, (INTEGER)_Instance)
+LeaderLib_ModMenu_Internal_UpdatePageFlags((CHARACTERGUID)_Player, (INTEGER)_Page, (INTEGER)_Instance)
 THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_02_ModMenuSystem:UpdatePageFlags] Updated page flags.");
 NOT DB_LeaderLib_ModMenu_Temp_NextPageHidden(_Player, _Instance);
 NOT DB_LeaderLib_ModMenu_Temp_PreviousPageHidden(_Player, _Instance);
 
@@ -538,7 +543,7 @@ LeaderLib_ModMenu_CheckPageCount((CHARACTERGUID)_Player)
 AND
 DB_LeaderLib_ModMenu_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
 AND
-_MaxPage > 1
+_LastPageIndex > 0
 THEN
 ObjectSetFlag(_Player, "LeaderLib_ModMenu_HasMultiplePages", 0);
 //LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu] Multiple pages available.");
@@ -548,7 +553,7 @@ LeaderLib_ModMenu_CheckPageCount((CHARACTERGUID)_Player)
 AND
 DB_LeaderLib_ModMenu_PageMax(_LastIndex, _LastPageIndex, _MaxPage)
 AND
-_MaxPage <= 1
+_LastPageIndex <= 0
 THEN
 ObjectClearFlag(_Player, "LeaderLib_ModMenu_HasMultiplePages", 0);
 //LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu] Only one page available.");

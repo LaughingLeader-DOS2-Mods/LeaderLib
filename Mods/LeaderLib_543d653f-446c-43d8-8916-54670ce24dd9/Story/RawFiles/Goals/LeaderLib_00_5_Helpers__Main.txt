@@ -1149,6 +1149,30 @@ QRY
 LeaderLib_Helper_QRY_EitherCharacterMatches((CHARACTERGUID)_Char2, (CHARACTERGUID)_Char1, (CHARACTERGUID)_Char2)
 THEN
 DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_CapPercentage((CHARACTERGUID)_Char, (REAL)_Percentage)
+THEN
+LeaderLib_Helper_CapPercentage(_Char, _Percentage, 100.0);
+
+QRY
+LeaderLib_Helper_QRY_CapPercentage((CHARACTERGUID)_Char, (REAL)_Percentage, (REAL)_Max)
+THEN
+LeaderLib_Helper_CapPercentage(_Char, _Percentage, _Max);
+
+PROC
+LeaderLib_Helper_CapPercentage((CHARACTERGUID)_Char, (REAL)_Percentage, (REAL)_Max)
+AND
+_Percentage < _Max
+THEN
+DB_LeaderLib_Helper_Temp_CappedPercentage(_Char, _Percentage);
+
+PROC
+LeaderLib_Helper_CapPercentage((CHARACTERGUID)_Char, (REAL)_Percentage, (REAL)_Max)
+AND
+_Percentage >= _Max
+THEN
+DB_LeaderLib_Helper_Temp_CappedPercentage(_Char, _Max);
 //END_REGION
 
 //REGION QUERIES_CHARACTERS

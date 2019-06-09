@@ -212,3 +212,4 @@ DB_LeaderLib_CC_PortraitTriggers 5
 DB_LeaderLib_Growth_Items_Temp_BlockEquip 2
 DB_LeaderLib_PresetMenu_RegisteredPreset 2
 DB_LeaderLib_PresetMenu_RegisteredPreset 3
+DB_LeaderLib_Helper_Temp_CappedPercentage 2

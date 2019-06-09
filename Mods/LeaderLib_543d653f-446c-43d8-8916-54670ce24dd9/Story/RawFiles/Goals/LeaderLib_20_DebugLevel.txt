@@ -1239,26 +1239,37 @@ THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Debug:CharacterStatusRemoved] Status [",_Status,"] removed from [",_Name,"].");
 
 IF
-ItemStatusAttempt(_Item, _Status, (CHARACTERGUID)_Causee)
+ItemStatusAttempt(_Item, _Status, _Causee)
 //AND
 //CharacterGetHostCharacter(_Causee)
 AND
-CharacterGetDisplayName(_Causee, _, _Cause)
+String(_Causee, _CauseName)
 AND
 GetTemplate(_Item, _Name)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Debug:ItemStatusAttempt] Status [",_Status,"] attempt on [",_Name,"] via [",_Cause,"].");
+LeaderLog_Log("DEBUG", "[LeaderLib:Debug:ItemStatusAttempt] Status [",_Status,"] attempt on [",_Name,"] via [",_CauseName,"].");
 
 IF
-ItemStatusChange(_Item, _Status, (CHARACTERGUID)_Causee)
+ItemStatusChange(_Item, _Status, _Causee)
 //AND
 //CharacterGetHostCharacter(_Causee)
 AND
-CharacterGetDisplayName(_Causee, _, _Cause)
+String(_Causee, _CauseName)
 AND
 GetTemplate(_Item, _Name)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Debug:ItemStatusChange] Status [",_Status,"] applied on [",_Name,"] via [",_Cause,"].");
+LeaderLog_Log("DEBUG", "[LeaderLib:Debug:ItemStatusChange] Status [",_Status,"] applied on [",_Name,"] via [",_CauseName,"].");
+
+IF
+ItemStatusChange(_Item, "SUMMONING", _)
+AND
+ItemGetOwner(_Item, _Owner)
+AND
+String(_Owner, _CauseName)
+AND
+GetTemplate(_Item, _Name)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Debug:ItemStatusChange] Status [SUMMONING] applied on [",_Name,"] via [",_CauseName,"].");
 
 IF
 ItemStatusRemoved(_Item, _Status, _)

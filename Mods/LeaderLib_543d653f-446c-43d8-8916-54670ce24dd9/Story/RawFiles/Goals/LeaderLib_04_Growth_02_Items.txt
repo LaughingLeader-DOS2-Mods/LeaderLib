@@ -4,6 +4,18 @@ INITSECTION
 //DB_LeaderLib_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, _MatchType, _MatchValue)
 
 KBSECTION
+//REGION UPDATES
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,1,22,0)
+AND
+DB_LeaderLib_Growth_Items_TemplateID((STRING)_ID, (STRING)_Template)
+THEN
+NOT DB_LeaderLib_Growth_Items_TemplateID(_ID, _Template);
+DB_LeaderLib_Growth_Items_TemplateID("None", _ID, _Template);
+//END_REGION
+
 //REGION REGISTERING
 
 /*Register a deltamod to the growth system.
@@ -32,7 +44,12 @@ LeaderLib_Growth_Items_Internal_OnRegistered();
 PROC
 LeaderLib_Growth_Items_Register_Template((STRING)_ID, (STRING)_Template)
 THEN
-DB_LeaderLib_Growth_Items_TemplateID(_ID, _Template);
+LeaderLib_Growth_Items_Register_Template("None", _ID, _Template);
+
+PROC
+LeaderLib_Growth_Items_Register_Template((STRING)_ModID, (STRING)_ID, (STRING)_Template)
+THEN
+DB_LeaderLib_Growth_Items_TemplateID(_ModID, _ID, _Template);
 LeaderLib_Growth_Items_Internal_OnRegistered();
 
 PROC
@@ -60,9 +77,16 @@ NOT DB_LeaderLib_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, _MatchType, _
 PROC
 LeaderLib_Growth_Items_Clear_Template((STRING)_ID)
 AND
-DB_LeaderLib_Growth_Items_TemplateID(_ID, _Template)
+DB_LeaderLib_Growth_Items_TemplateID(_ModID, _ID, _Template)
 THEN
-NOT DB_LeaderLib_Growth_Items_TemplateID(_ID, _Template);
+NOT DB_LeaderLib_Growth_Items_TemplateID(_ModID, _ID, _Template);
+
+PROC
+LeaderLib_Growth_Items_Clear_TemplatesForMod((STRING)_ModID)
+AND
+DB_LeaderLib_Growth_Items_TemplateID(_ModID, _ID, _Template)
+THEN
+NOT DB_LeaderLib_Growth_Items_TemplateID(_ModID, _ID, _Template);
 
 PROC
 LeaderLib_Growth_Items_Clear_Transformation((STRING)_ID, (STRING)_TransformTemplate)
@@ -83,7 +107,7 @@ LeaderLib_Growth_Items_Clear_ByEntriesID((STRING)_ID)
 AND
 DB_LeaderLib_ToggleScripts_Temp_ActiveScripts("LeaderLib_TS_GrowthEvents_Character_Enabled", "LeaderLib")
 AND
-SysCount("DB_LeaderLib_Growth_Items_TemplateID", 2, 0)
+SysCount("DB_LeaderLib_Growth_Items_TemplateID", 3, 0)
 AND
 SysCount("DB_LeaderLib_Growth_Items_Transformations", 4, 0)
 AND
@@ -255,7 +279,7 @@ NOT DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character);
 QRY
 LeaderLib_Growth_Items_QRY_Internal_TemplateMatch((ITEMGUID)_Item, (STRING)_Template)
 AND
-DB_LeaderLib_Growth_Items_TemplateID(_ID, _Template)
+DB_LeaderLib_Growth_Items_TemplateID(_ModID, _ID, _Template)
 AND
 DB_LeaderLib_Growth_Items_DeltaMods(_GroupID, _MinLevel, _DeltaMod, "ID", _ID)
 AND
@@ -419,7 +443,7 @@ LeaderLib_Growth_Items_QRY_Internal_GetID((ITEMGUID)_Item)
 AND
 GetTemplate(_Item, _Template)
 AND
-DB_LeaderLib_Growth_Items_TemplateID(_ID, _Template)
+DB_LeaderLib_Growth_Items_TemplateID(_ModID, _ID, _Template)
 THEN
 DB_LeaderLib_Growth_Items_Temp_MatchedID(_Item, _ID);
 
@@ -490,7 +514,7 @@ LeaderLib_Growth_Items_TransformItem((CHARACTERGUID)_Character, (ITEMGUID)_Item)
 AND
 GetTemplate(_Item, _Template)
 AND
-DB_LeaderLib_Growth_Items_TemplateID(_ID, _Template)
+DB_LeaderLib_Growth_Items_TemplateID(_ModID, _ID, _Template)
 AND
 CharacterGetLevel(_Character, _Level)
 THEN
@@ -501,7 +525,7 @@ LeaderLib_Growth_Items_TransformItem((CHARACTERGUID)_Character, (ITEMGUID)_Item,
 AND
 GetTemplate(_Item, _Template)
 AND
-DB_LeaderLib_Growth_Items_TemplateID(_ID, _Template)
+DB_LeaderLib_Growth_Items_TemplateID(_ModID, _ID, _Template)
 THEN
 LeaderLib_Growth_Items_TransformItem(_Character, _Item, _ID, _Level);
 
@@ -621,13 +645,13 @@ Transform(_Item, _Template);
 PROC
 LeaderLib_Growth_Items_ResetItemsByID((STRING)_ID)
 AND
-DB_LeaderLib_Growth_Items_TemplateID(_ID, _Template)
+DB_LeaderLib_Growth_Items_TemplateID(_ModID, _ID, _Template)
 AND
 DB_IsPlayer(_Player)
 AND
-LeaderLib_Growth_Items_QRY_ResetEquippedItems(_Player, _Template)
+NOT LeaderLib_Growth_Items_QRY_ResetEquippedItems(_Player, _Template)
 AND
-GetItemForItemTemplateInPartyInventory(_Player, _Template, _Item)
+GetItemForItemTemplateInInventory(_Player, _Template, _Item)
 THEN
 Transform(_Item, _Template);
 

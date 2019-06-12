@@ -48,21 +48,21 @@ CharacterCharacterSetEvent(_Owner, _Follower, "LeaderLib_Events_FollowerRecruite
 PROC
 LeaderLib_Follower_DismissCharacter((CHARACTERGUID)_Follower)
 AND
-DB_LeaderLib_PartyFollower(_Owner, _Follower)
+DB_LeaderLib_PartyFollower((CHARACTERGUID)_Owner, _Follower)
 THEN
 LeaderLib_Follower_DismissCharacterFromOwner(_Owner, _Follower);
 
 PROC
 LeaderLib_Follower_DismissCharacter((CHARACTERGUID)_Follower, (STRING)_Effect)
 AND
-DB_LeaderLib_PartyFollower(_Owner, _Follower)
+DB_LeaderLib_PartyFollower((CHARACTERGUID)_Owner, _Follower)
 THEN
 LeaderLib_Follower_DismissCharacterFromOwner(_Owner, _Follower, _Effect, 0);
 
 PROC
 LeaderLib_Follower_DismissCharacter((CHARACTERGUID)_Follower, (STRING)_Effect, (INTEGER)_SetOffStage)
 AND
-DB_LeaderLib_PartyFollower(_Owner, _Follower)
+DB_LeaderLib_PartyFollower((CHARACTERGUID)_Owner, _Follower)
 THEN
 LeaderLib_Follower_DismissCharacterFromOwner(_Owner, _Follower, _Effect, _SetOffStage);
 
@@ -148,7 +148,7 @@ LeaderLib_Party_OnCharacterLeftParty((CHARACTERGUID)_LeavingCharacter, (CHARACTE
 AND
 CharacterIsControlled(_LeavingCharacter, 0)
 AND
-DB_LeaderLib_PartyFollower(_LeavingCharacter, _Follower)
+DB_LeaderLib_PartyFollower(_LeavingCharacter, (CHARACTERGUID)_Follower)
 THEN
 LeaderLib_Follower_Internal_ClearFollowerData(_LeavingCharacter, _Follower);
 LeaderLib_Follower_Internal_ReAttachToNearestPartyMember(_Follower, _FormerPartyMember, _LeavingCharacter);
@@ -364,7 +364,7 @@ ObjectFlagSet("LeaderLib_DismissFollower", (CHARACTERGUID)_Follower, _Instance)
 AND
 LeaderLib_Helper_QRY_ClearObjectFlag(_Follower, "LeaderLib_DismissFollower")
 AND
-DB_LeaderLib_PartyFollower(_Owner, _Follower)
+DB_LeaderLib_PartyFollower((CHARACTERGUID)_Owner, _Follower)
 THEN
 LeaderLib_Follower_DismissCharacterFromOwner(_Owner, _Follower);
 
@@ -390,7 +390,7 @@ ObjectSetFlag(_Follower, "LeaderLib_IsFollowingSpeaker", 0);
 IF
 StoryEvent((CHARACTERGUID)_Follower, "LeaderLib_Commands_FollowOwner")
 AND
-DB_LeaderLib_PartyFollower(_Owner, _Follower)
+DB_LeaderLib_PartyFollower((CHARACTERGUID)_Owner, _Follower)
 THEN
 CharacterAttachToGroup(_Follower, _Owner);
 ObjectSetFlag(_Follower, "LeaderLib_CharacterIsFollowing", 0);
@@ -409,7 +409,7 @@ ObjectClearFlag(_Follower, "LeaderLib_IsFollowingSpeaker", 0);
 IF
 StoryEvent((CHARACTERGUID)_Follower, "LeaderLib_Commands_StopFollowingOwner")
 AND
-DB_LeaderLib_PartyFollower(_Owner, _Follower)
+DB_LeaderLib_PartyFollower((CHARACTERGUID)_Owner, _Follower)
 THEN
 ProcCharacterStopFollow(_Follower);
 CharacterDetachFromGroup(_Follower);

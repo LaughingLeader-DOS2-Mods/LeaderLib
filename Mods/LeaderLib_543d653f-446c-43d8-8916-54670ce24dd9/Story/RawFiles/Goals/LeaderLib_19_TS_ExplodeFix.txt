@@ -1,0 +1,20 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+
+/*
+In combat, EXPLODE seems to stick on a target, despite having a 0 turn duration.
+This blocks subsequent attempts to apply EXPLODE on that turn.
+This fix simply removes EXPLODE.
+*/
+IF
+CharacterStatusApplied(_Character, "EXPLODE", _)
+THEN
+RemoveStatus(_Character, "EXPLODE");
+
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

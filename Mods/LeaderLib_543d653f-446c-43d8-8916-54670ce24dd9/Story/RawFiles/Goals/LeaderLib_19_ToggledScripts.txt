@@ -38,6 +38,8 @@ LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Follower_TeleportEvents
 
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Debug", "LeaderLib_IsEditorMode");
 
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_ExplodeFix", "LeaderLib_ExplodeFix");
+
 //LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_GrowthEvents_Item_Enabled", "LeaderLib");
 //END_REGION
 
@@ -164,7 +166,7 @@ LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_GrowthEvents_Item_Enabled", "
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 15, 0)
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 23, 0)
 THEN
 LeaderLib_ToggleScripts_Internal_InitRegistration();
 LeaderLib_ToggleScripts_Internal_UpdateScriptFlags();

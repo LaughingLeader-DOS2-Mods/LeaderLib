@@ -58,6 +58,13 @@ DB_LeaderLib_ModApi_RegisterPreset((STRING)_Preset, (STRING)_DisplayName, (STRIN
 THEN
 LeaderLib_PresetMenu_RegisterPreset(_Preset, _DisplayName, _EnabledGlobalFlag);
 NOT DB_LeaderLib_ModApi_RegisterPreset(_Preset, _DisplayName, _EnabledGlobalFlag);
+/*Presets*/
+
+IF
+DB_LeaderLib_ModApi_RegisterPreset((STRING)_Group, (STRING)_Preset, (STRING)_DisplayName, (STRING)_EnabledGlobalFlag)
+THEN
+LeaderLib_PresetMenu_RegisterPreset(_Group, _Preset, _DisplayName, _EnabledGlobalFlag);
+NOT DB_LeaderLib_ModApi_RegisterPreset(_Group, _Preset, _DisplayName, _EnabledGlobalFlag);
 
 /*Clear Commands*/
 IF

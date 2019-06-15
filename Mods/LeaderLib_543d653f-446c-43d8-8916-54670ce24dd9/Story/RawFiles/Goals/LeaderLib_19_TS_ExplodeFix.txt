@@ -11,6 +11,8 @@ This fix simply removes EXPLODE.
 */
 IF
 CharacterStatusApplied(_Character, "EXPLODE", _)
+AND
+GetStatusTurns(_Character, "EXPLODE", 0)
 THEN
 RemoveStatus(_Character, "EXPLODE");
 

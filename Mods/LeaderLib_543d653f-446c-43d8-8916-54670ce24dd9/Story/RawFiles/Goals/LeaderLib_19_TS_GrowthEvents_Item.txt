@@ -52,6 +52,17 @@ LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:ItemTemplateCombinedWithItemTemp
 CharacterItemSetEvent(_Player, _Item, "LeaderLib_Commands_CheckItemLevel");
 //END_REGION
 
+//REGION TRANSFORMATION
+IF
+ObjectTransformed((ITEMGUID)_Item, _Template)
+AND
+IsTagged(_Item, "LeaderLib_AutoLevel", 1)
+AND
+String(_Template, _TemplateStr)
+THEN
+LeaderLib_Growth_Items_OnItemTransformed(_Item, _TemplateStr);
+//END_REGION
+
 //REGION DESTRUCTION_EVENTS
 IF
 ItemUnEquipped(_Item, _Character)

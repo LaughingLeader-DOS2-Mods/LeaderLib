@@ -601,8 +601,15 @@ THEN
 DB_LeaderLib_Growth_Items_Temp_NextTransform(_Character, _Item, _ID, _Template, _TransformedFlag);
 ObjectSetFlag(_Item, _TransformedFlag);
 
-IF
-ObjectTransformed((ITEMGUID)_Item, _Template)
+PROC
+LeaderLib_Growth_Items_OnItemTransformed((ITEMGUID)_Item, (STRING)_Template)
+AND
+IsTagged(_Item, "LeaderLib_AutoLevel", 1)
+THEN
+SetVarInteger(_Item, "LeaderLib_Level", 1);
+
+PROC
+LeaderLib_Growth_Items_OnItemTransformed((ITEMGUID)_Item, (STRING)_Template)
 AND
 DB_LeaderLib_Growth_Items_Temp_EquipAfterTransform(_Character, _Item)
 THEN

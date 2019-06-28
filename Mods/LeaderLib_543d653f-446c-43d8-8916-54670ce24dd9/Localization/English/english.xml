@@ -1,0 +1,240 @@
+<contentList>
+	<content contentuid="h14939ec7g5208g49d1ga484gd88c66bb67ba" Source="LeaderLib_MessageBox.lsb" Key="LeaderLib_MessageBox_CheckMissingMods">&lt;font color=&apos;#00FA9A&apos;&gt;View Missing Mods&lt;/font&gt;</content>
+	<content contentuid="h8fe3bf6cg2791g4a46gb517g396ceb756b43" Source="LeaderLib_MessageBox.lsb" Key="LeaderLib_MessageBox_MissingModDependendencies">&lt;font color=&apos;#fcd203&apos; size=&apos;28&apos;&gt;LeaderLib&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#FF0000&apos;&gt;&lt;font size=&apos;24&apos;&gt;* Error *&lt;/font&gt;&lt;br&gt;Required Mods Missing&lt;/font&gt;&lt;br&gt;Check your mod list at the main menu.</content>
+	<content contentuid="h393d684bg505dg41c4gbb5dg715a4b5bd153" Source="LeaderLib_MessageBox.lsb" Key="LeaderLib_MessageBox_SkipCheck">Close</content>
+	<content contentuid="h3510e199g7d0cg404fga53bg052c534d94d1" Source="LeaderLib_Skills.lsb" Key="Shout_LeaderLib_OpenModMenu_Description">&lt;font color=&apos;#3e81fc&apos; size=&apos;18&apos;&gt;LeaderLib&lt;/font&gt;&lt;br&gt;Open the mod menu to access registered settings menus.</content>
+	<content contentuid="h3ed2c7c5gf6c0g4c9dga916g5782593327ab" Source="LeaderLib_Skills.lsb" Key="Shout_LeaderLib_OpenModMenu_DisplayName">Open Mod Menu</content>
+	<content contentuid="head5217fga96cg4b34gafb1geb56b80bd8e0" Source="LeaderLib_Skills.lsb" Key="Target_LeaderLib_ControlSummon_Description">Take control of a summon or follower you own.</content>
+	<content contentuid="h1c359033g2e0dg49b1g9befg63f786d3f9fc" Source="LeaderLib_Skills.lsb" Key="Target_LeaderLib_ControlSummon_DisplayName">Control Summon</content>
+	<content contentuid="h1db4b34cg358dg49a2gbaeag3cb06a86ab4c" Source="LeaderLib_Statuses.lsb" Key="LeaderLib_NEW_ITEMS_Description">Character is selling new items.</content>
+	<content contentuid="hf1c7aa42g3e2fg4338ga672g59a3a935cff4" Source="LeaderLib_Statuses.lsb" Key="LeaderLib_NEW_ITEMS_DisplayName">New Items in Stock</content>
+	<content contentuid="haee6fb94g2ea6g4f56g800dg3e49e5b131ff" Source="LeaderLib_Statuses.lsb" Key="LeaderLib_PACIFIST_Description">Character has taken a vow to avoid fighting, and will flee if pulled into combat.</content>
+	<content contentuid="hae65b472g6a61g4c8fgb05dge94cc8e853d4" Source="LeaderLib_Statuses.lsb" Key="LeaderLib_PACIFIST_DisplayName">Pacifism</content>
+	<content contentuid="h7cf6d938g1c71g4431gbbccg85cfdf119735" Source="LeaderLib_AD_TestFollower.lsj">Lead the way.</content>
+	<content contentuid="hfb5e41d2gbcc7g4ed4gb962g13f831ed95c8" Source="LeaderLib_AD_TestFollower.lsj">I&apos;ll stay here.</content>
+	<content contentuid="hb26cb153g5583g48e7gb851g4dc00b23865d" Source="LeaderLib_AutosaveMenu.lsj">Updating menu...</content>
+	<content contentuid="h60d869f2gcb5cg4b29gafa4g9d94ef2ae4f7" Source="LeaderLib_AutosaveMenu.lsj">[LeaderLib_DynamicMenu_MenuOption3_58379c79-1cf1-4129-bcf5-579f40a9ad11]</content>
+	<content contentuid="h1332cb24g1da0g4c36g8447g650f71ef54c8" Source="LeaderLib_AutosaveMenu.lsj">Settings updated.</content>
+	<content contentuid="h916a5457g6ec8g47fdgb4adg2c5e67174a4b" Source="LeaderLib_AutosaveMenu.lsj">[LeaderLib_DynamicMenu_MenuOption6_ea90e3a6-30da-411c-8ab5-cae95373ae93]</content>
+	<content contentuid="h5be7351cgb6eeg438fgbb32g65c8295bfb3b" Source="LeaderLib_AutosaveMenu.lsj">Disable Timed Autosaves</content>
+	<content contentuid="h7d86a1e8g8071g444dgb6d8g859c06b2c1e6" Source="LeaderLib_AutosaveMenu.lsj">[LeaderLib_DynamicMenu_MenuOption8_f5ef1f68-8995-4c14-8e62-cf5f330cb31a]</content>
+	<content contentuid="hd7ef9f3egf089g4b40gbd4agd0f9b9b967c8" Source="LeaderLib_AutosaveMenu.lsj">[LeaderLib_DynamicMenu_MenuOption7_36c11cee-0a1b-4f4b-bd66-3bf0d100439b]</content>
+	<content contentuid="hb2822093gaf6ag417dgab70g447f0b730fb4" Source="LeaderLib_AutosaveMenu.lsj">[LeaderLib_DynamicMenu_MenuOption1_1f7c9690-58b3-4cf6-b17e-0da478b15e0e]</content>
+	<content contentuid="hbe5db354g0434g4e02g8af6g16dee986c19a" Source="LeaderLib_AutosaveMenu.lsj">[LeaderLib_DynamicMenu_MenuOption2_9df56ce3-cd42-421b-81b6-91ffe91042fd]</content>
+	<content contentuid="hc389e741g3228g423bgb2f8g82e3aab85e5f" Source="LeaderLib_AutosaveMenu.lsj">Save created.</content>
+	<content contentuid="h049d4b25g3cb0g4bc1gba9dg80749898d4e1" Source="LeaderLib_AutosaveMenu.lsj">[Exit]</content>
+	<content contentuid="hf3a71217gb65cg43bfg99bbg5c82a6f01901" Source="LeaderLib_AutosaveMenu.lsj">Autosave interval updated.</content>
+	<content contentuid="h39cb32edgc4a5g4932g8f3eg1595aa137776" Source="LeaderLib_AutosaveMenu.lsj">Autosave Settings&lt;br&gt;[LeaderLib_AutosaveMenu_CurrentSettings_b48918b6-4864-4aae-88fd-53d658ccb082]</content>
+	<content contentuid="hb78cd437g6402g485bg837dga7c59b959cd3" Source="LeaderLib_AutosaveMenu.lsj">[Last]</content>
+	<content contentuid="hf705976fg6f7fg4164g8f87g8db41f062a31" Source="LeaderLib_AutosaveMenu.lsj">Autosave Interval&lt;br&gt;[LeaderLib_AutosaveMenu_CurrentSettings_b48918b6-4864-4aae-88fd-53d658ccb082]</content>
+	<content contentuid="h5eb45b65g72aeg4b6cga7eegd42b61850315" Source="LeaderLib_AutosaveMenu.lsj">[Back]</content>
+	<content contentuid="hc3ddccc5g960cg4b23gaeb8g9646ea8f510e" Source="LeaderLib_AutosaveMenu.lsj">Autosave Now</content>
+	<content contentuid="hd07402b2g8a4cg4d6dg8b31gecf12983c614" Source="LeaderLib_AutosaveMenu.lsj">[More Intervals]</content>
+	<content contentuid="h658b85b9g49abg4c9fg9215ga09ac36d3e53" Source="LeaderLib_AutosaveMenu.lsj">Disable Autosaving in Combat</content>
+	<content contentuid="h13979ba5g4916g465fga3f0ge92a3c72c887" Source="LeaderLib_AutosaveMenu.lsj">Enable Timed Autosaves</content>
+	<content contentuid="h680a3621g57dag4544g8c63gb43e64633e24" Source="LeaderLib_AutosaveMenu.lsj">Enable Autosaving in Combat</content>
+	<content contentuid="h898ea651g71ddg40f0g8a76g6296ffc9581f" Source="LeaderLib_AutosaveMenu.lsj">[First]</content>
+	<content contentuid="h1a3bf422gc2b3g4b33g9009g316b0ed5bb26" Source="LeaderLib_AutosaveMenu.lsj">[Back]</content>
+	<content contentuid="h25737285gb844g4142gad4cg1d5dc420fb0b" Source="LeaderLib_AutosaveMenu.lsj">[LeaderLib_DynamicMenu_MenuOption5_f450c0eb-c308-4755-9718-f6a1e87305bd]</content>
+	<content contentuid="h7051ecdfgb5d8g4d31gb3f4g075f8d99c61b" Source="LeaderLib_AutosaveMenu.lsj">Change Autosave Interval</content>
+	<content contentuid="hb62538b3gfff2g4bb4g9b70g7463f658f4f7" Source="LeaderLib_AutosaveMenu.lsj">[LeaderLib_DynamicMenu_MenuOption4_e6bea606-b29a-4bfe-8959-94e8be8330cb]</content>
+	<content contentuid="h632cbbd2g4193g4921g979fg1abd006f1e0b" Source="LeaderLib_CommandsMenu.lsj">Running command...</content>
+	<content contentuid="hb207bd26gc851g4a92ga231g3f076a87b3d6" Source="LeaderLib_CommandsMenu.lsj">[Back]</content>
+	<content contentuid="h68ad69bfg9d72g4107g8285g691dd3abc27e" Source="LeaderLib_CommandsMenu.lsj">Add the Mod Menu Skill (Self)</content>
+	<content contentuid="hbb25dcedgbd28g4408g80dcg3ab34bed0164" Source="LeaderLib_CommandsMenu.lsj">Remove the Mod Menu Skill (Party)</content>
+	<content contentuid="h86be6c1eg4261g4c62gb949gab7b24bfd1f8" Source="LeaderLib_CommandsMenu.lsj">Commands</content>
+	<content contentuid="h31a2f896g6e9fg47aegb876ga3d5ba3114b1" Source="LeaderLib_CommandsMenu.lsj">[Debug] Fix Dialog for Active LeaderLib Traders</content>
+	<content contentuid="h8859d107g3e28g44dega723gc7434a93f206" Source="LeaderLib_CommandsMenu.lsj">Add the Mod Menu Skill (Party)</content>
+	<content contentuid="h529c36c6g6b68g46e2g867dg863184908d5a" Source="LeaderLib_CommandsMenu.lsj">Remove the Mod Menu Skill (Self)</content>
+	<content contentuid="hf8c6e866g9949g4d30g9cf2g3a9ba53d2f28" Source="LeaderLib_Debug_RecruitCharacter.lsj">Follow me.</content>
+	<content contentuid="h8b8cb81bgf46eg435fg9fadg283b2bec5c89" Source="LeaderLib_Debug_RecruitCharacter.lsj">Let&apos;s part ways.</content>
+	<content contentuid="h109e781dg2032g4b77gacdagce8034c4e49e" Source="LeaderLib_Debug_RecruitCharacter.lsj">Okay.</content>
+	<content contentuid="h0d0af957g4dc8g4ddagb0fag6c38340bb6de" Source="LeaderLib_Debug_RecruitCharacter.lsj">Hello!</content>
+	<content contentuid="ha140cb94g4fd8g4651gacf2g9c54f0a8b74a" Source="LeaderLib_Debug_RecruitCharacter.lsj">*Take your leave.*</content>
+	<content contentuid="h031b0a74g0630g4f79ga05fg71c06e49015d" Source="LeaderLib_Debug_Trader.lsj">*Step away.*</content>
+	<content contentuid="h00d3459bg4562g42dbgbe1fg0eba1a0e9f6c" Source="LeaderLib_Debug_Trader.lsj">*You take a look at the trader&apos;s wares.*</content>
+	<content contentuid="h47d73bfcg16eag4504g83c0ge7b9c0048f13" Source="LeaderLib_Debug_Trader.lsj">*Ask to see the trader&apos;s goods.*</content>
+	<content contentuid="h3eb917d7g036fg483dg8ee5gc83743845400" Source="LeaderLib_Debug_Trader.lsj">Welcome!</content>
+	<content contentuid="ha6c69629g6fbag4268g8826g82af57c354fc" Source="LeaderLib_Debug_Trader.lsj">Take a look.</content>
+	<content contentuid="hb8f5a682g5a19g4fe4ga26ag701bf0ba4e8b" Source="LeaderLib_LeaderTrader_Arx_Intro.lsj">Give me a moment to prepare my things, and we can begin trading again.</content>
+	<content contentuid="hd90e217bga98dg4b24g86e0g5eafa5afc923" Source="LeaderLib_LeaderTrader_Arx_Intro.lsj">Of course, of course. I have plenty to sell.</content>
+	<content contentuid="hf250f2d4gb046g4001gbd88g1872e3b857c7" Source="LeaderLib_LeaderTrader_Arx_Intro.lsj">Me? Oh, I&apos;m just a retired old man, looking to sell his wares. *He rubs his beard, glancing around on the boat.* Afraid I&apos;m not much of a soldier anymore, so trading is all I&apos;ve got.</content>
+	<content contentuid="h5a3c3cb9g4168g48eaga773g6e5cd41223b5" Source="LeaderLib_LeaderTrader_Arx_Intro.lsj">*He reaches for his bag.*</content>
+	<content contentuid="h608a3fb1g869eg45b6g93f6g9ec6d52a02d8" Source="LeaderLib_LeaderTrader_Arx_Intro.lsj">Welcome [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3]. Seems we&apos;re nearing the end of our journey together.</content>
+	<content contentuid="h503525aeg41e0g459bg9c2cg0ad0080cfed9" Source="LeaderLib_LeaderTrader_Arx_Intro.lsj">*Take your leave.*</content>
+	<content contentuid="h15c7dfedg0e00g4ed8g85d2g6bdd30204527" Source="LeaderLib_LeaderTrader_Arx_Intro.lsj">*The old man moves quickly, and seems to be prepared in the blink of an eye.*</content>
+	<content contentuid="h97e93b5eg2e78g46f0gac84g8250aeaa1984" Source="LeaderLib_LeaderTrader_Arx_Intro.lsj">*The old man looks to you as you approach.* Welcome! *He looks around.* Bit of a dreary place now, mm?</content>
+	<content contentuid="h29d24735g62a8g43f0gb65fg817b15e27da6" Source="LeaderLib_LeaderTrader_Arx_Intro.lsj">Before I get set up... Here. I have a few extra copies of this book I bet you&apos;d like. It&apos;s on the house.</content>
+	<content contentuid="h7322bed9g2ea5g4abeg9decga21994353d79" Source="LeaderLib_LeaderTrader_Arx_Intro.lsj">*He waits for you to speak.*</content>
+	<content contentuid="h30327946g0ea7g4b53gada1g8fbaf61a8e84" Source="LeaderLib_LeaderTrader_Arx_Intro.lsj">*Ask if he&apos;s selling anything.*</content>
+	<content contentuid="he59d7821g2c4dg4deag8341g27215713bf5e" Source="LeaderLib_LeaderTrader_Arx_Intro.lsj">*Introduce yourself, then ask the man who he is.*</content>
+	<content contentuid="hc3774aa6g7d51g4ed9gb34dgc3756022fd56" Source="LeaderLib_LeaderTrader_Arx_Intro.lsj">*He hands you a peculiar-looking book.*</content>
+	<content contentuid="h89b19292g87beg4312g9514g63c95313649f" Source="LeaderLib_LeaderTrader_Arx_Intro.lsj">*He straightens his posture before speaking.* You may call me [LeaderLib_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b]. Pleasure to meet you, [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3].</content>
+	<content contentuid="h9d00c99fgf7a1g4cb0gbfd9gb015d525148f" Source="LeaderLib_LeaderTrader_Arx_Intro.lsj">*Ask if he&apos;s still selling things.*</content>
+	<content contentuid="h4ceb8a44g8bf7g40b3g999egaca5cf0af044" Source="LeaderLib_LeaderTrader_Arx_Intro.lsj">*The old man runs his hands over his clothes, trying to iron out the wrinkles.* What can I do for you, stranger?</content>
+	<content contentuid="h35914541gb69bg42f4gafa5gb90aeb1ec229" Source="LeaderLib_LeaderTrader_AttackResponse.lsj">...</content>
+	<content contentuid="h4f43d13bgeb18g4af9gb7e0g6b49fda77d33" Source="LeaderLib_LeaderTrader_AttackResponse.lsj">Hnng! Really?!</content>
+	<content contentuid="hcd40ab3egabe1g4111g9217gb2381b466a2a" Source="LeaderLib_LeaderTrader_AttackResponse.lsj">Argh!</content>
+	<content contentuid="h70808d00g222dg4b4ega35cg661cb7eccd45" Source="LeaderLib_LeaderTrader_AttackResponse.lsj">Urgh!</content>
+	<content contentuid="h2627dad1g64d8g4d19gaf42g6a12ef1a7d1a" Source="LeaderLib_LeaderTrader_AttackResponse.lsj">Please stop that...</content>
+	<content contentuid="h2d67c338g8fceg4b65g8465g82db90e959b0" Source="LeaderLib_LeaderTrader_Default.lsj">Take a look.</content>
+	<content contentuid="hf585ea52gbdb4g4a21g82aag836415d7d0d6" Source="LeaderLib_LeaderTrader_Default.lsj">*Request a copy of the &quot;Mod Menu&quot; book.*</content>
+	<content contentuid="h2d06e76dg6338g466bg875eg55c2c58e275c" Source="LeaderLib_LeaderTrader_Default.lsj">Ahah. A fan, eh? Here you go.</content>
+	<content contentuid="ha73d93a8g04fdg4eb0g90fage5e02cd0c4ef" Source="LeaderLib_LeaderTrader_Default.lsj">*Step away.*</content>
+	<content contentuid="h50452891g891bg45a7gb700g348998ff32b5" Source="LeaderLib_LeaderTrader_Default.lsj">*He hands you copy of the requested sacred text.*</content>
+	<content contentuid="h14535fc5g0469g4edfg94bfge8732ca3be6f" Source="LeaderLib_LeaderTrader_Default.lsj">*Ask to see the trader&apos;s goods.*</content>
+	<content contentuid="h6349d1c7g6af8g4bb0g9d17g1e09f64a3d6f" Source="LeaderLib_LeaderTrader_Default.lsj">[LeaderLib_LeaderTrader_Greeting_f143b90b-9afc-477e-b133-6a1574341261]</content>
+	<content contentuid="hbd4f0f23g1792g4e99g9665g58b511994c18" Source="LeaderLib_LeaderTrader_Default.lsj">*You take a look at the trader&apos;s wares.*</content>
+	<content contentuid="hab87e202g3afcg45f6g9325gbfde5f0f015b" Source="LeaderLib_LeaderTrader_FortJoy_Intro.lsj">Speaking of, I have a few extra copies of this book I bet you&apos;d like. It&apos;s on the house.</content>
+	<content contentuid="hf2727fbcg6af7g4a95g9888g15dd8338e10c" Source="LeaderLib_LeaderTrader_FortJoy_Intro.lsj">*He straightens his posture before speaking.* You may call me [LeaderLib_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b]. Pleasure to meet you, [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3].</content>
+	<content contentuid="h7b455d51g9be5g4f48g8dffg7e1a4b1ad356" Source="LeaderLib_LeaderTrader_FortJoy_Intro.lsj">*Ask what his plans are for his time on Reaper&apos;s Eye.*</content>
+	<content contentuid="hd3baa721g34c3g49f7ga360ge49af2a015b8" Source="LeaderLib_LeaderTrader_FortJoy_Intro.lsj">*You notice the old man moves quickly, and seems to be prepared in the blink of an eye.*</content>
+	<content contentuid="h7f7227a5g87fcg4c91ga612geec72eb18721" Source="LeaderLib_LeaderTrader_FortJoy_Intro.lsj">*Introduce yourself, then ask the man who he is.*</content>
+	<content contentuid="h8679b603g4c2cg4d2eg8e25g5c17e7078f22" Source="LeaderLib_LeaderTrader_FortJoy_Intro.lsj">*Take your leave.*</content>
+	<content contentuid="h81a0d6b9g43adg4223gbcc9g0fceadeff883" Source="LeaderLib_LeaderTrader_FortJoy_Intro.lsj">*He coughs out some sea water.*  That she-beast of a sourceress nearly wiped me out with the others on the boat... *He trails off for a moment before returning his gaze back to you.*</content>
+	<content contentuid="hb6ecdc41g4c2fg4940ga84bgc781c616de71" Source="LeaderLib_LeaderTrader_FortJoy_Intro.lsj">You&apos;re already aware that I&apos;m selling things, right? That&apos;s the plan here too, of course.</content>
+	<content contentuid="h76b098bdgb9f4g4ae8g8e5bg87f68b4599d9" Source="LeaderLib_LeaderTrader_FortJoy_Intro.lsj">Hey there, [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3]! You made it off that wreck in one piece, eh? *He snorts.* </content>
+	<content contentuid="h6d61f680g2f6cg44c1g8a37g4ad2ad98dc90" Source="LeaderLib_LeaderTrader_FortJoy_Intro.lsj">I&apos;m also selling some old belongings.</content>
+	<content contentuid="h2bf7a5ddg25cfg4ae6gaf3dg511c3727ffa0" Source="LeaderLib_LeaderTrader_FortJoy_Intro.lsj">*He waits for you to speak.*</content>
+	<content contentuid="he5a918ecg8f34g4ddbg9af6g98e9f4575d91" Source="LeaderLib_LeaderTrader_FortJoy_Intro.lsj">Me? Oh, I&apos;m just a retired old man, looking to get some fishing done. *He rubs his beard, glancing at the broken-down scenery.* Afraid I don&apos;t have any fight left in me anywho.</content>
+	<content contentuid="h2db9aa52g45f1g400cg88f9g895196cbe43e" Source="LeaderLib_LeaderTrader_FortJoy_Intro.lsj">*The old man looks to you as you approach.* Oh good... Another surviver!</content>
+	<content contentuid="ha9284da0gd161g47d7g8c19g7ac10878ee5c" Source="LeaderLib_LeaderTrader_FortJoy_Intro.lsj">*He sets his fishing pole down for a moment and rummages through a bag,*</content>
+	<content contentuid="ha56bd856gb01fg43c3g965dg5447174ab32c" Source="LeaderLib_LeaderTrader_FortJoy_Intro.lsj">*He snorts.* Why, fishing of course! *He gestures to the fishing rod on his back.*</content>
+	<content contentuid="hdefd7688g4811g445ag94a4gbe304b43168b" Source="LeaderLib_LeaderTrader_FortJoy_Intro.lsj">I managed to sneak away before that nasty Kraken showed up. *He groans and rubs his shoulders.* Damn if I won&apos;t feel it tomorrow, though...</content>
+	<content contentuid="hc70db3e9ga1ecg465egb953g253f7e77db5d" Source="LeaderLib_LeaderTrader_FortJoy_Intro.lsj">*He hands you a peculiar-looking book.*</content>
+	<content contentuid="h7f407d4bgae1ag466agb7c4g248d44e3a629" Source="LeaderLib_LeaderTrader_FortJoy_Intro.lsj">One second while I set things up...</content>
+	<content contentuid="hae9e720bgfb0bg43b4gb428g8b7fedf7193e" Source="LeaderLib_LeaderTrader_LadyVengeance_Intro.lsj">Hey, [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3]! We made it off that dreadful island!</content>
+	<content contentuid="h30855a9fga157g4ff1g83b7g7bb8fd640988" Source="LeaderLib_LeaderTrader_LadyVengeance_Intro.lsj">*Take your leave.*</content>
+	<content contentuid="h386d715bg3f70g4373g8d64g99fb5f1010e8" Source="LeaderLib_LeaderTrader_LadyVengeance_Intro.lsj">*Ask why Lothar left his &quot;vacation&quot; on Reaper&apos;s Eye.*</content>
+	<content contentuid="h5f603b9bg4c0fg4b80g9cfagfce9ed3b295b" Source="LeaderLib_LeaderTrader_LadyVengeance_Intro.lsj">Speaking of old junk, I have a few extra copies of this book I bet you&apos;d like. It&apos;s on the house.</content>
+	<content contentuid="h951be36bg6ed7g49e4ga343gaa5c47a4c98e" Source="LeaderLib_LeaderTrader_LadyVengeance_Intro.lsj">*Lothar grunts, rubbing his lower back as he chews on something.* Once I saw this beautiful ship in the distance, I knew it was my chance to escape. I swam like a fish.</content>
+	<content contentuid="h28bc1942gc4f1g42bag8fc3g83b33f653c17" Source="LeaderLib_LeaderTrader_LadyVengeance_Intro.lsj">Anyway, I figure I&apos;ll make this my little home away from home, and sell some old junk I&apos;ve accumulated over the years.</content>
+	<content contentuid="ha573859bg0e9bg4fefgab91g278749405487" Source="LeaderLib_LeaderTrader_LadyVengeance_Intro.lsj">*You notice the old man moves quickly, and seems to be prepared in the blink of an eye.*</content>
+	<content contentuid="hf6f6cbc6g89efg40dag8c9cg8359c5e0d618" Source="LeaderLib_LeaderTrader_LadyVengeance_Intro.lsj">*Ask why he&apos;s here on the Lady Vengeance.*</content>
+	<content contentuid="hd6d9366dg5fe9g424cga28egc15c030b747c" Source="LeaderLib_LeaderTrader_LadyVengeance_Intro.lsj">*The old man looks to you as you approach.* Welcome, welcome!</content>
+	<content contentuid="hd1f4f8d8g4a81g4366g86a2g5a3715d978b7" Source="LeaderLib_LeaderTrader_LadyVengeance_Intro.lsj">*He straightens his posture before speaking.* You may call me [LeaderLib_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b]. Pleasure to meet you, [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3].</content>
+	<content contentuid="h1431da4ege831g43cdg94dcgb0989c7771bf" Source="LeaderLib_LeaderTrader_LadyVengeance_Intro.lsj">Have you been enjoying that book I gave you? *He rubs his beard.*</content>
+	<content contentuid="h6d41e8bag5ab9g42c4g8723g2dad9e443b64" Source="LeaderLib_LeaderTrader_LadyVengeance_Intro.lsj">*He hands you a peculiar-looking book.*</content>
+	<content contentuid="h6f21c7b6gea18g4846gbd07g048402159797" Source="LeaderLib_LeaderTrader_LadyVengeance_Intro.lsj">*He waits for you to speak.*</content>
+	<content contentuid="hdd673ac0g2ae1g423cg853eg5a7b8149cd13" Source="LeaderLib_LeaderTrader_LadyVengeance_Intro.lsj">*He spits out what is presumably seaweed.* So, what can I do for you today?</content>
+	<content contentuid="h01d5b8eagb39eg4b1egb63eg3f3369e7aaef" Source="LeaderLib_LeaderTrader_LadyVengeance_Intro.lsj">*Introduce yourself, then ask the man who he is.*</content>
+	<content contentuid="h93f14fd4gf2eag4e9egb5f6g134e1c8f9ad1" Source="LeaderLib_LeaderTrader_LadyVengeance_Intro.lsj">Me? Oh, I&apos;m just a retired old man, looking to sell his wares. *He rubs his beard, glancing around on the boat.* Afraid I&apos;m not much of a soldier anymore, so trading is all I&apos;ve got.</content>
+	<content contentuid="h00cfaa9cg1ba7g4699gb353g07d1570afea6" Source="LeaderLib_LeaderTrader_LadyVengeance_Intro.lsj">*He snorts.* Unfortunately, the thought of hanging around on that stuffy island, with all that death underneath, did not appeal to me. </content>
+	<content contentuid="h2a4940c6g0da0g4c44gb1b8gde69d2ede8bb" Source="LeaderLib_LeaderTrader_LadyVengeance_Intro.lsj">*Lothar lets out a hearty laugh.* As it turns out, doing nothing but fishing all day is boring! I figure I&apos;ll see some interesting things if I tag along. </content>
+	<content contentuid="h3fb60439g4406g4623ga6b7gb53cda538fcb" Source="LeaderLib_LeaderTrader_LadyVengeance_Intro.lsj">*The old man runs his hands over his clothes, trying to iron out the wrinkles.* What can I do for you, stranger?</content>
+	<content contentuid="hd21aa2fag381bg45f9g83ffg578fd34fbe1a" Source="LeaderLib_LeaderTrader_LadyVengeance_Intro.lsj">Give me a moment to prepare my things, and we can begin trading.</content>
+	<content contentuid="h8e75b265ge400g4f0agbfcfg9b5a404d48f7" Source="LeaderLib_LeaderTrader_Tutorial_Intro.lsj">*With a puzzled look on your face, the old man speaks up before you get a chance to respond.*</content>
+	<content contentuid="h907db4cdg96e4g4597g87f5g9a45d7ae9e70" Source="LeaderLib_LeaderTrader_Tutorial_Intro.lsj">*Ask to see the goods.*</content>
+	<content contentuid="hda816c8bg2b06g4c93ga526gb61ed29a8760" Source="LeaderLib_LeaderTrader_Tutorial_Intro.lsj">&quot;Let me get my things in order here...&quot; *He presumably situates a bag of goods that&apos;s strangely out of sight.*</content>
+	<content contentuid="h5d2c77c1g3533g486ag9b80g25e13037c2ae" Source="LeaderLib_LeaderTrader_Tutorial_Intro.lsj">*Take your leave.*</content>
+	<content contentuid="h98d315c5g189cg431eg9862g7cea569a5e3b" Source="LeaderLib_LeaderTrader_Tutorial_Intro.lsj">Hmm?</content>
+	<content contentuid="h58d6052fgd3bag4cd9gb6e0gfe94189dfdb6" Source="LeaderLib_LeaderTrader_Tutorial_Intro.lsj">*The old man yawns, barely giving an indication to your presence.*</content>
+	<content contentuid="hc78dbfbbg99e3g4b81gbb3fg8068e2d4ecda" Source="LeaderLib_LeaderTrader_Tutorial_Intro.lsj">*He hands you a peculiar-looking book.*</content>
+	<content contentuid="h6472ecb0g5977g4c93g8a51g6444c9402d47" Source="LeaderLib_LeaderTrader_Tutorial_Intro.lsj">So. How about a trade?</content>
+	<content contentuid="h62a23d87g39e8g464fg84ddg63b7f53d6a9b" Source="LeaderLib_LeaderTrader_Tutorial_Intro.lsj">*Ask the man who he is.*</content>
+	<content contentuid="hea8ffe81g16f9g4a76ga9b0gad73bbaa72df" Source="LeaderLib_LeaderTrader_Tutorial_Intro.lsj">Oh! That reminds me. I have some goodies here. I&apos;m selling them for fishing gear, you see. Part of my retirement plan.</content>
+	<content contentuid="h03e70da4g57d5g4cc6g9f3dg2af32a56a3e6" Source="LeaderLib_LeaderTrader_Tutorial_Intro.lsj">Take a look.</content>
+	<content contentuid="hc6932dc9g399cg48a5gb9cdg722cf1ac26ea" Source="LeaderLib_LeaderTrader_Tutorial_Intro.lsj">*You take a look at his wares.*</content>
+	<content contentuid="hc108b43dgeae9g4469g8ea4gcaf87e524454" Source="LeaderLib_LeaderTrader_Tutorial_Intro.lsj">*Introduce yourself, then ask who you&apos;re talking to.*</content>
+	<content contentuid="h12a0d291g8a48g4448g97adgf3dd1d053aa6" Source="LeaderLib_LeaderTrader_Tutorial_Intro.lsj">Me? Oh, I&apos;m nobody... Just an old bag of bones, keen on seeing the sights. I hear this cruise ship has a great buffet. *He snorts.*</content>
+	<content contentuid="h017f78f5ge510g4f95gb17cg84d4865a6823" Source="LeaderLib_LeaderTrader_Tutorial_Intro.lsj">It&apos;s a pleasure to meet you [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3]. You may call me [LeaderLib_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b].</content>
+	<content contentuid="h4d75e3c0ge0c3g4078gb94dg8e1e054aecb6" Source="LeaderLib_LeaderTrader_Tutorial_Intro.lsj">*He yawns.* Anything else?</content>
+	<content contentuid="ha7f6838bg646eg405bg9d45g91e8f5434cb4" Source="LeaderLib_LeaderTrader_Tutorial_Intro.lsj">*The old man perks up for a moment.*</content>
+	<content contentuid="hc768ad97g83deg41fdgb257g54443e202c5a" Source="LeaderLib_LeaderTrader_Tutorial_Intro.lsj">As a gesture of goodwill towards future trading, I&apos;ll give you this book for free.</content>
+	<content contentuid="head3fc5eg00dag451dga8bdge0b6896e6a86" Source="LeaderLib_MissingModDependencyList.lsj">[Steam] I subscribed to these mods, but they don&apos;t show up in the mod list!</content>
+	<content contentuid="hd14d7a41gbb30g4810gaebfgc883c22654d1" Source="LeaderLib_MissingModDependencyList.lsj">Chances are a mod was updated, which deactivates it by default. It&apos;s quite annoying, I know!</content>
+	<content contentuid="hb48f1258g4031g4ab2g8d73gbb24956d5d74" Source="LeaderLib_MissingModDependencyList.lsj">I definitely activated these mods at one point! Why are they no longer active?</content>
+	<content contentuid="hfc57ba23gd6adg420fg814cgeb89ab9347b6" Source="LeaderLib_MissingModDependencyList.lsj">This is likely an issue of the mod not copying to the right folder after subscribing.&lt;br&gt;Check the discussion pinned at LeaderLib&apos;s steam workshop page titled:&lt;br&gt;&lt;b&gt;Support: Mod Doesn&apos;t Appear in the Mod List&lt;/b&gt;</content>
+	<content contentuid="h15a1a420ga70cg421fg9debg4dde6e153ee6" Source="LeaderLib_MissingModDependencyList.lsj">[Back]</content>
+	<content contentuid="h3cb84dc3g7a01g411bg860eg4ef5a3dbbac2" Source="LeaderLib_MissingModDependencyList.lsj">The following &lt;font color=&apos;#FF00FF&apos;&gt;required mods&lt;/font&gt; are &lt;font color=&apos;#FF0000&apos;&gt;inactive:&lt;/font&gt;&lt;br&gt;[LeaderLib_MissingModDependencyText_24356ba8-a1c7-4ad9-86fe-de1c834ec789]&lt;br&gt;&lt;font color=&apos;#00FA9A&apos;&gt;Tip: Check your mod list at the main menu, and load a save from before you got this message after activating the missing mods.&lt;/font&gt;</content>
+	<content contentuid="h3a115862g7d96g47bcga77dgc86ff8da7ff8" Source="LeaderLib_ModMenu.lsj">[LeaderLib_ModMenu_Menu3_cf00a8c6-02d2-4fda-a766-4f533ac93b2d]</content>
+	<content contentuid="h3e1f5e00g58f7g4b23g97c4g979be6586c6f" Source="LeaderLib_ModMenu.lsj">Opening the LeaderLib settings menu...</content>
+	<content contentuid="h196cc760g0133g4cb7gb48bg6a902641739f" Source="LeaderLib_ModMenu.lsj">[LeaderLib_ModMenu_Menu1_783ec14d-2861-4345-8dbc-45974fa34e15]</content>
+	<content contentuid="h25bf34f3g1b21g4b69gb041g896d6e346f36" Source="LeaderLib_ModMenu.lsj">[LeaderLib_ModMenu_Menu4_337a1066-9a85-4005-a2dc-f0156bf13d16]</content>
+	<content contentuid="hb955eb39g2068g4c7dga389gfabcaa42462d" Source="LeaderLib_ModMenu.lsj"> Loading mod menu...</content>
+	<content contentuid="hbe7c777fg3946g4d49g9271g4684744cb15b" Source="LeaderLib_ModMenu.lsj">[LeaderLib_ModMenu_Menu7_888ce02f-83ff-4173-be8d-f41fd348358f]</content>
+	<content contentuid="h5e7156dfg4eddg428fg8939gdadd6f2eb50f" Source="LeaderLib_ModMenu.lsj">[ERROR] No mod menus detected (LeaderLib should be here!). Click here to open [LeaderLib] Settings.</content>
+	<content contentuid="h6765e77cg13c0g48dcgb708g721355bc5451" Source="LeaderLib_ModMenu.lsj">[LeaderLib_ModMenu_Menu6_863af621-ff0c-454a-b6a3-7c9d3166a8a0]</content>
+	<content contentuid="h808d2fe2ge0d2g4e78g94cag05b054d2b96b" Source="LeaderLib_ModMenu.lsj">[LeaderLib_ModMenu_Menu2_9a2d2990-5cff-420e-ba8a-37f9510ab9e1]</content>
+	<content contentuid="h1ae3aaa5gb444g4372g8b9ag231538f36a86" Source="LeaderLib_ModMenu.lsj">[LeaderLib_ModMenu_Menu8_a6aa98e6-cde4-491b-a2cb-2cd7d5d71f96]</content>
+	<content contentuid="h9c91bca1g6c8eg4381gb975gb58c0c8f7320" Source="LeaderLib_ModMenu.lsj">[-] Previous Page</content>
+	<content contentuid="h00eb1825gdc83g454dga263g5e7088c50ef1" Source="LeaderLib_ModMenu.lsj">[+] Next Page</content>
+	<content contentuid="h16793f3dgb128g4b51g9e24g7b19ef78b894" Source="LeaderLib_ModMenu.lsj">Loading menus...</content>
+	<content contentuid="h9ff30ae0ge39eg480bg82a3ge975aafed5fd" Source="LeaderLib_ModMenu.lsj">[LeaderLib_ModMenu_Menu5_45148ce6-e8f3-4af4-81ed-a3b2e1ff8a17]</content>
+	<content contentuid="he7290ab2gb195g4d9dgb9e8g47bfdc30ba55" Source="LeaderLib_ModMenu.lsj">[Exit]</content>
+	<content contentuid="h6d2689a6ge111g43b7g8c87g478a5e501f40" Source="LeaderLib_ModMenu.lsj">Mods&lt;br&gt;[LeaderLib_ModMenu_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156]</content>
+	<content contentuid="h7a60181dg1be6g4e43g99c5g91289ea59f8f" Source="LeaderLib_ModMenu.lsj">Exiting...</content>
+	<content contentuid="h3c27be6dg727bg4802ga3cbge9ab8e50a62b" Source="LeaderLib_PresetMenu.lsj">[Previous]</content>
+	<content contentuid="h7f51b851g67b5g4eceg9ab5g2bc268bd674f" Source="LeaderLib_PresetMenu.lsj">Cancel</content>
+	<content contentuid="h7e3e81b3g5215g4168gb89dg97d50baaabd6" Source="LeaderLib_PresetMenu.lsj">[LeaderLib_DynamicMenu_MenuOption7_36c11cee-0a1b-4f4b-bd66-3bf0d100439b]</content>
+	<content contentuid="hcf7d886cg8ab9g4ec8gb2efgca86a9260837" Source="LeaderLib_PresetMenu.lsj">[Last]</content>
+	<content contentuid="h6a5dc57egc088g471eg8f38g8fb02efbf1cb" Source="LeaderLib_PresetMenu.lsj">Preset Menu</content>
+	<content contentuid="he0bf54a8g57fdg4dffg9287gf5c6aac24a35" Source="LeaderLib_PresetMenu.lsj">Selecting preset...</content>
+	<content contentuid="h3d81a0d7g267ag45f9g985egffeffa0119e2" Source="LeaderLib_PresetMenu.lsj">Preset changed. Have a wonderful day.</content>
+	<content contentuid="h07b0d455gbe0fg48a4gbe1eg3ae23e84b2eb" Source="LeaderLib_PresetMenu.lsj">Confirm Preset Selection</content>
+	<content contentuid="h85c3e4fag683cg471agaef1g448f3023e955" Source="LeaderLib_PresetMenu.lsj">Selected Preset: [LeaderLib_PresetMenu_CurrentPreset_2e904bf9-1a93-447a-8f07-5383aea20068]</content>
+	<content contentuid="h135cea8bg36f7g48a7g83e0g79394989e50b" Source="LeaderLib_PresetMenu.lsj">Change your preset to [LeaderLib_PresetMenu_CurrentPreset_2e904bf9-1a93-447a-8f07-5383aea20068]? Your items, skills, and talents will be preserved.</content>
+	<content contentuid="h24a38c04g6d7bg4de1gbb39gbf06db6a3777" Source="LeaderLib_PresetMenu.lsj">[Back]</content>
+	<content contentuid="h91437530g1ddag4b1bgaed7g7e1a7990d43c" Source="LeaderLib_PresetMenu.lsj">Confirm</content>
+	<content contentuid="hf79ed706g92d1g4183g911egf7ea7d927d05" Source="LeaderLib_PresetMenu.lsj">[LeaderLib_DynamicMenu_MenuOption3_58379c79-1cf1-4129-bcf5-579f40a9ad11]</content>
+	<content contentuid="h0ab95fb3g7cfbg483dga66bg5daf233e945a" Source="LeaderLib_PresetMenu.lsj">Loading presets...</content>
+	<content contentuid="h40ac3891g3661g43eag878dg6510b001704a" Source="LeaderLib_PresetMenu.lsj">[LeaderLib_DynamicMenu_MenuOption4_e6bea606-b29a-4bfe-8959-94e8be8330cb]</content>
+	<content contentuid="hbbc07b7cgc1d4g41c8gbec8gdadfd3486b3f" Source="LeaderLib_PresetMenu.lsj">[LeaderLib_DynamicMenu_MenuOption8_f5ef1f68-8995-4c14-8e62-cf5f330cb31a]</content>
+	<content contentuid="h5cc39c97g969dg4c92gbf7fgbc57f3bff64d" Source="LeaderLib_PresetMenu.lsj">[LeaderLib_DynamicMenu_MenuOption2_9df56ce3-cd42-421b-81b6-91ffe91042fd]</content>
+	<content contentuid="hfc127269g5358g45caga849g9199319d004d" Source="LeaderLib_PresetMenu.lsj">[First]</content>
+	<content contentuid="h5671b6e0gf0c5g4a01g9513g36382bea3418" Source="LeaderLib_PresetMenu.lsj">[LeaderLib_DynamicMenu_MenuOption1_1f7c9690-58b3-4cf6-b17e-0da478b15e0e]</content>
+	<content contentuid="hc916a563gc973g4052gafa2ged83d3ff3da7" Source="LeaderLib_PresetMenu.lsj">[Next]</content>
+	<content contentuid="hd9f00ef8g890eg475bg88ddg9cda39e551fe" Source="LeaderLib_PresetMenu.lsj">[LeaderLib_DynamicMenu_MenuOption5_f450c0eb-c308-4755-9718-f6a1e87305bd]</content>
+	<content contentuid="hd6575622g90aeg49d1gbe2dg1e81de23a636" Source="LeaderLib_PresetMenu.lsj">[LeaderLib_DynamicMenu_MenuOption6_ea90e3a6-30da-411c-8ab5-cae95373ae93]</content>
+	<content contentuid="h22e00201g6666g4837gaf8ega722712bad2a" Source="LeaderLib_Sample_DynamicMenu.lsj">[LeaderLib_DynamicMenu_MenuOption3_58379c79-1cf1-4129-bcf5-579f40a9ad11]</content>
+	<content contentuid="hb5265b58gcf15g40dfg8769gb5dcc430a99f" Source="LeaderLib_Sample_DynamicMenu.lsj">[LeaderLib_DynamicMenu_MenuOption5_f450c0eb-c308-4755-9718-f6a1e87305bd]</content>
+	<content contentuid="h2ecf8684gea80g4317g9c50gef04b597ab2c" Source="LeaderLib_Sample_DynamicMenu.lsj">Dynamic Menu Sample</content>
+	<content contentuid="ha2901d46g7ba5g408cg91ffg6b14b45b4c09" Source="LeaderLib_Sample_DynamicMenu.lsj">Dynamic Menu Sample</content>
+	<content contentuid="hbc981162gff5eg476bgb043gc3b236500031" Source="LeaderLib_Sample_DynamicMenu.lsj">[Exit]</content>
+	<content contentuid="h517cd9b4g30f4g4663ga73cgaaa145863dfc" Source="LeaderLib_Sample_DynamicMenu.lsj">[LeaderLib_DynamicMenu_MenuOption1_1f7c9690-58b3-4cf6-b17e-0da478b15e0e]</content>
+	<content contentuid="h294e6b91g0ba8g4116g9b44g2763b441ea8a" Source="LeaderLib_Sample_DynamicMenu.lsj">[LeaderLib_DynamicMenu_MenuOption2_9df56ce3-cd42-421b-81b6-91ffe91042fd]</content>
+	<content contentuid="ha54e3050g2d5dg46d7g9340g419ead1f437f" Source="LeaderLib_Sample_DynamicMenu.lsj">[LeaderLib_DynamicMenu_MenuOption7_36c11cee-0a1b-4f4b-bd66-3bf0d100439b]</content>
+	<content contentuid="haf24c059g3811g4babgb529g348a34b47d05" Source="LeaderLib_Sample_DynamicMenu.lsj">[LeaderLib_DynamicMenu_MenuOption8_f5ef1f68-8995-4c14-8e62-cf5f330cb31a]</content>
+	<content contentuid="h72b6a94cgb4dbg42f3ga2b0g97d70ba67eef" Source="LeaderLib_Sample_DynamicMenu.lsj">[Next]</content>
+	<content contentuid="h943fc926g7822g4ed0g8f23g217d384bf9d2" Source="LeaderLib_Sample_DynamicMenu.lsj">Selecting menu option...</content>
+	<content contentuid="h8881875ag89e3g47f1g8f89g582ba3a73151" Source="LeaderLib_Sample_DynamicMenu.lsj">[First]</content>
+	<content contentuid="ha267dc3cg888dg4f53g956ag3b6a6a9cbbef" Source="LeaderLib_Sample_DynamicMenu.lsj">[LeaderLib_DynamicMenu_MenuOption6_ea90e3a6-30da-411c-8ab5-cae95373ae93]</content>
+	<content contentuid="h2c109d0cgc401g4e1ega270g0826a644a73f" Source="LeaderLib_Sample_DynamicMenu.lsj">[Last]</content>
+	<content contentuid="ha3bbe7f8gc896g44e5ga131gfbd6f32b1d82" Source="LeaderLib_Sample_DynamicMenu.lsj">[Previous]</content>
+	<content contentuid="h513658cbg41f5g40afg809cg1d0830efd3f1" Source="LeaderLib_Sample_DynamicMenu.lsj">[LeaderLib_DynamicMenu_MenuOption4_e6bea606-b29a-4bfe-8959-94e8be8330cb]</content>
+	<content contentuid="hf1ead9c1gbe57g44beg922eg299bf0a05325" Source="LeaderLib_Sample_DynamicMenu.lsj">Updating menu...</content>
+	<content contentuid="hb796e45cgaab4g4fcega4a2g2e424ed8b66c" Source="LeaderLib_SettingsMenu.lsj">[GLOBAL] Enable Combat Log Logging</content>
+	<content contentuid="h669a2b5cg5dd5g48e7g93f6g70770ca6bd33" Source="LeaderLib_SettingsMenu.lsj">[Exit]</content>
+	<content contentuid="hf15fdd63gddedg435bgaa2egdd0574ce2c3c" Source="LeaderLib_SettingsMenu.lsj">Registered Mods:&lt;br&gt;[LeaderLib_Settings_ModList_50c55fbe-ad1e-490e-92d1-8836ca42ca12]</content>
+	<content contentuid="h4db42cd2g9575g4c9ag8eb8ga362b3e2e2dc" Source="LeaderLib_SettingsMenu.lsj">&lt;b&gt;[Error] Missing Mod Dependencies&lt;/b&gt;</content>
+	<content contentuid="hd1e9761cg75bdg4f1bg9676g6040cb7f4a50" Source="LeaderLib_SettingsMenu.lsj">Updating settings...</content>
+	<content contentuid="he037429fgcbf9g4a78gb1c2ge9613039ef62" Source="LeaderLib_SettingsMenu.lsj">Preset Menu (Locked - Check Back in 30 Seconds)</content>
+	<content contentuid="he50309cbg61ffg4355g88b3g3617d2ccfc86" Source="LeaderLib_SettingsMenu.lsj">[Back]</content>
+	<content contentuid="h4979f63cg679ag41b0g9092gedffd6592786" Source="LeaderLib_SettingsMenu.lsj">Game Settings</content>
+	<content contentuid="h8664487cga940g4aacg8d6agc10d7e80b33e" Source="LeaderLib_SettingsMenu.lsj">Autosave Settings</content>
+	<content contentuid="h580c1770g96ffg4452gab5fg997e448b1864" Source="LeaderLib_SettingsMenu.lsj">Settings updated.</content>
+	<content contentuid="h1fa59303gda2bg4cbfga649g8c2986ef2179" Source="LeaderLib_SettingsMenu.lsj">[Back]</content>
+	<content contentuid="hb6a0d65bga210g4882g939ega32f65189909" Source="LeaderLib_SettingsMenu.lsj">Enable Balanced Experience for All Parties - Every player character will be brought up to the highest player level across all parties.</content>
+	<content contentuid="hb3063ca1gfa6eg4d2bga591g4c7f72642a17" Source="LeaderLib_SettingsMenu.lsj">[Back]</content>
+	<content contentuid="h7a4ddc58g1cbeg4e40gaba2g0b2bf5dedd98" Source="LeaderLib_SettingsMenu.lsj">[GLOBAL] Enable Debug Logging</content>
+	<content contentuid="he2de2e0cgda32g4128g9db7g72020fa32c2e" Source="LeaderLib_SettingsMenu.lsj">Preset Menu</content>
+	<content contentuid="h8ecc120fg9d67g4faegb198gebd73e4c836c" Source="LeaderLib_SettingsMenu.lsj">[USER] Disable auto-opening the Mod Settings Menu when closing another mod&apos;s settings menu.</content>
+	<content contentuid="h199f5401g295eg4b24ga52ag9cf3a9844635" Source="LeaderLib_SettingsMenu.lsj">Enable Friendly Fire. This setting is for mods that implement friendly fire in their skill targeting conditions. </content>
+	<content contentuid="h92ae656agd5f1g4471g85dcgb2871834dd03" Source="LeaderLib_SettingsMenu.lsj">[USER] Enable auto-opening the Mod Settings Menu when closing another mod&apos;s settings menu.&lt;br&gt;Note that this could possibly have unintended side-effects if that mod opens a sub-menu dialog after the main menu dialog is closed.</content>
+	<content contentuid="h1a6318dcgb094g4b3cg8492g6e26d8e3a11d" Source="LeaderLib_SettingsMenu.lsj">Mod Menu Settings</content>
+	<content contentuid="h5d6cebcagab5eg45ebgbaf0gb0b77cd0ac39" Source="LeaderLib_SettingsMenu.lsj">Disable Friendly Fire. This setting is for mods that implement friendly fire in their skill targeting conditions.</content>
+	<content contentuid="h3e953163gea05g488ag8e89ga96a2f15f06e" Source="LeaderLib_SettingsMenu.lsj">Commands</content>
+	<content contentuid="ha7b4af6cg0f0cg4e02g8839g5f9c756e105b" Source="LeaderLib_SettingsMenu.lsj">Registered Mods</content>
+	<content contentuid="h1558f2c9g5436g481eg990agdc02ce050c8b" Source="LeaderLib_SettingsMenu.lsj">Log Settings</content>
+	<content contentuid="hc394390bge3c0g4935ga60dg63c11e223a8f" Source="LeaderLib_SettingsMenu.lsj">[GLOBAL] Disable Debug Logging</content>
+	<content contentuid="h62fcf915g9babg41e3gbc1fg7cec5eeb59ce" Source="LeaderLib_SettingsMenu.lsj">[GLOBAL] Disable Combat Log Logging</content>
+	<content contentuid="hfe0169eagd031g41a8gbcd3g6b992d81fba5" Source="LeaderLib_SettingsMenu.lsj">[GLOBAL] Enable Status Logging</content>
+	<content contentuid="h6f8c74d8g77d3g469ega859g41d644a06c6a" Source="LeaderLib_SettingsMenu.lsj">LeaderLib Settings</content>
+	<content contentuid="h8e7bed3eg6e65g4b8agb542g83bc56753d17" Source="LeaderLib_SettingsMenu.lsj">Game Settings</content>
+	<content contentuid="h61bfcef3g8212g4043g880cgf04e313f465d" Source="LeaderLib_SettingsMenu.lsj">Updating settings...</content>
+	<content contentuid="hea20bb8dg93b1g4147g924ag686aa59a1cf8" Source="LeaderLib_SettingsMenu.lsj">Checking registered mods...</content>
+	<content contentuid="h3d2b0915g15b6g415bga09fg57dd7eed08c9" Source="LeaderLib_SettingsMenu.lsj">Log Settings</content>
+	<content contentuid="hdc5db041g39d0g4a87g81eagb26a0d11358e" Source="LeaderLib_SettingsMenu.lsj">[GLOBAL] Disable Status Logging</content>
+	<content contentuid="h2d78ab51gc892g4754ga12cg2176bc50b688" Source="LeaderLib_SettingsMenu.lsj">Mod Menu Settings</content>
+	<content contentuid="h14956412g44e4g4890ga268gd425729622f1" Source="LeaderLib_SettingsMenu.lsj">Disable Balanced Experience for All Parties - Players in other parties will no longer be automatically leveled up to the highest player level.</content>
+</contentList>

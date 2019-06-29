@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <save>
     <header version="2" />
-    <version major="3" minor="6" revision="4" build="0" />
+    <version major="3" minor="6" revision="4" build="1" />
     <region id="IconUVList">
         <node id="root">
             <children>
@@ -1287,6 +1287,13 @@
                     <attribute id="V2" value="0.0467529" type="6" />
                 </node>
                 <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_MagicMissile_ChangeMode" type="22" />
+                    <attribute id="U1" value="0.0782471" type="6" />
+                    <attribute id="U2" value="0.0936279" type="6" />
+                    <attribute id="V1" value="0.0626221" type="6" />
+                    <attribute id="V2" value="0.0780029" type="6" />
+                </node>
+                <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_MagicRush" type="22" />
                     <attribute id="U1" value="0.421997" type="6" />
                     <attribute id="U2" value="0.437378" type="6" />
@@ -1378,6 +1385,13 @@
                     <attribute id="V2" value="0.0311279" type="6" />
                 </node>
                 <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Scramble" type="22" />
+                    <attribute id="U1" value="0.0313721" type="6" />
+                    <attribute id="U2" value="0.0467529" type="6" />
+                    <attribute id="V1" value="0.0626221" type="6" />
+                    <attribute id="V2" value="0.0780029" type="6" />
+                </node>
+                <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_SniperShot" type="22" />
                     <attribute id="U1" value="0.468872" type="6" />
                     <attribute id="U2" value="0.484253" type="6" />
@@ -1397,6 +1411,20 @@
                     <attribute id="U2" value="0.812378" type="6" />
                     <attribute id="V1" value="0.0313721" type="6" />
                     <attribute id="V2" value="0.0467529" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Transit" type="22" />
+                    <attribute id="U1" value="0.0469971" type="6" />
+                    <attribute id="U2" value="0.0623779" type="6" />
+                    <attribute id="V1" value="0.0626221" type="6" />
+                    <attribute id="V2" value="0.0780029" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Warchief_ChangeStance" type="22" />
+                    <attribute id="U1" value="0.0626221" type="6" />
+                    <attribute id="U2" value="0.0780029" type="6" />
+                    <attribute id="V1" value="0.0626221" type="6" />
+                    <attribute id="V2" value="0.0780029" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_WaterSpout" type="22" />

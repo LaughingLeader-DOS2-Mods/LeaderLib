@@ -1261,6 +1261,24 @@ AND
 _Dist > _Range
 THEN
 DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_DistanceWithin((GUIDSTRING)_Obj1, (GUIDSTRING)_Obj2, (REAL)_MaxDist)
+AND
+_MaxDist <= 0
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_DistanceWithin((GUIDSTRING)_Obj1, (GUIDSTRING)_Obj2, (REAL)_MaxDist)
+AND
+_MaxDist > 0
+AND
+GetDistanceTo(_Obj1, _Obj2, _Dist)
+AND
+_Dist <= _MaxDist
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION DUMMY_HELPERS

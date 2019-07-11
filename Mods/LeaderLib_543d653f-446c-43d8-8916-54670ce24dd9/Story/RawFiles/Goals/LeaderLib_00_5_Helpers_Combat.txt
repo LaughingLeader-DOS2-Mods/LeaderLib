@@ -208,28 +208,54 @@ DB_NOOP(1);
 
 //REGION RANDOM
 QRY
-LeaderLib_Combat_QRY_GetRandomEnemy((CHARACTERGUID)_Ally, (INTEGER)_CombatID)
+LeaderLib_Combat_QRY_GetRandomEnemy((CHARACTERGUID)_Char, (INTEGER)_CombatID)
 THEN
-LeaderLib_Combat_GetRandomEnemy(_Ally, _CombatID);
+LeaderLib_Combat_GetRandomEnemy(_Char, _CombatID, -1, -1.0);
+
+QRY
+LeaderLib_Combat_QRY_GetRandomEnemy((CHARACTERGUID)_Char, (INTEGER)_CombatID, (INTEGER)_IsDead)
+THEN
+LeaderLib_Combat_GetRandomEnemy(_Char, _CombatID, _IsDead, -1.0);
+
+QRY
+LeaderLib_Combat_QRY_GetRandomEnemy((CHARACTERGUID)_Char, (INTEGER)_CombatID, (INTEGER)_IsDead, (REAL)_MaxDistance)
+THEN
+LeaderLib_Combat_GetRandomEnemy(_Char, _CombatID, _IsDead, _MaxDistance);
 
 PROC
-LeaderLib_Combat_GetRandomEnemy((CHARACTERGUID)_Ally, (INTEGER)_CombatID)
+LeaderLib_Combat_GetRandomEnemy((CHARACTERGUID)_Char, (INTEGER)_CombatID)
 THEN
-LeaderLib_Combat_ClearRandomEnemyData(_Ally, _CombatID);
+LeaderLib_Combat_GetRandomEnemy(_Char, _CombatID, -1, -1.0);
 
 PROC
-LeaderLib_Combat_GetRandomEnemy((CHARACTERGUID)_Ally, (INTEGER)_CombatID)
-AND
-DB_CombatCharacters(_Character, _CombatID)
-AND
-_Character != _Ally
-AND
-CharacterIsEnemy(_Ally, _Character, 1)
+LeaderLib_Combat_GetRandomEnemy((CHARACTERGUID)_Char, (INTEGER)_CombatID, (INTEGER)_IsDead)
 THEN
-LeaderLib_Combat_Internal_AddToCharacterList(_Character, _CombatID);
+LeaderLib_Combat_GetRandomEnemy(_Char, _CombatID, _IsDead, -1.0);
 
 PROC
-LeaderLib_Combat_GetRandomEnemy((CHARACTERGUID)_Ally, (INTEGER)_CombatID)
+LeaderLib_Combat_GetRandomEnemy((CHARACTERGUID)_Char, (INTEGER)_CombatID, (INTEGER)_IsDead, (REAL)_MaxDistance)
+THEN
+LeaderLib_Combat_ClearRandomEnemyData(_Char, _CombatID);
+
+PROC
+LeaderLib_Combat_GetRandomEnemy((CHARACTERGUID)_Char, (INTEGER)_CombatID, (INTEGER)_IsDead, (REAL)_MaxDistance)
+AND
+DB_CombatCharacters(_Enemy, _CombatID)
+AND
+_Enemy != _Char
+AND
+CharacterIsEnemy(_Char, _Enemy, 1)
+AND
+CharacterIsDead(_Enemy, _CharIsDead)
+AND
+LeaderLib_Math_QRY_IsEqualToAny(_IsDead, _CharIsDead, -1) // Either match _CharIsDead or ignore if -1
+AND
+LeaderLib_Helper_QRY_DistanceWithin(_Char, _Enemy, _MaxDistance)
+THEN
+LeaderLib_Combat_Internal_AddToCharacterList(_Enemy, _CombatID);
+
+PROC
+LeaderLib_Combat_GetRandomEnemy((CHARACTERGUID)_Char, (INTEGER)_CombatID, (INTEGER)_IsDead, (REAL)_MaxDistance)
 AND
 SysCount("DB_LeaderLib_Combat_Temp_CharacterCombatList", 3, _Total)
 AND
@@ -241,28 +267,42 @@ DB_LeaderLib_Random(_Index)
 AND
 DB_LeaderLib_Combat_Temp_CharacterCombatList(_Index, _Enemy, _CombatID)
 THEN
-DB_LeaderLib_Combat_Temp_RandomEnemy(_CombatID, _Ally, _Enemy, _Index);
+DB_LeaderLib_Combat_Temp_RandomEnemy(_CombatID, _Char, _Enemy, _Index);
 NOT DB_LeaderLib_Random(_Index);
 
 QRY
 LeaderLib_Combat_QRY_GetRandomCharacter((INTEGER)_CombatID)
 THEN
-LeaderLib_Combat_GetRandomCharacter(_CombatID);
+LeaderLib_Combat_GetRandomCharacter(_CombatID, -1);
+
+QRY
+LeaderLib_Combat_QRY_GetRandomCharacter((INTEGER)_CombatID, (INTEGER)_IsDead)
+THEN
+LeaderLib_Combat_GetRandomCharacter(_CombatID, _IsDead);
 
 PROC
 LeaderLib_Combat_GetRandomCharacter((INTEGER)_CombatID)
+THEN
+LeaderLib_Combat_GetRandomCharacter(_CombatID, -1);
+
+PROC
+LeaderLib_Combat_GetRandomCharacter((INTEGER)_CombatID, (INTEGER)_IsDead)
 THEN
 LeaderLib_Combat_ClearRandomCharacterData(_CombatID);
 
 PROC
-LeaderLib_Combat_GetRandomCharacter((INTEGER)_CombatID)
+LeaderLib_Combat_GetRandomCharacter((INTEGER)_CombatID, (INTEGER)_IsDead)
 AND
 DB_CombatCharacters(_Character, _CombatID)
+AND
+CharacterIsDead(_Character, _CharIsDead)
+AND
+LeaderLib_Math_QRY_IsEqualToAny(_IsDead, _CharIsDead, -1) // Either match _CharIsDead or ignore if -1
 THEN
 LeaderLib_Combat_Internal_AddToCharacterList(_Character, _CombatID);
 
 PROC
-LeaderLib_Combat_GetRandomCharacter((INTEGER)_CombatID)
+LeaderLib_Combat_GetRandomCharacter((INTEGER)_CombatID, (INTEGER)_IsDead)
 AND
 SysCount("DB_LeaderLib_Combat_Temp_CharacterCombatList", 3, _Total)
 AND

@@ -235,7 +235,7 @@ LeaderLib_Combat_GetRandomEnemy(_Char, _CombatID, _IsDead, -1.0);
 PROC
 LeaderLib_Combat_GetRandomEnemy((CHARACTERGUID)_Char, (INTEGER)_CombatID, (INTEGER)_IsDead, (REAL)_MaxDistance)
 THEN
-LeaderLib_Combat_ClearRandomEnemyData(_Char, _CombatID);
+LeaderLib_Combat_ClearRandomCharacterData(_CombatID);
 
 PROC
 LeaderLib_Combat_GetRandomEnemy((CHARACTERGUID)_Char, (INTEGER)_CombatID, (INTEGER)_IsDead, (REAL)_MaxDistance)
@@ -257,7 +257,7 @@ LeaderLib_Combat_Internal_AddToCharacterList(_Enemy, _CombatID);
 PROC
 LeaderLib_Combat_GetRandomEnemy((CHARACTERGUID)_Char, (INTEGER)_CombatID, (INTEGER)_IsDead, (REAL)_MaxDistance)
 AND
-SysCount("DB_LeaderLib_Combat_Temp_CharacterCombatList", 3, _Total)
+DB_LeaderLib_Combat_Temp_ListTotal("Character", _CombatID, _Total)
 AND
 IntegerSubtract(_Total, 1, _LastIndex)
 AND
@@ -304,7 +304,7 @@ LeaderLib_Combat_Internal_AddToCharacterList(_Character, _CombatID);
 PROC
 LeaderLib_Combat_GetRandomCharacter((INTEGER)_CombatID, (INTEGER)_IsDead)
 AND
-SysCount("DB_LeaderLib_Combat_Temp_CharacterCombatList", 3, _Total)
+DB_LeaderLib_Combat_Temp_ListTotal("Character", _CombatID, _Total)
 AND
 IntegerSubtract(_Total, 1, _LastIndex)
 AND
@@ -339,7 +339,7 @@ LeaderLib_Combat_Internal_AddToItemList(_Object, _CombatID);
 PROC
 LeaderLib_Combat_GetRandomItem((INTEGER)_CombatID)
 AND
-SysCount("DB_LeaderLib_Combat_Temp_ItemCombatList", 3, _Total)
+DB_LeaderLib_Combat_Temp_ListTotal("Item", _CombatID, _Total)
 AND
 IntegerSubtract(_Total, 1, _LastIndex)
 AND
@@ -349,8 +349,8 @@ DB_LeaderLib_Random(_Index)
 AND
 DB_LeaderLib_Combat_Temp_ItemCombatList(_Index, _Item, _CombatID)
 THEN
-DB_LeaderLib_Combat_Temp_RandomItem(_CombatID, _Item, _Index);
 NOT DB_LeaderLib_Random(_Index);
+DB_LeaderLib_Combat_Temp_RandomItem(_CombatID, _Item, _Index);
 
 QRY
 LeaderLib_Combat_QRY_GetRandomObject((INTEGER)_CombatID)
@@ -372,7 +372,7 @@ LeaderLib_Combat_Internal_AddToObjectList(_Object, _CombatID);
 PROC
 LeaderLib_Combat_GetRandomObject((CHARACTERGUID)_Ally, (INTEGER)_CombatID)
 AND
-SysCount("DB_LeaderLib_Combat_Temp_ObjectCombatList", 3, _Total)
+DB_LeaderLib_Combat_Temp_ListTotal("Object", _CombatID, _Total)
 AND
 IntegerSubtract(_Total, 1, _LastIndex)
 AND
@@ -386,23 +386,13 @@ DB_LeaderLib_Combat_Temp_RandomObject(_CombatID, _Object, _Index);
 NOT DB_LeaderLib_Random(_Index);
 //END_REGION
 
-//REGION COMBAT_LIST
-PROC
-LeaderLib_Combat_ClearRandomEnemyData((CHARACTERGUID)_Ally, (INTEGER)_CombatID)
-THEN
-SysClear("DB_LeaderLib_Combat_Temp_CharacterCombatList", 3);
-
-PROC
-LeaderLib_Combat_ClearRandomEnemyData((CHARACTERGUID)_Ally, (INTEGER)_CombatID)
-AND
-DB_LeaderLib_Combat_Temp_RandomEnemy(_CombatID, _Ally, _Enemy, _Index)
-THEN
-NOT DB_LeaderLib_Combat_Temp_RandomEnemy(_CombatID, _Ally, _Enemy, _Index);
-
+//REGION CHARACTER_LIST
 PROC
 LeaderLib_Combat_ClearRandomCharacterData((INTEGER)_CombatID)
+AND
+DB_LeaderLib_Combat_Temp_ListTotal("Character", _CombatID, _Total)
 THEN
-SysClear("DB_LeaderLib_Combat_Temp_CharacterCombatList", 3);
+NOT DB_LeaderLib_Combat_Temp_ListTotal("Character", _CombatID, _Total);
 
 PROC
 LeaderLib_Combat_ClearRandomCharacterData((INTEGER)_CombatID)
@@ -412,9 +402,52 @@ THEN
 NOT DB_LeaderLib_Combat_Temp_RandomCharacter(_CombatID, _Character, _Index);
 
 PROC
-LeaderLib_Combat_ClearRandomItemData((INTEGER)_CombatID)
+LeaderLib_Combat_ClearRandomCharacterData((INTEGER)_CombatID)
+AND
+DB_LeaderLib_Combat_Temp_RandomEnemy(_CombatID, _Ally, _Enemy, _Index)
 THEN
-SysClear("DB_LeaderLib_Combat_Temp_ItemCombatList", 3);
+NOT DB_LeaderLib_Combat_Temp_RandomEnemy(_CombatID, _Ally, _Enemy, _Index);
+
+PROC
+LeaderLib_Combat_ClearRandomCharacterData((INTEGER)_CombatID)
+AND
+DB_LeaderLib_Combat_Temp_CharacterCombatList(_Total, _Character, _CombatID)
+THEN
+NOT DB_LeaderLib_Combat_Temp_CharacterCombatList(_Total, _Character, _CombatID);
+
+PROC
+LeaderLib_Combat_Internal_AddToCharacterList((CHARACTERGUID)_Character, (INTEGER)_CombatID)
+AND
+NOT DB_LeaderLib_Combat_Temp_ListTotal("Character", _CombatID, _)
+THEN
+DB_LeaderLib_Combat_Temp_ListTotal("Character", _CombatID, 0);
+
+PROC
+LeaderLib_Combat_Internal_AddToCharacterList((CHARACTERGUID)_Character, (INTEGER)_CombatID)
+AND
+DB_LeaderLib_Combat_Temp_ListTotal("Character", _CombatID, _Total)
+AND
+IntegerSum(_Total, 1, _NextTotal)
+THEN
+NOT DB_LeaderLib_Combat_Temp_ListTotal("Character", _CombatID, _Total);
+DB_LeaderLib_Combat_Temp_ListTotal("Character", _CombatID, _NextTotal);
+DB_LeaderLib_Combat_Temp_CharacterCombatList(_Total, _Character, _CombatID);
+//END_REGION
+
+//REGION ITEM_LIST
+PROC
+LeaderLib_Combat_ClearRandomItemData((INTEGER)_CombatID)
+AND
+DB_LeaderLib_Combat_Temp_ListTotal("Item", _CombatID, _Total)
+THEN
+NOT DB_LeaderLib_Combat_Temp_ListTotal("Item", _CombatID, _Total);
+
+PROC
+LeaderLib_Combat_ClearRandomItemData((INTEGER)_CombatID)
+AND
+DB_LeaderLib_Combat_Temp_ItemCombatList(_Index, _Item, _CombatID)
+THEN
+NOT DB_LeaderLib_Combat_Temp_ItemCombatList(_Index, _Item, _CombatID);
 
 PROC
 LeaderLib_Combat_ClearRandomItemData((INTEGER)_CombatID)
@@ -424,10 +457,25 @@ THEN
 NOT DB_LeaderLib_Combat_Temp_RandomItem(_CombatID, _Item, _Index);
 
 PROC
-LeaderLib_Combat_ClearRandomObjectData((INTEGER)_CombatID)
+LeaderLib_Combat_Internal_AddToItemList((ITEMGUID)_Item, (INTEGER)_CombatID)
+AND
+NOT DB_LeaderLib_Combat_Temp_ListTotal("Item", _CombatID, _)
 THEN
-SysClear("DB_LeaderLib_Combat_Temp_ObjectCombatList", 3);
+DB_LeaderLib_Combat_Temp_ListTotal("Item", _CombatID, 0);
 
+PROC
+LeaderLib_Combat_Internal_AddToItemList((ITEMGUID)_Item, (INTEGER)_CombatID)
+AND
+DB_LeaderLib_Combat_Temp_ListTotal("Item", _CombatID, _Total)
+AND
+IntegerSum(_Total, 1, _NextTotal)
+THEN
+NOT DB_LeaderLib_Combat_Temp_ListTotal("Item", _CombatID, _Total);
+DB_LeaderLib_Combat_Temp_ListTotal("Item", _CombatID, _NextTotal);
+DB_LeaderLib_Combat_Temp_ItemCombatList(_Total, _Item, _CombatID);
+//END_REGION
+
+//REGION OBJECT_LIST
 PROC
 LeaderLib_Combat_ClearRandomObjectData((INTEGER)_CombatID)
 AND
@@ -436,25 +484,45 @@ THEN
 NOT DB_LeaderLib_Combat_Temp_RandomObject(_CombatID, _Object, _Index);
 
 PROC
+LeaderLib_Combat_ClearRandomObjectData((INTEGER)_CombatID)
+AND
+DB_LeaderLib_Combat_Temp_ListTotal("Object", _CombatID, _Total)
+THEN
+NOT DB_LeaderLib_Combat_Temp_ListTotal("Object", _CombatID, _Total);
+
+PROC
+LeaderLib_Combat_ClearRandomObjectData((INTEGER)_CombatID)
+AND
+DB_LeaderLib_Combat_Temp_ObjectCombatList(_CombatID, _Object, _Index)
+THEN
+NOT DB_LeaderLib_Combat_Temp_ObjectCombatList(_CombatID, _Object, _Index);
+
+PROC
 LeaderLib_Combat_Internal_AddToObjectList((GUIDSTRING)_Object, (INTEGER)_CombatID)
 AND
-SysCount("DB_LeaderLib_Combat_Temp_ObjectCombatList", 3, _Index)
+NOT DB_LeaderLib_Combat_Temp_ListTotal("Object", _CombatID, _)
 THEN
-DB_LeaderLib_Combat_Temp_ObjectCombatList(_Index, _Object, _CombatID);
+DB_LeaderLib_Combat_Temp_ListTotal("Object", _CombatID, 0);
 
 PROC
-LeaderLib_Combat_Internal_AddToCharacterList((CHARACTERGUID)_Character, (INTEGER)_CombatID)
+LeaderLib_Combat_Internal_AddToObjectList((GUIDSTRING)_Object, (INTEGER)_CombatID)
 AND
-SysCount("DB_LeaderLib_Combat_Temp_CharacterCombatList", 3, _Index)
+DB_LeaderLib_Combat_Temp_ListTotal("Object", _CombatID, _Total)
+AND
+IntegerSum(_Total, 1, _NextTotal)
 THEN
-DB_LeaderLib_Combat_Temp_CharacterCombatList(_Index, _Character, _CombatID);
+NOT DB_LeaderLib_Combat_Temp_ListTotal("Object", _CombatID, _Total);
+DB_LeaderLib_Combat_Temp_ListTotal("Object", _CombatID, _NextTotal);
+DB_LeaderLib_Combat_Temp_ObjectCombatList(_Total, _Object, _CombatID);
+//END_REGION
 
+//REGION COMBAT_LIST_DATA_CLEAR
 PROC
-LeaderLib_Combat_Internal_AddToItemList((ITEMGUID)_Item, (INTEGER)_CombatID)
-AND
-SysCount("DB_LeaderLib_Combat_Temp_ItemCombatList", 3, _Index)
+LeaderLib_Combat_Clear_CombatData((INTEGER)_CombatID)
 THEN
-DB_LeaderLib_Combat_Temp_ItemCombatList(_Index, _Item, _CombatID);
+LeaderLib_Combat_ClearRandomItemData(_CombatID);
+LeaderLib_Combat_ClearRandomCharacterData(_CombatID);
+LeaderLib_Combat_ClearRandomObjectData(_CombatID);
 //END_REGION
 
 //REGION FRIENDLY_FIRE
@@ -504,6 +572,7 @@ IF
 CombatEnded(_CombatID)
 THEN
 LeaderLib_Combat_Clear_CombatData(_CombatID);
+
 //END_REGION
 EXITSECTION
 

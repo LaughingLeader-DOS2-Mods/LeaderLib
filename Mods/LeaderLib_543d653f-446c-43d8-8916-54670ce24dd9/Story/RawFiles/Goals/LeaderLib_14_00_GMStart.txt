@@ -1,0 +1,22 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+LeaderLib_GMStart_Internal_CompleteIfStarted(); // Existing saves
+KBSECTION
+
+PROC
+LeaderLib_GMStart_Internal_CompleteIfStarted()
+AND
+DB_LeaderLib_GameMode("GameMaster", _IsEditorMode)
+THEN
+DebugBreak("[LeaderLib_14_00_GMStart:CompleteIfStarted] Existing GM save detected.");
+GoalCompleted;
+
+PROC
+Proc_GameModeStarted("GameMaster",(INTEGER)_)
+THEN
+GoalCompleted;
+
+EXITSECTION
+LeaderLog_Log("DEBUG", "[LeaderLib_14_00_GMStart:Proc_GameModeStarted] Starting GM mode scripts.");
+ENDEXITSECTION

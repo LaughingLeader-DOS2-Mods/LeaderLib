@@ -1,0 +1,359 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+LeaderLib_GM_DisableGMScripts();
+KBSECTION
+
+PROC
+LeaderLib_GM_DisableGMScripts()
+AND
+SysIsActive("GameMasterHelperActions")
+THEN
+SysCompleteGoal("GameMasterHelperActions");
+
+//In case the GM scripts become active again
+IF
+StoryEvent(_, "LeaderLib_Events_OnDefaultEventFlowComplete")
+THEN
+LeaderLib_GM_DisableGMScripts();
+
+//REGION GameMasterHelperActions
+// Achievement for starting GM Mode
+IF
+GMCampaignModeStarted("Play")
+THEN
+UnlockAchievement("DOS2_Quest98",NULL_00000000-0000-0000-0000-000000000000);
+
+IF
+TextEventSet("gm_camera")
+THEN
+SetCameraDistanceOverride(30.0);
+
+IF
+CharacterDied(_NPC)
+AND
+CharacterIsPlayer(_NPC,0)
+THEN
+ProcClearTradeFacts(_NPC);
+
+PROC
+PROC_GLO_SystemicTags_CheckMurder((CHARACTERGUID)_Killer)
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION CRIMESCRIPT_PICKPOCKET
+IF
+CharacterPickpocketFailed(_Char1,_)
+AND
+CharacterGameMaster(_Char1, 0)
+AND
+NOT DB_GlobalFlag("LeaderLib_PreserveInvisibilityWhenStealing")
+THEN
+RemoveStatus(_Char1,"INVISIBLE");
+
+IF
+RequestPickpocket(_Char1, _Char2)
+AND
+CharacterGameMaster(_Char1, _ThiefIsGameMaster)
+AND
+CharacterIsPartyMember(_Char2, _TargetIsPartyMember)
+THEN
+LeaderLib_GM_Requests_BlockPickpocket(_Char1, _Char2, _ThiefIsGameMaster, _TargetIsPartyMember);
+LeaderLib_GM_Requests_StartRequestPickpocket(_Char1, _Char2, _ThiefIsGameMaster, _TargetIsPartyMember);
+
+/*
+PROC
+LeaderLib_GM_Requests_BlockPickpocket((CHARACTERGUID)_Char1, (CHARACTERGUID)_Char2, (INTEGER)_ThiefIsGameMaster, (INTEGER)_TargetIsPartyMember)
+THEN
+DB_LeaderLib_PickpocketingBlocked(_Char1, _Char2)
+*/
+
+PROC
+LeaderLib_GM_Requests_BlockPickpocket((CHARACTERGUID)_Char1, (CHARACTERGUID)_Char2, 0, (INTEGER)_TargetIsPartyMember)
+AND
+DB_CannotPickpocketTags(_Tag)
+AND
+IsTagged(_Char2, _Tag, 1)
+THEN
+DB_LeaderLib_PickpocketingBlocked(_Char1, _Char2);
+Proc_StartDialog(1,"GEB_AD_CannotPickpocket",_Char1);
+
+PROC
+LeaderLib_GM_Requests_StartRequestPickpocket((CHARACTERGUID)_Char1, (CHARACTERGUID)_Char2, (INTEGER)_ThiefIsGameMaster, (INTEGER)_TargetIsPartyMember)
+AND
+NOT DB_LeaderLib_PickpocketingBlocked(_Char1, _Char2)
+THEN
+LeaderLib_GM_Requests_RequestPickpocket(_Char1, _Char2, _ThiefIsGameMaster, _TargetIsPartyMember);
+
+PROC
+LeaderLib_GM_Requests_StartRequestPickpocket((CHARACTERGUID)_Char1, (CHARACTERGUID)_Char2, (INTEGER)_ThiefIsGameMaster, (INTEGER)_TargetIsPartyMember)
+AND
+DB_LeaderLib_PickpocketingBlocked(_Char1, _Char2)
+THEN
+NOT DB_LeaderLib_PickpocketingBlocked(_Char1, _Char2);
+StartPickpocket(_Char1, _Char2, 0);
+LeaderLib_GM_Requests_OnPickpocketFailed(_Char1, _Char2, _ThiefIsGameMaster, _TargetIsPartyMember);
+
+PROC
+LeaderLib_GM_Requests_OnPickpocketFailed((CHARACTERGUID)_Char1, (CHARACTERGUID)_Char2, (INTEGER)_ThiefIsGameMaster, (INTEGER)_TargetIsPartyMember)
+THEN
+DB_NOOP(1);
+
+//INVISIBLE is removed by default in Origins
+PROC
+LeaderLib_GM_Requests_RequestPickpocket((CHARACTERGUID)_Char1, (CHARACTERGUID)_Char2, 0, (INTEGER)_TargetIsPartyMember)
+AND
+NOT DB_GlobalFlag("LeaderLib_PreserveInvisibilityWhenStealing")
+THEN
+RemoveStatus(_Char1, "INVISIBLE");
+
+//Pickpocketing an NPC
+PROC
+LeaderLib_GM_Requests_RequestPickpocket((CHARACTERGUID)_Char1, (CHARACTERGUID)_Char2, 0, 0)
+THEN
+GenTradeItems(_Char1,_Char2);
+StartPickpocket(_Char1,_Char2,1);
+
+//Pickpocketing party members
+PROC
+LeaderLib_GM_Requests_RequestPickpocket((CHARACTERGUID)_Char1, (CHARACTERGUID)_Char2, (INTEGER)_ThiefIsGameMaster, 1)
+THEN
+StartPickpocket(_Char1,_Char2, 1);
+//END_REGION
+
+//REGION CRIMESCRIPT_REQUESTS
+//Rules from Shared/_CRIME_CrimeTriggers.txt that get disabled in GM mode.
+
+/***************************************/
+//--- REQUESTS
+/***************************************/
+IF
+CanUseItem(_Char,_Item,_RequestID)
+THEN
+ProcBlockUseOfItem(_Char,_Item);
+ProcProcessUseOfItemWithStatus(_Char,_Item);
+ProcProcessUseOfItem(_Char,_Item,_RequestID);
+
+IF
+CanMoveItem(_Char,_Item,_RequestID)
+THEN
+ProcBlockMoveOfItem(_Char,_Item);
+ProcProcessMoveOfItem(_Char,_Item,_RequestID);
+
+IF
+CanPickupItem(_Char,_Item,_RequestID)
+THEN
+ProcBlockPickupOfItem(_Char,_Item);
+ProcProcessPickupOfItem(_Char,_Item,_RequestID);
+
+IF
+CanLockpickItem(_Char,_Item,_RequestID)
+THEN
+ProcBlockLockpickItem(_Char,_Item);
+ProcProcessLockpickItem(_Char,_Item,_RequestID);
+
+IF
+CanCombineItem(_Char,_ItemA,_ItemB,_ItemC,_ItemD,_ItemE,_RequestID)
+THEN
+ProcBlockCombineItem(_Char,_ItemA);
+ProcBlockCombineItem(_Char,_ItemB);
+ProcBlockCombineItem(_Char,_ItemC);
+ProcBlockCombineItem(_Char,_ItemD);
+ProcBlockCombineItem(_Char,_ItemE);
+ProcProcessCombineItem(_Char,_ItemA,_ItemB,_ItemC,_ItemD,_ItemE,_RequestID);
+
+/***************************************/
+//--- BLOCK ACTIONS
+/***************************************/
+/*	Catch one of the following PROCs to set the appropriate DB:
+	DB_CustomUseItemResponse((CHARACTERGUID)_Char,(ITEMGUID)_Item,(INTEGER)_Result)
+	DB_CustomMoveItemResponse((CHARACTERGUID)_Char,(ITEMGUID)_Item,(INTEGER)_Result)
+	DB_CustomPickupItemResponse((CHARACTERGUID)_Char,(ITEMGUID)_Item,(INTEGER)_Result)
+	DB_CustomLockpickItemResponse((CHARACTERGUID)_Char,(ITEMGUID)_Item,(INTEGER)_Result)
+	DB_CustomCombineItemResponse((CHARACTERGUID)_Char,(ITEMGUID)_Item,(INTEGER)_Result)
+*/
+
+PROC
+ProcBlockUseOfItem((CHARACTERGUID)_Char,(ITEMGUID)_Item)
+THEN
+DB_NOOP(1);
+
+PROC
+ProcBlockMoveOfItem((CHARACTERGUID)_Char,(ITEMGUID)_Item)
+THEN
+DB_NOOP(1);
+
+PROC
+ProcBlockPickupOfItem((CHARACTERGUID)_Char,(ITEMGUID)_Item)
+THEN
+DB_NOOP(1);
+
+PROC
+ProcBlockLockpickItem((CHARACTERGUID)_Char,(ITEMGUID)_Item)
+THEN
+DB_NOOP(1);
+
+PROC
+ProcBlockCombineItem((CHARACTERGUID)_Char,(ITEMGUID)_Item)
+THEN
+DB_NOOP(1);
+
+
+/***************************************/
+//--- BURNING AND ELECTRIFIED items apply status
+/***************************************/
+PROC
+ProcProcessUseOfItemWithStatus((CHARACTERGUID)_Char,(ITEMGUID)_Item)
+AND
+DB_IsPlayer(_Char) // apply only on player not to break story events with NPCs using items
+AND
+NOT DB_CustomUseItemResponse(_Char,_Item,0) // if handled in story, don't apply effect
+AND
+DB_ItemStatusAffectCharacterOnUse(_Status)
+AND
+HasActiveStatus(_Item,_Status,1)
+AND
+NOT QRYItemStatusIsNotAppliedToUser(_Item,_Status)
+THEN
+ApplyStatus(_Char,_Status,12.0);
+
+QRY
+QRYItemStatusIsNotAppliedToUser((ITEMGUID)_Item,(STRING)_Status)
+AND
+_Status == "BURNING"
+AND
+ItemIsTorch(_Item,1)
+THEN
+DB_NOOP(1);
+
+/***************************************/
+//--- PROCESS
+/***************************************/
+// Use
+PROC
+ProcProcessUseOfItem((CHARACTERGUID)_Char,(ITEMGUID)_Item,(INTEGER)_RequestID)
+AND
+DB_CustomUseItemResponse(_Char,_Item,(INTEGER)_Result)
+THEN
+RequestProcessed(_Char,_RequestID,_Result);
+
+/*
+PROC
+ProcProcessUseOfItem((CHARACTERGUID)_Char,(ITEMGUID)_Item,(INTEGER)_RequestID)
+AND
+NOT DB_CustomUseItemResponse(_Char,_Item,_)
+AND
+ItemCanSitOn(_Item,0)
+AND
+ItemIsLadder(_Item,0)
+AND
+ItemIsPublicDomain(_Item,0)
+THEN
+DB_HandledRequest(_Char,_Item,_RequestID);
+ProcCrimeTryRegisteringUseForbiddenItem(_Char,_Item,_RequestID);
+*/
+
+PROC
+ProcProcessUseOfItem((CHARACTERGUID)_Char,(ITEMGUID)_Item,(INTEGER)_RequestID)
+AND
+NOT DB_CustomUseItemResponse(_Char,_Item,_)
+AND
+NOT DB_HandledRequest(_Char,_Item,_RequestID)
+THEN
+RequestProcessed(_Char,_RequestID,1);
+
+PROC
+ProcProcessUseOfItem((CHARACTERGUID)_Char,(ITEMGUID)_Item,(INTEGER)_RequestID)
+AND
+DB_HandledRequest(_Char,_Item,_RequestID)
+THEN
+NOT DB_HandledRequest(_Char,_Item,_RequestID);
+
+// Move (registers MoveForbiddenItem instead of UseForbiddenItem)
+PROC
+ProcProcessMoveOfItem((CHARACTERGUID)_Char,(ITEMGUID)_Item,(INTEGER)_RequestID)
+AND
+DB_CustomMoveItemResponse(_Char,_Item,(INTEGER)_Result)
+THEN
+RequestProcessed(_Char,_RequestID,_Result);
+
+PROC
+ProcProcessMoveOfItem((CHARACTERGUID)_Char,(ITEMGUID)_Item,(INTEGER)_RequestID)
+AND
+NOT DB_CustomMoveItemResponse(_Char,_Item,_)
+THEN
+//ProcCrimeTryRegisteringMoveForbiddenItem(_Char,_Item,_RequestID);
+RequestProcessed(_Char,_RequestID,1);
+
+// Pickup
+PROC
+ProcProcessPickupOfItem((CHARACTERGUID)_Char,(ITEMGUID)_Item,(INTEGER)_RequestID)
+AND
+DB_CustomPickupItemResponse(_Char,_Item,(INTEGER)_Result)
+THEN
+RequestProcessed(_Char,_RequestID,_Result);
+
+PROC
+ProcProcessPickupOfItem((CHARACTERGUID)_Char,(ITEMGUID)_Item,(INTEGER)_RequestID)
+AND
+NOT DB_CustomPickupItemResponse(_Char,_Item,_)
+THEN
+//ProcCrimeTryRegisteringStealItem(_Char,_Item,_RequestID);
+RequestProcessed(_Char,_RequestID,1);
+
+// Lockpick
+PROC
+ProcProcessLockpickItem((CHARACTERGUID)_Char,(ITEMGUID)_Item,(INTEGER)_RequestID)
+AND
+DB_CustomLockpickItemResponse(_Char,_Item,(INTEGER)_Result)
+THEN
+RequestProcessed(_Char,_RequestID,_Result);
+
+PROC
+ProcProcessLockpickItem((CHARACTERGUID)_Char,(ITEMGUID)_Item,(INTEGER)_RequestID)
+AND
+NOT DB_CustomLockpickItemResponse(_Char,_Item,_)
+THEN
+//ProcCrimeTryRegisteringUseForbiddenItem(_Char,_Item,_RequestID);
+RequestProcessed(_Char,_RequestID,1);
+
+// Combine
+PROC
+ProcProcessCombineItem(_Player,_ItemA,_ItemB,_ItemC,_ItemD,_ItemE,_RequestID)
+AND
+NOT QryCombineItemHasCustomResult(_Player,_ItemA,_ItemB,_ItemC,_ItemD,_ItemE)
+AND
+CharacterIsPlayer(_Player,1)
+THEN
+RequestProcessed(_Player,_RequestID,1);
+/*ProcCrimeCheckRegisterUseForbiddenItem(_Player,_ItemA,_RequestID);
+ProcCrimeCheckRegisterUseForbiddenItem(_Player,_ItemB,_RequestID);
+ProcCrimeCheckRegisterUseForbiddenItem(_Player,_ItemC,_RequestID);
+ProcCrimeCheckRegisterUseForbiddenItem(_Player,_ItemD,_RequestID);
+ProcCrimeCheckRegisterUseForbiddenItem(_Player,_ItemE,_RequestID);*/
+
+PROC
+ProcProcessCombineItem((CHARACTERGUID)_Char,(ITEMGUID)_ItemA,(ITEMGUID)_ItemB,(ITEMGUID)_ItemC,(ITEMGUID)_ItemD,(ITEMGUID)_ItemE,(INTEGER)_RequestID)
+AND
+QryCombineItemHasCustomResult(_Char,_ItemA,_ItemB,_ItemC,_ItemD,_ItemE)
+THEN
+ProcProcessCustomCombineResponse(_Char,_ItemA,_ItemB,_ItemC,_ItemD,_ItemE,_RequestID);
+
+PROC
+ProcProcessCustomCombineResponse((CHARACTERGUID)_Char,(ITEMGUID)_ItemA,(ITEMGUID)_ItemB,(ITEMGUID)_ItemC,(ITEMGUID)_ItemD,(ITEMGUID)_ItemE,(INTEGER)_RequestID)
+AND
+QryCombineItemIsBlocked(_Char,_ItemA,_ItemB,_ItemC,_ItemD,_ItemE)
+THEN
+RequestProcessed(_Char,_RequestID,0);
+
+PROC
+ProcProcessCustomCombineResponse((CHARACTERGUID)_Char,(ITEMGUID)_ItemA,(ITEMGUID)_ItemB,(ITEMGUID)_ItemC,(ITEMGUID)_ItemD,(ITEMGUID)_ItemE,(INTEGER)_RequestID)
+AND
+NOT QryCombineItemIsBlocked(_Char,_ItemA,_ItemB,_ItemC,_ItemD,_ItemE)
+THEN
+RequestProcessed(_Char,_RequestID,1);
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION

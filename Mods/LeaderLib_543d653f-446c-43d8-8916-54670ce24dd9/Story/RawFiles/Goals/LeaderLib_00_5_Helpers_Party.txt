@@ -35,11 +35,15 @@ FireOsirisEvents();
 
 IF
 StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Events_ResetPartyCount")
+AND
+NOT QRY_IsSummonOrPartyFollower(_Character)
 THEN
 SetVarInteger(_Character, "LeaderLib_PartyCount", 1);
 
 IF
 StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Events_ResetPartyCount")
+AND
+NOT QRY_IsSummonOrPartyFollower(_Character)
 AND
 PartyGetFlag(_Character, "LeaderLib_PartyCounted", 1)
 THEN
@@ -47,6 +51,8 @@ PartyClearFlag(_Character, "LeaderLib_PartyCounted", 0);
 
 IF
 StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Events_AddToPartyCheck")
+AND
+NOT QRY_IsSummonOrPartyFollower(_Character)
 AND
 PartyGetFlag(_Character, "LeaderLib_PartyCounted", 0)
 AND
@@ -60,7 +66,7 @@ IterateParty(_Character, _EventName);
 LeaderLib_Timers_StartObjectTimer(_Character, 250, "LeaderLib_Timers_ResetPartyDB_", "LeaderLib_PartyCountFinished");
 
 IF
-StoryEvent((CHARACTERGUID)_Player, "LeaderLib_PartyCountFinished")
+StoryEvent((CHARACTERGUID)_Character, "LeaderLib_PartyCountFinished")
 AND
 DB_LeaderLib_Temp_PartyCheck(_Character, _EventName)
 THEN
@@ -68,6 +74,8 @@ NOT DB_LeaderLib_Temp_PartyCheck(_Character, _EventName);
 
 IF
 StoryEvent((CHARACTERGUID)_Character, _EventName)
+AND
+NOT QRY_IsSummonOrPartyFollower(_Character)
 AND
 DB_LeaderLib_Temp_PartyCheck(_Leader, _EventName)
 AND
@@ -121,9 +129,7 @@ DB_NOOP(1);
 IF
 CharacterJoinedParty(_Character)
 AND
-CharacterIsPartyFollower(_Character, 0)
-AND
-CharacterIsSummon(_Character, 0)
+NOT QRY_IsSummonOrPartyFollower(_Character)
 AND
 NOT DB_LeaderLib_Temp_PartyCheck(_, _)
 AND
@@ -184,6 +190,8 @@ NOT DB_LeaderLib_PartyMembers(_Player, _Character);
 
 IF
 CharacterLeftParty(_Character)
+AND
+NOT QRY_IsSummonOrPartyFollower(_Character)
 THEN
 SetVarInteger(_Character, "LeaderLib_PartyCount", 1);
 

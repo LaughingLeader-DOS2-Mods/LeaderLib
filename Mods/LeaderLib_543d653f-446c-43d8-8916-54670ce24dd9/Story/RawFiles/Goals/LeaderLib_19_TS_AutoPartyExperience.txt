@@ -26,7 +26,7 @@ TimerLaunch("LeaderLib_Timers_BalancePartyExperience", 250);
 IF
 StoryEvent((CHARACTERGUID)_Player, "LeaderLib_FindHighestPlayerLevel")
 AND
-DB_IsPlayer(_Player)
+NOT QRY_IsSummonOrPartyFollower(_Player)
 AND
 DB_LeaderLib_AutoPartyExperience_Temp_TargetLevel(_TargetLevel)
 AND
@@ -50,7 +50,7 @@ TimerLaunch("LeaderLib_Timers_ResetPartyExperienceValues", 1000);
 IF
 StoryEvent((CHARACTERGUID)_Player, "LeaderLib_Commands_LevelUpPlayers")
 AND
-DB_IsPlayer(_Player)
+NOT QRY_IsSummonOrPartyFollower(_Player)
 AND
 DB_LeaderLib_AutoPartyExperience_Temp_TargetLevel(_TargetLevel)
 THEN

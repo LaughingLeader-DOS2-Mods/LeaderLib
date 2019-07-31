@@ -189,6 +189,8 @@ LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Listeners_RemoveHarmful
 //REGION REGISTERING
 PROC
 LeaderLib_ToggleScripts_Register_Script((STRING)_GoalTitle, (STRING)_GlobalFlag)
+AND
+NOT DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag)
 THEN
 DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag);
 LeaderLib_ToggleScripts_OnScriptRegistered(_GoalTitle, _GlobalFlag);

@@ -4,6 +4,14 @@ INITSECTION
 LeaderLib_GM_DisableGMScripts();
 KBSECTION
 
+IF
+StoryEvent(_, "LeaderLib_Initialized")
+AND
+DB_LeaderLib_GameMode("Campaign", _IsEditorMode)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_14_01_RequestProcessor:LeaderLib_Initialized] Disabling GM mode scripts.");
+GoalCompleted;
+
 PROC
 LeaderLib_GM_DisableGMScripts()
 AND
@@ -357,3 +365,4 @@ RequestProcessed(_Char,_RequestID,1);
 EXITSECTION
 
 ENDEXITSECTION
+ParentTargetEdge "LeaderLib_14_00_GMStart"

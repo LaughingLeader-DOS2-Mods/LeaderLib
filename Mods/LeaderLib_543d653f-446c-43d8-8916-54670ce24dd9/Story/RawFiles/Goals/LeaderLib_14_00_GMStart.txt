@@ -20,3 +20,4 @@ GoalCompleted;
 EXITSECTION
 LeaderLog_Log("DEBUG", "[LeaderLib_14_00_GMStart:Proc_GameModeStarted] Starting GM mode scripts.");
 ENDEXITSECTION
+ParentTargetEdge "LeaderLib_11__Start"

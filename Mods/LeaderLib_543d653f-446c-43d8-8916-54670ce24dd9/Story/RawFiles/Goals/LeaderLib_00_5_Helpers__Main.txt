@@ -1569,47 +1569,52 @@ LeaderLib_Helper_Internal_FireOnVariableIntChanged(_Object, _Variable, _LastValu
 PROC
 LeaderLib_Helper_ModifyVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_ModifyBy)
 THEN
-LeaderLib_Helper_ModifyVariableInt(_Object, _Variable, _ModifyBy, 999);
+LeaderLib_Helper_ModifyVariableInt(_Object, _Variable, _ModifyBy, 999, 0);
 
 PROC
 LeaderLib_Helper_ModifyVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_ModifyBy, (INTEGER)_Max)
+THEN
+LeaderLib_Helper_ModifyVariableInt(_Object, _Variable, _ModifyBy, _Max, 0);
+
+PROC
+LeaderLib_Helper_ModifyVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_ModifyBy, (INTEGER)_Max, (INTEGER)_Min)
 AND
 NOT GetVarInteger(_Object, _Variable, _)
 THEN
 SetVarInteger(_Object, _Variable, 0);
 
 PROC
-LeaderLib_Helper_ModifyVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_ModifyBy, (INTEGER)_Max)
+LeaderLib_Helper_ModifyVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_ModifyBy, (INTEGER)_Max, (INTEGER)_Min)
 AND
 GetVarInteger(_Object, _Variable, _Var)
 AND
 IntegerSum(_Var, _ModifyBy, _NextVar)
 THEN
-LeaderLib_Helper_ClampVariableInt(_Object, _Variable, _NextVar, _Max);
+LeaderLib_Helper_ClampVariableInt(_Object, _Variable, _NextVar, _Max, _Min);
 LeaderLib_Helper_Internal_FireOnVariableIntChanged(_Object, _Variable, _Var);
 
 PROC
-LeaderLib_Helper_ClampVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_NextVar, (INTEGER)_Max)
+LeaderLib_Helper_ClampVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_NextVar, (INTEGER)_Max, (INTEGER)_Min)
 AND
 _NextVar > _Max
 THEN
 SetVarInteger(_Object, _Variable, _Max);
 
 PROC
-LeaderLib_Helper_ClampVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_NextVar, (INTEGER)_Max)
+LeaderLib_Helper_ClampVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_NextVar, (INTEGER)_Max, (INTEGER)_Min)
 AND
 _NextVar <= _Max
 AND
-_NextVar > 0
+_NextVar > _Min
 THEN
 SetVarInteger(_Object, _Variable, _NextVar);
 
 PROC
-LeaderLib_Helper_ClampVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_NextVar, (INTEGER)_Max)
+LeaderLib_Helper_ClampVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_NextVar, (INTEGER)_Max, (INTEGER)_Min)
 AND
-_NextVar <= 0
+_NextVar <= _Min
 THEN
-SetVarInteger(_Object, _Variable, 0);
+SetVarInteger(_Object, _Variable, _Min);
 
 // Only fires OnVariableChanged if the variable has actually changed.
 PROC

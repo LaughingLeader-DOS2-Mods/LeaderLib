@@ -371,6 +371,33 @@ SysCompleteGoal(_GoalTitle);
 LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:GlobalFlagCleared] Global flag [",_GlobalFlag,"] was cleared. Deactivating goal [",_GoalTitle,"].");
 //END_REGION
 
+//REGION POST_TOGGLE
+IF
+StoryEvent(_, "LeaderLib_Initialized")
+AND
+DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag)
+AND
+GlobalGetFlag(_GlobalFlag, _FlagIsSet)
+THEN
+LeaderLib_ToggleScripts_Internal_PostToggle(_GlobalFlag, _GoalTitle, _FlagIsSet);
+
+PROC
+LeaderLib_ToggleScripts_Internal_PostToggle((STRING)_GlobalFlag, (STRING)_GoalTitle, 1)
+AND
+NOT SysIsActive(_GoalTitle)
+THEN
+SysActivateGoal(_GoalTitle);
+LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:LeaderLib_Initialized] Global flag [",_GlobalFlag,"] is set. Activating goal [",_GoalTitle,"].");
+
+PROC
+LeaderLib_ToggleScripts_Internal_PostToggle((STRING)_GlobalFlag, (STRING)_GoalTitle, 0)
+AND
+SysIsActive(_GoalTitle)
+THEN
+SysCompleteGoal(_GoalTitle);
+LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:LeaderLib_Initialized] Global flag [",_GlobalFlag,"] is not set. Deactivating goal [",_GoalTitle,"].");
+//END_REGION
+
 //REGION TREASURE_SCRIPTS_AUTO_ENABLE
 IF
 DB_LeaderLib_Treasure_RegisteredGenerationTypes("DIALOG_STARTED")

@@ -382,3 +382,6 @@ DB_LeaderLib_PresetMenu_RegisteredPreset 3
 DB_LeaderLib_Helper_Temp_CappedPercentage 2
 DB_LeaderLib_Growth_Items_TemplateID 2
 DB_LeaderLib_Growth_Items_TemplateID 3
+DB_CustomMoveItemResponse 3
+DB_CustomPickupItemResponse 3
+DB_CustomLockpickItemResponse 3

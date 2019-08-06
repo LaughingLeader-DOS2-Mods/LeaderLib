@@ -160,13 +160,18 @@ THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel:CharacterJoinedParty] Summon [",_Name,"] joined the party.");
 
 IF
-ObjectWasTagged((CHARACTERGUID)_Summon, _Tag)
+ObjectWasTagged(_Obj, _Tag)
 AND
-CharacterIsSummon(_Summon, 1)
-AND
-CharacterGetDisplayName(_Summon, _, _Name)
+String(_Obj, _Name)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel:ObjectWasTagged] Summon [",_Name,"] was tagged with [",_Tag,"].");
+LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel:ObjectWasTagged] [",_Name,"] was tagged with [",_Tag,"].");
+
+IF
+ObjectLostTag(_Obj, _Tag)
+AND
+String(_Obj, _Name)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel:ObjectLostTag] [",_Name,"] lost tag [",_Tag,"].");
 
 IF
 CharacterStatusApplied(_Summon, _Status, _Causee)

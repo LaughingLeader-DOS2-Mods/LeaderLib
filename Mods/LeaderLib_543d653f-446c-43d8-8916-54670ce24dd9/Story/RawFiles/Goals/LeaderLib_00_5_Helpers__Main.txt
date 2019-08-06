@@ -1127,6 +1127,69 @@ THEN
 DB_NOOP(1);
 
 QRY
+LeaderLib_Helper_QRY_IsRace((CHARACTERGUID)_Char, (STRING)_BaseRaceTag)
+AND
+LeaderLib_Helper_QRY_IsRace(_Char, _BaseRaceTag, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IsRace((CHARACTERGUID)_Char, (STRING)_BaseRaceTag, (INTEGER)_AllowPolymorph)
+AND
+DB_LeaderLib_RaceTags(_Race, _Tag, _BaseRaceTag)
+AND
+IsTagged(_Char, _BaseRaceTag, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IsRace((CHARACTERGUID)_Char, (STRING)_BaseRaceTag, (INTEGER)_AllowPolymorph)
+AND
+DB_LeaderLib_RaceTags(_Race, _Tag, _BaseRaceTag)
+AND
+CharacterGetRace(_Char, _AllowPolymorph, _Race)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IsRace((CHARACTERGUID)_Char, (STRING)_BaseRaceTag, (INTEGER)_AllowPolymorph)
+AND
+DB_LeaderLib_RaceTags(_Race, _Tag, _BaseRaceTag)
+AND
+IsTagged(_Char, _Tag, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IsUndeadRace((CHARACTERGUID)_Char, (STRING)_BaseRaceTag)
+AND
+LeaderLib_Helper_QRY_IsUndeadRace(_Char, _BaseRaceTag, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IsUndeadRace((CHARACTERGUID)_Char, (STRING)_BaseRaceTag, (INTEGER)_AllowPolymorph)
+AND
+DB_LeaderLib_RaceTags(_Race, _Tag, _BaseRaceTag)
+AND
+StringContains(_Tag, "UNDEAD_", 1)
+AND
+IsTagged(_Char, _Tag, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IsUndeadRace((CHARACTERGUID)_Char, (STRING)_BaseRaceTag, (INTEGER)_AllowPolymorph)
+AND
+DB_LeaderLib_RaceTags(_Race, _Tag, _BaseRaceTag)
+AND
+StringContains(_Tag, "UNDEAD_", 1)
+AND
+CharacterGetRace(_Char, _AllowPolymorph, _Race)
+THEN
+DB_NOOP(1);
+
+QRY
 LeaderLib_Helper_QRY_IsRaceOrOriginSkill((STRING)_Skill)
 AND
 DB_LeaderLib_RacialSkills(_, _Skill)

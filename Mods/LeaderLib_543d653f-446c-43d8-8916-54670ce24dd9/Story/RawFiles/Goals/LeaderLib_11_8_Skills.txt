@@ -1,23 +1,26 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-//LeaderLib_Skills_InitSettings();
+LeaderLib_Skills_InitSettings();
 
 KBSECTION
 //REGION SETTINGS
-/*
+
 PROC
 LeaderLib_Skills_InitSettings()
 THEN
-DB_NOOP(1);
+//DB_LeaderLib_RaceTemplates(_RaceTag, _Undead, _Female, _Template)
+DB_LeaderLib_Skills_UndeadPolymorph("DWARF", "LEADERLIB_SHAPESHIFT_DWARF", "LEADERLIB_UNDEAD_DWARF");
+DB_LeaderLib_Skills_UndeadPolymorph("ELF", "LEADERLIB_SHAPESHIFT_ELF", "LEADERLIB_UNDEAD_ELF");
+DB_LeaderLib_Skills_UndeadPolymorph("HUMAN", "LEADERLIB_SHAPESHIFT_HUMAN", "LEADERLIB_UNDEAD_HUMAN");
+DB_LeaderLib_Skills_UndeadPolymorph("LIZARD", "LEADERLIB_SHAPESHIFT_LIZARD", "LEADERLIB_UNDEAD_LIZARD");
 
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 4, 2)
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,2,2,0)
 THEN
 LeaderLib_Skills_InitSettings();
-*/
 //END_REGION
 
 //REGION SUMMON_CONTROL
@@ -99,6 +102,454 @@ ProcObjectTimerCancel(_PositionChecker, "LeaderLib_Timers_PositionChecker_Valida
 ItemRemove(_PositionChecker);
 LeaderLog_Log("DEBUG", "[LeaderLib:Skills:ForcePositionCorrection] Valid position found by item. Teleporting character to position.");
 TeleportToPosition(_Character, _x, _y, _z, "LeaderLib_Events_ForcePositionCorrected", 0, 1);
+//END_REGION
+
+//REGION SHAPESHIFT_STATUS_UNDEAD_TAG
+IF
+CharacterStatusApplied(_Char, "LEADERLIB_UNDEAD_DWARF", _)
+THEN
+SetTag(_Char, "UNDEAD");
+
+IF
+CharacterStatusApplied(_Char, "LEADERLIB_UNDEAD_ELF", _)
+THEN
+SetTag(_Char, "UNDEAD");
+
+IF
+CharacterStatusApplied(_Char, "LEADERLIB_UNDEAD_HUMAN", _)
+THEN
+SetTag(_Char, "UNDEAD");
+
+IF
+CharacterStatusApplied(_Char, "LEADERLIB_UNDEAD_LIZARD", _)
+THEN
+SetTag(_Char, "UNDEAD");
+
+IF
+CharacterStatusRemoved(_Char, "LEADERLIB_UNDEAD_DWARF", _)
+THEN
+ClearTag(_Char, "UNDEAD");
+
+IF
+CharacterStatusRemoved(_Char, "LEADERLIB_UNDEAD_ELF", _)
+THEN
+ClearTag(_Char, "UNDEAD");
+
+IF
+CharacterStatusRemoved(_Char, "LEADERLIB_UNDEAD_HUMAN", _)
+THEN
+ClearTag(_Char, "UNDEAD");
+
+IF
+CharacterStatusRemoved(_Char, "LEADERLIB_UNDEAD_LIZARD", _)
+THEN
+ClearTag(_Char, "UNDEAD");
+//END_REGION
+
+//REGION GENDER_FIX
+/*
+IF
+CharacterStatusRemoved(_Char, "LEADERLIB_SHAPESHIFT_DWARF", _)
+THEN
+SetStoryEvent(_Char, "LeaderLib_Skills_StartPostPolymorphFix");
+
+IF
+CharacterStatusRemoved(_Char, "LEADERLIB_SHAPESHIFT_ELF", _)
+THEN
+SetStoryEvent(_Char, "LeaderLib_Skills_StartPostPolymorphFix");
+
+IF
+CharacterStatusRemoved(_Char, "LEADERLIB_SHAPESHIFT_HUMAN", _)
+THEN
+SetStoryEvent(_Char, "LeaderLib_Skills_StartPostPolymorphFix");
+
+IF
+CharacterStatusRemoved(_Char, "LEADERLIB_SHAPESHIFT_LIZARD", _)
+THEN
+SetStoryEvent(_Char, "LeaderLib_Skills_StartPostPolymorphFix");
+
+IF
+StoryEvent((CHARACTERGUID)_Char, "LeaderLib_Skills_StartPostPolymorphFix")
+AND
+ObjectGetFlag(_Char, "LeaderLib_GenderSwapped", 1)
+THEN
+LeaderLib_Timers_StartObjectTimer(_Char, 250, "LeaderLib_Timers_PostPolymorphFix_", "LeaderLib_PostPolymorphFix");
+
+IF
+StoryEvent((CHARACTERGUID)_Char, "LeaderLib_PostPolymorphFix")
+AND
+NOT LeaderLib_Skills_QRY_ShapeshiftActive(_Char)
+THEN
+LeaderLib_Skills_Internal_SwapGender_PostPolymorphFix(_Char);
+*/
+//END_REGION
+
+//REGION SHAPESHIFTING
+QRY
+LeaderLib_Skills_QRY_ShapeshiftActive((CHARACTERGUID)_Char)
+AND
+DB_LeaderLib_Skills_UndeadPolymorph(_Tag, _Status, _UndeadStatus)
+AND
+HasActiveStatus(_Char, _Status, _A)
+AND
+HasActiveStatus(_Char, _UndeadStatus, _B)
+AND
+IntegerSum(_A, _B, _AnyActive)
+AND
+_AnyActive > 0
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Skills_QRY_UndeadShapeshiftActive((CHARACTERGUID)_Char)
+AND
+DB_LeaderLib_Skills_UndeadPolymorph(_Tag, _Status, _UndeadStatus)
+AND
+HasActiveStatus(_Char, _UndeadStatus, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Skills_QRY_ApplyUndeadShapeshift((CHARACTERGUID)_Char, (STRING)_Status)
+AND
+LeaderLib_Skills_QRY_UndeadShapeshiftActive(_Char)
+AND
+DB_LeaderLib_Skills_UndeadPolymorph(_Tag, _Status, _UndeadStatus)
+THEN
+ApplyStatus(_Char, _UndeadStatus, -1.0, 1, _Char);
+
+//We set the status here so we can use noprepare for the cast animation
+IF
+CharacterUsedSkill(_Char, "Shout_LeaderLib_PolymorphIntoDwarf", _, _)
+AND
+NOT LeaderLib_Skills_QRY_ApplyUndeadShapeshift(_Char, "LEADERLIB_SHAPESHIFT_DWARF")
+THEN
+ApplyStatus(_Char, "LEADERLIB_SHAPESHIFT_DWARF", -1.0, 1, _Char);
+
+IF
+CharacterUsedSkill(_Char, "Shout_LeaderLib_PolymorphIntoElf", _, _)
+AND
+NOT LeaderLib_Skills_QRY_ApplyUndeadShapeshift(_Char, "LEADERLIB_SHAPESHIFT_ELF")
+THEN
+ApplyStatus(_Char, "LEADERLIB_SHAPESHIFT_ELF", -1.0, 1, _Char);
+
+IF
+CharacterUsedSkill(_Char, "Shout_LeaderLib_PolymorphIntoHuman", _, _)
+AND
+NOT LeaderLib_Skills_QRY_ApplyUndeadShapeshift(_Char, "LEADERLIB_SHAPESHIFT_HUMAN")
+THEN
+ApplyStatus(_Char, "LEADERLIB_SHAPESHIFT_HUMAN", -1.0, 1, _Char);
+
+IF
+CharacterUsedSkill(_Char, "Shout_LeaderLib_PolymorphIntoLizard", _, _)
+AND
+NOT LeaderLib_Skills_QRY_ApplyUndeadShapeshift(_Char, "LEADERLIB_SHAPESHIFT_LIZARD")
+THEN
+ApplyStatus(_Char, "LEADERLIB_SHAPESHIFT_LIZARD", -1.0, 1, _Char);
+
+IF
+CharacterUsedSkill(_Char, "Shout_LeaderLib_CancelPolymorphism", _, _)
+AND
+NOT LeaderLib_Skills_QRY_UndeadShapeshiftActive(_Char)
+THEN
+ApplyStatus(_Char, "LEADERLIB_SHAPESHIFT_CLEAR", 0.0, 1, _Char);
+
+/*
+IF
+CharacterUsedSkill(_Char, "Shout_LeaderLib_CancelPolymorphism", _, _)
+AND
+GetVarFixedString(_Char, "LeaderLib_OriginalGenderTemplate", _Template)
+THEN
+CharacterTransform(_Char, _Template, 0, 1, 0, 0, 0, 1, 0);
+*/
+
+IF
+CharacterUsedSkill(_Char, "Shout_LeaderLib_ToggleUndead", _, _)
+THEN
+LeaderLib_Skills_ToggleUndeadPolymorph(_Char);
+
+PROC
+LeaderLib_Skills_ToggleUndeadPolymorph((CHARACTERGUID)_Char)
+AND
+DB_LeaderLib_Skills_UndeadPolymorph(_Racetag, _ShapeshisftStatus, _UndeadStatus)
+AND
+NOT DB_LeaderLib_Skills_Temp_UndeadPolymorphResolved(_Char)
+THEN
+LeaderLib_Skills_Internal_ToggleUndeadPolymorph(_Char, _Racetag, _ShapeshisftStatus, _UndeadStatus);
+
+PROC
+LeaderLib_Skills_ToggleUndeadPolymorph((CHARACTERGUID)_Char)
+AND
+NOT DB_LeaderLib_Skills_Temp_UndeadPolymorphResolved(_Char)
+THEN
+ShowNotification(_Char, "LeaderLib_ToggleUndeadPolymorph_Failed");
+
+PROC
+LeaderLib_Skills_ToggleUndeadPolymorph((CHARACTERGUID)_Char)
+AND
+DB_LeaderLib_Skills_Temp_UndeadPolymorphResolved(_Char)
+THEN
+NOT DB_LeaderLib_Skills_Temp_UndeadPolymorphResolved(_Char);
+
+PROC
+LeaderLib_Skills_Internal_ToggleUndeadPolymorph((CHARACTERGUID)_Char, (STRING)_Racetag, (STRING)_ShapeshisftStatus, (STRING)_UndeadStatus)
+AND
+NOT DB_LeaderLib_Skills_Temp_UndeadPolymorphResolved(_Char)
+AND
+HasActiveStatus(_Char, _ShapeshisftStatus, 1)
+THEN
+ApplyStatus(_Char, _UndeadStatus, -1.0, 1, _Char);
+DB_LeaderLib_Skills_Temp_UndeadPolymorphResolved(_Char);
+
+PROC
+LeaderLib_Skills_Internal_ToggleUndeadPolymorph((CHARACTERGUID)_Char, (STRING)_Racetag, (STRING)_ShapeshisftStatus, (STRING)_UndeadStatus)
+AND
+NOT DB_LeaderLib_Skills_Temp_UndeadPolymorphResolved(_Char)
+AND
+HasActiveStatus(_Char, _UndeadStatus, 1)
+THEN
+LeaderLib_Skills_Internal_ToggleUndeadPolymorph_ToNormalRace(_Char, _Racetag, _ShapeshisftStatus, _UndeadStatus);
+DB_LeaderLib_Skills_Temp_UndeadPolymorphResolved(_Char);
+
+PROC
+LeaderLib_Skills_Internal_ToggleUndeadPolymorph_ToNormalRace((CHARACTERGUID)_Char, (STRING)_Racetag, (STRING)_ShapeshisftStatus, (STRING)_UndeadStatus)
+AND
+LeaderLib_Helper_QRY_IsRace(_Char, _Racetag, 0)
+THEN
+RemoveStatus(_Char, _UndeadStatus);
+
+PROC
+LeaderLib_Skills_Internal_ToggleUndeadPolymorph_ToNormalRace((CHARACTERGUID)_Char, (STRING)_Racetag, (STRING)_ShapeshisftStatus, (STRING)_UndeadStatus)
+AND
+NOT LeaderLib_Helper_QRY_IsRace(_Char, _Racetag, 0)
+THEN
+ApplyStatus(_Char, _ShapeshisftStatus, -1.0, 1, _Char);
+
+PROC
+LeaderLib_Skills_Internal_ToggleUndeadPolymorph((CHARACTERGUID)_Char, (STRING)_Racetag, (STRING)_ShapeshisftStatus, (STRING)_UndeadStatus)
+AND
+NOT DB_LeaderLib_Skills_Temp_UndeadPolymorphResolved(_Char)
+AND
+LeaderLib_Helper_QRY_IsRace(_Char, _Racetag, 1)
+THEN
+ApplyStatus(_Char, _UndeadStatus, -1.0, 1, _Char);
+DB_LeaderLib_Skills_Temp_UndeadPolymorphResolved(_Char);
+
+PROC
+LeaderLib_Skills_Internal_ToggleUndeadPolymorph((CHARACTERGUID)_Char, (STRING)_Racetag, (STRING)_ShapeshisftStatus, (STRING)_UndeadStatus)
+AND
+NOT DB_LeaderLib_Skills_Temp_UndeadPolymorphResolved(_Char)
+AND
+LeaderLib_Helper_QRY_IsUndeadRace(_Char, _Racetag, 1)
+THEN
+ApplyStatus(_Char, _ShapeshisftStatus, -1.0, 1, _Char);
+DB_LeaderLib_Skills_Temp_UndeadPolymorphResolved(_Char);
+//END_REGION
+
+//REGION GENDER_SWAP_SAVE_POLYMORPH
+PROC
+LeaderLib_Skills_Internal_SavePolymorph((CHARACTERGUID)_Char)
+AND
+DB_LeaderLib_Skills_UndeadPolymorph(_Tag, _Status, _UndeadStatus)
+AND
+HasActiveStatus(_Char, _Status, 1)
+THEN
+DB_LeaderLib_Skills_Temp_ActivePolymorph(_Char, _Status);
+
+PROC
+LeaderLib_Skills_Internal_SavePolymorph((CHARACTERGUID)_Char)
+AND
+DB_LeaderLib_Skills_UndeadPolymorph(_Tag, _Status, _UndeadStatus)
+AND
+HasActiveStatus(_Char, _UndeadStatus, 1)
+THEN
+DB_LeaderLib_Skills_Temp_ActivePolymorph(_Char, _UndeadStatus);
+
+PROC
+LeaderLib_Skills_SwapGender_Transform((CHARACTERGUID)_Char, (STRING)_Template)
+AND
+DB_LeaderLib_Skills_Temp_ActivePolymorph(_Char, _)
+THEN
+LeaderLib_Timers_StartObjectTimer(_Char, 50, "LeaderLib_Timers_SwapGender_ReApplyPolymorph", "LeaderLib_SwapGender_ReApplyPolymorph");
+
+IF
+StoryEvent((CHARACTERGUID)_Char, "LeaderLib_SwapGender_ReApplyPolymorph")
+AND
+DB_LeaderLib_Skills_Temp_ActivePolymorph(_Char, _Status)
+THEN
+NOT DB_LeaderLib_Skills_Temp_ActivePolymorph(_Char, _Status);
+ApplyStatus(_Char, _Status, -1.0, 1, _Char);
+//END_REGION
+
+//REGION GENDER_SWAP
+IF
+CharacterUsedSkill(_Char, "Shout_LeaderLib_SwapGender", _, _)
+AND
+NOT LeaderLib_Skills_QRY_ShapeshiftActive(_Char)
+THEN
+LeaderLib_Skills_SwapGender(_Char);
+
+IF
+CharacterUsedSkill(_Char, "Shout_LeaderLib_SwapGender", _, _)
+AND
+LeaderLib_Skills_QRY_ShapeshiftActive(_Char)
+THEN
+LeaderLib_Skills_Internal_SavePolymorph(_Char);
+ApplyStatus(_Char, "LEADERLIB_SHAPESHIFT_CLEAR", 0.0, 1, _Char);
+LeaderLib_Timers_StartObjectTimer(_Char, 50, "LeaderLib_Timers_SwapGender_", "LeaderLib_SwapGender");
+
+IF
+StoryEvent((CHARACTERGUID)_Char, "LeaderLib_SwapGender")
+THEN
+LeaderLib_Skills_SwapGender(_Char);
+
+PROC
+LeaderLib_Skills_SwapGender((CHARACTERGUID)_Char)
+AND
+NOT GetVarFixedString(_Char, "LeaderLib_OriginalGenderTemplate", _)
+AND
+GetTemplate(_Char, _Template)
+THEN
+SetVarFixedString(_Char, "LeaderLib_OriginalGenderTemplate", _Template);
+
+PROC
+LeaderLib_Skills_SwapGender((CHARACTERGUID)_Char)
+AND
+IsTagged(_Char, "FEMALE", _Female)
+AND
+IntegerSubtract(1, _Female, _IsFemale)
+AND
+IsTagged(_Char, "UNDEAD", _IsUndead)
+THEN
+LeaderLog_LogInt("DEBUG", "[LeaderLib:Skills:SwapGender] Starting swap. IsFemale [",_Female,"] => [",_IsFemale,"] IsUndead [",_IsUndead,"].");
+LeaderLib_Skills_Internal_SwapGender(_Char, _IsFemale, _IsUndead);
+
+PROC
+LeaderLib_Skills_SwapGender((CHARACTERGUID)_Char)
+AND
+DB_LeaderLib_Skills_Temp_SwapGenderResolved(_Char)
+THEN
+NOT DB_LeaderLib_Skills_Temp_SwapGenderResolved(_Char);
+
+PROC
+LeaderLib_Skills_Internal_SwapGender_PostPolymorphFix((CHARACTERGUID)_Char)
+AND
+NOT LeaderLib_Skills_QRY_ShapeshiftActive(_Char)
+AND
+GetVarFixedString(_Char, "LeaderLib_ActiveGenderTemplate", _SavedTemplate)
+AND
+GetTemplate(_Char, _CurrentTemplate)
+AND
+_SavedTemplate != _CurrentTemplate
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Skills:SwapGender:PostPolymorphFix] Transforming character into template [",_SavedTemplate,"], as their current template [",_CurrentTemplate,"] does not match.");
+CharacterTransform(_Char, _SavedTemplate, 0, 1, 0, 0, 0, 1, 0);
+
+PROC
+LeaderLib_Skills_Internal_SwapGender((CHARACTERGUID)_Char, (INTEGER)_IsFemale, (INTEGER)_IsUndead)
+AND
+NOT DB_LeaderLib_Skills_Temp_SwapGenderResolved(_Char)
+AND
+CharacterGetRace(_Char, 1, _Race)
+AND
+DB_LeaderLib_RaceTags(_Race, _RaceTag, _BaseRaceTag)
+AND
+DB_LeaderLib_RaceTemplates(_RaceTag, _IsUndead, _IsFemale, _Template)
+AND
+NOT DB_LeaderLib_Skills_Temp_SwapGenderResolved(_Char)
+THEN
+DB_LeaderLib_Skills_Temp_SwapGenderResolved(_Char);
+SetVarInteger(_Char, "LeaderLib_ActiveGender", _IsFemale);
+LeaderLib_Skills_SwapGender_Transform(_Char, _Template);
+LeaderLib_Skills_SwapGender_UpdateTags(_Char, _IsFemale);
+
+PROC
+LeaderLib_Skills_Internal_SwapGender((CHARACTERGUID)_Char, (INTEGER)_IsFemale, (INTEGER)_IsUndead)
+AND
+NOT DB_LeaderLib_Skills_Temp_SwapGenderResolved(_Char)
+AND
+DB_LeaderLib_RaceTags(_Race, _RaceTag, _BaseRaceTag)
+AND
+IsTagged(_Char, _BaseRaceTag, 1)
+AND
+DB_LeaderLib_RaceTemplates(_RaceTag, _IsUndead, _IsFemale, _Template)
+AND
+NOT DB_LeaderLib_Skills_Temp_SwapGenderResolved(_Char)
+THEN
+DB_LeaderLib_Skills_Temp_SwapGenderResolved(_Char);
+SetVarInteger(_Char, "LeaderLib_ActiveGender", _IsFemale);
+LeaderLib_Skills_SwapGender_Transform(_Char, _Template);
+LeaderLib_Skills_SwapGender_UpdateTags(_Char, _IsFemale);
+
+PROC
+LeaderLib_Skills_SwapGender_Transform((CHARACTERGUID)_Char, (STRING)_Template)
+AND
+NOT LeaderLib_Skills_QRY_ShapeshiftActive(_Char)
+THEN
+SetVarFixedString(_Char, "LeaderLib_ActiveGenderTemplate", _Template);
+
+PROC
+LeaderLib_Skills_SwapGender_Transform((CHARACTERGUID)_Char, (STRING)_Template)
+AND
+GetPosition(_Char, _x, _y, _z)
+THEN
+PlayEffectAtPosition("RS3_FX_GP_ScriptedEvent_Teleport_GenericSmoke_01", _x, _y, _z);
+LeaderLog_Log("DEBUG", "[LeaderLib:Skills:SwapGender] Transforming character into root template [",_Template,"].");
+CharacterTransform(_Char, _Template, 0, 1, 0, 0, 0, 1, 0);
+
+PROC
+LeaderLib_Skills_SwapGender_UpdateTags((CHARACTERGUID)_Character, 0)
+AND
+NOT GetVarString(_Character, "LeaderLib_OriginalGender", _)
+THEN
+SetVarString(_Character, "LeaderLib_OriginalGender", "FEMALE");
+
+PROC
+LeaderLib_Skills_SwapGender_UpdateTags((CHARACTERGUID)_Character, 1)
+AND
+NOT GetVarString(_Character, "LeaderLib_OriginalGender", _)
+THEN
+SetVarString(_Character, "LeaderLib_OriginalGender", "MALE");
+
+PROC
+LeaderLib_Skills_SwapGender_UpdateTags((CHARACTERGUID)_Character, 0)
+THEN
+ClearTag(_Character, "FEMALE");
+SetTag(_Character, "MALE");
+
+PROC
+LeaderLib_Skills_SwapGender_UpdateTags((CHARACTERGUID)_Character, 1)
+THEN
+SetTag(_Character, "FEMALE");
+ClearTag(_Character, "MALE");
+
+PROC
+LeaderLib_Skills_SwapGender_UpdateTags((CHARACTERGUID)_Character, 1)
+AND
+GetVarString(_Character, "LeaderLib_OriginalGender", "MALE")
+THEN
+ObjectSetFlag(_Character, "LeaderLib_GenderSwapped", 0);
+
+PROC
+LeaderLib_Skills_SwapGender_UpdateTags((CHARACTERGUID)_Character, 0)
+AND
+GetVarString(_Character, "LeaderLib_OriginalGender", "MALE")
+THEN
+ObjectClearFlag(_Character, "LeaderLib_GenderSwapped", 0);
+
+PROC
+LeaderLib_Skills_SwapGender_UpdateTags((CHARACTERGUID)_Character, 0)
+AND
+GetVarString(_Character, "LeaderLib_OriginalGender", "FEMALE")
+THEN
+ObjectSetFlag(_Character, "LeaderLib_GenderSwapped", 0);
+
+PROC
+LeaderLib_Skills_SwapGender_UpdateTags((CHARACTERGUID)_Character, 1)
+AND
+GetVarString(_Character, "LeaderLib_OriginalGender", "FEMALE")
+THEN
+ObjectClearFlag(_Character, "LeaderLib_GenderSwapped", 0);
 //END_REGION
 EXITSECTION
 

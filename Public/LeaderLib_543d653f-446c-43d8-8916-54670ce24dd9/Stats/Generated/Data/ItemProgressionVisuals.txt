@@ -3,3 +3,15 @@ new itemgroup "LeaderLib_ArmorVisualsDisabled"
 add levelgroup 0,0,"All"
 add rootgroup "94ef2c7b-099b-4ccb-ac16-d79db4314381",""
 add namegroup "EMPTY","",""
+
+new itemgroup "ARM_LeaderLib_Ring_Shapeshifter"
+
+add levelgroup 0,0,"All"
+add rootgroup "1892531e-4eeb-42ff-907e-4a7ce2278b3d",""
+add namegroup "ARM_LeaderLib_Ring_Shapeshifter","",""
+
+new itemgroup "ARM_LeaderLib_Debug_Ring_TestingStats"
+
+add levelgroup 0,0,"All"
+add rootgroup "9cdd8d76-7bb7-4ad2-b699-610a1f161917",""
+add namegroup "ARM_LeaderLib_Debug_Ring_TestingStats","",""

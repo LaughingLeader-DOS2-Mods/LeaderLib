@@ -1,0 +1,5 @@
+new namegroup "ARM_LeaderLib_Ring_Shapeshifter"
+add name "Shapeshifter's Ring",""
+
+new namegroup "ARM_LeaderLib_Debug_Ring_TestingStats"
+add name "Master Debug Ring",""

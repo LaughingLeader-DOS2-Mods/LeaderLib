@@ -254,14 +254,16 @@ NOT LeaderLib_Skills_QRY_UndeadShapeshiftActive(_Char)
 THEN
 ApplyStatus(_Char, "LEADERLIB_SHAPESHIFT_CLEAR", 0.0, 1, _Char);
 
-/*
 IF
 CharacterUsedSkill(_Char, "Shout_LeaderLib_CancelPolymorphism", _, _)
+AND
+GetVarString(_Char, "LeaderLib_OriginalGender", _Tag)
+AND
+IsTagged(_Char, _Tag, 1)
 AND
 GetVarFixedString(_Char, "LeaderLib_OriginalGenderTemplate", _Template)
 THEN
 CharacterTransform(_Char, _Template, 0, 1, 0, 0, 0, 1, 0);
-*/
 
 IF
 CharacterUsedSkill(_Char, "Shout_LeaderLib_ToggleUndead", _, _)

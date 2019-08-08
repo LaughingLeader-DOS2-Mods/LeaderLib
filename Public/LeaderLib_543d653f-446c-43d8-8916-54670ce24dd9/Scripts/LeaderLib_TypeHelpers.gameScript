@@ -76,9 +76,14 @@ THEN
 		Set(_Turns, 2)
 	ENDIF
 	CreateSurfaceAt(_Pos, _Surface, _Radius, _Turns, _Owner)
+
+	Print(_LogStr, "[LeaderLib:LeaderLib_TypeHelpers:LeaderLib_CreateSurface] Created surface ([1]). Owner([2]) Turns([3]) Radius([4]) Target([5])", _Surface, _Owner, _Turns, _Radius, _Pos)
+	SetVar(_Obj, "LeaderLog_Type", STRING:"DEBUG")
+	SetVar(_Obj, "LeaderLog_Message", _LogStr)
+	CharacterEvent(_Obj, "LeaderLog_Commands_Log")
 ELSE
 	Print(_LogStr, "[LeaderLib:LeaderLib_TypeHelpers:LeaderLib_CreateSurface] [ERROR] Variable [LeaderLib_StringToSurface_Surface] is not set for object ([1]).", _Obj)
-	SetVar(_Obj, "LeaderLog_Type", STRING:"Error")
+	SetVar(_Obj, "LeaderLog_Type", STRING:"ERROR")
 	SetVar(_Obj, "LeaderLog_Message", _LogStr)
 	CharacterEvent(_Obj, "LeaderLog_Commands_Log")
 ENDIF

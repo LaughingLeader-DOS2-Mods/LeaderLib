@@ -125,6 +125,58 @@ DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent,
 THEN
 NOT DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent, _TimerPrefix);
 TimerCancel(_TimerName);
+
+/*
+QRY
+LeaderLib_Timers_QRY_CharacterItemTimerStarted((GUIDSTRING)_Object, (STRING)_TimerPrefix)
+AND
+ObjectIsCharacter((CHARACTERGUID)_Object, 1)
+AND
+DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Object, _Item, _CompleteEvent, _TimerPrefix)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Timers_QRY_CharacterItemTimerStarted((GUIDSTRING)_Object, (STRING)_CompleteEvent)
+AND
+ObjectIsCharacter((CHARACTERGUID)_Object, 1)
+AND
+DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Object, _Item, _CompleteEvent, _TimerPrefix)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Timers_QRY_CharacterItemTimerStarted((GUIDSTRING)_Object, (STRING)_TimerPrefix)
+AND
+ObjectIsItem((ITEMGUID)_Object, 1)
+AND
+DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Object, _CompleteEvent, _TimerPrefix)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Timers_QRY_CharacterItemTimerStarted((GUIDSTRING)_Object, (STRING)_CompleteEvent)
+AND
+ObjectIsItem((ITEMGUID)_Object, 1)
+AND
+DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Object, _CompleteEvent, _TimerPrefix)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Timers_QRY_CharacterItemTimerStarted((CHARACTERGUID)_Char, (ITEMGUID)_Item, (STRING)_CompleteEvent)
+AND
+DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent, _TimerPrefix)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Timers_QRY_CharacterItemTimerStarted((CHARACTERGUID)_Char, (ITEMGUID)_Item, (STRING)_CompleteEvent)
+AND
+DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent, _TimerPrefix)
+THEN
+DB_NOOP(1);
+*/
 //END_REGION
 
 //REGION CHARACTER_CHARACTER_TIMER

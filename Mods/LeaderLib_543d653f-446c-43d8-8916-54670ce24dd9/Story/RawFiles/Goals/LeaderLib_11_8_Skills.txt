@@ -254,6 +254,7 @@ NOT LeaderLib_Skills_QRY_UndeadShapeshiftActive(_Char)
 THEN
 ApplyStatus(_Char, "LEADERLIB_SHAPESHIFT_CLEAR", 0.0, 1, _Char);
 
+/*
 IF
 CharacterUsedSkill(_Char, "Shout_LeaderLib_CancelPolymorphism", _, _)
 AND
@@ -264,6 +265,7 @@ AND
 GetVarFixedString(_Char, "LeaderLib_OriginalGenderTemplate", _Template)
 THEN
 CharacterTransform(_Char, _Template, 0, 1, 0, 0, 0, 1, 0);
+*/
 
 IF
 CharacterUsedSkill(_Char, "Shout_LeaderLib_ToggleUndead", _, _)
@@ -423,7 +425,7 @@ IntegerSubtract(1, _Female, _IsFemale)
 AND
 IsTagged(_Char, "UNDEAD", _IsUndead)
 THEN
-LeaderLog_LogInt("DEBUG", "[LeaderLib:Skills:SwapGender] Starting swap. IsFemale [",_Female,"] => [",_IsFemale,"] IsUndead [",_IsUndead,"].");
+LeaderLog_LogInt("DEBUG", "[LeaderLib:Skills:SwapGender] Starting swap. Female [",_Female,"] to => IsFemale [",_IsFemale,"] IsUndead [",_IsUndead,"].");
 LeaderLib_Skills_Internal_SwapGender(_Char, _IsFemale, _IsUndead);
 
 PROC
@@ -446,6 +448,38 @@ _SavedTemplate != _CurrentTemplate
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Skills:SwapGender:PostPolymorphFix] Transforming character into template [",_SavedTemplate,"], as their current template [",_CurrentTemplate,"] does not match.");
 CharacterTransform(_Char, _SavedTemplate, 0, 1, 0, 0, 0, 1, 0);
+
+QRY
+LeaderLib_Skills_Internal_SwapGender_QRY_NextChangeIsOriginal((CHARACTERGUID)_Char, 0)
+AND
+NOT LeaderLib_Skills_QRY_ShapeshiftActive(_Char)
+AND
+GetVarString(_Char, "LeaderLib_OriginalGender", "MALE")
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Skills_Internal_SwapGender_QRY_NextChangeIsOriginal((CHARACTERGUID)_Char, 1)
+AND
+NOT LeaderLib_Skills_QRY_ShapeshiftActive(_Char)
+AND
+GetVarString(_Char, "LeaderLib_OriginalGender", "FEMALE")
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_Skills_Internal_SwapGender((CHARACTERGUID)_Char, (INTEGER)_IsFemale, (INTEGER)_IsUndead)
+AND
+NOT DB_LeaderLib_Skills_Temp_SwapGenderResolved(_Char)
+AND
+LeaderLib_Skills_Internal_SwapGender_QRY_NextChangeIsOriginal(_Char, _IsFemale)
+AND
+GetVarFixedString(_Char, "LeaderLib_OriginalGenderTemplate", _Template)
+THEN
+DB_LeaderLib_Skills_Temp_SwapGenderResolved(_Char);
+SetVarInteger(_Char, "LeaderLib_ActiveGender", _IsFemale);
+LeaderLib_Skills_SwapGender_Transform(_Char, _Template);
+LeaderLib_Skills_SwapGender_UpdateTags(_Char, _IsFemale);
 
 PROC
 LeaderLib_Skills_Internal_SwapGender((CHARACTERGUID)_Char, (INTEGER)_IsFemale, (INTEGER)_IsUndead)

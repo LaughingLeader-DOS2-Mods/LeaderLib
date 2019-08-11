@@ -69,6 +69,24 @@ DB_IsPlayer(_Player)
 THEN
 LeaderLib_Statuses_ApplyPermanentStatuses(_Player);
 //END_REGION
+
+//REGION FLAG_EVENTS
+/*
+IF
+ObjectFlagSet(_Flag, (CHARACTERGUID)_Object, _)
+AND
+DB_LeaderLib_Statuses_PermanentStatus(_ModID, _Group, _Status, _Flag)
+THEN
+LeaderLib_Statuses_ApplyPermanentStatusByFlag(_Object, _Flag);
+
+IF
+ObjectFlagCleared(_Flag, (CHARACTERGUID)_Object, _)
+AND
+DB_LeaderLib_Statuses_PermanentStatus(_ModID, _Group, _Status, _Flag)
+THEN
+LeaderLib_Statuses_RemovePermanentStatusByFlag(_Object, _Flag);
+*/
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

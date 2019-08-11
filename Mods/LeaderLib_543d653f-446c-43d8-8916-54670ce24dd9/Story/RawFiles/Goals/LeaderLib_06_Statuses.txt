@@ -103,6 +103,22 @@ THEN
 GlobalClearFlag("LeaderLib_TS_RemoveHarmfulStatusesEnabled");
 //END_REGION
 
+//REGION UTIL
+PROC
+LeaderLib_Statuses_Internal_UpdateFlag((CHARACTERGUID)_Character, (STRING)_Status, (STRING)_Flag, 0)
+AND
+NOT DB_LeaderLib_Statuses_PermanentStatusBlocked(_Character, _Status, _Flag)
+THEN
+ObjectSetFlag(_Character, _Flag, 0);
+
+PROC
+LeaderLib_Statuses_Internal_UpdateFlag((CHARACTERGUID)_Character, (STRING)_Status, (STRING)_Flag, 1)
+AND
+NOT DB_LeaderLib_Statuses_PermanentStatusBlocked(_Character, _Status, _Flag)
+THEN
+ObjectClearFlag(_Character, _Flag, 0);
+//END_REGION
+
 //REGION REMOVE_HARMFUL_STATUSES_WORKAROUND
 PROC
 LeaderLib_TS_Internal_RemoveHarmfulStatusesCalled((CHARACTERGUID)_Character)
@@ -134,21 +150,86 @@ AND
 NOT LeaderLib_Helper_QRY_HasStatus(_Character, _Status)
 THEN
 LeaderLib_Statuses_BlockPermanentStatus(_Character, _Status, _Flag);
-LeaderLib_Statuses_ApplyPermanentStatus(_Character, _Status, _Flag);
+LeaderLib_Statuses_Internal_ApplyPermanentStatus(_Character, _Status, _Flag);
 
 PROC
-LeaderLib_Statuses_ApplyPermanentStatus((CHARACTERGUID)_Character, (STRING)_Status, (STRING)_Flag)
+LeaderLib_Statuses_Internal_ApplyPermanentStatus((CHARACTERGUID)_Character, (STRING)_Status, (STRING)_Flag)
 AND
 NOT DB_LeaderLib_Statuses_PermanentStatusBlocked(_Character, _Status, _Flag)
 THEN
 ApplyStatus(_Character, _Status, -1.0, 0, _Character);
 
 PROC
-LeaderLib_Statuses_ApplyPermanentStatus((CHARACTERGUID)_Character, (STRING)_Status, (STRING)_Flag)
+LeaderLib_Statuses_Internal_ApplyPermanentStatus((CHARACTERGUID)_Character, (STRING)_Status, (STRING)_Flag)
 AND
 DB_LeaderLib_Statuses_PermanentStatusBlocked(_Character, _Status, _Flag)
 THEN
 NOT DB_LeaderLib_Statuses_PermanentStatusBlocked(_Character, _Status, _Flag);
+//END_REGION
+
+//REGION MODIFY_SINGLE
+//Non-forced, requires flag to be set by other means
+PROC
+LeaderLib_Statuses_ApplyPermanentStatus((CHARACTERGUID)_Character, (STRING)_Status)
+THEN
+LeaderLib_Statuses_ApplyPermanentStatus(_Character, _Status, 0);
+
+PROC
+LeaderLib_Statuses_ApplyPermanentStatus((CHARACTERGUID)_Character, (STRING)_Status, (INTEGER)_Force)
+AND
+DB_LeaderLib_Statuses_PermanentStatus(_ModID, _ID, _Status, _Flag)
+AND
+LeaderUpdater_QRY_ModIsActive(_ModID)
+AND
+ObjectGetFlag(_Character, _Flag, _IsActive)
+AND
+IntegerMax(_Force, _IsActive, _DoApply) // Force >= 1, then apply it no matter what
+AND
+_DoApply >= 1
+THEN
+LeaderLib_Statuses_BlockPermanentStatus(_Character, _Status, _Flag);
+LeaderLib_Statuses_Internal_UpdateFlag(_Character, _Status, _Flag, 1);
+LeaderLib_Statuses_Internal_ApplyPermanentStatus(_Character, _Status, _Flag);
+
+PROC
+LeaderLib_Statuses_RemovePermanentStatus((CHARACTERGUID)_Character, (STRING)_Status)
+AND
+DB_LeaderLib_Statuses_PermanentStatus(_ModID, _ID, _Status, _Flag)
+THEN
+RemoveStatus(_Character, _Status);
+LeaderLib_Statuses_Internal_UpdateFlag(_Character, _Status, _Flag, 0);
+//END_REGION
+
+//REGION MODIFY_BY_FLAG
+PROC
+LeaderLib_Statuses_ApplyPermanentStatusByFlag((CHARACTERGUID)_Character, (STRING)_Flag)
+THEN
+LeaderLib_Statuses_ApplyPermanentStatusByFlag(_Character, _Flag, 0);
+
+PROC
+LeaderLib_Statuses_ApplyPermanentStatusByFlag((CHARACTERGUID)_Character, (STRING)_Flag, (INTEGER)_Force)
+AND
+DB_LeaderLib_Statuses_PermanentStatus(_ModID, _ID, _Status, _Flag)
+AND
+LeaderUpdater_QRY_ModIsActive(_ModID)
+AND
+ObjectGetFlag(_Character, _Flag, _IsActive)
+AND
+IntegerMax(_Force, _IsActive, _DoApply) // Force >= 1, then apply it no matter what
+AND
+_DoApply >= 1
+THEN
+LeaderLib_Statuses_BlockPermanentStatus(_Character, _Status, _Flag);
+LeaderLib_Statuses_Internal_UpdateFlag(_Character, _Status, _Flag, 1);
+LeaderLib_Statuses_Internal_ApplyPermanentStatus(_Character, _Status, _Flag);
+
+PROC
+LeaderLib_Statuses_RemovePermanentStatusByFlag((CHARACTERGUID)_Character, (STRING)_Flag)
+AND
+DB_LeaderLib_Statuses_PermanentStatus(_ModID, _ID, _Status, _Flag)
+THEN
+RemoveStatus(_Character, _Status);
+LeaderLib_Statuses_Internal_UpdateFlag(_Character, _Status, _Flag, 0);
 //END_REGION
 
 EXITSECTION

@@ -211,12 +211,30 @@ LeaderLib_Growth_Items_Internal_CheckItemLevel((CHARACTERGUID)_Character, (ITEMG
 AND
 NOT DB_LeaderLib_Growth_Items_Temp_EquipAfterTransform(_Character, _Item)
 THEN
+LeaderLib_Timers_StartCharacterItemTimer(_Character, _Item, 75, "LeaderLib_Timers_AutoLevelItemFallback", "LeaderLib_Commands_AutoLevelItem");
 CharacterItemSetEvent(_Character, _Item, "LeaderLib_Commands_CheckItemLevel");
 
 IF
 StoryEvent((ITEMGUID)_Item, "LeaderLib_Commands_AutoLevelItem")
 AND
-ItemGetOwner(_Item, _Character)
+GetInventoryOwner(_Item, _Character)
+AND
+ObjectIsCharacter((CHARACTERGUID)_Character, 1)
+THEN
+LeaderLib_Growth_Items_Internal_LevelUpNow(_Character, _Item);
+
+IF
+CharacterItemEvent(_Character, _Item, "LeaderLib_Commands_AutoLevelItem")
+THEN
+LeaderLib_Growth_Items_Internal_LevelUpNow(_Character, _Item);
+
+PROC
+LeaderLib_Growth_Items_Internal_LevelUpNow((CHARACTERGUID)_Character, (ITEMGUID)_Item)
+THEN
+LeaderLib_Timers_CancelCharacterItemTimer(_Character, _Item, "LeaderLib_Timers_AutoLevelItemFallback");
+
+PROC
+LeaderLib_Growth_Items_Internal_LevelUpNow((CHARACTERGUID)_Character, (ITEMGUID)_Item)
 AND
 NOT DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character)
 AND
@@ -230,10 +248,8 @@ ItemLevelUpTo(_Item, _Level);
 SetVarInteger(_Item, "LeaderLib_Level", _Level);
 CharacterItemSetEvent(_Character, _Item, "LeaderLib_Events_ItemLeveledUp");
 
-IF
-StoryEvent((ITEMGUID)_Item, "LeaderLib_Commands_AutoLevelItem")
-AND
-ItemGetOwner(_Item, _Character)
+PROC
+LeaderLib_Growth_Items_Internal_LevelUpNow((CHARACTERGUID)_Character, (ITEMGUID)_Item)
 AND
 NOT DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character)
 AND
@@ -249,8 +265,8 @@ ItemLevelUpTo(_Item, _Level);
 SetVarInteger(_Item, "LeaderLib_Level", _Level);
 CharacterItemSetEvent(_Character, _Item, "LeaderLib_Events_ItemLeveledUp");
 
-IF
-CharacterItemEvent(_Character, _Item, "LeaderLib_Commands_AutoLevelItem")
+PROC
+LeaderLib_Growth_Items_Internal_LevelUpNow((CHARACTERGUID)_Character, (ITEMGUID)_Item)
 AND
 NOT DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character)
 AND
@@ -262,13 +278,8 @@ ItemLevelUpTo(_Item, _Level);
 SetVarInteger(_Item, "LeaderLib_Level", _Level);
 CharacterItemSetEvent(_Character, _Item, "LeaderLib_Events_ItemLeveledUp");
 
-IF
-DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character)
-THEN
-LeaderLib_Timers_StartCharacterItemTimer(_Character, _Item, 500, "LeaderLib_Timers_ResetAutoLeveledItemDatabase", "LeaderLib_Events_ResetAutoLeveledItemDatabase");
-
-IF
-CharacterItemEvent(_Character, _Item, "LeaderLib_Events_ResetAutoLeveledItemDatabase")
+PROC
+LeaderLib_Growth_Items_Internal_LevelUpNow((CHARACTERGUID)_Character, (ITEMGUID)_Item)
 AND
 DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character)
 THEN

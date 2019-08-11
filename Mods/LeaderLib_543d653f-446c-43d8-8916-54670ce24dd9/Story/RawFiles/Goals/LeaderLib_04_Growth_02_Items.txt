@@ -211,7 +211,7 @@ LeaderLib_Growth_Items_Internal_CheckItemLevel((CHARACTERGUID)_Character, (ITEMG
 AND
 NOT DB_LeaderLib_Growth_Items_Temp_EquipAfterTransform(_Character, _Item)
 THEN
-LeaderLib_Timers_StartCharacterItemTimer(_Character, _Item, 75, "LeaderLib_Timers_AutoLevelItemFallback", "LeaderLib_Commands_AutoLevelItem");
+LeaderLib_Timers_StartCharacterItemTimer(_Character, _Item, 125, "LeaderLib_Timers_AutoLevelItemFallback", "LeaderLib_Commands_AutoLevelItem");
 CharacterItemSetEvent(_Character, _Item, "LeaderLib_Commands_CheckItemLevel");
 
 IF
@@ -243,7 +243,7 @@ AND
 CharacterGetLevel(_Character, _Level)
 THEN
 DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character);
-LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:LeaderLib_Commands_AutoLevelItem] Item variable not set. Using Character's level.");
+LeaderLog_LogInt("DEBUG", "[LeaderLib:Growth:Items:LevelUpNow] Item variable not set. Using Character's level (",_Level,").");
 ItemLevelUpTo(_Item, _Level);
 SetVarInteger(_Item, "LeaderLib_Level", _Level);
 CharacterItemSetEvent(_Character, _Item, "LeaderLib_Events_ItemLeveledUp");
@@ -260,20 +260,7 @@ AND
 _ItemLevel < _Level
 THEN
 DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character);
-LeaderLog_LogInt("DEBUG", "[LeaderLib:Growth:Items:LeaderLib_Commands_AutoLevelItem] Leveling up item from level [",_ItemLevel,"] to [",_Level,"].");
-ItemLevelUpTo(_Item, _Level);
-SetVarInteger(_Item, "LeaderLib_Level", _Level);
-CharacterItemSetEvent(_Character, _Item, "LeaderLib_Events_ItemLeveledUp");
-
-PROC
-LeaderLib_Growth_Items_Internal_LevelUpNow((CHARACTERGUID)_Character, (ITEMGUID)_Item)
-AND
-NOT DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character)
-AND
-CharacterGetLevel(_Character, _Level)
-THEN
-DB_LeaderLib_Growth_Items_Temp_AutoLeveledItem(_Item, _Character);
-LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:LeaderLib_Commands_AutoLevelItem] Item hasn't leveled up yet. Using Character's level.");
+LeaderLog_LogInt("DEBUG", "[LeaderLib:Growth:Items:LevelUpNow] Leveling up item from level [",_ItemLevel,"] to [",_Level,"].");
 ItemLevelUpTo(_Item, _Level);
 SetVarInteger(_Item, "LeaderLib_Level", _Level);
 CharacterItemSetEvent(_Character, _Item, "LeaderLib_Events_ItemLeveledUp");

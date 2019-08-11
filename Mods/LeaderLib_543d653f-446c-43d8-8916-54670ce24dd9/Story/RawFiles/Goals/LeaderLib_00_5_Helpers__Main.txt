@@ -1344,6 +1344,50 @@ THEN
 DB_NOOP(1);
 //END_REGION
 
+//REGION QUERIES_STRINGS
+QRY
+LeaderLib_String_QRY_EqualsAny((STRING)_Str, (STRING)_Check1, (STRING)_Check2)
+AND
+_Str == _Check1
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_String_QRY_EqualsAny((STRING)_Str, (STRING)_Check1, (STRING)_Check2)
+AND
+_Str == _Check2
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_String_QRY_EqualsAny((STRING)_Str, (STRING)_Check1, (STRING)_Check2, (STRING)_Check3)
+AND
+_Str == _Check3
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_String_QRY_EqualsAny((STRING)_Str, (STRING)_Check1, (STRING)_Check2, (STRING)_Check3)
+AND
+LeaderLib_String_QRY_EqualsAny(_Str, _Check1, _Check2)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_String_QRY_EqualsAny((STRING)_Str, (STRING)_Check1, (STRING)_Check2, (STRING)_Check3, (STRING)_Check4)
+AND
+_Str == _Check4
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_String_QRY_EqualsAny((STRING)_Str, (STRING)_Check1, (STRING)_Check2, (STRING)_Check3, (STRING)_Check4)
+AND
+LeaderLib_String_QRY_EqualsAny(_Str, _Check1, _Check2, _Check3)
+THEN
+DB_NOOP(1);
+//END_REGION
+
 //REGION DUMMY_HELPERS
 PROC
 LeaderLib_Helper_SetupDummy((CHARACTERGUID)_Dummy)

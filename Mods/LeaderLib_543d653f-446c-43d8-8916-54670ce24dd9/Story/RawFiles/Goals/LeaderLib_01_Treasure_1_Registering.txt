@@ -650,7 +650,7 @@ LeaderLib_Trader_Register_Seat(_TraderID, _Level, _Seat, "");
 PROC
 LeaderLib_Trader_Register_Seat((STRING)_TraderID, (STRING)_Level, (ITEMGUID)_Seat, (STRING)_RequirementID)
 THEN
-LeaderLib_Trader_Register_PositionObject(_TraderID, _Level, _Seat);
+LeaderLib_Trader_Register_PositionObject(_TraderID, _Level, _Seat); // Calls LeaderLib_Trader_Register_Level
 DB_LeaderLib_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID);
 //END_REGION
 

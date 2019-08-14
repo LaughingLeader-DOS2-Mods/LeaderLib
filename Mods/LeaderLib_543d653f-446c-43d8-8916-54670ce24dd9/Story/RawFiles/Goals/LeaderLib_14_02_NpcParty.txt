@@ -1,0 +1,48 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+IF
+CharacterStatusApplied(_PartyMember, "LEADERLIB_PARTY_ADD", (CHARACTERGUID)_Leader)
+THEN
+DB_LeaderLib_GM_NpcParty_Active(_Leader, _PartyMember);
+
+IF
+CharacterStatusApplied(_PartyMember, "LEADERLIB_PARTY_REMOVE", (CHARACTERGUID)_Leader)
+THEN
+NOT DB_LeaderLib_GM_NpcParty_Active(_Leader, _PartyMember);
+
+//Cleanup non-existant parties
+IF
+RegionStarted(_)
+AND
+DB_LeaderLib_GM_NpcParty_Active(_Leader, _PartyMember)
+AND
+ObjectExists(_Leader, _LeaderExists)
+AND
+ObjectExists(_PartyMember, _PartyMemberExists)
+AND
+IntegerMin(_LeaderExists, _PartyMemberExists, 0)
+THEN
+NOT DB_LeaderLib_GM_NpcParty_Active(_Leader, _PartyMember);
+DB_LeaderLib_GM_NpcParty_Temp_CleanedUpParty(_Leader);
+
+IF
+DB_LeaderLib_GM_NpcParty_Temp_CleanedUpParty(_Leader)
+AND
+CharacterGetHostCharacter(_Host)
+AND
+CharacterGameMaster(_Host, 1)
+AND
+String(_Leader, _LeaderStr)
+AND
+StringConcatenate("[LeaderLib] Cleaned up the party of", _LeaderStr, _Str)
+THEN
+//ShowNotification(_Char, "LeaderLib_Notifications_GM_PartyCleanedUp");
+ShowNotification(_Host, _Str);
+NOT DB_LeaderLib_GM_NpcParty_Temp_CleanedUpParty(_Leader);
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_14_00_GMStart"

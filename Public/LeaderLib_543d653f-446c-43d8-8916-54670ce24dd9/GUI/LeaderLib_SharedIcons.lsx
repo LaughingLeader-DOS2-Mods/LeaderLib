@@ -1105,6 +1105,13 @@
                     <attribute id="V2" value="0.0311279" type="6" />
                 </node>
                 <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_Wraithblade_2H_A" type="22" />
+                    <attribute id="U1" value="0.281372" type="6" />
+                    <attribute id="U2" value="0.296753" type="6" />
+                    <attribute id="V1" value="0.0626221" type="6" />
+                    <attribute id="V2" value="0.0780029" type="6" />
+                </node>
+                <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Wand_Unique_MagicMissile_A" type="22" />
                     <attribute id="U1" value="0.750122" type="6" />
                     <attribute id="U2" value="0.765503" type="6" />

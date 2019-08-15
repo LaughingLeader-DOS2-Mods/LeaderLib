@@ -1077,6 +1077,20 @@
                     <attribute id="V2" value="0.0467529" type="6" />
                 </node>
                 <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_Banner_DivineOrder_2H_A" type="22" />
+                    <attribute id="U1" value="0.296997" type="6" />
+                    <attribute id="U2" value="0.312378" type="6" />
+                    <attribute id="V1" value="0.0626221" type="6" />
+                    <attribute id="V2" value="0.0780029" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_Banner_Dwarves_2H_A" type="22" />
+                    <attribute id="U1" value="0.312622" type="6" />
+                    <attribute id="U2" value="0.328003" type="6" />
+                    <attribute id="V1" value="0.0626221" type="6" />
+                    <attribute id="V2" value="0.0780029" type="6" />
+                </node>
+                <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_Kevin_A" type="22" />
                     <attribute id="U1" value="0.375122" type="6" />
                     <attribute id="U2" value="0.390503" type="6" />

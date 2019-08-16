@@ -103,7 +103,7 @@ THEN
 NOT DB_LeaderLib_Skills_BlockStatusToggle(_Character, _Skill, _Status);
 //END_REGION
 
-//REGION SKILL_DUMMIES
+//REGION USE_PROCS
 PROC
 LeaderLib_Skills_UseSkillOnTarget((CHARACTERGUID)_Caster, (GUIDSTRING)_Target, (STRING)_Skill, (INTEGER)_CopyStats, (INTEGER)_CopyEquipment)
 AND
@@ -156,14 +156,6 @@ DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z);
 LeaderLog_Log("TRACE", "[LeaderLib:Skills:UseSkillOnTargetFromPosition] Teleporting skill dummy for skill [",_Skill,"] to position. Dummy ID: [",_ID,"]");
 TeleportToPosition(_Dummy, _x, _y, _z, "LeaderLib_Events_SkillDummyTeleported", 0, 0);
 
-IF
-StoryEvent((CHARACTERGUID)_Dummy, "LeaderLib_Events_SkillDummyTeleported")
-AND
-DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z)
-THEN
-NOT DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z);
-LeaderLog_Log("TRACE", "[LeaderLib:Skills:SkillDummyTeleported] Skill dummy teleported to position. Moving to position as a failsafe.");
-CharacterMoveToPosition(_Dummy, _x, _y, _z, 1, "LeaderLib_Events_SkillDummyArrived");
 
 PROC
 LeaderLib_Skills_UseSkillAtPosition((CHARACTERGUID)_Caster, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_Skill, (INTEGER)_CopyStats, (INTEGER)_CopyEquipment)
@@ -187,6 +179,40 @@ NOT DB_LeaderLog_Temp_CombinedString(_ID);
 DB_LeaderLib_Skills_Temp_SkillDummyData(_Dummy, _Caster, _x, _y, _z, _Skill);
 DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z);
 TeleportToPosition(_Dummy, _x, _y, _z, "LeaderLib_Events_SkillDummyTeleported", 0, 0);
+
+PROC
+LeaderLib_Skills_UseShoutFromPosition((CHARACTERGUID)_Caster, (STRING)_Skill, (REAL)_x, (REAL)_y, (REAL)_z, (INTEGER)_CopyStats, (INTEGER)_CopyEquipment)
+AND
+GetUUID(_Caster, _UUID)
+AND
+Random(999999, _Ran)
+AND
+IntegertoString(_Ran, _RanStr)
+AND
+LeaderLog_QRY_Log("COMBINE", _Skill, "_", _UUID, "_", _RanStr)
+AND
+DB_LeaderLog_Temp_CombinedString(_ID)
+AND
+LeaderLib_Skills_QRY_PrepareSkillDummy(_ID, _Caster, _CopyStats, _CopyEquipment)
+AND
+DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy)
+THEN
+NOT DB_LeaderLog_Temp_CombinedString(_ID);
+DB_LeaderLib_Skills_Temp_SkillDummyData(_Dummy, _Caster, _Dummy, _Skill);
+DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z);
+LeaderLog_Log("TRACE", "[LeaderLib:Skills:UseShoutFromPosition] Teleporting skill dummy for skill [",_Skill,"] to position. Dummy ID: [",_ID,"]");
+TeleportToPosition(_Dummy, _x, _y, _z, "LeaderLib_Events_SkillDummyTeleported", 0, 0);
+//END_REGION
+
+//REGION SKILL_DUMMIES
+IF
+StoryEvent((CHARACTERGUID)_Dummy, "LeaderLib_Events_SkillDummyTeleported")
+AND
+DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z)
+THEN
+NOT DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z);
+LeaderLog_Log("TRACE", "[LeaderLib:Skills:SkillDummyTeleported] Skill dummy teleported to position. Moving to position as a failsafe.");
+CharacterMoveToPosition(_Dummy, _x, _y, _z, 1, "LeaderLib_Events_SkillDummyArrived");
 
 //Failsafe
 IF

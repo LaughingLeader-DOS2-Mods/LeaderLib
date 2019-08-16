@@ -324,9 +324,22 @@ DB_LeaderLib_Turns_ActiveTracker_Combat(_ID, _CombatID);
 IF
 CombatStarted(_CombatID)
 AND
+NOT SysCount("DB_LeaderLib_Turns_Temp_ListenForCombat", 1, 0)
+THEN
+TimerLaunch("LeaderLib_Timers_Turns_CombatStarted", 50);
+
+IF
+TimerFinished("LeaderLib_Timers_Turns_CombatStarted")
+AND
 DB_LeaderLib_Turns_Temp_ListenForCombat(_ID)
 AND
+DB_LeaderLib_Combat_ActiveCombat(_CombatID)
+AND
 DB_LeaderLib_Turns_ActiveTracker_Position(_ID, _x, _y, _z)
+AND
+LeaderLib_Combat_QRY_DistanceToCombatIsLessThan(_CombatID, _x, _y, _z, 6.0)
+AND
+NOT DB_LeaderLib_Turns_ActiveTracker_Combat(_ID, _)
 THEN
 NOT DB_LeaderLib_Turns_Temp_ListenForCombat(_ID);
 LeaderLib_Turns_ClearTrackerTimer(_ID);

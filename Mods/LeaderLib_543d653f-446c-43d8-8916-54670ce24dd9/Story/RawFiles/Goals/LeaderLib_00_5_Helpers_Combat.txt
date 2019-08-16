@@ -204,6 +204,17 @@ AND
 ItemIsDestructible(_Target, 1)
 THEN
 DB_NOOP(1);
+
+QRY
+LeaderLib_Combat_QRY_DistanceToCombatIsLessThan((INTEGER)_CombatID, (REAL)_x, (REAL)_y, (REAL)_z, (REAL)_MinDist)
+AND
+DB_CombatObjects(_Object, _CombatID)
+AND
+GetDistanceToPosition(_Object, _x, _y, _z, _Dist)
+AND
+_Dist < _MinDist
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION RANDOM

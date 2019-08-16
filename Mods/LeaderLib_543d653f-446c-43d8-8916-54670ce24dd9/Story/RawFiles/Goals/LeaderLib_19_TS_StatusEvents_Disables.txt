@@ -31,8 +31,30 @@ AND
 DB_LeaderLib_StatusEvents_Temp_DisableMatch(_Character)
 THEN
 NOT DB_LeaderLib_StatusEvents_Temp_DisableMatch(_Character);
+LeaderLib_Tags_PreserveTag(_Character, "LeaderLib_IsDisabled");
+DB_LeaderLib_StatusEvents_Temp_DisabledStatus(_Character, _Status, _Cause, _Type);
 //LeaderLog_Log("DEBUG", "[LeaderLib:StatusEvents_Disables:OnDisablingStatusApplied] Status [",_Status,"](",_Type,") was applied to character.");
-EXITSECTION
 
+IF
+CharacterStatusRemoved(_Character, _Status, _)
+AND
+DB_LeaderLib_StatusEvents_Temp_DisabledStatus(_Character, _Status, _Cause, _Type)
+THEN
+NOT DB_LeaderLib_StatusEvents_Temp_DisabledStatus(_Character, _Status, _Cause, _Type);
+LeaderLib_StatusEvents_OnDisablingStatusRemoved(_Character, _Cause, _Status, _Type);
+
+PROC
+LeaderLib_StatusEvents_OnDisablingStatusRemoved((CHARACTERGUID)_Character, (GUIDSTRING)_Cause, (STRING)_Status, (STRING)_Type)
+AND
+NOT DB_LeaderLib_StatusEvents_Temp_DisabledStatus(_Character, _, _, _)
+THEN
+LeaderLib_Tags_ClearPreservedTag(_Character, "LeaderLib_IsDisabled");
+
+IF
+RegionEnded(_)
+THEN
+SysClear("DB_LeaderLib_StatusEvents_Temp_DisabledStatus", 4);
+EXITSECTION
+SysClear("DB_LeaderLib_StatusEvents_Temp_DisabledStatus", 4);
 ENDEXITSECTION
 ParentTargetEdge "LeaderLib_19_ToggledScripts"

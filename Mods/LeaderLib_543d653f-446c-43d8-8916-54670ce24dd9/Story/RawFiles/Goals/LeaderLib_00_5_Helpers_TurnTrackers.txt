@@ -3,14 +3,36 @@ SubGoalCombiner SGC_AND
 INITSECTION
 
 KBSECTION
+//REGION QUERIES
+QRY
+LeaderLib_Turns_QRY_TrackerHasPosition("All")
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Turns_QRY_TrackerHasPosition("Position")
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Turns_QRY_TrackerHasObject("All")
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Turns_QRY_TrackerHasObject("Object")
+THEN
+DB_NOOP(1);
+//END_REGION
+
 //REGION ID_CREATION
 QRY
-LeaderLib_Turns_QRY_CreateIdentifierByObject((GUIDSTRING)_Object, (STRING)_CompletionEvent)
+LeaderLib_Turns_Internal_QRY_CreateIdentifierByObject((GUIDSTRING)_Object, (STRING)_CompletionEvent)
 THEN
-LeaderLib_Turns_CreateIdentifierByObject(_Object, _CompletionEvent);
+LeaderLib_Turns_Internal_CreateIdentifierByObject(_Object, _CompletionEvent);
 
 PROC
-LeaderLib_Turns_CreateIdentifierByObject((GUIDSTRING)_Object, (STRING)_CompletionEvent)
+LeaderLib_Turns_Internal_CreateIdentifierByObject((GUIDSTRING)_Object, (STRING)_CompletionEvent)
 AND
 String(_Object, _ObjectStr)
 AND
@@ -28,12 +50,12 @@ NOT DB_LeaderLog_Temp_CombinedString(_ID);
 DB_LeaderLib_Turns_Temp_NextObjectID(_Object, _CompletionEvent, _ID);
 
 QRY
-LeaderLib_Turns_QRY_CreateIdentifierByPosition((REAL)_x, (REAL)_y, (REAL)_z, (STRING)_CompletionEvent)
+LeaderLib_Turns_Internal_QRY_CreateIdentifierByPosition((REAL)_x, (REAL)_y, (REAL)_z, (STRING)_CompletionEvent)
 THEN
-LeaderLib_Turns_CreateIdentifierByPosition(_x, _y, _z, _CompletionEvent);
+LeaderLib_Turns_Internal_CreateIdentifierByPosition(_x, _y, _z, _CompletionEvent);
 
 PROC
-LeaderLib_Turns_CreateIdentifierByPosition((REAL)_x, (REAL)_y, (REAL)_z, (STRING)_CompletionEvent)
+LeaderLib_Turns_Internal_CreateIdentifierByPosition((REAL)_x, (REAL)_y, (REAL)_z, (STRING)_CompletionEvent)
 AND
 RealSum(_x, _y, _a)
 AND
@@ -55,6 +77,37 @@ DB_LeaderLog_Temp_CombinedString(_ID)
 THEN
 NOT DB_LeaderLog_Temp_CombinedString(_ID);
 DB_LeaderLib_Turns_Temp_NextPositionID(_x, _y, _z, _CompletionEvent, _ID);
+
+QRY
+LeaderLib_Turns_Internal_QRY_CreateIdentifierByPositionWithObject((GUIDSTRING)_Object, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_CompletionEvent)
+THEN
+LeaderLib_Turns_Internal_CreateIdentifierByPositionWithObject(_Object, _x, _y, _z, _CompletionEvent);
+
+PROC
+LeaderLib_Turns_Internal_CreateIdentifierByPositionWithObject((GUIDSTRING)_Object, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_CompletionEvent)
+AND
+String(_Object, _ObjectStr)
+AND
+RealSum(_x, _y, _a)
+AND
+RealSum(_z, _a, _b)
+AND
+Integer(_b, _IntB)
+AND
+IntegertoString(_IntB, _PosStr)
+AND
+Random(99999, _Ran)
+AND
+IntegerSum(_Ran, 12931, _RanInt)
+AND
+IntegertoString(_RanInt, _RanStr)
+AND
+LeaderLog_QRY_Log("COMBINE", "LeaderLib_TurnTracker_", _CompletionEvent, _ObjectStr, _PosStr, _RanStr)
+AND
+DB_LeaderLog_Temp_CombinedString(_ID)
+THEN
+NOT DB_LeaderLog_Temp_CombinedString(_ID);
+DB_LeaderLib_Turns_Temp_NextObjectPositionID(_Object, _x, _y, _z, _CompletionEvent, _ID);
 //END_REGION
 
 //REGION MAIN_DB
@@ -90,16 +143,9 @@ TimerCancel(_ID);
 PROC
 LeaderLib_Turns_Internal_ClearTracker((STRING)_ID)
 AND
-DB_LeaderLib_Turns_ActiveTracker_Object(_ID, _Object, _AnyTurns)
+DB_LeaderLib_Turns_ActiveTracker_Data(_ID, _Object, _x, _y, _z, _Type, _AnyTurns)
 THEN
-NOT DB_LeaderLib_Turns_ActiveTracker_Object(_ID, _Object, _AnyTurns);
-
-PROC
-LeaderLib_Turns_Internal_ClearTracker((STRING)_ID)
-AND
-DB_LeaderLib_Turns_ActiveTracker_Position(_ID, _x, _y, _z)
-THEN
-NOT DB_LeaderLib_Turns_ActiveTracker_Position(_ID, _x, _y, _z);
+NOT DB_LeaderLib_Turns_ActiveTracker_Data(_ID, _Object, _x, _y, _z, _Type, _AnyTurns);
 
 PROC
 LeaderLib_Turns_Internal_ClearTracker((STRING)_ID)
@@ -126,10 +172,10 @@ IntegerSubtract(_Turns, 1, _NextTurns)
 THEN
 NOT DB_LeaderLib_Turns_ActiveTracker(_ID, _CompletionEvent, _Turns);
 DB_LeaderLib_Turns_ActiveTracker(_ID, _CompletionEvent, _NextTurns);
-LeaderLib_Turns_OnTurnCounterChanged(_ID, _CompletionEvent, _Turns, _NextTurns);
+LeaderLib_Turns_OnTurnChanged(_ID, _CompletionEvent, _Turns, _NextTurns);
 
 PROC
-LeaderLib_Turns_OnTurnCounterChanged((STRING)_ID, (STRING)_CompletionEvent, (INTEGER)_LastTurns, (INTEGER)_NextTurns)
+LeaderLib_Turns_OnTurnChanged((STRING)_ID, (STRING)_CompletionEvent, (INTEGER)_LastTurns, (INTEGER)_NextTurns)
 AND
 _NextTurns <= 0
 THEN
@@ -137,26 +183,38 @@ LeaderLib_Turns_OnTurnCounterComplete(_ID, _CompletionEvent);
 LeaderLib_Turns_Internal_ClearTracker(_ID);
 
 PROC
-LeaderLib_Turns_OnTurnCounterChanged((STRING)_ID, (STRING)_CompletionEvent, (INTEGER)_LastTurns, (INTEGER)_NextTurns)
+LeaderLib_Turns_OnTurnChanged((STRING)_ID, (STRING)_CompletionEvent, (INTEGER)_LastTurns, (INTEGER)_NextTurns)
 AND
-DB_LeaderLib_Turns_ActiveTracker_Object(_ID, _Object, _AnyTurns)
+DB_LeaderLib_Turns_ActiveTracker_Data(_ID, _Object, _x, _y, _z, "Object", _AnyTurns)
 THEN
-LeaderLib_Turns_OnTurnCounterChanged_Object(_ID, _Object, _CompletionEvent, _LastTurns, _NextTurns);
+LeaderLib_Turns_OnObjectTurnChanged(_ID, _Object, _CompletionEvent, _LastTurns, _NextTurns);
 
 PROC
-LeaderLib_Turns_OnTurnCounterChanged_Object((STRING)_ID, (GUIDSTRING)_Object, (STRING)_CompletionEvent, (INTEGER)_LastTurns, (INTEGER)_NextTurns)
+LeaderLib_Turns_OnObjectTurnChanged((STRING)_ID, (GUIDSTRING)_Object, (STRING)_CompletionEvent, (INTEGER)_LastTurns, (INTEGER)_NextTurns)
 THEN
 DB_NOOP(1);
 
 PROC
-LeaderLib_Turns_OnTurnCounterChanged((STRING)_ID, (STRING)_CompletionEvent, (INTEGER)_LastTurns, (INTEGER)_NextTurns)
+LeaderLib_Turns_OnTurnChanged((STRING)_ID, (STRING)_CompletionEvent, (INTEGER)_LastTurns, (INTEGER)_NextTurns)
 AND
-DB_LeaderLib_Turns_ActiveTracker_Position(_ID, _x, _y, _z)
+DB_LeaderLib_Turns_ActiveTracker_Data(_ID, _Object, _x, _y, _z, "Position", _AnyTurns)
 THEN
-LeaderLib_Turns_OnTurnCounterChanged_Position(_ID, _x, _y, _z, _CompletionEvent, _LastTurns, _NextTurns);
+LeaderLib_Turns_OnPositionTurnChanged(_ID, _x, _y, _z, _CompletionEvent, _LastTurns, _NextTurns);
 
 PROC
-LeaderLib_Turns_OnTurnCounterChanged_Position((STRING)_ID, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_CompletionEvent, (INTEGER)_LastTurns, (INTEGER)_NextTurns)
+LeaderLib_Turns_OnPositionTurnChanged((STRING)_ID, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_CompletionEvent, (INTEGER)_LastTurns, (INTEGER)_NextTurns)
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_Turns_OnTurnChanged((STRING)_ID, (STRING)_CompletionEvent, (INTEGER)_LastTurns, (INTEGER)_NextTurns)
+AND
+DB_LeaderLib_Turns_ActiveTracker_Data(_ID, _Object, _x, _y, _z, "All", _AnyTurns)
+THEN
+LeaderLib_Turns_OnPositionObjectTurnChanged(_ID, _Object, _x, _y, _z, _CompletionEvent, _LastTurns, _NextTurns);
+
+PROC
+LeaderLib_Turns_OnPositionObjectTurnChanged((STRING)_ID, (GUIDSTRING)_Object, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_CompletionEvent, (INTEGER)_LastTurns, (INTEGER)_NextTurns)
 THEN
 DB_NOOP(1);
 //END_REGION
@@ -165,9 +223,9 @@ DB_NOOP(1);
 PROC
 LeaderLib_Turns_OnTurnCounterComplete((STRING)_ID, (STRING)_CompletionEvent)
 AND
-DB_LeaderLib_Turns_ActiveTracker_Object(_ID, _Object, _AnyTurns)
+DB_LeaderLib_Turns_ActiveTracker_Data(_ID, _Object, _x, _y, _z, "Object", _AnyTurns)
 THEN
-NOT DB_LeaderLib_Turns_ActiveTracker_Object(_ID, _Object, _AnyTurns);
+NOT DB_LeaderLib_Turns_ActiveTracker_Data(_ID, _Object, _x, _y, _z, "Object", _AnyTurns);
 LeaderLib_Turns_OnTurnCounterComplete_Object(_ID, _Object, _CompletionEvent);
 
 PROC
@@ -178,20 +236,33 @@ DB_NOOP(1);
 PROC
 LeaderLib_Turns_OnTurnCounterComplete((STRING)_ID, (STRING)_CompletionEvent)
 AND
-DB_LeaderLib_Turns_ActiveTracker_Position(_ID, _x, _y, _z)
+DB_LeaderLib_Turns_ActiveTracker_Data(_ID, _Object, _x, _y, _z, "Position", _AnyTurns)
 THEN
-NOT DB_LeaderLib_Turns_ActiveTracker_Position(_ID, _x, _y, _z);
+NOT DB_LeaderLib_Turns_ActiveTracker_Data(_ID, _Object, _x, _y, _z, "Position", _AnyTurns);
 LeaderLib_Turns_OnTurnCounterComplete_Position(_ID, _x, _y, _z, _CompletionEvent);
 
 PROC
 LeaderLib_Turns_OnTurnCounterComplete_Position((STRING)_ID, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_CompletionEvent)
 THEN
 DB_NOOP(1);
+
+PROC
+LeaderLib_Turns_OnTurnCounterComplete((STRING)_ID, (STRING)_CompletionEvent)
+AND
+DB_LeaderLib_Turns_ActiveTracker_Data(_ID, _Object, _x, _y, _z, "All", _AnyTurns)
+THEN
+NOT DB_LeaderLib_Turns_ActiveTracker_Data(_ID, _Object, _x, _y, _z, "All", _AnyTurns);
+LeaderLib_Turns_OnTurnCounterComplete_PositionWithObject(_ID, _Object, _x, _y, _z, _CompletionEvent);
+
+PROC
+LeaderLib_Turns_OnTurnCounterComplete_PositionWithObject((STRING)_ID, (GUIDSTRING)_Object, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_CompletionEvent)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION TIMERS
 PROC
-LeaderLib_Turns_CreateTimerWatcher((STRING)_ID)
+LeaderLib_Turns_Internal_CreateTimerWatcher((STRING)_ID)
 AND
 NOT DB_LeaderLib_Turns_ActiveTracker_Timer(_ID)
 THEN
@@ -207,7 +278,7 @@ LeaderLib_Turns_DecreaseCounter(_ID);
 TimerLaunch(_ID, 6000);
 
 PROC
-LeaderLib_Turns_ClearTrackerTimer((STRING)_ID)
+LeaderLib_Turns_Internal_ClearTrackerTimer((STRING)_ID)
 AND
 DB_LeaderLib_Turns_ActiveTracker_Timer(_ID)
 THEN
@@ -219,101 +290,129 @@ TimerCancel(_ID);
 PROC
 LeaderLib_Turns_TrackForObject((GUIDSTRING)_Object, (STRING)_CompletionEvent, (INTEGER)_StartingTurns, (INTEGER)_AnyTurns)
 AND
-LeaderLib_Turns_QRY_CreateIdentifierByObject(_Object, _CompletionEvent)
+LeaderLib_Turns_Internal_QRY_CreateIdentifierByObject(_Object, _CompletionEvent)
 AND
 DB_LeaderLib_Turns_Temp_NextObjectID(_Object, _CompletionEvent, _ID)
 THEN
 NOT DB_LeaderLib_Turns_Temp_NextObjectID(_Object, _CompletionEvent, _ID);
 LeaderLib_Turns_Internal_CreateTracker(_ID, _CompletionEvent, _StartingTurns);
-DB_LeaderLib_Turns_ActiveTracker_Object(_ID, _Object, _AnyTurns);
-LeaderLib_Turns_Internal_CreateWatcherForObject(_Object, _CompletionEvent, _AnyTurns, _ID);
+DB_LeaderLib_Turns_ActiveTracker_Data(_ID, _Object, 0.0, 0.0, 0.0, "Object", _AnyTurns);
+LeaderLib_Turns_Internal_CreateWatcherForObject(_ID, _Object, _CompletionEvent, _AnyTurns);
 
 PROC
-LeaderLib_Turns_Internal_CreateWatcherForObject((GUIDSTRING)_Object, (STRING)_CompletionEvent, (INTEGER)_AnyTurns, (STRING)_ID)
+LeaderLib_Turns_Internal_CreateWatcherForObject((STRING)_ID, (GUIDSTRING)_Object, (STRING)_CompletionEvent, (INTEGER)_AnyTurns)
 AND
 DB_CombatObjects(_Object, _CombatID)
 THEN
 DB_LeaderLib_Turns_ActiveTracker_Combat(_ID, _CombatID);
 
 PROC
-LeaderLib_Turns_Internal_CreateWatcherForObject((GUIDSTRING)_Object, (STRING)_CompletionEvent, (INTEGER)_AnyTurns, (STRING)_ID)
+LeaderLib_Turns_Internal_CreateWatcherForObject((STRING)_ID, (GUIDSTRING)_Object, (STRING)_CompletionEvent, (INTEGER)_AnyTurns)
 AND
 NOT DB_CombatObjects(_Object, _)
 THEN
-LeaderLib_Turns_CreateTimerWatcher(_ID);
+LeaderLib_Turns_Internal_CreateTimerWatcher(_ID);
 //END_REGION
 
 //REGION POSITION_BASED_NONCOMBAT
 PROC
 LeaderLib_Turns_TrackForPosition((REAL)_x, (REAL)_y, (REAL)_z, (STRING)_CompletionEvent, (INTEGER)_StartingTurns, (INTEGER)_UseTimer)
 AND
-LeaderLib_Turns_QRY_CreateIdentifierByPosition(_x, _y, _z, _CompletionEvent)
+LeaderLib_Turns_Internal_QRY_CreateIdentifierByPosition(_x, _y, _z, _CompletionEvent)
 AND
 DB_LeaderLib_Turns_Temp_NextPositionID(_x, _y, _z, _CompletionEvent, _ID)
 THEN
 NOT DB_LeaderLib_Turns_Temp_NextPositionID(_x, _y, _z, _CompletionEvent, _ID);
 LeaderLib_Turns_Internal_CreateTracker(_ID, _CompletionEvent, _StartingTurns);
-DB_LeaderLib_Turns_ActiveTracker_Position(_ID, _x, _y, _z);
-LeaderLib_Turns_Internal_CreateWatcherForPosition(_x, _y, _z, _ID, _CompletionEvent, _UseTimer);
+DB_LeaderLib_Turns_ActiveTracker_Data(_ID, NULL_00000000-0000-0000-0000-000000000000, _x, _y, _z, "Position", 1);
+LeaderLib_Turns_Internal_CreateWatcherForPosition(_ID, _x, _y, _z, _CompletionEvent, _UseTimer);
 
 PROC
-LeaderLib_Turns_Internal_CreateWatcherForPosition((REAL)_x, (REAL)_y, (REAL)_z, (STRING)_ID, (STRING)_CompletionEvent, 1)
+LeaderLib_Turns_Internal_CreateWatcherForPosition((STRING)_ID, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_CompletionEvent, 1)
 THEN
-LeaderLib_Turns_CreateTimerWatcher(_ID);
+LeaderLib_Turns_Internal_CreateTimerWatcher(_ID);
 //END_REGION
 
 //REGION POSITION_BASED_COMBAT
 PROC
 LeaderLib_Turns_TrackForPositionInCombat((REAL)_x, (REAL)_y, (REAL)_z, (STRING)_CompletionEvent, (INTEGER)_StartingTurns, (INTEGER)_CombatID)
 AND
-LeaderLib_Turns_QRY_CreateIdentifierByPosition(_x, _y, _z, _CompletionEvent)
+LeaderLib_Turns_Internal_QRY_CreateIdentifierByPosition(_x, _y, _z, _CompletionEvent)
 AND
 DB_LeaderLib_Turns_Temp_NextPositionID(_x, _y, _z, _CompletionEvent, _ID)
 THEN
 NOT DB_LeaderLib_Turns_Temp_NextPositionID(_x, _y, _z, _CompletionEvent, _ID);
 LeaderLib_Turns_Internal_CreateTracker(_ID, _CompletionEvent, _StartingTurns);
-DB_LeaderLib_Turns_ActiveTracker_Position(_ID, _x, _y, _z);
-LeaderLib_Turns_Internal_CreateWatcherForPositionInCombat(_x, _y, _z, _ID, _CompletionEvent, _CombatID);
+DB_LeaderLib_Turns_ActiveTracker_Data(_ID, NULL_00000000-0000-0000-0000-000000000000, _x, _y, _z, "Position", 1);
+LeaderLib_Turns_Internal_CreateWatcherForPositionInCombat(_ID, _x, _y, _z, _CompletionEvent, _CombatID);
 
 PROC
-LeaderLib_Turns_Internal_CreateWatcherForPositionInCombat((REAL)_x, (REAL)_y, (REAL)_z, (STRING)_ID, (STRING)_CompletionEvent, (INTEGER)_CombatID)
+LeaderLib_Turns_Internal_CreateWatcherForPositionInCombat((STRING)_ID, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_CompletionEvent, (INTEGER)_CombatID)
 AND
 DB_LeaderLib_Combat_ActiveCombat(_CombatID)
 THEN
 DB_LeaderLib_Turns_ActiveTracker_Combat(_ID, _CombatID);
 
 PROC
-LeaderLib_Turns_Internal_CreateWatcherForPositionInCombat((REAL)_x, (REAL)_y, (REAL)_z, (STRING)_ID, (STRING)_CompletionEvent, (INTEGER)_CombatID)
+LeaderLib_Turns_Internal_CreateWatcherForPositionInCombat((STRING)_ID, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_CompletionEvent, (INTEGER)_CombatID)
 AND
 NOT DB_LeaderLib_Combat_ActiveCombat(_)
 THEN
 DB_LeaderLib_Turns_Temp_ListenForCombat(_ID);
-LeaderLib_Turns_CreateTimerWatcher(_ID);
+LeaderLib_Turns_Internal_CreateTimerWatcher(_ID);
+//END_REGION
+
+//REGION POSITION_COMBAT_WITH_SOURCE
+PROC
+LeaderLib_Turns_TrackPositionInCombatWithObject((GUIDSTRING)_Object, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_CompletionEvent, (INTEGER)_StartingTurns)
+AND
+LeaderLib_Turns_Internal_QRY_CreateIdentifierByPositionWithObject(_Object, _x, _y, _z, _CompletionEvent)
+AND
+DB_LeaderLib_Turns_Temp_NextObjectPositionID(_Object, _x, _y, _z, _CompletionEvent, _ID)
+THEN
+NOT DB_LeaderLib_Turns_Temp_NextObjectPositionID(_Object, _x, _y, _z, _CompletionEvent, _ID);
+LeaderLib_Turns_Internal_CreateTracker(_ID, _CompletionEvent, _StartingTurns);
+DB_LeaderLib_Turns_ActiveTracker_Data(_ID, _Object, _x, _y, _z, "All", 1);
+LeaderLib_Turns_Internal_CreateWatcherForObject(_ID, _Object, _CompletionEvent, 1);
 //END_REGION
 
 //REGION TURN_ENDED
+// Track any turns ending
 PROC
 LeaderLib_Combat_Clear_ActiveTurn((INTEGER)_CombatID, (GUIDSTRING)_Object)
 AND
 DB_LeaderLib_Turns_ActiveTracker_Combat(_ID, _CombatID)
 AND
-NOT DB_LeaderLib_Turns_ActiveTracker_Object(_ID, _, 0) // Track any turns ending
+NOT DB_LeaderLib_Turns_Temp_CounterDecremented(_ID)
+AND
+NOT DB_LeaderLib_Turns_ActiveTracker_Data(_ID, _, _, _, _, "Object", 0) // Isn't tracking a specific object
 THEN
+DB_LeaderLib_Turns_Temp_CounterDecremented(_ID);
 LeaderLib_Turns_DecreaseCounter(_ID);
 
 PROC
 LeaderLib_Combat_Clear_ActiveTurn((INTEGER)_CombatID, (GUIDSTRING)_Object)
 AND
-DB_LeaderLib_Turns_ActiveTracker_Object(_ID, _Object, 0)
+DB_LeaderLib_Turns_ActiveTracker_Data(_ID, _Object, _, _, _, "Object", 0)
+AND
+NOT DB_LeaderLib_Turns_Temp_CounterDecremented(_ID)
 THEN
+DB_LeaderLib_Turns_Temp_CounterDecremented(_ID);
 LeaderLib_Turns_DecreaseCounter(_ID);
+
+PROC
+LeaderLib_Combat_Clear_ActiveTurn((INTEGER)_CombatID, (GUIDSTRING)_Object)
+AND
+DB_LeaderLib_Turns_Temp_CounterDecremented(_ID)
+THEN
+NOT DB_LeaderLib_Turns_Temp_CounterDecremented(_ID);
 //END_REGION
 
 //REGION COMBAT_STARTED
 IF
 ObjectEnteredCombat(_Object, _CombatID)
 AND
-DB_LeaderLib_Turns_ActiveTracker_Object(_ID, _Object, _AnyTurns)
+DB_LeaderLib_Turns_ActiveTracker_Data(_ID, _Object, _, _, _, "Object", _AnyTurns)
 AND
 DB_LeaderLib_Turns_ActiveTracker_Timer(_ID)
 THEN
@@ -335,14 +434,16 @@ DB_LeaderLib_Turns_Temp_ListenForCombat(_ID)
 AND
 DB_LeaderLib_Combat_ActiveCombat(_CombatID)
 AND
-DB_LeaderLib_Turns_ActiveTracker_Position(_ID, _x, _y, _z)
+DB_LeaderLib_Turns_ActiveTracker_Data(_ID, _Object, _x, _y, _z, _Type, _AnyTurns)
+AND
+LeaderLib_Turns_QRY_TrackerHasPosition(_Type)
 AND
 LeaderLib_Combat_QRY_DistanceToCombatIsLessThan(_CombatID, _x, _y, _z, 6.0)
 AND
 NOT DB_LeaderLib_Turns_ActiveTracker_Combat(_ID, _)
 THEN
 NOT DB_LeaderLib_Turns_Temp_ListenForCombat(_ID);
-LeaderLib_Turns_ClearTrackerTimer(_ID);
+LeaderLib_Turns_Internal_ClearTrackerTimer(_ID);
 DB_LeaderLib_Turns_ActiveTracker_Combat(_ID, _CombatID);
 //END_REGION
 
@@ -355,7 +456,7 @@ AND
 LeaderLib_Turns_QRY_HasRemainingTurns(_ID)
 THEN
 NOT DB_LeaderLib_Turns_ActiveTracker_Combat(_ID, _CombatID);
-LeaderLib_Turns_CreateTimerWatcher(_ID);
+LeaderLib_Turns_Internal_CreateTimerWatcher(_ID);
 //END_REGION
 EXITSECTION
 

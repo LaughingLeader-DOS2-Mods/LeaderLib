@@ -364,7 +364,7 @@ LeaderLib_Turns_Internal_CreateTimerWatcher(_ID);
 
 //REGION POSITION_COMBAT_WITH_SOURCE
 PROC
-LeaderLib_Turns_TrackPositionInCombatWithObject((GUIDSTRING)_Object, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_CompletionEvent, (INTEGER)_StartingTurns)
+LeaderLib_Turns_TrackPositionWithObject((GUIDSTRING)_Object, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_CompletionEvent, (INTEGER)_StartingTurns)
 AND
 LeaderLib_Turns_Internal_QRY_CreateIdentifierByPositionWithObject(_Object, _x, _y, _z, _CompletionEvent)
 AND

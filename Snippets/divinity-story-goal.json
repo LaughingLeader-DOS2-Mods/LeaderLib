@@ -1,0 +1,216 @@
+{
+	// Snippets for the Divinity Engine Script Support extension
+	"null":{
+		"prefix": "null",
+		"body": [
+			"NULL_00000000-0000-0000-0000-000000000000"
+		],
+		"description": "The null value for a GUIDSTRING."
+	},
+	"Character Timer": {
+		"prefix": "chartimer",
+		"body": [
+			"ProcObjectTimer(_${1:Char}, \"${2:MyMod_Timers_TimerName}\", ${3:1000});",
+			"",
+			"PROC",
+			"ProcObjectTimerFinished((CHARACTERGUID)_${1:Char}, \"${2:MyMod_Timers_TimerName}\")",
+			"THEN",
+			"DB_NOOP(1);",
+		],
+		"description": "Launches an object timer for a character, and creates the procedure that runs when it ends."
+	},
+	"Item Timer": {
+		"prefix": "itemtimer",
+		"body": [
+			"ProcObjectTimer(_${1:Item}, \"${2:MyMod_Timers_TimerName}\", ${3:1000});",
+			"",
+			"PROC",
+			"ProcObjectTimerFinished((ITEMGUID)_${1:Item}, \"${2:MyMod_Timers_TimerName}\")",
+			"THEN",
+			"DB_NOOP(1);",
+		],
+		"description": "Launches an object timer, and creates the procedure that runs when it ends."
+	},
+	"Object Timer": {
+		"prefix": "objtimer",
+		"body": [
+			"ProcObjectTimer(_${1:Object}, \"${2:MyMod_Timers_TimerName}\", ${3:1000});",
+			"",
+			"PROC",
+			"ProcObjectTimerFinished(_${1:Object}, \"${2:MyMod_Timers_TimerName}\")",
+			"THEN",
+			"DB_NOOP(1);",
+		],
+		"description": "Launches an object timer, and creates the procedure that runs when it ends."
+	},
+	"ObjectObject Timer": {
+		"prefix": "objobjtimer",
+		"body": [
+			"LeaderLib_Timers_StartObjectObjectTimer(_${1:Obj1}, _${2:Obj2}, ${3:1000}, \"${4:MyMod_Timers_TimerName}\", \"${5:CompletionEvent}\");",
+			"",
+			"PROC",
+			"LeaderLib_Timers_ObjectObjectTimerFinished(_${1:Obj1}, _${2:Obj2}, \"${5:CompletionEvent}\")",
+			"THEN",
+			"DB_NOOP(1);",
+		],
+		"description": "Launches a LeaderLib object timer for two objects, and creates the procedure that runs when it ends."
+	},
+	"Leader Object Timer": {
+		"prefix": "leadertimerobj",
+		"body": [
+			"LeaderLib_Timers_StartObjectTimer(_${1:Obj1}, ${2:1000}, \"${3:MyMod_Timers_TimerName}\", \"${4:CompletionEvent}\");",
+			"",
+			"IF",
+			"StoryEvent(_${1:Obj1}, \"${4:CompletionEvent}\")",
+			"THEN",
+			"DB_NOOP(1);",
+		],
+		"description": "Launches a LeaderLib object timer, and creates the event that runs when it ends."
+	},
+	"Leader Character Timer": {
+		"prefix": "leadertimerchar",
+		"body": [
+			"LeaderLib_Timers_StartObjectTimer(_${1:Char}, ${2:1000}, \"${3:MyMod_Timers_TimerName}\", \"${4:CompletionEvent}\");",
+			"",
+			"IF",
+			"StoryEvent((CHARACTERGUID)_${1:Char}, \"${4:CompletionEvent}\")",
+			"THEN",
+			"DB_NOOP(1);",
+		],
+		"description": "Launches a LeaderLib object timer, and creates the event that runs when it ends. Casts object to CHARACTERGUID."
+	},
+	"Leader Item Timer": {
+		"prefix": "leadertimeritem",
+		"body": [
+			"LeaderLib_Timers_StartObjectTimer(_${1:Item}, ${2:1000}, \"${3:MyMod_Timers_TimerName}\", \"${4:CompletionEvent}\");",
+			"",
+			"IF",
+			"StoryEvent((ITEMGUID)_${1:Item}, \"${4:CompletionEvent}\")",
+			"THEN",
+			"DB_NOOP(1);",
+		],
+		"description": "Launches a LeaderLib object timer, and creates the event that runs when it ends. Casts object to ITEMGUID."
+	},
+	"Leader CharItem Timer": {
+		"prefix": "leadertimercharitem",
+		"body": [
+			"LeaderLib_Timers_StartCharacterItemTimer(_${1:_Char}, _${2:Item}, ${3:1000}, \"${4:MyMod_Timers_}${5:CompletionEvent}\", \"${5:CompletionEvent}\");",
+			"",
+			"IF",
+			"CharacterItemEvent(_${1:_Char}, _${2:Item}, \"${4:CompletionEvent}\")",
+			"THEN",
+			"DB_NOOP(1);",
+		],
+		"description": "Launches a LeaderLib character item timer, and creates the event that runs when it ends."
+	},
+	"LeaderLog": {
+		"prefix": "log",
+		"body": [
+			"LeaderLog_Log(\"${1|DEBUG,TRACE,COMBINE,COMBAT,STATUS,SYSTEM|}\", \"[$TM_FILENAME_BASE:$2] $3\");"
+		],
+		"description": "Logs a message using LeaderLib's LeaderLog system."
+	},
+	"LeaderLog_Int": {
+		"prefix": "logint",
+		"body": [
+			"LeaderLog_LogInt(\"${1|DEBUG,TRACE,COMBINE,COMBAT,STATUS,SYSTEM|}\", \"[$TM_FILENAME_BASE:$2] $3\", _$4, \"$5\");"
+		],
+		"description": "Logs an int wrapped in a prefix and suffix."
+	},
+	"LeaderLog_Target": {
+		"prefix": "logtarget",
+		"body": [
+			"LeaderLog_LogTarget(\"${1|NOTIFICATION,COMBAT,STATUS|}\", ${2:_Obj}, \"[$TM_FILENAME_BASE:$3] $4\");"
+		],
+		"description": "Logs a message to the target using LeaderLib's LeaderLog system."
+	},
+	"LeaderLog_Combine": {
+		"prefix": "logcombine",
+		"body": [
+			"LeaderLog_QRY_Log(\"COMBINE\", _$2, _$3, _$4)",
+			"AND",
+			"DB_LeaderLog_Temp_CombinedString(${5:_Str})",
+			"${6|AND,THEN|}"
+		],
+		"description": "Combines multiple strings using LeaderLib's LeaderLog system. Outputs to a DB."
+	},
+	"LeaderLib_TurnTracker_Position": {
+		"prefix": "leaderturnskillcombatpos",
+		"body": [
+			"IF",
+			"CharacterUsedSkillAtPosition(_Char, _x, _y, _z, \"$1\", _SkillType, _SkillElement)",
+			"AND",
+			"NOT CombatGetIDForCharacter(_Char, _)",
+			"THEN",
+			"LeaderLib_Turns_TrackPositionWithObject(_Char, _x, _y, _z, \"$1\", $2, -1);",
+			"",
+			"PROC",
+			"LeaderLib_Turns_OnPositionObjectTurnChanged((STRING)_ID, (GUIDSTRING)_Object, (REAL)_x, (REAL)_y, (REAL)_z, \"$1\", (INTEGER)_LastTurns, (INTEGER)_NextTurns)",
+			"THEN",
+			"DB_NOOP(1);",
+			"",
+			"PROC",
+			"LeaderLib_Turns_OnTurnCounterComplete_PositionWithObject((STRING)_ID, (GUIDSTRING)_Object, (REAL)_x, (REAL)_y, (REAL)_z, \"$1\"",
+			"THEN",
+			"DB_NOOP(1);"
+		],
+		"description": "Tracks turns in combat at a position after a skill is cast."
+	},
+	"SkillEvents_TrackTarget": {
+		"prefix": "skilltargetcast",
+		"body": [
+			"IF",
+			"CharacterUsedSkillOnTarget(${1:_Char}, ${2:_Target}, \"${3:Skill}\", _SkillType, _SkillElement)",
+			"THEN",
+			"DB_MyMod_Skills_Temp_SkillTarget($1, $2, $3);",
+			"",
+			"IF",
+			"SkillCast($1, $3, _SkillType, _SkillElement)",
+			"AND",
+			"DB_MyMod_Skills_Temp_SkillTarget($1, $2, $3)",
+			"THEN",
+			"NOT DB_MyMod_Skills_Temp_SkillTarget($1, $2, $3);"
+		],
+		"description": "Combines multiple strings using LeaderLib's LeaderLog system. Outputs to a DB."
+	},
+	"SkillEvents_TrackTarget_TypeCheck": {
+		"prefix": "skilltargetcasttypes",
+		"body": [
+			"IF",
+			"CharacterUsedSkillOnTarget(${1:_Char}, ${2:_Target}, \"${3:Skill}\", _SkillType, _SkillElement)",
+			"THEN",
+			"DB_MyMod_Skills_Temp_SkillTarget($1, $2, $3, \"${4:MyMod_OnSkillCast_}\");",
+			"",
+			"IF",
+			"SkillCast($1, \"$3\", _SkillType, _SkillElement)",
+			"AND",
+			"DB_MyMod_Skills_Temp_SkillTarget($1, $2, \"$3\")",
+			"AND",
+			"ObjectIsCharacter((CHARACTERGUID)$2, 1)",
+			"THEN",
+			"NOT DB_MyMod_Skills_Temp_SkillTarget($1, $2, \"$3\");",
+			"CharacterCharacterSetEvent($1, $2, \"$4\");",
+			"",
+			"IF",
+			"SkillCast($1, \"$3\", _SkillType, _SkillElement)",
+			"AND",
+			"DB_MyMod_Skills_Temp_SkillTarget($1, $2, \"$3\")",
+			"AND",
+			"ObjectIsItem((ITEMGUID)$2, 1)",
+			"THEN",
+			"NOT DB_MyMod_Skills_Temp_SkillTarget($1, $2, \"$3\");",
+			"CharacterItemSetEvent($1, $2, \"$4\");",
+			"",
+			"IF",
+			"CharacterCharacterEvent($1, $2, \"$4\"",
+			"THEN",
+			"DB_NOOP(1);",
+			"",
+			"IF",
+			"CharacterItemEvent($1, $2, \"$4\"",
+			"THEN",
+			"DB_NOOP(1);"
+		],
+		"description": "Tracks when a skill is used on a target, waits for the skill cast, then fires an appropriate event for the target type."
+	}
+}

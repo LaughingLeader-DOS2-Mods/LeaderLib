@@ -359,6 +359,13 @@ AND
 ItemGetAmount(_Item, _Amount)
 THEN
 ItemToInventory(_Item, _Character, _Amount, 0, 0);
+
+IF
+CharacterItemEvent(_Character, _Item, "LeaderLib_Commands_UnequipItem")
+AND
+ItemIsEquipable(_Item, 1)
+THEN
+CharacterUnEquipItem(_Character, _Item);
 //END_REGION
 
 //REGION BEHAVIOR_SCRIPT_HELPERS

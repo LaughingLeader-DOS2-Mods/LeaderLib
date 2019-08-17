@@ -1944,6 +1944,13 @@
                     <attribute id="V1" value="0.00012207" type="6" />
                     <attribute id="V2" value="0.0155029" type="6" />
                 </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LeaderLib_Placeholder" type="22" />
+                    <attribute id="U1" value="0.328247" type="6" />
+                    <attribute id="U2" value="0.343628" type="6" />
+                    <attribute id="V1" value="0.0626221" type="6" />
+                    <attribute id="V2" value="0.0780029" type="6" />
+                </node>
             </children>
         </node>
     </region>

@@ -102,6 +102,47 @@ HasActiveStatus(_Object, _Status, 1)
 THEN
 RemoveStatus(_Object, _Status);
 
+//REGION EXTEND_STATUS
+//For applying a status and adding on top of the current turns, if any exists
+
+PROC
+LeaderLib_Statuses_ExtendStatus((GUIDSTRING)_Object, (STRING)_Status, (INTEGER)_AddTurns)
+THEN
+LeaderLib_Statuses_ExtendStatus(_Object, _Status, _AddTurns, 99, 1, _Object);
+
+PROC
+LeaderLib_Statuses_ExtendStatus((GUIDSTRING)_Object, (STRING)_Status, (INTEGER)_AddTurns, (INTEGER)_MaxTurns)
+THEN
+LeaderLib_Statuses_ExtendStatus(_Object, _Status, _AddTurns, _MaxTurns, 1, _Object);
+
+PROC
+LeaderLib_Statuses_ExtendStatus((GUIDSTRING)_Object, (STRING)_Status, (INTEGER)_AddTurns, (INTEGER)_MaxTurns, (INTEGER)_Force, (GUIDSTRING)_Source)
+AND
+HasActiveStatus(_Object, _Status, 1)
+AND
+GetStatusTurns(_Object, _Status, _Turns)
+AND
+IntegerSum(_Turns, _AddTurns, _NextTurns)
+AND
+IntegerMin(_NextTurns, _MaxTurns, _CappedTurns)
+AND
+Real(_CappedTurns, _DurationR)
+AND
+RealProduct(_DurationR, 6.0, _Duration)
+THEN
+ApplyStatus(_Object, _Status, _Duration, _Force, _Source);
+
+PROC
+LeaderLib_Statuses_ExtendStatus((GUIDSTRING)_Object, (STRING)_Status, (INTEGER)_AddTurns, (INTEGER)_MaxTurns, (INTEGER)_Force, (GUIDSTRING)_Source)
+AND
+HasActiveStatus(_Object, _Status, 0)
+AND
+Real(_AddTurns, _DurationR)
+AND
+RealProduct(_DurationR, 6.0, _Duration)
+THEN
+ApplyStatus(_Object, _Status, _Duration, _Force, _Source);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

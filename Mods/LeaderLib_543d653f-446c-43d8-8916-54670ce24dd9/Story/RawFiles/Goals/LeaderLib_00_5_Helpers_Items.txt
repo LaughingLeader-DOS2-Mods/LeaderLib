@@ -348,6 +348,19 @@ THEN
 CharacterUnequipItem(_Character, _Item);
 //END_REGION
 
+//REGION MISC_CHAR_ITEM_EVENTS
+IF
+CharacterItemEvent(_Character, _Item, "LeaderLib_Commands_ItemToInventory")
+AND
+ObjectExists(_Character, 1)
+AND
+ObjectExists(_Item, 1)
+AND
+ItemGetAmount(_Item, _Amount)
+THEN
+ItemToInventory(_Item, _Character, _Amount, 0, 0);
+//END_REGION
+
 //REGION BEHAVIOR_SCRIPT_HELPERS
 IF
 CharacterItemEvent(_Character, _Item, "LeaderLib_Commands_EquipItem")

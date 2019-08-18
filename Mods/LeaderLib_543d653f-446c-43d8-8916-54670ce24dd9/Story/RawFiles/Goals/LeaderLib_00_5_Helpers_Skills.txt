@@ -383,6 +383,9 @@ CharacterTransformFromCharacter(_Dummy, _Caster, 0, 1, _CopyStats, _CopyEquipmen
 SetCanJoinCombat(_Dummy, 0);
 SetCanFight(_Dummy, 0);
 SetTag(_Dummy, "LeaderLib_Dummy");
+SetTag(_Dummy, "SUMMON"); // For Crime/etc to ignore the dummy
+SetVarObject(_Dummy, "LeaderLib_Dummy_Owner", _Caster);
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_DummyCrimesEnabled", "LeaderLib");
 //LeaderLib_Timers_StartCharacterCharacterTimer(_Dummy, _Caster, 50, "LeaderLib_Timers_SkillDummy_CopyStats", "LeaderLib_Commands_SkillDummy_CopyStats")
 
 PROC
@@ -623,6 +626,7 @@ DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy)
 THEN
 NOT DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy);
 DB_LeaderLib_Skills_InactiveSkillDummies(_Dummy);
+ClearVarObject(_Dummy, "LeaderLib_Dummy_Owner");
 SetVarString(_Dummy, "LeaderLib_SkillDummyID", "");
 SetOnStage(_Dummy, 0);
 
@@ -655,7 +659,39 @@ AND
 DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy)
 THEN
 LeaderLib_Skills_ResetDummy(_Dummy);
+//END_REGION
 
+//REGION DUMMY_CRIMES_DISABLING
+QRY
+LeaderLib_Skills_QRY_AnyDummiesActive()
+AND
+DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Skills_QRY_AnyDummiesActive()
+AND
+DB_LeaderLib_Skills_TargetDummies(_ID, _Dummy)
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_Skills_ResetDummy((CHARACTERGUID)_Dummy)
+AND
+DB_IgnoreAssaultFor(_Dummy,_NPC)
+THEN
+NOT DB_IgnoreAssaultFor(_Dummy,_NPC);
+
+PROC
+LeaderLib_Skills_ResetDummy((CHARACTERGUID)_Dummy)
+AND
+NOT LeaderLib_Skills_QRY_AnyDummiesActive()
+THEN
+LeaderLib_ToggleScripts_DisableScriptAfterDelay("LeaderLib_DummyCrimesEnabled", "LeaderLib", 2000);
+//END_REGION
+
+//REGION RESET_REGION_ENDED
 IF
 RegionEnded(_)
 AND
@@ -695,6 +731,8 @@ THEN
 SysClear("DB_LeaderLib_Skills_SkillDummies", 2);
 SysClear("DB_LeaderLib_Skills_TargetDummies", 2);
 SysClear("DB_LeaderLib_Skills_InactiveSkillDummies", 1);
+LeaderLib_ToggleScripts_DisableScript("LeaderLib_DummyCrimesEnabled", "LeaderLib");
+
 //END_REGION
 EXITSECTION
 

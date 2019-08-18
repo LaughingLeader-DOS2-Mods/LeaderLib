@@ -361,6 +361,17 @@ THEN
 ItemToInventory(_Item, _Character, _Amount, 0, 0);
 
 IF
+CharacterItemEvent(_Character, _Item, "LeaderLib_Commands_ItemToInventory")
+AND
+ObjectExists(_Character, 1)
+AND
+ObjectExists(_Item, 1)
+AND
+NOT ItemGetAmount(_Item, _)
+THEN
+ItemToInventory(_Item, _Character, 1, 0, 0);
+
+IF
 CharacterItemEvent(_Character, _Item, "LeaderLib_Commands_UnequipItem")
 AND
 ItemIsEquipable(_Item, 1)

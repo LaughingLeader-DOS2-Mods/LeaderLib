@@ -1,0 +1,99 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+KBSECTION
+
+//REGION ASSAULT
+IF
+AttackedByObject((CHARACTERGUID)_NPC,_,(CHARACTERGUID)_Dummy,_,_DamageSource)
+AND
+IsTagged(_Dummy, "LeaderLib_Dummy", 1)
+AND
+_NPC != _Dummy
+AND
+GetVarObject(_Dummy, "LeaderLib_Dummy_Owner", (CHARACTERGUID)_Player)
+AND
+NOT DB_IgnoreAssault(_NPC)
+AND
+NOT DB_Crime_PolymorphedIgnoreAssault(_NPC,_Player)
+AND
+NOT DB_CombatCharacters(_NPC,_)
+AND
+NOT DB_Crime_Assault(_,_,_NPC)
+AND
+CharacterIsPlayer(_Player,1)
+AND
+NOT QryIgnoreDamageSource(_DamageSource)
+AND
+CharacterIsDeadOrFeign(_Player,0)
+AND
+ObjectIsCharacter(_NPC,1)
+AND
+CharacterIsPlayer(_NPC,0)
+AND
+CharacterIsDead(_NPC,0)
+AND
+IsTagged(_NPC,"GHOST",0)
+AND
+IsTagged(_NPC,"SUMMON",0)
+THEN
+DB_IgnoreAssaultFor(_Dummy,_NPC); // Prevent Larian's crime script from doing anything with the dummy.
+ProcCrimeCheckAssailant(_NPC,_Player,_Player);
+//END_REGION
+
+//REGION ITEM_ATTACKED
+//--- 1) Item attacked
+IF
+AttackedByObject((ITEMGUID)_Item,_,(CHARACTERGUID)_Dummy,_,_DamageSource)
+AND
+NOT QryIgnoreDamageSource(_DamageSource)
+AND
+ObjectIsItem(_Item,1)
+AND
+IsTagged(_Dummy, "LeaderLib_Dummy", 1)
+AND
+GetVarObject(_Dummy, "LeaderLib_Dummy_Owner", (CHARACTERGUID)_Player)
+AND
+CharacterIsPlayer(_Player,1)
+AND
+QRY_Crime_ItemHasHPorIndestructible(_Item)
+THEN
+ProcCrimeVandaliseCheckOwner(_Item,_Player,_Player);
+//END_REGION
+
+//REGION ITEM_DESTROYED
+IF
+AttackedByObject((ITEMGUID)_Item,_,(CHARACTERGUID)_Dummy,_,_DamageSource)
+AND
+NOT QryIgnoreDamageSource(_DamageSource)
+AND
+ObjectIsItem(_Item,1)
+AND
+IsTagged(_Dummy, "LeaderLib_Dummy", 1)
+AND
+GetVarObject(_Dummy, "LeaderLib_Dummy_Owner", (CHARACTERGUID)_Player)
+AND
+CharacterIsPlayer(_Player,1)
+AND
+NOT DB_CombatCharacters(_Player,_)
+AND
+ItemIsDestructible(_Item,1)
+AND
+ItemGetHealthPoints(_Item,_INT)
+AND
+_INT < 1
+AND
+NOT DB_Crime_ItemDestroyed(_Item,_Player)
+AND
+ItemGetOwner(_Item,_Owner)
+AND
+_Owner != NULL_00000000-0000-0000-0000-000000000000
+AND
+CharacterIsPlayer(_Owner,0)
+THEN
+ProcCrimeItemDestroyCheckVandal(_Item,_Owner,_Player,_Player);
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "__AAA_Z_LaughingLeader_TopToggledScripts"

@@ -504,6 +504,25 @@ AND
 ObjectGetFlag(_Object, _Flag, 1)
 THEN
 DB_NOOP(1);
+
+PROC
+LeaderLib_Helper_FlipGlobalFlag((STRING)_Flag)
+AND
+GlobalGetFlag(_Flag, _State)
+AND
+IntegerSubtract(1, _State, _NextState)
+THEN
+LeaderLib_Helper_SetGlobalFlag(_Flag, _NextState);
+
+PROC
+LeaderLib_Helper_SetGlobalFlag((STRING)_Flag, 1)
+THEN
+GlobalSetFlag(_Flag);
+
+PROC
+LeaderLib_Helper_SetGlobalFlag((STRING)_Flag, 0)
+THEN
+GlobalClearFlag(_Flag);
 //END_REGION
 
 //REGION RANDOM

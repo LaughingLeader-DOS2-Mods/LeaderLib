@@ -94,10 +94,22 @@
 	"Leader CharItem Timer": {
 		"prefix": "leadertimercharitem",
 		"body": [
-			"LeaderLib_Timers_StartCharacterItemTimer(_${1:_Char}, _${2:Item}, ${3:1000}, \"${4:MyMod_Timers_}${5:CompletionEvent}\", \"${5:CompletionEvent}\");",
+			"LeaderLib_Timers_StartCharacterItemTimer(_${1:Char}, _${2:Item}, ${3:1000}, \"${4:MyMod_Timers_}${5:CompletionEvent}\", \"${5:CompletionEvent}\");",
 			"",
 			"IF",
-			"CharacterItemEvent(_${1:_Char}, _${2:Item}, \"${4:CompletionEvent}\")",
+			"CharacterItemEvent(_$1, _$2, \"$5\")",
+			"THEN",
+			"DB_NOOP(1);",
+		],
+		"description": "Launches a LeaderLib character item timer, and creates the event that runs when it ends."
+	},
+	"Leader CharChar Timer": {
+		"prefix": "leadertimercharchar",
+		"body": [
+			"LeaderLib_Timers_StartCharacterCharacterTimer(_${1:Char1}, _${2:Char2}, ${3:1000}, \"${4:MyMod_Timers_}${5:CompletionEvent}\", \"${5:CompletionEvent}\");",
+			"",
+			"IF",
+			"CharacterCharacterEvent(_$1, _$2, \"$5\")",
 			"THEN",
 			"DB_NOOP(1);",
 		],

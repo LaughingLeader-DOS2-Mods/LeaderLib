@@ -639,6 +639,104 @@ THEN
 DB_NOOP(1);
 //END_REGION
 
+//REGION RUNE_SLOT_HELPERS
+QRY
+LeaderLib_Helper_QRY_RuneInSlot((ITEMGUID)_Item, (INTEGER)_Slot)
+AND
+ItemGetRuneItemTemplate(_Item, _Slot, _)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_RuneInAnySlot((ITEMGUID)_Item)
+AND
+LeaderLib_Helper_QRY_RuneInSlot(_Item, 0)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_RuneInAnySlot((ITEMGUID)_Item)
+AND
+LeaderLib_Helper_QRY_RuneInSlot(_Item, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_RuneInAnySlot((ITEMGUID)_Item)
+AND
+LeaderLib_Helper_QRY_RuneInSlot(_Item, 2)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_Internal_InitRuneSlotCount((ITEMGUID)_Item)
+THEN
+DB_LeaderLib_Helper_Temp_RuneSlotTotal(_Item, 0);
+
+QRY
+LeaderLib_Helper_QRY_Internal_UpdateRuneSlotCount((ITEMGUID)_Item, (INTEGER)_Count, (INTEGER)_LastCount)
+THEN
+NOT DB_LeaderLib_Helper_Temp_RuneSlotTotal(_Item, _LastCount);
+DB_LeaderLib_Helper_Temp_RuneSlotTotal(_Item, _Count);
+
+QRY
+LeaderLib_Helper_QRY_Internal_ClearRuneSlotCount((ITEMGUID)_Item)
+AND
+DB_LeaderLib_Helper_Temp_RuneSlotTotal(_Item, _Count)
+THEN
+NOT DB_LeaderLib_Helper_Temp_RuneSlotTotal(_Item, _Count);
+
+QRY
+LeaderLib_Helper_QRY_ItemHasMaxRuneSlots((ITEMGUID)_Item)
+AND
+LeaderLib_Helper_QRY_Internal_InitRuneSlotCount(_Item)
+AND
+DB_LeaderLib_RuneSlotDeltaMod(_Group, _DeltaMod)
+AND
+ItemHasDeltaModifier(_Item, _DeltaMod, _Count)
+AND
+_Count > 0
+AND
+DB_LeaderLib_Helper_Temp_RuneSlotTotal(_Item, _LastTotal)
+AND
+IntegerSum(_LastTotal, _Count, _NextTotalSlots)
+AND
+LeaderLib_Helper_QRY_Internal_UpdateRuneSlotCount(_Item, _LastTotal, _NextTotalSlots)
+AND
+LeaderLog_QRY_LogInt("DEBUG", "[LeaderLib_00_5_Helpers_Items:QRY_ItemHasMaxRuneSlots] Rune slots in item: (", _NextTotalSlots, ").")
+AND
+_NextTotalSlots >= 3
+THEN
+DB_NOOP(1);
+
+//No script-based deltamods added
+QRY
+LeaderLib_Helper_QRY_ItemHasMaxRuneSlots((ITEMGUID)_Item)
+AND
+DB_LeaderLib_Helper_Temp_RuneSlotTotal(_Item, 0)
+AND
+LeaderLib_Helper_QRY_RuneInSlot(_Item, 0)
+AND
+LeaderLib_Helper_QRY_RuneInSlot(_Item, 1)
+AND
+LeaderLib_Helper_QRY_RuneInSlot(_Item, 2)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_00_5_Helpers_Items:QRY_ItemHasMaxRuneSlots] Item has 3 runeslots.");
+
+//Clear without returning true if slots are less than 3
+QRY
+LeaderLib_Helper_QRY_ItemHasMaxRuneSlots((ITEMGUID)_Item)
+AND
+DB_LeaderLib_Helper_Temp_RuneSlotTotal(_Item, _Count)
+AND
+LeaderLib_Helper_QRY_Internal_ClearRuneSlotCount(_Item)
+AND
+_Count >= 3
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION COPY_ITEM_TRANSFORM
 PROC
 LeaderLib_Helpers_CopyItemTransform((ITEMGUID)_Item, (ITEMGUID)_Target)
 THEN
@@ -725,6 +823,7 @@ AND
 RealProduct(_RollDegree, 0.0174533, _Roll)
 THEN
 ItemToTransform(_Item, _x, _y, _z, _Pitch, _Yaw, _Roll, _Amount, _Owner);
+//END_REGION
 
 EXITSECTION
 

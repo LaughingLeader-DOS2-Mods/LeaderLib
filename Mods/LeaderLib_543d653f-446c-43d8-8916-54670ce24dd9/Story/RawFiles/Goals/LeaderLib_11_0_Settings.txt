@@ -30,6 +30,7 @@ LeaderLib_Settings_InitSkillData();
 LeaderLib_Settings_InitRaceData();
 LeaderLib_Settings_InitStatusData();
 LeaderLib_Settings_InitCCData();
+LeaderLib_Settings_InitRuneSlotHelperData();
 
 SysClear("DB_LeaderLib_Settings_QueueRates", 3);
 DB_LeaderLib_Settings_QueueRates("TraderSpawn", 500, 2000);
@@ -622,7 +623,32 @@ THEN
 LeaderLib_Helper_Register_IgnoreTag_Character("LeaderLib", "LeaderLib_Dummy");
 //END_REGION
 
+//REGION RUNESLOT_PROBLEM_WORKAROUND
+PROC
+LeaderLib_Settings_InitRuneSlotHelperData()
+THEN
+DB_LeaderLib_RuneSlotDeltaMod("Shared", "Boost_Weapon_EmptyRuneSlot");
+DB_LeaderLib_RuneSlotDeltaMod("Shared", "Boost_Armor_UpperBody_EmptyRuneSlot");
+DB_LeaderLib_RuneSlotDeltaMod("Shared", "Boost_Armor_Amulet_EmptyRuneSlot");
+DB_LeaderLib_RuneSlotDeltaMod("LeaderLib", "Boost_LeaderLib_Armor_LowerBody_EmptyRuneSlot");
+DB_LeaderLib_RuneSlotDeltaMod("LeaderLib", "Boost_LeaderLib_Armor_LowerBody_EmptyRuneSlot2");
+DB_LeaderLib_RuneSlotDeltaMod("LeaderLib", "Boost_LeaderLib_Armor_Arms_EmptyRuneSlot");
+DB_LeaderLib_RuneSlotDeltaMod("LeaderLib", "Boost_LeaderLib_Armor_Arms_EmptyRuneSlot2");
+DB_LeaderLib_RuneSlotDeltaMod("LeaderLib", "Boost_LeaderLib_Armor_Boots_EmptyRuneSlot");
+DB_LeaderLib_RuneSlotDeltaMod("LeaderLib", "Boost_LeaderLib_Armor_Boots_EmptyRuneSlot2");
+DB_LeaderLib_RuneSlotDeltaMod("LeaderLib", "Boost_LeaderLib_Armor_UpperBody_EmptyRuneSlot");
+DB_LeaderLib_RuneSlotDeltaMod("LeaderLib", "Boost_LeaderLib_Armor_UpperBody_EmptyRuneSlot2");
+//END_REGION
+
 //REGION UPDATES
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,2,7,0)
+THEN
+LeaderLib_Settings_InitRuneSlotHelperData();
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
+
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND

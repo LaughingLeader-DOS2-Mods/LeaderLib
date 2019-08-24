@@ -1462,6 +1462,13 @@
                     <attribute id="V2" value="0.0780029" type="6" />
                 </node>
                 <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_ShieldCover" type="22" />
+                    <attribute id="U1" value="0.375122" type="6" />
+                    <attribute id="U2" value="0.390503" type="6" />
+                    <attribute id="V1" value="0.0626221" type="6" />
+                    <attribute id="V2" value="0.0780029" type="6" />
+                </node>
+                <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Skills_ShieldPrison" type="22" />
                     <attribute id="U1" value="0.187622" type="6" />
                     <attribute id="U2" value="0.203003" type="6" />

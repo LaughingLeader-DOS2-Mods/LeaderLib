@@ -31,7 +31,7 @@ LeaderLib_Growth_Items_Internal_OnRegistered();
 PROC
 LeaderLib_Growth_Items_Register_DeltaModLimit((STRING)_DeltaMod, (INTEGER)_Limit)
 THEN
-DB_LeaderLib_Growth_Items_DeltaMod_Limit(_Deltamod, _Limit);
+DB_LeaderLib_Growth_Items_DeltaMod_Limit(_DeltaMod, _Limit);
 
 //Register a deltamod using the ID as the match value.
 PROC
@@ -319,13 +319,13 @@ THEN
 DB_NOOP(1);
 
 QRY
-LeaderLib_Growth_Items_QRY_DeltamodsAddedThisLevel((ITEMGUID)_Item)
+LeaderLib_Growth_Items_QRY_DeltaModsAddedThisLevel((ITEMGUID)_Item)
 AND
 GetVarInteger(_Item, "LeaderLib_Level", _Level)
 AND
 GetVarInteger(_Item, "LeaderLib_LastDeltamodLevel", _Last)
 //AND
-//LeaderLog_QRY_LogInt("DEBUG", "[LeaderLib:Growth:Items:QRY_DeltamodsAddedThisLevel] LeaderLib_Level [",_Level,"] LeaderLib_LastDeltamodLevel [",_Last,"].")
+//LeaderLog_QRY_LogInt("DEBUG", "[LeaderLib:Growth:Items:QRY_DeltaModsAddedThisLevel] LeaderLib_Level [",_Level,"] LeaderLib_LastDeltamodLevel [",_Last,"].")
 AND
 _Last >= _Level
 THEN
@@ -334,7 +334,7 @@ DB_NOOP(1);
 IF
 CharacterItemEvent(_Character, _Item, "LeaderLib_Events_ItemLeveledUp")
 AND
-NOT LeaderLib_Growth_Items_QRY_DeltamodsAddedThisLevel(_Item)
+NOT LeaderLib_Growth_Items_QRY_DeltaModsAddedThisLevel(_Item)
 AND
 NOT DB_LeaderLib_Growth_Items_Temp_AppliedDeltaMods(_Character, _Item)
 AND
@@ -347,7 +347,7 @@ LeaderLib_Growth_Items_ApplyDeltaMods(_Character, _Item);
 IF
 CharacterItemEvent(_Character, _Item, "LeaderLib_Events_ItemLevelCheckFinished")
 AND
-NOT LeaderLib_Growth_Items_QRY_DeltamodsAddedThisLevel(_Item)
+NOT LeaderLib_Growth_Items_QRY_DeltaModsAddedThisLevel(_Item)
 AND
 NOT DB_LeaderLib_Growth_Items_Temp_AppliedDeltaMods(_Character, _Item)
 AND
@@ -396,25 +396,51 @@ THEN
 SetVarInteger(_Item, "LeaderLib_LastDeltamodLevel", _Level);
 
 QRY
-LeaderLib_Growth_Items_QRY_CanAddDeltamod((ITEMGUID)_Item, (STRING)_Deltamod)
+LeaderLib_Growth_Items_QRY_CanAddRuneSlotDeltaMod((ITEMGUID)_Item, (STRING)_DeltaMod)
 AND
-NOT ItemHasDeltaModifier(_Item, _Deltamod, _)
+DB_LeaderLib_RuneSlotDeltaMod(_Group, _DeltaMod)
+AND
+NOT LeaderLib_Helper_QRY_ItemHasMaxRuneSlots(_Item)
 THEN
 DB_NOOP(1);
 
 QRY
-LeaderLib_Growth_Items_QRY_CanAddDeltamod((ITEMGUID)_Item, (STRING)_Deltamod)
+LeaderLib_Growth_Items_QRY_CanAddRuneSlotDeltaMod((ITEMGUID)_Item, (STRING)_DeltaMod)
 AND
-ItemHasDeltaModifier(_Item, _Deltamod, 0)
+NOT DB_LeaderLib_RuneSlotDeltaMod(_, _DeltaMod)
 THEN
 DB_NOOP(1);
 
 QRY
-LeaderLib_Growth_Items_QRY_CanAddDeltamod((ITEMGUID)_Item, (STRING)_Deltamod)
+LeaderLib_Growth_Items_QRY_CanAddDeltaMod((ITEMGUID)_Item, (STRING)_DeltaMod)
 AND
-ItemHasDeltaModifier(_Item, _Deltamod, _Count)
+LeaderLib_Growth_Items_QRY_CanAddRuneSlotDeltaMod(_Item, _DeltaMod)
 AND
-DB_LeaderLib_Growth_Items_DeltaMod_Limit(_Deltamod, _Limit)
+LeaderLib_Growth_Items_QRY_Internal_CanAddDeltaMod(_Item, _DeltaMod)
+THEN
+DB_NOOP(1);
+
+//After the RuneSlot check is passed
+QRY
+LeaderLib_Growth_Items_QRY_Internal_CanAddDeltaMod((ITEMGUID)_Item, (STRING)_DeltaMod)
+AND
+NOT ItemHasDeltaModifier(_Item, _DeltaMod, _)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Growth_Items_QRY_Internal_CanAddDeltaMod((ITEMGUID)_Item, (STRING)_DeltaMod)
+AND
+ItemHasDeltaModifier(_Item, _DeltaMod, 0)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Growth_Items_QRY_Internal_CanAddDeltaMod((ITEMGUID)_Item, (STRING)_DeltaMod)
+AND
+ItemHasDeltaModifier(_Item, _DeltaMod, _Count)
+AND
+DB_LeaderLib_Growth_Items_DeltaMod_Limit(_DeltaMod, _Limit)
 AND
 _Count < _Limit
 THEN
@@ -431,7 +457,7 @@ IsTagged(_Item, _Tag, 1)
 AND
 _ItemLevel >= _MinLevel
 AND
-LeaderLib_Growth_Items_QRY_CanAddDeltamod(_Item, _DeltaMod)
+LeaderLib_Growth_Items_QRY_CanAddDeltaMod(_Item, _DeltaMod)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:ApplyDeltaMods(Tag)] Added deltamod [",_DeltaMod,"] to item with tag [",_Tag,"].");
 ItemAddDeltaModifier(_Item, _DeltaMod);
@@ -458,7 +484,7 @@ DB_LeaderLib_Growth_Items_DeltaMods(_GroupID, _MinLevel, _DeltaMod, "ID", _ID)
 AND
 _ItemLevel >= _MinLevel
 AND
-LeaderLib_Growth_Items_QRY_CanAddDeltamod(_Item, _DeltaMod)
+LeaderLib_Growth_Items_QRY_CanAddDeltaMod(_Item, _DeltaMod)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:ApplyDeltaMods(ID)] Added deltamod [",_DeltaMod,"] to item via matched ID [",_ID,"].");
 ItemAddDeltaModifier(_Item, _DeltaMod);
@@ -482,7 +508,7 @@ DB_LeaderLib_Growth_Items_DeltaMods(_ID, _MinLevel, _DeltaMod, "Template", _Temp
 AND
 _ItemLevel >= _MinLevel
 AND
-LeaderLib_Growth_Items_QRY_CanAddDeltamod(_Item, _DeltaMod)
+LeaderLib_Growth_Items_QRY_CanAddDeltaMod(_Item, _DeltaMod)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:ApplyDeltaMods(Template)] Added deltamod [",_DeltaMod,"] to item.");
 ItemAddDeltaModifier(_Item, _DeltaMod);
@@ -498,7 +524,7 @@ CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
 AND
 _Item != NULL_00000000-0000-0000-0000-000000000000
 AND
-NOT LeaderLib_Growth_Items_QRY_DeltamodsAddedThisLevel(_Item)
+NOT LeaderLib_Growth_Items_QRY_DeltaModsAddedThisLevel(_Item)
 AND
 LeaderLib_Growth_Items_QRY_ItemHasDeltaMods(_Item)
 THEN

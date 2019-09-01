@@ -254,8 +254,11 @@ IF
 CharacterUsedSkillOnTarget(_Dummy, _Target, _Skill, _Skilltype, _SkillElement)
 AND
 DB_LeaderLib_Skills_Temp_ListenForTargetCast(_Dummy, _Caster, _, _Skill)
+AND
+GetPosition(_Target, _x, _y, _z)
 THEN
 LeaderLib_Skills_OnDummyUsedSkillOnTarget(_Dummy, _Caster, _Skill, _Target, _Skilltype, _SkillElement);
+LeaderLib_Skills_OnDummyUsedSkillAtPosition(_Dummy, _Caster, _Skill, _x, _y, _z, _Skilltype, _SkillElement);
 
 PROC
 LeaderLib_Skills_OnDummyUsedSkillOnTarget((CHARACTERGUID)_Dummy, (CHARACTERGUID)_Caster, (STRING)_Skill, (GUIDSTRING)_Target, (STRING)_Skilltype, (STRING)_SkillElement)
@@ -266,9 +269,12 @@ IF
 SkillCast(_Dummy, _Skill, _Skilltype, _SkillElement)
 AND
 DB_LeaderLib_Skills_Temp_ListenForTargetCast(_Dummy, _Caster, _Target, _Skill)
+AND
+GetPosition(_Target, _x, _y, _z)
 THEN
 NOT DB_LeaderLib_Skills_Temp_ListenForTargetCast(_Dummy, _Caster, _Target, _Skill);
 LeaderLib_Skills_OnDummyCastSkillOnTarget(_Dummy, _Caster, _Skill, _Target, _Skilltype, _SkillElement);
+LeaderLib_Skills_OnDummyCastSkillAtPosition(_Dummy, _Caster, _Skill, _x, _y, _z, _Skilltype, _SkillElement);
 
 PROC
 LeaderLib_Skills_OnDummyCastSkillOnTarget((CHARACTERGUID)_Dummy, (CHARACTERGUID)_Caster, (STRING)_Skill, (GUIDSTRING)_Target, (STRING)_Skilltype, (STRING)_SkillElement)

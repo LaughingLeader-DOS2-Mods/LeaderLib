@@ -626,11 +626,28 @@ ItemRemove(_Backpack);
 IF
 TextEventSet("leaderlib_addtreasure")
 AND
-GetTextEventParamString(1, _Treasure)
-AND
 CharacterGetHostCharacter(_Player)
+AND
+LeaderLib_Recon_QRY_GetUUID("leaderlib_addtreasure", "target", 1, _Player)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_addtreasure", "target", _Target, _NextParamIndex)
+AND
+ObjectIsCharacter((CHARACTERGUID)_Target, 1)
+AND
+LeaderLib_Recon_QRY_GetString("leaderlib_addtreasure", "treasure", _NextParamIndex, "Cheat2HMaces")
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_addtreasure", "treasure", _Treasure, _NextParamIndex2)
+AND
+LeaderLib_Recon_QRY_GetInt("leaderlib_addtreasure", "identified", _NextParamIndex2, 1)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_Int("leaderlib_addtreasure", "identified", _Identified, _NextParamIndex3)
 THEN
-CharacterGiveReward(_Player, _Treasure, 1);
+CharacterGiveReward(_Target, _Treasure, _Identified);
+
+IF
+TextEventSet("leaderlib_addtreasure")
+THEN
+LeaderLib_Recon_ClearParams("leaderlib_addtreasure");
 //END_REGION
 
 //REGION PRESETS

@@ -1308,7 +1308,7 @@ DB_NOOP(1);
 QRY
 LeaderLib_Helper_QRY_PartyOutsideOfRange((GUIDSTRING)_Object, (REAL)_Range)
 AND
-DB_LeaderLib_PartyFollower(_Owner, _Follower)
+DB_LeaderLib_PartyFollower((CHARACTERGUID)_Owner, (CHARACTERGUID)_Follower)
 AND
 CharacterIsDead(_Follower, 0)
 AND
@@ -1334,7 +1334,7 @@ DB_NOOP(1);
 QRY
 LeaderLib_Helper_QRY_PartyOutsideOfRange((REAL)_x, (REAL)_y, (REAL)_z, (REAL)_Range)
 AND
-DB_LeaderLib_PartyFollower(_Owner, _Follower)
+DB_LeaderLib_PartyFollower((CHARACTERGUID)_Owner, (CHARACTERGUID)_Follower)
 AND
 CharacterIsDead(_Follower, 0)
 AND

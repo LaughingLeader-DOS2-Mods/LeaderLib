@@ -587,6 +587,76 @@ GetVarString(_Character, "LeaderLib_OriginalGender", "FEMALE")
 THEN
 ObjectClearFlag(_Character, "LeaderLib_GenderSwapped", 0);
 //END_REGION
+
+//REGION FORCE_PROJECTILE
+PROC
+LeaderLib_Force_Apply((GUIDSTRING)_Source, (GUIDSTRING)_Target, (INTEGER)_Distance)
+AND
+LeaderLib_Math_QRY_ClampInt("LeaderLib_ForceDistance", _Distance, 1, 20)
+AND
+DB_LeaderLib_Math_ClampInt("LeaderLib_ForceDistance", _DistanceClamped)
+AND
+DB_LeaderLib_ForceEvent(_DistanceClamped, _Event, _FromItemEvent)
+THEN
+NOT DB_LeaderLib_Math_ClampInt("LeaderLib_ForceDistance", _DistanceClamped);
+LeaderLib_Force_SendApplyForceEvent(_Source, _Target, _Event, _FromItemEvent);
+
+PROC
+LeaderLib_Force_SendApplyForceEvent((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Event, (STRING)_FromItemEvent)
+AND
+NOT DB_LeaderLib_Force_Temp_Resolved(_Event)
+AND
+ObjectIsCharacter((CHARACTERGUID)_Source, 1)
+AND
+ObjectIsCharacter((CHARACTERGUID)_Target, 1)
+THEN
+DB_LeaderLib_Force_Temp_Resolved(_Event);
+CharacterCharacterSetEvent(_Source, _Target, _Event);
+
+PROC
+LeaderLib_Force_SendApplyForceEvent((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Event, (STRING)_FromItemEvent)
+AND
+NOT DB_LeaderLib_Force_Temp_Resolved(_Event)
+AND
+ObjectIsCharacter((CHARACTERGUID)_Source, 1)
+AND
+ObjectIsItem((ITEMGUID)_Target, 1)
+THEN
+DB_LeaderLib_Force_Temp_Resolved(_Event);
+CharacterItemSetEvent(_Source, _Target, _Event);
+
+PROC
+LeaderLib_Force_SendApplyForceEvent((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Event, (STRING)_FromItemEvent)
+AND
+NOT DB_LeaderLib_Force_Temp_Resolved(_Event)
+AND
+ObjectIsItem((ITEMGUID)_Source, 1)
+AND
+ObjectIsCharacter((CHARACTERGUID)_Target, 1)
+THEN
+DB_LeaderLib_Force_Temp_Resolved(_Event);
+CharacterItemSetEvent(_Target, _Source, _FromItemEvent);
+
+PROC
+LeaderLib_Force_SendApplyForceEvent((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Event, (STRING)_FromItemEvent)
+AND
+NOT DB_LeaderLib_Force_Temp_Resolved(_Event)
+AND
+ObjectIsItem((ITEMGUID)_Source, 1)
+AND
+ObjectIsItem((ITEMGUID)_Target, 1)
+THEN
+DB_LeaderLib_Force_Temp_Resolved(_Event);
+SetVarObject(_Target, "LeaderLib_Force_SourceItem", _Source);
+SetStoryEvent(_Target, _Event);
+
+PROC
+LeaderLib_Force_SendApplyForceEvent((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Event, (STRING)_FromItemEvent)
+AND
+DB_LeaderLib_Force_Temp_Resolved(_Event)
+THEN
+NOT DB_LeaderLib_Force_Temp_Resolved(_Event);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

@@ -143,6 +143,7 @@ RealProduct(_DurationR, 6.0, _Duration)
 THEN
 ApplyStatus(_Object, _Status, _Duration, _Force, _Source);
 //END_REGION
+
 EXITSECTION
 
 ENDEXITSECTION

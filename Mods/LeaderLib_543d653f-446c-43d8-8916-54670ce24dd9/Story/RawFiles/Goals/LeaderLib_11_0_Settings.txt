@@ -31,6 +31,7 @@ LeaderLib_Settings_InitRaceData();
 LeaderLib_Settings_InitStatusData();
 LeaderLib_Settings_InitCCData();
 LeaderLib_Settings_InitRuneSlotHelperData();
+LeaderLib_Settings_InitForceHelperData();
 
 SysClear("DB_LeaderLib_Settings_QueueRates", 3);
 DB_LeaderLib_Settings_QueueRates("TraderSpawn", 500, 2000);
@@ -644,6 +645,14 @@ DB_LeaderLib_RuneSlotDeltaMod("LeaderLib", "Boost_LeaderLib_Armor_UpperBody_Empt
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,2,9,0)
+THEN
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
+LeaderLib_Settings_InitForceHelperData();
+
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
 LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,2,7,0)
 THEN
 LeaderLib_Settings_InitRuneSlotHelperData();
@@ -865,6 +874,34 @@ ObjectClearFlag(_Player, "LeaderLib_Commands_RemoveModMenuSkill", 0);
 CharacterRemoveSkill(_Player, "Shout_LeaderLib_OpenModMenu");
 //END_REGION
 
+//REGION FORCE_DATA
+PROC
+LeaderLib_Settings_InitForceHelperData()
+AND
+NOT DB_LeaderLib_ForceEvent(_,_,_)
+THEN
+//SysClear("DB_LeaderLib_ForceEvent", 3);
+DB_LeaderLib_ForceEvent(1, "LeaderLib_Force_ShootProjectile_1", "LeaderLib_Force_ShootProjectileFromItem_1");
+DB_LeaderLib_ForceEvent(2, "LeaderLib_Force_ShootProjectile_2", "LeaderLib_Force_ShootProjectileFromItem_2");
+DB_LeaderLib_ForceEvent(3, "LeaderLib_Force_ShootProjectile_3", "LeaderLib_Force_ShootProjectileFromItem_3");
+DB_LeaderLib_ForceEvent(4, "LeaderLib_Force_ShootProjectile_4", "LeaderLib_Force_ShootProjectileFromItem_4");
+DB_LeaderLib_ForceEvent(5, "LeaderLib_Force_ShootProjectile_5", "LeaderLib_Force_ShootProjectileFromItem_5");
+DB_LeaderLib_ForceEvent(6, "LeaderLib_Force_ShootProjectile_6", "LeaderLib_Force_ShootProjectileFromItem_6");
+DB_LeaderLib_ForceEvent(7, "LeaderLib_Force_ShootProjectile_7", "LeaderLib_Force_ShootProjectileFromItem_7");
+DB_LeaderLib_ForceEvent(8, "LeaderLib_Force_ShootProjectile_8", "LeaderLib_Force_ShootProjectileFromItem_8");
+DB_LeaderLib_ForceEvent(9, "LeaderLib_Force_ShootProjectile_9", "LeaderLib_Force_ShootProjectileFromItem_9");
+DB_LeaderLib_ForceEvent(10, "LeaderLib_Force_ShootProjectile_10", "LeaderLib_Force_ShootProjectileFromItem_10");
+DB_LeaderLib_ForceEvent(11, "LeaderLib_Force_ShootProjectile_11", "LeaderLib_Force_ShootProjectileFromItem_11");
+DB_LeaderLib_ForceEvent(12, "LeaderLib_Force_ShootProjectile_12", "LeaderLib_Force_ShootProjectileFromItem_12");
+DB_LeaderLib_ForceEvent(13, "LeaderLib_Force_ShootProjectile_13", "LeaderLib_Force_ShootProjectileFromItem_13");
+DB_LeaderLib_ForceEvent(14, "LeaderLib_Force_ShootProjectile_14", "LeaderLib_Force_ShootProjectileFromItem_14");
+DB_LeaderLib_ForceEvent(15, "LeaderLib_Force_ShootProjectile_15", "LeaderLib_Force_ShootProjectileFromItem_15");
+DB_LeaderLib_ForceEvent(16, "LeaderLib_Force_ShootProjectile_16", "LeaderLib_Force_ShootProjectileFromItem_16");
+DB_LeaderLib_ForceEvent(17, "LeaderLib_Force_ShootProjectile_17", "LeaderLib_Force_ShootProjectileFromItem_17");
+DB_LeaderLib_ForceEvent(18, "LeaderLib_Force_ShootProjectile_18", "LeaderLib_Force_ShootProjectileFromItem_18");
+DB_LeaderLib_ForceEvent(19, "LeaderLib_Force_ShootProjectile_19", "LeaderLib_Force_ShootProjectileFromItem_19");
+DB_LeaderLib_ForceEvent(20, "LeaderLib_Force_ShootProjectile_20", "LeaderLib_Force_ShootProjectileFromItem_20");
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

@@ -1,4 +1,5 @@
 #INCLUDE LeaderLib_TypeHelpers
+#INCLUDE LeaderLib_ForceHelpers
 
 INIT
 	FIXEDSTRING:%LeaderLib_EmptyString=""
@@ -18,6 +19,7 @@ INIT
 	CHARACTER:%LeaderLib_CreateByStat_Dummy = null
 	
 	USING LeaderLib_TypeHelpers
+	USING LeaderLib_ForceHelpers
 EVENTS
 
 /* This event doesn't seem to fire

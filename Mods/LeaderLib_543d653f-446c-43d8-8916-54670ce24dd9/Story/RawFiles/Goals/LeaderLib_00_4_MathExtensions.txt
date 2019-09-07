@@ -663,6 +663,43 @@ _Num == _Match4
 THEN
 DB_NOOP(1);
 //END_REGION
+
+//REGION CLAMP
+PROC
+LeaderLib_Math_ClampInt((STRING)_ID, (INTEGER)_Value, (INTEGER)_Max, (INTEGER)_Min)
+AND
+DB_LeaderLib_Math_ClampInt(_ID, _Last)
+THEN
+NOT DB_LeaderLib_Math_ClampInt(_ID, _Last);
+
+PROC
+LeaderLib_Math_ClampInt((STRING)_ID, (INTEGER)_Value, (INTEGER)_Max, (INTEGER)_Min)
+AND
+_Value > _Max
+THEN
+DB_LeaderLib_Math_ClampInt(_ID, _Max);
+
+PROC
+LeaderLib_Math_ClampInt((STRING)_ID, (INTEGER)_Value, (INTEGER)_Max, (INTEGER)_Min)
+AND
+_Value <= _Max
+AND
+_Value > _Min
+THEN
+DB_LeaderLib_Math_ClampInt(_ID, _Value);
+
+PROC
+LeaderLib_Math_ClampInt((STRING)_ID, (INTEGER)_Value, (INTEGER)_Max, (INTEGER)_Min)
+AND
+_Value <= _Min
+THEN
+DB_LeaderLib_Math_ClampInt(_ID, _Min);
+
+QRY
+LeaderLib_Math_QRY_ClampInt((STRING)_ID, (INTEGER)_Value, (INTEGER)_Max, (INTEGER)_Min)
+THEN
+LeaderLib_Math_ClampInt(_ID, _Value, _Min, _Max);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

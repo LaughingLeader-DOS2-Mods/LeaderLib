@@ -46,6 +46,12 @@ MakePlayerActive(_Follower);
 //END_REGION
 
 //REGION FORCE_SAFETY_CHECK
+PROC
+LeaderLib_Force_ClearTempData()
+THEN
+SysClear("DB_LeaderLib_Skills_Temp_CheckForcePosition", 4);
+SysClear("DB_LeaderLib_Skills_Temp_PositionChecker_LastValidSpot", 5);
+
 IF
 CharacterStatusAttempt(_Character, "LEADERLIB_FORCE_APPLIED", _)
 AND
@@ -53,31 +59,31 @@ GetPosition(_Character, _x, _y, _z)
 AND
 NOT DB_LeaderLib_Skills_Temp_CheckForcePosition(_Character, _, _, _)
 THEN
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_Force_EnableEvents", "LeaderLib");
 DB_LeaderLib_Skills_Temp_CheckForcePosition(_Character, _x, _y, _z);
+ProcObjectTimerCancel(_Character, "LeaderLib_Timers_ClearForcePosition");
+ProcObjectTimer(_Character, "LeaderLib_Timers_ClearForcePosition", 5000);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Char, "LeaderLib_Timers_ClearForcePosition")
+AND
+DB_LeaderLib_Skills_Temp_CheckForcePosition(_Character, _x, _y, _z)
+THEN
+NOT DB_LeaderLib_Skills_Temp_CheckForcePosition(_Character, _x, _y, _z);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Char, "LeaderLib_Timers_ClearForcePosition")
+AND
+SysCount("DB_LeaderLib_Skills_Temp_CheckForcePosition", 4, 0)
+THEN
+LeaderLib_ToggleScripts_DisableScriptAfterDelay("LeaderLib_Force_EnableEvents", "LeaderLib", 1250);
 
 IF
-CharacterStatusRemoved(_Character, "SHOCKWAVE", _)
+StoryEvent((ITEMGUID)_PositionChecker, "LeaderLib_Events_Skills_ForcePositionFinderDone")
 AND
-DB_LeaderLib_Skills_Temp_CheckForcePosition(_Character, _StartX, _StartY, _StartZ)
-AND
-GetPosition(_Character, _ForceX, _ForceY, _ForceZ)
-AND
-NOT FindValidPosition(_ForceX, _ForceY, _ForceZ, 10.0, _Character, _, _, _)
-AND
-CreateItemTemplateAtPosition("LOOT_LeaderLib_BackPack_Invisible_98fa7688-0810-4113-ba94-9a8c8463f830", _StartX, _StartY, _StartZ, _PositionChecker)
+SysCount("DB_LeaderLib_Skills_Temp_PositionChecker_LastValidSpot", 5, 0)
 THEN
-NOT DB_LeaderLib_Skills_Temp_CheckForcePosition(_Character, _StartX, _StartY, _StartZ);
-LeaderLog_Log("DEBUG", "[LeaderLib:Skills:ForcePositionCorrection] Character was moved with Force and is not in a valid position. Spawning item and attempting to find a valid position.");
-DB_LeaderLib_Skills_Temp_PositionChecker_LastValidSpot(_Character, _PositionChecker, _StartX, _StartY, _StartZ);
-ProcObjectTimer(_PositionChecker, "LeaderLib_Timers_PositionChecker_ValidatePosition", 25);
-ItemMoveToPosition(_PositionChecker, _ForceX, _ForceY, _ForceZ, 5.0, 0.0, "LeaderLib_Events_Skills_ForcePositionFinderDone", 1);
-
-IF
-ItemMoved(_PositionChecker)
-AND
-DB_LeaderLib_Skills_Temp_PositionChecker_LastValidSpot(_Character, _PositionChecker, _StartX, _StartY, _StartZ)
-THEN
-SetStoryEvent(_PositionChecker, "LeaderLib_Events_Skills_ForcePositionFinderDone");
+LeaderLib_ToggleScripts_DisableScriptAfterDelay("LeaderLib_Force_EnableEvents", "LeaderLib", 1250);
 
 PROC
 ProcObjectTimerFinished((ITEMGUID)_PositionChecker, "LeaderLib_Timers_PositionChecker_ValidatePosition")
@@ -656,6 +662,16 @@ AND
 DB_LeaderLib_Force_Temp_Resolved(_Event)
 THEN
 NOT DB_LeaderLib_Force_Temp_Resolved(_Event);
+//END_REGION
+
+//REGION UPDATES
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,2,9,1)
+THEN
+LeaderLog_Log("SYSTEM", "[LeaderLib:Skills] Clearing entries in [DB_LeaderLib_Skills_Temp_CheckForcePosition] from version [",_PastVersion,"].");
+SysClear("DB_LeaderLib_Skills_Temp_CheckForcePosition", 4);
 //END_REGION
 EXITSECTION
 

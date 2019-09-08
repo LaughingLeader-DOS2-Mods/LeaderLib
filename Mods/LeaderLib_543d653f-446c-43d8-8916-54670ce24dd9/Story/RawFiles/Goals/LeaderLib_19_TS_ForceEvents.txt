@@ -1,0 +1,33 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+IF
+CharacterStatusRemoved(_Character, "SHOCKWAVE", _)
+AND
+DB_LeaderLib_Skills_Temp_CheckForcePosition(_Character, _StartX, _StartY, _StartZ)
+AND
+GetPosition(_Character, _ForceX, _ForceY, _ForceZ)
+AND
+NOT FindValidPosition(_ForceX, _ForceY, _ForceZ, 10.0, _Character, _, _, _)
+AND
+CreateItemTemplateAtPosition("LOOT_LeaderLib_BackPack_Invisible_98fa7688-0810-4113-ba94-9a8c8463f830", _StartX, _StartY, _StartZ, _PositionChecker)
+THEN
+NOT DB_LeaderLib_Skills_Temp_CheckForcePosition(_Character, _StartX, _StartY, _StartZ);
+ProcObjectTimerCancel(_Character, "LeaderLib_Timers_ClearForcePosition");
+LeaderLog_Log("DEBUG", "[LeaderLib:Skills:ForcePositionCorrection] Character was moved with Force and is not in a valid position. Spawning item and attempting to find a valid position.");
+DB_LeaderLib_Skills_Temp_PositionChecker_LastValidSpot(_Character, _PositionChecker, _StartX, _StartY, _StartZ);
+ProcObjectTimer(_PositionChecker, "LeaderLib_Timers_PositionChecker_ValidatePosition", 25);
+ItemMoveToPosition(_PositionChecker, _ForceX, _ForceY, _ForceZ, 5.0, 0.0, "LeaderLib_Events_Skills_ForcePositionFinderDone", 1);
+
+IF
+ItemMoved(_PositionChecker)
+AND
+DB_LeaderLib_Skills_Temp_PositionChecker_LastValidSpot(_Character, _PositionChecker, _StartX, _StartY, _StartZ)
+THEN
+SetStoryEvent(_PositionChecker, "LeaderLib_Events_Skills_ForcePositionFinderDone");
+EXITSECTION
+LeaderLib_Force_ClearTempData();
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

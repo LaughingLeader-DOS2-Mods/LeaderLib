@@ -36,12 +36,12 @@ LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_GrowthEvents_Item", "Le
 
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Follower_TeleportEvents", "LeaderLib_Follower_Active");
 
-LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Debug", "LeaderLib_IsEditorMode");
-
-LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_ExplodeFix", "LeaderLib_ExplodeFix");
-
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Top_DummyCrimes", "LeaderLib_DummyCrimesEnabled");
 
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_ExplodeFix", "LeaderLib_ExplodeFix");
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_ForceEvents", "LeaderLib_Force_EnableEvents");
+
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Debug", "LeaderLib_IsEditorMode");
 //LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_GrowthEvents_Item_Enabled", "LeaderLib");
 //END_REGION
 
@@ -168,6 +168,14 @@ LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_GrowthEvents_Item_Enabled", "
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,2,9,1)
+THEN
+LeaderLog_Log("SYSTEM", "[LeaderLib:ToggledScripts] Adding [LeaderLib_19_TS_ForceEvents] toggle script from version [",_PastVersion,"].");
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_ForceEvents", "LeaderLib_Force_EnableEvents");
+
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
 LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 2, 5, 0)
 THEN
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Top_DummyCrimes", "LeaderLib_DummyCrimesEnabled");
@@ -256,6 +264,15 @@ THEN
 DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_GlobalFlag, _EnablingModID);
 
 PROC
+LeaderLib_ToggleScripts_EnableScript((STRING)_GlobalFlag, (STRING)_ModID)
+AND
+DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByMod(_GlobalFlag, _ModID)
+THEN
+NOT DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByMod(_GlobalFlag, _ModID);
+LeaderLib_ToggleScripts_Internal_OnCanceledDeactivation(_GlobalFlag, _ModID);
+LeaderLog_Log("DEBUG", "[LeaderLib_19_ToggledScripts:EnableScript] Canceled deactivation of script [",_GlobalFlag,"] for mod [",_ModID,"].");
+
+PROC
 LeaderLib_ToggleScripts_DisableScript((STRING)_GlobalFlag, (STRING)_EnablingModID)
 AND
 DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_GlobalFlag, _EnablingModID)
@@ -270,22 +287,44 @@ NOT DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_GlobalFlag, _)
 THEN
 GlobalClearFlag(_GlobalFlag);
 
+//Add to the "Mod is disabling a script" DB.
 PROC
 LeaderLib_ToggleScripts_DisableScriptAfterDelay((STRING)_GlobalFlag, (STRING)_ModID, (INTEGER)_Delay)
 AND
-StringConcatenate("LeaderLib_Timers_ToggleScripts_DeactivateScript_", _GlobalFlag, _TimerName)
+NOT DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByMod(_GlobalFlag, _ModID)
 THEN
 DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByMod(_GlobalFlag, _ModID);
+LeaderLog_Log("DEBUG", "[LeaderLib_19_ToggledScripts:DisableScriptAfterDelay] Mod [",_ModID,"] is disabling script [",_GlobalFlag,"] after a delay.");
+
+//Create the timer.
+PROC
+LeaderLib_ToggleScripts_DisableScriptAfterDelay((STRING)_GlobalFlag, (STRING)_ModID, (INTEGER)_Delay)
+AND
+NOT DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptTimer(_, _GlobalFlag)
+AND
+StringConcatenate("LeaderLib_Timers_ToggleScripts_DeactivateScript_", _GlobalFlag, _TimerName)
+THEN
 DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptTimer(_TimerName, _GlobalFlag);
+
+//Start/restart the timer
+PROC
+LeaderLib_ToggleScripts_DisableScriptAfterDelay((STRING)_GlobalFlag, (STRING)_ModID, (INTEGER)_Delay)
+AND
+DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptTimer(_TimerName, _GlobalFlag)
+THEN
 TimerCancel(_TimerName);
 TimerLaunch(_TimerName, _Delay);
 
+//No mods left trying to deactivate this script, so cancel the timer.
 PROC
-LeaderLib_ToggleScripts_EnableScript((STRING)_GlobalFlag, (STRING)_ModID)
+LeaderLib_ToggleScripts_Internal_OnCanceledDeactivation((STRING)_GlobalFlag, (STRING)_ModID)
 AND
-DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByMod(_GlobalFlag, _ModID)
+NOT DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByMod(_GlobalFlag, _)
+AND
+DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptTimer(_TimerName, _GlobalFlag)
 THEN
-NOT DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByMod(_GlobalFlag, _ModID);
+NOT DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptTimer(_TimerName, _GlobalFlag);
+TimerCancel(_TimerName);
 
 IF
 TimerFinished(_TimerName)

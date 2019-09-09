@@ -597,6 +597,16 @@ ObjectClearFlag(_Character, "LeaderLib_GenderSwapped", 0);
 //REGION FORCE_PROJECTILE
 PROC
 LeaderLib_Force_Apply((GUIDSTRING)_Source, (GUIDSTRING)_Target, (INTEGER)_Distance)
+THEN
+LeaderLib_Force_Apply(_Source, _Target, _Distance, 0);
+
+PROC
+LeaderLib_Force_Apply((GUIDSTRING)_Source, (GUIDSTRING)_Target, (INTEGER)_Distance, 1)
+THEN
+DB_LeaderLib_Force_Temp_ListenForLanding(_Target, _Source);
+
+PROC
+LeaderLib_Force_Apply((GUIDSTRING)_Source, (GUIDSTRING)_Target, (INTEGER)_Distance, (INTEGER)_SendLandEvent)
 AND
 LeaderLib_Math_QRY_ClampInt("LeaderLib_ForceDistance", _Distance, 1, 20)
 AND
@@ -662,6 +672,37 @@ AND
 DB_LeaderLib_Force_Temp_Resolved(_Event)
 THEN
 NOT DB_LeaderLib_Force_Temp_Resolved(_Event);
+
+//END_REGION
+
+//REGION FORCE_LANDING
+PROC
+ProcObjectTimerFinished((GUIDSTRING)_Target, "LeaderLib_Timers_Force_CheckLanding")
+AND
+DB_LeaderLib_Force_Temp_ListenForLanding(_Target, _Source, _tx, _ty, _tz)
+AND
+GetDistanceToPosition(_Target, _tx, _ty, _tz, _Dist)
+AND
+_Dist <= 0.01
+THEN
+NOT DB_LeaderLib_Force_Temp_ListenForLanding(_Target, _Source, _tx, _ty, _tz);
+LeaderLib_Force_OnLanded(_Target, _Source);
+
+PROC
+ProcObjectTimerFinished((GUIDSTRING)_Target, "LeaderLib_Timers_Force_CheckLanding")
+AND
+DB_LeaderLib_Force_Temp_ListenForLanding(_Target, _Source, _tx, _ty, _tz)
+AND
+GetPosition(_Target, _x, _y, _z)
+THEN
+NOT DB_LeaderLib_Force_Temp_ListenForLanding(_Target, _Source, _tx, _ty, _tz);
+DB_LeaderLib_Force_Temp_ListenForLanding(_Target, _Source, _x, _y, _z);
+ProcObjectTimer(_Target, "LeaderLib_Timers_Force_CheckLanding", 250);
+
+PROC
+LeaderLib_Force_OnLanded((GUIDSTRING)_Target, (GUIDSTRING)_Source)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION UPDATES

@@ -1297,6 +1297,87 @@ THEN
 GoalCompleted;
 SysActivateGoal("LeaderLib_20__Debug");
 
+IF
+TextEventSet("leaderlib_rancircle")
+AND
+CharacterGetHostCharacter(_Char)
+THEN
+DB_LeaderLib_Debug_RanCircleTest(_Char, 20, 10.0);
+ProcObjectTimer(_Char, "LeaderLib_Timers_Debug_RanCircleTest", 50);
+ProcObjectTimer(_Char, "LeaderLib_Timers_Debug_RanCircleTest_NextCircle", 1001);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Char, "LeaderLib_Timers_Debug_RanCircleTest")
+AND
+DB_LeaderLib_Debug_RanCircleTest(_Char, _Count, _Radius)
+AND
+GetPosition(_Char, _x, _y, _z)
+AND
+LeaderLib_Math_QRY_GetRandomPositionInCircle("LeaderLib_Debug_RanSurfaceSpot", _x, _y, _z, _Radius)
+AND
+DB_LeaderLib_Math_RandomCirclePosition("LeaderLib_Debug_RanSurfaceSpot", _tx, _ty, _tz)
+THEN
+NOT DB_LeaderLib_Math_RandomCirclePosition("LeaderLib_Debug_RanSurfaceSpot", _tx, _ty, _tz);
+CreateSurfaceAtPosition(_tx, _ty, _tz, "SurfaceFireBlessed", 1.0, 6.0);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Char, "LeaderLib_Timers_Debug_RanCircleTest")
+AND
+DB_LeaderLib_Debug_RanCircleTest(_Char, _Count, _Radius)
+AND
+_Count > 0
+AND
+IntegerSubtract(_Count, 1, _NextCount)
+THEN
+NOT DB_LeaderLib_Debug_RanCircleTest(_Char, _Count, _Radius);
+DB_LeaderLib_Debug_RanCircleTest(_Char, _NextCount, _Radius);
+ProcObjectTimer(_Char, "LeaderLib_Timers_Debug_RanCircleTest", 50);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Char, "LeaderLib_Timers_Debug_RanCircleTest")
+AND
+DB_LeaderLib_Debug_RanCircleTest(_Char, _Count, _Radius)
+AND
+_Count <= 0
+THEN
+NOT DB_LeaderLib_Debug_RanCircleTest(_Char, _Count, _Radius);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Char, "LeaderLib_Timers_Debug_RanCircleTest_NextCircle")
+THEN
+DB_LeaderLib_Debug_RanCircleTest(_Char, 20, 6.0);
+ProcObjectTimer(_Char, "LeaderLib_Timers_Debug_RanCircleTest", 50);
+ProcObjectTimer(_Char, "LeaderLib_Timers_Debug_RanCircleTest_NextCircle2", 1002);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Char, "LeaderLib_Timers_Debug_RanCircleTest_NextCircle2")
+THEN
+DB_LeaderLib_Debug_RanCircleTest(_Char, 20, 3.0);
+ProcObjectTimer(_Char, "LeaderLib_Timers_Debug_RanCircleTest", 50);
+
+IF
+TextEventSet("leaderlib_rancircle10")
+AND
+CharacterGetHostCharacter((GUIDSTRING)_Char)
+THEN
+LeaderLib_Debug_CreatRandomSurfaceInCircle(_Char, 10, "SurfaceFireBlessed");
+
+PROC
+LeaderLib_Debug_CreatRandomSurfaceInCircle((GUIDSTRING)_Obj, (INTEGER)_Count, (STRING)_Surface)
+AND
+_Count > 0
+AND
+IntegerSubtract(_Count, 1, _NextCount)
+AND
+GetPosition(_Obj, _x, _y, _z)
+AND
+LeaderLib_Math_QRY_GetRandomPositionInCircle("LeaderLib_Debug_RanSurfaceSpot", _x, _y, _z, 10.0)
+AND
+DB_LeaderLib_Math_RandomCirclePosition("LeaderLib_Debug_RanSurfaceSpot", _tx, _ty, _tz)
+THEN
+NOT DB_LeaderLib_Math_RandomCirclePosition("LeaderLib_Debug_RanSurfaceSpot", _tx, _ty, _tz);
+CreateSurfaceAtPosition(_tx, _ty, _tz, _Surface, 1.0, 6.0);
+LeaderLib_Debug_CreatRandomSurfaceInCircle(_Obj, _NextCount, _Surface);
 EXITSECTION
 
 ENDEXITSECTION

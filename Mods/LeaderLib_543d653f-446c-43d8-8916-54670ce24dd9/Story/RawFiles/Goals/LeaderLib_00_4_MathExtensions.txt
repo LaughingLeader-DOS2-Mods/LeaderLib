@@ -300,7 +300,56 @@ DB_LeaderLib_Math_Factorial(_Factor, _Result);
 //END_REGION
 
 //REGION SQUARE_ROOT
+QRY
+LeaderLib_Math_QRY_SquareRoot((REAL)_Number)
+THEN
+LeaderLib_Math_SquareRoot(_Number);
 
+PROC
+LeaderLib_Math_SquareRoot((REAL)_Number)
+AND
+NOT DB_LeaderLib_Math_SquareRoot(_Number, _)
+AND
+RealDivide(_Number, 2.0, _Sqrt)
+THEN
+LeaderLib_Math_Internal_SquareRootLoop(_Number, _Sqrt, 0.0);
+
+PROC
+LeaderLib_Math_Internal_SquareRootLoop((REAL)_Number, (REAL)_Sqrt, (REAL)_Temp)
+AND
+_Sqrt != _Temp
+AND
+RealDivide(_Number, _Sqrt, _a)
+AND
+RealSum(_a, _Sqrt, _b)
+AND
+RealDivide(_b, 2.0, _Sqrt2)
+THEN
+LeaderLib_Math_Internal_SquareRootLoop(_Number, _Sqrt2, _Sqrt);
+
+PROC
+LeaderLib_Math_Internal_SquareRootLoop((REAL)_Number, (REAL)_Sqrt, (REAL)_Temp)
+AND
+_Sqrt == _Temp
+THEN
+DB_LeaderLib_Math_SquareRoot(_Number, _Sqrt);
+
+IF
+TextEventSet("leaderlib_squareroot")
+AND
+GetTextEventParamReal(1, _Number)
+AND
+LeaderLib_Math_QRY_SquareRoot(_Number)
+AND
+DB_LeaderLib_Math_SquareRoot(_Number, _Sqrt)
+//AND
+//Integer(_Sqrt, _SqrtInt)
+//AND
+//IntegertoString(_SqrtInt, _SqrtStr)
+THEN
+NOT DB_LeaderLib_Math_SquareRoot(_Number, _Sqrt);
+//LeaderLog_Log("DEBUG", "[LeaderLib_00_4_MathExtensions:leaderlib_squareroot] Square root is [",_SqrtStr,"]");
+LeaderLog_RealToString(_Sqrt, "[LeaderLib:leaderlib_squareroot] Square root [","]");
 //END_REGION
 
 //REGION SINE
@@ -699,6 +748,72 @@ QRY
 LeaderLib_Math_QRY_ClampInt((STRING)_ID, (INTEGER)_Value, (INTEGER)_Max, (INTEGER)_Min)
 THEN
 LeaderLib_Math_ClampInt(_ID, _Value, _Min, _Max);
+//END_REGION
+
+//REGION RANDOM_POSITION_CIRCLE
+QRY
+LeaderLib_Math_QRY_GetRandomPositionInCircle((STRING)_ID, (REAL)_x, (REAL)_y, (REAL)_z, (REAL)_MaxDistance)
+THEN
+LeaderLib_Math_SetRandomPositionInCircle(_ID, _x, _y, _z, _MaxDistance);
+
+PROC
+LeaderLib_Math_SetRandomPositionInCircle((STRING)_ID, (REAL)_x, (REAL)_y, (REAL)_z, (REAL)_MaxDistance)
+AND
+DB_LeaderLib_Math_RandomCirclePosition(_ID, _tx, _ty, _tz)
+THEN
+NOT DB_LeaderLib_Math_RandomCirclePosition(_ID, _tx, _ty, _tz);
+
+PROC
+LeaderLib_Math_SetRandomPositionInCircle((STRING)_ID, (REAL)_x, (REAL)_y, (REAL)_z, (REAL)_MaxDistance)
+AND
+RealDivide(_MaxDistance, 2.0, _Radius)
+AND
+Random(628318, _RanThetaInt)
+AND
+Real(_RanThetaInt, _RanThetaIntRealPreDivide)
+AND
+RealDivide(_RanThetaIntRealPreDivide, 100000.0, _Theta)
+AND
+Random(1000, _DistScalarInt)
+AND
+Real(_DistScalarInt, _DistScalarReal)
+AND
+RealDivide(_DistScalarReal, 1000.0, _DistScalar)
+AND
+LeaderLib_Math_QRY_SquareRoot(_DistScalar)
+AND
+DB_LeaderLib_Math_SquareRoot(_DistScalar, _Sqrt)
+AND
+RealProduct(_Sqrt, _Radius, _Distance)
+THEN
+NOT DB_LeaderLib_Random(_RanThetaInt);
+NOT DB_LeaderLib_Random(_DistScalarInt);
+NOT DB_LeaderLib_Math_SquareRoot(_DistScalarReal, _Sqrt);
+LeaderLib_Math_SetRandomPositionInCircleFromAngleDist(_ID, _x, _y, _z, _Theta, _Distance);
+
+PROC
+LeaderLib_Math_SetRandomPositionInCircleFromAngleDist((STRING)_ID, (REAL)_x, (REAL)_y, (REAL)_z, (REAL)_Theta, (REAL)_Distance)
+AND
+LeaderLib_Math_QRY_Cosine(_Theta)
+AND
+DB_LeaderLib_Math_Cosine(_Theta, _Cos)
+AND
+RealProduct(_Distance, _Cos, _a)
+AND
+RealSum(_x, _a, _tx)
+AND
+LeaderLib_Math_QRY_Sine(_Theta)
+AND
+DB_LeaderLib_Math_Sine(_Theta, _Sin)
+AND
+RealProduct(_Distance, _Sin, _b)
+AND
+RealSum(_z, _b, _tz)
+THEN
+NOT DB_LeaderLib_Math_Cosine(_Theta, _Cos);
+NOT DB_LeaderLib_Math_Sine(_Theta, _Sin);
+DB_LeaderLib_Math_RandomCirclePosition(_ID, _tx, _y, _tz);
+
 //END_REGION
 EXITSECTION
 

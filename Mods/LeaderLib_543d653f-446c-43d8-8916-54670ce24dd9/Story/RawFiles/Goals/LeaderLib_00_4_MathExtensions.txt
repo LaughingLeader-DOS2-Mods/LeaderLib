@@ -768,50 +768,52 @@ LeaderLib_Math_SetRandomPositionInCircle((STRING)_ID, (REAL)_x, (REAL)_y, (REAL)
 AND
 RealDivide(_MaxDistance, 2.0, _Radius)
 AND
-Random(628318, _RanThetaInt)
+Random(1000, _ThetaRanInt) // [0,1], we need to Ran out of 1000 since Random is an integer
 AND
-Real(_RanThetaInt, _RanThetaIntRealPreDivide)
+Real(_ThetaRanInt, _ThetaRanReal)
 AND
-RealDivide(_RanThetaIntRealPreDivide, 100000.0, _Theta)
+RealDivide(_ThetaRanReal, 1000.0, _ThetaRan) // Ran Float [0,1]
 AND
-Random(1000, _DistScalarInt)
+RealProduct(_ThetaRan, 2.0, _AngleLeftSide)  // [0,1] * 2
+AND
+RealProduct(_AngleLeftSide, 3.14159, _Angle)  // ([0,1] * 2) * Pi
+AND
+Random(1000, _DistScalarInt) // Area = Sqrt x [0,1] / Pi
 AND
 Real(_DistScalarInt, _DistScalarReal)
 AND
 RealDivide(_DistScalarReal, 1000.0, _DistScalar)
 AND
-LeaderLib_Math_QRY_SquareRoot(_DistScalar)
+LeaderLib_Math_QRY_SquareRoot(_DistScalar) // distance = sqrt(random(0.0, 1.0)) * radius
 AND
 DB_LeaderLib_Math_SquareRoot(_DistScalar, _Sqrt)
 AND
 RealProduct(_Sqrt, _Radius, _Distance)
 THEN
-NOT DB_LeaderLib_Random(_RanThetaInt);
-NOT DB_LeaderLib_Random(_DistScalarInt);
 NOT DB_LeaderLib_Math_SquareRoot(_DistScalarReal, _Sqrt);
-LeaderLib_Math_SetRandomPositionInCircleFromAngleDist(_ID, _x, _y, _z, _Theta, _Distance);
+LeaderLib_Math_SetRandomPositionInCircleFromAngleDist(_ID, _x, _y, _z, _Angle, _Distance);
 
 PROC
-LeaderLib_Math_SetRandomPositionInCircleFromAngleDist((STRING)_ID, (REAL)_x, (REAL)_y, (REAL)_z, (REAL)_Theta, (REAL)_Distance)
+LeaderLib_Math_SetRandomPositionInCircleFromAngleDist((STRING)_ID, (REAL)_x, (REAL)_y, (REAL)_z, (REAL)_Angle, (REAL)_Distance)
 AND
-LeaderLib_Math_QRY_Cosine(_Theta)
+LeaderLib_Math_QRY_Cosine(_Angle)
 AND
-DB_LeaderLib_Math_Cosine(_Theta, _Cos)
+DB_LeaderLib_Math_Cosine(_Angle, _Cos)
 AND
 RealProduct(_Distance, _Cos, _a)
 AND
 RealSum(_x, _a, _tx)
 AND
-LeaderLib_Math_QRY_Sine(_Theta)
+LeaderLib_Math_QRY_Sine(_Angle)
 AND
-DB_LeaderLib_Math_Sine(_Theta, _Sin)
+DB_LeaderLib_Math_Sine(_Angle, _Sin)
 AND
 RealProduct(_Distance, _Sin, _b)
 AND
 RealSum(_z, _b, _tz)
 THEN
-NOT DB_LeaderLib_Math_Cosine(_Theta, _Cos);
-NOT DB_LeaderLib_Math_Sine(_Theta, _Sin);
+NOT DB_LeaderLib_Math_Cosine(_Angle, _Cos);
+NOT DB_LeaderLib_Math_Sine(_Angle, _Sin);
 DB_LeaderLib_Math_RandomCirclePosition(_ID, _tx, _y, _tz);
 
 //END_REGION

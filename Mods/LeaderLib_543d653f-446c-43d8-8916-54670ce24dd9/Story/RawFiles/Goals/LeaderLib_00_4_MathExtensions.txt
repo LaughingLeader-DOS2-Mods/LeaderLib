@@ -9,7 +9,26 @@ INITSECTION
 //DB_LeaderLib_Math_AbsoluteValueInt(_Num, _Result)
 
 //DB_LeaderLib_Math_Temp_FactorialOperation(_Factor, _MultiplyBy, _Result)
+
+
 KBSECTION
+//REGION INIT_CACHED_VALUES
+PROC
+LeaderLib_Settings_InitMathValues()
+THEN
+DB_LeaderLib_Math_Factorial(0, 1);
+DB_LeaderLib_Math_Factorial(1, 1);
+DB_LeaderLib_Math_Factorial(2, 2);
+DB_LeaderLib_Math_Factorial(3, 6);
+DB_LeaderLib_Math_Factorial(4, 24);
+DB_LeaderLib_Math_Factorial(5, 120);
+DB_LeaderLib_Math_Factorial(6, 720);
+DB_LeaderLib_Math_Factorial(7, 5040);
+DB_LeaderLib_Math_Factorial(8, 40320);
+DB_LeaderLib_Math_Factorial(9, 362880);
+DB_LeaderLib_Math_Factorial(10, 3628800);
+//END_REGION
+
 //REGION NORMALIZE
 
 //R = tMin + (X - oMin) * (tMax - tMin) / (oMax - oMin)
@@ -120,6 +139,16 @@ AND
 NOT DB_LeaderLib_Math_Power(_Num, _Power, _)
 THEN
 LeaderLib_Math_Internal_CalculatePower(_Num, _Power);
+
+PROC
+LeaderLib_Math_Internal_CalculatePower((REAL)_Num, 0)
+THEN
+DB_LeaderLib_Math_Power(_Num, 0, 1.0);
+
+PROC
+LeaderLib_Math_Internal_CalculatePower((REAL)_Num, 1)
+THEN
+DB_LeaderLib_Math_Power(_Num, 1, _Num);
 
 PROC
 LeaderLib_Math_Internal_CalculatePower((REAL)_Num, 2)
@@ -506,6 +535,70 @@ AND
 RealSum(_xblock3, _xp4, _xblock4)
 THEN
 DB_LeaderLib_Math_Cosine(_Angle, _xblock4);
+//END_REGION
+
+//REGION EXPONENTIAL
+/*
+Source:
+def exp_custom(x, n):
+    e_approx = 0
+    for i in range(n):
+        e_approx += math.pow(x, i)/math.factorial(i)
+    return e_approx
+*/
+QRY
+LeaderLib_Math_QRY_Exponential((REAL)_x, (INTEGER)_Approximation)
+THEN
+LeaderLib_Math_Exponential(_x, _Approximation);
+
+PROC
+LeaderLib_Math_Exponential((REAL)_x, (INTEGER)_Approximation)
+AND
+NOT DB_LeaderLib_Math_Exponential(_x, _Approximation, _)
+THEN
+DB_LeaderLib_Math_Exponential(_x, _Approximation, 0.0);
+LeaderLib_Math_Internal_ExponentialLoop(_x, 0, _Approximation);
+
+PROC
+LeaderLib_Math_Internal_ExponentialLoop((REAL)_x, (INTEGER)_i, (INTEGER)_Approximation)
+AND
+_i < _Approximation
+AND
+IntegerSum(_i, 1, _NextIndex)
+AND
+LeaderLib_Math_QRY_Power(_x, _i)
+AND
+DB_LeaderLib_Math_Power(_x, _i, _p1)
+AND
+LeaderLib_Math_QRY_Factorial(_i)
+AND
+DB_LeaderLib_Math_Factorial(_i, _f1)
+AND
+Real(_f1, _fr1)
+AND
+RealDivide(_p1, _fr1, _exp)
+AND
+DB_LeaderLib_Math_Exponential(_x, _Approximation, _Val)
+AND
+RealSum(_Val, _exp, _NextVal)
+THEN
+NOT DB_LeaderLib_Math_Exponential(_x, _Approximation, _Val);
+DB_LeaderLib_Math_Exponential(_x, _Approximation, _NextVal);
+LeaderLib_Math_Internal_ExponentialLoop(_x, _NextIndex, _Approximation);
+
+IF
+TextEventSet("leaderlib_exp")
+AND
+GetTextEventParamReal(1, _x)
+AND
+GetTextEventParamInteger(2, _n)
+AND
+LeaderLib_Math_QRY_Exponential(_x, _n)
+AND
+DB_LeaderLib_Math_Exponential(_x, _n, _Val)
+THEN
+NOT DB_LeaderLib_Math_Exponential(_x, _n, _Val);
+LeaderLog_RealToString(_Val, "[LeaderLib:leaderlib_exp] Exponential [","]");
 //END_REGION
 
 //REGION ABSOLUTE

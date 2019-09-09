@@ -32,6 +32,7 @@ LeaderLib_Settings_InitStatusData();
 LeaderLib_Settings_InitCCData();
 LeaderLib_Settings_InitRuneSlotHelperData();
 LeaderLib_Settings_InitForceHelperData();
+LeaderLib_Settings_InitMathValues();
 
 SysClear("DB_LeaderLib_Settings_QueueRates", 3);
 DB_LeaderLib_Settings_QueueRates("TraderSpawn", 500, 2000);
@@ -795,6 +796,7 @@ LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,2,9,0)
 THEN
 LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
 LeaderLib_Settings_InitForceHelperData();
+LeaderLib_Settings_InitMathValues();
 
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)

@@ -641,122 +641,6 @@ DB_LeaderLib_RuneSlotDeltaMod("LeaderLib", "Boost_LeaderLib_Armor_UpperBody_Empt
 DB_LeaderLib_RuneSlotDeltaMod("LeaderLib", "Boost_LeaderLib_Armor_UpperBody_EmptyRuneSlot2");
 //END_REGION
 
-//REGION UPDATES
-PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
-AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,2,9,0)
-THEN
-LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
-LeaderLib_Settings_InitForceHelperData();
-
-PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
-AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,2,7,0)
-THEN
-LeaderLib_Settings_InitRuneSlotHelperData();
-LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
-
-PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
-AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,1,17,0)
-THEN
-LeaderLib_Settings_InitCCData();
-LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
-
-//Add missing _BaseTag to regular races
-PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
-AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,1,14,0)
-THEN
-LeaderLib_Settings_Internal_UpdateTalents();
-LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
-
-//Add missing _BaseTag to regular races
-PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
-AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 13, 12)
-THEN
-SysClear("DB_LeaderLib_RaceTags", 3);
-LeaderLib_Settings_InitRaceData();
-LeaderLib_Helper_Register_IgnoreTag_Character("LeaderLib", "LeaderLib_Dummy");
-LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
-
-PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
-AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 11, 0)
-THEN
-SysClear("DB_LeaderLib_RaceTags", 2);
-LeaderLib_Settings_InitSkillData();
-LeaderLib_Settings_InitRaceData();
-LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
-
-PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
-AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 9, 2)
-THEN
-SysClear("DB_LeaderLib_EngineStatus", 1);
-LeaderLib_Settings_InitStatusData();
-DB_NeutralTagIgnore("LeaderLib_Dummy");
-LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
-
-PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
-AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 0, 0)
-THEN
-NOT DB_LeaderLib_SurfaceGroup("SurfaceBloodFrozen", "Standard");
-NOT DB_LeaderLib_SurfaceGroup("SurfaceBloodElectrified", "Standard");
-NOT DB_LeaderLib_SurfaceGroup("SurfaceBloodCloudElectrified", "Standard");
-DB_LeaderLib_SurfaceGroup("SurfaceBlood", "BloodStandard");
-DB_LeaderLib_SurfaceGroup("SurfaceBloodFrozen", "BloodStandard");
-DB_LeaderLib_SurfaceGroup("SurfaceBloodElectrified", "BloodStandard");
-DB_LeaderLib_SurfaceGroup("SurfaceBloodCloudElectrified", "BloodStandard");
-LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updating surface settings from version [",_PastVersion,"].");
-
-PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
-AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 0, 0)
-THEN
-LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
-LeaderLib_Settings_InitSurfaces();
-LeaderLib_Settings_SettingsInitialized();
-
-PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
-AND
-NOT DB_LLBARTER_DialogBlacklist("LeaderLib", _PastVersion)
-THEN
-DB_LLBARTER_DialogBlacklist("LeaderLib", "LeaderLib_AutosaveMenu");
-LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updating dialog variables from version [",_PastVersion,"].");
-DB_LeaderLib_Settings_DialogVariables("CurrentAutosaveInterval", "LeaderLib_AutosaveMenu_CurrentSettings_b48918b6-4864-4aae-88fd-53d658ccb082");
-SysClear("DB_LeaderLib_Talents", 1);
-LeaderLib_Settings_InitStats();
-
-PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
-AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 6, 0)
-THEN
-LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
-LeaderLib_Settings_InitRaceData();
-
-PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
-AND
-NOT DB_LeaderLib_EngineStatus(_)
-THEN
-LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updating [DB_LeaderLib_EngineStatus] from version [",_PastVersion,"].");
-LeaderLib_Settings_InitStatusData();
-//END_REGION
-
 //REGION MOD_DATA
 IF
 ObjectFlagSet("LeaderLib_Settings_ListMods", _Player, _Instance)
@@ -901,6 +785,122 @@ DB_LeaderLib_ForceEvent(17, "LeaderLib_Force_ShootProjectile_17", "LeaderLib_For
 DB_LeaderLib_ForceEvent(18, "LeaderLib_Force_ShootProjectile_18", "LeaderLib_Force_ShootProjectileFromItem_18");
 DB_LeaderLib_ForceEvent(19, "LeaderLib_Force_ShootProjectile_19", "LeaderLib_Force_ShootProjectileFromItem_19");
 DB_LeaderLib_ForceEvent(20, "LeaderLib_Force_ShootProjectile_20", "LeaderLib_Force_ShootProjectileFromItem_20");
+//END_REGION
+
+//REGION UPDATES
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,2,9,0)
+THEN
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
+LeaderLib_Settings_InitForceHelperData();
+
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,2,7,0)
+THEN
+LeaderLib_Settings_InitRuneSlotHelperData();
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
+
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,1,17,0)
+THEN
+LeaderLib_Settings_InitCCData();
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
+
+//Add missing _BaseTag to regular races
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,1,14,0)
+THEN
+LeaderLib_Settings_Internal_UpdateTalents();
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
+
+//Add missing _BaseTag to regular races
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 13, 12)
+THEN
+SysClear("DB_LeaderLib_RaceTags", 3);
+LeaderLib_Settings_InitRaceData();
+LeaderLib_Helper_Register_IgnoreTag_Character("LeaderLib", "LeaderLib_Dummy");
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
+
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 11, 0)
+THEN
+SysClear("DB_LeaderLib_RaceTags", 2);
+LeaderLib_Settings_InitSkillData();
+LeaderLib_Settings_InitRaceData();
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
+
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 9, 2)
+THEN
+SysClear("DB_LeaderLib_EngineStatus", 1);
+LeaderLib_Settings_InitStatusData();
+DB_NeutralTagIgnore("LeaderLib_Dummy");
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
+
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 0, 0)
+THEN
+NOT DB_LeaderLib_SurfaceGroup("SurfaceBloodFrozen", "Standard");
+NOT DB_LeaderLib_SurfaceGroup("SurfaceBloodElectrified", "Standard");
+NOT DB_LeaderLib_SurfaceGroup("SurfaceBloodCloudElectrified", "Standard");
+DB_LeaderLib_SurfaceGroup("SurfaceBlood", "BloodStandard");
+DB_LeaderLib_SurfaceGroup("SurfaceBloodFrozen", "BloodStandard");
+DB_LeaderLib_SurfaceGroup("SurfaceBloodElectrified", "BloodStandard");
+DB_LeaderLib_SurfaceGroup("SurfaceBloodCloudElectrified", "BloodStandard");
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updating surface settings from version [",_PastVersion,"].");
+
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 0, 0)
+THEN
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
+LeaderLib_Settings_InitSurfaces();
+LeaderLib_Settings_SettingsInitialized();
+
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+NOT DB_LLBARTER_DialogBlacklist("LeaderLib", _PastVersion)
+THEN
+DB_LLBARTER_DialogBlacklist("LeaderLib", "LeaderLib_AutosaveMenu");
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updating dialog variables from version [",_PastVersion,"].");
+DB_LeaderLib_Settings_DialogVariables("CurrentAutosaveInterval", "LeaderLib_AutosaveMenu_CurrentSettings_b48918b6-4864-4aae-88fd-53d658ccb082");
+SysClear("DB_LeaderLib_Talents", 1);
+LeaderLib_Settings_InitStats();
+
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 6, 0)
+THEN
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
+LeaderLib_Settings_InitRaceData();
+
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+NOT DB_LeaderLib_EngineStatus(_)
+THEN
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updating [DB_LeaderLib_EngineStatus] from version [",_PastVersion,"].");
+LeaderLib_Settings_InitStatusData();
 //END_REGION
 EXITSECTION
 

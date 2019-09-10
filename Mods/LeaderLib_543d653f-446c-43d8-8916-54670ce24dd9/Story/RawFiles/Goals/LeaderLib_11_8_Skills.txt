@@ -598,7 +598,7 @@ ObjectClearFlag(_Character, "LeaderLib_GenderSwapped", 0);
 PROC
 LeaderLib_Force_Apply((GUIDSTRING)_Source, (GUIDSTRING)_Target, (INTEGER)_Distance)
 THEN
-LeaderLib_Force_Apply(_Source, _Target, _Distance, 0);
+LeaderLib_Force_Apply(_Source, _Target, _Distance, 1);
 
 PROC
 LeaderLib_Force_Apply((GUIDSTRING)_Source, (GUIDSTRING)_Target, (INTEGER)_Distance, 1)
@@ -675,6 +675,32 @@ NOT DB_LeaderLib_Force_Temp_Resolved(_Event);
 
 //END_REGION
 
+//REGION FORCE_ITEM_MOVE
+IF
+CharacterItemEvent(_Source, _Target, "LeaderLib_Force_MoveItem")
+AND
+GetVarFloat3(_Target, "LeaderLib_Force_HalfwayPosition", _x, _y, _z)
+THEN
+ItemMoveToPosition(_Target, _x, _y, _z, 8.0, 22.0, "LeaderLib_Force_ItemIsHalfway", 1);
+
+IF
+StoryEvent((ITEMGUID)_Target, "LeaderLib_Force_ItemIsHalfway")
+AND
+GetVarFloat3(_Target, "LeaderLib_Force_LandPosition", _x, _y, _z)
+THEN
+ItemMoveToPosition(_Target, _x, _y, _z, 16.0, 32.0, "LeaderLib_Force_ItemDoneMoving", 1);
+
+IF
+StoryEvent((ITEMGUID)_Target, "LeaderLib_Force_ItemDoneMoving")
+AND
+GetVarObject(_Target, "LeaderLib_Force_Source", _Source)
+THEN
+LeaderLib_Force_OnLanded((GUIDSTRING)_Target, (GUIDSTRING)_Source);
+ClearVarObject(_Target, "LeaderLib_Force_Source");
+ClearVarObject(_Target, "LeaderLib_Force_LandPosition");
+ClearVarObject(_Target, "LeaderLib_Force_HalfwayPosition");
+//END_REGION
+
 //REGION FORCE_LANDING
 PROC
 ProcObjectTimerFinished((GUIDSTRING)_Target, "LeaderLib_Timers_Force_CheckLanding")
@@ -684,6 +710,19 @@ AND
 GetDistanceToPosition(_Target, _tx, _ty, _tz, _Dist)
 AND
 _Dist <= 0.01
+/*
+GetPosition(_Target, _, _y, _)
+AND
+RealSubtract(_ty, _y, _HeightDiff)
+AND
+LeaderLib_Math_QRY_AbsoluteValue(_HeightDiff)
+AND
+DB_LeaderLib_Math_AbsoluteValue(_HeightDiff, _HeightDiffAbs)
+AND
+LeaderLib_Math_QRY_ClearAbsoluteValues()
+AND
+_HeightDiffAbs < 1.0
+*/
 THEN
 NOT DB_LeaderLib_Force_Temp_ListenForLanding(_Target, _Source, _tx, _ty, _tz);
 LeaderLib_Force_OnLanded(_Target, _Source);
@@ -697,7 +736,7 @@ GetPosition(_Target, _x, _y, _z)
 THEN
 NOT DB_LeaderLib_Force_Temp_ListenForLanding(_Target, _Source, _tx, _ty, _tz);
 DB_LeaderLib_Force_Temp_ListenForLanding(_Target, _Source, _x, _y, _z);
-ProcObjectTimer(_Target, "LeaderLib_Timers_Force_CheckLanding", 250);
+ProcObjectTimer(_Target, "LeaderLib_Timers_Force_CheckLanding", 60);
 
 PROC
 LeaderLib_Force_OnLanded((GUIDSTRING)_Target, (GUIDSTRING)_Source)

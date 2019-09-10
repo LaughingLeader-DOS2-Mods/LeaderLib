@@ -4,7 +4,7 @@ INITSECTION
 
 KBSECTION
 IF
-CharacterStatusRemoved((GUIDSTRING)_Target, "SHOCKWAVE", _)
+CharacterStatusAttempt((GUIDSTRING)_Target, "SHOCKWAVE", _)
 AND
 DB_LeaderLib_Force_Temp_ListenForLanding(_Target, (GUIDSTRING)_Source)
 AND

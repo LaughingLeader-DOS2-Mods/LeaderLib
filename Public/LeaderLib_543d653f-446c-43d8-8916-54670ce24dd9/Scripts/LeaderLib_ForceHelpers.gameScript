@@ -2,6 +2,95 @@ INIT
 
 EVENTS
 
+EVENT LeaderLib_Force_StartMoveItem
+VARS
+	CHARACTER:_Source
+	ITEM:_Target
+	FLOAT3:_Dir
+	FLOAT3:_Pos
+	FLOAT3:_LandPos
+	FLOAT3:_HalfwayPos
+	FLOAT:_Dist
+	FLOAT:_AirY
+	FLOAT:_Mult
+	FLOAT:_HalfMult
+	FLOAT:_DistToNext
+	STRING:_Str
+	
+	FLOAT:_HeightMult
+	FLOAT:_NormalizeA
+	FLOAT:_NormalizeB
+ON
+	OnCharacterItemEvent(_Source, _Target, "LeaderLib_Force_StartMoveItem")
+ACTIONS
+IF "c1&c2"
+	GetVar(_Mult, _Target, "LeaderLib_Force_ForceDistance")
+	GetPosition(_Target, _Pos)
+THEN
+	Set(_HalfMult, _Mult)
+	Divide(_HalfMult, 2)
+	
+	GetDirection(_Source, _Target, _Dir, _Dist)
+	GetForwardDirection(_Source, _LandPos)
+	
+	Set(_HalfwayPos, _LandPos)
+	
+	Multiply(_LandPos, _Mult)
+	Multiply(_HalfwayPos, _HalfMult)
+	
+	Add(_LandPos, _Pos)
+	Add(_HalfwayPos, _Pos)
+	
+	IF "c1"
+		GetY(_HalfwayPos, _AirY)
+	THEN
+		// (b−a) * (x − min(x)) / (max(x) − min(x)) + a
+		// Where a == min distance, b = max distance, x = multiplier
+		Set(_HeightMult, 4.0)
+		Subtract(_HeightMult, 0.5)
+		
+		Set(_NormalizeA, _Mult)
+		Subtract(_NormalizeA, 2.0) // Min mult
+		
+		Set(_NormalizeB, 20.0) // Max mult
+		Subtract(_NormalizeB, 2.0) // Min mult
+		
+		Multiply(_HeightMult, _NormalizeA)
+		Divide(_HeightMult, _NormalizeB)
+		Add(_HeightMult, 0.5) // + a
+
+		Add(_AirY, _HeightMult)
+		SetY(_HalfwayPos, _AirY)
+	ENDIF
+	/*
+	IF "c1"
+		FindValidPosition(_HalfwayPos, 6.0, _Target)
+	THEN
+	ENDIF
+	*/
+	IF "c1"
+		FindValidPosition(_LandPos, 2.0, _Target)
+	THEN
+	ENDIF
+	
+	SetVar(_Target, "LeaderLib_Force_HalfwayPosition", _HalfwayPos)
+	SetVar(_Target, "LeaderLib_Force_LandPosition", _LandPos)
+	SetVar(_Target, "LeaderLib_Force_Source", _Source)
+	ItemApplyStatus(_Target, LEADERLIB_FORCE_APPLIED, 0, 0, _Source)
+	CharacterItemEvent(_Source, _Target, "LeaderLib_Force_MoveItem")
+	
+	IF "c1"
+		GetDistance(_DistToNext, _Pos, _LandPos)
+	THEN
+	
+	ENDIF
+	
+	Print(_Str, "[LeaderLib:Force_Item_Start] _Pos([8]) _Dir([1]) _LandPos([2]) _HalfwayPos([3]) _Dist([4]) _AirY([5]) _Mult([6]) _HalfMult([7]) _DistToNext([9])", _Dir, _LandPos, _HalfwayPos, _Dist, _AirY, _Mult, _HalfMult, _Pos, _DistToNext)
+	SetVar(_Source, "LeaderLog_Type", STRING:"Debug")
+	SetVar(_Source, "LeaderLog_Message", _Str)
+	CharacterEvent(_Source, "LeaderLog_Commands_Log")
+ENDIF
+
 /*
 Auto-generated events, allowing force to be applied purely through events (no variables required).
 */
@@ -196,7 +285,8 @@ VARS
 ON
 	OnCharacterItemEvent(_Source, _Target, "LeaderLib_Force_ShootProjectile_1")
 ACTIONS
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force1, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
+	SetVar(_Target, "LeaderLib_Force_ForceDistance", FLOAT:1.0)
+	CharacterItemEvent(_Source, _Target, "LeaderLib_Force_StartMoveItem")
 
 EVENT LeaderLib_Force_ShootProjectile_CharItem_2
 VARS
@@ -205,7 +295,8 @@ VARS
 ON
 	OnCharacterItemEvent(_Source, _Target, "LeaderLib_Force_ShootProjectile_2")
 ACTIONS
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force2, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
+	SetVar(_Target, "LeaderLib_Force_ForceDistance", FLOAT:2.0)
+	CharacterItemEvent(_Source, _Target, "LeaderLib_Force_StartMoveItem")
 
 EVENT LeaderLib_Force_ShootProjectile_CharItem_3
 VARS
@@ -214,7 +305,8 @@ VARS
 ON
 	OnCharacterItemEvent(_Source, _Target, "LeaderLib_Force_ShootProjectile_3")
 ACTIONS
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force3, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
+	SetVar(_Target, "LeaderLib_Force_ForceDistance", FLOAT:3.0)
+	CharacterItemEvent(_Source, _Target, "LeaderLib_Force_StartMoveItem")
 
 EVENT LeaderLib_Force_ShootProjectile_CharItem_4
 VARS
@@ -223,7 +315,8 @@ VARS
 ON
 	OnCharacterItemEvent(_Source, _Target, "LeaderLib_Force_ShootProjectile_4")
 ACTIONS
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force4, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
+	SetVar(_Target, "LeaderLib_Force_ForceDistance", FLOAT:4.0)
+	CharacterItemEvent(_Source, _Target, "LeaderLib_Force_StartMoveItem")
 
 EVENT LeaderLib_Force_ShootProjectile_CharItem_5
 VARS
@@ -232,7 +325,8 @@ VARS
 ON
 	OnCharacterItemEvent(_Source, _Target, "LeaderLib_Force_ShootProjectile_5")
 ACTIONS
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force5, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
+	SetVar(_Target, "LeaderLib_Force_ForceDistance", FLOAT:5.0)
+	CharacterItemEvent(_Source, _Target, "LeaderLib_Force_StartMoveItem")
 
 EVENT LeaderLib_Force_ShootProjectile_CharItem_6
 VARS
@@ -241,7 +335,8 @@ VARS
 ON
 	OnCharacterItemEvent(_Source, _Target, "LeaderLib_Force_ShootProjectile_6")
 ACTIONS
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force6, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
+	SetVar(_Target, "LeaderLib_Force_ForceDistance", FLOAT:6.0)
+	CharacterItemEvent(_Source, _Target, "LeaderLib_Force_StartMoveItem")
 
 EVENT LeaderLib_Force_ShootProjectile_CharItem_7
 VARS
@@ -250,7 +345,8 @@ VARS
 ON
 	OnCharacterItemEvent(_Source, _Target, "LeaderLib_Force_ShootProjectile_7")
 ACTIONS
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force7, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
+	SetVar(_Target, "LeaderLib_Force_ForceDistance", FLOAT:7.0)
+	CharacterItemEvent(_Source, _Target, "LeaderLib_Force_StartMoveItem")
 
 EVENT LeaderLib_Force_ShootProjectile_CharItem_8
 VARS
@@ -259,7 +355,8 @@ VARS
 ON
 	OnCharacterItemEvent(_Source, _Target, "LeaderLib_Force_ShootProjectile_8")
 ACTIONS
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force8, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
+	SetVar(_Target, "LeaderLib_Force_ForceDistance", FLOAT:8.0)
+	CharacterItemEvent(_Source, _Target, "LeaderLib_Force_StartMoveItem")
 
 EVENT LeaderLib_Force_ShootProjectile_CharItem_9
 VARS
@@ -268,7 +365,8 @@ VARS
 ON
 	OnCharacterItemEvent(_Source, _Target, "LeaderLib_Force_ShootProjectile_9")
 ACTIONS
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force9, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
+	SetVar(_Target, "LeaderLib_Force_ForceDistance", FLOAT:9.0)
+	CharacterItemEvent(_Source, _Target, "LeaderLib_Force_StartMoveItem")
 
 EVENT LeaderLib_Force_ShootProjectile_CharItem_10
 VARS
@@ -277,7 +375,8 @@ VARS
 ON
 	OnCharacterItemEvent(_Source, _Target, "LeaderLib_Force_ShootProjectile_10")
 ACTIONS
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force10, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
+	SetVar(_Target, "LeaderLib_Force_ForceDistance", FLOAT:10.0)
+	CharacterItemEvent(_Source, _Target, "LeaderLib_Force_StartMoveItem")
 
 EVENT LeaderLib_Force_ShootProjectile_CharItem_11
 VARS
@@ -286,7 +385,8 @@ VARS
 ON
 	OnCharacterItemEvent(_Source, _Target, "LeaderLib_Force_ShootProjectile_11")
 ACTIONS
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force11, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
+	SetVar(_Target, "LeaderLib_Force_ForceDistance", FLOAT:11.0)
+	CharacterItemEvent(_Source, _Target, "LeaderLib_Force_StartMoveItem")
 
 EVENT LeaderLib_Force_ShootProjectile_CharItem_12
 VARS
@@ -295,7 +395,8 @@ VARS
 ON
 	OnCharacterItemEvent(_Source, _Target, "LeaderLib_Force_ShootProjectile_12")
 ACTIONS
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force12, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
+	SetVar(_Target, "LeaderLib_Force_ForceDistance", FLOAT:12.0)
+	CharacterItemEvent(_Source, _Target, "LeaderLib_Force_StartMoveItem")
 
 EVENT LeaderLib_Force_ShootProjectile_CharItem_13
 VARS
@@ -304,7 +405,8 @@ VARS
 ON
 	OnCharacterItemEvent(_Source, _Target, "LeaderLib_Force_ShootProjectile_13")
 ACTIONS
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force13, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
+	SetVar(_Target, "LeaderLib_Force_ForceDistance", FLOAT:13.0)
+	CharacterItemEvent(_Source, _Target, "LeaderLib_Force_StartMoveItem")
 
 EVENT LeaderLib_Force_ShootProjectile_CharItem_14
 VARS
@@ -313,7 +415,8 @@ VARS
 ON
 	OnCharacterItemEvent(_Source, _Target, "LeaderLib_Force_ShootProjectile_14")
 ACTIONS
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force14, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
+	SetVar(_Target, "LeaderLib_Force_ForceDistance", FLOAT:14.0)
+	CharacterItemEvent(_Source, _Target, "LeaderLib_Force_StartMoveItem")
 
 EVENT LeaderLib_Force_ShootProjectile_CharItem_15
 VARS
@@ -322,7 +425,8 @@ VARS
 ON
 	OnCharacterItemEvent(_Source, _Target, "LeaderLib_Force_ShootProjectile_15")
 ACTIONS
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force15, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
+	SetVar(_Target, "LeaderLib_Force_ForceDistance", FLOAT:15.0)
+	CharacterItemEvent(_Source, _Target, "LeaderLib_Force_StartMoveItem")
 
 EVENT LeaderLib_Force_ShootProjectile_CharItem_16
 VARS
@@ -331,7 +435,8 @@ VARS
 ON
 	OnCharacterItemEvent(_Source, _Target, "LeaderLib_Force_ShootProjectile_16")
 ACTIONS
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force16, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
+	SetVar(_Target, "LeaderLib_Force_ForceDistance", FLOAT:16.0)
+	CharacterItemEvent(_Source, _Target, "LeaderLib_Force_StartMoveItem")
 
 EVENT LeaderLib_Force_ShootProjectile_CharItem_17
 VARS
@@ -340,7 +445,8 @@ VARS
 ON
 	OnCharacterItemEvent(_Source, _Target, "LeaderLib_Force_ShootProjectile_17")
 ACTIONS
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force17, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
+	SetVar(_Target, "LeaderLib_Force_ForceDistance", FLOAT:17.0)
+	CharacterItemEvent(_Source, _Target, "LeaderLib_Force_StartMoveItem")
 
 EVENT LeaderLib_Force_ShootProjectile_CharItem_18
 VARS
@@ -349,7 +455,8 @@ VARS
 ON
 	OnCharacterItemEvent(_Source, _Target, "LeaderLib_Force_ShootProjectile_18")
 ACTIONS
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force18, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
+	SetVar(_Target, "LeaderLib_Force_ForceDistance", FLOAT:18.0)
+	CharacterItemEvent(_Source, _Target, "LeaderLib_Force_StartMoveItem")
 
 EVENT LeaderLib_Force_ShootProjectile_CharItem_19
 VARS
@@ -358,7 +465,8 @@ VARS
 ON
 	OnCharacterItemEvent(_Source, _Target, "LeaderLib_Force_ShootProjectile_19")
 ACTIONS
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force19, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
+	SetVar(_Target, "LeaderLib_Force_ForceDistance", FLOAT:19.0)
+	CharacterItemEvent(_Source, _Target, "LeaderLib_Force_StartMoveItem")
 
 EVENT LeaderLib_Force_ShootProjectile_CharItem_20
 VARS
@@ -367,7 +475,8 @@ VARS
 ON
 	OnCharacterItemEvent(_Source, _Target, "LeaderLib_Force_ShootProjectile_20")
 ACTIONS
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force20, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
+	SetVar(_Target, "LeaderLib_Force_ForceDistance", FLOAT:20.0)
+	CharacterItemEvent(_Source, _Target, "LeaderLib_Force_StartMoveItem")
 //END_REGION
 
 //REGION ITEM_CHARACTER
@@ -550,268 +659,4 @@ ON
 	OnCharacterItemEvent(_Target, _Source, "LeaderLib_Force_ShootProjectileFromItem_20")
 ACTIONS
 	ShootLocalProjectileAt(Projectile_LeaderLib_Force20, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
-//END_REGION
-
-//REGION ITEM_ITEM
-//Need a var here since there's no ItemItem event.
-
-EVENT LeaderLib_Force_ShootProjectile_ItemItem_1
-VARS
-	ITEM:_Source
-	ITEM:_Target
-ON
-	OnItemEvent(_Target, "LeaderLib_Force_ShootProjectile_1")
-ACTIONS
-IF "c1"
-	GetVar(_Source, _Target, "LeaderLib_Force_SourceItem")
-THEN
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force1, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
-ENDIF
-
-EVENT LeaderLib_Force_ShootProjectile_ItemItem_2
-VARS
-	ITEM:_Source
-	ITEM:_Target
-ON
-	OnItemEvent(_Target, "LeaderLib_Force_ShootProjectile_2")
-ACTIONS
-IF "c1"
-	GetVar(_Source, _Target, "LeaderLib_Force_SourceItem")
-THEN
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force2, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
-ENDIF
-
-EVENT LeaderLib_Force_ShootProjectile_ItemItem_3
-VARS
-	ITEM:_Source
-	ITEM:_Target
-ON
-	OnItemEvent(_Target, "LeaderLib_Force_ShootProjectile_3")
-ACTIONS
-IF "c1"
-	GetVar(_Source, _Target, "LeaderLib_Force_SourceItem")
-THEN
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force3, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
-ENDIF
-
-EVENT LeaderLib_Force_ShootProjectile_ItemItem_4
-VARS
-	ITEM:_Source
-	ITEM:_Target
-ON
-	OnItemEvent(_Target, "LeaderLib_Force_ShootProjectile_4")
-ACTIONS
-IF "c1"
-	GetVar(_Source, _Target, "LeaderLib_Force_SourceItem")
-THEN
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force4, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
-ENDIF
-
-EVENT LeaderLib_Force_ShootProjectile_ItemItem_5
-VARS
-	ITEM:_Source
-	ITEM:_Target
-ON
-	OnItemEvent(_Target, "LeaderLib_Force_ShootProjectile_5")
-ACTIONS
-IF "c1"
-	GetVar(_Source, _Target, "LeaderLib_Force_SourceItem")
-THEN
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force5, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
-ENDIF
-
-EVENT LeaderLib_Force_ShootProjectile_ItemItem_6
-VARS
-	ITEM:_Source
-	ITEM:_Target
-ON
-	OnItemEvent(_Target, "LeaderLib_Force_ShootProjectile_6")
-ACTIONS
-IF "c1"
-	GetVar(_Source, _Target, "LeaderLib_Force_SourceItem")
-THEN
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force6, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
-ENDIF
-
-EVENT LeaderLib_Force_ShootProjectile_ItemItem_7
-VARS
-	ITEM:_Source
-	ITEM:_Target
-ON
-	OnItemEvent(_Target, "LeaderLib_Force_ShootProjectile_7")
-ACTIONS
-IF "c1"
-	GetVar(_Source, _Target, "LeaderLib_Force_SourceItem")
-THEN
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force7, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
-ENDIF
-
-EVENT LeaderLib_Force_ShootProjectile_ItemItem_8
-VARS
-	ITEM:_Source
-	ITEM:_Target
-ON
-	OnItemEvent(_Target, "LeaderLib_Force_ShootProjectile_8")
-ACTIONS
-IF "c1"
-	GetVar(_Source, _Target, "LeaderLib_Force_SourceItem")
-THEN
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force8, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
-ENDIF
-
-EVENT LeaderLib_Force_ShootProjectile_ItemItem_9
-VARS
-	ITEM:_Source
-	ITEM:_Target
-ON
-	OnItemEvent(_Target, "LeaderLib_Force_ShootProjectile_9")
-ACTIONS
-IF "c1"
-	GetVar(_Source, _Target, "LeaderLib_Force_SourceItem")
-THEN
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force9, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
-ENDIF
-
-EVENT LeaderLib_Force_ShootProjectile_ItemItem_10
-VARS
-	ITEM:_Source
-	ITEM:_Target
-ON
-	OnItemEvent(_Target, "LeaderLib_Force_ShootProjectile_10")
-ACTIONS
-IF "c1"
-	GetVar(_Source, _Target, "LeaderLib_Force_SourceItem")
-THEN
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force10, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
-ENDIF
-
-EVENT LeaderLib_Force_ShootProjectile_ItemItem_11
-VARS
-	ITEM:_Source
-	ITEM:_Target
-ON
-	OnItemEvent(_Target, "LeaderLib_Force_ShootProjectile_11")
-ACTIONS
-IF "c1"
-	GetVar(_Source, _Target, "LeaderLib_Force_SourceItem")
-THEN
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force11, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
-ENDIF
-
-EVENT LeaderLib_Force_ShootProjectile_ItemItem_12
-VARS
-	ITEM:_Source
-	ITEM:_Target
-ON
-	OnItemEvent(_Target, "LeaderLib_Force_ShootProjectile_12")
-ACTIONS
-IF "c1"
-	GetVar(_Source, _Target, "LeaderLib_Force_SourceItem")
-THEN
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force12, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
-ENDIF
-
-EVENT LeaderLib_Force_ShootProjectile_ItemItem_13
-VARS
-	ITEM:_Source
-	ITEM:_Target
-ON
-	OnItemEvent(_Target, "LeaderLib_Force_ShootProjectile_13")
-ACTIONS
-IF "c1"
-	GetVar(_Source, _Target, "LeaderLib_Force_SourceItem")
-THEN
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force13, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
-ENDIF
-
-EVENT LeaderLib_Force_ShootProjectile_ItemItem_14
-VARS
-	ITEM:_Source
-	ITEM:_Target
-ON
-	OnItemEvent(_Target, "LeaderLib_Force_ShootProjectile_14")
-ACTIONS
-IF "c1"
-	GetVar(_Source, _Target, "LeaderLib_Force_SourceItem")
-THEN
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force14, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
-ENDIF
-
-EVENT LeaderLib_Force_ShootProjectile_ItemItem_15
-VARS
-	ITEM:_Source
-	ITEM:_Target
-ON
-	OnItemEvent(_Target, "LeaderLib_Force_ShootProjectile_15")
-ACTIONS
-IF "c1"
-	GetVar(_Source, _Target, "LeaderLib_Force_SourceItem")
-THEN
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force15, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
-ENDIF
-
-EVENT LeaderLib_Force_ShootProjectile_ItemItem_16
-VARS
-	ITEM:_Source
-	ITEM:_Target
-ON
-	OnItemEvent(_Target, "LeaderLib_Force_ShootProjectile_16")
-ACTIONS
-IF "c1"
-	GetVar(_Source, _Target, "LeaderLib_Force_SourceItem")
-THEN
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force16, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
-ENDIF
-
-EVENT LeaderLib_Force_ShootProjectile_ItemItem_17
-VARS
-	ITEM:_Source
-	ITEM:_Target
-ON
-	OnItemEvent(_Target, "LeaderLib_Force_ShootProjectile_17")
-ACTIONS
-IF "c1"
-	GetVar(_Source, _Target, "LeaderLib_Force_SourceItem")
-THEN
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force17, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
-ENDIF
-
-EVENT LeaderLib_Force_ShootProjectile_ItemItem_18
-VARS
-	ITEM:_Source
-	ITEM:_Target
-ON
-	OnItemEvent(_Target, "LeaderLib_Force_ShootProjectile_18")
-ACTIONS
-IF "c1"
-	GetVar(_Source, _Target, "LeaderLib_Force_SourceItem")
-THEN
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force18, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
-ENDIF
-
-EVENT LeaderLib_Force_ShootProjectile_ItemItem_19
-VARS
-	ITEM:_Source
-	ITEM:_Target
-ON
-	OnItemEvent(_Target, "LeaderLib_Force_ShootProjectile_19")
-ACTIONS
-IF "c1"
-	GetVar(_Source, _Target, "LeaderLib_Force_SourceItem")
-THEN
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force19, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
-ENDIF
-
-EVENT LeaderLib_Force_ShootProjectile_ItemItem_20
-VARS
-	ITEM:_Source
-	ITEM:_Target
-ON
-	OnItemEvent(_Target, "LeaderLib_Force_ShootProjectile_20")
-ACTIONS
-IF "c1"
-	GetVar(_Source, _Target, "LeaderLib_Force_SourceItem")
-THEN
-	ShootLocalProjectileAt(Projectile_LeaderLib_Force20, _Source, FLOAT3:{0;3.0;0}, _Target, 1, _Source)
-ENDIF
 //END_REGION

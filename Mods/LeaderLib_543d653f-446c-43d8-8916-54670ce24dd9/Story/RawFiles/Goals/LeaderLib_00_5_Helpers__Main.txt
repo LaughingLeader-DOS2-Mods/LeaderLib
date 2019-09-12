@@ -1289,6 +1289,17 @@ AND
 IsTagged(_Char, _Tag, 1)
 THEN
 DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_CharacterIsDeadOrDying((CHARACTERGUID)_Char)
+AND
+CharacterIsDead(_Char, _a)
+AND
+HasActiveStatus(_Char, "DYING", _b)
+AND
+IntegerMax(_a, _b, 1)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION QUERIES_DISTANCE

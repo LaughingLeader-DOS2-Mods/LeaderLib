@@ -235,6 +235,8 @@ AND
 CharacterIsDead(_Character, 0)
 AND
 ItemIsEquipable(_Item, 1)
+AND
+NOT LeaderLib_Helper_QRY_ItemIsEquipped(_Character, _Item)
 THEN
 LeaderLib_Helper_CanRefreshItem(_Character, _Item);
 LeaderLib_Helper_Internal_EquipItem(_Character, _Item);

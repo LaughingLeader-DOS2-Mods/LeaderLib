@@ -1358,9 +1358,9 @@ ProcObjectTimer(_Char, "LeaderLib_Timers_Debug_RanCircleTest", 50);
 IF
 TextEventSet("leaderlib_rancircle10")
 AND
-CharacterGetHostCharacter((GUIDSTRING)_Char)
+CharacterGetHostCharacter(_Char)
 THEN
-LeaderLib_Debug_CreatRandomSurfaceInCircle(_Char, 10, "SurfaceFireBlessed");
+LeaderLib_Debug_CreatRandomSurfaceInCircle((GUIDSTRING)_Char, 10, "SurfaceFireBlessed");
 
 PROC
 LeaderLib_Debug_CreatRandomSurfaceInCircle((GUIDSTRING)_Obj, (INTEGER)_Count, (STRING)_Surface)

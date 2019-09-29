@@ -25,7 +25,7 @@ IF "!c1&!c2"
 	IsEqual(%LLFX_Material_UUID, null)
 	IsEqual(%LLFX_Material_UUID, "")
 THEN
-	SetMaterial(__Me, %LLFX_Material_UUID, %LLFX_Material_ApplyOnBody, %LLFX_Material_ApplyOnBody, %LLFX_Material_ApplyOnArmor, %LLFX_Material_ApplyOnWings, %LLFX_Material_ApplyOnHorns, %LLFX_Material_ApplyOnOverhead, %LLFX_Material_ApplyOnWeapon, %LLFX_Material_ApplyOnNM, %LLFX_Material_IsOverlay, %LLFX_Material_IsFading)
+	SetMaterial(__Me, %LLFX_Material_UUID, %LLFX_Material_Duration, %LLFX_Material_ApplyOnBody, %LLFX_Material_ApplyOnArmor, %LLFX_Material_ApplyOnWings, %LLFX_Material_ApplyOnHorns, %LLFX_Material_ApplyOnOverhead, %LLFX_Material_ApplyOnWeapon, %LLFX_Material_ApplyOnNM, %LLFX_Material_IsOverlay, %LLFX_Material_IsFading)
 ENDIF
 IF "!c1&!c2"
 	IsEqual(%LLFX_EffectName, null)

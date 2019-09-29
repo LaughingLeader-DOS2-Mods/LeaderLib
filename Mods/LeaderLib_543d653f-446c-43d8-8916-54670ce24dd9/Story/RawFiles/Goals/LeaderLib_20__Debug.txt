@@ -24,6 +24,18 @@ THEN
 DebugBreak("[LeaderLib_20__Debug:RegisterDebugPlayer_Fallback] No character found in [DB_Origins]. Adding default dummy.");
 DB_Origins((CHARACTERGUID)S_GLO_CharacterCreationDummy_001_da072fe7-fdd5-42ae-9139-8bd4b9fca406);
 
+// Add racial skills outside of race presets
+IF
+GameStarted(_,1)
+AND
+DB_Origins(_Char)
+AND
+DB_LeaderLib_RacialSkills(_RaceTag, _Skill)
+AND
+IsTagged(_Char, _RaceTag, 1)
+THEN
+CharacterAddSkill(_Char, _Skill, 0);
+
 IF
 GameModeStarted(_, 1)
 AND

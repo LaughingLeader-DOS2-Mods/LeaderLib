@@ -740,61 +740,61 @@ DB_NOOP(1);
 
 //REGION COPY_ITEM_TRANSFORM
 PROC
-LeaderLib_Helpers_CopyItemTransform((ITEMGUID)_Item, (ITEMGUID)_Target)
+LeaderLib_Helper_CopyItemTransform((ITEMGUID)_Item, (ITEMGUID)_Target)
 THEN
-LeaderLib_Helpers_CopyItemTransform(_Item, _Target, 0);
+LeaderLib_Helper_CopyItemTransform(_Item, _Target, 0);
 
 //Find a valid position, or use the given position if no valid one is found.
 QRY
-LeaderLib_Helpers_QRY_FindValidPosition((GUIDSTRING)_Object, (REAL)_x, (REAL)_y, (REAL)_z, (REAL)_Radius)
+LeaderLib_Helper_QRY_FindValidPosition((GUIDSTRING)_Object, (REAL)_x, (REAL)_y, (REAL)_z, (REAL)_Radius)
 AND
 FindValidPosition(_x, _y, _z, _Radius, _Object, _tx, _ty, _tz)
 THEN
-DB_LeaderLib_Helpers_Temp_ValidPosition(_Object, _x, _y, _z, _tx, _ty, _tz);
+DB_LeaderLib_Helper_Temp_ValidPosition(_Object, _x, _y, _z, _tx, _ty, _tz);
 
 QRY
-LeaderLib_Helpers_QRY_FindValidPosition((GUIDSTRING)_Object, (REAL)_x, (REAL)_y, (REAL)_z, (REAL)_Radius)
+LeaderLib_Helper_QRY_FindValidPosition((GUIDSTRING)_Object, (REAL)_x, (REAL)_y, (REAL)_z, (REAL)_Radius)
 AND
-NOT DB_LeaderLib_Helpers_Temp_ValidPosition(_Object, _x, _y, _z, _, _, _)
+NOT DB_LeaderLib_Helper_Temp_ValidPosition(_Object, _x, _y, _z, _, _, _)
 THEN
-DB_LeaderLib_Helpers_Temp_ValidPosition(_Object, _x, _y, _z, _x, _y, _z);
+DB_LeaderLib_Helper_Temp_ValidPosition(_Object, _x, _y, _z, _x, _y, _z);
 
 PROC
-LeaderLib_Helpers_CopyItemTransform((ITEMGUID)_Item, (ITEMGUID)_Target)
+LeaderLib_Helper_CopyItemTransform((ITEMGUID)_Item, (ITEMGUID)_Target)
 AND
 ItemGetAmount(_Item, _Amount)
 AND
 ItemGetOwner(_Item, _Owner)
 THEN
-LeaderLib_Helpers_CopyItemTransform(_Item, _Target, 0, _Amount, _Owner);
+LeaderLib_Helper_CopyItemTransform(_Item, _Target, 0, _Amount, _Owner);
 
 PROC
-LeaderLib_Helpers_CopyItemTransform((ITEMGUID)_Item, (ITEMGUID)_Target, (INTEGER)_UseValidPosition)
+LeaderLib_Helper_CopyItemTransform((ITEMGUID)_Item, (ITEMGUID)_Target, (INTEGER)_UseValidPosition)
 AND
 ItemGetAmount(_Item, _Amount)
 AND
 ItemGetOwner(_Item, _Owner)
 THEN
-LeaderLib_Helpers_CopyItemTransform(_Item, _Target, _UseValidPosition, _Amount, _Owner);
+LeaderLib_Helper_CopyItemTransform(_Item, _Target, _UseValidPosition, _Amount, _Owner);
 
 PROC
-LeaderLib_Helpers_CopyItemTransform((ITEMGUID)_Item, (ITEMGUID)_Target, (INTEGER)_UseValidPosition, (INTEGER)_Amount)
+LeaderLib_Helper_CopyItemTransform((ITEMGUID)_Item, (ITEMGUID)_Target, (INTEGER)_UseValidPosition, (INTEGER)_Amount)
 AND
 ItemGetOwner(_Item, _Owner)
 THEN
-LeaderLib_Helpers_CopyItemTransform(_Item, _Target, _UseValidPosition, _Amount, _Owner);
+LeaderLib_Helper_CopyItemTransform(_Item, _Target, _UseValidPosition, _Amount, _Owner);
 
 //Use valid position
 PROC
-LeaderLib_Helpers_CopyItemTransform((ITEMGUID)_Item, (ITEMGUID)_Target, (INTEGER)_UseValidPosition, (INTEGER)_Amount, (CHARACTERGUID)_Owner)
+LeaderLib_Helper_CopyItemTransform((ITEMGUID)_Item, (ITEMGUID)_Target, (INTEGER)_UseValidPosition, (INTEGER)_Amount, (CHARACTERGUID)_Owner)
 AND
 _UseValidPosition != 0
 AND
 GetPosition(_Target, _x, _y, _z)
 AND
-LeaderLib_Helpers_QRY_FindValidPosition(_Item, _x, _y, _z, 1.0)
+LeaderLib_Helper_QRY_FindValidPosition(_Item, _x, _y, _z, 1.0)
 AND
-DB_LeaderLib_Helpers_Temp_ValidPosition(_Object, _x, _y, _z, _tx, _ty, _tz)
+DB_LeaderLib_Helper_Temp_ValidPosition(_Object, _x, _y, _z, _tx, _ty, _tz)
 AND
 GetRotation(_Target, _PitchDegree, _YawDegree, _RollDegree)
 AND
@@ -808,11 +808,11 @@ ItemGetAmount(_Item, _Amount)
 AND
 ItemGetOwner(_Item, _Owner)
 THEN
-NOT DB_LeaderLib_Helpers_Temp_ValidPosition(_Object, _x, _y, _z, _tx, _ty, _tz);
+NOT DB_LeaderLib_Helper_Temp_ValidPosition(_Object, _x, _y, _z, _tx, _ty, _tz);
 ItemToTransform(_Item, _x, _ty, _z, _Pitch, _Yaw, _Roll, _Amount, _Owner);
 
 PROC
-LeaderLib_Helpers_CopyItemTransform((ITEMGUID)_Item, (ITEMGUID)_Target, 0, (INTEGER)_Amount, (CHARACTERGUID)_Owner)
+LeaderLib_Helper_CopyItemTransform((ITEMGUID)_Item, (ITEMGUID)_Target, 0, (INTEGER)_Amount, (CHARACTERGUID)_Owner)
 AND
 GetPosition(_Target, _x, _y, _z)
 AND
@@ -827,6 +827,21 @@ THEN
 ItemToTransform(_Item, _x, _y, _z, _Pitch, _Yaw, _Roll, _Amount, _Owner);
 //END_REGION
 
+//REGION LEVEL_UP_ITEMS
+//Sets the level of all equipped items to that of the character's.
+//This will override the item's level (if it was higher, it will get reduced).
+PROC
+LeaderLib_Helper_LevelUpEquipment((CHARACTERGUID)_Character)
+AND
+CharacterGetLevel(_Character, _Level)
+AND
+DB_LeaderLib_EquipmentSlots(_Slot)
+AND
+CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
+THEN
+ItemLevelUpTo(_Item, _Level);
+SetVarInteger(_Item, "LeaderLib_Level", _Level);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

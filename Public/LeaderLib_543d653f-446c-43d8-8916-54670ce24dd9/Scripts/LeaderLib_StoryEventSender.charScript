@@ -1,0 +1,34 @@
+INIT
+	CHARACTER:__Me
+	EXTERN INT:%LeaderLib_StoryEvents_Initialized = 0
+EVENTS
+
+EVENT LeaderLib_StoryEvents_OnInit
+ON
+	OnInit()
+ACTIONS
+	CharacterEvent(__Me, "LeaderLib_StoryEvents_OnInit")
+IF "!c1"
+	IsEqual(%LeaderLib_StoryEvents_Initialized, 1)
+THEN
+	CharacterEvent(__Me, "LeaderLib_StoryEvents_Initialize")
+	Set(%LeaderLib_StoryEvents_Initialized, 1)
+ENDIF
+
+EVENT LeaderLib_StoryEvents_OnActivate
+ON
+	OnActivate()
+ACTIONS
+	CharacterEvent(__Me, "LeaderLib_StoryEvents_OnActivate")
+	
+EVENT LeaderLib_StoryEvents_OnDeActivate
+ON
+	OnDeactivate()
+ACTIONS
+	CharacterEvent(__Me, "LeaderLib_StoryEvents_OnDeactivate")	
+	
+EVENT LeaderLib_StoryEvents_OnShutdown
+ON
+	OnShutdown()
+ACTIONS
+	CharacterEvent(__Me, "LeaderLib_StoryEvents_OnShutdown")

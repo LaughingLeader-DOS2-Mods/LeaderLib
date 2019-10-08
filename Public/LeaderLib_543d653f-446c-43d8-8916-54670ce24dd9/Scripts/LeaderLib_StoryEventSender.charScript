@@ -1,6 +1,6 @@
 INIT
 	CHARACTER:__Me
-	EXTERN INT:%LeaderLib_StoryEvents_Initialized = 0
+	INT:%LeaderLib_StoryEvents_Initialized = 0
 EVENTS
 
 EVENT LeaderLib_StoryEvents_OnInit
@@ -25,7 +25,7 @@ EVENT LeaderLib_StoryEvents_OnDeActivate
 ON
 	OnDeactivate()
 ACTIONS
-	CharacterEvent(__Me, "LeaderLib_StoryEvents_OnDeactivate")	
+	CharacterEvent(__Me, "LeaderLib_StoryEvents_OnDeactivate")
 	
 EVENT LeaderLib_StoryEvents_OnShutdown
 ON

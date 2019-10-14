@@ -1785,6 +1785,29 @@ THEN
 DB_NOOP(1);
 //END_REGION
 
+//REGION CLEAR_ACTION_QUEUE
+//Use to clear a player-casted skill so Osiris skill uses happen immediately.
+PROC
+LeaderLib_Helper_ClearActionQueue((CHARACTERGUID)_Char)
+THEN
+LeaderLib_Helper_ClearActionQueue(_Char, 0);
+
+PROC
+LeaderLib_Helper_ClearActionQueue((CHARACTERGUID)_Char, 0)
+THEN
+CharacterFlushQueue(_Char);
+
+PROC
+LeaderLib_Helper_ClearActionQueue((CHARACTERGUID)_Char, 1)
+THEN
+CharacterPurgeQueue(_Char);
+
+PROC
+LeaderLib_Helper_ClearActionQueue((CHARACTERGUID)_Char, (INTEGER)_Purge)
+THEN
+CharacterMoveTo(_Char, _Char, 1, "", 1);
+CharacterSetStill(_Char);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

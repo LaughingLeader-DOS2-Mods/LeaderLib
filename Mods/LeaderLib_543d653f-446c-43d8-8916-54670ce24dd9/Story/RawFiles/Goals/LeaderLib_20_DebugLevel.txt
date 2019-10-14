@@ -1378,6 +1378,21 @@ THEN
 NOT DB_LeaderLib_Math_RandomCirclePosition("LeaderLib_Debug_RanSurfaceSpot", _tx, _ty, _tz);
 CreateSurfaceAtPosition(_tx, _ty, _tz, _Surface, 1.0, 6.0);
 LeaderLib_Debug_CreatRandomSurfaceInCircle(_Obj, _NextCount, _Surface);
+
+PROC
+LeaderLib_Statuses_OnStatusExtended((GUIDSTRING)_Object, (STRING)_Status, (INTEGER)_LastTurns, (INTEGER)_NextTurns)
+AND
+String(_Object, _Str)
+AND
+StringConcatenate("[LeaderLib_20_DebugLevel:OnStatusExtended] Object (", _Str, _Str2)
+AND
+StringConcatenate(_Str2, ") extended status (", _Str3)
+AND
+StringConcatenate(_Str3, _Status, _Str4)
+AND
+StringConcatenate(_Str4, ") from (", _Str5)
+THEN
+LeaderLog_LogInt("DEBUG", _Str5, _LastTurns, ") to => (", _NextTurns, ").");
 EXITSECTION
 
 ENDEXITSECTION

@@ -103,8 +103,7 @@ THEN
 RemoveStatus(_Object, _Status);
 
 //REGION EXTEND_STATUS
-//For applying a status and adding on top of the current turns, if any exists
-
+//For applying a status and adding on top of the current turns, if any exists.
 PROC
 LeaderLib_Statuses_ExtendStatus((GUIDSTRING)_Object, (STRING)_Status, (INTEGER)_AddTurns)
 THEN
@@ -124,6 +123,8 @@ HasActiveStatus(_Object, _Status, 1)
 AND
 GetStatusTurns(_Object, _Status, _Turns)
 AND
+_Turns >= 0
+AND
 IntegerSum(_Turns, _AddTurns, _NextTurns)
 AND
 IntegerMin(_NextTurns, _MaxTurns, _CappedTurns)
@@ -133,7 +134,7 @@ AND
 RealProduct(_DurationR, 6.0, _Duration)
 THEN
 ApplyStatus(_Object, _Status, _Duration, _Force, _Source);
-DB_LeaderLib_Statuses_Temp_ExtendResolved(_Object, _Status, _CappedTurns, _Duration);
+DB_LeaderLib_Statuses_Temp_ExtendResolved(_Object, _Status, _Turns, _CappedTurns);
 
 PROC
 LeaderLib_Statuses_ExtendStatus((GUIDSTRING)_Object, (STRING)_Status, (INTEGER)_AddTurns, (INTEGER)_MaxTurns, (INTEGER)_Force, (GUIDSTRING)_Source)
@@ -147,20 +148,114 @@ AND
 RealProduct(_DurationR, 6.0, _Duration)
 THEN
 ApplyStatus(_Object, _Status, _Duration, _Force, _Source);
-DB_LeaderLib_Statuses_Temp_ExtendResolved(_Object, _Status, _AddTurns, _Duration);
+DB_LeaderLib_Statuses_Temp_ExtendResolved(_Object, _Status, 0, _AddTurns);
 
 PROC
 LeaderLib_Statuses_ExtendStatus((GUIDSTRING)_Object, (STRING)_Status, (INTEGER)_AddTurns, (INTEGER)_MaxTurns, (INTEGER)_Force, (GUIDSTRING)_Source)
 AND
-DB_LeaderLib_Statuses_Temp_ExtendResolved(_Object, _Status, _NextTurns, _NextDuration)
+DB_LeaderLib_Statuses_Temp_ExtendResolved(_Object, _Status, _LastTurns, _NextTurns)
 THEN
-NOT DB_LeaderLib_Statuses_Temp_ExtendResolved(_Object, _Status, _NextTurns, _NextDuration);
-LeaderLib_Statuses_OnStatusExtended(_Object, _Status, _NextTurns, _NextDuration);
+NOT DB_LeaderLib_Statuses_Temp_ExtendResolved(_Object, _Status, _LastTurns, _NextTurns);
+LeaderLib_Statuses_OnStatusExtended(_Object, _Status, _LastTurns, _NextTurns);
 
 PROC
-LeaderLib_Statuses_OnStatusExtended((GUIDSTRING)_Object, (STRING)_Status, (INTEGER)_NextTurns, (REAL)_NextDuration)
+LeaderLib_Statuses_OnStatusExtended((GUIDSTRING)_Object, (STRING)_Status, (INTEGER)_LastTurns, (INTEGER)_NextTurns)
 THEN
 DB_NOOP(1);
+//END_REGION
+
+//REGION EXTEND_STATUS_DELAY
+
+PROC
+LeaderLib_Statuses_ExtendStatusWithDelay((GUIDSTRING)_Object, (STRING)_Status, (INTEGER)_AddTurns)
+THEN
+LeaderLib_Statuses_ExtendStatusWithDelay(_Object, _Status, _AddTurns, 99, 1, _Object, 250, 0);
+
+PROC
+LeaderLib_Statuses_ExtendStatusWithDelay((GUIDSTRING)_Object, (STRING)_Status, (INTEGER)_AddTurns, (INTEGER)_MaxTurns)
+THEN
+LeaderLib_Statuses_ExtendStatusWithDelay(_Object, _Status, _AddTurns, _MaxTurns, 1, _Object, 250, 0);
+
+PROC
+LeaderLib_Statuses_ExtendStatusWithDelay((GUIDSTRING)_Object, (STRING)_Status, (INTEGER)_AddTurns, (INTEGER)_MaxTurns, (INTEGER)_Force, (GUIDSTRING)_Source, (INTEGER)_Delay, (INTEGER)_ResetTimer)
+AND
+NOT DB_LeaderLib_Statuses_Temp_ExtendDelayResult(_Object, _Status, _, _, _, _, _)
+AND
+HasActiveStatus(_Object, _Status, 1)
+AND
+GetStatusTurns(_Object, _Status, _Turns)
+AND
+_Turns >= 0
+AND
+IntegerSum(_Turns, _AddTurns, _NextTurns)
+AND
+IntegerMin(_NextTurns, _MaxTurns, _CappedTurns)
+THEN
+DB_LeaderLib_Statuses_Temp_ExtendDelayResult(_Object, _Status, _Turns, _CappedTurns, "", _Force, _Source);
+
+PROC
+LeaderLib_Statuses_ExtendStatusWithDelay((GUIDSTRING)_Object, (STRING)_Status, (INTEGER)_AddTurns, (INTEGER)_MaxTurns, (INTEGER)_Force, (GUIDSTRING)_Source, (INTEGER)_Delay, (INTEGER)_ResetTimer)
+AND
+NOT DB_LeaderLib_Statuses_Temp_ExtendDelayResult(_Object, _Status, _, _, _, _ ,_)
+AND
+HasActiveStatus(_Object, _Status, 0)
+AND
+Real(_AddTurns, _DurationR)
+AND
+RealProduct(_DurationR, 6.0, _Duration)
+THEN
+DB_LeaderLib_Statuses_Temp_ExtendDelayResult(_Object, _Status, 0, _AddTurns, "", _Force, _Source);
+
+PROC
+LeaderLib_Statuses_ExtendStatusWithDelay((GUIDSTRING)_Object, (STRING)_Status, (INTEGER)_AddTurns, (INTEGER)_MaxTurns, (INTEGER)_Force, (GUIDSTRING)_Source, (INTEGER)_Delay, (INTEGER)_ResetTimer)
+AND
+DB_LeaderLib_Statuses_Temp_ExtendDelayResult(_Object, _Status, _LastTurns, _Turns, _TimerName, _Force, _Source)
+AND
+_TimerName != ""
+AND
+IntegerSum(_Turns, _AddTurns, _NextTurns)
+AND
+IntegerMin(_NextTurns, _MaxTurns, _CappedTurns)
+THEN
+NOT DB_LeaderLib_Statuses_Temp_ExtendDelayResult(_Object, _Status, _LastTurns, _Turns, _TimerName, _Force, _Source);
+DB_LeaderLib_Statuses_Temp_ExtendDelayResult(_Object, _Status, _LastTurns, _CappedTurns, _TimerName, _Force, _Source);
+
+PROC
+LeaderLib_Statuses_ExtendStatusWithDelay((GUIDSTRING)_Object, (STRING)_Status, (INTEGER)_AddTurns, (INTEGER)_MaxTurns, (INTEGER)_Force, (GUIDSTRING)_Source, (INTEGER)_Delay, (INTEGER)_ResetTimer)
+AND
+DB_LeaderLib_Statuses_Temp_ExtendDelayResult(_Object, _Status, _LastTurns, _NextTurns, "", _Force, _Source)
+AND
+GetUUID(_Object, _Uuid)
+AND
+LeaderLog_QRY_Log("COMBINE", "LeaderLib_Timers_ExtendStatus_", _Status, "_", _Uuid)
+AND
+DB_LeaderLog_Temp_CombinedString(_TimerName)
+THEN
+NOT DB_LeaderLog_Temp_CombinedString(_TimerName); 
+NOT DB_LeaderLib_Statuses_Temp_ExtendDelayResult(_Object, _Status, _LastTurns, _NextTurns, "", _Force, _Source);
+DB_LeaderLib_Statuses_Temp_ExtendDelayResult(_Object, _Status, _LastTurns, _NextTurns, _TimerName, _Force, _Source);
+TimerLaunch(_TimerName, _Delay);
+
+PROC
+LeaderLib_Statuses_ExtendStatusWithDelay((GUIDSTRING)_Object, (STRING)_Status, (INTEGER)_AddTurns, (INTEGER)_MaxTurns, (INTEGER)_Force, (GUIDSTRING)_Source, (INTEGER)_Delay, 1)
+AND
+DB_LeaderLib_Statuses_Temp_ExtendDelayResult(_Object, _Status, _LastTurns, _NextTurns, _TimerName, _Force, _Source)
+THEN
+TimerCancel(_TimerName);
+TimerLaunch(_TimerName, _Delay);
+
+IF
+TimerFinished(_TimerName)
+AND
+DB_LeaderLib_Statuses_Temp_ExtendDelayResult(_Object, _Status, _LastTurns, _NextTurns, _TimerName, _Force, _Source)
+AND
+Real(_NextTurns, _DurationR)
+AND
+RealProduct(_DurationR, 6.0, _Duration)
+THEN
+NOT DB_LeaderLib_Statuses_Temp_ExtendDelayResult(_Object, _Status, _LastTurns, _NextTurns, _TimerName, _Force, _Source);
+ApplyStatus(_Object, _Status, _Duration, _Force, _Source);
+LeaderLib_Statuses_OnStatusExtended(_Object, _Status, _LastTurns, _NextTurns);
 //END_REGION
 
 EXITSECTION

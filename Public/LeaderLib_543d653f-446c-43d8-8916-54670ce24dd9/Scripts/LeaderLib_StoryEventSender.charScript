@@ -8,6 +8,12 @@ ON
 	OnInit()
 ACTIONS
 	CharacterEvent(__Me, "LeaderLib_StoryEvents_OnInit")
+
+EVENT LeaderLib_StoryEvents_OnActivate
+ON
+	OnActivate()
+ACTIONS
+	CharacterEvent(__Me, "LeaderLib_StoryEvents_OnActivate")
 IF "!c1"
 	IsEqual(%LeaderLib_StoryEvents_Initialized, 1)
 THEN
@@ -15,12 +21,6 @@ THEN
 	Set(%LeaderLib_StoryEvents_Initialized, 1)
 ENDIF
 
-EVENT LeaderLib_StoryEvents_OnActivate
-ON
-	OnActivate()
-ACTIONS
-	CharacterEvent(__Me, "LeaderLib_StoryEvents_OnActivate")
-	
 EVENT LeaderLib_StoryEvents_OnDeActivate
 ON
 	OnDeactivate()

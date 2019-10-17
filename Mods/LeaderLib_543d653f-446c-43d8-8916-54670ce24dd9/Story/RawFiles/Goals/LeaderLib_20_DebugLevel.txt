@@ -1462,6 +1462,29 @@ AND
 IntegertoString(_Instance, _InstanceStr)
 THEN
 LeaderLog_Log("DEBUG", _Prefix, "NPC was added to Dialog (", _Dialog, ")[",_InstanceStr,"] at index (",_IndexStr,")");
+
+IF
+TextEventSet("leaderlib_knockuptest")
+AND
+DB_IsPlayer(_Char)
+AND
+CharacterIsControlled(_Char, 1)
+THEN
+PlayAnimation(_Char, "knockdown_fall", "LeaderLib_Debug_PlayKnockdownLoop");
+LeaderLib_Platforms_Launch(_Char, "LeaderLib_Debug_KnockupTest_Done", 10.0);
+
+IF
+StoryEvent((CHARACTERGUID)_Char, "LeaderLib_Debug_PlayKnockdownLoop")
+THEN
+CharacterSetAnimationOverride(_Char, "knockdown_loop");
+
+PROC
+LeaderLib_Platforms_OnLaunchFinished((GUIDSTRING)_Char, "LeaderLib_Debug_KnockupTest_Done")
+AND
+ObjectIsCharacter((CHARACTERGUID)_Char, 1)
+THEN
+CharacterSetAnimationOverride(_Char, "");
+PlayAnimation(_Char,"knockdown_getup");
 EXITSECTION
 
 ENDEXITSECTION

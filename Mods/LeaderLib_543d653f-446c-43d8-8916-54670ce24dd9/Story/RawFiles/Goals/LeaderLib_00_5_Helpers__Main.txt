@@ -1742,14 +1742,14 @@ LeaderLib_Helper_ClampVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEG
 AND
 _NextVar <= _Max
 AND
-_NextVar > _Min
+_NextVar >= _Min
 THEN
 SetVarInteger(_Object, _Variable, _NextVar);
 
 PROC
 LeaderLib_Helper_ClampVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_NextVar, (INTEGER)_Max, (INTEGER)_Min)
 AND
-_NextVar <= _Min
+_NextVar < _Min
 THEN
 SetVarInteger(_Object, _Variable, _Min);
 

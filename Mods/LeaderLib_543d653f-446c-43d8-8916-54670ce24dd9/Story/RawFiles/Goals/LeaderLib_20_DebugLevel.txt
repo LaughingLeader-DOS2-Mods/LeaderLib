@@ -174,17 +174,6 @@ THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel:ObjectLostTag] [",_Name,"] lost tag [",_Tag,"].");
 
 IF
-CharacterStatusApplied(_Summon, _Status, _Causee)
-AND
-CharacterIsSummon(_Summon, 1)
-AND
-CharacterGetDisplayName(_Summon, _, _Name)
-AND
-String(_Causee, _CauseeStr)
-THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel:CharacterStatusApplied] Summon [",_Name,"] has applied status [",_Status,"] from [",_CauseeStr,"].");
-
-IF
 TextEventSet("liblag")
 THEN
 ObjectSetFlag(ITEMGUID_NDL_ArenaChest_000_60d1603d-606f-4b64-9863-7b962d456278, "LeaderLib_Treasure_GenerationEnded", 0);
@@ -1223,6 +1212,28 @@ THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Debug:CharacterStatusAttempt] Status [",_Status,"] attempt on [",_Name,"] via [",_Cause,"].");
 
 IF
+CharacterStatusAttempt(_Summon, _Status, _Causee)
+AND
+CharacterIsSummon(_Summon, 1)
+AND
+CharacterGetDisplayName(_Summon, _, _Name)
+AND
+String(_Causee, _CauseeStr)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel:CharacterStatusAttempt] Summon [",_Name,"] with attempted status [",_Status,"] from [",_CauseeStr,"].");
+
+IF
+CharacterStatusApplied(_Summon, _Status, _Causee)
+AND
+CharacterIsSummon(_Summon, 1)
+AND
+CharacterGetDisplayName(_Summon, _, _Name)
+AND
+String(_Causee, _CauseeStr)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel:CharacterStatusApplied] Summon [",_Name,"] has applied status [",_Status,"] from [",_CauseeStr,"].");
+
+IF
 CharacterStatusApplied(_Character, _Status, _Causee)
 //AND
 //haracterGetHostCharacter(_Causee)
@@ -1393,6 +1404,64 @@ AND
 StringConcatenate(_Str4, ") from (", _Str5)
 THEN
 LeaderLog_LogInt("DEBUG", _Str5, _LastTurns, ") to => (", _NextTurns, ").");
+
+IF
+DialogStarted(_Dialog, _Instance)
+AND
+IntegertoString(_Instance, _InstanceStr)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:DialogStarted] Dialog (", _Dialog, ")[",_InstanceStr,"] started.");
+LeaderLib_Debug_TraceDialog(_Dialog, _Instance, "[LeaderLib_20_DebugLevel:DialogStarted] ");
+
+IF
+DialogEnded(_Dialog, _Instance)
+AND
+IntegertoString(_Instance, _InstanceStr)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:DialogEnded] Dialog (", _Dialog, ")[",_InstanceStr,"] ended.");
+
+IF
+DualDialogRequested(_Dialog, _Instance, _TargetInstance)
+AND
+IntegertoString(_TargetInstance, _TargetInstanceStr)
+AND
+IntegertoString(_Instance, _InstanceStr)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:DualDialogRequested] Dialog (", _Dialog, ")[",_InstanceStr,"] requesting instance (",_TargetInstanceStr,").");
+
+IF
+DualDialogStart(_Dialog, _Instance)
+AND
+IntegertoString(_Instance, _InstanceStr)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:DualDialogStart] Dual Dialog (", _Dialog, ")[",_InstanceStr,"] started.");
+LeaderLib_Debug_TraceDialog(_Dialog, _Instance, "[LeaderLib_20_DebugLevel:DualDialogStart] ");
+
+PROC
+LeaderLib_Debug_TraceDialog((STRING)_Dialog, (INTEGER)_Instance, (STRING)_Prefix)
+AND
+DB_DialogPlayers(_Instance, _Char, _Index)
+AND
+String(_Char, _NpcStr)
+AND
+IntegertoString(_Index, _IndexStr)
+AND
+IntegertoString(_Instance, _InstanceStr)
+THEN
+LeaderLog_Log("DEBUG", _Prefix, "Player was added to Dialog (", _Dialog, ")[",_InstanceStr,"] at index (",_IndexStr,")");
+
+PROC
+LeaderLib_Debug_TraceDialog((STRING)_Dialog, (INTEGER)_Instance, (STRING)_Prefix)
+AND
+DB_DialogNPCs(_Instance, _Npc, _Index)
+AND
+String(_Npc, _NpcStr)
+AND
+IntegertoString(_Index, _IndexStr)
+AND
+IntegertoString(_Instance, _InstanceStr)
+THEN
+LeaderLog_Log("DEBUG", _Prefix, "NPC was added to Dialog (", _Dialog, ")[",_InstanceStr,"] at index (",_IndexStr,")");
 EXITSECTION
 
 ENDEXITSECTION

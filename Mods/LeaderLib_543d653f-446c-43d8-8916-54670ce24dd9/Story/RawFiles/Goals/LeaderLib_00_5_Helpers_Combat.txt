@@ -51,8 +51,11 @@ IF
 ObjectEnteredCombat(_Object, _CombatID)
 AND
 NOT DB_LeaderLib_Combat_ActiveCombat(_CombatID)
+AND
+GetPosition(_Object, _x, _y, _z)
 THEN
 DB_LeaderLib_Combat_ActiveCombat(_CombatID);
+DB_LeaderLib_Combat_ActiveCombatPosition(_CombatID, _x, _y, _z);
 
 //Fires after objects enter combat
 IF
@@ -68,6 +71,13 @@ AND
 DB_LeaderLib_Combat_ActiveCombat(_CombatID)
 THEN
 NOT DB_LeaderLib_Combat_ActiveCombat(_CombatID);
+
+IF
+CombatEnded(_CombatID)
+AND
+DB_LeaderLib_Combat_ActiveCombatPosition(_CombatID, _x, _y, _z)
+THEN
+NOT DB_LeaderLib_Combat_ActiveCombatPosition(_CombatID, _x, _y, _z);
 
 IF
 ObjectLeftCombat(_Object, _CombatID)

@@ -1808,6 +1808,43 @@ THEN
 CharacterMoveTo(_Char, _Char, 1, "", 1);
 CharacterSetStill(_Char);
 //END_REGION
+
+//REGION CLEAR_ANIMATION_OVERRIDE_HACK
+PROC
+LeaderLib_Hacks_ClearAnimationOverride((CHARACTERGUID)_Char, (STRING)_CompletionEvent)
+AND
+_CompletionEvent != ""
+THEN
+SetVarString(_Char, "LeaderLib_ClearAnimationOverride_CompletionEvent", _CompletionEvent);
+
+PROC
+LeaderLib_Hacks_ClearAnimationOverride((CHARACTERGUID)_Char, (STRING)_CompletionEvent)
+THEN
+CharacterSetAnimationOverride(_Char, "");
+CharacterSetStill(_Char);
+SetStoryEvent(_Char, "LeaderLib_ClearAnimationOverride_ByMovement");
+
+IF
+StoryEvent((CHARACTERGUID)_Char, "LeaderLib_ClearAnimationOverride_ByMovement_Run")
+AND
+GetVarFloat3(_Char, "LeaderLib_ClearAnimationOverride_TargetPosition", _tx, _ty, _tz)
+AND
+GetPosition(_Char, _x, _y, _z)
+THEN
+ClearVarObject(_Char, "LeaderLib_ClearAnimationOverride_TargetPosition");
+CharacterMoveToPosition(_Char, _tx, _ty, _tz, 1, "LeaderLib_ClearAnimationOverride_ByMovement_Done");
+TeleportToPosition(_Char, _x, _y, _z, "", 0, 1);
+
+IF
+StoryEvent((CHARACTERGUID)_Char, "LeaderLib_ClearAnimationOverride_ByMovement_Run")
+AND
+GetVarString(_Char, "LeaderLib_ClearAnimationOverride_CompletionEvent", _Event)
+AND
+_Event != ""
+THEN
+ClearVarObject(_Char, "LeaderLib_ClearAnimationOverride_CompletionEvent");
+SetStoryEvent(_Char, _Event);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

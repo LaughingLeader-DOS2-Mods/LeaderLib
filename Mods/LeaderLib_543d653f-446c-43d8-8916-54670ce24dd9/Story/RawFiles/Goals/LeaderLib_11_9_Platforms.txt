@@ -162,6 +162,8 @@ DB_LeaderLib_Platforms_Temp_ActiveMovement(_ID, _Object, _Platform, _TeleportSpe
 ProcObjectTimer(_Object, "LeaderLib_Timers_MoveWithPlatform_Teleport", _TeleportSpeed);
 ItemMoveToPosition(_Platform, _TargetX, _TargetY, _TargetZ, _Speed, _Acceleration, _CompletionEvent, _DoHits);
 
+// PlayAnimation prevents teleport from happening while the animation is happening.
+// Use CharacterSetAnimationOverride instead.
 PROC
 ProcObjectTimerFinished((GUIDSTRING)_Object, "LeaderLib_Timers_MoveWithPlatform_Teleport")
 AND
@@ -169,7 +171,9 @@ DB_LeaderLib_Platforms_Temp_ActiveMovement(_ID, _Object, _Platform, _TeleportSpe
 AND
 GetPosition(_Platform, _x, _y, _z)
 THEN
-TeleportToPosition(_Object, _x, _y, _z, "", 0, 0);
+//TeleportToPosition(_Object, _x, _y, _z, "", 0, 1);
+SetVarFloat3(_Object, "LeaderLib_Teleport_TargetPosition", _x, _y, _z);
+SetStoryEvent(_Object, "LeaderLib_TeleportToPosition");
 
 PROC
 ProcObjectTimerFinished((GUIDSTRING)_Object, "LeaderLib_Timers_MoveWithPlatform_Teleport")
@@ -187,7 +191,9 @@ GetPosition(_Platform, _x, _y, _z)
 THEN
 NOT DB_LeaderLib_Platforms_Temp_ActiveMovement(_ID, _Object, _Platform, _TeleportSpeed, _CompletionEvent, _LifeTime);
 ProcObjectTimerCancel(_Object, "LeaderLib_Timers_MoveWithPlatform_Teleport");
-TeleportToPosition(_Object, _x, _y, _z, "", 0, 0);
+//TeleportToPosition(_Object, _x, _y, _z, "", 0, 1);
+SetVarFloat3(_Object, "LeaderLib_Teleport_TargetPosition", _x, _y, _z);
+SetStoryEvent(_Object, "LeaderLib_TeleportToPosition");
 LeaderLib_Platforms_Internal_StartPlatformTimer(_ID, _Platform, _LifeTime);
 LeaderLib_Platforms_OnMovementFinished(_Object, _Platform, _ID, _CompletionEvent);
 

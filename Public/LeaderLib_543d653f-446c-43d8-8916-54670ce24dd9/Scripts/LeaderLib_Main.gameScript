@@ -562,3 +562,81 @@ THEN
 	Cast(_Exp, _ExpF)
 	SetVar(_Player, "LeaderLib_CurrentExperience", _Exp)
 ENDIF
+
+EVENT LeaderLib_TeleportToPosition_Character
+VARS
+	CHARACTER:_Char
+	FLOAT3:_Pos
+ON
+	OnCharacterEvent(_Char, "LeaderLib_TeleportToPosition")
+ACTIONS
+IF "c1&!c2"
+	GetVar(_Pos, _Char, "LeaderLib_Teleport_TargetPosition")
+	IsEqual(_Pos, null)
+THEN
+	TeleportTo(_Char, _Pos, 1)
+ELSE
+	TeleportTo(_Char, _Char, 1)
+ENDIF
+	CharacterEvent(_Char, "LeaderLib_OnTeleportToPosition")
+
+EVENT LeaderLib_TeleportToPosition_Item
+VARS
+	ITEM:_Item
+	FLOAT3:_Pos
+ON
+	OnItemEvent(_Item, "LeaderLib_TeleportToPosition")
+ACTIONS
+IF "c1&!c2"
+	GetVar(_Pos, _Item, "LeaderLib_Teleport_TargetPosition")
+	IsEqual(_Pos, null)
+THEN
+	TeleportTo(_Item, _Pos, 1)
+ELSE
+	TeleportTo(_Item, _Item, 1)
+ENDIF
+	ItemEvent(_Item, "LeaderLib_OnTeleportToPosition")
+	
+EVENT LeaderLib_TeleportToCharacter
+VARS
+	CHARACTER:_Char
+	CHARACTER:_Target
+ON
+	OnCharacterCharacterEvent(_Char, _Target, "LeaderLib_TeleportToObject")
+ACTIONS
+	TeleportTo(_Char, _Target, 1)
+	CharacterCharacterEvent(_Char, _Target, "LeaderLib_OnTeleportToObject")
+
+EVENT LeaderLib_TeleportToItem
+VARS
+	CHARACTER:_Char
+	ITEM:_Target
+ON
+	OnCharacterItemEvent(_Char, _Target, "LeaderLib_TeleportToObject")
+ACTIONS
+	TeleportTo(_Char, _Target, 1)
+	CharacterItemEvent(_Char, _Target, "LeaderLib_OnTeleportToObject")
+
+EVENT LeaderLib_ClearAnimationOverride
+VARS
+	CHARACTER:_Char
+ON
+	OnCharacterEvent(_Char, "LeaderLib_ClearAnimationOverride")
+ACTIONS
+	CharacterSetAnimationOverride(_Char, "")
+
+EVENT LeaderLib_ClearAnimationOverride_ByMovement
+VARS
+	CHARACTER:_Char
+	FLOAT3:_Forward
+	FLOAT3:_Pos
+ON
+	OnCharacterEvent(_Char, "LeaderLib_ClearAnimationOverride_ByMovement")
+ACTIONS
+	CharacterSetAnimationOverride(_Char, "")
+	GetForwardDirection(_Char, _Forward)
+	Multiply(_Forward, 0.1)
+	GetPosition(_Char, _Pos)
+	Add(_Pos, _Forward)
+	SetVar(_Char, "LeaderLib_ClearAnimationOverride_TargetPosition", _Pos)
+	CharacterEvent(_Char, "LeaderLib_ClearAnimationOverride_ByMovement_Run")

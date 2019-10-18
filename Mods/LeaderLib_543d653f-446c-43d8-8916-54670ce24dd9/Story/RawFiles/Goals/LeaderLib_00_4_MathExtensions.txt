@@ -910,6 +910,18 @@ NOT DB_LeaderLib_Math_Sine(_Angle, _Sin);
 DB_LeaderLib_Math_RandomCirclePosition(_ID, _tx, _y, _tz);
 
 //END_REGION
+
+//REGION IS_DIVISIBLE
+QRY
+LeaderLib_Math_IsDivisible((INTEGER)_Numerator, (INTEGER)_Denominator)
+AND
+IntegerDivide(_Numerator, _Denominator, _Quotient)
+AND
+IntegerProduct(_Denominator, _Quotient, _Numerator)
+THEN
+DB_NOOP(1);
+
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

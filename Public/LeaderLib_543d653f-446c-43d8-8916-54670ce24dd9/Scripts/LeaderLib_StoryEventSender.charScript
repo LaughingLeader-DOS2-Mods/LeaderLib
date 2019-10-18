@@ -1,6 +1,10 @@
 INIT
 	CHARACTER:__Me
 	INT:%LeaderLib_StoryEvents_Initialized = 0
+	FIXEDSTRING:%LeaderLib_CharacterPlayAnimation_Animation = ""
+	INT:%LeaderLib_CharacterPlayAnimation_ExitOnFinish = 0
+	INT:%LeaderLib_CharacterPlayAnimation_WaitForCompletion = 0
+	INT:%LeaderLib_CharacterPlayAnimation_NoBlend = 1
 EVENTS
 
 EVENT LeaderLib_StoryEvents_OnInit
@@ -32,3 +36,24 @@ ON
 	OnShutdown()
 ACTIONS
 	CharacterEvent(__Me, "LeaderLib_StoryEvents_OnShutdown")
+	
+EVENT LeaderLib_StoryEvents_CharacterPlayAnimation
+ON
+	OnCharacterEvent(__Me, "LeaderLib_StoryEvents_CharacterPlayAnimation")
+ACTIONS
+	//StatusText(__Me, %LeaderLib_CharacterPlayAnimation_Animation)
+	CharacterSetAnimationOverride(__Me, "")
+	SetPriority("LeaderLib_StoryEvents_PlayAnimation", 999)
+	
+BEHAVIOUR
+
+REACTION LeaderLib_StoryEvents_PlayAnimation,0
+USAGE ALL
+CHECK "!c1"
+	IsEqual(%LeaderLib_CharacterPlayAnimation_Animation, "")
+ACTIONS
+	CharacterPlayAnimation(%LeaderLib_CharacterPlayAnimation_Animation, %LeaderLib_CharacterPlayAnimation_ExitOnFinish, %LeaderLib_CharacterPlayAnimation_WaitForCompletion, %LeaderLib_CharacterPlayAnimation_NoBlend)
+	SetPriority("LeaderLib_StoryEvents_PlayAnimation", 0)
+INTERRUPT
+ACTIONS
+	Reset()

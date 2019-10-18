@@ -1484,7 +1484,51 @@ AND
 ObjectIsCharacter((CHARACTERGUID)_Char, 1)
 THEN
 CharacterSetAnimationOverride(_Char, "");
-PlayAnimation(_Char,"knockdown_getup");
+//PlayAnimation(_Char,"knockdown_getup");
+
+IF
+TextEventSet("leaderlib_teleporttest")
+AND
+DB_IsPlayer(_Char)
+AND
+CharacterIsControlled(_Char, 1)
+AND
+GetPosition(_Char, _x, _y, _z)
+AND
+RealSum(_x, 2.0, _tx)
+AND
+RealSum(_z, -2.0, _tz)
+AND
+FindValidPosition(_tx, _y, _tz, 6.0, _Char, _cx, _cy, _cz)
+THEN
+PlayAnimation(_Char, "knockdown_fall", "");
+//TeleportToPosition(_Char, _cx, _cy, _cz, "", 0, 1);
+SetVarFloat3(_Char, "LeaderLib_Teleport_TargetPosition", _cx, _cy, _cz);
+SetStoryEvent(_Char, "LeaderLib_TeleportToPosition");
+
+IF
+TextEventSet("leaderlib_teleporttest2")
+AND
+DB_IsPlayer(_Char)
+AND
+CharacterIsControlled(_Char, 1)
+THEN
+PlayAnimation(_Char, "knockdown_fall", "");
+ProcObjectTimer(_Char, "LeaderLib_Timers_Debug_RandomTeleportTest", 200);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Char, "LeaderLib_Timers_Debug_RandomTeleportTest")
+AND
+GetPosition(_Char, _x, _y, _z)
+AND
+RealSum(_x, 2.0, _tx)
+AND
+RealSum(_z, -2.0, _tz)
+AND
+FindValidPosition(_tx, _y, _tz, 12.0, _Char, _cx, _cy, _cz)
+THEN
+TeleportToPosition(_Char, _cx, _cy, _cz, "", 0, 1);
+
 EXITSECTION
 
 ENDEXITSECTION

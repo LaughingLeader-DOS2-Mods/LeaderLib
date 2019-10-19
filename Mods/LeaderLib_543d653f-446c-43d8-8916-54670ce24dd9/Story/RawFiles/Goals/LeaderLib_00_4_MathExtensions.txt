@@ -922,6 +922,29 @@ THEN
 DB_NOOP(1);
 
 //END_REGION
+
+//REGION SCALE_TO_RANGE
+QRY
+LeaderLib_Math_QRY_ScaleToRange((REAL)_Val, (REAL)_MinValRange, (REAL)_MaxValRange, (REAL)_MinScaleRange, (REAL)_MaxScaleRange)
+THEN
+LeaderLib_Math_ScaleToRange(_Val, _MinValRange, _MaxValRange, _MinScaleRange, _MaxScaleRange);
+
+PROC
+LeaderLib_Math_ScaleToRange((REAL)_Val, (REAL)_MinValRange, (REAL)_MaxValRange, (REAL)_MinScaleRange, (REAL)_MaxScaleRange)
+AND
+RealSubtract(_Val, _MinValRange, _a)
+AND
+RealSubtract(_MaxValRange, _MinValRange, _b)
+AND
+RealDivide(_a, _b, _c)
+AND
+RealSubtract(_MaxScaleRange, _MinScaleRange, _d)
+AND
+RealProduct(_c, _d, _e)
+AND
+RealSum(_e, _MinScaleRange, _Result)
+THEN
+DB_LeaderLib_Math_ScaleToRange(_Val, _Result, _MinValRange, _MaxValRange, _MinScaleRange, _MaxScaleRange);
 EXITSECTION
 
 ENDEXITSECTION

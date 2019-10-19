@@ -11,18 +11,32 @@ EVENT LeaderLib_StoryEvents_OnInit
 ON
 	OnInit()
 ACTIONS
+IF "c1"
+	HasGlobalFlag("LeaderLib_LevelIsLoaded")
+THEN
 	CharacterEvent(__Me, "LeaderLib_StoryEvents_OnInit")
+ELSE
+	SetPriority("LeaderLib_StoryEvents_PostLoadInit", 999)
+	DelayReaction("LeaderLib_StoryEvents_PostLoadInit", 1.0)
+ENDIF
 
 EVENT LeaderLib_StoryEvents_OnActivate
 ON
 	OnActivate()
 ACTIONS
-	CharacterEvent(__Me, "LeaderLib_StoryEvents_OnActivate")
-IF "!c1"
-	IsEqual(%LeaderLib_StoryEvents_Initialized, 1)
+IF "c1"
+	HasGlobalFlag("LeaderLib_LevelIsLoaded")
 THEN
-	CharacterEvent(__Me, "LeaderLib_StoryEvents_Initialize")
-	Set(%LeaderLib_StoryEvents_Initialized, 1)
+	CharacterEvent(__Me, "LeaderLib_StoryEvents_OnActivate")
+	IF "!c1"
+		IsEqual(%LeaderLib_StoryEvents_Initialized, 1)
+	THEN
+		CharacterEvent(__Me, "LeaderLib_StoryEvents_Initialize")
+		Set(%LeaderLib_StoryEvents_Initialized, 1)
+	ENDIF
+ELSE
+	SetPriority("LeaderLib_StoryEvents_PostLoadInit", 999)
+	DelayReaction("LeaderLib_StoryEvents_PostLoadInit", 1.0)
 ENDIF
 
 EVENT LeaderLib_StoryEvents_OnDeActivate
@@ -36,6 +50,7 @@ ON
 	OnShutdown()
 ACTIONS
 	CharacterEvent(__Me, "LeaderLib_StoryEvents_OnShutdown")
+	Set(%LeaderLib_StoryEvents_Initialized, 0)
 	
 EVENT LeaderLib_StoryEvents_CharacterPlayAnimation
 ON
@@ -57,3 +72,22 @@ ACTIONS
 INTERRUPT
 ACTIONS
 	Reset()
+
+REACTION LeaderLib_StoryEvents_PostLoadInit,0
+USAGE ALL
+CHECK "c1"
+	HasGlobalFlag("LeaderLib_LevelIsLoaded")
+ACTIONS
+	CharacterEvent(__Me, "LeaderLib_StoryEvents_OnInit")
+IF "c1"
+	IsActive(__Me)
+THEN
+	CharacterEvent(__Me, "LeaderLib_StoryEvents_OnActivate")
+ENDIF
+IF "!c1"
+	IsEqual(%LeaderLib_StoryEvents_Initialized, 1)
+THEN
+	CharacterEvent(__Me, "LeaderLib_StoryEvents_Initialize")
+	Set(%LeaderLib_StoryEvents_Initialized, 1)
+ENDIF
+	SetPriority("LeaderLib_StoryEvents_PostLoadInit", 0)

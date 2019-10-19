@@ -11,7 +11,6 @@ IsGameLevel(_Level, 1)
 THEN
 //Enable script flags that should be otherwise disabled when not in a game level.
 LeaderLib_ToggleScripts_Internal_UpdateScriptFlags();
-
 GoalCompleted;
 
 EXITSECTION

@@ -246,6 +246,28 @@ THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Init:LeaderLib_Debug_IteratePlayers] Iteration complete.");
 LeaderLib_SendEvent("LeaderLib_Debug_PlayerDatabaseReady");
 //END_REGION
+
+//REGION LEVEL_LOADING
+IF
+SavegameLoading(_,_,_,_)
+THEN
+GlobalClearFlag("LeaderLib_LevelIsLoaded");
+GlobalClearFlag("LeaderLib_LevelIsLoading");
+
+IF
+RegionStarted(_)
+THEN
+GlobalSetFlag("LeaderLib_LevelIsLoading");
+GlobalClearFlag("LeaderLib_LevelIsLoaded");
+
+IF
+GameStarted(_,_)
+AND
+GlobalGetFlag("LeaderLib_LevelIsLoading", 1)
+THEN
+GlobalClearFlag("LeaderLib_LevelIsLoading");
+GlobalSetFlag("LeaderLib_LevelIsLoaded");
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

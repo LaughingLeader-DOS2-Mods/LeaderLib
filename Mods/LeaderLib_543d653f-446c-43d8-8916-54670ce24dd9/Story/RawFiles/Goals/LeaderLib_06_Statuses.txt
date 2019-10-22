@@ -157,7 +157,7 @@ LeaderLib_Statuses_Internal_ApplyPermanentStatus((CHARACTERGUID)_Character, (STR
 AND
 NOT DB_LeaderLib_Statuses_PermanentStatusBlocked(_Character, _Status, _Flag)
 THEN
-ApplyStatus(_Character, _Status, -1.0, 0, _Character);
+ApplyStatus(_Character, _Status, -1.0, 1, _Character);
 
 PROC
 LeaderLib_Statuses_Internal_ApplyPermanentStatus((CHARACTERGUID)_Character, (STRING)_Status, (STRING)_Flag)

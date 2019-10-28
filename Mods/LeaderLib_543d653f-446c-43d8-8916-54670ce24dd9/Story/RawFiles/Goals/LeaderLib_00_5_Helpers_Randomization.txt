@@ -25,6 +25,13 @@ DB_LeaderLib_Randomization_Entries(_TableID, _EntryID, _Frequency, _StartingDrop
 //END_REGION
 
 //REGION TABLE_BUILD
+QRY
+LeaderLib_Randomization_Tables_QRY_TableInitialized((GUIDSTRING)_Object, (STRING)_TableID)
+AND
+DB_LeaderLib_Randomization_Temp_ActiveTableTotal(_Object, _TableID, _Total, _Max)
+THEN
+DB_NOOP(1);
+
 PROC
 LeaderLib_Randomization_Tables_Internal_CheckForCompletion((GUIDSTRING)_Object, (STRING)_TableID)
 AND
@@ -132,6 +139,11 @@ _Next < _Total
 THEN
 LeaderLib_Randomization_Tables_Internal_SetDropRanges(_Object, _TableID, _DefaultAmountPerEntry, _Next, _Min, _Max, _Total);
 //END_REGION
+
+QRY
+LeaderLib_Randomization_QRY_Tables_Roll((GUIDSTRING)_Object, (STRING)_TableID)
+THEN
+LeaderLib_Randomization_Tables_Roll(_Object, _TableID);
 
 PROC
 LeaderLib_Randomization_Tables_Roll((GUIDSTRING)_Object, (STRING)_TableID)

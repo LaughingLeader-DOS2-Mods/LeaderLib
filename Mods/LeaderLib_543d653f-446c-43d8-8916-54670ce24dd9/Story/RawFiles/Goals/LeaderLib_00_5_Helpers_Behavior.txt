@@ -9,6 +9,8 @@ AND
 GetVarObject(_Object, _Var, _Val)
 AND
 _Val != NULL_00000000-0000-0000-0000-000000000000
+AND
+ObjectExists(_Val, 1)
 THEN
 DB_NOOP(1);
 

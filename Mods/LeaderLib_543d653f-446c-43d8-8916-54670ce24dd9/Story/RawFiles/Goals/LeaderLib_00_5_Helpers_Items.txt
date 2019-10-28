@@ -842,6 +842,28 @@ THEN
 ItemLevelUpTo(_Item, _Level);
 SetVarInteger(_Item, "LeaderLib_Level", _Level);
 //END_REGION
+
+//REGION GET_ITEM_BY_TEMPLATE
+QRY
+LeaderLib_Helper_QRY_GetItemByTemplate((CHARACTERGUID)_Char, (STRING)_Template)
+AND
+GetItemForItemTemplateInInventory(_Char, _Template, _Item)
+THEN
+DB_LeaderLib_Helper_Temp_ItemFound(_Char, _Template, _Item);
+
+QRY
+LeaderLib_Helper_QRY_GetItemByTemplate((CHARACTERGUID)_Char, (STRING)_Template)
+AND
+NOT DB_LeaderLib_Helper_Temp_ItemFound(_Char, _Template, _)
+AND
+DB_LeaderLib_EquipmentSlots(_Slot)
+AND
+CharacterGetEquippedItem(_Char, _Slot, _Item)
+AND
+GetTemplate(_Item, _Template)
+THEN
+DB_LeaderLib_Helper_Temp_ItemFound(_Char, _Template, (ITEMGUID)_Item);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

@@ -1774,15 +1774,6 @@ PROC
 LeaderLib_Helper_OnVariableIntChanged((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_LastValue, (INTEGER)_CurrentValue)
 THEN
 DB_NOOP(1);
-
-QRY
-LeaderLib_Helper_QRY_VariableObjectIsSet((GUIDSTRING)_Object, (STRING)_VariableName)
-AND
-GetVarObject(_Object, _VariableName, _Obj)
-AND
-ObjectExists(_Obj, 1)
-THEN
-DB_NOOP(1);
 //END_REGION
 
 //REGION CLEAR_ACTION_QUEUE

@@ -1146,7 +1146,7 @@ GetTemplate(_Character, _Template)
 AND
 IntegertoString(_Learned, _LearnedStr)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Debug:Skills:SkillAdded] Skill [",_Skill,"](",_LearnedStr,") was added to Character [",_Name,"](",_Template,").");
+LeaderLog_Log("DEBUG_EVENTS", "[LeaderLib:Debug:Skills:SkillAdded] Skill [",_Skill,"](",_LearnedStr,") was added to Character [",_Name,"](",_Template,").");
 
 IF
 CharacterLearnedSkill(_Character, _Skill)
@@ -1155,7 +1155,7 @@ CharacterGetDisplayName(_Character, _, _Name)
 AND
 GetTemplate(_Character, _Template)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Debug:Skills:CharacterLearnedSkill] Skill [",_Skill,"] was learned by Character [",_Name,"](",_Template,").");
+LeaderLog_Log("DEBUG_EVENTS", "[LeaderLib:Debug:Skills:CharacterLearnedSkill] Skill [",_Skill,"] was learned by Character [",_Name,"](",_Template,").");
 
 IF
 SkillActivated(_Character, _Skill)
@@ -1164,7 +1164,7 @@ CharacterGetDisplayName(_Character, _, _Name)
 AND
 GetTemplate(_Character, _Template)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Debug:Skills:SkillActivated] Skill [",_Skill,"] was activated by Character [",_Name,"](",_Template,").");
+LeaderLog_Log("DEBUG_EVENTS", "[LeaderLib:Debug:Skills:SkillActivated] Skill [",_Skill,"] was activated by Character [",_Name,"](",_Template,").");
 
 IF
 SkillDeactivated(_Character, _Skill)
@@ -1173,7 +1173,7 @@ CharacterGetDisplayName(_Character, _, _Name)
 AND
 GetTemplate(_Character, _Template)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Debug:Skills:SkillDeactivated] Skill [",_Skill,"] was deactivated by Character [",_Name,"](",_Template,").");
+LeaderLog_Log("DEBUG_EVENTS", "[LeaderLib:Debug:Skills:SkillDeactivated] Skill [",_Skill,"] was deactivated by Character [",_Name,"](",_Template,").");
 //END_REGION
 
 //REGION STATUSES
@@ -1182,21 +1182,21 @@ CharacterPrecogDying(_Character)
 AND
 String(_Character, _Name)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Debug:CharacterPrecogDying] [",_Name,"] is about to die.");
+LeaderLog_Log("DEBUG_EVENTS", "[LeaderLib:Debug:CharacterPrecogDying] [",_Name,"] is about to die.");
 
 IF
 CharacterDying(_Character)
 AND
 String(_Character, _Name)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Debug:CharacterDying] [",_Name,"] is dying.");
+LeaderLog_Log("DEBUG_EVENTS", "[LeaderLib:Debug:CharacterDying] [",_Name,"] is dying.");
 
 IF
 CharacterDied(_Character)
 AND
 String(_Character, _Name)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Debug:CharacterDied] [",_Name,"] died.");
+LeaderLog_Log("DEBUG_EVENTS", "[LeaderLib:Debug:CharacterDied] [",_Name,"] died.");
 
 IF
 CharacterStatusAttempt(_Character, _Status, _Causee)
@@ -1209,7 +1209,7 @@ AND
 //CharacterGetDisplayName(_Character, _, _Name)
 String(_Character, _Name)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Debug:CharacterStatusAttempt] Status [",_Status,"] attempt on [",_Name,"] via [",_Cause,"].");
+LeaderLog_Log("DEBUG_STATUS", "[LeaderLib:Debug:CharacterStatusAttempt] Status [",_Status,"] attempt on [",_Name,"] via [",_Cause,"].");
 
 IF
 CharacterStatusAttempt(_Summon, _Status, _Causee)
@@ -1220,7 +1220,7 @@ CharacterGetDisplayName(_Summon, _, _Name)
 AND
 String(_Causee, _CauseeStr)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel:CharacterStatusAttempt] Summon [",_Name,"] with attempted status [",_Status,"] from [",_CauseeStr,"].");
+LeaderLog_Log("DEBUG_STATUS", "[LeaderLib:DebugLevel:CharacterStatusAttempt] Summon [",_Name,"] with attempted status [",_Status,"] from [",_CauseeStr,"].");
 
 IF
 CharacterStatusApplied(_Summon, _Status, _Causee)
@@ -1231,7 +1231,7 @@ CharacterGetDisplayName(_Summon, _, _Name)
 AND
 String(_Causee, _CauseeStr)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:DebugLevel:CharacterStatusApplied] Summon [",_Name,"] has applied status [",_Status,"] from [",_CauseeStr,"].");
+LeaderLog_Log("DEBUG_STATUS", "[LeaderLib:DebugLevel:CharacterStatusApplied] Summon [",_Name,"] has applied status [",_Status,"] from [",_CauseeStr,"].");
 
 IF
 CharacterStatusApplied(_Character, _Status, _Causee)
@@ -1244,7 +1244,7 @@ AND
 //CharacterGetDisplayName(_Character, _, _Name)
 String(_Character, _Name)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Debug:CharacterStatusApplied] Status [",_Status,"] applied on [",_Name,"] via [",_Cause,"].");
+LeaderLog_Log("DEBUG_STATUS", "[LeaderLib:Debug:CharacterStatusApplied] Status [",_Status,"] applied on [",_Name,"] via [",_Cause,"].");
 
 IF
 CharacterStatusRemoved(_Character, _Status, _)
@@ -1252,7 +1252,7 @@ AND
 //CharacterGetDisplayName(_Character, _, _Name)
 String(_Character, _Name)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Debug:CharacterStatusRemoved] Status [",_Status,"] removed from [",_Name,"].");
+LeaderLog_Log("DEBUG_STATUS", "[LeaderLib:Debug:CharacterStatusRemoved] Status [",_Status,"] removed from [",_Name,"].");
 
 IF
 ItemStatusAttempt(_Item, _Status, _Causee)
@@ -1263,7 +1263,7 @@ String(_Causee, _CauseName)
 AND
 GetTemplate(_Item, _Name)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Debug:ItemStatusAttempt] Status [",_Status,"] attempt on [",_Name,"] via [",_CauseName,"].");
+LeaderLog_Log("DEBUG_STATUS", "[LeaderLib:Debug:ItemStatusAttempt] Status [",_Status,"] attempt on [",_Name,"] via [",_CauseName,"].");
 
 IF
 ItemStatusChange(_Item, _Status, _Causee)
@@ -1274,7 +1274,7 @@ String(_Causee, _CauseName)
 AND
 GetTemplate(_Item, _Name)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Debug:ItemStatusChange] Status [",_Status,"] applied on [",_Name,"] via [",_CauseName,"].");
+LeaderLog_Log("DEBUG_STATUS", "[LeaderLib:Debug:ItemStatusChange] Status [",_Status,"] applied on [",_Name,"] via [",_CauseName,"].");
 
 IF
 ItemStatusChange(_Item, "SUMMONING", _)
@@ -1285,21 +1285,21 @@ String(_Owner, _CauseName)
 AND
 GetTemplate(_Item, _Name)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Debug:ItemStatusChange] Status [SUMMONING] applied on [",_Name,"] via [",_CauseName,"].");
+LeaderLog_Log("DEBUG_STATUS", "[LeaderLib:Debug:ItemStatusChange] Status [SUMMONING] applied on [",_Name,"] via [",_CauseName,"].");
 
 IF
 ItemStatusRemoved(_Item, _Status, _)
 AND
 GetTemplate(_Item, _Name)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Debug:ItemStatusRemoved] Status [",_Status,"] removed from [",_Name,"].");
+LeaderLog_Log("DEBUG_STATUS", "[LeaderLib:Debug:ItemStatusRemoved] Status [",_Status,"] removed from [",_Name,"].");
 
 IF
 CharacterTeleported(_Character, _, _x, _y, _z, _tx, _ty, _tz, _Skill)
 AND
 CharacterGetDisplayName(_Character, _, _Name)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Debug:CharacterTeleported] Character [",_Name,"] teleported via [",_Skill,"].");
+LeaderLog_Log("DEBUG_STATUS", "[LeaderLib:Debug:CharacterTeleported] Character [",_Name,"] teleported via [",_Skill,"].");
 //END_REGION
 
 IF
@@ -1410,7 +1410,7 @@ DialogStarted(_Dialog, _Instance)
 AND
 IntegertoString(_Instance, _InstanceStr)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:DialogStarted] Dialog (", _Dialog, ")[",_InstanceStr,"] started.");
+LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_20_DebugLevel:DialogStarted] Dialog (", _Dialog, ")[",_InstanceStr,"] started.");
 LeaderLib_Debug_TraceDialog(_Dialog, _Instance, "[LeaderLib_20_DebugLevel:DialogStarted] ");
 
 IF
@@ -1418,7 +1418,7 @@ DialogEnded(_Dialog, _Instance)
 AND
 IntegertoString(_Instance, _InstanceStr)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:DialogEnded] Dialog (", _Dialog, ")[",_InstanceStr,"] ended.");
+LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_20_DebugLevel:DialogEnded] Dialog (", _Dialog, ")[",_InstanceStr,"] ended.");
 
 IF
 DualDialogRequested(_Dialog, _Instance, _TargetInstance)
@@ -1427,14 +1427,14 @@ IntegertoString(_TargetInstance, _TargetInstanceStr)
 AND
 IntegertoString(_Instance, _InstanceStr)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:DualDialogRequested] Dialog (", _Dialog, ")[",_InstanceStr,"] requesting instance (",_TargetInstanceStr,").");
+LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_20_DebugLevel:DualDialogRequested] Dialog (", _Dialog, ")[",_InstanceStr,"] requesting instance (",_TargetInstanceStr,").");
 
 IF
 DualDialogStart(_Dialog, _Instance)
 AND
 IntegertoString(_Instance, _InstanceStr)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:DualDialogStart] Dual Dialog (", _Dialog, ")[",_InstanceStr,"] started.");
+LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_20_DebugLevel:DualDialogStart] Dual Dialog (", _Dialog, ")[",_InstanceStr,"] started.");
 LeaderLib_Debug_TraceDialog(_Dialog, _Instance, "[LeaderLib_20_DebugLevel:DualDialogStart] ");
 
 PROC

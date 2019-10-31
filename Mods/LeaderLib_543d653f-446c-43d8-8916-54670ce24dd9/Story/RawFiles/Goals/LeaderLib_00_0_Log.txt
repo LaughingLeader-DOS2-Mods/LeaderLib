@@ -79,6 +79,20 @@ THEN
 DB_NOOP(1);
 
 QRY
+LeaderLog_QRY_LogTypeEnabled("DEBUG_STATUS")
+AND
+GlobalGetFlag("LeaderLog_DebugStatus_Enabled", 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLog_QRY_LogTypeEnabled("DEBUG_EVENTS")
+AND
+GlobalGetFlag("LeaderLog_DebugEvents_Enabled", 1)
+THEN
+DB_NOOP(1);
+
+QRY
 LeaderLog_QRY_LogTypeEnabled("EDITOR")
 AND
 GlobalGetFlag("LeaderLog_Debug_Enabled", 1)
@@ -1235,18 +1249,23 @@ StoryEvent(_Target, "LeaderLog_Commands_Log")
 AND
 GetVarString(_Target, "LeaderLog_Message", _Message)
 AND
-NOT GetVarString(_Target, "LeaderLog_Type", _)
+NOT LeaderLib_Helper_QRY_StringVariableSet(_Target, "LeaderLog_Type")
 THEN
 LeaderLog_Log("DEBUG", _Message);
+ClearVarObject(_Target, "LeaderLog_Message");
 
 IF
 StoryEvent(_Target, "LeaderLog_Commands_Log")
 AND
 GetVarString(_Target, "LeaderLog_Message", _Message)
 AND
+LeaderLib_Helper_QRY_StringVariableSet(_Target, "LeaderLog_Type")
+AND
 GetVarString(_Target, "LeaderLog_Type", _Type)
 THEN
 LeaderLog_Log(_Type, _Message);
+ClearVarObject(_Target, "LeaderLog_Message");
+ClearVarObject(_Target, "LeaderLog_Type");
 //END_REGION
 
 //REGION NUMBER_CONVERSION

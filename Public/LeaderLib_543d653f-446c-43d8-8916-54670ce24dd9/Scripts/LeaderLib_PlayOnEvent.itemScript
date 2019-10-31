@@ -15,8 +15,7 @@ ON
 ACTIONS
 IF "c1"
 	IsEqual(%LeaderLib_PlayOnEvent_DroppedEffect1, null)
-THEN
-	StatusText(__Me, "Playing effect?")
+THEN	
 	IF "!c1"
 		IsGreaterThen(%LeaderLib_PlayOnEvent_DroppedEffect1_Looping, 0)
 	THEN

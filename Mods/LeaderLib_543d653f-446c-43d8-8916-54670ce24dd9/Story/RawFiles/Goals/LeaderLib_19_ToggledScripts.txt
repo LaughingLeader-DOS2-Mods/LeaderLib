@@ -213,10 +213,42 @@ DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag);
 LeaderLib_ToggleScripts_OnScriptRegistered(_GoalTitle, _GlobalFlag);
 
 PROC
+LeaderLib_ToggleScripts_Register_ObjectScript((STRING)_GoalTitle, (STRING)_TagOrFlag, (INTEGER)_IsTag)
+THEN
+DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _TagOrFlag, _IsTag);
+LeaderLib_ToggleScripts_OnScriptRegistered(_GoalTitle, _TagOrFlag, _IsTag);
+
+PROC
 LeaderLib_ToggleScripts_OnScriptRegistered((STRING)_GoalTitle, (STRING)_GlobalFlag)
 AND
 DB_GlobalFlag(_GlobalFlag)
 THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:OnScriptRegistered] Activating goal [",_GoalTitle,"] (",_GlobalFlag,").");
+SysActivateGoal(_GoalTitle);
+
+PROC
+//LeaderLib_ToggleScripts_OnScriptRegistered((STRING)_GoalTitle, (STRING)_TagOrFlag, (INTEGER)_IsTag)
+LeaderLib_ToggleScripts_OnScriptRegistered((STRING)_GoalTitle, (STRING)_TagOrFlag, 0)
+AND
+DB_IsPlayer(_Char)
+AND
+NOT SysIsActive(_GoalTitle)
+AND
+PartyGetFlag(_Char, _TagOrFlag, 1)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:OnScriptRegistered] Activating goal [",_GoalTitle,"] (",_TagOrFlag,").");
+SysActivateGoal(_GoalTitle);
+
+PROC
+LeaderLib_ToggleScripts_OnScriptRegistered((STRING)_GoalTitle, (STRING)_TagOrFlag, 1)
+AND
+DB_IsPlayer(_Char)
+AND
+IsTagged(_Char, _TagOrFlag, 1)
+AND
+NOT SysIsActive(_GoalTitle)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:OnScriptRegistered] Activating goal [",_GoalTitle,"] (",_TagOrFlag,").");
 SysActivateGoal(_GoalTitle);
 //END_REGION
 
@@ -230,7 +262,7 @@ NOT DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag);
 LeaderLib_ToggleScripts_OnGoalCleared(_GoalTitle, _GlobalFlag);
 
 PROC
-LeaderLib_ToggleScripts_Clear_ByFlag((STRING)_GoalTitle)
+LeaderLib_ToggleScripts_Clear_ByFlag((STRING)_GlobalFlag)
 AND
 DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag)
 THEN
@@ -238,8 +270,17 @@ NOT DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag);
 LeaderLib_ToggleScripts_OnGoalCleared(_GoalTitle, _GlobalFlag);
 
 PROC
-LeaderLib_ToggleScripts_OnGoalCleared((STRING)_GoalTitle, (STRING)_GlobalFlag)
+LeaderLib_ToggleScripts_Clear_ByFlagOrTag((STRING)_TagOrFlag)
+AND
+DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _TagOrFlag, _IsTag)
 THEN
+NOT DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _TagOrFlag, _IsTag);
+LeaderLib_ToggleScripts_OnGoalCleared(_GoalTitle, _TagOrFlag);
+
+PROC
+LeaderLib_ToggleScripts_OnGoalCleared((STRING)_GoalTitle, (STRING)_TagOrFlag)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:OnGoalCleared] Completing goal [",_GoalTitle,"] (",_TagOrFlag,").");
 SysCompleteGoal(_GoalTitle);
 //END_REGION
 
@@ -247,6 +288,13 @@ QRY
 LeaderLib_ToggleScripts_QRY_ScriptIsEnabled((STRING)_GlobalFlag)
 AND
 DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_GlobalFlag, _EnablingModID)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_ToggleScripts_QRY_ScriptIsEnabled((STRING)_TagOrFlag)
+AND
+DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_Object, _TagOrFlag, _EnablingModID)
 THEN
 DB_NOOP(1);
 
@@ -329,9 +377,12 @@ TimerCancel(_TimerName);
 IF
 TimerFinished(_TimerName)
 AND
+DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptTimer(_TimerName, _GlobalFlag)
+AND
 DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByMod(_GlobalFlag, _ModID)
 THEN
 NOT DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByMod(_GlobalFlag, _ModID);
+NOT DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptTimer(_TimerName, _GlobalFlag);
 LeaderLib_ToggleScripts_DisableScript(_GlobalFlag, _ModID);
 
 IF
@@ -403,8 +454,18 @@ DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag)
 AND
 NOT SysIsActive(_GoalTitle)
 THEN
-SysActivateGoal(_GoalTitle);
 LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:GlobalFlagSet] Global flag [",_GlobalFlag,"] was set. Activating goal [",_GoalTitle,"].");
+SysActivateGoal(_GoalTitle);
+
+PROC
+LeaderLib_ToggleScripts_Internal_ToggleOn((STRING)_TagOrFlag)
+AND
+DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _TagOrFlag, _IsTag)
+AND
+NOT SysIsActive(_GoalTitle)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:ToggleOn] Activating goal [",_GoalTitle,"] (",_TagOrFlag,").");
+SysActivateGoal(_GoalTitle);
 //END_REGION
 
 //REGION TOGGLING_OFF
@@ -415,8 +476,18 @@ DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag)
 AND
 SysIsActive(_GoalTitle)
 THEN
-SysCompleteGoal(_GoalTitle);
 LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:GlobalFlagCleared] Global flag [",_GlobalFlag,"] was cleared. Deactivating goal [",_GoalTitle,"].");
+SysCompleteGoal(_GoalTitle);
+
+PROC
+LeaderLib_ToggleScripts_Internal_ToggleOff((STRING)_TagOrFlag)
+AND
+DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _TagOrFlag, _IsTag)
+AND
+SysIsActive(_GoalTitle)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:ToggleOff] Deactivating goal [",_GoalTitle,"] (",_TagOrFlag,").");
+SysCompleteGoal(_GoalTitle);
 //END_REGION
 
 //REGION POST_TOGGLE
@@ -471,6 +542,155 @@ IF
 DB_LeaderLib_Treasure_RegisteredGenerationTypes("TRADE_GENERATION_START")
 THEN
 GlobalSetFlag("LeaderLib_TS_TreasureEvents_TradeGeneration_Enabled");
+//END_REGION
+
+//REGION ENABLING_DISABLING_WITH_OBJECT
+PROC
+LeaderLib_ToggleScripts_EnableScriptForObject((GUIDSTRING)_Object, (STRING)_TagOrFlag, (STRING)_EnablingModID)
+THEN
+LeaderLib_ToggleScripts_EnableScriptForObject(_Object, _TagOrFlag, _EnablingModID, 1);
+
+PROC
+LeaderLib_ToggleScripts_EnableScriptForObject((GUIDSTRING)_Object, (STRING)_TagOrFlag, (STRING)_EnablingModID, (INTEGER)_AddTagOrFlag)
+AND
+DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _TagOrFlag, _IsTag)
+THEN
+LeaderLib_ToggleScripts_Internal_EnableScriptForObject(_Object, _TagOrFlag, _EnablingModID, _AddTagOrFlag, _IsTag);
+
+PROC
+LeaderLib_ToggleScripts_Internal_EnableScriptForObject((GUIDSTRING)_Object, (STRING)_TagOrFlag, (STRING)_EnablingModID, 1, 1)
+THEN
+LeaderLib_Tags_PreserveTag(_Object, _TagOrFlag);
+DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_Object, _TagOrFlag, _EnablingModID);
+LeaderLib_ToggleScripts_EnableScriptForObject_OnActivated(_Object, _TagOrFlag, _EnablingModID);
+
+PROC
+LeaderLib_ToggleScripts_Internal_EnableScriptForObject((GUIDSTRING)_Object, (STRING)_TagOrFlag, (STRING)_EnablingModID, 0, 1)
+AND
+IsTagged(_Object, _TagOrFlag, 1)
+THEN
+DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_Object, _TagOrFlag, _EnablingModID);
+LeaderLib_ToggleScripts_EnableScriptForObject_OnActivated(_Object, _TagOrFlag, _EnablingModID);
+
+PROC
+LeaderLib_ToggleScripts_Internal_EnableScriptForObject((GUIDSTRING)_Object, (STRING)_TagOrFlag, (STRING)_EnablingModID, 1, 0)
+THEN
+ObjectSetFlag(_Object, _TagOrFlag, 0);
+DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_Object, _TagOrFlag, _EnablingModID);
+LeaderLib_ToggleScripts_EnableScriptForObject_OnActivated(_Object, _TagOrFlag, _EnablingModID);
+
+PROC
+LeaderLib_ToggleScripts_Internal_EnableScriptForObject((GUIDSTRING)_Object, (STRING)_TagOrFlag, (STRING)_EnablingModID, 0, 0)
+AND
+ObjectGetFlag(_Object, _TagOrFlag, 1)
+THEN
+DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_Object, _TagOrFlag, _EnablingModID);
+LeaderLib_ToggleScripts_EnableScriptForObject_OnActivated(_Object, _TagOrFlag, _EnablingModID);
+
+PROC
+LeaderLib_ToggleScripts_EnableScriptForObject_OnActivated((GUIDSTRING)_Object, (STRING)_TagOrFlag, (STRING)_EnablingModID)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_19_ToggledScriptsEnableScriptForObject:OnActivated] Toggling script [",_TagOrFlag,"] on for object/mod [",_EnablingModID,"].");
+LeaderLib_ToggleScripts_Internal_ToggleOn(_TagOrFlag);
+
+PROC
+LeaderLib_ToggleScripts_EnableScriptForObject_OnActivated((GUIDSTRING)_Object, (STRING)_TagOrFlag, (STRING)_EnablingModID)
+AND
+DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByMod(_TagOrFlag, _ModID)
+THEN
+NOT DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByMod(_TagOrFlag, _ModID);
+LeaderLib_ToggleScripts_Internal_OnCanceledDeactivation(_TagOrFlag, _ModID);
+LeaderLog_Log("DEBUG", "[LeaderLib_19_ToggledScripts:OnActivated] Canceled deactivation of script [",_TagOrFlag,"] for mod [",_ModID,"].");
+
+PROC
+LeaderLib_ToggleScripts_DisableScriptForObject((GUIDSTRING)_Object, (STRING)_TagOrFlag, (STRING)_EnablingModID)
+THEN
+LeaderLib_ToggleScripts_DisableScriptForObject(_Object, _TagOrFlag, _EnablingModID, 1);
+
+PROC
+LeaderLib_ToggleScripts_DisableScriptForObject((GUIDSTRING)_Object, (STRING)_TagOrFlag, (STRING)_EnablingModID, (INTEGER)_RemoveTagOrFlag)
+AND
+DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_Object, _TagOrFlag, _EnablingModID)
+THEN
+NOT DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_Object, _TagOrFlag, _EnablingModID);
+
+PROC
+LeaderLib_ToggleScripts_DisableScriptForObject((GUIDSTRING)_Object, (STRING)_TagOrFlag, (STRING)_EnablingModID, 1)
+AND
+DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _TagOrFlag, 0)
+THEN
+ObjectClearFlag(_Object, _TagOrFlag, 0);
+
+PROC
+LeaderLib_ToggleScripts_DisableScriptForObject((GUIDSTRING)_Object, (STRING)_TagOrFlag, (STRING)_EnablingModID, 1)
+AND
+DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _TagOrFlag, 1)
+THEN
+LeaderLib_Tags_ClearPreservedTag(_Object, _TagOrFlag);
+
+PROC
+LeaderLib_ToggleScripts_DisableScriptForObject((GUIDSTRING)_Object, (STRING)_TagOrFlag, (STRING)_EnablingModID, (INTEGER)_RemoveTagOrFlag)
+AND
+NOT DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_, _TagOrFlag, _)
+THEN
+LeaderLib_ToggleScripts_Internal_ToggleOff(_TagOrFlag);
+
+//Add to the "Mod is disabling a script" DB.
+PROC
+LeaderLib_ToggleScripts_DisableScriptForObjectAfterDelay((GUIDSTRING)_Object, (STRING)_TagOrFlag, (STRING)_ModID, (INTEGER)_Delay)
+AND
+NOT DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByObject(_Object, _TagOrFlag, _)
+THEN
+DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByObject(_Object, _TagOrFlag, _ModID);
+LeaderLog_Log("DEBUG", "[LeaderLib_19_ToggledScripts:DisableScriptAfterDelay] Mod [",_ModID,"] is disabling script [",_TagOrFlag,"] after a delay for object.");
+
+//Create the timer.
+PROC
+LeaderLib_ToggleScripts_DisableScriptForObjectAfterDelay((GUIDSTRING)_Object, (STRING)_TagOrFlag, (STRING)_ModID, (INTEGER)_Delay)
+AND
+NOT DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByObjectTimer(_, _, _TagOrFlag)
+AND
+StringConcatenate("LeaderLib_Timers_ToggleScripts_DeactivateScript_", _TagOrFlag, _TimerName)
+THEN
+DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByObjectTimer(_Object, _TimerName, _TagOrFlag);
+
+//Start/restart the timer
+PROC
+LeaderLib_ToggleScripts_DisableScriptForObjectAfterDelay((GUIDSTRING)_Object, (STRING)_TagOrFlag, (STRING)_ModID, (INTEGER)_Delay)
+AND
+DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByObjectTimer(_Object, _TimerName, _TagOrFlag)
+THEN
+TimerCancel(_TimerName);
+TimerLaunch(_TimerName, _Delay);
+
+//No mods left trying to deactivate this script, so cancel the timer.
+PROC
+LeaderLib_ToggleScripts_Internal_OnCanceledDeactivation((STRING)_TagOrFlag, (STRING)_ModID)
+AND
+NOT DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByObject(_, _TagOrFlag, _ModID)
+AND
+DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByObjectTimer(_Object, _TimerName, _TagOrFlag)
+THEN
+NOT DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByObjectTimer(_Object, _TimerName, _TagOrFlag);
+TimerCancel(_TimerName);
+
+IF
+TimerFinished(_TimerName)
+AND
+DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByObjectTimer(_Object, _TimerName, _TagOrFlag)
+AND
+DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByObject(_Object, _TagOrFlag, _ModID)
+THEN
+NOT DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByObjectTimer(_Object, _TimerName, _TagOrFlag);
+NOT DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByObject(_Object, _TagOrFlag, _ModID);
+LeaderLib_ToggleScripts_DisableScriptForObject(_Object, _TagOrFlag, _ModID);
+
+IF
+TimerFinished(_TimerName)
+AND
+DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByObjectTimer(_Object, _TimerName, _TagOrFlag)
+THEN
+NOT DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByObjectTimer(_Object, _TimerName, _TagOrFlag);
 //END_REGION
 EXITSECTION
 

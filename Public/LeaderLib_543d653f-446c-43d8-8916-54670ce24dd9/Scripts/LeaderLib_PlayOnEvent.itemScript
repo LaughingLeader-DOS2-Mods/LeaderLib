@@ -1,0 +1,40 @@
+INIT
+	ITEM:__Me
+	EXTERN STRING:%LeaderLib_PlayOnEvent_DroppedEffect1 = null
+	EXTERN FIXEDSTRING:%LeaderLib_PlayOnEvent_DroppedEffect1_Bone = ""
+	EXTERN INT:%LeaderLib_PlayOnEvent_DroppedEffect1_Looping = 0
+	INT64:%LeaderLib_PlayOnEvent_DroppedEffect1_Handle = null
+	
+EVENTS
+
+EVENT LeaderLib_PlayOnEvent_Dropped
+ON
+	OnItemDropped(__Me, _)
+	OnItemEvent(__Me, "LeaderLib_PlayOnEvent_ItemIsMoving")
+	OnActivate()
+ACTIONS
+IF "c1"
+	IsEqual(%LeaderLib_PlayOnEvent_DroppedEffect1, null)
+THEN
+	StatusText(__Me, "Playing effect?")
+	IF "!c1"
+		IsGreaterThen(%LeaderLib_PlayOnEvent_DroppedEffect1_Looping, 0)
+	THEN
+		ItemPlayEffect(__Me, %LeaderLib_PlayOnEvent_DroppedEffect1, %LeaderLib_PlayOnEvent_DroppedEffect1_Bone)
+	ELSE
+		IF "!c1"
+			IsEqual(%LeaderLib_PlayOnEvent_DroppedEffect1_Handle, null)
+		THEN
+			StopLoopEffect(%LeaderLib_PlayOnEvent_DroppedEffect1_Handle)
+		ENDIF
+		ItemPlayLoopEffect(%LeaderLib_PlayOnEvent_DroppedEffect1_Handle, __Me, %LeaderLib_PlayOnEvent_DroppedEffect1, %LeaderLib_PlayOnEvent_DroppedEffect1_Bone)
+	ENDIF
+ENDIF
+
+BEHAVIOUR
+REACTION LeaderLib_PlayOnEvent_JustDropped,999
+USAGE ALL
+CHECK "c1"
+	ItemIsMoving(__Me)
+ACTIONS
+	ItemEvent(__Me, "LeaderLib_PlayOnEvent_ItemIsMoving")

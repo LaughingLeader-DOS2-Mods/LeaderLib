@@ -44,7 +44,7 @@ LeaderLib_Randomization_Tables_OnTableReset((GUIDSTRING)_Object, (STRING)_TableI
 AND
 String(_Object, _ObjectStr)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib_00_5_Helpers_Randomization:OnTableReset] Table (",_TableID,") finished rolling all entries for object (",_ObjectStr,").");
+LeaderLog_Log("TRACE", "[LeaderLib_00_5_Helpers_Randomization:OnTableReset] Table (",_TableID,") finished rolling all entries for object (",_ObjectStr,").");
 
 PROC
 LeaderLib_Randomization_Tables_BuildTable((GUIDSTRING)_Object, (STRING)_TableID)
@@ -66,23 +66,37 @@ PROC
 LeaderLib_Randomization_Tables_BuildTable((GUIDSTRING)_Object, (STRING)_TableID)
 THEN
 DB_LeaderLib_Randomization_Temp_ActiveTableTotal(_Object, _TableID, 0, 0);
+LeaderLib_Randomization_Tables_Internal_BuildTableEntries(_Object, _TableID);
+LeaderLib_Randomization_Tables_Internal_BuildIndexes_Start(_Object, _TableID);
 
 PROC
-LeaderLib_Randomization_Tables_BuildTable((GUIDSTRING)_Object, (STRING)_TableID)
+LeaderLib_Randomization_Tables_Internal_BuildTableEntries((GUIDSTRING)_Object, (STRING)_TableID)
 AND
 NOT DB_LeaderLib_Randomization_Temp_ActiveTables(_Object, _TableID, _, _, _, _, _)
 AND
 DB_LeaderLib_Randomization_Temp_ActiveEntries(_Object, _TableID, _EntryID, _DropCount)
 THEN
-LeaderLib_Randomization_Tables_Internal_RegisterEntry(_Object, _TableID, _EntryID, _DropCount);
-LeaderLib_Randomization_Tables_Internal_IncreaseTotal(_Object, _TableID);
+DB_LeaderLib_Randomization_Temp_ActiveTables(_Object, _TableID, -1, _EntryID, _DropCount, 0, 0);
 
 PROC
-LeaderLib_Randomization_Tables_Internal_RegisterEntry((GUIDSTRING)_Object, (STRING)_TableID, (STRING)_EntryID, (INTEGER)_DropCount)
+LeaderLib_Randomization_Tables_Internal_BuildIndexes_Start((GUIDSTRING)_Object, (STRING)_TableID)
 AND
-DB_LeaderLib_Randomization_Temp_ActiveTableTotal(_Object, _TableID, _Total, _MaxRange)
+DB_LeaderLib_Randomization_Temp_ActiveTables(_Object, _TableID, _Index, _EntryID, _DropCount, _Start, _End)
 THEN
-DB_LeaderLib_Randomization_Temp_ActiveTables(_Object, _TableID, _Total, _EntryID, _DropCount, 0, 0);
+LeaderLib_Randomization_Tables_Internal_SetIndex(_Object, _TableID, _EntryID);
+
+PROC
+LeaderLib_Randomization_Tables_Internal_SetIndex((GUIDSTRING)_Object, (STRING)_TableID, (STRING)_EntryID)
+AND
+DB_LeaderLib_Randomization_Temp_ActiveTableTotal(_Object, _TableID, _Index, _MaxRange)
+AND
+DB_LeaderLib_Randomization_Temp_ActiveTables(_Object, _TableID, _LastIndex, _EntryID, _DropCount, _Start, _End)
+THEN
+NOT DB_LeaderLib_Randomization_Temp_ActiveTables(_Object, _TableID, _LastIndex, _EntryID, _DropCount, _Start, _End);
+DB_LeaderLib_Randomization_Temp_ActiveTables(_Object, _TableID, _Index, _EntryID, _DropCount, _Start, _End);
+LeaderLib_Randomization_Tables_Internal_IncreaseTotal(_Object, _TableID);
+LeaderLog_Log("TRACE", "[LeaderLib_00_5_Helpers_Randomization:SetIndex] Table (",_TableID,") Entry (",_EntryID,")");
+LeaderLog_LogInt("TRACE", "[LeaderLib_00_5_Helpers_Randomization:SetIndex] --- Index ", _Index, "");
 
 PROC
 LeaderLib_Randomization_Tables_Internal_IncreaseTotal((GUIDSTRING)_Object, (STRING)_TableID)
@@ -101,12 +115,27 @@ DB_LeaderLib_Randomization_Tables(_TableID, _Max)
 AND
 DB_LeaderLib_Randomization_Temp_ActiveTableTotal(_Object, _TableID, _Total, _MaxRange)
 AND
+_Total > 0
+AND
 IntegerDivide(_Max, _Total, _DefaultAmountPerEntry)
 THEN
-LeaderLib_Randomization_Tables_Internal_SetDropRanges(_Object, _TableID, _DefaultAmountPerEntry, 0, 0, _Max, _Total);
+LeaderLog_Log("TRACE", "[LeaderLib:Randomization:Tables:BuildTable] Generating entries for table (",_TableID,")");
+LeaderLog_LogInt("TRACE", "[LeaderLib:Randomization:Tables:BuildTable] --- DefaultAmountPerEntry (",_DefaultAmountPerEntry,")");
+LeaderLib_Randomization_Tables_Internal_SetDropRanges(_Object, _TableID, _DefaultAmountPerEntry, 0, -1, _Total);
 
 PROC
-LeaderLib_Randomization_Tables_Internal_SetDropRanges((GUIDSTRING)_Object, (STRING)_TableID, (INTEGER)_DefaultAmountPerEntry, (INTEGER)_Index, (INTEGER)_Start, (INTEGER)_Max, (INTEGER)_Total)
+LeaderLib_Randomization_Tables_BuildTable((GUIDSTRING)_Object, (STRING)_TableID)
+AND
+DB_LeaderLib_Randomization_Tables(_TableID, _Max)
+AND
+DB_LeaderLib_Randomization_Temp_ActiveTableTotal(_Object, _TableID, _Total, _MaxRange)
+AND
+_Total <= 0
+THEN
+LeaderLog_Log("ERROR", "[LeaderLib:Randomization:Tables:BuildTable] *ERROR* Table (",_TableID,") total is 0! No entries!");
+
+PROC
+LeaderLib_Randomization_Tables_Internal_SetDropRanges((GUIDSTRING)_Object, (STRING)_TableID, (INTEGER)_DefaultAmountPerEntry, (INTEGER)_Index, (INTEGER)_LastStart, (INTEGER)_Total)
 AND
 DB_LeaderLib_Randomization_Temp_ActiveTables(_Object, _TableID, _Index, _EntryID, _CurrentDropCount, 0, 0)
 AND
@@ -114,32 +143,35 @@ DB_LeaderLib_Randomization_Entries(_TableID, _EntryID, _Frequency, _DropCount)
 AND
 IntegerProduct(_DefaultAmountPerEntry, _Frequency, _Range)
 AND
-IntegerSum(_Start, _Range, _NextStart)
+IntegerSum(_LastStart, 1, _Start)
 AND
-IntegerSum(_Max, _Range, _NextMax)
+IntegerSum(_LastStart, _Range, _End)
 THEN
 NOT DB_LeaderLib_Randomization_Temp_ActiveTables(_Object, _TableID, _Index, _EntryID, _CurrentDropCount, 0, 0);
-DB_LeaderLib_Randomization_Temp_ActiveTables(_Object, _TableID, _Index, _EntryID, _CurrentDropCount, _Start, _NextMax);
-LeaderLib_Randomization_Tables_Internal_SetDropRanges_Next(_Object, _TableID, _DefaultAmountPerEntry, _Index, _NextStart, _NextMax, _Total);
+DB_LeaderLib_Randomization_Temp_ActiveTables(_Object, _TableID, _Index, _EntryID, _CurrentDropCount, _Start, _End);
+LeaderLog_Log("TRACE", "[LeaderLib:Randomization:Tables:SetDropRanges] Added entry. Table (",_TableID,") Entry (",_EntryID,")");
+LeaderLog_LogInt("TRACE", "[LeaderLib:Randomization:Tables:SetDropRanges] --- Start (",_Start,") End (",_End,")");
+LeaderLib_Randomization_Tables_Internal_SetDropRanges_Next(_Object, _TableID, _DefaultAmountPerEntry, _Index, _End, _Total);
 
 PROC
-LeaderLib_Randomization_Tables_Internal_SetDropRanges_Next((GUIDSTRING)_Object, (STRING)_TableID, (INTEGER)_DefaultAmountPerEntry, (INTEGER)_Index, (INTEGER)_Min, (INTEGER)_Max, (INTEGER)_Total)
+LeaderLib_Randomization_Tables_Internal_SetDropRanges_Next((GUIDSTRING)_Object, (STRING)_TableID, (INTEGER)_DefaultAmountPerEntry, (INTEGER)_Index, (INTEGER)_LastEnd, (INTEGER)_Total)
 AND
 DB_LeaderLib_Randomization_Temp_ActiveTableTotal(_Object, _TableID, _LastTotal, _MaxRange)
 THEN
 NOT DB_LeaderLib_Randomization_Temp_ActiveTableTotal(_Object, _TableID, _LastTotal, _MaxRange);
-DB_LeaderLib_Randomization_Temp_ActiveTableTotal(_Object, _TableID, _LastTotal, _Max);
+DB_LeaderLib_Randomization_Temp_ActiveTableTotal(_Object, _TableID, _LastTotal, _LastEnd);
 
 PROC
-LeaderLib_Randomization_Tables_Internal_SetDropRanges_Next((GUIDSTRING)_Object, (STRING)_TableID, (INTEGER)_DefaultAmountPerEntry, (INTEGER)_Index, (INTEGER)_Min, (INTEGER)_Max, (INTEGER)_Total)
+LeaderLib_Randomization_Tables_Internal_SetDropRanges_Next((GUIDSTRING)_Object, (STRING)_TableID, (INTEGER)_DefaultAmountPerEntry, (INTEGER)_Index, (INTEGER)_LastEnd, (INTEGER)_Total)
 AND
-IntegerSum(_Index, 1, _Next)
+IntegerSum(_Index, 1, _NextIndex)
 AND
-_Next < _Total
+_NextIndex < _Total
 THEN
-LeaderLib_Randomization_Tables_Internal_SetDropRanges(_Object, _TableID, _DefaultAmountPerEntry, _Next, _Min, _Max, _Total);
+LeaderLib_Randomization_Tables_Internal_SetDropRanges(_Object, _TableID, _DefaultAmountPerEntry, _NextIndex, _LastEnd, _Total);
 //END_REGION
 
+//REGION TABLE_ROLL
 QRY
 LeaderLib_Randomization_QRY_Tables_Roll((GUIDSTRING)_Object, (STRING)_TableID)
 THEN
@@ -161,18 +193,31 @@ LeaderLib_Random_QRY(0, _MaxRange)
 AND
 DB_LeaderLib_Random(_Ran)
 AND
+LeaderLog_QRY_Log("TRACE", "[LeaderLib:Randomization:Tables:Roll] Rolled for table (", _TableID, ")")
+AND
+LeaderLog_QRY_LogInt("TRACE", "[LeaderLib:Randomization:Tables:Roll] -- MaxRange (", _MaxRange, ") Total (",_Total,")")
+AND
+LeaderLog_QRY_LogInt("TRACE", "[LeaderLib:Randomization:Tables:Roll] -- Roll (", _Ran, ")")
+AND
 DB_LeaderLib_Randomization_Temp_ActiveTables(_Object, _TableID, _Index, _EntryID, _DropCount, _Start, _End)
 AND
 NOT DB_LeaderLib_Randomization_Temp_RollResult(_Object, _TableID, _)
 AND
 _DropCount > 0
 AND
-_Start >= _Ran
+LeaderLog_QRY_Log("TRACE", "[LeaderLib:Randomization:Tables:Roll] -- Entry (", _EntryID, ")")
 AND
-_End <= _Ran
+LeaderLog_QRY_LogInt("TRACE", "[LeaderLib:Randomization:Tables:Roll] --- Index (",_Index,") Dropcount (", _DropCount, ")")
+AND
+LeaderLog_QRY_LogInt("TRACE", "[LeaderLib:Randomization:Tables:Roll] --- _Start (", _Start, ") End (",_End,")")
+AND
+_Ran >= _Start
+AND
+_Ran <= _End
 AND
 IntegerSubtract(_DropCount, 1, _NextDropCount)
 THEN
+LeaderLog_Log("TRACE", "[LeaderLib:Randomization:Tables:Roll] === Success. Lowering dropcount. Table (",_TableID,") Entry (",_EntryID,") ===");
 DB_LeaderLib_Randomization_Temp_RollResult(_Object, _TableID, _EntryID);
 NOT DB_LeaderLib_Randomization_Temp_ActiveTables(_Object, _TableID, _Index, _EntryID, _DropCount, _Start, _End);
 LeaderLib_Randomization_Tables_Internal_UpdateEntry(_Object, _TableID, _Index, _EntryID, _NextDropCount, _Start, _End);
@@ -193,8 +238,10 @@ AND
 DB_LeaderLib_Randomization_Temp_ActiveEntries(_Object, _TableID, _EntryID, _LastDropCount)
 THEN
 NOT DB_LeaderLib_Randomization_Temp_ActiveEntries(_Object, _TableID, _EntryID, _LastDropCount);
+LeaderLog_Log("TRACE", "[LeaderLib:Randomization:Tables:UpdateEntry] Table (",_TableID,") Entry (",_EntryID,") hit a drop count of 0 and was removed from the active entries.");
 LeaderLib_Randomization_Tables_Internal_CheckForCompletion(_Object, _TableID);
 LeaderLib_Randomization_Tables_BuildTable(_Object, _TableID);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

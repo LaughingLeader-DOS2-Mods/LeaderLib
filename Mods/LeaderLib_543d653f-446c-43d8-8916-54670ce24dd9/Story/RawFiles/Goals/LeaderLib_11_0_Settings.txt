@@ -319,6 +319,89 @@ DB_LeaderLib_QuestTalents("Quest_SpidersKiss_Per");
 DB_LeaderLib_QuestTalents("Quest_SpidersKiss_Str");
 DB_LeaderLib_QuestTalents("Quest_TradeSecrets");
 DB_LeaderLib_QuestTalents("Quest_Rooted");
+//END_REGION
+
+//REGION SURFACES
+PROC
+LeaderLib_Settings_InitSurfaces()
+AND
+NOT DB_LeaderLib_SurfaceToInt(_,_)
+THEN
+DB_LeaderLib_SurfaceToInt("SurfaceNone", -1);
+DB_LeaderLib_SurfaceToInt("SurfaceFire", 0);
+DB_LeaderLib_SurfaceToInt("SurfaceFireBlessed", 1);
+DB_LeaderLib_SurfaceToInt("SurfaceFireCursed", 2);
+DB_LeaderLib_SurfaceToInt("SurfaceFirePurified", 3);
+DB_LeaderLib_SurfaceToInt("SurfaceWater", 4);
+DB_LeaderLib_SurfaceToInt("SurfaceWaterElectrified", 5);
+DB_LeaderLib_SurfaceToInt("SurfaceWaterFrozen", 6);
+DB_LeaderLib_SurfaceToInt("SurfaceWaterBlessed", 7);
+DB_LeaderLib_SurfaceToInt("SurfaceWaterElectrifiedBlessed", 8);
+DB_LeaderLib_SurfaceToInt("SurfaceWaterFrozenBlessed", 9);
+DB_LeaderLib_SurfaceToInt("SurfaceWaterCursed", 10);
+DB_LeaderLib_SurfaceToInt("SurfaceWaterElectrifiedCursed", 11);
+DB_LeaderLib_SurfaceToInt("SurfaceWaterFrozenCursed", 12);
+DB_LeaderLib_SurfaceToInt("SurfaceWaterPurified", 13);
+DB_LeaderLib_SurfaceToInt("SurfaceWaterElectrifiedPurified", 14);
+DB_LeaderLib_SurfaceToInt("SurfaceWaterFrozenPurified", 15);
+DB_LeaderLib_SurfaceToInt("SurfaceBlood", 16);
+DB_LeaderLib_SurfaceToInt("SurfaceBloodElectrified", 17);
+DB_LeaderLib_SurfaceToInt("SurfaceBloodFrozen", 18);
+DB_LeaderLib_SurfaceToInt("SurfaceBloodBlessed", 19);
+DB_LeaderLib_SurfaceToInt("SurfaceBloodElectrifiedBlessed", 20);
+DB_LeaderLib_SurfaceToInt("SurfaceBloodFrozenBlessed", 21);
+DB_LeaderLib_SurfaceToInt("SurfaceBloodCursed", 22);
+DB_LeaderLib_SurfaceToInt("SurfaceBloodElectrifiedCursed", 23);
+DB_LeaderLib_SurfaceToInt("SurfaceBloodFrozenCursed", 24);
+DB_LeaderLib_SurfaceToInt("SurfaceBloodPurified", 25);
+DB_LeaderLib_SurfaceToInt("SurfaceBloodElectrifiedPurified", 26);
+DB_LeaderLib_SurfaceToInt("SurfaceBloodFrozenPurified", 27);
+DB_LeaderLib_SurfaceToInt("SurfacePoison", 28);
+DB_LeaderLib_SurfaceToInt("SurfacePoisonBlessed", 29);
+DB_LeaderLib_SurfaceToInt("SurfacePoisonCursed", 30);
+DB_LeaderLib_SurfaceToInt("SurfacePoisonPurified", 31);
+DB_LeaderLib_SurfaceToInt("SurfaceOil", 32);
+DB_LeaderLib_SurfaceToInt("SurfaceOilBlessed", 33);
+DB_LeaderLib_SurfaceToInt("SurfaceOilCursed", 34);
+DB_LeaderLib_SurfaceToInt("SurfaceOilPurified", 35);
+DB_LeaderLib_SurfaceToInt("SurfaceLava", 36);
+DB_LeaderLib_SurfaceToInt("SurfaceSource", 37);
+DB_LeaderLib_SurfaceToInt("SurfaceWeb", 38);
+DB_LeaderLib_SurfaceToInt("SurfaceWebBlessed", 39);
+DB_LeaderLib_SurfaceToInt("SurfaceWebCursed", 40);
+DB_LeaderLib_SurfaceToInt("SurfaceWebPurified", 41);
+DB_LeaderLib_SurfaceToInt("SurfaceDeepwater", 42);
+DB_LeaderLib_SurfaceToInt("SurfaceFireCloud", 47);
+DB_LeaderLib_SurfaceToInt("SurfaceFireCloudBlessed", 48);
+DB_LeaderLib_SurfaceToInt("SurfaceFireCloudCursed", 49);
+DB_LeaderLib_SurfaceToInt("SurfaceFireCloudPurified", 50);
+DB_LeaderLib_SurfaceToInt("SurfaceWaterCloud", 51);
+DB_LeaderLib_SurfaceToInt("SurfaceWaterCloudElectrified", 52);
+DB_LeaderLib_SurfaceToInt("SurfaceWaterCloudBlessed", 53);
+DB_LeaderLib_SurfaceToInt("SurfaceWaterCloudElectrifiedBlessed", 54);
+DB_LeaderLib_SurfaceToInt("SurfaceWaterCloudCursed", 55);
+DB_LeaderLib_SurfaceToInt("SurfaceWaterCloudElectrifiedCursed", 56);
+DB_LeaderLib_SurfaceToInt("SurfaceWaterCloudPurified", 57);
+DB_LeaderLib_SurfaceToInt("SurfaceWaterCloudElectrifiedPurified", 58);
+DB_LeaderLib_SurfaceToInt("SurfaceBloodCloud", 59);
+DB_LeaderLib_SurfaceToInt("SurfaceBloodCloudElectrified", 60);
+DB_LeaderLib_SurfaceToInt("SurfaceBloodCloudBlessed", 61);
+DB_LeaderLib_SurfaceToInt("SurfaceBloodCloudElectrifiedBlessed", 62);
+DB_LeaderLib_SurfaceToInt("SurfaceBloodCloudCursed", 63);
+DB_LeaderLib_SurfaceToInt("SurfaceBloodCloudElectrifiedCursed", 64);
+DB_LeaderLib_SurfaceToInt("SurfaceBloodCloudPurified", 65);
+DB_LeaderLib_SurfaceToInt("SurfaceBloodCloudElectrifiedPurified", 66);
+DB_LeaderLib_SurfaceToInt("SurfacePoisonCloud", 67);
+DB_LeaderLib_SurfaceToInt("SurfacePoisonCloudBlessed", 68);
+DB_LeaderLib_SurfaceToInt("SurfacePoisonCloudCursed", 69);
+DB_LeaderLib_SurfaceToInt("SurfacePoisonCloudPurified", 70);
+DB_LeaderLib_SurfaceToInt("SurfaceSmokeCloud", 71);
+DB_LeaderLib_SurfaceToInt("SurfaceSmokeCloudBlessed", 72);
+DB_LeaderLib_SurfaceToInt("SurfaceSmokeCloudCursed", 73);
+DB_LeaderLib_SurfaceToInt("SurfaceSmokeCloudPurified", 74);
+DB_LeaderLib_SurfaceToInt("SurfaceExplosionCloud", 75);
+DB_LeaderLib_SurfaceToInt("SurfaceFrostCloud", 76);
+DB_LeaderLib_SurfaceToInt("SurfaceDeathfogCloud", 77);
 
 PROC
 LeaderLib_Settings_InitSurfaces()
@@ -368,6 +451,10 @@ LeaderLib_Settings_RegisterSurface("SurfaceWeb", "Ground", "Web");
 LeaderLib_Settings_RegisterSurface("SurfaceWebBlessed", "Ground", "Web", "Blessed");
 LeaderLib_Settings_RegisterSurface("SurfaceWebCursed", "Ground", "Web", "Cursed");
 LeaderLib_Settings_RegisterSurface("SurfaceWebPurified", "Ground", "Web", "Purified");
+//LeaderLib_Settings_RegisterSurface("Custom", "Custom", "", "");
+//LeaderLib_Settings_RegisterSurface("CustomBlessed", "Custom", "", "");
+//LeaderLib_Settings_RegisterSurface("CustomCursed", "Custom", "", "");
+//LeaderLib_Settings_RegisterSurface("CustomPurified", "Custom", "", "");
 LeaderLib_Settings_RegisterSurface("SurfaceDeepwater", "Ground", "Special");
 LeaderLib_Settings_RegisterSurface("SurfaceFireCloud", "Standard", "Cloud");
 LeaderLib_Settings_RegisterSurface("SurfaceFireCloudBlessed", "Cloud", "Blessed");
@@ -789,6 +876,16 @@ DB_LeaderLib_ForceEvent(20, "LeaderLib_Force_ShootProjectile_20", "LeaderLib_For
 //END_REGION
 
 //REGION UPDATES
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,3,0,0)
+THEN
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
+SysClear("DB_LeaderLib_Surfaces", 2);
+SysClear("DB_LeaderLib_SurfaceGroup", 2);
+LeaderLib_Settings_InitSurfaces();
+
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND

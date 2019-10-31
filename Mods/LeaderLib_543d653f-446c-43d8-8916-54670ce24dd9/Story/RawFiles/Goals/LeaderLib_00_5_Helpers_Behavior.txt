@@ -14,6 +14,31 @@ ObjectExists(_Val, 1)
 THEN
 DB_NOOP(1);
 
+QRY
+LeaderLib_Helper_QRY_StringVariableSet((GUIDSTRING)_Object, (STRING)_Var)
+AND
+LeaderLib_Helper_QRY_StringVariableSet(_Object, _Var, 0)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_StringVariableSet((GUIDSTRING)_Object, (STRING)_Var, 0)
+AND
+GetVarString(_Object, _Var, _Val)
+AND
+_Val != ""
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_StringVariableSet((GUIDSTRING)_Object, (STRING)_Var, 1)
+AND
+GetVarFixedString(_Object, _Var, _Val)
+AND
+_Val != ""
+THEN
+DB_NOOP(1);
+
 PROC
 LeaderLib_Helper_CreateSurfaceWithOwner((CHARACTERGUID)_Owner, (STRING)_Surface)
 AND
@@ -40,15 +65,28 @@ LeaderLib_Helper_CreateSurfaceWithOwnerAtPosition(_Owner, _x, _y, _z, _Surface, 
 
 PROC
 LeaderLib_Helper_CreateSurfaceWithOwnerAtPosition((CHARACTERGUID)_Owner, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_Surface, (REAL)_Radius, (INTEGER)_Turns)
+AND
+NOT DB_LeaderLib_SurfaceToInt(_Surface, _)
 THEN
 SetVarFloat(_Owner, "LeaderLib_CreateSurface_Radius", _Radius);
 SetVarInteger(_Owner, "LeaderLib_CreateSurface_Turns", _Turns);
 SetVarFloat3(_Owner, "LeaderLib_CreateSurface_Target", _x, _y, _z);
 SetVarObject(_Owner, "LeaderLib_CreateSurface_Owner", _Owner);
-
 SetVarString(_Owner, "LeaderLib_StringToSurface_String", _Surface);
 SetVarString(_Owner, "LeaderLib_StringToSurface_CompletionEvent", "LeaderLib_CreateSurface");
 SetStoryEvent(_Owner, "LeaderLib_StringToSurface");
+
+PROC
+LeaderLib_Helper_CreateSurfaceWithOwnerAtPosition((CHARACTERGUID)_Owner, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_Surface, (REAL)_Radius, (INTEGER)_Turns)
+AND
+DB_LeaderLib_SurfaceToInt(_Surface, _Index)
+THEN
+SetVarFloat(_Owner, "LeaderLib_CreateSurface_Radius", _Radius);
+SetVarInteger(_Owner, "LeaderLib_CreateSurface_Turns", _Turns);
+SetVarFloat3(_Owner, "LeaderLib_CreateSurface_Target", _x, _y, _z);
+SetVarObject(_Owner, "LeaderLib_CreateSurface_Owner", _Owner);
+SetVarInteger(_Owner, "LeaderLib_StringToSurface_Surface", _Index); // INT => SURFACE
+SetStoryEvent(_Owner, "LeaderLib_CreateSurface");
 EXITSECTION
 
 ENDEXITSECTION

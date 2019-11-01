@@ -8,10 +8,11 @@ StoryEvent(_, "LeaderLib_Initialized")
 AND
 DB_CurrentLevel(_Level)
 AND
-IsCharacterCreationLevel(_Level, 0)
+NOT LeaderLib_Helper_QRY_IsCharacterCreationOrLobby(_Level)
 AND
 NOT GlobalGetFlag("LeaderLib_CountedParties", 1)
 THEN
+TimerCancel("LeaderLib_Timers_StartCountingParty");
 TimerLaunch("LeaderLib_Timers_StartCountingParty", 500);
 
 IF
@@ -27,6 +28,7 @@ LeaderLib_Party_CountParties();
 PROC
 LeaderLib_Party_CountParties()
 THEN
+SysActivateGoal("LeaderLib_19_TS_PartyCountIterator");
 GlobalSetFlag("LeaderLib_CountedParties");
 SysClear("DB_LeaderLib_Temp_PartyCheck", 2);
 IterateParties("LeaderLib_Events_ResetPartyCount");
@@ -71,7 +73,15 @@ AND
 DB_LeaderLib_Temp_PartyCheck(_Character, _EventName)
 THEN
 NOT DB_LeaderLib_Temp_PartyCheck(_Character, _EventName);
+TimerCancel("LeaderLib_Timers_PartyCountingFinished");
+TimerLaunch("LeaderLib_Timers_PartyCountingFinished", 500);
 
+IF
+TimerFinished("LeaderLib_Timers_PartyCountingFinished")
+THEN
+SysCompleteGoal("LeaderLib_19_TS_PartyCountIterator");
+
+/* Moved to LeaderLib_19_TS_PartyCountIterator
 IF
 StoryEvent((CHARACTERGUID)_Character, _EventName)
 AND
@@ -83,47 +93,18 @@ _Character != _Leader
 THEN
 LeaderLib_Party_IncreaseCount(_Leader);
 LeaderLib_Party_IncreaseCount(_Character);
-
+*/
+//REGION INCREASE_DECREASE
 PROC
 LeaderLib_Party_IncreaseCount((CHARACTERGUID)_Character)
-AND
-NOT GetVarInteger(_Character, "LeaderLib_PartyCount", _)
 THEN
-SetVarInteger(_Character, "LeaderLib_PartyCount", 1);
-
-PROC
-LeaderLib_Party_IncreaseCount((CHARACTERGUID)_Character)
-AND
-GetVarInteger(_Character, "LeaderLib_PartyCount", _Count)
-AND
-IntegerSum(_Count, 1, _NextCount)
-THEN
-SetVarInteger(_Character, "LeaderLib_PartyCount", _NextCount);
+LeaderLib_Helper_ModifyVariableInt(_Character, "LeaderLib_PartyCount", 1, 999, 1);
 
 PROC
 LeaderLib_Party_DecreaseCount((CHARACTERGUID)_Character)
-AND
-GetVarInteger(_Character, "LeaderLib_PartyCount", _Count)
-AND
-_Count > 1
-AND
-IntegerSubtract(_Count, 1, _NextCount)
 THEN
-SetVarInteger(_Character, "LeaderLib_PartyCount", _NextCount);
-
-QRY
-LeaderLib_Party_QRY_CountNotSet((CHARACTERGUID)_Character)
-AND
-NOT GetVarInteger(_Character, "LeaderLib_PartyCount", _)
-THEN
-DB_NOOP(1);
-
-QRY
-LeaderLib_Party_QRY_CountNotSet((CHARACTERGUID)_Character)
-AND
-GetVarInteger(_Character, "LeaderLib_PartyCount", 0)
-THEN
-DB_NOOP(1);
+LeaderLib_Helper_ModifyVariableInt(_Character, "LeaderLib_PartyCount", -1, 999, 1);
+//END_REGION
 
 //REGION EVENTS
 IF

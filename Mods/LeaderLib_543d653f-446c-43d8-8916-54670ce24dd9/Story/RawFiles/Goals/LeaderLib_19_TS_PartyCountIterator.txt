@@ -1,0 +1,20 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+IF
+StoryEvent((CHARACTERGUID)_Character, _EventName)
+AND
+NOT QRY_IsSummonOrPartyFollower(_Character)
+AND
+DB_LeaderLib_Temp_PartyCheck(_Leader, _EventName)
+AND
+_Character != _Leader
+THEN
+LeaderLib_Party_IncreaseCount(_Leader);
+LeaderLib_Party_IncreaseCount(_Character);
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

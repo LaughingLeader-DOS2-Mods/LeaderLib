@@ -1132,6 +1132,20 @@ THEN
 DB_NOOP(1);
 
 QRY
+LeaderLib_Helper_QRY_IsCharacterCreationOrLobby((STRING)_Level)
+AND
+LeaderLib_Helper_QRY_IsLobby(_Level)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IsCharacterCreationOrLobby((STRING)_Level)
+AND
+IsCharacterCreationLevel(_Level, 1)
+THEN
+DB_NOOP(1);
+
+QRY
 LeaderLib_Helper_QRY_ObjectIsAlive((GUIDSTRING)_Object)
 AND
 CharacterIsDead((CHARACTERGUID)_Object, 0)
@@ -1718,7 +1732,7 @@ LeaderLib_Helper_ModifyVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTE
 AND
 NOT GetVarInteger(_Object, _Variable, _)
 THEN
-SetVarInteger(_Object, _Variable, 0);
+SetVarInteger(_Object, _Variable, _Min);
 
 PROC
 LeaderLib_Helper_ModifyVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_ModifyBy, (INTEGER)_Max, (INTEGER)_Min)

@@ -15,6 +15,22 @@ THEN
 DB_NOOP(1);
 
 QRY
+LeaderLib_Helper_QRY_IntegerVariableSet((GUIDSTRING)_Object, (STRING)_Var)
+AND
+GetVarInteger(_Object, _Var, _Value)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IntegerVariableSet((GUIDSTRING)_Object, (STRING)_Var, (INTEGER)_MinValue)
+AND
+GetVarInteger(_Object, _Var, _Value)
+AND
+_Value >= _MinValue
+THEN
+DB_NOOP(1);
+
+QRY
 LeaderLib_Helper_QRY_StringVariableSet((GUIDSTRING)_Object, (STRING)_Var)
 AND
 LeaderLib_Helper_QRY_StringVariableSet(_Object, _Var, 0)

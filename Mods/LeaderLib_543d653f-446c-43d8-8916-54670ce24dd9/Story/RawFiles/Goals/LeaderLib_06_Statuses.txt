@@ -105,14 +105,14 @@ GlobalClearFlag("LeaderLib_TS_RemoveHarmfulStatusesEnabled");
 
 //REGION UTIL
 PROC
-LeaderLib_Statuses_Internal_UpdateFlag((CHARACTERGUID)_Character, (STRING)_Status, (STRING)_Flag, 0)
+LeaderLib_Statuses_Internal_UpdateFlag((CHARACTERGUID)_Character, (STRING)_Status, (STRING)_Flag, 1)
 AND
 NOT DB_LeaderLib_Statuses_PermanentStatusBlocked(_Character, _Status, _Flag)
 THEN
 ObjectSetFlag(_Character, _Flag, 0);
 
 PROC
-LeaderLib_Statuses_Internal_UpdateFlag((CHARACTERGUID)_Character, (STRING)_Status, (STRING)_Flag, 1)
+LeaderLib_Statuses_Internal_UpdateFlag((CHARACTERGUID)_Character, (STRING)_Status, (STRING)_Flag, 0)
 AND
 NOT DB_LeaderLib_Statuses_PermanentStatusBlocked(_Character, _Status, _Flag)
 THEN
@@ -197,7 +197,7 @@ AND
 DB_LeaderLib_Statuses_PermanentStatus(_ModID, _ID, _Status, _Flag)
 THEN
 RemoveStatus(_Character, _Status);
-LeaderLib_Statuses_Internal_UpdateFlag(_Character, _Status, _Flag, 0);
+ObjectClearFlag(_Character, _Flag, 0);
 //END_REGION
 
 //REGION MODIFY_BY_FLAG
@@ -229,7 +229,7 @@ AND
 DB_LeaderLib_Statuses_PermanentStatus(_ModID, _ID, _Status, _Flag)
 THEN
 RemoveStatus(_Character, _Status);
-LeaderLib_Statuses_Internal_UpdateFlag(_Character, _Status, _Flag, 0);
+ObjectClearFlag(_Character, _Flag, 0);
 //END_REGION
 
 EXITSECTION

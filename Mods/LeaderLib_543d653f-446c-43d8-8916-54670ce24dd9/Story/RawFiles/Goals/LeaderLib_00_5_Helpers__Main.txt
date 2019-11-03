@@ -1300,7 +1300,22 @@ LeaderLib_Helper_QRY_CharacterIsHumanoid((CHARACTERGUID)_Char)
 AND
 DB_LeaderLib_RaceTags(_Race, _Tag, _BaseRace)
 AND
-IsTagged(_Char, _Tag, 1)
+IsTagged(_Char, _Tag, _a)
+AND
+IsTagged(_Char, _BaseRace, _b)
+AND
+IntegerMax(_a, _b, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_CharacterIsHumanoid((CHARACTERGUID)_Char)
+AND
+CharacterIsPlayer(_Char, 1) // CharacterGetRace doesn't work with NPCs
+AND
+DB_LeaderLib_RaceTags(_Race, _Tag, _BaseRace)
+AND
+CharacterGetRace(_Char, 1, _Race)
 THEN
 DB_NOOP(1);
 

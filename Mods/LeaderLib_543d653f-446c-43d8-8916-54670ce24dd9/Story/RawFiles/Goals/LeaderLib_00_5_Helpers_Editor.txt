@@ -1021,9 +1021,9 @@ TextEventSet("leaderlib_dialog")
 AND
 CharacterGetHostCharacter(_Player)
 AND
-LeaderLib_Recon_QRY_GetUUID("leaderlib_dialog", "target", 1, _Player)
+LeaderLib_Recon_QRY_GetUUID("leaderlib_dialog", "speaker", 1, _Player)
 AND
-DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_dialog", "target", _Target, _NextParamIndex)
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_dialog", "speaker", _Speaker, _NextParamIndex)
 AND
 LeaderLib_Recon_QRY_GetString("leaderlib_dialog", "dialog", _NextParamIndex, "LeaderLib_Debug_RecruitCharacter")
 AND
@@ -1033,12 +1033,128 @@ LeaderLib_Recon_QRY_GetInt("leaderlib_dialog", "automated", _NextParamIndex2, 0)
 AND
 DB_LeaderLib_Recon_Temp_CommandParameters_Int("leaderlib_dialog", "automated", _Automated, _NextParamIndex3)
 AND
-LeaderLib_Recon_QRY_GetUUID("leaderlib_dialog", "target2", _NextParamIndex3, NULL_00000000-0000-0000-0000-000000000000)
+LeaderLib_Recon_QRY_GetUUID("leaderlib_dialog", "speaker2", _NextParamIndex3, NULL_00000000-0000-0000-0000-000000000000)
 AND
-DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_dialog", "target2", _Target2, _NextParamIndex4)
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_dialog", "speaker2", _Speaker2, _NextParamIndex4)
+AND
+LeaderLib_Recon_QRY_GetUUID("leaderlib_dialog", "speaker3", _NextParamIndex4, NULL_00000000-0000-0000-0000-000000000000)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_dialog", "speaker3", _Speaker3, _NextParamIndex5)
+AND
+LeaderLib_Recon_QRY_GetUUID("leaderlib_dialog", "speaker4", _NextParamIndex5, NULL_00000000-0000-0000-0000-000000000000)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_dialog", "speaker4", _Speaker4, _NextParamIndex6)
+AND
+LeaderLib_Recon_QRY_GetUUID("leaderlib_dialog", "speaker5", _NextParamIndex6, NULL_00000000-0000-0000-0000-000000000000)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_dialog", "speaker5", _Speaker5, _NextParamIndex7)
+AND
+LeaderLib_Recon_QRY_GetUUID("leaderlib_dialog", "speaker6", _NextParamIndex7, NULL_00000000-0000-0000-0000-000000000000)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_dialog", "speaker6", _Speaker6, _NextParamIndex8)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_dialog] fired. Starting dialog [",_Dialog,"].");
-Proc_StartDialog(_Automated, _Dialog, _Target, _Target2);
+LeaderLog_LogInt("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet(leaderlib_dialog)] -- Automated [",_Automated,"].");
+LeaderLib_Helper_Editor_Internal_StartDialog(_Dialog, _Automated, _Speaker, _Speaker2, _Speaker3, _Speaker4, _Speaker5, _Speaker6);
+
+PROC
+LeaderLib_Helper_Editor_Internal_StartDialog((STRING)_Dialog, (INTEGER)_IsAutomated, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
+AND
+IntegerSubtract(1, _IsAutomated, _IsInteractive)
+AND
+LeaderLib_Helper_Editor_Internal_QRY_PrepareDialog(_Dialog, _IsInteractive,_Speaker1,_Speaker2,_Speaker3,_Speaker4,_Speaker5,_Speaker6)
+AND
+StartDialog_Internal(_Dialog,_IsInteractive,_Speaker1,_Speaker2,_Speaker3,_Speaker4,_Speaker5,_Speaker6,1)
+THEN
+Proc_DialogFlagSetup((STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6);
+LeaderLib_Helper_Editor_Internal_SetupDialogSpeakers(_Dialog, _IsInteractive, _Speaker1, _Speaker1,_Speaker2,_Speaker3,_Speaker4,_Speaker5,_Speaker6);
+LeaderLib_Helper_Editor_Internal_SetupDialogSpeakers(_Dialog, _IsInteractive, _Speaker2, _Speaker1,_Speaker2,_Speaker3,_Speaker4,_Speaker5,_Speaker6);
+LeaderLib_Helper_Editor_Internal_SetupDialogSpeakers(_Dialog, _IsInteractive, _Speaker3, _Speaker1,_Speaker2,_Speaker3,_Speaker4,_Speaker5,_Speaker6);
+LeaderLib_Helper_Editor_Internal_SetupDialogSpeakers(_Dialog, _IsInteractive, _Speaker4, _Speaker1,_Speaker2,_Speaker3,_Speaker4,_Speaker5,_Speaker6);
+LeaderLib_Helper_Editor_Internal_SetupDialogSpeakers(_Dialog, _IsInteractive, _Speaker5, _Speaker1,_Speaker2,_Speaker3,_Speaker4,_Speaker5,_Speaker6);
+LeaderLib_Helper_Editor_Internal_SetupDialogSpeakers(_Dialog, _IsInteractive, _Speaker6, _Speaker1,_Speaker2,_Speaker3,_Speaker4,_Speaker5,_Speaker6);
+LeaderLib_Helper_Editor_Internal_SetDialogFacing(_Dialog, _IsInteractive, _Speaker1,_Speaker2,_Speaker3,_Speaker4,_Speaker5,_Speaker6);
+
+QRY
+LeaderLib_Helper_Editor_Internal_QRY_PrepareDialog((STRING)_Dialog, 1, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
+AND
+QRY_PrepForInteractiveDialog(_Speaker1)
+AND
+QRY_PrepForInteractiveDialog(_Speaker2)
+AND
+QRY_PrepForInteractiveDialog(_Speaker3)
+AND
+QRY_PrepForInteractiveDialog(_Speaker4)
+AND
+QRY_PrepForInteractiveDialog(_Speaker5)
+AND
+QRY_PrepForInteractiveDialog(_Speaker6)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_Editor_Internal_QRY_PrepareDialog((STRING)_Dialog, (INTEGER)_IsInteractive, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_Helper_Editor_Internal_SetupDialogSpeakers((STRING)_Dialog, 1, (GUIDSTRING)_TargetSpeaker, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
+AND
+_TargetSpeaker != NULL_00000000-0000-0000-0000-000000000000
+THEN
+ProcItemSetInvulnerableForDialog(_TargetSpeaker);
+CharacterMakeStoryNpc((CHARACTERGUID)_TargetSpeaker,1);
+DB_HasMetCharactersToCheck(_Speaker1,_TargetSpeaker);
+
+PROC
+LeaderLib_Helper_Editor_Internal_SetDialogFacing((STRING)_Dialog, 1, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
+AND
+_Speaker6 != NULL_00000000-0000-0000-0000-000000000000
+THEN
+ProcFaceCharacter(_Speaker1,_Speaker6);
+ProcFaceCharacter(_Speaker2,_Speaker6);
+ProcFaceCharacter(_Speaker3,_Speaker6);
+ProcFaceCharacter(_Speaker4,_Speaker6);
+ProcFaceCharacter(_Speaker5,_Speaker6);
+ProcFaceCharacter(_Speaker6,_Speaker1);
+
+PROC
+LeaderLib_Helper_Editor_Internal_SetDialogFacing((STRING)_Dialog, 1, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, NULL_00000000-0000-0000-0000-000000000000)
+AND
+_Speaker5 != NULL_00000000-0000-0000-0000-000000000000
+THEN
+ProcFaceCharacter(_Speaker1,_Speaker5);
+ProcFaceCharacter(_Speaker2,_Speaker5);
+ProcFaceCharacter(_Speaker3,_Speaker5);
+ProcFaceCharacter(_Speaker4,_Speaker5);
+ProcFaceCharacter(_Speaker5,_Speaker1);
+
+PROC
+LeaderLib_Helper_Editor_Internal_SetDialogFacing((STRING)_Dialog, 1, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, NULL_00000000-0000-0000-0000-000000000000, NULL_00000000-0000-0000-0000-000000000000)
+AND
+_Speaker4 != NULL_00000000-0000-0000-0000-000000000000
+THEN
+ProcFaceCharacter(_Speaker1,_Speaker4);
+ProcFaceCharacter(_Speaker2,_Speaker4);
+ProcFaceCharacter(_Speaker3,_Speaker4);
+ProcFaceCharacter(_Speaker4,_Speaker1);
+
+PROC
+LeaderLib_Helper_Editor_Internal_SetDialogFacing((STRING)_Dialog, 1, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, NULL_00000000-0000-0000-0000-000000000000, NULL_00000000-0000-0000-0000-000000000000, NULL_00000000-0000-0000-0000-000000000000)
+AND
+_Speaker3 != NULL_00000000-0000-0000-0000-000000000000
+THEN
+ProcFaceCharacter(_Speaker1,_Speaker3);
+ProcFaceCharacter(_Speaker2,_Speaker3);
+ProcFaceCharacter(_Speaker3,_Speaker1);
+
+PROC
+LeaderLib_Helper_Editor_Internal_SetDialogFacing((STRING)_Dialog, 1, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, NULL_00000000-0000-0000-0000-000000000000, NULL_00000000-0000-0000-0000-000000000000, NULL_00000000-0000-0000-0000-000000000000, NULL_00000000-0000-0000-0000-000000000000)
+AND
+_Speaker2 != NULL_00000000-0000-0000-0000-000000000000
+THEN
+ProcFaceCharacter(_Speaker1,_Speaker2);
+ProcFaceCharacter(_Speaker2,_Speaker1);
 
 IF
 TextEventSet("leaderlib_dialog")

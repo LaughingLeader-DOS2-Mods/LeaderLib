@@ -10,10 +10,10 @@
 	"Character Timer": {
 		"prefix": "chartimer",
 		"body": [
-			"ProcObjectTimer(_${1:Char}, \"${2:MyMod_Timers_TimerName}\", ${3:1000});",
+			"ProcObjectTimer(_${1:Char}, \"${2:Timers_MyMod_TimerName}\", ${3:1000});",
 			"",
 			"PROC",
-			"ProcObjectTimerFinished((CHARACTERGUID)_${1:Char}, \"${2:MyMod_Timers_TimerName}\")",
+			"ProcObjectTimerFinished((CHARACTERGUID)_${1:Char}, \"${2:Timers_MyMod_TimerName}\")",
 			"THEN",
 			"DB_NOOP(1);",
 		],
@@ -22,10 +22,10 @@
 	"Item Timer": {
 		"prefix": "itemtimer",
 		"body": [
-			"ProcObjectTimer(_${1:Item}, \"${2:MyMod_Timers_TimerName}\", ${3:1000});",
+			"ProcObjectTimer(_${1:Item}, \"${2:Timers_MyMod_TimerName}\", ${3:1000});",
 			"",
 			"PROC",
-			"ProcObjectTimerFinished((ITEMGUID)_${1:Item}, \"${2:MyMod_Timers_TimerName}\")",
+			"ProcObjectTimerFinished((ITEMGUID)_${1:Item}, \"${2:Timers_MyMod_TimerName}\")",
 			"THEN",
 			"DB_NOOP(1);",
 		],
@@ -34,10 +34,10 @@
 	"Object Timer": {
 		"prefix": "objtimer",
 		"body": [
-			"ProcObjectTimer(_${1:Object}, \"${2:MyMod_Timers_TimerName}\", ${3:1000});",
+			"ProcObjectTimer(_${1:Object}, \"${2:Timers_MyMod_TimerName}\", ${3:1000});",
 			"",
 			"PROC",
-			"ProcObjectTimerFinished(_${1:Object}, \"${2:MyMod_Timers_TimerName}\")",
+			"ProcObjectTimerFinished(_${1:Object}, \"${2:Timers_MyMod_TimerName}\")",
 			"THEN",
 			"DB_NOOP(1);",
 		],
@@ -46,7 +46,7 @@
 	"ObjectObject Timer": {
 		"prefix": "objobjtimer",
 		"body": [
-			"LeaderLib_Timers_StartObjectObjectTimer(_${1:Obj1}, _${2:Obj2}, ${3:1000}, \"${4:MyMod_Timers_TimerName}\", \"${5:CompletionEvent}\");",
+			"LeaderLib_Timers_StartObjectObjectTimer(_${1:Obj1}, _${2:Obj2}, ${3:1000}, \"${4:Timers_MyMod_TimerName}\", \"${5:CompletionEvent}\");",
 			"",
 			"PROC",
 			"LeaderLib_Timers_ObjectObjectTimerFinished(_${1:Obj1}, _${2:Obj2}, \"${5:CompletionEvent}\")",
@@ -58,7 +58,7 @@
 	"Leader Object Timer": {
 		"prefix": "leadertimerobj",
 		"body": [
-			"LeaderLib_Timers_StartObjectTimer(_${1:Obj1}, ${2:1000}, \"${3:MyMod_Timers_TimerName}\", \"${4:CompletionEvent}\");",
+			"LeaderLib_Timers_StartObjectTimer(_${1:Obj1}, ${2:1000}, \"${3:Timers_MyMod_TimerName}\", \"${4:CompletionEvent}\");",
 			"",
 			"IF",
 			"StoryEvent(_${1:Obj1}, \"${4:CompletionEvent}\")",
@@ -70,7 +70,7 @@
 	"Leader Character Timer": {
 		"prefix": "leadertimerchar",
 		"body": [
-			"LeaderLib_Timers_StartObjectTimer(_${1:Char}, ${2:1000}, \"${3:MyMod_Timers_TimerName}\", \"${4:CompletionEvent}\");",
+			"LeaderLib_Timers_StartObjectTimer(_${1:Char}, ${2:1000}, \"${3:Timers_MyMod_TimerName}\", \"${4:CompletionEvent}\");",
 			"",
 			"IF",
 			"StoryEvent((CHARACTERGUID)_${1:Char}, \"${4:CompletionEvent}\")",
@@ -82,7 +82,7 @@
 	"Leader Item Timer": {
 		"prefix": "leadertimeritem",
 		"body": [
-			"LeaderLib_Timers_StartObjectTimer(_${1:Item}, ${2:1000}, \"${3:MyMod_Timers_TimerName}\", \"${4:CompletionEvent}\");",
+			"LeaderLib_Timers_StartObjectTimer(_${1:Item}, ${2:1000}, \"${3:Timers_MyMod_TimerName}\", \"${4:CompletionEvent}\");",
 			"",
 			"IF",
 			"StoryEvent((ITEMGUID)_${1:Item}, \"${4:CompletionEvent}\")",
@@ -94,7 +94,7 @@
 	"Leader CharItem Timer": {
 		"prefix": "leadertimercharitem",
 		"body": [
-			"LeaderLib_Timers_StartCharacterItemTimer(_${1:Char}, _${2:Item}, ${3:1000}, \"${4:MyMod_Timers_}${5:CompletionEvent}\", \"${5:CompletionEvent}\");",
+			"LeaderLib_Timers_StartCharacterItemTimer(_${1:Char}, _${2:Item}, ${3:1000}, \"${4:Timers_MyMod_}${5:CompletionEvent}\", \"${5:CompletionEvent}\");",
 			"",
 			"IF",
 			"CharacterItemEvent(_$1, _$2, \"$5\")",
@@ -106,7 +106,7 @@
 	"Leader CharChar Timer": {
 		"prefix": "leadertimercharchar",
 		"body": [
-			"LeaderLib_Timers_StartCharacterCharacterTimer(_${1:Char1}, _${2:Char2}, ${3:1000}, \"${4:MyMod_Timers_}${5:CompletionEvent}\", \"${5:CompletionEvent}\");",
+			"LeaderLib_Timers_StartCharacterCharacterTimer(_${1:Char1}, _${2:Char2}, ${3:1000}, \"${4:Timers_MyMod_}${5:CompletionEvent}\", \"${5:CompletionEvent}\");",
 			"",
 			"IF",
 			"CharacterCharacterEvent(_$1, _$2, \"$5\")",

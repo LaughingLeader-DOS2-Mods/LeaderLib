@@ -1015,6 +1015,36 @@ THEN
 LeaderLib_Recon_ClearParams("leaderlib_useskill");
 //END_REGION
 
+//REGION DIALOG
+IF
+TextEventSet("leaderlib_dialog")
+AND
+CharacterGetHostCharacter(_Player)
+AND
+LeaderLib_Recon_QRY_GetUUID("leaderlib_dialog", "target", 1, _Player)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_dialog", "target", _Target, _NextParamIndex)
+AND
+LeaderLib_Recon_QRY_GetString("leaderlib_dialog", "dialog", _NextParamIndex, "LeaderLib_Debug_RecruitCharacter")
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_dialog", "dialog", _Dialog, _NextParamIndex2)
+AND
+LeaderLib_Recon_QRY_GetInt("leaderlib_dialog", "automated", _NextParamIndex2, 0)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_Int("leaderlib_dialog", "automated", _Automated, _NextParamIndex3)
+AND
+LeaderLib_Recon_QRY_GetUUID("leaderlib_dialog", "target2", _NextParamIndex3, NULL_00000000-0000-0000-0000-000000000000)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_dialog", "target2", _Target2, _NextParamIndex4)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib_dialog] fired. Starting dialog [",_Dialog,"].");
+Proc_StartDialog(_Automated, _Dialog, _Target, _Target2);
+
+IF
+TextEventSet("leaderlib_dialog")
+THEN
+LeaderLib_Recon_ClearParams("leaderlib_dialog");
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

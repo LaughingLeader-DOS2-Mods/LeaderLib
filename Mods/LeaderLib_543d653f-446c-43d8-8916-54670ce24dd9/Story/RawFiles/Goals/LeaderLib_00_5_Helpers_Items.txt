@@ -843,6 +843,87 @@ ItemLevelUpTo(_Item, _Level);
 SetVarInteger(_Item, "LeaderLib_Level", _Level);
 //END_REGION
 
+//REGION ADD_AND_EQUIP
+QRY
+LeaderLib_Helper_QRY_AddItemTemplateTo((CHARACTERGUID)_Char, (STRING)_Template)
+THEN
+ItemTemplateAddTo(_Template, _Char, 1, 1);
+
+QRY
+LeaderLib_Helper_QRY_AddItemTemplateTo((CHARACTERGUID)_Char, (STRING)_Template, (INTEGER)_Amount)
+THEN
+ItemTemplateAddTo(_Template, _Char, _Amount, 1);
+
+QRY
+LeaderLib_Helper_QRY_AddItemTemplateTo((CHARACTERGUID)_Char, (STRING)_Template, (INTEGER)_Amount, (INTEGER)_ShowNotification)
+THEN
+ItemTemplateAddTo(_Template, _Char, _Amount, _ShowNotification);
+
+QRY
+LeaderLib_Helper_QRY_AddAndEquipItemTemplate((CHARACTERGUID)_Char, (STRING)_Template)
+THEN
+LeaderLib_Helper_AddAndEquipItemTemplate(_Char, _Template, 1);
+
+QRY
+LeaderLib_Helper_QRY_AddAndEquipItemTemplate((CHARACTERGUID)_Char, (STRING)_Template, (INTEGER)_ShowNotification)
+THEN
+LeaderLib_Helper_AddAndEquipItemTemplate(_Char, _Template, _ShowNotification);
+
+PROC
+LeaderLib_Helper_AddAndEquipItemTemplate((CHARACTERGUID)_Char, (STRING)_Template)
+THEN
+LeaderLib_Helper_AddAndEquipItemTemplate(_Char, _Template, 1);
+
+PROC
+LeaderLib_Helper_AddAndEquipItemTemplate((CHARACTERGUID)_Char, (STRING)_Template, (INTEGER)_ShowNotification)
+AND
+LeaderLib_Helper_QRY_AddItemTemplateTo(_Char, _Template, 1, _ShowNotification)
+AND
+GetItemForItemTemplateInInventory(_Char, _Template, _Item)
+THEN
+CharacterEquipItem(_Char, _Item);
+
+QRY
+LeaderLib_Helper_QRY_EquipOrAddItemTemplate((CHARACTERGUID)_Char, (STRING)_Template)
+THEN
+LeaderLib_Helper_EquipOrAddItemTemplate(_Char, _Template, 1);
+
+QRY
+LeaderLib_Helper_QRY_EquipOrAddItemTemplate((CHARACTERGUID)_Char, (STRING)_Template, (INTEGER)_ShowNotification)
+THEN
+LeaderLib_Helper_EquipOrAddItemTemplate(_Char, _Template, _ShowNotification);
+
+PROC
+LeaderLib_Helper_EquipOrAddItemTemplate((CHARACTERGUID)_Char, (STRING)_Template)
+THEN
+LeaderLib_Helper_EquipOrAddItemTemplate(_Char, _Template, 1);
+
+PROC
+LeaderLib_Helper_EquipOrAddItemTemplate((CHARACTERGUID)_Char, (STRING)_Template, (INTEGER)_ShowNotification)
+AND
+LeaderLib_Helper_QRY_GetItemByTemplate(_Char, _Template)
+AND
+DB_LeaderLib_Helper_Temp_ItemFound(_Char, _Template, _Item)
+THEN
+NOT DB_LeaderLib_Helper_Temp_ItemFound(_Char, _Template, _Item);
+DB_LeaderLib_Helper_Temp_ItemFoundAndEquipped(_Char, _Template, _Item);
+CharacterEquipItem(_Char, _Item);
+
+PROC
+LeaderLib_Helper_EquipOrAddItemTemplate((CHARACTERGUID)_Char, (STRING)_Template, (INTEGER)_ShowNotification)
+AND
+NOT DB_LeaderLib_Helper_Temp_ItemFoundAndEquipped(_Char, _Template, _)
+THEN
+LeaderLib_Helper_EquipOrAddItemTemplate(_Char, _Template, _ShowNotification);
+
+PROC
+LeaderLib_Helper_EquipOrAddItemTemplate((CHARACTERGUID)_Char, (STRING)_Template, (INTEGER)_ShowNotification)
+AND
+DB_LeaderLib_Helper_Temp_ItemFoundAndEquipped(_Char, _Template, _Item)
+THEN
+NOT DB_LeaderLib_Helper_Temp_ItemFoundAndEquipped(_Char, _Template, _Item);
+//END_REGION
+
 //REGION GET_ITEM_BY_TEMPLATE
 QRY
 LeaderLib_Helper_QRY_GetItemByTemplate((CHARACTERGUID)_Char, (STRING)_Template)

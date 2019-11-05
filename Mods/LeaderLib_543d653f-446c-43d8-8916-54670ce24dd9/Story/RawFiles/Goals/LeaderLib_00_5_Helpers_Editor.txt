@@ -1103,8 +1103,22 @@ AND
 _TargetSpeaker != NULL_00000000-0000-0000-0000-000000000000
 THEN
 ProcItemSetInvulnerableForDialog(_TargetSpeaker);
-CharacterMakeStoryNpc((CHARACTERGUID)_TargetSpeaker,1);
+
+PROC
+LeaderLib_Helper_Editor_Internal_SetupDialogSpeakers((STRING)_Dialog, 1, (GUIDSTRING)_TargetSpeaker, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
+AND
+ObjectIsCharacter((CHARACTERGUID)_Speaker1, 1)
+AND
+ObjectIsCharacter((CHARACTERGUID)_TargetSpeaker, 1)
+THEN
 DB_HasMetCharactersToCheck(_Speaker1,_TargetSpeaker);
+
+PROC
+LeaderLib_Helper_Editor_Internal_SetupDialogSpeakers((STRING)_Dialog, 1, (GUIDSTRING)_TargetSpeaker, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
+AND
+ObjectIsCharacter((CHARACTERGUID)_TargetSpeaker, 1)
+THEN
+CharacterMakeStoryNpc(_TargetSpeaker,1);
 
 PROC
 LeaderLib_Helper_Editor_Internal_SetDialogFacing((STRING)_Dialog, 1, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)

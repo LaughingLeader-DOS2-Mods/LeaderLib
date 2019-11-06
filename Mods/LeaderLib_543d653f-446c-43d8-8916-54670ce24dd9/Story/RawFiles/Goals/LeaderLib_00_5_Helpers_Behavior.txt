@@ -3,6 +3,8 @@ SubGoalCombiner SGC_AND
 INITSECTION
 
 KBSECTION
+
+//REGION VARIABLE_QUERIES
 QRY
 LeaderLib_Helper_QRY_ObjectVariableSet((GUIDSTRING)_Object, (STRING)_Var)
 AND
@@ -18,6 +20,8 @@ QRY
 LeaderLib_Helper_QRY_IntegerVariableSet((GUIDSTRING)_Object, (STRING)_Var)
 AND
 GetVarInteger(_Object, _Var, _Value)
+AND
+_Value != -1163005939 // ClearVarObject sets an int var to this number
 THEN
 DB_NOOP(1);
 
@@ -54,7 +58,98 @@ AND
 _Val != ""
 THEN
 DB_NOOP(1);
+//END_REGION
 
+//REGION VARIABLES
+PROC
+LeaderLib_Helper_SetVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_Value)
+AND
+NOT LeaderLib_Helper_QRY_IntegerVariableSet(_Object, _Variable)
+THEN
+SetVarInteger(_Object, _Variable, 0);
+
+PROC
+LeaderLib_Helper_SetVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_Value)
+AND
+GetVarInteger(_Object, _Variable, _LastValue)
+THEN
+SetVarInteger(_Object, _Variable, _Value);
+LeaderLib_Helper_Internal_FireOnVariableIntChanged(_Object, _Variable, _LastValue, _Value);
+
+PROC
+LeaderLib_Helper_ModifyVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_ModifyBy)
+THEN
+LeaderLib_Helper_ModifyVariableInt(_Object, _Variable, _ModifyBy, 999, 0);
+
+PROC
+LeaderLib_Helper_ModifyVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_ModifyBy, (INTEGER)_Max)
+THEN
+LeaderLib_Helper_ModifyVariableInt(_Object, _Variable, _ModifyBy, _Max, 0);
+
+PROC
+LeaderLib_Helper_ModifyVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_ModifyBy, (INTEGER)_Max, (INTEGER)_Min)
+AND
+NOT LeaderLib_Helper_QRY_IntegerVariableSet(_Object, _Variable, _Min)
+THEN
+SetVarInteger(_Object, _Variable, _Min);
+
+PROC
+LeaderLib_Helper_ModifyVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_ModifyBy, (INTEGER)_Max, (INTEGER)_Min)
+AND
+GetVarInteger(_Object, _Variable, _Var)
+AND
+IntegerSum(_Var, _ModifyBy, _NextVar)
+THEN
+LeaderLib_Helper_ClampVariableInt(_Object, _Variable, _NextVar, _Max, _Min);
+LeaderLib_Helper_Internal_FireOnVariableIntChanged(_Object, _Variable, _Var);
+
+PROC
+LeaderLib_Helper_ClampVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_NextVar, (INTEGER)_Max, (INTEGER)_Min)
+AND
+_NextVar > _Max
+THEN
+SetVarInteger(_Object, _Variable, _Max);
+
+PROC
+LeaderLib_Helper_ClampVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_NextVar, (INTEGER)_Max, (INTEGER)_Min)
+AND
+_NextVar <= _Max
+AND
+_NextVar >= _Min
+THEN
+SetVarInteger(_Object, _Variable, _NextVar);
+
+PROC
+LeaderLib_Helper_ClampVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_NextVar, (INTEGER)_Max, (INTEGER)_Min)
+AND
+_NextVar < _Min
+THEN
+SetVarInteger(_Object, _Variable, _Min);
+
+// Only fires OnVariableChanged if the variable has actually changed.
+PROC
+LeaderLib_Helper_Internal_FireOnVariableIntChanged((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_LastValue)
+AND
+GetVarInteger(_Object, _Variable, _CurrentValue)
+AND
+_LastValue != _CurrentValue
+THEN
+LeaderLib_Helper_OnVariableIntChanged(_Object, _Variable, _LastValue, _CurrentValue);
+
+PROC
+LeaderLib_Helper_Internal_FireOnVariableIntChanged((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_LastValue, (INTEGER)_CurrentValue)
+AND
+_LastValue != _CurrentValue
+THEN
+LeaderLib_Helper_OnVariableIntChanged(_Object, _Variable, _LastValue, _CurrentValue);
+
+PROC
+LeaderLib_Helper_OnVariableIntChanged((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_LastValue, (INTEGER)_CurrentValue)
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION CREATE_SURFACE_OWNER
 PROC
 LeaderLib_Helper_CreateSurfaceWithOwner((CHARACTERGUID)_Owner, (STRING)_Surface)
 AND
@@ -103,6 +198,7 @@ SetVarFloat3(_Owner, "LeaderLib_CreateSurface_Target", _x, _y, _z);
 SetVarObject(_Owner, "LeaderLib_CreateSurface_Owner", _Owner);
 SetVarInteger(_Owner, "LeaderLib_StringToSurface_Surface", _Index); // INT => SURFACE
 SetStoryEvent(_Owner, "LeaderLib_CreateSurface");
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

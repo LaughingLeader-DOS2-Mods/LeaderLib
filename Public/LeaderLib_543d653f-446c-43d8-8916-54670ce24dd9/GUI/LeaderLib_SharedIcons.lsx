@@ -118,6 +118,13 @@
                     <attribute id="V2" value="0.0936279" type="6" />
                 </node>
                 <node id="IconUV">
+                    <attribute id="MapKey" value="LLMAJSKULLK_Items_Unique_GravelordSword_2H_A" type="22" />
+                    <attribute id="U1" value="0.312622" type="6" />
+                    <attribute id="U2" value="0.328003" type="6" />
+                    <attribute id="V1" value="0.0782471" type="6" />
+                    <attribute id="V2" value="0.0936279" type="6" />
+                </node>
+                <node id="IconUV">
                     <attribute id="MapKey" value="LLMAJSKULLK_Items_Unique_RoseShield_A" type="22" />
                     <attribute id="U1" value="0.171997" type="6" />
                     <attribute id="U2" value="0.187378" type="6" />
@@ -177,6 +184,55 @@
                     <attribute id="MapKey" value="LLMAJSKULLK_Items_Unique_ThornArmor_Skirt_A" type="22" />
                     <attribute id="U1" value="0.234497" type="6" />
                     <attribute id="U2" value="0.249878" type="6" />
+                    <attribute id="V1" value="0.0782471" type="6" />
+                    <attribute id="V2" value="0.0936279" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLMAJSKULLK_Skills_ActivateSwordOfActuation" type="22" />
+                    <attribute id="U1" value="0.375122" type="6" />
+                    <attribute id="U2" value="0.390503" type="6" />
+                    <attribute id="V1" value="0.0782471" type="6" />
+                    <attribute id="V2" value="0.0936279" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLMAJSKULLK_Skills_Riftwalk" type="22" />
+                    <attribute id="U1" value="0.390747" type="6" />
+                    <attribute id="U2" value="0.406128" type="6" />
+                    <attribute id="V1" value="0.0782471" type="6" />
+                    <attribute id="V2" value="0.0936279" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLMAJSKULLK_Skills_TripleStrike" type="22" />
+                    <attribute id="U1" value="0.421997" type="6" />
+                    <attribute id="U2" value="0.437378" type="6" />
+                    <attribute id="V1" value="0.0782471" type="6" />
+                    <attribute id="V2" value="0.0936279" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLMAJSKULLK_Status_Toxic" type="22" />
+                    <attribute id="U1" value="0.406372" type="6" />
+                    <attribute id="U2" value="0.421753" type="6" />
+                    <attribute id="V1" value="0.0782471" type="6" />
+                    <attribute id="V2" value="0.0936279" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLMAJSKULLK_Status_Toxic_Stage1" type="22" />
+                    <attribute id="U1" value="0.328247" type="6" />
+                    <attribute id="U2" value="0.343628" type="6" />
+                    <attribute id="V1" value="0.0782471" type="6" />
+                    <attribute id="V2" value="0.0936279" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLMAJSKULLK_Status_Toxic_Stage2" type="22" />
+                    <attribute id="U1" value="0.343872" type="6" />
+                    <attribute id="U2" value="0.359253" type="6" />
+                    <attribute id="V1" value="0.0782471" type="6" />
+                    <attribute id="V2" value="0.0936279" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLMAJSKULLK_Status_Toxic_Stage3" type="22" />
+                    <attribute id="U1" value="0.359497" type="6" />
+                    <attribute id="U2" value="0.374878" type="6" />
                     <attribute id="V1" value="0.0782471" type="6" />
                     <attribute id="V2" value="0.0936279" type="6" />
                 </node>

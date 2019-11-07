@@ -299,31 +299,56 @@ LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:TextEventSet] Event [leaderlib
 IF
 TextEventSet("leaderlib_playfx")
 AND
-GetTextEventParamString(1, _EffectName)
-AND
-GetTextEventParamString(2, _Bone)
-AND
 CharacterGetHostCharacter(_Player)
 AND
 LeaderLib_Recon_QRY_GetUUID("leaderlib_playfx", "target", 1, _Player)
 AND
 DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_playfx", "target", _Target, _NextParamIndex)
+AND
+LeaderLib_Recon_QRY_GetString("leaderlib_playfx", "effect", _NextParamIndex, "RS3_FX_Skills_Divine_Shout_Cast_01")
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_playfx", "effect", _EffectName, _NextParamIndex2)
+AND
+LeaderLib_Recon_QRY_GetString("leaderlib_playfx", "bone", _NextParamIndex2, "")
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_playfx", "bone", _Bone, _NextParamIndex3)
 THEN
-NOT DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_playfx", "target", _Target, _NextParamIndex);
 PlayEffect(_Target, _EffectName, _Bone);
+
+IF
+TextEventSet("leaderlib_playfx")
+THEN
+LeaderLib_Recon_ClearParams("leaderlib_playfx");
 
 IF
 TextEventSet("leaderlib_playfxpos")
 AND
-GetTextEventParamString(1, _EffectName)
+CharacterGetHostCharacter(_Player)
 AND
-GetTextEventParamReal(2, _x)
+GetPosition(_Player, _x, _y, _z)
 AND
-GetTextEventParamReal(3, _y)
+LeaderLib_Recon_QRY_GetString("leaderlib_playfx", "effect", 1, "RS3_FX_Skills_Divine_Shout_Cast_01")
 AND
-GetTextEventParamReal(4, _z)
+DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_playfx", "effect", _EffectName, _NextParamIndex)
+AND
+LeaderLib_Recon_QRY_GetReal("leaderlib_playfx", "xpos", _NextParamIndex, _x)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_Real("leaderlib_playfx", "xpos", _tx, _NextParamIndex2)
+AND
+LeaderLib_Recon_QRY_GetReal("leaderlib_playfx", "ypos", _NextParamIndex2, _y)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_Real("leaderlib_playfx", "ypos", _ty, _NextParamIndex3)
+AND
+LeaderLib_Recon_QRY_GetReal("leaderlib_playfx", "zpos", _NextParamIndex3, _z)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_Real("leaderlib_playfx", "zpos", _tz, _NextParamIndex4)
 THEN
-PlayEffectAtPosition(_EffectName, _x, _y, _z);
+PlayEffectAtPosition(_EffectName, _tx, _ty, _tz);
+
+IF
+TextEventSet("leaderlib_playfxpos")
+THEN
+LeaderLib_Recon_ClearParams("leaderlib_playfxpos");
 //END_REGION
 
 //REGION SOUND

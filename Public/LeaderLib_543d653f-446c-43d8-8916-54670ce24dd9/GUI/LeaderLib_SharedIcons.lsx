@@ -1329,6 +1329,13 @@
                     <attribute id="V2" value="0.0780029" type="6" />
                 </node>
                 <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_AnvilMace_2H_A" type="22" />
+                    <attribute id="U1" value="0.468872" type="6" />
+                    <attribute id="U2" value="0.484253" type="6" />
+                    <attribute id="V1" value="0.0782471" type="6" />
+                    <attribute id="V2" value="0.0936279" type="6" />
+                </node>
+                <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_Banner_DivineOrder_2H_A" type="22" />
                     <attribute id="U1" value="0.296997" type="6" />
                     <attribute id="U2" value="0.312378" type="6" />
@@ -1341,6 +1348,20 @@
                     <attribute id="U2" value="0.328003" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.0780029" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_BattleScroll_2H_A" type="22" />
+                    <attribute id="U1" value="0.437622" type="6" />
+                    <attribute id="U2" value="0.453003" type="6" />
+                    <attribute id="V1" value="0.0782471" type="6" />
+                    <attribute id="V2" value="0.0936279" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_Bible_2H_A" type="22" />
+                    <attribute id="U1" value="0.453247" type="6" />
+                    <attribute id="U2" value="0.468628" type="6" />
+                    <attribute id="V1" value="0.0782471" type="6" />
+                    <attribute id="V2" value="0.0936279" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Unique_Kevin_A" type="22" />
@@ -1376,6 +1397,20 @@
                     <attribute id="U2" value="0.296753" type="6" />
                     <attribute id="V1" value="0.0626221" type="6" />
                     <attribute id="V2" value="0.0780029" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Wakizashi_1H_A" type="22" />
+                    <attribute id="U1" value="0.484497" type="6" />
+                    <attribute id="U2" value="0.499878" type="6" />
+                    <attribute id="V1" value="0.0782471" type="6" />
+                    <attribute id="V2" value="0.0936279" type="6" />
+                </node>
+                <node id="IconUV">
+                    <attribute id="MapKey" value="LLWEAPONEX_Items_Wakizashi_1H_B" type="22" />
+                    <attribute id="U1" value="0.500122" type="6" />
+                    <attribute id="U2" value="0.515503" type="6" />
+                    <attribute id="V1" value="0.0782471" type="6" />
+                    <attribute id="V2" value="0.0936279" type="6" />
                 </node>
                 <node id="IconUV">
                     <attribute id="MapKey" value="LLWEAPONEX_Items_Wand_Unique_MagicMissile_A" type="22" />

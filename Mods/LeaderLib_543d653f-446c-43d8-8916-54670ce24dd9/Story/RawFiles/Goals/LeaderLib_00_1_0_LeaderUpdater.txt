@@ -17,6 +17,31 @@ LeaderUpdater_Clear_RegisteredModVersions(_ModID, _Author);
 DB_Mods_Registered(_ModID, _Author, _Version);
 LeaderLog_Log("DEBUG", "[LeaderUpdater:RegisterMod] Registered mod [",_ModID,"] by author [",_Author,"] with version [",_Version,"].");
 
+//New register call for using the version integers directly
+PROC
+LeaderUpdater_Register_Mod((STRING)_ModID, (STRING)_Author, (INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Revision, (INTEGER)_Build)
+AND
+IntegertoString(_Major, _a)
+AND
+IntegertoString(_Minor, _b)
+AND
+IntegertoString(_Revision, _c)
+AND
+IntegertoString(_Build, _d)
+AND
+LeaderLog_QRY_Log("COMBINE", _a, ".", _b, ".", _c, ".", _d)
+AND
+DB_LeaderLog_Temp_CombinedString(_Version)
+AND
+LeaderLog_QRY_ClearCombinedString(_Version)
+AND
+NOT DB_Mods_Registered(_ModID, _Author, _Version)
+THEN
+LeaderUpdater_Clear_RegisteredModVersions(_ModID, _Author);
+DB_Mods_Registered(_ModID, _Author, _Version);
+DB_LeaderLib_StringExt_VersionIsLessThan(_Version, _Major, _Minor, _Revision, _Build);
+LeaderLog_Log("DEBUG", "[LeaderUpdater:RegisterMod] Registered mod [",_ModID,"] by author [",_Author,"] with version [",_Version,"].");
+
 PROC
 LeaderUpdater_Register_ActiveGoal((STRING)_ModID, (STRING)_Author, (STRING)_GoalTitle)
 AND
@@ -399,11 +424,11 @@ THEN
 LeaderLib_SendEvent(_NotActiveEvent);
 
 QRY
-LeaderUpdater_QRY_RegisteredVersionIsLessThan((STRING)_ModID, (STRING)_Author, (INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherBuild, (INTEGER)_OtherRevision)
+LeaderUpdater_QRY_RegisteredVersionIsLessThan((STRING)_ModID, (STRING)_Author, (INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherRevision, (INTEGER)_OtherBuild)
 AND
 DB_Mods_Registered(_ModID, _Author, _Version)
 AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_Version, _OtherMajor, _OtherMinor, _OtherBuild, _OtherRevision)
+LeaderLib_StringExt_QRY_VersionIsLessThan(_Version, _OtherMajor, _OtherMinor, _OtherRevision, _OtherBuild)
 THEN
 DB_NOOP(1);
 //END_REGION

@@ -21,6 +21,8 @@ LeaderLog_Log("DEBUG", "[LeaderUpdater:RegisterMod] Registered mod [",_ModID,"] 
 PROC
 LeaderUpdater_Register_Mod((STRING)_ModID, (STRING)_Author, (INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Revision, (INTEGER)_Build)
 AND
+LeaderLib_StringExt_Internal_QRY_VersionSupported(_Major, _Minor, _Revision, _Build) // >= 0, <= 256
+AND
 IntegertoString(_Major, _a)
 AND
 IntegertoString(_Minor, _b)

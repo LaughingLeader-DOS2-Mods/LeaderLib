@@ -570,15 +570,23 @@ SysClear("DB_LeaderLib_StringExt_VersionIsLessThan", 5);
 LeaderLog_LogInt("DEBUG", "[LeaderLib:StringExt:ClearCache_Lazy] Cleared [DB_LeaderLib_StringExt_VersionIsLessThan]. Entry Count: [",_Count,"]/[",_MaxCount,"].");
 
 QRY
-LeaderLib_StringExt_Internal_QRY_VersionSupported((INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherRevision, (INTEGER)_OtherBuild)
+LeaderLib_StringExt_Internal_QRY_VersionSupported((INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Revision, (INTEGER)_Build)
 AND
-_OtherMajor <= 256
+_Major >= 0
 AND
-_OtherMinor <= 256
+_Major <= 256
 AND
-_OtherRevision <= 256
+_Minor >= 0
 AND
-_OtherBuild <= 256
+_Minor <= 256
+AND
+_Revision >= 0
+AND
+_Revision <= 256
+AND
+_Build >= 0
+AND
+_Build <= 256
 THEN
 DB_NOOP(1);
 

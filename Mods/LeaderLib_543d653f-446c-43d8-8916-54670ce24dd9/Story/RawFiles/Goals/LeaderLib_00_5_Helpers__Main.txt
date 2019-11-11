@@ -1738,6 +1738,12 @@ LeaderLib_Helper_ClearActionQueue((CHARACTERGUID)_Char, (INTEGER)_Purge)
 THEN
 CharacterMoveTo(_Char, _Char, 1, "", 1);
 CharacterSetStill(_Char);
+
+//Applies a MUTED status to refresh skill icons.
+PROC
+LeaderLib_Helper_RefreshUI((CHARACTERGUID)_Char)
+THEN
+ApplyStatus(_Char, "LEADERLIB_REFRESH_UI", 0.0, 0, _Char);
 //END_REGION
 
 //REGION CLEAR_ANIMATION_OVERRIDE_HACK

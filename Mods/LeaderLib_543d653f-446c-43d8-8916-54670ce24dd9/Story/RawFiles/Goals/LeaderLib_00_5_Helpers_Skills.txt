@@ -740,6 +740,36 @@ SysClear("DB_LeaderLib_Skills_InactiveSkillDummies", 1);
 LeaderLib_ToggleScripts_DisableScript("LeaderLib_DummyCrimesEnabled", "LeaderLib");
 
 //END_REGION
+
+//REGION SKILL_USAGE_LISTENERS
+/*
+LeaderLib_Skills_CharacterUsedSkillAtPosition(_Char, "", _x,  _y, _z);
+LeaderLib_Skills_CharacterUsedSkillOnTarget(_Char, "", _Target);
+*/
+//These are helpers so alternate versions of skills (enemy variants) can still trigger the same logic
+PROC
+LeaderLib_Skills_CharacterUsedSkill((CHARACTERGUID)_Char, (STRING)_Skill)
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_Skills_CharacterUsedSkillAtPosition((CHARACTERGUID)_Char, (STRING)_Skill, (REAL)_x, (REAL)_y, (REAL)_z)
+THEN
+LeaderLib_Skills_CharacterUsedSkill(_Char, _Skill);
+
+PROC
+LeaderLib_Skills_CharacterUsedSkillOnTarget((CHARACTERGUID)_Char, (STRING)_Skill, (GUIDSTRING)_Target)
+AND
+GetPosition(_Target, _x, _y, _z)
+THEN
+LeaderLib_Skills_CharacterUsedSkill(_Char, _Skill);
+LeaderLib_Skills_CharacterUsedSkillAtPosition(_Char, _Skill, _x, _y, _z);
+
+PROC
+LeaderLib_Skills_CharacterCastSkill((CHARACTERGUID)_Char, (STRING)_Skill)
+THEN
+DB_NOOP(1);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

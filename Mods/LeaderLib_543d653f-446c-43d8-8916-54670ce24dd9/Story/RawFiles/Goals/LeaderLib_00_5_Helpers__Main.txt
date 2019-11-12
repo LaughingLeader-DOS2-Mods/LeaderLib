@@ -1743,7 +1743,7 @@ CharacterSetStill(_Char);
 PROC
 LeaderLib_Helper_RefreshUI((CHARACTERGUID)_Char)
 THEN
-ApplyStatus(_Char, "LEADERLIB_REFRESH_UI", 0.0, 0, _Char);
+ApplyStatus(_Char, "LEADERLIB_REFRESH_UI", 0.0, 1, _Char);
 //END_REGION
 
 //REGION CLEAR_ANIMATION_OVERRIDE_HACK

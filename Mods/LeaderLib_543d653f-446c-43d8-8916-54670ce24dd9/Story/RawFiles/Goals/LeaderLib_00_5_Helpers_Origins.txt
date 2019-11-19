@@ -1,0 +1,49 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+PROC
+LeaderLib_Origins_Register_Main((CHARACTERGUID)_Char, (STRING)_NpcAlignment, (STRING)_DefaultFaction)
+THEN
+DB_Origins(_Char);
+DB_OriginNPCAlignment(_Char, _NpcAlignment);
+DB_GLO_PartyMembers_DefaultFaction(_Char, _DefaultFaction);
+
+PROC
+LeaderLib_Origins_Register_Tags((CHARACTERGUID)_Char, (STRING)_ProfessionTag1, (STRING)_ProfessionTag2, (STRING)_PolymorphPreservedTag)
+AND
+_ProfessionTag1 != ""
+THEN
+DB_OriginProfessionTags(_Char, _ProfessionTag1);
+
+PROC
+LeaderLib_Origins_Register_Tags((CHARACTERGUID)_Char, (STRING)_ProfessionTag1, (STRING)_ProfessionTag2, (STRING)_PolymorphPreservedTag)
+AND
+_ProfessionTag2 != ""
+THEN
+DB_OriginProfessionTags(_Char, _ProfessionTag2);
+
+PROC
+LeaderLib_Origins_Register_Tags((CHARACTERGUID)_Char, (STRING)_ProfessionTag1, (STRING)_ProfessionTag2, (STRING)_PolymorphPreservedTag)
+AND
+_PolymorphPreservedTag != ""
+THEN
+DB_PolymorphTags(_Char, _PolymorphPreservedTag);
+
+PROC
+LeaderLib_Origins_Register_Dialog_Default((CHARACTERGUID)_Char, (STRING)_DefaultRecruitmentDialog, (STRING)_DefaultInPartyDialog)
+THEN
+DB_OriginRecruitmentDialog(_Char, _DefaultRecruitmentDialog);
+DB_OriginInPartyDialog(_Char, _DefaultInPartyDialog);
+
+PROC
+LeaderLib_Origins_Register_All((CHARACTERGUID)_Char, (STRING)_NpcAlignment, (STRING)_DefaultFaction, (STRING)_DefaultRecruitmentDialog, (STRING)_DefaultInPartyDialog, (STRING)_ProfessionTag1, (STRING)_ProfessionTag2, (STRING)_PolymorphPreservedTag)
+THEN
+LeaderLib_Origins_Register_Main(_Char, _NpcAlignment, _DefaultFaction);
+LeaderLib_Origins_Register_Tags(_Char, _ProfessionTag1, _ProfessionTag2, _PolymorphPreservedTag);
+LeaderLib_Origins_Register_Dialog_Default(_Char, _DefaultRecruitmentDialog, _DefaultInPartyDialog);
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

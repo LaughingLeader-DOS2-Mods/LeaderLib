@@ -1,0 +1,97 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+//REGION REGISTER_OVERRIDE
+PROC
+LeaderLib_DialogOverride_Register_Override((GUIDSTRING)_Speaker, (STRING)_ReplacedDialog, (STRING)_UseDialog)
+THEN
+DB_LeaderLib_DialogOverride_Registered_StoryOverride((GUIDSTRING)_Speaker, _ReplacedDialog, _UseDialog);
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_DialogOverridingEnabled", "LeaderLib");
+
+// For dialogs that start with behavior scripting, we have to stop it and start the replacement
+PROC
+LeaderLib_DialogOverride_Register_BehaviorOverride((GUIDSTRING)_Speaker, (STRING)_ReplacedDialog, (STRING)_UseDialog)
+THEN
+DB_LeaderLib_DialogOverride_Registered_BehaviorOverride((GUIDSTRING)_Speaker, _ReplacedDialog, _UseDialog);
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_DialogOverridingEnabled", "LeaderLib");
+//END_REGION
+
+//REGION SPEAKER_MATCHING
+QRY
+LeaderLib_DialogOverride_QRY_SpeakerMatch((GUIDSTRING)_Target, (GUIDSTRING)_S1, (GUIDSTRING)_S2)
+AND
+NOT DB_LeaderLib_DialogOverride_Temp_Match(_Target)
+AND
+_Target == _S1
+THEN
+DB_LeaderLib_DialogOverride_Temp_Match(_Target);
+
+QRY
+LeaderLib_DialogOverride_QRY_SpeakerMatch((GUIDSTRING)_Target, (GUIDSTRING)_S1, (GUIDSTRING)_S2)
+AND
+NOT DB_LeaderLib_DialogOverride_Temp_Match(_Target)
+AND
+_Target == _S2
+THEN
+DB_LeaderLib_DialogOverride_Temp_Match(_Target);
+
+QRY
+LeaderLib_DialogOverride_QRY_SpeakerMatch((GUIDSTRING)_Target, (GUIDSTRING)_S1, (GUIDSTRING)_S2, (GUIDSTRING)_S3, (GUIDSTRING)_S4, (GUIDSTRING)_S5, (GUIDSTRING)_S6)
+AND
+NOT DB_LeaderLib_DialogOverride_Temp_Match(_Target)
+AND
+LeaderLib_DialogOverride_QRY_SpeakerMatch(_Target, _S1, _S2)
+THEN
+DB_LeaderLib_DialogOverride_Temp_Match(_Target);
+
+QRY
+LeaderLib_DialogOverride_QRY_SpeakerMatch((GUIDSTRING)_Target, (GUIDSTRING)_S1, (GUIDSTRING)_S2, (GUIDSTRING)_S3, (GUIDSTRING)_S4, (GUIDSTRING)_S5, (GUIDSTRING)_S6)
+AND
+NOT DB_LeaderLib_DialogOverride_Temp_Match(_Target)
+AND
+LeaderLib_DialogOverride_QRY_SpeakerMatch(_Target, _S3, _S4)
+THEN
+DB_LeaderLib_DialogOverride_Temp_Match(_Target);
+
+QRY
+LeaderLib_DialogOverride_QRY_SpeakerMatch((GUIDSTRING)_Target, (GUIDSTRING)_S1, (GUIDSTRING)_S2, (GUIDSTRING)_S3, (GUIDSTRING)_S4, (GUIDSTRING)_S5, (GUIDSTRING)_S6)
+AND
+NOT DB_LeaderLib_DialogOverride_Temp_Match(_Target)
+AND
+LeaderLib_DialogOverride_QRY_SpeakerMatch(_Target, _S5, _S6)
+THEN
+DB_LeaderLib_DialogOverride_Temp_Match(_Target);
+
+QRY
+LeaderLib_DialogOverride_QRY_SpeakerMatch((GUIDSTRING)_Target, (GUIDSTRING)_S1, (GUIDSTRING)_S2, (GUIDSTRING)_S3, (GUIDSTRING)_S4, (GUIDSTRING)_S5)
+AND
+NOT DB_LeaderLib_DialogOverride_Temp_Match(_Target)
+AND
+LeaderLib_DialogOverride_QRY_SpeakerMatch(_Target, _s1, _S2, _S3, _S4, _s5, NULL_00000000-0000-0000-0000-000000000000)
+THEN
+DB_LeaderLib_DialogOverride_Temp_Match(_Target);
+
+QRY
+LeaderLib_DialogOverride_QRY_SpeakerMatch((GUIDSTRING)_Target, (GUIDSTRING)_S1, (GUIDSTRING)_S2, (GUIDSTRING)_S3, (GUIDSTRING)_S4)
+AND
+NOT DB_LeaderLib_DialogOverride_Temp_Match(_Target)
+AND
+LeaderLib_DialogOverride_QRY_SpeakerMatch(_Target, _s1, _S2, _S3, _S4, NULL_00000000-0000-0000-0000-000000000000, NULL_00000000-0000-0000-0000-000000000000)
+THEN
+DB_LeaderLib_DialogOverride_Temp_Match(_Target);
+
+QRY
+LeaderLib_DialogOverride_QRY_SpeakerMatch((GUIDSTRING)_Target, (GUIDSTRING)_S1, (GUIDSTRING)_S2, (GUIDSTRING)_S3)
+AND
+NOT DB_LeaderLib_DialogOverride_Temp_Match(_Target)
+AND
+LeaderLib_DialogOverride_QRY_SpeakerMatch(_Target, _s1, _S2, _S3, NULL_00000000-0000-0000-0000-000000000000, NULL_00000000-0000-0000-0000-000000000000, NULL_00000000-0000-0000-0000-000000000000)
+THEN
+DB_LeaderLib_DialogOverride_Temp_Match(_Target);
+//END_REGION
+
+EXITSECTION
+
+ENDEXITSECTION

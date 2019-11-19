@@ -3,6 +3,26 @@ SubGoalCombiner SGC_AND
 INITSECTION
 
 KBSECTION
+//REGION DUMMY_DEFINITIONS
+//These are missing in the editor's Shared scripts for some reason
+
+//Dummy definition
+QRY
+QRY_GLOBAL_CrimeDialogIntercept_Wrapper((INTEGER)_Automated, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3,(GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
+AND
+0 == 1
+THEN
+DB_NOOP(1);
+
+//Dummy definition
+QRY
+QRY_PlayOriginMoment((STRING)_Dialog, (GUIDSTRING)_MainNPC, (GUIDSTRING)_Player)
+AND
+0 == 1
+THEN
+DB_NOOP(1);
+//END_REGION
+
 //REGION Proc_StartDialog_Override
 PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1)

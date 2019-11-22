@@ -709,6 +709,11 @@ NOT DB_LeaderLib_Array_Temp_FirstEntry(_ID, _Index, _Value);
 //END_REGION
 
 //REGION DEBUG
+QRY
+LeaderLib_Array_Debug_QRY_Print((STRING)_ID)
+THEN
+LeaderLib_Array_Debug_Print(_ID);
+
 PROC
 LeaderLib_Array_Debug_Print((STRING)_ID)
 AND

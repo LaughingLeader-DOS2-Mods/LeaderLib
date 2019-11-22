@@ -186,7 +186,7 @@ LeaderLib_Array_ShiftArrayUp(_ID, _Index);
 
 //REGION ARRAY_FIRST_ENTRY
 PROC
-LeaderLib_Array_ClearFirstEntry((STRING)_ID)
+LeaderLib_Array_Internal_ClearFirstEntry((STRING)_ID)
 AND
 DB_LeaderLib_Array_Temp_FirstEntry(_ID, _Index, _Value)
 THEN
@@ -200,7 +200,7 @@ LeaderLib_Array_GetFirstEntry(_ID);
 PROC
 LeaderLib_Array_GetFirstEntry((STRING)_ID)
 THEN
-LeaderLib_Array_ClearFirstEntry(_ID);
+LeaderLib_Array_Internal_ClearFirstEntry(_ID);
 
 PROC
 LeaderLib_Array_GetFirstEntry((STRING)_ID)
@@ -367,44 +367,49 @@ DB_LeaderLib_Array_Temp_RandomResult(_ID, _Index, _Value);
 
 //REGION ARRAY_CLEAR
 QRY
-LeaderLib_Array_QRY_ClearArrayEntries((STRING)_ID)
+LeaderLib_Array_Internal_QRY_ClearArrayEntries((STRING)_ID)
 THEN
-LeaderLib_Array_ClearArrayEntries(_ID);
+LeaderLib_Array_Internal_ClearArrayEntries(_ID);
 
 PROC
-LeaderLib_Array_ClearArrayEntries((STRING)_ID)
+LeaderLib_Array_Internal_ClearArrayEntries((STRING)_ID)
 AND
 DB_LeaderLib_Array_Data(_ID, _Index, _Value)
 THEN
 NOT DB_LeaderLib_Array_Data(_ID, _Index, _Value);
 
 PROC
-LeaderLib_Array_ClearArrayLength((STRING)_ID)
+LeaderLib_Array_Internal_ClearArrayLength((STRING)_ID)
 AND
 DB_LeaderLib_Array_Length(_ID, _Length)
 THEN
 NOT DB_LeaderLib_Array_Length(_ID, _Length);
 
 PROC
-LeaderLib_Array_ClearArrayIterators((STRING)_ID)
+LeaderLib_Array_Internal_ClearArrayIterators((STRING)_ID)
 AND
 DB_LeaderLib_Array_Iterator(_ID, _CurrentIndex)
 THEN
 NOT DB_LeaderLib_Array_Iterator(_ID, _CurrentIndex);
 
 PROC
-LeaderLib_Array_ClearArrayIterators((STRING)_ID)
+LeaderLib_Array_Internal_ClearArrayIterators((STRING)_ID)
 AND
 DB_LeaderLib_Array_Temp_ArrayIteratorBuilder(_ID, _CurrentIndex, _Length)
 THEN
 NOT DB_LeaderLib_Array_Temp_ArrayIteratorBuilder(_ID, _CurrentIndex, _Length);
 
 PROC
+LeaderLib_Array_QRY_ClearArray((STRING)_ID)
+THEN
+LeaderLib_Array_ClearArray(_ID);
+
+PROC
 LeaderLib_Array_ClearArray((STRING)_ID)
 THEN
-LeaderLib_Array_ClearArrayEntries(_ID);
-LeaderLib_Array_ClearArrayIterators(_ID);
-LeaderLib_Array_ClearArrayLength(_ID);
+LeaderLib_Array_Internal_ClearArrayEntries(_ID);
+LeaderLib_Array_Internal_ClearArrayIterators(_ID);
+LeaderLib_Array_Internal_ClearArrayLength(_ID);
 
 PROC
 LeaderLib_Array_ClearArray((STRING)_ID)
@@ -704,6 +709,31 @@ NOT DB_LeaderLib_Array_Temp_FirstEntry(_ID, _Index, _Value);
 //END_REGION
 
 //REGION DEBUG
+PROC
+LeaderLib_Array_Debug_Print((STRING)_ID)
+AND
+DB_LeaderLib_Array_Length(_ID, _Length)
+AND
+IntegertoString(_Length, _LengthStr)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_00_2_DatabaseExtensions:Array:Debug:Print] Array (",_ID,") Length: (",_LengthStr,")");
+
+PROC
+LeaderLib_Array_Debug_Print((STRING)_ID)
+AND
+NOT DB_LeaderLib_Array_Length(_ID, _)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_00_2_DatabaseExtensions:Array:Debug:Print] Array (",_ID,") Length: (-1)");
+
+PROC
+LeaderLib_Array_Debug_Print((STRING)_ID)
+AND
+DB_LeaderLib_Array_Data(_ID, _Index, _Val)
+AND
+IntegertoString(_Index, _IndexStr)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_00_2_DatabaseExtensions:Array:Debug:Print] Array (",_ID,") Index (",_IndexStr,") Value (",_Val,")");
+
 /*
 PROC
 LeaderLib_Array_AddToArray((STRING)_ID, (STRING)_Value)

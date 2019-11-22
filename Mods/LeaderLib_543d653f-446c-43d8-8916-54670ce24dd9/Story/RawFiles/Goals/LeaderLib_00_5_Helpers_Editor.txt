@@ -754,7 +754,8 @@ GetTextEventParamString(1, _Preset)
 AND
 DB_LeaderLib_PresetMenu_RegisteredPreset(_Preset, _EnabledGlobalFlag)
 AND
-DB_IsPlayer(_Player)
+//DB_IsPlayer(_Player)
+CharacterGetHostCharacter(_Player)
 AND
 CharacterIsControlled(_Player, 1)
 THEN

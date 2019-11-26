@@ -16,14 +16,13 @@ GameStarted(_,_)
 THEN
 LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Game started.");
 
-
 IF
 GameStarted(_,_)
 AND
-LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", "1.4.0.0")
+LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", "1.4.1.0")
 THEN
-LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Updating LeaderLib to latest version (1.4.0.0).");
-LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", 1,4,0,0);
+LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Updating LeaderLib to latest version (1.4.1.0).");
+LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", 1,4,1,0);
 LeaderLib_SendEvent("LeaderLib_Events_Internal_OnUpdateSettings");
 //LeaderLib_StringExt_Internal_ClearCache_Lazy(100);
 //END_REGION

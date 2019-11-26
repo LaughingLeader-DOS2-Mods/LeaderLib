@@ -131,6 +131,24 @@ IF
 TextEventSet("leaderlib_debug_versionstring")
 THEN
 LeaderLib_Recon_ClearParams("leaderlib_debug_versionstring");
+
+IF
+TextEventSet("leaderlib_debug_arraytest")
+THEN
+LeaderLib_Array_AddToArray("LeaderLib_Debug_ArrayTest", "HASTED");
+LeaderLib_Array_AddToArray("LeaderLib_Debug_ArrayTest", "BURNING");
+LeaderLib_Array_AddToArray("LeaderLib_Debug_ArrayTest", "SLOWED");
+
+IF
+TextEventSet("leaderlib_debug_arraytest")
+AND
+LeaderLib_Array_QRY_GetLastEntry("LeaderLib_Debug_ArrayTest")
+AND
+DB_LeaderLib_Array_Temp_LastEntry("LeaderLib_Debug_ArrayTest", _Index, _Value)
+THEN
+NOT DB_LeaderLib_Array_Temp_LastEntry("LeaderLib_Debug_ArrayTest", _Index, _Value);
+LeaderLog_Log("DEBUG", "[LeaderLib_20__Debug:TextEventSet(leaderlib_debug_arraytest)] Removed '(",_Value,")'");
+LeaderLib_Array_ClearArray("LeaderLib_Debug_ArrayTest");
 EXITSECTION
 
 ENDEXITSECTION

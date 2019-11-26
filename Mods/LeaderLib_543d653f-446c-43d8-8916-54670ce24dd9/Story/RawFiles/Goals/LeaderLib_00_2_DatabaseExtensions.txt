@@ -256,9 +256,9 @@ DB_LeaderLib_Array_Length(_ID, _Length)
 AND
 IntegerSubtract(_Length, 1, _LastIndex)
 AND
-DB_LeaderLib_Array_Data(_ID, _Index, _Value)
+DB_LeaderLib_Array_Data(_ID, _LastIndex, _Value)
 THEN
-DB_LeaderLib_Array_Temp_LastEntry(_ID, _Index, _Value);
+DB_LeaderLib_Array_Temp_LastEntry(_ID, _LastIndex, _Value);
 
 QRY
 LeaderLib_Array_Internal_QRY_ClearLastEntry((STRING)_ID)

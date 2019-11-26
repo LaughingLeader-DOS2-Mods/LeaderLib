@@ -3,6 +3,7 @@ SubGoalCombiner SGC_AND
 INITSECTION
 LeaderLib_Debug_RunTests();
 KBSECTION
+
 IF
 GameModeStarted(_, 1)
 THEN
@@ -52,13 +53,23 @@ THEN
 GlobalSetFlag("LeaderLib_IsEditorMode");
 GlobalSetFlag("LeaderLog_Debug_Enabled");
 //GlobalSetFlag("LeaderLog_Trace_Enabled");
-GoalCompleted;
+SysActivateGoal("LeaderLib_20_DebugLevel");
+
+IF
+RegionEnded("TestLevel_LL_LeaderLib")
+THEN
+SysCompleteGoal("LeaderLib_20_DebugLevel");
 
 PROC
 LeaderLib_Debug_RunTests()
 THEN
 //LeaderLib_Debug_MathTests();
 DB_NOOP(1);
+
+IF
+TextEventSet("leaderlib_mathtests")
+THEN
+LeaderLib_Debug_MathTests();
 
 PROC
 LeaderLib_Debug_MathTests()

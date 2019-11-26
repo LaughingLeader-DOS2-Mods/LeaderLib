@@ -152,6 +152,19 @@
                     </children>
                 </node>
                 <node id="Tag">
+                    <attribute id="Description" value="Flags an item as enabling an animation override, if a mod implements it" type="23" />
+                    <attribute id="Name" value="LeaderLib_AnimationOverrideEnabled" type="23" />
+                    <children>
+                        <node id="Categories">
+                            <children>
+                                <node id="Category">
+                                    <attribute id="Name" value="Code" type="23" />
+                                </node>
+                            </children>
+                        </node>
+                    </children>
+                </node>
+                <node id="Tag">
                     <attribute id="Name" value="LLWEAPONEX_AnyWeaponEquipped" type="23" />
                     <attribute id="Description" value="For skill requirements (Weapon Expansion)" type="23" />
                     <children>

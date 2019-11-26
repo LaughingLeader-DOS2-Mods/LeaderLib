@@ -91,6 +91,22 @@ THEN
 SysClear("DB_LeaderLib_GameMode", 2);
 DB_LeaderLib_GameMode(_Mode, _IsEditorMode);
 //END_REGION
+
+//REGION EXTENDER
+QRY
+LeaderLib_QRY_ExtenderIsActive()
+AND
+1 == 0
+THEN
+DB_NOOP(1);
+
+/* [OSITOOLS_ONLY]
+QRY
+LeaderLib_QRY_ExtenderIsActive()
+THEN
+DB_NOOP(1);
+*/
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

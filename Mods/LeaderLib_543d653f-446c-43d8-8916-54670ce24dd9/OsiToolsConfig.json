@@ -1,0 +1,7 @@
+{
+    "ExtendOsiris": true,
+	"Lua": true,
+    "UseCustomStats": false,
+	"UseCustomStatsPane": false,
+	"RequiredExtensionVersion": [1, 50, 0]
+}

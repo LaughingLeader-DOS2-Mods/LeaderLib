@@ -128,8 +128,19 @@ NOT DB_LeaderLib_Math_NormalizeInt(_Input, _Result);
 //END_REGION
 
 //REGION POWER
+/* [OSITOOLS_ONLY]
 QRY
 LeaderLib_Math_QRY_Power((REAL)_Num, (INTEGER)_Power)
+AND
+NRD_Pow(_Num, _Power, _Result)
+THEN
+DB_LeaderLib_Math_Power(_Num, _Power, _Result);
+*/
+
+QRY
+LeaderLib_Math_QRY_Power((REAL)_Num, (INTEGER)_Power)
+AND
+NOT LeaderLib_QRY_ExtenderIsActive()
 THEN
 LeaderLib_Math_Internal_CalculatePower(_Num, _Power);
 
@@ -271,8 +282,19 @@ LeaderLog_Log("DEBUG", "[LeaderLib:Math:Power] [ERROR] Powers above 10 are not i
 //END_REGION
 
 //REGION FACTORIAL
+/* [OSITOOLS_ONLY]
 QRY
 LeaderLib_Math_QRY_Factorial((INTEGER)_Factor)
+AND
+NRD_Factorial(_Factor, _Result)
+THEN
+DB_LeaderLib_Math_Factorial(_Factor, _Result);
+*/
+
+QRY
+LeaderLib_Math_QRY_Factorial((INTEGER)_Factor)
+AND
+NOT LeaderLib_QRY_ExtenderIsActive()
 THEN
 LeaderLib_Math_Factorial(_Factor);
 
@@ -329,8 +351,19 @@ DB_LeaderLib_Math_Factorial(_Factor, _Result);
 //END_REGION
 
 //REGION SQUARE_ROOT
+/* [OSITOOLS_ONLY]
+QRY
+LeaderLib_Math_QRY_SquareRoot((INTEGER)_Number)
+AND
+NRD_Sqrt(_Number, _Result)
+THEN
+DB_LeaderLib_Math_SquareRoot(_Number, _Result);
+*/
+
 QRY
 LeaderLib_Math_QRY_SquareRoot((REAL)_Number)
+AND
+NOT LeaderLib_QRY_ExtenderIsActive()
 THEN
 LeaderLib_Math_SquareRoot(_Number);
 
@@ -382,8 +415,19 @@ LeaderLog_RealToString(_Sqrt, "[LeaderLib:leaderlib_squareroot] Square root [","
 //END_REGION
 
 //REGION SINE
+/* [OSITOOLS_ONLY]
+QRY
+LeaderLib_Math_QRY_Sine((INTEGER)_Angle)
+AND
+NRD_Sin(_Angle, _Result)
+THEN
+DB_LeaderLib_Math_Sine(_Angle, _Result);
+*/
+
 QRY
 LeaderLib_Math_QRY_Sine((REAL)_Angle)
+AND
+NOT LeaderLib_QRY_ExtenderIsActive()
 THEN
 LeaderLib_Math_Sine(_Angle);
 
@@ -460,8 +504,19 @@ DB_LeaderLib_Math_Sine(_Angle, _xblock4);
 //END_REGION
 
 //REGION COSINE
+/* [OSITOOLS_ONLY]
+QRY
+LeaderLib_Math_QRY_Cosine((INTEGER)_Angle)
+AND
+NRD_Cos(_Angle, _Result)
+THEN
+DB_LeaderLib_Math_Cosine(_Angle, _Result);
+*/
+
 QRY
 LeaderLib_Math_QRY_Cosine((REAL)_Angle)
+AND
+NOT LeaderLib_QRY_ExtenderIsActive()
 THEN
 LeaderLib_Math_Cosine(_Angle);
 
@@ -538,6 +593,15 @@ DB_LeaderLib_Math_Cosine(_Angle, _xblock4);
 //END_REGION
 
 //REGION EXPONENTIAL
+/* [OSITOOLS_ONLY]
+QRY
+LeaderLib_Math_QRY_Exponential((REAL)_x, (INTEGER)_Approximation)
+AND
+NRD_Exp(_x, _Result)
+THEN
+DB_LeaderLib_Math_Exponential(_x, _Approximation, _Result);
+*/
+
 /*
 Source:
 def exp_custom(x, n):
@@ -548,6 +612,8 @@ def exp_custom(x, n):
 */
 QRY
 LeaderLib_Math_QRY_Exponential((REAL)_x, (INTEGER)_Approximation)
+AND
+NOT LeaderLib_QRY_ExtenderIsActive()
 THEN
 LeaderLib_Math_Exponential(_x, _Approximation);
 
@@ -602,6 +668,15 @@ LeaderLog_RealToString(_Val, "[LeaderLib:leaderlib_exp] Exponential [","]");
 //END_REGION
 
 //REGION ABSOLUTE
+/* [OSITOOLS_ONLY]
+QRY
+LeaderLib_Math_QRY_AbsoluteValue((REAL)_Num)
+AND
+NRD_Abs(_Num, _Result)
+THEN
+DB_LeaderLib_Math_AbsoluteValue(_Num, _Result);
+*/
+
 QRY
 LeaderLib_Math_QRY_ClearAbsoluteValues()
 THEN
@@ -616,6 +691,8 @@ NOT DB_LeaderLib_Math_AbsoluteValue(_Num, _AbsNum);
 
 QRY
 LeaderLib_Math_QRY_AbsoluteValue((REAL)_Num)
+AND
+NOT LeaderLib_QRY_ExtenderIsActive()
 THEN
 LeaderLib_Math_Internal_AbsoluteValue(_Num);
 

@@ -82,8 +82,20 @@ LeaderLib_StringExt_QRY_CompareStrings((STRING)_SessionID, (STRING)_Str1, (STRIN
 THEN
 LeaderLib_StringExt_CompareStrings(_SessionID, _Str1, _Str2);
 
+// All these rules reduced to essentially 2 lines. ;)
+/* [OSITOOLS_ONLY]
 PROC
 LeaderLib_StringExt_CompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+AND
+NRD_StringCompare(_Str1, _Str2, _Result)
+THEN
+DB_LeaderLib_StringCompare_Results(_Str1, _Str2, _Result);
+*/
+
+PROC
+LeaderLib_StringExt_CompareStrings((STRING)_SessionID, (STRING)_Str1, (STRING)_Str2)
+AND
+NOT LeaderLib_QRY_ExtenderIsActive()
 AND
 LeaderLib_StringExt_CompareStrings_Internal_QRY_SkipCompareIfEqual(_Str1, _Str2)
 AND
@@ -386,11 +398,30 @@ PROC
 LeaderLib_StringExt_ProcessVersionString((STRING)_Str)
 AND
 NOT DB_LeaderLib_StringExt_Temp_Version_String(_Str, _, _, _, _)
+AND
+NOT LeaderLib_QRY_ExtenderIsActive()
 THEN
 LeaderLib_StringExt_BuildIteratorByLength(_Str);
 LeaderLib_StringExt_ClearPreviousVersionData(_Str);
 DB_LeaderLib_StringExt_Temp_Version_FoundPeriod(_Str, 0);
 LeaderLib_StringExt_Internal_ProcessVersionString(_Str);
+
+/* [OSITOOLS_ONLY]
+PROC
+LeaderLib_StringExt_ProcessVersionString((STRING)_Str)
+AND
+NOT DB_LeaderLib_StringExt_Temp_Version_String(_Str, _, _, _, _)
+AND
+LeaderLib_QRY_ExtenderIsActive()
+AND
+NRD_StringLength(_Str, _Length)
+THEN
+DB_LeaderLib_StringLength(_Str, _Length);
+LeaderLib_StringExt_BuildIteratorByLength(_Str);
+LeaderLib_StringExt_ClearPreviousVersionData(_Str);
+DB_LeaderLib_StringExt_Temp_Version_FoundPeriod(_Str, 0);
+LeaderLib_StringExt_Internal_ProcessVersionString(_Str);
+*/
 
 PROC
 LeaderLib_StringExt_Internal_ProcessVersionString((STRING)_Str)
@@ -602,6 +633,8 @@ DB_NOOP(1);
 QRY
 LeaderLib_StringExt_QRY_VersionIsLessThan((STRING)_Version, (INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherRevision, (INTEGER)_OtherBuild)
 AND
+NOT LeaderLib_QRY_ExtenderIsActive()
+AND
 NOT DB_LeaderLib_StringExt_VersionIsLessThan(_Version, _OtherMajor, _OtherMinor, _OtherRevision, _OtherBuild)
 AND
 LeaderLib_StringExt_Internal_QRY_VersionSupported(_OtherMajor, _OtherMinor, _OtherRevision, _OtherBuild)
@@ -621,6 +654,56 @@ AND
 LeaderLib_StringExt_Internal_QRY_VersionIsLessThan(_Major, _Minor, _Revision, _Build, _OtherMajor, _OtherMinor, _OtherRevision, _OtherBuild)
 THEN
 DB_LeaderLib_StringExt_VersionIsLessThan(_Version, _OtherMajor, _OtherMinor, _OtherRevision, _OtherBuild);
+
+IF
+StoryEvent(_Obj, "LeaderLib_StringToVersion_Success")
+AND
+GetVarInteger(_Obj, "LeaderLib_StringToVersion_Major", _Major)
+AND
+GetVarInteger(_Obj, "LeaderLib_StringToVersion_Minor", _Minor)
+AND
+GetVarInteger(_Obj, "LeaderLib_StringToVersion_Revision", _Revision)
+AND
+GetVarInteger(_Obj, "LeaderLib_StringToVersion_Build", _Build)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_00_2_StringExtensions:LeaderLib_StringToVersion_Success] Lua (LeaderLib_Ext_StringToVersion) successfully ran.");
+LeaderLog_LogInt("DEBUG", "[LeaderLib_00_2_StringExtensions:LeaderLib_StringToVersion_Success] -- Major (",_Major,")");
+LeaderLog_LogInt("DEBUG", "[LeaderLib_00_2_StringExtensions:LeaderLib_StringToVersion_Success] -- Minor (",_Minor,")");
+LeaderLog_LogInt("DEBUG", "[LeaderLib_00_2_StringExtensions:LeaderLib_StringToVersion_Success] -- Revision (",_Revision,")");
+LeaderLog_LogInt("DEBUG", "[LeaderLib_00_2_StringExtensions:LeaderLib_StringToVersion_Success] -- Build (",_Build,")");
+
+/* [OSITOOLS_ONLY]
+QRY
+LeaderLib_StringExt_QRY_Ext_Internal_SplitVersionString((STRING)_Version)
+THEN
+NRD_LuaCall("LeaderLib_Ext_StringToVersion", _Version);
+
+QRY
+LeaderLib_StringExt_QRY_VersionIsLessThan((STRING)_Version, (INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherRevision, (INTEGER)_OtherBuild)
+AND
+NOT DB_LeaderLib_StringExt_Temp_Version_String(_Version, _, _, _, _)
+AND
+LeaderLib_QRY_ExtenderIsActive()
+AND
+LeaderLib_StringExt_QRY_Ext_Internal_SplitVersionString(_Version)
+AND
+DB_LeaderLib_EventParser(_Obj)
+AND
+ObjectGetFlag(_Obj, "LeaderLib_StringToVersion_Success", 1)
+AND
+GetVarInteger(_Obj, "LeaderLib_StringToVersion_Major", _Major)
+AND
+GetVarInteger(_Obj, "LeaderLib_StringToVersion_Minor", _Minor)
+AND
+GetVarInteger(_Obj, "LeaderLib_StringToVersion_Revision", _Revision)
+AND
+GetVarInteger(_Obj, "LeaderLib_StringToVersion_Build", _Build)
+AND
+LeaderLib_StringExt_Internal_QRY_VersionIsLessThan(_Major, _Minor, _Revision, _Build, _OtherMajor, _OtherMinor, _OtherRevision, _OtherBuild)
+THEN
+ObjectClearFlag(_Obj, "LeaderLib_StringToVersion_Success", 0);
+DB_LeaderLib_StringExt_VersionIsLessThan(_Version, _OtherMajor, _OtherMinor, _OtherRevision, _OtherBuild);
+*/
 
 QRY
 LeaderLib_StringExt_Internal_QRY_VersionIsLessThan((INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Revision, (INTEGER)_Build, (INTEGER)_OtherMajor, (INTEGER)_OtherMinor, (INTEGER)_OtherRevision, (INTEGER)_OtherBuild)

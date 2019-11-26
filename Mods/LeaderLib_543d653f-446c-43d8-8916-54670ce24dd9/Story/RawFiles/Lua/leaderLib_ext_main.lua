@@ -9,10 +9,14 @@ local function table_has_index(tbl, index)
     return false
 end
 
+function LeaderLib_Ext_Debug_Test(msg)
+	LeaderLog_Log("DEBUG", "[leaderlib_ext_main.lua:LeaderLib_Ext_Debug_Test] Test: (",_msg,")")
+end
+
 function LeaderLib_Ext_StringToVersion(version_str)
 	obj = nil
-	if ObjectExists(ITEMGUID_S_LeaderLib_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, 1) then
-
+	if ObjectExists("S_LeaderLib_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6") == 1 then
+		obj = "S_LeaderLib_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6"
 	else
 		obj = CharacterGetHostCharacter()
 	end
@@ -47,7 +51,8 @@ function LeaderLib_Ext_StringToVersion(version_str)
 			-- SetVarInteger(obj, "LeaderLib_StringToVersion_Build", build)
 			-- ObjectSetFlag(obj, "LeaderLib_StringToVersion_Success", 0)
 			-- SetStoryEvent(obj, "LeaderLib_StringToVersion_Success")
-			LeaderLib_StringExt_SetVersionFromString(version_str, major, minor, revision, build)
+			--LeaderLib_StringExt_SetVersionFromString(version_str, major, minor, revision, build)
+			DB_LeaderLib_StringExt_VersionToInt(_Version, _Major, _Minor, _Revision, _Build)
 		end
 		--return major,minor,revision,build
 end

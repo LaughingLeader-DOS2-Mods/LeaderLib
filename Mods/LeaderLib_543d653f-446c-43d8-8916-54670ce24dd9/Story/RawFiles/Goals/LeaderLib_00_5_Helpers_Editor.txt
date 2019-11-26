@@ -72,7 +72,7 @@ AND
 IntegerSum(_ParamIndex, 1, _NextParamIndex)
 THEN
 DB_LeaderLib_Recon_Temp_CommandParameters_String(_Command, _ParamID, _Value, _NextParamIndex);
-LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:Recon_SeString] String param [",_ParamID,"] set to [",_Value,"] for command [",_Command,"].");
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:Recon_SetString] String param [",_ParamID,"] set to [",_Value,"] for command [",_Command,"].");
 
 PROC
 LeaderLib_Recon_SetString((STRING)_Command, (STRING)_ParamID, (INTEGER)_ParamIndex, (STRING)_FallbackValue)
@@ -80,7 +80,7 @@ AND
 NOT DB_LeaderLib_Recon_Temp_CommandParameters_String(_Command, _ParamID, _, _)
 THEN
 DB_LeaderLib_Recon_Temp_CommandParameters_String(_Command, _ParamID, _FallbackValue, _ParamIndex);
-LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:Recon_SeString] String param [",_ParamID,"] set to fallback value [",_FallbackValue,"] for command [",_Command,"].");
+LeaderLog_Log("DEBUG", "[LeaderLib:Helpers:Editor:Recon_SetString] String param [",_ParamID,"] set to fallback value [",_FallbackValue,"] for command [",_Command,"].");
 
 QRY
 LeaderLib_Recon_QRY_GetInt((STRING)_Command, (INTEGER)_ParamIndex, (INTEGER)_FallbackValue)
@@ -1271,6 +1271,37 @@ IF
 TextEventSet("leaderlib_dialog")
 THEN
 LeaderLib_Recon_ClearParams("leaderlib_dialog");
+//END_REGION
+
+//REGION EXTENDER_LUA
+IF
+TextEventSet("leaderlib_lua")
+AND
+LeaderLib_Recon_QRY_GetString("leaderlib_lua", "function", 1, "LeaderLib_Ext_Debug_Test")
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_lua", "function", _Function, _NextParamInt)
+AND
+LeaderLib_Recon_QRY_GetString("leaderlib_lua", "param", _NextParamInt, "Test Message")
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_lua", "param", _Param, _NextParamInt2)
+AND
+LeaderLib_Recon_QRY_GetString("leaderlib_lua", "script", _NextParamInt2, "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/RawFiles/Lua/leaderLib_ext_main.lua")
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_lua", "script", _Script, _NextParamInt3)
+THEN
+/* [OSITOOLS_ONLY]
+NRD_LuaReset();
+NRD_LuaLoad(_Script);
+NRD_LuaCall(_Function, _Param);
+*/
+// [BEGIN_NO_OSITOOLS]
+LeaderLog_Log("DEBUG", "[LeaderLib_00_5_Helpers_Editor:TextEventSet(leaderlib_lua)] [*WARNING*] The extender is not active, or conditional compilation does not work!");
+// [END_NO_OSITOOLS]
+
+IF
+TextEventSet("leaderlib_lua")
+THEN
+LeaderLib_Recon_ClearParams("leaderlib_lua");
 //END_REGION
 EXITSECTION
 

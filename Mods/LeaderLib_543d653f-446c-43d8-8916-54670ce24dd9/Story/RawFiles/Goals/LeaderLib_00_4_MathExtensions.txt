@@ -353,7 +353,7 @@ DB_LeaderLib_Math_Factorial(_Factor, _Result);
 //REGION SQUARE_ROOT
 /* [OSITOOLS_ONLY]
 QRY
-LeaderLib_Math_QRY_SquareRoot((INTEGER)_Number)
+LeaderLib_Math_QRY_SquareRoot((REAL)_Number)
 AND
 NRD_Sqrt(_Number, _Result)
 THEN
@@ -417,7 +417,7 @@ LeaderLog_RealToString(_Sqrt, "[LeaderLib:leaderlib_squareroot] Square root [","
 //REGION SINE
 /* [OSITOOLS_ONLY]
 QRY
-LeaderLib_Math_QRY_Sine((INTEGER)_Angle)
+LeaderLib_Math_QRY_Sine((REAL)_Angle)
 AND
 NRD_Sin(_Angle, _Result)
 THEN
@@ -506,7 +506,7 @@ DB_LeaderLib_Math_Sine(_Angle, _xblock4);
 //REGION COSINE
 /* [OSITOOLS_ONLY]
 QRY
-LeaderLib_Math_QRY_Cosine((INTEGER)_Angle)
+LeaderLib_Math_QRY_Cosine((REAL)_Angle)
 AND
 NRD_Cos(_Angle, _Result)
 THEN

@@ -115,6 +115,22 @@ AND
 IntegertoString(_Result2, _Result2Str)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLog:Debug:Math] Factorial | [5!] = [",_Result1Str,"] [10!] = [",_Result2Str,"]");
+
+IF
+TextEventSet("leaderlib_debug_versionstring")
+AND
+LeaderLib_Recon_QRY_GetString("leaderlib_debug_versionstring", "version", 1, "1.2.3.4")
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_debug_versionstring", "version", _VersionString, _NextParamInt)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_VersionString, 2,0,0,0)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_20__Debug:] Version (",_VersionString,") is less than 2.0.0.0");
+
+IF
+TextEventSet("leaderlib_debug_versionstring")
+THEN
+LeaderLib_Recon_ClearParams("leaderlib_debug_versionstring");
 EXITSECTION
 
 ENDEXITSECTION

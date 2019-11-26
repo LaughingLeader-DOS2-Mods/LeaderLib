@@ -730,11 +730,12 @@ LeaderLib_QRY_ExtenderIsActive()
 AND
 LeaderLib_StringExt_QRY_Ext_Internal_SplitVersionString(_Version)
 AND
-DB_LeaderLib_StringExt_Temp_Version_ToInt(_Version, _Major, _Minor, _Revision, _Build)
+DB_LeaderLib_StringExt_VersionToInt(_Version, _Major, _Minor, _Revision, _Build)
 AND
 LeaderLib_StringExt_Internal_QRY_VersionIsLessThan(_Major, _Minor, _Revision, _Build, _OtherMajor, _OtherMinor, _OtherRevision, _OtherBuild)
 THEN
 DB_LeaderLib_StringExt_VersionIsLessThan(_Version, _OtherMajor, _OtherMinor, _OtherRevision, _OtherBuild);
+LeaderLog_Log("DEBUG", "[LeaderLib_00_2_StringExtensions:QRY:VersionIsLessThan] Lua extender function was successful for version string (",_Version,").");
 */
 
 QRY

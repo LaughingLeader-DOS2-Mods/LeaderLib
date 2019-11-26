@@ -41,7 +41,7 @@ NOT DB_Mods_Registered(_ModID, _Author, _Version)
 THEN
 LeaderUpdater_Clear_RegisteredModVersions(_ModID, _Author);
 DB_Mods_Registered(_ModID, _Author, _Version);
-DB_LeaderLib_StringExt_VersionIsLessThan(_Version, _Major, _Minor, _Revision, _Build);
+LeaderLib_StringExt_SetVersionFromString(_Version, _Major, _Minor, _Revision, _Build);
 LeaderLog_Log("DEBUG", "[LeaderUpdater:RegisterMod] Registered mod [",_ModID,"] by author [",_Author,"] with version [",_Version,"].");
 
 PROC

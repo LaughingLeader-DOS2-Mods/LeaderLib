@@ -343,11 +343,12 @@ LeaderLib_Helper_UnequipInSlot(_Character, _Slot);
 PROC
 LeaderLib_Helper_UnequipInSlot((CHARACTERGUID)_Character, (STRING)_SLot)
 AND
-CharacterGetEquippedItem(_Character, _Slot, _Item)
+CharacterGetEquippedItem(_Character, _Slot, (ITEMGUID)_Item)
 AND
 _Item != NULL_00000000-0000-0000-0000-000000000000
 THEN
-CharacterUnequipItem(_Character, (ITEMGUID)_Item);
+CharacterUnequipItem(_Character, _Item);
+ItemToInventory(_Item, _Character);
 
 PROC
 LeaderLib_Helper_UnequipIfEquipped((CHARACTERGUID)_Character, (ITEMGUID)_Item)
@@ -355,6 +356,7 @@ AND
 LeaderLib_Helper_QRY_ItemIsEquipped(_Character, _Item)
 THEN
 CharacterUnequipItem(_Character, _Item);
+ItemToInventory(_Item, _Character);
 //END_REGION
 
 //REGION MISC_CHAR_ITEM_EVENTS

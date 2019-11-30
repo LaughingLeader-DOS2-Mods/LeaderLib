@@ -5,5 +5,5 @@
     "UseCustomStatsPane": false,
     "EnableFormulaOverrides": false,
     "PreprocessStory": true,
-    "RequiredExtensionVersion": 28
+    "RequiredExtensionVersion": 32
 }

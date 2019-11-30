@@ -1290,8 +1290,8 @@ AND
 DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_lua", "script", _Script, _NextParamInt3)
 THEN
 /* [OSITOOLS_ONLY]
-NRD_LuaReset();
-NRD_LuaLoad(_Script);
+NRD_LuaReset(1);
+NRD_LuaLoad(LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c, _Script);
 NRD_LuaCall(_Function, _Param);
 */
 // [BEGIN_NO_OSITOOLS]
@@ -1302,6 +1302,16 @@ IF
 TextEventSet("leaderlib_lua")
 THEN
 LeaderLib_Recon_ClearParams("leaderlib_lua");
+
+IF
+TextEventSet("leaderlib_luareset")
+THEN
+/* [OSITOOLS_ONLY]
+NRD_LuaReset(1);
+*/
+// [BEGIN_NO_OSITOOLS]
+LeaderLog_Log("DEBUG", "[LeaderLib_00_5_Helpers_Editor:TextEventSet(leaderlib_lua)] [*WARNING*] The extender is not active, or conditional compilation does not work!");
+// [END_NO_OSITOOLS]
 //END_REGION
 EXITSECTION
 

@@ -1,5 +1,3 @@
-module(...)
-
 local function table_has_index(tbl, index)
 	if #tbl > index then
 		if tbl[index] ~= nil then
@@ -9,11 +7,11 @@ local function table_has_index(tbl, index)
     return false
 end
 
-function LeaderLib_Ext_Debug_Test(msg)
+local function LeaderLib_Ext_Debug_Test(msg)
 	LeaderLog_Log("DEBUG", "[leaderlib_ext_main.lua:LeaderLib_Ext_Debug_Test] Test: (",_msg,")")
 end
 
-function LeaderLib_Ext_StringToVersion(version_str)
+local function string_to_version(version_str)
 	obj = nil
 	if ObjectExists("S_LeaderLib_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6") == 1 then
 		obj = "S_LeaderLib_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6"
@@ -52,7 +50,16 @@ function LeaderLib_Ext_StringToVersion(version_str)
 			-- ObjectSetFlag(obj, "LeaderLib_StringToVersion_Success", 0)
 			-- SetStoryEvent(obj, "LeaderLib_StringToVersion_Success")
 			--LeaderLib_StringExt_SetVersionFromString(version_str, major, minor, revision, build)
-			DB_LeaderLib_StringExt_VersionToInt(_Version, _Major, _Minor, _Revision, _Build)
+			--Osi.DB_LeaderLib_StringExt_VersionToInt(version_str, major, minor, revision, build)
+			return major,minor,revision,build
+		else 
+			return nil
 		end
-		--return major,minor,revision,build
+	end
 end
+
+leaderlib = {
+	string_to_version = string_to_version
+}
+
+Ext.NewQuery(leaderlib.string_to_version, "LeaderLib_Ext_StringToVersion", "[in](STRING)_Version, [out](INTEGER)_Major, [out](INTEGER)_Minor, [out](INTEGER)_Revision, [out](INTEGER)_Build");

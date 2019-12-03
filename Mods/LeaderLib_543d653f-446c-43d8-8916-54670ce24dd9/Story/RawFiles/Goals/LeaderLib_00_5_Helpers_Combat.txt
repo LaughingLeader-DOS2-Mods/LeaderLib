@@ -225,6 +225,24 @@ AND
 _Dist < _MinDist
 THEN
 DB_NOOP(1);
+
+QRY
+LeaderLib_Combat_QRY_HasInvolvedPlayer((INTEGER)_CombatID)
+AND
+DB_CombatCharacters(_Char, _CombatID)
+AND
+DB_IsPlayer(_Char)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Combat_QRY_AnyPlayerIsInCombat()
+AND
+DB_IsPlayer(_Char)
+AND
+CharacterIsInCombat(_Char, 1)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION RANDOM

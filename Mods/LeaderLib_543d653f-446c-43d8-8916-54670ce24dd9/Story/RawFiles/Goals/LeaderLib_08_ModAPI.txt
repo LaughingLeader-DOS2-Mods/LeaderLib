@@ -29,6 +29,12 @@ LeaderUpdater_Register_Mod(_ModID, _Author, _Version);
 NOT DB_LeaderLib_ModApi_RegisterMod(_ModID, _Author, _Version);
 
 IF
+DB_LeaderLib_ModApi_RegisterMod((STRING)_ModID, (STRING)_Author, (INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Revision, (INTEGER)_Build)
+THEN
+LeaderUpdater_Register_Mod(_ModID, _Author, _Major, _Minor, _Revision, _Build);
+NOT DB_LeaderLib_ModApi_RegisterMod(_ModID, _Author, _Major, _Minor, _Revision, _Build);
+
+IF
 DB_LeaderLib_ModApi_RegisterMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModID, (STRING)_Author)
 THEN
 LeaderLib_Register_ModMenu(_ID, _DisplayName, _Dialog, _ModID, _Author);

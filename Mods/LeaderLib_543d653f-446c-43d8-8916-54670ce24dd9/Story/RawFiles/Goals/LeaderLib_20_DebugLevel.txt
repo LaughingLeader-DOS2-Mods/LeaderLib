@@ -122,6 +122,30 @@ ObjectSetFlag(_Player, "LeaderLib_DebugLevel_TalkedToTrader", 0);
 //END_REGION
 
 //REGION DEBUG_TEXT_EVENTS
+/*
+IF
+TextEventSet("leaderlib_printattributes")
+AND
+CharacterGetHostCharacter(_Char)
+THEN
+LeaderLib_Ext_PrintAttributes(_Char);
+
+IF
+TextEventSet("leaderlib_debug_ext_versionstring")
+AND
+LeaderLib_Ext_StringToVersion("1.10.35.120", _Major, _Minor, _Revision, _Build)
+AND
+IntegertoString(_Major, _a)
+AND
+IntegertoString(_Minor, _b)
+AND
+IntegertoString(_Revision, _c)
+AND
+IntegertoString(_Build, _d)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:leaderlib_debug_versionstring] (1.10.35.120) Major(",_a,") Minor(",_b,") Revision(",_c,") Build(",_d,")");
+*/
+
 IF
 TextEventSet("llupdatetest")
 AND
@@ -686,6 +710,7 @@ CharacterResetCooldowns(_Player);
 //END_REGION
 
 //REGION MISC
+
 /*
 IF
 StoryEvent(_, "LeaderLib_Initialized")

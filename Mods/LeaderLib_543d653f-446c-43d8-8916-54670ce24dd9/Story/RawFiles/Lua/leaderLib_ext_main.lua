@@ -7,10 +7,6 @@ local function table_has_index(tbl, index)
     return false
 end
 
-local function LeaderLib_Ext_Debug_Test(msg)
-	LeaderLog_Log("DEBUG", "[leaderlib_ext_main.lua:LeaderLib_Ext_Debug_Test] Test: (",_msg,")")
-end
-
 local function string_to_version(version_str)
 	obj = nil
 	if ObjectExists("S_LeaderLib_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6") == 1 then
@@ -58,8 +54,18 @@ local function string_to_version(version_str)
 	end
 end
 
+local function print_attributes(char)
+	local attributes = {"Strength", "Finesse", "Intelligence", "Constitution", "Memory", "Wits"}
+	for k, att in pairs(attributes) do
+		local val = CharacterGetAttribute(char, att)
+		Osi.LeaderLog_Log("DEBUG", "[lua:leaderlib.print_attributes] (" .. char .. ") | " .. att .. " = " .. val)
+	end
+end
+
 leaderlib = {
-	string_to_version = string_to_version
+	string_to_version = string_to_version,
+	print_attributes = print_attributes
 }
 
-Ext.NewQuery(leaderlib.string_to_version, "LeaderLib_Ext_StringToVersion", "[in](STRING)_Version, [out](INTEGER)_Major, [out](INTEGER)_Minor, [out](INTEGER)_Revision, [out](INTEGER)_Build");
+--Ext.NewQuery(leaderlib.string_to_version, "LeaderLib_Ext_StringToVersion", "[in](STRING)_Version, [out](INTEGER)_Major, [out](INTEGER)_Minor, [out](INTEGER)_Revision, [out](INTEGER)_Build");
+--Ext.NewCall(leaderlib.print_attributes, "LeaderLib_Ext_PrintAttributes", "(CHARACTERGUID)_Char");

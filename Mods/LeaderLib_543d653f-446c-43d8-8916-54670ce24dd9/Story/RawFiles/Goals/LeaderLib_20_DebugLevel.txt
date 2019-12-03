@@ -122,7 +122,7 @@ ObjectSetFlag(_Player, "LeaderLib_DebugLevel_TalkedToTrader", 0);
 //END_REGION
 
 //REGION DEBUG_TEXT_EVENTS
-/*
+/* [OSITOOLS_ONLY]
 IF
 TextEventSet("leaderlib_printattributes")
 AND
@@ -130,10 +130,21 @@ CharacterGetHostCharacter(_Char)
 THEN
 LeaderLib_Ext_PrintAttributes(_Char);
 
+
+IF
+TextEventSet("leaderlib_debug_ext_versionstring")
+THEN
+NRD_LuaReset(1);
+NRD_LuaLoad(LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c, "leaderLib_ext_main.lua");
+
 IF
 TextEventSet("leaderlib_debug_ext_versionstring")
 AND
-LeaderLib_Ext_StringToVersion("1.10.35.120", _Major, _Minor, _Revision, _Build)
+//LeaderLib_Ext_StringToVersion("1.10.35.120", _Major, _Minor, _Revision, _Build)
+//AND
+LeaderLib_StringExt_QRY_Ext_Internal_SplitVersionString("1.10.35.120")
+AND
+DB_LeaderLib_StringExt_VersionToInt(_Version, _Major, _Minor, _Revision, _Build)
 AND
 IntegertoString(_Major, _a)
 AND
@@ -143,6 +154,7 @@ IntegertoString(_Revision, _c)
 AND
 IntegertoString(_Build, _d)
 THEN
+NOT DB_LeaderLib_StringExt_VersionToInt(_Version, _Major, _Minor, _Revision, _Build);
 LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:leaderlib_debug_versionstring] (1.10.35.120) Major(",_a,") Minor(",_b,") Revision(",_c,") Build(",_d,")");
 */
 

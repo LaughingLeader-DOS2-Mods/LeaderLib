@@ -43,6 +43,8 @@ LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_ExplodeFix", "LeaderLib
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_ForceEvents", "LeaderLib_Force_EnableEvents");
 
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Debug", "LeaderLib_IsEditorMode");
+
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Autosaving", "LeaderLib_AutosavingEnabled");
 //LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_GrowthEvents_Item_Enabled", "LeaderLib");
 //END_REGION
 
@@ -165,6 +167,20 @@ THEN
 LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_GrowthEvents_Item_Enabled", "LeaderLib");
 //END_REGION
 
+//REGION UPDATING_SCRIPT_ENABLE_AUTO
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag)
+AND
+GlobalGetFlag(_GlobalFlag, 1)
+AND
+NOT SysIsActive(_GoalTitle)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:LeaderUpdater_ModUpdated] Retroactively activating toggle script [",_GoalTitle,"] (",_GlobalFlag,").");
+SysActivateGoal(_GoalTitle);
+//END_REGION
+
 //REGION UPDATING
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
@@ -232,7 +248,7 @@ AND
 NOT DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag)
 THEN
 DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag);
-LeaderLib_ToggleScripts_OnScriptRegistered(_GoalTitle, _GlobalFlag);
+LeaderLib_ToggleScripts_OnScriptRegistered(_GoalTitle, _GlobalFlag, -1);
 
 PROC
 LeaderLib_ToggleScripts_Register_ObjectScript((STRING)_GoalTitle, (STRING)_TagOrFlag, (INTEGER)_IsTag)
@@ -240,10 +256,18 @@ THEN
 DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _TagOrFlag, _IsTag);
 LeaderLib_ToggleScripts_OnScriptRegistered(_GoalTitle, _TagOrFlag, _IsTag);
 
+//Support for mods that may have an older definition
 PROC
 LeaderLib_ToggleScripts_OnScriptRegistered((STRING)_GoalTitle, (STRING)_GlobalFlag)
+THEN
+LeaderLib_ToggleScripts_OnScriptRegistered(_GoalTitle, _GlobalFlag, -1);
+
+PROC
+LeaderLib_ToggleScripts_OnScriptRegistered((STRING)_GoalTitle, (STRING)_GlobalFlag, -1)
 AND
 DB_GlobalFlag(_GlobalFlag)
+AND
+NOT SysIsActive(_GoalTitle)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:OnScriptRegistered] Activating goal [",_GoalTitle,"] (",_GlobalFlag,").");
 SysActivateGoal(_GoalTitle);

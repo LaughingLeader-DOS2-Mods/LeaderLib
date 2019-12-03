@@ -1,0 +1,19 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+KBSECTION
+
+IF
+CombatStarted(_CombatID)
+THEN
+LeaderLib_AutoSaving_OnCombatStarted(_CombatID);
+
+IF
+CombatEnded(_CombatID)
+THEN
+LeaderLib_AutoSaving_OnCombatEnded(_CombatID);
+
+EXITSECTION
+LeaderLib_AutoSaving_ClearToggleScriptData();
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

@@ -170,32 +170,6 @@ LeaderLib_Autosaving_Stop();
 LeaderLib_Autosaving_Start();
 //END_REGION
 
-//REGION PAUSING
-IF
-CombatStarted(_)
-AND
-DB_GlobalFlag("LeaderLib_DisableAutosavingInCombat")
-AND
-CharacterGetHostCharacter(_Player)
-AND
-CharacterIsInCombat(_Player, 1)
-THEN
-TimerPause("LeaderLib_Timers_Autosaving");
-DB_LeaderLib_AutoSaving_Temp_TimerPaused(1);
-
-IF
-CombatEnded(_)
-AND
-DB_LeaderLib_AutoSaving_Temp_TimerPaused(1)
-AND
-CharacterGetHostCharacter(_Player)
-AND
-CharacterIsInCombat(_Player, 0)
-THEN
-NOT DB_LeaderLib_AutoSaving_Temp_TimerPaused(1);
-TimerUnpause("LeaderLib_Timers_Autosaving");
-//END_REGION
-
 //REGION START_EVENTS
 IF
 GlobalFlagSet("LeaderLib_AutosavingEnabled")
@@ -250,8 +224,8 @@ THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Autosaving:LeaderLib_Commands_AutosaveNow] Host is in combat. Delaying autosave until combat ends.");
 DB_LeaderLib_Autosaving_Temp_SaveAfterCombat(1);
 
-IF
-CombatEnded(_CombatID)
+PROC
+LeaderLib_AutoSaving_OnCombatEnded((INTEGER)_CombatID)
 AND
 DB_LeaderLib_Autosaving_Temp_SaveAfterCombat(1)
 AND
@@ -467,6 +441,64 @@ PROC
 LeaderLib_DynamicMenu_OnFetchDialogVariable("LeaderLib.Autosave.IntervalSettings", (STRING)_DialogVar, (STRING)_AvailableFlag, (INTEGER)_Instance, (STRING)_EntryKey, (STRING)_DisplayText)
 THEN
 DialogSetVariableStringForInstance(_Instance, _DialogVar, _DisplayText);
+//END_REGION
+
+//REGION COMBAT_SAVE
+PROC
+LeaderLib_AutoSaving_OnCombatStarted((INTEGER)_CombatID)
+AND
+DB_GlobalFlag("LeaderLib_AutosaveOnCombatStart")
+AND
+NOT DB_LeaderLib_AutoSaving_Temp_CombatSave(_CombatID)
+AND
+LeaderLib_Combat_QRY_HasInvolvedPlayer(_CombatID)
+THEN
+AutoSave();
+DB_LeaderLib_AutoSaving_Temp_CombatSave(_CombatID);
+
+PROC
+LeaderLib_AutoSaving_OnCombatEnded((INTEGER)_CombatID)
+AND
+DB_LeaderLib_AutoSaving_Temp_CombatSave(_CombatID)
+THEN
+NOT DB_LeaderLib_AutoSaving_Temp_CombatSave(_CombatID);
+
+PROC
+LeaderLib_AutoSaving_ClearToggleScriptData()
+AND
+DB_LeaderLib_AutoSaving_Temp_CombatSave(_CombatID)
+THEN
+NOT DB_LeaderLib_AutoSaving_Temp_CombatSave(_CombatID);
+//END_REGION
+
+//REGION PAUSING
+PROC
+LeaderLib_AutoSaving_OnCombatStarted((INTEGER)_CombatID)
+AND
+DB_GlobalFlag("LeaderLib_DisableAutosavingInCombat")
+AND
+LeaderLib_Combat_QRY_HasInvolvedPlayer(_CombatID)
+THEN
+TimerPause("LeaderLib_Timers_Autosaving");
+DB_LeaderLib_AutoSaving_Temp_TimerPaused(1);
+
+PROC
+LeaderLib_AutoSaving_OnCombatEnded((INTEGER)_CombatID)
+AND
+DB_LeaderLib_AutoSaving_Temp_TimerPaused(1)
+THEN
+TimerCancel("LeaderLib_Timers_Autosaving_ResetPause");
+TimerLaunch("LeaderLib_Timers_Autosaving_ResetPause", 250);
+
+IF
+TimerFinished("LeaderLib_Timers_Autosaving_ResetPause")
+AND
+DB_LeaderLib_AutoSaving_Temp_TimerPaused(1)
+AND
+NOT LeaderLib_Combat_QRY_AnyPlayerIsInCombat()
+THEN
+NOT DB_LeaderLib_AutoSaving_Temp_TimerPaused(1);
+TimerUnpause("LeaderLib_Timers_Autosaving");
 //END_REGION
 EXITSECTION
 

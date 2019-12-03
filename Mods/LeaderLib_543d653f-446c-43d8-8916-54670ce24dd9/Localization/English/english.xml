@@ -1,19 +1,10 @@
 <contentList>
-	<content contentuid="h14939ec7g5208g49d1ga484gd88c66bb67ba" Source="LeaderLib_MessageBox.lsb" Key="LeaderLib_MessageBox_CheckMissingMods">&lt;font color=&apos;#00FA9A&apos;&gt;View Missing Mods&lt;/font&gt;</content>
-	<content contentuid="h8fe3bf6cg2791g4a46gb517g396ceb756b43" Source="LeaderLib_MessageBox.lsb" Key="LeaderLib_MessageBox_MissingModDependendencies">&lt;font color=&apos;#fcd203&apos; size=&apos;28&apos;&gt;LeaderLib&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#FF0000&apos;&gt;&lt;font size=&apos;24&apos;&gt;* Error *&lt;/font&gt;&lt;br&gt;Required Mods Missing&lt;/font&gt;&lt;br&gt;Check your mod list at the main menu.</content>
-	<content contentuid="h393d684bg505dg41c4gbb5dg715a4b5bd153" Source="LeaderLib_MessageBox.lsb" Key="LeaderLib_MessageBox_SkipCheck">Close</content>
-	<content contentuid="h3510e199g7d0cg404fga53bg052c534d94d1" Source="LeaderLib_Skills.lsb" Key="Shout_LeaderLib_OpenModMenu_Description">&lt;font color=&apos;#3e81fc&apos; size=&apos;18&apos;&gt;LeaderLib&lt;/font&gt;&lt;br&gt;Open the mod menu to access registered settings menus.</content>
-	<content contentuid="h3ed2c7c5gf6c0g4c9dga916g5782593327ab" Source="LeaderLib_Skills.lsb" Key="Shout_LeaderLib_OpenModMenu_DisplayName">Open Mod Menu</content>
-	<content contentuid="head5217fga96cg4b34gafb1geb56b80bd8e0" Source="LeaderLib_Skills.lsb" Key="Target_LeaderLib_ControlSummon_Description">Take control of a summon or follower you own.</content>
-	<content contentuid="h1c359033g2e0dg49b1g9befg63f786d3f9fc" Source="LeaderLib_Skills.lsb" Key="Target_LeaderLib_ControlSummon_DisplayName">Control Summon</content>
-	<content contentuid="h1db4b34cg358dg49a2gbaeag3cb06a86ab4c" Source="LeaderLib_Statuses.lsb" Key="LeaderLib_NEW_ITEMS_Description">Character is selling new items.</content>
-	<content contentuid="hf1c7aa42g3e2fg4338ga672g59a3a935cff4" Source="LeaderLib_Statuses.lsb" Key="LeaderLib_NEW_ITEMS_DisplayName">New Items in Stock</content>
-	<content contentuid="haee6fb94g2ea6g4f56g800dg3e49e5b131ff" Source="LeaderLib_Statuses.lsb" Key="LeaderLib_PACIFIST_Description">Character has taken a vow to avoid fighting, and will flee if pulled into combat.</content>
-	<content contentuid="hae65b472g6a61g4c8fgb05dge94cc8e853d4" Source="LeaderLib_Statuses.lsb" Key="LeaderLib_PACIFIST_DisplayName">Pacifism</content>
 	<content contentuid="h7cf6d938g1c71g4431gbbccg85cfdf119735" Source="LeaderLib_AD_TestFollower.lsj">Lead the way.</content>
 	<content contentuid="hfb5e41d2gbcc7g4ed4gb962g13f831ed95c8" Source="LeaderLib_AD_TestFollower.lsj">I&apos;ll stay here.</content>
 	<content contentuid="hb26cb153g5583g48e7gb851g4dc00b23865d" Source="LeaderLib_AutosaveMenu.lsj">Updating menu...</content>
 	<content contentuid="h60d869f2gcb5cg4b29gafa4g9d94ef2ae4f7" Source="LeaderLib_AutosaveMenu.lsj">[LeaderLib_DynamicMenu_MenuOption3_58379c79-1cf1-4129-bcf5-579f40a9ad11]</content>
+	<content contentuid="hf1b69262ga2cfg490bg9a80g43fa32b4bdab" Source="LeaderLib_AutosaveMenu.lsj">Enable Autosaving when Combat Starts</content>
+	<content contentuid="h5c7a2bbdg2c51g4629g945egef8020afeb3c" Source="LeaderLib_AutosaveMenu.lsj">Disable Autosaving when Combat Starts</content>
 	<content contentuid="h1332cb24g1da0g4c36g8447g650f71ef54c8" Source="LeaderLib_AutosaveMenu.lsj">Settings updated.</content>
 	<content contentuid="h916a5457g6ec8g47fdgb4adg2c5e67174a4b" Source="LeaderLib_AutosaveMenu.lsj">[LeaderLib_DynamicMenu_MenuOption6_ea90e3a6-30da-411c-8ab5-cae95373ae93]</content>
 	<content contentuid="h5be7351cgb6eeg438fgbb32g65c8295bfb3b" Source="LeaderLib_AutosaveMenu.lsj">Disable Timed Autosaves</content>
@@ -237,4 +228,28 @@
 	<content contentuid="hdc5db041g39d0g4a87g81eagb26a0d11358e" Source="LeaderLib_SettingsMenu.lsj">[GLOBAL] Disable Status Logging</content>
 	<content contentuid="h2d78ab51gc892g4754ga12cg2176bc50b688" Source="LeaderLib_SettingsMenu.lsj">Mod Menu Settings</content>
 	<content contentuid="h14956412g44e4g4890ga268gd425729622f1" Source="LeaderLib_SettingsMenu.lsj">Disable Balanced Experience for All Parties - Players in other parties will no longer be automatically leveled up to the highest player level.</content>
+	<content contentuid="h14939ec7g5208g49d1ga484gd88c66bb67ba" Source="LeaderLib_MessageBox.lsb" Key="LeaderLib_MessageBox_CheckMissingMods">&lt;font color=&apos;#00FA9A&apos;&gt;View Missing Mods&lt;/font&gt;</content>
+	<content contentuid="h8fe3bf6cg2791g4a46gb517g396ceb756b43" Source="LeaderLib_MessageBox.lsb" Key="LeaderLib_MessageBox_MissingModDependendencies">&lt;font color=&apos;#fcd203&apos; size=&apos;28&apos;&gt;LeaderLib&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#FF0000&apos;&gt;&lt;font size=&apos;24&apos;&gt;* Error *&lt;/font&gt;&lt;br&gt;Required Mods Missing&lt;/font&gt;&lt;br&gt;Check your mod list at the main menu.</content>
+	<content contentuid="h393d684bg505dg41c4gbb5dg715a4b5bd153" Source="LeaderLib_MessageBox.lsb" Key="LeaderLib_MessageBox_SkipCheck">Close</content>
+	<content contentuid="h1db4b34cg358dg49a2gbaeag3cb06a86ab4c" Source="LeaderLib_Statuses.lsb" Key="LeaderLib_NEW_ITEMS_Description">Character is selling new items.</content>
+	<content contentuid="hf1c7aa42g3e2fg4338ga672g59a3a935cff4" Source="LeaderLib_Statuses.lsb" Key="LeaderLib_NEW_ITEMS_DisplayName">New Items in Stock</content>
+	<content contentuid="haee6fb94g2ea6g4f56g800dg3e49e5b131ff" Source="LeaderLib_Statuses.lsb" Key="LeaderLib_PACIFIST_Description">Character has taken a vow to avoid fighting, and will flee if pulled into combat.</content>
+	<content contentuid="hae65b472g6a61g4c8fgb05dge94cc8e853d4" Source="LeaderLib_Statuses.lsb" Key="LeaderLib_PACIFIST_DisplayName">Pacifism</content>
+	<content contentuid="h4c7b2325g95f6g4be6g8c95g83773399e232" Source="LeaderLib_Statuses.lsb" Key="LEADERLIB_SHAPESHIFT_Description">Character is shapeshifted.</content>
+	<content contentuid="h53c66b8bg5ac2g4a29gbf8bgd427e7a2797e" Source="LeaderLib_Statuses.lsb" Key="LEADERLIB_SHAPESHIFT_UNDEAD_Description">Character is in an undead form.</content>
+	<content contentuid="h5719d687g5099g4294g9fb7g14e7f7c08c13" Source="LeaderLib_Notifications.lsb" Key="LeaderLib_ToggleUndeadPolymorph_Failed">&lt;font color=&apos;#FF0000&apos;&gt;Failed to find current race.&lt;/font&gt;</content>
+	<content contentuid="h4c547698gedeeg4e66gbdb8gac0d8549e9f1" Source="LeaderLib_Statuses.lsb" Key="LEADERLIB_UNDEAD_DWARF_DisplayName">Undead Dwarf</content>
+	<content contentuid="hf5b98286gafc9g42cbg8d13g8e8db2b36fd4" Source="LeaderLib_Statuses.lsb" Key="LEADERLIB_UNDEAD_ELF_DisplayName">Undead Elf</content>
+	<content contentuid="ha816c9dega02eg49d7gb2dbgbb0d82e03168" Source="LeaderLib_Statuses.lsb" Key="LEADERLIB_UNDEAD_HUMAN_DisplayName">Undead Human</content>
+	<content contentuid="h04e966c1ga9ecg4f16g87dcg1ecddbc90ba8" Source="LeaderLib_Statuses.lsb" Key="LEADERLIB_UNDEAD_LIZARD_DisplayName">Undead Lizard</content>
+	<content contentuid="h85efd005g213dg41e8gb555g8f1aa08d1c70" Source="LeaderLib_Skills.lsb" Key="Shout_LeaderLib_CancelPolymorphism_Description">Clear any active shapeshifting statuses.</content>
+	<content contentuid="h15b3ed19g5445g4ae7gb5f8g931691459902" Source="LeaderLib_Skills.lsb" Key="Shout_LeaderLib_CancelPolymorphism_DisplayName">Cancel Shapeshifting</content>
+	<content contentuid="h3510e199g7d0cg404fga53bg052c534d94d1" Source="LeaderLib_Skills.lsb" Key="Shout_LeaderLib_OpenModMenu_Description">&lt;font color=&apos;#3e81fc&apos; size=&apos;18&apos;&gt;LeaderLib&lt;/font&gt;&lt;br&gt;Open the mod menu to access registered settings menus.</content>
+	<content contentuid="h3ed2c7c5gf6c0g4c9dga916g5782593327ab" Source="LeaderLib_Skills.lsb" Key="Shout_LeaderLib_OpenModMenu_DisplayName">Open Mod Menu</content>
+	<content contentuid="hfe5ec3aeg9e96g4613ga76cg9a032dd2b28f" Source="LeaderLib_Skills.lsb" Key="Shout_LeaderLib_SwapGender_Description">Change to the opposite gender.&lt;br&gt;&lt;font color=&apos;#188ede&apos;&gt;Warning: Replaces custom appearance settings!&lt;/font&gt;</content>
+	<content contentuid="hceca42f0g64b6g4454gb9f8gd4304f80ed56" Source="LeaderLib_Skills.lsb" Key="Shout_LeaderLib_SwapGender_DisplayName">Swap Gender</content>
+	<content contentuid="h0f61d4abg995fg4c5fg8bdfg955c1d2ed15c" Source="LeaderLib_Skills.lsb" Key="Shout_LeaderLib_ToggleUndead_Description">Swap between the undead and non-undead equivalent of your current race.</content>
+	<content contentuid="h8b5454aeg5835g41afg830bg66806d81d2a3" Source="LeaderLib_Skills.lsb" Key="Shout_LeaderLib_ToggleUndead_DisplayName">Toggle Undead</content>
+	<content contentuid="head5217fga96cg4b34gafb1geb56b80bd8e0" Source="LeaderLib_Skills.lsb" Key="Target_LeaderLib_ControlSummon_Description">Take control of a summon or follower you own.</content>
+	<content contentuid="h1c359033g2e0dg49b1g9befg63f786d3f9fc" Source="LeaderLib_Skills.lsb" Key="Target_LeaderLib_ControlSummon_DisplayName">Control Summon</content>
 </contentList>

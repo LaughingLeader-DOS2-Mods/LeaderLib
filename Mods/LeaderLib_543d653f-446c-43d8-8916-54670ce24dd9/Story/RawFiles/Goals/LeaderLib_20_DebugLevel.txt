@@ -13,7 +13,7 @@ DB_NOOP(1);
 PROC
 LeaderLib_Debug_SetupEditorCharacter((CHARACTERGUID)_Org, (STRING)_Preset)
 AND
-CharacterIsPlayer(_Org, 0)
+NOT LeaderLib_Helper_QRY_CharacterIsPlayer(_Org)
 THEN
 CharacterMakePlayer(_Org, NULL_00000000-0000-0000-0000-000000000000);
 DB_IsPlayer(_Org);
@@ -716,7 +716,7 @@ LeaderLib_Treasure_Register_ItemTemplate("TestLevel_LL_LeaderLib_Chest3", "WPN_L
 IF
 SkillCast(_Player, _Skill, _, _)
 AND
-CharacterIsPlayer(_Player, 1)
+LeaderLib_Helper_QRY_CharacterIsPlayer(_Player)
 THEN
 CharacterResetCooldowns(_Player);
 //END_REGION

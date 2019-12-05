@@ -21,7 +21,7 @@ NOT DB_CombatCharacters(_NPC,_)
 AND
 NOT DB_Crime_Assault(_,_,_NPC)
 AND
-CharacterIsPlayer(_Player,1)
+LeaderLib_Helper_QRY_CharacterIsPlayer(_Player)
 AND
 NOT QryIgnoreDamageSource(_DamageSource)
 AND
@@ -29,7 +29,7 @@ CharacterIsDeadOrFeign(_Player,0)
 AND
 ObjectIsCharacter(_NPC,1)
 AND
-CharacterIsPlayer(_NPC,0)
+NOT LeaderLib_Helper_QRY_CharacterIsPlayer(_NPC)
 AND
 CharacterIsDead(_NPC,0)
 AND
@@ -54,7 +54,7 @@ IsTagged(_Dummy, "LeaderLib_Dummy", 1)
 AND
 GetVarObject(_Dummy, "LeaderLib_Dummy_Owner", (CHARACTERGUID)_Player)
 AND
-CharacterIsPlayer(_Player,1)
+LeaderLib_Helper_QRY_CharacterIsPlayer(_Player)
 AND
 QRY_Crime_ItemHasHPorIndestructible(_Item)
 THEN
@@ -73,7 +73,7 @@ IsTagged(_Dummy, "LeaderLib_Dummy", 1)
 AND
 GetVarObject(_Dummy, "LeaderLib_Dummy_Owner", (CHARACTERGUID)_Player)
 AND
-CharacterIsPlayer(_Player,1)
+LeaderLib_Helper_QRY_CharacterIsPlayer(_Player)
 AND
 NOT DB_CombatCharacters(_Player,_)
 AND
@@ -89,7 +89,7 @@ ItemGetOwner(_Item,_Owner)
 AND
 _Owner != NULL_00000000-0000-0000-0000-000000000000
 AND
-CharacterIsPlayer(_Owner,0)
+NOT LeaderLib_Helper_QRY_CharacterIsPlayer(_Owner)
 THEN
 ProcCrimeItemDestroyCheckVandal(_Item,_Owner,_Player,_Player);
 //END_REGION

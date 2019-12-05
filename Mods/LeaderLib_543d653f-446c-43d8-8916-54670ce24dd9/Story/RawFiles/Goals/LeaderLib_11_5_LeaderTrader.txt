@@ -416,7 +416,7 @@ AttackedByObject((CHARACTERGUID)_LeaderTrader, (CHARACTERGUID)_AttackerOwner, _A
 AND
 DB_LeaderLib_LeaderTrader(_LeaderTrader)
 AND
-CharacterIsPlayer(_AttackerOwner, 1)
+LeaderLib_Helper_QRY_CharacterIsPlayer(_AttackerOwner)
 AND
 NOT DB_LeaderLib_LeaderTrader_IsRespondingToAttack(_)
 THEN

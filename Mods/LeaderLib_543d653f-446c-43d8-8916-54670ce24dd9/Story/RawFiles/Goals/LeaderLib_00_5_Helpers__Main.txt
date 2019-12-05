@@ -731,7 +731,7 @@ RemoveTemporaryCharacter(_Dummy);
 PROC
 LeaderLib_Helper_CopyFaction((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
 AND
-CharacterIsPlayer(_CopyFrom, 1)
+LeaderLib_Helper_QRY_CharacterIsPlayer(_CopyFrom)
 THEN
 CharacterSetRelationIndivFactionToFaction(_CopyTo, "Evil NPC", 0);
 CharacterSetRelationIndivFactionToIndivFaction(_CopyTo, _CopyFrom, 100);
@@ -740,7 +740,7 @@ CharacterAddAttitudeTowardsPlayer(_CopyTo, _CopyFrom, 100);
 PROC
 LeaderLib_Helper_CopyFaction((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)
 AND
-CharacterIsPlayer(_CopyFrom, 0)
+NOT LeaderLib_Helper_QRY_CharacterIsPlayer(_CopyFrom)
 AND
 GetFaction(_CopyTo, _Faction)
 THEN
@@ -1311,7 +1311,7 @@ DB_NOOP(1);
 QRY
 LeaderLib_Helper_QRY_CharacterIsHumanoid((CHARACTERGUID)_Char)
 AND
-CharacterIsPlayer(_Char, 1) // CharacterGetRace doesn't work with NPCs
+LeaderLib_Helper_QRY_CharacterIsPlayer(_Char) // CharacterGetRace doesn't work with NPCs
 AND
 DB_LeaderLib_RaceTags(_Race, _Tag, _BaseRace)
 AND
@@ -1327,6 +1327,24 @@ AND
 HasActiveStatus(_Char, "DYING", _b)
 AND
 IntegerMax(_a, _b, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_CharacterIsPlayer((CHARACTERGUID)_Char)
+AND
+CharacterIsPlayer(_Char, _a)
+AND
+CharacterIsPartyMember(_Char, _b)
+AND
+IntegerMax(_a, _b, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_CharacterIsPlayer((CHARACTERGUID)_Char)
+AND
+DB_IsPlayer(_Char)
 THEN
 DB_NOOP(1);
 //END_REGION

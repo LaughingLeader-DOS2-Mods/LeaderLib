@@ -40,7 +40,7 @@ SetCameraDistanceOverride(30.0);
 IF
 CharacterDied(_NPC)
 AND
-CharacterIsPlayer(_NPC,0)
+NOT LeaderLib_Helper_QRY_CharacterIsPlayer(_NPC)
 THEN
 ProcClearTradeFacts(_NPC);
 
@@ -332,7 +332,7 @@ ProcProcessCombineItem(_Player,_ItemA,_ItemB,_ItemC,_ItemD,_ItemE,_RequestID)
 AND
 NOT QryCombineItemHasCustomResult(_Player,_ItemA,_ItemB,_ItemC,_ItemD,_ItemE)
 AND
-CharacterIsPlayer(_Player,1)
+LeaderLib_Helper_QRY_CharacterIsPlayer(_Player)
 THEN
 RequestProcessed(_Player,_RequestID,1);
 /*ProcCrimeCheckRegisterUseForbiddenItem(_Player,_ItemA,_RequestID);

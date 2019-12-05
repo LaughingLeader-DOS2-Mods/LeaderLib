@@ -231,7 +231,7 @@ CharacterLaunchIterator("LeaderLib_Debug_AddPlayer");
 IF
 StoryEvent((CHARACTERGUID)_Player, "LeaderLib_Debug_AddPlayer")
 AND
-CharacterIsPlayer(_Player, 1)
+LeaderLib_Helper_QRY_CharacterIsPlayer(_Player)
 AND
 CharacterIsSummon(_Player, 0)
 AND

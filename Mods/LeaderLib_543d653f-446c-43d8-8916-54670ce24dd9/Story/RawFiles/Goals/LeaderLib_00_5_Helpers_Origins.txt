@@ -8,6 +8,7 @@ LeaderLib_Origins_Register_Main((CHARACTERGUID)_Char, (STRING)_NpcAlignment, (ST
 THEN
 DB_Origins(_Char);
 DB_OriginNPCAlignment(_Char, _NpcAlignment);
+DB_GLO_PartyMembers_OriginalAlignment(_Char, _NpcAlignment);
 DB_GLO_PartyMembers_DefaultFaction(_Char, _DefaultFaction);
 
 PROC

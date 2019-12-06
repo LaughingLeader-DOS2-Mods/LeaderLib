@@ -221,3 +221,4 @@ DB_CustomMoveItemResponse 3
 DB_CustomPickupItemResponse 3
 DB_CustomLockpickItemResponse 3
 DB_LeaderLib_Math_ScaleToRange 6
+DB_LeaderLib_PartyCounter_TimerIsActive 1

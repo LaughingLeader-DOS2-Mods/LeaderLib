@@ -1347,6 +1347,22 @@ AND
 DB_IsPlayer(_Char)
 THEN
 DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_FactionIsSet((CHARACTERGUID)_Char)
+AND
+GetFaction(_Char, _Faction)
+AND
+_Faction != ""
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_FactionIsSet((CHARACTERGUID)_Char, (STRING)_Faction)
+AND
+GetFaction(_Char, _Faction)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION QUERIES_DISTANCE

@@ -1566,6 +1566,7 @@ FindValidPosition(_tx, _y, _tz, 12.0, _Char, _cx, _cy, _cz)
 THEN
 TeleportToPosition(_Char, _cx, _cy, _cz, "", 0, 1);
 
+/*
 PROC
 LeaderLib_Helper_OnVariableIntChanged((GUIDSTRING)_Object, "LeaderLib_PartyCount", (INTEGER)_LastValue, (INTEGER)_CurrentValue)
 AND
@@ -1573,6 +1574,7 @@ String(_Object, _ObjectStr)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:OnVariableIntChanged]  (LeaderLib_PartyCount) changed for (",_ObjectStr,").");
 LeaderLog_LogInt("DEBUG", "[LeaderLib_20_DebugLevel:OnVariableIntChanged] --- (LeaderLib_PartyCount) (", _LastValue, ") => (",_CurrentValue,").");
+*/
 EXITSECTION
 
 ENDEXITSECTION

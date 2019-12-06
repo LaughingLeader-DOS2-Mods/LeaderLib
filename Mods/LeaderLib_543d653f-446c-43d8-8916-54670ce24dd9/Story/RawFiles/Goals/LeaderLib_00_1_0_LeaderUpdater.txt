@@ -17,9 +17,21 @@ LeaderUpdater_Clear_RegisteredModVersions(_ModID, _Author);
 DB_Mods_Registered(_ModID, _Author, _Version);
 LeaderLog_Log("DEBUG", "[LeaderUpdater:RegisterMod] Registered mod [",_ModID,"] by author [",_Author,"] with version [",_Version,"].");
 
+PROC
+LeaderUpdater_Register_Mod((STRING)_ModID, (STRING)_Author, (INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Revision, (INTEGER)_Build)
+AND
+DB_LeaderLib_StringExt_VersionToInt(_Version, _Major, _Minor, _Revision, _Build)
+AND
+NOT DB_Mods_Registered(_ModID, _Author, _Version)
+THEN
+LeaderUpdater_Clear_RegisteredModVersions(_ModID, _Author);
+DB_Mods_Registered(_ModID, _Author, _Version);
+
 //New register call for using the version integers directly
 PROC
 LeaderUpdater_Register_Mod((STRING)_ModID, (STRING)_Author, (INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Revision, (INTEGER)_Build)
+AND
+NOT DB_LeaderLib_StringExt_VersionToInt(_, _Major, _Minor, _Revision, _Build)
 AND
 LeaderLib_StringExt_Internal_QRY_VersionSupported(_Major, _Minor, _Revision, _Build) // >= 0, <= 256
 AND
@@ -376,6 +388,40 @@ AND
 NOT DB_Mods_Registered(_ModID, _Author, _Version)
 THEN
 DB_NOOP(1);
+
+QRY
+LeaderUpdater_QRY_ModUpdateNeeded((STRING)_ModID, (STRING)_Author, (INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Revision, (INTEGER)_Build)
+AND
+DB_LeaderLib_StringExt_VersionToInt(_Version, _Major, _Minor, _Revision, _Build)
+AND
+NOT DB_Mods_Registered(_ModID, _Author, _Version)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderUpdater_QRY_ModUpdateNeeded((STRING)_ModID, (STRING)_Author, (INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Revision, (INTEGER)_Build)
+AND
+NOT DB_LeaderLib_StringExt_VersionToInt(_, _Major, _Minor, _Revision, _Build)
+AND
+LeaderLib_StringExt_Internal_QRY_VersionSupported(_Major, _Minor, _Revision, _Build) // >= 0, <= 256
+AND
+IntegertoString(_Major, _a)
+AND
+IntegertoString(_Minor, _b)
+AND
+IntegertoString(_Revision, _c)
+AND
+IntegertoString(_Build, _d)
+AND
+LeaderLog_QRY_Log("COMBINE", _a, ".", _b, ".", _c, ".", _d)
+AND
+DB_LeaderLog_Temp_CombinedString(_Version)
+AND
+LeaderLog_QRY_ClearCombinedString(_Version)
+AND
+NOT DB_Mods_Registered(_ModID, _Author, _Version)
+THEN
+DB_LeaderLib_StringExt_VersionToInt(_Version, _Major, _Minor, _Revision, _Build);
 
 QRY
 LeaderUpdater_QRY_ModIsActive((STRING)_ModID)

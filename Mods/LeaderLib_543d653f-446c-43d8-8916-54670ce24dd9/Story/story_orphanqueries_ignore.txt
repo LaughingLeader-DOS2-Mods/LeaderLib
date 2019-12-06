@@ -188,6 +188,7 @@ DB_LeaderLib_ModApi_RegisterDatabase 5
 DB_LeaderLib_ModApi_RegisterGoal 3
 DB_LeaderLib_ModApi_RegisterMenu 5
 DB_LeaderLib_ModApi_RegisterMod 3
+DB_LeaderLib_ModApi_RegisterMod 6
 DB_LeaderLib_ModApi_RegisterPreset 3
 DB_LeaderLib_ModApi_RegisterPreset 4
 DB_LeaderLib_ModApi_Register_TreasureTable 2

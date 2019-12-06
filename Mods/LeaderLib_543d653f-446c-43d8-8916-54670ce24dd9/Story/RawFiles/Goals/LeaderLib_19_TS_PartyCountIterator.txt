@@ -13,7 +13,6 @@ AND
 _Character != _Leader
 THEN
 LeaderLib_Party_IncreaseCount(_Leader);
-LeaderLib_Party_IncreaseCount(_Character);
 EXITSECTION
 
 ENDEXITSECTION

@@ -26,7 +26,23 @@ THEN
 DB_NOOP(1);
 
 QRY
-LeaderLib_Helper_QRY_IntegerVariableSet((GUIDSTRING)_Object, (STRING)_Var, (INTEGER)_MinValue)
+LeaderLib_Helper_QRY_IntegerVariableIsLessThanOrEqualTo((GUIDSTRING)_Object, (STRING)_Var, (INTEGER)_MinValue)
+AND
+GetVarInteger(_Object, _Var, _Value)
+AND
+_Value <= _MinValue
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IntegerVariableIsLessThanOrEqualTo((GUIDSTRING)_Object, (STRING)_Var, (INTEGER)_MinValue)
+AND
+NOT LeaderLib_Helper_QRY_IntegerVariableSet(_Object, _Var)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IntegerVariableIsGreaterThanOrEqualTo((GUIDSTRING)_Object, (STRING)_Var, (INTEGER)_MinValue)
 AND
 GetVarInteger(_Object, _Var, _Value)
 AND
@@ -89,7 +105,7 @@ LeaderLib_Helper_ModifyVariableInt(_Object, _Variable, _ModifyBy, _Max, 0);
 PROC
 LeaderLib_Helper_ModifyVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_ModifyBy, (INTEGER)_Max, (INTEGER)_Min)
 AND
-NOT LeaderLib_Helper_QRY_IntegerVariableSet(_Object, _Variable, _Min)
+LeaderLib_Helper_QRY_IntegerVariableIsLessThanOrEqualTo(_Object, _Variable, _Min)
 THEN
 SetVarInteger(_Object, _Variable, _Min);
 

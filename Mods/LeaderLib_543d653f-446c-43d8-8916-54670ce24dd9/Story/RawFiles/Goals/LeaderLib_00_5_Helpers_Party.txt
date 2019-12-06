@@ -13,11 +13,13 @@ AND
 NOT GlobalGetFlag("LeaderLib_CountedParties", 1)
 THEN
 TimerCancel("LeaderLib_Timers_StartCountingParty");
-TimerLaunch("LeaderLib_Timers_StartCountingParty", 500);
+TimerLaunch("LeaderLib_Timers_StartCountingParty", 50);
+DB_LeaderLib_PartyCounter_TimerIsActive(1);
 
 IF
 TimerFinished("LeaderLib_Timers_StartCountingParty")
 THEN
+NOT DB_LeaderLib_PartyCounter_TimerIsActive(1);
 LeaderLib_Party_CountParties();
 
 QRY
@@ -28,52 +30,60 @@ LeaderLib_Party_CountParties();
 PROC
 LeaderLib_Party_CountParties()
 THEN
-SysActivateGoal("LeaderLib_19_TS_PartyCountIterator");
 GlobalSetFlag("LeaderLib_CountedParties");
 SysClear("DB_LeaderLib_Temp_PartyCheck", 2);
 IterateParties("LeaderLib_Events_ResetPartyCount");
 IterateParties("LeaderLib_Events_AddToPartyCheck");
-FireOsirisEvents();
 
 IF
-StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Events_ResetPartyCount")
+StoryEvent((CHARACTERGUID)_Char, "LeaderLib_Events_ResetPartyCount")
 AND
-NOT QRY_IsSummonOrPartyFollower(_Character)
+NOT QRY_IsSummonOrPartyFollower(_Char)
 THEN
-SetVarInteger(_Character, "LeaderLib_PartyCount", 1);
+SetVarInteger(_Char, "LeaderLib_PartyCount", 1);
 
 IF
-StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Events_ResetPartyCount")
+StoryEvent((CHARACTERGUID)_Char, "LeaderLib_Events_ResetPartyCount")
 AND
-NOT QRY_IsSummonOrPartyFollower(_Character)
+NOT QRY_IsSummonOrPartyFollower(_Char)
 AND
-PartyGetFlag(_Character, "LeaderLib_PartyCounted", 1)
+PartyGetFlag(_Char, "LeaderLib_PartyCounted", 1)
 THEN
-PartyClearFlag(_Character, "LeaderLib_PartyCounted", 0);
+PartyClearFlag(_Char, "LeaderLib_PartyCounted", 0);
 
 IF
-StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Events_AddToPartyCheck")
+StoryEvent((CHARACTERGUID)_Char, "LeaderLib_Events_AddToPartyCheck")
 AND
-NOT QRY_IsSummonOrPartyFollower(_Character)
+NOT QRY_IsSummonOrPartyFollower(_Char)
 AND
-PartyGetFlag(_Character, "LeaderLib_PartyCounted", 0)
+PartyGetFlag(_Char, "LeaderLib_PartyCounted", 0)
 AND
-GetUUID(_Character, _ID)
+GetUUID(_Char, _ID)
 AND
 StringConcatenate("LeaderLib_Events_CheckParty_", _ID, _EventName)
 THEN
-PartySetFlag(_Character, "LeaderLib_PartyCounted");
-DB_LeaderLib_Temp_PartyCheck(_Character, _EventName);
-SetVarInteger(_Character, "LeaderLib_PartyCount", 1);
-IterateParty(_Character, _EventName);
-LeaderLib_Timers_StartObjectTimer(_Character, 250, "LeaderLib_Timers_ResetPartyDB_", "LeaderLib_PartyCountFinished");
+PartySetFlag(_Char, "LeaderLib_PartyCounted", 0);
+DB_LeaderLib_Temp_PartyCheck(_Char, _EventName);
+LeaderLib_Timers_StartObjectTimer(_Char, 16, "Timers_LeaderLib_StartPartyCountIterator", "LeaderLib_StartPartyCountIterator");
 
 IF
-StoryEvent((CHARACTERGUID)_Character, "LeaderLib_PartyCountFinished")
+StoryEvent((CHARACTERGUID)_Char, "LeaderLib_StartPartyCountIterator")
 AND
-DB_LeaderLib_Temp_PartyCheck(_Character, _EventName)
+DB_LeaderLib_Temp_PartyCheck(_Char, _EventName)
 THEN
-NOT DB_LeaderLib_Temp_PartyCheck(_Character, _EventName);
+SetVarInteger(_Char, "LeaderLib_PartyCount", 1);
+LeaderLog_Log("DEBUG", "[LeaderLib:Party:LeaderLib_StartPartyCountIterator] Iterating party and setting count.");
+SysActivateGoal("LeaderLib_19_TS_PartyCountIterator");
+IterateParty(_Char, _EventName);
+LeaderLib_Timers_StartObjectTimer(_Char, 250, "LeaderLib_Timers_ResetPartyDB_", "LeaderLib_PartyCountFinished");
+
+IF
+StoryEvent((CHARACTERGUID)_Char, "LeaderLib_PartyCountFinished")
+AND
+DB_LeaderLib_Temp_PartyCheck(_Char, _EventName)
+THEN
+NOT DB_LeaderLib_Temp_PartyCheck(_Char, _EventName);
+LeaderLog_Log("DEBUG", "[LeaderLib:Party:LeaderLib_PartyCountFinished] Iterator finished.");
 TimerCancel("LeaderLib_Timers_PartyCountingFinished");
 TimerLaunch("LeaderLib_Timers_PartyCountingFinished", 500);
 
@@ -84,69 +94,86 @@ SysCompleteGoal("LeaderLib_19_TS_PartyCountIterator");
 
 /* Moved to LeaderLib_19_TS_PartyCountIterator
 IF
-StoryEvent((CHARACTERGUID)_Character, _EventName)
+StoryEvent((CHARACTERGUID)_Char, _EventName)
 AND
-NOT QRY_IsSummonOrPartyFollower(_Character)
+NOT QRY_IsSummonOrPartyFollower(_Char)
 AND
 DB_LeaderLib_Temp_PartyCheck(_Leader, _EventName)
 AND
-_Character != _Leader
+_Char != _Leader
 THEN
 LeaderLib_Party_IncreaseCount(_Leader);
-LeaderLib_Party_IncreaseCount(_Character);
+LeaderLib_Party_IncreaseCount(_Char);
 */
 //REGION INCREASE_DECREASE
 PROC
-LeaderLib_Party_IncreaseCount((CHARACTERGUID)_Character)
+LeaderLib_Party_IncreaseCount((CHARACTERGUID)_Char)
 THEN
-LeaderLib_Helper_ModifyVariableInt(_Character, "LeaderLib_PartyCount", 1, 999, 1);
+LeaderLib_Helper_ModifyVariableInt(_Char, "LeaderLib_PartyCount", 1, 999, 1);
 
 PROC
-LeaderLib_Party_DecreaseCount((CHARACTERGUID)_Character)
+LeaderLib_Party_DecreaseCount((CHARACTERGUID)_Char)
 THEN
-LeaderLib_Helper_ModifyVariableInt(_Character, "LeaderLib_PartyCount", -1, 999, 1);
+LeaderLib_Helper_ModifyVariableInt(_Char, "LeaderLib_PartyCount", -1, 999, 1);
 //END_REGION
 
 //REGION EVENTS
 IF
-CharacterJoinedParty(_Character)
+CharacterJoinedParty(_Char)
 AND
-NOT QRY_IsSummonOrPartyFollower(_Character)
+DB_LeaderLib_PartyCounter_TimerIsActive(1)
+THEN
+TimerCancel("LeaderLib_Timers_StartCountingParty");
+TimerLaunch("LeaderLib_Timers_StartCountingParty", 999);
+
+IF
+CharacterJoinedParty(_Char)
+AND
+NOT QRY_IsSummonOrPartyFollower(_Char)
 AND
 NOT DB_LeaderLib_Temp_PartyCheck(_, _)
 AND
 DB_IsPlayer(_Player)
 AND
-_Character != _Player
+_Char != _Player
 AND
-CharacterIsInPartyWith(_Character, _Player, 1)
+CharacterIsInPartyWith(_Char, _Player, 1)
 THEN
+//LeaderLog_LogInt("DEBUG", "[LeaderLib:Party:OnCharacterJoinedParty] Character joined party. Increasing count of [",_Count,"].");
 LeaderLib_Party_IncreaseCount(_Player);
-DB_LeaderLib_PartyMembers(_Player, _Character);
-DB_LeaderLib_PartyMembers(_Character, _Player);
-LeaderLib_Party_Internal_CopyPartyCount(_Character, _Player);
+DB_LeaderLib_PartyMembers(_Player, _Char);
+DB_LeaderLib_PartyMembers(_Char, _Player);
+LeaderLib_Party_Internal_CopyPartyCount(_Char, _Player);
 
 PROC
-LeaderLib_Party_Internal_CopyPartyCount((CHARACTERGUID)_Character, (CHARACTERGUID)_Player)
+LeaderLib_Party_Internal_CopyPartyCount((CHARACTERGUID)_Char, (CHARACTERGUID)_Player)
+AND
+LeaderLib_Helper_QRY_IntegerVariableIsLessThanOrEqualTo(_Char, "LeaderLib_PartyCount", 1)
 AND
 GetVarInteger(_Player, "LeaderLib_PartyCount", _Count)
 THEN
-SetVarInteger(_Character, "LeaderLib_PartyCount", _Count);
-LeaderLib_Party_OnCharacterJoinedParty(_Character, _Player, _Count);
+SetVarInteger(_Char, "LeaderLib_PartyCount", _Count);
+
+PROC
+LeaderLib_Party_Internal_CopyPartyCount((CHARACTERGUID)_Char, (CHARACTERGUID)_Player)
+AND
+GetVarInteger(_Char, "LeaderLib_PartyCount", _Count)
+THEN
+LeaderLib_Party_OnCharacterJoinedParty(_Char, _Player, _Count);
 
 /*
 IF
-CharacterJoinedParty(_Character)
+CharacterJoinedParty(_Char)
 AND
-LeaderLib_Party_QRY_CountNotSet(_Character)
+LeaderLib_Party_QRY_CountNotSet(_Char)
 AND
 DB_IsPlayer(_Player)
 AND
-_Player != _Character
+_Player != _Char
 AND
-CharacterIsInPartyWith(_Character, _Player, 1)
+CharacterIsInPartyWith(_Char, _Player, 1)
 AND
-LeaderLib_Party_QRY_CountNotSet(_Character)
+LeaderLib_Party_QRY_CountNotSet(_Char)
 AND
 GetVarInteger(_Player, "LeaderLib_PartyCount", _Count)
 THEN
@@ -159,33 +186,29 @@ THEN
 DB_NOOP(1);
 
 IF
-CharacterLeftParty(_Character)
+CharacterLeftParty(_Char)
 AND
-DB_IsPlayer(_Player)
-AND
-_Player != _Character
-AND
-DB_LeaderLib_PartyMembers(_Player, _Character)
+DB_LeaderLib_PartyMembers(_Player, _Char)
 THEN
+NOT DB_LeaderLib_PartyMembers(_Player, _Char);
 LeaderLib_Party_DecreaseCount(_Player);
-NOT DB_LeaderLib_PartyMembers(_Player, _Character);
 
 IF
-CharacterLeftParty(_Character)
+CharacterLeftParty(_Char)
 AND
-NOT QRY_IsSummonOrPartyFollower(_Character)
+NOT QRY_IsSummonOrPartyFollower(_Char)
 THEN
-SetVarInteger(_Character, "LeaderLib_PartyCount", 1);
+SetVarInteger(_Char, "LeaderLib_PartyCount", 1);
 
 IF
-CharacterLeftParty(_Character)
+CharacterLeftParty(_Char)
 AND
-DB_LeaderLib_PartyMembers(_Character, _Player)
+DB_LeaderLib_PartyMembers(_Char, _Player)
 AND
 GetVarInteger(_Player, "LeaderLib_PartyCount", _Count)
 THEN
-NOT DB_LeaderLib_PartyMembers(_Character, _Player);
-LeaderLib_Party_OnCharacterLeftParty(_Character, _Player, _Count);
+NOT DB_LeaderLib_PartyMembers(_Char, _Player);
+LeaderLib_Party_OnCharacterLeftParty(_Char, _Player, _Count);
 
 PROC
 LeaderLib_Party_OnCharacterLeftParty((CHARACTERGUID)_LeavingCharacter, (CHARACTERGUID)_FormerPartyMember, (INTEGER)_PartyCount)

@@ -3,6 +3,7 @@ SubGoalCombiner SGC_AND
 INITSECTION
 
 KBSECTION
+/*
 IF
 StoryEvent(_, "LeaderLib_Initialized")
 AND
@@ -13,11 +14,23 @@ AND
 NOT GlobalGetFlag("LeaderLib_CountedParties", 1)
 THEN
 TimerCancel("LeaderLib_Timers_StartCountingParty");
-TimerLaunch("LeaderLib_Timers_StartCountingParty", 50);
+TimerLaunch("LeaderLib_Timers_StartCountingParty", 2500);
 DB_LeaderLib_PartyCounter_TimerIsActive(1);
+*/
+
+IF
+ObjectFlagSet("LeaderLib_PartyCounted", _, _)
+AND
+DB_LeaderLib_PartyCounter_TimerIsActive(1)
+THEN
+NOT DB_LeaderLib_PartyCounter_TimerIsActive(1);
+TimerCancel("LeaderLib_Timers_StartCountingParty");
+GlobalSetFlag("LeaderLib_CountedParties");
 
 IF
 TimerFinished("LeaderLib_Timers_StartCountingParty")
+AND
+DB_LeaderLib_PartyCounter_TimerIsActive(1)
 THEN
 NOT DB_LeaderLib_PartyCounter_TimerIsActive(1);
 LeaderLib_Party_CountParties();
@@ -139,46 +152,37 @@ _Char != _Player
 AND
 CharacterIsInPartyWith(_Char, _Player, 1)
 THEN
-//LeaderLog_LogInt("DEBUG", "[LeaderLib:Party:OnCharacterJoinedParty] Character joined party. Increasing count of [",_Count,"].");
-LeaderLib_Party_IncreaseCount(_Player);
 DB_LeaderLib_PartyMembers(_Player, _Char);
 DB_LeaderLib_PartyMembers(_Char, _Player);
-LeaderLib_Party_Internal_CopyPartyCount(_Char, _Player);
+LeaderLib_Party_Internal_BuildPartyCount(_Char);
+LeaderLib_Party_Internal_BuildPartyCount(_Player);
+LeaderLib_Party_OnCharacterJoinedParty_Start(_Char, _Player);
 
 PROC
-LeaderLib_Party_Internal_CopyPartyCount((CHARACTERGUID)_Char, (CHARACTERGUID)_Player)
-AND
-LeaderLib_Helper_QRY_IntegerVariableIsLessThanOrEqualTo(_Char, "LeaderLib_PartyCount", 1)
-AND
-GetVarInteger(_Player, "LeaderLib_PartyCount", _Count)
+LeaderLib_Party_Internal_BuildPartyCount((CHARACTERGUID)_Char)
 THEN
-SetVarInteger(_Char, "LeaderLib_PartyCount", _Count);
+LeaderLib_Helper_SetVariableInt(_Char, "LeaderLib_PartyCount", 1);
 
 PROC
-LeaderLib_Party_Internal_CopyPartyCount((CHARACTERGUID)_Char, (CHARACTERGUID)_Player)
+LeaderLib_Party_Internal_BuildPartyCount((CHARACTERGUID)_Char)
 AND
-GetVarInteger(_Char, "LeaderLib_PartyCount", _Count)
+DB_LeaderLib_PartyMembers(_Char, _PartyMember)
 THEN
-LeaderLib_Party_OnCharacterJoinedParty(_Char, _Player, _Count);
+LeaderLib_Helper_ModifyVariableInt(_Char, "LeaderLib_PartyCount", 1, 999, 1);
 
-/*
-IF
-CharacterJoinedParty(_Char)
+PROC
+LeaderLib_Party_OnCharacterJoinedParty_Start((CHARACTERGUID)_JoiningCharacter, (CHARACTERGUID)_PartyMember)
 AND
-LeaderLib_Party_QRY_CountNotSet(_Char)
-AND
-DB_IsPlayer(_Player)
-AND
-_Player != _Char
-AND
-CharacterIsInPartyWith(_Char, _Player, 1)
-AND
-LeaderLib_Party_QRY_CountNotSet(_Char)
-AND
-GetVarInteger(_Player, "LeaderLib_PartyCount", _Count)
+GetVarInteger(_PartyMember, "LeaderLib_PartyCount", _Count)
 THEN
-SetVarInteger(_Player, "LeaderLib_PartyCount", _Count);
-*/
+LeaderLib_Party_OnCharacterJoinedParty(_JoiningCharacter, _PartyMember, _Count);
+
+PROC
+LeaderLib_Party_OnCharacterJoinedParty_Start((CHARACTERGUID)_JoiningCharacter, (CHARACTERGUID)_PartyMember)
+AND
+PartyGetFlag(_PartyMember, "LeaderLib_PartyCounted", 0)
+THEN
+PartySetFlag(_PartyMember, "LeaderLib_PartyCounted", 0);
 
 PROC
 LeaderLib_Party_OnCharacterJoinedParty((CHARACTERGUID)_JoiningCharacter, (CHARACTERGUID)_PartyMember, (INTEGER)_PartyCount)
@@ -188,27 +192,20 @@ DB_NOOP(1);
 IF
 CharacterLeftParty(_Char)
 AND
-DB_LeaderLib_PartyMembers(_Player, _Char)
+DB_LeaderLib_PartyMembers(_Char, _Player)
 THEN
 NOT DB_LeaderLib_PartyMembers(_Player, _Char);
-LeaderLib_Party_DecreaseCount(_Player);
-
-IF
-CharacterLeftParty(_Char)
-AND
-NOT QRY_IsSummonOrPartyFollower(_Char)
-THEN
-SetVarInteger(_Char, "LeaderLib_PartyCount", 1);
-
-IF
-CharacterLeftParty(_Char)
-AND
-DB_LeaderLib_PartyMembers(_Char, _Player)
-AND
-GetVarInteger(_Player, "LeaderLib_PartyCount", _Count)
-THEN
 NOT DB_LeaderLib_PartyMembers(_Char, _Player);
-LeaderLib_Party_OnCharacterLeftParty(_Char, _Player, _Count);
+LeaderLib_Party_Internal_BuildPartyCount(_Char);
+LeaderLib_Party_Internal_BuildPartyCount(_Player);
+LeaderLib_Party_Internal_OnCharacterLeftParty_Start(_Char, _Player);
+
+PROC
+LeaderLib_Party_Internal_OnCharacterLeftParty_Start((CHARACTERGUID)_LeavingCharacter, (CHARACTERGUID)_FormerPartyMember)
+AND
+GetVarInteger(_FormerPartyMember, "LeaderLib_PartyCount", _Count)
+THEN
+LeaderLib_Party_OnCharacterLeftParty(_LeavingCharacter, _FormerPartyMember, _Count);
 
 PROC
 LeaderLib_Party_OnCharacterLeftParty((CHARACTERGUID)_LeavingCharacter, (CHARACTERGUID)_FormerPartyMember, (INTEGER)_PartyCount)
@@ -238,6 +235,17 @@ AND
 IntegertoString(_PartyCount, _CountStr)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Party:OnCharacterLeftParty] [",_LeavingCharacterName,"] is no longer in a party with [",_FormerPartyMemberName,"]. Party Count [",_CountStr,"].");
+//END_REGION
+
+//REGION UPDATES
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,5,1,0)
+AND
+DB_IsPlayer(_Char)
+THEN
+LeaderLib_Party_Internal_BuildPartyCount(_Char);
 //END_REGION
 EXITSECTION
 

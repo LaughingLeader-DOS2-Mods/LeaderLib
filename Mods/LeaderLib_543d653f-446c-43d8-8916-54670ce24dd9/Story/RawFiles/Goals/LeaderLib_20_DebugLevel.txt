@@ -1572,7 +1572,7 @@ AND
 String(_Object, _ObjectStr)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:OnVariableIntChanged]  (LeaderLib_PartyCount) changed for (",_ObjectStr,").");
-LeaderLog_LogInt("DEBUG", "[LeaderLib_20_DebugLevel:OnVariableIntChanged] --- (", _LastValue, ") => (",_CurrentValue,").");
+LeaderLog_LogInt("DEBUG", "[LeaderLib_20_DebugLevel:OnVariableIntChanged] --- (LeaderLib_PartyCount) (", _LastValue, ") => (",_CurrentValue,").");
 EXITSECTION
 
 ENDEXITSECTION

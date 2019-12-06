@@ -64,6 +64,7 @@ StringConcatenate("LeaderLib_Events_CheckParty_", _ID, _EventName)
 THEN
 PartySetFlag(_Character, "LeaderLib_PartyCounted");
 DB_LeaderLib_Temp_PartyCheck(_Character, _EventName);
+SetVarInteger(_Character, "LeaderLib_PartyCount", 1);
 IterateParty(_Character, _EventName);
 LeaderLib_Timers_StartObjectTimer(_Character, 250, "LeaderLib_Timers_ResetPartyDB_", "LeaderLib_PartyCountFinished");
 

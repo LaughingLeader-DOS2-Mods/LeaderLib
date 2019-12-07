@@ -37,8 +37,8 @@ LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_GrowthEvents_Item", "Le
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Follower_TeleportEvents", "LeaderLib_Follower_Active");
 
 LeaderLib_ToggleScripts_Register_Script("__AAA_Z_LeaderLib_TS_Top_DummyCrimes", "LeaderLib_DummyCrimesEnabled");
-LeaderLib_ToggleScripts_Register_Script("__AAA_Z_LeaderLib_TS_Top_DialogOverriding", "LeaderLib_DialogOverridingEnabled");
-LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_DialogOverriding_AutomatedDialog", "LeaderLib_DialogOverridingEnabled");
+LeaderLib_ToggleScripts_Register_Script("__AAA_Z_LeaderLib_TS_Top_DialogOverriding", "LeaderLib_RegularDialogOverridingEnabled");
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_DialogOverriding_AutomatedDialog", "LeaderLib_AutomatedDialogOverridingEnabled");
 
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_ExplodeFix", "LeaderLib_ExplodeFix");
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_ForceEvents", "LeaderLib_Force_EnableEvents");

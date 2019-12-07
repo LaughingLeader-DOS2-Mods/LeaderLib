@@ -1273,25 +1273,53 @@ THEN
 LeaderLib_Recon_ClearParams("leaderlib_dialog");
 //END_REGION
 
+//REGION VOICEBARKS
+IF
+TextEventSet("leaderlib_vb")
+AND
+LeaderLib_Recon_QRY_GetString("leaderlib_vb", "voicebark", 1, "GEN_VB_TeleportPyramids")
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_vb", "voicebark", _Voicebark, _NextParamInt)
+AND
+CharacterGetHostCharacter(_Host)
+AND
+LeaderLib_Recon_QRY_GetUUID("leaderlib_vb", "target", _NextParamInt, _Host)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_vb", "target", _Target, _NextParamInt2)
+AND
+ObjectIsCharacter((CHARACTERGUID)_Target, 1)
+THEN
+StartVoiceBark(_Voicebark, _Target);
+
+IF
+TextEventSet("leaderlib_vb")
+THEN
+LeaderLib_Recon_ClearParams("leaderlib_vb");
+//END_REGION
+
 //REGION EXTENDER_LUA
 IF
 TextEventSet("leaderlib_lua")
 AND
-LeaderLib_Recon_QRY_GetString("leaderlib_lua", "function", 1, "LeaderLib_Ext_Debug_Test")
+LeaderLib_Recon_QRY_GetUUID("leaderlib_vb", "mod", 1, LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c)
 AND
-DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_lua", "function", _Function, _NextParamInt)
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_vb", "mod", _ModUUID, _NextParamInt)
 AND
-LeaderLib_Recon_QRY_GetString("leaderlib_lua", "param", _NextParamInt, "Test Message")
+LeaderLib_Recon_QRY_GetString("leaderlib_lua", "function", _NextParamInt, "LeaderLib.print_test")
 AND
-DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_lua", "param", _Param, _NextParamInt2)
+DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_lua", "function", _Function, _NextParamInt2)
 AND
-LeaderLib_Recon_QRY_GetString("leaderlib_lua", "script", _NextParamInt2, "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/RawFiles/Lua/leaderLib_ext_main.lua")
+LeaderLib_Recon_QRY_GetString("leaderlib_lua", "param", _NextParamInt2, "Test Message")
 AND
-DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_lua", "script", _Script, _NextParamInt3)
+DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_lua", "param", _Param, _NextParamInt3)
+AND
+LeaderLib_Recon_QRY_GetString("leaderlib_lua", "script", _NextParamInt3, "leaderLib_ext_main.lua")
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_lua", "script", _Script, _NextParamInt4)
 THEN
 /* [OSITOOLS_ONLY]
 NRD_LuaReset(1);
-NRD_LuaLoad(LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c, _Script);
+NRD_LuaLoad(_ModUUID, _Script);
 NRD_LuaCall(_Function, _Param);
 */
 // [BEGIN_NO_OSITOOLS]

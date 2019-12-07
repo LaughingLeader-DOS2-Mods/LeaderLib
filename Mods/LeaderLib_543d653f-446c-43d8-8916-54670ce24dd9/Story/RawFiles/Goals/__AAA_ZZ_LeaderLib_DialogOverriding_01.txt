@@ -21,76 +21,76 @@ LeaderLib_ToggleScripts_EnableScript("LeaderLib_AutomatedDialogOverridingEnabled
 
 //REGION SPEAKER_MATCHING
 QRY
-LeaderLib_DialogOverride_QRY_SpeakerMatch((GUIDSTRING)_Target, (GUIDSTRING)_S1, (GUIDSTRING)_S2)
+LeaderLib_DialogOverride_QRY_SpeakerMatch((STRING)_Dialog, (GUIDSTRING)_Target, (GUIDSTRING)_S1, (GUIDSTRING)_S2)
 AND
-NOT DB_LeaderLib_DialogOverride_Temp_Match(_Target)
+NOT DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _Target)
 AND
 _Target == _S1
 THEN
-DB_LeaderLib_DialogOverride_Temp_Match(_Target);
+DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _Target);
 
 QRY
-LeaderLib_DialogOverride_QRY_SpeakerMatch((GUIDSTRING)_Target, (GUIDSTRING)_S1, (GUIDSTRING)_S2)
+LeaderLib_DialogOverride_QRY_SpeakerMatch((STRING)_Dialog, (GUIDSTRING)_Target, (GUIDSTRING)_S1, (GUIDSTRING)_S2)
 AND
-NOT DB_LeaderLib_DialogOverride_Temp_Match(_Target)
+NOT DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _Target)
 AND
 _Target == _S2
 THEN
-DB_LeaderLib_DialogOverride_Temp_Match(_Target);
+DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _Target);
 
 QRY
-LeaderLib_DialogOverride_QRY_SpeakerMatch((GUIDSTRING)_Target, (GUIDSTRING)_S1, (GUIDSTRING)_S2, (GUIDSTRING)_S3, (GUIDSTRING)_S4, (GUIDSTRING)_S5, (GUIDSTRING)_S6)
+LeaderLib_DialogOverride_QRY_SpeakerMatch((STRING)_Dialog, (GUIDSTRING)_Target, (GUIDSTRING)_S1, (GUIDSTRING)_S2, (GUIDSTRING)_S3, (GUIDSTRING)_S4, (GUIDSTRING)_S5, (GUIDSTRING)_S6)
 AND
-NOT DB_LeaderLib_DialogOverride_Temp_Match(_Target)
+NOT DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _Target)
 AND
-LeaderLib_DialogOverride_QRY_SpeakerMatch(_Target, _S1, _S2)
+LeaderLib_DialogOverride_QRY_SpeakerMatch(_Dialog, _Target, _S1, _S2)
 THEN
-DB_LeaderLib_DialogOverride_Temp_Match(_Target);
+DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _Target);
 
 QRY
-LeaderLib_DialogOverride_QRY_SpeakerMatch((GUIDSTRING)_Target, (GUIDSTRING)_S1, (GUIDSTRING)_S2, (GUIDSTRING)_S3, (GUIDSTRING)_S4, (GUIDSTRING)_S5, (GUIDSTRING)_S6)
+LeaderLib_DialogOverride_QRY_SpeakerMatch((STRING)_Dialog, (GUIDSTRING)_Target, (GUIDSTRING)_S1, (GUIDSTRING)_S2, (GUIDSTRING)_S3, (GUIDSTRING)_S4, (GUIDSTRING)_S5, (GUIDSTRING)_S6)
 AND
-NOT DB_LeaderLib_DialogOverride_Temp_Match(_Target)
+NOT DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _Target)
 AND
-LeaderLib_DialogOverride_QRY_SpeakerMatch(_Target, _S3, _S4)
+LeaderLib_DialogOverride_QRY_SpeakerMatch(_Dialog, _Target, _S3, _S4)
 THEN
-DB_LeaderLib_DialogOverride_Temp_Match(_Target);
+DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _Target);
 
 QRY
-LeaderLib_DialogOverride_QRY_SpeakerMatch((GUIDSTRING)_Target, (GUIDSTRING)_S1, (GUIDSTRING)_S2, (GUIDSTRING)_S3, (GUIDSTRING)_S4, (GUIDSTRING)_S5, (GUIDSTRING)_S6)
+LeaderLib_DialogOverride_QRY_SpeakerMatch((STRING)_Dialog, (GUIDSTRING)_Target, (GUIDSTRING)_S1, (GUIDSTRING)_S2, (GUIDSTRING)_S3, (GUIDSTRING)_S4, (GUIDSTRING)_S5, (GUIDSTRING)_S6)
 AND
-NOT DB_LeaderLib_DialogOverride_Temp_Match(_Target)
+NOT DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _Target)
 AND
-LeaderLib_DialogOverride_QRY_SpeakerMatch(_Target, _S5, _S6)
+LeaderLib_DialogOverride_QRY_SpeakerMatch(_Dialog, _Target, _S5, _S6)
 THEN
-DB_LeaderLib_DialogOverride_Temp_Match(_Target);
+DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _Target);
 
 QRY
-LeaderLib_DialogOverride_QRY_SpeakerMatch((GUIDSTRING)_Target, (GUIDSTRING)_S1, (GUIDSTRING)_S2, (GUIDSTRING)_S3, (GUIDSTRING)_S4, (GUIDSTRING)_S5)
+LeaderLib_DialogOverride_QRY_SpeakerMatch((STRING)_Dialog, (GUIDSTRING)_Target, (GUIDSTRING)_S1, (GUIDSTRING)_S2, (GUIDSTRING)_S3, (GUIDSTRING)_S4, (GUIDSTRING)_S5)
 AND
-NOT DB_LeaderLib_DialogOverride_Temp_Match(_Target)
+NOT DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _Target)
 AND
-LeaderLib_DialogOverride_QRY_SpeakerMatch(_Target, _s1, _S2, _S3, _S4, _s5, NULL_00000000-0000-0000-0000-000000000000)
+LeaderLib_DialogOverride_QRY_SpeakerMatch(_Dialog, _Target, _s1, _S2, _S3, _S4, _s5, NULL_00000000-0000-0000-0000-000000000000)
 THEN
-DB_LeaderLib_DialogOverride_Temp_Match(_Target);
+DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _Target);
 
 QRY
-LeaderLib_DialogOverride_QRY_SpeakerMatch((GUIDSTRING)_Target, (GUIDSTRING)_S1, (GUIDSTRING)_S2, (GUIDSTRING)_S3, (GUIDSTRING)_S4)
+LeaderLib_DialogOverride_QRY_SpeakerMatch((STRING)_Dialog, (GUIDSTRING)_Target, (GUIDSTRING)_S1, (GUIDSTRING)_S2, (GUIDSTRING)_S3, (GUIDSTRING)_S4)
 AND
-NOT DB_LeaderLib_DialogOverride_Temp_Match(_Target)
+NOT DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _Target)
 AND
-LeaderLib_DialogOverride_QRY_SpeakerMatch(_Target, _s1, _S2, _S3, _S4, NULL_00000000-0000-0000-0000-000000000000, NULL_00000000-0000-0000-0000-000000000000)
+LeaderLib_DialogOverride_QRY_SpeakerMatch(_Dialog, _Target, _s1, _S2, _S3, _S4, NULL_00000000-0000-0000-0000-000000000000, NULL_00000000-0000-0000-0000-000000000000)
 THEN
-DB_LeaderLib_DialogOverride_Temp_Match(_Target);
+DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _Target);
 
 QRY
-LeaderLib_DialogOverride_QRY_SpeakerMatch((GUIDSTRING)_Target, (GUIDSTRING)_S1, (GUIDSTRING)_S2, (GUIDSTRING)_S3)
+LeaderLib_DialogOverride_QRY_SpeakerMatch((STRING)_Dialog, (GUIDSTRING)_Target, (GUIDSTRING)_S1, (GUIDSTRING)_S2, (GUIDSTRING)_S3)
 AND
-NOT DB_LeaderLib_DialogOverride_Temp_Match(_Target)
+NOT DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _Target)
 AND
-LeaderLib_DialogOverride_QRY_SpeakerMatch(_Target, _s1, _S2, _S3, NULL_00000000-0000-0000-0000-000000000000, NULL_00000000-0000-0000-0000-000000000000, NULL_00000000-0000-0000-0000-000000000000)
+LeaderLib_DialogOverride_QRY_SpeakerMatch(_Dialog, _Target, _s1, _S2, _S3, NULL_00000000-0000-0000-0000-000000000000, NULL_00000000-0000-0000-0000-000000000000, NULL_00000000-0000-0000-0000-000000000000)
 THEN
-DB_LeaderLib_DialogOverride_Temp_Match(_Target);
+DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _Target);
 //END_REGION
 
 EXITSECTION

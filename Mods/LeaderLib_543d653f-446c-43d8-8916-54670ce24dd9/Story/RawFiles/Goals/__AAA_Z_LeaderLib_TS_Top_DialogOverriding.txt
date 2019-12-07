@@ -44,11 +44,11 @@ NOT DB_OriginRecruitmentDialog((CHARACTERGUID)_,_Dialog)
 AND
 DB_LeaderLib_DialogOverride_Registered_RegularDialog(_SpeakerMatch, _Dialog, _UseDialog)
 AND
-LeaderLib_DialogOverride_QRY_SpeakerMatch(_SpeakerMatch, _Speaker1, _Speaker2)
+LeaderLib_DialogOverride_QRY_SpeakerMatch(_Dialog, _SpeakerMatch, _Speaker1, _Speaker2)
 AND
 QRY_StartDialog(_Automated,_UseDialog,_Speaker1,_Speaker2)
 THEN
-NOT DB_LeaderLib_DialogOverride_Temp_Match(_SpeakerMatch);
+DB_NOOP(1);
 
 PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2,(GUIDSTRING)_Speaker3)
@@ -59,11 +59,11 @@ NOT QRY_PlayOriginMoment(_Dialog,_Speaker1,_Speaker3)
 AND
 DB_LeaderLib_DialogOverride_Registered_RegularDialog(_SpeakerMatch, _Dialog, _UseDialog)
 AND
-LeaderLib_DialogOverride_QRY_SpeakerMatch(_SpeakerMatch, _Speaker1, _Speaker2, _Speaker3)
+LeaderLib_DialogOverride_QRY_SpeakerMatch(_Dialog, _SpeakerMatch, _Speaker1, _Speaker2, _Speaker3)
 AND
 QRY_StartDialog(_Automated,_UseDialog,_Speaker1,_Speaker2,_Speaker3)
 THEN
-NOT DB_LeaderLib_DialogOverride_Temp_Match(_SpeakerMatch);
+DB_NOOP(1);
 
 PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2,(GUIDSTRING)_Speaker3,(GUIDSTRING)_Speaker4)
@@ -74,11 +74,11 @@ NOT QRY_PlayOriginMoment(_Dialog,_Speaker1,_Speaker4)
 AND
 DB_LeaderLib_DialogOverride_Registered_RegularDialog(_SpeakerMatch, _Dialog, _UseDialog)
 AND
-LeaderLib_DialogOverride_QRY_SpeakerMatch(_SpeakerMatch, _Speaker1, _Speaker2, _Speaker3, _Speaker4)
+LeaderLib_DialogOverride_QRY_SpeakerMatch(_Dialog, _SpeakerMatch, _Speaker1, _Speaker2, _Speaker3, _Speaker4)
 AND
 QRY_StartDialog(_Automated,_UseDialog,_Speaker1,_Speaker2,_Speaker3,_Speaker4)
 THEN
-NOT DB_LeaderLib_DialogOverride_Temp_Match(_SpeakerMatch);
+DB_NOOP(1);
 
 PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2,(GUIDSTRING)_Speaker3,(GUIDSTRING)_Speaker4,(GUIDSTRING)_Speaker5)
@@ -89,11 +89,11 @@ NOT QRY_PlayOriginMoment(_Dialog,_Speaker1,_Speaker5)
 AND
 DB_LeaderLib_DialogOverride_Registered_RegularDialog(_SpeakerMatch, _Dialog, _UseDialog)
 AND
-LeaderLib_DialogOverride_QRY_SpeakerMatch(_SpeakerMatch, _Speaker1, _Speaker2, _Speaker3, _Speaker4, _Speaker5)
+LeaderLib_DialogOverride_QRY_SpeakerMatch(_Dialog, _SpeakerMatch, _Speaker1, _Speaker2, _Speaker3, _Speaker4, _Speaker5)
 AND
 QRY_StartDialog(_Automated,_UseDialog,_Speaker1,_Speaker2,_Speaker3,_Speaker4,_Speaker5)
 THEN
-NOT DB_LeaderLib_DialogOverride_Temp_Match(_SpeakerMatch);
+DB_NOOP(1);
 
 PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2,(GUIDSTRING)_Speaker3,(GUIDSTRING)_Speaker4,(GUIDSTRING)_Speaker5,(GUIDSTRING)_Speaker6)
@@ -104,55 +104,94 @@ NOT QRY_PlayOriginMoment(_Dialog,_Speaker1,_Speaker6)
 AND
 DB_LeaderLib_DialogOverride_Registered_RegularDialog(_SpeakerMatch, _Dialog, _UseDialog)
 AND
-LeaderLib_DialogOverride_QRY_SpeakerMatch(_SpeakerMatch, _Speaker1, _Speaker2, _Speaker3, _Speaker4, _Speaker5, _Speaker6)
+LeaderLib_DialogOverride_QRY_SpeakerMatch(_Dialog, _SpeakerMatch, _Speaker1, _Speaker2, _Speaker3, _Speaker4, _Speaker5, _Speaker6)
 AND
 QRY_StartDialog(_Automated,_UseDialog,_Speaker1,_Speaker2,_Speaker3,_Speaker4,_Speaker5,_Speaker6)
 THEN
-NOT DB_LeaderLib_DialogOverride_Temp_Match(_SpeakerMatch);
+DB_NOOP(1);
+//END_REGION
+
+//REGION Proc_StartDialog_CompanionRecruitment
+//REGION Companions cant recruit companions
+//Companion in party with initiates conversation with unhired companion.
+PROC
+Proc_StartDialog(0,(STRING)_RecruitementDialog,(GUIDSTRING)_UnhiredCompanion,(GUIDSTRING)_NonAvatar)
+AND
+DB_OriginRecruitmentDialog((CHARACTERGUID)_UnhiredCompanion,_RecruitementDialog)
+AND
+NOT DB_Avatars((CHARACTERGUID)_NonAvatar)
+AND
+DB_CompanionAvatarBond((CHARACTERGUID)_NonAvatar,(CHARACTERGUID)_Avatar)
+AND
+QRY_SpeakerIsAvailableAndInDialogRange(_Avatar,_NonAvatar)
+AND
+CharacterIsControlled(_Avatar,0)
+AND
+DB_LeaderLib_DialogOverride_Registered_RegularDialog(_SpeakerMatch, _RecruitementDialog, _UseDialog)
+AND
+LeaderLib_DialogOverride_QRY_SpeakerMatch(_RecruitementDialog, _SpeakerMatch, _UnhiredCompanion, _NonAvatar)
+AND
+QRY_StartDialog(0,_UseDialog,_UnhiredCompanion,_Avatar)
+THEN
+PROC_CheckPlayTut(_Avatar,"TUT_Comp_Talking_To_Comp");
+MakePlayerActive(_Avatar);
+
+PROC
+Proc_StartDialog(0,(STRING)_RecruitementDialog,(GUIDSTRING)_UnhiredCompanion,(GUIDSTRING)_NonAvatar)
+AND
+DB_OriginRecruitmentDialog((CHARACTERGUID)_UnhiredCompanion,_RecruitementDialog)
+AND
+DB_LeaderLib_DialogOverride_Registered_RegularDialog(_SpeakerMatch, _RecruitementDialog, _UseDialog)
+AND
+LeaderLib_DialogOverride_QRY_SpeakerMatch(_RecruitementDialog, _SpeakerMatch, _UnhiredCompanion, _NonAvatar)
+AND
+QRY_StartDialog(0,_UseDialog,_UnhiredCompanion,_NonAvatar)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION Proc_StartDialog_CLEANUP
 PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1)
 AND
-DB_LeaderLib_DialogOverride_Temp_Match(_SpeakerMatch)
+DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _SpeakerMatch)
 THEN
-NOT DB_LeaderLib_DialogOverride_Temp_Match(_SpeakerMatch);
+NOT DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _SpeakerMatch);
 
 PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2)
 AND
-DB_LeaderLib_DialogOverride_Temp_Match(_SpeakerMatch)
+DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _SpeakerMatch)
 THEN
-NOT DB_LeaderLib_DialogOverride_Temp_Match(_SpeakerMatch);
+NOT DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _SpeakerMatch);
 
 PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2,(GUIDSTRING)_Speaker3)
 AND
-DB_LeaderLib_DialogOverride_Temp_Match(_SpeakerMatch)
+DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _SpeakerMatch)
 THEN
-NOT DB_LeaderLib_DialogOverride_Temp_Match(_SpeakerMatch);
+NOT DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _SpeakerMatch);
 
 PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2,(GUIDSTRING)_Speaker3,(GUIDSTRING)_Speaker4)
 AND
-DB_LeaderLib_DialogOverride_Temp_Match(_SpeakerMatch)
+DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _SpeakerMatch)
 THEN
-NOT DB_LeaderLib_DialogOverride_Temp_Match(_SpeakerMatch);
+NOT DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _SpeakerMatch);
 
 PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2,(GUIDSTRING)_Speaker3,(GUIDSTRING)_Speaker4,(GUIDSTRING)_Speaker5)
 AND
-DB_LeaderLib_DialogOverride_Temp_Match(_SpeakerMatch)
+DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _SpeakerMatch)
 THEN
-NOT DB_LeaderLib_DialogOverride_Temp_Match(_SpeakerMatch);
+NOT DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _SpeakerMatch);
 
 PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2,(GUIDSTRING)_Speaker3,(GUIDSTRING)_Speaker4,(GUIDSTRING)_Speaker5,(GUIDSTRING)_Speaker6)
 AND
-DB_LeaderLib_DialogOverride_Temp_Match(_SpeakerMatch)
+DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _SpeakerMatch)
 THEN
-NOT DB_LeaderLib_DialogOverride_Temp_Match(_SpeakerMatch);
+NOT DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _SpeakerMatch);
 //END_REGION
 EXITSECTION
 

@@ -1474,18 +1474,60 @@ THEN
 LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_20_DebugLevel:DualDialogStart] Dual Dialog (", _Dialog, ")[",_InstanceStr,"] started.");
 LeaderLib_Debug_TraceDialog(_Dialog, _Instance, "[LeaderLib_20_DebugLevel:DualDialogStart] ");
 
+IF
+AutomatedDialogStarted(_Dialog, _Instance)
+AND
+IntegertoString(_Instance, _InstanceStr)
+THEN
+LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_20_DebugLevel:AutomatedDialogStarted] AD Dialog (", _Dialog, ")[",_InstanceStr,"] started.");
+LeaderLib_Debug_TraceDialog(_Dialog, _Instance, "[LeaderLib_20_DebugLevel:AutomatedDialogStarted] ");
+
+IF
+AutomatedDialogEnded(_Dialog, _Instance)
+AND
+IntegertoString(_Instance, _InstanceStr)
+THEN
+LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_20_DebugLevel:AutomatedDialogEnded] AD Dialog (", _Dialog, ")[",_InstanceStr,"] ended.");
+
+IF
+AutomatedDialogRequestFailed(_Dialog, _Instance)
+AND
+IntegertoString(_Instance, _InstanceStr)
+THEN
+LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_20_DebugLevel:AutomatedDialogRequestFailed] AD Dialog (", _Dialog, ")[",_InstanceStr,"] failed.");
+
+IF
+VoiceBarkStarted(_Dialog, _Instance)
+AND
+IntegertoString(_Instance, _InstanceStr)
+THEN
+LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_20_DebugLevel:VoiceBarkStarted] Voicebark Dialog (", _Dialog, ")[",_InstanceStr,"] started.");
+LeaderLib_Debug_TraceDialog(_Dialog, _Instance, "[LeaderLib_20_DebugLevel:VoiceBarkStarted] ");
+
+IF
+VoiceBarkEnded(_Dialog, _Instance)
+AND
+IntegertoString(_Instance, _InstanceStr)
+THEN
+LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_20_DebugLevel:VoiceBarkEnded] Voicebark Dialog (", _Dialog, ")[",_InstanceStr,"] ended.");
+
+IF
+VoiceBarkFailed(_Dialog)
+THEN
+LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_20_DebugLevel:VoiceBarkFailed] Voicebark Dialog (", _Dialog, ") failed.");
+
 PROC
 LeaderLib_Debug_TraceDialog((STRING)_Dialog, (INTEGER)_Instance, (STRING)_Prefix)
 AND
 DB_DialogPlayers(_Instance, _Char, _Index)
 AND
-String(_Char, _NpcStr)
+String(_Char, _PlayerStr)
 AND
 IntegertoString(_Index, _IndexStr)
 AND
 IntegertoString(_Instance, _InstanceStr)
 THEN
-LeaderLog_Log("DEBUG", _Prefix, "Player was added to Dialog (", _Dialog, ")[",_InstanceStr,"] at index (",_IndexStr,")");
+LeaderLog_Log("DEBUG", _Prefix, "Player (",_PlayerStr,") was added to Dialog (", _Dialog, ")[",_InstanceStr,"] at index (",_IndexStr,")");
 
 PROC
 LeaderLib_Debug_TraceDialog((STRING)_Dialog, (INTEGER)_Instance, (STRING)_Prefix)
@@ -1498,7 +1540,7 @@ IntegertoString(_Index, _IndexStr)
 AND
 IntegertoString(_Instance, _InstanceStr)
 THEN
-LeaderLog_Log("DEBUG", _Prefix, "NPC was added to Dialog (", _Dialog, ")[",_InstanceStr,"] at index (",_IndexStr,")");
+LeaderLog_Log("DEBUG", _Prefix, "NPC (",_NpcStr,") was added to Dialog (", _Dialog, ")[",_InstanceStr,"] at index (",_IndexStr,")");
 
 IF
 TextEventSet("leaderlib_knockuptest")

@@ -93,6 +93,13 @@ THEN
 DB_NOOP(1);
 
 QRY
+LeaderLog_QRY_LogTypeEnabled("DEBUG_DIALOG")
+AND
+GlobalGetFlag("LeaderLog_DebugDialog_Enabled", 1)
+THEN
+DB_NOOP(1);
+
+QRY
 LeaderLog_QRY_LogTypeEnabled("EDITOR")
 AND
 GlobalGetFlag("LeaderLog_Debug_Enabled", 1)

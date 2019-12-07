@@ -1269,6 +1269,29 @@ AND
 _Percentage >= _Max
 THEN
 DB_LeaderLib_Helper_Temp_CappedPercentage(_Char, _Max);
+
+QRY
+LeaderLib_Helper_QRY_SpeakerIsInDialog((GUIDSTRING)_Speaker, (INTEGER)_Instance)
+AND
+DB_DialogPlayers(_Instance, _Speaker, _Index)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_SpeakerIsInDialog((GUIDSTRING)_Speaker, (INTEGER)_Instance)
+AND
+DB_DialogNPCs(_Instance, _Speaker, _Index)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_SpeakerIsInDialogName((GUIDSTRING)_Speaker, (STRING)_Dialog)
+AND
+DB_DialogName(_Dialog, _Instance)
+AND
+LeaderLib_Helper_QRY_SpeakerIsInDialog(_Speaker, _Instance)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION QUERIES_CHARACTERS

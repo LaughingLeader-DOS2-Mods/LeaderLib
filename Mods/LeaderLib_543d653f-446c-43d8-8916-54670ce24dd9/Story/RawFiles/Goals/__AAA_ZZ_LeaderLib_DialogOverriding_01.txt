@@ -5,16 +5,17 @@ INITSECTION
 KBSECTION
 //REGION REGISTER_OVERRIDE
 PROC
-LeaderLib_DialogOverride_Register_Override((GUIDSTRING)_Speaker, (STRING)_ReplacedDialog, (STRING)_UseDialog)
+LeaderLib_DialogOverride_Register_RegularDialog((GUIDSTRING)_Speaker, (STRING)_ReplacedDialog, (STRING)_UseDialog)
 THEN
-DB_LeaderLib_DialogOverride_Registered_StoryOverride((GUIDSTRING)_Speaker, _ReplacedDialog, _UseDialog);
+DB_LeaderLib_DialogOverride_Registered_RegularDialog((GUIDSTRING)_Speaker, _ReplacedDialog, _UseDialog);
 LeaderLib_ToggleScripts_EnableScript("LeaderLib_DialogOverridingEnabled", "LeaderLib");
 
-// For dialogs that start with behavior scripting, we have to stop it and start the replacement
+// For dialogs that start with behavior scripting or voice barks, we have to stop it and start the replacement
+// Behavior scripting dialog started with DialogStart will always be automated
 PROC
-LeaderLib_DialogOverride_Register_BehaviorOverride((GUIDSTRING)_Speaker, (STRING)_ReplacedDialog, (STRING)_UseDialog)
+LeaderLib_DialogOverride_Register_AutomatedDialog((GUIDSTRING)_Speaker, (STRING)_ReplacedDialog, (STRING)_UseDialog)
 THEN
-DB_LeaderLib_DialogOverride_Registered_BehaviorOverride((GUIDSTRING)_Speaker, _ReplacedDialog, _UseDialog);
+DB_LeaderLib_DialogOverride_Registered_AutomatedDialog((GUIDSTRING)_Speaker, _ReplacedDialog, _UseDialog);
 LeaderLib_ToggleScripts_EnableScript("LeaderLib_DialogOverridingEnabled", "LeaderLib");
 //END_REGION
 

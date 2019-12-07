@@ -1,0 +1,80 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+//REGION BEHAVIOR_DIALOG_OVERRIDING
+//Solo AD dialog
+IF
+AutomatedDialogStarted(_Dialog, _Instance)
+AND
+DB_LeaderLib_DialogOverride_Registered_AutomatedDialog((GUIDSTRING)_Speaker, _Dialog, _UseDialog)
+AND
+LeaderLib_Helper_QRY_SpeakerIsInDialog(_Speaker, _Instance)
+THEN
+LeaderLog_Log("DEBUG", "[__AAA_Z_LeaderLib_TS_Top_DialogOverriding:AutomatedDialogStarted] Intecepting automated dialog (",_Dialog,") with dialog (",_UseDialog,").");
+LeaderLib_DialogOverride_TransitionDialog(1, _Dialog, _UseDialog, _Instance, _Speaker);
+
+/*
+IF
+AutomatedDialogStarted(_Dialog, _Instance)
+AND
+DB_LeaderLib_DialogOverride_Registered_AutomatedDialog((GUIDSTRING)_Speaker, _Dialog, _UseDialog)
+AND
+NOT LeaderLib_Helper_QRY_SpeakerIsInDialog(_Speaker, _Instance)
+AND
+IntegertoString(_Instance, _InstanceStr)
+AND
+String(_Speaker, _SpeakerStr)
+AND
+LeaderLog_QRY_Log("DEBUG_DIALOG", "[__AAA_Z_LeaderLib_TS_Top_DialogOverriding:AutomatedDialogStarted] AD Dialog (", _Dialog, ")[",_InstanceStr,"] started.")
+AND
+LeaderLog_QRY_Log("DEBUG_DIALOG", "[__AAA_Z_LeaderLib_TS_Top_DialogOverriding:AutomatedDialogStarted] --- Registered speaker (",_SpeakerStr,") is not in the dialog.")
+AND
+DB_DialogPlayers(_Instance, _Player, _Index)
+AND
+String(_Player, _PlayerStr)
+AND
+IntegertoString(_Index, _IndexStr)
+THEN
+LeaderLog_Log("DEBUG_DIALOG", "[__AAA_Z_LeaderLib_TS_Top_DialogOverriding:AutomatedDialogStarted] --- Player (",_PlayerStr,") [",_IndexStr,"]");
+*/
+
+/*
+IF
+VoiceBarkStarted(_Dialog, _Instance)
+AND
+DB_LeaderLib_DialogOverride_Registered_AutomatedDialog((GUIDSTRING)_SpeakerMatch, _Dialog, _UseDialog)
+AND
+DB_DialogPlayers(_Instance, _SpeakerMatch, _PlayerIndex)
+THEN
+LeaderLog_Log("DEBUG", "[__AAA_Z_LeaderLib_TS_Top_DialogOverriding:AutomatedDialogStarted] Intecepting voicebark dialog (",_Dialog,") with dialog (",_UseDialog,").");
+LeaderLib_DialogOverride_TransitionDialog(1, _Dialog, _UseDialog, _Instance, _SpeakerMatch);
+*/
+
+/*
+PROC
+LeaderLib_DialogOverride_TransitionDialog((INTEGER)_Automated, (STRING)_Dialog, (STRING)_NextDialog, (INTEGER)_PreviousInstance, (GUIDSTRING)_Target)
+AND
+DB_DialogNPCs(_PreviousInstance, _Npc, _NpcIndex)
+THEN
+DB_LeaderLib_DialogOverride_Temp_DialogNPCs(_PreviousInstance, _Npc, _NpcIndex);
+
+PROC
+LeaderLib_DialogOverride_TransitionDialog((INTEGER)_Automated, (STRING)_Dialog, (STRING)_NextDialog, (INTEGER)_PreviousInstance, (GUIDSTRING)_Target)
+AND
+DB_DialogPlayers(_PreviousInstance, _Player, _PlayerIndex)
+THEN
+DB_LeaderLib_DialogOverride_Temp_DialogPlayers(_PreviousInstance, _Player, _PlayerIndex);
+*/
+
+PROC
+LeaderLib_DialogOverride_TransitionDialog((INTEGER)_Automated, (STRING)_Dialog, (STRING)_NextDialog, (INTEGER)_PreviousInstance, (GUIDSTRING)_Target)
+THEN
+DialogRequestStopForDialog(_Dialog, _Target);
+Proc_StartDialog(_Automated, _NextDialog, _Target);
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

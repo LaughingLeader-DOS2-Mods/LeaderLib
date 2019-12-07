@@ -112,7 +112,42 @@ DB_NOOP(1);
 //END_REGION
 
 //REGION Proc_StartDialog_CompanionRecruitment
-//REGION Companions cant recruit companions
+// To avoid type definition conflicts with __Global_Dialogs.
+// This query is defined as (CHARACTERGUID),(CHARACTERGUID), but in the Dialogs script it's used with GUIDSTRING, leading to typedef errors
+QRY
+LeaderLib_DialogOverride_QRY_SpeakerIsAvailableAndInDialogRange_Workaround((CHARACTERGUID)_Char,(CHARACTERGUID)_SourceCharacter)
+AND
+DB_CustomDialogRange(_SourceCharacter,_MaxDist)
+AND
+CharacterIsDeadOrFeign(_Char,0)
+AND
+IsSpeakerReserved(_Char,0)
+AND
+CharacterIsInCombat(_Char,0)
+AND
+GetDistanceTo(_Char,_SourceCharacter,_Distance)
+AND
+_Distance < _MaxDist
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_DialogOverride_QRY_SpeakerIsAvailableAndInDialogRange_Workaround((CHARACTERGUID)_Char,(CHARACTERGUID)_SourceCharacter)
+AND
+NOT DB_CustomDialogRange(_SourceCharacter,_)
+AND
+CharacterIsDeadOrFeign(_Char,0)
+AND
+IsSpeakerReserved(_Char,0)
+AND
+CharacterIsInCombat(_Char,0)
+AND
+GetDistanceTo(_Char,_SourceCharacter,_Distance)
+AND
+_Distance < 10.0
+THEN
+DB_NOOP(1);
+
 //Companion in party with initiates conversation with unhired companion.
 PROC
 Proc_StartDialog(0,(STRING)_RecruitementDialog,(GUIDSTRING)_UnhiredCompanion,(GUIDSTRING)_NonAvatar)
@@ -123,13 +158,13 @@ NOT DB_Avatars((CHARACTERGUID)_NonAvatar)
 AND
 DB_CompanionAvatarBond((CHARACTERGUID)_NonAvatar,(CHARACTERGUID)_Avatar)
 AND
-QRY_SpeakerIsAvailableAndInDialogRange(_Avatar,_NonAvatar)
+LeaderLib_DialogOverride_QRY_SpeakerIsAvailableAndInDialogRange_Workaround((CHARACTERGUID)_Avatar, (CHARACTERGUID)_NonAvatar)
 AND
 CharacterIsControlled(_Avatar,0)
 AND
-DB_LeaderLib_DialogOverride_Registered_RegularDialog(_SpeakerMatch, _RecruitementDialog, _UseDialog)
+DB_LeaderLib_DialogOverride_Registered_RegularDialog((GUIDSTRING)_SpeakerMatch, _RecruitementDialog, _UseDialog)
 AND
-LeaderLib_DialogOverride_QRY_SpeakerMatch(_RecruitementDialog, _SpeakerMatch, _UnhiredCompanion, _NonAvatar)
+LeaderLib_DialogOverride_QRY_SpeakerMatch(_RecruitementDialog, (GUIDSTRING)_SpeakerMatch, (GUIDSTRING)_UnhiredCompanion, (GUIDSTRING)_NonAvatar)
 AND
 QRY_StartDialog(0,_UseDialog,_UnhiredCompanion,_Avatar)
 THEN
@@ -141,9 +176,9 @@ Proc_StartDialog(0,(STRING)_RecruitementDialog,(GUIDSTRING)_UnhiredCompanion,(GU
 AND
 DB_OriginRecruitmentDialog((CHARACTERGUID)_UnhiredCompanion,_RecruitementDialog)
 AND
-DB_LeaderLib_DialogOverride_Registered_RegularDialog(_SpeakerMatch, _RecruitementDialog, _UseDialog)
+DB_LeaderLib_DialogOverride_Registered_RegularDialog((GUIDSTRING)_SpeakerMatch, _RecruitementDialog, _UseDialog)
 AND
-LeaderLib_DialogOverride_QRY_SpeakerMatch(_RecruitementDialog, _SpeakerMatch, _UnhiredCompanion, _NonAvatar)
+LeaderLib_DialogOverride_QRY_SpeakerMatch(_RecruitementDialog, (GUIDSTRING)_SpeakerMatch, (GUIDSTRING)_UnhiredCompanion, (GUIDSTRING)_NonAvatar)
 AND
 QRY_StartDialog(0,_UseDialog,_UnhiredCompanion,_NonAvatar)
 THEN

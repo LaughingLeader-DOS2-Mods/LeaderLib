@@ -14,13 +14,6 @@ DB_LeaderLib_Skills_UndeadPolymorph("DWARF", "LEADERLIB_SHAPESHIFT_DWARF", "LEAD
 DB_LeaderLib_Skills_UndeadPolymorph("ELF", "LEADERLIB_SHAPESHIFT_ELF", "LEADERLIB_UNDEAD_ELF");
 DB_LeaderLib_Skills_UndeadPolymorph("HUMAN", "LEADERLIB_SHAPESHIFT_HUMAN", "LEADERLIB_UNDEAD_HUMAN");
 DB_LeaderLib_Skills_UndeadPolymorph("LIZARD", "LEADERLIB_SHAPESHIFT_LIZARD", "LEADERLIB_UNDEAD_LIZARD");
-
-PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
-AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,2,2,0)
-THEN
-LeaderLib_Skills_InitSettings();
 //END_REGION
 
 //REGION SUMMON_CONTROL
@@ -745,6 +738,13 @@ DB_NOOP(1);
 //END_REGION
 
 //REGION UPDATES
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,2,2,0)
+THEN
+LeaderLib_Skills_InitSettings();
+
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND

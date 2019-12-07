@@ -191,12 +191,31 @@ SysActivateGoal(_GoalTitle);
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,4,0,0)
-AND
-DB_LeaderLib_ToggleScripts_Registered("LeaderLib_19_TS_Top_DummyCrimes", _GlobalFlag)
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 11, 2)
 THEN
-NOT DB_LeaderLib_ToggleScripts_Registered("LeaderLib_19_TS_Top_DummyCrimes", _GlobalFlag);
-DB_LeaderLib_ToggleScripts_Registered("__AAA_Z_LeaderLib_TS_Top_DummyCrimes", _GlobalFlag);
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Listeners_RemoveHarmfulStatuses", "LeaderLib_TS_RemoveHarmfulStatusesEnabled");
+
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 13, 0)
+THEN
+LeaderLib_Queue_ClearQueue("LeaderLib_ItemGenerationQueue");
+
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 2, 5, 0)
+THEN
+LeaderLib_ToggleScripts_Register_Script("__AAA_Z_LeaderLib_TS_Top_DummyCrimes", "LeaderLib_DummyCrimesEnabled");
+
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,2,9,1)
+THEN
+LeaderLog_Log("SYSTEM", "[LeaderLib:ToggledScripts] Adding [LeaderLib_19_TS_ForceEvents] toggle script from version [",_PastVersion,"].");
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_ForceEvents", "LeaderLib_Force_EnableEvents");
 
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
@@ -212,31 +231,12 @@ SysActivateGoal("__AAA_Z_LeaderLib_TS_Top_DummyCrimes");
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,2,9,1)
-THEN
-LeaderLog_Log("SYSTEM", "[LeaderLib:ToggledScripts] Adding [LeaderLib_19_TS_ForceEvents] toggle script from version [",_PastVersion,"].");
-LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_ForceEvents", "LeaderLib_Force_EnableEvents");
-
-PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,4,0,0)
 AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 2, 5, 0)
+DB_LeaderLib_ToggleScripts_Registered("LeaderLib_19_TS_Top_DummyCrimes", _GlobalFlag)
 THEN
-LeaderLib_ToggleScripts_Register_Script("__AAA_Z_LeaderLib_TS_Top_DummyCrimes", "LeaderLib_DummyCrimesEnabled");
-
-PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
-AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 13, 0)
-THEN
-LeaderLib_Queue_ClearQueue("LeaderLib_ItemGenerationQueue");
-
-PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
-AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 11, 2)
-THEN
-LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Listeners_RemoveHarmfulStatuses", "LeaderLib_TS_RemoveHarmfulStatusesEnabled");
+NOT DB_LeaderLib_ToggleScripts_Registered("LeaderLib_19_TS_Top_DummyCrimes", _GlobalFlag);
+DB_LeaderLib_ToggleScripts_Registered("__AAA_Z_LeaderLib_TS_Top_DummyCrimes", _GlobalFlag);
 //END_REGION
 
 //REGION REGISTERING

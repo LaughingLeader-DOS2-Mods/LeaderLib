@@ -9,14 +9,14 @@ KBSECTION
 QRY
 LeaderLib_Variables_DB_QRY_IntegerVariableSet((GUIDSTRING)_Object, (STRING)_Variable)
 AND
-DB_LeaderLib_Variables_Integer(_Object, _Variable, _Value)
+DB_LeaderLib_Variables_Integer(_Object, _Variable, _Value, _Source)
 THEN
 DB_NOOP(1);
 
 QRY
 LeaderLib_Variables_DB_QRY_IntegerVariableIsLessThanOrEqualTo((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_MinValue)
 AND
-DB_LeaderLib_Variables_Integer(_Object, _Variable, _Value)
+DB_LeaderLib_Variables_Integer(_Object, _Variable, _Value, _Source)
 AND
 _Value <= _MinValue
 THEN
@@ -32,7 +32,7 @@ DB_NOOP(1);
 QRY
 LeaderLib_Variables_DB_QRY_IntegerVariableIsGreaterThanOrEqualTo((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_MinValue)
 AND
-DB_LeaderLib_Variables_Integer(_Object, _Variable, _Value)
+DB_LeaderLib_Variables_Integer(_Object, _Variable, _Value, _Source)
 AND
 _Value >= _MinValue
 THEN
@@ -119,7 +119,7 @@ DB_LeaderLib_Variables_Integer(_Object, _Variable, _Value, _Source)
 AND
 IntegerSum(_Value, _ModifyBy, _NextValue)
 THEN
-LeaderLib_Variables_DB_ClampVariableInt(_Object, _Variable, _NextValue, _Max, _Min);
+LeaderLib_Variables_DB_ClampVariableInt(_Object, _Variable, _NextValue, _Max, _Min, _Source);
 LeaderLib_Variables_DB_Internal_FireOnVariableIntChanged(_Object, _Variable, _Value, _Source);
 
 PROC
@@ -139,7 +139,7 @@ THEN
 LeaderLib_Variables_DB_Internal_SetVariableInt(_Object, _Variable, _NextValue, _Source);
 
 PROC
-LeaderLib_Variables_DB_ClampVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_NextValue, (INTEGER)_Max, (INTEGER)_Min)
+LeaderLib_Variables_DB_ClampVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_NextValue, (INTEGER)_Max, (INTEGER)_Min, (GUIDSTRING)_Source)
 AND
 _NextValue < _Min
 THEN

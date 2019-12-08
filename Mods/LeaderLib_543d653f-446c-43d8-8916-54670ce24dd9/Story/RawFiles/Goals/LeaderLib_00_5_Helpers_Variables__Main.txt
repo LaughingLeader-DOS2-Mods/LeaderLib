@@ -1,0 +1,188 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+
+//REGION VARIABLE_QUERIES
+QRY
+LeaderLib_Helper_QRY_ObjectVariableSet((GUIDSTRING)_Object, (STRING)_Var)
+AND
+GetVarObject(_Object, _Var, _Val)
+AND
+_Val != NULL_00000000-0000-0000-0000-000000000000
+AND
+ObjectExists(_Val, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IntegerVariableSet((GUIDSTRING)_Object, (STRING)_Var)
+AND
+GetVarInteger(_Object, _Var, _Value)
+AND
+_Value != -1163005939 // ClearVarObject sets an int var to this number
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IntegerVariableIsLessThanOrEqualTo((GUIDSTRING)_Object, (STRING)_Var, (INTEGER)_MinValue)
+AND
+GetVarInteger(_Object, _Var, _Value)
+AND
+_Value <= _MinValue
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IntegerVariableIsLessThanOrEqualTo((GUIDSTRING)_Object, (STRING)_Var, (INTEGER)_MinValue)
+AND
+NOT LeaderLib_Helper_QRY_IntegerVariableSet(_Object, _Var)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IntegerVariableIsGreaterThanOrEqualTo((GUIDSTRING)_Object, (STRING)_Var, (INTEGER)_MinValue)
+AND
+GetVarInteger(_Object, _Var, _Value)
+AND
+_Value >= _MinValue
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_StringVariableSet((GUIDSTRING)_Object, (STRING)_Var)
+AND
+LeaderLib_Helper_QRY_StringVariableSet(_Object, _Var, 0)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_StringVariableSet((GUIDSTRING)_Object, (STRING)_Var, 0)
+AND
+GetVarString(_Object, _Var, _Val)
+AND
+_Val != ""
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_StringVariableSet((GUIDSTRING)_Object, (STRING)_Var, 1)
+AND
+GetVarFixedString(_Object, _Var, _Val)
+AND
+_Val != ""
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION VARIABLES
+PROC
+LeaderLib_Helper_SetVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_Value)
+THEN
+LeaderLib_Helper_SetVariableInt(_Object, _Variable, _Value, NULL_00000000-0000-0000-0000-000000000000);
+
+PROC
+LeaderLib_Helper_SetVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_Value, (GUIDSTRING)_Source)
+AND
+NOT LeaderLib_Helper_QRY_IntegerVariableSet(_Object, _Variable)
+THEN
+SetVarInteger(_Object, _Variable, 0);
+
+PROC
+LeaderLib_Helper_SetVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_Value, (GUIDSTRING)_Source)
+AND
+GetVarInteger(_Object, _Variable, _LastValue)
+THEN
+SetVarInteger(_Object, _Variable, _Value);
+LeaderLib_Helper_Internal_FireOnVariableIntChanged(_Object, _Variable, _LastValue, _Value, _Source);
+
+PROC
+LeaderLib_Helper_ModifyVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_ModifyBy)
+THEN
+LeaderLib_Helper_ModifyVariableInt(_Object, _Variable, _ModifyBy, 999, 0);
+
+PROC
+LeaderLib_Helper_ModifyVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_ModifyBy, (INTEGER)_Max)
+THEN
+LeaderLib_Helper_ModifyVariableInt(_Object, _Variable, _ModifyBy, _Max, 0);
+
+PROC
+LeaderLib_Helper_ModifyVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_ModifyBy, (INTEGER)_Max, (INTEGER)_Min)
+THEN
+LeaderLib_Helper_ModifyVariableInt(_Object, _Variable, _ModifyBy, _Max, _Min, NULL_00000000-0000-0000-0000-000000000000);
+
+PROC
+LeaderLib_Helper_ModifyVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_ModifyBy, (INTEGER)_Max, (INTEGER)_Min, (GUIDSTRING)_Source)
+AND
+LeaderLib_Helper_QRY_IntegerVariableIsLessThanOrEqualTo(_Object, _Variable, _Min)
+THEN
+SetVarInteger(_Object, _Variable, _Min);
+
+PROC
+LeaderLib_Helper_ModifyVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_ModifyBy, (INTEGER)_Max, (INTEGER)_Min, (GUIDSTRING)_Source)
+AND
+GetVarInteger(_Object, _Variable, _Var)
+AND
+IntegerSum(_Var, _ModifyBy, _NextVar)
+THEN
+LeaderLib_Helper_ClampVariableInt(_Object, _Variable, _NextVar, _Max, _Min);
+LeaderLib_Helper_Internal_FireOnVariableIntChanged(_Object, _Variable, _Var, _Source);
+
+PROC
+LeaderLib_Helper_ClampVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_NextVar, (INTEGER)_Max, (INTEGER)_Min)
+AND
+_NextVar > _Max
+THEN
+SetVarInteger(_Object, _Variable, _Max);
+
+PROC
+LeaderLib_Helper_ClampVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_NextVar, (INTEGER)_Max, (INTEGER)_Min)
+AND
+_NextVar <= _Max
+AND
+_NextVar >= _Min
+THEN
+SetVarInteger(_Object, _Variable, _NextVar);
+
+PROC
+LeaderLib_Helper_ClampVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_NextVar, (INTEGER)_Max, (INTEGER)_Min)
+AND
+_NextVar < _Min
+THEN
+SetVarInteger(_Object, _Variable, _Min);
+
+// Only fires OnVariableChanged if the variable has actually changed.
+PROC
+LeaderLib_Helper_Internal_FireOnVariableIntChanged((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_LastValue, (GUIDSTRING)_Source)
+AND
+GetVarInteger(_Object, _Variable, _CurrentValue)
+AND
+_LastValue != _CurrentValue
+THEN
+LeaderLib_Helper_OnVariableIntChanged(_Object, _Variable, _LastValue, _CurrentValue);
+LeaderLib_Helper_OnVariableIntChanged(_Object, _Variable, _LastValue, _CurrentValue, _Source);
+
+PROC
+LeaderLib_Helper_Internal_FireOnVariableIntChanged((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_LastValue, (INTEGER)_CurrentValue, (GUIDSTRING)_Source)
+AND
+_LastValue != _CurrentValue
+THEN
+LeaderLib_Helper_OnVariableIntChanged(_Object, _Variable, _LastValue, _CurrentValue);
+LeaderLib_Helper_OnVariableIntChanged(_Object, _Variable, _LastValue, _CurrentValue, _Source);
+
+//Old definition
+PROC
+LeaderLib_Helper_OnVariableIntChanged((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_LastValue, (INTEGER)_CurrentValue)
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_Helper_OnVariableIntChanged((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_LastValue, (INTEGER)_CurrentValue, (GUIDSTRING)_Source)
+THEN
+DB_NOOP(1);
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

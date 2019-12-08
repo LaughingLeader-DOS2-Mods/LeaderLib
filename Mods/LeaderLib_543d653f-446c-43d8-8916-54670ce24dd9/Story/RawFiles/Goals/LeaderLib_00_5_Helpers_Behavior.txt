@@ -79,18 +79,23 @@ DB_NOOP(1);
 //REGION VARIABLES
 PROC
 LeaderLib_Helper_SetVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_Value)
+THEN
+LeaderLib_Helper_SetVariableInt(_Object, _Variable, _Value, NULL_00000000-0000-0000-0000-000000000000);
+
+PROC
+LeaderLib_Helper_SetVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_Value, (GUIDSTRING)_Source)
 AND
 NOT LeaderLib_Helper_QRY_IntegerVariableSet(_Object, _Variable)
 THEN
 SetVarInteger(_Object, _Variable, 0);
 
 PROC
-LeaderLib_Helper_SetVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_Value)
+LeaderLib_Helper_SetVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_Value, (GUIDSTRING)_Source)
 AND
 GetVarInteger(_Object, _Variable, _LastValue)
 THEN
 SetVarInteger(_Object, _Variable, _Value);
-LeaderLib_Helper_Internal_FireOnVariableIntChanged(_Object, _Variable, _LastValue, _Value);
+LeaderLib_Helper_Internal_FireOnVariableIntChanged(_Object, _Variable, _LastValue, _Value, _Source);
 
 PROC
 LeaderLib_Helper_ModifyVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_ModifyBy)
@@ -104,20 +109,25 @@ LeaderLib_Helper_ModifyVariableInt(_Object, _Variable, _ModifyBy, _Max, 0);
 
 PROC
 LeaderLib_Helper_ModifyVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_ModifyBy, (INTEGER)_Max, (INTEGER)_Min)
+THEN
+LeaderLib_Helper_ModifyVariableInt(_Object, _Variable, _ModifyBy, _Max, _Min, NULL_00000000-0000-0000-0000-000000000000);
+
+PROC
+LeaderLib_Helper_ModifyVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_ModifyBy, (INTEGER)_Max, (INTEGER)_Min, (GUIDSTRING)_Source)
 AND
 LeaderLib_Helper_QRY_IntegerVariableIsLessThanOrEqualTo(_Object, _Variable, _Min)
 THEN
 SetVarInteger(_Object, _Variable, _Min);
 
 PROC
-LeaderLib_Helper_ModifyVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_ModifyBy, (INTEGER)_Max, (INTEGER)_Min)
+LeaderLib_Helper_ModifyVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_ModifyBy, (INTEGER)_Max, (INTEGER)_Min, (GUIDSTRING)_Source)
 AND
 GetVarInteger(_Object, _Variable, _Var)
 AND
 IntegerSum(_Var, _ModifyBy, _NextVar)
 THEN
 LeaderLib_Helper_ClampVariableInt(_Object, _Variable, _NextVar, _Max, _Min);
-LeaderLib_Helper_Internal_FireOnVariableIntChanged(_Object, _Variable, _Var);
+LeaderLib_Helper_Internal_FireOnVariableIntChanged(_Object, _Variable, _Var, _Source);
 
 PROC
 LeaderLib_Helper_ClampVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_NextVar, (INTEGER)_Max, (INTEGER)_Min)
@@ -144,23 +154,31 @@ SetVarInteger(_Object, _Variable, _Min);
 
 // Only fires OnVariableChanged if the variable has actually changed.
 PROC
-LeaderLib_Helper_Internal_FireOnVariableIntChanged((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_LastValue)
+LeaderLib_Helper_Internal_FireOnVariableIntChanged((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_LastValue, (GUIDSTRING)_Source)
 AND
 GetVarInteger(_Object, _Variable, _CurrentValue)
 AND
 _LastValue != _CurrentValue
 THEN
 LeaderLib_Helper_OnVariableIntChanged(_Object, _Variable, _LastValue, _CurrentValue);
+LeaderLib_Helper_OnVariableIntChanged(_Object, _Variable, _LastValue, _CurrentValue, _Source);
 
 PROC
-LeaderLib_Helper_Internal_FireOnVariableIntChanged((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_LastValue, (INTEGER)_CurrentValue)
+LeaderLib_Helper_Internal_FireOnVariableIntChanged((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_LastValue, (INTEGER)_CurrentValue, (GUIDSTRING)_Source)
 AND
 _LastValue != _CurrentValue
 THEN
 LeaderLib_Helper_OnVariableIntChanged(_Object, _Variable, _LastValue, _CurrentValue);
+LeaderLib_Helper_OnVariableIntChanged(_Object, _Variable, _LastValue, _CurrentValue, _Source);
 
+//Old definition
 PROC
 LeaderLib_Helper_OnVariableIntChanged((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_LastValue, (INTEGER)_CurrentValue)
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_Helper_OnVariableIntChanged((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_LastValue, (INTEGER)_CurrentValue, (GUIDSTRING)_Source)
 THEN
 DB_NOOP(1);
 //END_REGION

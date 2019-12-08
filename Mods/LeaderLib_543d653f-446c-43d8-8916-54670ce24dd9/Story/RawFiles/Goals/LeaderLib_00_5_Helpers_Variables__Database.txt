@@ -150,8 +150,8 @@ LeaderLib_Variables_DB_Internal_FireOnVariableIntChanged((GUIDSTRING)_Object, (S
 AND
 _LastValue != _CurrentValue
 THEN
-LeaderLib_Helper_OnVariableIntChanged(_Object, _Variable, _LastValue, _CurrentValue);
-LeaderLib_Helper_OnVariableIntChanged(_Object, _Variable, _LastValue, _CurrentValue, _Source);
+LeaderLib_Variables_OnVariableIntChanged(_Object, _Variable, _LastValue, _CurrentValue);
+LeaderLib_Variables_OnVariableIntChanged(_Object, _Variable, _LastValue, _CurrentValue, _Source);
 //END_REGION
 EXITSECTION
 

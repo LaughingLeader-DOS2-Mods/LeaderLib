@@ -122,12 +122,12 @@ LeaderLib_Party_IncreaseCount(_Char);
 PROC
 LeaderLib_Party_IncreaseCount((CHARACTERGUID)_Char)
 THEN
-LeaderLib_Helper_ModifyVariableInt(_Char, "LeaderLib_PartyCount", 1, 999, 1);
+LeaderLib_Variables_ModifyVariableInt(_Char, "LeaderLib_PartyCount", 1, 999, 1);
 
 PROC
 LeaderLib_Party_DecreaseCount((CHARACTERGUID)_Char)
 THEN
-LeaderLib_Helper_ModifyVariableInt(_Char, "LeaderLib_PartyCount", -1, 999, 1);
+LeaderLib_Variables_ModifyVariableInt(_Char, "LeaderLib_PartyCount", -1, 999, 1);
 //END_REGION
 
 //REGION EVENTS
@@ -161,14 +161,14 @@ LeaderLib_Party_OnCharacterJoinedParty_Start(_Char, _Player);
 PROC
 LeaderLib_Party_Internal_BuildPartyCount((CHARACTERGUID)_Char)
 THEN
-LeaderLib_Helper_SetVariableInt(_Char, "LeaderLib_PartyCount", 1);
+LeaderLib_Variables_SetVariableInt(_Char, "LeaderLib_PartyCount", 1);
 
 PROC
 LeaderLib_Party_Internal_BuildPartyCount((CHARACTERGUID)_Char)
 AND
 DB_LeaderLib_PartyMembers(_Char, _PartyMember)
 THEN
-LeaderLib_Helper_ModifyVariableInt(_Char, "LeaderLib_PartyCount", 1, 999, 1);
+LeaderLib_Variables_ModifyVariableInt(_Char, "LeaderLib_PartyCount", 1, 999, 1);
 
 PROC
 LeaderLib_Party_OnCharacterJoinedParty_Start((CHARACTERGUID)_JoiningCharacter, (CHARACTERGUID)_PartyMember)

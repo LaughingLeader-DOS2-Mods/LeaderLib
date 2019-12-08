@@ -1610,7 +1610,7 @@ TeleportToPosition(_Char, _cx, _cy, _cz, "", 0, 1);
 
 /*
 PROC
-LeaderLib_Helper_OnVariableIntChanged((GUIDSTRING)_Object, "LeaderLib_PartyCount", (INTEGER)_LastValue, (INTEGER)_CurrentValue)
+LeaderLib_Variables_OnVariableIntChanged((GUIDSTRING)_Object, "LeaderLib_PartyCount", (INTEGER)_LastValue, (INTEGER)_CurrentValue)
 AND
 String(_Object, _ObjectStr)
 THEN

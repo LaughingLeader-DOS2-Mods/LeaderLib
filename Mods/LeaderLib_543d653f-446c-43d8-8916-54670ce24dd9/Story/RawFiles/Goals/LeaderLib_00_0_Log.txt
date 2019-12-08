@@ -1256,7 +1256,7 @@ StoryEvent(_Target, "LeaderLog_Commands_Log")
 AND
 GetVarString(_Target, "LeaderLog_Message", _Message)
 AND
-NOT LeaderLib_Helper_QRY_StringVariableSet(_Target, "LeaderLog_Type")
+NOT LeaderLib_Variables_QRY_StringVariableSet(_Target, "LeaderLog_Type")
 THEN
 LeaderLog_Log("DEBUG", _Message);
 ClearVarObject(_Target, "LeaderLog_Message");
@@ -1266,7 +1266,7 @@ StoryEvent(_Target, "LeaderLog_Commands_Log")
 AND
 GetVarString(_Target, "LeaderLog_Message", _Message)
 AND
-LeaderLib_Helper_QRY_StringVariableSet(_Target, "LeaderLog_Type")
+LeaderLib_Variables_QRY_StringVariableSet(_Target, "LeaderLog_Type")
 AND
 GetVarString(_Target, "LeaderLog_Type", _Type)
 THEN

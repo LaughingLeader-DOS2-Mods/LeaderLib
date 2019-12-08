@@ -43,24 +43,31 @@ DB_NOOP(1);
 PROC
 LeaderLib_Variables_DB_ClearVariableInt((GUIDSTRING)_Object, (STRING)_Variable)
 AND
-DB_LeaderLib_Variables_Integer(_Object, _Variable, _Value)
+DB_LeaderLib_Variables_Integer(_Object, _Variable, _Value, _Source)
 THEN
-NOT DB_LeaderLib_Variables_Integer(_Object, _Variable, _Value);
+NOT DB_LeaderLib_Variables_Integer(_Object, _Variable, _Value, _Source);
 
 PROC
-LeaderLib_Variables_DB_Internal_SetVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_Value)
+LeaderLib_Variables_DB_ClearVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (GUIDSTRING)_Source)
 AND
-DB_LeaderLib_Variables_Integer(_Object, _Variable, _LastValue)
+DB_LeaderLib_Variables_Integer(_Object, _Variable, _Value, _Source)
 THEN
-NOT DB_LeaderLib_Variables_Integer(_Object, _Variable, _LastValue);
-DB_LeaderLib_Variables_Integer(_Object, _Variable, _Value);
+NOT DB_LeaderLib_Variables_Integer(_Object, _Variable, _Value, _Source);
 
 PROC
-LeaderLib_Variables_DB_Internal_SetVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_Value)
+LeaderLib_Variables_DB_Internal_SetVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_Value, (GUIDSTRING)_Source)
 AND
-NOT DB_LeaderLib_Variables_Integer(_Object, _Variable, _)
+DB_LeaderLib_Variables_Integer(_Object, _Variable, _LastValue, _Source)
 THEN
-DB_LeaderLib_Variables_Integer(_Object, _Variable, _Value);
+NOT DB_LeaderLib_Variables_Integer(_Object, _Variable, _LastValue, _Source);
+DB_LeaderLib_Variables_Integer(_Object, _Variable, _Value, _Source);
+
+PROC
+LeaderLib_Variables_DB_Internal_SetVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_Value, (GUIDSTRING)_Source)
+AND
+NOT DB_LeaderLib_Variables_Integer(_Object, _Variable, _, _Source)
+THEN
+DB_LeaderLib_Variables_Integer(_Object, _Variable, _Value, _Source);
 
 PROC
 LeaderLib_Variables_DB_SetVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_Value)
@@ -72,15 +79,15 @@ LeaderLib_Variables_DB_SetVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (I
 AND
 NOT LeaderLib_Variables_DB_QRY_IntegerVariableSet(_Object, _Variable)
 THEN
-LeaderLib_Variables_DB_Internal_SetVariableInt(_Object, _Variable, 0);
+LeaderLib_Variables_DB_Internal_SetVariableInt(_Object, _Variable, 0, _Source);
 
 PROC
 LeaderLib_Variables_DB_SetVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_Value, (GUIDSTRING)_Source)
 AND
-DB_LeaderLib_Variables_Integer(_Object, _Variable, _LastValue)
+DB_LeaderLib_Variables_Integer(_Object, _Variable, _LastValue, _Source)
 THEN
-NOT DB_LeaderLib_Variables_Integer(_Object, _Variable, _LastValue);
-LeaderLib_Variables_DB_Internal_SetVariableInt(_Object, _Variable, _Value);
+NOT DB_LeaderLib_Variables_Integer(_Object, _Variable, _LastValue, _Source);
+LeaderLib_Variables_DB_Internal_SetVariableInt(_Object, _Variable, _Value, _Source);
 LeaderLib_Variables_DB_Internal_FireOnVariableIntChanged(_Object, _Variable, _LastValue, _Value, _Source);
 
 PROC
@@ -103,12 +110,12 @@ LeaderLib_Variables_DB_ModifyVariableInt((GUIDSTRING)_Object, (STRING)_Variable,
 AND
 LeaderLib_Variables_DB_QRY_IntegerVariableIsLessThanOrEqualTo(_Object, _Variable, _Min)
 THEN
-LeaderLib_Variables_DB_Internal_SetVariableInt(_Object, _Variable, _Min);
+LeaderLib_Variables_DB_Internal_SetVariableInt(_Object, _Variable, _Min, _Source);
 
 PROC
 LeaderLib_Variables_DB_ModifyVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_ModifyBy, (INTEGER)_Max, (INTEGER)_Min, (GUIDSTRING)_Source)
 AND
-DB_LeaderLib_Variables_Integer(_Object, _Variable, _Value)
+DB_LeaderLib_Variables_Integer(_Object, _Variable, _Value, _Source)
 AND
 IntegerSum(_Value, _ModifyBy, _NextValue)
 THEN
@@ -120,7 +127,7 @@ LeaderLib_Variables_DB_ClampVariableInt((GUIDSTRING)_Object, (STRING)_Variable, 
 AND
 _NextValue > _Max
 THEN
-LeaderLib_Variables_DB_Internal_SetVariableInt(_Object, _Variable, _Max);
+LeaderLib_Variables_DB_Internal_SetVariableInt(_Object, _Variable, _Max, _Source);
 
 PROC
 LeaderLib_Variables_DB_ClampVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_NextValue, (INTEGER)_Max, (INTEGER)_Min, (GUIDSTRING)_Source)
@@ -129,19 +136,19 @@ _NextValue <= _Max
 AND
 _NextValue >= _Min
 THEN
-LeaderLib_Variables_DB_Internal_SetVariableInt(_Object, _Variable, _NextValue);
+LeaderLib_Variables_DB_Internal_SetVariableInt(_Object, _Variable, _NextValue, _Source);
 
 PROC
 LeaderLib_Variables_DB_ClampVariableInt((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_NextValue, (INTEGER)_Max, (INTEGER)_Min)
 AND
 _NextValue < _Min
 THEN
-LeaderLib_Variables_DB_Internal_SetVariableInt(_Object, _Variable, _Min);
+LeaderLib_Variables_DB_Internal_SetVariableInt(_Object, _Variable, _Min, _Source);
 
 PROC
 LeaderLib_Variables_DB_Internal_FireOnVariableIntChanged((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_LastValue, (GUIDSTRING)_Source)
 AND
-DB_LeaderLib_Variables_Integer(_Object, _Variable, _CurrentValue)
+DB_LeaderLib_Variables_Integer(_Object, _Variable, _CurrentValue, _Source)
 THEN
 LeaderLib_Variables_DB_Internal_FireOnVariableIntChanged(_Object, _Variable, _LastValue, _CurrentValue, _Source);
 

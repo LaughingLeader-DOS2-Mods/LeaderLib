@@ -19,7 +19,7 @@ story.debugInfo
 #Assets
 ######################*
 Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Assets/*
-#Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/*
+!Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Assets/Sound
 
 #Editor files
 ######################
@@ -33,11 +33,15 @@ ReConHistory.txt
 ######################
 *.gr2
 *.dae
+*.bin
+*.bnk
 *.swf
 *.bullet
 *.dds
 *.tga
 *.png
+*.jpg
+*.jpeg
 *.ttf
 *.lsb
 *.lsf
@@ -45,6 +49,12 @@ ReConHistory.txt
 *.lsefx
 #*.lsx
 *.lsmg
+*.fbx
+*.lsm
+*.wav
+*.wem
+*.shd
+*.metal
 
 # Logs #
 ######################

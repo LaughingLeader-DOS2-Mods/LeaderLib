@@ -106,6 +106,20 @@ LeaderLib_QRY_ExtenderIsActive()
 THEN
 DB_NOOP(1);
 */
+
+IF
+GameModeStarted(_,_)
+AND
+LeaderLib_QRY_ExtenderIsActive()
+THEN
+GlobalSetFlag("LeaderLib_ExtenderIsActive");
+
+IF
+GameModeStarted(_,_)
+AND
+NOT LeaderLib_QRY_ExtenderIsActive()
+THEN
+GlobalClearFlag("LeaderLib_ExtenderIsActive");
 //END_REGION
 EXITSECTION
 

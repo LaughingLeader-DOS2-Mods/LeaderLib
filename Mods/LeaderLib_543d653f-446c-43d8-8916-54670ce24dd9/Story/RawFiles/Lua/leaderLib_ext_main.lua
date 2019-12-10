@@ -67,7 +67,7 @@ local function print_test(str)
 	DebugBreak("[LeaderLib:Lua:print_test] " .. str)
 end
 
-Leaderlib = {
+LeaderLib = {
 	string_to_version = string_to_version,
 	print_attributes = print_attributes,
 	print_test = print_test

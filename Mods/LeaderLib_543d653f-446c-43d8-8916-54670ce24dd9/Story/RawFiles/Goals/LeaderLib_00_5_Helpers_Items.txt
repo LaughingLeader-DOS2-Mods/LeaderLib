@@ -630,24 +630,29 @@ LeaderLib_Helper_RemoveRunes(_Player, _Item);
 
 PROC
 LeaderLib_Helper_RemoveRunes((CHARACTERGUID)_Player, (ITEMGUID)_Item)
+THEN
+LeaderLib_Helper_RemoveRunes(_Player, _Item, 0);
+LeaderLib_Helper_RemoveRunes(_Player, _Item, 1);
+LeaderLib_Helper_RemoveRunes(_Player, _Item, 2);
+
+QRY
+LeaderLib_Helper_QRY_RemoveRunes((CHARACTERGUID)_Player, (ITEMGUID)_Item, (INTEGER)_SLot)
+THEN
+LeaderLib_Helper_RemoveRunes(_Player, _Item, _SLot);
+
+PROC
+LeaderLib_Helper_RemoveRunes((CHARACTERGUID)_Player, (ITEMGUID)_Item, (INTEGER)_SLot)
 AND
-ItemRemoveRune(_Player, _Item, 0, _Rune)
+ItemRemoveRune(_Player, _Item, _SLot, _Rune)
 THEN
 DB_NOOP(1);
 
-PROC
-LeaderLib_Helper_RemoveRunes((CHARACTERGUID)_Player, (ITEMGUID)_Item)
+QRY
+LeaderLib_Helper_QRY_InsertRuneInSlot((CHARACTERGUID)_Char, (ITEMGUID)_Item, (STRING)_Rune, (INTEGER)_Slot)
 AND
-ItemRemoveRune(_Player, _Item, 1, _Rune)
+NOT ItemGetRuneItemTemplate(_Item, _Slot, _)
 THEN
-DB_NOOP(1);
-
-PROC
-LeaderLib_Helper_RemoveRunes((CHARACTERGUID)_Player, (ITEMGUID)_Item)
-AND
-ItemRemoveRune(_Player, _Item, 2, _Rune)
-THEN
-DB_NOOP(1);
+ItemInsertRune(_Char, _Item, _Rune, _Slot);
 //END_REGION
 
 //REGION RUNE_SLOT_HELPERS

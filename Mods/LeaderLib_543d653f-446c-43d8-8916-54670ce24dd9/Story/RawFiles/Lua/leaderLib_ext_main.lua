@@ -67,6 +67,20 @@ local function print_test(str)
 	DebugBreak("[LeaderLib:Lua:print_test] " .. str)
 end
 
+function LeaderLib_RefreshSkills(char)
+	 -- Until we can fetch the active skill bar, iterate through every skill slot for now
+	for i=0,144 do
+		local skill = NRD_SkillBarGetSkill(char, i)
+		if skill ~= nil then
+			local cd = NRD_SkillGetCooldown(char, skill)
+			Osi.DB_LeaderLib_Helper_Temp_RefreshUISkill(char, skill, i, cd)
+			Osi.LeaderLog_Log("DEBUG", "[lua:LeaderLib_RefreshSkills] Refreshing (" .. skill ..") for (" .. char .. ") [" .. cd .. "]")
+			NRD_SkillBarClear(char, i)
+		end
+	end
+	Osi.LeaderLib_Timers_StartObjectTimer(char, 12, "Timers_LeaderLib_RefreshUI_RevertSkillCooldown", "LeaderLib_RefreshUI_RevertSkillCooldown");
+end
+
 LeaderLib = {
 	string_to_version = string_to_version,
 	print_attributes = print_attributes,

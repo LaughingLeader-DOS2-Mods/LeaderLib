@@ -1795,12 +1795,6 @@ LeaderLib_Helper_ClearActionQueue((CHARACTERGUID)_Char, (INTEGER)_Purge)
 THEN
 CharacterMoveTo(_Char, _Char, 1, "", 1);
 CharacterSetStill(_Char);
-
-//Applies a MUTED status to refresh skill icons.
-PROC
-LeaderLib_Helper_RefreshUI((CHARACTERGUID)_Char)
-THEN
-ApplyStatus(_Char, "LEADERLIB_REFRESH_UI", 0.0, 1, _Char);
 //END_REGION
 
 //REGION CLEAR_ANIMATION_OVERRIDE_HACK
@@ -1838,6 +1832,46 @@ _Event != ""
 THEN
 ClearVarObject(_Char, "LeaderLib_ClearAnimationOverride_CompletionEvent");
 SetStoryEvent(_Char, _Event);
+//END_REGION
+
+//REGION REFRESH_SKILL_UI
+//Applies a MUTED status to refresh skill icons.
+PROC
+LeaderLib_Helper_RefreshUI((CHARACTERGUID)_Char)
+THEN
+LeaderLib_Helper_RefreshUI(_Char, 0);
+
+PROC
+LeaderLib_Helper_RefreshUI((CHARACTERGUID)_Char, (INTEGER)_ForceRefreshAllActiveSkills)
+THEN
+ApplyStatus(_Char, "LEADERLIB_REFRESH_UI", 0.0, 1, _Char);
+
+PROC
+LeaderLib_Helper_RefreshUI((CHARACTERGUID)_Char, 1)
+AND
+LeaderLib_QRY_ExtenderIsActive()
+AND
+CharacterIsPlayer(_Char, 1)
+THEN
+LeaderLib_Timers_StartObjectTimer(_Char, 50, "Timers_LeaderLib_RefreshUI_RefreshSkills_Start", "LeaderLib_RefreshUI_RefreshSkills_Start");
+
+/* [OSITOOLS_ONLY]
+IF
+StoryEvent((CHARACTERGUID)_Char, "LeaderLib_RefreshUI_RefreshSkills_Start")
+AND
+String(_Char, _CharStr)
+THEN
+NRD_LuaCall("LeaderLib_RefreshSkills", _CharStr);
+
+IF
+StoryEvent((CHARACTERGUID)_Char, "LeaderLib_RefreshUI_RevertSkillCooldown")
+AND
+DB_LeaderLib_Helper_Temp_RefreshUISkill((CHARACTERGUID)_Char, (STRING)_Skill, (INTEGER)_Slot, (REAL)_Cooldown)
+THEN
+NOT DB_LeaderLib_Helper_Temp_RefreshUISkill(_Char, _Skill, _Slot, _Cooldown);
+NRD_SkillBarSetSkill(_Char, _Slot, _Skill);
+NRD_SkillSetCooldown(_Char, _Skill, _Cooldown);
+*/
 //END_REGION
 EXITSECTION
 

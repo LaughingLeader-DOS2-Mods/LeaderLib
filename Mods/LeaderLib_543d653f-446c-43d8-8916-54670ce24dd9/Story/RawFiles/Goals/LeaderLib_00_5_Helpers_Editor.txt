@@ -1341,6 +1341,17 @@ NRD_LuaReset(1);
 LeaderLog_Log("DEBUG", "[LeaderLib_00_5_Helpers_Editor:TextEventSet(leaderlib_lua)] [*WARNING*] The extender is not active, or conditional compilation does not work!");
 // [END_NO_OSITOOLS]
 //END_REGION
+
+IF
+TextEventSet("leaderlib_resetcd")
+THEN
+IterateParties("LeaderLib_Iterators_Editor_ResetCooldowns");
+
+IF
+StoryEvent((CHARACTERGUID)_Char, "LeaderLib_Iterators_Editor_ResetCooldowns")
+THEN
+CharacterResetCooldowns(_Char);
+
 EXITSECTION
 
 ENDEXITSECTION

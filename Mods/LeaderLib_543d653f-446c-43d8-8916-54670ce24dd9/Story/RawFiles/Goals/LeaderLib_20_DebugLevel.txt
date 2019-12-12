@@ -713,12 +713,14 @@ LeaderLib_Treasure_Register_ItemTemplate("TestLevel_LL_LeaderLib_Chest3", "WPN_L
 //END_REGION
 
 //REGION COOLDOWN_DISABLING
+/*
 IF
 SkillCast(_Player, _Skill, _, _)
 AND
 LeaderLib_Helper_QRY_CharacterIsPlayer(_Player)
 THEN
 CharacterResetCooldowns(_Player);
+*/
 //END_REGION
 
 //REGION MISC

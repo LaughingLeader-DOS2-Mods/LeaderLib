@@ -1596,7 +1596,7 @@
                     <attribute id="V2" value="0.0623779296875" type="6" />
                 </node>
                 <node id="IconUV">
-                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Blunderbuss_PointBlank" type="22" />
+                    <attribute id="MapKey" value="LLWEAPONEX_Skills_Blunderbuss_Scattershot" type="22" />
                     <attribute id="U1" value="0.5469970703125" type="6" />
                     <attribute id="U2" value="0.5623779296875" type="6" />
                     <attribute id="V1" value="0.0469970703125" type="6" />

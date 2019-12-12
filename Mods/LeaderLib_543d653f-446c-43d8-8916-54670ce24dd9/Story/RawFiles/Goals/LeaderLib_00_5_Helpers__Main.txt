@@ -1855,7 +1855,17 @@ CharacterIsPlayer(_Char, 1)
 THEN
 LeaderLib_Timers_StartObjectTimer(_Char, 50, "Timers_LeaderLib_RefreshUI_RefreshSkills_Start", "LeaderLib_RefreshUI_RefreshSkills_Start");
 
+PROC
+LeaderLib_RefreshUI_Internal_StoreSkillData((CHARACTERGUID)_Char, (STRING)_Skill, (INTEGER)_Slot, (REAL)_Cooldown)
+THEN
+DB_LeaderLib_Helper_Temp_RefreshUISkill(_Char, _Skill, _Slot, _Cooldown);
+
 /* [OSITOOLS_ONLY]
+PROC
+LeaderLib_RefreshUI_Internal_StoreSkillData((CHARACTERGUID)_Char, (STRING)_Skill, (INTEGER)_Slot, (REAL)_Cooldown)
+THEN
+NRD_SkillBarClear(_Char, _Slot);
+
 IF
 StoryEvent((CHARACTERGUID)_Char, "LeaderLib_RefreshUI_RefreshSkills_Start")
 AND

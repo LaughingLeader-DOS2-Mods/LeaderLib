@@ -6,12 +6,12 @@ KBSECTION
 IF
 CharacterStatusAttempt(_Target, "SHOCKWAVE", _)
 AND
-DB_LeaderLib_Force_Temp_ListenForLanding((GUIDSTRING)_Target, (GUIDSTRING)_Source)
+DB_LeaderLib_Force_Temp_ListenForLanding((GUIDSTRING)_Target, (GUIDSTRING)_Source, (STRING)_Event)
 AND
 GetPosition(_Target, _x, _y, _z)
 THEN
-NOT DB_LeaderLib_Force_Temp_ListenForLanding(_Target, _Source);
-DB_LeaderLib_Force_Temp_ListenForLanding((GUIDSTRING)_Target, (GUIDSTRING)_Source, _x, _y, _z);
+NOT DB_LeaderLib_Force_Temp_ListenForLanding(_Target, _Source, _Event);
+DB_LeaderLib_Force_Temp_ListenForLanding((GUIDSTRING)_Target, (GUIDSTRING)_Source, _x, _y, _z, _Event);
 ProcObjectTimer(_Target, "LeaderLib_Timers_Force_CheckLanding", 250);
 
 IF

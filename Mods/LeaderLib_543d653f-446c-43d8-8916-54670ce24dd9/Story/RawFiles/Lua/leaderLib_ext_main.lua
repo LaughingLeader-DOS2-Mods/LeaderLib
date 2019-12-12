@@ -73,12 +73,11 @@ function LeaderLib_RefreshSkills(char)
 		local skill = NRD_SkillBarGetSkill(char, i)
 		if skill ~= nil then
 			local cd = NRD_SkillGetCooldown(char, skill)
-			Osi.DB_LeaderLib_Helper_Temp_RefreshUISkill(char, skill, i, cd)
+			Osi.LeaderLib_RefreshUI_Internal_StoreSkillData(char, skill, i, cd)
 			Osi.LeaderLog_Log("DEBUG", "[lua:LeaderLib_RefreshSkills] Refreshing (" .. skill ..") for (" .. char .. ") [" .. cd .. "]")
-			NRD_SkillBarClear(char, i)
 		end
 	end
-	Osi.LeaderLib_Timers_StartObjectTimer(char, 12, "Timers_LeaderLib_RefreshUI_RevertSkillCooldown", "LeaderLib_RefreshUI_RevertSkillCooldown");
+	Osi.LeaderLib_Timers_StartObjectTimer(char, 60, "Timers_LeaderLib_RefreshUI_RevertSkillCooldown", "LeaderLib_RefreshUI_RevertSkillCooldown");
 end
 
 LeaderLib = {

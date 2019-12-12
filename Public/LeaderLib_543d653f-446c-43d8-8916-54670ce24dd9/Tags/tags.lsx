@@ -360,6 +360,19 @@
                     </children>
                 </node>
                 <node id="Tag">
+                    <attribute id="Name" value="LLWEAPONEX_Flamethrower" type="23" />
+                    <attribute id="Description" value="Weapon Type (Weapon Expansion)" type="23" />
+                    <children>
+                        <node id="Categories">
+                            <children>
+                                <node id="Category">
+                                    <attribute id="Name" value="Code" type="23" />
+                                </node>
+                            </children>
+                        </node>
+                    </children>
+                </node>
+                <node id="Tag">
                     <attribute id="Name" value="LLWEAPONEX_Glaive" type="23" />
                     <attribute id="Description" value="Weapon Type (Weapon Expansion)" type="23" />
                     <children>

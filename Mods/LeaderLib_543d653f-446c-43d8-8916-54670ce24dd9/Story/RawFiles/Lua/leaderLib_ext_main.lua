@@ -28,7 +28,8 @@ local function process_version_str(version_str)
 	return a,b,c,d
 end
 
-local function string_to_version(version_str)
+--Added a lua->Osiris query
+local function StringToVersion_Query(version_str)
 	local b, major,minor,revision,build = pcall(process_version_str, version_str)
 	if b then
 		if major ~= -1 and minor ~= -1 and revision ~= -1 and build ~= -1 then
@@ -42,7 +43,7 @@ local function string_to_version(version_str)
 	end
 end
 
-function LeaderLib_Ext_StringToVersion(version_str)
+local function StringToVersion(version_str)
 	local b, major,minor,revision,build = pcall(process_version_str, version_str)
 	if b then
 		if major ~= -1 and minor ~= -1 and revision ~= -1 and build ~= -1 then
@@ -55,19 +56,19 @@ function LeaderLib_Ext_StringToVersion(version_str)
 	end
 end
 
-local function print_attributes(char)
+local function PrintAttributes(char)
 	local attributes = {"Strength", "Finesse", "Intelligence", "Constitution", "Memory", "Wits"}
 	for k, att in pairs(attributes) do
 		local val = CharacterGetAttribute(char, att)
-		Osi.LeaderLog_Log("DEBUG", "[lua:leaderlib.print_attributes] (" .. char .. ") | " .. att .. " = " .. val)
+		Osi.LeaderLog_Log("DEBUG", "[lua:leaderlib.PrintAttributes] (" .. char .. ") | " .. att .. " = " .. val)
 	end
 end
 
-local function print_test(str)
-	DebugBreak("[LeaderLib:Lua:print_test] " .. str)
+local function PrintTest(str)
+	DebugBreak("[LeaderLib:Lua:PrintTest] " .. str)
 end
 
-function LeaderLib_RefreshSkills(char)
+local function LeaderLib_RefreshSkills(char)
 	 -- Until we can fetch the active skill bar, iterate through every skill slot for now
 	for i=0,144 do
 		local skill = NRD_SkillBarGetSkill(char, i)
@@ -80,8 +81,40 @@ function LeaderLib_RefreshSkills(char)
 	Osi.LeaderLib_Timers_StartObjectTimer(char, 60, "Timers_LeaderLib_RefreshUI_RevertSkillCooldown", "LeaderLib_RefreshUI_RevertSkillCooldown");
 end
 
+local function RefreshSkills(char)
+	 -- Until we can fetch the active skill bar, iterate through every skill slot for now
+	for i=0,144 do
+		local skill = NRD_SkillBarGetSkill(char, i)
+		if skill ~= nil then
+			local cd = NRD_SkillGetCooldown(char, skill)
+			Osi.LeaderLib_RefreshUI_Internal_StoreSkillData(char, skill, i, cd)
+			Osi.LeaderLog_Log("DEBUG", "[lua:LeaderLib_RefreshSkills] Refreshing (" .. skill ..") for (" .. char .. ") [" .. cd .. "]")
+		end
+	end
+	Osi.LeaderLib_Timers_StartObjectTimer(char, 60, "Timers_LeaderLib_RefreshUI_RevertSkillCooldown", "LeaderLib_RefreshUI_RevertSkillCooldown");
+end
+
+local function RefreshSkill(char, skill)
+	local slot = NRD_SkillBarFindSkill(char, skill)
+	if slot ~= nil then
+		local cd = NRD_SkillGetCooldown(char, skill)
+		Osi.LeaderLib_RefreshUI_Internal_StoreSkillData(char, skill, slot, cd)
+		Osi.LeaderLog_Log("DEBUG", "[lua:LeaderLib_RefreshSkill] Refreshing (" .. skill ..") for (" .. char .. ") [" .. cd .. "]")
+	end
+	Osi.LeaderLib_Timers_StartObjectTimer(char, 60, "Timers_LeaderLib_RefreshUI_RevertSkillCooldownDirect", "LeaderLib_RefreshUI_RevertSkillCooldown");
+end
+
 LeaderLib = {
-	string_to_version = string_to_version,
-	print_attributes = print_attributes,
-	print_test = print_test
+	StringToVersion_Query = StringToVersion_Query,
+	StringToVersion = StringToVersion,
+	PrintAttributes = PrintAttributes,
+	PrintTest = PrintTest,
+	RefreshSkills = RefreshSkills,
+	RefreshSkill = RefreshSkill,
+	SkillMemorizationFix = SkillMemorizationFix
 }
+
+--Export local functions to global for now
+for name,func in pairs(LeaderLib) do
+    _G["LeaderLib_" .. name] = func
+end

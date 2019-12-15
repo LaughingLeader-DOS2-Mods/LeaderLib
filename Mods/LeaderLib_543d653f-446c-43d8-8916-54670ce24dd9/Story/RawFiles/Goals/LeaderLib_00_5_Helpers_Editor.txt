@@ -1305,7 +1305,7 @@ LeaderLib_Recon_QRY_GetUUID("leaderlib_vb", "mod", 1, LeaderLib_7e737d2f-31d2-47
 AND
 DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_vb", "mod", _ModUUID, _NextParamInt)
 AND
-LeaderLib_Recon_QRY_GetString("leaderlib_lua", "function", _NextParamInt, "LeaderLib.print_test")
+LeaderLib_Recon_QRY_GetString("leaderlib_lua", "function", _NextParamInt, "LeaderLib.PrintTest")
 AND
 DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_lua", "function", _Function, _NextParamInt2)
 AND

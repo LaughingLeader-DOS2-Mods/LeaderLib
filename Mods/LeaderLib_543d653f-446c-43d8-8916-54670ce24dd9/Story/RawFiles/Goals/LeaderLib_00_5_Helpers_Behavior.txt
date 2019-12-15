@@ -7,17 +7,25 @@ KBSECTION
 //REGION CREATE_SURFACE_OWNER
 PROC
 LeaderLib_Helper_CreateSurfaceWithOwner((CHARACTERGUID)_Owner, (STRING)_Surface)
-AND
-GetPosition(_Owner, _x, _y, _z)
 THEN
-LeaderLib_Helper_CreateSurfaceWithOwnerAtPosition(_Owner, _x, _y, _z, _Surface, 1.0, 2);
+LeaderLib_Helper_CreateSurfaceWithOwner(_Owner, _Owner, _Surface, 1.0, 2);
 
 PROC
 LeaderLib_Helper_CreateSurfaceWithOwner((CHARACTERGUID)_Owner, (GUIDSTRING)_Target, (STRING)_Surface)
+THEN
+LeaderLib_Helper_CreateSurfaceWithOwner(_Owner, _Target, _Surface, 1.0, 2);
+
+PROC
+LeaderLib_Helper_CreateSurfaceWithOwner((CHARACTERGUID)_Owner, (GUIDSTRING)_Target, (STRING)_Surface, (REAL)_Radius)
+THEN
+LeaderLib_Helper_CreateSurfaceWithOwner(_Owner, _Target, _Surface, _Radius, 2);
+
+PROC
+LeaderLib_Helper_CreateSurfaceWithOwner((CHARACTERGUID)_Owner, (GUIDSTRING)_Target, (STRING)_Surface, (REAL)_Radius, (INTEGER)_Turns)
 AND
 GetPosition(_Target, _x, _y, _z)
 THEN
-LeaderLib_Helper_CreateSurfaceWithOwnerAtPosition(_Owner, _x, _y, _z, _Surface, 1.0, 2);
+LeaderLib_Helper_CreateSurfaceWithOwnerAtPosition(_Owner, _x, _y, _z, _Surface, _Radius, _Turns);
 
 PROC
 LeaderLib_Helper_CreateSurfaceWithOwnerAtPosition((CHARACTERGUID)_Owner, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_Surface)
@@ -27,7 +35,7 @@ LeaderLib_Helper_CreateSurfaceWithOwnerAtPosition(_Owner, _x, _y, _z, _Surface, 
 PROC
 LeaderLib_Helper_CreateSurfaceWithOwnerAtPosition((CHARACTERGUID)_Owner, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_Surface, (REAL)_Radius)
 THEN
-LeaderLib_Helper_CreateSurfaceWithOwnerAtPosition(_Owner, _x, _y, _z, _Surface, 1.0);
+LeaderLib_Helper_CreateSurfaceWithOwnerAtPosition(_Owner, _x, _y, _z, _Surface, _Radius, 2);
 
 PROC
 LeaderLib_Helper_CreateSurfaceWithOwnerAtPosition((CHARACTERGUID)_Owner, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_Surface, (REAL)_Radius, (INTEGER)_Turns)

@@ -46,9 +46,9 @@ ReConHistory.txt
 *.lsb
 *.lsf
 *.lsfx
-*.lsefx
+#*.lsefx
 #*.lsx
-*.lsmg
+#*.lsmg
 *.fbx
 *.lsm
 *.wav

@@ -110,8 +110,7 @@ LeaderLib = {
 	PrintAttributes = PrintAttributes,
 	PrintTest = PrintTest,
 	RefreshSkills = RefreshSkills,
-	RefreshSkill = RefreshSkill,
-	SkillMemorizationFix = SkillMemorizationFix
+	RefreshSkill = RefreshSkill
 }
 
 --Export local functions to global for now

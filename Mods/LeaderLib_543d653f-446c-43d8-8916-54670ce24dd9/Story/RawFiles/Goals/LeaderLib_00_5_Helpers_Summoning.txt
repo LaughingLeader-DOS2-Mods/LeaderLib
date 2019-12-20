@@ -1,0 +1,34 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+//LeaderLib_ToggleScripts_EnableScript("LeaderLib_SummonEvents_Character_Enabled", "ModName");
+
+PROC
+LeaderLib_Summoning_OnCharacterSummoned((CHARACTERGUID)_Char, (CHARACTERGUID)_Owner, (INTEGER)_IsTotem)
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_Summoning_OnCharacterDismissed((CHARACTERGUID)_Char, (CHARACTERGUID)_Owner, (INTEGER)_IsTotem)
+THEN
+DB_NOOP(1);
+
+/*
+Enable with LeaderLib_ToggleScripts_EnableScript("LeaderLib_SummonEvents_Item_Enabled", "ModName");
+Summoned items are MovingObject items used in projectiles, like grenades.
+*/
+PROC
+LeaderLib_Summoning_OnItemSummoned((ITEMGUID)_Item, (CHARACTERGUID)_Owner)
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_Summoning_OnItemDismissed((ITEMGUID)_Item, (CHARACTERGUID)_Owner, (INTEGER)_IsDestroyed)
+THEN
+DB_NOOP(1);
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

@@ -46,6 +46,9 @@ LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_ForceEvents", "LeaderLi
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Debug", "LeaderLib_IsEditorMode");
 
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Autosaving", "LeaderLib_AutosavingEnabled");
+
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_SummonEvents_Character", "LeaderLib_SummonEvents_Character_Enabled");
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_SummonEvents_Item", "LeaderLib_SummonEvents_Item_Enabled");
 //LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_GrowthEvents_Item_Enabled", "LeaderLib");
 //END_REGION
 
@@ -491,7 +494,7 @@ THEN
 LeaderLib_ToggleScripts_EnableScript("LeaderLib_StatusEvents_MainScriptEnabled", _EnablingModID);
 //END_REGION
 
-//REGION TOGGLING_ON
+//REGION TOGGLING_ON_INTERNAL
 IF
 GlobalFlagSet(_GlobalFlag)
 AND
@@ -513,7 +516,7 @@ LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:ToggleOn] Activating goal [",_G
 SysActivateGoal(_GoalTitle);
 //END_REGION
 
-//REGION TOGGLING_OFF
+//REGION TOGGLING_OFF_INTERNAL
 IF
 GlobalFlagCleared(_GlobalFlag)
 AND

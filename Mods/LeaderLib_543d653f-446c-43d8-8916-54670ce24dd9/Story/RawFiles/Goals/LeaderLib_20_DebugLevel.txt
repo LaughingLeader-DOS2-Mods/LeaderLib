@@ -63,6 +63,8 @@ LeaderLib_Requirements_Add_FlagRequirement("LeaderLib_DebugLevel_TraderRequireme
 LeaderLib_Requirements_Add_FlagRequirement("LeaderLib_DebugLevel_NotTraderRequirements1", "LeaderLib_DebugLevel_TalkedToTrader", "Object", 0);
 LeaderLib_Requirements_Add_FlagRequirement("LeaderLib_DebugLevel_ChestRequirements1", "LeaderLib_DebugLevel_OpenedChest", "Object", 1);
 LeaderLib_Requirements_Add_FlagRequirement("LeaderLib_DebugLevel_NotChestRequirements1", "LeaderLib_DebugLevel_OpenedChest", "Object", 0);
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_SummonEvents_Character_Enabled", "LeaderLib");
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_SummonEvents_Item_Enabled", "LeaderLib");
 //LeaderLib_DebugLevel_TraderTest();
 //LeaderLib_DebugLevel_TreasureTest2();
 //LeaderLib_DebugLevel_ModMenuTest();
@@ -1339,6 +1341,50 @@ AND
 CharacterGetDisplayName(_Character, _, _Name)
 THEN
 LeaderLog_Log("DEBUG_STATUS", "[LeaderLib:Debug:CharacterTeleported] Character [",_Name,"] teleported via [",_Skill,"].");
+//END_REGION
+
+//REGION SUMMONING_DEBUG
+PROC
+LeaderLib_Summoning_OnCharacterSummoned((CHARACTERGUID)_Char, (CHARACTERGUID)_Owner, (INTEGER)_IsTotem)
+AND
+String(_Char, _SummonStr)
+AND
+String(_Owner, _OwnerStr)
+AND
+IntegertoString(_IsTotem, _IsTotemStr)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:LeaderLib_Summoning_OnCharacterSummoned] Character (",_SummonStr,") was summoned by (",_OwnerStr,"). IsTotem(",_IsTotemStr,")");
+
+PROC
+LeaderLib_Summoning_OnCharacterDismissed((CHARACTERGUID)_Char, (CHARACTERGUID)_Owner, (INTEGER)_IsTotem)
+AND
+String(_Char, _SummonStr)
+AND
+String(_Owner, _OwnerStr)
+AND
+IntegertoString(_IsTotem, _IsTotemStr)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:LeaderLib_Summoning_OnCharacterDismissed] Summon (",_SummonStr,") was dismissed. Owner (",_OwnerStr,") IsTotem(",_IsTotemStr,")");
+
+PROC
+LeaderLib_Summoning_OnItemSummoned((ITEMGUID)_Item, (CHARACTERGUID)_Owner)
+AND
+String(_Item, _SummonStr)
+AND
+String(_Owner, _OwnerStr)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:LeaderLib_Summoning_OnItemSummoned] Item (",_SummonStr,") was summoned by (",_OwnerStr,").");
+
+PROC
+LeaderLib_Summoning_OnItemDismissed((ITEMGUID)_Item, (CHARACTERGUID)_Owner, (INTEGER)_IsDestroyed)
+AND
+String(_Item, _SummonStr)
+AND
+String(_Owner, _OwnerStr)
+AND
+IntegertoString(_IsDestroyed, _IsDestroyedStr)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:LeaderLib_Summoning_OnItemDismissed] Item (",_SummonStr,") was dismissed. Owner (",_OwnerStr,") IsDestroyed(",_IsDestroyedStr,")");
 //END_REGION
 
 IF

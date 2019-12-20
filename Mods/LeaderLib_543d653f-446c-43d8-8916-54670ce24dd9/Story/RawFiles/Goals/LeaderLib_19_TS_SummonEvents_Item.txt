@@ -1,0 +1,36 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+IF
+ItemStatusChange(_Item, "SUMMONING", _)
+AND
+ItemGetOriginalOwner(_Item, _Owner)
+THEN
+SetTag(_Item, "LeaderLib_Summon");
+LeaderLib_Summoning_OnItemSummoned(_Item, _Owner);
+
+IF
+ItemDestroying(_Item)
+AND
+IsTagged(_Item, "LeaderLib_Summon", 1)
+AND
+ItemGetOriginalOwner(_Item, _Owner)
+AND
+ItemIsDestroyed(_Item, _IsDestroyed)
+THEN
+LeaderLib_Summoning_OnItemDismissed(_Item, _Owner, _IsDestroyed);
+
+IF
+ItemDestroyed(_Item)
+AND
+IsTagged(_Item, "LeaderLib_Summon", 1)
+AND
+ItemGetOriginalOwner(_Item, _Owner)
+THEN
+LeaderLib_Summoning_OnItemDismissed(_Item, _Owner, 1);
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

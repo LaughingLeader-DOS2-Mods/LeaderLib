@@ -1,0 +1,29 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+IF
+CharacterStatusApplied(_Char, "SUMMONING", _)
+AND
+CharacterGetOwner(_Char, _Owner)
+AND
+IsTagged(_Char, "TOTEM", _IsTotem)
+THEN
+SetTag(_Char, "LeaderLib_Summon");
+LeaderLib_Summoning_OnCharacterSummoned(_Char, _Owner, _IsTotem);
+
+IF
+CharacterPrecogDying(_Char)
+AND
+IsTagged(_Char, "LeaderLib_Summon", 1)
+AND
+CharacterGetOwner(_Char, _Owner)
+AND
+IsTagged(_Char, "TOTEM", _IsTotem)
+THEN
+LeaderLib_Summoning_OnCharacterDismissed(_Char, _Owner, _IsTotem);
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

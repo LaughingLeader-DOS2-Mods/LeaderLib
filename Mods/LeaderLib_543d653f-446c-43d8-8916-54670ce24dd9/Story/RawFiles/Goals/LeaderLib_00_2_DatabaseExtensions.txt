@@ -652,6 +652,38 @@ LeaderLib_Array_DecreaseArrayLength(_ID);
 LeaderLib_Array_ShiftDictionaryUp(_ID, _Index);
 //END_REGION
 
+//REGION DICTIONARY_RANDOM
+QRY
+LeaderLib_Dictionary_QRY_Random((STRING)_ID)
+THEN
+LeaderLib_Dictionary_Random(_ID);
+
+PROC
+LeaderLib_Dictionary_Random((STRING)_ID)
+AND
+DB_LeaderLib_Dictionary_Temp_RandomResult(_ID, _Index, _Key, _Value)
+THEN
+NOT DB_LeaderLib_Dictionary_Temp_RandomResult(_ID, _Index, _Key, _Value);
+
+PROC
+LeaderLib_Dictionary_Random((STRING)_ID)
+AND
+LeaderLib_Array_QRY_DictionaryDataExists(_ID)
+AND
+DB_LeaderLib_Array_Length(_ID, _Length)
+AND
+IntegerSubtract(_Length, 1, _LastIndex)
+AND
+LeaderLib_Random_QRY(0, _LastIndex)
+AND
+DB_LeaderLib_Random(_Index)
+AND
+DB_LeaderLib_Dictionary_Data(_ID, _Index, _Key, _Value)
+THEN
+NOT DB_LeaderLib_Random(_Index);
+DB_LeaderLib_Dictionary_Temp_RandomResult(_ID, _Index, _Key, _Value);
+//END_REGION
+
 //REGION DICTIONARY_CLEAR
 QRY
 LeaderLib_Array_QRY_ClearDictionaryEntries((STRING)_ID)
@@ -706,6 +738,13 @@ AND
 DB_LeaderLib_Array_Temp_FirstEntry(_ID, _Index, _Value)
 THEN
 NOT DB_LeaderLib_Array_Temp_FirstEntry(_ID, _Index, _Value);
+
+PROC
+LeaderLib_Array_ClearDictionary((STRING)_ID)
+AND
+DB_LeaderLib_Dictionary_Temp_RandomResult(_ID, _Index, _Key, _Value)
+THEN
+NOT DB_LeaderLib_Dictionary_Temp_RandomResult(_ID, _Index, _Key, _Value);
 //END_REGION
 
 //REGION DEBUG

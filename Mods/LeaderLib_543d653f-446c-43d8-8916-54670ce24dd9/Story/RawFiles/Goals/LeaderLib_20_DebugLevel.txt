@@ -130,8 +130,8 @@ TextEventSet("leaderlib_printattributes")
 AND
 CharacterGetHostCharacter(_Char)
 THEN
-LeaderLib_Ext_PrintAttributes(_Char);
-
+//LeaderLib_Ext_PrintAttributes(_Char);
+LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:leaderlib_printattributes] Not implemented yet!");
 
 IF
 TextEventSet("leaderlib_debug_ext_versionstring")

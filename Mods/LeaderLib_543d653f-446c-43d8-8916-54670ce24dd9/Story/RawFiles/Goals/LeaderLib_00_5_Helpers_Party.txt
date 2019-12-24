@@ -45,6 +45,29 @@ LeaderLib_Party_CountParties()
 THEN
 GlobalSetFlag("LeaderLib_CountedParties");
 SysClear("DB_LeaderLib_Temp_PartyCheck", 2);
+SysClear("DB_LeaderLib_PartyMembers", 2);
+
+PROC
+LeaderLib_Party_CountParties()
+AND
+DB_IsPlayer(_Char)
+AND
+DB_IsPlayer(_Player)
+AND
+_Char != _Player
+AND
+CharacterIsInPartyWith(_Char, _Player, 1)
+THEN
+DB_LeaderLib_PartyMembers(_Player, _Char);
+DB_LeaderLib_PartyMembers(_Char, _Player);
+LeaderLib_Party_Internal_BuildPartyCount(_Char);
+LeaderLib_Party_Internal_BuildPartyCount(_Player);
+
+PROC
+LeaderLib_Party_Internal_Old_CountParties()
+THEN
+GlobalSetFlag("LeaderLib_CountedParties");
+SysClear("DB_LeaderLib_Temp_PartyCheck", 2);
 IterateParties("LeaderLib_Events_ResetPartyCount");
 IterateParties("LeaderLib_Events_AddToPartyCheck");
 
@@ -241,11 +264,9 @@ LeaderLog_Log("DEBUG", "[LeaderLib:Party:OnCharacterLeftParty] [",_LeavingCharac
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,5,1,0)
-AND
-DB_IsPlayer(_Char)
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,5,4,0)
 THEN
-LeaderLib_Party_Internal_BuildPartyCount(_Char);
+LeaderLib_Party_CountParties();
 //END_REGION
 EXITSECTION
 

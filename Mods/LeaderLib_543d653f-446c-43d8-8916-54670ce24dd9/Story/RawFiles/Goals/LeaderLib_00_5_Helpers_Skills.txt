@@ -156,7 +156,6 @@ DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z);
 LeaderLog_Log("TRACE", "[LeaderLib:Skills:UseSkillOnTargetFromPosition] Teleporting skill dummy for skill [",_Skill,"] to position. Dummy ID: [",_ID,"]");
 TeleportToPosition(_Dummy, _x, _y, _z, "LeaderLib_Events_SkillDummyTeleported", 0, 0);
 
-
 PROC
 LeaderLib_Skills_UseSkillAtPosition((CHARACTERGUID)_Caster, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_Skill, (INTEGER)_CopyStats, (INTEGER)_CopyEquipment)
 AND

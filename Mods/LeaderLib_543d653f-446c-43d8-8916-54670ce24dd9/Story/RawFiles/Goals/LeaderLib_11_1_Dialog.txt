@@ -82,6 +82,10 @@ DB_LeaderLib_Dialog_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation
 DB_LeaderLib_Dialog_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Mental_Loop", "stillmental", 1);
 DB_LeaderLib_Dialog_AnimationFlags("LeaderLib.Default", "LeaderLib_PlayAnimation_Sneaking_Loop", "stillsneaking", 1);
 
+//Blacklist specific Origin dialogs for redirection
+LeaderLib_DialogOverride_Register_BlacklistDialogForRedirection("FTJ_RedPrinceAssassin");
+LeaderLib_DialogOverride_Register_BlacklistDialogForRedirection("RC_DW_IfanKid");
+
 PROC
 LeaderLib_Dialog_ClearStatusGroup((STRING)_Group)
 AND

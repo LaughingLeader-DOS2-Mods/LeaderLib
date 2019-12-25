@@ -438,6 +438,19 @@ AND
 CharacterGetReservedUserID(_Char2, _ID)
 THEN
 DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_ObjectUserMatch((GUIDSTRING)_Obj1, (GUIDSTRING)_Obj2)
+AND
+ObjectIsCharacter((CHARACTERGUID)_Obj1, 1)
+AND
+ObjectIsCharacter((CHARACTERGUID)_Obj1, 1)
+AND
+CharacterGetReservedUserID(_Obj1, _ID)
+AND
+CharacterGetReservedUserID(_Obj1, _ID)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION QUERY_STATS

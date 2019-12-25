@@ -27,11 +27,9 @@ DB_NOOP(1);
 PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1)
 AND
-DB_LeaderLib_DialogOverride_Registered_RegularDialog(_Speaker1, _Dialog, _UseDialog)
-AND
-QRY_StartDialog(_Automated,_UseDialog,_Speaker1)
+GlobalGetFlag("LeaderLib_DialogRedirectionEnabled", _RedirectionEnabled)
 THEN
-DB_NOOP(1);
+LeaderLib_DialogOverride_Internal_StartDialog(_Automated,_RedirectionEnabled,_Dialog,_Speaker1);
 
 PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2)
@@ -42,13 +40,9 @@ NOT QRY_PlayOriginMoment(_Dialog,_Speaker1,_Speaker2)
 AND
 NOT DB_OriginRecruitmentDialog((CHARACTERGUID)_,_Dialog)
 AND
-DB_LeaderLib_DialogOverride_Registered_RegularDialog(_SpeakerMatch, _Dialog, _UseDialog)
-AND
-LeaderLib_DialogOverride_QRY_SpeakerMatch(_Dialog, _SpeakerMatch, _Speaker1, _Speaker2)
-AND
-QRY_StartDialog(_Automated,_UseDialog,_Speaker1,_Speaker2)
+GlobalGetFlag("LeaderLib_DialogRedirectionEnabled", _RedirectionEnabled)
 THEN
-DB_NOOP(1);
+LeaderLib_DialogOverride_Internal_StartDialog(_Automated,_RedirectionEnabled,_Dialog,_Speaker1,_Speaker2);
 
 PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2,(GUIDSTRING)_Speaker3)
@@ -57,13 +51,9 @@ NOT QRY_GLOBAL_CrimeDialogIntercept_Wrapper(_Automated, _Speaker1,_Speaker2, _Sp
 AND
 NOT QRY_PlayOriginMoment(_Dialog,_Speaker1,_Speaker3)
 AND
-DB_LeaderLib_DialogOverride_Registered_RegularDialog(_SpeakerMatch, _Dialog, _UseDialog)
-AND
-LeaderLib_DialogOverride_QRY_SpeakerMatch(_Dialog, _SpeakerMatch, _Speaker1, _Speaker2, _Speaker3)
-AND
-QRY_StartDialog(_Automated,_UseDialog,_Speaker1,_Speaker2,_Speaker3)
+GlobalGetFlag("LeaderLib_DialogRedirectionEnabled", _RedirectionEnabled)
 THEN
-DB_NOOP(1);
+LeaderLib_DialogOverride_Internal_StartDialog(_Automated,_RedirectionEnabled,_Dialog,_Speaker1,_Speaker2,_Speaker3);
 
 PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2,(GUIDSTRING)_Speaker3,(GUIDSTRING)_Speaker4)
@@ -72,13 +62,9 @@ NOT QRY_GLOBAL_CrimeDialogIntercept_Wrapper(_Automated, _Speaker1,_Speaker2, _Sp
 AND
 NOT QRY_PlayOriginMoment(_Dialog,_Speaker1,_Speaker4)
 AND
-DB_LeaderLib_DialogOverride_Registered_RegularDialog(_SpeakerMatch, _Dialog, _UseDialog)
-AND
-LeaderLib_DialogOverride_QRY_SpeakerMatch(_Dialog, _SpeakerMatch, _Speaker1, _Speaker2, _Speaker3, _Speaker4)
-AND
-QRY_StartDialog(_Automated,_UseDialog,_Speaker1,_Speaker2,_Speaker3,_Speaker4)
+GlobalGetFlag("LeaderLib_DialogRedirectionEnabled", _RedirectionEnabled)
 THEN
-DB_NOOP(1);
+LeaderLib_DialogOverride_Internal_StartDialog(_Automated,_RedirectionEnabled,_Dialog,_Speaker1,_Speaker2,_Speaker3,_Speaker4);
 
 PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2,(GUIDSTRING)_Speaker3,(GUIDSTRING)_Speaker4,(GUIDSTRING)_Speaker5)
@@ -87,13 +73,9 @@ NOT QRY_GLOBAL_CrimeDialogIntercept_Wrapper(_Automated, _Speaker1,_Speaker2, _Sp
 AND
 NOT QRY_PlayOriginMoment(_Dialog,_Speaker1,_Speaker5)
 AND
-DB_LeaderLib_DialogOverride_Registered_RegularDialog(_SpeakerMatch, _Dialog, _UseDialog)
-AND
-LeaderLib_DialogOverride_QRY_SpeakerMatch(_Dialog, _SpeakerMatch, _Speaker1, _Speaker2, _Speaker3, _Speaker4, _Speaker5)
-AND
-QRY_StartDialog(_Automated,_UseDialog,_Speaker1,_Speaker2,_Speaker3,_Speaker4,_Speaker5)
+GlobalGetFlag("LeaderLib_DialogRedirectionEnabled", _RedirectionEnabled)
 THEN
-DB_NOOP(1);
+LeaderLib_DialogOverride_Internal_StartDialog(_Automated,_RedirectionEnabled,_Dialog,_Speaker1,_Speaker2,_Speaker3,_Speaker4,_Speaker5);
 
 PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2,(GUIDSTRING)_Speaker3,(GUIDSTRING)_Speaker4,(GUIDSTRING)_Speaker5,(GUIDSTRING)_Speaker6)
@@ -102,13 +84,9 @@ NOT QRY_GLOBAL_CrimeDialogIntercept_Wrapper(_Automated, _Speaker1,_Speaker2, _Sp
 AND
 NOT QRY_PlayOriginMoment(_Dialog,_Speaker1,_Speaker6)
 AND
-DB_LeaderLib_DialogOverride_Registered_RegularDialog(_SpeakerMatch, _Dialog, _UseDialog)
-AND
-LeaderLib_DialogOverride_QRY_SpeakerMatch(_Dialog, _SpeakerMatch, _Speaker1, _Speaker2, _Speaker3, _Speaker4, _Speaker5, _Speaker6)
-AND
-QRY_StartDialog(_Automated,_UseDialog,_Speaker1,_Speaker2,_Speaker3,_Speaker4,_Speaker5,_Speaker6)
+GlobalGetFlag("LeaderLib_DialogRedirectionEnabled", _RedirectionEnabled)
 THEN
-DB_NOOP(1);
+LeaderLib_DialogOverride_Internal_StartDialog(_Automated,_RedirectionEnabled,_Dialog,_Speaker1,_Speaker2,_Speaker3,_Speaker4,_Speaker5,_Speaker6);
 //END_REGION
 
 //REGION Proc_StartDialog_CompanionRecruitment
@@ -188,45 +166,33 @@ DB_NOOP(1);
 //REGION Proc_StartDialog_CLEANUP
 PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1)
-AND
-DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _SpeakerMatch)
 THEN
-NOT DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _SpeakerMatch);
+LeaderLib_DialogOverride_Internal_ClearTempData(_Dialog);
 
 PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2)
-AND
-DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _SpeakerMatch)
 THEN
-NOT DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _SpeakerMatch);
+LeaderLib_DialogOverride_Internal_ClearTempData(_Dialog);
 
 PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2,(GUIDSTRING)_Speaker3)
-AND
-DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _SpeakerMatch)
 THEN
-NOT DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _SpeakerMatch);
+LeaderLib_DialogOverride_Internal_ClearTempData(_Dialog);
 
 PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2,(GUIDSTRING)_Speaker3,(GUIDSTRING)_Speaker4)
-AND
-DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _SpeakerMatch)
 THEN
-NOT DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _SpeakerMatch);
+LeaderLib_DialogOverride_Internal_ClearTempData(_Dialog);
 
 PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2,(GUIDSTRING)_Speaker3,(GUIDSTRING)_Speaker4,(GUIDSTRING)_Speaker5)
-AND
-DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _SpeakerMatch)
 THEN
-NOT DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _SpeakerMatch);
+LeaderLib_DialogOverride_Internal_ClearTempData(_Dialog);
 
 PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2,(GUIDSTRING)_Speaker3,(GUIDSTRING)_Speaker4,(GUIDSTRING)_Speaker5,(GUIDSTRING)_Speaker6)
-AND
-DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _SpeakerMatch)
 THEN
-NOT DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _SpeakerMatch);
+LeaderLib_DialogOverride_Internal_ClearTempData(_Dialog);
 //END_REGION
 EXITSECTION
 

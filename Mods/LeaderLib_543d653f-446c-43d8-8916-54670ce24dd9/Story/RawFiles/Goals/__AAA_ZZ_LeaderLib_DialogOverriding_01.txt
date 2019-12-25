@@ -168,7 +168,7 @@ DB_LeaderLib_DialogOverride_Temp_Success(_Dialog, _UseDialog);
 PROC
 LeaderLib_DialogOverride_Internal_StartDialog((INTEGER)_Automated,(INTEGER)_RedirectionEnabled,(STRING)_Dialog,(GUIDSTRING)_Speaker1)
 AND
-DB_LeaderLib_DialogOverride_Temp_Success(_Dialog, _)
+NOT DB_LeaderLib_DialogOverride_Temp_Success(_Dialog, _)
 AND
 LeaderLib_DialogOverride_QRY_StartDialog(_Automated,_RedirectionEnabled,_Dialog,_Speaker1)
 THEN
@@ -177,7 +177,7 @@ DB_NOOP(1);
 PROC
 LeaderLib_DialogOverride_Internal_StartDialog((INTEGER)_Automated,(INTEGER)_RedirectionEnabled,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2)
 AND
-DB_LeaderLib_DialogOverride_Temp_Success(_Dialog, _)
+NOT DB_LeaderLib_DialogOverride_Temp_Success(_Dialog, _)
 AND
 LeaderLib_DialogOverride_QRY_StartDialog(_Automated,_RedirectionEnabled,_Dialog,_Speaker1,_Speaker2)
 THEN
@@ -186,7 +186,7 @@ DB_NOOP(1);
 PROC
 LeaderLib_DialogOverride_Internal_StartDialog((INTEGER)_Automated,(INTEGER)_RedirectionEnabled,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2,(GUIDSTRING)_Speaker3)
 AND
-DB_LeaderLib_DialogOverride_Temp_Success(_Dialog, _)
+NOT DB_LeaderLib_DialogOverride_Temp_Success(_Dialog, _)
 AND
 LeaderLib_DialogOverride_QRY_StartDialog(_Automated,_RedirectionEnabled,_Dialog,_Speaker1,_Speaker2,_Speaker3)
 THEN
@@ -195,7 +195,7 @@ DB_NOOP(1);
 PROC
 LeaderLib_DialogOverride_Internal_StartDialog((INTEGER)_Automated,(INTEGER)_RedirectionEnabled,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2,(GUIDSTRING)_Speaker3,(GUIDSTRING)_Speaker4)
 AND
-DB_LeaderLib_DialogOverride_Temp_Success(_Dialog, _)
+NOT DB_LeaderLib_DialogOverride_Temp_Success(_Dialog, _)
 AND
 LeaderLib_DialogOverride_QRY_StartDialog(_Automated,_RedirectionEnabled,_Dialog,_Speaker1,_Speaker2,_Speaker3,_Speaker4)
 THEN
@@ -204,7 +204,7 @@ DB_NOOP(1);
 PROC
 LeaderLib_DialogOverride_Internal_StartDialog((INTEGER)_Automated,(INTEGER)_RedirectionEnabled,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2,(GUIDSTRING)_Speaker3,(GUIDSTRING)_Speaker4,(GUIDSTRING)_Speaker5)
 AND
-DB_LeaderLib_DialogOverride_Temp_Success(_Dialog, _)
+NOT DB_LeaderLib_DialogOverride_Temp_Success(_Dialog, _)
 AND
 LeaderLib_DialogOverride_QRY_StartDialog(_Automated,_RedirectionEnabled,_Dialog,_Speaker1,_Speaker2,_Speaker3,_Speaker4,_Speaker5)
 THEN
@@ -213,7 +213,7 @@ DB_NOOP(1);
 PROC
 LeaderLib_DialogOverride_Internal_StartDialog((INTEGER)_Automated,(INTEGER)_RedirectionEnabled,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2,(GUIDSTRING)_Speaker3,(GUIDSTRING)_Speaker4,(GUIDSTRING)_Speaker5,(GUIDSTRING)_Speaker6)
 AND
-DB_LeaderLib_DialogOverride_Temp_Success(_Dialog, _)
+NOT DB_LeaderLib_DialogOverride_Temp_Success(_Dialog, _)
 AND
 LeaderLib_DialogOverride_QRY_StartDialog(_Automated,_RedirectionEnabled,_Dialog,_Speaker1,_Speaker2,_Speaker3,_Speaker4,_Speaker5,_Speaker6)
 THEN
@@ -265,6 +265,8 @@ AND
 NOT DB_LeaderLib_DialogOverride_Redirection_BlacklistedDialog(_Dialog)
 AND
 NOT DB_LeaderLib_ModMenu_RegisteredMenuData(_,_,_Dialog,_,_)
+AND
+NOT DB_PartyDecisionDialog_OutcomeEvent(_Dialog,_,_) // Ignore party decision dialogs
 THEN
 DB_NOOP(1);
 

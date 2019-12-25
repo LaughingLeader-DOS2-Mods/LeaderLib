@@ -321,7 +321,15 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_DialogRedirectionEnabled"},"value" : {"type" : 19, "value" : 0}}
-                                    ],"type" : {"type" : 22, "value" : "Global"}}
+                                    ],"type" : {"type" : 22, "value" : "Global"}},
+                                 {
+                                    "flag" : [
+                                       {
+                                          "name" : {"type" : 22, "value" : "LeaderLib_IsHost"},
+                                          "paramval" : {"type" : 4, "value" : 0},
+                                          "value" : {"type" : 19, "value" : 1}
+                                       }
+                                    ],"type" : {"type" : 22, "value" : "User"}}
                               ]
                            }
                         ],
@@ -329,7 +337,7 @@
                            {
                               "child" : [
                                  {
-                                    "UUID" : {"type" : 22, "value" : "d93285b1-3621-4978-83d9-b65af147520f"}
+                                    "UUID" : {"type" : 22, "value" : "62c5fcc9-05cb-42e0-bdc9-107f73180f71"}
                                  }
                               ]
                            }
@@ -356,7 +364,7 @@
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "2255;1329"}
+                                    "val" : {"type" : 23, "value" : "3855;1986"}
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "sourcetemplate"},
@@ -1161,6 +1169,12 @@
                                  },
                                  {
                                     "UUID" : {"type" : 22, "value" : "fd47762a-8cae-40f2-836d-dc7cf7e132f6"}
+                                 },
+                                 {
+                                    "UUID" : {"type" : 22, "value" : "25a47b62-3631-4892-8de1-a32f8f207f78"}
+                                 },
+                                 {
+                                    "UUID" : {"type" : 22, "value" : "d154f101-2300-44c4-93c1-2cf5054522a7"}
                                  }
                               ]
                            }
@@ -3558,7 +3572,15 @@
                                     "flag" : [
                                        {
                                           "name" : {"type" : 22, "value" : "LeaderLib_DialogRedirectionEnabled"},"value" : {"type" : 19, "value" : 1}}
-                                    ],"type" : {"type" : 22, "value" : "Global"}}
+                                    ],"type" : {"type" : 22, "value" : "Global"}},
+                                 {
+                                    "flag" : [
+                                       {
+                                          "name" : {"type" : 22, "value" : "LeaderLib_IsHost"},
+                                          "paramval" : {"type" : 4, "value" : 0},
+                                          "value" : {"type" : 19, "value" : 1}
+                                       }
+                                    ],"type" : {"type" : 22, "value" : "User"}}
                               ]
                            }
                         ],
@@ -3566,7 +3588,7 @@
                            {
                               "child" : [
                                  {
-                                    "UUID" : {"type" : 22, "value" : "d93285b1-3621-4978-83d9-b65af147520f"}
+                                    "UUID" : {"type" : 22, "value" : "62c5fcc9-05cb-42e0-bdc9-107f73180f71"}
                                  }
                               ]
                            }
@@ -3593,7 +3615,7 @@
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "2255;1548"}
+                                    "val" : {"type" : 23, "value" : "3855;2205"}
                                  },
                                  {
                                     "key" : {"type" : 22, "value" : "sourcetemplate"},
@@ -4245,12 +4267,6 @@
                                  },
                                  {
                                     "UUID" : {"type" : 22, "value" : "80d91ba9-c266-477d-b2c3-cbf3cb063414"}
-                                 },
-                                 {
-                                    "UUID" : {"type" : 22, "value" : "25a47b62-3631-4892-8de1-a32f8f207f78"}
-                                 },
-                                 {
-                                    "UUID" : {"type" : 22, "value" : "d154f101-2300-44c4-93c1-2cf5054522a7"}
                                  }
                               ]
                            }

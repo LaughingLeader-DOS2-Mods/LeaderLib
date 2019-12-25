@@ -703,6 +703,13 @@ PROC
 LeaderLib_Settings_Register_PortraitTrigger((INTEGER)_Index, (STRING)_Race, (INTEGER)_IsFemale, (INTEGER)_IsUndead, (TRIGGERGUID)_Trigger)
 THEN
 DB_LeaderLib_CC_PortraitTriggers(_Index, _Race, _IsFemale, _IsUndead, _Trigger);
+
+PROC
+LeaderLib_Settings_Internal_ClearPortraitTriggers()
+AND
+DB_LeaderLib_CC_PortraitTriggers(_Index, _Race, _IsFemale, _IsUndead, _Trigger)
+THEN
+NOT DB_LeaderLib_CC_PortraitTriggers(_Index, _Race, _IsFemale, _IsUndead, _Trigger);
 //END_REGION
 
 //REGION IGNORE_TAGS

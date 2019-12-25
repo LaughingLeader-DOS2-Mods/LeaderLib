@@ -1404,6 +1404,13 @@ DB_LeaderLog_Temp_RealString(_ID, _NumStr);
 PROC
 LeaderLog_RealToIntToString((STRING)_ID, (REAL)_a, (REAL)_b)
 AND
+DB_LeaderLog_Temp_RealString(_ID, _NumStr, _Num2Str)
+THEN
+NOT DB_LeaderLog_Temp_RealString(_ID, _NumStr, _Num2Str);
+
+PROC
+LeaderLog_RealToIntToString((STRING)_ID, (REAL)_a, (REAL)_b)
+AND
 Integer(_a, _ai)
 AND
 Integer(_b, _bi)
@@ -1419,6 +1426,13 @@ THEN
 NOT DB_LeaderLog_IntString(_ai, _NumStr);
 NOT DB_LeaderLog_IntString(_bi, _Num2Str);
 DB_LeaderLog_Temp_RealString(_ID, _NumStr, _Num2Str);
+
+PROC
+LeaderLog_RealToIntToString((STRING)_ID, (REAL)_a, (REAL)_b, (REAL)_c)
+AND
+DB_LeaderLog_Temp_RealString(_ID, _NumStr, _Num2Str, _Num3Str)
+THEN
+NOT DB_LeaderLog_Temp_RealString(_ID, _NumStr, _Num2Str, _Num3Str);
 
 PROC
 LeaderLog_RealToIntToString((STRING)_ID, (REAL)_a, (REAL)_b, (REAL)_c)

@@ -67,7 +67,7 @@ LeaderLib_EventFlow_Init_AddSortFlow()
 AND
 LeaderLib_ModMenu_QRY_SortNeeded()
 AND
-NOT DB_LeaderLib_Array_Dictionary("LeaderLib_DefaultEventFlow", "LeaderLib_Commands_SortMenus", "LeaderLib_Events_OnMenuSortComplete")
+NOT DB_LeaderLib_Dictionary_Data("LeaderLib_DefaultEventFlow", _, "LeaderLib_Commands_SortMenus", "LeaderLib_Events_OnMenuSortComplete")
 THEN
 LeaderLib_Array_AddToDictionary("LeaderLib_DefaultEventFlow", "LeaderLib_Commands_SortMenus", "LeaderLib_Events_OnMenuSortComplete");
 //END_REGION

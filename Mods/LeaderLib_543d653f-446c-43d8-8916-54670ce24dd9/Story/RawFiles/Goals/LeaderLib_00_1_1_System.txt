@@ -60,21 +60,22 @@ LeaderLog_Log("DEBUG", "[LeaderLib:System][ERROR] No host character found.");
 PROC
 LeaderLib_CreateIterator((STRING)_IteratorName, (INTEGER)_MaxInt)
 THEN
-DB_LeaderLib_System_Temp_IteratorCreator(_IteratorName, _MaxInt);
-DB_LeaderLib_System_Temp_StartIteratorCreator(_IteratorName, 0);
+LeaderLib_Helper_CreateIteratorDB(_IteratorName, _MaxInt);
 
-IF
-DB_LeaderLib_System_Temp_StartIteratorCreator((STRING)_IteratorName, (INTEGER)_CurrentInt)
-AND
-DB_LeaderLib_System_Temp_IteratorCreator(_IteratorName, _MaxInt)
+PROC
+LeaderLib_Helper_CreateIteratorDB((STRING)_IteratorName, (INTEGER)_MaxInt)
+THEN
+LeaderLib_Helper_Internal_CreateIteratorDB_Run(_IteratorName, 0, _MaxInt);
+
+PROC
+LeaderLib_Helper_Internal_CreateIteratorDB_Run((STRING)_IteratorName, (INTEGER)_CurrentInt, (INTEGER)_MaxInt)
 AND
 _CurrentInt < _MaxInt
 AND
 IntegerSum(_CurrentInt, 1, _NextInt)
 THEN
 DB_LeaderLib_Iterator(_IteratorName, _CurrentInt);
-NOT DB_LeaderLib_System_Temp_StartIteratorCreator(_IteratorName, _CurrentInt);
-DB_LeaderLib_System_Temp_StartIteratorCreator(_IteratorName, _NextInt);
+LeaderLib_Helper_Internal_CreateIteratorDB_Run(_IteratorName, _NextInt, _MaxInt);
 //END_REGION
 
 //REGION EDITOR_MODE_FLAG

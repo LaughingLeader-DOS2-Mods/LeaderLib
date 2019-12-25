@@ -110,6 +110,7 @@ LeaderLib_Codex_AddToCodex("X");
 LeaderLib_Codex_AddToCodex("Y");
 LeaderLib_Codex_AddToCodex("Z");
 
+/*
 PROC
 LeaderLib_Codex_BuildCodex()
 AND
@@ -117,6 +118,7 @@ SysCount("DB_LeaderLib_Codex", 2, _Max)
 THEN
 SysClear("DB_LeaderLib_CodexCount", 1);
 DB_LeaderLib_CodexCount(_Max);
+*/
 //END_REGION
 
 //REGION ITERATOR_HARD_DEFINE

@@ -1152,6 +1152,11 @@ ObjectExists(_Seat, 1)
 THEN
 DB_NOOP(1);
 
+PROC
+LeaderLib_Traders_BlockSitting((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
+THEN
+DB_LeaderLib_Traders_BlockSitting(_TraderID, _Level);
+
 IF
 StoryEvent((CHARACTERGUID)_Trader, "LeaderLib_Commands_Trader_StartSitting")
 AND
@@ -1161,6 +1166,8 @@ LeaderLib_Traders_SetSeat(_Trader, _TraderID, _Level);
 
 PROC
 LeaderLib_Traders_SetSeat((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
+AND
+NOT DB_LeaderLib_Traders_BlockSitting(_TraderID, _Level)
 AND
 DB_LeaderLib_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID)
 AND
@@ -1175,7 +1182,7 @@ LeaderLog_Log("DEBUG", "[LeaderLib:DynamicTraders] Set seat value on trader ", _
 PROC
 LeaderLib_Traders_SetSeat((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
 AND
-NOT DB_LeaderLib_Traders_CantSit(_TraderID, _Level)
+DB_LeaderLib_Traders_BlockSitting(_TraderID, _Level)
 THEN
 ClearVarObject(_Trader, "Seat");
 //END_REGION

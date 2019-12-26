@@ -333,6 +333,109 @@ AND
 CharacterIsPartyMember(_Speaker, 1)
 THEN
 DB_NOOP(1);
+
+QRY
+LeaderLib_DialogOverride_QRY_SpeakersHaveAvatar((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2)
+AND
+IsTagged(_Speaker1, "AVATAR", _a)
+AND
+IsTagged(_Speaker1, "AVATAR", _b)
+AND
+IntegerMax(_a, _b, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_DialogOverride_QRY_SpeakersHaveAvatar((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3)
+AND
+IsTagged(_Speaker1, "AVATAR", _a)
+AND
+IsTagged(_Speaker2, "AVATAR", _b)
+AND
+IntegerSum(_a,_b,_Group1)
+AND
+IsTagged(_Speaker3, "AVATAR", _c)
+AND
+IntegerSum(_c,_Group1,_Final1)
+AND
+_Final1 > 0
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_DialogOverride_QRY_SpeakersHaveAvatar((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4)
+AND
+IsTagged(_Speaker1, "AVATAR", _a)
+AND
+IsTagged(_Speaker2, "AVATAR", _b)
+AND
+IntegerSum(_a,_b,_Group1)
+AND
+IsTagged(_Speaker3, "AVATAR", _c)
+AND
+IsTagged(_Speaker4, "AVATAR", _d)
+AND
+IntegerSum(_c,_d,_Group2)
+AND
+IntegerSum(_Group1, _Group2, _Final1)
+AND
+_Final1 > 0
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_DialogOverride_QRY_SpeakersHaveAvatar((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5)
+AND
+IsTagged(_Speaker1, "AVATAR", _a)
+AND
+IsTagged(_Speaker2, "AVATAR", _b)
+AND
+IntegerSum(_a,_b,_Group1)
+AND
+IsTagged(_Speaker3, "AVATAR", _c)
+AND
+IsTagged(_Speaker4, "AVATAR", _d)
+AND
+IntegerSum(_c,_d,_Group2)
+AND
+IsTagged(_Speaker5, "AVATAR", _e)
+AND
+IntegerSum(_Group1, _Group2, _Final1)
+AND
+IntegerSum(_Final1, _e, _Final2)
+AND
+_Final2 > 0
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_DialogOverride_QRY_SpeakersHaveAvatar((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
+AND
+IsTagged(_Speaker1, "AVATAR", _a)
+AND
+IsTagged(_Speaker2, "AVATAR", _b)
+AND
+IntegerSum(_a,_b,_Group1)
+AND
+IsTagged(_Speaker3, "AVATAR", _c)
+AND
+IsTagged(_Speaker4, "AVATAR", _d)
+AND
+IntegerSum(_c,_d,_Group2)
+AND
+IsTagged(_Speaker5, "AVATAR", _e)
+AND
+IsTagged(_Speaker6, "AVATAR", _f)
+AND
+IntegerSum(_e,_f,_Group3)
+AND
+IntegerSum(_Group1, _Group2, _Final1)
+AND
+IntegerSum(_Final1, _Group3, _Final2)
+AND
+_Final2 > 0
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION REDIRECT_CONTROLLED_SPEAKER

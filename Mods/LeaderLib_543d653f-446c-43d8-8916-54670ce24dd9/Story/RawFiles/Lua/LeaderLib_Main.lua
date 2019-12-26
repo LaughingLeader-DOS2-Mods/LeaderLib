@@ -9,7 +9,7 @@ end
 
 local function process_version_str(version_str)
 	local a,b,c,d = -1
-	vals = {}
+	local vals = {}
 	for s in string.gmatch(version_str, "([^.]+)") do
 		table.insert(vals, tonumber(s))
 	end
@@ -104,8 +104,8 @@ local function RefreshSkill(char, skill)
 	Osi.LeaderLib_Timers_StartObjectTimer(char, 60, "Timers_LeaderLib_RefreshUI_RevertSkillCooldownDirect", "LeaderLib_RefreshUI_RevertSkillCooldown");
 end
 
-LeaderLib = {
-	StringToVersion_Query = StringToVersion_Query,
+LeaderLib.Main = {
+	--StringToVersion_Query = StringToVersion_Query,
 	StringToVersion = StringToVersion,
 	PrintAttributes = PrintAttributes,
 	PrintTest = PrintTest,
@@ -114,6 +114,6 @@ LeaderLib = {
 }
 
 --Export local functions to global for now
-for name,func in pairs(LeaderLib) do
-    _G["LeaderLib_" .. name] = func
+for name,func in pairs(LeaderLib.Main) do
+    _G["LeaderLib_Ext_" .. name] = func
 end

@@ -1334,12 +1334,18 @@ LeaderLib_Recon_ClearParams("leaderlib_lua");
 IF
 TextEventSet("leaderlib_luareset")
 THEN
-/* [OSITOOLS_ONLY]
-NRD_LuaReset(1);
-*/
+DB_NOOP(1);
 // [BEGIN_NO_OSITOOLS]
 LeaderLog_Log("DEBUG", "[LeaderLib_00_5_Helpers_Editor:TextEventSet(leaderlib_lua)] [*WARNING*] The extender is not active, or conditional compilation does not work!");
 // [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+IF
+TextEventSet("leaderlib_luareset")
+THEN
+NRD_LuaReset(1);
+LeaderLog_Log("DEBUG", "[LeaderLib_00_5_Helpers_Editor:TextEventSet(leaderlib_lua)] Reset lua.");
+*/
 //END_REGION
 
 IF

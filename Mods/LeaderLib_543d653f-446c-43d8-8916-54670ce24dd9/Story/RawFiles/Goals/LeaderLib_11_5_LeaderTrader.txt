@@ -670,8 +670,9 @@ LeaderLib_Dialog_SetNameOverride(_LeaderTrader, "Lothar");
 //REGION FLAG_COMMANDS
 IF
 ObjectFlagSet("LeaderLib_LeaderTrader_GiveIntroItems", (CHARACTERGUID)_Speaker, _)
+AND
+GlobalGetFlag("LeaderLib_AutoAddModMenuBooksDisabled", 0)
 THEN
-ObjectClearFlag(_Speaker, "LeaderLib_LeaderTrader_GiveIntroItems", 0);
 LeaderLib_LeaderTrader_GiveIntroItems(_Speaker);
 
 PROC

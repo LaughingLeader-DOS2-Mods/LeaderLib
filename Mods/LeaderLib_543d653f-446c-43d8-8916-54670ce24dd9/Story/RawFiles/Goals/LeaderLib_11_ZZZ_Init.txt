@@ -5,9 +5,11 @@ INITSECTION
 KBSECTION
 //REGION INIT_EVENT
 IF
-GameStarted(_Level,_)
+GameStarted(_Level, _Editor)
 AND
-IsGameLevel(_Level, 1)
+IsGameLevel(_Level, _IsGameLevel)
+AND
+IntegerMax(_Editor, _IsGameLevel, 1)
 THEN
 LeaderLib_System_ResetInit();
 // This timer starts twice in the editor?
@@ -40,7 +42,9 @@ DB_CurrentLevel(_Level)
 AND
 IsGameLevel(_Level, 1)
 AND
-NOT DB_GlobalFlag("LeaderLib_AddedInitialModMenuBooks")
+GlobalGetFlag("LeaderLib_AddedInitialModMenuBooks", 0)
+AND
+GlobalGetFlag("LeaderLib_AutoAddModMenuBooksDisabled", 0)
 AND
 DB_LeaderLib_Settings_ItemTemplates("Book_ModMenu", _ModMenuBookTemplate)
 AND

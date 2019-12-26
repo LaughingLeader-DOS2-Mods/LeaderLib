@@ -2,12 +2,15 @@ local global_flags = {
 	"LeaderLib_DialogRedirectionEnabled",
 	"LeaderLib_DialogRedirection_HighestPersuasionEnabled",
 	"LeaderLib_DialogRedirection_DisableUserRestriction",
-	"LeaderLib_AutoBalancePartyExperience",
+	--"LeaderLib_AutoBalancePartyExperience",
 	"LeaderLib_AutoAddModMenuBooksDisabled",
 	"LeaderLib_FriendlyFireEnabled",
 	"LeaderLib_AutosavingEnabled",
 	"LeaderLib_AutosaveOnCombatStart",
-	"LeaderLib_DisableAutosavingInCombat"
+	"LeaderLib_DisableAutosavingInCombat",
+	"LeaderLog_Debug_Enabled",
+	"LeaderLog_CombatLog_Disabled",
+	"LeaderLog_Status_Disabled",
 }
 
 --[[ local global_settings_example = {

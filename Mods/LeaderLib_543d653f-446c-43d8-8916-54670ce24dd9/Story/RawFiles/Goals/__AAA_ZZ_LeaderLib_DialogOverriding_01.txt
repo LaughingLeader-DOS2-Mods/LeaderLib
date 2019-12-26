@@ -253,7 +253,7 @@ UserGetFlag(_Avatar, "LeaderLib_DialogRedirectionTeleportingEnabled", 1)
 AND
 GetDistanceTo(_Avatar, _OwnedObject, _Dist)
 AND
-_Dist >= 10.0
+_Dist > 10.0
 THEN
 TeleportTo(_Avatar, _OwnedObject, "LeaderLib_DialogRedirectionTargetTeleported", 0, 1);
 DB_LeaderLib_DialogOverride_Temp_TeleportedRedirectionTarget((GUIDSTRING)_Avatar);

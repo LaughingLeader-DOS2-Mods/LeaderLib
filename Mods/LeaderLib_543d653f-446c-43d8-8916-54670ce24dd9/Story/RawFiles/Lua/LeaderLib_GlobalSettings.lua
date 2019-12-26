@@ -1,32 +1,28 @@
-local global_settings_example = {
+local global_flags = {
+	"LeaderLib_DialogRedirectionEnabled",
+	"LeaderLib_DialogRedirection_HighestPersuasionEnabled",
+	"LeaderLib_DialogRedirection_DisableUserRestriction",
+	"LeaderLib_AutoBalancePartyExperience",
+	"LeaderLib_AutoAddModMenuBooksDisabled",
+	"LeaderLib_FriendlyFireEnabled",
+	"LeaderLib_AutosavingEnabled",
+	"LeaderLib_AutosaveOnCombatStart",
+	"LeaderLib_DisableAutosavingInCombat"
+}
+
+--[[ local global_settings_example = {
 	GlobalFlags = {
 		"LeaderLib_DialogRedirectionEnabled",
 		"LeaderLib_DialogRedirection_HighestPersuasionEnabled",
 		"LeaderLib_DialogRedirection_DisableUserRestriction",
 		"LeaderLib_AutoBalancePartyExperience",
 		"LeaderLib_AutoAddModMenuBooksDisabled",
+		"LeaderLib_AutosavingEnabled",
+		"LeaderLib_AutosaveOnCombatStart",
+		"LeaderLib_DisableAutosavingInCombat",
 	},
-	Autosaving = {
-		GlobalFlags = {
-			"LeaderLib_AutosavingEnabled",
-			"LeaderLib_AutosaveOnCombatStart",
-			"LeaderLib_DisableAutosavingInCombat",
-		},
-		Interval = "LeaderLib_Autosave_Interval_15"
-	}
-}
-
-local global_settings_base = {
-	GlobalFlags = {
-		
-	},
-	Autosaving = {
-		GlobalFlags = {
-			
-		},
-		Interval = "LeaderLib_Autosave_Interval_15"
-	}
-}
+	AutosavingInterval = "LeaderLib_Autosave_Interval_15"
+} ]]
 
 local autosaving_interval = {
 	"LeaderLib_Autosave_Interval_2",
@@ -54,7 +50,7 @@ local function parse_settings(tbl)
 					GlobalSetFlag(flag)
 				end
 			end
-		elseif k == "Interval" then
+		elseif k == "AutosavingInterval" then
 			if type(v) == "string" then
 				GlobalSetFlag(v)
 				break
@@ -62,6 +58,12 @@ local function parse_settings(tbl)
 		end
 		if type(v) == "table" then
 			parse_settings(v)
+		end
+	end
+
+	for _,flag in ipairs(global_flags) do
+		if LeaderLib.Common.TableHasEntry(tbl, flag) == false then
+			GlobalClearFlag(flag)
 		end
 	end
 end
@@ -75,6 +77,7 @@ local function LoadGlobalSettings()
 	else
 		Ext.Print("[LeaderLib:GlobalSettings.lua] No global settings found.")
 	end
+	return true
 end
 
 local function LoadGlobalSettings_Error (x)
@@ -83,43 +86,47 @@ local function LoadGlobalSettings_Error (x)
 end
 
 local function LoadGlobalSettings_Run()
-	Ext.Print("[LeaderLib:GlobalSettings.lua] Loading global settings.")
-	xpcall(LoadGlobalSettings, LoadGlobalSettings_Error)
+	if (xpcall(LoadGlobalSettings, LoadGlobalSettings_Error)) then
+		Osi.LeaderLog_Log("DEBUG", "[LeaderLib:GlobalSettings.lua] Loaded global settings.")
+	end
 end
 
 local function build_settings(tbl)
 	for k,v in pairs(tbl) do
 		if k == "GlobalFlags" then
-			tbl["GlobalFlags"] = {}
-			for _,flag in ipairs(k) do
-				if type(flag) == "string" then
-					local flag_set = GlobalGetFlag(flag)
-					if flag_set == 1 then
-						tbl[#tbl+1] = flag
+			for _,flag in ipairs(global_flags) do
+				local flag_set = GlobalGetFlag(flag)
+				if flag_set == 1 then
+					if LeaderLib.Common.TableHasEntry(v, flag) == false then
+						v[#v+1] = flag
 					end
 				end
 			end
-		elseif k == "Interval" then
-			for _,interval_flag in ipairs(autosaving_interval) do
-				local flag_set = GlobalGetFlag(interval_flag)
-				if flag_set == 1 then
-					v = interval_flag
-					break
-				end
-			end
+			table.sort(v)
 		end
-		if type(v) == "table" then
-			build_settings(v, tbl)
+		-- if type(v) == "table" then
+		-- 	build_settings(v, tbl)
+		-- end
+	end
+	if GlobalGetFlag("LeaderLib_AutosavingEnabled") == 1 then
+		for _,interval_flag in ipairs(autosaving_interval) do
+			local flag_set = GlobalGetFlag(interval_flag)
+			if flag_set == 1 then
+				tbl["Autosaving_Interval"] = interval_flag
+				break
+			end
 		end
 	end
 end
 
 local function SaveGlobalSettings()
-	local LeaderLib_GlobalSettings = global_settings_base
+	local LeaderLib_GlobalSettings = { GlobalFlags = {} }
 	build_settings(LeaderLib_GlobalSettings)
+	table.sort(LeaderLib_GlobalSettings)
 	local json = Ext.JsonStringify(LeaderLib_GlobalSettings)
 	NRD_SaveFile("LeaderLib_GlobalSettings.json", json)
 	Ext.Print("[LeaderLib:GlobalSettings.lua] Saved global settings. {" .. json .. "}")
+	return true
 end
 
 local function SaveGlobalSettings_Error (x)
@@ -128,8 +135,9 @@ local function SaveGlobalSettings_Error (x)
 end
 
 local function SaveGlobalSettings_Run()
-	Ext.Print("[LeaderLib:GlobalSettings.lua] Saved global settings.")
-	xpcall(SaveGlobalSettings, SaveGlobalSettings_Error)
+	if (xpcall(SaveGlobalSettings, SaveGlobalSettings_Error)) then
+		Osi.LeaderLog_Log("DEBUG", "[LeaderLib:GlobalSettings.lua] Saved global settings.")
+	end
 end
 
 LeaderLib.Settings = {

@@ -223,3 +223,6 @@ DB_CustomLockpickItemResponse 3
 DB_LeaderLib_Math_ScaleToRange 6
 DB_LeaderLib_PartyCounter_TimerIsActive 1
 DB_LeaderLib_Helper_Temp_RefreshUISkill 4
+DB_Dialogs 3
+DB_Dialogs 4
+DB_Dialogs 5

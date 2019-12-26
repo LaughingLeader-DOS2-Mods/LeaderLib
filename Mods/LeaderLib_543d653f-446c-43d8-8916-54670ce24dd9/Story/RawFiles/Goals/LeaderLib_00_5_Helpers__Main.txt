@@ -1305,6 +1305,34 @@ AND
 LeaderLib_Helper_QRY_SpeakerIsInDialog(_Speaker, _Instance)
 THEN
 DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_DialogIsRegistered((STRING)_Dialog)
+AND
+DB_Dialogs((GUIDSTRING)_Npc,(STRING)_Dialog)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_DialogIsRegistered((STRING)_Dialog)
+AND
+DB_Dialogs((GUIDSTRING)_Npc,(GUIDSTRING)_Npc2,(STRING)_Dialog)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_DialogIsRegistered((STRING)_Dialog)
+AND
+DB_Dialogs((GUIDSTRING)_Npc,(GUIDSTRING)_Npc2,(GUIDSTRING)_Npc3,(STRING)_Dialog)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_DialogIsRegistered((STRING)_Dialog)
+AND
+DB_Dialogs((GUIDSTRING)_Npc,(GUIDSTRING)_Npc2,(GUIDSTRING)_Npc3,(GUIDSTRING)_Npc4,(STRING)_Dialog)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION QUERIES_CHARACTERS

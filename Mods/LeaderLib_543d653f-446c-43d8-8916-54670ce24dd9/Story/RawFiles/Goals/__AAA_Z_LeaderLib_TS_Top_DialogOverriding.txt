@@ -23,6 +23,16 @@ THEN
 DB_NOOP(1);
 //END_REGION
 
+//REGION SKIPPING_REDIRECTION
+/*If the player iniates a dialog directly, don't redirect it.*/
+/*
+IF    
+DialogStartRequested(_Target, _Player)
+THEN
+UserSetFlag((CHARACTERGUID)_Player, "LeaderLib_DialogOverride_PlayerStarted", 0);
+*/
+//END_REGION
+
 //REGION Proc_StartDialog_Override
 PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1)

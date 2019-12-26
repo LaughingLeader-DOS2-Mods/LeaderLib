@@ -341,7 +341,7 @@ LeaderLib_DialogOverride_Internal_BuildAvatarDistances((STRING)_Dialog, (GUIDSTR
 AND
 _AvatarsCount > 1
 THEN
-DB_LeaderLib_DialogOverride_Temp_Redirection_ClosestAvatar(_Dialog, _Speaker, (GUIDSTRING)NULL_00000000-0000-0000-0000-000000000000, 999.0);
+DB_LeaderLib_DialogOverride_Temp_Redirection_ClosestAvatar(_Dialog, _Speaker, NULL_00000000-0000-0000-0000-000000000000, 999.0);
 
 PROC
 LeaderLib_DialogOverride_Internal_BuildAvatarDistances((STRING)_Dialog, (GUIDSTRING)_Speaker, (INTEGER)_AvatarsCount, 1)

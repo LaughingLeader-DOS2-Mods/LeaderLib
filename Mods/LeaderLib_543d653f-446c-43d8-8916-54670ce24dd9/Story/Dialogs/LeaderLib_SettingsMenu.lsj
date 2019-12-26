@@ -397,280 +397,6 @@
 								},
 								"UUID": {
 									"type": 22,
-									"value": "154fa839-cc7e-405d-86d0-c7c55d2fc735"
-								},
-								"addressedspeaker": {
-									"type": 4,
-									"value": -1
-								},
-								"constructor": {
-									"type": 22,
-									"value": "TagQuestion"
-								},
-								"endnode": {
-									"type": 19,
-									"value": false
-								},
-								"exclusive": {
-									"type": 19,
-									"value": false
-								},
-								"optional": {
-									"type": 19,
-									"value": false
-								},
-								"speaker": {
-									"type": 4,
-									"value": 0
-								},
-								"stub": {
-									"type": 19,
-									"value": false
-								},
-								"transitionmode": {
-									"type": 1,
-									"value": 0
-								},
-								"waittime": {
-									"type": 6,
-									"value": -1.0
-								},
-								"GameData": [
-									{
-										"CameraTarget": {
-											"type": 4,
-											"value": -1
-										},
-										"CustomMovie": {
-											"type": 23,
-											"value": ""
-										},
-										"Emotion": {
-											"type": 23,
-											"value": "Default"
-										},
-										"ExtraWaitTime": {
-											"type": 4,
-											"value": 0
-										},
-										"SoundEvent": {
-											"type": 23,
-											"value": ""
-										},
-										"AiPersonalities": [
-											{}
-										],
-										"MusicInstrumentSounds": [
-											{}
-										],
-										"OriginSound": [
-											{}
-										]
-									}
-								],
-								"TaggedTexts": [
-									{
-										"TaggedText": [
-											{
-												"HasTagRule": {
-													"type": 19,
-													"value": true
-												},
-												"RuleGroup": [
-													{
-														"TagCombineOp": {
-															"type": 1,
-															"value": 0
-														},
-														"Rules": [
-															{}
-														]
-													}
-												],
-												"TagTexts": [
-													{
-														"TagText": [
-															{
-																"TagText": {
-																	"type": 28,
-																	"value": "[USER] Don't teleport your avatar to the dialog event when dialog gets redirected.",
-																	"handle": "h024f32dbg7cebg45b8g8b4eg302439dce463"
-																},
-																"stub": {
-																	"type": 19,
-																	"value": true
-																}
-															}
-														]
-													}
-												]
-											}
-										]
-									}
-								],
-								"Tags": [
-									{}
-								],
-								"checkflags": [
-									{
-										"flaggroup": [
-											{
-												"type": {
-													"type": 22,
-													"value": "Global"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirectionEnabled"
-														},
-														"value": {
-															"type": 19,
-															"value": true
-														}
-													}
-												]
-											},
-											{
-												"type": {
-													"type": 22,
-													"value": "User"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirectionTeleportingEnabled"
-														},
-														"paramval": {
-															"type": 4,
-															"value": 0
-														},
-														"value": {
-															"type": 19,
-															"value": true
-														}
-													}
-												]
-											}
-										]
-									}
-								],
-								"children": [
-									{
-										"child": [
-											{
-												"UUID": {
-													"type": 22,
-													"value": "62c5fcc9-05cb-42e0-bdc9-107f73180f71"
-												}
-											}
-										]
-									}
-								],
-								"editorData": [
-									{
-										"data": [
-											{
-												"key": {
-													"type": 22,
-													"value": "ID"
-												},
-												"val": {
-													"type": 23,
-													"value": "N216"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "NodeContext"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "collapsed"
-												},
-												"val": {
-													"type": 23,
-													"value": "False"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "logicalname"
-												},
-												"val": {
-													"type": 23,
-													"value": "Question"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "position"
-												},
-												"val": {
-													"type": 23,
-													"value": "3855;1767"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "sourcetemplate"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											}
-										]
-									}
-								],
-								"setflags": [
-									{
-										"flaggroup": [
-											{
-												"type": {
-													"type": 22,
-													"value": "User"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirectionTeleportingEnabled"
-														},
-														"paramval": {
-															"type": 4,
-															"value": 0
-														},
-														"value": {
-															"type": 19,
-															"value": false
-														}
-													}
-												]
-											}
-										]
-									}
-								]
-							},
-							{
-								"ShowOnce": {
-									"type": 19,
-									"value": false
-								},
-								"UUID": {
-									"type": 22,
 									"value": "1e617c07-4196-466f-a64a-e13239710c9c"
 								},
 								"addressedspeaker": {
@@ -868,7 +594,7 @@
 								},
 								"UUID": {
 									"type": 22,
-									"value": "25a47b62-3631-4892-8de1-a32f8f207f78"
+									"value": "1f26ebf2-5a80-4a02-bbe8-dce8a433c397"
 								},
 								"addressedspeaker": {
 									"type": 4,
@@ -964,8 +690,8 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[HOST[ Enable <b>Dialog Redirection</b>. If dialog tries to start with a party member that is not an AVATAR (the crown symbol), the avatar that owns that character will be used instead.",
-																	"handle": "hf0eb5097g325bg4254gaf97g77255a6380ad"
+																	"value": "[HOST] Enable Friendly Fire. This setting is for mods that implement friendly fire in their skill targeting conditions. ",
+																	"handle": "h199f5401g295eg4b24ga52ag9cf3a9844635"
 																},
 																"stub": {
 																	"type": 19,
@@ -994,7 +720,7 @@
 													{
 														"name": {
 															"type": 22,
-															"value": "LeaderLib_DialogRedirectionEnabled"
+															"value": "LeaderLib_FriendlyFireEnabled"
 														},
 														"value": {
 															"type": 19,
@@ -1050,7 +776,7 @@
 												},
 												"val": {
 													"type": 23,
-													"value": "N195"
+													"value": "N246"
 												}
 											},
 											{
@@ -1090,7 +816,7 @@
 												},
 												"val": {
 													"type": 23,
-													"value": "3855;1110"
+													"value": "3855;1329"
 												}
 											},
 											{
@@ -1118,7 +844,7 @@
 													{
 														"name": {
 															"type": 22,
-															"value": "LeaderLib_DialogRedirectionEnabled"
+															"value": "LeaderLib_FriendlyFireEnabled"
 														},
 														"value": {
 															"type": 19,
@@ -1669,6 +1395,119 @@
 												"val": {
 													"type": 23,
 													"value": "655;-642"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "sourcetemplate"
+												},
+												"val": {
+													"type": 23,
+													"value": ""
+												}
+											}
+										]
+									}
+								]
+							},
+							{
+								"DualDialog": {
+									"type": 30,
+									"value": "LeaderLib_DialogRedirectionMenu"
+								},
+								"Party": {
+									"type": 19,
+									"value": false
+								},
+								"ShowOnce": {
+									"type": 19,
+									"value": false
+								},
+								"UUID": {
+									"type": 22,
+									"value": "46a706e9-ffb3-4e6d-8142-911e5828c651"
+								},
+								"constructor": {
+									"type": 22,
+									"value": "DualDialog"
+								},
+								"endnode": {
+									"type": 19,
+									"value": false
+								},
+								"exclusive": {
+									"type": 19,
+									"value": false
+								},
+								"optional": {
+									"type": 19,
+									"value": false
+								},
+								"transitionmode": {
+									"type": 1,
+									"value": 1
+								},
+								"waittime": {
+									"type": 6,
+									"value": 666.0
+								},
+								"Tags": [
+									{}
+								],
+								"children": [
+									{
+										"child": [
+											{
+												"UUID": {
+													"type": 22,
+													"value": "62c5fcc9-05cb-42e0-bdc9-107f73180f71"
+												}
+											}
+										]
+									}
+								],
+								"editorData": [
+									{
+										"data": [
+											{
+												"key": {
+													"type": 22,
+													"value": "ID"
+												},
+												"val": {
+													"type": 23,
+													"value": "N242"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "collapsed"
+												},
+												"val": {
+													"type": 23,
+													"value": "False"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "logicalname"
+												},
+												"val": {
+													"type": 23,
+													"value": "DualDialog"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "position"
+												},
+												"val": {
+													"type": 23,
+													"value": "3855;1110"
 												}
 											},
 											{
@@ -2541,280 +2380,6 @@
 								},
 								"UUID": {
 									"type": 22,
-									"value": "595ecbde-ebf4-416a-adff-4dc671d74e28"
-								},
-								"addressedspeaker": {
-									"type": 4,
-									"value": -1
-								},
-								"constructor": {
-									"type": 22,
-									"value": "TagQuestion"
-								},
-								"endnode": {
-									"type": 19,
-									"value": false
-								},
-								"exclusive": {
-									"type": 19,
-									"value": false
-								},
-								"optional": {
-									"type": 19,
-									"value": false
-								},
-								"speaker": {
-									"type": 4,
-									"value": 0
-								},
-								"stub": {
-									"type": 19,
-									"value": false
-								},
-								"transitionmode": {
-									"type": 1,
-									"value": 0
-								},
-								"waittime": {
-									"type": 6,
-									"value": -1.0
-								},
-								"GameData": [
-									{
-										"CameraTarget": {
-											"type": 4,
-											"value": -1
-										},
-										"CustomMovie": {
-											"type": 23,
-											"value": ""
-										},
-										"Emotion": {
-											"type": 23,
-											"value": "Default"
-										},
-										"ExtraWaitTime": {
-											"type": 4,
-											"value": 0
-										},
-										"SoundEvent": {
-											"type": 23,
-											"value": ""
-										},
-										"AiPersonalities": [
-											{}
-										],
-										"MusicInstrumentSounds": [
-											{}
-										],
-										"OriginSound": [
-											{}
-										]
-									}
-								],
-								"TaggedTexts": [
-									{
-										"TaggedText": [
-											{
-												"HasTagRule": {
-													"type": 19,
-													"value": true
-												},
-												"RuleGroup": [
-													{
-														"TagCombineOp": {
-															"type": 1,
-															"value": 0
-														},
-														"Rules": [
-															{}
-														]
-													}
-												],
-												"TagTexts": [
-													{
-														"TagText": [
-															{
-																"TagText": {
-																	"type": 28,
-																	"value": "[USER] Teleport your avatar to the dialog event when dialog gets redirected.",
-																	"handle": "h59075d75g55f1g4ba4g87b7g4953c6818ee3"
-																},
-																"stub": {
-																	"type": 19,
-																	"value": true
-																}
-															}
-														]
-													}
-												]
-											}
-										]
-									}
-								],
-								"Tags": [
-									{}
-								],
-								"checkflags": [
-									{
-										"flaggroup": [
-											{
-												"type": {
-													"type": 22,
-													"value": "Global"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirectionEnabled"
-														},
-														"value": {
-															"type": 19,
-															"value": true
-														}
-													}
-												]
-											},
-											{
-												"type": {
-													"type": 22,
-													"value": "User"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirectionTeleportingEnabled"
-														},
-														"paramval": {
-															"type": 4,
-															"value": 0
-														},
-														"value": {
-															"type": 19,
-															"value": false
-														}
-													}
-												]
-											}
-										]
-									}
-								],
-								"children": [
-									{
-										"child": [
-											{
-												"UUID": {
-													"type": 22,
-													"value": "62c5fcc9-05cb-42e0-bdc9-107f73180f71"
-												}
-											}
-										]
-									}
-								],
-								"editorData": [
-									{
-										"data": [
-											{
-												"key": {
-													"type": 22,
-													"value": "ID"
-												},
-												"val": {
-													"type": 23,
-													"value": "N212"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "NodeContext"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "collapsed"
-												},
-												"val": {
-													"type": 23,
-													"value": "False"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "logicalname"
-												},
-												"val": {
-													"type": 23,
-													"value": "Question"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "position"
-												},
-												"val": {
-													"type": 23,
-													"value": "3855;1548"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "sourcetemplate"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											}
-										]
-									}
-								],
-								"setflags": [
-									{
-										"flaggroup": [
-											{
-												"type": {
-													"type": 22,
-													"value": "User"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirectionTeleportingEnabled"
-														},
-														"paramval": {
-															"type": 4,
-															"value": 0
-														},
-														"value": {
-															"type": 19,
-															"value": true
-														}
-													}
-												]
-											}
-										]
-									}
-								]
-							},
-							{
-								"ShowOnce": {
-									"type": 19,
-									"value": false
-								},
-								"UUID": {
-									"type": 22,
 									"value": "5a7662e0-e793-4988-867a-122a9c4f91c6"
 								},
 								"addressedspeaker": {
@@ -2912,7 +2477,7 @@
 																"TagText": {
 																	"type": 28,
 																	"value": "[Back]",
-																	"handle": "he50309cbg61ffg4355g88b3g3617d2ccfc86"
+																	"handle": "h5eb45b65g72aeg4b6cga7eegd42b61850315"
 																},
 																"stub": {
 																	"type": 19,
@@ -3150,31 +2715,13 @@
 											{
 												"UUID": {
 													"type": 22,
-													"value": "25a47b62-3631-4892-8de1-a32f8f207f78"
+													"value": "46a706e9-ffb3-4e6d-8142-911e5828c651"
 												}
 											},
 											{
 												"UUID": {
 													"type": 22,
-													"value": "d154f101-2300-44c4-93c1-2cf5054522a7"
-												}
-											},
-											{
-												"UUID": {
-													"type": 22,
-													"value": "595ecbde-ebf4-416a-adff-4dc671d74e28"
-												}
-											},
-											{
-												"UUID": {
-													"type": 22,
-													"value": "154fa839-cc7e-405d-86d0-c7c55d2fc735"
-												}
-											},
-											{
-												"UUID": {
-													"type": 22,
-													"value": "81e1a9bd-cecd-4ff3-8166-be128ef4aa36"
+													"value": "1f26ebf2-5a80-4a02-bbe8-dce8a433c397"
 												}
 											},
 											{
@@ -3809,7 +3356,7 @@
 																"TagText": {
 																	"type": 28,
 																	"value": "[Back]",
-																	"handle": "h1fa59303gda2bg4cbfga649g8c2986ef2179"
+																	"handle": "h5eb45b65g72aeg4b6cga7eegd42b61850315"
 																},
 																"stub": {
 																	"type": 19,
@@ -4140,7 +3687,7 @@
 												},
 												"val": {
 													"type": 23,
-													"value": "3855;2424"
+													"value": "3855;1767"
 												}
 											},
 											{
@@ -4285,7 +3832,7 @@
 																"TagText": {
 																	"type": 28,
 																	"value": "[Back]",
-																	"handle": "hb3063ca1gfa6eg4d2bga591g4c7f72642a17"
+																	"handle": "h5eb45b65g72aeg4b6cga7eegd42b61850315"
 																},
 																"stub": {
 																	"type": 19,
@@ -5446,276 +4993,6 @@
 								},
 								"UUID": {
 									"type": 22,
-									"value": "81e1a9bd-cecd-4ff3-8166-be128ef4aa36"
-								},
-								"addressedspeaker": {
-									"type": 4,
-									"value": -1
-								},
-								"constructor": {
-									"type": 22,
-									"value": "TagQuestion"
-								},
-								"endnode": {
-									"type": 19,
-									"value": false
-								},
-								"exclusive": {
-									"type": 19,
-									"value": false
-								},
-								"optional": {
-									"type": 19,
-									"value": false
-								},
-								"speaker": {
-									"type": 4,
-									"value": 0
-								},
-								"stub": {
-									"type": 19,
-									"value": false
-								},
-								"transitionmode": {
-									"type": 1,
-									"value": 0
-								},
-								"waittime": {
-									"type": 6,
-									"value": -1.0
-								},
-								"GameData": [
-									{
-										"CameraTarget": {
-											"type": 4,
-											"value": -1
-										},
-										"CustomMovie": {
-											"type": 23,
-											"value": ""
-										},
-										"Emotion": {
-											"type": 23,
-											"value": "Default"
-										},
-										"ExtraWaitTime": {
-											"type": 4,
-											"value": 0
-										},
-										"SoundEvent": {
-											"type": 23,
-											"value": ""
-										},
-										"AiPersonalities": [
-											{}
-										],
-										"MusicInstrumentSounds": [
-											{}
-										],
-										"OriginSound": [
-											{}
-										]
-									}
-								],
-								"TaggedTexts": [
-									{
-										"TaggedText": [
-											{
-												"HasTagRule": {
-													"type": 19,
-													"value": true
-												},
-												"RuleGroup": [
-													{
-														"TagCombineOp": {
-															"type": 1,
-															"value": 0
-														},
-														"Rules": [
-															{}
-														]
-													}
-												],
-												"TagTexts": [
-													{
-														"TagText": [
-															{
-																"TagText": {
-																	"type": 28,
-																	"value": "[HOST] Enable Friendly Fire. This setting is for mods that implement friendly fire in their skill targeting conditions. ",
-																	"handle": "h199f5401g295eg4b24ga52ag9cf3a9844635"
-																},
-																"stub": {
-																	"type": 19,
-																	"value": true
-																}
-															}
-														]
-													}
-												]
-											}
-										]
-									}
-								],
-								"Tags": [
-									{}
-								],
-								"checkflags": [
-									{
-										"flaggroup": [
-											{
-												"type": {
-													"type": 22,
-													"value": "Global"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_FriendlyFireEnabled"
-														},
-														"value": {
-															"type": 19,
-															"value": false
-														}
-													}
-												]
-											},
-											{
-												"type": {
-													"type": 22,
-													"value": "User"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_IsHost"
-														},
-														"paramval": {
-															"type": 4,
-															"value": 0
-														},
-														"value": {
-															"type": 19,
-															"value": true
-														}
-													}
-												]
-											}
-										]
-									}
-								],
-								"children": [
-									{
-										"child": [
-											{
-												"UUID": {
-													"type": 22,
-													"value": "62c5fcc9-05cb-42e0-bdc9-107f73180f71"
-												}
-											}
-										]
-									}
-								],
-								"editorData": [
-									{
-										"data": [
-											{
-												"key": {
-													"type": 22,
-													"value": "ID"
-												},
-												"val": {
-													"type": 23,
-													"value": "N59"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "NodeContext"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "collapsed"
-												},
-												"val": {
-													"type": 23,
-													"value": "False"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "logicalname"
-												},
-												"val": {
-													"type": 23,
-													"value": "Question"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "position"
-												},
-												"val": {
-													"type": 23,
-													"value": "3855;1986"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "sourcetemplate"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											}
-										]
-									}
-								],
-								"setflags": [
-									{
-										"flaggroup": [
-											{
-												"type": {
-													"type": 22,
-													"value": "Global"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_FriendlyFireEnabled"
-														},
-														"value": {
-															"type": 19,
-															"value": true
-														}
-													}
-												]
-											}
-										]
-									}
-								]
-							},
-							{
-								"ShowOnce": {
-									"type": 19,
-									"value": false
-								},
-								"UUID": {
-									"type": 22,
 									"value": "8acc366e-c8a6-4bce-90fb-767658418655"
 								},
 								"addressedspeaker": {
@@ -6400,7 +5677,7 @@
 												},
 												"val": {
 													"type": 23,
-													"value": "3855;2205"
+													"value": "3855;1548"
 												}
 											},
 											{
@@ -8323,276 +7600,6 @@
 								},
 								"UUID": {
 									"type": 22,
-									"value": "d154f101-2300-44c4-93c1-2cf5054522a7"
-								},
-								"addressedspeaker": {
-									"type": 4,
-									"value": -1
-								},
-								"constructor": {
-									"type": 22,
-									"value": "TagQuestion"
-								},
-								"endnode": {
-									"type": 19,
-									"value": false
-								},
-								"exclusive": {
-									"type": 19,
-									"value": false
-								},
-								"optional": {
-									"type": 19,
-									"value": false
-								},
-								"speaker": {
-									"type": 4,
-									"value": 0
-								},
-								"stub": {
-									"type": 19,
-									"value": false
-								},
-								"transitionmode": {
-									"type": 1,
-									"value": 0
-								},
-								"waittime": {
-									"type": 6,
-									"value": -1.0
-								},
-								"GameData": [
-									{
-										"CameraTarget": {
-											"type": 4,
-											"value": -1
-										},
-										"CustomMovie": {
-											"type": 23,
-											"value": ""
-										},
-										"Emotion": {
-											"type": 23,
-											"value": "Default"
-										},
-										"ExtraWaitTime": {
-											"type": 4,
-											"value": 0
-										},
-										"SoundEvent": {
-											"type": 23,
-											"value": ""
-										},
-										"AiPersonalities": [
-											{}
-										],
-										"MusicInstrumentSounds": [
-											{}
-										],
-										"OriginSound": [
-											{}
-										]
-									}
-								],
-								"TaggedTexts": [
-									{
-										"TaggedText": [
-											{
-												"HasTagRule": {
-													"type": 19,
-													"value": true
-												},
-												"RuleGroup": [
-													{
-														"TagCombineOp": {
-															"type": 1,
-															"value": 0
-														},
-														"Rules": [
-															{}
-														]
-													}
-												],
-												"TagTexts": [
-													{
-														"TagText": [
-															{
-																"TagText": {
-																	"type": 28,
-																	"value": "[HOST[ Disable <b>Dialog Redirection</b>. Certain dialog events will start with the closest player character available. (Default)",
-																	"handle": "h26d9df87gcc82g4b87gb068g6e5e3b053113"
-																},
-																"stub": {
-																	"type": 19,
-																	"value": true
-																}
-															}
-														]
-													}
-												]
-											}
-										]
-									}
-								],
-								"Tags": [
-									{}
-								],
-								"checkflags": [
-									{
-										"flaggroup": [
-											{
-												"type": {
-													"type": 22,
-													"value": "Global"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirectionEnabled"
-														},
-														"value": {
-															"type": 19,
-															"value": true
-														}
-													}
-												]
-											},
-											{
-												"type": {
-													"type": 22,
-													"value": "User"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_IsHost"
-														},
-														"paramval": {
-															"type": 4,
-															"value": 0
-														},
-														"value": {
-															"type": 19,
-															"value": true
-														}
-													}
-												]
-											}
-										]
-									}
-								],
-								"children": [
-									{
-										"child": [
-											{
-												"UUID": {
-													"type": 22,
-													"value": "62c5fcc9-05cb-42e0-bdc9-107f73180f71"
-												}
-											}
-										]
-									}
-								],
-								"editorData": [
-									{
-										"data": [
-											{
-												"key": {
-													"type": 22,
-													"value": "ID"
-												},
-												"val": {
-													"type": 23,
-													"value": "N199"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "NodeContext"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "collapsed"
-												},
-												"val": {
-													"type": 23,
-													"value": "False"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "logicalname"
-												},
-												"val": {
-													"type": 23,
-													"value": "Question"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "position"
-												},
-												"val": {
-													"type": 23,
-													"value": "3855;1329"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "sourcetemplate"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											}
-										]
-									}
-								],
-								"setflags": [
-									{
-										"flaggroup": [
-											{
-												"type": {
-													"type": 22,
-													"value": "Global"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirectionEnabled"
-														},
-														"value": {
-															"type": 19,
-															"value": false
-														}
-													}
-												]
-											}
-										]
-									}
-								]
-							},
-							{
-								"ShowOnce": {
-									"type": 19,
-									"value": false
-								},
-								"UUID": {
-									"type": 22,
 									"value": "d30773ad-4592-42ab-aa1f-ea688e8fc32f"
 								},
 								"addressedspeaker": {
@@ -10234,7 +9241,7 @@
 												},
 												"val": {
 													"type": 23,
-													"value": "3855;2643"
+													"value": "3855;1986"
 												}
 											},
 											{
@@ -10302,7 +9309,7 @@
 				},
 				"nextNodeId": {
 					"type": 5,
-					"value": 228
+					"value": 246
 				}
 			}
 		}

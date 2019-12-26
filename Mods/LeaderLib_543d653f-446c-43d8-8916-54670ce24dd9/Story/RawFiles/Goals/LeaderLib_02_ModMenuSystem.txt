@@ -726,27 +726,25 @@ PROC
 ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_AttemptToOpenModMenu")
 AND
 NOT DB_DialogPlayers(_, _Player, _)
-AND
-QRY_SpeakerIsAvailable(_Player)
 THEN
 LeaderLib_ModMenu_Reopen(_Player);
 
 PROC
 LeaderLib_ModMenu_Reopen((CHARACTERGUID)_Player)
 AND
-DB_LeaderLib_Settings_ItemTemplates("Book_ModMenu", _ItemTemplate)
-AND
-GetItemForItemTemplateInPartyInventory(_Player, _ItemTemplate, _MenuBook)
+QRY_SpeakerIsAvailable((GUIDSTRING)_Player, 0)
 THEN
-Proc_StartDialog(0, "LeaderLib_ModMenu", _MenuBook, _Player);
+Proc_StartDialog(0, "LeaderLib_ModMenu", _Player);
 
 //Book not found?
+/*
 PROC
 LeaderLib_ModMenu_Reopen((CHARACTERGUID)_Player)
 AND
 LeaderLib_ModMenu_QRY_HasMenuSelected(_Player)
 THEN
-Proc_StartDialog(0, "LeaderLib_ModMenu", _Player, _Player);
+Proc_StartDialog(0, "LeaderLib_ModMenu", _Player);
+*/
 
 PROC
 LeaderLib_ModMenu_Reopen((CHARACTERGUID)_Player)

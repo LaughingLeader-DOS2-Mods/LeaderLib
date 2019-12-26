@@ -494,7 +494,7 @@
 																"TagText": {
 																	"type": 28,
 																	"value": "[USER] Don't teleport your avatar to the dialog event when dialog gets redirected.",
-																	"handle": "h8a3ac8b1g9321g4198g9c26ga4bbd91a9ae9"
+																	"handle": "h024f32dbg7cebg45b8g8b4eg302439dce463"
 																},
 																"stub": {
 																	"type": 19,
@@ -619,7 +619,7 @@
 												},
 												"val": {
 													"type": 23,
-													"value": "3855;2643"
+													"value": "3855;1767"
 												}
 											},
 											{
@@ -965,7 +965,7 @@
 																"TagText": {
 																	"type": 28,
 																	"value": "[HOST[ Enable <b>Dialog Redirection</b>. If dialog tries to start with a party member that is not an AVATAR (the crown symbol), the avatar that owns that character will be used instead.",
-																	"handle": "hf1535d5ag5040g4324g83fag0ee30f5a6df1"
+																	"handle": "hf0eb5097g325bg4254gaf97g77255a6380ad"
 																},
 																"stub": {
 																	"type": 19,
@@ -1090,7 +1090,7 @@
 												},
 												"val": {
 													"type": 23,
-													"value": "3855;1986"
+													"value": "3855;1110"
 												}
 											},
 											{
@@ -2638,7 +2638,7 @@
 																"TagText": {
 																	"type": 28,
 																	"value": "[USER] Teleport your avatar to the dialog event when dialog gets redirected.",
-																	"handle": "h5ab5081eg28bag49cag9739g94074df24cb9"
+																	"handle": "h59075d75g55f1g4ba4g87b7g4953c6818ee3"
 																},
 																"stub": {
 																	"type": 19,
@@ -2763,7 +2763,7 @@
 												},
 												"val": {
 													"type": 23,
-													"value": "3855;2424"
+													"value": "3855;1548"
 												}
 											},
 											{
@@ -3150,30 +3150,6 @@
 											{
 												"UUID": {
 													"type": 22,
-													"value": "81e1a9bd-cecd-4ff3-8166-be128ef4aa36"
-												}
-											},
-											{
-												"UUID": {
-													"type": 22,
-													"value": "8e9a1b78-7ac3-416b-b58d-cfc42a97eba1"
-												}
-											},
-											{
-												"UUID": {
-													"type": 22,
-													"value": "68376a7d-b741-4be6-a8b0-3ffcefd58afa"
-												}
-											},
-											{
-												"UUID": {
-													"type": 22,
-													"value": "fd47762a-8cae-40f2-836d-dc7cf7e132f6"
-												}
-											},
-											{
-												"UUID": {
-													"type": 22,
 													"value": "25a47b62-3631-4892-8de1-a32f8f207f78"
 												}
 											},
@@ -3193,6 +3169,30 @@
 												"UUID": {
 													"type": 22,
 													"value": "154fa839-cc7e-405d-86d0-c7c55d2fc735"
+												}
+											},
+											{
+												"UUID": {
+													"type": 22,
+													"value": "81e1a9bd-cecd-4ff3-8166-be128ef4aa36"
+												}
+											},
+											{
+												"UUID": {
+													"type": 22,
+													"value": "8e9a1b78-7ac3-416b-b58d-cfc42a97eba1"
+												}
+											},
+											{
+												"UUID": {
+													"type": 22,
+													"value": "68376a7d-b741-4be6-a8b0-3ffcefd58afa"
+												}
+											},
+											{
+												"UUID": {
+													"type": 22,
+													"value": "fd47762a-8cae-40f2-836d-dc7cf7e132f6"
 												}
 											}
 										]
@@ -4052,6 +4052,28 @@
 														}
 													}
 												]
+											},
+											{
+												"type": {
+													"type": 22,
+													"value": "User"
+												},
+												"flag": [
+													{
+														"name": {
+															"type": 22,
+															"value": "LeaderLib_IsHost"
+														},
+														"paramval": {
+															"type": 4,
+															"value": 0
+														},
+														"value": {
+															"type": 19,
+															"value": true
+														}
+													}
+												]
 											}
 										]
 									}
@@ -4118,7 +4140,7 @@
 												},
 												"val": {
 													"type": 23,
-													"value": "3855;1548"
+													"value": "3855;2424"
 												}
 											},
 											{
@@ -5520,7 +5542,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "Enable Friendly Fire. This setting is for mods that implement friendly fire in their skill targeting conditions. ",
+																	"value": "[HOST] Enable Friendly Fire. This setting is for mods that implement friendly fire in their skill targeting conditions. ",
 																	"handle": "h199f5401g295eg4b24ga52ag9cf3a9844635"
 																},
 																"stub": {
@@ -5555,6 +5577,28 @@
 														"value": {
 															"type": 19,
 															"value": false
+														}
+													}
+												]
+											},
+											{
+												"type": {
+													"type": 22,
+													"value": "User"
+												},
+												"flag": [
+													{
+														"name": {
+															"type": 22,
+															"value": "LeaderLib_IsHost"
+														},
+														"paramval": {
+															"type": 4,
+															"value": 0
+														},
+														"value": {
+															"type": 19,
+															"value": true
 														}
 													}
 												]
@@ -5624,7 +5668,7 @@
 												},
 												"val": {
 													"type": 23,
-													"value": "3855;1110"
+													"value": "3855;1986"
 												}
 											},
 											{
@@ -6230,7 +6274,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "Disable Friendly Fire. This setting is for mods that implement friendly fire in their skill targeting conditions.",
+																	"value": "[HOST] Disable Friendly Fire. This setting is for mods that implement friendly fire in their skill targeting conditions.",
 																	"handle": "h5d6cebcagab5eg45ebgbaf0gb0b77cd0ac39"
 																},
 																"stub": {
@@ -6261,6 +6305,28 @@
 														"name": {
 															"type": 22,
 															"value": "LeaderLib_FriendlyFireEnabled"
+														},
+														"value": {
+															"type": 19,
+															"value": true
+														}
+													}
+												]
+											},
+											{
+												"type": {
+													"type": 22,
+													"value": "User"
+												},
+												"flag": [
+													{
+														"name": {
+															"type": 22,
+															"value": "LeaderLib_IsHost"
+														},
+														"paramval": {
+															"type": 4,
+															"value": 0
 														},
 														"value": {
 															"type": 19,
@@ -6334,7 +6400,7 @@
 												},
 												"val": {
 													"type": 23,
-													"value": "3855;1329"
+													"value": "3855;2205"
 												}
 											},
 											{
@@ -8354,7 +8420,7 @@
 																"TagText": {
 																	"type": 28,
 																	"value": "[HOST[ Disable <b>Dialog Redirection</b>. Certain dialog events will start with the closest player character available. (Default)",
-																	"handle": "h39026cc8g598fg45acg9d5egac84a60f5f89"
+																	"handle": "h26d9df87gcc82g4b87gb068g6e5e3b053113"
 																},
 																"stub": {
 																	"type": 19,
@@ -8479,7 +8545,7 @@
 												},
 												"val": {
 													"type": 23,
-													"value": "3855;2205"
+													"value": "3855;1329"
 												}
 											},
 											{
@@ -8642,32 +8708,7 @@
 									{}
 								],
 								"checkflags": [
-									{
-										"flaggroup": [
-											{
-												"type": {
-													"type": 22,
-													"value": "User"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_IsHost"
-														},
-														"paramval": {
-															"type": 4,
-															"value": 0
-														},
-														"value": {
-															"type": 19,
-															"value": true
-														}
-													}
-												]
-											}
-										]
-									}
+									{}
 								],
 								"children": [
 									{
@@ -10105,6 +10146,28 @@
 														}
 													}
 												]
+											},
+											{
+												"type": {
+													"type": 22,
+													"value": "User"
+												},
+												"flag": [
+													{
+														"name": {
+															"type": 22,
+															"value": "LeaderLib_IsHost"
+														},
+														"paramval": {
+															"type": 4,
+															"value": 0
+														},
+														"value": {
+															"type": 19,
+															"value": true
+														}
+													}
+												]
 											}
 										]
 									}
@@ -10171,7 +10234,7 @@
 												},
 												"val": {
 													"type": 23,
-													"value": "3855;1767"
+													"value": "3855;2643"
 												}
 											},
 											{

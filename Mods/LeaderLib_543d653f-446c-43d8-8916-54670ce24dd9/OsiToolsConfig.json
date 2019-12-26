@@ -1,8 +1,7 @@
 {
-    "ExtendOsiris": true,
-    "Lua": true,
-    "UseCustomStats": false,
-    "UseCustomStatsPane": false,
-    "EnableFormulaOverrides": false,
-    "PreprocessStory": true
+    "FeatureFlags": [
+        "ExtendOsiris",
+        "Lua",
+        "Preprocessor"
+    ]
 }

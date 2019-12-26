@@ -307,6 +307,192 @@ THEN
 SysClear("DB_LeaderLib_DialogOverride_Temp_PostDialogActivation", 2);
 //END_REGION
 
+//REGION GET_REDIRECTION_POTENTIAL_TARGETS
+QRY
+LeaderLib_DialogOverride_QRY_UserMatchOrLoneAvatar((STRING)_Dialog, (GUIDSTRING)_Speaker, (GUIDSTRING)_Avatar, (INTEGER)_AvatarsCount, 0)
+AND
+LeaderLib_Helper_QRY_ObjectUserMatch(_Speaker, _Avatar)
+THEN
+DB_NOOP(1);
+
+//User restriction disabled, get the closest avatar
+QRY
+LeaderLib_DialogOverride_QRY_UserMatchOrLoneAvatar((STRING)_Dialog, (GUIDSTRING)_Speaker, (GUIDSTRING)_Avatar, (INTEGER)_AvatarsCount, 1)
+AND
+_AvatarsCount > 1
+AND
+DB_LeaderLib_DialogOverride_Temp_Redirection_ClosestAvatar(_Dialog, _Speaker, _Avatar, _Dist)
+THEN
+NOT DB_LeaderLib_DialogOverride_Temp_Redirection_ClosestAvatar(_Dialog, _Speaker, _Avatar, _Dist);
+
+//Only one avatar
+QRY
+LeaderLib_DialogOverride_QRY_UserMatchOrLoneAvatar((STRING)_Dialog, (GUIDSTRING)_Speaker, (GUIDSTRING)_Avatar, 1, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_DialogOverride_QRY_Internal_BuildAvatarDistances((STRING)_Dialog, (GUIDSTRING)_Speaker, (INTEGER)_AvatarsCount, (INTEGER)_DisableUserRestriction)
+THEN
+LeaderLib_DialogOverride_Internal_BuildAvatarDistances(_Dialog, _Speaker, _AvatarsCount, _DisableUserRestriction);
+
+PROC
+LeaderLib_DialogOverride_Internal_BuildAvatarDistances((STRING)_Dialog, (GUIDSTRING)_Speaker, (INTEGER)_AvatarsCount, 1)
+AND
+_AvatarsCount > 1
+THEN
+DB_LeaderLib_DialogOverride_Temp_Redirection_ClosestAvatar(_Dialog, _Speaker, (GUIDSTRING)NULL_00000000-0000-0000-0000-000000000000, 999.0);
+
+PROC
+LeaderLib_DialogOverride_Internal_BuildAvatarDistances((STRING)_Dialog, (GUIDSTRING)_Speaker, (INTEGER)_AvatarsCount, 1)
+AND
+_AvatarsCount > 1
+AND
+DB_Avatars(_Avatar)
+AND
+QRY_SpeakerIsAvailable((GUIDSTRING)_Avatar, 0)
+AND
+DB_LeaderLib_DialogOverride_Temp_Redirection_ClosestAvatar(_Dialog, _Speaker, _LastAvatar, _LastDist)
+AND
+GetDistanceTo(_Speaker, _Avatar, _Dist)
+AND
+_Dist < _LastDist
+THEN
+NOT DB_LeaderLib_DialogOverride_Temp_Redirection_ClosestAvatar(_Dialog, _Speaker, _LastAvatar, _LastDist);
+DB_LeaderLib_DialogOverride_Temp_Redirection_ClosestAvatar(_Dialog, (GUIDSTRING)_Speaker, (GUIDSTRING)_Avatar, _Dist);
+
+QRY
+LeaderLib_DialogOverride_QRY_Internal_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker)
+AND
+GlobalGetFlag("LeaderLib_DialogRedirection_HighestPersuasionEnabled", _HighestPersuasionEnabled)
+AND
+GlobalGetFlag("LeaderLib_DialogRedirection_ManualTargetEnabled", _ManualTargetEnabled)
+THEN
+LeaderLib_DialogOverride_Internal_GetRedirectionTarget(_Dialog, _Speaker, _HighestPersuasionEnabled, _ManualTargetEnabled);
+
+//Default Avatar Mode, with optional user ignoring / distance getting
+PROC
+LeaderLib_DialogOverride_Internal_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker, 0, 0)
+AND
+GlobalGetFlag("LeaderLib_DialogRedirection_DisableUserRestriction", _DisableUserRestriction)
+AND
+SysCount("DB_Avatars", 1, _AvatarsCount)
+AND
+LeaderLib_DialogOverride_QRY_Internal_BuildAvatarDistances(_Dialog, _Speaker, _AvatarsCount, _DisableUserRestriction)
+AND
+DB_Avatars(_Avatar)
+AND
+NOT DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, _, _Speaker)
+AND
+QRY_SpeakerIsAvailable((GUIDSTRING)_Avatar, 0)
+AND
+LeaderLib_DialogOverride_QRY_UserMatchOrLoneAvatar(_Dialog, (GUIDSTRING)_Speaker, (GUIDSTRING)_Avatar, _AvatarsCount, _DisableUserRestriction)
+THEN
+DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Avatar, (GUIDSTRING)_Speaker);
+
+//Highest Persuasion
+PROC
+LeaderLib_DialogOverride_Internal_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker, 1, 0)
+AND
+DB_IsPlayer(_Player)
+AND
+_Player != _Speaker
+AND
+CharacterGetAbility(_Player, "Persuasion", _Persuasion)
+AND
+QRY_SpeakerIsAvailable((GUIDSTRING)_Player, 0)
+AND
+NOT DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, _, _Speaker)
+THEN
+LeaderLib_DialogOverride_Internal_GetPersuasionTarget(_Dialog, _Speaker, _Player, _Persuasion);
+
+PROC
+LeaderLib_DialogOverride_Internal_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker, 1, 0)
+THEN
+LeaderLib_DialogOverride_Internal_SetPersuasionTargetFallback(_Dialog, _Speaker);
+
+PROC
+LeaderLib_DialogOverride_Internal_GetPersuasionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker, (GUIDSTRING)_Player, (INTEGER)_Persuasion)
+AND
+NOT DB_LeaderLib_DialogOverride_Temp_HighestPersuasion(_Dialog, _Speaker, _, _)
+THEN
+DB_LeaderLib_DialogOverride_Temp_HighestPersuasion(_Dialog, _Speaker, NULL_00000000-0000-0000-0000-000000000000, 0);
+
+PROC
+LeaderLib_DialogOverride_Internal_GetPersuasionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker, (GUIDSTRING)_Player, (INTEGER)_Persuasion)
+AND
+DB_LeaderLib_DialogOverride_Temp_HighestPersuasion(_Dialog, _Speaker, _LastPlayer, _LastAmount)
+AND
+_Persuasion > _LastAmount
+THEN
+NOT DB_LeaderLib_DialogOverride_Temp_HighestPersuasion(_Dialog, _Speaker, _LastPlayer, _LastAmount);
+DB_LeaderLib_DialogOverride_Temp_HighestPersuasion(_Dialog, _Speaker, _Player, _Persuasion);
+
+PROC
+LeaderLib_DialogOverride_Internal_GetPersuasionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker, (GUIDSTRING)_Player, (INTEGER)_Persuasion)
+AND
+DB_LeaderLib_DialogOverride_Temp_HighestPersuasion(_Dialog, _Speaker, _Player, _HighestPersuasion)
+AND
+_Player != NULL_00000000-0000-0000-0000-000000000000
+THEN
+NOT DB_LeaderLib_DialogOverride_Temp_HighestPersuasion(_Dialog, _Speaker, _Player, _HighestPersuasion);
+DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Player, (GUIDSTRING)_Speaker);
+
+//If no target with persuasion is found, use the default target options
+PROC
+LeaderLib_DialogOverride_Internal_SetPersuasionTargetFallback((STRING)_Dialog, (GUIDSTRING)_Speaker)
+AND
+DB_LeaderLib_DialogOverride_Temp_HighestPersuasion(_Dialog, _Speaker, NULL_00000000-0000-0000-0000-000000000000, _HighestPersuasion)
+AND
+GlobalGetFlag("LeaderLib_DialogRedirection_ManualTargetEnabled", _ManualTargetEnabled)
+THEN
+NOT DB_LeaderLib_DialogOverride_Temp_HighestPersuasion(_Dialog, _Speaker, NULL_00000000-0000-0000-0000-000000000000, _HighestPersuasion);
+LeaderLib_DialogOverride_Internal_GetRedirectionTarget(_Dialog, _Speaker, 0, _ManualTargetEnabled);
+
+//Manual Target
+PROC
+LeaderLib_DialogOverride_Internal_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker, 0, 1)
+AND
+NOT DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, _, _Speaker)
+AND
+DB_LeaderLib_DialogOverride_RedirectionTarget((CHARACTERGUID)_Char)
+AND
+_Char != _Speaker
+AND
+QRY_SpeakerIsAvailable((GUIDSTRING)_Char, 0)
+THEN
+DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Char, _Speaker);
+
+//Manual target could not be used, revert to default avatar checking
+PROC
+LeaderLib_DialogOverride_Internal_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker, 0, 1)
+AND
+NOT DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, _, _Speaker)
+THEN
+LeaderLib_DialogOverride_Internal_GetRedirectionTarget(_Dialog, _Speaker, 0, 0);
+//END_REGION
+
+//REGION MANUAL_TARGET
+IF
+ObjectFlagSet("LeaderLib_DialogRedirection_ManualTarget", _New, _)
+AND
+DB_LeaderLib_DialogOverride_RedirectionTarget(_Target)
+AND
+_New != _Target
+THEN
+ObjectClearFlag(_Target, "LeaderLib_DialogRedirection_ManualTarget", 0);
+
+IF
+ObjectFlagSet("LeaderLib_DialogRedirection_ManualTarget", (CHARACTERGUID)_Target, _)
+THEN
+DB_LeaderLib_DialogOverride_RedirectionTarget(_Target);
+
+IF
+ObjectFlagCleared("LeaderLib_DialogRedirection_ManualTarget", (CHARACTERGUID)_Target, _)
+THEN
+NOT DB_LeaderLib_DialogOverride_RedirectionTarget(_Target);
+//END_REGION
+
 //REGION GET_REDIRECTION_CONDITIONS
 QRY
 LeaderLib_DialogOverride_QRY_CanRedirect((STRING)_Dialog)
@@ -577,6 +763,20 @@ AND
 DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Avatar, (GUIDSTRING)_Speaker)
 THEN
 NOT DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, _Avatar, _Speaker);
+
+PROC
+LeaderLib_DialogOverride_Internal_ClearTempData((STRING)_Dialog)
+AND
+DB_LeaderLib_DialogOverride_Temp_HighestPersuasion(_Dialog, _Speaker, _LastPlayer, _LastAmount)
+THEN
+NOT DB_LeaderLib_DialogOverride_Temp_HighestPersuasion(_Dialog, _Speaker, _LastPlayer, _LastAmount);
+
+PROC
+LeaderLib_DialogOverride_Internal_ClearTempData((STRING)_Dialog)
+AND
+DB_LeaderLib_DialogOverride_Temp_Redirection_ClosestAvatar(_Dialog, _Speaker, _LastAvatar, _LastDist)
+THEN
+NOT DB_LeaderLib_DialogOverride_Temp_Redirection_ClosestAvatar(_Dialog, _Speaker, _LastAvatar, _LastDist);
 
 PROC
 LeaderLib_DialogOverride_Internal_ClearTempData((STRING)_Dialog)

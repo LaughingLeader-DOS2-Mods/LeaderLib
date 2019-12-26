@@ -15,16 +15,11 @@ LeaderLib_DialogOverride_QRY_CanRedirectObject(_Speaker6)
 AND
 NOT LeaderLib_DialogOverride_QRY_SpeakersHaveAvatar((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
 AND
-DB_Avatars(_Avatar)
+LeaderLib_DialogOverride_QRY_Internal_GetRedirectionTarget(_Dialog, _Speaker6)
 AND
-NOT DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, _, _)
-AND
-QRY_SpeakerIsAvailable((GUIDSTRING)_Avatar, 0)
-AND
-LeaderLib_Helper_QRY_ObjectUserMatch((GUIDSTRING)_Speaker6, (GUIDSTRING)_Avatar)
+DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Target, _Speaker6)
 THEN
-DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Avatar, _Speaker6);
-DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Avatar);
+DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Target);
 
 QRY
 LeaderLib_DialogOverride_QRY_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
@@ -37,16 +32,11 @@ LeaderLib_DialogOverride_QRY_CanRedirectObject(_Speaker5)
 AND
 NOT LeaderLib_DialogOverride_QRY_SpeakersHaveAvatar((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
 AND
-DB_Avatars(_Avatar)
+LeaderLib_DialogOverride_QRY_Internal_GetRedirectionTarget(_Dialog, _Speaker5)
 AND
-NOT DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, _, _)
-AND
-QRY_SpeakerIsAvailable((GUIDSTRING)_Avatar, 0)
-AND
-LeaderLib_Helper_QRY_ObjectUserMatch((GUIDSTRING)_Speaker5, (GUIDSTRING)_Avatar)
+DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Target, _Speaker5)
 THEN
-DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Avatar, _Speaker5);
-DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Avatar, (GUIDSTRING)_Speaker6);
+DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Target, (GUIDSTRING)_Speaker6);
 
 QRY
 LeaderLib_DialogOverride_QRY_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
@@ -59,16 +49,11 @@ LeaderLib_DialogOverride_QRY_CanRedirectObject(_Speaker4)
 AND
 NOT LeaderLib_DialogOverride_QRY_SpeakersHaveAvatar((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
 AND
-DB_Avatars(_Avatar)
+LeaderLib_DialogOverride_QRY_Internal_GetRedirectionTarget(_Dialog, _Speaker4)
 AND
-NOT DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, _, _)
-AND
-QRY_SpeakerIsAvailable((GUIDSTRING)_Avatar, 0)
-AND
-LeaderLib_Helper_QRY_ObjectUserMatch((GUIDSTRING)_Speaker4, (GUIDSTRING)_Avatar)
+DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Target, _Speaker4)
 THEN
-DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Avatar, _Speaker4);
-DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Avatar, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6);
+DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Target, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6);
 
 QRY
 LeaderLib_DialogOverride_QRY_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
@@ -81,16 +66,11 @@ LeaderLib_DialogOverride_QRY_CanRedirectObject(_Speaker3)
 AND
 NOT LeaderLib_DialogOverride_QRY_SpeakersHaveAvatar((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
 AND
-DB_Avatars(_Avatar)
+LeaderLib_DialogOverride_QRY_Internal_GetRedirectionTarget(_Dialog, _Speaker3)
 AND
-NOT DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, _, _)
-AND
-QRY_SpeakerIsAvailable((GUIDSTRING)_Avatar, 0)
-AND
-LeaderLib_Helper_QRY_ObjectUserMatch((GUIDSTRING)_Speaker3, (GUIDSTRING)_Avatar)
+DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Target, _Speaker3)
 THEN
-DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Avatar, _Speaker3);
-DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Avatar, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6);
+DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Target, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6);
 
 QRY
 LeaderLib_DialogOverride_QRY_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
@@ -103,16 +83,11 @@ LeaderLib_DialogOverride_QRY_CanRedirectObject(_Speaker2)
 AND
 NOT LeaderLib_DialogOverride_QRY_SpeakersHaveAvatar((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
 AND
-DB_Avatars(_Avatar)
+LeaderLib_DialogOverride_QRY_Internal_GetRedirectionTarget(_Dialog, _Speaker2)
 AND
-NOT DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, _, _)
-AND
-QRY_SpeakerIsAvailable((GUIDSTRING)_Avatar, 0)
-AND
-LeaderLib_Helper_QRY_ObjectUserMatch((GUIDSTRING)_Speaker2, (GUIDSTRING)_Avatar)
+DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Target, _Speaker2)
 THEN
-DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Avatar, _Speaker2);
-DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Avatar, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6);
+DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Target, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6);
 //END_REGION
 
 //REGION GET_REDIRECTION_TARGET_5
@@ -127,16 +102,11 @@ LeaderLib_DialogOverride_QRY_CanRedirectObject(_Speaker5)
 AND
 NOT LeaderLib_DialogOverride_QRY_SpeakersHaveAvatar((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5)
 AND
-DB_Avatars(_Avatar)
+LeaderLib_DialogOverride_QRY_Internal_GetRedirectionTarget(_Dialog, _Speaker5)
 AND
-NOT DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, _, _)
-AND
-QRY_SpeakerIsAvailable((GUIDSTRING)_Avatar, 0)
-AND
-LeaderLib_Helper_QRY_ObjectUserMatch((GUIDSTRING)_Speaker5, (GUIDSTRING)_Avatar)
+DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Target, _Speaker5)
 THEN
-DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Avatar, _Speaker5);
-DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Avatar);
+DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Target);
 
 QRY
 LeaderLib_DialogOverride_QRY_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5)
@@ -149,16 +119,11 @@ LeaderLib_DialogOverride_QRY_CanRedirectObject(_Speaker4)
 AND
 NOT LeaderLib_DialogOverride_QRY_SpeakersHaveAvatar((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5)
 AND
-DB_Avatars(_Avatar)
+LeaderLib_DialogOverride_QRY_Internal_GetRedirectionTarget(_Dialog, _Speaker4)
 AND
-NOT DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, _, _)
-AND
-QRY_SpeakerIsAvailable((GUIDSTRING)_Avatar, 0)
-AND
-LeaderLib_Helper_QRY_ObjectUserMatch((GUIDSTRING)_Speaker4, (GUIDSTRING)_Avatar)
+DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Target, _Speaker4)
 THEN
-DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Avatar, _Speaker4);
-DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Avatar, (GUIDSTRING)_Speaker5);
+DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Target, (GUIDSTRING)_Speaker5);
 
 QRY
 LeaderLib_DialogOverride_QRY_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5)
@@ -171,16 +136,11 @@ LeaderLib_DialogOverride_QRY_CanRedirectObject(_Speaker3)
 AND
 NOT LeaderLib_DialogOverride_QRY_SpeakersHaveAvatar((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5)
 AND
-DB_Avatars(_Avatar)
+LeaderLib_DialogOverride_QRY_Internal_GetRedirectionTarget(_Dialog, _Speaker3)
 AND
-NOT DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, _, _)
-AND
-QRY_SpeakerIsAvailable((GUIDSTRING)_Avatar, 0)
-AND
-LeaderLib_Helper_QRY_ObjectUserMatch((GUIDSTRING)_Speaker3, (GUIDSTRING)_Avatar)
+DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Target, _Speaker3)
 THEN
-DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Avatar, _Speaker3);
-DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Avatar, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5);
+DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Target, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5);
 
 QRY
 LeaderLib_DialogOverride_QRY_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5)
@@ -193,16 +153,11 @@ LeaderLib_DialogOverride_QRY_CanRedirectObject(_Speaker2)
 AND
 NOT LeaderLib_DialogOverride_QRY_SpeakersHaveAvatar((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5)
 AND
-DB_Avatars(_Avatar)
+LeaderLib_DialogOverride_QRY_Internal_GetRedirectionTarget(_Dialog, _Speaker2)
 AND
-NOT DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, _, _)
-AND
-QRY_SpeakerIsAvailable((GUIDSTRING)_Avatar, 0)
-AND
-LeaderLib_Helper_QRY_ObjectUserMatch((GUIDSTRING)_Speaker2, (GUIDSTRING)_Avatar)
+DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Target, _Speaker2)
 THEN
-DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Avatar, _Speaker2);
-DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Avatar, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5);
+DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Target, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5);
 //END_REGION
 
 //REGION GET_REDIRECTION_TARGET_4
@@ -217,16 +172,11 @@ LeaderLib_DialogOverride_QRY_CanRedirectObject(_Speaker4)
 AND
 NOT LeaderLib_DialogOverride_QRY_SpeakersHaveAvatar((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4)
 AND
-DB_Avatars(_Avatar)
+LeaderLib_DialogOverride_QRY_Internal_GetRedirectionTarget(_Dialog, _Speaker4)
 AND
-NOT DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, _, _)
-AND
-QRY_SpeakerIsAvailable((GUIDSTRING)_Avatar, 0)
-AND
-LeaderLib_Helper_QRY_ObjectUserMatch((GUIDSTRING)_Speaker4, (GUIDSTRING)_Avatar)
+DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Target, _Speaker4)
 THEN
-DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Avatar, _Speaker4);
-DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Avatar);
+DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Target);
 
 QRY
 LeaderLib_DialogOverride_QRY_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4)
@@ -239,16 +189,11 @@ LeaderLib_DialogOverride_QRY_CanRedirectObject(_Speaker3)
 AND
 NOT LeaderLib_DialogOverride_QRY_SpeakersHaveAvatar((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4)
 AND
-DB_Avatars(_Avatar)
+LeaderLib_DialogOverride_QRY_Internal_GetRedirectionTarget(_Dialog, _Speaker3)
 AND
-NOT DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, _, _)
-AND
-QRY_SpeakerIsAvailable((GUIDSTRING)_Avatar, 0)
-AND
-LeaderLib_Helper_QRY_ObjectUserMatch((GUIDSTRING)_Speaker3, (GUIDSTRING)_Avatar)
+DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Target, _Speaker3)
 THEN
-DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Avatar, _Speaker3);
-DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Avatar, (GUIDSTRING)_Speaker4);
+DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Target, (GUIDSTRING)_Speaker4);
 
 QRY
 LeaderLib_DialogOverride_QRY_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4)
@@ -261,16 +206,11 @@ LeaderLib_DialogOverride_QRY_CanRedirectObject(_Speaker2)
 AND
 NOT LeaderLib_DialogOverride_QRY_SpeakersHaveAvatar((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4)
 AND
-DB_Avatars(_Avatar)
+LeaderLib_DialogOverride_QRY_Internal_GetRedirectionTarget(_Dialog, _Speaker2)
 AND
-NOT DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, _, _)
-AND
-QRY_SpeakerIsAvailable((GUIDSTRING)_Avatar, 0)
-AND
-LeaderLib_Helper_QRY_ObjectUserMatch((GUIDSTRING)_Speaker2, (GUIDSTRING)_Avatar)
+DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Target, _Speaker2)
 THEN
-DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Avatar, _Speaker2);
-DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Avatar, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4);
+DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Target, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4);
 //END_REGION
 
 //REGION GET_REDIRECTION_TARGET_3
@@ -285,16 +225,11 @@ LeaderLib_DialogOverride_QRY_CanRedirectObject(_Speaker3)
 AND
 NOT LeaderLib_DialogOverride_QRY_SpeakersHaveAvatar((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3)
 AND
-DB_Avatars(_Avatar)
+LeaderLib_DialogOverride_QRY_Internal_GetRedirectionTarget(_Dialog, _Speaker3)
 AND
-NOT DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, _, _)
-AND
-QRY_SpeakerIsAvailable((GUIDSTRING)_Avatar, 0)
-AND
-LeaderLib_Helper_QRY_ObjectUserMatch((GUIDSTRING)_Speaker3, (GUIDSTRING)_Avatar)
+DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Target, _Speaker3)
 THEN
-DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Avatar, _Speaker3);
-DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Avatar);
+DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Target);
 
 QRY
 LeaderLib_DialogOverride_QRY_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3)
@@ -307,16 +242,11 @@ LeaderLib_DialogOverride_QRY_CanRedirectObject(_Speaker2)
 AND
 NOT LeaderLib_DialogOverride_QRY_SpeakersHaveAvatar((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3)
 AND
-DB_Avatars(_Avatar)
+LeaderLib_DialogOverride_QRY_Internal_GetRedirectionTarget(_Dialog, _Speaker2)
 AND
-NOT DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, _, _)
-AND
-QRY_SpeakerIsAvailable((GUIDSTRING)_Avatar, 0)
-AND
-LeaderLib_Helper_QRY_ObjectUserMatch((GUIDSTRING)_Speaker2, (GUIDSTRING)_Avatar)
+DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Target, _Speaker2)
 THEN
-DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Avatar, _Speaker2);
-DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Avatar, (GUIDSTRING)_Speaker3);
+DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Target, (GUIDSTRING)_Speaker3);
 //END_REGION
 
 //REGION GET_REDIRECTION_TARGET_2
@@ -331,16 +261,11 @@ LeaderLib_DialogOverride_QRY_CanRedirectObject(_Speaker2)
 AND
 NOT LeaderLib_DialogOverride_QRY_SpeakersHaveAvatar((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2)
 AND
-DB_Avatars(_Avatar)
+LeaderLib_DialogOverride_QRY_Internal_GetRedirectionTarget(_Dialog, _Speaker2)
 AND
-NOT DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, _, _)
-AND
-QRY_SpeakerIsAvailable((GUIDSTRING)_Avatar, 0)
-AND
-LeaderLib_Helper_QRY_ObjectUserMatch((GUIDSTRING)_Speaker2, (GUIDSTRING)_Avatar)
+DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Target, _Speaker2)
 THEN
-DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Avatar, _Speaker2);
-DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Avatar);
+DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Target);
 //END_REGION
 EXITSECTION
 

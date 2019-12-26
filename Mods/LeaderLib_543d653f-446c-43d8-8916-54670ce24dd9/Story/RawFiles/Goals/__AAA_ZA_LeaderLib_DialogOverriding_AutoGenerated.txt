@@ -7,6 +7,8 @@ KBSECTION
 QRY
 LeaderLib_DialogOverride_QRY_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
 AND
+NOT DB_LeaderLib_DialogOverride_Redirection_BlacklistedDialog(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
+AND
 LeaderLib_DialogOverride_QRY_CanRedirect(_Dialog)
 AND
 LeaderLib_DialogOverride_QRY_CanRedirectObject(_Speaker6)
@@ -24,6 +26,8 @@ DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRI
 
 QRY
 LeaderLib_DialogOverride_QRY_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
+AND
+NOT DB_LeaderLib_DialogOverride_Redirection_BlacklistedDialog(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
 AND
 LeaderLib_DialogOverride_QRY_CanRedirect(_Dialog)
 AND
@@ -43,6 +47,8 @@ DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRI
 QRY
 LeaderLib_DialogOverride_QRY_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
 AND
+NOT DB_LeaderLib_DialogOverride_Redirection_BlacklistedDialog(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
+AND
 LeaderLib_DialogOverride_QRY_CanRedirect(_Dialog)
 AND
 LeaderLib_DialogOverride_QRY_CanRedirectObject(_Speaker4)
@@ -61,6 +67,8 @@ DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRI
 QRY
 LeaderLib_DialogOverride_QRY_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
 AND
+NOT DB_LeaderLib_DialogOverride_Redirection_BlacklistedDialog(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
+AND
 LeaderLib_DialogOverride_QRY_CanRedirect(_Dialog)
 AND
 LeaderLib_DialogOverride_QRY_CanRedirectObject(_Speaker3)
@@ -78,6 +86,8 @@ DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRI
 
 QRY
 LeaderLib_DialogOverride_QRY_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
+AND
+NOT DB_LeaderLib_DialogOverride_Redirection_BlacklistedDialog(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
 AND
 LeaderLib_DialogOverride_QRY_CanRedirect(_Dialog)
 AND
@@ -99,6 +109,8 @@ DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRI
 QRY
 LeaderLib_DialogOverride_QRY_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5)
 AND
+NOT DB_LeaderLib_DialogOverride_Redirection_BlacklistedDialog(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5)
+AND
 LeaderLib_DialogOverride_QRY_CanRedirect(_Dialog)
 AND
 LeaderLib_DialogOverride_QRY_CanRedirectObject(_Speaker5)
@@ -116,6 +128,8 @@ DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRI
 
 QRY
 LeaderLib_DialogOverride_QRY_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5)
+AND
+NOT DB_LeaderLib_DialogOverride_Redirection_BlacklistedDialog(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5)
 AND
 LeaderLib_DialogOverride_QRY_CanRedirect(_Dialog)
 AND
@@ -135,6 +149,8 @@ DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRI
 QRY
 LeaderLib_DialogOverride_QRY_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5)
 AND
+NOT DB_LeaderLib_DialogOverride_Redirection_BlacklistedDialog(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5)
+AND
 LeaderLib_DialogOverride_QRY_CanRedirect(_Dialog)
 AND
 LeaderLib_DialogOverride_QRY_CanRedirectObject(_Speaker3)
@@ -152,6 +168,8 @@ DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRI
 
 QRY
 LeaderLib_DialogOverride_QRY_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5)
+AND
+NOT DB_LeaderLib_DialogOverride_Redirection_BlacklistedDialog(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5)
 AND
 LeaderLib_DialogOverride_QRY_CanRedirect(_Dialog)
 AND
@@ -173,6 +191,8 @@ DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRI
 QRY
 LeaderLib_DialogOverride_QRY_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4)
 AND
+NOT DB_LeaderLib_DialogOverride_Redirection_BlacklistedDialog(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4)
+AND
 LeaderLib_DialogOverride_QRY_CanRedirect(_Dialog)
 AND
 LeaderLib_DialogOverride_QRY_CanRedirectObject(_Speaker4)
@@ -191,6 +211,8 @@ DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRI
 QRY
 LeaderLib_DialogOverride_QRY_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4)
 AND
+NOT DB_LeaderLib_DialogOverride_Redirection_BlacklistedDialog(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4)
+AND
 LeaderLib_DialogOverride_QRY_CanRedirect(_Dialog)
 AND
 LeaderLib_DialogOverride_QRY_CanRedirectObject(_Speaker3)
@@ -208,6 +230,8 @@ DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRI
 
 QRY
 LeaderLib_DialogOverride_QRY_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4)
+AND
+NOT DB_LeaderLib_DialogOverride_Redirection_BlacklistedDialog(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4)
 AND
 LeaderLib_DialogOverride_QRY_CanRedirect(_Dialog)
 AND
@@ -229,6 +253,8 @@ DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRI
 QRY
 LeaderLib_DialogOverride_QRY_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3)
 AND
+NOT DB_LeaderLib_DialogOverride_Redirection_BlacklistedDialog(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3)
+AND
 LeaderLib_DialogOverride_QRY_CanRedirect(_Dialog)
 AND
 LeaderLib_DialogOverride_QRY_CanRedirectObject(_Speaker3)
@@ -246,6 +272,8 @@ DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRI
 
 QRY
 LeaderLib_DialogOverride_QRY_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3)
+AND
+NOT DB_LeaderLib_DialogOverride_Redirection_BlacklistedDialog(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3)
 AND
 LeaderLib_DialogOverride_QRY_CanRedirect(_Dialog)
 AND
@@ -267,6 +295,8 @@ DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRI
 QRY
 LeaderLib_DialogOverride_QRY_GetRedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2)
 AND
+NOT DB_LeaderLib_DialogOverride_Redirection_BlacklistedDialog(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2)
+AND
 LeaderLib_DialogOverride_QRY_CanRedirect(_Dialog)
 AND
 LeaderLib_DialogOverride_QRY_CanRedirectObject(_Speaker2)
@@ -282,8 +312,6 @@ THEN
 DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Avatar, _Speaker2);
 DB_LeaderLib_DialogOverride_Temp_Order(_Dialog, (GUIDSTRING)_Speaker1, (GUIDSTRING)_Avatar);
 //END_REGION
-
-
 EXITSECTION
 
 ENDEXITSECTION

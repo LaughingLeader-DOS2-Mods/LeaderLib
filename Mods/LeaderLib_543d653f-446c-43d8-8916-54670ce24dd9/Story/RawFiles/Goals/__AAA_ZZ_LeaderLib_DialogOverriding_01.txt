@@ -22,6 +22,31 @@ PROC
 LeaderLib_DialogOverride_Register_BlacklistDialogForRedirection((STRING)_Dialog)
 THEN
 DB_LeaderLib_DialogOverride_Redirection_BlacklistedDialog(_Dialog);
+
+PROC
+LeaderLib_DialogOverride_Register_BlacklistRedirection((STRING)_Dialog, (GUIDSTRING)_Obj1, (GUIDSTRING)_Obj2)
+THEN
+DB_LeaderLib_DialogOverride_Redirection_BlacklistedDialog(_Dialog, _Obj1, _Obj2);
+
+PROC
+LeaderLib_DialogOverride_Register_BlacklistRedirection((STRING)_Dialog, (GUIDSTRING)_Obj1, (GUIDSTRING)_Obj2, (GUIDSTRING)_Obj3)
+THEN
+DB_LeaderLib_DialogOverride_Redirection_BlacklistedDialog(_Dialog, _Obj1, _Obj2, _Obj3);
+
+PROC
+LeaderLib_DialogOverride_Register_BlacklistRedirection((STRING)_Dialog, (GUIDSTRING)_Obj1, (GUIDSTRING)_Obj2, (GUIDSTRING)_Obj3, (GUIDSTRING)_Obj4)
+THEN
+DB_LeaderLib_DialogOverride_Redirection_BlacklistedDialog(_Dialog, _Obj1, _Obj2, _Obj3, _Obj4);
+
+PROC
+LeaderLib_DialogOverride_Register_BlacklistRedirection((STRING)_Dialog, (GUIDSTRING)_Obj1, (GUIDSTRING)_Obj2, (GUIDSTRING)_Obj3, (GUIDSTRING)_Obj4, (GUIDSTRING)_Obj5)
+THEN
+DB_LeaderLib_DialogOverride_Redirection_BlacklistedDialog(_Dialog, _Obj1, _Obj2, _Obj3, _Obj4, _Obj5);
+
+PROC
+LeaderLib_DialogOverride_Register_BlacklistRedirection((STRING)_Dialog, (GUIDSTRING)_Obj1, (GUIDSTRING)_Obj2, (GUIDSTRING)_Obj3, (GUIDSTRING)_Obj4, (GUIDSTRING)_Obj5, (GUIDSTRING)_Obj6)
+THEN
+DB_LeaderLib_DialogOverride_Redirection_BlacklistedDialog(_Dialog, _Obj1, _Obj2, _Obj3, _Obj4, _Obj5, _Obj6);
 //END_REGION
 
 //REGION SPEAKER_MATCHING
@@ -222,43 +247,54 @@ DB_NOOP(1);
 
 //REGION REDIRECTION_TELEPORT
 PROC
-LeaderLib_DialogOverride_Internal_TeleportRedirectionTarget((GUIDSTRING)_Target, (GUIDSTRING)_OwnedObject)
+LeaderLib_DialogOverride_Internal_TeleportRedirectionTarget((CHARACTERGUID)_Avatar, (GUIDSTRING)_OwnedObject)
 AND
-GetDistanceTo(_Target, _OwnedObject, _Dist)
+UserGetFlag(_Avatar, "LeaderLib_DialogRedirectionTeleportingEnabled", 1)
+AND
+GetDistanceTo(_Avatar, _OwnedObject, _Dist)
 AND
 _Dist >= 10.0
 THEN
-TeleportTo(_Target, _OwnedObject, "LeaderLib_DialogRedirectionTargetTeleported", 0, 1);
-DB_LeaderLib_DialogOverride_Temp_TeleportedRedirectionTarget(_Target);
+TeleportTo(_Avatar, _OwnedObject, "LeaderLib_DialogRedirectionTargetTeleported", 0, 1);
+DB_LeaderLib_DialogOverride_Temp_TeleportedRedirectionTarget((GUIDSTRING)_Avatar);
+
+IF
+StoryEvent(_Avatar, "LeaderLib_DialogRedirectionTargetTeleported")
+THEN
+Proc_TeleportSmoke(_Avatar);
 
 PROC
-LeaderLib_DialogOverride_Internal_TeleportRedirectionTarget((GUIDSTRING)_Target, (GUIDSTRING)_OwnedObject)
+LeaderLib_DialogOverride_Internal_TeleportRedirectionTarget((CHARACTERGUID)_Avatar, (GUIDSTRING)_OwnedObject)
 AND
-NOT DB_LeaderLib_DialogOverride_Temp_TeleportedRedirectionTarget(_Target)
+UserGetFlag(_Avatar, "LeaderLib_DialogRedirectionTeleportingEnabled", 1)
 AND
-ObjectIsCharacter((CHARACTERGUID)_Target, 1)
+NOT DB_LeaderLib_DialogOverride_Temp_TeleportedRedirectionTarget(_Avatar)
 AND
-CharacterCanSee(_Target, _OwnedObject, 0)
+ObjectIsCharacter((CHARACTERGUID)_Avatar, 1)
+AND
+CharacterCanSee(_Avatar, _OwnedObject, 0)
 THEN
-TeleportTo(_Target, _OwnedObject, "LeaderLib_DialogRedirectionTargetTeleported", 0, 1);
-DB_LeaderLib_DialogOverride_Temp_TeleportedRedirectionTarget((GUIDSTRING)_Target);
+TeleportTo(_Avatar, _OwnedObject, "LeaderLib_DialogRedirectionTargetTeleported", 0, 1);
+DB_LeaderLib_DialogOverride_Temp_TeleportedRedirectionTarget((GUIDSTRING)_Avatar);
 
 PROC
-LeaderLib_DialogOverride_Internal_TeleportRedirectionTarget((GUIDSTRING)_Target, (GUIDSTRING)_OwnedObject)
+LeaderLib_DialogOverride_Internal_TeleportRedirectionTarget((CHARACTERGUID)_Avatar, (GUIDSTRING)_OwnedObject)
 AND
-DB_LeaderLib_DialogOverride_Temp_TeleportedRedirectionTarget((GUIDSTRING)_Target)
+DB_LeaderLib_DialogOverride_Temp_TeleportedRedirectionTarget((GUIDSTRING)_Avatar)
 THEN
-NOT DB_LeaderLib_DialogOverride_Temp_TeleportedRedirectionTarget((GUIDSTRING)_Target);
+NOT DB_LeaderLib_DialogOverride_Temp_TeleportedRedirectionTarget((GUIDSTRING)_Avatar);
 
 IF
 DB_LeaderLib_DialogOverride_Temp_RedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Avatar, (GUIDSTRING)_Target)
 THEN
-LeaderLib_DialogOverride_Internal_TeleportRedirectionTarget(_Avatar, _Target);
+LeaderLib_DialogOverride_Internal_TeleportRedirectionTarget((CHARACTERGUID)_Avatar, _Target);
 //END_REGION
 
 //REGION GET_REDIRECTION_CONDITIONS
 QRY
 LeaderLib_DialogOverride_QRY_CanRedirect((STRING)_Dialog)
+AND
+NOT LeaderLib_Helper_QRY_DialogIsRegistered(_Dialog) // Dialogs in DB_Dialogs are started by clicking on the character
 AND
 NOT DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog,_,_)
 AND

@@ -65,7 +65,7 @@ DB_NOOP(1);
 LeaderLog_Log("DEBUG", "[LeaderLib_00_1_1_System:LeaderLib_SaveGlobalSettings] (*WARNING*) The extender is not active. Skipping.");
 // [END_NO_OSITOOLS]
 
-/*[OSITOOLS_ONLY]
+/* [OSITOOLS_ONLY]
 PROC
 LeaderLib_SaveGlobalSettings()
 THEN
@@ -93,6 +93,12 @@ IF
 StoryEvent(_,"LeaderLib_Initialized")
 THEN
 LeaderLib_LoadGlobalSettings();
+
+IF
+GlobalFlagSet("LeaderLib_Commands_SaveGlobalSettings")
+THEN
+GlobalClearFlag("LeaderLib_Commands_SaveGlobalSettings");
+LeaderLib_SaveGlobalSettings();
 
 IF
 TextEventSet("leaderlib_saveglobalsettings")

@@ -1,2945 +1,1367 @@
 {
-	"save": {
-		"header": {
-			"time": 0,
-			"version": "2.0.8.2"
-		},
-		"regions": {
-			"dialog": {
-				"UUID": {
-					"type": 22,
-					"value": "57c4531d-3dfb-4672-8c37-08ae48b229cd"
-				},
-				"automated": {
-					"type": 19,
-					"value": false
-				},
-				"category": {
-					"type": 23,
-					"value": "Generic NPC Dialog"
-				},
-				"nodes": [
-					{
-						"RootNodes": [
-							{
-								"RootNodes": {
-									"type": 22,
-									"value": "99b3ac4f-f6cd-46d8-90b1-297c8a1fff6a"
-								}
-							}
-						],
-						"node": [
-							{
-								"ShowOnce": {
-									"type": 19,
-									"value": false
-								},
-								"UUID": {
-									"type": 22,
-									"value": "040634f7-fe14-4620-9adb-57a4f4ad59dc"
-								},
-								"addressedspeaker": {
-									"type": 4,
-									"value": -1
-								},
-								"constructor": {
-									"type": 22,
-									"value": "TagQuestion"
-								},
-								"endnode": {
-									"type": 19,
-									"value": false
-								},
-								"exclusive": {
-									"type": 19,
-									"value": false
-								},
-								"optional": {
-									"type": 19,
-									"value": false
-								},
-								"speaker": {
-									"type": 4,
-									"value": 0
-								},
-								"stub": {
-									"type": 19,
-									"value": false
-								},
-								"transitionmode": {
-									"type": 1,
-									"value": 0
-								},
-								"waittime": {
-									"type": 6,
-									"value": -1.0
-								},
-								"GameData": [
-									{
-										"CameraTarget": {
-											"type": 4,
-											"value": -1
-										},
-										"CustomMovie": {
-											"type": 23,
-											"value": ""
-										},
-										"Emotion": {
-											"type": 23,
-											"value": "Default"
-										},
-										"ExtraWaitTime": {
-											"type": 4,
-											"value": 0
-										},
-										"SoundEvent": {
-											"type": 23,
-											"value": ""
-										},
-										"AiPersonalities": [
-											{}
-										],
-										"MusicInstrumentSounds": [
-											{}
-										],
-										"OriginSound": [
-											{}
-										]
-									}
-								],
-								"TaggedTexts": [
-									{
-										"TaggedText": [
-											{
-												"HasTagRule": {
-													"type": 19,
-													"value": true
-												},
-												"RuleGroup": [
-													{
-														"TagCombineOp": {
-															"type": 1,
-															"value": 0
-														},
-														"Rules": [
-															{}
-														]
-													}
-												],
-												"TagTexts": [
-													{
-														"TagText": [
-															{
-																"TagText": {
-																	"type": 28,
-																	"value": "[HOST] Enable <b>Dialog Redirection</b>. If dialog tries to start with a party member that is not an AVATAR (the crown symbol), the avatar that owns that character will be used instead.",
-																	"handle": "hf0eb5097g325bg4254gaf97g77255a6380ad"
-																},
-																"stub": {
-																	"type": 19,
-																	"value": true
-																}
-															}
-														]
-													}
-												]
-											}
-										]
-									}
-								],
-								"Tags": [
-									{}
-								],
-								"checkflags": [
-									{
-										"flaggroup": [
-											{
-												"type": {
-													"type": 22,
-													"value": "Global"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirectionEnabled"
-														},
-														"value": {
-															"type": 19,
-															"value": false
-														}
-													}
-												]
-											},
-											{
-												"type": {
-													"type": 22,
-													"value": "User"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_IsHost"
-														},
-														"paramval": {
-															"type": 4,
-															"value": 0
-														},
-														"value": {
-															"type": 19,
-															"value": true
-														}
-													}
-												]
-											}
-										]
-									}
-								],
-								"children": [
-									{
-										"child": [
-											{
-												"UUID": {
-													"type": 22,
-													"value": "637ac8e6-21ac-4bb0-98be-7d05f8fe6572"
-												}
-											}
-										]
-									}
-								],
-								"editorData": [
-									{
-										"data": [
-											{
-												"key": {
-													"type": 22,
-													"value": "ID"
-												},
-												"val": {
-													"type": 23,
-													"value": "N26"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "NodeContext"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "collapsed"
-												},
-												"val": {
-													"type": 23,
-													"value": "False"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "logicalname"
-												},
-												"val": {
-													"type": 23,
-													"value": "Question"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "position"
-												},
-												"val": {
-													"type": 23,
-													"value": "335;234"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "sourcetemplate"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											}
-										]
-									}
-								],
-								"setflags": [
-									{
-										"flaggroup": [
-											{
-												"type": {
-													"type": 22,
-													"value": "Global"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirectionEnabled"
-														},
-														"value": {
-															"type": 19,
-															"value": true
-														}
-													}
-												]
-											}
-										]
-									}
-								]
-							},
-							{
-								"ShowOnce": {
-									"type": 19,
-									"value": false
-								},
-								"UUID": {
-									"type": 22,
-									"value": "0da194e2-156b-400f-93c8-3caa9b51249d"
-								},
-								"constructor": {
-									"type": 22,
-									"value": "Jump"
-								},
-								"endnode": {
-									"type": 19,
-									"value": false
-								},
-								"exclusive": {
-									"type": 19,
-									"value": false
-								},
-								"jumptarget": {
-									"type": 22,
-									"value": "99b3ac4f-f6cd-46d8-90b1-297c8a1fff6a"
-								},
-								"jumptargetpoint": {
-									"type": 1,
-									"value": 1
-								},
-								"optional": {
-									"type": 19,
-									"value": false
-								},
-								"transitionmode": {
-									"type": 1,
-									"value": 0
-								},
-								"waittime": {
-									"type": 6,
-									"value": -1.0
-								},
-								"Tags": [
-									{}
-								],
-								"children": [
-									{}
-								],
-								"editorData": [
-									{
-										"data": [
-											{
-												"key": {
-													"type": 22,
-													"value": "ID"
-												},
-												"val": {
-													"type": 23,
-													"value": "N22"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "collapsed"
-												},
-												"val": {
-													"type": 23,
-													"value": "False"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "logicalname"
-												},
-												"val": {
-													"type": 23,
-													"value": "Jump"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "position"
-												},
-												"val": {
-													"type": 23,
-													"value": "975;234"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "sourcetemplate"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											}
-										]
-									}
-								]
-							},
-							{
-								"ShowOnce": {
-									"type": 19,
-									"value": false
-								},
-								"UUID": {
-									"type": 22,
-									"value": "1a0fc9cb-526e-4988-a435-f9867809883c"
-								},
-								"addressedspeaker": {
-									"type": 4,
-									"value": -1
-								},
-								"constructor": {
-									"type": 22,
-									"value": "TagQuestion"
-								},
-								"endnode": {
-									"type": 19,
-									"value": false
-								},
-								"exclusive": {
-									"type": 19,
-									"value": false
-								},
-								"optional": {
-									"type": 19,
-									"value": false
-								},
-								"speaker": {
-									"type": 4,
-									"value": 0
-								},
-								"stub": {
-									"type": 19,
-									"value": false
-								},
-								"transitionmode": {
-									"type": 1,
-									"value": 0
-								},
-								"waittime": {
-									"type": 6,
-									"value": -1.0
-								},
-								"GameData": [
-									{
-										"CameraTarget": {
-											"type": 4,
-											"value": -1
-										},
-										"CustomMovie": {
-											"type": 23,
-											"value": ""
-										},
-										"Emotion": {
-											"type": 23,
-											"value": "Default"
-										},
-										"ExtraWaitTime": {
-											"type": 4,
-											"value": 0
-										},
-										"SoundEvent": {
-											"type": 23,
-											"value": ""
-										},
-										"AiPersonalities": [
-											{}
-										],
-										"MusicInstrumentSounds": [
-											{}
-										],
-										"OriginSound": [
-											{}
-										]
-									}
-								],
-								"TaggedTexts": [
-									{
-										"TaggedText": [
-											{
-												"HasTagRule": {
-													"type": 19,
-													"value": true
-												},
-												"RuleGroup": [
-													{
-														"TagCombineOp": {
-															"type": 1,
-															"value": 0
-														},
-														"Rules": [
-															{}
-														]
-													}
-												],
-												"TagTexts": [
-													{
-														"TagText": [
-															{
-																"TagText": {
-																	"type": 28,
-																	"value": "[HOST] Disable making the party member with the highest persuasion the redirection target, using the closest Avatar instead. (Default)",
-																	"handle": "h7e405c6egfcadg4313gbcb8g0f5f7459d722"
-																},
-																"stub": {
-																	"type": 19,
-																	"value": true
-																}
-															}
-														]
-													}
-												]
-											}
-										]
-									}
-								],
-								"Tags": [
-									{}
-								],
-								"checkflags": [
-									{
-										"flaggroup": [
-											{
-												"type": {
-													"type": 22,
-													"value": "Global"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirectionEnabled"
-														},
-														"value": {
-															"type": 19,
-															"value": true
-														}
-													},
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirection_HighestPersuasionEnabled"
-														},
-														"value": {
-															"type": 19,
-															"value": true
-														}
-													}
-												]
-											}
-										]
-									}
-								],
-								"children": [
-									{
-										"child": [
-											{
-												"UUID": {
-													"type": 22,
-													"value": "637ac8e6-21ac-4bb0-98be-7d05f8fe6572"
-												}
-											}
-										]
-									}
-								],
-								"editorData": [
-									{
-										"data": [
-											{
-												"key": {
-													"type": 22,
-													"value": "ID"
-												},
-												"val": {
-													"type": 23,
-													"value": "N31"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "NodeContext"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "collapsed"
-												},
-												"val": {
-													"type": 23,
-													"value": "False"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "logicalname"
-												},
-												"val": {
-													"type": 23,
-													"value": "Question"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "position"
-												},
-												"val": {
-													"type": 23,
-													"value": "335;1767"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "sourcetemplate"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											}
-										]
-									}
-								],
-								"setflags": [
-									{
-										"flaggroup": [
-											{
-												"type": {
-													"type": 22,
-													"value": "Global"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirection_HighestPersuasionEnabled"
-														},
-														"value": {
-															"type": 19,
-															"value": false
-														}
-													}
-												]
-											}
-										]
-									}
-								]
-							},
-							{
-								"ShowOnce": {
-									"type": 19,
-									"value": false
-								},
-								"UUID": {
-									"type": 22,
-									"value": "436254d6-dda8-421d-b998-58ecce2f035b"
-								},
-								"addressedspeaker": {
-									"type": 4,
-									"value": -1
-								},
-								"constructor": {
-									"type": 22,
-									"value": "TagQuestion"
-								},
-								"endnode": {
-									"type": 19,
-									"value": false
-								},
-								"exclusive": {
-									"type": 19,
-									"value": false
-								},
-								"optional": {
-									"type": 19,
-									"value": false
-								},
-								"speaker": {
-									"type": 4,
-									"value": 0
-								},
-								"stub": {
-									"type": 19,
-									"value": false
-								},
-								"transitionmode": {
-									"type": 1,
-									"value": 0
-								},
-								"waittime": {
-									"type": 6,
-									"value": -1.0
-								},
-								"GameData": [
-									{
-										"CameraTarget": {
-											"type": 4,
-											"value": -1
-										},
-										"CustomMovie": {
-											"type": 23,
-											"value": ""
-										},
-										"Emotion": {
-											"type": 23,
-											"value": "Default"
-										},
-										"ExtraWaitTime": {
-											"type": 4,
-											"value": 0
-										},
-										"SoundEvent": {
-											"type": 23,
-											"value": ""
-										},
-										"AiPersonalities": [
-											{}
-										],
-										"MusicInstrumentSounds": [
-											{}
-										],
-										"OriginSound": [
-											{}
-										]
-									}
-								],
-								"TaggedTexts": [
-									{
-										"TaggedText": [
-											{
-												"HasTagRule": {
-													"type": 19,
-													"value": true
-												},
-												"RuleGroup": [
-													{
-														"TagCombineOp": {
-															"type": 1,
-															"value": 0
-														},
-														"Rules": [
-															{}
-														]
-													}
-												],
-												"TagTexts": [
-													{
-														"TagText": [
-															{
-																"TagText": {
-																	"type": 28,
-																	"value": "[HOST] Disable <b>Dialog Redirection</b>. Certain dialog events will start with the closest player character available. (Default)",
-																	"handle": "h26d9df87gcc82g4b87gb068g6e5e3b053113"
-																},
-																"stub": {
-																	"type": 19,
-																	"value": true
-																}
-															}
-														]
-													}
-												]
-											}
-										]
-									}
-								],
-								"Tags": [
-									{}
-								],
-								"checkflags": [
-									{
-										"flaggroup": [
-											{
-												"type": {
-													"type": 22,
-													"value": "Global"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirectionEnabled"
-														},
-														"value": {
-															"type": 19,
-															"value": true
-														}
-													}
-												]
-											},
-											{
-												"type": {
-													"type": 22,
-													"value": "User"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_IsHost"
-														},
-														"paramval": {
-															"type": 4,
-															"value": 0
-														},
-														"value": {
-															"type": 19,
-															"value": true
-														}
-													}
-												]
-											}
-										]
-									}
-								],
-								"children": [
-									{
-										"child": [
-											{
-												"UUID": {
-													"type": 22,
-													"value": "637ac8e6-21ac-4bb0-98be-7d05f8fe6572"
-												}
-											}
-										]
-									}
-								],
-								"editorData": [
-									{
-										"data": [
-											{
-												"key": {
-													"type": 22,
-													"value": "ID"
-												},
-												"val": {
-													"type": 23,
-													"value": "N7"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "NodeContext"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "collapsed"
-												},
-												"val": {
-													"type": 23,
-													"value": "False"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "logicalname"
-												},
-												"val": {
-													"type": 23,
-													"value": "Question"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "position"
-												},
-												"val": {
-													"type": 23,
-													"value": "335;453"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "sourcetemplate"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											}
-										]
-									}
-								],
-								"setflags": [
-									{
-										"flaggroup": [
-											{
-												"type": {
-													"type": 22,
-													"value": "Global"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirectionEnabled"
-														},
-														"value": {
-															"type": 19,
-															"value": false
-														}
-													}
-												]
-											}
-										]
-									}
-								]
-							},
-							{
-								"ShowOnce": {
-									"type": 19,
-									"value": false
-								},
-								"UUID": {
-									"type": 22,
-									"value": "445aa9be-09af-4bbf-afd4-4a7d4dbe9ff6"
-								},
-								"addressedspeaker": {
-									"type": 4,
-									"value": -1
-								},
-								"constructor": {
-									"type": 22,
-									"value": "TagQuestion"
-								},
-								"endnode": {
-									"type": 19,
-									"value": false
-								},
-								"exclusive": {
-									"type": 19,
-									"value": false
-								},
-								"optional": {
-									"type": 19,
-									"value": false
-								},
-								"speaker": {
-									"type": 4,
-									"value": 0
-								},
-								"stub": {
-									"type": 19,
-									"value": false
-								},
-								"transitionmode": {
-									"type": 1,
-									"value": 0
-								},
-								"waittime": {
-									"type": 6,
-									"value": -1.0
-								},
-								"GameData": [
-									{
-										"CameraTarget": {
-											"type": 4,
-											"value": -1
-										},
-										"CustomMovie": {
-											"type": 23,
-											"value": ""
-										},
-										"Emotion": {
-											"type": 23,
-											"value": "Default"
-										},
-										"ExtraWaitTime": {
-											"type": 4,
-											"value": 0
-										},
-										"SoundEvent": {
-											"type": 23,
-											"value": ""
-										},
-										"AiPersonalities": [
-											{}
-										],
-										"MusicInstrumentSounds": [
-											{}
-										],
-										"OriginSound": [
-											{}
-										]
-									}
-								],
-								"TaggedTexts": [
-									{
-										"TaggedText": [
-											{
-												"HasTagRule": {
-													"type": 19,
-													"value": true
-												},
-												"RuleGroup": [
-													{
-														"TagCombineOp": {
-															"type": 1,
-															"value": 0
-														},
-														"Rules": [
-															{}
-														]
-													}
-												],
-												"TagTexts": [
-													{
-														"TagText": [
-															{
-																"TagText": {
-																	"type": 28,
-																	"value": "[HOST] Disable user ID matching when finding the closest character a party member belongs to. This will allow the closest avatar (or persuasive) character in multiplayer to control dialog when a non-avatar player triggers an automatic dialog event.<br>",
-																	"handle": "ha853bcf9g311dg4e56g8725g0a9188e22344"
-																},
-																"stub": {
-																	"type": 19,
-																	"value": true
-																}
-															}
-														]
-													}
-												]
-											}
-										]
-									}
-								],
-								"Tags": [
-									{}
-								],
-								"checkflags": [
-									{
-										"flaggroup": [
-											{
-												"type": {
-													"type": 22,
-													"value": "Global"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirectionEnabled"
-														},
-														"value": {
-															"type": 19,
-															"value": true
-														}
-													},
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirection_DisableUserRestriction"
-														},
-														"value": {
-															"type": 19,
-															"value": false
-														}
-													}
-												]
-											}
-										]
-									}
-								],
-								"children": [
-									{
-										"child": [
-											{
-												"UUID": {
-													"type": 22,
-													"value": "637ac8e6-21ac-4bb0-98be-7d05f8fe6572"
-												}
-											}
-										]
-									}
-								],
-								"editorData": [
-									{
-										"data": [
-											{
-												"key": {
-													"type": 22,
-													"value": "ID"
-												},
-												"val": {
-													"type": 23,
-													"value": "N35"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "NodeContext"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "collapsed"
-												},
-												"val": {
-													"type": 23,
-													"value": "False"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "logicalname"
-												},
-												"val": {
-													"type": 23,
-													"value": "Question"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "position"
-												},
-												"val": {
-													"type": 23,
-													"value": "335;1110"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "sourcetemplate"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											}
-										]
-									}
-								],
-								"setflags": [
-									{
-										"flaggroup": [
-											{
-												"type": {
-													"type": 22,
-													"value": "Global"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirection_DisableUserRestriction"
-														},
-														"value": {
-															"type": 19,
-															"value": true
-														}
-													}
-												]
-											}
-										]
-									}
-								]
-							},
-							{
-								"ShowOnce": {
-									"type": 19,
-									"value": false
-								},
-								"UUID": {
-									"type": 22,
-									"value": "458357c5-09f6-43fc-8a2d-b81d958a5a96"
-								},
-								"addressedspeaker": {
-									"type": 4,
-									"value": -1
-								},
-								"constructor": {
-									"type": 22,
-									"value": "TagQuestion"
-								},
-								"endnode": {
-									"type": 19,
-									"value": false
-								},
-								"exclusive": {
-									"type": 19,
-									"value": false
-								},
-								"optional": {
-									"type": 19,
-									"value": false
-								},
-								"speaker": {
-									"type": 4,
-									"value": 0
-								},
-								"stub": {
-									"type": 19,
-									"value": false
-								},
-								"transitionmode": {
-									"type": 1,
-									"value": 0
-								},
-								"waittime": {
-									"type": 6,
-									"value": -1.0
-								},
-								"GameData": [
-									{
-										"CameraTarget": {
-											"type": 4,
-											"value": -1
-										},
-										"CustomMovie": {
-											"type": 23,
-											"value": ""
-										},
-										"Emotion": {
-											"type": 23,
-											"value": "Default"
-										},
-										"ExtraWaitTime": {
-											"type": 4,
-											"value": 0
-										},
-										"SoundEvent": {
-											"type": 23,
-											"value": ""
-										},
-										"AiPersonalities": [
-											{}
-										],
-										"MusicInstrumentSounds": [
-											{}
-										],
-										"OriginSound": [
-											{}
-										]
-									}
-								],
-								"TaggedTexts": [
-									{
-										"TaggedText": [
-											{
-												"HasTagRule": {
-													"type": 19,
-													"value": true
-												},
-												"RuleGroup": [
-													{
-														"TagCombineOp": {
-															"type": 1,
-															"value": 0
-														},
-														"Rules": [
-															{}
-														]
-													}
-												],
-												"TagTexts": [
-													{
-														"TagText": [
-															{
-																"TagText": {
-																	"type": 28,
-																	"value": "[HOST] Disable user ID matching when finding the closest character a party member belongs to. This will allow the closest avatar (or persuasive) character in multiplayer to control dialog when a non-avatar player triggers an automatic dialog event.",
-																	"handle": "h861c65b9g0db7g4799gaeb2g67ac42f57540"
-																},
-																"stub": {
-																	"type": 19,
-																	"value": true
-																}
-															}
-														]
-													}
-												]
-											}
-										]
-									}
-								],
-								"Tags": [
-									{}
-								],
-								"checkflags": [
-									{
-										"flaggroup": [
-											{
-												"type": {
-													"type": 22,
-													"value": "Global"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirectionEnabled"
-														},
-														"value": {
-															"type": 19,
-															"value": true
-														}
-													},
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirection_DisableUserRestriction"
-														},
-														"value": {
-															"type": 19,
-															"value": true
-														}
-													}
-												]
-											}
-										]
-									}
-								],
-								"children": [
-									{
-										"child": [
-											{
-												"UUID": {
-													"type": 22,
-													"value": "637ac8e6-21ac-4bb0-98be-7d05f8fe6572"
-												}
-											}
-										]
-									}
-								],
-								"editorData": [
-									{
-										"data": [
-											{
-												"key": {
-													"type": 22,
-													"value": "ID"
-												},
-												"val": {
-													"type": 23,
-													"value": "N39"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "NodeContext"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "collapsed"
-												},
-												"val": {
-													"type": 23,
-													"value": "False"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "logicalname"
-												},
-												"val": {
-													"type": 23,
-													"value": "Question"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "position"
-												},
-												"val": {
-													"type": 23,
-													"value": "335;1329"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "sourcetemplate"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											}
-										]
-									}
-								],
-								"setflags": [
-									{
-										"flaggroup": [
-											{
-												"type": {
-													"type": 22,
-													"value": "Global"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirection_DisableUserRestriction"
-														},
-														"value": {
-															"type": 19,
-															"value": false
-														}
-													}
-												]
-											}
-										]
-									}
-								]
-							},
-							{
-								"ShowOnce": {
-									"type": 19,
-									"value": false
-								},
-								"UUID": {
-									"type": 22,
-									"value": "637ac8e6-21ac-4bb0-98be-7d05f8fe6572"
-								},
-								"addressedspeaker": {
-									"type": 4,
-									"value": -1
-								},
-								"constructor": {
-									"type": 22,
-									"value": "TagAnswer"
-								},
-								"endnode": {
-									"type": 19,
-									"value": false
-								},
-								"exclusive": {
-									"type": 19,
-									"value": false
-								},
-								"optional": {
-									"type": 19,
-									"value": false
-								},
-								"speaker": {
-									"type": 4,
-									"value": 0
-								},
-								"stub": {
-									"type": 19,
-									"value": true
-								},
-								"transitionmode": {
-									"type": 1,
-									"value": 2
-								},
-								"waittime": {
-									"type": 6,
-									"value": -1.0
-								},
-								"GameData": [
-									{
-										"CameraTarget": {
-											"type": 4,
-											"value": -1
-										},
-										"CustomMovie": {
-											"type": 23,
-											"value": ""
-										},
-										"Emotion": {
-											"type": 23,
-											"value": "Default"
-										},
-										"ExtraWaitTime": {
-											"type": 4,
-											"value": 0
-										},
-										"SoundEvent": {
-											"type": 23,
-											"value": ""
-										},
-										"AiPersonalities": [
-											{}
-										],
-										"MusicInstrumentSounds": [
-											{}
-										],
-										"OriginSound": [
-											{}
-										]
-									}
-								],
-								"TaggedTexts": [
-									{
-										"TaggedText": [
-											{
-												"HasTagRule": {
-													"type": 19,
-													"value": true
-												},
-												"RuleGroup": [
-													{
-														"TagCombineOp": {
-															"type": 1,
-															"value": 0
-														},
-														"Rules": [
-															{}
-														]
-													}
-												],
-												"TagTexts": [
-													{
-														"TagText": [
-															{
-																"TagText": {
-																	"type": 28,
-																	"value": "Updating settings...",
-																	"handle": "h74027c8fg5a78g4bb2g8c96g74034f3b5b9b"
-																},
-																"stub": {
-																	"type": 19,
-																	"value": true
-																}
-															}
-														]
-													}
-												]
-											}
-										]
-									}
-								],
-								"Tags": [
-									{}
-								],
-								"checkflags": [
-									{}
-								],
-								"children": [
-									{
-										"child": [
-											{
-												"UUID": {
-													"type": 22,
-													"value": "0da194e2-156b-400f-93c8-3caa9b51249d"
-												}
-											}
-										]
-									}
-								],
-								"editorData": [
-									{
-										"data": [
-											{
-												"key": {
-													"type": 22,
-													"value": "ID"
-												},
-												"val": {
-													"type": 23,
-													"value": "N20"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "NodeContext"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "collapsed"
-												},
-												"val": {
-													"type": 23,
-													"value": "False"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "logicalname"
-												},
-												"val": {
-													"type": 23,
-													"value": "Answer"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "position"
-												},
-												"val": {
-													"type": 23,
-													"value": "655;234"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "sourcetemplate"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											}
-										]
-									}
-								],
-								"setflags": [
-									{}
-								]
-							},
-							{
-								"ShowOnce": {
-									"type": 19,
-									"value": false
-								},
-								"UUID": {
-									"type": 22,
-									"value": "6573b7cb-699b-49e3-990a-87a60899828f"
-								},
-								"addressedspeaker": {
-									"type": 4,
-									"value": -1
-								},
-								"constructor": {
-									"type": 22,
-									"value": "TagQuestion"
-								},
-								"endnode": {
-									"type": 19,
-									"value": false
-								},
-								"exclusive": {
-									"type": 19,
-									"value": false
-								},
-								"optional": {
-									"type": 19,
-									"value": false
-								},
-								"speaker": {
-									"type": 4,
-									"value": 0
-								},
-								"stub": {
-									"type": 19,
-									"value": false
-								},
-								"transitionmode": {
-									"type": 1,
-									"value": 0
-								},
-								"waittime": {
-									"type": 6,
-									"value": -1.0
-								},
-								"GameData": [
-									{
-										"CameraTarget": {
-											"type": 4,
-											"value": -1
-										},
-										"CustomMovie": {
-											"type": 23,
-											"value": ""
-										},
-										"Emotion": {
-											"type": 23,
-											"value": "Default"
-										},
-										"ExtraWaitTime": {
-											"type": 4,
-											"value": 0
-										},
-										"SoundEvent": {
-											"type": 23,
-											"value": ""
-										},
-										"AiPersonalities": [
-											{}
-										],
-										"MusicInstrumentSounds": [
-											{}
-										],
-										"OriginSound": [
-											{}
-										]
-									}
-								],
-								"TaggedTexts": [
-									{
-										"TaggedText": [
-											{
-												"HasTagRule": {
-													"type": 19,
-													"value": true
-												},
-												"RuleGroup": [
-													{
-														"TagCombineOp": {
-															"type": 1,
-															"value": 0
-														},
-														"Rules": [
-															{}
-														]
-													}
-												],
-												"TagTexts": [
-													{
-														"TagText": [
-															{
-																"TagText": {
-																	"type": 28,
-																	"value": "[HOST] Automatically make the party member with the highest persuasion the redirection target. Still preserves User ID matching in multiplayer, if that setting is enabled.",
-																	"handle": "hf545a1fbgccb8g481ega4adg32165aaa9288"
-																},
-																"stub": {
-																	"type": 19,
-																	"value": true
-																}
-															}
-														]
-													}
-												]
-											}
-										]
-									}
-								],
-								"Tags": [
-									{}
-								],
-								"checkflags": [
-									{
-										"flaggroup": [
-											{
-												"type": {
-													"type": 22,
-													"value": "Global"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirectionEnabled"
-														},
-														"value": {
-															"type": 19,
-															"value": true
-														}
-													},
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirection_HighestPersuasionEnabled"
-														},
-														"value": {
-															"type": 19,
-															"value": false
-														}
-													}
-												]
-											}
-										]
-									}
-								],
-								"children": [
-									{
-										"child": [
-											{
-												"UUID": {
-													"type": 22,
-													"value": "637ac8e6-21ac-4bb0-98be-7d05f8fe6572"
-												}
-											}
-										]
-									}
-								],
-								"editorData": [
-									{
-										"data": [
-											{
-												"key": {
-													"type": 22,
-													"value": "ID"
-												},
-												"val": {
-													"type": 23,
-													"value": "N27"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "NodeContext"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "collapsed"
-												},
-												"val": {
-													"type": 23,
-													"value": "False"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "logicalname"
-												},
-												"val": {
-													"type": 23,
-													"value": "Question"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "position"
-												},
-												"val": {
-													"type": 23,
-													"value": "335;1548"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "sourcetemplate"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											}
-										]
-									}
-								],
-								"setflags": [
-									{
-										"flaggroup": [
-											{
-												"type": {
-													"type": 22,
-													"value": "Global"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirection_HighestPersuasionEnabled"
-														},
-														"value": {
-															"type": 19,
-															"value": true
-														}
-													}
-												]
-											}
-										]
-									}
-								]
-							},
-							{
-								"ShowOnce": {
-									"type": 19,
-									"value": false
-								},
-								"UUID": {
-									"type": 22,
-									"value": "982f02b7-f433-4325-8c00-592883547441"
-								},
-								"addressedspeaker": {
-									"type": 4,
-									"value": -1
-								},
-								"constructor": {
-									"type": 22,
-									"value": "TagQuestion"
-								},
-								"endnode": {
-									"type": 19,
-									"value": false
-								},
-								"exclusive": {
-									"type": 19,
-									"value": false
-								},
-								"optional": {
-									"type": 19,
-									"value": false
-								},
-								"speaker": {
-									"type": 4,
-									"value": 0
-								},
-								"stub": {
-									"type": 19,
-									"value": false
-								},
-								"transitionmode": {
-									"type": 1,
-									"value": 0
-								},
-								"waittime": {
-									"type": 6,
-									"value": -1.0
-								},
-								"GameData": [
-									{
-										"CameraTarget": {
-											"type": 4,
-											"value": -1
-										},
-										"CustomMovie": {
-											"type": 23,
-											"value": ""
-										},
-										"Emotion": {
-											"type": 23,
-											"value": "Default"
-										},
-										"ExtraWaitTime": {
-											"type": 4,
-											"value": 0
-										},
-										"SoundEvent": {
-											"type": 23,
-											"value": ""
-										},
-										"AiPersonalities": [
-											{}
-										],
-										"MusicInstrumentSounds": [
-											{}
-										],
-										"OriginSound": [
-											{}
-										]
-									}
-								],
-								"TaggedTexts": [
-									{
-										"TaggedText": [
-											{
-												"HasTagRule": {
-													"type": 19,
-													"value": true
-												},
-												"RuleGroup": [
-													{
-														"TagCombineOp": {
-															"type": 1,
-															"value": 0
-														},
-														"Rules": [
-															{}
-														]
-													}
-												],
-												"TagTexts": [
-													{
-														"TagText": [
-															{
-																"TagText": {
-																	"type": 28,
-																	"value": "[USER] Don't teleport your avatar to the dialog event when dialog gets redirected.",
-																	"handle": "h024f32dbg7cebg45b8g8b4eg302439dce463"
-																},
-																"stub": {
-																	"type": 19,
-																	"value": true
-																}
-															}
-														]
-													}
-												]
-											}
-										]
-									}
-								],
-								"Tags": [
-									{}
-								],
-								"checkflags": [
-									{
-										"flaggroup": [
-											{
-												"type": {
-													"type": 22,
-													"value": "Global"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirectionEnabled"
-														},
-														"value": {
-															"type": 19,
-															"value": true
-														}
-													}
-												]
-											},
-											{
-												"type": {
-													"type": 22,
-													"value": "User"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirectionTeleportingEnabled"
-														},
-														"paramval": {
-															"type": 4,
-															"value": 0
-														},
-														"value": {
-															"type": 19,
-															"value": true
-														}
-													}
-												]
-											}
-										]
-									}
-								],
-								"children": [
-									{
-										"child": [
-											{
-												"UUID": {
-													"type": 22,
-													"value": "637ac8e6-21ac-4bb0-98be-7d05f8fe6572"
-												}
-											}
-										]
-									}
-								],
-								"editorData": [
-									{
-										"data": [
-											{
-												"key": {
-													"type": 22,
-													"value": "ID"
-												},
-												"val": {
-													"type": 23,
-													"value": "N15"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "NodeContext"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "collapsed"
-												},
-												"val": {
-													"type": 23,
-													"value": "False"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "logicalname"
-												},
-												"val": {
-													"type": 23,
-													"value": "Question"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "position"
-												},
-												"val": {
-													"type": 23,
-													"value": "335;891"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "sourcetemplate"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											}
-										]
-									}
-								],
-								"setflags": [
-									{
-										"flaggroup": [
-											{
-												"type": {
-													"type": 22,
-													"value": "User"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirectionTeleportingEnabled"
-														},
-														"paramval": {
-															"type": 4,
-															"value": 0
-														},
-														"value": {
-															"type": 19,
-															"value": false
-														}
-													}
-												]
-											}
-										]
-									}
-								]
-							},
-							{
-								"ShowOnce": {
-									"type": 19,
-									"value": false
-								},
-								"UUID": {
-									"type": 22,
-									"value": "99b3ac4f-f6cd-46d8-90b1-297c8a1fff6a"
-								},
-								"addressedspeaker": {
-									"type": 4,
-									"value": -1
-								},
-								"constructor": {
-									"type": 22,
-									"value": "TagGreeting"
-								},
-								"endnode": {
-									"type": 19,
-									"value": false
-								},
-								"exclusive": {
-									"type": 19,
-									"value": false
-								},
-								"optional": {
-									"type": 19,
-									"value": false
-								},
-								"speaker": {
-									"type": 4,
-									"value": 0
-								},
-								"stub": {
-									"type": 19,
-									"value": false
-								},
-								"transitionmode": {
-									"type": 1,
-									"value": 0
-								},
-								"waittime": {
-									"type": 6,
-									"value": -1.0
-								},
-								"GameData": [
-									{
-										"CameraTarget": {
-											"type": 4,
-											"value": -1
-										},
-										"CustomMovie": {
-											"type": 23,
-											"value": ""
-										},
-										"Emotion": {
-											"type": 23,
-											"value": "Default"
-										},
-										"ExtraWaitTime": {
-											"type": 4,
-											"value": 0
-										},
-										"SoundEvent": {
-											"type": 23,
-											"value": ""
-										},
-										"AiPersonalities": [
-											{}
-										],
-										"MusicInstrumentSounds": [
-											{}
-										],
-										"OriginSound": [
-											{}
-										]
-									}
-								],
-								"TaggedTexts": [
-									{
-										"TaggedText": [
-											{
-												"HasTagRule": {
-													"type": 19,
-													"value": true
-												},
-												"RuleGroup": [
-													{
-														"TagCombineOp": {
-															"type": 1,
-															"value": 0
-														},
-														"Rules": [
-															{}
-														]
-													}
-												],
-												"TagTexts": [
-													{
-														"TagText": [
-															{
-																"TagText": {
-																	"type": 28,
-																	"value": "Dialog Redirection Settings",
-																	"handle": "h9b843d3agc42eg4295g8381ge2eb54eeac08"
-																},
-																"stub": {
-																	"type": 19,
-																	"value": true
-																}
-															}
-														]
-													}
-												]
-											}
-										]
-									}
-								],
-								"Tags": [
-									{}
-								],
-								"checkflags": [
-									{}
-								],
-								"children": [
-									{
-										"child": [
-											{
-												"UUID": {
-													"type": 22,
-													"value": "dbc5d25f-d562-493c-b4da-206b7e3d7ffc"
-												}
-											},
-											{
-												"UUID": {
-													"type": 22,
-													"value": "040634f7-fe14-4620-9adb-57a4f4ad59dc"
-												}
-											},
-											{
-												"UUID": {
-													"type": 22,
-													"value": "436254d6-dda8-421d-b998-58ecce2f035b"
-												}
-											},
-											{
-												"UUID": {
-													"type": 22,
-													"value": "b517d79e-5579-4117-92e2-1cb9b787dc8d"
-												}
-											},
-											{
-												"UUID": {
-													"type": 22,
-													"value": "982f02b7-f433-4325-8c00-592883547441"
-												}
-											},
-											{
-												"UUID": {
-													"type": 22,
-													"value": "445aa9be-09af-4bbf-afd4-4a7d4dbe9ff6"
-												}
-											},
-											{
-												"UUID": {
-													"type": 22,
-													"value": "458357c5-09f6-43fc-8a2d-b81d958a5a96"
-												}
-											},
-											{
-												"UUID": {
-													"type": 22,
-													"value": "6573b7cb-699b-49e3-990a-87a60899828f"
-												}
-											},
-											{
-												"UUID": {
-													"type": 22,
-													"value": "1a0fc9cb-526e-4988-a435-f9867809883c"
-												}
-											}
-										]
-									}
-								],
-								"editorData": [
-									{
-										"data": [
-											{
-												"key": {
-													"type": 22,
-													"value": "ID"
-												},
-												"val": {
-													"type": 23,
-													"value": "N1"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "NodeContext"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "collapsed"
-												},
-												"val": {
-													"type": 23,
-													"value": "False"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "logicalname"
-												},
-												"val": {
-													"type": 23,
-													"value": "Greeting"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "position"
-												},
-												"val": {
-													"type": 23,
-													"value": "15;15"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "sourcetemplate"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											}
-										]
-									}
-								],
-								"setflags": [
-									{}
-								]
-							},
-							{
-								"ShowOnce": {
-									"type": 19,
-									"value": false
-								},
-								"UUID": {
-									"type": 22,
-									"value": "b517d79e-5579-4117-92e2-1cb9b787dc8d"
-								},
-								"addressedspeaker": {
-									"type": 4,
-									"value": -1
-								},
-								"constructor": {
-									"type": 22,
-									"value": "TagQuestion"
-								},
-								"endnode": {
-									"type": 19,
-									"value": false
-								},
-								"exclusive": {
-									"type": 19,
-									"value": false
-								},
-								"optional": {
-									"type": 19,
-									"value": false
-								},
-								"speaker": {
-									"type": 4,
-									"value": 0
-								},
-								"stub": {
-									"type": 19,
-									"value": false
-								},
-								"transitionmode": {
-									"type": 1,
-									"value": 0
-								},
-								"waittime": {
-									"type": 6,
-									"value": -1.0
-								},
-								"GameData": [
-									{
-										"CameraTarget": {
-											"type": 4,
-											"value": -1
-										},
-										"CustomMovie": {
-											"type": 23,
-											"value": ""
-										},
-										"Emotion": {
-											"type": 23,
-											"value": "Default"
-										},
-										"ExtraWaitTime": {
-											"type": 4,
-											"value": 0
-										},
-										"SoundEvent": {
-											"type": 23,
-											"value": ""
-										},
-										"AiPersonalities": [
-											{}
-										],
-										"MusicInstrumentSounds": [
-											{}
-										],
-										"OriginSound": [
-											{}
-										]
-									}
-								],
-								"TaggedTexts": [
-									{
-										"TaggedText": [
-											{
-												"HasTagRule": {
-													"type": 19,
-													"value": true
-												},
-												"RuleGroup": [
-													{
-														"TagCombineOp": {
-															"type": 1,
-															"value": 0
-														},
-														"Rules": [
-															{}
-														]
-													}
-												],
-												"TagTexts": [
-													{
-														"TagText": [
-															{
-																"TagText": {
-																	"type": 28,
-																	"value": "[USER] Teleport your avatar to the dialog event when dialog gets redirected.",
-																	"handle": "h59075d75g55f1g4ba4g87b7g4953c6818ee3"
-																},
-																"stub": {
-																	"type": 19,
-																	"value": true
-																}
-															}
-														]
-													}
-												]
-											}
-										]
-									}
-								],
-								"Tags": [
-									{}
-								],
-								"checkflags": [
-									{
-										"flaggroup": [
-											{
-												"type": {
-													"type": 22,
-													"value": "Global"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirectionEnabled"
-														},
-														"value": {
-															"type": 19,
-															"value": true
-														}
-													}
-												]
-											},
-											{
-												"type": {
-													"type": 22,
-													"value": "User"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirectionTeleportingEnabled"
-														},
-														"paramval": {
-															"type": 4,
-															"value": 0
-														},
-														"value": {
-															"type": 19,
-															"value": false
-														}
-													}
-												]
-											}
-										]
-									}
-								],
-								"children": [
-									{
-										"child": [
-											{
-												"UUID": {
-													"type": 22,
-													"value": "637ac8e6-21ac-4bb0-98be-7d05f8fe6572"
-												}
-											}
-										]
-									}
-								],
-								"editorData": [
-									{
-										"data": [
-											{
-												"key": {
-													"type": 22,
-													"value": "ID"
-												},
-												"val": {
-													"type": 23,
-													"value": "N11"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "NodeContext"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "collapsed"
-												},
-												"val": {
-													"type": 23,
-													"value": "False"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "logicalname"
-												},
-												"val": {
-													"type": 23,
-													"value": "Question"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "position"
-												},
-												"val": {
-													"type": 23,
-													"value": "335;672"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "sourcetemplate"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											}
-										]
-									}
-								],
-								"setflags": [
-									{
-										"flaggroup": [
-											{
-												"type": {
-													"type": 22,
-													"value": "User"
-												},
-												"flag": [
-													{
-														"name": {
-															"type": 22,
-															"value": "LeaderLib_DialogRedirectionTeleportingEnabled"
-														},
-														"paramval": {
-															"type": 4,
-															"value": 0
-														},
-														"value": {
-															"type": 19,
-															"value": true
-														}
-													}
-												]
-											}
-										]
-									}
-								]
-							},
-							{
-								"ShowOnce": {
-									"type": 19,
-									"value": false
-								},
-								"UUID": {
-									"type": 22,
-									"value": "dbc5d25f-d562-493c-b4da-206b7e3d7ffc"
-								},
-								"addressedspeaker": {
-									"type": 4,
-									"value": -1
-								},
-								"constructor": {
-									"type": 22,
-									"value": "TagQuestion"
-								},
-								"endnode": {
-									"type": 19,
-									"value": true
-								},
-								"exclusive": {
-									"type": 19,
-									"value": false
-								},
-								"optional": {
-									"type": 19,
-									"value": false
-								},
-								"speaker": {
-									"type": 4,
-									"value": 0
-								},
-								"stub": {
-									"type": 19,
-									"value": false
-								},
-								"transitionmode": {
-									"type": 1,
-									"value": 0
-								},
-								"waittime": {
-									"type": 6,
-									"value": -1.0
-								},
-								"GameData": [
-									{
-										"CameraTarget": {
-											"type": 4,
-											"value": -1
-										},
-										"CustomMovie": {
-											"type": 23,
-											"value": ""
-										},
-										"Emotion": {
-											"type": 23,
-											"value": "Default"
-										},
-										"ExtraWaitTime": {
-											"type": 4,
-											"value": 0
-										},
-										"SoundEvent": {
-											"type": 23,
-											"value": ""
-										},
-										"AiPersonalities": [
-											{}
-										],
-										"MusicInstrumentSounds": [
-											{}
-										],
-										"OriginSound": [
-											{}
-										]
-									}
-								],
-								"TaggedTexts": [
-									{
-										"TaggedText": [
-											{
-												"HasTagRule": {
-													"type": 19,
-													"value": true
-												},
-												"RuleGroup": [
-													{
-														"TagCombineOp": {
-															"type": 1,
-															"value": 0
-														},
-														"Rules": [
-															{}
-														]
-													}
-												],
-												"TagTexts": [
-													{
-														"TagText": [
-															{
-																"TagText": {
-																	"type": 28,
-																	"value": "[Back]",
-																	"handle": "h5eb45b65g72aeg4b6cga7eegd42b61850315"
-																},
-																"stub": {
-																	"type": 19,
-																	"value": true
-																}
-															}
-														]
-													}
-												]
-											}
-										]
-									}
-								],
-								"Tags": [
-									{}
-								],
-								"checkflags": [
-									{}
-								],
-								"children": [
-									{}
-								],
-								"editorData": [
-									{
-										"data": [
-											{
-												"key": {
-													"type": 22,
-													"value": "ID"
-												},
-												"val": {
-													"type": 23,
-													"value": "N2"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "NodeContext"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "collapsed"
-												},
-												"val": {
-													"type": 23,
-													"value": "False"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "logicalname"
-												},
-												"val": {
-													"type": 23,
-													"value": "Question"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "position"
-												},
-												"val": {
-													"type": 23,
-													"value": "335;15"
-												}
-											},
-											{
-												"key": {
-													"type": 22,
-													"value": "sourcetemplate"
-												},
-												"val": {
-													"type": 23,
-													"value": ""
-												}
-											}
-										]
-									}
-								],
-								"setflags": [
-									{}
-								]
-							}
-						]
-					}
-				],
-				"speakerlist": [
-					{
-						"speaker": [
-							{
-								"index": {
-									"type": 22,
-									"value": "0"
-								},
-								"list": {
-									"type": 23,
-									"value": "e0d1ff71-04a8-4340-ae64-9684d846eb83"
-								}
-							}
-						]
-					}
-				]
-			},
-			"editorData": {
-				"needLayout": {
-					"type": 19,
-					"value": false
-				},
-				"nextNodeId": {
-					"type": 5,
-					"value": 39
-				}
-			}
-		}
-	}
+   "save" : {
+      "header" : {
+         "version" : "2.0.8.2"
+      },
+      "regions" : {
+         "dialog" : {
+            "UUID" : {"type" : 22, "value" : "57c4531d-3dfb-4672-8c37-08ae48b229cd"},
+            "automated" : {"type" : 19, "value" : 0},
+            "category" : {"type" : 23, "value" : "Generic NPC Dialog"},
+            "nodes" : [
+               {
+                  "RootNodes" : [
+                     {
+                        "RootNodes" : {"type" : 22, "value" : "99b3ac4f-f6cd-46d8-90b1-297c8a1fff6a"}
+                     }
+                  ],
+                  "node" : [
+                     {
+                        "GameData" : [
+                           {
+                              "AiPersonalities" : [ {} ],
+                              "CameraTarget" : {"type" : 4, "value" : -1},
+                              "CustomMovie" : {"type" : 23, "value" : ""},
+                              "Emotion" : {"type" : 23, "value" : "Default"},
+                              "ExtraWaitTime" : {"type" : 4, "value" : 0},
+                              "MusicInstrumentSounds" : [ {} ],
+                              "OriginSound" : [ {} ],
+                              "SoundEvent" : {"type" : 23, "value" : ""}
+                           }
+                        ],
+                        "ShowOnce" : {"type" : 19, "value" : 0},
+                        "TaggedTexts" : [
+                           {
+                              "TaggedText" : [
+                                 {
+                                    "HasTagRule" : {"type" : 19, "value" : 1},
+                                    "RuleGroup" : [
+                                       {
+                                          "Rules" : [ {} ],
+                                          "TagCombineOp" : {"type" : 1, "value" : 0}
+                                       }
+                                    ],
+                                    "TagTexts" : [
+                                       {
+                                          "TagText" : [
+                                             {
+                                                "TagText" : {
+                                                   "handle" : "hf0eb5097g325bg4254gaf97g77255a6380ad",
+                                                   "type" : 28,
+                                                   "value" : "[HOST] Enable <b>Dialog Redirection</b>. If dialog tries to start with a party member that is not an AVATAR (the crown symbol), the avatar that owns that character will be used instead."
+                                                },
+                                                "stub" : {"type" : 19, "value" : 1}
+                                             }
+                                          ]
+                                       }
+                                    ]
+                                 }
+                              ]
+                           }
+                        ],
+                        "Tags" : [ {} ],
+                        "UUID" : {"type" : 22, "value" : "040634f7-fe14-4620-9adb-57a4f4ad59dc"},
+                        "addressedspeaker" : {"type" : 4, "value" : -1},
+                        "checkflags" : [
+                           {
+                              "flaggroup" : [
+                                 {
+                                    "flag" : [
+                                       {
+                                          "name" : {"type" : 22, "value" : "LeaderLib_DialogRedirectionEnabled"},"value" : {"type" : 19, "value" : 0}}
+                                    ],"type" : {"type" : 22, "value" : "Global"}},
+                                 {
+                                    "flag" : [
+                                       {
+                                          "name" : {"type" : 22, "value" : "LeaderLib_IsHost"},
+                                          "paramval" : {"type" : 4, "value" : 0},
+                                          "value" : {"type" : 19, "value" : 1}
+                                       }
+                                    ],"type" : {"type" : 22, "value" : "User"}}
+                              ]
+                           }
+                        ],
+                        "children" : [
+                           {
+                              "child" : [
+                                 {
+                                    "UUID" : {"type" : 22, "value" : "637ac8e6-21ac-4bb0-98be-7d05f8fe6572"}
+                                 }
+                              ]
+                           }
+                        ],
+                        "constructor" : {"type" : 22, "value" : "TagQuestion"},
+                        "editorData" : [
+                           {
+                              "data" : [
+                                 {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N26"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "NodeContext"},
+                                    "val" : {"type" : 23, "value" : ""}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "collapsed"},
+                                    "val" : {"type" : 23, "value" : "False"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "logicalname"},
+                                    "val" : {"type" : 23, "value" : "Question"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "position"},
+                                    "val" : {"type" : 23, "value" : "335;234"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "sourcetemplate"},
+                                    "val" : {"type" : 23, "value" : ""}
+                                 }
+                              ]
+                           }
+                        ],
+                        "endnode" : {"type" : 19, "value" : 0},
+                        "exclusive" : {"type" : 19, "value" : 0},
+                        "optional" : {"type" : 19, "value" : 0},
+                        "setflags" : [
+                           {
+                              "flaggroup" : [
+                                 {
+                                    "flag" : [
+                                       {
+                                          "name" : {"type" : 22, "value" : "LeaderLib_DialogRedirectionEnabled"},"value" : {"type" : 19, "value" : 1}}
+                                    ],"type" : {"type" : 22, "value" : "Global"}}
+                              ]
+                           }
+                        ],
+                        "speaker" : {"type" : 4, "value" : 0},
+                        "stub" : {"type" : 19, "value" : 0},
+                        "transitionmode" : {"type" : 1, "value" : 0},
+                        "waittime" : {"type" : 6, "value" : -1.0}
+                     },
+                     {
+                        "ShowOnce" : {"type" : 19, "value" : 0},
+                        "Tags" : [ {} ],
+                        "UUID" : {"type" : 22, "value" : "0da194e2-156b-400f-93c8-3caa9b51249d"},
+                        "children" : [ {} ],
+                        "constructor" : {"type" : 22, "value" : "Jump"},
+                        "editorData" : [
+                           {
+                              "data" : [
+                                 {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N22"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "collapsed"},
+                                    "val" : {"type" : 23, "value" : "False"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "logicalname"},
+                                    "val" : {"type" : 23, "value" : "Jump"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "position"},
+                                    "val" : {"type" : 23, "value" : "975;234"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "sourcetemplate"},
+                                    "val" : {"type" : 23, "value" : ""}
+                                 }
+                              ]
+                           }
+                        ],
+                        "endnode" : {"type" : 19, "value" : 0},
+                        "exclusive" : {"type" : 19, "value" : 0},
+                        "jumptarget" : {"type" : 22, "value" : "99b3ac4f-f6cd-46d8-90b1-297c8a1fff6a"},
+                        "jumptargetpoint" : {"type" : 1, "value" : 1},
+                        "optional" : {"type" : 19, "value" : 0},
+                        "transitionmode" : {"type" : 1, "value" : 0},
+                        "waittime" : {"type" : 6, "value" : -1.0}
+                     },
+                     {
+                        "GameData" : [
+                           {
+                              "AiPersonalities" : [ {} ],
+                              "CameraTarget" : {"type" : 4, "value" : -1},
+                              "CustomMovie" : {"type" : 23, "value" : ""},
+                              "Emotion" : {"type" : 23, "value" : "Default"},
+                              "ExtraWaitTime" : {"type" : 4, "value" : 0},
+                              "MusicInstrumentSounds" : [ {} ],
+                              "OriginSound" : [ {} ],
+                              "SoundEvent" : {"type" : 23, "value" : ""}
+                           }
+                        ],
+                        "ShowOnce" : {"type" : 19, "value" : 0},
+                        "TaggedTexts" : [
+                           {
+                              "TaggedText" : [
+                                 {
+                                    "HasTagRule" : {"type" : 19, "value" : 1},
+                                    "RuleGroup" : [
+                                       {
+                                          "Rules" : [ {} ],
+                                          "TagCombineOp" : {"type" : 1, "value" : 0}
+                                       }
+                                    ],
+                                    "TagTexts" : [
+                                       {
+                                          "TagText" : [
+                                             {
+                                                "TagText" : {
+                                                   "handle" : "h7e405c6egfcadg4313gbcb8g0f5f7459d722",
+                                                   "type" : 28,
+                                                   "value" : "[HOST] Disable making the party member with the highest persuasion the redirection target, using the closest Avatar instead. (Default)"
+                                                },
+                                                "stub" : {"type" : 19, "value" : 1}
+                                             }
+                                          ]
+                                       }
+                                    ]
+                                 }
+                              ]
+                           }
+                        ],
+                        "Tags" : [ {} ],
+                        "UUID" : {"type" : 22, "value" : "1a0fc9cb-526e-4988-a435-f9867809883c"},
+                        "addressedspeaker" : {"type" : 4, "value" : -1},
+                        "checkflags" : [
+                           {
+                              "flaggroup" : [
+                                 {
+                                    "flag" : [
+                                       {
+                                          "name" : {"type" : 22, "value" : "LeaderLib_DialogRedirectionEnabled"},"value" : {"type" : 19, "value" : 1}},
+                                       {
+                                          "name" : {"type" : 22, "value" : "LeaderLib_DialogRedirection_HighestPersuasionEnabled"},"value" : {"type" : 19, "value" : 1}}
+                                    ],"type" : {"type" : 22, "value" : "Global"}}
+                              ]
+                           }
+                        ],
+                        "children" : [
+                           {
+                              "child" : [
+                                 {
+                                    "UUID" : {"type" : 22, "value" : "637ac8e6-21ac-4bb0-98be-7d05f8fe6572"}
+                                 }
+                              ]
+                           }
+                        ],
+                        "constructor" : {"type" : 22, "value" : "TagQuestion"},
+                        "editorData" : [
+                           {
+                              "data" : [
+                                 {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N31"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "NodeContext"},
+                                    "val" : {"type" : 23, "value" : ""}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "collapsed"},
+                                    "val" : {"type" : 23, "value" : "False"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "logicalname"},
+                                    "val" : {"type" : 23, "value" : "Question"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "position"},
+                                    "val" : {"type" : 23, "value" : "335;1767"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "sourcetemplate"},
+                                    "val" : {"type" : 23, "value" : ""}
+                                 }
+                              ]
+                           }
+                        ],
+                        "endnode" : {"type" : 19, "value" : 0},
+                        "exclusive" : {"type" : 19, "value" : 0},
+                        "optional" : {"type" : 19, "value" : 0},
+                        "setflags" : [
+                           {
+                              "flaggroup" : [
+                                 {
+                                    "flag" : [
+                                       {
+                                          "name" : {"type" : 22, "value" : "LeaderLib_DialogRedirection_HighestPersuasionEnabled"},"value" : {"type" : 19, "value" : 0}}
+                                    ],"type" : {"type" : 22, "value" : "Global"}}
+                              ]
+                           }
+                        ],
+                        "speaker" : {"type" : 4, "value" : 0},
+                        "stub" : {"type" : 19, "value" : 0},
+                        "transitionmode" : {"type" : 1, "value" : 0},
+                        "waittime" : {"type" : 6, "value" : -1.0}
+                     },
+                     {
+                        "GameData" : [
+                           {
+                              "AiPersonalities" : [ {} ],
+                              "CameraTarget" : {"type" : 4, "value" : -1},
+                              "CustomMovie" : {"type" : 23, "value" : ""},
+                              "Emotion" : {"type" : 23, "value" : "Default"},
+                              "ExtraWaitTime" : {"type" : 4, "value" : 0},
+                              "MusicInstrumentSounds" : [ {} ],
+                              "OriginSound" : [ {} ],
+                              "SoundEvent" : {"type" : 23, "value" : ""}
+                           }
+                        ],
+                        "ShowOnce" : {"type" : 19, "value" : 0},
+                        "TaggedTexts" : [
+                           {
+                              "TaggedText" : [
+                                 {
+                                    "HasTagRule" : {"type" : 19, "value" : 1},
+                                    "RuleGroup" : [
+                                       {
+                                          "Rules" : [ {} ],
+                                          "TagCombineOp" : {"type" : 1, "value" : 0}
+                                       }
+                                    ],
+                                    "TagTexts" : [
+                                       {
+                                          "TagText" : [
+                                             {
+                                                "TagText" : {
+                                                   "handle" : "h26d9df87gcc82g4b87gb068g6e5e3b053113",
+                                                   "type" : 28,
+                                                   "value" : "[HOST] Disable <b>Dialog Redirection</b>. Certain dialog events will start with the closest player character available. (Default)"
+                                                },
+                                                "stub" : {"type" : 19, "value" : 1}
+                                             }
+                                          ]
+                                       }
+                                    ]
+                                 }
+                              ]
+                           }
+                        ],
+                        "Tags" : [ {} ],
+                        "UUID" : {"type" : 22, "value" : "436254d6-dda8-421d-b998-58ecce2f035b"},
+                        "addressedspeaker" : {"type" : 4, "value" : -1},
+                        "checkflags" : [
+                           {
+                              "flaggroup" : [
+                                 {
+                                    "flag" : [
+                                       {
+                                          "name" : {"type" : 22, "value" : "LeaderLib_DialogRedirectionEnabled"},"value" : {"type" : 19, "value" : 1}}
+                                    ],"type" : {"type" : 22, "value" : "Global"}},
+                                 {
+                                    "flag" : [
+                                       {
+                                          "name" : {"type" : 22, "value" : "LeaderLib_IsHost"},
+                                          "paramval" : {"type" : 4, "value" : 0},
+                                          "value" : {"type" : 19, "value" : 1}
+                                       }
+                                    ],"type" : {"type" : 22, "value" : "User"}}
+                              ]
+                           }
+                        ],
+                        "children" : [
+                           {
+                              "child" : [
+                                 {
+                                    "UUID" : {"type" : 22, "value" : "637ac8e6-21ac-4bb0-98be-7d05f8fe6572"}
+                                 }
+                              ]
+                           }
+                        ],
+                        "constructor" : {"type" : 22, "value" : "TagQuestion"},
+                        "editorData" : [
+                           {
+                              "data" : [
+                                 {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N7"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "NodeContext"},
+                                    "val" : {"type" : 23, "value" : ""}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "collapsed"},
+                                    "val" : {"type" : 23, "value" : "False"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "logicalname"},
+                                    "val" : {"type" : 23, "value" : "Question"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "position"},
+                                    "val" : {"type" : 23, "value" : "335;453"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "sourcetemplate"},
+                                    "val" : {"type" : 23, "value" : ""}
+                                 }
+                              ]
+                           }
+                        ],
+                        "endnode" : {"type" : 19, "value" : 0},
+                        "exclusive" : {"type" : 19, "value" : 0},
+                        "optional" : {"type" : 19, "value" : 0},
+                        "setflags" : [
+                           {
+                              "flaggroup" : [
+                                 {
+                                    "flag" : [
+                                       {
+                                          "name" : {"type" : 22, "value" : "LeaderLib_DialogRedirectionEnabled"},"value" : {"type" : 19, "value" : 0}}
+                                    ],"type" : {"type" : 22, "value" : "Global"}}
+                              ]
+                           }
+                        ],
+                        "speaker" : {"type" : 4, "value" : 0},
+                        "stub" : {"type" : 19, "value" : 0},
+                        "transitionmode" : {"type" : 1, "value" : 0},
+                        "waittime" : {"type" : 6, "value" : -1.0}
+                     },
+                     {
+                        "GameData" : [
+                           {
+                              "AiPersonalities" : [ {} ],
+                              "CameraTarget" : {"type" : 4, "value" : -1},
+                              "CustomMovie" : {"type" : 23, "value" : ""},
+                              "Emotion" : {"type" : 23, "value" : "Default"},
+                              "ExtraWaitTime" : {"type" : 4, "value" : 0},
+                              "MusicInstrumentSounds" : [ {} ],
+                              "OriginSound" : [ {} ],
+                              "SoundEvent" : {"type" : 23, "value" : ""}
+                           }
+                        ],
+                        "ShowOnce" : {"type" : 19, "value" : 0},
+                        "TaggedTexts" : [
+                           {
+                              "TaggedText" : [
+                                 {
+                                    "HasTagRule" : {"type" : 19, "value" : 1},
+                                    "RuleGroup" : [
+                                       {
+                                          "Rules" : [ {} ],
+                                          "TagCombineOp" : {"type" : 1, "value" : 0}
+                                       }
+                                    ],
+                                    "TagTexts" : [
+                                       {
+                                          "TagText" : [
+                                             {
+                                                "TagText" : {
+                                                   "handle" : "ha853bcf9g311dg4e56g8725g0a9188e22344",
+                                                   "type" : 28,
+                                                   "value" : "[HOST] Disable user ID matching when finding the closest character a party member belongs to. This will allow the closest avatar (or persuasive) character in multiplayer to control dialog when a non-avatar player triggers an automatic dialog event.<br>"
+                                                },
+                                                "stub" : {"type" : 19, "value" : 1}
+                                             }
+                                          ]
+                                       }
+                                    ]
+                                 }
+                              ]
+                           }
+                        ],
+                        "Tags" : [ {} ],
+                        "UUID" : {"type" : 22, "value" : "445aa9be-09af-4bbf-afd4-4a7d4dbe9ff6"},
+                        "addressedspeaker" : {"type" : 4, "value" : -1},
+                        "checkflags" : [
+                           {
+                              "flaggroup" : [
+                                 {
+                                    "flag" : [
+                                       {
+                                          "name" : {"type" : 22, "value" : "LeaderLib_DialogRedirectionEnabled"},"value" : {"type" : 19, "value" : 1}},
+                                       {
+                                          "name" : {"type" : 22, "value" : "LeaderLib_DialogRedirection_DisableUserRestriction"},"value" : {"type" : 19, "value" : 0}}
+                                    ],"type" : {"type" : 22, "value" : "Global"}}
+                              ]
+                           }
+                        ],
+                        "children" : [
+                           {
+                              "child" : [
+                                 {
+                                    "UUID" : {"type" : 22, "value" : "637ac8e6-21ac-4bb0-98be-7d05f8fe6572"}
+                                 }
+                              ]
+                           }
+                        ],
+                        "constructor" : {"type" : 22, "value" : "TagQuestion"},
+                        "editorData" : [
+                           {
+                              "data" : [
+                                 {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N35"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "NodeContext"},
+                                    "val" : {"type" : 23, "value" : ""}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "collapsed"},
+                                    "val" : {"type" : 23, "value" : "False"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "logicalname"},
+                                    "val" : {"type" : 23, "value" : "Question"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "position"},
+                                    "val" : {"type" : 23, "value" : "335;1110"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "sourcetemplate"},
+                                    "val" : {"type" : 23, "value" : ""}
+                                 }
+                              ]
+                           }
+                        ],
+                        "endnode" : {"type" : 19, "value" : 0},
+                        "exclusive" : {"type" : 19, "value" : 0},
+                        "optional" : {"type" : 19, "value" : 0},
+                        "setflags" : [
+                           {
+                              "flaggroup" : [
+                                 {
+                                    "flag" : [
+                                       {
+                                          "name" : {"type" : 22, "value" : "LeaderLib_DialogRedirection_DisableUserRestriction"},"value" : {"type" : 19, "value" : 1}}
+                                    ],"type" : {"type" : 22, "value" : "Global"}}
+                              ]
+                           }
+                        ],
+                        "speaker" : {"type" : 4, "value" : 0},
+                        "stub" : {"type" : 19, "value" : 0},
+                        "transitionmode" : {"type" : 1, "value" : 0},
+                        "waittime" : {"type" : 6, "value" : -1.0}
+                     },
+                     {
+                        "GameData" : [
+                           {
+                              "AiPersonalities" : [ {} ],
+                              "CameraTarget" : {"type" : 4, "value" : -1},
+                              "CustomMovie" : {"type" : 23, "value" : ""},
+                              "Emotion" : {"type" : 23, "value" : "Default"},
+                              "ExtraWaitTime" : {"type" : 4, "value" : 0},
+                              "MusicInstrumentSounds" : [ {} ],
+                              "OriginSound" : [ {} ],
+                              "SoundEvent" : {"type" : 23, "value" : ""}
+                           }
+                        ],
+                        "ShowOnce" : {"type" : 19, "value" : 0},
+                        "TaggedTexts" : [
+                           {
+                              "TaggedText" : [
+                                 {
+                                    "HasTagRule" : {"type" : 19, "value" : 1},
+                                    "RuleGroup" : [
+                                       {
+                                          "Rules" : [ {} ],
+                                          "TagCombineOp" : {"type" : 1, "value" : 0}
+                                       }
+                                    ],
+                                    "TagTexts" : [
+                                       {
+                                          "TagText" : [
+                                             {
+                                                "TagText" : {
+                                                   "handle" : "h861c65b9g0db7g4799gaeb2g67ac42f57540",
+                                                   "type" : 28,
+                                                   "value" : "[HOST] Disable user ID matching when finding the closest character a party member belongs to. This will allow the closest avatar (or persuasive) character in multiplayer to control dialog when a non-avatar player triggers an automatic dialog event."
+                                                },
+                                                "stub" : {"type" : 19, "value" : 1}
+                                             }
+                                          ]
+                                       }
+                                    ]
+                                 }
+                              ]
+                           }
+                        ],
+                        "Tags" : [ {} ],
+                        "UUID" : {"type" : 22, "value" : "458357c5-09f6-43fc-8a2d-b81d958a5a96"},
+                        "addressedspeaker" : {"type" : 4, "value" : -1},
+                        "checkflags" : [
+                           {
+                              "flaggroup" : [
+                                 {
+                                    "flag" : [
+                                       {
+                                          "name" : {"type" : 22, "value" : "LeaderLib_DialogRedirectionEnabled"},"value" : {"type" : 19, "value" : 1}},
+                                       {
+                                          "name" : {"type" : 22, "value" : "LeaderLib_DialogRedirection_DisableUserRestriction"},"value" : {"type" : 19, "value" : 1}}
+                                    ],"type" : {"type" : 22, "value" : "Global"}}
+                              ]
+                           }
+                        ],
+                        "children" : [
+                           {
+                              "child" : [
+                                 {
+                                    "UUID" : {"type" : 22, "value" : "637ac8e6-21ac-4bb0-98be-7d05f8fe6572"}
+                                 }
+                              ]
+                           }
+                        ],
+                        "constructor" : {"type" : 22, "value" : "TagQuestion"},
+                        "editorData" : [
+                           {
+                              "data" : [
+                                 {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N39"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "NodeContext"},
+                                    "val" : {"type" : 23, "value" : ""}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "collapsed"},
+                                    "val" : {"type" : 23, "value" : "False"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "logicalname"},
+                                    "val" : {"type" : 23, "value" : "Question"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "position"},
+                                    "val" : {"type" : 23, "value" : "335;1329"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "sourcetemplate"},
+                                    "val" : {"type" : 23, "value" : ""}
+                                 }
+                              ]
+                           }
+                        ],
+                        "endnode" : {"type" : 19, "value" : 0},
+                        "exclusive" : {"type" : 19, "value" : 0},
+                        "optional" : {"type" : 19, "value" : 0},
+                        "setflags" : [
+                           {
+                              "flaggroup" : [
+                                 {
+                                    "flag" : [
+                                       {
+                                          "name" : {"type" : 22, "value" : "LeaderLib_DialogRedirection_DisableUserRestriction"},"value" : {"type" : 19, "value" : 0}}
+                                    ],"type" : {"type" : 22, "value" : "Global"}}
+                              ]
+                           }
+                        ],
+                        "speaker" : {"type" : 4, "value" : 0},
+                        "stub" : {"type" : 19, "value" : 0},
+                        "transitionmode" : {"type" : 1, "value" : 0},
+                        "waittime" : {"type" : 6, "value" : -1.0}
+                     },
+                     {
+                        "GameData" : [
+                           {
+                              "AiPersonalities" : [ {} ],
+                              "CameraTarget" : {"type" : 4, "value" : -1},
+                              "CustomMovie" : {"type" : 23, "value" : ""},
+                              "Emotion" : {"type" : 23, "value" : "Default"},
+                              "ExtraWaitTime" : {"type" : 4, "value" : 0},
+                              "MusicInstrumentSounds" : [ {} ],
+                              "OriginSound" : [ {} ],
+                              "SoundEvent" : {"type" : 23, "value" : ""}
+                           }
+                        ],
+                        "ShowOnce" : {"type" : 19, "value" : 0},
+                        "TaggedTexts" : [
+                           {
+                              "TaggedText" : [
+                                 {
+                                    "HasTagRule" : {"type" : 19, "value" : 1},
+                                    "RuleGroup" : [
+                                       {
+                                          "Rules" : [ {} ],
+                                          "TagCombineOp" : {"type" : 1, "value" : 0}
+                                       }
+                                    ],
+                                    "TagTexts" : [
+                                       {
+                                          "TagText" : [
+                                             {
+                                                "TagText" : {
+                                                   "handle" : "h74027c8fg5a78g4bb2g8c96g74034f3b5b9b",
+                                                   "type" : 28,
+                                                   "value" : "Updating settings..."
+                                                },
+                                                "stub" : {"type" : 19, "value" : 1}
+                                             }
+                                          ]
+                                       }
+                                    ]
+                                 }
+                              ]
+                           }
+                        ],
+                        "Tags" : [ {} ],
+                        "UUID" : {"type" : 22, "value" : "637ac8e6-21ac-4bb0-98be-7d05f8fe6572"},
+                        "addressedspeaker" : {"type" : 4, "value" : -1},
+                        "checkflags" : [ {} ],
+                        "children" : [
+                           {
+                              "child" : [
+                                 {
+                                    "UUID" : {"type" : 22, "value" : "0da194e2-156b-400f-93c8-3caa9b51249d"}
+                                 }
+                              ]
+                           }
+                        ],
+                        "constructor" : {"type" : 22, "value" : "TagAnswer"},
+                        "editorData" : [
+                           {
+                              "data" : [
+                                 {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N20"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "NodeContext"},
+                                    "val" : {"type" : 23, "value" : ""}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "collapsed"},
+                                    "val" : {"type" : 23, "value" : "False"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "logicalname"},
+                                    "val" : {"type" : 23, "value" : "Answer"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "position"},
+                                    "val" : {"type" : 23, "value" : "655;234"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "sourcetemplate"},
+                                    "val" : {"type" : 23, "value" : ""}
+                                 }
+                              ]
+                           }
+                        ],
+                        "endnode" : {"type" : 19, "value" : 0},
+                        "exclusive" : {"type" : 19, "value" : 0},
+                        "optional" : {"type" : 19, "value" : 0},
+                        "setflags" : [
+                           {
+                              "flaggroup" : [
+                                 {
+                                    "flag" : [
+                                       {
+                                          "name" : {"type" : 22, "value" : "LeaderLib_Commands_SaveGlobalSettings"},"value" : {"type" : 19, "value" : 1}}
+                                    ],"type" : {"type" : 22, "value" : "Global"}}
+                              ]
+                           }
+                        ],
+                        "speaker" : {"type" : 4, "value" : 0},
+                        "stub" : {"type" : 19, "value" : 1},
+                        "transitionmode" : {"type" : 1, "value" : 2},
+                        "waittime" : {"type" : 6, "value" : -1.0}
+                     },
+                     {
+                        "GameData" : [
+                           {
+                              "AiPersonalities" : [ {} ],
+                              "CameraTarget" : {"type" : 4, "value" : -1},
+                              "CustomMovie" : {"type" : 23, "value" : ""},
+                              "Emotion" : {"type" : 23, "value" : "Default"},
+                              "ExtraWaitTime" : {"type" : 4, "value" : 0},
+                              "MusicInstrumentSounds" : [ {} ],
+                              "OriginSound" : [ {} ],
+                              "SoundEvent" : {"type" : 23, "value" : ""}
+                           }
+                        ],
+                        "ShowOnce" : {"type" : 19, "value" : 0},
+                        "TaggedTexts" : [
+                           {
+                              "TaggedText" : [
+                                 {
+                                    "HasTagRule" : {"type" : 19, "value" : 1},
+                                    "RuleGroup" : [
+                                       {
+                                          "Rules" : [ {} ],
+                                          "TagCombineOp" : {"type" : 1, "value" : 0}
+                                       }
+                                    ],
+                                    "TagTexts" : [
+                                       {
+                                          "TagText" : [
+                                             {
+                                                "TagText" : {
+                                                   "handle" : "hf545a1fbgccb8g481ega4adg32165aaa9288",
+                                                   "type" : 28,
+                                                   "value" : "[HOST] Automatically make the party member with the highest persuasion the redirection target. Still preserves User ID matching in multiplayer, if that setting is enabled."
+                                                },
+                                                "stub" : {"type" : 19, "value" : 1}
+                                             }
+                                          ]
+                                       }
+                                    ]
+                                 }
+                              ]
+                           }
+                        ],
+                        "Tags" : [ {} ],
+                        "UUID" : {"type" : 22, "value" : "6573b7cb-699b-49e3-990a-87a60899828f"},
+                        "addressedspeaker" : {"type" : 4, "value" : -1},
+                        "checkflags" : [
+                           {
+                              "flaggroup" : [
+                                 {
+                                    "flag" : [
+                                       {
+                                          "name" : {"type" : 22, "value" : "LeaderLib_DialogRedirectionEnabled"},"value" : {"type" : 19, "value" : 1}},
+                                       {
+                                          "name" : {"type" : 22, "value" : "LeaderLib_DialogRedirection_HighestPersuasionEnabled"},"value" : {"type" : 19, "value" : 0}}
+                                    ],"type" : {"type" : 22, "value" : "Global"}}
+                              ]
+                           }
+                        ],
+                        "children" : [
+                           {
+                              "child" : [
+                                 {
+                                    "UUID" : {"type" : 22, "value" : "637ac8e6-21ac-4bb0-98be-7d05f8fe6572"}
+                                 }
+                              ]
+                           }
+                        ],
+                        "constructor" : {"type" : 22, "value" : "TagQuestion"},
+                        "editorData" : [
+                           {
+                              "data" : [
+                                 {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N27"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "NodeContext"},
+                                    "val" : {"type" : 23, "value" : ""}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "collapsed"},
+                                    "val" : {"type" : 23, "value" : "False"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "logicalname"},
+                                    "val" : {"type" : 23, "value" : "Question"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "position"},
+                                    "val" : {"type" : 23, "value" : "335;1548"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "sourcetemplate"},
+                                    "val" : {"type" : 23, "value" : ""}
+                                 }
+                              ]
+                           }
+                        ],
+                        "endnode" : {"type" : 19, "value" : 0},
+                        "exclusive" : {"type" : 19, "value" : 0},
+                        "optional" : {"type" : 19, "value" : 0},
+                        "setflags" : [
+                           {
+                              "flaggroup" : [
+                                 {
+                                    "flag" : [
+                                       {
+                                          "name" : {"type" : 22, "value" : "LeaderLib_DialogRedirection_HighestPersuasionEnabled"},"value" : {"type" : 19, "value" : 1}}
+                                    ],"type" : {"type" : 22, "value" : "Global"}}
+                              ]
+                           }
+                        ],
+                        "speaker" : {"type" : 4, "value" : 0},
+                        "stub" : {"type" : 19, "value" : 0},
+                        "transitionmode" : {"type" : 1, "value" : 0},
+                        "waittime" : {"type" : 6, "value" : -1.0}
+                     },
+                     {
+                        "GameData" : [
+                           {
+                              "AiPersonalities" : [ {} ],
+                              "CameraTarget" : {"type" : 4, "value" : -1},
+                              "CustomMovie" : {"type" : 23, "value" : ""},
+                              "Emotion" : {"type" : 23, "value" : "Default"},
+                              "ExtraWaitTime" : {"type" : 4, "value" : 0},
+                              "MusicInstrumentSounds" : [ {} ],
+                              "OriginSound" : [ {} ],
+                              "SoundEvent" : {"type" : 23, "value" : ""}
+                           }
+                        ],
+                        "ShowOnce" : {"type" : 19, "value" : 0},
+                        "TaggedTexts" : [
+                           {
+                              "TaggedText" : [
+                                 {
+                                    "HasTagRule" : {"type" : 19, "value" : 1},
+                                    "RuleGroup" : [
+                                       {
+                                          "Rules" : [ {} ],
+                                          "TagCombineOp" : {"type" : 1, "value" : 0}
+                                       }
+                                    ],
+                                    "TagTexts" : [
+                                       {
+                                          "TagText" : [
+                                             {
+                                                "TagText" : {
+                                                   "handle" : "h024f32dbg7cebg45b8g8b4eg302439dce463",
+                                                   "type" : 28,
+                                                   "value" : "[USER] Don't teleport your avatar to the dialog event when dialog gets redirected."
+                                                },
+                                                "stub" : {"type" : 19, "value" : 1}
+                                             }
+                                          ]
+                                       }
+                                    ]
+                                 }
+                              ]
+                           }
+                        ],
+                        "Tags" : [ {} ],
+                        "UUID" : {"type" : 22, "value" : "982f02b7-f433-4325-8c00-592883547441"},
+                        "addressedspeaker" : {"type" : 4, "value" : -1},
+                        "checkflags" : [
+                           {
+                              "flaggroup" : [
+                                 {
+                                    "flag" : [
+                                       {
+                                          "name" : {"type" : 22, "value" : "LeaderLib_DialogRedirectionEnabled"},"value" : {"type" : 19, "value" : 1}}
+                                    ],"type" : {"type" : 22, "value" : "Global"}},
+                                 {
+                                    "flag" : [
+                                       {
+                                          "name" : {"type" : 22, "value" : "LeaderLib_DialogRedirectionTeleportingEnabled"},
+                                          "paramval" : {"type" : 4, "value" : 0},
+                                          "value" : {"type" : 19, "value" : 1}
+                                       }
+                                    ],"type" : {"type" : 22, "value" : "User"}}
+                              ]
+                           }
+                        ],
+                        "children" : [
+                           {
+                              "child" : [
+                                 {
+                                    "UUID" : {"type" : 22, "value" : "637ac8e6-21ac-4bb0-98be-7d05f8fe6572"}
+                                 }
+                              ]
+                           }
+                        ],
+                        "constructor" : {"type" : 22, "value" : "TagQuestion"},
+                        "editorData" : [
+                           {
+                              "data" : [
+                                 {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N15"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "NodeContext"},
+                                    "val" : {"type" : 23, "value" : ""}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "collapsed"},
+                                    "val" : {"type" : 23, "value" : "False"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "logicalname"},
+                                    "val" : {"type" : 23, "value" : "Question"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "position"},
+                                    "val" : {"type" : 23, "value" : "335;891"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "sourcetemplate"},
+                                    "val" : {"type" : 23, "value" : ""}
+                                 }
+                              ]
+                           }
+                        ],
+                        "endnode" : {"type" : 19, "value" : 0},
+                        "exclusive" : {"type" : 19, "value" : 0},
+                        "optional" : {"type" : 19, "value" : 0},
+                        "setflags" : [
+                           {
+                              "flaggroup" : [
+                                 {
+                                    "flag" : [
+                                       {
+                                          "name" : {"type" : 22, "value" : "LeaderLib_DialogRedirectionTeleportingEnabled"},
+                                          "paramval" : {"type" : 4, "value" : 0},
+                                          "value" : {"type" : 19, "value" : 0}
+                                       }
+                                    ],"type" : {"type" : 22, "value" : "User"}}
+                              ]
+                           }
+                        ],
+                        "speaker" : {"type" : 4, "value" : 0},
+                        "stub" : {"type" : 19, "value" : 0},
+                        "transitionmode" : {"type" : 1, "value" : 0},
+                        "waittime" : {"type" : 6, "value" : -1.0}
+                     },
+                     {
+                        "GameData" : [
+                           {
+                              "AiPersonalities" : [ {} ],
+                              "CameraTarget" : {"type" : 4, "value" : -1},
+                              "CustomMovie" : {"type" : 23, "value" : ""},
+                              "Emotion" : {"type" : 23, "value" : "Default"},
+                              "ExtraWaitTime" : {"type" : 4, "value" : 0},
+                              "MusicInstrumentSounds" : [ {} ],
+                              "OriginSound" : [ {} ],
+                              "SoundEvent" : {"type" : 23, "value" : ""}
+                           }
+                        ],
+                        "ShowOnce" : {"type" : 19, "value" : 0},
+                        "TaggedTexts" : [
+                           {
+                              "TaggedText" : [
+                                 {
+                                    "HasTagRule" : {"type" : 19, "value" : 1},
+                                    "RuleGroup" : [
+                                       {
+                                          "Rules" : [ {} ],
+                                          "TagCombineOp" : {"type" : 1, "value" : 0}
+                                       }
+                                    ],
+                                    "TagTexts" : [
+                                       {
+                                          "TagText" : [
+                                             {
+                                                "TagText" : {
+                                                   "handle" : "h9b843d3agc42eg4295g8381ge2eb54eeac08",
+                                                   "type" : 28,
+                                                   "value" : "Dialog Redirection Settings"
+                                                },
+                                                "stub" : {"type" : 19, "value" : 1}
+                                             }
+                                          ]
+                                       }
+                                    ]
+                                 }
+                              ]
+                           }
+                        ],
+                        "Tags" : [ {} ],
+                        "UUID" : {"type" : 22, "value" : "99b3ac4f-f6cd-46d8-90b1-297c8a1fff6a"},
+                        "addressedspeaker" : {"type" : 4, "value" : -1},
+                        "checkflags" : [ {} ],
+                        "children" : [
+                           {
+                              "child" : [
+                                 {
+                                    "UUID" : {"type" : 22, "value" : "dbc5d25f-d562-493c-b4da-206b7e3d7ffc"}
+                                 },
+                                 {
+                                    "UUID" : {"type" : 22, "value" : "040634f7-fe14-4620-9adb-57a4f4ad59dc"}
+                                 },
+                                 {
+                                    "UUID" : {"type" : 22, "value" : "436254d6-dda8-421d-b998-58ecce2f035b"}
+                                 },
+                                 {
+                                    "UUID" : {"type" : 22, "value" : "b517d79e-5579-4117-92e2-1cb9b787dc8d"}
+                                 },
+                                 {
+                                    "UUID" : {"type" : 22, "value" : "982f02b7-f433-4325-8c00-592883547441"}
+                                 },
+                                 {
+                                    "UUID" : {"type" : 22, "value" : "445aa9be-09af-4bbf-afd4-4a7d4dbe9ff6"}
+                                 },
+                                 {
+                                    "UUID" : {"type" : 22, "value" : "458357c5-09f6-43fc-8a2d-b81d958a5a96"}
+                                 },
+                                 {
+                                    "UUID" : {"type" : 22, "value" : "6573b7cb-699b-49e3-990a-87a60899828f"}
+                                 },
+                                 {
+                                    "UUID" : {"type" : 22, "value" : "1a0fc9cb-526e-4988-a435-f9867809883c"}
+                                 }
+                              ]
+                           }
+                        ],
+                        "constructor" : {"type" : 22, "value" : "TagGreeting"},
+                        "editorData" : [
+                           {
+                              "data" : [
+                                 {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N1"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "NodeContext"},
+                                    "val" : {"type" : 23, "value" : ""}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "collapsed"},
+                                    "val" : {"type" : 23, "value" : "False"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "logicalname"},
+                                    "val" : {"type" : 23, "value" : "Greeting"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "position"},
+                                    "val" : {"type" : 23, "value" : "15;15"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "sourcetemplate"},
+                                    "val" : {"type" : 23, "value" : ""}
+                                 }
+                              ]
+                           }
+                        ],
+                        "endnode" : {"type" : 19, "value" : 0},
+                        "exclusive" : {"type" : 19, "value" : 0},
+                        "optional" : {"type" : 19, "value" : 0},
+                        "setflags" : [ {} ],
+                        "speaker" : {"type" : 4, "value" : 0},
+                        "stub" : {"type" : 19, "value" : 0},
+                        "transitionmode" : {"type" : 1, "value" : 0},
+                        "waittime" : {"type" : 6, "value" : -1.0}
+                     },
+                     {
+                        "GameData" : [
+                           {
+                              "AiPersonalities" : [ {} ],
+                              "CameraTarget" : {"type" : 4, "value" : -1},
+                              "CustomMovie" : {"type" : 23, "value" : ""},
+                              "Emotion" : {"type" : 23, "value" : "Default"},
+                              "ExtraWaitTime" : {"type" : 4, "value" : 0},
+                              "MusicInstrumentSounds" : [ {} ],
+                              "OriginSound" : [ {} ],
+                              "SoundEvent" : {"type" : 23, "value" : ""}
+                           }
+                        ],
+                        "ShowOnce" : {"type" : 19, "value" : 0},
+                        "TaggedTexts" : [
+                           {
+                              "TaggedText" : [
+                                 {
+                                    "HasTagRule" : {"type" : 19, "value" : 1},
+                                    "RuleGroup" : [
+                                       {
+                                          "Rules" : [ {} ],
+                                          "TagCombineOp" : {"type" : 1, "value" : 0}
+                                       }
+                                    ],
+                                    "TagTexts" : [
+                                       {
+                                          "TagText" : [
+                                             {
+                                                "TagText" : {
+                                                   "handle" : "h59075d75g55f1g4ba4g87b7g4953c6818ee3",
+                                                   "type" : 28,
+                                                   "value" : "[USER] Teleport your avatar to the dialog event when dialog gets redirected."
+                                                },
+                                                "stub" : {"type" : 19, "value" : 1}
+                                             }
+                                          ]
+                                       }
+                                    ]
+                                 }
+                              ]
+                           }
+                        ],
+                        "Tags" : [ {} ],
+                        "UUID" : {"type" : 22, "value" : "b517d79e-5579-4117-92e2-1cb9b787dc8d"},
+                        "addressedspeaker" : {"type" : 4, "value" : -1},
+                        "checkflags" : [
+                           {
+                              "flaggroup" : [
+                                 {
+                                    "flag" : [
+                                       {
+                                          "name" : {"type" : 22, "value" : "LeaderLib_DialogRedirectionEnabled"},"value" : {"type" : 19, "value" : 1}}
+                                    ],"type" : {"type" : 22, "value" : "Global"}},
+                                 {
+                                    "flag" : [
+                                       {
+                                          "name" : {"type" : 22, "value" : "LeaderLib_DialogRedirectionTeleportingEnabled"},
+                                          "paramval" : {"type" : 4, "value" : 0},
+                                          "value" : {"type" : 19, "value" : 0}
+                                       }
+                                    ],"type" : {"type" : 22, "value" : "User"}}
+                              ]
+                           }
+                        ],
+                        "children" : [
+                           {
+                              "child" : [
+                                 {
+                                    "UUID" : {"type" : 22, "value" : "637ac8e6-21ac-4bb0-98be-7d05f8fe6572"}
+                                 }
+                              ]
+                           }
+                        ],
+                        "constructor" : {"type" : 22, "value" : "TagQuestion"},
+                        "editorData" : [
+                           {
+                              "data" : [
+                                 {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N11"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "NodeContext"},
+                                    "val" : {"type" : 23, "value" : ""}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "collapsed"},
+                                    "val" : {"type" : 23, "value" : "False"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "logicalname"},
+                                    "val" : {"type" : 23, "value" : "Question"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "position"},
+                                    "val" : {"type" : 23, "value" : "335;672"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "sourcetemplate"},
+                                    "val" : {"type" : 23, "value" : ""}
+                                 }
+                              ]
+                           }
+                        ],
+                        "endnode" : {"type" : 19, "value" : 0},
+                        "exclusive" : {"type" : 19, "value" : 0},
+                        "optional" : {"type" : 19, "value" : 0},
+                        "setflags" : [
+                           {
+                              "flaggroup" : [
+                                 {
+                                    "flag" : [
+                                       {
+                                          "name" : {"type" : 22, "value" : "LeaderLib_DialogRedirectionTeleportingEnabled"},
+                                          "paramval" : {"type" : 4, "value" : 0},
+                                          "value" : {"type" : 19, "value" : 1}
+                                       }
+                                    ],"type" : {"type" : 22, "value" : "User"}}
+                              ]
+                           }
+                        ],
+                        "speaker" : {"type" : 4, "value" : 0},
+                        "stub" : {"type" : 19, "value" : 0},
+                        "transitionmode" : {"type" : 1, "value" : 0},
+                        "waittime" : {"type" : 6, "value" : -1.0}
+                     },
+                     {
+                        "GameData" : [
+                           {
+                              "AiPersonalities" : [ {} ],
+                              "CameraTarget" : {"type" : 4, "value" : -1},
+                              "CustomMovie" : {"type" : 23, "value" : ""},
+                              "Emotion" : {"type" : 23, "value" : "Default"},
+                              "ExtraWaitTime" : {"type" : 4, "value" : 0},
+                              "MusicInstrumentSounds" : [ {} ],
+                              "OriginSound" : [ {} ],
+                              "SoundEvent" : {"type" : 23, "value" : ""}
+                           }
+                        ],
+                        "ShowOnce" : {"type" : 19, "value" : 0},
+                        "TaggedTexts" : [
+                           {
+                              "TaggedText" : [
+                                 {
+                                    "HasTagRule" : {"type" : 19, "value" : 1},
+                                    "RuleGroup" : [
+                                       {
+                                          "Rules" : [ {} ],
+                                          "TagCombineOp" : {"type" : 1, "value" : 0}
+                                       }
+                                    ],
+                                    "TagTexts" : [
+                                       {
+                                          "TagText" : [
+                                             {
+                                                "TagText" : {
+                                                   "handle" : "h5eb45b65g72aeg4b6cga7eegd42b61850315",
+                                                   "type" : 28,
+                                                   "value" : "[Back]"
+                                                },
+                                                "stub" : {"type" : 19, "value" : 1}
+                                             }
+                                          ]
+                                       }
+                                    ]
+                                 }
+                              ]
+                           }
+                        ],
+                        "Tags" : [ {} ],
+                        "UUID" : {"type" : 22, "value" : "dbc5d25f-d562-493c-b4da-206b7e3d7ffc"},
+                        "addressedspeaker" : {"type" : 4, "value" : -1},
+                        "checkflags" : [ {} ],
+                        "children" : [ {} ],
+                        "constructor" : {"type" : 22, "value" : "TagQuestion"},
+                        "editorData" : [
+                           {
+                              "data" : [
+                                 {
+                                    "key" : {"type" : 22, "value" : "ID"},
+                                    "val" : {"type" : 23, "value" : "N2"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "NodeContext"},
+                                    "val" : {"type" : 23, "value" : ""}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "collapsed"},
+                                    "val" : {"type" : 23, "value" : "False"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "logicalname"},
+                                    "val" : {"type" : 23, "value" : "Question"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "position"},
+                                    "val" : {"type" : 23, "value" : "335;15"}
+                                 },
+                                 {
+                                    "key" : {"type" : 22, "value" : "sourcetemplate"},
+                                    "val" : {"type" : 23, "value" : ""}
+                                 }
+                              ]
+                           }
+                        ],
+                        "endnode" : {"type" : 19, "value" : 1},
+                        "exclusive" : {"type" : 19, "value" : 0},
+                        "optional" : {"type" : 19, "value" : 0},
+                        "setflags" : [ {} ],
+                        "speaker" : {"type" : 4, "value" : 0},
+                        "stub" : {"type" : 19, "value" : 0},
+                        "transitionmode" : {"type" : 1, "value" : 0},
+                        "waittime" : {"type" : 6, "value" : -1.0}
+                     }
+                  ]
+               }
+            ],
+            "speakerlist" : [
+               {
+                  "speaker" : [
+                     {
+                        "index" : {"type" : 22, "value" : "0"},
+                        "list" : {"type" : 23, "value" : "e0d1ff71-04a8-4340-ae64-9684d846eb83"}
+                     }
+                  ]
+               }
+            ]
+         },
+         "editorData" : {
+            "needLayout" : {"type" : 19, "value" : 0},
+            "nextNodeId" : {"type" : 5, "value" : 40}
+         }
+      }
+   }
 }

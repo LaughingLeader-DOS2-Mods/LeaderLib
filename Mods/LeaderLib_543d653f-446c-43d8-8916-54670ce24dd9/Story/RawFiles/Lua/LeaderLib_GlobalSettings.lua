@@ -1,4 +1,4 @@
-local global_settings_base = {
+local global_settings_example = {
 	GlobalFlags = {
 		"LeaderLib_DialogRedirectionEnabled",
 		"LeaderLib_DialogRedirection_HighestPersuasionEnabled",
@@ -11,6 +11,18 @@ local global_settings_base = {
 			"LeaderLib_AutosavingEnabled",
 			"LeaderLib_AutosaveOnCombatStart",
 			"LeaderLib_DisableAutosavingInCombat",
+		},
+		Interval = "LeaderLib_Autosave_Interval_15"
+	}
+}
+
+local global_settings_base = {
+	GlobalFlags = {
+		
+	},
+	Autosaving = {
+		GlobalFlags = {
+			
 		},
 		Interval = "LeaderLib_Autosave_Interval_15"
 	}
@@ -55,9 +67,14 @@ local function parse_settings(tbl)
 end
 
 local function LoadGlobalSettings()
-	local global_settings = Ext.JsonParse("LeaderLib_GlobalSettings")
-	Ext.Print("[LeaderLib:GlobalSettings.lua] Loaded global settings. {" .. LeaderLib.Common.Dump(global_settings) .. "}")
-	parse_settings(global_settings)
+	local json = NRD_LoadFile("LeaderLib_GlobalSettings.json")
+	if json ~= nil and json ~= "" then
+		local global_settings = Ext.JsonParse(json)
+		Ext.Print("[LeaderLib:GlobalSettings.lua] Loaded global settings. {" .. LeaderLib.Common.Dump(global_settings) .. "}")
+		parse_settings(global_settings)
+	else
+		Ext.Print("[LeaderLib:GlobalSettings.lua] No global settings found.")
+	end
 end
 
 local function LoadGlobalSettings_Error (x)
@@ -70,20 +87,20 @@ local function LoadGlobalSettings_Run()
 	xpcall(LoadGlobalSettings, LoadGlobalSettings_Error)
 end
 
-local function build_settings(tbl, target)
+local function build_settings(tbl)
 	for k,v in pairs(tbl) do
 		if k == "GlobalFlags" then
-			target["GlobalFlags"] = {}
+			tbl["GlobalFlags"] = {}
 			for _,flag in ipairs(k) do
 				if type(flag) == "string" then
 					local flag_set = GlobalGetFlag(flag)
 					if flag_set == 1 then
-						target[#target+1] = flag
+						tbl[#tbl+1] = flag
 					end
 				end
 			end
 		elseif k == "Interval" then
-			for _,interval_flag in autosaving_interval do
+			for _,interval_flag in ipairs(autosaving_interval) do
 				local flag_set = GlobalGetFlag(interval_flag)
 				if flag_set == 1 then
 					v = interval_flag
@@ -92,15 +109,16 @@ local function build_settings(tbl, target)
 			end
 		end
 		if type(v) == "table" then
-			build_settings(v, target)
+			build_settings(v, tbl)
 		end
 	end
 end
 
 local function SaveGlobalSettings()
-	local LeaderLib_GlobalSettings = {}
-	build_settings(global_settings_base, LeaderLib_GlobalSettings)
+	local LeaderLib_GlobalSettings = global_settings_base
+	build_settings(LeaderLib_GlobalSettings)
 	local json = Ext.JsonStringify(LeaderLib_GlobalSettings)
+	NRD_SaveFile("LeaderLib_GlobalSettings.json", json)
 	Ext.Print("[LeaderLib:GlobalSettings.lua] Saved global settings. {" .. json .. "}")
 end
 

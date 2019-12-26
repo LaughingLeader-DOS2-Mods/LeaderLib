@@ -204,6 +204,34 @@ Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUID
 THEN
 LeaderLib_DialogOverride_Internal_ClearTempData(_Dialog);
 //END_REGION
+
+//REGION POST_DIALOG_ACTIVATION
+IF
+DialogEnded(_Dialog, _)
+AND
+DB_LeaderLib_DialogOverride_Temp_PostDialogActivation(_Dialog, (CHARACTERGUID)_Target)
+AND
+CharacterIsPartyMember(_Target, 1)
+THEN
+NOT DB_LeaderLib_DialogOverride_Temp_PostDialogActivation(_Dialog, (CHARACTERGUID)_Target);
+MakePlayerActive(_Target);
+
+IF
+DialogEnded(_Dialog, _)
+AND
+DB_LeaderLib_DialogOverride_Temp_PostDialogActivation(_Dialog, (CHARACTERGUID)_Target)
+THEN
+NOT DB_LeaderLib_DialogOverride_Temp_PostDialogActivation(_Dialog, (CHARACTERGUID)_Target);
+
+//No dialogs active, cleanup
+IF
+DialogEnded(_,_)
+AND
+NOT SysCount("DB_LeaderLib_DialogOverride_Temp_PostDialogActivation", 2, 0)
+THEN
+TimerCancel("Timers_LeaderLib_DialogOverride_ClearPostActivationDB");
+TimerLaunch("Timers_LeaderLib_DialogOverride_ClearPostActivationDB", 25);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

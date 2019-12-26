@@ -288,6 +288,23 @@ IF
 DB_LeaderLib_DialogOverride_Temp_RedirectionTarget((STRING)_Dialog, (GUIDSTRING)_Avatar, (GUIDSTRING)_Target)
 THEN
 LeaderLib_DialogOverride_Internal_TeleportRedirectionTarget((CHARACTERGUID)_Avatar, _Target);
+LeaderLib_DialogOverride_Internal_MarkForPostDialogActivation(_Dialog, _Target);
+
+PROC
+LeaderLib_DialogOverride_Internal_MarkForPostDialogActivation((STRING)_Dialog, (GUIDSTRING)_Target)
+AND
+ObjectIsCharacter((CHARACTERGUID)_Target, 1)
+AND
+CharacterIsControlled(_Target, 1)
+THEN
+DB_LeaderLib_DialogOverride_Temp_PostDialogActivation(_Dialog, (CHARACTERGUID)_Target);
+
+IF
+TimerFinished("Timers_LeaderLib_DialogOverride_ClearPostActivationDB")
+AND
+NOT DB_DialogName(_,_)
+THEN
+SysClear("DB_LeaderLib_DialogOverride_Temp_PostDialogActivation", 2);
 //END_REGION
 
 //REGION GET_REDIRECTION_CONDITIONS

@@ -1,123 +1,3 @@
-
-local global_settings = {}
-
----@class LeaderLibIntegerVariable
-local LeaderLibIntegerVariable = { 
-	name = "",
-	value = 0,
-	defaultValue = 0
-}
-
-LeaderLibIntegerVariable.__index = LeaderLibIntegerVariable
-
-function LeaderLibIntegerVariable:Create(name,defaultValue)
-    local this =
-    {
-		name = name,
-		defaultValue = defaultValue
-	}
-	setmetatable(this, self)
-    return this
-end
-
----@class LeaderLibModSettings
-local LeaderLibModSettings = {
-	name = "Mod", 
-	author = "Author",
-	globalflags = {},
-	integers = {},
-	version = "0.0.0.0"
-}
-
-LeaderLibModSettings.__index = LeaderLibModSettings
-
-function LeaderLibModSettings:Create(name,author)
-    local this =
-    {
-		name = name,
-		author = author,
-		globalflags = {},
-		integers = {},
-	}
-	setmetatable(this, self)
-    return this
-end
-
-local function do_addflags(tbl, x)
-	if type(x) == "string" then
-		tbl[x] = GlobalGetFlag(x) == 1 and true or false
-	elseif type(x) == "table" then
-		for _,y in ipairs(x) do
-			do_addflags(tbl, y)
-		end
-	end
-end
-
-function LeaderLibModSettings:AddFlags(...)
-	local flags = {...}
-	local target = self.globalflags
-	for _,f in ipairs(flags) do
-		do_addflags(target, f)
-	end
-	self.globalflags = target
-	--Ext.Print("Test: " .. LeaderLib.Common.Dump(self))
-end
-
-function LeaderLibModSettings:Export()
-	Ext.Print("Exporting: " .. LeaderLib.Common.Dump(self))
-	local export_table = LeaderLibModSettings:Create(self.name, self.author)
-	export_table.version = self.version
-	--export_table.globalflags = {}
-	table.sort(self.globalflags)
-	for flag,v in pairs(self.globalflags) do
-		if GlobalGetFlag(flag) == 1 then
-			export_table.globalflags[flag] = true
-		else
-			export_table.globalflags[flag] = false
-		end
-		Ext.Print("Flag: " .. flag .. " | " .. GlobalGetFlag(flag))
-	end
-	for name,v in pairs(self.integers) do
-		local last_pricemod = GetGlobalPriceModifier()
-		Osi.LeaderLib_GlobalSettings_Internal_GetIntegerVariable(self.name, self.author, name)
-		local int_value = GetGlobalPriceModifier()
-		export_table.integers[name] = int_value
-		SetGlobalPriceModifier(last_pricemod)
-		Ext.Print("Price mod int hack? Last("..last_pricemod..") IntGrabbed("..int_value..") Current("..GetGlobalPriceModifier()..")")
-	end
-	return export_table
-end
-
----@class LeaderLibGlobalSettings
-local LeaderLibGlobalSettings = { 
-	mods = {}
-}
-
-LeaderLibGlobalSettings.__index = LeaderLibGlobalSettings
-
-function LeaderLibGlobalSettings:Create()
-    local this =
-    {
-		mods = {}
-	}
-	setmetatable(this, self)
-
-	for _,v in ipairs(global_settings) do
-		local export = v:Export()
-		this.mods[#this.mods+1] = export
-	end
-
-	table.sort(this.mods, function(a,b)
-		if a.name ~= nil and b.name ~= nil then
-			return a.name.upper() < b.name.upper()
-		else
-			return false
-		end
-	end)
-
-    return this
-end
-
 local global_flags = {
 	"LeaderLib_DialogRedirectionEnabled",
 	"LeaderLib_DialogRedirection_HighestPersuasionEnabled",
@@ -164,6 +44,147 @@ local autosaving_interval = {
 	"LeaderLib_Autosave_Interval_240",
 }
 
+local global_settings = {}
+
+---@class LeaderLibIntegerVariable
+local LeaderLibIntegerVariable = { 
+	name = "",
+	value = 0,
+	defaultValue = 0
+}
+
+LeaderLibIntegerVariable.__index = LeaderLibIntegerVariable
+
+function LeaderLibIntegerVariable:Create(name,defaultValue)
+    local this =
+    {
+		name = name,
+		defaultValue = defaultValue
+	}
+	setmetatable(this, self)
+    return this
+end
+
+---@class LeaderLibFlagVariable
+local LeaderLibFlagVariable = {
+	name = "",
+	saveWhenFalse = false
+}
+
+LeaderLibFlagVariable.__index = LeaderLibFlagVariable
+
+function LeaderLibFlagVariable:Create(name)
+    local this =
+    {
+		name = name
+	}
+	setmetatable(this, self)
+    return this
+end
+
+---@class LeaderLibModSettings
+local LeaderLibModSettings = {
+	name = "Mod", 
+	author = "Author",
+	globalflags = {},
+	integers = {},
+	version = "0.0.0.0"
+}
+
+LeaderLibModSettings.__index = LeaderLibModSettings
+
+function LeaderLibModSettings:Create(name,author)
+    local this =
+    {
+		name = name,
+		author = author,
+		globalflags = {},
+		integers = {},
+	}
+	setmetatable(this, self)
+    return this
+end
+
+local function do_addflags(tbl, x)
+	if type(x) == "string" then
+		tbl[x] = LeaderLibFlagVariable:Create(x)
+	elseif type(x) == "table" then
+		for _,y in ipairs(x) do
+			do_addflags(tbl, y)
+		end
+	end
+end
+
+function LeaderLibModSettings:AddFlags(...)
+	local flags = {...}
+	local target = self.globalflags
+	for _,f in ipairs(flags) do
+		do_addflags(target, f)
+	end
+	self.globalflags = target
+	--Ext.Print("Test: " .. LeaderLib.Common.Dump(self))
+end
+
+function LeaderLibModSettings:Export()
+	Ext.Print("Exporting: " .. LeaderLib.Common.Dump(self))
+	local export_table = LeaderLibModSettings:Create(self.name, self.author)
+	export_table.version = self.version
+	--export_table.globalflags = {}
+	table.sort(self.globalflags)
+	for flag,v in pairs(self.globalflags) do
+		if GlobalGetFlag(flag) == 1 then
+			export_table.globalflags[flag] = true
+		elseif v.saveWhenFalse == true then
+			export_table.globalflags[flag] = false
+		end
+		Ext.Print("Flag: " .. flag .. " | " .. GlobalGetFlag(flag))
+	end
+	local last_pricemod = GetGlobalPriceModifier()
+	for name,v in pairs(self.integers) do
+		SetGlobalPriceModifier(123456)
+		Osi.LeaderLib_GlobalSettings_Internal_GetIntegerVariable(self.name, self.author, name)
+		local int_value = GetGlobalPriceModifier()
+		if int_value ~= 123456 then
+			export_table.integers[name] = int_value
+			--GlobalClearFlag("LeaderLib_Internal_GlobalSettings_IntegerVarSet")
+		end
+		Ext.Print("Got int var ("..name..") Value ("..int_value..")")
+	end
+	SetGlobalPriceModifier(last_pricemod)
+	Ext.Print("GlobalPriceModifier reverted back to ("..GetGlobalPriceModifier()..")")
+	return export_table
+end
+
+---@class LeaderLibGlobalSettings
+local LeaderLibGlobalSettings = { 
+	mods = {}
+}
+
+LeaderLibGlobalSettings.__index = LeaderLibGlobalSettings
+
+function LeaderLibGlobalSettings:Create()
+    local this =
+    {
+		mods = {}
+	}
+	setmetatable(this, self)
+
+	for _,v in ipairs(global_settings) do
+		local export = v:Export()
+		this.mods[#this.mods+1] = export
+	end
+
+	table.sort(this.mods, function(a,b)
+		if a.name ~= nil and b.name ~= nil then
+			return a.name.upper() < b.name.upper()
+		else
+			return false
+		end
+	end)
+
+    return this
+end
+
 ---Fetches stored settings, or returns a new settings table.
 ---@param modid string
 ---@param author string
@@ -186,9 +207,13 @@ end
 ---@param modid string
 ---@param author string
 ---@param flag string
-local function GlobalSettings_StoreGlobalFlag(modid, author, flag)
+local function GlobalSettings_StoreGlobalFlag(modid, author, flag, saveWhenFalse)
 	local mod_settings = Get_Settings(modid, author)
-	mod_settings.globalflags[flag] = GlobalGetFlag(flag) == 1 and true or false
+	if flag ~= nil then
+		local flagvar = LeaderLibFlagVariable:Create(flag)
+		if saveWhenFalse == "1" then flagvar.saveWhenFalse = true end
+		mod_settings.globalflags[flag] = flagvar
+	end
 end
 
 ---@param modid string
@@ -199,6 +224,14 @@ local function GlobalSettings_StoreGlobalInteger(modid, author, name, defaultval
 	Ext.Print("Storing int: ", modid, author, name, defaultvalue)
 	local mod_settings = Get_Settings(modid, author)
 	mod_settings.integers[name] = tonumber(defaultvalue)
+end
+
+---@param modid string
+---@param author string
+---@param version string
+local function GlobalSettings_StoreModVersion(modid, author, version)
+	local mod_settings = Get_Settings(modid, author)
+	mod_settings.version = version
 end
 
 local function parse_settings(tbl)
@@ -310,7 +343,8 @@ LeaderLib.Settings = {
 	SaveGlobalSettings = SaveGlobalSettings_Run,
 	GlobalSettings_StoreGlobalFlag = GlobalSettings_StoreGlobalFlag,
 	GlobalSettings_StoreGlobalInteger = GlobalSettings_StoreGlobalInteger,
-	GlobalSettings_Initialize = GlobalSettings_Initialize
+	GlobalSettings_StoreModVersion = GlobalSettings_StoreModVersion,
+	GlobalSettings_Initialize = GlobalSettings_Initialize,
 }
 
 --Export local functions to global for now

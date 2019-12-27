@@ -1,8 +1,115 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-
+LeaderLib_GlobalSettings_Internal_Init();
 KBSECTION
+
+//REGION INIT_SETTING
+PROC
+LeaderLib_GlobalSettings_Internal_Init()
+THEN
+LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLib_AutoAddModMenuBooksDisabled");
+LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLib_AutosaveOnCombatStart");
+LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLib_AutosavingEnabled");
+LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLib_DialogRedirectionEnabled");
+LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLib_DialogRedirection_DisableUserRestriction");
+LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLib_DialogRedirection_HighestPersuasionEnabled");
+LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLib_DisableAutosavingInCombat");
+LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLib_FriendlyFireEnabled");
+LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLog_CombatLog_Disabled");
+LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLog_Debug_Enabled");
+LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLog_Status_Disabled");
+
+PROC
+LeaderLib_Internal_GlobalSettings_Register_Flag((STRING)_Flag)
+THEN
+LeaderLib_GlobalSettings_Register_Flag("LeaderLib", "LaughingLeader", _Flag);
+
+PROC
+LeaderLib_Internal_GlobalSettings_Register_Flag((STRING)_Flag, (INTEGER)_SaveWhenFalse)
+THEN
+LeaderLib_GlobalSettings_Register_Flag("LeaderLib", "LaughingLeader", _Flag, _SaveWhenFalse);
+//END_REGION
+
+//REGION VARIABLE_TRANSFER
+QRY
+LeaderLib_GlobalSettings_QRY_ModHasVariables((STRING)_ModID, (STRING)_Author)
+AND
+DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author, _SaveWhenFalse)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_GlobalSettings_QRY_ModHasVariables((STRING)_ModID, (STRING)_Author)
+AND
+DB_LeaderLib_GlobalSettings_Integers(_ModID, _Author, _Name, _DefaultValue)
+THEN
+DB_NOOP(1);
+
+IF
+TimerFinished("Timers_LeaderLib_GlobalSettings_TransferVariables")
+THEN
+LeaderLib_GlobalSettings_Internal_TransferFlags();
+LeaderLib_GlobalSettings_Internal_TransferIntegers();
+
+//Sends all flags to lua for export, if the extender is present
+PROC
+LeaderLib_GlobalSettings_Internal_TransferFlags()
+THEN
+DB_NOOP(1);
+// [BEGIN_NO_OSITOOLS]
+LeaderLog_Log("DEBUG", "[LeaderLib_00_1_1_System:LeaderLib_GlobalSettings_Internal_TransferFlags] (*WARNING*) The extender is not active. Skipping.");
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+PROC
+LeaderLib_GlobalSettings_Internal_TransferFlags()
+AND
+DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author, _SaveWhenFalse)
+AND
+IntegertoString(_SaveWhenFalse, _IntStr)
+THEN
+NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreGlobalFlag", _ModID, _Author, _Flag, _IntStr);
+*/
+
+//Sends all vars to lua for export, if the extender is present
+PROC
+LeaderLib_GlobalSettings_Internal_TransferIntegers()
+THEN
+DB_NOOP(1);
+// [BEGIN_NO_OSITOOLS]
+LeaderLog_Log("DEBUG", "[LeaderLib_00_1_1_System:LeaderLib_GlobalSettings_Internal_TransferIntegers] (*WARNING*) The extender is not active. Skipping.");
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+PROC
+LeaderLib_GlobalSettings_Internal_TransferIntegers()
+AND
+DB_LeaderLib_GlobalSettings_Integers(_ModID, _Author, _Name, _DefaultValue)
+AND
+IntegertoString(_DefaultValue, _IntStr)
+THEN
+NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreGlobalInteger", _ModID, _Author, _Name, _IntStr);
+*/
+//END_REGION
+
+//REGION VERSION_UPDATING
+/* [OSITOOLS_ONLY]
+IF
+TimerFinished("Timers_LeaderLib_GlobalSettings_TransferVariables")
+AND
+DB_Mods_Registered(_ModID, _Author, _CurrentVersion)
+THEN
+NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreModVersion", _ModID, _Author, _CurrentVersion);
+
+PROC
+LeaderUpdater_ModUpdated((STRING)_ModID, (STRING)_Author, (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_GlobalSettings_QRY_ModHasVariables(_ModID, _Author)
+THEN
+NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreModVersion", _ModID, _Author, _NewVersion);
+*/
+//END_REGION
 
 //REGION GLOBAL_SETTING_INT_REGISTER
 PROC
@@ -16,27 +123,8 @@ PROC
 LeaderLib_GlobalSettings_Register_Integer((STRING)_ModID, (STRING)_Author, (STRING)_Name, (INTEGER)_DefaultValue)
 THEN
 DB_LeaderLib_GlobalSettings_Integers(_ModID, _Author, _Name, _DefaultValue);
-LeaderLib_GlobalSettings_Internal_TransferIntegers();
-
-//Sends all flags to lua for export, if the extender is present
-PROC
-LeaderLib_GlobalSettings_Internal_TransferIntegers()
-THEN
-DB_NOOP(1);
-// [BEGIN_NO_OSITOOLS]
-LeaderLog_Log("DEBUG", "[LeaderLib_00_1_1_System:LeaderLib_GlobalSettings_Internal_TransferIntegers] (*WARNING*) The extender is not active. Skipping.");
-// [END_NO_OSITOOLS]
-
-/* [OSITOOLS_ONLY]
-PROC
-LeaderLib_GlobalSettings_Internal_TransferIntegers()
-AND
-DB_LeaderLib_GlobalSettings_Integers(_Name, _DefaultValue, _ModID, _Author)
-AND
-IntegertoString(_DefaultValue, _IntStr)
-THEN
-NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreGlobalInteger", _ModID, _Author, _Name, _IntStr);
-*/
+TimerCancel("Timers_LeaderLib_GlobalSettings_TransferVariables");
+TimerLaunch("Timers_LeaderLib_GlobalSettings_TransferVariables", 25);
 
 //Called by LeaderLib_GlobalSettings.lua
 PROC
@@ -69,7 +157,6 @@ DB_NOOP(1);
 /* [OSITOOLS_ONLY]
 SetGlobalPriceModifier(_Value);
 */
-
 //Called by LeaderLib_GlobalSettings.lua, listened for in mods
 PROC
 LeaderLib_GlobalSettings_SetIntegerVariable((STRING)_ModID, (STRING)_Author, (STRING)_Name, (INTEGER)_Value)
@@ -80,29 +167,24 @@ DB_NOOP(1);
 //REGION GLOBAL_SETTING_FLAG_REGISTER
 PROC
 LeaderLib_GlobalSettings_Register_Flag((STRING)_ModID, (STRING)_Author, (STRING)_Flag)
-AND
-NOT DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author)
 THEN
-DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author);
-LeaderLib_GlobalSettings_Internal_TransferFlags();
+LeaderLib_GlobalSettings_Register_Flag(_ModID, _Author, _Flag, 0);
 
-//Sends all flags to lua for export, if the extender is present
 PROC
-LeaderLib_GlobalSettings_Internal_TransferFlags()
-THEN
-DB_NOOP(1);
-// [BEGIN_NO_OSITOOLS]
-LeaderLog_Log("DEBUG", "[LeaderLib_00_1_1_System:LeaderLib_GlobalSettings_Internal_TransferFlags] (*WARNING*) The extender is not active. Skipping.");
-// [END_NO_OSITOOLS]
-
-/* [OSITOOLS_ONLY]
-PROC
-LeaderLib_GlobalSettings_Internal_TransferFlags()
+LeaderLib_GlobalSettings_Register_Flag((STRING)_ModID, (STRING)_Author, (STRING)_Flag, (INTEGER)_SaveWhenFalse)
 AND
-DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author)
+DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author, _LastVal)
 THEN
-NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreGlobalFlag", _ModID, _Author, _Flag);
-*/
+NOT DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author, _LastVal);
+
+PROC
+LeaderLib_GlobalSettings_Register_Flag((STRING)_ModID, (STRING)_Author, (STRING)_Flag, (INTEGER)_SaveWhenFalse)
+AND
+NOT DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author, _)
+THEN
+DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author, _SaveWhenFalse);
+TimerCancel("Timers_LeaderLib_GlobalSettings_TransferVariables");
+TimerLaunch("Timers_LeaderLib_GlobalSettings_TransferVariables", 25);
 //END_REGION
 
 //REGION GLOBAL_SETTINGS

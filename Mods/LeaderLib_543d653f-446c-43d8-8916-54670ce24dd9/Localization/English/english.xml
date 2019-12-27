@@ -32,7 +32,9 @@
 	<content contentuid="h68ad69bfg9d72g4107g8285g691dd3abc27e" Source ="LeaderLib_CommandsMenu.lsj">Add the Mod Menu Skill (Self)</content>
 	<content contentuid="hbb25dcedgbd28g4408g80dcg3ab34bed0164" Source ="LeaderLib_CommandsMenu.lsj">Remove the Mod Menu Skill (Party)</content>
 	<content contentuid="h86be6c1eg4261g4c62gb949gab7b24bfd1f8" Source ="LeaderLib_CommandsMenu.lsj">Commands</content>
+	<content contentuid="h1c1d8acag9819g4028g860fg9a546af236ee" Source ="LeaderLib_CommandsMenu.lsj">[LOAD] Load Global Settings</content>
 	<content contentuid="h31a2f896g6e9fg47aegb876ga3d5ba3114b1" Source ="LeaderLib_CommandsMenu.lsj">[Debug] Fix Dialog for Active LeaderLib Traders</content>
+	<content contentuid="hc48478ceg4b78g4087g9dd6g27ba0e95a20b" Source ="LeaderLib_CommandsMenu.lsj">[SAVE] Save Global Settings</content>
 	<content contentuid="h8859d107g3e28g44dega723gc7434a93f206" Source ="LeaderLib_CommandsMenu.lsj">Add the Mod Menu Skill (Party)</content>
 	<content contentuid="h529c36c6g6b68g46e2g867dg863184908d5a" Source ="LeaderLib_CommandsMenu.lsj">Remove the Mod Menu Skill (Self)</content>
 	<content contentuid="hf8c6e866g9949g4d30g9cf2g3a9ba53d2f28" Source ="LeaderLib_Debug_RecruitCharacter.lsj">Follow me.</content>
@@ -171,6 +173,10 @@
 	<content contentuid="h9ff30ae0ge39eg480bg82a3ge975aafed5fd" Source ="LeaderLib_ModMenu.lsj">[LeaderLib_ModMenu_Menu5_45148ce6-e8f3-4af4-81ed-a3b2e1ff8a17]</content>
 	<content contentuid="h6d2689a6ge111g43b7g8c87g478a5e501f40" Source ="LeaderLib_ModMenu.lsj">Mods&lt;br&gt;[LeaderLib_ModMenu_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156]</content>
 	<content contentuid="h7a60181dg1be6g4e43g99c5g91289ea59f8f" Source ="LeaderLib_ModMenu.lsj">Exiting...</content>
+	<content contentuid="h3025ccc1g5106g4019g8e0egf2c26206bf86" Source ="LeaderLib_Notifications.lsb" Key="LeaderLib_Notifications_LoadGlobalSettings_Failed">&lt;font color=&apos;#FF0000&apos;&gt;LeaderLib Failed to Load Global Settings&lt;/font&gt;</content>
+	<content contentuid="hb987d743g981dg43f6g9aa8g08109349d4e9" Source ="LeaderLib_Notifications.lsb" Key="LeaderLib_Notifications_LoadGlobalSettings_Success">LeaderLib Successfully Loaded Global Settings</content>
+	<content contentuid="h73234319g4e6bg4967gb45cga511b60f0408" Source ="LeaderLib_Notifications.lsb" Key="LeaderLib_Notifications_SaveGlobalSettings_Failed">&lt;font color=&apos;#FF0000&apos;&gt;LeaderLib Failed to Save Global Settings&lt;/font&gt;</content>
+	<content contentuid="hee75e144g1d75g4094ga8c9g4a0508c5cf67" Source ="LeaderLib_Notifications.lsb" Key="LeaderLib_Notifications_SaveGlobalSettings_Success">LeaderLib Successfully Saved Global Settings</content>
 	<content contentuid="hd36c1438g1728g4d9bg8b9bg21941bffb16a" Source ="LeaderLib_Notifications.lsb" Key="LeaderLib_ToggleUndeadPolymorph_Failed">&lt;font color=&apos;#FF0000&apos;&gt;Failed to find current race.&lt;/font&gt;</content>
 	<content contentuid="h3c27be6dg727bg4802ga3cbge9ab8e50a62b" Source ="LeaderLib_PresetMenu.lsj">[Previous]</content>
 	<content contentuid="h7f51b851g67b5g4eceg9ab5g2bc268bd674f" Source ="LeaderLib_PresetMenu.lsj">Cancel</content>

@@ -132,8 +132,6 @@ PROC
 LeaderLib_GlobalSettings_Register_Integer((STRING)_ModID, (STRING)_Author, (STRING)_Name, (INTEGER)_DefaultValue)
 THEN
 DB_LeaderLib_GlobalSettings_Integers(_ModID, _Author, _Name, _DefaultValue);
-TimerCancel("Timers_LeaderLib_GlobalSettings_TransferVariables");
-TimerLaunch("Timers_LeaderLib_GlobalSettings_TransferVariables", 25);
 
 //Called by LeaderLib_GlobalSettings.lua
 PROC
@@ -228,9 +226,38 @@ NRD_LuaCall("LeaderLib_Ext_LoadGlobalSettings");
 */
 
 IF
-StoryEvent(_,"LeaderLib_Initialized")
+GameStarted(_Region,_IsEditor)
+AND
+IsGameLevel(_Region, _IsGameLevel)
+AND
+IntegerMax(_IsEditor, _IsGameLevel, 1)
 THEN
 LeaderLib_LoadGlobalSettings();
+
+IF
+ObjectFlagSet("LeaderLib_Commands_LoadGlobalSettings", (CHARACTERGUID)_Speaker, _)
+THEN
+ObjectClearFlag(_Speaker, "LeaderLib_Commands_LoadGlobalSettings", 0);
+LeaderLib_LoadGlobalSettings();
+ShowNotification(_Speaker, "LeaderLib_Notifications_LoadGlobalSettings_Success");
+//ShowNotification(_Speaker, "LeaderLib_Notifications_LoadGlobalSettings_Failed");
+
+IF
+ObjectFlagSet("LeaderLib_Commands_SaveGlobalSettings", (CHARACTERGUID)_Speaker, _)
+THEN
+ObjectClearFlag(_Speaker, "LeaderLib_Commands_SaveGlobalSettings", 0);
+LeaderLib_SaveGlobalSettings();
+ShowNotification(_Speaker, "LeaderLib_Notifications_SaveGlobalSettings_Success");
+//ShowNotification(_Speaker, "LeaderLib_Notifications_SaveGlobalSettings_Failed");
+/*
+IF
+//StoryEvent(_,"LeaderLib_Initialized")
+RegionStarted(_Region)
+AND
+IsGameLevel(_Region, 1)
+THEN
+LeaderLib_LoadGlobalSettings();
+*/
 
 IF
 GlobalFlagSet("LeaderLib_Commands_SaveGlobalSettings")

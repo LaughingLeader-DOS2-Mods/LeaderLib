@@ -772,9 +772,9 @@ _Major <= _OtherMajor
 AND
 _Minor <= _OtherMinor
 AND
-_Revision < _OtherRevision
+_Revision <= _OtherRevision
 AND
-_Build <= _OtherBuild
+_Build < _OtherBuild
 THEN
 DB_NOOP(1);
 //END_REGION

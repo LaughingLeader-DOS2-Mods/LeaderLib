@@ -34,6 +34,13 @@ THEN
 LeaderLib_GlobalSettings_Register_Flag("LeaderLib", "LaughingLeader", _Flag, _SaveWhenFalse);
 //END_REGION
 
+//REGION UPDATES
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+THEN
+LeaderLib_GlobalSettings_Internal_Init();
+//END_REGION
+
 //REGION VARIABLE_TRANSFER
 QRY
 LeaderLib_GlobalSettings_QRY_ModHasVariables((STRING)_ModID, (STRING)_Author)
@@ -122,6 +129,11 @@ NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreModVersion", _ModID, _Author, _Ne
 
 //REGION GLOBAL_SETTING_INT_REGISTER
 PROC
+LeaderLib_GlobalSettings_Register_Integer((STRING)_ModID, (STRING)_Author, (STRING)_Name)
+THEN
+LeaderLib_GlobalSettings_Register_Integer(_ModID, _Author, _Name, 0);
+
+PROC
 LeaderLib_GlobalSettings_Register_Integer((STRING)_ModID, (STRING)_Author, (STRING)_Name, (INTEGER)_DefaultValue)
 AND
 DB_LeaderLib_GlobalSettings_Integers(_ModID, _Author, _Name, _LastDefaultValue)
@@ -192,7 +204,22 @@ THEN
 DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author, _SaveWhenFalse);
 //END_REGION
 
-//REGION GLOBAL_SETTINGS
+//REGION SIGNAL_OTHER_MODS_REGISTRATION
+IF
+RegionStarted(_Region)
+AND
+NOT LeaderLib_Helper_QRY_IsCharacterCreationOrLobby(_Region)
+THEN
+LeaderLib_GlobalSettings_InitModRegistration();
+
+//Signals other mods to register their settings
+PROC
+LeaderLib_GlobalSettings_InitModRegistration()
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION GLOBAL_SETTINGS_SAVE_LOAD
 PROC
 LeaderLib_SaveGlobalSettings()
 THEN

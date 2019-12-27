@@ -175,7 +175,7 @@ function LeaderLibGlobalSettings:Create()
 	
 	table.sort(this.mods, function(a,b)
 		if a.name ~= nil and b.name ~= nil then
-			return a.name.upper() < b.name.upper()
+			return string.upper(a.name) < string.upper(b.name)
 		else
 			return false
 		end

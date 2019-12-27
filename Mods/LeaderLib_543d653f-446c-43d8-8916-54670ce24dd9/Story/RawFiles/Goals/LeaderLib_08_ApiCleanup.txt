@@ -155,6 +155,39 @@ DB_LeaderLib_ModApi_StartSortQueue((STRING)_DictionaryID, (INTEGER)_TickRate, (S
 THEN
 LeaderLib_DictionarySort_StartSorting(_DictionaryID, _TickRate, _CompleteEvent);
 NOT DB_LeaderLib_ModApi_StartSortQueue(_DictionaryID, _TickRate, _CompleteEvent);
+
+/*Global Settings*/
+PROC
+LeaderLib_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_GlobalSettings_Register_Flag((STRING)_ModID, (STRING)_Author, (STRING)_Name)
+THEN
+LeaderLib_GlobalSettings_Register_Flag(_ModID, _Author, _Name);
+NOT DB_LeaderLib_ModApi_GlobalSettings_Register_Flag(_ModID, _Author, _Name);
+
+PROC
+LeaderLib_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_GlobalSettings_Register_Flag((STRING)_ModID, (STRING)_Author, (STRING)_Name, (INTEGER)_SaveWhenFalse)
+THEN
+LeaderLib_GlobalSettings_Register_Flag(_ModID, _Author, _Name, _SaveWhenFalse);
+NOT DB_LeaderLib_ModApi_GlobalSettings_Register_Flag(_ModID, _Author, _Name, _SaveWhenFalse);
+
+PROC
+LeaderLib_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_GlobalSettings_Register_Integer((STRING)_ModID, (STRING)_Author, (STRING)_Name)
+THEN
+LeaderLib_GlobalSettings_Register_Integer(_ModID, _Author, _Name);
+NOT DB_LeaderLib_ModApi_GlobalSettings_Register_Integer(_ModID, _Author, _Name);
+
+PROC
+LeaderLib_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_GlobalSettings_Register_Integer((STRING)_ModID, (STRING)_Author, (STRING)_Name, (INTEGER)_DefaultValue)
+THEN
+LeaderLib_GlobalSettings_Register_Integer(_ModID, _Author, _Name, _DefaultValue);
+NOT DB_LeaderLib_ModApi_GlobalSettings_Register_Integer(_ModID, _Author, _Name, _DefaultValue);
 EXITSECTION
 
 ENDEXITSECTION

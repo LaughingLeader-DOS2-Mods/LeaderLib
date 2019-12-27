@@ -42,12 +42,45 @@ DB_LeaderLib_Autosaving_Interval("LeaderLib_Autosave_Interval_120", 120);
 DB_LeaderLib_Autosaving_Interval("LeaderLib_Autosave_Interval_180", 180);
 DB_LeaderLib_Autosaving_Interval("LeaderLib_Autosave_Interval_240", 240);
 
+LeaderLib_GlobalSettings_Register_Integer("LeaderLib", "LaughingLeader", "AutosaveInterval", 15);
+
 IF
 GameStarted(_,_)
 AND
 NOT DB_LeaderLib_Autosaving_CurrentInterval(_)
 THEN
 DB_LeaderLib_Autosaving_CurrentInterval("LeaderLib_Autosave_Interval_15");
+//END_REGION
+
+//REGION GLOBAL_SETTINGS
+PROC
+LeaderLib_GlobalSettings_GetIntegerVariable("LeaderLib", "LaughingLeader", "AutosaveInterval")
+AND
+DB_LeaderLib_Autosaving_CurrentInterval(_Flag)
+AND
+DB_LeaderLib_Autosaving_Interval(_Flag, _Minutes)
+THEN
+LeaderLib_GlobalSettings_SaveIntegerVariable("LeaderLib", "LaughingLeader", "AutosaveInterval", _Minutes);
+
+//New minutes  assigned by a user via the settings file
+PROC
+LeaderLib_GlobalSettings_SetIntegerVariable("LeaderLib", "LaughingLeader", "AutosaveInterval", (INTEGER)_Minutes)
+AND
+IntegerMax(_Minutes, 2, _ClampedA)
+AND
+IntegerMin(_Minutes, 1440, _ClampedB)
+AND
+NOT DB_LeaderLib_Autosaving_Interval(_, _ClampedB)
+AND
+IntegertoString(_ClampedB, _IntStr)
+AND
+StringConcatenate("LeaderLib_Autosave_Interval_", _IntStr, _NewFlag)
+THEN
+DB_LeaderLib_Autosaving_Interval(_NewFlag, _ClampedB);
+DB_LeaderLib_Autosaving_CurrentInterval(_NewFlag);
+LeaderLib_GlobalSettings_Register_Flag("LeaderLib", "LaughingLeader", _NewFlag);
+GlobalSetFlag(_NewFlag);
+LeaderLog_Log("DEBUG", "[LeaderLib_11_3_Autosaving:SetIntegerVariable] New interval flag was created by user: (",_NewFlag,")[",_IntStr,"]");
 //END_REGION
 
 //REGION INIT_TIMER

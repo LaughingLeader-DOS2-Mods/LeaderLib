@@ -25,7 +25,15 @@ local function has_table_entry(tbl, key)
 	return false
 end
 
+local function StringEquals(a,b)
+	if a ~= nil and b ~= nil then
+		return string.upper(a) == string.upper(b)
+	end
+	return false
+end
+
 LeaderLib.Common = {
 	Dump = dump,
-	TableHasEntry = has_table_entry
+	TableHasEntry = has_table_entry,
+	StringEquals = StringEquals
 }

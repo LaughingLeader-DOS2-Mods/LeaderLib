@@ -1,0 +1,177 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+
+//REGION GLOBAL_SETTING_INT_REGISTER
+PROC
+LeaderLib_GlobalSettings_Register_Integer((STRING)_ModID, (STRING)_Author, (STRING)_Name, (INTEGER)_DefaultValue)
+AND
+DB_LeaderLib_GlobalSettings_Integers(_ModID, _Author, _Name, _LastDefaultValue)
+THEN
+NOT DB_LeaderLib_GlobalSettings_Integers(_ModID, _Author, _Name, _LastDefaultValue);
+
+PROC
+LeaderLib_GlobalSettings_Register_Integer((STRING)_ModID, (STRING)_Author, (STRING)_Name, (INTEGER)_DefaultValue)
+THEN
+DB_LeaderLib_GlobalSettings_Integers(_ModID, _Author, _Name, _DefaultValue);
+LeaderLib_GlobalSettings_Internal_TransferIntegers();
+
+//Sends all flags to lua for export, if the extender is present
+PROC
+LeaderLib_GlobalSettings_Internal_TransferIntegers()
+THEN
+DB_NOOP(1);
+// [BEGIN_NO_OSITOOLS]
+LeaderLog_Log("DEBUG", "[LeaderLib_00_1_1_System:LeaderLib_GlobalSettings_Internal_TransferIntegers] (*WARNING*) The extender is not active. Skipping.");
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+PROC
+LeaderLib_GlobalSettings_Internal_TransferIntegers()
+AND
+DB_LeaderLib_GlobalSettings_Integers(_Name, _DefaultValue, _ModID, _Author)
+AND
+IntegertoString(_DefaultValue, _IntStr)
+THEN
+NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreGlobalInteger", _ModID, _Author, _Name, _IntStr);
+*/
+
+//Called by LeaderLib_GlobalSettings.lua
+PROC
+LeaderLib_GlobalSettings_Internal_GetIntegerVariable((STRING)_ModID, (STRING)_Author, (STRING)_Name)
+AND
+DB_LeaderLib_GlobalSettings_Integers(_ModID, _Author, _Name, _DefaultValue)
+THEN
+LeaderLib_GlobalSettings_GetIntegerVariable(_ModID, _Author, _Name);
+
+/*
+PROC
+LeaderLib_GlobalSettings_GetIntegerVariable((STRING)_ModID, (STRING)_Author, (STRING)_Name)
+THEN
+LeaderLib_GlobalSettings_SaveIntegerVariable(_ModID, _Author, _Name, 0);
+*/
+
+// Listen for this in mods
+PROC
+LeaderLib_GlobalSettings_GetIntegerVariable((STRING)_ModID, (STRING)_Author, (STRING)_Name)
+THEN
+DB_NOOP(1);
+//Call this proc with the value to send.
+//LeaderLib_GlobalSettings_SaveIntegerVariable(_ModID, _Author, _Name, _Value);
+
+//Called by other mods
+PROC
+LeaderLib_GlobalSettings_SaveIntegerVariable((STRING)_ModID, (STRING)_Author, (STRING)_Name, (INTEGER)_Value)
+THEN
+DB_NOOP(1);
+/* [OSITOOLS_ONLY]
+SetGlobalPriceModifier(_Value);
+*/
+
+//Called by LeaderLib_GlobalSettings.lua, listened for in mods
+PROC
+LeaderLib_GlobalSettings_SetIntegerVariable((STRING)_ModID, (STRING)_Author, (STRING)_Name, (INTEGER)_Value)
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION GLOBAL_SETTING_FLAG_REGISTER
+PROC
+LeaderLib_GlobalSettings_Register_Flag((STRING)_ModID, (STRING)_Author, (STRING)_Flag)
+AND
+NOT DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author)
+THEN
+DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author);
+LeaderLib_GlobalSettings_Internal_TransferFlags();
+
+//Sends all flags to lua for export, if the extender is present
+PROC
+LeaderLib_GlobalSettings_Internal_TransferFlags()
+THEN
+DB_NOOP(1);
+// [BEGIN_NO_OSITOOLS]
+LeaderLog_Log("DEBUG", "[LeaderLib_00_1_1_System:LeaderLib_GlobalSettings_Internal_TransferFlags] (*WARNING*) The extender is not active. Skipping.");
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+PROC
+LeaderLib_GlobalSettings_Internal_TransferFlags()
+AND
+DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author)
+THEN
+NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreGlobalFlag", _ModID, _Author, _Flag);
+*/
+//END_REGION
+
+//REGION GLOBAL_SETTINGS
+PROC
+LeaderLib_SaveGlobalSettings()
+THEN
+DB_NOOP(1);
+// [BEGIN_NO_OSITOOLS]
+LeaderLog_Log("DEBUG", "[LeaderLib_00_1_1_System:LeaderLib_SaveGlobalSettings] (*WARNING*) The extender is not active. Skipping.");
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+PROC
+LeaderLib_SaveGlobalSettings()
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_00_1_1_System:LeaderLib_SaveGlobalSettings] Saving global settings.");
+NRD_LuaCall("LeaderLib_Ext_SaveGlobalSettings");
+*/
+
+PROC
+LeaderLib_LoadGlobalSettings()
+THEN
+DB_NOOP(1);
+// [BEGIN_NO_OSITOOLS]
+LeaderLog_Log("DEBUG", "[LeaderLib_00_1_1_System:LeaderLib_LoadGlobalSettings] (*WARNING*) The extender is not active. Skipping.");
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+PROC
+LeaderLib_LoadGlobalSettings()
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_00_1_1_System:LeaderLib_LoadGlobalSettings] Loading global settings.");
+NRD_LuaCall("LeaderLib_Ext_LoadGlobalSettings");
+*/
+
+IF
+StoryEvent(_,"LeaderLib_Initialized")
+THEN
+LeaderLib_LoadGlobalSettings();
+
+IF
+GlobalFlagSet("LeaderLib_Commands_SaveGlobalSettings")
+THEN
+GlobalClearFlag("LeaderLib_Commands_SaveGlobalSettings");
+LeaderLib_SaveGlobalSettings();
+
+IF
+TextEventSet("leaderlib_saveglobalsettings")
+THEN
+LeaderLib_SaveGlobalSettings();
+
+IF
+TextEventSet("leaderlib_loadglobalsettings")
+THEN
+LeaderLib_LoadGlobalSettings();
+//END_REGION
+
+//REGION DEBUG
+/* [OSITOOLS_ONLY]
+IF
+TextEventSet("leaderlib_settingstest")
+THEN
+NRD_LuaReset(1);
+NRD_LuaCall("LeaderLib_Ext_GlobalSettings_Initialize");
+LeaderLib_GlobalSettings_Register_Integer("LeaderLib", "LaughingLeader", "AutosaveInterval", 15);
+LeaderLib_SaveGlobalSettings();
+*/
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "__AAA_Z_LaughingLeader_LeaderLib_Top"

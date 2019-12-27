@@ -235,4 +235,4 @@ TimerLaunch("Timers_LeaderLib_DialogOverride_ClearPostActivationDB", 25);
 EXITSECTION
 
 ENDEXITSECTION
-ParentTargetEdge "__AAA_Z_LaughingLeader_TopToggledScripts"
+ParentTargetEdge "__AAA_Z_LeaderLib_TopToggledScripts"

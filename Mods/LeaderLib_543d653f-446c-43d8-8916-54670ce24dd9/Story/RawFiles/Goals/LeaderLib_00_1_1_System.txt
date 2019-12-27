@@ -56,61 +56,6 @@ THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:System][ERROR] No host character found.");
 //END_REGION
 
-//REGION GLOBAL_SETTINGS
-PROC
-LeaderLib_SaveGlobalSettings()
-THEN
-DB_NOOP(1);
-// [BEGIN_NO_OSITOOLS]
-LeaderLog_Log("DEBUG", "[LeaderLib_00_1_1_System:LeaderLib_SaveGlobalSettings] (*WARNING*) The extender is not active. Skipping.");
-// [END_NO_OSITOOLS]
-
-/* [OSITOOLS_ONLY]
-PROC
-LeaderLib_SaveGlobalSettings()
-THEN
-LeaderLog_Log("DEBUG", "[LeaderLib_00_1_1_System:LeaderLib_SaveGlobalSettings] Saving global settings.");
-NRD_LuaCall("LeaderLib_Ext_SaveGlobalSettings");
-*/
-
-PROC
-LeaderLib_LoadGlobalSettings()
-THEN
-DB_NOOP(1);
-// [BEGIN_NO_OSITOOLS]
-LeaderLog_Log("DEBUG", "[LeaderLib_00_1_1_System:LeaderLib_LoadGlobalSettings] (*WARNING*) The extender is not active. Skipping.");
-// [END_NO_OSITOOLS]
-
-/* [OSITOOLS_ONLY]
-PROC
-LeaderLib_LoadGlobalSettings()
-THEN
-LeaderLog_Log("DEBUG", "[LeaderLib_00_1_1_System:LeaderLib_LoadGlobalSettings] Loading global settings.");
-NRD_LuaCall("LeaderLib_Ext_LoadGlobalSettings");
-*/
-
-IF
-StoryEvent(_,"LeaderLib_Initialized")
-THEN
-LeaderLib_LoadGlobalSettings();
-
-IF
-GlobalFlagSet("LeaderLib_Commands_SaveGlobalSettings")
-THEN
-GlobalClearFlag("LeaderLib_Commands_SaveGlobalSettings");
-LeaderLib_SaveGlobalSettings();
-
-IF
-TextEventSet("leaderlib_saveglobalsettings")
-THEN
-LeaderLib_SaveGlobalSettings();
-
-IF
-TextEventSet("leaderlib_loadglobalsettings")
-THEN
-LeaderLib_LoadGlobalSettings();
-//END_REGION
-
 //REGION ITERATOR
 PROC
 LeaderLib_CreateIterator((STRING)_IteratorName, (INTEGER)_MaxInt)

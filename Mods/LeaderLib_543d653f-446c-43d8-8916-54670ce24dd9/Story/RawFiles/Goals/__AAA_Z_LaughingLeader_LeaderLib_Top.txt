@@ -1,0 +1,22 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+LeaderLib_Internal_Top_StartLeaderLib();
+KBSECTION
+PROC
+LeaderLib_Internal_Top_StartLeaderLib()
+THEN
+DebugBreak("[__AAA_Z_LaughingLeader_LeaderLib_Top] Starting LeaderLib top scripts.");
+GoalCompleted;
+
+/*
+For existing saves, where this goal was never completed 
+(or perhaps it was set back to sleeping)
+*/
+IF
+SavegameLoaded(_,_,_,_)
+THEN
+GoalCompleted;
+EXITSECTION
+
+ENDEXITSECTION

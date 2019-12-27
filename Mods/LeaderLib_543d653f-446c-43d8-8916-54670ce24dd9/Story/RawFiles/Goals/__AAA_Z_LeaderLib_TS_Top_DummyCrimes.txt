@@ -96,4 +96,4 @@ ProcCrimeItemDestroyCheckVandal(_Item,_Owner,_Player,_Player);
 EXITSECTION
 
 ENDEXITSECTION
-ParentTargetEdge "__AAA_Z_LaughingLeader_TopToggledScripts"
+ParentTargetEdge "__AAA_Z_LeaderLib_TopToggledScripts"

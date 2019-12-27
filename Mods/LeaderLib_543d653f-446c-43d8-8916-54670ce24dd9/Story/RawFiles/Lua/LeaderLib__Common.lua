@@ -32,8 +32,13 @@ local function StringEquals(a,b)
 	return false
 end
 
+local function StringIsNullOrEmpty(x)
+	return x == nil or x == ""
+end
+
 LeaderLib.Common = {
 	Dump = dump,
 	TableHasEntry = has_table_entry,
-	StringEquals = StringEquals
+	StringEquals = StringEquals,
+	StringIsNullOrEmpty = StringIsNullOrEmpty,
 }

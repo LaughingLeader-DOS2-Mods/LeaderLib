@@ -192,15 +192,13 @@ AND
 NOT DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author, _)
 THEN
 DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author, _SaveWhenFalse);
-TimerCancel("Timers_LeaderLib_GlobalSettings_TransferVariables");
-TimerLaunch("Timers_LeaderLib_GlobalSettings_TransferVariables", 25);
 //END_REGION
 
 //REGION GLOBAL_SETTINGS
 PROC
 LeaderLib_SaveGlobalSettings()
 THEN
-DB_NOOP(1);
+LeaderLib_GlobalSettings_TransferVariables();
 // [BEGIN_NO_OSITOOLS]
 LeaderLog_Log("DEBUG", "[LeaderLib_00_1_1_System:LeaderLib_SaveGlobalSettings] (*WARNING*) The extender is not active. Skipping.");
 // [END_NO_OSITOOLS]

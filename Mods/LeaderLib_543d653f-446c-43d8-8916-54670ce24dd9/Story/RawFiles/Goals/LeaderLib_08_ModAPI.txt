@@ -259,13 +259,13 @@ IF
 DB_LeaderLib_ModApi_GlobalSettings_Register_Integer((STRING)_ModID, (STRING)_Author, (STRING)_Name)
 THEN
 LeaderLib_GlobalSettings_Register_Integer(_ModID, _Author, _Name);
-NOT DB_LeaderLib_ModApi_RegisterMod(_ModID, _Author, _Name);
+NOT DB_LeaderLib_ModApi_GlobalSettings_Register_Integer(_ModID, _Author, _Name);
 
 IF
 DB_LeaderLib_ModApi_GlobalSettings_Register_Integer((STRING)_ModID, (STRING)_Author, (STRING)_Name, (INTEGER)_DefaultValue)
 THEN
 LeaderLib_GlobalSettings_Register_Integer(_ModID, _Author, _Name, _DefaultValue);
-NOT DB_LeaderLib_ModApi_RegisterMod(_ModID, _Author, _Name, _DefaultValue);
+NOT DB_LeaderLib_ModApi_GlobalSettings_Register_Integer(_ModID, _Author, _Name, _DefaultValue);
 //END_REGION
 
 //REGION CLEANUP

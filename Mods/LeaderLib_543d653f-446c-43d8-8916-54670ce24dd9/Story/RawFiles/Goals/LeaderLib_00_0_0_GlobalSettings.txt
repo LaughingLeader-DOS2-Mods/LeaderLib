@@ -20,6 +20,9 @@ LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLog_CombatLog_Disabled");
 LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLog_Debug_Enabled");
 LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLog_Status_Disabled");
 
+LeaderLib_GlobalSettings_Register_Integer("LeaderLib", "LaughingLeader", "AutosaveInterval", 15);
+LeaderLib_GlobalSettings_TransferVariables();
+
 PROC
 LeaderLib_Internal_GlobalSettings_Register_Flag((STRING)_Flag)
 THEN
@@ -46,11 +49,17 @@ DB_LeaderLib_GlobalSettings_Integers(_ModID, _Author, _Name, _DefaultValue)
 THEN
 DB_NOOP(1);
 
-IF
-TimerFinished("Timers_LeaderLib_GlobalSettings_TransferVariables")
+//Transfers all saved variables to Lua
+PROC
+LeaderLib_GlobalSettings_TransferVariables()
 THEN
 LeaderLib_GlobalSettings_Internal_TransferFlags();
 LeaderLib_GlobalSettings_Internal_TransferIntegers();
+
+IF
+TimerFinished("Timers_LeaderLib_GlobalSettings_TransferVariables")
+THEN
+LeaderLib_GlobalSettings_TransferVariables();
 
 //Sends all flags to lua for export, if the extender is present
 PROC
@@ -95,8 +104,8 @@ NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreGlobalInteger", _ModID, _Author, 
 
 //REGION VERSION_UPDATING
 /* [OSITOOLS_ONLY]
-IF
-TimerFinished("Timers_LeaderLib_GlobalSettings_TransferVariables")
+PROC
+LeaderLib_GlobalSettings_TransferVariables()
 AND
 DB_Mods_Registered(_ModID, _Author, _CurrentVersion)
 THEN
@@ -230,7 +239,9 @@ GlobalFlagSet("LeaderLib_Commands_SaveGlobalSettings")
 THEN
 GlobalClearFlag("LeaderLib_Commands_SaveGlobalSettings");
 LeaderLib_SaveGlobalSettings();
+//END_REGION
 
+//REGION DEBUG
 IF
 TextEventSet("leaderlib_saveglobalsettings")
 THEN
@@ -240,17 +251,24 @@ IF
 TextEventSet("leaderlib_loadglobalsettings")
 THEN
 LeaderLib_LoadGlobalSettings();
-//END_REGION
 
-//REGION DEBUG
 /* [OSITOOLS_ONLY]
 IF
-TextEventSet("leaderlib_settingstest")
+TextEventSet("leaderlib_savesettingstest")
 THEN
 NRD_LuaReset(1);
 NRD_LuaCall("LeaderLib_Ext_GlobalSettings_Initialize");
 LeaderLib_GlobalSettings_Register_Integer("LeaderLib", "LaughingLeader", "AutosaveInterval", 15);
 LeaderLib_SaveGlobalSettings();
+*/
+
+/* [OSITOOLS_ONLY]
+IF
+TextEventSet("leaderlib_loadsettingstest")
+THEN
+NRD_LuaReset(1);
+NRD_LuaCall("LeaderLib_Ext_GlobalSettings_Initialize");
+LeaderLib_LoadGlobalSettings();
 */
 //END_REGION
 EXITSECTION

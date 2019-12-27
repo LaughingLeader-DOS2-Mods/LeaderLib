@@ -42,8 +42,6 @@ DB_LeaderLib_Autosaving_Interval("LeaderLib_Autosave_Interval_120", 120);
 DB_LeaderLib_Autosaving_Interval("LeaderLib_Autosave_Interval_180", 180);
 DB_LeaderLib_Autosaving_Interval("LeaderLib_Autosave_Interval_240", 240);
 
-LeaderLib_GlobalSettings_Register_Integer("LeaderLib", "LaughingLeader", "AutosaveInterval", 15);
-
 IF
 GameStarted(_,_)
 AND

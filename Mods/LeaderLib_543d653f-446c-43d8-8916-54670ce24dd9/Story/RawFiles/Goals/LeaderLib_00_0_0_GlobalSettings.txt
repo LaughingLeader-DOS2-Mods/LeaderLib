@@ -290,6 +290,19 @@ IF
 GlobalFlagSet("LeaderLib_Commands_SaveGlobalSettings")
 THEN
 GlobalClearFlag("LeaderLib_Commands_SaveGlobalSettings");
+TimerCancel("LeaderLib_Timers_LeaderLib_SaveGlobalSettings");
+TimerLaunch("LeaderLib_Timers_LeaderLib_SaveGlobalSettings", 150);
+
+IF
+StoryEvent(_, "LeaderLib_Commands_SaveGlobalSettings")
+THEN
+TimerCancel("LeaderLib_Timers_LeaderLib_SaveGlobalSettings");
+TimerLaunch("LeaderLib_Timers_LeaderLib_SaveGlobalSettings", 150);
+
+//Saving is delayed in case multiple mods are calling for it
+IF
+TimerFinished("LeaderLib_Timers_LeaderLib_SaveGlobalSettings")
+THEN
 LeaderLib_SaveGlobalSettings();
 //END_REGION
 

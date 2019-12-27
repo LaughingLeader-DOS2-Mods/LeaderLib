@@ -137,7 +137,7 @@ function LeaderLibModSettings:Export()
 		elseif v.saveWhenFalse == true then
 			export_table.globalflags[flag] = false
 		end
-		Ext.Print("Flag: " .. flag .. " | " .. GlobalGetFlag(flag))
+		--Ext.Print("Flag: " .. flag .. " | " .. GlobalGetFlag(flag))
 	end
 	local last_pricemod = GetGlobalPriceModifier()
 	for name,v in pairs(self.integers) do
@@ -148,7 +148,7 @@ function LeaderLibModSettings:Export()
 			export_table.integers[name] = int_value
 			--GlobalClearFlag("LeaderLib_Internal_GlobalSettings_IntegerVarSet")
 		end
-		Ext.Print("Got int var ("..name..") Value ("..int_value..")")
+		--Ext.Print("Got int var ("..name..") Value ("..int_value..")")
 	end
 	SetGlobalPriceModifier(last_pricemod)
 	Ext.Print("GlobalPriceModifier reverted back to ("..GetGlobalPriceModifier()..")")
@@ -221,7 +221,7 @@ end
 ---@param name string
 ---@param defaultvalue string
 local function GlobalSettings_StoreGlobalInteger(modid, author, name, defaultvalue)
-	Ext.Print("Storing int: ", modid, author, name, defaultvalue)
+	Ext.Print("[LeaderLib:GlobalSettings.lua] Storing int: ", modid, author, name, defaultvalue)
 	local mod_settings = Get_Settings(modid, author)
 	mod_settings.integers[name] = tonumber(defaultvalue)
 end
@@ -238,7 +238,7 @@ local function parse_mod_data(modid, author, tbl)
 	local flags = tbl["globalflags"]
 	if flags ~= nil and type(flags) == "table" then
 		for flag,v in pairs(flags) do
-			Ext.Print("[LeaderLib:GlobalSettings.lua] Found global flag ("..flag..")["..tostring(v).."] for mod (".. modid..")("..author..")")
+			Ext.Print("[LeaderLib:GlobalSettings.lua] Found global flag ("..flag..")["..tostring(v).."] for mod (".. modid.."|"..author..")")
 			if v == false then
 				GlobalClearFlag(flag)
 			else
@@ -251,11 +251,11 @@ local function parse_mod_data(modid, author, tbl)
 		for name,v in pairs(integers) do
 			if type(v) == "number" then
 				Osi.LeaderLib_GlobalSettings_SetIntegerVariable(modid, author, name, math.floor(v))
-				Ext.Print("[LeaderLib:GlobalSettings.lua] Found global integer variable ("..name..")["..v.."] for mod (".. modid..")("..author..")")
+				Ext.Print("[LeaderLib:GlobalSettings.lua] Found global integer variable ("..name..")["..v.."] for mod (".. modid.."|"..author..")")
 			elseif type(v) == "string" then
 				local num = tostring(v)
 				Osi.LeaderLib_GlobalSettings_SetIntegerVariable(modid, author, name, math.floor(num))
-				Ext.Print("[LeaderLib:GlobalSettings.lua] Found global integer variable ("..name..")["..v.."] for mod (".. modid..")("..author..")")
+				Ext.Print("[LeaderLib:GlobalSettings.lua] Found global integer variable ("..name..")["..v.."] for mod (".. modid.."|"..author..")")
 			end
 		end
 	end

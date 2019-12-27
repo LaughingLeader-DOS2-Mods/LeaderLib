@@ -18,13 +18,15 @@ LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Game started.");
 
 //Whoops
 IF
-GameStarted(_,_)
+SavegameLoading(_,_,_,_)
 AND
 DB_Mods_Registered("LeaderLib", "LaughingLeader", "1.5.57.0")
 THEN
 NOT DB_LeaderLib_StringExt_VersionToInt("1.5.57.0", 1, 5, 57, 0);
 NOT DB_Mods_Registered("LeaderLib", "LaughingLeader", "1.5.57.0");
 NOT DB_LeaderUpdater_Temp_PastRegistered("LeaderLib", "LaughingLeader", "1.5.57.0");
+DB_LeaderLib_StringExt_VersionToInt("1.5.7.0", 1, 5, 7, 0);
+DB_LeaderLib_StringExt_VersionToInt("1.5.7.1", 1, 5, 7, 1);
 DB_Mods_Registered("LeaderLib", "LaughingLeader", "1.5.7.0");
 DB_LeaderUpdater_Temp_PastRegistered("LeaderLib", "LaughingLeader", "1.5.7.0");
 

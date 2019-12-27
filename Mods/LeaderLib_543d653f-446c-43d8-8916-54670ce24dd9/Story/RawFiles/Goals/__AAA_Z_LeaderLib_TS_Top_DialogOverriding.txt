@@ -25,12 +25,10 @@ DB_NOOP(1);
 
 //REGION SKIPPING_REDIRECTION
 /*If the player iniates a dialog directly, don't redirect it.*/
-/*
 IF    
 DialogStartRequested(_Target, _Player)
 THEN
-UserSetFlag((CHARACTERGUID)_Player, "LeaderLib_DialogOverride_PlayerStarted", 0);
-*/
+ObjectSetFlag((CHARACTERGUID)_Player, "LeaderLib_DialogOverride_PlayerStarted", 0);
 //END_REGION
 
 //REGION Proc_StartDialog_Override
@@ -183,26 +181,46 @@ PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2)
 THEN
 LeaderLib_DialogOverride_Internal_ClearTempData(_Dialog);
+LeaderLib_DialogOverride_Internal_ClearPlayerFlag(_Speaker1);
+LeaderLib_DialogOverride_Internal_ClearPlayerFlag(_Speaker2);
 
 PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2,(GUIDSTRING)_Speaker3)
 THEN
 LeaderLib_DialogOverride_Internal_ClearTempData(_Dialog);
+LeaderLib_DialogOverride_Internal_ClearPlayerFlag(_Speaker1);
+LeaderLib_DialogOverride_Internal_ClearPlayerFlag(_Speaker2);
+LeaderLib_DialogOverride_Internal_ClearPlayerFlag(_Speaker3);
 
 PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2,(GUIDSTRING)_Speaker3,(GUIDSTRING)_Speaker4)
 THEN
 LeaderLib_DialogOverride_Internal_ClearTempData(_Dialog);
+LeaderLib_DialogOverride_Internal_ClearPlayerFlag(_Speaker1);
+LeaderLib_DialogOverride_Internal_ClearPlayerFlag(_Speaker2);
+LeaderLib_DialogOverride_Internal_ClearPlayerFlag(_Speaker3);
+LeaderLib_DialogOverride_Internal_ClearPlayerFlag(_Speaker4);
 
 PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2,(GUIDSTRING)_Speaker3,(GUIDSTRING)_Speaker4,(GUIDSTRING)_Speaker5)
 THEN
 LeaderLib_DialogOverride_Internal_ClearTempData(_Dialog);
+LeaderLib_DialogOverride_Internal_ClearPlayerFlag(_Speaker1);
+LeaderLib_DialogOverride_Internal_ClearPlayerFlag(_Speaker2);
+LeaderLib_DialogOverride_Internal_ClearPlayerFlag(_Speaker3);
+LeaderLib_DialogOverride_Internal_ClearPlayerFlag(_Speaker4);
+LeaderLib_DialogOverride_Internal_ClearPlayerFlag(_Speaker5);
 
 PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2,(GUIDSTRING)_Speaker3,(GUIDSTRING)_Speaker4,(GUIDSTRING)_Speaker5,(GUIDSTRING)_Speaker6)
 THEN
 LeaderLib_DialogOverride_Internal_ClearTempData(_Dialog);
+LeaderLib_DialogOverride_Internal_ClearPlayerFlag(_Speaker1);
+LeaderLib_DialogOverride_Internal_ClearPlayerFlag(_Speaker2);
+LeaderLib_DialogOverride_Internal_ClearPlayerFlag(_Speaker3);
+LeaderLib_DialogOverride_Internal_ClearPlayerFlag(_Speaker4);
+LeaderLib_DialogOverride_Internal_ClearPlayerFlag(_Speaker5);
+LeaderLib_DialogOverride_Internal_ClearPlayerFlag(_Speaker6);
 //END_REGION
 
 //REGION POST_DIALOG_ACTIVATION

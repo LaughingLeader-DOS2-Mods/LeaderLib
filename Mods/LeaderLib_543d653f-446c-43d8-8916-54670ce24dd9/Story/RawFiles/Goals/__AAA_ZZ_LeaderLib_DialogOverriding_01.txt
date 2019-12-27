@@ -497,8 +497,6 @@ NOT DB_LeaderLib_DialogOverride_RedirectionTarget(_Target);
 QRY
 LeaderLib_DialogOverride_QRY_CanRedirect((STRING)_Dialog)
 AND
-NOT LeaderLib_Helper_QRY_DialogIsRegistered(_Dialog) // Dialogs in DB_Dialogs are started by clicking on the character
-AND
 NOT DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog,_,_)
 AND
 NOT DB_LeaderLib_DialogOverride_Redirection_BlacklistedDialog(_Dialog)
@@ -622,6 +620,111 @@ AND
 IsTagged(_Speaker5, "AVATAR", _e)
 AND
 IsTagged(_Speaker6, "AVATAR", _f)
+AND
+IntegerSum(_e,_f,_Group3)
+AND
+IntegerSum(_Group1, _Group2, _Final1)
+AND
+IntegerSum(_Final1, _Group3, _Final2)
+AND
+_Final2 > 0
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION PLAYER_STARTED_DIALOG_FLAG
+QRY
+LeaderLib_DialogOverride_QRY_DialogIsPlayerStarted((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2)
+AND
+ObjectGetFlag(_Speaker1, "LeaderLib_DialogOverride_PlayerStarted", _a)
+AND
+ObjectGetFlag(_Speaker2, "LeaderLib_DialogOverride_PlayerStarted", _b)
+AND
+IntegerMax(_a, _b, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_DialogOverride_QRY_DialogIsPlayerStarted((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3)
+AND
+ObjectGetFlag(_Speaker1, "LeaderLib_DialogOverride_PlayerStarted", _a)
+AND
+ObjectGetFlag(_Speaker2, "LeaderLib_DialogOverride_PlayerStarted", _b)
+AND
+IntegerSum(_a,_b,_Group1)
+AND
+ObjectGetFlag(_Speaker3, "LeaderLib_DialogOverride_PlayerStarted", _c)
+AND
+IntegerSum(_c,_Group1,_Final1)
+AND
+_Final1 > 0
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_DialogOverride_QRY_DialogIsPlayerStarted((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4)
+AND
+ObjectGetFlag(_Speaker1, "LeaderLib_DialogOverride_PlayerStarted", _a)
+AND
+ObjectGetFlag(_Speaker2, "LeaderLib_DialogOverride_PlayerStarted", _b)
+AND
+IntegerSum(_a,_b,_Group1)
+AND
+ObjectGetFlag(_Speaker3, "LeaderLib_DialogOverride_PlayerStarted", _c)
+AND
+ObjectGetFlag(_Speaker4, "LeaderLib_DialogOverride_PlayerStarted", _d)
+AND
+IntegerSum(_c,_d,_Group2)
+AND
+IntegerSum(_Group1, _Group2, _Final1)
+AND
+_Final1 > 0
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_DialogOverride_QRY_DialogIsPlayerStarted((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5)
+AND
+ObjectGetFlag(_Speaker1, "LeaderLib_DialogOverride_PlayerStarted", _a)
+AND
+ObjectGetFlag(_Speaker2, "LeaderLib_DialogOverride_PlayerStarted", _b)
+AND
+IntegerSum(_a,_b,_Group1)
+AND
+ObjectGetFlag(_Speaker3, "LeaderLib_DialogOverride_PlayerStarted", _c)
+AND
+ObjectGetFlag(_Speaker4, "LeaderLib_DialogOverride_PlayerStarted", _d)
+AND
+IntegerSum(_c,_d,_Group2)
+AND
+ObjectGetFlag(_Speaker5, "LeaderLib_DialogOverride_PlayerStarted", _e)
+AND
+IntegerSum(_Group1, _Group2, _Final1)
+AND
+IntegerSum(_Final1, _e, _Final2)
+AND
+_Final2 > 0
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_DialogOverride_QRY_DialogIsPlayerStarted((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
+AND
+ObjectGetFlag(_Speaker1, "LeaderLib_DialogOverride_PlayerStarted", _a)
+AND
+ObjectGetFlag(_Speaker2, "LeaderLib_DialogOverride_PlayerStarted", _b)
+AND
+IntegerSum(_a,_b,_Group1)
+AND
+ObjectGetFlag(_Speaker3, "LeaderLib_DialogOverride_PlayerStarted", _c)
+AND
+ObjectGetFlag(_Speaker4, "LeaderLib_DialogOverride_PlayerStarted", _d)
+AND
+IntegerSum(_c,_d,_Group2)
+AND
+ObjectGetFlag(_Speaker5, "LeaderLib_DialogOverride_PlayerStarted", _e)
+AND
+ObjectGetFlag(_Speaker6, "LeaderLib_DialogOverride_PlayerStarted", _f)
 AND
 IntegerSum(_e,_f,_Group3)
 AND
@@ -759,6 +862,15 @@ THEN
 DB_NOOP(1);
 //END_REGION
 
+//REGION CLEAR_PLAYER_STARTED_DIALOG_FLAG
+PROC
+LeaderLib_DialogOverride_Internal_ClearPlayerFlag((GUIDSTRING)_Speaker)
+AND
+ObjectGetFlag(_Speaker, "LeaderLib_DialogOverride_PlayerStarted", 1)
+THEN
+ObjectClearFlag(_Speaker, "LeaderLib_DialogOverride_PlayerStarted", 0);
+//END_REGION
+
 //REGION CLEAR_DATA
 PROC
 LeaderLib_DialogOverride_Internal_ClearTempData((STRING)_Dialog)
@@ -836,6 +948,20 @@ AND
 DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _SpeakerMatch)
 THEN
 NOT DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _SpeakerMatch);
+//END_REGION
+
+//REGION UPDATING
+//
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,5,7,1)
+AND
+DB_IsPlayer(_Player)
+AND
+ObjectGetFlag(_Player, "LeaderLib_DialogOverride_PlayerStarted", 1)
+THEN
+ObjectClearFlag(_Player, "LeaderLib_DialogOverride_PlayerStarted", 0);
 //END_REGION
 EXITSECTION
 

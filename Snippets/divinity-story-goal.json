@@ -224,5 +224,23 @@
 			"DB_NOOP(1);"
 		],
 		"description": "Tracks when a skill is used on a target, waits for the skill cast, then fires an appropriate event for the target type."
-	}
+	},
+	"OsiTools_Enabled_PreProcessorBlock":{
+		"prefix": "ositoolsonly",
+		"body": [
+			"/* [OSITOOLS_ONLY]",
+			"",
+			"*/"
+		],
+		"description": "Rules contained within this block only compile if OsiTools is present."
+	},
+	"OsiTools_Disabled_PreProcessorBlock":{
+		"prefix": "noositools",
+		"body": [
+			"// [BEGIN_NO_OSITOOLS]",
+			"",
+			"// [END_NO_OSITOOLS]"
+		],
+		"description": "Rules contained within this block only compile if OsiTools is not present."
+	},
 }

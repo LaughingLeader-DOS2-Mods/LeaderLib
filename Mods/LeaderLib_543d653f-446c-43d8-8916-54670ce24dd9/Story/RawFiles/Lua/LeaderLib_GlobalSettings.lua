@@ -167,13 +167,12 @@ function LeaderLibGlobalSettings:Create()
     {
 		mods = {}
 	}
-	setmetatable(this, self)
-
+	
 	for _,v in ipairs(global_settings) do
 		local export = v:Export()
 		this.mods[#this.mods+1] = export
 	end
-
+	
 	table.sort(this.mods, function(a,b)
 		if a.name ~= nil and b.name ~= nil then
 			return a.name.upper() < b.name.upper()
@@ -181,7 +180,8 @@ function LeaderLibGlobalSettings:Create()
 			return false
 		end
 	end)
-
+	
+	setmetatable(this, self)
     return this
 end
 
@@ -234,28 +234,48 @@ local function GlobalSettings_StoreModVersion(modid, author, version)
 	mod_settings.version = version
 end
 
-local function parse_settings(tbl)
-	for k,v in pairs(tbl) do
-		if k == "GlobalFlags" then
-			for _,flag in ipairs(k) do
-				if type(flag) == "string" then
-					GlobalSetFlag(flag)
-				end
+local function parse_mod_data(modid, author, tbl)
+	local flags = tbl["globalflags"]
+	if flags ~= nil and type(flags) == "table" then
+		for flag,v in pairs(flags) do
+			Ext.Print("[LeaderLib:GlobalSettings.lua] Found global flag ("..flag..")["..tostring(v).."] for mod (".. modid..")("..author..")")
+			if v == false then
+				GlobalClearFlag(flag)
+			else
+				GlobalSetFlag(flag)
 			end
-		elseif k == "AutosavingInterval" then
-			if type(v) == "string" then
-				GlobalSetFlag(v)
-				break
-			end
-		end
-		if type(v) == "table" then
-			parse_settings(v)
 		end
 	end
+	local integers = tbl["integers"]
+	if integers ~= nil and type(integers) == "table" then
+		for name,v in pairs(integers) do
+			if type(v) == "number" then
+				Osi.LeaderLib_GlobalSettings_SetIntegerVariable(modid, author, name, math.floor(v))
+				Ext.Print("[LeaderLib:GlobalSettings.lua] Found global integer variable ("..name..")["..v.."] for mod (".. modid..")("..author..")")
+			elseif type(v) == "string" then
+				local num = tostring(v)
+				Osi.LeaderLib_GlobalSettings_SetIntegerVariable(modid, author, name, math.floor(num))
+				Ext.Print("[LeaderLib:GlobalSettings.lua] Found global integer variable ("..name..")["..v.."] for mod (".. modid..")("..author..")")
+			end
+		end
+	end
+	return true
+end
 
-	for _,flag in ipairs(global_flags) do
-		if LeaderLib.Common.TableHasEntry(tbl, flag) == false then
-			GlobalClearFlag(flag)
+local function parse_settings(tbl)
+	for k,v in pairs(tbl) do
+		if LeaderLib.Common.StringEquals(k, "mods") then
+			for k2,v2 in pairs(v) do
+				local modid = v2["name"]
+				local author = v2["author"]
+				if LeaderLib.Common.StringIsNullOrEmpty(modid) == false and LeaderLib.Common.StringIsNullOrEmpty(author) == false then
+					xpcall(parse_mod_data, function(err)
+						Ext.Print("[LeaderLib:GlobalSettings.lua] Error parsing mod data in global settings: ", err)
+						Ext.Print(debug.traceback())
+						return false
+					end, modid, author, v2)
+				end
+			end
 		end
 	end
 end
@@ -313,9 +333,15 @@ end
 
 local function SaveGlobalSettings()
 	local export_settings = LeaderLibGlobalSettings:Create()
-	local json = Ext.JsonStringify(export_settings)
-	NRD_SaveFile("LeaderLib_GlobalSettings.json", json)
-	Ext.Print("[LeaderLib:GlobalSettings.lua] Saved global settings. {" .. json .. "}")
+	Ext.Print(LeaderLib.Common.Dump(export_settings))
+	local mods = export_settings.mods
+	if #mods > 0 then
+		local json = Ext.JsonStringify(export_settings)
+		NRD_SaveFile("LeaderLib_GlobalSettings.json", json)
+		Ext.Print("[LeaderLib:GlobalSettings.lua] Saved global settings. {" .. json .. "}")
+	else
+		Ext.Print("[LeaderLib:GlobalSettings.lua] No global settings to save. Skipping.")
+	end
 	return true
 end
 
@@ -332,8 +358,9 @@ local function SaveGlobalSettings_Run()
 end
 
 local function GlobalSettings_Initialize()
-	local LeaderLib_Settings = Get_Settings("LeaderLib", "LaughingLeader")
-	LeaderLib_Settings:AddFlags(global_flags)
+	Osi.LeaderLib_GlobalSettings_Internal_Init()
+	--local LeaderLib_Settings = Get_Settings("LeaderLib", "LaughingLeader")
+	--LeaderLib_Settings:AddFlags(global_flags)
 	--LeaderLib_Settings:AddFlags(autosaving_interval)
 	--Ext.Print(LeaderLib.Common.Dump(LeaderLib_Settings))
 end

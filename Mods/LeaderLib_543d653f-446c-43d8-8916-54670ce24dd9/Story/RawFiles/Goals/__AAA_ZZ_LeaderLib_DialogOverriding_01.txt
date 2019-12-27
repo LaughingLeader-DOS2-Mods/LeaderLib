@@ -523,9 +523,11 @@ DB_NOOP(1);
 QRY
 LeaderLib_DialogOverride_QRY_SpeakersHaveAvatar((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2)
 AND
+GlobalGetFlag("LeaderLib_DialogRedirection_HighestPersuasionEnabled", 0)
+AND
 IsTagged(_Speaker1, "AVATAR", _a)
 AND
-IsTagged(_Speaker1, "AVATAR", _b)
+IsTagged(_Speaker2, "AVATAR", _b)
 AND
 IntegerMax(_a, _b, 1)
 THEN
@@ -533,6 +535,8 @@ DB_NOOP(1);
 
 QRY
 LeaderLib_DialogOverride_QRY_SpeakersHaveAvatar((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3)
+AND
+GlobalGetFlag("LeaderLib_DialogRedirection_HighestPersuasionEnabled", 0)
 AND
 IsTagged(_Speaker1, "AVATAR", _a)
 AND
@@ -550,6 +554,8 @@ DB_NOOP(1);
 
 QRY
 LeaderLib_DialogOverride_QRY_SpeakersHaveAvatar((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4)
+AND
+GlobalGetFlag("LeaderLib_DialogRedirection_HighestPersuasionEnabled", 0)
 AND
 IsTagged(_Speaker1, "AVATAR", _a)
 AND
@@ -571,6 +577,8 @@ DB_NOOP(1);
 
 QRY
 LeaderLib_DialogOverride_QRY_SpeakersHaveAvatar((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5)
+AND
+GlobalGetFlag("LeaderLib_DialogRedirection_HighestPersuasionEnabled", 0)
 AND
 IsTagged(_Speaker1, "AVATAR", _a)
 AND
@@ -596,6 +604,8 @@ DB_NOOP(1);
 
 QRY
 LeaderLib_DialogOverride_QRY_SpeakersHaveAvatar((GUIDSTRING)_Speaker1, (GUIDSTRING)_Speaker2, (GUIDSTRING)_Speaker3, (GUIDSTRING)_Speaker4, (GUIDSTRING)_Speaker5, (GUIDSTRING)_Speaker6)
+AND
+GlobalGetFlag("LeaderLib_DialogRedirection_HighestPersuasionEnabled", 0)
 AND
 IsTagged(_Speaker1, "AVATAR", _a)
 AND

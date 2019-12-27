@@ -332,6 +332,18 @@ THEN
 DB_NOOP(1);
 
 QRY
+LeaderLib_DialogOverride_QRY_UserMatchOrDisabled((GUIDSTRING)_Speaker, (GUIDSTRING)_Speaker2, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_DialogOverride_QRY_UserMatchOrDisabled((GUIDSTRING)_Speaker, (GUIDSTRING)_Speaker2, 0)
+AND
+LeaderLib_Helper_QRY_ObjectUserMatch(_Speaker, _Speaker2)
+THEN
+DB_NOOP(1);
+
+QRY
 LeaderLib_DialogOverride_QRY_Internal_BuildAvatarDistances((STRING)_Dialog, (GUIDSTRING)_Speaker, (INTEGER)_AvatarsCount, (INTEGER)_DisableUserRestriction)
 THEN
 LeaderLib_DialogOverride_Internal_BuildAvatarDistances(_Dialog, _Speaker, _AvatarsCount, _DisableUserRestriction);
@@ -400,6 +412,8 @@ LeaderLib_DialogOverride_Internal_SetPersuasionTarget_Done(_Dialog, _Speaker);
 PROC
 LeaderLib_DialogOverride_Internal_CheckPlayerPersuasion((STRING)_Dialog, (GUIDSTRING)_Speaker)
 AND
+GlobalGetFlag("LeaderLib_DialogRedirection_DisableUserRestriction", _DisableUserCheck)
+AND
 DB_IsPlayer(_Player)
 AND
 CharacterGetAbility(_Player, "Persuasion", _Persuasion)
@@ -407,6 +421,8 @@ AND
 _Persuasion > 0
 AND
 QRY_SpeakerIsAvailable((GUIDSTRING)_Player, 0)
+AND
+LeaderLib_DialogOverride_QRY_UserMatchOrDisabled((GUIDSTRING)_Speaker, (GUIDSTRING)_Player, _DisableUserCheck)
 THEN
 LeaderLib_DialogOverride_Internal_SetPersuasionTarget(_Dialog, _Speaker, _Player, _Persuasion);
 

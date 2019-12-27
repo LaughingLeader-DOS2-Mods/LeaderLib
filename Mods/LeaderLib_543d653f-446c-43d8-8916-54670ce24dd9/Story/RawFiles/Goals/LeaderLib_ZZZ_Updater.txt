@@ -16,15 +16,29 @@ GameStarted(_,_)
 THEN
 LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Game started.");
 
+//Whoops
 IF
 GameStarted(_,_)
 AND
-LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", 1,5,7,0)
+DB_Mods_Registered("LeaderLib", "LaughingLeader", "1.5.57.0")
 THEN
-LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Updating LeaderLib to latest version (1.5.7.0).");
-LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", 1,5,57,0);
+NOT DB_LeaderLib_StringExt_VersionToInt("1.5.57.0", 1, 5, 57, 0);
+NOT DB_Mods_Registered("LeaderLib", "LaughingLeader", "1.5.57.0");
+NOT DB_LeaderUpdater_Temp_PastRegistered("LeaderLib", "LaughingLeader", "1.5.57.0");
+DB_Mods_Registered("LeaderLib", "LaughingLeader", "1.5.7.0");
+DB_LeaderUpdater_Temp_PastRegistered("LeaderLib", "LaughingLeader", "1.5.7.0");
+
+IF
+GameStarted(_,_)
+AND
+LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", 1,5,7,1)
+THEN
+LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Updating LeaderLib to latest version (1.5.7.1).");
+LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", 1,5,7,1);
 LeaderLib_SendEvent("LeaderLib_Events_Internal_OnUpdateSettings");
 //LeaderLib_StringExt_Internal_ClearCache_Lazy(100);
+
+
 //END_REGION
 
 //REGION ACTIVE_FLAG

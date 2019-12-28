@@ -29,6 +29,8 @@ PROC
 LeaderLib_PresetMenu_RegisterPreset((STRING)_Group, (STRING)_Preset, (STRING)_DisplayName, (STRING)_EnabledGlobalFlag)
 AND
 _Group != "DOS2_Act1"
+AND
+_Group != "DOS2_Act2"
 THEN
 LeaderLib_PresetMenu_StartSorting();
 
@@ -151,6 +153,39 @@ StringConcatenate(_ModID, "_IsActive", _EnabledGlobalFlag)
 THEN
 NOT DB_LeaderLib_PresetMenu_RegisteredPreset(_Preset, _EnabledGlobalFlag);
 DB_LeaderLib_PresetMenu_RegisteredPreset(_ModID, _Preset, _EnabledGlobalFlag);
+
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,5,8,2)
+THEN
+LeaderLib_PresetMenu_Internal_UpdateDefaultPresets();
+
+PROC
+LeaderLib_PresetMenu_Internal_UpdateDefaultPresets()
+THEN
+LeaderLib_PresetMenu_ClearEntriesWithGroup("DOS2_Act1");
+LeaderLib_PresetMenu_ClearEntriesWithGroup("DOS2_Act2");
+LeaderLib_PresetMenu_Internal_RegisterDefaultPresets();
+TimerLaunch("Timers_LeaderLib_PresetMenu_StartSorting", 250);
+
+IF
+TimerFinished("Timers_LeaderLib_PresetMenu_StartSorting")
+THEN
+LeaderLib_PresetMenu_StartSorting();
+
+PROC
+LeaderLib_PresetMenu_Internal_UpdateDefaultPresets()
+AND
+DB_LeaderLib_DynamicMenu_Flags("LeaderLib.Settings.PresetMenu", _HasMultiplePagesFlag, _NextPageFlag, _PreviousPageFlag, _FirstPageFlag, _LastPageFlag)
+AND
+DB_IsPlayer(_Char)
+THEN
+ObjectClearFlag(_Char, _HasMultiplePagesFlag, 0);
+ObjectClearFlag(_Char, _NextPageFlag, 0);
+ObjectClearFlag(_Char, _PreviousPageFlag, 0);
+ObjectClearFlag(_Char, _FirstPageFlag, 0);
+ObjectClearFlag(_Char, _LastPageFlag, 0);
 //END_REGION
 
 //REGION DEFAULT_PRESETS

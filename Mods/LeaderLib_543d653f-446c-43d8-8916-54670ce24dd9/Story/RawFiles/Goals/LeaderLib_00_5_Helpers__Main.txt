@@ -1565,6 +1565,22 @@ SetCanFight(_Dummy, 1);
 SetVisible(_Dummy, 1);
 //END_REGION
 
+//REGION SURFACE_QRY
+QRY
+LeaderLib_Helper_QRY_IsInSurface((GUIDSTRING)_Obj, (STRING)_Surface)
+AND
+GetSurfaceGroundAt(_Obj, _Surface)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IsInSurface((GUIDSTRING)_Obj, (STRING)_Surface)
+AND
+GetSurfaceCloudAt(_Obj, _Surface)
+THEN
+DB_NOOP(1);
+//END_REGION
+
 //REGION SURFACE_LIST
 QRY
 LeaderLib_Helper_QRY_SurfaceDoesNotMatchGroup((STRING)_Surface, "")

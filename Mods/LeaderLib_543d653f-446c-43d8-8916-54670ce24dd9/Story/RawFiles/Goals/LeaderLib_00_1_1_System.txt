@@ -96,27 +96,22 @@ DB_LeaderLib_GameMode(_Mode, _IsEditorMode);
 //REGION EXTENDER
 QRY
 LeaderLib_QRY_ExtenderIsActive()
+// [BEGIN_NO_OSITOOLS]
 AND
 1 == 0
+// [END_NO_OSITOOLS]
 THEN
 DB_NOOP(1);
-
-/* [OSITOOLS_ONLY]
-QRY
-LeaderLib_QRY_ExtenderIsActive()
-THEN
-DB_NOOP(1);
-*/
 
 IF
-GameModeStarted(_,_)
+SavegameLoading(_,_,_,_)
 AND
 LeaderLib_QRY_ExtenderIsActive()
 THEN
 GlobalSetFlag("LeaderLib_ExtenderIsActive");
 
 IF
-GameModeStarted(_,_)
+SavegameLoading(_,_,_,_)
 AND
 NOT LeaderLib_QRY_ExtenderIsActive()
 THEN

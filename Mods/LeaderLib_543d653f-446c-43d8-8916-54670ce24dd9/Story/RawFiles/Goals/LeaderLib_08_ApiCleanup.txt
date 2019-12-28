@@ -188,6 +188,14 @@ DB_LeaderLib_ModApi_GlobalSettings_Register_Integer((STRING)_ModID, (STRING)_Aut
 THEN
 LeaderLib_GlobalSettings_Register_Integer(_ModID, _Author, _Name, _DefaultValue);
 NOT DB_LeaderLib_ModApi_GlobalSettings_Register_Integer(_ModID, _Author, _Name, _DefaultValue);
+
+PROC
+LeaderLib_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_GlobalSettings_SaveIntegerVariable((STRING)_ModID, (STRING)_Author, (STRING)_Name, (INTEGER)_Value)
+THEN
+LeaderLib_GlobalSettings_SaveIntegerVariable(_ModID, _Author, _Name, _Value);
+NOT DB_LeaderLib_ModApi_GlobalSettings_SaveIntegerVariable(_ModID, _Author, _Name, _Value);
 EXITSECTION
 
 ENDEXITSECTION

@@ -79,6 +79,11 @@ PROC
 LeaderUpdater_Register_Dependency((STRING)_ModID, (STRING)_Author, (STRING)_DependencyModID, (STRING)_DependencyModAuthor, (INTEGER)_NotifyWhenMissing)
 THEN
 DB_LeaderUpdater_Dependency(_ModID, _Author, _DependencyModID, _DependencyModAuthor, _NotifyWhenMissing);
+
+PROC
+LeaderUpdater_Register_UUID((STRING)_ModID, (STRING)_Author, (GUIDSTRING)_UUID)
+THEN
+DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID);
 //END_REGION
 
 //REGION MOD_NOT_ACTIVE_EVENTS
@@ -442,6 +447,49 @@ THEN
 DB_NOOP(1);
 
 QRY
+LeaderUpdater_QRY_ModIsActive((STRING)_ModID, (STRING)_Author)
+AND
+DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID)
+AND
+LeaderUpdater_QRY_ModIsActive_Ext(_UUID)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderUpdater_QRY_ModIsActive((STRING)_ModID, (STRING)_Author, (STRING)_GoalTitle)
+AND
+SysIsActive(_GoalTitle)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderUpdater_QRY_ModIsActive((STRING)_ModID, (STRING)_Author, (STRING)_GoalTitle)
+AND
+DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID)
+AND
+LeaderUpdater_QRY_ModIsActive_Ext(_UUID)
+THEN
+DB_NOOP(1);
+
+// [BEGIN_NO_OSITOOLS]
+QRY
+LeaderUpdater_QRY_ModIsActive_Ext((GUIDSTRING)_UUID)
+AND
+1 == 0
+THEN
+DB_NOOP(1);
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+QRY
+LeaderUpdater_QRY_ModIsActive_Ext((GUIDSTRING)_UUID)
+AND
+NRD_IsModLoaded(_UUID, 1)
+THEN
+DB_NOOP(1);
+*/
+
+QRY
 LeaderUpdater_QRY_ModRegisteredActiveGoal((STRING)_ModID, (STRING)_Author)
 AND
 DB_Mods_ActiveGoal(_ModID, _Author, _GoalTitle)
@@ -584,8 +632,9 @@ PROC
 LeaderUpdater_ModUpdated((STRING)_ModID, (STRING)_Author, (STRING)_PastVersion, (STRING)_NewVersion)
 THEN
 DB_NOOP(1);
+//END_REGION
 
-//Active flag
+//REGION ACTIVE_FLAG
 IF
 StoryEvent(_, "LeaderLib_Initialized")
 AND
@@ -598,9 +647,9 @@ LeaderUpdater_SetModActiveFlag(_ModID, _Author, _GoalTitle, _Flag);
 PROC
 LeaderUpdater_SetModActiveFlag((STRING)_ModID, (STRING)_Author, (STRING)_GoalTitle, (STRING)_Flag)
 AND
-SysIsActive(_GoalTitle)
+LeaderUpdater_QRY_ModIsActive(_ModID, _Author, _GoalTitle)
 AND
-NOT DB_GlobalFlag(_Flag)
+GlobalGetFlag(_Flag, 0)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderUpdater:SetModActiveFlag] Mod [",_ModID,"] by [",_Author,"] is active [",_GoalTitle,"]. Setting global flag [",_Flag,"].");
 GlobalSetFlag(_Flag);
@@ -608,12 +657,44 @@ GlobalSetFlag(_Flag);
 PROC
 LeaderUpdater_SetModActiveFlag((STRING)_ModID, (STRING)_Author, (STRING)_GoalTitle, (STRING)_Flag)
 AND
-NOT SysIsActive(_GoalTitle)
+NOT LeaderUpdater_QRY_ModIsActive(_ModID, _Author, _GoalTitle)
 AND
-DB_GlobalFlag(_Flag)
+GlobalGetFlag(_Flag, 1)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderUpdater:SetModActiveFlag] Mod [",_ModID,"] by [",_Author,"] is no longer active [",_GoalTitle,"]. Clearing global flag [",_Flag,"].");
 GlobalClearFlag(_Flag);
+
+//Support for mods without scripts, thanks to OsiTools
+/* [OSITOOLS_ONLY]
+IF
+StoryEvent(_, "LeaderLib_Initialized")
+AND
+DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID)
+AND
+NOT DB_Mods_ActiveGoal(_ModID, _Author, _)
+AND
+NRD_IsModLoaded(_UUID, _IsLoaded)
+AND
+StringConcatenate(_ModID, "_IsActive", _Flag)
+THEN
+LeaderUpdater_Internal_SetModActiveFlagByUUID(_ModID, _Author, _Flag, _IsLoaded);
+*/
+
+PROC
+LeaderUpdater_Internal_SetModActiveFlagByUUID((STRING)_ModID, (STRING)_Author, (STRING)_Flag, 0)
+AND
+GlobalGetFlag(_Flag, 1)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderUpdater:SetModActiveFlag] Mod [",_ModID,"] by [",_Author,"] is active. Setting global flag [",_Flag,"].");
+GlobalClearFlag(_Flag);
+
+PROC
+LeaderUpdater_Internal_SetModActiveFlagByUUID((STRING)_ModID, (STRING)_Author, (STRING)_Flag, 1)
+AND
+GlobalGetFlag(_Flag, 0)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderUpdater:SetModActiveFlag] Mod [",_ModID,"] by [",_Author,"] is active. Setting global flag [",_Flag,"].");
+GlobalSetFlag(_Flag);
 //END_REGION
 
 //REGION UNINSTALLING

@@ -1,7 +1,7 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-LeaderLib_GlobalSettings_Internal_Init();
+
 KBSECTION
 
 //REGION INIT_SETTING

@@ -237,12 +237,13 @@ THEN
 ObjectClearFlag(_Player, "LeaderLib_PresetMenu_PresetSelected", _Instance);
 NOT DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _LastPreset, _Instance, _IsRace);
 
+//(_Player, _ID, _DialogVar, _AvailableFlag, _Instance, _EntryKey, _DisplayText)
 PROC
 LeaderLib_DynamicMenu_BlockEntry((GUIDSTRING)_Player, "LeaderLib.Settings.PresetMenu", (STRING)_DialogVar, (STRING)_AvailableFlag, (INTEGER)_Instance, (STRING)_Preset, (STRING)_DisplayText)
 AND
-DB_LeaderLib_PresetMenu_RegisteredPreset(_Preset, _GlobalFlag)
+DB_LeaderLib_PresetMenu_RegisteredPreset(_ModID, _Preset, _GlobalFlag)
 AND
-NOT GlobalGetFlag(_GlobalFlag, 1)
+NOT DB_GlobalFlag(_GlobalFlag)
 THEN
 DB_LeaderLib_DynamicMenu_EntryBlocked(_Player, "LeaderLib.Settings.PresetMenu", _Preset, _Instance);
 

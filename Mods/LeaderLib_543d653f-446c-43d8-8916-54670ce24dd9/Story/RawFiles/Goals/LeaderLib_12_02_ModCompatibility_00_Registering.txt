@@ -27,15 +27,15 @@ LeaderUpdater_Register_UUID("Helaene_Wyldfae_Class", "Helaene", Helaene_Wyldfae_
 LeaderUpdater_Register_UUID("Helaene_Trickster", "Helaene", Helaene_Trickster_ca9ff65f-b16d-690a-22c5-6c3c31d8e597);
 LeaderUpdater_Register_UUID("Helaene_Succubus", "Helaene", Helaene_Succubus_975c594c-2382-93a0-377a-847775be6c5b);
 
-DB_LeaderLib_ModCompatibility_Goals("Helaene_Blacksmith", "Helaene", "Helaene_Blacksmith_Scripts");
-DB_LeaderLib_ModCompatibility_Goals("Helaene_Cryomancer", "Helaene", "Helaene_Cryomancer_Scripts");
-DB_LeaderLib_ModCompatibility_Goals("Helaene_Mirage_Class", "Helaene", "Helaene_Mirage_Scripts");
-DB_LeaderLib_ModCompatibility_Goals("Helaene_Priest_Class", "Helaene", "Helaene_Priest_Reactions");
-DB_LeaderLib_ModCompatibility_Goals("Helaene_Valkyrie", "Helaene", "Helaene_Valkyrie_Effects");
-DB_LeaderLib_ModCompatibility_Goals("Helaene_Vampire", "Helaene", "Helaene_Vampire_Story");
-DB_LeaderLib_ModCompatibility_Goals("Helaene_Wyldfae_Class", "Helaene", "Helaene_Wyldfae_Scripts");
-DB_LeaderLib_ModCompatibility_Goals("Helaene_Trickster", "Helaene", "Helaene_Trickster_Effects");
-DB_LeaderLib_ModCompatibility_Goals("Helaene_Succubus", "Helaene", "Helaene_Succubus_Scripts");
+LeaderUpdater_Register_ActiveGoal("Helaene_Blacksmith", "Helaene", "Helaene_Blacksmith_Scripts");
+LeaderUpdater_Register_ActiveGoal("Helaene_Cryomancer", "Helaene", "Helaene_Cryomancer_Scripts");
+LeaderUpdater_Register_ActiveGoal("Helaene_Mirage_Class", "Helaene", "Helaene_Mirage_Scripts");
+LeaderUpdater_Register_ActiveGoal("Helaene_Priest_Class", "Helaene", "Helaene_Priest_Reactions");
+LeaderUpdater_Register_ActiveGoal("Helaene_Valkyrie", "Helaene", "Helaene_Valkyrie_Effects");
+LeaderUpdater_Register_ActiveGoal("Helaene_Vampire", "Helaene", "Helaene_Vampire_Story");
+LeaderUpdater_Register_ActiveGoal("Helaene_Wyldfae_Class", "Helaene", "Helaene_Wyldfae_Scripts");
+LeaderUpdater_Register_ActiveGoal("Helaene_Trickster", "Helaene", "Helaene_Trickster_Effects");
+LeaderUpdater_Register_ActiveGoal("Helaene_Succubus", "Helaene", "Helaene_Succubus_Scripts");
 
 /*
 DB_LeaderLib_ModCompatibility_PlaceholderVersions("Helaene_Blacksmith", "Helaene", "0.0.0.0");

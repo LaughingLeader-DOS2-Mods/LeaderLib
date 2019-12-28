@@ -31,6 +31,5 @@ DB_StoryStarted(_)
 THEN
 GoalCompleted;
 EXITSECTION
-
 ENDEXITSECTION
 ParentTargetEdge "LaughingLeader__LeaderLib"

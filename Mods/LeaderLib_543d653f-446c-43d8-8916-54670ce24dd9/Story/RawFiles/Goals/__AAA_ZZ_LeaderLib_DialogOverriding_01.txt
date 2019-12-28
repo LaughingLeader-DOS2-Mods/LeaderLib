@@ -977,7 +977,6 @@ NOT DB_LeaderLib_DialogOverride_Temp_Match(_Dialog, _SpeakerMatch);
 //END_REGION
 
 //REGION UPDATING
-//
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND

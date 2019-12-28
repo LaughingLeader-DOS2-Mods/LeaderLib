@@ -231,3 +231,6 @@ DB_LeaderLib_Helper_Temp_RefreshUISkill 4
 DB_Dialogs 3
 DB_Dialogs 4
 DB_Dialogs 5
+DB_LeaderLib_ModCompatibility_PlaceholderVersions 3
+DB_LeaderLib_ModCompatibility_Goals 3
+DB_LeaderLib_ModCompatibility_Presets 4

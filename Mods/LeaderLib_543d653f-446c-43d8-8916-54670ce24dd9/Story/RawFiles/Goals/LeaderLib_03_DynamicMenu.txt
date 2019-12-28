@@ -208,6 +208,13 @@ THEN
 ObjectSetFlag(_Player, _AvailableFlag, 0);
 
 PROC
+LeaderLib_DynamicMenu_SetAvailableFlag((GUIDSTRING)_Player, (STRING)_ID, (STRING)_DialogVar, (STRING)_AvailableFlag, (INTEGER)_Instance, (STRING)_EntryKey, (STRING)_DisplayText)
+AND
+DB_LeaderLib_DynamicMenu_EntryBlocked(_Player, _ID, _EntryKey, _Instance)
+THEN
+ObjectClearFlag(_Player, _AvailableFlag, 0);
+
+PROC
 LeaderLib_DynamicMenu_OnEntryValueSet((GUIDSTRING)_Player, (STRING)_ID, (STRING)_DialogVar, (STRING)_AvailableFlag, (INTEGER)_Instance, (STRING)_EntryKey, (STRING)_DisplayText)
 AND
 DB_LeaderLib_DynamicMenu_EntryBlocked(_Player, _ID, _EntryKey, _Instance)

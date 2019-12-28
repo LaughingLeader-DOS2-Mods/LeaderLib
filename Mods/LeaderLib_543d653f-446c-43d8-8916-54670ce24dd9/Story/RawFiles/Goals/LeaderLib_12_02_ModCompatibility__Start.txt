@@ -1,0 +1,35 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+LeaderLib_ModCompatibility_Internal_CompleteIfStarted(); // Existing saves
+KBSECTION
+IF
+GameEventSet("GAMEEVENT_GameStarted")
+AND
+NOT DB_LeaderLib_GameStarted(_)
+THEN
+DB_LeaderLib_GameStarted(1);
+
+IF
+GameEventSet("GAMEEVENT_GameStarted")
+THEN
+GoalCompleted;
+
+PROC
+LeaderLib_ModCompatibility_Internal_CompleteIfStarted()
+AND
+DB_StoryStarted(_)
+THEN
+DebugBreak("[LeaderLib:__Start] Existing save detected.");
+GoalCompleted;
+
+//If something truly funky happened
+IF
+SavegameLoaded(_,_,_,_)
+AND
+DB_StoryStarted(_)
+THEN
+GoalCompleted;
+EXITSECTION
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

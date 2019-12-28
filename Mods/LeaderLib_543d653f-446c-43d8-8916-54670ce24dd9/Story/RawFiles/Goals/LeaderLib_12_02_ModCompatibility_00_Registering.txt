@@ -1,0 +1,89 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+LeaderLib_ModCompatibility_Internal_InitSettings();
+KBSECTION
+PROC
+LeaderLib_ModCompatibility_Internal_InitSettings()
+THEN
+/* Support for Helaene's presets*/
+DB_LeaderLib_ModCompatibility_Presets("Helaene_Blacksmith", "Helaene", "Blacksmith", "Blacksmith [Helaene]");
+DB_LeaderLib_ModCompatibility_Presets("Helaene_Cryomancer", "Helaene", "Cryomancer", "Cryomancer [Helaene]");
+DB_LeaderLib_ModCompatibility_Presets("Helaene_Mirage_Class", "Helaene", "Mirage", "Mirage [Helaene]");
+DB_LeaderLib_ModCompatibility_Presets("Helaene_Priest_Class", "Helaene", "Priest", "Priest [Helaene]");
+DB_LeaderLib_ModCompatibility_Presets("Helaene_Valkyrie", "Helaene", "Valkyrie", "Valkyrie [Helaene]");
+DB_LeaderLib_ModCompatibility_Presets("Helaene_Vampire", "Helaene", "Vampire", "Vampire [Helaene]");
+DB_LeaderLib_ModCompatibility_Presets("Helaene_Wyldfae_Class", "Helaene", "Wyldfae", "Wyldfae [Helaene]");
+DB_LeaderLib_ModCompatibility_Presets("Helaene_Trickster", "Helaene", "Trickster", "Trickster [Helaene]");
+DB_LeaderLib_ModCompatibility_Presets("Helaene_Succubus", "Helaene", "Succubus", "Succubus [Helaene]");
+
+LeaderUpdater_Register_UUID("Helaene_Blacksmith", "Helaene", Helaene_Blacksmith_faac3525-c5b3-580d-6ef2-ed9797f68fb0);
+LeaderUpdater_Register_UUID("Helaene_Cryomancer", "Helaene", Helaene_Cryomancer_958ef674-66ec-d208-1112-5c62ffbba16b);
+LeaderUpdater_Register_UUID("Helaene_Mirage_Class", "Helaene", Helaene_Mirage_Class_3a5f27e8-2bb7-a1aa-210d-646fa48a1a98);
+LeaderUpdater_Register_UUID("Helaene_Priest_Class", "Helaene", Helaene_Priest_Class_fd3534f5-99b9-cae1-a458-ecf9f3be5a3c);
+LeaderUpdater_Register_UUID("Helaene_Valkyrie", "Helaene", Helaene_Valkyrie_78a84dd9-de34-c4c7-47a5-e47bd080ebb1);
+LeaderUpdater_Register_UUID("Helaene_Vampire", "Helaene", Helaene_Vampire_ba43959a-490b-0846-6630-56a90568b651);
+LeaderUpdater_Register_UUID("Helaene_Wyldfae_Class", "Helaene", Helaene_Wyldfae_Class_260d1263-4650-51f8-38dc-614f6c9536ed);
+LeaderUpdater_Register_UUID("Helaene_Trickster", "Helaene", Helaene_Trickster_ca9ff65f-b16d-690a-22c5-6c3c31d8e597);
+LeaderUpdater_Register_UUID("Helaene_Succubus", "Helaene", Helaene_Succubus_975c594c-2382-93a0-377a-847775be6c5b);
+
+DB_LeaderLib_ModCompatibility_Goals("Helaene_Blacksmith", "Helaene", "Helaene_Blacksmith_Scripts");
+DB_LeaderLib_ModCompatibility_Goals("Helaene_Cryomancer", "Helaene", "Helaene_Cryomancer_Scripts");
+DB_LeaderLib_ModCompatibility_Goals("Helaene_Mirage_Class", "Helaene", "Helaene_Mirage_Scripts");
+DB_LeaderLib_ModCompatibility_Goals("Helaene_Priest_Class", "Helaene", "Helaene_Priest_Reactions");
+DB_LeaderLib_ModCompatibility_Goals("Helaene_Valkyrie", "Helaene", "Helaene_Valkyrie_Effects");
+DB_LeaderLib_ModCompatibility_Goals("Helaene_Vampire", "Helaene", "Helaene_Vampire_Story");
+DB_LeaderLib_ModCompatibility_Goals("Helaene_Wyldfae_Class", "Helaene", "Helaene_Wyldfae_Scripts");
+DB_LeaderLib_ModCompatibility_Goals("Helaene_Trickster", "Helaene", "Helaene_Trickster_Effects");
+DB_LeaderLib_ModCompatibility_Goals("Helaene_Succubus", "Helaene", "Helaene_Succubus_Scripts");
+
+/*
+DB_LeaderLib_ModCompatibility_PlaceholderVersions("Helaene_Blacksmith", "Helaene", "0.0.0.0");
+DB_LeaderLib_ModCompatibility_PlaceholderVersions("Helaene_Cryomancer", "Helaene", "0.0.0.0");
+DB_LeaderLib_ModCompatibility_PlaceholderVersions("Helaene_Mirage_Class", "Helaene", "0.0.0.0");
+DB_LeaderLib_ModCompatibility_PlaceholderVersions("Helaene_Priest_Class", "Helaene", "0.0.0.0");
+DB_LeaderLib_ModCompatibility_PlaceholderVersions("Helaene_Valkyrie", "Helaene", "0.0.0.0");
+DB_LeaderLib_ModCompatibility_PlaceholderVersions("Helaene_Vampire", "Helaene", "0.0.0.0");
+DB_LeaderLib_ModCompatibility_PlaceholderVersions("Helaene_Wyldfae_Class", "Helaene", "0.0.0.0");
+DB_LeaderLib_ModCompatibility_PlaceholderVersions("Helaene_Trickster", "Helaene", "0.0.0.0");
+DB_LeaderLib_ModCompatibility_PlaceholderVersions("Helaene_Succubus", "Helaene", "0.0.0.0");
+*/
+
+PROC
+LeaderLib_ModCompatibility_Internal_InitSettings()
+THEN
+LeaderLib_ModCompatibility_Internal_Register();
+
+/*
+PROC
+LeaderLib_ModCompatibility_Internal_Register()
+AND
+DB_LeaderLib_ModCompatibility_PlaceholderVersions(_ModID, _Author, _Version)
+AND
+NOT LeaderUpdater_QRY_ModIsRegistered(_ModID, _Author)
+THEN
+LeaderUpdater_Register_Mod(_ModID, _Author, _Version);
+*/
+
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+THEN
+LeaderLib_ModCompatibility_Internal_InitSettings();
+
+IF
+StoryEvent(_, "LeaderLib_Initialized")
+THEN
+LeaderLib_ModCompatibility_Internal_Register();
+
+PROC
+LeaderLib_ModCompatibility_Internal_Register()
+AND
+DB_LeaderLib_ModCompatibility_Presets(_ModID, _Author, _ClassType, _DisplayName)
+AND
+StringConcatenate(_ModID, "_IsActive", _Flag)
+THEN
+LeaderLib_PresetMenu_RegisterPreset(_ModID, _ClassType, _DisplayName, _Flag);
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_12_02_ModCompatibility__Start"

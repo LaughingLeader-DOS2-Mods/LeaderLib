@@ -9,7 +9,7 @@ ItemStatusChange(_Target, _Status, _Source)
 AND
 ItemIsDestroyed(_Target, 0)
 AND
-NOT DB_LeaderLib_Statuses_LeaveActionProjectile_Blacklist(_, _Status)
+NOT DB_LeaderLib_Statuses_LeaveActionStatus_Blacklist(_, _Status)
 AND
 NOT DB_LeaderLib_EngineStatus(_Status)
 AND
@@ -35,13 +35,13 @@ ItemStatusChange(_Target, _Status, _Source)
 AND
 ItemIsDestroyed(_Target, 0)
 AND
-NOT DB_LeaderLib_Statuses_LeaveActionProjectile_Blacklist(_, _Status)
+NOT DB_LeaderLib_Statuses_LeaveActionStatus_Blacklist(_, _Status)
 AND
 NOT DB_LeaderLib_EngineStatus(_Status)
 AND
 NOT DB_LeaderLib_AuraStatus(_, _Status)
 AND
-DB_LeaderLib_Statuses_LeaveActionProjectile_Statuses((STRING)_ID, (STRING)_Status, (STRING)_Skill, (INTEGER)_ExplodeRadius)
+DB_LeaderLib_Statuses_LeaveActionStatus_Statuses((STRING)_ID, (STRING)_Status, (STRING)_Skill, (INTEGER)_ExplodeRadius)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib_19_TS_LeaveActionItemFix:ItemStatusChange] Exploding projectile [",_Skill,"] from status (",_Status,") on item.");
 SetVarFixedString(_Target, "LeaderLib_LeaveAction_ProjectileSkill", _Skill);

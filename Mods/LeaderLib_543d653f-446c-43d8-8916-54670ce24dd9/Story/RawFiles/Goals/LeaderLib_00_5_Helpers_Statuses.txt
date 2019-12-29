@@ -261,28 +261,28 @@ LeaderLib_Statuses_OnStatusExtended(_Object, _Status, _LastTurns, _NextTurns);
 //REGION LEAVE_ACTION_ITEMS
 
 PROC
-LeaderLib_Statuses_Register_LeaveActionProjectile((STRING)_ID, (STRING)_Status, (STRING)_Skill, (INTEGER)_ExplodeRadius)
+LeaderLib_Statuses_Register_LeaveActionStatus((STRING)_ID, (STRING)_Status, (STRING)_Skill, (INTEGER)_ExplodeRadius)
 THEN
-DB_LeaderLib_Statuses_LeaveActionProjectile_Statuses(_ID, _Status, _Skill, _ExplodeRadius);
+DB_LeaderLib_Statuses_LeaveActionStatus_Statuses(_ID, _Status, _Skill, _ExplodeRadius);
 
 PROC
-LeaderLib_Statuses_Register_LeaveActionProjectileBlacklist((STRING)_ID, (STRING)_IgnoreStatus)
+LeaderLib_Statuses_Register_LeaveActionStatusBlacklist((STRING)_ID, (STRING)_IgnoreStatus)
 THEN
-DB_LeaderLib_Statuses_LeaveActionProjectile_Blacklist(_ID, _IgnoreStatus);
+DB_LeaderLib_Statuses_LeaveActionStatus_Blacklist(_ID, _IgnoreStatus);
 
 PROC
-LeaderLib_Statuses_Clear_LeaveActionProjectiles((STRING)_ID)
+LeaderLib_Statuses_Clear_LeaveActionStatuses((STRING)_ID)
 AND
-DB_LeaderLib_Statuses_LeaveActionProjectile_Statuses(_ID, _Status, _Skill, _ExplodeRadius)
+DB_LeaderLib_Statuses_LeaveActionStatus_Statuses(_ID, _Status, _Skill, _ExplodeRadius)
 THEN
-NOT DB_LeaderLib_Statuses_LeaveActionProjectile_Statuses(_ID, _Status, _Skill, _ExplodeRadius);
+NOT DB_LeaderLib_Statuses_LeaveActionStatus_Statuses(_ID, _Status, _Skill, _ExplodeRadius);
 
 PROC
-LeaderLib_Statuses_Clear_LeaveActionProjectileBlacklist((STRING)_ID)
+LeaderLib_Statuses_Clear_LeaveActionStatusBlacklist((STRING)_ID)
 AND
-DB_LeaderLib_Statuses_LeaveActionProjectile_Blacklist(_ID, _IgnoreStatus)
+DB_LeaderLib_Statuses_LeaveActionStatus_Blacklist(_ID, _IgnoreStatus)
 THEN
-NOT DB_LeaderLib_Statuses_LeaveActionProjectile_Blacklist(_ID, _IgnoreStatus);
+NOT DB_LeaderLib_Statuses_LeaveActionStatus_Blacklist(_ID, _IgnoreStatus);
 
 
 /* LeaveAction/EXPLODE on statuses do not work on items. This is a workaround so it does.

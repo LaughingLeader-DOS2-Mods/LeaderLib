@@ -9,6 +9,12 @@ ItemStatusChange(_Target, _Status, _Source)
 AND
 ItemIsDestroyed(_Target, 0)
 AND
+NOT DB_LeaderLib_Statuses_LeaveActionProjectile_Blacklist(_, _Status)
+AND
+NOT DB_LeaderLib_EngineStatus(_Status)
+AND
+NOT DB_LeaderLib_AuraStatus(_, _Status)
+AND
 NRD_StatAttributeExists(_Status, "LeaveAction")
 AND
 NRD_StatGetString(_Status, "LeaveAction", _ProjectileSkill)
@@ -22,6 +28,25 @@ LeaderLog_LogInt("DEBUG", "[LeaderLib_19_TS_LeaveActionItemFix:ItemStatusChange]
 SetVarFixedString(_Target, "LeaderLib_LeaveAction_ProjectileSkill", _ProjectileSkill);
 LeaderLib_Statuses_ExplodeProjectile(_Target, _Source, _ProjectileSkill, _ExplodeRadius);
 */
+
+// [BEGIN_NO_OSITOOLS]
+IF
+ItemStatusChange(_Target, _Status, _Source)
+AND
+ItemIsDestroyed(_Target, 0)
+AND
+NOT DB_LeaderLib_Statuses_LeaveActionProjectile_Blacklist(_, _Status)
+AND
+NOT DB_LeaderLib_EngineStatus(_Status)
+AND
+NOT DB_LeaderLib_AuraStatus(_, _Status)
+AND
+DB_LeaderLib_Statuses_LeaveActionProjectile_Statuses((STRING)_ID, (STRING)_Status, (STRING)_Skill, (INTEGER)_ExplodeRadius)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_19_TS_LeaveActionItemFix:ItemStatusChange] Exploding projectile [",_Skill,"] from status (",_Status,") on item.");
+SetVarFixedString(_Target, "LeaderLib_LeaveAction_ProjectileSkill", _Skill);
+LeaderLib_Statuses_ExplodeProjectile(_Target, _Source, _Skill, _ExplodeRadius);
+// [END_NO_OSITOOLS]
 
 /* LeaveAction/EXPLODE, when applied to items, apparently doesn't explode the item. */
 /*

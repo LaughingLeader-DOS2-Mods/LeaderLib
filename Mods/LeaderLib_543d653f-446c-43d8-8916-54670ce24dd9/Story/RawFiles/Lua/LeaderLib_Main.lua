@@ -105,15 +105,9 @@ local function RefreshSkill(char, skill)
 end
 
 LeaderLib.Main = {
-	--StringToVersion_Query = StringToVersion_Query,
 	StringToVersion = StringToVersion,
 	PrintAttributes = PrintAttributes,
 	PrintTest = PrintTest,
 	RefreshSkills = RefreshSkills,
 	RefreshSkill = RefreshSkill
 }
-
---Export local functions to global for now
-for name,func in pairs(LeaderLib.Main) do
-    _G["LeaderLib_Ext_" .. name] = func
-end

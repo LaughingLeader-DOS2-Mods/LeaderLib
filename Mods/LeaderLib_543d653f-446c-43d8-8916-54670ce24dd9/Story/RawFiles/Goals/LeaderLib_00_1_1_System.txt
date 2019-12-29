@@ -117,6 +117,16 @@ NOT LeaderLib_QRY_ExtenderIsActive()
 THEN
 GlobalClearFlag("LeaderLib_ExtenderIsActive");
 //END_REGION
+
+//REGION LUA_INIT
+PROC
+LeaderLib_StoryStarted()
+THEN
+NOT DB_LeaderLib_Extender_LuaInitialized(1);
+/* [OSITOOLS_ONLY]
+NRD_LuaCall("LeaderLib_Ext_Init");
+*/
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

@@ -451,6 +451,19 @@
                     </children>
                 </node>
                 <node id="Tag">
+                    <attribute id="Name" value="LLWEAPONEX_Pistol" type="23" />
+                    <attribute id="Description" value="Weapon Type (Weapon Expansion)" type="23" />
+                    <children>
+                        <node id="Categories">
+                            <children>
+                                <node id="Category">
+                                    <attribute id="Name" value="Code" type="23" />
+                                </node>
+                            </children>
+                        </node>
+                    </children>
+                </node>
+                <node id="Tag">
                     <attribute id="Name" value="LLWEAPONEX_Polearm" type="23" />
                     <attribute id="Description" value="Weapon Type (Weapon Expansion)" type="23" />
                     <children>

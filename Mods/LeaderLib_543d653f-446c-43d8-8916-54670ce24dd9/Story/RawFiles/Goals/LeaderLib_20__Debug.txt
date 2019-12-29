@@ -129,6 +129,15 @@ LeaderLog_Log("DEBUG", "[LeaderLib_20__Debug:] Version (",_VersionString,") is l
 
 IF
 TextEventSet("leaderlib_debug_versionstring")
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_debug_versionstring", "version", _VersionString, _NextParamInt)
+AND
+NOT LeaderLib_StringExt_QRY_VersionIsLessThan(_VersionString, 2,0,0,0)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_20__Debug:] Version (",_VersionString,") is not less than 2.0.0.0?");
+
+IF
+TextEventSet("leaderlib_debug_versionstring")
 THEN
 LeaderLib_Recon_ClearParams("leaderlib_debug_versionstring");
 

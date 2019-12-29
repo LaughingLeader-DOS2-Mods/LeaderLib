@@ -284,6 +284,25 @@ DB_LeaderLib_Statuses_LeaveActionStatus_Blacklist(_ID, _IgnoreStatus)
 THEN
 NOT DB_LeaderLib_Statuses_LeaveActionStatus_Blacklist(_ID, _IgnoreStatus);
 
+QRY
+LeaderLib_Statuses_QRY_StatusHasLeaveAction((STRING)_Status)
+AND
+DB_LeaderLib_Statuses_LeaveActionStatus_Statuses(_ID, _Status, _Skill, _ExplodeRadius)
+THEN
+DB_NOOP(1);
+
+/* [OSITOOLS_ONLY]
+QRY
+LeaderLib_Statuses_QRY_StatusHasLeaveAction((STRING)_Status)
+AND
+NRD_StatAttributeExists(_Status, "LeaveAction")
+AND
+NRD_StatGetString(_Status, "LeaveAction", _ProjectileSkill)
+AND
+NRD_StatExists(_ProjectileSkill)
+THEN
+DB_NOOP(1);
+*/
 
 /* LeaveAction/EXPLODE on statuses do not work on items. This is a workaround so it does.
 Enable the toggle script via:

@@ -105,6 +105,7 @@ local function RefreshSkill(char, skill)
 end
 
 LeaderLib.Main = {
+	StringToVersion_Query = StringToVersion_Query,
 	StringToVersion = StringToVersion,
 	PrintAttributes = PrintAttributes,
 	PrintTest = PrintTest,

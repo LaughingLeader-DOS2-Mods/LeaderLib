@@ -229,7 +229,7 @@
 		"prefix": "ositoolsonly",
 		"body": [
 			"/* [OSITOOLS_ONLY]",
-			"",
+			"$1",
 			"*/"
 		],
 		"description": "Rules contained within this block only compile if OsiTools is present."
@@ -238,7 +238,7 @@
 		"prefix": "noositools",
 		"body": [
 			"// [BEGIN_NO_OSITOOLS]",
-			"",
+			"$1",
 			"// [END_NO_OSITOOLS]"
 		],
 		"description": "Rules contained within this block only compile if OsiTools is not present."

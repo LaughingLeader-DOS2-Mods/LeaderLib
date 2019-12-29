@@ -29,8 +29,10 @@ local export = {
 	RefreshSkill = LeaderLib.Main.RefreshSkill
 }
 
-for name,func in pairs(LeaderLib.Main) do
+for name,func in pairs(export) do
 	local func_name = "LeaderLib_Ext_" .. name
 	_G[func_name] = func
 	Ext.Print("[LeaderLib:Bootstrap.lua] Registered global function '"..func_name.."'.")
 end
+
+Ext.NewQuery(LeaderLib.Main.StringToVersion_Query, "LeaderLib_Ext_QRY_StringToVersion", "[in](STRING)_Version, [out](INTEGER)_Major, [out](INTEGER)_Minor, [out](INTEGER)_Revision, [out](INTEGER)_Build");

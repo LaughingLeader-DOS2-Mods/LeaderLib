@@ -1,0 +1,53 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+/* [OSITOOLS_ONLY]
+IF
+ItemStatusChange(_Target, _Status, _Source)
+AND
+ItemIsDestroyed(_Target, 0)
+AND
+NRD_StatAttributeExists(_Status, "LeaveAction")
+AND
+NRD_StatGetString(_Status, "LeaveAction", _ProjectileSkill)
+AND
+NRD_StatExists(_ProjectileSkill)
+AND
+NRD_StatGetInt(_ProjectileSkill, "ExplodeRadius", _ExplodeRadius)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_19_TS_LeaveActionItemFix:ItemStatusChange] Exploding projectile [",_ProjectileSkill,"] from status (",_Status,") on item.");
+LeaderLog_LogInt("DEBUG", "[LeaderLib_19_TS_LeaveActionItemFix:ItemStatusChange] *** Explode Radius [",_ExplodeRadius,"].");
+SetVarFixedString(_Target, "LeaderLib_LeaveAction_ProjectileSkill", _ProjectileSkill);
+LeaderLib_Statuses_ExplodeProjectile(_Target, _Source, _ProjectileSkill, _ExplodeRadius);
+*/
+
+/* LeaveAction/EXPLODE, when applied to items, apparently doesn't explode the item. */
+/*
+Waiting on a public release fix.
+Should be fixed in the next devel. --12.29.2019
+IF
+ItemStatusChange(_Target, _Status, _Source)
+AND
+ItemIsDestroyed(_Target, 0)
+AND
+NRD_StatAttributeExists(_Status, "LeaveAction")
+AND
+NRD_StatGetString(_Status, "LeaveAction", _Skill)
+AND
+NRD_StatExists(_Skill)
+THEN
+NRD_ProjectilePrepareLaunch();
+NRD_ProjectileSetString("SkillId", _Skill);
+NRD_ProjectileSetInt("CasterLevel", 1);
+NRD_ProjectileSetGuidString("SourcePosition", _Target);
+NRD_ProjectileSetGuidString("TargetPosition", _Target);
+NRD_ProjectileSetGuidString("Source", _Source);
+NRD_ProjectileSetGuidString("Target", _Target);
+NRD_ProjectileLaunch();
+*/
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

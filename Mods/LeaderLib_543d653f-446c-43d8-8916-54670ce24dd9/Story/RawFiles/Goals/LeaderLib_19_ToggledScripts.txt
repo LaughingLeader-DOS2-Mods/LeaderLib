@@ -43,6 +43,8 @@ LeaderLib_ToggleScripts_Register_Script("__AAA_Z_LeaderLib_TS_Top_DialogOverridi
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_DialogOverriding_AutomatedDialog", "LeaderLib_AutomatedDialogOverridingEnabled");
 
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_ExplodeFix", "LeaderLib_ExplodeFix");
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_LeaveActionItemFix", "LeaderLib_LeaveActionItemFixEnabled");
+
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_ForceEvents", "LeaderLib_Force_EnableEvents");
 
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Debug", "LeaderLib_IsEditorMode");
@@ -52,6 +54,8 @@ LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Autosaving", "LeaderLib
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_SummonEvents_Character", "LeaderLib_SummonEvents_Character_Enabled");
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_SummonEvents_Item", "LeaderLib_SummonEvents_Item_Enabled");
 //LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_GrowthEvents_Item_Enabled", "LeaderLib");
+
+
 //END_REGION
 
 //REGION UPDATE_SCRIPT_DISABLE

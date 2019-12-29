@@ -258,6 +258,50 @@ ApplyStatus(_Object, _Status, _Duration, _Force, _Source);
 LeaderLib_Statuses_OnStatusExtended(_Object, _Status, _LastTurns, _NextTurns);
 //END_REGION
 
+//REGION LEAVE_ACTION_ITEMS
+/* LeaveAction/EXPLODE on statuses do not work on items. This is a workaround so it does.
+Enable the toggle script via:
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_LeaveActionItemFixEnabled", "ModName");
+Or call this proc manually.
+*/
+PROC
+LeaderLib_Statuses_ExplodeProjectile((ITEMGUID)_Target, (GUIDSTRING)_Source, (STRING)_ProjectileSkill, (INTEGER)_ExplodeRadius)
+AND
+ObjectIsCharacter((CHARACTERGUID)_Source, 1)
+AND
+_ExplodeRadius > 0
+THEN
+CharacterItemSetEvent(_Source, _Target, "LeaderLib_LeaveAction_ExplodeProjectile");
+
+PROC
+LeaderLib_Statuses_ExplodeProjectile((ITEMGUID)_Target, (GUIDSTRING)_Source, (STRING)_ProjectileSkill, (INTEGER)_ExplodeRadius)
+AND
+ObjectIsCharacter((CHARACTERGUID)_Source, 1)
+AND
+_ExplodeRadius <= 0
+THEN
+CharacterItemSetEvent(_Source, _Target, "LeaderLib_LeaveAction_ShootProjectile");
+
+PROC
+LeaderLib_Statuses_ExplodeProjectile((ITEMGUID)_Target, (GUIDSTRING)_Source, (STRING)_ProjectileSkill, (INTEGER)_ExplodeRadius)
+AND
+ObjectIsCharacter(_Source, 0)
+AND
+_ExplodeRadius > 0
+THEN
+SetVarObject(_Target, "LeaderLib_LeaveAction_Source", _Source);
+SetStoryEvent(_Target, "LeaderLib_LeaveAction_ExplodeProjectile");
+
+PROC
+LeaderLib_Statuses_ExplodeProjectile((ITEMGUID)_Target, (GUIDSTRING)_Source, (STRING)_ProjectileSkill, (INTEGER)_ExplodeRadius)
+AND
+ObjectIsCharacter(_Source, 0)
+AND
+_ExplodeRadius <= 0
+THEN
+SetVarObject(_Target, "LeaderLib_LeaveAction_Source", _Source);
+SetStoryEvent(_Target, "LeaderLib_LeaveAction_ShootProjectile");
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

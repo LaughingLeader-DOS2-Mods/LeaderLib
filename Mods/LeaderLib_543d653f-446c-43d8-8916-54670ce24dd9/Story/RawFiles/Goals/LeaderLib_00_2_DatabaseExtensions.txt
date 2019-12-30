@@ -236,13 +236,9 @@ DB_LeaderLib_Array_Iterator(_ID, _Index)
 AND
 NOT DB_LeaderLib_Array_Temp_FirstEntry(_ID, _, _) // Skip if set during iteration
 AND
-IntegertoString(_Index, _IndexStr)
-AND
-LeaderLog_QRY_Log("TRACE", "[LeaderLib:DatabaseExtensions:GetFirstEntry] Checking index [",_IndexStr,"] in array [",_ID,"]")
-AND
 DB_LeaderLib_Array_Data(_ID, _Index, _Value)
 THEN
-LeaderLog_Log("TRACE", "[LeaderLib:DatabaseExtensions:GetFirstEntry] First entry for array [",_ID,"] set to [",_IndexStr,"](",_Value,").");
+//LeaderLog_Log("TRACE", "[LeaderLib:DatabaseExtensions:GetFirstEntry] First entry for array [",_ID,"] set to [",_IndexStr,"](",_Value,").");
 DB_LeaderLib_Array_Temp_FirstEntry(_ID, _Index, _Value);
 //END_REGION
 

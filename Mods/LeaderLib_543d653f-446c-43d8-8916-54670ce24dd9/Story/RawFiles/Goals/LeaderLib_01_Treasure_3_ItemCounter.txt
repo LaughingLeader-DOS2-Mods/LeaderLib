@@ -59,8 +59,6 @@ LeaderLib_Treasure_Internal_QRY_StatMatch((ITEMGUID)_Item, (STRING)_GeneratedSta
 AND
 GetVarFixedString(_Item, "LeaderLib_GeneratedItemStat", _Stat)
 AND
-LeaderLog_QRY_Log("DEBUG", "[LeaderLib:DebugNow] Item has string variable [LeaderLib_GeneratedItemStat] with value [", _Stat, "]. Looking for [",_GeneratedStat,"]")
-AND
 _GeneratedStat == _Stat
 THEN
 DB_NOOP(1);
@@ -76,8 +74,6 @@ QRY
 LeaderLib_Treasure_Internal_QRY_StatMatch((ITEMGUID)_Item, (STRING)_GeneratedStat)
 AND
 GetStatString(_Item, _Stat)
-AND
-LeaderLog_QRY_Log("DEBUG", "[LeaderLib:DebugNow] Item has StatString [", _Stat, "]. Looking for [",_GeneratedStat,"]")
 AND
 _GeneratedStat == _Stat
 THEN
@@ -129,17 +125,9 @@ DB_LeaderLib_Treasure_Temp_TemplateIterator(_ID, _Object, _TreasureID, _ItemTemp
 AND
 String(_Object, _UUID)
 AND
-LeaderLog_QRY_Log("DEBUG", "[LeaderLib:DebugNow] Found template [",_ItemTemplate,"] in character inventory with ITEMGUID [",_UUID,"]. Checking for item stat [", _GeneratedStat, "].")
-AND
 LeaderLib_Treasure_Internal_QRY_StatMatch(_Item, _GeneratedStat)
 AND
-LeaderLog_QRY_Log("DEBUG", "[LeaderLib:DebugNow] Item stat [",_GeneratedStat,"] found on item. Checking amount.")
-AND
 ItemGetAmount(_Item, _Amount)
-AND
-IntegertoString(_Amount, _AmountStr)
-AND
-LeaderLog_QRY_Log("DEBUG", "[LeaderLib:DebugNow] Incrementing amount by [",_AmountStr,"].")
 AND
 DB_LeaderLib_Treasure_Temp_ItemStatAmount((GUIDSTRING)_Object, _TreasureID, _ItemTemplate, _GeneratedStat, _CurrentAmount)
 AND

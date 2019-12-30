@@ -75,9 +75,8 @@ AND
 DB_LeaderLib_CBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateItemEvent, _ItemTransferredEvent, _CompletionEvent, _TimeoutEvent)
 AND
 LeaderLib_CreateByStat_Internal_QRY_StatIsNotStackable(_Stat, _Amount)
-AND
-LeaderLog_QRY_Log("TRACE", "[LeaderLib:CreateItemByStat:AddToQueue] Stat [",_Stat,"] is not stackable. Adding by 1 each to the array [",_ArrayID,"].")
 THEN
+LeaderLog_Log("TRACE", "[LeaderLib:CreateItemByStat:AddToQueue] Stat [",_Stat,"] is not stackable. Adding by 1 each to the array [",_ArrayID,"].");
 LeaderLib_CreateByStat_SetStatSettings(_ArrayID, _Stat, 1, _Equip, _ShowInTrade);
 LeaderLib_Treasure_CreateItemByStat_Internal_AddIndividualItems(_Object, _ArrayID, _Stat, _Equip, _ShowInTrade, _Amount);
 

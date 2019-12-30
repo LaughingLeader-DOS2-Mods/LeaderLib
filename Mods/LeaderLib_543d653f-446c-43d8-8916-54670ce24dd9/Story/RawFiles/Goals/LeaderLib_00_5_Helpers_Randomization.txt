@@ -194,6 +194,33 @@ LeaderLib_Random_QRY(0, _MaxRange)
 AND
 DB_LeaderLib_Random(_Ran)
 AND
+DB_LeaderLib_Randomization_Temp_ActiveTables(_Object, _TableID, _Index, _EntryID, _DropCount, _Start, _End)
+AND
+NOT DB_LeaderLib_Randomization_Temp_RollResult(_Object, _TableID, _)
+AND
+_DropCount > 0
+AND
+_Ran >= _Start
+AND
+_Ran <= _End
+AND
+IntegerSubtract(_DropCount, 1, _NextDropCount)
+THEN
+LeaderLog_Log("TRACE", "[LeaderLib:Randomization:Tables:Roll] === Success. Lowering dropcount. Table (",_TableID,") Entry (",_EntryID,") ===");
+DB_LeaderLib_Randomization_Temp_RollResult(_Object, _TableID, _EntryID);
+NOT DB_LeaderLib_Randomization_Temp_ActiveTables(_Object, _TableID, _Index, _EntryID, _DropCount, _Start, _End);
+LeaderLib_Randomization_Tables_Internal_UpdateEntry(_Object, _TableID, _Index, _EntryID, _NextDropCount, _Start, _End);
+
+/* // Debug tracing
+PROC
+LeaderLib_Randomization_Tables_Roll((GUIDSTRING)_Object, (STRING)_TableID)
+AND
+DB_LeaderLib_Randomization_Temp_ActiveTableTotal(_Object, _TableID, _Total, _MaxRange)
+AND
+LeaderLib_Random_QRY(0, _MaxRange)
+AND
+DB_LeaderLib_Random(_Ran)
+AND
 LeaderLog_QRY_Log("TRACE", "[LeaderLib:Randomization:Tables:Roll] Rolled for table (", _TableID, ")")
 AND
 LeaderLog_QRY_LogInt("TRACE", "[LeaderLib:Randomization:Tables:Roll] -- MaxRange (", _MaxRange, ") Total (",_Total,")")
@@ -222,6 +249,7 @@ LeaderLog_Log("TRACE", "[LeaderLib:Randomization:Tables:Roll] === Success. Lower
 DB_LeaderLib_Randomization_Temp_RollResult(_Object, _TableID, _EntryID);
 NOT DB_LeaderLib_Randomization_Temp_ActiveTables(_Object, _TableID, _Index, _EntryID, _DropCount, _Start, _End);
 LeaderLib_Randomization_Tables_Internal_UpdateEntry(_Object, _TableID, _Index, _EntryID, _NextDropCount, _Start, _End);
+*/
 
 PROC
 LeaderLib_Randomization_Tables_Internal_UpdateEntry((GUIDSTRING)_Object, (STRING)_TableID, (INTEGER)_Index, (STRING)_EntryID, (INTEGER)_NextDropCount, (INTEGER)_Start, (INTEGER)_End)

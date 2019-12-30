@@ -1916,13 +1916,9 @@ DB_LeaderLib_Treasure_Temp_MatchedRequirementTreasure(_TreasureID, _RequirementI
 AND
 LeaderLib_Treasure_QRY_TreasureHasGenerationType(_TreasureID, "REQUIREMENT_UNLOCKED")
 AND
-LeaderLog_QRY_Log("DEBUG", "[LeaderLib:TreasureSystem:RequirementUnlocked] [", _RequirementID,"] linked to treasure [",_TreasureID,"]")
-AND
 LeaderLib_Treasure_QRY_GetTreasureObject(_TreasureID, "REQUIREMENT_UNLOCKED")
 AND
 DB_LeaderLib_Treasure_Temp_MatchedTreasure(_Object, _TreasureID)
-AND
-LeaderLog_QRY_Log("DEBUG", "[LeaderLib:TreasureSystem:RequirementUnlocked] Found object for [", _RequirementID,"][",_TreasureID,"]")
 THEN
 NOT DB_LeaderLib_Treasure_Temp_MatchedTreasure(_Object, _TreasureID);
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem] Generating [",_TreasureID,"] due to requirement [",_RequirementID,"] unlocking.");

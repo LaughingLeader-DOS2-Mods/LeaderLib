@@ -127,13 +127,11 @@ THEN
 DB_NOOP(1);
 
 QRY
-LeaderLog_QRY_AllLogTypesDisabled()
+LeaderLog_QRY_AllDebugLogTypesDisabled()
 AND
 NOT LeaderLog_QRY_LogTypeEnabled("DEBUG")
 AND
 NOT LeaderLog_QRY_LogTypeEnabled("TRACE")
-AND
-NOT LeaderLog_QRY_LogTypeEnabled("STATUS")
 AND
 NOT LeaderLog_QRY_LogTypeEnabled("COMBAT")
 THEN
@@ -141,37 +139,47 @@ DB_NOOP(1);
 //END_REGION
 
 //REGION LOG_TOGGLING
+PROC
+LeaderLog_Internal_ToggleLogging(1)
+AND
+NOT DB_LeaderLog_Internal_LoggingMode(_)
+THEN
+DB_LeaderLog_Internal_LoggingMode(1);
+SysActivateGoal("LeaderLib_00_0_TS_AllLogging");
+SysCompleteGoal("LeaderLib_00_0_TS_StrictLogCalls");
+
+PROC
+LeaderLog_Internal_ToggleLogging(0)
+AND
+DB_LeaderLog_Internal_LoggingMode(_Mode)
+THEN
+NOT DB_LeaderLog_Internal_LoggingMode(_Mode);
+SysCompleteGoal("LeaderLib_00_0_TS_AllLogging");
+SysActivateGoal("LeaderLib_00_0_TS_StrictLogCalls");
+
 IF
 GlobalFlagSet("LeaderLog_Debug_Enabled")
-AND
-NOT SysIsActive("LeaderLib_00_0_TS_LogActive")
 THEN
-SysActivateGoal("LeaderLib_00_0_TS_LogActive");
+LeaderLog_Internal_ToggleLogging(1);
 
 IF
 GlobalFlagSet("LeaderLog_Trace_Enabled")
-AND
-NOT SysIsActive("LeaderLib_00_0_TS_LogActive")
 THEN
-SysActivateGoal("LeaderLib_00_0_TS_LogActive");
+LeaderLog_Internal_ToggleLogging(1);
 
 IF
 GlobalFlagCleared("LeaderLog_Debug_Enabled")
 AND
-SysIsActive("LeaderLib_00_0_TS_LogActive")
-AND
-LeaderLog_QRY_AllLogTypesDisabled()
+LeaderLog_QRY_AllDebugLogTypesDisabled()
 THEN
-SysCompleteGoal("LeaderLib_00_0_TS_LogActive");
+LeaderLog_Internal_ToggleLogging(0);
 
 IF
 GlobalFlagCleared("LeaderLog_Trace_Enabled")
 AND
-SysIsActive("LeaderLib_00_0_TS_LogActive")
-AND
-LeaderLog_QRY_AllLogTypesDisabled()
+LeaderLog_QRY_AllDebugLogTypesDisabled()
 THEN
-SysCompleteGoal("LeaderLib_00_0_TS_LogActive");
+LeaderLog_Internal_ToggleLogging(0);
 //END_REGION
 
 //REGION TYPE_CHECK
@@ -301,328 +309,6 @@ AND
 DB_LeaderLog_Temp_NextStatusColor(_Target, _Color, _Size)
 THEN
 NOT DB_LeaderLog_Temp_NextStatusColor(_Target, _Color, _Size);
-//END_REGION
-
-//REGION LOG_COMBINE
-PROC
-LeaderLog_Log("COMBINE", (STRING)_Str1)
-THEN
-LeaderLog_Internal_RunString("COMBINE", _Str1);
-
-PROC
-LeaderLog_Log("COMBINE", (STRING)_Str1, (STRING)_Str2)
-AND
-StringConcatenate(_Str1, _Str2, _Msg1)
-THEN
-LeaderLog_Internal_RunString("COMBINE", _Msg1);
-
-PROC
-LeaderLog_Log("COMBINE", (STRING)_Str1, (STRING)_Str2, (STRING)_Str3)
-AND
-StringConcatenate(_Str1, _Str2, _Msg1)
-AND
-StringConcatenate(_Msg1, _Str3, _Msg2)
-THEN
-LeaderLog_Internal_RunString("COMBINE", _Msg2);
-
-PROC
-LeaderLog_Log("COMBINE", (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4)
-AND
-StringConcatenate(_Str1, _Str2, _Msg1)
-AND
-StringConcatenate(_Msg1, _Str3, _Msg2)
-AND
-StringConcatenate(_Msg2, _Str4, _Msg3)
-THEN
-LeaderLog_Internal_RunString("COMBINE", _Msg3);
-
-PROC
-LeaderLog_Log("COMBINE", (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5)
-AND
-StringConcatenate(_Str1, _Str2, _Msg1)
-AND
-StringConcatenate(_Msg1, _Str3, _Msg2)
-AND
-StringConcatenate(_Msg2, _Str4, _Msg3)
-AND
-StringConcatenate(_Msg3, _Str5, _Msg4)
-THEN
-LeaderLog_Internal_RunString("COMBINE", _Msg4);
-
-PROC
-LeaderLog_Log("COMBINE", (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6)
-AND
-StringConcatenate(_Str1, _Str2, _Msg1)
-AND
-StringConcatenate(_Msg1, _Str3, _Msg2)
-AND
-StringConcatenate(_Msg2, _Str4, _Msg3)
-AND
-StringConcatenate(_Msg3, _Str5, _Msg4)
-AND
-StringConcatenate(_Msg4, _Str6, _Msg5)
-THEN
-LeaderLog_Internal_RunString("COMBINE", _Msg5);
-
-PROC
-LeaderLog_Log("COMBINE", (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7)
-AND
-StringConcatenate(_Str1, _Str2, _Msg1)
-AND
-StringConcatenate(_Msg1, _Str3, _Msg2)
-AND
-StringConcatenate(_Msg2, _Str4, _Msg3)
-AND
-StringConcatenate(_Msg3, _Str5, _Msg4)
-AND
-StringConcatenate(_Msg4, _Str6, _Msg5)
-AND
-StringConcatenate(_Msg5, _Str7, _Msg6)
-THEN
-LeaderLog_Internal_RunString("COMBINE", _Msg6);
-
-PROC
-LeaderLog_Log("COMBINE", (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8)
-AND
-StringConcatenate(_Str1, _Str2, _Msg1)
-AND
-StringConcatenate(_Msg1, _Str3, _Msg2)
-AND
-StringConcatenate(_Msg2, _Str4, _Msg3)
-AND
-StringConcatenate(_Msg3, _Str5, _Msg4)
-AND
-StringConcatenate(_Msg4, _Str6, _Msg5)
-AND
-StringConcatenate(_Msg5, _Str7, _Msg6)
-AND
-StringConcatenate(_Msg6, _Str8, _Msg7)
-THEN
-LeaderLog_Internal_RunString("COMBINE", _Msg7);
-
-PROC
-LeaderLog_Log("COMBINE", (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9)
-AND
-StringConcatenate(_Str1, _Str2, _Msg1)
-AND
-StringConcatenate(_Msg1, _Str3, _Msg2)
-AND
-StringConcatenate(_Msg2, _Str4, _Msg3)
-AND
-StringConcatenate(_Msg3, _Str5, _Msg4)
-AND
-StringConcatenate(_Msg4, _Str6, _Msg5)
-AND
-StringConcatenate(_Msg5, _Str7, _Msg6)
-AND
-StringConcatenate(_Msg6, _Str8, _Msg7)
-AND
-StringConcatenate(_Msg7, _Str9, _Msg8)
-THEN
-LeaderLog_Internal_RunString("COMBINE", _Msg8);
-
-PROC
-LeaderLog_Log("COMBINE", (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10)
-AND
-StringConcatenate(_Str1, _Str2, _Msg1)
-AND
-StringConcatenate(_Msg1, _Str3, _Msg2)
-AND
-StringConcatenate(_Msg2, _Str4, _Msg3)
-AND
-StringConcatenate(_Msg3, _Str5, _Msg4)
-AND
-StringConcatenate(_Msg4, _Str6, _Msg5)
-AND
-StringConcatenate(_Msg5, _Str7, _Msg6)
-AND
-StringConcatenate(_Msg6, _Str8, _Msg7)
-AND
-StringConcatenate(_Msg7, _Str9, _Msg8)
-AND
-StringConcatenate(_Msg8, _Str10, _Msg9)
-THEN
-LeaderLog_Internal_RunString("COMBINE", _Msg9);
-
-PROC
-LeaderLog_Log("COMBINE", (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10, (STRING)_Str11)
-AND
-StringConcatenate(_Str1, _Str2, _Msg1)
-AND
-StringConcatenate(_Msg1, _Str3, _Msg2)
-AND
-StringConcatenate(_Msg2, _Str4, _Msg3)
-AND
-StringConcatenate(_Msg3, _Str5, _Msg4)
-AND
-StringConcatenate(_Msg4, _Str6, _Msg5)
-AND
-StringConcatenate(_Msg5, _Str7, _Msg6)
-AND
-StringConcatenate(_Msg6, _Str8, _Msg7)
-AND
-StringConcatenate(_Msg7, _Str9, _Msg8)
-AND
-StringConcatenate(_Msg8, _Str10, _Msg9)
-AND
-StringConcatenate(_Msg9, _Str11, _Msg10)
-THEN
-LeaderLog_Internal_RunString("COMBINE", _Msg10);
-
-PROC
-LeaderLog_Log("COMBINE", (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10, (STRING)_Str11, (STRING)_Str12)
-AND
-StringConcatenate(_Str1, _Str2, _Msg1)
-AND
-StringConcatenate(_Msg1, _Str3, _Msg2)
-AND
-StringConcatenate(_Msg2, _Str4, _Msg3)
-AND
-StringConcatenate(_Msg3, _Str5, _Msg4)
-AND
-StringConcatenate(_Msg4, _Str6, _Msg5)
-AND
-StringConcatenate(_Msg5, _Str7, _Msg6)
-AND
-StringConcatenate(_Msg6, _Str8, _Msg7)
-AND
-StringConcatenate(_Msg7, _Str9, _Msg8)
-AND
-StringConcatenate(_Msg8, _Str10, _Msg9)
-AND
-StringConcatenate(_Msg9, _Str11, _Msg10)
-AND
-StringConcatenate(_Msg10, _Str12, _Msg11)
-THEN
-LeaderLog_Internal_RunString("COMBINE", _Msg11);
-
-PROC
-LeaderLog_Log("COMBINE", (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10, (STRING)_Str11, (STRING)_Str12, (STRING)_Str13)
-AND
-StringConcatenate(_Str1, _Str2, _Msg1)
-AND
-StringConcatenate(_Msg1, _Str3, _Msg2)
-AND
-StringConcatenate(_Msg2, _Str4, _Msg3)
-AND
-StringConcatenate(_Msg3, _Str5, _Msg4)
-AND
-StringConcatenate(_Msg4, _Str6, _Msg5)
-AND
-StringConcatenate(_Msg5, _Str7, _Msg6)
-AND
-StringConcatenate(_Msg6, _Str8, _Msg7)
-AND
-StringConcatenate(_Msg7, _Str9, _Msg8)
-AND
-StringConcatenate(_Msg8, _Str10, _Msg9)
-AND
-StringConcatenate(_Msg9, _Str11, _Msg10)
-AND
-StringConcatenate(_Msg10, _Str12, _Msg11)
-AND
-StringConcatenate(_Msg11, _Str13, _Msg12)
-THEN
-LeaderLog_Internal_RunString("COMBINE", _Msg12);
-
-PROC
-LeaderLog_Log("COMBINE", (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10, (STRING)_Str11, (STRING)_Str12, (STRING)_Str13, (STRING)_Str14)
-AND
-StringConcatenate(_Str1, _Str2, _Msg1)
-AND
-StringConcatenate(_Msg1, _Str3, _Msg2)
-AND
-StringConcatenate(_Msg2, _Str4, _Msg3)
-AND
-StringConcatenate(_Msg3, _Str5, _Msg4)
-AND
-StringConcatenate(_Msg4, _Str6, _Msg5)
-AND
-StringConcatenate(_Msg5, _Str7, _Msg6)
-AND
-StringConcatenate(_Msg6, _Str8, _Msg7)
-AND
-StringConcatenate(_Msg7, _Str9, _Msg8)
-AND
-StringConcatenate(_Msg8, _Str10, _Msg9)
-AND
-StringConcatenate(_Msg9, _Str11, _Msg10)
-AND
-StringConcatenate(_Msg10, _Str12, _Msg11)
-AND
-StringConcatenate(_Msg11, _Str13, _Msg12)
-AND
-StringConcatenate(_Msg12, _Str14, _Msg13)
-THEN
-LeaderLog_Internal_RunString("COMBINE", _Msg13);
-
-PROC
-LeaderLog_Log("COMBINE", (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10, (STRING)_Str11, (STRING)_Str12, (STRING)_Str13, (STRING)_Str14, (STRING)_Str15)
-AND
-StringConcatenate(_Str1, _Str2, _Msg1)
-AND
-StringConcatenate(_Msg1, _Str3, _Msg2)
-AND
-StringConcatenate(_Msg2, _Str4, _Msg3)
-AND
-StringConcatenate(_Msg3, _Str5, _Msg4)
-AND
-StringConcatenate(_Msg4, _Str6, _Msg5)
-AND
-StringConcatenate(_Msg5, _Str7, _Msg6)
-AND
-StringConcatenate(_Msg6, _Str8, _Msg7)
-AND
-StringConcatenate(_Msg7, _Str9, _Msg8)
-AND
-StringConcatenate(_Msg8, _Str10, _Msg9)
-AND
-StringConcatenate(_Msg9, _Str11, _Msg10)
-AND
-StringConcatenate(_Msg10, _Str12, _Msg11)
-AND
-StringConcatenate(_Msg11, _Str13, _Msg12)
-AND
-StringConcatenate(_Msg12, _Str14, _Msg13)
-AND
-StringConcatenate(_Msg13, _Str15, _Msg14)
-THEN
-LeaderLog_Internal_RunString("COMBINE", _Msg14);
-
-PROC
-LeaderLog_Log("COMBINE", (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10, (STRING)_Str11, (STRING)_Str12, (STRING)_Str13, (STRING)_Str14, (STRING)_Str15, (STRING)_Str16)
-AND
-StringConcatenate(_Str1, _Str2, _Msg1)
-AND
-StringConcatenate(_Msg1, _Str3, _Msg2)
-AND
-StringConcatenate(_Msg2, _Str4, _Msg3)
-AND
-StringConcatenate(_Msg3, _Str5, _Msg4)
-AND
-StringConcatenate(_Msg4, _Str6, _Msg5)
-AND
-StringConcatenate(_Msg5, _Str7, _Msg6)
-AND
-StringConcatenate(_Msg6, _Str8, _Msg7)
-AND
-StringConcatenate(_Msg7, _Str9, _Msg8)
-AND
-StringConcatenate(_Msg8, _Str10, _Msg9)
-AND
-StringConcatenate(_Msg9, _Str11, _Msg10)
-AND
-StringConcatenate(_Msg10, _Str12, _Msg11)
-AND
-StringConcatenate(_Msg11, _Str13, _Msg12)
-AND
-StringConcatenate(_Msg12, _Str14, _Msg13)
-AND
-StringConcatenate(_Msg13, _Str15, _Msg14)
-AND
-StringConcatenate(_Msg14, _Str16, _Msg15)
-THEN
-LeaderLog_Internal_RunString("COMBINE", _Msg15);
 //END_REGION
 
 //REGION RUN_STRING
@@ -1709,8 +1395,15 @@ ItemRemove(_Dummy);
 NOT DB_LeaderLog_Temp_TraceDummy(_Dummy);
 //END_REGION
 
-//REGION UPDATER
-
+//REGION UPDATES
+//Enable strict logging mode (less QRY spam)
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,5,9,0)
+THEN
+DB_LeaderLog_Internal_LoggingMode(1);
+LeaderLog_Internal_ToggleLogging(0);
 //END_REGION
 EXITSECTION
 

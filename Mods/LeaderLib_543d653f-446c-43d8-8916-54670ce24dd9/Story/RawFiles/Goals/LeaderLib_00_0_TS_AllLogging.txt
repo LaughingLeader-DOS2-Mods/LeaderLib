@@ -7,16 +7,12 @@ KBSECTION
 PROC
 LeaderLog_Log((STRING)_Type, (STRING)_Str1)
 AND
-_Type != "COMBINE"
-AND
 LeaderLog_QRY_LogTypeEnabled(_Type)
 THEN
 LeaderLog_Internal_RunString(_Type, _Str1);
 
 PROC
 LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2)
-AND
-_Type != "COMBINE"
 AND
 LeaderLog_QRY_LogTypeEnabled(_Type)
 AND
@@ -26,8 +22,6 @@ LeaderLog_Internal_RunString(_Type, _Msg1);
 
 PROC
 LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3)
-AND
-_Type != "COMBINE"
 AND
 LeaderLog_QRY_LogTypeEnabled(_Type)
 AND
@@ -39,8 +33,6 @@ LeaderLog_Internal_RunString(_Type, _Msg2);
 
 PROC
 LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4)
-AND
-_Type != "COMBINE"
 AND
 LeaderLog_QRY_LogTypeEnabled(_Type)
 AND
@@ -54,8 +46,6 @@ LeaderLog_Internal_RunString(_Type, _Msg3);
 
 PROC
 LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5)
-AND
-_Type != "COMBINE"
 AND
 LeaderLog_QRY_LogTypeEnabled(_Type)
 AND
@@ -71,8 +61,6 @@ LeaderLog_Internal_RunString(_Type, _Msg4);
 
 PROC
 LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6)
-AND
-_Type != "COMBINE"
 AND
 LeaderLog_QRY_LogTypeEnabled(_Type)
 AND
@@ -90,8 +78,6 @@ LeaderLog_Internal_RunString(_Type, _Msg5);
 
 PROC
 LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7)
-AND
-_Type != "COMBINE"
 AND
 LeaderLog_QRY_LogTypeEnabled(_Type)
 AND
@@ -111,8 +97,6 @@ LeaderLog_Internal_RunString(_Type, _Msg6);
 
 PROC
 LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8)
-AND
-_Type != "COMBINE"
 AND
 LeaderLog_QRY_LogTypeEnabled(_Type)
 AND
@@ -134,8 +118,6 @@ LeaderLog_Internal_RunString(_Type, _Msg7);
 
 PROC
 LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9)
-AND
-_Type != "COMBINE"
 AND
 LeaderLog_QRY_LogTypeEnabled(_Type)
 AND
@@ -159,8 +141,6 @@ LeaderLog_Internal_RunString(_Type, _Msg8);
 
 PROC
 LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10)
-AND
-_Type != "COMBINE"
 AND
 LeaderLog_QRY_LogTypeEnabled(_Type)
 AND
@@ -186,8 +166,6 @@ LeaderLog_Internal_RunString(_Type, _Msg9);
 
 PROC
 LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10, (STRING)_Str11)
-AND
-_Type != "COMBINE"
 AND
 LeaderLog_QRY_LogTypeEnabled(_Type)
 AND
@@ -215,8 +193,6 @@ LeaderLog_Internal_RunString(_Type, _Msg10);
 
 PROC
 LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10, (STRING)_Str11, (STRING)_Str12)
-AND
-_Type != "COMBINE"
 AND
 LeaderLog_QRY_LogTypeEnabled(_Type)
 AND
@@ -246,8 +222,6 @@ LeaderLog_Internal_RunString(_Type, _Msg11);
 
 PROC
 LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10, (STRING)_Str11, (STRING)_Str12, (STRING)_Str13)
-AND
-_Type != "COMBINE"
 AND
 LeaderLog_QRY_LogTypeEnabled(_Type)
 AND
@@ -279,8 +253,6 @@ LeaderLog_Internal_RunString(_Type, _Msg12);
 
 PROC
 LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10, (STRING)_Str11, (STRING)_Str12, (STRING)_Str13, (STRING)_Str14)
-AND
-_Type != "COMBINE"
 AND
 LeaderLog_QRY_LogTypeEnabled(_Type)
 AND
@@ -314,8 +286,6 @@ LeaderLog_Internal_RunString(_Type, _Msg13);
 
 PROC
 LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10, (STRING)_Str11, (STRING)_Str12, (STRING)_Str13, (STRING)_Str14, (STRING)_Str15)
-AND
-_Type != "COMBINE"
 AND
 LeaderLog_QRY_LogTypeEnabled(_Type)
 AND
@@ -351,8 +321,6 @@ LeaderLog_Internal_RunString(_Type, _Msg14);
 
 PROC
 LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10, (STRING)_Str11, (STRING)_Str12, (STRING)_Str13, (STRING)_Str14, (STRING)_Str15, (STRING)_Str16)
-AND
-_Type != "COMBINE"
 AND
 LeaderLog_QRY_LogTypeEnabled(_Type)
 AND

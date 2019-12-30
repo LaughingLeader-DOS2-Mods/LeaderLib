@@ -1,0 +1,393 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+KBSECTION
+
+//REGION LOGGING
+PROC
+LeaderLog_Log((STRING)_Type, (STRING)_Str1)
+AND
+_Type != "COMBINE"
+AND
+LeaderLog_QRY_LogTypeEnabled(_Type)
+THEN
+LeaderLog_Internal_RunString(_Type, _Str1);
+
+PROC
+LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2)
+AND
+_Type != "COMBINE"
+AND
+LeaderLog_QRY_LogTypeEnabled(_Type)
+AND
+StringConcatenate(_Str1, _Str2, _Msg1)
+THEN
+LeaderLog_Internal_RunString(_Type, _Msg1);
+
+PROC
+LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3)
+AND
+_Type != "COMBINE"
+AND
+LeaderLog_QRY_LogTypeEnabled(_Type)
+AND
+StringConcatenate(_Str1, _Str2, _Msg1)
+AND
+StringConcatenate(_Msg1, _Str3, _Msg2)
+THEN
+LeaderLog_Internal_RunString(_Type, _Msg2);
+
+PROC
+LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4)
+AND
+_Type != "COMBINE"
+AND
+LeaderLog_QRY_LogTypeEnabled(_Type)
+AND
+StringConcatenate(_Str1, _Str2, _Msg1)
+AND
+StringConcatenate(_Msg1, _Str3, _Msg2)
+AND
+StringConcatenate(_Msg2, _Str4, _Msg3)
+THEN
+LeaderLog_Internal_RunString(_Type, _Msg3);
+
+PROC
+LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5)
+AND
+_Type != "COMBINE"
+AND
+LeaderLog_QRY_LogTypeEnabled(_Type)
+AND
+StringConcatenate(_Str1, _Str2, _Msg1)
+AND
+StringConcatenate(_Msg1, _Str3, _Msg2)
+AND
+StringConcatenate(_Msg2, _Str4, _Msg3)
+AND
+StringConcatenate(_Msg3, _Str5, _Msg4)
+THEN
+LeaderLog_Internal_RunString(_Type, _Msg4);
+
+PROC
+LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6)
+AND
+_Type != "COMBINE"
+AND
+LeaderLog_QRY_LogTypeEnabled(_Type)
+AND
+StringConcatenate(_Str1, _Str2, _Msg1)
+AND
+StringConcatenate(_Msg1, _Str3, _Msg2)
+AND
+StringConcatenate(_Msg2, _Str4, _Msg3)
+AND
+StringConcatenate(_Msg3, _Str5, _Msg4)
+AND
+StringConcatenate(_Msg4, _Str6, _Msg5)
+THEN
+LeaderLog_Internal_RunString(_Type, _Msg5);
+
+PROC
+LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7)
+AND
+_Type != "COMBINE"
+AND
+LeaderLog_QRY_LogTypeEnabled(_Type)
+AND
+StringConcatenate(_Str1, _Str2, _Msg1)
+AND
+StringConcatenate(_Msg1, _Str3, _Msg2)
+AND
+StringConcatenate(_Msg2, _Str4, _Msg3)
+AND
+StringConcatenate(_Msg3, _Str5, _Msg4)
+AND
+StringConcatenate(_Msg4, _Str6, _Msg5)
+AND
+StringConcatenate(_Msg5, _Str7, _Msg6)
+THEN
+LeaderLog_Internal_RunString(_Type, _Msg6);
+
+PROC
+LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8)
+AND
+_Type != "COMBINE"
+AND
+LeaderLog_QRY_LogTypeEnabled(_Type)
+AND
+StringConcatenate(_Str1, _Str2, _Msg1)
+AND
+StringConcatenate(_Msg1, _Str3, _Msg2)
+AND
+StringConcatenate(_Msg2, _Str4, _Msg3)
+AND
+StringConcatenate(_Msg3, _Str5, _Msg4)
+AND
+StringConcatenate(_Msg4, _Str6, _Msg5)
+AND
+StringConcatenate(_Msg5, _Str7, _Msg6)
+AND
+StringConcatenate(_Msg6, _Str8, _Msg7)
+THEN
+LeaderLog_Internal_RunString(_Type, _Msg7);
+
+PROC
+LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9)
+AND
+_Type != "COMBINE"
+AND
+LeaderLog_QRY_LogTypeEnabled(_Type)
+AND
+StringConcatenate(_Str1, _Str2, _Msg1)
+AND
+StringConcatenate(_Msg1, _Str3, _Msg2)
+AND
+StringConcatenate(_Msg2, _Str4, _Msg3)
+AND
+StringConcatenate(_Msg3, _Str5, _Msg4)
+AND
+StringConcatenate(_Msg4, _Str6, _Msg5)
+AND
+StringConcatenate(_Msg5, _Str7, _Msg6)
+AND
+StringConcatenate(_Msg6, _Str8, _Msg7)
+AND
+StringConcatenate(_Msg7, _Str9, _Msg8)
+THEN
+LeaderLog_Internal_RunString(_Type, _Msg8);
+
+PROC
+LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10)
+AND
+_Type != "COMBINE"
+AND
+LeaderLog_QRY_LogTypeEnabled(_Type)
+AND
+StringConcatenate(_Str1, _Str2, _Msg1)
+AND
+StringConcatenate(_Msg1, _Str3, _Msg2)
+AND
+StringConcatenate(_Msg2, _Str4, _Msg3)
+AND
+StringConcatenate(_Msg3, _Str5, _Msg4)
+AND
+StringConcatenate(_Msg4, _Str6, _Msg5)
+AND
+StringConcatenate(_Msg5, _Str7, _Msg6)
+AND
+StringConcatenate(_Msg6, _Str8, _Msg7)
+AND
+StringConcatenate(_Msg7, _Str9, _Msg8)
+AND
+StringConcatenate(_Msg8, _Str10, _Msg9)
+THEN
+LeaderLog_Internal_RunString(_Type, _Msg9);
+
+PROC
+LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10, (STRING)_Str11)
+AND
+_Type != "COMBINE"
+AND
+LeaderLog_QRY_LogTypeEnabled(_Type)
+AND
+StringConcatenate(_Str1, _Str2, _Msg1)
+AND
+StringConcatenate(_Msg1, _Str3, _Msg2)
+AND
+StringConcatenate(_Msg2, _Str4, _Msg3)
+AND
+StringConcatenate(_Msg3, _Str5, _Msg4)
+AND
+StringConcatenate(_Msg4, _Str6, _Msg5)
+AND
+StringConcatenate(_Msg5, _Str7, _Msg6)
+AND
+StringConcatenate(_Msg6, _Str8, _Msg7)
+AND
+StringConcatenate(_Msg7, _Str9, _Msg8)
+AND
+StringConcatenate(_Msg8, _Str10, _Msg9)
+AND
+StringConcatenate(_Msg9, _Str11, _Msg10)
+THEN
+LeaderLog_Internal_RunString(_Type, _Msg10);
+
+PROC
+LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10, (STRING)_Str11, (STRING)_Str12)
+AND
+_Type != "COMBINE"
+AND
+LeaderLog_QRY_LogTypeEnabled(_Type)
+AND
+StringConcatenate(_Str1, _Str2, _Msg1)
+AND
+StringConcatenate(_Msg1, _Str3, _Msg2)
+AND
+StringConcatenate(_Msg2, _Str4, _Msg3)
+AND
+StringConcatenate(_Msg3, _Str5, _Msg4)
+AND
+StringConcatenate(_Msg4, _Str6, _Msg5)
+AND
+StringConcatenate(_Msg5, _Str7, _Msg6)
+AND
+StringConcatenate(_Msg6, _Str8, _Msg7)
+AND
+StringConcatenate(_Msg7, _Str9, _Msg8)
+AND
+StringConcatenate(_Msg8, _Str10, _Msg9)
+AND
+StringConcatenate(_Msg9, _Str11, _Msg10)
+AND
+StringConcatenate(_Msg10, _Str12, _Msg11)
+THEN
+LeaderLog_Internal_RunString(_Type, _Msg11);
+
+PROC
+LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10, (STRING)_Str11, (STRING)_Str12, (STRING)_Str13)
+AND
+_Type != "COMBINE"
+AND
+LeaderLog_QRY_LogTypeEnabled(_Type)
+AND
+StringConcatenate(_Str1, _Str2, _Msg1)
+AND
+StringConcatenate(_Msg1, _Str3, _Msg2)
+AND
+StringConcatenate(_Msg2, _Str4, _Msg3)
+AND
+StringConcatenate(_Msg3, _Str5, _Msg4)
+AND
+StringConcatenate(_Msg4, _Str6, _Msg5)
+AND
+StringConcatenate(_Msg5, _Str7, _Msg6)
+AND
+StringConcatenate(_Msg6, _Str8, _Msg7)
+AND
+StringConcatenate(_Msg7, _Str9, _Msg8)
+AND
+StringConcatenate(_Msg8, _Str10, _Msg9)
+AND
+StringConcatenate(_Msg9, _Str11, _Msg10)
+AND
+StringConcatenate(_Msg10, _Str12, _Msg11)
+AND
+StringConcatenate(_Msg11, _Str13, _Msg12)
+THEN
+LeaderLog_Internal_RunString(_Type, _Msg12);
+
+PROC
+LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10, (STRING)_Str11, (STRING)_Str12, (STRING)_Str13, (STRING)_Str14)
+AND
+_Type != "COMBINE"
+AND
+LeaderLog_QRY_LogTypeEnabled(_Type)
+AND
+StringConcatenate(_Str1, _Str2, _Msg1)
+AND
+StringConcatenate(_Msg1, _Str3, _Msg2)
+AND
+StringConcatenate(_Msg2, _Str4, _Msg3)
+AND
+StringConcatenate(_Msg3, _Str5, _Msg4)
+AND
+StringConcatenate(_Msg4, _Str6, _Msg5)
+AND
+StringConcatenate(_Msg5, _Str7, _Msg6)
+AND
+StringConcatenate(_Msg6, _Str8, _Msg7)
+AND
+StringConcatenate(_Msg7, _Str9, _Msg8)
+AND
+StringConcatenate(_Msg8, _Str10, _Msg9)
+AND
+StringConcatenate(_Msg9, _Str11, _Msg10)
+AND
+StringConcatenate(_Msg10, _Str12, _Msg11)
+AND
+StringConcatenate(_Msg11, _Str13, _Msg12)
+AND
+StringConcatenate(_Msg12, _Str14, _Msg13)
+THEN
+LeaderLog_Internal_RunString(_Type, _Msg13);
+
+PROC
+LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10, (STRING)_Str11, (STRING)_Str12, (STRING)_Str13, (STRING)_Str14, (STRING)_Str15)
+AND
+_Type != "COMBINE"
+AND
+LeaderLog_QRY_LogTypeEnabled(_Type)
+AND
+StringConcatenate(_Str1, _Str2, _Msg1)
+AND
+StringConcatenate(_Msg1, _Str3, _Msg2)
+AND
+StringConcatenate(_Msg2, _Str4, _Msg3)
+AND
+StringConcatenate(_Msg3, _Str5, _Msg4)
+AND
+StringConcatenate(_Msg4, _Str6, _Msg5)
+AND
+StringConcatenate(_Msg5, _Str7, _Msg6)
+AND
+StringConcatenate(_Msg6, _Str8, _Msg7)
+AND
+StringConcatenate(_Msg7, _Str9, _Msg8)
+AND
+StringConcatenate(_Msg8, _Str10, _Msg9)
+AND
+StringConcatenate(_Msg9, _Str11, _Msg10)
+AND
+StringConcatenate(_Msg10, _Str12, _Msg11)
+AND
+StringConcatenate(_Msg11, _Str13, _Msg12)
+AND
+StringConcatenate(_Msg12, _Str14, _Msg13)
+AND
+StringConcatenate(_Msg13, _Str15, _Msg14)
+THEN
+LeaderLog_Internal_RunString(_Type, _Msg14);
+
+PROC
+LeaderLog_Log((STRING)_Type, (STRING)_Str1, (STRING)_Str2, (STRING)_Str3, (STRING)_Str4, (STRING)_Str5, (STRING)_Str6, (STRING)_Str7, (STRING)_Str8, (STRING)_Str9, (STRING)_Str10, (STRING)_Str11, (STRING)_Str12, (STRING)_Str13, (STRING)_Str14, (STRING)_Str15, (STRING)_Str16)
+AND
+_Type != "COMBINE"
+AND
+LeaderLog_QRY_LogTypeEnabled(_Type)
+AND
+StringConcatenate(_Str1, _Str2, _Msg1)
+AND
+StringConcatenate(_Msg1, _Str3, _Msg2)
+AND
+StringConcatenate(_Msg2, _Str4, _Msg3)
+AND
+StringConcatenate(_Msg3, _Str5, _Msg4)
+AND
+StringConcatenate(_Msg4, _Str6, _Msg5)
+AND
+StringConcatenate(_Msg5, _Str7, _Msg6)
+AND
+StringConcatenate(_Msg6, _Str8, _Msg7)
+AND
+StringConcatenate(_Msg7, _Str9, _Msg8)
+AND
+StringConcatenate(_Msg8, _Str10, _Msg9)
+AND
+StringConcatenate(_Msg9, _Str11, _Msg10)
+AND
+StringConcatenate(_Msg10, _Str12, _Msg11)
+AND
+StringConcatenate(_Msg11, _Str13, _Msg12)
+AND
+StringConcatenate(_Msg12, _Str14, _Msg13)
+AND
+StringConcatenate(_Msg13, _Str15, _Msg14)
+AND
+StringConcatenate(_Msg14, _Str16, _Msg15)
+THEN
+LeaderLog_Internal_RunString(_Type, _Msg15);
+//END_REGION
+EXITSECTION
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_00_0_Log"

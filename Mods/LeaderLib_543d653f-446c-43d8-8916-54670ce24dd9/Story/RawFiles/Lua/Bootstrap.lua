@@ -16,9 +16,14 @@ local GameSessionLoad = function ()
 	Ext.Print("[LeaderLib:Bootstrap.lua] Session is loading.")
 end
 
+local ModuleLoading = function ()
+	Ext.Print("[LeaderLib:Bootstrap.lua] Module is loading.")
+end
+
 --v36 and higher
 if Ext.RegisterListener ~= nil then
     Ext.RegisterListener("SessionLoading", GameSessionLoad)
+    Ext.RegisterListener("ModuleLoading", ModuleLoading)
 end
 
 local export = {
@@ -35,4 +40,6 @@ for name,func in pairs(export) do
 	Ext.Print("[LeaderLib:Bootstrap.lua] Registered global function '"..func_name.."'.")
 end
 
-Ext.NewQuery(LeaderLib.Main.StringToVersion_Query, "LeaderLib_Ext_QRY_StringToVersion", "[in](STRING)_Version, [out](INTEGER)_Major, [out](INTEGER)_Minor, [out](INTEGER)_Revision, [out](INTEGER)_Build");
+Ext.NewQuery(LeaderLib.Main.StringToVersion_Query, "LeaderLib_Ext_QRY_StringToVersion", "[in](STRING)_Version, [out](INTEGER)_Major, [out](INTEGER)_Minor, [out](INTEGER)_Revision, [out](INTEGER)_Build")
+
+Ext.Print("[LeaderLib:Bootstrap.lua] Finished running.")

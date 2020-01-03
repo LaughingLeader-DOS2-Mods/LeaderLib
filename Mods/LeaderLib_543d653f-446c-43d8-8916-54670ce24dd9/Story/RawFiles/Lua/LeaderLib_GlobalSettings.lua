@@ -11,6 +11,7 @@ local global_flags = {
 	"LeaderLog_Debug_Enabled",
 	"LeaderLog_CombatLog_Disabled",
 	"LeaderLog_Status_Disabled",
+	"LeaderLib_DebugMode"
 }
 --[[ local global_settings_example = {
 	GlobalFlags = {
@@ -284,7 +285,8 @@ local function LoadGlobalSettings()
 	local json = NRD_LoadFile("LeaderLib_GlobalSettings.json")
 	if json ~= nil and json ~= "" then
 		local json_tbl = Ext.JsonParse(json)
-		Ext.Print("[LeaderLib:GlobalSettings.lua] Loaded global settings. {" .. LeaderLib.Common.Dump(json_tbl) .. "}")
+		--Ext.Print("[LeaderLib:GlobalSettings.lua] Loaded global settings. {" .. LeaderLib.Common.Dump(json_tbl) .. "}")
+		Ext.Print("[LeaderLib:GlobalSettings.lua] Loaded global settings.")
 		parse_settings(json_tbl)
 	else
 		Ext.Print("[LeaderLib:GlobalSettings.lua] No global settings found.")
@@ -303,37 +305,9 @@ local function LoadGlobalSettings_Run()
 	end
 end
 
-local function build_settings(tbl)
-	for k,v in pairs(tbl) do
-		if k == "GlobalFlags" then
-			for _,flag in ipairs(global_flags) do
-				local flag_set = GlobalGetFlag(flag) == 1
-				if flag_set == 1 then
-					if LeaderLib.Common.TableHasEntry(v, flag) == false then
-						v[#v+1] = flag
-					end
-				end
-			end
-			table.sort(v)
-		end
-		-- if type(v) == "table" then
-		-- 	build_settings(v, tbl)
-		-- end
-	end
-	if GlobalGetFlag("LeaderLib_AutosavingEnabled") == 1 then
-		for _,interval_flag in ipairs(autosaving_interval) do
-			local flag_set = GlobalGetFlag(interval_flag) == 1
-			if flag_set == 1 then
-				tbl["Autosaving_Interval"] = interval_flag
-				break
-			end
-		end
-	end
-end
-
 local function SaveGlobalSettings()
 	local export_settings = LeaderLibGlobalSettings:Create()
-	Ext.Print(LeaderLib.Common.Dump(export_settings))
+	--Ext.Print(LeaderLib.Common.Dump(export_settings))
 	local mods = export_settings.mods
 	if #mods > 0 then
 		local json = Ext.JsonStringify(export_settings)

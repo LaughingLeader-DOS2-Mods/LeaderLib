@@ -19,6 +19,7 @@ LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLib_FriendlyFireEnabled")
 LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLog_CombatLog_Disabled");
 LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLog_Debug_Enabled");
 LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLog_Status_Disabled");
+LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLib_DebugModeEnabled", 1);
 
 LeaderLib_GlobalSettings_Register_Integer("LeaderLib", "LaughingLeader", "AutosaveInterval", 15);
 LeaderLib_GlobalSettings_TransferVariables();

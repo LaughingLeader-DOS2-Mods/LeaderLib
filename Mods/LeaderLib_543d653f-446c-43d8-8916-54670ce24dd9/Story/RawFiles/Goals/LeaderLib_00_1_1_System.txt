@@ -129,6 +129,17 @@ NOT DB_LeaderLib_Extender_LuaInitialized(1);
 NRD_LuaCall("LeaderLib_Ext_Init");
 */
 //END_REGION
+
+//REGION DEBUG_MODE_LUA
+/* [OSITOOLS_ONLY]
+IF
+StoryEvent(_, "LeaderLib_Initialized")
+AND
+GlobalGetFlag("LeaderLib_DebugModeEnabled", 1)
+THEN
+NRD_LuaCall("LeaderLib_Ext_DebugInit");
+*/
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

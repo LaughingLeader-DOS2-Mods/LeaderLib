@@ -3,7 +3,7 @@ LeaderLib = {
 	Settings = {},
 	Common = {},
 	ModRegistration = {},
-	Initialized = false
+	Initialized = false,
 }
 
 ---A global table that holds update functions to call when a mod's version changes. The key should be the mod's UUID.
@@ -18,6 +18,18 @@ function LeaderLib_Ext_Init()
 	LeaderLib.Initialized = true
 end
 
+LeaderLib_DebugInitCalls = {}
+
+function LeaderLib_Ext_DebugInit()
+	for i = 1, #LeaderLib_DebugInitCalls do
+		local func = LeaderLib_DebugInitCalls[i]
+		if func ~= nil and type(func) == "function" then
+			pcall(func)
+		end
+	end
+end
+
+---Called by other mods via Lua scripts.
 function LeaderLib_Ext_RegisterMod(id,author,major,minor,revision,build,uuid)
 	if LeaderLib.Initialized == true then
 		Osi.LeaderUpdater_Register_Mod(id,author,major,minor,revision,build)

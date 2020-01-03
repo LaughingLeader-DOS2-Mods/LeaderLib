@@ -449,7 +449,7 @@ CharacterGetReservedUserID(_Host, _User)
 AND
 GetUserName(_User, _ProfileName)
 AND
-StringContains(_ProfileName, "Debug", 1)
+StringContains(_ProfileName, "LLDebug", 1)
 THEN
 DB_LeaderUpdater_Temp_Debug_TestingDependency(1);
 DB_LeaderUpdater_Dependency("LeaderLib", "LaughingLeader", "TheBestModEver", "KaijuModder", 1);

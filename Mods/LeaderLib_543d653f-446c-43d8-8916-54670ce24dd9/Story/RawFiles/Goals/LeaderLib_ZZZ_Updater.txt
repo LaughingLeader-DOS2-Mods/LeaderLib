@@ -34,14 +34,12 @@ DB_LeaderUpdater_Temp_PastRegistered("LeaderLib", "LaughingLeader", "1.5.7.0");
 IF
 GameStarted(_,_)
 AND
-LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", 1,5,9,0)
+LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", 1,5,9,1)
 THEN
-LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Updating LeaderLib to latest version (1.5.9.0).");
-LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", 1,5,9,0);
+LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Updating LeaderLib to latest version (1.5.9.1).");
+LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", 1,5,9,1);
 LeaderLib_SendEvent("LeaderLib_Events_Internal_OnUpdateSettings");
 //LeaderLib_StringExt_Internal_ClearCache_Lazy(100);
-
-
 //END_REGION
 
 //REGION ACTIVE_FLAG
@@ -51,6 +49,15 @@ AND
 GlobalGetFlag("LeaderLib_Active", 0)
 THEN
 GlobalSetFlag("LeaderLib_Active");
+//END_REGION
+
+//REGION GENERAL_UPDATES
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,5,9,1)
+THEN
+LeaderUpdater_Register_UUID("LeaderLib", "LaughingLeader", 7e737d2f-31d2-4751-963f-be6ccc59cd0c);
 //END_REGION
 EXITSECTION
 

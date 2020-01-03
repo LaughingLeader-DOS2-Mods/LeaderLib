@@ -108,12 +108,14 @@ local function Register_Mod_Table(tbl)
 	local id = tbl["id"]
 	local author = tbl["author"]
 	local version = tbl["version"]
+	local b = false
+	local major,minor,revision,build = 0
 	if id ~= nil and author ~= nil then
 		if version == nil then
 			Osi.LeaderUpdater_Register_Mod(id, author, 0,0,0,0);
 		else
 			if type(version) == "string" then
-				local b,major,minor,revision,build = pcall(process_version_str, version)
+				b,major,minor,revision,build = pcall(process_version_str, version)
 				if b then
 					Osi.LeaderUpdater_Register_Mod(id,author,major,minor,revision,build)
 				else
@@ -127,6 +129,12 @@ local function Register_Mod_Table(tbl)
 				Osi.LeaderUpdater_Register_Mod(id,author,major,minor,revision,build)
 			end
 		end
+
+		local uuid = tbl["uuid"]
+		if uuid ~= nil then
+			Osi.LeaderUpdater_Register_UUID(id,author,uuid)
+		end
+		Ext.Print("[LeaderLib_Main.lua] Registered mod (",LeaderLib.Common.Dump(tbl),").")
 	end
 end
 

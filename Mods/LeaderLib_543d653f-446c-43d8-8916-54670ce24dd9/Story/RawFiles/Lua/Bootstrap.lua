@@ -15,7 +15,7 @@ function LeaderLib_Ext_Init()
 	LeaderLib.Initialized = true
 end
 
-function LeaderLib_Ext_RegisterMod(id,author,major,minor,revision,build)
+function LeaderLib_Ext_RegisterMod(id,author,major,minor,revision,build,uuid)
 	if LeaderLib.Initialized == true then
 		Osi.LeaderUpdater_Register_Mod(id,author,major,minor,revision,build)
 	else
@@ -27,7 +27,8 @@ function LeaderLib_Ext_RegisterMod(id,author,major,minor,revision,build)
 				minor = minor,
 				revision = revision,
 				build = build
-			}
+			},
+			uuid = uuid
 		}
 	end
 end

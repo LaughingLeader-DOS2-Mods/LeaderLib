@@ -82,6 +82,15 @@ DB_LeaderUpdater_Dependency(_ModID, _Author, _DependencyModID, _DependencyModAut
 
 PROC
 LeaderUpdater_Register_UUID((STRING)_ModID, (STRING)_Author, (GUIDSTRING)_UUID)
+AND
+DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _Old)
+AND
+_Old != _UUID
+THEN
+NOT DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _Old);
+
+PROC
+LeaderUpdater_Register_UUID((STRING)_ModID, (STRING)_Author, (GUIDSTRING)_UUID)
 THEN
 DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID);
 //END_REGION
@@ -702,9 +711,12 @@ GlobalSetFlag(_Flag);
 
 if _G["LeaderLib_Ext_RegisterMod"] ~= nil then
 	local func = _G["LeaderLib_Ext_RegisterMod"]
-	func("ModName", "AuthorName", 1,0,0,0)
+	func("ModName", "AuthorName", 1,0,0,0, "UUID")
 end
+
+Including the Mod UUID here means LeaderLib can use the extender to see if the mod is active.
 */
+
 /* [OSITOOLS_ONLY]
 PROC
 LeaderLib_StoryStarted()

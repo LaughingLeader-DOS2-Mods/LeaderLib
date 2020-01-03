@@ -17,15 +17,15 @@ DB_LeaderLib_ModCompatibility_Presets("Helaene_Wyldfae_Class", "Helaene", "Wyldf
 DB_LeaderLib_ModCompatibility_Presets("Helaene_Trickster", "Helaene", "Trickster", "Trickster [Helaene]");
 DB_LeaderLib_ModCompatibility_Presets("Helaene_Succubus", "Helaene", "Succubus", "Succubus [Helaene]");
 
-LeaderUpdater_Register_UUID("Helaene_Blacksmith", "Helaene", Helaene_Blacksmith_faac3525-c5b3-580d-6ef2-ed9797f68fb0);
-LeaderUpdater_Register_UUID("Helaene_Cryomancer", "Helaene", Helaene_Cryomancer_958ef674-66ec-d208-1112-5c62ffbba16b);
-LeaderUpdater_Register_UUID("Helaene_Mirage_Class", "Helaene", Helaene_Mirage_Class_3a5f27e8-2bb7-a1aa-210d-646fa48a1a98);
-LeaderUpdater_Register_UUID("Helaene_Priest_Class", "Helaene", Helaene_Priest_Class_fd3534f5-99b9-cae1-a458-ecf9f3be5a3c);
-LeaderUpdater_Register_UUID("Helaene_Valkyrie", "Helaene", Helaene_Valkyrie_78a84dd9-de34-c4c7-47a5-e47bd080ebb1);
-LeaderUpdater_Register_UUID("Helaene_Vampire", "Helaene", Helaene_Vampire_ba43959a-490b-0846-6630-56a90568b651);
-LeaderUpdater_Register_UUID("Helaene_Wyldfae_Class", "Helaene", Helaene_Wyldfae_Class_260d1263-4650-51f8-38dc-614f6c9536ed);
-LeaderUpdater_Register_UUID("Helaene_Trickster", "Helaene", Helaene_Trickster_ca9ff65f-b16d-690a-22c5-6c3c31d8e597);
-LeaderUpdater_Register_UUID("Helaene_Succubus", "Helaene", Helaene_Succubus_975c594c-2382-93a0-377a-847775be6c5b);
+LeaderUpdater_Register_UUID("Helaene_Blacksmith", "Helaene", faac3525-c5b3-580d-6ef2-ed9797f68fb0);
+LeaderUpdater_Register_UUID("Helaene_Cryomancer", "Helaene", 958ef674-66ec-d208-1112-5c62ffbba16b);
+LeaderUpdater_Register_UUID("Helaene_Mirage_Class", "Helaene", 3a5f27e8-2bb7-a1aa-210d-646fa48a1a98);
+LeaderUpdater_Register_UUID("Helaene_Priest_Class", "Helaene", fd3534f5-99b9-cae1-a458-ecf9f3be5a3c);
+LeaderUpdater_Register_UUID("Helaene_Valkyrie", "Helaene", 78a84dd9-de34-c4c7-47a5-e47bd080ebb1);
+LeaderUpdater_Register_UUID("Helaene_Vampire", "Helaene", ba43959a-490b-0846-6630-56a90568b651);
+LeaderUpdater_Register_UUID("Helaene_Wyldfae_Class", "Helaene", 260d1263-4650-51f8-38dc-614f6c9536ed);
+LeaderUpdater_Register_UUID("Helaene_Trickster", "Helaene", ca9ff65f-b16d-690a-22c5-6c3c31d8e597);
+LeaderUpdater_Register_UUID("Helaene_Succubus", "Helaene", 975c594c-2382-93a0-377a-847775be6c5b);
 
 LeaderUpdater_Register_ActiveGoal("Helaene_Blacksmith", "Helaene", "Helaene_Blacksmith_Scripts");
 LeaderUpdater_Register_ActiveGoal("Helaene_Cryomancer", "Helaene", "Helaene_Cryomancer_Scripts");

@@ -761,14 +761,15 @@ DB_LeaderLib_Settings_Temp_RegisteredModsList("");
 QRY
 LeaderLib_Settings_QRY_SetActiveText((STRING)_ModID, (STRING)_Author)
 AND
-LeaderUpdater_QRY_ModRegisteredActiveGoal(_ModID, _Author)
-AND
 LeaderUpdater_QRY_ModIsActive(_ModID, _Author)
 THEN
 DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, " <b>(Active)</b>");
 
+// [BEGIN_NO_OSITOOLS]
 QRY
 LeaderLib_Settings_QRY_SetActiveText((STRING)_ModID, (STRING)_Author)
+AND
+NOT DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, _)
 AND
 LeaderUpdater_QRY_ModRegisteredActiveGoal(_ModID, _Author)
 AND
@@ -779,9 +780,40 @@ DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, " <b>(Deactivated)</b>
 QRY
 LeaderLib_Settings_QRY_SetActiveText((STRING)_ModID, (STRING)_Author)
 AND
+NOT DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, _)
+AND
 NOT LeaderUpdater_QRY_ModRegisteredActiveGoal(_ModID, _Author)
+AND
+NOT LeaderUpdater_QRY_ModIsActive(_ModID, _Author)
 THEN
-DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, " <b>(No Active Goal Registered)</b>");
+DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, " <b>(No Script Registered)</b>");
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+QRY
+LeaderLib_Settings_QRY_SetActiveText((STRING)_ModID, (STRING)_Author)
+AND
+NOT DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, _)
+AND
+NOT LeaderUpdater_QRY_ModIsActive(_ModID, _Author)
+AND
+DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID)
+THEN
+DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, " <b>(Deactivated)</b>");
+
+QRY
+LeaderLib_Settings_QRY_SetActiveText((STRING)_ModID, (STRING)_Author)
+AND
+NOT DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, _)
+AND
+NOT LeaderUpdater_QRY_ModIsActive(_ModID, _Author)
+AND
+NOT LeaderUpdater_QRY_ModRegisteredActiveGoal(_ModID, _Author)
+AND
+NOT DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _)
+THEN
+DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, " <b>(No Script/UUID Registered)</b>");
+*/
 
 PROC
 LeaderLib_Settings_BuildModList()

@@ -7,7 +7,32 @@ local function table_has_index(tbl, index)
     return false
 end
 
-local function process_version_str(version_str)
+---Checks if a version string is less than a given version.
+---@param past_version string
+---@param major integer
+---@param minor integer
+---@param revision integer
+---@param build integer
+--_@return boolean
+function LeaderLib_Ext_VersionIsLessThan(past_version,major,minor,revision,build)
+	local b,pastmajor,pastminor,pastrevision,pastbuild = pcall(LeaderLib_Ext_StringToVersionIntegers, past_version)
+
+	if b == true then
+		if  major > pastmajor then
+			return true
+		elseif major == pastmajor and minor > pastminor then
+			return true
+		elseif major == pastmajor and pastminor == minor and revision > pastrevision then
+			return true
+		elseif major == pastmajor and pastminor == minor and pastrevision == revision and build > pastbuild then
+			return true
+		end
+	end
+
+	return false
+end
+
+function LeaderLib_Ext_StringToVersionIntegers(version_str)
 	local a,b,c,d = -1
 	local vals = {}
 	for s in string.gmatch(version_str, "([^.]+)") do
@@ -30,7 +55,7 @@ end
 
 --Added a lua->Osiris query
 local function StringToVersion_Query(version_str)
-	local b, major,minor,revision,build = pcall(process_version_str, version_str)
+	local b, major,minor,revision,build = pcall(LeaderLib_Ext_StringToVersionIntegers, version_str)
 	if b then
 		if major ~= -1 and minor ~= -1 and revision ~= -1 and build ~= -1 then
 			--Osi.LeaderLib_StringExt_SetVersionFromString(version_str,major,minor,revision,build)
@@ -39,12 +64,12 @@ local function StringToVersion_Query(version_str)
 			error(version_str .. " is not a valid version string!")
 		end
 	else
-		error("Failed to process '"..version_str.."' - function process_version_str has an error.")
+		error("Failed to process '"..version_str.."' - function LeaderLib_Ext_StringToVersionIntegers has an error.")
 	end
 end
 
 local function StringToVersion(version_str)
-	local b, major,minor,revision,build = pcall(process_version_str, version_str)
+	local b, major,minor,revision,build = pcall(LeaderLib_Ext_StringToVersionIntegers, version_str)
 	if b then
 		if major ~= -1 and minor ~= -1 and revision ~= -1 and build ~= -1 then
 			Osi.LeaderLib_StringExt_SetVersionFromString(version_str,major,minor,revision,build)
@@ -52,7 +77,7 @@ local function StringToVersion(version_str)
 			error(version_str .. " is not a valid version string!")
 		end
 	else
-		error("Failed to process '"..version_str.."' - function process_version_str has an error.")
+		error("Failed to process '"..version_str.."' - function LeaderLib_Ext_StringToVersionIntegers has an error.")
 	end
 end
 
@@ -115,7 +140,7 @@ local function Register_Mod_Table(tbl)
 			Osi.LeaderUpdater_Register_Mod(id, author, 0,0,0,0);
 		else
 			if type(version) == "string" then
-				b,major,minor,revision,build = pcall(process_version_str, version)
+				b,major,minor,revision,build = pcall(LeaderLib_Ext_StringToVersionIntegers, version)
 				if b then
 					Osi.LeaderUpdater_Register_Mod(id,author,major,minor,revision,build)
 				else
@@ -140,9 +165,11 @@ end
 
 ---Lua-based mod registration.
 local function RegisterModsFromLua()
-	for _,v in pairs(LeaderLib.ModRegistration) do
+	for k,v in pairs(LeaderLib.ModRegistration) do
 		Register_Mod_Table(v)
 	end
+	--Clear
+	LeaderLib.ModRegistration = {}
 end
 
 LeaderLib.Main = {

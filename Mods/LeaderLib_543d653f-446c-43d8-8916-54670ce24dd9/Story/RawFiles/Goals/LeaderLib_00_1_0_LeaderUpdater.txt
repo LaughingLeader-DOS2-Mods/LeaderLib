@@ -697,6 +697,27 @@ LeaderLog_Log("DEBUG", "[LeaderUpdater:SetModActiveFlag] Mod [",_ModID,"] by [",
 GlobalSetFlag(_Flag);
 //END_REGION
 
+//REGION LUA_MOD_REGISTRATION
+/* Mods can register to LeaderLib, through Lua, like so:
+
+if _G["LeaderLib_Ext_RegisterMod"] ~= nil then
+	local func = _G["LeaderLib_Ext_RegisterMod"]
+	func("ModName", "AuthorName", 1,0,0,0)
+end
+*/
+/* [OSITOOLS_ONLY]
+PROC
+LeaderLib_StoryStarted()
+THEN
+NRD_LuaCall("LeaderLib_Ext_RegisterModsFromLua");
+
+IF
+SavegameLoaded(_,_,_,_)
+THEN
+NRD_LuaCall("LeaderLib_Ext_RegisterModsFromLua");
+*/
+//END_REGION
+
 //REGION UNINSTALLING
 PROC
 LeaderUpdater_UnregisterMod((STRING)_ModID, (STRING)_Author)

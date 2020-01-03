@@ -104,11 +104,45 @@ local function RefreshSkill(char, skill)
 	Osi.LeaderLib_Timers_StartObjectTimer(char, 60, "Timers_LeaderLib_RefreshUI_RevertSkillCooldownDirect", "LeaderLib_RefreshUI_RevertSkillCooldown");
 end
 
+local function Register_Mod_Table(tbl)
+	local id = tbl["id"]
+	local author = tbl["author"]
+	local version = tbl["version"]
+	if id ~= nil and author ~= nil then
+		if version == nil then
+			Osi.LeaderUpdater_Register_Mod(id, author, 0,0,0,0);
+		else
+			if type(version) == "string" then
+				local b,major,minor,revision,build = pcall(process_version_str, version)
+				if b then
+					Osi.LeaderUpdater_Register_Mod(id,author,major,minor,revision,build)
+				else
+					Osi.LeaderUpdater_Register_Mod(id,author,0,0,0,0)
+				end
+			elseif type(version) == "table" then
+				local major = LeaderLib.Common.GetTableEntry(version, "major", 0)
+				local minor = LeaderLib.Common.GetTableEntry(version, "minor", 0)
+				local revision = LeaderLib.Common.GetTableEntry(version, "revision", 0)
+				local build = LeaderLib.Common.GetTableEntry(version, "build", 0)
+				Osi.LeaderUpdater_Register_Mod(id,author,major,minor,revision,build)
+			end
+		end
+	end
+end
+
+---Lua-based mod registration.
+local function RegisterModsFromLua()
+	for _,v in pairs(LeaderLib.ModRegistration) do
+		Register_Mod_Table(v)
+	end
+end
+
 LeaderLib.Main = {
 	StringToVersion_Query = StringToVersion_Query,
 	StringToVersion = StringToVersion,
 	PrintAttributes = PrintAttributes,
 	PrintTest = PrintTest,
 	RefreshSkills = RefreshSkills,
-	RefreshSkill = RefreshSkill
+	RefreshSkill = RefreshSkill,
+	RegisterModsFromLua = RegisterModsFromLua
 }

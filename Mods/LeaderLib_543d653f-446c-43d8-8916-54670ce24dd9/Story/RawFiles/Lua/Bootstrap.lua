@@ -2,6 +2,8 @@ LeaderLib = {
 	Main = {},
 	Settings = {},
 	Common = {},
+	ModRegistration = {},
+	Initialized = false
 }
 
 Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib__Common.lua");
@@ -10,6 +12,24 @@ Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib_GlobalS
 
 function LeaderLib_Ext_Init()
 	Osi.DB_LeaderLib_Extender_LuaInitialized(1)
+	LeaderLib.Initialized = true
+end
+
+function LeaderLib_Ext_RegisterMod(id,author,major,minor,revision,build)
+	if LeaderLib.Initialized == true then
+		Osi.LeaderUpdater_Register_Mod(id,author,major,minor,revision,build)
+	else
+		LeaderLib.ModRegistration[#LeaderLib.ModRegistration+1] = {
+			id = id,
+			author = author,
+			version = {
+				major = major,
+				minor = minor,
+				revision = revision,
+				build = build
+			}
+		}
+	end
 end
 
 local GameSessionLoad = function ()
@@ -31,7 +51,8 @@ local export = {
 	PrintAttributes = LeaderLib.Main.PrintAttributes,
 	PrintTest = LeaderLib.Main.PrintTest,
 	RefreshSkills = LeaderLib.Main.RefreshSkills,
-	RefreshSkill = LeaderLib.Main.RefreshSkill
+	RefreshSkill = LeaderLib.Main.RefreshSkill,
+	RegisterModsFromLua = LeaderLib.Main.RegisterModsFromLua,
 }
 
 for name,func in pairs(export) do

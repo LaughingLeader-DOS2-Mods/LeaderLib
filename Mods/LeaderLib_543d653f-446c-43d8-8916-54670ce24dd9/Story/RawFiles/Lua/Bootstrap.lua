@@ -6,6 +6,9 @@ LeaderLib = {
 	Initialized = false
 }
 
+---A global table that holds update functions to call when a mod's version changes. The key should be the mod's UUID.
+LeaderLib_ModUpdater = {}
+
 Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib__Common.lua");
 Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib_Main.lua");
 Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib_GlobalSettings.lua");
@@ -30,6 +33,18 @@ function LeaderLib_Ext_RegisterMod(id,author,major,minor,revision,build,uuid)
 			},
 			uuid = uuid
 		}
+	end
+end
+
+local function LeaderUpdater_ModUpdated_Error (x)
+	Ext.Print("[LeaderLib:Bootstrap.lua] Error calling mod update function: ", x)
+	return false
+end
+
+function LeaderUpdater_Ext_ModUpdated(id,author,past_version,new_version,uuid)
+	local update_func = LeaderLib_ModUpdater[uuid]
+	if update_func ~= nil then
+		xpcall(update_func, LeaderUpdater_ModUpdated_Error, id,author,past_version,new_version)
 	end
 end
 

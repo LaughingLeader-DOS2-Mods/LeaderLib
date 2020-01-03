@@ -641,6 +641,17 @@ PROC
 LeaderUpdater_ModUpdated((STRING)_ModID, (STRING)_Author, (STRING)_PastVersion, (STRING)_NewVersion)
 THEN
 DB_NOOP(1);
+
+/* [OSITOOLS_ONLY]
+PROC
+LeaderUpdater_ModUpdated((STRING)_ModID, (STRING)_Author, (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID)
+AND
+String(_UUID, _UUIDStr)
+THEN
+NRD_LuaCall("LeaderUpdater_Ext_ModUpdated", _ModID, _Author, _PastVersion, _NewVersion, _UUIDStr);
+*/
 //END_REGION
 
 //REGION ACTIVE_FLAG

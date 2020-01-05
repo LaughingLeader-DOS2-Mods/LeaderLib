@@ -162,24 +162,26 @@ NOT DB_LeaderLib_PresetMenu_RegisteredPreset(_Preset, _EnabledGlobalFlag);
 LeaderLib_DynamicMenu_Remove_Entry("LeaderLib.Settings.PresetMenu", _Preset);
 LeaderLib_PresetMenu_RegisterPreset(_ModID, _Preset, _DisplayName, _EnabledGlobalFlag);
 
-
-/*
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND
 LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,5,10,1)
 THEN
 LeaderLib_PresetMenu_Internal_UpdateDefaultPresets();
-*/
 
 PROC
 LeaderLib_PresetMenu_Internal_UpdateDefaultPresets()
+AND
+LeaderLib_Helper_QRY_IsPastFortJoy()
 THEN
-LeaderLib_PresetMenu_ClearEntriesWithGroup("DOS2_Act1");
-LeaderLib_PresetMenu_ClearEntriesWithGroup("DOS2_Act2");
-LeaderLib_PresetMenu_Internal_RegisterDefaultPresets();
-TimerCancel("Timers_LeaderLib_PresetMenu_StartSorting");
-TimerLaunch("Timers_LeaderLib_PresetMenu_StartSorting", 50);
+LeaderLib_PresetMenu_Internal_RegisterDefaultPresets(1);
+
+PROC
+LeaderLib_PresetMenu_Internal_UpdateDefaultPresets()
+AND
+NOT LeaderLib_Helper_QRY_IsPastFortJoy()
+THEN
+LeaderLib_PresetMenu_Internal_RegisterDefaultPresets(0);
 
 IF
 TimerFinished("Timers_LeaderLib_PresetMenu_StartSorting")

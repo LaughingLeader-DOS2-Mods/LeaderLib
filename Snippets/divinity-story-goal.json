@@ -243,4 +243,24 @@
 		],
 		"description": "Rules contained within this block only compile if OsiTools is not present."
 	},
+	"StringConcat_7":{
+		"prefix": "concat",
+		"body": [
+			"AND",
+			"StringConcatenate(_Str1, _Str2, _Msg1)",
+			"AND",
+			"StringConcatenate(_Msg1, _Str3, _Msg2)",
+			"AND",
+			"StringConcatenate(_Msg2, _Str4, _Msg3)",
+			"AND",
+			"StringConcatenate(_Msg3, _Str5, _Msg4)",
+			"AND",
+			"StringConcatenate(_Msg4, _Str6, _Msg5)",
+			"AND",
+			"StringConcatenate(_Msg5, _Str7, _Msg6)",
+			"AND",
+			"StringConcatenate(_Msg6, _Str8, _Msg7)",
+		],
+		"description": "Concatenates strings 7 times."
+	}
 }

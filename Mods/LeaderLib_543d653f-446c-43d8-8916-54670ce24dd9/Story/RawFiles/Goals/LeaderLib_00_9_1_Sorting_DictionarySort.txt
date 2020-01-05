@@ -324,9 +324,15 @@ DB_NOOP(1);
 PROC
 LeaderLib_DictionarySort_SortEntry((STRING)_DictionaryID, (STRING)_ID, (STRING)_StringEntry)
 AND
-NOT DB_LeaderLib_Dictionary_Data(_DictionaryID, _, _, _)
+NOT DB_LeaderLib_Dictionary_Data(_DictionaryID, _, _ID, _)
 THEN
 LeaderLib_Array_AddToDictionary(_DictionaryID, _ID, _StringEntry);
+
+PROC
+LeaderLib_DictionarySort_SortEntry((STRING)_DictionaryID, (STRING)_ID, (STRING)_StringEntry)
+AND
+DB_LeaderLib_Dictionary_Data(_DictionaryID, _, _ID, _StringEntry)
+THEN
 LeaderLib_DictionarySort_OnStringSorted(_DictionaryID, _ID);
 
 PROC
@@ -345,11 +351,12 @@ DB_LeaderLib_Array_Length(_DictionaryID, _Length)
 AND
 _Length > 0
 AND
-LeaderLog_QRY_Log("COMBINE", "LeaderLib_Timers_Sorter_SortEntry_", _DictionaryID, "_", _ID, "_", _StringEntry)
+StringConcatenate("LeaderLib_Timers_Sorter_SortEntry_", _DictionaryID, _a)
 AND
-DB_LeaderLog_Temp_CombinedString(_TimerName)
+StringConcatenate(_a, _ID, _b)
+AND
+StringConcatenate(_b, _StringEntry, _TimerName)
 THEN
-NOT DB_LeaderLog_Temp_CombinedString(_TimerName);
 DB_LeaderLib_DictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, 0);
 //LeaderLog_Log("TRACE", "[LeaderLib:DictionarySort] [",_DictionaryID,"] Finding sorted position for '",_StringEntry,"'.");
 LeaderLib_Array_BuildArrayIterator(_DictionaryID);

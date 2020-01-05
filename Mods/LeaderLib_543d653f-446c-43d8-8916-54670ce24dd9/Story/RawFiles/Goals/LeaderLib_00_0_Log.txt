@@ -8,6 +8,7 @@ INITSECTION
 //DB_LeaderLog_Temp_RealString(_ID, _Str)
 //DB_LeaderLog_Temp_RealString(_ID, _Str1, _Str2)
 //DB_LeaderLog_Temp_RealString(_ID, _Str1, _Str2, _Str3)
+SysActivateGoal("LeaderLib_00_0_TS_StrictLogCalls");
 LeaderLib_LeaderLog_SetInitialEnable();
 // DB_LeaderLog_Flags("LeaderLog_DebugStatus_Enabled");
 // DB_LeaderLog_Flags("LeaderLog_DebugEvents_Enabled");
@@ -142,12 +143,22 @@ DB_NOOP(1);
 //REGION LOG_TOGGLING
 PROC
 LeaderLog_Internal_ToggleLogging(1)
+THEN
+SysActivateGoal("LeaderLib_00_0_TS_AllLogging");
+SysCompleteGoal("LeaderLib_00_0_TS_StrictLogCalls");
+
+PROC
+LeaderLog_Internal_ToggleLogging(1)
 AND
 NOT DB_LeaderLog_Internal_LoggingMode(_)
 THEN
 DB_LeaderLog_Internal_LoggingMode(1);
-SysActivateGoal("LeaderLib_00_0_TS_AllLogging");
-SysCompleteGoal("LeaderLib_00_0_TS_StrictLogCalls");
+
+PROC
+LeaderLog_Internal_ToggleLogging(0)
+THEN
+SysCompleteGoal("LeaderLib_00_0_TS_AllLogging");
+SysActivateGoal("LeaderLib_00_0_TS_StrictLogCalls");
 
 PROC
 LeaderLog_Internal_ToggleLogging(0)
@@ -155,8 +166,6 @@ AND
 DB_LeaderLog_Internal_LoggingMode(_Mode)
 THEN
 NOT DB_LeaderLog_Internal_LoggingMode(_Mode);
-SysCompleteGoal("LeaderLib_00_0_TS_AllLogging");
-SysActivateGoal("LeaderLib_00_0_TS_StrictLogCalls");
 
 IF
 GlobalFlagSet("LeaderLog_Debug_Enabled")
@@ -1401,7 +1410,9 @@ NOT DB_LeaderLog_Temp_TraceDummy(_Dummy);
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND
-NOT DB_LeaderLog_Internal_LoggingMode(_)
+NOT SysIsActive("LeaderLib_00_0_TS_StrictLogCalls")
+AND
+NOT SysIsActive("LeaderLib_00_0_TS_AllLogging")
 THEN
 LeaderLog_Internal_ToggleLogging(0);
 //END_REGION

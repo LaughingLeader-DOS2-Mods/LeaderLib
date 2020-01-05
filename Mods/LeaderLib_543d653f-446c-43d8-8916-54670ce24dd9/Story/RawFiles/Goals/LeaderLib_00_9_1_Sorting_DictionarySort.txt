@@ -324,15 +324,9 @@ DB_NOOP(1);
 PROC
 LeaderLib_DictionarySort_SortEntry((STRING)_DictionaryID, (STRING)_ID, (STRING)_StringEntry)
 AND
-NOT DB_LeaderLib_Dictionary_Data(_DictionaryID, _, _ID, _)
+NOT DB_LeaderLib_Dictionary_Data(_DictionaryID, _, _, _)
 THEN
 LeaderLib_Array_AddToDictionary(_DictionaryID, _ID, _StringEntry);
-
-PROC
-LeaderLib_DictionarySort_SortEntry((STRING)_DictionaryID, (STRING)_ID, (STRING)_StringEntry)
-AND
-DB_LeaderLib_Dictionary_Data(_DictionaryID, _, _ID, _StringEntry)
-THEN
 LeaderLib_DictionarySort_OnStringSorted(_DictionaryID, _ID);
 
 PROC

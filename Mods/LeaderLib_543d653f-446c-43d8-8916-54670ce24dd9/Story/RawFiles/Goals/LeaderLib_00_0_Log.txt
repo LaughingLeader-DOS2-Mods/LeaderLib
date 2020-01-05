@@ -33,6 +33,7 @@ DB_LeaderLog_InitialEnable(_Val)
 THEN
 NOT DB_LeaderLog_InitialEnable(_Val);
 GlobalClearFlag("LeaderLog_Debug_Enabled");
+
 //END_REGION
 
 //REGION DISABLED_CHECK
@@ -1400,9 +1401,8 @@ NOT DB_LeaderLog_Temp_TraceDummy(_Dummy);
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,5,9,0)
+NOT DB_LeaderLog_Internal_LoggingMode(_)
 THEN
-DB_LeaderLog_Internal_LoggingMode(1);
 LeaderLog_Internal_ToggleLogging(0);
 //END_REGION
 EXITSECTION

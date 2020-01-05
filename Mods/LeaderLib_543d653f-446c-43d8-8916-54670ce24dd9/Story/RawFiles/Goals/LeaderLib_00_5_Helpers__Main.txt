@@ -142,6 +142,32 @@ THEN
 DB_LeaderLib_Helper_Temp_StopIteratingForFlags(1);
 //END_REGION
 
+//REGION QUERY_GAME_LEVEL
+QRY
+LeaderLib_Helper_QRY_IsPastFortJoy()
+AND
+DB_CurrentLevel(_Level)
+AND
+IsGameLevel(_Level, 1)
+AND
+_Level != "TUT_Tutorial_A"
+AND
+_Level != "FJ_FortJoy_Main"
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IsPastFortJoy((STRING)_Region)
+AND
+IsGameLevel(_Region, 1)
+AND
+_Region != "TUT_Tutorial_A"
+AND
+_Region != "FJ_FortJoy_Main"
+THEN
+DB_NOOP(1);
+//END_REGION
+
 //REGION QUERY_LEVEL_RANGE
 QRY
 LeaderLib_Helper_QRY_LevelRangeMet((INTEGER)_Level, (INTEGER)_MinLevel, (INTEGER)_MaxLevel)

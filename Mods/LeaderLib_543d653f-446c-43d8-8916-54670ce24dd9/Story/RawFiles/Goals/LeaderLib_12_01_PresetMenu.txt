@@ -39,8 +39,8 @@ LeaderLib_PresetMenu_ClearEntriesWithGroup((STRING)_Group)
 AND
 DB_LeaderLib_PresetMenu_RegisteredPreset(_Group, _Preset, _EnabledGlobalFlag)
 THEN
-LeaderLib_DynamicMenu_Remove_Entry("LeaderLib.Settings.PresetMenu", _Preset);
 NOT DB_LeaderLib_PresetMenu_RegisteredPreset(_Group, _Preset, _EnabledGlobalFlag);
+LeaderLib_DynamicMenu_Remove_Entry("LeaderLib.Settings.PresetMenu", _Preset);
 
 PROC
 LeaderLib_PresetMenu_ClearEntriesWithFlag((STRING)_EnabledGlobalFlag)
@@ -55,6 +55,7 @@ NOT DB_LeaderLib_PresetMenu_RegisteredPreset(_Group, _Preset, _EnabledGlobalFlag
 PROC
 LeaderLib_PresetMenu_StartSorting()
 THEN
+LeaderLib_Array_ClearDictionary("LeaderLib.Settings.PresetMenu.Sorted");
 TimerCancel("LeaderLib_Timers_SortPresetMenu");
 TimerLaunch("LeaderLib_Timers_SortPresetMenu", 50);
 GlobalSetFlag("LeaderLib_PresetMenu_LockOpening");
@@ -124,7 +125,6 @@ LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,1,19,0)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib_12_01_PresetMenu:LeaderUpdater_ModUpdated] Updating settings from version [",_PastVersion,"]. Migrating registered presets.");
 LeaderLib_PresetMenu_Internal_Migrate();
-LeaderLib_PresetMenu_Internal_RegisterDefaultPresets();
 
 PROC
 LeaderLib_PresetMenu_Internal_Migrate()
@@ -144,22 +144,33 @@ NOT DB_LeaderLib_PresetMenu_RegisteredPreset(_Preset, "LeaderLib_PresetMenu_IsNo
 
 PROC
 LeaderLib_PresetMenu_Internal_Migrate()
+THEN
+LeaderLib_PresetMenu_Internal_RegisterDefaultPresets();
+
+PROC
+LeaderLib_PresetMenu_Internal_Migrate()
 AND
 DB_LeaderLib_PresetMenu_RegisteredPreset((STRING)_Preset, (STRING)_EnabledGlobalFlag)
+AND
+DB_LeaderLib_Dictionary_Data("LeaderLib.Settings.PresetMenu", _Index, _Preset, _DisplayName)
 AND
 DB_Mods_Registered(_ModID, _Author, _CurrentVersion)
 AND
 StringConcatenate(_ModID, "_IsActive", _EnabledGlobalFlag)
 THEN
 NOT DB_LeaderLib_PresetMenu_RegisteredPreset(_Preset, _EnabledGlobalFlag);
-DB_LeaderLib_PresetMenu_RegisteredPreset(_ModID, _Preset, _EnabledGlobalFlag);
+LeaderLib_DynamicMenu_Remove_Entry("LeaderLib.Settings.PresetMenu", _Preset);
+LeaderLib_PresetMenu_RegisterPreset(_ModID, _Preset, _DisplayName, _EnabledGlobalFlag);
 
+
+/*
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,5,8,2)
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,5,10,1)
 THEN
 LeaderLib_PresetMenu_Internal_UpdateDefaultPresets();
+*/
 
 PROC
 LeaderLib_PresetMenu_Internal_UpdateDefaultPresets()
@@ -168,7 +179,7 @@ LeaderLib_PresetMenu_ClearEntriesWithGroup("DOS2_Act1");
 LeaderLib_PresetMenu_ClearEntriesWithGroup("DOS2_Act2");
 LeaderLib_PresetMenu_Internal_RegisterDefaultPresets();
 TimerCancel("Timers_LeaderLib_PresetMenu_StartSorting");
-TimerLaunch("Timers_LeaderLib_PresetMenu_StartSorting", 250);
+TimerLaunch("Timers_LeaderLib_PresetMenu_StartSorting", 50);
 
 IF
 TimerFinished("Timers_LeaderLib_PresetMenu_StartSorting")
@@ -193,30 +204,43 @@ ObjectClearFlag(_Char, _LastPageFlag, 0);
 IF
 DB_GlobalFlag("LeaderLib_IsEditorMode")
 THEN
-LeaderLib_PresetMenu_Internal_RegisterDefaultPresets();
-
-//This flag is set by Origins when FortJoy is ending.
-IF
-DB_GlobalFlag("FTJ_LV_StartHoELevel")
-THEN
-LeaderLib_PresetMenu_Internal_RegisterDefaultPresets();
+LeaderLib_PresetMenu_Internal_RegisterDefaultPresets(1);
 
 IF
-SavegameLoaded(_,_,_,_)
+RegionStarted(_Level)
 AND
-QueryOnlyOnce("LeaderLib_PresetMenu_RegisterDefaultPresets")
+GlobalGetFlag("LeaderLib_PresetMenu_IsNotAct1", 0)
+AND
+LeaderLib_Helper_QRY_IsPastFortJoy(_Level)
 THEN
-LeaderLib_PresetMenu_Internal_RegisterDefaultPresets();
+LeaderLib_PresetMenu_Internal_RegisterDefaultPresets(1);
+
+IF
+RegionStarted(_Level)
+AND
+GlobalGetFlag("LeaderLib_PresetMenu_IsAct1", 0)
+AND
+NOT LeaderLib_Helper_QRY_IsPastFortJoy(_Level)
+THEN
+LeaderLib_PresetMenu_Internal_RegisterDefaultPresets(0);
 
 PROC
 LeaderLib_PresetMenu_Internal_RegisterDefaultPresets()
 AND
-NOT DB_LeaderLib_PresetMenu_RegisteredPreset("DOS2_Act1", _, _)
-AND
-NOT DB_GlobalFlag("FTJ_LV_StartHoELevel")
+NOT LeaderLib_Helper_QRY_IsPastFortJoy()
 THEN
-GlobalSetFlag("LeaderLib_PresetMenu_IsAct1");
-GlobalClearFlag("LeaderLib_PresetMenu_IsNotAct1");
+LeaderLib_PresetMenu_Internal_RegisterDefaultPresets(0);
+
+PROC
+LeaderLib_PresetMenu_Internal_RegisterDefaultPresets()
+AND
+LeaderLib_Helper_QRY_IsPastFortJoy()
+THEN
+LeaderLib_PresetMenu_Internal_RegisterDefaultPresets(1);
+
+PROC
+LeaderLib_PresetMenu_Internal_RegisterDefaultPresets(0)
+THEN
 LeaderLib_PresetMenu_ClearEntriesWithGroup("DOS2_Act2");
 LeaderLib_PresetMenu_RegisterPreset("DOS2_Act1", "Battlemage", "Battlemage [DOS2]", "LeaderLib_PresetMenu_IsAct1");
 LeaderLib_PresetMenu_RegisterPreset("DOS2_Act1", "Cleric", "Cleric [DOS2]", "LeaderLib_PresetMenu_IsAct1");
@@ -232,16 +256,12 @@ LeaderLib_PresetMenu_RegisterPreset("DOS2_Act1", "Shadowblade", "Shadowblade [DO
 LeaderLib_PresetMenu_RegisterPreset("DOS2_Act1", "Wayfarer", "Wayfarer [DOS2]", "LeaderLib_PresetMenu_IsAct1");
 LeaderLib_PresetMenu_RegisterPreset("DOS2_Act1", "Witch", "Witch [DOS2]", "LeaderLib_PresetMenu_IsAct1");
 LeaderLib_PresetMenu_RegisterPreset("DOS2_Act1", "Wizard", "Wizard [DOS2]", "LeaderLib_PresetMenu_IsAct1");
+GlobalSetFlag("LeaderLib_PresetMenu_IsAct1");
+GlobalClearFlag("LeaderLib_PresetMenu_IsNotAct1");
 
 PROC
-LeaderLib_PresetMenu_Internal_RegisterDefaultPresets()
-AND
-NOT DB_LeaderLib_PresetMenu_RegisteredPreset("DOS2_Act2", _, _)
-AND
-DB_GlobalFlag("FTJ_LV_StartHoELevel")
+LeaderLib_PresetMenu_Internal_RegisterDefaultPresets(1)
 THEN
-GlobalClearFlag("LeaderLib_PresetMenu_IsAct1");
-GlobalSetFlag("LeaderLib_PresetMenu_IsNotAct1");
 LeaderLib_PresetMenu_ClearEntriesWithGroup("DOS2_Act1");
 LeaderLib_PresetMenu_RegisterPreset("DOS2_Act2", "Battlemage_Act2", "Battlemage [DOS2]", "LeaderLib_PresetMenu_IsNotAct1");
 LeaderLib_PresetMenu_RegisterPreset("DOS2_Act2", "Cleric_Act2", "Cleric [DOS2]", "LeaderLib_PresetMenu_IsNotAct1");
@@ -257,6 +277,8 @@ LeaderLib_PresetMenu_RegisterPreset("DOS2_Act2", "Shadowblade_Act2", "Shadowblad
 LeaderLib_PresetMenu_RegisterPreset("DOS2_Act2", "Wayfarer_Act2", "Wayfarer [DOS2]", "LeaderLib_PresetMenu_IsNotAct1");
 LeaderLib_PresetMenu_RegisterPreset("DOS2_Act2", "Witch_Act2", "Witch [DOS2]", "LeaderLib_PresetMenu_IsNotAct1");
 LeaderLib_PresetMenu_RegisterPreset("DOS2_Act2", "Wizard_Act2", "Wizard [DOS2]", "LeaderLib_PresetMenu_IsNotAct1");
+GlobalClearFlag("LeaderLib_PresetMenu_IsAct1");
+GlobalSetFlag("LeaderLib_PresetMenu_IsNotAct1");
 //END_REGION
 
 //REGION PRESET_MENU

@@ -230,11 +230,12 @@ Random(999999, _Ran)
 AND
 IntegertoString(_Ran, _RanStr)
 AND
-LeaderLog_QRY_Log("COMBINE", _TreasureID, _ItemEntry, _DeltaMod, _RanStr)
+StringConcatenate(_TreasureID, _ItemEntry, _Msg1)
 AND
-DB_LeaderLog_Temp_CombinedString(_Str)
+StringConcatenate(_Msg1, _DeltaMod, _Msg2)
+AND
+StringConcatenate(_Msg2, _RanStr, _Str)
 THEN
-NOT DB_LeaderLog_Temp_CombinedString(_Str);
 LeaderLib_Treasure_Configure_AddDeltaMod(_Str, _TreasureID, _ItemEntry, _Deltamod, _Chance);
 
 PROC
@@ -261,11 +262,12 @@ Random(999999, _Ran)
 AND
 IntegertoString(_Ran, _RanStr)
 AND
-LeaderLog_QRY_Log("COMBINE", _TreasureID, _ItemEntry, _Rune, _RanStr)
+StringConcatenate(_TreasureID, _ItemEntry, _Msg1)
 AND
-DB_LeaderLog_Temp_CombinedString(_Str)
+StringConcatenate(_Msg1, _Rune, _Msg2)
+AND
+StringConcatenate(_Msg2, _RanStr, _Str)
 THEN
-NOT DB_LeaderLog_Temp_CombinedString(_Str);
 LeaderLib_Treasure_Configure_AddRune(_Str, _TreasureID, _ItemEntry, _Rune, _Chance);
 
 PROC

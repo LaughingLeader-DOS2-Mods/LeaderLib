@@ -84,13 +84,12 @@ LeaderLib_Treasure_CountTemplateWithStat((STRING)_ID, (GUIDSTRING)_Object, (STRI
 AND
 NOT DB_LeaderLib_Treasure_Temp_TemplateIterator(_ID, _Object, _TreasureID, _ItemTemplate, _GeneratedStat, _, _)
 AND
-LeaderLog_QRY_Log("COMBINE", "LeaderLib_IterateTemplate_", _ItemTemplate, "_", _ID)
+StringConcatenate("LeaderLib_IterateTemplate_", _ItemTemplate, _Msg1)
 AND
-DB_LeaderLog_Temp_CombinedString(_IterateEvent)
+StringConcatenate(_Msg1, _ID, _IterateEvent)
 AND
 StringConcatenate(_IterateEvent, "_Complete", _CompletionEvent)
 THEN
-NOT DB_LeaderLog_Temp_CombinedString(_IterateEvent);
 DB_LeaderLib_Treasure_Temp_TemplateIterator(_ID, _Object, _TreasureID, _ItemTemplate, _GeneratedStat, _IterateEvent, _CompletionEvent);
 InventoryLaunchTemplateIterator(_Object, _ItemTemplate, _IterateEvent, _CompletionEvent);
 

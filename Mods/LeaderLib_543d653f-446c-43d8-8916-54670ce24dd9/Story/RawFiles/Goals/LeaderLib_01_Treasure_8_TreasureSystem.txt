@@ -593,11 +593,10 @@ Random(999999, _Ran)
 AND
 IntegertoString(_Ran, _RanStr)
 AND
-LeaderLog_QRY_Log("COMBINE", _ID, "_TreasureQueue_", "_", _RanStr)
+StringConcatenate(_ID, "_TreasureQueue_", _a)
 AND
-DB_LeaderLog_Temp_CombinedString(_TreasureQueueID)
+StringConcatenate(_a, _RanStr, _TreasureQueueID)
 THEN
-NOT DB_LeaderLog_Temp_CombinedString(_TreasureQueueID);
 DB_LeaderLib_Treasure_Temp_TreasureQueue_Settings(_ID, _TreasureQueueID);
 
 PROC
@@ -1022,11 +1021,12 @@ IntegertoString(_Ran, _RanStr)
 AND
 GetUUID(_Object, _ObjectID)
 AND
-LeaderLog_QRY_Log("COMBINE", _ObjectID, "_", _TreasureID, "_", _GenerationType, "_", _RanStr)
+StringConcatenate(_ObjectID, _TreasureID, _Msg1)
 AND
-DB_LeaderLog_Temp_CombinedString(_ID)
+StringConcatenate(_Msg1, _GenerationType, _Msg2)
+AND
+StringConcatenate(_Msg2, _RanStr, _ID)
 THEN
-NOT DB_LeaderLog_Temp_CombinedString(_ID);
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:AddToGenerationQueue] Added [",_ID,"] to generation queue.");
 LeaderLib_Array_AddToArray("LeaderLib_ItemGenerationQueue", _ID);
 DB_LeaderLib_Treasure_Temp_ItemGenerationQueue(_ID, _Object, _TreasureID, _GenerationType);

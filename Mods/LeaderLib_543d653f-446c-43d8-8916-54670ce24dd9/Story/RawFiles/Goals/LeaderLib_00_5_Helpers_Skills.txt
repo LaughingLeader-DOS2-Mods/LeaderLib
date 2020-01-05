@@ -115,9 +115,11 @@ Random(999999, _Ran)
 AND
 IntegertoString(_Ran, _RanStr)
 AND
-LeaderLog_QRY_Log("COMBINE", _Skill, "_", _UUID, "_", _UUID2, "_", _RanStr)
+StringConcatenate(_Skill, _UUID, _Msg1)
 AND
-DB_LeaderLog_Temp_CombinedString(_ID)
+StringConcatenate(_Msg1, _UUID2, _Msg2)
+AND
+StringConcatenate(_Msg2, _RanStr, _ID)
 AND
 LeaderLib_Skills_QRY_PrepareSkillDummy(_ID, _Caster, _CopyStats, _CopyEquipment)
 AND
@@ -125,7 +127,6 @@ DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy)
 AND
 GetPosition(_Caster, _x, _y, _z)
 THEN
-NOT DB_LeaderLog_Temp_CombinedString(_ID);
 //LeaderLog_Log("TRACE", "[LeaderLib:Skills:UseSkillOnTarget] Got dummy with ID [",_ID,"]. Casting [",_Skill,"] after teleport.");
 DB_LeaderLib_Skills_Temp_SkillDummyData(_Dummy, _Caster, _Target, _Skill);
 DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z);
@@ -142,15 +143,16 @@ Random(999999, _Ran)
 AND
 IntegertoString(_Ran, _RanStr)
 AND
-LeaderLog_QRY_Log("COMBINE", _Skill, "_", _UUID, "_", _UUID2, "_", _RanStr)
+StringConcatenate(_Skill, _UUID, _Msg1)
 AND
-DB_LeaderLog_Temp_CombinedString(_ID)
+StringConcatenate(_Msg1, _UUID2, _Msg2)
+AND
+StringConcatenate(_Msg2, _RanStr, _ID)
 AND
 LeaderLib_Skills_QRY_PrepareSkillDummy(_ID, _Caster, _CopyStats, _CopyEquipment)
 AND
 DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy)
 THEN
-NOT DB_LeaderLog_Temp_CombinedString(_ID);
 DB_LeaderLib_Skills_Temp_SkillDummyData(_Dummy, _Caster, _Target, _Skill);
 DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z);
 LeaderLog_Log("TRACE", "[LeaderLib:Skills:UseSkillOnTargetFromPosition] Teleporting skill dummy for skill [",_Skill,"] to position. Dummy ID: [",_ID,"]");
@@ -165,15 +167,14 @@ Random(999999, _Ran)
 AND
 IntegertoString(_Ran, _RanStr)
 AND
-LeaderLog_QRY_Log("COMBINE", _Skill, "_", _UUID, "_", _RanStr)
+StringConcatenate(_Skill, _UUID, _Msg1)
 AND
-DB_LeaderLog_Temp_CombinedString(_ID)
+StringConcatenate(_Msg1, _RanStr, _ID)
 AND
 LeaderLib_Skills_QRY_PrepareSkillDummy(_ID, _Caster, _CopyStats, _CopyEquipment)
 AND
 DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy)
 THEN
-NOT DB_LeaderLog_Temp_CombinedString(_ID);
 //LeaderLog_Log("TRACE", "[LeaderLib:Skills:UseSkillOnTarget] Got dummy with ID [",_ID,"]. Casting [",_Skill,"] after teleport.");
 DB_LeaderLib_Skills_Temp_SkillDummyData(_Dummy, _Caster, _x, _y, _z, _Skill);
 DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z);
@@ -188,15 +189,14 @@ Random(999999, _Ran)
 AND
 IntegertoString(_Ran, _RanStr)
 AND
-LeaderLog_QRY_Log("COMBINE", _Skill, "_", _UUID, "_", _RanStr)
+StringConcatenate(_Skill, _UUID, _Msg1)
 AND
-DB_LeaderLog_Temp_CombinedString(_ID)
+StringConcatenate(_Msg1, _RanStr, _ID)
 AND
 LeaderLib_Skills_QRY_PrepareSkillDummy(_ID, _Caster, _CopyStats, _CopyEquipment)
 AND
 DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy)
 THEN
-NOT DB_LeaderLog_Temp_CombinedString(_ID);
 DB_LeaderLib_Skills_Temp_SkillDummyData(_Dummy, _Caster, _Dummy, _Skill);
 DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z);
 LeaderLog_Log("TRACE", "[LeaderLib:Skills:UseShoutFromPosition] Teleporting skill dummy for skill [",_Skill,"] to position. Dummy ID: [",_ID,"]");

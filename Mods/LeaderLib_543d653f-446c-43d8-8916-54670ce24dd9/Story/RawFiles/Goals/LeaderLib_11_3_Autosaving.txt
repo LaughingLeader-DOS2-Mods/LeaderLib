@@ -346,11 +346,14 @@ DB_LeaderLib_Settings_DialogVariables("CurrentAutosaveInterval", _CurrentValVar)
 AND
 DB_LeaderLib_Dictionary_Data("LeaderLib.Autosave.IntervalSettings", _EntryIndex, _CurrentGlobalFlag, _DisplayText)
 AND
-LeaderLog_QRY_Log("COMBINE", "Autosaving <font color='#00FF00'>Enabled</font> | Interval: <font color='#00FFFF'>", _DisplayText, "</font> | Time Left: <font color='#FF69B4'>", _MinutesLeft, " Minutes</font>")
+StringConcatenate("Autosaving <font color='#00FF00'>Enabled</font> | Interval: <font color='#00FFFF'>", _DisplayText, _Msg1)
 AND
-DB_LeaderLog_Temp_CombinedString(_Str)
+StringConcatenate(_Msg1, "</font> | Time Left: <font color='#FF69B4'>", _Msg2)
+AND
+StringConcatenate(_Msg2, _MinutesLeft, _Msg3)
+AND
+StringConcatenate(_Msg3, " Minutes</font>", _Str)
 THEN
-NOT DB_LeaderLog_Temp_CombinedString(_Str);
 DialogSetVariableStringForInstance(_Instance, _CurrentValVar, _Str);
 
 PROC
@@ -374,11 +377,10 @@ DB_LeaderLib_Settings_DialogVariables("CurrentAutosaveInterval", _CurrentValVar)
 AND
 DB_LeaderLib_Dictionary_Data("LeaderLib.Autosave.IntervalSettings", _EntryIndex, _CurrentGlobalFlag, _DisplayText)
 AND
-LeaderLog_QRY_Log("COMBINE", "Autosaving <font color='#00FF00'>Enabled</font> | Interval: <font color='#00FFFF'>", _DisplayText, "</font> | Time Left: Less Than <font color='#FF69B4'>1 Minute</font>")
+StringConcatenate("Autosaving <font color='#00FF00'>Enabled</font> | Interval: <font color='#00FFFF'>", _DisplayText, _Msg1)
 AND
-DB_LeaderLog_Temp_CombinedString(_Str)
+StringConcatenate(_Msg1, "</font> | Time Left: Less Than <font color='#FF69B4'>1 Minute</font>", _Str)
 THEN
-NOT DB_LeaderLog_Temp_CombinedString(_Str);
 DialogSetVariableStringForInstance(_Instance, _CurrentValVar, _Str);
 DB_LeaderLib_AutoSaving_Temp_DialogVarSet(1);
 
@@ -415,11 +417,10 @@ DB_LeaderLib_Settings_DialogVariables("CurrentAutosaveInterval", _CurrentValVar)
 AND
 DB_LeaderLib_Dictionary_Data("LeaderLib.Autosave.IntervalSettings", _EntryIndex, _CurrentGlobalFlag, _DisplayText)
 AND
-LeaderLog_QRY_Log("COMBINE", "Autosaving <font color='#00FF00'>Enabled</font> | Interval: <font color='#00FFFF'>", _DisplayText, "</font> | <font color='#FFA500'>Timer not started. Enable/Disable autosaving to restart the timer.</font>")
+StringConcatenate("Autosaving <font color='#00FF00'>Enabled</font> | Interval: <font color='#00FFFF'>", _DisplayText, _Msg1)
 AND
-DB_LeaderLog_Temp_CombinedString(_Str)
+StringConcatenate(_Msg1, "</font> | <font color='#FFA500'>Timer not started. Enable/Disable autosaving to restart the timer.</font>", _Str)
 THEN
-NOT DB_LeaderLog_Temp_CombinedString(_Str);
 DialogSetVariableStringForInstance(_Instance, _CurrentValVar, _Str);
 DB_LeaderLib_AutoSaving_Temp_DialogVarSet(1);
 

@@ -227,11 +227,12 @@ DB_LeaderLib_Statuses_Temp_ExtendDelayResult(_Object, _Status, _LastTurns, _Next
 AND
 GetUUID(_Object, _Uuid)
 AND
-LeaderLog_QRY_Log("COMBINE", "LeaderLib_Timers_ExtendStatus_", _Status, "_", _Uuid)
+StringConcatenate("LeaderLib_Timers_ExtendStatus_", _Status, _Msg1)
 AND
-DB_LeaderLog_Temp_CombinedString(_TimerName)
+StringConcatenate(_Msg1, "_", _Msg2)
+AND
+StringConcatenate(_Msg2, _Uuid, _TimerName)
 THEN
-NOT DB_LeaderLog_Temp_CombinedString(_TimerName); 
 NOT DB_LeaderLib_Statuses_Temp_ExtendDelayResult(_Object, _Status, _LastTurns, _NextTurns, "", _Force, _Source);
 DB_LeaderLib_Statuses_Temp_ExtendDelayResult(_Object, _Status, _LastTurns, _NextTurns, _TimerName, _Force, _Source);
 TimerLaunch(_TimerName, _Delay);

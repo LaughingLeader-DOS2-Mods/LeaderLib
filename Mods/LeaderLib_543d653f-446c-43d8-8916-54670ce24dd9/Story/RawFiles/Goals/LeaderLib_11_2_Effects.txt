@@ -43,11 +43,14 @@ DB_CurrentLevel(_Region)
 AND
 GetUUID(_Target, _UUID)
 AND
-LeaderLog_QRY_Log("COMBINE", _UUID, "_", _Effect, "_", _BoneName)
+StringConcatenate(_UUID, "_", _Msg1)
 AND
-DB_LeaderLog_Temp_CombinedString(_ID)
+StringConcatenate(_Msg1, _Effect, _Msg2)
+AND
+StringConcatenate(_Msg2, "_", _Msg3)
+AND
+StringConcatenate(_Msg3, _BoneName, _ID)
 THEN
-NOT DB_LeaderLog_Temp_CombinedString(_ID);
 LeaderLog_Log("DEBUG", "[LeaderLib:EffectFlags:ParseEffect] Playing loop effect [",_Effect,"] on target [",_UUID,"].");
 PROC_LoopEffect(_Effect, _Target, _ID, _Region, _BoneName);
 

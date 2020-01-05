@@ -43,11 +43,17 @@ IntegertoString(_Revision, _c)
 AND
 IntegertoString(_Build, _d)
 AND
-LeaderLog_QRY_Log("COMBINE", _a, ".", _b, ".", _c, ".", _d)
+StringConcatenate(_a, ".", _Str1)
 AND
-DB_LeaderLog_Temp_CombinedString(_Version)
+StringConcatenate(_Str1, _b, _Str2)
 AND
-LeaderLog_QRY_ClearCombinedString(_Version)
+StringConcatenate(_Str2, ".", _Str3)
+AND
+StringConcatenate(_Str3, _c, _Str4)
+AND
+StringConcatenate(_Str4, ".", _Str5)
+AND
+StringConcatenate(_Str5, _d, _Version)
 AND
 NOT DB_Mods_Registered(_ModID, _Author, _Version)
 THEN
@@ -187,12 +193,17 @@ StringConcatenate("<font color='#FF00FF'>", _ModID, _Str1)
 AND
 StringConcatenate(_Str1, "</font>", _ColoredModName)
 AND
-LeaderLog_QRY_Log("COMBINE", _Str, "<br>", _ColoredModName, " by ", _AuthorID, _RequiredByString)
+StringConcatenate(_Str, "<br>", _Msg1)
 AND
-DB_LeaderLog_Temp_CombinedString(_CombinedStr)
+StringConcatenate(_Msg1, _ColoredModName, _Msg2)
+AND
+StringConcatenate(_Msg2, " by ", _Msg3)
+AND
+StringConcatenate(_Msg3, _AuthorID, _Msg4)
+AND
+StringConcatenate(_Msg4, _RequiredByString, _CombinedStr)
 THEN
 NOT DB_LeaderUpdater_Temp_RequiredByString(_ModID, _AuthorID, _RequiredByString);
-NOT DB_LeaderLog_Temp_CombinedString(_CombinedStr);
 NOT DB_LeaderUpdater_Temp_MissingModMessage(_Str, _IsFinal);
 DB_LeaderUpdater_Temp_MissingModMessage(_CombinedStr, _IsFinal);
 DB_LeaderUpdater_Temp_CombatLog_Messages(_ModID);
@@ -427,11 +438,17 @@ IntegertoString(_Revision, _c)
 AND
 IntegertoString(_Build, _d)
 AND
-LeaderLog_QRY_Log("COMBINE", _a, ".", _b, ".", _c, ".", _d)
+StringConcatenate(_a, ".", _Msg1)
 AND
-DB_LeaderLog_Temp_CombinedString(_Version)
+StringConcatenate(_Msg1, _b, _Msg2)
 AND
-LeaderLog_QRY_ClearCombinedString(_Version)
+StringConcatenate(_Msg2, ".", _Msg3)
+AND
+StringConcatenate(_Msg3, _c, _Msg4)
+AND
+StringConcatenate(_Msg4, ".", _Msg5)
+AND
+StringConcatenate(_Msg5, _d, _Version)
 AND
 NOT DB_Mods_Registered(_ModID, _Author, _Version)
 THEN

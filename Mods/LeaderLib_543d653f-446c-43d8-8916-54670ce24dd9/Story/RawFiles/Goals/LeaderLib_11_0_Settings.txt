@@ -820,7 +820,7 @@ LeaderLib_Settings_BuildModList()
 AND
 DB_Mods_Registered(_ModID, _Author, _Version)
 AND
-DB_LeaderLib_Settings_Temp_RegisteredModsList(_Str)
+DB_LeaderLib_Settings_Temp_RegisteredModsList(_Str1)
 AND
 StringConcatenate("<b>", _ModID, _NameStr)
 AND
@@ -828,13 +828,22 @@ LeaderLib_Settings_QRY_SetActiveText(_ModID, _Author)
 AND
 DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, _ActiveStr)
 AND
-LeaderLog_QRY_Log("COMBINE", _Str, _NameStr, "</b> (", _Version, ") by ",_Author, _ActiveStr, "<br>")
+StringConcatenate(_Str1, _NameStr, _Msg1)
 AND
-DB_LeaderLog_Temp_CombinedString(_CombinedStr)
+StringConcatenate(_Msg1, "</b> (", _Msg2)
+AND
+StringConcatenate(_Msg2, _Version, _Msg3)
+AND
+StringConcatenate(_Msg3, ") by ", _Msg4)
+AND
+StringConcatenate(_Msg4, _Author, _Msg5)
+AND
+StringConcatenate(_Msg5, _ActiveStr, _Msg6)
+AND
+StringConcatenate(_Msg6, "<br>", _CombinedStr)
 THEN
-NOT DB_LeaderLib_Settings_Temp_RegisteredModsList(_Str);
+NOT DB_LeaderLib_Settings_Temp_RegisteredModsList(_Str1);
 DB_LeaderLib_Settings_Temp_RegisteredModsList(_CombinedStr);
-NOT DB_LeaderLog_Temp_CombinedString(_CombinedStr);
 NOT DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, _ActiveStr);
 
 PROC

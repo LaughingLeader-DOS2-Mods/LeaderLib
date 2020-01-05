@@ -218,11 +218,12 @@ LeaderLib_EventFlow_LaunchTimeoutTimer((STRING)_StackName, (STRING)_OnCompleteEv
 AND
 DB_LeaderLib_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime, _TimeoutValue)
 AND
-LeaderLog_QRY_Log("COMBINE", "LeaderLib_Timers_EventFlow_", _StackName, "_", _OnCompleteEvent)
+StringConcatenate("LeaderLib_Timers_EventFlow_", _StackName, _Msg1)
 AND
-DB_LeaderLog_Temp_CombinedString(_TimerName)
+StringConcatenate(_Msg1, "_", _Msg2)
+AND
+StringConcatenate(_Msg2, _OnCompleteEvent, _TimerName)
 THEN
-NOT DB_LeaderLog_Temp_CombinedString(_TimerName);
 DB_LeaderLib_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent);
 TimerLaunch(_TimerName, _TimeoutValue);
 

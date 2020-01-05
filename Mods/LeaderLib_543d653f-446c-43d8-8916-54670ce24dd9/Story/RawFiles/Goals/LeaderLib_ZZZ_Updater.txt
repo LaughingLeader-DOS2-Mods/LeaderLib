@@ -34,10 +34,10 @@ DB_LeaderUpdater_Temp_PastRegistered("LeaderLib", "LaughingLeader", "1.5.7.0");
 IF
 GameStarted(_,_)
 AND
-LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", 1,5,9,3)
+LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", 1,5,10,0)
 THEN
-LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Updating LeaderLib to latest version (1.5.9.3).");
-LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", 1,5,9,3);
+LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Updating LeaderLib to latest version (1.5.10.0).");
+LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", 1,5,10,0);
 LeaderLib_SendEvent("LeaderLib_Events_Internal_OnUpdateSettings");
 //LeaderLib_StringExt_Internal_ClearCache_Lazy(100);
 //END_REGION

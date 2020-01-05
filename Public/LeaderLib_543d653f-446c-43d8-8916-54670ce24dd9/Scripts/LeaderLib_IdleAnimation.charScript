@@ -1,0 +1,19 @@
+INIT
+	CHARACTER:__Me
+	EXTERN FIXEDSTRING:%LeaderLib_IdleAnim_Animation = "CC_Still_01"
+	EXTERN INT:%LeaderLib_IdleAnim_Unsheathed = 0
+EVENTS
+
+EVENT LeaderLib_IdleAnim_OnInit
+ON
+	OnInit()
+ACTIONS
+	CharacterSetFightMode(__Me, %LeaderLib_IdleAnim_Unsheathed, 1)
+
+BEHAVIOUR
+
+REACTION LeaderLib_IdleAnim_PlayAnim,999
+USAGE PEACE
+ACTIONS
+	//CharacterPlayAnimation(%LeaderLib_IdleAnim_Animation)
+	CharacterSetAnimationOverride(__Me, %LeaderLib_IdleAnim_Animation)

@@ -167,6 +167,7 @@ THEN
 LeaderLib_PresetMenu_ClearEntriesWithGroup("DOS2_Act1");
 LeaderLib_PresetMenu_ClearEntriesWithGroup("DOS2_Act2");
 LeaderLib_PresetMenu_Internal_RegisterDefaultPresets();
+TimerCancel("Timers_LeaderLib_PresetMenu_StartSorting");
 TimerLaunch("Timers_LeaderLib_PresetMenu_StartSorting", 250);
 
 IF

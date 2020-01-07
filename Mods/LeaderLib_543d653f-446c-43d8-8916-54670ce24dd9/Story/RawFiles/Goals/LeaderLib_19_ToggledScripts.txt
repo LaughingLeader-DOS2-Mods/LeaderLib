@@ -669,7 +669,16 @@ DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByMod(_TagOrFlag, _ModID)
 THEN
 NOT DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByMod(_TagOrFlag, _ModID);
 LeaderLib_ToggleScripts_Internal_OnCanceledDeactivation(_TagOrFlag, _ModID);
-LeaderLog_Log("DEBUG", "[LeaderLib_19_ToggledScripts:OnActivated] Canceled deactivation of script [",_TagOrFlag,"] for mod [",_ModID,"].");
+LeaderLog_Log("DEBUG", "[LeaderLib_19_ToggledScripts:EnableScriptForObject_OnActivated] Canceled deactivation of script [",_TagOrFlag,"] for mod [",_ModID,"].");
+
+PROC
+LeaderLib_ToggleScripts_EnableScriptForObject_OnActivated((GUIDSTRING)_Object, (STRING)_TagOrFlag, (STRING)_EnablingModID)
+AND
+DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByObject(_Object, _TagOrFlag, _ModID)
+THEN
+NOT DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByObject(_Object, _TagOrFlag, _ModID);
+LeaderLib_ToggleScripts_Internal_OnCanceledDeactivation(_TagOrFlag, _ModID);
+LeaderLog_Log("DEBUG", "[LeaderLib_19_ToggledScripts:EnableScriptForObject_OnActivated] Canceled deactivation of script [",_TagOrFlag,"] for mod [",_ModID,"].");
 
 PROC
 LeaderLib_ToggleScripts_DisableScriptForObject((GUIDSTRING)_Object, (STRING)_TagOrFlag, (STRING)_EnablingModID)

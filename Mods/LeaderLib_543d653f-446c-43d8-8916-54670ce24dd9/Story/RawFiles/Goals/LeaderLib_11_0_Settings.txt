@@ -27,6 +27,7 @@ LeaderLib_Settings_InitTalents();
 LeaderLib_Settings_InitStats();
 LeaderLib_Settings_InitSurfaces();
 LeaderLib_Settings_InitSkillData();
+LeaderLib_Settings_InitDamageData();
 LeaderLib_Settings_InitRaceData();
 LeaderLib_Settings_InitStatusData();
 LeaderLib_Settings_InitCCData();
@@ -924,6 +925,26 @@ DB_LeaderLib_ForceEvent(19, "LeaderLib_Force_ShootProjectile_19", "LeaderLib_For
 DB_LeaderLib_ForceEvent(20, "LeaderLib_Force_ShootProjectile_20", "LeaderLib_Force_ShootProjectileFromItem_20");
 //END_REGION
 
+//REGION DAMAGE_TYPES
+PROC
+LeaderLib_Settings_InitDamageData()
+AND
+NOT DB_LeaderLib_DamageTypes(_)
+THEN
+DB_LeaderLib_DamageTypes("None");
+DB_LeaderLib_DamageTypes("Physical");
+DB_LeaderLib_DamageTypes("Piercing");
+DB_LeaderLib_DamageTypes("Corrosive");
+DB_LeaderLib_DamageTypes("Magic");
+DB_LeaderLib_DamageTypes("Chaos");
+DB_LeaderLib_DamageTypes("Fire");
+DB_LeaderLib_DamageTypes("Air");
+DB_LeaderLib_DamageTypes("Water");
+DB_LeaderLib_DamageTypes("Earth");
+DB_LeaderLib_DamageTypes("Poison");
+DB_LeaderLib_DamageTypes("Shadow");
+//END_REGION
+
 //REGION UPDATES
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
@@ -974,7 +995,6 @@ LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 6, 0)
 THEN
 LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
 LeaderLib_Settings_InitRaceData();
-
 
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
@@ -1057,6 +1077,13 @@ AND
 LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,5,8,2)
 THEN
 LeaderLib_GlobalSettings_Internal_Init();
+
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,5,11,0)
+THEN
+LeaderLib_Settings_InitDamageData();
 //END_REGION
 EXITSECTION
 

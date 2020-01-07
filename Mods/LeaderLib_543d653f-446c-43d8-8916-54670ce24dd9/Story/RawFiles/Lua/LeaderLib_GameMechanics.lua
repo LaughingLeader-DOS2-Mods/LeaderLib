@@ -18,16 +18,57 @@ LeaderLib.Data["DamageTypes"] = damage_types
 local function ReduceDamage(target, attacker, handlestr, reduction_str)
     local handle = tonumber(handlestr)
     local reduction = tonumber(reduction_str)
-    Ext.Print("[LLWEAPONEX_Main.lua:RedirectDamage] Reducing damage to ("..reduction_str..") of total. Handle("..handlestr.."). Target(",target,") Attacker(",attacker,")")
+	Ext.Print("[LeaderLib_GameMechanics.lua:RedirectDamage] Reducing damage to ("..reduction_str..") of total. Handle("..handlestr.."). Target(",target,") Attacker(",attacker,")")
+	local success = false
     for k,v in pairs(damage_types) do
         local damage = NRD_HitStatusGetDamage(target, handle, v)
         if damage ~= nil and damage > 0 then
             local reduced_damage = math.max(math.ceil(damage * reduction), 1)
             NRD_HitStatusClearDamage(target, handle, v)
             NRD_HitStatusAddDamage(target, handle, v, reduced_damage)
-            Ext.Print("Reduced damage: "..tostring(damage).." => "..tostring(reduced_damage).." for type: "..v)
+			Ext.Print("[LeaderLib_GameMechanics.lua:RedirectDamage] Reduced damage: "..tostring(damage).." => "..tostring(reduced_damage).." for type: "..v)
+			success = true
+        end
+	end
+	return success
+end
+
+local function RedirectDamage(blocker, target, attacker, handlestr, reduction_str)
+    local handle = tonumber(handlestr)
+    local reduction = tonumber(reduction_str)
+    --if CanRedirectHit(target, handle, hit_type) then -- Ignore surface, DoT, and reflected damage
+    local hit_type_name = NRD_StatusGetString(target, handle, "DamageSourceType")
+    --local hit_type = NRD_StatusGetInt(target, handle, "HitType")
+    Ext.Print("[LeaderLib_GameMechanics.lua:RedirectDamage] Redirecting damage Handle("..handlestr.."). Blocker(",blocker,") Target(",target,") Attacker(",attacker,")")
+    local redirected_hit = NRD_HitPrepare(blocker, attacker)
+    local damageRedirected = false
+
+    for k,v in pairs(_G["LeaderLib"].Data["DamageTypes"]) do
+        local damage = NRD_HitStatusGetDamage(target, handle, v)
+        if damage ~= nil and damage > 0 then
+            local reduced_damage = math.max(math.ceil(damage * reduction), 1)
+            NRD_HitStatusClearDamage(target, handle, v)
+            NRD_HitStatusAddDamage(target, handle, v, reduced_damage)
+            NRD_HitAddDamage(redirected_hit, v, reduced_damage)
+            Ext.Print("Redirected damage: "..tostring(damage).." => "..tostring(reduced_damage).." for type: "..v)
+            damageRedirected = true
         end
     end
+
+    if damageRedirected then
+        local is_crit = NRD_StatusGetInt(target, handle, "CriticalHit") == 1
+        if is_crit then
+            NRD_HitSetInt(redirected_hit, "CriticalRoll", 1);
+        else
+            NRD_HitSetInt(redirected_hit, "CriticalRoll", 2);
+        end
+        NRD_HitSetInt(redirected_hit, "SimulateHit", 1);
+        NRD_HitSetInt(redirected_hit, "HitType", 6);
+        NRD_HitSetInt(redirected_hit, "Hit", 1);
+        NRD_HitSetInt(redirected_hit, "RollForDamage", 1);
+        NRD_HitExecute(redirected_hit);
+	end
+	return damageRedirected;
 end
 
 local function RefreshSkills(char)
@@ -59,6 +100,7 @@ end
 
 LeaderLib.Game = {
 	ReduceDamage = ReduceDamage,
+	RedirectDamage = RedirectDamage,
 	RefreshSkills = RefreshSkills,
 	RefreshSkill = RefreshSkill,
 }

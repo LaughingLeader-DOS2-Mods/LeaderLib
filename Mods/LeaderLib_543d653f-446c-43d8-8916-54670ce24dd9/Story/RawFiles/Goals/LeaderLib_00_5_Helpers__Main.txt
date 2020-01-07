@@ -1954,7 +1954,7 @@ StoryEvent((CHARACTERGUID)_Char, "LeaderLib_RefreshUI_RefreshSkills_Start")
 AND
 String(_Char, _CharStr)
 THEN
-NRD_LuaCall("LeaderLib_RefreshSkills", _CharStr);
+NRD_LuaCall("LeaderLib_Ext_RefreshSkills", _CharStr);
 
 IF
 StoryEvent((CHARACTERGUID)_Char, "LeaderLib_RefreshUI_RevertSkillCooldown")

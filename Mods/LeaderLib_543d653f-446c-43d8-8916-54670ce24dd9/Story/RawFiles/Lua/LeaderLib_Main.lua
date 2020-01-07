@@ -93,42 +93,6 @@ local function PrintTest(str)
 	DebugBreak("[LeaderLib:Lua:PrintTest] " .. str)
 end
 
-local function LeaderLib_RefreshSkills(char)
-	 -- Until we can fetch the active skill bar, iterate through every skill slot for now
-	for i=0,144 do
-		local skill = NRD_SkillBarGetSkill(char, i)
-		if skill ~= nil then
-			local cd = NRD_SkillGetCooldown(char, skill)
-			Osi.LeaderLib_RefreshUI_Internal_StoreSkillData(char, skill, i, cd)
-			Osi.LeaderLog_Log("DEBUG", "[lua:LeaderLib_RefreshSkills] Refreshing (" .. skill ..") for (" .. char .. ") [" .. cd .. "]")
-		end
-	end
-	Osi.LeaderLib_Timers_StartObjectTimer(char, 60, "Timers_LeaderLib_RefreshUI_RevertSkillCooldown", "LeaderLib_RefreshUI_RevertSkillCooldown");
-end
-
-local function RefreshSkills(char)
-	 -- Until we can fetch the active skill bar, iterate through every skill slot for now
-	for i=0,144 do
-		local skill = NRD_SkillBarGetSkill(char, i)
-		if skill ~= nil then
-			local cd = NRD_SkillGetCooldown(char, skill)
-			Osi.LeaderLib_RefreshUI_Internal_StoreSkillData(char, skill, i, cd)
-			Osi.LeaderLog_Log("DEBUG", "[lua:LeaderLib_RefreshSkills] Refreshing (" .. skill ..") for (" .. char .. ") [" .. cd .. "]")
-		end
-	end
-	Osi.LeaderLib_Timers_StartObjectTimer(char, 60, "Timers_LeaderLib_RefreshUI_RevertSkillCooldown", "LeaderLib_RefreshUI_RevertSkillCooldown");
-end
-
-local function RefreshSkill(char, skill)
-	local slot = NRD_SkillBarFindSkill(char, skill)
-	if slot ~= nil then
-		local cd = NRD_SkillGetCooldown(char, skill)
-		Osi.LeaderLib_RefreshUI_Internal_StoreSkillData(char, skill, slot, cd)
-		Osi.LeaderLog_Log("DEBUG", "[lua:LeaderLib_RefreshSkill] Refreshing (" .. skill ..") for (" .. char .. ") [" .. cd .. "]")
-	end
-	Osi.LeaderLib_Timers_StartObjectTimer(char, 60, "Timers_LeaderLib_RefreshUI_RevertSkillCooldownDirect", "LeaderLib_RefreshUI_RevertSkillCooldown");
-end
-
 local function Register_Mod_Table(tbl)
 	local id = tbl["id"]
 	local author = tbl["author"]
@@ -177,7 +141,7 @@ LeaderLib.Main = {
 	StringToVersion = StringToVersion,
 	PrintAttributes = PrintAttributes,
 	PrintTest = PrintTest,
-	RefreshSkills = RefreshSkills,
-	RefreshSkill = RefreshSkill,
 	RegisterModsFromLua = RegisterModsFromLua
 }
+
+LeaderLib.Register.Table(LeaderLib.Main);

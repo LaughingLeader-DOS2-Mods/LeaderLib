@@ -1,7 +1,38 @@
+---Registers a function to the global table.
+---@param name string
+---@param func function
+local function Register_Function(name, func)
+    if type(func) == "function" then
+        local func_name = "LeaderLib_Ext_" .. name
+        _G[func_name] = func
+        Ext.Print("[LeaderLib_Bootstrap.lua] Registered function ("..func_name..").")
+    end
+end
+
+---Registers a table of key => function to the global table. The key is used for the name.
+---@param tbl table
+local function Register_Table(tbl)
+    for k,func in pairs(tbl) do
+        if type(func) == "function" then
+            local func_name = "LeaderLib_Ext_" .. k
+            _G[func_name] = func
+            Ext.Print("LeaderLib_Bootstrap.lua] Registered function ("..func_name..").")
+        else
+            Ext.Print("[LeaderLib_Bootstrap.lua] Not a function type ("..type(func)..").")
+        end
+    end
+end
+
 LeaderLib = {
 	Main = {},
 	Settings = {},
 	Common = {},
+	Game = {},
+	Data = {},
+	Register = {
+        Function = Register_Function,
+        Table = Register_Table
+    },
 	ModRegistration = {},
 	Initialized = false,
 }
@@ -12,6 +43,7 @@ LeaderLib_ModUpdater = {}
 Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib__Common.lua");
 Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib_Main.lua");
 Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib_GlobalSettings.lua");
+Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib_GameMechanics.lua");
 
 function LeaderLib_Ext_Init()
 	Osi.DB_LeaderLib_Extender_LuaInitialized(1)
@@ -72,21 +104,6 @@ end
 if Ext.RegisterListener ~= nil then
     Ext.RegisterListener("SessionLoading", GameSessionLoad)
     Ext.RegisterListener("ModuleLoading", ModuleLoading)
-end
-
-local export = {
-	StringToVersion = LeaderLib.Main.StringToVersion,
-	PrintAttributes = LeaderLib.Main.PrintAttributes,
-	PrintTest = LeaderLib.Main.PrintTest,
-	RefreshSkills = LeaderLib.Main.RefreshSkills,
-	RefreshSkill = LeaderLib.Main.RefreshSkill,
-	RegisterModsFromLua = LeaderLib.Main.RegisterModsFromLua,
-}
-
-for name,func in pairs(export) do
-	local func_name = "LeaderLib_Ext_" .. name
-	_G[func_name] = func
-	Ext.Print("[LeaderLib:Bootstrap.lua] Registered global function '"..func_name.."'.")
 end
 
 Ext.NewQuery(LeaderLib.Main.StringToVersion_Query, "LeaderLib_Ext_QRY_StringToVersion", "[in](STRING)_Version, [out](INTEGER)_Major, [out](INTEGER)_Minor, [out](INTEGER)_Revision, [out](INTEGER)_Build")

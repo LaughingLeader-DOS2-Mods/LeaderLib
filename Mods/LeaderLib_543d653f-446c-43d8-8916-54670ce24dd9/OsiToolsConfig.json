@@ -1,5 +1,5 @@
 {
-    "RequiredExtensionVersion": 36,
+    "RequiredExtensionVersion": 38,
     "FeatureFlags": [
         "OsirisExtensions",
         "Lua",

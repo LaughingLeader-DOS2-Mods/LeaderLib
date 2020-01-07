@@ -37,7 +37,7 @@ local function RedirectDamage(blocker, target, attacker, handlestr, reduction_st
     local handle = tonumber(handlestr)
     local reduction = tonumber(reduction_str)
     --if CanRedirectHit(target, handle, hit_type) then -- Ignore surface, DoT, and reflected damage
-    local hit_type_name = NRD_StatusGetString(target, handle, "DamageSourceType")
+    --local hit_type_name = NRD_StatusGetString(target, handle, "DamageSourceType")
     --local hit_type = NRD_StatusGetInt(target, handle, "HitType")
     --Ext.Print("[LeaderLib_GameMechanics.lua:RedirectDamage] Redirecting damage Handle("..handlestr.."). Blocker(",blocker,") Target(",target,") Attacker(",attacker,")")
     local redirected_hit = NRD_HitPrepare(blocker, attacker)

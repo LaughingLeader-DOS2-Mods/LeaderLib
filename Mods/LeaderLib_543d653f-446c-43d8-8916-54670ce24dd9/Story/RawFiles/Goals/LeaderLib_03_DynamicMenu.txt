@@ -84,6 +84,13 @@ LeaderLib_DynamicMenu_Remove_Entry((STRING)_ID, (STRING)_Key)
 THEN
 LeaderLib_Array_RemoveKeyFromDictionary(_ID, _Key);
 LeaderLib_DynamicMenu_Internal_CalculatePageValues(_ID);
+
+PROC
+LeaderLib_DynamicMenu_Register_TranslatedStringEntry((STRING)_ID, (STRING)_Key, (STRING)_Handle, (STRING)_ReferenceText)
+THEN
+DB_LeaderLib_DynamicMenu_TranslatedStrings(_ID, _Key, _Handle, _ReferenceText);
+LeaderLib_Array_AddToDictionary(_ID, _Key, _Handle);
+LeaderLib_DynamicMenu_Internal_CalculatePageValues(_ID);
 //END_REGION
 
 //REGION INIT
@@ -190,9 +197,23 @@ THEN
 LeaderLib_DynamicMenu_BlockEntry(_Player, _ID, _DialogVar, _AvailableFlag, _Instance, _EntryKey, _DisplayText);
 LeaderLib_DynamicMenu_SetAvailableFlag(_Player, _ID, _DialogVar, _AvailableFlag, _Instance, _EntryKey, _DisplayText);
 //LeaderLog_Log("DEBUG", "[LeaderLib:DynamicMenu:Internal:LoadPageVariables] Setting dialog variable [",_DialogVar,"] to [",_DisplayText,"] for menu [",_ID,"].");
-DialogSetVariableStringForInstance(_Instance, _DialogVar, _DisplayText);
+LeaderLib_DynamicMenu_Internal_SetDialogVariables(_ID, _EntryKey, _DisplayText, _DialogVar, _Instance);
 DB_LeaderLib_DynamicMenu_Temp_MenuVariableValue(_ID, _Instance, _VarIndex, _EntryKey);
 LeaderLib_DynamicMenu_OnEntryValueSet(_Player, _ID, _DialogVar, _AvailableFlag, _Instance, _EntryKey, _DisplayText);
+
+PROC
+LeaderLib_DynamicMenu_Internal_SetDialogVariables((STRING)_ID, (STRING)_Key, (STRING)_DisplayText, (STRING)_DialogVar, (INTEGER)_Instance)
+AND
+NOT DB_LeaderLib_DynamicMenu_TranslatedStrings(_ID, _Key, _DisplayText, _)
+THEN
+DialogSetVariableStringForInstance(_Instance, _DialogVar, _DisplayText);
+
+PROC
+LeaderLib_DynamicMenu_Internal_SetDialogVariables((STRING)_ID, (STRING)_Key, (STRING)_Handle, (STRING)_DialogVar, (INTEGER)_Instance)
+AND
+DB_LeaderLib_DynamicMenu_TranslatedStrings(_ID, _Key, _Handle, _ReferenceText)
+THEN
+DialogSetVariableTranslatedStringForInstance(_Instance, _DialogVar, _Handle, _ReferenceText);
 
 //Helper in case a mod needs to modify the default result
 PROC

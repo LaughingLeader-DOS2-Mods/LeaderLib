@@ -178,6 +178,11 @@ THEN
 LeaderLog_Internal_ToggleLogging(1);
 
 IF
+GlobalFlagSet("LeaderLog_DebugStatus_Enabled")
+THEN
+LeaderLog_Internal_ToggleLogging(1);
+
+IF
 GlobalFlagCleared("LeaderLog_Debug_Enabled")
 AND
 LeaderLog_QRY_AllDebugLogTypesDisabled()
@@ -186,6 +191,13 @@ LeaderLog_Internal_ToggleLogging(0);
 
 IF
 GlobalFlagCleared("LeaderLog_Trace_Enabled")
+AND
+LeaderLog_QRY_AllDebugLogTypesDisabled()
+THEN
+LeaderLog_Internal_ToggleLogging(0);
+
+IF
+GlobalFlagCleared("LeaderLog_DebugStatus_Enabled")
 AND
 LeaderLog_QRY_AllDebugLogTypesDisabled()
 THEN

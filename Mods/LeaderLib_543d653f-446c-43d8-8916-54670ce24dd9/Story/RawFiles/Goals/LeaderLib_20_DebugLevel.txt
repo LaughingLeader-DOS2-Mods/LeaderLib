@@ -65,6 +65,8 @@ LeaderLib_Requirements_Add_FlagRequirement("LeaderLib_DebugLevel_ChestRequiremen
 LeaderLib_Requirements_Add_FlagRequirement("LeaderLib_DebugLevel_NotChestRequirements1", "LeaderLib_DebugLevel_OpenedChest", "Object", 0);
 LeaderLib_ToggleScripts_EnableScript("LeaderLib_SummonEvents_Character_Enabled", "LeaderLib");
 LeaderLib_ToggleScripts_EnableScript("LeaderLib_SummonEvents_Item_Enabled", "LeaderLib");
+GlobalSetFlag("LeaderLog_DebugStatus_Enabled");
+LeaderLog_Internal_ToggleLogging(1);
 //LeaderLib_DebugLevel_TraderTest();
 //LeaderLib_DebugLevel_TreasureTest2();
 //LeaderLib_DebugLevel_ModMenuTest();
@@ -1276,13 +1278,27 @@ LeaderLog_Log("DEBUG_STATUS", "[LeaderLib:DebugLevel:CharacterStatusApplied] Sum
 
 IF
 CharacterStatusApplied(_Character, _Status, _Causee)
-//AND
-//haracterGetHostCharacter(_Causee)
 AND
-//CharacterGetDisplayName(_Causee, _, _Cause)
+GetStatusTurns(_Character, _Status, _Turns)
+AND
 String(_Causee, _Cause)
 AND
-//CharacterGetDisplayName(_Character, _, _Name)
+String(_Character, _Name)
+AND
+LeaderLog_QRY_IntegerToString(_Turns)
+AND
+DB_LeaderLog_IntString(_Turns, _TurnsStr)
+THEN
+NOT DB_LeaderLog_IntString(_Turns, _TurnsStr);
+LeaderLog_Log("DEBUG_STATUS", "[LeaderLib:Debug:CharacterStatusApplied] Status [",_Status,"] applied on [",_Name,"] via [",_Cause,"] for [",_TurnsStr,"] turns.");
+
+IF
+CharacterStatusApplied(_Character, _Status, _Causee)
+AND
+NOT GetStatusTurns(_Character, _Status, _)
+AND
+String(_Causee, _Cause)
+AND
 String(_Character, _Name)
 THEN
 LeaderLog_Log("DEBUG_STATUS", "[LeaderLib:Debug:CharacterStatusApplied] Status [",_Status,"] applied on [",_Name,"] via [",_Cause,"].");

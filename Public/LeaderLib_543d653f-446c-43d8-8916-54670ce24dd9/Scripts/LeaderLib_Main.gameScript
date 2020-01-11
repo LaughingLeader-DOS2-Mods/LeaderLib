@@ -732,3 +732,24 @@ THEN
 		ENDIF
 	ENDIF
 ENDIF
+
+EVENT LeaderLib_Commands_ItemSetAmount
+VARS
+	ITEM:_Item
+	INT:_Amount
+ON
+	OnItemEvent(_Item, "LeaderLib_Commands_Internal_ItemSetAmount")
+ACTIONS
+IF "c1&!c2"
+	GetVar(_Amount, _Item, "LeaderLib_ItemAmount")
+	IsEqual(_Amount, null)
+THEN
+	IF "c1|c2"
+		IsGreaterThen(_Amount, 1)
+		IsEqual(_Amount, 1)
+	THEN
+		ItemSetAmount(_Item, _Amount)
+	ELSE
+		ItemDestroy(_Item)
+	ENDIF
+ENDIF

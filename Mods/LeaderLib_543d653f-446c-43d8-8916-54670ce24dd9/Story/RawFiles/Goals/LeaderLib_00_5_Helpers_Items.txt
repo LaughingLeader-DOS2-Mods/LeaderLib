@@ -959,6 +959,45 @@ GetTemplate(_Item, _Template)
 THEN
 DB_LeaderLib_Helper_Temp_ItemFound(_Char, _Template, (ITEMGUID)_Item);
 //END_REGION
+
+//REGION BEHAVIOR_ITEM_SET_AMOUNT
+// Uses behavior to modify an item's amount by a set value. If the next amount is <= 0, the item is destroyed.
+PROC
+LeaderLib_Helper_ModifyItemAmount((ITEMGUID)_Item, (INTEGER)_ModifyBy)
+AND
+ItemGetAmount(_Item, _Amount)
+AND
+IntegerSum(_Amount, _ModifyBy, _NextAmount)
+THEN
+SetVarInteger(_Item, "LeaderLib_ItemAmount", _Amount);
+SetStoryEvent(_Item, "LeaderLib_Commands_Internal_ItemSetAmount");
+
+IF
+StoryEvent((ITEMGUID)_Item, "LeaderLib_Commands_ItemSetAmount")
+AND
+LeaderLib_Variables_QRY_IntegerVariableSet(_Item, "LeaderLib_ItemAmount")
+THEN
+DB_LeaderLib_Helper_Temp_ItemSetAmount(_Item);
+SetStoryEvent(_Item, "LeaderLib_Commands_Internal_ItemSetAmount");
+
+IF
+StoryEvent((ITEMGUID)_Item, "LeaderLib_Commands_ItemSetAmount")
+AND
+NOT DB_LeaderLib_Helper_Temp_ItemSetAmount(_Item)
+AND
+ItemGetAmount(_Item, _Amount)
+THEN
+DB_LeaderLib_Helper_Temp_ItemSetAmount(_Item);
+SetVarInteger(_Item, "LeaderLib_ItemAmount", _Amount);
+SetStoryEvent(_Item, "LeaderLib_Commands_Internal_ItemSetAmount");
+
+IF
+StoryEvent((ITEMGUID)_Item, "LeaderLib_Commands_ItemSetAmount")
+AND
+DB_LeaderLib_Helper_Temp_ItemSetAmount(_Item)
+THEN
+NOT DB_LeaderLib_Helper_Temp_ItemSetAmount(_Item);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

@@ -733,7 +733,7 @@ THEN
 	ENDIF
 ENDIF
 
-EVENT LeaderLib_Commands_ItemSetAmount
+EVENT LeaderLib_Commands_Internal_ItemSetAmount
 VARS
 	ITEM:_Item
 	INT:_Amount

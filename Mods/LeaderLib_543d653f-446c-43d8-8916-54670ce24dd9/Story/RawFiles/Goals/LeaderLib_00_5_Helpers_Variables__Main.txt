@@ -66,6 +66,7 @@ _Val != ""
 THEN
 DB_NOOP(1);
 
+// 1 == FixedString, 0 == String
 QRY
 LeaderLib_Variables_QRY_StringVariableSet((GUIDSTRING)_Object, (STRING)_Var, 1)
 AND

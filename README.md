@@ -18,6 +18,8 @@ All coffee goes toward fueling future and current development efforts. Thanks!
 ### Using LeaderLib
 Check the [Leaderlib Wiki](https://github.com/LaughingLeader-DOS2-Mods/LeaderLib/wiki) for information on using LeaderLib with your mod.
 
+* [Latest Editor Release](https://github.com/LaughingLeader-DOS2-Mods/LeaderLib/releases/latest)
+
 # Main Features
 
 ## Mod Support

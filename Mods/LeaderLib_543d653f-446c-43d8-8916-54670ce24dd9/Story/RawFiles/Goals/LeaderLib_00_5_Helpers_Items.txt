@@ -975,9 +975,9 @@ SetStoryEvent(_Item, "LeaderLib_Commands_Internal_ItemSetAmount");
 IF
 StoryEvent((ITEMGUID)_Item, "LeaderLib_Commands_ItemSetAmount")
 AND
-LeaderLib_Variables_QRY_IntegerVariableSet(_Item, "LeaderLib_ItemAmount")
+LeaderLib_Variables_QRY_IntegerVariableSet((GUIDSTRING)_Item, "LeaderLib_ItemAmount")
 THEN
-DB_LeaderLib_Helper_Temp_ItemSetAmount(_Item);
+DB_LeaderLib_Helper_Temp_ItemSetAmount((ITEMGUID)_Item);
 SetStoryEvent(_Item, "LeaderLib_Commands_Internal_ItemSetAmount");
 
 IF

@@ -19,6 +19,27 @@ DB_LeaderLib_PartyCounter_TimerIsActive(1);
 */
 
 IF
+GameStarted(_,1)
+THEN
+LeaderLib_Party_CountParties();
+
+IF
+RegionEnded(_Region)
+AND
+IsCharacterCreationLevel(_Region, 1)
+THEN
+LeaderLib_Party_CountParties();
+
+IF
+SavegameLoaded(_,_,_,_)
+AND
+CharacterGetHostCharacter(_Host)
+AND
+PartyGetFlag(_Host, "LeaderLib_PartyCounted", 0)
+THEN
+LeaderLib_Party_CountParties();
+
+IF
 ObjectFlagSet("LeaderLib_PartyCounted", _, _)
 AND
 DB_LeaderLib_PartyCounter_TimerIsActive(1)

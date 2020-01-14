@@ -1681,6 +1681,88 @@ THEN
 LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:OnVariableIntChanged]  (LeaderLib_PartyCount) changed for (",_ObjectStr,").");
 LeaderLog_LogInt("DEBUG", "[LeaderLib_20_DebugLevel:OnVariableIntChanged] --- (LeaderLib_PartyCount) (", _LastValue, ") => (",_CurrentValue,").");
 */
+
+//REGION AURAS_TEST
+IF
+GameStarted(_,1)
+THEN
+LeaderLib_Auras_Register_TurnAura("LeaderLib_Debug_HasteAura", 6.0, 1, 0, 1, 1);
+
+IF
+TextEventSet("leaderlib_debug_applyturnaura")
+AND
+LeaderLib_Recon_QRY_GetString("leaderlib_debug_applyturnaura", "aura", 1, "LeaderLib_Debug_HasteAura")
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_debug_applyturnaura", "aura", _AuraID, _NextParamInt1)
+AND
+CharacterGetHostCharacter(_Host)
+AND
+LeaderLib_Recon_QRY_GetUUID("leaderlib_debug_applyturnaura", "target", _NextParamInt1, _Host)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_debug_applyturnaura", "target", _Target, _NextParamInt2)
+THEN
+NOT DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_debug_applyturnaura", "aura", _AuraID, _NextParamInt1);
+NOT DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_debug_applyturnaura", "target", _Target, _NextParamInt2);
+LeaderLib_Auras_ApplyTurnAura(_Target, _AuraID);
+
+IF
+TextEventSet("leaderlib_debug_applyturnaura")
+THEN
+LeaderLib_Recon_ClearParams("leaderlib_debug_applyturnaura");
+
+IF
+TextEventSet("leaderlib_debug_applyaura")
+AND
+LeaderLib_Recon_QRY_GetString("leaderlib_debug_applyaura", "aura", 1, "LeaderLib_Debug_HasteAura")
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_debug_applyaura", "aura", _AuraID, _NextParamInt1)
+AND
+CharacterGetHostCharacter(_Host)
+AND
+LeaderLib_Recon_QRY_GetUUID("leaderlib_debug_applyaura", "target", _NextParamInt1, _Host)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_debug_applyaura", "target", _Target, _NextParamInt2)
+THEN
+NOT DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_debug_applyaura", "aura", _AuraID, _NextParamInt1);
+NOT DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_debug_applyaura", "target", _Target, _NextParamInt2);
+LeaderLib_Auras_ApplyTimerAura(_Target, _AuraID);
+
+IF
+TextEventSet("leaderlib_debug_applyturnaura")
+THEN
+LeaderLib_Recon_ClearParams("leaderlib_debug_applyturnaura");
+
+PROC
+LeaderLib_Auras_OnPulseCountChanged((GUIDSTRING)_Source, (STRING)_AuraID, (INTEGER)_Last, (INTEGER)_Next)
+AND
+IntegertoString(_Last, _LastStr)
+AND
+IntegertoString(_Next, _NextStr)
+AND
+StringConcatenate("Turn Aura Changed: ", _LastStr, _Msg1)
+AND
+StringConcatenate(_Msg1, " => ", _Msg2)
+AND
+StringConcatenate(_Msg2, _NextStr, _Msg3)
+AND
+StringConcatenate(_Msg3, " | ", _Msg4)
+AND
+StringConcatenate(_Msg4, _AuraID, _Msg5)
+THEN
+DisplayText(_Source, _Msg5);
+LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:LeaderLib_Auras_OnPulseCountChanged] ", _Msg5);
+
+PROC
+LeaderLib_Auras_OnPulse((GUIDSTRING)_Source, "LeaderLib_Debug_HasteAura")
+THEN
+PlayEffect(_Source, "RS3_FX_GP_Status_Hypercharged_Apply_01", "Dummy_BodyFX");
+
+PROC
+LeaderLib_Auras_OnPulseTargetFound((GUIDSTRING)_Source, (GUIDSTRING)_Target, "LeaderLib_Debug_HasteAura")
+THEN
+ApplyStatus(_Target, "HASTED", 6.0, 0, _Source);
+PlayEffect(_Target, "RS3_FX_GP_Status_Hypercharged_Hands_01", "Dummy_OverheadFX");
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

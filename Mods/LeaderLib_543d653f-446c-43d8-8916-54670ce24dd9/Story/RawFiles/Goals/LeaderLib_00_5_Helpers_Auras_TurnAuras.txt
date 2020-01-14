@@ -76,6 +76,7 @@ LeaderLib_Auras_ApplyTurnAura((GUIDSTRING)_Source, (STRING)_AuraID, (INTEGER)_Pu
 THEN
 DB_LeaderLib_Auras_Temp_ActiveTurnAuras(_Source, _AuraID, _PulseTurnRate, _Radius, _EveryTurn, _HitCharacters, _HitItems, _HitSelf, _TrackTargets);
 LeaderLib_ToggleScripts_EnableScriptForObject(_Source, "LeaderLib_Auras_TurnAuraEnabled", "LeaderLib");
+LeaderLib_Auras_OnAuraApplied(_Source, _AuraID);
 LeaderLib_Auras_PulseAura(_Source, _AuraID);
 //END_REGION
 
@@ -144,7 +145,7 @@ _Source == _Target
 AND
 DB_LeaderLib_Auras_Temp_ActiveTurnAuras(_Source, _AuraID, _PulseTurnRate, _Radius, _EveryTurn, _HitCharacters, _HitItems, 1, _TrackTargets)
 THEN
-LeaderLib_Auras_OnPulseTargetFound(_Source, _Target, _AuraID);
+LeaderLib_Auras_OnTargetFound(_Source, _Target, _AuraID);
 
 PROC
 LeaderLib_Auras_OnPulseComplete((GUIDSTRING)_Source, (STRING)_AuraID)

@@ -88,6 +88,7 @@ THEN
 DB_LeaderLib_Auras_Temp_ActiveTimerAuras(_Source, _AuraID, _PulseTimerRate, _Radius, _HitCharacters, _HitItems, _HitSelf, _TrackTargets);
 DB_LeaderLib_Auras_Temp_TimerAuraData(_Source, _AuraID, _TimerName);
 LeaderLib_ToggleScripts_EnableScriptForObject(_Source, "LeaderLib_Auras_TimerAuraEnabled", "LeaderLib");
+LeaderLib_Auras_OnAuraApplied(_Source, _AuraID);
 LeaderLib_Auras_PulseAura(_Source, _AuraID);
 //END_REGION
 
@@ -150,7 +151,7 @@ _Source == _Target
 AND
 DB_LeaderLib_Auras_Temp_ActiveTimerAuras(_Source, _AuraID, _PulseTimerRate, _Radius, _HitCharacters, _HitItems, 1, _TrackTargets)
 THEN
-LeaderLib_Auras_OnPulseTargetFound(_Source, _Target, _AuraID);
+LeaderLib_Auras_OnTargetFound(_Source, _Target, _AuraID);
 //END_REGION
 
 //REGION TURN_COUNT
@@ -161,17 +162,21 @@ DB_LeaderLib_Auras_Temp_TimerAuraData(_Source, _AuraID, _TimerName)
 THEN
 LeaderLib_Auras_PulseAura(_Source, _AuraID);
 
-IF
-StoryEvent(_Source, "LeaderLib_Auras_OnPulseComplete")
-AND
-DB_LeaderLib_Auras_Temp_Pulsing(_Source, _AuraID)
-THEN
-NOT DB_LeaderLib_Auras_Temp_Pulsing(_Source, _AuraID);
-
-IF
-StoryEvent(_Source, "LeaderLib_Auras_OnPulseComplete")
+PROC
+LeaderLib_Auras_OnPulseComplete((GUIDSTRING)_Source, (STRING)_AuraID)
 AND
 DB_LeaderLib_Auras_Temp_ActiveTimerAuras(_Source, _AuraID, _PulseTimerRate, _Radius, _HitCharacters, _HitItems, _HitSelf, _TrackTargets)
+THEN
+LeaderLib_Auras_Internal_OnTimerPulseComplete(_Source, _AuraID, _PulseTimerRate, _TrackTargets);
+
+PROC
+LeaderLib_Auras_Internal_OnTimerPulseComplete((GUIDSTRING)_Source, (STRING)_AuraID, (INTEGER)_PulseTimerRate, 1)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_00_5_Helpers_Auras_TimerAuras:OnTimerPulseComplete] Checking targets for aura (",_AuraID,").");
+LeaderLib_Auras_Internal_CheckPulseTargets(_Source, _AuraID);
+
+PROC
+LeaderLib_Auras_Internal_OnTimerPulseComplete((GUIDSTRING)_Source, (STRING)_AuraID, (INTEGER)_PulseTimerRate, (INTEGER)_TrackTargets)
 AND
 DB_LeaderLib_Auras_Temp_TimerAuraData(_Source, _AuraID, _TimerName)
 THEN

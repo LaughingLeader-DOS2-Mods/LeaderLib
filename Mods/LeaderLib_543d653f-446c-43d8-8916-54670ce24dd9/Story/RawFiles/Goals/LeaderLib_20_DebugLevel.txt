@@ -1403,6 +1403,7 @@ THEN
 LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:LeaderLib_Summoning_OnItemDismissed] Item (",_SummonStr,") was dismissed. Owner (",_OwnerStr,") IsDestroyed(",_IsDestroyedStr,")");
 //END_REGION
 
+//REGION MISC
 IF
 RegionEnded("TestLevel_LL_LeaderLib")
 THEN
@@ -1505,7 +1506,9 @@ AND
 StringConcatenate(_Str4, ") from (", _Str5)
 THEN
 LeaderLog_LogInt("DEBUG", _Str5, _LastTurns, ") to => (", _NextTurns, ").");
+//END_REGION
 
+//REGION DIALOG
 IF
 DialogStarted(_Dialog, _Instance)
 AND
@@ -1605,7 +1608,9 @@ AND
 IntegertoString(_Instance, _InstanceStr)
 THEN
 LeaderLog_Log("DEBUG", _Prefix, "NPC (",_NpcStr,") was added to Dialog (", _Dialog, ")[",_InstanceStr,"] at index (",_IndexStr,")");
+//END_REGION
 
+//REGION KNOCKUP_TEST
 IF
 TextEventSet("leaderlib_knockuptest")
 AND
@@ -1681,6 +1686,7 @@ THEN
 LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:OnVariableIntChanged]  (LeaderLib_PartyCount) changed for (",_ObjectStr,").");
 LeaderLog_LogInt("DEBUG", "[LeaderLib_20_DebugLevel:OnVariableIntChanged] --- (LeaderLib_PartyCount) (", _LastValue, ") => (",_CurrentValue,").");
 */
+//END_REGION
 
 //REGION AURAS_TEST
 IF
@@ -1736,6 +1742,8 @@ LeaderLib_Recon_ClearParams("leaderlib_debug_applyturnaura");
 PROC
 LeaderLib_Auras_OnPulseCountChanged((GUIDSTRING)_Source, (STRING)_AuraID, (INTEGER)_Last, (INTEGER)_Next)
 AND
+ObjectIsCharacter((CHARACTERGUID)_Source, 1)
+AND
 IntegertoString(_Last, _LastStr)
 AND
 IntegertoString(_Next, _NextStr)
@@ -1750,7 +1758,7 @@ StringConcatenate(_Msg3, " | ", _Msg4)
 AND
 StringConcatenate(_Msg4, _AuraID, _Msg5)
 THEN
-DisplayText(_Source, _Msg5);
+CharacterStatusText(_Source, _Msg5);
 LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:LeaderLib_Auras_OnPulseCountChanged] ", _Msg5);
 
 PROC
@@ -1776,7 +1784,7 @@ THEN
 CharacterSetAnimationOverride(_Target, "barf");
 PlayEffect(_Target, "RS3_FX_GP_Impacts_TrapNoxiousBulbExplodePoison_01", "Dummy_Root");
 DisplayText(_Target, "*Puke Sounds*");
-CreateSurfaceAtPosition(_x, _y, _z, "SurfacePoison", 0.5, 6.0);
+CreateSurfaceAtPosition(_x, _y, _z, "SurfaceWater", 0.5, 6.0);
 
 PROC
 LeaderLib_Auras_OnTargetLost((GUIDSTRING)_Source, (GUIDSTRING)_Target, "LeaderLib_Debug_BarfAura")

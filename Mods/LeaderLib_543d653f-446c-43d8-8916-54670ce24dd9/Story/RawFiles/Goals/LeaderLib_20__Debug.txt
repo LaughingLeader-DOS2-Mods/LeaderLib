@@ -56,7 +56,20 @@ GlobalSetFlag("LeaderLog_Debug_Enabled");
 SysActivateGoal("LeaderLib_20_DebugLevel");
 
 IF
+RegionStarted("_TMPL_Sandbox")
+THEN
+GlobalSetFlag("LeaderLib_IsEditorMode");
+GlobalSetFlag("LeaderLog_Debug_Enabled");
+//GlobalSetFlag("LeaderLog_Trace_Enabled");
+SysActivateGoal("LeaderLib_20_DebugLevel");
+
+IF
 RegionEnded("TestLevel_LL_LeaderLib")
+THEN
+SysCompleteGoal("LeaderLib_20_DebugLevel");
+
+IF
+RegionEnded("_TMPL_Sandbox")
 THEN
 SysCompleteGoal("LeaderLib_20_DebugLevel");
 

@@ -3,9 +3,49 @@ SubGoalCombiner SGC_AND
 INITSECTION
 
 KBSECTION
+//REGION TEMPDATA_CLEAR
+PROC
+LeaderLib_Auras_Internal_ClearData((GUIDSTRING)_Source, (STRING)_AuraID)
+AND
+DB_LeaderLib_Auras_Temp_LastTarget(_Source, _AuraID, _Target)
+THEN
+NOT DB_LeaderLib_Auras_Temp_LastTarget(_Source, _AuraID, _Target);
+//END_REGION
+
 //REGION PULSE
 PROC
 LeaderLib_Auras_OnPulse((GUIDSTRING)_Source, (STRING)_AuraID)
+THEN
+DB_NOOP(1);
+
+IF
+StoryEvent(_Source, "LeaderLib_Auras_OnPulseComplete")
+AND
+DB_LeaderLib_Auras_Temp_Pulsing(_Source, _AuraID)
+THEN
+NOT DB_LeaderLib_Auras_Temp_Pulsing(_Source, _AuraID);
+LeaderLib_Auras_OnPulseComplete(_Source, _AuraID);
+
+PROC
+LeaderLib_Auras_Internal_CheckPulseTargets((GUIDSTRING)_Source, (STRING)_AuraID)
+AND
+DB_LeaderLib_Auras_Temp_LastTarget(_Source, _AuraID, _Target)
+AND
+NOT DB_LeaderLib_Auras_Temp_NewTarget(_Source, _AuraID, _)
+THEN
+NOT DB_LeaderLib_Auras_Temp_LastTarget(_Source, _AuraID, _Target);
+LeaderLib_Auras_OnPulseTargetLost(_Source, _Target, _AuraID);
+
+PROC
+LeaderLib_Auras_Internal_CheckPulseTargets((GUIDSTRING)_Source, (STRING)_AuraID)
+AND
+DB_LeaderLib_Auras_Temp_NewTarget(_Source, _AuraID, _Target)
+THEN
+NOT DB_LeaderLib_Auras_Temp_NewTarget(_Source, _AuraID, _Target);
+DB_LeaderLib_Auras_Temp_LastTarget(_Source, _AuraID, _Target);
+
+PROC
+LeaderLib_Auras_OnPulseTargetLost((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_AuraID)
 THEN
 DB_NOOP(1);
 //END_REGION
@@ -28,14 +68,12 @@ LeaderLib_Auras_Internal_OnPulseHit(_Source, (GUIDSTRING)_Target, _AuraID);
 PROC
 LeaderLib_Auras_Internal_OnPulseHit((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_AuraID)
 AND
-_Source == _Target
-AND
-DB_LeaderLib_Auras_Temp_ActiveTurnAuras(_Source, _AuraID, _Radius, _PulseTurnRate, _EveryTurn, _HitCharacters, _HitItems, 1)
+_Source != _Target
 THEN
-LeaderLib_Auras_OnPulseTargetFound(_Source, _Target, _AuraID);
+DB_LeaderLib_Auras_Temp_NewTarget(_Source, _AuraID, _Target);
 
 PROC
-LeaderLib_Auras_OnPulseTargetFound((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_AuraID)
+LeaderLib_Auras_Internal_OnPulseHit((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_AuraID)
 AND
 _Source != _Target
 THEN

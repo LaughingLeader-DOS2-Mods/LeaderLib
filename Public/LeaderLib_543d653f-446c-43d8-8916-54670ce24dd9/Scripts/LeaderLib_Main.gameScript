@@ -1,5 +1,6 @@
 #INCLUDE LeaderLib_TypeHelpers
 #INCLUDE LeaderLib_ForceHelpers
+#INCLUDE LeaderLib_Auras
 
 INIT
 	FIXEDSTRING:%LeaderLib_EmptyString=""
@@ -20,6 +21,7 @@ INIT
 	
 	USING LeaderLib_TypeHelpers
 	USING LeaderLib_ForceHelpers
+	USING LeaderLib_Auras
 EVENTS
 
 /* This event doesn't seem to fire

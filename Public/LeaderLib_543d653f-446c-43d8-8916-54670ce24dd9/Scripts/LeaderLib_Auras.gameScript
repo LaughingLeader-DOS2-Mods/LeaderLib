@@ -1,0 +1,52 @@
+INIT
+	STRING:%LeaderLib_Auras_LastAuraID = ""
+	CHARACTER:%LeaderLib_Auras_LastAuraSource_Char = null
+	ITEM:%LeaderLib_Auras_LastAuraSource_Item = null
+EVENTS
+
+EVENT LeaderLib_Auras_Pulse_Char
+VARS
+	CHARACTER:_Source
+	FLOAT:_AuraRadius
+	INT:_PulseItems
+	INT:_PulseCharacters
+ON
+	OnCharacterEvent(_Source, "LeaderLib_Auras_PulseNow")
+ACTIONS
+	Set(%LeaderLib_Auras_LastAuraSource_Char, _Source)
+IF "c1&c2&c3"
+	GetVar(%LeaderLib_Auras_LastAuraID, _Source, "LeaderLib_Auras_ID")
+	GetVar(_AuraRadius, _Source, "LeaderLib_Auras_Radius")
+	IsGreaterThen(_AuraRadius, 0.0)
+THEN
+	IF "c1&c2"
+		GetVar(_PulseCharacters, _Source, "LeaderLib_Auras_PulseCharacters")
+		IsGreaterThen(_PulseCharacters, 0)
+	THEN
+		IterateCharactersNear(_Source, _AuraRadius, "LeaderLib_Auras_OnPulseIterate_Char", Lowest, Distance)
+	ENDIF
+	IF "c1&c2"
+		GetVar(_PulseItems, _Source, "LeaderLib_Auras_PulseItems")
+		IsGreaterThen(_PulseItems, 0)
+	THEN
+		IterateItemsNear(_Source, _AuraRadius, "LeaderLib_Auras_OnPulseIterate_Char")
+	ENDIF
+ENDIF
+	CharacterEvent(_Source, "LeaderLib_Auras_OnPulseComplete")
+
+EVENT LeaderLib_Auras_Pulse_Char_OnIterate_Char
+VARS
+	CHARACTER:_Target
+ON
+	OnIterateCharacter(_Target, "LeaderLib_Auras_OnPulseIterate_Char")
+ACTIONS
+	//SetVar(_Target, "LeaderLib_Auras_PulseID", %LeaderLib_Auras_LastAuraID)
+	CharacterCharacterEvent(%LeaderLib_Auras_LastAuraSource_Char, _Target, "LeaderLib_Auras_OnPulseHit")
+
+EVENT LeaderLib_Auras_Pulse_Char_OnIterate_Item
+VARS
+	ITEM:_Target
+ON
+	OnIterateItem(_Target, "LeaderLib_Auras_OnPulseIterate")
+ACTIONS
+	CharacterItemEvent(%LeaderLib_Auras_LastAuraSource_Char, _Target, "LeaderLib_Auras_OnPulseHit")

@@ -1,0 +1,202 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+//REGION REGISTER
+PROC
+LeaderLib_Auras_Register_TurnAura((STRING)_AuraID, (REAL)_Radius, (INTEGER)_DefaultTurnRate, (INTEGER)_DefaultEveryTurn, (INTEGER)_HitCharacters, (INTEGER)_HitItems)
+THEN
+LeaderLib_Auras_Register_TurnAura(_AuraID, _Radius, _DefaultTurnRate, _DefaultEveryTurn, _HitCharacters, _HitItems, 0);
+
+PROC
+LeaderLib_Auras_Register_TurnAura((STRING)_AuraID, (REAL)_Radius, (INTEGER)_DefaultTurnRate, (INTEGER)_DefaultEveryTurn, (INTEGER)_HitCharacters, (INTEGER)_HitItems, (INTEGER)_HitSelf)
+AND
+IntegerMax(_DefaultTurnRate, 1, _CappedTurnRate)
+AND
+IntegerMax(_DefaultEveryTurn, 0, _a)
+AND
+IntegerMin(_a, 1, _CappedEveryTurn)
+THEN
+DB_LeaderLib_Auras_TurnAuras(_AuraID, _Radius, _CappedTurnRate, _CappedEveryTurn, _HitCharacters, _HitItems, _HitSelf);
+//END_REGION
+
+//REGION TURN_AURA_APPLY
+PROC
+LeaderLib_Auras_ApplyTurnAura((GUIDSTRING)_Source, (STRING)_AuraID)
+AND
+DB_LeaderLib_Auras_TurnAuras(_AuraID, _DefaultRadius, _DefaultTurnRate, _DefaultEveryTurn, _HitCharacters, _HitItems, _HitSelf)
+THEN
+LeaderLib_Auras_ApplyTurnAura(_Source, _AuraID, _DefaultTurnRate, _DefaultRadius, _DefaultEveryTurn, _HitCharacters, _HitItems, _HitSelf);
+
+PROC
+LeaderLib_Auras_ApplyTurnAura((GUIDSTRING)_Source, (STRING)_AuraID, (INTEGER)_PulseTurnRate)
+AND
+DB_LeaderLib_Auras_TurnAuras(_AuraID, _DefaultRadius, _DefaultTurnRate, _DefaultEveryTurn, _HitCharacters, _HitItems, _HitSelf)
+THEN
+LeaderLib_Auras_ApplyTurnAura(_Source, _AuraID, _PulseTurnRate, _DefaultRadius, _DefaultEveryTurn, _HitCharacters, _HitItems, _HitSelf);
+
+PROC
+LeaderLib_Auras_ApplyTurnAura((GUIDSTRING)_Source, (STRING)_AuraID, (INTEGER)_PulseTurnRate, (REAL)_Radius)
+AND
+DB_LeaderLib_Auras_TurnAuras(_AuraID, _DefaultRadius, _DefaultTurnRate, _DefaultEveryTurn, _HitCharacters, _HitItems, _HitSelf)
+THEN
+LeaderLib_Auras_ApplyTurnAura(_Source, _AuraID, _PulseTurnRate, _Radius, _DefaultEveryTurn, _HitCharacters, _HitItems, _HitSelf);
+
+PROC
+LeaderLib_Auras_ApplyTurnAura((GUIDSTRING)_Source, (STRING)_AuraID, (INTEGER)_PulseTurnRate, (REAL)_Radius, (INTEGER)_EveryTurn)
+AND
+DB_LeaderLib_Auras_TurnAuras(_AuraID, _DefaultRadius, _DefaultTurnRate, _DefaultEveryTurn, _HitCharacters, _HitItems, _HitSelf)
+THEN
+LeaderLib_Auras_ApplyTurnAura(_Source, _AuraID, _PulseTurnRate, _Radius, _EveryTurn, _HitCharacters, _HitItems, _HitSelf);
+
+PROC
+LeaderLib_Auras_ApplyTurnAura((GUIDSTRING)_Source, (STRING)_AuraID, (INTEGER)_PulseTurnRate, (REAL)_Radius, (INTEGER)_EveryTurn, (INTEGER)_HitCharacters, (INTEGER)_HitItems, (INTEGER)_HitSelf)
+THEN
+DB_LeaderLib_Auras_Temp_ActiveTurnAuras(_Source, _AuraID, _PulseTurnRate, _Radius, _EveryTurn, _HitCharacters, _HitItems, _HitSelf);
+LeaderLib_Auras_PulseAura(_Source, _AuraID);
+//END_REGION
+
+//REGION AURA_REMOVE
+PROC
+LeaderLib_Auras_RemoveTurnAura((GUIDSTRING)_Source, (STRING)_AuraID)
+AND
+DB_LeaderLib_Auras_Temp_ActiveTurnAuras(_Source, _AuraID, _PulseTurnRate, _Radius, _EveryTurn, _HitCharacters, _HitItems, _HitSelf)
+THEN
+NOT DB_LeaderLib_Auras_Temp_ActiveTurnAuras(_Source, _AuraID, _PulseTurnRate, _Radius, _EveryTurn, _HitCharacters, _HitItems, _HitSelf);
+
+PROC
+LeaderLib_Auras_RemoveTurnAura((GUIDSTRING)_Source, (STRING)_AuraID)
+AND
+DB_LeaderLib_Auras_Temp_TurnAuraData(_Source, _AuraID, _TurnsLeft)
+THEN
+NOT DB_LeaderLib_Auras_Temp_TurnAuraData(_Source, _AuraID, _TurnsLeft);
+
+PROC
+LeaderLib_Auras_RemoveTurnAura((GUIDSTRING)_Source, (STRING)_AuraID)
+AND
+NOT DB_LeaderLib_Auras_Temp_TurnAuraData(_Source, _, _)
+THEN
+LeaderLib_Timers_CancelObjectTimer(_Source, "Timers_LeaderLib_Auras_OnPulseTimer");
+
+PROC
+LeaderLib_Auras_RemoveTurnAura((GUIDSTRING)_Source, (STRING)_AuraID)
+AND
+NOT DB_LeaderLib_Auras_Temp_ActiveTurnAuras(_Source, _, _, _, _, _, _, _)
+THEN
+LeaderLib_ToggleScripts_DisableScriptForObject(_Source, "LeaderLib_Auras_TurnAuraEnabled", "LeaderLib");
+//END_REGION
+
+//REGION PULSE
+PROC
+LeaderLib_Auras_PulseAura((GUIDSTRING)_Source, (STRING)_AuraID)
+AND
+DB_LeaderLib_Auras_Temp_TurnAuraData(_Source, _AuraID, _TurnsLeft)
+THEN
+NOT DB_LeaderLib_Auras_Temp_TurnAuraData(_Source, _AuraID, _TurnsLeft);
+
+PROC
+LeaderLib_Auras_PulseAura((GUIDSTRING)_Source, (STRING)_AuraID)
+AND
+NOT DB_LeaderLib_Auras_Temp_Pulsing(_Source, _)
+AND
+DB_LeaderLib_Auras_Temp_ActiveTurnAuras(_Source, _AuraID, _PulseTurnRate, _Radius, _EveryTurn, _HitCharacters, _HitItems, _HitSelf)
+THEN
+DB_LeaderLib_Auras_Temp_Pulsing(_Source, _AuraID);
+SetVarString(_Source, "LeaderLib_Auras_ID", _AuraID);
+SetVarFloat(_Source, "LeaderLib_Auras_Radius", _Radius);
+SetVarInteger(_Source, "LeaderLib_Auras_PulseCharacters", _HitCharacters);
+SetVarInteger(_Source, "LeaderLib_Auras_PulseItems", _HitItems);
+SetStoryEvent(_Source, "LeaderLib_Auras_PulseNow");
+LeaderLib_Auras_OnPulse(_Source, _AuraID);
+//END_REGION
+
+//REGION TURN_COUNT
+PROC
+LeaderLib_Auras_Internal_DecreaseAuraCountdown((GUIDSTRING)_Source, (STRING)_AuraID)
+AND
+DB_LeaderLib_Auras_Temp_TurnAuraData(_Source, _AuraID, _PulseTurnRate)
+AND
+IntegerSubtract(_PulseTurnRate, 1, _Next)
+AND
+IntegerMax(_Next, 0, _CappedNext)
+THEN
+NOT DB_LeaderLib_Auras_Temp_TurnAuraData(_Source, _AuraID, _PulseTurnRate);
+DB_LeaderLib_Auras_Temp_TurnAuraData(_Source, _AuraID, _CappedNext);
+LeaderLib_Auras_OnPulseCountChanged(_Source, _AuraID, _PulseTurnRate, _CappedNext);
+
+PROC
+LeaderLib_Auras_OnPulseCountChanged((GUIDSTRING)_Source, (STRING)_AuraID, (INTEGER)_LastCount, 0)
+THEN
+LeaderLib_Auras_PulseAura(_Source, _AuraID);
+
+IF
+StoryEvent(_Source, "LeaderLib_Auras_OnPulseComplete")
+AND
+DB_LeaderLib_Auras_Temp_Pulsing(_Source, _AuraID)
+THEN
+NOT DB_LeaderLib_Auras_Temp_Pulsing(_Source, _AuraID);
+
+IF
+StoryEvent(_Source, "LeaderLib_Auras_OnPulseComplete")
+AND
+DB_LeaderLib_Auras_Temp_ActiveTurnAuras(_Source, _AuraID, _PulseTurnRate, _Radius, _EveryTurn, _HitCharacters, _HitItems, _HitSelf)
+THEN
+DB_LeaderLib_Auras_Temp_TurnAuraData(_Source, _AuraID, _PulseTurnRate);
+//END_REGION
+
+//REGION TURN_AURA_OUT_OF_COMBAT
+IF
+DB_LeaderLib_Auras_Temp_TurnAuraData(_Source, _AuraID, _TurnsLeft)
+AND
+_TurnsLeft > 0
+AND
+NOT DB_CombatObjects(_Source, _)
+THEN
+LeaderLib_Timers_StartObjectTimer(_Source, 6000, "Timers_LeaderLib_Auras_OnPulseTimer", "LeaderLib_Auras_OnPulseTimer");
+
+IF
+StoryEvent(_Source, "LeaderLib_Auras_OnPulseTimer")
+AND
+DB_LeaderLib_Auras_Temp_TurnAuraData(_Source, _AuraID, _TurnsLeft)
+THEN
+LeaderLib_Auras_Internal_DecreaseAuraCountdown(_Source, _AuraID);
+
+IF
+ObjectEnteredCombat(_Source, _)
+AND
+DB_LeaderLib_Auras_Temp_TurnAuraData(_Source, _AuraID, _TurnsLeft)
+THEN
+LeaderLib_Timers_CancelObjectTimer(_Source, "Timers_LeaderLib_Auras_OnPulseTimer");
+
+IF
+ObjectLeftCombat(_Source, _)
+AND
+DB_LeaderLib_Auras_Temp_TurnAuraData(_Source, _AuraID, _TurnsLeft)
+THEN
+LeaderLib_Timers_StartObjectTimer(_Source, 6000, "Timers_LeaderLib_Auras_OnPulseTimer", "LeaderLib_Auras_OnPulseTimer");
+//END_REGION
+
+//REGION TURN_AURA_COMBAT
+PROC
+LeaderLib_Combat_Clear_ActiveTurn((INTEGER)_CombatID, (GUIDSTRING)_Source)
+AND
+DB_LeaderLib_Auras_Temp_ActiveTurnAuras(_Source, _AuraID, _PulseTurnRate, _Radius, _EveryTurn, _HitCharacters, _HitItems, _HitSelf)
+THEN
+LeaderLib_Auras_Internal_DecreaseAuraCountdown(_Source, _AuraID);
+
+PROC
+LeaderLib_Combat_Clear_ActiveTurn((INTEGER)_CombatID, (GUIDSTRING)_Object)
+AND
+DB_LeaderLib_Auras_Temp_ActiveTurnAuras(_Source, _AuraID, _Radius, _PulseTurnRate, 1, _HitCharacters, _HitItems, _HitSelf)
+AND
+_Object != _Source
+AND
+DB_CombatObjects(_Source, _CombatID)
+THEN
+LeaderLib_Auras_Internal_DecreaseAuraCountdown(_Source, _AuraID);
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

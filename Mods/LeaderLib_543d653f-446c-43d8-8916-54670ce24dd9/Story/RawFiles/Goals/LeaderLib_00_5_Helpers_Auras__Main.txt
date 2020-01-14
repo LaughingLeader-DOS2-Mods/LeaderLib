@@ -1,0 +1,47 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+//REGION PULSE
+PROC
+LeaderLib_Auras_OnPulse((GUIDSTRING)_Source, (STRING)_AuraID)
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION PULSE_HIT
+IF
+CharacterCharacterEvent(_Source, _Target, "LeaderLib_Auras_OnPulseHit")
+AND
+DB_LeaderLib_Auras_Temp_Pulsing(_Source, _AuraID)
+THEN
+LeaderLib_Auras_Internal_OnPulseHit(_Source, (GUIDSTRING)_Target, _AuraID);
+
+IF
+CharacterItemEvent(_Source, _Target, "LeaderLib_Auras_OnPulseHit")
+AND
+DB_LeaderLib_Auras_Temp_Pulsing(_Source, _AuraID)
+THEN
+LeaderLib_Auras_Internal_OnPulseHit(_Source, (GUIDSTRING)_Target, _AuraID);
+
+PROC
+LeaderLib_Auras_Internal_OnPulseHit((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_AuraID)
+AND
+_Source == _Target
+AND
+DB_LeaderLib_Auras_Temp_ActiveTurnAuras(_Source, _AuraID, _Radius, _PulseTurnRate, _EveryTurn, _HitCharacters, _HitItems, 1)
+THEN
+LeaderLib_Auras_OnPulseTargetFound(_Source, _Target, _AuraID);
+
+PROC
+LeaderLib_Auras_OnPulseTargetFound((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_AuraID)
+AND
+_Source != _Target
+THEN
+LeaderLib_Auras_OnPulseTargetFound(_Source, _Target, _AuraID);
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

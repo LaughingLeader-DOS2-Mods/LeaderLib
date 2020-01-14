@@ -32,7 +32,6 @@ THEN
 		IterateItemsNear(_Source, _AuraRadius, "LeaderLib_Auras_OnPulseIterate_Char")
 	ENDIF
 ENDIF
-	CharacterEvent(_Source, "LeaderLib_Auras_OnPulseComplete")
 
 EVENT LeaderLib_Auras_Pulse_Char_OnIterate_Char
 VARS

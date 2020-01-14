@@ -1686,7 +1686,8 @@ LeaderLog_LogInt("DEBUG", "[LeaderLib_20_DebugLevel:OnVariableIntChanged] --- (L
 IF
 GameStarted(_,1)
 THEN
-LeaderLib_Auras_Register_TurnAura("LeaderLib_Debug_HasteAura", 6.0, 1, 0, 1, 1);
+LeaderLib_Auras_Register_TurnAura("LeaderLib_Debug_HasteAura", 1, 6.0, 0, 1, 1, 0, 1);
+LeaderLib_Auras_Register_TimerAura("LeaderLib_Debug_WetAura", 500, 6.0, 1, 1, 0, 0);
 
 IF
 TextEventSet("leaderlib_debug_applyturnaura")
@@ -1711,20 +1712,20 @@ THEN
 LeaderLib_Recon_ClearParams("leaderlib_debug_applyturnaura");
 
 IF
-TextEventSet("leaderlib_debug_applyaura")
+TextEventSet("leaderlib_debug_applytimeraura")
 AND
-LeaderLib_Recon_QRY_GetString("leaderlib_debug_applyaura", "aura", 1, "LeaderLib_Debug_HasteAura")
+LeaderLib_Recon_QRY_GetString("leaderlib_debug_applytimeraura", "aura", 1, "LeaderLib_Debug_WetAura")
 AND
-DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_debug_applyaura", "aura", _AuraID, _NextParamInt1)
+DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_debug_applytimeraura", "aura", _AuraID, _NextParamInt1)
 AND
 CharacterGetHostCharacter(_Host)
 AND
-LeaderLib_Recon_QRY_GetUUID("leaderlib_debug_applyaura", "target", _NextParamInt1, _Host)
+LeaderLib_Recon_QRY_GetUUID("leaderlib_debug_applytimeraura", "target", _NextParamInt1, _Host)
 AND
-DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_debug_applyaura", "target", _Target, _NextParamInt2)
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_debug_applytimeraura", "target", _Target, _NextParamInt2)
 THEN
-NOT DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_debug_applyaura", "aura", _AuraID, _NextParamInt1);
-NOT DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_debug_applyaura", "target", _Target, _NextParamInt2);
+NOT DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_debug_applytimeraura", "aura", _AuraID, _NextParamInt1);
+NOT DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_debug_applytimeraura", "target", _Target, _NextParamInt2);
 LeaderLib_Auras_ApplyTimerAura(_Target, _AuraID);
 
 IF
@@ -1762,6 +1763,29 @@ LeaderLib_Auras_OnPulseTargetFound((GUIDSTRING)_Source, (GUIDSTRING)_Target, "Le
 THEN
 ApplyStatus(_Target, "HASTED", 6.0, 0, _Source);
 PlayEffect(_Target, "RS3_FX_GP_Status_Hypercharged_Hands_01", "Dummy_OverheadFX");
+
+PROC
+LeaderLib_Auras_OnPulseTargetLost((GUIDSTRING)_Source, (GUIDSTRING)_Target, "LeaderLib_Debug_HasteAura")
+AND
+GetStatusTurns(_Target, "HASTED", _Turns)
+AND
+_Turns > 0
+THEN
+RemoveStatus(_Target, "HASTED");
+
+PROC
+LeaderLib_Auras_OnPulseTargetFound((GUIDSTRING)_Source, (GUIDSTRING)_Target, "LeaderLib_Debug_WetAura")
+THEN
+ApplyStatus(_Target, "WET", 12.0, 0, _Source);
+
+PROC
+LeaderLib_Auras_OnPulseTargetLost((GUIDSTRING)_Source, (GUIDSTRING)_Target, "LeaderLib_Debug_WetAura")
+AND
+GetStatusTurns(_Target, "WET", _Turns)
+AND
+_Turns > 0
+THEN
+RemoveStatus(_Target, "WET");
 //END_REGION
 EXITSECTION
 

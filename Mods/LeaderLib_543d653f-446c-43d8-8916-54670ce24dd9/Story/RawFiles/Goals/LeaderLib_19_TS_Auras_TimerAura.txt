@@ -1,0 +1,37 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+KBSECTION
+IF
+TimerFinished(_TimerName)
+AND
+DB_LeaderLib_Auras_Temp_TimerAuraData(_Source, _AuraID, _TimerName)
+THEN
+LeaderLib_Auras_Internal_OnTimerFinished(_Source, _AuraID, _TimerName);
+
+IF
+CharacterDied(_Source)
+AND
+DB_LeaderLib_Auras_Temp_TimerAuraData((GUIDSTRING)_Source, _AuraID, _TimerName)
+THEN
+TimerCancel(_TimerName);
+
+IF
+CharacterStatusRemoved(_Source, "RESURRECT", _)
+AND
+DB_LeaderLib_Auras_Temp_TimerAuraData((GUIDSTRING)_Source, _AuraID, _TimerName)
+THEN
+LeaderLib_Auras_PulseAura(_Source, _AuraID);
+
+IF
+RegionEnded(_)
+AND
+DB_LeaderLib_Auras_Temp_TimerAuraData((GUIDSTRING)_Source, _AuraID, _TimerName)
+AND
+ObjectIsGlobal(_Source, 0)
+THEN
+LeaderLib_Auras_RemoveTimerAura(_Source, _AuraID);
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

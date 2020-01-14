@@ -2,7 +2,40 @@ Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
 KBSECTION
+IF
+ObjectEnteredCombat(_Source, _)
+AND
+DB_LeaderLib_Auras_Temp_TurnAuraData(_Source, _AuraID, _TurnsLeft)
+THEN
+LeaderLib_Timers_CancelObjectTimer(_Source, "Timers_LeaderLib_Auras_OnPulseTimer");
 
+IF
+ObjectLeftCombat(_Source, _)
+AND
+DB_LeaderLib_Auras_Temp_TurnAuraData(_Source, _AuraID, _TurnsLeft)
+THEN
+LeaderLib_Timers_StartObjectTimer(_Source, 6000, "Timers_LeaderLib_Auras_OnPulseTimer", "LeaderLib_Auras_OnPulseTimer");
+
+//REGION TURN_AURA_COMBAT
+IF
+ObjectTurnStarted(_Source)
+AND
+DB_LeaderLib_Auras_Temp_ActiveTurnAuras(_Source, _AuraID, _PulseTurnRate, _Radius, _EveryTurn, _HitCharacters, _HitItems, _HitSelf, _TrackTargets)
+THEN
+LeaderLib_Auras_Internal_DecreaseAuraCountdown(_Source, _AuraID);
+
+//ObjectTurnEnded(_Object)
+PROC
+LeaderLib_Combat_Clear_ActiveTurn((INTEGER)_CombatID, (GUIDSTRING)_Object)
+AND
+DB_LeaderLib_Auras_Temp_ActiveTurnAuras(_Source, _AuraID, _PulseTurnRate, _Radius, 1, _HitCharacters, _HitItems, _HitSelf, _TrackTargets)
+AND
+_Object != _Source
+AND
+DB_CombatObjects(_Source, _CombatID)
+THEN
+LeaderLib_Auras_Internal_DecreaseAuraCountdown(_Source, _AuraID);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

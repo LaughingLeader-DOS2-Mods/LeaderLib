@@ -16,7 +16,6 @@ DB_LeaderLib_Auras_Temp_TurnAuraData(_Source, _AuraID, _TurnsLeft)
 THEN
 LeaderLib_Timers_StartObjectTimer(_Source, 6000, "Timers_LeaderLib_Auras_OnPulseTimer", "LeaderLib_Auras_OnPulseTimer");
 
-//REGION TURN_AURA_COMBAT
 IF
 ObjectTurnStarted(_Source)
 AND
@@ -35,7 +34,31 @@ AND
 DB_CombatObjects(_Source, _CombatID)
 THEN
 LeaderLib_Auras_Internal_DecreaseAuraCountdown(_Source, _AuraID);
-//END_REGION
+
+IF
+CharacterDied(_Source)
+AND
+DB_LeaderLib_Auras_Temp_TurnAuraData(_Source, _AuraID, _TurnsLeft)
+THEN
+LeaderLib_Timers_CancelObjectTimer(_Source, "Timers_LeaderLib_Auras_OnPulseTimer");
+
+IF
+CharacterStatusRemoved(_Source, "RESURRECT", _)
+AND
+DB_LeaderLib_Auras_Temp_TurnAuraData(_Source, _AuraID, _TurnsLeft)
+AND
+NOT DB_CombatObjects(_Source, _)
+THEN
+LeaderLib_Timers_StartObjectTimer(_Source, 6000, "Timers_LeaderLib_Auras_OnPulseTimer", "LeaderLib_Auras_OnPulseTimer");
+
+IF
+RegionEnded(_)
+AND
+DB_LeaderLib_Auras_Temp_TurnAuraData(_Source, _AuraID, _TurnsLeft)
+AND
+ObjectIsGlobal(_Source, 0)
+THEN
+LeaderLib_Auras_RemoveTurnAura(_Source, _AuraID);
 EXITSECTION
 
 ENDEXITSECTION

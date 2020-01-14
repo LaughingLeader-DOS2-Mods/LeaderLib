@@ -87,6 +87,7 @@ StringConcatenate(_Msg2, _UUID, _TimerName)
 THEN
 DB_LeaderLib_Auras_Temp_ActiveTimerAuras(_Source, _AuraID, _PulseTimerRate, _Radius, _HitCharacters, _HitItems, _HitSelf, _TrackTargets);
 DB_LeaderLib_Auras_Temp_TimerAuraData(_Source, _AuraID, _TimerName);
+LeaderLib_ToggleScripts_EnableScriptForObject(_Source, "LeaderLib_Auras_TimerAuraEnabled", "LeaderLib");
 LeaderLib_Auras_PulseAura(_Source, _AuraID);
 //END_REGION
 

@@ -131,7 +131,6 @@ AND
 DB_LeaderLib_Auras_Temp_ActiveTurnAuras(_Source, _AuraID, _PulseTurnRate, _Radius, _EveryTurn, _HitCharacters, _HitItems, _HitSelf, _TrackTargets)
 THEN
 DB_LeaderLib_Auras_Temp_Pulsing(_Source, _AuraID);
-SetVarString(_Source, "LeaderLib_Auras_ID", _AuraID);
 SetVarFloat(_Source, "LeaderLib_Auras_Radius", _Radius);
 SetVarInteger(_Source, "LeaderLib_Auras_PulseCharacters", _HitCharacters);
 SetVarInteger(_Source, "LeaderLib_Auras_PulseItems", _HitItems);

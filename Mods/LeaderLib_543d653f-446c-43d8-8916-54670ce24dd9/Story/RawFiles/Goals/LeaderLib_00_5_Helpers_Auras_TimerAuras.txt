@@ -45,28 +45,28 @@ THEN
 LeaderLib_Auras_ApplyTimerAura(_Source, _AuraID, _PulseTimerRate, _Radius, _DefaultHitCharacters, _DefaultHitItems, _DefaultHitSelf, _DefaultTrackTargets);
 
 PROC
-LeaderLib_Auras_ApplyTimerAura((GUIDSTRING)_Source, (STRING)_AuraID, (INTEGER)_PulseTimerRate, (REAL)_Radius, (INTEGER)_EveryTimer)
+LeaderLib_Auras_ApplyTimerAura((GUIDSTRING)_Source, (STRING)_AuraID, (INTEGER)_PulseTimerRate, (REAL)_Radius)
 AND
 DB_LeaderLib_Auras_TimerAuras(_AuraID, _DefaultRadius, _DefaultTimerRate, _DefaultHitCharacters, _DefaultHitItems, _DefaultHitSelf, _DefaultTrackTargets)
 THEN
 LeaderLib_Auras_ApplyTimerAura(_Source, _AuraID, _PulseTimerRate, _Radius, _DefaultHitCharacters, _DefaultHitItems, _DefaultHitSelf, _DefaultTrackTargets);
 
 PROC
-LeaderLib_Auras_ApplyTimerAura((GUIDSTRING)_Source, (STRING)_AuraID, (INTEGER)_PulseTimerRate, (REAL)_Radius, (INTEGER)_EveryTimer, (INTEGER)_HitCharacters)
+LeaderLib_Auras_ApplyTimerAura((GUIDSTRING)_Source, (STRING)_AuraID, (INTEGER)_PulseTimerRate, (REAL)_Radius, (INTEGER)_HitCharacters)
 AND
 DB_LeaderLib_Auras_TimerAuras(_AuraID, _DefaultRadius, _DefaultTimerRate, _DefaultHitCharacters, _DefaultHitItems, _DefaultHitSelf, _DefaultTrackTargets)
 THEN
 LeaderLib_Auras_ApplyTimerAura(_Source, _AuraID, _PulseTimerRate, _Radius, _HitCharacters, _DefaultHitItems, _DefaultHitSelf, _DefaultTrackTargets);
 
 PROC
-LeaderLib_Auras_ApplyTimerAura((GUIDSTRING)_Source, (STRING)_AuraID, (INTEGER)_PulseTimerRate, (REAL)_Radius, (INTEGER)_EveryTimer, (INTEGER)_HitCharacters, (INTEGER)_HitItems)
+LeaderLib_Auras_ApplyTimerAura((GUIDSTRING)_Source, (STRING)_AuraID, (INTEGER)_PulseTimerRate, (REAL)_Radius, (INTEGER)_HitCharacters, (INTEGER)_HitItems)
 AND
 DB_LeaderLib_Auras_TimerAuras(_AuraID, _DefaultRadius, _DefaultTimerRate, _DefaultHitCharacters, _DefaultHitItems, _DefaultHitSelf, _DefaultTrackTargets)
 THEN
 LeaderLib_Auras_ApplyTimerAura(_Source, _AuraID, _PulseTimerRate, _Radius, _HitCharacters, _HitItems, _DefaultHitSelf, _DefaultTrackTargets);
 
 PROC
-LeaderLib_Auras_ApplyTimerAura((GUIDSTRING)_Source, (STRING)_AuraID, (INTEGER)_PulseTimerRate, (REAL)_Radius, (INTEGER)_EveryTimer, (INTEGER)_HitCharacters, (INTEGER)_HitItems, (INTEGER)_HitSelf)
+LeaderLib_Auras_ApplyTimerAura((GUIDSTRING)_Source, (STRING)_AuraID, (INTEGER)_PulseTimerRate, (REAL)_Radius, (INTEGER)_HitCharacters, (INTEGER)_HitItems, (INTEGER)_HitSelf)
 AND
 DB_LeaderLib_Auras_TimerAuras(_AuraID, _DefaultRadius, _DefaultTimerRate, _DefaultHitCharacters, _DefaultHitItems, _DefaultHitSelf, _DefaultTrackTargets)
 THEN

@@ -7,9 +7,9 @@ KBSECTION
 PROC
 LeaderLib_Auras_Internal_ClearData((GUIDSTRING)_Source, (STRING)_AuraID)
 AND
-DB_LeaderLib_Auras_Temp_LastTarget(_Source, _AuraID, _Target)
+DB_LeaderLib_Auras_Temp_LastTarget(_Source, _AuraID, (GUIDSTRING)_Target)
 THEN
-NOT DB_LeaderLib_Auras_Temp_LastTarget(_Source, _AuraID, _Target);
+NOT DB_LeaderLib_Auras_Temp_LastTarget(_Source, _AuraID, (GUIDSTRING)_Target);
 //END_REGION
 
 //REGION PULSE
@@ -29,20 +29,20 @@ LeaderLib_Auras_OnPulseComplete(_Source, _AuraID);
 PROC
 LeaderLib_Auras_Internal_CheckPulseTargets((GUIDSTRING)_Source, (STRING)_AuraID)
 AND
-DB_LeaderLib_Auras_Temp_LastTarget(_Source, _AuraID, _Target)
+DB_LeaderLib_Auras_Temp_LastTarget(_Source, _AuraID, (GUIDSTRING)_Target)
 AND
-NOT DB_LeaderLib_Auras_Temp_NewTarget(_Source, _AuraID, _)
+NOT DB_LeaderLib_Auras_Temp_NewTarget(_Source, _AuraID, _Target)
 THEN
-NOT DB_LeaderLib_Auras_Temp_LastTarget(_Source, _AuraID, _Target);
+NOT DB_LeaderLib_Auras_Temp_LastTarget(_Source, _AuraID, (GUIDSTRING)_Target);
 LeaderLib_Auras_OnPulseTargetLost(_Source, _Target, _AuraID);
 
 PROC
 LeaderLib_Auras_Internal_CheckPulseTargets((GUIDSTRING)_Source, (STRING)_AuraID)
 AND
-DB_LeaderLib_Auras_Temp_NewTarget(_Source, _AuraID, _Target)
+DB_LeaderLib_Auras_Temp_NewTarget(_Source, _AuraID, (GUIDSTRING)_Target)
 THEN
-NOT DB_LeaderLib_Auras_Temp_NewTarget(_Source, _AuraID, _Target);
-DB_LeaderLib_Auras_Temp_LastTarget(_Source, _AuraID, _Target);
+NOT DB_LeaderLib_Auras_Temp_NewTarget(_Source, _AuraID, (GUIDSTRING)_Target);
+DB_LeaderLib_Auras_Temp_LastTarget(_Source, _AuraID, (GUIDSTRING)_Target);
 
 PROC
 LeaderLib_Auras_OnPulseTargetLost((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_AuraID)

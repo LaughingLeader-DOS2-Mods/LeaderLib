@@ -1686,13 +1686,13 @@ LeaderLog_LogInt("DEBUG", "[LeaderLib_20_DebugLevel:OnVariableIntChanged] --- (L
 IF
 GameStarted(_,1)
 THEN
-LeaderLib_Auras_Register_TurnAura("LeaderLib_Debug_HasteAura", 1, 6.0, 0, 1, 1, 0, 1);
-LeaderLib_Auras_Register_TimerAura("LeaderLib_Debug_WetAura", 500, 6.0, 1, 1, 0, 0);
+LeaderLib_Auras_Register_TurnAura("LeaderLib_Debug_BarfAura", 1, 6.0, 0, 1, 1, 0, 1);
+LeaderLib_Auras_Register_TimerAura("LeaderLib_Debug_DrunkAura", 500, 3.0, 1, 1, 0, 1);
 
 IF
 TextEventSet("leaderlib_debug_applyturnaura")
 AND
-LeaderLib_Recon_QRY_GetString("leaderlib_debug_applyturnaura", "aura", 1, "LeaderLib_Debug_HasteAura")
+LeaderLib_Recon_QRY_GetString("leaderlib_debug_applyturnaura", "aura", 1, "LeaderLib_Debug_BarfAura")
 AND
 DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_debug_applyturnaura", "aura", _AuraID, _NextParamInt1)
 AND
@@ -1714,7 +1714,7 @@ LeaderLib_Recon_ClearParams("leaderlib_debug_applyturnaura");
 IF
 TextEventSet("leaderlib_debug_applytimeraura")
 AND
-LeaderLib_Recon_QRY_GetString("leaderlib_debug_applytimeraura", "aura", 1, "LeaderLib_Debug_WetAura")
+LeaderLib_Recon_QRY_GetString("leaderlib_debug_applytimeraura", "aura", 1, "LeaderLib_Debug_DrunkAura")
 AND
 DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_debug_applytimeraura", "aura", _AuraID, _NextParamInt1)
 AND
@@ -1754,38 +1754,78 @@ DisplayText(_Source, _Msg5);
 LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:LeaderLib_Auras_OnPulseCountChanged] ", _Msg5);
 
 PROC
-LeaderLib_Auras_OnPulse((GUIDSTRING)_Source, "LeaderLib_Debug_HasteAura")
-THEN
-PlayEffect(_Source, "RS3_FX_GP_Status_Hypercharged_Apply_01", "Dummy_BodyFX");
-
-PROC
-LeaderLib_Auras_OnPulseTargetFound((GUIDSTRING)_Source, (GUIDSTRING)_Target, "LeaderLib_Debug_HasteAura")
-THEN
-ApplyStatus(_Target, "HASTED", 6.0, 0, _Source);
-PlayEffect(_Target, "RS3_FX_GP_Status_Hypercharged_Hands_01", "Dummy_OverheadFX");
-
-PROC
-LeaderLib_Auras_OnPulseTargetLost((GUIDSTRING)_Source, (GUIDSTRING)_Target, "LeaderLib_Debug_HasteAura")
+LeaderLib_Auras_OnAuraApplied((GUIDSTRING)_Source, "LeaderLib_Debug_BarfAura")
 AND
-GetStatusTurns(_Target, "HASTED", _Turns)
+ObjectIsCharacter((CHARACTERGUID)_Source, 1)
+THEN
+DisplayText(_Source, "Geez, I smell.");
+CharacterStatusText(_Source, "<font size='28' color='#96AA00'>Aura of Dankness</font>");
+
+PROC
+LeaderLib_Auras_OnPulse((GUIDSTRING)_Source, "LeaderLib_Debug_BarfAura")
+THEN
+PlayEffect(_Source, "RS3_FX_GP_Impacts_TrapNoxiousBulbPoofPoison_01", "Dummy_BodyFX");
+
+PROC
+LeaderLib_Auras_OnTargetFound((GUIDSTRING)_Source, (GUIDSTRING)_Target, "LeaderLib_Debug_BarfAura")
+AND
+ObjectIsCharacter((CHARACTERGUID)_Target, 1)
+AND
+GetPosition(_Target, _x, _y, _z)
+THEN
+CharacterSetAnimationOverride(_Target, "barf");
+PlayEffect(_Target, "RS3_FX_GP_Impacts_TrapNoxiousBulbExplodePoison_01", "Dummy_Root");
+DisplayText(_Target, "*Puke Sounds*");
+CreateSurfaceAtPosition(_x, _y, _z, "SurfacePoison", 0.5, 6.0);
+
+PROC
+LeaderLib_Auras_OnTargetLost((GUIDSTRING)_Source, (GUIDSTRING)_Target, "LeaderLib_Debug_BarfAura")
+AND
+ObjectIsCharacter((CHARACTERGUID)_Target, 1)
+THEN
+CharacterSetAnimationOverride(_Target, "");
+DisplayText(_Target, "Ugh.");
+
+/*
+PROC
+LeaderLib_Auras_OnPulse((GUIDSTRING)_Source, "LeaderLib_Debug_DrunkAura")
+THEN
+*/
+
+PROC
+LeaderLib_Auras_OnAuraApplied((GUIDSTRING)_Source, "LeaderLib_Debug_DrunkAura")
+AND
+ObjectIsCharacter((CHARACTERGUID)_Source, 1)
+THEN
+DisplayText(_Source, "Booze it up!");
+CharacterStatusText(_Source, "<font size='28' color='#99DD55'>Aura of Intoxication</font>");
+
+PROC
+LeaderLib_Auras_OnTargetFound((GUIDSTRING)_Source, (GUIDSTRING)_Target, "LeaderLib_Debug_DrunkAura")
+AND
+HasActiveStatus(_Target, "DRUNK", 0)
+THEN
+ApplyStatus(_Target, "DRUNK", 12.0, 0, _Source);
+DisplayText(_Target, "Ugh, I don't feel so good...");
+
+PROC
+LeaderLib_Auras_OnTargetLost((GUIDSTRING)_Source, (GUIDSTRING)_Target, "LeaderLib_Debug_DrunkAura")
+AND
+GetStatusTurns(_Target, "DRUNK", _Turns)
 AND
 _Turns > 0
 THEN
-RemoveStatus(_Target, "HASTED");
+RemoveStatus(_Target, "DRUNK");
+DisplayText(_Target, "Whot? All better!");
 
+/*
 PROC
-LeaderLib_Auras_OnPulseTargetFound((GUIDSTRING)_Source, (GUIDSTRING)_Target, "LeaderLib_Debug_WetAura")
-THEN
-ApplyStatus(_Target, "WET", 12.0, 0, _Source);
-
-PROC
-LeaderLib_Auras_OnPulseTargetLost((GUIDSTRING)_Source, (GUIDSTRING)_Target, "LeaderLib_Debug_WetAura")
+LeaderLib_Auras_OnTargetLost((GUIDSTRING)_Source, (GUIDSTRING)_Target, "LeaderLib_Debug_DrunkAura")
 AND
-GetStatusTurns(_Target, "WET", _Turns)
-AND
-_Turns > 0
+ObjectIsCharacter((CHARACTERGUID)_Source, 1)
 THEN
-RemoveStatus(_Target, "WET");
+CharacterStatusText(_Source, "Lost Target!");
+*/
 //END_REGION
 EXITSECTION
 

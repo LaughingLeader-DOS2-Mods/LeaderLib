@@ -105,19 +105,33 @@ AND
 THEN
 DB_NOOP(1);
 
-IF
-SavegameLoading(_,_,_,_)
+PROC
+LeaderLib_System_SetExtenderFlag()
+AND
+GlobalGetFlag("LeaderLib_ExtenderIsActive", 0)
 AND
 LeaderLib_QRY_ExtenderIsActive()
 THEN
 GlobalSetFlag("LeaderLib_ExtenderIsActive");
 
-IF
-SavegameLoading(_,_,_,_)
+PROC
+LeaderLib_System_SetExtenderFlag()
+AND
+GlobalGetFlag("LeaderLib_ExtenderIsActive", 1)
 AND
 NOT LeaderLib_QRY_ExtenderIsActive()
 THEN
 GlobalClearFlag("LeaderLib_ExtenderIsActive");
+
+IF
+SavegameLoading(_,_,_,_)
+THEN
+LeaderLib_System_SetExtenderFlag();
+
+IF
+GameModeStarted(_,_)
+THEN
+LeaderLib_System_SetExtenderFlag();
 //END_REGION
 
 //REGION LUA_INIT

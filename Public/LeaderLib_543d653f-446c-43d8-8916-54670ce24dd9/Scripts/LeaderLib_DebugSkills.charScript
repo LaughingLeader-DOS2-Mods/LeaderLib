@@ -11,5 +11,5 @@ USAGE ALL
 CHECK "!c1"
 	IsEqual(%LeaderLib_DebugSkills_SkillTarget, null)
 ACTIONS
-	CharacterUseSkill(%LeaderLib_DebugSkills_Skill, %LeaderLib_DebugSkills_SkillTarget, null, null, 1)
+	CharacterUseSkill(%LeaderLib_DebugSkills_Skill, %LeaderLib_DebugSkills_SkillTarget, FLOAT3:null, null, 1)
 	Sleep(%LeaderLib_DebugSkills_SkillDelay)

@@ -2,6 +2,7 @@ INIT
 	CHARACTER:__Me
 	FLOAT:%LeaderLib_SkillDummy_WalkSpeed = 20.0
 	FLOAT:%LeaderLib_SkillDummy_RunSpeed = 20.0
+	EXTERN STRING:%LeaderLib_SkillDummy_InitEvent = "LeaderLib_Dummy_Initialized"
 EVENTS
 
 EVENT LeaderLib_SkillDummy_Init_Invisible
@@ -9,6 +10,7 @@ ON
 	OnInit()
 ACTIONS
 	SetMaterial(__Me, "8c46ff9c-f39b-43fa-a2bf-4a10f47db0d3", -1, 1, 1, 1, 1, 1, 1, 1)
+	CharacterEvent(__Me, %LeaderLib_SkillDummy_InitEvent)
 	
 EVENT LeaderLib_SkillDummy_Init
 ON

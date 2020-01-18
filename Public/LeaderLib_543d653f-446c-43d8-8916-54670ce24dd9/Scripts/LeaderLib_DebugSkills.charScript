@@ -1,0 +1,15 @@
+INIT
+	CHARACTER:__Me
+	EXTERN SKILL:%LeaderLib_DebugSkills_Skill = "Projectile_Fireball"
+	EXTERN CHARACTER:%LeaderLib_DebugSkills_SkillTarget = null
+	EXTERN FLOAT:%LeaderLib_DebugSkills_SkillDelay = 4.0
+
+BEHAVIOUR
+
+REACTION LeaderLib_DebugSkills_UseSkill,999
+USAGE ALL
+CHECK "!c1"
+	IsEqual(%LeaderLib_DebugSkills_SkillTarget, null)
+ACTIONS
+	CharacterUseSkill(%LeaderLib_DebugSkills_Skill, %LeaderLib_DebugSkills_SkillTarget, null, null, 1)
+	Sleep(%LeaderLib_DebugSkills_SkillDelay)

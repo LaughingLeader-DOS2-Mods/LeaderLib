@@ -112,7 +112,7 @@ LeaderLib_Auras_RemoveTurnAura((GUIDSTRING)_Source, (STRING)_AuraID)
 AND
 NOT DB_LeaderLib_Auras_Temp_TurnAuraData(_Source, _, _)
 THEN
-LeaderLib_ToggleScripts_DisableScriptForObject(_Source, "LeaderLib_Auras_TurnAuraEnabled", "LeaderLib");
+LeaderLib_ToggleScripts_DisableScriptForObjectAfterDelay(_Source, "LeaderLib_Auras_TurnAuraEnabled", "LeaderLib", 500);
 //END_REGION
 
 //REGION PULSE

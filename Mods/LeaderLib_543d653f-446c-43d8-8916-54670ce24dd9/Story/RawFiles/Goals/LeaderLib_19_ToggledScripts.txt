@@ -697,12 +697,16 @@ NOT DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_Object, _TagOrFlag, _Enabling
 PROC
 LeaderLib_ToggleScripts_DisableScriptForObject((GUIDSTRING)_Object, (STRING)_TagOrFlag, (STRING)_EnablingModID, 1)
 AND
+ObjectExists(_Object, 1)
+AND
 DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _TagOrFlag, 0)
 THEN
 ObjectClearFlag(_Object, _TagOrFlag, 0);
 
 PROC
 LeaderLib_ToggleScripts_DisableScriptForObject((GUIDSTRING)_Object, (STRING)_TagOrFlag, (STRING)_EnablingModID, 1)
+AND
+ObjectExists(_Object, 1)
 AND
 DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _TagOrFlag, 1)
 THEN
@@ -771,6 +775,26 @@ AND
 DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByObjectTimer(_Object, _TimerName, _TagOrFlag)
 THEN
 NOT DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByObjectTimer(_Object, _TimerName, _TagOrFlag);
+//END_REGION
+
+//REGION AUTO_SCRIPT_DISABLE
+IF
+RegionStarted(_)
+AND
+DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_Object, _TagOrFlag, _EnablingModID)
+AND
+ObjectExists(_Object, 0)
+THEN
+LeaderLib_ToggleScripts_DisableScriptForObject(_Object, _TagOrFlag, _EnablingModID, 0);
+
+IF
+RegionEnded(_)
+AND
+DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_Object, _TagOrFlag, _EnablingModID)
+AND
+ObjectIsGlobal(_Object, 0)
+THEN
+LeaderLib_ToggleScripts_DisableScriptForObject(_Object, _TagOrFlag, _EnablingModID);
 //END_REGION
 EXITSECTION
 

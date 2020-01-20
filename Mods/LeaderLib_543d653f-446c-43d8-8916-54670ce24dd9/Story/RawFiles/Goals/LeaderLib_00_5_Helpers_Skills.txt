@@ -23,6 +23,11 @@ LeaderLib_Skills_Register_StatusToggleSkill((STRING)_Skill, (STRING)_Status, (RE
 THEN
 LeaderLib_Skills_Register_StatusToggleSkill(_Skill, _Status, _Duration, _Force, 0);
 
+// _Skill - The skill to listen for.
+// _Status - The status to apply.
+// _Duration - The duration to apply the status for.
+// _Force - Whether to force the status to apply.
+// _OnUse - If 1, the status is toggled via CharacterUsedSkill. If 0, SkillCast.
 PROC
 LeaderLib_Skills_Register_StatusToggleSkill((STRING)_Skill, (STRING)_Status, (REAL)_Duration, (INTEGER)_Force, (INTEGER)_OnUse)
 AND

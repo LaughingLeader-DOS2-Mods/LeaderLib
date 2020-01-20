@@ -1569,6 +1569,81 @@ AND
 LeaderLib_String_QRY_EqualsAny(_Str, _Check1, _Check2, _Check3)
 THEN
 DB_NOOP(1);
+
+//Contain Any
+QRY
+LeaderLib_String_QRY_ContainsAny((STRING)_Str, (STRING)_Check1, (STRING)_Check2)
+AND
+StringContains(_Str, _Check1, _a)
+AND
+StringContains(_Str, _Check2, _b)
+AND
+IntegerMin(_a, _b, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_String_QRY_ContainsAny((STRING)_Str, (STRING)_Check1, (STRING)_Check2, (STRING)_Check3)
+AND
+StringContains(_Str, _Check1, _a)
+AND
+StringContains(_Str, _Check2, _b)
+AND
+StringContains(_Str, _Check3, _c)
+AND
+IntegerSum(_a, _b, _sum1)
+AND
+IntegerSum(_sum1, _c, _Final)
+AND
+_Final > 0
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_String_QRY_ContainsAny((STRING)_Str, (STRING)_Check1, (STRING)_Check2, (STRING)_Check3, (STRING)_Check4)
+AND
+StringContains(_Str, _Check1, _a)
+AND
+StringContains(_Str, _Check2, _b)
+AND
+StringContains(_Str, _Check3, _c)
+AND
+StringContains(_Str, _Check4, _d)
+AND
+IntegerSum(_a, _b, _sum1)
+AND
+IntegerSum(_sum1, _c, _sum2)
+AND
+IntegerSum(_sum2, _d, _Final)
+AND
+_Final > 0
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_String_QRY_ContainsAny((STRING)_Str, (STRING)_Check1, (STRING)_Check2, (STRING)_Check3, (STRING)_Check4, (STRING)_Check5)
+AND
+StringContains(_Str, _Check1, _a)
+AND
+StringContains(_Str, _Check2, _b)
+AND
+StringContains(_Str, _Check3, _c)
+AND
+StringContains(_Str, _Check4, _d)
+AND
+StringContains(_Str, _Check5, _e)
+AND
+IntegerSum(_a, _b, _sum1)
+AND
+IntegerSum(_sum1, _c, _sum2)
+AND
+IntegerSum(_sum2, _d, _sum3)
+AND
+IntegerSum(_sum3, _e, _Final)
+AND
+_Final > 0
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION DUMMY_HELPERS

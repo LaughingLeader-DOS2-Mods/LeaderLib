@@ -1,3 +1,11 @@
+local function init_seed()
+    local rnd = math.random(9999)
+    local seed = (math.random(9999) * 214013) + 2531011
+	LeaderLib_RAN_SEED = seed
+	Ext.Print("[LeaderLib__Common.lua] Set LeaderLib_RAN_SEED to ("..tostring(LeaderLib_RAN_SEED)..")")
+end
+init_seed()
+
 local function dump(o)
 	if type(o) == 'table' then
 		local s = '{ '
@@ -33,6 +41,25 @@ local function GetTableEntry(tbl, key, fallback)
 	return fallback
 end
 
+---Get a random entry from a table.
+---@param tbl table
+---@return any
+local function GetRandomTableEntry(tbl)
+	if #tbl > 0 then
+		local rnd = math.random(LeaderLib_RAN_SEED)
+		local ran = math.max(1, math.fmod(rnd,#tbl))
+		return tbl[ran]
+	end
+	return nil
+end
+
+local function GetRandom(max,min)
+	if min == nil then min = 0 end;
+	local rnd = math.random(LeaderLib_RAN_SEED)
+	local ran = math.max(min, math.fmod(rnd,max))
+	return ran
+end
+
 local function StringEquals(a,b)
 	if a ~= nil and b ~= nil then
 		return string.upper(a) == string.upper(b)
@@ -49,5 +76,7 @@ LeaderLib.Common = {
 	TableHasEntry = has_table_entry,
 	StringEquals = StringEquals,
 	StringIsNullOrEmpty = StringIsNullOrEmpty,
-	GetTableEntry = GetTableEntry
+	GetTableEntry = GetTableEntry,
+	GetRandomTableEntry = GetRandomTableEntry,
+	GetRandom = GetRandom
 }

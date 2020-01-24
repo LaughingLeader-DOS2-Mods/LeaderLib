@@ -143,8 +143,6 @@ THEN
 	ENDIF
 ENDIF
 
-
-
 EVENT LeaderLog_CombatLog_Character
 VARS
 	CHARACTER:_Character
@@ -754,4 +752,66 @@ THEN
 	ELSE
 		ItemDestroy(_Item)
 	ENDIF
+ENDIF
+
+EVENT LeaderLog_Commands_SetWeaponRequirement
+VARS
+	CHARACTER:_Character
+ON
+	OnCharacterEvent(_Character, "LeaderLog_Commands_SetSkillRequirement")
+ACTIONS
+IF "c1|c2|c3|c4"
+	CharacterHasWeaponType(_Char, Axe, 1)
+	CharacterHasWeaponType(_Char, Club, 1)
+	CharacterHasWeaponType(_Char, Sword, 1)
+	CharacterHasWeaponType(_Char, Spear, 1)
+THEN
+	SetFlag(_Char, "LeaderLib_SkillRequirement_MeleeWeapon")
+ELIF "c1"
+	HasFlag(_Char, "LeaderLib_SkillRequirement_MeleeWeapon")
+THEN
+	ClearFlag(_Char, "LeaderLib_SkillRequirement_MeleeWeapon")
+ENDIF
+
+IF "c1"
+	CharacterHasWeaponType(_Char, Knife, 1)
+THEN
+	SetFlag(_Char, "LeaderLib_SkillRequirement_MeleeWeapon")
+	SetFlag(_Char, "LeaderLib_SkillRequirement_DaggerWeapon")
+ELIF "c1"
+	HasFlag(_Char, "LeaderLib_SkillRequirement_DaggerWeapon")
+THEN
+	ClearFlag(_Char, "LeaderLib_SkillRequirement_DaggerWeapon")
+ENDIF
+
+IF "c1"
+	CharacterHasWeaponType(_Char, Staff, 1)
+THEN
+	SetFlag(_Char, "LeaderLib_SkillRequirement_MeleeWeapon")
+	SetFlag(_Char, "LeaderLib_SkillRequirement_StaffWeapon")
+ELIF "c1"
+	HasFlag(_Char, "LeaderLib_SkillRequirement_StaffWeapon")
+THEN
+	ClearFlag(_Char, "LeaderLib_SkillRequirement_StaffWeapon")
+ENDIF
+	
+IF "c1|c2"
+	CharacterHasWeaponType(_Char, Bow, 1)
+	CharacterHasWeaponType(_Char, Crossbow, 1)
+THEN
+	SetFlag(_Char, "LeaderLib_SkillRequirement_RangedWeapon")
+ELIF "c1"
+	HasFlag(_Char, "LeaderLib_SkillRequirement_RangedWeapon")
+THEN
+	ClearFlag(_Char, "LeaderLib_SkillRequirement_RangedWeapon")
+ENDIF
+
+IF "c1"
+	CharacterHasWeaponType(_Char, Wand, 1)
+THEN
+	SetFlag(_Char, "LeaderLib_SkillRequirement_WandWeapon")
+ELIF "c1"
+	HasFlag(_Char, "LeaderLib_SkillRequirement_WandWeapon")
+THEN
+	ClearFlag(_Char, "LeaderLib_SkillRequirement_WandWeapon")
 ENDIF

@@ -756,9 +756,9 @@ ENDIF
 
 EVENT LeaderLog_Commands_SetWeaponRequirement
 VARS
-	CHARACTER:_Character
+	CHARACTER:_Char
 ON
-	OnCharacterEvent(_Character, "LeaderLog_Commands_SetSkillRequirement")
+	OnCharacterEvent(_Char, "LeaderLog_Commands_SetSkillRequirement")
 ACTIONS
 IF "c1|c2|c3|c4"
 	CharacterHasWeaponType(_Char, Axe, 1)

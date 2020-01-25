@@ -246,6 +246,24 @@ DB_NOOP(1);
 //END_REGION
 
 //REGION REDIRECTION_TELEPORT
+QRY
+LeaderLib_DialogOverride_QRY_WithinDistance((GUIDSTRING)_Speaker, (CHARACTERGUID)_Target)
+AND
+UserGetFlag(_Target, "LeaderLib_DialogRedirectionTeleportingEnabled", 0)
+AND
+GetDistanceTo(_Speaker, _Target, _Dist)
+AND
+_Dist < 11.0
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_DialogOverride_QRY_WithinDistance((GUIDSTRING)_Speaker, (CHARACTERGUID)_Target)
+AND
+UserGetFlag(_Target, "LeaderLib_DialogRedirectionTeleportingEnabled", 1)
+THEN
+DB_NOOP(1);
+
 PROC
 LeaderLib_DialogOverride_Internal_TeleportRedirectionTarget((CHARACTERGUID)_Avatar, (GUIDSTRING)_OwnedObject)
 AND
@@ -396,6 +414,8 @@ DB_Avatars(_Avatar)
 AND
 NOT DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, _, _Speaker)
 AND
+LeaderLib_DialogOverride_QRY_WithinDistance(_Speaker, _Avatar) // Within 11m or teleportation is enabled
+AND
 QRY_SpeakerIsAvailable((GUIDSTRING)_Avatar, 0)
 AND
 LeaderLib_DialogOverride_QRY_UserMatchOrLoneAvatar(_Dialog, (GUIDSTRING)_Speaker, (GUIDSTRING)_Avatar, _AvatarsCount, _DisableUserRestriction)
@@ -419,6 +439,8 @@ AND
 CharacterGetAbility(_Player, "Persuasion", _Persuasion)
 AND
 _Persuasion > 0
+AND
+LeaderLib_DialogOverride_QRY_WithinDistance(_Speaker, _Player)
 AND
 QRY_SpeakerIsAvailable((GUIDSTRING)_Player, 0)
 AND

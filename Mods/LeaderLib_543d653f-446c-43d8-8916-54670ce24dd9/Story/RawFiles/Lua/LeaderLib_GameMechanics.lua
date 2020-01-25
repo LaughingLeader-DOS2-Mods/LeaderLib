@@ -87,7 +87,7 @@ local function StoreSkillData(char, skill)
     end
  end
 
- local function StoreSkillSlots(char)
+local function StoreSkillSlots(char)
 	-- Until we can fetch the active skill bar, iterate through every skill slot for now
    for i=0,144 do
 	   local skill = NRD_SkillBarGetSkill(char, i)
@@ -101,11 +101,28 @@ local function StoreSkillData(char, skill)
    end
 end
 
+---Clone an item for a character.
+---@param char string
+---@param item string
+---@param completion_event string
+---@param autolevel string
+local function CloneItemForCharacter(char, item, completion_event, autolevel)
+    local autolevel_enabled = autolevel == "Yes"
+	NRD_ItemCloneBegin(item)
+    local cloned = NRD_ItemClone()
+    if autolevel_enabled then
+        local level = CharacterGetLevel(char)
+        ItemLevelUpTo(cloned,level)
+    end
+    CharacterItemSetEvent(char, cloned, completion_event)
+end
+
 LeaderLib.Game = {
 	ReduceDamage = ReduceDamage,
 	RedirectDamage = RedirectDamage,
     StoreSkillData = StoreSkillData,
     StoreSkillSlots = StoreSkillSlots,
+    CloneItemForCharacter = CloneItemForCharacter,
 }
 
 LeaderLib.Register.Table(LeaderLib.Game);

@@ -496,6 +496,8 @@ DB_LeaderLib_DialogOverride_RedirectionTarget((CHARACTERGUID)_Char)
 AND
 _Char != _Speaker
 AND
+LeaderLib_DialogOverride_QRY_WithinDistance(_Speaker, _Char)
+AND
 QRY_SpeakerIsAvailable((GUIDSTRING)_Char, 0)
 THEN
 DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog, (GUIDSTRING)_Char, _Speaker);

@@ -115,10 +115,13 @@ NOT QRY_IsSummonOrPartyFollower(_Char)
 AND
 PartyGetFlag(_Char, "LeaderLib_PartyCounted", 0)
 AND
-GetUUID(_Char, _ID)
+GetUUID(_Char, _UUID)
 AND
-StringConcatenate("LeaderLib_Events_CheckParty_", _ID, _EventName)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_PartyIteratorEvent", "LeaderLib_Events_CheckParty_", _UUID)
+AND
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_PartyIteratorEvent", _EventName)
 THEN
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_PartyIteratorEvent", _EventName);
 PartySetFlag(_Char, "LeaderLib_PartyCounted", 0);
 DB_LeaderLib_Temp_PartyCheck(_Char, _EventName);
 LeaderLib_Timers_StartObjectTimer(_Char, 16, "Timers_LeaderLib_StartPartyCountIterator", "LeaderLib_StartPartyCountIterator");

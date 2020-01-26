@@ -79,12 +79,11 @@ NOT DB_LeaderLib_Auras_Temp_TimerAuraData(_Source, _AuraID, _)
 AND
 GetUUID(_Source, _UUID)
 AND
-StringConcatenate("Timers_LeaderLib_Auras_", _AuraID, _Msg1)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_AuraTimerName", "Timers_LeaderLib_Auras_", _AuraID, _UUID)
 AND
-StringConcatenate(_Msg1, "_", _Msg2)
-AND
-StringConcatenate(_Msg2, _UUID, _TimerName)
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_AuraTimerName", _TimerName)
 THEN
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_AuraTimerName", _TimerName);
 DB_LeaderLib_Auras_Temp_ActiveTimerAuras(_Source, _AuraID, _PulseTimerRate, _Radius, _HitCharacters, _HitItems, _HitSelf, _TrackTargets);
 DB_LeaderLib_Auras_Temp_TimerAuraData(_Source, _AuraID, _TimerName);
 LeaderLib_ToggleScripts_EnableScriptForObject(_Source, "LeaderLib_Auras_TimerAuraEnabled", "LeaderLib");

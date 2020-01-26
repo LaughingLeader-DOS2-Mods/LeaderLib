@@ -787,6 +787,47 @@ _Build < _OtherBuild
 THEN
 DB_NOOP(1);
 //END_REGION
+
+//REGION SUB_STRING
+QRY
+LeaderLib_StringExt_QRY_SubString((STRING)_Str)
+THEN
+LeaderLib_StringExt_SubString(_Str, 255);
+
+QRY
+LeaderLib_StringExt_QRY_SubString((STRING)_Str, (INTEGER)_MaxLength)
+THEN
+LeaderLib_StringExt_SubString(_Str, _MaxLength);
+
+// [BEGIN_NO_OSITOOLS]
+PROC
+LeaderLib_StringExt_SubString((STRING)_Str, (INTEGER)_MaxLength)
+AND
+StringSub(_Str, 0, _MaxLength, _SubbedString)
+THEN
+DB_LeaderLib_StringExt_Slice(_Str, _SubbedString);
+
+PROC
+LeaderLib_StringExt_SubString((STRING)_Str, (INTEGER)_MaxLength)
+AND
+NOT DB_LeaderLib_StringExt_Slice(_Str, _)
+THEN
+DB_LeaderLib_StringExt_Slice(_Str, _Str);
+// [END_NO_OSITOOLS]
+/* [OSITOOLS_ONLY]
+PROC
+LeaderLib_StringExt_SubString((STRING)_Str, (INTEGER)_MaxLength)
+AND
+NRD_StringLength(_Str, _Length)
+AND
+IntegerMin(_Length, _MaxLength, _CappedLength)
+AND
+StringSub(_Str, 0, _CappedLength, _SafeStr)
+THEN
+DB_LeaderLib_StringExt_Slice(_Str, _SafeStr);
+*/
+
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

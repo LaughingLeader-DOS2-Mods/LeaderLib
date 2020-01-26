@@ -173,6 +173,8 @@
 	<content contentuid="h9ff30ae0ge39eg480bg82a3ge975aafed5fd" Source="LeaderLib_ModMenu.lsj">[LeaderLib_ModMenu_Menu5_45148ce6-e8f3-4af4-81ed-a3b2e1ff8a17]</content>
 	<content contentuid="h6d2689a6ge111g43b7g8c87g478a5e501f40" Source="LeaderLib_ModMenu.lsj">Mods&lt;br&gt;[LeaderLib_ModMenu_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156]</content>
 	<content contentuid="h7a60181dg1be6g4e43g99c5g91289ea59f8f" Source="LeaderLib_ModMenu.lsj">Exiting...</content>
+	<content contentuid="h69590addg7840g4821gb632g52799233bb88" Source="LeaderLib_Notifications.lsb" Key="LeaderLib_MiscText_AttitudeDecrease">&lt;font color=&apos;#FF0000&apos;&gt;-[1] Attitude&lt;/font&gt;</content>
+	<content contentuid="hff1084efgf4efg450aga177g1311cbce0ebb" Source="LeaderLib_Notifications.lsb" Key="LeaderLib_MiscText_AttitudeIncrease">&lt;font color=&apos;#2EFE2E&apos;&gt;+[1] Attitude&lt;/font&gt;</content>
 	<content contentuid="h3025ccc1g5106g4019g8e0egf2c26206bf86" Source="LeaderLib_Notifications.lsb" Key="LeaderLib_Notifications_LoadGlobalSettings_Failed">&lt;font color=&apos;#FF0000&apos;&gt;LeaderLib Failed to Load Global Settings&lt;/font&gt;</content>
 	<content contentuid="hb987d743g981dg43f6g9aa8g08109349d4e9" Source="LeaderLib_Notifications.lsb" Key="LeaderLib_Notifications_LoadGlobalSettings_Success">LeaderLib Successfully Loaded Global Settings</content>
 	<content contentuid="h73234319g4e6bg4967gb45cga511b60f0408" Source="LeaderLib_Notifications.lsb" Key="LeaderLib_Notifications_SaveGlobalSettings_Failed">&lt;font color=&apos;#FF0000&apos;&gt;LeaderLib Failed to Save Global Settings&lt;/font&gt;</content>

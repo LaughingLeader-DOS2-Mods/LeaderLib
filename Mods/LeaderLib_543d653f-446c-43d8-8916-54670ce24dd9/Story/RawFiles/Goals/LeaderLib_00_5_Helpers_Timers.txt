@@ -29,10 +29,13 @@ DB_NOOP(1);
 PROC
 LeaderLib_Timers_StartObjectTimer((GUIDSTRING)_Target, (INTEGER)_Time, (STRING)_TimerPrefix, (STRING)_CompleteEvent)
 AND
-GetUUID(_Target, _ID)
+GetUUID(_Target, _UUID)
 AND
-StringConcatenate(_TimerPrefix, _ID, _TimerName)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_StartObjectTimerName", _TimerPrefix, _UUID)
+AND
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_StartObjectTimerName", _TimerName)
 THEN
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_StartObjectTimerName", _TimerName);
 DB_LeaderLib_Helper_Temp_ObjectTimer(_TimerName, _Target, _CompleteEvent, _TimerPrefix);
 TimerCancel(_TimerName);
 TimerLaunch(_TimerName, _Time);
@@ -78,10 +81,11 @@ GetUUID(_Char, _CharID)
 AND
 GetUUID(_Item, _ItemID)
 AND
-StringConcatenate(_CharID, _ItemID, _ID)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_StartCharacterItemTimerName", _TimerPrefix, _CharID, _ItemID)
 AND
-StringConcatenate(_TimerPrefix, _ID, _TimerName)
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_StartCharacterItemTimerName", _TimerName)
 THEN
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_StartCharacterItemTimerName", _TimerName);
 DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent, _TimerPrefix);
 TimerCancel(_TimerName);
 TimerLaunch(_TimerName, _Time);
@@ -187,10 +191,11 @@ GetUUID(_Char1, _Char1ID)
 AND
 GetUUID(_Char2, _Char2ID)
 AND
-StringConcatenate(_Char1ID, _Char2ID, _ID)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_StartCharacterCharacterTimerName", _TimerPrefix, _Char1ID, _Char2ID)
 AND
-StringConcatenate(_TimerPrefix, _ID, _TimerName)
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_StartCharacterCharacterTimerName", _TimerName)
 THEN
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_StartCharacterCharacterTimerName", _TimerName);
 DB_LeaderLib_Helper_Temp_CharCharTimer(_TimerName, _Char1, _Char2, _CompleteEvent, _TimerPrefix);
 TimerCancel(_TimerName);
 TimerLaunch(_TimerName, _Time);
@@ -272,12 +277,11 @@ GetUUID(_Obj1, _UUID1)
 AND
 GetUUID(_Obj1, _UUID2)
 AND
-StringConcatenate(_UUID1, "_", _Str1)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_StartObjectObjectTimerName", _TimerPrefix, _UUID1, _UUID2)
 AND
-StringConcatenate(_Str1, _UUID2, _ID)
-AND
-StringConcatenate(_TimerPrefix, _ID, _TimerName)
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_StartObjectObjectTimerName", _TimerName)
 THEN
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_StartObjectObjectTimerName", _TimerName);
 DB_LeaderLib_Helper_Temp_ObjectObjectTimer(_TimerName, _Obj1, _Obj2, _CompleteEvent, _TimerPrefix);
 TimerCancel(_TimerName);
 TimerLaunch(_TimerName, _Time);

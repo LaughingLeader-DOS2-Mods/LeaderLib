@@ -84,12 +84,16 @@ LeaderLib_Treasure_CountTemplateWithStat((STRING)_ID, (GUIDSTRING)_Object, (STRI
 AND
 NOT DB_LeaderLib_Treasure_Temp_TemplateIterator(_ID, _Object, _TreasureID, _ItemTemplate, _GeneratedStat, _, _)
 AND
-StringConcatenate("LeaderLib_IterateTemplate_", _ItemTemplate, _Msg1)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_Treasure_CountTemplateWithStat_Iterate", "LeaderLib_IterateTemplate_", _ItemTemplate, _ID)
 AND
-StringConcatenate(_Msg1, _ID, _IterateEvent)
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_Treasure_CountTemplateWithStat_Iterate", _IterateEvent)
 AND
-StringConcatenate(_IterateEvent, "_Complete", _CompletionEvent)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_Treasure_CountTemplateWithStat_Complete", "LeaderLib_IterateTemplateComplete_", _ItemTemplate, _ID)
+AND
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_Treasure_CountTemplateWithStat_Complete", _CompletionEvent)
 THEN
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_Treasure_CountTemplateWithStat_Complete", _CompletionEvent);
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_Treasure_CountTemplateWithStat_Iterate", _IterateEvent);
 DB_LeaderLib_Treasure_Temp_TemplateIterator(_ID, _Object, _TreasureID, _ItemTemplate, _GeneratedStat, _IterateEvent, _CompletionEvent);
 InventoryLaunchTemplateIterator(_Object, _ItemTemplate, _IterateEvent, _CompletionEvent);
 

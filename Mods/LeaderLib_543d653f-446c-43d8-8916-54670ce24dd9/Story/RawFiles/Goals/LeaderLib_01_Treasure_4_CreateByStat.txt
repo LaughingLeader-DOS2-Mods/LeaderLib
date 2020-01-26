@@ -14,24 +14,41 @@ NOT DB_LeaderLib_CBS_Temp_Queue(_Object, _ArrayPrefix, _, _, _, _, _, _)
 AND
 GetUUID(_Object, _UUID)
 AND
-StringConcatenate("LeaderLib_CreateItemByStat_", _ArrayPrefix, _Str1)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_CreateByStat_CreateQueue1", "LeaderLib_CBS_Array_", _ArrayPrefix, _UUID)
 AND
-StringConcatenate(_Str1, "_", _Str2)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_CreateByStat_CreateQueue2", "LeaderLib_CBS_Queue_", _ArrayPrefix, _UUID)
 AND
-StringConcatenate(_Str2, "Array", _ArrayID)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_CreateByStat_CreateQueue3", "Timers_LeaderLib_CBS_Queue_", _ArrayPrefix, _UUID)
 AND
-StringConcatenate(_Str2, "Queue", _QueueID)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_CreateByStat_CreateQueue4", "Timers_LeaderLib_CBS_Timeout_", _ArrayPrefix, _UUID)
 AND
-StringConcatenate(_Str2, "Events_CreateItem", _CreateItemEvent)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_CreateByStat_CreateQueue5", "LeaderLib_CBS_Create_", _ArrayPrefix, _UUID)
 AND
-StringConcatenate(_Str2, "Events_OnItemCreationComplete", _ItemTransferredEvent)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_CreateByStat_CreateQueue6", "LeaderLib_CBS_Complete_", _ArrayPrefix, _UUID)
 AND
-StringConcatenate(_Str2, "Events_OnCreationTimedOut", _TimeoutEvent)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_CreateByStat_CreateQueue7", "LeaderLib_CBS_Timedout_", _ArrayPrefix, _UUID)
 AND
-StringConcatenate("LeaderLib_Timers_CBS_QueueTimer_", _ArrayID, _QueueTimerName)
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_CreateByStat_CreateQueue1", _ArrayID)
 AND
-StringConcatenate("LeaderLib_Timers_CBS_QueueTimeoutTimer_", _ArrayID, _TimeoutTimerName)
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_CreateByStat_CreateQueue2", _QueueID)
+AND
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_CreateByStat_CreateQueue3", _QueueTimerName)
+AND
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_CreateByStat_CreateQueue4", _TimeoutTimerName)
+AND
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_CreateByStat_CreateQueue5", _CreateItemEvent)
+AND
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_CreateByStat_CreateQueue6", _ItemTransferredEvent)
+AND
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_CreateByStat_CreateQueue7", _TimeoutEvent)
 THEN
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_CreateByStat_CreateQueue1", _ArrayID);
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_CreateByStat_CreateQueue2", _QueueID);
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_CreateByStat_CreateQueue3", _QueueTimerName);
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_CreateByStat_CreateQueue4", _TimeoutTimerName);
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_CreateByStat_CreateQueue5", _CreateItemEvent);
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_CreateByStat_CreateQueue6", _ItemTransferredEvent);
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_CreateByStat_CreateQueue7", _TimeoutEvent);
 LeaderLib_Queue_Create(_QueueID, _ArrayID, _QueueTimerName, _TickRate, _CreateItemEvent, _ItemTransferredEvent, "");
 LeaderLib_Queue_SetTimeout(_ArrayID, _TimeoutTimerName, _TimeoutRate, _TimeoutEvent);
 DB_LeaderLib_CBS_Temp_Queue(_Object, _ArrayPrefix, _QueueID, _ArrayID, _CreateItemEvent, _ItemTransferredEvent, _CompletionEvent, _TimeoutEvent);

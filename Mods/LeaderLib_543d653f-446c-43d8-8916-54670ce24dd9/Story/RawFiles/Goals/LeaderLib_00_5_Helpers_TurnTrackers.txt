@@ -34,7 +34,7 @@ LeaderLib_Turns_Internal_CreateIdentifierByObject(_Object, _CompletionEvent);
 PROC
 LeaderLib_Turns_Internal_CreateIdentifierByObject((GUIDSTRING)_Object, (STRING)_CompletionEvent)
 AND
-String(_Object, _ObjectStr)
+GetUUID(_Object, _UUID)
 AND
 Random(99999, _Ran)
 AND
@@ -42,12 +42,11 @@ IntegerSum(_Ran, 12931, _RanInt)
 AND
 IntegertoString(_RanInt, _RanStr)
 AND
-StringConcatenate("LeaderLib_TurnTracker_", _CompletionEvent, _Msg1)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_CreateIdentifierByObject", "LeaderLib_TurnTracker_", _CompletionEvent, _UUID, _RanStr)
 AND
-StringConcatenate(_Msg1, _ObjectStr, _Msg2)
-AND
-StringConcatenate(_Msg2, _RanStr, _ID)
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_CreateIdentifierByObject", _ID)
 THEN
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_CreateIdentifierByObject", _ID);
 DB_LeaderLib_Turns_Temp_NextObjectID(_Object, _CompletionEvent, _ID);
 
 QRY
@@ -72,12 +71,11 @@ IntegerSum(_Ran, 12931, _RanInt)
 AND
 IntegertoString(_RanInt, _RanStr)
 AND
-StringConcatenate("LeaderLib_TurnTracker_", _CompletionEvent, _Msg1)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_CreateIdentifierByPosition", "LeaderLib_TurnTracker_", _CompletionEvent, _PosStr, _RanStr)
 AND
-StringConcatenate(_Msg1, _PosStr, _Msg2)
-AND
-StringConcatenate(_Msg2, _RanStr, _ID)
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_CreateIdentifierByPosition", _ID)
 THEN
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_CreateIdentifierByPosition", _ID);
 DB_LeaderLib_Turns_Temp_NextPositionID(_x, _y, _z, _CompletionEvent, _ID);
 
 QRY
@@ -104,14 +102,11 @@ IntegerSum(_Ran, 12931, _RanInt)
 AND
 IntegertoString(_RanInt, _RanStr)
 AND
-StringConcatenate("LeaderLib_TurnTracker_", _CompletionEvent, _Msg1)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_CreateIdentifierByPositionWithObject", "LeaderLib_TurnTracker_", _CompletionEvent, _ObjectStr, _PosStr, _RanStr)
 AND
-StringConcatenate(_Msg1, _ObjectStr, _Msg2)
-AND
-StringConcatenate(_Msg2, _PosStr, _Msg3)
-AND
-StringConcatenate(_Msg3, _RanStr, _ID)
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_CreateIdentifierByPositionWithObject", _ID)
 THEN
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_CreateIdentifierByPositionWithObject", _ID);
 DB_LeaderLib_Turns_Temp_NextObjectPositionID(_Object, _x, _y, _z, _CompletionEvent, _ID);
 //END_REGION
 

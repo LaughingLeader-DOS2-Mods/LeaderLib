@@ -193,14 +193,15 @@ Random(999999, _Ran)
 AND
 IntegertoString(_Ran, _RanStr)
 AND
-StringConcatenate(_Skill, _UUID, _Msg1)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_SkillDummyID", _UUID, _RanStr)
 AND
-StringConcatenate(_Msg1, _RanStr, _ID)
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_SkillDummyID", _ID)
 AND
 LeaderLib_Skills_QRY_PrepareSkillDummy(_ID, _Caster, _CopyStats, _CopyEquipment)
 AND
 DB_LeaderLib_Skills_SkillDummies(_ID, _Dummy)
 THEN
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_SkillDummyID", _ID);
 DB_LeaderLib_Skills_Temp_SkillDummyData(_Dummy, _Caster, _Dummy, _Skill);
 DB_LeaderLib_Skills_Temp_MoveDummyToPosition(_Dummy, _x, _y, _z);
 LeaderLog_Log("TRACE", "[LeaderLib:Skills:UseShoutFromPosition] Teleporting skill dummy for skill [",_Skill,"] to position. Dummy ID: [",_ID,"]");

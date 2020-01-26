@@ -57,8 +57,11 @@ NOT DB_LeaderLib_DictionarySort_SortingComplete(_DictionaryID);
 PROC
 LeaderLib_DictionarySort_StartSorting((STRING)_DictionaryID, (INTEGER)_TickRate, (STRING)_CompleteEvent, (INTEGER)_EntryTickRate)
 AND
-StringConcatenate("LeaderLib_Timers_Sorter_SortDictionary_", _DictionaryID, _TimerName)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_DictionarySort_StartSorting", "LeaderLib_Timers_DictSorter_", _DictionaryID)
+AND
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_DictionarySort_StartSorting", _TimerName)
 THEN
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_DictionarySort_StartSorting", _TimerName);
 DB_LeaderLib_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate);
 DB_LeaderLib_DictionarySort_SortingStarted(_DictionaryID, 1);
 LeaderLib_DictionarySort_Internal_OnTick(_DictionaryID);
@@ -345,12 +348,11 @@ DB_LeaderLib_Array_Length(_DictionaryID, _Length)
 AND
 _Length > 0
 AND
-StringConcatenate("LeaderLib_Timers_Sorter_SortEntry_", _DictionaryID, _a)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_DictionarySort_SortEntry", "LeaderLib_Timers_DictEntrySorter_", _DictionaryID, _ID, _StringEntry)
 AND
-StringConcatenate(_a, _ID, _b)
-AND
-StringConcatenate(_b, _StringEntry, _TimerName)
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_DictionarySort_SortEntry", _TimerName)
 THEN
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_DictionarySort_SortEntry", _TimerName);
 DB_LeaderLib_DictionarySort_EntrySortTimer(_TimerName, _DictionaryID, _ID, _StringEntry, 0);
 //LeaderLog_Log("TRACE", "[LeaderLib:DictionarySort] [",_DictionaryID,"] Finding sorted position for '",_StringEntry,"'.");
 LeaderLib_Array_BuildArrayIterator(_DictionaryID);

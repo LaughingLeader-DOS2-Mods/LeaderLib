@@ -277,8 +277,11 @@ _RequirementID != ""
 AND
 NOT DB_LeaderLib_Requirements_JustUnlocked(_RequirementID)
 AND
-StringConcatenate("LeaderLib_Timers_Requirements_RemoveJustUnlocked_", _RequirementID, _TimerName)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_Requirements_RequirementUnlocked", "LeaderLib_Timers_Req_RemoveJustUnlocked_", _RequirementID)
+AND
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_Requirements_RequirementUnlocked", _TimerName)
 THEN
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_Requirements_RequirementUnlocked", _TimerName);
 DB_LeaderLib_Requirements_JustUnlocked(_RequirementID);
 DB_LeaderLib_Requirements_Temp_RemoveJustUnlocked(_TimerName, _RequirementID);
 TimerLaunch(_TimerName, 1000);

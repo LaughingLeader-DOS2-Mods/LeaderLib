@@ -805,18 +805,20 @@ LeaderLib_StringExt_SubString((STRING)_Str, (INTEGER)_MaxLength)
 AND
 StringSub(_Str, 0, _MaxLength, _SubbedString)
 THEN
-DB_LeaderLib_StringExt_Slice(_Str, _SubbedString);
+DB_LeaderLib_StringExt_Sub(_Str, _SubbedString);
 
 PROC
 LeaderLib_StringExt_SubString((STRING)_Str, (INTEGER)_MaxLength)
 AND
-NOT DB_LeaderLib_StringExt_Slice(_Str, _)
+NOT DB_LeaderLib_StringExt_Sub(_Str, _)
 THEN
-DB_LeaderLib_StringExt_Slice(_Str, _Str);
+DB_LeaderLib_StringExt_Sub(_Str, _Str);
 // [END_NO_OSITOOLS]
 /* [OSITOOLS_ONLY]
 PROC
 LeaderLib_StringExt_SubString((STRING)_Str, (INTEGER)_MaxLength)
+AND
+NOT DB_LeaderLib_StringExt_Sub(_Str, _)
 AND
 NRD_StringLength(_Str, _Length)
 AND
@@ -824,7 +826,7 @@ IntegerMin(_Length, _MaxLength, _CappedLength)
 AND
 StringSub(_Str, 0, _CappedLength, _SafeStr)
 THEN
-DB_LeaderLib_StringExt_Slice(_Str, _SafeStr);
+DB_LeaderLib_StringExt_Sub(_Str, _SafeStr);
 */
 
 //END_REGION

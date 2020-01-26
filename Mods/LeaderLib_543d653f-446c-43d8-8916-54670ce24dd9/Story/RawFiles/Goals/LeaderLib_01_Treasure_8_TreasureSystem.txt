@@ -916,10 +916,16 @@ _IsStat > 0
 AND
 _CreatedAmount < _MaxAmount
 AND
-StringConcatenate("CreateByStat_", _ID, _ArrayPrefix)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_Treasure_Internal_GenerateItemNow_Array", "LeaderLib_CBS_GenNow", _ID)
 AND
-StringConcatenate("LeaderLib_Events_Treasure_OnStatItemsGenerated_", _ID, _CompletionEvent)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_Treasure_Internal_GenerateItemNow_CompletionEvent", "LeaderLib_CBS_GenNowComplete_", _ID)
+AND
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_Treasure_Internal_GenerateItemNow_Array", _ArrayPrefix)
+AND
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_Treasure_Internal_GenerateItemNow_CompletionEvent", _CompletionEvent)
 THEN
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_Treasure_Internal_GenerateItemNow_Array", _ArrayPrefix);
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_Treasure_Internal_GenerateItemNow_CompletionEvent", _CompletionEvent);
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:GenerateItems] Generating stat item [",_TreasureID,"]:[",_ItemEntry,"] via [LeaderLib_Treasure_CreateItemByStat].");
 LeaderLib_CreateByStat_CreateQueue(_Object, _ArrayPrefix, 5, 2500, _CompletionEvent);
 DB_LeaderLib_Treasure_Temp_CreatingByStat(_ID, _Object, _TreasureID, _ItemEntry, _MaxAmount, _ArrayPrefix, _CompletionEvent);

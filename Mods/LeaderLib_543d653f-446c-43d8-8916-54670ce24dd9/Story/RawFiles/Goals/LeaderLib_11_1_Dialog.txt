@@ -292,27 +292,15 @@ PROC
 LeaderLib_Dialog_AttitudeStatusText((CHARACTERGUID)_Target, (INTEGER)_Amount)
 AND
 _Amount > 0
-AND
-IntegertoString(_Amount, _AmountStr)
-AND
-StringConcatenate("<font color='#2EFE2E'>+", _AmountStr, _Str1)
-AND
-StringConcatenate(_Str1, " Attitude</font>", _StatusText)
 THEN
-CharacterStatusText(_Target, _StatusText);
+CharacterDisplayTextWithParam(_Target, "LeaderLib_MiscText_AttitudeIncrease", _Amount);
 
 PROC
 LeaderLib_Dialog_AttitudeStatusText((CHARACTERGUID)_Target, (INTEGER)_Amount)
 AND
 _Amount < 0
-AND
-IntegertoString(_Amount, _AmountStr)
-AND
-StringConcatenate("<font color='#FF0000'>-", _AmountStr, _Str1)
-AND
-StringConcatenate(_Str1, " Attitude</font>", _StatusText)
 THEN
-CharacterStatusText(_Target, _StatusText);
+CharacterDisplayTextWithParam(_Target, "LeaderLib_MiscText_AttitudeDecrease", _Amount);
 
 IF
 ObjectFlagSet("LeaderLib_OpenTrade", (CHARACTERGUID)_Object, _Instance)

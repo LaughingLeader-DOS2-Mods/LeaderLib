@@ -417,8 +417,11 @@ LeaderLib_ToggleScripts_DisableScriptAfterDelay((STRING)_GlobalFlag, (STRING)_Mo
 AND
 NOT DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptTimer(_, _GlobalFlag)
 AND
-StringConcatenate("LeaderLib_Timers_ToggleScripts_DeactivateScript_", _GlobalFlag, _TimerName)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_ToggleScripts_DisableScriptAfterDelay", "Timers_LeaderLib_TS_Off_", _GlobalFlag)
+AND
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_ToggleScripts_DisableScriptAfterDelay", _TimerName)
 THEN
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_ToggleScripts_DisableScriptAfterDelay", _TimerName);
 DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptTimer(_TimerName, _GlobalFlag);
 
 //Start/restart the timer
@@ -734,8 +737,11 @@ LeaderLib_ToggleScripts_DisableScriptForObjectAfterDelay((GUIDSTRING)_Object, (S
 AND
 NOT DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByObjectTimer(_, _, _TagOrFlag)
 AND
-StringConcatenate("LeaderLib_Timers_ToggleScripts_DeactivateScript_", _TagOrFlag, _TimerName)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_ToggleScripts_DisableScriptForObjectAfterDelay", "Timers_LeaderLib_TS_Off_", _TagOrFlag)
+AND
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_ToggleScripts_DisableScriptForObjectAfterDelay", _TimerName)
 THEN
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_ToggleScripts_DisableScriptForObjectAfterDelay", _TimerName);
 DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByObjectTimer(_Object, _TimerName, _TagOrFlag);
 
 //Start/restart the timer

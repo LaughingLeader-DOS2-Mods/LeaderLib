@@ -395,13 +395,13 @@ StringConcatenate(_Str1, "_", _Str2)
 AND
 StringConcatenate(_Str2, "List", _ArrayID)
 AND
-StringConcatenate(_Str2, "Events_OnSpawnTrader", _SpawnEvent)
+StringConcatenate(_Str2, "OnSpawnTrader", _SpawnEvent)
 AND
-StringConcatenate(_Str2, "Events_OnSpawnTraderComplete", _SpawnCompleteEvent)
+StringConcatenate(_Str2, "OnSpawnTraderComplete", _SpawnCompleteEvent)
 AND
-StringConcatenate(_Str2, "Events_OnSpawnQueueComplete", _SpawnQueueCompleteEvent)
+StringConcatenate(_Str2, "OnSpawnQueueComplete", _SpawnQueueCompleteEvent)
 AND
-StringConcatenate(_Str2, "Events_OnSpawnTimedOut", _TimeoutEvent)
+StringConcatenate(_Str2, "OnSpawnTimedOut", _TimeoutEvent)
 THEN
 DB_LeaderLib_Traders_Temp_CurrentSpawnQueue(_Level, _ArrayID, _SpawnEvent, _SpawnCompleteEvent, _SpawnQueueCompleteEvent, _TimeoutEvent);
 

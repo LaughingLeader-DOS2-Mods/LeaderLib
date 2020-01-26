@@ -218,12 +218,11 @@ LeaderLib_EventFlow_LaunchTimeoutTimer((STRING)_StackName, (STRING)_OnCompleteEv
 AND
 DB_LeaderLib_EventFlow_EventStack(_StackName, _OnFlowCompleteEvent, _WaitTime, _TimeoutValue)
 AND
-StringConcatenate("LeaderLib_Timers_EventFlow_", _StackName, _Msg1)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_EventFlow_LaunchTimeoutTimer", "Timers_LeaderLib_EventFlow_", _StackName, _OnCompleteEvent)
 AND
-StringConcatenate(_Msg1, "_", _Msg2)
-AND
-StringConcatenate(_Msg2, _OnCompleteEvent, _TimerName)
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_EventFlow_LaunchTimeoutTimer", _TimerName)
 THEN
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_EventFlow_LaunchTimeoutTimer", _TimerName);
 DB_LeaderLib_EventFlow_EventTimeout(_StackName, _TimerName, _OnCompleteEvent);
 TimerLaunch(_TimerName, _TimeoutValue);
 
@@ -291,8 +290,11 @@ LeaderLib_EventFlow_StartWaitTimer(_StackName, _CustomWaitTime);
 PROC
 LeaderLib_EventFlow_StartWaitTimer((STRING)_StackName, (INTEGER)_WaitTime)
 AND
-StringConcatenate("LeaderLib_Timers_EventFlow_WaitTimer_", _StackName, _TimerName)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_EventFlow_StartWaitTimer", "Timers_LeaderLib_EF_Wait_", _StackName)
+AND
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_EventFlow_StartWaitTimer", _TimerName)
 THEN
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_EventFlow_StartWaitTimer", _TimerName);
 DB_LeaderLib_EventFlow_WaitTimer(_StackName, _TimerName);
 TimerLaunch(_TimerName, _WaitTime);
 

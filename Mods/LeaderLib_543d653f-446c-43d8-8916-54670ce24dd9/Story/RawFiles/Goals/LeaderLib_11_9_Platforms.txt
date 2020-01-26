@@ -226,11 +226,11 @@ RealProduct(_A, 8.0, _LaunchSpeed)
 AND
 GetUUID(_Object, _UUID)
 AND
-StringConcatenate("LeaderLib_Platforms_Launch_", _UUID, _ID)
+StringConcatenate("LeaderLib_Pl_Launch_", _UUID, _ID)
 AND
-StringConcatenate("LeaderLib_Platforms_Launch_InitialMovement_", _UUID, _LaunchCompletionEvent)
+StringConcatenate("LeaderLib_Pl_Launch_1_", _UUID, _LaunchCompletionEvent)
 AND
-StringConcatenate("LeaderLib_Platforms_Launch_SlowUpwards_", _UUID, _SlowUpCompletionEvent)
+StringConcatenate("LeaderLib_Pl_Launch_2_", _UUID, _SlowUpCompletionEvent)
 AND
 LeaderLib_Platforms_QRY_SpawnPlatform(_ID, "Tiny", 0, _Object)
 AND

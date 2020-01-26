@@ -63,8 +63,11 @@ IntegerSum(_Count, 1, _MultBy)
 AND
 IntegerProduct(_MultBy, 250, _TimerDelay)
 AND
-StringConcatenate("LeaderLib_Timers_Growth_Characters_StartTagIterator_", _Tag, _TimerName)
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_Growth_Characters_Skills", "Timers_LeaderLib_GC_TagIter_", _Tag)
+AND
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_Growth_Characters_Skills", _TimerName)
 THEN
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_Growth_Characters_Skills", _TimerName);
 LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Characters:NewTagAdded] Adding tag [",_Tag,"][",_TimerName,"] to [DB_LeaderLib_Growth_Characters_Temp_NewTags].");
 DB_LeaderLib_Growth_Characters_Temp_NewTags(_Tag, _TimerName, _TimerDelay);
 

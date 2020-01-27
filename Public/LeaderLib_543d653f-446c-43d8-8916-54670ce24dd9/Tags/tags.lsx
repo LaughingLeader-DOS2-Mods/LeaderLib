@@ -412,8 +412,8 @@
                     </children>
                 </node>
                 <node id="Tag">
-                    <attribute id="Name" value="LLWEAPONEX_Grimoire" type="23" />
-                    <attribute id="Description" value="Weapon Type (Weapon Expansion)" type="23" />
+                    <attribute id="Name" value="LLGRIMOIRE_Grimoire" type="23" />
+                    <attribute id="Description" value="Weapon Type (Grimoires)" type="23" />
                     <children>
                         <node id="Categories">
                             <children>

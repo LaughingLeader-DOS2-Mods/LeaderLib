@@ -103,18 +103,24 @@ DB_LeaderLib_SendEvent(_EventName)
 THEN
 NOT DB_LeaderLib_SendEvent(_EventName);
 
+/*
 PROC
 LeaderLib_EventParser_Internal_RunEvent((STRING)_EventName)
 AND
-LeaderLib_Events_QRY_GetEventParser()
-AND
-DB_LeaderLib_EventParser(_EventParser)
+NOT DB_LeaderLib_EventParser(_)
+THEN
+LeaderLib_Events_Internal_GetEventParser();
+*/
+
+PROC
+LeaderLib_EventParser_Internal_RunEvent((STRING)_EventName)
 THEN
 LeaderLib_EventParser_Internal_ClearEvent(_EventName);
-SetStoryEvent(_EventParser, _EventName);
+SetStoryEvent(ITEMGUID_S_LeaderLib_EventParser_6983a226-0d86-47da-a27f-ee3e483625e6, _EventName);
 //END_REGION
 
 //REGION GAME_STARTED
+/*
 IF
 GameStarted(_Level,_)
 AND
@@ -123,6 +129,7 @@ AND
 NOT LeaderLib_QRY_EventParser_GlobalParserExists()
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:EventParser][ERROR] Global Event Parser doesn't exist for some reason.");
+*/
 
 //Bring the EventParser into the current level, so its itemScript works
 IF

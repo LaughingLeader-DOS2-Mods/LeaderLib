@@ -408,9 +408,7 @@ THEN
 DebugBreak(_Str);
 
 PROC
-LeaderLog_Internal_RunString((STRING)_Type, (STRING)_Str)
-AND
-_Type == "COMBAT"
+LeaderLog_Internal_RunString("COMBAT", (STRING)_Str)
 AND
 NOT DB_LeaderLog_Temp_NextLogTarget(_)
 AND
@@ -422,9 +420,7 @@ LeaderLib_StringExt_DetermineStringLength(_Str);
 LeaderLog_Internal_LogToCombatLog(_EventParser, _Str);
 
 PROC
-LeaderLog_Internal_RunString((STRING)_Type, (STRING)_Str)
-AND
-_Type == "COMBAT"
+LeaderLog_Internal_RunString("COMBAT", (STRING)_Str)
 AND
 DB_LeaderLog_Temp_NextLogTarget(_Target)
 THEN

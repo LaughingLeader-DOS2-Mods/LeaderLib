@@ -830,16 +830,6 @@
                         </node>
                         <node id="Relation">
                             <attribute id="Source" value="LeaderLib_Dummy_TargetHelper" type="22" />
-                            <attribute id="Target" value="RC_DU_HeroicRescue" type="22" />
-                            <attribute id="Value" value="0" type="4" />
-                        </node>
-                        <node id="Relation">
-                            <attribute id="Source" value="RC_DU_HeroicRescue" type="22" />
-                            <attribute id="Target" value="LeaderLib_Dummy_TargetHelper" type="22" />
-                            <attribute id="Value" value="0" type="4" />
-                        </node>
-                        <node id="Relation">
-                            <attribute id="Source" value="LeaderLib_Dummy_TargetHelper" type="22" />
                             <attribute id="Target" value="PVP" type="22" />
                             <attribute id="Value" value="0" type="4" />
                         </node>
@@ -908,17 +898,6 @@
                             <attribute id="Target" value="LeaderLib_Dummy_TargetHelper" type="22" />
                             <attribute id="Value" value="0" type="4" />
                         </node>
-                        <node id="Relation">
-                            <attribute id="Source" value="LeaderLib_Dummy_TargetHelper" type="22" />
-                            <attribute id="Target" value="RC_MIL_ElvenHeroes" type="22" />
-                            <attribute id="Value" value="0" type="4" />
-                        </node>
-                        <node id="Relation">
-                            <attribute id="Source" value="RC_MIL_ElvenHeroes" type="22" />
-                            <attribute id="Target" value="LeaderLib_Dummy_TargetHelper" type="22" />
-                            <attribute id="Value" value="0" type="4" />
-                        </node>
-
                     </children>
                 </node>
             </children>

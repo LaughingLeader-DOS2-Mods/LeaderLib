@@ -885,37 +885,37 @@ DB_NOOP(1);
 
 //REGION CLAMP
 PROC
-LeaderLib_Math_ClampInt((STRING)_ID, (INTEGER)_Value, (INTEGER)_Max, (INTEGER)_Min)
+LeaderLib_Math_ClampInt((STRING)_ID, (INTEGER)_Value, (INTEGER)_Min, (INTEGER)_Max)
 AND
 DB_LeaderLib_Math_ClampInt(_ID, _Last)
 THEN
 NOT DB_LeaderLib_Math_ClampInt(_ID, _Last);
 
 PROC
-LeaderLib_Math_ClampInt((STRING)_ID, (INTEGER)_Value, (INTEGER)_Max, (INTEGER)_Min)
+LeaderLib_Math_ClampInt((STRING)_ID, (INTEGER)_Value, (INTEGER)_Min, (INTEGER)_Max)
 AND
 _Value > _Max
 THEN
 DB_LeaderLib_Math_ClampInt(_ID, _Max);
 
 PROC
-LeaderLib_Math_ClampInt((STRING)_ID, (INTEGER)_Value, (INTEGER)_Max, (INTEGER)_Min)
+LeaderLib_Math_ClampInt((STRING)_ID, (INTEGER)_Value, (INTEGER)_Min, (INTEGER)_Max)
 AND
-_Value <= _Max
+_Value < _Max
 AND
 _Value > _Min
 THEN
 DB_LeaderLib_Math_ClampInt(_ID, _Value);
 
 PROC
-LeaderLib_Math_ClampInt((STRING)_ID, (INTEGER)_Value, (INTEGER)_Max, (INTEGER)_Min)
+LeaderLib_Math_ClampInt((STRING)_ID, (INTEGER)_Value, (INTEGER)_Min, (INTEGER)_Max)
 AND
 _Value <= _Min
 THEN
 DB_LeaderLib_Math_ClampInt(_ID, _Min);
 
 QRY
-LeaderLib_Math_QRY_ClampInt((STRING)_ID, (INTEGER)_Value, (INTEGER)_Max, (INTEGER)_Min)
+LeaderLib_Math_QRY_ClampInt((STRING)_ID, (INTEGER)_Value, (INTEGER)_Min, (INTEGER)_Max)
 THEN
 LeaderLib_Math_ClampInt(_ID, _Value, _Min, _Max);
 //END_REGION

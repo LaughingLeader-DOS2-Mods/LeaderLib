@@ -34,6 +34,7 @@ LeaderLib_Settings_InitCCData();
 LeaderLib_Settings_InitRuneSlotHelperData();
 LeaderLib_Settings_InitForceHelperData();
 LeaderLib_Settings_InitMathValues();
+LeaderLib_Settings_InitStarterSkills();
 LeaderLib_GlobalSettings_Internal_Init();
 
 SysClear("DB_LeaderLib_Settings_QueueRates", 3);
@@ -856,6 +857,22 @@ DB_LeaderLib_Settings_Temp_RegisteredModsList(_Str)
 THEN
 DialogSetVariableString("LeaderLib_SettingsMenu", _DialogVar, _Str);
 NOT DB_LeaderLib_Settings_Temp_RegisteredModsList(_Str);
+//END_REGION
+
+//REGION STARTER_SKILLS
+PROC
+LeaderLib_Settings_InitStarterSkills()
+AND
+DB_LeaderLib_StarterSkills("LeaderLib", _Skill, _Slot, _Flag)
+THEN
+NOT DB_LeaderLib_StarterSkills("LeaderLib", _Skill, _Slot, _Flag);
+
+PROC
+LeaderLib_Settings_InitStarterSkills()
+THEN
+DB_LeaderLib_StarterSkills("LeaderLib", "Shout_LeaderLib_ChainAll", 25, "");
+DB_LeaderLib_StarterSkills("LeaderLib", "Shout_LeaderLib_UnchainAll", 26, "");
+DB_LeaderLib_StarterSkills("LeaderLib", "Shout_LeaderLib_OpenModMenu", 27, "LeaderLib_ModMenuSkillWasAdded");
 //END_REGION
 
 //REGION SETTINGS_MENU

@@ -62,45 +62,6 @@ NOT GlobalGetFlag("LeaderLib_AddedInitialModMenuBooks", 1)
 THEN
 GlobalSetFlag("LeaderLib_AddedInitialModMenuBooks");
 
-IF
-StoryEvent(_, "LeaderLib_Initialized")
-AND
-DB_CurrentLevel(_Level)
-AND
-IsGameLevel(_Level, 1)
-AND
-NOT DB_GlobalFlag("LeaderLib_AddedInitialModMenuSkills")
-THEN
-GlobalSetFlag("LeaderLib_AddedInitialModMenuSkills");
-LeaderLib_Settings_AddModMenuSkillToParty();
-
-PROC
-LeaderLib_Settings_AddModMenuSkillToParty()
-AND
-DB_IsPlayer(_Player)
-THEN
-LeaderLib_Settings_AddStarterSkills(_Player);
-
-PROC
-LeaderLib_Settings_AddModMenuSkillToParty()
-AND
-DB_Origins(_Player)
-THEN
-LeaderLib_Settings_AddStarterSkills(_Player);
-
-PROC
-LeaderLib_Settings_AddStarterSkills((CHARACTERGUID)_Player)
-AND
-ObjectGetFlag(_Player, "LeaderLib_ModMenuSkillWasAdded", _WasAdded)
-AND
-CharacterHasSkill(_Player, "Shout_LeaderLib_OpenModMenu", _HasSkill)
-AND
-IntegerMin(_WasAdded, _HasSkill, 0)
-THEN
-ObjectSetFlag(_Player, "LeaderLib_ModMenuSkillWasAdded", 0);
-CharacterAddSkill(_Player, "Shout_LeaderLib_OpenModMenu", 0);
-LeaderLib_Skills_SetSlot(_Player, "Shout_LeaderLib_OpenModMenu", 26);
-
 PROC
 LeaderLib_Party_OnCharacterJoinedParty((CHARACTERGUID)_JoiningCharacter, (CHARACTERGUID)_PartyMember, (INTEGER)_PartyCount)
 AND
@@ -292,6 +253,72 @@ GlobalGetFlag("LeaderLib_LevelIsLoading", 1)
 THEN
 GlobalClearFlag("LeaderLib_LevelIsLoading");
 GlobalSetFlag("LeaderLib_LevelIsLoaded");
+//END_REGION
+
+//REGION STARTER_SKILLS
+//Deprecated
+//LeaderLib_AddedInitialModMenuSkills
+PROC
+LeaderLib_Settings_AddModMenuSkillToParty()
+THEN
+LeaderLib_Settings_AddStarterSkillsToParty();
+
+
+IF
+StoryEvent(_, "LeaderLib_Initialized")
+AND
+DB_CurrentLevel(_Level)
+AND
+IsGameLevel(_Level, 1)
+AND
+NOT DB_GlobalFlag("LeaderLib_AddedStarterSkills")
+THEN
+GlobalSetFlag("LeaderLib_AddedStarterSkills");
+LeaderLib_Settings_AddStarterSkillsToParty();
+
+PROC
+LeaderLib_Settings_AddStarterSkillsToParty()
+AND
+DB_IsPlayer(_Player)
+THEN
+LeaderLib_Settings_AddStarterSkills(_Player);
+
+PROC
+LeaderLib_Settings_AddStarterSkillsToParty()
+AND
+DB_Origins(_Player)
+THEN
+LeaderLib_Settings_AddStarterSkills(_Player);
+
+PROC
+LeaderLib_Settings_AddStarterSkills((CHARACTERGUID)_Player)
+AND
+DB_LeaderLib_StarterSkills("LeaderLib", _Skill, _Slot, _Flag)
+THEN
+LeaderLib_Settings_Internal_AddStarterSkill(_Player, _Skill, _Slot, _Flag);
+
+PROC
+LeaderLib_Settings_Internal_AddStarterSkill((CHARACTERGUID)_Player, (STRING)_Skill, (INTEGER)_Slot, (STRING)_Flag)
+AND
+_Flag != ""
+AND
+ObjectGetFlag(_Player, _Flag, _WasAdded)
+AND
+CharacterHasSkill(_Player, _Skill, _HasSkill)
+AND
+IntegerMin(_WasAdded, _HasSkill, 0)
+THEN
+ObjectSetFlag(_Player, _Flag, 0);
+CharacterAddSkill(_Player, _Skill, 0);
+LeaderLib_Skills_SetSlot(_Player, _Skill, _Slot);
+
+PROC
+LeaderLib_Settings_Internal_AddStarterSkill((CHARACTERGUID)_Player, (STRING)_Skill, (INTEGER)_Slot, "")
+AND
+CharacterHasSkill(_Player, _Skill, 0)
+THEN
+CharacterAddSkill(_Player, _Skill, 0);
+LeaderLib_Skills_SetSlot(_Player, _Skill, _Slot);
 //END_REGION
 EXITSECTION
 

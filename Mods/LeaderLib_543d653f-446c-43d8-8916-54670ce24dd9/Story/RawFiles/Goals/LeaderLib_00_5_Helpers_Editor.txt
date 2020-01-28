@@ -1352,19 +1352,23 @@ LeaderLog_Log("DEBUG", "[LeaderLib_00_5_Helpers_Editor:TextEventSet(leaderlib_lu
 IF
 TextEventSet("leaderlib_fling")
 AND
+LeaderLib_Recon_QRY_GetInt("leaderlib_fling", "dist", 1, 10)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_Int("leaderlib_fling", "dist", _Distance, _NextParamIndex)
+AND
 CharacterGetHostCharacter(_Player)
 AND
-LeaderLib_Recon_QRY_GetUUID("leaderlib_fling", "target", 1, _Player)
+LeaderLib_Recon_QRY_GetUUID("leaderlib_fling", "source", _NextParamIndex, _Player)
 AND
-DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_fling", "target", _Target, _NextParamIndex)
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_fling", "source", _Source, _NextParamIndex2)
 AND
-LeaderLib_Recon_QRY_GetInt("leaderlib_fling", "dist", _NextParamIndex, 10)
+LeaderLib_Recon_QRY_GetUUID("leaderlib_fling", "target", _NextParamIndex2, _Player)
 AND
-DB_LeaderLib_Recon_Temp_CommandParameters_Int("leaderlib_fling", "dist", _Distance, _NextParamIndex2)
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_fling", "target", _Target, _NextParamIndex3)
 THEN
-CharacterDisplayTextWithParam((CHARACTERGUID)_Target, "*Fling!* ([1])", _Distance);
-LeaderLib_Force_Apply(_Target, _Distance);
-LeaderLib_Timers_StartObjectTimer(_Target, 950, "Timers_LeaderLib_Debug_ApplyPlayDead", "LeaderLib_Debug_ApplyPlayDead");
+ApplyStatus(_Target, "PLAY_DEAD", -1.0, 1, _Target);
+DB_LeaderLib_ReCon_Temp_Fling(_Source, _Target, _Distance);
+LeaderLib_Timers_StartObjectTimer(_Target, 350, "Timers_LeaderLib_Debug_ReCon_Fling", "LeaderLib_Debug_ReCon_Fling");
 
 IF
 TextEventSet("leaderlib_fling")
@@ -1372,9 +1376,21 @@ THEN
 LeaderLib_Recon_ClearParams("leaderlib_fling");
 
 IF
-StoryEvent((CHARACTERGUID)_Target, "LeaderLib_Debug_ApplyPlayDead")
+StoryEvent(_Target, "LeaderLib_Debug_ReCon_Fling")
+AND
+DB_LeaderLib_ReCon_Temp_Fling(_Source, _Target, _Distance)
+AND
+ObjectIsCharacter((CHARACTERGUID)_Target, 1)
 THEN
-ApplyStatus(_Target, "PLAY_DEAD", 6.0, 1, _Target);
+CharacterDisplayTextWithParam(_Target, "*Fling!* ([1])", _Distance);
+
+IF
+StoryEvent(_Target, "LeaderLib_Debug_ReCon_Fling")
+AND
+DB_LeaderLib_ReCon_Temp_Fling(_Source, _Target, _Distance)
+THEN
+NOT DB_LeaderLib_ReCon_Temp_Fling(_Source, _Target, _Distance);
+LeaderLib_Force_Apply(_Source, _Target, _Distance);
 
 //END_REGION
 IF

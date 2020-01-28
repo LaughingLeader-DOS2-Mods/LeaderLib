@@ -252,6 +252,48 @@
 		],
 		"description": "Rules contained within this block only compile if OsiTools is not present."
 	},
+	"Type_CHARACTER":{
+		"prefix": "(CH",
+		"body": [
+			"(CHARACTERGUID$1",
+		],
+		"description": "Specify a CHARACTERGUID type."
+	},
+	"Type_ITEM":{
+		"prefix": "(IT",
+		"body": [
+			"(ITEMGUID$1",
+		],
+		"description": "Specify an ITEMGUID type."
+	},
+	"Type_GUIDSTRING":{
+		"prefix": "(GU",
+		"body": [
+			"(GUIDSTRING$1",
+		],
+		"description": "Specify a GUIDSTRING type."
+	},
+	"Type_STRING":{
+		"prefix": "(ST",
+		"body": [
+			"(STRING$1",
+		],
+		"description": "Specify a STRING type."
+	},
+	"Type_INTEGER":{
+		"prefix": "(IN",
+		"body": [
+			"(INTEGER$1",
+		],
+		"description": "Specify an INTEGER type."
+	},
+	"Type_REAL":{
+		"prefix": "(RE",
+		"body": [
+			"(REAL$1",
+		],
+		"description": "Specify a REAL type."
+	},
 	"StringConcat_7":{
 		"prefix": "concat",
 		"body": [

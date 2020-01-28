@@ -243,6 +243,15 @@
 		],
 		"description": "Rules contained within this block only compile if OsiTools is not present."
 	},
+	"RegionBlock":{
+		"prefix": "region",
+		"body": [
+			"//REGION ${1:NAME}",
+			"$2",
+			"//END_REGION"
+		],
+		"description": "Rules contained within this block only compile if OsiTools is not present."
+	},
 	"StringConcat_7":{
 		"prefix": "concat",
 		"body": [

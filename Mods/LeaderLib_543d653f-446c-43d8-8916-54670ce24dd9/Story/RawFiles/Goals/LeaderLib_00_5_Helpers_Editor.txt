@@ -1348,6 +1348,35 @@ LeaderLog_Log("DEBUG", "[LeaderLib_00_5_Helpers_Editor:TextEventSet(leaderlib_lu
 */
 //END_REGION
 
+//REGION FUN
+IF
+TextEventSet("leaderlib_fling")
+AND
+CharacterGetHostCharacter(_Player)
+AND
+LeaderLib_Recon_QRY_GetUUID("leaderlib_fling", "target", 1, _Player)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_UUID("leaderlib_fling", "target", _Target, _NextParamIndex)
+AND
+LeaderLib_Recon_QRY_GetInt("leaderlib_fling", "dist", _NextParamIndex, 10)
+AND
+DB_LeaderLib_Recon_Temp_CommandParameters_Int("leaderlib_fling", "dist", _Distance, _NextParamIndex2)
+THEN
+CharacterDisplayTextWithParam((CHARACTERGUID)_Target, "*Fling!* ([1])", _Distance);
+LeaderLib_Force_Apply(_Target, _Distance);
+LeaderLib_Timers_StartObjectTimer(_Target, 950, "Timers_LeaderLib_Debug_ApplyPlayDead", "LeaderLib_Debug_ApplyPlayDead");
+
+IF
+TextEventSet("leaderlib_fling")
+THEN
+LeaderLib_Recon_ClearParams("leaderlib_fling");
+
+IF
+StoryEvent((CHARACTERGUID)_Target, "LeaderLib_Debug_ApplyPlayDead")
+THEN
+ApplyStatus(_Target, "PLAY_DEAD", 6.0, 1, _Target);
+
+//END_REGION
 IF
 TextEventSet("leaderlib_resetcd")
 THEN

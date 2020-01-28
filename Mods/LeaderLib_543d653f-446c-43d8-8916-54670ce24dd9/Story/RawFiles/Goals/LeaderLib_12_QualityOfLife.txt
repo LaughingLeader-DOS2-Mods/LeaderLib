@@ -3,6 +3,38 @@ SubGoalCombiner SGC_AND
 INITSECTION
 
 KBSECTION
+//REGION COMMANDS
+PROC
+LeaderLib_Settings_AddStarterSkills((CHARACTERGUID)_Player)
+AND
+CharacterHasSkill(_Player, "Shout_LeaderLib_ChainAll", 0)
+THEN
+CharacterAddSkill(_Player, "Shout_LeaderLib_ChainAll", 0);
+LeaderLib_Skills_SetSlot(_Player, "Shout_LeaderLib_ChainAll", 27);
+
+PROC
+LeaderLib_Settings_AddStarterSkills((CHARACTERGUID)_Player)
+AND
+CharacterHasSkill(_Player, "Shout_LeaderLib_UnchainAll", 0)
+THEN
+CharacterAddSkill(_Player, "Shout_LeaderLib_UnchainAll", 0);
+LeaderLib_Skills_SetSlot(_Player, "Shout_LeaderLib_UnchainAll", 28);
+
+IF
+ObjectFlagSet("LeaderLib_Commands_AddChainSkills", (CHARACTERGUID)_Char, _)
+THEN
+ObjectClearFlag(_Char, "LeaderLib_Commands_AddChainSkills", 0);
+CharacterAddSkill(_Char, "Shout_LeaderLib_ChainAll", 0);
+CharacterAddSkill(_Char, "Shout_LeaderLib_UnchainAll", 0);
+
+IF
+ObjectFlagSet("LeaderLib_Commands_RemoveChainSkills", (CHARACTERGUID)_Char, _)
+THEN
+ObjectClearFlag(_Char, "LeaderLib_Commands_RemoveChainSkills", 0);
+CharacterRemoveSkill(_Char, "Shout_LeaderLib_ChainAll");
+CharacterRemoveSkill(_Char, "Shout_LeaderLib_UnchainAll");
+//END_REGION
+
 //REGION CHAIN_UNCHAIN_ALL
 PROC
 LeaderLib_LifeHacks_ChainToggle((CHARACTERGUID)_Player, (INTEGER)_UserID, 0)

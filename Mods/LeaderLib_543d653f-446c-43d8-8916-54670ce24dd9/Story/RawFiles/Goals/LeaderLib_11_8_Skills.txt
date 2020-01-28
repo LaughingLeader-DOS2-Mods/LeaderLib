@@ -587,12 +587,38 @@ THEN
 ObjectClearFlag(_Character, "LeaderLib_GenderSwapped", 0);
 //END_REGION
 
-//REGION FORCE_PROJECTILE
+//REGION FORCE_SINGULAR
 PROC
-LeaderLib_Force_Apply((GUIDSTRING)_Source, (GUIDSTRING)_Target, (INTEGER)_Distance)
+LeaderLib_Force_Apply((GUIDSTRING)_Target, (INTEGER)_Distance)
 THEN
-LeaderLib_Force_Apply(_Source, _Target, _Distance, "");
+LeaderLib_Force_Apply_Single(_Target, _Distance, "");
 
+PROC
+LeaderLib_Force_Apply_Single((GUIDSTRING)_Target, (INTEGER)_Distance, (STRING)_LandEvent)
+AND
+ObjectIsCharacter(_Target, 1)
+AND
+_LandEvent != ""
+THEN
+DB_LeaderLib_Force_Temp_ListenForLanding(_Target, _Target, _LandEvent);
+
+//Support for items comes later
+PROC
+LeaderLib_Force_Apply_Single((GUIDSTRING)_Target, (INTEGER)_Distance, (STRING)_LandEvent)
+AND
+ObjectIsCharacter(_Target, 1)
+AND
+LeaderLib_Math_QRY_ClampInt("LeaderLib_ForceDistance", _Distance, 1, 20)
+AND
+DB_LeaderLib_Math_ClampInt("LeaderLib_ForceDistance", _DistanceClamped)
+AND
+DB_LeaderLib_ForceEvent(_DistanceClamped, _Event, _FromItemEvent)
+THEN
+NOT DB_LeaderLib_Math_ClampInt("LeaderLib_ForceDistance", _DistanceClamped);
+SetStoryEvent(_Target, _Event);
+//END_REGION
+
+//REGION FORCE_PROJECTILE
 PROC
 LeaderLib_Force_Apply((GUIDSTRING)_Source, (GUIDSTRING)_Target, (INTEGER)_Distance)
 THEN
@@ -615,10 +641,10 @@ AND
 DB_LeaderLib_ForceEvent(_DistanceClamped, _Event, _FromItemEvent)
 THEN
 NOT DB_LeaderLib_Math_ClampInt("LeaderLib_ForceDistance", _DistanceClamped);
-LeaderLib_Force_SendApplyForceEvent(_Source, _Target, _Event, _FromItemEvent);
+LeaderLib_Force_Internal_SendApplyForceEvent(_Source, _Target, _Event, _FromItemEvent, _Distance);
 
 PROC
-LeaderLib_Force_SendApplyForceEvent((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Event, (STRING)_FromItemEvent)
+LeaderLib_Force_Internal_SendApplyForceEvent((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Event, (STRING)_FromItemEvent, (INTEGER)_Distance)
 AND
 NOT DB_LeaderLib_Force_Temp_Resolved(_Event)
 AND
@@ -630,19 +656,22 @@ DB_LeaderLib_Force_Temp_Resolved(_Event);
 CharacterCharacterSetEvent(_Source, _Target, _Event);
 
 PROC
-LeaderLib_Force_SendApplyForceEvent((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Event, (STRING)_FromItemEvent)
+LeaderLib_Force_Internal_SendApplyForceEvent((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Event, (STRING)_FromItemEvent, (INTEGER)_Distance)
 AND
 NOT DB_LeaderLib_Force_Temp_Resolved(_Event)
 AND
 ObjectIsCharacter((CHARACTERGUID)_Source, 1)
 AND
 ObjectIsItem((ITEMGUID)_Target, 1)
+AND
+Real(_Distance, _DistanceR)
 THEN
 DB_LeaderLib_Force_Temp_Resolved(_Event);
-CharacterItemSetEvent(_Source, _Target, _Event);
+SetVarFloat(_Target, "LeaderLib_Force_ForceDistance", _DistanceR);
+CharacterItemSetEvent(_Source, _Target, "LeaderLib_Force_StartMoveItem");
 
 PROC
-LeaderLib_Force_SendApplyForceEvent((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Event, (STRING)_FromItemEvent)
+LeaderLib_Force_Internal_SendApplyForceEvent((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Event, (STRING)_FromItemEvent, (INTEGER)_Distance)
 AND
 NOT DB_LeaderLib_Force_Temp_Resolved(_Event)
 AND
@@ -654,7 +683,7 @@ DB_LeaderLib_Force_Temp_Resolved(_Event);
 CharacterItemSetEvent(_Target, _Source, _FromItemEvent);
 
 PROC
-LeaderLib_Force_SendApplyForceEvent((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Event, (STRING)_FromItemEvent)
+LeaderLib_Force_Internal_SendApplyForceEvent((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Event, (STRING)_FromItemEvent, (INTEGER)_Distance)
 AND
 NOT DB_LeaderLib_Force_Temp_Resolved(_Event)
 AND
@@ -667,7 +696,7 @@ SetVarObject(_Target, "LeaderLib_Force_SourceItem", _Source);
 SetStoryEvent(_Target, _Event);
 
 PROC
-LeaderLib_Force_SendApplyForceEvent((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Event, (STRING)_FromItemEvent)
+LeaderLib_Force_Internal_SendApplyForceEvent((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Event, (STRING)_FromItemEvent, (INTEGER)_Distance)
 AND
 DB_LeaderLib_Force_Temp_Resolved(_Event)
 THEN
@@ -702,6 +731,18 @@ ClearVarObject(_Target, "LeaderLib_Force_HalfwayPosition");
 //END_REGION
 
 //REGION FORCE_LANDING
+IF
+DB_LeaderLib_Force_Temp_ListenForLanding(_Source, _Target, _LandEvent)
+THEN
+LeaderLib_Timers_StartObjectObjectTimer(_Source, _Target, 1500, "Timers_LeaderLib_ResetLandingListener", "LeaderLib_ResetLandingListener");
+
+PROC
+LeaderLib_Timers_ObjectObjectTimerFinished(_Source, _Target, "LeaderLib_ResetLandingListener")
+AND
+DB_LeaderLib_Force_Temp_ListenForLanding(_Source, _Target, _LandEvent)
+THEN
+NOT DB_LeaderLib_Force_Temp_ListenForLanding(_Source, _Target, _LandEvent);
+
 PROC
 ProcObjectTimerFinished((GUIDSTRING)_Target, "LeaderLib_Timers_Force_CheckLanding")
 AND
@@ -710,19 +751,6 @@ AND
 GetDistanceToPosition(_Target, _tx, _ty, _tz, _Dist)
 AND
 _Dist <= 0.01
-/*
-GetPosition(_Target, _, _y, _)
-AND
-RealSubtract(_ty, _y, _HeightDiff)
-AND
-LeaderLib_Math_QRY_AbsoluteValue(_HeightDiff)
-AND
-DB_LeaderLib_Math_AbsoluteValue(_HeightDiff, _HeightDiffAbs)
-AND
-LeaderLib_Math_QRY_ClearAbsoluteValues()
-AND
-_HeightDiffAbs < 1.0
-*/
 THEN
 NOT DB_LeaderLib_Force_Temp_ListenForLanding(_Target, _Source, _tx, _ty, _tz, _Event);
 LeaderLib_Force_OnLanded(_Target, _Source, _Event);

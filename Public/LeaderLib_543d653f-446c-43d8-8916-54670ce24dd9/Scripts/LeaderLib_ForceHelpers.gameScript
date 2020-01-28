@@ -1,5 +1,6 @@
 INIT
 	CHARACTER:%LeaderLib_Force_TargetHelper = S_LeaderLib_Dummy_TargetHelper_A_36069245-0e2d-44b1-9044-6797bd29bb15
+	//CHARACTER:%LeaderLib_Force_TargetHelper = S_Elves_Hero_Female_Test_c6dd59c6-b589-4ad3-84fb-60acb57396ff
 EVENTS
 
 EVENT LeaderLib_Force_StartMoveItem
@@ -44,7 +45,7 @@ THEN
 	IF "c1"
 		GetY(_HalfwayPos, _AirY)
 	THEN
-		// // (b−a) * (x − min(x)) / (max(x) − min(x)) + a
+		// // (b - a) * (x - min(x)) / (max(x) - min(x)) + a
 		// Where a == min distance, b = max distance, x = multiplier
 		Set(_HeightMult, 4.0)
 		Subtract(_HeightMult, 0.5)
@@ -62,12 +63,6 @@ THEN
 		Add(_AirY, _HeightMult)
 		SetY(_HalfwayPos, _AirY)
 	ENDIF
-	/*
-	IF "c1"
-		FindValidPosition(_HalfwayPos, 6.0, _Target)
-	THEN
-	ENDIF
-	*/
 	IF "c1"
 		FindValidPosition(_LandPos, 2.0, _Target)
 	THEN

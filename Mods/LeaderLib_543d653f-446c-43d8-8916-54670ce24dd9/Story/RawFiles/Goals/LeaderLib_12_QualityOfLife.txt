@@ -1,0 +1,50 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+//REGION CHAIN_UNCHAIN_ALL
+PROC
+LeaderLib_LifeHacks_ChainToggle((CHARACTERGUID)_Player, (INTEGER)_UserID, 0)
+AND
+DB_IsPlayer(_OtherPlayer)
+AND
+CharacterGetReservedUserID(_OtherPlayer, _UserID)
+AND
+CharactersAreGrouped(_Player, _OtherPlayer, 0)
+THEN
+CharacterAttachToGroup(_OtherPlayer, _Player);
+
+PROC
+LeaderLib_LifeHacks_ChainToggle((CHARACTERGUID)_Player, (INTEGER)_UserID, 1)
+AND
+DB_IsPlayer(_OtherPlayer)
+AND
+CharacterGetReservedUserID(_OtherPlayer, _UserID)
+AND
+CharactersAreGrouped(_Player, _OtherPlayer, 1)
+THEN
+CharacterDetachFromGroup(_OtherPlayer);
+
+IF
+CharacterStatusApplied(_OtherPlayer, "LEADERLIB_CHAIN_ALL", (CHARACTERGUID)_Player)
+AND
+CharactersAreGrouped(_Player, _OtherPlayer, 0)
+AND
+CharacterGetReservedUserID(_Player, _UserID)
+AND
+CharacterGetReservedUserID(_OtherPlayer, _UserID)
+THEN
+CharacterAttachToGroup(_OtherPlayer, _Player);
+
+IF
+CharacterStatusApplied(_OtherPlayer, "LEADERLIB_UNCHAIN_ALL", (CHARACTERGUID)_Player)
+AND
+CharactersAreGrouped(_Player, _OtherPlayer, 1)
+THEN
+CharacterDetachFromGroup(_OtherPlayer);
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_11__Start"

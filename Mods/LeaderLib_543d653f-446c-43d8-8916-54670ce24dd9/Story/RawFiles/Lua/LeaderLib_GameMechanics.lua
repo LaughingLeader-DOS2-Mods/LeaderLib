@@ -110,7 +110,7 @@ local function SetSlotToSkill(char, slot, addskill)
     if skill == nil then
         NRD_SkillBarSetSkill(char, slot, addskill)
         return true
-    else if skill == addskill then
+    elseif skill == addskill then
         return true
     else
         local nextslot = slot + 1
@@ -119,7 +119,7 @@ local function SetSlotToSkill(char, slot, addskill)
             if skill == nil then
                 NRD_SkillBarSetSkill(char, slot, addskill)
                 return true
-            else if skill == addskill then
+            elseif skill == addskill then
                 return true
             end
             nextslot = slot + 1

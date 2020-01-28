@@ -1,0 +1,15 @@
+Key	Content
+Shout_LeaderLib_CancelPolymorphism_Description	Clear any active shapeshifting statuses.
+Shout_LeaderLib_CancelPolymorphism_DisplayName	Cancel Shapeshifting
+Shout_LeaderLib_ChainAll_Description	Chain all characters under your control that are within [1].
+Shout_LeaderLib_ChainAll_DisplayName	Chain All
+Shout_LeaderLib_OpenModMenu_Description	<font color='#3e81fc' size='18'>LeaderLib</font><br>Open the mod menu to access registered settings menus.
+Shout_LeaderLib_OpenModMenu_DisplayName	Open Mod Menu
+Shout_LeaderLib_SwapGender_Description	Change to the opposite gender.<br><font color='#188ede'>Warning: Replaces custom appearance settings!</font>
+Shout_LeaderLib_SwapGender_DisplayName	Swap Gender
+Shout_LeaderLib_ToggleUndead_Description	Swap between the undead and non-undead equivalent of your current race.
+Shout_LeaderLib_ToggleUndead_DisplayName	Toggle Undead
+Shout_LeaderLib_UnchainAll_Description	Unchain all chained characters under your control that are within [1].
+Shout_LeaderLib_UnchainAll_DisplayName	Unchain All
+Target_LeaderLib_ControlSummon_Description	Take control of a summon or follower you own.
+Target_LeaderLib_ControlSummon_DisplayName	Control Summon

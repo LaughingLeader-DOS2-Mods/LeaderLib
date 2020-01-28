@@ -1,0 +1,8 @@
+Key	Content
+LeaderLib_MiscText_AttitudeDecrease	<font color='#FF0000'>-[1] Attitude</font>
+LeaderLib_MiscText_AttitudeIncrease	<font color='#2EFE2E'>+[1] Attitude</font>
+LeaderLib_Notifications_LoadGlobalSettings_Failed	<font color='#FF0000'>LeaderLib Failed to Load Global Settings</font>
+LeaderLib_Notifications_LoadGlobalSettings_Success	LeaderLib Successfully Loaded Global Settings
+LeaderLib_Notifications_SaveGlobalSettings_Failed	<font color='#FF0000'>LeaderLib Failed to Save Global Settings</font>
+LeaderLib_Notifications_SaveGlobalSettings_Success	LeaderLib Successfully Saved Global Settings
+LeaderLib_ToggleUndeadPolymorph_Failed	<font color='#FF0000'>Failed to find current race.</font>

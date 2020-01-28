@@ -1,0 +1,4 @@
+Key	Content
+LeaderLib_MessageBox_CheckMissingMods	<font color='#00FA9A'>View Missing Mods</font>
+LeaderLib_MessageBox_MissingModDependendencies	<font color='#fcd203' size='28'>LeaderLib</font><br><font color='#FF0000'><font size='24'>* Error *</font><br>Required Mods Missing</font><br>Check your mod list at the main menu.
+LeaderLib_MessageBox_SkipCheck	Close

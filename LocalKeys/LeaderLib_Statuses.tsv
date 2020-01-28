@@ -1,0 +1,11 @@
+Key	Content
+LeaderLib_NEW_ITEMS_Description	Character is selling new items.
+LeaderLib_NEW_ITEMS_DisplayName	New Items in Stock
+LeaderLib_PACIFIST_Description	Character has taken a vow to avoid fighting, and will flee if pulled into combat.
+LeaderLib_PACIFIST_DisplayName	Pacifism
+LEADERLIB_SHAPESHIFT_Description	Character is shapeshifted.
+LEADERLIB_SHAPESHIFT_UNDEAD_Description	Character is in an undead form.
+LEADERLIB_UNDEAD_DWARF_DisplayName	Undead Dwarf
+LEADERLIB_UNDEAD_ELF_DisplayName	Undead Elf
+LEADERLIB_UNDEAD_HUMAN_DisplayName	Undead Human
+LEADERLIB_UNDEAD_LIZARD_DisplayName	Undead Lizard

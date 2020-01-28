@@ -101,6 +101,33 @@ local function StoreSkillSlots(char)
    end
 end
 
+---Sets a skill into an empty slot, or finds empty space.
+local function SetSlotToSkill(char, slot, addskill)
+    if type(slot) == "string" then
+        slot = tonumber(slot)
+    end
+    local skill = NRD_SkillBarGetSkill(char, slot)
+    if skill == nil then
+        NRD_SkillBarSetSkill(char, slot, addskill)
+        return true
+    else if skill == addskill then
+        return true
+    else
+        local nextslot = slot + 1
+        while nextslot < 144 do
+            skill = NRD_SkillBarGetSkill(char, nextslot)
+            if skill == nil then
+                NRD_SkillBarSetSkill(char, slot, addskill)
+                return true
+            else if skill == addskill then
+                return true
+            end
+            nextslot = slot + 1
+        end
+    end
+    return false
+end
+
 ---Clone an item for a character.
 ---@param char string
 ---@param item string
@@ -122,6 +149,7 @@ LeaderLib.Game = {
 	RedirectDamage = RedirectDamage,
     StoreSkillData = StoreSkillData,
     StoreSkillSlots = StoreSkillSlots,
+    SetSlotToSkill = SetSlotToSkill,
     CloneItemForCharacter = CloneItemForCharacter,
 }
 

@@ -17,6 +17,11 @@
                     <children>
                         <node id="Relation">
                             <attribute id="Source" value="LeaderLib_Dummy_TargetHelper" type="22" />
+                            <attribute id="Target" value="LeaderLib_Dummy_TargetHelper" type="22" />
+                            <attribute id="Value" value="0" type="4" />
+                        </node>
+                        <node id="Relation">
+                            <attribute id="Source" value="LeaderLib_Dummy_TargetHelper" type="22" />
                             <attribute id="Target" value="AnimalBase" type="22" />
                             <attribute id="Value" value="0" type="4" />
                         </node>

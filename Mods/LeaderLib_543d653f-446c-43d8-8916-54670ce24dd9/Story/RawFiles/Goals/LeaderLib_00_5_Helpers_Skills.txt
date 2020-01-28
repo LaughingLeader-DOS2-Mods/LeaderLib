@@ -773,6 +773,50 @@ LeaderLib_Skills_CharacterCastSkill((CHARACTERGUID)_Char, (STRING)_Skill)
 THEN
 DB_NOOP(1);
 //END_REGION
+
+//REGION SET_SKILL_SLOT
+// [BEGIN_NO_OSITOOLS]
+PROC
+LeaderLib_Skills_SetSlot((CHARACTERGUID)_Char, (STRING)_Skill, (INTEGER)_Slot)
+THEN
+DB_NOOP(1);
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+PROC
+LeaderLib_Skills_SetSlot((CHARACTERGUID)_Char, (STRING)_Skill, (INTEGER)_Slot)
+AND
+NRD_SkillBarFindSkill(_Char, _Skill, _OldSlot)
+THEN
+DB_LeaderLib_Skills_SetSlotResolved(_Char, _Skill, _Slot);
+NRD_SkillBarClear(_Char, _OldSlot);
+LeaderLib_Skills_Internal_SetSlotToSkill(_Char, _Slot, _Skill);
+
+PROC
+LeaderLib_Skills_SetSlot((CHARACTERGUID)_Char, (STRING)_Skill, (INTEGER)_Slot)
+AND
+NOT DB_LeaderLib_Skills_SetSlotResolved(_Char, _Skill, _Slot)
+THEN
+DB_LeaderLib_Skills_SetSlotResolved(_Char, _Skill, _Slot);
+LeaderLib_Skills_Internal_SetSlotToSkill(_Char, _Slot, _Skill);
+
+PROC
+LeaderLib_Skills_SetSlot((CHARACTERGUID)_Char, (STRING)_Skill, (INTEGER)_Slot)
+AND
+DB_LeaderLib_Skills_SetSlotResolved(_Char, _Skill, _Slot)
+THEN
+NOT DB_LeaderLib_Skills_SetSlotResolved(_Char, _Skill, _Slot);
+
+PROC
+LeaderLib_Skills_Internal_SetSlotToSkill((CHARACTERGUID)_Char, (INTEGER)_Slot, (STRING)_Skill)
+AND
+String(_Char, _CharStr)
+AND
+IntegertoString(_Slot, _SlotStr)
+THEN
+NRD_LuaCall("LeaderLib_Ext_SetSlotToSkill", _CharStr, _SlotStr, _Skill);
+*/
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

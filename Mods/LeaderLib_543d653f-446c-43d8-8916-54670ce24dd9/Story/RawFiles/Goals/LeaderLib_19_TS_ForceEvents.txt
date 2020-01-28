@@ -11,6 +11,7 @@ AND
 GetPosition(_Target, _x, _y, _z)
 THEN
 NOT DB_LeaderLib_Force_Temp_ListenForLanding(_Target, _Source, _Event);
+LeaderLib_Timers_CancelObjectObjectTimer(_Source, _Target, "Timers_LeaderLib_ResetLandingListener");
 DB_LeaderLib_Force_Temp_ListenForLanding((GUIDSTRING)_Target, (GUIDSTRING)_Source, _x, _y, _z, _Event);
 ProcObjectTimer(_Target, "LeaderLib_Timers_Force_CheckLanding", 250);
 

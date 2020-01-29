@@ -870,9 +870,9 @@ NOT DB_LeaderLib_StarterSkills("LeaderLib", _Skill, _Slot, _Flag);
 PROC
 LeaderLib_Settings_InitStarterSkills()
 THEN
-DB_LeaderLib_StarterSkills("LeaderLib", "Shout_LeaderLib_ChainAll", 25, "");
-DB_LeaderLib_StarterSkills("LeaderLib", "Shout_LeaderLib_UnchainAll", 26, "");
-DB_LeaderLib_StarterSkills("LeaderLib", "Shout_LeaderLib_OpenModMenu", 27, "LeaderLib_ModMenuSkillWasAdded");
+DB_LeaderLib_StarterSkills("LeaderLib", "Shout_LeaderLib_ChainAll", 29, "");
+DB_LeaderLib_StarterSkills("LeaderLib", "Shout_LeaderLib_UnchainAll", 30, "");
+DB_LeaderLib_StarterSkills("LeaderLib", "Shout_LeaderLib_OpenModMenu", 31, "LeaderLib_ModMenuSkillWasAdded");
 //END_REGION
 
 //REGION SETTINGS_MENU

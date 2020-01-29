@@ -9,8 +9,15 @@ AND
 CharacterIsSummon(_Character, 0)
 AND
 CharacterIsPartyFollower(_Character, 0)
+AND
+NOT DB_IsPlayer(_Character)
+AND
+CharacterGetDisplayName(_Character, _, _Name)
+AND
+String(_Character, _CharacterStr)
 THEN
 DB_IsPlayer(_Character);
+LeaderLog_Log("DEBUG", "[LeaderLib_19_TS_Debug:CharacterJoinedParty] Added (",_CharacterStr,")[",_Name,"] to DB_IsPlayer.");
 EXITSECTION
 
 ENDEXITSECTION

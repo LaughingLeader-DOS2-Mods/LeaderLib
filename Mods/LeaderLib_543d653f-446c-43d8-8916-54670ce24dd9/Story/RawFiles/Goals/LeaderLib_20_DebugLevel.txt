@@ -1835,6 +1835,36 @@ THEN
 CharacterStatusText(_Source, "Lost Target!");
 */
 //END_REGION
+
+IF
+TextEventSet("leaderlib_isplayer")
+AND
+CharacterGetHostCharacter(_Host)
+THEN
+LeaderLib_Timers_StartObjectTimer(_Host, 1000, "Timers_LeaderLib_Debug_CheckIsPlayer", "LeaderLib_Debug_CheckIsPlayer");
+IterateParty(_Host, "LeaderLib_Debug_CheckIsPlayer");
+
+IF
+StoryEvent((CHARACTERGUID)_Char, "LeaderLib_Debug_CheckIsPlayer")
+AND
+CharacterIsPlayer(_Char, _IsPlayer)
+AND
+IntegertoString(_IsPlayer, _IsPlayerStr)
+AND
+String(_Char, _CharStr)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:LeaderLib_Debug_CheckIsPlayer] (",_CharStr,") is player? (",_IsPlayerStr,")");
+
+IF
+StoryEvent((CHARACTERGUID)_Char, "LeaderLib_Debug_CheckIsPlayer")
+AND
+CharacterIsPartyMember(_Char, _IsPlayer)
+AND
+IntegertoString(_IsPlayer, _IsPlayerStr)
+AND
+String(_Char, _CharStr)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:LeaderLib_Debug_CheckIsPlayer] (",_CharStr,") is party member? (",_IsPlayerStr,")");
 EXITSECTION
 
 ENDEXITSECTION

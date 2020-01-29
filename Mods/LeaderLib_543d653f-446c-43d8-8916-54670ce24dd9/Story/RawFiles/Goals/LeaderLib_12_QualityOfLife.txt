@@ -5,57 +5,86 @@ INITSECTION
 KBSECTION
 //REGION COMMANDS
 IF
-ObjectFlagSet("LeaderLib_Commands_AddChainSkills", (CHARACTERGUID)_Char, _)
+ObjectFlagSet("LeaderLib_Commands_AddChainSkills", (CHARACTERGUID)_Player, _)
 THEN
-ObjectClearFlag(_Char, "LeaderLib_Commands_AddChainSkills", 0);
-CharacterAddSkill(_Char, "Shout_LeaderLib_ChainAll", 0);
-CharacterAddSkill(_Char, "Shout_LeaderLib_UnchainAll", 0);
+ObjectClearFlag(_Player, "LeaderLib_Commands_AddChainSkills", 0);
+CharacterAddSkill(_Player, "Shout_LeaderLib_ChainAll", 0);
+CharacterAddSkill(_Player, "Shout_LeaderLib_UnchainAll", 0);
 
 IF
-ObjectFlagSet("LeaderLib_Commands_RemoveChainSkills", (CHARACTERGUID)_Char, _)
+ObjectFlagSet("LeaderLib_Commands_RemoveChainSkills", (CHARACTERGUID)_Player, _)
 THEN
-ObjectClearFlag(_Char, "LeaderLib_Commands_RemoveChainSkills", 0);
-CharacterRemoveSkill(_Char, "Shout_LeaderLib_ChainAll");
-CharacterRemoveSkill(_Char, "Shout_LeaderLib_UnchainAll");
-//END_REGION
-
-//REGION CHAIN_SKILLS_ACTIONCLEAR
-IF
-SkillCast(_Char, "Shout_LeaderLib_ChainAll", _, _)
-THEN
-LeaderLib_Helper_ClearActionQueue(_Char);
-
-IF
-SkillCast(_Char, "Shout_LeaderLib_UnchainAll", _, _)
-THEN
-LeaderLib_Helper_ClearActionQueue(_Char);
+ObjectClearFlag(_Player, "LeaderLib_Commands_RemoveChainSkills", 0);
+CharacterRemoveSkill(_Player, "Shout_LeaderLib_ChainAll");
+CharacterRemoveSkill(_Player, "Shout_LeaderLib_UnchainAll");
 //END_REGION
 
 //REGION CHAIN_UNCHAIN_ALL
 PROC
-LeaderLib_LifeHacks_ChainToggle((CHARACTERGUID)_Player, (INTEGER)_UserID, 0)
+LeaderLib_LifeHacks_ChainToggle_OnChainState((CHARACTERGUID)_Player, (INTEGER)_State)
 AND
-DB_IsPlayer(_OtherPlayer)
-AND
-CharacterGetReservedUserID(_OtherPlayer, _UserID)
-AND
-CharactersAreGrouped(_Player, _OtherPlayer, 0)
+NOT DB_LeaderLib_LifeHacks_ChainChanged(_Player, _)
 THEN
-CharacterAttachToGroup(_OtherPlayer, _Player);
+DB_LeaderLib_LifeHacks_ChainChanged(_Player, _State);
+LeaderLib_LifeHacks_ChainToggle_PlayRootEffect(_Player, _State);
+LeaderLib_Timers_StartObjectTimer(_Player, 250, "Timers_LeaderLib_LifeHacks_ClearChainChanged", "LeaderLib_LifeHacks_ClearChainChanged");
+
+IF
+StoryEvent((CHARACTERGUID)_Player, "LeaderLib_LifeHacks_ClearChainChanged")
+AND
+DB_LeaderLib_LifeHacks_ChainChanged(_Player, _State)
+THEN
+NOT DB_LeaderLib_LifeHacks_ChainChanged(_Player, _State);
+
+PROC
+LeaderLib_LifeHacks_ChainToggle_PlayRootEffect((CHARACTERGUID)_Player, 1)
+AND
+GetPosition(_Player, _x, _y, _z)
+THEN
+PlayEffectAtPosition("LeaderLib_FX_Skills_ChainToggle_Attach_Root_01", _x, _y, _z);
+
+PROC
+LeaderLib_LifeHacks_ChainToggle_PlayRootEffect((CHARACTERGUID)_Player, 0)
+AND
+GetPosition(_Player, _x, _y, _z)
+THEN
+PlayEffectAtPosition("LeaderLib_FX_Skills_ChainToggle_Detach_Root_01", _x, _y, _z);
+
 
 PROC
 LeaderLib_LifeHacks_ChainToggle((CHARACTERGUID)_Player, (INTEGER)_UserID, 1)
 AND
 DB_IsPlayer(_OtherPlayer)
 AND
+_OtherPlayer != _Player
+AND
+CharacterGetReservedUserID(_OtherPlayer, _UserID)
+AND
+CharactersAreGrouped(_Player, _OtherPlayer, 0)
+THEN
+LeaderLib_LifeHacks_ChainToggle_OnChainState(_Player, 1);
+CharacterAttachToGroup(_OtherPlayer, _Player);
+PlayBeamEffect(_Player, _OtherPlayer, "LeaderLib_FX_Skills_ChainToggle_Attach_Beam_01", "Dummy_BodyFX", "Dummy_BodyFX");
+
+PROC
+LeaderLib_LifeHacks_ChainToggle((CHARACTERGUID)_Player, (INTEGER)_UserID, 0)
+AND
+DB_IsPlayer(_OtherPlayer)
+AND
+_OtherPlayer != _Player
+AND
 CharacterGetReservedUserID(_OtherPlayer, _UserID)
 AND
 CharactersAreGrouped(_Player, _OtherPlayer, 1)
 THEN
+LeaderLib_LifeHacks_ChainToggle_OnChainState(_Player, 0);
 CharacterDetachFromGroup(_OtherPlayer);
+PlayBeamEffect(_Player, _OtherPlayer, "LeaderLib_FX_Skills_ChainToggle_Detach_Beam_01", "Dummy_BodyFX", "Dummy_BodyFX");
 
 IF
 CharacterStatusApplied(_OtherPlayer, "LEADERLIB_CHAIN_ALL", (CHARACTERGUID)_Player)
+AND
+_OtherPlayer != _Player
 AND
 CharactersAreGrouped(_Player, _OtherPlayer, 0)
 AND
@@ -63,14 +92,107 @@ CharacterGetReservedUserID(_Player, _UserID)
 AND
 CharacterGetReservedUserID(_OtherPlayer, _UserID)
 THEN
+LeaderLib_LifeHacks_ChainToggle_OnChainState(_Player, 1);
 CharacterAttachToGroup(_OtherPlayer, _Player);
+PlayBeamEffect(_Player, _OtherPlayer, "LeaderLib_FX_Skills_ChainToggle_Attach_Beam_01", "Dummy_BodyFX", "Dummy_BodyFX");
 
 IF
 CharacterStatusApplied(_OtherPlayer, "LEADERLIB_UNCHAIN_ALL", (CHARACTERGUID)_Player)
 AND
+_OtherPlayer != _Player
+AND
 CharactersAreGrouped(_Player, _OtherPlayer, 1)
 THEN
+LeaderLib_LifeHacks_ChainToggle_OnChainState(_Player, 0);
 CharacterDetachFromGroup(_OtherPlayer);
+PlayBeamEffect(_Player, _OtherPlayer, "LeaderLib_FX_Skills_ChainToggle_Detach_Beam_01", "Dummy_BodyFX", "Dummy_BodyFX");
+
+QRY
+LeaderLib_LifeHacks_QRY_AllChained((CHARACTERGUID)_Player, (INTEGER)_UserID)
+AND
+DB_IsPlayer(_OtherPlayer)
+AND
+_OtherPlayer != _Player
+AND
+CharacterGetReservedUserID(_OtherPlayer, _UserID)
+AND
+CharactersAreGrouped(_Player, _OtherPlayer, 1)
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION CHAIN_SKILLS_ACTIONCLEAR
+IF
+CharacterUsedSkill(_Player, "Shout_LeaderLib_ChainAll", _, _)
+THEN
+LeaderLib_Helper_ClearActionQueue(_Player);
+
+IF
+CharacterUsedSkill(_Player, "Shout_LeaderLib_UnchainAll", _, _)
+THEN
+LeaderLib_Helper_ClearActionQueue(_Player);
+
+/*
+IF
+SkillCast(_Player, "Shout_LeaderLib_ChainAll", _, _)
+THEN
+LeaderLib_Timers_StartObjectTimer(_Player, 250, "Timers_LeaderLib_ChainAll_CheckState", "LeaderLib_ChainAll_CheckState");
+
+IF
+StoryEvent((CHARACTERGUID)_Player, "LeaderLib_ChainAll_CheckState")
+THEN
+LeaderLib_Timers_CancelObjectTimer(_Player, "Timers_LeaderLib_LifeHacks_ClearChainChanged");
+
+IF
+StoryEvent((CHARACTERGUID)_Player, "LeaderLib_ChainAll_CheckState")
+AND
+NOT DB_LeaderLib_LifeHacks_ChainChanged(_Player, _)
+AND
+CharacterGetReservedUserID(_Player, _UserID)
+AND
+LeaderLib_LifeHacks_QRY_AllChained(_Player, _UserID)
+THEN
+LeaderLib_LifeHacks_ChainToggle(_Player, _UserID, 0);
+
+IF
+StoryEvent((CHARACTERGUID)_Player, "LeaderLib_ChainAll_CheckState")
+AND
+DB_LeaderLib_LifeHacks_ChainChanged(_Player, _State)
+THEN
+NOT DB_LeaderLib_LifeHacks_ChainChanged(_Player, _State);
+
+IF
+SkillCast(_Player, "Shout_LeaderLib_ChainAll", _, _)
+THEN
+LeaderLib_Timers_StartObjectTimer(_Player, 250, "Timers_LeaderLib_UnchainAll_CheckState", "LeaderLib_UnchainAll_CheckState");
+
+IF
+StoryEvent((CHARACTERGUID)_Player, "LeaderLib_UnchainAll_CheckState")
+THEN
+LeaderLib_Timers_CancelObjectTimer(_Player, "Timers_LeaderLib_LifeHacks_ClearChainChanged");
+
+IF
+StoryEvent((CHARACTERGUID)_Player, "LeaderLib_UnchainAll_CheckState")
+AND
+NOT DB_LeaderLib_LifeHacks_ChainChanged(_Player, _)
+AND
+GetVarInteger(_Player, "LeaderLib_PartyCount", _Count)
+AND
+_Count > 1
+AND
+CharacterGetReservedUserID(_Player, _UserID)
+AND
+NOT LeaderLib_LifeHacks_QRY_AllChained(_Player, _UserID)
+THEN
+LeaderLib_LifeHacks_ChainToggle(_Player, _UserID, 1);
+
+IF
+StoryEvent((CHARACTERGUID)_Player, "LeaderLib_UnchainAll_CheckState")
+AND
+DB_LeaderLib_LifeHacks_ChainChanged(_Player, _State)
+THEN
+NOT DB_LeaderLib_LifeHacks_ChainChanged(_Player, _State);
+*/
 //END_REGION
 EXITSECTION
 

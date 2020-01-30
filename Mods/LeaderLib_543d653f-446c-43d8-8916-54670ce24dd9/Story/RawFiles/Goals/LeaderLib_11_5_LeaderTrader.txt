@@ -789,8 +789,8 @@ NOT DB_LeaderLib_LeaderTrader_Temp_HasNewItems(_)
 THEN
 DB_LeaderLib_LeaderTrader_Temp_HasNewItems(1);
 
-IF
-DB_Dialogs(_LeaderTrader, _Dialog)
+PROC
+LeaderLib_Traders_OnDialogSet((CHARACTERGUID)_LeaderTrader, (STRING)_Dialog)
 AND
 DB_LeaderLib_LeaderTrader((CHARACTERGUID)_LeaderTrader)
 AND

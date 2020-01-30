@@ -226,6 +226,12 @@ NOT DB_Dialogs(_Trader, _Dialog)
 THEN
 ProcRemoveAllDialogEntriesForSpeaker(_Trader);
 DB_Dialogs(_Trader, _Dialog);
+LeaderLib_Traders_OnDialogSet(_Trader, _Dialog);
+
+PROC
+LeaderLib_Traders_OnDialogSet((CHARACTERGUID)_Trader, (STRING)_Dialog)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION TRADER_PROCS

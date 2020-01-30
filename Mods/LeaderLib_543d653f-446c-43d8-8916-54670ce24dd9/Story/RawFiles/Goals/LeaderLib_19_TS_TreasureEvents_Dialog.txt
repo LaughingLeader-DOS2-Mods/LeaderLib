@@ -9,6 +9,11 @@ IF
 DB_DialogNPCs(_Instance, _Trader, _Index)
 AND
 ObjectIsCharacter((CHARACTERGUID)_Trader, 1)
+THEN
+LeaderLib_Treasure_Internal_CheckForTraderGeneration(_Trader);
+
+PROC
+LeaderLib_Treasure_Internal_CheckForTraderGeneration((CHARACTERGUID)_Trader)
 AND
 DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 AND

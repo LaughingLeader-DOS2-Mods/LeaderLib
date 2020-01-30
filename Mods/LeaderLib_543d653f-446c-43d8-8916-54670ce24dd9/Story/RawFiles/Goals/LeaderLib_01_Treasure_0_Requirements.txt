@@ -465,8 +465,8 @@ LeaderLib_Requirements_RequirementLocked(_RequirementID);
 //END_REGION
 
 //REGION MOD_REQUIREMENT
-IF
-DB_LeaderLib_Requirements_Mod(_RequirementID, _ModID, _Author)
+PROC
+LeaderLib_Requirements_CheckRequirement((STRING)_RequirementID, (STRING)_ModID, (STRING)_Author)
 AND
 NOT DB_LeaderLib_Requirements_IsUnlocked(_RequirementID)
 AND
@@ -478,8 +478,8 @@ LeaderLib_Requirements_QRY_AllMet(_RequirementID)
 THEN
 LeaderLib_Requirements_RequirementUnlocked(_RequirementID);
 
-IF
-DB_Mods_Registered(_ModID, _Author, _Version)
+PROC
+LeaderLib_Requirements_CheckRequirementsForMod((STRING)_ModID, (STRING)_Author)
 AND
 DB_GlobalFlag("LeaderLib_InitialEventFlowComplete")
 AND
@@ -490,6 +490,16 @@ AND
 LeaderLib_Requirements_QRY_AllMet(_RequirementID)
 THEN
 LeaderLib_Requirements_RequirementUnlocked(_RequirementID);
+
+IF
+DB_LeaderLib_Requirements_Mod(_RequirementID, _ModID, _Author)
+THEN
+LeaderLib_Requirements_CheckRequirement(_RequirementID, _ModID, _Author);
+
+IF
+DB_Mods_Registered(_ModID, _Author, _Version)
+THEN
+LeaderLib_Requirements_CheckRequirementsForMod(_ModID, _Author);
 //END_REGION
 EXITSECTION
 

@@ -12,7 +12,7 @@ THEN
 LeaderLib_Treasure_Internal_GenerateByFlag(_Flag, "Object");
 
 IF
-DB_GlobalFlag(_Flag)
+GlobalFlagSet(_Flag)
 THEN
 LeaderLib_Treasure_Internal_GenerateByFlag(_Flag, "Global");
 

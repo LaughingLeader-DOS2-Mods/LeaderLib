@@ -14,6 +14,11 @@ LeaderLib_Growth_Characters_Register_Skill((STRING)_ID, (INTEGER)_MinLevel, (STR
 THEN
 DB_LeaderLib_Growth_Characters_Skills(_ID, _MinLevel, _Skill, _MatchType, _MatchValue);
 
+IF
+DB_LeaderLib_Growth_Characters_Skills(_ID, _MinLevel, _Skill, _MatchType, _MatchValue)
+THEN
+LeaderLib_GC_Internal_SkillRegistered(_ID, _MinLevel, _Skill, _MatchType, _MatchValue);
+
 PROC
 LeaderLib_Growth_Characters_Register_Skill((STRING)_ID, (INTEGER)_MinLevel, (STRING)_Skill, (STRING)_MatchType, (STRING)_MatchValue)
 AND
@@ -45,41 +50,23 @@ LeaderLib_ToggleScripts_DisableScript("LeaderLib_TS_GrowthEvents_Character_Enabl
 //END_REGION
 
 //REGION ITERATOR_START
-QRY
-LeaderLib_Growth_Characters_QRY_NewTagAlreadyExists((STRING)_Tag)
+PROC
+LeaderLib_GC_Internal_SkillRegistered((STRING)_ID, (INTEGER)_MinLevel, (STRING)_Skill, "Tag", (STRING)_Tag)
 AND
-DB_LeaderLib_Growth_Characters_Temp_NewTags(_Tag, _TimerName, _TimerDelay)
+NOT DB_LeaderLib_Growth_Characters_Temp_NewTags(_Tag)
 THEN
-DB_NOOP(1);
+DB_LeaderLib_Growth_Characters_Temp_NewTags(_Tag);
+LeaderLib_GC_Internal_NewTagAdded(_Tag);
 
-IF
-DB_LeaderLib_Growth_Characters_Skills(_ID, _MinLevel, _Skill, "Tag", _Tag)
-AND
-NOT LeaderLib_Growth_Characters_QRY_NewTagAlreadyExists(_Tag)
-AND
-SysCount("DB_LeaderLib_Growth_Characters_Temp_NewTags", 3, _Count)
-AND
-IntegerSum(_Count, 1, _MultBy)
-AND
-IntegerProduct(_MultBy, 250, _TimerDelay)
-AND
-LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_Growth_Characters_Skills", "Timers_LeaderLib_GC_TagIter_", _Tag)
-AND
-DB_LeaderLib_StringExt_CombineResult("LeaderLib_Growth_Characters_Skills", _TimerName)
-THEN
-NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_Growth_Characters_Skills", _TimerName);
-LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Characters:NewTagAdded] Adding tag [",_Tag,"][",_TimerName,"] to [DB_LeaderLib_Growth_Characters_Temp_NewTags].");
-DB_LeaderLib_Growth_Characters_Temp_NewTags(_Tag, _TimerName, _TimerDelay);
-
-IF
-DB_LeaderLib_Growth_Characters_Temp_NewTags(_Tag, _TimerName, _TimerDelay)
+PROC
+LeaderLib_GC_Internal_NewTagAdded((STRING)_Tag)
+//DB_LeaderLib_Growth_Characters_Temp_NewTags(_Tag, _TimerName, _TimerDelay)
 AND
 GlobalGetFlag("LeaderLib_Initialized", 1)
-AND
-IntegertoString(_TimerDelay, _TimerDelayStr)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Characters:NewTagAdded(Already Initialized)] Starting character tag iterator for tag [",_Tag,"] after [",_TimerDelayStr,"] ms.");
-TimerLaunch(_TimerName, _TimerDelay);
+LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Characters:NewTagAdded(Already Initialized)] Starting character tag iterator after 250ms.");
+TimerCancel("Timers_LeaderLib_GC_StartTagIterator");
+TimerLaunch("Timers_LeaderLib_GC_StartTagIterator", 250);
 
 IF
 GlobalFlagSet("LeaderLib_Initialized")
@@ -88,20 +75,38 @@ DB_CurrentLevel(_Level)
 AND
 IsGameLevel(_Level, 1)
 AND
-DB_LeaderLib_Growth_Characters_Temp_NewTags(_Tag, _TimerName, _TimerDelay)
+SysCount("DB_LeaderLib_Growth_Characters_Temp_NewTags", 1, _Count)
 AND
-IntegertoString(_TimerDelay, _TimerDelayStr)
+_Count > 0
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Characters:NewTagAdded(JustInitialzed)] Starting character tag iterator for tag [",_Tag,"] after [",_TimerDelayStr,"] ms.");
-TimerLaunch(_TimerName, _TimerDelay);
+LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Characters:NewTagAdded(JustInitialzed)] Starting character tag iterator after 250ms.");
+TimerCancel("Timers_LeaderLib_GC_StartTagIterator");
+TimerLaunch("Timers_LeaderLib_GC_StartTagIterator", 250);
 
 IF
-TimerFinished(_TimerName)
-AND
-DB_LeaderLib_Growth_Characters_Temp_NewTags(_Tag, _TimerName, _TimerDelay)
+TimerFinished("Timers_LeaderLib_GC_StartTagIterator")
 THEN
-NOT DB_LeaderLib_Growth_Characters_Temp_NewTags(_Tag, _TimerName, _TimerDelay);
-LeaderLib_EventParser_LaunchCharacterIterator("LeaderLib_Commands_AddGrowthSkills", _Tag);
+CharacterLaunchOsirisOnlyIterator("Iterator_LeaderLib_GC_CheckForNewTags");
+TimerCancel("Timers_LeaderLib_GC_ClearNewTags");
+TimerLaunch("Timers_LeaderLib_GC_ClearNewTags", 25);
+
+IF
+StoryEvent((CHARACTERGUID)_Char, "Iterator_LeaderLib_GC_CheckForNewTags")
+AND
+DB_LeaderLib_Growth_Characters_Temp_NewTags(_Tag)
+AND
+NOT DB_LeaderLib_Growth_Characters_Temp_AddedNewSkills(_Char)
+AND
+IsTagged(_Char, _Tag, 1)
+THEN
+DB_LeaderLib_Growth_Characters_Temp_AddedNewSkills(_Char);
+LeaderLib_Growth_Characters_AddSkills(_Char);
+
+IF
+TimerFinished("Timers_LeaderLib_GC_ClearNewTags")
+THEN
+SysClear("DB_LeaderLib_Growth_Characters_Temp_NewTags", 1);
+SysClear("DB_LeaderLib_Growth_Characters_Temp_AddedNewSkills", 1);
 //END_REGION
 
 //REGION SKILLS

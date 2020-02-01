@@ -1,0 +1,25 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+IF
+GameStarted(_Region, _)
+AND
+NOT DB_LeaderLib_Dummies_MovedToLevel(_Region, S_LeaderLib_Dummy_TargetHelper_A_36069245-0e2d-44b1-9044-6797bd29bb15)
+AND
+CharacterGetHostCharacter(_Host)
+THEN
+DB_LeaderLib_Dummies_MovedToLevel(_Region, S_LeaderLib_Dummy_TargetHelper_A_36069245-0e2d-44b1-9044-6797bd29bb15);
+TeleportTo(S_LeaderLib_Dummy_TargetHelper_A_36069245-0e2d-44b1-9044-6797bd29bb15, _Host, "", 0, 1);
+
+IF
+RegionEnded(_Region)
+AND
+DB_LeaderLib_Dummies_MovedToLevel(_Region, S_LeaderLib_Dummy_TargetHelper_A_36069245-0e2d-44b1-9044-6797bd29bb15)
+THEN
+NOT DB_LeaderLib_Dummies_MovedToLevel(_Region, S_LeaderLib_Dummy_TargetHelper_A_36069245-0e2d-44b1-9044-6797bd29bb15);
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_11__Start"

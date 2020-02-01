@@ -90,6 +90,17 @@ LeaderLog_Log("DEBUG", "[LeaderLib_11_3_Autosaving:SetIntegerVariable] Loaded au
 //END_REGION
 
 //REGION INIT_TIMER
+IF
+GameStarted(_Region, 0)
+AND
+IsGameLevel(_Region, 1)
+AND
+DB_LeaderLib_Autosaving_Temp_StartAtGameLevel(1)
+THEN
+NOT DB_LeaderLib_Autosaving_Temp_StartAtGameLevel(1);
+LeaderLog_Log("DEBUG", "[LeaderLib:Autosaving:StartAtGameLevel(1)] Game level started. Starting autosaving.");
+LeaderLib_Autosaving_Start();
+
 PROC
 LeaderLib_Autosaving_Start()
 AND
@@ -117,17 +128,6 @@ IsGameLevel(_Region, 0)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Autosaving:LeaderLib_Commands_StartAutosaving] Current level is not a game level. Delaying autosaving until a game level is started.");
 DB_LeaderLib_Autosaving_Temp_StartAtGameLevel(1);
-
-IF
-GameStarted(_Region, _)
-AND
-IsGameLevel(_Region, 1)
-AND
-DB_LeaderLib_Autosaving_Temp_StartAtGameLevel(1)
-THEN
-NOT DB_LeaderLib_Autosaving_Temp_StartAtGameLevel(1);
-LeaderLog_Log("DEBUG", "[LeaderLib:Autosaving:StartAtGameLevel(1)] Game level started. Starting autosaving.");
-LeaderLib_Autosaving_Start();
 
 PROC
 LeaderLib_Autosaving_InitTimer((INTEGER)_Minutes)

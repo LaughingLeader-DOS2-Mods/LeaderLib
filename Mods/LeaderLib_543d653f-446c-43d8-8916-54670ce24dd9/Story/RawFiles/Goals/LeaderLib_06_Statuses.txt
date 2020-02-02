@@ -156,6 +156,8 @@ PROC
 LeaderLib_Statuses_Internal_ApplyPermanentStatus((CHARACTERGUID)_Character, (STRING)_Status, (STRING)_Flag)
 AND
 NOT DB_LeaderLib_Statuses_PermanentStatusBlocked(_Character, _Status, _Flag)
+AND
+HasActiveStatus(_Character, _Status, 0)
 THEN
 ApplyStatus(_Character, _Status, -1.0, 1, _Character);
 
@@ -183,9 +185,7 @@ LeaderUpdater_QRY_ModIsActive(_ModID)
 AND
 ObjectGetFlag(_Character, _Flag, _IsActive)
 AND
-IntegerMax(_Force, _IsActive, _DoApply) // Force >= 1, then apply it no matter what
-AND
-_DoApply >= 1
+IntegerMax(_Force, _IsActive, 1) // Force == 1, then apply it no matter what
 THEN
 LeaderLib_Statuses_BlockPermanentStatus(_Character, _Status, _Flag);
 LeaderLib_Statuses_Internal_UpdateFlag(_Character, _Status, _Flag, 1);

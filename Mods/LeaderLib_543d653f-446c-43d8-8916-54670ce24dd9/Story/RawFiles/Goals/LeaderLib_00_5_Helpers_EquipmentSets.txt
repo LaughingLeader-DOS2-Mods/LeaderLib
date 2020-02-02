@@ -1,0 +1,114 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+//REGION REGISTERING
+PROC
+LeaderLib_EquipmentSets_Register((STRING)_ModID, (STRING)_Group, (STRING)_SetName, (INTEGER)_MinRequired, (STRING)_Bonus)
+THEN
+LeaderLib_EquipmentSets_Register(_ModID, _Group, _SetName, _MinRequired, _Bonus, 0);
+
+//LeaderLib_EquipmentSets_Register((STRING)_ModID, (STRING)_Group, (STRING)_SetName, (INTEGER)_MinRequired, (STRING)_Bonus, (INTEGER)_RegisterPermanentStatus)
+PROC
+LeaderLib_EquipmentSets_Register((STRING)_ModID, (STRING)_Group, (STRING)_SetName, (INTEGER)_MinRequired, (STRING)_Bonus, 0)
+THEN
+DB_LeaderLib_EquipmentSets_Bonuses(_ModID, _Group, _SetName, _MinRequired, _Bonus, 0);
+
+PROC
+LeaderLib_EquipmentSets_Register((STRING)_ModID, (STRING)_Group, (STRING)_SetName, (INTEGER)_MinRequired, (STRING)_Bonus, 1)
+AND
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_SetBonusFlag", _Group, "_", _SetName, "_Bonus_", _Bonus)
+AND
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_SetBonusFlag", _Flag)
+THEN
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_SetBonusFlag", _Flag);
+LeaderLib_Statuses_Register_PermanentStatus(_ModID, _Group, _Bonus, _Flag);
+DB_LeaderLib_EquipmentSets_Bonuses(_ModID, _Group, _SetName, _MinRequired, _Bonus, 1);
+//END_REGION
+
+//REGION CHANGE_SET_COUNT
+PROC
+LeaderLib_EquipmentSets_ChangeSetCount((CHARACTERGUID)_Character, (STRING)_SetName, (INTEGER)_ByAmount)
+AND
+_ByAmount > 0
+AND
+NOT DB_LeaderLib_EquipmentSets_Temp_Active(_Character, _SetName, _)
+THEN
+DB_LeaderLib_EquipmentSets_Temp_Active(_Character, _SetName, 0);
+
+// Increment or decrement the set count
+PROC
+LeaderLib_EquipmentSets_ChangeSetCount((CHARACTERGUID)_Character, (STRING)_SetName, (INTEGER)_ByAmount)
+AND
+DB_LeaderLib_EquipmentSets_Temp_Active(_Character, _SetName, _Last)
+AND
+IntegerSum(_Last, _ByAmount, _Next)
+THEN
+NOT DB_LeaderLib_EquipmentSets_Temp_Active(_Character, _SetName, _Last);
+DB_LeaderLib_EquipmentSets_Temp_Active(_Character, _SetName, _Next);
+LeaderLib_EquipmentSets_OnSetCountChanged(_Character, _SetName, _Last, _Next);
+
+//Apply bonus statuses when the min set count requirement is met
+PROC
+LeaderLib_EquipmentSets_OnSetCountChanged((CHARACTERGUID)_Character, (STRING)_SetName, (INTEGER)_Last, (INTEGER)_Next)
+AND
+DB_LeaderLib_EquipmentSets_Bonuses(_ModID, _Group, _SetName, _MinRequired, _Bonus, _AutoPermanentStatus)
+AND
+_Next >= _MinRequired
+THEN
+LeaderLib_EquipmentSets_ApplySetBonus(_Character, _SetName, _Next, _Bonus, _AutoPermanentStatus);
+
+PROC
+LeaderLib_EquipmentSets_OnSetCountChanged((CHARACTERGUID)_Character, (STRING)_SetName, (INTEGER)_Last, (INTEGER)_Next)
+AND
+_Next < _Last
+THEN
+LeaderLib_EquipmentSets_Internal_ClearSetBonuses(_Character, _SetName, _Next);
+
+// Full set unequipped
+PROC
+LeaderLib_EquipmentSets_OnSetCountChanged((CHARACTERGUID)_Character, (STRING)_SetName, (INTEGER)_Last, (INTEGER)_Next)
+AND
+_Next <= 0
+THEN
+DB_LeaderLib_EquipmentSets_Temp_Active(_Character, _SetName, _Next);
+//LeaderLib_EquipmentSets_RemoveAllSetBonuses(_Character, _SetName);
+//END_REGION
+
+//REGION APPLY_REMOVE_BONUS
+PROC
+LeaderLib_EquipmentSets_ApplySetBonus((CHARACTERGUID)_Character, (STRING)_SetName, (INTEGER)_SetCount, (STRING)_Bonus, 1)
+AND
+HasActiveStatus(_Character, _Bonus, 0)
+THEN
+LeaderLib_Statuses_ApplyPermanentStatus(_Character, _Bonus, 1);
+
+PROC
+LeaderLib_EquipmentSets_RemoveSetBonus((CHARACTERGUID)_Character, (STRING)_SetName, (INTEGER)_SetCount, (STRING)_Bonus, 1)
+THEN
+LeaderLib_Statuses_RemovePermanentStatus(_Character, _Bonus);
+//END_REGION
+
+//REGION CLEAR_BONUSES
+PROC
+LeaderLib_EquipmentSets_Internal_ClearSetBonuses((CHARACTERGUID)_Character, (STRING)_SetName, (INTEGER)_Next)
+AND
+DB_LeaderLib_EquipmentSets_Bonuses(_ModID, _Group, _SetName, _MinRequired, _Bonus, _AutoPermanentStatus)
+AND
+_MinRequired > _Next
+THEN
+LeaderLib_EquipmentSets_RemoveSetBonus(_Character, _SetName, _Next, _Bonus, _AutoPermanentStatus);
+
+PROC
+LeaderLib_EquipmentSets_RemoveAllSetBonuses((CHARACTERGUID)_Character, (STRING)_SetName)
+AND
+DB_LeaderLib_EquipmentSets_Bonuses(_ModID, _Group, _SetName, _MinRequired, _Bonus, _AutoPermanentStatus)
+THEN
+LeaderLib_EquipmentSets_RemoveSetBonus(_Character, _SetName, 0, _Bonus, _AutoPermanentStatus);
+//END_REGION
+
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

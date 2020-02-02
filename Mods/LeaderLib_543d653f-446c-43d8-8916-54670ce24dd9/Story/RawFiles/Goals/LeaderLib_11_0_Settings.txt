@@ -66,6 +66,7 @@ DB_NeutralTagIgnore("LeaderLib_Dummy");
 
 LeaderLib_Settings_SettingsInitialized();
 
+//Proc for other mods to call to register LeaderLib data
 PROC
 LeaderLib_Settings_SettingsInitialized()
 THEN

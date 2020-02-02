@@ -83,14 +83,12 @@ LeaderLib_Requirements_Add_RegionRequirement("LeaderLib_RegionIsDebugLevel", "Te
 
 LeaderLib_Trader_Register_StartingGold("LeaderLib.LeaderTrader", "TestLevel_LL_LeaderLib", 20000);
 LeaderLib_Trader_Register_StartingGold("LeaderLib.LeaderTrader", "TUT_Tutorial_A", 50);
-LeaderLib_Trader_Register_StartingGold("LeaderLib.LeaderTrader", "FJ_FortJoy_Main", 100);
-/*
+LeaderLib_Trader_Register_StartingGold("LeaderLib.LeaderTrader", "FJ_FortJoy_Main", 1200);
 LeaderLib_Trader_Register_StartingGold("LeaderLib.LeaderTrader", "FJ_FortJoy_Main", 4000, "LeaderLib_LeaderTrader_PartyFoundSeekerCamp");
 LeaderLib_Trader_Register_StartingGold("LeaderLib.LeaderTrader", "LV_HoE_Main", 4500);
 LeaderLib_Trader_Register_StartingGold("LeaderLib.LeaderTrader", "RC_Main", 5000);
 LeaderLib_Trader_Register_StartingGold("LeaderLib.LeaderTrader", "CoS_Main", 10000);
 LeaderLib_Trader_Register_StartingGold("LeaderLib.LeaderTrader", "Arx_Main", 13000);
-*/
 
 LeaderLib_Treasure_Register_TreasureToTrader("LeaderLib.LeaderTrader.Misc", "LeaderLib.LeaderTrader");
 LeaderLib_Treasure_Register_TreasureToTrader("LeaderLib.LeaderTrader.ModItems", "LeaderLib.LeaderTrader");

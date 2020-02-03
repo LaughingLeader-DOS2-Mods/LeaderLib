@@ -1142,6 +1142,13 @@ AND
 IntegertoString(_Int, _IntStr)
 THEN
 LeaderLog_Log("DEBUG", "[Leaderib:Debug:MinTest] Int: [",_IntStr,"] (3592446025 -> Real -> Int)");
+
+/* [OSITOOLS_ONLY]
+IF
+TextEventSet("leaderlib_tracehit")
+THEN
+LeaderLib_Helper_FlipGlobalFlag("LeaderLib_Debug_Tracing_Hit");
+*/
 //END_REGION
 
 //REGION SKILLS_ADDED

@@ -47,7 +47,6 @@ LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_LeaveActionItemFix", "L
 
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_ForceEvents", "LeaderLib_Force_EnableEvents");
 
-LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Debug", "LeaderLib_IsEditorMode");
 
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Autosaving", "LeaderLib_AutosavingEnabled");
 
@@ -58,6 +57,9 @@ LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_SummonEvents_Item", "Le
 LeaderLib_ToggleScripts_Register_ObjectScript("LeaderLib_19_TS_Auras_TurnAura", "LeaderLib_Auras_TurnAuraEnabled", 0);
 LeaderLib_ToggleScripts_Register_ObjectScript("LeaderLib_19_TS_Auras_TimerAura", "LeaderLib_Auras_TimerAuraEnabled", 0);
 
+//Debug
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Debug_General", "LeaderLib_IsEditorMode");
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Debug_HitTracing", "LeaderLib_Debug_Tracing_Hit");
 //END_REGION
 
 //REGION UPDATE_SCRIPT_DISABLE

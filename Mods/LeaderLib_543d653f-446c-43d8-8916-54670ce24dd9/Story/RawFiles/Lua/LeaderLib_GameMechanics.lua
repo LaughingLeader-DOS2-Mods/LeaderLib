@@ -16,6 +16,7 @@ local damage_types = {
 LeaderLib.Data["DamageTypes"] = damage_types
 
 local function ReduceDamage(target, attacker, handlestr, reduction_str)
+    if reduction_str == nil then reduction_str = "0.5" end
     local handle = tonumber(handlestr)
     local reduction = tonumber(reduction_str)
 	Ext.Print("[LeaderLib_GameMechanics.lua:RedirectDamage] Reducing damage to ("..reduction_str..") of total. Handle("..handlestr.."). Target(",target,") Attacker(",attacker,")")
@@ -33,7 +34,27 @@ local function ReduceDamage(target, attacker, handlestr, reduction_str)
 	return success
 end
 
+local function IncreaseDamage(target, attacker, handlestr, increase_str)
+    if increase_str == nil then increase_str = "0.10" end
+    local handle = tonumber(handlestr)
+    local increase_amount = tonumber(increase_str)
+	Ext.Print("[LeaderLib_GameMechanics.lua:IncreaseDamage] Increasing damage by ("..increase_str.."). Handle("..handlestr.."). Target(",target,") Attacker(",attacker,")")
+	local success = false
+    for k,v in pairs(damage_types) do
+        local damage = NRD_HitStatusGetDamage(target, handle, v)
+        if damage ~= nil and damage > 0 then
+            local increased_damage = damage + math.ceil(damage * increase_amount)
+            NRD_HitStatusClearDamage(target, handle, v)
+            NRD_HitStatusAddDamage(target, handle, v, increased_damage)
+			Ext.Print("[LeaderLib_GameMechanics.lua:IncreaseDamage] Increasing damage: "..tostring(damage).." => "..tostring(increased_damage).." for type: "..v)
+			success = true
+        end
+	end
+	return success
+end
+
 local function RedirectDamage(blocker, target, attacker, handlestr, reduction_str)
+    if reduction_str == nil then reduction_str = "1.0" end
     local handle = tonumber(handlestr)
     local reduction = tonumber(reduction_str)
     --if CanRedirectHit(target, handle, hit_type) then -- Ignore surface, DoT, and reflected damage
@@ -146,6 +167,7 @@ end
 
 LeaderLib.Game = {
 	ReduceDamage = ReduceDamage,
+	IncreaseDamage = IncreaseDamage,
 	RedirectDamage = RedirectDamage,
     StoreSkillData = StoreSkillData,
     StoreSkillSlots = StoreSkillSlots,

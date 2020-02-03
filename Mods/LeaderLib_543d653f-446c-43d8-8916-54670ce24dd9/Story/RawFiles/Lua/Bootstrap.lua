@@ -93,11 +93,11 @@ function LeaderUpdater_Ext_ModUpdated(id,author,past_version,new_version,uuid)
 	end
 end
 
-local GameSessionLoad = function ()
+local function GameSessionLoad()
 	Ext.Print("[LeaderLib:Bootstrap.lua] Session is loading.")
 end
 
-local ModuleLoading = function ()
+local function ModuleLoading()
 	Ext.Print("[LeaderLib:Bootstrap.lua] Module is loading.")
 end
 

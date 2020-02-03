@@ -47,7 +47,6 @@ LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_LeaveActionItemFix", "L
 
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_ForceEvents", "LeaderLib_Force_EnableEvents");
 
-
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Autosaving", "LeaderLib_AutosavingEnabled");
 
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_SummonEvents_Character", "LeaderLib_SummonEvents_Character_Enabled");

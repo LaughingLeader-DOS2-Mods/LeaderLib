@@ -375,6 +375,7 @@ GetPosition(_Caster, _x, _y, _z)
 AND
 TemporaryCharacterCreateAtPosition(_x, _y, _z, "LeaderLib_SkillDummy_94668062-11ea-4ecf-807c-4cc225cbb236", 0, _Dummy)
 THEN
+SetTag(_Dummy, "LeaderLib_TemporaryCharacter");
 LeaderLib_Skills_Internal_TransformDummy(_Dummy, _Caster, _CopyStats, _CopyEquipment);
 LeaderLib_Skills_Internal_PrepareDummyStats(_Dummy, _Caster, _CopyStats, _CopyEquipment);
 ObjectSetFlag(_Dummy, "LeaderLib_IsSkillDummy", 0);
@@ -431,6 +432,7 @@ LeaderLib_Skills_CreateTargetDummy((STRING)_ID, (REAL)_x, (REAL)_y, (REAL)_z, (S
 AND
 TemporaryCharacterCreateAtPosition(_x, _y, _z, "LeaderLib_SkillDummy_94668062-11ea-4ecf-807c-4cc225cbb236", 0, _Dummy)
 THEN
+SetTag(_Dummy, "LeaderLib_TemporaryCharacter");
 LeaderLib_Skills_Internal_SetTargetDummyID(_ID, _Dummy);
 SetVarInteger(_Dummy, "LeaderLib_TargetDummyTimeout", _Timeout);
 SetVarString(_Dummy, "LeaderLib_TargetDummyReadyEvent", _ReadyEvent);

@@ -17,6 +17,7 @@ GetPosition(_AtObject, _x,_y,_z)
 AND
 TemporaryCharacterCreateAtPosition(_x,_y,_z,"LeaderLib_GeneratorDummy_24a5d60b-680b-4fbc-9b2c-19061a261297", 0, _Dummy)
 THEN
+SetTag(_Dummy, "LeaderLib_TemporaryCharacter");
 SetStoryNpc(_Dummy, 1);
 CharacterSetDetached(_Dummy, 1);
 LeaderLog_Log("DEBUG", "[LeaderLib:TreasureSystem:CreateGeneratorDummy] Generator dummy created. Set ID to [",_DummyID,"].");

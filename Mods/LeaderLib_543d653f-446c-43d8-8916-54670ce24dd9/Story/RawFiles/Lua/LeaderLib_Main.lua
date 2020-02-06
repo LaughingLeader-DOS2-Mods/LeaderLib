@@ -90,7 +90,7 @@ local function PrintAttributes(char)
 end
 
 local function PrintTest(str)
-	DebugBreak("[LeaderLib:Lua:PrintTest] " .. str)
+	NRD_DebugLog("[LeaderLib:Lua:PrintTest] " .. str)
 end
 
 local function Register_Mod_Table(tbl)

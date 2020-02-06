@@ -104,6 +104,8 @@ LeaderLib_Autosaving_Start();
 PROC
 LeaderLib_Autosaving_Start()
 AND
+GlobalGetFlag("LeaderLib_IsEditorMode", 0)
+AND
 NOT DB_LeaderLib_AutoSaving_Temp_TimerStarted(1)
 AND
 DB_CurrentLevel(_Level)
@@ -119,6 +121,8 @@ LeaderLib_Autosaving_InitTimer(_Minutes);
 
 PROC
 LeaderLib_Autosaving_Start()
+AND
+GlobalGetFlag("LeaderLib_IsEditorMode", 0)
 AND
 NOT DB_LeaderLib_AutoSaving_Temp_TimerStarted(1)
 AND
@@ -139,6 +143,8 @@ TimerCancel("LeaderLib_Timers_Autosaving");
 
 PROC
 LeaderLib_Autosaving_InitTimer((INTEGER)_Minutes)
+AND
+GlobalGetFlag("LeaderLib_IsEditorMode", 0)
 THEN
 DB_LeaderLib_Autosaving_Temp_Countdown(_Minutes);
 LeaderLib_Autosaving_StartTimer();

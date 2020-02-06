@@ -18,6 +18,7 @@ String(_Character, _CharacterStr)
 THEN
 DB_IsPlayer(_Character);
 LeaderLog_Log("DEBUG", "[LeaderLib_19_TS_Debug:CharacterJoinedParty] Added (",_CharacterStr,")[",_Name,"] to DB_IsPlayer.");
+SetStoryEvent(_Character, "LeaderLib_Debug_CharacterJoinedParty");
 EXITSECTION
 
 ENDEXITSECTION

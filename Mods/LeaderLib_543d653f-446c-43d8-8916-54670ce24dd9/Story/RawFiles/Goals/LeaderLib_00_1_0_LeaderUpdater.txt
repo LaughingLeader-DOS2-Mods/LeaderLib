@@ -515,6 +515,28 @@ THEN
 DB_NOOP(1);
 */
 
+/* [OSITOOLS_ONLY]
+QRY
+LeaderUpdater_QRY_ModIsActive_ByUUID((GUIDSTRING)_UUID)
+AND
+NRD_IsModLoaded(_UUID, 1)
+THEN
+DB_NOOP(1);
+*/
+
+// [BEGIN_NO_OSITOOLS]
+QRY
+LeaderUpdater_QRY_ModIsActive_ByUUID((GUIDSTRING)_UUID)
+AND
+DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID)
+AND
+DB_Mods_ActiveGoal(_ModID, _Author, _GoalTitle)
+AND
+SysIsActive(_GoalTitle)
+THEN
+DB_NOOP(1);
+// [END_NO_OSITOOLS]
+
 QRY
 LeaderUpdater_QRY_ModRegisteredActiveGoal((STRING)_ModID, (STRING)_Author)
 AND

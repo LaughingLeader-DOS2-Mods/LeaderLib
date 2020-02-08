@@ -19,13 +19,14 @@ local function ReduceDamage(target, attacker, handlestr, reduction_str)
     if reduction_str == nil then reduction_str = "0.5" end
     local handle = tonumber(handlestr)
     local reduction = tonumber(reduction_str)
-	Ext.Print("[LeaderLib_GameMechanics.lua:RedirectDamage] Reducing damage to ("..reduction_str..") of total. Handle("..handlestr.."). Target(",target,") Attacker(",attacker,")")
+	Ext.Print("[LeaderLib_GameMechanics.lua:RedirectDamage] Reducing damage to ("..tostring(reduction_str)..") of total. Handle("..tostring(handlestr).."). Target("..tostring(target)..") Attacker("..tostring(attacker)..")")
 	local success = false
     for k,v in pairs(damage_types) do
         local damage = NRD_HitStatusGetDamage(target, handle, v)
         if damage ~= nil and damage > 0 then
-            local reduced_damage = math.max(math.ceil(damage * reduction), 1)
-            NRD_HitStatusClearDamage(target, handle, v)
+            --local reduced_damage = math.max(math.ceil(damage * reduction), 1)
+            --NRD_HitStatusClearDamage(target, handle, v)
+            local reduced_damage = (damage * reduction) * -1
             NRD_HitStatusAddDamage(target, handle, v, reduced_damage)
 			Ext.Print("[LeaderLib_GameMechanics.lua:RedirectDamage] Reduced damage: "..tostring(damage).." => "..tostring(reduced_damage).." for type: "..v)
 			success = true
@@ -43,8 +44,9 @@ local function IncreaseDamage(target, attacker, handlestr, increase_str)
     for k,v in pairs(damage_types) do
         local damage = NRD_HitStatusGetDamage(target, handle, v)
         if damage ~= nil and damage > 0 then
-            local increased_damage = damage + math.ceil(damage * increase_amount)
-            NRD_HitStatusClearDamage(target, handle, v)
+            --local increased_damage = damage + math.ceil(damage * increase_amount)
+            --NRD_HitStatusClearDamage(target, handle, v)
+            local increased_damage = math.ceil(damage * increase_amount)
             NRD_HitStatusAddDamage(target, handle, v, increased_damage)
 			Ext.Print("[LeaderLib_GameMechanics.lua:IncreaseDamage] Increasing damage: "..tostring(damage).." => "..tostring(increased_damage).." for type: "..v)
 			success = true
@@ -68,8 +70,9 @@ local function RedirectDamage(blocker, target, attacker, handlestr, reduction_st
         local damage = NRD_HitStatusGetDamage(target, handle, v)
         if damage ~= nil and damage > 0 then
             local reduced_damage = math.max(math.ceil(damage * reduction), 1)
-            NRD_HitStatusClearDamage(target, handle, v)
-            NRD_HitStatusAddDamage(target, handle, v, reduced_damage)
+            --NRD_HitStatusClearDamage(target, handle, v)
+            local removed_damage = damage * -1
+            NRD_HitStatusAddDamage(target, handle, v, removed_damage)
             NRD_HitAddDamage(redirected_hit, v, reduced_damage)
             Ext.Print("[LeaderLib_GameMechanics.lua:RedirectDamage] Redirected damage: "..tostring(damage).." => "..tostring(reduced_damage).." for type: "..v)
             damageRedirected = true

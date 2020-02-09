@@ -52,14 +52,14 @@ DB_LeaderLib_CC_Temp_SelectedPreset(_UserID, _Preset);
 PROC
 LeaderLib_CC_OnPresetChanged((CHARACTERGUID)_Player, (STRING)_LastPreset, (STRING)_Preset)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:CC:LeaderLib_CC_OnPresetChanged] Player's preset changed from [",_LastPreset,"] to [",_Preset,"] in Character Creation.");
+LeaderLog_Log("TRACE", "[LeaderLib:CC:LeaderLib_CC_OnPresetChanged] Player's preset changed from [",_LastPreset,"] to [",_Preset,"] in Character Creation.");
 
 PROC
 LeaderLib_CC_SetSelectedPreset((CHARACTERGUID)_Player)
 AND
 NOT GetVarFixedString(_Player, "LeaderLib_CharacterCreationPreset", _)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:CC:LeaderLib_Events_OnPresetSet] [ERROR] Variable [LeaderLib_CharacterCreationPreset] is null!");
+LeaderLog_Log("TRACE", "[LeaderLib:CC:LeaderLib_Events_OnPresetSet] [ERROR] Variable [LeaderLib_CharacterCreationPreset] is null!");
 
 IF
 RegionStarted(_Level)

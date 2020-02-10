@@ -1415,7 +1415,7 @@ IF
 RegionEnded("TestLevel_LL_LeaderLib")
 THEN
 GoalCompleted;
-SysActivateGoal("LeaderLib_20__Debug");
+SysActivateGoal("LeaderLib_90__Debug");
 
 IF
 TextEventSet("leaderlib_rancircle")
@@ -1875,4 +1875,4 @@ LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:LeaderLib_Debug_CheckIsPlayer] 
 EXITSECTION
 
 ENDEXITSECTION
-ParentTargetEdge "LeaderLib_20__Debug"
+ParentTargetEdge "LeaderLib_90__Debug"

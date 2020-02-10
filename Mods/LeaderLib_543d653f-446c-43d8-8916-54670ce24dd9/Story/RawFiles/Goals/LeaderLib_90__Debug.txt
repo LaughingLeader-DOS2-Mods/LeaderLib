@@ -7,7 +7,7 @@ KBSECTION
 IF
 GameModeStarted(_, 1)
 THEN
-DebugBreak("[LeaderLib_20__Debug:GameModeStarted] Starting [DB_Origins] registration.");
+DebugBreak("[LeaderLib_90__Debug:GameModeStarted] Starting [DB_Origins] registration.");
 LeaderLib_Debug_RegisterDebugPlayer();
 LeaderLib_Debug_Internal_RegisterDebugPlayer_Fallback();
 
@@ -22,7 +22,7 @@ LeaderLib_Debug_Internal_RegisterDebugPlayer_Fallback()
 AND
 NOT DB_Origins(_)
 THEN
-DebugBreak("[LeaderLib_20__Debug:RegisterDebugPlayer_Fallback] No character found in [DB_Origins]. Adding default dummy.");
+DebugBreak("[LeaderLib_90__Debug:RegisterDebugPlayer_Fallback] No character found in [DB_Origins]. Adding default dummy.");
 DB_Origins((CHARACTERGUID)S_GLO_CharacterCreationDummy_001_da072fe7-fdd5-42ae-9139-8bd4b9fca406);
 
 // Add racial skills outside of race presets
@@ -138,7 +138,7 @@ DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_debug_versionstring"
 AND
 LeaderLib_StringExt_QRY_VersionIsLessThan(_VersionString, 2,0,0,0)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib_20__Debug:] Version (",_VersionString,") is less than 2.0.0.0");
+LeaderLog_Log("DEBUG", "[LeaderLib_90__Debug:] Version (",_VersionString,") is less than 2.0.0.0");
 
 IF
 TextEventSet("leaderlib_debug_versionstring")
@@ -147,7 +147,7 @@ DB_LeaderLib_Recon_Temp_CommandParameters_String("leaderlib_debug_versionstring"
 AND
 NOT LeaderLib_StringExt_QRY_VersionIsLessThan(_VersionString, 2,0,0,0)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib_20__Debug:] Version (",_VersionString,") is not less than 2.0.0.0?");
+LeaderLog_Log("DEBUG", "[LeaderLib_90__Debug:] Version (",_VersionString,") is not less than 2.0.0.0?");
 
 IF
 TextEventSet("leaderlib_debug_versionstring")
@@ -169,7 +169,7 @@ AND
 DB_LeaderLib_Array_Temp_LastEntry("LeaderLib_Debug_ArrayTest", _Index, _Value)
 THEN
 NOT DB_LeaderLib_Array_Temp_LastEntry("LeaderLib_Debug_ArrayTest", _Index, _Value);
-LeaderLog_Log("DEBUG", "[LeaderLib_20__Debug:TextEventSet(leaderlib_debug_arraytest)] Removed '(",_Value,")'");
+LeaderLog_Log("DEBUG", "[LeaderLib_90__Debug:TextEventSet(leaderlib_debug_arraytest)] Removed '(",_Value,")'");
 LeaderLib_Array_ClearArray("LeaderLib_Debug_ArrayTest");
 EXITSECTION
 

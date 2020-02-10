@@ -63,16 +63,32 @@ LeaderLib_Traders_QRY_CantSit((STRING)_TraderID, (STRING)_Level)
 AND
 DB_LeaderLib_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID)
 AND
+LeaderLib_Traders_QRY_CantSit(_TraderID, _Level, _Seat, _RequirementID)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Traders_QRY_CantSit((STRING)_TraderID, (STRING)_Level, (ITEMGUID)_Seat, (STRING)_RequirementID)
+AND
 ObjectExists(_Seat, 0)
 THEN
 DB_NOOP(1);
 
 QRY
-LeaderLib_Traders_QRY_CantSit((STRING)_TraderID, (STRING)_Level)
-AND
-DB_LeaderLib_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID)
+LeaderLib_Traders_QRY_CantSit((STRING)_TraderID, (STRING)_Level, (ITEMGUID)_Seat, (STRING)_RequirementID)
 AND
 ObjectExists(_Seat, 1)
+AND
+ItemIsDestroyed(_Seat, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Traders_QRY_CantSit((STRING)_TraderID, (STRING)_Level, (ITEMGUID)_Seat, (STRING)_RequirementID)
+AND
+ObjectExists(_Seat, 1)
+AND
+ItemIsDestroyed(_Seat, 0)
 AND
 NOT LeaderLib_Requirements_QRY_AllMet(_RequirementID)
 THEN
@@ -1155,6 +1171,8 @@ AND
 DB_LeaderLib_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID)
 AND
 ObjectExists(_Seat, 1)
+AND
+ItemIsDestroyed(_Seat, 0)
 THEN
 DB_NOOP(1);
 
@@ -1173,11 +1191,25 @@ LeaderLib_Traders_SetSeat(_Trader, _TraderID, _Level);
 PROC
 LeaderLib_Traders_SetSeat((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
 AND
+DB_LeaderLib_Traders_BlockSitting(_TraderID, _Level)
+THEN
+ClearVarObject(_Trader, "Seat");
+
+PROC
+LeaderLib_Traders_SetSeat((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
+AND
 NOT DB_LeaderLib_Traders_BlockSitting(_TraderID, _Level)
 AND
 DB_LeaderLib_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID)
+THEN
+LeaderLib_Traders_Internal_TrySetSeat(_Trader, _TraderID, _Level, _Seat, _RequirementID);
+
+PROC
+LeaderLib_Traders_Internal_TrySetSeat((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level, (ITEMGUID)_Seat, (STRING)_RequirementID)
 AND
 ObjectExists(_Seat, 1)
+AND
+ItemIsDestroyed(_Seat, 0)
 AND
 LeaderLib_Requirements_QRY_AllMet(_RequirementID)
 THEN
@@ -1186,9 +1218,18 @@ CharacterUseItem(_Trader, _Seat, "LeaderLib_Events_OnTraderSit");
 LeaderLog_Log("DEBUG", "[LeaderLib:DynamicTraders] Set seat value on trader ", _TraderID);
 
 PROC
-LeaderLib_Traders_SetSeat((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level)
+LeaderLib_Traders_Internal_TrySetSeat((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level, (ITEMGUID)_Seat, (STRING)_RequirementID)
 AND
-DB_LeaderLib_Traders_BlockSitting(_TraderID, _Level)
+ObjectExists(_Seat, 0)
+THEN
+ClearVarObject(_Trader, "Seat");
+
+PROC
+LeaderLib_Traders_Internal_TrySetSeat((CHARACTERGUID)_Trader, (STRING)_TraderID, (STRING)_Level, (ITEMGUID)_Seat, (STRING)_RequirementID)
+AND
+ObjectExists(_Seat, 1)
+AND
+ItemIsDestroyed(_Seat, 1)
 THEN
 ClearVarObject(_Trader, "Seat");
 //END_REGION

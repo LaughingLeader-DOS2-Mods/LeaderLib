@@ -402,6 +402,10 @@ AND
 DB_LeaderLib_Traders_Active(_LeaderTrader, _TraderID, _Level)
 AND
 DB_LeaderLib_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID)
+AND
+ObjectExists(_Seat, 1)
+AND
+ItemIsDestroyed(_Seat, 0)
 THEN
 //Reset the chair logic
 ClearVarObject(_LeaderTrader, "Seat");

@@ -313,5 +313,19 @@
 			"StringConcatenate(_Msg6, _Str8, _Msg7)",
 		],
 		"description": "Concatenates strings 7 times."
+	},
+	"StoryGoalTemplate":{
+		"prefix": "storygoal",
+		"body": [
+			"Version 1",
+			"SubGoalCombiner SGC_AND",
+			"INITSECTION",
+			"KBSECTION",
+			"",
+			"EXITSECTION",
+			"ENDEXITSECTION",
+			"ParentTargetEdge \"$1\"",
+		],
+		"description": "Basic story goal contents."
 	}
 }

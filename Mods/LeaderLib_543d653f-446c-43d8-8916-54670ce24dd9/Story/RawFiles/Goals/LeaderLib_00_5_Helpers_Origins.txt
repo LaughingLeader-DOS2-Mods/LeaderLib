@@ -33,6 +33,13 @@ THEN
 DB_PolymorphTags(_Char, _PolymorphPreservedTag);
 
 PROC
+LeaderLib_Origins_Register_Tags((CHARACTERGUID)_Char, (STRING)_ProfessionTag1, (STRING)_ProfessionTag2, (STRING)_PolymorphPreservedTag)
+AND
+NOT DB_CurrentLevel(_)
+THEN
+DB_LeaderLib_Origins_Temp_ApplyProfessionTags(_Char);
+
+PROC
 LeaderLib_Origins_Register_Dialog_Default((CHARACTERGUID)_Char, (STRING)_DefaultRecruitmentDialog, (STRING)_DefaultInPartyDialog)
 THEN
 DB_OriginRecruitmentDialog(_Char, _DefaultRecruitmentDialog);
@@ -44,6 +51,15 @@ THEN
 LeaderLib_Origins_Register_Main(_Char, _NpcAlignment, _DefaultFaction);
 LeaderLib_Origins_Register_Tags(_Char, _ProfessionTag1, _ProfessionTag2, _PolymorphPreservedTag);
 LeaderLib_Origins_Register_Dialog_Default(_Char, _DefaultRecruitmentDialog, _DefaultInPartyDialog);
+
+PROC
+LeaderLib_Origins_Internal_ApplyProfessionTags()
+AND
+DB_LeaderLib_Origins_Temp_ApplyProfessionTags(_Char)
+AND
+DB_OriginProfessionTags(_Char, _ProfessionTag)
+THEN
+SetTag(_Char, _ProfessionTag);
 EXITSECTION
 
 ENDEXITSECTION

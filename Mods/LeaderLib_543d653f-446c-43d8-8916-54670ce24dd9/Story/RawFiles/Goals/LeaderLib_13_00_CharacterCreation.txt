@@ -3,14 +3,13 @@ SubGoalCombiner SGC_AND
 INITSECTION
 
 KBSECTION
-
 IF
 RegionStarted(_Level)
 AND
 IsCharacterCreationLevel(_Level, 1)
 THEN
+LeaderLib_Origins_Internal_ApplyProfessionTags();
 GoalCompleted;
-
 EXITSECTION
 
 ENDEXITSECTION

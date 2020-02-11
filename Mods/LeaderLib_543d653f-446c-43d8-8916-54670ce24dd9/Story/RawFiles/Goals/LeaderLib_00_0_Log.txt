@@ -405,12 +405,7 @@ LeaderLog_Internal_RunString((STRING)_Type, (STRING)_Str)
 AND
 LeaderLog_QRY_IsDebugType(_Type)
 THEN
-// [BEGIN_NO_OSITOOLS]
 DebugBreak(_Str);
-// [END_NO_OSITOOLS]
-/* [OSITOOLS_ONLY]
-NRD_DebugLog(_Str);
-*/
 
 PROC
 LeaderLog_Internal_RunString("COMBAT", (STRING)_Str)
@@ -881,12 +876,7 @@ LeaderLog_Internal_RunStringOnTarget((STRING)_Type, (GUIDSTRING)_Target, (STRING
 AND
 LeaderLog_QRY_IsDebugType(_Type)
 THEN
-// [BEGIN_NO_OSITOOLS]
 DebugBreak(_Str);
-// [END_NO_OSITOOLS]
-/* [OSITOOLS_ONLY]
-NRD_DebugLog(_Str);
-*/
 
 PROC
 LeaderLog_Internal_RunStringOnTarget((STRING)_Type, (GUIDSTRING)_Target, (STRING)_Str)

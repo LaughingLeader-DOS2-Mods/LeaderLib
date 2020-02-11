@@ -245,6 +245,7 @@ local function parse_mod_data(modid, author, tbl)
 			else
 				GlobalSetFlag(flag)
 			end
+			GlobalSettings_StoreGlobalFlag(modid, author, flag, 0)
 		end
 	end
 	local integers = tbl["integers"]
@@ -258,6 +259,7 @@ local function parse_mod_data(modid, author, tbl)
 				Osi.LeaderLib_GlobalSettings_SetIntegerVariable(modid, author, name, math.floor(num))
 				Ext.Print("[LeaderLib:GlobalSettings.lua] Found global integer variable ("..name..")["..v.."] for mod (".. modid.."|"..author..")")
 			end
+			GlobalSettings_StoreGlobalInteger(modid, author, name, 0)
 		end
 	end
 	return true

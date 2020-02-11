@@ -25,6 +25,11 @@ NOT DB_LeaderLib_DictionarySort_Temp_StringQueue(_DictionaryID, _ID, _StringEntr
 THEN
 DB_LeaderLib_DictionarySort_Temp_StringQueue(_DictionaryID, _ID, _StringEntry);
 
+PROC
+LeaderLib_DictionarySort_AddTarget((STRING)_DictionaryID, (GUIDSTRING)_Object)
+THEN
+DB_LeaderLib_DictionarySort_Temp_Target(_DictionaryID, _Object);
+
 QRY
 LeaderLib_DictionarySort_QRY_QueueEmpty((STRING)_DictionaryID)
 AND
@@ -96,6 +101,8 @@ LeaderLog_Log("DEBUG", "[LeaderLib:DictionarySort:StopSorting] Sorting stopped f
 PROC
 LeaderLib_DictionarySort_SortingComplete((STRING)_DictionaryID)
 AND
+NOT DB_LeaderLib_DictionarySort_Temp_Target(_DictionaryID, _)
+AND
 DB_LeaderLib_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate)
 AND
 NOT DB_LeaderLib_DictionarySort_SortingComplete(_DictionaryID)
@@ -103,6 +110,20 @@ THEN
 DB_LeaderLib_DictionarySort_SortingComplete(_DictionaryID);
 LeaderLog_Log("DEBUG", "[LeaderLib:DictionarySort:SortingComplete] Sorting complete for '",_DictionaryID,"'. Sending completion event [",_CompleteEvent,"].");
 LeaderLib_SendEvent(_CompleteEvent);
+
+PROC
+LeaderLib_DictionarySort_SortingComplete((STRING)_DictionaryID)
+AND
+DB_LeaderLib_DictionarySort_Temp_Target(_DictionaryID, _Object)
+AND
+DB_LeaderLib_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate)
+AND
+NOT DB_LeaderLib_DictionarySort_SortingComplete(_DictionaryID)
+THEN
+DB_LeaderLib_DictionarySort_SortingComplete(_DictionaryID);
+NOT DB_LeaderLib_DictionarySort_Temp_Target(_DictionaryID, _Object);
+LeaderLog_Log("DEBUG", "[LeaderLib:DictionarySort:SortingComplete] Sorting complete for '",_DictionaryID,"'. Sending completion event [",_CompleteEvent,"] to object.");
+SetStoryEvent(_Object, _CompleteEvent);
 //END_REGION
 
 //REGION TIME_TRACKING

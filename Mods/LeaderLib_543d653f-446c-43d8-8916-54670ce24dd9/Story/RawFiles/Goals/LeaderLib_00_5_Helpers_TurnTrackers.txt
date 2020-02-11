@@ -108,6 +108,29 @@ DB_LeaderLib_StringExt_CombineResult("LeaderLib_CreateIdentifierByPositionWithOb
 THEN
 NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_CreateIdentifierByPositionWithObject", _ID);
 DB_LeaderLib_Turns_Temp_NextObjectPositionID(_Object, _x, _y, _z, _CompletionEvent, _ID);
+
+QRY
+LeaderLib_Turns_Internal_QRY_CreateIdentifierByCombat((INTEGER)_CombatID, (STRING)_CompletionEvent)
+THEN
+LeaderLib_Turns_Internal_CreateIdentifierByCombat(_CombatID, _CompletionEvent);
+
+PROC
+LeaderLib_Turns_Internal_CreateIdentifierByCombat((INTEGER)_CombatID, (STRING)_CompletionEvent)
+AND
+IntegertoString(_CombatID, _CombatIDStr)
+AND
+Random(99999, _Ran)
+AND
+IntegerSum(_Ran, 12931, _RanInt)
+AND
+IntegertoString(_RanInt, _RanStr)
+AND
+LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_CreateIdentifierByCombatID", "LeaderLib_TurnTracker_", _CompletionEvent, _CombatIDStr, _RanStr)
+AND
+DB_LeaderLib_StringExt_CombineResult("LeaderLib_CreateIdentifierByCombatID", _ID)
+THEN
+NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_CreateIdentifierByCombatID", _ID);
+DB_LeaderLib_Turns_Temp_NextCombatID(_CombatID, _CompletionEvent, _ID);
 //END_REGION
 
 //REGION MAIN_DB
@@ -230,8 +253,10 @@ LeaderLib_Turns_OnTurnCounterComplete_Object(_ID, _Object, _CompletionEvent);
 
 PROC
 LeaderLib_Turns_OnTurnCounterComplete_Object((STRING)_ID, (GUIDSTRING)_Object, (STRING)_CompletionEvent)
+AND
+NOT DB_LeaderLib_Turns_ActiveTracker_Data(_, _Object, _, _, _, _, _)
 THEN
-DB_NOOP(1);
+LeaderLib_ToggleScripts_DisableScriptForObject(_Object, "LeaderLib_Turns_TrackCombatObject", "LeaderLib");
 
 PROC
 LeaderLib_Turns_OnTurnCounterComplete((STRING)_ID, (STRING)_CompletionEvent)
@@ -256,8 +281,25 @@ LeaderLib_Turns_OnTurnCounterComplete_PositionWithObject(_ID, _Object, _x, _y, _
 
 PROC
 LeaderLib_Turns_OnTurnCounterComplete_PositionWithObject((STRING)_ID, (GUIDSTRING)_Object, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_CompletionEvent)
+AND
+NOT DB_LeaderLib_Turns_ActiveTracker_Data(_, _Object, _, _, _, _, _)
 THEN
-DB_NOOP(1);
+LeaderLib_ToggleScripts_DisableScriptForObject(_Object, "LeaderLib_Turns_TrackCombatObject", "LeaderLib");
+
+PROC
+LeaderLib_Turns_OnTurnCounterComplete((STRING)_ID, (STRING)_CompletionEvent)
+AND
+DB_LeaderLib_Turns_ActiveTracker_CombatData(_ID, _CombatID)
+THEN
+NOT DB_LeaderLib_Turns_ActiveTracker_CombatData(_ID, _CombatID);
+LeaderLib_Turns_OnTurnCounterComplete_Combat(_ID, _CombatID, _CompletionEvent);
+
+PROC
+LeaderLib_Turns_OnTurnCounterComplete_Combat((STRING)_ID, (INTEGER)_CombatID, (STRING)_CompletionEvent)
+AND
+NOT DB_LeaderLib_Turns_ActiveTracker_CombatData(_, _)
+THEN
+LeaderLib_ToggleScripts_DisableScript("LeaderLib_Turns_TrackCombatObject", "LeaderLib");
 //END_REGION
 
 //REGION TIMERS
@@ -286,7 +328,22 @@ NOT DB_LeaderLib_Turns_ActiveTracker_Timer(_ID);
 TimerCancel(_ID);
 //END_REGION
 
-//REGION OBJECT_BASED
+//REGION TRACK_COMBAT_BASED
+PROC
+LeaderLib_Turns_TrackCombat((INTEGER)_CombatID, (STRING)_CompletionEvent, (INTEGER)_StartingTurns)
+AND
+LeaderLib_Turns_Internal_QRY_CreateIdentifierByCombat(_CombatID, _CompletionEvent)
+AND
+DB_LeaderLib_Turns_Temp_NextCombatID(_CombatID, _CompletionEvent, _ID)
+THEN
+NOT DB_LeaderLib_Turns_Temp_NextCombatID(_CombatID, _CompletionEvent, _ID);
+LeaderLib_Turns_Internal_CreateTracker(_ID, _CompletionEvent, _StartingTurns);
+DB_LeaderLib_Turns_ActiveTracker_CombatData(_ID, _CombatID);
+DB_LeaderLib_Turns_ActiveTracker_Combat(_ID, _CombatID);
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_Turns_TrackCombat", "LeaderLib");
+//END_REGION
+
+//REGION TRACK_OBJECT_BASED
 PROC
 LeaderLib_Turns_TrackForObject((GUIDSTRING)_Object, (STRING)_CompletionEvent, (INTEGER)_StartingTurns, (INTEGER)_AnyTurns)
 AND
@@ -297,6 +354,7 @@ THEN
 NOT DB_LeaderLib_Turns_Temp_NextObjectID(_Object, _CompletionEvent, _ID);
 LeaderLib_Turns_Internal_CreateTracker(_ID, _CompletionEvent, _StartingTurns);
 DB_LeaderLib_Turns_ActiveTracker_Data(_ID, _Object, 0.0, 0.0, 0.0, "Object", _AnyTurns);
+LeaderLib_ToggleScripts_EnableScriptForObject(_Object, "LeaderLib_Turns_TrackCombatObject", "LeaderLib");
 LeaderLib_Turns_Internal_CreateWatcherForObject(_ID, _Object, _CompletionEvent, _AnyTurns);
 
 PROC
@@ -314,7 +372,7 @@ THEN
 LeaderLib_Turns_Internal_CreateTimerWatcher(_ID);
 //END_REGION
 
-//REGION POSITION_BASED_NONCOMBAT
+//REGION TRACK_POSITION_BASED_NONCOMBAT
 PROC
 LeaderLib_Turns_TrackForPosition((REAL)_x, (REAL)_y, (REAL)_z, (STRING)_CompletionEvent, (INTEGER)_StartingTurns, (INTEGER)_UseTimer)
 AND
@@ -333,7 +391,7 @@ THEN
 LeaderLib_Turns_Internal_CreateTimerWatcher(_ID);
 //END_REGION
 
-//REGION POSITION_BASED_COMBAT
+//REGION TRACK_POSITION_BASED_COMBAT
 PROC
 LeaderLib_Turns_TrackForPositionInCombat((REAL)_x, (REAL)_y, (REAL)_z, (STRING)_CompletionEvent, (INTEGER)_StartingTurns, (INTEGER)_CombatID)
 AND
@@ -362,7 +420,7 @@ DB_LeaderLib_Turns_Temp_ListenForCombat(_ID);
 LeaderLib_Turns_Internal_CreateTimerWatcher(_ID);
 //END_REGION
 
-//REGION POSITION_COMBAT_WITH_SOURCE
+//REGION TRACK_POSITION_COMBAT_WITH_SOURCE
 PROC
 LeaderLib_Turns_TrackPositionWithObject((GUIDSTRING)_Object, (REAL)_x, (REAL)_y, (REAL)_z, (STRING)_CompletionEvent, (INTEGER)_StartingTurns)
 AND
@@ -403,6 +461,16 @@ LeaderLib_Turns_DecreaseCounter(_ID);
 PROC
 LeaderLib_Combat_Clear_ActiveTurn((INTEGER)_CombatID, (GUIDSTRING)_Object)
 AND
+DB_LeaderLib_Turns_ActiveTracker_CombatData(_ID, _CombatID)
+AND
+NOT DB_LeaderLib_Turns_Temp_CounterDecremented(_ID)
+THEN
+DB_LeaderLib_Turns_Temp_CounterDecremented(_ID);
+LeaderLib_Turns_DecreaseCounter(_ID);
+
+PROC
+LeaderLib_Combat_Clear_ActiveTurn((INTEGER)_CombatID, (GUIDSTRING)_Object)
+AND
 DB_LeaderLib_Turns_Temp_CounterDecremented(_ID)
 THEN
 NOT DB_LeaderLib_Turns_Temp_CounterDecremented(_ID);
@@ -410,21 +478,11 @@ NOT DB_LeaderLib_Turns_Temp_CounterDecremented(_ID);
 
 //REGION COMBAT_STARTED
 IF
-ObjectEnteredCombat(_Object, _CombatID)
-AND
-DB_LeaderLib_Turns_ActiveTracker_Data(_ID, _Object, _, _, _, "Object", _AnyTurns)
-AND
-DB_LeaderLib_Turns_ActiveTracker_Timer(_ID)
-THEN
-NOT DB_LeaderLib_Turns_ActiveTracker_Timer(_ID);
-TimerCancel(_ID);
-DB_LeaderLib_Turns_ActiveTracker_Combat(_ID, _CombatID);
-
-IF
 CombatStarted(_CombatID)
 AND
 NOT SysCount("DB_LeaderLib_Turns_Temp_ListenForCombat", 1, 0)
 THEN
+TimerCancel("LeaderLib_Timers_Turns_CombatStarted");
 TimerLaunch("LeaderLib_Timers_Turns_CombatStarted", 50);
 
 IF

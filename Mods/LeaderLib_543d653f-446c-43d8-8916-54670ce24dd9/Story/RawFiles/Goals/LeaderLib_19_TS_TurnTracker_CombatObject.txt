@@ -1,0 +1,19 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+IF
+ObjectEnteredCombat(_Object, _CombatID)
+AND
+DB_LeaderLib_Turns_ActiveTracker_Data(_ID, _Object, _, _, _, "Object", _AnyTurns)
+AND
+DB_LeaderLib_Turns_ActiveTracker_Timer(_ID)
+THEN
+NOT DB_LeaderLib_Turns_ActiveTracker_Timer(_ID);
+TimerCancel(_ID);
+DB_LeaderLib_Turns_ActiveTracker_Combat(_ID, _CombatID);
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

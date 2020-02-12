@@ -1500,7 +1500,7 @@
             </property>
             <property id="d1fe8ba8-a5d8-4feb-853a-e0ead4913148">
               <data>
-                <datum platform="00000000-0000-0000-0000-000000000000" lod="00000000-0000-0000-0000-000000000000" value="3" />
+                <datum platform="00000000-0000-0000-0000-000000000000" lod="00000000-0000-0000-0000-000000000000" value="7" />
               </data>
             </property>
             <property id="e7011b2d-8add-4e29-998c-3a7e4d2c0559">
@@ -4541,7 +4541,6 @@
       <ids>
         <id value="6" />
       </ids>
-      <track name="Track" muted="False" locked="False" mutestateoverride="None" />
       <track name="Track" muted="False" locked="False" mutestateoverride="None">
         <component class="Sound" start="0" end="2.219683" instancename="d8c19a42-57c5-440d-a5ba-afdea5f26de3">
           <properties>
@@ -4562,7 +4561,7 @@
             </property>
             <property id="d9c8f8f4-03ef-4a81-afcc-9979213be536">
               <data>
-                <datum platform="00000000-0000-0000-0000-000000000000" lod="00000000-0000-0000-0000-000000000000" value="Cont_Chest_A_Destroy_01 &lt;303f6590-436a-4839-bf8e-5f43afaa68d6&gt;" />
+                <datum platform="00000000-0000-0000-0000-000000000000" lod="00000000-0000-0000-0000-000000000000" value="LeaderLib_UI_Game_Party_Split &lt;5727a9f1-4532-4c3c-82c3-a205071b5ca7&gt;" />
               </data>
             </property>
             <property id="83f4fce2-68bb-41eb-b2fe-9082b8fc9147">
@@ -4572,7 +4571,7 @@
             </property>
             <property id="d719a367-01a3-44b3-a94d-830503c01095">
               <data>
-                <datum platform="00000000-0000-0000-0000-000000000000" lod="00000000-0000-0000-0000-000000000000" value="20" />
+                <datum platform="00000000-0000-0000-0000-000000000000" lod="00000000-0000-0000-0000-000000000000" value="60" />
               </data>
             </property>
             <propertygroup id="f83c9169-77b6-48e5-a88a-947661b27479" name="Property Group" collapsed="False" />

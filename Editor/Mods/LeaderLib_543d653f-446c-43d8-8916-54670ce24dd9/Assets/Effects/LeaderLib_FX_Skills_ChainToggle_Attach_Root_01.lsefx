@@ -4733,7 +4733,7 @@
       <ids>
         <id value="6" />
       </ids>
-      <track name="Track" muted="True" locked="False" mutestateoverride="None">
+      <track name="Track" muted="False" locked="False" mutestateoverride="None">
         <component class="Sound" start="0" end="2.219683" instancename="9f755a9a-5409-42c8-a2e6-5bdf93dbc0ea">
           <properties>
             <property id="ef1d7d1e-02b6-4548-80d9-5ef2fbcda237">
@@ -4753,7 +4753,7 @@
             </property>
             <property id="d9c8f8f4-03ef-4a81-afcc-9979213be536">
               <data>
-                <datum platform="00000000-0000-0000-0000-000000000000" lod="00000000-0000-0000-0000-000000000000" value="SE_FX_GP_ScriptedEvent_Sebille_BreakSong &lt;1ffcfbf4-8804-4a41-b247-098818d87ac1&gt;" />
+                <datum platform="00000000-0000-0000-0000-000000000000" lod="00000000-0000-0000-0000-000000000000" value="LeaderLib_UI_Game_Party_Merge &lt;9c12bbf1-83a8-4687-b9e5-39d8107779cd&gt;" />
               </data>
             </property>
             <property id="83f4fce2-68bb-41eb-b2fe-9082b8fc9147">
@@ -4763,7 +4763,7 @@
             </property>
             <property id="d719a367-01a3-44b3-a94d-830503c01095">
               <data>
-                <datum platform="00000000-0000-0000-0000-000000000000" lod="00000000-0000-0000-0000-000000000000" value="20" />
+                <datum platform="00000000-0000-0000-0000-000000000000" lod="00000000-0000-0000-0000-000000000000" value="60" />
               </data>
             </property>
             <propertygroup id="380779cc-3230-43f8-9d7b-8ce267406e37" name="Property Group" collapsed="False" />
@@ -4773,7 +4773,7 @@
           </modules>
         </component>
       </track>
-      <track name="Track" muted="False" locked="False" mutestateoverride="None">
+      <track name="Track" muted="True" locked="False" mutestateoverride="None">
         <component class="Sound" start="0" end="2.219683" instancename="ec5e6f88-11d1-479f-be4d-fcf480ce7617">
           <properties>
             <property id="ef1d7d1e-02b6-4548-80d9-5ef2fbcda237">

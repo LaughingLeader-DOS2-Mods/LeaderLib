@@ -9,3 +9,5 @@ LEADERLIB_UNDEAD_DWARF_DisplayName	Undead Dwarf
 LEADERLIB_UNDEAD_ELF_DisplayName	Undead Elf
 LEADERLIB_UNDEAD_HUMAN_DisplayName	Undead Human
 LEADERLIB_UNDEAD_LIZARD_DisplayName	Undead Lizard
+LEADERLIB_CHAIN_ALL_DisplayName	Chain All Party Members
+LEADERLIB_UNCHAIN_ALL_DisplayName	Unchain All Party Members

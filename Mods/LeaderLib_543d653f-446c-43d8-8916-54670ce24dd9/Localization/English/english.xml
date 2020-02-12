@@ -247,12 +247,14 @@
 	<content contentuid="hd5803cb0ga2cdg4823g9bc1gebcbaec5fd2f" Source="LeaderLib_Skills.lsb" Key="Shout_LeaderLib_UnchainAll_DisplayName">Unchain All</content>
 	<content contentuid="head5217fga96cg4b34gafb1geb56b80bd8e0" Source="LeaderLib_Skills.lsb" Key="Target_LeaderLib_ControlSummon_Description">Take control of a summon or follower you own.</content>
 	<content contentuid="h1c359033g2e0dg49b1g9befg63f786d3f9fc" Source="LeaderLib_Skills.lsb" Key="Target_LeaderLib_ControlSummon_DisplayName">Control Summon</content>
+	<content contentuid="hc173b9dag053dg4dbfga960g100fb29ae494" Source="LeaderLib_Statuses.lsb" Key="LEADERLIB_CHAIN_ALL_DisplayName">Chain All Party Members</content>
 	<content contentuid="h1db4b34cg358dg49a2gbaeag3cb06a86ab4c" Source="LeaderLib_Statuses.lsb" Key="LeaderLib_NEW_ITEMS_Description">Character is selling new items.</content>
 	<content contentuid="hf1c7aa42g3e2fg4338ga672g59a3a935cff4" Source="LeaderLib_Statuses.lsb" Key="LeaderLib_NEW_ITEMS_DisplayName">New Items in Stock</content>
 	<content contentuid="haee6fb94g2ea6g4f56g800dg3e49e5b131ff" Source="LeaderLib_Statuses.lsb" Key="LeaderLib_PACIFIST_Description">Character has taken a vow to avoid fighting, and will flee if pulled into combat.</content>
 	<content contentuid="hae65b472g6a61g4c8fgb05dge94cc8e853d4" Source="LeaderLib_Statuses.lsb" Key="LeaderLib_PACIFIST_DisplayName">Pacifism</content>
 	<content contentuid="h58262db3g3059g425cgb07age9b560e30cbf" Source="LeaderLib_Statuses.lsb" Key="LEADERLIB_SHAPESHIFT_Description">Character is shapeshifted.</content>
 	<content contentuid="hed9e1aaeg3fceg4d9cg87edg9a4630c24fe7" Source="LeaderLib_Statuses.lsb" Key="LEADERLIB_SHAPESHIFT_UNDEAD_Description">Character is in an undead form.</content>
+	<content contentuid="h67aa23a9g27f2g4e14gac5ag1fcd293324e4" Source="LeaderLib_Statuses.lsb" Key="LEADERLIB_UNCHAIN_ALL_DisplayName">Unchain All Party Members</content>
 	<content contentuid="h46c05d65g039dg4651gb24eg027244f86897" Source="LeaderLib_Statuses.lsb" Key="LEADERLIB_UNDEAD_DWARF_DisplayName">Undead Dwarf</content>
 	<content contentuid="h562f0a3bg4566g452eg860egb5c2ff3e750e" Source="LeaderLib_Statuses.lsb" Key="LEADERLIB_UNDEAD_ELF_DisplayName">Undead Elf</content>
 	<content contentuid="h473ddea8g74eag4433g8e19gc217b9c1e42d" Source="LeaderLib_Statuses.lsb" Key="LEADERLIB_UNDEAD_HUMAN_DisplayName">Undead Human</content>

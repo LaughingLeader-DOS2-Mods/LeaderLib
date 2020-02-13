@@ -28,7 +28,7 @@ DB_LeaderLib_GameScripts_Registered(_Group, _GoalName)
 AND
 SysStatus(_GoalName, _Status) // Hopefully fails for scripts that don't exist?
 AND
-_Status != 2
+_Status != 2 // 2 == ACTIVE
 THEN
 SysActivateGoal(_GoalName);
 EXITSECTION

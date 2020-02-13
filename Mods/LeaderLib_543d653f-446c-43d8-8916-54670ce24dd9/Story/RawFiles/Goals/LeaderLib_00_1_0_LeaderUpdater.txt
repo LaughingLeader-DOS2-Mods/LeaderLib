@@ -695,7 +695,7 @@ NRD_LuaCall("LeaderUpdater_Ext_ModUpdated", _ModID, _Author, _PastVersion, _NewV
 
 //REGION ACTIVE_FLAG
 IF
-StoryEvent(_, "LeaderLib_Initialized")
+TimerFinished("LeaderLib_Timers_LeaderLib_CheckActiveMods")
 AND
 DB_Mods_ActiveGoal(_ModID, _Author, _GoalTitle)
 AND
@@ -726,7 +726,7 @@ GlobalClearFlag(_Flag);
 //Support for mods without scripts, thanks to OsiTools
 /* [OSITOOLS_ONLY]
 IF
-StoryEvent(_, "LeaderLib_Initialized")
+TimerFinished("LeaderLib_Timers_LeaderLib_CheckActiveMods")
 AND
 DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID)
 AND

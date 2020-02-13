@@ -13,17 +13,19 @@ IntegerMax(_Editor, _IsGameLevel, 1)
 THEN
 LeaderLib_System_ResetInit();
 // This timer starts twice in the editor?
-TimerCancel("LeaderLib_Timers_LeaderLibInitialized");
-TimerLaunch("LeaderLib_Timers_LeaderLibInitialized", 1);
+TimerCancel("LeaderLib_Timers_LeaderLib_Initialized");
+TimerLaunch("LeaderLib_Timers_LeaderLib_Initialized", 1);
 
 IF
-TimerFinished("LeaderLib_Timers_LeaderLibInitialized")
+TimerFinished("LeaderLib_Timers_LeaderLib_Initialized")
 THEN
-LeaderLog_Log("TRACE", "[LeaderLib:System:TimerFinished(LeaderLib_Timers_LeaderLibInitialized)] Running default event [LeaderLib_Initialized].");
+LeaderLog_Log("TRACE", "[LeaderLib:System:TimerFinished(LeaderLib_Timers_LeaderLib_Initialized)] Running default event [LeaderLib_Initialized].");
 DB_LeaderLib_Initialized(1);
 GlobalSetFlag("LeaderLib_Initialized");
 LeaderLog_Log("DEBUG", "[LeaderLib:ModAPI] LeaderLib initialized.");
 LeaderLib_SendEvent("LeaderLib_Initialized");
+TimerCancel("LeaderLib_Timers_LeaderLib_CheckActiveMods");
+TimerLaunch("LeaderLib_Timers_LeaderLib_CheckActiveMods", 2);
 //END_REGION
 
 //REGION ENDING_EVENT

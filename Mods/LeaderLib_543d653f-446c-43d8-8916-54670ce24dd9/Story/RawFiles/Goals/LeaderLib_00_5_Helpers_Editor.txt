@@ -759,7 +759,7 @@ CharacterGetHostCharacter(_Player)
 AND
 CharacterIsControlled(_Player, 1)
 THEN
-CharacterApplyPreset(_Player, _Preset);
+LeaderLib_ApplyCharacterPreset(_Player, _Preset);
 
 IF
 TextEventSet("leaderlib_applyrace")
@@ -770,7 +770,7 @@ DB_IsPlayer(_Player)
 AND
 CharacterIsControlled(_Player, 1)
 THEN
-CharacterApplyRacePreset(_Player, _Preset);
+LeaderLib_ApplyRacePreset(_Player, _Preset);
 
 IF
 TextEventSet("leaderlib_applyhenchman")
@@ -1080,8 +1080,8 @@ AND
 CharacterIsControlled(_Player, 1)
 THEN
 CharacterSetCustomName(_Player, "Leader");
-CharacterApplyRacePreset(_Player, "Elf");
-CharacterApplyPreset(_Player, "Fighter_Act2");
+LeaderLib_ApplyRacePreset(_Player, "Elf");
+LeaderLib_ApplyCharacterPreset(_Player, "Fighter_Act2");
 //END_REGION
 
 //REGION SKILL_CAST

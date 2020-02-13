@@ -2083,6 +2083,29 @@ LeaderLib_RefreshUI_Internal_StoreSkillData((CHARACTERGUID)_Char, (STRING)_Skill
 THEN
 DB_LeaderLib_Helper_Temp_RefreshUISkill(_Char, _Skill, _Slot, _Cooldown);
 //END_REGION
+
+//REGION APPLY_PRESET_WRAPPERS
+PROC
+LeaderLib_ApplyCharacterPreset((CHARACTERGUID)_Player,(STRING)_Preset)
+THEN
+CharacterApplyPreset(_Player,_Preset);
+SetStoryEvent(_Player, "LeaderLib_PresetApplied");
+
+PROC
+LeaderLib_ApplyRacePreset((CHARACTERGUID)_Player, (STRING)_Preset)
+THEN
+CharacterApplyRacePreset(_Player, _Preset);
+SetStoryEvent(_Player, "LeaderLib_PresetApplied");
+//END_REGION
+
+//REGION HOSTILITY
+PROC
+LeaderLib_Helper_MakeHostileToPlayers((CHARACTERGUID)_Npc)
+AND
+DB_IsPlayer(_Player)
+THEN
+ProcSetHostileToIndivPlayer(_Npc, _Player);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

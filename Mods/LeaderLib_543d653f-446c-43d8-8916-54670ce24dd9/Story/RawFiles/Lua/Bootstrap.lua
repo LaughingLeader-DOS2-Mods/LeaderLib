@@ -49,13 +49,16 @@ Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib_Debug.l
 function LeaderLib_Ext_Init()
 	Osi.DB_LeaderLib_Extender_LuaInitialized(1)
 	LeaderLib.Initialized = true
+	-- LeaderLib
+	Ext.Print("[LeaderLib:Bootstrap.lua] Registering LeaderLib's mod info.")
 	local mod = Ext.GetModInfo("7e737d2f-31d2-4751-963f-be6ccc59cd0c")
+	--Ext.Print(Ext.JsonStringify(mod))
 	local versionInt = tonumber(mod.Version)
 	local major = math.floor(versionInt >> 28)
 	local minor = math.floor(versionInt >> 24) & 0x0F
 	local revision = math.floor(versionInt >> 16) & 0xFF
 	local build = math.floor(versionInt & 0xFFFF)
-	Osi.LeaderLib_Mods_OnModLoaded("7e737d2f-31d2-4751-963f-be6ccc59cd0c", mod.Name, mod.Author, versionInt, major, minor, revision, build)
+	Osi.LeaderLib_Mods_OnModLoaded("7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib", mod.Author, versionInt, major, minor, revision, build)
 end
 
 LeaderLib_DebugInitCalls = {}

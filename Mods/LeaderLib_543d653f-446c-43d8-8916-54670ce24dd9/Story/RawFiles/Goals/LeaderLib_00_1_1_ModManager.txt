@@ -1,0 +1,98 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+KBSECTION
+//REGION REGISTERING
+PROC
+LeaderLib_Mods_Internal_Clear_LastModInfo((GUIDSTRING)_UUID)
+AND
+DB_LeaderLib_Mods_Registered(_UUID, _Name, _Author, _Version, _Major, _Minor, _Revision, _Build)
+THEN
+NOT DB_LeaderLib_Mods_Registered(_UUID, _Name, _Author, _Version, _Major, _Minor, _Revision, _Build);
+
+PROC
+LeaderLib_Mods_Register_Mod((GUIDSTRING)_UUID, (STRING)_Name, (STRING)_Author, (INTEGER)_Version, (INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Revision, (INTEGER)_Build)
+THEN
+LeaderLib_Mods_Internal_Clear_LastModInfo(_UUID);
+DB_LeaderLib_Mods_Registered(_UUID, _Name, _Author, _Version, _Major, _Minor, _Revision, _Build);
+
+PROC
+LeaderLib_Mods_Internal_Register((GUIDSTRING)_UUID, (STRING)_Name, (STRING)_Author, (INTEGER)_Version, (INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Revision, (INTEGER)_Build)
+AND
+NOT DB_LeaderLib_Mods_Registered(_UUID, _, _, _, _, _, _, _)
+THEN
+DB_LeaderLib_Mods_Registered(_UUID, _Name, _Author, _Version, _Major, _Minor, _Revision, _Build);
+LeaderLib_Mods_OnModRegistered(_UUID, _Name, _Author, _Version, _Major, _Minor, _Revision, _Build);
+
+/* Called when a mod is registered for the first time. */
+PROC
+LeaderLib_Mods_OnModRegistered((GUIDSTRING)_UUID, (STRING)_Name, (STRING)_Author, (INTEGER)_Version, (INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Revision, (INTEGER)_Build)
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_Mods_Internal_Register((GUIDSTRING)_UUID, (STRING)_Name, (STRING)_Author, (INTEGER)_Version, (INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Revision, (INTEGER)_Build)
+AND
+DB_LeaderLib_Mods_Registered(_UUID, _LastName, _LastAuthor, _LastVersion, _LastMajor, _LastMinor, _LastRevision, _LastBuild)
+THEN
+NOT DB_LeaderLib_Mods_Registered(_UUID, _LastName, _LastAuthor, _LastVersion, _LastMajor, _LastMinor, _LastRevision, _LastBuild);
+DB_LeaderLib_Mods_Registered(_UUID, _Name, _Author, _Version, _Major, _Minor, _Revision, _Build);
+LeaderLib_Mods_OnVersionChanged(_UUID, _LastVersion, _Version);
+LeaderLib_Mods_OnVersionChanged(_UUID, _LastMajor, _LastMinor, _LastRevision, _LastBuild, _Major, _Minor, _Revision, _Build);
+
+/* Called when a mod's registered version changes. */
+PROC
+LeaderLib_Mods_OnVersionChanged((GUIDSTRING)_UUID, (INTEGER)_LastVersion, (INTEGER)_NextVersion)
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_Mods_OnVersionChanged((GUIDSTRING)_UUID, (INTEGER)_LastMajor, (INTEGER)_LastMinor, (INTEGER)_LastRevision, (INTEGER)_LastBuild, (INTEGER)_NextMajor, (INTEGER)_NextMinor, (INTEGER)_NextRevision, (INTEGER)_NextBuild)
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION MOD_INFO_LOADING
+/* [OSITOOLS_ONLY]
+IF
+GameModeStarted(_,_)
+THEN
+NRD_LuaCall("LeaderLib_Ext_LoadMods");
+
+IF
+SaveGameLoaded(_,_,_,_)
+THEN
+NRD_LuaCall("LeaderLib_Ext_LoadMods");
+*/
+
+// Called via LeaderLib_Ext_LoadMods 
+PROC
+LeaderLib_Mods_OnModLoaded((GUIDSTRING)_UUID, (STRING)_Name, (STRING)_Author, (INTEGER)_Version, (INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Revision, (INTEGER)_Build)
+AND
+LeaderLib_Mods_QRY_ModUpdateNeeded(_UUID, _Version)
+THEN
+LeaderLib_Mods_Internal_Register(_UUID, _Name, _Author, _Version, _Major, _Minor, _Revision, _Build);
+//END_REGION
+
+/* New OsiTools automatic mod registration! */
+//REGION QUERIES
+QRY
+LeaderLib_Mods_QRY_ModUpdateNeeded((GUIDSTRING)_UUID, (INTEGER)_Version)
+AND
+NOT DB_LeaderLib_Mods_Registered(_UUID, _, _, _Version, _, _, _, _)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Mods_QRY_ModUpdateNeeded((GUIDSTRING)_UUID, (INTEGER)_Version)
+AND
+DB_LeaderLib_Mods_Registered(_UUID, _LastName, _LastAuthor, _LastVersion, _LastMajor, _LastMinor, _LastRevision, _LastBuild)
+AND
+_Version > _LastVersion
+THEN
+DB_NOOP(1);
+
+//END_REGION
+EXITSECTION
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

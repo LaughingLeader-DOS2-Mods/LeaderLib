@@ -498,7 +498,7 @@ NOT DB_LeaderLib_Dictionary_Data("LeaderLib_RegisteredMenus", _Index, _, _)
 AND
 ObjectGetFlag(_Player, _DisabledFlag, 0)
 THEN
-ObjectSetFlag(_Player, _DisabledFlag);
+ObjectSetFlag(_Player, _DisabledFlag, 0);
 
 QRY
 LeaderLib_QRY_WordMenus_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_DisabledFlag)
@@ -511,7 +511,7 @@ ObjectGetFlag(_Player, _DisabledFlag, 0)
 AND
 NOT LeaderUpdater_QRY_ModIsActive(_ModID, _Author)
 THEN
-ObjectSetFlag(_Player, _DisabledFlag);
+ObjectSetFlag(_Player, _DisabledFlag, 0);
 
 QRY
 LeaderLib_QRY_WordMenus_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_DisabledFlag)

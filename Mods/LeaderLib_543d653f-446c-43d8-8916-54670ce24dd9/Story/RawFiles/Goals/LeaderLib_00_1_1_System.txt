@@ -7,7 +7,7 @@ LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", 1,6,0,0);
 LeaderUpdater_Register_UUID("LeaderLib", "LaughingLeader", 7e737d2f-31d2-4751-963f-be6ccc59cd0c);
 LeaderUpdater_Register_ActiveGoal("LeaderLib", "LaughingLeader", "LeaderLib_ZZZ_Updater");
 // [END_NO_OSITOOLS]
-LeaderLib_Register_ModMenuByUUID(7e737d2f-31d2-4751-963f-be6ccc59cd0c, "LeaderLib_SettingsMenu", "[LeaderLib] Settings");
+LeaderLib_Register_ModMenu("7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib_SettingsMenu", "[LeaderLib] Settings");
 
 KBSECTION
 //REGION INIT_EVENT

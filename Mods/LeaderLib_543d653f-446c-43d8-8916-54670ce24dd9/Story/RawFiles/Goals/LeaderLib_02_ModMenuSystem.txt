@@ -39,13 +39,11 @@ DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Aut
 LeaderLib_ModMenu_Internal_StartSortIfNeeded();
 
 PROC
-LeaderLib_Register_ModMenuByUUID((GUIDSTRING)_UUID, (STRING)_Dialog, (STRING)_DisplayName)
-AND
-String(_UUID, _ID)
+LeaderLib_Register_ModMenu((STRING)_UUID, (STRING)_Dialog, (STRING)_DisplayName)
 THEN
-LeaderLib_ModMenu_Internal_ClearLast(_ID);
+LeaderLib_ModMenu_Internal_ClearLast(_UUID);
 LeaderLib_StringExt_DetermineStringLength(_DisplayName);
-DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, "", "");
+DB_LeaderLib_ModMenu_RegisteredMenuData(_UUID, _DisplayName, _Dialog, "", "");
 LeaderLib_ModMenu_Internal_StartSortIfNeeded();
 
 //Updating empty author/modid

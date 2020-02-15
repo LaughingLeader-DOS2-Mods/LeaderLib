@@ -29,9 +29,9 @@ LeaderLib_Mods_Internal_Register(_UUID, _ModID, _DisplayName, _Author, _Version,
 NOT DB_LeaderLib_ModApi_RegisterMod(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build);
 
 IF
-DB_LeaderLib_ModApi_RegisterMenu((GUIDSTRING)_UUID, (STRING)_Dialog, (STRING)_DisplayName)
+DB_LeaderLib_ModApi_RegisterMenu((STRING)_UUID, (STRING)_Dialog, (STRING)_DisplayName)
 THEN
-LeaderLib_Register_ModMenuByUUID(_UUID, _Dialog, _DisplayName);
+LeaderLib_Register_ModMenu(_UUID, _Dialog, _DisplayName);
 NOT DB_LeaderLib_ModApi_RegisterMenu(_UUID, _Dialog, _DisplayName);
 //END_REGION
 

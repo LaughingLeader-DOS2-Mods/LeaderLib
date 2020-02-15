@@ -107,7 +107,7 @@ LeaderUpdater_CheckForMissingMods()
 AND
 DB_LeaderUpdater_RegisteredGoal(_ModID, _Author, _GoalTitle)
 AND
-NOT SysIsActive(_GoalTitle)
+NOT SysStatus(_GoalTitle, _)
 THEN
 LeaderUpdater_OnModNotActive(_ModID, _Author, _GoalTitle);
 
@@ -459,7 +459,7 @@ LeaderUpdater_QRY_ModIsActive((STRING)_ModID)
 AND
 DB_Mods_ActiveGoal(_ModID, _Author, _GoalTitle)
 AND
-SysIsActive(_GoalTitle)
+SysStatus(_GoalTitle, _Status)
 THEN
 DB_NOOP(1);
 
@@ -468,7 +468,7 @@ LeaderUpdater_QRY_ModIsActive((STRING)_ModID, (STRING)_Author)
 AND
 DB_Mods_ActiveGoal(_ModID, _Author, _GoalTitle)
 AND
-SysIsActive(_GoalTitle)
+SysStatus(_GoalTitle, _Status)
 THEN
 DB_NOOP(1);
 
@@ -484,7 +484,7 @@ DB_NOOP(1);
 QRY
 LeaderUpdater_QRY_ModIsActive((STRING)_ModID, (STRING)_Author, (STRING)_GoalTitle)
 AND
-SysIsActive(_GoalTitle)
+SysStatus(_GoalTitle, _Status)
 THEN
 DB_NOOP(1);
 
@@ -532,7 +532,7 @@ DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID)
 AND
 DB_Mods_ActiveGoal(_ModID, _Author, _GoalTitle)
 AND
-SysIsActive(_GoalTitle)
+SysStatus(_GoalTitle, _Status)
 THEN
 DB_NOOP(1);
 // [END_NO_OSITOOLS]

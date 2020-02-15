@@ -58,7 +58,7 @@ function LeaderLib_Ext_Init()
 	local minor = math.floor(versionInt >> 24) & 0x0F
 	local revision = math.floor(versionInt >> 16) & 0xFF
 	local build = math.floor(versionInt & 0xFFFF)
-	Osi.LeaderLib_Mods_OnModLoaded("7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib", mod.Author, versionInt, major, minor, revision, build)
+	Osi.LeaderLib_Mods_OnModLoaded("7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib", "LeaderLib - Definitive Edition", mod.Author, versionInt, major, minor, revision, build)
 end
 
 LeaderLib_DebugInitCalls = {}
@@ -168,7 +168,11 @@ function LeaderLib_Ext_LoadMods()
 			local minor = math.floor(versionInt >> 24) & 0x0F
 			local revision = math.floor(versionInt >> 16) & 0xFF
 			local build = math.floor(versionInt & 0xFFFF)
-			Osi.LeaderLib_Mods_OnModLoaded(uuid, mod.Name, mod.Author, versionInt, major, minor, revision, build)
+			local modid = string.gsub(mod.Name, "%s+", "") -- Replace spaces
+			modid:gsub("-", "")
+			modid:gsub("'", "")
+			modid:gsub('"', "")
+			Osi.LeaderLib_Mods_OnModLoaded(uuid, modid, mod.Name, mod.Author, versionInt, major, minor, revision, build)
 		end
 	end
 end

@@ -819,11 +819,11 @@ LeaderLog_Log("DEBUG", "[LeaderLib_11_0_Settings:BuildModList] Nothing is fuckin
 PROC
 LeaderLib_Settings_BuildModList()
 AND
-DB_LeaderLib_Mods_Registered(_UUID, _Name, _Author, _Version, _Major, _Minor, _Revision, _Build)
+DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build)
 AND
 DB_LeaderLib_Settings_Temp_RegisteredModsList(_Str1)
 AND
-StringConcatenate("<b>", _Name, _NameStr)
+StringConcatenate("<b>", _DisplayName, _NameStr)
 AND
 IntegertoString(_Major, _va)
 AND
@@ -873,7 +873,7 @@ LeaderLib_Settings_BuildModList()
 AND
 DB_Mods_Registered(_ModID, _Author, _Version)
 AND
-NOT DB_LeaderLib_Mods_Registered(_, _ModID, _Author, _, _, _, _, _)
+NOT DB_LeaderLib_Mods_Registered(_, _ModID, _, _, _, _, _, _, _)
 AND
 DB_LeaderLib_Settings_Temp_RegisteredModsList(_Str1)
 AND

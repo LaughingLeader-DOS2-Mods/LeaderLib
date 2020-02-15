@@ -162,3 +162,13 @@ function LeaderLib_Ext_Debug_TraceOnHit(obj, handle)
 		LeaderLib_Ext_Debug_TraceStatus(obj, status, handle)
 	end
 end
+
+function LeaderLib_Ext_PrintModDB()
+	Ext.Print("[LeaderLib_Debug.lua:PrintDB] Printing database DB_LeaderLib_Mods_Registered.")
+	local values = Osi.DB_LeaderLib_Mods_Registered:Get(nil, nil, nil, nil, nil, nil, nil, nil)
+    Ext.Print(Ext.JsonStringify(values))
+end
+
+function LeaderLib_Ext_PrintDB(name, arity)
+	Ext.Print("[LeaderLib_Debug.lua:PrintDB] Printing database "..name.." ("..tostring(arity)..")")
+end

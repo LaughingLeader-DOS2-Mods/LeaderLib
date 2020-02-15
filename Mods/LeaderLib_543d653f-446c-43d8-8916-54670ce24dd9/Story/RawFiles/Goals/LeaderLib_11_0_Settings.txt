@@ -749,7 +749,7 @@ LeaderLib_Settings_SetActiveTextByUUID(_UUID);
 PROC
 LeaderLib_Settings_SetActiveTextByUUID((GUIDSTRING)_UUID)
 AND
-LeaderLib_Mods_QRY_ModIsActive(_UUID)
+LeaderLib_Mods_QRY_ModIsRegisteredAndActive(_UUID)
 THEN
 DB_LeaderLib_Settings_Temp_ActiveModTextByUUID(_UUID, " <b>(Active)</b>");
 

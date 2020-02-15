@@ -123,7 +123,7 @@ DB_NOOP(1);
 
 /* [OSITOOLS_ONLY]
 QRY
-LeaderLib_Mods_QRY_ModIsActive((GUIDSTRING)_UUID)
+LeaderLib_Mods_QRY_ModIsRegisteredAndActive((GUIDSTRING)_UUID)
 AND
 DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build)
 AND
@@ -134,7 +134,7 @@ DB_NOOP(1);
 
 // [BEGIN_NO_OSITOOLS]
 QRY
-LeaderLib_Mods_QRY_ModIsActive((GUIDSTRING)_UUID)
+LeaderLib_Mods_QRY_ModIsRegisteredAndActive((GUIDSTRING)_UUID)
 AND
 DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _SavedAuthor, _Version, _Major, _Minor, _Revision, _Build)
 AND

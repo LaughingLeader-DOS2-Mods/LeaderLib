@@ -540,7 +540,7 @@ NOT DB_LeaderLib_DialogOverride_Temp_RedirectionTarget(_Dialog,_,_)
 AND
 NOT DB_LeaderLib_DialogOverride_Redirection_BlacklistedDialog(_Dialog)
 AND
-NOT DB_LeaderLib_ModMenu_RegisteredMenuData(_,_,_Dialog,_,_)
+NOT LeaderLib_ModMenu_QRY_IsRegistered(_Dialog)
 AND
 NOT DB_PartyDecisionDialog_OutcomeEvent(_Dialog,_,_) // Ignore party decision dialogs
 THEN

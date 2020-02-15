@@ -270,6 +270,7 @@ LeaderLib_StringExt_QRY_GetStringLength((STRING)_Str)
 THEN
 LeaderLib_StringExt_DetermineStringLength(_Str);
 
+// [BEGIN_NO_OSITOOLS]
 PROC
 LeaderLib_StringExt_DetermineStringLength((STRING)_Str)
 AND
@@ -293,17 +294,24 @@ IntegerSum(_Length, 1, _NextLength)
 THEN
 NOT DB_LeaderLib_StringLength(_Str, _Length);
 DB_LeaderLib_StringLength(_Str, _NextLength);
+// [END_NO_OSITOOLS]
 
-/*
+/* [OSITOOLS_ONLY]
 PROC
 LeaderLib_StringExt_DetermineStringLength((STRING)_Str)
 AND
-DB_LeaderLib_StringLength(_Str, _Length)
-AND
-IntegertoString(_Length, _LengthStr)
+DB_LeaderLib_StringLength(_Str, _Last)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Sorter:DetermineStringLength] Length of '",_Str,"' is [",_LengthStr,"].");
+NOT DB_LeaderLib_StringLength(_Str, _Last);
+
+PROC
+LeaderLib_StringExt_DetermineStringLength((STRING)_Str)
+AND
+NRD_StringLength(_Str, _Length)
+THEN
+DB_LeaderLib_StringLength(_Str, _Length);
 */
+
 //END_REGION
 
 //REGION STRING_ITERATOR

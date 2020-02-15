@@ -278,11 +278,11 @@ NOT DB_LeaderLib_ModApi_GlobalSettings_SaveIntegerVariable(_ModID, _Author, _Nam
 IF
 StoryEvent(_,"LeaderLib_Initialized")
 THEN
-TimerLaunch("LeaderLib_Timers_LeaderLib_ModApiCleanup", 500);
+TimerLaunch("Timers_LeaderLib_ModApiCleanup", 500);
 
 /* In the event that any of these databases were set without LeaderLib installed, run through them again. */
 IF
-TimerFinished("LeaderLib_Timers_LeaderLib_ModApiCleanup")
+TimerFinished("Timers_LeaderLib_ModApiCleanup")
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:ModAPI] ModApi cleanup started. Running ModAPI databases.");
 LeaderLib_ModApi_RunCleanup();

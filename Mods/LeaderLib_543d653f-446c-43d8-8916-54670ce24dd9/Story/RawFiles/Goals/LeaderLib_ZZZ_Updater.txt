@@ -32,6 +32,41 @@ LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,5,9,1)
 THEN
 LeaderUpdater_Register_UUID("LeaderLib", "LaughingLeader", 7e737d2f-31d2-4751-963f-be6ccc59cd0c);
 //END_REGION
+
+//REGION MIGRATING
+PROC
+LeaderLib_Mods_OnModRegistered((GUIDSTRING)_UUID, (INTEGER)_Version, (INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Revision, (INTEGER)_Build)
+AND
+DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID)
+THEN
+DB_LeaderLib_Updater_Temp_MigrateGlobalSettings(_UUID, _ModID, _Author);
+TimerCancel("Timers_LeaderLib_Updater_MigrateGlobalSettings");
+TimerLaunch("Timers_LeaderLib_Updater_MigrateGlobalSettings", 500);
+
+IF
+TimerFinished("Timers_LeaderLib_Updater_MigrateGlobalSettings")
+AND
+DB_LeaderLib_Updater_Temp_MigrateGlobalSettings(_UUID, _ModID, _Author)
+THEN
+NOT DB_LeaderLib_Updater_Temp_MigrateGlobalSettings(_UUID, _ModID, _Author);
+LeaderLib_GlobalSettings_Internal_MigrateMod(_ModID, _Author, _UUID);
+
+PROC
+LeaderLib_GlobalSettings_Internal_MigrateMod((STRING)_ModID, (STRING)_Author, (GUIDSTRING)_UUID)
+AND
+DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author, _SaveWhenFalse)
+THEN
+NOT DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author, _SaveWhenFalse);
+DB_LeaderLib_GlobalSettings_GlobalFlags(_UUID, _Flag, _SaveWhenFalse);
+
+PROC
+LeaderLib_GlobalSettings_Internal_MigrateMod((STRING)_ModID, (STRING)_Author, (GUIDSTRING)_UUID)
+AND
+DB_LeaderLib_GlobalSettings_Integers(_ModID, _Author, _VarName, _DefaultValue)
+THEN
+NOT DB_LeaderLib_GlobalSettings_Integers(_ModID, _Author, _VarName, _DefaultValue);
+DB_LeaderLib_GlobalSettings_GlobalIntegers(_UUID, _VarName, _DefaultValue);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

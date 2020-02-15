@@ -2,6 +2,7 @@ Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
 KBSECTION
+
 //REGION GLOBAL_SETTING_FLAG_REGISTER_OLD
 PROC
 LeaderLib_GlobalSettings_Register_Flag_Old((STRING)_ModID, (STRING)_Author, (STRING)_Flag)
@@ -134,6 +135,7 @@ THEN
 NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreModVersion_Old",  _ModID, _Author, _NewVersion);
 */
 //END_REGION
+
 EXITSECTION
 ENDEXITSECTION
 ParentTargetEdge "__AAA_Z_LaughingLeader_LeaderLib_Top"

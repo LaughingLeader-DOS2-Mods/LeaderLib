@@ -20,6 +20,21 @@ INITSECTION
 //DB_LeaderLib_ModApi_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _Str9)
 //DB_LeaderLib_ModApi_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _Str7, _Str8, _Str9, _Str10)
 KBSECTION
+//REGION REGISTER_MODS_NEW
+//Only needed in non-extender situations
+IF
+DB_LeaderLib_ModApi_RegisterMod((GUIDSTRING)_UUID, (STRING)_ModID, (STRING)_DisplayName, (STRING)_Author, (INTEGER)_Version, (INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Revision, (INTEGER)_Build)
+THEN
+LeaderLib_Mods_Internal_Register(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build);
+NOT DB_LeaderLib_ModApi_RegisterMod(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build);
+
+IF
+DB_LeaderLib_ModApi_RegisterMenu((GUIDSTRING)_UUID, (STRING)_Dialog, (STRING)_DisplayName)
+THEN
+LeaderLib_Register_ModMenuByUUID(_UUID, _Dialog, _DisplayName);
+NOT DB_LeaderLib_ModApi_RegisterMenu(_UUID, _Dialog, _DisplayName);
+//END_REGION
+
 //REGION DB_MODAPI
 /*LeaderUpdater Registering*/
 IF

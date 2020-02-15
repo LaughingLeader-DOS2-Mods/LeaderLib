@@ -238,6 +238,25 @@ DB_LeaderLib_ModApi_GlobalSettings_SaveIntegerVariable((STRING)_ModID, (STRING)_
 THEN
 LeaderLib_GlobalSettings_SaveIntegerVariable(_ModID, _Author, _Name, _Value);
 NOT DB_LeaderLib_ModApi_GlobalSettings_SaveIntegerVariable(_ModID, _Author, _Name, _Value);
+
+//REGION REGISTER_MODS_NEW
+//Only needed in non-extender situations
+PROC
+LeaderLib_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_RegisterMod((GUIDSTRING)_UUID, (STRING)_ModID, (STRING)_DisplayName, (STRING)_Author, (INTEGER)_Version, (INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Revision, (INTEGER)_Build)
+THEN
+LeaderLib_Mods_Internal_Register(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build);
+NOT DB_LeaderLib_ModApi_RegisterMod(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build);
+
+PROC
+LeaderLib_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_RegisterMenu((GUIDSTRING)_UUID, (STRING)_Dialog, (STRING)_DisplayName)
+THEN
+LeaderLib_Register_ModMenuByUUID(_UUID, _Dialog, _DisplayName);
+NOT DB_LeaderLib_ModApi_RegisterMenu(_UUID, _Dialog, _DisplayName);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

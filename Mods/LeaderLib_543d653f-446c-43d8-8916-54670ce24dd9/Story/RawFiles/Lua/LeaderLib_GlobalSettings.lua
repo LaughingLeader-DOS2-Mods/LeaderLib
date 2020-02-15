@@ -235,6 +235,20 @@ local function GlobalSettings_StoreModVersion(modid, author, version)
 	mod_settings.version = version
 end
 
+---@param modid string
+---@param author string
+---@param version string
+local function GlobalSettings_StoreModVersion_New(modid, author, version)
+	local versionInt = tonumber(version)
+	local major = math.floor(versionInt >> 28)
+	local minor = math.floor(versionInt >> 24) & 0x0F
+	local revision = math.floor(versionInt >> 16) & 0xFF
+	local build = math.floor(versionInt & 0xFFFF)
+	local versionString = tostring(major).."."..tostring(minor).."."..tostring(revision).."."..tostring(build)
+	local mod_settings = Get_Settings(modid, author)
+	mod_settings.version = version
+end
+
 local function parse_mod_data(modid, author, tbl)
 	local flags = tbl["globalflags"]
 	if flags ~= nil and type(flags) == "table" then
@@ -347,6 +361,7 @@ LeaderLib.Settings = {
 	GlobalSettings_StoreGlobalFlag = GlobalSettings_StoreGlobalFlag,
 	GlobalSettings_StoreGlobalInteger = GlobalSettings_StoreGlobalInteger,
 	GlobalSettings_StoreModVersion = GlobalSettings_StoreModVersion,
+	GlobalSettings_StoreModVersion_New = GlobalSettings_StoreModVersion_New,
 	GlobalSettings_Initialize = GlobalSettings_Initialize,
 }
 

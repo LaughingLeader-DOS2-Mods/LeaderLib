@@ -244,27 +244,59 @@ NOT DB_LeaderLib_ModApi_Log(_Type, _Str1, _Str2, _Str3, _Str4, _Str5, _Str6, _St
 
 //REGION GLOBAL_SETTINGS
 IF
+DB_LeaderLib_ModApi_GlobalSettings_Register_GlobalFlag((GUIDSTRING)_UUID, (STRING)_Flag)
+THEN
+LeaderLib_GlobalSettings_Register_GlobalFlag(_UUID, _Flag);
+NOT DB_LeaderLib_ModApi_GlobalSettings_Register_GlobalFlag(_UUID, _Flag);
+
+IF
+DB_LeaderLib_ModApi_GlobalSettings_Register_GlobalFlag((GUIDSTRING)_UUID, (STRING)_Flag, (INTEGER)_SaveWhenFalse)
+THEN
+LeaderLib_GlobalSettings_Register_GlobalFlag(_UUID, _Flag, _SaveWhenFalse);
+NOT DB_LeaderLib_ModApi_GlobalSettings_Register_GlobalFlag(_UUID, _Flag, _SaveWhenFalse);
+
+IF
+DB_LeaderLib_ModApi_GlobalSettings_Register_GlobalInteger((GUIDSTRING)_UUID, (STRING)_VarName)
+THEN
+LeaderLib_GlobalSettings_Register_GlobalInteger(_UUID, _VarName);
+NOT DB_LeaderLib_ModApi_GlobalSettings_Register_GlobalInteger(_UUID, _VarName);
+
+IF
+DB_LeaderLib_ModApi_GlobalSettings_Register_GlobalInteger((GUIDSTRING)_UUID, (STRING)_VarName, (INTEGER)_DefaultValue)
+THEN
+LeaderLib_GlobalSettings_Register_GlobalInteger(_UUID, _VarName, _DefaultValue);
+NOT DB_LeaderLib_ModApi_GlobalSettings_Register_GlobalInteger(_UUID, _VarName, _DefaultValue);
+
+IF
+DB_LeaderLib_ModApi_GlobalSettings_SaveGlobalIntegerVariable((GUIDSTRING)_UUID, (STRING)_VarName, (INTEGER)_Value)
+THEN
+LeaderLib_GlobalSettings_SaveIntegerVariable(_UUID, _VarName, _Value);
+NOT DB_LeaderLib_ModApi_GlobalSettings_SaveGlobalIntegerVariable(_UUID, _VarName, _Value);
+//END_REGION
+
+//REGION GLOBAL_SETTINGS_OLD
+IF
 DB_LeaderLib_ModApi_GlobalSettings_Register_Flag((STRING)_ModID, (STRING)_Author, (STRING)_Name)
 THEN
-LeaderLib_GlobalSettings_Register_Flag(_ModID, _Author, _Name);
+LeaderLib_GlobalSettings_Register_Flag_Old(_ModID, _Author, _Name);
 NOT DB_LeaderLib_ModApi_GlobalSettings_Register_Flag(_ModID, _Author, _Name);
 
 IF
 DB_LeaderLib_ModApi_GlobalSettings_Register_Flag((STRING)_ModID, (STRING)_Author, (STRING)_Name, (INTEGER)_SaveWhenFalse)
 THEN
-LeaderLib_GlobalSettings_Register_Flag(_ModID, _Author, _Name, _SaveWhenFalse);
+LeaderLib_GlobalSettings_Register_Flag_Old(_ModID, _Author, _Name, _SaveWhenFalse);
 NOT DB_LeaderLib_ModApi_GlobalSettings_Register_Flag(_ModID, _Author, _Name, _SaveWhenFalse);
 
 IF
 DB_LeaderLib_ModApi_GlobalSettings_Register_Integer((STRING)_ModID, (STRING)_Author, (STRING)_Name)
 THEN
-LeaderLib_GlobalSettings_Register_Integer(_ModID, _Author, _Name);
+LeaderLib_GlobalSettings_Register_Integer_Old(_ModID, _Author, _Name);
 NOT DB_LeaderLib_ModApi_GlobalSettings_Register_Integer(_ModID, _Author, _Name);
 
 IF
 DB_LeaderLib_ModApi_GlobalSettings_Register_Integer((STRING)_ModID, (STRING)_Author, (STRING)_Name, (INTEGER)_DefaultValue)
 THEN
-LeaderLib_GlobalSettings_Register_Integer(_ModID, _Author, _Name, _DefaultValue);
+LeaderLib_GlobalSettings_Register_Integer_Old(_ModID, _Author, _Name, _DefaultValue);
 NOT DB_LeaderLib_ModApi_GlobalSettings_Register_Integer(_ModID, _Author, _Name, _DefaultValue);
 
 IF

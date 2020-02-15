@@ -21,18 +21,18 @@ LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLog_Debug_Enabled");
 LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLog_Status_Disabled");
 LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLib_DebugModeEnabled", 1);
 
-LeaderLib_GlobalSettings_Register_Integer("LeaderLib", "LaughingLeader", "AutosaveInterval", 15);
+LeaderLib_GlobalSettings_Register_GlobalInteger(7e737d2f-31d2-4751-963f-be6ccc59cd0c, "AutosaveInterval", 15);
 LeaderLib_GlobalSettings_TransferVariables();
 
 PROC
 LeaderLib_Internal_GlobalSettings_Register_Flag((STRING)_Flag)
 THEN
-LeaderLib_GlobalSettings_Register_Flag("LeaderLib", "LaughingLeader", _Flag);
+LeaderLib_GlobalSettings_Register_GlobalFlag(7e737d2f-31d2-4751-963f-be6ccc59cd0c, _Flag);
 
 PROC
 LeaderLib_Internal_GlobalSettings_Register_Flag((STRING)_Flag, (INTEGER)_SaveWhenFalse)
 THEN
-LeaderLib_GlobalSettings_Register_Flag("LeaderLib", "LaughingLeader", _Flag, _SaveWhenFalse);
+LeaderLib_GlobalSettings_Register_GlobalFlag(7e737d2f-31d2-4751-963f-be6ccc59cd0c, _Flag, _SaveWhenFalse);
 //END_REGION
 
 //REGION UPDATES
@@ -44,34 +44,16 @@ LeaderLib_GlobalSettings_Internal_Init();
 
 //REGION VARIABLE_TRANSFER
 QRY
-LeaderLib_GlobalSettings_QRY_ModHasVariables((STRING)_ModID, (STRING)_Author)
+LeaderLib_GlobalSettings_QRY_ModHasVariables((GUIDSTRING)_UUID)
 AND
-DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author, _SaveWhenFalse)
+DB_LeaderLib_GlobalSettings_GlobalFlags(_UUID, _Flag, _SaveWhenFalse)
 THEN
 DB_NOOP(1);
 
 QRY
-LeaderLib_GlobalSettings_QRY_ModHasVariables((STRING)_ModID, (STRING)_Author)
+LeaderLib_GlobalSettings_QRY_ModHasVariables((GUIDSTRING)_UUID)
 AND
-DB_LeaderLib_GlobalSettings_Integers(_ModID, _Author, _Name, _DefaultValue)
-THEN
-DB_NOOP(1);
-
-QRY
-LeaderLib_GlobalSettings_QRY_ModHasVariables((GUIDSTRING)_ModUUID)
-AND
-String(_ModUUID, _ModID)
-AND
-DB_LeaderLib_GlobalSettings_Integers(_ModID, _Author, _Name, _DefaultValue)
-THEN
-DB_NOOP(1);
-
-QRY
-LeaderLib_GlobalSettings_QRY_ModHasVariables((GUIDSTRING)_ModUUID)
-AND
-String(_ModUUID, _ModID)
-AND
-DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author, _SaveWhenFalse)
+DB_LeaderLib_GlobalSettings_GlobalIntegers(_UUID, _VarName, _DefaultValue)
 THEN
 DB_NOOP(1);
 
@@ -100,11 +82,15 @@ LeaderLog_Log("DEBUG", "[LeaderLib_00_1_1_System:LeaderLib_GlobalSettings_Intern
 PROC
 LeaderLib_GlobalSettings_Internal_TransferFlags()
 AND
-DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author, _SaveWhenFalse)
+DB_LeaderLib_GlobalSettings_GlobalFlags(_UUID, _Flag, _SaveWhenFalse)
+AND
+DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build)
 AND
 IntegertoString(_SaveWhenFalse, _IntStr)
+AND
+String(_UUID, _UUIDStr)
 THEN
-NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreGlobalFlag", _ModID, _Author, _Flag, _IntStr);
+NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreGlobalFlag", _UUIDStr, _DisplayName, _Author, _Flag, _IntStr);
 */
 
 //Sends all vars to lua for export, if the extender is present
@@ -120,33 +106,15 @@ LeaderLog_Log("DEBUG", "[LeaderLib_00_1_1_System:LeaderLib_GlobalSettings_Intern
 PROC
 LeaderLib_GlobalSettings_Internal_TransferIntegers()
 AND
-DB_LeaderLib_GlobalSettings_Integers(_ModID, _Author, _Name, _DefaultValue)
+DB_LeaderLib_GlobalSettings_GlobalIntegers(_UUID, _VarName, _DefaultValue)
+AND
+DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build)
 AND
 IntegertoString(_DefaultValue, _IntStr)
+AND
+String(_UUID, _UUIDStr)
 THEN
-NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreGlobalInteger", _ModID, _Author, _Name, _IntStr);
-*/
-//END_REGION
-
-//REGION VERSION_UPDATING
-/* [OSITOOLS_ONLY]
-PROC
-LeaderLib_GlobalSettings_TransferVariables()
-AND
-DB_Mods_Registered(_ModID, _Author, _CurrentVersion)
-AND
-NOT DB_LeaderLib_Mods_Registered(_, _ModID, _Author, _, _, _, _, _)
-AND
-LeaderLib_GlobalSettings_QRY_ModHasVariables(_ModID, _Author)
-THEN
-NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreModVersion", _ModID, _Author, _CurrentVersion);
-
-PROC
-LeaderUpdater_ModUpdated((STRING)_ModID, (STRING)_Author, (STRING)_PastVersion, (STRING)_NewVersion)
-AND
-LeaderLib_GlobalSettings_QRY_ModHasVariables(_ModID, _Author)
-THEN
-NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreModVersion", _ModID, _Author, _NewVersion);
+NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreGlobalInteger", _UUIDStr, _DisplayName, _Author, _VarName, _IntStr);
 */
 //END_REGION
 
@@ -155,71 +123,70 @@ NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreModVersion", _ModID, _Author, _Ne
 PROC
 LeaderLib_GlobalSettings_TransferVariables()
 AND
-DB_LeaderLib_Mods_Registered(_UUID, _Name, _Author, _Version, _Major, _Minor, _Revision, _Build)
+DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build)
 AND
 LeaderLib_GlobalSettings_QRY_ModHasVariables(_UUID)
 AND
 IntegertoString(_Version, _VersionStr)
 THEN
-NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreModVersion_New", _Name, _Author, _VersionStr);
+NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreModVersion", (STRING)_UUID, _DisplayName, _Author, _VersionStr);
 
 PROC
 LeaderLib_Mods_OnVersionChanged((GUIDSTRING)_UUID, (INTEGER)_LastVersion, (INTEGER)_NextVersion)
 AND
 LeaderLib_GlobalSettings_QRY_ModHasVariables(_UUID)
 AND
-DB_LeaderLib_Mods_Registered(_UUID, _Name, _Author, _Version, _Major, _Minor, _Revision, _Build)
+DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build)
 AND
 IntegertoString(_Version, _VersionStr)
 THEN
-NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreModVersion_New", _Name, _Author, _VersionStr);
+NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreModVersion", (STRING)_UUID, _DisplayName, _Author, _VersionStr);
 */
 //END_REGION
 
 //REGION GLOBAL_SETTING_INT_REGISTER
 PROC
-LeaderLib_GlobalSettings_Register_Integer((STRING)_ModID, (STRING)_Author, (STRING)_Name)
+LeaderLib_GlobalSettings_Register_GlobalInteger((GUIDSTRING)_UUID, (STRING)_Name)
 THEN
-LeaderLib_GlobalSettings_Register_Integer(_ModID, _Author, _Name, 0);
+LeaderLib_GlobalSettings_Register_GlobalInteger(_UUID, _Name, 0);
 
 PROC
-LeaderLib_GlobalSettings_Register_Integer((STRING)_ModID, (STRING)_Author, (STRING)_Name, (INTEGER)_DefaultValue)
+LeaderLib_GlobalSettings_Register_GlobalInteger((GUIDSTRING)_UUID, (STRING)_VarName, (INTEGER)_DefaultValue)
 AND
-DB_LeaderLib_GlobalSettings_Integers(_ModID, _Author, _Name, _LastDefaultValue)
+DB_LeaderLib_GlobalSettings_GlobalIntegers(_UUID, _VarName, _LastDefaultValue)
 THEN
-NOT DB_LeaderLib_GlobalSettings_Integers(_ModID, _Author, _Name, _LastDefaultValue);
+NOT DB_LeaderLib_GlobalSettings_GlobalIntegers(_UUID, _VarName, _LastDefaultValue);
 
 PROC
-LeaderLib_GlobalSettings_Register_Integer((STRING)_ModID, (STRING)_Author, (STRING)_Name, (INTEGER)_DefaultValue)
+LeaderLib_GlobalSettings_Register_GlobalInteger((GUIDSTRING)_UUID, (STRING)_VarName, (INTEGER)_DefaultValue)
 THEN
-DB_LeaderLib_GlobalSettings_Integers(_ModID, _Author, _Name, _DefaultValue);
+DB_LeaderLib_GlobalSettings_GlobalIntegers(_UUID, _VarName, _DefaultValue);
 
 //Called by LeaderLib_GlobalSettings.lua
 PROC
-LeaderLib_GlobalSettings_Internal_GetIntegerVariable((STRING)_ModID, (STRING)_Author, (STRING)_Name)
+LeaderLib_GlobalSettings_Internal_GetIntegerVariable((GUIDSTRING)_UUID, (STRING)_VarName)
 AND
-DB_LeaderLib_GlobalSettings_Integers(_ModID, _Author, _Name, _DefaultValue)
+DB_LeaderLib_GlobalSettings_GlobalIntegers(_UUID, _VarName, _DefaultValue)
 THEN
-LeaderLib_GlobalSettings_GetIntegerVariable(_ModID, _Author, _Name);
+LeaderLib_GlobalSettings_GetIntegerVariable(_UUID, _VarName);
 
-/*
 PROC
-LeaderLib_GlobalSettings_GetIntegerVariable((STRING)_ModID, (STRING)_Author, (STRING)_Name)
+LeaderLib_GlobalSettings_GetIntegerVariable((GUIDSTRING)_UUID, (STRING)_VarName)
 THEN
-LeaderLib_GlobalSettings_SaveIntegerVariable(_ModID, _Author, _Name, 0);
-*/
+//LeaderLib_GlobalSettings_SaveIntegerVariable(_UUID, _VarName, 0);
+DB_NOOP(1);
 
 // Listen for this in mods
 PROC
-LeaderLib_GlobalSettings_GetIntegerVariable((STRING)_ModID, (STRING)_Author, (STRING)_Name)
+LeaderLib_GlobalSettings_GetIntegerVariable((GUIDSTRING)_UUID, (STRING)_VarName)
 THEN
 DB_NOOP(1);
 //Call this proc with the value to send.
-//LeaderLib_GlobalSettings_SaveIntegerVariable(_ModID, _Author, _Name, _Value);
+//LeaderLib_GlobalSettings_SaveIntegerVariable(_UUID, _VarName, _Value);
 
 //Called by other mods
 PROC
-LeaderLib_GlobalSettings_SaveIntegerVariable((STRING)_ModID, (STRING)_Author, (STRING)_Name, (INTEGER)_Value)
+LeaderLib_GlobalSettings_SaveIntegerVariable((GUIDSTRING)_UUID, (STRING)_VarName, (INTEGER)_Value)
 THEN
 DB_NOOP(1);
 /* [OSITOOLS_ONLY]
@@ -227,30 +194,28 @@ SetGlobalPriceModifier(_Value);
 */
 //Called by LeaderLib_GlobalSettings.lua, listened for in mods
 PROC
-LeaderLib_GlobalSettings_SetIntegerVariable((STRING)_ModID, (STRING)_Author, (STRING)_Name, (INTEGER)_Value)
+LeaderLib_GlobalSettings_SetIntegerVariable((GUIDSTRING)_UUID, (STRING)_VarName, (INTEGER)_Value)
 THEN
 DB_NOOP(1);
 //END_REGION
 
 //REGION GLOBAL_SETTING_FLAG_REGISTER
 PROC
-LeaderLib_GlobalSettings_Register_Flag((STRING)_ModID, (STRING)_Author, (STRING)_Flag)
+LeaderLib_GlobalSettings_Register_GlobalFlag((GUIDSTRING)_UUID, (STRING)_Flag)
 THEN
-LeaderLib_GlobalSettings_Register_Flag(_ModID, _Author, _Flag, 0);
+LeaderLib_GlobalSettings_Register_GlobalFlag(_UUID, _Flag, 0);
 
 PROC
-LeaderLib_GlobalSettings_Register_Flag((STRING)_ModID, (STRING)_Author, (STRING)_Flag, (INTEGER)_SaveWhenFalse)
+LeaderLib_GlobalSettings_Register_GlobalFlag((GUIDSTRING)_UUID, (STRING)_Flag, (INTEGER)_SaveWhenFalse)
 AND
-DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author, _LastVal)
+DB_LeaderLib_GlobalSettings_GlobalFlags(_UUID, _Flag, _LastVal)
 THEN
-NOT DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author, _LastVal);
+NOT DB_LeaderLib_GlobalSettings_GlobalFlags(_UUID, _Flag, _LastVal);
 
 PROC
-LeaderLib_GlobalSettings_Register_Flag((STRING)_ModID, (STRING)_Author, (STRING)_Flag, (INTEGER)_SaveWhenFalse)
-AND
-NOT DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author, _)
+LeaderLib_GlobalSettings_Register_GlobalFlag((GUIDSTRING)_UUID, (STRING)_Flag, (INTEGER)_SaveWhenFalse)
 THEN
-DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author, _SaveWhenFalse);
+DB_LeaderLib_GlobalSettings_GlobalFlags(_UUID, _Flag, _SaveWhenFalse);
 //END_REGION
 
 //REGION SIGNAL_OTHER_MODS_REGISTRATION
@@ -372,7 +337,7 @@ TextEventSet("leaderlib_savesettingstest")
 THEN
 NRD_LuaReset(1);
 NRD_LuaCall("LeaderLib_Ext_GlobalSettings_Initialize");
-LeaderLib_GlobalSettings_Register_Integer("LeaderLib", "LaughingLeader", "AutosaveInterval", 15);
+LeaderLib_GlobalSettings_Register_GlobalInteger(7e737d2f-31d2-4751-963f-be6ccc59cd0c, "AutosaveInterval", 15);
 LeaderLib_SaveGlobalSettings();
 */
 

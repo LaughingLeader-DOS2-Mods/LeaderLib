@@ -52,17 +52,17 @@ DB_LeaderLib_Autosaving_CurrentInterval("LeaderLib_Autosave_Interval_15");
 
 //REGION GLOBAL_SETTINGS
 PROC
-LeaderLib_GlobalSettings_GetIntegerVariable("LeaderLib", "LaughingLeader", "AutosaveInterval")
+LeaderLib_GlobalSettings_GetIntegerVariable(7e737d2f-31d2-4751-963f-be6ccc59cd0c, "AutosaveInterval")
 AND
 DB_LeaderLib_Autosaving_CurrentInterval(_Flag)
 AND
 DB_LeaderLib_Autosaving_Interval(_Flag, _Minutes)
 THEN
-LeaderLib_GlobalSettings_SaveIntegerVariable("LeaderLib", "LaughingLeader", "AutosaveInterval", _Minutes);
+LeaderLib_GlobalSettings_SaveIntegerVariable(7e737d2f-31d2-4751-963f-be6ccc59cd0c, "AutosaveInterval", _Minutes);
 
 //New minutes assigned by a user via the settings file
 PROC
-LeaderLib_GlobalSettings_SetIntegerVariable("LeaderLib", "LaughingLeader", "AutosaveInterval", (INTEGER)_Minutes)
+LeaderLib_GlobalSettings_SetIntegerVariable(7e737d2f-31d2-4751-963f-be6ccc59cd0c, "AutosaveInterval", (INTEGER)_Minutes)
 AND
 IntegerMax(_Minutes, 2, _ClampedA)
 AND
@@ -76,11 +76,11 @@ StringConcatenate("LeaderLib_Autosave_Interval_", _IntStr, _NewFlag)
 THEN
 DB_LeaderLib_Autosaving_Interval(_NewFlag, _ClampedB);
 DB_LeaderLib_Autosaving_CurrentInterval(_NewFlag);
-LeaderLib_GlobalSettings_Register_Flag("LeaderLib", "LaughingLeader", _NewFlag);
+LeaderLib_GlobalSettings_Register_GlobalFlag(7e737d2f-31d2-4751-963f-be6ccc59cd0c, _NewFlag);
 LeaderLog_Log("DEBUG", "[LeaderLib_11_3_Autosaving:SetIntegerVariable] New interval flag was created by user: (",_NewFlag,")[",_IntStr,"]");
 
 PROC
-LeaderLib_GlobalSettings_SetIntegerVariable("LeaderLib", "LaughingLeader", "AutosaveInterval", (INTEGER)_Minutes)
+LeaderLib_GlobalSettings_SetIntegerVariable(7e737d2f-31d2-4751-963f-be6ccc59cd0c, "AutosaveInterval", (INTEGER)_Minutes)
 AND
 DB_LeaderLib_Autosaving_Interval(_Flag, _Minutes)
 THEN

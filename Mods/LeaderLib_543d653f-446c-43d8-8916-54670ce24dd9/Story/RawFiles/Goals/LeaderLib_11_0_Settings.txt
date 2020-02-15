@@ -740,37 +740,42 @@ DB_LeaderLib_RuneSlotDeltaMod("LeaderLib", "Boost_LeaderLib_Armor_UpperBody_Empt
 DB_LeaderLib_RuneSlotDeltaMod("LeaderLib", "Boost_LeaderLib_Armor_UpperBody_EmptyRuneSlot2");
 //END_REGION
 
-//REGION MOD_DATA
-IF
-ObjectFlagSet("LeaderLib_Settings_ListMods", _Player, _Instance)
+//REGION ACTIVE_TEXT_BY_UUID
+QRY
+LeaderLib_Settings_QRY_SetActiveTextByUUID((GUIDSTRING)_UUID)
 THEN
-ObjectClearFlag(_Player, "LeaderLib_Settings_ListMods", 0);
-LeaderLib_Settings_BuildModList();
+LeaderLib_Settings_SetActiveTextByUUID(_UUID);
 
 PROC
-LeaderLib_Settings_BuildModList()
+LeaderLib_Settings_SetActiveTextByUUID((GUIDSTRING)_UUID)
 AND
-DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, _Str)
+LeaderLib_Mods_QRY_ModIsActive(_UUID)
 THEN
-NOT DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, _Str);
+DB_LeaderLib_Settings_Temp_ActiveModTextByUUID(_UUID, " <b>(Active)</b>");
 
 PROC
-LeaderLib_Settings_BuildModList()
+LeaderLib_Settings_SetActiveTextByUUID((GUIDSTRING)_UUID)
 AND
-NOT DB_LeaderLib_Settings_Temp_RegisteredModsList(_)
+NOT DB_LeaderLib_Settings_Temp_ActiveModTextByUUID(_UUID, _)
 THEN
-DB_LeaderLib_Settings_Temp_RegisteredModsList("");
+DB_LeaderLib_Settings_Temp_ActiveModTextByUUID(_UUID, " <b>(Not Detected)</b>");
+//END_REGION
 
+//REGION ACTIVE_TEXT_OLD
 QRY
 LeaderLib_Settings_QRY_SetActiveText((STRING)_ModID, (STRING)_Author)
+THEN
+LeaderLib_Settings_SetActiveText(_ModID, _Author);
+
+PROC
+LeaderLib_Settings_SetActiveText((STRING)_ModID, (STRING)_Author)
 AND
 LeaderUpdater_QRY_ModIsActive(_ModID, _Author)
 THEN
 DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, " <b>(Active)</b>");
 
-// [BEGIN_NO_OSITOOLS]
-QRY
-LeaderLib_Settings_QRY_SetActiveText((STRING)_ModID, (STRING)_Author)
+PROC
+LeaderLib_Settings_SetActiveText((STRING)_ModID, (STRING)_Author)
 AND
 NOT DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, _)
 AND
@@ -780,8 +785,8 @@ NOT LeaderUpdater_QRY_ModIsActive(_ModID, _Author)
 THEN
 DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, " <b>(Deactivated)</b>");
 
-QRY
-LeaderLib_Settings_QRY_SetActiveText((STRING)_ModID, (STRING)_Author)
+PROC
+LeaderLib_Settings_SetActiveText((STRING)_ModID, (STRING)_Author)
 AND
 NOT DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, _)
 AND
@@ -789,39 +794,86 @@ NOT LeaderUpdater_QRY_ModRegisteredActiveGoal(_ModID, _Author)
 AND
 NOT LeaderUpdater_QRY_ModIsActive(_ModID, _Author)
 THEN
-DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, " <b>(No Script Registered)</b>");
-// [END_NO_OSITOOLS]
+DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, " <b>(Not Detected)</b>");
+//END_REGION
 
-/* [OSITOOLS_ONLY]
-QRY
-LeaderLib_Settings_QRY_SetActiveText((STRING)_ModID, (STRING)_Author)
-AND
-NOT DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, _)
-AND
-NOT LeaderUpdater_QRY_ModIsActive(_ModID, _Author)
-AND
-DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID)
+//REGION MOD_DATA
+IF
+TimerFinished("Timers_LeaderLib_UpdateRegisteredList")
 THEN
-DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, " <b>(Deactivated)</b>");
+SysClear("DB_LeaderLib_Settings_Temp_ActiveModText", 3);
+SysClear("DB_LeaderLib_Settings_Temp_ActiveModTextByUUID", 2);
+SysClear("DB_LeaderLib_Settings_Temp_RegisteredModsList", 1);
+DB_LeaderLib_Settings_Temp_RegisteredModsList("");
+LeaderLib_Settings_BuildModList();
 
-QRY
-LeaderLib_Settings_QRY_SetActiveText((STRING)_ModID, (STRING)_Author)
+PROC
+LeaderLib_Settings_BuildModList()
 AND
-NOT DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, _)
+SysCount("DB_LeaderLib_Mods_Registered", 8, 0)
 AND
-NOT LeaderUpdater_QRY_ModIsActive(_ModID, _Author)
-AND
-NOT LeaderUpdater_QRY_ModRegisteredActiveGoal(_ModID, _Author)
-AND
-NOT DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _)
+SysCount("DB_Mods_Registered", 3, 0)
 THEN
-DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, " <b>(No Script/UUID Registered)</b>");
-*/
+LeaderLog_Log("DEBUG", "[LeaderLib_11_0_Settings:BuildModList] Nothing is fucking registered?");
+
+PROC
+LeaderLib_Settings_BuildModList()
+AND
+DB_LeaderLib_Mods_Registered(_UUID, _Name, _Author, _Version, _Major, _Minor, _Revision, _Build)
+AND
+DB_LeaderLib_Settings_Temp_RegisteredModsList(_Str1)
+AND
+StringConcatenate("<b>", _Name, _NameStr)
+AND
+IntegertoString(_Major, _va)
+AND
+IntegertoString(_Minor, _vb)
+AND
+IntegertoString(_Revision, _vc)
+AND
+IntegertoString(_Build, _vd)
+AND
+StringConcatenate(_va, ".", _v1)
+AND
+StringConcatenate(_v1, _vb, _v2)
+AND
+StringConcatenate(_v2, ".", _v3)
+AND
+StringConcatenate(_v3, _vc, _v4)
+AND
+StringConcatenate(_v4, ".", _v5)
+AND
+StringConcatenate(_v5, _vd, _VersionStr)
+AND
+StringConcatenate(_Str1, _NameStr, _Msg1)
+AND
+StringConcatenate(_Msg1, "</b> (", _Msg2)
+AND
+StringConcatenate(_Msg2, _VersionStr, _Msg3)
+AND
+StringConcatenate(_Msg3, ") by ", _Msg4)
+AND
+StringConcatenate(_Msg4, _Author, _Msg5)
+AND
+LeaderLib_Settings_QRY_SetActiveTextByUUID(_UUID)
+AND
+DB_LeaderLib_Settings_Temp_ActiveModTextByUUID(_UUID, _ActiveStr)
+AND
+StringConcatenate(_Msg5, _ActiveStr, _Msg6)
+AND
+StringConcatenate(_Msg6, "<br>", _CombinedStr)
+THEN
+NOT DB_LeaderLib_Settings_Temp_RegisteredModsList(_Str1);
+NOT DB_LeaderLib_Settings_Temp_ActiveModTextByUUID(_UUID, _ActiveStr);
+DB_LeaderLib_Settings_Temp_RegisteredModsList(_CombinedStr);
+LeaderLog_Log("DEBUG", "[LeaderLib_11_0_Settings:BuildMostList] Final: ", _CombinedStr);
 
 PROC
 LeaderLib_Settings_BuildModList()
 AND
 DB_Mods_Registered(_ModID, _Author, _Version)
+AND
+NOT DB_LeaderLib_Mods_Registered(_, _ModID, _Author, _, _, _, _, _)
 AND
 DB_LeaderLib_Settings_Temp_RegisteredModsList(_Str1)
 AND
@@ -846,8 +898,8 @@ AND
 StringConcatenate(_Msg6, "<br>", _CombinedStr)
 THEN
 NOT DB_LeaderLib_Settings_Temp_RegisteredModsList(_Str1);
-DB_LeaderLib_Settings_Temp_RegisteredModsList(_CombinedStr);
 NOT DB_LeaderLib_Settings_Temp_ActiveModText(_ModID, _Author, _ActiveStr);
+DB_LeaderLib_Settings_Temp_RegisteredModsList(_CombinedStr);
 
 PROC
 LeaderLib_Settings_BuildModList()

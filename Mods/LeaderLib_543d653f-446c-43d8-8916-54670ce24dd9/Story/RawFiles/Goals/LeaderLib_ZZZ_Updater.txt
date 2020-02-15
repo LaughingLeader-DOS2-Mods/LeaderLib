@@ -3,43 +3,16 @@ SubGoalCombiner SGC_AND
 INITSECTION
 //The version is registered in LeaderLib_00_1_1_System, so other mods will be able to see if LeaderLib is registered.
 KBSECTION
-//REGION UPDATING
-IF
-StoryEvent(_,"LeaderLib_Events_Internal_OnUpdateSettings")
-THEN
-LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Settings updated.");
-//END_REGION
-
 //REGION UPDATE_EVENT
-IF
-GameStarted(_,_)
-THEN
-LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Game started.");
-
-//REGION Whoops
-IF
-SavegameLoading(_,_,_,_)
-AND
-DB_Mods_Registered("LeaderLib", "LaughingLeader", "1.5.57.0")
-THEN
-NOT DB_LeaderLib_StringExt_VersionToInt("1.5.57.0", 1, 5, 57, 0);
-NOT DB_Mods_Registered("LeaderLib", "LaughingLeader", "1.5.57.0");
-NOT DB_LeaderUpdater_Temp_PastRegistered("LeaderLib", "LaughingLeader", "1.5.57.0");
-DB_LeaderLib_StringExt_VersionToInt("1.5.7.0", 1, 5, 7, 0);
-DB_LeaderLib_StringExt_VersionToInt("1.5.7.1", 1, 5, 7, 1);
-DB_Mods_Registered("LeaderLib", "LaughingLeader", "1.5.7.0");
-DB_LeaderUpdater_Temp_PastRegistered("LeaderLib", "LaughingLeader", "1.5.7.0");
-//END_REGION
-
+// [BEGIN_NO_OSITOOLS]
 IF
 GameStarted(_,_)
 AND
-LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", 1,5,21,0)
+LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", 1,6,0,0)
 THEN
-LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Updating LeaderLib to latest version (1.5.21.0).");
-LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", 1,5,21,0);
-LeaderLib_SendEvent("LeaderLib_Events_Internal_OnUpdateSettings");
-//LeaderLib_StringExt_Internal_ClearCache_Lazy(100);
+LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Updating LeaderLib to latest version (1.6.0.0).");
+LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", 1,6,0,0);
+// [END_NO_OSITOOLS]
 //END_REGION
 
 //REGION ACTIVE_FLAG

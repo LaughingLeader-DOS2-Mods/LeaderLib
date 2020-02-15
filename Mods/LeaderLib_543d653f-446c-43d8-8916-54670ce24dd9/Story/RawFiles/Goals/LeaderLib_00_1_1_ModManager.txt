@@ -32,6 +32,16 @@ LeaderLib_Mods_OnVersionChanged((GUIDSTRING)_UUID, (INTEGER)_LastVersion, (INTEG
 THEN
 DB_NOOP(1);
 
+/* [OSITOOLS_ONLY]
+// For mods registered/updating purely through Lua
+PROC
+LeaderLib_Mods_OnVersionChanged((GUIDSTRING)_UUID, (INTEGER)_LastVersion, (INTEGER)_NextVersion)
+AND
+DB_LeaderLib_Mods_Registered(_UUID, _Name, _Author, _Version, _Major, _Minor, _Revision, _Build)
+THEN
+NRD_LuaCall("LeaderUpdater_Ext_OnModVersionChanged", _Name, _Author, (STRING)_LastVersion, (STRING)_NextVersion, (STRING)_UUID);
+*/
+
 PROC
 LeaderLib_Mods_OnVersionChanged((GUIDSTRING)_UUID, (INTEGER)_LastMajor, (INTEGER)_LastMinor, (INTEGER)_LastRevision, (INTEGER)_LastBuild, (INTEGER)_NextMajor, (INTEGER)_NextMinor, (INTEGER)_NextRevision, (INTEGER)_NextBuild)
 THEN
@@ -171,7 +181,17 @@ NRD_IsModLoaded(_UUID, 1)
 THEN
 DB_NOOP(1);
 */
+//END_REGION
 
+//REGION ACTIVE_FLAG
+/* [OSITOOLS_ONLY]
+IF
+TimerFinished("Timers_LeaderLib_CheckActiveMods")
+AND
+DB_LeaderLib_Mods_Registered(_UUID, _Name, _Author, _Version, _Major, _Minor, _Revision, _Build)
+THEN
+NRD_LuaCall("LeaderLib_Ext_SetModIsActiveFlag", (STRING)_UUID, _Name);
+*/
 //END_REGION
 EXITSECTION
 ENDEXITSECTION

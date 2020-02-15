@@ -136,12 +136,27 @@ local function RegisterModsFromLua()
 	LeaderLib.ModRegistration = {}
 end
 
+local function SetModIsActiveFlag(uuid, name)
+	local flag = string.gsub(name, "%s+", "_") -- Replace spaces
+	local flagEnabled = GlobalGetFlag(flag)
+	if NRD_IsModLoaded(uuid) == 1 then
+		if flagEnabled == 0 then
+			GlobalSetFlag(flag)
+		end
+	else
+		if flagEnabled == 1 then
+			GlobalClearFlag(flag)
+		end
+	end
+end
+
 LeaderLib.Main = {
 	StringToVersion_Query = StringToVersion_Query,
 	StringToVersion = StringToVersion,
 	PrintAttributes = PrintAttributes,
 	PrintTest = PrintTest,
-	RegisterModsFromLua = RegisterModsFromLua
+	RegisterModsFromLua = RegisterModsFromLua,
+	SetModIsActiveFlag = SetModIsActiveFlag
 }
 
 LeaderLib.Register.Table(LeaderLib.Main);

@@ -103,6 +103,18 @@ function LeaderUpdater_Ext_ModUpdated(id,author,past_version,new_version,uuid)
 	end
 end
 
+---@param id string
+---@param author string
+---@param past_version integer
+---@param new_version integer
+---@param uuid string
+function LeaderUpdater_Ext_OnModVersionChanged(id,author,past_version,new_version,uuid)
+	local update_func = LeaderLib_ModUpdater[uuid]
+	if update_func ~= nil then
+		xpcall(update_func, LeaderUpdater_ModUpdated_Error, id,author,past_version,new_version)
+	end
+end
+
 local function GameSessionLoad()
 	Ext.Print("[LeaderLib:Bootstrap.lua] Session is loading.")
 end

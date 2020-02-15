@@ -92,6 +92,76 @@ _Version > _LastVersion
 THEN
 DB_NOOP(1);
 
+QRY
+LeaderUpdater_QRY_ModIsRegistered((STRING)_ModID, (STRING)_Author)
+AND
+DB_LeaderLib_Mods_Registered(_UUID, _Name, _Author, _Version, _Major, _Minor, _Revision, _Build)
+AND
+String(_UUID, _ModID)
+THEN
+DB_NOOP(1);
+
+/* [OSITOOLS_ONLY]
+QRY
+LeaderLib_Mods_QRY_ModIsActive((GUIDSTRING)_UUID)
+AND
+DB_LeaderLib_Mods_Registered(_UUID, _Name, _Author, _Version, _Major, _Minor, _Revision, _Build)
+AND
+NRD_IsModLoaded(_UUID, 1)
+THEN
+DB_NOOP(1);
+*/
+
+// [BEGIN_NO_OSITOOLS]
+QRY
+LeaderLib_Mods_QRY_ModIsActive((GUIDSTRING)_UUID)
+AND
+DB_LeaderLib_Mods_Registered(_UUID, _Name, _SavedAuthor, _Version, _Major, _Minor, _Revision, _Build)
+AND
+String(_UUID, _ModID)
+AND
+DB_Mods_ActiveGoal(_ModID, _Author, _GoalTitle)
+AND
+SysStatus(_GoalTitle, _Status)
+THEN
+DB_NOOP(1);
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+QRY
+LeaderUpdater_QRY_ModIsActive((STRING)_ModID)
+AND
+NRD_GuidString(_ModID, _UUID)
+AND
+DB_LeaderLib_Mods_Registered(_UUID, _Name, _Author, _Version, _Major, _Minor, _Revision, _Build)
+AND
+NRD_IsModLoaded(_UUID, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderUpdater_QRY_ModIsActive((STRING)_ModID, (STRING)_Author)
+AND
+NRD_GuidString(_ModID, _UUID)
+AND
+DB_LeaderLib_Mods_Registered(_UUID, _Name, _SavedAuthor, _Version, _Major, _Minor, _Revision, _Build)
+AND
+NRD_IsModLoaded(_UUID, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderUpdater_QRY_ModIsActive((STRING)_ModID, (STRING)_Author, (STRING)_GoalTitle)
+AND
+NRD_GuidString(_ModID, _UUID)
+AND
+DB_LeaderLib_Mods_Registered(_UUID, _Name, _SavedAuthor, _Version, _Major, _Minor, _Revision, _Build)
+AND
+NRD_IsModLoaded(_UUID, 1)
+THEN
+DB_NOOP(1);
+*/
+
 //END_REGION
 EXITSECTION
 ENDEXITSECTION

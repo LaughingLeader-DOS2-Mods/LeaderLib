@@ -302,19 +302,6 @@ NOT DB_LeaderLib_Requirements_IsUnlocked(_RequirementID);
 //END_REGION
 
 //REGION INITIAL_UNLOCK
-IF
-//StoryEvent(_, "LeaderLib_Events_OnDefaultEventFlowComplete")
-StoryEvent(_, "LeaderLib_Commands_StartDefaultEventFlow")
-THEN
-LeaderLib_Requirements_CheckForRequirementUnlocks();
-
-/*
-IF
-StoryEvent(_, "LeaderLib_Events_OnTraderSpawnComplete")
-THEN
-LeaderLib_Requirements_CheckForRequirementUnlocks();
-*/
-
 PROC
 LeaderLib_Requirements_CheckForRequirementUnlocks()
 AND
@@ -341,12 +328,8 @@ PROC
 LeaderLib_Requirements_CheckForRequirementUnlocks()
 AND
 DB_LeaderLib_Requirements_Mod(_RequirementID, _ModID, _Author)
-AND
-NOT DB_LeaderLib_Requirements_IsUnlocked(_RequirementID)
-AND
-LeaderLib_Requirements_QRY_AllMet(_RequirementID)
 THEN
-LeaderLib_Requirements_RequirementUnlocked(_RequirementID);
+LeaderLib_Requirements_CheckModRequirement(_RequirementID, _ModID, _Author);
 //END_REGION
 
 //REGION FLAG_UNLOCKING
@@ -409,97 +392,26 @@ THEN
 LeaderLib_Requirements_Internal_OnFlagSet(_RequirementID, _TargetVal, 0);
 //END_REGION
 
-//REGION LEVEL_REQUIREMENT
-PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
-AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1, 1, 4, 0)
-AND
-DB_LeaderLib_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel, _StrictMode)
-AND
-NOT DB_LeaderLib_Requirements_IsUnlocked(_RequirementID)
-AND
-LeaderLib_Requirements_QRY_AllMet(_RequirementID)
-THEN
-LeaderLib_Requirements_RequirementUnlocked(_RequirementID);
-
-//Initial unlocking
-IF
-DB_LeaderLib_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel, _StrictMode)
-AND
-NOT DB_LeaderLib_Requirements_IsUnlocked(_RequirementID)
-AND
-LeaderLib_Requirements_QRY_AllMet(_RequirementID)
-THEN
-LeaderLib_Requirements_RequirementUnlocked(_RequirementID);
-
-IF
-CharacterLeveledUp(_Player)
-AND
-DB_IsPlayer(_Player)
-AND
-DB_LeaderLib_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel, _StrictMode)
-AND
-NOT DB_LeaderLib_Requirements_IsUnlocked(_RequirementID)
-AND
-LeaderLib_Requirements_QRY_AllMet(_RequirementID)
-THEN
-LeaderLib_Requirements_RequirementUnlocked(_RequirementID);
-
-IF
-CharacterLeveledUp(_Player)
-AND
-DB_IsPlayer(_Player)
-AND
-DB_CurrentLevel(_Level)
-AND
-DB_LeaderLib_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel, _StrictMode)
-AND
-DB_LeaderLib_Requirements_IsUnlocked(_RequirementID)
-AND
-_StrictMode > 0
-AND
-NOT LeaderLib_Requirements_QRY_LevelMet(_Player, _MinLevel, _MaxLevel)
-THEN
-LeaderLib_Requirements_RequirementLocked(_RequirementID);
-//END_REGION
-
 //REGION MOD_REQUIREMENT
 PROC
-LeaderLib_Requirements_CheckRequirement((STRING)_RequirementID, (STRING)_ModID, (STRING)_Author)
+LeaderLib_Requirements_CheckModRequirement((STRING)_RequirementID, (STRING)_ModID, (STRING)_Author)
 AND
 NOT DB_LeaderLib_Requirements_IsUnlocked(_RequirementID)
 AND
-DB_GlobalFlag("LeaderLib_InitialEventFlowComplete")
-AND
-DB_Mods_Registered(_ModID, _Author, _Version)
+LeaderUpdater_QRY_ModIsActive(_ModID, _Author)
 AND
 LeaderLib_Requirements_QRY_AllMet(_RequirementID)
 THEN
 LeaderLib_Requirements_RequirementUnlocked(_RequirementID);
 
 PROC
-LeaderLib_Requirements_CheckRequirementsForMod((STRING)_ModID, (STRING)_Author)
-AND
-DB_GlobalFlag("LeaderLib_InitialEventFlowComplete")
-AND
-DB_LeaderLib_Requirements_Mod(_RequirementID, _ModID, _Author)
+LeaderLib_Requirements_CheckModRequirement((STRING)_RequirementID, (STRING)_ModID, (STRING)_Author)
 AND
 NOT DB_LeaderLib_Requirements_IsUnlocked(_RequirementID)
 AND
-LeaderLib_Requirements_QRY_AllMet(_RequirementID)
+NOT LeaderUpdater_QRY_ModIsActive(_ModID, _Author)
 THEN
-LeaderLib_Requirements_RequirementUnlocked(_RequirementID);
-
-IF
-DB_LeaderLib_Requirements_Mod(_RequirementID, _ModID, _Author)
-THEN
-LeaderLib_Requirements_CheckRequirement(_RequirementID, _ModID, _Author);
-
-IF
-DB_Mods_Registered(_ModID, _Author, _Version)
-THEN
-LeaderLib_Requirements_CheckRequirementsForMod(_ModID, _Author);
+LeaderLib_Requirements_RequirementLocked(_RequirementID);
 //END_REGION
 EXITSECTION
 

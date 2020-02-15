@@ -1,13 +1,19 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-
+LeaderLib_GameScripts_InitSettings();
 KBSECTION
+PROC
+LeaderLib_GameScripts_InitSettings()
+THEN
+LeaderLib_GameScripts_RegisterScript("LeaderLib.GameScripts", "LeaderLib_21_GS_RequirementEvents");
+
 PROC
 LeaderLib_GameScripts_RegisterScript((STRING)_Group, (STRING)_GoalName)
 THEN
 DB_LeaderLib_GameScripts_Registered(_Group, _GoalName);
 
+//REGION SCRIPT_TOGGLING
 IF
 RegionEnded(_Region)
 AND
@@ -31,6 +37,14 @@ AND
 _Status != 2 // 2 == ACTIVE
 THEN
 SysActivateGoal(_GoalName);
+//END_REGION
+
+//REGION UPDATES
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_CurrentVersion)
+THEN
+LeaderLib_GameScripts_InitSettings();
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

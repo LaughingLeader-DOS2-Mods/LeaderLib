@@ -1,0 +1,49 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+LeaderLib_GS_RequirementEvents_RunCheck();
+KBSECTION
+
+//REGION INIT_CHECK
+PROC
+LeaderLib_GS_RequirementEvents_RunCheck()
+THEN
+LeaderLib_Requirements_CheckForRequirementUnlocks();
+//END_REGION
+
+//REGION LEVEL_REQUIREMENT
+IF
+CharacterLeveledUp(_Player)
+AND
+DB_IsPlayer(_Player)
+AND
+DB_LeaderLib_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel, _StrictMode)
+AND
+NOT DB_LeaderLib_Requirements_IsUnlocked(_RequirementID)
+AND
+LeaderLib_Requirements_QRY_AllMet(_RequirementID)
+THEN
+LeaderLib_Requirements_RequirementUnlocked(_RequirementID);
+
+IF
+CharacterLeveledUp(_Player)
+AND
+DB_IsPlayer(_Player)
+AND
+DB_CurrentLevel(_Level)
+AND
+DB_LeaderLib_Requirements_PartyLevel(_RequirementID, _MinLevel, _MaxLevel, _StrictMode)
+AND
+DB_LeaderLib_Requirements_IsUnlocked(_RequirementID)
+AND
+_StrictMode > 0
+AND
+NOT LeaderLib_Requirements_QRY_LevelMet(_Player, _MinLevel, _MaxLevel)
+THEN
+LeaderLib_Requirements_RequirementLocked(_RequirementID);
+//END_REGION
+
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

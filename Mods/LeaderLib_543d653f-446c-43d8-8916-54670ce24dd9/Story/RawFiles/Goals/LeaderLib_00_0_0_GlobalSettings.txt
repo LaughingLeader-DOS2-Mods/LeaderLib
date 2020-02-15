@@ -134,6 +134,8 @@ PROC
 LeaderLib_GlobalSettings_TransferVariables()
 AND
 DB_Mods_Registered(_ModID, _Author, _CurrentVersion)
+AND
+LeaderLib_GlobalSettings_QRY_ModHasVariables(_ModID, _Author)
 THEN
 NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreModVersion", _ModID, _Author, _CurrentVersion);
 
@@ -152,6 +154,8 @@ PROC
 LeaderLib_GlobalSettings_TransferVariables()
 AND
 DB_LeaderLib_Mods_Registered(_UUID, _Name, _Author, _Version, _Major, _Minor, _Revision, _Build)
+AND
+LeaderLib_GlobalSettings_QRY_ModHasVariables(_UUID)
 AND
 IntegertoString(_Version, _VersionStr)
 THEN

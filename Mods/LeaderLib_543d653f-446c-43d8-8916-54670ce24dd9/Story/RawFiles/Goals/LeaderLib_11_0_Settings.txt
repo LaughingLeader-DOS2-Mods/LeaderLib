@@ -804,8 +804,8 @@ THEN
 SysClear("DB_LeaderLib_Settings_Temp_ActiveModText", 3);
 SysClear("DB_LeaderLib_Settings_Temp_ActiveModTextByUUID", 2);
 SysClear("DB_LeaderLib_Settings_Temp_RegisteredModsList", 1);
-DB_LeaderLib_Settings_Temp_RegisteredModsList("");
-LeaderLib_Settings_BuildModList();
+//DB_LeaderLib_Settings_Temp_RegisteredModsList("");
+//LeaderLib_Settings_BuildModList();
 
 PROC
 LeaderLib_Settings_BuildModList()

@@ -167,6 +167,20 @@ THEN
 DB_NOOP(1);
 
 QRY
+LeaderUpdater_QRY_ModIsActive((STRING)_ModID, (STRING)_Author)
+AND
+DB_LeaderLib_Mods_Temp_ModIsActiveResolved(_ModID)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderUpdater_QRY_ModIsActive((STRING)_ModID, (STRING)_Author, (STRING)_GoalTitle)
+AND
+DB_LeaderLib_Mods_Temp_ModIsActiveResolved(_ModID)
+THEN
+DB_NOOP(1);
+
+QRY
 LeaderUpdater_QRY_ModIsActive((STRING)_ModID)
 AND
 NOT DB_LeaderLib_Mods_Temp_ModIsActiveResolved(_ModID)

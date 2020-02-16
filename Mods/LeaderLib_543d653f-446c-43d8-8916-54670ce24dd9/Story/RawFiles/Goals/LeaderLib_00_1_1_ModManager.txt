@@ -26,27 +26,6 @@ DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _Author, _Version, _Ma
 LeaderLib_Mods_OnVersionChanged(_UUID, _LastVersion, _Version);
 LeaderLib_Mods_OnVersionChanged(_UUID, _LastMajor, _LastMinor, _LastRevision, _LastBuild, _Major, _Minor, _Revision, _Build);
 
-/* Called when a mod's registered version changes. */
-PROC
-LeaderLib_Mods_OnVersionChanged((GUIDSTRING)_UUID, (INTEGER)_LastVersion, (INTEGER)_NextVersion)
-THEN
-DB_NOOP(1);
-
-/* [OSITOOLS_ONLY]
-// For mods registered/updating purely through Lua
-PROC
-LeaderLib_Mods_OnVersionChanged((GUIDSTRING)_UUID, (INTEGER)_LastVersion, (INTEGER)_NextVersion)
-AND
-DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build)
-THEN
-NRD_LuaCall("LeaderUpdater_Ext_OnModVersionChanged", _DisplayName, _Author, (STRING)_LastVersion, (STRING)_NextVersion, (STRING)_UUID);
-*/
-
-PROC
-LeaderLib_Mods_OnVersionChanged((GUIDSTRING)_UUID, (INTEGER)_LastMajor, (INTEGER)_LastMinor, (INTEGER)_LastRevision, (INTEGER)_LastBuild, (INTEGER)_NextMajor, (INTEGER)_NextMinor, (INTEGER)_NextRevision, (INTEGER)_NextBuild)
-THEN
-DB_NOOP(1);
-
 PROC
 LeaderLib_Mods_Internal_Register((GUIDSTRING)_UUID, (STRING)_ModID, (STRING)_DisplayName, (STRING)_Author, (INTEGER)_Version, (INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Revision, (INTEGER)_Build)
 AND
@@ -64,12 +43,42 @@ GlobalGetFlag("LeaderLib_IsEditorMode", 1)
 THEN
 NRD_LuaCall("LeaderLib_Ext_PrintModDB");
 */
+//END_REGION
 
+//REGION MOD_PROC_EVENTS
 /* Called when a mod is registered for the first time. */
 PROC
 LeaderLib_Mods_OnModRegistered((GUIDSTRING)_UUID, (INTEGER)_Version, (INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Revision, (INTEGER)_Build)
 THEN
 DB_NOOP(1);
+
+/* Called when a mod's registered version changes. Uses the version integer in meta.lsx */
+PROC
+LeaderLib_Mods_OnVersionChanged((GUIDSTRING)_UUID, (INTEGER)_LastVersion, (INTEGER)_NextVersion)
+THEN
+DB_NOOP(1);
+
+/* Called when a mod's registered version changes, using the individual version numbers. */
+PROC
+LeaderLib_Mods_OnVersionChanged((GUIDSTRING)_UUID, (INTEGER)_LastMajor, (INTEGER)_LastMinor, (INTEGER)_LastRevision, (INTEGER)_LastBuild, (INTEGER)_NextMajor, (INTEGER)_NextMinor, (INTEGER)_NextRevision, (INTEGER)_NextBuild)
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION MOD_PROC_EVENTS_LUA
+/* [OSITOOLS_ONLY]
+// For mods using Lua
+PROC
+LeaderLib_Mods_OnModRegistered((GUIDSTRING)_UUID, (INTEGER)_Version, (INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Revision, (INTEGER)_Build)
+THEN
+NRD_LuaCall("LeaderUpdater_Ext_OnModRegistered", (STRING)_UUID, (STRING)_Version);
+
+// For mods updating purely through Lua
+PROC
+LeaderLib_Mods_OnVersionChanged((GUIDSTRING)_UUID, (INTEGER)_LastVersion, (INTEGER)_NextVersion)
+THEN
+NRD_LuaCall("LeaderUpdater_Ext_OnModVersionChanged", (STRING)_UUID, (STRING)_LastVersion, (STRING)_NextVersion);
+*/
 //END_REGION
 
 //REGION MOD_INFO_LOADING
@@ -302,7 +311,7 @@ THEN
 DB_NOOP(1);
 //END_REGION
 
-//REGION MODISACTIVE
+//REGION MODISACTIVE_BY_UUID
 QRY
 LeaderUpdater_QRY_ModIsActive_ByUUID((GUIDSTRING)_UUID)
 AND

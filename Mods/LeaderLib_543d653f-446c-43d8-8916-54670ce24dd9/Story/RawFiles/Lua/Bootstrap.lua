@@ -37,7 +37,9 @@ LeaderLib = {
 	Initialized = false,
 }
 
----A global table that holds update functions to call when a mod's version changes. The key should be the mod's UUID.
+---A global table that holds registration callback functions to run when a mod is initially registered. The key should be the mod's UUID.
+LeaderLib_ModRegistered = {}
+---A global table that holds update callback functions to run when a mod's version changes. The key should be the mod's UUID.
 LeaderLib_ModUpdater = {}
 
 Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib__Common.lua");
@@ -72,46 +74,34 @@ function LeaderLib_Ext_DebugInit()
 	end
 end
 
----Called by other mods via Lua scripts.
-function LeaderLib_Ext_RegisterMod(id,author,major,minor,revision,build,uuid)
-	if LeaderLib.Initialized == true then
-		Osi.LeaderUpdater_Register_Mod(id,author,major,minor,revision,build)
-	else
-		LeaderLib.ModRegistration[#LeaderLib.ModRegistration+1] = {
-			id = id,
-			author = author,
-			version = {
-				major = major,
-				minor = minor,
-				revision = revision,
-				build = build
-			},
-			uuid = uuid
-		}
-	end
-end
-
-local function LeaderUpdater_ModUpdated_Error (x)
-	Ext.Print("[LeaderLib:Bootstrap.lua] Error calling mod update function: ", x)
+local function LeaderUpdater_OnModRegistered_Error (x)
+	Ext.Print("[LeaderLib:Bootstrap.lua] Error calling mod registered callback function: ", x)
 	return false
 end
 
-function LeaderUpdater_Ext_ModUpdated(id,author,past_version,new_version,uuid)
-	local update_func = LeaderLib_ModUpdater[uuid]
+---Calls initial registration functions stored in LeaderLib_ModRegistered.
+---@param uuid string
+---@param version integer
+function LeaderUpdater_Ext_OnModRegistered(uuid,version)
+	local update_func = LeaderLib_ModRegistered[uuid]
 	if update_func ~= nil then
-		xpcall(update_func, LeaderUpdater_ModUpdated_Error, id,author,past_version,new_version)
+		xpcall(update_func, LeaderUpdater_OnModRegistered_Error,version)
 	end
 end
 
----@param id string
----@param author string
+local function LeaderUpdater_OnModUpdated_Error (x)
+	Ext.Print("[LeaderLib:Bootstrap.lua] Error calling mod update callback function: ", x)
+	return false
+end
+
+---Calls update functions stored in LeaderLib_ModUpdater when that mod's version changes.
+---@param uuid string
 ---@param past_version integer
 ---@param new_version integer
----@param uuid string
-function LeaderUpdater_Ext_OnModVersionChanged(id,author,past_version,new_version,uuid)
+function LeaderUpdater_Ext_OnModVersionChanged(uuid,past_version,new_version)
 	local update_func = LeaderLib_ModUpdater[uuid]
 	if update_func ~= nil then
-		xpcall(update_func, LeaderUpdater_ModUpdated_Error, id,author,past_version,new_version)
+		xpcall(update_func, LeaderUpdater_OnModUpdated_Error, past_version,new_version)
 	end
 end
 

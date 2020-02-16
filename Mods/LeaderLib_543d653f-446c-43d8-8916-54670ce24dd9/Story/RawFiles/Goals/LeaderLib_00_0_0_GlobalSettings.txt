@@ -170,20 +170,6 @@ DB_LeaderLib_GlobalSettings_GlobalIntegers(_UUID, _VarName, _DefaultValue)
 THEN
 LeaderLib_GlobalSettings_GetIntegerVariable(_UUID, _VarName);
 
-PROC
-LeaderLib_GlobalSettings_GetIntegerVariable((GUIDSTRING)_UUID, (STRING)_VarName)
-THEN
-//LeaderLib_GlobalSettings_SaveIntegerVariable(_UUID, _VarName, 0);
-DB_NOOP(1);
-
-// Listen for this in mods
-PROC
-LeaderLib_GlobalSettings_GetIntegerVariable((GUIDSTRING)_UUID, (STRING)_VarName)
-THEN
-DB_NOOP(1);
-//Call this proc with the value to send.
-//LeaderLib_GlobalSettings_SaveIntegerVariable(_UUID, _VarName, _Value);
-
 //Called by other mods
 PROC
 LeaderLib_GlobalSettings_SaveIntegerVariable((GUIDSTRING)_UUID, (STRING)_VarName, (INTEGER)_Value)
@@ -192,7 +178,27 @@ DB_NOOP(1);
 /* [OSITOOLS_ONLY]
 SetGlobalPriceModifier(_Value);
 */
-//Called by LeaderLib_GlobalSettings.lua, listened for in mods
+
+//END_REGION
+
+//REGION INTEGERS_MOD_PROCS
+/* 
+Called by LeaderLib when it goes to fetch the value of an integer variable.
+Mods should listen for this with their UUID / VarName set and "reply" to the proc via:
+(Dependency)
+LeaderLib_GlobalSettings_SaveIntegerVariable(_UUID, _VarName, _Value);
+(No dependency):
+DB_LeaderLib_ModApi_GlobalSettings_SaveGlobalIntegerVariable((GUIDSTRING)_UUID, (STRING)_VarName, (INTEGER)_Value);
+*/
+PROC
+LeaderLib_GlobalSettings_GetIntegerVariable((GUIDSTRING)_UUID, (STRING)_VarName)
+THEN
+DB_NOOP(1);
+
+/*
+Called by LeaderLib when a global variable is loaded.
+Listen for this in mods to transfer the variable value to your scripts.
+*/
 PROC
 LeaderLib_GlobalSettings_SetIntegerVariable((GUIDSTRING)_UUID, (STRING)_VarName, (INTEGER)_Value)
 THEN
@@ -236,11 +242,10 @@ DB_NOOP(1);
 //REGION GLOBAL_SETTINGS_SAVE_LOAD
 PROC
 LeaderLib_SaveGlobalSettings()
+AND
+LeaderLib_QRY_ExtenderIsActive()
 THEN
 LeaderLib_GlobalSettings_TransferVariables();
-// [BEGIN_NO_OSITOOLS]
-LeaderLog_Log("DEBUG", "[LeaderLib_00_1_1_System:LeaderLib_SaveGlobalSettings] (*WARNING*) The extender is not active. Skipping.");
-// [END_NO_OSITOOLS]
 
 /* [OSITOOLS_ONLY]
 PROC
@@ -280,6 +285,14 @@ ObjectFlagSet("LeaderLib_Commands_LoadGlobalSettings", (CHARACTERGUID)_Speaker, 
 THEN
 ObjectClearFlag(_Speaker, "LeaderLib_Commands_LoadGlobalSettings", 0);
 LeaderLib_LoadGlobalSettings();
+
+IF
+ObjectFlagSet("LeaderLib_Commands_LoadGlobalSettings", (CHARACTERGUID)_Speaker, _)
+AND
+CharacterIsControlled(_Speaker, 1)
+AND
+LeaderLib_QRY_ExtenderIsActive()
+THEN
 ShowNotification(_Speaker, "LeaderLib_Notifications_LoadGlobalSettings_Success");
 //ShowNotification(_Speaker, "LeaderLib_Notifications_LoadGlobalSettings_Failed");
 
@@ -287,7 +300,17 @@ IF
 ObjectFlagSet("LeaderLib_Commands_SaveGlobalSettings", (CHARACTERGUID)_Speaker, _)
 THEN
 ObjectClearFlag(_Speaker, "LeaderLib_Commands_SaveGlobalSettings", 0);
-LeaderLib_SaveGlobalSettings();
+//LeaderLib_SaveGlobalSettings();
+TimerCancel("Timers_LeaderLib_SaveGlobalSettings");
+TimerLaunch("Timers_LeaderLib_SaveGlobalSettings", 250);
+
+IF
+ObjectFlagSet("LeaderLib_Commands_SaveGlobalSettings", (CHARACTERGUID)_Speaker, _)
+AND
+CharacterIsControlled(_Speaker, 1)
+AND
+LeaderLib_QRY_ExtenderIsActive()
+THEN
 ShowNotification(_Speaker, "LeaderLib_Notifications_SaveGlobalSettings_Success");
 //ShowNotification(_Speaker, "LeaderLib_Notifications_SaveGlobalSettings_Failed");
 /*
@@ -305,13 +328,13 @@ GlobalFlagSet("LeaderLib_Commands_SaveGlobalSettings")
 THEN
 GlobalClearFlag("LeaderLib_Commands_SaveGlobalSettings");
 TimerCancel("Timers_LeaderLib_SaveGlobalSettings");
-TimerLaunch("Timers_LeaderLib_SaveGlobalSettings", 150);
+TimerLaunch("Timers_LeaderLib_SaveGlobalSettings", 250);
 
 IF
 StoryEvent(_, "LeaderLib_Commands_SaveGlobalSettings")
 THEN
 TimerCancel("Timers_LeaderLib_SaveGlobalSettings");
-TimerLaunch("Timers_LeaderLib_SaveGlobalSettings", 150);
+TimerLaunch("Timers_LeaderLib_SaveGlobalSettings", 250);
 
 //Saving is delayed in case multiple mods are calling for it
 IF

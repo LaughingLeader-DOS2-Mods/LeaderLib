@@ -964,6 +964,14 @@ ObjectFlagSet("LeaderLib_Commands_RemoveModMenuSkill", (CHARACTERGUID)_Player, _
 THEN
 ObjectClearFlag(_Player, "LeaderLib_Commands_RemoveModMenuSkill", 0);
 CharacterRemoveSkill(_Player, "Shout_LeaderLib_OpenModMenu");
+
+IF
+ObjectFlagSet("LeaderLib_Commands_ResetLua", (CHARACTERGUID)_Player, _)
+THEN
+ObjectClearFlag(_Player, "LeaderLib_Commands_ResetLua", 0);
+/* [OSITOOLS_ONLY]
+NRD_LuaReset(1);
+*/
 //END_REGION
 
 //REGION FORCE_DATA

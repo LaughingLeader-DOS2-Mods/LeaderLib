@@ -42,22 +42,29 @@ PROC
 LeaderLib_Register_ModMenu((STRING)_UUID, (STRING)_Dialog, (STRING)_DisplayName)
 THEN
 LeaderLib_ModMenu_Internal_ClearLast(_UUID);
-LeaderLib_StringExt_DetermineStringLength(_DisplayName);
 DB_LeaderLib_ModMenu_RegisteredMenuData(_UUID, _DisplayName, _Dialog, "", "");
+LeaderLib_ModMenu_Internal_GetInfoForUUID(_UUID, _Dialog, _DisplayName);
+LeaderLib_StringExt_DetermineStringLength(_DisplayName);
 LeaderLib_ModMenu_Internal_StartSortIfNeeded();
 
-//Updating empty author/modid
+/* [OSITOOLS_ONLY]
 PROC
-LeaderLib_Mods_OnVersionChanged((GUIDSTRING)_UUID, (INTEGER)_LastVersion, (INTEGER)_NextVersion)
+LeaderLib_ModMenu_Internal_GetInfoForUUID((STRING)_ID, (STRING)_Dialog, (STRING)_DisplayName)
 AND
-String(_UUID, _ID)
-AND
-DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, "", "")
+NRD_GuidString(_ID, _UUID)
 AND
 DB_LeaderLib_Mods_Registered(_UUID, _ModID, _ModDisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build)
 THEN
 NOT DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, "", "");
 DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author);
+*/
+
+// [BEGIN_NO_OSITOOLS]
+PROC
+LeaderLib_ModMenu_Internal_GetInfoForUUID((STRING)_ID, (STRING)_Dialog, (STRING)_DisplayName)
+THEN
+DB_NOOP(1);
+// [END_NO_OSITOOLS]
 
 /*
 PROC
@@ -72,6 +79,33 @@ PROC
 LeaderLib_Register_ModMenuOpenEvent((STRING)_ID, (STRING)_OpenMenuEvent)
 THEN
 DB_LeaderLib_ModMenu_RegisteredMenu_OpenEvent(_ID, _OpenMenuEvent);
+//END_REGION
+
+//REGION AUTO_UPDATING
+//Updating empty author/modid
+PROC
+LeaderLib_Mods_OnVersionChanged((GUIDSTRING)_UUID, (INTEGER)_LastVersion, (INTEGER)_NextVersion)
+AND
+String(_UUID, _ID)
+AND
+DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, "", "")
+AND
+DB_LeaderLib_Mods_Registered(_UUID, _ModID, _ModDisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build)
+THEN
+NOT DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, "", "");
+DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author);
+
+PROC
+LeaderLib_Mods_OnModRegistered((GUIDSTRING)_UUID, (INTEGER)_Version, (INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Revision, (INTEGER)_Build)
+AND
+String(_UUID, _ID)
+AND
+DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, "", "")
+AND
+DB_LeaderLib_Mods_Registered(_UUID, _ModID, _ModDisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build)
+THEN
+NOT DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, "", "");
+DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author);
 //END_REGION
 
 //REGION QUERIES
@@ -447,6 +481,66 @@ LeaderLib_ModMenu_SetPage(_Player, _NextPage, _Instance);
 NOT DB_LeaderLib_ModMenu_Temp_IsChangingMenuPage(_Player, _Instance);
 //END_REGION
 
+//REGION DISABLE_FLAG
+
+QRY
+LeaderLib_ModMenu_QRY_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_DisabledFlag)
+THEN
+LeaderLib_ModMenu_Internal_DisableMenu_Start(_Player, _Index, _DisabledFlag);
+LeaderLib_ModMenu_Internal_DisableMenu_ClearResolution(_Player, _Index, _DisabledFlag);
+
+PROC
+LeaderLib_ModMenu_Internal_DisableMenu_ClearResolution((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_DisabledFlag)
+AND
+DB_LeaderLib_ModMenu_Temp_DisableMenuResolved(_Player, _Index, _DisabledFlag)
+THEN
+NOT DB_LeaderLib_ModMenu_Temp_DisableMenuResolved(_Player, _Index, _DisabledFlag);
+
+PROC
+LeaderLib_ModMenu_Internal_DisableMenu_Start((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_DisabledFlag)
+AND
+ObjectGetFlag(_Player, _DisabledFlag, 0)
+AND
+NOT DB_LeaderLib_Dictionary_Data("LeaderLib_RegisteredMenus", _Index, _, _)
+THEN
+ObjectSetFlag(_Player, _DisabledFlag, 0);
+DB_LeaderLib_ModMenu_Temp_DisableMenuResolved(_Player, _Index, _DisabledFlag);
+
+PROC
+LeaderLib_ModMenu_Internal_DisableMenu_Start((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_DisabledFlag)
+AND
+NOT DB_LeaderLib_ModMenu_Temp_DisableMenuResolved(_Player, _Index, _DisabledFlag)
+AND
+ObjectGetFlag(_Player, _DisabledFlag, _FlagIsEnabled)
+AND
+DB_LeaderLib_Dictionary_Data("LeaderLib_RegisteredMenus", _Index, _ID, _DisplayName)
+AND
+DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author)
+THEN
+LeaderLib_ModMenu_Internal_DisableMenuIfNotAvailable(_Player, _Index, _ID, _ModID, _Author, _DisabledFlag, _FlagIsEnabled);
+
+PROC
+LeaderLib_ModMenu_Internal_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_ID, (STRING)_ModID, (STRING)_Author, (STRING)_DisabledFlag, 0)
+AND
+NOT DB_LeaderLib_ModMenu_Temp_DisableMenuResolved(_Player, _Index, _DisabledFlag)
+AND
+NOT LeaderUpdater_QRY_ModIsActive(_ModID)
+THEN
+DB_LeaderLib_ModMenu_Temp_DisableMenuResolved(_Player, _Index, _DisabledFlag);
+ObjectSetFlag(_Player, _DisabledFlag, 0);
+
+PROC
+LeaderLib_ModMenu_Internal_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_ID, (STRING)_ModID, (STRING)_Author, (STRING)_DisabledFlag, 1)
+AND
+NOT DB_LeaderLib_ModMenu_Temp_DisableMenuResolved(_Player, _Index, _DisabledFlag)
+AND
+LeaderUpdater_QRY_ModIsActive(_ModID)
+THEN
+DB_LeaderLib_ModMenu_Temp_DisableMenuResolved(_Player, _Index, _DisabledFlag);
+ObjectClearFlag(_Player, _DisabledFlag, 0);
+
+//END_REGION
+
 //REGION PAGE_VARIABLES
 PROC
 LeaderLib_ModMenu_LoadPageVariables((CHARACTERGUID)_Player, (INTEGER)_Instance)
@@ -487,7 +581,6 @@ AND
 LeaderLib_ModMenu_QRY_DisableMenuIfNotAvailable(_Player, _Index, _DisabledFlag)
 AND
 DB_LeaderLib_Dictionary_Data("LeaderLib_RegisteredMenus", _Index, _ID, _DisplayName)
-//DB_LeaderLib_ModMenu_RegisteredMenu(_Index, _ID, _DisplayName, _Dialog, _ModID, _Author)
 AND
 NOT DB_LeaderLib_MenuSettings_Temp_MenuVariableValue(_MenuIndex, _)
 THEN
@@ -536,67 +629,6 @@ AND
 DB_LeaderLib_Settings_DialogVariables("ModMenu_PageInfo", _VariableValue)
 THEN
 DialogSetVariableStringForInstance(_Instance, _VariableValue, "");
-
-QRY
-LeaderLib_ModMenu_QRY_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_DisabledFlag)
-THEN
-LeaderLib_ModMenu_Internal_DisableMenu_Start(_Player, _Index, _DisabledFlag);
-
-PROC
-LeaderLib_ModMenu_Internal_DisableMenu_Start((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_DisabledFlag)
-AND
-ObjectGetFlag(_Player, _DisabledFlag, 0)
-AND
-NOT DB_LeaderLib_Dictionary_Data("LeaderLib_RegisteredMenus", _Index, _, _)
-THEN
-ObjectSetFlag(_Player, _DisabledFlag, 0);
-
-PROC
-LeaderLib_ModMenu_Internal_DisableMenu_Start((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_DisabledFlag)
-AND
-DB_LeaderLib_Dictionary_Data("LeaderLib_RegisteredMenus", _Index, _ID, _DisplayName)
-AND
-DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author)
-AND
-ObjectGetFlag(_Player, _DisabledFlag, _FlagIsEnabled)
-THEN
-LeaderLib_ModMenu_Internal_DisableMenuIfNotAvailable(_Player, _Index, _ID, _ModID, _Author, _DisabledFlag, _FlagIsEnabled);
-
-/* [OSITOOLS_ONLY]
-PROC
-LeaderLib_ModMenu_Internal_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_ID, (STRING)_ModID, (STRING)_Author, (STRING)_DisabledFlag, 0)
-AND
-NRD_GuidString(_ID, _UUID)
-AND
-NRD_IsModLoaded(_UUID, 1)
-THEN
-ObjectSetFlag(_Player, _DisabledFlag, 0);
-*/
-
-PROC
-LeaderLib_ModMenu_Internal_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_ID, (STRING)_ModID, (STRING)_Author, (STRING)_DisabledFlag, 0)
-AND
-NOT LeaderUpdater_QRY_ModIsActive(_ModID, _Author)
-THEN
-ObjectSetFlag(_Player, _DisabledFlag, 0);
-
-/* [OSITOOLS_ONLY]
-PROC
-LeaderLib_ModMenu_Internal_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_ID, (STRING)_ModID, (STRING)_Author, (STRING)_DisabledFlag, 1)
-AND
-NRD_GuidString(_ID, _UUID)
-AND
-NRD_IsModLoaded(_UUID, 1)
-THEN
-ObjectClearFlag(_Player, _DisabledFlag, 0);
-*/
-
-PROC
-LeaderLib_ModMenu_Internal_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_ID, (STRING)_ModID, (STRING)_Author, (STRING)_DisabledFlag, 1)
-AND
-LeaderUpdater_QRY_ModIsActive(_ModID, _Author)
-THEN
-ObjectClearFlag(_Player, _DisabledFlag, 0);
 
 PROC
 LeaderLib_ModMenu_CheckPageCount((CHARACTERGUID)_Player)

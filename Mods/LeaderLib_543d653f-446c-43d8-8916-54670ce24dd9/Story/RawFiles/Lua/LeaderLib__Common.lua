@@ -6,6 +6,7 @@ local function init_seed()
 end
 init_seed()
 
+---Print a value or table (recursive).
 local function dump(o)
 	if type(o) == 'table' then
 		local s = '{ '
@@ -19,6 +20,9 @@ local function dump(o)
 	end
 end
 
+---@param tbl table
+---@param key any
+---@return boolean
 local function has_table_entry(tbl, key)
 	local v = tbl[key]
 	if v ~= nil then
@@ -33,6 +37,10 @@ local function has_table_entry(tbl, key)
 	return false
 end
 
+---@param tbl table
+---@param key any
+---@param fallback any
+---@return any
 local function GetTableEntry(tbl, key, fallback)
 	local v = tbl[key]
 	if v ~= nil then
@@ -53,6 +61,9 @@ local function GetRandomTableEntry(tbl)
 	return nil
 end
 
+---@param max integer
+---@param min integer
+---@return integer
 local function GetRandom(max,min)
 	if max == nil then max = 999 end
 	if min == nil then min = 0 end
@@ -61,9 +72,19 @@ local function GetRandom(max,min)
 	return ran
 end
 
-local function StringEquals(a,b)
+---Check if a string is equal to another. Case-insenstive.
+---@param a string
+---@param b string
+---@param insensitive boolean
+---@return boolean
+local function StringEquals(a,b, insensitive)
+	if insensitive == nil then insensitive = true end
 	if a ~= nil and b ~= nil then
-		return string.upper(a) == string.upper(b)
+		if insensitive then
+			return string.upper(a) == string.upper(b)
+		else
+			return a == b
+		end
 	end
 	return false
 end
@@ -73,7 +94,10 @@ local function StringIsNullOrEmpty(x)
 end
 
 --Source: https://github.com/sulai/Lib-Pico8/blob/master/lang.lua
----Generate an enum-like table
+---Generates an enum-like table
+---@param names table
+---@param offset integer
+---@return table
 local function Enum(names, offset)
 	offset=offset or 1
 	local objects = {}

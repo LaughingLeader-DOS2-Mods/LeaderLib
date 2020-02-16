@@ -79,6 +79,7 @@ DB_NOOP(1);
 //END_REGION
 
 //REGION TRANSFER_OLD
+/* [OSITOOLS_ONLY]
 PROC
 LeaderLib_GlobalSettings_Internal_TransferFlags()
 AND
@@ -100,6 +101,7 @@ AND
 IntegertoString(_DefaultValue, _IntStr)
 THEN
 NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreGlobalInteger_Old", _ModID, _Author, _VarName, _IntStr);
+*/
 //END_REGION
 
 //REGION VERSION_UPDATING

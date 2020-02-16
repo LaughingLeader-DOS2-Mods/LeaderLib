@@ -85,7 +85,7 @@ end
 
 ---@class LeaderLibModSettings
 local LeaderLibModSettings = {
-	name = "Mod", 
+	name = "Mod",
 	author = "Author",
 	globalflags = {},
 	integers = {},
@@ -201,7 +201,11 @@ end
 local function Get_Settings(uuid, name, author)
 	if #global_settings > 0 then
 		for _,v in pairs(global_settings) do
-			if (v.uuid == uuid) or (LeaderLib.Common.StringEquals(v.name == name) and LeaderLib.Common.StringEquals(v.author, author)) then
+			Ext.Print("Comparing uuid (",uuid,") with (",v.uuid,") for ("..name..") vs ("..v.name..")")
+			if (v.uuid == uuid) or (LeaderLib.Common.StringEquals(v.name, name) and LeaderLib.Common.StringEquals(v.author, author)) then
+				if v.uuid ~= uuid and uuid ~= "" then v.uuid = uuid end
+				if v.name ~= name and name ~= "" then v.name = name end
+				if v.author ~= author and author ~= "" then v.author = author end
 				return v
 			end
 		end
@@ -277,26 +281,29 @@ local function GlobalSettings_StoreGlobalInteger_Old(modid, author, varname, def
 	mod_settings.integers[varname] = tonumber(defaultvalue)
 end
 
----@param modid string
+---@param uuid string
+---@param name string
 ---@param author string
 ---@param version string
-local function GlobalSettings_StoreModVersion(modid, author, version)
-	local mod_settings = Get_Settings(modid, author)
-	mod_settings.version = version
-end
-
----@param modid string
----@param author string
----@param version string
-local function GlobalSettings_StoreModVersion_New(uuid, modid, author, version)
+local function GlobalSettings_StoreModVersion(uuid, name, author, version)
 	local versionInt = tonumber(version)
 	local major = math.floor(versionInt >> 28)
 	local minor = math.floor(versionInt >> 24) & 0x0F
 	local revision = math.floor(versionInt >> 16) & 0xFF
 	local build = math.floor(versionInt & 0xFFFF)
 	local versionString = tostring(major).."."..tostring(minor).."."..tostring(revision).."."..tostring(build)
-	local mod_settings = Get_Settings(modid, author)
+	local mod_settings = Get_Settings(uuid, name, author)
 	mod_settings.uuid = uuid
+	mod_settings.name = name
+	mod_settings.author = author
+	mod_settings.version = version
+end
+
+---@param modid string
+---@param author string
+---@param version string
+local function GlobalSettings_StoreModVersion_Old(modid, author, version)
+	local mod_settings = Get_Settings_Old(modid, author)
 	mod_settings.version = version
 end
 
@@ -424,7 +431,7 @@ LeaderLib.Settings = {
 	GlobalSettings_StoreGlobalFlag = GlobalSettings_StoreGlobalFlag,
 	GlobalSettings_StoreGlobalInteger = GlobalSettings_StoreGlobalInteger,
 	GlobalSettings_StoreModVersion = GlobalSettings_StoreModVersion,
-	GlobalSettings_StoreModVersion_New = GlobalSettings_StoreModVersion_New,
+	GlobalSettings_StoreModVersion_Old = GlobalSettings_StoreModVersion_Old,
 	GlobalSettings_Initialize = GlobalSettings_Initialize,
 }
 

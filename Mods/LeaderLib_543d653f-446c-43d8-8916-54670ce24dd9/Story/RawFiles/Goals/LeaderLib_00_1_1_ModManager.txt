@@ -53,6 +53,7 @@ AND
 NOT DB_LeaderLib_Mods_Registered(_UUID, _, _, _, _, _, _, _, _)
 THEN
 DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build);
+DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID);
 LeaderLib_Mods_OnModRegistered(_UUID, _Version, _Major, _Minor, _Revision, _Build);
 
 /*
@@ -121,6 +122,15 @@ String(_UUID, _ModID)
 THEN
 DB_NOOP(1);
 
+QRY
+LeaderUpdater_QRY_ModIsRegistered((STRING)_ModID, (STRING)_Author)
+AND
+DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID)
+AND
+DB_LeaderLib_Mods_Registered(_UUID, _, _DisplayName, _, _Version, _Major, _Minor, _Revision, _Build)
+THEN
+DB_NOOP(1);
+
 /* [OSITOOLS_ONLY]
 QRY
 LeaderLib_Mods_QRY_ModIsRegisteredAndActive((GUIDSTRING)_UUID)
@@ -146,10 +156,63 @@ SysStatus(_GoalTitle, _Status)
 THEN
 DB_NOOP(1);
 // [END_NO_OSITOOLS]
+//END_REGION
+
+//REGION MODISACTIVE
+QRY
+LeaderUpdater_QRY_ModIsActive((STRING)_ModID)
+AND
+DB_LeaderLib_Mods_Temp_ModIsActiveResolved(_ModID)
+THEN
+DB_NOOP(1);
 
 /* [OSITOOLS_ONLY]
 QRY
 LeaderUpdater_QRY_ModIsActive((STRING)_ModID)
+AND
+NOT DB_LeaderLib_Mods_Temp_ModIsActiveResolved(_ModID)
+AND
+DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID)
+AND
+NRD_IsModLoaded(_UUID, 1)
+THEN
+DB_LeaderLib_Mods_Temp_ModIsActiveResolved(_ModID);
+*/
+
+QRY
+LeaderUpdater_QRY_ModIsActive((STRING)_ModID)
+AND
+NOT DB_LeaderLib_Mods_Temp_ModIsActiveResolved(_ModID)
+AND
+DB_Mods_ActiveGoal(_ModID, _Author, _GoalTitle)
+AND
+SysStatus(_GoalTitle, _Status)
+THEN
+DB_LeaderLib_Mods_Temp_ModIsActiveResolved(_ModID);
+
+QRY
+LeaderUpdater_QRY_ModIsActive((STRING)_ModID, (STRING)_Author)
+AND
+NOT DB_LeaderLib_Mods_Temp_ModIsActiveResolved(_ModID)
+AND
+LeaderUpdater_QRY_ModIsActive(_ModID)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderUpdater_QRY_ModIsActive((STRING)_ModID, (STRING)_Author, (STRING)_GoalTitle)
+AND
+NOT DB_LeaderLib_Mods_Temp_ModIsActiveResolved(_ModID)
+AND
+LeaderUpdater_QRY_ModIsActive(_ModID)
+THEN
+DB_NOOP(1);
+
+/* [OSITOOLS_ONLY]
+QRY
+LeaderUpdater_QRY_ModIsActive((STRING)_ModID)
+AND
+NOT DB_LeaderLib_Mods_Temp_ModIsActiveResolved(_ModID)
 AND
 NRD_GuidString(_ModID, _UUID)
 AND
@@ -157,30 +220,65 @@ DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _Author, _Version, _Ma
 AND
 NRD_IsModLoaded(_UUID, 1)
 THEN
-DB_NOOP(1);
+DB_LeaderLib_Mods_Temp_ModIsActiveResolved(_ModID);
 
 QRY
-LeaderUpdater_QRY_ModIsActive((STRING)_ModID, (STRING)_Author)
+LeaderUpdater_QRY_ModIsActive((STRING)_ModID)
 AND
-NRD_GuidString(_ModID, _UUID)
+NOT DB_LeaderLib_Mods_Temp_ModIsActiveResolved(_ModID)
 AND
-DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _SavedAuthor, _Version, _Major, _Minor, _Revision, _Build)
+DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build)
 AND
 NRD_IsModLoaded(_UUID, 1)
 THEN
-DB_NOOP(1);
-
-QRY
-LeaderUpdater_QRY_ModIsActive((STRING)_ModID, (STRING)_Author, (STRING)_GoalTitle)
-AND
-NRD_GuidString(_ModID, _UUID)
-AND
-DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _SavedAuthor, _Version, _Major, _Minor, _Revision, _Build)
-AND
-NRD_IsModLoaded(_UUID, 1)
-THEN
-DB_NOOP(1);
+DB_LeaderLib_Mods_Temp_ModIsActiveResolved(_ModID);
 */
+//END_REGION
+
+//REGION MODISACTIVE
+QRY
+LeaderUpdater_QRY_ModIsActive_ByUUID((GUIDSTRING)_UUID)
+AND
+DB_LeaderLib_Mods_Temp_ModIsActiveUUIDResolved(_UUID)
+THEN
+DB_NOOP(1);
+
+/* [OSITOOLS_ONLY]
+QRY
+LeaderUpdater_QRY_ModIsActive_ByUUID((GUIDSTRING)_UUID)
+AND
+NOT DB_LeaderLib_Mods_Temp_ModIsActiveUUIDResolved(_UUID)
+AND
+DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build)
+AND
+NRD_IsModLoaded(_UUID, 1)
+THEN
+DB_LeaderLib_Mods_Temp_ModIsActiveUUIDResolved(_UUID);
+
+QRY
+LeaderUpdater_QRY_ModIsActive_ByUUID((GUIDSTRING)_UUID)
+AND
+NOT DB_LeaderLib_Mods_Temp_ModIsActiveUUIDResolved(_UUID)
+AND
+DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID)
+AND
+NRD_IsModLoaded(_UUID, 1)
+THEN
+DB_LeaderLib_Mods_Temp_ModIsActiveUUIDResolved(_UUID);
+*/
+
+// [BEGIN_NO_OSITOOLS]
+QRY
+LeaderUpdater_QRY_ModIsActive_ByUUID((GUIDSTRING)_UUID)
+AND
+NOT DB_LeaderLib_Mods_Temp_ModIsActiveUUIDResolved(_UUID)
+AND
+DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID)
+AND
+LeaderUpdater_QRY_ModIsActive(_ModID, _Author)
+THEN
+DB_LeaderLib_Mods_Temp_ModIsActiveUUIDResolved(_UUID);
+// [END_NO_OSITOOLS]
 //END_REGION
 
 //REGION ACTIVE_FLAG
@@ -192,6 +290,43 @@ DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _Author, _Version, _Ma
 THEN
 NRD_LuaCall("LeaderLib_Ext_SetModIsActiveFlag", (STRING)_UUID, _ModID, _DisplayName);
 */
+
+IF
+TimerFinished("Timers_LeaderLib_CheckActiveMods")
+AND
+DB_Mods_Registered(_ModID, _Author, _Version)
+AND
+NOT LeaderUpdater_QRY_ModIsRegistered(_ModID, _Author)
+AND
+StringConcatenate(_ModID, "_IsActive", _Flag)
+AND
+GlobalGetFlag(_Flag, _FlagEnabled)
+THEN
+LeaderUpdater_SetModActiveFlag(_ModID, _Author, _Flag, _FlagEnabled);
+
+PROC
+LeaderUpdater_SetModActiveFlag((STRING)_ModID, (STRING)_Author, (STRING)_Flag, 0)
+AND
+LeaderUpdater_QRY_ModIsActive(_ModID)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderUpdater:SetModActiveFlag] Mod [",_ModID,"] by [",_Author,"] is active. Setting global flag [",_Flag,"].");
+GlobalSetFlag(_Flag);
+
+PROC
+LeaderUpdater_SetModActiveFlag((STRING)_ModID, (STRING)_Author, (STRING)_Flag, 1)
+AND
+NOT LeaderUpdater_QRY_ModIsActive(_ModID)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderUpdater:SetModActiveFlag] Mod [",_ModID,"] by [",_Author,"] is no longer active. Clearing global flag [",_Flag,"].");
+GlobalClearFlag(_Flag);
+//END_REGION
+
+//REGION SAVE_LOADING_RESETVARS
+IF
+SavegameLoaded(_,_,_,_)
+THEN
+SysClear("DB_LeaderLib_Mods_Temp_ModIsActiveResolved", 1);
+SysClear("DB_LeaderLib_Mods_Temp_ModIsActiveUUIDResolved", 1);
 //END_REGION
 EXITSECTION
 ENDEXITSECTION

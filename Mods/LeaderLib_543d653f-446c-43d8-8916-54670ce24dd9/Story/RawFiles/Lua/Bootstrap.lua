@@ -148,20 +148,31 @@ local ignore_mods = {
 	["f243c84f-9322-43ac-96b7-7504f990a8f0"] = true,--Improved Organisation
 	["d2507d43-efce-48b8-ba5e-5dd136c715a7"] = true,--Pet Power
 }
+
+--- Split a version integer into separate values
+---@param version integer
+---@return integer,integer,integer,integer
+function LeaderLib_Ext_ParseVersion(version)
+	if type(version) == "string" then
+		version = math.floor(tonumber(version))
+	elseif type(version) == "number" then
+		version = math.tointeger(version)
+	end
+	local major = math.floor(version >> 28)
+	local minor = math.floor(version >> 24) & 0x0F
+	local revision = math.floor(version >> 16) & 0xFF
+	local build = math.floor(version & 0xFFFF)
+	return major,minor,revision,build
+end
+
 function LeaderLib_Ext_LoadMods()
 	local loadOrder = Ext.GetModLoadOrder()
 	for _,uuid in pairs(loadOrder) do
 		if ignore_mods[uuid] ~= true then
 			local mod = Ext.GetModInfo(uuid)
 			local versionInt = tonumber(mod.Version)
-			local major = math.floor(versionInt >> 28)
-			local minor = math.floor(versionInt >> 24) & 0x0F
-			local revision = math.floor(versionInt >> 16) & 0xFF
-			local build = math.floor(versionInt & 0xFFFF)
-			local modid = string.gsub(mod.Name, "%s+", "") -- Replace spaces
-			modid:gsub("-", "")
-			modid:gsub("'", "")
-			modid:gsub('"', "")
+			local major,minor,revision,build = LeaderLib_Ext_ParseVersion(versionInt)
+			local modid = string.gsub(mod.Name, "%s+", ""):gsub("%p+", ""):gsub("%c+", ""):gsub("%%+", ""):gsub("&+", "")
 			Osi.LeaderLib_Mods_OnModLoaded(uuid, modid, mod.Name, mod.Author, versionInt, major, minor, revision, build)
 		end
 	end

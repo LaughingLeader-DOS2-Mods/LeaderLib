@@ -127,11 +127,29 @@ PROC
 LeaderLib_ModMenu_CalculateMaxPage()
 THEN
 SysClear("DB_LeaderLib_ModMenu_PageMax", 3);
+SysClear("DB_LeaderLib_ModMenu_Temp_Counted", 1);
+SysClear("DB_LeaderLib_ModMenu_Temp_UniqueDialogs", 1);
+DB_LeaderLib_ModMenu_Temp_UniqueDialogs(0);
 
 PROC
 LeaderLib_ModMenu_CalculateMaxPage()
 AND
-SysCount("DB_LeaderLib_ModMenu_RegisteredMenuData", 5, _TotalMenus)
+DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author)
+AND
+NOT DB_LeaderLib_ModMenu_Temp_Counted(_Dialog)
+AND
+DB_LeaderLib_ModMenu_Temp_UniqueDialogs(_Last)
+AND
+IntegerSum(_Last, 1, _Next)
+THEN
+NOT DB_LeaderLib_ModMenu_Temp_UniqueDialogs(_Last);
+DB_LeaderLib_ModMenu_Temp_UniqueDialogs(_Next);
+DB_LeaderLib_ModMenu_Temp_Counted(_Dialog);
+
+PROC
+LeaderLib_ModMenu_CalculateMaxPage()
+AND
+DB_LeaderLib_ModMenu_Temp_UniqueDialogs(_TotalMenus)
 AND
 DB_LeaderLib_ModMenu_MenusPerPage(_MaxPerPage)
 AND
@@ -228,7 +246,7 @@ LeaderLib_ModMenu_QRY_SortNeeded()
 AND
 DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author)
 AND
-NOT DB_LeaderLib_Dictionary_Data("LeaderLib_RegisteredMenus", _, _ID, _)
+NOT DB_LeaderLib_Dictionary_Data("LeaderLib_RegisteredMenus", _, _Dialog, _)
 THEN
 DB_NOOP(1);
 
@@ -270,21 +288,21 @@ LeaderLib_ModMenu_StartSorting()
 AND
 DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author)
 AND
-NOT DB_LeaderLib_Dictionary_Data("LeaderLib_RegisteredMenus", _, _ID, _)
+NOT DB_LeaderLib_Dictionary_Data("LeaderLib_RegisteredMenus", _, _Dialog, _)
 AND
-NOT DB_LeaderLib_DictionarySort_Temp_StringQueue("LeaderLib_RegisteredMenus", _ID, _DisplayName)
+NOT DB_LeaderLib_DictionarySort_Temp_StringQueue("LeaderLib_RegisteredMenus", _Dialog, _DisplayName)
 THEN
-LeaderLib_DictionarySort_AddString("LeaderLib_RegisteredMenus", _ID, _DisplayName);
+LeaderLib_DictionarySort_AddString("LeaderLib_RegisteredMenus", _Dialog, _DisplayName);
 
 // [BEGIN_NO_OSITOOLS]
 PROC
 LeaderLib_ModMenu_StartSorting()
 AND
-SysCount("DB_LeaderLib_ModMenu_RegisteredMenuData", 5, _Length)
+DB_LeaderLib_ModMenu_Temp_UniqueDialogs(_TotalMenus)
 AND
-_Length < 100
+_TotalMenus < 100
 AND
-IntegertoString(_Length, _TotalStr)
+IntegertoString(_TotalMenus, _TotalStr)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu:Sorting] Total menus = [",_TotalStr,"]. Setting sort tick rate to 1.");
 LeaderLib_ModMenu_SetSortTickRate(1);
@@ -292,7 +310,7 @@ LeaderLib_ModMenu_SetSortTickRate(1);
 PROC
 LeaderLib_ModMenu_StartSorting()
 AND
-SysCount("DB_LeaderLib_ModMenu_RegisteredMenuData", 5, _Length)
+DB_LeaderLib_ModMenu_Temp_UniqueDialogs(_Length)
 AND
 _Length >= 100
 AND
@@ -513,7 +531,7 @@ NOT DB_LeaderLib_ModMenu_Temp_DisableMenuResolved(_Player, _Index, _DisabledFlag
 AND
 ObjectGetFlag(_Player, _DisabledFlag, _FlagIsEnabled)
 AND
-DB_LeaderLib_Dictionary_Data("LeaderLib_RegisteredMenus", _Index, _ID, _DisplayName)
+DB_LeaderLib_Dictionary_Data("LeaderLib_RegisteredMenus", _Index, _Dialog, _DisplayName)
 AND
 DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author)
 THEN
@@ -561,9 +579,9 @@ LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu][ERROR] ", "Page not set for some rea
 PROC
 LeaderLib_ModMenu_LoadPageVariables((CHARACTERGUID)_Player, (INTEGER)_Instance)
 AND
-DB_LeaderLib_MenuSettings_Temp_MenuVariableValue(_MenuIndex, _ID)
+DB_LeaderLib_MenuSettings_Temp_MenuVariableValue(_MenuIndex, _Dialog)
 THEN
-NOT DB_LeaderLib_MenuSettings_Temp_MenuVariableValue(_MenuIndex, _ID);
+NOT DB_LeaderLib_MenuSettings_Temp_MenuVariableValue(_MenuIndex, _Dialog);
 
 PROC
 LeaderLib_ModMenu_LoadPageVariables((CHARACTERGUID)_Player, (INTEGER)_Instance)
@@ -580,12 +598,12 @@ IntegerSum(_MenuIndex, _StartIndex, _Index)
 AND
 LeaderLib_ModMenu_QRY_DisableMenuIfNotAvailable(_Player, _Index, _DisabledFlag)
 AND
-DB_LeaderLib_Dictionary_Data("LeaderLib_RegisteredMenus", _Index, _ID, _DisplayName)
+DB_LeaderLib_Dictionary_Data("LeaderLib_RegisteredMenus", _Index, _Dialog, _DisplayName)
 AND
 NOT DB_LeaderLib_MenuSettings_Temp_MenuVariableValue(_MenuIndex, _)
 THEN
 DialogSetVariableStringForInstance(_Instance, _DialogVar, _DisplayName);
-DB_LeaderLib_MenuSettings_Temp_MenuVariableValue(_MenuIndex, _ID);
+DB_LeaderLib_MenuSettings_Temp_MenuVariableValue(_MenuIndex, _Dialog);
 
 PROC
 LeaderLib_ModMenu_LoadPageVariables((CHARACTERGUID)_Player, (INTEGER)_Instance)
@@ -678,7 +696,7 @@ DB_LeaderLib_ModMenu_MenuVars(_MenuIndex, _DialogVar, _SelectFlag, _DisabledFlag
 AND
 LeaderLib_Helper_QRY_ClearObjectFlag(_Player, _SelectFlag)
 AND
-DB_LeaderLib_MenuSettings_Temp_MenuVariableValue(_MenuIndex, _ID)
+DB_LeaderLib_MenuSettings_Temp_MenuVariableValue(_MenuIndex, _Dialog)
 AND
 DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author)
 THEN

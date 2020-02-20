@@ -81,6 +81,20 @@ local function StringToVersion(version_str)
 	end
 end
 
+local function VersionStringToVersionInteger(version_str, fallback)
+	local b, major,minor,revision,build = pcall(LeaderLib_Ext_StringToVersionIntegers, version_str)
+	if b then
+		if major ~= -1 and minor ~= -1 and revision ~= -1 and build ~= -1 then
+			return (major << 28) + (minor << 24) + (revision << 16) + (build)
+		else
+			Ext.Print("[LeaderLib:Main.lua:VersionStringToVersionInteger] " .. version_str .. " is not a valid version string!")
+		end
+	else
+		Ext.Print("[LeaderLib:Main.lua:VersionStringToVersionInteger] Failed to process '"..version_str.."' - function LeaderLib_Ext_StringToVersionIntegers has an error.")
+	end
+	return fallback
+end
+
 local function PrintAttributes(char)
 	local attributes = {"Strength", "Finesse", "Intelligence", "Constitution", "Memory", "Wits"}
 	for k, att in pairs(attributes) do
@@ -153,6 +167,7 @@ end
 LeaderLib.Main = {
 	StringToVersion_Query = StringToVersion_Query,
 	StringToVersion = StringToVersion,
+	VersionStringToVersionInteger = VersionStringToVersionInteger,
 	PrintAttributes = PrintAttributes,
 	PrintTest = PrintTest,
 	RegisterModsFromLua = RegisterModsFromLua,

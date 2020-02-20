@@ -173,7 +173,7 @@ function LeaderLib_Ext_LoadMods()
 			local versionInt = tonumber(mod.Version)
 			local major,minor,revision,build = LeaderLib_Ext_ParseVersion(versionInt)
 			--local modid = string.gsub(mod.Name, "%s+", ""):gsub("%p+", ""):gsub("%c+", ""):gsub("%%+", ""):gsub("&+", "")
-			local modid = string.match(mod.Folder, "(.*)_")
+			local modid = string.match(mod.Directory, "(.*)_")
 			Osi.LeaderLib_Mods_OnModLoaded(uuid, modid, mod.Name, mod.Author, versionInt, major, minor, revision, build)
 		end
 	end

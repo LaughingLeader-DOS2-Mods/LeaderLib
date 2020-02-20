@@ -142,6 +142,7 @@ DB_LeaderLib_ModApi_RegisterMod 6
 DB_LeaderLib_ModApi_RegisterMod 9
 DB_LeaderLib_ModApi_RegisterPreset 3
 DB_LeaderLib_ModApi_RegisterPreset 4
+DB_LeaderLib_ModApi_RenameModID 2
 DB_LeaderLib_ModApi_ResetAllGoals 2
 DB_LeaderLib_ModApi_SendEvent 1
 DB_LeaderLib_ModApi_StartSortQueue 3

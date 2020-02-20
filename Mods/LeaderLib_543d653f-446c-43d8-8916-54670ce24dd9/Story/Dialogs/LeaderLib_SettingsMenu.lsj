@@ -2186,7 +2186,7 @@
                                  {
                                     "flag" : [
                                        {
-                                          "name" : {"type" : 22, "value" : "LeaderLib_CanViewRegisteredMods"},"value" : {"type" : 19, "value" : 0}}
+                                          "name" : {"type" : 22, "value" : "LeaderLib_CanViewRegisteredMods"},"value" : {"type" : 19, "value" : 1}}
                                     ],"type" : {"type" : 22, "value" : "Global"}}
                               ]
                            }
@@ -3547,7 +3547,7 @@
          },
          "editorData" : {
             "needLayout" : {"type" : 19, "value" : 0},
-            "nextNodeId" : {"type" : 5, "value" : 290}
+            "nextNodeId" : {"type" : 5, "value" : 302}
          }
       }
    }

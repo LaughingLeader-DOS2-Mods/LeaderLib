@@ -256,6 +256,14 @@ DB_LeaderLib_ModApi_RegisterMenu((STRING)_UUID, (STRING)_Dialog, (STRING)_Displa
 THEN
 LeaderLib_Register_ModMenu(_UUID, _Dialog, _DisplayName);
 NOT DB_LeaderLib_ModApi_RegisterMenu(_UUID, _Dialog, _DisplayName);
+
+PROC
+LeaderLib_ModApi_RunCleanup()
+AND
+DB_LeaderLib_ModApi_RenameModID((STRING)_ModID, (STRING)_NewID)
+THEN
+LeaderLib_Mods_RenameOldModID(_ModID, _NewID);
+NOT DB_LeaderLib_ModApi_RenameModID(_ModID, _NewID);
 //END_REGION
 EXITSECTION
 

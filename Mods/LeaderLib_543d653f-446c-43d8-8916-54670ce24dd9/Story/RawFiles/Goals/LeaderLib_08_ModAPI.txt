@@ -29,6 +29,12 @@ LeaderLib_Mods_Internal_Register(_UUID, _ModID, _DisplayName, _Author, _Version,
 NOT DB_LeaderLib_ModApi_RegisterMod(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build);
 
 IF
+DB_LeaderLib_ModApi_RenameModID((STRING)_ModID, (STRING)_NewID)
+THEN
+LeaderLib_Mods_RenameOldModID(_ModID, _NewID);
+NOT DB_LeaderLib_ModApi_RenameModID(_ModID, _NewID);
+
+IF
 DB_LeaderLib_ModApi_RegisterMenu((STRING)_UUID, (STRING)_Dialog, (STRING)_DisplayName)
 THEN
 LeaderLib_Register_ModMenu(_UUID, _Dialog, _DisplayName);

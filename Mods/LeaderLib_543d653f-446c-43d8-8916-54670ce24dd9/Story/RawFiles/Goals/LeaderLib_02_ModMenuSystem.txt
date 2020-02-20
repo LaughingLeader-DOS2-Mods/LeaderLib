@@ -81,6 +81,19 @@ THEN
 DB_LeaderLib_ModMenu_RegisteredMenu_OpenEvent(_ID, _OpenMenuEvent);
 //END_REGION
 
+//REGION UPDATE_OLD
+//Swap old DB entries that stored the ID in the dict to the dialog instead
+IF
+SavegameLoading(_,_,_,_)
+AND
+DB_LeaderLib_Dictionary_Data("LeaderLib_RegisteredMenus", _Index, _ID, _DisplayName)
+AND
+DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author)
+THEN
+NOT DB_LeaderLib_Dictionary_Data("LeaderLib_RegisteredMenus", _Index, _ID, _DisplayName);
+DB_LeaderLib_Dictionary_Data("LeaderLib_RegisteredMenus", _Index, _Dialog, _DisplayName);
+//END_REGION
+
 //REGION AUTO_UPDATING
 //Updating empty author/modid
 PROC

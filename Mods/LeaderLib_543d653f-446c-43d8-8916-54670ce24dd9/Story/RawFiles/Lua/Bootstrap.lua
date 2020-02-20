@@ -43,6 +43,7 @@ LeaderLib_ModRegistered = {}
 LeaderLib_ModUpdater = {}
 
 Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib__Common.lua");
+Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib_Versioning.lua");
 Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib_Main.lua");
 Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib_GlobalSettings.lua");
 Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib_GameMechanics.lua");
@@ -119,8 +120,6 @@ if Ext.RegisterListener ~= nil then
     Ext.RegisterListener("ModuleLoading", ModuleLoading)
 end
 
-Ext.NewQuery(LeaderLib.Main.StringToVersion_Query, "LeaderLib_Ext_QRY_StringToVersion", "[in](STRING)_Version, [out](INTEGER)_Major, [out](INTEGER)_Minor, [out](INTEGER)_Revision, [out](INTEGER)_Build")
-
 Ext.Print("[LeaderLib:Bootstrap.lua] Finished running.")
 
 local ignore_mods = {
@@ -148,22 +147,6 @@ local ignore_mods = {
 	["f243c84f-9322-43ac-96b7-7504f990a8f0"] = true,--Improved Organisation
 	["d2507d43-efce-48b8-ba5e-5dd136c715a7"] = true,--Pet Power
 }
-
---- Split a version integer into separate values
----@param version integer
----@return integer,integer,integer,integer
-function LeaderLib_Ext_ParseVersion(version)
-	if type(version) == "string" then
-		version = math.floor(tonumber(version))
-	elseif type(version) == "number" then
-		version = math.tointeger(version)
-	end
-	local major = math.floor(version >> 28)
-	local minor = math.floor(version >> 24) & 0x0F
-	local revision = math.floor(version >> 16) & 0xFF
-	local build = math.floor(version & 0xFFFF)
-	return major,minor,revision,build
-end
 
 function LeaderLib_Ext_LoadMods()
 	local loadOrder = Ext.GetModLoadOrder()

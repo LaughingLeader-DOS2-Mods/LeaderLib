@@ -325,7 +325,7 @@ local function GlobalSettings_StoreModVersion_Old(modid, author, version_str)
 		local modinfo = Ext.GetModInfo(mod_settings.uuid)
 		mod_settings.version = tonumber(modinfo.Version)
 	else
-		mod_settings.version = LeaderLib.Main.VersionStringToVersionInteger(version_str, -1)
+		mod_settings.version = LeaderLib_Ext_VersionStringToVersionInteger(version_str, -1)
 		Ext.Print("[LeaderLib:GlobalSettings.lua:StoreModVersion_Old] Transformed " .. version_str .. " into "..tostring(mod_settings.version))
 	end
 end

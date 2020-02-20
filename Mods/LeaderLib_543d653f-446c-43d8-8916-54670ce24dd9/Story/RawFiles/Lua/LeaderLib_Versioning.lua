@@ -19,7 +19,10 @@ end
 ---@return string
 function LeaderLib_Ext_VersionIntegerToVersionString(version)
 	local major,minor,revision,build = LeaderLib_Ext_ParseVersion(version)
-	return tostring(major).."."..tostring(minor).."."..tostring(revision).."."..tostring(build)
+	if major ~= -1 and minor ~= -1 and revision ~= -1 and build ~= -1 then
+		return tostring(major).."."..tostring(minor).."."..tostring(revision).."."..tostring(build)
+	end 
+	return nil
 end
 
 ---Checks if a version string is less than a given version.
@@ -93,7 +96,7 @@ end
 Ext.NewQuery(StringToVersion_Query, "LeaderLib_Ext_QRY_StringToVersion", "[in](STRING)_Version, [out](INTEGER)_Major, [out](INTEGER)_Minor, [out](INTEGER)_Revision, [out](INTEGER)_Build")
 
 function LeaderLib_Ext_VersionStringToVersionInteger(version_str, fallback)
-	local b, major,minor,revision,build = pcall(LeaderLib_Ext_StringToVersionIntegers, version_str)
+	local b,major,minor,revision,build = pcall(LeaderLib_Ext_StringToVersionIntegers, version_str)
 	if b then
 		if major ~= -1 and minor ~= -1 and revision ~= -1 and build ~= -1 then
 			return (major << 28) + (minor << 24) + (revision << 16) + (build)
@@ -105,6 +108,8 @@ function LeaderLib_Ext_VersionStringToVersionInteger(version_str, fallback)
 	end
 	return fallback
 end
+
+Ext.NewQuery(LeaderLib_Ext_VersionStringToVersionInteger, "LeaderLib_Ext_QRY_VersionStringToVersionInteger", "[in](STRING)_VersionString, [in](INTEGER)_Fallback, [out](INTEGER)_VersionInt")
 
 function LeaderLib_Ext_CallModUpdated(modid, author, lastversionstr, nextversionstr)
 	local old_version = LeaderLib_Ext_VersionIntegerToVersionString(math.tointeger(lastversionstr))

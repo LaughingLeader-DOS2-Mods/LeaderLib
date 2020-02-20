@@ -303,7 +303,7 @@ LeaderLib_DynamicMenu_BlockEntry((GUIDSTRING)_Player, "LeaderLib.Settings.Preset
 AND
 DB_LeaderLib_PresetMenu_RegisteredPreset(_ModID, _Preset, _GlobalFlag)
 AND
-NOT DB_GlobalFlag(_GlobalFlag)
+GlobalGetFlag(_GlobalFlag, 0)
 THEN
 DB_LeaderLib_DynamicMenu_EntryBlocked(_Player, "LeaderLib.Settings.PresetMenu", _Preset, _Instance);
 

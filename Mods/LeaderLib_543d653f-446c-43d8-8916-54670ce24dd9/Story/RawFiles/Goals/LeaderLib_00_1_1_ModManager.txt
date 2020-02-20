@@ -364,7 +364,7 @@ TimerFinished("Timers_LeaderLib_CheckActiveMods")
 AND
 DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build)
 THEN
-NRD_LuaCall("LeaderLib_Ext_SetModIsActiveFlag", (STRING)_UUID, _ModID, _DisplayName);
+NRD_LuaCall("LeaderLib_Ext_SetModIsActiveFlag", (STRING)_UUID, _ModID);
 */
 
 IF

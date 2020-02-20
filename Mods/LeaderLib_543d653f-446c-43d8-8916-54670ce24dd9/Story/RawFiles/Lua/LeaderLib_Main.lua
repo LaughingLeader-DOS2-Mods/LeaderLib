@@ -62,8 +62,9 @@ local function RegisterModsFromLua()
 	LeaderLib.ModRegistration = {}
 end
 
-local function SetModIsActiveFlag(uuid, name)
-	local flag = string.gsub(name, "%s+", "_") -- Replace spaces
+local function SetModIsActiveFlag(uuid, modid)
+	--local flag = string.gsub(modid, "%s+", "_") -- Replace spaces
+	local flag = tostring(modid).. "_IsActive"
 	local flagEnabled = GlobalGetFlag(flag)
 	if NRD_IsModLoaded(uuid) == 1 then
 		if flagEnabled == 0 then

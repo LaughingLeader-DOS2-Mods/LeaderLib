@@ -576,27 +576,61 @@ IF
 StoryEvent(_, "LeaderLib_Initialized")
 AND
 DB_LeaderUpdater_Temp_PastRegistered(_ModID, _Author, _OldVersion)
-AND
-DB_Mods_Registered(_ModID, _Author, _CurrentVersion)
 THEN
 NOT DB_LeaderUpdater_Temp_PastRegistered(_ModID, _Author, _OldVersion);
-LeaderUpdater_ModUpdated(_ModID, _Author, _OldVersion, _CurrentVersion);
+LeaderUpdater_Internal_OnModUpdated(_ModID, _Author, _OldVersion, "");
 
-//Fail-safe
-IF
-StoryEvent(_, "LeaderLib_Initialized")
-AND
-DB_LeaderUpdater_Temp_PastRegistered(_ModID, _Author, _OldVersion)
-AND
-NOT DB_Mods_Registered(_ModID, _Author, _)
+// [BEGIN_NO_OSITOOLS]
+PROC
+LeaderUpdater_Internal_OnModUpdated((STRING)_ModID, (STRING)_Author, (STRING)_PastVersion, (STRING)_NewVersion)
 THEN
-NOT DB_LeaderUpdater_Temp_PastRegistered(_ModID, _Author, _OldVersion);
-LeaderUpdater_ModUpdated(_ModID, _Author, _OldVersion, "");
+LeaderUpdater_ModUpdated(_ModID, _Author, _PastVersion, _NewVersion);
+// [END_NO_OSITOOLS]
+
+/*
+Only send out the usual update proc if this mod isn't registered using the extender system.
+Otherwise we fire LeaderUpdater_ModUpdated via the new procs.
+*/
+/* [OSITOOLS_ONLY]
+PROC
+LeaderUpdater_Internal_OnModUpdated((STRING)_ModID, (STRING)_Author, (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+NOT DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _)
+THEN
+LeaderUpdater_ModUpdated(_ModID, _Author, _PastVersion, _NewVersion);
+*/
 
 PROC
 LeaderUpdater_ModUpdated((STRING)_ModID, (STRING)_Author, (STRING)_PastVersion, (STRING)_NewVersion)
 THEN
 DB_NOOP(1);
+//END_REGION
+
+//REGION VERSION_CHANGED_TO_OLD_SYSTEM
+/* For supporting mods with non-extender versioning support. */
+/* [OSITOOLS_ONLY]
+PROC
+LeaderLib_Mods_OnVersionChanged((GUIDSTRING)_UUID, (INTEGER)_LastVersion, (INTEGER)_NextVersion)
+AND
+DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID)
+AND
+DB_Mods_Registered(_ModID, _Author, _)
+THEN
+NRD_LuaCall("LeaderLib_Ext_CallModUpdated", _ModID, _Author, (STRING)_LastVersion, (STRING)_NextVersion);
+
+PROC
+LeaderLib_Mods_OnModRegistered((GUIDSTRING)_UUID, (INTEGER)_NextVersion, (INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Revision, (INTEGER)_Build)
+AND
+DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID)
+AND
+DB_Mods_Registered(_ModID, _Author, _PastVersion)
+AND
+LeaderLib_Ext_QRY_VersionStringToVersionInteger(_PastVersion, -1, _LastVersion)
+AND
+_LastVersion != _NextVersion
+THEN
+NRD_LuaCall("LeaderLib_Ext_CallModUpdated", _ModID, _Author, (STRING)_LastVersion, (STRING)_NextVersion);
+*/
 //END_REGION
 
 //REGION UNINSTALLING

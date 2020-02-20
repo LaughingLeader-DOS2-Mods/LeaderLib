@@ -721,13 +721,6 @@ LeaderLib_StringExt_SetVersionFromString((STRING)_Version, (INTEGER)_Major, (INT
 THEN
 DB_LeaderLib_StringExt_VersionToInt(_Version, _Major, _Minor, _Revision, _Build);
 
-/*
-QRY
-LeaderLib_StringExt_QRY_Ext_Internal_SplitVersionString((STRING)_Version)
-THEN
-NRD_LuaCall("LeaderLib_Ext_StringToVersion", _Version);
-*/
-
 /* [OSITOOLS_ONLY]
 QRY
 LeaderLib_StringExt_QRY_Ext_Internal_SplitVersionString((STRING)_Version)

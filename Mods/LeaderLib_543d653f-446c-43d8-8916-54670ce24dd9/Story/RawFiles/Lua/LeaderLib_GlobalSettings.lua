@@ -89,21 +89,29 @@ local LeaderLibModSettings = {
 	author = "Author",
 	globalflags = {},
 	integers = {},
-	version = "0.0.0.0",
+	version = -1,
 	uuid = ""
 }
 
 LeaderLibModSettings.__index = LeaderLibModSettings
 
-function LeaderLibModSettings:Create(name,author)
+function LeaderLibModSettings:Create(uuid)
     local this =
     {
-		name = name,
-		author = author,
+		name = "",
+		author = "",
 		globalflags = {},
 		integers = {},
-		uuid = ""
+		uuid = uuid
 	}
+	if LeaderLib.Common.StringIsNullOrEmpty(uuid) == false then
+		local modinfo = Ext.GetModInfo(uuid)
+		if modinfo ~= nil then
+			this.name = modinfo.Name
+			this.author = modinfo.Author
+			this.version = tonumber(modinfo.Version)
+		end
+	end
 	setmetatable(this, self)
     return this
 end
@@ -130,8 +138,7 @@ end
 
 function LeaderLibModSettings:Export()
 	Ext.Print("Exporting: " .. LeaderLib.Common.Dump(self))
-	local export_table = LeaderLibModSettings:Create(self.name, self.author)
-	export_table.uuid = self.uuid
+	local export_table = LeaderLibModSettings:Create(self.uuid)
 	export_table.version = self.version
 	--export_table.globalflags = {}
 	table.sort(self.globalflags)
@@ -195,25 +202,29 @@ end
 
 ---Fetches stored settings, or returns a new settings table.
 ---@param uuid string
----@param name string
----@param author string
 ---@return LeaderLibModSettings
-local function Get_Settings(uuid, name, author)
+local function Get_Settings(uuid)
 	if #global_settings > 0 then
 		for _,v in pairs(global_settings) do
-			Ext.Print("Comparing uuid (",uuid,") with (",v.uuid,") for ("..name..") vs ("..v.name..")")
-			if (v.uuid == uuid) or (LeaderLib.Common.StringEquals(v.name, name) and LeaderLib.Common.StringEquals(v.author, author)) then
-				if v.uuid ~= uuid and uuid ~= "" then v.uuid = uuid end
-				if v.name ~= name and name ~= "" then v.name = name end
-				if v.author ~= author and author ~= "" then v.author = author end
+			if v.uuid == uuid then
 				return v
 			end
 		end
 	end
-	local new_settings = LeaderLibModSettings:Create(name, author)
-	new_settings.uuid = uuid
+	local new_settings = LeaderLibModSettings:Create(uuid)
 	global_settings[#global_settings+1] = new_settings
 	return new_settings
+end
+
+local function TryGetUUID(modid, author)
+	local loadOrder = Ext.GetModLoadOrder()
+	for _,uuid in pairs(loadOrder) do
+		local mod = Ext.GetModInfo(uuid)
+		if LeaderLib.Common.StringEquals(modid, mod.Name) and LeaderLib.Common.StringEquals(author, mod.Author) then
+			return uuid
+		end
+	end
+	return ""
 end
 
 ---Fetches stored settings, or returns a new settings table.
@@ -230,22 +241,37 @@ local function Get_Settings_Old(modid, author)
 			end
 		end
 	end
-	local new_settings = LeaderLibModSettings:Create(modid, author)
+	local uuid = TryGetUUID(modid, author)
+	local new_settings = LeaderLibModSettings:Create(uuid)
+	if uuid == "" then
+		new_settings.name = modid
+		new_settings.author = author
+	end
 	global_settings[#global_settings+1] = new_settings
 	return new_settings
 end
 
 ---@param uuid string
----@param name string
----@param author string
 ---@param flag string
-local function GlobalSettings_StoreGlobalFlag(uuid, name, author, flag, saveWhenFalse)
-	local mod_settings = Get_Settings(uuid, name, author)
+local function GlobalSettings_StoreGlobalFlag(uuid, flag, saveWhenFalse)
+	local mod_settings = Get_Settings(uuid)
 	if flag ~= nil then
 		local flagvar = LeaderLibFlagVariable:Create(flag)
 		if saveWhenFalse == "1" then flagvar.saveWhenFalse = true end
 		mod_settings.globalflags[flag] = flagvar
 	end
+end
+
+---@param uuid string
+---@param varname string
+---@param defaultvalue string
+local function GlobalSettings_StoreGlobalInteger(uuid, varname, defaultvalue)
+	Ext.Print("[LeaderLib:GlobalSettings.lua:StoreGlobalInteger] Storing int: ", uuid, varname, defaultvalue)
+	local mod_settings = Get_Settings(uuid)
+	if mod_settings["integers"] == nil then
+		mod_settings.integers = {}
+	end
+	mod_settings.integers[varname] = tonumber(defaultvalue)
 end
 
 ---@param modid string
@@ -260,51 +286,48 @@ local function GlobalSettings_StoreGlobalFlag_Old(modid, author, flag, saveWhenF
 	end
 end
 
----@param uuid string
----@param name string
----@param author string
----@param varname string
----@param defaultvalue string
-local function GlobalSettings_StoreGlobalInteger(uuid, name, author, varname, defaultvalue)
-	Ext.Print("[LeaderLib:GlobalSettings.lua] Storing int: ", uuid, name, author, varname, defaultvalue)
-	local mod_settings = Get_Settings(uuid, name, author)
-	mod_settings.integers[varname] = tonumber(defaultvalue)
-end
-
 ---@param modid string
 ---@param author string
 ---@param varname string
 ---@param defaultvalue string
 local function GlobalSettings_StoreGlobalInteger_Old(modid, author, varname, defaultvalue)
-	Ext.Print("[LeaderLib:GlobalSettings.lua] Storing int: ", modid, author, varname, defaultvalue)
+	Ext.Print("[LeaderLib:GlobalSettings.lua:StoreGlobalInteger_Old] Storing int: ", modid, author, varname, defaultvalue)
 	local mod_settings = Get_Settings_Old(modid, author)
 	mod_settings.integers[varname] = tonumber(defaultvalue)
 end
 
 ---@param uuid string
----@param name string
----@param author string
+local function GlobalSettings_GetAndStoreModVersion(uuid)
+	local mod_settings = Get_Settings(uuid)
+	local modinfo = Ext.GetModInfo(uuid)
+	mod_settings.version = tonumber(modinfo.Version)
+end
+
+---@param uuid string
 ---@param version string
-local function GlobalSettings_StoreModVersion(uuid, name, author, version)
-	local versionInt = tonumber(version)
-	local major = math.floor(versionInt >> 28)
-	local minor = math.floor(versionInt >> 24) & 0x0F
-	local revision = math.floor(versionInt >> 16) & 0xFF
-	local build = math.floor(versionInt & 0xFFFF)
-	local versionString = tostring(major).."."..tostring(minor).."."..tostring(revision).."."..tostring(build)
-	local mod_settings = Get_Settings(uuid, name, author)
-	mod_settings.uuid = uuid
-	mod_settings.name = name
-	mod_settings.author = author
-	mod_settings.version = version
+local function GlobalSettings_StoreModVersion(uuid, version)
+	-- local versionInt = tonumber(version)
+	-- local major = math.floor(versionInt >> 28)
+	-- local minor = math.floor(versionInt >> 24) & 0x0F
+	-- local revision = math.floor(versionInt >> 16) & 0xFF
+	-- local build = math.floor(versionInt & 0xFFFF)
+	-- local versionString = tostring(major).."."..tostring(minor).."."..tostring(revision).."."..tostring(build)
+	local mod_settings = Get_Settings(uuid)
+	mod_settings.version = tonumber(version)
 end
 
 ---@param modid string
 ---@param author string
----@param version string
-local function GlobalSettings_StoreModVersion_Old(modid, author, version)
+local function GlobalSettings_StoreModVersion_Old(modid, author, version_str)
 	local mod_settings = Get_Settings_Old(modid, author)
-	mod_settings.version = version
+	if mod_settings.uuid ~= "" then
+		local mod_settings = Get_Settings(mod_settings.uuid)
+		local modinfo = Ext.GetModInfo(mod_settings.uuid)
+		mod_settings.version = tonumber(modinfo.Version)
+	else
+		mod_settings.version = LeaderLib.Main.VersionStringToVersionInteger(version_str, -1)
+		Ext.Print("[LeaderLib:GlobalSettings.lua:StoreModVersion_Old] Transformed " .. version_str .. " into "..tostring(mod_settings.version))
+	end
 end
 
 local function parse_mod_data(uuid, modid, author, tbl)
@@ -318,9 +341,10 @@ local function parse_mod_data(uuid, modid, author, tbl)
 				GlobalSetFlag(flag)
 			end
 			if LeaderLib.Common.StringIsNullOrEmpty(uuid) == false then
+				--GlobalSettings_StoreGlobalInteger(uuid, name, author, varname, defaultvalue)
 				GlobalSettings_StoreGlobalFlag(uuid, flag, 0)
 			else
-				GlobalSettings_StoreGlobalFlag(modid, author, flag, 0)
+				GlobalSettings_StoreGlobalFlag_Old(modid, author, flag, 0)
 			end
 		end
 	end
@@ -337,10 +361,12 @@ local function parse_mod_data(uuid, modid, author, tbl)
 			Ext.Print("[LeaderLib:GlobalSettings.lua] Found global integer variable ("..varname..")["..tostring(num).."] for mod (".. modid.."|"..author..")")
 			if LeaderLib.Common.StringIsNullOrEmpty(uuid) == false then
 				Osi.LeaderLib_GlobalSettings_SetIntegerVariable(uuid, varname, num)
-				GlobalSettings_StoreGlobalInteger(uuid, 0)
+				--GlobalSettings_StoreGlobalInteger(uuid, name, author, varname, defaultvalue)
+				GlobalSettings_StoreGlobalInteger(uuid, varname, 0)
 			else
 				Osi.LeaderLib_GlobalSettings_SetIntegerVariable(modid, author, varname, num)
-				GlobalSettings_StoreGlobalInteger(modid, author, varname, 0)
+				--GlobalSettings_StoreGlobalInteger_Old(modid, author, varname, defaultvalue)
+				GlobalSettings_StoreGlobalInteger_Old(modid, author, varname, 0)
 			end
 		end
 	end
@@ -430,8 +456,10 @@ LeaderLib.Settings = {
 	SaveGlobalSettings = SaveGlobalSettings_Run,
 	GlobalSettings_StoreGlobalFlag = GlobalSettings_StoreGlobalFlag,
 	GlobalSettings_StoreGlobalInteger = GlobalSettings_StoreGlobalInteger,
+	GlobalSettings_StoreGlobalInteger_Old = GlobalSettings_StoreGlobalInteger_Old,
 	GlobalSettings_StoreModVersion = GlobalSettings_StoreModVersion,
 	GlobalSettings_StoreModVersion_Old = GlobalSettings_StoreModVersion_Old,
+	GlobalSettings_GetAndStoreModVersion = GlobalSettings_GetAndStoreModVersion,
 	GlobalSettings_Initialize = GlobalSettings_Initialize,
 }
 

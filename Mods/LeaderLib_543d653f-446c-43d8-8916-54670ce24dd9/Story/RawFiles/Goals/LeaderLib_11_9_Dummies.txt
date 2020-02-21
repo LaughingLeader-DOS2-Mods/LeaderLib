@@ -4,17 +4,25 @@ INITSECTION
 
 KBSECTION
 IF
-GameStarted(_Region, _)
+StoryEvent(_, "LeaderLib_Initialized")
 AND
-IsGameLevel(_Region, 1)
+DB_CurrentLevel(_Region)
+AND
+GlobalGetFlag("LeaderLib_IsEditorMode", _IsEditorMode)
+AND
+IsGameLevel(_Region, _IsGameLevel)
+AND
+IntegerMax(_IsEditorMode, _IsGameLevel, 1)
 AND
 NOT DB_LeaderLib_Dummies_MovedToLevel(_Region, S_LeaderLib_Dummy_TargetHelper_A_36069245-0e2d-44b1-9044-6797bd29bb15)
 AND
 CharacterGetHostCharacter(_Host)
 THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_11_9_Dummies] Moved TargetHelper_A dummy into level (",_Region,")");
 DB_LeaderLib_Dummies_MovedToLevel(_Region, S_LeaderLib_Dummy_TargetHelper_A_36069245-0e2d-44b1-9044-6797bd29bb15);
 TeleportTo(S_LeaderLib_Dummy_TargetHelper_A_36069245-0e2d-44b1-9044-6797bd29bb15, _Host, "", 0, 1);
 SetOnStage(S_LeaderLib_Dummy_TargetHelper_A_36069245-0e2d-44b1-9044-6797bd29bb15, 0);
+//CharacterSetDetached(S_LeaderLib_Dummy_TargetHelper_A_36069245-0e2d-44b1-9044-6797bd29bb15, 1);
 
 IF
 RegionEnded(_Region)
@@ -29,7 +37,8 @@ AND
 ObjectIsOnStage(S_LeaderLib_Dummy_TargetHelper_A_36069245-0e2d-44b1-9044-6797bd29bb15, 1)
 THEN
 SetOnStage(S_LeaderLib_Dummy_TargetHelper_A_36069245-0e2d-44b1-9044-6797bd29bb15, 0);
+//CharacterSetDetached(S_LeaderLib_Dummy_TargetHelper_A_36069245-0e2d-44b1-9044-6797bd29bb15, 1);
 EXITSECTION
-
+SysClear("DB_LeaderLib_Dummies_MovedToLevel", 2);
 ENDEXITSECTION
 ParentTargetEdge "LeaderLib_11__Start"

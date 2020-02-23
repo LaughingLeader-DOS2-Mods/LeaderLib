@@ -7,10 +7,10 @@ KBSECTION
 IF
 GameStarted(_,_)
 AND
-LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", 1,6,0,1)
+LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", 1,6,0,2)
 THEN
-LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Updating LeaderLib to latest version (1.6.0.1).");
-LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", 1,6,0,1);
+LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Updating LeaderLib to latest version (1.6.0.2).");
+LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", 1,6,0,2);
 //END_REGION
 
 //REGION GENERAL_UPDATES
@@ -24,7 +24,7 @@ LeaderUpdater_Register_UUID("LeaderLib", "LaughingLeader", 7e737d2f-31d2-4751-96
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,6,0,1)
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,6,0,2)
 AND
 NOT DB_LeaderLib_ModMenu_RegisteredMenuData("7e737d2f-31d2-4751-963f-be6ccc59cd0c", _, _, _, _)
 THEN

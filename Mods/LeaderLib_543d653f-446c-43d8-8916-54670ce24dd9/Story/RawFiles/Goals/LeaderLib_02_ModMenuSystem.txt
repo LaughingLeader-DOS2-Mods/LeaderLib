@@ -29,6 +29,7 @@ AND
 DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author)
 THEN
 NOT DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author);
+LeaderLib_Array_ClearDictionary("LeaderLib_RegisteredMenus");
 
 PROC
 LeaderLib_ModMenu_Internal_ClearLastForDialog((STRING)_Dialog)
@@ -36,14 +37,16 @@ AND
 DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author)
 THEN
 NOT DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author);
+LeaderLib_Array_ClearDictionary("LeaderLib_RegisteredMenus");
 
+//Old
 PROC
 LeaderLib_Register_ModMenu((STRING)_ID, (STRING)_DisplayName, (STRING)_Dialog, (STRING)_ModID, (STRING)_Author)
 THEN
 LeaderLib_ModMenu_Internal_ClearLastForID(_ID);
 LeaderLib_ModMenu_Internal_ClearLastForDialog(_ID);
-LeaderLib_StringExt_DetermineStringLength(_DisplayName);
 DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author);
+LeaderLib_StringExt_DetermineStringLength(_DisplayName);
 LeaderLib_ModMenu_Internal_StartSortIfNeeded();
 
 PROC
@@ -56,15 +59,40 @@ LeaderLib_ModMenu_Internal_GetInfoForUUID(_UUID, _Dialog, _DisplayName);
 LeaderLib_StringExt_DetermineStringLength(_DisplayName);
 LeaderLib_ModMenu_Internal_StartSortIfNeeded();
 
+PROC
+LeaderLib_Register_ModMenuByUUID((STRING)_UUID, (STRING)_Dialog, (STRING)_DisplayName, (STRING)_ModID, (STRING)_Author)
+THEN
+LeaderLib_ModMenu_Internal_ClearLastForID(_UUID);
+LeaderLib_ModMenu_Internal_ClearLastForDialog(_Dialog);
+DB_LeaderLib_ModMenu_RegisteredMenuData(_UUID, _DisplayName, _Dialog, _ModID, _Author);
+LeaderLib_StringExt_DetermineStringLength(_DisplayName);
+LeaderLib_ModMenu_Internal_StartSortIfNeeded();
+
 /* [OSITOOLS_ONLY]
 PROC
 LeaderLib_ModMenu_Internal_GetInfoForUUID((STRING)_ID, (STRING)_Dialog, (STRING)_DisplayName)
+AND
+DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, "", "")
 AND
 NRD_GuidString(_ID, _UUID)
 AND
 DB_LeaderLib_Mods_Registered(_UUID, _ModID, _ModDisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build)
 THEN
-NOT DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, "", "");
+LeaderLib_ModMenu_Internal_ClearLastForID(_ID);
+DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author);
+
+PROC
+LeaderLib_ModMenu_Internal_GetInfoForUUID((STRING)_ID, (STRING)_Dialog, (STRING)_DisplayName)
+AND
+DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, "", "")
+AND
+NRD_GuidString(_ID, _UUID)
+AND
+NOT DB_LeaderLib_Mods_Registered(_UUID, _, _, _, _, _, _, _, _)
+AND
+DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID)
+THEN
+LeaderLib_ModMenu_Internal_ClearLastForID(_ID);
 DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author);
 */
 

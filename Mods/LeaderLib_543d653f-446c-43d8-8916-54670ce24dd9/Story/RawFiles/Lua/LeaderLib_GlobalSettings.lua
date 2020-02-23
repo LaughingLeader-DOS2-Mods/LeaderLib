@@ -254,11 +254,15 @@ end
 ---@param uuid string
 ---@param flag string
 local function GlobalSettings_StoreGlobalFlag(uuid, flag, saveWhenFalse)
-	local mod_settings = Get_Settings(uuid)
 	if flag ~= nil then
-		local flagvar = LeaderLibFlagVariable:Create(flag)
-		if saveWhenFalse == "1" then flagvar.saveWhenFalse = true end
-		mod_settings.globalflags[flag] = flagvar
+		local mod_settings = Get_Settings(uuid)
+		if mod_settings ~= nil then
+			local flagvar = LeaderLibFlagVariable:Create(flag)
+			if saveWhenFalse == "1" then flagvar.saveWhenFalse = true end
+			mod_settings.globalflags[flag] = flagvar
+		else
+			Ext.Print("[LeaderLib:GlobalSettings.lua:StoreGlobalFlag] [*ERROR]* Failed to find settings for UUID ("..tostring(uuid)..").")
+		end
 	end
 end
 
@@ -266,23 +270,31 @@ end
 ---@param varname string
 ---@param defaultvalue string
 local function GlobalSettings_StoreGlobalInteger(uuid, varname, defaultvalue)
-	Ext.Print("[LeaderLib:GlobalSettings.lua:StoreGlobalInteger] Storing int: ", uuid, varname, defaultvalue)
+	--Ext.Print("[LeaderLib:GlobalSettings.lua:StoreGlobalInteger] Storing int: ", uuid, varname, defaultvalue)
 	local mod_settings = Get_Settings(uuid)
-	if mod_settings["integers"] == nil then
-		mod_settings.integers = {}
+	if mod_settings ~= nil then
+		if mod_settings["integers"] == nil then
+			mod_settings.integers = {}
+		end
+		mod_settings.integers[varname] = tonumber(defaultvalue)
+	else
+		Ext.Print("[LeaderLib:GlobalSettings.lua:StoreGlobalInteger] [*ERROR]* Failed to find settings for UUID ("..tostring(uuid)..").")
 	end
-	mod_settings.integers[varname] = tonumber(defaultvalue)
 end
 
 ---@param modid string
 ---@param author string
 ---@param flag string
 local function GlobalSettings_StoreGlobalFlag_Old(modid, author, flag, saveWhenFalse)
-	local mod_settings = Get_Settings_Old(modid, author)
 	if flag ~= nil then
-		local flagvar = LeaderLibFlagVariable:Create(flag)
-		if saveWhenFalse == "1" then flagvar.saveWhenFalse = true end
-		mod_settings.globalflags[flag] = flagvar
+		local mod_settings = Get_Settings_Old(modid, author)
+		if mod_settings ~= nil then
+			local flagvar = LeaderLibFlagVariable:Create(flag)
+			if saveWhenFalse == "1" then flagvar.saveWhenFalse = true end
+			mod_settings.globalflags[flag] = flagvar
+		else
+			Ext.Print("[LeaderLib:GlobalSettings.lua:StoreGlobalFlag_Old] [*ERROR]* Failed to find settings for ("..tostring(modid)..","..tostring(author)..").")
+		end
 	end
 end
 
@@ -291,9 +303,13 @@ end
 ---@param varname string
 ---@param defaultvalue string
 local function GlobalSettings_StoreGlobalInteger_Old(modid, author, varname, defaultvalue)
-	Ext.Print("[LeaderLib:GlobalSettings.lua:StoreGlobalInteger_Old] Storing int: ", modid, author, varname, defaultvalue)
+	--Ext.Print("[LeaderLib:GlobalSettings.lua:StoreGlobalInteger_Old] Storing int: ", modid, author, varname, defaultvalue)
 	local mod_settings = Get_Settings_Old(modid, author)
-	mod_settings.integers[varname] = tonumber(defaultvalue)
+	if mod_settings ~= nil then
+		mod_settings.integers[varname] = math.tointeger(defaultvalue)
+	else
+		Ext.Print("[LeaderLib:GlobalSettings.lua:StoreGlobalInteger_Old] [*ERROR]* Failed to find settings for UUID ("..tostring(modid)..","..tostring(author)..").")
+	end
 end
 
 ---@param uuid string
@@ -306,27 +322,29 @@ end
 ---@param uuid string
 ---@param version string
 local function GlobalSettings_StoreModVersion(uuid, version)
-	-- local versionInt = tonumber(version)
-	-- local major = math.floor(versionInt >> 28)
-	-- local minor = math.floor(versionInt >> 24) & 0x0F
-	-- local revision = math.floor(versionInt >> 16) & 0xFF
-	-- local build = math.floor(versionInt & 0xFFFF)
-	-- local versionString = tostring(major).."."..tostring(minor).."."..tostring(revision).."."..tostring(build)
 	local mod_settings = Get_Settings(uuid)
-	mod_settings.version = tonumber(version)
+	if mod_settings ~= nil then
+		mod_settings.version = math.tointeger(version)
+	else
+		Ext.Print("[LeaderLib:GlobalSettings.lua:StoreModVersion] [*ERROR]* Failed to find settings for UUID ("..tostring(uuid)..").")
+	end
 end
 
 ---@param modid string
 ---@param author string
 local function GlobalSettings_StoreModVersion_Old(modid, author, version_str)
 	local mod_settings = Get_Settings_Old(modid, author)
-	if mod_settings.uuid ~= "" then
-		local mod_settings = Get_Settings(mod_settings.uuid)
-		local modinfo = Ext.GetModInfo(mod_settings.uuid)
-		mod_settings.version = tonumber(modinfo.Version)
+	if mod_settings ~= nil then
+		if mod_settings.uuid ~= "" then
+			local mod_settings = Get_Settings(mod_settings.uuid)
+			local modinfo = Ext.GetModInfo(mod_settings.uuid)
+			mod_settings.version = tonumber(modinfo.Version)
+		else
+			mod_settings.version = LeaderLib_Ext_VersionStringToVersionInteger(version_str, -1)
+			Ext.Print("[LeaderLib:GlobalSettings.lua:StoreModVersion_Old] Transformed " .. version_str .. " into "..tostring(mod_settings.version))
+		end
 	else
-		mod_settings.version = LeaderLib_Ext_VersionStringToVersionInteger(version_str, -1)
-		Ext.Print("[LeaderLib:GlobalSettings.lua:StoreModVersion_Old] Transformed " .. version_str .. " into "..tostring(mod_settings.version))
+		Ext.Print("[LeaderLib:GlobalSettings.lua:StoreModVersion_Old] [*ERROR]* Failed to find settings for ("..tostring(modid)..","..tostring(author)..").")
 	end
 end
 

@@ -31,6 +31,15 @@ AND
 LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,5,9,1)
 THEN
 LeaderUpdater_Register_UUID("LeaderLib", "LaughingLeader", 7e737d2f-31d2-4751-963f-be6ccc59cd0c);
+
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,6,0,0)
+AND
+DB_LeaderLib_ModMenu_RegisteredMenuData("LaughingLeader.LeaderLib", "[LeaderLib] Settings", "LeaderLib_SettingsMenu", "LeaderLib", "LaughingLeader")
+THEN
+NOT DB_LeaderLib_ModMenu_RegisteredMenuData("LaughingLeader.LeaderLib", "[LeaderLib] Settings", "LeaderLib_SettingsMenu", "LeaderLib", "LaughingLeader");
 //END_REGION
 
 //REGION MIGRATING

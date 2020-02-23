@@ -123,7 +123,7 @@ end
 Ext.Print("[LeaderLib:Bootstrap.lua] Finished running.")
 
 local ignore_mods = {
-	["7e737d2f-31d2-4751-963f-be6ccc59cd0c"] = true,--LeaderLib
+	--["7e737d2f-31d2-4751-963f-be6ccc59cd0c"] = true,--LeaderLib
 	["2bd9bdbe-22ae-4aa2-9c93-205880fc6564"] = true,--Shared
 	["eedf7638-36ff-4f26-a50a-076b87d53ba0"] = true,--Shared_DOS
 	["1301db3d-1f54-4e98-9be5-5094030916e4"] = true,--Divinity: Original Sin 2

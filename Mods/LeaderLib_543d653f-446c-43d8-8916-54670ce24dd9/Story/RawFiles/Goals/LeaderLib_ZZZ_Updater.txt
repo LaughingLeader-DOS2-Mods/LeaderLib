@@ -4,15 +4,13 @@ INITSECTION
 //The version is registered in LeaderLib_00_1_1_System, so other mods will be able to see if LeaderLib is registered.
 KBSECTION
 //REGION UPDATE_EVENT
-// [BEGIN_NO_OSITOOLS]
 IF
 GameStarted(_,_)
 AND
-LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", 1,6,0,0)
+LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", 1,6,0,1)
 THEN
-LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Updating LeaderLib to latest version (1.6.0.0).");
-LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", 1,6,0,0);
-// [END_NO_OSITOOLS]
+LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Updating LeaderLib to latest version (1.6.0.1).");
+LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", 1,6,0,1);
 //END_REGION
 
 //REGION ACTIVE_FLAG
@@ -35,11 +33,11 @@ LeaderUpdater_Register_UUID("LeaderLib", "LaughingLeader", 7e737d2f-31d2-4751-96
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND
-LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,6,0,0)
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,6,0,1)
 AND
-DB_LeaderLib_ModMenu_RegisteredMenuData("LaughingLeader.LeaderLib", "[LeaderLib] Settings", "LeaderLib_SettingsMenu", "LeaderLib", "LaughingLeader")
+NOT DB_LeaderLib_ModMenu_RegisteredMenuData("7e737d2f-31d2-4751-963f-be6ccc59cd0c", _, _, _, _)
 THEN
-NOT DB_LeaderLib_ModMenu_RegisteredMenuData("LaughingLeader.LeaderLib", "[LeaderLib] Settings", "LeaderLib_SettingsMenu", "LeaderLib", "LaughingLeader");
+LeaderLib_Register_ModMenu("7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib_SettingsMenu", "[LeaderLib] Settings");
 //END_REGION
 
 //REGION MIGRATING

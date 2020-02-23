@@ -578,7 +578,6 @@ LeaderUpdater_QRY_ModIsActive(_ModID)
 THEN
 DB_LeaderLib_ModMenu_Temp_DisableMenuResolved(_Player, _Index, _DisabledFlag);
 ObjectClearFlag(_Player, _DisabledFlag, 0);
-
 //END_REGION
 
 //REGION PAGE_VARIABLES

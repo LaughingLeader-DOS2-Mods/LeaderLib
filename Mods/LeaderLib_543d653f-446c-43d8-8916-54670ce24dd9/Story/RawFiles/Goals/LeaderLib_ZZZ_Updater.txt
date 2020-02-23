@@ -28,7 +28,7 @@ LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,6,0,1)
 AND
 NOT DB_LeaderLib_ModMenu_RegisteredMenuData("7e737d2f-31d2-4751-963f-be6ccc59cd0c", _, _, _, _)
 THEN
-LeaderLib_Register_ModMenu("7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib_SettingsMenu", "[LeaderLib] Settings");
+LeaderLib_Register_ModMenuByUUID("7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib_SettingsMenu", "[LeaderLib] Settings", "LeaderLib", "LaughingLeader");
 //END_REGION
 
 //REGION MIGRATING

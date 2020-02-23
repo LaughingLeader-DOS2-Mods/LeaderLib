@@ -5,7 +5,7 @@ INITSECTION
 LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", 1,6,0,1);
 LeaderUpdater_Register_UUID("LeaderLib", "LaughingLeader", 7e737d2f-31d2-4751-963f-be6ccc59cd0c);
 LeaderUpdater_Register_ActiveGoal("LeaderLib", "LaughingLeader", "LeaderLib_ZZZ_Updater");
-LeaderLib_Register_ModMenu("7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib_SettingsMenu", "[LeaderLib] Settings");
+LeaderLib_Register_ModMenuByUUID("7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib_SettingsMenu", "[LeaderLib] Settings", "LeaderLib", "LaughingLeader");
 
 KBSECTION
 //REGION INIT_EVENT
@@ -140,6 +140,16 @@ LeaderLib_StoryStarted()
 THEN
 NOT DB_LeaderLib_Extender_LuaInitialized(1);
 /* [OSITOOLS_ONLY]
+NRD_LuaCall("LeaderLib_Ext_Init");
+*/
+
+/* [OSITOOLS_ONLY]
+IF
+SavegameLoading(_,_,_,_)
+AND
+//NOT DB_LeaderLib_Mods_Registered(7e737d2f-31d2-4751-963f-be6ccc59cd0c, _, _, _, _, _, _, _, _)
+NOT DB_LeaderLib_Extender_LuaInitialized(1)
+THEN
 NRD_LuaCall("LeaderLib_Ext_Init");
 */
 //END_REGION

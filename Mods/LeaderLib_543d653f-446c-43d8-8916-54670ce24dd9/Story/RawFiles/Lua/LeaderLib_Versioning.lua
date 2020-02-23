@@ -114,7 +114,7 @@ Ext.NewQuery(LeaderLib_Ext_VersionStringToVersionInteger, "LeaderLib_Ext_QRY_Ver
 function LeaderLib_Ext_CallModUpdated(modid, author, lastversionstr, nextversionstr)
 	local old_version = LeaderLib_Ext_VersionIntegerToVersionString(math.tointeger(lastversionstr))
 	local new_version = LeaderLib_Ext_VersionIntegerToVersionString(math.tointeger(nextversionstr))
-	if old_version ~= nil and new_version ~= nil then
+	if old_version ~= nil or new_version ~= nil then
 		Osi.LeaderUpdater_ModUpdated(modid, author, old_version, new_version)
 	else
 		Ext.Print("[LeaderLib_Versioning.lua:LeaderLib_Ext_CallModUpdated] Failed to process '"..lastversionstr.."' and "..nextversionstr.." into version strings")

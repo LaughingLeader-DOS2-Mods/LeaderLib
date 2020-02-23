@@ -13,15 +13,6 @@ LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Updating LeaderLib to latest versio
 LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", 1,6,0,1);
 //END_REGION
 
-//REGION ACTIVE_FLAG
-IF
-GameStarted(_,_)
-AND
-GlobalGetFlag("LeaderLib_Active", 0)
-THEN
-GlobalSetFlag("LeaderLib_Active");
-//END_REGION
-
 //REGION GENERAL_UPDATES
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)

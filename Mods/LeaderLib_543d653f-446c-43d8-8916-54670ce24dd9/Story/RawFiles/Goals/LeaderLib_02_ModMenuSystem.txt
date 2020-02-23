@@ -144,18 +144,6 @@ DB_LeaderLib_Mods_Registered(_UUID, _ModID, _ModDisplayName, _Author, _Version, 
 THEN
 NOT DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, "", "");
 DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author);
-
-PROC
-LeaderLib_Mods_OnModRegistered((GUIDSTRING)_UUID, (INTEGER)_Version, (INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Revision, (INTEGER)_Build)
-AND
-String(_UUID, _ID)
-AND
-DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, "", "")
-AND
-DB_LeaderLib_Mods_Registered(_UUID, _ModID, _ModDisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build)
-THEN
-NOT DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, "", "");
-DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author);
 //END_REGION
 
 //REGION QUERIES

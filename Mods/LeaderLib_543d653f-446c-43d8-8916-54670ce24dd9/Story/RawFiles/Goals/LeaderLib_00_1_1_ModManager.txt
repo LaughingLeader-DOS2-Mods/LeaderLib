@@ -34,6 +34,8 @@ THEN
 DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build);
 DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID);
 LeaderLib_Mods_OnModRegistered(_UUID, _Version, _Major, _Minor, _Revision, _Build);
+LeaderLib_Mods_OnVersionChanged(_UUID, -1, _Version);
+LeaderLib_Mods_OnVersionChanged(_UUID, -1, -1, -1, -1, _Major, _Minor, _Revision, _Build);
 
 /*
 PROC

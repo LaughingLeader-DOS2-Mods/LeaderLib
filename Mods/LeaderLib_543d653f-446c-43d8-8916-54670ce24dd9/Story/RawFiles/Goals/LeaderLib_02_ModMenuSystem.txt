@@ -99,8 +99,13 @@ DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Aut
 // [BEGIN_NO_OSITOOLS]
 PROC
 LeaderLib_ModMenu_Internal_GetInfoForUUID((STRING)_ID, (STRING)_Dialog, (STRING)_DisplayName)
+AND
+DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID)
+AND
+String(_UUID, _ID)
 THEN
-DB_NOOP(1);
+LeaderLib_ModMenu_Internal_ClearLastForID(_ID);
+DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author);
 // [END_NO_OSITOOLS]
 
 /*
@@ -144,6 +149,22 @@ DB_LeaderLib_Mods_Registered(_UUID, _ModID, _ModDisplayName, _Author, _Version, 
 THEN
 NOT DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, "", "");
 DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author);
+
+// [BEGIN_NO_OSITOOLS]
+PROC
+LeaderUpdater_ModUpdated((STRING)_ModID, (STRING)_Author, (STRING)_LastVersion, (STRING)_NextVersion)
+AND
+DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID)
+AND
+String(_UUID, _ID)
+AND
+DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, "", "")
+AND
+DB_LeaderLib_Mods_Registered(_UUID, _ModID, _ModDisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build)
+THEN
+NOT DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, "", "");
+DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author);
+// [END_NO_OSITOOLS]
 //END_REGION
 
 //REGION QUERIES
@@ -590,6 +611,8 @@ LeaderLib_ModMenu_Internal_DisableMenuIfNotAvailable(_Player, _Index, _ID, _ModI
 PROC
 LeaderLib_ModMenu_Internal_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_ID, (STRING)_ModID, (STRING)_Author, (STRING)_DisabledFlag, 0)
 AND
+_ModID != ""
+AND
 NOT DB_LeaderLib_ModMenu_Temp_DisableMenuResolved(_Player, _Index, _DisabledFlag)
 AND
 NOT LeaderUpdater_QRY_ModIsActive(_ModID)
@@ -600,7 +623,37 @@ ObjectSetFlag(_Player, _DisabledFlag, 0);
 PROC
 LeaderLib_ModMenu_Internal_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_ID, (STRING)_ModID, (STRING)_Author, (STRING)_DisabledFlag, 1)
 AND
+_ModID != ""
+AND
 NOT DB_LeaderLib_ModMenu_Temp_DisableMenuResolved(_Player, _Index, _DisabledFlag)
+AND
+LeaderUpdater_QRY_ModIsActive(_ModID)
+THEN
+DB_LeaderLib_ModMenu_Temp_DisableMenuResolved(_Player, _Index, _DisabledFlag);
+ObjectClearFlag(_Player, _DisabledFlag, 0);
+
+PROC
+LeaderLib_ModMenu_Internal_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_ID, "", "", (STRING)_DisabledFlag, 0)
+AND
+NOT DB_LeaderLib_ModMenu_Temp_DisableMenuResolved(_Player, _Index, _DisabledFlag)
+AND
+DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID)
+AND
+String(_UUID, _ID)
+AND
+NOT LeaderUpdater_QRY_ModIsActive(_ModID)
+THEN
+DB_LeaderLib_ModMenu_Temp_DisableMenuResolved(_Player, _Index, _DisabledFlag);
+ObjectSetFlag(_Player, _DisabledFlag, 0);
+
+PROC
+LeaderLib_ModMenu_Internal_DisableMenuIfNotAvailable((CHARACTERGUID)_Player, (INTEGER)_Index, (STRING)_ID, "", "", (STRING)_DisabledFlag, 1)
+AND
+NOT DB_LeaderLib_ModMenu_Temp_DisableMenuResolved(_Player, _Index, _DisabledFlag)
+AND
+DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID)
+AND
+String(_UUID, _ID)
 AND
 LeaderUpdater_QRY_ModIsActive(_ModID)
 THEN

@@ -147,7 +147,7 @@ function LeaderLibModSettings:Export()
 	for flag,v in pairs(self.globalflags) do
 		if GlobalGetFlag(flag) == 1 then
 			export_table.globalflags[flag] = true
-		elseif v.saveWhenFalse == true then
+		elseif v.saveWhenFalse == true or Ext.IsModLoaded(self.uuid) == false then
 			export_table.globalflags[flag] = false
 		end
 		--Ext.Print("Flag: " .. flag .. " | " .. GlobalGetFlag(flag))
@@ -300,7 +300,7 @@ local function GlobalSettings_StoreGlobalFlag_Old(modid, author, flag, saveWhenF
 		local mod_settings = Get_Settings_Old(modid, author)
 		if mod_settings ~= nil then
 			local flagvar = LeaderLibFlagVariable:Create(flag)
-			if saveWhenFalse == "1" then flagvar.saveWhenFalse = true end
+			if saveWhenFalse == "1" or saveWhenFalse == true then flagvar.saveWhenFalse = true end
 			mod_settings.globalflags[flag] = flagvar
 		else
 			Ext.Print("[LeaderLib:GlobalSettings.lua:StoreGlobalFlag_Old] [*ERROR]* Failed to find settings for ("..tostring(modid)..","..tostring(author)..").")
@@ -359,6 +359,19 @@ local function GlobalSettings_StoreModVersion_Old(modid, author, version_str)
 end
 
 local function parse_mod_data(uuid, modid, author, tbl)
+	--Store settings for deactivated mods
+	if LeaderLib.Common.StringIsNullOrEmpty(uuid) == false and Ext.IsModLoaded(uuid) == false then
+		local mod_settings = Get_Settings(uuid)
+		if mod_settings ~= nil then
+			mod_settings.name = modid
+			mod_settings.author = author
+			if mod_settings.version <= -1 and tbl["version"] ~= nil then
+				mod_settings.version = math.tointeger(tbl["version"])
+			end
+			Ext.Print("[LeaderLib:GlobalSettings.lua] Configured global mod settings for deactivated mod (".. tostring(modid)..","..tostring(author)..")")
+		end
+	end
+
 	local flags = tbl["globalflags"]
 	if flags ~= nil and type(flags) == "table" then
 		for flag,v in pairs(flags) do
@@ -396,20 +409,6 @@ local function parse_mod_data(uuid, modid, author, tbl)
 				Osi.LeaderLib_GlobalSettings_SetIntegerVariable(modid, author, varname, num)
 				--GlobalSettings_StoreGlobalInteger_Old(modid, author, varname, defaultvalue)
 				GlobalSettings_StoreGlobalInteger_Old(modid, author, varname, 0)
-			end
-		end
-	end
-	--Store settings for deactivated mods
-	if LeaderLib.Common.StringIsNullOrEmpty(uuid) == false then
-		if Ext.IsModLoaded(uuid) == false then
-			local mod_settings = Get_Settings(uuid)
-			if mod_settings ~= nil then
-				mod_settings.name = modid
-				mod_settings.author = author
-				if mod_settings.version <= -1 and tbl["version"] ~= nil then
-					mod_settings.version = math.tointeger(tbl["version"])
-				end
-				Ext.Print("[LeaderLib:GlobalSettings.lua] Updated global mod settings for deactivated mod (".. tostring(modid)..","..tostring(author)..")")
 			end
 		end
 	end

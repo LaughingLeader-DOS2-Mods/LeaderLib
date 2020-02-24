@@ -388,6 +388,21 @@ local function parse_mod_data(uuid, modid, author, tbl)
 			end
 		end
 	end
+	--Store settings for deactivated mods
+	if LeaderLib.StringIsNullOrEmpty(uuid) == false then
+		local mod_settings = Get_Settings(uuid)
+		if mod_settings ~= nil then
+			if LeaderLib.StringIsNullOrEmpty(mod_settings.modid) then
+				mod_settings.modid = modid
+			end
+			if LeaderLib.StringIsNullOrEmpty(mod_settings.author) then
+				mod_settings.author = author
+			end
+			if mod_settings.version <= -1 and tbl["version"] ~= nil then
+				mod_settings.version = math.tointeger(tbl["version"])
+			end
+		end
+	end
 	return true
 end
 
@@ -442,7 +457,8 @@ local function SaveGlobalSettings()
 	if #mods > 0 then
 		local json = Ext.JsonStringify(export_settings)
 		NRD_SaveFile("LeaderLib_GlobalSettings.json", json)
-		Ext.Print("[LeaderLib:GlobalSettings.lua] Saved global settings. {" .. json .. "}")
+		--Ext.Print("[LeaderLib:GlobalSettings.lua] Saved global settings. {" .. json .. "}")
+		Ext.Print("[LeaderLib:GlobalSettings.lua] Saved global settings.")
 	else
 		Ext.Print("[LeaderLib:GlobalSettings.lua] No global settings to save. Skipping.")
 	end

@@ -125,7 +125,7 @@ THEN
 DB_NOOP(1);
 
 QRY
-LeaderUpdater_QRY_ModIsRegistered((STRING)_ModID, (STRING)_Author)
+LeaderLibs_Mods_QRY_ModIsRegistered((STRING)_ModID, (STRING)_Author)
 AND
 DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build)
 AND
@@ -134,7 +134,7 @@ THEN
 DB_NOOP(1);
 
 QRY
-LeaderUpdater_QRY_ModIsRegistered((STRING)_ModID, (STRING)_Author)
+LeaderLibs_Mods_QRY_ModIsRegistered((STRING)_ModID, (STRING)_Author)
 AND
 DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID)
 AND
@@ -369,19 +369,6 @@ THEN
 NRD_LuaCall("LeaderLib_Ext_SetModIsActiveFlag", (STRING)_UUID, _ModID);
 */
 
-IF
-TimerFinished("Timers_LeaderLib_CheckActiveMods")
-AND
-DB_Mods_Registered(_ModID, _Author, _Version)
-AND
-NOT LeaderUpdater_QRY_ModIsRegistered(_ModID, _Author)
-AND
-StringConcatenate(_ModID, "_IsActive", _Flag)
-AND
-GlobalGetFlag(_Flag, _FlagEnabled)
-THEN
-LeaderUpdater_SetModActiveFlag(_ModID, _Author, _Flag, _FlagEnabled);
-
 PROC
 LeaderUpdater_SetModActiveFlag((STRING)_ModID, (STRING)_Author, (STRING)_Flag, 0)
 AND
@@ -397,6 +384,53 @@ NOT LeaderUpdater_QRY_ModIsActive(_ModID)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderUpdater:SetModActiveFlag] Mod [",_ModID,"] by [",_Author,"] is no longer active. Clearing global flag [",_Flag,"].");
 GlobalClearFlag(_Flag);
+//END_REGION
+
+//REGION ACTIVE_FLAG_OLD_DATABASES
+IF
+TimerFinished("Timers_LeaderLib_CheckActiveMods")
+AND
+DB_Mods_Registered(_ModID, _Author, _Version)
+AND
+NOT LeaderLibs_Mods_QRY_ModIsRegistered(_ModID, _Author)
+AND
+StringConcatenate(_ModID, "_IsActive", _Flag)
+AND
+GlobalGetFlag(_Flag, _FlagEnabled)
+THEN
+LeaderUpdater_SetModActiveFlag(_ModID, _Author, _Flag, _FlagEnabled);
+
+IF
+TimerFinished("Timers_LeaderLib_CheckActiveMods")
+AND
+DB_Mods_ActiveGoal(_ModID, _Author, _GoalTitle)
+AND
+NOT DB_Mods_Registered(_ModID, _Author, _)
+AND
+NOT LeaderLibs_Mods_QRY_ModIsRegistered(_ModID, _Author)
+AND
+StringConcatenate(_ModID, "_IsActive", _Flag)
+AND
+GlobalGetFlag(_Flag, _FlagEnabled)
+THEN
+LeaderUpdater_SetModActiveFlag(_ModID, _Author, _Flag, _FlagEnabled);
+
+IF
+TimerFinished("Timers_LeaderLib_CheckActiveMods")
+AND
+DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID)
+AND
+NOT DB_Mods_ActiveGoal(_ModID, _Author, _)
+AND
+NOT DB_Mods_Registered(_ModID, _Author, _)
+AND
+NOT LeaderLibs_Mods_QRY_ModIsRegistered(_ModID, _Author)
+AND
+StringConcatenate(_ModID, "_IsActive", _Flag)
+AND
+GlobalGetFlag(_Flag, _FlagEnabled)
+THEN
+LeaderUpdater_SetModActiveFlag(_ModID, _Author, _Flag, _FlagEnabled);
 //END_REGION
 
 //REGION SAVE_LOADING_RESETVARS

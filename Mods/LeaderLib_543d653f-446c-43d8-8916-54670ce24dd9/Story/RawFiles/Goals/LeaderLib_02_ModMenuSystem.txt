@@ -321,14 +321,26 @@ LeaderLib_ModMenu_SetSortTickRate((INTEGER)_TickRate)
 THEN
 DB_LeaderLib_ModMenu_SortTickRate(_TickRate);
 
+QRY
+LeaderLib_ModMenu_Internal_QRY_CanSort((STRING)_Dialog)
+AND
+NOT DB_LeaderLib_Dictionary_Data("LeaderLib_RegisteredMenus", _, _Dialog, _)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_ModMenu_Internal_QRY_CanSort((STRING)_Dialog)
+AND
+NOT DB_LeaderLib_DictionarySort_Temp_StringQueue("LeaderLib_RegisteredMenus", _Dialog, _)
+THEN
+DB_NOOP(1);
+
 PROC
 LeaderLib_ModMenu_StartSorting()
 AND
 DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author)
 AND
-NOT DB_LeaderLib_Dictionary_Data("LeaderLib_RegisteredMenus", _, _Dialog, _)
-AND
-NOT DB_LeaderLib_DictionarySort_Temp_StringQueue("LeaderLib_RegisteredMenus", _Dialog, _DisplayName)
+LeaderLib_ModMenu_Internal_QRY_CanSort(_Dialog)
 THEN
 LeaderLib_DictionarySort_AddString("LeaderLib_RegisteredMenus", _Dialog, _DisplayName);
 

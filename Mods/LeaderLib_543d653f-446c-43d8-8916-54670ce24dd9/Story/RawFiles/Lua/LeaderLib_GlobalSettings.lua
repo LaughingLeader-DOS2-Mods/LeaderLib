@@ -56,12 +56,15 @@ local LeaderLibIntegerVariable = {
 
 LeaderLibIntegerVariable.__index = LeaderLibIntegerVariable
 
+---@param name string
+---@param defaultValue integer
 function LeaderLibIntegerVariable:Create(name,defaultValue)
     local this =
     {
 		name = name,
 		defaultValue = defaultValue
 	}
+	self.value = defaultValue
 	setmetatable(this, self)
     return this
 end
@@ -139,23 +142,17 @@ end
 function LeaderLibModSettings:Export()
 	--Ext.Print("Exporting: " .. LeaderLib.Common.Dump(self))
 	local export_table = LeaderLibModSettings:Create(self.uuid)
-	if LeaderLib.Common.StringIsNullOrEmpty(export_table.name) then
-		export_table.name = self.name
-	end
-	if LeaderLib.Common.StringIsNullOrEmpty(export_table.author) then
-		export_table.author = self.author
-	end
 	export_table.version = self.version
 	table.sort(self.globalflags)
-	if Ext.IsModLoaded(self.uuid) then
-		for flag,v in pairs(self.globalflags) do
-			if GlobalGetFlag(flag) == 1 then
-				export_table.globalflags[flag] = true
-			elseif v.saveWhenFalse == true then
-				export_table.globalflags[flag] = false
-			end
-			--Ext.Print("Flag: " .. flag .. " | " .. GlobalGetFlag(flag))
+	for flag,v in pairs(self.globalflags) do
+		if GlobalGetFlag(flag) == 1 then
+			export_table.globalflags[flag] = true
+		elseif v.saveWhenFalse == true then
+			export_table.globalflags[flag] = false
 		end
+		--Ext.Print("Flag: " .. flag .. " | " .. GlobalGetFlag(flag))
+	end
+	if Ext.IsModLoaded(self.uuid) then
 		local last_pricemod = GetGlobalPriceModifier()
 		for name,v in pairs(self.integers) do
 			SetGlobalPriceModifier(123456)
@@ -173,6 +170,12 @@ function LeaderLibModSettings:Export()
 		end
 		SetGlobalPriceModifier(last_pricemod)
 		--Ext.Print("GlobalPriceModifier reverted back to ("..GetGlobalPriceModifier()..")")
+	else
+		export_table.name = self.name
+		export_table.author = self.author
+		for name,v in pairs(self.integers) do
+			export_table.integers[name] = v.value
+		end
 	end
 	return export_table
 end
@@ -367,9 +370,9 @@ local function parse_mod_data(uuid, modid, author, tbl)
 			end
 			if LeaderLib.Common.StringIsNullOrEmpty(uuid) == false then
 				--GlobalSettings_StoreGlobalInteger(uuid, name, author, varname, defaultvalue)
-				GlobalSettings_StoreGlobalFlag(uuid, flag, 0)
+				GlobalSettings_StoreGlobalFlag(uuid, flag, v == false)
 			else
-				GlobalSettings_StoreGlobalFlag_Old(modid, author, flag, 0)
+				GlobalSettings_StoreGlobalFlag_Old(modid, author, flag, v == false)
 			end
 		end
 	end

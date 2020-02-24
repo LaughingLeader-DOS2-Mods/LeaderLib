@@ -268,7 +268,7 @@ local function GlobalSettings_StoreGlobalFlag(uuid, flag, saveWhenFalse)
 		local mod_settings = Get_Settings(uuid)
 		if mod_settings ~= nil then
 			local flagvar = LeaderLibFlagVariable:Create(flag)
-			if saveWhenFalse == "1" then flagvar.saveWhenFalse = true end
+			if saveWhenFalse == "1" or saveWhenFalse == true then flagvar.saveWhenFalse = true end
 			mod_settings.globalflags[flag] = flagvar
 		else
 			Ext.Print("[LeaderLib:GlobalSettings.lua:StoreGlobalFlag] [*ERROR]* Failed to find settings for UUID ("..tostring(uuid)..").")
@@ -364,15 +364,16 @@ local function parse_mod_data(uuid, modid, author, tbl)
 		for flag,v in pairs(flags) do
 			Ext.Print("[LeaderLib:GlobalSettings.lua] Found global flag ("..flag..")["..tostring(v).."] for mod ["..uuid.."](".. modid.."|"..author..")")
 			if v == false then
-				GlobalClearFlag(flag)
+				if GlobalGetFlag(flag) == 1 then GlobalClearFlag(flag) end
 			else
-				GlobalSetFlag(flag)
+				if GlobalGetFlag(flag) == 0 then GlobalSetFlag(flag) end
 			end
+			local saveWhenFalse = v == false
 			if LeaderLib.Common.StringIsNullOrEmpty(uuid) == false then
 				--GlobalSettings_StoreGlobalInteger(uuid, name, author, varname, defaultvalue)
-				GlobalSettings_StoreGlobalFlag(uuid, flag, v == false)
+				GlobalSettings_StoreGlobalFlag(uuid, flag, saveWhenFalse)
 			else
-				GlobalSettings_StoreGlobalFlag_Old(modid, author, flag, v == false)
+				GlobalSettings_StoreGlobalFlag_Old(modid, author, flag, saveWhenFalse)
 			end
 		end
 	end

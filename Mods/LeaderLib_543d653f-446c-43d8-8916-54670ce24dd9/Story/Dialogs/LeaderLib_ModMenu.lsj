@@ -1155,7 +1155,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": " Loading mod menu...",
+																	"value": "Loading mod menu...",
 																	"handle": "hb955eb39g2068g4c7dga389gfabcaa42462d"
 																},
 																"stub": {
@@ -1616,7 +1616,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[ERROR] No mod menus detected (LeaderLib should be here!). Click here to open [LeaderLib] Settings.",
+																	"value": "[LeaderLib] Settings",
 																	"handle": "h5e7156dfg4eddg428fg8939gdadd6f2eb50f"
 																},
 																"stub": {
@@ -4351,7 +4351,7 @@
 				},
 				"nextNodeId": {
 					"type": 5,
-					"value": 20
+					"value": 21
 				}
 			}
 		}

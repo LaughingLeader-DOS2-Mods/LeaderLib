@@ -167,9 +167,9 @@
 	<content contentuid="h3e1f5e00g58f7g4b23g97c4g979be6586c6f" Source="LeaderLib_ModMenu.lsj">Opening the LeaderLib settings menu...</content>
 	<content contentuid="h196cc760g0133g4cb7gb48bg6a902641739f" Source="LeaderLib_ModMenu.lsj">[LeaderLib_ModMenu_Menu1_783ec14d-2861-4345-8dbc-45974fa34e15]</content>
 	<content contentuid="h25bf34f3g1b21g4b69gb041g896d6e346f36" Source="LeaderLib_ModMenu.lsj">[LeaderLib_ModMenu_Menu4_337a1066-9a85-4005-a2dc-f0156bf13d16]</content>
-	<content contentuid="hb955eb39g2068g4c7dga389gfabcaa42462d" Source="LeaderLib_ModMenu.lsj"> Loading mod menu...</content>
+	<content contentuid="hb955eb39g2068g4c7dga389gfabcaa42462d" Source="LeaderLib_ModMenu.lsj">Loading mod menu...</content>
 	<content contentuid="hbe7c777fg3946g4d49g9271g4684744cb15b" Source="LeaderLib_ModMenu.lsj">[LeaderLib_ModMenu_Menu7_888ce02f-83ff-4173-be8d-f41fd348358f]</content>
-	<content contentuid="h5e7156dfg4eddg428fg8939gdadd6f2eb50f" Source="LeaderLib_ModMenu.lsj">[ERROR] No mod menus detected (LeaderLib should be here!). Click here to open [LeaderLib] Settings.</content>
+	<content contentuid="h5e7156dfg4eddg428fg8939gdadd6f2eb50f" Source="LeaderLib_ModMenu.lsj">[LeaderLib] Settings</content>
 	<content contentuid="h6765e77cg13c0g48dcgb708g721355bc5451" Source="LeaderLib_ModMenu.lsj">[LeaderLib_ModMenu_Menu6_863af621-ff0c-454a-b6a3-7c9d3166a8a0]</content>
 	<content contentuid="h808d2fe2ge0d2g4e78g94cag05b054d2b96b" Source="LeaderLib_ModMenu.lsj">[LeaderLib_ModMenu_Menu2_9a2d2990-5cff-420e-ba8a-37f9510ab9e1]</content>
 	<content contentuid="h1ae3aaa5gb444g4372g8b9ag231538f36a86" Source="LeaderLib_ModMenu.lsj">[LeaderLib_ModMenu_Menu8_a6aa98e6-cde4-491b-a2cb-2cd7d5d71f96]</content>
@@ -259,7 +259,7 @@
 	<content contentuid="h562f0a3bg4566g452eg860egb5c2ff3e750e" Source="LeaderLib_Statuses.lsb" Key="LEADERLIB_UNDEAD_ELF_DisplayName">Undead Elf</content>
 	<content contentuid="h473ddea8g74eag4433g8e19gc217b9c1e42d" Source="LeaderLib_Statuses.lsb" Key="LEADERLIB_UNDEAD_HUMAN_DisplayName">Undead Human</content>
 	<content contentuid="h05e3a637g0755g4659g9aa9g99888bc32ed5" Source="LeaderLib_Statuses.lsb" Key="LEADERLIB_UNDEAD_LIZARD_DisplayName">Undead Lizard</content>
-	<content contentuid="h27d11f50gaecbg4d8fgaf81g0b7f26fb61f3" Source="LOOT_LeaderLib_BackPack_Invisible">LeaderLib - Debug</content>
+	<content contentuid="h45f478cdg3b77g400aga94fg04b3a60b7ad9" Source="LOOT_LeaderLib_BackPack_Invisible">Hidden Backpack</content>
 	<content contentuid="h9be57347g863eg400fg997dg19c57c3c657e" Source="LOOT_LeaderLib_BackPack_Invisible_Debug">Hidden Backpack</content>
 	<content contentuid="hee326232gbe82g49c2gbe8eg1d0511d29248" Source="S_LeaderLib_EventParser">LeaderLib</content>
 </contentList>

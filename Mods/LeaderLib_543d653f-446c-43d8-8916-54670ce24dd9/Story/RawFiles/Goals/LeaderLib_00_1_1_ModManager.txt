@@ -126,7 +126,7 @@ LeaderLib_Mods_OnModRegistered((GUIDSTRING)_UUID, (INTEGER)_Version, (INTEGER)_M
 THEN
 DB_NOOP(1);
 
-/* Called when a mod's registered version changes. Uses the version integer in meta.lsx */
+/* Called when a mod's registered version changes, including the first registration. Uses the version integer in meta.lsx */
 PROC
 LeaderLib_Mods_OnVersionChanged((GUIDSTRING)_UUID, (INTEGER)_LastVersion, (INTEGER)_NextVersion)
 THEN

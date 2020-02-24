@@ -125,7 +125,7 @@ THEN
 DB_NOOP(1);
 
 QRY
-LeaderLibs_Mods_QRY_ModIsRegistered((STRING)_ModID, (STRING)_Author)
+LeaderLib_Mods_QRY_ModIsRegistered((STRING)_ModID, (STRING)_Author)
 AND
 DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build)
 AND
@@ -134,7 +134,7 @@ THEN
 DB_NOOP(1);
 
 QRY
-LeaderLibs_Mods_QRY_ModIsRegistered((STRING)_ModID, (STRING)_Author)
+LeaderLib_Mods_QRY_ModIsRegistered((STRING)_ModID, (STRING)_Author)
 AND
 DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID)
 AND
@@ -392,7 +392,7 @@ TimerFinished("Timers_LeaderLib_CheckActiveMods")
 AND
 DB_Mods_Registered(_ModID, _Author, _Version)
 AND
-NOT LeaderLibs_Mods_QRY_ModIsRegistered(_ModID, _Author)
+NOT LeaderLib_Mods_QRY_ModIsRegistered(_ModID, _Author)
 AND
 StringConcatenate(_ModID, "_IsActive", _Flag)
 AND
@@ -407,7 +407,7 @@ DB_Mods_ActiveGoal(_ModID, _Author, _GoalTitle)
 AND
 NOT DB_Mods_Registered(_ModID, _Author, _)
 AND
-NOT LeaderLibs_Mods_QRY_ModIsRegistered(_ModID, _Author)
+NOT LeaderLib_Mods_QRY_ModIsRegistered(_ModID, _Author)
 AND
 StringConcatenate(_ModID, "_IsActive", _Flag)
 AND
@@ -424,7 +424,7 @@ NOT DB_Mods_ActiveGoal(_ModID, _Author, _)
 AND
 NOT DB_Mods_Registered(_ModID, _Author, _)
 AND
-NOT LeaderLibs_Mods_QRY_ModIsRegistered(_ModID, _Author)
+NOT LeaderLib_Mods_QRY_ModIsRegistered(_ModID, _Author)
 AND
 StringConcatenate(_ModID, "_IsActive", _Flag)
 AND

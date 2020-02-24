@@ -401,6 +401,13 @@ NOT DB_LeaderUpdater_RegisteredGoal(_ModID, _Author, _GoalTitle);
 
 //REGION QUERIES
 QRY
+LeaderUpdater_QRY_ModIsRegistered((STRING)_ModID, (STRING)_Author)
+AND
+DB_Mods_Registered(_ModID, _Author, _Version)
+THEN
+DB_NOOP(1);
+
+QRY
 LeaderUpdater_QRY_ModUpdateNeeded((STRING)_ModID, (STRING)_Author, (STRING)_Version)
 AND
 NOT DB_Mods_Registered(_ModID, _Author, _Version)
@@ -491,7 +498,7 @@ DB_NOOP(1);
 PROC
 LeaderUpdater_Clear_RegisteredModVersions((STRING)_ModID, (STRING)_Author)
 AND
-LeaderLibs_Mods_QRY_ModIsRegistered(_ModID, _Author)
+LeaderLib_Mods_QRY_ModIsRegistered(_ModID, _Author)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderUpdater:RegisterMod] Removing registered versions of mod [",_ModID,"] by author [",_Author,"].");
 

@@ -60,7 +60,7 @@ LeaderLib_ModCompatibility_Internal_Register()
 AND
 DB_LeaderLib_ModCompatibility_PlaceholderVersions(_ModID, _Author, _Version)
 AND
-NOT LeaderLibs_Mods_QRY_ModIsRegistered(_ModID, _Author)
+NOT LeaderLib_Mods_QRY_ModIsRegistered(_ModID, _Author)
 THEN
 LeaderUpdater_Register_Mod(_ModID, _Author, _Version);
 */

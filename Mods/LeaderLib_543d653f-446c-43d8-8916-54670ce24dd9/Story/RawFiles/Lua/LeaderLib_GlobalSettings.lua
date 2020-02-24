@@ -85,8 +85,8 @@ end
 
 ---@class LeaderLibModSettings
 local LeaderLibModSettings = {
-	name = "Mod",
-	author = "Author",
+	name = "",
+	author = "",
 	globalflags = {},
 	integers = {},
 	version = -1,
@@ -104,7 +104,7 @@ function LeaderLibModSettings:Create(uuid)
 		integers = {},
 		uuid = uuid
 	}
-	if LeaderLib.Common.StringIsNullOrEmpty(uuid) == false then
+	if LeaderLib.Common.StringIsNullOrEmpty(uuid) == false and Ext.IsModLoaded(uuid) then
 		local modinfo = Ext.GetModInfo(uuid)
 		if modinfo ~= nil then
 			this.name = modinfo.Name
@@ -137,36 +137,43 @@ function LeaderLibModSettings:AddFlags(...)
 end
 
 function LeaderLibModSettings:Export()
-	Ext.Print("Exporting: " .. LeaderLib.Common.Dump(self))
+	--Ext.Print("Exporting: " .. LeaderLib.Common.Dump(self))
 	local export_table = LeaderLibModSettings:Create(self.uuid)
+	if LeaderLib.Common.StringIsNullOrEmpty(export_table.name) then
+		export_table.name = self.name
+	end
+	if LeaderLib.Common.StringIsNullOrEmpty(export_table.author) then
+		export_table.author = self.author
+	end
 	export_table.version = self.version
-	--export_table.globalflags = {}
 	table.sort(self.globalflags)
-	for flag,v in pairs(self.globalflags) do
-		if GlobalGetFlag(flag) == 1 then
-			export_table.globalflags[flag] = true
-		elseif v.saveWhenFalse == true then
-			export_table.globalflags[flag] = false
+	if Ext.IsModLoaded(self.uuid) then
+		for flag,v in pairs(self.globalflags) do
+			if GlobalGetFlag(flag) == 1 then
+				export_table.globalflags[flag] = true
+			elseif v.saveWhenFalse == true then
+				export_table.globalflags[flag] = false
+			end
+			--Ext.Print("Flag: " .. flag .. " | " .. GlobalGetFlag(flag))
 		end
-		--Ext.Print("Flag: " .. flag .. " | " .. GlobalGetFlag(flag))
+		local last_pricemod = GetGlobalPriceModifier()
+		for name,v in pairs(self.integers) do
+			SetGlobalPriceModifier(123456)
+			if self.uuid ~= nil and self.uuid ~= "" then
+				Osi.LeaderLib_GlobalSettings_Internal_GetIntegerVariable(self.uuid, name)
+			else
+				Osi.LeaderLib_GlobalSettings_Internal_GetIntegerVariable_Old(self.name, self.author, name)
+			end
+			local int_value = GetGlobalPriceModifier()
+			if int_value ~= 123456 then
+				export_table.integers[name] = int_value
+				--GlobalClearFlag("LeaderLib_Internal_GlobalSettings_IntegerVarSet")
+			end
+			--Ext.Print("Got int var ("..name..") Value ("..int_value..")")
+		end
+		SetGlobalPriceModifier(last_pricemod)
+		--Ext.Print("GlobalPriceModifier reverted back to ("..GetGlobalPriceModifier()..")")
 	end
-	local last_pricemod = GetGlobalPriceModifier()
-	for name,v in pairs(self.integers) do
-		SetGlobalPriceModifier(123456)
-		if self.uuid ~= nil and self.uuid ~= "" then
-			Osi.LeaderLib_GlobalSettings_Internal_GetIntegerVariable(self.uuid, name)
-		else
-			Osi.LeaderLib_GlobalSettings_Internal_GetIntegerVariable_Old(self.name, self.author, name)
-		end
-		local int_value = GetGlobalPriceModifier()
-		if int_value ~= 123456 then
-			export_table.integers[name] = int_value
-			--GlobalClearFlag("LeaderLib_Internal_GlobalSettings_IntegerVarSet")
-		end
-		--Ext.Print("Got int var ("..name..") Value ("..int_value..")")
-	end
-	SetGlobalPriceModifier(last_pricemod)
-	Ext.Print("GlobalPriceModifier reverted back to ("..GetGlobalPriceModifier()..")")
 	return export_table
 end
 
@@ -389,17 +396,16 @@ local function parse_mod_data(uuid, modid, author, tbl)
 		end
 	end
 	--Store settings for deactivated mods
-	if LeaderLib.StringIsNullOrEmpty(uuid) == false then
-		local mod_settings = Get_Settings(uuid)
-		if mod_settings ~= nil then
-			if LeaderLib.StringIsNullOrEmpty(mod_settings.modid) then
-				mod_settings.modid = modid
-			end
-			if LeaderLib.StringIsNullOrEmpty(mod_settings.author) then
+	if LeaderLib.Common.StringIsNullOrEmpty(uuid) == false then
+		if Ext.IsModLoaded(uuid) == false then
+			local mod_settings = Get_Settings(uuid)
+			if mod_settings ~= nil then
+				mod_settings.name = modid
 				mod_settings.author = author
-			end
-			if mod_settings.version <= -1 and tbl["version"] ~= nil then
-				mod_settings.version = math.tointeger(tbl["version"])
+				if mod_settings.version <= -1 and tbl["version"] ~= nil then
+					mod_settings.version = math.tointeger(tbl["version"])
+				end
+				Ext.Print("[LeaderLib:GlobalSettings.lua] Updated global mod settings for deactivated mod (".. tostring(modid)..","..tostring(author)..")")
 			end
 		end
 	end

@@ -343,66 +343,6 @@ THEN
 LeaderLib_SaveGlobalSettings();
 //END_REGION
 
-//REGION RENAME_ID
-PROC
-LeaderLib_Mods_RenameOldModID((STRING)_ModID, (STRING)_NewID)
-AND
-DB_Mods_Registered(_ModID, _Author, _Version)
-THEN
-NOT DB_Mods_Registered(_ModID, _Author, _Version);
-DB_Mods_Registered(_NewID, _Author, _Version);
-
-PROC
-LeaderLib_Mods_RenameOldModID((STRING)_ModID, (STRING)_NewID)
-AND
-DB_Mods_ActiveGoal(_ModID, _Author, _Goal)
-THEN
-NOT DB_Mods_ActiveGoal(_ModID, _Author, _Goal);
-DB_Mods_ActiveGoal(_NewID, _Author, _Goal);
-
-PROC
-LeaderLib_Mods_RenameOldModID((STRING)_ModID, (STRING)_NewID)
-AND
-DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID)
-THEN
-NOT DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID);
-DB_LeaderUpdater_RegisteredUUID(_NewID, _Author, _UUID);
-
-PROC
-LeaderLib_Mods_RenameOldModID((STRING)_ModID, (STRING)_NewID)
-AND
-DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author, _LastVal)
-THEN
-NOT DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author, _LastVal);
-DB_LeaderLib_GlobalSettings_Flags(_Flag, _NewID, _Author, _LastVal);
-
-PROC
-LeaderLib_Mods_RenameOldModID((STRING)_ModID, (STRING)_NewID)
-AND
-DB_LeaderLib_GlobalSettings_Integers(_ModID, _Author, _Name, _LastDefaultValue)
-THEN
-NOT DB_LeaderLib_GlobalSettings_Integers(_ModID, _Author, _Name, _LastDefaultValue);
-DB_LeaderLib_GlobalSettings_Integers(_NewID, _Author, _Name, _LastDefaultValue);
-
-PROC
-LeaderLib_Mods_RenameOldModID((STRING)_ModID, (STRING)_NewID)
-AND
-DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author)
-THEN
-NOT DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author);
-DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _NewID, _Author);
-
-/*
-PROC
-LeaderLib_Mods_RenameOldModID((STRING)_ModID, (STRING)_NewID)
-AND
-DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build)
-THEN
-NOT DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build);
-DB_LeaderLib_Mods_Registered(_UUID, _NewID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build);
-*/
-//END_REGION
-
 //REGION DEBUG
 IF
 TextEventSet("leaderlib_saveglobalsettings")

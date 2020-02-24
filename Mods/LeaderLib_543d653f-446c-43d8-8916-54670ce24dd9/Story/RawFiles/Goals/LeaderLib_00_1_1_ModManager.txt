@@ -47,18 +47,102 @@ NRD_LuaCall("LeaderLib_Ext_PrintModDB");
 */
 //END_REGION
 
+//REGION RENAME_ID
+PROC
+LeaderLib_Mods_RenameOldModID((STRING)_ModID, (STRING)_NewID)
+AND
+DB_Mods_Registered(_ModID, _Author, _Version)
+THEN
+NOT DB_Mods_Registered(_ModID, _Author, _Version);
+DB_Mods_Registered(_NewID, _Author, _Version);
+
+PROC
+LeaderLib_Mods_RenameOldModID((STRING)_ModID, (STRING)_NewID)
+AND
+DB_Mods_ActiveGoal(_ModID, _Author, _Goal)
+THEN
+NOT DB_Mods_ActiveGoal(_ModID, _Author, _Goal);
+DB_Mods_ActiveGoal(_NewID, _Author, _Goal);
+
+PROC
+LeaderLib_Mods_RenameOldModID((STRING)_ModID, (STRING)_NewID)
+AND
+DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID)
+THEN
+NOT DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID);
+DB_LeaderUpdater_RegisteredUUID(_NewID, _Author, _UUID);
+
+PROC
+LeaderLib_Mods_RenameOldModID((STRING)_ModID, (STRING)_NewID)
+AND
+DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author, _LastVal)
+THEN
+NOT DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author, _LastVal);
+DB_LeaderLib_GlobalSettings_Flags(_Flag, _NewID, _Author, _LastVal);
+
+PROC
+LeaderLib_Mods_RenameOldModID((STRING)_ModID, (STRING)_NewID)
+AND
+DB_LeaderLib_GlobalSettings_Integers(_ModID, _Author, _Name, _LastDefaultValue)
+THEN
+NOT DB_LeaderLib_GlobalSettings_Integers(_ModID, _Author, _Name, _LastDefaultValue);
+DB_LeaderLib_GlobalSettings_Integers(_NewID, _Author, _Name, _LastDefaultValue);
+
+PROC
+LeaderLib_Mods_RenameOldModID((STRING)_ModID, (STRING)_NewID)
+AND
+DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author)
+THEN
+NOT DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author);
+DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _NewID, _Author);
+
+PROC
+LeaderLib_Mods_RenameOldModID((STRING)_ModID, (STRING)_NewID)
+AND
+StringConcatenate(_ModID, "_IsActive", _EnabledGlobalFlag)
+AND
+DB_LeaderLib_PresetMenu_RegisteredPreset(_Group, _Preset, _EnabledGlobalFlag)
+AND
+StringConcatenate(_NewID, "_IsActive", _NewEnabledGlobalFlag)
+THEN
+NOT DB_LeaderLib_PresetMenu_RegisteredPreset(_Group, _Preset, _EnabledGlobalFlag);
+DB_LeaderLib_PresetMenu_RegisteredPreset(_Group, _Preset, _NewEnabledGlobalFlag);
+
+/*
+PROC
+LeaderLib_Mods_RenameOldModID((STRING)_ModID, (STRING)_NewID)
+AND
+DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build)
+THEN
+NOT DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build);
+DB_LeaderLib_Mods_Registered(_UUID, _NewID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build);
+*/
+//END_REGION
+
 //REGION MOD_PROC_EVENTS
 /* Called when a mod is registered for the first time. */
 PROC
 LeaderLib_Mods_OnModRegistered((GUIDSTRING)_UUID, (INTEGER)_Version, (INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Revision, (INTEGER)_Build)
+AND
+DB_LeaderUpdater_RegisteredUUID(_OldModID, _OldAuthor, _UUID)
+AND
+DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build)
+AND
+_OldModID != _ModID
 THEN
-DB_NOOP(1);
+LeaderLib_Mods_RenameOldModID(_OldModID, _ModID);
 
 /* Called when a mod's registered version changes. Uses the version integer in meta.lsx */
 PROC
 LeaderLib_Mods_OnVersionChanged((GUIDSTRING)_UUID, (INTEGER)_LastVersion, (INTEGER)_NextVersion)
+AND
+DB_LeaderUpdater_RegisteredUUID(_OldModID, _OldAuthor, _UUID)
+AND
+DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build)
+AND
+_OldModID != _ModID
 THEN
-DB_NOOP(1);
+LeaderLib_Mods_RenameOldModID(_OldModID, _ModID);
 
 /* Called when a mod's registered version changes, using the individual version numbers. */
 PROC
@@ -439,6 +523,21 @@ SavegameLoaded(_,_,_,_)
 THEN
 SysClear("DB_LeaderLib_Mods_Temp_ModIsActiveResolved", 1);
 SysClear("DB_LeaderLib_Mods_Temp_ModIsActiveUUIDResolved", 1);
+//END_REGION
+
+//REGION UPDATES
+/* [OSITOOLS_ONLY]
+IF
+SavegameLoaded(_,_,_,_)
+AND
+DB_LeaderUpdater_RegisteredUUID(_OldModID, _OldAuthor, _UUID)
+AND
+DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build)
+AND
+_OldModID != _ModID
+THEN
+LeaderLib_Mods_RenameOldModID(_OldModID, _ModID);
+*/
 //END_REGION
 EXITSECTION
 ENDEXITSECTION

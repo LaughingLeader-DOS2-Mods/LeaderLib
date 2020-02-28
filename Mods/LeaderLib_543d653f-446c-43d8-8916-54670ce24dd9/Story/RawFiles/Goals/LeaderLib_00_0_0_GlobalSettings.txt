@@ -20,6 +20,7 @@ LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLog_CombatLog_Disabled");
 LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLog_Debug_Enabled");
 LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLog_Status_Disabled");
 LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLib_DebugModeEnabled", 1);
+LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLib_UnhealableFix_Enabled", 1);
 
 LeaderLib_GlobalSettings_Register_GlobalInteger(7e737d2f-31d2-4751-963f-be6ccc59cd0c, "AutosaveInterval", 15);
 LeaderLib_GlobalSettings_TransferVariables();

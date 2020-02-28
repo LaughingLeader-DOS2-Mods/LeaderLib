@@ -63,7 +63,9 @@
 	<content contentuid="h9b843d3agc42eg4295g8381ge2eb54eeac08" Source="LeaderLib_DialogRedirectionMenu.lsj">Dialog Redirection Settings</content>
 	<content contentuid="h59075d75g55f1g4ba4g87b7g4953c6818ee3" Source="LeaderLib_DialogRedirectionMenu.lsj">[USER] Teleport your avatar to the dialog event when dialog gets redirected.</content>
 	<content contentuid="h199f5401g295eg4b24ga52ag9cf3a9844635" Source="LeaderLib_GameSettings.lsj">[GLOBAL] Enable Friendly Fire. This setting is for mods that implement friendly fire in their skill targeting conditions. </content>
+	<content contentuid="ha1260afagf673g4e7eg983ag834907ffeb4e" Source="LeaderLib_GameSettings.lsj">[GLOBAL] Enable the Unhealable fix - If Unhealable is applied, the target will not be able to be healed by statuses (Regeneration, etc).</content>
 	<content contentuid="h3db4fa28g041bg45ceg9fd6g91d77d5e154f" Source="LeaderLib_GameSettings.lsj">[GLOBAL] Disable LeaderLib registered mod books from automatically being added to the party&apos;s inventory.</content>
+	<content contentuid="h9cc2120agfe21g4721g8e33g6d1fb7621956" Source="LeaderLib_GameSettings.lsj">[GLOBAL] Disable the Unhealable fix - If Unhealable is applied, the target will still be able to be healed.</content>
 	<content contentuid="h8e7bed3eg6e65g4b8agb542g83bc56753d17" Source="LeaderLib_GameSettings.lsj">Game Settings</content>
 	<content contentuid="hbb9961bcg9dbfg47f9g90fdg6db3aca83f86" Source="LeaderLib_GameSettings.lsj">[GLOBAL] Allow LeaderLib registered mod books to automatically be added to the party&apos;s inventory. (Default)</content>
 	<content contentuid="h5d6cebcagab5eg45ebgbaf0gb0b77cd0ac39" Source="LeaderLib_GameSettings.lsj">[GLOBAL] Disable Friendly Fire. This setting is for mods that implement friendly fire in their skill targeting conditions. (Default)</content>
@@ -259,7 +261,9 @@
 	<content contentuid="h562f0a3bg4566g452eg860egb5c2ff3e750e" Source="LeaderLib_Statuses.lsb" Key="LEADERLIB_UNDEAD_ELF_DisplayName">Undead Elf</content>
 	<content contentuid="h473ddea8g74eag4433g8e19gc217b9c1e42d" Source="LeaderLib_Statuses.lsb" Key="LEADERLIB_UNDEAD_HUMAN_DisplayName">Undead Human</content>
 	<content contentuid="h05e3a637g0755g4659g9aa9g99888bc32ed5" Source="LeaderLib_Statuses.lsb" Key="LEADERLIB_UNDEAD_LIZARD_DisplayName">Undead Lizard</content>
+	<content contentuid="h8311eb63g89cfg41c1g961cgde31f8d79927" Source="LeaderLib_TargetHelperDummy"></content>
 	<content contentuid="h45f478cdg3b77g400aga94fg04b3a60b7ad9" Source="LOOT_LeaderLib_BackPack_Invisible">Hidden Backpack</content>
+	<content contentuid="h27d11f50gaecbg4d8fgaf81g0b7f26fb61f3" Source="LOOT_LeaderLib_BackPack_Invisible">LeaderLib - Debug</content>
 	<content contentuid="h9be57347g863eg400fg997dg19c57c3c657e" Source="LOOT_LeaderLib_BackPack_Invisible_Debug">Hidden Backpack</content>
 	<content contentuid="hee326232gbe82g49c2gbe8eg1d0511d29248" Source="S_LeaderLib_EventParser">LeaderLib</content>
 </contentList>

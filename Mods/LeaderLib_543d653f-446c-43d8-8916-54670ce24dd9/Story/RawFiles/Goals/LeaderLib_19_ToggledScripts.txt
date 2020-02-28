@@ -53,6 +53,8 @@ LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_SummonEvents_Character"
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_SummonEvents_Item", "LeaderLib_SummonEvents_Item_Enabled");
 //LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_GrowthEvents_Item_Enabled", "LeaderLib");
 
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_UnhealableMechanic", "LeaderLib_UnhealableFix_Enabled");
+
 LeaderLib_ToggleScripts_Register_ObjectScript("LeaderLib_19_TS_Auras_TurnAura", "LeaderLib_Auras_TurnAuraEnabled", 0);
 LeaderLib_ToggleScripts_Register_ObjectScript("LeaderLib_19_TS_Auras_TimerAura", "LeaderLib_Auras_TimerAuraEnabled", 0);
 

@@ -174,7 +174,11 @@ function LeaderLibModSettings:Export()
 		export_table.name = self.name
 		export_table.author = self.author
 		for name,v in pairs(self.integers) do
-			export_table.integers[name] = v.value
+			if v ~= nil then
+				export_table.integers[name] = v
+			else
+				Ext.Print("[LeaderLib:GlobalSettings.lua:LeaderLibModSettings:Export] [*ERROR]* Global Integer ("..tostring(name)..") has no value.")
+			end
 		end
 	end
 	return export_table
@@ -393,22 +397,17 @@ local function parse_mod_data(uuid, modid, author, tbl)
 	local integers = tbl["integers"]
 	if integers ~= nil and type(integers) == "table" then
 		for varname,v in pairs(integers) do
-			local num = 0
-			if type(v) == "number" then
-				num = v
-			elseif type(v) == "string" then
-				num = tonumber(v)
-			end
-			num = math.floor(num)
-			Ext.Print("[LeaderLib:GlobalSettings.lua] Found global integer variable ("..varname..")["..tostring(num).."] for mod (".. modid.."|"..author..")")
+			local intnum = math.tointeger(v)
+			if intnum == nil then intnum = 0 end
+			Ext.Print("[LeaderLib:GlobalSettings.lua] Found global integer variable ("..varname..")["..tostring(intnum).."] for mod (".. modid.."|"..author..")")
 			if LeaderLib.Common.StringIsNullOrEmpty(uuid) == false then
-				Osi.LeaderLib_GlobalSettings_SetIntegerVariable(uuid, varname, num)
+				Osi.LeaderLib_GlobalSettings_SetIntegerVariable(uuid, varname, intnum)
 				--GlobalSettings_StoreGlobalInteger(uuid, name, author, varname, defaultvalue)
-				GlobalSettings_StoreGlobalInteger(uuid, varname, 0)
+				GlobalSettings_StoreGlobalInteger(uuid, varname, tostring(intnum))
 			else
-				Osi.LeaderLib_GlobalSettings_SetIntegerVariable(modid, author, varname, num)
+				Osi.LeaderLib_GlobalSettings_SetIntegerVariable(modid, author, varname, intnum)
 				--GlobalSettings_StoreGlobalInteger_Old(modid, author, varname, defaultvalue)
-				GlobalSettings_StoreGlobalInteger_Old(modid, author, varname, 0)
+				GlobalSettings_StoreGlobalInteger_Old(modid, author, varname, tostring(intnum))
 			end
 		end
 	end

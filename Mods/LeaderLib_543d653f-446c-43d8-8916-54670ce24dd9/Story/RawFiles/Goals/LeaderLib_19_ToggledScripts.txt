@@ -53,7 +53,8 @@ LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_SummonEvents_Character"
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_SummonEvents_Item", "LeaderLib_SummonEvents_Item_Enabled");
 //LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_GrowthEvents_Item_Enabled", "LeaderLib");
 
-LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_UnhealableMechanic", "LeaderLib_UnhealableFix_Enabled");
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Unhealable_Toggling", "LeaderLib_UnhealableFix_Enabled");
+LeaderLib_ToggleScripts_Register_ObjectScript("LeaderLib_19_TS_Unhealable_BlockHealing", "LeaderLib_Unhealable_Active", 0);
 
 LeaderLib_ToggleScripts_Register_ObjectScript("LeaderLib_19_TS_Auras_TurnAura", "LeaderLib_Auras_TurnAuraEnabled", 0);
 LeaderLib_ToggleScripts_Register_ObjectScript("LeaderLib_19_TS_Auras_TimerAura", "LeaderLib_Auras_TimerAuraEnabled", 0);
@@ -192,6 +193,13 @@ LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (S
 THEN
 LeaderLib_ToggleScripts_Internal_InitRegistration();
 LeaderLib_ToggleScripts_Internal_UpdateScriptFlags();
+
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,6,2,1)
+THEN
+LeaderLib_ToggleScripts_Clear_ByGoal("LeaderLib_19_TS_UnhealableMechanic");
 
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
@@ -788,6 +796,15 @@ AND
 DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByObjectTimer(_Object, _TimerName, _TagOrFlag)
 THEN
 NOT DB_LeaderLib_ToggleScripts_Temp_DeactivateScriptByObjectTimer(_Object, _TimerName, _TagOrFlag);
+//END_REGION
+
+//REGION DISABLE_ALL
+PROC
+LeaderLib_ToggleScripts_DisableAllObjectScripts((STRING)_TagOrFlag)
+AND
+DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_Object, _TagOrFlag, _ModID)
+THEN
+LeaderLib_ToggleScripts_DisableScriptForObject(_Object, _TagOrFlag, _ModID);
 //END_REGION
 
 //REGION AUTO_SCRIPT_DISABLE

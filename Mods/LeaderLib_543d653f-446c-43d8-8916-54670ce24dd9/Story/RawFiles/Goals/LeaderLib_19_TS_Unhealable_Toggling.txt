@@ -1,0 +1,27 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+CharacterLaunchOsirisOnlyIterator("Iterator_LeaderLib_CheckForUnhealable");
+KBSECTION
+
+IF
+StoryEvent((CHARACTERGUID)_Char, "Iterator_LeaderLib_CheckForUnhealable")
+AND
+HasActiveStatus(_Char, "UNHEALABLE", 1)
+THEN
+LeaderLib_ToggleScripts_EnableScriptForObject(_Char, "LeaderLib_Unhealable_Active", "LeaderLib");
+
+IF
+CharacterStatusApplied(_Char, "UNHEALABLE", _)
+THEN
+LeaderLib_ToggleScripts_EnableScriptForObject(_Char, "LeaderLib_Unhealable_Active", "LeaderLib");
+
+IF
+CharacterStatusRemoved(_Char, "UNHEALABLE", _)
+THEN
+LeaderLib_ToggleScripts_DisableScriptForObjectAfterDelay(_Char, "LeaderLib_Unhealable_Active", "LeaderLib", 1000);
+
+EXITSECTION
+LeaderLib_ToggleScripts_DisableAllObjectScripts("LeaderLib_Unhealable_Active");
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

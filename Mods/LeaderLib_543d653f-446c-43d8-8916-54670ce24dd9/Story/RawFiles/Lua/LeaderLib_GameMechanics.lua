@@ -15,6 +15,12 @@ local damage_types = {
 
 LeaderLib.Data["DamageTypes"] = damage_types
 
+---Reduce damage by a percentage (0.5).
+---@param target string
+---@param attacker string
+---@param handlestr string
+---@param reduction_str string
+---@return boolean
 local function ReduceDamage(target, attacker, handlestr, reduction_str)
     if reduction_str == nil then reduction_str = "0.5" end
     local handle = tonumber(handlestr)

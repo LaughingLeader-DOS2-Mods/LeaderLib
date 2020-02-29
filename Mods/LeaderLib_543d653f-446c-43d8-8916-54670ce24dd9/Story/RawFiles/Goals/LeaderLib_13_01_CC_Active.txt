@@ -12,54 +12,97 @@ THEN
 ProcObjectTimerCancel(_Player, "LeaderLib_Timers_UpdateSelectedPreset");
 ProcObjectTimer(_Player, "LeaderLib_Timers_UpdateSelectedPreset", 50);
 
+//REGION PRESET_TRACKING
 PROC
 ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_UpdateSelectedPreset")
-//AND
-//DB_SelectedCC(_Player, _UserProfile)
 THEN
 SetStoryEvent(_Player, "LeaderLib_CC_SetPreset");
 
 IF
 StoryEvent((CHARACTERGUID)_Player, "LeaderLib_Events_OnPresetSet")
 THEN
-LeaderLib_CC_SetSelectedPreset(_Player);
+LeaderLib_CC_Internal_SetSelectedPreset(_Player);
 
 PROC
-LeaderLib_CC_ClearLastSelectedPreset((CHARACTERGUID)_Player, (INTEGER)_UserID, (STRING)_NextPreset)
+LeaderLib_CC_Internal_UpdateSelectedPreset((CHARACTERGUID)_Player, (INTEGER)_UserID, (STRING)_NextPreset)
 AND
 NOT DB_LeaderLib_CC_Temp_SelectedPreset(_UserID, _)
 THEN
 LeaderLib_CC_OnPresetChanged(_Player, "", _NextPreset);
 
 PROC
-LeaderLib_CC_ClearLastSelectedPreset((CHARACTERGUID)_Player, (INTEGER)_UserID, (STRING)_NextPreset)
+LeaderLib_CC_Internal_UpdateSelectedPreset((CHARACTERGUID)_Player, (INTEGER)_UserID, (STRING)_NextPreset)
 AND
-DB_LeaderLib_CC_Temp_SelectedPreset(_UserID, _Preset)
+DB_LeaderLib_CC_Temp_SelectedPreset(_UserID, _LastPreset)
 THEN
-NOT DB_LeaderLib_CC_Temp_SelectedPreset(_UserID, _Preset);
-LeaderLib_CC_OnPresetChanged(_Player, _Preset, _NextPreset);
+NOT DB_LeaderLib_CC_Temp_SelectedPreset(_UserID, _LastPreset);
+LeaderLib_CC_OnPresetChanged(_Player, _LastPreset, _NextPreset);
 
 PROC
-LeaderLib_CC_SetSelectedPreset((CHARACTERGUID)_Player)
+LeaderLib_CC_Internal_SetSelectedPreset((CHARACTERGUID)_Player)
 AND
 GetVarFixedString(_Player, "LeaderLib_CharacterCreationPreset", _Preset)
 AND
 CharacterGetReservedUserID(_Player, _UserID)
+AND
+NOT DB_LeaderLib_CC_Temp_SelectedPreset(_UserID, _Preset)
 THEN
-LeaderLib_CC_ClearLastSelectedPreset(_Player, _UserID, _Preset);
+LeaderLib_CC_Internal_UpdateSelectedPreset(_Player, _UserID, _Preset);
 DB_LeaderLib_CC_Temp_SelectedPreset(_UserID, _Preset);
+
+PROC
+LeaderLib_CC_Internal_SetSelectedPreset((CHARACTERGUID)_Player)
+AND
+NOT GetVarFixedString(_Player, "LeaderLib_CharacterCreationPreset", _)
+THEN
+LeaderLog_Log("TRACE", "[LeaderLib:CC:LeaderLib_Events_OnPresetSet] [ERROR] Variable [LeaderLib_CharacterCreationPreset] is null!");
 
 PROC
 LeaderLib_CC_OnPresetChanged((CHARACTERGUID)_Player, (STRING)_LastPreset, (STRING)_Preset)
 THEN
 LeaderLog_Log("TRACE", "[LeaderLib:CC:LeaderLib_CC_OnPresetChanged] Player's preset changed from [",_LastPreset,"] to [",_Preset,"] in Character Creation.");
+//END_REGION
+
+//REGION ORIGIN_TRACKING
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_UpdateSelectedPreset")
+AND
+CharacterGetOrigin(_Player, 1, _Origin)
+AND
+CharacterGetReservedUserID(_Player, _UserID)
+AND
+NOT DB_LeaderLib_CC_Temp_SelectedOrigin(_UserID, _Origin)
+THEN
+LeaderLib_CC_Internal_UpdateSelectedOrigin(_Player, _UserID, _Origin);
+DB_LeaderLib_CC_Temp_SelectedOrigin(_UserID, _Origin);
 
 PROC
-LeaderLib_CC_SetSelectedPreset((CHARACTERGUID)_Player)
+LeaderLib_CC_Internal_UpdateSelectedOrigin((CHARACTERGUID)_Player, (INTEGER)_UserID, (STRING)_NextOrigin)
 AND
-NOT GetVarFixedString(_Player, "LeaderLib_CharacterCreationPreset", _)
+NOT DB_LeaderLib_CC_Temp_SelectedOrigin(_UserID, _)
 THEN
-LeaderLog_Log("TRACE", "[LeaderLib:CC:LeaderLib_Events_OnPresetSet] [ERROR] Variable [LeaderLib_CharacterCreationPreset] is null!");
+LeaderLib_CC_OnOriginChanged(_Player, "", _NextOrigin);
+
+PROC
+LeaderLib_CC_Internal_UpdateSelectedOrigin((CHARACTERGUID)_Player, (INTEGER)_UserID, (STRING)_NextOrigin)
+AND
+DB_LeaderLib_CC_Temp_SelectedOrigin(_UserID, _LastOrigin)
+THEN
+NOT DB_LeaderLib_CC_Temp_SelectedOrigin(_UserID, _LastOrigin);
+LeaderLib_CC_OnOriginChanged(_Player, _LastOrigin, _NextOrigin);
+//END_REGION
+
+//REGION PROC_EVENTS
+PROC
+LeaderLib_CC_OnPresetChanged((CHARACTERGUID)_Player, (STRING)_LastPreset, (STRING)_Preset)
+THEN
+LeaderLog_Log("TRACE", "[LeaderLib:CC:LeaderLib_CC_OnPresetChanged] Player's Preset changed from [",_LastPreset,"] to [",_Preset,"] in Character Creation.");
+
+PROC
+LeaderLib_CC_OnOriginChanged((CHARACTERGUID)_Player, (STRING)_LastOrigin, (STRING)_Origin)
+THEN
+LeaderLog_Log("TRACE", "[LeaderLib:CC:LeaderLib_CC_OnOriginChanged] Player's Origin changed from [",_LastOrigin,"] to [",_Origin,"] in Character Creation.");
+//END_REGION
 
 IF
 RegionStarted(_Level)

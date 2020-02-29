@@ -1,0 +1,20 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+/* This script initializes various Origin character related settings once a game level is loaded, then completes. */
+
+IF
+GameStarted(_Region, _IsEditorMode)
+AND
+IsGameLevel(_Region, _IsGameLevel)
+AND
+IntegerMax(_IsEditorMode, _IsGameLevel, 1)
+THEN
+LeaderLib_Origins_Internal_GameLevelInit(_Region);
+GoalCompleted;
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_11__Start"

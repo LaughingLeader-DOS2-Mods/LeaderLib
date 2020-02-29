@@ -3,6 +3,8 @@ SubGoalCombiner SGC_AND
 INITSECTION
 
 KBSECTION
+//REGION ORIGIN_SETUP
+
 PROC
 LeaderLib_Origins_Register_Main((CHARACTERGUID)_Char, (STRING)_NpcAlignment, (STRING)_DefaultFaction)
 THEN
@@ -60,6 +62,47 @@ AND
 DB_OriginProfessionTags(_Char, _ProfessionTag)
 THEN
 SetTag(_Char, _ProfessionTag);
+//END_REGION
+
+//REGION STARTING_ITEMS
+PROC
+LeaderLib_Origins_Register_StartingItems_Global((CHARACTERGUID)_Char, (ITEMGUID)_Item)
+THEN
+LeaderLib_Origins_Register_StartingItems_Global(_Char, _Item, 0);
+
+PROC
+LeaderLib_Origins_Register_StartingItems_Global((CHARACTERGUID)_Char, (ITEMGUID)_Item, (INTEGER)_AutoEquip)
+THEN
+DB_LeaderLib_Origins_GlobalStartingItems(_Char, _Item, _AutoEquip);
+
+PROC
+LeaderLib_Origins_Internal_MoveGlobalItem((CHARACTERGUID)_Char, (ITEMGUID)_Item, (INTEGER)_AutoEquip)
+AND
+ItemGetAmount(_Item, _Amount)
+THEN
+ItemToInventory(_Item, _Char, _Amount, 0, 1);
+ItemSetOwner(_Item, _Char);
+
+PROC
+LeaderLib_Origins_Internal_MoveGlobalItem((CHARACTERGUID)_Char, (ITEMGUID)_Item, 1)
+AND
+ItemIsEquipable(_Item, 1)
+THEN
+CharacterEquipItem(_Char, _Item);
+//END_REGION
+
+//REGION GAME_LEVEL_INIT
+PROC
+LeaderLib_Origins_Internal_GameLevelInit((STRING)_Region)
+AND
+DB_LeaderLib_Origins_GlobalStartingItems(_Char, _Item, _AutoEquip)
+AND
+ObjectExists(_Char, 1)
+AND
+ObjectExists(_Item, 1)
+THEN
+LeaderLib_Origins_Internal_MoveGlobalItem(_Char, _Item, _AutoEquip);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

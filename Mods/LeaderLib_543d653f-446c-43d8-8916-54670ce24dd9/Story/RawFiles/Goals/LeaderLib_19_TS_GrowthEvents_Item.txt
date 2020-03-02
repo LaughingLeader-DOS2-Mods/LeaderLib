@@ -7,8 +7,6 @@ KBSECTION
 IF
 CharacterLeveledUp(_Character)
 AND
-DB_IsPlayer(_Character)
-AND
 NOT LeaderLib_Helper_QRY_IgnoreCharacter(_Character)
 AND
 LeaderLib_Growth_Items_QRY_HasAutoLevelItem(_Character)
@@ -22,6 +20,19 @@ AND
 IsTagged(_Item, "LeaderLib_AutoLevel", 1)
 AND
 NOT LeaderLib_Helper_QRY_IgnoreItem(_Item)
+AND
+NOT LeaderLib_Helper_QRY_IgnoreCharacter(_Character)
+THEN
+LeaderLib_Growth_Items_LevelUpItem(_Character, _Item);
+
+IF
+ObjectWasTagged((ITEMGUID)_Item, "LeaderLib_AutoLevel")
+AND
+NOT LeaderLib_Helper_QRY_IgnoreItem(_Item)
+AND
+GetInventoryOwner(_Item, _Character)
+AND
+ObjectIsCharacter((CHARACTERGUID)_Character, 1)
 AND
 NOT LeaderLib_Helper_QRY_IgnoreCharacter(_Character)
 THEN

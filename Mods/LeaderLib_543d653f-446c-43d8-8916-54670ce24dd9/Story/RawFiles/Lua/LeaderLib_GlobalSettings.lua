@@ -437,8 +437,8 @@ end
 local function LoadGlobalSettings()
 	local json = NRD_LoadFile("LeaderLib_GlobalSettings.json")
 	if json ~= nil and json ~= "" then
+		--Ext.Print("[LeaderLib:GlobalSettings.lua] Loading global settings. {" .. json .. "}")
 		local json_tbl = Ext.JsonParse(json)
-		--Ext.Print("[LeaderLib:GlobalSettings.lua] Loaded global settings. {" .. LeaderLib.Common.Dump(json_tbl) .. "}")
 		Ext.Print("[LeaderLib:GlobalSettings.lua] Loaded global settings.")
 		parse_settings(json_tbl)
 	else

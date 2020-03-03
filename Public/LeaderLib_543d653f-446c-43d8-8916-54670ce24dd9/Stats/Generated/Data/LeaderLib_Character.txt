@@ -23,7 +23,7 @@ data "WaterSpecialist" "4"
 data "EarthSpecialist" "2"
 data "Loremaster" "5"
 data "Reflection" "6"
-data "Flags" "KnockdownImmunity"
+data "Flags" "KnockdownImmunity;CharmImmunity;MadnessImmunity;WebImmunity;TauntedImmunity"
 data "Talents" "AttackOfOpportunity;QuickStep;Perfectionist"
 
 new entry "LeaderLib_DummyHelper"

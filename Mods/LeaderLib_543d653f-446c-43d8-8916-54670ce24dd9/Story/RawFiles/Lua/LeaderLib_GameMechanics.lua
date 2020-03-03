@@ -174,6 +174,19 @@ local function CloneItemForCharacter(char, item, completion_event, autolevel)
     CharacterItemSetEvent(char, cloned, completion_event)
 end
 
+---Returns true if a hit isn't Dodged, Missed, or Blocked.
+---Pass in an object if this is a status.
+---@param handle integer
+---@param object string
+---@return boolean
+local function HitSucceeded(handle, object)
+    if object ~= nil then
+        return NRD_StatusGetInt(object, handle, "Dodged") == 0 and NRD_StatusGetInt(object, handle, "Missed") == 0 and NRD_StatusGetInt(object, handle, "Blocked") == 0
+    else
+        return NRD_HitGetInt(handle, "Dodged") == 0 and NRD_HitGetInt(handle, "Missed") == 0 and NRD_HitGetInt(handle, "Blocked") == 0
+    end
+end
+
 LeaderLib.Game = {
 	ReduceDamage = ReduceDamage,
 	IncreaseDamage = IncreaseDamage,
@@ -182,6 +195,7 @@ LeaderLib.Game = {
     StoreSkillSlots = StoreSkillSlots,
     SetSlotToSkill = SetSlotToSkill,
     CloneItemForCharacter = CloneItemForCharacter,
+    HitSucceeded = HitSucceeded,
 }
 
 LeaderLib.Register.Table(LeaderLib.Game);

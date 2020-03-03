@@ -369,6 +369,13 @@ DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_Object, _TagOrFlag, _EnablingModI
 THEN
 DB_NOOP(1);
 
+QRY
+LeaderLib_ToggleScripts_QRY_ScriptIsEnabled((GUIDSTRING)_Object, (STRING)_TagOrFlag)
+AND
+DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_Object, _TagOrFlag, _EnablingModID)
+THEN
+DB_NOOP(1);
+
 //Since multiple flags may enable the same goal, this is used to make sure all of the flags are disabled.
 //Checks if a global flag is  enabled for a goal.
 QRY

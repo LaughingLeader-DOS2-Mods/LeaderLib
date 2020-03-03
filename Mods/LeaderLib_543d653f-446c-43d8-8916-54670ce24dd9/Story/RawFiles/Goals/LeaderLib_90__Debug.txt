@@ -53,7 +53,7 @@ THEN
 GlobalSetFlag("LeaderLib_IsEditorMode");
 GlobalSetFlag("LeaderLog_Debug_Enabled");
 //GlobalSetFlag("LeaderLog_Trace_Enabled");
-SysActivateGoal("LeaderLib_20_DebugLevel");
+SysActivateGoal("LeaderLib_90_DebugLevel");
 
 IF
 RegionStarted("_TMPL_Sandbox")
@@ -61,17 +61,17 @@ THEN
 GlobalSetFlag("LeaderLib_IsEditorMode");
 GlobalSetFlag("LeaderLog_Debug_Enabled");
 //GlobalSetFlag("LeaderLog_Trace_Enabled");
-SysActivateGoal("LeaderLib_20_DebugLevel");
+SysActivateGoal("LeaderLib_90_DebugLevel");
 
 IF
 RegionEnded("TestLevel_LL_LeaderLib")
 THEN
-SysCompleteGoal("LeaderLib_20_DebugLevel");
+SysCompleteGoal("LeaderLib_90_DebugLevel");
 
 IF
 RegionEnded("_TMPL_Sandbox")
 THEN
-SysCompleteGoal("LeaderLib_20_DebugLevel");
+SysCompleteGoal("LeaderLib_90_DebugLevel");
 
 PROC
 LeaderLib_Debug_RunTests()

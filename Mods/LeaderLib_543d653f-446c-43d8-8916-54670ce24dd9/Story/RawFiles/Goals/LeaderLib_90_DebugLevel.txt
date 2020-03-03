@@ -133,7 +133,7 @@ AND
 CharacterGetHostCharacter(_Char)
 THEN
 //LeaderLib_Ext_PrintAttributes(_Char);
-LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:leaderlib_printattributes] Not implemented yet!");
+LeaderLog_Log("DEBUG", "[LeaderLib_90_DebugLevel:leaderlib_printattributes] Not implemented yet!");
 
 IF
 TextEventSet("leaderlib_debug_ext_versionstring")
@@ -159,7 +159,7 @@ AND
 IntegertoString(_Build, _d)
 THEN
 NOT DB_LeaderLib_StringExt_VersionToInt(_Version, _Major, _Minor, _Revision, _Build);
-LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:leaderlib_debug_versionstring] (1.10.35.120) Major(",_a,") Minor(",_b,") Revision(",_c,") Build(",_d,")");
+LeaderLog_Log("DEBUG", "[LeaderLib_90_DebugLevel:leaderlib_debug_versionstring] (1.10.35.120) Major(",_a,") Minor(",_b,") Revision(",_c,") Build(",_d,")");
 */
 
 IF
@@ -1376,7 +1376,7 @@ String(_Owner, _OwnerStr)
 AND
 IntegertoString(_IsTotem, _IsTotemStr)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:LeaderLib_Summoning_OnCharacterSummoned] Character (",_SummonStr,") was summoned by (",_OwnerStr,"). IsTotem(",_IsTotemStr,")");
+LeaderLog_Log("DEBUG", "[LeaderLib_90_DebugLevel:LeaderLib_Summoning_OnCharacterSummoned] Character (",_SummonStr,") was summoned by (",_OwnerStr,"). IsTotem(",_IsTotemStr,")");
 
 PROC
 LeaderLib_Summoning_OnCharacterDismissed((CHARACTERGUID)_Char, (CHARACTERGUID)_Owner, (INTEGER)_IsTotem)
@@ -1387,7 +1387,7 @@ String(_Owner, _OwnerStr)
 AND
 IntegertoString(_IsTotem, _IsTotemStr)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:LeaderLib_Summoning_OnCharacterDismissed] Summon (",_SummonStr,") was dismissed. Owner (",_OwnerStr,") IsTotem(",_IsTotemStr,")");
+LeaderLog_Log("DEBUG", "[LeaderLib_90_DebugLevel:LeaderLib_Summoning_OnCharacterDismissed] Summon (",_SummonStr,") was dismissed. Owner (",_OwnerStr,") IsTotem(",_IsTotemStr,")");
 
 PROC
 LeaderLib_Summoning_OnItemSummoned((ITEMGUID)_Item, (CHARACTERGUID)_Owner)
@@ -1396,7 +1396,7 @@ String(_Item, _SummonStr)
 AND
 String(_Owner, _OwnerStr)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:LeaderLib_Summoning_OnItemSummoned] Item (",_SummonStr,") was summoned by (",_OwnerStr,").");
+LeaderLog_Log("DEBUG", "[LeaderLib_90_DebugLevel:LeaderLib_Summoning_OnItemSummoned] Item (",_SummonStr,") was summoned by (",_OwnerStr,").");
 
 PROC
 LeaderLib_Summoning_OnItemDismissed((ITEMGUID)_Item, (CHARACTERGUID)_Owner, (INTEGER)_IsDestroyed)
@@ -1407,7 +1407,7 @@ String(_Owner, _OwnerStr)
 AND
 IntegertoString(_IsDestroyed, _IsDestroyedStr)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:LeaderLib_Summoning_OnItemDismissed] Item (",_SummonStr,") was dismissed. Owner (",_OwnerStr,") IsDestroyed(",_IsDestroyedStr,")");
+LeaderLog_Log("DEBUG", "[LeaderLib_90_DebugLevel:LeaderLib_Summoning_OnItemDismissed] Item (",_SummonStr,") was dismissed. Owner (",_OwnerStr,") IsDestroyed(",_IsDestroyedStr,")");
 //END_REGION
 
 //REGION MISC
@@ -1504,7 +1504,7 @@ LeaderLib_Statuses_OnStatusExtended((GUIDSTRING)_Object, (STRING)_Status, (INTEG
 AND
 String(_Object, _Str)
 AND
-StringConcatenate("[LeaderLib_20_DebugLevel:OnStatusExtended] Object (", _Str, _Str2)
+StringConcatenate("[LeaderLib_90_DebugLevel:OnStatusExtended] Object (", _Str, _Str2)
 AND
 StringConcatenate(_Str2, ") extended status (", _Str3)
 AND
@@ -1521,15 +1521,15 @@ DialogStarted(_Dialog, _Instance)
 AND
 IntegertoString(_Instance, _InstanceStr)
 THEN
-LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_20_DebugLevel:DialogStarted] Dialog (", _Dialog, ")[",_InstanceStr,"] started.");
-LeaderLib_Debug_TraceDialog(_Dialog, _Instance, "[LeaderLib_20_DebugLevel:DialogStarted] ");
+LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_90_DebugLevel:DialogStarted] Dialog (", _Dialog, ")[",_InstanceStr,"] started.");
+LeaderLib_Debug_TraceDialog(_Dialog, _Instance, "[LeaderLib_90_DebugLevel:DialogStarted] ");
 
 IF
 DialogEnded(_Dialog, _Instance)
 AND
 IntegertoString(_Instance, _InstanceStr)
 THEN
-LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_20_DebugLevel:DialogEnded] Dialog (", _Dialog, ")[",_InstanceStr,"] ended.");
+LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_90_DebugLevel:DialogEnded] Dialog (", _Dialog, ")[",_InstanceStr,"] ended.");
 
 IF
 DualDialogRequested(_Dialog, _Instance, _TargetInstance)
@@ -1538,57 +1538,57 @@ IntegertoString(_TargetInstance, _TargetInstanceStr)
 AND
 IntegertoString(_Instance, _InstanceStr)
 THEN
-LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_20_DebugLevel:DualDialogRequested] Dialog (", _Dialog, ")[",_InstanceStr,"] requesting instance (",_TargetInstanceStr,").");
+LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_90_DebugLevel:DualDialogRequested] Dialog (", _Dialog, ")[",_InstanceStr,"] requesting instance (",_TargetInstanceStr,").");
 
 IF
 DualDialogStart(_Dialog, _Instance)
 AND
 IntegertoString(_Instance, _InstanceStr)
 THEN
-LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_20_DebugLevel:DualDialogStart] Dual Dialog (", _Dialog, ")[",_InstanceStr,"] started.");
-LeaderLib_Debug_TraceDialog(_Dialog, _Instance, "[LeaderLib_20_DebugLevel:DualDialogStart] ");
+LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_90_DebugLevel:DualDialogStart] Dual Dialog (", _Dialog, ")[",_InstanceStr,"] started.");
+LeaderLib_Debug_TraceDialog(_Dialog, _Instance, "[LeaderLib_90_DebugLevel:DualDialogStart] ");
 
 IF
 AutomatedDialogStarted(_Dialog, _Instance)
 AND
 IntegertoString(_Instance, _InstanceStr)
 THEN
-LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_20_DebugLevel:AutomatedDialogStarted] AD Dialog (", _Dialog, ")[",_InstanceStr,"] started.");
-LeaderLib_Debug_TraceDialog(_Dialog, _Instance, "[LeaderLib_20_DebugLevel:AutomatedDialogStarted] ");
+LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_90_DebugLevel:AutomatedDialogStarted] AD Dialog (", _Dialog, ")[",_InstanceStr,"] started.");
+LeaderLib_Debug_TraceDialog(_Dialog, _Instance, "[LeaderLib_90_DebugLevel:AutomatedDialogStarted] ");
 
 IF
 AutomatedDialogEnded(_Dialog, _Instance)
 AND
 IntegertoString(_Instance, _InstanceStr)
 THEN
-LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_20_DebugLevel:AutomatedDialogEnded] AD Dialog (", _Dialog, ")[",_InstanceStr,"] ended.");
+LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_90_DebugLevel:AutomatedDialogEnded] AD Dialog (", _Dialog, ")[",_InstanceStr,"] ended.");
 
 IF
 AutomatedDialogRequestFailed(_Dialog, _Instance)
 AND
 IntegertoString(_Instance, _InstanceStr)
 THEN
-LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_20_DebugLevel:AutomatedDialogRequestFailed] AD Dialog (", _Dialog, ")[",_InstanceStr,"] failed.");
+LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_90_DebugLevel:AutomatedDialogRequestFailed] AD Dialog (", _Dialog, ")[",_InstanceStr,"] failed.");
 
 IF
 VoiceBarkStarted(_Dialog, _Instance)
 AND
 IntegertoString(_Instance, _InstanceStr)
 THEN
-LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_20_DebugLevel:VoiceBarkStarted] Voicebark Dialog (", _Dialog, ")[",_InstanceStr,"] started.");
-LeaderLib_Debug_TraceDialog(_Dialog, _Instance, "[LeaderLib_20_DebugLevel:VoiceBarkStarted] ");
+LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_90_DebugLevel:VoiceBarkStarted] Voicebark Dialog (", _Dialog, ")[",_InstanceStr,"] started.");
+LeaderLib_Debug_TraceDialog(_Dialog, _Instance, "[LeaderLib_90_DebugLevel:VoiceBarkStarted] ");
 
 IF
 VoiceBarkEnded(_Dialog, _Instance)
 AND
 IntegertoString(_Instance, _InstanceStr)
 THEN
-LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_20_DebugLevel:VoiceBarkEnded] Voicebark Dialog (", _Dialog, ")[",_InstanceStr,"] ended.");
+LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_90_DebugLevel:VoiceBarkEnded] Voicebark Dialog (", _Dialog, ")[",_InstanceStr,"] ended.");
 
 IF
 VoiceBarkFailed(_Dialog)
 THEN
-LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_20_DebugLevel:VoiceBarkFailed] Voicebark Dialog (", _Dialog, ") failed.");
+LeaderLog_Log("DEBUG_DIALOG", "[LeaderLib_90_DebugLevel:VoiceBarkFailed] Voicebark Dialog (", _Dialog, ") failed.");
 
 PROC
 LeaderLib_Debug_TraceDialog((STRING)_Dialog, (INTEGER)_Instance, (STRING)_Prefix)
@@ -1690,8 +1690,8 @@ LeaderLib_Variables_OnVariableIntChanged((GUIDSTRING)_Object, "LeaderLib_PartyCo
 AND
 String(_Object, _ObjectStr)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:OnVariableIntChanged]  (LeaderLib_PartyCount) changed for (",_ObjectStr,").");
-LeaderLog_LogInt("DEBUG", "[LeaderLib_20_DebugLevel:OnVariableIntChanged] --- (LeaderLib_PartyCount) (", _LastValue, ") => (",_CurrentValue,").");
+LeaderLog_Log("DEBUG", "[LeaderLib_90_DebugLevel:OnVariableIntChanged]  (LeaderLib_PartyCount) changed for (",_ObjectStr,").");
+LeaderLog_LogInt("DEBUG", "[LeaderLib_90_DebugLevel:OnVariableIntChanged] --- (LeaderLib_PartyCount) (", _LastValue, ") => (",_CurrentValue,").");
 */
 //END_REGION
 
@@ -1766,7 +1766,7 @@ AND
 StringConcatenate(_Msg4, _AuraID, _Msg5)
 THEN
 CharacterStatusText(_Source, _Msg5);
-LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:LeaderLib_Auras_OnPulseCountChanged] ", _Msg5);
+LeaderLog_Log("DEBUG", "[LeaderLib_90_DebugLevel:LeaderLib_Auras_OnPulseCountChanged] ", _Msg5);
 
 PROC
 LeaderLib_Auras_OnAuraApplied((GUIDSTRING)_Source, "LeaderLib_Debug_BarfAura")
@@ -1860,7 +1860,7 @@ IntegertoString(_IsPlayer, _IsPlayerStr)
 AND
 String(_Char, _CharStr)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:LeaderLib_Debug_CheckIsPlayer] (",_CharStr,") is player? (",_IsPlayerStr,")");
+LeaderLog_Log("DEBUG", "[LeaderLib_90_DebugLevel:LeaderLib_Debug_CheckIsPlayer] (",_CharStr,") is player? (",_IsPlayerStr,")");
 
 IF
 StoryEvent((CHARACTERGUID)_Char, "LeaderLib_Debug_CheckIsPlayer")
@@ -1871,7 +1871,62 @@ IntegertoString(_IsPlayer, _IsPlayerStr)
 AND
 String(_Char, _CharStr)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib_20_DebugLevel:LeaderLib_Debug_CheckIsPlayer] (",_CharStr,") is party member? (",_IsPlayerStr,")");
+LeaderLog_Log("DEBUG", "[LeaderLib_90_DebugLevel:LeaderLib_Debug_CheckIsPlayer] (",_CharStr,") is party member? (",_IsPlayerStr,")");
+
+IF
+TextEventSet("leaderlib_debug_statitem")
+AND
+CharacterGetHostCharacter(_Host)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_90_DebugLevel:leaderlib_debug_statitem] Creating two items by stat.");
+//LeaderLib_Items_CreateByStat(_Host, "WPN_CraftedMace_2H", "LeaderLib_Debug_CreateByStat_ItemAdded", 1, 1, CHARACTERGUID_Trailer_Humans_Female_Lohse_000_145810cc-7e46-43e7-9fdf-ab9bb8ffcdc0);
+LeaderLib_Items_CreateByStat(_Host, "WPN_Mace_2H", "LeaderLib_Debug_CreateByStat_ItemAdded", 1, 1);
+LeaderLib_Items_CreateByStat(_Host, "WPN_Mace_2H", "LeaderLib_Debug_CreateByStat_ItemAdded", 1, 1);
+LeaderLib_Items_CreateByStat(_Host, "ARM_Light_Helmet", "LeaderLib_Debug_CreateByStat_ItemAdded", 1, 1);
+LeaderLib_Items_CreateByStat(_Host, "ARM_Light_UpperBody", "LeaderLib_Debug_CreateByStat_ItemAdded", 1, 1);
+LeaderLib_Items_CreateByStat(_Host, "ARM_Light_LowerBody", "LeaderLib_Debug_CreateByStat_ItemAdded", 1, 1);
+LeaderLib_Items_CreateByStat(_Host, "ARM_Light_Boots", "LeaderLib_Debug_CreateByStat_ItemAdded", 1, 1);
+LeaderLib_Items_CreateByStat(_Host, "ARM_Light_Gloves", "LeaderLib_Debug_CreateByStat_ItemAdded", 1, 1);
+LeaderLib_Items_CreateByStat(_Host, "WPN_Shield", "LeaderLib_Debug_CreateByStat_ItemAdded", 1, 1);
+LeaderLib_Items_CreateByStat(_Host, "POTION_Minor_Healing_Potion", "LeaderLib_Debug_CreateByStat_ItemAdded", 1, 1);
+
+/* [OSITOOLS_ONLY]
+IF
+StoryEvent(_Char, "LeaderLib_CreateByStat_Generate")
+THEN
+NRD_DebugLog("Creating item by stat:");
+NRD_DebugLog((STRING)_Char);
+
+IF
+CharacterItemEvent(_Char, _Item, "LeaderLib_Debug_CreateByStat_ItemAdded")
+THEN
+NRD_DebugLog((STRING)_Item);
+*/
+
+IF
+CharacterItemEvent(_Char, _Item, "LeaderLib_Debug_CreateByStat_ItemAdded")
+THEN
+ItemToInventory(_Item, _Char, 1, 1, 1);
+ItemSetOwner(_Item, _Char);
+
+IF
+CharacterItemEvent(_Char, _Item, "LeaderLib_Debug_CreateByStat_ItemAdded")
+AND
+ItemIsEquipable(_Item, 1)
+AND
+CharacterGetLevel(_Char, _Level)
+THEN
+//ItemLevelUpTo(_Item, _Level);
+CharacterEquipItem(_Char, _Item);
+
+IF
+ItemTemplateAddedToCharacter(_TemplateGUID, CHARACTERGUID_S_LeaderLib_Dummy_TargetHelper_A_36069245-0e2d-44b1-9044-6797bd29bb15, _Item)
+AND
+String(_Item, _ItemStr)
+AND
+String(_TemplateGUID, _Template)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_90_DebugLevel:LeaderLib_Debug_CreateByStat] Added item (",_ItemStr,")[",_Template,"]");
 EXITSECTION
 
 ENDEXITSECTION

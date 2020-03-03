@@ -15,6 +15,19 @@ local damage_types = {
 
 LeaderLib.Data["DamageTypes"] = damage_types
 
+---Returns true if a hit isn't Dodged, Missed, or Blocked.
+---Pass in an object if this is a status.
+---@param handle integer
+---@param object string
+---@return boolean
+local function HitSucceeded(handle, object)
+    if object ~= nil then
+        return NRD_StatusGetInt(object, handle, "Dodged") == 0 and NRD_StatusGetInt(object, handle, "Missed") == 0 and NRD_StatusGetInt(object, handle, "Blocked") == 0
+    else
+        return NRD_HitGetInt(handle, "Dodged") == 0 and NRD_HitGetInt(handle, "Missed") == 0 and NRD_HitGetInt(handle, "Blocked") == 0
+    end
+end
+
 ---Reduce damage by a percentage (0.5).
 ---@param target string
 ---@param attacker string
@@ -174,28 +187,33 @@ local function CloneItemForCharacter(char, item, completion_event, autolevel)
     CharacterItemSetEvent(char, cloned, completion_event)
 end
 
----Returns true if a hit isn't Dodged, Missed, or Blocked.
----Pass in an object if this is a status.
----@param handle integer
----@param object string
----@return boolean
-local function HitSucceeded(handle, object)
-    if object ~= nil then
-        return NRD_StatusGetInt(object, handle, "Dodged") == 0 and NRD_StatusGetInt(object, handle, "Missed") == 0 and NRD_StatusGetInt(object, handle, "Blocked") == 0
-    else
-        return NRD_HitGetInt(handle, "Dodged") == 0 and NRD_HitGetInt(handle, "Missed") == 0 and NRD_HitGetInt(handle, "Blocked") == 0
-    end
+---Clone an item for a character.
+---@param stat string
+---@param level integer
+---@return string
+local function CreateItemByStat(stat, level)
+    local x,y,z = GetPosition(CharacterGetHostCharacter())
+    local item = CreateItemTemplateAtPosition("LOOT_LeaderLib_BackPack_Invisible_98fa7688-0810-4113-ba94-9a8c8463f830",x,y,z)
+    NRD_ItemCloneBegin(item)
+    NRD_ItemCloneSetString("GenerationStatsId", stat)
+    NRD_ItemCloneSetString("StatsEntryName", stat)
+    NRD_ItemCloneSetInt("HasGeneratedStats", 0)
+    NRD_ItemCloneSetInt("StatsLevel", level)
+    --NRD_ItemCloneResetProgression()
+    local cloned NRD_ItemClone()
+    ItemLevelUpTo(cloned,level)
+    return cloned
 end
 
 LeaderLib.Game = {
 	ReduceDamage = ReduceDamage,
 	IncreaseDamage = IncreaseDamage,
+    HitSucceeded = HitSucceeded,
 	RedirectDamage = RedirectDamage,
     StoreSkillData = StoreSkillData,
     StoreSkillSlots = StoreSkillSlots,
     SetSlotToSkill = SetSlotToSkill,
     CloneItemForCharacter = CloneItemForCharacter,
-    HitSucceeded = HitSucceeded,
 }
 
 LeaderLib.Register.Table(LeaderLib.Game);

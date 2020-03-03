@@ -998,6 +998,38 @@ DB_LeaderLib_Helper_Temp_ItemSetAmount(_Item)
 THEN
 NOT DB_LeaderLib_Helper_Temp_ItemSetAmount(_Item);
 //END_REGION
+
+//REGION BEHAVIOR_CREATE_BY_STAT
+PROC
+LeaderLib_Items_CreateByStat((CHARACTERGUID)_Target, (STRING)_Stat)
+THEN
+LeaderLib_Items_CreateByStat(_Target, _Stat, "", 1, 1);
+
+PROC
+LeaderLib_Items_CreateByStat((CHARACTERGUID)_Target, (STRING)_Stat, (STRING)_AddedEvent)
+THEN
+LeaderLib_Items_CreateByStat(_Target, _Stat, _AddedEvent, 1, 1);
+
+PROC
+LeaderLib_Items_CreateByStat((CHARACTERGUID)_Target, (STRING)_Stat, (STRING)_AddedEvent, (INTEGER)_Amount)
+THEN
+LeaderLib_Items_CreateByStat(_Target, _Stat, _AddedEvent, _Amount, 1);
+
+PROC
+LeaderLib_Items_CreateByStat((CHARACTERGUID)_Target, (STRING)_Stat, (STRING)_AddedEvent, (INTEGER)_Amount, (INTEGER)_ShowInTrade)
+THEN
+LeaderLib_Items_CreateByStat(_Target, _Stat, _AddedEvent, _Amount, _ShowInTrade, CHARACTERGUID_S_LeaderLib_Dummy_TargetHelper_A_36069245-0e2d-44b1-9044-6797bd29bb15);
+
+PROC
+LeaderLib_Items_CreateByStat((CHARACTERGUID)_Target, (STRING)_Stat, (STRING)_AddedEvent, (INTEGER)_Amount, (INTEGER)_ShowInTrade, (CHARACTERGUID)_Proxy)
+THEN
+SetVarFixedString(_Proxy, "LeaderLib_CBS_Generate_Stat", _Stat);
+SetVarInteger(_Proxy, "LeaderLib_CBS_Generate_Amount", _Amount);
+SetVarInteger(_Proxy, "LeaderLib_CBS_Generate_ShowInTrade", _ShowInTrade);
+SetVarObject(_Proxy, "LeaderLib_CBS_ItemAdded_Target", _Target);
+SetVarString(_Proxy, "LeaderLib_CBS_ItemAdded_AddedEvent", _AddedEvent);
+SetStoryEvent(_Proxy, "LeaderLib_CreateByStat_Generate");
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

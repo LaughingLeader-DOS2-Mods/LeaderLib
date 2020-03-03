@@ -1,0 +1,52 @@
+INIT
+	CHARACTER:__Me
+	FIXEDSTRING:%LeaderLib_CBS_Generate_Stat = null
+	INT:%LeaderLib_CBS_Generate_Amount = 1
+	INT:%LeaderLib_CBS_Generate_ShowInTrade = 1
+	CHARACTER:%LeaderLib_CBS_ItemAdded_Target = null
+	STRING:%LeaderLib_CBS_ItemAdded_AddedEvent = null
+EVENTS
+
+EVENT LeaderLib_CBS_Generate
+ON
+	OnCharacterEvent(__Me, "LeaderLib_CreateByStat_Generate")
+ACTIONS
+	Output("Creating item: [1] [2] [3]", %LeaderLib_CBS_Generate_Stat, %LeaderLib_CBS_Generate_Amount, %LeaderLib_CBS_Generate_ShowInTrade)
+IF "!c1&!c2"
+	IsEqual(%LeaderLib_CBS_Generate_Stat, null)
+	IsEqual(%LeaderLib_CBS_Generate_Stat, "")
+THEN
+	IF "c1"
+		IsEqual(%LeaderLib_CBS_Generate_Amount, null)
+	THEN
+		Set(%LeaderLib_CBS_Generate_Amount, 1)
+	ENDIF
+	IF "c1"
+		IsEqual(%LeaderLib_CBS_Generate_ShowInTrade, null)
+	THEN
+		Set(%LeaderLib_CBS_Generate_ShowInTrade, 1)
+	ENDIF
+	CharacterAddToInventory(__Me, %LeaderLib_CBS_Generate_Stat, %LeaderLib_CBS_Generate_Amount, %LeaderLib_CBS_Generate_ShowInTrade)
+	IterateItemsInInventory(__Me, "Iterator_LeaderLib_CreateByStatProxy_ItemFound")
+ENDIF
+
+EVENT LeaderLib_CBS_ItemAdded
+VARS
+	ITEM:_Item
+ON
+	OnIterateItem(_Item, "Iterator_LeaderLib_CreateByStatProxy_ItemFound")
+ACTIONS
+	Output("OnIterateItem: [1] [2] [3]", _Item, %LeaderLib_CBS_ItemAdded_AddedEvent, %LeaderLib_CBS_ItemAdded_Target)
+IF "c1|c2"
+	IsEqual(%LeaderLib_CBS_ItemAdded_AddedEvent, null)
+	IsEqual(%LeaderLib_CBS_ItemAdded_AddedEvent, "")
+THEN
+	Set(%LeaderLib_CBS_ItemAdded_AddedEvent, "LeaderLib_CreateByStat_ItemCreated")
+ENDIF
+IF "!c1"
+	IsEqual(%LeaderLib_CBS_ItemAdded_Target, null)
+THEN
+	CharacterItemEvent(%LeaderLib_CBS_ItemAdded_Target, _Item, %LeaderLib_CBS_ItemAdded_AddedEvent)
+ELSE
+	CharacterItemEvent(__Me, _Item, %LeaderLib_CBS_ItemAdded_AddedEvent)
+ENDIF

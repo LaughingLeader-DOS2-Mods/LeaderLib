@@ -17,16 +17,40 @@ LeaderLib.Data["DamageTypes"] = damage_types
 
 ---Returns true if a hit isn't Dodged, Missed, or Blocked.
 ---Pass in an object if this is a status.
+---@param target string
 ---@param handle integer
----@param object string
+---@param is_hit integer
 ---@return boolean
-local function HitSucceeded(handle, object)
-    if object ~= nil then
-        return NRD_StatusGetInt(object, handle, "Dodged") == 0 and NRD_StatusGetInt(object, handle, "Missed") == 0 and NRD_StatusGetInt(object, handle, "Blocked") == 0
+local function HitSucceeded(target, handle, is_hit)
+    if is_hit ~= 1 then
+        return NRD_StatusGetInt(target, handle, "Dodged") == 0 and NRD_StatusGetInt(target, handle, "Missed") == 0 and NRD_StatusGetInt(target, handle, "Blocked") == 0
     else
         return NRD_HitGetInt(handle, "Dodged") == 0 and NRD_HitGetInt(handle, "Missed") == 0 and NRD_HitGetInt(handle, "Blocked") == 0
     end
 end
+
+Ext.NewQuery(HitSucceeded, "LeaderLib_Ext_QRY_HitSucceeded", "[in](GUIDSTRING)_Target, [in](INTEGER64)_Handle, [in](INTEGER)_IsHitType, [out](INTEGER)_Bool")
+
+---Returns true if a hit is from a weapon.
+---@param target string
+---@param handle integer
+---@param is_hit integer
+---@return boolean
+local function HitWithWeapon(target, handle, is_hit)
+    local hit_type = -1
+    local hitWithWeapon = false
+    if is_hit ~= 1 then
+        hit_type = NRD_StatusGetInt(target, handle, "HitReason")
+        local source_type = NRD_StatusGetInt(target, handle, "DamageSourceType")
+        hitWithWeapon = source_type == 6 or source_type == 7
+    else
+        hit_type = NRD_HitGetInt(handle, "HitType")
+        hitWithWeapon = NRD_HitGetInt(handle, "HitWithWeapon") == 1
+    end
+    return (hit_type == 0 or hit_type == 2 or hit_type == 3) and hitWithWeapon
+end
+
+Ext.NewQuery(HitWithWeapon, "LeaderLib_Ext_QRY_HitWithWeapon", "[in](GUIDSTRING)_Target, [in](INTEGER64)_Handle, [in](INTEGER)_IsHitType, [out](INTEGER)_Bool")
 
 ---Reduce damage by a percentage (0.5).
 ---@param target string

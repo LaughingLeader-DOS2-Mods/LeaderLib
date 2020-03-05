@@ -1684,15 +1684,16 @@ FindValidPosition(_tx, _y, _tz, 12.0, _Char, _cx, _cy, _cz)
 THEN
 TeleportToPosition(_Char, _cx, _cy, _cz, "", 0, 1);
 
-/*
 PROC
-LeaderLib_Variables_OnVariableIntChanged((GUIDSTRING)_Object, "LeaderLib_PartyCount", (INTEGER)_LastValue, (INTEGER)_CurrentValue)
+LeaderLib_Variables_OnVariableIntChanged((GUIDSTRING)_Object, (STRING)_Variable, (INTEGER)_LastValue, (INTEGER)_CurrentValue)
 AND
 String(_Object, _ObjectStr)
+AND
+IntegertoString(_LastValue, _LastValueStr)
+AND
+IntegertoString(_CurrentValue, _CurrentValueStr)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib_90_DebugLevel:OnVariableIntChanged]  (LeaderLib_PartyCount) changed for (",_ObjectStr,").");
-LeaderLog_LogInt("DEBUG", "[LeaderLib_90_DebugLevel:OnVariableIntChanged] --- (LeaderLib_PartyCount) (", _LastValue, ") => (",_CurrentValue,").");
-*/
+LeaderLog_Log("DEBUG", "[LeaderLib_90_DebugLevel:OnVariableIntChanged] (",_Variable,") changed for (",_ObjectStr,") | (", _LastValueStr, ") => (",_CurrentValueStr,").");
 //END_REGION
 
 //REGION AURAS_TEST

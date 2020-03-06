@@ -1,0 +1,99 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+KBSECTION
+// [BEGIN_NO_OSITOOLS]
+QRY
+LeaderLib_Hit_QRY_HitSucceeded((GUIDSTRING)_Target, (INTEGER64)_Handle, (INTEGER)_IsHit)
+AND
+1 == 0
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Hit_QRY_HitWithWeapon((GUIDSTRING)_Target, (INTEGER64)_Handle, (INTEGER)_IsHit)
+AND
+1 == 0
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Hit_QRY_HitDirectly((GUIDSTRING)_Target, (INTEGER64)_Handle, (INTEGER)_IsHit)
+AND
+1 == 0
+THEN
+DB_NOOP(1);
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+QRY
+LeaderLib_Hit_QRY_HitSucceeded((GUIDSTRING)_Target, (INTEGER64)_Handle, 1)
+AND
+NRD_HitGetInt(_Handle, "Dodged", 0)
+AND
+NRD_HitGetInt(_Handle, "Missed", 0)
+AND
+NRD_HitGetInt(_Handle, "Blocked", 0)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Hit_QRY_HitSucceeded((GUIDSTRING)_Target, (INTEGER64)_Handle, 0)
+AND
+NRD_StatusGetInt(_Target, _Handle, "Dodged", 0)
+AND
+NRD_StatusGetInt(_Target, _Handle, "Missed", 0)
+AND
+NRD_StatusGetInt(_Target, _Handle, "Blocked", 0)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Hit_QRY_HitWithWeapon((GUIDSTRING)_Target, (INTEGER64)_Handle, 1)
+AND
+//NRD_HitGetInt(_Handle, "HitWithWeapon", 1)
+NRD_HitGetInt(_Handle, "HitType", _HitType)
+AND
+LeaderLib_Math_QRY_IsEqualToAny(_HitType,0,2,3)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Hit_QRY_HitWithWeapon((GUIDSTRING)_Target, (INTEGER64)_Handle, 0)
+AND
+NRD_StatusGetInt(_Target, _Handle, "HitReason", _HitType)
+AND
+NRD_StatusGetInt(_Target, _Handle, "DamageSourceType", _SourceType)
+AND
+LeaderLib_Math_QRY_IsEqualToAny(_HitType,0,2,3)
+AND
+LeaderLib_Math_QRY_IsEqualToAny(_SourceType,6,7)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Hit_QRY_HitDirectly((GUIDSTRING)_Target, (INTEGER64)_Handle, 1)
+AND
+NRD_HitGetInt(_Handle, "HitType", _HitType)
+AND
+_HitType < 4
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Hit_QRY_HitDirectly((GUIDSTRING)_Target, (INTEGER64)_Handle, 0)
+AND
+NRD_StatusGetInt(_Target, _Handle, "HitReason", _HitType)
+AND
+_HitType < 4
+AND
+NRD_StatusGetInt(_Target, _Handle, "DamageSourceType", _SourceType)
+AND
+LeaderLib_Math_QRY_IsEqualToAny(_SourceType,0,6,7)
+THEN
+DB_NOOP(1);
+*/
+
+EXITSECTION
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

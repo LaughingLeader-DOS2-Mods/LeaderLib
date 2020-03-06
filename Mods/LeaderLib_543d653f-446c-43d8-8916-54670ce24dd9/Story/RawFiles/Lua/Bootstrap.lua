@@ -44,14 +44,10 @@ LeaderLib_ModUpdater = {}
 
 function LeaderLib_Ext_Log(...)
 	if GlobalGetFlag("LeaderLib_IsEditorMode") == 1 then
-		local args = {...}
+		local logArgs = {...}
 		local output_str = ""
-		for i=1,#args do
-			if type(args[1] ~= "string") then
-				output_str = output_str .. tostring(args[i])
-			else
-				output_str = output_str .. args[i]
-			end
+		for i,v in ipairs(logArgs) do
+			output_str = output_str .. tostring(v)
 		end
 		Ext.Print(output_str)
 	end

@@ -127,6 +127,26 @@ local function Enum(names, offset)
 	return objects
 end
 
+---@param in_value any
+---@param param_type string
+---@param fallback_value any
+---@return any
+local function SafeguardParam(in_value, param_type, fallback_value)
+	if in_value == nil then return fallback_value end
+	local in_type = type(in_value)
+	if in_type == param_type then
+		return in_value
+	elseif in_type == "number" and param_type == "integer" then
+		return in_value
+	elseif in_type == "string" and param_type == "number" then
+		return tonumber(in_value)
+	elseif in_type == "string" and param_type == "integer" then
+		return math.tointeger(in_value)
+	else
+		return fallback_value
+	end
+end
+
 LeaderLib.Common = {
 	Dump = dump,
 	TableHasEntry = has_table_entry,
@@ -135,5 +155,6 @@ LeaderLib.Common = {
 	GetTableEntry = GetTableEntry,
 	GetRandomTableEntry = GetRandomTableEntry,
 	GetRandom = GetRandom,
-	Enum = Enum
+	Enum = Enum,
+	SafeguardParam = SafeguardParam
 }

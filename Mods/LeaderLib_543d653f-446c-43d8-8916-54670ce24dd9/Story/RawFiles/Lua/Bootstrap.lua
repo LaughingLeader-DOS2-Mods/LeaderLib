@@ -42,6 +42,21 @@ LeaderLib_ModRegistered = {}
 ---A global table that holds update callback functions to run when a mod's version changes. The key should be the mod's UUID.
 LeaderLib_ModUpdater = {}
 
+function LeaderLib_Ext_Log(...)
+	if GlobalGetFlag("LeaderLib_IsEditorMode") == 1 then
+		local args = {...}
+		local output_str = ""
+		for i=1,#args do
+			if type(args[1] ~= "string") then
+				output_str = output_str .. tostring(args[i])
+			else
+				output_str = output_str .. args[i]
+			end
+		end
+		Ext.Print(output_str)
+	end
+end
+
 Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib__Common.lua");
 Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib_Versioning.lua");
 Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib_Main.lua");

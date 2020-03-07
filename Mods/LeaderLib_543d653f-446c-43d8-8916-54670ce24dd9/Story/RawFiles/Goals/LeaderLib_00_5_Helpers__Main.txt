@@ -300,9 +300,15 @@ LeaderLib_Helper_SetHighestPlayerLevel();
 
 PROC
 LeaderLib_Helper_SetHighestPlayerLevel()
+AND
+CharacterGetHostCharacter(_Host)
+AND
+CharacterGetLevel(_Host, _Level)
 THEN
-LeaderLib_Helper_Internal_ClearHighestPlayerLevel();
-LeaderLib_Helper_Internal_SetHighestLevel(1);
+SysClear("DB_LeaderLib_Helper_Temp_HighestPlayerLevel", 1);
+SysClear("DB_LeaderLib_Helper_Temp_HighestLevelPlayer", 2);
+DB_LeaderLib_Helper_Temp_HighestPlayerLevel(_Level);
+DB_LeaderLib_Helper_Temp_HighestLevelPlayer(_Host, _Level);
 
 PROC
 LeaderLib_Helper_SetHighestPlayerLevel()
@@ -315,61 +321,32 @@ CharacterGetLevel(_Player, _Level)
 AND
 _Level > _HighestLevel
 THEN
-LeaderLib_Helper_Internal_SetHighestLevel(_Level);
-LeaderLib_Helper_Internal_SetHighestPlayerLevel(_Player, _Level);
-
-PROC
-LeaderLib_Helper_SetHighestPlayerLevel()
-AND
-NOT DB_LeaderLib_Helper_Temp_HighestLevelPlayer(_, _)
-AND
-CharacterGetHostCharacter(_Host)
-AND
-CharacterGetLevel(_Host, _Level)
-THEN
-LeaderLib_Helper_Internal_SetHighestPlayerLevel(_Host, _Level);
-
-PROC
-LeaderLib_Helper_Internal_SetHighestPlayerLevel((CHARACTERGUID)_Player, (INTEGER)_Level)
-THEN
-LeaderLib_Helper_Internal_ClearHighestPlayerLevel();
-DB_LeaderLib_Helper_Temp_HighestLevelPlayer(_Player, _Level);
-
-PROC
-LeaderLib_Helper_Internal_ClearHighestPlayerLevel()
-AND
-DB_LeaderLib_Helper_Temp_HighestLevelPlayer(_Player, _Level)
-THEN
-NOT DB_LeaderLib_Helper_Temp_HighestLevelPlayer(_Player, _Level);
-
-PROC
-LeaderLib_Helper_Internal_SetHighestLevel((INTEGER)_Level)
-AND
-DB_LeaderLib_Helper_Temp_HighestPlayerLevel(_HighestLevel)
-THEN
-NOT DB_LeaderLib_Helper_Temp_HighestPlayerLevel(_HighestLevel);
-
-PROC
-LeaderLib_Helper_Internal_SetHighestLevel((INTEGER)_Level)
-THEN
+SysClear("DB_LeaderLib_Helper_Temp_HighestPlayerLevel", 1);
+SysClear("DB_LeaderLib_Helper_Temp_HighestLevelPlayer", 2);
 DB_LeaderLib_Helper_Temp_HighestPlayerLevel(_Level);
+DB_LeaderLib_Helper_Temp_HighestLevelPlayer(_Player, _Level);
 
 QRY
 LeaderLib_Helper_QRY_GetHighestLevelInParty((CHARACTERGUID)_PartyMember)
+THEN
+LeaderLib_Helper_SetHighestLevelInParty(_PartyMember);
+
+PROC
+LeaderLib_Helper_SetHighestLevelInParty((CHARACTERGUID)_PartyMember)
 AND
 DB_LeaderLib_Helper_Temp_HighestLevelInParty(_PartyMember, _Level)
 THEN
 NOT DB_LeaderLib_Helper_Temp_HighestLevelInParty(_PartyMember, _Level);
 
-QRY
-LeaderLib_Helper_QRY_GetHighestLevelInParty((CHARACTERGUID)_PartyMember)
+PROC
+LeaderLib_Helper_SetHighestLevelInParty((CHARACTERGUID)_PartyMember)
 AND
-NOT DB_LeaderLib_Helper_Temp_HighestLevelInParty(_PartyMember, _)
+CharacterGetLevel(_PartyMember, _Level)
 THEN
-DB_LeaderLib_Helper_Temp_HighestLevelInParty(_PartyMember, 1);
+DB_LeaderLib_Helper_Temp_HighestLevelInParty(_PartyMember, _Level);
 
-QRY
-LeaderLib_Helper_QRY_GetHighestLevelInParty((CHARACTERGUID)_PartyMember)
+PROC
+LeaderLib_Helper_SetHighestLevelInParty((CHARACTERGUID)_PartyMember)
 AND
 DB_IsPlayer(_Player)
 AND

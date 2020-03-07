@@ -52,7 +52,7 @@ end
 
 --Ext.NewQuery(HitWithWeapon, "LeaderLib_Ext_QRY_HitWithWeapon", "[in](GUIDSTRING)_Target, [in](INTEGER64)_Handle, [in](INTEGER)_IsHitType, [out](INTEGER)_Bool")
 
----Reduce damage by a percentage (0.5).
+---Reduce damage by a percentage (ex. 0.5)
 ---@param target string
 ---@param attacker string
 ---@param handle_param integer

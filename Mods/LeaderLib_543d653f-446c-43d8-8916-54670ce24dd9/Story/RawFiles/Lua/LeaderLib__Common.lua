@@ -6,13 +6,39 @@ local function init_seed()
 end
 init_seed()
 
+local function PrintIndex(k, indexMap)
+	if indexMap ~= nil and type(indexMap) == "table" then
+		local displayValue = indexMap[k]
+		if displayValue ~= nil then
+			return displayValue
+		end
+	end
+	if type(k) == "string" then
+		return '"'..k..'"'
+	else
+		return tostring(k)
+	end
+end
+
 ---Print a value or table (recursive).
-local function dump(o)
+---@param o table
+---@param indexMap table
+---@param innerOnly boolean
+---@return string
+local function Dump(o, indexMap, innerOnly, recursionLevel)
+	if recursionLevel == nil then recursionLevel = 0 end
 	if type(o) == 'table' then
 		local s = '{ '
 		for k,v in pairs(o) do
-			if type(k) ~= 'number' then k = '"'..tostring(k)..'"' end
-			s = s .. '['..tostring(k)..'] = ' .. dump(v) .. ','
+			if innerOnly == true then
+				if recursionLevel > 0 then
+					s = s .. ' ['..PrintIndex(k, indexMap)..'] = ' .. Dump(v, indexMap, innerOnly, recursionLevel + 1) .. ','
+				else
+					s = s .. ' ['..PrintIndex(k, nil)..'] = ' .. Dump(v, indexMap, innerOnly, recursionLevel + 1) .. ','
+				end
+			else
+				s = s .. ' ['..PrintIndex(k, indexMap)..'] = ' .. Dump(v, indexMap, innerOnly, recursionLevel + 1) .. ','
+			end
 		end
 		return s .. '} \n'
 	else
@@ -148,7 +174,7 @@ local function SafeguardParam(in_value, param_type, fallback_value)
 end
 
 LeaderLib.Common = {
-	Dump = dump,
+	Dump = Dump,
 	TableHasEntry = has_table_entry,
 	StringEquals = StringEquals,
 	StringIsNullOrEmpty = StringIsNullOrEmpty,

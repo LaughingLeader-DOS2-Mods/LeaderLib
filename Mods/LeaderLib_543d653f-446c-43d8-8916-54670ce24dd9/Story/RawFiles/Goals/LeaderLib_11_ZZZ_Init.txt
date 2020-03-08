@@ -297,6 +297,8 @@ LeaderLib_Settings_AddStarterSkills(_Player);
 PROC
 LeaderLib_Settings_AddStarterSkills((CHARACTERGUID)_Player)
 AND
+ObjectExists(_Player, 1)
+AND
 DB_LeaderLib_StarterSkills("LeaderLib", _Skill, _Slot, _Flag)
 THEN
 LeaderLib_Settings_Internal_AddStarterSkill(_Player, _Skill, _Slot, _Flag);

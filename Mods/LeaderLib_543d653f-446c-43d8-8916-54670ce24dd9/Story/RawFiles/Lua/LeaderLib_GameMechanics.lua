@@ -229,8 +229,9 @@ end
 ---Sets a skill into an empty slot, or finds empty space.
 local function SetSlotToSkill(char, slot, addskill)
     if type(slot) == "string" then
-        slot = tonumber(slot)
+        slot = math.tointeger(slot)
     end
+    if slot == nil or slot < 0 then slot = 0 end
     local skill = NRD_SkillBarGetSkill(char, slot)
     if skill == nil then
         NRD_SkillBarSetSkill(char, slot, addskill)
@@ -238,8 +239,9 @@ local function SetSlotToSkill(char, slot, addskill)
     elseif skill == addskill then
         return true
     else
+        local maxslots = 144 - slot
         local nextslot = slot + 1
-        while nextslot < 144 do
+        while nextslot < maxslots do
             skill = NRD_SkillBarGetSkill(char, nextslot)
             if skill == nil then
                 NRD_SkillBarSetSkill(char, slot, addskill)
@@ -247,7 +249,7 @@ local function SetSlotToSkill(char, slot, addskill)
             elseif skill == addskill then
                 return true
             end
-            nextslot = slot + 1
+            nextslot = nextslot + 1
         end
     end
     return false

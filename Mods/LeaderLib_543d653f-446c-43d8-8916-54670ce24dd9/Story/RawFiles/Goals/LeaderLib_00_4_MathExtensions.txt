@@ -881,6 +881,20 @@ AND
 _Num == _Match4
 THEN
 DB_NOOP(1);
+
+QRY
+LeaderLib_Math_QRY_IsEqualToAny((INTEGER)_Num, (INTEGER)_Match1, (INTEGER)_Match2, (INTEGER)_Match3, (INTEGER)_Match4, (INTEGER)_Match5)
+AND
+_Num == _Match5
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Math_QRY_IsEqualToAny((INTEGER)_Num, (INTEGER)_Match1, (INTEGER)_Match2, (INTEGER)_Match3, (INTEGER)_Match4, (INTEGER)_Match5)
+AND
+LeaderLib_Math_QRY_IsEqualToAny(_Num, _Match1, _Match2, _Match3, _Match4)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION CLAMP

@@ -289,6 +289,30 @@ local function CreateItemByStat(stat, level)
     return cloned
 end
 
+local function ExplodeProjectile(source, target, skill)
+    local level = 1
+    if ObjectIsCharacter(source) == 1 then
+        level = CharacterGetLevel(source)
+    else
+        SetStoryEvent(source, "LeaderLib_Commands_SetItemLevel")
+        level = GetVarInteger(source, "LeaderLib_Level")
+    end
+    local x,y,z = GetPosition(target)
+    NRD_ProjectilePrepareLaunch();
+    NRD_ProjectileSetString("SkillId", skill);
+    NRD_ProjectileSetInt("CasterLevel", level);
+    NRD_ProjectileSetGuidString("SourcePosition", target);
+    NRD_ProjectileSetGuidString("Caster", source);
+    NRD_ProjectileSetGuidString("Source", source);
+    NRD_ProjectileSetGuidString("HitObject", target);
+    NRD_ProjectileSetGuidString("HitObjectPosition", target);
+    NRD_ProjectileSetGuidString("TargetPosition", target);
+    NRD_ProjectileLaunch();
+    Ext.Print("Exploded projectile ("..skill..") at ("..target..")")
+end
+
+--Ext.NewCall(ExplodeProjectile, "LeaderLib_Ext_ExplodeProjectile", "(GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Skill")
+
 LeaderLib.Game = {
 	ReduceDamage = ReduceDamage,
 	IncreaseDamage = IncreaseDamage,
@@ -299,6 +323,7 @@ LeaderLib.Game = {
     StoreSkillSlots = StoreSkillSlots,
     SetSlotToSkill = SetSlotToSkill,
     CloneItemForCharacter = CloneItemForCharacter,
+    ExplodeProjectile = ExplodeProjectile
 }
 
 LeaderLib.Register.Table(LeaderLib.Game);

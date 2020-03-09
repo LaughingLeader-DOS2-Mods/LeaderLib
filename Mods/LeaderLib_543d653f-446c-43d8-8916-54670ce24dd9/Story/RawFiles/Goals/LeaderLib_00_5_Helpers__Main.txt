@@ -2099,6 +2099,13 @@ DB_IsPlayer(_Player)
 THEN
 ProcSetHostileToIndivPlayer(_Npc, _Player);
 //END_REGION
+
+//REGION QUERIES_RUN_EVENT
+QRY
+LeaderLib_Helper_QRY_SetStoryEvent((GUIDSTRING)_Target, (STRING)_Event)
+THEN
+SetStoryEvent(_Target, _Event);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

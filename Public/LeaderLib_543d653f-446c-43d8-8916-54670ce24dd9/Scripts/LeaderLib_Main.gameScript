@@ -395,6 +395,21 @@ THEN
 	*/
 ENDIF
 
+EVENT LeaderLib_Events_Commands_SetItemLevel
+VARS
+	ITEM:_Item
+	FLOAT:_ItemLevel
+	INT:_ItemLevelVar
+ON
+	ItemEvent(_Item, "LeaderLib_Commands_SetItemLevel")
+ACTIONS
+IF "c1"
+	ItemGetStat(_ItemLevel, _Item, Level)
+THEN
+	Cast(_ItemLevelVar, _ItemLevel)
+	SetVar(_Item, "LeaderLib_Level", _ItemLevelVar)
+ENDIF
+
 EVENT LeaderLib_Events_SetItemVariables
 VARS
 	ITEM:_Item
@@ -664,10 +679,8 @@ THEN
 		IsEqual(_Source, null)
 		CharacterGetStat(_LevelF, _Source, Level)
 	THEN
-		//Character source
 		Cast(_Level, _LevelF)
 		ExplodeAt(_Pos, _Skill, _Level, _Source)
-		StatusText(_Target, "Character source")
 	ELIF "c1&!c2&c3"
 		GetVar(_SourceItem, _Target, "LeaderLib_LeaveAction_Source")
 		IsEqual(_SourceItem, null)
@@ -714,7 +727,6 @@ THEN
 	THEN
 		Cast(_Level, _LevelF)
 		ShootWorldProjectileAt(_Skill, _Source, _Pos, _Target, _Level)
-		StatusText(_Target, "Character source")
 	ELIF "c1&c2"
 		GetVar(_SourceItem, _Target, "LeaderLib_LeaveAction_Source")
 		ItemGetStat(_LevelF, _SourceItem, Level)

@@ -819,6 +819,53 @@ THEN
 NRD_LuaCall("LeaderLib_Ext_SetSlotToSkill", _CharStr, _SlotStr, _Skill);
 */
 //END_REGION
+
+//REGION EXPLODING
+// [BEGIN_NO_OSITOOLS]
+PROC
+LeaderLib_Skills_Internal_ExplodeProjectile((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Skill, (INTEGER)_Level)
+THEN
+SetVarFixedString(_Target, "LeaderLib_LeaveAction_ProjectileSkill", _Skill);
+SetVarObject(_Target, "LeaderLib_LeaveAction_Source", _Source);
+SetStoryEvent(_Target, "LeaderLib_LeaveAction_ExplodeProjectile");
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+PROC
+LeaderLib_Skills_Internal_ExplodeProjectile((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Skill, (INTEGER)_Level)
+THEN
+NRD_ProjectilePrepareLaunch();
+NRD_ProjectileSetString("SkillId", _Skill);
+NRD_ProjectileSetInt("CasterLevel", _Level);
+NRD_ProjectileSetGuidString("Caster", _Source);
+NRD_ProjectileSetGuidString("SourcePosition", _Target);
+NRD_ProjectileSetGuidString("Source", _Source);
+NRD_ProjectileSetGuidString("HitObject", _Target);
+NRD_ProjectileSetGuidString("HitObjectPosition", _Target);
+NRD_ProjectileSetGuidString("TargetPosition", _Target);
+NRD_ProjectileLaunch();
+*/
+
+PROC
+LeaderLib_Skills_ExplodeProjectile((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Skill)
+AND
+ObjectIsCharacter((CHARACTERGUID)_Source, 1)
+AND
+CharacterGetLevel(_Source, _Level)
+THEN
+LeaderLib_Skills_Internal_ExplodeProjectile(_Source, _Target, _Skill, _Level);
+
+PROC
+LeaderLib_Skills_ExplodeProjectile((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Skill)
+AND
+ObjectIsCharacter(_Source, 0)
+AND
+LeaderLib_Helper_QRY_SetStoryEvent(_Source, "LeaderLib_Commands_SetItemLevel")
+AND
+GetVarInteger(_Source, "LeaderLib_Level", _Level)
+THEN
+LeaderLib_Skills_Internal_ExplodeProjectile(_Source, _Target, _Skill, _Level);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

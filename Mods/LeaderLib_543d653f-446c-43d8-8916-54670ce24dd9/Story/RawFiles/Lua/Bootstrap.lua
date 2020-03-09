@@ -113,6 +113,13 @@ end
 
 local function ModuleLoading()
 	Ext.Print("[LeaderLib:Bootstrap.lua] Module is loading.")
+	-- local loadOrder = Ext.GetModLoadOrder();
+	-- Ext.Print("[LeaderLib:Bootstrap.lua] Mod Order:")
+	-- for i=1,#loadOrder do
+	-- 	local uuid = loadOrder[i]
+	-- 	local mod = Ext.GetModInfo(uuid)
+	-- 	Ext.Print("  " .. tostring(i) .. ". " .. mod.Name .. "(".. uuid .. ")")
+	-- end
 end
 
 --v36 and higher

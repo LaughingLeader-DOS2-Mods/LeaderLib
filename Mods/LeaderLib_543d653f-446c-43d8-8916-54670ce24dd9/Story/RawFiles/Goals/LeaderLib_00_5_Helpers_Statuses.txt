@@ -312,35 +312,48 @@ Or call this proc manually.
 PROC
 LeaderLib_Statuses_ExplodeProjectile((ITEMGUID)_Target, (GUIDSTRING)_Source, (STRING)_ProjectileSkill, (INTEGER)_ExplodeRadius)
 AND
-ObjectIsCharacter((CHARACTERGUID)_Source, 1)
+ObjectIsCharacter(_Source, _IsCharacter)
 AND
 _ExplodeRadius > 0
 THEN
-CharacterItemSetEvent(_Source, _Target, "LeaderLib_LeaveAction_ExplodeProjectile");
+SetVarFixedString(_Target, "LeaderLib_LeaveAction_ProjectileSkill", _ProjectileSkill);
+LeaderLib_Statuses_Internal_ExplodeProjectile(_Target, _Source, _ProjectileSkill, _ExplodeRadius, _IsCharacter);
 
 PROC
-LeaderLib_Statuses_ExplodeProjectile((ITEMGUID)_Target, (GUIDSTRING)_Source, (STRING)_ProjectileSkill, (INTEGER)_ExplodeRadius)
+LeaderLib_Statuses_Internal_ExplodeProjectile((ITEMGUID)_Target, (GUIDSTRING)_Source, (STRING)_ProjectileSkill, (INTEGER)_ExplodeRadius, 1)
 AND
-ObjectIsCharacter((CHARACTERGUID)_Source, 1)
-AND
-_ExplodeRadius <= 0
+_ExplodeRadius > 0
 THEN
-CharacterItemSetEvent(_Source, _Target, "LeaderLib_LeaveAction_ShootProjectile");
+CharacterItemSetEvent((CHARACTERGUID)_Source, _Target, "LeaderLib_LeaveAction_ExplodeProjectile");
 
 PROC
-LeaderLib_Statuses_ExplodeProjectile((ITEMGUID)_Target, (GUIDSTRING)_Source, (STRING)_ProjectileSkill, (INTEGER)_ExplodeRadius)
-AND
-ObjectIsCharacter(_Source, 0)
+LeaderLib_Statuses_Internal_ExplodeProjectile((ITEMGUID)_Target, (GUIDSTRING)_Source, (STRING)_ProjectileSkill, (INTEGER)_ExplodeRadius, 0)
 AND
 _ExplodeRadius > 0
 THEN
 SetVarObject(_Target, "LeaderLib_LeaveAction_Source", _Source);
 SetStoryEvent(_Target, "LeaderLib_LeaveAction_ExplodeProjectile");
 
+// [BEGIN_NO_OSITOOLS]
 PROC
-LeaderLib_Statuses_ExplodeProjectile((ITEMGUID)_Target, (GUIDSTRING)_Source, (STRING)_ProjectileSkill, (INTEGER)_ExplodeRadius)
+LeaderLib_Statuses_Internal_ExplodeProjectile((ITEMGUID)_Target, (GUIDSTRING)_Source, (STRING)_ProjectileSkill, (INTEGER)_ExplodeRadius, 1)
 AND
-ObjectIsCharacter(_Source, 0)
+_ExplodeRadius <= 0
+THEN
+CharacterItemSetEvent((CHARACTERGUID)_Source, _Target, "LeaderLib_LeaveAction_ShootProjectile");
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+PROC
+LeaderLib_Statuses_Internal_ExplodeProjectile((ITEMGUID)_Target, (GUIDSTRING)_Source, (STRING)_ProjectileSkill, (INTEGER)_ExplodeRadius, 1)
+AND
+_ExplodeRadius <= 0
+THEN
+LeaderLib_Skills_ExplodeProjectile((CHARACTERGUID)_Source, (GUIDSTRING)_Target, _ProjectileSkill);
+*/
+
+PROC
+LeaderLib_Statuses_Internal_ExplodeProjectile((ITEMGUID)_Target, (GUIDSTRING)_Source, (STRING)_ProjectileSkill, (INTEGER)_ExplodeRadius, 0)
 AND
 _ExplodeRadius <= 0
 THEN

@@ -401,7 +401,7 @@ VARS
 	FLOAT:_ItemLevel
 	INT:_ItemLevelVar
 ON
-	ItemEvent(_Item, "LeaderLib_Commands_SetItemLevel")
+	OnItemEvent(_Item, "LeaderLib_Commands_SetItemLevel")
 ACTIONS
 IF "c1"
 	ItemGetStat(_ItemLevel, _Item, Level)

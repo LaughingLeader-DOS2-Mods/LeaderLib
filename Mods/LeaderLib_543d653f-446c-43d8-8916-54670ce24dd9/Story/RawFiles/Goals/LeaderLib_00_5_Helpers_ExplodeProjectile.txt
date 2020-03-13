@@ -4,7 +4,19 @@ INITSECTION
 KBSECTION
 //REGION REGISTER
 PROC
-LeaderLib_Explode_Register_Status((STRING)_ID, (STRING)_Status, (STRING)_LeaveActionSkill, (INTEGER)_ExplodeRadius, (STRING)_DieActionSkill, (INTEGER)_ExplodeRadius2)
+LeaderLib_Explode_Register_LeaveActionStatus((STRING)_ID, (STRING)_Status, (STRING)_Skill, (INTEGER)_ExplodeRadius)
+THEN
+DB_LeaderLib_Explode_Statuses_LeaveAction(_ID, _Status, _Skill, _ExplodeRadius);
+
+PROC
+LeaderLib_Explode_Register_DieActionStatus((STRING)_ID, (STRING)_Status, (STRING)_Skill, (INTEGER)_ExplodeRadius)
+THEN
+DB_LeaderLib_Explode_Statuses_DieAction(_ID, _Status, _Skill, _ExplodeRadius);
+
+PROC
+LeaderLib_Explode_Register_Statuses((STRING)_ID, (STRING)_Status, (STRING)_LeaveActionSkill, (INTEGER)_ExplodeRadius, (STRING)_DieActionSkill, (INTEGER)_ExplodeRadius2)
+AND
+_LeaveActionSkill != ""
 THEN
 DB_LeaderLib_Explode_Statuses_LeaveAction(_ID, _Status, _LeaveActionSkill, _ExplodeRadius);
 

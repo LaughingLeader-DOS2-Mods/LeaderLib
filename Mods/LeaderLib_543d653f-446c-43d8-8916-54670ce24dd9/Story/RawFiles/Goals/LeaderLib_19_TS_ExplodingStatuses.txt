@@ -39,80 +39,12 @@ NOT DB_LeaderLib_Explode_Temp_StatusWaiting(_Object, _Status, _Cause);
 LeaderLib_Explode_OnStatusRemoved(_Object, _Status, _Cause);
 //END_REGION
 
-//REGION NON_REGISTERED_STATUSES
-/* [OSITOOLS_ONLY]
-IF
-ItemStatusChange(_Object, _Status, _Cause)
-AND
-NOT DB_LeaderLib_EngineStatus(_Status)
-AND
-NOT DB_LeaderLib_AuraStatus(_, _Status)
-AND
-NOT LeaderLib_Explode_QRY_StatusIsRegistered(_Status)
-THEN
-LeaderLib_Explode_Internal_GatherData(_Object, _Status, _Cause);
-
-PROC
-LeaderLib_Explode_Internal_GatherData((ITEMGUID)_Object, (STRING)_Status, (GUIDSTRING)_Cause)
-AND
-NRD_StatAttributeExists(_Status, "LeaveAction")
-AND
-NRD_StatGetString(_Status, "LeaveAction", _ProjectileSkill)
-AND
-NRD_StatExists(_ProjectileSkill)
-THEN
-DB_LeaderLib_Explode_Temp_WaitForUnregistered_LeaveAction(_Object, _Status, _Cause, _ProjectileSkill);
-
-PROC
-LeaderLib_Explode_Internal_GatherData((ITEMGUID)_Object, (STRING)_Status, (GUIDSTRING)_Cause)
-AND
-ItemIsDestructible(_Object, 1)
-AND
-NRD_StatAttributeExists(_Status, "DieAction")
-AND
-NRD_StatGetString(_Status, "DieAction", _ProjectileSkill)
-AND
-NRD_StatExists(_ProjectileSkill)
-THEN
-DB_LeaderLib_Explode_Temp_WaitForUnregistered_DieAction(_Object, _Status, _Cause, _ProjectileSkill);
-
-IF
-ItemStatusRemoved(_Object, _Status, _)
-AND
-DB_LeaderLib_Explode_Temp_WaitForUnregistered_LeaveAction(_Object, _Status, _Cause, _ProjectileSkill)
-THEN
-NOT DB_LeaderLib_Explode_Temp_WaitForUnregistered_LeaveAction(_Object, _Status, _Cause, _ProjectileSkill);
-LeaderLib_Explode_ExplodeProjectile(_Object, _ProjectileSkill, _Cause, 0);
-
-IF
-ItemStatusRemoved(_Object, _Status, _)
-AND
-DB_LeaderLib_Explode_Temp_WaitForUnregistered_DieAction(_Object, _Status, _Cause, _ProjectileSkill)
-AND
-ItemIsDestroyed(_Object, 0)
-THEN
-NOT DB_LeaderLib_Explode_Temp_WaitForUnregistered_DieAction(_Object, _Status, _Cause, _ProjectileSkill);
-
-IF
-ItemDestroying(_Object)
-AND
-DB_LeaderLib_Explode_Temp_WaitForUnregistered_DieAction(_Object, _Status, _Cause, _ProjectileSkill)
-THEN
-NOT DB_LeaderLib_Explode_Temp_WaitForUnregistered_DieAction(_Object, _Status, _Cause, _ProjectileSkill);
-LeaderLib_Explode_ExplodeProjectile(_Object, _ProjectileSkill, _Cause, 0);
-*/
-//END_REGION
-
 IF
 RegionEnded(_Level)
 THEN
 SysClear("DB_LeaderLib_Explode_Temp_StatusWaiting", 5);
-SysClear("DB_LeaderLib_Explode_Temp_WaitForUnregistered_LeaveAction", 4);
-SysClear("DB_LeaderLib_Explode_Temp_WaitForUnregistered_DieAction", 4);
 
 EXITSECTION
 SysClear("DB_LeaderLib_Explode_Temp_StatusWaiting", 5);
-SysClear("DB_LeaderLib_Explode_Temp_WaitForUnregistered_LeaveAction", 4);
-SysClear("DB_LeaderLib_Explode_Temp_WaitForUnregistered_DieAction", 4);
 ENDEXITSECTION
 ParentTargetEdge "LeaderLib_19_ToggledScripts"

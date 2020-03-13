@@ -44,6 +44,7 @@ LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_DialogOverriding_Automa
 
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_ExplodeFix", "LeaderLib_ExplodeFix");
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_LeaveActionItemFix", "LeaderLib_LeaveActionItemFixEnabled");
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_ExplodingStatuses", "LeaderLib_ExplodeStatusListenerEnabled");
 
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_ForceEvents", "LeaderLib_Force_EnableEvents");
 

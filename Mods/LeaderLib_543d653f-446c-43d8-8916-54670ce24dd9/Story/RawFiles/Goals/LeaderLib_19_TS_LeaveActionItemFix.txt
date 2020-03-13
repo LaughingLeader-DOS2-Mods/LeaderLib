@@ -4,6 +4,11 @@ INITSECTION
 
 KBSECTION
 
+/* LeaveAction/EXPLODE statuses do not work on items. This is a workaround so it does.
+Enable the toggle script via:
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_LeaveActionItemFixEnabled", "ModName");
+*/
+
 /* [OSITOOLS_ONLY]
 IF
 ItemStatusChange(_Object, _Status, _Cause)

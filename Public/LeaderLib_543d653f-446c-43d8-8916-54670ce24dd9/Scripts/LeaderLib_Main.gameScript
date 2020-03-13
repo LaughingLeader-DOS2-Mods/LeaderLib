@@ -1,6 +1,7 @@
 #INCLUDE LeaderLib_TypeHelpers
 #INCLUDE LeaderLib_ForceHelpers
 #INCLUDE LeaderLib_Auras
+#INCLUDE LeaderLib_Projectiles
 
 INIT
 	FIXEDSTRING:%LeaderLib_EmptyString=""
@@ -22,6 +23,7 @@ INIT
 	USING LeaderLib_TypeHelpers
 	USING LeaderLib_ForceHelpers
 	USING LeaderLib_Auras
+	USING LeaderLib_Projectiles
 EVENTS
 
 /* This event doesn't seem to fire
@@ -655,95 +657,6 @@ ACTIONS
 	Add(_Pos, _Forward)
 	SetVar(_Char, "LeaderLib_ClearAnimationOverride_TargetPosition", _Pos)
 	CharacterEvent(_Char, "LeaderLib_ClearAnimationOverride_ByMovement_Run")
-	
-EVENT LeaderLib_LeaveAction_ExplodeProjectile
-VARS
-	ITEM:_Target
-	CHARACTER:_Source
-	ITEM:_SourceItem
-	SKILL:_Skill
-	INT:_Level
-	FLOAT:_LevelF
-	FLOAT3:_Pos
-ON
-	OnItemEvent(_Target, "LeaderLib_LeaveAction_ExplodeProjectile")
-	OnCharacterItemEvent(_Source, _Target, "LeaderLib_LeaveAction_ExplodeProjectile")
-ACTIONS
-IF "c1"
-	GetVar(_Skill, _Target, "LeaderLib_LeaveAction_ProjectileSkill")
-THEN
-	Set(_LevelF, 1.0)
-	Set(_Level, 1.0)
-	GetPosition(_Target, _Pos)
-	IF "!c1&c2"
-		IsEqual(_Source, null)
-		CharacterGetStat(_LevelF, _Source, Level)
-	THEN
-		Cast(_Level, _LevelF)
-		ExplodeAt(_Pos, _Skill, _Level, _Source)
-	ELIF "c1&!c2&c3"
-		GetVar(_SourceItem, _Target, "LeaderLib_LeaveAction_Source")
-		IsEqual(_SourceItem, null)
-		ItemGetStat(_LevelF, _SourceItem, Level)
-	THEN
-		//Item source
-		Cast(_Level, _LevelF)
-		ExplodeAt(_Pos, _Skill, _Level, _SourceItem)
-		StatusText(_Target, "Item source")
-	ELSE 
-		IF "c1"
-			ItemGetStat(_LevelF, _Target, Level)
-		THEN
-			//Null source
-			Cast(_Level, _LevelF)
-			ExplodeAt(_Pos, _Skill, _Level)
-			StatusText(_Target, "Null source")
-		ENDIF
-	ENDIF
-ENDIF
-
-EVENT LeaderLib_LeaveAction_ShootProjectile
-VARS
-	ITEM:_Target
-	CHARACTER:_Source
-	ITEM:_SourceItem
-	SKILL:_Skill
-	INT:_Level
-	FLOAT:_LevelF
-	FLOAT3:_Pos
-ON
-	OnItemEvent(_Target, "LeaderLib_LeaveAction_ShootProjectile")
-	OnCharacterItemEvent(_Source, _Target, "LeaderLib_LeaveAction_ShootProjectile")
-ACTIONS
-IF "c1"
-	GetVar(_Skill, _Target, "LeaderLib_LeaveAction_ProjectileSkill")
-THEN
-	Set(_LevelF, 1.0)
-	Set(_Level, 1.0)
-	GetPosition(_Target, _Pos)
-	IF "!c1&c2"
-		IsEqual(_Source, null)
-		CharacterGetStat(_LevelF, _Source, Level)
-	THEN
-		Cast(_Level, _LevelF)
-		ShootWorldProjectileAt(_Skill, _Source, _Pos, _Target, _Level)
-	ELIF "c1&c2"
-		GetVar(_SourceItem, _Target, "LeaderLib_LeaveAction_Source")
-		ItemGetStat(_LevelF, _SourceItem, Level)
-	THEN
-		Cast(_Level, _LevelF)
-		ShootWorldProjectileAt(_Skill, _SourceItem, _Pos, _Target, _Level)
-		StatusText(_Target, "Item source")
-	ELSE
-		IF "c1"
-			ItemGetStat(_LevelF, _Target, Level)
-		THEN
-			Cast(_Level, _LevelF)
-			ShootWorldProjectileAt(_Skill, ITEM:null, _Pos, _Target, _Level)
-			StatusText(_Target, "Null source")
-		ENDIF
-	ENDIF
-ENDIF
 
 EVENT LeaderLib_Commands_Internal_ItemSetAmount
 VARS

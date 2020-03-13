@@ -1,0 +1,215 @@
+INIT
+
+EVENTS
+
+EVENT LeaderLib_Commands_ExplodeProjectile_CharChar
+VARS
+	CHARACTER:_Target
+	CHARACTER:_Cause
+	SKILL:_Skill
+	INT:_Level
+	FLOAT:_LevelF
+ON
+	OnCharacterCharacterEvent(_Target, _Cause, "LeaderLib_Commands_ExplodeProjectile")
+ACTIONS
+IF "c1"
+	GetVar(_Skill, _Target, "LeaderLib_Explode_ProjectileSkill")
+THEN
+	Set(_LevelF, 1.0)
+	IF "c1"
+		CharacterGetStat(_LevelF, _Cause, Level)
+	THEN
+	ENDIF
+	Cast(_Level, _LevelF)
+	ExplodeAt(_Target, _Skill, _Level, _Cause)
+	CharacterEvent(_Target, "LeaderLib_Commands_Explode_Cleanup")
+ENDIF
+
+EVENT LeaderLib_Commands_ExplodeProjectile_CharItem
+VARS
+	ITEM:_Target
+	CHARACTER:_Cause
+	SKILL:_Skill
+	INT:_Level
+	FLOAT:_LevelF
+ON
+	OnCharacterItemEvent(_Cause, _Target, "LeaderLib_Commands_ExplodeProjectile")
+ACTIONS
+IF "c1"
+	GetVar(_Skill, _Target, "LeaderLib_Explode_ProjectileSkill")
+THEN
+	Set(_LevelF, 1.0)
+	IF "c1"
+		CharacterGetStat(_LevelF, _Cause, Level)
+	THEN
+	ELIF "c1"
+		ItemGetStat(_LevelF, _Target, Level)
+	THEN
+	ENDIF
+	Cast(_Level, _LevelF)
+	ExplodeAt(_Target, _Skill, _Level, _Cause)
+	ItemEvent(_Target, "LeaderLib_Commands_Explode_Cleanup")
+ENDIF
+
+EVENT LeaderLib_Commands_ExplodeProjectile_ItemChar
+VARS
+	CHARACTER:_Target
+	ITEM:_Cause
+	SKILL:_Skill
+	INT:_Level
+	FLOAT:_LevelF
+ON
+	OnCharacterItemEvent(_Target, _Cause, "LeaderLib_Commands_ExplodeProjectile_Reversed")
+ACTIONS
+IF "c1"
+	GetVar(_Skill, _Target, "LeaderLib_Explode_ProjectileSkill")
+THEN
+	Set(_LevelF, 1.0)
+	IF "c1"
+		ItemGetStat(_LevelF, _Cause, Level)
+	THEN
+	ELIF "c1"
+		CharacterGetStat(_LevelF, _Target, Level)
+	THEN
+	ENDIF
+	Cast(_Level, _LevelF)
+	ExplodeAt(_Target, _Skill, _Level, _Cause)
+	CharacterEvent(_Target, "LeaderLib_Commands_Explode_Cleanup")
+ENDIF
+
+EVENT LeaderLib_Commands_ExplodeProjectile_ItemItem
+VARS
+	ITEM:_Cause
+	ITEM:_Target
+	SKILL:_Skill
+	INT:_Level
+	FLOAT:_LevelF
+ON
+	OnItemEvent(_Target, "LeaderLib_Commands_ExplodeProjectile_ItemItem")
+ACTIONS
+IF "c1&c2"
+	GetVar(_Skill, _Target, "LeaderLib_Explode_ProjectileSkill")
+	GetVar(_Cause, _Target, "LeaderLib_Explode_Source")
+THEN
+	Set(_LevelF, 1.0)
+	IF "c1"
+		ItemGetStat(_LevelF, _Cause, Level)
+	THEN
+	ELIF "c1"
+		ItemGetStat(_LevelF, _Target, Level)
+	THEN
+	ENDIF
+	Cast(_Level, _LevelF)
+	ExplodeAt(_Target, _Skill, _Level, _Cause)
+	ItemEvent(_Target, "LeaderLib_Commands_Explode_Cleanup")
+ENDIF
+
+EVENT LeaderLib_Commands_ShootProjectile_CharChar
+VARS
+	CHARACTER:_Target
+	CHARACTER:_Cause
+	SKILL:_Skill
+	INT:_Level
+	FLOAT:_LevelF
+	FLOAT3:_Pos
+ON
+	OnCharacterCharacterEvent(_Target, _Cause, "LeaderLib_Commands_ShootProjectile")
+ACTIONS
+IF "c1"
+	GetVar(_Skill, _Target, "LeaderLib_Explode_ProjectileSkill")
+THEN
+	Set(_LevelF, 1.0)
+	GetPosition(_Target, _Pos)
+	IF "c1"
+		CharacterGetStat(_LevelF, _Cause, Level)
+	THEN
+	ENDIF
+	Cast(_Level, _LevelF)
+	ShootWorldProjectileAt(_Skill, _Cause, _Pos, _Target, _Level)
+	CharacterEvent(_Target, "LeaderLib_Commands_Explode_Cleanup")
+ENDIF
+
+EVENT LeaderLib_Commands_ShootProjectile_CharItem
+VARS
+	ITEM:_Target
+	CHARACTER:_Cause
+	SKILL:_Skill
+	INT:_Level
+	FLOAT:_LevelF
+	FLOAT3:_Pos
+ON
+	OnCharacterItemEvent(_Cause, _Target, "LeaderLib_Commands_ShootProjectile")
+ACTIONS
+IF "c1"
+	GetVar(_Skill, _Target, "LeaderLib_Explode_ProjectileSkill")
+THEN
+	Set(_LevelF, 1.0)
+	GetPosition(_Target, _Pos)
+	IF "c1"
+		CharacterGetStat(_LevelF, _Cause, Level)
+	THEN
+	ELIF "c1"
+		ItemGetStat(_LevelF, _Target, Level)
+	THEN
+	ENDIF
+	Cast(_Level, _LevelF)
+	ShootWorldProjectileAt(_Skill, _Cause, _Pos, _Target, _Level)
+	ItemEvent(_Target, "LeaderLib_Commands_Explode_Cleanup")
+ENDIF
+
+EVENT LeaderLib_Commands_ShootProjectile_ItemChar
+VARS
+	ITEM:_Cause
+	CHARACTER:_Target
+	SKILL:_Skill
+	INT:_Level
+	FLOAT:_LevelF
+	FLOAT3:_Pos
+ON
+	OnCharacterItemEvent(_Target, _Cause, "LeaderLib_Commands_ShootProjectile_Reversed")
+ACTIONS
+IF "c1"
+	GetVar(_Skill, _Target, "LeaderLib_Explode_ProjectileSkill")
+THEN
+	Set(_LevelF, 1.0)
+	GetPosition(_Target, _Pos)
+	IF "c1"
+		ItemGetStat(_LevelF, _Cause, Level)
+	THEN
+	ELIF "c1"
+		CharacterGetStat(_LevelF, _Target, Level)
+	THEN
+	ENDIF
+	Cast(_Level, _LevelF)
+	ShootWorldProjectileAt(_Skill, _Cause, _Pos, _Target, _Level)
+	CharacterEvent(_Target, "LeaderLib_Commands_Explode_Cleanup")
+ENDIF
+
+EVENT LeaderLib_Commands_ShootProjectile_ItemItem
+VARS
+	ITEM:_Cause
+	ITEM:_Target
+	SKILL:_Skill
+	INT:_Level
+	FLOAT:_LevelF
+	FLOAT3:_Pos
+ON
+	OnItemEvent(_Target, "LeaderLib_Commands_ShootProjectile_ItemItem")
+ACTIONS
+IF "c1&c2"
+	GetVar(_Skill, _Target, "LeaderLib_Explode_ProjectileSkill")
+	GetVar(_Cause, _Target, "LeaderLib_Explode_Source")
+THEN
+	Set(_LevelF, 1.0)
+	GetPosition(_Target, _Pos)
+	IF "c1"
+		ItemGetStat(_LevelF, _Cause, Level)
+	THEN
+	ELIF "c1"
+		ItemGetStat(_LevelF, _Target, Level)
+	THEN
+	ENDIF
+	Cast(_Level, _LevelF)
+	ShootWorldProjectileAt(_Skill, _Cause, _Pos, _Target, _Level)
+	ItemEvent(_Target, "LeaderLib_Commands_Explode_Cleanup")
+ENDIF

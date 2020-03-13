@@ -81,6 +81,7 @@ ItemStatusRemoved(_Object, _Status, _)
 AND
 DB_LeaderLib_Explode_Temp_WaitForUnregistered_LeaveAction(_Object, _Status, _Cause, _ProjectileSkill)
 THEN
+NOT DB_LeaderLib_Explode_Temp_WaitForUnregistered_LeaveAction(_Object, _Status, _Cause, _ProjectileSkill);
 LeaderLib_Explode_ExplodeProjectile(_Object, _ProjectileSkill, _Cause, 0);
 
 IF
@@ -97,6 +98,7 @@ ItemDestroying(_Object)
 AND
 DB_LeaderLib_Explode_Temp_WaitForUnregistered_DieAction(_Object, _Status, _Cause, _ProjectileSkill)
 THEN
+NOT DB_LeaderLib_Explode_Temp_WaitForUnregistered_DieAction(_Object, _Status, _Cause, _ProjectileSkill);
 LeaderLib_Explode_ExplodeProjectile(_Object, _ProjectileSkill, _Cause, 0);
 */
 //END_REGION
@@ -105,10 +107,12 @@ IF
 RegionEnded(_Level)
 THEN
 SysClear("DB_LeaderLib_Explode_Temp_StatusWaiting", 5);
+SysClear("DB_LeaderLib_Explode_Temp_WaitForUnregistered_LeaveAction", 4);
 SysClear("DB_LeaderLib_Explode_Temp_WaitForUnregistered_DieAction", 4);
 
 EXITSECTION
 SysClear("DB_LeaderLib_Explode_Temp_StatusWaiting", 5);
+SysClear("DB_LeaderLib_Explode_Temp_WaitForUnregistered_LeaveAction", 4);
 SysClear("DB_LeaderLib_Explode_Temp_WaitForUnregistered_DieAction", 4);
 ENDEXITSECTION
 ParentTargetEdge "LeaderLib_19_ToggledScripts"

@@ -1,0 +1,216 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+KBSECTION
+//REGION REGISTER
+PROC
+LeaderLib_Explode_Register_Status((STRING)_ID, (STRING)_Status, (STRING)_LeaveActionSkill, (INTEGER)_ExplodeRadius, (STRING)_DieActionSkill, (INTEGER)_ExplodeRadius2)
+THEN
+DB_LeaderLib_Explode_Statuses_LeaveAction(_ID, _Status, _LeaveActionSkill, _ExplodeRadius);
+
+PROC
+LeaderLib_Explode_Register_Status((STRING)_ID, (STRING)_Status, (STRING)_LeaveActionSkill, (INTEGER)_ExplodeRadius1, (STRING)_DieActionSkill, (INTEGER)_ExplodeRadius)
+AND
+_DieActionSkill != ""
+THEN
+DB_LeaderLib_Explode_Statuses_DieAction(_ID, _Status, _DieActionSkill, _ExplodeRadius);
+
+PROC
+LeaderLib_Explode_Clear_Statuses((STRING)_ID, (STRING)_Status)
+AND
+DB_LeaderLib_Explode_Statuses_LeaveAction(_ID, _Status, _Skill, _ExplodeRadius)
+THEN
+NOT DB_LeaderLib_Explode_Statuses_LeaveAction(_ID, _Status, _Skill, _ExplodeRadius);
+
+PROC
+LeaderLib_Explode_Clear_Statuses((STRING)_ID, (STRING)_Status)
+AND
+DB_LeaderLib_Explode_Statuses_DieAction(_ID, _Status, _Skill, _ExplodeRadius)
+THEN
+NOT DB_LeaderLib_Explode_Statuses_DieAction(_ID, _Status, _Skill, _ExplodeRadius);
+
+PROC
+LeaderLib_Explode_Clear_StatusesWithID((STRING)_ID)
+AND
+DB_LeaderLib_Explode_Statuses_LeaveAction(_ID, _Status, _Skill, _ExplodeRadius)
+THEN
+NOT DB_LeaderLib_Explode_Statuses_LeaveAction(_ID, _Status, _Skill, _ExplodeRadius);
+
+PROC
+LeaderLib_Explode_Clear_StatusesWithID((STRING)_ID)
+AND
+DB_LeaderLib_Explode_Statuses_DieAction(_ID, _Status, _Skill, _ExplodeRadius)
+THEN
+NOT DB_LeaderLib_Explode_Statuses_DieAction(_ID, _Status, _Skill, _ExplodeRadius);
+
+QRY
+LeaderLib_Explode_QRY_StatusIsRegistered((STRING)_Status)
+AND
+DB_LeaderLib_Explode_Statuses_LeaveAction(_ID, _Status, _Skill, _ExplodeRadius)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Explode_QRY_StatusIsRegistered((STRING)_Status)
+AND
+DB_LeaderLib_Explode_Statuses_DieAction(_ID, _Status, _Skill, _ExplodeRadius)
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION EXPLODING
+// [BEGIN_NO_OSITOOLS]
+PROC
+LeaderLib_Explode_Internal_ExplodeProjectile((GUIDSTRING)_Target, (STRING)_Skill, (GUIDSTRING)_Cause, (INTEGER)_Level, (INTEGER)_ExplodeRadius)
+AND
+ObjectIsCharacter(_Target, _TargetIsCharacter)
+AND
+ObjectIsCharacter(_Cause, _CauseIsCharacter)
+THEN
+SetVarFixedString(_Target, "LeaderLib_Explode_ProjectileSkill", _Skill);
+LeaderLib_Explode_Internal_SendBehaviorEvent(_Target, _Cause, _ExplodeRadius, _TargetIsCharacter, _CauseIsCharacter);
+
+PROC
+LeaderLib_Explode_Internal_SendBehaviorEvent((GUIDSTRING)_Target, (GUIDSTRING)_Cause, (INTEGER)_ExplodeRadius, 1, 1)
+AND
+_ExplodeRadius > 0
+THEN
+CharacterCharacterSetEvent((CHARACTERGUID)_Target, (CHARACTERGUID)_Cause, "LeaderLib_Commands_ExplodeProjectile");
+
+/*Character source, Item target */
+PROC
+LeaderLib_Explode_Internal_SendBehaviorEvent((GUIDSTRING)_Target, (GUIDSTRING)_Cause, (INTEGER)_ExplodeRadius, 0, 1)
+AND
+_ExplodeRadius > 0
+THEN
+CharacterItemSetEvent((CHARACTERGUID)_Cause, (ITEMGUID)_Target, "LeaderLib_Commands_ExplodeProjectile");
+
+/*Character target, Item source */
+PROC
+LeaderLib_Explode_Internal_SendBehaviorEvent((GUIDSTRING)_Target, (GUIDSTRING)_Cause, (INTEGER)_ExplodeRadius, 1, 0)
+AND
+_ExplodeRadius > 0
+THEN
+CharacterItemSetEvent((CHARACTERGUID)_Target, (ITEMGUID)_Cause, "LeaderLib_Commands_ExplodeProjectile_Reversed");
+
+PROC
+LeaderLib_Explode_Internal_SendBehaviorEvent((GUIDSTRING)_Target, (GUIDSTRING)_Cause, 0, 1, 1)
+THEN
+CharacterCharacterSetEvent((CHARACTERGUID)_Target, (CHARACTERGUID)_Cause, "LeaderLib_Commands_ShootProjectile");
+
+PROC
+LeaderLib_Explode_Internal_SendBehaviorEvent((GUIDSTRING)_Target, (GUIDSTRING)_Cause, 0, 0, 1)
+THEN
+CharacterItemSetEvent((CHARACTERGUID)_Cause, (ITEMGUID)_Target, "LeaderLib_Commands_ShootProjectile");
+
+PROC
+LeaderLib_Explode_Internal_SendBehaviorEvent((GUIDSTRING)_Target, (GUIDSTRING)_Cause, 0, 1, 0)
+THEN
+CharacterItemSetEvent((CHARACTERGUID)_Target, (ITEMGUID)_Cause, "LeaderLib_Commands_ShootProjectile_Reversed");
+
+PROC
+LeaderLib_Explode_Internal_SendBehaviorEvent((GUIDSTRING)_Target, (GUIDSTRING)_Cause, (INTEGER)_ExplodeRadius, 0, 0)
+AND
+_ExplodeRadius > 0
+THEN
+SetVarObject(_Target, "LeaderLib_Explode_Source", _Cause);
+SetStoryEvent(_Target, "LeaderLib_Commands_ExplodeProjectile_ItemItem");
+
+PROC
+LeaderLib_Explode_Internal_SendBehaviorEvent((GUIDSTRING)_Target, (GUIDSTRING)_Cause, 0, 0, 0)
+THEN
+SetVarObject(_Target, "LeaderLib_Explode_Source", _Cause);
+SetStoryEvent(_Target, "LeaderLib_Commands_ShootProjectile_ItemItem");
+
+IF
+StoryEvent(_Target, "LeaderLib_Commands_Explode_Cleanup")
+THEN
+ClearVarObject(_Target, "LeaderLib_Explode_Source");
+ClearVarObject(_Target, "LeaderLib_Explode_ProjectileSkill");
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+PROC
+LeaderLib_Explode_Internal_ExplodeProjectile((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Skill, (INTEGER)_Level)
+THEN
+NRD_ProjectilePrepareLaunch();
+NRD_ProjectileSetString("SkillId", _Skill);
+NRD_ProjectileSetInt("CasterLevel", _Level);
+NRD_ProjectileSetGuidString("Caster", _Source);
+NRD_ProjectileSetGuidString("SourcePosition", _Target);
+NRD_ProjectileSetGuidString("Source", _Source);
+NRD_ProjectileSetGuidString("HitObject", _Target);
+NRD_ProjectileSetGuidString("HitObjectPosition", _Target);
+NRD_ProjectileSetGuidString("TargetPosition", _Target);
+NRD_ProjectileLaunch();
+*/
+
+PROC
+LeaderLib_Explode_ExplodeProjectile((GUIDSTRING)_Target, (STRING)_Skill, (GUIDSTRING)_Cause)
+AND
+ObjectIsCharacter((CHARACTERGUID)_Cause, 1)
+AND
+CharacterGetLevel(_Cause, _Level)
+THEN
+LeaderLib_Explode_Internal_ExplodeProjectile(_Cause, _Target, _Skill, _Level);
+
+PROC
+LeaderLib_Explode_ExplodeProjectile((GUIDSTRING)_Target, (STRING)_Skill, (GUIDSTRING)_Cause)
+AND
+ObjectIsCharacter(_Cause, 0)
+AND
+LeaderLib_Helper_QRY_SetStoryEvent(_Cause, "LeaderLib_Commands_SetItemLevel")
+AND
+GetVarInteger(_Cause, "LeaderLib_Level", _Level)
+THEN
+LeaderLib_Explode_Internal_ExplodeProjectile(_Cause, _Target, _Skill, _Level);
+//END_REGION
+
+//REGION STATUS_EXPLODING
+/* Let mods intercept this to explode other projectiles than what's registered. */
+QRY
+LeaderLib_Explode_QRY_ExplodeStatus((GUIDSTRING)_Target, (STRING)_Status, (GUIDSTRING)_Cause)
+AND
+1 == 0
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_Explode_Internal_ExplodeStatus_Start((GUIDSTRING)_Target, (STRING)_Status, (GUIDSTRING)_Cause)
+AND
+NOT LeaderLib_Explode_QRY_ExplodeStatus(_Target, _Status, _Cause)
+THEN
+LeaderLib_Explode_ExplodeStatus(_Target, _Status, _Cause);
+
+PROC
+LeaderLib_Explode_ExplodeStatus((GUIDSTRING)_Target, (STRING)_Status, (GUIDSTRING)_Cause)
+AND
+DB_LeaderLib_Explode_Statuses(_ID, _Status, _Skill, _ExplodeRadius, _OnLeave, _OnDeath)
+THEN
+LeaderLib_Explode_ExplodeProjectile(_Target, _Skill, _Cause, _ExplodeRadius);
+//END_REGION
+
+//REGION STATUS_REMOVED
+/* Only explode on death if we aren't exploding on status removed (death removes statuses) */
+PROC
+LeaderLib_Explode_OnStatusRemoved((GUIDSTRING)_Target, (STRING)_Status, (GUIDSTRING)_Cause, 0, 1)
+AND
+LeaderLib_Helper_QRY_ObjectIsDeadOrDying(_Target)
+THEN
+LeaderLib_Explode_Internal_ExplodeStatus_Start(_Target, _Status, _Cause);
+
+PROC
+LeaderLib_Explode_OnStatusRemoved((GUIDSTRING)_Target, (STRING)_Status, (GUIDSTRING)_Cause, 1, (INTEGER)_OnDeath)
+THEN
+LeaderLib_Explode_Internal_ExplodeStatus_Start(_Target, _Status, _Cause);
+
+/*
+PROC
+LeaderLib_Explode_OnStatusRemoved((GUIDSTRING)_Target, (STRING)_Status, (GUIDSTRING)_Cause, (INTEGER)_OnLeave, (INTEGER)_OnDeath)
+THEN
+DB_NOOP(1);
+*/
+//END_REGION
+EXITSECTION
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

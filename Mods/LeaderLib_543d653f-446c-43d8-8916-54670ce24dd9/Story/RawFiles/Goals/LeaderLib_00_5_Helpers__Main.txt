@@ -1176,6 +1176,30 @@ THEN
 DB_NOOP(1);
 
 QRY
+LeaderLib_Helper_QRY_ObjectIsDeadOrDying((GUIDSTRING)_Object)
+AND
+ObjectIsCharacter((CHARACTERGUID)_Object, 1)
+AND
+CharacterIsDead(_Object, _a)
+AND
+HasAppliedStatus(_Object, "DYING", _b)
+AND
+HasActiveStatus(_Object, "DYING", _c)
+AND
+LeaderLib_Math_QRY_IsEqualToAny(1, _a, _b, _c)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_ObjectIsDeadOrDying((GUIDSTRING)_Object)
+AND
+ObjectIsItem((ITEMGUID)_Object, 1)
+AND
+ItemIsDestroyed(_Object, 1)
+THEN
+DB_NOOP(1);
+
+QRY
 LeaderLib_Helper_QRY_IsRace((CHARACTERGUID)_Char, (STRING)_BaseRaceTag)
 AND
 LeaderLib_Helper_QRY_IsRace(_Char, _BaseRaceTag, 1)

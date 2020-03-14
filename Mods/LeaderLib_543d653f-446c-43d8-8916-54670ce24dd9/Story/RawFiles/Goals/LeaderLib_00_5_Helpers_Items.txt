@@ -1039,7 +1039,8 @@ THEN
 CharacterEquipItem(_Char, _Item);
 // [END_NO_OSITOOLS]
 /* [OSITOOLS_ONLY]
-NRD_CharacterEquipItem(_Char, _Item, _Slot, 0, 0, 1, 1);
+CharacterEquipItem(_Char, _Item);
+//NRD_CharacterEquipItem(_Char, _Item, _Slot, 0, 0, 1, 1);
 */
 //END_REGION
 EXITSECTION

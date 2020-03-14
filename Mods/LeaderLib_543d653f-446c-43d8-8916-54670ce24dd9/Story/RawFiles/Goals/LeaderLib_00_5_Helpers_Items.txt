@@ -1030,6 +1030,18 @@ SetVarObject(_Proxy, "LeaderLib_CBS_ItemAdded_Target", _Target);
 SetVarString(_Proxy, "LeaderLib_CBS_ItemAdded_AddedEvent", _AddedEvent);
 SetStoryEvent(_Proxy, "LeaderLib_CreateByStat_Generate");
 //END_REGION
+
+//REGION EQUIP_IN_SLOT
+PROC
+LeaderLib_Helper_EquipInSlot((CHARACTERGUID)_Char, (ITEMGUID)_Item, (STRING)_Slot)
+THEN
+// [BEGIN_NO_OSITOOLS]
+CharacterEquipItem(_Char, _Item);
+// [END_NO_OSITOOLS]
+/* [OSITOOLS_ONLY]
+NRD_CharacterEquipItem(_Char, _Item, _Slot, 0, 0, 1, 1);
+*/
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

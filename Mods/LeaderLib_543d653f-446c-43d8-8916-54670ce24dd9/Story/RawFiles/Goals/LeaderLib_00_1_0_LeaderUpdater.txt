@@ -580,25 +580,11 @@ THEN
 NOT DB_LeaderUpdater_Temp_PastRegistered(_ModID, _Author, _OldVersion);
 LeaderUpdater_Internal_OnModUpdated(_ModID, _Author, _OldVersion, "");
 
-// [BEGIN_NO_OSITOOLS]
+/* Support for the older system. */
 PROC
 LeaderUpdater_Internal_OnModUpdated((STRING)_ModID, (STRING)_Author, (STRING)_PastVersion, (STRING)_NewVersion)
 THEN
 LeaderUpdater_ModUpdated(_ModID, _Author, _PastVersion, _NewVersion);
-// [END_NO_OSITOOLS]
-
-/*
-Only send out the usual update proc if this mod isn't registered using the extender system.
-Otherwise we fire LeaderUpdater_ModUpdated via the new procs.
-*/
-/* [OSITOOLS_ONLY]
-PROC
-LeaderUpdater_Internal_OnModUpdated((STRING)_ModID, (STRING)_Author, (STRING)_PastVersion, (STRING)_NewVersion)
-AND
-NOT DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _)
-THEN
-LeaderUpdater_ModUpdated(_ModID, _Author, _PastVersion, _NewVersion);
-*/
 
 PROC
 LeaderUpdater_ModUpdated((STRING)_ModID, (STRING)_Author, (STRING)_PastVersion, (STRING)_NewVersion)

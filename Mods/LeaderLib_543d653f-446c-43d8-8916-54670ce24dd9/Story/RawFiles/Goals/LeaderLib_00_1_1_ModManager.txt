@@ -25,6 +25,7 @@ NOT DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _LastAuthor, _Last
 DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build);
 LeaderLib_Mods_OnVersionChanged(_UUID, _LastVersion, _Version);
 LeaderLib_Mods_OnVersionChanged(_UUID, _LastMajor, _LastMinor, _LastRevision, _LastBuild, _Major, _Minor, _Revision, _Build);
+LeaderLib_Mods_Internal_FireOldProc(_ModID, _Author, _LastVersion, _Version);
 
 PROC
 LeaderLib_Mods_Internal_Register((GUIDSTRING)_UUID, (STRING)_ModID, (STRING)_DisplayName, (STRING)_Author, (INTEGER)_Version, (INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Revision, (INTEGER)_Build)
@@ -36,6 +37,27 @@ DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID);
 LeaderLib_Mods_OnModRegistered(_UUID, _Version, _Major, _Minor, _Revision, _Build);
 LeaderLib_Mods_OnVersionChanged(_UUID, -1, _Version);
 LeaderLib_Mods_OnVersionChanged(_UUID, -1, -1, -1, -1, _Major, _Minor, _Revision, _Build);
+LeaderLib_Mods_Internal_FireOldProc(_ModID, _Author, -1, _Version);
+
+// [BEGIN_NO_OSITOOLS]
+PROC
+LeaderLib_Mods_Internal_FireOldProc((STRING)_ModID, (STRING)_Author, (INTEGER)_PastVersion, (INTEGER)_NextVersion)
+THEN
+DB_NOOP(1);
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+PROC
+LeaderLib_Mods_Internal_FireOldProc((STRING)_ModID, (STRING)_Author, (INTEGER)_PastVersion, (INTEGER)_NextVersion)
+AND
+NOT DB_LeaderUpdater_Temp_PastRegistered(_ModID, _, _)
+AND
+LeaderLib_Ext_QRY_VersionIntegerToString(_PastVersion, _PastVersionString)
+AND
+LeaderLib_Ext_QRY_VersionIntegerToString(_NextVersion, _NextVersionString)
+THEN
+LeaderUpdater_ModUpdated(_ModID, _Author, _PastVersionString, _NextVersionString);
+*/
 
 /*
 PROC

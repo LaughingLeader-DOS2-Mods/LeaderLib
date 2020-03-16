@@ -18,6 +18,7 @@ end
 ---@param version integer
 ---@return string
 function LeaderLib_Ext_VersionIntegerToVersionString(version)
+	if version == -1 then return "-1" end
 	local major,minor,revision,build = LeaderLib_Ext_ParseVersion(version)
 	if major ~= -1 and minor ~= -1 and revision ~= -1 and build ~= -1 then
 		return tostring(major).."."..tostring(minor).."."..tostring(revision).."."..tostring(build)

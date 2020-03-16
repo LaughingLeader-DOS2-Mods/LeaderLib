@@ -25,6 +25,8 @@ function LeaderLib_Ext_VersionIntegerToVersionString(version)
 	return nil
 end
 
+Ext.NewQuery(LeaderLib_Ext_VersionIntegerToVersionString, "LeaderLib_Ext_QRY_VersionIntegerToString", "[in](INTEGER)_Version, [out](STRING)_VersionString")
+
 ---Checks if a version string is less than a given version.
 ---@param past_version string
 ---@param major integer

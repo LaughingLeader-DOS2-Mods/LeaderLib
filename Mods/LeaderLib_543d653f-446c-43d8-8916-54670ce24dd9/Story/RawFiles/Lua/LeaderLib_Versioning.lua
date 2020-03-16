@@ -22,7 +22,9 @@ function LeaderLib_Ext_VersionIntegerToVersionString(version)
 	local major,minor,revision,build = LeaderLib_Ext_ParseVersion(version)
 	if major ~= -1 and minor ~= -1 and revision ~= -1 and build ~= -1 then
 		return tostring(major).."."..tostring(minor).."."..tostring(revision).."."..tostring(build)
-	end 
+	elseif major == -1 and minor == -1 and revision == -1 and build == -1 then
+		return "-1"
+	end
 	return nil
 end
 

@@ -48,6 +48,16 @@ DB_UndeadRacePresets(2,"Undead_Human");
 DB_UndeadRacePresets(3,"Undead_Lizard");
 
 IF
+GameStarted(_,1)
+THEN
+GlobalSetFlag("LeaderLib_IsEditorMode");
+
+IF
+GameModeStarted(_, 1)
+THEN
+GlobalSetFlag("LeaderLib_IsEditorMode");
+
+IF
 RegionStarted("TestLevel_LL_LeaderLib")
 THEN
 GlobalSetFlag("LeaderLib_IsEditorMode");

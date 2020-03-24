@@ -4,13 +4,22 @@ INITSECTION
 
 KBSECTION
 
+// Initial Selection
 IF
-SkillAdded(_Player, _, _)
+ObjectTransformed(_Player, _Template)
+AND
+ObjectIsCharacter(_Player, 1)
+THEN
+ProcObjectTimer(_Player, "LeaderLib_Timers_UpdateSelectedPreset", 2);
+SetStoryEvent(_Player, "LeaderLib_CC_SetPreset");
+
+IF
+SkillActivated(_Player, _)
 AND
 _Player != NULL_00000000-0000-0000-0000-000000000000
 THEN
 ProcObjectTimerCancel(_Player, "LeaderLib_Timers_UpdateSelectedPreset");
-ProcObjectTimer(_Player, "LeaderLib_Timers_UpdateSelectedPreset", 50);
+ProcObjectTimer(_Player, "LeaderLib_Timers_UpdateSelectedPreset", 2);
 
 //REGION PRESET_TRACKING
 PROC

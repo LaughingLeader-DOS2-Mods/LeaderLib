@@ -7,6 +7,8 @@ KBSECTION
 IF
 CharacterLeveledUp(_Character)
 AND
+LeaderLib_Helper_QRY_IsGameLevel()
+AND
 NOT LeaderLib_Helper_QRY_IgnoreCharacter(_Character)
 AND
 LeaderLib_Growth_Items_QRY_HasAutoLevelItem(_Character)
@@ -17,6 +19,8 @@ LeaderLib_Growth_Items_LevelUpItems(_Character);
 IF
 ItemEquipped(_Item, _Character)
 AND
+LeaderLib_Helper_QRY_IsGameLevel()
+AND
 IsTagged(_Item, "LeaderLib_AutoLevel", 1)
 AND
 NOT LeaderLib_Helper_QRY_IgnoreItem(_Item)
@@ -26,7 +30,9 @@ THEN
 LeaderLib_Growth_Items_LevelUpItem(_Character, _Item);
 
 IF
-ObjectWasTagged((ITEMGUID)_Item, "LeaderLib_AutoLevel")
+ObjectWasTagged(_Item, "LeaderLib_AutoLevel")
+AND
+ObjectIsItem((ITEMGUID)_Item, 1)
 AND
 NOT LeaderLib_Helper_QRY_IgnoreItem(_Item)
 AND
@@ -65,7 +71,11 @@ CharacterItemSetEvent(_Player, _Item, "LeaderLib_Commands_CheckItemLevel");
 
 //REGION TRANSFORMATION
 IF
-ObjectTransformed((ITEMGUID)_Item, _Template)
+ObjectTransformed(_Item, _Template)
+AND
+LeaderLib_Helper_QRY_IsGameLevel()
+AND
+ObjectIsItem((ITEMGUID)_Item, 1)
 AND
 IsTagged(_Item, "LeaderLib_AutoLevel", 1)
 AND

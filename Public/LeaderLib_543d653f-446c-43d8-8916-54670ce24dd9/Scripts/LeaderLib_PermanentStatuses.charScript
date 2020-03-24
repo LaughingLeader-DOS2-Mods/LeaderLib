@@ -112,11 +112,11 @@ EVENT LeaderLib_PermaStatus_RemoveStatusOnCombat
 ON
 	OnEnteredCombat(__Me,_)
 ACTIONS
-	IF "!c1"
-		IsEqual(%LeaderLib_PermaStatus_RemoveOnCombat, 0)
-	THEN
-		CharacterEvent(__Me, "LeaderLib_PermaStatus_RemovePermanentStatuses")
-	ENDIF
+IF "!c1"
+	IsEqual(%LeaderLib_PermaStatus_RemoveOnCombat, 0)
+THEN
+	CharacterEvent(__Me, "LeaderLib_PermaStatus_RemovePermanentStatuses")
+ENDIF
 
 EVENT LeaderLib_PermaStatus_OnStatusRemoved_StartTimer
 ON

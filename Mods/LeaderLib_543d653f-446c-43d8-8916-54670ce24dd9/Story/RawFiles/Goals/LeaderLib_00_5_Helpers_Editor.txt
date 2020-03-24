@@ -1331,13 +1331,11 @@ TextEventSet("leaderlib_lua")
 THEN
 LeaderLib_Recon_ClearParams("leaderlib_lua");
 
+
+// [BEGIN_NO_OSITOOLS]
 IF
 TextEventSet("leaderlib_luareset")
-AND
-NOT LeaderLib_QRY_ExtenderIsActive()
 THEN
-DB_NOOP(1);
-// [BEGIN_NO_OSITOOLS]
 LeaderLog_Log("DEBUG", "[LeaderLib_00_5_Helpers_Editor:TextEventSet(leaderlib_luareset)] [*WARNING*] The extender is not active, or conditional compilation does not work!");
 // [END_NO_OSITOOLS]
 

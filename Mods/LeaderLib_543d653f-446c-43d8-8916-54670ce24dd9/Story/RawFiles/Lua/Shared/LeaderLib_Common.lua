@@ -1,8 +1,68 @@
+LeaderLib = {
+	Main = {},
+	Settings = {},
+	Common = {},
+	Game = {},
+	Data = {},
+	Register = {},
+	ModRegistration = {},
+	Initialized = false,
+}
+
+function LeaderLib_Ext_Init()
+	LeaderLib.Initialized = true
+end
+
+---Registers a function to the global table.
+---@param name string
+---@param func function
+local function Register_Function(name, func)
+    if type(func) == "function" then
+        local func_name = "LeaderLib_Ext_" .. name
+        _G[func_name] = func
+        Ext.Print("[LeaderLib_Bootstrap.lua] Registered function ("..func_name..").")
+    end
+end
+
+---Registers a table of key => function to the global table. The key is used for the name.
+---@param tbl table
+local function Register_Table(tbl)
+    for k,func in pairs(tbl) do
+        if type(func) == "function" then
+            local func_name = "LeaderLib_Ext_" .. k
+            _G[func_name] = func
+            Ext.Print("LeaderLib_Bootstrap.lua] Registered function ("..func_name..").")
+        else
+            Ext.Print("[LeaderLib_Bootstrap.lua] Not a function type ("..type(func)..").")
+        end
+    end
+end
+
+LeaderLib.Register["Function"] = Register_Function
+LeaderLib.Register["Table"] = Register_Table
+
+function LeaderLib_Ext_Log(...)
+	local printEnabled = false
+	if Ext.Version() >= 42 then
+		printEnabled = Ext.IsDeveloperMode() == true
+	else
+		printEnabled = GlobalGetFlag("LeaderLib_IsEditorMode") == 1
+	end
+	if printEnabled then
+		local logArgs = {...}
+		local output_str = ""
+		for i,v in ipairs(logArgs) do
+			output_str = output_str .. tostring(v)
+		end
+		Ext.Print(output_str)
+	end
+end
+
 local function init_seed()
     local rnd = math.random(9999)
     local seed = (math.random(9999) * 214013) + 2531011
 	LeaderLib_RAN_SEED = seed
-	Ext.Print("[LeaderLib__Common.lua] Set LeaderLib_RAN_SEED to ("..tostring(LeaderLib_RAN_SEED)..")")
+	Ext.Print("[LeaderLib_Common.lua] Set LeaderLib_RAN_SEED to ("..tostring(LeaderLib_RAN_SEED)..")")
 end
 init_seed()
 
@@ -173,11 +233,22 @@ local function SafeguardParam(in_value, param_type, fallback_value)
 	end
 end
 
+local function Split(s, sep)
+    local fields = {}
+
+    local sep = sep or " "
+    local pattern = string.format("([^%s]+)", sep)
+    string.gsub(s, pattern, function(c) fields[#fields + 1] = c end)
+
+    return fields
+end
+
 LeaderLib.Common = {
 	Dump = Dump,
 	TableHasEntry = has_table_entry,
 	StringEquals = StringEquals,
 	StringIsNullOrEmpty = StringIsNullOrEmpty,
+	Split = Split,
 	GetTableEntry = GetTableEntry,
 	GetRandomTableEntry = GetRandomTableEntry,
 	GetRandom = GetRandom,

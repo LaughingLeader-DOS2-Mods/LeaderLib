@@ -1,3 +1,14 @@
+LeaderLib_DebugInitCalls = {}
+
+function LeaderLib_Ext_DebugInit()
+	for i = 1, #LeaderLib_DebugInitCalls do
+		local func = LeaderLib_DebugInitCalls[i]
+		if func ~= nil and type(func) == "function" then
+			pcall(func)
+		end
+	end
+end
+
 local HIT_ATTRIBUTE = {
 	Equipment = "Integer",
 	DeathType = "Enum",
@@ -171,4 +182,8 @@ end
 
 function LeaderLib_Ext_PrintDB(name, arity)
 	Ext.Print("[LeaderLib_Debug.lua:PrintDB] Printing database "..name.." ("..tostring(arity)..")")
+end
+
+function LeaderLib_Ext_PrintTest(str)
+	NRD_DebugLog("[LeaderLib:Lua:PrintTest] " .. str)
 end

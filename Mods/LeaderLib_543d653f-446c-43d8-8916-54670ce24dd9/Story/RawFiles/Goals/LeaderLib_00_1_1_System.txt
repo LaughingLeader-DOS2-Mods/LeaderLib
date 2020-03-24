@@ -141,6 +141,7 @@ THEN
 NOT DB_LeaderLib_Extender_LuaInitialized(1);
 /* [OSITOOLS_ONLY]
 NRD_LuaCall("LeaderLib_Ext_Init");
+DB_LeaderLib_Extender_LuaInitialized(1);
 */
 
 /* [OSITOOLS_ONLY]
@@ -151,6 +152,7 @@ AND
 NOT DB_LeaderLib_Extender_LuaInitialized(1)
 THEN
 NRD_LuaCall("LeaderLib_Ext_Init");
+DB_LeaderLib_Extender_LuaInitialized(1);
 */
 //END_REGION
 

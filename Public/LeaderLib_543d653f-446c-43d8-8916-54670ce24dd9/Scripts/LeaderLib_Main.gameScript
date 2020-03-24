@@ -58,6 +58,8 @@ IF "c1&!c2"
 	IsEqual(_Class, null)
 THEN
 	SetVar(_Player, "LeaderLib_CharacterCreationPreset", _Class)
+ELSE
+	SetVar(_Player, "LeaderLib_CharacterCreationPreset", FIXEDSTRING:"")
 ENDIF
 	CharacterEvent(_Player, "LeaderLib_Events_OnPresetSet")
 

@@ -43,6 +43,17 @@ THEN
 DB_NOOP(1);
 
 QRY
+LeaderLib_Helper_QRY_HasItemTemplateInSlot((CHARACTERGUID)_Character, (STRING)_Slot, (STRING)_Template)
+AND
+CharacterGetEquippedItem(_Character, _Slot, _Item)
+AND
+_Item != NULL_00000000-0000-0000-0000-000000000000
+AND
+GetTemplate(_Item, _Template)
+THEN
+DB_NOOP(1);
+
+QRY
 LeaderLib_Helper_QRY_HasEmptyWeaponSlot((CHARACTERGUID)_Character)
 AND
 NOT LeaderLib_Helper_QRY_HasItemInSlot(_Character, "Weapon")

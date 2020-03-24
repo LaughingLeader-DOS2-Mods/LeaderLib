@@ -144,6 +144,15 @@ DB_LeaderLib_Helper_Temp_StopIteratingForFlags(1);
 
 //REGION QUERY_GAME_LEVEL
 QRY
+LeaderLib_Helper_QRY_IsGameLevel()
+AND
+DB_CurrentLevel(_Region)
+AND
+IsGameLevel(_Region, 1)
+THEN
+DB_NOOP(1);
+
+QRY
 LeaderLib_Helper_QRY_IsPastFortJoy()
 AND
 DB_CurrentLevel(_Level)

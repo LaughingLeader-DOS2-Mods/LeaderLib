@@ -264,6 +264,56 @@ type "SkillData"
 using "Projectile_LeaderLib_Force1"
 data "SkillProperties" "Force,20;LEADERLIB_FORCE_APPLIED,100,0"
 
+new entry "Projectile_LeaderLib_Force21"
+type "SkillData"
+using "Projectile_LeaderLib_Force1"
+data "SkillProperties" "Force,21;LEADERLIB_FORCE_APPLIED,100,0"
+
+new entry "Projectile_LeaderLib_Force22"
+type "SkillData"
+using "Projectile_LeaderLib_Force1"
+data "SkillProperties" "Force,22;LEADERLIB_FORCE_APPLIED,100,0"
+
+new entry "Projectile_LeaderLib_Force23"
+type "SkillData"
+using "Projectile_LeaderLib_Force1"
+data "SkillProperties" "Force,23;LEADERLIB_FORCE_APPLIED,100,0"
+
+new entry "Projectile_LeaderLib_Force24"
+type "SkillData"
+using "Projectile_LeaderLib_Force1"
+data "SkillProperties" "Force,24;LEADERLIB_FORCE_APPLIED,100,0"
+
+new entry "Projectile_LeaderLib_Force25"
+type "SkillData"
+using "Projectile_LeaderLib_Force1"
+data "SkillProperties" "Force,25;LEADERLIB_FORCE_APPLIED,100,0"
+
+new entry "Projectile_LeaderLib_Force26"
+type "SkillData"
+using "Projectile_LeaderLib_Force1"
+data "SkillProperties" "Force,26;LEADERLIB_FORCE_APPLIED,100,0"
+
+new entry "Projectile_LeaderLib_Force27"
+type "SkillData"
+using "Projectile_LeaderLib_Force1"
+data "SkillProperties" "Force,27;LEADERLIB_FORCE_APPLIED,100,0"
+
+new entry "Projectile_LeaderLib_Force28"
+type "SkillData"
+using "Projectile_LeaderLib_Force1"
+data "SkillProperties" "Force,28;LEADERLIB_FORCE_APPLIED,100,0"
+
+new entry "Projectile_LeaderLib_Force29"
+type "SkillData"
+using "Projectile_LeaderLib_Force1"
+data "SkillProperties" "Force,29;LEADERLIB_FORCE_APPLIED,100,0"
+
+new entry "Projectile_LeaderLib_Force30"
+type "SkillData"
+using "Projectile_LeaderLib_Force1"
+data "SkillProperties" "Force,30;LEADERLIB_FORCE_APPLIED,100,0"
+
 new entry "Shout_LeaderLib_SwapGender"
 type "SkillData"
 data "SkillType" "Shout"

@@ -313,6 +313,14 @@ end
 
 --Ext.NewCall(ExplodeProjectile, "LeaderLib_Ext_ExplodeProjectile", "(GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Skill")
 
+function LeaderLib_Ext_EquipInSlot(char, item, slot)
+    if Ext.Version() >= 42 then
+        NRD_CharacterEquipItem(char, item, slot, 0, 0, 1, 1)
+    else
+        CharacterEquipItem(char, item)
+    end
+end
+
 LeaderLib.Game = {
 	ReduceDamage = ReduceDamage,
 	IncreaseDamage = IncreaseDamage,

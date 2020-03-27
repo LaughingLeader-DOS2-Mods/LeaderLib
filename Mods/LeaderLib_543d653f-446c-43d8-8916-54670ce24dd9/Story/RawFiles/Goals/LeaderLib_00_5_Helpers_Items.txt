@@ -1043,15 +1043,22 @@ SetStoryEvent(_Proxy, "LeaderLib_CreateByStat_Generate");
 //END_REGION
 
 //REGION EQUIP_IN_SLOT
+// [BEGIN_NO_OSITOOLS]
 PROC
 LeaderLib_Helper_EquipInSlot((CHARACTERGUID)_Char, (ITEMGUID)_Item, (STRING)_Slot)
 THEN
-// [BEGIN_NO_OSITOOLS]
 CharacterEquipItem(_Char, _Item);
 // [END_NO_OSITOOLS]
+
 /* [OSITOOLS_ONLY]
-CharacterEquipItem(_Char, _Item);
-//NRD_CharacterEquipItem(_Char, _Item, _Slot, 0, 0, 1, 1);
+PROC
+LeaderLib_Helper_EquipInSlot((CHARACTERGUID)_Char, (ITEMGUID)_Item, (STRING)_Slot)
+AND
+String(_Char, _CharStr)
+AND
+String(_Item, _ItemStr)
+THEN
+NRD_LuaCall("LeaderLib_Ext_EquipInSlot", _CharStr, _ItemStr, _Slot);
 */
 //END_REGION
 EXITSECTION

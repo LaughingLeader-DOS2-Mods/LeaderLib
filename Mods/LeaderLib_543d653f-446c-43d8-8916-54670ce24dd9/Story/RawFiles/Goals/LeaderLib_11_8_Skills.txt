@@ -634,14 +634,21 @@ DB_LeaderLib_Force_Temp_ListenForLanding(_Target, _Source, _LandEvent);
 PROC
 LeaderLib_Force_Apply((GUIDSTRING)_Source, (GUIDSTRING)_Target, (INTEGER)_Distance, (STRING)_LandEvent)
 AND
-LeaderLib_Math_QRY_ClampInt("LeaderLib_ForceDistance", _Distance, 1, 20)
+LeaderLib_Math_QRY_ClampInt("LeaderLib_ForceDistance", _Distance, 1, 30)
 AND
 DB_LeaderLib_Math_ClampInt("LeaderLib_ForceDistance", _DistanceClamped)
 AND
 DB_LeaderLib_ForceEvent(_DistanceClamped, _Event, _FromItemEvent)
 THEN
 NOT DB_LeaderLib_Math_ClampInt("LeaderLib_ForceDistance", _DistanceClamped);
-LeaderLib_Force_Internal_SendApplyForceEvent(_Source, _Target, _Event, _FromItemEvent, _Distance);
+LeaderLib_Force_Internal_SendApplyForceEvent(_Source, _Target, _Event, _FromItemEvent, _DistanceClamped);
+
+PROC
+LeaderLib_Force_Internal_SendApplyForceEvent((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Event, (STRING)_FromItemEvent, (INTEGER)_Distance)
+AND
+GetPosition(_Source, _x, _y, _z)
+THEN
+TeleportToPosition(S_LeaderLib_Dummy_TargetHelper_A_36069245-0e2d-44b1-9044-6797bd29bb15, _x, _y, _z, "", 0, 1);
 
 PROC
 LeaderLib_Force_Internal_SendApplyForceEvent((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Event, (STRING)_FromItemEvent, (INTEGER)_Distance)

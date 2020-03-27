@@ -641,7 +641,30 @@ AND
 DB_LeaderLib_ForceEvent(_DistanceClamped, _Event, _FromItemEvent)
 THEN
 NOT DB_LeaderLib_Math_ClampInt("LeaderLib_ForceDistance", _DistanceClamped);
+// [BEGIN_NO_OSITOOLS]
 LeaderLib_Force_Internal_SendApplyForceEvent(_Source, _Target, _Event, _FromItemEvent, _DistanceClamped);
+// [END_NO_OSITOOLS]
+/* [OSITOOLS_ONLY]
+LeaderLib_Force_Internal_ShootForceProjectile(_Source, _Target, _DistanceClamped);
+
+PROC
+LeaderLib_Force_Internal_ShootForceProjectile((GUIDSTRING)_Source, (GUIDSTRING)_Target, (INTEGER)_Distance)
+AND
+IntegertoString(_Distance, _DistanceStr)
+AND
+StringConcatenate("Projectile_LeaderLib_Force", _DistanceStr, _Skill)
+THEN
+NRD_ProjectilePrepareLaunch();
+NRD_ProjectileSetString("SkillId", _Skill);
+NRD_ProjectileSetInt("CasterLevel", 1);
+NRD_ProjectileSetGuidString("Caster", _Source);
+NRD_ProjectileSetGuidString("SourcePosition", _Source);
+NRD_ProjectileSetGuidString("Source", _Source);
+NRD_ProjectileSetGuidString("HitObject", _Target);
+NRD_ProjectileSetGuidString("HitObjectPosition", _Target);
+NRD_ProjectileSetGuidString("TargetPosition", _Target);
+NRD_ProjectileLaunch();
+*/
 
 PROC
 LeaderLib_Force_Internal_SendApplyForceEvent((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Event, (STRING)_FromItemEvent, (INTEGER)_Distance)

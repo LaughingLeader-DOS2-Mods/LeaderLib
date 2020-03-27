@@ -3,7 +3,9 @@ function LeaderLib_Ext_Log(...)
 	if Ext.Version() >= 42 then
 		printEnabled = Ext.IsDeveloperMode() == true
 	else
-		printEnabled = GlobalGetFlag("LeaderLib_IsEditorMode") == 1
+		if Ext.Server() then
+			printEnabled = GlobalGetFlag("LeaderLib_IsEditorMode") == 1
+		end
 	end
 	if printEnabled then
 		local logArgs = {...}

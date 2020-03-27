@@ -1,0 +1,18 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+// Auras that don't iterate
+PROC
+LeaderLib_Auras_PulseAura((GUIDSTRING)_Source, (STRING)_AuraID)
+AND
+NOT DB_LeaderLib_Auras_Temp_Pulsing(_Source, _AuraID)
+THEN
+LeaderLib_Timers_CancelObjectTimer(_Source, "Timers_LeaderLib_Auras_OnPulseComplete");
+LeaderLib_Auras_OnPulse(_Source, _AuraID);
+LeaderLib_Auras_OnPulseComplete(_Source, _AuraID);
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

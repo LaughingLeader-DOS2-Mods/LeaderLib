@@ -3,6 +3,15 @@ SubGoalCombiner SGC_AND
 INITSECTION
 
 KBSECTION
+//REGION QUERIES
+QRY
+LeaderLib_Auras_QRY_CanPulse((INTEGER)_HitCharacters, (INTEGER)_HitItems, (INTEGER)_HitSelf, (INTEGER)_TrackTargets)
+AND
+LeaderLib_Math_QRY_IsEqualToAny(1, _HitCharacters, _HitItems, _HitSelf, _TrackTargets)
+THEN
+DB_NOOP(1);
+//END_REGION
+
 //REGION PULSE
 PROC
 LeaderLib_Auras_OnPulse((GUIDSTRING)_Source, (STRING)_AuraID)

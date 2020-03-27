@@ -134,6 +134,8 @@ AND
 NOT DB_LeaderLib_Auras_Temp_Pulsing(_Source, _)
 AND
 DB_LeaderLib_Auras_Temp_ActiveTimerAuras(_Source, _AuraID, _PulseTimerRate, _Radius, _HitCharacters, _HitItems, _HitSelf, _TrackTargets)
+AND
+LeaderLib_Auras_QRY_CanPulse(_HitCharacters, _HitItems, _HitSelf, _TrackTargets)
 THEN
 DB_LeaderLib_Auras_Temp_Pulsing(_Source, _AuraID);
 SetVarString(_Source, "LeaderLib_Auras_ID", _AuraID);

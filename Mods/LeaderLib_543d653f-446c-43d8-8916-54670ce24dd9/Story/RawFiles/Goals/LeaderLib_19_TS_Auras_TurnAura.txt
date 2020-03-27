@@ -23,7 +23,7 @@ DB_LeaderLib_Auras_Temp_ActiveTurnAuras(_Source, _AuraID, _PulseTurnRate, _Radiu
 THEN
 LeaderLib_Auras_Internal_DecreaseAuraCountdown(_Source, _AuraID);
 
-//ObjectTurnEnded(_Object)
+// Decrease cooldown if the aura is set to count down every turn in the combat
 PROC
 LeaderLib_Combat_Clear_ActiveTurn((INTEGER)_CombatID, (GUIDSTRING)_Object)
 AND

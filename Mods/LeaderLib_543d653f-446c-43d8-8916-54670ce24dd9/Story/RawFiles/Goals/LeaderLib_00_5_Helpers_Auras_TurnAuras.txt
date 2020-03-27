@@ -10,6 +10,11 @@ THEN
 LeaderLib_Auras_Register_TurnAura(_AuraID, _DefaultTurnRate, _Radius, _DefaultEveryTurn, _HitCharacters, _HitItems, 0, 0);
 
 PROC
+LeaderLib_Auras_Register_TurnAura((STRING)_AuraID, (INTEGER)_DefaultTurnRate, (REAL)_Radius, (INTEGER)_DefaultEveryTurn, (INTEGER)_HitCharacters, (INTEGER)_HitItems, (INTEGER)_HitSelf)
+THEN
+LeaderLib_Auras_Register_TurnAura(_AuraID, _DefaultTurnRate, _Radius, _DefaultEveryTurn, _HitCharacters, _HitItems, _HitSelf, 0);
+
+PROC
 LeaderLib_Auras_Register_TurnAura((STRING)_AuraID, (INTEGER)_DefaultTurnRate, (REAL)_Radius, (INTEGER)_DefaultEveryTurn, (INTEGER)_HitCharacters, (INTEGER)_HitItems, (INTEGER)_HitSelf, (INTEGER)_TrackTargets)
 AND
 IntegerMax(_DefaultTurnRate, 1, _CappedTurnRate)
@@ -129,6 +134,8 @@ AND
 NOT DB_LeaderLib_Auras_Temp_Pulsing(_Source, _)
 AND
 DB_LeaderLib_Auras_Temp_ActiveTurnAuras(_Source, _AuraID, _PulseTurnRate, _Radius, _EveryTurn, _HitCharacters, _HitItems, _HitSelf, _TrackTargets)
+AND
+LeaderLib_Auras_QRY_CanPulse(_HitCharacters, _HitItems, _HitSelf, _TrackTargets)
 THEN
 DB_LeaderLib_Auras_Temp_Pulsing(_Source, _AuraID);
 SetVarFloat(_Source, "LeaderLib_Auras_Radius", _Radius);

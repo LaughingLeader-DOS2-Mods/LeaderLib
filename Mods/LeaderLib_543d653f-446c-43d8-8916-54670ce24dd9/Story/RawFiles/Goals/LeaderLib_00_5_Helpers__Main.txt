@@ -1504,6 +1504,15 @@ AND
 GetFaction(_Char, _Faction)
 THEN
 DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_ObjectIsAlly((CHARACTERGUID)_Char, (GUIDSTRING)_Object)
+AND
+ObjectIsCharacter((CHARACTERGUID)_Object, 1)
+AND
+CharacterIsAlly(_Char, _Object, 1)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION QUERIES_DISTANCE

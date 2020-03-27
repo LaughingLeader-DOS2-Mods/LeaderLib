@@ -1748,7 +1748,7 @@ THEN
 LeaderLib_Recon_ClearParams("leaderlib_debug_applyturnaura");
 
 PROC
-LeaderLib_Auras_OnPulseCountChanged((GUIDSTRING)_Source, (STRING)_AuraID, (INTEGER)_Last, (INTEGER)_Next)
+LeaderLib_Auras_OnPulseCountChanged((GUIDSTRING)_Source, "LeaderLib_Debug_BarfAura", (INTEGER)_Last, (INTEGER)_Next)
 AND
 ObjectIsCharacter((CHARACTERGUID)_Source, 1)
 AND
@@ -1764,7 +1764,7 @@ StringConcatenate(_Msg2, _NextStr, _Msg3)
 AND
 StringConcatenate(_Msg3, " | ", _Msg4)
 AND
-StringConcatenate(_Msg4, _AuraID, _Msg5)
+StringConcatenate(_Msg4, "LeaderLib_Debug_BarfAura", _Msg5)
 THEN
 CharacterStatusText(_Source, _Msg5);
 LeaderLog_Log("DEBUG", "[LeaderLib_90_DebugLevel:LeaderLib_Auras_OnPulseCountChanged] ", _Msg5);
@@ -1928,6 +1928,31 @@ AND
 String(_TemplateGUID, _Template)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib_90_DebugLevel:LeaderLib_Debug_CreateByStat] Added item (",_ItemStr,")[",_Template,"]");
+
+IF
+TextEventSet("leaderlib_pushtest")
+AND
+CharacterGetHostCharacter(_Char)
+THEN
+DB_LeaderLib_Debug_Temp_PushCenter(_Char);
+CharacterLaunchIteratorAroundObject(_Char, 10.0, "LeaderLib_Debug_PushTarget");
+
+IF
+StoryEvent((CHARACTERGUID)_Target, "LeaderLib_Debug_PushTarget")
+AND
+DB_LeaderLib_Debug_Temp_PushCenter(_Char)
+AND
+_Target != _Char
+AND
+GetDistanceTo(_Char, _Target, _Dist)
+AND
+RealSubtract(10.0, _Dist, _DistMult)
+AND
+_DistMult > 0.0
+AND
+Integer(_DistMult, _DistInt)
+THEN
+LeaderLib_Force_Apply(_Char, _Target, _DistInt);
 EXITSECTION
 
 ENDEXITSECTION

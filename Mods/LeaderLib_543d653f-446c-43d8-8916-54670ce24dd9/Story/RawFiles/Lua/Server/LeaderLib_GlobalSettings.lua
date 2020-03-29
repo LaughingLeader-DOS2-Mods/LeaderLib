@@ -379,7 +379,7 @@ local function parse_mod_data(uuid, modid, author, tbl)
 	local flags = tbl["globalflags"]
 	if flags ~= nil and type(flags) == "table" then
 		for flag,v in pairs(flags) do
-			Ext.Print("[LeaderLib:GlobalSettings.lua] Found global flag ("..flag..")["..tostring(v).."] for mod ["..uuid.."](".. modid.."|"..author..")")
+			--Ext.Print("[LeaderLib:GlobalSettings.lua] Found global flag ("..flag..")["..tostring(v).."] for mod ["..uuid.."](".. modid.."|"..author..")")
 			if v == false then
 				if GlobalGetFlag(flag) == 1 then GlobalClearFlag(flag) end
 			else
@@ -399,7 +399,7 @@ local function parse_mod_data(uuid, modid, author, tbl)
 		for varname,v in pairs(integers) do
 			local intnum = math.tointeger(v)
 			if intnum == nil then intnum = 0 end
-			Ext.Print("[LeaderLib:GlobalSettings.lua] Found global integer variable ("..varname..")["..tostring(intnum).."] for mod (".. modid.."|"..author..")")
+			--Ext.Print("[LeaderLib:GlobalSettings.lua] Found global integer variable ("..varname..")["..tostring(intnum).."] for mod (".. modid.."|"..author..")")
 			if LeaderLib.Common.StringIsNullOrEmpty(uuid) == false then
 				Osi.LeaderLib_GlobalSettings_SetIntegerVariable(uuid, varname, intnum)
 				--GlobalSettings_StoreGlobalInteger(uuid, name, author, varname, defaultvalue)

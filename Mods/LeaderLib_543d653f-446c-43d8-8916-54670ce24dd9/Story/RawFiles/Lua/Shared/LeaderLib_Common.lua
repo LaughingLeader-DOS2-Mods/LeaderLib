@@ -91,6 +91,23 @@ local function init_seed()
 end
 init_seed()
 
+local function FlattenTable(tbl)
+	local result = { }
+		
+	local function flatten(tbl)
+		for _, v in ipairs(tbl) do
+			if type(v) == "table" then
+				flatten(v)
+			else
+				table.insert(result, v)
+			end
+		end
+	end
+	
+	flatten(tbl)
+	return result
+end
+
 local function PrintIndex(k, indexMap)
 	if indexMap ~= nil and type(indexMap) == "table" then
 		local displayValue = indexMap[k]
@@ -270,6 +287,7 @@ end
 
 LeaderLib.Common = {
 	Dump = Dump,
+	FlattenTable = FlattenTable,
 	TableHasEntry = has_table_entry,
 	StringEquals = StringEquals,
 	StringIsNullOrEmpty = StringIsNullOrEmpty,

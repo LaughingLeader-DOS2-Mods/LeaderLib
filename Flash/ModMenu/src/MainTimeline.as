@@ -422,8 +422,15 @@ package
       
       public function setButtonDisable(id:Number, disabled:Boolean) : *
       {
-         this.button_array[id].disable_mc.visible = disabled;
-         this.button_array[id].bg_mc.visible = !disabled;
+         if (this.button_array[id] !== undefined)
+         {
+            this.button_array[id].disable_mc.visible = disabled;
+            this.button_array[id].bg_mc.visible = !disabled;
+         }
+         else
+         {
+            ExternalInterface.call("UIAssert","[LeaderLib_ModMenu.swf] button ID ("+id+") is not in the button_array.");
+         }
       }
       
       public function resetMenuButtons(id:Number) : *

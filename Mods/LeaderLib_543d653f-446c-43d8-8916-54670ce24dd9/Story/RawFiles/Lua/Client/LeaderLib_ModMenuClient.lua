@@ -206,18 +206,20 @@ local function OnClientMessage(event, data)
 	end
 end
 
-Ext.RegisterNetListener("LeaderLib_OnClientMessage", OnClientMessage)
-
 local function Client_ModuleSetup()
 	Ext.AddPathOverride("Public/Game/GUI/gameMenu.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/gameMenu.swf")
 	Ext.Print("LeaderLib_ModMenuClient.lua:Client_ModuleSetup] Overrode gameMenu.swf with LeaderLib version.")
 end
 
-Ext.RegisterListener("ModuleLoading", Client_ModuleSetup)
-Ext.RegisterListener("ModuleResume", Client_ModuleSetup)
-
 local function SessionLoaded()
 	SetupOptionsSettings()
 end
 
-Ext.RegisterListener("SessionLoaded", SetupOptionsSettings)
+if Ext.IsDeveloperMode() then
+	Ext.RegisterNetListener("LeaderLib_OnClientMessage", OnClientMessage)
+	Ext.RegisterListener("ModuleLoading", Client_ModuleSetup)
+	Ext.RegisterListener("ModuleResume", Client_ModuleSetup)
+	if Ext.Version() >= 43 then
+		Ext.RegisterListener("SessionLoaded", SetupOptionsSettings)
+	end
+end

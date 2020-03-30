@@ -256,7 +256,7 @@ package LS_Classes
          {
             ExternalInterface.call("PlaySound",this.SND_Click);
          }
-         if(!this.m_Disabled && this.m_AllowToggleActive)
+         if(!this.m_Disabled && this.m_AllowToggleActive && !this.m_Active)
          {
             this.setActive(!this.m_Active);
          }

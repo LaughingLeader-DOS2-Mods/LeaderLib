@@ -76,6 +76,7 @@ package gameMenu_fla
 										button.y = this.arrItems[atIndex].y;
 										var lastY = button.y;
 										arrItems.splice(atIndex, 0, button);
+										count = this.arrItems.length;
 										for (var i = atIndex+1; i < count; i++)
 										{
 											var nextButton = this.arrItems[i];
@@ -161,6 +162,10 @@ package gameMenu_fla
 									this.arrItems.push(_loc4_);
 									this.resetBtnsPos();
 									ExternalInterface.call("onGameMenuButtonAdded",param1,param2);
+									if(param1 == 14)
+									{
+										ExternalInterface.call("onGameMenuSetup",this.arrItems.count);
+									}
 						}
 						
 						public function resetBtnsPos() : *

@@ -1,6 +1,7 @@
 package gameMenu_fla
 {
 			import flash.display.MovieClip;
+			import flash.external.ExternalInterface;
 			import flash.text.TextFormat;
 			
 			public dynamic class MenuMC_1 extends MovieClip
@@ -63,6 +64,59 @@ package gameMenu_fla
 												this.arrItems[this.selectedID].bg_mc.gotoAndStop(1);
 									}
 						}
+
+						public function insertMenuButton(id:Number, label:String, enabled:Boolean, atIndex:Number) : *
+						{
+									var textFormat:TextFormat = null;
+									var button:MovieClip = new Menu_button();
+									var count:Number = this.arrItems.length;
+									button.pos = atIndex;
+									if(count > 0)
+									{
+										button.y = this.arrItems[atIndex].y;
+										var lastY = button.y;
+										arrItems.splice(atIndex, 0, button);
+										for (var i = atIndex+1; i < count; i++)
+										{
+											var nextButton = this.arrItems[i];
+											nextButton.y = lastY + this.arrItems[i-1].height + this.buttonSpacing;
+											lastY = nextButton.y;
+											trace(i + "| Moved button down: " + nextButton.y);
+										}
+									}
+									else
+									{
+										button.y = 0;
+									}
+									button.label_mc.text_txt.htmlText = label.toUpperCase();
+									while(button.label_mc.text_txt.numLines > 1)
+									{
+										textFormat = button.label_mc.text_txt.getTextFormat();
+										textFormat.size = textFormat.size - 1;
+										button.label_mc.text_txt.setTextFormat(textFormat);
+										button.label_mc.text_txt.y++;
+									}
+									button.defaultColour = !!enabled?16777215:10263708;
+									button.id = id;
+									button.name = "item" + id + "_mc";
+									button.bg_mc.gotoAndStop(1);
+									button.isEnabled = enabled;
+									this.totalHeight = Number(Number(this.totalHeight + button.height));
+									if(button.label_mc.text_txt.textWidth > this.minWidth)
+									{
+										if(this.maxWidth < button.label_mc.text_txt.textWidth)
+										{
+											this.maxWidth = Number(Number(button.label_mc.text_txt.textWidth));
+										}
+									}
+									else
+									{
+										this.maxWidth = this.minWidth;
+									}
+									this.buttonHolder_mc.addChild(button);
+									this.resetBtnsPos();
+									ExternalInterface.call("onGameMenuButtonAdded",id,label);
+						}
 						
 						public function addMenuButton(param1:Number, param2:String, param3:Boolean) : *
 						{
@@ -91,12 +145,12 @@ package gameMenu_fla
 									_loc4_.name = "item" + param1 + "_mc";
 									_loc4_.bg_mc.gotoAndStop(1);
 									_loc4_.isEnabled = param3;
-									this.totalHeight = this.totalHeight + _loc4_.height;
+									this.totalHeight = Number(Number(this.totalHeight + _loc4_.height));
 									if(_loc4_.label_mc.text_txt.textWidth > this.minWidth)
 									{
 												if(this.maxWidth < _loc4_.label_mc.text_txt.textWidth)
 												{
-															this.maxWidth = _loc4_.label_mc.text_txt.textWidth;
+															this.maxWidth = Number(Number(_loc4_.label_mc.text_txt.textWidth));
 												}
 									}
 									else
@@ -106,6 +160,7 @@ package gameMenu_fla
 									this.buttonHolder_mc.addChild(_loc4_);
 									this.arrItems.push(_loc4_);
 									this.resetBtnsPos();
+									ExternalInterface.call("onGameMenuButtonAdded",param1,param2);
 						}
 						
 						public function resetBtnsPos() : *
@@ -124,12 +179,12 @@ package gameMenu_fla
 									_loc4_.defaultColour = !!param3?16777215:10263708;
 									_loc4_.changeTextColour(_loc4_.defaultColour);
 									_loc4_.isEnabled = param3;
-									this.totalHeight = this.totalHeight + _loc4_.height;
+									this.totalHeight = Number(Number(this.totalHeight + _loc4_.height));
 									if(_loc4_.label_mc.text_txt.textWidth > this.minWidth)
 									{
 												if(this.maxWidth < _loc4_.label_mc.text_txt.textWidth)
 												{
-															this.maxWidth = _loc4_.label_mc.text_txt.textWidth;
+															this.maxWidth = Number(Number(_loc4_.label_mc.text_txt.textWidth));
 												}
 									}
 									else
@@ -211,7 +266,7 @@ package gameMenu_fla
 									if(_loc3_)
 									{
 												this.selectedID = param1;
-												this.selectedPos = _loc3_.pos;
+												this.selectedPos = Number(Number(_loc3_.pos));
 												_loc3_.select();
 									}
 						}
@@ -251,8 +306,8 @@ package gameMenu_fla
 												_loc1_++;
 									}
 									this.arrItems.splice(0,this.arrItems.length);
-									this.totalHeight = 0;
-									this.maxWidth = 0;
+									this.totalHeight = Number(Number(0));
+									this.maxWidth = Number(Number(0));
 						}
 						
 						function frame1() : *
@@ -260,16 +315,16 @@ package gameMenu_fla
 									this.opened = false;
 									this.Root = this;
 									this.arrItems = new Array();
-									this.selectedID = -1;
-									this.totalHeight = 0;
-									this.maxWidth = 0;
-									this.factor = 30;
-									this.buttonSpacing = 2;
-									this.WidthSpacing = 80;
-									this.HeightSpacing = 40;
-									this.minWidth = 400;
-									this.selectedPos = -1;
-									this.defaultBtnId = -2;
+									this.selectedID = Number(Number(-1));
+									this.totalHeight = Number(Number(0));
+									this.maxWidth = Number(Number(0));
+									this.factor = Number(Number(30));
+									this.buttonSpacing = Number(Number(2));
+									this.WidthSpacing = Number(Number(80));
+									this.HeightSpacing = Number(Number(40));
+									this.minWidth = Number(Number(400));
+									this.selectedPos = Number(Number(-1));
+									this.defaultBtnId = Number(Number(-2));
 									this.canLoop = true;
 						}
 			}

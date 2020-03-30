@@ -1,6 +1,7 @@
 package gameMenu_fla
 {
 			import flash.display.MovieClip;
+			import flash.external.ExternalInterface;
 			
 			public dynamic class MainTimeline extends MovieClip
 			{
@@ -148,6 +149,11 @@ package gameMenu_fla
 						public function addMenuButton(param1:Number, param2:String, param3:Boolean) : *
 						{
 									this.gameMenu_mc.addMenuButton(param1,param2,param3);
+						}
+
+						public function insertMenuButton(id:Number, label:String, enabled:Boolean, atIndex:Number) : *
+						{
+							this.gameMenu_mc.insertMenuButton(id,label,enabled,atIndex);
 						}
 						
 						public function addDefaultMenuButton(param1:Number, param2:String, param3:Boolean) : *

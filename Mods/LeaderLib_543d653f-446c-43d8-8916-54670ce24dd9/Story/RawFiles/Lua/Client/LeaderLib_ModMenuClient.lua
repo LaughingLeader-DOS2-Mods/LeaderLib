@@ -1,16 +1,19 @@
 
-local MODMENU_BUTTON_ID = 1337
+local MODMENU_BUTTON_ID = 11
 local ModButtons = {}
 local addedModMenuToOptions = false
 local modMenuOpen = false
 local OpenMenu = function () end
 
-local function OnGameMenuEvent(ui, call, arg1, arg2, arg3)
-	Ext.Print("[LeaderLib_ModMenuClient.lua:OnGameMenuEvent] Event called. call("..tostring(call)..") arg1("..tostring(arg1)..") arg2("..tostring(arg2)..") arg3("..tostring(arg3)..")")
-	if call == "PlaySound" then
+local function OnGameMenuEvent(ui, call, ...)
+	local params = LeaderLib.Common.FlattenTable({...})
+	Ext.Print("[LeaderLib_ModMenuClient.lua:OnGameMenuEvent] Event called. call("..tostring(call)..") params("..tostring(LeaderLib.Common.Dump(params))..")")
+	--if call == "onGameMenuButtonAdded" then
+	if call == "PlaySound" and params[1] == "UI_Game_PauseMenu_Open" then
+		--local lastButtonID = params[1]
+		--local lastButtonName = params[2]
 		if addedModMenuToOptions == false then
-			--ui:SetValue(name, value, [arrayIndex])
-			ui:Invoke("addMenuButton", MODMENU_BUTTON_ID, "Mod Settings", true)
+			ui:Invoke("insertMenuButton", MODMENU_BUTTON_ID, "Mod Settings", true, 11)
 			Ext.Print("[LeaderLib_ModMenuClient.lua:SetupOptionsSettings] Added mod menu option to the escape menu.")
 			addedModMenuToOptions = true
 		end
@@ -58,6 +61,7 @@ local function SetupOptionsSettings()
 		Ext.RegisterUICall(ui, "openMenu", OnGameMenuEvent)
 		Ext.RegisterUICall(ui, "executeSelected", OnGameMenuEvent)
 		Ext.RegisterUICall(ui, "setCursorPosition", OnGameMenuEvent)
+		Ext.RegisterUICall(ui, "onGameMenuButtonAdded", OnGameMenuEvent)
 	else
 		Ext.Print("[LeaderLib_ModMenuClient.lua:SetupOptionsSettings] Failed to get Public/Game/GUI/gameMenu.swf")
 	end
@@ -205,11 +209,12 @@ end
 Ext.RegisterNetListener("LeaderLib_OnClientMessage", OnClientMessage)
 
 local function Client_ModuleSetup()
-	SetupOptionsSettings()
+	Ext.AddPathOverride("Public/Game/GUI/gameMenu.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/gameMenu.swf")
+	Ext.Print("LeaderLib_ModMenuClient.lua:Client_ModuleSetup] Overrode gameMenu.swf with LeaderLib version.")
 end
 
---Ext.RegisterListener("ModuleLoading", Client_ModuleSetup)
---Ext.RegisterListener("ModuleResume", Client_ModuleSetup)
+Ext.RegisterListener("ModuleLoading", Client_ModuleSetup)
+Ext.RegisterListener("ModuleResume", Client_ModuleSetup)
 
 local function SessionLoaded()
 	SetupOptionsSettings()

@@ -251,6 +251,8 @@ LeaderLib_GlobalSettings_TransferVariables();
 /* [OSITOOLS_ONLY]
 PROC
 LeaderLib_SaveGlobalSettings()
+AND
+GlobalGetFlag("LeaderLib_IsEditorMode", 0)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib_00_1_1_System:LeaderLib_SaveGlobalSettings] Saving global settings.");
 NRD_LuaCall("LeaderLib_Ext_SaveGlobalSettings");

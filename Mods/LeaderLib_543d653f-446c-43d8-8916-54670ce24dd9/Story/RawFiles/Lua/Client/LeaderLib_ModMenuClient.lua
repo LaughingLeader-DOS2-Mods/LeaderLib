@@ -1,5 +1,5 @@
 
-local MODMENU_BUTTON_ID = 11
+local MODMENU_BUTTON_ID = 734634
 local ModButtons = {}
 local addedModMenuToOptions = false
 local modMenuOpen = false
@@ -9,17 +9,19 @@ local function OnGameMenuEvent(ui, call, ...)
 	local params = LeaderLib.Common.FlattenTable({...})
 	Ext.Print("[LeaderLib_ModMenuClient.lua:OnGameMenuEvent] Event called. call("..tostring(call)..") params("..tostring(LeaderLib.Common.Dump(params))..")")
 	--if call == "onGameMenuButtonAdded" then
-	if call == "PlaySound" and params[1] == "UI_Game_PauseMenu_Open" then
+	--if call == "PlaySound" and params[1] == "UI_Game_PauseMenu_Open" then
+	if call == "onGameMenuSetup" then
 		--local lastButtonID = params[1]
 		--local lastButtonName = params[2]
 		if addedModMenuToOptions == false then
-			ui:Invoke("insertMenuButton", MODMENU_BUTTON_ID, "Mod Settings", true, 11)
+			ui:Invoke("insertMenuButton", MODMENU_BUTTON_ID, "Mod Settings", true, 8)
 			Ext.Print("[LeaderLib_ModMenuClient.lua:SetupOptionsSettings] Added mod menu option to the escape menu.")
 			addedModMenuToOptions = true
 		end
 	elseif call == "buttonPressed" then
-		if arg1 == MODMENU_BUTTON_ID then
+		if params[1] == MODMENU_BUTTON_ID then
 			OpenMenu()
+			addedModMenuToOptions = false
 		end
 	elseif call == "requestCloseUI" then
 		addedModMenuToOptions = false
@@ -62,6 +64,7 @@ local function SetupOptionsSettings()
 		Ext.RegisterUICall(ui, "executeSelected", OnGameMenuEvent)
 		Ext.RegisterUICall(ui, "setCursorPosition", OnGameMenuEvent)
 		Ext.RegisterUICall(ui, "onGameMenuButtonAdded", OnGameMenuEvent)
+		Ext.RegisterUICall(ui, "onGameMenuSetup", OnGameMenuEvent)
 	else
 		Ext.Print("[LeaderLib_ModMenuClient.lua:SetupOptionsSettings] Failed to get Public/Game/GUI/gameMenu.swf")
 	end
@@ -126,9 +129,6 @@ local function BuildMenu(ui)
 				fontSize = 12
 			end
 			ui:Invoke("addOptionButton", modName, "switchMenu", buttonInt, false, fontSize)
-			if buttonInt == 0 then
-				SwitchMenu(ui, "switchMenu", 0)
-			end
 			ModButtons[buttonInt] = modName .. " Settings"
 			buttonInt = buttonInt + 1
 		end

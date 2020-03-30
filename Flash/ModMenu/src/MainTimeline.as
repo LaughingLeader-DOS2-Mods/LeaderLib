@@ -3,6 +3,7 @@ package
    import flash.display.MovieClip;
    import flash.text.TextField;
    import flash.text.TextFieldAutoSize;
+   import flash.external.ExternalInterface;
    import font.UbutunuMonoRegular;
    
    public dynamic class MainTimeline extends MovieClip
@@ -33,7 +34,6 @@ package
       {
          super();
          addFrameScript(0,this.frame1);
-         ExternalInterface.call("LeaderLibModMenu_Initialized");
       }
 
       private static var ubuntuFont:UbutunuMonoRegular = new UbutunuMonoRegular();
@@ -344,11 +344,15 @@ package
       public function openMenu() : *
       {
          this.mainMenu_mc.openMenu();
+         ExternalInterface.call("focus");
+         ExternalInterface.call("inputFocus");
       }
       
       public function closeMenu() : *
       {
          this.mainMenu_mc.closeMenu();
+         ExternalInterface.call("focusLost");
+         ExternalInterface.call("inputFocusLost");
       }
       
       public function cancelChanges() : *

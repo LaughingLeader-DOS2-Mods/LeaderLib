@@ -2,19 +2,24 @@
 local MODMENU_BUTTON_ID = 1337
 local ModButtons = {}
 local addedModMenuToOptions = false
+local modMenuOpen = false
 local OpenMenu = function () end
 
 local function OnGameMenuEvent(ui, call, arg1, arg2, arg3)
 	Ext.Print("[LeaderLib_ModMenuClient.lua:OnGameMenuEvent] Event called. call("..tostring(call)..") arg1("..tostring(arg1)..") arg2("..tostring(arg2)..") arg3("..tostring(arg3)..")")
-	if call == "LeaderLibModMenu_Initialized" then
+	if call == "PlaySound" then
 		if addedModMenuToOptions == false then
+			--ui:SetValue(name, value, [arrayIndex])
 			ui:Invoke("addMenuButton", MODMENU_BUTTON_ID, "Mod Settings", true)
 			Ext.Print("[LeaderLib_ModMenuClient.lua:SetupOptionsSettings] Added mod menu option to the escape menu.")
+			addedModMenuToOptions = true
 		end
 	elseif call == "buttonPressed" then
 		if arg1 == MODMENU_BUTTON_ID then
 			OpenMenu()
 		end
+	elseif call == "requestCloseUI" then
+		addedModMenuToOptions = false
 	end
 end
 
@@ -40,15 +45,19 @@ local function UIHookTest()
 end
 
 local function SetupOptionsSettings()
+	addedModMenuToOptions = false
 	--UIHookTest()
 	local ui = Ext.GetBuiltinUI("Public/Game/GUI/gameMenu.swf")
 	if ui ~= nil then
 		Ext.RegisterUICall(ui, "registeranchorId", OnGameMenuEvent)
 		Ext.RegisterUICall(ui, "setAnchor", OnGameMenuEvent)
-		Ext.RegisterUICall(ui, "LeaderLibModMenu_Initialized", OnGameMenuEvent)
 		Ext.RegisterUICall(ui, "PlaySound", OnGameMenuEvent)
 		Ext.RegisterUICall(ui, "requestCloseUI", OnGameMenuEvent)
 		Ext.RegisterUICall(ui, "buttonPressed", OnGameMenuEvent)
+		Ext.RegisterUICall(ui, "onEventInit", OnGameMenuEvent)
+		Ext.RegisterUICall(ui, "openMenu", OnGameMenuEvent)
+		Ext.RegisterUICall(ui, "executeSelected", OnGameMenuEvent)
+		Ext.RegisterUICall(ui, "setCursorPosition", OnGameMenuEvent)
 	else
 		Ext.Print("[LeaderLib_ModMenuClient.lua:SetupOptionsSettings] Failed to get Public/Game/GUI/gameMenu.swf")
 	end
@@ -56,31 +65,33 @@ end
 
 local function CloseMenu()
 	Ext.DestroyUI("LeaderLibModMenu")
+	modMenuOpen = false
 end
 
-local function SwitchMenu(ui, call, buttonId)
-	Ext.Print("LeaderLib_ModMenuClient.lua:SwitchMenu] Switching menu to: " .. tostring(buttonId))
+local function SwitchMenu(ui, call, ...)
+	local params = LeaderLib.Common.FlattenTable({...})
+	local buttonId = params[1]
+	Ext.Print("LeaderLib_ModMenuClient.lua:SwitchMenu] Switching menu to: " .. tostring(LeaderLib.Common.Dump(params)))
 	ui:Invoke("removeItems")
-
 	ui:Invoke("resetMenuButtons", buttonId)
 
 	local menuTitle = ModButtons[buttonId]
 	if menuTitle ~= nil then
-		ui:Invoke("uiSetTitle", menuTitle)
+		ui:Invoke("modMenuSetTitle", menuTitle)
 	end
 	ui:Invoke("setButtonDisable", buttonId, true)
 	
-	ui:Invoke("uiAddMenuLabel", "General")
-	ui:Invoke("uiAddMenuButton", 1, "Test Button", "", true, "This is a tooltip!")
+	ui:Invoke("modMenuAddMenuLabel", "General")
+	ui:Invoke("modMenuAddMenuButton", 1, "Test Button", "", true, "This is a tooltip!")
 	ui:Invoke("addMenuInfoLabel", 2, "Thing", "Info here!")
-	ui:Invoke("uiAddCheckbox", 3, "", true, 0, false, "Checkbox tooltip!")
-	ui:Invoke("uiAddMenuDropDown", 4, "Test Dropdown", "Dropdown tooltip!")
-	ui:Invoke("uiAddMenuDropDownEntry", 4, "Entry 1")
-	ui:Invoke("uiAddMenuDropDownEntry", 4, "Entry 2")
-	ui:Invoke("uiAddMenuDropDownEntry", 4, "Entry 3")
-	ui:Invoke("uiAddMenuDropDownEntry", 4, "Entry 4")
+	ui:Invoke("modMenuAddCheckbox", 3, "", true, 0, false, "Checkbox tooltip!")
+	ui:Invoke("modMenuAddMenuDropDown", 4, "Test Dropdown", "Dropdown tooltip!")
+	ui:Invoke("modMenuAddMenuDropDownEntry", 4, "Entry 1")
+	ui:Invoke("modMenuAddMenuDropDownEntry", 4, "Entry 2")
+	ui:Invoke("modMenuAddMenuDropDownEntry", 4, "Entry 3")
+	ui:Invoke("modMenuAddMenuDropDownEntry", 4, "Entry 4")
 	ui:Invoke("selectMenuDropDownEntry", 4, 0)
-	ui:Invoke("uiAddMenuSlider", 5, "Test Slider", 0, 0, 10, 1, false, "Test menu slider")
+	ui:Invoke("modMenuAddMenuSlider", 5, "Test Slider", 0, 0, 10, 1, false, "Test menu slider")
 end
 
 local function addTestButton(ui, buttonInt)
@@ -111,6 +122,9 @@ local function BuildMenu(ui)
 				fontSize = 12
 			end
 			ui:Invoke("addOptionButton", modName, "switchMenu", buttonInt, false, fontSize)
+			if buttonInt == 0 then
+				SwitchMenu(ui, "switchMenu", 0)
+			end
 			ModButtons[buttonInt] = modName .. " Settings"
 			buttonInt = buttonInt + 1
 		end
@@ -129,21 +143,44 @@ local function BuildMenu(ui)
 	ui:Invoke("setButtonEnabled", 0, true)
 end
 
+local function OnModMenuEvent(ui, call, ...)
+	local params = {...}
+	Ext.Print("[LeaderLib_ModMenuClient.lua:OnModMenuEvent] Event called. call("..tostring(call)..") params("..tostring(LeaderLib.Common.Dump(params))..")")
+	if call == "switchMenu" then
+		SwitchMenu(ui, call, ...)
+	elseif call == "requestCloseUI" then
+		ui:Hide()
+		CloseMenu()
+	end
+end
+
 OpenMenu = function ()
 	local ui = Ext.GetUI("LeaderLibModMenu")
 	if ui == nil then
-		ui = Ext.CreateUI("LeaderLibModMenu", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/LeaderLib_ModMenu.swf", 20)
+		ui = Ext.CreateUI("LeaderLibModMenu", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/LeaderLib_ModMenu.swf", 99)
 	end
-	if ui ~= nil then
-		Ext.RegisterUICall(ui, "switchMenu", SwitchMenu)
-		Ext.RegisterUICall(ui, "requestCloseUI", CloseMenu)
-		ui:Invoke("uiSetTopTitle", "Mods")
+	if ui ~= nil and modMenuOpen == false then
+		Ext.RegisterUICall(ui, "switchMenu", OnModMenuEvent)
+		Ext.RegisterUICall(ui, "requestCloseUI", OnModMenuEvent)
+		--ui:Invoke("updateAddBaseTopTitleText", "Mods")
+		ui:Invoke("modMenuSetTopTitle", "Mods")
 		BuildMenu(ui)
 		Ext.Print("LeaderLib_ModMenuClient.lua:OpenMenu] Showing mod menu.")
+
+		local gameMenu = Ext.GetBuiltinUI("Public/Game/GUI/gameMenu.swf")
+		gameMenu:ExternalInterfaceCall("focusLost")
+		gameMenu:ExternalInterfaceCall("inputFocusLost")
+		gameMenu:Hide()
 		
+		ui:Invoke("modMenuSetTitle", "Select a Mod")
 		ui:Show()
 		ui:Invoke("setMenuScrolling", true)
 		ui:Invoke("openMenu")
+		ui:ExternalInterfaceCall("requestOpenUI")
+		ui:ExternalInterfaceCall("inputFocus")
+		ui:ExternalInterfaceCall("show")
+		ui:ExternalInterfaceCall("focus")
+		modMenuOpen = true
 	end
 	--local ui = Ext.CreateUI("Test", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/optionsSettings.swf", 20)
 	--ui:Invoke("addMenuInfoLabel", 0, "Test", "Info")

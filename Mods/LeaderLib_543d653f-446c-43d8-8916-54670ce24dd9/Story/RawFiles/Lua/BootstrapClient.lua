@@ -41,6 +41,13 @@ local function LeaderLib_Client_ModuleSetup()
 	LeaderLib_Client_OpenDebugWindow()
 end
 
+local function LeaderLib_SyncRanSeed(call, seedstr)
+	LEADERLIB_RAN_SEED = math.tointeger(seedstr)
+	Ext.Print("[LeaderLib:BootstrapClient.lua:LeaderLib_SyncRanSeed] Set [LEADERLIB_RAN_SEED] to ("..tostring(LEADERLIB_RAN_SEED)..").")
+end
+
+Ext.RegisterNetListener("LeaderLib_SyncRanSeed", LeaderLib_SyncRanSeed)
+
 if Ext.IsDeveloperMode() then
 	-- Ext.RegisterListener("ModuleLoading", LeaderLib_Client_ModuleSetup)
 	-- Ext.RegisterListener("ModuleResume", LeaderLib_Client_ModuleSetup)

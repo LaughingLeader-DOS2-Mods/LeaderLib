@@ -227,6 +227,17 @@ THEN
 DB_NOOP(1);
 
 QRY
+LeaderLib_Combat_QRY_IsNearCombat((GUIDSTRING)_Object, (INTEGER)_CombatID, (REAL)_MinDist)
+AND
+DB_CombatObjects(_OtherObject, _CombatID)
+AND
+GetDistanceTo(_Object, _OtherObject, _Dist)
+AND
+_Dist < _MinDist
+THEN
+DB_NOOP(1);
+
+QRY
 LeaderLib_Combat_QRY_HasInvolvedPlayer((INTEGER)_CombatID)
 AND
 DB_CombatCharacters(_Char, _CombatID)

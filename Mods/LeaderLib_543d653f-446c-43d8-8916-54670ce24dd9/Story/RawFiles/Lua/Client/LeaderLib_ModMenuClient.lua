@@ -3,7 +3,12 @@ local MODMENU_BUTTON_ID = 734634
 local ModButtons = {}
 local addedModMenuToOptions = false
 local modMenuOpen = false
-local OpenMenu = function () end
+
+LeaderLib_ModMenu_Listeners = {
+	SwitchMenu = {},
+	Clicked = {}
+}
+local OpenModMenu = function () end
 
 local function OnGameMenuEvent(ui, call, ...)
 	local params = LeaderLib.Common.FlattenTable({...})
@@ -20,7 +25,7 @@ local function OnGameMenuEvent(ui, call, ...)
 		end
 	elseif call == "buttonPressed" then
 		if params[1] == MODMENU_BUTTON_ID then
-			OpenMenu()
+			OpenModMenu()
 			addedModMenuToOptions = false
 		end
 	elseif call == "requestCloseUI" then
@@ -28,30 +33,8 @@ local function OnGameMenuEvent(ui, call, ...)
 	end
 end
 
-local function UIHookTest()
-	local ui = Ext.GetBuiltinUI("Public/Game/GUI/hotBar.swf")
-	if ui ~= nil then
-		Ext.RegisterUICall(ui, "updateSlots", OnGameMenuEvent)
-		Ext.RegisterUICall(ui, "hideTooltip", OnGameMenuEvent)
-		Ext.RegisterUICall(ui, "showCharTooltip", OnGameMenuEvent)
-		ui:Invoke("setExp", 3333, false)
-		ui:Invoke("allowActionsButton", false)
-		ui:Invoke("toggleActionSkillHolder")
-		--local actionSkills = ui:GetValue("actionSkillArray", "Array")
-		--actionSkills[#actionSkills+1] = "Test"
-		--actionSkills[#actionSkills+1] = true
-		ui:SetValue("actionSkillArray", "Test", 1)
-		ui:SetValue("actionSkillArray", true, 2)
-		ui:Invoke("updateActionSkills")
-		Ext.Print("[LeaderLib_ModMenuClient.lua:UIHookTest] Found hotBar.swf.")
-	else
-		Ext.Print("[LeaderLib_ModMenuClient.lua:UIHookTest] Failed to get Public/Game/GUI/hotBar.swf")
-	end
-end
-
 local function SetupOptionsSettings()
 	addedModMenuToOptions = false
-	--UIHookTest()
 	local ui = Ext.GetBuiltinUI("Public/Game/GUI/gameMenu.swf")
 	if ui ~= nil then
 		Ext.RegisterUICall(ui, "registeranchorId", OnGameMenuEvent)
@@ -158,7 +141,7 @@ local function OnModMenuEvent(ui, call, ...)
 	end
 end
 
-OpenMenu = function ()
+OpenModMenu = function ()
 	local ui = Ext.GetUI("LeaderLibModMenu")
 	if ui == nil then
 		ui = Ext.CreateUI("LeaderLibModMenu", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/LeaderLib_ModMenu.swf", 99)
@@ -169,7 +152,7 @@ OpenMenu = function ()
 		--ui:Invoke("updateAddBaseTopTitleText", "Mods")
 		ui:Invoke("modMenuSetTopTitle", "Mods")
 		BuildMenu(ui)
-		Ext.Print("LeaderLib_ModMenuClient.lua:OpenMenu] Showing mod menu.")
+		Ext.Print("LeaderLib_ModMenuClient.lua:OpenModMenu] Showing mod menu.")
 
 		local gameMenu = Ext.GetBuiltinUI("Public/Game/GUI/gameMenu.swf")
 		gameMenu:ExternalInterfaceCall("focusLost")
@@ -195,7 +178,7 @@ end
 
 local function OnClientMessage(event, data)
 	if data == "OpenModMenu" then
-		--OpenMenu()
+		--OpenModMenu()
 		SetupOptionsSettings()
 	end
 	if Ext.IsDeveloperMode() then

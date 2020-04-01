@@ -423,14 +423,18 @@ SetVarObject(_LeaderTrader, "Seat", _Seat);
 IF
 CombatStarted(_CombatID)
 AND
-CombatGetActiveEntity(_CombatID, _ActiveEntity)
+ObjectExists(CHARACTERGUID_S_LeaderLib_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, 1)
 AND
-CharacterCanSee(CHARACTERGUID_S_LeaderLib_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, _ActiveEntity, 1)
+CharacterIsDeadOrFeign(CHARACTERGUID_S_LeaderLib_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, 0)
+AND
+LeaderLib_Combat_QRY_IsNearCombat(CHARACTERGUID_S_LeaderLib_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, _CombatID, 12.0)
 THEN
 LeaderLib_LeaderTrader_Internal_AvoidCombat(CHARACTERGUID_S_LeaderLib_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, _CombatID);
 
 IF
 ObjectEnteredCombat(CHARACTERGUID_S_LeaderLib_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, _CombatID)
+AND
+CharacterIsDeadOrFeign(CHARACTERGUID_S_LeaderLib_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, 0)
 THEN
 LeaderLib_LeaderTrader_Internal_AvoidCombat(CHARACTERGUID_S_LeaderLib_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, _CombatID);
 //END_REGION

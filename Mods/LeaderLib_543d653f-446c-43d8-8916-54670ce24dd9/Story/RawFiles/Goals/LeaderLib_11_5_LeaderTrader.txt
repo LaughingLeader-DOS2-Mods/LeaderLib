@@ -329,23 +329,29 @@ NOT DB_LeaderLib_LeaderTrader_Temp_ActiveDialog(_Player, _Instance);
 //END_REGION
 
 //REGION AVOID_COMBAT
-IF
-CombatStarted(_CombatID)
+PROC
+LeaderLib_LeaderTrader_Internal_AvoidCombat((CHARACTERGUID)_LeaderTrader, (INTEGER)_CombatID)
 AND
-CombatGetActiveEntity(_CombatID, _ActiveEntity)
-AND
-DB_LeaderLib_LeaderTrader(_LeaderTrader)
-AND
-CharacterCanSee(_LeaderTrader, _ActiveEntity, 1)
+NOT DB_LeaderLib_LeaderTrader_AvoidingCombat(_)
+THEN
+DB_LeaderLib_LeaderTrader_AvoidingCombat(_CombatID);
+SetCanJoinCombat(_LeaderTrader, 0);
+
+PROC
+LeaderLib_LeaderTrader_Internal_AvoidCombat((CHARACTERGUID)_LeaderTrader, (INTEGER)_CombatID)
 AND
 ObjectGetFlag(_LeaderTrader, "LeaderLib_LeaderTrader_Hiding", 0)
 THEN
-DB_LeaderLib_LeaderTrader_AvoidingCombat(_CombatID);
 DisplayText(_LeaderTrader, "I'm too old for this...");
 CharacterStatusText(_LeaderTrader, "<font color='#9400D3'>Stealth Mastery</font>");
 ObjectSetFlag(_LeaderTrader, "LeaderLib_LeaderTrader_Hiding", 0);
+
+PROC
+LeaderLib_LeaderTrader_Internal_AvoidCombat((CHARACTERGUID)_LeaderTrader, (INTEGER)_CombatID)
+THEN
 LeaveCombat(_LeaderTrader);
-SetCanJoinCombat(_LeaderTrader, 0);
+ProcObjectTimerCancel(_LeaderTrader, "LeaderLib_Timers_LeaderTrader_SetOffStage");
+ProcObjectTimerCancel(_LeaderTrader, "LeaderLib_Timers_LeaderTrader_HideFromCombat");
 ProcObjectTimer(_LeaderTrader, "LeaderLib_Timers_LeaderTrader_SetOffStage", 2500);
 ProcObjectTimer(_LeaderTrader, "LeaderLib_Timers_LeaderTrader_HideFromCombat", 1750);
 
@@ -355,17 +361,15 @@ AND
 GetPosition(_LeaderTrader, _x, _y, _z)
 THEN
 PlayEffectAtPosition("RS3_FX_Skills_Arrow_SmokeScreen_Impact_01", _x, _y, _z);
-ApplyStatus(_LeaderTrader, "INVISIBLE", 12.0, 0, _LeaderTrader);
+ApplyStatus(_LeaderTrader, "INVISIBLE", 12.0, 1, _LeaderTrader);
 
 IF
-CharacterStatusApplied(_LeaderTrader, "INVISIBLE", _)
+CharacterStatusApplied(CHARACTERGUID_S_LeaderLib_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, "INVISIBLE", _)
 AND
-DB_LeaderLib_LeaderTrader(_LeaderTrader)
-AND
-ObjectGetFlag(_LeaderTrader, "LeaderLib_LeaderTrader_Hiding", 1)
+ObjectGetFlag(CHARACTERGUID_S_LeaderLib_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, "LeaderLib_LeaderTrader_Hiding", 1)
 THEN
-SetOnStage(_LeaderTrader, 0);
-ProcObjectTimerCancel(_LeaderTrader, "LeaderLib_Timers_LeaderTrader_SetOffStage");
+SetOnStage(CHARACTERGUID_S_LeaderLib_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, 0);
+ProcObjectTimerCancel(CHARACTERGUID_S_LeaderLib_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, "LeaderLib_Timers_LeaderTrader_SetOffStage");
 
 PROC
 ProcObjectTimerFinished((CHARACTERGUID)_LeaderTrader, "LeaderLib_Timers_LeaderTrader_SetOffStage")
@@ -377,6 +381,9 @@ CombatEnded(_CombatID)
 AND
 DB_LeaderLib_LeaderTrader_AvoidingCombat(_CombatID)
 THEN
+ProcObjectTimerCancel(CHARACTERGUID_S_LeaderLib_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, "LeaderLib_Timers_LeaderTrader_SetOffStage");
+ProcObjectTimerCancel(CHARACTERGUID_S_LeaderLib_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, "LeaderLib_Timers_LeaderTrader_HideFromCombat");
+TimerCancel("LeaderLib_Timers_LeaderTrader_CombatEnded");
 TimerLaunch("LeaderLib_Timers_LeaderTrader_CombatEnded", 3000);
 NOT DB_LeaderLib_LeaderTrader_AvoidingCombat(_CombatID);
 
@@ -412,25 +419,38 @@ ClearVarObject(_LeaderTrader, "Seat");
 SetVarObject(_LeaderTrader, "Seat", _Seat);
 //END_REGION
 
+//REGION AVOID_COMBAT_START_EVENTS
+IF
+CombatStarted(_CombatID)
+AND
+CombatGetActiveEntity(_CombatID, _ActiveEntity)
+AND
+CharacterCanSee(CHARACTERGUID_S_LeaderLib_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, _ActiveEntity, 1)
+THEN
+LeaderLib_LeaderTrader_Internal_AvoidCombat(CHARACTERGUID_S_LeaderLib_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, _CombatID);
+
+IF
+ObjectEnteredCombat(CHARACTERGUID_S_LeaderLib_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, _CombatID)
+THEN
+LeaderLib_LeaderTrader_Internal_AvoidCombat(CHARACTERGUID_S_LeaderLib_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, _CombatID);
+//END_REGION
+
 //REGION ATTACKED
 IF
-AttackedByObject((CHARACTERGUID)_LeaderTrader, (CHARACTERGUID)_AttackerOwner, _Attacker, _DamageType, _DamageSource)
-AND
-DB_LeaderLib_LeaderTrader(_LeaderTrader)
+AttackedByObject(CHARACTERGUID_S_LeaderLib_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574, (CHARACTERGUID)_AttackerOwner, _Attacker, _DamageType, _DamageSource)
 AND
 LeaderLib_Helper_QRY_CharacterIsPlayer(_AttackerOwner)
-AND
-NOT DB_LeaderLib_LeaderTrader_IsRespondingToAttack(_)
 THEN
-DB_LeaderLib_LeaderTrader_IsRespondingToAttack(1);
-Proc_StartDialog(1, "LeaderLib_LeaderTrader_AttackResponse", _LeaderTrader);
+Proc_StartDialog(1, "LeaderLib_LeaderTrader_AttackResponse", CHARACTERGUID_S_LeaderLib_LeaderTrader_61ae5acc-1537-4970-82bb-d408a3334574);
 
+/*
 IF
 AutomatedDialogEnded("LeaderLib_LeaderTrader_AttackResponse", _Instance)
 AND
 DB_LeaderLib_LeaderTrader_IsRespondingToAttack(_Val)
 THEN
 NOT DB_LeaderLib_LeaderTrader_IsRespondingToAttack(_Val);
+*/
 //END_REGION
 
 //REGION SPAWN_EVENT

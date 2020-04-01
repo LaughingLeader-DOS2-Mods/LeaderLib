@@ -1,11 +1,36 @@
 LeaderLib_DebugInitCalls = {}
 
+local function Debug_TorturerBugTest()
+	local host = CharacterGetHostCharacter()
+	--CharacterGiveReward(host, "ST_LeaderLib_Debug_Cheats1", 1)
+	CharacterAddTalent(host, "Torturer")
+	CharacterAddAbility(host, "Telekinesis", 10)
+	local x,y,z = GetPosition(host)
+	--710e98d9-b9e2-4563-82e6-9e9ce90118c8
+	--WPN_RC_UNIQUE_Chastity
+	local item = CreateItemTemplateAtPosition("710e98d9-b9e2-4563-82e6-9e9ce90118c8", x, y, z)
+	NRD_ItemCloneBegin(item)
+	NRD_ItemCloneSetString("GenerationStatsId", "WPN_RC_UNIQUE_Chastity")
+	NRD_ItemCloneSetString("StatsEntryName", "WPN_RC_UNIQUE_Chastity")
+	NRD_ItemCloneSetString("CustomDisplayName", "Stabby Bleedy Dagger")
+	NRD_ItemCloneSetInt("GenerationLevel", 1)
+	NRD_ItemCloneSetInt("StatsLevel", 1)
+	NRD_ItemCloneSetInt("IsIdentified", 1)
+	local cloned = NRD_ItemClone()
+	ItemRemove(item)
+	ItemMoveToPosition(cloned, x,y,z, 20.0, 20.0, "", 0)
+end
+
 function LeaderLib_Ext_DebugInit()
 	for i = 1, #LeaderLib_DebugInitCalls do
 		local func = LeaderLib_DebugInitCalls[i]
 		if func ~= nil and type(func) == "function" then
 			pcall(func)
 		end
+	end
+
+	if Ext.IsDeveloperMode() then
+		--Debug_TorturerBugTest()
 	end
 end
 

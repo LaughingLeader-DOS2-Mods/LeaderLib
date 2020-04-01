@@ -187,3 +187,19 @@ end
 function LeaderLib_Ext_PrintTest(str)
 	NRD_DebugLog("[LeaderLib:Lua:PrintTest] " .. str)
 end
+
+function LeaderLib_Ext_Debug_TestSkillScaleMath(level)
+	local stat = Ext.GetStat("Damage_Burning")
+	local dmgFromBase = stat.DamageFromBase * 0.01
+	local damage = Game.Math.GetAverageLevelDamage(math.tointeger(level))
+	local damageAdjusted = damage * dmgFromBase
+    local damageRange = damageAdjusted * 0.3
+	local minDamage = math.max(dmgFromBase * dmgFromBase * (damageAdjusted - damageRange), 1.0)
+	local maxDamage = math.max(dmgFromBase * dmgFromBase * (damageAdjusted + damageRange), 1.0)
+
+	if minDamage > 0 then
+		maxDamage = math.max(maxDamage, minDamage + 1.0)
+	end
+
+	Ext.Print("[LeaderLib_Debug.lua:TestSkillScaleMath] Level("..level..") Range(30) Damage("..tostring(damage)..") FromBase("..tostring(damageAdjusted)..") Final Damage("..tostring(minDamage).." - "..tostring(maxDamage)..")" )
+end

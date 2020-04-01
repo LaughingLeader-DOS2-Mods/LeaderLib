@@ -7,7 +7,7 @@ local OpenMenu = function () end
 
 local function OnGameMenuEvent(ui, call, ...)
 	local params = LeaderLib.Common.FlattenTable({...})
-	Ext.Print("[LeaderLib_ModMenuClient.lua:OnGameMenuEvent] Event called. call("..tostring(call)..") params("..tostring(LeaderLib.Common.Dump(params))..")")
+	--Ext.Print("[LeaderLib_ModMenuClient.lua:OnGameMenuEvent] Event called. call("..tostring(call)..") params("..tostring(LeaderLib.Common.Dump(params))..")")
 	--if call == "onGameMenuButtonAdded" then
 	--if call == "PlaySound" and params[1] == "UI_Game_PauseMenu_Open" then
 	if call == "onGameMenuSetup" then

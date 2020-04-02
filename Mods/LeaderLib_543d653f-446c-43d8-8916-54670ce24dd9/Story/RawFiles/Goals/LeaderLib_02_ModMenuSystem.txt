@@ -48,6 +48,7 @@ LeaderLib_ModMenu_Internal_ClearLastForDialog(_ID);
 DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author);
 LeaderLib_StringExt_DetermineStringLength(_DisplayName);
 LeaderLib_ModMenu_Internal_StartSortIfNeeded();
+LeaderLog_Log("DEBUG", "[LeaderLib_02_ModMenuSystem:LeaderLib_Register_ModMenu] Register mod menu ID(",_ID,") Dialog(",_Dialog,") DisplayName(",_DisplayName,") ModID(",_ModID,") Author(",_Author,")");
 
 PROC
 LeaderLib_Register_ModMenu((STRING)_UUID, (STRING)_Dialog, (STRING)_DisplayName)
@@ -58,6 +59,7 @@ DB_LeaderLib_ModMenu_RegisteredMenuData(_UUID, _DisplayName, _Dialog, "", "");
 LeaderLib_ModMenu_Internal_GetInfoForUUID(_UUID, _Dialog, _DisplayName);
 LeaderLib_StringExt_DetermineStringLength(_DisplayName);
 LeaderLib_ModMenu_Internal_StartSortIfNeeded();
+LeaderLog_Log("DEBUG", "[LeaderLib_02_ModMenuSystem:LeaderLib_Register_ModMenu] Register mod menu UUID(",_UUID,") Dialog(",_Dialog,") DisplayName(",_DisplayName,")");
 
 PROC
 LeaderLib_Register_ModMenuByUUID((STRING)_UUID, (STRING)_Dialog, (STRING)_DisplayName, (STRING)_ModID, (STRING)_Author)
@@ -67,6 +69,7 @@ LeaderLib_ModMenu_Internal_ClearLastForDialog(_Dialog);
 DB_LeaderLib_ModMenu_RegisteredMenuData(_UUID, _DisplayName, _Dialog, _ModID, _Author);
 LeaderLib_StringExt_DetermineStringLength(_DisplayName);
 LeaderLib_ModMenu_Internal_StartSortIfNeeded();
+LeaderLog_Log("DEBUG", "[LeaderLib_02_ModMenuSystem:LeaderLib_Register_ModMenu] Register mod menu UUID(",_UUID,") Dialog(",_Dialog,") DisplayName(",_DisplayName,") ModID(",_ModID,") Author(",_Author,")");
 
 /* [OSITOOLS_ONLY]
 PROC
@@ -177,21 +180,14 @@ DB_NOOP(1);
 //END_REGION
 
 //REGION PAGE_MAX_CALCULATION
-IF
-TimerFinished("LeaderLib_Timers_ModMenu_CalculateMaxPage")
-THEN
-LeaderLib_ModMenu_CalculateMaxPage();
-
 PROC
-LeaderLib_ModMenu_CalculateMaxPage()
+LeaderLib_ModMenu_Internal_CalculateUniqueDialogs()
 THEN
-SysClear("DB_LeaderLib_ModMenu_PageMax", 3);
-SysClear("DB_LeaderLib_ModMenu_Temp_Counted", 1);
 SysClear("DB_LeaderLib_ModMenu_Temp_UniqueDialogs", 1);
 DB_LeaderLib_ModMenu_Temp_UniqueDialogs(0);
 
 PROC
-LeaderLib_ModMenu_CalculateMaxPage()
+LeaderLib_ModMenu_Internal_CalculateUniqueDialogs()
 AND
 DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author)
 AND
@@ -204,6 +200,18 @@ THEN
 NOT DB_LeaderLib_ModMenu_Temp_UniqueDialogs(_Last);
 DB_LeaderLib_ModMenu_Temp_UniqueDialogs(_Next);
 DB_LeaderLib_ModMenu_Temp_Counted(_Dialog);
+
+IF
+TimerFinished("LeaderLib_Timers_ModMenu_CalculateMaxPage")
+THEN
+LeaderLib_ModMenu_CalculateMaxPage();
+
+PROC
+LeaderLib_ModMenu_CalculateMaxPage()
+THEN
+SysClear("DB_LeaderLib_ModMenu_PageMax", 3);
+SysClear("DB_LeaderLib_ModMenu_Temp_Counted", 1);
+LeaderLib_ModMenu_Internal_CalculateUniqueDialogs();
 
 PROC
 LeaderLib_ModMenu_CalculateMaxPage()
@@ -264,6 +272,11 @@ DB_LeaderLib_ModMenu_MenuVars(7, "LeaderLib_ModMenu_Menu8_a6aa98e6-cde4-491b-a2c
 //REGION SORTING
 PROC
 LeaderLib_ModMenu_Internal_StartSortIfNeeded()
+THEN
+LeaderLib_ModMenu_Internal_CalculateUniqueDialogs();
+
+PROC
+LeaderLib_ModMenu_Internal_StartSortIfNeeded()
 AND
 NOT DB_LeaderLib_ModMenu_Temp_SortStarted(_)
 AND
@@ -277,6 +290,17 @@ LeaderLib_ModMenu_QRY_SortNeeded()
 THEN
 TimerCancel("LeaderLib_ModMenu_StartManualSortTimer");
 TimerLaunch("LeaderLib_ModMenu_StartManualSortTimer", 500);
+
+PROC
+LeaderLib_ModMenu_Internal_StartSortIfNeeded()
+AND
+NOT DB_LeaderLib_ModMenu_Temp_SortStarted(_)
+AND
+NOT DB_LeaderLib_Initialized(1)
+AND
+LeaderLib_ModMenu_QRY_SortNeeded()
+THEN
+LeaderLib_ModMenu_StartSorting();
 
 IF
 GlobalFlagSet("LeaderLib_DefaultEventFlowRunning")
@@ -309,12 +333,20 @@ NOT DB_LeaderLib_Dictionary_Data("LeaderLib_RegisteredMenus", _, _Dialog, _)
 THEN
 DB_NOOP(1);
 
+QRY
+LeaderLib_ModMenu_QRY_SortNeeded()
+AND
+NOT DB_LeaderLib_ModMenu_PageMax(_, _, _)
+THEN
+DB_NOOP(1);
+
 //Sorting Start
 IF
 StoryEvent(_, "LeaderLib_Commands_SortMenus")
 AND
 LeaderLib_ModMenu_QRY_SortNeeded()
 THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_02_ModMenuSystem:LeaderLib_Commands_SortMenus] Starting sorting.");
 LeaderLib_ModMenu_StartSorting();
 
 IF
@@ -322,6 +354,7 @@ StoryEvent(_, "LeaderLib_Commands_SortMenus")
 AND
 NOT LeaderLib_ModMenu_QRY_SortNeeded()
 THEN
+LeaderLog_Log("DEBUG", "[LeaderLib_02_ModMenuSystem:LeaderLib_Commands_SortMenus] No sorting needed. Skipping.");
 LeaderLib_SendEvent("LeaderLib_Events_OnMenuSortComplete");
 
 IF
@@ -363,9 +396,19 @@ DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Aut
 AND
 LeaderLib_ModMenu_Internal_QRY_CanSort(_Dialog)
 THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu:LeaderLib_ModMenu_StartSorting] Added (",_Dialog,") to sort dictionary.");
 LeaderLib_DictionarySort_AddString("LeaderLib_RegisteredMenus", _Dialog, _DisplayName);
 
 // [BEGIN_NO_OSITOOLS]
+PROC
+LeaderLib_ModMenu_StartSorting()
+AND
+NOT DB_LeaderLib_ModMenu_Temp_UniqueDialogs(_)
+AND
+SysCount("DB_LeaderLib_ModMenu_RegisteredMenuData", 5, _TotalMenus)
+THEN
+DB_LeaderLib_ModMenu_Temp_UniqueDialogs(_TotalMenus);
+
 PROC
 LeaderLib_ModMenu_StartSorting()
 AND
@@ -389,14 +432,6 @@ IntegertoString(_Length, _TotalStr)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu:Sorting] Total menus = [",_TotalStr,"]. Setting sort tick rate to 2.");
 LeaderLib_ModMenu_SetSortTickRate(2);
-// [END_NO_OSITOOLS]
-
-/* [OSITOOLS_ONLY]
-PROC
-LeaderLib_ModMenu_StartSorting()
-THEN
-LeaderLib_ModMenu_SetSortTickRate(0);
-*/
 
 PROC
 LeaderLib_ModMenu_StartSorting()
@@ -406,6 +441,16 @@ THEN
 DB_LeaderLib_ModMenu_Temp_SortStarted(1);
 LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu:Sorting] Starting menu sorting.");
 LeaderLib_DictionarySort_StartSorting("LeaderLib_RegisteredMenus", _TickRate, "LeaderLib_Events_OnMenuSortComplete", 0);
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+PROC
+LeaderLib_ModMenu_StartSorting()
+THEN
+DB_LeaderLib_ModMenu_Temp_SortStarted(1);
+LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu:Sorting] Starting menu sorting.");
+LeaderLib_DictionarySort_StartSorting("LeaderLib_RegisteredMenus", 0, "LeaderLib_Events_OnMenuSortComplete", 0);
+*/
 
 IF
 StoryEvent(_, "LeaderLib_Events_OnMenuSortComplete")
@@ -414,8 +459,21 @@ DB_LeaderLib_ModMenu_Temp_SortStarted(_Val)
 THEN
 NOT DB_LeaderLib_ModMenu_Temp_SortStarted(_Val);
 LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu:SortingComplete] Menu sorting done.");
+
+IF
+StoryEvent(_, "LeaderLib_Events_OnMenuSortComplete")
+AND
+DB_LeaderLib_Initialized(1)
+THEN
 TimerCancel("LeaderLib_Timers_ModMenu_CalculateMaxPage");
 TimerLaunch("LeaderLib_Timers_ModMenu_CalculateMaxPage", 200);
+
+IF
+StoryEvent(_, "LeaderLib_Events_OnMenuSortComplete")
+AND
+NOT DB_LeaderLib_Initialized(1)
+THEN
+LeaderLib_ModMenu_CalculateMaxPage();
 //END_REGION
 
 //REGION CLEAR

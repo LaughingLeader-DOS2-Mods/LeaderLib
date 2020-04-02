@@ -195,6 +195,7 @@ PROC
 LeaderLib_GlobalSettings_GetIntegerVariable((GUIDSTRING)_UUID, (STRING)_VarName)
 THEN
 DB_NOOP(1);
+//LeaderLib_GlobalSettings_SaveIntegerVariable(_UUID, _VarName, _Value);
 
 /*
 Called by LeaderLib when a global variable is loaded.

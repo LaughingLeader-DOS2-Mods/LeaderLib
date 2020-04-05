@@ -8,14 +8,12 @@ KBSECTION
 IF
 DB_DialogNPCs(_Instance, _Trader, _Index)
 AND
-ObjectIsCharacter((CHARACTERGUID)_Trader, 1)
+DB_LeaderLib_Traders_Active((CHARACTERGUID)_Trader, _TraderID, _Level)
 THEN
 LeaderLib_Treasure_Internal_CheckForTraderGeneration(_Trader);
 
 PROC
 LeaderLib_Treasure_Internal_CheckForTraderGeneration((CHARACTERGUID)_Trader)
-AND
-DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
 AND
 LeaderLib_Treasure_QRY_ObjectCanStartGeneration((GUIDSTRING)_Trader)
 AND
@@ -30,9 +28,7 @@ LeaderLib_Treasure_AddToGenerationQueue(_Trader, _TreasureID, "DIALOG_STARTED");
 PROC
 ProcSetHasMetDBEntry((STRING)_Dialog, (GUIDSTRING)_Trader, (CHARACTERGUID)_Player)
 AND
-ObjectIsCharacter((CHARACTERGUID)_Trader, 1)
-AND
-DB_LeaderLib_Traders_Active(_Trader, _TraderID, _Level)
+DB_LeaderLib_Traders_Active((CHARACTERGUID)_Trader, _TraderID, _Level)
 AND
 LeaderLib_Treasure_QRY_ObjectCanStartGeneration((GUIDSTRING)_Trader)
 AND

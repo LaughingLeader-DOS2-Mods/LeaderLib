@@ -1,5 +1,6 @@
-local damage_types = {
-    "None",
+
+LeaderLib.Data["DamageTypes"] = {
+    [0] = "None",
     "Physical",
     "Piercing",
     "Corrosive",
@@ -13,7 +14,20 @@ local damage_types = {
     "Shadow"
 }
 
-LeaderLib.Data["DamageTypes"] = damage_types
+LeaderLib.Data["DamageTypeEnums"] = {
+    None = 0,
+    Physical = 1,
+    Piercing = 2,
+    Corrosive = 3,
+    Magic = 4,
+    Chaos = 5,
+    Fire = 6,
+    Air = 7,
+    Water = 8,
+    Earth = 9,
+    Poison = 10,
+    Shadow = 11
+}
 
 ---Returns true if a hit isn't Dodged, Missed, or Blocked.
 ---Pass in an object if this is a status.

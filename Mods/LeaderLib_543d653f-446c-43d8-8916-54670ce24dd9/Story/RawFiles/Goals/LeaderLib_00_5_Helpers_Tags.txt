@@ -78,6 +78,13 @@ DB_LeaderLib_ToggleScripts_Temp_ActiveScripts("LeaderLib_TS_TagReapplyEventsEnab
 THEN
 LeaderLib_ToggleScripts_DisableScriptAfterDelay("LeaderLib_TS_TagReapplyEventsEnabled", "LeaderLib", 1000);
 
+PROC
+LeaderLib_Tags_ClearAllPreservedTags((GUIDSTRING)_Object)
+AND
+DB_LeaderLib_TagPreserver_AssignedTags(_Object, _Tag)
+THEN
+LeaderLib_Tags_ClearPreservedTag(_Object, _Tag);
+
 IF
 RegionEnded(_)
 AND

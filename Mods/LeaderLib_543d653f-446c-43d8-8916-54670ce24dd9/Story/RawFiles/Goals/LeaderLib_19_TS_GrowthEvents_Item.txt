@@ -11,6 +11,8 @@ LeaderLib_Helper_QRY_IsGameLevel()
 AND
 NOT LeaderLib_Helper_QRY_IgnoreCharacter(_Character)
 AND
+LeaderLib_Helper_QRY_CharacterIsPlayerOrGM(_Character)
+AND
 LeaderLib_Growth_Items_QRY_HasAutoLevelItem(_Character)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Growth:Items:CharacterLeveledUp] Leveling up character equipment.");

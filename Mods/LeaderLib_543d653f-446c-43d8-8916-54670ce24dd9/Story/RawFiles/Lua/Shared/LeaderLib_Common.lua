@@ -99,8 +99,7 @@ if LEADERLIB_RAN_SEED == nil then
 end
 
 local function FlattenTable(tbl)
-	local result = { }
-		
+	local result = {}
 	local function flatten(tbl)
 		for _, v in ipairs(tbl) do
 			if type(v) == "table" then
@@ -113,6 +112,39 @@ local function FlattenTable(tbl)
 	
 	flatten(tbl)
 	return result
+end
+
+local function DeepCopyTable(orig)
+	local orig_type = type(orig)
+	local copy
+	if orig_type == 'table' then
+		copy = {}
+		for orig_key, orig_value in next, orig, nil do
+			copy[DeepCopyTable(orig_key)] = DeepCopyTable(orig_value)
+		end
+		setmetatable(copy, DeepCopyTable(getmetatable(orig)))
+	else -- number, string, boolean, etc
+		copy = orig
+	end
+	return copy
+end
+
+local function CopyTable(orig, deep)
+	if deep ~= true then
+		local orig_type = type(orig)
+		local copy
+		if orig_type == 'table' then
+			copy = {}
+			for orig_key, orig_value in pairs(orig) do
+				copy[orig_key] = orig_value
+			end
+		else -- number, string, boolean, etc
+			copy = orig
+		end
+		return copy
+	else
+		return DeepCopyTable(orig)
+	end
 end
 
 local function PrintIndex(k, indexMap)
@@ -294,6 +326,7 @@ end
 
 LeaderLib.Common = {
 	Dump = Dump,
+	CopyTable = CopyTable,
 	FlattenTable = FlattenTable,
 	TableHasEntry = has_table_entry,
 	StringEquals = StringEquals,

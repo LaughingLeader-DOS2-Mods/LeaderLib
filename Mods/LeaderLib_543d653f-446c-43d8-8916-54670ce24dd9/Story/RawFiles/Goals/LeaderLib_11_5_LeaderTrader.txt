@@ -336,6 +336,7 @@ NOT DB_LeaderLib_LeaderTrader_AvoidingCombat(_)
 THEN
 DB_LeaderLib_LeaderTrader_AvoidingCombat(_CombatID);
 SetCanJoinCombat(_LeaderTrader, 0);
+ProcForceLeaveCombat(_LeaderTrader);
 
 PROC
 LeaderLib_LeaderTrader_Internal_AvoidCombat((CHARACTERGUID)_LeaderTrader, (INTEGER)_CombatID)

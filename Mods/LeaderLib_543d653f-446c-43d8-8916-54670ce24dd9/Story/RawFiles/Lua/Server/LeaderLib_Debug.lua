@@ -21,9 +21,13 @@ local function Debug_TorturerBugTest()
 	ItemMoveToPosition(cloned, x,y,z, 20.0, 20.0, "", 0)
 end
 
+function LeaderLib_Ext_AddDebugInitCall(func)
+	if LeaderLib_DebugInitCalls == nil then LeaderLib_DebugInitCalls {} end
+	LeaderLib_DebugInitCalls[#LeaderLib_DebugInitCalls+1] = func
+end
+
 function LeaderLib_Ext_DebugInit()
-	for i = 1, #LeaderLib_DebugInitCalls do
-		local func = LeaderLib_DebugInitCalls[i]
+	for i,func in pairs(LeaderLib_DebugInitCalls) do
 		if func ~= nil and type(func) == "function" then
 			pcall(func)
 		end

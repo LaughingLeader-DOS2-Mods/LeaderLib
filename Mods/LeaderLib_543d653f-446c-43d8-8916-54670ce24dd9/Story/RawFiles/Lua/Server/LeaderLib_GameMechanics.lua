@@ -335,6 +335,40 @@ function LeaderLib_Ext_EquipInSlot(char, item, slot)
     end
 end
 
+local EquipmentSlots = {
+    "Weapon",
+    "Shield",
+    "Helmet",
+    "Breast",
+    "Gloves",
+    "Leggings",
+    "Boots",
+    "Belt",
+    "Amulet",
+    "Ring",
+    "Ring2",
+    "Wings",
+    "Horns",
+    "Overhead"
+}
+
+function LeaderLib_Ext_ItemIsEquipped(char, item)
+    local itemObj = Ext.GetItem(item)
+    if itemObj ~= nil then
+        local slot = itemObj.Slot
+        if slot <= 13 then -- 13 is the Overhead slot
+            return true
+        end
+    else
+        for i,slot in pairs(EquipmentSlots) do
+            if CharacterGetEquippedItem(char, slot) == item then
+                return true
+            end
+        end
+    end
+    return false
+end
+
 LeaderLib.Game = {
 	ReduceDamage = ReduceDamage,
 	IncreaseDamage = IncreaseDamage,

@@ -2140,7 +2140,9 @@ AND
 DB_IsPlayer(_Player)
 THEN
 //ProcSetHostileToIndivPlayer(_Npc, _Player);
-ProcMakeNPCHostile(_Player, _Npc);
+//ProcMakeNPCHostile(_Player, _Npc);
+CharacterSetRelationIndivFactionToIndivFaction(_Player,_Npc,0);
+CharacterSetRelationIndivFactionToIndivFaction(_Npc,_Player,0);
 //END_REGION
 
 //REGION QUERIES_RUN_EVENT

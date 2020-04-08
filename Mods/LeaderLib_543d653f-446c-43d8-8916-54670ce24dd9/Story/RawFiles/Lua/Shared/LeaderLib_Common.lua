@@ -36,6 +36,14 @@ if _G["LeaderLib"] == nil then
 	}
 end
 
+local function Print(...)
+	if Ext.IsDeveloperMode() then
+		Ext.Print(...)
+	end
+end
+
+LeaderLib.Print = Print
+
 function LeaderLib_Ext_Init()
 	LeaderLib.Initialized = true
 end
@@ -336,5 +344,5 @@ LeaderLib.Common = {
 	GetRandomTableEntry = GetRandomTableEntry,
 	GetRandom = GetRandom,
 	Enum = Enum,
-	SafeguardParam = SafeguardParam
+	SafeguardParam = SafeguardParam,
 }

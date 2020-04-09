@@ -3,6 +3,7 @@ if _G["LeaderLib"] == nil then
 		Main = {},
 		Settings = {},
 		Common = {},
+		Classes = {},
 		Game = {},
 		Data = {},
 		Register = {},
@@ -35,6 +36,8 @@ if _G["LeaderLib"] == nil then
 		}
 	}
 end
+
+Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "Shared/LeaderLib_Classes.lua")
 
 local function Print(...)
 	if Ext.IsDeveloperMode() then
@@ -332,6 +335,44 @@ local function Split(s, sep)
     return fields
 end
 
+---Join a table of string into one string.
+---Source: http://www.wellho.net/resources/ex.php4?item=u105/spjo
+---@param delimiter string
+---@param list table
+local function StringJoin(delimiter, list)
+	local len = #list
+	if len == 0 then
+		return ""
+	end
+	local string = list[1]
+	for i = 2, len do
+		string = string .. delimiter .. list[i]
+	end
+	return string
+end
+
+---Split a string into a table.
+---Source: http://www.wellho.net/resources/ex.php4?item=u105/spjo
+---@param delimiter string
+---@param str string
+local function StringSplit(delimiter, str)
+	local list = {}; local pos = 1
+	if string.find("", delimiter, 1) then
+		return list
+	end
+	while 1 do
+		local first, last = string.find(str, delimiter, pos)
+		if first then
+			table.insert(list, string.sub(str, pos, first-1))
+			pos = last+1
+		else
+			table.insert(list, string.sub(str, pos))
+			break
+		end
+	end
+	return list
+end
+
 LeaderLib.Common = {
 	Dump = Dump,
 	CopyTable = CopyTable,
@@ -345,4 +386,6 @@ LeaderLib.Common = {
 	GetRandom = GetRandom,
 	Enum = Enum,
 	SafeguardParam = SafeguardParam,
+	StringJoin = StringJoin,
+	StringSplit = StringSplit
 }

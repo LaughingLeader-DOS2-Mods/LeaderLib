@@ -30,6 +30,18 @@ local function SetModIsActiveFlag(uuid, modid)
 	end
 end
 
+---Set a character's name with a translated string value.
+---@param char string
+---@param handle string
+---@param fallback string
+function LeaderLib_Ext_SetCustomNameWithLocalization(char,handle,fallback)
+	local name = fallback
+	if Ext.Version() >= 43 then
+		name = Ext.GetTranslatedString(handle, fallback)
+	end
+	CharacterSetCustomName(char, name)
+end
+
 LeaderLib.Main = {
 	PrintAttributes = PrintAttributes,
 	SetModIsActiveFlag = SetModIsActiveFlag

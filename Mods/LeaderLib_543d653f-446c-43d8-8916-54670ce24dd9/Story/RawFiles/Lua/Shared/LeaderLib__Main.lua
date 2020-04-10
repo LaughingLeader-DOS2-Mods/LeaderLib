@@ -1,14 +1,26 @@
 if _G["LeaderLib"] == nil then
 	_G["LeaderLib"] = {
-		Main = {},
-		Settings = {},
-		Common = {},
 		Classes = {},
-		Game = {},
+		Common = {},
 		Data = {},
-		Register = {},
-		ModRegistration = {},
+		Game = {},
 		Initialized = false,
+		Main = {},
+		ModRegistration = {},
+		Register = {},
+		Settings = {},
+		StatusTypes = {
+			ACTIVE_DEFENSE = {},
+			BLIND = { BLIND = true },
+			CHARMED = { CHARMED = true },
+			DAMAGE_ON_MOVE = { DAMAGE_ON_MOVE = true },
+			DISARMED = { DISARMED = true },
+			INCAPACITATED = {},
+			INVISIBLE = { INVISIBLE = true },
+			KNOCKED_DOWN = { KNOCKED_DOWN = true },
+			MUTED = { MUTED = true },
+			POLYMORPHED = {},
+		},
 		IgnoredMods = {
 			--["7e737d2f-31d2-4751-963f-be6ccc59cd0c"] = true,--LeaderLib
 			["2bd9bdbe-22ae-4aa2-9c93-205880fc6564"] = true,--Shared
@@ -36,3 +48,23 @@ if _G["LeaderLib"] == nil then
 		}
 	}
 end
+
+LeaderLib.StatusTypes.CHARMED = { CHARMED = true }
+--LeaderLib.StatusTypes.POLYMORPHED = { POLYMORPHED = true }
+
+local function LeaderLib_Shared_SessionLoading()
+	for i,status in pairs(Ext.GetStatEntries("StatusData")) do
+		local statusType = Ext.StatGetAttribute(status, "StatusType")
+		if statusType ~= nil and statusType ~= "" then
+			statusType = string.upper(statusType)
+			local statusTypeTable = LeaderLib.StatusTypes[statusType]
+			if statusTypeTable ~= nil then
+				statusTypeTable[status] = true
+				LeaderLib.Print("[LeaderLib__Main.lua:LeaderLib_Shared_SessionLoading] Added Status ("..status..") to StatusType table ("..statusType..").")
+			end
+		end
+	end
+	Ext.Print("Tables " .. LeaderLib.Common.Dump(LeaderLib.StatusTypes))
+end
+
+Ext.RegisterListener("SessionLoading", LeaderLib_Shared_SessionLoading)

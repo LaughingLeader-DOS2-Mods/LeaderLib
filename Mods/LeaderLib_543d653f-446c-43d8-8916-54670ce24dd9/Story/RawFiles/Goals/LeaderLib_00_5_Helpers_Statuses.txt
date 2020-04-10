@@ -81,6 +81,24 @@ AND
 _Turns == -1
 THEN
 DB_NOOP(1);
+
+// [BEGIN_NO_OSITOOLS]
+QRY
+LeaderLib_Helper_QRY_IsSneakingOrInvisible((GUIDSTRING)_Object)
+AND
+LeaderLib_Helper_QRY_HasAnyStatus(_Object, "INVISIBLE", "SNEAKING")
+THEN
+DB_NOOP(1);
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+QRY
+LeaderLib_Helper_QRY_IsSneakingOrInvisible((GUIDSTRING)_Object)
+AND
+LeaderLib_Ext_QRY_IsSneakingOrInvisible(_Object, 1)
+THEN
+DB_NOOP(1);
+*/
 //END_REGION
 
 //Checks if the object is null before actually calling RemoveStatus

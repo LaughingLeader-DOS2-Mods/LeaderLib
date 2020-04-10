@@ -1961,6 +1961,35 @@ AND
 GetTextEventParamString(1, _Level)
 THEN
 NRD_LuaCall("LeaderLib_Ext_Debug_TestSkillScaleMath", _Level);
+
+IF
+TextEventSet("leaderlib_invistypetest")
+AND
+CharacterGetHostCharacter(_Host)
+THEN
+ApplyStatus(_Host, "LEADERLIB_DUMMY_INVULNERABLE", 12.0, 1, _Host);
+LeaderLib_Timers_StartObjectTimer(_Host, 1000, "Timers_LeaderLib_Debug_CheckInvisTypeStatuses", "LeaderLib_Debug_CheckInvisTypeStatuses");
+
+IF
+StoryEvent((CHARACTERGUID)_Host, "LeaderLib_Debug_CheckInvisTypeStatuses")
+AND
+LeaderLib_Ext_QRY_IsSneakingOrInvisible(_Host, 1)
+THEN
+CharacterStatusText(_Host, "<font color='#22FFCC' size='26'>Is sneaking or invisible!</font>");
+
+IF
+StoryEvent((CHARACTERGUID)_Host, "LeaderLib_Debug_CheckInvisTypeStatuses")
+AND
+LeaderLib_Ext_QRY_HasStatusType(_Host, "INVISIBLE", 1)
+THEN
+CharacterStatusText(_Host, "<font color='#22FFCC' size='26'>Has an INVISIBLE type status!</font>");
+
+IF
+StoryEvent((CHARACTERGUID)_Host, "LeaderLib_Debug_CheckInvisTypeStatuses")
+AND
+LeaderLib_Ext_QRY_HasStatusType(_Host, "INVISIBLE", 0)
+THEN
+CharacterStatusText(_Host, "<font color='#FF22CC' size='26'>No INVISIBLE type status!</font>");
 */
 EXITSECTION
 

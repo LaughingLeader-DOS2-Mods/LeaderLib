@@ -613,9 +613,11 @@ THEN
 IterateParties("LeaderLib_Iterator_Combat_CheckPartyInvolvement");
 
 IF
-StoryEvent((CHARACTERGUID)_Char, "LeaderLib_Iterator_Combat_CheckPartyInvolvement")
+StoryEvent(_Char, "LeaderLib_Iterator_Combat_CheckPartyInvolvement")
 AND
-NOT DB_CombatCharacters(_Char, _)
+NOT LeaderLib_Helper_QRY_IsSneakingOrInvisible(_Char)
+AND
+NOT DB_CombatCharacters((CHARACTERGUID)_Char, _)
 AND
 DB_LeaderLib_Combat_ActiveCombat(_CombatID)
 AND
@@ -623,7 +625,7 @@ LeaderLib_Combat_QRY_IsNearCombat(_Char, _CombatID, 30.0)
 AND
 DB_CombatCharacters(_Enemy, _CombatID)
 AND
-CharacterIsEnemy(_Enemy, _Char, 1)
+LeaderLib_Party_QRY_IsEnemyOfParty(_Char, _Enemy)
 AND
 NOT DB_LeaderLib_Combat_Temp_EnteredCombat(_Char, _)
 THEN

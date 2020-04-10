@@ -3,6 +3,7 @@ SubGoalCombiner SGC_AND
 INITSECTION
 
 KBSECTION
+//REGION COUNTING_START
 /*
 IF
 StoryEvent(_, "LeaderLib_Initialized")
@@ -165,6 +166,8 @@ THEN
 LeaderLib_Party_IncreaseCount(_Leader);
 LeaderLib_Party_IncreaseCount(_Char);
 */
+//END_REGION
+
 //REGION INCREASE_DECREASE
 PROC
 LeaderLib_Party_IncreaseCount((CHARACTERGUID)_Char)
@@ -256,6 +259,42 @@ LeaderLib_Party_OnCharacterLeftParty(_LeavingCharacter, _FormerPartyMember, _Cou
 
 PROC
 LeaderLib_Party_OnCharacterLeftParty((CHARACTERGUID)_LeavingCharacter, (CHARACTERGUID)_FormerPartyMember, (INTEGER)_PartyCount)
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION QUERIES
+QRY
+LeaderLib_Party_QRY_PartyIsInCombat((CHARACTERGUID)_PartyMember)
+AND
+DB_LeaderLib_PartyMembers(_PartyMember, _OtherPartyMember)
+AND
+DB_CombatCharacters(_OtherPartyMember, _CombatID)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Party_QRY_PartyIsInCombat((CHARACTERGUID)_PartyMember, (INTEGER)_CombatID)
+AND
+DB_LeaderLib_PartyMembers(_PartyMember, _OtherPartyMember)
+AND
+DB_CombatCharacters(_OtherPartyMember, _CombatID)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Party_QRY_IsEnemyOfParty((CHARACTERGUID)_PartyMember, (CHARACTERGUID)_Enemy)
+AND
+CharacterIsEnemy(_Enemy, _PartyMember, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Party_QRY_IsEnemyOfParty((CHARACTERGUID)_PartyMember, (CHARACTERGUID)_Enemy)
+AND
+DB_LeaderLib_PartyMembers(_PartyMember, _OtherPartyMember)
+AND
+CharacterIsEnemy(_Enemy, _OtherPartyMember, 1)
 THEN
 DB_NOOP(1);
 //END_REGION

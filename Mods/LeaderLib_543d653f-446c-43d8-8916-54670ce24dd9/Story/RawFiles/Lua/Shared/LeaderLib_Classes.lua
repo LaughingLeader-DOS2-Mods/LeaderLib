@@ -6,6 +6,9 @@ local TranslatedString = {
 }
 TranslatedString.__index = TranslatedString
 
+---@param handle string
+---@param content string
+---@return TranslatedString
 function TranslatedString:Create(handle,content)
     local this =
     {

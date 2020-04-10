@@ -29,22 +29,22 @@ DB_NOOP(1);
 QRY
 LeaderLib_Hit_QRY_HitSucceeded((GUIDSTRING)_Target, (INTEGER64)_Handle, 1)
 AND
-NRD_HitGetInt(_Handle, "Dodged", 0)
+NOT NRD_HitGetInt(_Handle, "Dodged", 1)
 AND
-NRD_HitGetInt(_Handle, "Missed", 0)
+NOT NRD_HitGetInt(_Handle, "Missed", 1)
 AND
-NRD_HitGetInt(_Handle, "Blocked", 0)
+NOT NRD_HitGetInt(_Handle, "Blocked", 1)
 THEN
 DB_NOOP(1);
 
 QRY
 LeaderLib_Hit_QRY_HitSucceeded((GUIDSTRING)_Target, (INTEGER64)_Handle, 0)
 AND
-NRD_StatusGetInt(_Target, _Handle, "Dodged", 0)
+NOT NRD_StatusGetInt(_Target, _Handle, "Dodged", 1)
 AND
-NRD_StatusGetInt(_Target, _Handle, "Missed", 0)
+NOT NRD_StatusGetInt(_Target, _Handle, "Missed", 1)
 AND
-NRD_StatusGetInt(_Target, _Handle, "Blocked", 0)
+NOT NRD_StatusGetInt(_Target, _Handle, "Blocked", 1)
 THEN
 DB_NOOP(1);
 

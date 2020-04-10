@@ -5,9 +5,14 @@ INITSECTION
 KBSECTION
 /* [OSITOOLS_ONLY]
 IF
-NRD_OnHit(_Target, _, _, _Handle)
+NRD_OnPrepareHit(_Target, _Attacker, _Damage, _Handle)
 THEN
-NRD_LuaCall("LeaderLib_Ext_Debug_TraceOnHit", (STRING)_Target, (STRING)_Handle);
+NRD_LuaCall("LeaderLib_Ext_Debug_TraceHitPrepare", (STRING)_Target, (STRING)_Attacker, (STRING)_Damage, (STRING)_Handle);
+
+IF
+NRD_OnHit(_Target, _Attacker, _Damage, _Handle)
+THEN
+NRD_LuaCall("LeaderLib_Ext_Debug_TraceOnHit", (STRING)_Target, (STRING)_Attacker, (STRING)_Damage, (STRING)_Handle);
 */
 EXITSECTION
 

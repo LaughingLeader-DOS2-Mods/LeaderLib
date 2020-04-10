@@ -1,1574 +1,3361 @@
 {
-   "save" : {
-      "header" : {
-         "version" : "2.0.8.2"
-      },
-      "regions" : {
-         "dialog" : {
-            "UUID" : {"type" : 22, "value" : "4e541b9c-5c8b-4870-b93f-cd5d6f58e5dc"},
-            "automated" : {"type" : 19, "value" : 0},
-            "category" : {"type" : 23, "value" : "Generic NPC Dialog"},
-            "nodes" : [
-               {
-                  "RootNodes" : [
-                     {
-                        "RootNodes" : {"type" : 22, "value" : "59971a40-b2a1-4a38-964b-4a892f5f4f09"}
-                     }
-                  ],
-                  "node" : [
-                     {
-                        "GameData" : [
-                           {
-                              "AiPersonalities" : [ {} ],
-                              "CameraTarget" : {"type" : 4, "value" : -1},
-                              "CustomMovie" : {"type" : 23, "value" : ""},
-                              "Emotion" : {"type" : 23, "value" : "Default"},
-                              "ExtraWaitTime" : {"type" : 4, "value" : 0},
-                              "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [ {} ],
-                              "SoundEvent" : {"type" : 23, "value" : ""}
-                           }
-                        ],
-                        "ShowOnce" : {"type" : 19, "value" : 0},
-                        "TaggedTexts" : [
-                           {
-                              "TaggedText" : [
-                                 {
-                                    "HasTagRule" : {"type" : 19, "value" : 1},
-                                    "RuleGroup" : [
-                                       {
-                                          "Rules" : [ {} ],
-                                          "TagCombineOp" : {"type" : 1, "value" : 0}
-                                       }
-                                    ],
-                                    "TagTexts" : [
-                                       {
-                                          "TagText" : [
-                                             {
-                                                "TagText" : {
-                                                   "handle" : "h632cbbd2g4193g4921g979fg1abd006f1e0b",
-                                                   "type" : 28,
-                                                   "value" : "Running command..."
-                                                },
-                                                "stub" : {"type" : 19, "value" : 1}
-                                             }
-                                          ]
-                                       }
-                                    ]
-                                 }
-                              ]
-                           }
-                        ],
-                        "Tags" : [ {} ],
-                        "UUID" : {"type" : 22, "value" : "034c5c77-dc34-4b87-93a7-73c6f0eeacc3"},
-                        "addressedspeaker" : {"type" : 4, "value" : -1},
-                        "checkflags" : [ {} ],
-                        "children" : [
-                           {
-                              "child" : [
-                                 {
-                                    "UUID" : {"type" : 22, "value" : "e8e1633e-2387-4f75-99aa-68506d7319bb"}
-                                 }
-                              ]
-                           }
-                        ],
-                        "constructor" : {"type" : 22, "value" : "TagAnswer"},
-                        "editorData" : [
-                           {
-                              "data" : [
-                                 {
-                                    "key" : {"type" : 22, "value" : "ID"},
-                                    "val" : {"type" : 23, "value" : "N4"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "NodeContext"},
-                                    "val" : {"type" : 23, "value" : ""}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "collapsed"},
-                                    "val" : {"type" : 23, "value" : "False"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "logicalname"},
-                                    "val" : {"type" : 23, "value" : "Answer"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "655;234"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "sourcetemplate"},
-                                    "val" : {"type" : 23, "value" : ""}
-                                 }
-                              ]
-                           }
-                        ],
-                        "endnode" : {"type" : 19, "value" : 0},
-                        "exclusive" : {"type" : 19, "value" : 0},
-                        "optional" : {"type" : 19, "value" : 0},
-                        "setflags" : [ {} ],
-                        "speaker" : {"type" : 4, "value" : 0},
-                        "stub" : {"type" : 19, "value" : 0},
-                        "transitionmode" : {"type" : 1, "value" : 2},
-                        "waittime" : {"type" : 6, "value" : -1.0}
-                     },
-                     {
-                        "GameData" : [
-                           {
-                              "AiPersonalities" : [ {} ],
-                              "CameraTarget" : {"type" : 4, "value" : -1},
-                              "CustomMovie" : {"type" : 23, "value" : ""},
-                              "Emotion" : {"type" : 23, "value" : "Default"},
-                              "ExtraWaitTime" : {"type" : 4, "value" : 0},
-                              "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [ {} ],
-                              "SoundEvent" : {"type" : 23, "value" : ""}
-                           }
-                        ],
-                        "ShowOnce" : {"type" : 19, "value" : 0},
-                        "TaggedTexts" : [
-                           {
-                              "TaggedText" : [
-                                 {
-                                    "HasTagRule" : {"type" : 19, "value" : 1},
-                                    "RuleGroup" : [
-                                       {
-                                          "Rules" : [ {} ],
-                                          "TagCombineOp" : {"type" : 1, "value" : 0}
-                                       }
-                                    ],
-                                    "TagTexts" : [
-                                       {
-                                          "TagText" : [
-                                             {
-                                                "TagText" : {
-                                                   "handle" : "h5eb45b65g72aeg4b6cga7eegd42b61850315",
-                                                   "type" : 28,
-                                                   "value" : "[Back]"
-                                                },
-                                                "stub" : {"type" : 19, "value" : 1}
-                                             }
-                                          ]
-                                       }
-                                    ]
-                                 }
-                              ]
-                           }
-                        ],
-                        "Tags" : [ {} ],
-                        "UUID" : {"type" : 22, "value" : "325371fe-4536-4d6f-930e-c97c3c4005af"},
-                        "addressedspeaker" : {"type" : 4, "value" : -1},
-                        "checkflags" : [ {} ],
-                        "children" : [ {} ],
-                        "constructor" : {"type" : 22, "value" : "TagQuestion"},
-                        "editorData" : [
-                           {
-                              "data" : [
-                                 {
-                                    "key" : {"type" : 22, "value" : "ID"},
-                                    "val" : {"type" : 23, "value" : "N2"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "NodeContext"},
-                                    "val" : {"type" : 23, "value" : ""}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "collapsed"},
-                                    "val" : {"type" : 23, "value" : "False"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "logicalname"},
-                                    "val" : {"type" : 23, "value" : "Question"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "335;15"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "sourcetemplate"},
-                                    "val" : {"type" : 23, "value" : ""}
-                                 }
-                              ]
-                           }
-                        ],
-                        "endnode" : {"type" : 19, "value" : 1},
-                        "exclusive" : {"type" : 19, "value" : 0},
-                        "optional" : {"type" : 19, "value" : 0},
-                        "setflags" : [ {} ],
-                        "speaker" : {"type" : 4, "value" : 0},
-                        "stub" : {"type" : 19, "value" : 0},
-                        "transitionmode" : {"type" : 1, "value" : 0},
-                        "waittime" : {"type" : 6, "value" : -1.0}
-                     },
-                     {
-                        "GameData" : [
-                           {
-                              "AiPersonalities" : [ {} ],
-                              "CameraTarget" : {"type" : 4, "value" : -1},
-                              "CustomMovie" : {"type" : 23, "value" : ""},
-                              "Emotion" : {"type" : 23, "value" : "Default"},
-                              "ExtraWaitTime" : {"type" : 4, "value" : 0},
-                              "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [ {} ],
-                              "SoundEvent" : {"type" : 23, "value" : ""}
-                           }
-                        ],
-                        "ShowOnce" : {"type" : 19, "value" : 0},
-                        "TaggedTexts" : [
-                           {
-                              "TaggedText" : [
-                                 {
-                                    "HasTagRule" : {"type" : 19, "value" : 1},
-                                    "RuleGroup" : [
-                                       {
-                                          "Rules" : [ {} ],
-                                          "TagCombineOp" : {"type" : 1, "value" : 0}
-                                       }
-                                    ],
-                                    "TagTexts" : [
-                                       {
-                                          "TagText" : [
-                                             {
-                                                "TagText" : {
-                                                   "handle" : "h68ad69bfg9d72g4107g8285g691dd3abc27e",
-                                                   "type" : 28,
-                                                   "value" : "Add the Mod Menu Skill (Self)"
-                                                },
-                                                "stub" : {"type" : 19, "value" : 1}
-                                             }
-                                          ]
-                                       }
-                                    ]
-                                 }
-                              ]
-                           }
-                        ],
-                        "Tags" : [ {} ],
-                        "UUID" : {"type" : 22, "value" : "3d3e2dfc-2898-413e-87b0-f3490bf4bc72"},
-                        "addressedspeaker" : {"type" : 4, "value" : -1},
-                        "checkflags" : [ {} ],
-                        "children" : [
-                           {
-                              "child" : [
-                                 {
-                                    "UUID" : {"type" : 22, "value" : "034c5c77-dc34-4b87-93a7-73c6f0eeacc3"}
-                                 }
-                              ]
-                           }
-                        ],
-                        "constructor" : {"type" : 22, "value" : "TagQuestion"},
-                        "editorData" : [
-                           {
-                              "data" : [
-                                 {
-                                    "key" : {"type" : 22, "value" : "ID"},
-                                    "val" : {"type" : 23, "value" : "N3"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "NodeContext"},
-                                    "val" : {"type" : 23, "value" : ""}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "collapsed"},
-                                    "val" : {"type" : 23, "value" : "False"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "logicalname"},
-                                    "val" : {"type" : 23, "value" : "Question"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "335;234"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "sourcetemplate"},
-                                    "val" : {"type" : 23, "value" : ""}
-                                 }
-                              ]
-                           }
-                        ],
-                        "endnode" : {"type" : 19, "value" : 0},
-                        "exclusive" : {"type" : 19, "value" : 0},
-                        "optional" : {"type" : 19, "value" : 0},
-                        "setflags" : [
-                           {
-                              "flaggroup" : [
-                                 {
-                                    "flag" : [
-                                       {
-                                          "name" : {"type" : 22, "value" : "LeaderLib_Commands_AddModMenuSkill"},
-                                          "paramval" : {"type" : 4, "value" : 0},
-                                          "value" : {"type" : 19, "value" : 1}
-                                       }
-                                    ],"type" : {"type" : 22, "value" : "Character"}}
-                              ]
-                           }
-                        ],
-                        "speaker" : {"type" : 4, "value" : 0},
-                        "stub" : {"type" : 19, "value" : 0},
-                        "transitionmode" : {"type" : 1, "value" : 0},
-                        "waittime" : {"type" : 6, "value" : -1.0}
-                     },
-                     {
-                        "GameData" : [
-                           {
-                              "AiPersonalities" : [ {} ],
-                              "CameraTarget" : {"type" : 4, "value" : -1},
-                              "CustomMovie" : {"type" : 23, "value" : ""},
-                              "Emotion" : {"type" : 23, "value" : "Default"},
-                              "ExtraWaitTime" : {"type" : 4, "value" : 0},
-                              "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [ {} ],
-                              "SoundEvent" : {"type" : 23, "value" : ""}
-                           }
-                        ],
-                        "ShowOnce" : {"type" : 19, "value" : 0},
-                        "TaggedTexts" : [
-                           {
-                              "TaggedText" : [
-                                 {
-                                    "HasTagRule" : {"type" : 19, "value" : 1},
-                                    "RuleGroup" : [
-                                       {
-                                          "Rules" : [ {} ],
-                                          "TagCombineOp" : {"type" : 1, "value" : 0}
-                                       }
-                                    ],
-                                    "TagTexts" : [
-                                       {
-                                          "TagText" : [
-                                             {
-                                                "TagText" : {
-                                                   "handle" : "hbb25dcedgbd28g4408g80dcg3ab34bed0164",
-                                                   "type" : 28,
-                                                   "value" : "Remove the Mod Menu Skill (Party)"
-                                                },
-                                                "stub" : {"type" : 19, "value" : 1}
-                                             }
-                                          ]
-                                       }
-                                    ]
-                                 }
-                              ]
-                           }
-                        ],
-                        "Tags" : [ {} ],
-                        "UUID" : {"type" : 22, "value" : "4e4ea807-417b-43ca-80fc-2df600249cba"},
-                        "addressedspeaker" : {"type" : 4, "value" : -1},
-                        "checkflags" : [
-                           {
-                              "flaggroup" : [
-                                 {
-                                    "flag" : [
-                                       {
-                                          "name" : {"type" : 22, "value" : "LeaderLib_IsHost"},
-                                          "paramval" : {"type" : 4, "value" : 0},
-                                          "value" : {"type" : 19, "value" : 1}
-                                       }
-                                    ],"type" : {"type" : 22, "value" : "User"}}
-                              ]
-                           }
-                        ],
-                        "children" : [
-                           {
-                              "child" : [
-                                 {
-                                    "UUID" : {"type" : 22, "value" : "034c5c77-dc34-4b87-93a7-73c6f0eeacc3"}
-                                 }
-                              ]
-                           }
-                        ],
-                        "constructor" : {"type" : 22, "value" : "TagQuestion"},
-                        "editorData" : [
-                           {
-                              "data" : [
-                                 {
-                                    "key" : {"type" : 22, "value" : "ID"},
-                                    "val" : {"type" : 23, "value" : "N15"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "NodeContext"},
-                                    "val" : {"type" : 23, "value" : ""}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "collapsed"},
-                                    "val" : {"type" : 23, "value" : "False"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "logicalname"},
-                                    "val" : {"type" : 23, "value" : "Question"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "335;891"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "sourcetemplate"},
-                                    "val" : {"type" : 23, "value" : ""}
-                                 }
-                              ]
-                           }
-                        ],
-                        "endnode" : {"type" : 19, "value" : 0},
-                        "exclusive" : {"type" : 19, "value" : 0},
-                        "optional" : {"type" : 19, "value" : 0},
-                        "setflags" : [
-                           {
-                              "flaggroup" : [
-                                 {
-                                    "flag" : [
-                                       {
-                                          "name" : {"type" : 22, "value" : "LeaderLib_Commands_RemoveModMenuSkill"},
-                                          "paramval" : {"type" : 4, "value" : 0},
-                                          "value" : {"type" : 19, "value" : 1}
-                                       }
-                                    ],"type" : {"type" : 22, "value" : "Party"}}
-                              ]
-                           }
-                        ],
-                        "speaker" : {"type" : 4, "value" : 0},
-                        "stub" : {"type" : 19, "value" : 0},
-                        "transitionmode" : {"type" : 1, "value" : 0},
-                        "waittime" : {"type" : 6, "value" : -1.0}
-                     },
-                     {
-                        "GameData" : [
-                           {
-                              "AiPersonalities" : [ {} ],
-                              "CameraTarget" : {"type" : 4, "value" : -1},
-                              "CustomMovie" : {"type" : 23, "value" : ""},
-                              "Emotion" : {"type" : 23, "value" : "Default"},
-                              "ExtraWaitTime" : {"type" : 4, "value" : 0},
-                              "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [ {} ],
-                              "SoundEvent" : {"type" : 23, "value" : ""}
-                           }
-                        ],
-                        "ShowOnce" : {"type" : 19, "value" : 0},
-                        "TaggedTexts" : [
-                           {
-                              "TaggedText" : [
-                                 {
-                                    "HasTagRule" : {"type" : 19, "value" : 1},
-                                    "RuleGroup" : [
-                                       {
-                                          "Rules" : [ {} ],
-                                          "TagCombineOp" : {"type" : 1, "value" : 0}
-                                       }
-                                    ],
-                                    "TagTexts" : [
-                                       {
-                                          "TagText" : [
-                                             {
-                                                "TagText" : {
-                                                   "handle" : "h86be6c1eg4261g4c62gb949gab7b24bfd1f8",
-                                                   "type" : 28,
-                                                   "value" : "Commands"
-                                                },
-                                                "stub" : {"type" : 19, "value" : 1}
-                                             }
-                                          ]
-                                       }
-                                    ]
-                                 }
-                              ]
-                           }
-                        ],
-                        "Tags" : [ {} ],
-                        "UUID" : {"type" : 22, "value" : "59971a40-b2a1-4a38-964b-4a892f5f4f09"},
-                        "addressedspeaker" : {"type" : 4, "value" : -1},
-                        "checkflags" : [ {} ],
-                        "children" : [
-                           {
-                              "child" : [
-                                 {
-                                    "UUID" : {"type" : 22, "value" : "325371fe-4536-4d6f-930e-c97c3c4005af"}
-                                 },
-                                 {
-                                    "UUID" : {"type" : 22, "value" : "3d3e2dfc-2898-413e-87b0-f3490bf4bc72"}
-                                 },
-                                 {
-                                    "UUID" : {"type" : 22, "value" : "c284a2dc-93c1-48f2-b013-652c2003cad4"}
-                                 },
-                                 {
-                                    "UUID" : {"type" : 22, "value" : "dba894a2-22cc-4931-8330-ecda1e3e7b76"}
-                                 },
-                                 {
-                                    "UUID" : {"type" : 22, "value" : "4e4ea807-417b-43ca-80fc-2df600249cba"}
-                                 },
-                                 {
-                                    "UUID" : {"type" : 22, "value" : "82c908ec-2a5e-4a9c-b5de-d91c8e2a97c9"}
-                                 },
-                                 {
-                                    "UUID" : {"type" : 22, "value" : "82c8717e-9879-4e30-8dc0-1f433b324a68"}
-                                 },
-                                 {
-                                    "UUID" : {"type" : 22, "value" : "8570f010-350d-419d-9ced-db2d3e5b6c78"}
-                                 },
-                                 {
-                                    "UUID" : {"type" : 22, "value" : "ac341297-478c-4bcc-95ff-183731dc599e"}
-                                 },
-                                 {
-                                    "UUID" : {"type" : 22, "value" : "8b77d8ab-bb60-497b-8b59-7e19bf00c387"}
-                                 },
-                                 {
-                                    "UUID" : {"type" : 22, "value" : "89bc6681-fa56-400f-b0ca-822afae4c19a"}
-                                 }
-                              ]
-                           }
-                        ],
-                        "constructor" : {"type" : 22, "value" : "TagGreeting"},
-                        "editorData" : [
-                           {
-                              "data" : [
-                                 {
-                                    "key" : {"type" : 22, "value" : "ID"},
-                                    "val" : {"type" : 23, "value" : "N1"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "NodeContext"},
-                                    "val" : {"type" : 23, "value" : ""}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "collapsed"},
-                                    "val" : {"type" : 23, "value" : "False"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "logicalname"},
-                                    "val" : {"type" : 23, "value" : "Greeting"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "15;15"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "sourcetemplate"},
-                                    "val" : {"type" : 23, "value" : ""}
-                                 }
-                              ]
-                           }
-                        ],
-                        "endnode" : {"type" : 19, "value" : 0},
-                        "exclusive" : {"type" : 19, "value" : 0},
-                        "optional" : {"type" : 19, "value" : 0},
-                        "setflags" : [ {} ],
-                        "speaker" : {"type" : 4, "value" : 0},
-                        "stub" : {"type" : 19, "value" : 1},
-                        "transitionmode" : {"type" : 1, "value" : 0},
-                        "waittime" : {"type" : 6, "value" : -1.0}
-                     },
-                     {
-                        "GameData" : [
-                           {
-                              "AiPersonalities" : [ {} ],
-                              "CameraTarget" : {"type" : 4, "value" : -1},
-                              "CustomMovie" : {"type" : 23, "value" : ""},
-                              "Emotion" : {"type" : 23, "value" : "Default"},
-                              "ExtraWaitTime" : {"type" : 4, "value" : 0},
-                              "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [ {} ],
-                              "SoundEvent" : {"type" : 23, "value" : ""}
-                           }
-                        ],
-                        "ShowOnce" : {"type" : 19, "value" : 0},
-                        "TaggedTexts" : [
-                           {
-                              "TaggedText" : [
-                                 {
-                                    "HasTagRule" : {"type" : 19, "value" : 1},
-                                    "RuleGroup" : [
-                                       {
-                                          "Rules" : [ {} ],
-                                          "TagCombineOp" : {"type" : 1, "value" : 0}
-                                       }
-                                    ],
-                                    "TagTexts" : [
-                                       {
-                                          "TagText" : [
-                                             {
-                                                "TagText" : {
-                                                   "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
-                                                   "type" : 28,
-                                                   "value" : "Remove Chain/Unchain Skills (User - All Owned Characters)<br>"
-                                                },
-                                                "stub" : {"type" : 19, "value" : 1}
-                                             }
-                                          ]
-                                       }
-                                    ]
-                                 }
-                              ]
-                           }
-                        ],
-                        "Tags" : [ {} ],
-                        "UUID" : {"type" : 22, "value" : "82c8717e-9879-4e30-8dc0-1f433b324a68"},
-                        "addressedspeaker" : {"type" : 4, "value" : -1},
-                        "checkflags" : [ {} ],
-                        "children" : [
-                           {
-                              "child" : [
-                                 {
-                                    "UUID" : {"type" : 22, "value" : "034c5c77-dc34-4b87-93a7-73c6f0eeacc3"}
-                                 }
-                              ]
-                           }
-                        ],
-                        "constructor" : {"type" : 22, "value" : "TagQuestion"},
-                        "editorData" : [
-                           {
-                              "data" : [
-                                 {
-                                    "key" : {"type" : 22, "value" : "ID"},
-                                    "val" : {"type" : 23, "value" : "N31"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "NodeContext"},
-                                    "val" : {"type" : 23, "value" : ""}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "collapsed"},
-                                    "val" : {"type" : 23, "value" : "False"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "logicalname"},
-                                    "val" : {"type" : 23, "value" : "Question"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "335;1329"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "sourcetemplate"},
-                                    "val" : {"type" : 23, "value" : ""}
-                                 }
-                              ]
-                           }
-                        ],
-                        "endnode" : {"type" : 19, "value" : 0},
-                        "exclusive" : {"type" : 19, "value" : 0},
-                        "optional" : {"type" : 19, "value" : 0},
-                        "setflags" : [
-                           {
-                              "flaggroup" : [
-                                 {
-                                    "flag" : [
-                                       {
-                                          "name" : {"type" : 22, "value" : "LeaderLib_Commands_RemoveChainSkills"},
-                                          "paramval" : {"type" : 4, "value" : 0},
-                                          "value" : {"type" : 19, "value" : 1}
-                                       }
-                                    ],"type" : {"type" : 22, "value" : "User"}}
-                              ]
-                           }
-                        ],
-                        "speaker" : {"type" : 4, "value" : 0},
-                        "stub" : {"type" : 19, "value" : 0},
-                        "transitionmode" : {"type" : 1, "value" : 0},
-                        "waittime" : {"type" : 6, "value" : -1.0}
-                     },
-                     {
-                        "GameData" : [
-                           {
-                              "AiPersonalities" : [ {} ],
-                              "CameraTarget" : {"type" : 4, "value" : -1},
-                              "CustomMovie" : {"type" : 23, "value" : ""},
-                              "Emotion" : {"type" : 23, "value" : "Default"},
-                              "ExtraWaitTime" : {"type" : 4, "value" : 0},
-                              "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [ {} ],
-                              "SoundEvent" : {"type" : 23, "value" : ""}
-                           }
-                        ],
-                        "ShowOnce" : {"type" : 19, "value" : 0},
-                        "TaggedTexts" : [
-                           {
-                              "TaggedText" : [
-                                 {
-                                    "HasTagRule" : {"type" : 19, "value" : 1},
-                                    "RuleGroup" : [
-                                       {
-                                          "Rules" : [ {} ],
-                                          "TagCombineOp" : {"type" : 1, "value" : 0}
-                                       }
-                                    ],
-                                    "TagTexts" : [
-                                       {
-                                          "TagText" : [
-                                             {
-                                                "TagText" : {
-                                                   "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
-                                                   "type" : 28,
-                                                   "value" : "Add Chain/Unchain Skills (User - All Owned Characters)"
-                                                },
-                                                "stub" : {"type" : 19, "value" : 1}
-                                             }
-                                          ]
-                                       }
-                                    ]
-                                 }
-                              ]
-                           }
-                        ],
-                        "Tags" : [ {} ],
-                        "UUID" : {"type" : 22, "value" : "82c908ec-2a5e-4a9c-b5de-d91c8e2a97c9"},
-                        "addressedspeaker" : {"type" : 4, "value" : -1},
-                        "checkflags" : [ {} ],
-                        "children" : [
-                           {
-                              "child" : [
-                                 {
-                                    "UUID" : {"type" : 22, "value" : "034c5c77-dc34-4b87-93a7-73c6f0eeacc3"}
-                                 }
-                              ]
-                           }
-                        ],
-                        "constructor" : {"type" : 22, "value" : "TagQuestion"},
-                        "editorData" : [
-                           {
-                              "data" : [
-                                 {
-                                    "key" : {"type" : 22, "value" : "ID"},
-                                    "val" : {"type" : 23, "value" : "N27"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "NodeContext"},
-                                    "val" : {"type" : 23, "value" : ""}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "collapsed"},
-                                    "val" : {"type" : 23, "value" : "False"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "logicalname"},
-                                    "val" : {"type" : 23, "value" : "Question"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "335;1110"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "sourcetemplate"},
-                                    "val" : {"type" : 23, "value" : ""}
-                                 }
-                              ]
-                           }
-                        ],
-                        "endnode" : {"type" : 19, "value" : 0},
-                        "exclusive" : {"type" : 19, "value" : 0},
-                        "optional" : {"type" : 19, "value" : 0},
-                        "setflags" : [
-                           {
-                              "flaggroup" : [
-                                 {
-                                    "flag" : [
-                                       {
-                                          "name" : {"type" : 22, "value" : "LeaderLib_Commands_AddChainSkills"},
-                                          "paramval" : {"type" : 4, "value" : 0},
-                                          "value" : {"type" : 19, "value" : 1}
-                                       }
-                                    ],"type" : {"type" : 22, "value" : "User"}}
-                              ]
-                           }
-                        ],
-                        "speaker" : {"type" : 4, "value" : 0},
-                        "stub" : {"type" : 19, "value" : 0},
-                        "transitionmode" : {"type" : 1, "value" : 0},
-                        "waittime" : {"type" : 6, "value" : -1.0}
-                     },
-                     {
-                        "GameData" : [
-                           {
-                              "AiPersonalities" : [ {} ],
-                              "CameraTarget" : {"type" : 4, "value" : -1},
-                              "CustomMovie" : {"type" : 23, "value" : ""},
-                              "Emotion" : {"type" : 23, "value" : "Default"},
-                              "ExtraWaitTime" : {"type" : 4, "value" : 0},
-                              "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [ {} ],
-                              "SoundEvent" : {"type" : 23, "value" : ""}
-                           }
-                        ],
-                        "ShowOnce" : {"type" : 19, "value" : 0},
-                        "TaggedTexts" : [
-                           {
-                              "TaggedText" : [
-                                 {
-                                    "HasTagRule" : {"type" : 19, "value" : 1},
-                                    "RuleGroup" : [
-                                       {
-                                          "Rules" : [ {} ],
-                                          "TagCombineOp" : {"type" : 1, "value" : 0}
-                                       }
-                                    ],
-                                    "TagTexts" : [
-                                       {
-                                          "TagText" : [
-                                             {
-                                                "TagText" : {
-                                                   "handle" : "h1c1d8acag9819g4028g860fg9a546af236ee",
-                                                   "type" : 28,
-                                                   "value" : "[LOAD] Load Global Settings"
-                                                },
-                                                "stub" : {"type" : 19, "value" : 1}
-                                             }
-                                          ]
-                                       }
-                                    ]
-                                 }
-                              ]
-                           }
-                        ],
-                        "Tags" : [ {} ],
-                        "UUID" : {"type" : 22, "value" : "8570f010-350d-419d-9ced-db2d3e5b6c78"},
-                        "addressedspeaker" : {"type" : 4, "value" : -1},
-                        "checkflags" : [
-                           {
-                              "flaggroup" : [
-                                 {
-                                    "flag" : [
-                                       {
-                                          "name" : {"type" : 22, "value" : "LeaderLib_ExtenderIsActive"},"value" : {"type" : 19, "value" : 1}}
-                                    ],"type" : {"type" : 22, "value" : "Global"}},
-                                 {
-                                    "flag" : [
-                                       {
-                                          "name" : {"type" : 22, "value" : "LeaderLib_IsHost"},
-                                          "paramval" : {"type" : 4, "value" : 0},
-                                          "value" : {"type" : 19, "value" : 1}
-                                       }
-                                    ],"type" : {"type" : 22, "value" : "User"}}
-                              ]
-                           }
-                        ],
-                        "children" : [
-                           {
-                              "child" : [
-                                 {
-                                    "UUID" : {"type" : 22, "value" : "034c5c77-dc34-4b87-93a7-73c6f0eeacc3"}
-                                 }
-                              ]
-                           }
-                        ],
-                        "constructor" : {"type" : 22, "value" : "TagQuestion"},
-                        "editorData" : [
-                           {
-                              "data" : [
-                                 {
-                                    "key" : {"type" : 22, "value" : "ID"},
-                                    "val" : {"type" : 23, "value" : "N19"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "NodeContext"},
-                                    "val" : {"type" : 23, "value" : ""}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "collapsed"},
-                                    "val" : {"type" : 23, "value" : "False"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "logicalname"},
-                                    "val" : {"type" : 23, "value" : "Question"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "335;1548"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "sourcetemplate"},
-                                    "val" : {"type" : 23, "value" : ""}
-                                 }
-                              ]
-                           }
-                        ],
-                        "endnode" : {"type" : 19, "value" : 0},
-                        "exclusive" : {"type" : 19, "value" : 0},
-                        "optional" : {"type" : 19, "value" : 0},
-                        "setflags" : [
-                           {
-                              "flaggroup" : [
-                                 {
-                                    "flag" : [
-                                       {
-                                          "name" : {"type" : 22, "value" : "LeaderLib_Commands_LoadGlobalSettings"},
-                                          "paramval" : {"type" : 4, "value" : 0},
-                                          "value" : {"type" : 19, "value" : 1}
-                                       }
-                                    ],"type" : {"type" : 22, "value" : "Character"}}
-                              ]
-                           }
-                        ],
-                        "speaker" : {"type" : 4, "value" : 0},
-                        "stub" : {"type" : 19, "value" : 0},
-                        "transitionmode" : {"type" : 1, "value" : 0},
-                        "waittime" : {"type" : 6, "value" : -1.0}
-                     },
-                     {
-                        "GameData" : [
-                           {
-                              "AiPersonalities" : [ {} ],
-                              "CameraTarget" : {"type" : 4, "value" : -1},
-                              "CustomMovie" : {"type" : 23, "value" : ""},
-                              "Emotion" : {"type" : 23, "value" : "Default"},
-                              "ExtraWaitTime" : {"type" : 4, "value" : 0},
-                              "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [ {} ],
-                              "SoundEvent" : {"type" : 23, "value" : ""}
-                           }
-                        ],
-                        "ShowOnce" : {"type" : 19, "value" : 0},
-                        "TaggedTexts" : [
-                           {
-                              "TaggedText" : [
-                                 {
-                                    "HasTagRule" : {"type" : 19, "value" : 1},
-                                    "RuleGroup" : [
-                                       {
-                                          "Rules" : [ {} ],
-                                          "TagCombineOp" : {"type" : 1, "value" : 0}
-                                       }
-                                    ],
-                                    "TagTexts" : [
-                                       {
-                                          "TagText" : [
-                                             {
-                                                "TagText" : {
-                                                   "handle" : "h31a2f896g6e9fg47aegb876ga3d5ba3114b1",
-                                                   "type" : 28,
-                                                   "value" : "[Debug] Fix Dialog for Active LeaderLib Traders"
-                                                },
-                                                "stub" : {"type" : 19, "value" : 1}
-                                             }
-                                          ]
-                                       }
-                                    ]
-                                 }
-                              ]
-                           }
-                        ],
-                        "Tags" : [ {} ],
-                        "UUID" : {"type" : 22, "value" : "89bc6681-fa56-400f-b0ca-822afae4c19a"},
-                        "addressedspeaker" : {"type" : 4, "value" : -1},
-                        "checkflags" : [
-                           {
-                              "flaggroup" : [
-                                 {
-                                    "flag" : [
-                                       {
-                                          "name" : {"type" : 22, "value" : "LeaderLib_IsHost"},
-                                          "paramval" : {"type" : 4, "value" : 0},
-                                          "value" : {"type" : 19, "value" : 1}
-                                       }
-                                    ],"type" : {"type" : 22, "value" : "User"}}
-                              ]
-                           }
-                        ],
-                        "children" : [
-                           {
-                              "child" : [
-                                 {
-                                    "UUID" : {"type" : 22, "value" : "034c5c77-dc34-4b87-93a7-73c6f0eeacc3"}
-                                 }
-                              ]
-                           }
-                        ],
-                        "constructor" : {"type" : 22, "value" : "TagQuestion"},
-                        "editorData" : [
-                           {
-                              "data" : [
-                                 {
-                                    "key" : {"type" : 22, "value" : "ID"},
-                                    "val" : {"type" : 23, "value" : "N16"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "NodeContext"},
-                                    "val" : {"type" : 23, "value" : ""}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "collapsed"},
-                                    "val" : {"type" : 23, "value" : "False"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "logicalname"},
-                                    "val" : {"type" : 23, "value" : "Question"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "335;2205"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "sourcetemplate"},
-                                    "val" : {"type" : 23, "value" : ""}
-                                 }
-                              ]
-                           }
-                        ],
-                        "endnode" : {"type" : 19, "value" : 0},
-                        "exclusive" : {"type" : 19, "value" : 0},
-                        "optional" : {"type" : 19, "value" : 0},
-                        "setflags" : [
-                           {
-                              "flaggroup" : [
-                                 {
-                                    "flag" : [
-                                       {
-                                          "name" : {"type" : 22, "value" : "LeaderLib_Commands_CheckTraders"},
-                                          "paramval" : {"type" : 4, "value" : 0},
-                                          "value" : {"type" : 19, "value" : 1}
-                                       }
-                                    ],"type" : {"type" : 22, "value" : "Character"}}
-                              ]
-                           }
-                        ],
-                        "speaker" : {"type" : 4, "value" : 0},
-                        "stub" : {"type" : 19, "value" : 0},
-                        "transitionmode" : {"type" : 1, "value" : 0},
-                        "waittime" : {"type" : 6, "value" : -1.0}
-                     },
-                     {
-                        "GameData" : [
-                           {
-                              "AiPersonalities" : [ {} ],
-                              "CameraTarget" : {"type" : 4, "value" : -1},
-                              "CustomMovie" : {"type" : 23, "value" : ""},
-                              "Emotion" : {"type" : 23, "value" : "Default"},
-                              "ExtraWaitTime" : {"type" : 4, "value" : 0},
-                              "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [ {} ],
-                              "SoundEvent" : {"type" : 23, "value" : ""}
-                           }
-                        ],
-                        "ShowOnce" : {"type" : 19, "value" : 0},
-                        "TaggedTexts" : [
-                           {
-                              "TaggedText" : [
-                                 {
-                                    "HasTagRule" : {"type" : 19, "value" : 1},
-                                    "RuleGroup" : [
-                                       {
-                                          "Rules" : [ {} ],
-                                          "TagCombineOp" : {"type" : 1, "value" : 0}
-                                       }
-                                    ],
-                                    "TagTexts" : [
-                                       {
-                                          "TagText" : [
-                                             {
-                                                "TagText" : {
-                                                   "handle" : "ls::TranslatedStringRepository::s_HandleUnknown",
-                                                   "type" : 28,
-                                                   "value" : "[LUA] Reset LeaderLib Lua Scripts (<b>*WARNING*</b> For testing purposes only!)"
-                                                },
-                                                "stub" : {"type" : 19, "value" : 1}
-                                             }
-                                          ]
-                                       }
-                                    ]
-                                 }
-                              ]
-                           }
-                        ],
-                        "Tags" : [ {} ],
-                        "UUID" : {"type" : 22, "value" : "8b77d8ab-bb60-497b-8b59-7e19bf00c387"},
-                        "addressedspeaker" : {"type" : 4, "value" : -1},
-                        "checkflags" : [
-                           {
-                              "flaggroup" : [
-                                 {
-                                    "flag" : [
-                                       {
-                                          "name" : {"type" : 22, "value" : "LeaderLib_DebugModeEnabled"},"value" : {"type" : 19, "value" : 1}},
-                                       {
-                                          "name" : {"type" : 22, "value" : "LeaderLib_ExtenderIsActive"},"value" : {"type" : 19, "value" : 1}}
-                                    ],"type" : {"type" : 22, "value" : "Global"}},
-                                 {
-                                    "flag" : [
-                                       {
-                                          "name" : {"type" : 22, "value" : "LeaderLib_IsHost"},
-                                          "paramval" : {"type" : 4, "value" : 0},
-                                          "value" : {"type" : 19, "value" : 1}
-                                       }
-                                    ],"type" : {"type" : 22, "value" : "User"}}
-                              ]
-                           }
-                        ],
-                        "children" : [
-                           {
-                              "child" : [
-                                 {
-                                    "UUID" : {"type" : 22, "value" : "034c5c77-dc34-4b87-93a7-73c6f0eeacc3"}
-                                 }
-                              ]
-                           }
-                        ],
-                        "constructor" : {"type" : 22, "value" : "TagQuestion"},
-                        "editorData" : [
-                           {
-                              "data" : [
-                                 {
-                                    "key" : {"type" : 22, "value" : "ID"},
-                                    "val" : {"type" : 23, "value" : "N33"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "NodeContext"},
-                                    "val" : {"type" : 23, "value" : ""}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "collapsed"},
-                                    "val" : {"type" : 23, "value" : "False"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "logicalname"},
-                                    "val" : {"type" : 23, "value" : "Question"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "335;1986"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "sourcetemplate"},
-                                    "val" : {"type" : 23, "value" : ""}
-                                 }
-                              ]
-                           }
-                        ],
-                        "endnode" : {"type" : 19, "value" : 0},
-                        "exclusive" : {"type" : 19, "value" : 0},
-                        "optional" : {"type" : 19, "value" : 0},
-                        "setflags" : [
-                           {
-                              "flaggroup" : [
-                                 {
-                                    "flag" : [
-                                       {
-                                          "name" : {"type" : 22, "value" : "LeaderLib_Commands_ResetLua"},
-                                          "paramval" : {"type" : 4, "value" : 0},
-                                          "value" : {"type" : 19, "value" : 1}
-                                       }
-                                    ],"type" : {"type" : 22, "value" : "Character"}}
-                              ]
-                           }
-                        ],
-                        "speaker" : {"type" : 4, "value" : 0},
-                        "stub" : {"type" : 19, "value" : 0},
-                        "transitionmode" : {"type" : 1, "value" : 0},
-                        "waittime" : {"type" : 6, "value" : -1.0}
-                     },
-                     {
-                        "GameData" : [
-                           {
-                              "AiPersonalities" : [ {} ],
-                              "CameraTarget" : {"type" : 4, "value" : -1},
-                              "CustomMovie" : {"type" : 23, "value" : ""},
-                              "Emotion" : {"type" : 23, "value" : "Default"},
-                              "ExtraWaitTime" : {"type" : 4, "value" : 0},
-                              "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [ {} ],
-                              "SoundEvent" : {"type" : 23, "value" : ""}
-                           }
-                        ],
-                        "ShowOnce" : {"type" : 19, "value" : 0},
-                        "TaggedTexts" : [
-                           {
-                              "TaggedText" : [
-                                 {
-                                    "HasTagRule" : {"type" : 19, "value" : 1},
-                                    "RuleGroup" : [
-                                       {
-                                          "Rules" : [ {} ],
-                                          "TagCombineOp" : {"type" : 1, "value" : 0}
-                                       }
-                                    ],
-                                    "TagTexts" : [
-                                       {
-                                          "TagText" : [
-                                             {
-                                                "TagText" : {
-                                                   "handle" : "hc48478ceg4b78g4087g9dd6g27ba0e95a20b",
-                                                   "type" : 28,
-                                                   "value" : "[SAVE] Save Global Settings"
-                                                },
-                                                "stub" : {"type" : 19, "value" : 1}
-                                             }
-                                          ]
-                                       }
-                                    ]
-                                 }
-                              ]
-                           }
-                        ],
-                        "Tags" : [ {} ],
-                        "UUID" : {"type" : 22, "value" : "ac341297-478c-4bcc-95ff-183731dc599e"},
-                        "addressedspeaker" : {"type" : 4, "value" : -1},
-                        "checkflags" : [
-                           {
-                              "flaggroup" : [
-                                 {
-                                    "flag" : [
-                                       {
-                                          "name" : {"type" : 22, "value" : "LeaderLib_ExtenderIsActive"},"value" : {"type" : 19, "value" : 1}}
-                                    ],"type" : {"type" : 22, "value" : "Global"}},
-                                 {
-                                    "flag" : [
-                                       {
-                                          "name" : {"type" : 22, "value" : "LeaderLib_IsHost"},
-                                          "paramval" : {"type" : 4, "value" : 0},
-                                          "value" : {"type" : 19, "value" : 1}
-                                       }
-                                    ],"type" : {"type" : 22, "value" : "User"}}
-                              ]
-                           }
-                        ],
-                        "children" : [
-                           {
-                              "child" : [
-                                 {
-                                    "UUID" : {"type" : 22, "value" : "034c5c77-dc34-4b87-93a7-73c6f0eeacc3"}
-                                 }
-                              ]
-                           }
-                        ],
-                        "constructor" : {"type" : 22, "value" : "TagQuestion"},
-                        "editorData" : [
-                           {
-                              "data" : [
-                                 {
-                                    "key" : {"type" : 22, "value" : "ID"},
-                                    "val" : {"type" : 23, "value" : "N23"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "NodeContext"},
-                                    "val" : {"type" : 23, "value" : ""}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "collapsed"},
-                                    "val" : {"type" : 23, "value" : "False"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "logicalname"},
-                                    "val" : {"type" : 23, "value" : "Question"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "335;1767"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "sourcetemplate"},
-                                    "val" : {"type" : 23, "value" : ""}
-                                 }
-                              ]
-                           }
-                        ],
-                        "endnode" : {"type" : 19, "value" : 0},
-                        "exclusive" : {"type" : 19, "value" : 0},
-                        "optional" : {"type" : 19, "value" : 0},
-                        "setflags" : [
-                           {
-                              "flaggroup" : [
-                                 {
-                                    "flag" : [
-                                       {
-                                          "name" : {"type" : 22, "value" : "LeaderLib_Commands_SaveGlobalSettings"},
-                                          "paramval" : {"type" : 4, "value" : 0},
-                                          "value" : {"type" : 19, "value" : 1}
-                                       }
-                                    ],"type" : {"type" : 22, "value" : "Character"}}
-                              ]
-                           }
-                        ],
-                        "speaker" : {"type" : 4, "value" : 0},
-                        "stub" : {"type" : 19, "value" : 0},
-                        "transitionmode" : {"type" : 1, "value" : 0},
-                        "waittime" : {"type" : 6, "value" : -1.0}
-                     },
-                     {
-                        "GameData" : [
-                           {
-                              "AiPersonalities" : [ {} ],
-                              "CameraTarget" : {"type" : 4, "value" : -1},
-                              "CustomMovie" : {"type" : 23, "value" : ""},
-                              "Emotion" : {"type" : 23, "value" : "Default"},
-                              "ExtraWaitTime" : {"type" : 4, "value" : 0},
-                              "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [ {} ],
-                              "SoundEvent" : {"type" : 23, "value" : ""}
-                           }
-                        ],
-                        "ShowOnce" : {"type" : 19, "value" : 0},
-                        "TaggedTexts" : [
-                           {
-                              "TaggedText" : [
-                                 {
-                                    "HasTagRule" : {"type" : 19, "value" : 1},
-                                    "RuleGroup" : [
-                                       {
-                                          "Rules" : [ {} ],
-                                          "TagCombineOp" : {"type" : 1, "value" : 0}
-                                       }
-                                    ],
-                                    "TagTexts" : [
-                                       {
-                                          "TagText" : [
-                                             {
-                                                "TagText" : {
-                                                   "handle" : "h8859d107g3e28g44dega723gc7434a93f206",
-                                                   "type" : 28,
-                                                   "value" : "Add the Mod Menu Skill (Party)"
-                                                },
-                                                "stub" : {"type" : 19, "value" : 1}
-                                             }
-                                          ]
-                                       }
-                                    ]
-                                 }
-                              ]
-                           }
-                        ],
-                        "Tags" : [ {} ],
-                        "UUID" : {"type" : 22, "value" : "c284a2dc-93c1-48f2-b013-652c2003cad4"},
-                        "addressedspeaker" : {"type" : 4, "value" : -1},
-                        "checkflags" : [
-                           {
-                              "flaggroup" : [
-                                 {
-                                    "flag" : [
-                                       {
-                                          "name" : {"type" : 22, "value" : "LeaderLib_IsHost"},
-                                          "paramval" : {"type" : 4, "value" : 0},
-                                          "value" : {"type" : 19, "value" : 1}
-                                       }
-                                    ],"type" : {"type" : 22, "value" : "User"}}
-                              ]
-                           }
-                        ],
-                        "children" : [
-                           {
-                              "child" : [
-                                 {
-                                    "UUID" : {"type" : 22, "value" : "034c5c77-dc34-4b87-93a7-73c6f0eeacc3"}
-                                 }
-                              ]
-                           }
-                        ],
-                        "constructor" : {"type" : 22, "value" : "TagQuestion"},
-                        "editorData" : [
-                           {
-                              "data" : [
-                                 {
-                                    "key" : {"type" : 22, "value" : "ID"},
-                                    "val" : {"type" : 23, "value" : "N10"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "NodeContext"},
-                                    "val" : {"type" : 23, "value" : ""}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "collapsed"},
-                                    "val" : {"type" : 23, "value" : "False"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "logicalname"},
-                                    "val" : {"type" : 23, "value" : "Question"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "335;453"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "sourcetemplate"},
-                                    "val" : {"type" : 23, "value" : ""}
-                                 }
-                              ]
-                           }
-                        ],
-                        "endnode" : {"type" : 19, "value" : 0},
-                        "exclusive" : {"type" : 19, "value" : 0},
-                        "optional" : {"type" : 19, "value" : 0},
-                        "setflags" : [
-                           {
-                              "flaggroup" : [
-                                 {
-                                    "flag" : [
-                                       {
-                                          "name" : {"type" : 22, "value" : "LeaderLib_Commands_AddModMenuSkill"},
-                                          "paramval" : {"type" : 4, "value" : 0},
-                                          "value" : {"type" : 19, "value" : 1}
-                                       }
-                                    ],"type" : {"type" : 22, "value" : "Party"}}
-                              ]
-                           }
-                        ],
-                        "speaker" : {"type" : 4, "value" : 0},
-                        "stub" : {"type" : 19, "value" : 0},
-                        "transitionmode" : {"type" : 1, "value" : 0},
-                        "waittime" : {"type" : 6, "value" : -1.0}
-                     },
-                     {
-                        "GameData" : [
-                           {
-                              "AiPersonalities" : [ {} ],
-                              "CameraTarget" : {"type" : 4, "value" : -1},
-                              "CustomMovie" : {"type" : 23, "value" : ""},
-                              "Emotion" : {"type" : 23, "value" : "Default"},
-                              "ExtraWaitTime" : {"type" : 4, "value" : 0},
-                              "MusicInstrumentSounds" : [ {} ],
-                              "OriginSound" : [ {} ],
-                              "SoundEvent" : {"type" : 23, "value" : ""}
-                           }
-                        ],
-                        "ShowOnce" : {"type" : 19, "value" : 0},
-                        "TaggedTexts" : [
-                           {
-                              "TaggedText" : [
-                                 {
-                                    "HasTagRule" : {"type" : 19, "value" : 1},
-                                    "RuleGroup" : [
-                                       {
-                                          "Rules" : [ {} ],
-                                          "TagCombineOp" : {"type" : 1, "value" : 0}
-                                       }
-                                    ],
-                                    "TagTexts" : [
-                                       {
-                                          "TagText" : [
-                                             {
-                                                "TagText" : {
-                                                   "handle" : "h529c36c6g6b68g46e2g867dg863184908d5a",
-                                                   "type" : 28,
-                                                   "value" : "Remove the Mod Menu Skill (Self)"
-                                                },
-                                                "stub" : {"type" : 19, "value" : 1}
-                                             }
-                                          ]
-                                       }
-                                    ]
-                                 }
-                              ]
-                           }
-                        ],
-                        "Tags" : [ {} ],
-                        "UUID" : {"type" : 22, "value" : "dba894a2-22cc-4931-8330-ecda1e3e7b76"},
-                        "addressedspeaker" : {"type" : 4, "value" : -1},
-                        "checkflags" : [ {} ],
-                        "children" : [
-                           {
-                              "child" : [
-                                 {
-                                    "UUID" : {"type" : 22, "value" : "034c5c77-dc34-4b87-93a7-73c6f0eeacc3"}
-                                 }
-                              ]
-                           }
-                        ],
-                        "constructor" : {"type" : 22, "value" : "TagQuestion"},
-                        "editorData" : [
-                           {
-                              "data" : [
-                                 {
-                                    "key" : {"type" : 22, "value" : "ID"},
-                                    "val" : {"type" : 23, "value" : "N11"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "NodeContext"},
-                                    "val" : {"type" : 23, "value" : ""}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "collapsed"},
-                                    "val" : {"type" : 23, "value" : "False"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "logicalname"},
-                                    "val" : {"type" : 23, "value" : "Question"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "335;672"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "sourcetemplate"},
-                                    "val" : {"type" : 23, "value" : ""}
-                                 }
-                              ]
-                           }
-                        ],
-                        "endnode" : {"type" : 19, "value" : 0},
-                        "exclusive" : {"type" : 19, "value" : 0},
-                        "optional" : {"type" : 19, "value" : 0},
-                        "setflags" : [
-                           {
-                              "flaggroup" : [
-                                 {
-                                    "flag" : [
-                                       {
-                                          "name" : {"type" : 22, "value" : "LeaderLib_Commands_RemoveModMenuSkill"},
-                                          "paramval" : {"type" : 4, "value" : 0},
-                                          "value" : {"type" : 19, "value" : 1}
-                                       }
-                                    ],"type" : {"type" : 22, "value" : "Character"}}
-                              ]
-                           }
-                        ],
-                        "speaker" : {"type" : 4, "value" : 0},
-                        "stub" : {"type" : 19, "value" : 0},
-                        "transitionmode" : {"type" : 1, "value" : 0},
-                        "waittime" : {"type" : 6, "value" : -1.0}
-                     },
-                     {
-                        "ShowOnce" : {"type" : 19, "value" : 0},
-                        "Tags" : [ {} ],
-                        "UUID" : {"type" : 22, "value" : "e8e1633e-2387-4f75-99aa-68506d7319bb"},
-                        "children" : [ {} ],
-                        "constructor" : {"type" : 22, "value" : "Jump"},
-                        "editorData" : [
-                           {
-                              "data" : [
-                                 {
-                                    "key" : {"type" : 22, "value" : "ID"},
-                                    "val" : {"type" : 23, "value" : "N6"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "collapsed"},
-                                    "val" : {"type" : 23, "value" : "False"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "logicalname"},
-                                    "val" : {"type" : 23, "value" : "Jump"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "position"},
-                                    "val" : {"type" : 23, "value" : "975;234"}
-                                 },
-                                 {
-                                    "key" : {"type" : 22, "value" : "sourcetemplate"},
-                                    "val" : {"type" : 23, "value" : ""}
-                                 }
-                              ]
-                           }
-                        ],
-                        "endnode" : {"type" : 19, "value" : 0},
-                        "exclusive" : {"type" : 19, "value" : 0},
-                        "jumptarget" : {"type" : 22, "value" : "59971a40-b2a1-4a38-964b-4a892f5f4f09"},
-                        "jumptargetpoint" : {"type" : 1, "value" : 1},
-                        "optional" : {"type" : 19, "value" : 0},
-                        "transitionmode" : {"type" : 1, "value" : 0},
-                        "waittime" : {"type" : 6, "value" : -1.0}
-                     }
-                  ]
-               }
-            ],
-            "speakerlist" : [
-               {
-                  "speaker" : [
-                     {
-                        "index" : {"type" : 22, "value" : "0"},
-                        "list" : {"type" : 23, "value" : "e0d1ff71-04a8-4340-ae64-9684d846eb83"}
-                     }
-                  ]
-               }
-            ]
-         },
-         "editorData" : {
-            "needLayout" : {"type" : 19, "value" : 0},
-            "nextNodeId" : {"type" : 5, "value" : 33}
-         }
-      }
-   }
+	"save": {
+		"header": {
+			"time": 0,
+			"version": "2.0.8.2"
+		},
+		"regions": {
+			"dialog": {
+				"UUID": {
+					"type": 22,
+					"value": "4e541b9c-5c8b-4870-b93f-cd5d6f58e5dc"
+				},
+				"automated": {
+					"type": 19,
+					"value": false
+				},
+				"category": {
+					"type": 23,
+					"value": "Generic NPC Dialog"
+				},
+				"nodes": [
+					{
+						"RootNodes": [
+							{
+								"RootNodes": {
+									"type": 22,
+									"value": "59971a40-b2a1-4a38-964b-4a892f5f4f09"
+								}
+							}
+						],
+						"node": [
+							{
+								"ShowOnce": {
+									"type": 19,
+									"value": false
+								},
+								"UUID": {
+									"type": 22,
+									"value": "034c5c77-dc34-4b87-93a7-73c6f0eeacc3"
+								},
+								"addressedspeaker": {
+									"type": 4,
+									"value": -1
+								},
+								"constructor": {
+									"type": 22,
+									"value": "TagAnswer"
+								},
+								"endnode": {
+									"type": 19,
+									"value": false
+								},
+								"exclusive": {
+									"type": 19,
+									"value": false
+								},
+								"optional": {
+									"type": 19,
+									"value": false
+								},
+								"speaker": {
+									"type": 4,
+									"value": 0
+								},
+								"stub": {
+									"type": 19,
+									"value": false
+								},
+								"transitionmode": {
+									"type": 1,
+									"value": 2
+								},
+								"waittime": {
+									"type": 6,
+									"value": -1.0
+								},
+								"GameData": [
+									{
+										"CameraTarget": {
+											"type": 4,
+											"value": -1
+										},
+										"CustomMovie": {
+											"type": 23,
+											"value": ""
+										},
+										"Emotion": {
+											"type": 23,
+											"value": "Default"
+										},
+										"ExtraWaitTime": {
+											"type": 4,
+											"value": 0
+										},
+										"SoundEvent": {
+											"type": 23,
+											"value": ""
+										},
+										"AiPersonalities": [
+											{}
+										],
+										"MusicInstrumentSounds": [
+											{}
+										],
+										"OriginSound": [
+											{}
+										]
+									}
+								],
+								"TaggedTexts": [
+									{
+										"TaggedText": [
+											{
+												"HasTagRule": {
+													"type": 19,
+													"value": true
+												},
+												"RuleGroup": [
+													{
+														"TagCombineOp": {
+															"type": 1,
+															"value": 0
+														},
+														"Rules": [
+															{}
+														]
+													}
+												],
+												"TagTexts": [
+													{
+														"TagText": [
+															{
+																"TagText": {
+																	"type": 28,
+																	"value": "Running command...",
+																	"handle": "h632cbbd2g4193g4921g979fg1abd006f1e0b"
+																},
+																"stub": {
+																	"type": 19,
+																	"value": true
+																}
+															}
+														]
+													}
+												]
+											}
+										]
+									}
+								],
+								"Tags": [
+									{}
+								],
+								"checkflags": [
+									{}
+								],
+								"children": [
+									{
+										"child": [
+											{
+												"UUID": {
+													"type": 22,
+													"value": "e8e1633e-2387-4f75-99aa-68506d7319bb"
+												}
+											}
+										]
+									}
+								],
+								"editorData": [
+									{
+										"data": [
+											{
+												"key": {
+													"type": 22,
+													"value": "ID"
+												},
+												"val": {
+													"type": 23,
+													"value": "N4"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "NodeContext"
+												},
+												"val": {
+													"type": 23,
+													"value": ""
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "collapsed"
+												},
+												"val": {
+													"type": 23,
+													"value": "False"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "logicalname"
+												},
+												"val": {
+													"type": 23,
+													"value": "Answer"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "position"
+												},
+												"val": {
+													"type": 23,
+													"value": "655;234"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "sourcetemplate"
+												},
+												"val": {
+													"type": 23,
+													"value": ""
+												}
+											}
+										]
+									}
+								],
+								"setflags": [
+									{}
+								]
+							},
+							{
+								"ShowOnce": {
+									"type": 19,
+									"value": false
+								},
+								"UUID": {
+									"type": 22,
+									"value": "325371fe-4536-4d6f-930e-c97c3c4005af"
+								},
+								"addressedspeaker": {
+									"type": 4,
+									"value": -1
+								},
+								"constructor": {
+									"type": 22,
+									"value": "TagQuestion"
+								},
+								"endnode": {
+									"type": 19,
+									"value": true
+								},
+								"exclusive": {
+									"type": 19,
+									"value": false
+								},
+								"optional": {
+									"type": 19,
+									"value": false
+								},
+								"speaker": {
+									"type": 4,
+									"value": 0
+								},
+								"stub": {
+									"type": 19,
+									"value": false
+								},
+								"transitionmode": {
+									"type": 1,
+									"value": 0
+								},
+								"waittime": {
+									"type": 6,
+									"value": -1.0
+								},
+								"GameData": [
+									{
+										"CameraTarget": {
+											"type": 4,
+											"value": -1
+										},
+										"CustomMovie": {
+											"type": 23,
+											"value": ""
+										},
+										"Emotion": {
+											"type": 23,
+											"value": "Default"
+										},
+										"ExtraWaitTime": {
+											"type": 4,
+											"value": 0
+										},
+										"SoundEvent": {
+											"type": 23,
+											"value": ""
+										},
+										"AiPersonalities": [
+											{}
+										],
+										"MusicInstrumentSounds": [
+											{}
+										],
+										"OriginSound": [
+											{}
+										]
+									}
+								],
+								"TaggedTexts": [
+									{
+										"TaggedText": [
+											{
+												"HasTagRule": {
+													"type": 19,
+													"value": true
+												},
+												"RuleGroup": [
+													{
+														"TagCombineOp": {
+															"type": 1,
+															"value": 0
+														},
+														"Rules": [
+															{}
+														]
+													}
+												],
+												"TagTexts": [
+													{
+														"TagText": [
+															{
+																"TagText": {
+																	"type": 28,
+																	"value": "[Back]",
+																	"handle": "h5eb45b65g72aeg4b6cga7eegd42b61850315"
+																},
+																"stub": {
+																	"type": 19,
+																	"value": true
+																}
+															}
+														]
+													}
+												]
+											}
+										]
+									}
+								],
+								"Tags": [
+									{}
+								],
+								"checkflags": [
+									{}
+								],
+								"children": [
+									{}
+								],
+								"editorData": [
+									{
+										"data": [
+											{
+												"key": {
+													"type": 22,
+													"value": "ID"
+												},
+												"val": {
+													"type": 23,
+													"value": "N2"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "NodeContext"
+												},
+												"val": {
+													"type": 23,
+													"value": ""
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "collapsed"
+												},
+												"val": {
+													"type": 23,
+													"value": "False"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "logicalname"
+												},
+												"val": {
+													"type": 23,
+													"value": "Question"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "position"
+												},
+												"val": {
+													"type": 23,
+													"value": "335;15"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "sourcetemplate"
+												},
+												"val": {
+													"type": 23,
+													"value": ""
+												}
+											}
+										]
+									}
+								],
+								"setflags": [
+									{}
+								]
+							},
+							{
+								"ShowOnce": {
+									"type": 19,
+									"value": false
+								},
+								"UUID": {
+									"type": 22,
+									"value": "3d3e2dfc-2898-413e-87b0-f3490bf4bc72"
+								},
+								"addressedspeaker": {
+									"type": 4,
+									"value": -1
+								},
+								"constructor": {
+									"type": 22,
+									"value": "TagQuestion"
+								},
+								"endnode": {
+									"type": 19,
+									"value": false
+								},
+								"exclusive": {
+									"type": 19,
+									"value": false
+								},
+								"optional": {
+									"type": 19,
+									"value": false
+								},
+								"speaker": {
+									"type": 4,
+									"value": 0
+								},
+								"stub": {
+									"type": 19,
+									"value": false
+								},
+								"transitionmode": {
+									"type": 1,
+									"value": 0
+								},
+								"waittime": {
+									"type": 6,
+									"value": -1.0
+								},
+								"GameData": [
+									{
+										"CameraTarget": {
+											"type": 4,
+											"value": -1
+										},
+										"CustomMovie": {
+											"type": 23,
+											"value": ""
+										},
+										"Emotion": {
+											"type": 23,
+											"value": "Default"
+										},
+										"ExtraWaitTime": {
+											"type": 4,
+											"value": 0
+										},
+										"SoundEvent": {
+											"type": 23,
+											"value": ""
+										},
+										"AiPersonalities": [
+											{}
+										],
+										"MusicInstrumentSounds": [
+											{}
+										],
+										"OriginSound": [
+											{}
+										]
+									}
+								],
+								"TaggedTexts": [
+									{
+										"TaggedText": [
+											{
+												"HasTagRule": {
+													"type": 19,
+													"value": true
+												},
+												"RuleGroup": [
+													{
+														"TagCombineOp": {
+															"type": 1,
+															"value": 0
+														},
+														"Rules": [
+															{}
+														]
+													}
+												],
+												"TagTexts": [
+													{
+														"TagText": [
+															{
+																"TagText": {
+																	"type": 28,
+																	"value": "Add the Mod Menu Skill (Self)",
+																	"handle": "h68ad69bfg9d72g4107g8285g691dd3abc27e"
+																},
+																"stub": {
+																	"type": 19,
+																	"value": true
+																}
+															}
+														]
+													}
+												]
+											}
+										]
+									}
+								],
+								"Tags": [
+									{}
+								],
+								"checkflags": [
+									{}
+								],
+								"children": [
+									{
+										"child": [
+											{
+												"UUID": {
+													"type": 22,
+													"value": "034c5c77-dc34-4b87-93a7-73c6f0eeacc3"
+												}
+											}
+										]
+									}
+								],
+								"editorData": [
+									{
+										"data": [
+											{
+												"key": {
+													"type": 22,
+													"value": "ID"
+												},
+												"val": {
+													"type": 23,
+													"value": "N3"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "NodeContext"
+												},
+												"val": {
+													"type": 23,
+													"value": ""
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "collapsed"
+												},
+												"val": {
+													"type": 23,
+													"value": "False"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "logicalname"
+												},
+												"val": {
+													"type": 23,
+													"value": "Question"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "position"
+												},
+												"val": {
+													"type": 23,
+													"value": "335;234"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "sourcetemplate"
+												},
+												"val": {
+													"type": 23,
+													"value": ""
+												}
+											}
+										]
+									}
+								],
+								"setflags": [
+									{
+										"flaggroup": [
+											{
+												"type": {
+													"type": 22,
+													"value": "Character"
+												},
+												"flag": [
+													{
+														"name": {
+															"type": 22,
+															"value": "LeaderLib_Commands_AddModMenuSkill"
+														},
+														"paramval": {
+															"type": 4,
+															"value": 0
+														},
+														"value": {
+															"type": 19,
+															"value": true
+														}
+													}
+												]
+											}
+										]
+									}
+								]
+							},
+							{
+								"ShowOnce": {
+									"type": 19,
+									"value": false
+								},
+								"UUID": {
+									"type": 22,
+									"value": "4e4ea807-417b-43ca-80fc-2df600249cba"
+								},
+								"addressedspeaker": {
+									"type": 4,
+									"value": -1
+								},
+								"constructor": {
+									"type": 22,
+									"value": "TagQuestion"
+								},
+								"endnode": {
+									"type": 19,
+									"value": false
+								},
+								"exclusive": {
+									"type": 19,
+									"value": false
+								},
+								"optional": {
+									"type": 19,
+									"value": false
+								},
+								"speaker": {
+									"type": 4,
+									"value": 0
+								},
+								"stub": {
+									"type": 19,
+									"value": false
+								},
+								"transitionmode": {
+									"type": 1,
+									"value": 0
+								},
+								"waittime": {
+									"type": 6,
+									"value": -1.0
+								},
+								"GameData": [
+									{
+										"CameraTarget": {
+											"type": 4,
+											"value": -1
+										},
+										"CustomMovie": {
+											"type": 23,
+											"value": ""
+										},
+										"Emotion": {
+											"type": 23,
+											"value": "Default"
+										},
+										"ExtraWaitTime": {
+											"type": 4,
+											"value": 0
+										},
+										"SoundEvent": {
+											"type": 23,
+											"value": ""
+										},
+										"AiPersonalities": [
+											{}
+										],
+										"MusicInstrumentSounds": [
+											{}
+										],
+										"OriginSound": [
+											{}
+										]
+									}
+								],
+								"TaggedTexts": [
+									{
+										"TaggedText": [
+											{
+												"HasTagRule": {
+													"type": 19,
+													"value": true
+												},
+												"RuleGroup": [
+													{
+														"TagCombineOp": {
+															"type": 1,
+															"value": 0
+														},
+														"Rules": [
+															{}
+														]
+													}
+												],
+												"TagTexts": [
+													{
+														"TagText": [
+															{
+																"TagText": {
+																	"type": 28,
+																	"value": "Remove the Mod Menu Skill (Party)",
+																	"handle": "hbb25dcedgbd28g4408g80dcg3ab34bed0164"
+																},
+																"stub": {
+																	"type": 19,
+																	"value": true
+																}
+															}
+														]
+													}
+												]
+											}
+										]
+									}
+								],
+								"Tags": [
+									{}
+								],
+								"checkflags": [
+									{
+										"flaggroup": [
+											{
+												"type": {
+													"type": 22,
+													"value": "User"
+												},
+												"flag": [
+													{
+														"name": {
+															"type": 22,
+															"value": "LeaderLib_IsHost"
+														},
+														"paramval": {
+															"type": 4,
+															"value": 0
+														},
+														"value": {
+															"type": 19,
+															"value": true
+														}
+													}
+												]
+											}
+										]
+									}
+								],
+								"children": [
+									{
+										"child": [
+											{
+												"UUID": {
+													"type": 22,
+													"value": "034c5c77-dc34-4b87-93a7-73c6f0eeacc3"
+												}
+											}
+										]
+									}
+								],
+								"editorData": [
+									{
+										"data": [
+											{
+												"key": {
+													"type": 22,
+													"value": "ID"
+												},
+												"val": {
+													"type": 23,
+													"value": "N15"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "NodeContext"
+												},
+												"val": {
+													"type": 23,
+													"value": ""
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "collapsed"
+												},
+												"val": {
+													"type": 23,
+													"value": "False"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "logicalname"
+												},
+												"val": {
+													"type": 23,
+													"value": "Question"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "position"
+												},
+												"val": {
+													"type": 23,
+													"value": "335;891"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "sourcetemplate"
+												},
+												"val": {
+													"type": 23,
+													"value": ""
+												}
+											}
+										]
+									}
+								],
+								"setflags": [
+									{
+										"flaggroup": [
+											{
+												"type": {
+													"type": 22,
+													"value": "Party"
+												},
+												"flag": [
+													{
+														"name": {
+															"type": 22,
+															"value": "LeaderLib_Commands_RemoveModMenuSkill"
+														},
+														"paramval": {
+															"type": 4,
+															"value": 0
+														},
+														"value": {
+															"type": 19,
+															"value": true
+														}
+													}
+												]
+											}
+										]
+									}
+								]
+							},
+							{
+								"ShowOnce": {
+									"type": 19,
+									"value": false
+								},
+								"UUID": {
+									"type": 22,
+									"value": "59971a40-b2a1-4a38-964b-4a892f5f4f09"
+								},
+								"addressedspeaker": {
+									"type": 4,
+									"value": -1
+								},
+								"constructor": {
+									"type": 22,
+									"value": "TagGreeting"
+								},
+								"endnode": {
+									"type": 19,
+									"value": false
+								},
+								"exclusive": {
+									"type": 19,
+									"value": false
+								},
+								"optional": {
+									"type": 19,
+									"value": false
+								},
+								"speaker": {
+									"type": 4,
+									"value": 0
+								},
+								"stub": {
+									"type": 19,
+									"value": true
+								},
+								"transitionmode": {
+									"type": 1,
+									"value": 0
+								},
+								"waittime": {
+									"type": 6,
+									"value": -1.0
+								},
+								"GameData": [
+									{
+										"CameraTarget": {
+											"type": 4,
+											"value": -1
+										},
+										"CustomMovie": {
+											"type": 23,
+											"value": ""
+										},
+										"Emotion": {
+											"type": 23,
+											"value": "Default"
+										},
+										"ExtraWaitTime": {
+											"type": 4,
+											"value": 0
+										},
+										"SoundEvent": {
+											"type": 23,
+											"value": ""
+										},
+										"AiPersonalities": [
+											{}
+										],
+										"MusicInstrumentSounds": [
+											{}
+										],
+										"OriginSound": [
+											{}
+										]
+									}
+								],
+								"TaggedTexts": [
+									{
+										"TaggedText": [
+											{
+												"HasTagRule": {
+													"type": 19,
+													"value": true
+												},
+												"RuleGroup": [
+													{
+														"TagCombineOp": {
+															"type": 1,
+															"value": 0
+														},
+														"Rules": [
+															{}
+														]
+													}
+												],
+												"TagTexts": [
+													{
+														"TagText": [
+															{
+																"TagText": {
+																	"type": 28,
+																	"value": "Commands",
+																	"handle": "h86be6c1eg4261g4c62gb949gab7b24bfd1f8"
+																},
+																"stub": {
+																	"type": 19,
+																	"value": true
+																}
+															}
+														]
+													}
+												]
+											}
+										]
+									}
+								],
+								"Tags": [
+									{}
+								],
+								"checkflags": [
+									{}
+								],
+								"children": [
+									{
+										"child": [
+											{
+												"UUID": {
+													"type": 22,
+													"value": "325371fe-4536-4d6f-930e-c97c3c4005af"
+												}
+											},
+											{
+												"UUID": {
+													"type": 22,
+													"value": "3d3e2dfc-2898-413e-87b0-f3490bf4bc72"
+												}
+											},
+											{
+												"UUID": {
+													"type": 22,
+													"value": "c284a2dc-93c1-48f2-b013-652c2003cad4"
+												}
+											},
+											{
+												"UUID": {
+													"type": 22,
+													"value": "dba894a2-22cc-4931-8330-ecda1e3e7b76"
+												}
+											},
+											{
+												"UUID": {
+													"type": 22,
+													"value": "4e4ea807-417b-43ca-80fc-2df600249cba"
+												}
+											},
+											{
+												"UUID": {
+													"type": 22,
+													"value": "82c908ec-2a5e-4a9c-b5de-d91c8e2a97c9"
+												}
+											},
+											{
+												"UUID": {
+													"type": 22,
+													"value": "82c8717e-9879-4e30-8dc0-1f433b324a68"
+												}
+											},
+											{
+												"UUID": {
+													"type": 22,
+													"value": "8570f010-350d-419d-9ced-db2d3e5b6c78"
+												}
+											},
+											{
+												"UUID": {
+													"type": 22,
+													"value": "ac341297-478c-4bcc-95ff-183731dc599e"
+												}
+											},
+											{
+												"UUID": {
+													"type": 22,
+													"value": "8b77d8ab-bb60-497b-8b59-7e19bf00c387"
+												}
+											},
+											{
+												"UUID": {
+													"type": 22,
+													"value": "89bc6681-fa56-400f-b0ca-822afae4c19a"
+												}
+											}
+										]
+									}
+								],
+								"editorData": [
+									{
+										"data": [
+											{
+												"key": {
+													"type": 22,
+													"value": "ID"
+												},
+												"val": {
+													"type": 23,
+													"value": "N1"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "NodeContext"
+												},
+												"val": {
+													"type": 23,
+													"value": ""
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "collapsed"
+												},
+												"val": {
+													"type": 23,
+													"value": "False"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "logicalname"
+												},
+												"val": {
+													"type": 23,
+													"value": "Greeting"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "position"
+												},
+												"val": {
+													"type": 23,
+													"value": "15;15"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "sourcetemplate"
+												},
+												"val": {
+													"type": 23,
+													"value": ""
+												}
+											}
+										]
+									}
+								],
+								"setflags": [
+									{}
+								]
+							},
+							{
+								"ShowOnce": {
+									"type": 19,
+									"value": false
+								},
+								"UUID": {
+									"type": 22,
+									"value": "82c8717e-9879-4e30-8dc0-1f433b324a68"
+								},
+								"addressedspeaker": {
+									"type": 4,
+									"value": -1
+								},
+								"constructor": {
+									"type": 22,
+									"value": "TagQuestion"
+								},
+								"endnode": {
+									"type": 19,
+									"value": false
+								},
+								"exclusive": {
+									"type": 19,
+									"value": false
+								},
+								"optional": {
+									"type": 19,
+									"value": false
+								},
+								"speaker": {
+									"type": 4,
+									"value": 0
+								},
+								"stub": {
+									"type": 19,
+									"value": false
+								},
+								"transitionmode": {
+									"type": 1,
+									"value": 0
+								},
+								"waittime": {
+									"type": 6,
+									"value": -1.0
+								},
+								"GameData": [
+									{
+										"CameraTarget": {
+											"type": 4,
+											"value": -1
+										},
+										"CustomMovie": {
+											"type": 23,
+											"value": ""
+										},
+										"Emotion": {
+											"type": 23,
+											"value": "Default"
+										},
+										"ExtraWaitTime": {
+											"type": 4,
+											"value": 0
+										},
+										"SoundEvent": {
+											"type": 23,
+											"value": ""
+										},
+										"AiPersonalities": [
+											{}
+										],
+										"MusicInstrumentSounds": [
+											{}
+										],
+										"OriginSound": [
+											{}
+										]
+									}
+								],
+								"TaggedTexts": [
+									{
+										"TaggedText": [
+											{
+												"HasTagRule": {
+													"type": 19,
+													"value": true
+												},
+												"RuleGroup": [
+													{
+														"TagCombineOp": {
+															"type": 1,
+															"value": 0
+														},
+														"Rules": [
+															{}
+														]
+													}
+												],
+												"TagTexts": [
+													{
+														"TagText": [
+															{
+																"TagText": {
+																	"type": 28,
+																	"value": "Remove Chain/Unchain Skills (User - All Owned Characters)<br>",
+																	"handle": "h65b39fe2gab3ag4f22gbddfg661799bb0841"
+																},
+																"stub": {
+																	"type": 19,
+																	"value": true
+																}
+															}
+														]
+													}
+												]
+											}
+										]
+									}
+								],
+								"Tags": [
+									{}
+								],
+								"checkflags": [
+									{}
+								],
+								"children": [
+									{
+										"child": [
+											{
+												"UUID": {
+													"type": 22,
+													"value": "034c5c77-dc34-4b87-93a7-73c6f0eeacc3"
+												}
+											}
+										]
+									}
+								],
+								"editorData": [
+									{
+										"data": [
+											{
+												"key": {
+													"type": 22,
+													"value": "ID"
+												},
+												"val": {
+													"type": 23,
+													"value": "N31"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "NodeContext"
+												},
+												"val": {
+													"type": 23,
+													"value": ""
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "collapsed"
+												},
+												"val": {
+													"type": 23,
+													"value": "False"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "logicalname"
+												},
+												"val": {
+													"type": 23,
+													"value": "Question"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "position"
+												},
+												"val": {
+													"type": 23,
+													"value": "335;1329"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "sourcetemplate"
+												},
+												"val": {
+													"type": 23,
+													"value": ""
+												}
+											}
+										]
+									}
+								],
+								"setflags": [
+									{
+										"flaggroup": [
+											{
+												"type": {
+													"type": 22,
+													"value": "User"
+												},
+												"flag": [
+													{
+														"name": {
+															"type": 22,
+															"value": "LeaderLib_Commands_RemoveChainSkills"
+														},
+														"paramval": {
+															"type": 4,
+															"value": 0
+														},
+														"value": {
+															"type": 19,
+															"value": true
+														}
+													}
+												]
+											}
+										]
+									}
+								]
+							},
+							{
+								"ShowOnce": {
+									"type": 19,
+									"value": false
+								},
+								"UUID": {
+									"type": 22,
+									"value": "82c908ec-2a5e-4a9c-b5de-d91c8e2a97c9"
+								},
+								"addressedspeaker": {
+									"type": 4,
+									"value": -1
+								},
+								"constructor": {
+									"type": 22,
+									"value": "TagQuestion"
+								},
+								"endnode": {
+									"type": 19,
+									"value": false
+								},
+								"exclusive": {
+									"type": 19,
+									"value": false
+								},
+								"optional": {
+									"type": 19,
+									"value": false
+								},
+								"speaker": {
+									"type": 4,
+									"value": 0
+								},
+								"stub": {
+									"type": 19,
+									"value": false
+								},
+								"transitionmode": {
+									"type": 1,
+									"value": 0
+								},
+								"waittime": {
+									"type": 6,
+									"value": -1.0
+								},
+								"GameData": [
+									{
+										"CameraTarget": {
+											"type": 4,
+											"value": -1
+										},
+										"CustomMovie": {
+											"type": 23,
+											"value": ""
+										},
+										"Emotion": {
+											"type": 23,
+											"value": "Default"
+										},
+										"ExtraWaitTime": {
+											"type": 4,
+											"value": 0
+										},
+										"SoundEvent": {
+											"type": 23,
+											"value": ""
+										},
+										"AiPersonalities": [
+											{}
+										],
+										"MusicInstrumentSounds": [
+											{}
+										],
+										"OriginSound": [
+											{}
+										]
+									}
+								],
+								"TaggedTexts": [
+									{
+										"TaggedText": [
+											{
+												"HasTagRule": {
+													"type": 19,
+													"value": true
+												},
+												"RuleGroup": [
+													{
+														"TagCombineOp": {
+															"type": 1,
+															"value": 0
+														},
+														"Rules": [
+															{}
+														]
+													}
+												],
+												"TagTexts": [
+													{
+														"TagText": [
+															{
+																"TagText": {
+																	"type": 28,
+																	"value": "Add Chain/Unchain Skills (User - All Owned Characters)",
+																	"handle": "h87df678agafbeg4816gbd41g1708cb5b2a41"
+																},
+																"stub": {
+																	"type": 19,
+																	"value": true
+																}
+															}
+														]
+													}
+												]
+											}
+										]
+									}
+								],
+								"Tags": [
+									{}
+								],
+								"checkflags": [
+									{}
+								],
+								"children": [
+									{
+										"child": [
+											{
+												"UUID": {
+													"type": 22,
+													"value": "034c5c77-dc34-4b87-93a7-73c6f0eeacc3"
+												}
+											}
+										]
+									}
+								],
+								"editorData": [
+									{
+										"data": [
+											{
+												"key": {
+													"type": 22,
+													"value": "ID"
+												},
+												"val": {
+													"type": 23,
+													"value": "N27"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "NodeContext"
+												},
+												"val": {
+													"type": 23,
+													"value": ""
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "collapsed"
+												},
+												"val": {
+													"type": 23,
+													"value": "False"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "logicalname"
+												},
+												"val": {
+													"type": 23,
+													"value": "Question"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "position"
+												},
+												"val": {
+													"type": 23,
+													"value": "335;1110"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "sourcetemplate"
+												},
+												"val": {
+													"type": 23,
+													"value": ""
+												}
+											}
+										]
+									}
+								],
+								"setflags": [
+									{
+										"flaggroup": [
+											{
+												"type": {
+													"type": 22,
+													"value": "User"
+												},
+												"flag": [
+													{
+														"name": {
+															"type": 22,
+															"value": "LeaderLib_Commands_AddChainSkills"
+														},
+														"paramval": {
+															"type": 4,
+															"value": 0
+														},
+														"value": {
+															"type": 19,
+															"value": true
+														}
+													}
+												]
+											}
+										]
+									}
+								]
+							},
+							{
+								"ShowOnce": {
+									"type": 19,
+									"value": false
+								},
+								"UUID": {
+									"type": 22,
+									"value": "8570f010-350d-419d-9ced-db2d3e5b6c78"
+								},
+								"addressedspeaker": {
+									"type": 4,
+									"value": -1
+								},
+								"constructor": {
+									"type": 22,
+									"value": "TagQuestion"
+								},
+								"endnode": {
+									"type": 19,
+									"value": false
+								},
+								"exclusive": {
+									"type": 19,
+									"value": false
+								},
+								"optional": {
+									"type": 19,
+									"value": false
+								},
+								"speaker": {
+									"type": 4,
+									"value": 0
+								},
+								"stub": {
+									"type": 19,
+									"value": false
+								},
+								"transitionmode": {
+									"type": 1,
+									"value": 0
+								},
+								"waittime": {
+									"type": 6,
+									"value": -1.0
+								},
+								"GameData": [
+									{
+										"CameraTarget": {
+											"type": 4,
+											"value": -1
+										},
+										"CustomMovie": {
+											"type": 23,
+											"value": ""
+										},
+										"Emotion": {
+											"type": 23,
+											"value": "Default"
+										},
+										"ExtraWaitTime": {
+											"type": 4,
+											"value": 0
+										},
+										"SoundEvent": {
+											"type": 23,
+											"value": ""
+										},
+										"AiPersonalities": [
+											{}
+										],
+										"MusicInstrumentSounds": [
+											{}
+										],
+										"OriginSound": [
+											{}
+										]
+									}
+								],
+								"TaggedTexts": [
+									{
+										"TaggedText": [
+											{
+												"HasTagRule": {
+													"type": 19,
+													"value": true
+												},
+												"RuleGroup": [
+													{
+														"TagCombineOp": {
+															"type": 1,
+															"value": 0
+														},
+														"Rules": [
+															{}
+														]
+													}
+												],
+												"TagTexts": [
+													{
+														"TagText": [
+															{
+																"TagText": {
+																	"type": 28,
+																	"value": "[LOAD] Load Global Settings",
+																	"handle": "h1c1d8acag9819g4028g860fg9a546af236ee"
+																},
+																"stub": {
+																	"type": 19,
+																	"value": true
+																}
+															}
+														]
+													}
+												]
+											}
+										]
+									}
+								],
+								"Tags": [
+									{}
+								],
+								"checkflags": [
+									{
+										"flaggroup": [
+											{
+												"type": {
+													"type": 22,
+													"value": "Global"
+												},
+												"flag": [
+													{
+														"name": {
+															"type": 22,
+															"value": "LeaderLib_ExtenderIsActive"
+														},
+														"value": {
+															"type": 19,
+															"value": true
+														}
+													}
+												]
+											},
+											{
+												"type": {
+													"type": 22,
+													"value": "User"
+												},
+												"flag": [
+													{
+														"name": {
+															"type": 22,
+															"value": "LeaderLib_IsHost"
+														},
+														"paramval": {
+															"type": 4,
+															"value": 0
+														},
+														"value": {
+															"type": 19,
+															"value": true
+														}
+													}
+												]
+											}
+										]
+									}
+								],
+								"children": [
+									{
+										"child": [
+											{
+												"UUID": {
+													"type": 22,
+													"value": "034c5c77-dc34-4b87-93a7-73c6f0eeacc3"
+												}
+											}
+										]
+									}
+								],
+								"editorData": [
+									{
+										"data": [
+											{
+												"key": {
+													"type": 22,
+													"value": "ID"
+												},
+												"val": {
+													"type": 23,
+													"value": "N19"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "NodeContext"
+												},
+												"val": {
+													"type": 23,
+													"value": ""
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "collapsed"
+												},
+												"val": {
+													"type": 23,
+													"value": "False"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "logicalname"
+												},
+												"val": {
+													"type": 23,
+													"value": "Question"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "position"
+												},
+												"val": {
+													"type": 23,
+													"value": "335;1548"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "sourcetemplate"
+												},
+												"val": {
+													"type": 23,
+													"value": ""
+												}
+											}
+										]
+									}
+								],
+								"setflags": [
+									{
+										"flaggroup": [
+											{
+												"type": {
+													"type": 22,
+													"value": "Character"
+												},
+												"flag": [
+													{
+														"name": {
+															"type": 22,
+															"value": "LeaderLib_Commands_LoadGlobalSettings"
+														},
+														"paramval": {
+															"type": 4,
+															"value": 0
+														},
+														"value": {
+															"type": 19,
+															"value": true
+														}
+													}
+												]
+											}
+										]
+									}
+								]
+							},
+							{
+								"ShowOnce": {
+									"type": 19,
+									"value": false
+								},
+								"UUID": {
+									"type": 22,
+									"value": "89bc6681-fa56-400f-b0ca-822afae4c19a"
+								},
+								"addressedspeaker": {
+									"type": 4,
+									"value": -1
+								},
+								"constructor": {
+									"type": 22,
+									"value": "TagQuestion"
+								},
+								"endnode": {
+									"type": 19,
+									"value": false
+								},
+								"exclusive": {
+									"type": 19,
+									"value": false
+								},
+								"optional": {
+									"type": 19,
+									"value": false
+								},
+								"speaker": {
+									"type": 4,
+									"value": 0
+								},
+								"stub": {
+									"type": 19,
+									"value": false
+								},
+								"transitionmode": {
+									"type": 1,
+									"value": 0
+								},
+								"waittime": {
+									"type": 6,
+									"value": -1.0
+								},
+								"GameData": [
+									{
+										"CameraTarget": {
+											"type": 4,
+											"value": -1
+										},
+										"CustomMovie": {
+											"type": 23,
+											"value": ""
+										},
+										"Emotion": {
+											"type": 23,
+											"value": "Default"
+										},
+										"ExtraWaitTime": {
+											"type": 4,
+											"value": 0
+										},
+										"SoundEvent": {
+											"type": 23,
+											"value": ""
+										},
+										"AiPersonalities": [
+											{}
+										],
+										"MusicInstrumentSounds": [
+											{}
+										],
+										"OriginSound": [
+											{}
+										]
+									}
+								],
+								"TaggedTexts": [
+									{
+										"TaggedText": [
+											{
+												"HasTagRule": {
+													"type": 19,
+													"value": true
+												},
+												"RuleGroup": [
+													{
+														"TagCombineOp": {
+															"type": 1,
+															"value": 0
+														},
+														"Rules": [
+															{}
+														]
+													}
+												],
+												"TagTexts": [
+													{
+														"TagText": [
+															{
+																"TagText": {
+																	"type": 28,
+																	"value": "[Debug] Fix Dialog for Active LeaderLib Traders",
+																	"handle": "h31a2f896g6e9fg47aegb876ga3d5ba3114b1"
+																},
+																"stub": {
+																	"type": 19,
+																	"value": true
+																}
+															}
+														]
+													}
+												]
+											}
+										]
+									}
+								],
+								"Tags": [
+									{}
+								],
+								"checkflags": [
+									{
+										"flaggroup": [
+											{
+												"type": {
+													"type": 22,
+													"value": "User"
+												},
+												"flag": [
+													{
+														"name": {
+															"type": 22,
+															"value": "LeaderLib_IsHost"
+														},
+														"paramval": {
+															"type": 4,
+															"value": 0
+														},
+														"value": {
+															"type": 19,
+															"value": true
+														}
+													}
+												]
+											}
+										]
+									}
+								],
+								"children": [
+									{
+										"child": [
+											{
+												"UUID": {
+													"type": 22,
+													"value": "034c5c77-dc34-4b87-93a7-73c6f0eeacc3"
+												}
+											}
+										]
+									}
+								],
+								"editorData": [
+									{
+										"data": [
+											{
+												"key": {
+													"type": 22,
+													"value": "ID"
+												},
+												"val": {
+													"type": 23,
+													"value": "N16"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "NodeContext"
+												},
+												"val": {
+													"type": 23,
+													"value": ""
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "collapsed"
+												},
+												"val": {
+													"type": 23,
+													"value": "False"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "logicalname"
+												},
+												"val": {
+													"type": 23,
+													"value": "Question"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "position"
+												},
+												"val": {
+													"type": 23,
+													"value": "335;2205"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "sourcetemplate"
+												},
+												"val": {
+													"type": 23,
+													"value": ""
+												}
+											}
+										]
+									}
+								],
+								"setflags": [
+									{
+										"flaggroup": [
+											{
+												"type": {
+													"type": 22,
+													"value": "Character"
+												},
+												"flag": [
+													{
+														"name": {
+															"type": 22,
+															"value": "LeaderLib_Commands_CheckTraders"
+														},
+														"paramval": {
+															"type": 4,
+															"value": 0
+														},
+														"value": {
+															"type": 19,
+															"value": true
+														}
+													}
+												]
+											}
+										]
+									}
+								]
+							},
+							{
+								"ShowOnce": {
+									"type": 19,
+									"value": false
+								},
+								"UUID": {
+									"type": 22,
+									"value": "8b77d8ab-bb60-497b-8b59-7e19bf00c387"
+								},
+								"addressedspeaker": {
+									"type": 4,
+									"value": -1
+								},
+								"constructor": {
+									"type": 22,
+									"value": "TagQuestion"
+								},
+								"endnode": {
+									"type": 19,
+									"value": false
+								},
+								"exclusive": {
+									"type": 19,
+									"value": false
+								},
+								"optional": {
+									"type": 19,
+									"value": false
+								},
+								"speaker": {
+									"type": 4,
+									"value": 0
+								},
+								"stub": {
+									"type": 19,
+									"value": false
+								},
+								"transitionmode": {
+									"type": 1,
+									"value": 0
+								},
+								"waittime": {
+									"type": 6,
+									"value": -1.0
+								},
+								"GameData": [
+									{
+										"CameraTarget": {
+											"type": 4,
+											"value": -1
+										},
+										"CustomMovie": {
+											"type": 23,
+											"value": ""
+										},
+										"Emotion": {
+											"type": 23,
+											"value": "Default"
+										},
+										"ExtraWaitTime": {
+											"type": 4,
+											"value": 0
+										},
+										"SoundEvent": {
+											"type": 23,
+											"value": ""
+										},
+										"AiPersonalities": [
+											{}
+										],
+										"MusicInstrumentSounds": [
+											{}
+										],
+										"OriginSound": [
+											{}
+										]
+									}
+								],
+								"TaggedTexts": [
+									{
+										"TaggedText": [
+											{
+												"HasTagRule": {
+													"type": 19,
+													"value": true
+												},
+												"RuleGroup": [
+													{
+														"TagCombineOp": {
+															"type": 1,
+															"value": 0
+														},
+														"Rules": [
+															{}
+														]
+													}
+												],
+												"TagTexts": [
+													{
+														"TagText": [
+															{
+																"TagText": {
+																	"type": 28,
+																	"value": "[LUA] Reset LeaderLib Lua Scripts (<b>*WARNING*</b> For testing purposes only!)",
+																	"handle": "hd525dc1fg4819g40b1g9bb8gc896dad435bd"
+																},
+																"stub": {
+																	"type": 19,
+																	"value": true
+																}
+															}
+														]
+													}
+												]
+											}
+										]
+									}
+								],
+								"Tags": [
+									{}
+								],
+								"checkflags": [
+									{
+										"flaggroup": [
+											{
+												"type": {
+													"type": 22,
+													"value": "Global"
+												},
+												"flag": [
+													{
+														"name": {
+															"type": 22,
+															"value": "LeaderLib_DebugModeEnabled"
+														},
+														"value": {
+															"type": 19,
+															"value": true
+														}
+													},
+													{
+														"name": {
+															"type": 22,
+															"value": "LeaderLib_ExtenderIsActive"
+														},
+														"value": {
+															"type": 19,
+															"value": true
+														}
+													}
+												]
+											},
+											{
+												"type": {
+													"type": 22,
+													"value": "User"
+												},
+												"flag": [
+													{
+														"name": {
+															"type": 22,
+															"value": "LeaderLib_IsHost"
+														},
+														"paramval": {
+															"type": 4,
+															"value": 0
+														},
+														"value": {
+															"type": 19,
+															"value": true
+														}
+													}
+												]
+											}
+										]
+									}
+								],
+								"children": [
+									{
+										"child": [
+											{
+												"UUID": {
+													"type": 22,
+													"value": "034c5c77-dc34-4b87-93a7-73c6f0eeacc3"
+												}
+											}
+										]
+									}
+								],
+								"editorData": [
+									{
+										"data": [
+											{
+												"key": {
+													"type": 22,
+													"value": "ID"
+												},
+												"val": {
+													"type": 23,
+													"value": "N33"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "NodeContext"
+												},
+												"val": {
+													"type": 23,
+													"value": ""
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "collapsed"
+												},
+												"val": {
+													"type": 23,
+													"value": "False"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "logicalname"
+												},
+												"val": {
+													"type": 23,
+													"value": "Question"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "position"
+												},
+												"val": {
+													"type": 23,
+													"value": "335;1986"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "sourcetemplate"
+												},
+												"val": {
+													"type": 23,
+													"value": ""
+												}
+											}
+										]
+									}
+								],
+								"setflags": [
+									{
+										"flaggroup": [
+											{
+												"type": {
+													"type": 22,
+													"value": "Character"
+												},
+												"flag": [
+													{
+														"name": {
+															"type": 22,
+															"value": "LeaderLib_Commands_ResetLua"
+														},
+														"paramval": {
+															"type": 4,
+															"value": 0
+														},
+														"value": {
+															"type": 19,
+															"value": true
+														}
+													}
+												]
+											}
+										]
+									}
+								]
+							},
+							{
+								"ShowOnce": {
+									"type": 19,
+									"value": false
+								},
+								"UUID": {
+									"type": 22,
+									"value": "ac341297-478c-4bcc-95ff-183731dc599e"
+								},
+								"addressedspeaker": {
+									"type": 4,
+									"value": -1
+								},
+								"constructor": {
+									"type": 22,
+									"value": "TagQuestion"
+								},
+								"endnode": {
+									"type": 19,
+									"value": false
+								},
+								"exclusive": {
+									"type": 19,
+									"value": false
+								},
+								"optional": {
+									"type": 19,
+									"value": false
+								},
+								"speaker": {
+									"type": 4,
+									"value": 0
+								},
+								"stub": {
+									"type": 19,
+									"value": false
+								},
+								"transitionmode": {
+									"type": 1,
+									"value": 0
+								},
+								"waittime": {
+									"type": 6,
+									"value": -1.0
+								},
+								"GameData": [
+									{
+										"CameraTarget": {
+											"type": 4,
+											"value": -1
+										},
+										"CustomMovie": {
+											"type": 23,
+											"value": ""
+										},
+										"Emotion": {
+											"type": 23,
+											"value": "Default"
+										},
+										"ExtraWaitTime": {
+											"type": 4,
+											"value": 0
+										},
+										"SoundEvent": {
+											"type": 23,
+											"value": ""
+										},
+										"AiPersonalities": [
+											{}
+										],
+										"MusicInstrumentSounds": [
+											{}
+										],
+										"OriginSound": [
+											{}
+										]
+									}
+								],
+								"TaggedTexts": [
+									{
+										"TaggedText": [
+											{
+												"HasTagRule": {
+													"type": 19,
+													"value": true
+												},
+												"RuleGroup": [
+													{
+														"TagCombineOp": {
+															"type": 1,
+															"value": 0
+														},
+														"Rules": [
+															{}
+														]
+													}
+												],
+												"TagTexts": [
+													{
+														"TagText": [
+															{
+																"TagText": {
+																	"type": 28,
+																	"value": "[SAVE] Save Global Settings",
+																	"handle": "hc48478ceg4b78g4087g9dd6g27ba0e95a20b"
+																},
+																"stub": {
+																	"type": 19,
+																	"value": true
+																}
+															}
+														]
+													}
+												]
+											}
+										]
+									}
+								],
+								"Tags": [
+									{}
+								],
+								"checkflags": [
+									{
+										"flaggroup": [
+											{
+												"type": {
+													"type": 22,
+													"value": "Global"
+												},
+												"flag": [
+													{
+														"name": {
+															"type": 22,
+															"value": "LeaderLib_ExtenderIsActive"
+														},
+														"value": {
+															"type": 19,
+															"value": true
+														}
+													}
+												]
+											},
+											{
+												"type": {
+													"type": 22,
+													"value": "User"
+												},
+												"flag": [
+													{
+														"name": {
+															"type": 22,
+															"value": "LeaderLib_IsHost"
+														},
+														"paramval": {
+															"type": 4,
+															"value": 0
+														},
+														"value": {
+															"type": 19,
+															"value": true
+														}
+													}
+												]
+											}
+										]
+									}
+								],
+								"children": [
+									{
+										"child": [
+											{
+												"UUID": {
+													"type": 22,
+													"value": "034c5c77-dc34-4b87-93a7-73c6f0eeacc3"
+												}
+											}
+										]
+									}
+								],
+								"editorData": [
+									{
+										"data": [
+											{
+												"key": {
+													"type": 22,
+													"value": "ID"
+												},
+												"val": {
+													"type": 23,
+													"value": "N23"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "NodeContext"
+												},
+												"val": {
+													"type": 23,
+													"value": ""
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "collapsed"
+												},
+												"val": {
+													"type": 23,
+													"value": "False"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "logicalname"
+												},
+												"val": {
+													"type": 23,
+													"value": "Question"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "position"
+												},
+												"val": {
+													"type": 23,
+													"value": "335;1767"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "sourcetemplate"
+												},
+												"val": {
+													"type": 23,
+													"value": ""
+												}
+											}
+										]
+									}
+								],
+								"setflags": [
+									{
+										"flaggroup": [
+											{
+												"type": {
+													"type": 22,
+													"value": "Character"
+												},
+												"flag": [
+													{
+														"name": {
+															"type": 22,
+															"value": "LeaderLib_Commands_SaveGlobalSettings"
+														},
+														"paramval": {
+															"type": 4,
+															"value": 0
+														},
+														"value": {
+															"type": 19,
+															"value": true
+														}
+													}
+												]
+											}
+										]
+									}
+								]
+							},
+							{
+								"ShowOnce": {
+									"type": 19,
+									"value": false
+								},
+								"UUID": {
+									"type": 22,
+									"value": "c284a2dc-93c1-48f2-b013-652c2003cad4"
+								},
+								"addressedspeaker": {
+									"type": 4,
+									"value": -1
+								},
+								"constructor": {
+									"type": 22,
+									"value": "TagQuestion"
+								},
+								"endnode": {
+									"type": 19,
+									"value": false
+								},
+								"exclusive": {
+									"type": 19,
+									"value": false
+								},
+								"optional": {
+									"type": 19,
+									"value": false
+								},
+								"speaker": {
+									"type": 4,
+									"value": 0
+								},
+								"stub": {
+									"type": 19,
+									"value": false
+								},
+								"transitionmode": {
+									"type": 1,
+									"value": 0
+								},
+								"waittime": {
+									"type": 6,
+									"value": -1.0
+								},
+								"GameData": [
+									{
+										"CameraTarget": {
+											"type": 4,
+											"value": -1
+										},
+										"CustomMovie": {
+											"type": 23,
+											"value": ""
+										},
+										"Emotion": {
+											"type": 23,
+											"value": "Default"
+										},
+										"ExtraWaitTime": {
+											"type": 4,
+											"value": 0
+										},
+										"SoundEvent": {
+											"type": 23,
+											"value": ""
+										},
+										"AiPersonalities": [
+											{}
+										],
+										"MusicInstrumentSounds": [
+											{}
+										],
+										"OriginSound": [
+											{}
+										]
+									}
+								],
+								"TaggedTexts": [
+									{
+										"TaggedText": [
+											{
+												"HasTagRule": {
+													"type": 19,
+													"value": true
+												},
+												"RuleGroup": [
+													{
+														"TagCombineOp": {
+															"type": 1,
+															"value": 0
+														},
+														"Rules": [
+															{}
+														]
+													}
+												],
+												"TagTexts": [
+													{
+														"TagText": [
+															{
+																"TagText": {
+																	"type": 28,
+																	"value": "Add the Mod Menu Skill (Party)",
+																	"handle": "h8859d107g3e28g44dega723gc7434a93f206"
+																},
+																"stub": {
+																	"type": 19,
+																	"value": true
+																}
+															}
+														]
+													}
+												]
+											}
+										]
+									}
+								],
+								"Tags": [
+									{}
+								],
+								"checkflags": [
+									{
+										"flaggroup": [
+											{
+												"type": {
+													"type": 22,
+													"value": "User"
+												},
+												"flag": [
+													{
+														"name": {
+															"type": 22,
+															"value": "LeaderLib_IsHost"
+														},
+														"paramval": {
+															"type": 4,
+															"value": 0
+														},
+														"value": {
+															"type": 19,
+															"value": true
+														}
+													}
+												]
+											}
+										]
+									}
+								],
+								"children": [
+									{
+										"child": [
+											{
+												"UUID": {
+													"type": 22,
+													"value": "034c5c77-dc34-4b87-93a7-73c6f0eeacc3"
+												}
+											}
+										]
+									}
+								],
+								"editorData": [
+									{
+										"data": [
+											{
+												"key": {
+													"type": 22,
+													"value": "ID"
+												},
+												"val": {
+													"type": 23,
+													"value": "N10"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "NodeContext"
+												},
+												"val": {
+													"type": 23,
+													"value": ""
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "collapsed"
+												},
+												"val": {
+													"type": 23,
+													"value": "False"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "logicalname"
+												},
+												"val": {
+													"type": 23,
+													"value": "Question"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "position"
+												},
+												"val": {
+													"type": 23,
+													"value": "335;453"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "sourcetemplate"
+												},
+												"val": {
+													"type": 23,
+													"value": ""
+												}
+											}
+										]
+									}
+								],
+								"setflags": [
+									{
+										"flaggroup": [
+											{
+												"type": {
+													"type": 22,
+													"value": "Party"
+												},
+												"flag": [
+													{
+														"name": {
+															"type": 22,
+															"value": "LeaderLib_Commands_AddModMenuSkill"
+														},
+														"paramval": {
+															"type": 4,
+															"value": 0
+														},
+														"value": {
+															"type": 19,
+															"value": true
+														}
+													}
+												]
+											}
+										]
+									}
+								]
+							},
+							{
+								"ShowOnce": {
+									"type": 19,
+									"value": false
+								},
+								"UUID": {
+									"type": 22,
+									"value": "dba894a2-22cc-4931-8330-ecda1e3e7b76"
+								},
+								"addressedspeaker": {
+									"type": 4,
+									"value": -1
+								},
+								"constructor": {
+									"type": 22,
+									"value": "TagQuestion"
+								},
+								"endnode": {
+									"type": 19,
+									"value": false
+								},
+								"exclusive": {
+									"type": 19,
+									"value": false
+								},
+								"optional": {
+									"type": 19,
+									"value": false
+								},
+								"speaker": {
+									"type": 4,
+									"value": 0
+								},
+								"stub": {
+									"type": 19,
+									"value": false
+								},
+								"transitionmode": {
+									"type": 1,
+									"value": 0
+								},
+								"waittime": {
+									"type": 6,
+									"value": -1.0
+								},
+								"GameData": [
+									{
+										"CameraTarget": {
+											"type": 4,
+											"value": -1
+										},
+										"CustomMovie": {
+											"type": 23,
+											"value": ""
+										},
+										"Emotion": {
+											"type": 23,
+											"value": "Default"
+										},
+										"ExtraWaitTime": {
+											"type": 4,
+											"value": 0
+										},
+										"SoundEvent": {
+											"type": 23,
+											"value": ""
+										},
+										"AiPersonalities": [
+											{}
+										],
+										"MusicInstrumentSounds": [
+											{}
+										],
+										"OriginSound": [
+											{}
+										]
+									}
+								],
+								"TaggedTexts": [
+									{
+										"TaggedText": [
+											{
+												"HasTagRule": {
+													"type": 19,
+													"value": true
+												},
+												"RuleGroup": [
+													{
+														"TagCombineOp": {
+															"type": 1,
+															"value": 0
+														},
+														"Rules": [
+															{}
+														]
+													}
+												],
+												"TagTexts": [
+													{
+														"TagText": [
+															{
+																"TagText": {
+																	"type": 28,
+																	"value": "Remove the Mod Menu Skill (Self)",
+																	"handle": "h529c36c6g6b68g46e2g867dg863184908d5a"
+																},
+																"stub": {
+																	"type": 19,
+																	"value": true
+																}
+															}
+														]
+													}
+												]
+											}
+										]
+									}
+								],
+								"Tags": [
+									{}
+								],
+								"checkflags": [
+									{}
+								],
+								"children": [
+									{
+										"child": [
+											{
+												"UUID": {
+													"type": 22,
+													"value": "034c5c77-dc34-4b87-93a7-73c6f0eeacc3"
+												}
+											}
+										]
+									}
+								],
+								"editorData": [
+									{
+										"data": [
+											{
+												"key": {
+													"type": 22,
+													"value": "ID"
+												},
+												"val": {
+													"type": 23,
+													"value": "N11"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "NodeContext"
+												},
+												"val": {
+													"type": 23,
+													"value": ""
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "collapsed"
+												},
+												"val": {
+													"type": 23,
+													"value": "False"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "logicalname"
+												},
+												"val": {
+													"type": 23,
+													"value": "Question"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "position"
+												},
+												"val": {
+													"type": 23,
+													"value": "335;672"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "sourcetemplate"
+												},
+												"val": {
+													"type": 23,
+													"value": ""
+												}
+											}
+										]
+									}
+								],
+								"setflags": [
+									{
+										"flaggroup": [
+											{
+												"type": {
+													"type": 22,
+													"value": "Character"
+												},
+												"flag": [
+													{
+														"name": {
+															"type": 22,
+															"value": "LeaderLib_Commands_RemoveModMenuSkill"
+														},
+														"paramval": {
+															"type": 4,
+															"value": 0
+														},
+														"value": {
+															"type": 19,
+															"value": true
+														}
+													}
+												]
+											}
+										]
+									}
+								]
+							},
+							{
+								"ShowOnce": {
+									"type": 19,
+									"value": false
+								},
+								"UUID": {
+									"type": 22,
+									"value": "e8e1633e-2387-4f75-99aa-68506d7319bb"
+								},
+								"constructor": {
+									"type": 22,
+									"value": "Jump"
+								},
+								"endnode": {
+									"type": 19,
+									"value": false
+								},
+								"exclusive": {
+									"type": 19,
+									"value": false
+								},
+								"jumptarget": {
+									"type": 22,
+									"value": "59971a40-b2a1-4a38-964b-4a892f5f4f09"
+								},
+								"jumptargetpoint": {
+									"type": 1,
+									"value": 1
+								},
+								"optional": {
+									"type": 19,
+									"value": false
+								},
+								"transitionmode": {
+									"type": 1,
+									"value": 0
+								},
+								"waittime": {
+									"type": 6,
+									"value": -1.0
+								},
+								"Tags": [
+									{}
+								],
+								"children": [
+									{}
+								],
+								"editorData": [
+									{
+										"data": [
+											{
+												"key": {
+													"type": 22,
+													"value": "ID"
+												},
+												"val": {
+													"type": 23,
+													"value": "N6"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "collapsed"
+												},
+												"val": {
+													"type": 23,
+													"value": "False"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "logicalname"
+												},
+												"val": {
+													"type": 23,
+													"value": "Jump"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "position"
+												},
+												"val": {
+													"type": 23,
+													"value": "975;234"
+												}
+											},
+											{
+												"key": {
+													"type": 22,
+													"value": "sourcetemplate"
+												},
+												"val": {
+													"type": 23,
+													"value": ""
+												}
+											}
+										]
+									}
+								]
+							}
+						]
+					}
+				],
+				"speakerlist": [
+					{
+						"speaker": [
+							{
+								"index": {
+									"type": 22,
+									"value": "0"
+								},
+								"list": {
+									"type": 23,
+									"value": "e0d1ff71-04a8-4340-ae64-9684d846eb83"
+								}
+							}
+						]
+					}
+				]
+			},
+			"editorData": {
+				"needLayout": {
+					"type": 19,
+					"value": false
+				},
+				"nextNodeId": {
+					"type": 5,
+					"value": 33
+				}
+			}
+		}
+	}
 }

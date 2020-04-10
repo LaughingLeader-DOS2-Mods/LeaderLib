@@ -1,0 +1,17 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+KBSECTION
+/* This script pulls party members into combat if they're close enough. */
+
+IF
+ObjectEnteredCombat((CHARACTERGUID)_Player, _CombatID)
+AND
+CharacterIsPlayer(_Player, 1)
+THEN
+TimerCancel("Timers_LeaderLib_Combat_BringPartiesIntoCombat");
+TimerLaunch("Timers_LeaderLib_Combat_BringPartiesIntoCombat", 500);
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

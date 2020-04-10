@@ -606,6 +606,38 @@ SetTag(_Character, "LeaderLib_FriendlyFireEnabled");
 
 //END_REGION
 
+//REGION BRING_PARTY_INTO_COMBAT
+IF
+TimerFinished("Timers_LeaderLib_Combat_BringPartiesIntoCombat")
+THEN
+IterateParties("LeaderLib_Iterator_Combat_CheckPartyInvolvement");
+
+IF
+StoryEvent((CHARACTERGUID)_Char, "LeaderLib_Iterator_Combat_CheckPartyInvolvement")
+AND
+NOT DB_CombatCharacters(_Char, _)
+AND
+DB_LeaderLib_Combat_ActiveCombat(_CombatID)
+AND
+LeaderLib_Combat_QRY_IsNearCombat(_Char, _CombatID, 30.0)
+AND
+DB_CombatCharacters(_Enemy, _CombatID)
+AND
+CharacterIsEnemy(_Enemy, _Char, 1)
+AND
+NOT DB_LeaderLib_Combat_Temp_EnteredCombat(_Char, _)
+THEN
+DB_LeaderLib_Combat_Temp_EnteredCombat(_Char, _CombatID);
+EnterCombat(_Char, _Enemy);
+
+IF
+StoryEvent((CHARACTERGUID)_Char, "LeaderLib_Iterator_Combat_CheckPartyInvolvement")
+AND
+DB_LeaderLib_Combat_Temp_EnteredCombat(_Char, _CombatID)
+THEN
+NOT DB_LeaderLib_Combat_Temp_EnteredCombat(_Char, _CombatID);
+//END_REGION
+
 //REGION CLEANUP
 //Cleanup past data
 PROC

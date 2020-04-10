@@ -17,7 +17,7 @@ LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_StatusEvents_ToggleSkil
 
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Combat_DeadCharacters", "LeaderLib_Combat_TrackDeadCharacters");
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Combat_DeadItems", "LeaderLib_Combat_TrackDeadItems");
-LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Combat_Vaccuum", "LeaderLib_PullPartyIntoCombat");
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Combat_Vacuum", "LeaderLib_PullPartyIntoCombat");
 
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Listeners_RemoveHarmfulStatuses", "LeaderLib_TS_RemoveHarmfulStatusesEnabled");
 

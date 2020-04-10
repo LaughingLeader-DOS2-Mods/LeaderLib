@@ -42,6 +42,14 @@ function LeaderLib_Ext_SetCustomNameWithLocalization(char,handle,fallback)
 	CharacterSetCustomName(char, name)
 end
 
+---Get a skill's stat entry. Formats away _-1, _10, etc.
+---@param skill string
+---@return string
+function LeaderLib_Ext_GetSkillEntryName(skill)
+	return string.gsub(skill, "_%-?%d+$", "")
+end
+Ext.NewQuery(LeaderLib_Ext_GetSkillEntryName, "LeaderLib_Ext_QRY_GetSkillEntryName", "[in](STRING)_SkillPrototype, [out](STRING)_SkillId")
+
 LeaderLib.Main = {
 	PrintAttributes = PrintAttributes,
 	SetModIsActiveFlag = SetModIsActiveFlag

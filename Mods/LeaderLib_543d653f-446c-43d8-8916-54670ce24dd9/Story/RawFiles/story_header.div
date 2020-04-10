@@ -1274,6 +1274,7 @@ query LeaderLib_Ext_QRY_StringToVersion([in](STRING)_Version, [out](INTEGER)_Maj
 query LeaderLib_Ext_QRY_VersionStringToVersionInteger([in](STRING)_VersionString, [in](INTEGER)_Fallback, [out](INTEGER)_VersionInt) (2,1500,170,1)
 query LeaderLib_Ext_QRY_IsSneakingOrInvisible([in](GUIDSTRING)_Object, [out](INTEGER)_Bool) (2,1500,171,1)
 query LeaderLib_Ext_QRY_HasStatusType([in](GUIDSTRING)_Object, [in](STRING)_StatusType, [out](INTEGER)_Bool) (2,1500,172,1)
+query LeaderLib_Ext_QRY_GetSkillEntryName([in](STRING)_SkillPrototype, [out](STRING)_SkillId) (2,1500,172,1)
 event NRD_Loop((STRING)_Event, (INTEGER)_Num) (3,1600,0,1)
 event NRD_Loop((GUIDSTRING)_Object, (STRING)_Event, (INTEGER)_Num) (3,1600,1,1)
 event NRD_StatusIteratorEvent((STRING)_Event, (GUIDSTRING)_Object, (STRING)_StatusId, (INTEGER64)_StatusHandle) (3,1600,2,1)

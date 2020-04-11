@@ -160,14 +160,14 @@ end
 ---@param tbl table
 ---@param key any
 ---@return boolean
-local function has_table_entry(tbl, key)
+local function TableHasEntry(tbl, key)
 	local v = tbl[key]
 	if v ~= nil then
 		return true
 	elseif #tbl > 0 then
 		for k,v2 in pairs(tbl) do
 			if type(v2) == "table" then
-				return has_table_entry(v2, key)
+				return TableHasEntry(v2, key)
 			end
 		end
 	end
@@ -336,7 +336,7 @@ LeaderLib.Common = {
 	Dump = Dump,
 	CopyTable = CopyTable,
 	FlattenTable = FlattenTable,
-	TableHasEntry = has_table_entry,
+	TableHasEntry = TableHasEntry,
 	StringEquals = StringEquals,
 	StringIsNullOrEmpty = StringIsNullOrEmpty,
 	Split = Split,

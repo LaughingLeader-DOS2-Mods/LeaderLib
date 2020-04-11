@@ -647,12 +647,14 @@ THEN
 DB_LeaderLib_Combat_Temp_EnteredCombat(_PartyMember, _CombatID);
 EnterCombat(_PartyMember, _Enemy);
 
+/*
 IF
 StoryEvent((CHARACTERGUID)_PartyMember, "LeaderLib_Iterator_Combat_CheckPartyInvolvement")
 AND
 DB_LeaderLib_Combat_Temp_EnteredCombat(_PartyMember, _CombatID)
 THEN
 NOT DB_LeaderLib_Combat_Temp_EnteredCombat(_PartyMember, _CombatID);
+*/
 //END_REGION
 
 //REGION CLEANUP

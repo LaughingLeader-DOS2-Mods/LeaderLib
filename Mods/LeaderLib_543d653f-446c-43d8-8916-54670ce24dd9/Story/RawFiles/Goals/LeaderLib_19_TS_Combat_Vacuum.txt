@@ -7,11 +7,21 @@ KBSECTION
 IF
 ObjectEnteredCombat((CHARACTERGUID)_Player, _CombatID)
 AND
+NOT DB_LeaderLib_Combat_Temp_EnteredCombat(_Player, _CombatID)
+AND
 CharacterIsPlayer(_Player, 1)
 THEN
 TimerCancel("Timers_LeaderLib_Combat_BringPartiesIntoCombat");
 TimerLaunch("Timers_LeaderLib_Combat_BringPartiesIntoCombat", 500);
-EXITSECTION
 
+IF
+ObjectEnteredCombat((CHARACTERGUID)_Player, _CombatID)
+AND
+DB_LeaderLib_Combat_Temp_EnteredCombat(_Player, _CombatID)
+THEN
+NOT DB_LeaderLib_Combat_Temp_EnteredCombat(_Player, _CombatID);
+
+EXITSECTION
+SysClear("DB_LeaderLib_Combat_Temp_EnteredCombat", 2);
 ENDEXITSECTION
 ParentTargetEdge "LeaderLib_19_ToggledScripts"

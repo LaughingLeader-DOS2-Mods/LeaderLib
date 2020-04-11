@@ -2141,8 +2141,10 @@ DB_IsPlayer(_Player)
 THEN
 //ProcSetHostileToIndivPlayer(_Npc, _Player);
 //ProcMakeNPCHostile(_Player, _Npc);
-CharacterSetRelationIndivFactionToIndivFaction(_Player,_Npc,0);
-CharacterSetRelationIndivFactionToIndivFaction(_Npc,_Player,0);
+//CharacterSetRelationIndivFactionToIndivFaction(_Player,_Npc,0);
+//CharacterSetRelationIndivFactionToIndivFaction(_Npc,_Player,0);
+ChangeAttitude(_Npc, _Player, -200);
+//ChangeAttitude(_Player, _Npc, -200);
 //END_REGION
 
 //REGION QUERIES_RUN_EVENT

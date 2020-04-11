@@ -238,6 +238,19 @@ THEN
 DB_NOOP(1);
 
 QRY
+LeaderLib_Combat_QRY_PartyMemberIsNearCombat((CHARACTERGUID)_Char, (INTEGER)_CombatID, (REAL)_MinDist)
+AND
+DB_CombatCharacters(_Enemy, _CombatID)
+AND
+LeaderLib_Party_QRY_IsEnemyOfParty(_Char, _Enemy)
+AND
+GetDistanceTo(_Char, _Enemy, _Dist)
+AND
+_Dist < _MinDist
+THEN
+DB_NOOP(1);
+
+QRY
 LeaderLib_Combat_QRY_HasInvolvedPlayer((INTEGER)_CombatID)
 AND
 DB_CombatCharacters(_Char, _CombatID)
@@ -613,31 +626,33 @@ THEN
 IterateParties("LeaderLib_Iterator_Combat_CheckPartyInvolvement");
 
 IF
-StoryEvent(_Char, "LeaderLib_Iterator_Combat_CheckPartyInvolvement")
+StoryEvent(_PartyMember, "LeaderLib_Iterator_Combat_CheckPartyInvolvement")
 AND
-NOT LeaderLib_Helper_QRY_IsSneakingOrInvisible(_Char)
+NOT LeaderLib_Helper_QRY_IsSneakingOrInvisible(_PartyMember)
 AND
-NOT DB_CombatCharacters((CHARACTERGUID)_Char, _)
+NOT DB_CombatCharacters((CHARACTERGUID)_PartyMember, _)
 AND
 DB_LeaderLib_Combat_ActiveCombat(_CombatID)
 AND
-LeaderLib_Combat_QRY_IsNearCombat(_Char, _CombatID, 30.0)
-AND
 DB_CombatCharacters(_Enemy, _CombatID)
 AND
-LeaderLib_Party_QRY_IsEnemyOfParty(_Char, _Enemy)
+LeaderLib_Party_QRY_IsEnemyOfParty(_PartyMember, _Enemy)
 AND
-NOT DB_LeaderLib_Combat_Temp_EnteredCombat(_Char, _)
+NOT DB_LeaderLib_Combat_Temp_EnteredCombat(_PartyMember, _)
+AND
+GetDistanceTo(_PartyMember, _Enemy, _Dist)
+AND
+_Dist <= 30.0
 THEN
-DB_LeaderLib_Combat_Temp_EnteredCombat(_Char, _CombatID);
-EnterCombat(_Char, _Enemy);
+DB_LeaderLib_Combat_Temp_EnteredCombat(_PartyMember, _CombatID);
+EnterCombat(_PartyMember, _Enemy);
 
 IF
-StoryEvent((CHARACTERGUID)_Char, "LeaderLib_Iterator_Combat_CheckPartyInvolvement")
+StoryEvent((CHARACTERGUID)_PartyMember, "LeaderLib_Iterator_Combat_CheckPartyInvolvement")
 AND
-DB_LeaderLib_Combat_Temp_EnteredCombat(_Char, _CombatID)
+DB_LeaderLib_Combat_Temp_EnteredCombat(_PartyMember, _CombatID)
 THEN
-NOT DB_LeaderLib_Combat_Temp_EnteredCombat(_Char, _CombatID);
+NOT DB_LeaderLib_Combat_Temp_EnteredCombat(_PartyMember, _CombatID);
 //END_REGION
 
 //REGION CLEANUP

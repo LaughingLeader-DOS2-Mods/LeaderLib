@@ -202,7 +202,7 @@ local function RedirectDamage(target, defender, attacker, handle_param, reductio
         NRD_HitSetInt(redirected_hit, "SimulateHit", 1);
         NRD_HitSetInt(redirected_hit, "HitType", 6);
         NRD_HitSetInt(redirected_hit, "Hit", 1);
-        NRD_HitSetInt(redirected_hit, "RollForDamage", 1);
+        NRD_HitSetInt(redirected_hit, "NoHitRoll", 1);
         NRD_HitExecute(redirected_hit);
 	end
 	return damageRedirected;

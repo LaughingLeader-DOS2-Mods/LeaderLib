@@ -60,11 +60,11 @@ local function LeaderLib_Shared_SessionLoading()
 			local statusTypeTable = LeaderLib.StatusTypes[statusType]
 			if statusTypeTable ~= nil then
 				statusTypeTable[status] = true
-				LeaderLib.Print("[LeaderLib__Main.lua:LeaderLib_Shared_SessionLoading] Added Status ("..status..") to StatusType table ("..statusType..").")
+				--LeaderLib.Print("[LeaderLib__Main.lua:LeaderLib_Shared_SessionLoading] Added Status ("..status..") to StatusType table ("..statusType..").")
 			end
 		end
 	end
-	Ext.Print("Tables " .. LeaderLib.Common.Dump(LeaderLib.StatusTypes))
+	--LeaderLib.Print("Tables " .. LeaderLib.Common.Dump(LeaderLib.StatusTypes))
 end
 
 Ext.RegisterListener("SessionLoading", LeaderLib_Shared_SessionLoading)

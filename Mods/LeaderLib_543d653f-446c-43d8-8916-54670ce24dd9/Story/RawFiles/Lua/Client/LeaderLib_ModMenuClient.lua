@@ -199,10 +199,10 @@ local function SessionLoaded()
 end
 
 if Ext.IsDeveloperMode() then
-	Ext.RegisterNetListener("LeaderLib_OnClientMessage", OnClientMessage)
-	Ext.RegisterListener("ModuleLoading", Client_ModuleSetup)
-	Ext.RegisterListener("ModuleResume", Client_ModuleSetup)
+	--Ext.RegisterNetListener("LeaderLib_OnClientMessage", OnClientMessage)
+	--Ext.RegisterListener("ModuleLoading", Client_ModuleSetup)
+	--Ext.RegisterListener("ModuleResume", Client_ModuleSetup)
 	if Ext.Version() >= 43 then
-		Ext.RegisterListener("SessionLoaded", SetupOptionsSettings)
+		--Ext.RegisterListener("SessionLoaded", SetupOptionsSettings)
 	end
 end

@@ -98,5 +98,5 @@ local function LeaderLib_ClientDebug_SessionLoaded()
 end
 
 if Ext.IsDeveloperMode() and Ext.Version() >= 43 then
-	Ext.RegisterListener("SessionLoaded", LeaderLib_ClientDebug_SessionLoaded)
+	--Ext.RegisterListener("SessionLoaded", LeaderLib_ClientDebug_SessionLoaded)
 end

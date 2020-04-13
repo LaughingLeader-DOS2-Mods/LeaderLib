@@ -1,0 +1,27 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+KBSECTION
+IF
+StoryEvent(_Object, _Event)
+AND
+DB_LeaderLib_Auras_Temp_PulsingEvent(_Source, _AuraID, _Event, _Radius, _TimerEvent)
+AND
+_Object != _Source
+AND
+GetDistanceTo(_Source, _Object, _Dist)
+AND
+_Dist <= _Radius
+THEN
+LeaderLib_Auras_Internal_OnPulseHit(_Source, _Object, _AuraID);
+
+IF
+StoryEvent(_Source, _TimerEvent)
+AND
+DB_LeaderLib_Auras_Temp_PulsingEvent(_Source, _AuraID, _Event, _Radius, _TimerEvent)
+THEN
+NOT DB_LeaderLib_Auras_Temp_PulsingEvent(_Source, _AuraID, _Event, _Radius, _TimerEvent);
+LeaderLib_Auras_Internal_OnPulseComplete(_Source, _AuraID);
+EXITSECTION
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

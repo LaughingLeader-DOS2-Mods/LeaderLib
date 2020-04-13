@@ -12,17 +12,76 @@ THEN
 DB_NOOP(1);
 //END_REGION
 
-//REGION PULSE
-PROC
-LeaderLib_Auras_OnPulse((GUIDSTRING)_Source, (STRING)_AuraID)
-THEN
-LeaderLib_Timers_StartObjectTimer(_Source, 50, "Timers_LeaderLib_Auras_OnPulseComplete", "LeaderLib_Auras_OnPulseComplete");
-//END_REGION
-
+//REGION LISTENER_EVENTS
 PROC
 LeaderLib_Auras_OnAuraApplied((GUIDSTRING)_Source, (STRING)_AuraID)
 THEN
 DB_NOOP(1);
+
+PROC
+LeaderLib_Auras_OnTargetFound((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_AuraID)
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_Auras_OnTargetLost((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_AuraID)
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION PULSING
+PROC
+LeaderLib_Auras_Internal_Pulse((GUIDSTRING)_Source, (STRING)_AuraID, (REAL)_Radius, (INTEGER)_HitCharacters, (INTEGER)_HitItems, (INTEGER)_HitSelf)
+AND
+GetUUID(_Source, _UUID)
+AND
+StringConcatenate("Iterators_AuraPulse_", _AuraID, _EventID)
+AND
+StringConcatenate("Timers_AuraPulse_", _AuraID, _TimerID)
+AND
+LeaderLib_StringExt_QRY_SafeCombine(_EventID, "Iterators_AuraPulse_", _AuraID, _UUID)
+AND
+DB_LeaderLib_StringExt_CombineResult(_EventID, _Event)
+AND
+LeaderLib_StringExt_QRY_SafeCombine(_TimerID, "Timers_AuraPulse_", _AuraID, _UUID)
+AND
+DB_LeaderLib_StringExt_CombineResult(_TimerID, _TimerEvent)
+THEN
+NOT DB_LeaderLib_StringExt_CombineResult(_EventID, _Event);
+NOT DB_LeaderLib_StringExt_CombineResult(_TimerID, _TimerEvent);
+DB_LeaderLib_Auras_Temp_PulsingEvent(_Source, _AuraID, _Event, _Radius, _TimerEvent);
+LeaderLib_Timers_StartObjectTimer(_Source, 25, _TimerEvent, _TimerEvent);
+LeaderLib_Auras_Internal_PulseNow(_Source, _AuraID, _Event, _Radius, _HitCharacters, _HitItems, _HitSelf);
+
+PROC
+LeaderLib_Auras_Internal_PulseNow((GUIDSTRING)_Source, (STRING)_AuraID, (STRING)_Event, (REAL)_Radius, (INTEGER)_HitCharacters, (INTEGER)_HitItems, (INTEGER)_HitSelf)
+AND
+NOT SysIsActive("LeaderLib_19_TS_AuraGenericEventListener")
+THEN
+SysActivateGoal("LeaderLib_19_TS_AuraGenericEventListener");
+
+PROC
+LeaderLib_Auras_Internal_PulseNow((GUIDSTRING)_Source, (STRING)_AuraID, (STRING)_Event, (REAL)_Radius, (INTEGER)_HitCharacters, (INTEGER)_HitItems, 1)
+THEN
+LeaderLib_Auras_Internal_OnPulseHit(_Source, _Source, _AuraID);
+
+PROC
+LeaderLib_Auras_Internal_PulseNow((GUIDSTRING)_Source, (STRING)_AuraID, (STRING)_Event, (REAL)_Radius, 1, (INTEGER)_HitItems, (INTEGER)_HitSelf)
+THEN
+CharacterLaunchIteratorAroundObject(_Source, _Radius, _Event);
+
+PROC
+LeaderLib_Auras_Internal_PulseNow((GUIDSTRING)_Source, (STRING)_AuraID, (STRING)_Event, (REAL)_Radius, (INTEGER)_HitCharacters, 1, (INTEGER)_HitSelf)
+THEN
+ItemLaunchIterator(_Event);
+
+PROC
+LeaderLib_Auras_Internal_OnPulseComplete((GUIDSTRING)_Source, (STRING)_AuraID)
+AND
+SysCount("DB_LeaderLib_Auras_Temp_PulsingEvent", 5, 0)
+THEN
+SysCompleteGoal("LeaderLib_19_TS_AuraGenericEventListener");
+//END_REGION
 
 //REGION PULSE_HIT
 IF
@@ -72,16 +131,11 @@ LeaderLib_Auras_Internal_CheckPulseTargets((GUIDSTRING)_Source, (STRING)_AuraID)
 THEN
 LeaderLib_Auras_Internal_ComparePulseTargets(_Source, _AuraID);
 LeaderLib_Auras_Internal_ClearPulseTargets(_Source, _AuraID);
-
-PROC
-LeaderLib_Auras_OnTargetLost((GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_AuraID)
-THEN
-DB_NOOP(1);
 //END_REGION
 
 //REGION PULSE_COMPLETE
-IF
-StoryEvent(_Source, "LeaderLib_Auras_OnPulseComplete")
+PROC
+LeaderLib_Auras_Internal_OnPulseComplete((GUIDSTRING)_Source, (STRING)_AuraID)
 AND
 DB_LeaderLib_Auras_Temp_Pulsing(_Source, _AuraID)
 THEN

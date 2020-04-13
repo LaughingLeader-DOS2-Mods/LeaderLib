@@ -131,18 +131,14 @@ TimerCancel(_TimerName);
 PROC
 LeaderLib_Auras_PulseAura((GUIDSTRING)_Source, (STRING)_AuraID)
 AND
-NOT DB_LeaderLib_Auras_Temp_Pulsing(_Source, _)
+NOT DB_LeaderLib_Auras_Temp_Pulsing(_Source, _AuraID)
 AND
 DB_LeaderLib_Auras_Temp_ActiveTimerAuras(_Source, _AuraID, _PulseTimerRate, _Radius, _HitCharacters, _HitItems, _HitSelf, _TrackTargets)
 AND
 LeaderLib_Auras_QRY_CanPulse(_HitCharacters, _HitItems, _HitSelf, _TrackTargets)
 THEN
 DB_LeaderLib_Auras_Temp_Pulsing(_Source, _AuraID);
-SetVarString(_Source, "LeaderLib_Auras_ID", _AuraID);
-SetVarFloat(_Source, "LeaderLib_Auras_Radius", _Radius);
-SetVarInteger(_Source, "LeaderLib_Auras_PulseCharacters", _HitCharacters);
-SetVarInteger(_Source, "LeaderLib_Auras_PulseItems", _HitItems);
-SetStoryEvent(_Source, "LeaderLib_Auras_PulseNow");
+LeaderLib_Auras_Internal_Pulse(_Source, _AuraID, _Radius, _HitCharacters, _HitItems, _HitSelf);
 LeaderLib_Auras_OnPulse(_Source, _AuraID);
 
 PROC

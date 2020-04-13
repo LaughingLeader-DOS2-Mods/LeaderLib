@@ -131,17 +131,14 @@ NOT DB_LeaderLib_Auras_Temp_TurnAuraData(_Source, _AuraID, _TurnsLeft);
 PROC
 LeaderLib_Auras_PulseAura((GUIDSTRING)_Source, (STRING)_AuraID)
 AND
-NOT DB_LeaderLib_Auras_Temp_Pulsing(_Source, _)
-AND
 DB_LeaderLib_Auras_Temp_ActiveTurnAuras(_Source, _AuraID, _PulseTurnRate, _Radius, _EveryTurn, _HitCharacters, _HitItems, _HitSelf, _TrackTargets)
+AND
+NOT DB_LeaderLib_Auras_Temp_Pulsing(_Source, _AuraID)
 AND
 LeaderLib_Auras_QRY_CanPulse(_HitCharacters, _HitItems, _HitSelf, _TrackTargets)
 THEN
 DB_LeaderLib_Auras_Temp_Pulsing(_Source, _AuraID);
-SetVarFloat(_Source, "LeaderLib_Auras_Radius", _Radius);
-SetVarInteger(_Source, "LeaderLib_Auras_PulseCharacters", _HitCharacters);
-SetVarInteger(_Source, "LeaderLib_Auras_PulseItems", _HitItems);
-SetStoryEvent(_Source, "LeaderLib_Auras_PulseNow");
+LeaderLib_Auras_Internal_Pulse(_Source, _AuraID, _Radius, _HitCharacters, _HitItems, _HitSelf);
 LeaderLib_Auras_OnPulse(_Source, _AuraID);
 
 PROC
@@ -180,8 +177,8 @@ LeaderLib_Auras_OnPulseCountChanged((GUIDSTRING)_Source, (STRING)_AuraID, (INTEG
 THEN
 LeaderLib_Auras_PulseAura(_Source, _AuraID);
 
-IF
-StoryEvent(_Source, "LeaderLib_Auras_OnPulseComplete")
+PROC
+LeaderLib_Auras_Internal_OnPulseComplete((GUIDSTRING)_Source, (STRING)_AuraID)
 AND
 DB_LeaderLib_Auras_Temp_ActiveTurnAuras(_Source, _AuraID, _PulseTurnRate, _Radius, _EveryTurn, _HitCharacters, _HitItems, _HitSelf, _TrackTargets)
 THEN

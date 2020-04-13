@@ -210,7 +210,7 @@ DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag)
 AND
 GlobalGetFlag(_GlobalFlag, 1)
 AND
-NOT SysIsActive(_GoalTitle)
+LeaderLib_GameScripts_QRY_CanEnableScript(_GoalTitle, _GlobalFlag)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:LeaderUpdater_ModUpdated] Retroactively activating toggle script [",_GoalTitle,"] (",_GlobalFlag,").");
 SysActivateGoal(_GoalTitle);
@@ -292,9 +292,9 @@ LeaderLib_ToggleScripts_OnScriptRegistered(_GoalTitle, _GlobalFlag, -1);
 PROC
 LeaderLib_ToggleScripts_OnScriptRegistered((STRING)_GoalTitle, (STRING)_GlobalFlag, -1)
 AND
-DB_GlobalFlag(_GlobalFlag)
+GlobalGetFlag(_GlobalFlag, 1)
 AND
-NOT SysIsActive(_GoalTitle)
+LeaderLib_GameScripts_QRY_CanEnableScript(_GoalTitle, _GlobalFlag)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:OnScriptRegistered] Activating goal [",_GoalTitle,"] (",_GlobalFlag,").");
 SysActivateGoal(_GoalTitle);
@@ -305,9 +305,9 @@ LeaderLib_ToggleScripts_OnScriptRegistered((STRING)_GoalTitle, (STRING)_TagOrFla
 AND
 DB_IsPlayer(_Char)
 AND
-NOT SysIsActive(_GoalTitle)
-AND
 PartyGetFlag(_Char, _TagOrFlag, 1)
+AND
+LeaderLib_GameScripts_QRY_CanEnableScript(_GoalTitle, _TagOrFlag)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:OnScriptRegistered] Activating goal [",_GoalTitle,"] (",_TagOrFlag,").");
 SysActivateGoal(_GoalTitle);
@@ -319,7 +319,7 @@ DB_IsPlayer(_Char)
 AND
 IsTagged(_Char, _TagOrFlag, 1)
 AND
-NOT SysIsActive(_GoalTitle)
+LeaderLib_GameScripts_QRY_CanEnableScript(_GoalTitle, _TagOrFlag)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:OnScriptRegistered] Activating goal [",_GoalTitle,"] (",_TagOrFlag,").");
 SysActivateGoal(_GoalTitle);
@@ -546,7 +546,7 @@ GlobalFlagSet(_GlobalFlag)
 AND
 DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag)
 AND
-NOT SysIsActive(_GoalTitle)
+LeaderLib_GameScripts_QRY_CanEnableScript(_GoalTitle, _GlobalFlag)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:GlobalFlagSet] Global flag [",_GlobalFlag,"] was set. Activating goal [",_GoalTitle,"].");
 SysActivateGoal(_GoalTitle);
@@ -556,7 +556,7 @@ LeaderLib_ToggleScripts_Internal_ToggleOn((STRING)_TagOrFlag)
 AND
 DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _TagOrFlag, _IsTag)
 AND
-NOT SysIsActive(_GoalTitle)
+LeaderLib_GameScripts_QRY_CanEnableScript(_GoalTitle, _TagOrFlag)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:ToggleOn] Activating goal [",_GoalTitle,"] (",_TagOrFlag,").");
 SysActivateGoal(_GoalTitle);
@@ -601,7 +601,7 @@ LeaderLib_ToggleScripts_Internal_PostToggle(_GlobalFlag, _GoalTitle, _FlagIsSet)
 PROC
 LeaderLib_ToggleScripts_Internal_PostToggle((STRING)_GlobalFlag, (STRING)_GoalTitle, 1)
 AND
-NOT SysIsActive(_GoalTitle)
+LeaderLib_GameScripts_QRY_CanEnableScript(_GoalTitle, _GlobalFlag)
 THEN
 SysActivateGoal(_GoalTitle);
 LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:LeaderLib_Initialized] Global flag [",_GlobalFlag,"] is set. Activating goal [",_GoalTitle,"].");

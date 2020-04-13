@@ -2136,15 +2136,63 @@ SetStoryEvent(_Player, "LeaderLib_PresetApplied");
 //REGION HOSTILITY
 PROC
 LeaderLib_Helper_MakeHostileToPlayers((CHARACTERGUID)_Npc)
-AND
-DB_IsPlayer(_Player)
 THEN
+DB_LeaderLib_Helper_Temp_MakeHostile(_Npc);
+IterateParties("Iterator_LeaderLib_Command_MakeHostileToPlayers");
+LeaderLib_Timers_StartObjectTimer(_Npc, 250, "Timers_LeaderLib_Helper_MakeHostileToPlayers_ClearDB", "LeaderLib_Helper_MakeHostileToPlayers_ClearDB");
+
+IF
+StoryEvent((CHARACTERGUID)_Npc, "LeaderLib_Helper_MakeHostileToPlayers_ClearDB")
+THEN
+NOT DB_LeaderLib_Helper_Temp_MakeHostile(_Npc);
+
+IF
+StoryEvent((CHARACTERGUID)_Player, "Iterator_LeaderLib_Command_MakeHostileToPlayers")
+AND
+DB_LeaderLib_Helper_Temp_MakeHostile(_Npc)
+AND
+_Player != _Npc
+THEN
+CharacterSetTemporaryHostileRelation(_Npc, _Player);
+ChangeAttitude(_Npc, _Player, -200);
+ChangeAttitude(_Player, _Npc, -200);
 //ProcSetHostileToIndivPlayer(_Npc, _Player);
 //ProcMakeNPCHostile(_Player, _Npc);
 //CharacterSetRelationIndivFactionToIndivFaction(_Player,_Npc,0);
 //CharacterSetRelationIndivFactionToIndivFaction(_Npc,_Player,0);
+
+PROC
+LeaderLib_Helper_MakeHostileToParty((CHARACTERGUID)_Npc)
+AND
+DB_IsPlayer(_Player)
+THEN
 ChangeAttitude(_Npc, _Player, -200);
-//ChangeAttitude(_Player, _Npc, -200);
+ChangeAttitude(_Player, _Npc, -200);
+
+IF
+StoryEvent((CHARACTERGUID)_Npc, "LeaderLib_Commands_EnterCombatWithPlayers")
+THEN
+LeaderLib_Helper_EnterCombatWithPlayers(_Npc);
+
+PROC
+LeaderLib_Helper_EnterCombatWithPlayers((CHARACTERGUID)_Npc)
+AND
+DB_IsPlayer(_Player)
+THEN
+CharacterSetTemporaryHostileRelation(_Npc, _Player);
+ChangeAttitude(_Npc, _Player, -200);
+//ProcSetHostileToIndivPlayer(_Npc, _Player);
+
+PROC
+LeaderLib_Helper_EnterCombatWithPlayers((CHARACTERGUID)_Npc)
+AND
+DB_IsPlayer(_Player)
+AND
+GetDistanceTo(_Player, _Npc, _Dist)
+AND
+_Dist <= 30
+THEN
+EnterCombat(_Npc, _Player);
 //END_REGION
 
 //REGION QUERIES_RUN_EVENT

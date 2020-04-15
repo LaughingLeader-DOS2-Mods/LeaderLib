@@ -80,7 +80,7 @@ local function ReduceDamage(target, attacker, handle_param, reduction_perc, is_h
     local is_hit = LeaderLib.Common.SafeguardParam(is_hit_param, "integer", 0)
 	LeaderLib_Ext_Log("[LeaderLib_GameMechanics.lua:ReduceDamage] Reducing damage to ("..tostring(reduction)..") of total. Handle("..tostring(handle).."). Target("..tostring(target)..") Attacker("..tostring(attacker)..") IsHit("..tostring(is_hit)..")")
 	local success = false
-    for k,v in pairs(damage_types) do
+    for k,v in pairs(LeaderLib.Data.DamageTypes) do
         local damage = nil
         if is_hit == 0 then
             damage = NRD_HitStatusGetDamage(target, handle, v)
@@ -119,7 +119,7 @@ local function IncreaseDamage(target, attacker, handle_param, increase_perc, is_
     local is_hit = LeaderLib.Common.SafeguardParam(is_hit_param, "number", 0)
 	LeaderLib_Ext_Log("[LeaderLib_GameMechanics.lua:IncreaseDamage] Increasing damage by ("..tostring(increase_amount).."). Handle("..tostring(handle).."). Target("..tostring(target)..") Attacker("..tostring(attacker)..") IsHit("..tostring(is_hit)..")")
 	local success = false
-    for k,v in pairs(damage_types) do
+    for k,v in pairs(LeaderLib.Data.DamageTypes) do
         local damage = nil
         if is_hit == 0 then
             damage = NRD_HitStatusGetDamage(target, handle, v)

@@ -56,8 +56,8 @@ function LeaderLib_Ext_Log(...)
 end
 
 local function init_seed()
-	local rnd = math.random(9999)
-	local seed = (math.random(9999) * 214013) + 2531011
+	local rnd = Ext.Random(9999)
+	local seed = (Ext.Random(9999) * 214013) + 2531011
 	LEADERLIB_RAN_SEED = seed
 	Ext.Print("[LeaderLib_Common.lua] Set LEADERLIB_RAN_SEED to ("..tostring(LEADERLIB_RAN_SEED)..")")
 	if Ext.IsServer() then
@@ -191,11 +191,19 @@ end
 ---@return any
 local function GetRandomTableEntry(tbl)
 	if #tbl > 0 then
-		local rnd = math.random(LEADERLIB_RAN_SEED)
+		local rnd = Ext.Random(LEADERLIB_RAN_SEED)
 		local ran = math.max(1, math.fmod(rnd,#tbl))
 		return tbl[ran]
 	end
 	return nil
+end
+
+local function ShuffleTable(tbl)
+	for i = #tbl, 2, -1 do
+		local j = Ext.Random(i)
+		tbl[i], tbl[j] = tbl[j], tbl[i]
+	end
+	return tbl
 end
 
 ---@param max integer
@@ -204,7 +212,7 @@ end
 local function GetRandom(max,min)
 	if max == nil then max = 999 end
 	if min == nil then min = 0 end
-	local rnd = math.random(LEADERLIB_RAN_SEED)
+	local rnd = Ext.Random(LEADERLIB_RAN_SEED)
 	local ran = math.max(min, math.fmod(rnd,max))
 	return ran
 end
@@ -340,6 +348,7 @@ LeaderLib.Common = {
 	StringEquals = StringEquals,
 	StringIsNullOrEmpty = StringIsNullOrEmpty,
 	Split = Split,
+	ShuffleTable = ShuffleTable,
 	GetTableEntry = GetTableEntry,
 	GetRandomTableEntry = GetRandomTableEntry,
 	GetRandom = GetRandom,

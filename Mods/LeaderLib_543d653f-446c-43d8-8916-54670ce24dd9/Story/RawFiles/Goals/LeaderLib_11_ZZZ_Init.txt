@@ -28,6 +28,18 @@ TimerCancel("Timers_LeaderLib_CheckActiveMods");
 TimerLaunch("Timers_LeaderLib_CheckActiveMods", 2);
 TimerCancel("Timers_LeaderLib_UpdateRegisteredList");
 TimerLaunch("Timers_LeaderLib_UpdateRegisteredList", 250);
+
+IF
+TimerFinished("Timers_LeaderLib_Initialized")
+AND
+DB_CurrentLevel(_Region)
+THEN
+LeaderLib_Initialized(_Region);
+
+PROC
+LeaderLib_Initialized((STRING)_Region)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION ENDING_EVENT

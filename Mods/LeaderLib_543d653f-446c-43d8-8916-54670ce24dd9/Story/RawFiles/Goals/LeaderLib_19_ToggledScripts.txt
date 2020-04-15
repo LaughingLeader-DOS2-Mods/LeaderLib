@@ -278,10 +278,30 @@ DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag);
 LeaderLib_ToggleScripts_OnScriptRegistered(_GoalTitle, _GlobalFlag, -1);
 
 PROC
+LeaderLib_ToggleScripts_Register_Script((STRING)_GoalTitle, (STRING)_GlobalFlag, 1)
+THEN
+LeaderLib_GameScripts_RegisterToggleScript(_GoalTitle, _GlobalFlag);
+
+PROC
+LeaderLib_ToggleScripts_Register_Script((STRING)_GoalTitle, (STRING)_GlobalFlag, (INTEGER)_RegisterGameScript)
+THEN
+LeaderLib_ToggleScripts_Register_Script(_GoalTitle, _GlobalFlag);
+
+PROC
 LeaderLib_ToggleScripts_Register_ObjectScript((STRING)_GoalTitle, (STRING)_TagOrFlag, (INTEGER)_IsTag)
 THEN
 DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _TagOrFlag, _IsTag);
 LeaderLib_ToggleScripts_OnScriptRegistered(_GoalTitle, _TagOrFlag, _IsTag);
+
+PROC
+LeaderLib_ToggleScripts_Register_ObjectScript((STRING)_GoalTitle, (STRING)_TagOrFlag, (INTEGER)_IsTag, 1)
+THEN
+LeaderLib_GameScripts_RegisterToggleScript(_GoalTitle, _TagOrFlag);
+
+PROC
+LeaderLib_ToggleScripts_Register_ObjectScript((STRING)_GoalTitle, (STRING)_TagOrFlag, (INTEGER)_IsTag, (INTEGER)_RegisterGameScript)
+THEN
+LeaderLib_ToggleScripts_Register_ObjectScript(_GoalTitle, _TagOrFlag, _IsTag);
 
 //Support for mods that may have an older definition
 PROC
@@ -589,8 +609,8 @@ SysCompleteGoal(_GoalTitle);
 //END_REGION
 
 //REGION POST_TOGGLE
-IF
-StoryEvent(_, "LeaderLib_Initialized")
+PROC
+LeaderLib_Initialized((STRING)_Region)
 AND
 DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag)
 AND

@@ -1,34 +1,3 @@
-
-LeaderLib.Data["DamageTypes"] = {
-    [0] = "None",
-    "Physical",
-    "Piercing",
-    "Corrosive",
-    "Magic",
-    "Chaos",
-    "Fire",
-    "Air",
-    "Water",
-    "Earth",
-    "Poison",
-    "Shadow"
-}
-
-LeaderLib.Data["DamageTypeEnums"] = {
-    None = 0,
-    Physical = 1,
-    Piercing = 2,
-    Corrosive = 3,
-    Magic = 4,
-    Chaos = 5,
-    Fire = 6,
-    Air = 7,
-    Water = 8,
-    Earth = 9,
-    Poison = 10,
-    Shadow = 11
-}
-
 ---Returns true if a hit isn't Dodged, Missed, or Blocked.
 ---Pass in an object if this is a status.
 ---@param target string
@@ -335,23 +304,6 @@ function LeaderLib_Ext_EquipInSlot(char, item, slot)
     end
 end
 
-local EquipmentSlots = {
-    "Weapon",
-    "Shield",
-    "Helmet",
-    "Breast",
-    "Gloves",
-    "Leggings",
-    "Boots",
-    "Belt",
-    "Amulet",
-    "Ring",
-    "Ring2",
-    "Wings",
-    "Horns",
-    "Overhead"
-}
-
 function LeaderLib_Ext_ItemIsEquipped(char, item)
     local itemObj = Ext.GetItem(item)
     if itemObj ~= nil then
@@ -360,7 +312,7 @@ function LeaderLib_Ext_ItemIsEquipped(char, item)
             return true
         end
     else
-        for i,slot in pairs(EquipmentSlots) do
+        for i,slot in pairs(LeaderLib.Data.EquipmentSlots) do
             if CharacterGetEquippedItem(char, slot) == item then
                 return true
             end

@@ -381,20 +381,41 @@ QRY
 LeaderLib_ToggleScripts_QRY_ScriptIsEnabled((STRING)_GlobalFlag)
 AND
 DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_GlobalFlag, _EnablingModID)
+AND
+DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag)
+AND
+SysIsActive(_GoalTitle)
 THEN
-DB_NOOP(1);
+DB_LeaderLib_ToggleScripts_Temp_ScriptIsEnabled(_GlobalFlag);
 
 QRY
 LeaderLib_ToggleScripts_QRY_ScriptIsEnabled((STRING)_TagOrFlag)
 AND
+NOT DB_LeaderLib_ToggleScripts_Temp_ScriptIsEnabled(_TagOrFlag)
+AND
 DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_Object, _TagOrFlag, _EnablingModID)
+AND
+DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _TagOrFlag)
+AND
+SysIsActive(_GoalTitle)
 THEN
-DB_NOOP(1);
+DB_LeaderLib_ToggleScripts_Temp_ScriptIsEnabled(_TagOrFlag);
+
+QRY
+LeaderLib_ToggleScripts_QRY_ScriptIsEnabled((STRING)_TagOrFlag)
+AND
+DB_LeaderLib_ToggleScripts_Temp_ScriptIsEnabled(_TagOrFlag)
+THEN
+NOT DB_LeaderLib_ToggleScripts_Temp_ScriptIsEnabled(_TagOrFlag);
 
 QRY
 LeaderLib_ToggleScripts_QRY_ScriptIsEnabled((GUIDSTRING)_Object, (STRING)_TagOrFlag)
 AND
 DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_Object, _TagOrFlag, _EnablingModID)
+AND
+DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _TagOrFlag)
+AND
+SysIsActive(_GoalTitle)
 THEN
 DB_NOOP(1);
 

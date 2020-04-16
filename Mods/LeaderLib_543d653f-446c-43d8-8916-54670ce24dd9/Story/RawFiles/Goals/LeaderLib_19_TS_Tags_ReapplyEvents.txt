@@ -4,25 +4,41 @@ INITSECTION
 
 KBSECTION
 IF
-ObjectTransformed(_Player, _)
+ObjectTransformed(_Object, _)
 AND
-DB_LeaderLib_TagPreserver_AssignedTags(_Player, _Tag)
+LeaderLib_Tags_QRY_HasPreservedTags(_Object)
 THEN
-SetTag(_Player, _Tag);
+LeaderLib_Timers_StartObjectTimer(_Object, 250, "Timers_LeaderLib_Commands_ReapplyTags", "LeaderLib_Commands_ReapplyTags");
 
 IF
-CharacterPolymorphedInto(_Player, _)
+CharacterPolymorphedInto(_Object, _)
 AND
-DB_LeaderLib_TagPreserver_AssignedTags((GUIDSTRING)_Player, _Tag)
+LeaderLib_Tags_QRY_HasPreservedTags((GUIDSTRING)_Object)
 THEN
-SetTag(_Player, _Tag);
+LeaderLib_Timers_StartObjectTimer(_Object, 250, "Timers_LeaderLib_Commands_ReapplyTags", "LeaderLib_Commands_ReapplyTags");
 
 IF
-CharacterStoppedPolymorph(_Player)
+CharacterStoppedPolymorph(_Object)
 AND
-DB_LeaderLib_TagPreserver_AssignedTags((GUIDSTRING)_Player, _Tag)
+LeaderLib_Tags_QRY_HasPreservedTags((GUIDSTRING)_Object)
 THEN
-SetTag(_Player, _Tag);
+LeaderLib_Timers_StartObjectTimer(_Object, 250, "Timers_LeaderLib_Commands_ReapplyTags", "LeaderLib_Commands_ReapplyTags");
+
+IF
+GameStarted(_,_)
+THEN
+LeaderLib_Tags_ReapplyAllTags();
+
+/*
+IF
+RegionEnded(_)
+AND
+DB_LeaderLib_TagPreserver_AssignedTags(_Object, _Tag)
+AND
+ObjectIsGlobal(_Object, 0)
+THEN
+NOT DB_LeaderLib_TagPreserver_AssignedTags(_Object, _Tag);
+*/
 EXITSECTION
 
 ENDEXITSECTION

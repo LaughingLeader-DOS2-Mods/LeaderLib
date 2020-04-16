@@ -95,6 +95,50 @@ THEN
 NOT DB_LeaderLib_TagPreserver_AssignedTags(_Object, _Tag);
 //END_REGION
 
+//REGION REAPPLY_TAGS
+QRY
+LeaderLib_Tags_QRY_HasPreservedTags((GUIDSTRING)_Object)
+AND
+DB_LeaderLib_TagPreserver_AssignedTags(_Object, _Tag)
+THEN
+DB_NOOP(1);
+
+IF
+StoryEvent(_Object, "LeaderLib_Commands_ReapplyTags")
+THEN
+LeaderLib_Tags_ReapplyTags(_Object);
+
+PROC
+LeaderLib_Tags_ReapplyTags((GUIDSTRING)_Object)
+AND
+ObjectExists(_Object, _Exists)
+AND
+DB_LeaderLib_TagPreserver_AssignedTags(_Object, _Tag)
+THEN
+LeaderLib_Tags_Internal_ReapplyTag(_Object, _Tag, _Exists);
+
+PROC
+LeaderLib_Tags_Internal_ReapplyTag((GUIDSTRING)_Object, (STRING)_Tag, 1)
+THEN
+SetTag(_Object, _Tag);
+
+PROC
+LeaderLib_Tags_Internal_ReapplyTag((GUIDSTRING)_Object, (STRING)_Tag, 0)
+THEN
+NOT DB_LeaderLib_TagPreserver_AssignedTags(_Object, _Tag);
+
+PROC
+LeaderLib_Tags_ReapplyAllTags()
+AND
+DB_LeaderLib_TagPreserver_AssignedTags(_Object, _Tag)
+AND
+ObjectExists(_Object, _Exists)
+AND
+DB_LeaderLib_TagPreserver_AssignedTags(_Object, _Tag)
+THEN
+LeaderLib_Tags_Internal_ReapplyTag(_Object, _Tag, _Exists);
+//END_REGION
+
 EXITSECTION
 
 ENDEXITSECTION

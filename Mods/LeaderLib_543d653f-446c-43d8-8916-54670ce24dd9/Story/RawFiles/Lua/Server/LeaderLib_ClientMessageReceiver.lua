@@ -25,7 +25,7 @@ local function StorePartyValues()
 			end
 		end
 	end
-	LeaderLib.Print("[LLENEMY_ServerMessages.lua:StorePartyValues] Stored party stat data:\n("..LeaderLib.Common.Dump(statChanges)..").")
+	--LeaderLib.Print("[LeaderLib_ClientMessageReceiver.lua:StorePartyValues] Stored party stat data:\n("..LeaderLib.Common.Dump(statChanges)..").")
 end
 
 local function SignalPartyValueChanges()
@@ -39,6 +39,7 @@ local function SignalPartyValueChanges()
 				local lastVal = playerData.attributes[att]
 				if baseVal ~= nil and lastVal ~= nil and lastVal ~= baseVal then
 					Osi.LeaderLib_CharacterSheet_AttributeChanged(uuid, att, lastVal, baseVal)
+					LeaderLib.Print("[LeaderLib_ClientMessageReceiver.lua:SignalPartyValueChanges] ("..uuid..") base attribute ("..att..") changed: "..tostring(lastVal).." => "..tostring(baseVal).." ")
 				end
 			end
 			for _,ability in pairs(LeaderLib.Data.Ability) do
@@ -46,6 +47,7 @@ local function SignalPartyValueChanges()
 				local lastVal = playerData.abilities[ability]
 				if baseVal ~= nil and lastVal ~= nil and lastVal ~= baseVal then
 					Osi.LeaderLib_CharacterSheet_AbilityChanged(uuid, ability, lastVal, baseVal)
+					LeaderLib.Print("[LeaderLib_ClientMessageReceiver.lua:SignalPartyValueChanges] ("..uuid..") base ability ("..ability..") changed: "..tostring(lastVal).." => "..tostring(baseVal).." ")
 				end
 			end
 		end
@@ -56,28 +58,32 @@ end
 
 function LeaderLib_Ext_CharacterSheet_SignalPartyValueChanges()
 	xpcall(SignalPartyValueChanges, function(err)
-		Ext.Print("[LeaderLib_ClientMessageReceiver.lua:SignalPartyValueChanges] Signaling party attribute changes:\n" .. tostring(err))
+		Ext.Print("[LeaderLib_ClientMessageReceiver.lua:SignalPartyValueChanges] Error signaling party attribute changes:\n" .. tostring(err))
+	end)
+end
+
+function LeaderLib_Ext_CharacterSheet_StorePartyValues()
+	xpcall(StorePartyValues, function(err)
+		Ext.Print("[LeaderLib_ClientMessageReceiver.lua:StorePartyValues] Error storing party sheet values:\n" .. tostring(err))
 	end)
 end
 
 local function RunChangesDetectionTimer()
 	TimerCancel("Timers_LeaderLib_CharacterSheet_SignalPartyValueChanges")
-	TimerLaunch("Timers_LeaderLib_CharacterSheet_SignalPartyValueChanges", 50)
+	TimerLaunch("Timers_LeaderLib_CharacterSheet_SignalPartyValueChanges", 1000)
 end
 
 local function LeaderLib_OnGlobalMessage(call, data)
-	Ext.Print("[LLENEMY_ServerMessages.lua:LeaderLib_OnGlobalMessage] Received message from client. Data ("..tostring(data)..").")
-
+	--LeaderLib.Print("[LLENEMY_ServerMessages.lua:LeaderLib_OnGlobalMessage] Received message from client. Data ("..tostring(data)..").")
 	if LeaderLib.ID.MESSAGE[data] ~= nil then
 		if data == LeaderLib.ID.MESSAGE.STORE_PARTY_VALUES then
 			StorePartyValues()
 		end
 	else
-		local messageData = MessageData:FromString(data)
+		local messageData = MessageData:CreateFromString(data)
+		--LeaderLib.Print("[LLENEMY_ServerMessages.lua:LeaderLib_OnGlobalMessage] Created MessageData ("..LeaderLib.Common.Dump(messageData)..").")
 		if messageData ~= nil then
-			if messageData.ID == LeaderLib.ID.MESSAGE.ABILITY_CHANGED then
-				RunChangesDetectionTimer()
-			elseif messageData.ID == LeaderLib.ID.MESSAGE.ABILITY_CHANGED then
+			if messageData.ID == LeaderLib.ID.MESSAGE.ATTRIBUTE_CHANGED or messageData.ID == LeaderLib.ID.MESSAGE.ABILITY_CHANGED then
 				RunChangesDetectionTimer()
 			end
 		end

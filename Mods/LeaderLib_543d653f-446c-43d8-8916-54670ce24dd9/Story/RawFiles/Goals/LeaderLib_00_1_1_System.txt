@@ -113,6 +113,7 @@ AND
 LeaderLib_QRY_ExtenderIsActive()
 THEN
 GlobalSetFlag("LeaderLib_ExtenderIsActive");
+LeaderLib_Extender_Enabled(1);
 
 PROC
 LeaderLib_System_SetExtenderFlag()
@@ -122,6 +123,7 @@ AND
 NOT LeaderLib_QRY_ExtenderIsActive()
 THEN
 GlobalClearFlag("LeaderLib_ExtenderIsActive");
+LeaderLib_Extender_Enabled(0);
 
 IF
 SavegameLoading(_,_,_,_)
@@ -132,6 +134,11 @@ IF
 GameModeStarted(_,_)
 THEN
 LeaderLib_System_SetExtenderFlag();
+
+PROC
+LeaderLib_Extender_Enabled((INTEGER)_Enabled)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION LUA_INIT

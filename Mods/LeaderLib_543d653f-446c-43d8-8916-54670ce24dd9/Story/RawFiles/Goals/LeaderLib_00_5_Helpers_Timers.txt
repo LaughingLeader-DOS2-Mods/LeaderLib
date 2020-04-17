@@ -129,58 +129,6 @@ DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent,
 THEN
 NOT DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent, _TimerPrefix);
 TimerCancel(_TimerName);
-
-/*
-QRY
-LeaderLib_Timers_QRY_CharacterItemTimerStarted((GUIDSTRING)_Object, (STRING)_TimerPrefix)
-AND
-ObjectIsCharacter((CHARACTERGUID)_Object, 1)
-AND
-DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Object, _Item, _CompleteEvent, _TimerPrefix)
-THEN
-DB_NOOP(1);
-
-QRY
-LeaderLib_Timers_QRY_CharacterItemTimerStarted((GUIDSTRING)_Object, (STRING)_CompleteEvent)
-AND
-ObjectIsCharacter((CHARACTERGUID)_Object, 1)
-AND
-DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Object, _Item, _CompleteEvent, _TimerPrefix)
-THEN
-DB_NOOP(1);
-
-QRY
-LeaderLib_Timers_QRY_CharacterItemTimerStarted((GUIDSTRING)_Object, (STRING)_TimerPrefix)
-AND
-ObjectIsItem((ITEMGUID)_Object, 1)
-AND
-DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Object, _CompleteEvent, _TimerPrefix)
-THEN
-DB_NOOP(1);
-
-QRY
-LeaderLib_Timers_QRY_CharacterItemTimerStarted((GUIDSTRING)_Object, (STRING)_CompleteEvent)
-AND
-ObjectIsItem((ITEMGUID)_Object, 1)
-AND
-DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Object, _CompleteEvent, _TimerPrefix)
-THEN
-DB_NOOP(1);
-
-QRY
-LeaderLib_Timers_QRY_CharacterItemTimerStarted((CHARACTERGUID)_Char, (ITEMGUID)_Item, (STRING)_CompleteEvent)
-AND
-DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent, _TimerPrefix)
-THEN
-DB_NOOP(1);
-
-QRY
-LeaderLib_Timers_QRY_CharacterItemTimerStarted((CHARACTERGUID)_Char, (ITEMGUID)_Item, (STRING)_CompleteEvent)
-AND
-DB_LeaderLib_Helper_Temp_CharItemTimer(_TimerName, _Char, _Item, _CompleteEvent, _TimerPrefix)
-THEN
-DB_NOOP(1);
-*/
 //END_REGION
 
 //REGION CHARACTER_CHARACTER_TIMER
@@ -359,6 +307,88 @@ DB_LeaderLib_Helper_Temp_ObjectObjectTimer(_TimerName, _Obj1, _Obj2, _CompleteEv
 THEN
 NOT DB_LeaderLib_Helper_Temp_ObjectObjectTimer(_TimerName, _Obj1, _Obj2, _CompleteEvent, _TimerPrefix);
 TimerCancel(_TimerName);
+//END_REGION
+
+//REGION LUA_TIMERS
+// [BEGIN_NO_OSITOOLS]
+PROC
+LeaderLib_Timers_StartLuaTimer((STRING)_Event, (INTEGER)_Delay)
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_Timers_StartLuaTimer((STRING)_Event, (INTEGER)_Delay, (GUIDSTRING)_Obj)
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_Timers_StartLuaTimer((STRING)_Event, (INTEGER)_Delay, (GUIDSTRING)_Obj, (GUIDSTRING)_Obj2)
+THEN
+DB_NOOP(1);
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+PROC
+LeaderLib_Timers_StartLuaTimer((STRING)_Event, (INTEGER)_Delay)
+THEN
+NRD_LuaCall("LeaderLib_Ext_StartTimer", _Event, (STRING)_Delay);
+
+PROC
+LeaderLib_Timers_StartLuaTimer((STRING)_Event, (INTEGER)_Delay, (GUIDSTRING)_Obj)
+AND
+GetUUID(_Obj, _UUID)
+THEN
+NRD_LuaCall("LeaderLib_Ext_StartTimer", _Event, (STRING)_Delay, _UUID);
+
+PROC
+LeaderLib_Timers_StartLuaTimer((STRING)_Event, (INTEGER)_Delay, (GUIDSTRING)_Obj, (GUIDSTRING)_Obj2)
+AND
+GetUUID(_Obj, _UUID)
+AND
+GetUUID(_Obj, _UUID2)
+THEN
+NRD_LuaCall("LeaderLib_Ext_StartTimer", _Event, (STRING)_Delay, _UUID, _UUID2);
+
+PROC
+LeaderLib_Timers_Internal_StoreLuaData((STRING)_TimerName, (STRING)_Event)
+THEN
+DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event);
+
+PROC
+LeaderLib_Timers_Internal_StoreLuaData((STRING)_TimerName, (STRING)_UUID, (STRING)_Event)
+THEN
+DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event, _UUID);
+
+PROC
+LeaderLib_Timers_Internal_StoreLuaData((STRING)_TimerName, (STRING)_UUID, (STRING)_UUID2, (STRING)_Event)
+THEN
+DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event, _UUID, _UUID2);
+
+IF
+TimerFinished(_TimerName)
+AND
+DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event)
+THEN
+NOT DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event);
+NRD_LuaCall("LeaderLib_Ext_TimerFinished", _Event);
+
+IF
+TimerFinished(_TimerName)
+AND
+DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event, _UUID)
+THEN
+NOT DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event, _UUID);
+NRD_LuaCall("LeaderLib_Ext_TimerFinished", _Event, _UUID);
+
+IF
+TimerFinished(_TimerName)
+AND
+DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event, _UUID, _UUID2)
+THEN
+NOT DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event, _UUID, _UUID2);
+NRD_LuaCall("LeaderLib_Ext_TimerFinished", _Event, _UUID, _UUID2);
+*/
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

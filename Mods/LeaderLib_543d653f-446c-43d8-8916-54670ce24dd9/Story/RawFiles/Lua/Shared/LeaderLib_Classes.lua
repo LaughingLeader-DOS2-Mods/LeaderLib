@@ -67,9 +67,9 @@ end
 ---Prepares a message for data transfer and converts it to string.
 ---@param str string
 ---@return MessageData
-function MessageData:FromString(str)
+function MessageData:CreateFromString(str)
 	local b,result = xpcall(TryParseTable, function(err)
-		Ext.Print("[LeaderLib_Classes.lua:MessageData:FromString] Error parsing string as table ("..str.."):\n" .. tostring(err))
+		Ext.Print("[LeaderLib_Classes.lua:MessageData:CreateFromString] Error parsing string as table ("..str.."):\n" .. tostring(err))
 	end, str)
 	if b and result ~= nil then
 		return result

@@ -68,6 +68,9 @@ LeaderLib_ToggleScripts_Register_ObjectScript("LeaderLib_19_TS_TurnTracker_Comba
 //Debug
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Debug_General", "LeaderLib_IsEditorMode");
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Debug_HitTracing", "LeaderLib_Debug_Tracing_Hit");
+
+//Lua Helpers
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_LuaEventListeners", "LeaderLib_LuaEventListeners_Enabled");
 //END_REGION
 
 //REGION UPDATE_SCRIPT_DISABLE

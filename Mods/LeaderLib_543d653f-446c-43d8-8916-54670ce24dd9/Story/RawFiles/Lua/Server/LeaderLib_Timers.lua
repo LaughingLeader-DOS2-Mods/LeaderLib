@@ -21,7 +21,7 @@ end
 ---@param event string
 ---@param delay integer
 function LeaderLib_Ext_StartTimer(event, delay, ...)
-	local status,err = xpcall(TryStartTimer, debug.traceback, delay, ...)
+	local status,err = xpcall(TryStartTimer, debug.traceback, event, delay, ...)
 	if not status then
 		Ext.PrintError("Error starting timer:\n", err)
 	end

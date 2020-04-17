@@ -329,25 +329,31 @@ DB_NOOP(1);
 
 /* [OSITOOLS_ONLY]
 PROC
-LeaderLib_Timers_StartLuaTimer((STRING)_Event, (INTEGER)_Delay)
+LeaderLib_Timers_StartLuaTimer((STRING)_Event, (INTEGER)_d)
+AND
+IntegertoString(_d, _Delay)
 THEN
-NRD_LuaCall("LeaderLib_Ext_StartTimer", _Event, (STRING)_Delay);
+NRD_LuaCall("LeaderLib_Ext_StartTimer", _Event, _Delay);
 
 PROC
-LeaderLib_Timers_StartLuaTimer((STRING)_Event, (INTEGER)_Delay, (GUIDSTRING)_Obj)
+LeaderLib_Timers_StartLuaTimer((STRING)_Event, (INTEGER)_d, (GUIDSTRING)_Obj)
+AND
+IntegertoString(_d, _Delay)
 AND
 GetUUID(_Obj, _UUID)
 THEN
-NRD_LuaCall("LeaderLib_Ext_StartTimer", _Event, (STRING)_Delay, _UUID);
+NRD_LuaCall("LeaderLib_Ext_StartTimer", _Event, _Delay, _UUID);
 
 PROC
-LeaderLib_Timers_StartLuaTimer((STRING)_Event, (INTEGER)_Delay, (GUIDSTRING)_Obj, (GUIDSTRING)_Obj2)
+LeaderLib_Timers_StartLuaTimer((STRING)_Event, (INTEGER)_d, (GUIDSTRING)_Obj, (GUIDSTRING)_Obj2)
+AND
+IntegertoString(_d, _Delay)
 AND
 GetUUID(_Obj, _UUID)
 AND
 GetUUID(_Obj, _UUID2)
 THEN
-NRD_LuaCall("LeaderLib_Ext_StartTimer", _Event, (STRING)_Delay, _UUID, _UUID2);
+NRD_LuaCall("LeaderLib_Ext_StartTimer", _Event, _Delay, _UUID, _UUID2);
 
 PROC
 LeaderLib_Timers_Internal_StoreLuaData((STRING)_TimerName, (STRING)_Event)

@@ -1,0 +1,26 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+KBSECTION
+
+/* [OSITOOLS_ONLY]
+IF
+TimerFinished("Timers_LeaderLib_CharacterSheet_SignalPartyValueChanges")
+THEN
+NRD_LuaCall("LeaderLib_Ext_CharacterSheet_SignalPartyValueChanges");
+*/
+
+/* These procs are fired by Lua scripts, signaled by client UI events when plus buttons are clicked. */
+PROC
+LeaderLib_CharacterSheet_AttributeChanged((CHARACTERGUID)_Player, (STRING)_Attribute, (INTEGER)_Last, (INTEGER)_Next)
+THEN
+DB_NOOP(1);
+
+PROC
+LeaderLib_CharacterSheet_AbilityChanged((CHARACTERGUID)_Player, (STRING)_Attribute, (INTEGER)_Last, (INTEGER)_Next)
+THEN
+DB_NOOP(1);
+
+EXITSECTION
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

@@ -40,3 +40,66 @@ function TranslatedString:Update()
 end
 
 LeaderLib.Classes["TranslatedString"] = TranslatedString
+
+---@class MessageData
+local MessageData = {
+	ID = "NONE",
+	Params = {}
+}
+MessageData.__index = MessageData
+
+---Prepares a message for data transfer and converts it to string.
+---@return string
+function MessageData:ToString()
+    return Ext.JsonStringify(self)
+end
+
+local function TryParseTable(str)
+	local tbl = Ext.JsonParse(str)
+	if tbl ~= nil then
+		if tbl.ID ~= nil and tbl.Params ~= nil then
+			return MessageData:CreateFromTable(tbl.ID, tbl.Params)
+		end
+	end
+	error("String is not a MessageData structure.")
+end
+
+---Prepares a message for data transfer and converts it to string.
+---@param str string
+---@return MessageData
+function MessageData:FromString(str)
+	local b,result = xpcall(TryParseTable, function(err)
+		Ext.Print("[LeaderLib_Classes.lua:MessageData:FromString] Error parsing string as table ("..str.."):\n" .. tostring(err))
+	end, str)
+	if b and result ~= nil then
+		return result
+	end
+	return nil
+end
+
+---@param id string
+---@return MessageData
+function MessageData:Create(id,...)
+    local this =
+    {
+		ID = id,
+		Params = {...}
+	}
+	setmetatable(this, self)
+    return this
+end
+
+---@param id string
+---@param params table
+---@return MessageData
+function MessageData:CreateFromTable(id,params)
+    local this =
+    {
+		ID = id,
+		Params = params
+	}
+	setmetatable(this, self)
+    return this
+end
+
+LeaderLib.Classes["MessageData"] = MessageData

@@ -38,13 +38,6 @@ PROC
 LeaderLib_CharacterSheet_PointsChanged((STRING)_Stat)
 THEN
 DB_NOOP(1);
-
-/* General listener for when a point is changed in the character sheet. */
-PROC
-LeaderLib_CharacterSheet_PointAdded((STRING)_Stat)
-THEN
-DB_NOOP(1);
-
 EXITSECTION
 ENDEXITSECTION
 ParentTargetEdge "LaughingLeader__LeaderLib"

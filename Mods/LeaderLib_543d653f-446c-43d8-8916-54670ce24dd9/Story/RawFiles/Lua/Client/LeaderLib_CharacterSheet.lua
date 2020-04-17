@@ -44,7 +44,7 @@ local pointEvents = {
 }
 
 local sheetEvents = {
-	"PlaySound",
+	--"PlaySound",
 	"getStats",
 	"editCustomStat",
 	"removeCustomStat",
@@ -94,15 +94,15 @@ local function RegisterListeners()
 	end
 
 	-- Listen to the hotbar for when the sheet opens
-	-- local hotbar = Ext.GetBuiltinUI("Public/Game/GUI/hotBar.swf")
-	-- if hotbar ~= nil then
-	-- 	Ext.RegisterUICall(hotbar, "hotbarBtnPressed", OnSheetEvent)
-	-- 	Ext.RegisterUICall(hotbar, "PlaySound", OnSheetEvent)
-	-- 	Ext.Print("[LeaderLib_CharacterSheet.lua:RegisterListeners] Found (hotBar.swf). Registered listeners.")
-	-- else
-	-- 	Ext.Print("[LeaderLib_CharacterSheet.lua:RegisterListeners] Failed to find Public/Game/GUI/hotBar.swf")
-	-- end
-	local characterCreation = Ext.GetBuiltinUI("Public/Game/GUI/characterCreation.swf")
+	--[[ local hotbar = Ext.GetBuiltinUI("Public/Game/GUI/hotBar.swf")
+	if hotbar ~= nil then
+		Ext.RegisterUICall(hotbar, "hotbarBtnPressed", OnSheetEvent)
+		Ext.RegisterUICall(hotbar, "PlaySound", OnSheetEvent)
+		Ext.Print("[LeaderLib_CharacterSheet.lua:RegisterListeners] Found (hotBar.swf). Registered listeners.")
+	else
+		Ext.Print("[LeaderLib_CharacterSheet.lua:RegisterListeners] Failed to find Public/Game/GUI/hotBar.swf")
+	end ]]
+	--[[ local characterCreation = Ext.GetBuiltinUI("Public/Game/GUI/characterCreation.swf")
 	if characterCreation ~= nil then
 		Ext.RegisterUICall(characterCreation, "selectOption", OnSheetEvent)
 		for i,v in pairs(pointEvents) do
@@ -111,7 +111,7 @@ local function RegisterListeners()
 		Ext.Print("[LeaderLib_CharacterSheet.lua:RegisterListeners] Found (characterCreation.swf). Registered listeners.")
 	else
 		Ext.Print("[LeaderLib_CharacterSheet.lua:RegisterListeners] Failed to find Public/Game/GUI/characterCreation.swf")
-	end
+	end ]]
 end
 
 Ext.RegisterListener("SessionLoaded", RegisterListeners)

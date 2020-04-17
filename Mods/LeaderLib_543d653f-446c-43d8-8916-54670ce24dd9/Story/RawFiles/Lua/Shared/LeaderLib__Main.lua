@@ -1,3 +1,14 @@
+--- Registers a function to call when a specific Lua LeaderLib event fires.
+---@param event string
+---@param callback function
+local function RegisterListener(event, callback)
+	if LeaderLib.Listeners[event] ~= nil then
+		table.insert(LeaderLib.Listeners[event], callback)
+	else
+		error("[LeaderLib__Main.lua:RegisterListener] Event ("..tostring(event)..") is not a valid LeaderLib listener event!")
+	end
+end
+
 if _G["LeaderLib"] == nil then
 	_G["LeaderLib"] = {
 		Classes = {},
@@ -45,7 +56,13 @@ if _G["LeaderLib"] == nil then
 			["a945eefa-530c-4bca-a29c-a51450f8e181"] = true,--Sourcerous Sundries
 			["f243c84f-9322-43ac-96b7-7504f990a8f0"] = true,--Improved Organisation
 			["d2507d43-efce-48b8-ba5e-5dd136c715a7"] = true,--Pet Power
-		}
+		},
+		Listeners = {
+			CharacterSheetPointChanged = {},
+			CharacterBasePointsChanged = {},
+			TimerFinished = {}
+		},
+		RegisterListener = RegisterListener
 	}
 end
 

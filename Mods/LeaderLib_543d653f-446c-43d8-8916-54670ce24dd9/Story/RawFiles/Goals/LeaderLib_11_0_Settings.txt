@@ -589,6 +589,7 @@ THEN
 //These are statuses with their own type
 DB_LeaderLib_EngineStatus("HIT");
 DB_LeaderLib_EngineStatus("CLIMBING");
+DB_LeaderLib_EngineStatus("COMBAT");
 DB_LeaderLib_EngineStatus("DYING");
 DB_LeaderLib_EngineStatus("ENCUMBERED");
 DB_LeaderLib_EngineStatus("EXPLODE");
@@ -1162,6 +1163,15 @@ AND
 LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,5,11,0)
 THEN
 LeaderLib_Settings_InitDamageData();
+
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,6,7,9)
+THEN
+SysClear("DB_LeaderLib_EngineStatus", 1);
+LeaderLib_Settings_InitStatusData();
+LeaderLog_Log("SYSTEM", "[LeaderLib:Settings] Updated settings from version [",_PastVersion,"].");
 //END_REGION
 EXITSECTION
 

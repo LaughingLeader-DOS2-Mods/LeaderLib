@@ -110,31 +110,29 @@ local ItemBoost = {
 	Type = "DeltaMod",
 	Boost = "",
 	MinLevel = -1,
-	MaxLevel = -1
+	MaxLevel = -1,
+	Chance = 100
 }
 ItemBoost.__index = ItemBoost
 
+---@param boost string
+---@param vars table
 ---@return ItemBoost
-function ItemBoost:Create(boost, ...)
+function ItemBoost:Create(boost, vars)
     local this =
     {
-		Boost = boost
+		Boost = boost,
+		Type = "DeltaMod",
+		MinLevel = -1,
+		MaxLevel = -1,
+		Chance = 100
 	}
 	setmetatable(this, self)
-	local params = {...}
-	local paramsCount = #params
-	if paramsCount > 0 then
-		for i,param in ipairs(params) do
-			if type(param) == "string" then
-				this.Type = param
-			elseif type(param) == "number" then
-				if this.MinLevel <= -1 then
-					this.MinLevel = math.tointeger(param)
-				elseif this.MinLevel <= -1 then
-					this.MaxLevel = math.tointeger(param)
-				end
-			end
-		end
+	if vars ~= nil then
+		if vars.Type ~= nil then this.Type = vars.Type end
+		if vars.MinLevel ~= nil then this.MinLevel = vars.MinLevel end
+		if vars.MaxLevel ~= nil then this.MaxLevel = vars.MaxLevel end
+		if vars.Chance ~= nil then this.Chance = vars.Chance end
 	end
     return this
 end

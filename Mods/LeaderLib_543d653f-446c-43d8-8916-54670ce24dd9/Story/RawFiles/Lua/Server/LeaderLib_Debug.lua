@@ -247,3 +247,7 @@ function LeaderLib_Ext_Debug_TestSkillScaleMath(level)
 
 	Ext.Print("[LeaderLib_Debug.lua:TestSkillScaleMath] Level("..level..") Range(30) Damage("..tostring(damage)..") FromBase("..tostring(damageAdjusted)..") Final Damage("..tostring(minDamage).." - "..tostring(maxDamage)..")" )
 end
+
+function LeaderLib_Ext_GenerateIdeHelpers()
+	Ext.GenerateIdeHelpers()
+end

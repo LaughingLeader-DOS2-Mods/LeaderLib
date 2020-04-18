@@ -321,6 +321,24 @@ function LeaderLib_Ext_ItemIsEquipped(char, item)
     return false
 end
 
+---Removes matching rune templates from items in any equipment slots.
+---@param character string
+---@param runeTemplates table
+local function RemoveRunes(character, runeTemplates)
+	for _,slotName in pairs(LeaderLib.VisibleEquipmentSlots) do
+		local item = CharacterGetEquippedItem(character, slotName)
+		if item ~= nil then
+			for runeSlot=0,2,1 do
+				local runeTemplate = ItemGetRuneItemTemplate(item, runeSlot)
+				if runeTemplate ~= nil and runeTemplates[runeTemplate] == true then
+					local rune = ItemRemoveRune(character, item, runeSlot)
+					Ext.Print("[LeaderLib_Ext_RemoveRunes] Removed rune ("..tostring(rune)..") from item ("..item..")["..tostring(runeSlot).."] for character ("..character..")")
+				end
+			end
+		end
+	end
+end
+
 LeaderLib.Game = {
 	ReduceDamage = ReduceDamage,
 	IncreaseDamage = IncreaseDamage,
@@ -331,7 +349,8 @@ LeaderLib.Game = {
     StoreSkillSlots = StoreSkillSlots,
     SetSlotToSkill = SetSlotToSkill,
     CloneItemForCharacter = CloneItemForCharacter,
-    ExplodeProjectile = ExplodeProjectile
+    ExplodeProjectile = ExplodeProjectile,
+    RemoveRunes = RemoveRunes
 }
 
 LeaderLib.Register.Table(LeaderLib.Game);

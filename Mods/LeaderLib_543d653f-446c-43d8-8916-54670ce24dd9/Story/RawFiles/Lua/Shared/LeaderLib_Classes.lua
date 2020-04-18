@@ -103,3 +103,41 @@ function MessageData:CreateFromTable(id,params)
 end
 
 LeaderLib.Classes["MessageData"] = MessageData
+
+---An item boost to be used with NRD_ItemCloneAddBoost.
+---@class ItemBoost
+local ItemBoost = {
+	Type = "DeltaMod",
+	Boost = "",
+	MinLevel = -1,
+	MaxLevel = -1
+}
+ItemBoost.__index = ItemBoost
+
+---@return ItemBoost
+function ItemBoost:Create(boost, ...)
+    local this =
+    {
+		Boost = boost
+	}
+	setmetatable(this, self)
+	local params = {...}
+	local paramsCount = #params
+	if paramsCount > 0 then
+		for i,param in ipairs(params) do
+			if type(param) == "string" then
+				this.Boost = param
+			elseif type(param) == "number" then
+				if this.MinLevel <= -1 then
+					this.MinLevel = math.tointeger(param)
+				elseif this.MinLevel <= -1 then
+					this.MaxLevel = math.tointeger(param)
+				end
+			end
+		end
+	end
+    return this
+end
+
+LeaderLib.Classes["ItemBoost"] = ItemBoost
+--local ItemBoost = LeaderLib.Classes["ItemBoost"]

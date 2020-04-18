@@ -1403,6 +1403,12 @@ StoryEvent((CHARACTERGUID)_Char, "LeaderLib_Iterators_Editor_ResetCooldowns")
 THEN
 CharacterResetCooldowns(_Char);
 
+/* [OSITOOLS_ONLY]
+IF
+TextEventSet("leaderlib_ide")
+THEN
+NRD_LuaCall("LeaderLib_Ext_GenerateIdeHelpers");
+*/
 EXITSECTION
 
 ENDEXITSECTION

@@ -198,6 +198,20 @@ local function GetRandomTableEntry(tbl)
 	return nil
 end
 
+---Get a random entry from a table after removing it.
+---@param tbl table
+---@return any
+local function PopRandomTableEntry(tbl)
+	if #tbl > 0 then
+		local rnd = Ext.Random(LEADERLIB_RAN_SEED)
+		local ran = math.max(1, math.fmod(rnd,#tbl))
+		local entry = tbl[ran]
+		tbl[ran] = nil
+		return entry
+	end
+	return nil
+end
+
 local function ShuffleTable(tbl)
 	for i = #tbl, 2, -1 do
 		local j = Ext.Random(i)
@@ -351,6 +365,7 @@ LeaderLib.Common = {
 	ShuffleTable = ShuffleTable,
 	GetTableEntry = GetTableEntry,
 	GetRandomTableEntry = GetRandomTableEntry,
+	PopRandomTableEntry = PopRandomTableEntry,
 	GetRandom = GetRandom,
 	Enum = Enum,
 	SafeguardParam = SafeguardParam,

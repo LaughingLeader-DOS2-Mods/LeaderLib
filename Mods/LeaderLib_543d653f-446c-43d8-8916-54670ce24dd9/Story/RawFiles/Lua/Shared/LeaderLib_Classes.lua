@@ -126,7 +126,7 @@ function ItemBoost:Create(boost, ...)
 	if paramsCount > 0 then
 		for i,param in ipairs(params) do
 			if type(param) == "string" then
-				this.Boost = param
+				this.Type = param
 			elseif type(param) == "number" then
 				if this.MinLevel <= -1 then
 					this.MinLevel = math.tointeger(param)

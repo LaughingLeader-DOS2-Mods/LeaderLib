@@ -254,7 +254,7 @@ local function CloneItemForCharacter(char, item, completion_event, autolevel)
     CharacterItemSetEvent(char, cloned, completion_event)
 end
 
----Clone an item for a character.
+---Creates an item by stat, using cloning.
 ---@param stat string
 ---@param level integer
 ---@return string
@@ -339,18 +339,16 @@ local function RemoveRunes(character, runeTemplates)
 	end
 end
 
-LeaderLib.Game = {
-	ReduceDamage = ReduceDamage,
-	IncreaseDamage = IncreaseDamage,
-    HitSucceeded = HitSucceeded,
-    HitWithWeapon = HitWithWeapon,
-	RedirectDamage = RedirectDamage,
-    StoreSkillData = StoreSkillData,
-    StoreSkillSlots = StoreSkillSlots,
-    SetSlotToSkill = SetSlotToSkill,
-    CloneItemForCharacter = CloneItemForCharacter,
-    ExplodeProjectile = ExplodeProjectile,
-    RemoveRunes = RemoveRunes
-}
+LeaderLib.Game.ReduceDamage = ReduceDamage
+LeaderLib.Game.IncreaseDamage = IncreaseDamage
+LeaderLib.Game.HitSucceeded = HitSucceeded
+LeaderLib.Game.HitWithWeapon = HitWithWeapon
+LeaderLib.Game.RedirectDamage = RedirectDamage
+LeaderLib.Game.StoreSkillData = StoreSkillData
+LeaderLib.Game.StoreSkillSlots = StoreSkillSlots
+LeaderLib.Game.SetSlotToSkill = SetSlotToSkill
+LeaderLib.Game.CloneItemForCharacter = CloneItemForCharacter
+LeaderLib.Game.ExplodeProjectile = ExplodeProjectile
+LeaderLib.Game.RemoveRunes = RemoveRunes
 
 LeaderLib.Register.Table(LeaderLib.Game);

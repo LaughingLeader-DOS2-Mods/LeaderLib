@@ -13,7 +13,6 @@ if _G["LeaderLib"] == nil then
 	_G["LeaderLib"] = {
 		Classes = {},
 		Common = {},
-
 		Game = {},
 		Initialized = false,
 		Main = {},

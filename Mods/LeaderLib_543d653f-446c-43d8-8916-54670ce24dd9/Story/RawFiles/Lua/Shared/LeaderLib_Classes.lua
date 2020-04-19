@@ -139,3 +139,28 @@ end
 
 LeaderLib.Classes["ItemBoost"] = ItemBoost
 --local ItemBoost = LeaderLib.Classes["ItemBoost"]
+
+---An container for multiple ItemBoost entries.
+---@class ItemBoostGroup
+local ItemBoostGroup = {
+	Entries = {}
+}
+ItemBoostGroup.__index = ItemBoostGroup
+
+---@param entries table
+---@return ItemBoostGroup
+function ItemBoostGroup:Create(entries)
+    local this =
+    {
+		Entries = entries
+	}
+	setmetatable(this, self)
+    return this
+end
+
+---@return table
+function ItemBoostGroup:GetRandomEntry()
+    return LeaderLib.Common.GetRandomTableEntry(self.Entries)
+end
+LeaderLib.Classes["ItemBoostGroup"] = ItemBoostGroup
+--local ItemBoostGroup = LeaderLib.Classes["ItemBoostGroup"]

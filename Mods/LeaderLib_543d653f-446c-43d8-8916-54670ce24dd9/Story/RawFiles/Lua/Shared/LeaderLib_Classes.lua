@@ -40,6 +40,7 @@ function TranslatedString:Update()
 end
 
 LeaderLib.Classes["TranslatedString"] = TranslatedString
+--local TranslatedString = LeaderLib.Classes["TranslatedString"]
 
 ---@class MessageData
 local MessageData = {
@@ -108,12 +109,29 @@ LeaderLib.Classes["MessageData"] = MessageData
 ---@class ItemBoost
 local ItemBoost = {
 	Type = "DeltaMod",
+	SlotType = "",
+	WeaponType = "",
+	TwoHanded = "",
 	Boost = "",
 	MinLevel = -1,
 	MaxLevel = -1,
 	Chance = 100
 }
 ItemBoost.__index = ItemBoost
+
+---@param itemBoost ItemBoost
+---@param vars table
+local function SetVars(itemBoost, vars)
+	if vars ~= nil then
+		if vars.Type ~= nil then itemBoost.Type = vars.Type end
+		if vars.MinLevel ~= nil then itemBoost.MinLevel = vars.MinLevel end
+		if vars.MaxLevel ~= nil then itemBoost.MaxLevel = vars.MaxLevel end
+		if vars.Chance ~= nil then itemBoost.Chance = vars.Chance end
+		if vars.SlotType ~= nil then itemBoost.SlotType = vars.SlotType end
+		if vars.TwoHanded ~= nil then itemBoost.TwoHanded = vars.TwoHanded end
+		if vars.WeaponType ~= nil then itemBoost.WeaponType = vars.WeaponType end
+	end
+end
 
 ---@param boost string
 ---@param vars table
@@ -128,12 +146,7 @@ function ItemBoost:Create(boost, vars)
 		Chance = 100
 	}
 	setmetatable(this, self)
-	if vars ~= nil then
-		if vars.Type ~= nil then this.Type = vars.Type end
-		if vars.MinLevel ~= nil then this.MinLevel = vars.MinLevel end
-		if vars.MaxLevel ~= nil then this.MaxLevel = vars.MaxLevel end
-		if vars.Chance ~= nil then this.Chance = vars.Chance end
-	end
+	SetVars(this, vars)
     return this
 end
 
@@ -148,13 +161,19 @@ local ItemBoostGroup = {
 ItemBoostGroup.__index = ItemBoostGroup
 
 ---@param entries table
+---@param vars table
 ---@return ItemBoostGroup
-function ItemBoostGroup:Create(entries)
+function ItemBoostGroup:Create(entries, vars)
     local this =
     {
 		Entries = entries
 	}
 	setmetatable(this, self)
+	if vars ~= nil then
+		for i,v in pairs(this.Entries) do
+			SetVars(v, vars)
+		end
+	end
     return this
 end
 

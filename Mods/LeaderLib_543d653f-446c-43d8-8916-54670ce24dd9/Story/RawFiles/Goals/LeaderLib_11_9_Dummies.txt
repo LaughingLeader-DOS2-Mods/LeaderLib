@@ -3,18 +3,16 @@ SubGoalCombiner SGC_AND
 INITSECTION
 
 KBSECTION
-IF
-StoryEvent(_, "LeaderLib_Initialized")
+PROC
+LeaderLib_Initialized((STRING)_Region)
 AND
-DB_CurrentLevel(_Region)
+NOT GetRegion(S_LeaderLib_Dummy_TargetHelper_A_36069245-0e2d-44b1-9044-6797bd29bb15, _Region)
 AND
 GlobalGetFlag("LeaderLib_IsEditorMode", _IsEditorMode)
 AND
 IsGameLevel(_Region, _IsGameLevel)
 AND
 IntegerMax(_IsEditorMode, _IsGameLevel, 1)
-AND
-NOT DB_LeaderLib_Dummies_MovedToLevel(_Region, S_LeaderLib_Dummy_TargetHelper_A_36069245-0e2d-44b1-9044-6797bd29bb15)
 AND
 CharacterGetHostCharacter(_Host)
 THEN

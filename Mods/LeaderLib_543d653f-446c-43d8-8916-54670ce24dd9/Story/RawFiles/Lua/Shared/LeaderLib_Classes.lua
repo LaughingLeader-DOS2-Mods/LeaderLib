@@ -106,8 +106,8 @@ end
 LeaderLib.Classes["MessageData"] = MessageData
 
 ---An item boost to be used with NRD_ItemCloneAddBoost.
----@class ItemBoost
-local ItemBoost = {
+---@class DeltaMod
+local DeltaMod = {
 	Type = "DeltaMod",
 	SlotType = "",
 	WeaponType = "",
@@ -117,26 +117,26 @@ local ItemBoost = {
 	MaxLevel = -1,
 	Chance = 100
 }
-ItemBoost.__index = ItemBoost
+DeltaMod.__index = DeltaMod
 
----@param itemBoost ItemBoost
+---@param deltaMod DeltaMod
 ---@param vars table
-local function SetVars(itemBoost, vars)
+local function SetVars(deltaMod, vars)
 	if vars ~= nil then
-		if vars.Type ~= nil then itemBoost.Type = vars.Type end
-		if vars.MinLevel ~= nil then itemBoost.MinLevel = vars.MinLevel end
-		if vars.MaxLevel ~= nil then itemBoost.MaxLevel = vars.MaxLevel end
-		if vars.Chance ~= nil then itemBoost.Chance = vars.Chance end
-		if vars.SlotType ~= nil then itemBoost.SlotType = vars.SlotType end
-		if vars.TwoHanded ~= nil then itemBoost.TwoHanded = vars.TwoHanded end
-		if vars.WeaponType ~= nil then itemBoost.WeaponType = vars.WeaponType end
+		if vars.Type ~= nil then deltaMod.Type = vars.Type end
+		if vars.MinLevel ~= nil then deltaMod.MinLevel = vars.MinLevel end
+		if vars.MaxLevel ~= nil then deltaMod.MaxLevel = vars.MaxLevel end
+		if vars.Chance ~= nil then deltaMod.Chance = vars.Chance end
+		if vars.SlotType ~= nil then deltaMod.SlotType = vars.SlotType end
+		if vars.TwoHanded ~= nil then deltaMod.TwoHanded = vars.TwoHanded end
+		if vars.WeaponType ~= nil then deltaMod.WeaponType = vars.WeaponType end
 	end
 end
 
 ---@param boost string
 ---@param vars table
----@return ItemBoost
-function ItemBoost:Create(boost, vars)
+---@return DeltaMod
+function DeltaMod:Create(boost, vars)
     local this =
     {
 		Boost = boost,
@@ -150,20 +150,20 @@ function ItemBoost:Create(boost, vars)
     return this
 end
 
-LeaderLib.Classes["ItemBoost"] = ItemBoost
---local ItemBoost = LeaderLib.Classes["ItemBoost"]
+LeaderLib.Classes["DeltaMod"] = DeltaMod
+--local DeltaMod = LeaderLib.Classes["DeltaMod"]
 
----An container for multiple ItemBoost entries.
----@class ItemBoostGroup
-local ItemBoostGroup = {
+---An container for multiple DeltaMod entries.
+---@class DeltaModGroup
+local DeltaModGroup = {
 	Entries = {}
 }
-ItemBoostGroup.__index = ItemBoostGroup
+DeltaModGroup.__index = DeltaModGroup
 
 ---@param entries table
 ---@param vars table
----@return ItemBoostGroup
-function ItemBoostGroup:Create(entries, vars)
+---@return DeltaModGroup
+function DeltaModGroup:Create(entries, vars)
     local this =
     {
 		Entries = entries
@@ -178,8 +178,8 @@ function ItemBoostGroup:Create(entries, vars)
 end
 
 ---@return table
-function ItemBoostGroup:GetRandomEntry()
+function DeltaModGroup:GetRandomEntry()
     return LeaderLib.Common.GetRandomTableEntry(self.Entries)
 end
-LeaderLib.Classes["ItemBoostGroup"] = ItemBoostGroup
---local ItemBoostGroup = LeaderLib.Classes["ItemBoostGroup"]
+LeaderLib.Classes["DeltaModGroup"] = DeltaModGroup
+--local DeltaModGroup = LeaderLib.Classes["DeltaModGroup"]

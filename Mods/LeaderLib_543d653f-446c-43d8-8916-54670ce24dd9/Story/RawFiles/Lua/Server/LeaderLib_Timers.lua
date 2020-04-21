@@ -1,7 +1,15 @@
-local function TryStartTimer(event, delay, ...)
+local function GetParamsCount(tbl)
+	local count = 0
+	for i,v in pairs(tbl) do
+		count = count + 1
+	end
+	return count
+end
+
+local function TryStartTimer(event, delay, uuids)
 	local timerName = event
-	local uuids = {...}
-	local paramCount = #uuids
+	local paramCount = GetParamsCount(uuids)
+	Ext.Print("TryStartTimer: ", event, delay, LeaderLib.Common.Dump(uuids), paramCount)
 	if uuids == nil or paramCount == 0 then
 		Osi.LeaderLib_Timers_Internal_StoreLuaData(timerName, event)
 	else
@@ -21,7 +29,8 @@ end
 ---@param event string
 ---@param delay integer
 function LeaderLib_Ext_StartTimer(event, delay, ...)
-	local status,err = xpcall(TryStartTimer, debug.traceback, event, delay, ...)
+	Ext.Print("LeaderLib_Ext_StartTimer: ", event, delay, LeaderLib.Common.Dump({...}))
+	local status,err = xpcall(TryStartTimer, debug.traceback, event, delay, {...})
 	if not status then
 		Ext.PrintError("Error starting timer:\n", err)
 	end

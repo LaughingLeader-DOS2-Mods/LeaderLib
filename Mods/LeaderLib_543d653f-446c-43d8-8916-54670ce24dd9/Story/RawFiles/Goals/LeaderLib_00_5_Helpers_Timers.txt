@@ -361,12 +361,12 @@ THEN
 DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event);
 
 PROC
-LeaderLib_Timers_Internal_StoreLuaData((STRING)_TimerName, (STRING)_UUID, (STRING)_Event)
+LeaderLib_Timers_Internal_StoreLuaData((STRING)_TimerName, (STRING)_Event, (STRING)_UUID)
 THEN
 DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event, _UUID);
 
 PROC
-LeaderLib_Timers_Internal_StoreLuaData((STRING)_TimerName, (STRING)_UUID, (STRING)_UUID2, (STRING)_Event)
+LeaderLib_Timers_Internal_StoreLuaData((STRING)_TimerName, (STRING)_Event, (STRING)_UUID, (STRING)_UUID2)
 THEN
 DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event, _UUID, _UUID2);
 

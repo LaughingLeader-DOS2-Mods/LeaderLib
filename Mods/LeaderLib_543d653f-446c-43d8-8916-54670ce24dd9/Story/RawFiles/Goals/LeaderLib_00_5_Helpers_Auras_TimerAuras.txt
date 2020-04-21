@@ -19,7 +19,15 @@ LeaderLib_Auras_Register_TimerAura((STRING)_AuraID, (INTEGER)_DefaultTimerRate, 
 AND
 IntegerMax(_DefaultTimerRate, 1, _CappedTimerRate)
 THEN
+LeaderLib_Auras_Internal_ClearLastRegisteredTimerAura(_AuraID);
 DB_LeaderLib_Auras_TimerAuras(_AuraID, _Radius, _CappedTimerRate, _HitCharacters, _HitItems, _HitSelf, _TrackTargets);
+
+PROC
+LeaderLib_Auras_Internal_ClearLastRegisteredTimerAura((STRING)_AuraID)
+AND
+DB_LeaderLib_Auras_TimerAuras(_AuraID, _Radius, _CappedTimerRate, _HitCharacters, _HitItems, _HitSelf, _TrackTargets)
+THEN
+NOT DB_LeaderLib_Auras_TimerAuras(_AuraID, _Radius, _CappedTimerRate, _HitCharacters, _HitItems, _HitSelf, _TrackTargets);
 //END_REGION
 
 //REGION AURA_APPLY

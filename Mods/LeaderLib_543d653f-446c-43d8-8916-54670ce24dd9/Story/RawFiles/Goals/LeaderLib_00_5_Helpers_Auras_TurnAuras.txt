@@ -23,7 +23,15 @@ IntegerMax(_DefaultEveryTurn, 0, _a)
 AND
 IntegerMin(_a, 1, _CappedEveryTurn)
 THEN
+LeaderLib_Auras_Internal_ClearLastRegisteredTurnAura(_AuraID);
 DB_LeaderLib_Auras_TurnAuras(_AuraID, _Radius, _CappedTurnRate, _CappedEveryTurn, _HitCharacters, _HitItems, _HitSelf, _TrackTargets);
+
+PROC
+LeaderLib_Auras_Internal_ClearLastRegisteredTurnAura((STRING)_AuraID)
+AND
+DB_LeaderLib_Auras_TurnAuras(_AuraID, _Radius, _CappedTurnRate, _CappedEveryTurn, _HitCharacters, _HitItems, _HitSelf, _TrackTargets)
+THEN
+NOT DB_LeaderLib_Auras_TurnAuras(_AuraID, _Radius, _CappedTurnRate, _CappedEveryTurn, _HitCharacters, _HitItems, _HitSelf, _TrackTargets);
 //END_REGION
 
 //REGION TURN_AURA_APPLY

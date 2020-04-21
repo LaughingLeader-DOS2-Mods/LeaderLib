@@ -3,13 +3,20 @@ INIT
 	EXTERN SKILL:%LeaderLib_DebugSkills_Skill = "Projectile_Fireball"
 	EXTERN CHARACTER:%LeaderLib_DebugSkills_SkillTarget = null
 	EXTERN FLOAT:%LeaderLib_DebugSkills_SkillDelay = 4.0
+	EXTERN FLOAT:%LeaderLib_DebugSkills_MinPlayerDistance = 10.0
 
 BEHAVIOUR
 
 REACTION LeaderLib_DebugSkills_UseSkill,999
+VARS
+	CHARACTER:_Player
+	FLOAT:_Dist
 USAGE ALL
-CHECK "!c1"
+CHECK "!c1&c2&c3&c4"
 	IsEqual(%LeaderLib_DebugSkills_SkillTarget, null)
+	GetClosestPlayer(_Player, __Me)
+	GetDistance(_Dist, __Me, _Player)
+	IsLessThen(_Dist, %LeaderLib_DebugSkills_MinPlayerDistance)
 ACTIONS
 	CharacterUseSkill(%LeaderLib_DebugSkills_Skill, %LeaderLib_DebugSkills_SkillTarget, FLOAT3:null, null, 1)
 	Sleep(%LeaderLib_DebugSkills_SkillDelay)

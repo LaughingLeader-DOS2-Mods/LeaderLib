@@ -54,6 +54,10 @@ local CHARACTER_STATS_PARAMS = {
 	MaxSummons = "Integer",
 	BaseMaxSummons = "Integer",
 	MaxMpOverride = "Integer",
+	Rotation = "table",
+	Position = "table",
+	MyGuid = "Integer",
+	NetID = "Integer",
 }
 
 local function TraceType(character, attribute, attribute_type)
@@ -63,6 +67,8 @@ local function TraceType(character, attribute, attribute_type)
 		Ext.Print("[LeaderLib_SharedDebug.lua:TraceCharacter] ["..attribute.."] = "..tostring(character[attribute]).."")
 	elseif attribute_type == "String" then
 		Ext.Print("[LeaderLib_SharedDebug.lua:TraceCharacter] ["..attribute.."] = "..tostring(character[attribute]).."")
+	elseif attribute_type == "table" then
+		Ext.Print("[LeaderLib_SharedDebug.lua:TraceCharacter] ["..attribute.."] = "..LeaderLib.Common.Dump(character[attribute]).."")
 	else
 		Ext.Print("[LeaderLib_SharedDebug.lua:TraceCharacter] ["..attribute.."] = "..tostring(character[attribute]).."")
 	end
@@ -73,22 +79,48 @@ function LeaderLib_Ext_Debug_TraceCharacter(character)
 		character = Ext.GetCharacter(character)
 	end
 
-	if character.MyGuid ~= nil then
-		for attribute,attribute_type in pairs(CHARACTER_PARAMS) do
-			TraceType(character, attribute, attribute_type)
-		end
-	end
-
+	local characterObject = nil
 	local characterStats = nil
-	if character.Stats ~= nil then
-		characterStats = character.Stats
-	elseif character.MyGuid == nil then
+
+	if character.Level ~= nil then
 		characterStats = character
+		if character.Character ~= nil then
+			characterObject = character.Character
+		end
+	else
+		characterObject = character
+		if character.Stats ~= nil then
+			characterStats = character.Stats
+		end
 	end
 
-	if characterStats ~= nil then
-		for attribute,attribute_type in pairs(CHARACTER_STATS_PARAMS) do
-			TraceType(character, attribute, attribute_type)
+	Ext.Print("=======================")
+	Ext.Print("===TRACING: "..tostring(characterObject.MyGuid).."====")
+	Ext.Print("=======================")
+	if characterObject ~= nil then
+		Ext.Print("=======================")
+		Ext.Print("===Character Params====")
+		Ext.Print("=======================")
+		for attribute,attribute_type in pairs(CHARACTER_PARAMS) do
+			TraceType(characterObject, attribute, attribute_type)
 		end
+		Ext.Print("=======================")
+	end
+	if characterStats ~= nil then
+		Ext.Print("=======================")
+		Ext.Print("====Character Stats====")
+		Ext.Print("=======================")
+		for attribute,attribute_type in pairs(CHARACTER_STATS_PARAMS) do
+			TraceType(characterStats, attribute, attribute_type)
+		end
+		Ext.Print("=======================")
 	end
 end
+
+local SKILLPROTOTYPE_PARAMS = {
+	SkillId = "String",
+	PrepareAnimationInit = "String",
+	PrepareAnimationLoop = "String",
+	IsFinished = "String",
+	IsEntered = "String",
+}

@@ -178,13 +178,13 @@ LeaderLib_Mods_RenameOldModID(_OldModID, _ModID);
 PROC
 LeaderLib_Mods_OnModRegistered((GUIDSTRING)_UUID, (INTEGER)_Version, (INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Revision, (INTEGER)_Build)
 THEN
-NRD_LuaCall("LeaderUpdater_Ext_OnModRegistered", (STRING)_UUID, (STRING)_Version);
+NRD_ModCall("LeaderLib", "OnModRegistered", (STRING)_UUID, (STRING)_Version);
 
 // For mods updating purely through Lua
 PROC
 LeaderLib_Mods_OnVersionChanged((GUIDSTRING)_UUID, (INTEGER)_LastVersion, (INTEGER)_NextVersion)
 THEN
-NRD_LuaCall("LeaderUpdater_Ext_OnModVersionChanged", (STRING)_UUID, (STRING)_LastVersion, (STRING)_NextVersion);
+NRD_ModCall("LeaderLib", "OnModVersionChanged", (STRING)_UUID, (STRING)_LastVersion, (STRING)_NextVersion);
 */
 //END_REGION
 

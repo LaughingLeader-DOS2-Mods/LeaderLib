@@ -1,9 +1,21 @@
 --- Registers a function to call when a specific Lua LeaderLib event fires.
 ---@param event string
 ---@param callback function
-local function RegisterListener(event, callback)
+function RegisterListener(event, callback)
 	if LeaderLib.Listeners[event] ~= nil then
 		table.insert(LeaderLib.Listeners[event], callback)
+	else
+		error("[LeaderLib__Main.lua:RegisterListener] Event ("..tostring(event)..") is not a valid LeaderLib listener event!")
+	end
+end
+
+--- Registers a function to call when a specific Lua LeaderLib event fires.
+---@param event string
+---@param uuid string
+---@param callback function
+function RegisterModListener(event, uuid, callback)
+	if LeaderLib.ModListeners[event] ~= nil then
+		LeaderLib.Listeners[event][uuid] = callback
 	else
 		error("[LeaderLib__Main.lua:RegisterListener] Event ("..tostring(event)..") is not a valid LeaderLib listener event!")
 	end
@@ -60,7 +72,11 @@ if _G["LeaderLib"] == nil then
 			CharacterSheetPointChanged = {},
 			CharacterBasePointsChanged = {},
 			TimerFinished = {},
-			Skills = {}
+			Skills = {},
+		},
+		ModListeners = {
+			Registered = {},
+			Updated = {},
 		},
 		RegisterListener = RegisterListener
 	}

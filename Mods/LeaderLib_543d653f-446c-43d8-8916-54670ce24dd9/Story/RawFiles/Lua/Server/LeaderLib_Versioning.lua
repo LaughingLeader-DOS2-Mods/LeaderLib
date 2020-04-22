@@ -1,8 +1,3 @@
----A global table that holds registration callback functions to run when a mod is initially registered. The key should be the mod's UUID.
-LeaderLib_ModRegistered = {}
----A global table that holds update callback functions to run when a mod's version changes. The key should be the mod's UUID.
-LeaderLib_ModUpdater = {}
-
 --- Split a version integer into separate values
 ---@param version integer
 ---@return integer,integer,integer,integer
@@ -167,10 +162,15 @@ end
 ---Calls initial registration functions stored in LeaderLib_ModRegistered.
 ---@param uuid string
 ---@param version integer
-function LeaderUpdater_Ext_OnModRegistered(uuid,version)
-	local update_func = LeaderLib_ModRegistered[uuid]
-	if update_func ~= nil then
-		xpcall(update_func, LeaderUpdater_OnModRegistered_Error,version)
+function OnModRegistered(uuid,version)
+	if #LeaderLib.ModListeners.Registered > 0 then
+		local callback = LeaderLib.ModListeners.Registered[uuid]
+		if callback ~= nil then
+			local status,err = xpcall(callback, debug.traceback, version)
+			if not status then
+				Ext.PrintError("[LeaderLib:OnModRegistered] Error calling function:\n", err)
+			end
+		end
 	end
 end
 
@@ -183,10 +183,15 @@ end
 ---@param uuid string
 ---@param past_version integer
 ---@param new_version integer
-function LeaderUpdater_Ext_OnModVersionChanged(uuid,past_version,new_version)
-	local update_func = LeaderLib_ModUpdater[uuid]
-	if update_func ~= nil then
-		xpcall(update_func, LeaderUpdater_OnModUpdated_Error, past_version,new_version)
+function OnModVersionChanged(uuid,past_version,new_version)
+	if #LeaderLib.ModListeners.Updated > 0 then
+		local callback = LeaderLib.ModListeners.Updated[uuid]
+		if callback ~= nil then
+			local status,err = xpcall(callback, debug.traceback, past_version, new_version)
+			if not status then
+				Ext.PrintError("[LeaderLib:OnModVersionChanged] Error calling function:\n", err)
+			end
+		end
 	end
 end
 

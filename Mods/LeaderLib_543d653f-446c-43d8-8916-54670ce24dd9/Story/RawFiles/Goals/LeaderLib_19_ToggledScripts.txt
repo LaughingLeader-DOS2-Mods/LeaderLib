@@ -72,6 +72,14 @@ LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Debug_HitTracing", "Lea
 //Lua Helpers
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_LuaEventListeners", "LeaderLib_LuaEventListeners_Enabled");
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_LuaSkillListeners", "LeaderLib_LuaSkillListeners_Enabled");
+
+//PROC
+//LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+IF
+SavegameLoaded(_,_,_,_)
+THEN
+LeaderLib_ToggleScripts_Internal_InitRegistration();
+LeaderLib_ToggleScripts_Internal_UpdateScriptFlags();
 //END_REGION
 
 //REGION UPDATE_SCRIPT_DISABLE
@@ -194,12 +202,6 @@ LeaderLib_ToggleScripts_EnableScript("LeaderLib_TS_GrowthEvents_Item_Enabled", "
 //END_REGION
 
 //REGION UPDATING_SCRIPT_ENABLE_AUTO
-PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
-THEN
-LeaderLib_ToggleScripts_Internal_InitRegistration();
-LeaderLib_ToggleScripts_Internal_UpdateScriptFlags();
-
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
 AND
@@ -381,6 +383,7 @@ LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:OnGoalCleared] Completing goal 
 SysCompleteGoal(_GoalTitle);
 //END_REGION
 
+//REGION QUERIES
 QRY
 LeaderLib_ToggleScripts_QRY_ScriptIsEnabled((STRING)_GlobalFlag)
 AND
@@ -433,6 +436,7 @@ AND
 GlobalGetFlag(_GlobalFlag, 1)
 THEN
 DB_NOOP(1);
+//END_REGION
 
 //REGION ENABLING_DISABLING
 PROC
@@ -446,6 +450,7 @@ PROC
 LeaderLib_ToggleScripts_EnableScript((STRING)_GlobalFlag, (STRING)_EnablingModID)
 THEN
 DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_GlobalFlag, _EnablingModID);
+LeaderLib_ToggleScripts_Internal_ToggleOn(_GlobalFlag);
 
 PROC
 LeaderLib_ToggleScripts_EnableScript((STRING)_GlobalFlag, (STRING)_ModID)
@@ -587,13 +592,13 @@ LeaderLib_ToggleScripts_EnableScript("LeaderLib_StatusEvents_MainScriptEnabled",
 
 //REGION TOGGLING_ON_INTERNAL
 IF
-GlobalFlagSet(_GlobalFlag)
+DB_GlobalFlag(_GlobalFlag)
 AND
 DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag)
 AND
 LeaderLib_GameScripts_QRY_CanEnableScript(_GoalTitle, _GlobalFlag)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:GlobalFlagSet] Global flag [",_GlobalFlag,"] was set. Activating goal [",_GoalTitle,"].");
+LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:ToggleOn] Activating goal [",_GoalTitle,"] (",_GlobalFlag,").");
 SysActivateGoal(_GoalTitle);
 
 PROC
@@ -617,7 +622,7 @@ SysIsActive(_GoalTitle)
 AND
 NOT LeaderLib_ToggleScripts_QRY_GoalFlagIsEnabled(_GoalTitle)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:GlobalFlagCleared] Global flag [",_GlobalFlag,"] was cleared. Deactivating goal [",_GoalTitle,"].");
+LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:ToggleOff] Deactivating goal [",_GoalTitle,"] (",_GlobalFlag,").");
 SysCompleteGoal(_GoalTitle);
 
 PROC

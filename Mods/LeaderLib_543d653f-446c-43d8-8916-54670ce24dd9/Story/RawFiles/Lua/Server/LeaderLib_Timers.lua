@@ -9,7 +9,7 @@ end
 local function TryStartTimer(event, delay, uuids)
 	local timerName = event
 	local paramCount = GetParamsCount(uuids)
-	Ext.Print("TryStartTimer: ", event, delay, LeaderLib.Common.Dump(uuids), paramCount)
+	LeaderLib.Print("[LeaderLib_Timers.lua:TryStartTimer] ", event, delay, LeaderLib.Common.Dump(uuids), paramCount)
 	if uuids == nil or paramCount == 0 then
 		Osi.LeaderLib_Timers_Internal_StoreLuaData(timerName, event)
 	else
@@ -29,10 +29,46 @@ end
 ---@param event string
 ---@param delay integer
 function LeaderLib_Ext_StartTimer(event, delay, ...)
-	Ext.Print("LeaderLib_Ext_StartTimer: ", event, delay, LeaderLib.Common.Dump({...}))
+	--Ext.Print("LeaderLib_Ext_StartTimer: ", event, delay, LeaderLib.Common.Dump({...}))
 	local status,err = xpcall(TryStartTimer, debug.traceback, event, delay, {...})
 	if not status then
 		Ext.PrintError("Error starting timer:\n", err)
+	end
+end
+
+---Cancels an Osiris timer with a variable amount of UUIDs (or none).
+---@param event string
+function LeaderLib_Ext_CancelTimer(event, ...)
+	local timerName = event
+	local uuids = {...}
+	local paramCount = GetParamsCount(uuids)
+	local entry = nil
+	if paramCount >= 1 then
+		timerName = event..uuids[1]
+		entry = Osi.DB_LeaderLib_Helper_Temp_LuaTimer:Get(nil, event, uuids[1])
+		LeaderLib.Print("[LeaderLib_Ext_CancelTimer] DB: ", Ext.JsonStringify(entry))
+		if entry ~= nil and #entry > 0 then
+			timerName = entry[1][1]
+			if timerName ~= nil then
+				Osi.DB_LeaderLib_Helper_Temp_LuaTimer:Delete(timerName, event, uuids[1])
+			end
+		end
+	elseif paramCount >= 2 then
+		timerName = event..uuids[1]..uuids[2]
+		entry = Osi.DB_LeaderLib_Helper_Temp_LuaTimer:Get(nil, event, uuids[1], uuids[2])
+		if entry ~= nil and #entry > 0 then
+			LeaderLib.Print("[LeaderLib_Ext_CancelTimer] DB: ", Ext.JsonStringify(entry))
+			timerName = entry[1][1]
+			if timerName ~= nil then
+				Osi.DB_LeaderLib_Helper_Temp_LuaTimer:Delete(timerName, event, uuids[1], uuids[2])
+			end
+		end
+	else
+		Osi.DB_LeaderLib_Helper_Temp_LuaTimer:Delete(timerName, event)
+	end
+	LeaderLib.Print("[LeaderLib_Ext_CancelTimer] Canceling timer: ", timerName)
+	if timerName ~= nil then
+		TimerCancel(timerName)
 	end
 end
 

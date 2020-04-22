@@ -21,6 +21,16 @@ function RegisterModListener(event, uuid, callback)
 	end
 end
 
+--- Registers a function to call when a specific skill's events fire.
+---@param skill string
+---@param callback function
+function RegisterSkillListener(skill, callback)
+	if LeaderLib.SkillListeners[skill] == nil then
+		LeaderLib.SkillListeners[skill] = {}
+	end
+	table.insert(LeaderLib.SkillListeners[skill], callback)
+end
+
 if _G["LeaderLib"] == nil then
 	_G["LeaderLib"] = {
 		Classes = {},
@@ -72,13 +82,15 @@ if _G["LeaderLib"] == nil then
 			CharacterSheetPointChanged = {},
 			CharacterBasePointsChanged = {},
 			TimerFinished = {},
-			Skills = {},
 		},
+		SkillListeners = {},
 		ModListeners = {
 			Registered = {},
 			Updated = {},
 		},
-		RegisterListener = RegisterListener
+		RegisterListener = RegisterListener,
+		RegisterModListener = RegisterModListener,
+		RegisterSkillListener = RegisterSkillListener,
 	}
 end
 

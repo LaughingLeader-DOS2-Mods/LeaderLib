@@ -40,7 +40,7 @@ NRD_OnHit(_Target, _Source, _Damage, _Handle)
 AND
 NRD_StatusGetString(_Target, _Handle, "SkillId", _SkillPrototype)
 THEN
-NRD_ModCall("LeaderLib", "OnSkillHit", (STRING)_Source, _SkillPrototype, (STRING)_Target);
+NRD_ModCall("LeaderLib", "OnSkillHit", (STRING)_Source, _SkillPrototype, (STRING)_Target, (STRING)_Handle, (STRING)_Damage);
 */
 EXITSECTION
 ENDEXITSECTION

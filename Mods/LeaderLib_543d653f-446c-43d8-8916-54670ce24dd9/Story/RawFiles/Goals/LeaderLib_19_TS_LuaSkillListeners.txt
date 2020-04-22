@@ -1,0 +1,47 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+KBSECTION
+/* [OSITOOLS_ONLY]
+IF
+NRD_OnActionStateEnter(_Char, "PrepareSkill")
+AND
+NRD_ActionStateGetString(_Char, "SkillId", _SkillPrototype)
+THEN
+NRD_ModCall("LeaderLib", "OnSkillPreparing", (STRING)_Char, _SkillPrototype);
+
+IF
+CharacterUsedSkill(_Char, _Skill, _SkillType, _SkillElement)
+THEN
+NRD_ModCall("LeaderLib", "OnSkillUsed", (STRING)_Char, _Skill);
+
+IF
+CharacterUsedSkillOnTarget(_Char, _Target, _Skill, _SkillType, _SkillElement)
+THEN
+NRD_ModCall("LeaderLib", "OnSkillUsed", (STRING)_Char, _Skill, (STRING)_Target);
+
+IF
+CharacterUsedSkillAtPosition(_Char, _x, _y, _z, _Skill, _SkillType, _SkillElement)
+THEN
+NRD_ModCall("LeaderLib", "OnSkillUsed", (STRING)_Char, _Skill, (STRING)_x, (STRING)_y, (STRING)_z);
+
+IF
+CharacterUsedSkillOnZoneWithTarget(_Char, _Target, _Skill, _SkillType, _SkillElement)
+THEN
+NRD_ModCall("LeaderLib", "OnSkillUsed", (STRING)_Char, _Skill, (STRING)_Target);
+
+IF
+SkillCast(_Char, _Skill, _SkillType, _SkillElement)
+THEN
+NRD_ModCall("LeaderLib", "OnSkillCast", (STRING)_Char, _Skill);
+
+IF
+NRD_OnHit(_Target, _Source, _Damage, _Handle)
+AND
+NRD_StatusGetString(_Target, _Handle, "SkillId", _SkillPrototype)
+THEN
+NRD_ModCall("LeaderLib", "OnSkillHit", (STRING)_Source, _SkillPrototype, (STRING)_Target);
+*/
+EXITSECTION
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

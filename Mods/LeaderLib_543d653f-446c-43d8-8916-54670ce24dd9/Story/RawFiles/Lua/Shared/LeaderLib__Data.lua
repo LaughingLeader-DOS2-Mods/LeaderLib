@@ -123,3 +123,10 @@ local ID = {
 
 LeaderLib.Data = Data
 LeaderLib.ID = ID
+
+LeaderLib.SKILL_STATE = {
+	PREPARE = "PREPARE",
+	USED = "USED",
+	CAST = "CAST",
+	HIT = "HIT",
+}

@@ -59,7 +59,8 @@ if _G["LeaderLib"] == nil then
 		Listeners = {
 			CharacterSheetPointChanged = {},
 			CharacterBasePointsChanged = {},
-			TimerFinished = {}
+			TimerFinished = {},
+			Skills = {}
 		},
 		RegisterListener = RegisterListener
 	}

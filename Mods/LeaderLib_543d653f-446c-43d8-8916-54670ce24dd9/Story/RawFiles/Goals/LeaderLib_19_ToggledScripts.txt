@@ -71,6 +71,7 @@ LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_Debug_HitTracing", "Lea
 
 //Lua Helpers
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_LuaEventListeners", "LeaderLib_LuaEventListeners_Enabled");
+LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_LuaSkillListeners", "LeaderLib_LuaSkillListeners_Enabled");
 //END_REGION
 
 //REGION UPDATE_SCRIPT_DISABLE

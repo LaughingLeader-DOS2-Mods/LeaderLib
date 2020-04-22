@@ -2101,7 +2101,7 @@ NRD_SkillIteratorEvent("LeaderLib_Iterator_StoreSkillCooldown", _Char, _Skill, _
 AND
 String(_Char, _CharStr)
 THEN
-NRD_LuaCall("LeaderLib_Ext_StoreSkillData", _CharStr, _Skill);
+NRD_ModCall("LeaderLib", "StoreSkillData", _CharStr, _Skill);
 
 IF
 StoryEvent((CHARACTERGUID)_Char, "LeaderLib_RefreshUI_RevertSkillCooldowns")

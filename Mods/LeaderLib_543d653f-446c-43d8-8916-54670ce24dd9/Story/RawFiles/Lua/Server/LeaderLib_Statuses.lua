@@ -1,7 +1,7 @@
 ---Returns true if the object is sneaking or has an INVISIBLE type status.
 ---@param obj string
 ---@return boolean
-function LeaderLib_Ext_IsSneakingOrInvisible(obj)
+function IsSneakingOrInvisible(obj)
     if HasActiveStatus(obj, "SNEAKING") == 1 or HasActiveStatus(obj, "INVISIBLE") == 1 then
         return true
 	else
@@ -30,13 +30,13 @@ function LeaderLib_Ext_IsSneakingOrInvisible(obj)
     return false
 end
 
-Ext.NewQuery(LeaderLib_Ext_IsSneakingOrInvisible, "LeaderLib_Ext_QRY_IsSneakingOrInvisible", "[in](GUIDSTRING)_Object, [out](INTEGER)_Bool")
+Ext.NewQuery(IsSneakingOrInvisible, "LeaderLib_Ext_QRY_IsSneakingOrInvisible", "[in](GUIDSTRING)_Object, [out](INTEGER)_Bool")
 
 ---Returns true if the object has a tracked type status.
 ---Current tracked types: ACTIVE_DEFENSE, BLIND, CHARMED, DAMAGE_ON_MOVE, DISARMED, INCAPACITATED, INVISIBLE, KNOCKED_DOWN, MUTED, POLYMORPHED
 ---@param obj string
 ---@return boolean
-function LeaderLib_Ext_HasStatusType(obj, statusType)
+function HasStatusType(obj, statusType)
 	--Ext.Print("LeaderLib_Ext_HasStatusType:",obj,statusType)
 	if statusType ~= nil and statusType ~= "" then
 		statusType = string.upper(statusType)
@@ -56,4 +56,4 @@ function LeaderLib_Ext_HasStatusType(obj, statusType)
     return false
 end
 
-Ext.NewQuery(LeaderLib_Ext_HasStatusType, "LeaderLib_Ext_QRY_HasStatusType", "[in](GUIDSTRING)_Object, [in](STRING)_StatusType, [out](INTEGER)_Bool")
+Ext.NewQuery(HasStatusType, "LeaderLib_Ext_QRY_HasStatusType", "[in](GUIDSTRING)_Object, [in](STRING)_StatusType, [out](INTEGER)_Bool")

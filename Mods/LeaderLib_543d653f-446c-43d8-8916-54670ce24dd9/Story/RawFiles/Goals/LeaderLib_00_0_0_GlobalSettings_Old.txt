@@ -93,7 +93,7 @@ DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author, _SaveWhenFalse)
 AND
 IntegertoString(_SaveWhenFalse, _IntStr)
 THEN
-NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreGlobalFlag_Old", _ModID, _Author, _Flag, _IntStr);
+NRD_ModCall("LeaderLib", "GlobalSettings_StoreGlobalFlag_Old", _ModID, _Author, _Flag, _IntStr);
 
 PROC
 LeaderLib_GlobalSettings_Internal_TransferIntegers()
@@ -108,7 +108,7 @@ DB_LeaderLib_GlobalSettings_Integers(_ModID, _Author, _VarName, _DefaultValue)
 AND
 IntegertoString(_DefaultValue, _IntStr)
 THEN
-NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreGlobalInteger_Old", _ModID, _Author, _VarName, _IntStr);
+NRD_ModCall("LeaderLib", "GlobalSettings_StoreGlobalInteger_Old", _ModID, _Author, _VarName, _IntStr);
 
 PROC
 LeaderLib_GlobalSettings_Internal_TransferFlags()
@@ -123,7 +123,7 @@ DB_LeaderLib_GlobalSettings_Flags(_Flag, _ModID, _Author, _SaveWhenFalse)
 AND
 IntegertoString(_SaveWhenFalse, _IntStr)
 THEN
-NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreGlobalFlag", _UUIDStr, _Flag, _IntStr);
+NRD_ModCall("LeaderLib", "GlobalSettings_StoreGlobalFlag", _UUIDStr, _Flag, _IntStr);
 
 PROC
 LeaderLib_GlobalSettings_Internal_TransferIntegers()
@@ -138,7 +138,7 @@ DB_LeaderLib_GlobalSettings_Integers(_ModID, _Author, _VarName, _DefaultValue)
 AND
 IntegertoString(_DefaultValue, _IntStr)
 THEN
-NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreGlobalInteger", _UUIDStr, _VarName, _IntStr);
+NRD_ModCall("LeaderLib", "GlobalSettings_StoreGlobalInteger", _UUIDStr, _VarName, _IntStr);
 */
 //END_REGION
 
@@ -169,7 +169,7 @@ NOT DB_LeaderLib_Mods_Registered(_, _ModID, _, _Author, _, _, _, _, _)
 AND
 LeaderLib_GlobalSettings_QRY_ModHasVariables_Old(_ModID, _Author)
 THEN
-NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreModVersion_Old", _ModID, _Author, _CurrentVersion);
+NRD_ModCall("LeaderLib", "GlobalSettings_StoreModVersion_Old", _ModID, _Author, _CurrentVersion);
 
 PROC
 LeaderUpdater_ModUpdated((STRING)_ModID, (STRING)_Author, (STRING)_PastVersion, (STRING)_NewVersion)
@@ -180,7 +180,7 @@ NOT DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _)
 AND
 NOT DB_LeaderLib_Mods_Registered(_, _ModID, _, _Author, _, _, _, _, _)
 THEN
-NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreModVersion_Old",  _ModID, _Author, _NewVersion);
+NRD_ModCall("LeaderLib", "GlobalSettings_StoreModVersion_Old",  _ModID, _Author, _NewVersion);
 
 PROC
 LeaderLib_GlobalSettings_TransferVariables()
@@ -193,7 +193,7 @@ LeaderLib_GlobalSettings_QRY_ModHasVariables_Old(_ModID, _Author)
 AND
 String(_UUID, _UUIDStr)
 THEN
-NRD_LuaCall("LeaderLib_Ext_GlobalSettings_GetAndStoreModVersion", _UUIDStr);
+NRD_ModCall("LeaderLib", "GlobalSettings_GetAndStoreModVersion", _UUIDStr);
 
 PROC
 LeaderUpdater_ModUpdated((STRING)_ModID, (STRING)_Author, (STRING)_PastVersion, (STRING)_NewVersion)
@@ -206,7 +206,7 @@ NOT DB_LeaderLib_Mods_Registered(_UUID, _, _, _, _, _, _, _, _)
 AND
 String(_UUID, _UUIDStr)
 THEN
-NRD_LuaCall("LeaderLib_Ext_GlobalSettings_GetAndStoreModVersion", _UUIDStr);
+NRD_ModCall("LeaderLib", "GlobalSettings_GetAndStoreModVersion", _UUIDStr);
 */
 //END_REGION
 

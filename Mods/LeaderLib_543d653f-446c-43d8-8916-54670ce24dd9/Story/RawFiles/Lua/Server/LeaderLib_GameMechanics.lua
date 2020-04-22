@@ -47,7 +47,7 @@ local function ReduceDamage(target, attacker, handle_param, reduction_perc, is_h
     if handle == nil then error("[LeaderLib_GameMechanics.lua:ReduceDamage] Handle is null! Skipping.") end
     local reduction = LeaderLib.Common.SafeguardParam(reduction_perc, "number", 0.5)
     local is_hit = LeaderLib.Common.SafeguardParam(is_hit_param, "integer", 0)
-	LeaderLib_Ext_Log("[LeaderLib_GameMechanics.lua:ReduceDamage] Reducing damage to ("..tostring(reduction)..") of total. Handle("..tostring(handle).."). Target("..tostring(target)..") Attacker("..tostring(attacker)..") IsHit("..tostring(is_hit)..")")
+	LeaderLib.Log("[LeaderLib_GameMechanics.lua:ReduceDamage] Reducing damage to ("..tostring(reduction)..") of total. Handle("..tostring(handle).."). Target("..tostring(target)..") Attacker("..tostring(attacker)..") IsHit("..tostring(is_hit)..")")
 	local success = false
     for k,v in pairs(LeaderLib.Data.DamageTypes) do
         local damage = nil
@@ -65,7 +65,7 @@ local function ReduceDamage(target, attacker, handle_param, reduction_perc, is_h
             else
                 NRD_HitAddDamage(handle, v, reduced_damage)
             end
-			LeaderLib_Ext_Log("[LeaderLib_GameMechanics.lua:ReduceDamage] Reduced damage: "..tostring(damage).." => "..tostring(reduced_damage).." for type: "..v)
+			LeaderLib.Log("[LeaderLib_GameMechanics.lua:ReduceDamage] Reduced damage: "..tostring(damage).." => "..tostring(reduced_damage).." for type: "..v)
 			success = true
         end
 	end
@@ -86,7 +86,7 @@ local function IncreaseDamage(target, attacker, handle_param, increase_perc, is_
     if handle == nil then error("[LeaderLib_GameMechanics.lua:IncreaseDamage] Handle is null! Skipping.") end
     local increase_amount = LeaderLib.Common.SafeguardParam(increase_perc, "number", 0.5)
     local is_hit = LeaderLib.Common.SafeguardParam(is_hit_param, "number", 0)
-	LeaderLib_Ext_Log("[LeaderLib_GameMechanics.lua:IncreaseDamage] Increasing damage by ("..tostring(increase_amount).."). Handle("..tostring(handle).."). Target("..tostring(target)..") Attacker("..tostring(attacker)..") IsHit("..tostring(is_hit)..")")
+	LeaderLib.Log("[LeaderLib_GameMechanics.lua:IncreaseDamage] Increasing damage by ("..tostring(increase_amount).."). Handle("..tostring(handle).."). Target("..tostring(target)..") Attacker("..tostring(attacker)..") IsHit("..tostring(is_hit)..")")
 	local success = false
     for k,v in pairs(LeaderLib.Data.DamageTypes) do
         local damage = nil
@@ -104,7 +104,7 @@ local function IncreaseDamage(target, attacker, handle_param, increase_perc, is_
             else
                 NRD_HitAddDamage(handle, v, increased_damage)
             end
-			LeaderLib_Ext_Log("[LeaderLib_GameMechanics.lua:IncreaseDamage] Increasing damage: "..tostring(damage).." => "..tostring(damage + increased_damage).." for type: "..v)
+			LeaderLib.Log("[LeaderLib_GameMechanics.lua:IncreaseDamage] Increasing damage: "..tostring(damage).." => "..tostring(damage + increased_damage).." for type: "..v)
 			success = true
         end
 	end
@@ -126,11 +126,11 @@ local function RedirectDamage(target, defender, attacker, handle_param, reductio
     if handle == nil then error("[LeaderLib_GameMechanics.lua:RedirectDamage] Handle is null! Skipping.") end
     local reduction = LeaderLib.Common.SafeguardParam(reduction_perc, "number", 0.5)
     local is_hit = LeaderLib.Common.SafeguardParam(is_hit_param, "integer", 0)
-	LeaderLib_Ext_Log("[LeaderLib_GameMechanics.lua:RedirectDamage] Reducing damage to ("..tostring(reduction)..") of total. Handle("..tostring(handle).."). Target("..tostring(target)..") Defender("..tostring(defender)..") Attacker("..tostring(attacker)..") IsHit("..tostring(is_hit)..")")
+	LeaderLib.Log("[LeaderLib_GameMechanics.lua:RedirectDamage] Reducing damage to ("..tostring(reduction)..") of total. Handle("..tostring(handle).."). Target("..tostring(target)..") Defender("..tostring(defender)..") Attacker("..tostring(attacker)..") IsHit("..tostring(is_hit)..")")
     --if CanRedirectHit(defender, handle, hit_type) then -- Ignore surface, DoT, and reflected damage
     --local hit_type_name = NRD_StatusGetString(defender, handle, "DamageSourceType")
     --local hit_type = NRD_StatusGetInt(defender, handle, "HitType")
-    --LeaderLib_Ext_Log("[LeaderLib_GameMechanics.lua:RedirectDamage] Redirecting damage Handle("..handlestr.."). Blocker(",target,") Target(",defender,") Attacker(",attacker,")")
+    --LeaderLib.Log("[LeaderLib_GameMechanics.lua:RedirectDamage] Redirecting damage Handle("..handlestr.."). Blocker(",target,") Target(",defender,") Attacker(",attacker,")")
     local redirected_hit = NRD_HitPrepare(target, attacker)
     local damageRedirected = false
 
@@ -151,7 +151,7 @@ local function RedirectDamage(target, defender, attacker, handle_param, reductio
                 NRD_HitAddDamage(handle, v, removed_damage)
             end
             NRD_HitAddDamage(redirected_hit, v, reduced_damage)
-            LeaderLib_Ext_Log("[LeaderLib_GameMechanics.lua:RedirectDamage] Redirected damage: "..tostring(damage).." => "..tostring(reduced_damage).." for type: "..v)
+            LeaderLib.Log("[LeaderLib_GameMechanics.lua:RedirectDamage] Redirected damage: "..tostring(damage).." => "..tostring(reduced_damage).." for type: "..v)
             damageRedirected = true
         end
     end
@@ -296,7 +296,7 @@ end
 
 --Ext.NewCall(ExplodeProjectile, "LeaderLib_Ext_ExplodeProjectile", "(GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Skill")
 
-function LeaderLib_Ext_EquipInSlot(char, item, slot)
+function EquipInSlot(char, item, slot)
     if Ext.Version() >= 42 then
         NRD_CharacterEquipItem(char, item, slot, 0, 0, 1, 1)
     else
@@ -304,7 +304,7 @@ function LeaderLib_Ext_EquipInSlot(char, item, slot)
     end
 end
 
-function LeaderLib_Ext_ItemIsEquipped(char, item)
+function ItemIsEquipped(char, item)
     local itemObj = Ext.GetItem(item)
     if itemObj ~= nil then
         local slot = itemObj.Slot
@@ -332,7 +332,7 @@ local function RemoveRunes(character, runeTemplates)
 				local runeTemplate = ItemGetRuneItemTemplate(item, runeSlot)
 				if runeTemplate ~= nil and runeTemplates[runeTemplate] == true then
 					local rune = ItemRemoveRune(character, item, runeSlot)
-					Ext.Print("[LeaderLib_Ext_RemoveRunes] Removed rune ("..tostring(rune)..") from item ("..item..")["..tostring(runeSlot).."] for character ("..character..")")
+					Ext.Print("[LeaderLib:RemoveRunes] Removed rune ("..tostring(rune)..") from item ("..item..")["..tostring(runeSlot).."] for character ("..character..")")
 				end
 			end
 		end

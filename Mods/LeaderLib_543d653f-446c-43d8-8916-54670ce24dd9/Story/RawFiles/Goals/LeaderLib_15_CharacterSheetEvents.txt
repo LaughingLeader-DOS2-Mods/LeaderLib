@@ -7,12 +7,12 @@ KBSECTION
 IF
 TimerFinished("Timers_LeaderLib_CharacterSheet_SignalPartyValueChanges")
 THEN
-NRD_LuaCall("LeaderLib_Ext_CharacterSheet_SignalPartyValueChanges");
+NRD_ModCall("LeaderLib", "CharacterSheet_SignalPartyValueChanges");
 
 PROC
 LeaderLib_Initialized((STRING)_Region)
 THEN
-NRD_LuaCall("LeaderLib_Ext_CharacterSheet_StorePartyValues");
+NRD_ModCall("LeaderLib", "CharacterSheet_StorePartyValues");
 
 // Respec mirror
 IF

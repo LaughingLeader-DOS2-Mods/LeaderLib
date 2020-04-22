@@ -92,7 +92,7 @@ IntegertoString(_SaveWhenFalse, _IntStr)
 AND
 String(_UUID, _UUIDStr)
 THEN
-NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreGlobalFlag", _UUIDStr, _Flag, _IntStr);
+NRD_ModCall("LeaderLib", "GlobalSettings_StoreGlobalFlag", _UUIDStr, _Flag, _IntStr);
 */
 
 //Sends all vars to lua for export, if the extender is present
@@ -116,7 +116,7 @@ IntegertoString(_DefaultValue, _IntStr)
 AND
 String(_UUID, _UUIDStr)
 THEN
-NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreGlobalInteger", _UUIDStr, _VarName, _IntStr);
+NRD_ModCall("LeaderLib", "GlobalSettings_StoreGlobalInteger", _UUIDStr, _VarName, _IntStr);
 */
 //END_REGION
 
@@ -131,7 +131,7 @@ LeaderLib_GlobalSettings_QRY_ModHasVariables(_UUID)
 AND
 IntegertoString(_Version, _VersionStr)
 THEN
-NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreModVersion", (STRING)_UUID, _VersionStr);
+NRD_ModCall("LeaderLib", "GlobalSettings_StoreModVersion", (STRING)_UUID, _VersionStr);
 
 PROC
 LeaderLib_Mods_OnVersionChanged((GUIDSTRING)_UUID, (INTEGER)_LastVersion, (INTEGER)_NextVersion)
@@ -142,7 +142,7 @@ DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _Author, _Version, _Ma
 AND
 IntegertoString(_Version, _VersionStr)
 THEN
-NRD_LuaCall("LeaderLib_Ext_GlobalSettings_StoreModVersion", (STRING)_UUID, _VersionStr);
+NRD_ModCall("LeaderLib", "GlobalSettings_StoreModVersion", (STRING)_UUID, _VersionStr);
 */
 //END_REGION
 
@@ -257,7 +257,7 @@ AND
 GlobalGetFlag("LeaderLib_IsEditorMode", 0)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib_00_1_1_System:LeaderLib_SaveGlobalSettings] Saving global settings.");
-NRD_LuaCall("LeaderLib_Ext_SaveGlobalSettings");
+NRD_ModCall("LeaderLib", "SaveGlobalSettings");
 */
 
 PROC
@@ -273,7 +273,7 @@ PROC
 LeaderLib_LoadGlobalSettings()
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib_00_1_1_System:LeaderLib_LoadGlobalSettings] Loading global settings.");
-NRD_LuaCall("LeaderLib_Ext_LoadGlobalSettings");
+NRD_ModCall("LeaderLib", "LoadGlobalSettings");
 */
 
 IF
@@ -364,7 +364,7 @@ IF
 TextEventSet("leaderlib_savesettingstest")
 THEN
 NRD_LuaReset(1);
-NRD_LuaCall("LeaderLib_Ext_GlobalSettings_Initialize");
+NRD_ModCall("LeaderLib", "GlobalSettings_Initialize");
 LeaderLib_GlobalSettings_Register_GlobalInteger(7e737d2f-31d2-4751-963f-be6ccc59cd0c, "AutosaveInterval", 15);
 LeaderLib_SaveGlobalSettings();
 */
@@ -374,7 +374,7 @@ IF
 TextEventSet("leaderlib_loadsettingstest")
 THEN
 NRD_LuaReset(1);
-NRD_LuaCall("LeaderLib_Ext_GlobalSettings_Initialize");
+NRD_ModCall("LeaderLib", "GlobalSettings_Initialize");
 LeaderLib_LoadGlobalSettings();
 */
 //END_REGION

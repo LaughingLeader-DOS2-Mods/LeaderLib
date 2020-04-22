@@ -28,17 +28,17 @@ end
 ---Starts an Osiris timer with a variable amount of UUIDs (or none).
 ---@param event string
 ---@param delay integer
-function LeaderLib_Ext_StartTimer(event, delay, ...)
-	--Ext.Print("LeaderLib_Ext_StartTimer: ", event, delay, LeaderLib.Common.Dump({...}))
+function StartTimer(event, delay, ...)
+	--Ext.Print("LeaderLib:StartTimer: ", event, delay, LeaderLib.Common.Dump({...}))
 	local status,err = xpcall(TryStartTimer, debug.traceback, event, delay, {...})
 	if not status then
-		Ext.PrintError("Error starting timer:\n", err)
+		Ext.PrintError("[LeaderLib:StartTimer] Error starting timer:\n", err)
 	end
 end
 
 ---Cancels an Osiris timer with a variable amount of UUIDs (or none).
 ---@param event string
-function LeaderLib_Ext_CancelTimer(event, ...)
+function CancelTimer(event, ...)
 	local timerName = event
 	local uuids = {...}
 	local paramCount = GetParamsCount(uuids)
@@ -46,7 +46,7 @@ function LeaderLib_Ext_CancelTimer(event, ...)
 	if paramCount >= 1 then
 		timerName = event..uuids[1]
 		entry = Osi.DB_LeaderLib_Helper_Temp_LuaTimer:Get(nil, event, uuids[1])
-		LeaderLib.Print("[LeaderLib_Ext_CancelTimer] DB: ", Ext.JsonStringify(entry))
+		LeaderLib.Print("[LeaderLib:CancelTimer] DB: ", Ext.JsonStringify(entry))
 		if entry ~= nil and #entry > 0 then
 			timerName = entry[1][1]
 			if timerName ~= nil then
@@ -57,7 +57,7 @@ function LeaderLib_Ext_CancelTimer(event, ...)
 		timerName = event..uuids[1]..uuids[2]
 		entry = Osi.DB_LeaderLib_Helper_Temp_LuaTimer:Get(nil, event, uuids[1], uuids[2])
 		if entry ~= nil and #entry > 0 then
-			LeaderLib.Print("[LeaderLib_Ext_CancelTimer] DB: ", Ext.JsonStringify(entry))
+			LeaderLib.Print("[LeaderLib:CancelTimer] DB: ", Ext.JsonStringify(entry))
 			timerName = entry[1][1]
 			if timerName ~= nil then
 				Osi.DB_LeaderLib_Helper_Temp_LuaTimer:Delete(timerName, event, uuids[1], uuids[2])
@@ -66,18 +66,18 @@ function LeaderLib_Ext_CancelTimer(event, ...)
 	else
 		Osi.DB_LeaderLib_Helper_Temp_LuaTimer:Delete(timerName, event)
 	end
-	LeaderLib.Print("[LeaderLib_Ext_CancelTimer] Canceling timer: ", timerName)
+	LeaderLib.Print("[LeaderLib:CancelTimer] Canceling timer: ", timerName)
 	if timerName ~= nil then
 		TimerCancel(timerName)
 	end
 end
 
-function LeaderLib_Ext_TimerFinished(event, ...)
+function TimerFinished(event, ...)
 	if #LeaderLib.Listeners.TimerFinished > 0 then
 		for i,callback in ipairs(LeaderLib.Listeners.TimerFinished) do
 			local status,err = xpcall(callback, debug.traceback, event, ...)
 			if not status then
-				Ext.PrintError("Error sending timer finished event:\n", err)
+				Ext.PrintError("[LeaderLib:CancelTimer] Error sending timer finished event:\n", err)
 			end
 		end
 	end

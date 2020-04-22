@@ -333,7 +333,7 @@ LeaderLib_Timers_StartLuaTimer((STRING)_Event, (INTEGER)_d)
 AND
 IntegertoString(_d, _Delay)
 THEN
-NRD_LuaCall("LeaderLib_Ext_StartTimer", _Event, _Delay);
+NRD_ModCall("LeaderLib", "StartTimer", _Event, _Delay);
 
 PROC
 LeaderLib_Timers_StartLuaTimer((STRING)_Event, (INTEGER)_d, (GUIDSTRING)_Obj)
@@ -342,7 +342,7 @@ IntegertoString(_d, _Delay)
 AND
 GetUUID(_Obj, _UUID)
 THEN
-NRD_LuaCall("LeaderLib_Ext_StartTimer", _Event, _Delay, _UUID);
+NRD_ModCall("LeaderLib", "StartTimer", _Event, _Delay, _UUID);
 
 PROC
 LeaderLib_Timers_StartLuaTimer((STRING)_Event, (INTEGER)_d, (GUIDSTRING)_Obj, (GUIDSTRING)_Obj2)
@@ -353,7 +353,7 @@ GetUUID(_Obj, _UUID)
 AND
 GetUUID(_Obj, _UUID2)
 THEN
-NRD_LuaCall("LeaderLib_Ext_StartTimer", _Event, _Delay, _UUID, _UUID2);
+NRD_ModCall("LeaderLib", "StartTimer", _Event, _Delay, _UUID, _UUID2);
 
 PROC
 LeaderLib_Timers_Internal_StoreLuaData((STRING)_TimerName, (STRING)_Event)
@@ -376,7 +376,7 @@ AND
 DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event)
 THEN
 NOT DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event);
-NRD_LuaCall("LeaderLib_Ext_TimerFinished", _Event);
+NRD_ModCall("LeaderLib", "TimerFinished", _Event);
 
 IF
 TimerFinished(_TimerName)
@@ -384,7 +384,7 @@ AND
 DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event, _UUID)
 THEN
 NOT DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event, _UUID);
-NRD_LuaCall("LeaderLib_Ext_TimerFinished", _Event, _UUID);
+NRD_ModCall("LeaderLib", "TimerFinished", _Event, _UUID);
 
 IF
 TimerFinished(_TimerName)
@@ -392,7 +392,7 @@ AND
 DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event, _UUID, _UUID2)
 THEN
 NOT DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event, _UUID, _UUID2);
-NRD_LuaCall("LeaderLib_Ext_TimerFinished", _Event, _UUID, _UUID2);
+NRD_ModCall("LeaderLib", "TimerFinished", _Event, _UUID, _UUID2);
 */
 //END_REGION
 EXITSECTION

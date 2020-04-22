@@ -6,7 +6,7 @@ LeaderLib_ModUpdater = {}
 --- Split a version integer into separate values
 ---@param version integer
 ---@return integer,integer,integer,integer
-function LeaderLib_Ext_ParseVersion(version)
+function ParseVersion(version)
 	if type(version) == "string" then
 		version = math.floor(tonumber(version))
 	elseif type(version) == "number" then
@@ -22,9 +22,9 @@ end
 --- Turn a version integer into a string.
 ---@param version integer
 ---@return string
-function LeaderLib_Ext_VersionIntegerToVersionString(version)
+function VersionIntegerToVersionString(version)
 	if version == -1 then return "-1" end
-	local major,minor,revision,build = LeaderLib_Ext_ParseVersion(version)
+	local major,minor,revision,build = ParseVersion(version)
 	if major ~= -1 and minor ~= -1 and revision ~= -1 and build ~= -1 then
 		return tostring(major).."."..tostring(minor).."."..tostring(revision).."."..tostring(build)
 	elseif major == -1 and minor == -1 and revision == -1 and build == -1 then
@@ -33,7 +33,7 @@ function LeaderLib_Ext_VersionIntegerToVersionString(version)
 	return nil
 end
 
-Ext.NewQuery(LeaderLib_Ext_VersionIntegerToVersionString, "LeaderLib_Ext_QRY_VersionIntegerToString", "[in](INTEGER)_Version, [out](STRING)_VersionString")
+Ext.NewQuery(VersionIntegerToVersionString, "LeaderLib_Ext_QRY_VersionIntegerToString", "[in](INTEGER)_Version, [out](STRING)_VersionString")
 
 ---Checks if a version string is less than a given version.
 ---@param past_version string
@@ -42,8 +42,8 @@ Ext.NewQuery(LeaderLib_Ext_VersionIntegerToVersionString, "LeaderLib_Ext_QRY_Ver
 ---@param revision integer
 ---@param build integer
 --_@return boolean
-function LeaderLib_Ext_VersionIsLessThan(past_version,major,minor,revision,build)
-	local b,pastmajor,pastminor,pastrevision,pastbuild = pcall(LeaderLib_Ext_StringToVersionIntegers, past_version)
+function VersionIsLessThan(past_version,major,minor,revision,build)
+	local b,pastmajor,pastminor,pastrevision,pastbuild = pcall(StringToVersionIntegers, past_version)
 
 	if b == true then
 		if  major > pastmajor then
@@ -60,7 +60,7 @@ function LeaderLib_Ext_VersionIsLessThan(past_version,major,minor,revision,build
 	return false
 end
 
-function LeaderLib_Ext_StringToVersionIntegers(version_str)
+function StringToVersionIntegers(version_str)
 	local a,b,c,d = -1
 	local vals = {}
 	for s in string.gmatch(version_str, "([^.]+)") do
@@ -81,8 +81,8 @@ function LeaderLib_Ext_StringToVersionIntegers(version_str)
 	return a,b,c,d
 end
 
-function LeaderLib_Ext_StringToVersion(version_str)
-	local b,major,minor,revision,build = pcall(LeaderLib_Ext_StringToVersionIntegers, version_str)
+function StringToVersion(version_str)
+	local b,major,minor,revision,build = pcall(StringToVersionIntegers, version_str)
 	if b then
 		if major ~= -1 and minor ~= -1 and revision ~= -1 and build ~= -1 then
 			return major,minor,revision,build
@@ -93,13 +93,13 @@ function LeaderLib_Ext_StringToVersion(version_str)
 			end
 		end
 	else
-		Ext.Print("[LeaderLib_Versioning.lua:LeaderLib_Ext_StringToVersion] Failed to process '"..version_str.."' - function LeaderLib_Ext_StringToVersionIntegers had an error.")
+		Ext.Print("[LeaderLib_Versioning.lua:LeaderLib_Ext_StringToVersion] Failed to process '"..version_str.."' - function StringToVersionIntegers had an error.")
 	end
 	return -1,-1,-1,-1
 end
 
 local function StringToVersion_Query(version_str)
-	local major,minor,revision,build = LeaderLib_Ext_StringToVersion(version_str)
+	local major,minor,revision,build = StringToVersion(version_str)
 	if major ~= -1 and minor ~= -1 and revision ~= -1 and build ~= -1 then
 		return major,minor,revision,build
 	end
@@ -107,8 +107,8 @@ end
 
 Ext.NewQuery(StringToVersion_Query, "LeaderLib_Ext_QRY_StringToVersion", "[in](STRING)_Version, [out](INTEGER)_Major, [out](INTEGER)_Minor, [out](INTEGER)_Revision, [out](INTEGER)_Build")
 
-function LeaderLib_Ext_VersionStringToVersionInteger(version_str, fallback)
-	local b,major,minor,revision,build = pcall(LeaderLib_Ext_StringToVersionIntegers, version_str)
+function VersionStringToVersionInteger(version_str, fallback)
+	local b,major,minor,revision,build = pcall(StringToVersionIntegers, version_str)
 	if b then
 		if major ~= -1 and minor ~= -1 and revision ~= -1 and build ~= -1 then
 			return (major << 28) + (minor << 24) + (revision << 16) + (build)
@@ -118,12 +118,12 @@ function LeaderLib_Ext_VersionStringToVersionInteger(version_str, fallback)
 			end
 		end
 	else
-		Ext.Print("[LeaderLib_Versioning.lua:VersionStringToVersionInteger] Failed to process '"..version_str.."' - function LeaderLib_Ext_StringToVersionIntegers has an error.")
+		Ext.Print("[LeaderLib_Versioning.lua:VersionStringToVersionInteger] Failed to process '"..version_str.."' - function StringToVersionIntegers has an error.")
 	end
 	return fallback
 end
 
-Ext.NewQuery(LeaderLib_Ext_VersionStringToVersionInteger, "LeaderLib_Ext_QRY_VersionStringToVersionInteger", "[in](STRING)_VersionString, [in](INTEGER)_Fallback, [out](INTEGER)_VersionInt")
+Ext.NewQuery(VersionStringToVersionInteger, "LeaderLib_Ext_QRY_VersionStringToVersionInteger", "[in](STRING)_VersionString, [in](INTEGER)_Fallback, [out](INTEGER)_VersionInt")
 
 local function Register_Mod_Table(tbl)
 	local id = tbl["id"]
@@ -136,7 +136,7 @@ local function Register_Mod_Table(tbl)
 			Osi.LeaderUpdater_Register_Mod(id, author, 0,0,0,0);
 		else
 			if type(version) == "string" then
-				b,major,minor,revision,build = pcall(LeaderLib_Ext_StringToVersionIntegers, version)
+				b,major,minor,revision,build = pcall(StringToVersionIntegers, version)
 				if b then
 					Osi.LeaderUpdater_Register_Mod(id,author,major,minor,revision,build)
 				else
@@ -190,7 +190,7 @@ function LeaderUpdater_Ext_OnModVersionChanged(uuid,past_version,new_version)
 	end
 end
 
-function LeaderLib_Ext_LoadMods()
+function LoadMods()
 	Ext.Print("[LeaderLib:Bootstrap.lua] Registering LeaderLib's mod info.")
 	-- LeaderLib
 	local mod = Ext.GetModInfo("7e737d2f-31d2-4751-963f-be6ccc59cd0c")
@@ -207,7 +207,7 @@ function LeaderLib_Ext_LoadMods()
 		if LeaderLib.IgnoredMods[uuid] ~= true then
 			local mod = Ext.GetModInfo(uuid)
 			local versionInt = tonumber(mod.Version)
-			local major,minor,revision,build = LeaderLib_Ext_ParseVersion(versionInt)
+			local major,minor,revision,build = ParseVersion(versionInt)
 			--local modid = string.gsub(mod.Name, "%s+", ""):gsub("%p+", ""):gsub("%c+", ""):gsub("%%+", ""):gsub("&+", "")
 			local modid = string.match(mod.Directory, "(.*)_")
 			Osi.LeaderLib_Mods_OnModLoaded(uuid, modid, mod.Name, mod.Author, versionInt, major, minor, revision, build)
@@ -215,9 +215,9 @@ function LeaderLib_Ext_LoadMods()
 	end
 end
 
-function LeaderLib_Ext_CallModUpdated(modid, author, lastversionstr, nextversionstr)
-	local old_version = LeaderLib_Ext_VersionIntegerToVersionString(math.tointeger(lastversionstr))
-	local new_version = LeaderLib_Ext_VersionIntegerToVersionString(math.tointeger(nextversionstr))
+function CallModUpdated(modid, author, lastversionstr, nextversionstr)
+	local old_version = VersionIntegerToVersionString(math.tointeger(lastversionstr))
+	local new_version = VersionIntegerToVersionString(math.tointeger(nextversionstr))
 	if old_version ~= nil or new_version ~= nil then
 		Osi.LeaderUpdater_ModUpdated(modid, author, old_version, new_version)
 	else

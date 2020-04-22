@@ -1058,7 +1058,7 @@ String(_Char, _CharStr)
 AND
 String(_Item, _ItemStr)
 THEN
-NRD_LuaCall("LeaderLib_Ext_EquipInSlot", _CharStr, _ItemStr, _Slot);
+NRD_ModCall("LeaderLib", "EquipInSlot", _CharStr, _ItemStr, _Slot);
 */
 //END_REGION
 EXITSECTION

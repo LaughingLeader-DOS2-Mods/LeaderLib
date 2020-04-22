@@ -65,7 +65,7 @@ LeaderLib_Mods_Internal_Register((GUIDSTRING)_UUID, (STRING)_ModID, (STRING)_Dis
 AND
 GlobalGetFlag("LeaderLib_IsEditorMode", 1)
 THEN
-NRD_LuaCall("LeaderLib_Ext_PrintModDB");
+NRD_ModCall("LeaderLib", "PrintModDB");
 */
 //END_REGION
 
@@ -193,12 +193,12 @@ NRD_LuaCall("LeaderUpdater_Ext_OnModVersionChanged", (STRING)_UUID, (STRING)_Las
 IF
 GameModeStarted(_,_)
 THEN
-NRD_LuaCall("LeaderLib_Ext_LoadMods");
+NRD_ModCall("LeaderLib", "LoadMods");
 
 IF
 SaveGameLoaded(_,_,_,_)
 THEN
-NRD_LuaCall("LeaderLib_Ext_LoadMods");
+NRD_ModCall("LeaderLib", "LoadMods");
 */
 
 // Called via LeaderLib_Ext_LoadMods 
@@ -473,7 +473,7 @@ TimerFinished("Timers_LeaderLib_CheckActiveMods")
 AND
 DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _Author, _Version, _Major, _Minor, _Revision, _Build)
 THEN
-NRD_LuaCall("LeaderLib_Ext_SetModIsActiveFlag", (STRING)_UUID, _ModID);
+NRD_ModCall("LeaderLib", "SetModIsActiveFlag", (STRING)_UUID, _ModID);
 */
 
 PROC

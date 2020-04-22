@@ -147,7 +147,7 @@ LeaderLib_StoryStarted()
 THEN
 NOT DB_LeaderLib_Extender_LuaInitialized(1);
 /* [OSITOOLS_ONLY]
-NRD_LuaCall("LeaderLib_Ext_Init");
+NRD_ModCall("LeaderLib", "OnInit");
 DB_LeaderLib_Extender_LuaInitialized(1);
 */
 
@@ -158,7 +158,7 @@ AND
 //NOT DB_LeaderLib_Mods_Registered(7e737d2f-31d2-4751-963f-be6ccc59cd0c, _, _, _, _, _, _, _, _)
 NOT DB_LeaderLib_Extender_LuaInitialized(1)
 THEN
-NRD_LuaCall("LeaderLib_Ext_Init");
+NRD_ModCall("LeaderLib", "OnInit");
 DB_LeaderLib_Extender_LuaInitialized(1);
 */
 //END_REGION
@@ -170,7 +170,7 @@ StoryEvent(_, "LeaderLib_Initialized")
 AND
 GlobalGetFlag("LeaderLib_DebugModeEnabled", 1)
 THEN
-NRD_LuaCall("LeaderLib_Ext_DebugInit");
+NRD_ModCall("LeaderLib", "DebugInit");
 */
 //END_REGION
 EXITSECTION

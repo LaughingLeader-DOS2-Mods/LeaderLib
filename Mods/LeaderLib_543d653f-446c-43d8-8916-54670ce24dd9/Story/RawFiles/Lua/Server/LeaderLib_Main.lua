@@ -34,7 +34,7 @@ end
 ---@param char string
 ---@param handle string
 ---@param fallback string
-function LeaderLib_Ext_SetCustomNameWithLocalization(char,handle,fallback)
+function SetCustomNameWithLocalization(char,handle,fallback)
 	local name = fallback
 	if Ext.Version() >= 43 then
 		name = Ext.GetTranslatedString(handle, fallback)
@@ -45,14 +45,7 @@ end
 ---Get a skill's stat entry. Formats away _-1, _10, etc.
 ---@param skill string
 ---@return string
-function LeaderLib_Ext_GetSkillEntryName(skill)
+function GetSkillEntryName(skill)
 	return string.gsub(skill, "_%-?%d+$", "")
 end
-Ext.NewQuery(LeaderLib_Ext_GetSkillEntryName, "LeaderLib_Ext_QRY_GetSkillEntryName", "[in](STRING)_SkillPrototype, [out](STRING)_SkillId")
-
-LeaderLib.Main = {
-	PrintAttributes = PrintAttributes,
-	SetModIsActiveFlag = SetModIsActiveFlag
-}
-
-LeaderLib.Register.Table(LeaderLib.Main);
+Ext.NewQuery(GetSkillEntryName, "LeaderLib_Ext_QRY_GetSkillEntryName", "[in](STRING)_SkillPrototype, [out](STRING)_SkillId")

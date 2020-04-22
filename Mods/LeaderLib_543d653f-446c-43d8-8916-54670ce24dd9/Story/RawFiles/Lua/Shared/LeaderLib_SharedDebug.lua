@@ -74,7 +74,7 @@ local function TraceType(character, attribute, attribute_type)
 	end
 end
 
-function LeaderLib_Ext_Debug_TraceCharacter(character)
+function Debug_TraceCharacter(character)
 	if type(character) == "string" then
 		character = Ext.GetCharacter(character)
 	end

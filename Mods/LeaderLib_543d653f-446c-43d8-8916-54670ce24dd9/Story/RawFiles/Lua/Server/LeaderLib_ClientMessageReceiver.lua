@@ -69,14 +69,14 @@ local function SignalPartyValueChanges()
 	StorePartyValues()
 end
 
-function LeaderLib_Ext_CharacterSheet_SignalPartyValueChanges()
+function CharacterSheet_SignalPartyValueChanges()
 	local status,err = xpcall(SignalPartyValueChanges, debug.traceback)
 	if not status then
 		Ext.PrintError("Error signaling party attribute changes:\n", err)
 	end
 end
 
-function LeaderLib_Ext_CharacterSheet_StorePartyValues()
+function CharacterSheet_StorePartyValues()
 	local status,err = xpcall(StorePartyValues, debug.traceback)
 	if not status then
 		Ext.PrintError("Error storing party sheet values:\n", err)

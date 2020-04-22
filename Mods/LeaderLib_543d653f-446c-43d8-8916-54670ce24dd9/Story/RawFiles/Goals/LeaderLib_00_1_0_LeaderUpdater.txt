@@ -602,7 +602,7 @@ DB_LeaderUpdater_RegisteredUUID(_ModID, _Author, _UUID)
 AND
 DB_Mods_Registered(_ModID, _Author, _)
 THEN
-NRD_LuaCall("LeaderLib_Ext_CallModUpdated", _ModID, _Author, (STRING)_LastVersion, (STRING)_NextVersion);
+NRD_ModCall("LeaderLib", "CallModUpdated", _ModID, _Author, (STRING)_LastVersion, (STRING)_NextVersion);
 
 PROC
 LeaderLib_Mods_OnModRegistered((GUIDSTRING)_UUID, (INTEGER)_NextVersion, (INTEGER)_Major, (INTEGER)_Minor, (INTEGER)_Revision, (INTEGER)_Build)
@@ -615,7 +615,7 @@ LeaderLib_Ext_QRY_VersionStringToVersionInteger(_PastVersion, -1, _LastVersion)
 AND
 _LastVersion != _NextVersion
 THEN
-NRD_LuaCall("LeaderLib_Ext_CallModUpdated", _ModID, _Author, (STRING)_LastVersion, (STRING)_NextVersion);
+NRD_ModCall("LeaderLib", "CallModUpdated", _ModID, _Author, (STRING)_LastVersion, (STRING)_NextVersion);
 */
 //END_REGION
 

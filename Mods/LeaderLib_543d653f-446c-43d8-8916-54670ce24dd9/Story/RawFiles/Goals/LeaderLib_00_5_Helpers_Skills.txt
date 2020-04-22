@@ -816,7 +816,7 @@ String(_Char, _CharStr)
 AND
 IntegertoString(_Slot, _SlotStr)
 THEN
-NRD_LuaCall("LeaderLib_Ext_SetSlotToSkill", _CharStr, _SlotStr, _Skill);
+NRD_ModCall("LeaderLib", "SetSlotToSkill", _CharStr, _SlotStr, _Skill);
 */
 //END_REGION
 EXITSECTION

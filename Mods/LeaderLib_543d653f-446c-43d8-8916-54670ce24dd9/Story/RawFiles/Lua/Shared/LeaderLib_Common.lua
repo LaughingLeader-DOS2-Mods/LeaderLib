@@ -6,39 +6,11 @@ end
 
 LeaderLib.Print = Print
 
-function LeaderLib_Ext_Init()
+function OnInit()
 	LeaderLib.Initialized = true
 end
 
----Registers a function to the global table.
----@param name string
----@param func function
-local function Register_Function(name, func)
-    if type(func) == "function" then
-        local func_name = "LeaderLib_Ext_" .. name
-        _G[func_name] = func
-        Ext.Print("[LeaderLib_Bootstrap.lua] Registered function ("..func_name..").")
-    end
-end
-
----Registers a table of key => function to the global table. The key is used for the name.
----@param tbl table
-local function Register_Table(tbl)
-    for k,func in pairs(tbl) do
-        if type(func) == "function" then
-            local func_name = "LeaderLib_Ext_" .. k
-            _G[func_name] = func
-            Ext.Print("LeaderLib_Bootstrap.lua] Registered function ("..func_name..").")
-        else
-            Ext.Print("[LeaderLib_Bootstrap.lua] Not a function type ("..type(func)..").")
-        end
-    end
-end
-
-LeaderLib.Register["Function"] = Register_Function
-LeaderLib.Register["Table"] = Register_Table
-
-function LeaderLib_Ext_Log(...)
+function Log(...)
 	local printEnabled = false
 	if Ext.Version() >= 42 then
 		printEnabled = Ext.IsDeveloperMode() == true

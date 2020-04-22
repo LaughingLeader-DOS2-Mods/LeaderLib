@@ -15,7 +15,7 @@ local function PrintAttributes(char)
 	end
 end
 
-local function SetModIsActiveFlag(uuid, modid)
+function SetModIsActiveFlag(uuid, modid)
 	--local flag = string.gsub(modid, "%s+", "_") -- Replace spaces
 	local flag = tostring(modid).. "_IsActive"
 	local flagEnabled = GlobalGetFlag(flag)

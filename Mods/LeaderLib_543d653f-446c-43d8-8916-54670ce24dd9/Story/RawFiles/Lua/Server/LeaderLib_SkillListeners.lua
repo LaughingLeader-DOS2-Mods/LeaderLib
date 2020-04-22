@@ -11,7 +11,7 @@ end
 function OnSkillPreparing(char, skillprototype)
 	local skill = GetRealSkill(string.gsub(skillprototype, "_%-?%d+$", ""))
 	LeaderLib.Print("[LeaderLib_SkillListeners.lua:OnSkillPreparing] char(",char,") skillprototype(",skillprototype,") skill(",skill,")")
-	local listeners = LeaderLib.Listeners.Skills[skill]
+	local listeners = LeaderLib.SkillListeners[skill]
 	if listeners ~= nil then
 		for i,callback in ipairs(listeners) do
 			local status,err = xpcall(callback, debug.traceback, GetUUID(char), SKILL_STATE.PREPARE)
@@ -25,7 +25,7 @@ end
 function OnSkillUsed(char, skillUsed, ...)
 	local skill = GetRealSkill(skillUsed)
 	LeaderLib.Print("[LeaderLib_SkillListeners.lua:OnSkillUsed] char(",char,") skillUsed(",skillUsed,") skill(",skill,") params(",Ext.JsonStringify({...}),")")
-	local listeners = LeaderLib.Listeners.Skills[skill]
+	local listeners = LeaderLib.SkillListeners[skill]
 	if listeners ~= nil then
 		for i,callback in ipairs(listeners) do
 			local status,err = xpcall(callback, debug.traceback, GetUUID(char), SKILL_STATE.USED, {...})
@@ -39,7 +39,7 @@ end
 function OnSkillCast(char, skillUsed, ...)
 	local skill = GetRealSkill(skillUsed)
 	LeaderLib.Print("[LeaderLib_SkillListeners.lua:OnSkillCast] char(",char,") skillUsed(",skillUsed,") skill(",skill,") params(",Ext.JsonStringify({...}),")")
-	local listeners = LeaderLib.Listeners.Skills[skill]
+	local listeners = LeaderLib.SkillListeners[skill]
 	if listeners ~= nil then
 		for i,callback in ipairs(listeners) do
 			local status,err = xpcall(callback, debug.traceback, GetUUID(char), SKILL_STATE.CAST, {...})
@@ -53,7 +53,7 @@ end
 function OnSkillHit(char, skillprototype, ...)
 	local skill = GetRealSkill(string.gsub(skillprototype, "_%-?%d+$", ""))
 	LeaderLib.Print("[LeaderLib_SkillListeners.lua:OnSkillHit] char(",char,") skillprototype(",skillprototype,") skill(",skill,") params(",Ext.JsonStringify({...}),")")
-	local listeners = LeaderLib.Listeners.Skills[skill]
+	local listeners = LeaderLib.SkillListeners[skill]
 	if listeners ~= nil then
 		for i,callback in ipairs(listeners) do
 			local status,err = xpcall(callback, debug.traceback, GetUUID(char), SKILL_STATE.HIT, {...})

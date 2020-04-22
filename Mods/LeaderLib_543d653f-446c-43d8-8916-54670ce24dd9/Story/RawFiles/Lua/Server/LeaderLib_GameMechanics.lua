@@ -350,5 +350,3 @@ LeaderLib.Game.SetSlotToSkill = SetSlotToSkill
 LeaderLib.Game.CloneItemForCharacter = CloneItemForCharacter
 LeaderLib.Game.ExplodeProjectile = ExplodeProjectile
 LeaderLib.Game.RemoveRunes = RemoveRunes
-
-LeaderLib.Register.Table(LeaderLib.Game);

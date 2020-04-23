@@ -75,6 +75,9 @@ local function TraceType(character, attribute, attribute_type)
 end
 
 function Debug_TraceCharacter(character)
+	if character == nil then
+		return
+	end
 	if type(character) == "string" then
 		character = Ext.GetCharacter(character)
 	end

@@ -155,6 +155,7 @@ StringContains(_Template, "_Wand_", 1)
 THEN
 DB_NOOP(1);
 
+// [BEGIN_NO_OSITOOLS]
 QRY
 LeaderLib_Helper_QRY_IsRangedWeapon((ITEMGUID)_Item)
 AND
@@ -168,6 +169,20 @@ AND
 LeaderLib_Helper_QRY_IsMagicalRangedWeapon(_Item)
 THEN
 DB_NOOP(1);
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+QRY
+LeaderLib_Helper_QRY_IsRangedWeapon((ITEMGUID)_Item)
+AND
+NRD_ItemGetStatsId(_Item, _Stat)
+AND
+NRD_StatGetString(_Stat, "WeaponType", _WeaponType)
+AND
+LeaderLib_String_QRY_EqualsAny(_WeaponType, "Bow", "Crossbow", "Wand", "Rifle")
+THEN
+DB_NOOP(1);
+*/
 
 QRY
 LeaderLib_Helper_QRY_ChargesAreMaxed((ITEMGUID)_Item)

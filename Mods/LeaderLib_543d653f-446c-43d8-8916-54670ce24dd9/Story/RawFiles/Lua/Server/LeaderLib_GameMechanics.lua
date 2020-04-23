@@ -210,7 +210,7 @@ local function StoreSkillSlots(char)
 end
 
 ---Sets a skill into an empty slot, or finds empty space.
-local function SetSlotToSkill(char, slot, addskill)
+function TrySetSkillSlot(char, slot, addskill)
     if type(slot) == "string" then
         slot = math.tointeger(slot)
     end
@@ -237,6 +237,7 @@ local function SetSlotToSkill(char, slot, addskill)
     end
     return false
 end
+Ext.NewCall(TrySetSkillSlot, "LeaderLib_Ext_TrySetSkillSlot", "(CHARACTERGUID)_Character, (INTEGER)_Slot, (STRING)_Skill")
 
 ---Clone an item for a character.
 ---@param char string

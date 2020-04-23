@@ -811,12 +811,8 @@ NOT DB_LeaderLib_Skills_SetSlotResolved(_Char, _Skill, _Slot);
 
 PROC
 LeaderLib_Skills_Internal_SetSlotToSkill((CHARACTERGUID)_Char, (INTEGER)_Slot, (STRING)_Skill)
-AND
-String(_Char, _CharStr)
-AND
-IntegertoString(_Slot, _SlotStr)
 THEN
-NRD_ModCall("LeaderLib", "SetSlotToSkill", _CharStr, _SlotStr, _Skill);
+LeaderLib_Ext_TrySetSkillSlot(_Char, _Slot, _SKill);
 */
 //END_REGION
 EXITSECTION

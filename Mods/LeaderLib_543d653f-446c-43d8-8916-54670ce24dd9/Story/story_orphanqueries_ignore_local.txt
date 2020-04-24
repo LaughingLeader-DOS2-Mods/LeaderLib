@@ -243,3 +243,4 @@ DB_WasInRegion 2
 DB_WaypointBlockUI 1
 DB_WaypointInfo 3
 DB_WaypointTuto 1
+DB_LeaderLib_LuaSkillListeners_Ignore 3

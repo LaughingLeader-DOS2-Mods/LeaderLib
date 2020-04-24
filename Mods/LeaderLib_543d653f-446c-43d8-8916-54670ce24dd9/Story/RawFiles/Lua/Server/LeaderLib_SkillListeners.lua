@@ -1,16 +1,21 @@
 SKILL_STATE = LeaderLib.SKILL_STATE
 
 local function GetRealSkill(id)
-	if string.find(id, "Enemy") then
-		local skill = Ext.StatGetAttribute(id, "Using")
-		return GetRealSkill(skill)
+	if id ~= nil then
+		if string.find(id, "Enemy") then
+			local skill = Ext.StatGetAttribute(id, "Using")
+			return GetRealSkill(skill)
+		end
 	end
 	return id
 end
 
 function OnSkillPreparing(char, skillprototype)
 	local skill = GetRealSkill(string.gsub(skillprototype, "_%-?%d+$", ""))
-	LeaderLib.Print("[LeaderLib_SkillListeners.lua:OnSkillPreparing] char(",char,") skillprototype(",skillprototype,") skill(",skill,")")
+	if CharacterIsPlayer(char) == 0 then
+		Osi.DB_LeaderLib_LuaSkillListeners_Ignore(char, skillprototype, skill)
+	end
+	--LeaderLib.Print("[LeaderLib_SkillListeners.lua:OnSkillPreparing] char(",char,") skillprototype(",skillprototype,") skill(",skill,")")
 	local listeners = LeaderLib.SkillListeners[skill]
 	if listeners ~= nil then
 		for i,callback in ipairs(listeners) do
@@ -24,7 +29,10 @@ end
 
 function OnSkillUsed(char, skillUsed, ...)
 	local skill = GetRealSkill(skillUsed)
-	LeaderLib.Print("[LeaderLib_SkillListeners.lua:OnSkillUsed] char(",char,") skillUsed(",skillUsed,") skill(",skill,") params(",Ext.JsonStringify({...}),")")
+	if CharacterIsPlayer(char) == 0 then
+		Osi.DB_LeaderLib_LuaSkillListeners_Ignore:Delete(char, nil, skill)
+	end
+	--LeaderLib.Print("[LeaderLib_SkillListeners.lua:OnSkillUsed] char(",char,") skillUsed(",skillUsed,") skill(",skill,") params(",Ext.JsonStringify({...}),")")
 	local listeners = LeaderLib.SkillListeners[skill]
 	if listeners ~= nil then
 		for i,callback in ipairs(listeners) do
@@ -38,7 +46,7 @@ end
 
 function OnSkillCast(char, skillUsed, ...)
 	local skill = GetRealSkill(skillUsed)
-	LeaderLib.Print("[LeaderLib_SkillListeners.lua:OnSkillCast] char(",char,") skillUsed(",skillUsed,") skill(",skill,") params(",Ext.JsonStringify({...}),")")
+	--LeaderLib.Print("[LeaderLib_SkillListeners.lua:OnSkillCast] char(",char,") skillUsed(",skillUsed,") skill(",skill,") params(",Ext.JsonStringify({...}),")")
 	local listeners = LeaderLib.SkillListeners[skill]
 	if listeners ~= nil then
 		for i,callback in ipairs(listeners) do
@@ -52,7 +60,7 @@ end
 
 function OnSkillHit(char, skillprototype, ...)
 	local skill = GetRealSkill(string.gsub(skillprototype, "_%-?%d+$", ""))
-	LeaderLib.Print("[LeaderLib_SkillListeners.lua:OnSkillHit] char(",char,") skillprototype(",skillprototype,") skill(",skill,") params(",Ext.JsonStringify({...}),")")
+	--LeaderLib.Print("[LeaderLib_SkillListeners.lua:OnSkillHit] char(",char,") skillprototype(",skillprototype,") skill(",skill,") params(",Ext.JsonStringify({...}),")")
 	local listeners = LeaderLib.SkillListeners[skill]
 	if listeners ~= nil then
 		for i,callback in ipairs(listeners) do

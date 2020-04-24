@@ -7,6 +7,8 @@ IF
 NRD_OnActionStateEnter(_Char, "PrepareSkill")
 AND
 NRD_ActionStateGetString(_Char, "SkillId", _SkillPrototype)
+AND
+NOT DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _SkillPrototype, _)
 THEN
 NRD_ModCall("LeaderLib", "OnSkillPreparing", (STRING)_Char, _SkillPrototype);
 
@@ -42,6 +44,13 @@ NRD_StatusGetString(_Target, _Handle, "SkillId", _SkillPrototype)
 THEN
 NRD_ModCall("LeaderLib", "OnSkillHit", (STRING)_Source, _SkillPrototype, (STRING)_Target, (STRING)_Handle, (STRING)_Damage);
 */
+
+IF
+RegionEnded(_)
+THEN
+SysClear("DB_LeaderLib_LuaSkillListeners_Ignore", 3);
+
 EXITSECTION
+SysClear("DB_LeaderLib_LuaSkillListeners_Ignore", 3);
 ENDEXITSECTION
 ParentTargetEdge "LeaderLib_19_ToggledScripts"

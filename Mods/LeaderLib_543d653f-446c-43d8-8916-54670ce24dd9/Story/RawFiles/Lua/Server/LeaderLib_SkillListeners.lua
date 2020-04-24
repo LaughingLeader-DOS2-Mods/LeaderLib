@@ -13,7 +13,7 @@ end
 function OnSkillPreparing(char, skillprototype)
 	local skill = GetRealSkill(string.gsub(skillprototype, "_%-?%d+$", ""))
 	if CharacterIsPlayer(char) == 0 then
-		Osi.DB_LeaderLib_LuaSkillListeners_Ignore(char, skillprototype, skill)
+		Osi.LeaderLib_LuaSkillListeners_IgnorePrototype(char, skillprototype, skill)
 	end
 	--LeaderLib.Print("[LeaderLib_SkillListeners.lua:OnSkillPreparing] char(",char,") skillprototype(",skillprototype,") skill(",skill,")")
 	local listeners = LeaderLib.SkillListeners[skill]
@@ -30,7 +30,7 @@ end
 function OnSkillUsed(char, skillUsed, ...)
 	local skill = GetRealSkill(skillUsed)
 	if CharacterIsPlayer(char) == 0 then
-		Osi.DB_LeaderLib_LuaSkillListeners_Ignore:Delete(char, nil, skill)
+		Osi.LeaderLib_LuaSkillListeners_RemoveIgnoredPrototype(char, skill)
 	end
 	--LeaderLib.Print("[LeaderLib_SkillListeners.lua:OnSkillUsed] char(",char,") skillUsed(",skillUsed,") skill(",skill,") params(",Ext.JsonStringify({...}),")")
 	local listeners = LeaderLib.SkillListeners[skill]

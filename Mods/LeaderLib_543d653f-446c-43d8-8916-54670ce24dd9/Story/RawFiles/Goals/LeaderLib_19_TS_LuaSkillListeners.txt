@@ -45,6 +45,19 @@ THEN
 NRD_ModCall("LeaderLib", "OnSkillHit", (STRING)_Source, _SkillPrototype, (STRING)_Target, (STRING)_Handle, (STRING)_Damage);
 */
 
+PROC
+LeaderLib_LuaSkillListeners_IgnorePrototype((CHARACTERGUID)_Char, (STRING)_SkillPrototype, (STRING)_Skill)
+THEN
+DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _SkillPrototype, _Skill);
+
+PROC
+LeaderLib_LuaSkillListeners_RemoveIgnoredPrototype((CHARACTERGUID)_Char, (STRING)_Skill)
+AND
+DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _SkillPrototype, _Skill)
+THEN
+NOT DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _SkillPrototype, _Skill);
+
+
 IF
 RegionEnded(_)
 THEN

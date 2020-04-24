@@ -57,6 +57,12 @@ DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _SkillPrototype, _Skill)
 THEN
 NOT DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _SkillPrototype, _Skill);
 
+PROC
+LeaderLib_LuaSkillListeners_RemoveIgnoredPrototype((CHARACTERGUID)_Char)
+AND
+DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _SkillPrototype, _Skill)
+THEN
+NOT DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _SkillPrototype, _Skill);
 
 IF
 RegionEnded(_)

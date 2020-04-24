@@ -750,6 +750,16 @@ ObjectExists(_Dummy, 1)
 THEN
 SetStoryNpc(_Dummy, 0);
 RemoveTemporaryCharacter(_Dummy);
+
+IF
+StoryEvent((CHARACTERGUID)_Dummy, "LeaderLib_Commands_RemoveTemporaryDummy")
+AND
+_Dummy != NULL_00000000-0000-0000-0000-000000000000
+AND
+ObjectExists(_Dummy, 1)
+THEN
+SetStoryNpc(_Dummy, 0);
+RemoveTemporaryCharacter(_Dummy);
 //END_REGION
 
 //REGION CHARACTER_COPY

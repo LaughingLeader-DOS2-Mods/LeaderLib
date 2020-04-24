@@ -8,7 +8,7 @@ NRD_OnActionStateEnter(_Char, "PrepareSkill")
 AND
 NRD_ActionStateGetString(_Char, "SkillId", _SkillPrototype)
 AND
-NOT DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _SkillPrototype, _)
+NOT DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _SkillPrototype, (STRING)_)
 THEN
 NRD_ModCall("LeaderLib", "OnSkillPreparing", (STRING)_Char, _SkillPrototype);
 

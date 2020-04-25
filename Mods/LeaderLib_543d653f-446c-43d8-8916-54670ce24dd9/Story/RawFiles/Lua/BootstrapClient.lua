@@ -44,8 +44,8 @@ local function LeaderLib_Client_ModuleSetup()
 end
 
 local function LeaderLib_SyncRanSeed(call, seedstr)
-	LEADERLIB_RAN_SEED = math.tointeger(seedstr)
-	Ext.Print("[LeaderLib:BootstrapClient.lua:LeaderLib_SyncRanSeed] Set [LEADERLIB_RAN_SEED] to ("..tostring(LEADERLIB_RAN_SEED)..").")
+	_G["LEADERLIB_RAN_SEED"] = math.tointeger(seedstr)
+	Ext.Print("[LeaderLib:BootstrapClient.lua:LeaderLib_SyncRanSeed] Set [LEADERLIB_RAN_SEED] to ("..tostring(_G["LEADERLIB_RAN_SEED"])..").")
 end
 
 Ext.RegisterNetListener("LeaderLib_SyncRanSeed", LeaderLib_SyncRanSeed)

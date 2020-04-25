@@ -30,13 +30,13 @@ end
 local function init_seed()
 	local rnd = Ext.Random(9999)
 	local seed = (Ext.Random(9999) * 214013) + 2531011
-	LEADERLIB_RAN_SEED = seed
-	Ext.Print("[LeaderLib_Common.lua] Set LEADERLIB_RAN_SEED to ("..tostring(LEADERLIB_RAN_SEED)..")")
+	_G["LEADERLIB_RAN_SEED"] = seed
+	Ext.Print("[LeaderLib_Common.lua] Set LEADERLIB_RAN_SEED to ("..tostring(seed)..")")
 	if Ext.IsServer() then
-		Ext.BroadcastMessage("LeaderLib_SyncRanSeed", tostring(LEADERLIB_RAN_SEED), nil)
+		Ext.BroadcastMessage("LeaderLib_SyncRanSeed", tostring(seed), nil)
 	end
 end
-if LEADERLIB_RAN_SEED == nil then
+if _G["LEADERLIB_RAN_SEED"] == nil then
 	init_seed()
 end
 
@@ -163,9 +163,9 @@ end
 ---@return any
 local function GetRandomTableEntry(tbl)
 	if #tbl > 0 then
-		local rnd = Ext.Random(LEADERLIB_RAN_SEED)
-		local ran = math.max(1, math.fmod(rnd,#tbl))
-		return tbl[ran]
+		local rnd = Ext.Random(1,#tbl)
+		--local ran = math.max(1, math.fmod(rnd,#tbl))
+		return tbl[rnd]
 	end
 	return nil
 end
@@ -175,10 +175,10 @@ end
 ---@return any
 local function PopRandomTableEntry(tbl)
 	if #tbl > 0 then
-		local rnd = Ext.Random(LEADERLIB_RAN_SEED)
-		local ran = math.max(1, math.fmod(rnd,#tbl))
-		local entry = tbl[ran]
-		tbl[ran] = nil
+		local rnd = Ext.Random(1,#tbl)
+		--local ran = math.max(1, math.fmod(rnd,#tbl))
+		local entry = tbl[rnd]
+		tbl[rnd] = nil
 		return entry
 	end
 	return nil
@@ -198,7 +198,7 @@ end
 local function GetRandom(max,min)
 	if max == nil then max = 999 end
 	if min == nil then min = 0 end
-	local rnd = Ext.Random(LEADERLIB_RAN_SEED)
+	local rnd = Ext.Random(0, _G["LEADERLIB_RAN_SEED"])
 	local ran = math.max(min, math.fmod(rnd,max))
 	return ran
 end

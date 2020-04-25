@@ -61,8 +61,15 @@ local function OnSheetEvent(ui, call, ...)
 
 	elseif call == "requestCloseUI" or call == "hideUI" then
 		addedTalents = false
+		addedAbilities = false
 	elseif call == "showTalentTooltip" and not addedTalents then
 		addTestTalents(ui)
+	elseif call == "showAbilityTooltip" and not addedAbilities then
+		--addMissingAbilities(ui)
+	end
+
+	if call == "selectedTab" then
+
 	end
 end
 
@@ -71,6 +78,7 @@ local function LeaderLib_ClientDebug_SessionLoaded()
 	if ui ~= nil then
 		Ext.RegisterUICall(ui, "setPosition", OnSheetEvent)
 		Ext.RegisterUICall(ui, "getStats", OnSheetEvent)
+		Ext.RegisterUICall(ui, "selectedTab", OnSheetEvent)
 		Ext.RegisterUICall(ui, "hideTooltip", OnSheetEvent)
 		Ext.RegisterUICall(ui, "openContextMenu", OnSheetEvent)
 		Ext.RegisterUICall(ui, "PlaySound", OnSheetEvent)
@@ -82,6 +90,7 @@ local function LeaderLib_ClientDebug_SessionLoaded()
 		Ext.RegisterUICall(ui, "showCustomStatTooltip", OnSheetEvent)
 		Ext.RegisterUICall(ui, "showStatTooltip", OnSheetEvent)
 		Ext.RegisterUICall(ui, "showTalentTooltip", OnSheetEvent)
+		Ext.RegisterUICall(ui, "showAbilityTooltip", OnSheetEvent)
 		Ext.RegisterUICall(ui, "onGenerateTreasure", OnSheetEvent)
 		Ext.RegisterUICall(ui, "onClearInventory", OnSheetEvent)
 		Ext.RegisterUICall(ui, "setMcSize", OnSheetEvent)
@@ -91,6 +100,7 @@ local function LeaderLib_ClientDebug_SessionLoaded()
 		Ext.RegisterUICall(ui, "keepUIinScreen", OnSheetEvent)
 		Ext.RegisterUICall(ui, "clearAnchor", OnSheetEvent)
 		addedTalents = false
+		addedAbilities = false
 		Ext.Print("[LeaderLib_ModMenuClient.lua:UIHookTest] Found characterSheet.swf.")
 	else
 		Ext.Print("[LeaderLib_ModMenuClient.lua:UIHookTest] Failed to get Public/Game/GUI/characterSheet.swf")

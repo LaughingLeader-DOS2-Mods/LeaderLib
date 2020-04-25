@@ -271,4 +271,6 @@
 	<content contentuid="h27d11f50gaecbg4d8fgaf81g0b7f26fb61f3" Source="LOOT_LeaderLib_BackPack_Invisible">LeaderLib - Debug</content>
 	<content contentuid="h9be57347g863eg400fg997dg19c57c3c657e" Source="LOOT_LeaderLib_BackPack_Invisible_Debug">Hidden Backpack</content>
 	<content contentuid="hee326232gbe82g49c2gbe8eg1d0511d29248" Source="S_LeaderLib_EventParser">LeaderLib</content>
+	<content contentuid="hae52ff4bg54e7g4eabgb930gca752c4ba072">Armour Specialist</content>
+	<content contentuid="h919b260ag66c4g4551gb4c7g793a12115cfc">Sulfurology</content>
 </contentList>

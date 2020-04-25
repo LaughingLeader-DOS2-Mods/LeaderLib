@@ -35,7 +35,7 @@ end
 LeaderLib.Game.GetDamageText = GetDamageText
 
 local AbilityNames = {
-	None = TranslatedString:Create("h9a2aead4gfa2dg4fbegae65g57c501cadf4f","None"),
+	--None = TranslatedString:Create("h9a2aead4gfa2dg4fbegae65g57c501cadf4f","None"),
 	WarriorLore = TranslatedString:Create("h8e4bebcbg21c7g43dag8b05gd3b13c1be651","Warfare"),
 	RangerLore = TranslatedString:Create("h3d3dc89dgd286g418eg8134g2eb65d063514","Huntsman"),
 	RogueLore = TranslatedString:Create("hed591025g5c39g48ccga899gc9b1569716c1","Scoundrel"),
@@ -43,9 +43,9 @@ local AbilityNames = {
 	TwoHanded = TranslatedString:Create("h3fb5cd5ag9ec8g4746g8f9cg03100b26bd3a","Two-Handed"),
 	Reflection = TranslatedString:Create("h591d7502gb8c3g443cg86ebga0b3a903155a","Retribution"),
 	Ranged = TranslatedString:Create("hdda30cb9g17adg433ag9071g867e97c09c3a","Ranged"),
-	Shield = TranslatedString:Create("h77557ac7g4f6fg49bdga76cg404de43d92f5","Shield"), -- Or h0c4dfdb5g88e7g4df8gabc9gf17b7042bf14 ?
+	Shield = TranslatedString:Create("h2bbbfa10g8c9cg4c49ga425g582da93fb156","Shieldbearer"), -- Or h0c4dfdb5g88e7g4df8gabc9gf17b7042bf14 ?
 	Reflexes = TranslatedString:Create("h4e65fe41g7f4cg429ega1abgab8894fc6b2e","Reflexes"),
-	PhysicalArmorMastery = TranslatedString:Create("h1f09b725g975dg4480gb88fge119687654f9","Tenebrium"),
+	PhysicalArmorMastery = TranslatedString:Create("hae52ff4bg54e7g4eabgb930gca752c4ba072","Armour Specialist"), -- Re-added by LeaderLib
 	Sourcery = TranslatedString:Create("ha8b343fbg4ebbg4e72gb58fg633850ad0580","Sourcery"),
 	Telekinesis = TranslatedString:Create("h455eb073g28abg4f3bgae9dga8a592a30cdb","Telekinesis"),
 	FireSpecialist = TranslatedString:Create("hf0a5a77dg132ag4517g8701g9d2ca3057a28","Pyrokinetic"),
@@ -55,6 +55,7 @@ local AbilityNames = {
 	Necromancy = TranslatedString:Create("hb7ea4cc5g2a18g416bg9b95g51d928a60398","Necromancer"),
 	Summoning = TranslatedString:Create("hac10f374gf9dbg4ee5gb5d0g7b1d3cb6d1fe","Summoning"),
 	Polymorph = TranslatedString:Create("h70714d89g196eg4affga165gaa9d72a61368","Polymorph"),
+	Sulfurology = TranslatedString:Create("h919b260ag66c4g4551gb4c7g793a12115cfc","Sulfurology"),
 	Repair = TranslatedString:Create("hfb0ab865gb8dfg4e35g9c8dg0a8bb9445348","Repair"), -- Or h11c016c1g62a6g4e34g852dg9cc43da69d57
 	Sneaking = TranslatedString:Create("h6bf7caf0g7756g443bg926dg1ee5975ee133","Sneaking"),
 	Pickpocket = TranslatedString:Create("ha39a1bbeg39a3g4f52g8953g8f2f6b6ee1fa","Pickpocketing"), -- or h285c0c44g7cf1g43deg8ec7g6d6e9b7deba0
@@ -74,21 +75,28 @@ local AbilityNames = {
 	VitalityMastery = TranslatedString:Create("h9e592393gda0fg4841gb7eegbfa847582e82","Bodybuilding"),
 	Perseverance = TranslatedString:Create("h5b61fccfg5d2ag4a81g9cacg068403d61b5c","Perseverance"), -- Or hfc4ae314g920ag4fdagbc50ge73b91cfa7c7
 	Runecrafting = TranslatedString:Create("h87db6c3cg511dg4db1gad59g58ace25f71d1","Rune Crafting"),
-	Brewmaster = TranslatedString:Create("h01fcbb18gbec4g488egaab1g96f8a3db38cc","Brewer"),
+	Brewmaster = TranslatedString:Create("hab7acde6g5af6g47a7ga65dgc633aef193cf","Brew Master"),
 }
 
 --MagicArmorMasteryDescription = TranslatedString:Create("h211cb400g5881g4b90g8bc8g0399d0288e00","Willpower determines how resistant you are to mental statuses like Fear or Charm."),
 --VitalityMasteryDescription = TranslatedString:Create("h2c42b179gd34bg45f8g9a81g847315e0319c","Bodybuilding determines how resistant you are to physical statuses like Bleeding or Crippled."),
 
 --- Get the localized name for an ability.
----@param ability string
+---@param ability string|integer
 ---@return string
 local function GetAbilityName(ability)
+	if type(ability) == "number" then
+		ability = LeaderLib.Data.Ability(math.tointeger(ability))
+	else
+		if ability == "None" then
+			return ""
+		end
+	end
 	local entry = AbilityNames[ability]
 	if entry ~= nil then
 		return entry.Value
 	else
-		Ext.PrintError("[LeaderLib.Game.GetAbilityName] No ability name for " .. tostring(ability))
+		Ext.PrintError("[LeaderLib.Game.GetAbilityName] No ability name for ["..tostring(ability).."]")
 	end
 	return nil
 end

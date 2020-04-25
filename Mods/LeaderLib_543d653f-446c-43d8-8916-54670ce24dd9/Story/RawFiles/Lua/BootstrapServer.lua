@@ -1,5 +1,5 @@
 -- local function LeaderLib_GameSessionLoad()
--- 	Ext.Print("[LeaderLib:Bootstrap.lua] Session is loading.")
+-- 	LeaderLib.Print("[LeaderLib:Bootstrap.lua] Session is loading.")
 -- end
 
 -- local genericPresetOverrideTest = "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/CharacterCreation/OriginPresets/LeaderLib_GenericOverrideTest.lsx"
@@ -11,7 +11,7 @@
 -- }
 
 local function LeaderLib_ModuleLoading()
-	--Ext.Print("[LeaderLib:Bootstrap.lua] Module is loading.")
+	--LeaderLib.Print("[LeaderLib:Bootstrap.lua] Module is loading.")
 	-- if Ext.IsDeveloperMode() then
 	-- 	for file,override in pairs(pathOverrides) do
 	-- 		Ext.AddPathOverride(file, override)

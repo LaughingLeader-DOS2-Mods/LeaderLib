@@ -141,46 +141,46 @@ local STATUS_HEALING_ATTRIBUTE = {
 
 local function TraceType(obj, handle, attribute, attribute_type)
 	if attribute_type == "Integer" or attribute_type == "Flag" or attribute_type == "Integer64" or attribute_type == "Enum" then
-		Ext.Print("[LeaderLib_Debug.lua] ["..attribute.."] = "..tostring(NRD_HitGetInt(handle, attribute)).."")
+		LeaderLib.Print("[LeaderLib_Debug.lua] ["..attribute.."] = "..tostring(NRD_HitGetInt(handle, attribute)).."")
 	elseif attribute_type == "Real" then
-		Ext.Print("[LeaderLib_Debug.lua] ["..attribute.."] = "..tostring(NRD_HitGetInt(handle, attribute)).."")
+		LeaderLib.Print("[LeaderLib_Debug.lua] ["..attribute.."] = "..tostring(NRD_HitGetInt(handle, attribute)).."")
 	elseif attribute_type == "String" then
-		Ext.Print("[LeaderLib_Debug.lua] ["..attribute.."] = "..tostring(NRD_HitGetString(handle, attribute)).."")
+		LeaderLib.Print("[LeaderLib_Debug.lua] ["..attribute.."] = "..tostring(NRD_HitGetString(handle, attribute)).."")
 	else
-		Ext.Print("[LeaderLib_Debug.lua] ["..attribute.."] = "..tostring(NRD_HitGetString(handle, attribute)).."")
+		LeaderLib.Print("[LeaderLib_Debug.lua] ["..attribute.."] = "..tostring(NRD_HitGetString(handle, attribute)).."")
 	end
 end
 
 local function TraceStatusType(obj, handle, attribute, attribute_type)
 	if attribute_type == "Integer" or attribute_type == "Flag" or attribute_type == "Integer64" then
-		Ext.Print("[LeaderLib_Debug.lua] ["..attribute.."] = "..tostring(NRD_StatusGetInt(obj, handle, attribute)).."")
+		LeaderLib.Print("[LeaderLib_Debug.lua] ["..attribute.."] = "..tostring(NRD_StatusGetInt(obj, handle, attribute)).."")
 	elseif attribute_type == "Real" then
-		Ext.Print("[LeaderLib_Debug.lua] ["..attribute.."] = "..tostring(NRD_StatusGetReal(obj, handle, attribute)).."")
+		LeaderLib.Print("[LeaderLib_Debug.lua] ["..attribute.."] = "..tostring(NRD_StatusGetReal(obj, handle, attribute)).."")
 	elseif attribute_type == "String" then
-		Ext.Print("[LeaderLib_Debug.lua] ["..attribute.."] = "..tostring(NRD_StatusGetString(obj, handle, attribute)).."")
+		LeaderLib.Print("[LeaderLib_Debug.lua] ["..attribute.."] = "..tostring(NRD_StatusGetString(obj, handle, attribute)).."")
 	elseif attribute_type == "Enum" then
 		local val = NRD_StatusGetString(obj, handle, attribute)
 		if val == nil then val = NRD_StatusGetInt(obj, handle, attribute) end
-		Ext.Print("[LeaderLib_Debug.lua] ["..attribute.."] = "..tostring(val).."")
+		LeaderLib.Print("[LeaderLib_Debug.lua] ["..attribute.."] = "..tostring(val).."")
 	elseif attribute_type == "GuidString" or attribute_type == "Handle" then
-		Ext.Print("[LeaderLib_Debug.lua] ["..attribute.."] = "..tostring(NRD_StatusGetGuidString(obj, handle, attribute)).."")
+		LeaderLib.Print("[LeaderLib_Debug.lua] ["..attribute.."] = "..tostring(NRD_StatusGetGuidString(obj, handle, attribute)).."")
 	end
 end
 
 function Debug_TraceStatus(obj, status, handle)
-	Ext.Print("[LeaderLib_Debug.lua:TraceStatus] === "..obj.." || "..status.." ("..tostring(handle)..") === ")
+	LeaderLib.Print("[LeaderLib_Debug.lua:TraceStatus] === "..obj.." || "..status.." ("..tostring(handle)..") === ")
 	for attribute,attribute_type in pairs(STATUS_ATTRIBUTE) do
 		TraceType(obj, handle, attribute, attribute_type)
 	end
-	Ext.Print("[LeaderLib_Debug.lua:TraceHit] Trying to get StatusType...")
+	LeaderLib.Print("[LeaderLib_Debug.lua:TraceHit] Trying to get StatusType...")
 	local status_type = Ext.StatGetAttribute(status, "StatusType")
 	if status_type == "HEAL" then
-		Ext.Print("[LeaderLib_Debug.lua:TraceStatus] ===== HEAL TYPE ===== ")
+		LeaderLib.Print("[LeaderLib_Debug.lua:TraceStatus] ===== HEAL TYPE ===== ")
 		for attribute,attribute_type in pairs(STATUS_HEAL_ATTRIBUTE) do
 			TraceType(obj, handle, attribute, attribute_type)
 		end
 	elseif status_type == "HEALING" then
-		Ext.Print("[LeaderLib_Debug.lua:TraceStatus] ===== HEALING TYPE ===== ")
+		LeaderLib.Print("[LeaderLib_Debug.lua:TraceStatus] ===== HEALING TYPE ===== ")
 		for attribute,attribute_type in pairs(STATUS_HEALING_ATTRIBUTE) do
 			TraceType(obj, handle, attribute, attribute_type)
 		end
@@ -188,45 +188,45 @@ function Debug_TraceStatus(obj, status, handle)
 end
 
 function Debug_TraceHitPrepare(target,attacker,damage,handle)
-	Ext.Print("[LeaderLib_Debug.lua:TraceHitPrepare] damage("..tostring(damage)..") attacker("..tostring(attacker)..") target("..tostring(target)..") handle("..tostring(handle)..")")
-	Ext.Print("=======================")
+	LeaderLib.Print("[LeaderLib_Debug.lua:TraceHitPrepare] damage("..tostring(damage)..") attacker("..tostring(attacker)..") target("..tostring(target)..") handle("..tostring(handle)..")")
+	LeaderLib.Print("=======================")
 	for attribute,attribute_type in pairs(HIT_ATTRIBUTE) do
 		TraceType(target, handle, attribute, attribute_type)
 	end
-	Ext.Print("=======================")
+	LeaderLib.Print("=======================")
 end
 
 function Debug_TraceOnHit(target,attacker,damage,handle)
-	Ext.Print("[LeaderLib_Debug.lua:TraceOnHit] damage("..tostring(damage)..") attacker("..tostring(attacker)..") target("..tostring(target)..") handle("..tostring(handle)..")")
-	Ext.Print("=======================")
-	Ext.Print("==========HIT==========")
-	Ext.Print("=======================")
+	LeaderLib.Print("[LeaderLib_Debug.lua:TraceOnHit] damage("..tostring(damage)..") attacker("..tostring(attacker)..") target("..tostring(target)..") handle("..tostring(handle)..")")
+	LeaderLib.Print("=======================")
+	LeaderLib.Print("==========HIT==========")
+	LeaderLib.Print("=======================")
 	for attribute,attribute_type in pairs(HIT_ATTRIBUTE) do
 		TraceStatusType(target, handle, attribute, attribute_type)
 	end
-	Ext.Print("=======================")
-	Ext.Print("======HIT STATUS=======")
-	Ext.Print("=======================")
+	LeaderLib.Print("=======================")
+	LeaderLib.Print("======HIT STATUS=======")
+	LeaderLib.Print("=======================")
 	for attribute,attribute_type in pairs(STATUS_HIT) do
 		TraceStatusType(target, handle, attribute, attribute_type)
 	end
-	Ext.Print("=======================")
-	Ext.Print("[LeaderLib_Debug.lua:TraceHit] Trying to get StatusId...")
+	LeaderLib.Print("=======================")
+	LeaderLib.Print("[LeaderLib_Debug.lua:TraceHit] Trying to get StatusId...")
 	local status = NRD_StatusGetString(target, handle, "StatusId")
 	if status ~= nil and status ~= "HIT" then
 		Debug_TraceStatus(target, status, handle)
 	end
-	Ext.Print("=======================")
+	LeaderLib.Print("=======================")
 end
 
 function PrintModDB()
-	Ext.Print("[LeaderLib_Debug.lua:PrintDB] Printing database DB_LeaderLib_Mods_Registered.")
+	LeaderLib.Print("[LeaderLib_Debug.lua:PrintDB] Printing database DB_LeaderLib_Mods_Registered.")
 	local values = Osi.DB_LeaderLib_Mods_Registered:Get(nil, nil, nil, nil, nil, nil, nil, nil)
-    Ext.Print(Ext.JsonStringify(values))
+    LeaderLib.Print(Ext.JsonStringify(values))
 end
 
 function PrintDB(name, arity)
-	Ext.Print("[LeaderLib_Debug.lua:PrintDB] Printing database "..name.." ("..tostring(arity)..")")
+	LeaderLib.Print("[LeaderLib_Debug.lua:PrintDB] Printing database "..name.." ("..tostring(arity)..")")
 end
 
 function PrintTest(str)
@@ -246,7 +246,7 @@ function Debug_TestSkillScaleMath(level)
 		maxDamage = math.max(maxDamage, minDamage + 1.0)
 	end
 
-	Ext.Print("[LeaderLib_Debug.lua:TestSkillScaleMath] Level("..level..") Range(30) Damage("..tostring(damage)..") FromBase("..tostring(damageAdjusted)..") Final Damage("..tostring(minDamage).." - "..tostring(maxDamage)..")" )
+	LeaderLib.Print("[LeaderLib_Debug.lua:TestSkillScaleMath] Level("..level..") Range(30) Damage("..tostring(damage)..") FromBase("..tostring(damageAdjusted)..") Final Damage("..tostring(minDamage).." - "..tostring(maxDamage)..")" )
 end
 
 function GenerateIdeHelpers()

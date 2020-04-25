@@ -84,11 +84,11 @@ function StringToVersion(version_str)
 			--Osi.LeaderLib_StringExt_SetVersionFromString(version_str,major,minor,revision,build)
 		else
 			if version_str ~= "-1" then
-				Ext.Print("[LeaderLib_Versioning.lua:LeaderLib_Ext_StringToVersion] ".. version_str .. " is not a valid version string!")
+				Ext.PrintError("[LeaderLib_Versioning.lua:LeaderLib_Ext_StringToVersion] ".. version_str .. " is not a valid version string!")
 			end
 		end
 	else
-		Ext.Print("[LeaderLib_Versioning.lua:LeaderLib_Ext_StringToVersion] Failed to process '"..version_str.."' - function StringToVersionIntegers had an error.")
+		Ext.PrintError("[LeaderLib_Versioning.lua:LeaderLib_Ext_StringToVersion] Failed to process '"..version_str.."' - function StringToVersionIntegers had an error.")
 	end
 	return -1,-1,-1,-1
 end
@@ -109,11 +109,11 @@ function VersionStringToVersionInteger(version_str, fallback)
 			return (major << 28) + (minor << 24) + (revision << 16) + (build)
 		else
 			if version_str ~= "-1" then
-				Ext.Print("[LeaderLib_Versioning.lua:VersionStringToVersionInteger] " .. version_str .. " is not a valid version string!")
+				Ext.PrintError("[LeaderLib_Versioning.lua:VersionStringToVersionInteger] " .. version_str .. " is not a valid version string!")
 			end
 		end
 	else
-		Ext.Print("[LeaderLib_Versioning.lua:VersionStringToVersionInteger] Failed to process '"..version_str.."' - function StringToVersionIntegers has an error.")
+		Ext.PrintError("[LeaderLib_Versioning.lua:VersionStringToVersionInteger] Failed to process '"..version_str.."' - function StringToVersionIntegers has an error.")
 	end
 	return fallback
 end
@@ -150,12 +150,12 @@ local function Register_Mod_Table(tbl)
 		if uuid ~= nil then
 			Osi.LeaderUpdater_Register_UUID(id,author,uuid)
 		end
-		Ext.Print("[LeaderLib_Main.lua] Registered mod (",LeaderLib.Common.Dump(tbl),").")
+		LeaderLib.Print("[LeaderLib_Main.lua] Registered mod (",LeaderLib.Common.Dump(tbl),").")
 	end
 end
 
 local function LeaderUpdater_OnModRegistered_Error (x)
-	Ext.Print("[LeaderLib:Bootstrap.lua] Error calling mod registered callback function: ", x)
+	Ext.PrintError("[LeaderLib:Bootstrap.lua] Error calling mod registered callback function: ", x)
 	return false
 end
 
@@ -175,7 +175,7 @@ function OnModRegistered(uuid,version)
 end
 
 local function LeaderUpdater_OnModUpdated_Error (x)
-	Ext.Print("[LeaderLib:Bootstrap.lua] Error calling mod update callback function: ", x)
+	Ext.PrintError("[LeaderLib:Bootstrap.lua] Error calling mod update callback function: ", x)
 	return false
 end
 
@@ -196,10 +196,10 @@ function OnModVersionChanged(uuid,past_version,new_version)
 end
 
 function LoadMods()
-	Ext.Print("[LeaderLib:Bootstrap.lua] Registering LeaderLib's mod info.")
+	LeaderLib.Print("[LeaderLib:Bootstrap.lua] Registering LeaderLib's mod info.")
 	-- LeaderLib
 	local mod = Ext.GetModInfo("7e737d2f-31d2-4751-963f-be6ccc59cd0c")
-	--Ext.Print(Ext.JsonStringify(mod))
+	--LeaderLib.Print(Ext.JsonStringify(mod))
 	local versionInt = tonumber(mod.Version)
 	local major = math.floor(versionInt >> 28)
 	local minor = math.floor(versionInt >> 24) & 0x0F
@@ -226,6 +226,6 @@ function CallModUpdated(modid, author, lastversionstr, nextversionstr)
 	if old_version ~= nil or new_version ~= nil then
 		Osi.LeaderUpdater_ModUpdated(modid, author, old_version, new_version)
 	else
-		Ext.Print("[LeaderLib_Versioning.lua:LeaderLib_Ext_CallModUpdated] Failed to process '"..lastversionstr.."' and "..nextversionstr.." into version strings")
+		Ext.PrintError("[LeaderLib_Versioning.lua:LeaderLib_Ext_CallModUpdated] Failed to process '"..lastversionstr.."' and "..nextversionstr.." into version strings")
 	end
 end

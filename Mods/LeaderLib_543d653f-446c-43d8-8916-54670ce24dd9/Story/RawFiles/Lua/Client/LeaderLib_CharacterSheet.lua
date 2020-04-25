@@ -95,11 +95,11 @@ local function addMissingAbilities(ui)
 			ui:SetValue("ability_array", Ext.Random(1,10), i+4) -- valueText
 			ui:SetValue("ability_array", LeaderLib.LocalizedText.AbilityPlusTooltip.Value:gsub("%[1%]", Ext.ExtraData.CombatAbilityLevelGrowth), i+5) -- addTooltipText
 			ui:SetValue("ability_array", "", i+6) -- removeTooltipText
-			--Ext.Print(string.format("[LeaderLib:addMissingAbilities] Added ability [%s] = (%s)", abilityID, abilityName))
+			--LeaderLib.Print(string.format("[LeaderLib:addMissingAbilities] Added ability [%s] = (%s)", abilityID, abilityName))
 			i = i + 7
 			total = total + 1
 		end
-		Ext.Print(string.format("[LeaderLib:addMissingAbilities] Added abilities to the character sheet. i[%s] Total(%s)", i, total))
+		LeaderLib.Print(string.format("[LeaderLib:addMissingAbilities] Added abilities to the character sheet. i[%s] Total(%s)", i, total))
 	else
 		Ext.PrintError("[LeaderLib:addMissingAbilities] Failed to finding starting index for ability_array!")
 	end
@@ -125,7 +125,7 @@ local function toggleAbilityButtonVisibility(ui, hasPoints)
 			ui:SetValue("lvlBtnAbility_array", data.Group, i+2) -- groupId
 			ui:SetValue("lvlBtnAbility_array", abilityID, i+3) -- statId
 			ui:SetValue("lvlBtnAbility_array", true, i+4) -- isVisible
-			--Ext.Print(string.format("[LeaderLib:addMissingAbilities] Enabled point button for [%s] = (%s)", abilityID, abilityName))
+			--LeaderLib.Print(string.format("[LeaderLib:addMissingAbilities] Enabled point button for [%s] = (%s)", abilityID, abilityName))
 			i = i + 5
 		end
 	else

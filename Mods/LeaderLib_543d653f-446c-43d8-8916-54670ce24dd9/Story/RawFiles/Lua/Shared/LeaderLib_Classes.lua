@@ -70,7 +70,7 @@ end
 ---@return MessageData
 function MessageData:CreateFromString(str)
 	local b,result = xpcall(TryParseTable, function(err)
-		Ext.Print("[LeaderLib_Classes.lua:MessageData:CreateFromString] Error parsing string as table ("..str.."):\n" .. tostring(err))
+		Ext.PrintError("[LeaderLib_Classes.lua:MessageData:CreateFromString] Error parsing string as table ("..str.."):\n" .. tostring(err))
 	end, str)
 	if b and result ~= nil then
 		return result

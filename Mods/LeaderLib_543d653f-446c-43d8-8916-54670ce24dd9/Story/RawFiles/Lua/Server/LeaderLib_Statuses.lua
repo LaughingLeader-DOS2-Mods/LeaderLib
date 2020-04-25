@@ -37,7 +37,7 @@ Ext.NewQuery(IsSneakingOrInvisible, "LeaderLib_Ext_QRY_IsSneakingOrInvisible", "
 ---@param obj string
 ---@return boolean
 function HasStatusType(obj, statusType)
-	--Ext.Print("LeaderLib_Ext_HasStatusType:",obj,statusType)
+	--LeaderLib.Print("LeaderLib_Ext_HasStatusType:",obj,statusType)
 	if statusType ~= nil and statusType ~= "" then
 		statusType = string.upper(statusType)
 		if HasActiveStatus(obj, statusType) == 1 then

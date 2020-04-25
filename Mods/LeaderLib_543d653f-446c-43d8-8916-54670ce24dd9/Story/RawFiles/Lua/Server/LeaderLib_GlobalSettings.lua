@@ -177,7 +177,7 @@ function LeaderLibModSettings:Export()
 			if v ~= nil then
 				export_table.integers[name] = v
 			else
-				Ext.Print("[LeaderLib:GlobalSettings.lua:LeaderLibModSettings:Export] [*ERROR*] Global Integer ("..tostring(name)..") has no value.")
+				Ext.PrintError("[LeaderLib:GlobalSettings.lua:LeaderLibModSettings:Export] [*ERROR*] Global Integer ("..tostring(name)..") has no value.")
 			end
 		end
 	end
@@ -275,7 +275,7 @@ function GlobalSettings_StoreGlobalFlag(uuid, flag, saveWhenFalse)
 			if saveWhenFalse == "1" or saveWhenFalse == true then flagvar.saveWhenFalse = true end
 			mod_settings.globalflags[flag] = flagvar
 		else
-			Ext.Print("[LeaderLib:GlobalSettings.lua:StoreGlobalFlag] [*ERROR]* Failed to find settings for UUID ("..tostring(uuid)..").")
+			Ext.PrintError("[LeaderLib:GlobalSettings.lua:StoreGlobalFlag] [*ERROR]* Failed to find settings for UUID ("..tostring(uuid)..").")
 		end
 	end
 end
@@ -292,7 +292,7 @@ function GlobalSettings_StoreGlobalInteger(uuid, varname, defaultvalue)
 		end
 		mod_settings.integers[varname] = tonumber(defaultvalue)
 	else
-		Ext.Print("[LeaderLib:GlobalSettings.lua:StoreGlobalInteger] [*ERROR*] Failed to find settings for UUID ("..tostring(uuid)..").")
+		Ext.PrintError("[LeaderLib:GlobalSettings.lua:StoreGlobalInteger] [*ERROR*] Failed to find settings for UUID ("..tostring(uuid)..").")
 	end
 end
 
@@ -307,7 +307,7 @@ function GlobalSettings_StoreGlobalFlag_Old(modid, author, flag, saveWhenFalse)
 			if saveWhenFalse == "1" or saveWhenFalse == true then flagvar.saveWhenFalse = true end
 			mod_settings.globalflags[flag] = flagvar
 		else
-			Ext.Print("[LeaderLib:GlobalSettings.lua:StoreGlobalFlag_Old] [*ERROR*] Failed to find settings for ("..tostring(modid)..","..tostring(author)..").")
+			Ext.PrintError("[LeaderLib:GlobalSettings.lua:StoreGlobalFlag_Old] [*ERROR*] Failed to find settings for ("..tostring(modid)..","..tostring(author)..").")
 		end
 	end
 end
@@ -322,7 +322,7 @@ function GlobalSettings_StoreGlobalInteger_Old(modid, author, varname, defaultva
 	if mod_settings ~= nil then
 		mod_settings.integers[varname] = math.tointeger(defaultvalue)
 	else
-		Ext.Print("[LeaderLib:GlobalSettings.lua:StoreGlobalInteger_Old] [*ERROR*] Failed to find settings for UUID ("..tostring(modid)..","..tostring(author)..").")
+		Ext.PrintError("[LeaderLib:GlobalSettings.lua:StoreGlobalInteger_Old] [*ERROR*] Failed to find settings for UUID ("..tostring(modid)..","..tostring(author)..").")
 	end
 end
 
@@ -340,7 +340,7 @@ function GlobalSettings_StoreModVersion(uuid, version)
 	if mod_settings ~= nil then
 		mod_settings.version = math.tointeger(version)
 	else
-		Ext.Print("[LeaderLib:GlobalSettings.lua:StoreModVersion] [*ERROR*] Failed to find settings for UUID ("..tostring(uuid)..").")
+		Ext.PrintError("[LeaderLib:GlobalSettings.lua:StoreModVersion] [*ERROR*] Failed to find settings for UUID ("..tostring(uuid)..").")
 	end
 end
 
@@ -358,7 +358,7 @@ function GlobalSettings_StoreModVersion_Old(modid, author, version_str)
 			LeaderLib.Print("[LeaderLib:GlobalSettings.lua:StoreModVersion_Old] Transformed " .. version_str .. " into "..tostring(mod_settings.version))
 		end
 	else
-		Ext.Print("[LeaderLib:GlobalSettings.lua:StoreModVersion_Old] [*ERROR*] Failed to find settings for ("..tostring(modid)..","..tostring(author)..").")
+		Ext.PrintError("[LeaderLib:GlobalSettings.lua:StoreModVersion_Old] [*ERROR*] Failed to find settings for ("..tostring(modid)..","..tostring(author)..").")
 	end
 end
 
@@ -474,8 +474,8 @@ local function SaveGlobalSettings_Run()
 end
 
 local function SaveGlobalSettings_Error (x)
-	Ext.Print("[LeaderLib:GlobalSettings.lua] Error saving global settings: ", x)
-	Ext.Print(debug.traceback())
+	Ext.PrintError("[LeaderLib:GlobalSettings.lua] Error saving global settings: ", x)
+	Ext.PrintError(debug.traceback())
 	return false
 end
 

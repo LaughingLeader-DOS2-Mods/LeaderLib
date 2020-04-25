@@ -292,7 +292,7 @@ local function ExplodeProjectile(source, target, skill)
     NRD_ProjectileSetGuidString("HitObjectPosition", target);
     NRD_ProjectileSetGuidString("TargetPosition", target);
     NRD_ProjectileLaunch();
-    Ext.Print("Exploded projectile ("..skill..") at ("..target..")")
+    LeaderLib.Print("Exploded projectile ("..skill..") at ("..target..")")
 end
 
 --Ext.NewCall(ExplodeProjectile, "LeaderLib_Ext_ExplodeProjectile", "(GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Skill")
@@ -333,7 +333,7 @@ local function RemoveRunes(character, runeTemplates)
 				local runeTemplate = ItemGetRuneItemTemplate(item, runeSlot)
 				if runeTemplate ~= nil and runeTemplates[runeTemplate] == true then
 					local rune = ItemRemoveRune(character, item, runeSlot)
-					Ext.Print("[LeaderLib:RemoveRunes] Removed rune ("..tostring(rune)..") from item ("..item..")["..tostring(runeSlot).."] for character ("..character..")")
+					LeaderLib.Print("[LeaderLib:RemoveRunes] Removed rune ("..tostring(rune)..") from item ("..item..")["..tostring(runeSlot).."] for character ("..character..")")
 				end
 			end
 		end

@@ -12,7 +12,7 @@ local OpenModMenu = function () end
 
 local function OnGameMenuEvent(ui, call, ...)
 	local params = LeaderLib.Common.FlattenTable({...})
-	--Ext.Print("[LeaderLib_ModMenuClient.lua:OnGameMenuEvent] Event called. call("..tostring(call)..") params("..tostring(LeaderLib.Common.Dump(params))..")")
+	--LeaderLib.Print("[LeaderLib_ModMenuClient.lua:OnGameMenuEvent] Event called. call("..tostring(call)..") params("..tostring(LeaderLib.Common.Dump(params))..")")
 	--if call == "onGameMenuButtonAdded" then
 	--if call == "PlaySound" and params[1] == "UI_Game_PauseMenu_Open" then
 	if call == "onGameMenuSetup" then
@@ -20,7 +20,7 @@ local function OnGameMenuEvent(ui, call, ...)
 		--local lastButtonName = params[2]
 		if addedModMenuToOptions == false then
 			ui:Invoke("insertMenuButton", MODMENU_BUTTON_ID, "Mod Settings", true, 8)
-			Ext.Print("[LeaderLib_ModMenuClient.lua:SetupOptionsSettings] Added mod menu option to the escape menu.")
+			LeaderLib.Print("[LeaderLib_ModMenuClient.lua:SetupOptionsSettings] Added mod menu option to the escape menu.")
 			addedModMenuToOptions = true
 		end
 	elseif call == "buttonPressed" then
@@ -49,7 +49,7 @@ local function SetupOptionsSettings()
 		Ext.RegisterUICall(ui, "onGameMenuButtonAdded", OnGameMenuEvent)
 		Ext.RegisterUICall(ui, "onGameMenuSetup", OnGameMenuEvent)
 	else
-		Ext.Print("[LeaderLib_ModMenuClient.lua:SetupOptionsSettings] Failed to get Public/Game/GUI/gameMenu.swf")
+		LeaderLib.Print("[LeaderLib_ModMenuClient.lua:SetupOptionsSettings] Failed to get Public/Game/GUI/gameMenu.swf")
 	end
 end
 
@@ -61,7 +61,7 @@ end
 local function SwitchMenu(ui, call, ...)
 	local params = LeaderLib.Common.FlattenTable({...})
 	local buttonId = params[1]
-	Ext.Print("LeaderLib_ModMenuClient.lua:SwitchMenu] Switching menu to: " .. tostring(LeaderLib.Common.Dump(params)))
+	LeaderLib.Print("LeaderLib_ModMenuClient.lua:SwitchMenu] Switching menu to: " .. tostring(LeaderLib.Common.Dump(params)))
 	ui:Invoke("removeItems")
 	ui:Invoke("resetMenuButtons", buttonId)
 
@@ -132,7 +132,7 @@ end
 
 local function OnModMenuEvent(ui, call, ...)
 	local params = {...}
-	Ext.Print("[LeaderLib_ModMenuClient.lua:OnModMenuEvent] Event called. call("..tostring(call)..") params("..tostring(LeaderLib.Common.Dump(params))..")")
+	LeaderLib.Print("[LeaderLib_ModMenuClient.lua:OnModMenuEvent] Event called. call("..tostring(call)..") params("..tostring(LeaderLib.Common.Dump(params))..")")
 	if call == "switchMenu" then
 		SwitchMenu(ui, call, ...)
 	elseif call == "requestCloseUI" then
@@ -152,7 +152,7 @@ OpenModMenu = function ()
 		--ui:Invoke("updateAddBaseTopTitleText", "Mods")
 		ui:Invoke("modMenuSetTopTitle", "Mods")
 		BuildMenu(ui)
-		Ext.Print("LeaderLib_ModMenuClient.lua:OpenModMenu] Showing mod menu.")
+		LeaderLib.Print("LeaderLib_ModMenuClient.lua:OpenModMenu] Showing mod menu.")
 
 		local gameMenu = Ext.GetBuiltinUI("Public/Game/GUI/gameMenu.swf")
 		gameMenu:ExternalInterfaceCall("focusLost")
@@ -182,16 +182,16 @@ local function OnClientMessage(event, data)
 		SetupOptionsSettings()
 	end
 	if Ext.IsDeveloperMode() then
-		Ext.Print("LeaderLib_ModMenuClient.lua:OnClientMessage] Received client message.")
-		Ext.Print("======")
-		Ext.Print(data)
-		Ext.Print("======")
+		LeaderLib.Print("LeaderLib_ModMenuClient.lua:OnClientMessage] Received client message.")
+		LeaderLib.Print("======")
+		LeaderLib.Print(data)
+		LeaderLib.Print("======")
 	end
 end
 
 local function Client_ModuleSetup()
 	Ext.AddPathOverride("Public/Game/GUI/gameMenu.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/gameMenu.swf")
-	Ext.Print("LeaderLib_ModMenuClient.lua:Client_ModuleSetup] Overrode gameMenu.swf with LeaderLib version.")
+	LeaderLib.Print("LeaderLib_ModMenuClient.lua:Client_ModuleSetup] Overrode gameMenu.swf with LeaderLib version.")
 end
 
 local function SessionLoaded()

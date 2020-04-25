@@ -80,10 +80,10 @@ local AbilityNames = {
 --MagicArmorMasteryDescription = TranslatedString:Create("h211cb400g5881g4b90g8bc8g0399d0288e00","Willpower determines how resistant you are to mental statuses like Fear or Charm."),
 --VitalityMasteryDescription = TranslatedString:Create("h2c42b179gd34bg45f8g9a81g847315e0319c","Bodybuilding determines how resistant you are to physical statuses like Bleeding or Crippled."),
 
----Get the localized name for an ability.
+--- Get the localized name for an ability.
 ---@param ability string
 ---@return string
-local function GetAbilityName(ability, damageValue)
+local function GetAbilityName(ability)
 	local entry = AbilityNames[ability]
 	if entry ~= nil then
 		return entry.Value

@@ -10,14 +10,14 @@ local function OnSheetEvent(ui, call, ...)
 		local index = math.tointeger(params[1])
 		if index ~= nil then
 			local name = LeaderLib.Data.Ability[index]
-			LeaderLib.Print("[LeaderLib_CharacterSheet.lua:OnSheetEvent:plusAbility] A point was added to the ability ("..tostring(name)..")")
+			LeaderLib.Print(string.format("[LeaderLib_CharacterSheet.lua:OnSheetEvent:plusAbility] A point was added to the ability [%s](%s).", index, name))
 			Ext.PostMessageToServer("LeaderLib_GlobalMessage", MessageData:Create(LeaderLib.ID.MESSAGE.ABILITY_CHANGED, name):ToString())
 		end
 	elseif call == "plusStat" then
 		local index = math.tointeger(params[1])
 		if index ~= nil then
 			local name = LeaderLib.Data.Attribute[index]
-			LeaderLib.Print("[LeaderLib_CharacterSheet.lua:OnSheetEvent:plusStat] A point was added to the attribute ("..tostring(name)..")")
+			LeaderLib.Print(string.format("[LeaderLib_CharacterSheet.lua:OnSheetEvent:plusStat] A point was added to the attribute [%s](%s).", index, name))
 			Ext.PostMessageToServer("LeaderLib_GlobalMessage", MessageData:Create(LeaderLib.ID.MESSAGE.ATTRIBUTE_CHANGED, name):ToString())
 		end
 	elseif call == "hotbarBtnPressed" then
@@ -83,7 +83,6 @@ ability_array Mapping:
 
 ---@param ui UIObject
 local function addMissingAbilities(ui)
-	Ext.Print(Ext.JsonStringify(LeaderLib.Data.Ability))
 	local i = GetArrayIndexStart(ui, "ability_array", "boolean", 7)
 	if i > -1 then
 		local total = 0
@@ -93,10 +92,10 @@ local function addMissingAbilities(ui)
 			ui:SetValue("ability_array", data.Group, i+1) -- groupId
 			ui:SetValue("ability_array", abilityID, i+2) -- statId
 			ui:SetValue("ability_array", LeaderLib.Game.GetAbilityName(abilityName), i+3) -- displayName
-			ui:SetValue("ability_array", 0, i+4) -- valueText
-			ui:SetValue("ability_array", "Test Add", i+5) -- addTooltipText
-			ui:SetValue("ability_array", "Test Remove", i+6) -- removeTooltipText
-			Ext.Print(string.format("[LeaderLib:addMissingAbilities] Added ability [%s] = (%s)", abilityID, abilityName))
+			ui:SetValue("ability_array", Ext.Random(1,10), i+4) -- valueText
+			ui:SetValue("ability_array", LeaderLib.LocalizedText.AbilityPlusTooltip.Value:gsub("%[1%]", Ext.ExtraData.CombatAbilityLevelGrowth), i+5) -- addTooltipText
+			ui:SetValue("ability_array", "", i+6) -- removeTooltipText
+			--Ext.Print(string.format("[LeaderLib:addMissingAbilities] Added ability [%s] = (%s)", abilityID, abilityName))
 			i = i + 7
 			total = total + 1
 		end
@@ -117,7 +116,6 @@ Array Mapping:
 ---@param ui UIObject
 ---@param hasPoints boolean
 local function toggleAbilityButtonVisibility(ui, hasPoints)
-	Ext.Print(Ext.JsonStringify(LeaderLib.Data.Ability))
 	local i = GetArrayIndexStart(ui, "lvlBtnAbility_array", "boolean", 5)
 	if i > -1 then
 		for abilityName,data in pairs(missingAbilities) do
@@ -127,7 +125,7 @@ local function toggleAbilityButtonVisibility(ui, hasPoints)
 			ui:SetValue("lvlBtnAbility_array", data.Group, i+2) -- groupId
 			ui:SetValue("lvlBtnAbility_array", abilityID, i+3) -- statId
 			ui:SetValue("lvlBtnAbility_array", true, i+4) -- isVisible
-			Ext.Print(string.format("[LeaderLib:addMissingAbilities] Enabled point button for [%s] = (%s)", abilityID, abilityName))
+			--Ext.Print(string.format("[LeaderLib:addMissingAbilities] Enabled point button for [%s] = (%s)", abilityID, abilityName))
 			i = i + 5
 		end
 	else

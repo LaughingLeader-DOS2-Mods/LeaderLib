@@ -113,8 +113,8 @@ local Data = {
 	}
 }
 
-for name,i in ipairs(Data.AbilityEnum) do
-	Data.Ability[i] = v
+for name,i in pairs(Data.AbilityEnum) do
+	Data.Ability[i] = name
 end
 
 local ID = {

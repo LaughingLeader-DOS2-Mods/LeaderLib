@@ -4,20 +4,20 @@ local pointAddedSound = "UI_Game_CharacterSheet_Attribute_Plus_Click_Release"
 
 local function OnSheetEvent(ui, call, ...)
 	local params = LeaderLib.Common.FlattenTable({...})
-	Ext.Print("[LeaderLib_CharacterSheet.lua:OnSheetEvent] Event called. call("..tostring(call)..") params("..tostring(LeaderLib.Common.Dump(params))..")")
+	LeaderLib.Print("[LeaderLib_CharacterSheet.lua:OnSheetEvent] Event called. call("..tostring(call)..") params("..tostring(LeaderLib.Common.Dump(params))..")")
 
 	if call == "plusAbility" then
 		local index = math.tointeger(params[1])
 		if index ~= nil then
 			local name = LeaderLib.Data.Ability[index]
-			Ext.Print("[LeaderLib_CharacterSheet.lua:OnSheetEvent:plusAbility] A point was added to the ability ("..tostring(name)..")")
+			LeaderLib.Print("[LeaderLib_CharacterSheet.lua:OnSheetEvent:plusAbility] A point was added to the ability ("..tostring(name)..")")
 			Ext.PostMessageToServer("LeaderLib_GlobalMessage", MessageData:Create(LeaderLib.ID.MESSAGE.ABILITY_CHANGED, name):ToString())
 		end
 	elseif call == "plusStat" then
 		local index = math.tointeger(params[1])
 		if index ~= nil then
 			local name = LeaderLib.Data.Attribute[index]
-			Ext.Print("[LeaderLib_CharacterSheet.lua:OnSheetEvent:plusStat] A point was added to the attribute ("..tostring(name)..")")
+			LeaderLib.Print("[LeaderLib_CharacterSheet.lua:OnSheetEvent:plusStat] A point was added to the attribute ("..tostring(name)..")")
 			Ext.PostMessageToServer("LeaderLib_GlobalMessage", MessageData:Create(LeaderLib.ID.MESSAGE.ATTRIBUTE_CHANGED, name):ToString())
 		end
 	elseif call == "hotbarBtnPressed" then
@@ -88,9 +88,9 @@ local function RegisterListeners()
 		for i,v in pairs(sheetEvents) do
 			Ext.RegisterUICall(ui, v, OnSheetEvent)
 		end
-		Ext.Print("[LeaderLib_CharacterSheet.lua:RegisterListeners] Found (characterSheet.swf). Registered listeners.")
+		LeaderLib.Print("[LeaderLib_CharacterSheet.lua:RegisterListeners] Found (characterSheet.swf). Registered listeners.")
 	else
-		Ext.Print("[LeaderLib_CharacterSheet.lua:RegisterListeners] Failed to find Public/Game/GUI/characterSheet.swf")
+		LeaderLib.Print("[LeaderLib_CharacterSheet.lua:RegisterListeners] Failed to find Public/Game/GUI/characterSheet.swf")
 	end
 
 	-- Listen to the hotbar for when the sheet opens
@@ -98,9 +98,9 @@ local function RegisterListeners()
 	if hotbar ~= nil then
 		Ext.RegisterUICall(hotbar, "hotbarBtnPressed", OnSheetEvent)
 		Ext.RegisterUICall(hotbar, "PlaySound", OnSheetEvent)
-		Ext.Print("[LeaderLib_CharacterSheet.lua:RegisterListeners] Found (hotBar.swf). Registered listeners.")
+		LeaderLib.Print("[LeaderLib_CharacterSheet.lua:RegisterListeners] Found (hotBar.swf). Registered listeners.")
 	else
-		Ext.Print("[LeaderLib_CharacterSheet.lua:RegisterListeners] Failed to find Public/Game/GUI/hotBar.swf")
+		LeaderLib.Print("[LeaderLib_CharacterSheet.lua:RegisterListeners] Failed to find Public/Game/GUI/hotBar.swf")
 	end ]]
 	--[[ local characterCreation = Ext.GetBuiltinUI("Public/Game/GUI/characterCreation.swf")
 	if characterCreation ~= nil then
@@ -108,9 +108,9 @@ local function RegisterListeners()
 		for i,v in pairs(pointEvents) do
 			Ext.RegisterUICall(characterCreation, v, OnSheetEvent)
 		end
-		Ext.Print("[LeaderLib_CharacterSheet.lua:RegisterListeners] Found (characterCreation.swf). Registered listeners.")
+		LeaderLib.Print("[LeaderLib_CharacterSheet.lua:RegisterListeners] Found (characterCreation.swf). Registered listeners.")
 	else
-		Ext.Print("[LeaderLib_CharacterSheet.lua:RegisterListeners] Failed to find Public/Game/GUI/characterCreation.swf")
+		LeaderLib.Print("[LeaderLib_CharacterSheet.lua:RegisterListeners] Failed to find Public/Game/GUI/characterCreation.swf")
 	end ]]
 end
 

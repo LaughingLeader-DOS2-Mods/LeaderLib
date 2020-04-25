@@ -205,7 +205,9 @@ local function RegisterListeners()
 		for i,v in pairs(sheetEvents) do
 			Ext.RegisterUICall(ui, v, OnSheetEvent)
 		end
-		Ext.RegisterUIInvokeListener(ui, "updateArraySystem", OnCharacterSheetUpdating)
+		if Ext.IsDeveloperMode() then
+			Ext.RegisterUIInvokeListener(ui, "updateArraySystem", OnCharacterSheetUpdating)
+		end
 		LeaderLib.Print("[LeaderLib_CharacterSheet.lua:RegisterListeners] Found (characterSheet.swf). Registered listeners.")
 	else
 		LeaderLib.Print("[LeaderLib_CharacterSheet.lua:RegisterListeners] Failed to find Public/Game/GUI/characterSheet.swf")

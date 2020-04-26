@@ -1,15 +1,18 @@
 SKILL_STATE = LeaderLib.SKILL_STATE
 
-local function GetRealSkill(id)
-	if id ~= nil then
-		if string.find(id, "Enemy") then
-			local skill = Ext.StatGetAttribute(id, "Using")
+--- Gets the base skill from an enemy skill.
+--- @param skill string The skill entry to check.
+--- @return string The base skill, if any, otherwise the skill that was passed in.
+local function GetRealSkill(skill)
+	if skill ~= nil then
+		if string.find(skill, "Enemy") then
+			local skill = Ext.StatGetAttribute(skill, "Using")
 			if skill ~= nil then
 				return GetRealSkill(skill)
 			end
 		end
 	end
-	return id
+	return skill
 end
 
 function OnSkillPreparing(char, skillprototype)

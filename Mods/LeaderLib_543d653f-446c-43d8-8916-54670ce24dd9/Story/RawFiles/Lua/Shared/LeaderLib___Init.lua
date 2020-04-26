@@ -59,3 +59,6 @@ LeaderLib.ModListeners = {
 	Updated = {},
 }
 LeaderLib.LocalizedText = {}
+
+---@type TranslatedString[]
+LeaderLib.TranslatedStringEntries = {}

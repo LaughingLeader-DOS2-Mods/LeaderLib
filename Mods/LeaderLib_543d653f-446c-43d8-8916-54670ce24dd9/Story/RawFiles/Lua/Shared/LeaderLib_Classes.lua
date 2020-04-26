@@ -23,6 +23,7 @@ function TranslatedString:Create(handle,content)
 			this.Value = this.Content
 		end
 	end
+	table.insert(LeaderLib.TranslatedStringEntries, this)
     return this
 end
 

@@ -1,8 +1,6 @@
 ---@type TranslatedString
 local TranslatedString = LeaderLib.Classes["TranslatedString"]
 
-
-
 ---Get localized damage text wrapped in that damage type's color.
 ---@param damageType string
 ---@param damageValue integer
@@ -10,7 +8,11 @@ local TranslatedString = LeaderLib.Classes["TranslatedString"]
 local function GetDamageText(damageType, damageValue)
 	local entry = LeaderLib.LocalizedText.DamageTypeHandles[damageType]
 	if entry ~= nil then
-		return string.format("<font color='%s'>%s %s</font>", entry.Color, damageValue, entry.Text.Value)
+		if damageValue ~= nil then
+			return string.format("<font color='%s'>%s %s</font>", entry.Color, damageValue, entry.Text.Value)
+		else
+			return string.format("<font color='%s'>%s</font>", entry.Color, entry.Text.Value)
+		end
 	else
 		Ext.PrintError("No damage name/color entry for type " .. tostring(damageType))
 	end

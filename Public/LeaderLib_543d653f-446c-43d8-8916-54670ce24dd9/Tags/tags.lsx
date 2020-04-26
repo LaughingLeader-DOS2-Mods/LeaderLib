@@ -282,7 +282,7 @@
                     </children>
                 </node>
                 <node id="Tag">
-                    <attribute id="Name" value="LLWEAPONEX_Blunt" type="23" />
+                    <attribute id="Name" value="LLWEAPONEX_Bludgeon" type="23" />
                     <attribute id="Description" value="Weapon Type (Weapon Expansion)" type="23" />
                     <children>
                         <node id="Categories">

@@ -1,22 +1,29 @@
 SKILL_STATE = LeaderLib.SKILL_STATE
 
---- Gets the base skill from an enemy skill.
+--- Gets the base skill from a skill.
 --- @param skill string The skill entry to check.
 --- @return string The base skill, if any, otherwise the skill that was passed in.
-local function GetRealSkill(skill)
+local function GetBaseSkill(skill, match)
 	if skill ~= nil then
-		if string.find(skill, "Enemy") then
+		local checkParent = true
+		if match ~= nil and match ~= "" and not string.find(skill, match) then
+			checkParent = false
+		end
+		if checkParent then
 			local skill = Ext.StatGetAttribute(skill, "Using")
 			if skill ~= nil then
-				return GetRealSkill(skill)
+				return GetBaseSkill(skill, match)
 			end
 		end
 	end
 	return skill
 end
 
+-- Example: Finding the base skill of an enemy skill
+-- GetBaseSkill(skill, "Enemy")
+
 function OnSkillPreparing(char, skillprototype)
-	local skill = GetRealSkill(string.gsub(skillprototype, "_%-?%d+$", ""))
+	local skill = string.gsub(skillprototype, "_%-?%d+$", "")
 	if CharacterIsControlled(char) == 0 then
 		Osi.LeaderLib_LuaSkillListeners_IgnorePrototype(char, skillprototype, skill)
 	end
@@ -32,14 +39,13 @@ function OnSkillPreparing(char, skillprototype)
 	end
 end
 
-function OnSkillUsed(char, skillUsed, ...)
-	local skill = GetRealSkill(skillUsed)
+function OnSkillUsed(char, skill, ...)
 	if skill ~= nil then
 		Osi.LeaderLib_LuaSkillListeners_RemoveIgnoredPrototype(char, skill)
 	else
 		Osi.LeaderLib_LuaSkillListeners_RemoveIgnoredPrototype(char)
 	end
-	LeaderLib.Print("[LeaderLib_SkillListeners.lua:OnSkillUsed] char(",char,") skillUsed(",skillUsed,") skill(",skill,") params(",Ext.JsonStringify({...}),")")
+	LeaderLib.Print("[LeaderLib_SkillListeners.lua:OnSkillUsed] char(",char,") skill(",skill,") params(",Ext.JsonStringify({...}),")")
 	local listeners = LeaderLib.SkillListeners[skill]
 	if listeners ~= nil then
 		for i,callback in ipairs(listeners) do
@@ -51,9 +57,8 @@ function OnSkillUsed(char, skillUsed, ...)
 	end
 end
 
-function OnSkillCast(char, skillUsed, ...)
-	local skill = GetRealSkill(skillUsed)
-	LeaderLib.Print("[LeaderLib_SkillListeners.lua:OnSkillCast] char(",char,") skillUsed(",skillUsed,") skill(",skill,") params(",Ext.JsonStringify({...}),")")
+function OnSkillCast(char, skill, ...)
+	LeaderLib.Print("[LeaderLib_SkillListeners.lua:OnSkillCast] char(",char,") skill(",skill,") params(",Ext.JsonStringify({...}),")")
 	local listeners = LeaderLib.SkillListeners[skill]
 	if listeners ~= nil then
 		for i,callback in ipairs(listeners) do
@@ -67,7 +72,7 @@ end
 
 function OnSkillHit(char, skillprototype, ...)
 	if skillprototype ~= "" and skillprototype ~= nil then
-		local skill = GetRealSkill(string.gsub(skillprototype, "_%-?%d+$", ""))
+		local skill = string.gsub(skillprototype, "_%-?%d+$", "")
 		LeaderLib.Print("[LeaderLib_SkillListeners.lua:OnSkillHit] char(",char,") skillprototype(",skillprototype,") skill(",skill,") params(",Ext.JsonStringify({...}),")")
 		local listeners = LeaderLib.SkillListeners[skill]
 		if listeners ~= nil then

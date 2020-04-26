@@ -46,6 +46,7 @@ end
 ---@param skill string
 ---@return string
 function GetSkillEntryName(skill)
-	return string.gsub(skill, "_%-?%d+$", "")
+	local text = string.gsub(skill, "_%-?%d+$", "")
+	return text
 end
 Ext.NewQuery(GetSkillEntryName, "LeaderLib_Ext_QRY_GetSkillEntryName", "[in](STRING)_SkillPrototype, [out](STRING)_SkillId")

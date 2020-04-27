@@ -210,7 +210,7 @@ local function StoreSkillSlots(char)
 end
 
 ---Sets a skill into an empty slot, or finds empty space.
-function TrySetSkillSlot(char, slot, addskill)
+local function TrySetSkillSlot(char, slot, addskill)
     if type(slot) == "string" then
         slot = math.tointeger(slot)
     end
@@ -238,6 +238,14 @@ function TrySetSkillSlot(char, slot, addskill)
     return false
 end
 Ext.NewCall(TrySetSkillSlot, "LeaderLib_Ext_TrySetSkillSlot", "(CHARACTERGUID)_Character, (INTEGER)_Slot, (STRING)_Skill")
+
+---Refreshes a skill if the character has it.
+local function RefreshSkill(char, skill)
+    if CharacterHasSkill(char, skill) == 1 then
+        NRD_SkillSetCooldown(skill, 0.0)
+    end
+end
+Ext.NewCall(RefreshSkill, "LeaderLib_Ext_RefreshSkill", "(CHARACTERGUID)_Character, (STRING)_Skill")
 
 ---Clone an item for a character.
 ---@param char string
@@ -347,7 +355,8 @@ LeaderLib.Game.HitWithWeapon = HitWithWeapon
 LeaderLib.Game.RedirectDamage = RedirectDamage
 LeaderLib.Game.StoreSkillData = StoreSkillData
 LeaderLib.Game.StoreSkillSlots = StoreSkillSlots
-LeaderLib.Game.SetSlotToSkill = SetSlotToSkill
+LeaderLib.Game.TrySetSkillSlot = TrySetSkillSlot
+LeaderLib.Game.RefreshSkill = RefreshSkill
 LeaderLib.Game.CloneItemForCharacter = CloneItemForCharacter
 LeaderLib.Game.ExplodeProjectile = ExplodeProjectile
 LeaderLib.Game.RemoveRunes = RemoveRunes

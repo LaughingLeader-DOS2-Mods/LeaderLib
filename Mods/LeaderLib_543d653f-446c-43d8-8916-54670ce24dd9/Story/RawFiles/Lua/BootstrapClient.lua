@@ -5,7 +5,7 @@ Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "Client/LeaderLib_
 
 local function LeaderLib_Debug_OnDebugUIEvent(ui, event, ...)
 	local params = {...}
-	LeaderLib.Print("[LeaderLib:BootstrapClient.lua:OnDebugUIEvent] Event (" .. tostring(event) .. ") Params(".. LeaderLib.Common.Dump(params) .. ")")
+	PrintDebug("[LeaderLib:BootstrapClient.lua:OnDebugUIEvent] Event (" .. tostring(event) .. ") Params(".. Common.Dump(params) .. ")")
 
 	local eventParam = params[1]
 	local param1 = params[2]
@@ -14,9 +14,9 @@ local function LeaderLib_Debug_OnDebugUIEvent(ui, event, ...)
 	local cc = Ext.GetBuiltinUI("Public/Game/GUI/characterCreation.swf")
 	if cc ~= nil then
 		cc:Invoke(eventParam, param1, param2, param3)
-		LeaderLib.Print("[LeaderLib:BootstrapClient.lua:OnDebugUIEvent] Called function on characterCreation.swf.")
+		PrintDebug("[LeaderLib:BootstrapClient.lua:OnDebugUIEvent] Called function on characterCreation.swf.")
 	else
-		LeaderLib.Print("[LeaderLib:BootstrapClient.lua:OnDebugUIEvent] Failed to get Public/Game/GUI/characterCreation.swf")
+		PrintDebug("[LeaderLib:BootstrapClient.lua:OnDebugUIEvent] Failed to get Public/Game/GUI/characterCreation.swf")
 	end
 end
 
@@ -28,7 +28,7 @@ local function LeaderLib_Client_OpenDebugWindow()
 	end
 	if ui ~= nil then
 		Ext.RegisterUICall(ui, "onEvent", LeaderLib_Debug_OnDebugUIEvent)
-		LeaderLib.Print("[LeaderLib:BootstrapClient.lua] Showing debug window.")
+		PrintDebug("[LeaderLib:BootstrapClient.lua] Showing debug window.")
 		ui:Show()
 		ui:SetPosition(200,200)
 	end
@@ -45,7 +45,7 @@ end
 
 local function LeaderLib_SyncRanSeed(call, seedstr)
 	_G["LEADERLIB_RAN_SEED"] = math.tointeger(seedstr)
-	LeaderLib.Print("[LeaderLib:BootstrapClient.lua:LeaderLib_SyncRanSeed] Set [LEADERLIB_RAN_SEED] to ("..tostring(_G["LEADERLIB_RAN_SEED"])..").")
+	PrintDebug("[LeaderLib:BootstrapClient.lua:LeaderLib_SyncRanSeed] Set [LEADERLIB_RAN_SEED] to ("..tostring(_G["LEADERLIB_RAN_SEED"])..").")
 end
 
 Ext.RegisterNetListener("LeaderLib_SyncRanSeed", LeaderLib_SyncRanSeed)

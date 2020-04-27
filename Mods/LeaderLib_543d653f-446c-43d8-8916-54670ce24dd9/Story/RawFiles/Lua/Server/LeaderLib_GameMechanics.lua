@@ -43,13 +43,13 @@ end
 ---@param is_hit_param integer
 ---@return boolean
 local function ReduceDamage(target, attacker, handle_param, reduction_perc, is_hit_param)
-    local handle = LeaderLib.Common.SafeguardParam(handle_param, "integer", nil)
+    local handle = Common.SafeguardParam(handle_param, "integer", nil)
     if handle == nil then error("[LeaderLib_GameMechanics.lua:ReduceDamage] Handle is null! Skipping.") end
-    local reduction = LeaderLib.Common.SafeguardParam(reduction_perc, "number", 0.5)
-    local is_hit = LeaderLib.Common.SafeguardParam(is_hit_param, "integer", 0)
-	LeaderLib.Log("[LeaderLib_GameMechanics.lua:ReduceDamage] Reducing damage to ("..tostring(reduction)..") of total. Handle("..tostring(handle).."). Target("..tostring(target)..") Attacker("..tostring(attacker)..") IsHit("..tostring(is_hit)..")")
+    local reduction = Common.SafeguardParam(reduction_perc, "number", 0.5)
+    local is_hit = Common.SafeguardParam(is_hit_param, "integer", 0)
+	PrintDebug("[LeaderLib_GameMechanics.lua:ReduceDamage] Reducing damage to ("..tostring(reduction)..") of total. Handle("..tostring(handle).."). Target("..tostring(target)..") Attacker("..tostring(attacker)..") IsHit("..tostring(is_hit)..")")
 	local success = false
-    for k,v in pairs(LeaderLib.Data.DamageTypes) do
+    for k,v in pairs(Data.DamageTypes) do
         local damage = nil
         if is_hit == 0 then
             damage = NRD_HitStatusGetDamage(target, handle, v)
@@ -65,7 +65,7 @@ local function ReduceDamage(target, attacker, handle_param, reduction_perc, is_h
             else
                 NRD_HitAddDamage(handle, v, reduced_damage)
             end
-			LeaderLib.Log("[LeaderLib_GameMechanics.lua:ReduceDamage] Reduced damage: "..tostring(damage).." => "..tostring(reduced_damage).." for type: "..v)
+			Log("[LeaderLib_GameMechanics.lua:ReduceDamage] Reduced damage: "..tostring(damage).." => "..tostring(reduced_damage).." for type: "..v)
 			success = true
         end
 	end
@@ -82,13 +82,13 @@ Ext.NewCall(ReduceDamage, "LeaderLib_Hit_ReduceDamage", "(GUIDSTRING)_Target, (G
 ---@param is_hit_param integer
 ---@return boolean
 local function IncreaseDamage(target, attacker, handle_param, increase_perc, is_hit_param)
-    local handle = LeaderLib.Common.SafeguardParam(handle_param, "number", nil)
+    local handle = Common.SafeguardParam(handle_param, "number", nil)
     if handle == nil then error("[LeaderLib_GameMechanics.lua:IncreaseDamage] Handle is null! Skipping.") end
-    local increase_amount = LeaderLib.Common.SafeguardParam(increase_perc, "number", 0.5)
-    local is_hit = LeaderLib.Common.SafeguardParam(is_hit_param, "number", 0)
-	LeaderLib.Log("[LeaderLib_GameMechanics.lua:IncreaseDamage] Increasing damage by ("..tostring(increase_amount).."). Handle("..tostring(handle).."). Target("..tostring(target)..") Attacker("..tostring(attacker)..") IsHit("..tostring(is_hit)..")")
+    local increase_amount = Common.SafeguardParam(increase_perc, "number", 0.5)
+    local is_hit = Common.SafeguardParam(is_hit_param, "number", 0)
+	Log("[LeaderLib_GameMechanics.lua:IncreaseDamage] Increasing damage by ("..tostring(increase_amount).."). Handle("..tostring(handle).."). Target("..tostring(target)..") Attacker("..tostring(attacker)..") IsHit("..tostring(is_hit)..")")
 	local success = false
-    for k,v in pairs(LeaderLib.Data.DamageTypes) do
+    for k,v in pairs(Data.DamageTypes) do
         local damage = nil
         if is_hit == 0 then
             damage = NRD_HitStatusGetDamage(target, handle, v)
@@ -104,7 +104,7 @@ local function IncreaseDamage(target, attacker, handle_param, increase_perc, is_
             else
                 NRD_HitAddDamage(handle, v, increased_damage)
             end
-			LeaderLib.Log("[LeaderLib_GameMechanics.lua:IncreaseDamage] Increasing damage: "..tostring(damage).." => "..tostring(damage + increased_damage).." for type: "..v)
+			Log("[LeaderLib_GameMechanics.lua:IncreaseDamage] Increasing damage: "..tostring(damage).." => "..tostring(damage + increased_damage).." for type: "..v)
 			success = true
         end
 	end
@@ -122,19 +122,19 @@ Ext.NewCall(IncreaseDamage, "LeaderLib_Hit_IncreaseDamage", "(GUIDSTRING)_Target
 ---@param is_hit_param integer
 ---@return boolean
 local function RedirectDamage(target, defender, attacker, handle_param, reduction_perc, is_hit_param)
-    local handle = LeaderLib.Common.SafeguardParam(handle_param, "integer", nil)
+    local handle = Common.SafeguardParam(handle_param, "integer", nil)
     if handle == nil then error("[LeaderLib_GameMechanics.lua:RedirectDamage] Handle is null! Skipping.") end
-    local reduction = LeaderLib.Common.SafeguardParam(reduction_perc, "number", 0.5)
-    local is_hit = LeaderLib.Common.SafeguardParam(is_hit_param, "integer", 0)
-	LeaderLib.Log("[LeaderLib_GameMechanics.lua:RedirectDamage] Reducing damage to ("..tostring(reduction)..") of total. Handle("..tostring(handle).."). Target("..tostring(target)..") Defender("..tostring(defender)..") Attacker("..tostring(attacker)..") IsHit("..tostring(is_hit)..")")
+    local reduction = Common.SafeguardParam(reduction_perc, "number", 0.5)
+    local is_hit = Common.SafeguardParam(is_hit_param, "integer", 0)
+	Log("[LeaderLib_GameMechanics.lua:RedirectDamage] Reducing damage to ("..tostring(reduction)..") of total. Handle("..tostring(handle).."). Target("..tostring(target)..") Defender("..tostring(defender)..") Attacker("..tostring(attacker)..") IsHit("..tostring(is_hit)..")")
     --if CanRedirectHit(defender, handle, hit_type) then -- Ignore surface, DoT, and reflected damage
     --local hit_type_name = NRD_StatusGetString(defender, handle, "DamageSourceType")
     --local hit_type = NRD_StatusGetInt(defender, handle, "HitType")
-    --LeaderLib.Log("[LeaderLib_GameMechanics.lua:RedirectDamage] Redirecting damage Handle("..handlestr.."). Blocker(",target,") Target(",defender,") Attacker(",attacker,")")
+    --Log("[LeaderLib_GameMechanics.lua:RedirectDamage] Redirecting damage Handle("..handlestr.."). Blocker(",target,") Target(",defender,") Attacker(",attacker,")")
     local redirected_hit = NRD_HitPrepare(target, attacker)
     local damageRedirected = false
 
-    for k,v in pairs(LeaderLib.Data.DamageTypes) do
+    for k,v in pairs(Data.DamageTypes) do
         local damage = nil
         if is_hit == 0 then
             damage = NRD_HitStatusGetDamage(defender, handle, v)
@@ -151,7 +151,7 @@ local function RedirectDamage(target, defender, attacker, handle_param, reductio
                 NRD_HitAddDamage(handle, v, removed_damage)
             end
             NRD_HitAddDamage(redirected_hit, v, reduced_damage)
-            LeaderLib.Log("[LeaderLib_GameMechanics.lua:RedirectDamage] Redirected damage: "..tostring(damage).." => "..tostring(reduced_damage).." for type: "..v)
+            Log("[LeaderLib_GameMechanics.lua:RedirectDamage] Redirected damage: "..tostring(damage).." => "..tostring(reduced_damage).." for type: "..v)
             damageRedirected = true
         end
     end
@@ -300,7 +300,7 @@ local function ExplodeProjectile(source, target, skill)
     NRD_ProjectileSetGuidString("HitObjectPosition", target);
     NRD_ProjectileSetGuidString("TargetPosition", target);
     NRD_ProjectileLaunch();
-    LeaderLib.Print("Exploded projectile ("..skill..") at ("..target..")")
+    PrintDebug("Exploded projectile ("..skill..") at ("..target..")")
 end
 
 --Ext.NewCall(ExplodeProjectile, "LeaderLib_Ext_ExplodeProjectile", "(GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Skill")
@@ -321,7 +321,7 @@ function ItemIsEquipped(char, item)
             return true
         end
     else
-        for i,slot in pairs(LeaderLib.Data.EquipmentSlots) do
+        for i,slot in pairs(Data.EquipmentSlots) do
             if CharacterGetEquippedItem(char, slot) == item then
                 return true
             end
@@ -334,29 +334,29 @@ end
 ---@param character string
 ---@param runeTemplates table
 local function RemoveRunes(character, runeTemplates)
-	for _,slotName in pairs(LeaderLib.VisibleEquipmentSlots) do
+	for _,slotName in pairs(VisibleEquipmentSlots) do
 		local item = CharacterGetEquippedItem(character, slotName)
 		if item ~= nil then
 			for runeSlot=0,2,1 do
 				local runeTemplate = ItemGetRuneItemTemplate(item, runeSlot)
 				if runeTemplate ~= nil and runeTemplates[runeTemplate] == true then
 					local rune = ItemRemoveRune(character, item, runeSlot)
-					LeaderLib.Print("[LeaderLib:RemoveRunes] Removed rune ("..tostring(rune)..") from item ("..item..")["..tostring(runeSlot).."] for character ("..character..")")
+					PrintDebug("[LeaderLib:RemoveRunes] Removed rune ("..tostring(rune)..") from item ("..item..")["..tostring(runeSlot).."] for character ("..character..")")
 				end
 			end
 		end
 	end
 end
 
-LeaderLib.Game.ReduceDamage = ReduceDamage
-LeaderLib.Game.IncreaseDamage = IncreaseDamage
-LeaderLib.Game.HitSucceeded = HitSucceeded
-LeaderLib.Game.HitWithWeapon = HitWithWeapon
-LeaderLib.Game.RedirectDamage = RedirectDamage
-LeaderLib.Game.StoreSkillData = StoreSkillData
-LeaderLib.Game.StoreSkillSlots = StoreSkillSlots
-LeaderLib.Game.TrySetSkillSlot = TrySetSkillSlot
-LeaderLib.Game.RefreshSkill = RefreshSkill
-LeaderLib.Game.CloneItemForCharacter = CloneItemForCharacter
-LeaderLib.Game.ExplodeProjectile = ExplodeProjectile
-LeaderLib.Game.RemoveRunes = RemoveRunes
+Game.ReduceDamage = ReduceDamage
+Game.IncreaseDamage = IncreaseDamage
+Game.HitSucceeded = HitSucceeded
+Game.HitWithWeapon = HitWithWeapon
+Game.RedirectDamage = RedirectDamage
+Game.StoreSkillData = StoreSkillData
+Game.StoreSkillSlots = StoreSkillSlots
+Game.TrySetSkillSlot = TrySetSkillSlot
+Game.RefreshSkill = RefreshSkill
+Game.CloneItemForCharacter = CloneItemForCharacter
+Game.ExplodeProjectile = ExplodeProjectile
+Game.RemoveRunes = RemoveRunes

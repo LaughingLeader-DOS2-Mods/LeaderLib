@@ -1,5 +1,3 @@
-SKILL_STATE = LeaderLib.SKILL_STATE
-
 --- Gets the base skill from a skill.
 --- @param skill string The skill entry to check.
 --- @return string The base skill, if any, otherwise the skill that was passed in.
@@ -27,8 +25,8 @@ function OnSkillPreparing(char, skillprototype)
 	if CharacterIsControlled(char) == 0 then
 		Osi.LeaderLib_LuaSkillListeners_IgnorePrototype(char, skillprototype, skill)
 	end
-	LeaderLib.Print("[LeaderLib_SkillListeners.lua:OnSkillPreparing] char(",char,") skillprototype(",skillprototype,") skill(",skill,")")
-	local listeners = LeaderLib.SkillListeners[skill]
+	PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillPreparing] char(",char,") skillprototype(",skillprototype,") skill(",skill,")")
+	local listeners = SkillListeners[skill]
 	if listeners ~= nil then
 		for i,callback in ipairs(listeners) do
 			local status,err = xpcall(callback, debug.traceback, GetUUID(char), SKILL_STATE.PREPARE)
@@ -45,8 +43,8 @@ function OnSkillUsed(char, skill, ...)
 	else
 		Osi.LeaderLib_LuaSkillListeners_RemoveIgnoredPrototype(char)
 	end
-	LeaderLib.Print("[LeaderLib_SkillListeners.lua:OnSkillUsed] char(",char,") skill(",skill,") params(",Ext.JsonStringify({...}),")")
-	local listeners = LeaderLib.SkillListeners[skill]
+	PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillUsed] char(",char,") skill(",skill,") params(",Ext.JsonStringify({...}),")")
+	local listeners = SkillListeners[skill]
 	if listeners ~= nil then
 		for i,callback in ipairs(listeners) do
 			local status,err = xpcall(callback, debug.traceback, GetUUID(char), SKILL_STATE.USED, {...})
@@ -58,8 +56,8 @@ function OnSkillUsed(char, skill, ...)
 end
 
 function OnSkillCast(char, skill, ...)
-	LeaderLib.Print("[LeaderLib_SkillListeners.lua:OnSkillCast] char(",char,") skill(",skill,") params(",Ext.JsonStringify({...}),")")
-	local listeners = LeaderLib.SkillListeners[skill]
+	PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillCast] char(",char,") skill(",skill,") params(",Ext.JsonStringify({...}),")")
+	local listeners = SkillListeners[skill]
 	if listeners ~= nil then
 		for i,callback in ipairs(listeners) do
 			local status,err = xpcall(callback, debug.traceback, GetUUID(char), SKILL_STATE.CAST, {...})
@@ -73,8 +71,8 @@ end
 function OnSkillHit(char, skillprototype, ...)
 	if skillprototype ~= "" and skillprototype ~= nil then
 		local skill = string.gsub(skillprototype, "_%-?%d+$", "")
-		LeaderLib.Print("[LeaderLib_SkillListeners.lua:OnSkillHit] char(",char,") skillprototype(",skillprototype,") skill(",skill,") params(",Ext.JsonStringify({...}),")")
-		local listeners = LeaderLib.SkillListeners[skill]
+		PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillHit] char(",char,") skillprototype(",skillprototype,") skill(",skill,") params(",Ext.JsonStringify({...}),")")
+		local listeners = SkillListeners[skill]
 		if listeners ~= nil then
 			for i,callback in ipairs(listeners) do
 				local status,err = xpcall(callback, debug.traceback, GetUUID(char), SKILL_STATE.HIT, {...})

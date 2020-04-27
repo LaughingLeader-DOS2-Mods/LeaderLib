@@ -1,6 +1,6 @@
 local function OnGameMenuEvent(ui, call, ...)
-	local params = LeaderLib.Common.FlattenTable({...})
-	--LeaderLib.Print("[LeaderLib_ModMenuClient.lua:OnGameMenuEvent] Event called. call("..tostring(call)..") params("..tostring(LeaderLib.Common.Dump(params))..")")
+	local params = Common.FlattenTable({...})
+	--PrintDebug("[LeaderLib_ModMenuClient.lua:OnGameMenuEvent] Event called. call("..tostring(call)..") params("..tostring(Common.Dump(params))..")")
 	--if call == "onGameMenuButtonAdded" then
 	--if call == "PlaySound" and params[1] == "UI_Game_PauseMenu_Open" then
 	if call == "onGameMenuSetup" then
@@ -28,9 +28,9 @@ local function UIHookTest()
 		ui:SetValue("actionSkillArray", "Test", 1)
 		ui:SetValue("actionSkillArray", true, 2)
 		ui:Invoke("updateActionSkills")
-		LeaderLib.Print("[LeaderLib_ModMenuClient.lua:UIHookTest] Found hotBar.swf.")
+		PrintDebug("[LeaderLib_ModMenuClient.lua:UIHookTest] Found hotBar.swf.")
 	else
-		LeaderLib.Print("[LeaderLib_ModMenuClient.lua:UIHookTest] Failed to get Public/Game/GUI/hotBar.swf")
+		PrintDebug("[LeaderLib_ModMenuClient.lua:UIHookTest] Failed to get Public/Game/GUI/hotBar.swf")
 	end
 end
 
@@ -50,8 +50,8 @@ local function addTestTalents(ui)
 end
 
 local function OnSheetEvent(ui, call, ...)
-	local params = LeaderLib.Common.FlattenTable({...})
-	LeaderLib.Print("[LeaderLib_ModMenuClient.lua:OnSheetEvent] Event called. call("..tostring(call)..") params("..tostring(LeaderLib.Common.Dump(params))..")")
+	local params = Common.FlattenTable({...})
+	PrintDebug("[LeaderLib_ModMenuClient.lua:OnSheetEvent] Event called. call("..tostring(call)..") params("..tostring(Common.Dump(params))..")")
 	--if call == "onGameMenuButtonAdded" then
 	--if call == "PlaySound" and params[1] == "UI_Game_PauseMenu_Open" then
 	if call == "onGameMenuSetup" then
@@ -101,9 +101,9 @@ local function LeaderLib_ClientDebug_SessionLoaded()
 		Ext.RegisterUICall(ui, "clearAnchor", OnSheetEvent)
 		addedTalents = false
 		addedAbilities = false
-		LeaderLib.Print("[LeaderLib_ModMenuClient.lua:UIHookTest] Found characterSheet.swf.")
+		PrintDebug("[LeaderLib_ModMenuClient.lua:UIHookTest] Found characterSheet.swf.")
 	else
-		LeaderLib.Print("[LeaderLib_ModMenuClient.lua:UIHookTest] Failed to get Public/Game/GUI/characterSheet.swf")
+		PrintDebug("[LeaderLib_ModMenuClient.lua:UIHookTest] Failed to get Public/Game/GUI/characterSheet.swf")
 	end
 end
 

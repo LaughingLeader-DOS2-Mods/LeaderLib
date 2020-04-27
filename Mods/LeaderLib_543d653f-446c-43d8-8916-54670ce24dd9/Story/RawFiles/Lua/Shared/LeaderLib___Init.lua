@@ -1,17 +1,18 @@
-if _G["LeaderLib"] == nil then
-	LeaderLib = {}
-	_G["LeaderLib"] = LeaderLib
+function PrintDebug(...)
+	if Ext.IsDeveloperMode() then
+		Ext.Print(...)
+	end
 end
 
-LeaderLib.Classes = {}
-LeaderLib.Common = {}
-LeaderLib.Game = {}
-LeaderLib.Initialized = false
-LeaderLib.Main = {}
-LeaderLib.ModRegistration = {}
-LeaderLib.Register = {}
-LeaderLib.Settings = {}
-LeaderLib.StatusTypes = {
+Classes = {}
+Common = {}
+Game = {}
+Initialized = false
+Main = {}
+ModRegistration = {}
+Register = {}
+Settings = {}
+StatusTypes = {
 	ACTIVE_DEFENSE = {},
 	BLIND = { BLIND = true },
 	CHARMED = { CHARMED = true },
@@ -23,7 +24,7 @@ LeaderLib.StatusTypes = {
 	MUTED = { MUTED = true },
 	POLYMORPHED = {},
 }
-LeaderLib.IgnoredMods = {
+IgnoredMods = {
 	--["7e737d2f-31d2-4751-963f-be6ccc59cd0c"] = true,--LeaderLib
 	["2bd9bdbe-22ae-4aa2-9c93-205880fc6564"] = true,--Shared
 	["eedf7638-36ff-4f26-a50a-076b87d53ba0"] = true,--Shared_DOS
@@ -48,17 +49,21 @@ LeaderLib.IgnoredMods = {
 	["f243c84f-9322-43ac-96b7-7504f990a8f0"] = true,--Improved Organisation
 	["d2507d43-efce-48b8-ba5e-5dd136c715a7"] = true,--Pet Power
 }
-LeaderLib.Listeners = {
+Listeners = {
 	CharacterSheetPointChanged = {},
 	CharacterBasePointsChanged = {},
 	TimerFinished = {},
 }
-LeaderLib.SkillListeners = {}
-LeaderLib.ModListeners = {
+SkillListeners = {}
+ModListeners = {
 	Registered = {},
 	Updated = {},
 }
-LeaderLib.LocalizedText = {}
+LocalizedText = {}
 
 ---@type TranslatedString[]
-LeaderLib.TranslatedStringEntries = {}
+TranslatedStringEntries = {}
+
+function OnInit()
+	Initialized = true
+end

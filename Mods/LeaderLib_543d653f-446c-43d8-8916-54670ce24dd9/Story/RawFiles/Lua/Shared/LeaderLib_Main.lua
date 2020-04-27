@@ -2,8 +2,8 @@
 ---@param event string
 ---@param callback function
 function RegisterListener(event, callback)
-	if LeaderLib.Listeners[event] ~= nil then
-		table.insert(LeaderLib.Listeners[event], callback)
+	if Listeners[event] ~= nil then
+		table.insert(Listeners[event], callback)
 	else
 		error("[LeaderLib__Main.lua:RegisterListener] Event ("..tostring(event)..") is not a valid LeaderLib listener event!")
 	end
@@ -14,8 +14,8 @@ end
 ---@param uuid string
 ---@param callback function
 function RegisterModListener(event, uuid, callback)
-	if LeaderLib.ModListeners[event] ~= nil then
-		LeaderLib.Listeners[event][uuid] = callback
+	if ModListeners[event] ~= nil then
+		Listeners[event][uuid] = callback
 	else
 		error("[LeaderLib__Main.lua:RegisterListener] Event ("..tostring(event)..") is not a valid LeaderLib listener event!")
 	end
@@ -25,25 +25,21 @@ end
 ---@param skill string
 ---@param callback function
 function RegisterSkillListener(skill, callback)
-	if LeaderLib.SkillListeners[skill] == nil then
-		LeaderLib.SkillListeners[skill] = {}
+	if SkillListeners[skill] == nil then
+		SkillListeners[skill] = {}
 	end
-	table.insert(LeaderLib.SkillListeners[skill], callback)
+	table.insert(SkillListeners[skill], callback)
 end
 
-LeaderLib.RegisterListener = RegisterListener
-LeaderLib.RegisterModListener = RegisterModListener
-LeaderLib.RegisterSkillListener = RegisterSkillListener
-
-LeaderLib.StatusTypes.CHARMED = { CHARMED = true }
---LeaderLib.StatusTypes.POLYMORPHED = { POLYMORPHED = true }
+StatusTypes.CHARMED = { CHARMED = true }
+--StatusTypes.POLYMORPHED = { POLYMORPHED = true }
 
 ---@type TranslatedString
-local TranslatedString = LeaderLib.Classes["TranslatedString"]
+local TranslatedString = Classes["TranslatedString"]
 -- <content contentuid="h9b6e0ed8g07afg413dg939fg5d5b91a9461c">Next level costs [1] ability point(s)</content>
-LeaderLib.LocalizedText.AbilityPlusTooltip = TranslatedString:Create("h9b6e0ed8g07afg413dg939fg5d5b91a9461c", "Next level costs [1] ability point(s)")
+LocalizedText.AbilityPlusTooltip = TranslatedString:Create("h9b6e0ed8g07afg413dg939fg5d5b91a9461c", "Next level costs [1] ability point(s)")
 
-LeaderLib.LocalizedText.DamageTypeHandles = {
+LocalizedText.DamageTypeHandles = {
 	None = {Text=TranslatedString:Create("h8a070775gc251g4f34g9086gb1772f7e2cff","pure damage"), Color="#13D177"},
 	Physical = {Text=TranslatedString:Create("h40782d69gbfaeg40cegbe3cg370ef44e3980","physical damage"), Color="#AE9F95"},
 	Piercing = {Text=TranslatedString:Create("hd05581a1g83a7g4d95gb59fgfa5ef68f5c90","piercing damage"), Color="#CD1F1F"},
@@ -60,7 +56,7 @@ LeaderLib.LocalizedText.DamageTypeHandles = {
 
 --MagicArmorMasteryDescription = TranslatedString:Create("h211cb400g5881g4b90g8bc8g0399d0288e00","Willpower determines how resistant you are to mental statuses like Fear or Charm."),
 --VitalityMasteryDescription = TranslatedString:Create("h2c42b179gd34bg45f8g9a81g847315e0319c","Bodybuilding determines how resistant you are to physical statuses like Bleeding or Crippled."),
-LeaderLib.LocalizedText.AbilityNames = {
+LocalizedText.AbilityNames = {
 	--None = TranslatedString:Create("h9a2aead4gfa2dg4fbegae65g57c501cadf4f","None"),
 	WarriorLore = TranslatedString:Create("h8e4bebcbg21c7g43dag8b05gd3b13c1be651","Warfare"),
 	RangerLore = TranslatedString:Create("h3d3dc89dgd286g418eg8134g2eb65d063514","Huntsman"),
@@ -109,10 +105,10 @@ local function LeaderLib_Shared_SessionLoading()
 		local statusType = Ext.StatGetAttribute(status, "StatusType")
 		if statusType ~= nil and statusType ~= "" then
 			statusType = string.upper(statusType)
-			local statusTypeTable = LeaderLib.StatusTypes[statusType]
+			local statusTypeTable = StatusTypes[statusType]
 			if statusTypeTable ~= nil then
 				statusTypeTable[status] = true
-				--LeaderLib.Print("[LeaderLib__Main.lua:LeaderLib_Shared_SessionLoading] Added Status ("..status..") to StatusType table ("..statusType..").")
+				--PrintDebug("[LeaderLib__Main.lua:LeaderLib_Shared_SessionLoading] Added Status ("..status..") to StatusType table ("..statusType..").")
 			end
 		end
 	end
@@ -121,18 +117,18 @@ end
 Ext.RegisterListener("SessionLoading", LeaderLib_Shared_SessionLoading)
 
 local function LeaderLib_Shared_SessionLoaded()
-	local count = #LeaderLib.TranslatedStringEntries
-	if LeaderLib.TranslatedStringEntries ~= nil and count > 0 then
-		for i,v in pairs(LeaderLib.TranslatedStringEntries) do
+	local count = #TranslatedStringEntries
+	if TranslatedStringEntries ~= nil and count > 0 then
+		for i,v in pairs(TranslatedStringEntries) do
 			if v == nil then
-				table.remove(LeaderLib.TranslatedStringEntries, i)
+				table.remove(TranslatedStringEntries, i)
 			else
 				pcall(function()
 					v:Update()
 				end)
 			end
 		end
-		LeaderLib.Print(string.format("[LeaderLib_Shared_SessionLoaded] Updated %s TranslatedString entries.", count))
+		PrintDebug(string.format("[LeaderLib_Shared_SessionLoaded] Updated %s TranslatedString entries.", count))
 	end
 end
 Ext.RegisterListener("SessionLoaded", LeaderLib_Shared_SessionLoaded)

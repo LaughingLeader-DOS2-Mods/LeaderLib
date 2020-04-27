@@ -107,7 +107,7 @@ function LeaderLibModSettings:Create(uuid)
 		integers = {},
 		uuid = uuid
 	}
-	if LeaderLib.Common.StringIsNullOrEmpty(uuid) == false and Ext.IsModLoaded(uuid) then
+	if Common.StringIsNullOrEmpty(uuid) == false and Ext.IsModLoaded(uuid) then
 		local modinfo = Ext.GetModInfo(uuid)
 		if modinfo ~= nil then
 			this.name = modinfo.Name
@@ -136,11 +136,11 @@ function LeaderLibModSettings:AddFlags(...)
 		do_addflags(target, f)
 	end
 	self.globalflags = target
-	--LeaderLib.Print("Test: " .. LeaderLib.Common.Dump(self))
+	--PrintDebug("Test: " .. Common.Dump(self))
 end
 
 function LeaderLibModSettings:Export()
-	--LeaderLib.Print("Exporting: " .. LeaderLib.Common.Dump(self))
+	--PrintDebug("Exporting: " .. Common.Dump(self))
 	local export_table = LeaderLibModSettings:Create(self.uuid)
 	export_table.version = self.version
 	table.sort(self.globalflags)
@@ -150,7 +150,7 @@ function LeaderLibModSettings:Export()
 		elseif v.saveWhenFalse == true or Ext.IsModLoaded(self.uuid) == false then
 			export_table.globalflags[flag] = false
 		end
-		--LeaderLib.Print("Flag: " .. flag .. " | " .. GlobalGetFlag(flag))
+		--PrintDebug("Flag: " .. flag .. " | " .. GlobalGetFlag(flag))
 	end
 	if Ext.IsModLoaded(self.uuid) then
 		local last_pricemod = GetGlobalPriceModifier()
@@ -166,10 +166,10 @@ function LeaderLibModSettings:Export()
 				export_table.integers[name] = int_value
 				--GlobalClearFlag("LeaderLib_Internal_GlobalSettings_IntegerVarSet")
 			end
-			--LeaderLib.Print("Got int var ("..name..") Value ("..int_value..")")
+			--PrintDebug("Got int var ("..name..") Value ("..int_value..")")
 		end
 		SetGlobalPriceModifier(last_pricemod)
-		--LeaderLib.Print("GlobalPriceModifier reverted back to ("..GetGlobalPriceModifier()..")")
+		--PrintDebug("GlobalPriceModifier reverted back to ("..GetGlobalPriceModifier()..")")
 	else
 		export_table.name = self.name
 		export_table.author = self.author
@@ -234,7 +234,7 @@ local function TryGetUUID(modid, author)
 	local loadOrder = Ext.GetModLoadOrder()
 	for _,uuid in pairs(loadOrder) do
 		local mod = Ext.GetModInfo(uuid)
-		if LeaderLib.Common.StringEquals(modid, mod.Name) and LeaderLib.Common.StringEquals(author, mod.Author) then
+		if Common.StringEquals(modid, mod.Name) and Common.StringEquals(author, mod.Author) then
 			return uuid
 		end
 	end
@@ -249,7 +249,7 @@ local function Get_Settings_Old(modid, author)
 	if #global_settings > 0 then
 		for _,v in pairs(global_settings) do
 			if v.name ~= nil and v.author ~= nil and author ~= nil and modid ~= nil then
-				if LeaderLib.Common.StringEquals(v.name, modid) and LeaderLib.Common.StringEquals(v.author, author) then
+				if Common.StringEquals(v.name, modid) and Common.StringEquals(v.author, author) then
 					return v
 				end
 			end
@@ -284,7 +284,7 @@ end
 ---@param varname string
 ---@param defaultvalue string
 function GlobalSettings_StoreGlobalInteger(uuid, varname, defaultvalue)
-	--LeaderLib.Print("[LeaderLib:GlobalSettings.lua:StoreGlobalInteger] Storing int: ", uuid, varname, defaultvalue)
+	--PrintDebug("[LeaderLib:GlobalSettings.lua:StoreGlobalInteger] Storing int: ", uuid, varname, defaultvalue)
 	local mod_settings = Get_Settings(uuid)
 	if mod_settings ~= nil then
 		if mod_settings["integers"] == nil then
@@ -317,7 +317,7 @@ end
 ---@param varname string
 ---@param defaultvalue string
 function GlobalSettings_StoreGlobalInteger_Old(modid, author, varname, defaultvalue)
-	--LeaderLib.Print("[LeaderLib:GlobalSettings.lua:StoreGlobalInteger_Old] Storing int: ", modid, author, varname, defaultvalue)
+	--PrintDebug("[LeaderLib:GlobalSettings.lua:StoreGlobalInteger_Old] Storing int: ", modid, author, varname, defaultvalue)
 	local mod_settings = Get_Settings_Old(modid, author)
 	if mod_settings ~= nil then
 		mod_settings.integers[varname] = math.tointeger(defaultvalue)
@@ -355,7 +355,7 @@ function GlobalSettings_StoreModVersion_Old(modid, author, version_str)
 			mod_settings.version = tonumber(modinfo.Version)
 		else
 			mod_settings.version = VersionStringToVersionInteger(version_str, -1)
-			LeaderLib.Print("[LeaderLib:GlobalSettings.lua:StoreModVersion_Old] Transformed " .. version_str .. " into "..tostring(mod_settings.version))
+			PrintDebug("[LeaderLib:GlobalSettings.lua:StoreModVersion_Old] Transformed " .. version_str .. " into "..tostring(mod_settings.version))
 		end
 	else
 		Ext.PrintError("[LeaderLib:GlobalSettings.lua:StoreModVersion_Old] [*ERROR*] Failed to find settings for ("..tostring(modid)..","..tostring(author)..").")
@@ -364,7 +364,7 @@ end
 
 local function parse_mod_data(uuid, modid, author, tbl)
 	--Store settings for deactivated mods
-	if LeaderLib.Common.StringIsNullOrEmpty(uuid) == false and Ext.IsModLoaded(uuid) == false then
+	if Common.StringIsNullOrEmpty(uuid) == false and Ext.IsModLoaded(uuid) == false then
 		local mod_settings = Get_Settings(uuid)
 		if mod_settings ~= nil then
 			mod_settings.name = modid
@@ -372,21 +372,21 @@ local function parse_mod_data(uuid, modid, author, tbl)
 			if mod_settings.version <= -1 and tbl["version"] ~= nil then
 				mod_settings.version = math.tointeger(tbl["version"])
 			end
-			LeaderLib.Print("[LeaderLib:GlobalSettings.lua] Configured global mod settings for deactivated mod (".. tostring(modid)..","..tostring(author)..")")
+			PrintDebug("[LeaderLib:GlobalSettings.lua] Configured global mod settings for deactivated mod (".. tostring(modid)..","..tostring(author)..")")
 		end
 	end
 
 	local flags = tbl["globalflags"]
 	if flags ~= nil and type(flags) == "table" then
 		for flag,v in pairs(flags) do
-			--LeaderLib.Print("[LeaderLib:GlobalSettings.lua] Found global flag ("..flag..")["..tostring(v).."] for mod ["..uuid.."](".. modid.."|"..author..")")
+			--PrintDebug("[LeaderLib:GlobalSettings.lua] Found global flag ("..flag..")["..tostring(v).."] for mod ["..uuid.."](".. modid.."|"..author..")")
 			if v == false then
 				if GlobalGetFlag(flag) == 1 then GlobalClearFlag(flag) end
 			else
 				if GlobalGetFlag(flag) == 0 then GlobalSetFlag(flag) end
 			end
 			local saveWhenFalse = v == false
-			if LeaderLib.Common.StringIsNullOrEmpty(uuid) == false then
+			if Common.StringIsNullOrEmpty(uuid) == false then
 				--GlobalSettings_StoreGlobalInteger(uuid, name, author, varname, defaultvalue)
 				GlobalSettings_StoreGlobalFlag(uuid, flag, saveWhenFalse)
 			else
@@ -399,8 +399,8 @@ local function parse_mod_data(uuid, modid, author, tbl)
 		for varname,v in pairs(integers) do
 			local intnum = math.tointeger(v)
 			if intnum == nil then intnum = 0 end
-			--LeaderLib.Print("[LeaderLib:GlobalSettings.lua] Found global integer variable ("..varname..")["..tostring(intnum).."] for mod (".. modid.."|"..author..")")
-			if LeaderLib.Common.StringIsNullOrEmpty(uuid) == false then
+			--PrintDebug("[LeaderLib:GlobalSettings.lua] Found global integer variable ("..varname..")["..tostring(intnum).."] for mod (".. modid.."|"..author..")")
+			if Common.StringIsNullOrEmpty(uuid) == false then
 				Osi.LeaderLib_GlobalSettings_SetIntegerVariable(uuid, varname, intnum)
 				--GlobalSettings_StoreGlobalInteger(uuid, name, author, varname, defaultvalue)
 				GlobalSettings_StoreGlobalInteger(uuid, varname, tostring(intnum))
@@ -416,16 +416,16 @@ end
 
 local function parse_settings(tbl)
 	for k,v in pairs(tbl) do
-		if LeaderLib.Common.StringEquals(k, "mods") then
+		if Common.StringEquals(k, "mods") then
 			for k2,v2 in pairs(v) do
 				local modid = v2["name"]
 				local author = v2["author"]
 				local uuid = v2["uuid"]
-				local canParse = LeaderLib.Common.StringIsNullOrEmpty(uuid) == false or (LeaderLib.Common.StringIsNullOrEmpty(modid) == false and LeaderLib.Common.StringIsNullOrEmpty(author) == false)
+				local canParse = Common.StringIsNullOrEmpty(uuid) == false or (Common.StringIsNullOrEmpty(modid) == false and Common.StringIsNullOrEmpty(author) == false)
 				if canParse then
 					xpcall(parse_mod_data, function(err)
-						LeaderLib.Print("[LeaderLib:GlobalSettings.lua] Error parsing mod data in global settings: ", err)
-						LeaderLib.Print(debug.traceback())
+						PrintDebug("[LeaderLib:GlobalSettings.lua] Error parsing mod data in global settings: ", err)
+						PrintDebug(debug.traceback())
 						return false
 					end, uuid, modid, author, v2)
 				end
@@ -437,38 +437,38 @@ end
 local function LoadGlobalSettings_Run()
 	local json = NRD_LoadFile("LeaderLib_GlobalSettings.json")
 	if json ~= nil and json ~= "" then
-		--LeaderLib.Print("[LeaderLib:GlobalSettings.lua] Loading global settings. {" .. json .. "}")
+		--PrintDebug("[LeaderLib:GlobalSettings.lua] Loading global settings. {" .. json .. "}")
 		local json_tbl = Ext.JsonParse(json)
-		LeaderLib.Print("[LeaderLib:GlobalSettings.lua] Loaded global settings.")
+		PrintDebug("[LeaderLib:GlobalSettings.lua] Loaded global settings.")
 		parse_settings(json_tbl)
 	else
-		LeaderLib.Print("[LeaderLib:GlobalSettings.lua] No global settings found.")
+		PrintDebug("[LeaderLib:GlobalSettings.lua] No global settings found.")
 	end
 	return true
 end
 
 local function LoadGlobalSettings_Error (x)
-	LeaderLib.Print("[LeaderLib:GlobalSettings.lua] Error loading global settings: ", x)
+	PrintDebug("[LeaderLib:GlobalSettings.lua] Error loading global settings: ", x)
 	return false
 end
 
 function LoadGlobalSettings()
 	if (xpcall(LoadGlobalSettings_Run, LoadGlobalSettings_Error)) then
-		LeaderLib.Print("[LeaderLib:GlobalSettings.lua] Loaded global settings.")
+		PrintDebug("[LeaderLib:GlobalSettings.lua] Loaded global settings.")
 	end
 end
 
 local function SaveGlobalSettings_Run()
 	local export_settings = LeaderLibGlobalSettings:Create()
-	--LeaderLib.Print(LeaderLib.Common.Dump(export_settings))
+	--PrintDebug(Common.Dump(export_settings))
 	local mods = export_settings.mods
 	if #mods > 0 then
 		local json = Ext.JsonStringify(export_settings)
 		NRD_SaveFile("LeaderLib_GlobalSettings.json", json)
-		--LeaderLib.Print("[LeaderLib:GlobalSettings.lua] Saved global settings. {" .. json .. "}")
-		LeaderLib.Print("[LeaderLib:GlobalSettings.lua] Saved global settings.")
+		--PrintDebug("[LeaderLib:GlobalSettings.lua] Saved global settings. {" .. json .. "}")
+		PrintDebug("[LeaderLib:GlobalSettings.lua] Saved global settings.")
 	else
-		LeaderLib.Print("[LeaderLib:GlobalSettings.lua] No global settings to save. Skipping.")
+		PrintDebug("[LeaderLib:GlobalSettings.lua] No global settings to save. Skipping.")
 	end
 	return true
 end
@@ -481,7 +481,7 @@ end
 
 function SaveGlobalSettings()
 	if (xpcall(SaveGlobalSettings_Run, SaveGlobalSettings_Error)) then
-		LeaderLib.Print("[LeaderLib:GlobalSettings.lua] Saved global settings.")
+		PrintDebug("[LeaderLib:GlobalSettings.lua] Saved global settings.")
 	end
 end
 
@@ -490,5 +490,5 @@ function GlobalSettings_Initialize()
 	--local LeaderLib_Settings = Get_Settings("LeaderLib", "LaughingLeader")
 	--LeaderLib_Settings:AddFlags(global_flags)
 	--LeaderLib_Settings:AddFlags(autosaving_interval)
-	--LeaderLib.Print(LeaderLib.Common.Dump(LeaderLib_Settings))
+	--PrintDebug(Common.Dump(LeaderLib_Settings))
 end

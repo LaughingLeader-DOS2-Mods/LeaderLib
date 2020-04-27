@@ -1,5 +1,5 @@
 
-local MessageData = LeaderLib.Classes["MessageData"]
+local MessageData = Classes["MessageData"]
 
 local statChanges = {}
 
@@ -12,25 +12,25 @@ local function StorePartyValues()
 			abilities = {}
 		}
 		statChanges[uuid] = playerData
-		for _,att in pairs(LeaderLib.Data.Attribute) do
+		for _,att in pairs(Data.Attribute) do
 			local baseVal = CharacterGetBaseAttribute(uuid, att)
 			if baseVal ~= nil then
 				playerData.attributes[att] = baseVal
 			end
 		end
-		for _,ability in pairs(LeaderLib.Data.Ability) do
+		for _,ability in pairs(Data.Ability) do
 			local baseVal = CharacterGetBaseAbility(uuid, ability)
 			if baseVal ~= nil then
 				playerData.abilities[ability] = baseVal
 			end
 		end
 	end
-	--LeaderLib.Print("[LeaderLib_ClientMessageReceiver.lua:StorePartyValues] Stored party stat data:\n("..LeaderLib.Common.Dump(statChanges)..").")
+	--PrintDebug("[LeaderLib_ClientMessageReceiver.lua:StorePartyValues] Stored party stat data:\n("..Common.Dump(statChanges)..").")
 end
 
 local function FireListenerEvents(uuid, stat, lastVal, nextVal)
-	if #LeaderLib.Listeners.CharacterBasePointsChanged > 0 then
-		for i,callback in ipairs(LeaderLib.Listeners.CharacterBasePointsChanged) do
+	if #Listeners.CharacterBasePointsChanged > 0 then
+		for i,callback in ipairs(Listeners.CharacterBasePointsChanged) do
 			local status,err = xpcall(callback, debug.traceback, uuid, stat, lastVal, nextVal)
 			if not status then
 				Ext.PrintError("Error calling function for 'CharacterBasePointsChanged':\n", err)
@@ -45,20 +45,20 @@ local function SignalPartyValueChanges()
 		local uuid = entry[1]
 		local playerData = statChanges[uuid]
 		if playerData ~= nil then
-			for _,stat in pairs(LeaderLib.Data.Attribute) do
+			for _,stat in pairs(Data.Attribute) do
 				local baseVal = CharacterGetBaseAttribute(uuid, stat)
 				local lastVal = playerData.attributes[stat]
 				if baseVal ~= nil and lastVal ~= nil and lastVal ~= baseVal then
-					LeaderLib.Print("[LeaderLib_ClientMessageReceiver.lua:SignalPartyValueChanges] ("..uuid..") base attribute ("..stat..") changed: "..tostring(lastVal).." => "..tostring(baseVal).." ")
+					PrintDebug("[LeaderLib_ClientMessageReceiver.lua:SignalPartyValueChanges] ("..uuid..") base attribute ("..stat..") changed: "..tostring(lastVal).." => "..tostring(baseVal).." ")
 					Osi.LeaderLib_CharacterSheet_AttributeChanged(uuid, stat, lastVal, baseVal)
 					FireListenerEvents(uuid, stat, lastVal, baseVal)
 				end
 			end
-			for _,stat in pairs(LeaderLib.Data.Ability) do
+			for _,stat in pairs(Data.Ability) do
 				local baseVal = CharacterGetBaseAbility(uuid, stat)
 				local lastVal = playerData.abilities[stat]
 				if baseVal ~= nil and lastVal ~= nil and lastVal ~= baseVal then
-					LeaderLib.Print("[LeaderLib_ClientMessageReceiver.lua:SignalPartyValueChanges] ("..uuid..") base ability ("..stat..") changed: "..tostring(lastVal).." => "..tostring(baseVal).." ")
+					PrintDebug("[LeaderLib_ClientMessageReceiver.lua:SignalPartyValueChanges] ("..uuid..") base ability ("..stat..") changed: "..tostring(lastVal).." => "..tostring(baseVal).." ")
 					Osi.LeaderLib_CharacterSheet_AbilityChanged(uuid, stat, lastVal, baseVal)
 					FireListenerEvents(uuid, stat, lastVal, baseVal)
 				end
@@ -89,16 +89,16 @@ local function RunChangesDetectionTimer()
 end
 
 local function LeaderLib_OnGlobalMessage(call, data)
-	--LeaderLib.Print("[LLENEMY_ServerMessages.lua:LeaderLib_OnGlobalMessage] Received message from client. Data ("..tostring(data)..").")
-	if LeaderLib.ID.MESSAGE[data] ~= nil then
-		if data == LeaderLib.ID.MESSAGE.STORE_PARTY_VALUES then
+	--PrintDebug("[LLENEMY_ServerMessages.lua:LeaderLib_OnGlobalMessage] Received message from client. Data ("..tostring(data)..").")
+	if ID.MESSAGE[data] ~= nil then
+		if data == ID.MESSAGE.STORE_PARTY_VALUES then
 			StorePartyValues()
 		end
 	else
 		local messageData = MessageData:CreateFromString(data)
-		--LeaderLib.Print("[LLENEMY_ServerMessages.lua:LeaderLib_OnGlobalMessage] Created MessageData ("..LeaderLib.Common.Dump(messageData)..").")
+		--PrintDebug("[LLENEMY_ServerMessages.lua:LeaderLib_OnGlobalMessage] Created MessageData ("..Common.Dump(messageData)..").")
 		if messageData ~= nil then
-			if messageData.ID == LeaderLib.ID.MESSAGE.ATTRIBUTE_CHANGED or messageData.ID == LeaderLib.ID.MESSAGE.ABILITY_CHANGED then
+			if messageData.ID == ID.MESSAGE.ATTRIBUTE_CHANGED or messageData.ID == ID.MESSAGE.ABILITY_CHANGED then
 				RunChangesDetectionTimer()
 				local stat = messageData.Params[1]
 				if stat ~= nil and stat ~= "" then

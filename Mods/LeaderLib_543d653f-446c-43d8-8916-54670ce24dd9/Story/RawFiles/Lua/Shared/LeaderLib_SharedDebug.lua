@@ -62,15 +62,15 @@ local CHARACTER_STATS_PARAMS = {
 
 local function TraceType(character, attribute, attribute_type)
 	if attribute_type == "Integer" or attribute_type == "Flag" or attribute_type == "Integer64" or attribute_type == "Enum" then
-		LeaderLib.Print("[LeaderLib_SharedDebug.lua:TraceCharacter] ["..attribute.."] = "..tostring(character[attribute]).."")
+		PrintDebug("[LeaderLib_SharedDebug.lua:TraceCharacter] ["..attribute.."] = "..tostring(character[attribute]).."")
 	elseif attribute_type == "Real" then
-		LeaderLib.Print("[LeaderLib_SharedDebug.lua:TraceCharacter] ["..attribute.."] = "..tostring(character[attribute]).."")
+		PrintDebug("[LeaderLib_SharedDebug.lua:TraceCharacter] ["..attribute.."] = "..tostring(character[attribute]).."")
 	elseif attribute_type == "String" then
-		LeaderLib.Print("[LeaderLib_SharedDebug.lua:TraceCharacter] ["..attribute.."] = "..tostring(character[attribute]).."")
+		PrintDebug("[LeaderLib_SharedDebug.lua:TraceCharacter] ["..attribute.."] = "..tostring(character[attribute]).."")
 	elseif attribute_type == "table" then
-		LeaderLib.Print("[LeaderLib_SharedDebug.lua:TraceCharacter] ["..attribute.."] = "..LeaderLib.Common.Dump(character[attribute]).."")
+		PrintDebug("[LeaderLib_SharedDebug.lua:TraceCharacter] ["..attribute.."] = "..Common.Dump(character[attribute]).."")
 	else
-		LeaderLib.Print("[LeaderLib_SharedDebug.lua:TraceCharacter] ["..attribute.."] = "..tostring(character[attribute]).."")
+		PrintDebug("[LeaderLib_SharedDebug.lua:TraceCharacter] ["..attribute.."] = "..tostring(character[attribute]).."")
 	end
 end
 
@@ -97,26 +97,26 @@ function Debug_TraceCharacter(character)
 		end
 	end
 
-	LeaderLib.Print("=======================")
-	LeaderLib.Print("===TRACING: "..tostring(characterObject.MyGuid).."====")
-	LeaderLib.Print("=======================")
+	PrintDebug("=======================")
+	PrintDebug("===TRACING: "..tostring(characterObject.MyGuid).."====")
+	PrintDebug("=======================")
 	if characterObject ~= nil then
-		LeaderLib.Print("=======================")
-		LeaderLib.Print("===Character Params====")
-		LeaderLib.Print("=======================")
+		PrintDebug("=======================")
+		PrintDebug("===Character Params====")
+		PrintDebug("=======================")
 		for attribute,attribute_type in pairs(CHARACTER_PARAMS) do
 			TraceType(characterObject, attribute, attribute_type)
 		end
-		LeaderLib.Print("=======================")
+		PrintDebug("=======================")
 	end
 	if characterStats ~= nil then
-		LeaderLib.Print("=======================")
-		LeaderLib.Print("====Character Stats====")
-		LeaderLib.Print("=======================")
+		PrintDebug("=======================")
+		PrintDebug("====Character Stats====")
+		PrintDebug("=======================")
 		for attribute,attribute_type in pairs(CHARACTER_STATS_PARAMS) do
 			TraceType(characterStats, attribute, attribute_type)
 		end
-		LeaderLib.Print("=======================")
+		PrintDebug("=======================")
 	end
 end
 

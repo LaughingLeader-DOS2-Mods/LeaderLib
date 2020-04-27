@@ -5,7 +5,7 @@ function IsSneakingOrInvisible(obj)
     if HasActiveStatus(obj, "SNEAKING") == 1 or HasActiveStatus(obj, "INVISIBLE") == 1 then
         return true
 	else
-		local invisibleTable = LeaderLib.StatusTypes["INVISIBLE"]
+		local invisibleTable = StatusTypes["INVISIBLE"]
 		if invisibleTable ~= nil then
 			for status,b in pairs(invisibleTable) do
 				if HasActiveStatus(obj, status) == 1 then
@@ -37,13 +37,13 @@ Ext.NewQuery(IsSneakingOrInvisible, "LeaderLib_Ext_QRY_IsSneakingOrInvisible", "
 ---@param obj string
 ---@return boolean
 function HasStatusType(obj, statusType)
-	--LeaderLib.Print("LeaderLib_Ext_HasStatusType:",obj,statusType)
+	--PrintDebug("LeaderLib_Ext_HasStatusType:",obj,statusType)
 	if statusType ~= nil and statusType ~= "" then
 		statusType = string.upper(statusType)
 		if HasActiveStatus(obj, statusType) == 1 then
 			return true
 		else
-			local statusTypeTable = LeaderLib.StatusTypes[statusType]
+			local statusTypeTable = StatusTypes[statusType]
 			if statusTypeTable ~= nil then
 				for status,b in pairs(statusTypeTable) do
 					if HasActiveStatus(obj, status) == 1 then

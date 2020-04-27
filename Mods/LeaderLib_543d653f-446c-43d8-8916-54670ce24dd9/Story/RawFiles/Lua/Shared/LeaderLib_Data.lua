@@ -1,4 +1,4 @@
-local Data = {
+Data = {
 	DamageTypes = {
 		[0] = "None",
 		"Physical",
@@ -117,7 +117,7 @@ for name,i in pairs(Data.AbilityEnum) do
 	Data.Ability[i] = name
 end
 
-local ID = {
+ID = {
 	MESSAGE = {
 		ATTRIBUTE_CHANGED = "ATTRIBUTE_CHANGED",
 		ABILITY_CHANGED = "ABILITY_CHANGED",
@@ -128,10 +128,7 @@ local ID = {
 	}
 }
 
-LeaderLib.Data = Data
-LeaderLib.ID = ID
-
-LeaderLib.SKILL_STATE = {
+SKILL_STATE = {
 	PREPARE = "PREPARE",
 	USED = "USED",
 	CAST = "CAST",

@@ -23,7 +23,7 @@ function TranslatedString:Create(handle,content)
 			this.Value = this.Content
 		end
 	end
-	table.insert(LeaderLib.TranslatedStringEntries, this)
+	table.insert(TranslatedStringEntries, this)
     return this
 end
 
@@ -40,8 +40,8 @@ function TranslatedString:Update()
 	return self.Value
 end
 
-LeaderLib.Classes["TranslatedString"] = TranslatedString
---local TranslatedString = LeaderLib.Classes["TranslatedString"]
+Classes["TranslatedString"] = TranslatedString
+--local TranslatedString = Classes["TranslatedString"]
 
 ---@class MessageData
 local MessageData = {
@@ -104,7 +104,7 @@ function MessageData:CreateFromTable(id,params)
     return this
 end
 
-LeaderLib.Classes["MessageData"] = MessageData
+Classes["MessageData"] = MessageData
 
 ---An item boost to be used with NRD_ItemCloneAddBoost.
 ---@class DeltaMod
@@ -151,8 +151,8 @@ function DeltaMod:Create(boost, vars)
     return this
 end
 
-LeaderLib.Classes["DeltaMod"] = DeltaMod
---local DeltaMod = LeaderLib.Classes["DeltaMod"]
+Classes["DeltaMod"] = DeltaMod
+--local DeltaMod = Classes["DeltaMod"]
 
 ---An container for multiple DeltaMod entries.
 ---@class DeltaModGroup
@@ -180,7 +180,7 @@ end
 
 ---@return table
 function DeltaModGroup:GetRandomEntry()
-    return LeaderLib.Common.GetRandomTableEntry(self.Entries)
+    return Common.GetRandomTableEntry(self.Entries)
 end
-LeaderLib.Classes["DeltaModGroup"] = DeltaModGroup
---local DeltaModGroup = LeaderLib.Classes["DeltaModGroup"]
+Classes["DeltaModGroup"] = DeltaModGroup
+--local DeltaModGroup = Classes["DeltaModGroup"]

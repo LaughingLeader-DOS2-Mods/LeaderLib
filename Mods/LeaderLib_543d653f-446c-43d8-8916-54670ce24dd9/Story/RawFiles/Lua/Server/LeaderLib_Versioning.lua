@@ -138,10 +138,10 @@ local function Register_Mod_Table(tbl)
 					Osi.LeaderUpdater_Register_Mod(id,author,0,0,0,0)
 				end
 			elseif type(version) == "table" then
-				local major = LeaderLib.Common.GetTableEntry(version, "major", 0)
-				local minor = LeaderLib.Common.GetTableEntry(version, "minor", 0)
-				local revision = LeaderLib.Common.GetTableEntry(version, "revision", 0)
-				local build = LeaderLib.Common.GetTableEntry(version, "build", 0)
+				local major = Common.GetTableEntry(version, "major", 0)
+				local minor = Common.GetTableEntry(version, "minor", 0)
+				local revision = Common.GetTableEntry(version, "revision", 0)
+				local build = Common.GetTableEntry(version, "build", 0)
 				Osi.LeaderUpdater_Register_Mod(id,author,major,minor,revision,build)
 			end
 		end
@@ -150,7 +150,7 @@ local function Register_Mod_Table(tbl)
 		if uuid ~= nil then
 			Osi.LeaderUpdater_Register_UUID(id,author,uuid)
 		end
-		LeaderLib.Print("[LeaderLib_Main.lua] Registered mod (",LeaderLib.Common.Dump(tbl),").")
+		PrintDebug("[LeaderLib_Main.lua] Registered mod (",Common.Dump(tbl),").")
 	end
 end
 
@@ -163,8 +163,8 @@ end
 ---@param uuid string
 ---@param version integer
 function OnModRegistered(uuid,version)
-	if #LeaderLib.ModListeners.Registered > 0 then
-		local callback = LeaderLib.ModListeners.Registered[uuid]
+	if #ModListeners.Registered > 0 then
+		local callback = ModListeners.Registered[uuid]
 		if callback ~= nil then
 			local status,err = xpcall(callback, debug.traceback, version)
 			if not status then
@@ -184,8 +184,8 @@ end
 ---@param past_version integer
 ---@param new_version integer
 function OnModVersionChanged(uuid,past_version,new_version)
-	if #LeaderLib.ModListeners.Updated > 0 then
-		local callback = LeaderLib.ModListeners.Updated[uuid]
+	if #ModListeners.Updated > 0 then
+		local callback = ModListeners.Updated[uuid]
 		if callback ~= nil then
 			local status,err = xpcall(callback, debug.traceback, past_version, new_version)
 			if not status then
@@ -196,10 +196,10 @@ function OnModVersionChanged(uuid,past_version,new_version)
 end
 
 function LoadMods()
-	LeaderLib.Print("[LeaderLib:Bootstrap.lua] Registering LeaderLib's mod info.")
+	PrintDebug("[LeaderLib:Bootstrap.lua] Registering LeaderLib's mod info.")
 	-- LeaderLib
 	local mod = Ext.GetModInfo("7e737d2f-31d2-4751-963f-be6ccc59cd0c")
-	--LeaderLib.Print(Ext.JsonStringify(mod))
+	--PrintDebug(Ext.JsonStringify(mod))
 	local versionInt = tonumber(mod.Version)
 	local major = math.floor(versionInt >> 28)
 	local minor = math.floor(versionInt >> 24) & 0x0F
@@ -209,7 +209,7 @@ function LoadMods()
 
 	local loadOrder = Ext.GetModLoadOrder()
 	for _,uuid in pairs(loadOrder) do
-		if LeaderLib.IgnoredMods[uuid] ~= true then
+		if IgnoredMods[uuid] ~= true then
 			local mod = Ext.GetModInfo(uuid)
 			local versionInt = tonumber(mod.Version)
 			local major,minor,revision,build = ParseVersion(versionInt)

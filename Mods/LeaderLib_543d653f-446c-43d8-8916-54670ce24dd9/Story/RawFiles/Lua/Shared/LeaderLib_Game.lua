@@ -1,12 +1,12 @@
 ---@type TranslatedString
-local TranslatedString = LeaderLib.Classes["TranslatedString"]
+local TranslatedString = Classes["TranslatedString"]
 
 ---Get localized damage text wrapped in that damage type's color.
 ---@param damageType string
 ---@param damageValue integer
 ---@return string
 local function GetDamageText(damageType, damageValue)
-	local entry = LeaderLib.LocalizedText.DamageTypeHandles[damageType]
+	local entry = LocalizedText.DamageTypeHandles[damageType]
 	if entry ~= nil then
 		if damageValue ~= nil then
 			return string.format("<font color='%s'>%s %s</font>", entry.Color, damageValue, entry.Text.Value)
@@ -19,26 +19,40 @@ local function GetDamageText(damageType, damageValue)
 	return ""
 end
 
-LeaderLib.Game.GetDamageText = GetDamageText
+Game.GetDamageText = GetDamageText
 
 --- Get the localized name for an ability.
 ---@param ability string|integer
 ---@return string
 local function GetAbilityName(ability)
 	if type(ability) == "number" then
-		ability = LeaderLib.Data.Ability(math.tointeger(ability))
+		ability = Data.Ability(math.tointeger(ability))
 	else
 		if ability == "None" then
 			return ""
 		end
 	end
-	local entry = LeaderLib.LocalizedText.AbilityNames[ability]
+	local entry = LocalizedText.AbilityNames[ability]
 	if entry ~= nil then
 		return entry.Value
 	else
-		Ext.PrintError("[LeaderLib.Game.GetAbilityName] No ability name for ["..tostring(ability).."]")
+		Ext.PrintError("[Game.GetAbilityName] No ability name for ["..tostring(ability).."]")
 	end
 	return nil
 end
 
-LeaderLib.Game.GetAbilityName = GetAbilityName
+Game.GetAbilityName = GetAbilityName
+
+--- Get an ExtraData entry, with an optional fallback value if the key does not exist.
+---@param key string
+---@param fallback number
+---@return number
+local function GetExtraData(key,fallback)
+	local value = Ext.ExtraData[key]
+	if value ~= nil then
+		return value
+	end
+	return fallback
+end
+
+Game.GetExtraData = GetExtraData

@@ -1,15 +1,3 @@
-local function Print(...)
-	if Ext.IsDeveloperMode() then
-		Ext.Print(...)
-	end
-end
-
-LeaderLib.Print = Print
-
-function OnInit()
-	LeaderLib.Initialized = true
-end
-
 function Log(...)
 	local printEnabled = false
 	if Ext.Version() >= 42 then
@@ -31,7 +19,7 @@ local function init_seed()
 	local rnd = Ext.Random(9999)
 	local seed = (Ext.Random(9999) * 214013) + 2531011
 	_G["LEADERLIB_RAN_SEED"] = seed
-	LeaderLib.Print("[LeaderLib_Common.lua] Set LEADERLIB_RAN_SEED to ("..tostring(seed)..")")
+	PrintDebug("[LeaderLib_Common.lua] Set LEADERLIB_RAN_SEED to ("..tostring(seed)..")")
 	if Ext.IsServer() then
 		Ext.BroadcastMessage("LeaderLib_SyncRanSeed", tostring(seed), nil)
 	end
@@ -103,7 +91,7 @@ local function PrintIndex(k, indexMap)
 	end
 end
 
----Print a value or table (recursive).
+---PrintDebug a value or table (recursive).
 ---@param o table
 ---@param indexMap table
 ---@param innerOnly boolean
@@ -326,7 +314,7 @@ local function StringSplit(delimiter, str)
 	return list
 end
 
-LeaderLib.Common = {
+Common = {
 	Dump = Dump,
 	CopyTable = CopyTable,
 	FlattenTable = FlattenTable,

@@ -1,0 +1,9 @@
+{
+	"LeaderPrintDebug": {
+		"prefix": "log",
+		"body": [
+			"LeaderLib.PrintDebug(\"[$TM_FILENAME_BASE:$1] $2\")"
+		],
+		"description": "Prints a message to the console using LeaderLib's developer-mode print function."
+	},
+}

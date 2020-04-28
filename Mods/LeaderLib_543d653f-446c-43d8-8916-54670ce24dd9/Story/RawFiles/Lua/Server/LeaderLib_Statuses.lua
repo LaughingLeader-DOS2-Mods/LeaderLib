@@ -38,16 +38,24 @@ Ext.NewQuery(IsSneakingOrInvisible, "LeaderLib_Ext_QRY_IsSneakingOrInvisible", "
 ---@return boolean
 function HasStatusType(obj, statusType)
 	--PrintDebug("LeaderLib_Ext_HasStatusType:",obj,statusType)
-	if statusType ~= nil and statusType ~= "" then
-		statusType = string.upper(statusType)
-		if HasActiveStatus(obj, statusType) == 1 then
-			return true
-		else
-			local statusTypeTable = StatusTypes[statusType]
-			if statusTypeTable ~= nil then
-				for status,b in pairs(statusTypeTable) do
-					if HasActiveStatus(obj, status) == 1 then
-						return true
+	if type(statusType) == "table" then
+		for i,v in pairs(statusType) do
+			if HasStatusType(obj, v) then
+				return true
+			end
+		end
+	else
+		if statusType ~= nil and statusType ~= "" then
+			statusType = string.upper(statusType)
+			if HasActiveStatus(obj, statusType) == 1 then
+				return true
+			else
+				local statusTypeTable = StatusTypes[statusType]
+				if statusTypeTable ~= nil then
+					for status,b in pairs(statusTypeTable) do
+						if HasActiveStatus(obj, status) == 1 then
+							return true
+						end
 					end
 				end
 			end

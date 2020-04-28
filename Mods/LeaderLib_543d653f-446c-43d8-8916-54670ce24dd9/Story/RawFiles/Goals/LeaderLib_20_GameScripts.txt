@@ -8,6 +8,7 @@ LeaderLib_GameScripts_InitSettings()
 THEN
 LeaderLib_GameScripts_RegisterScript("LeaderLib.GameScripts", "LeaderLib_21_GS_RequirementEvents");
 
+//REGION REGISTERING
 PROC
 LeaderLib_GameScripts_RegisterScript((STRING)_Group, (STRING)_GoalName)
 THEN
@@ -18,6 +19,14 @@ PROC
 LeaderLib_GameScripts_RegisterToggleScript((STRING)_GoalName, (STRING)_ScriptFlag)
 THEN
 DB_LeaderLib_GameScripts_RegisteredToggleScripts(_GoalName, _ScriptFlag);
+
+PROC
+LeaderLib_GameScripts_ClearScriptsForGroup((STRING)_Group)
+AND
+DB_LeaderLib_GameScripts_Registered(_Group, _GoalName)
+THEN
+NOT DB_LeaderLib_GameScripts_Registered(_Group, _GoalName);
+//END_REGION
 
 //REGION SCRIPT_TOGGLING
 IF

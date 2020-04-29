@@ -156,16 +156,16 @@ LocalizedText.ResistanceNames = {
 ---@param amount integer
 ---@return string
 local function GetResistanceText(resistance, amount)
-	local entry = LocalizedText.DamageTypeHandles[resistance]
+	local entry = LocalizedText.ResistanceNames[resistance]
 	if entry == nil then
 		local damageTypeToResistance = damageTypeToResistanceName[resistance]
 		if damageTypeToResistance ~= nil then
-			entry = LocalizedText.DamageTypeHandles[damageTypeToResistance]
+			entry = LocalizedText.ResistanceNames[damageTypeToResistance]
 		end
 	end
 	if entry ~= nil then
 		if amount ~= nil then
-			return string.format("<font color='%s'>%s%% %s</font>", entry.Color, amount, entry.Text.Value)
+			return string.format("<font color='%s'>%s%%%% %s</font>", entry.Color, amount, entry.Text.Value)
 		else
 			return string.format("<font color='%s'>%s</font>", entry.Color, entry.Text.Value)
 		end

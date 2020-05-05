@@ -658,95 +658,167 @@ DB_LeaderLib_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID);
 
 //REGION TRADER_CLEARING
 PROC
-LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
+LeaderLib_Trader_Clear_AllData((STRING)_TraderID)
 AND
 LeaderLib_Traders_QRY_IsRegistered(_TraderID)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Traders] Trader [",_TraderID,"] removed from all associated databases.");
 
 PROC
-LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
+LeaderLib_Trader_Clear_AllData((STRING)_TraderID)
 AND
 DB_LeaderLib_Traders_RegisteredTraderTemplate(_TraderID, _Template, _PlaySpawn)
 THEN
 NOT DB_LeaderLib_Traders_RegisteredTraderTemplate(_TraderID, _Template, _PlaySpawn);
 
 PROC
-LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
+LeaderLib_Trader_Clear_AllData((STRING)_TraderID)
 AND
 DB_LeaderLib_Traders_StartingGold(_TraderID, _Level, _Amount, _RequirementID)
 THEN
 NOT DB_LeaderLib_Traders_StartingGold(_TraderID, _Level, _Amount, _RequirementID);
 
 PROC
-LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
+LeaderLib_Trader_Clear_AllData((STRING)_TraderID)
 AND
 DB_LeaderLib_Traders_RegisteredGlobalTrader(_TraderID, _Trader)
 THEN
 NOT DB_LeaderLib_Traders_RegisteredGlobalTrader(_TraderID, _Trader);
 
 PROC
-LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
+LeaderLib_Trader_Clear_AllData((STRING)_TraderID)
 AND
 DB_LeaderLib_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID)
 THEN
 NOT DB_LeaderLib_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID);
 
 PROC
-LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
+LeaderLib_Trader_Clear_AllData((STRING)_TraderID)
 AND
 DB_LeaderLib_Traders_Dialog(_TraderID, _Level, _Dialog, _RequirementID)
 THEN
 NOT DB_LeaderLib_Traders_Dialog(_TraderID, _Level, _Dialog, _RequirementID);
 
 PROC
-LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
+LeaderLib_Trader_Clear_AllData((STRING)_TraderID)
 AND
 DB_LeaderLib_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z)
 THEN
 NOT DB_LeaderLib_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z);
 
 PROC
-LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
+LeaderLib_Trader_Clear_AllData((STRING)_TraderID)
 AND
 DB_LeaderLib_Traders_LevelPositionObject(_TraderID, _Level, _Object)
 THEN
 NOT DB_LeaderLib_Traders_LevelPositionObject(_TraderID, _Level, _Object);
 
 PROC
-LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
+LeaderLib_Trader_Clear_AllData((STRING)_TraderID)
 AND
 DB_LeaderLib_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger)
 THEN
 NOT DB_LeaderLib_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger);
 
 PROC
-LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
+LeaderLib_Trader_Clear_AllData((STRING)_TraderID)
 AND
 DB_LeaderLib_Traders_Rotation_Position(_TraderID, _Level, _xr, _yr, _zr)
 THEN
 NOT DB_LeaderLib_Traders_Rotation_Position(_TraderID, _Level, _xr, _yr, _zr);
 
 PROC
-LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
+LeaderLib_Trader_Clear_AllData((STRING)_TraderID)
 AND
 DB_LeaderLib_Traders_Rotation_Object(_TraderID, _Level, _Object)
 THEN
 NOT DB_LeaderLib_Traders_Rotation_Object(_TraderID, _Level, _Object);
 
 PROC
-LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
+LeaderLib_Trader_Clear_AllData((STRING)_TraderID)
 AND
 DB_LeaderLib_Traders_CreationEvents(_TraderID, _EventName)
 THEN
 NOT DB_LeaderLib_Traders_CreationEvents(_TraderID, _EventName);
 
 PROC
-LeaderLib_Teasure_Clear_Trader((STRING)_TraderID)
+LeaderLib_Trader_Clear_AllData((STRING)_TraderID)
 AND
 DB_LeaderLib_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID)
 THEN
 NOT DB_LeaderLib_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID);
+//END_REGION
+
+//REGION CLEAR_POSITIONS
+PROC
+LeaderLib_Trader_Clear_Positions((STRING)_TraderID)
+AND
+DB_LeaderLib_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z)
+THEN
+NOT DB_LeaderLib_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z);
+
+PROC
+LeaderLib_Trader_Clear_Positions((STRING)_TraderID)
+AND
+DB_LeaderLib_Traders_LevelPositionObject(_TraderID, _Level, _Object)
+THEN
+NOT DB_LeaderLib_Traders_LevelPositionObject(_TraderID, _Level, _Object);
+
+PROC
+LeaderLib_Trader_Clear_Positions((STRING)_TraderID)
+AND
+DB_LeaderLib_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger)
+THEN
+NOT DB_LeaderLib_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger);
+
+PROC
+LeaderLib_Trader_Clear_Positions((STRING)_TraderID)
+AND
+DB_LeaderLib_Traders_Rotation_Position(_TraderID, _Level, _xr, _yr, _zr)
+THEN
+NOT DB_LeaderLib_Traders_Rotation_Position(_TraderID, _Level, _xr, _yr, _zr);
+
+PROC
+LeaderLib_Trader_Clear_Positions((STRING)_TraderID)
+AND
+DB_LeaderLib_Traders_Rotation_Object(_TraderID, _Level, _Object)
+THEN
+NOT DB_LeaderLib_Traders_Rotation_Object(_TraderID, _Level, _Object);
+
+PROC
+LeaderLib_Trader_Clear_Positions((STRING)_TraderID, (STRING)_Region)
+AND
+DB_LeaderLib_Traders_LevelPosition(_TraderID, _Region, _x, _y, _z)
+THEN
+NOT DB_LeaderLib_Traders_LevelPosition(_TraderID, _Region, _x, _y, _z);
+
+PROC
+LeaderLib_Trader_Clear_Positions((STRING)_TraderID, (STRING)_Region)
+AND
+DB_LeaderLib_Traders_LevelPositionObject(_TraderID, _Region, _Object)
+THEN
+NOT DB_LeaderLib_Traders_LevelPositionObject(_TraderID, _Region, _Object);
+
+PROC
+LeaderLib_Trader_Clear_Positions((STRING)_TraderID, (STRING)_Region)
+AND
+DB_LeaderLib_Traders_LevelPositionTrigger(_TraderID, _Region, _Trigger)
+THEN
+NOT DB_LeaderLib_Traders_LevelPositionTrigger(_TraderID, _Region, _Trigger);
+
+PROC
+LeaderLib_Trader_Clear_Positions((STRING)_TraderID, (STRING)_Region)
+AND
+DB_LeaderLib_Traders_Rotation_Position(_TraderID, _Region, _xr, _yr, _zr)
+THEN
+NOT DB_LeaderLib_Traders_Rotation_Position(_TraderID, _Region, _xr, _yr, _zr);
+
+PROC
+LeaderLib_Trader_Clear_Positions((STRING)_TraderID, (STRING)_Region)
+AND
+DB_LeaderLib_Traders_Rotation_Object(_TraderID, _Level, _Object)
+THEN
+NOT DB_LeaderLib_Traders_Rotation_Object(_TraderID, _Level, _Object);
 //END_REGION
 
 //REGION UPDATE_OLD_DATA

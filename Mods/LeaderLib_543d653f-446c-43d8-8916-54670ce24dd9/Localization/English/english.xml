@@ -16,17 +16,18 @@
 	<content contentuid="h12a0d291g8a48g4448g97adgf3dd1d053aa6">Me? Oh, I&apos;m nobody... Just an old bag of bones, keen on seeing the sights. I hear this cruise ship has a great buffet. *He snorts.*</content>
 	<content contentuid="h135cea8bg36f7g48a7g83e0g79394989e50b">Change your preset to [LeaderLib_PresetMenu_CurrentPreset_2e904bf9-1a93-447a-8f07-5383aea20068]? Your items, skills, and talents will be preserved.</content>
 	<content contentuid="h13979ba5g4916g465fga3f0ge92a3c72c887">[GLOBAL] Enable Timed Autosaves</content>
-	<content contentuid="h141a5954g5e16g417bg8d1fge2815d5d05ac">[GLOBAL] Disable automatically pull party members within 30m into combat. (Default)</content>
+	<content contentuid="h141a5954g5e16g417bg8d1fge2815d5d05ac">[GLOBAL] Disable automatically pulling party members within 30m into combat. (Currently Enabled)</content>
 	<content contentuid="h1431da4ege831g43cdg94dcgb0989c7771bf">Have you been enjoying that book I gave you? *He rubs his beard.*</content>
 	<content contentuid="h14535fc5g0469g4edfg94bfge8732ca3be6f">*Ask to see the trader&apos;s goods.*</content>
 	<content contentuid="h14939ec7g5208g49d1ga484gd88c66bb67ba">&lt;font color=&apos;#00FA9A&apos;&gt;View Missing Mods&lt;/font&gt;</content>
-	<content contentuid="h14956412g44e4g4890ga268gd425729622f1">[HOST] Disable Balanced Experience for All Parties - Players in other parties will no longer be automatically leveled up to the highest player level. (Default)</content>
+	<content contentuid="h14956412g44e4g4890ga268gd425729622f1">[HOST] Disable Balanced Experience for All Parties - Players in other parties will no longer be automatically leveled up to the highest player level. (Currently Enabled)</content>
 	<content contentuid="h1558f2c9g5436g481eg990agdc02ce050c8b">Log Settings</content>
 	<content contentuid="h15c7dfedg0e00g4ed8g85d2g6bdd30204527">*The old man moves quickly, and seems to be prepared in the blink of an eye.*</content>
 	<content contentuid="h16793f3dgb128g4b51g9e24g7b19ef78b894">Loading menus...</content>
 	<content contentuid="h17519925gf609g4110gbe37g25a3aae8b390">Unchain all chained characters under your control that are within [1].</content>
+	<content contentuid="h17e6d1bbgbe95g4944gb37dgfe5059a58a2d">&lt;font color=&apos;#9A00FF&apos;&gt;Chaos Resistance&lt;/font&gt;</content>
 	<content contentuid="h196cc760g0133g4cb7gb48bg6a902641739f">[LeaderLib_ModMenu_Menu1_783ec14d-2861-4345-8dbc-45974fa34e15]</content>
-	<content contentuid="h199f5401g295eg4b24ga52ag9cf3a9844635">[GLOBAL] Enable Friendly Fire. This setting is for mods that implement friendly fire in their skill targeting conditions. </content>
+	<content contentuid="h199f5401g295eg4b24ga52ag9cf3a9844635">[GLOBAL] Enable Friendly Fire. This setting is for mods that implement friendly fire in their skill targeting conditions. (Currently Disabled)</content>
 	<content contentuid="h1a6318dcgb094g4b3cg8492g6e26d8e3a11d">Mod Menu Settings</content>
 	<content contentuid="h1ae3aaa5gb444g4372g8b9ag231538f36a86">[LeaderLib_ModMenu_Menu8_a6aa98e6-cde4-491b-a2cb-2cd7d5d71f96]</content>
 	<content contentuid="h1c1d8acag9819g4028g860fg9a546af236ee">[LOAD] Load Global Settings</content>
@@ -61,7 +62,7 @@
 	<content contentuid="h3c27be6dg727bg4802ga3cbge9ab8e50a62b">[Previous]</content>
 	<content contentuid="h3cb84dc3g7a01g411bg860eg4ef5a3dbbac2">The following &lt;font color=&apos;#FF00FF&apos;&gt;required mods&lt;/font&gt; are &lt;font color=&apos;#FF0000&apos;&gt;inactive:&lt;/font&gt;&lt;br&gt;[LeaderLib_MissingModDependencyText_24356ba8-a1c7-4ad9-86fe-de1c834ec789]&lt;br&gt;&lt;font color=&apos;#00FA9A&apos;&gt;Tip: Check your mod list at the main menu, and load a save from before you got this message after activating the missing mods.&lt;/font&gt;</content>
 	<content contentuid="h3d81a0d7g267ag45f9g985egffeffa0119e2">Preset changed. Have a wonderful day.</content>
-	<content contentuid="h3db4fa28g041bg45ceg9fd6g91d77d5e154f">[GLOBAL] Disable LeaderLib registered mod books from automatically being added to the party&apos;s inventory.</content>
+	<content contentuid="h3db4fa28g041bg45ceg9fd6g91d77d5e154f">[GLOBAL] Prevent LeaderLib registered mod books from being automatically be added to the party&apos;s inventory. (Books are currently enabled)</content>
 	<content contentuid="h3e1f5e00g58f7g4b23g97c4g979be6586c6f">Opening the LeaderLib settings menu...</content>
 	<content contentuid="h3eb917d7g036fg483dg8ee5gc83743845400">Welcome!</content>
 	<content contentuid="h3ed2c7c5gf6c0g4c9dga916g5782593327ab">Open Mod Menu</content>
@@ -92,7 +93,7 @@
 	<content contentuid="h5be7351cgb6eeg438fgbb32g65c8295bfb3b">[GLOBAL] Disable Timed Autosaves</content>
 	<content contentuid="h5cc39c97g969dg4c92gbf7fgbc57f3bff64d">[LeaderLib_DynamicMenu_MenuOption2_9df56ce3-cd42-421b-81b6-91ffe91042fd]</content>
 	<content contentuid="h5d2c77c1g3533g486ag9b80g25e13037c2ae">*Take your leave.*</content>
-	<content contentuid="h5d6cebcagab5eg45ebgbaf0gb0b77cd0ac39">[GLOBAL] Disable Friendly Fire. This setting is for mods that implement friendly fire in their skill targeting conditions. (Default)</content>
+	<content contentuid="h5d6cebcagab5eg45ebgbaf0gb0b77cd0ac39">[GLOBAL] Disable Friendly Fire. This setting is for mods that implement friendly fire in their skill targeting conditions. (Currently Enabled)</content>
 	<content contentuid="h5e7156dfg4eddg428fg8939gdadd6f2eb50f">[LeaderLib] Settings</content>
 	<content contentuid="h5eb45b65g72aeg4b6cga7eegd42b61850315">[Back]</content>
 	<content contentuid="h5f603b9bg4c0fg4b80g9cfagfce9ed3b295b">Speaking of old junk, I have a few extra copies of this book I bet you&apos;d like. It&apos;s on the house.</content>
@@ -120,12 +121,13 @@
 	<content contentuid="h6f8c74d8g77d3g469ega859g41d644a06c6a">LeaderLib Settings</content>
 	<content contentuid="h7051ecdfgb5d8g4d31gb3f4g075f8d99c61b">[GLOBAL] Change Autosave Interval</content>
 	<content contentuid="h70808d00g222dg4b4ega35cg661cb7eccd45">Urgh!</content>
+	<content contentuid="h71766947g9564g4a6bg936bga055cccc01a0">&lt;font color=&apos;#13D177&apos;&gt;Pure Resistance&lt;/font&gt;</content>
 	<content contentuid="h71f43d4fg54f9g4ba5gac4dg71e8d4c4e056">[GLOBAL] Enable Autosaving when Combat Starts</content>
 	<content contentuid="h72b6a94cgb4dbg42f3ga2b0g97d70ba67eef">[Next]</content>
 	<content contentuid="h7322bed9g2ea5g4abeg9decga21994353d79">*He waits for you to speak.*</content>
 	<content contentuid="h73234319g4e6bg4967gb45cga511b60f0408">&lt;font color=&apos;#FF0000&apos;&gt;LeaderLib Failed to Save Global Settings&lt;/font&gt;</content>
 	<content contentuid="h76b098bdgb9f4g4ae8g8e5bg87f68b4599d9">Hey there, [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3]! You made it off that wreck in one piece, eh? *He snorts.* </content>
-	<content contentuid="h7942ef1ag44d9g49f0gab10ge07e419c1d32">[GLOBAL] Automatically pull party members within 30m into combat.</content>
+	<content contentuid="h7942ef1ag44d9g49f0gab10ge07e419c1d32">[GLOBAL] Automatically pull party members within 30m into combat. (Currently Disabled)</content>
 	<content contentuid="h7a4ddc58g1cbeg4e40gaba2g0b2bf5dedd98">[GLOBAL] Enable Debug Logging</content>
 	<content contentuid="h7a60181dg1be6g4e43g99c5g91289ea59f8f">Exiting...</content>
 	<content contentuid="h7b455d51g9be5g4f48g8dffg7e1a4b1ad356">*Ask what his plans are for his time on Reaper&apos;s Eye.*</content>
@@ -170,10 +172,10 @@
 	<content contentuid="h9bb57fccg3ddag4112g9047g2a8f557b4f0d">A peculiar tome said to be extremely convenient.&lt;br&gt;Read to access the &quot;Mod Menu&quot;.</content>
 	<content contentuid="h9be57347g863eg400fg997dg19c57c3c657e">Hidden Backpack</content>
 	<content contentuid="h9c91bca1g6c8eg4381gb975gb58c0c8f7320">[-] Previous Page</content>
-	<content contentuid="h9cc2120agfe21g4721g8e33g6d1fb7621956">[GLOBAL] Disable the Unhealable fix - If Unhealable is applied, the target will still be able to be healed.</content>
+	<content contentuid="h9cc2120agfe21g4721g8e33g6d1fb7621956">[GLOBAL] Disable the Unhealable fix - If Unhealable is applied, the target will still be able to be healed. (Currently Enabled)</content>
 	<content contentuid="h9d00c99fgf7a1g4cb0gbfd9gb015d525148f">*Ask if he&apos;s still selling things.*</content>
 	<content contentuid="h9ff30ae0ge39eg480bg82a3ge975aafed5fd">[LeaderLib_ModMenu_Menu5_45148ce6-e8f3-4af4-81ed-a3b2e1ff8a17]</content>
-	<content contentuid="ha1260afagf673g4e7eg983ag834907ffeb4e">[GLOBAL] Enable the Unhealable fix - If Unhealable is applied, the target will not be able to be healed by statuses (Regeneration, etc).</content>
+	<content contentuid="ha1260afagf673g4e7eg983ag834907ffeb4e">[GLOBAL] Enable the Unhealable fix - If Unhealable is applied, the target will not be able to be healed by statuses (Regeneration, etc). (Currently Disabled)</content>
 	<content contentuid="ha140cb94g4fd8g4651gacf2g9c54f0a8b74a">*Take your leave.*</content>
 	<content contentuid="ha267dc3cg888dg4f53g956ag3b6a6a9cbbef">[LeaderLib_DynamicMenu_MenuOption6_ea90e3a6-30da-411c-8ab5-cae95373ae93]</content>
 	<content contentuid="ha2901d46g7ba5g408cg91ffg6b14b45b4c09">Dynamic Menu Sample</content>
@@ -199,7 +201,7 @@
 	<content contentuid="hb48f1258g4031g4ab2g8d73gbb24956d5d74">I definitely activated these mods at one point! Why are they no longer active?</content>
 	<content contentuid="hb5265b58gcf15g40dfg8769gb5dcc430a99f">[LeaderLib_DynamicMenu_MenuOption5_f450c0eb-c308-4755-9718-f6a1e87305bd]</content>
 	<content contentuid="hb62538b3gfff2g4bb4g9b70g7463f658f4f7">[LeaderLib_DynamicMenu_MenuOption4_e6bea606-b29a-4bfe-8959-94e8be8330cb]</content>
-	<content contentuid="hb6a0d65bga210g4882g939ega32f65189909">[HOST] Enable Balanced Experience for All Parties - Every player character will be brought up to the highest player level across all parties.</content>
+	<content contentuid="hb6a0d65bga210g4882g939ega32f65189909">[HOST] Enable Balanced Experience for All Parties - Every player character will be brought up to the highest player level across all parties. (Currently Disabled)</content>
 	<content contentuid="hb6ecdc41g4c2fg4940ga84bgc781c616de71">You&apos;re already aware that I&apos;m selling things, right? That&apos;s the plan here too, of course.</content>
 	<content contentuid="hb78cd437g6402g485bg837dga7c59b959cd3">[Last]</content>
 	<content contentuid="hb796e45cgaab4g4fcega4a2g2e424ed8b66c">[GLOBAL] Enable Combat Log Logging</content>
@@ -208,7 +210,7 @@
 	<content contentuid="hb955eb39g2068g4c7dga389gfabcaa42462d">Loading mod menu...</content>
 	<content contentuid="hb987d743g981dg43f6g9aa8g08109349d4e9">LeaderLib Successfully Loaded Global Settings</content>
 	<content contentuid="hbb25dcedgbd28g4408g80dcg3ab34bed0164">Remove the Mod Menu Skill (Party)</content>
-	<content contentuid="hbb9961bcg9dbfg47f9g90fdg6db3aca83f86">[GLOBAL] Allow LeaderLib registered mod books to automatically be added to the party&apos;s inventory. (Default)</content>
+	<content contentuid="hbb9961bcg9dbfg47f9g90fdg6db3aca83f86">[GLOBAL] Allow LeaderLib registered mod books to automatically be added to the party&apos;s inventory. (Books are currently disabled)</content>
 	<content contentuid="hbbc07b7cgc1d4g41c8gbec8gdadfd3486b3f">[LeaderLib_DynamicMenu_MenuOption8_f5ef1f68-8995-4c14-8e62-cf5f330cb31a]</content>
 	<content contentuid="hbd4f0f23g1792g4e99g9665g58b511994c18">*You take a look at the trader&apos;s wares.*</content>
 	<content contentuid="hbe5db354g0434g4e02g8af6g16dee986c19a">[LeaderLib_DynamicMenu_MenuOption2_9df56ce3-cd42-421b-81b6-91ffe91042fd]</content>
@@ -257,6 +259,7 @@
 	<content contentuid="hed9e1aaeg3fceg4d9cg87edg9a4630c24fe7">Character is in an undead form.</content>
 	<content contentuid="hee326232gbe82g49c2gbe8eg1d0511d29248">LeaderLib</content>
 	<content contentuid="hee75e144g1d75g4094ga8c9g4a0508c5cf67">LeaderLib Successfully Saved Global Settings</content>
+	<content contentuid="hef0c737eg2a72g4564ga5cfg088484ac8b45">Shadow Resistance</content>
 	<content contentuid="hf0eb5097g325bg4254gaf97g77255a6380ad">[GLOBAL] Enable &lt;b&gt;Dialog Redirection&lt;/b&gt;. If dialog tries to start with a party member that is not an AVATAR (the crown symbol), the avatar that owns that character will be used instead.</content>
 	<content contentuid="hf15fdd63gddedg435bgaa2egdd0574ce2c3c">Registered Mods:&lt;br&gt;[LeaderLib_Settings_ModList_50c55fbe-ad1e-490e-92d1-8836ca42ca12]</content>
 	<content contentuid="hf1c7aa42g3e2fg4338ga672g59a3a935cff4">New Items in Stock</content>

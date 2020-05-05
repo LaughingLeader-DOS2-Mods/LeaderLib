@@ -297,6 +297,15 @@ AND
 CharacterIsEnemy(_Enemy, _OtherPartyMember, 1)
 THEN
 DB_NOOP(1);
+
+QRY
+LeaderLib_Party_QRY_IsEnemyOfParty((CHARACTERGUID)_Enemy)
+AND
+DB_IsPlayer(_Player)
+AND
+CharacterIsEnemy(_Enemy, _Player, 1)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION TRACING

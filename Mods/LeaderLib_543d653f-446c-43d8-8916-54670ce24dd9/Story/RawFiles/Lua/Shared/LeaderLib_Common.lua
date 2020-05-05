@@ -314,6 +314,19 @@ local function StringSplit(delimiter, str)
 	return list
 end
 
+---Formats a number with commas.
+---@param amount integer
+local function FormatNumber(amount)
+	local formatted = amount
+	while true do  
+		formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", '%1,%2')
+		if (k==0) then
+		break
+		end
+	end
+	return formatted
+end
+
 Common = {
 	Dump = Dump,
 	CopyTable = CopyTable,
@@ -330,5 +343,6 @@ Common = {
 	Enum = Enum,
 	SafeguardParam = SafeguardParam,
 	StringJoin = StringJoin,
-	StringSplit = StringSplit
+	StringSplit = StringSplit,
+	FormatNumber = FormatNumber
 }

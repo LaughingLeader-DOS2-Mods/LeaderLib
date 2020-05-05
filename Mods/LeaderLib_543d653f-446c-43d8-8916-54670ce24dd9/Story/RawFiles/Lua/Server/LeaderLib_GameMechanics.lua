@@ -27,6 +27,7 @@ local function HitWithWeapon(target, handle, is_hit)
         hitWithWeapon = NRD_HitGetInt(handle, "HitWithWeapon") == 1
     else
         hit_type = NRD_StatusGetInt(target, handle, "HitReason")
+        --local hitWithWeapon = NRD_StatusGetInt(target, handle, "HitWithWeapon")
         local source_type = NRD_StatusGetInt(target, handle, "DamageSourceType")
         hitWithWeapon = source_type == 6 or source_type == 7
     end

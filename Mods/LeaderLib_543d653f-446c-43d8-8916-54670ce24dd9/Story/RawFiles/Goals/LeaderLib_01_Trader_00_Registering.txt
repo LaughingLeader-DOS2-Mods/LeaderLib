@@ -1,0 +1,328 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+KBSECTION
+
+//REGION TRADER_REGISTERING
+PROC
+LeaderLib_Trader_Register_TraderTemplate((STRING)_TraderID, (STRING)_Template)
+AND
+NOT DB_LeaderLib_Traders_RegisteredTraderTemplate(_TraderID,_,_)
+THEN
+DB_LeaderLib_Traders_RegisteredTraderTemplate(_TraderID, _Template, 0);
+
+PROC
+LeaderLib_Trader_Register_TraderTemplate((STRING)_TraderID, (STRING)_Template, (INTEGER)_PlaySpawn)
+AND
+DB_LeaderLib_Traders_RegisteredTraderTemplate(_TraderID,_,_)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Trader][ERROR] Error adding trader with ID '", _TraderID, "': Trader already exists!");
+
+PROC
+LeaderLib_Trader_Register_TraderTemplate((STRING)_TraderID, (STRING)_Template, (INTEGER)_PlaySpawn)
+AND
+NOT DB_LeaderLib_Traders_RegisteredTraderTemplate(_TraderID,_,_)
+THEN
+DB_LeaderLib_Traders_RegisteredTraderTemplate(_TraderID, _Template, _PlaySpawn);
+
+PROC
+LeaderLib_Trader_Register_GlobalTrader((STRING)_TraderID, (CHARACTERGUID)_Trader)
+AND
+NOT DB_LeaderLib_Traders_RegisteredGlobalTrader(_, _Trader)
+THEN
+DB_LeaderLib_Traders_RegisteredGlobalTrader(_TraderID, _Trader);
+
+PROC
+LeaderLib_Trader_Register_TraderInstance((STRING)_TraderID, (CHARACTERGUID)_Character, (STRING)_Level)
+AND
+NOT DB_LeaderLib_Traders_RegisteredTraderInstance(_, _Character, _Level)
+THEN
+LeaderLib_Trader_Register_Level(_TraderID, _Level);
+DB_LeaderLib_Traders_RegisteredTraderInstance(_TraderID, _Character, _Level);
+
+PROC
+LeaderLib_Trader_Register_Level((STRING)_TraderID, (STRING)_Level)
+THEN
+LeaderLib_Trader_Register_Level(_TraderID, _Level, "");
+
+PROC
+LeaderLib_Trader_Register_Level((STRING)_TraderID, (STRING)_Level, (STRING)_RequirementID)
+AND
+DB_LeaderLib_Traders_RegisteredLevel(_TraderID, _Level, _LastRequirement)
+AND
+_LastRequirement != _RequirementID
+AND
+_RequirementID != ""
+THEN
+NOT DB_LeaderLib_Traders_RegisteredLevel(_TraderID, _Level, _LastRequirement);
+
+PROC
+LeaderLib_Trader_Register_Level((STRING)_TraderID, (STRING)_Level, (STRING)_RequirementID)
+AND
+NOT DB_LeaderLib_Traders_RegisteredLevel(_TraderID,_Level, _)
+THEN
+DB_LeaderLib_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID);
+
+PROC
+LeaderLib_Trader_Register_StartingGold((STRING)_TraderID, (STRING)_Level, (INTEGER)_Amount)
+THEN
+LeaderLib_Trader_Register_StartingGold(_TraderID, _Level, _Amount, "");
+
+PROC
+LeaderLib_Trader_Register_StartingGold((STRING)_TraderID, (STRING)_Level, (INTEGER)_Amount, (STRING)_RequirementID)
+THEN
+DB_LeaderLib_Traders_StartingGold(_TraderID, _Level, _Amount, _RequirementID);
+
+PROC
+LeaderLib_Trader_Register_Dialog((STRING)_TraderID, (STRING)_Dialog)
+THEN
+LeaderLib_Trader_Register_Dialog(_TraderID, _Dialog, "", "");
+
+PROC
+LeaderLib_Trader_Register_Dialog((STRING)_TraderID, (STRING)_Dialog, (STRING)_Level)
+THEN
+LeaderLib_Trader_Register_Dialog(_TraderID, _Dialog, _Level, "");
+
+PROC
+LeaderLib_Trader_Register_Dialog((STRING)_TraderID, (STRING)_Dialog, (STRING)_Level, (STRING)_RequirementID)
+AND
+DB_LeaderLib_Traders_Dialog(_TraderID, _Dialog, _Level, _PastRequirementID)
+AND
+_PastRequirementID != _RequirementID
+THEN
+NOT DB_LeaderLib_Traders_Dialog(_TraderID, _Dialog, _Level, _PastRequirementID);
+DB_LeaderLib_Traders_Dialog(_TraderID, _Dialog, _Level, _RequirementID);
+LeaderLog_Log("DEBUG", "[LeaderLib:TraderSystem:Register_Dialog] Requirement for [",_TraderID,"][",_Level,"][",_Dialog,"] changed from [",_PastRequirementID,"] to [",_RequirementID,"].");
+
+PROC
+LeaderLib_Trader_Register_Dialog((STRING)_TraderID, (STRING)_Dialog, (STRING)_Level, (STRING)_RequirementID)
+AND
+NOT DB_LeaderLib_Traders_Dialog(_TraderID, _Dialog, _Level, _)
+THEN
+DB_LeaderLib_Traders_Dialog(_TraderID, _Dialog, _Level, _RequirementID);
+
+PROC
+LeaderLib_Trader_Register_Position((STRING)_TraderID, (STRING)_Level, (REAL)_x, (REAL)_y, (REAL)_z)
+AND
+NOT DB_LeaderLib_Traders_LevelPosition(_TraderID, _Level, _,_,_)
+THEN
+LeaderLib_Trader_Register_Level(_TraderID, _Level);
+DB_LeaderLib_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z);
+
+PROC
+LeaderLib_Trader_Register_PositionTrigger((STRING)_TraderID, (STRING)_Level, (TRIGGERGUID)_Trigger)
+AND
+NOT DB_LeaderLib_Traders_LevelPositionTrigger(_TraderID, _Level, _)
+THEN
+LeaderLib_Trader_Register_Level(_TraderID, _Level);
+DB_LeaderLib_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger);
+
+PROC
+LeaderLib_Trader_Register_PositionObject((STRING)_TraderID, (STRING)_Level, (GUIDSTRING)_Object)
+AND
+NOT DB_LeaderLib_Traders_LevelPositionObject(_TraderID, _Level, _)
+THEN
+LeaderLib_Trader_Register_Level(_TraderID, _Level);
+DB_LeaderLib_Traders_LevelPositionObject(_TraderID, _Level, _Object);
+
+PROC
+LeaderLib_Trader_Register_Rotation_Position((STRING)_TraderID, (STRING)_Level, (REAL)_xr, (REAL)_yr, (REAL)_zr)
+AND
+DB_LeaderLib_Traders_Rotation_Position(_TraderID, _Level, _OldRotationX, _OldRotationY, _OldRotationZ)
+THEN
+NOT DB_LeaderLib_Traders_Rotation_Position(_TraderID, _Level, _OldRotationX, _OldRotationY, _OldRotationZ);
+
+PROC
+LeaderLib_Trader_Register_Rotation_Position((STRING)_TraderID, (STRING)_Level, (REAL)_xr, (REAL)_yr, (REAL)_zr)
+THEN
+DB_LeaderLib_Traders_Rotation_Position(_TraderID, _Level, _xr, _yr, _zr);
+
+PROC
+LeaderLib_Trader_Register_Rotation_Object((STRING)_TraderID, (STRING)_Level, (GUIDSTRING)_Object)
+THEN
+DB_LeaderLib_Traders_Rotation_Object(_TraderID, _Level, _Object);
+
+PROC
+LeaderLib_Trader_Register_CreationEvent((STRING)_TraderID, (STRING)_EventName)
+THEN
+DB_LeaderLib_Traders_CreationEvents(_TraderID, _EventName);
+
+PROC
+LeaderLib_Trader_Register_Seat((STRING)_TraderID, (STRING)_Level, (ITEMGUID)_Seat)
+THEN
+LeaderLib_Trader_Register_Seat(_TraderID, _Level, _Seat, "");
+
+PROC
+LeaderLib_Trader_Register_Seat((STRING)_TraderID, (STRING)_Level, (ITEMGUID)_Seat, (STRING)_RequirementID)
+THEN
+LeaderLib_Trader_Register_PositionObject(_TraderID, _Level, _Seat); // Calls LeaderLib_Trader_Register_Level
+DB_LeaderLib_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID);
+//END_REGION
+
+//REGION TRADER_CLEARING
+PROC
+LeaderLib_Trader_Clear_AllData((STRING)_TraderID)
+AND
+LeaderLib_Traders_QRY_IsRegistered(_TraderID)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:Traders] Trader [",_TraderID,"] removed from all associated databases.");
+
+PROC
+LeaderLib_Trader_Clear_AllData((STRING)_TraderID)
+AND
+DB_LeaderLib_Traders_RegisteredTraderTemplate(_TraderID, _Template, _PlaySpawn)
+THEN
+NOT DB_LeaderLib_Traders_RegisteredTraderTemplate(_TraderID, _Template, _PlaySpawn);
+
+PROC
+LeaderLib_Trader_Clear_AllData((STRING)_TraderID)
+AND
+DB_LeaderLib_Traders_StartingGold(_TraderID, _Level, _Amount, _RequirementID)
+THEN
+NOT DB_LeaderLib_Traders_StartingGold(_TraderID, _Level, _Amount, _RequirementID);
+
+PROC
+LeaderLib_Trader_Clear_AllData((STRING)_TraderID)
+AND
+DB_LeaderLib_Traders_RegisteredGlobalTrader(_TraderID, _Trader)
+THEN
+NOT DB_LeaderLib_Traders_RegisteredGlobalTrader(_TraderID, _Trader);
+
+PROC
+LeaderLib_Trader_Clear_AllData((STRING)_TraderID)
+AND
+DB_LeaderLib_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID)
+THEN
+NOT DB_LeaderLib_Traders_RegisteredLevel(_TraderID, _Level, _RequirementID);
+
+PROC
+LeaderLib_Trader_Clear_AllData((STRING)_TraderID)
+AND
+DB_LeaderLib_Traders_Dialog(_TraderID, _Level, _Dialog, _RequirementID)
+THEN
+NOT DB_LeaderLib_Traders_Dialog(_TraderID, _Level, _Dialog, _RequirementID);
+
+PROC
+LeaderLib_Trader_Clear_AllData((STRING)_TraderID)
+AND
+DB_LeaderLib_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z)
+THEN
+NOT DB_LeaderLib_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z);
+
+PROC
+LeaderLib_Trader_Clear_AllData((STRING)_TraderID)
+AND
+DB_LeaderLib_Traders_LevelPositionObject(_TraderID, _Level, _Object)
+THEN
+NOT DB_LeaderLib_Traders_LevelPositionObject(_TraderID, _Level, _Object);
+
+PROC
+LeaderLib_Trader_Clear_AllData((STRING)_TraderID)
+AND
+DB_LeaderLib_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger)
+THEN
+NOT DB_LeaderLib_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger);
+
+PROC
+LeaderLib_Trader_Clear_AllData((STRING)_TraderID)
+AND
+DB_LeaderLib_Traders_Rotation_Position(_TraderID, _Level, _xr, _yr, _zr)
+THEN
+NOT DB_LeaderLib_Traders_Rotation_Position(_TraderID, _Level, _xr, _yr, _zr);
+
+PROC
+LeaderLib_Trader_Clear_AllData((STRING)_TraderID)
+AND
+DB_LeaderLib_Traders_Rotation_Object(_TraderID, _Level, _Object)
+THEN
+NOT DB_LeaderLib_Traders_Rotation_Object(_TraderID, _Level, _Object);
+
+PROC
+LeaderLib_Trader_Clear_AllData((STRING)_TraderID)
+AND
+DB_LeaderLib_Traders_CreationEvents(_TraderID, _EventName)
+THEN
+NOT DB_LeaderLib_Traders_CreationEvents(_TraderID, _EventName);
+
+PROC
+LeaderLib_Trader_Clear_AllData((STRING)_TraderID)
+AND
+DB_LeaderLib_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID)
+THEN
+NOT DB_LeaderLib_Traders_Seat(_TraderID, _Level, _Seat, _RequirementID);
+//END_REGION
+
+//REGION CLEAR_POSITIONS
+PROC
+LeaderLib_Trader_Clear_Positions((STRING)_TraderID)
+AND
+DB_LeaderLib_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z)
+THEN
+NOT DB_LeaderLib_Traders_LevelPosition(_TraderID, _Level, _x, _y, _z);
+
+PROC
+LeaderLib_Trader_Clear_Positions((STRING)_TraderID)
+AND
+DB_LeaderLib_Traders_LevelPositionObject(_TraderID, _Level, _Object)
+THEN
+NOT DB_LeaderLib_Traders_LevelPositionObject(_TraderID, _Level, _Object);
+
+PROC
+LeaderLib_Trader_Clear_Positions((STRING)_TraderID)
+AND
+DB_LeaderLib_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger)
+THEN
+NOT DB_LeaderLib_Traders_LevelPositionTrigger(_TraderID, _Level, _Trigger);
+
+PROC
+LeaderLib_Trader_Clear_Positions((STRING)_TraderID)
+AND
+DB_LeaderLib_Traders_Rotation_Position(_TraderID, _Level, _xr, _yr, _zr)
+THEN
+NOT DB_LeaderLib_Traders_Rotation_Position(_TraderID, _Level, _xr, _yr, _zr);
+
+PROC
+LeaderLib_Trader_Clear_Positions((STRING)_TraderID)
+AND
+DB_LeaderLib_Traders_Rotation_Object(_TraderID, _Level, _Object)
+THEN
+NOT DB_LeaderLib_Traders_Rotation_Object(_TraderID, _Level, _Object);
+
+PROC
+LeaderLib_Trader_Clear_Positions((STRING)_TraderID, (STRING)_Region)
+AND
+DB_LeaderLib_Traders_LevelPosition(_TraderID, _Region, _x, _y, _z)
+THEN
+NOT DB_LeaderLib_Traders_LevelPosition(_TraderID, _Region, _x, _y, _z);
+
+PROC
+LeaderLib_Trader_Clear_Positions((STRING)_TraderID, (STRING)_Region)
+AND
+DB_LeaderLib_Traders_LevelPositionObject(_TraderID, _Region, _Object)
+THEN
+NOT DB_LeaderLib_Traders_LevelPositionObject(_TraderID, _Region, _Object);
+
+PROC
+LeaderLib_Trader_Clear_Positions((STRING)_TraderID, (STRING)_Region)
+AND
+DB_LeaderLib_Traders_LevelPositionTrigger(_TraderID, _Region, _Trigger)
+THEN
+NOT DB_LeaderLib_Traders_LevelPositionTrigger(_TraderID, _Region, _Trigger);
+
+PROC
+LeaderLib_Trader_Clear_Positions((STRING)_TraderID, (STRING)_Region)
+AND
+DB_LeaderLib_Traders_Rotation_Position(_TraderID, _Region, _xr, _yr, _zr)
+THEN
+NOT DB_LeaderLib_Traders_Rotation_Position(_TraderID, _Region, _xr, _yr, _zr);
+
+PROC
+LeaderLib_Trader_Clear_Positions((STRING)_TraderID, (STRING)_Region)
+AND
+DB_LeaderLib_Traders_Rotation_Object(_TraderID, _Level, _Object)
+THEN
+NOT DB_LeaderLib_Traders_Rotation_Object(_TraderID, _Level, _Object);
+//END_REGION
+EXITSECTION
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

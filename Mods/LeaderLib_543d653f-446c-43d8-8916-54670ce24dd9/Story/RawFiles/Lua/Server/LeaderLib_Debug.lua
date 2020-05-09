@@ -25,7 +25,6 @@ function AddDebugInitCall(func)
 	if LeaderLib_DebugInitCalls == nil then LeaderLib_DebugInitCalls {} end
 	LeaderLib_DebugInitCalls[#LeaderLib_DebugInitCalls+1] = func
 end
-_G["LeaderLib_Ext_AddDebugInitCall"] = AddDebugInitCall
 
 function DebugInit()
 	for i,func in pairs(LeaderLib_DebugInitCalls) do

@@ -9,7 +9,7 @@ end
 local function TryStartTimer(event, delay, uuids)
 	local timerName = event
 	local paramCount = GetParamsCount(uuids)
-	PrintDebug("[LeaderLib_Timers.lua:TryStartTimer] ", event, delay, Common.Dump(uuids), paramCount)
+	--PrintDebug("[LeaderLib_Timers.lua:TryStartTimer] ", event, delay, Common.Dump(uuids), paramCount)
 	if uuids == nil or paramCount == 0 then
 		Osi.LeaderLib_Timers_Internal_StoreLuaData(timerName, event)
 	else
@@ -21,6 +21,7 @@ local function TryStartTimer(event, delay, uuids)
 			Osi.LeaderLib_Timers_Internal_StoreLuaData(timerName, event, uuids[1], uuids[2])
 		end
 	end
+	--PrintDebug("[LeaderLib_Timers.lua:TryStartTimer] ", Common.Dump(Osi.DB_LeaderLib_Helper_Temp_LuaTimer:Get(nil,nil)))
 	TimerCancel(timerName)
 	TimerLaunch(timerName, delay)
 end
@@ -46,7 +47,7 @@ function CancelTimer(event, ...)
 	if paramCount >= 1 then
 		timerName = event..uuids[1]
 		entry = Osi.DB_LeaderLib_Helper_Temp_LuaTimer:Get(nil, event, uuids[1])
-		PrintDebug("[LeaderLib:CancelTimer] DB: ", Ext.JsonStringify(entry))
+		--PrintDebug("[LeaderLib:CancelTimer] DB: ", Ext.JsonStringify(entry))
 		if entry ~= nil and #entry > 0 then
 			timerName = entry[1][1]
 			if timerName ~= nil then
@@ -57,7 +58,7 @@ function CancelTimer(event, ...)
 		timerName = event..uuids[1]..uuids[2]
 		entry = Osi.DB_LeaderLib_Helper_Temp_LuaTimer:Get(nil, event, uuids[1], uuids[2])
 		if entry ~= nil and #entry > 0 then
-			PrintDebug("[LeaderLib:CancelTimer] DB: ", Ext.JsonStringify(entry))
+			--PrintDebug("[LeaderLib:CancelTimer] DB: ", Ext.JsonStringify(entry))
 			timerName = entry[1][1]
 			if timerName ~= nil then
 				Osi.DB_LeaderLib_Helper_Temp_LuaTimer:Delete(timerName, event, uuids[1], uuids[2])
@@ -66,13 +67,14 @@ function CancelTimer(event, ...)
 	else
 		Osi.DB_LeaderLib_Helper_Temp_LuaTimer:Delete(timerName, event)
 	end
-	PrintDebug("[LeaderLib:CancelTimer] Canceling timer: ", timerName)
+	--PrintDebug("[LeaderLib:CancelTimer] Canceling timer: ", timerName)
 	if timerName ~= nil then
 		TimerCancel(timerName)
 	end
 end
 
 function TimerFinished(event, ...)
+	--PrintDebug("[LeaderLib_Timers.lua:TimerFinished] ", event, Common.Dump({...}))
 	if #Listeners.TimerFinished > 0 then
 		for i,callback in ipairs(Listeners.TimerFinished) do
 			local status,err = xpcall(callback, debug.traceback, event, ...)

@@ -71,9 +71,9 @@ end
 function OnSkillHit(char, skillprototype, ...)
 	if skillprototype ~= "" and skillprototype ~= nil then
 		local skill = string.gsub(skillprototype, "_%-?%d+$", "")
-		PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillHit] char(",char,") skillprototype(",skillprototype,") skill(",skill,") params(",Ext.JsonStringify({...}),")")
 		local listeners = SkillListeners[skill]
 		if listeners ~= nil then
+			PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillHit] char(",char,") skillprototype(",skillprototype,") skill(",skill,") params(",Ext.JsonStringify({...}),")")
 			for i,callback in ipairs(listeners) do
 				local status,err = xpcall(callback, debug.traceback, GetUUID(char), SKILL_STATE.HIT, {...})
 				if not status then

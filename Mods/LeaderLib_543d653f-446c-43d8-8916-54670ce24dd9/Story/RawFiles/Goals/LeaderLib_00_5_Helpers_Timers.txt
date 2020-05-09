@@ -327,6 +327,21 @@ THEN
 DB_NOOP(1);
 // [END_NO_OSITOOLS]
 
+PROC
+LeaderLib_Timers_Internal_StoreLuaData((STRING)_TimerName, (STRING)_Event)
+THEN
+DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event);
+
+PROC
+LeaderLib_Timers_Internal_StoreLuaData((STRING)_TimerName, (STRING)_Event, (STRING)_UUID)
+THEN
+DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event, _UUID);
+
+PROC
+LeaderLib_Timers_Internal_StoreLuaData((STRING)_TimerName, (STRING)_Event, (STRING)_UUID, (STRING)_UUID2)
+THEN
+DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event, _UUID, _UUID2);
+
 /* [OSITOOLS_ONLY]
 PROC
 LeaderLib_Timers_StartLuaTimer((STRING)_Event, (INTEGER)_d)
@@ -354,21 +369,6 @@ AND
 GetUUID(_Obj, _UUID2)
 THEN
 NRD_ModCall("LeaderLib", "StartTimer", _Event, _Delay, _UUID, _UUID2);
-
-PROC
-LeaderLib_Timers_Internal_StoreLuaData((STRING)_TimerName, (STRING)_Event)
-THEN
-DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event);
-
-PROC
-LeaderLib_Timers_Internal_StoreLuaData((STRING)_TimerName, (STRING)_Event, (STRING)_UUID)
-THEN
-DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event, _UUID);
-
-PROC
-LeaderLib_Timers_Internal_StoreLuaData((STRING)_TimerName, (STRING)_Event, (STRING)_UUID, (STRING)_UUID2)
-THEN
-DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event, _UUID, _UUID2);
 
 IF
 TimerFinished(_TimerName)

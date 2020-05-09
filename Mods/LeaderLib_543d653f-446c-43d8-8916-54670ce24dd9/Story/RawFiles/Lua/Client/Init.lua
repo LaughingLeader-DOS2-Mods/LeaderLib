@@ -1,0 +1,5 @@
+Ext.Require("Client/UI/CharacterSheet.lua")
+Ext.Require("Client/UI/ModMenu.lua")
+Ext.Require("Client/UI/Tooltip.lua")
+Ext.Require("Client/UI/Debug.lua")
+Ext.RegisterListener("SessionLoaded", RegisterListeners)

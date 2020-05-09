@@ -11,6 +11,7 @@ Initialized = false
 Main = {}
 ModRegistration = {}
 Register = {}
+---@type LeaderLibGameSettings
 Settings = {}
 StatusTypes = {
 	ACTIVE_DEFENSE = {},
@@ -67,3 +68,17 @@ TranslatedStringEntries = {}
 function OnInit()
 	Initialized = true
 end
+
+function LoadSettings()
+	local settings = Classes.LeaderLibGameSettings:Create()
+	local tblString = Ext.LoadFile("LeaderLib_GameSettings.json")
+	if tblString ~= nil then
+		settings = settings:LoadString(tblString)
+	else
+		Ext.SaveFile("LeaderLib_GameSettings.json", settings:ToString())
+	end
+	Settings = settings
+	return settings
+end
+
+--Ext.RegisterListener("ModuleLoadStarted", LoadSettings)

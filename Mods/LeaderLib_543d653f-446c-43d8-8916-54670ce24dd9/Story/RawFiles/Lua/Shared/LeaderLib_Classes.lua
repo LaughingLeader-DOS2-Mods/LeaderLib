@@ -184,3 +184,6 @@ function DeltaModGroup:GetRandomEntry()
 end
 Classes["DeltaModGroup"] = DeltaModGroup
 --local DeltaModGroup = Classes["DeltaModGroup"]
+
+---@type LeaderLibGameSettings
+Classes["LeaderLibGameSettings"] = Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "Shared/Settings/LeaderLibGameSettings.lua").LeaderLibGameSettings

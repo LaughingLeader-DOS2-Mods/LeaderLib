@@ -69,16 +69,24 @@ function OnInit()
 	Initialized = true
 end
 
-function LoadSettings()
-	local settings = Classes.LeaderLibGameSettings:Create()
-	local tblString = Ext.LoadFile("LeaderLib_GameSettings.json")
-	if tblString ~= nil then
-		settings = settings:LoadString(tblString)
+function LoadGameSettings()
+	local b,result = pcall(function()
+		local settings = Classes.LeaderLibGameSettings:Create()
+		local tblString = Ext.LoadFile("LeaderLib_GameSettings.json")
+		if tblString ~= nil then
+			settings = settings:LoadString(tblString)
+		else
+			Ext.SaveFile("LeaderLib_GameSettings.json", settings:ToString())
+		end
+		Settings = settings
+		return settings
+	end)
+	if b then
+		Settings = result
 	else
-		Ext.SaveFile("LeaderLib_GameSettings.json", settings:ToString())
+		Settings = Classes.LeaderLibGameSettings:Create()
 	end
-	Settings = settings
-	return settings
+	return Settings
 end
 
 --Ext.RegisterListener("ModuleLoadStarted", LoadSettings)

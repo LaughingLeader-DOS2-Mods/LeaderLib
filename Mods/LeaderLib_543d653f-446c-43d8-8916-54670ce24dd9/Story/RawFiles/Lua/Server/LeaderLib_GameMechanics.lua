@@ -14,24 +14,32 @@ end
 
 --Ext.NewQuery(HitSucceeded, "LeaderLib_Ext_QRY_HitSucceeded", "[in](GUIDSTRING)_Target, [in](INTEGER64)_Handle, [in](INTEGER)_IsHitType, [out](INTEGER)_Bool")
 
+-- HitReason
+-- // 0 - ASAttack
+-- // 1 - Character::ApplyDamage, StatusDying, ExecPropertyDamage, StatusDamage
+-- // 2 - AI hit test
+-- // 3 - Explode
+-- // 4 - Trap
+-- // 5 - InSurface
+-- // 6 - SetHP, osi::ApplyDamage, StatusConsume
+
 ---Returns true if a hit is from a weapon.
 ---@param target string
 ---@param handle integer
 ---@param is_hit integer
 ---@return boolean
 local function HitWithWeapon(target, handle, is_hit)
-    local hit_type = -1
-    local hitWithWeapon = false
     if is_hit == 1 or is_hit == true then
-        hit_type = NRD_HitGetInt(handle, "HitType")
-        hitWithWeapon = NRD_HitGetInt(handle, "HitWithWeapon") == 1
+        local hitType = NRD_HitGetInt(handle, "HitType")
+        local hitWithWeapon = NRD_HitGetInt(handle, "HitWithWeapon") == 1
+        return (hitType == 0) and hitWithWeapon
     else
-        hit_type = NRD_StatusGetInt(target, handle, "HitReason")
-        --local hitWithWeapon = NRD_StatusGetInt(target, handle, "HitWithWeapon")
-        local source_type = NRD_StatusGetInt(target, handle, "DamageSourceType")
-        hitWithWeapon = source_type == 6 or source_type == 7
+        local hitReason = NRD_StatusGetInt(target, handle, "HitReason")
+        local weaponHandle = NRD_StatusGetGuidString(target, handle, "WeaponHandle")
+        local source_type = NRD_StatusGetString(target, handle, "DamageSourceType")
+        local hitWithWeapon = source_type == 6 or source_type == 7
+        return (hitReason <= 1 and hitWithWeapon) and (weaponHandle ~= nil and weaponHandle ~= "NULL_00000000-0000-0000-0000-000000000000")
     end
-    return (hit_type == 0 or hit_type == 2 or hit_type == 3) and hitWithWeapon
 end
 
 --Ext.NewQuery(HitWithWeapon, "LeaderLib_Ext_QRY_HitWithWeapon", "[in](GUIDSTRING)_Target, [in](INTEGER64)_Handle, [in](INTEGER)_IsHitType, [out](INTEGER)_Bool")

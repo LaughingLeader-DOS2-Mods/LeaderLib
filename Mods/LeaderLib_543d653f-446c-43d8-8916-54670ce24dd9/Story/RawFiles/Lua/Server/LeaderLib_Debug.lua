@@ -139,7 +139,9 @@ local STATUS_HEALING_ATTRIBUTE = {
 }
 
 local function TraceType(obj, handle, attribute, attribute_type)
-	if attribute_type == "Integer" or attribute_type == "Flag" or attribute_type == "Integer64" or attribute_type == "Enum" then
+	if attribute_type == "Enum" then
+		PrintDebug("[LeaderLib_Debug.lua] ["..attribute.."] = "..tostring(NRD_HitGetInt(handle, attribute)).."|"..NRD_HitGetString(handle,attribute))
+	elseif attribute_type == "Integer" or attribute_type == "Flag" or attribute_type == "Integer64" then
 		PrintDebug("[LeaderLib_Debug.lua] ["..attribute.."] = "..tostring(NRD_HitGetInt(handle, attribute)).."")
 	elseif attribute_type == "Real" then
 		PrintDebug("[LeaderLib_Debug.lua] ["..attribute.."] = "..tostring(NRD_HitGetInt(handle, attribute)).."")
@@ -158,9 +160,7 @@ local function TraceStatusType(obj, handle, attribute, attribute_type)
 	elseif attribute_type == "String" then
 		PrintDebug("[LeaderLib_Debug.lua] ["..attribute.."] = "..tostring(NRD_StatusGetString(obj, handle, attribute)).."")
 	elseif attribute_type == "Enum" then
-		local val = NRD_StatusGetString(obj, handle, attribute)
-		if val == nil then val = NRD_StatusGetInt(obj, handle, attribute) end
-		PrintDebug("[LeaderLib_Debug.lua] ["..attribute.."] = "..tostring(val).."")
+		PrintDebug("[LeaderLib_Debug.lua] ["..attribute.."] = "..tostring(NRD_StatusGetInt(obj, handle, attribute)).."|"..tostring(NRD_StatusGetString(obj, handle, attribute)).."")
 	elseif attribute_type == "GuidString" or attribute_type == "Handle" then
 		PrintDebug("[LeaderLib_Debug.lua] ["..attribute.."] = "..tostring(NRD_StatusGetGuidString(obj, handle, attribute)).."")
 	end
@@ -207,6 +207,12 @@ function Debug_TraceOnHit(target,attacker,damage,handle)
 	PrintDebug("======HIT STATUS=======")
 	PrintDebug("=======================")
 	for attribute,attribute_type in pairs(STATUS_HIT) do
+		TraceStatusType(target, handle, attribute, attribute_type)
+	end
+	PrintDebug("=======================")
+	PrintDebug("========STATUS=========")
+	PrintDebug("=======================")
+	for attribute,attribute_type in pairs(STATUS_ATTRIBUTE) do
 		TraceStatusType(target, handle, attribute, attribute_type)
 	end
 	PrintDebug("=======================")

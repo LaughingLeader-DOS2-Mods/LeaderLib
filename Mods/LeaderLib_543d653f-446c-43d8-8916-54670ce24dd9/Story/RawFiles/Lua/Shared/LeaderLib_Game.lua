@@ -67,13 +67,17 @@ LocalizedText.AbilityNames = {
 
 ---Get localized damage text wrapped in that damage type's color.
 ---@param damageType string
----@param damageValue integer
+---@param damageValue string|integer|number
 ---@return string
 local function GetDamageText(damageType, damageValue)
 	local entry = LocalizedText.DamageTypeHandles[damageType]
 	if entry ~= nil then
 		if damageValue ~= nil then
-			return string.format("<font color='%s'>%s %s</font>", entry.Color, damageValue, entry.Text.Value)
+			if type(damageValue) == "number" then
+				return string.format("<font color='%s'>is %s</font>", entry.Color, damageValue, entry.Text.Value)
+			else
+				return string.format("<font color='%s'>%s %s</font>", entry.Color, damageValue, entry.Text.Value)
+			end
 		else
 			return string.format("<font color='%s'>%s</font>", entry.Color, entry.Text.Value)
 		end
@@ -165,7 +169,11 @@ local function GetResistanceText(resistance, amount)
 	end
 	if entry ~= nil then
 		if amount ~= nil then
-			return string.format("<font color='%s'>%s%%%% %s</font>", entry.Color, amount, entry.Text.Value)
+			if type(amount) == "number" then
+				return string.format("<font color='%s'>%i%%%% %s</font>", entry.Color, amount, entry.Text.Value)
+			else
+				return string.format("<font color='%s'>%s%%%% %s</font>", entry.Color, amount, entry.Text.Value)
+			end
 		else
 			return string.format("<font color='%s'>%s</font>", entry.Color, entry.Text.Value)
 		end

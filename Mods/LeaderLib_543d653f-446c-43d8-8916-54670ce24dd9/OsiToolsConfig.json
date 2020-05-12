@@ -1,5 +1,5 @@
 {
-    "RequiredExtensionVersion": 44,
+    "RequiredExtensionVersion": 46,
     "ModTable": "LeaderLib",
     "FeatureFlags": [
         "OsirisExtensions",

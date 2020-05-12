@@ -75,10 +75,9 @@ function LoadGameSettings()
 		local tblString = Ext.LoadFile("LeaderLib_GameSettings.json")
 		if tblString ~= nil then
 			settings = settings:LoadString(tblString)
-		else
-			Ext.SaveFile("LeaderLib_GameSettings.json", settings:ToString())
 		end
 		Settings = settings
+		SaveGameSettings()
 		return settings
 	end)
 	if b then
@@ -87,6 +86,14 @@ function LoadGameSettings()
 		Settings = Classes.LeaderLibGameSettings:Create()
 	end
 	return Settings
+end
+
+function SaveGameSettings()
+	if Settings ~= nil then
+		pcall(function() 
+			Ext.SaveFile("LeaderLib_GameSettings.json", Settings:ToString())
+		end)
+	end
 end
 
 --Ext.RegisterListener("ModuleLoadStarted", LoadSettings)

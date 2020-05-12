@@ -154,7 +154,6 @@ LeaderLib_Platforms_SpawnPlatform(_ID, "Large", _LifeTime, _x, _y, _z);
 
 //REGION ELEVATOR
 //Make sure you generate the AI grid for your level at least once, or objects won't teleported to the top of platforms.
-
 PROC
 LeaderLib_Platforms_MoveObjectWithPlatform((GUIDSTRING)_Object, (ITEMGUID)_Platform, (STRING)_ID, (REAL)_TargetX, (REAL)_TargetY, (REAL)_TargetZ, (REAL)_Speed, (REAL)_Acceleration, (INTEGER)_TeleportSpeed, (STRING)_CompletionEvent, (INTEGER)_LifeTime, (INTEGER)_DoHits)
 THEN
@@ -164,7 +163,7 @@ DB_LeaderLib_Platforms_Temp_ActiveMovement(_ID, _Object, _Platform, _TeleportSpe
 ProcObjectTimer(_Object, "LeaderLib_Timers_MoveWithPlatform_Teleport", _TeleportSpeed);
 ItemMoveToPosition(_Platform, _TargetX, _TargetY, _TargetZ, _Speed, _Acceleration, _CompletionEvent, _DoHits);
 
-// PlayAnimation prevents teleport from happening while the animation is happening.
+// PlayAnimation prevents teleporting from happening while the animation is playing.
 // Use CharacterSetAnimationOverride instead.
 PROC
 ProcObjectTimerFinished((GUIDSTRING)_Object, "LeaderLib_Timers_MoveWithPlatform_Teleport")

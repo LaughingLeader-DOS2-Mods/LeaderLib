@@ -1,6 +1,7 @@
 ---@type LeaderLibDefaultSettings
 local DefaultSettings = {
-	StarterTierSkillOverrides = false
+	StarterTierSkillOverrides = false,
+	EnableDeveloperTests = false
 }
 
 ---@class LeaderLibGameSettings

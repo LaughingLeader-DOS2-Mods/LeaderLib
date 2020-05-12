@@ -197,6 +197,8 @@ local sheetEvents = {
 }
 
 local function RegisterListeners()
+	---@type LeaderLibGameSettings
+	local data = LoadGameSettings()
 	local ui = Ext.GetBuiltinUI("Public/Game/GUI/characterSheet.swf")
 	if ui ~= nil then
 		for i,v in pairs(pointEvents) do
@@ -205,7 +207,7 @@ local function RegisterListeners()
 		for i,v in pairs(sheetEvents) do
 			Ext.RegisterUICall(ui, v, OnSheetEvent)
 		end
-		if Ext.IsDeveloperMode() then
+		if data.Settings.EnableDeveloperTests == true and Ext.IsDeveloperMode() then
 			Ext.RegisterUIInvokeListener(ui, "updateArraySystem", OnCharacterSheetUpdating)
 		end
 		PrintDebug("[LeaderLib_CharacterSheet.lua:RegisterListeners] Found (characterSheet.swf). Registered listeners.")

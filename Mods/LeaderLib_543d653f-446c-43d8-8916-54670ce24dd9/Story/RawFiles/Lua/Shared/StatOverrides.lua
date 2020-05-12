@@ -26,9 +26,9 @@ end
 
 local function OverrideStats()
 	---@type LeaderLibGameSettings
-	local settings = LoadGameSettings()
+	local data = LoadGameSettings()
 	--Ext.IsModLoaded("88d7c1d3-8de9-4494-be12-a8fcbc8171e9")
-	if settings.Settings.StarterTierSkillOverrides == true then
+	if data.Settings.StarterTierSkillOverrides == true then
 		Ext.Print("[LeaderLib:StatOverrides.lua] Enabling skill tier overrides.")
 		for _,stat in pairs(Ext.GetStatEntries("SkillData")) do
 			local tier = Ext.StatGetAttribute(stat, "Tier")
@@ -37,8 +37,6 @@ local function OverrideStats()
 				PrintDebug("LeaderLib:StatOverrides.lua] Change Tier for skill ("..stat..") "..tier.." => Starter.")
 			end
 		end
-	else
-		Ext.PrintError("[LeaderLib:StatOverrides.lua] settings.StarterTierSkillOverrides = ",settings.Settings.StarterTierSkillOverrides)
 	end
 end
 Ext.RegisterListener("ModuleLoading", OverrideStats)

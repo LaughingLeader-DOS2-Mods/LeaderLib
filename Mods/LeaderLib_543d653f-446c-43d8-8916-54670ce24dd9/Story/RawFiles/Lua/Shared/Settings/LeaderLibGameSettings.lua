@@ -37,12 +37,10 @@ function LeaderLibGameSettings:LoadTable(tbl)
 			if tbl.Settings ~= nil and type(tbl.Settings) == "table" then
 				for k,v in pairs(tbl.Settings) do
 					self.Settings[k] = v
-					Ext.Print("Set " .. k .. " to ",v)
 				end
 			elseif tbl.Version == nil then
 				for k,v in pairs(tbl) do
 					self.Settings[k] = v
-					Ext.Print("Set " .. k .. " to ",v)
 				end
 			end
 		end

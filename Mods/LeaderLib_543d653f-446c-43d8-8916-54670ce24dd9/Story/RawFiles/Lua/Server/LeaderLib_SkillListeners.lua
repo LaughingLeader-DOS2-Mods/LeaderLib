@@ -83,7 +83,7 @@ function OnSkillHit(char, skillprototype, ...)
 			end
 		end
 
-		if Features.LeaderLib_ApplyBonusWeaponStatuses == true then
+		if Features.ApplyBonusWeaponStatuses == true then
 			local target = params[1]
 			local canApplyStatuses = target ~= nil and Ext.StatGetAttribute(skill, "UseWeaponProperties") == "Yes"
 			if canApplyStatuses then

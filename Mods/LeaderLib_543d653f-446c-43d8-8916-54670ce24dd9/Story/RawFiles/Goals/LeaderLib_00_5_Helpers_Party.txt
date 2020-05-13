@@ -332,6 +332,21 @@ THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:Party:OnCharacterLeftParty] [",_LeavingCharacterName,"] is no longer in a party with [",_FormerPartyMemberName,"]. Party Count [",_CountStr,"].");
 //END_REGION
 
+//REGION ALL_PARTY
+// A general database for tracking all party members, including summons/followers
+IF
+CharacterJoinedParty(_Char)
+THEN
+DB_LeaderLib_AllPartyMembers(_Char);
+
+IF
+CharacterLeftParty(_Char)
+AND
+DB_LeaderLib_AllPartyMembers(_Char)
+THEN
+NOT DB_LeaderLib_AllPartyMembers(_Char);
+//END_REGION
+
 //REGION UPDATES
 PROC
 LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)

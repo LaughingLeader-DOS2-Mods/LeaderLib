@@ -1,0 +1,82 @@
+---Clone an item for a character.
+---@param char string
+---@param item string
+---@param completion_event string
+---@param autolevel string
+local function CloneItemForCharacter(char, item, completion_event, autolevel)
+    local autolevel_enabled = autolevel == "Yes"
+	NRD_ItemCloneBegin(item)
+    local cloned = NRD_ItemClone()
+    if autolevel_enabled then
+        local level = CharacterGetLevel(char)
+        ItemLevelUpTo(cloned,level)
+    end
+    CharacterItemSetEvent(char, cloned, completion_event)
+end
+
+---Creates an item by stat, using cloning.
+---@param stat string
+---@param level integer
+---@return string
+local function CreateItemByStat(stat, level)
+    local x,y,z = GetPosition(CharacterGetHostCharacter())
+    local item = CreateItemTemplateAtPosition("LOOT_LeaderLib_BackPack_Invisible_98fa7688-0810-4113-ba94-9a8c8463f830",x,y,z)
+    NRD_ItemCloneBegin(item)
+    NRD_ItemCloneSetString("GenerationStatsId", stat)
+    NRD_ItemCloneSetString("StatsEntryName", stat)
+    NRD_ItemCloneSetInt("HasGeneratedStats", 0)
+    NRD_ItemCloneSetInt("StatsLevel", level)
+    --NRD_ItemCloneResetProgression()
+    local cloned NRD_ItemClone()
+    ItemLevelUpTo(cloned,level)
+    return cloned
+end
+
+function EquipInSlot(char, item, slot)
+    if Ext.Version() >= 42 then
+        NRD_CharacterEquipItem(char, item, slot, 0, 0, 1, 1)
+    else
+        CharacterEquipItem(char, item)
+    end
+end
+
+function ItemIsEquipped(char, item)
+    local itemObj = Ext.GetItem(item)
+    if itemObj ~= nil then
+        local slot = itemObj.Slot
+        if slot <= 13 then -- 13 is the Overhead slot
+            return true
+        end
+    else
+        for i,slot in pairs(Data.EquipmentSlots) do
+            if CharacterGetEquippedItem(char, slot) == item then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+---Removes matching rune templates from items in any equipment slots.
+---@param character string
+---@param runeTemplates table
+local function RemoveRunes(character, runeTemplates)
+	for _,slotName in pairs(VisibleEquipmentSlots) do
+		local item = CharacterGetEquippedItem(character, slotName)
+		if item ~= nil then
+			for runeSlot=0,2,1 do
+				local runeTemplate = ItemGetRuneItemTemplate(item, runeSlot)
+				if runeTemplate ~= nil and runeTemplates[runeTemplate] == true then
+					local rune = ItemRemoveRune(character, item, runeSlot)
+					PrintDebug("[LeaderLib:RemoveRunes] Removed rune ("..tostring(rune)..") from item ("..item..")["..tostring(runeSlot).."] for character ("..character..")")
+				end
+			end
+		end
+	end
+end
+
+Game.EquipInSlot = EquipInSlot
+Game.ItemIsEquipped = ItemIsEquipped
+Game.CloneItemForCharacter = CloneItemForCharacter
+Game.CreateItemByStat = CreateItemByStat
+Game.RemoveRunes = RemoveRunes

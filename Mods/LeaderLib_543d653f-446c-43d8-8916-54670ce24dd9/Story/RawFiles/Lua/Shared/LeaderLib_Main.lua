@@ -9,13 +9,14 @@ function RegisterListener(event, callback)
 	end
 end
 
---- Registers a function to call when a specific Lua LeaderLib event fires.
+--- Registers a function to call when a specific Lua LeaderLib event fires for specific mods.
+--- Events: Registered|Updated
 ---@param event string
 ---@param uuid string
 ---@param callback function
 function RegisterModListener(event, uuid, callback)
 	if ModListeners[event] ~= nil then
-		Listeners[event][uuid] = callback
+		ModListeners[event][uuid] = callback
 	else
 		error("[LeaderLib__Main.lua:RegisterListener] Event ("..tostring(event)..") is not a valid LeaderLib listener event!")
 	end

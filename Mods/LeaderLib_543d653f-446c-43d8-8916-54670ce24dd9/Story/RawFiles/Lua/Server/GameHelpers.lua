@@ -1,9 +1,3 @@
-Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "Server/Game/DamageHelpers.lua")
-Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "Server/Game/HitHelpers.lua")
-Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "Server/Game/ItemHelpers.lua")
-Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "Server/Game/ProjectileHelpers.lua")
-Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "Server/Game/SkillHelpers.lua")
-
 --- Applies ExtraProperties/SkillProperties.
 ---@param target string
 ---@param source string|nil

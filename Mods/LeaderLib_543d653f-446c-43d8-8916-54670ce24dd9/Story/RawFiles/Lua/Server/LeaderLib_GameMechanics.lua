@@ -374,6 +374,31 @@ local function RemoveRunes(character, runeTemplates)
 	end
 end
 
+--- Applies ExtraProperties/SkillProperties.
+---@param target string
+---@param source string|nil
+---@param properties StatProperty[]
+local function ApplyProperties(target, source, properties)
+    PrintDebug("=========")
+    PrintDebug(Common.Dump(properties))
+    PrintDebug("=========")
+    for i,v in ipairs(properties) do
+        if v.Type == "Status" then
+            if v.Context[1] == "Target" then
+                if target ~= nil then
+                    if v.StatusChance >= 1.0 then
+                        ApplyStatus(target, v.Action, v.Duration, 0, source)
+                    elseif v.StatusChance > 0 then
+                        if Ext.Random(0.0, 1.0) <= v.StatusChance then
+                            ApplyStatus(target, v.Action, v.Duration, 0, source)
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
 Game.ReduceDamage = ReduceDamage
 Game.IncreaseDamage = IncreaseDamage
 Game.HitSucceeded = HitSucceeded
@@ -387,3 +412,4 @@ Game.CloneItemForCharacter = CloneItemForCharacter
 Game.ExplodeProjectile = ExplodeProjectile
 Game.ExplodeProjectileAtPosition = ExplodeProjectileAtPosition
 Game.RemoveRunes = RemoveRunes
+Game.ApplyProperties = ApplyProperties

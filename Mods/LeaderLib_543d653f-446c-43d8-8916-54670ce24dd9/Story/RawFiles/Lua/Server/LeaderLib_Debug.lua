@@ -257,3 +257,16 @@ end
 function GenerateIdeHelpers()
 	Ext.GenerateIdeHelpers()
 end
+
+--[[SkillProperties = {{
+Type = "Status",
+Action = "LLWEAPONEX_SUCKER_PUNCH",
+Context = {"Target"},
+Duration = 6.0,
+StatusChance = 1.0,
+Arg3 = "",
+Arg4 = -1,
+Arg5 = -1,
+SurfaceBoost = false
+}}
+]]

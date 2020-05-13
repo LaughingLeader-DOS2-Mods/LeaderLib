@@ -4,6 +4,23 @@ local function OnHit(target, source, handle, damage)
 		OnSkillHit(source, skillprototype, target, handle, damage)
 	end
 
-
+	if source ~= nil and Features.LeaderLib_ApplyBonusWeaponStatuses == true and Game.HitWithWeapon(target, handle, 0) then
+		PrintDebug("Basic Attack Hit on", target, ". Checking for statuses with a BonusWeapon")
+		---@type EsvCharacter
+		local character = Ext.GetCharacter(source)
+		for i,status in pairs(character:GetStatuses()) do
+			local potion = Ext.StatGetAttribute(status, "StatusId")
+			if potion ~= nil then
+				local bonusWeapon = Ext.StatGetAttribute(potion, "BonusWeapon")
+				if bonusWeapon ~= nil then
+					local extraProps = Ext.StatGetAttribute(bonusWeapon, "ExtraProperties")
+					if extraProps ~= nil then
+						PrintDebug("Applying ExtraProperties for status BonusWeapon. status("..status..") potion("..potion..") weapon("..bonusWeapon..")")
+						Game.ApplyProperties(target, source, extraProps)
+					end
+				end
+			end
+		end
+	end
 end
 Ext.NewCall(OnHit, "LeaderLib_Ext_OnHit", "(GUIDSTRING)_Target, (GUIDSTRING)_Source, (INTEGER)_Damage, (INTEGER64)_Handle")

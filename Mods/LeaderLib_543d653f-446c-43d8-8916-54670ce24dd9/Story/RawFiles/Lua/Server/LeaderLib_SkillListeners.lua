@@ -70,14 +70,38 @@ end
 
 function OnSkillHit(char, skillprototype, ...)
 	if skillprototype ~= "" and skillprototype ~= nil then
+		local params = {...}
 		local skill = string.gsub(skillprototype, "_%-?%d+$", "")
 		local listeners = SkillListeners[skill]
 		if listeners ~= nil then
-			PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillHit] char(",char,") skillprototype(",skillprototype,") skill(",skill,") params(",Ext.JsonStringify({...}),")")
+			--PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillHit] char(",char,") skillprototype(",skillprototype,") skill(",skill,") params(",Ext.JsonStringify(params),")")
 			for i,callback in ipairs(listeners) do
-				local status,err = xpcall(callback, debug.traceback, GetUUID(char), SKILL_STATE.HIT, {...})
+				local status,err = xpcall(callback, debug.traceback, GetUUID(char), SKILL_STATE.HIT, params)
 				if not status then
 					Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
+				end
+			end
+		end
+
+		if Features.LeaderLib_ApplyBonusWeaponStatuses == true then
+			local target = params[1]
+			local canApplyStatuses = target ~= nil and Ext.StatGetAttribute(skill, "UseWeaponProperties") == "Yes"
+			if canApplyStatuses then
+				PrintDebug("Skill Hit:", skill, ". Checking for statuses with a BonusWeapon")
+				---@type EsvCharacter
+				local character = Ext.GetCharacter(char)
+				for i,status in pairs(character:GetStatuses()) do
+					local potion = Ext.StatGetAttribute(status, "StatusId")
+					if potion ~= nil then
+						local bonusWeapon = Ext.StatGetAttribute(potion, "BonusWeapon")
+						if bonusWeapon ~= nil then
+							local extraProps = Ext.StatGetAttribute(bonusWeapon, "ExtraProperties")
+							if extraProps ~= nil then
+								PrintDebug("Applying ExtraProperties for status BonusWeapon. status("..status..") potion("..potion..") weapon("..bonusWeapon..")")
+								Game.ApplyProperties(target, char, extraProps)
+							end
+						end
+					end
 				end
 			end
 		end

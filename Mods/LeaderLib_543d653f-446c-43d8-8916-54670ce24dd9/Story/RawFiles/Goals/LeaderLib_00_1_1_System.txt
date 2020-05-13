@@ -96,6 +96,11 @@ DB_LeaderLib_GameMode(_Mode, _IsEditorMode);
 //END_REGION
 
 //REGION EXTENDER
+IF
+GameModeStarted(_,_)
+THEN
+LeaderLib_System_SetExtenderFlag();
+
 QRY
 LeaderLib_QRY_ExtenderIsActive()
 // [BEGIN_NO_OSITOOLS]
@@ -124,16 +129,6 @@ NOT LeaderLib_QRY_ExtenderIsActive()
 THEN
 GlobalClearFlag("LeaderLib_ExtenderIsActive");
 LeaderLib_Extender_Enabled(0);
-
-IF
-SavegameLoading(_,_,_,_)
-THEN
-LeaderLib_System_SetExtenderFlag();
-
-IF
-GameModeStarted(_,_)
-THEN
-LeaderLib_System_SetExtenderFlag();
 
 PROC
 LeaderLib_Extender_Enabled((INTEGER)_Enabled)
@@ -172,6 +167,27 @@ GlobalGetFlag("LeaderLib_DebugModeEnabled", 1)
 THEN
 NRD_ModCall("LeaderLib", "DebugInit");
 */
+//END_REGION
+
+//REGION GAME_STARTED_AFTER_SAVE_LOADED
+IF
+SavegameLoading(_,_,_,_)
+THEN
+LeaderLib_System_SetExtenderFlag();
+DB_LeaderLib_System_Temp_SaveLoad(1);
+
+IF
+GameStarted(_,_)
+AND
+DB_LeaderLib_System_Temp_SaveLoad(1)
+THEN
+NOT DB_LeaderLib_System_Temp_SaveLoad(1);
+LeaderLib_OnSaveLoaded();
+
+PROC
+LeaderLib_OnSaveLoaded()
+THEN
+DB_NOOP(1);
 //END_REGION
 EXITSECTION
 

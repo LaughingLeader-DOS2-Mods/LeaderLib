@@ -1,0 +1,106 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+KBSECTION
+//REGION SKILLS
+PROC
+LeaderLib_LuaSkillListeners_IgnorePrototype((CHARACTERGUID)_Char, (STRING)_SkillPrototype, (STRING)_Skill)
+THEN
+DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _SkillPrototype, _Skill);
+
+PROC
+LeaderLib_LuaSkillListeners_RemoveIgnoredPrototype((CHARACTERGUID)_Char, (STRING)_Skill)
+AND
+DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _SkillPrototype, _Skill)
+THEN
+NOT DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _SkillPrototype, _Skill);
+
+PROC
+LeaderLib_LuaSkillListeners_RemoveIgnoredPrototype((CHARACTERGUID)_Char)
+AND
+DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _SkillPrototype, _Skill)
+THEN
+NOT DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _SkillPrototype, _Skill);
+
+PROC
+LeaderLib_LuaSkillListeners_QRY_PrototypeIsIgnored((CHARACTERGUID)_Char, (STRING)_SkillPrototype)
+AND
+DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _SkillPrototype, _Skill)
+THEN
+DB_NOOP(1);
+//END_REGION
+
+//REGION LUA_FEATURES
+/*
+Current LeaderLib features:
+
+LeaderLib_BonusWeaponStatusApplier - Applies statuses located in a BonusWeapon weapon stat's ExtraProperties. Normally these are not parsed/applied by the game.
+
+*/
+
+
+PROC
+LeaderLib_Lua_EnableFeature((GUIDSTRING)_ModID, (STRING)_Feature)
+AND
+NOT DB_LeaderLib_Lua_Features_Active(_Feature, _)
+THEN
+LeaderLib_Lua_ToggleFeature(_Feature, 1);
+
+PROC
+LeaderLib_Lua_EnableFeature((GUIDSTRING)_ModID, (STRING)_Feature)
+THEN
+DB_LeaderLib_Lua_Features_Active(_Feature, _ModID);
+
+PROC
+LeaderLib_Lua_DisableFeature((GUIDSTRING)_ModID, (STRING)_Feature)
+AND
+DB_LeaderLib_Lua_Features_Active(_Feature, _ModID)
+THEN
+NOT DB_LeaderLib_Lua_Features_Active(_Feature, _ModID);
+
+PROC
+LeaderLib_Lua_DisableFeature((GUIDSTRING)_ModID, (STRING)_Feature)
+AND
+NOT DB_LeaderLib_Lua_Features_Active(_Feature, _)
+THEN
+LeaderLib_Lua_ToggleFeature(_Feature, 0);
+
+// [BEGIN_NO_OSITOOLS]
+PROC
+LeaderLib_Lua_ToggleFeature((STRING)_Feature, (INTEGER)_Enable)
+THEN
+DB_NOOP(1);
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+PROC
+LeaderLib_OnSaveLoaded()
+AND
+DB_LeaderLib_Lua_Features_Active(_Feature, _ModID)
+AND
+NRD_IsModLoaded(_ModID, 1)
+THEN
+DB_LeaderLib_Lua_Features_Temp_EnableList(_Feature);
+
+PROC
+LeaderLib_OnSaveLoaded()
+AND
+DB_LeaderLib_Lua_Features_Temp_EnableList(_Feature)
+THEN
+NOT DB_LeaderLib_Lua_Features_Temp_EnableList(_Feature);
+NRD_ModCall("LeaderLib", "EnableFeature", _Feature);
+
+PROC
+LeaderLib_Lua_ToggleFeature((STRING)_Feature, 1)
+THEN
+NRD_ModCall("LeaderLib", "EnableFeature", _Feature);
+
+PROC
+LeaderLib_Lua_ToggleFeature((STRING)_Feature, 0)
+THEN
+NRD_ModCall("LeaderLib", "DisableFeature", _Feature);
+*/
+//END_REGION
+EXITSECTION
+ENDEXITSECTION
+ParentTargetEdge "LaughingLeader__LeaderLib"

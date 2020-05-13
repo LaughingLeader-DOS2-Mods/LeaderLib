@@ -54,6 +54,9 @@ Listeners = {
 	CharacterSheetPointChanged = {},
 	CharacterBasePointsChanged = {},
 	TimerFinished = {},
+	FeatureEnabled = {},
+	FeatureDisabled = {},
+	Initialized = {}
 }
 SkillListeners = {}
 ModListeners = {
@@ -64,6 +67,9 @@ LocalizedText = {}
 
 ---@type TranslatedString[]
 TranslatedStringEntries = {}
+
+---@type table<string,boolean>
+Features = {}
 
 function OnInit()
 	Initialized = true

@@ -112,6 +112,15 @@ LeaderLib_ToggleScripts_DisableScriptAfterDelay("LeaderLib_TS_GrowthEvents_Item_
 PROC
 LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
 AND
+DB_LeaderLib_ToggleScripts_Temp_ActiveScripts("LeaderLib_LuaSkillListeners_Enabled", _ModID)
+AND
+NOT DB_LeaderLib_ToggleScripts_Temp_ActiveScripts("LeaderLib_LuaEventListeners_Enabled", _ModID)
+THEN
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_LuaEventListeners_Enabled", _ModID);
+
+PROC
+LeaderLib_ToggleScripts_Internal_UpdateScriptFlags()
+AND
 NOT DB_LeaderLib_ToggleScripts_Temp_ActiveScripts("LeaderLib_Follower_Active", "LeaderLib")
 AND
 SysCount("DB_LeaderLib_PartyFollower", 2, _Count)
@@ -440,16 +449,16 @@ DB_NOOP(1);
 
 //REGION ENABLING_DISABLING
 PROC
-LeaderLib_ToggleScripts_EnableScript((STRING)_GlobalFlag, (STRING)_EnablingModID)
+LeaderLib_ToggleScripts_EnableScript((STRING)_GlobalFlag, (STRING)_ModID)
 AND
 NOT DB_GlobalFlag(_GlobalFlag)
 THEN
 GlobalSetFlag(_GlobalFlag);
 
 PROC
-LeaderLib_ToggleScripts_EnableScript((STRING)_GlobalFlag, (STRING)_EnablingModID)
+LeaderLib_ToggleScripts_EnableScript((STRING)_GlobalFlag, (STRING)_ModID)
 THEN
-DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_GlobalFlag, _EnablingModID);
+DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_GlobalFlag, _ModID);
 LeaderLib_ToggleScripts_Internal_ToggleOn(_GlobalFlag);
 
 PROC
@@ -884,6 +893,13 @@ AND
 ObjectIsGlobal(_Object, 0)
 THEN
 LeaderLib_ToggleScripts_DisableScriptForObject(_Object, _TagOrFlag, _EnablingModID);
+//END_REGION
+
+//REGION SECONDARY_SCRIPTS
+PROC
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_LuaSkillListeners_Enabled", (STRING)_ModID)
+THEN
+LeaderLib_ToggleScripts_EnableScript("LeaderLib_LuaEventListeners_Enabled", _ModID);
 //END_REGION
 EXITSECTION
 

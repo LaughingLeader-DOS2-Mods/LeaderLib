@@ -2,7 +2,12 @@ Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
 KBSECTION
-
+/* [OSITOOLS_ONLY]
+IF
+NRD_OnHit(_Target, _Source, _Damage, _Handle)
+THEN
+LeaderLib_Ext_OnHit(_Target, _Source, _Damage, _Handle);
+*/
 EXITSECTION
 ENDEXITSECTION
 ParentTargetEdge "LeaderLib_19_ToggledScripts"

@@ -14,21 +14,29 @@ NRD_ModCall("LeaderLib", "OnSkillPreparing", (STRING)_Char, _SkillPrototype);
 
 IF
 CharacterUsedSkill(_Char, _Skill, _SkillType, _SkillElement)
+AND
+NOT DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _, _Skill)
 THEN
 NRD_ModCall("LeaderLib", "OnSkillUsed", (STRING)_Char, _Skill);
 
 IF
 CharacterUsedSkillOnTarget(_Char, _Target, _Skill, _SkillType, _SkillElement)
+AND
+NOT DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _, _Skill)
 THEN
 NRD_ModCall("LeaderLib", "OnSkillUsed", (STRING)_Char, _Skill, (STRING)_Target);
 
 IF
 CharacterUsedSkillAtPosition(_Char, _x, _y, _z, _Skill, _SkillType, _SkillElement)
+AND
+NOT DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _, _Skill)
 THEN
 NRD_ModCall("LeaderLib", "OnSkillUsed", (STRING)_Char, _Skill, (STRING)_x, (STRING)_y, (STRING)_z);
 
 IF
 CharacterUsedSkillOnZoneWithTarget(_Char, _Target, _Skill, _SkillType, _SkillElement)
+AND
+NOT DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _, _Skill)
 THEN
 NRD_ModCall("LeaderLib", "OnSkillUsed", (STRING)_Char, _Skill, (STRING)_Target);
 
@@ -36,33 +44,9 @@ IF
 SkillCast(_Char, _Skill, _SkillType, _SkillElement)
 THEN
 NRD_ModCall("LeaderLib", "OnSkillCast", (STRING)_Char, _Skill);
-
-IF
-NRD_OnHit(_Target, _Source, _Damage, _Handle)
-AND
-NRD_StatusGetString(_Target, _Handle, "SkillId", _SkillPrototype)
-THEN
-NRD_ModCall("LeaderLib", "OnSkillHit", (STRING)_Source, _SkillPrototype, (STRING)_Target, (STRING)_Handle, (STRING)_Damage);
 */
 
-PROC
-LeaderLib_LuaSkillListeners_IgnorePrototype((CHARACTERGUID)_Char, (STRING)_SkillPrototype, (STRING)_Skill)
-THEN
-DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _SkillPrototype, _Skill);
-
-PROC
-LeaderLib_LuaSkillListeners_RemoveIgnoredPrototype((CHARACTERGUID)_Char, (STRING)_Skill)
-AND
-DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _SkillPrototype, _Skill)
-THEN
-NOT DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _SkillPrototype, _Skill);
-
-PROC
-LeaderLib_LuaSkillListeners_RemoveIgnoredPrototype((CHARACTERGUID)_Char)
-AND
-DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _SkillPrototype, _Skill)
-THEN
-NOT DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _SkillPrototype, _Skill);
+// Skill hits are detected with LeaderLib_Ext_OnHit / OnHit in Lua
 
 IF
 RegionEnded(_)

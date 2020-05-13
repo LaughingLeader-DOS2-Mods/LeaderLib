@@ -333,6 +333,18 @@ LeaderLog_Log("DEBUG", "[LeaderLib:Party:OnCharacterLeftParty] [",_LeavingCharac
 //END_REGION
 
 //REGION ALL_PARTY
+PROC
+LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
+AND
+LeaderLib_StringExt_QRY_VersionIsLessThan(_PastVersion, 1,6,11,0)
+THEN
+IterateParties("Iterator_LeaderLib_AddToAllPartyMembers");
+
+IF
+StoryEvent((CHARACTERGUID)_Char, "Iterator_LeaderLib_AddToAllPartyMembers")
+THEN
+DB_LeaderLib_AllPartyMembers(_Char);
+
 // A general database for tracking all party members, including summons/followers
 IF
 CharacterJoinedParty(_Char)
@@ -343,6 +355,19 @@ IF
 CharacterLeftParty(_Char)
 AND
 DB_LeaderLib_AllPartyMembers(_Char)
+THEN
+NOT DB_LeaderLib_AllPartyMembers(_Char);
+
+IF
+RegionEnded(_Region)
+AND
+DB_LeaderLib_AllPartyMembers(_Char)
+AND
+ObjectIsGlobal(_Char, _a)
+AND
+ObjectExists(_Char, _b)
+AND
+LeaderLib_Math_QRY_IsEqualToAny(_a, _b, 0)
 THEN
 NOT DB_LeaderLib_AllPartyMembers(_Char);
 //END_REGION

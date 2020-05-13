@@ -36,8 +36,8 @@ local function HitWithWeapon(target, handle, is_hit)
     else
         local hitReason = NRD_StatusGetInt(target, handle, "HitReason")
         local weaponHandle = NRD_StatusGetGuidString(target, handle, "WeaponHandle")
-        local source_type = NRD_StatusGetString(target, handle, "DamageSourceType")
-        local hitWithWeapon = source_type == 6 or source_type == 7
+        local sourceType = NRD_StatusGetInt(target, handle, "DamageSourceType")
+        local hitWithWeapon = sourceType == 6 or sourceType == 7
         return (hitReason <= 1 and hitWithWeapon) and (weaponHandle ~= nil and weaponHandle ~= "NULL_00000000-0000-0000-0000-000000000000")
     end
 end
@@ -379,9 +379,11 @@ end
 ---@param source string|nil
 ---@param properties StatProperty[]
 local function ApplyProperties(target, source, properties)
-    PrintDebug("=========")
-    PrintDebug(Common.Dump(properties))
-    PrintDebug("=========")
+    if Ext.IsDeveloperMode() then
+        PrintDebug("=========")
+        PrintDebug(Common.Dump(properties))
+        PrintDebug("=========")
+    end
     for i,v in ipairs(properties) do
         if v.Type == "Status" then
             if v.Context[1] == "Target" then
@@ -392,6 +394,14 @@ local function ApplyProperties(target, source, properties)
                         if Ext.Random(0.0, 1.0) <= v.StatusChance then
                             ApplyStatus(target, v.Action, v.Duration, 0, source)
                         end
+                    end
+                end
+            elseif v.Context[1] == "Self" then
+                if v.StatusChance >= 1.0 then
+                    ApplyStatus(source, v.Action, v.Duration, 0, source)
+                elseif v.StatusChance > 0 then
+                    if Ext.Random(0.0, 1.0) <= v.StatusChance then
+                        ApplyStatus(source, v.Action, v.Duration, 0, source)
                     end
                 end
             end

@@ -6,7 +6,10 @@ end
 
 Classes = {}
 Common = {}
-Game = {}
+
+if Game == nil then
+	Game = {}
+end
 Initialized = false
 Main = {}
 ModRegistration = {}

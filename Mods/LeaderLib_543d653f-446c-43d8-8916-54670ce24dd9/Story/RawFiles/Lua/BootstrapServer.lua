@@ -10,17 +10,35 @@
 -- 	["Mods/Shared/CharacterCreation/OriginPresets/Generic4.lsx"] = genericPresetOverrideTest,
 -- }
 
-local function LeaderLib_ModuleLoading()
+local function ModuleResume()
 	--PrintDebug("[LeaderLib:Bootstrap.lua] Module is loading.")
 	-- if Ext.IsDeveloperMode() then
 	-- 	for file,override in pairs(pathOverrides) do
 	-- 		Ext.AddPathOverride(file, override)
 	-- 	end
 	-- end
+	if #Listeners.ModuleResume > 0 then
+		for i,callback in ipairs(Listeners.ModuleResume) do
+			local status,err = xpcall(callback, debug.traceback)
+			if not status then
+				Ext.PrintError("Error calling function for 'ModuleResume':\n", err)
+			end
+		end
+	end
 end
--- Ext.RegisterListener("ModuleLoading", LeaderLib_ModuleLoading)
--- Ext.RegisterListener("ModuleResume", LeaderLib_ModuleLoading)
--- Ext.RegisterListener("SessionLoading", LeaderLib_ModuleLoading)
+Ext.RegisterListener("ModuleResume", ModuleResume)
+
+local function SessionLoaded()
+	if #Listeners.SessionLoaded > 0 then
+		for i,callback in ipairs(Listeners.SessionLoaded) do
+			local status,err = xpcall(callback, debug.traceback)
+			if not status then
+				Ext.PrintError("Error calling function for 'SessionLoaded':\n", err)
+			end
+		end
+	end
+end
+Ext.RegisterListener("SessionLoaded", SessionLoaded)
 
 -- Ext.RegisterListener("SessionLoading", LeaderLib_GameSessionLoad)
 

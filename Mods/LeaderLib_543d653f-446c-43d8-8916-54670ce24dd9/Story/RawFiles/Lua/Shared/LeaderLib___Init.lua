@@ -56,7 +56,9 @@ Listeners = {
 	TimerFinished = {},
 	FeatureEnabled = {},
 	FeatureDisabled = {},
-	Initialized = {}
+	Initialized = {},
+	ModuleResume = {},
+	SessionLoaded = {},
 }
 SkillListeners = {}
 ModListeners = {

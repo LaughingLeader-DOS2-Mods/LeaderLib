@@ -33,21 +33,26 @@ local function ApplyProperties(target, source, properties)
     end
 end
 
+Game.ApplyProperties = ApplyProperties
+
 ---Get a character's party members.
 ---@param partyMember string
 ---@param includeSummons boolean
 ---@param includeFollowers boolean
+---@param includeDead boolean
 ---@param includeSelf boolean
 ---@return string[]
-local function GetParty(partyMember, includeSummons, includeFollowers, includeSelf)
+local function GetParty(partyMember, includeSummons, includeFollowers, includeDead, includeSelf)
     local party = {}
     local allParty = Osi.DB_LeaderLib_AllPartyMembers:Get(nil)
     if allParty ~= nil then
         for i,v in pairs(allParty) do
             local uuid = v[1]
-            if (uuid ~= partyMember or includeSelf) and CharacterIsInPartyWith(partyMember, uuid) == 1 then
-                if (CharacterIsSummon(uuid) == 0 or includeSummons) and (CharacterIsPartyFollower(uuid) == 0 or includeFollowers) then
-                    party[#party+1] = uuid
+            if CharacterIsDead(uuid) == 0 or includeDead then
+                if (uuid ~= partyMember or includeSelf) and CharacterIsInPartyWith(partyMember, uuid) == 1 then
+                    if (CharacterIsSummon(uuid) == 0 or includeSummons) and (CharacterIsPartyFollower(uuid) == 0 or includeFollowers) then
+                        party[#party+1] = uuid
+                    end
                 end
             end
         end
@@ -55,4 +60,4 @@ local function GetParty(partyMember, includeSummons, includeFollowers, includeSe
     return party
 end
 
-Game.ApplyProperties = ApplyProperties
+Game.GetParty = GetParty

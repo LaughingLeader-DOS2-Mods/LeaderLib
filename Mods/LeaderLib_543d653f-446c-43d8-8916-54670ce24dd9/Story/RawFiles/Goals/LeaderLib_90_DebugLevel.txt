@@ -1366,6 +1366,89 @@ THEN
 LeaderLog_Log("DEBUG_STATUS", "[LeaderLib:Debug:CharacterTeleported] Character [",_Name,"] teleported via [",_Skill,"].");
 //END_REGION
 
+//REGION ATTACK_TRACKING
+IF
+CharacterStartAttackObject(_Target, _Owner, _Attacker)
+AND
+String(_Target, _TargetStr)
+AND
+CharacterGetDisplayName(_Attacker, _, _Name)
+AND
+CharacterGetDisplayName(_Owner, _, _OwnerName)
+THEN
+LeaderLog_Log("DEBUG_EVENTS", "[LeaderLib:Debug:CharacterStartAttackObject] [",_Name,"](",_OwnerName,") is attacking [",_TargetStr,"].");
+
+IF
+CharacterMissedBy(_Target, _Owner, _Attacker)
+AND
+String(_Target, _TargetStr)
+AND
+CharacterGetDisplayName(_Attacker, _, _Name)
+AND
+CharacterGetDisplayName(_Owner, _, _OwnerName)
+THEN
+LeaderLog_Log("DEBUG_EVENTS", "[LeaderLib:Debug:CharacterMissedBy] [",_Name,"](",_OwnerName,") missed [",_TargetStr,"].");
+
+IF
+CharacterCriticalHitBy(_Target, _Owner, _Attacker)
+AND
+String(_Target, _TargetStr)
+AND
+CharacterGetDisplayName(_Attacker, _, _Name)
+AND
+CharacterGetDisplayName(_Owner, _, _OwnerName)
+THEN
+LeaderLog_Log("DEBUG_EVENTS", "[LeaderLib:Debug:CharacterCriticalHitBy] [",_Name,"](",_OwnerName,") missed [",_TargetStr,"].");
+
+IF
+AttackedByObject(_Target, _Owner, _Attacker, _DamageType, _DamageSource)
+AND
+String(_Target, _TargetStr)
+AND
+String(_Attacker, _Name)
+AND
+String(_Owner, _OwnerName)
+THEN
+LeaderLog_Log("DEBUG_EVENTS", "[LeaderLib:Debug:AttackedByObject] DamageType [",_DamageType,"] DamageSource [",_DamageSource,"] [",_Name,"](",_OwnerName,") attacked [",_TargetStr,"].");
+
+IF
+AttackedByObject(_Target, NULL_00000000-0000-0000-0000-000000000000, _Attacker, _DamageType, _DamageSource)
+AND
+String(_Target, _TargetStr)
+AND
+String(_Attacker, _Name)
+THEN
+LeaderLog_Log("DEBUG_EVENTS", "[LeaderLib:Debug:AttackedByObject] DamageType [",_DamageType,"] DamageSource [",_DamageSource,"] [",_Name,"](No Owner) attacked [",_TargetStr,"].");
+
+IF
+CharacterReceivedDamage(_Target, _Percentage, _Attacker)
+AND
+String(_Target, _TargetStr)
+AND
+String(_Attacker, _Name)
+AND
+StringConcatenate("]% damage was done to [",_TargetStr, _Str1)
+AND
+StringConcatenate("] by [",_Name, _Str2)
+AND
+StringConcatenate(_Str1, _Str2, _Str3)
+AND
+StringConcatenate(_Str3, "].", _Suffix)
+THEN
+LeaderLog_LogInt("DEBUG_EVENTS", "[LeaderLib:Debug:CharacterReceivedDamage] [",_Percentage, _Suffix);
+
+IF
+CharacterPhysicalHitBy(_Target, _Owner, _Attacker)
+AND
+String(_Target, _TargetStr)
+AND
+String(_Attacker, _Name)
+AND
+String(_Owner, _OwnerName)
+THEN
+LeaderLog_Log("DEBUG_EVENTS", "[LeaderLib:Debug:CharacterPhysicalHitBy] [",_Name,"](",_OwnerName,") attacked [",_TargetStr,"].");
+//END_REGION
+
 //REGION SUMMONING_DEBUG
 PROC
 LeaderLib_Summoning_OnCharacterSummoned((CHARACTERGUID)_Char, (CHARACTERGUID)_Owner, (INTEGER)_IsTotem)

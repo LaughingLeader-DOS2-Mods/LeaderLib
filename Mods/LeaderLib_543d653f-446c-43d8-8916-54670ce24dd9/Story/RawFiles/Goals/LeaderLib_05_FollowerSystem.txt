@@ -448,6 +448,8 @@ CharacterIsDeadOrFeign(_Follower, 0)
 AND
 CharacterIsInCombat(_Follower, 0)
 AND
+CharacterIsInCombat(_Owner, 0)
+AND
 LeaderLib_Follower_QRY_FollowerIsTooFar(_Owner, _Follower)
 THEN
 DB_NOOP(1);

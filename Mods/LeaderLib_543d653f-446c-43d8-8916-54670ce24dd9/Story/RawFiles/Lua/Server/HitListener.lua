@@ -22,5 +22,14 @@ local function OnHit(target, source, damage, handle)
 			end
 		end
 	end
+
+	if #Listeners.OnHit > 0 then
+		for i,callback in ipairs(Listeners.OnHit) do
+			local status,err = xpcall(callback, debug.traceback, target, source, damage, handle)
+			if not status then
+				Ext.PrintError("Error calling function for 'OnHit':\n", err)
+			end
+		end
+	end
 end
 Ext.NewCall(OnHit, "LeaderLib_Ext_OnHit", "(GUIDSTRING)_Target, (GUIDSTRING)_Source, (INTEGER)_Damage, (INTEGER64)_Handle")

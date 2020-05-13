@@ -62,6 +62,7 @@ Listeners = {
 	Initialized = {},
 	ModuleResume = {},
 	SessionLoaded = {},
+	OnHit = {},
 }
 SkillListeners = {}
 ModListeners = {

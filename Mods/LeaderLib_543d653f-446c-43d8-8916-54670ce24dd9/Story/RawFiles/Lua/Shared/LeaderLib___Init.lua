@@ -10,6 +10,7 @@ Common = {}
 if Game == nil then
 	Game = {}
 end
+Game.Tooltip = {}
 Initialized = false
 Main = {}
 ModRegistration = {}

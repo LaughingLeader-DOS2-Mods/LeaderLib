@@ -601,7 +601,7 @@ LeaderLib_ToggleScripts_EnableScript("LeaderLib_StatusEvents_MainScriptEnabled",
 
 //REGION TOGGLING_ON_INTERNAL
 IF
-DB_GlobalFlag(_GlobalFlag)
+GlobalFlagSet(_GlobalFlag)
 AND
 DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _GlobalFlag)
 AND
@@ -609,6 +609,17 @@ LeaderLib_GameScripts_QRY_CanEnableScript(_GoalTitle, _GlobalFlag)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:ToggleOn] Activating goal [",_GoalTitle,"] (",_GlobalFlag,").");
 SysActivateGoal(_GoalTitle);
+
+/*
+IF
+ObjectWasTagged(_Object, _Tag)
+AND
+DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _Tag, 1)
+AND
+LeaderLib_GameScripts_QRY_CanEnableScript(_GoalTitle, _Tag)
+THEN
+LeaderLib_ToggleScripts_EnableScriptForObject(_Object, _Tag, "LeaderLib");
+*/
 
 PROC
 LeaderLib_ToggleScripts_Internal_ToggleOn((STRING)_TagOrFlag)

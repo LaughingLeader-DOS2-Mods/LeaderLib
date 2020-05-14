@@ -32,6 +32,20 @@ function RegisterSkillListener(skill, callback)
 	table.insert(SkillListeners[skill], callback)
 end
 
+--- Removed a function from the listeners table.
+---@param skill string
+---@param callback function
+function RemoveSkillListener(skill, callback)
+	if SkillListeners[skill] ~= nil then
+		for i,v in pairs(SkillListeners[skill]) do
+			if v == callback then
+				table.remove(SkillListeners[skill], i)
+				break
+			end
+		end
+	end
+end
+
 StatusTypes.CHARMED = { CHARMED = true }
 --StatusTypes.POLYMORPHED = { POLYMORPHED = true }
 

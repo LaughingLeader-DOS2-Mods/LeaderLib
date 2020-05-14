@@ -29,7 +29,7 @@ function OnSkillPreparing(char, skillprototype)
 	local listeners = SkillListeners[skill]
 	if listeners ~= nil then
 		for i,callback in ipairs(listeners) do
-			local status,err = xpcall(callback, debug.traceback, GetUUID(char), SKILL_STATE.PREPARE)
+			local status,err = xpcall(callback, debug.traceback, skill, GetUUID(char), SKILL_STATE.PREPARE)
 			if not status then
 				Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
 			end
@@ -47,7 +47,7 @@ function OnSkillUsed(char, skill, ...)
 	local listeners = SkillListeners[skill]
 	if listeners ~= nil then
 		for i,callback in ipairs(listeners) do
-			local status,err = xpcall(callback, debug.traceback, GetUUID(char), SKILL_STATE.USED, {...})
+			local status,err = xpcall(callback, debug.traceback, skill, GetUUID(char), SKILL_STATE.USED, {...})
 			if not status then
 				Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
 			end
@@ -60,7 +60,7 @@ function OnSkillCast(char, skill, ...)
 	local listeners = SkillListeners[skill]
 	if listeners ~= nil then
 		for i,callback in ipairs(listeners) do
-			local status,err = xpcall(callback, debug.traceback, GetUUID(char), SKILL_STATE.CAST, {...})
+			local status,err = xpcall(callback, debug.traceback, skill, GetUUID(char), SKILL_STATE.CAST, {...})
 			if not status then
 				Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
 			end
@@ -76,7 +76,7 @@ function OnSkillHit(char, skillprototype, ...)
 		if listeners ~= nil then
 			--PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillHit] char(",char,") skillprototype(",skillprototype,") skill(",skill,") params(",Ext.JsonStringify(params),")")
 			for i,callback in ipairs(listeners) do
-				local status,err = xpcall(callback, debug.traceback, GetUUID(char), SKILL_STATE.HIT, params)
+				local status,err = xpcall(callback, debug.traceback, skill, GetUUID(char), SKILL_STATE.HIT, params)
 				if not status then
 					Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
 				end
@@ -91,14 +91,15 @@ function OnSkillHit(char, skillprototype, ...)
 				---@type EsvCharacter
 				local character = Ext.GetCharacter(char)
 				for i,status in pairs(character:GetStatuses()) do
-					local potion = Ext.StatGetAttribute(status, "StatusId")
-					if potion ~= nil then
-						local bonusWeapon = Ext.StatGetAttribute(potion, "BonusWeapon")
-						if bonusWeapon ~= nil then
-							local extraProps = Ext.StatGetAttribute(bonusWeapon, "ExtraProperties")
-							if extraProps ~= nil then
-								PrintDebug("Applying ExtraProperties for status BonusWeapon. status("..status..") potion("..potion..") weapon("..bonusWeapon..")")
-								Game.ApplyProperties(target, char, extraProps)
+					if NRD_StatAttributeExists(status, "StatsId") == 1 then
+						local potion = Ext.StatGetAttribute(status, "StatsId")
+						if potion ~= nil and potion ~= "" then
+							local bonusWeapon = Ext.StatGetAttribute(potion, "BonusWeapon")
+							if bonusWeapon ~= nil and bonusWeapon ~= "" then
+								local extraProps = Ext.StatGetAttribute(bonusWeapon, "ExtraProperties")
+								if extraProps ~= nil then
+									Game.ApplyProperties(target, char, extraProps)
+								end
 							end
 						end
 					end

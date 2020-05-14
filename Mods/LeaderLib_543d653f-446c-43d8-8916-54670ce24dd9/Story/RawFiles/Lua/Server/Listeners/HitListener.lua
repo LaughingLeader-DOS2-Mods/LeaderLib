@@ -9,14 +9,15 @@ local function OnHit(target, source, damage, handle)
 		---@type EsvCharacter
 		local character = Ext.GetCharacter(source)
 		for i,status in pairs(character:GetStatuses()) do
-			local potion = Ext.StatGetAttribute(status, "StatsId")
-			if potion ~= nil and type(potion) == "string" then
-				local bonusWeapon = Ext.StatGetAttribute(potion, "BonusWeapon")
-				if bonusWeapon ~= nil then
-					local extraProps = Ext.StatGetAttribute(bonusWeapon, "ExtraProperties")
-					if extraProps ~= nil then
-						--PrintDebug("Applying ExtraProperties for status BonusWeapon. status("..status..") potion("..potion..") weapon("..bonusWeapon..")")
-						Game.ApplyProperties(target, source, extraProps)
+			if NRD_StatAttributeExists(status, "StatsId") == 1 then
+				local potion = Ext.StatGetAttribute(status, "StatsId")
+				if potion ~= nil and potion ~= "" then
+					local bonusWeapon = Ext.StatGetAttribute(potion, "BonusWeapon")
+					if bonusWeapon ~= nil and bonusWeapon ~= "" then
+						local extraProps = Ext.StatGetAttribute(bonusWeapon, "ExtraProperties")
+						if extraProps ~= nil then
+							Game.ApplyProperties(target, source, extraProps)
+						end
 					end
 				end
 			end

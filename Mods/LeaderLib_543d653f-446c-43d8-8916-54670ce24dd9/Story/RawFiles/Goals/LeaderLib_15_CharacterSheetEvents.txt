@@ -16,6 +16,11 @@ NRD_ModCall("LeaderLib", "CharacterSheet_StorePartyValues");
 
 // Respec mirror
 IF
+DB_Illusionist(_Player, _Mirror)
+THEN
+NRD_ModCall("LeaderLib", "CharacterSheet_StorePartyValues");
+
+IF
 TimerFinished("CharacterCreation")
 THEN
 TimerCancel("Timers_LeaderLib_CharacterSheet_SignalPartyValueChanges");

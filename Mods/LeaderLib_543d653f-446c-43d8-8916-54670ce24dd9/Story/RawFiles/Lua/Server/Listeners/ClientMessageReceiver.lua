@@ -30,7 +30,7 @@ end
 
 local function FireListenerEvents(uuid, stat, lastVal, nextVal)
 	if #Listeners.CharacterBasePointsChanged > 0 then
-		for i,callback in ipairs(Listeners.CharacterBasePointsChanged) do
+		for i,callback in pairs(Listeners.CharacterBasePointsChanged) do
 			local status,err = xpcall(callback, debug.traceback, uuid, stat, lastVal, nextVal)
 			if not status then
 				Ext.PrintError("Error calling function for 'CharacterBasePointsChanged':\n", err)

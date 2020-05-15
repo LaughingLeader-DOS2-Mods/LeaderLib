@@ -14,6 +14,14 @@ LeaderLib_Initialized((STRING)_Region)
 THEN
 NRD_ModCall("LeaderLib", "CharacterSheet_StorePartyValues");
 
+// Initial CC ended
+IF
+RegionEnded(_Region)
+AND
+IsCharacterCreationLevel(_Region, 1)
+THEN
+NRD_ModCall("LeaderLib", "CharacterSheet_StorePartyValues");
+
 // Respec mirror
 IF
 DB_Illusionist(_Player, _Mirror)

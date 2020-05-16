@@ -1,5 +1,5 @@
 
---- Formats a damage range typically returned from Game.Math.GetSkillDamageRange
+--- Formats a damage range typically returned from GameHelpers.Math.GetSkillDamageRange
 ---@param damageRange table<string,number[]>
 ---@return string
 local function FormatDamageRange(damageRange)
@@ -11,9 +11,9 @@ local function FormatDamageRange(damageRange)
 			local max = damage[2]
 			if min ~= nil and max ~= nil then
 				if max == min then
-					table.insert(damageTexts, Game.GetDamageText(damageType, string.format("%i", max)))
+					table.insert(damageTexts, GameHelpers.GetDamageText(damageType, string.format("%i", max)))
 				else
-					table.insert(damageTexts, Game.GetDamageText(damageType, string.format("%i-%i", min, max)))
+					table.insert(damageTexts, GameHelpers.GetDamageText(damageType, string.format("%i-%i", min, max)))
 				end
 				totalDamageTypes = totalDamageTypes + 1
 			end

@@ -241,7 +241,7 @@ end
 function Debug_TestSkillScaleMath(level)
 	local stat = Ext.GetStat("Damage_Burning")
 	local dmgFromBase = stat.DamageFromBase * 0.01
-	local damage = Game.Math.GetAverageLevelDamage(math.tointeger(level))
+	local damage = GameHelpers.Math.GetAverageLevelDamage(math.tointeger(level))
 	local damageAdjusted = damage * dmgFromBase
     local damageRange = damageAdjusted * 0.3
 	local minDamage = math.max(dmgFromBase * dmgFromBase * (damageAdjusted - damageRange), 1.0)

@@ -66,7 +66,7 @@ local function RefreshSkill(char, skill)
 end
 Ext.NewCall(RefreshSkill, "LeaderLib_Ext_RefreshSkill", "(CHARACTERGUID)_Character, (STRING)_Skill")
 
-Game.StoreSkillData = StoreSkillData
-Game.StoreSkillSlots = StoreSkillSlots
-Game.TrySetSkillSlot = TrySetSkillSlot
-Game.RefreshSkill = RefreshSkill
+GameHelpers.StoreSkillData = StoreSkillData
+GameHelpers.StoreSkillSlots = StoreSkillSlots
+GameHelpers.TrySetSkillSlot = TrySetSkillSlot
+GameHelpers.RefreshSkill = RefreshSkill

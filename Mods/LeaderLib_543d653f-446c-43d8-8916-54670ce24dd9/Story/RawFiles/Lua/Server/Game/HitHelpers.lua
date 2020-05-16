@@ -44,5 +44,5 @@ end
 
 --Ext.NewQuery(HitWithWeapon, "LeaderLib_Ext_QRY_HitWithWeapon", "[in](GUIDSTRING)_Target, [in](INTEGER64)_Handle, [in](INTEGER)_IsHitType, [out](INTEGER)_Bool")
 
-Game.HitSucceeded = HitSucceeded
-Game.HitWithWeapon = HitWithWeapon
+GameHelpers.HitSucceeded = HitSucceeded
+GameHelpers.HitWithWeapon = HitWithWeapon

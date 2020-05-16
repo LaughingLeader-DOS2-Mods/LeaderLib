@@ -36,7 +36,7 @@ local function ReduceDamage(target, attacker, handle_param, reduction_perc, is_h
 end
 
 Ext.NewCall(ReduceDamage, "LeaderLib_Hit_ReduceDamage", "(GUIDSTRING)_Target, (GUIDSTRING)_Attacker, (INTEGER64)_Handle, (REAL)_Percentage, (INTEGER)_IsHitHandle")
-Game.ReduceDamage = ReduceDamage
+GameHelpers.ReduceDamage = ReduceDamage
 
 ---Increase damage by a percentage (0.5).
 ---@param target string
@@ -76,7 +76,7 @@ local function IncreaseDamage(target, attacker, handle_param, increase_perc, is_
 end
 
 Ext.NewCall(IncreaseDamage, "LeaderLib_Hit_IncreaseDamage", "(GUIDSTRING)_Target, (GUIDSTRING)_Attacker, (INTEGER64)_Handle, (REAL)_Percentage, (INTEGER)_IsHitHandle")
-Game.IncreaseDamage = IncreaseDamage
+GameHelpers.IncreaseDamage = IncreaseDamage
 
 ---Redirect damage to another target.
 ---@param target string
@@ -144,4 +144,4 @@ end
 
 Ext.NewCall(RedirectDamage, "LeaderLib_Hit_RedirectDamage", "(GUIDSTRING)_Target, (GUIDSTRING)_Defender, (GUIDSTRING)_Attacker, (INTEGER64)_Handle, (REAL)_Percentage, (INTEGER)_IsHitHandle")
 
-Game.RedirectDamage = RedirectDamage
+GameHelpers.RedirectDamage = RedirectDamage

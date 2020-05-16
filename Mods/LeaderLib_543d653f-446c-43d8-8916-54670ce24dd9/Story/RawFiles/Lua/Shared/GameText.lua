@@ -87,7 +87,7 @@ local function GetDamageText(damageType, damageValue)
 	return ""
 end
 
-Game.GetDamageText = GetDamageText
+GameHelpers.GetDamageText = GetDamageText
 
 --- Get the localized name for an ability.
 ---@param ability string|integer
@@ -104,12 +104,12 @@ local function GetAbilityName(ability)
 	if entry ~= nil then
 		return entry.Value
 	else
-		Ext.PrintError("[Game.GetAbilityName] No ability name for ["..tostring(ability).."]")
+		Ext.PrintError("[GameHelpers.GetAbilityName] No ability name for ["..tostring(ability).."]")
 	end
 	return nil
 end
 
-Game.GetAbilityName = GetAbilityName
+GameHelpers.GetAbilityName = GetAbilityName
 
 --- Get an ExtraData entry, with an optional fallback value if the key does not exist.
 ---@param key string
@@ -123,7 +123,7 @@ local function GetExtraData(key,fallback)
 	return fallback
 end
 
-Game.GetExtraData = GetExtraData
+GameHelpers.GetExtraData = GetExtraData
 
 local damageTypeToResistanceName = {
 	None = "PureResistance", -- Special LeaderLib Addition
@@ -183,4 +183,4 @@ local function GetResistanceText(resistance, amount)
 	return ""
 end
 
-Game.GetResistanceText = GetResistanceText
+GameHelpers.GetResistanceText = GetResistanceText

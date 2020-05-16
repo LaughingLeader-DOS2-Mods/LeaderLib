@@ -7,10 +7,10 @@ end
 Classes = {}
 Common = {}
 
-if Game == nil then
-	Game = {}
+if GameHelpers == nil then
+	GameHelpers = {}
 end
-Game.Tooltip = {}
+GameHelpers.Tooltip = {}
 Initialized = false
 Main = {}
 ModRegistration = {}

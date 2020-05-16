@@ -33,7 +33,7 @@ local function ApplyProperties(target, source, properties)
     end
 end
 
-Game.ApplyProperties = ApplyProperties
+GameHelpers.ApplyProperties = ApplyProperties
 
 ---Get a character's party members.
 ---@param partyMember string
@@ -60,4 +60,4 @@ local function GetParty(partyMember, includeSummons, includeFollowers, includeDe
     return party
 end
 
-Game.GetParty = GetParty
+GameHelpers.GetParty = GetParty

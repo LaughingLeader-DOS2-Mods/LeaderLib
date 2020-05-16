@@ -98,7 +98,7 @@ function OnSkillHit(char, skillprototype, ...)
 							if bonusWeapon ~= nil and bonusWeapon ~= "" then
 								local extraProps = Ext.StatGetAttribute(bonusWeapon, "ExtraProperties")
 								if extraProps ~= nil then
-									Game.ApplyProperties(target, char, extraProps)
+									GameHelpers.ApplyProperties(target, char, extraProps)
 								end
 							end
 						end

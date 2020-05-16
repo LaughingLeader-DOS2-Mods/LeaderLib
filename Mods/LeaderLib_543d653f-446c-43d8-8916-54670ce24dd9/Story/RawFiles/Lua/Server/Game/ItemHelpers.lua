@@ -75,8 +75,8 @@ local function RemoveRunes(character, runeTemplates)
 	end
 end
 
-Game.EquipInSlot = EquipInSlot
-Game.ItemIsEquipped = ItemIsEquipped
-Game.CloneItemForCharacter = CloneItemForCharacter
-Game.CreateItemByStat = CreateItemByStat
-Game.RemoveRunes = RemoveRunes
+GameHelpers.EquipInSlot = EquipInSlot
+GameHelpers.ItemIsEquipped = ItemIsEquipped
+GameHelpers.CloneItemForCharacter = CloneItemForCharacter
+GameHelpers.CreateItemByStat = CreateItemByStat
+GameHelpers.RemoveRunes = RemoveRunes

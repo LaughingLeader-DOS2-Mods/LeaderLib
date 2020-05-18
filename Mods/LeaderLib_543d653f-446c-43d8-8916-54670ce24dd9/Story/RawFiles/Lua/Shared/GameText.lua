@@ -65,6 +65,15 @@ LocalizedText.AbilityNames = {
 	Brewmaster = TranslatedString:Create("hab7acde6g5af6g47a7ga65dgc633aef193cf","Brew Master"),
 }
 
+LocalizedText.AttributeNames = {
+	Strength = TranslatedString:Create("hb4e3a075g5f82g4a0dgaffbg456e5c15c3db","Strength"),
+	Finesse = TranslatedString:Create("h281c2da7g2d2bg4d69g986agfd124c7f569f","Finesse"),
+	Intelligence = TranslatedString:Create("hfbc938ceg297fg4232ga11dg3fe44985b9f8","Intelligence"),
+	Constitution = TranslatedString:Create("hb4cd5b0bg5731g40b3gb49bg1fa6db60f346","Constitution"),
+	Memory = TranslatedString:Create("h8565e761ge486g467aga4cfg17344874f1ab","Memory"),
+	Wits = TranslatedString:Create("h2b03f6f9gbf5dg4f51g9b98gf01243633ed3","Wits"),
+}
+
 ---Get localized damage text wrapped in that damage type's color.
 ---@param damageType string
 ---@param damageValue string|integer|number

@@ -164,6 +164,13 @@ local function TraceStatusType(obj, handle, attribute, attribute_type)
 	elseif attribute_type == "GuidString" or attribute_type == "Handle" then
 		PrintDebug("[LeaderLib_Debug.lua] ["..attribute.."] = "..tostring(NRD_StatusGetGuidString(obj, handle, attribute)).."")
 	end
+	if attribute == "SkillId" then
+		local skillprototype = NRD_StatusGetString(obj, handle, "SkillId")
+		if skillprototype ~= "" and skillprototype ~= nil then
+			local skill = string.gsub(skillprototype, "_%-?%d+$", "")
+			PrintDebug("[LeaderLib_Debug.lua] ["..attribute.."] = "..skillprototype.." => "..skill.."")
+		end
+	end
 end
 
 function Debug_TraceStatus(obj, status, handle)

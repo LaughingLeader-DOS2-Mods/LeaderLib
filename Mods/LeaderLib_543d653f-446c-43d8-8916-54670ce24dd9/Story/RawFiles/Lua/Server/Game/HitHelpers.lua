@@ -18,7 +18,7 @@ end
 -- // 0 - ASAttack
 -- // 1 - Character::ApplyDamage, StatusDying, ExecPropertyDamage, StatusDamage
 -- // 2 - AI hit test
--- // 3 - Explode
+-- // 3 - Explode, Projectile Skill Hit
 -- // 4 - Trap
 -- // 5 - InSurface
 -- // 6 - SetHP, osi::ApplyDamage, StatusConsume
@@ -27,8 +27,9 @@ end
 ---@param target string
 ---@param handle integer
 ---@param is_hit integer
+---@param allowSkills boolean
 ---@return boolean
-local function HitWithWeapon(target, handle, is_hit)
+local function HitWithWeapon(target, handle, is_hit, allowSkills)
     if is_hit == 1 or is_hit == true then
         local hitType = NRD_HitGetInt(handle, "HitType")
         local hitWithWeapon = NRD_HitGetInt(handle, "HitWithWeapon") == 1
@@ -37,8 +38,22 @@ local function HitWithWeapon(target, handle, is_hit)
         local hitReason = NRD_StatusGetInt(target, handle, "HitReason")
         local weaponHandle = NRD_StatusGetGuidString(target, handle, "WeaponHandle")
         local sourceType = NRD_StatusGetInt(target, handle, "DamageSourceType")
+
+        local hitReasonFromWeapon = hitReason <= 1
         local hitWithWeapon = sourceType == 6 or sourceType == 7
-        return (hitReason <= 1 and hitWithWeapon) and (weaponHandle ~= nil and weaponHandle ~= "NULL_00000000-0000-0000-0000-000000000000")
+        local hasWeaponHandle = weaponHandle ~= nil and weaponHandle ~= "NULL_00000000-0000-0000-0000-000000000000"
+        if allowSkills == true then
+            local skillprototype = NRD_StatusGetString(target, handle, "SkillId")
+            if skillprototype ~= "" and skillprototype ~= nil then
+                local skill = string.gsub(skillprototype, "_%-?%d+$", "")
+                hitReasonFromWeapon = Ext.StatGetAttribute(skill, "UseWeaponDamage") == "Yes" and (hitReason <= 1 or hitReason == 3)
+                if hitReasonFromWeapon then
+                    hasWeaponHandle = true
+                end
+                --Ext.StatGetAttribute(skill, "UseWeaponProperties") == "Yes"
+            end
+        end
+        return (hitReasonFromWeapon and hitWithWeapon) and hasWeaponHandle
     end
 end
 

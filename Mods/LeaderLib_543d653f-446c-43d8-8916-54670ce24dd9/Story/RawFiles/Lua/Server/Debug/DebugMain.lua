@@ -265,6 +265,49 @@ function GenerateIdeHelpers()
 	Ext.GenerateIdeHelpers()
 end
 
+local function Command_PrintPos()
+	---@type StatCharacter
+	local character = CharacterGetHostCharacter()
+	print("Pos:", GetPosition(character))
+	print("Rot:", GetRotation(character))
+end
+Ext.RegisterConsoleCommand("pos", Command_PrintPos)
+
+local function Command_PrintPos2()
+	---@type StatCharacter
+	local character = Ext.GetCharacter(CharacterGetHostCharacter()).Stats
+	print("Pos:", Ext.JsonStringify(character.Position))
+	print("Rot:", Ext.JsonStringify(character.Rotation))
+end
+Ext.RegisterConsoleCommand("pos2", Command_PrintPos2)
+
+local function Command_PrintUUIDs(call, radiusVal)
+	local radius = 6.0
+	if radiusVal ~= nil then
+		radius = tonumber(radiusVal)
+	end
+	local host = CharacterGetHostCharacter()
+	CharacterLaunchIteratorAroundObject(host, radius, "Iterator_LeaderLib_Debug_Ext_PrintCharacter")
+end
+Ext.RegisterConsoleCommand("printuuids", Command_PrintUUIDs)
+
+function Debug_Iterator_PrintCharacter(uuid)
+	---@type EsvCharacter
+	local character = Ext.GetCharacter(uuid)
+	---@type StatCharacter
+	local characterStats = character.Stats
+
+	print("CHARACTER")
+	print("===============")
+	print("UUID:", uuid)
+	print("Name:", CharacterGetDisplayName(uuid))
+	print("Stat:", characterStats.Name)
+	print("Archetype:", character.Archetype)
+	print("Pos:", Ext.JsonStringify(characterStats.Position))
+	print("Rot:", Ext.JsonStringify(characterStats.Rotation))
+	print("===============")
+end
+
 --[[SkillProperties = {{
 Type = "Status",
 Action = "LLWEAPONEX_SUCKER_PUNCH",

@@ -181,6 +181,15 @@ THEN
 NOT DB_LeaderLib_Array_Temp_LastEntry("LeaderLib_Debug_ArrayTest", _Index, _Value);
 LeaderLog_Log("DEBUG", "[LeaderLib_90__Debug:TextEventSet(leaderlib_debug_arraytest)] Removed '(",_Value,")'");
 LeaderLib_Array_ClearArray("LeaderLib_Debug_ArrayTest");
+
+//REGION LUA_DEBUG_COMMANDS
+/* [OSITOOLS_ONLY]
+IF
+StoryEvent(_Obj, "Iterator_LeaderLib_Debug_Ext_PrintCharacter")
+THEN
+NRD_ModCall("LeaderLib", "Debug_Iterator_PrintCharacter", (STRING)_Obj);
+*/
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

@@ -30,7 +30,7 @@ end
 ---@param allowSkills boolean
 ---@return boolean
 local function HitWithWeapon(target, handle, is_hit, allowSkills)
-    if handle < 0 then 
+    if handle == nil or handle < 0 then 
         return false
     end
     if is_hit == 1 or is_hit == true then

@@ -146,17 +146,23 @@ function OnSkillCast(char, skill, ...)
 	end
 end
 
-function OnSkillHit(char, skillprototype, ...)
+---@param source string
+---@param skillprototype string
+---@param target string
+---@param handle integer
+---@param damage integer
+function OnSkillHit(source, skillprototype, target, handle, damage)
 	if skillprototype ~= "" and skillprototype ~= nil then
-		local eventParams = {...}
 		local skill = string.gsub(skillprototype, "_%-?%d+$", "")
 		local listeners = SkillListeners[skill]
 		if listeners ~= nil then
+			---@type HitData
+			local data = Classes.HitData:Create(target, source, damage, handle, skill)
 			if Ext.IsDeveloperMode() then
-				PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillHit] char(",char,") skillprototype(",skillprototype,") skill(",skill,") params(",Ext.JsonStringify(params),")")
+				PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillHit] char(",char,") skillprototype(",skillprototype,") skill(",skill,") data(",Ext.JsonStringify(data),")")
 			end
 			for i,callback in ipairs(listeners) do
-				local status,err = xpcall(callback, debug.traceback, skill, GetUUID(char), SKILL_STATE.HIT, eventParams)
+				local status,err = xpcall(callback, debug.traceback, skill, GetUUID(char), SKILL_STATE.HIT, data)
 				if not status then
 					Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
 				end

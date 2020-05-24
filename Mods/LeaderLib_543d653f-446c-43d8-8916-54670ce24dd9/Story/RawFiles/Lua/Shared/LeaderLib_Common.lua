@@ -191,27 +191,6 @@ local function GetRandom(max,min)
 	return ran
 end
 
----Check if a string is equal to another. Case-insenstive.
----@param a string
----@param b string
----@param insensitive boolean
----@return boolean
-local function StringEquals(a,b, insensitive)
-	if insensitive == nil then insensitive = true end
-	if a ~= nil and b ~= nil then
-		if insensitive then
-			return string.upper(a) == string.upper(b)
-		else
-			return a == b
-		end
-	end
-	return false
-end
-
-local function StringIsNullOrEmpty(x)
-	return x == nil or x == ""
-end
-
 --Source: https://github.com/sulai/Lib-Pico8/blob/master/lang.lua
 ---Generates an enum-like table
 ---@param names table
@@ -276,44 +255,6 @@ local function Split(s, sep)
     return fields
 end
 
----Join a table of string into one string.
----Source: http://www.wellho.net/resources/ex.php4?item=u105/spjo
----@param delimiter string
----@param list table
-local function StringJoin(delimiter, list)
-	local len = #list
-	if len == 0 then
-		return ""
-	end
-	local string = list[1]
-	for i = 2, len do
-		string = string .. delimiter .. list[i]
-	end
-	return string
-end
-
----Split a string into a table.
----Source: http://www.wellho.net/resources/ex.php4?item=u105/spjo
----@param delimiter string
----@param str string
-local function StringSplit(delimiter, str)
-	local list = {}; local pos = 1
-	if string.find("", delimiter, 1) then
-		return list
-	end
-	while 1 do
-		local first, last = string.find(str, delimiter, pos)
-		if first then
-			table.insert(list, string.sub(str, pos, first-1))
-			pos = last+1
-		else
-			table.insert(list, string.sub(str, pos))
-			break
-		end
-	end
-	return list
-end
-
 ---Formats a number with commas.
 ---@param amount integer
 local function FormatNumber(amount)
@@ -332,8 +273,8 @@ Common = {
 	CopyTable = CopyTable,
 	FlattenTable = FlattenTable,
 	TableHasEntry = TableHasEntry,
-	StringEquals = StringEquals,
-	StringIsNullOrEmpty = StringIsNullOrEmpty,
+	StringEquals = StringHelpers.Equals,
+	StringIsNullOrEmpty = StringHelpers.IsNullOrEmpty,
 	Split = Split,
 	ShuffleTable = ShuffleTable,
 	GetTableEntry = GetTableEntry,
@@ -342,7 +283,7 @@ Common = {
 	GetRandom = GetRandom,
 	Enum = Enum,
 	SafeguardParam = SafeguardParam,
-	StringJoin = StringJoin,
-	StringSplit = StringSplit,
+	StringJoin = StringHelpers.Join,
+	StringSplit = StringHelpers.Split,
 	FormatNumber = FormatNumber
 }

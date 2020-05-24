@@ -291,6 +291,24 @@ local function Command_PrintUUIDs(call, radiusVal)
 end
 Ext.RegisterConsoleCommand("printuuids", Command_PrintUUIDs)
 
+local function Command_AddSkillListener(call, skill)
+	if skill ~= nil then
+		RegisterSkillListener(skill, function(skill, uuid, state, ...)
+			print("[LeaderLib:DebugMain.lua:SkillListener] skill(",skill,") caster(",uuid,") state(",state,") params(",Ext.JsonStringify({...}),")")
+		end)
+		print("[LeaderLib:listenskill] Registered listener function for skill ", skill)
+	else
+		Ext.PrintWarning("[LeaderLib:listenskill] Please provide a valid skill ID to listen for!")
+	end
+end
+Ext.RegisterConsoleCommand("listenskill", Command_AddSkillListener)
+
+local function Command_ResetLua(command)
+	print("[LeaderLib:luareset] Reseting lua.")
+	NRD_LuaReset(1,1,1)
+end
+Ext.RegisterConsoleCommand("luareset", Command_ResetLua)
+
 function Debug_Iterator_PrintCharacter(uuid)
 	---@type EsvCharacter
 	local character = Ext.GetCharacter(uuid)

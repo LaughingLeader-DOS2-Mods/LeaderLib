@@ -17,28 +17,28 @@ CharacterUsedSkill(_Char, _Skill, _SkillType, _SkillElement)
 AND
 NOT DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _, _Skill)
 THEN
-NRD_ModCall("LeaderLib", "OnSkillUsed", (STRING)_Char, _Skill);
+NRD_ModCall("LeaderLib", "OnSkillUsed", (STRING)_Char, _Skill, _SkillType, _SkillElement);
 
 IF
 CharacterUsedSkillOnTarget(_Char, _Target, _Skill, _SkillType, _SkillElement)
 AND
 NOT DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _, _Skill)
 THEN
-NRD_ModCall("LeaderLib", "OnSkillUsed", (STRING)_Char, _Skill, (STRING)_Target);
+NRD_ModCall("LeaderLib", "OnSkillUsed", (STRING)_Char, _Skill, _SkillType, _SkillElement, (STRING)_Target);
 
 IF
 CharacterUsedSkillAtPosition(_Char, _x, _y, _z, _Skill, _SkillType, _SkillElement)
 AND
 NOT DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _, _Skill)
 THEN
-NRD_ModCall("LeaderLib", "OnSkillUsed", (STRING)_Char, _Skill, (STRING)_x, (STRING)_y, (STRING)_z);
+NRD_ModCall("LeaderLib", "OnSkillUsed", (STRING)_Char, _Skill, _SkillType, _SkillElement, (STRING)_x, (STRING)_y, (STRING)_z);
 
 IF
 CharacterUsedSkillOnZoneWithTarget(_Char, _Target, _Skill, _SkillType, _SkillElement)
 AND
 NOT DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _, _Skill)
 THEN
-NRD_ModCall("LeaderLib", "OnSkillUsed", (STRING)_Char, _Skill, (STRING)_Target);
+NRD_ModCall("LeaderLib", "OnSkillUsed", (STRING)_Char, _Skill, _SkillType, _SkillElement, (STRING)_Target);
 
 IF
 SkillCast(_Char, _Skill, _SkillType, _SkillElement)

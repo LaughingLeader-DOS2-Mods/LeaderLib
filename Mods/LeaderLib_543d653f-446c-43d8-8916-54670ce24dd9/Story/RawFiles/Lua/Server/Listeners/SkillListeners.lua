@@ -37,15 +37,38 @@ function OnSkillPreparing(char, skillprototype)
 	end
 end
 
-function OnSkillUsed(char, skill, ...)
+---A temporary table used to store data for a skill, including targets / skill information.
+---@type table<string,SkillEventData>
+local skillEventDataTable = {}
+
+function OnSkillUsed(char, skill, skillType, skillAbility, ...)
 	if skill ~= nil then
 		Osi.LeaderLib_LuaSkillListeners_RemoveIgnoredPrototype(char, skill)
 	else
 		Osi.LeaderLib_LuaSkillListeners_RemoveIgnoredPrototype(char)
 	end
-	PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillUsed] char(",char,") skill(",skill,") params(",Ext.JsonStringify({...}),")")
 	local listeners = SkillListeners[skill]
 	if listeners ~= nil then
+		local eventParams = {...}
+		---@type SkillEventData
+		local data = nil
+		local skillDataHolder = skillEventDataTable[skill]
+		if skillDataHolder ~= nil then
+
+		end
+		if data == nil then
+			data = Classes.SkillEventData:Create(char, skill, skillType, skillAbility)
+		end
+		if eventParams ~= nil then
+			if #eventParams > 1 and not StringHelpers.IsNullOrEmpty(eventParams[1]) then
+				data.TargetObjects[#data.TargetObjects+1] = eventParams[1]
+				data.TotalTargetObjects = data.TotalTargetObjects + 1
+			elseif #eventParams == 1 then
+
+			end
+		end
+		PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillUsed] char(",char,") skill(",skill,") params(",Ext.JsonStringify({...}),")")
+		
 		for i,callback in ipairs(listeners) do
 			local status,err = xpcall(callback, debug.traceback, skill, GetUUID(char), SKILL_STATE.USED, {...})
 			if not status then

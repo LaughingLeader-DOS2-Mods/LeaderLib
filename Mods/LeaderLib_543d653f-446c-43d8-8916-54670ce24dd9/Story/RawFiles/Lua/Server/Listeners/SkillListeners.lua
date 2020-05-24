@@ -41,7 +41,53 @@ end
 ---@type table<string,SkillEventData>
 local skillEventDataTable = {}
 
-function OnSkillUsed(char, skill, skillType, skillAbility, ...)
+local function GetCharacterSkillData(skill, uuid, skillType, skillAbility)
+	local data = nil
+	local skillDataHolder = skillEventDataTable[skill]
+	if skillDataHolder ~= nil then
+		data = skillDataHolder[uuid]
+	else
+		skillDataHolder = {}
+		skillEventDataTable[skill] = skillDataHolder
+	end
+
+	if data == nil then
+		data = Classes.SkillEventData:Create(uuid, skill, skillType, skillAbility)
+		skillDataHolder[uuid] = data
+		print("[GetCharacterSkillData] data created for skill/caster | skillEventDataTable", Ext.JsonStringify(skillEventDataTable))
+	end
+	return data
+end
+
+local function RemoveCharacterSkillData(uuid, skill)
+	local skillDataHolder = skillEventDataTable[skill]
+	if skillDataHolder ~= nil then
+		skillDataHolder[uuid] = nil
+	end
+end
+
+function StoreSkillData(char, skill, skillType, skillAbility, ...)
+	local listeners = SkillListeners[skill]
+	if listeners ~= nil then
+		local uuid = GetUUID(char)
+		local eventParams = {...}
+		---@type SkillEventData
+		local data = GetCharacterSkillData(skill, uuid, skillType, skillAbility)
+		if eventParams ~= nil then
+			if #eventParams == 1 and not StringHelpers.IsNullOrEmpty(eventParams[1]) then
+				data:AddTargetObject(eventParams[1])
+			elseif #eventParams >= 3 then -- Position
+				local x,y,z = table.unpack(eventParams)
+				if x ~= nil and y ~= nil and z ~= nil then
+					data:AddTargetPosition(x,y,z)
+				end
+			end
+		end
+	end
+end
+
+-- Fires when CharacterUsedSkill fires. This happens after all the target events.
+function OnSkillUsed(char, skill, ...)
 	if skill ~= nil then
 		Osi.LeaderLib_LuaSkillListeners_RemoveIgnoredPrototype(char, skill)
 	else
@@ -49,28 +95,21 @@ function OnSkillUsed(char, skill, skillType, skillAbility, ...)
 	end
 	local listeners = SkillListeners[skill]
 	if listeners ~= nil then
+		local uuid = GetUUID(char)
 		local eventParams = {...}
-		---@type SkillEventData
-		local data = nil
-		local skillDataHolder = skillEventDataTable[skill]
-		if skillDataHolder ~= nil then
-
-		end
-		if data == nil then
-			data = Classes.SkillEventData:Create(char, skill, skillType, skillAbility)
-		end
-		if eventParams ~= nil then
-			if #eventParams > 1 and not StringHelpers.IsNullOrEmpty(eventParams[1]) then
-				data.TargetObjects[#data.TargetObjects+1] = eventParams[1]
-				data.TotalTargetObjects = data.TotalTargetObjects + 1
-			elseif #eventParams == 1 then
-
-			end
-		end
-		PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillUsed] char(",char,") skill(",skill,") params(",Ext.JsonStringify({...}),")")
-		
+		local data = GetCharacterSkillData(skill, uuid)
+		local hasSkillData = data ~= nil
 		for i,callback in ipairs(listeners) do
-			local status,err = xpcall(callback, debug.traceback, skill, GetUUID(char), SKILL_STATE.USED, {...})
+			local status = nil
+			local err = nil
+			if hasSkillData then
+				if Ext.IsDeveloperMode() then
+					PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillUsed] char(",char,") skill(",skill,") params(",Ext.JsonStringify(eventParams),") data(",data:ToString(),")")
+				end
+				status,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.USED, data, eventParams)
+			else
+				status,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.USED, eventParams)
+			end
 			if not status then
 				Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
 			end
@@ -79,27 +118,45 @@ function OnSkillUsed(char, skill, skillType, skillAbility, ...)
 end
 
 function OnSkillCast(char, skill, ...)
-	PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillCast] char(",char,") skill(",skill,") params(",Ext.JsonStringify({...}),")")
 	local listeners = SkillListeners[skill]
 	if listeners ~= nil then
+		local uuid = GetUUID(char)
+		local eventParams = {...}
+		local data = GetCharacterSkillData(skill, uuid)
+		local hasSkillData = data ~= nil
 		for i,callback in ipairs(listeners) do
-			local status,err = xpcall(callback, debug.traceback, skill, GetUUID(char), SKILL_STATE.CAST, {...})
+			local status = nil
+			local err = nil
+			if hasSkillData then
+				if Ext.IsDeveloperMode() then
+					PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillCast] char(",char,") skill(",skill,") params(",Ext.JsonStringify(eventParams),") data(",data:ToString(),")")
+				end
+				status,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.CAST, data, eventParams)
+			else
+				status,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.CAST, nil, eventParams)
+			end
 			if not status then
 				Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
 			end
+		end
+
+		if data ~= nil then
+			RemoveCharacterSkillData(skill, uuid)
 		end
 	end
 end
 
 function OnSkillHit(char, skillprototype, ...)
 	if skillprototype ~= "" and skillprototype ~= nil then
-		local params = {...}
+		local eventParams = {...}
 		local skill = string.gsub(skillprototype, "_%-?%d+$", "")
 		local listeners = SkillListeners[skill]
 		if listeners ~= nil then
-			--PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillHit] char(",char,") skillprototype(",skillprototype,") skill(",skill,") params(",Ext.JsonStringify(params),")")
+			if Ext.IsDeveloperMode() then
+				PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillHit] char(",char,") skillprototype(",skillprototype,") skill(",skill,") params(",Ext.JsonStringify(params),")")
+			end
 			for i,callback in ipairs(listeners) do
-				local status,err = xpcall(callback, debug.traceback, skill, GetUUID(char), SKILL_STATE.HIT, params)
+				local status,err = xpcall(callback, debug.traceback, skill, GetUUID(char), SKILL_STATE.HIT, eventParams)
 				if not status then
 					Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
 				end

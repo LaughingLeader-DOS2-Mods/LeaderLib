@@ -10,39 +10,49 @@ NRD_ActionStateGetString(_Char, "SkillId", _SkillPrototype)
 AND
 NOT DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _SkillPrototype, (STRING)_)
 THEN
+NRD_DebugLog("NRD_OnActionStateEnter(PrepareSkill)");
 NRD_ModCall("LeaderLib", "OnSkillPreparing", (STRING)_Char, _SkillPrototype);
 
-IF
-CharacterUsedSkill(_Char, _Skill, _SkillType, _SkillElement)
-AND
-NOT DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _, _Skill)
-THEN
-NRD_ModCall("LeaderLib", "OnSkillUsed", (STRING)_Char, _Skill, _SkillType, _SkillElement);
-
+// Fires when objects are targeted directly. Either a position or target event will fire for a target - Not both!
 IF
 CharacterUsedSkillOnTarget(_Char, _Target, _Skill, _SkillType, _SkillElement)
 AND
 NOT DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _, _Skill)
 THEN
-NRD_ModCall("LeaderLib", "OnSkillUsed", (STRING)_Char, _Skill, _SkillType, _SkillElement, (STRING)_Target);
+NRD_DebugLog("CharacterUsedSkillOnTarget");
+NRD_ModCall("LeaderLib", "StoreSkillData", (STRING)_Char, _Skill, _SkillType, _SkillElement, (STRING)_Target);
 
+// Fires for positions targeted, as well as zone/cone skills.
 IF
 CharacterUsedSkillAtPosition(_Char, _x, _y, _z, _Skill, _SkillType, _SkillElement)
 AND
 NOT DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _, _Skill)
 THEN
-NRD_ModCall("LeaderLib", "OnSkillUsed", (STRING)_Char, _Skill, _SkillType, _SkillElement, (STRING)_x, (STRING)_y, (STRING)_z);
+NRD_DebugLog("CharacterUsedSkillAtPosition");
+NRD_ModCall("LeaderLib", "StoreSkillData", (STRING)_Char, _Skill, _SkillType, _SkillElement, (STRING)_x, (STRING)_y, (STRING)_z);
 
+// Fires for zone/cone skills. CharacterUsedSkillOnTarget does not fire for these skill types!
 IF
 CharacterUsedSkillOnZoneWithTarget(_Char, _Target, _Skill, _SkillType, _SkillElement)
 AND
 NOT DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _, _Skill)
 THEN
-NRD_ModCall("LeaderLib", "OnSkillUsed", (STRING)_Char, _Skill, _SkillType, _SkillElement, (STRING)_Target);
+NRD_DebugLog("CharacterUsedSkillOnZoneWithTarget");
+NRD_ModCall("LeaderLib", "StoreSkillData", (STRING)_Char, _Skill, _SkillType, _SkillElement, (STRING)_Target);
+
+// Always fires after the other UsedSkill events.
+IF
+CharacterUsedSkill(_Char, _Skill, _SkillType, _SkillElement)
+AND
+NOT DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _, _Skill)
+THEN
+NRD_DebugLog("CharacterUsedSkill");
+NRD_ModCall("LeaderLib", "OnSkillUsed", (STRING)_Char, _Skill, _SkillType, _SkillElement);
 
 IF
 SkillCast(_Char, _Skill, _SkillType, _SkillElement)
 THEN
+NRD_DebugLog("SkillCast");
 NRD_ModCall("LeaderLib", "OnSkillCast", (STRING)_Char, _Skill);
 */
 

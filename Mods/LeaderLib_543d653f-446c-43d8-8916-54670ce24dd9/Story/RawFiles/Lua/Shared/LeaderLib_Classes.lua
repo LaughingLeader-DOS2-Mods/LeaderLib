@@ -154,7 +154,7 @@ end
 Classes["DeltaMod"] = DeltaMod
 --local DeltaMod = Classes["DeltaMod"]
 
----An container for multiple DeltaMod entries.
+---A container for multiple DeltaMod entries.
 ---@class DeltaModGroup
 local DeltaModGroup = {
 	Entries = {}
@@ -183,7 +183,41 @@ function DeltaModGroup:GetRandomEntry()
     return Common.GetRandomTableEntry(self.Entries)
 end
 Classes["DeltaModGroup"] = DeltaModGroup
---local DeltaModGroup = Classes["DeltaModGroup"]
 
 ---@type LeaderLibGameSettings
 Classes["LeaderLibGameSettings"] = Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "Shared/Settings/LeaderLibGameSettings.lua").LeaderLibGameSettings
+
+---Data passed to callbacks for the various functions in SkillListeners.lua
+---@class SkillEventData
+local SkillEventData = {
+	Source = nil,
+	Skill = "",
+	Type = "",
+	Ability = "",
+	---@type string[]
+	TargetObjects = {},
+	---@type number[][]
+	TargetPositions = {},
+	TotalTargetObjects = 0,
+	TargetPositions = 0,
+}
+SkillEventData.__index = SkillEventData
+
+---@param skillSource string The source of the skill.
+---@param skill string
+---@param skillType string
+---@param skillAbility string
+---@return SkillEventData
+function SkillEventData:Create(skillSource, skill, skillType, skillAbility)
+    local this =
+    {
+		Source = skillSource,
+		Skill = skill,
+		Type = StringHelpers.Capitalize(skillType),
+		Ability = StringHelpers.Capitalize(skillAbility)
+	}
+	setmetatable(this, self)
+    return this
+end
+
+Classes["SkillEventData"] = SkillEventData

@@ -229,7 +229,6 @@ end
 function SkillEventData:AddTargetObject(target)
 	self.TargetObjects[#self.TargetObjects+1] = target
 	self.TotalTargetObjects = self.TotalTargetObjects + 1
-	print("Added target to table", target, self.Skill, Common.Dump(self.TargetObjects))
 end
 
 ---@param x number

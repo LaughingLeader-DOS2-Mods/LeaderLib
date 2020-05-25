@@ -194,7 +194,7 @@ local SkillEventData = {
 	Source = nil,
 	Skill = "",
 	SkillType = "",
-	SkillAbility = "",
+	Ability = "",
 	---@type string[]
 	TargetObjects = {},
 	---@type number[][]
@@ -215,7 +215,11 @@ function SkillEventData:Create(skillSource, skill, skillType, skillAbility)
 		Source = skillSource,
 		Skill = skill,
 		SkillType = StringHelpers.Capitalize(skillType),
-		SkillAbility = StringHelpers.Capitalize(skillAbility)
+		Ability = StringHelpers.Capitalize(skillAbility),
+		TargetObjects = {},
+		TargetPositions = {},
+		TotalTargetObjects = 0,
+		TotalTargetPositions = 0,
 	}
 	setmetatable(this, self)
     return this
@@ -223,24 +227,24 @@ end
 
 ---@param target string
 function SkillEventData:AddTargetObject(target)
-	if self.TargetObjects == nil then 
-		self.TargetObjects = {}
-		self.TotalTargetObjects = 0
-	end
 	self.TargetObjects[#self.TargetObjects+1] = target
 	self.TotalTargetObjects = self.TotalTargetObjects + 1
+	print("Added target to table", target, self.Skill, Common.Dump(self.TargetObjects))
 end
 
 ---@param x number
 ---@param y number
 ---@param z number
 function SkillEventData:AddTargetPosition(x,y,z)
-	if self.TargetPositions == nil then 
-		self.TargetPositions = {}
-		self.TotalTargetPositions = 0
-	end
 	self.TargetPositions[#self.TargetPositions+1] = {x,y,z}
 	self.TotalTargetPositions = self.TotalTargetPositions + 1
+end
+
+function SkillEventData:Clear()
+	self.TargetObjects = {}
+	self.TargetPositions = {}
+	self.TotalTargetObjects = 0
+	self.TotalTargetPositions = 0
 end
 
 function SkillEventData:Print()

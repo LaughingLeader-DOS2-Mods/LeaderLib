@@ -80,7 +80,6 @@ local function GetCharacterSkillData(skill, uuid, createIfMissing, skillType, sk
 	if data == nil and createIfMissing == true then
 		data = Classes.SkillEventData:Create(uuid, skill, skillType, skillAbility)
 		skillDataHolder[uuid] = data
-		print("[GetCharacterSkillData] data created for skill/caster | skillEventDataTable", Ext.JsonStringify(skillEventDataTable))
 	end
 	return data
 end
@@ -92,7 +91,7 @@ local function RemoveCharacterSkillData(uuid, skill)
 	end
 end
 
-function StoreSkillData(char, skill, skillType, skillAbility, ...)
+function StoreSkillEventData(char, skill, skillType, skillAbility, ...)
 	local listeners = SkillListeners[skill]
 	if listeners ~= nil or SkillListeners["All"] ~= nil then
 		local uuid = GetUUID(char)
@@ -138,6 +137,7 @@ end
 
 function OnSkillCast(char, skill, ...)
 	local uuid = GetUUID(char)
+	---@type SkillEventData
 	local data = GetCharacterSkillData(skill, uuid)
 	if data ~= nil then
 		local status,err = nil,nil
@@ -151,9 +151,8 @@ function OnSkillCast(char, skill, ...)
 				Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
 			end
 		end
-	end
-	if data ~= nil then
-		RemoveCharacterSkillData(skill, uuid)
+		data:Clear()
+		RemoveCharacterSkillData(uuid, skill)
 	end
 end
 
@@ -167,13 +166,14 @@ function OnSkillHit(source, skillprototype, target, handle, damage)
 		local skill = string.gsub(skillprototype, "_%-?%d+$", "")
 		local listeners = SkillListeners[skill]
 		if listeners ~= nil then
+			local uuid = GetUUID(source)
 			---@type HitData
 			local data = Classes.HitData:Create(target, source, damage, handle, skill)
 			if Ext.IsDeveloperMode() then
-				PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillHit] char(",char,") skillprototype(",skillprototype,") skill(",skill,") data(",Ext.JsonStringify(data),")")
+				PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillHit] source(",source,") skillprototype(",skillprototype,") skill(",skill,") data(",Ext.JsonStringify(data),")")
 			end
 			for i,callback in ipairs(listeners) do
-				local status,err = xpcall(callback, debug.traceback, skill, GetUUID(char), SKILL_STATE.HIT, data)
+				local status,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.HIT, data)
 				if not status then
 					Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
 				end
@@ -181,12 +181,11 @@ function OnSkillHit(source, skillprototype, target, handle, damage)
 		end
 
 		if Features.ApplyBonusWeaponStatuses == true then
-			local target = params[1]
 			local canApplyStatuses = target ~= nil and Ext.StatGetAttribute(skill, "UseWeaponProperties") == "Yes"
 			if canApplyStatuses then
 				PrintDebug("Skill Hit:", skill, ". Checking for statuses with a BonusWeapon")
 				---@type EsvCharacter
-				local character = Ext.GetCharacter(char)
+				local character = Ext.GetCharacter(source)
 				for i,status in pairs(character:GetStatuses()) do
 					if NRD_StatAttributeExists(status, "StatsId") == 1 then
 						local potion = Ext.StatGetAttribute(status, "StatsId")
@@ -195,7 +194,7 @@ function OnSkillHit(source, skillprototype, target, handle, damage)
 							if bonusWeapon ~= nil and bonusWeapon ~= "" then
 								local extraProps = Ext.StatGetAttribute(bonusWeapon, "ExtraProperties")
 								if extraProps ~= nil then
-									GameHelpers.ApplyProperties(target, char, extraProps)
+									GameHelpers.ApplyProperties(target, source, extraProps)
 								end
 							end
 						end

@@ -20,7 +20,7 @@ AND
 NOT DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _, _Skill)
 THEN
 NRD_DebugLog("CharacterUsedSkillOnTarget");
-NRD_ModCall("LeaderLib", "StoreSkillData", (STRING)_Char, _Skill, _SkillType, _SkillElement, (STRING)_Target);
+NRD_ModCall("LeaderLib", "StoreSkillEventData", (STRING)_Char, _Skill, _SkillType, _SkillElement, (STRING)_Target);
 
 // Fires for positions targeted, as well as zone/cone skills.
 IF
@@ -29,7 +29,7 @@ AND
 NOT DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _, _Skill)
 THEN
 NRD_DebugLog("CharacterUsedSkillAtPosition");
-NRD_ModCall("LeaderLib", "StoreSkillData", (STRING)_Char, _Skill, _SkillType, _SkillElement, (STRING)_x, (STRING)_y, (STRING)_z);
+NRD_ModCall("LeaderLib", "StoreSkillEventData", (STRING)_Char, _Skill, _SkillType, _SkillElement, (STRING)_x, (STRING)_y, (STRING)_z);
 
 // Fires for zone/cone skills. CharacterUsedSkillOnTarget does not fire for these skill types!
 IF
@@ -38,7 +38,7 @@ AND
 NOT DB_LeaderLib_LuaSkillListeners_Ignore(_Char, _, _Skill)
 THEN
 NRD_DebugLog("CharacterUsedSkillOnZoneWithTarget");
-NRD_ModCall("LeaderLib", "StoreSkillData", (STRING)_Char, _Skill, _SkillType, _SkillElement, (STRING)_Target);
+NRD_ModCall("LeaderLib", "StoreSkillEventData", (STRING)_Char, _Skill, _SkillType, _SkillElement, (STRING)_Target);
 
 // Always fires after the other UsedSkill events.
 IF

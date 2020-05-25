@@ -1,13 +1,13 @@
 ---Get a skill's slot and cooldown, and store it in DB_LeaderLib_Helper_Temp_RefreshUISkill.
 ---@param char string
 ---@param skill string
-local function StoreSkillData(char, skill)
+function StoreSkillCooldownData(char, skill)
     local slot = NRD_SkillBarFindSkill(char, skill)
     if slot ~= nil then
         local success,cd = pcall(NRD_SkillGetCooldown, char, skill)
         if success == false or cd == nil then cd = 0.0; end
         cd = math.max(cd, 0.0)
-        --Osi.LeaderLib_RefreshUI_Internal_StoreSkillData(char, skill, slot, cd)
+        --Osi.LeaderLib_RefreshUI_Internal_StoreSkillCooldownData(char, skill, slot, cd)
         Osi.DB_LeaderLib_Helper_Temp_RefreshUISkill(char, skill, slot, cd)
         NRD_SkillBarClear(char, slot)
         Osi.LeaderLog_Log("DEBUG", "[lua:LeaderLib_RefreshSkill] Refreshing (" .. tostring(skill) ..") for (" .. tostring(char) .. ") [" .. tostring(cd) .. "]")
@@ -22,7 +22,7 @@ local function StoreSkillSlots(char)
 		   local success,cd = pcall(NRD_SkillGetCooldown, char, skill)
 		   if success == false or cd == nil then cd = 0.0 end;
 		   cd = math.max(cd, 0.0)
-		   Osi.LeaderLib_RefreshUI_Internal_StoreSkillData(char, skill, i, cd)
+		   Osi.LeaderLib_RefreshUI_Internal_StoreSkillCooldownData(char, skill, i, cd)
 		   Osi.LeaderLog_Log("DEBUG", "[lua:LeaderLib_RefreshSkills] Storing skill slot data (" .. tostring(skill) ..") for (" .. tostring(char) .. ") [" .. tostring(cd) .. "]")
 	   end
    end
@@ -66,7 +66,7 @@ local function RefreshSkill(char, skill)
 end
 Ext.NewCall(RefreshSkill, "LeaderLib_Ext_RefreshSkill", "(CHARACTERGUID)_Character, (STRING)_Skill")
 
-GameHelpers.StoreSkillData = StoreSkillData
+GameHelpers.StoreSkillCooldownData = StoreSkillCooldownData
 GameHelpers.StoreSkillSlots = StoreSkillSlots
 GameHelpers.TrySetSkillSlot = TrySetSkillSlot
 GameHelpers.RefreshSkill = RefreshSkill

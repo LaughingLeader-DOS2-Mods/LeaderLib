@@ -2111,7 +2111,7 @@ NRD_SkillIteratorEvent("LeaderLib_Iterator_StoreSkillCooldown", _Char, _Skill, _
 AND
 String(_Char, _CharStr)
 THEN
-NRD_ModCall("LeaderLib", "StoreSkillData", _CharStr, _Skill);
+NRD_ModCall("LeaderLib", "StoreSkillCooldownData", _CharStr, _Skill);
 
 IF
 StoryEvent((CHARACTERGUID)_Char, "LeaderLib_RefreshUI_RevertSkillCooldowns")
@@ -2124,7 +2124,7 @@ NRD_SkillSetCooldown(_Char, _Skill, _Cooldown);
 */
 
 PROC
-LeaderLib_RefreshUI_Internal_StoreSkillData((CHARACTERGUID)_Char, (STRING)_Skill, (INTEGER)_Slot, (REAL)_Cooldown)
+LeaderLib_RefreshUI_Internal_StoreSkillCooldownData((CHARACTERGUID)_Char, (STRING)_Skill, (INTEGER)_Slot, (REAL)_Cooldown)
 THEN
 DB_LeaderLib_Helper_Temp_RefreshUISkill(_Char, _Skill, _Slot, _Cooldown);
 //END_REGION

@@ -247,12 +247,14 @@ end
 
 local function Split(s, sep)
     local fields = {}
-
     local sep = sep or " "
     local pattern = string.format("([^%s]+)", sep)
-    string.gsub(s, pattern, function(c) fields[#fields + 1] = c end)
-
-    return fields
+	string.gsub(s, pattern, function(c) fields[#fields + 1] = c end)
+	if #fields == 0 then
+		return s
+	else
+		return fields
+	end
 end
 
 ---Formats a number with commas.

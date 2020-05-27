@@ -34,7 +34,7 @@ local function OverrideStats()
 			local tier = Ext.StatGetAttribute(stat, "Tier")
 			if CanChangeSkillTier(stat, tier) then
 				Ext.StatSetAttribute(stat, "Tier", "Starter")
-				PrintDebug("LeaderLib:StatOverrides.lua] Change Tier for skill ("..stat..") "..tier.." => Starter.")
+				--PrintDebug("LeaderLib:StatOverrides.lua] Change Tier for skill ("..stat..") "..tier.." => Starter.")
 			end
 		end
 	end

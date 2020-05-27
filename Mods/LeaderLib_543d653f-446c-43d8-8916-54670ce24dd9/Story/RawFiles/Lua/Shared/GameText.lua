@@ -19,6 +19,21 @@ LocalizedText.DamageTypeHandles = {
 	Water = {Text=TranslatedString:Create("h8cdcfeedg357eg4877ga69egc05dbe9c68a4","water damage"), Color="#4197E2"},
 }
 
+LocalizedText.DamageTypeNames = {
+	None = {Text=TranslatedString:Create("h37e16e2cgb2c7g46a6g942egb35eb0a825f1","Pure"), Color="#13D177"},
+	Physical = {Text=TranslatedString:Create("ha6c38456g4c6ag47b2gae87g60a26cf4bf7b","Physical"), Color="#AE9F95"},
+	Piercing = {Text=TranslatedString:Create("h22f6b7bcgc548g49cbgbc04g9532e893fb55","Piercing"), Color="#CD1F1F"},
+	Corrosive = {Text=TranslatedString:Create("h727b2365g5cd3g4557g8627ge9612ab59420","Corrosive"), Color="#88A25B"},
+	Magic = {Text=TranslatedString:Create("h02e0fcacg670eg4d35g9f20gcf5cddab7fd1","Magic"), Color="#7F00FF"},
+	Chaos = {Text=TranslatedString:Create("hf43ec8a1gb6c4g421dg983cg01535ee1bcdf","Chaos"), Color="#9A00FF"},-- Special LeaderLib handle
+	Air = {Text=TranslatedString:Create("h1cea7e28gc8f1g4915ga268g31f90767522c","Air"), Color="#7D71D9"},
+	Earth = {Text=TranslatedString:Create("h85fee3f4g0226g41c6g9d38g83b7b5bf96ba","Earth"), Color="#F7BA14"},
+	Fire = {Text=TranslatedString:Create("h051b2501g091ag4c93ga699g407cd2b29cdc","Fire"), Color="#FE6E27"},
+	Poison = {Text=TranslatedString:Create("haa64cdb8g22d6g40d6g9918g61961514f70f","Poison"), Color="#65C900"},
+	Shadow = {Text=TranslatedString:Create("hf4632a8fg42a7g4d53gbe26gd203f28e3d5e","Shadow"), Color="#797980"},
+	Water = {Text=TranslatedString:Create("hd30196cdg0253g434dga42ag12be43dac4ec","Water"), Color="#4197E2"},
+}
+
 --MagicArmorMasteryDescription = TranslatedString:Create("h211cb400g5881g4b90g8bc8g0399d0288e00","Willpower determines how resistant you are to mental statuses like Fear or Charm."),
 --VitalityMasteryDescription = TranslatedString:Create("h2c42b179gd34bg45f8g9a81g847315e0319c","Bodybuilding determines how resistant you are to physical statuses like Bleeding or Crippled."),
 LocalizedText.AbilityNames = {
@@ -72,6 +87,23 @@ LocalizedText.AttributeNames = {
 	Constitution = TranslatedString:Create("hb4cd5b0bg5731g40b3gb49bg1fa6db60f346","Constitution"),
 	Memory = TranslatedString:Create("h8565e761ge486g467aga4cfg17344874f1ab","Memory"),
 	Wits = TranslatedString:Create("h2b03f6f9gbf5dg4f51g9b98gf01243633ed3","Wits"),
+}
+
+LocalizedText.Slots = {
+	Helmet = TranslatedString:Create("hd4b98ff5g33a8g44e0ga6a9gdb1ab7d70bf3", "Helmet"),
+	Breast = TranslatedString:Create("hb5c52d20g6855g4929ga78ege3fe776a1f2e", "Chest Armour"),
+	Leggings = TranslatedString:Create("he7042b52g54d7g4f46g8f69g509460dfe595", "Leggings"),
+	Weapon = TranslatedString:Create("h102d1ef8g3757g4ff3g8ef2gd68007c6268d", "Weapon"),
+	Shield = TranslatedString:Create("h77557ac7g4f6fg49bdga76cg404de43d92f5", "Shield"),
+	Ring = TranslatedString:Create("h970199f8ge650g4fa3ga0deg5995696569b6", "Ring"),
+	Belt = TranslatedString:Create("h2a76a9ecg2982g4c7bgb66fgbe707db0ac9e", "Belt"),
+	Boots = TranslatedString:Create("h9b65aab2gf4c4g4b81g96e6g1dcf7ffa8306", "Boots"),
+	Gloves = TranslatedString:Create("h185545eagdaf0g4286ga411gd50cbdcabc8b", "Gloves"),
+	Amulet = TranslatedString:Create("hb9d79ca5g59afg4255g9cdbgf614b894be68", "Amulet"),
+	Ring2 = TranslatedString:Create("h970199f8ge650g4fa3ga0deg5995696569b6", "Ring"),
+	Wings = TranslatedString:Create("hd716a074gd36ag4dfcgbf79g53bd390dd202", "Wings"),
+	Horns = TranslatedString:Create("ha35fc503g56dbg4adag963dga359d961e0c8", "Horns"),
+	Overhead = TranslatedString:Create("hda749a3fg52c0g48d5gae3bgd522dd34f65c", "Overhead"),
 }
 
 ---Get localized damage text wrapped in that damage type's color.

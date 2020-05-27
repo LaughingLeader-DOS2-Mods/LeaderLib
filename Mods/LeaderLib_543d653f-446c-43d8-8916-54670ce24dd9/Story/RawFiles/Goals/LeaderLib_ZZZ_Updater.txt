@@ -7,10 +7,10 @@ KBSECTION
 IF
 GameStarted(_,_)
 AND
-LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", 1,6,10,0)
+LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", 1,6,12,0)
 THEN
-LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Updating LeaderLib to latest version (1.6.10.0).");
-LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", 1,6,10,0);
+LeaderLog_Log("SYSTEM", "[LeaderLib:Updater] Updating LeaderLib to latest version (1.6.12.0).");
+LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", 1,6,12,0);
 //END_REGION
 
 //REGION GENERAL_UPDATES

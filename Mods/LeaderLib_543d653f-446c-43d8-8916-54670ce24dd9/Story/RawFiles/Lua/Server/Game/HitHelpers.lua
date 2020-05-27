@@ -28,8 +28,9 @@ end
 ---@param handle integer
 ---@param is_hit integer
 ---@param allowSkills boolean
+---@param source string|nil
 ---@return boolean
-local function HitWithWeapon(target, handle, is_hit, allowSkills)
+local function HitWithWeapon(target, handle, is_hit, allowSkills, source)
     if handle == nil or handle < 0 then 
         return false
     end
@@ -45,7 +46,7 @@ local function HitWithWeapon(target, handle, is_hit, allowSkills)
         if hitReason ~= nil and sourceType ~= nil then
             local hitReasonFromWeapon = hitReason <= 1
             local hitWithWeapon = sourceType == 6 or sourceType == 7
-            local hasWeaponHandle = weaponHandle ~= nil and weaponHandle ~= "NULL_00000000-0000-0000-0000-000000000000"
+            local hasWeaponHandle = (weaponHandle ~= nil and weaponHandle ~= "NULL_00000000-0000-0000-0000-000000000000")
             if allowSkills == true then
                 local skillprototype = NRD_StatusGetString(target, handle, "SkillId")
                 if skillprototype ~= "" and skillprototype ~= nil then

@@ -4,7 +4,7 @@ local function OnHit(target, source, damage, handle)
 		OnSkillHit(source, skillprototype, target, handle, damage)
 	end
 
-	if source ~= nil and Features.ApplyBonusWeaponStatuses == true and GameHelpers.HitWithWeapon(target, handle) then
+	if source ~= nil and Features.ApplyBonusWeaponStatuses == true and GameHelpers.HitWithWeapon(target, handle, nil, nil, source) then
 		--PrintDebug("Basic Attack Hit on", target, ". Checking for statuses with a BonusWeapon")
 		---@type EsvCharacter
 		local character = Ext.GetCharacter(source)

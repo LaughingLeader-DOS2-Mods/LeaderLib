@@ -59,9 +59,9 @@ StringHelpers.Join = Join
 
 ---Split a string into a table.
 ---Source: http://www.wellho.net/resources/ex.php4?item=u105/spjo
----@param delimiter string
 ---@param str string
-local function Split(delimiter, str)
+---@param delimiter string
+local function Split(str, delimiter)
 	local list = {}; local pos = 1
 	if string.find("", delimiter, 1) then
 		return list

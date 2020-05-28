@@ -25,7 +25,7 @@ StringHelpers.Equals = Equals
 ---@type x string
 ---@return boolean
 local function IsNullOrEmpty(x)
-	return x == nil or x == "" or type(x) ~= "string"
+	return x == nil or x == "" or x == "NULL_00000000-0000-0000-0000-000000000000" or type(x) ~= "string"
 end
 
 StringHelpers.IsNullOrEmpty = IsNullOrEmpty

@@ -32,6 +32,15 @@ local function CreateItemByStat(stat, level)
     return cloned
 end
 
+local function GetEquippedSlot(char, item)
+    for i,slot in pairs(Data.EquipmentSlots) do
+        if CharacterGetEquippedItem(char, slot) == item then
+            return slot
+        end
+    end
+    return nil
+end
+
 function EquipInSlot(char, item, slot)
     if Ext.Version() >= 42 then
         NRD_CharacterEquipItem(char, item, slot, 0, 0, 1, 1)
@@ -76,6 +85,7 @@ local function RemoveRunes(character, runeTemplates)
 end
 
 GameHelpers.EquipInSlot = EquipInSlot
+GameHelpers.GetEquippedSlot = GetEquippedSlot
 GameHelpers.ItemIsEquipped = ItemIsEquipped
 GameHelpers.CloneItemForCharacter = CloneItemForCharacter
 GameHelpers.CreateItemByStat = CreateItemByStat

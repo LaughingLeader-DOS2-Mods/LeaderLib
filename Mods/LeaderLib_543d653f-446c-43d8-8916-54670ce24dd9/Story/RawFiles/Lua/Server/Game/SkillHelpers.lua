@@ -66,7 +66,26 @@ local function RefreshSkill(char, skill)
 end
 Ext.NewCall(RefreshSkill, "LeaderLib_Ext_RefreshSkill", "(CHARACTERGUID)_Character, (STRING)_Skill")
 
+---Swaps a skill with another one.
+function SwapSkill(char, targetSkill, replacementSkill, removeTargetSkill)
+    local slot = NRD_SkillBarFindSkill(char, targetSkill)
+    if slot ~= nil then
+        CharacterAddSkill(char, replacementSkill, 0)
+        local newSlot = NRD_SkillBarFindSkill(char, replacementSkill)
+        if newSlot ~= nil then
+            NRD_SkillBarClear(char, newSlot)
+        end
+        NRD_SkillBarSetSkill(char, slot, replacementSkill)
+    else
+        CharacterAddSkill(char, replacementSkill, 0)
+    end
+    if removeTargetSkill ~= nil and removeTargetSkill ~= false then
+        CharacterRemoveSkill(char, targetSkill)
+    end
+end
+
 GameHelpers.StoreSkillCooldownData = StoreSkillCooldownData
 GameHelpers.StoreSkillSlots = StoreSkillSlots
 GameHelpers.TrySetSkillSlot = TrySetSkillSlot
 GameHelpers.RefreshSkill = RefreshSkill
+GameHelpers.SwapSkill = SwapSkill

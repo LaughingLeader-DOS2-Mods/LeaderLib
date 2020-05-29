@@ -34,7 +34,8 @@ end
 
 local function GetEquippedSlot(char, item)
     for i,slot in pairs(Data.EquipmentSlots) do
-        if CharacterGetEquippedItem(char, slot) == item then
+        local slotItem = CharacterGetEquippedItem(char, slot)
+        if slotItem ~= nil and GetUUID(slotItem) == GetUUID(item) then
             return slot
         end
     end

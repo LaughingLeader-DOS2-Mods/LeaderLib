@@ -408,6 +408,15 @@ NOT ItemGetAmount(_Item, _)
 THEN
 ItemToInventory(_Item, _Character, 1, 0, 0);
 
+PROC
+LeaderLib_Timers_ObjectObjectTimerFinished(_Obj1, _Obj2, "LeaderLib_Commands_ItemToInventory")
+AND
+ObjectIsItem((ITEMGUID)_Obj1, 1)
+AND
+ItemGetAmount(_Obj1, _Amount)
+THEN
+ItemToInventory(_Obj1, _Obj2, _Amount, 0, 0);
+
 IF
 CharacterItemEvent(_Character, _Item, "LeaderLib_Commands_UnequipItem")
 AND

@@ -47,6 +47,8 @@ local function Join(delimiter, list)
 	local len = #list
 	if len == 0 then
 		return ""
+	elseif len == 1 then
+		return list[1]
 	end
 	local string = list[1]
 	for i = 2, len do

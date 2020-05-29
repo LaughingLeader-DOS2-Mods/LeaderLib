@@ -115,7 +115,7 @@ local function GetDamageText(damageType, damageValue)
 	if entry ~= nil then
 		if damageValue ~= nil then
 			if type(damageValue) == "number" then
-				return string.format("<font color='%s'>is %s</font>", entry.Color, damageValue, entry.Text.Value)
+				return string.format("<font color='%s'>%s %s</font>", entry.Color, damageValue, entry.Text.Value)
 			else
 				return string.format("<font color='%s'>%s %s</font>", entry.Color, damageValue, entry.Text.Value)
 			end

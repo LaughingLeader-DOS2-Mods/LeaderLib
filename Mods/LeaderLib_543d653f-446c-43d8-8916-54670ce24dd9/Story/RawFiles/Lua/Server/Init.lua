@@ -42,11 +42,10 @@ function SetCustomNameWithLocalization(char,handle,fallback)
 	CharacterSetCustomName(char, name)
 end
 
----Get a skill's stat entry. Formats away _-1, _10, etc.
----@param skill string
+---Get a skill's real entry name. Formats away _-1, _10, etc.
+---@param skillPrototype string
 ---@return string
-function GetSkillEntryName(skill)
-	local text = string.gsub(skill, "_%-?%d+$", "")
-	return text
+function GetSkillEntryName(skillPrototype)
+	return string.gsub(skillPrototype, "_%-?%d+$", "")
 end
 Ext.NewQuery(GetSkillEntryName, "LeaderLib_Ext_QRY_GetSkillEntryName", "[in](STRING)_SkillPrototype, [out](STRING)_SkillId")

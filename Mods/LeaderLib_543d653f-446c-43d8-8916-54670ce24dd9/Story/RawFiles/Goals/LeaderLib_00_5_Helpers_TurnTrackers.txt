@@ -23,6 +23,24 @@ QRY
 LeaderLib_Turns_QRY_TrackerHasObject("Object")
 THEN
 DB_NOOP(1);
+
+QRY
+LeaderLib_Turns_QRY_HasRemainingTurns((STRING)_ID)
+AND
+DB_LeaderLib_Turns_ActiveTracker(_ID, _CompletionEvent, _Turns)
+AND
+_Turns > 0
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Turns_QRY_GetRemainingTurns((GUIDSTRING)_Object, (STRING)_CompletionEvent)
+AND
+DB_LeaderLib_Turns_ActiveTracker_Data(_ID, _Object, _x, _y, _z, _Type, _AnyTurns)
+AND
+DB_LeaderLib_Turns_ActiveTracker(_ID, _CompletionEvent, _Turns)
+THEN
+DB_NOOP(1);
 //END_REGION
 
 //REGION ID_CREATION
@@ -133,20 +151,15 @@ NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_CreateIdentifierByCombatID",
 DB_LeaderLib_Turns_Temp_NextCombatID(_CombatID, _CompletionEvent, _ID);
 //END_REGION
 
-//REGION MAIN_DB
-QRY
-LeaderLib_Turns_QRY_HasRemainingTurns((STRING)_ID)
+//REGION CLEAR
+PROC
+LeaderLib_Turns_ClearTrackerForObject((GUIDSTRING)_Object, (STRING)_CompletionEvent)
+AND
+DB_LeaderLib_Turns_ActiveTracker_Data(_ID, _Object, _x, _y, _z, _Type, _AnyTurns)
 AND
 DB_LeaderLib_Turns_ActiveTracker(_ID, _CompletionEvent, _Turns)
-AND
-_Turns > 0
 THEN
-DB_NOOP(1);
-
-PROC
-LeaderLib_Turns_Internal_CreateTracker((STRING)_ID, (STRING)_CompletionEvent, (INTEGER)_StartingTurns)
-THEN
-DB_LeaderLib_Turns_ActiveTracker(_ID, _CompletionEvent, _StartingTurns);
+LeaderLib_Turns_Internal_ClearTracker(_ID);
 
 PROC
 LeaderLib_Turns_Internal_ClearTracker((STRING)_ID)
@@ -183,6 +196,13 @@ AND
 DB_LeaderLib_Turns_ActiveTracker_Combat(_ID, _CombatID)
 THEN
 NOT DB_LeaderLib_Turns_ActiveTracker_Combat(_ID, _CombatID);
+//END_REGION
+
+//REGION MAIN_DB
+PROC
+LeaderLib_Turns_Internal_CreateTracker((STRING)_ID, (STRING)_CompletionEvent, (INTEGER)_StartingTurns)
+THEN
+DB_LeaderLib_Turns_ActiveTracker(_ID, _CompletionEvent, _StartingTurns);
 //END_REGION
 
 //REGION MAIN_PROCS

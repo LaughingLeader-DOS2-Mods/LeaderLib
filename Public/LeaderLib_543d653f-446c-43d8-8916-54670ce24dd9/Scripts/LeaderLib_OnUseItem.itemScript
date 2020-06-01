@@ -1,0 +1,13 @@
+INIT
+	ITEM:__Me
+	EXTERN STRING:%OnUseEvent="LeaderLib_OnItemUsed"
+
+EVENTS
+
+EVENT LeaderLib_OnUseItem
+VARS
+	CHARACTER:_Char
+ON
+	OnUseItem(_Char,__Me)
+ACTIONS
+	CharacterItemEvent(_Char,__Me,%OnUseEvent)

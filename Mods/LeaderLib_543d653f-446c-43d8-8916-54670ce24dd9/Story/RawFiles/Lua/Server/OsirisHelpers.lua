@@ -28,3 +28,11 @@ local function TurnSystem_GetRemainingTurns(object, event)
 end
 Ext.NewQuery(TurnSystem_GetRemainingTurns, "LeaderLib_Turns_QRY_GetRemainingTurns", "[in](GUIDSTRING)_Object, [in](STRING)_CompletionEvent, [out](INTEGER)_Turns")
 
+function BroadcastToClient(channel, character, ...)
+	local payload = ""
+	local params = {...}
+	if params ~= nil and #params > 0 then
+		payload = Ext.JsonStringify(params)
+	end
+	Ext.PostMessageToClient(character, channel, payload)
+end

@@ -273,13 +273,12 @@ local function Command_PrintPos()
 end
 Ext.RegisterConsoleCommand("pos", Command_PrintPos)
 
-local function Command_PrintPos2()
+Ext.RegisterConsoleCommand("pos2", function()
 	---@type StatCharacter
 	local character = Ext.GetCharacter(CharacterGetHostCharacter()).Stats
-	print("Pos:", Ext.JsonStringify(character.Position))
-	print("Rot:", Ext.JsonStringify(character.Rotation))
-end
-Ext.RegisterConsoleCommand("pos2", Command_PrintPos2)
+	print("Position:", Ext.JsonStringify(character.Position))
+	print("Rotation:", Ext.JsonStringify(character.Rotation))
+end)
 
 local function Command_PrintUUIDs(call, radiusVal)
 	local radius = 6.0
@@ -308,6 +307,19 @@ local function Command_ResetLua(command)
 	NRD_LuaReset(1,1,1)
 end
 Ext.RegisterConsoleCommand("luareset", Command_ResetLua)
+
+local function Command_ResetLua(command)
+	print("[LeaderLib:luareset] Reseting lua.")
+	NRD_LuaReset(1,1,1)
+end
+
+Ext.RegisterConsoleCommand("movie", function(command,movie)
+	if movie == nil then
+		movie = "Splash_Logo_Larian"
+	end
+	local host = CharacterGetHostCharacter()
+	MoviePlay(host,movie)
+end)
 
 function Debug_Iterator_PrintCharacter(uuid)
 	---@type EsvCharacter

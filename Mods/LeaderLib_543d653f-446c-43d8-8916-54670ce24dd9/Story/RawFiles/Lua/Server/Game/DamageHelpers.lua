@@ -12,23 +12,23 @@ local function ReduceDamage(target, attacker, handle_param, reduction_perc, is_h
     local is_hit = Common.SafeguardParam(is_hit_param, "integer", 0)
 	PrintDebug("[LeaderLib_GameMechanics.lua:ReduceDamage] Reducing damage to ("..tostring(reduction)..") of total. Handle("..tostring(handle).."). Target("..tostring(target)..") Attacker("..tostring(attacker)..") IsHit("..tostring(is_hit)..")")
 	local success = false
-    for k,v in pairs(Data.DamageTypes) do
+    for i,damageType in Data.DamageTypes:Get() do
         local damage = nil
         if is_hit == 0 then
-            damage = NRD_HitStatusGetDamage(target, handle, v)
+            damage = NRD_HitStatusGetDamage(target, handle, damageType)
         else
-            damage = NRD_HitGetDamage(handle, v)
+            damage = NRD_HitGetDamage(handle, damageType)
         end
         if damage ~= nil and damage > 0 then
             --local reduced_damage = math.max(math.ceil(damage * reduction), 1)
             --NRD_HitStatusClearDamage(target, handle, v)
             local reduced_damage = (damage * reduction) * -1
             if is_hit == 0 then
-                NRD_HitStatusAddDamage(target, handle, v, reduced_damage)
+                NRD_HitStatusAddDamage(target, handle, damageType, reduced_damage)
             else
-                NRD_HitAddDamage(handle, v, reduced_damage)
+                NRD_HitAddDamage(handle, damageType, reduced_damage)
             end
-			Log("[LeaderLib_GameMechanics.lua:ReduceDamage] Reduced damage: "..tostring(damage).." => "..tostring(reduced_damage).." for type: "..v)
+			Log("[LeaderLib_GameMechanics.lua:ReduceDamage] Reduced damage: "..tostring(damage).." => "..tostring(reduced_damage).." for type: "..damageType)
 			success = true
         end
 	end
@@ -52,23 +52,23 @@ local function IncreaseDamage(target, attacker, handle_param, increase_perc, is_
     local is_hit = Common.SafeguardParam(is_hit_param, "number", 0)
 	Log("[LeaderLib_GameMechanics.lua:IncreaseDamage] Increasing damage by ("..tostring(increase_amount).."). Handle("..tostring(handle).."). Target("..tostring(target)..") Attacker("..tostring(attacker)..") IsHit("..tostring(is_hit)..")")
 	local success = false
-    for k,v in pairs(Data.DamageTypes) do
+    for i,damageType in Data.DamageTypes:Get() do
         local damage = nil
         if is_hit == 0 then
-            damage = NRD_HitStatusGetDamage(target, handle, v)
+            damage = NRD_HitStatusGetDamage(target, handle, damageType)
         else
-            damage = NRD_HitGetDamage(handle, v)
+            damage = NRD_HitGetDamage(handle, damageType)
         end
         if damage ~= nil and damage > 0 then
             --local increased_damage = damage + math.ceil(damage * increase_amount)
-            --NRD_HitStatusClearDamage(target, handle, v)
+            --NRD_HitStatusClearDamage(target, handle, damageType)
             local increased_damage = math.ceil(damage * increase_amount)
             if is_hit == 0 then
-                NRD_HitStatusAddDamage(target, handle, v, increased_damage)
+                NRD_HitStatusAddDamage(target, handle, damageType, increased_damage)
             else
-                NRD_HitAddDamage(handle, v, increased_damage)
+                NRD_HitAddDamage(handle, damageType, increased_damage)
             end
-			Log("[LeaderLib_GameMechanics.lua:IncreaseDamage] Increasing damage: "..tostring(damage).." => "..tostring(damage + increased_damage).." for type: "..v)
+			Log("[LeaderLib_GameMechanics.lua:IncreaseDamage] Increasing damage: "..tostring(damage).." => "..tostring(damage + increased_damage).." for type: "..damageType)
 			success = true
         end
 	end
@@ -99,24 +99,24 @@ local function RedirectDamage(target, defender, attacker, handle_param, reductio
     local redirected_hit = NRD_HitPrepare(target, attacker)
     local damageRedirected = false
 
-    for k,v in pairs(Data.DamageTypes) do
+    for i,damageType in Data.DamageTypes:Get() do
         local damage = nil
         if is_hit == 0 then
-            damage = NRD_HitStatusGetDamage(defender, handle, v)
+            damage = NRD_HitStatusGetDamage(defender, handle, damageType)
         else
-            damage = NRD_HitGetDamage(handle, v)
+            damage = NRD_HitGetDamage(handle, damageType)
         end
         if damage ~= nil and damage > 0 then
             local reduced_damage = math.max(math.ceil(damage * reduction), 1)
-            --NRD_HitStatusClearDamage(defender, handle, v)
+            --NRD_HitStatusClearDamage(defender, handle, damageType)
             local removed_damage = damage * -1
             if is_hit == 0 then
-                NRD_HitStatusAddDamage(defender, handle, v, removed_damage)
+                NRD_HitStatusAddDamage(defender, handle, damageType, removed_damage)
             else
-                NRD_HitAddDamage(handle, v, removed_damage)
+                NRD_HitAddDamage(handle, damageType, removed_damage)
             end
-            NRD_HitAddDamage(redirected_hit, v, reduced_damage)
-            Log("[LeaderLib_GameMechanics.lua:RedirectDamage] Redirected damage: "..tostring(damage).." => "..tostring(reduced_damage).." for type: "..v)
+            NRD_HitAddDamage(redirected_hit, damageType, reduced_damage)
+            Log("[LeaderLib_GameMechanics.lua:RedirectDamage] Redirected damage: "..tostring(damage).." => "..tostring(reduced_damage).." for type: "..damageType)
             damageRedirected = true
         end
     end

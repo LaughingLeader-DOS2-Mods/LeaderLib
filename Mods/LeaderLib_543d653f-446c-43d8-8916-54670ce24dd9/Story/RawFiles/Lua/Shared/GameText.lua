@@ -181,11 +181,7 @@ GameHelpers.GetAbilityName = GetAbilityName
 ---@param fallback number
 ---@return number
 local function GetExtraData(key,fallback)
-	local value = Ext.ExtraData[key]
-	if value ~= nil then
-		return value
-	end
-	return fallback
+	return Ext.ExtraData[key] or fallback
 end
 
 GameHelpers.GetExtraData = GetExtraData

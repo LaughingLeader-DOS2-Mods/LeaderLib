@@ -33,7 +33,7 @@ local function CreateItemByStat(stat, level)
 end
 
 local function GetEquippedSlot(char, item)
-    for i,slot in pairs(Data.EquipmentSlots) do
+    for i,slot in Data.EquipmentSlots:Get() do
         local slotItem = CharacterGetEquippedItem(char, slot)
         if slotItem ~= nil and GetUUID(slotItem) == GetUUID(item) then
             return slot
@@ -58,7 +58,7 @@ function ItemIsEquipped(char, item)
             return true
         end
     else
-        for i,slot in pairs(Data.EquipmentSlots) do
+        for i,slot in Data.EquipmentSlots:Get() do
             if CharacterGetEquippedItem(char, slot) == item then
                 return true
             end

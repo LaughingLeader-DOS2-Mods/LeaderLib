@@ -12,13 +12,13 @@ local function StorePartyValues()
 			abilities = {}
 		}
 		statChanges[uuid] = playerData
-		for _,att in pairs(Data.Attribute) do
+		for _,att in Data.Attribute:Get() do
 			local baseVal = CharacterGetBaseAttribute(uuid, att)
 			if baseVal ~= nil then
 				playerData.attributes[att] = baseVal
 			end
 		end
-		for _,ability in pairs(Data.Ability) do
+		for _,ability in Data.Ability:Get() do
 			local baseVal = CharacterGetBaseAbility(uuid, ability)
 			if baseVal ~= nil then
 				playerData.abilities[ability] = baseVal
@@ -45,7 +45,7 @@ local function SignalPartyValueChanges()
 		local uuid = entry[1]
 		local playerData = statChanges[uuid]
 		if playerData ~= nil then
-			for _,stat in pairs(Data.Attribute) do
+			for _,stat in Data.Attribute:Get() do
 				local baseVal = CharacterGetBaseAttribute(uuid, stat)
 				local lastVal = playerData.attributes[stat]
 				if baseVal ~= nil and lastVal ~= nil and lastVal ~= baseVal then
@@ -54,7 +54,7 @@ local function SignalPartyValueChanges()
 					FireListenerEvents(uuid, stat, lastVal, baseVal)
 				end
 			end
-			for _,stat in pairs(Data.Ability) do
+			for _,stat in Data.Ability:Get() do
 				local baseVal = CharacterGetBaseAbility(uuid, stat)
 				local lastVal = playerData.abilities[stat]
 				if baseVal ~= nil and lastVal ~= nil and lastVal ~= baseVal then

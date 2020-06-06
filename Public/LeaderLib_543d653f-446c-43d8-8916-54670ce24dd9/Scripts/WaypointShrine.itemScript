@@ -1,0 +1,126 @@
+INIT
+ITEM:__Me
+EXTERN INT:%IgnoreSight = 0
+EXTERN STRING:%DiscoveredEffect = ""
+EXTERN STRING:%DiscoveredLoopEffect = ""
+EXTERN FLOAT:%LoopEffectDelay = 0
+EXTERN FIXEDSTRING:%DiscoveredAnimation = ""
+EXTERN FLOAT:%UnlockDistance = 18.0
+INT64:%LoopEffect
+
+EVENTS
+
+EVENT Iterator
+VARS 
+	CHARACTER:_Char
+	FLOAT:_Dist
+ON
+	OnIterateCharacter(_Char,"WaypointDiscover")
+ACTIONS
+IF "!c1&!c2&c3&c4&(c5|c6)"
+	CharacterIsPartyFollower(_Char)
+	CharacterIsSummon(_Char)
+	GetDistance(_Dist,_Char,__Me)
+	IsLessThen(_Dist, %UnlockDistance)
+	IsEqual(%IgnoreSight,1)
+	CharacterCanSee(_Char,__Me)
+THEN
+	CharacterItemEvent(_Char,__Me,"WaypointDiscovered")
+ENDIF
+
+EVENT Discovered_PlayEffects
+ON
+	OnItemEvent(__Me,"WaypointDiscoveredEffect")
+ACTIONS
+	IF "!c1"
+		IsEqual(%DiscoveredEffect,"")
+	THEN
+		ItemPlayEffect(__Me,%DiscoveredEffect)
+	ENDIF
+	IF "!c1"
+		IsEqual(%DiscoveredLoopEffect,"")
+	THEN
+		StartTimer("DiscoveredLoopEffect_Timer",%LoopEffectDelay,0)
+	ENDIF
+	SetPriority("DiscoveredAnimation", 10)
+
+EVENT Discovered_PlayLoopEffect
+ON
+	OnTimer("DiscoveredLoopEffect_Timer")
+ACTIONS
+	ItemPlayLoopEffect(%LoopEffect,__Me,%DiscoveredLoopEffect)
+
+EVENT OnInit_StartDiscoverLoopEffect
+ON
+	OnInit()
+ACTIONS
+	IF "!c1"
+		IsEqual(%LoopEffect,null)
+	THEN
+		ItemPlayLoopEffect(%LoopEffect,__Me,%DiscoveredLoopEffect)
+	ENDIF
+	
+EVENT OnShutdown_StopDiscoverLoopEffect
+ON
+	OnShutdown()
+ACTIONS	
+	IF "!c1"
+		IsEqual(%LoopEffect,null)
+	THEN
+		StopLoopEffect(%LoopEffect)
+		Set(%LoopEffect, null)
+	ENDIF
+
+EVENTS
+
+EVENT WaypointShrine_CheckCanActivate
+ON
+	OnActivate()
+ACTIONS
+	ItemEvent(__Me, "CanActivateWaypointTimer")
+
+EVENT ActivateTimerino
+ON
+	OnItemEvent(__Me, "WaypointActivateTimer")
+ACTIONS
+	StartTimer("WaypointCheckForPlayers", 1, -1)
+
+EVENT WaypointShrine_OnDeactivate
+ON
+	OnDeactivate()
+ACTIONS
+	ItemEvent(__Me, "OnWaypointDeactivated")
+	StopTimer("WaypointCheckForPlayers")
+	
+EVENT DeactivateTimerino
+ON
+	OnItemEvent(__Me, "WaypointDeactivateTimer")
+ACTIONS
+	StopTimer("WaypointCheckForPlayers")
+
+EVENT OnTimer_WaypointCheckForPlayers
+ON
+	OnTimer("WaypointCheckForPlayers")
+ACTIONS
+	IterateParty("WaypointDiscover")
+
+BEHAVIOUR
+
+// Savegame compatibility
+REACTION Discover, 0
+USAGE ALL
+ACTIONS
+	SetPriority("Discover", 0)
+
+REACTION DiscoveredAnimation, 0
+USAGE ALL
+ACTIONS
+IF "!c1"
+	IsEqual(%DiscoveredAnimation,"")
+THEN
+	ItemPlayAnimation(%DiscoveredAnimation)
+	// don't trigger the animation a second time when discovered by another party,
+	// since the end-state of the animation may not match the start state
+	Set(%DiscoveredAnimation, "")
+ENDIF
+	SetPriority("DiscoveredAnimation",0)

@@ -100,3 +100,22 @@ local function SetRotation(uuid, rotx, rotz, turnTo)
 end
 
 GameHelpers.SetRotation = SetRotation
+
+---Roll between 0 and 100 and see if the result is below a number.
+---@param chance integer The minimum number that must be met.
+---@param includeZero boolean If true, 0 is not a failure roll, otherwise the roll must be higher than 0.
+---@return boolean,integer
+local function Roll(chance, includeZero)
+	if chance <= 0 then
+		return false,0
+	elseif chance >= 100 then
+		return true,100
+    end
+    local roll = Ext.Random(0,100)
+	if includeZero == true then
+		return (roll <= chance),roll
+	else
+		return (roll > 0 and roll <= chance),roll
+	end
+end
+GameHelpers.Roll = Roll

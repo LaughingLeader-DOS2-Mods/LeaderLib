@@ -1,3 +1,5 @@
+PersistentVars = {}
+
 -- local function LeaderLib_GameSessionLoad()
 -- 	PrintDebug("[LeaderLib:Bootstrap.lua] Session is loading.")
 -- end

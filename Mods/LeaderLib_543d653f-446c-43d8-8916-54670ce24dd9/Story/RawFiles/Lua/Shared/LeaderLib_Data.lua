@@ -148,6 +148,26 @@ function Data.Attribute:Get()
 	return iterateFromZero(self)
 end
 
+Data.ItemRarities = {
+	"Common",
+	"Unique",
+	"Uncommon",
+	"Rare",
+	"Epic",
+	"Legendary",
+	"Divine",
+}
+
+Data.RarityEnum = {
+	Common = 0,
+	Unique = 1,
+	Uncommon = 2,
+	Rare = 3,
+	Epic = 4,
+	Legendary = 5,
+	Divine = 6,
+}
+
 Data.UI = {
 	TOOLTIP_ENUM = {
 		"ItemName",

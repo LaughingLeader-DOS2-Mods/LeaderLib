@@ -277,11 +277,9 @@ NRD_ModCall("LeaderLib", "LoadGlobalSettings");
 */
 
 IF
-GameStarted(_Region,_IsEditor)
+GameStarted(_Region,_IsEditorMode)
 AND
-IsGameLevel(_Region, _IsGameLevel)
-AND
-IntegerMax(_IsEditor, _IsGameLevel, 1)
+LeaderLib_Helper_QRY_IsEditorOrGameLevel(_Region, _IsEditorMode)
 THEN
 LeaderLib_LoadGlobalSettings();
 

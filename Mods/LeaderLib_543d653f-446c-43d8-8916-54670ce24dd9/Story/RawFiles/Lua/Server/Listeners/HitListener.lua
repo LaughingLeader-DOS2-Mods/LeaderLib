@@ -1,3 +1,7 @@
+---@type target string
+---@type source string
+---@type damage integer
+---@type handle integer
 local function OnHit(target, source, damage, handle)
 	local skillprototype = NRD_StatusGetString(target, handle, "SkillId")
 	if skillprototype ~= "" and skillprototype ~= nil then

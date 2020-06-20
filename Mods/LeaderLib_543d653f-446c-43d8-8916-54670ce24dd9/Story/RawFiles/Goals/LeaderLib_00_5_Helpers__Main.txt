@@ -1181,6 +1181,27 @@ THEN
 DB_NOOP(1);
 
 QRY
+LeaderLib_Helper_QRY_IsEditorOrGameLevel((STRING)_Level, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IsEditorOrGameLevel((STRING)_Level, 0)
+AND
+IsGameLevel(_Level, 1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_Helper_QRY_IsEditorOrGameLevel((STRING)_Level)
+AND
+GlobalGetFlag("LeaderLib_IsEditorMode", _IsEditorMode)
+AND
+LeaderLib_Helper_QRY_IsEditorOrGameLevel(_Level, _IsEditorMode)
+THEN
+DB_NOOP(1);
+
+QRY
 LeaderLib_Helper_QRY_ObjectIsAlive((GUIDSTRING)_Object)
 AND
 CharacterIsDead((CHARACTERGUID)_Object, 0)

@@ -39,9 +39,13 @@ local function OverrideStats()
 				--PrintDebug("LeaderLib:StatOverrides.lua] Change Tier for skill ("..stat..") "..tier.." => Starter.")
 			end
 		end
-		PersistentVars["OriginalSkillTiers"] = originalSkillTiers
+		if Ext.IsServer() then
+			PersistentVars["OriginalSkillTiers"] = originalSkillTiers
+		end
 	else
-		PersistentVars["OriginalSkillTiers"] = nil
+		if Ext.IsServer() then
+			PersistentVars["OriginalSkillTiers"] = nil
+		end
 	end
 end
 Ext.RegisterListener("ModuleLoading", OverrideStats)

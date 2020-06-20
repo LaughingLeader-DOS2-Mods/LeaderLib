@@ -1,5 +1,5 @@
-Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "BootstrapShared.lua")
-Ext.Require("LeaderLib_7e737d2f-31d2-4751-963f-be6ccc59cd0c", "Client/Init.lua")
+Ext.Require("BootstrapShared.lua")
+Ext.Require("Client/Init.lua")
 
 local function LeaderLib_Debug_OnDebugUIEvent(ui, event, ...)
 	local params = {...}

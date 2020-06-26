@@ -71,7 +71,7 @@ end
 ---@param character string
 ---@param runeTemplates table
 local function RemoveRunes(character, runeTemplates)
-	for _,slotName in pairs(VisibleEquipmentSlots) do
+	for _,slotName in Data.VisibleEquipmentSlots:Get() do
 		local item = CharacterGetEquippedItem(character, slotName)
 		if item ~= nil then
 			for runeSlot=0,2,1 do

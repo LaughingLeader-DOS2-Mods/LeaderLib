@@ -26,6 +26,15 @@ local function ShootProjectile(source, target, skill, forceHit, sourcePosition)
         NRD_ProjectileSetGuidString("TargetPosition", target)
     elseif type(target) == "table" then
         local tx,ty,tz = table.unpack(target)
+        if tx == nil then
+            tx = x
+        end
+        if ty == nil then
+            ty = y
+        end
+        if tz == nil then
+            tz = z
+        end
         if forceHit == true then
             NRD_ProjectileSetVector3("HitObjectPosition", tx,ty,tz)
         end

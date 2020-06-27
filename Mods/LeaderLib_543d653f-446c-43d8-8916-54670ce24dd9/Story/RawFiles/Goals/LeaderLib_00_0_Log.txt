@@ -879,28 +879,24 @@ THEN
 DebugBreak(_Str);
 
 PROC
-LeaderLog_Internal_RunStringOnTarget((STRING)_Type, (GUIDSTRING)_Target, (STRING)_Str)
-AND
-_Type == "COMBAT"
+LeaderLog_Internal_RunStringOnTarget("COMBAT", (GUIDSTRING)_Target, (STRING)_Str)
 THEN
 LeaderLib_StringExt_DetermineStringLength(_Str);
 LeaderLog_Internal_LogToCombatLog(_Target, _Str);
 
 //255 character limit as well
 PROC
-LeaderLog_Internal_RunStringOnTarget((STRING)_Type, (GUIDSTRING)_Target, (STRING)_Str)
-AND
-_Type == "NOTIFICATION"
+LeaderLog_Internal_RunStringOnTarget("NOTIFICATION", (GUIDSTRING)_Target, (STRING)_Str)
 AND
 ObjectIsCharacter((CHARACTERGUID)_Target, 1)
+AND
+CharacterIsPlayer(_Target, 1) // Crashes otherwise
 THEN
 LeaderLib_StringExt_DetermineStringLength(_Str);
 LeaderLog_Internal_LogToNotification(_Target, _Str);
 
 PROC
-LeaderLog_Internal_RunStringOnTarget((STRING)_Type, (GUIDSTRING)_Target, (STRING)_Str)
-AND
-_Type == "NOTIFICATION"
+LeaderLog_Internal_RunStringOnTarget("NOTIFICATION", (GUIDSTRING)_Target, (STRING)_Str)
 AND
 ObjectIsCharacter(_Target, 0)
 THEN

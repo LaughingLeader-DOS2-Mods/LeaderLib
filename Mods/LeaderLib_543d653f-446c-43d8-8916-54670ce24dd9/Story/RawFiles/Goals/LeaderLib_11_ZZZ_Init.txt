@@ -36,10 +36,19 @@ DB_CurrentLevel(_Region)
 THEN
 LeaderLib_Initialized(_Region);
 
+// [BEGIN_NO_OSITOOLS]
 PROC
 LeaderLib_Initialized((STRING)_Region)
 THEN
 DB_NOOP(1);
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+PROC
+LeaderLib_Initialized((STRING)_Region)
+THEN
+NRD_ModCall("LeaderLib", "OnInitialized");
+*/
 //END_REGION
 
 //REGION ENDING_EVENT
@@ -51,12 +60,10 @@ LeaderLib_SendEvent("LeaderLib_RegionEnded");
 //END_REGION
 
 //REGION INITIAL_MOD_BOOKS
-IF
-StoryEvent(_, "LeaderLib_Initialized")
+PROC
+LeaderLib_Initialized((STRING)_Region)
 AND
-DB_CurrentLevel(_Level)
-AND
-IsGameLevel(_Level, 1)
+IsGameLevel(_Region, 1)
 AND
 GlobalGetFlag("LeaderLib_AddedInitialModMenuBooks", 0)
 AND

@@ -1,6 +1,6 @@
 function PrintDebug(...)
 	if Ext.IsDeveloperMode() then
-		Ext.Print(...)
+		print(...)
 	end
 end
 

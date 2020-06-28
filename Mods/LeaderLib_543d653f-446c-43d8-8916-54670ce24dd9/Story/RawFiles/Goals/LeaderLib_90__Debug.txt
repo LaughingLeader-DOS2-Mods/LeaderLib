@@ -188,6 +188,11 @@ IF
 StoryEvent(_Obj, "Iterator_LeaderLib_Debug_Ext_PrintCharacter")
 THEN
 NRD_ModCall("LeaderLib", "Debug_Iterator_PrintCharacter", (STRING)_Obj);
+
+IF
+NRD_ItemDeltaModIteratorEvent("Iterator_LeaderLib_Debug_PrintDeltamods", _Item, _DeltaMod, _IsGenerated)
+THEN
+NRD_ModCall("LeaderLib", "Debug_Iterator_PrintDeltamod", (STRING)_Item, _DeltaMod, (STRING)_IsGenerated);
 */
 //END_REGION
 EXITSECTION

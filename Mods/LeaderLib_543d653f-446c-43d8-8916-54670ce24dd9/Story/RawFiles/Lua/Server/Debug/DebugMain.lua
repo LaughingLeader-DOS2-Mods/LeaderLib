@@ -364,6 +364,17 @@ Ext.RegisterConsoleCommand("removestatus", function(command,status,target)
 	end
 end)
 
+Ext.RegisterConsoleCommand("clearinventory", function(command)
+	local host = CharacterGetHostCharacter()
+	local x,y,z = GetPosition(host)
+	--local backpack = CreateItemTemplateAtPosition("LOOT_LeaderLib_BackPack_Invisible_98fa7688-0810-4113-ba94-9a8c8463f830", x, y, z)
+	for i,item in pairs(Ext.GetCharacter(host):GetInventoryItems()) do
+		if ItemIsStoryItem(item) == 0 and ItemIsDestructible(item) and not GameHelpers.ItemIsEquipped(host, item) then
+			ItemRemove(item)
+		end
+	end
+end)
+
 function Debug_Iterator_PrintCharacter(uuid)
 	---@type EsvCharacter
 	local character = Ext.GetCharacter(uuid)
@@ -379,6 +390,48 @@ function Debug_Iterator_PrintCharacter(uuid)
 	print("Pos:", Ext.JsonStringify(characterStats.Position))
 	print("Rot:", Ext.JsonStringify(characterStats.Rotation))
 	print("===============")
+end
+
+local debug_DeltaModProperties = {
+    {Name="Name", Type="string"},
+    {Name="BoostType", Type="string"},
+    {Name="MinLevel", Type="integer"},
+    {Name="MaxLevel", Type="integer"},
+    {Name="Frequency", Type="integer"},
+    {Name="ModifierType", Type="string"},
+    {Name="SlotType", Type="string"},
+    {Name="WeaponType", Type="string"},
+    {Name="Handedness", Type="string"},
+    {Name="ArmorType", Type="string"},
+    {Name="Boosts", Type="table"},
+}
+
+function Debug_Iterator_PrintDeltamod(item, deltamod, isGenerated)
+    local modifierType = NRD_StatGetType(NRD_ItemGetStatsId(item))
+    ---@type DeltaMod
+	local deltamodObj = Ext.GetDeltaMod(deltamod, modifierType)
+	print("DELTAMOD")
+	print("===============")
+	print("Item:", item)
+	print("Item Stat:", Ext.GetItem(item).Stats.Name)
+	print("Name:", deltamod)
+	print("ModifierType:", modifierType)
+	print("IsGenerated:", isGenerated)
+    if deltamodObj ~= nil then
+        for i,prop in ipairs(debug_DeltaModProperties) do
+            if prop.Name == "Boosts" then
+                print("-------")
+                print("Deltamod Boosts:")
+                print("-------")
+                for i,boost in pairs(deltamodObj.Boosts) do
+                    print(boost.Boost, boost.Count)
+                end
+                print("-------")
+            else
+                print(prop.Name, deltamodObj[prop.Name])
+            end
+        end
+    end
 end
 
 --[[SkillProperties = {{

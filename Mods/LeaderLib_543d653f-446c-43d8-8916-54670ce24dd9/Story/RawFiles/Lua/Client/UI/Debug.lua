@@ -34,7 +34,52 @@ local function UIHookTest()
 	end
 end
 
+local function PrintArrayValue(ui, index, arrayName)
+	local val = ui:GetValue(arrayName, "number", index)
+	if val == nil then
+		val = ui:GetValue(arrayName, "string", index)
+		if val == nil then
+			val = ui:GetValue(arrayName, "boolean", index)
+		else
+			val = "\""..val.."\""
+		end
+	end
+	if val ~= nil then
+		print(" ["..index.."] = ["..tostring(val).."]")
+	end
+end
+
+local function PrintArray(ui, arrayName)
+	print("==============")
+	print(arrayName)
+	print("==============")
+	local i = 0
+	while i < 300 do
+		PrintArrayValue(ui, i, arrayName)
+		i = i + 1
+	end
+	print("==============")
+end
+
 local addedTalents = false
+
+local function GetArrayIndexStart(ui, arrayName, offset)
+	local i = 0
+	while i < 9999 do
+		local val = ui:GetValue(arrayName, "number", i)
+		if val == nil then
+			val = ui:GetValue(arrayName, "string", i)
+			if val == nil then
+				val = ui:GetValue(arrayName, "boolean", i)
+			end
+		end
+		if val == nil then
+			return i
+		end
+		i = i + offset
+	end
+	return -1
+end
 
 local function addTestTalents(ui)
 	local talentId = 0
@@ -74,39 +119,50 @@ local function OnSheetEvent(ui, call, ...)
 end
 
 local function LeaderLib_ClientDebug_SessionLoaded()
-	local ui = Ext.GetBuiltinUI("Public/Game/GUI/characterSheet.swf")
-	if ui ~= nil then
-		Ext.RegisterUICall(ui, "setPosition", OnSheetEvent)
-		Ext.RegisterUICall(ui, "getStats", OnSheetEvent)
-		Ext.RegisterUICall(ui, "selectedTab", OnSheetEvent)
-		Ext.RegisterUICall(ui, "hideTooltip", OnSheetEvent)
-		Ext.RegisterUICall(ui, "openContextMenu", OnSheetEvent)
-		Ext.RegisterUICall(ui, "PlaySound", OnSheetEvent)
-		Ext.RegisterUICall(ui, "UIAssert", OnSheetEvent)
-		Ext.RegisterUICall(ui, "inputFocus", OnSheetEvent)
-		Ext.RegisterUICall(ui, "inputFocusLost", OnSheetEvent)
-		Ext.RegisterUICall(ui, "hideUI", OnSheetEvent)
-		Ext.RegisterUICall(ui, "selectCharacter", OnSheetEvent)
-		Ext.RegisterUICall(ui, "showCustomStatTooltip", OnSheetEvent)
-		Ext.RegisterUICall(ui, "showStatTooltip", OnSheetEvent)
-		Ext.RegisterUICall(ui, "showTalentTooltip", OnSheetEvent)
-		Ext.RegisterUICall(ui, "showAbilityTooltip", OnSheetEvent)
-		Ext.RegisterUICall(ui, "onGenerateTreasure", OnSheetEvent)
-		Ext.RegisterUICall(ui, "onClearInventory", OnSheetEvent)
-		Ext.RegisterUICall(ui, "setMcSize", OnSheetEvent)
-		Ext.RegisterUICall(ui, "registerAnchorId", OnSheetEvent)
-		Ext.RegisterUICall(ui, "unregisterAnchorId", OnSheetEvent)
-		Ext.RegisterUICall(ui, "setAnchor", OnSheetEvent)
-		Ext.RegisterUICall(ui, "keepUIinScreen", OnSheetEvent)
-		Ext.RegisterUICall(ui, "clearAnchor", OnSheetEvent)
-		addedTalents = false
-		addedAbilities = false
-		PrintDebug("[LeaderLib_ModMenuClient.lua:UIHookTest] Found characterSheet.swf.")
-	else
-		PrintDebug("[LeaderLib_ModMenuClient.lua:UIHookTest] Failed to get Public/Game/GUI/characterSheet.swf")
-	end
+	Ext.RegisterUINameInvokeListener("updateArraySystem", function(ui, call, ...)
+		--PrintArray(ui, "tags_array")
+		local i = GetArrayIndexStart(ui, "talent_array", 1)
+		ui:SetValue("talent_array", "Undead", i)
+		ui:SetValue("talent_array", Data.TalentEnum.Zombie, i+1)
+		ui:SetValue("talent_array", 0, i+2)
+		ui:SetValue("talent_array", "Corpse Eater", i+3)
+		ui:SetValue("talent_array", Data.TalentEnum.Elf_CorpseEating, i+4)
+		ui:SetValue("talent_array", 0, i+5)
+		PrintArray(ui, "talent_array")
+	end)
+	-- local ui = Ext.GetBuiltinUI("Public/Game/GUI/characterSheet.swf")
+	-- if ui ~= nil then
+	-- 	Ext.RegisterUICall(ui, "setPosition", OnSheetEvent)
+	-- 	Ext.RegisterUICall(ui, "getStats", OnSheetEvent)
+	-- 	Ext.RegisterUICall(ui, "selectedTab", OnSheetEvent)
+	-- 	Ext.RegisterUICall(ui, "hideTooltip", OnSheetEvent)
+	-- 	Ext.RegisterUICall(ui, "openContextMenu", OnSheetEvent)
+	-- 	Ext.RegisterUICall(ui, "PlaySound", OnSheetEvent)
+	-- 	Ext.RegisterUICall(ui, "UIAssert", OnSheetEvent)
+	-- 	Ext.RegisterUICall(ui, "inputFocus", OnSheetEvent)
+	-- 	Ext.RegisterUICall(ui, "inputFocusLost", OnSheetEvent)
+	-- 	Ext.RegisterUICall(ui, "hideUI", OnSheetEvent)
+	-- 	Ext.RegisterUICall(ui, "selectCharacter", OnSheetEvent)
+	-- 	Ext.RegisterUICall(ui, "showCustomStatTooltip", OnSheetEvent)
+	-- 	Ext.RegisterUICall(ui, "showStatTooltip", OnSheetEvent)
+	-- 	Ext.RegisterUICall(ui, "showTalentTooltip", OnSheetEvent)
+	-- 	Ext.RegisterUICall(ui, "showAbilityTooltip", OnSheetEvent)
+	-- 	Ext.RegisterUICall(ui, "onGenerateTreasure", OnSheetEvent)
+	-- 	Ext.RegisterUICall(ui, "onClearInventory", OnSheetEvent)
+	-- 	Ext.RegisterUICall(ui, "setMcSize", OnSheetEvent)
+	-- 	Ext.RegisterUICall(ui, "registerAnchorId", OnSheetEvent)
+	-- 	Ext.RegisterUICall(ui, "unregisterAnchorId", OnSheetEvent)
+	-- 	Ext.RegisterUICall(ui, "setAnchor", OnSheetEvent)
+	-- 	Ext.RegisterUICall(ui, "keepUIinScreen", OnSheetEvent)
+	-- 	Ext.RegisterUICall(ui, "clearAnchor", OnSheetEvent)
+	-- 	addedTalents = false
+	-- 	addedAbilities = false
+	-- 	PrintDebug("[LeaderLib_ModMenuClient.lua:UIHookTest] Found characterSheet.swf.")
+	-- else
+	-- 	PrintDebug("[LeaderLib_ModMenuClient.lua:UIHookTest] Failed to get Public/Game/GUI/characterSheet.swf")
+	-- end
 end
 
-if Ext.IsDeveloperMode() and Ext.Version() >= 43 then
-	--Ext.RegisterListener("SessionLoaded", LeaderLib_ClientDebug_SessionLoaded)
+if Ext.IsDeveloperMode() then
+	Ext.RegisterListener("SessionLoaded", LeaderLib_ClientDebug_SessionLoaded)
 end

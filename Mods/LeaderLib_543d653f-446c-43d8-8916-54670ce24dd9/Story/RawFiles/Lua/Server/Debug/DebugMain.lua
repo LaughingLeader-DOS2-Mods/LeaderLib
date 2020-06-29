@@ -323,8 +323,7 @@ end)
 
 -- !applystatus LLLICH_DOMINATED 145810cc-7e46-43e7-9fdf-ab9bb8ffcdc0 host 18.0 1
 -- !applystatus LLLICH_DOMINATED_BEAM_FX 145810cc-7e46-43e7-9fdf-ab9bb8ffcdc0 host -1.0 1
-Ext.RegisterConsoleCommand("applystatus", function(command,status,target,source,duration,force)
-	print(command,status,target,source,duration,force)
+Ext.RegisterConsoleCommand("statusapply", function(command,status,target,source,duration,force)
 	local host = CharacterGetHostCharacter()
 	if target == nil or target == "host" then
 		target = host
@@ -338,18 +337,20 @@ Ext.RegisterConsoleCommand("applystatus", function(command,status,target,source,
 		duration = tonumber(duration)
 	end
 	if force == nil then
-		force = 0
+		force = 1
 	else
-		force = math.tointeger(force)
+		force = tonumber(force)
 	end
 	if status == nil then
 		status = "HASTED"
 	end
+	print(command,status,target,source,duration,force)
+	print(CharacterGetDisplayName(target))
 	ApplyStatus(target,status,duration,force,source)
 end)
 
 -- !removestatus LLLICH_DOMINATED_BEAM_FX 145810cc-7e46-43e7-9fdf-ab9bb8ffcdc0
-Ext.RegisterConsoleCommand("removestatus", function(command,status,target)
+Ext.RegisterConsoleCommand("statusremove", function(command,status,target)
 	local host = CharacterGetHostCharacter()
 	if target == nil or target == "host" then
 		target = host

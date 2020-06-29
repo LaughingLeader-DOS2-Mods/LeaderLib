@@ -1,4 +1,5 @@
 PersistentVars = {}
+PersistentVars.TimerData = {}
 
 -- local function LeaderLib_GameSessionLoad()
 -- 	PrintDebug("[LeaderLib:Bootstrap.lua] Session is loading.")

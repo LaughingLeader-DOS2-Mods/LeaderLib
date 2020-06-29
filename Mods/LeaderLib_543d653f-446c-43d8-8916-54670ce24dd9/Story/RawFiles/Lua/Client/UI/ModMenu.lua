@@ -190,8 +190,8 @@ local function OnClientMessage(event, data)
 end
 
 local function Client_ModuleSetup()
-	Ext.AddPathOverride("Public/Game/GUI/gameMenu.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/gameMenu.swf")
-	PrintDebug("LeaderLib_ModMenuClient.lua:Client_ModuleSetup] Overrode gameMenu.swf with LeaderLib version.")
+	--Ext.AddPathOverride("Public/Game/GUI/gameMenu.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/gameMenu.swf")
+	--PrintDebug("LeaderLib_ModMenuClient.lua:Client_ModuleSetup] Overrode gameMenu.swf with LeaderLib version.")
 end
 
 local function SessionLoaded()

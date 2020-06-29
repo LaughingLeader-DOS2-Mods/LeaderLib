@@ -37,6 +37,23 @@ function StartTimer(event, delay, ...)
 	end
 end
 
+local OneshotTimerData = {}
+
+--- Starts an Osiris timer with a callback function to run when the timer is finished.
+--- Not save safe since functions can't really be saved.
+---@param timerName string
+---@param delay integer
+---@param callback function
+function StartOneshotTimer(timerName, delay, callback)
+	if OneshotTimerData[timerName] == nil then
+		OneshotTimerData[timerName] = {}
+	end
+	table.insert(OneshotTimerData[timerName], callback)
+	Osi.LeaderLib_Timers_Internal_StoreLuaData(timerName, timerName)
+	TimerCancel(timerName)
+	TimerLaunch(timerName, delay)
+end
+
 ---Cancels an Osiris timer with a variable amount of UUIDs (or none).
 ---@param event string
 function CancelTimer(event, ...)
@@ -71,10 +88,22 @@ function CancelTimer(event, ...)
 	if timerName ~= nil then
 		TimerCancel(timerName)
 	end
+	if OneshotTimerData[event] ~= nil then
+		OneshotTimerData[event] = nil
+	end
 end
 
 function TimerFinished(event, ...)
 	--PrintDebug("[LeaderLib_Timers.lua:TimerFinished] ", event, Common.Dump({...}))
+	if OneshotTimerData[event] ~= nil then
+		for i,callback in ipairs(OneshotTimerData[event]) do
+			local status,err = xpcall(callback, debug.traceback, event, ...)
+			if not status then
+				Ext.PrintError("[LeaderLib:CancelTimer] Error calling oneshot timer callback:\n", err)
+			end
+		end
+		OneshotTimerData[event] = nil
+	end
 	if #Listeners.TimerFinished > 0 then
 		for i,callback in ipairs(Listeners.TimerFinished) do
 			local status,err = xpcall(callback, debug.traceback, event, ...)

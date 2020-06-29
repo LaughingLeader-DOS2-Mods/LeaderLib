@@ -5,6 +5,7 @@ local function _ipairs(t, var)
 	return var, value
 end
 local function iterateFromZero(t) return _ipairs, t, -1 end
+local function iterateDefault(t) return _ipairs, t, 0 end
 
 Data = {}
 local damageTypes = {
@@ -149,7 +150,7 @@ function Data.Attribute:Get()
 end
 
 local talents = {
-	[0] = "ItemMovement",
+	"ItemMovement",
 	"ItemCreation",
 	"Flanking",
 	"AttackOfOpportunity",
@@ -280,7 +281,13 @@ local talents = {
 }
 Data.Talents = setmetatable({},{__index = talents})
 function Data.Talents:Get()
-	return iterateFromZero(self)
+	return iterateDefault(self)
+end
+
+---@type table<string,integer>
+Data.TalentEnum = {}
+for i,talent in Data.Talents:Get() do
+	Data.TalentEnum[talent] = i
 end
 
 Data.ItemRarities = {

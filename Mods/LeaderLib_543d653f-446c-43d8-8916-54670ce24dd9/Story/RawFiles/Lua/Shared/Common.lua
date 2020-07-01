@@ -121,10 +121,13 @@ end
 ---@param key any
 ---@return boolean
 local function TableHasEntry(tbl, key)
+	if tbl == nil then
+		return false
+	end
 	local v = tbl[key]
 	if v ~= nil then
 		return true
-	elseif #tbl > 0 then
+	elseif #tbl > 0 or next(tbl, nil) ~= nil then
 		for k,v2 in pairs(tbl) do
 			if type(v2) == "table" then
 				return TableHasEntry(v2, key)

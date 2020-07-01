@@ -214,8 +214,13 @@ function LoadMods()
 			local versionInt = tonumber(mod.Version)
 			local major,minor,revision,build = ParseVersion(versionInt)
 			--local modid = string.gsub(mod.Name, "%s+", ""):gsub("%p+", ""):gsub("%c+", ""):gsub("%%+", ""):gsub("&+", "")
-			local modid = string.match(mod.Directory, "(.*)_")
-			Osi.LeaderLib_Mods_OnModLoaded(uuid, modid, mod.Name, mod.Author, versionInt, major, minor, revision, build)
+			local modName = mod.Name or ""
+			local modid = string.match(mod.Directory, "(.*)_") or modName .. uuid
+			local author = mod.Author or ""
+			if modName == nil then
+				modName = ""
+			end
+			Osi.LeaderLib_Mods_OnModLoaded(uuid, modid, modName, author, versionInt, major, minor, revision, build)
 		end
 	end
 end

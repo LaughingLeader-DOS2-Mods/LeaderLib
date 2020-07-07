@@ -41,6 +41,22 @@ Data.DamageTypeEnums = {
 	Poison = 10,
 	Shadow = 11
 }
+
+Data.DamageTypeToResistance = {
+	--None = "PureResistance", -- Special LeaderLib Addition
+	Physical = "PhysicalResistance",
+	Piercing = "PiercingResistance",
+	--Corrosive = "CorrosiveResistance",
+	--Magic = "MagicResistance",
+	--Chaos = "ChaosResistance",-- Special LeaderLib Addition
+	Air = "AirResistance",
+	Earth = "EarthResistance",
+	Fire = "FireResistance",
+	Poison = "PoisonResistance",
+	--Shadow = "ShadowResistance", -- Technically Tenebrium
+	Water = "WaterResistance",
+}
+
 local slots = {
 	[0] = "Weapon",
 	"Shield",

@@ -243,3 +243,8 @@ DB_WasInRegion 2
 DB_WaypointBlockUI 1
 DB_WaypointInfo 3
 DB_WaypointTuto 1
+DB_LeaderLib_LuaSkillListeners_Ignore 3
+DB_LeaderLib_Helper_Temp_LuaTimer 2
+DB_LeaderLib_Helper_Temp_LuaTimer 3
+DB_LeaderLib_Helper_Temp_LuaTimer 4
+DB_Illusionist 2

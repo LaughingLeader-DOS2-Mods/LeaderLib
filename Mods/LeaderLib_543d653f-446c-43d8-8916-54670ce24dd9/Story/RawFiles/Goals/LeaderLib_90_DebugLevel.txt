@@ -1437,6 +1437,7 @@ StringConcatenate(_Str3, "].", _Suffix)
 THEN
 LeaderLog_LogInt("DEBUG_EVENTS", "[LeaderLib:Debug:CharacterReceivedDamage] [",_Percentage, _Suffix);
 
+/* [OSITOOLS_ONLY]
 IF
 CharacterPhysicalHitBy(_Target, _Owner, _Attacker)
 AND
@@ -1447,6 +1448,7 @@ AND
 String(_Owner, _OwnerName)
 THEN
 LeaderLog_Log("DEBUG_EVENTS", "[LeaderLib:Debug:CharacterPhysicalHitBy] [",_Name,"](",_OwnerName,") attacked [",_TargetStr,"].");
+*/
 //END_REGION
 
 //REGION SUMMONING_DEBUG

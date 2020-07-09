@@ -17,11 +17,7 @@ function TranslatedString:Create(handle,content)
 	}
 	setmetatable(this, self)
 	if this.Handle ~= "" and this.Handle ~= nil then
-		if Ext.Version() >= 43 then
-			this.Value = Ext.GetTranslatedString(this.Handle, this.Content)
-		else
-			this.Value = this.Content
-		end
+		this.Value = Ext.GetTranslatedString(this.Handle, this.Content)
 	end
 	table.insert(TranslatedStringEntries, this)
     return this
@@ -38,6 +34,21 @@ function TranslatedString:Update()
 		self.Value = self.Content
 	end
 	return self.Value
+end
+
+--- Replace placeholder values in a string, such as [1], [2], etc. 
+--- Takes a variable numbers of values.
+--- @vararg values
+--- @return string
+function TranslatedString:ReplacePlaceholders(...)
+	local values = table.unpack({...})
+	local str = self.Value
+	if #values > 0 then
+		for i,v in ipairs(values) do
+			str = str:gsub("%["..tostring(i).."%]", v)
+		end
+	end
+	return str
 end
 
 Classes["TranslatedString"] = TranslatedString

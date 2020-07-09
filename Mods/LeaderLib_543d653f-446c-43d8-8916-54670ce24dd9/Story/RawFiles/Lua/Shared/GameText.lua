@@ -106,6 +106,10 @@ LocalizedText.Slots = {
 	Overhead = TranslatedString:Create("hda749a3fg52c0g48d5gae3bgd522dd34f65c", "Overhead"),
 }
 
+LocalizedText.ItemBoosts = {
+	ResistancePenetration = TranslatedString:Create("hf638bc67g5cb6g4dcfg8663gce1951caad2b", "[1] Penetration")
+}
+
 ---Get localized damage text wrapped in that damage type's color.
 ---@param damageType string
 ---@param damageValue string|integer|number
@@ -201,6 +205,11 @@ local damageTypeToResistanceName = {
 	Water = "WaterResistance",
 }
 
+---@class ResistanceTextEntry
+---@field Text TranslatedString
+---@field Color string
+
+---@type table<string, ResistanceTextEntry>
 LocalizedText.ResistanceNames = {
 	PureResistance = {Text=TranslatedString:Create("h71766947g9564g4a6bg936bga055cccc01a0","Pure Resistance"), Color="#13D177"}, -- Special LeaderLib handle
 	PhysicalResistance = {Text=TranslatedString:Create("hcd84ee03g9912g4b0dga49age6bce09b19d1","Physical Resistance"), Color="#AE9F95"},
@@ -245,3 +254,21 @@ local function GetResistanceText(resistance, amount)
 end
 
 GameHelpers.GetResistanceText = GetResistanceText
+
+---Get the localized resistance name for a damage type.
+---@param damageType string
+---@return string
+local function GetResistanceNameFromDamageType(damageType)
+	local resistance = Data.DamageTypeToResistanceWithExtras[damageType]
+	if resistance ~= nil then
+		local entry = LocalizedText.ResistanceNames[resistance]
+		if entry ~= nil then
+			return entry.Text.Value
+		else
+			Ext.PrintError("No damage name/color entry for resistance " .. tostring(resistance))
+		end
+	end
+	return ""
+end
+
+GameHelpers.GetResistanceNameFromDamageType = GetResistanceNameFromDamageType

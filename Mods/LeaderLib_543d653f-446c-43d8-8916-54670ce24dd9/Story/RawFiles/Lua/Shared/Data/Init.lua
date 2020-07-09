@@ -1,3 +1,9 @@
+if Data == nil then 
+	Data = {}
+end
+
+Ext.Require("Shared/Data/ResistancePenetrationTags.lua")
+
 local function _ipairs(t, var)
 	var = var + 1
 	local value = t[var]
@@ -7,7 +13,6 @@ end
 local function iterateFromZero(t) return _ipairs, t, -1 end
 local function iterateDefault(t) return _ipairs, t, 0 end
 
-Data = {}
 local damageTypes = {
 	[0] = "None",
 	"Physical",
@@ -345,23 +350,6 @@ Data.RarityEnum = {
 	Legendary = 5,
 	Divine = 6,
 }
-
----@class ResistancePenetrationTagEntry
----@field Tag string
----@field Amount integer
-
----@type table<string, ResistancePenetrationTagEntry[]>
-Data.ResistancePenetrationTags = {}
-
-for damageType,_ in pairs(Data.DamageTypeToResistance) do
-	if Data.ResistancePenetrationTags[damageType] == nil then
-		Data.ResistancePenetrationTags[damageType] = {}
-	end
-	for amount=5,50,5 do
-		local tag = string.format("LeaderLib_ResistancePenetration_%s%i", damageType,amount)
-		table.insert(Data.ResistancePenetrationTags[damageType], {Tag=tag,Amount=amount})
-	end
-end
 
 ID = {
 	MESSAGE = {

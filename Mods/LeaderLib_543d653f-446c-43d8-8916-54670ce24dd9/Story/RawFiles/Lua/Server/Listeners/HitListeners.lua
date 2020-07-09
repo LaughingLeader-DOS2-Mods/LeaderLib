@@ -3,6 +3,7 @@
 ---@type damage integer
 ---@type handle integer
 local function OnPrepareHit(target, source, damage, handle)
+	print("OnPrepareHit",target, source, damage, handle)
 	if #Listeners.OnPrepareHit > 0 then
 		for i,callback in ipairs(Listeners.OnPrepareHit) do
 			local status,err = xpcall(callback, debug.traceback, target, source, damage, handle)
@@ -24,19 +25,10 @@ Ext.RegisterOsirisListener("NRD_OnPrepareHit", 4, "after", OnPrepareHit)
 ---@type source string
 ---@type damage integer
 ---@type handle integer
-local function BeforeOnHit(target, source, damage, handle)
-	print("BeforeOnHit",target, source, damage, handle)
+local function OnHit(target, source, damage, handle)
+	print("OnHit",target, source, damage, handle)
 	--- Apply this before other mods possibly mess with the damage.
 	ApplyResistancePenetration(target, source, damage, handle)
-end
-Ext.RegisterOsirisListener("NRD_OnHit", 4, "after", BeforeOnHit)
-
-
----@type target string
----@type source string
----@type damage integer
----@type handle integer
-local function OnHit(target, source, damage, handle)
 	local skillprototype = NRD_StatusGetString(target, handle, "SkillId")
 	if skillprototype ~= "" and skillprototype ~= nil then
 		OnSkillHit(source, skillprototype, target, handle, damage)
@@ -71,5 +63,4 @@ local function OnHit(target, source, damage, handle)
 		end
 	end
 end
-Ext.NewCall(OnHit, "LeaderLib_Ext_OnHit", "(GUIDSTRING)_Target, (GUIDSTRING)_Source, (INTEGER)_Damage, (INTEGER64)_Handle")
---Ext.RegisterOsirisListener("NRD_OnHit", 4, "after", OnHit)
+Ext.RegisterOsirisListener("NRD_OnHit", 4, "after", OnHit)

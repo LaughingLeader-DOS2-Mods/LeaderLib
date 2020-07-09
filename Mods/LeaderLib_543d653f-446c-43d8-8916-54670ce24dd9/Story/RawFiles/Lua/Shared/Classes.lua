@@ -41,7 +41,7 @@ end
 --- @vararg values
 --- @return string
 function TranslatedString:ReplacePlaceholders(...)
-	local values = table.unpack({...})
+	local values = {...}
 	local str = self.Value
 	if #values > 0 then
 		for i,v in ipairs(values) do

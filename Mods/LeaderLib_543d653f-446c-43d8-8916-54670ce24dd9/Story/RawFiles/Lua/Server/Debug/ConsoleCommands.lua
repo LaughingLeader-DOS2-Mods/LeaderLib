@@ -239,10 +239,21 @@ Ext.RegisterConsoleCommand("testrespen", function(command, level)
 	end
 	local item = CreateItemTemplateAtPosition("537a06a5-0619-4d57-b77d-b4c319eab3e6", x, y, z)
 	SetTag(item, "LeaderLib_HasResistancePenetration")
-	local tag = Data.ResistancePenetrationTags["Fire"][4]
+	local tag = Data.ResistancePenetrationTags["Fire"][4].Tag
 	SetTag(item, tag)
+	ItemLevelUpTo(item, level)
 	PrintDebug("[LeaderLib:testrespen] Added tag",tag,"to item",item)
 	ItemToInventory(item, host, 1, 1, 0)
+end)
+
+Ext.RegisterConsoleCommand("testrespen2", function(...)
+	StartOneshotTimer("Timers_LeaderLib_Debug_ResPenTest", 3000, function()
+		--ApplyDamage(CharacterGetHostCharacter(), 50, "Fire", CharacterGetHostCharacter())
+		--ApplyDamage(CharacterGetHostCharacter(), 1, "Physical")
+		local host = CharacterGetHostCharacter()
+		Osi.ApplyDamage(host, 10, "Fire")
+		CharacterStatusText(host, "Took Damage?")
+	end)
 end)
 
 Ext.RegisterConsoleCommand("clearinventory", function(command)
@@ -364,4 +375,16 @@ Ext.RegisterConsoleCommand("printdeltamods", function(command, ...)
 			end
 		end
 	end
+end)
+
+Ext.RegisterConsoleCommand("printrespentags", function(command)
+	print("Data.ResistancePenetrationTags = {")
+	for damageType,_ in pairs(Data.DamageTypeToResistance) do
+		print("\t"..damageType.." = {")
+		for i,entry in ipairs(Data.ResistancePenetrationTags[damageType]) do
+			print(string.format("\t\t[%i] = {Tag=\"%s\", Amount=%i},", i, entry.Tag, entry.Amount))
+		end
+		print("\t},")
+	end
+	print("}")
 end)

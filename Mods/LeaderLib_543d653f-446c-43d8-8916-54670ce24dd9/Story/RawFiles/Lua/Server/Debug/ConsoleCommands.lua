@@ -229,6 +229,22 @@ Ext.RegisterConsoleCommand("statusremove", function(command,status,target)
 	end
 end)
 
+Ext.RegisterConsoleCommand("testrespen", function(command, level)
+	local host = CharacterGetHostCharacter()
+	local x,y,z = GetPosition(host)
+	if level ~= nil then
+		level = math.tointeger(tonumber(level))
+	else
+		level = CharacterGetLevel(host)
+	end
+	local item = CreateItemTemplateAtPosition("537a06a5-0619-4d57-b77d-b4c319eab3e6", x, y, z)
+	SetTag(item, "LeaderLib_HasResistancePenetration")
+	local tag = Data.ResistancePenetrationTags["Fire"][4]
+	SetTag(item, tag)
+	PrintDebug("[LeaderLib:testrespen] Added tag",tag,"to item",item)
+	ItemToInventory(item, host, 1, 1, 0)
+end)
+
 Ext.RegisterConsoleCommand("clearinventory", function(command)
 	local host = CharacterGetHostCharacter()
 	local x,y,z = GetPosition(host)

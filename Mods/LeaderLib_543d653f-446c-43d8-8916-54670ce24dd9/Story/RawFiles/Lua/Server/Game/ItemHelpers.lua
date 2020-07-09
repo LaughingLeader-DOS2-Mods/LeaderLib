@@ -85,9 +85,27 @@ local function RemoveRunes(character, runeTemplates)
 	end
 end
 
+--- Checks if a character has an item equipped with a specific tag.
+---@param character string
+---@param tag string
+---@return boolean
+local function HasTagEquipped(character, tag)
+    if StringHelpers.IsNullOrEmpty(character) or StringHelpers.IsNullOrEmpty(tag) then
+        return false
+    end
+	for _,slotName in Data.VisibleEquipmentSlots:Get() do
+		local item = CharacterGetEquippedItem(target, slotName)
+		if item ~= nil and IsTagged(item, tag) == 1 then
+			return true
+		end
+	end
+	return false
+end
+
 GameHelpers.EquipInSlot = EquipInSlot
 GameHelpers.GetEquippedSlot = GetEquippedSlot
 GameHelpers.ItemIsEquipped = ItemIsEquipped
 GameHelpers.CloneItemForCharacter = CloneItemForCharacter
 GameHelpers.CreateItemByStat = CreateItemByStat
 GameHelpers.RemoveRunes = RemoveRunes
+GameHelpers.HasTagEquipped = HasTagEquipped

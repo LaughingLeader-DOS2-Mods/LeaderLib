@@ -12,11 +12,6 @@ local function OnPrepareHit(target, source, damage, handle)
 			end
 		end
 	end
-
-	if damage > 0 and ObjectIsCharacter(source) == 1 and 
-		GameHelpers.HasTagEquipped(source, "LeaderLib_HasResistancePenetration") then
-			SaveDamageAmountForResistancePenetration(target, source, damage, handle)
-	end
 end
 
 Ext.RegisterOsirisListener("NRD_OnPrepareHit", 4, "after", OnPrepareHit)
@@ -27,8 +22,7 @@ Ext.RegisterOsirisListener("NRD_OnPrepareHit", 4, "after", OnPrepareHit)
 ---@type handle integer
 local function OnHit(target, source, damage, handle)
 	print("OnHit",target, source, damage, handle)
-	--- Apply this before other mods possibly mess with the damage.
-	ApplyResistancePenetration(target, source, damage, handle)
+
 	local skillprototype = NRD_StatusGetString(target, handle, "SkillId")
 	if skillprototype ~= "" and skillprototype ~= nil then
 		OnSkillHit(source, skillprototype, target, handle, damage)

@@ -4,6 +4,7 @@ local function OnItemTooltip(item, tooltip)
 	if item ~= nil then
 		-- Resistance Penetration display
 		if item:HasTag("LeaderLib_HasResistancePenetration") then
+			local tagsCheck = {}
 			for _,damageType in Data.DamageTypes:Get() do
 				local tags = Data.ResistancePenetrationTags[damageType]
 				if tags ~= nil then
@@ -11,7 +12,7 @@ local function OnItemTooltip(item, tooltip)
 					for i,tagEntry in ipairs(tags) do
 						if item:HasTag(tagEntry.Tag) then
 							totalResPen = totalResPen + tagEntry.Amount
-							print(tagEntry.Amount)
+							tagsCheck[#tagsCheck+1] = tagEntry.Tag
 						end
 					end
 
@@ -29,6 +30,7 @@ local function OnItemTooltip(item, tooltip)
 					end
 				end
 			end
+			--print("ResPen tags:", Ext.JsonStringify(tagsCheck))
 		end
 	end
 end

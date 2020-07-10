@@ -94,7 +94,7 @@ local function HasTagEquipped(character, tag)
         return false
     end
 	for _,slotName in Data.VisibleEquipmentSlots:Get() do
-		local item = CharacterGetEquippedItem(target, slotName)
+		local item = CharacterGetEquippedItem(character, slotName)
 		if item ~= nil and IsTagged(item, tag) == 1 then
 			return true
 		end

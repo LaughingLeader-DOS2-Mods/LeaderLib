@@ -2,8 +2,6 @@ if Data == nil then
 	Data = {}
 end
 
-Ext.Require("Shared/Data/ResistancePenetrationTags.lua")
-
 local function _ipairs(t, var)
 	var = var + 1
 	local value = t[var]
@@ -81,6 +79,8 @@ Data.DamageTypes = setmetatable({},{__index = damageTypes})
 function Data.DamageTypes:Get()
 	return iterateFromZero(self)
 end
+
+---@alias ItemSlot "Weapon"|"Shield"|"Helmet"|"Breast"|"Gloves"|"Leggings"|"Boots"|"Belt"|"Amulet"|"Ring"|"Ring2"|"Wings"|"Horns"|"Overhead"
 
 local slots = {
 	[0] = "Weapon",
@@ -368,3 +368,5 @@ SKILL_STATE = {
 	CAST = "CAST",
 	HIT = "HIT",
 }
+
+Ext.Require("Shared/Data/ResistancePenetrationTags.lua")

@@ -47,8 +47,6 @@ Ext.RegisterListener("SessionLoaded", SessionLoaded)
 
 Ext.Require("BootstrapShared.lua")
 Ext.Require("Server/Init.lua")
-Ext.Require("Server/Debug/DebugMain.lua")
-Ext.Require("Server/Debug/ConsoleCommands.lua")
 Ext.Require("Server/GameHelpers.lua")
 Ext.Require("Server/Game/DamageHelpers.lua")
 Ext.Require("Server/Game/HitHelpers.lua")
@@ -67,11 +65,7 @@ Ext.Require("Server/Timers.lua")
 Ext.Require("Server/OsirisHelpers.lua")
 Ext.Require("Server/Versioning.lua")
 
-
-Ext.RegisterOsirisListener("DebugBreak", 1, "after", function (v) 
-    print("DebugBreak", v)
-end)
-
-Ext.RegisterOsirisListener("AutomatedDialogEnded", 2, "after", function (...) 
-    print("AutomatedDialogEnded", Ext.JsonStringify({...}))
-end)
+Ext.Require("Server/Debug/DebugMain.lua")
+if Ext.IsDeveloperMode() then
+	Ext.Require("Server/Debug/ConsoleCommands.lua")
+end

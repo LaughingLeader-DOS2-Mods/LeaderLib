@@ -187,7 +187,8 @@ end)
 
 -- !applystatus LLLICH_DOMINATED 145810cc-7e46-43e7-9fdf-ab9bb8ffcdc0 host 18.0 1
 -- !applystatus LLLICH_DOMINATED_BEAM_FX 145810cc-7e46-43e7-9fdf-ab9bb8ffcdc0 host -1.0 1
-Ext.RegisterConsoleCommand("statusapply", function(command,status,target,source,duration,force)
+Ext.RegisterConsoleCommand("statusapply", function(command,status,duration,force,target,source)
+	print(command,status,target,source,duration,force)
 	local host = CharacterGetHostCharacter()
 	if target == nil or target == "host" then
 		target = host
@@ -208,7 +209,6 @@ Ext.RegisterConsoleCommand("statusapply", function(command,status,target,source,
 	if status == nil then
 		status = "HASTED"
 	end
-	print(command,status,target,source,duration,force)
 	print(CharacterGetDisplayName(target))
 	ApplyStatus(target,status,duration,force,source)
 end)
@@ -247,11 +247,14 @@ Ext.RegisterConsoleCommand("testrespen", function(command, level)
 end)
 
 Ext.RegisterConsoleCommand("testrespen2", function(...)
+	local host = CharacterGetHostCharacter()
+	ApplyStatus(host, "LADY_VENGEANCE", -1.0, 0, host)
 	StartOneshotTimer("Timers_LeaderLib_Debug_ResPenTest", 3000, function()
 		--ApplyDamage(CharacterGetHostCharacter(), 50, "Fire", CharacterGetHostCharacter())
 		--ApplyDamage(CharacterGetHostCharacter(), 1, "Physical")
-		local host = CharacterGetHostCharacter()
-		Osi.ApplyDamage(host, 10, "Fire")
+		--Osi.ApplyDamage(host, 10, "Water")
+		local x,y,z = GetPosition(host)
+		CreateExplosionAtPosition(x, y, z, "Projectile_EnemyIceShard", 1)
 		CharacterStatusText(host, "Took Damage?")
 	end)
 end)

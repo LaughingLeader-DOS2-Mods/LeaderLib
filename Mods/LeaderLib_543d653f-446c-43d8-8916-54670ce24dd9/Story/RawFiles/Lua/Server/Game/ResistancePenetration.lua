@@ -85,9 +85,11 @@ local function DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, atta
 		for i,itemId in ipairs(attacker.Character:GetInventoryItems()) do
 			---@type EsvItem
 			local item = Ext.GetItem(itemId)
-			print(item.Slot, item.StatsId)
+			--print(i, item.Slot, item.StatsId)
 			if item.Slot < 15 and item:HasTag("LeaderLib_HasResistancePenetration") then
 				resPenItems[#resPenItems+1] = item
+			elseif item.Slot >= 15 then
+				break
 			end
 		end
 		if #resPenItems > 0 then

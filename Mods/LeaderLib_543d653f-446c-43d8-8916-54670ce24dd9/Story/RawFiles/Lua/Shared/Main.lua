@@ -61,6 +61,12 @@ local function LeaderLib_Shared_SessionLoading()
 			end
 		end
 	end
+
+	if Ext.IsServer() then
+		if PersistentVars["OriginalSkillTiers"] ~= nil then
+			Data.OriginalSkillTiers = PersistentVars["OriginalSkillTiers"]
+		end
+	end
 end
 
 Ext.RegisterListener("SessionLoading", LeaderLib_Shared_SessionLoading)

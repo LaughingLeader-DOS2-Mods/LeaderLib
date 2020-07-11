@@ -2,6 +2,8 @@ if Data == nil then
 	Data = {}
 end
 
+Data.OriginalSkillTiers = {}
+
 local function _ipairs(t, var)
 	var = var + 1
 	local value = t[var]

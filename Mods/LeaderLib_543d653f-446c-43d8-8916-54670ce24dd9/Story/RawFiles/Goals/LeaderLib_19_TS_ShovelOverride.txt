@@ -1,0 +1,259 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+DB_LizardFirstShovelUses(0);
+KBSECTION
+//REGION CHECK FOR TREASURE
+IF
+DB_ShovelArea((TRIGGERGUID)_Trigger,(STRING)_,(ITEMGUID)_)
+THEN
+ProcTriggerRegisterForPlayers(_Trigger);
+
+IF
+DB_ShovelRewardItemAppear(_,_Item,_)
+THEN
+SetOnStage(_Item,0);
+
+IF
+DB_ShovelRewardItemScatter(_,_Item)
+THEN
+SetOnStage(_Item,0);
+
+IF
+DB_ShovelRewardItemSpawn(_,_Item)
+THEN
+SetOnStage(_Item,0);
+
+IF
+DB_ShovelRewardCharacterAppear(_,_Character)
+THEN
+SetOnStage(_Character,0);
+
+//Dig while in a trigger
+IF
+CharacterUsedItem(_Player, _Shovel)
+AND
+ObjectExists(_Shovel,1)	//ignore consumables that were destroyed
+AND
+IsTagged(_Shovel, "SHOVEL", 1)
+AND
+DB_ShovelArea(_Trigger,_,_DirtPile)
+AND
+DB_InRegion(_Player,_Trigger)
+AND
+NOT DB_Shovelling_Mound(_,_DirtPile)
+AND
+CharacterIsInFightMode(_Player,_WasInFightMode)
+THEN
+DB_Shovelling_Mound(_Player,_DirtPile);
+CharacterSetFightMode(_Player,0,1);
+PlayAnimation(_Player,"use_dig","digmound");
+DB_Shovel_PlayerHadWeaponDrawn(_Player,_WasInFightMode);
+
+//Dig outside a trigger
+IF
+CharacterUsedItem(_Player, _Shovel)
+AND
+ObjectExists(_Shovel,1)	//ignore consumables that were destroyed
+AND
+IsTagged(_Shovel, "SHOVEL", 1)
+AND
+NOT DB_Shovelling_Mound(_Player,_)
+AND
+CharacterIsInFightMode(_Player,_WasInFightMode)
+THEN
+CharacterSetFightMode(_Player,0,1);
+PlayAnimation(_Player,"use_dig","digmound");
+DB_Shovel_PlayerHadWeaponDrawn(_Player,_WasInFightMode);
+
+//Dig by interacting with pile without a shovel
+
+IF
+CharacterUsedItem(_Player,_DirtPile)
+AND
+DB_ShovelArea(_,_,_DirtPile)
+AND
+NOT PartyFindTaggedItem(_Player, "SHOVEL", 0, _)
+AND
+IsTagged(_Player,"LIZARD",0)
+THEN
+Proc_StartDialog(1,"GLO_AD_ShovelRequired", _Player);
+
+IF
+CharacterUsedItem(_Player,_DirtPile)
+AND
+DB_ShovelArea(_,_,_DirtPile)
+AND
+NOT DB_Shovelling_Mound(_,_DirtPile)
+AND
+IsTagged(_Player,"LIZARD",1)
+AND
+CharacterIsInFightMode(_Player,_WasInFightMode)
+THEN
+DB_Shovelling_Mound(_Player,_DirtPile);
+CharacterSetFightMode(_Player,0,1);
+PlayAnimation(_Player,"use_dig","digmound");
+DB_Shovel_PlayerHadWeaponDrawn(_Player,_WasInFightMode);
+proc_LizardFirstShovelUse((CHARACTERGUID)_Player);
+
+//Dig by interacting with pile with a shovel
+IF
+CharacterUsedItem(_Player,_DirtPile)
+AND
+DB_ShovelArea(_,_,_DirtPile)
+AND
+NOT DB_Shovelling_Mound(_,_DirtPile)
+AND
+PartyFindTaggedItem(_Player, "SHOVEL", 1, _)
+AND
+CharacterIsInFightMode(_Player,_WasInFightMode)
+THEN
+DB_Shovelling_Mound(_Player,_DirtPile);
+CharacterSetFightMode(_Player,0,1);
+PlayAnimation(_Player,"use_dig","digmound");
+DB_Shovel_PlayerHadWeaponDrawn(_Player,_WasInFightMode);
+
+//After Dig
+IF
+StoryEvent(_Player,"digmound")
+AND
+NOT DB_Shovelling_Mound((CHARACTERGUID)_Player,_)
+THEN
+Proc_StartDialog(1,"GLO_AD_ShovelFailed", _Player);
+
+IF
+StoryEvent(_Player,"digmound")
+AND
+DB_Shovelling_Mound((CHARACTERGUID)_Player,_DirtMound)
+AND
+DB_ShovelArea(_Trigger,_Reward,_DirtMound)
+THEN
+NOT DB_ShovelArea(_Trigger,_Reward,_DirtMound);
+NOT DB_Shovelling_Mound(_Player,_DirtMound);
+SetOnStage(_DirtMound,0);
+ProcShovelRewards(_Player,_Reward);
+CharacterItemSetEvent(_Player,_DirtMound,"clearedMound");
+
+IF
+StoryEvent(_Player,"digmound")
+AND
+DB_Shovel_PlayerHadWeaponDrawn((CHARACTERGUID)_Player,1)
+THEN
+CharacterSetFightMode(_Player,1,0);
+
+IF
+StoryEvent(_Player,"digmound")
+AND
+DB_Shovel_PlayerHadWeaponDrawn((CHARACTERGUID)_Player,_Value)
+THEN
+NOT DB_Shovel_PlayerHadWeaponDrawn(_Player,_Value);
+
+//END_REGION
+
+//REGION Lizard Dig AD
+
+PROC
+proc_LizardFirstShovelUse((CHARACTERGUID)_Lizrd)
+AND
+IsTagged(_Lizrd,"LIZARD",1)
+AND
+DB_LizardFirstShovelUses(_Int)
+AND
+_Int < 3
+AND
+IntegerSum(_Int,1,_NewInt)
+THEN
+DB_LizardFirstShovelUses(_NewInt);
+NOT DB_LizardFirstShovelUses(_Int);
+Proc_StartDialog(1,"GEN_AD_Lizrd_Dig",_Lizrd);
+
+
+
+//END_REGION
+
+//REGION SHOVEL REWARDS
+PROC
+ProcShovelRewards((CHARACTERGUID)_Player,(STRING)_Reward)
+AND
+DB_ShovelRewardItemAdd(_Reward,(ITEMGUID)_Item)
+THEN
+ItemToInventory(_Item,_Player,-1);
+
+PROC
+ProcShovelRewards((CHARACTERGUID)_Player,(STRING)_Reward)
+AND
+DB_ShovelRewardItemAppear(_Reward,(ITEMGUID)_Item,(TRIGGERGUID)_Trigger)
+THEN
+SetOnStage(_Item,1);
+ItemDragToTrigger(_Item,_Trigger);
+
+PROC
+ProcShovelRewards((CHARACTERGUID)_Player,(STRING)_Reward)
+AND
+DB_ShovelRewardCharacterAppear(_Reward,(CHARACTERGUID)_Character)
+THEN
+CharacterAppear(_Character,1,"");
+
+PROC
+ProcShovelRewards((CHARACTERGUID)_Player,(STRING)_Reward)
+AND
+DB_ShovelRewardItemSpawn(_Reward,(ITEMGUID)_Item)
+THEN
+SetOnStage(_Item,1);
+
+PROC
+ProcShovelRewards((CHARACTERGUID)_Player,(STRING)_Reward)
+AND
+DB_ShovelRewardItemTemplate(_Reward,(STRING)_ItemTemplate,(INTEGER)_Amount)
+THEN
+ItemTemplateAddTo(_ItemTemplate,_Player,_Amount);
+
+PROC
+ProcShovelRewards((CHARACTERGUID)_Player,(STRING)_Reward)
+AND
+DB_ShovelRewardEvent(_Reward,(STRING)_Event)
+THEN
+GlobalSetFlag(_Event);
+
+PROC
+ProcShovelRewards((CHARACTERGUID)_Player,(STRING)_Reward)
+AND
+DB_ShovelRewardVoiceBark(_Reward, (STRING)_VoiceBark)
+THEN
+StartVoiceBark(_VoiceBark, _Player);
+
+PROC
+ProcShovelRewards((CHARACTERGUID)_Player,(STRING)_Reward)
+AND
+DB_ShovelRewardSurface(_Reward,(TRIGGERGUID)_Trigger, (STRING)_Type, (REAL)_Radius, (REAL)_Lifetime)
+THEN
+CreateSurface(_Trigger, _Type, _Radius, _Lifetime);
+
+PROC
+ProcShovelRewards((CHARACTERGUID)_Player,(STRING)_Reward)
+AND
+DB_ShovelRewardItemScatter(_Reward,(ITEMGUID)_Item)
+AND
+GetPosition(_Item, _X, _Y, _Z)
+THEN
+SetOnStage(_Item, 1);
+ItemScatterAt(_Item, _X, _Y, _Z);
+
+//END_REGION
+
+//REGION Tombstone AD
+
+IF
+CharacterItemEvent(_Player,_Tombstone,"GEN_UsedTombstone")
+AND
+GetVarFixedString(_Tombstone,"Dialog",_Dialog)
+AND
+_Dialog != ""
+THEN
+Proc_StartDialog(1,_Dialog,_Tombstone,_Player);
+
+//END_REGION
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

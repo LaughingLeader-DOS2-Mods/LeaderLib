@@ -37,6 +37,8 @@ ObjectExists(_Shovel,1)	//ignore consumables that were destroyed
 AND
 IsTagged(_Shovel, "SHOVEL", 1)
 AND
+NOT CharacterGetEquippedWeapon(_Player, _Shovel) // Ignore item events if the shovel was equipped
+AND
 DB_ShovelArea(_Trigger,_,_DirtPile)
 AND
 DB_InRegion(_Player,_Trigger)
@@ -57,6 +59,8 @@ AND
 ObjectExists(_Shovel,1)	//ignore consumables that were destroyed
 AND
 IsTagged(_Shovel, "SHOVEL", 1)
+AND
+NOT CharacterGetEquippedWeapon(_Player, _Shovel) // Ignore item events if the shovel was equipped
 AND
 NOT DB_Shovelling_Mound(_Player,_)
 AND

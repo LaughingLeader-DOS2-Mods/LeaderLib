@@ -118,4 +118,18 @@ local function Roll(chance, includeZero)
 		return (roll > 0 and roll <= chance),roll
 	end
 end
+
 GameHelpers.Roll = Roll
+
+local function ClearActionQueue(character, purge)
+    if purge then
+        CharacterPurgeQueue(character)
+    else
+        CharacterFlushQueue(character)
+    end
+
+    CharacterMoveTo(character, character, 1, "", 1);
+    CharacterSetStill(character);
+end
+
+GameHelpers.ClearActionQueue = ClearActionQueue

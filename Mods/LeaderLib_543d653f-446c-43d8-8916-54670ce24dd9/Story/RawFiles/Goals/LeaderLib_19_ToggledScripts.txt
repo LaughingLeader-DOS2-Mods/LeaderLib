@@ -74,8 +74,8 @@ LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_LuaEventListeners", "Le
 LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_LuaSkillListeners", "LeaderLib_LuaSkillListeners_Enabled");
 
 //Script Overrides
-LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_ShovelOverride", "LeaderLib_Overrides_ShovelScript_Enabled");
-DB_LeaderLib_ToggleScripts_ScriptOverrides("LeaderLib_19_TS_ShovelOverride", "__GLO_Shovel");
+//LeaderLib_ToggleScripts_Register_Script("LeaderLib_19_TS_ShovelOverride", "LeaderLib_Overrides_ShovelScript_Enabled");
+//LeaderLib_ToggleScripts_Register_ScriptOverride("LeaderLib_19_TS_ShovelOverride", "__GLO_Shovel");
 
 //PROC
 //LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
@@ -398,6 +398,11 @@ THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:ToggleScripts:OnScriptRegistered] Activating goal [",_GoalTitle,"] (",_TagOrFlag,").");
 SysActivateGoal(_GoalTitle);
 LeaderLib_ToggleScripts_OnScriptEnabled(_TagOrFlag, _GoalTitle);
+
+PROC
+LeaderLib_ToggleScripts_Register_ScriptOverride((STRING)_GoalTitle, (STRING)_GoalToDisable)
+THEN
+DB_LeaderLib_ToggleScripts_ScriptOverrides(_GoalTitle, _GoalToDisable);
 //END_REGION
 
 //REGION CLEARING

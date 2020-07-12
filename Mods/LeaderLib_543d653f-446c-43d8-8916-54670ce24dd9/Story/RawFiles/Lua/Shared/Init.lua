@@ -11,7 +11,10 @@ if GameHelpers == nil then
 	GameHelpers = {}
 end
 GameHelpers.Tooltip = {}
-Initialized = false
+Vars = {
+	Initialized = false,
+	PostLoadEnableLuaListeners = false,
+}
 Main = {}
 ModRegistration = {}
 Register = {}
@@ -79,10 +82,6 @@ TranslatedStringEntries = {}
 
 ---@type table<string,boolean>
 Features = {}
-
-function OnInit()
-	Initialized = true
-end
 
 function LoadGameSettings()
 	local b,result = pcall(function()

@@ -30,6 +30,15 @@ function RegisterSkillListener(skill, callback)
 		SkillListeners[skill] = {}
 	end
 	table.insert(SkillListeners[skill], callback)
+
+	if Vars.Initialized then
+		if GlobalGetFlag("LeaderLib_LuaSkillListeners_Enabled") == 0 then
+			Osi.LeaderLib_ActivateGoal("LeaderLib_19_TS_LuaSkillListeners")
+			Osi.LeaderLib_ActivateGoal("LeaderLib_19_TS_LuaEventListeners")
+		end
+	else
+		Vars.PostLoadEnableLuaListeners = true
+	end
 end
 
 --- Removed a function from the listeners table.

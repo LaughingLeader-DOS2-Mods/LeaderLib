@@ -2232,6 +2232,18 @@ LeaderLib_Helper_QRY_SetStoryEvent((GUIDSTRING)_Target, (STRING)_Event)
 THEN
 SetStoryEvent(_Target, _Event);
 //END_REGION
+
+//REGION SYS_CALL_WRAPPERS
+PROC
+LeaderLib_ActivateGoal((STRING)_GoalTitle)
+THEN
+SysActivateGoal(_GoalTitle);
+
+PROC
+LeaderLib_CompleteGoal((STRING)_GoalTitle)
+THEN
+SysCompleteGoal(_GoalTitle);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

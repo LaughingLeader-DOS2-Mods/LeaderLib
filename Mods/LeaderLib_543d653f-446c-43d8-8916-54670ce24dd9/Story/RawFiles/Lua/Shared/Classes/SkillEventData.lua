@@ -38,7 +38,7 @@ end
 
 ---@param target string
 function SkillEventData:AddTargetObject(target)
-	self.TargetObjects[#self.TargetObjects+1] = target
+	self.TargetObjects[#self.TargetObjects+1] = GetUUID(target)
 	self.TotalTargetObjects = self.TotalTargetObjects + 1
 end
 

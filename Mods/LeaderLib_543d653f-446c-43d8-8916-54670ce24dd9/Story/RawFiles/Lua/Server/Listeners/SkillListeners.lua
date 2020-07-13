@@ -168,7 +168,7 @@ function OnSkillHit(source, skillprototype, target, handle, damage)
 		if listeners ~= nil then
 			local uuid = GetUUID(source)
 			---@type HitData
-			local data = Classes.HitData:Create(target, source, damage, handle, skill)
+			local data = Classes.HitData:Create(GetUUID(target), GetUUID(source), damage, handle, skill)
 			if Ext.IsDeveloperMode() then
 				PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillHit] source(",source,") skillprototype(",skillprototype,") skill(",skill,") data(",Ext.JsonStringify(data),")")
 			end

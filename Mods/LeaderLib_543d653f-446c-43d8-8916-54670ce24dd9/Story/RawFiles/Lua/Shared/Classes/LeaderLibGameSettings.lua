@@ -85,6 +85,4 @@ function LeaderLibGameSettings:LoadString(str)
 	end
 end
 
-return {
-	LeaderLibGameSettings = LeaderLibGameSettings
-}
+Classes.LeaderLibGameSettings = LeaderLibGameSettings

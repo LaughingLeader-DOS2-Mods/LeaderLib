@@ -80,19 +80,28 @@ end
 
 Ext.RegisterListener("SessionLoading", LeaderLib_Shared_SessionLoading)
 
-local function LeaderLib_Shared_SessionLoaded()
+Ext.RegisterListener("SessionLoaded", function()
+	print("Updating translated strings", #TranslatedStringEntries)
+	--print(Ext.JsonStringify(TranslatedStringEntries))
 	local count = #TranslatedStringEntries
 	if TranslatedStringEntries ~= nil and count > 0 then
 		for i,v in pairs(TranslatedStringEntries) do
 			if v == nil then
 				table.remove(TranslatedStringEntries, i)
 			else
-				pcall(function()
+				local status,err = xpcall(function()
 					v:Update()
-				end)
+				end, debug.traceback)
+				if not status then
+					print("[LeaderLib:SessionLoaded] Error updating TranslatedString entry:")
+					print(err)
+				end
+			end
+
+			if v.Handle == "h0dd71f52gf5a5g4106g9ff7g68670edb55bb" then
+				print(v.Handle, v.Content, v.Value)
 			end
 		end
 		PrintDebug(string.format("[LeaderLib_Shared_SessionLoaded] Updated %s TranslatedString entries.", count))
 	end
-end
-Ext.RegisterListener("SessionLoaded", LeaderLib_Shared_SessionLoaded)
+end)

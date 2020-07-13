@@ -12,6 +12,7 @@ function OnInitialized()
 	end
 
 	if Vars.PostLoadEnableLuaListeners then
+		print("**********************Enabling Lua listeners in Osiris*****************")
 		Osi.LeaderLib_ActivateGoal("LeaderLib_19_TS_LuaSkillListeners")
 		Osi.LeaderLib_ActivateGoal("LeaderLib_19_TS_LuaEventListeners")
 		Vars.PostLoadEnableLuaListeners = false

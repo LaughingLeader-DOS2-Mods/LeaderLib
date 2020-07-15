@@ -46,27 +46,11 @@ local function GetListeners(skill)
 	return function() end
 end
 
--- Example: Finding the base skill of an enemy skill
--- GetBaseSkill(skill, "Enemy")
-
-function OnSkillPreparing(char, skillprototype)
-	local skill = string.gsub(skillprototype, "_%-?%d+$", "")
-	if CharacterIsControlled(char) == 0 then
-		Osi.LeaderLib_LuaSkillListeners_IgnorePrototype(char, skillprototype, skill)
-	end
-	for callback in GetListeners(skill) do
-		PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillPreparing] char(",char,") skillprototype(",skillprototype,") skill(",skill,")")
-		local status,err = xpcall(callback, debug.traceback, skill, GetUUID(char), SKILL_STATE.PREPARE)
-		if not status then
-			Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
-		end
-	end
-end
-
 ---A temporary table used to store data for a skill, including targets / skill information.
 ---@type table<string,SkillEventData>
 local skillEventDataTable = {}
 
+---@return SkillEventData
 local function GetCharacterSkillData(skill, uuid, createIfMissing, skillType, skillAbility)
 	local data = nil
 	local skillDataHolder = skillEventDataTable[skill]
@@ -85,9 +69,18 @@ local function GetCharacterSkillData(skill, uuid, createIfMissing, skillType, sk
 end
 
 local function RemoveCharacterSkillData(uuid, skill)
-	local skillDataHolder = skillEventDataTable[skill]
-	if skillDataHolder ~= nil then
-		skillDataHolder[uuid] = nil
+	if skill ~= nil then
+		local skillDataHolder = skillEventDataTable[skill]
+		if skillDataHolder ~= nil then
+			skillDataHolder[uuid] = nil
+		end
+	else
+		-- Remove everything for this character
+		for skill,data in pairs(skillEventDataTable) do
+			if data[uuid] ~= nil then
+				data[uuid] = nil
+			end
+		end
 	end
 end
 
@@ -109,6 +102,26 @@ function StoreSkillEventData(char, skill, skillType, skillAbility, ...)
 			end
 		end
 	end
+end
+
+-- Example: Finding the base skill of an enemy skill
+-- GetBaseSkill(skill, "Enemy")
+
+function OnSkillPreparing(char, skillprototype)
+	local skill = string.gsub(skillprototype, "_%-?%d+$", "")
+	if CharacterIsControlled(char) == 0 then
+		Osi.LeaderLib_LuaSkillListeners_IgnorePrototype(char, skillprototype, skill)
+	end
+	for callback in GetListeners(skill) do
+		PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillPreparing] char(",char,") skillprototype(",skillprototype,") skill(",skill,")")
+		local status,err = xpcall(callback, debug.traceback, skill, GetUUID(char), SKILL_STATE.PREPARE)
+		if not status then
+			Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
+		end
+	end
+
+	-- Clear previous data for this character in case SkillCast never fired (interrupted)
+	RemoveCharacterSkillData(GetUUID(char))
 end
 
 -- Fires when CharacterUsedSkill fires. This happens after all the target events.

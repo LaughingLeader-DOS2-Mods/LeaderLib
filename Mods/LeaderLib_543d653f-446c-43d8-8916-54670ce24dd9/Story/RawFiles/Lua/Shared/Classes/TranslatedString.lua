@@ -16,9 +16,7 @@ function TranslatedString:Create(handle,content)
 		Content = content
 	}
 	setmetatable(this, self)
-	if this.Handle ~= "" and this.Handle ~= nil then
-		this.Value = Ext.GetTranslatedString(this.Handle, this.Content)
-	end
+	this.Update(this)
 	table.insert(TranslatedStringEntries, this)
     return this
 end
@@ -26,10 +24,8 @@ end
 function TranslatedString:Update()
 	if self.Handle ~= "" and self.Handle ~= nil then
 		self.Value = Ext.GetTranslatedString(self.Handle, self.Content) or self.Content
-		if StringHelpers.IsNullOrEmpty(self.Value) then
-			self.Value = self.Content
-		end
-	else
+	end
+	if StringHelpers.IsNullOrEmpty(self.Value) then
 		self.Value = self.Content
 	end
 	return self.Value
@@ -41,10 +37,10 @@ end
 --- @return string
 function TranslatedString:ReplacePlaceholders(...)
 	local values = {...}
-	local str = self.Value
+	local str = self.Value or ""
 	if #values > 0 then
 		for i,v in ipairs(values) do
-			str = str:gsub("%["..tostring(i).."%]", v)
+			str = string.gsub(str, "%["..tostring(i).."%]", v)
 		end
 	end
 	return str

@@ -104,6 +104,7 @@ LocalizedText.Slots = {
 	Wings = TranslatedString:Create("hd716a074gd36ag4dfcgbf79g53bd390dd202", "Wings"),
 	Horns = TranslatedString:Create("ha35fc503g56dbg4adag963dga359d961e0c8", "Horns"),
 	Overhead = TranslatedString:Create("hda749a3fg52c0g48d5gae3bgd522dd34f65c", "Overhead"),
+	Offhand = TranslatedString:Create("h50110389gc98ag49dbgb58fgae2fd227dff4", "Offhand"),
 }
 
 LocalizedText.ItemBoosts = {

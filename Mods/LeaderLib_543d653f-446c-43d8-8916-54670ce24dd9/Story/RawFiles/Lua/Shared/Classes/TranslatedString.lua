@@ -37,10 +37,14 @@ end
 --- @return string
 function TranslatedString:ReplacePlaceholders(...)
 	local values = {...}
-	local str = self.Value or ""
+	local str = self.Value
 	if #values > 0 then
-		for i,v in ipairs(values) do
-			str = string.gsub(str, "%["..tostring(i).."%]", v)
+		if str == "" then
+			str = values[1]
+		else
+			for i,v in ipairs(values) do
+				str = string.gsub(str, "%["..tostring(i).."%]", v)
+			end
 		end
 	end
 	return str

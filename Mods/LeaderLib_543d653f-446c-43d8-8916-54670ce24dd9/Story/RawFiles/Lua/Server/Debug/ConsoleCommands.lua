@@ -175,6 +175,7 @@ end)
 Ext.RegisterConsoleCommand("luareset", function(command)
 	print("[LeaderLib:luareset] Reseting lua.")
 	NRD_LuaReset(1,1,1)
+	Vars.JustReset = true
 end)
 
 Ext.RegisterConsoleCommand("movie", function(command,movie)

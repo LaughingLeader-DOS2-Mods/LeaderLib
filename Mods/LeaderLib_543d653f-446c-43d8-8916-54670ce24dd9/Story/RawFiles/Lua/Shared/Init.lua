@@ -14,6 +14,7 @@ GameHelpers.Tooltip = {}
 Vars = {
 	Initialized = false,
 	PostLoadEnableLuaListeners = false,
+	JustReset = false,
 }
 Main = {}
 ModRegistration = {}

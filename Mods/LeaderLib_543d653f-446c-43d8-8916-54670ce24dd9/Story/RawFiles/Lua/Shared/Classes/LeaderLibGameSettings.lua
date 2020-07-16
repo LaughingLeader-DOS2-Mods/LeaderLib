@@ -1,7 +1,9 @@
----@type LeaderLibDefaultSettings
+---@class LeaderLibDefaultSettings
 local DefaultSettings = {
 	StarterTierSkillOverrides = false,
-	EnableDeveloperTests = false
+	MaxAP = -1,
+	MaxAPGroup = "Player", -- All, NPC
+	EnableDeveloperTests = false,
 }
 
 ---@class LeaderLibGameSettings

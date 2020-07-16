@@ -26,7 +26,7 @@ function EnableFeature(id)
 		OnFeatureEnabled(id)
 		if Ext.OsirisIsCallable() then
 			pcall(function()
-				if Osi.DB_LeaderLib_GameStarted(1) ~= nil then
+				if Osi.DB_LeaderLib_GameStarted:Get(1) ~= nil then
 					Ext.BroadcastMessage("LeaderLib_EnableFeature", id, nil)
 				end
 			end)
@@ -40,7 +40,7 @@ function DisableFeature(id)
 		OnFeatureDisabled(id)
 		if Ext.OsirisIsCallable() then
 			pcall(function()
-				if Osi.DB_LeaderLib_GameStarted(1) ~= nil then
+				if Osi.DB_LeaderLib_GameStarted:Get(1) ~= nil then
 					Ext.BroadcastMessage("LeaderLib_DisableFeature", id, nil)
 				end
 			end)

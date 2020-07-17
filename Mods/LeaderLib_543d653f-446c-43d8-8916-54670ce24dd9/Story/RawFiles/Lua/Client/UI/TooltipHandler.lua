@@ -1,6 +1,7 @@
 ---@param item EsvItem
 ---@param tooltip TooltipData
 local function OnItemTooltip(item, tooltip)
+	--print(item.StatsId, Ext.JsonStringify(item.WorldPos), Ext.JsonStringify(tooltip.Data))
 	if item ~= nil then
 		-- Resistance Penetration display
 		if item:HasTag("LeaderLib_HasResistancePenetration") then

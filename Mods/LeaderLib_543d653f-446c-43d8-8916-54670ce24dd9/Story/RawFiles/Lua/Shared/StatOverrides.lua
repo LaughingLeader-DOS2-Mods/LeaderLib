@@ -81,10 +81,6 @@ local function OverrideStats()
 		end
 	end
 
-	if data.Settings.MaxAPForPlayers > 0 then
-		
-	end
-
 	if data.Settings.MaxAP > 0 then
 		local apGroups = data.Settings.MaxAPGroup:lower()
 		if string.find(apGroups, "all") then

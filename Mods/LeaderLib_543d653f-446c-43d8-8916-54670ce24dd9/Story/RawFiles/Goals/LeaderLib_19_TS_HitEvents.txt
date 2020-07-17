@@ -7,12 +7,12 @@ KBSECTION
 IF
 NRD_OnPrepareHit(_Target, _Attacker, _Damage, _Handle)
 THEN
-NRD_ModCall("LeaderLib", "Debug_TraceHitPrepare", (STRING)_Target, (STRING)_Attacker, (STRING)_Damage, (STRING)_Handle);
+NRD_ModCall("LeaderLib", "OnPrepareHit", (STRING)_Target, (STRING)_Attacker, (STRING)_Damage, (STRING)_Handle);
 
 IF
 NRD_OnHit(_Target, _Attacker, _Damage, _Handle)
 THEN
-NRD_ModCall("LeaderLib", "Debug_TraceOnHit", (STRING)_Target, (STRING)_Attacker, (STRING)_Damage, (STRING)_Handle);
+NRD_ModCall("LeaderLib", "OnHit", (STRING)_Target, (STRING)_Attacker, (STRING)_Damage, (STRING)_Handle);
 */
 EXITSECTION
 

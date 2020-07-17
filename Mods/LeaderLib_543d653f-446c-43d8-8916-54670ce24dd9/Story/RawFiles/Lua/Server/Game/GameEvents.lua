@@ -17,4 +17,8 @@ function OnInitialized()
 		Osi.LeaderLib_ActivateGoal("LeaderLib_19_TS_LuaEventListeners")
 		Vars.PostLoadEnableLuaListeners = false
 	end
+
+	if Ext.Version() < 50 then
+		Osi.LeaderLib_ActivateGoal("LeaderLib_19_TS_HitEvents")
+	end
 end

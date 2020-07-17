@@ -2,8 +2,15 @@
 ---@type source string
 ---@type damage integer
 ---@type handle integer
-local function OnPrepareHit(target, source, damage, handle)
-	print("OnPrepareHit",target, source, damage, handle)
+function OnPrepareHit(target, source, damage, handle)
+	if Ext.Version() < 50 then
+		if type(damage) == "string" then
+			damage = math.tointeger(tonumber(damage))
+		end
+		if type(handle) == "string" then
+			handle = math.tointeger(tonumber(handle))
+		end
+	end
 	if #Listeners.OnPrepareHit > 0 then
 		for i,callback in ipairs(Listeners.OnPrepareHit) do
 			local status,err = xpcall(callback, debug.traceback, target, source, damage, handle)
@@ -14,15 +21,19 @@ local function OnPrepareHit(target, source, damage, handle)
 	end
 end
 
-Ext.RegisterOsirisListener("NRD_OnPrepareHit", 4, "after", OnPrepareHit)
-
 ---@type target string
 ---@type source string
 ---@type damage integer
 ---@type handle integer
-local function OnHit(target, source, damage, handle)
-	print("OnHit",target, source, damage, handle)
-
+function OnHit(target, source, damage, handle)
+	if Ext.Version() < 50 then
+		if type(damage) == "string" then
+			damage = math.tointeger(tonumber(damage))
+		end
+		if type(handle) == "string" then
+			handle = math.tointeger(tonumber(handle))
+		end
+	end
 	local skillprototype = NRD_StatusGetString(target, handle, "SkillId")
 	if skillprototype ~= "" and skillprototype ~= nil then
 		OnSkillHit(source, skillprototype, target, handle, damage)
@@ -57,4 +68,8 @@ local function OnHit(target, source, damage, handle)
 		end
 	end
 end
-Ext.RegisterOsirisListener("NRD_OnHit", 4, "after", OnHit)
+
+if Ext.Version() >= 50 then
+	Ext.RegisterOsirisListener("NRD_OnPrepareHit", 4, "after", OnPrepareHit)
+	Ext.RegisterOsirisListener("NRD_OnHit", 4, "after", OnHit)
+end

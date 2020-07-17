@@ -1,5 +1,5 @@
 --- Registers a function to call when a specific Lua LeaderLib event fires.
----@param event string
+---@param event string OnPrepareHit|OnHit|CharacterSheetPointChanged|CharacterBasePointsChanged|TimerFinished|FeatureEnabled|FeatureDisabled|Initialized|ModuleResume|SessionLoaded
 ---@param callback function
 function RegisterListener(event, callback)
 	if Listeners[event] ~= nil then

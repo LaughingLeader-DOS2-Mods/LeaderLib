@@ -1,0 +1,51 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+KBSECTION
+/*
+Osiris events need to be used in a script somewhere for them to be used with Ext.RegisterOsirisListener in Lua.
+This script is never intended to run, as it's simply used so events can be listened for in Lua.
+ */
+
+IF
+NRD_OnPrepareHit(_Target, _Attacker, _Damage, _Handle)
+THEN
+DB_NOOP(1);
+
+IF
+NRD_OnHit(_Target, _Attacker, _Damage, _Handle)
+THEN
+DB_NOOP(1);
+
+IF
+NRD_OnStatusAttempt(_Target, _Status, _Handle, _Source)
+THEN
+DB_NOOP(1);
+
+IF
+NRD_OnHeal(_Target, _Source, _Amount, _Handle)
+THEN
+DB_NOOP(1);
+
+IF
+NRD_OnActionStateEnter(_Char, _Action)
+THEN
+DB_NOOP(1);
+
+IF
+CharacterStartAttackObject(_Target, _Owner, _Attacker)
+THEN
+DB_NOOP(1);
+
+IF
+CharacterStartAttackPosition(_x, _y, _z, _Owner, _Attacker)
+THEN
+DB_NOOP(1);
+
+IF
+CharacterStartAttackObject(_Target, _Owner, _Attacker)
+THEN
+DB_NOOP(1);
+EXITSECTION
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_19_ToggledScripts"

@@ -1,8 +1,19 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-
+SysCompleteGoal("__GLOBAL_Dialogs");
+SysActivateGoal("__GLOBAL_Dialogs_LeaderLib_Override");
 KBSECTION
+
+IF
+GameStarted(_,_)
+AND
+SysIsActive("__GLOBAL_Dialogs")
+THEN
+SysCompleteGoal("__GLOBAL_Dialogs");
+SysActivateGoal("__GLOBAL_Dialogs_LeaderLib_Override");
+// __GLOBAL_Dialogs_LeaderLib_Override has the Proc_StartDialog entries removed, so dialog should only start once.
+
 //REGION DUMMY_DEFINITIONS
 //These are missing in the editor's Shared scripts for some reason
 
@@ -251,6 +262,7 @@ TimerCancel("Timers_LeaderLib_DialogOverride_ClearPostActivationDB");
 TimerLaunch("Timers_LeaderLib_DialogOverride_ClearPostActivationDB", 25);
 //END_REGION
 EXITSECTION
-
+SysActivateGoal("__GLOBAL_Dialogs");
+SysCompleteGoal("__GLOBAL_Dialogs_LeaderLib_Override");
 ENDEXITSECTION
 ParentTargetEdge "__AAA_Z_LeaderLib_TopToggledScripts"

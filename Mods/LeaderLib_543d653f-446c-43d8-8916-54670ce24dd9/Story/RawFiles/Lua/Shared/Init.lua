@@ -82,7 +82,9 @@ LocalizedText = {}
 TranslatedStringEntries = {}
 
 ---@type table<string,boolean>
-Features = {}
+Features = {
+	ResistancePenetration = false
+}
 
 function LoadGameSettings()
 	local b,result = pcall(function()

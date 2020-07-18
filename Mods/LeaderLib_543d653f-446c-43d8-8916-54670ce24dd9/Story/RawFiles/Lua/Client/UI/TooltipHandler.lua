@@ -3,35 +3,37 @@
 local function OnItemTooltip(item, tooltip)
 	--print(item.StatsId, Ext.JsonStringify(item.WorldPos), Ext.JsonStringify(tooltip.Data))
 	if item ~= nil then
-		-- Resistance Penetration display
-		if item:HasTag("LeaderLib_HasResistancePenetration") then
-			local tagsCheck = {}
-			for _,damageType in Data.DamageTypes:Get() do
-				local tags = Data.ResistancePenetrationTags[damageType]
-				if tags ~= nil then
-					local totalResPen = 0
-					for i,tagEntry in ipairs(tags) do
-						if item:HasTag(tagEntry.Tag) then
-							totalResPen = totalResPen + tagEntry.Amount
-							tagsCheck[#tagsCheck+1] = tagEntry.Tag
+		if Features.ResistancePenetration == true then
+			-- Resistance Penetration display
+			if item:HasTag("LeaderLib_HasResistancePenetration") then
+				local tagsCheck = {}
+				for _,damageType in Data.DamageTypes:Get() do
+					local tags = Data.ResistancePenetrationTags[damageType]
+					if tags ~= nil then
+						local totalResPen = 0
+						for i,tagEntry in ipairs(tags) do
+							if item:HasTag(tagEntry.Tag) then
+								totalResPen = totalResPen + tagEntry.Amount
+								tagsCheck[#tagsCheck+1] = tagEntry.Tag
+							end
+						end
+
+						if totalResPen > 0 then
+							local tString = LocalizedText.ItemBoosts.ResistancePenetration
+							local resistanceText = GameHelpers.GetResistanceNameFromDamageType(damageType)
+							local result = tString:ReplacePlaceholders(GameHelpers.GetResistanceNameFromDamageType(damageType))
+							print(tString.Value, resistanceText, totalResPen, result)
+							local element = {
+								Type = "ResistanceBoost",
+								Label = result,
+								Value = totalResPen,
+							}
+							tooltip:AppendElement(element)
 						end
 					end
-
-					if totalResPen > 0 then
-						local tString = LocalizedText.ItemBoosts.ResistancePenetration
-						local resistanceText = GameHelpers.GetResistanceNameFromDamageType(damageType)
-						local result = tString:ReplacePlaceholders(GameHelpers.GetResistanceNameFromDamageType(damageType))
-						print(tString.Value, resistanceText, totalResPen, result)
-						local element = {
-							Type = "ResistanceBoost",
-							Label = result,
-							Value = totalResPen,
-						}
-						tooltip:AppendElement(element)
-					end
 				end
+				--print("ResPen tags:", Ext.JsonStringify(tagsCheck))
 			end
-			--print("ResPen tags:", Ext.JsonStringify(tagsCheck))
 		end
 	end
 end

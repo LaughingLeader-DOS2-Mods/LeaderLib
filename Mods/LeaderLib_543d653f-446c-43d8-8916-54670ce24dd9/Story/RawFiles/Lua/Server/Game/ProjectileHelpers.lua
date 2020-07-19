@@ -82,12 +82,30 @@ local function ExplodeProjectile(source, target, skill)
     NRD_ProjectilePrepareLaunch()
     NRD_ProjectileSetString("SkillId", skill)
     NRD_ProjectileSetInt("CasterLevel", level)
-    NRD_ProjectileSetGuidString("SourcePosition", target)
     NRD_ProjectileSetGuidString("Caster", source)
     NRD_ProjectileSetGuidString("Source", source)
-    NRD_ProjectileSetGuidString("HitObject", target)
-    NRD_ProjectileSetGuidString("HitObjectPosition", target)
-    NRD_ProjectileSetGuidString("TargetPosition", target)
+
+    if type(target) == "string" then
+        NRD_ProjectileSetGuidString("SourcePosition", target)
+        NRD_ProjectileSetGuidString("HitObject", target)
+        NRD_ProjectileSetGuidString("HitObjectPosition", target)
+        NRD_ProjectileSetGuidString("TargetPosition", target)
+    elseif type(target) == "table" then
+        local x,y,z = GetPosition(source)
+        local tx,ty,tz = table.unpack(target)
+        if tx == nil then
+            tx = x
+        end
+        if ty == nil then
+            ty = y
+        end
+        if tz == nil then
+            tz = z
+        end
+        NRD_ProjectileSetVector3("SourcePosition", tx,ty,tz)
+        NRD_ProjectileSetVector3("HitObjectPosition", tx,ty,tz)
+        NRD_ProjectileSetVector3("TargetPosition", tx,ty,tz)
+    end
     NRD_ProjectileLaunch()
 end
 GameHelpers.ExplodeProjectile = ExplodeProjectile

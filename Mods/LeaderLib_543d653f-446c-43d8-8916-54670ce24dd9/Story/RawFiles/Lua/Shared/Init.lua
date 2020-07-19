@@ -83,8 +83,19 @@ TranslatedStringEntries = {}
 
 ---@type table<string,boolean>
 Features = {
-	ResistancePenetration = false
+	ResistancePenetration = false,
+	HideMaxArmor = false,
+	HideMaxMagicArmor = false,
+	HideMaxVitality = false,
+	RacialTalentsDisplayFix = false,
 }
+
+if Ext.IsDeveloperMode() then
+	Features.HideMaxArmor = true
+	Features.HideMaxMagicArmor = true
+	Features.HideMaxVitality = true
+	Features.RacialTalentsDisplayFix = true
+end
 
 function LoadGameSettings()
 	local b,result = pcall(function()

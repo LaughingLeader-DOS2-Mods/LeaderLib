@@ -173,6 +173,8 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 end)
  
 Ext.RegisterConsoleCommand("luareset", function(command)
+	TimerCancel("Timers_LeaderLib_Debug_LuaReset")
+	TimerLaunch("Timers_LeaderLib_Debug_LuaReset", 500)
 	print("[LeaderLib:luareset] Reseting lua.")
 	NRD_LuaReset(1,1,1)
 	Vars.JustReset = true

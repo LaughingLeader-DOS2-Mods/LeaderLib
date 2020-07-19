@@ -7,6 +7,7 @@ Osiris events need to be used in a script somewhere for them to be used with Ext
 This script is never intended to run, as it's simply used so events can be listened for in Lua.
  */
 
+/* [OSITOOLS_ONLY]
 IF
 NRD_OnPrepareHit(_Target, _Attacker, _Damage, _Handle)
 THEN
@@ -46,6 +47,8 @@ IF
 CharacterStartAttackObject(_Target, _Owner, _Attacker)
 THEN
 DB_NOOP(1);
+*/
+
 EXITSECTION
 ENDEXITSECTION
 ParentTargetEdge "LeaderLib_19_ToggledScripts"

@@ -20,9 +20,12 @@ local function OnFeatureDisabled(id)
 	end
 end
 
-function EnableFeature(id)
-	if Features[id] ~= true then
-		Features[id] = true
+function EnableFeature(id, val)
+	if val == nil then
+		val = true
+	end
+	if Features[id] ~= val then
+		Features[id] = val
 		OnFeatureEnabled(id)
 		if Ext.OsirisIsCallable() then
 			pcall(function()
@@ -34,9 +37,12 @@ function EnableFeature(id)
 	end
 end
 
-function DisableFeature(id)
-	if Features[id] == true then
-		Features[id] = false
+function DisableFeature(id, val)
+	if val == nil then
+		val = false
+	end
+	if Features[id] == val then
+		Features[id] = val
 		OnFeatureDisabled(id)
 		if Ext.OsirisIsCallable() then
 			pcall(function()

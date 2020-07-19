@@ -84,16 +84,16 @@ TranslatedStringEntries = {}
 ---@type table<string,boolean>
 Features = {
 	ResistancePenetration = false,
-	HideMaxArmor = false,
-	HideMaxMagicArmor = false,
-	HideMaxVitality = false,
+	HideArmor = 0,
+	HideMagicArmor = 0,
+	HideVitality = 0,
 	RacialTalentsDisplayFix = false,
 }
 
 if Ext.IsDeveloperMode() then
-	Features.HideMaxArmor = true
-	Features.HideMaxMagicArmor = true
-	Features.HideMaxVitality = true
+	Features.HideArmor = 2
+	Features.HideMagicArmor = 2
+	Features.HideVitality = 2
 	Features.RacialTalentsDisplayFix = true
 end
 

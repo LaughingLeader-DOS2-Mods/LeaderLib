@@ -22,12 +22,5 @@ function OnInitialized()
 		Osi.LeaderLib_ActivateGoal("LeaderLib_19_TS_HitEvents")
 	end
 
-	if Ext.IsDeveloperMode() then
-		Features.HideMaxArmor = true
-		Features.HideMaxMagicArmor = true
-		Features.HideMaxVitality = true
-		Features.RacialTalentsDisplayFix = true
-	end
-
 	Ext.BroadcastMessage("LeaderLib_EnableUIFeatures", Ext.JsonStringify(Features), nil)
 end

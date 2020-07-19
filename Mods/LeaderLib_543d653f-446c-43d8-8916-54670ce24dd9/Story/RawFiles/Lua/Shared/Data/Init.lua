@@ -364,6 +364,7 @@ ID = {
 	}
 }
 
+---@class SKILL_STATE
 SKILL_STATE = {
 	PREPARE = "PREPARE",
 	USED = "USED",

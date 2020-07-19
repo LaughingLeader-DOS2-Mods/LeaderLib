@@ -76,6 +76,8 @@ ModListeners = {
 	Registered = {},
 	Updated = {},
 }
+
+---@class LeaderLibLocalizedText
 LocalizedText = {}
 
 ---@type TranslatedString[]

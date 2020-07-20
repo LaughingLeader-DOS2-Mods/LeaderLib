@@ -1,9 +1,14 @@
 ---@type TranslatedString
 local TranslatedString = Classes["TranslatedString"]
 
+---@class ColoredTranslatedStringEntry
+---@field Text TranslatedString
+---@field Color string
+
 -- <content contentuid="h9b6e0ed8g07afg413dg939fg5d5b91a9461c">Next level costs [1] ability point(s)</content>
 LocalizedText.AbilityPlusTooltip = TranslatedString:Create("h9b6e0ed8g07afg413dg939fg5d5b91a9461c", "Next level costs [1] ability point(s)")
 
+---@type table<string, ColoredTranslatedStringEntry>
 LocalizedText.DamageTypeHandles = {
 	None = {Text=TranslatedString:Create("h8a070775gc251g4f34g9086gb1772f7e2cff","pure damage"), Color="#13D177"},
 	Physical = {Text=TranslatedString:Create("h40782d69gbfaeg40cegbe3cg370ef44e3980","physical damage"), Color="#AE9F95"},
@@ -19,6 +24,7 @@ LocalizedText.DamageTypeHandles = {
 	Water = {Text=TranslatedString:Create("h8cdcfeedg357eg4877ga69egc05dbe9c68a4","water damage"), Color="#4197E2"},
 }
 
+---@type table<string, ColoredTranslatedStringEntry>
 LocalizedText.DamageTypeNames = {
 	None = {Text=TranslatedString:Create("h37e16e2cgb2c7g46a6g942egb35eb0a825f1","Pure"), Color="#13D177"},
 	Physical = {Text=TranslatedString:Create("ha6c38456g4c6ag47b2gae87g60a26cf4bf7b","Physical"), Color="#AE9F95"},
@@ -36,6 +42,8 @@ LocalizedText.DamageTypeNames = {
 
 --MagicArmorMasteryDescription = TranslatedString:Create("h211cb400g5881g4b90g8bc8g0399d0288e00","Willpower determines how resistant you are to mental statuses like Fear or Charm."),
 --VitalityMasteryDescription = TranslatedString:Create("h2c42b179gd34bg45f8g9a81g847315e0319c","Bodybuilding determines how resistant you are to physical statuses like Bleeding or Crippled."),
+
+---@type table<string, TranslatedString>
 LocalizedText.AbilityNames = {
 	--None = TranslatedString:Create("h9a2aead4gfa2dg4fbegae65g57c501cadf4f","None"),
 	WarriorLore = TranslatedString:Create("h8e4bebcbg21c7g43dag8b05gd3b13c1be651","Warfare"),
@@ -80,6 +88,7 @@ LocalizedText.AbilityNames = {
 	Brewmaster = TranslatedString:Create("hab7acde6g5af6g47a7ga65dgc633aef193cf","Brew Master"),
 }
 
+---@type table<string, TranslatedString>
 LocalizedText.AttributeNames = {
 	Strength = TranslatedString:Create("hb4e3a075g5f82g4a0dgaffbg456e5c15c3db","Strength"),
 	Finesse = TranslatedString:Create("h281c2da7g2d2bg4d69g986agfd124c7f569f","Finesse"),
@@ -89,6 +98,7 @@ LocalizedText.AttributeNames = {
 	Wits = TranslatedString:Create("h2b03f6f9gbf5dg4f51g9b98gf01243633ed3","Wits"),
 }
 
+---@type table<string, TranslatedString>
 LocalizedText.Slots = {
 	Helmet = TranslatedString:Create("hd4b98ff5g33a8g44e0ga6a9gdb1ab7d70bf3", "Helmet"),
 	Breast = TranslatedString:Create("hb5c52d20g6855g4929ga78ege3fe776a1f2e", "Chest Armour"),
@@ -107,6 +117,7 @@ LocalizedText.Slots = {
 	Offhand = TranslatedString:Create("h50110389gc98ag49dbgb58fgae2fd227dff4", "Offhand"),
 }
 
+---@type table<string, TranslatedString>
 LocalizedText.ItemBoosts = {
 	ResistancePenetration = TranslatedString:Create("hf638bc67g5cb6g4dcfg8663gce1951caad2b", "[1] Penetration")
 }
@@ -180,16 +191,6 @@ local function GetAbilityName(ability)
 end
 
 GameHelpers.GetAbilityName = GetAbilityName
-
---- Get an ExtraData entry, with an optional fallback value if the key does not exist.
----@param key string
----@param fallback number
----@return number
-local function GetExtraData(key,fallback)
-	return Ext.ExtraData[key] or fallback
-end
-
-GameHelpers.GetExtraData = GetExtraData
 
 local damageTypeToResistanceName = {
 	None = "PureResistance", -- Special LeaderLib Addition
@@ -266,7 +267,7 @@ local function GetResistanceNameFromDamageType(damageType)
 		if entry ~= nil then
 			return entry.Text.Value
 		else
-			Ext.PrintError("No damage name/color entry for resistance " .. tostring(resistance))
+			Ext.PrintError("No name/color entry for resistance/damagetype",resistance,damageType)
 		end
 	end
 	return ""

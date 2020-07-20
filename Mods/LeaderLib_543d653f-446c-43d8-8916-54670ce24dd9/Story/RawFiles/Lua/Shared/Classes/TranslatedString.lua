@@ -36,6 +36,10 @@ end
 --- @vararg values
 --- @return string
 function TranslatedString:ReplacePlaceholders(...)
+	if self == nil then
+		Ext.PrintError("[LeaderLib:TranslatedString:ReplacePlaceholders] Call ReplacePlaceholders with a colon instead! myVar:ReplacePlaceholders(val1)")
+		return ""
+	end
 	local values = {...}
 	local str = self.Value
 	if #values > 0 then

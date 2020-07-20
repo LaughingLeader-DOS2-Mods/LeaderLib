@@ -313,6 +313,7 @@ Ext.RegisterConsoleCommand("addskill", function(command, skill)
 	CharacterAddSkill(host, skill, 1)
 end)
 
+--!additemstat ARM_UNIQUE_LLWEAPONEX_ThiefGloves_A Unique fe0754e3-5f0b-409e-a856-31e646201ee4
 Ext.RegisterConsoleCommand("additemstat", function(command, stat, rarity, template)
 	if rarity == nil then
 		if Ext.StatGetAttribute(stat, "Unique") == 1 then

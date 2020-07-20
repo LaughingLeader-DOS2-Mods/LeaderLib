@@ -45,6 +45,22 @@ local function OnStatusTooltip(character, status, tooltip)
 
 end
 
+--- @param skill StatEntrySkillData
+--- @param character StatCharacter
+--- @param isFromItem boolean
+--- @param param string
+local function SkillGetDescriptionParam(skill, character, isFromItem, param1, param2)
+	print(Features.ExtraDataSkillParamReplacement, param1, param2)
+	if Features.ExtraDataSkillParamReplacement then
+		if param1 == "ExtraData" then
+			local value = Ext.ExtraData[param2] or 0
+			return string.format("%i", value)
+		end
+	end
+end
+
+Ext.RegisterListener("SkillGetDescriptionParam", SkillGetDescriptionParam)
+
 local function SessionLoaded()
 	Game.Tooltip.RegisterListener("Item", nil, OnItemTooltip)
 end

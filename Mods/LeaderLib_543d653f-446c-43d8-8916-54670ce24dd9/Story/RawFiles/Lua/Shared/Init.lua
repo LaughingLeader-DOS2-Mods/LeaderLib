@@ -90,6 +90,7 @@ Features = {
 	HideMagicArmor = 0,
 	HideVitality = 0,
 	RacialTalentsDisplayFix = false,
+	ExtraDataSkillParamReplacement = false
 }
 
 if Ext.IsDeveloperMode() then

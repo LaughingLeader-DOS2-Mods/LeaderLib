@@ -5,6 +5,8 @@ local HitData = {
 	Target = "",
 	Attacker = "",
 	Skill = "",
+	Damage = 0,
+	Handle = 0,
 	IsFromSkll = false
 }
 HitData.__index = HitData

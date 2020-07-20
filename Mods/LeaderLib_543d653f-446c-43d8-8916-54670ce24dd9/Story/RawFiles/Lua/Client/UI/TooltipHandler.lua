@@ -45,16 +45,30 @@ local function OnStatusTooltip(character, status, tooltip)
 
 end
 
+---@param character EsvCharacter
+---@param skill EsvStatus
+---@param tooltip TooltipData
+local function OnSkillTooltip(character, skill, tooltip)
+	if Features.TooltipGrammarHelper then
+		local element = tooltip:GetElement("SkillDescription")
+		if element ~= nil then
+			element.Label = string.gsub(element.Label, "a 8", "an 8")
+		end
+	end
+end
+
 --- @param skill StatEntrySkillData
 --- @param character StatCharacter
 --- @param isFromItem boolean
 --- @param param string
 local function SkillGetDescriptionParam(skill, character, isFromItem, param1, param2)
-	print(Features.ExtraDataSkillParamReplacement, param1, param2)
 	if Features.ExtraDataSkillParamReplacement then
 		if param1 == "ExtraData" then
 			local value = Ext.ExtraData[param2] or 0
-			return string.format("%i", value)
+			local result = string.format("%i", value)
+			if result ~= nil then
+				return result
+			end
 		end
 	end
 end
@@ -63,6 +77,7 @@ Ext.RegisterListener("SkillGetDescriptionParam", SkillGetDescriptionParam)
 
 local function SessionLoaded()
 	Game.Tooltip.RegisterListener("Item", nil, OnItemTooltip)
+	Game.Tooltip.RegisterListener("Skill", nil, OnSkillTooltip)
 end
 
 Ext.RegisterListener("SessionLoaded", SessionLoaded)

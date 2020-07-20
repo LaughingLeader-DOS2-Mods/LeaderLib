@@ -73,7 +73,7 @@ local function DisplayRacialTalents(ui, call, ...)
 		player = Ext.GetCharacter(handle)
 	end
 	if player ~= nil then
-		local i = GetArrayIndexStart(ui, "talent_array", 1)
+		local i = GetArrayIndexStart(ui, "talent_array", "string", 1)
 		for talent,text in pairs(TALENTS_RACIAL) do
 			if player.Stats[talent] == true then
 				local talentEnumName = string.gsub(talent, "TALENT_", "")

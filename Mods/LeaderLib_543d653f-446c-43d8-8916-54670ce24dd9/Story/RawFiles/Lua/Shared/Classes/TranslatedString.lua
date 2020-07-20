@@ -47,6 +47,7 @@ function TranslatedString:ReplacePlaceholders(...)
 			str = values[1]
 		else
 			for i,v in ipairs(values) do
+				print(i,v)
 				str = string.gsub(str, "%["..tostring(i).."%]", v)
 			end
 		end

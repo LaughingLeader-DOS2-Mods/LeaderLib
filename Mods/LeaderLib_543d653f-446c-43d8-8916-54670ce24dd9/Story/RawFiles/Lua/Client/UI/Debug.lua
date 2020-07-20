@@ -119,20 +119,20 @@ local function OnSheetEvent(ui, call, ...)
 end
 
 local function LeaderLib_ClientDebug_SessionLoaded()
-	local ui = Ext.GetBuiltinUI("Public/Game/GUI/characterSheet.swf")
-	if ui ~= nil then
-		Ext.RegisterUIInvokeListener(ui, "updateArraySystem", function(ui, call, ...)
-			--PrintArray(ui, "tags_array")
-			local i = GetArrayIndexStart(ui, "talent_array", 1)
-			ui:SetValue("talent_array", "Undead", i)
-			ui:SetValue("talent_array", Data.TalentEnum.Zombie, i+1)
-			ui:SetValue("talent_array", 0, i+2)
-			ui:SetValue("talent_array", "Corpse Eater", i+3)
-			ui:SetValue("talent_array", Data.TalentEnum.Elf_CorpseEating, i+4)
-			ui:SetValue("talent_array", 0, i+5)
-			PrintArray(ui, "talent_array")
-		end)
-	end
+	-- local ui = Ext.GetBuiltinUI("Public/Game/GUI/characterSheet.swf")
+	-- if ui ~= nil then
+	-- 	Ext.RegisterUIInvokeListener(ui, "updateArraySystem", function(ui, call, ...)
+	-- 		--PrintArray(ui, "tags_array")
+	-- 		local i = GetArrayIndexStart(ui, "talent_array", 1)
+	-- 		ui:SetValue("talent_array", "Undead", i)
+	-- 		ui:SetValue("talent_array", Data.TalentEnum.Zombie, i+1)
+	-- 		ui:SetValue("talent_array", 0, i+2)
+	-- 		ui:SetValue("talent_array", "Corpse Eater", i+3)
+	-- 		ui:SetValue("talent_array", Data.TalentEnum.Elf_CorpseEating, i+4)
+	-- 		ui:SetValue("talent_array", 0, i+5)
+	-- 		PrintArray(ui, "talent_array")
+	-- 	end)
+	-- end
 	-- local ui = Ext.GetBuiltinUI("Public/Game/GUI/characterSheet.swf")
 	-- if ui ~= nil then
 	-- 	Ext.RegisterUICall(ui, "setPosition", OnSheetEvent)

@@ -40,11 +40,17 @@ local TALENTS_RACIAL = {
 	TALENT_Zombie = Classes.TranslatedString:Create("hffa022a2g03b0g46f7g8ee6gcb8e5811a4d3", "Undead"),
 }
 
-local function GetArrayIndexStart(ui, arrayName, checkType, offset)
+local function GetArrayIndexStart(ui, arrayName, offset)
 	local i = 0
 	while i < 9999 do
-		local arrayValue = ui:GetValue(arrayName, checkType, i)
-		if arrayValue == nil then
+		local val = ui:GetValue(arrayName, "number", i)
+		if val == nil then
+			val = ui:GetValue(arrayName, "string", i)
+			if val == nil then
+				val = ui:GetValue(arrayName, "boolean", i)
+			end
+		end
+		if val == nil then
 			return i
 		end
 		i = i + offset
@@ -73,11 +79,12 @@ local function DisplayRacialTalents(ui, call, ...)
 		player = Ext.GetCharacter(handle)
 	end
 	if player ~= nil then
-		local i = GetArrayIndexStart(ui, "talent_array", "string", 1)
+		local i = GetArrayIndexStart(ui, "talent_array", 3)
 		for talent,text in pairs(TALENTS_RACIAL) do
 			if player.Stats[talent] == true then
 				local talentEnumName = string.gsub(talent, "TALENT_", "")
 				local talentId = Data.TalentEnum[talentEnumName]
+				print(talent, player.Stats[talent], talentEnumName, talentId)
 				if not IsInArray(ui, "talent_array", talentId, 1, 2) then
 					ui:SetValue("talent_array", text.Value, i)
 					ui:SetValue("talent_array", talentId, i+1)
@@ -88,6 +95,39 @@ local function DisplayRacialTalents(ui, call, ...)
 		end
 	end
 end
+
+local function AddToCombatLog(text)
+	local ui = Ext.GetBuiltinUI("Public/Game/GUI/combatLog.swf")
+	if ui ~= nil then
+		ui:Invoke("addTextToTab", 0, text)
+	end
+end
+
+---@type MessageData
+local MessageData = Classes.MessageData
+
+Ext.RegisterNetListener("LeaderLib_AddTextToCombatLog", function(call, dataStr)
+	local data = MessageData:CreateFromString(dataStr)
+	if data.Params ~= nil then
+		local filter = data.Params.Filter or 0
+		local text = data.Params.Text
+
+		if text ~= nil then
+			local ui = Ext.GetBuiltinUI("Public/Game/GUI/combatLog.swf")
+			if ui ~= nil then
+				ui:Invoke("addTextToTab", filter, text)
+			end
+		end
+	end
+end)
+
+Ext.RegisterNetListener("LeaderLib_ClearCombatLog", function(call, filterStr)
+	local filter = tonumber(filterStr)
+	local ui = Ext.GetBuiltinUI("Public/Game/GUI/combatLog.swf")
+	if ui ~= nil then
+		ui:Invoke("clearFilter", math.tointeger(filter))
+	end
+end)
 
 Ext.RegisterListener("SessionLoaded", function()
 	-- Ext.RegisterUINameInvokeListener("setHPBars", PrintCall)

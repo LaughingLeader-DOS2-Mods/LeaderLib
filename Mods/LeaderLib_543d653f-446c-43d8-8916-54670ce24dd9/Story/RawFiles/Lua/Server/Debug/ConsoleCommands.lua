@@ -384,6 +384,20 @@ Ext.RegisterConsoleCommand("printdeltamods", function(command, ...)
 	end
 end)
 
+Ext.RegisterConsoleCommand("combatlog", function(command, text)
+	local host = CharacterGetHostCharacter()
+	if text == nil then
+		local name = Ext.GetCharacter(host).DisplayName
+		text = "<font color='#CCFF00'>Test</font> did <font color='#FF0000'>TONS</font> of damage to " .. name
+	end
+	GameHelpers.CombatLog(text, 0)
+end)
+
+Ext.RegisterConsoleCommand("clearcombatlog", function(command, text)
+	local host = CharacterGetHostCharacter()
+	Ext.PostMessageToClient(host, "LeaderLib_ClearCombatLog", "0")
+end)
+
 Ext.RegisterConsoleCommand("printrespentags", function(command)
 	print("Data.ResistancePenetrationTags = {")
 	for damageType,_ in pairs(Data.DamageTypeToResistance) do

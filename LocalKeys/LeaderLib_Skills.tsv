@@ -1,15 +1,15 @@
-Key	Content
-Shout_LeaderLib_CancelPolymorphism_Description	Clear any active shapeshifting statuses.
-Shout_LeaderLib_CancelPolymorphism_DisplayName	Cancel Shapeshifting
-Shout_LeaderLib_ChainAll_Description	Chain all characters under your control that are within [1].
-Shout_LeaderLib_ChainAll_DisplayName	Chain All
-Shout_LeaderLib_OpenModMenu_Description	<font color='#3e81fc' size='18'>LeaderLib</font><br>Open the mod menu to access registered settings menus.
-Shout_LeaderLib_OpenModMenu_DisplayName	Open Mod Menu
-Shout_LeaderLib_SwapGender_Description	Change to the opposite gender.<br><font color='#188ede'>Warning: Replaces custom appearance settings!</font>
-Shout_LeaderLib_SwapGender_DisplayName	Swap Gender
-Shout_LeaderLib_ToggleUndead_Description	Swap between the undead and non-undead equivalent of your current race.
-Shout_LeaderLib_ToggleUndead_DisplayName	Toggle Undead
-Shout_LeaderLib_UnchainAll_Description	Unchain all chained characters under your control that are within [1].
-Shout_LeaderLib_UnchainAll_DisplayName	Unchain All
-Target_LeaderLib_ControlSummon_Description	Take control of a summon or follower you own.
-Target_LeaderLib_ControlSummon_DisplayName	Control Summon
+Key	Content	Handle
+Shout_LeaderLib_CancelPolymorphism_Description	Clear any active shapeshifting statuses.	h617f92ceg5e39g4dbbg84c7g4b20985cddfe
+Shout_LeaderLib_CancelPolymorphism_DisplayName	Cancel Shapeshifting	h5515ca23gf576g491dgb562ge71243c72ed8
+Shout_LeaderLib_ChainAll_Description	Chain all characters under your control that are within [1].	hea66772cgcbebg47a3g8c80g70763f921d72
+Shout_LeaderLib_ChainAll_DisplayName	Chain All	h950f9baege3b1g428agbb4dgf70a45676c5a
+Shout_LeaderLib_OpenModMenu_Description	<font color='#3e81fc' size='18'>LeaderLib</font><br>Open the mod menu to access registered settings menus.	h3510e199g7d0cg404fga53bg052c534d94d1
+Shout_LeaderLib_OpenModMenu_DisplayName	Open Mod Menu	h3ed2c7c5gf6c0g4c9dga916g5782593327ab
+Shout_LeaderLib_SwapGender_Description	Change to the opposite gender.<br><font color='#188ede'>Warning: Replaces custom appearance settings!</font>	hac41182fg734cg4f90gb787gff3f7dbdfd0e
+Shout_LeaderLib_SwapGender_DisplayName	Swap Gender	hd4ee1fb0g40aeg4fbcgac8dg907287d435df
+Shout_LeaderLib_ToggleUndead_Description	Swap between the undead and non-undead equivalent of your current race.	h08bb8216g9d40g49f9g91d4g8a77ecb090d2
+Shout_LeaderLib_ToggleUndead_DisplayName	Toggle Undead	h900bb2d3ga5c9g432aga1d8g2c4345909d55
+Shout_LeaderLib_UnchainAll_Description	Unchain all chained characters under your control that are within [1].	h17519925gf609g4110gbe37g25a3aae8b390
+Shout_LeaderLib_UnchainAll_DisplayName	Unchain All	hd5803cb0ga2cdg4823g9bc1gebcbaec5fd2f
+Target_LeaderLib_ControlSummon_Description	Take control of a summon or follower you own.	head5217fga96cg4b34gafb1geb56b80bd8e0
+Target_LeaderLib_ControlSummon_DisplayName	Control Summon	h1c359033g2e0dg49b1g9befg63f786d3f9fc

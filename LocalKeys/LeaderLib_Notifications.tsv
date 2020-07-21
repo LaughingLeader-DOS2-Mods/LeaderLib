@@ -1,8 +1,8 @@
-Key	Content
-LeaderLib_MiscText_AttitudeDecrease	<font color='#FF0000'>-[1] Attitude</font>
-LeaderLib_MiscText_AttitudeIncrease	<font color='#2EFE2E'>+[1] Attitude</font>
-LeaderLib_Notifications_LoadGlobalSettings_Failed	<font color='#FF0000'>LeaderLib Failed to Load Global Settings</font>
-LeaderLib_Notifications_LoadGlobalSettings_Success	LeaderLib Successfully Loaded Global Settings
-LeaderLib_Notifications_SaveGlobalSettings_Failed	<font color='#FF0000'>LeaderLib Failed to Save Global Settings</font>
-LeaderLib_Notifications_SaveGlobalSettings_Success	LeaderLib Successfully Saved Global Settings
-LeaderLib_ToggleUndeadPolymorph_Failed	<font color='#FF0000'>Failed to find current race.</font>
+Key	Content	Handle
+LeaderLib_MiscText_AttitudeDecrease	<font color='#FF0000'>-[1] Attitude</font>	h69590addg7840g4821gb632g52799233bb88
+LeaderLib_MiscText_AttitudeIncrease	<font color='#2EFE2E'>+[1] Attitude</font>	hff1084efgf4efg450aga177g1311cbce0ebb
+LeaderLib_Notifications_LoadGlobalSettings_Failed	<font color='#FF0000'>LeaderLib Failed to Load Global Settings</font>	h3025ccc1g5106g4019g8e0egf2c26206bf86
+LeaderLib_Notifications_LoadGlobalSettings_Success	LeaderLib Successfully Loaded Global Settings	hb987d743g981dg43f6g9aa8g08109349d4e9
+LeaderLib_Notifications_SaveGlobalSettings_Failed	<font color='#FF0000'>LeaderLib Failed to Save Global Settings</font>	h73234319g4e6bg4967gb45cga511b60f0408
+LeaderLib_Notifications_SaveGlobalSettings_Success	LeaderLib Successfully Saved Global Settings	hee75e144g1d75g4094ga8c9g4a0508c5cf67
+LeaderLib_ToggleUndeadPolymorph_Failed	<font color='#FF0000'>Failed to find current race.</font>	hd36c1438g1728g4d9bg8b9bg21941bffb16a

@@ -66,6 +66,7 @@
 	<content contentuid="h3d81a0d7g267ag45f9g985egffeffa0119e2">Preset changed. Have a wonderful day.</content>
 	<content contentuid="h3db4fa28g041bg45ceg9fd6g91d77d5e154f">[GLOBAL] Prevent LeaderLib registered mod books from being automatically be added to the party&apos;s inventory. (Books are currently enabled)</content>
 	<content contentuid="h3e1f5e00g58f7g4b23g97c4g979be6586c6f">Opening the LeaderLib settings menu...</content>
+	<content contentuid="h3e28d8d8g362bg4d7dga097gf8fcac3fbfe3">&lt;font color=&apos;#FF00CC&apos;&gt;One or more players are missing the script extender.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#FF0000&apos;&gt;The script extender is needed for mods to work correctly.&lt;/font&gt;&lt;br&gt;[1]</content>
 	<content contentuid="h3eb917d7g036fg483dg8ee5gc83743845400">Welcome!</content>
 	<content contentuid="h3ed2c7c5gf6c0g4c9dga916g5782593327ab">Open Mod Menu</content>
 	<content contentuid="h3fb60439g4406g4623ga6b7gb53cda538fcb">*The old man runs his hands over his clothes, trying to iron out the wrinkles.* What can I do for you, stranger?</content>
@@ -83,6 +84,7 @@
 	<content contentuid="h50452891g891bg45a7gb700g348998ff32b5">*He hands you copy of the requested sacred text.*</content>
 	<content contentuid="h513658cbg41f5g40afg809cg1d0830efd3f1">[LeaderLib_DynamicMenu_MenuOption4_e6bea606-b29a-4bfe-8959-94e8be8330cb]</content>
 	<content contentuid="h517cd9b4g30f4g4663ga73cgaaa145863dfc">[LeaderLib_DynamicMenu_MenuOption1_1f7c9690-58b3-4cf6-b17e-0da478b15e0e]</content>
+	<content contentuid="h52804b8ag97ccg478eg90f8gc8b6f735dab2">&lt;font color=&apos;#FF0000&apos; size=&apos;32&apos;&gt;ERROR&lt;/font&gt;&lt;br&gt;You are missing the Script Extender, and the host has mods that require it!&lt;br&gt;&lt;font color=&apos;#FF00CC&apos; size=&apos;22&apos;&gt;Please exit the game and install the Script Extender.&lt;/font&gt;&lt;br&gt;The game will not work correctly, mods will not work correctly, and Kalavinka will weep bloody tears of pain and regret.</content>
 	<content contentuid="h529c36c6g6b68g46e2g867dg863184908d5a">Remove the Mod Menu Skill (Self)</content>
 	<content contentuid="h5515ca23gf576g491dgb562ge71243c72ed8">Cancel Shapeshifting</content>
 	<content contentuid="h562f0a3bg4566g452eg860egb5c2ff3e750e">Undead Elf</content>
@@ -142,7 +144,6 @@
 	<content contentuid="h7f7227a5g87fcg4c91ga612geec72eb18721">*Introduce yourself, then ask the man who he is.*</content>
 	<content contentuid="h80766295g4589g4681gb03cgf6c692463084">&lt;font color=&apos;#9A00FF&apos;&gt;[1] chaos damage&lt;/font&gt;</content>
 	<content contentuid="h808d2fe2ge0d2g4e78g94cag05b054d2b96b">[LeaderLib_ModMenu_Menu2_9a2d2990-5cff-420e-ba8a-37f9510ab9e1]</content>
-	<content contentuid="h810736a8gb792g4208g9685g951f2906f14e">&lt;font color=&apos;#FF0000&apos; size=&apos;32&apos;&gt;ERROR&lt;/font&gt;&lt;br&gt;You are missing the Script Extender, and the host has mods that require it!&lt;br&gt;&lt;font color=&apos;#FF00CC&apos; size=&apos;22&apos;&gt;Please exit the game and install the Script Extender.&lt;/font&gt;&lt;br&gt;The game will not work correctly, mods will not work correctly, and Kalavinka will weep bloody tears of pain and regret.</content>
 	<content contentuid="h81a0d6b9g43adg4223gbcc9g0fceadeff883">*He coughs out some sea water.*  That she-beast of a sourceress nearly wiped me out with the others on the boat... *He trails off for a moment before returning his gaze back to you.*</content>
 	<content contentuid="h8311eb63g89cfg41c1g961cgde31f8d79927"></content>
 	<content contentuid="h85c3e4fag683cg471agaef1g448f3023e955">Selected Preset: [LeaderLib_PresetMenu_CurrentPreset_2e904bf9-1a93-447a-8f07-5383aea20068]</content>
@@ -171,6 +172,7 @@
 	<content contentuid="h951be36bg6ed7g49e4ga343gaa5c47a4c98e">*Lothar grunts, rubbing his lower back as he chews on something.* Once I saw this beautiful ship in the distance, I knew it was my chance to escape. I swam like a fish.</content>
 	<content contentuid="h966d6fabgc29cg4602gad0dg0c50f9418e24">A &lt;font color=&apos;#D040D0&apos;&gt;Story Compilation Error&lt;/font&gt; occurred with your active mods.&lt;br&gt;&lt;font color=&apos;#F7BA14&apos; size=&apos;22&apos;&gt;You may be missing mod requirements.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#FF0000&apos; size=&apos;24&apos;&gt;Mods will not work correctly.&lt;/font&gt;&lt;br&gt;To potentially fix this, please check the requirements of your active mods, such as required dependency mods, the script extender, and/or an updated game version.</content>
 	<content contentuid="h97e93b5eg2e78g46f0gac84g8250aeaa1984">*The old man looks to you as you approach.* Welcome! *He looks around.* Bit of a dreary place now, mm?</content>
+	<content contentuid="h98bf1217gf2bfg4d82g99b9g6747f36f9aab">&lt;font color=&apos;#FF0000&apos;&gt;Script Extender Missing!&lt;/font&gt;</content>
 	<content contentuid="h98d315c5g189cg431eg9862g7cea569a5e3b">Hmm?</content>
 	<content contentuid="h9b843d3agc42eg4295g8381ge2eb54eeac08">Dialog Redirection Settings</content>
 	<content contentuid="h9bb57fccg3ddag4112g9047g2a8f557b4f0d">A peculiar tome said to be extremely convenient.&lt;br&gt;Read to access the &quot;Mod Menu&quot;.</content>

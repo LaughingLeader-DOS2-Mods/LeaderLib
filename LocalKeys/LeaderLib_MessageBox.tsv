@@ -1,5 +1,7 @@
-Key	Content
-LeaderLib_MessageBox_CheckMissingMods	<font color='#00FA9A'>View Missing Mods</font>
-LeaderLib_MessageBox_MissingModDependendencies	<font color='#fcd203' size='28'>LeaderLib</font><br><font color='#FF0000'><font size='24'>* Error *</font><br>Required Mods Missing</font><br>Check your mod list at the main menu.
-LeaderLib_MessageBox_SkipCheck	Close
-LeaderLib_MessageBox_ExtenderNotInstalled	<font color='#FF0000' size='32'>ERROR</font><br>You are missing the Script Extender, and the host has mods that require it!<br><font color='#FF00CC' size='22'>Please exit the game and install the Script Extender.</font><br>The game will not work correctly, mods will not work correctly, and Kalavinka will weep bloody tears of pain and regret.
+Key	Content	Handle
+LeaderLib_MessageBox_CheckMissingMods	<font color='#00FA9A'>View Missing Mods</font>	h14939ec7g5208g49d1ga484gd88c66bb67ba
+LeaderLib_MessageBox_ExtenderNotInstalled_Client	<font color='#FF0000' size='32'>ERROR</font><br>You are missing the Script Extender, and the host has mods that require it!<br><font color='#FF00CC' size='22'>Please exit the game and install the Script Extender.</font><br>The game will not work correctly, mods will not work correctly, and Kalavinka will weep bloody tears of pain and regret.	h52804b8ag97ccg478eg90f8gc8b6f735dab2
+LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageText	<font color='#FF00CC'>One or more players are missing the script extender.</font><br><font color='#FF0000'>The script extender is needed for mods to work correctly.</font><br>[1]	h3e28d8d8g362bg4d7dga097gf8fcac3fbfe3
+LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageTitle	<font color='#FF0000'>Script Extender Missing!</font>	h98bf1217gf2bfg4d82g99b9g6747f36f9aab
+LeaderLib_MessageBox_MissingModDependendencies	<font color='#fcd203' size='28'>LeaderLib</font><br><font color='#FF0000'><font size='24'>* Error *</font><br>Required Mods Missing</font><br>Check your mod list at the main menu.	h8fe3bf6cg2791g4a46gb517g396ceb756b43
+LeaderLib_MessageBox_SkipCheck	Close	h393d684bg505dg41c4gbb5dg715a4b5bd153

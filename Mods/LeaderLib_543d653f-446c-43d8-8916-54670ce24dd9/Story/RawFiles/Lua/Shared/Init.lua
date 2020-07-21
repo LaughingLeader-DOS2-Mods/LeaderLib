@@ -77,7 +77,14 @@ ModListeners = {
 	Updated = {},
 }
 
----@class LeaderLibLocalizedText
+---@class LeaderLibLocalizedText A table of translated strings used by the game.
+---@field DamageTypeHandles table<string, ColoredTranslatedStringEntry>
+---@field DamageTypeNames table<string, ColoredTranslatedStringEntry>
+---@field AbilityNames table<string, TranslatedString>
+---@field AttributeNames table<string, TranslatedString>
+---@field Slots table<string, TranslatedString>
+---@field ItemBoosts table<string, TranslatedString>
+---@field UI table<string, TranslatedString> Misc UI text like Confirm/Close.
 LocalizedText = {}
 
 ---@type TranslatedString[]

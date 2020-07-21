@@ -5,9 +5,6 @@ local TranslatedString = Classes["TranslatedString"]
 ---@field Text TranslatedString
 ---@field Color string
 
--- <content contentuid="h9b6e0ed8g07afg413dg939fg5d5b91a9461c">Next level costs [1] ability point(s)</content>
-LocalizedText.AbilityPlusTooltip = TranslatedString:Create("h9b6e0ed8g07afg413dg939fg5d5b91a9461c", "Next level costs [1] ability point(s)")
-
 ---@type table<string, ColoredTranslatedStringEntry>
 LocalizedText.DamageTypeHandles = {
 	None = {Text=TranslatedString:Create("h8a070775gc251g4f34g9086gb1772f7e2cff","pure damage"), Color="#13D177"},
@@ -120,6 +117,18 @@ LocalizedText.Slots = {
 ---@type table<string, TranslatedString>
 LocalizedText.ItemBoosts = {
 	ResistancePenetration = TranslatedString:Create("hf638bc67g5cb6g4dcfg8663gce1951caad2b", "[1] Penetration")
+}
+
+-- <content contentuid="h9b6e0ed8g07afg413dg939fg5d5b91a9461c">Next level costs [1] ability point(s)</content>
+
+---@type table<string, TranslatedString>
+LocalizedText.UI = {
+	AbilityPlusTooltip = TranslatedString:Create("h9b6e0ed8g07afg413dg939fg5d5b91a9461c", "Next level costs [1] ability point(s)"),
+	Confirm = TranslatedString:Create("h0fb8bf07g3932g4ccbg8659g2f4f5aa7dd82", "Confirm"),
+	Close = TranslatedString:Create("h9eed6c77g31bbg4637g9332g30e47efcd7eb", "Close"),
+	OK = TranslatedString:Create("h1cb63048g62e1g4b86gac15gb333158c2c81", "OK"),
+	Yes = TranslatedString:Create("hf52bf842g05beg48dega717gca15b3678e0e", "Yes"),
+	No = TranslatedString:Create("heded8384gb4f5g439dg9883g5cf950b2bbfc", "No"),
 }
 
 ---Get localized damage text wrapped in that damage type's color.
@@ -274,3 +283,19 @@ local function GetResistanceNameFromDamageType(damageType)
 end
 
 GameHelpers.GetResistanceNameFromDamageType = GetResistanceNameFromDamageType
+
+---Get the final value of a string key.
+---This uses the handle returned from Ext.GetTranslatedStringFromKey to then get the text from Ext.GetTranslatedString.
+---@param key string The string key.
+---@param fallback string Text to use if the key does not exist.
+---@return string
+local function GetStringKeyText(key,fallback)
+	local ref,handle = Ext.GetTranslatedStringFromKey(key)
+	if handle == nil then
+		return fallback
+	end
+	local text = Ext.GetTranslatedString(handle, ref)
+	return text
+end
+
+GameHelpers.GetStringKeyText = GetStringKeyText

@@ -401,7 +401,7 @@ end)
 Ext.RegisterConsoleCommand("leaderlib_messageboxtest", function(command, text)
 	StartOneshotTimer("Timers_LeaderLib_Debug_MessageBoxTest", 2000, function()
 		local host = CharacterGetHostCharacter()
-		GameHelpers.ShowMessageBox(string.format("<font  color='#FF00CC'>One or more players are missing the script extender.</font><br>Please help:<br>* %s", "LaughingLeader"), host, 0, "<font  color='#FF0000'>Script Extender Missing!</font>")
+		GameHelpers.ShowMessageBox(string.format("<font  color='#FF00CC'>One or more players are missing the script extender.</font><br>Please help:<br>* %s", "LaughingLeader"), host, 0, "<font color='#FF0000'>Script Extender Missing!</font>")
 	end)
 end)
 

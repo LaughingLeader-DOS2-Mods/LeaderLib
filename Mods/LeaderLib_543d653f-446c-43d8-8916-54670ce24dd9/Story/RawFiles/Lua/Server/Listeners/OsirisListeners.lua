@@ -5,9 +5,10 @@ if Ext.Version() >= 50 then
 		if host ~= uuid then
 			print("UserConnected", id, username, profileId, uuid)
 			if uuid ~= nil and not Ext.PlayerHasExtender(uuid) then
-				OpenMessageBox(uuid, "LeaderLib_MessageBox_ExtenderNotInstalled")
+				OpenMessageBox(uuid, "LeaderLib_MessageBox_ExtenderNotInstalled_Client")
 
-				GameHelpers.ShowMessageBox(string.format("One or more players are missing the script extender. Please help:<br>%s", username), host, 0, "Player Is Missing the Script Extender")
+				local hostText = GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageText"):gsub("%[1%]", username)
+				GameHelpers.ShowMessageBox(hostText, host, 0, GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageTitle"))
 			end
 		end
 	end)

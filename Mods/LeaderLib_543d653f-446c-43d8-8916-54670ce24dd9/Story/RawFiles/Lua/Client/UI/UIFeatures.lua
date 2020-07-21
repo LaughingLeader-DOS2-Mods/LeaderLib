@@ -179,6 +179,13 @@ Ext.RegisterListener("SessionLoaded", function()
 			end
 		end)
 	end
+
+	local ui = Ext.GetBuiltinUI("Public/Game/GUI/msgBox.swf")
+	if ui ~= nil then
+		Ext.RegisterUICall(ui, "ButtonPressed", function(ui, call, id, currentDevice)
+			ui:Hide()
+		end)
+	end
 end)
 
 Ext.RegisterNetListener("LeaderLib_EnableUIFeatures", function(call, featuresString)

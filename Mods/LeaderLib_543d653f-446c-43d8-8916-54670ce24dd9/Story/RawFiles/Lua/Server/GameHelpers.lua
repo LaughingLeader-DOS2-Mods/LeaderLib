@@ -139,19 +139,51 @@ local MessageData = Classes.MessageData
 
 ---@param text string
 ---@param filter integer
----@param specificCharacters string[]|nil
+---@param specificCharacters string|string[]|nil
 local function CombatLog(text, filter, specificCharacters)
 	local data = MessageData:CreateFromTable("CombatLogData", {
 		Filter = filter,
 		Text = text
 	}):ToString()
 	if specificCharacters == nil then
-		Ext.BroadcastMessage("LeaderLib_AddTextToCombatLog",data)
+		Ext.BroadcastMessage("LeaderLib_AddTextToCombatLog", data, nil)
 	else
-		for i,v in pairs(specificCharacters) do
-			Ext.PostMessageToClient(v, "LeaderLib_AddTextToCombatLog", data)
+		local charType = type(specificCharacters)
+		if charType == "string" then
+			Ext.PostMessageToClient(specificCharacters, "LeaderLib_DisplayMessageBox", data)
+		elseif charType == "table" then
+			for i,v in pairs(specificCharacters) do
+				Ext.PostMessageToClient(v, "LeaderLib_DisplayMessageBox", data)
+			end
 		end
 	end
 end
 
 GameHelpers.CombatLog = CombatLog
+
+---@param text string
+---@param title string|nil
+---@param specificCharacters string|string[]|nil
+---@param boxType integer|nil
+---@param title string|nil
+local function ShowMessageBox(text, specificCharacters, boxType, title)
+	local data = MessageData:CreateFromTable("MessageBoxData", {
+		Type = boxType,
+		Text = text,
+		Title = title
+	}):ToString()
+	if specificCharacters == nil then
+		Ext.BroadcastMessage("LeaderLib_DisplayMessageBox", data, nil)
+	else
+		local charType = type(specificCharacters)
+		if charType == "string" then
+			Ext.PostMessageToClient(specificCharacters, "LeaderLib_DisplayMessageBox", data)
+		elseif charType == "table" then
+			for i,v in pairs(specificCharacters) do
+				Ext.PostMessageToClient(v, "LeaderLib_DisplayMessageBox", data)
+			end
+		end
+	end
+end
+
+GameHelpers.ShowMessageBox = ShowMessageBox

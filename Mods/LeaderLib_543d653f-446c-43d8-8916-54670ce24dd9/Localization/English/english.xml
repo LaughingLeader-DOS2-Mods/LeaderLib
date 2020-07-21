@@ -142,6 +142,7 @@
 	<content contentuid="h7f7227a5g87fcg4c91ga612geec72eb18721">*Introduce yourself, then ask the man who he is.*</content>
 	<content contentuid="h80766295g4589g4681gb03cgf6c692463084">&lt;font color=&apos;#9A00FF&apos;&gt;[1] chaos damage&lt;/font&gt;</content>
 	<content contentuid="h808d2fe2ge0d2g4e78g94cag05b054d2b96b">[LeaderLib_ModMenu_Menu2_9a2d2990-5cff-420e-ba8a-37f9510ab9e1]</content>
+	<content contentuid="h810736a8gb792g4208g9685g951f2906f14e">&lt;font color=&apos;#FF0000&apos; size=&apos;32&apos;&gt;ERROR&lt;/font&gt;&lt;br&gt;You are missing the Script Extender, and the host has mods that require it!&lt;br&gt;&lt;font color=&apos;#FF00CC&apos; size=&apos;22&apos;&gt;Please exit the game and install the Script Extender.&lt;/font&gt;&lt;br&gt;The game will not work correctly, mods will not work correctly, and Kalavinka will weep bloody tears of pain and regret.</content>
 	<content contentuid="h81a0d6b9g43adg4223gbcc9g0fceadeff883">*He coughs out some sea water.*  That she-beast of a sourceress nearly wiped me out with the others on the boat... *He trails off for a moment before returning his gaze back to you.*</content>
 	<content contentuid="h8311eb63g89cfg41c1g961cgde31f8d79927"></content>
 	<content contentuid="h85c3e4fag683cg471agaef1g448f3023e955">Selected Preset: [LeaderLib_PresetMenu_CurrentPreset_2e904bf9-1a93-447a-8f07-5383aea20068]</content>

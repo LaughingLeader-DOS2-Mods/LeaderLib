@@ -688,11 +688,51 @@
                         </node>
                         <node id="Entity">
                             <attribute id="Alignment" value="Hero" type="22" />
+                            <attribute id="Name" value="Hero Player9" type="22" />
+                        </node>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Hero" type="22" />
                             <attribute id="Name" value="Hero Player10" type="22" />
                         </node>
                         <node id="Entity">
                             <attribute id="Alignment" value="Hero" type="22" />
-                            <attribute id="Name" value="Hero Player9" type="22" />
+                            <attribute id="Name" value="Hero Player11" type="22" />
+                        </node>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Hero" type="22" />
+                            <attribute id="Name" value="Hero Player12" type="22" />
+                        </node>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Hero" type="22" />
+                            <attribute id="Name" value="Hero Player13" type="22" />
+                        </node>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Hero" type="22" />
+                            <attribute id="Name" value="Hero Player14" type="22" />
+                        </node>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Hero" type="22" />
+                            <attribute id="Name" value="Hero Player15" type="22" />
+                        </node>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Hero" type="22" />
+                            <attribute id="Name" value="Hero Player16" type="22" />
+                        </node>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Hero" type="22" />
+                            <attribute id="Name" value="Hero Player17" type="22" />
+                        </node>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Hero" type="22" />
+                            <attribute id="Name" value="Hero Player18" type="22" />
+                        </node>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Hero" type="22" />
+                            <attribute id="Name" value="Hero Player19" type="22" />
+                        </node>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Hero" type="22" />
+                            <attribute id="Name" value="Hero Player20" type="22" />
                         </node>
                         <node id="Entity">
                             <attribute id="Alignment" value="Neutral" type="22" />

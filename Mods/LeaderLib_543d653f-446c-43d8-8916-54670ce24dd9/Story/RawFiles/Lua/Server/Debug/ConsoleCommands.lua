@@ -1,3 +1,5 @@
+local MessageData = Classes.MessageData
+
 local dynamicStatsVars = {
 	"AccuracyBoost",
 	"AirResistance",
@@ -396,6 +398,22 @@ end)
 Ext.RegisterConsoleCommand("clearcombatlog", function(command, text)
 	local host = CharacterGetHostCharacter()
 	Ext.PostMessageToClient(host, "LeaderLib_ClearCombatLog", "0")
+end)
+
+Ext.RegisterConsoleCommand("leaderlib_statustext", function(command, text)
+	if text == nil then
+		text = "Test Status Text!"
+	end
+	local host = CharacterGetHostCharacter()
+	Ext.BroadcastMessage("LeaderLib_DisplayStatusText", MessageData:CreateFromTable("StatusTextData", {
+		UUID = host,
+		Text = text,
+		Duration = 5.0,
+		IsItem = false
+	}):ToString(), nil)
+	-- StartOneshotTimer("Timers_LeaderLib_Debug_MessageBoxTest", 2000, function()
+
+	-- end)
 end)
 
 Ext.RegisterConsoleCommand("leaderlib_messageboxtest", function(command, text)

@@ -118,7 +118,68 @@ local function OnSheetEvent(ui, call, ...)
 	end
 end
 
+local overheadFunctions = {
+	"setOverheadSize",
+	"reorderTexts",
+	"reorderAllTexts",
+	"addOverhead",
+	"addOverheadDamage",
+	"addADialog",
+	"repositionHolders",
+	"setAPString",
+	"addOverheadSelectionInfo",
+	"clearOverheadSelectionInfo",
+	"clearAllOverheadSelectionInfos",
+	--"updateOHs",
+	"cleanUpAllStatusses",
+	"updateStatusses",
+	"setStatus",
+	"cleanupStatuses",
+	"setIggyImage",
+	"removeChildrenOf",
+	"getCharHolderIndex",
+	"getCharHolder",
+	"INTnewCharacterHolder",
+	"newCharacterHolder",
+	"clearAD",
+	"INTclearAD",
+	"getOHOffset",
+	"clearObsoleteOHTs",
+	"findInArray",
+	"removeCharHolderInt",
+	"tryToPutBackInCache",
+	"getCharHolderFromArrayINT",
+	"findOverlaps",
+	"clearAll",
+	"cleanupDeleteRequests",
+	"fadeOutObsoleteDialogs",
+	"checkCharHolderMC",
+	"getOHTPos",
+	"setAction",
+	"checkInfoIcons",
+	--"setHPBars",
+	"setCharInfoPositioning",
+	"changeColour",
+}
+
 local function LeaderLib_ClientDebug_SessionLoaded()
+	-- local ui = Ext.GetBuiltinUI("Public/Game/GUI/overhead.swf")
+	-- if ui ~= nil then
+	-- 	Ext.RegisterUIInvokeListener(ui, "setHPBars", function(ui, call, ...)
+	-- 		print(call)
+	-- 		print(Ext.JsonStringify({...}))
+	-- 	end)
+	-- 	-- Ext.RegisterUIInvokeListener(ui, "updateOHs", function(ui, call, ...)
+	-- 	-- 	PrintArray(ui, "addOH_array")
+	-- 	-- 	PrintArray(ui, "selectionInfo_array")
+	-- 	-- 	PrintArray(ui, "hp_array")
+	-- 	-- end)
+	-- 	for i,v in pairs(overheadFunctions) do
+	-- 		Ext.RegisterUIInvokeListener(ui, v, function(ui, ...)
+	-- 			Ext.Print(Ext.JsonStringify({...}))
+	-- 		end)
+	-- 	end
+	-- end
 	-- local ui = Ext.GetBuiltinUI("Public/Game/GUI/characterSheet.swf")
 	-- if ui ~= nil then
 	-- 	Ext.RegisterUIInvokeListener(ui, "updateArraySystem", function(ui, call, ...)

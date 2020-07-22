@@ -9,6 +9,7 @@ Ext.Require("Client/UI/ModMenu.lua")
 Ext.Require("Client/UI/Debug.lua")
 Ext.Require("Client/UI/TooltipHandler.lua")
 Ext.Require("Client/UI/TooltipHelpers.lua")
+Ext.Require("Client/UI/InterfaceCommands.lua")
 
 Ext.Require("Client/ClientNetMessages.lua")
 

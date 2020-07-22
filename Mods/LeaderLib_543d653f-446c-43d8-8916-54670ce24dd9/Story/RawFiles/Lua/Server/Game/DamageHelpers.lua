@@ -1,20 +1,16 @@
 ---Reduce damage by a percentage (ex. 0.5)
 ---@param target string
 ---@param attacker string
----@param handle_param integer
----@param reduction_perc number
----@param is_hit_param integer
+---@param handle integer
+---@param reduction number The amount to reduce the damage by, i.e. 0.5
+---@param isHitHandle boolean Whether the handle is a hit or status handle.
 ---@return boolean
-local function ReduceDamage(target, attacker, handle_param, reduction_perc, is_hit_param)
-    local handle = Common.SafeguardParam(handle_param, "integer", nil)
-    if handle == nil then error("[LeaderLib_GameMechanics.lua:ReduceDamage] Handle is null! Skipping.") end
-    local reduction = Common.SafeguardParam(reduction_perc, "number", 0.5)
-    local is_hit = Common.SafeguardParam(is_hit_param, "integer", 0)
-	PrintDebug("[LeaderLib_GameMechanics.lua:ReduceDamage] Reducing damage to ("..tostring(reduction)..") of total. Handle("..tostring(handle).."). Target("..tostring(target)..") Attacker("..tostring(attacker)..") IsHit("..tostring(is_hit)..")")
+local function ReduceDamage(target, attacker, handle, reduction, isHitHandle)
+	--PrintDebug("[LeaderLib_GameMechanics.lua:ReduceDamage] Reducing damage to ("..tostring(reduction)..") of total. Handle("..tostring(handle).."). Target("..tostring(target)..") Attacker("..tostring(attacker)..") IsHit("..tostring(is_hit)..")")
 	local success = false
     for i,damageType in Data.DamageTypes:Get() do
         local damage = nil
-        if is_hit == 0 then
+        if not isHitHandle then
             damage = NRD_HitStatusGetDamage(target, handle, damageType)
         else
             damage = NRD_HitGetDamage(handle, damageType)
@@ -23,20 +19,34 @@ local function ReduceDamage(target, attacker, handle_param, reduction_perc, is_h
             --local reduced_damage = math.max(math.ceil(damage * reduction), 1)
             --NRD_HitStatusClearDamage(target, handle, v)
             local reduced_damage = (damage * reduction) * -1
-            if is_hit == 0 then
+            if not isHitHandle then
                 NRD_HitStatusAddDamage(target, handle, damageType, reduced_damage)
             else
                 NRD_HitAddDamage(handle, damageType, reduced_damage)
             end
-			Log("[LeaderLib_GameMechanics.lua:ReduceDamage] Reduced damage: "..tostring(damage).." => "..tostring(reduced_damage).." for type: "..damageType)
 			success = true
         end
 	end
 	return success
 end
 
-Ext.NewCall(ReduceDamage, "LeaderLib_Hit_ReduceDamage", "(GUIDSTRING)_Target, (GUIDSTRING)_Attacker, (INTEGER64)_Handle, (REAL)_Percentage, (INTEGER)_IsHitHandle")
 GameHelpers.ReduceDamage = ReduceDamage
+
+---Reduce damage by a percentage (ex. 0.5)
+---@param target string
+---@param attacker string
+---@param handle_param integer
+---@param reduction_perc number
+---@param is_hit_param integer
+---@return boolean
+local function ReduceDamage_Call(target, attacker, handle_param, reduction_perc, is_hit_param)
+    local handle = Common.SafeguardParam(handle_param, "integer", nil)
+    if handle == nil then error("[LeaderLib_GameMechanics.lua:ReduceDamage] Handle is null! Skipping.") end
+    local reduction = Common.SafeguardParam(reduction_perc, "number", 0.5)
+    return ReduceDamage(target, attacker, handle, reduction, is_hit_param == 1)
+end
+
+Ext.NewCall(ReduceDamage_Call, "LeaderLib_Hit_ReduceDamage", "(GUIDSTRING)_Target, (GUIDSTRING)_Attacker, (INTEGER64)_Handle, (REAL)_Percentage, (INTEGER)_IsHitHandle")
 
 ---Increase damage by a percentage (0.5).
 ---@param target string

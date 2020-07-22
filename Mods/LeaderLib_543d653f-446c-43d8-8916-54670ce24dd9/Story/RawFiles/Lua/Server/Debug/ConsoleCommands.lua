@@ -411,8 +411,8 @@ Ext.RegisterConsoleCommand("leaderlib_statustext", function(command, text)
 		Duration = 5.0,
 		IsItem = false
 	}):ToString(), nil)
-	-- StartOneshotTimer("Timers_LeaderLib_Debug_MessageBoxTest", 2000, function()
-
+	-- StartOneshotTimer("Timers_LeaderLib_Debug_StatusTextTest", 2000, function()
+		
 	-- end)
 end)
 

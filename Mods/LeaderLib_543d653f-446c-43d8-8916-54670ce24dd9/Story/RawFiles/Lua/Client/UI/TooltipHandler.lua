@@ -76,8 +76,8 @@ end
 Ext.RegisterListener("SkillGetDescriptionParam", SkillGetDescriptionParam)
 
 local function SessionLoaded()
-	Game.Tooltip.RegisterListener("Item", nil, OnItemTooltip)
-	Game.Tooltip.RegisterListener("Skill", nil, OnSkillTooltip)
+	--Game.Tooltip.RegisterListener("Item", nil, OnItemTooltip)
+	--Game.Tooltip.RegisterListener("Skill", nil, OnSkillTooltip)
 end
 
 Ext.RegisterListener("SessionLoaded", SessionLoaded)

@@ -1,5 +1,29 @@
 --public function addOverhead(param1:Number, param2:String, param3:Number) : *
 
+local testSelectionArray = {
+	[0] = -1,
+	[1] = "Sir Lora",
+	[2] = false,
+	[3] = 14430525.0,
+	[4] = 1.0,
+	[5] = -1.0,
+	[6] = 1.0,
+	[7] = -1.0,
+	[8] = 19.0,
+	[9] = -1.0,
+	[10] = "4",
+	[11] = "Talk",
+	[12] = "",
+	[13] = "",
+	[14] = true,
+	[15] = false,
+	[16] = "68",
+	[17] = "",
+	[18] = false,
+	[19] = 1.0,
+	[20] = true,
+}
+
 ---@param target string The object to display the text on.
 ---@param text string
 ---@param displayTime number The duration the text is visible for.
@@ -24,15 +48,44 @@ function UI.StatusText(target, text, displayTime, isItem)
 			end
 		end
 
-		print(handle, target, text, displayTime, isItem)
-		
 		if handle ~= nil then
-			ui:SetValue("addOH_array", 0, 1)
-			ui:SetValue("addOH_array", Ext.HandleToDouble(handle), 2)
-			ui:SetValue("addOH_array", text, 3)
+			ui:Invoke("clearObsoleteOHTs")
+			ui:Invoke("clearAll")
+			ui:Invoke("cleanupDeleteRequests")
+			local doubleHandle = Ext.HandleToDouble(handle)
+			ui:SetValue("addOH_array", 0, 0)
+			ui:SetValue("addOH_array", doubleHandle, 1)
+			ui:SetValue("addOH_array", text, 2)
 			ui:SetValue("addOH_array", displayTime, 3)
+
+			-- [0] = [3.4431383083963e-282]
+			-- [1] = ["Sir Lora"]
+			-- [2] = [false]
+			-- [3] = [14430525.0]
+			-- [4] = [1.0]
+			-- [5] = [-1.0]
+			-- [6] = [1.0]
+			-- [7] = [-1.0]
+			-- [8] = [19.0]
+			-- [9] = [-1.0]
+			-- [10] = ["4"]
+			-- [11] = ["Talk"]
+			-- [12] = [""]
+			-- [13] = [""]
+			-- [14] = [true]
+			-- [15] = [false]
+			-- [16] = ["68"]
+			-- [17] = [""]
+			-- [18] = [false]
+			-- [19] = [1.0]
+			-- [20] = [true]
+			testSelectionArray[0] = doubleHandle
+			for i,v in ipairs(testSelectionArray) do
+				ui:SetValue("selectionInfo_array", v, i)
+			end
 			ui:Invoke("updateOHs")
-			--ui:Invoke("addOverhead", Ext.HandleToDouble(handle), text, displayTime)
+			print("UI.StatusText", target, text, displayTime, isItem)
+			--ui:Invoke("addOverhead", doubleHandle, text, displayTime)
 		end
 	end
 end

@@ -1,8 +1,8 @@
 if UI == nil then
-UI = {
-	Tooltip = {}
-}
+	UI = {}
 end
+
+UI.Tooltip = {}
 
 Ext.Require("Client/UI/CharacterSheet.lua")
 Ext.Require("Client/UI/ModMenu.lua")

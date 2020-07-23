@@ -2243,6 +2243,20 @@ PROC
 LeaderLib_CompleteGoal((STRING)_GoalTitle)
 THEN
 SysCompleteGoal(_GoalTitle);
+
+QRY
+LeaderLib_QRY_AnyGoalsAreActive((STRING)_Goal1, (STRING)_Goal2)
+AND
+SysIsActive(_Goal1)
+THEN
+DB_NOOP(1);
+
+QRY
+LeaderLib_QRY_AnyGoalsAreActive((STRING)_Goal1, (STRING)_Goal2)
+AND
+SysIsActive(_Goal2)
+THEN
+DB_NOOP(1);
 //END_REGION
 EXITSECTION
 

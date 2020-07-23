@@ -245,6 +245,19 @@ function PrintTest(str)
 	NRD_DebugLog("[LeaderLib:Lua:PrintTest] " .. str)
 end
 
+function LeaderLog(logType, ...)
+	if Osi.LeaderLog_QRY_LogTypeEnabled(logType) then
+		local text = StringHelpers.Join("", {...})
+		Osi.LeaderLog_Internal_RunString(logType, text)
+	end
+end
+
+if Ext.Version() >= 50 then
+	for i=2,17,1 do
+		Ext.RegisterOsirisListener("LeaderLog_Log", i, "before", LeaderLog)
+	end
+end
+
 function Debug_TestSkillScaleMath(level)
 	local stat = Ext.GetStat("Damage_Burning")
 	local dmgFromBase = stat.DamageFromBase * 0.01

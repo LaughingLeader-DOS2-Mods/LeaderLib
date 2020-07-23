@@ -19,6 +19,7 @@ AND
 _ProfessionTag1 != ""
 THEN
 DB_OriginProfessionTags(_Char, _ProfessionTag1);
+SetTag(_Char, _ProfessionTag1);
 
 PROC
 LeaderLib_Origins_Register_Tags((CHARACTERGUID)_Char, (STRING)_ProfessionTag1, (STRING)_ProfessionTag2, (STRING)_PolymorphPreservedTag)
@@ -26,6 +27,7 @@ AND
 _ProfessionTag2 != ""
 THEN
 DB_OriginProfessionTags(_Char, _ProfessionTag2);
+SetTag(_Char, _ProfessionTag2);
 
 PROC
 LeaderLib_Origins_Register_Tags((CHARACTERGUID)_Char, (STRING)_ProfessionTag1, (STRING)_ProfessionTag2, (STRING)_PolymorphPreservedTag)

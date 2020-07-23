@@ -109,3 +109,18 @@ GameHelpers.CloneItemForCharacter = CloneItemForCharacter
 GameHelpers.CreateItemByStat = CreateItemByStat
 GameHelpers.RemoveRunes = RemoveRunes
 GameHelpers.HasTagEquipped = HasTagEquipped
+
+--- Removes an item in a slot, if one exists.
+---@param character string
+---@param slot string
+---@param delete boolean Whether to destroy the item or simply unequip it.
+---@return boolean
+function GameHelpers.UnequipItemInSlot(character, slot, delete)
+    local item = CharacterGetEquippedItem(character, slot)
+    if item ~= nil then
+        CharacterUnequipItem(character, item)
+        if delete == true and ObjectIsGlobal(item) == 0 then
+            ItemRemove(item)
+        end
+    end
+end

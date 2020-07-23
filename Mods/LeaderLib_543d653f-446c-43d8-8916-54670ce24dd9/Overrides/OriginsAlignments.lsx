@@ -735,6 +735,14 @@
                             <attribute id="Name" value="Hero Player20" type="22" />
                         </node>
                         <node id="Entity">
+                            <attribute id="Alignment" value="Hero" type="22" />
+                            <attribute id="Name" value="Hero LLWEAPONEX_Harken" type="22" />
+                        </node>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Hero" type="22" />
+                            <attribute id="Name" value="Hero LLWEAPONEX_Korvash" type="22" />
+                        </node>
+                        <node id="Entity">
                             <attribute id="Alignment" value="Neutral" type="22" />
                             <attribute id="Name" value="LV_Prisoner" type="22" />
                         </node>
@@ -781,6 +789,14 @@
                         <node id="Entity">
                             <attribute id="Alignment" value="Origin" type="22" />
                             <attribute id="Name" value="Origin_Sebille" type="22" />
+                        </node>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Origin" type="22" />
+                            <attribute id="Name" value="Origin_LLWEAPONEX_Harken" type="22" />
+                        </node>
+                        <node id="Entity">
+                            <attribute id="Alignment" value="Origin" type="22" />
+                            <attribute id="Name" value="Origin_LLWEAPONEX_Korvash" type="22" />
                         </node>
                         <node id="Entity">
                             <attribute id="Alignment" value="Good" type="22" />

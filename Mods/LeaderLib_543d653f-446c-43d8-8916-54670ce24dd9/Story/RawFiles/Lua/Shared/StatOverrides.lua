@@ -57,6 +57,9 @@ local function CanChangeSkillTier(stat, tier)
 	end
 end
 
+-- Adds more alignment entities
+Ext.AddPathOverride("Mods/DivinityOrigins_1301db3d-1f54-4e98-9be5-5094030916e4/Story/Alignments/Alignment.lsx", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/OriginsAlignments.lsx")
+
 local function OverrideStats()
 	---@type LeaderLibGameSettings
 	local data = LoadGameSettings()
@@ -116,4 +119,4 @@ local function OverrideStats()
 		end
 	end
 end
-Ext.RegisterListener("ModuleLoading", OverrideStats)
+Ext.RegisterListener("StatsLoaded", OverrideStats)

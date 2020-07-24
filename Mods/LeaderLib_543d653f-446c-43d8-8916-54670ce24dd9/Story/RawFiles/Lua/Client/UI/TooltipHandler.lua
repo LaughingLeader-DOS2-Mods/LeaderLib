@@ -1,3 +1,10 @@
+---@class TagTooltipData
+---@field Title TranslatedString
+---@field Description TranslatedString
+
+---@type table<string,TagTooltipData>
+local TagTooltips = {}
+
 ---@param item EsvItem
 ---@param tooltip TooltipData
 local function OnItemTooltip(item, tooltip)
@@ -33,6 +40,20 @@ local function OnItemTooltip(item, tooltip)
 					end
 				end
 				--print("ResPen tags:", Ext.JsonStringify(tagsCheck))
+			end
+		end
+		if #TagTooltips > 0 then
+			for tag,enabled in pairs(TagTooltips) do
+				if enabled and item:HasTag(tag) then
+					local tagName,nameHandle = Ext.GetTranslatedStringFromKey(tag)
+					local tagDesc,descHandle = Ext.GetTranslatedStringFromKey(tag.."_Description")
+					local element = {
+						Type = "Tags",
+						Label = tagName,
+						Value = tagDesc,
+					}
+					tooltip:AppendElement(element)
+				end
 			end
 		end
 	end
@@ -87,6 +108,15 @@ local function EnableTooltipOverride()
 	Ext.AddPathOverride("Public/Game/GUI/LSClasses.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/LSClasses_Fixed.swf")
 	--Ext.AddPathOverride("Public/Game/GUI/tooltipHelper_kb.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/tooltipHelper_kb_Fixed.swf")
 	Ext.Print("[LeaderLib] Enabled tooltip override.")
+end
+
+---Registers a tag to display on item tooltips.
+---@param tag string
+---@param title TranslatedString
+---@param description TranslatedString
+function UI.RegisterItemTooltipTag(tag, title, description)
+	TagTooltips[tag] = true
+	--TagTooltips[tag] = {Title=title, Description=description}
 end
 
 -- Ext.RegisterListener("ModuleLoading", EnableTooltipOverride)

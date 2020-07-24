@@ -24,3 +24,15 @@ function OnInitialized()
 
 	Ext.BroadcastMessage("LeaderLib_EnableUIFeatures", Ext.JsonStringify(Features), nil)
 end
+
+function OnLuaReset()
+	OnInitialized()
+	if #Listeners.LuaReset > 0 then
+		for i,callback in ipairs(Listeners.LuaReset) do
+			local status,err = xpcall(callback, debug.traceback)
+			if not status then
+				Ext.PrintError("[LeaderLib:OnLuaReset] Error calling function for 'LuaReset':\n", err)
+			end
+		end
+	end
+end

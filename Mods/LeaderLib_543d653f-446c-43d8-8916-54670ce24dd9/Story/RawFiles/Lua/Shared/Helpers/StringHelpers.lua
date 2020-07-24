@@ -82,3 +82,25 @@ local function Split(str, delimiter)
 end
 
 StringHelpers.Split = Split
+
+--- Replace placeholder values in a string, such as [1], [2], etc. 
+--- Takes a variable numbers of values.
+--- @vararg values
+--- @return string
+function StringHelpers.ReplacePlaceholders(text, ...)
+	local values = {...}
+	if #values > 0 then
+		if type(values[1]) == "table" then
+			values = values[1]
+		end
+		if text == "" then
+			text = values[1]
+		else
+			for i,v in ipairs(values) do
+				text = string.gsub(text, "%["..tostring(math.tointeger(i)).."%]", v)
+				print(i,v,text)
+			end
+		end
+	end
+	return text
+end

@@ -43,11 +43,13 @@ function TranslatedString:ReplacePlaceholders(...)
 	local values = {...}
 	local str = self.Value
 	if #values > 0 then
+		if type(values[1]) == "table" then
+			values = values[1]
+		end
 		if str == "" then
 			str = values[1]
 		else
 			for i,v in ipairs(values) do
-				print(i,v)
 				str = string.gsub(str, "%["..tostring(i).."%]", v)
 			end
 		end

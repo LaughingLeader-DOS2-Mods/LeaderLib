@@ -129,3 +129,14 @@ Ext.RegisterNetListener("LeaderLib_DisplayMessageBox", function(call, dataStr)
 		UI.DisplayMessageBox(data.Params.Text, data.Params.Title, data.Params.Type)
 	end
 end)
+
+Ext.RegisterNetListener("LeaderLib_UnlockCharacterInventory", function(call, playersTableString)
+	--ExternalInterface.call("lockInventory",this.id,this.lockBtn_mc.isActive)
+	local ui = Ext.GetBuiltinUI("Public/Game/GUI/partyInventory.swf")
+	if ui ~= nil then
+		local players = Ext.JsonParse(playersTableString)
+		for i,v in pairs(players) do
+			ui:ExternalInterfaceCall("lockInventory", Ext.HandleToDouble(Ext.GetCharacter(v[1]).Handle), false)
+		end
+	end
+end)

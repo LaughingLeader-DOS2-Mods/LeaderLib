@@ -47,6 +47,11 @@ IF
 CharacterStartAttackObject(_Target, _Owner, _Attacker)
 THEN
 DB_NOOP(1);
+
+IF
+UserEvent(_ID, _Event)
+THEN
+DB_NOOP(1);
 */
 
 EXITSECTION

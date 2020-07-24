@@ -1,50 +1,3 @@
-local global_flags = {
-	"LeaderLib_DialogRedirectionEnabled",
-	"LeaderLib_DialogRedirection_HighestPersuasionEnabled",
-	"LeaderLib_DialogRedirection_DisableUserRestriction",
-	--"LeaderLib_AutoBalancePartyExperience",
-	"LeaderLib_AutoAddModMenuBooksDisabled",
-	"LeaderLib_FriendlyFireEnabled",
-	"LeaderLib_AutosavingEnabled",
-	"LeaderLib_AutosaveOnCombatStart",
-	"LeaderLib_DisableAutosavingInCombat",
-	"LeaderLog_Debug_Enabled",
-	"LeaderLog_CombatLog_Disabled",
-	"LeaderLog_Status_Disabled",
-	"LeaderLib_DebugMode"
-}
---[[ local global_settings_example = {
-	GlobalFlags = {
-		"LeaderLib_DialogRedirectionEnabled",
-		"LeaderLib_DialogRedirection_HighestPersuasionEnabled",
-		"LeaderLib_DialogRedirection_DisableUserRestriction",
-		"LeaderLib_AutoBalancePartyExperience",
-		"LeaderLib_AutoAddModMenuBooksDisabled",
-		"LeaderLib_AutosavingEnabled",
-		"LeaderLib_AutosaveOnCombatStart",
-		"LeaderLib_DisableAutosavingInCombat",
-	},
-	AutosavingInterval = "LeaderLib_Autosave_Interval_15"
-} ]]
-
-local autosaving_interval = {
-	"LeaderLib_Autosave_Interval_2",
-	"LeaderLib_Autosave_Interval_5",
-	"LeaderLib_Autosave_Interval_10",
-	"LeaderLib_Autosave_Interval_15",
-	"LeaderLib_Autosave_Interval_20",
-	"LeaderLib_Autosave_Interval_25",
-	"LeaderLib_Autosave_Interval_30",
-	"LeaderLib_Autosave_Interval_35",
-	"LeaderLib_Autosave_Interval_40",
-	"LeaderLib_Autosave_Interval_45",
-	"LeaderLib_Autosave_Interval_60",
-	"LeaderLib_Autosave_Interval_90",
-	"LeaderLib_Autosave_Interval_120",
-	"LeaderLib_Autosave_Interval_180",
-	"LeaderLib_Autosave_Interval_240",
-}
-
 local global_settings = {}
 
 ---@class LeaderLibIntegerVariable
@@ -487,8 +440,4 @@ end
 
 function GlobalSettings_Initialize()
 	Osi.LeaderLib_GlobalSettings_Internal_Init()
-	--local LeaderLib_Settings = Get_Settings("LeaderLib", "LaughingLeader")
-	--LeaderLib_Settings:AddFlags(global_flags)
-	--LeaderLib_Settings:AddFlags(autosaving_interval)
-	--PrintDebug(Common.Dump(LeaderLib_Settings))
 end

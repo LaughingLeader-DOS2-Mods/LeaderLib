@@ -11,7 +11,20 @@ if Ext.Version() >= 50 then
 				GameHelpers.ShowMessageBox(hostText, host, 0, GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageTitle"))
 			end
 		end
+
+		if GlobalGetFlag("LeaderLib_AutoUnlockInventoryInMultiplayer") == 1 then
+			IterateUsers("Iterators_LeaderLib_UI_UnlockPartyInventory")
+			
+		end
 	end)
+
+	Ext.RegisterOsirisListener("UserEvent", 2, "after", function(id, event)
+		if event == "Iterators_LeaderLib_UI_UnlockPartyInventory" then
+			local players = Ext.JsonStringify(Osi.DB_IsPlayer:Get(nil))
+			Ext.PostMessageToUser(id, "LeaderLib_UnlockCharacterInventory", players)
+		end
+	end)
+
 	-- Ext.RegisterOsirisListener("CharacterReservedUserIDChanged", 3, "after", function(uuid, old, userId)
 	-- 	print("CharacterReservedUserIDChanged", uuid, old, userId, Ext.PlayerHasExtender(uuid))
 	-- 	if uuid ~= nil and not Ext.PlayerHasExtender(uuid) then

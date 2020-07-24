@@ -70,6 +70,7 @@ Listeners = {
 	SessionLoaded = {},
 	OnPrepareHit = {},
 	OnHit = {},
+	LuaReset = {},
 }
 SkillListeners = {}
 ModListeners = {

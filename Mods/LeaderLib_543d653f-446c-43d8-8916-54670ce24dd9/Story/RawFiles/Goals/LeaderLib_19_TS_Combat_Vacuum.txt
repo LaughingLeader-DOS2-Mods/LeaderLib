@@ -21,6 +21,13 @@ DB_LeaderLib_Combat_Temp_EnteredCombat(_Player, _CombatID)
 THEN
 NOT DB_LeaderLib_Combat_Temp_EnteredCombat(_Player, _CombatID);
 
+IF
+CombatEnded(_CombatID)
+AND
+DB_LeaderLib_Combat_Temp_EnteredCombat(_Player, _CombatID)
+THEN
+NOT DB_LeaderLib_Combat_Temp_EnteredCombat(_Player, _CombatID);
+
 EXITSECTION
 SysClear("DB_LeaderLib_Combat_Temp_EnteredCombat", 2);
 ENDEXITSECTION

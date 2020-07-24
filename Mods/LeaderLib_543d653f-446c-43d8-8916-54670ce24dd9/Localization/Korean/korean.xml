@@ -131,6 +131,7 @@
 	<content contentuid="h7322bed9g2ea5g4abeg9decga21994353d79">*He waits for you to speak.*</content>
 	<content contentuid="h73234319g4e6bg4967gb45cga511b60f0408">&lt;font color=&apos;#FF0000&apos;&gt;LeaderLib Failed to Save Global Settings&lt;/font&gt;</content>
 	<content contentuid="h76b098bdgb9f4g4ae8g8e5bg87f68b4599d9">Hey there, [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3]! You made it off that wreck in one piece, eh? *He snorts.* </content>
+	<content contentuid="h76d37069g565dg458bg8e57gdbd6f9b81b7a">[GLOBAL] Disable automatically unlocking every inventory in multiplayer. (Currently Enabled)</content>
 	<content contentuid="h7942ef1ag44d9g49f0gab10ge07e419c1d32">[GLOBAL] Automatically pull party members within 30m into combat. (Currently Disabled)</content>
 	<content contentuid="h7a4ddc58g1cbeg4e40gaba2g0b2bf5dedd98">[GLOBAL] Enable Debug Logging</content>
 	<content contentuid="h7a60181dg1be6g4e43g99c5g91289ea59f8f">Exiting...</content>
@@ -267,6 +268,7 @@
 	<content contentuid="hee326232gbe82g49c2gbe8eg1d0511d29248">LeaderLib</content>
 	<content contentuid="hee75e144g1d75g4094ga8c9g4a0508c5cf67">LeaderLib Successfully Saved Global Settings</content>
 	<content contentuid="hef0c737eg2a72g4564ga5cfg088484ac8b45">Shadow Resistance</content>
+	<content contentuid="hefbcc547g9671g4e57g9364g9cc7c9c06fc4">[GLOBAL] Automatically unlock the party inventory in multiplayer. (Currently Disabled)&lt;br&gt;This will allow all players to exchange items between their inventories without having to unlock them first.</content>
 	<content contentuid="hf0eb5097g325bg4254gaf97g77255a6380ad">[GLOBAL] Enable &lt;b&gt;Dialog Redirection&lt;/b&gt;. If dialog tries to start with a party member that is not an AVATAR (the crown symbol), the avatar that owns that character will be used instead.</content>
 	<content contentuid="hf15fdd63gddedg435bgaa2egdd0574ce2c3c">Registered Mods:&lt;br&gt;[LeaderLib_Settings_ModList_50c55fbe-ad1e-490e-92d1-8836ca42ca12]</content>
 	<content contentuid="hf1c7aa42g3e2fg4338ga672g59a3a935cff4">New Items in Stock</content>

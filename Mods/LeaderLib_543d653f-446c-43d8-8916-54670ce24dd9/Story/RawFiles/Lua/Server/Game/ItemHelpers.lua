@@ -124,3 +124,18 @@ function GameHelpers.UnequipItemInSlot(character, slot, delete)
         end
     end
 end
+
+--- Checks if a character has an item equipped with a specific tag.
+---@param character string
+---@param tag string
+---@return boolean
+function GameHelpers.FindTaggedEquipment(character, tag)
+    local items = {}
+	for _,slotName in Data.VisibleEquipmentSlots:Get() do
+		local item = CharacterGetEquippedItem(character, slotName)
+		if item ~= nil and IsTagged(item, tag) == 1 then
+			items[slotName] = item
+		end
+	end
+	return items
+end

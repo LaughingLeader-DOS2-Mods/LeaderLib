@@ -155,30 +155,6 @@ end
 
 GameHelpers.GetDamageText = GetDamageText
 
----Get localized damage text wrapped in that damage type's color.
----@param damageType string
----@param damageValue string|integer|number
----@return string
-local function GetColoredDamageText(damageType, damageValue)
-	local entry = LocalizedText.DamageTypeHandles[damageType]
-	if entry ~= nil then
-		if damageValue ~= nil then
-			if type(damageValue) == "number" then
-				return string.format("<font color='%s'>%i</font>", entry.Color, damageValue)
-			else
-				return string.format("<font color='%s'>%s</font>", entry.Color, damageValue)
-			end
-		else
-			return damageValue
-		end
-	else
-		Ext.PrintError("No damage name/color entry for type " .. tostring(damageType))
-	end
-	return damageValue
-end
-
-GameHelpers.GetColoredDamageText = GetColoredDamageText
-
 --- Get the localized name for an ability.
 ---@param ability string|integer
 ---@return string

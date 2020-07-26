@@ -24,6 +24,9 @@ function GetSkillSlots(client, skill, makeLocal)
 end
 
 function SetSkillEnabled(client, skill, enabled)
+	if type(enabled) == "string" then
+		enabled = enabled == "true" or enabled == "1"
+	end
 	local slots = GetSkillSlots(client, skill)
 	if #slots > 0 then
 		Ext.PostMessageToClient(client, "LeaderLib_Hotbar_SetSlotEnabled", MessageData:CreateFromTable("SetSlotEnabled", {

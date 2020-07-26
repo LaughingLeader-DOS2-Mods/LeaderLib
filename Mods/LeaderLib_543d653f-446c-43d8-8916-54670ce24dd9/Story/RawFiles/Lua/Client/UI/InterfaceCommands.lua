@@ -140,3 +140,30 @@ Ext.RegisterNetListener("LeaderLib_UnlockCharacterInventory", function(call, pla
 		end
 	end
 end)
+
+Ext.RegisterNetListener("LeaderLib_AutoSortPlayerInventory", function(call, uuid)
+	local ui = Ext.GetBuiltinUI("Public/Game/GUI/partyInventory.swf")
+	if ui ~= nil then
+		ui:ExternalInterfaceCall("autosort", Ext.HandleToDouble(Ext.GetCharacter(uuid).Handle), false)
+	end
+end)
+
+Ext.RegisterNetListener("LeaderLib_Hotbar_SetSlotEnabled", function(call, dataStr)
+	local ui = Ext.GetBuiltinUI("Public/Game/GUI/hotBar.swf")
+	if ui ~= nil then
+		---@type FlashObject
+		local hotbar = ui:GetRoot().hotbar_mc
+		local currentBarIndex = hotbar.cycleHotbar.currentHotBarIndex or 0
+
+		local maxSlot = (29 * currentBarIndex) - 1
+		local minSlot = 29 * (currentBarIndex - 1)
+
+		local data = Classes.MessageData:CreateFromString(dataStr)
+		for i,slot in pairs(data.Params.Slots) do
+			if slot <= maxSlot and slot >= minSlot then
+				hotbar.setSlotEnabled(slot%29, data.Params.Enabled)
+			end
+			--print(slot, slot%29, currentBarIndex, minSlot, maxSlot)
+		end
+	end
+end)

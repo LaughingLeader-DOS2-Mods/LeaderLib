@@ -49,7 +49,7 @@ local function PrintArrayValue(ui, index, arrayName)
 	end
 end
 
-local function PrintArray(ui, arrayName)
+function UI.PrintArray(ui, arrayName)
 	print("==============")
 	print(arrayName)
 	print("==============")

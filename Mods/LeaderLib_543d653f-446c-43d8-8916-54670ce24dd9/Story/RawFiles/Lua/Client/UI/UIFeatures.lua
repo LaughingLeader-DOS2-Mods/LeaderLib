@@ -84,8 +84,9 @@ local function DisplayRacialTalents(ui, call, ...)
 			if player.Stats[talent] == true then
 				local talentEnumName = string.gsub(talent, "TALENT_", "")
 				local talentId = Data.TalentEnum[talentEnumName]
-				print(talent, player.Stats[talent], talentEnumName, talentId)
-				if not IsInArray(ui, "talent_array", talentId, 1, 2) then
+				if not IsInArray(ui, "talent_array", talentId, 1, 3) then
+					--UI.PrintArray(ui, "talent_array")
+					--print("Added talent to array", talent, player.Stats[talent], talentEnumName, talentId, text.Value)
 					ui:SetValue("talent_array", text.Value, i)
 					ui:SetValue("talent_array", talentId, i+1)
 					ui:SetValue("talent_array", 0, i+2)

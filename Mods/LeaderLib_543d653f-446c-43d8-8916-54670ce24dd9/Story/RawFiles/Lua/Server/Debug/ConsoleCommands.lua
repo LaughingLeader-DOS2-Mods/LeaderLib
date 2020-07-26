@@ -293,6 +293,7 @@ Ext.RegisterConsoleCommand("addtreasure", function(command, treasure, identifyIt
 	end
 end)
 
+--!addreward ST_LLWEAPONEX_RunebladesRare
 Ext.RegisterConsoleCommand("addreward", function(command, treasure, identifyItems)
 	if treasure == nil then
 		treasure = "ST_WeaponRare"
@@ -433,4 +434,8 @@ Ext.RegisterConsoleCommand("printrespentags", function(command)
 		print("\t},")
 	end
 	print("}")
+end)
+
+Ext.RegisterConsoleCommand("refreshskill", function(command, skill, enabled)
+	SetSkillEnabled(CharacterGetHostCharacter(), skill, enabled == "true")
 end)

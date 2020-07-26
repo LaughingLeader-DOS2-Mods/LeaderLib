@@ -1,6 +1,14 @@
+local boost_stats = {
+	["StoryPlayer"] = true,
+	["CasualPlayer"] = true,
+	["NormalPlayer"] = true,
+	["HardcorePlayer"] = true,
+	["CasualNPC"] = true,
+	["NormalNPC"] = true,
+	["HardcoreNPC"] = true,
+}
+
 local player_stats = {
-	--["_Base"] = true,
-	["_Hero"] = true,
 	["HumanFemaleHero"] = true,
 	["HumanMaleHero"] = true,
 	["DwarfFemaleHero"] = true,
@@ -17,18 +25,12 @@ local player_stats = {
 	["ElfUndeadMaleHero"] = true,
 	["LizardUndeadFemaleHero"] = true,
 	["LizardUndeadMaleHero"] = true,
-	["_Companions"] = true,
-	["StoryPlayer"] = true,
-	["CasualPlayer"] = true,
-	["NormalPlayer"] = true,
-	["HardcorePlayer"] = true,
 	["Player_Ifan"] = true,
 	["Player_Lohse"] = true,
 	["Player_RedPrince"] = true,
 	["Player_Sebille"] = true,
 	["Player_Beast"] = true,
 	["Player_Fane"] = true,
-	--["Summon_Earth_Ooze_Player"] = true,
 }
 
 local ignore_skill_names = {
@@ -98,14 +100,16 @@ local function OverrideStats(syncMode)
 		if string.find(apGroups, "all") then
 			Ext.Print("[LeaderLib:StatOverrides.lua] Enabled Max AP override ("..tostring(data.Settings.MaxAP)..") for all characters.")
 			for _,stat in pairs(Ext.GetStatEntries("Character")) do
-				local maxAP = Ext.StatGetAttribute(stat, "APMaximum")
-				if maxAP < data.Settings.MaxAP then
-					if syncMode ~= true then
-						Ext.StatSetAttribute(stat, "APMaximum", data.Settings.MaxAP)
-					else
-						local statObj = Ext.GetStat(stat)
-						statObj.APMaximum = data.Settings.MaxAP
-						Ext.SyncStat(stat, false)
+				if boost_stats[stat] ~= true then
+					local maxAP = Ext.StatGetAttribute(stat, "APMaximum")
+					if maxAP < data.Settings.MaxAP then
+						if syncMode ~= true then
+							Ext.StatSetAttribute(stat, "APMaximum", data.Settings.MaxAP)
+						else
+							local statObj = Ext.GetStat(stat)
+							statObj.APMaximum = data.Settings.MaxAP
+							Ext.SyncStat(stat, false)
+						end
 					end
 				end
 			end
@@ -128,7 +132,7 @@ local function OverrideStats(syncMode)
 			if string.find(apGroups, "npc") then
 				Ext.Print("[LeaderLib:StatOverrides.lua] Enabled Max AP override ("..tostring(data.Settings.MaxAP)..") for non-player characters.")
 				for _,stat in pairs(Ext.GetStatEntries("Character")) do
-					local skip = not string.find(apGroups, "player") and player_stats[stat] == true
+					local skip = (not string.find(apGroups, "player") and player_stats[stat] == true) or boost_stats[stat] == true
 					if not skip then
 						local maxAP = Ext.StatGetAttribute(stat, "APMaximum")
 						if maxAP < data.Settings.MaxAP then

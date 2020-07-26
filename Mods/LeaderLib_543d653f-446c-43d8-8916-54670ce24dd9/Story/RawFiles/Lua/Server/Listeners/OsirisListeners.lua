@@ -14,7 +14,10 @@ if Ext.Version() >= 50 then
 
 		if GlobalGetFlag("LeaderLib_AutoUnlockInventoryInMultiplayer") == 1 then
 			IterateUsers("Iterators_LeaderLib_UI_UnlockPartyInventory")
-			
+		end
+
+		if CharacterGetReservedUserID(host) ~= id then
+			SyncGameSettings(id)
 		end
 	end)
 

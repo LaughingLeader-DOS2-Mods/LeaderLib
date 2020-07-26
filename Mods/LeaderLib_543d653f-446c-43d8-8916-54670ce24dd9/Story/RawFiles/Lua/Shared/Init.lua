@@ -136,4 +136,21 @@ function SaveGameSettings()
 	end
 end
 
+function SyncGameSettings(id)
+	if Ext.IsServer() then
+		local settings = LoadGameSettings()
+		Ext.PostMessageToUser(id, "LeaderLib_SyncGameSettings", Classes.MessageData:CreateFromTable("LeaderLibGameSettings", {Settings = settings}):ToString())
+
+		SyncStatOverrides()
+	end
+end
+
+if Ext.IsClient() then
+	Ext.RegisterNetListener("LeaderLib_SyncGameSettings", function(call, gameSettingsStr)
+		local settings = Classes.MessageData:CreateFromString(gameSettingsStr)
+		Settings = settings.Params.Settings
+		Ext.Print("[LeaderLib_SyncGameSettings] Synced game settings from server.")
+	end)
+end
+
 --Ext.RegisterListener("ModuleLoadStarted", LoadSettings)

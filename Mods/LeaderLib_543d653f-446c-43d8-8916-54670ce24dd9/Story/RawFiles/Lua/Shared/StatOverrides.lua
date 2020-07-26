@@ -60,21 +60,30 @@ end
 -- Adds more alignment entities
 Ext.AddPathOverride("Mods/DivinityOrigins_1301db3d-1f54-4e98-9be5-5094030916e4/Story/Alignments/Alignment.lsx", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/OriginsAlignments.lsx")
 
-local function OverrideStats()
+local function OverrideStats(syncMode)
 	---@type LeaderLibGameSettings
 	local data = LoadGameSettings()
 	--Ext.IsModLoaded("88d7c1d3-8de9-4494-be12-a8fcbc8171e9")
 	if data.Settings.StarterTierSkillOverrides == true then
 		local originalSkillTiers = {}
-		Ext.Print("[LeaderLib:StatOverrides.lua] Enabling skill tier overrides.")
+		local total = 0
+		--Ext.Print("[LeaderLib:StatOverrides.lua] Enabling skill tier overrides.")
 		for _,stat in pairs(Ext.GetStatEntries("SkillData")) do
 			local tier = Ext.StatGetAttribute(stat, "Tier")
 			if CanChangeSkillTier(stat, tier) then
 				originalSkillTiers[stat] = tier
-				Ext.StatSetAttribute(stat, "Tier", "Starter")
+				total = total + 1
+				if syncMode ~= true then
+					Ext.StatSetAttribute(stat, "Tier", "Starter")
+				else
+					local statObj = Ext.GetStat(stat)
+					statObj.Tier = "Starter"
+					Ext.SyncStat(stat, false)
+				end
 				--PrintDebug("LeaderLib:StatOverrides.lua] Change Tier for skill ("..stat..") "..tier.." => Starter.")
 			end
 		end
+		Ext.Print("LeaderLib:StatOverrides.lua] Change skill tier to Starter for ("..tostring(total)..") skills.")
 		if Ext.IsServer() then
 			PersistentVars["OriginalSkillTiers"] = originalSkillTiers
 		end
@@ -91,7 +100,13 @@ local function OverrideStats()
 			for _,stat in pairs(Ext.GetStatEntries("Character")) do
 				local maxAP = Ext.StatGetAttribute(stat, "APMaximum")
 				if maxAP < data.Settings.MaxAP then
-					Ext.StatSetAttribute(stat, "APMaximum", data.Settings.MaxAP)
+					if syncMode ~= true then
+						Ext.StatSetAttribute(stat, "APMaximum", data.Settings.MaxAP)
+					else
+						local statObj = Ext.GetStat(stat)
+						statObj.APMaximum = data.Settings.MaxAP
+						Ext.SyncStat(stat, false)
+					end
 				end
 			end
 		else
@@ -100,7 +115,13 @@ local function OverrideStats()
 				for stat,_ in pairs(player_stats) do
 					local maxAP = Ext.StatGetAttribute(stat, "APMaximum")
 					if maxAP < data.Settings.MaxAP then
-						Ext.StatSetAttribute(stat, "APMaximum", data.Settings.MaxAP)
+						if syncMode ~= true then
+							Ext.StatSetAttribute(stat, "APMaximum", data.Settings.MaxAP)
+						else
+							local statObj = Ext.GetStat(stat)
+							statObj.APMaximum = data.Settings.MaxAP
+							Ext.SyncStat(stat, false)
+						end
 					end
 				end
 			end
@@ -111,7 +132,13 @@ local function OverrideStats()
 					if not skip then
 						local maxAP = Ext.StatGetAttribute(stat, "APMaximum")
 						if maxAP < data.Settings.MaxAP then
-							Ext.StatSetAttribute(stat, "APMaximum", data.Settings.MaxAP)
+							if syncMode ~= true then
+								Ext.StatSetAttribute(stat, "APMaximum", data.Settings.MaxAP)
+							else
+								local statObj = Ext.GetStat(stat)
+								statObj.APMaximum = data.Settings.MaxAP
+								Ext.SyncStat(stat, false)
+							end
 						end
 					end
 				end
@@ -120,3 +147,7 @@ local function OverrideStats()
 	end
 end
 Ext.RegisterListener("StatsLoaded", OverrideStats)
+
+function SyncStatOverrides()
+	OverrideStats(true)
+end

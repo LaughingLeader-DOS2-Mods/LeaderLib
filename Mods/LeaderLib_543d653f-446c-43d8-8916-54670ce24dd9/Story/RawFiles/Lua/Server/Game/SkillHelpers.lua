@@ -72,16 +72,37 @@ local function RefreshSkill(char, skill)
 end
 Ext.NewCall(RefreshSkill, "LeaderLib_Ext_RefreshSkill", "(CHARACTERGUID)_Character, (STRING)_Skill")
 
+function GetSkillSlots(char, skill, makeLocal)
+	local slots = {}
+	for i=0,144,1 do
+		local slot = NRD_SkillBarGetSkill(char, i)
+		if slot ~= nil and slot == skill then
+			if makeLocal == true then
+				slots[#slots+1] = i%29
+			else
+				slots[#slots+1] = i
+			end
+		end
+	end
+	return slots
+end
+
 ---Swaps a skill with another one.
 function SwapSkill(char, targetSkill, replacementSkill, removeTargetSkill)
-    local slot = NRD_SkillBarFindSkill(char, targetSkill)
-    if slot ~= nil then
-        CharacterAddSkill(char, replacementSkill, 0)
-        local newSlot = NRD_SkillBarFindSkill(char, replacementSkill)
-        if newSlot ~= nil then
-            NRD_SkillBarClear(char, newSlot)
+    local slots = GetSkillSlots(char, targetSkill)
+    if #slots > 0 then
+        if CharacterHasSkill(char, replacementSkill) == 0 then
+            CharacterAddSkill(char, replacementSkill, 0)
+            local newSlot = NRD_SkillBarFindSkill(char, replacementSkill)
+            if newSlot ~= nil then
+                NRD_SkillBarClear(char, newSlot)
+            end
         end
-        NRD_SkillBarSetSkill(char, slot, replacementSkill)
+
+        for i,slot in pairs(slots) do
+            NRD_SkillBarSetSkill(char, slot, replacementSkill)
+        end
+
     else
         CharacterAddSkill(char, replacementSkill, 0)
     end

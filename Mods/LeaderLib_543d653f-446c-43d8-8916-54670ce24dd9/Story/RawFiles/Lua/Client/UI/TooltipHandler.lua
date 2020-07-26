@@ -91,10 +91,12 @@ end
 local function SkillGetDescriptionParam(skill, character, isFromItem, param1, param2)
 	if Features.ExtraDataSkillParamReplacement then
 		if param1 == "ExtraData" then
-			local value = Ext.ExtraData[param2] or 0
-			local result = string.format("%i", value)
-			if result ~= nil then
-				return result
+			local value = Ext.ExtraData[param2]
+			if value ~= nil then
+				local result = tostring(math.floor(value))
+				if result ~= nil then
+					return result
+				end
 			end
 		end
 	end
@@ -102,12 +104,10 @@ end
 
 Ext.RegisterListener("SkillGetDescriptionParam", SkillGetDescriptionParam)
 
-local function SessionLoaded()
+Ext.RegisterListener("SessionLoaded", function()
 	Game.Tooltip.RegisterListener("Item", nil, OnItemTooltip)
 	Game.Tooltip.RegisterListener("Skill", nil, OnSkillTooltip)
-end
-
-Ext.RegisterListener("SessionLoaded", SessionLoaded)
+end)
 
 local function EnableTooltipOverride()
 	--Ext.AddPathOverride("Public/Game/GUI/tooltip.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/tooltip.swf")

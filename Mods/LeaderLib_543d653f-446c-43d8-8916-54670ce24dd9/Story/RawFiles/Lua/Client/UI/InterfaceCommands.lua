@@ -1,3 +1,6 @@
+---@type MessageData
+local MessageData = Classes.MessageData
+
 --public function addOverhead(param1:Number, param2:String, param3:Number) : *
 
 local testSelectionArray = {
@@ -163,6 +166,7 @@ Ext.RegisterNetListener("LeaderLib_Hotbar_SetSlotEnabled", function(call, dataSt
 				--print("slot", slot, "local slot", slot%29, "currentBarIndex", currentBarIndex, "minSlot", minSlot, "maxSlot", maxSlot)
 				if slot <= maxSlot and slot >= minSlot then
 					hotbar.setSlotEnabled(slot%29, data.Params.Enabled)
+					PrintDebug("[LeaderLib] Set slot ", slot, "enabled to", data.Params.Enabled)
 				end
 			end
 			return true
@@ -170,5 +174,28 @@ Ext.RegisterNetListener("LeaderLib_Hotbar_SetSlotEnabled", function(call, dataSt
 		if not status then
 			Ext.PrintError(err)
 		end
+	end
+end)
+
+Ext.RegisterNetListener("LeaderLib_AddTextToCombatLog", function(call, dataStr)
+	local data = MessageData:CreateFromString(dataStr)
+	if data.Params ~= nil then
+		local filter = data.Params.Filter or 0
+		local text = data.Params.Text
+
+		if text ~= nil then
+			local ui = Ext.GetBuiltinUI("Public/Game/GUI/combatLog.swf")
+			if ui ~= nil then
+				ui:Invoke("addTextToTab", filter, text)
+			end
+		end
+	end
+end)
+
+Ext.RegisterNetListener("LeaderLib_ClearCombatLog", function(call, filterStr)
+	local filter = tonumber(filterStr)
+	local ui = Ext.GetBuiltinUI("Public/Game/GUI/combatLog.swf")
+	if ui ~= nil then
+		ui:Invoke("clearFilter", math.tointeger(filter))
 	end
 end)

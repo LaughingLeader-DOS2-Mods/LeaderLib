@@ -8,21 +8,6 @@ function SetSlotEnabled(client, slot, enabled)
 	}):ToString())
 end
 
-function GetSkillSlots(client, skill, makeLocal)
-	local slots = {}
-	for i=0,144,1 do
-		local slot = NRD_SkillBarGetSkill(client, i)
-		if slot ~= nil and slot == skill then
-			if makeLocal == true then
-				slots[#slots+1] = i%29
-			else
-				slots[#slots+1] = i
-			end
-		end
-	end
-	return slots
-end
-
 function SetSkillEnabled(client, skill, enabled)
 	if type(enabled) == "string" then
 		enabled = enabled == "true" or enabled == "1"

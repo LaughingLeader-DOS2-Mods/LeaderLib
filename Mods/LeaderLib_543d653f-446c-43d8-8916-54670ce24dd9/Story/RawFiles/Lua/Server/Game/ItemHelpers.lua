@@ -67,6 +67,16 @@ function ItemIsEquipped(char, item)
     return false
 end
 
+function GameHelpers.ItemIsEquippedByCharacter(item)
+    local itemObj = Ext.GetItem(item)
+    if itemObj ~= nil then
+        if itemObj.InUseByCharacterHandle ~= nil and itemObj.InUseByCharacterHandle ~= 0 then
+            return true
+        end
+    end
+    return false
+end
+
 ---Removes matching rune templates from items in any equipment slots.
 ---@param character string
 ---@param runeTemplates table

@@ -75,6 +75,12 @@ local function OnSkillTooltip(character, skill, tooltip)
 		if element ~= nil then
 			element.Label = string.gsub(element.Label, "a 8", "an 8")
 		end
+
+		-- This fixes the double spaces from removing the "tag" part of Requires tag
+		element = tooltip:GetElement("SkillRequiredEquipment")
+		if element ~= nil and not element.RequirementMet and string.find(element.Label, "Requires  ") then
+			element.Label = string.gsub(element.Label, "Requires  ", "Requires ")
+		end
 	end
 end
 
@@ -97,8 +103,8 @@ end
 Ext.RegisterListener("SkillGetDescriptionParam", SkillGetDescriptionParam)
 
 local function SessionLoaded()
-	--Game.Tooltip.RegisterListener("Item", nil, OnItemTooltip)
-	--Game.Tooltip.RegisterListener("Skill", nil, OnSkillTooltip)
+	Game.Tooltip.RegisterListener("Item", nil, OnItemTooltip)
+	Game.Tooltip.RegisterListener("Skill", nil, OnSkillTooltip)
 end
 
 Ext.RegisterListener("SessionLoaded", SessionLoaded)

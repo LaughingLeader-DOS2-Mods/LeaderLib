@@ -1,12 +1,12 @@
-
-local function Net_EnableFeature(channel, id)
+Ext.RegisterNetListener("LeaderLib_EnableFeature", function(channel, id)
 	Features[id] = true
-end
+end)
 
-Ext.RegisterNetListener("LeaderLib_EnableFeature", Net_EnableFeature)
-
-local function Net_DisableFeature(channel, id)
+Ext.RegisterNetListener("LeaderLib_DisableFeature", function(channel, id)
 	Features[id] = false
-end
+end)
 
-Ext.RegisterNetListener("LeaderLib_DisableFeature", Net_DisableFeature)
+Ext.RegisterNetListener("LeaderLib_SyncFeatures", function(call, featuresString)
+	Ext.Print("[LeaderLib] Synced Features", featuresString)
+	Features = Ext.JsonParse(featuresString)
+end)

@@ -104,32 +104,6 @@ local function AddToCombatLog(text)
 	end
 end
 
----@type MessageData
-local MessageData = Classes.MessageData
-
-Ext.RegisterNetListener("LeaderLib_AddTextToCombatLog", function(call, dataStr)
-	local data = MessageData:CreateFromString(dataStr)
-	if data.Params ~= nil then
-		local filter = data.Params.Filter or 0
-		local text = data.Params.Text
-
-		if text ~= nil then
-			local ui = Ext.GetBuiltinUI("Public/Game/GUI/combatLog.swf")
-			if ui ~= nil then
-				ui:Invoke("addTextToTab", filter, text)
-			end
-		end
-	end
-end)
-
-Ext.RegisterNetListener("LeaderLib_ClearCombatLog", function(call, filterStr)
-	local filter = tonumber(filterStr)
-	local ui = Ext.GetBuiltinUI("Public/Game/GUI/combatLog.swf")
-	if ui ~= nil then
-		ui:Invoke("clearFilter", math.tointeger(filter))
-	end
-end)
-
 Ext.RegisterListener("SessionLoaded", function()
 	-- Ext.RegisterUINameInvokeListener("setHPBars", PrintCall)
 	-- Ext.RegisterUINameInvokeListener("updateInfos", PrintCall)
@@ -180,8 +154,4 @@ Ext.RegisterListener("SessionLoaded", function()
 			end
 		end)
 	end
-end)
-
-Ext.RegisterNetListener("LeaderLib_EnableUIFeatures", function(call, featuresString)
-	Features = Ext.JsonParse(featuresString)
 end)

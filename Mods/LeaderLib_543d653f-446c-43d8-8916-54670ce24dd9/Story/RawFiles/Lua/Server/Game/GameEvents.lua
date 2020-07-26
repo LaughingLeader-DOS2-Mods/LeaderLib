@@ -22,7 +22,7 @@ function OnInitialized()
 		Osi.LeaderLib_ActivateGoal("LeaderLib_19_TS_HitEvents")
 	end
 
-	Ext.BroadcastMessage("LeaderLib_EnableUIFeatures", Ext.JsonStringify(Features), nil)
+	Ext.BroadcastMessage("LeaderLib_SyncFeatures", Ext.JsonStringify(Features), nil)
 end
 
 function OnLuaReset()

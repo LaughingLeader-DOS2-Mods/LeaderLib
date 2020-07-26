@@ -5,10 +5,22 @@ INITSECTION
 KBSECTION
 
 IF
+GameStarted(_Region, _)
+AND
+IsGameLevel(_Region, 1)
+AND
+DB_LeaderLib_CC_Temp_SelectedPreset(_ID, _Preset)
+AND
+GetCurrentCharacter(_ID, _Char)
+THEN
+SetVarFixedString(_Char, "LeaderLib_CharacterCreationPreset", _Preset);
+
+IF
 GameStarted(_Level,_)
 AND
 IsGameLevel(_Level, 1)
 THEN
+SysClear("DB_LeaderLib_CC_Temp_SelectedPreset", 2);
 //Enable script flags that should be otherwise disabled when not in a game level.
 LeaderLib_ToggleScripts_Internal_UpdateScriptFlags();
 GoalCompleted;

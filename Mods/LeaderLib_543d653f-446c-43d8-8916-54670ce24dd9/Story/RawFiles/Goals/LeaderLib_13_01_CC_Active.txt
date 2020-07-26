@@ -52,6 +52,8 @@ LeaderLib_CC_Internal_SetSelectedPreset((CHARACTERGUID)_Player)
 AND
 GetVarFixedString(_Player, "LeaderLib_CharacterCreationPreset", _Preset)
 AND
+_Preset != ""
+AND
 CharacterGetReservedUserID(_Player, _UserID)
 AND
 NOT DB_LeaderLib_CC_Temp_SelectedPreset(_UserID, _Preset)

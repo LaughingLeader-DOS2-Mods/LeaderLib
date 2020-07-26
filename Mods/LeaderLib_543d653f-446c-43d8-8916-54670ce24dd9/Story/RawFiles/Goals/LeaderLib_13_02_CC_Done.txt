@@ -28,7 +28,6 @@ CharacterIsControlled(_Player, 1)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:CC:LeaderLib_Initialized] Player selected preset [",_Preset,"] in Character Creation.");
 SetVarFixedString(_Player, "LeaderLib_CharacterCreationPreset", _Preset);
-NOT DB_LeaderLib_CC_Temp_SelectedPreset(_UserID, _Preset);
 LeaderLib_CC_PresetSaved(_Player, _Preset);
 
 PROC
@@ -42,7 +41,6 @@ THEN
 GoalCompleted;
 
 EXITSECTION
-SysClear("DB_LeaderLib_CC_Temp_SelectedPreset", 2);
 SysClear("DB_LeaderLib_CC_Temp_SelectedOrigin", 2);
 ENDEXITSECTION
 ParentTargetEdge "LeaderLib_13_00_CharacterCreation"

@@ -151,19 +151,24 @@ end)
 Ext.RegisterNetListener("LeaderLib_Hotbar_SetSlotEnabled", function(call, dataStr)
 	local ui = Ext.GetBuiltinUI("Public/Game/GUI/hotBar.swf")
 	if ui ~= nil then
-		---@type FlashObject
-		local hotbar = ui:GetRoot().hotbar_mc
-		local currentBarIndex = hotbar.cycleHotbar.currentHotBarIndex or 0
+		local status,err = xpcall(function()
+			local hotbar = ui:GetRoot().hotbar_mc
+			local currentBarIndex = hotbar.cycleHotBar_mc.currentHotBarIndex or 0
 
-		local maxSlot = (29 * currentBarIndex) - 1
-		local minSlot = 29 * (currentBarIndex - 1)
+			local maxSlot = (29 * currentBarIndex) - 1
+			local minSlot = 29 * (currentBarIndex - 1)
 
-		local data = Classes.MessageData:CreateFromString(dataStr)
-		for i,slot in pairs(data.Params.Slots) do
-			if slot <= maxSlot and slot >= minSlot then
-				hotbar.setSlotEnabled(slot%29, data.Params.Enabled)
+			local data = Classes.MessageData:CreateFromString(dataStr)
+			for i,slot in pairs(data.Params.Slots) do
+				--print("slot", slot, "local slot", slot%29, "currentBarIndex", currentBarIndex, "minSlot", minSlot, "maxSlot", maxSlot)
+				if slot <= maxSlot and slot >= minSlot then
+					hotbar.setSlotEnabled(slot%29, data.Params.Enabled)
+				end
 			end
-			--print(slot, slot%29, currentBarIndex, minSlot, maxSlot)
+			return true
+		end, debug.traceback)
+		if not status then
+			Ext.PrintError(err)
 		end
 	end
 end)

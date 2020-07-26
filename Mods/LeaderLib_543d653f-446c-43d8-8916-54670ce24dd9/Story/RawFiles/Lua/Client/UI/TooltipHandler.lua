@@ -29,7 +29,7 @@ local function OnItemTooltip(item, tooltip)
 							local tString = LocalizedText.ItemBoosts.ResistancePenetration
 							local resistanceText = GameHelpers.GetResistanceNameFromDamageType(damageType)
 							local result = tString:ReplacePlaceholders(GameHelpers.GetResistanceNameFromDamageType(damageType))
-							print(tString.Value, resistanceText, totalResPen, result)
+							--PrintDebug(tString.Value, resistanceText, totalResPen, result)
 							local element = {
 								Type = "ResistanceBoost",
 								Label = result,
@@ -79,7 +79,7 @@ local function OnSkillTooltip(character, skill, tooltip)
 		-- This fixes the double spaces from removing the "tag" part of Requires tag
 		element = tooltip:GetElement("SkillRequiredEquipment")
 		if element ~= nil and not element.RequirementMet and string.find(element.Label, "Requires  ") then
-			element.Label = string.gsub(element.Label, "Requires  ", "Requires ")
+			element.Label = string.gsub(element.Label, "  ", " ")
 		end
 	end
 end

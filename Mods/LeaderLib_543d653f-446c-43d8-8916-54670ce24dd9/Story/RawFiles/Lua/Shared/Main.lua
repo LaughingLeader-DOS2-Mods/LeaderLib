@@ -81,7 +81,7 @@ end
 Ext.RegisterListener("SessionLoading", LeaderLib_Shared_SessionLoading)
 
 Ext.RegisterListener("SessionLoaded", function()
-	print("Updating translated strings", #TranslatedStringEntries)
+	PrintDebug("[LeaderLib] Updating translated strings", #TranslatedStringEntries)
 	--print(Ext.JsonStringify(TranslatedStringEntries))
 	local count = #TranslatedStringEntries
 	if TranslatedStringEntries ~= nil and count > 0 then
@@ -96,10 +96,6 @@ Ext.RegisterListener("SessionLoaded", function()
 					print("[LeaderLib:SessionLoaded] Error updating TranslatedString entry:")
 					print(err)
 				end
-			end
-
-			if v.Handle == "h0dd71f52gf5a5g4106g9ff7g68670edb55bb" then
-				print(v.Handle, v.Content, v.Value)
 			end
 		end
 		PrintDebug(string.format("[LeaderLib_Shared_SessionLoaded] Updated %s TranslatedString entries.", count))

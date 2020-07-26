@@ -10,7 +10,7 @@ local function GetResistance(character, type, resistancePenetration)
 	
 	local res = character[type .. "Resistance"]
 	if res > 0 and resistancePenetration ~= nil and resistancePenetration > 0 then
-		print(res, " => ", math.max(res - resistancePenetration, 0))
+		--PrintDebug(res, " => ", math.max(res - resistancePenetration, 0))
 		res = math.max(res - resistancePenetration, 0)
 	end
 

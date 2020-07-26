@@ -437,5 +437,5 @@ Ext.RegisterConsoleCommand("printrespentags", function(command)
 end)
 
 Ext.RegisterConsoleCommand("refreshskill", function(command, skill, enabled)
-	SetSkillEnabled(CharacterGetHostCharacter(), skill, enabled == "true")
+	SetSkillEnabled(CharacterGetHostCharacter(), skill, false)
 end)

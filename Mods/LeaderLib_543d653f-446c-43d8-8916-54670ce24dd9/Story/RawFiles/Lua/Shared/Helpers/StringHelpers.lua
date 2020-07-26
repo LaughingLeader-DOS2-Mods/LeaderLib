@@ -98,7 +98,6 @@ function StringHelpers.ReplacePlaceholders(text, ...)
 		else
 			for i,v in ipairs(values) do
 				text = string.gsub(text, "%["..tostring(math.tointeger(i)).."%]", v)
-				print(i,v,text)
 			end
 		end
 	end

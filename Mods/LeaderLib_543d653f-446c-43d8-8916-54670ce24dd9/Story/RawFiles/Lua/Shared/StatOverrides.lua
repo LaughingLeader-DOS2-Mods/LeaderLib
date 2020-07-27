@@ -41,7 +41,7 @@ local ignore_skill_names = {
 }
 
 local function CanChangeSkillTier(stat, tier)
-	if Ext.StatGetAttribute(stat, "ForGameMaster") == "Yes" then
+	if Ext.StatGetAttribute(stat, "ForGameMaster") == "Yes" and Ext.StatGetAttribute(stat, "Ability") ~= "None" then
 		if tier == "" or tier == "Starter" or tier == "None" then
 			return false
 		end
@@ -54,9 +54,8 @@ local function CanChangeSkillTier(stat, tier)
 			end
 		end
 		return true
-	else
-		return false
 	end
+	return false
 end
 
 -- Adds more alignment entities

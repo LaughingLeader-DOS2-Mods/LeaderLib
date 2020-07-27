@@ -28,6 +28,7 @@ CharacterIsControlled(_Player, 1)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:CC:LeaderLib_Initialized] Player selected preset [",_Preset,"] in Character Creation.");
 SetVarFixedString(_Player, "LeaderLib_CharacterCreationPreset", _Preset);
+SetVarFixedString(_Player, "LeaderLib_CurrentPreset", _Preset);
 LeaderLib_CC_PresetSaved(_Player, _Preset);
 
 PROC

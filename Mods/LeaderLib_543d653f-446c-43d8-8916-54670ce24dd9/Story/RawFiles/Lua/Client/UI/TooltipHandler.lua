@@ -59,11 +59,22 @@ local function OnItemTooltip(item, tooltip)
 	end
 end
 
+local chaosDamagePattern = "<font color=\"#C80030\">(.+)</font>"
 ---@param character EsvCharacter
 ---@param status EsvStatus
 ---@param tooltip TooltipData
 local function OnStatusTooltip(character, status, tooltip)
-
+	if Features.FixChaosDamageDisplay then
+		local element = tooltip:GetElement("StatusDescription")
+		if element ~= nil then
+			local startPos,endPos,damage = string.find(element.Label, chaosDamagePattern)
+			if damage ~= nil then
+				damage = string.gsub(damage, "%s+", "")
+				local removeText = string.sub(element.Label, startPos, endPos):gsub("%-", "%%-")
+				element.Label = string.gsub(element.Label, removeText, GameHelpers.GetDamageText("Chaos", damage))
+			end
+		end
+	end
 end
 
 ---@param character EsvCharacter
@@ -80,6 +91,17 @@ local function OnSkillTooltip(character, skill, tooltip)
 		element = tooltip:GetElement("SkillRequiredEquipment")
 		if element ~= nil and not element.RequirementMet and string.find(element.Label, "Requires  ") then
 			element.Label = string.gsub(element.Label, "  ", " ")
+		end
+	end
+	if Features.FixChaosDamageDisplay then
+		local element = tooltip:GetElement("SkillDescription")
+		if element ~= nil then
+			local startPos,endPos,damage = string.find(element.Label, chaosDamagePattern)
+			if damage ~= nil then
+				damage = string.gsub(damage, "%s+", "")
+				local removeText = string.sub(element.Label, startPos, endPos):gsub("%-", "%%-")
+				element.Label = string.gsub(element.Label, removeText, GameHelpers.GetDamageText("Chaos", damage))
+			end
 		end
 	end
 end
@@ -107,6 +129,7 @@ Ext.RegisterListener("SkillGetDescriptionParam", SkillGetDescriptionParam)
 Ext.RegisterListener("SessionLoaded", function()
 	Game.Tooltip.RegisterListener("Item", nil, OnItemTooltip)
 	Game.Tooltip.RegisterListener("Skill", nil, OnSkillTooltip)
+	Game.Tooltip.RegisterListener("Status", nil, OnStatusTooltip)
 end)
 
 local function EnableTooltipOverride()

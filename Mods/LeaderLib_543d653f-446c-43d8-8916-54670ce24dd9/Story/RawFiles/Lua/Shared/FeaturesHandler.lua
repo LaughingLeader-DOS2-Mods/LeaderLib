@@ -27,7 +27,7 @@ function EnableFeature(id, val)
 	if Features[id] ~= val then
 		Features[id] = val
 		OnFeatureEnabled(id)
-		Ext.BroadcastMessage("LeaderLib_EnableFeature", id, nil)
+		--Ext.BroadcastMessage("LeaderLib_EnableFeature", id, nil)
 	end
 end
 
@@ -38,6 +38,6 @@ function DisableFeature(id, val)
 	if Features[id] == val then
 		Features[id] = val
 		OnFeatureDisabled(id)
-		Ext.BroadcastMessage("LeaderLib_DisableFeature", id, nil)
+		--Ext.BroadcastMessage("LeaderLib_DisableFeature", id, nil)
 	end
 end

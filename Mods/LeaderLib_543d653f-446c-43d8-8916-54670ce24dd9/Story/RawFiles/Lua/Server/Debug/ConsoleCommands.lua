@@ -269,7 +269,7 @@ Ext.RegisterConsoleCommand("clearinventory", function(command)
 	local x,y,z = GetPosition(host)
 	--local backpack = CreateItemTemplateAtPosition("LOOT_LeaderLib_BackPack_Invisible_98fa7688-0810-4113-ba94-9a8c8463f830", x, y, z)
 	for i,item in pairs(Ext.GetCharacter(host):GetInventoryItems()) do
-		if ItemIsStoryItem(item) == 0 and ItemIsDestructible(item) and not GameHelpers.ItemIsEquipped(host, item) then
+		if ItemIsStoryItem(item) == 0 and ItemIsDestructible(item) and not GameHelpers.Item.ItemIsEquipped(host, item) then
 			ItemRemove(item)
 		end
 	end
@@ -393,7 +393,7 @@ Ext.RegisterConsoleCommand("combatlog", function(command, text)
 		local name = Ext.GetCharacter(host).DisplayName
 		text = "<font color='#CCFF00'>Test</font> did <font color='#FF0000'>TONS</font> of damage to " .. name
 	end
-	GameHelpers.CombatLog(text, 0)
+	GameHelpers.UI.CombatLog(text, 0)
 end)
 
 Ext.RegisterConsoleCommand("clearcombatlog", function(command, text)
@@ -420,7 +420,7 @@ end)
 Ext.RegisterConsoleCommand("leaderlib_messageboxtest", function(command, text)
 	StartOneshotTimer("Timers_LeaderLib_Debug_MessageBoxTest", 2000, function()
 		local host = CharacterGetHostCharacter()
-		GameHelpers.ShowMessageBox(string.format("<font  color='#FF00CC'>One or more players are missing the script extender.</font><br>Please help:<br>* %s", "LaughingLeader"), host, 0, "<font color='#FF0000'>Script Extender Missing!</font>")
+		GameHelpers.UI.ShowMessageBox(string.format("<font  color='#FF00CC'>One or more players are missing the script extender.</font><br>Please help:<br>* %s", "LaughingLeader"), host, 0, "<font color='#FF0000'>Script Extender Missing!</font>")
 	end)
 end)
 

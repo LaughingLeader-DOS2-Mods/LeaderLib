@@ -1,4 +1,4 @@
-local function ShootProjectile(source, target, skill, forceHit, sourcePosition)
+function GameHelpers.ShootProjectile(source, target, skill, forceHit, sourcePosition)
     local level = 1
     if ObjectIsCharacter(source) == 1 then
         level = CharacterGetLevel(source)
@@ -42,9 +42,8 @@ local function ShootProjectile(source, target, skill, forceHit, sourcePosition)
     end
     NRD_ProjectileLaunch()
 end
-GameHelpers.ShootProjectile = ShootProjectile
 
-local function ShootProjectileAtPosition(source, tx, ty, tz, skill, forceHit)
+function GameHelpers.ShootProjectileAtPosition(source, tx, ty, tz, skill, forceHit)
     local level = 1
     if ObjectIsCharacter(source) == 1 then
         level = CharacterGetLevel(source)
@@ -69,9 +68,8 @@ local function ShootProjectileAtPosition(source, tx, ty, tz, skill, forceHit)
     end
     NRD_ProjectileLaunch()
 end
-GameHelpers.ShootProjectileAtPosition = ShootProjectileAtPosition
 
-local function ExplodeProjectile(source, target, skill)
+function GameHelpers.ExplodeProjectile(source, target, skill)
     local level = 1
     if ObjectIsCharacter(source) == 1 then
         level = CharacterGetLevel(source)
@@ -91,6 +89,7 @@ local function ExplodeProjectile(source, target, skill)
         NRD_ProjectileSetGuidString("HitObjectPosition", target)
         NRD_ProjectileSetGuidString("TargetPosition", target)
     elseif type(target) == "table" then
+        -- Exploding at a position
         local x,y,z = GetPosition(source)
         local tx,ty,tz = table.unpack(target)
         if tx == nil then
@@ -108,62 +107,3 @@ local function ExplodeProjectile(source, target, skill)
     end
     NRD_ProjectileLaunch()
 end
-GameHelpers.ExplodeProjectile = ExplodeProjectile
---Ext.NewCall(ExplodeProjectile, "LeaderLib_Ext_ExplodeProjectile", "(GUIDSTRING)_Source, (GUIDSTRING)_Target, (STRING)_Skill")
-
-local function ExplodeProjectileAtPosition(source, skill, x, y, z)
-    local level = 1
-    if ObjectIsCharacter(source) == 1 then
-        level = CharacterGetLevel(source)
-    else
-        SetStoryEvent(source, "LeaderLib_Commands_SetItemLevel")
-        level = GetVarInteger(source, "LeaderLib_Level")
-    end
-    NRD_ProjectilePrepareLaunch()
-    NRD_ProjectileSetString("SkillId", skill)
-    NRD_ProjectileSetInt("CasterLevel", level)
-    NRD_ProjectileSetGuidString("SourcePosition", source)
-    NRD_ProjectileSetGuidString("Caster", source)
-    NRD_ProjectileSetGuidString("Source", source)
-    NRD_ProjectileSetVector3("HitObjectPosition", x,y,z)
-    NRD_ProjectileSetVector3("TargetPosition", x,y,z)
-    NRD_ProjectileLaunch()
-end
-GameHelpers.ExplodeProjectileAtPosition = ExplodeProjectileAtPosition
-
-local function GetForwardPosition(source, distanceMult)
-    local x,y,z = GetPosition(source)
-    local character = Ext.GetCharacter(source)
-    if character ~= nil then
-        if distanceMult == nil then
-            distanceMult = 1.0
-        end
-        local forwardVector = {
-            -character.Stats.Rotation[7] * distanceMult,
-            0,---rot[8] * distanceMult, -- Rot Y is never used since objects can't look "up"
-            -character.Stats.Rotation[9] * distanceMult,
-        }
-        x = character.Stats.Position[1] + forwardVector[1]
-        z = character.Stats.Position[3] + forwardVector[3]
-    end
-    return {x,y,z}
-end
-GameHelpers.GetForwardPosition = GetForwardPosition
-
-local function ExtendPositionWithForwardDirection(source, distanceMult, x,y,z)
-    local character = Ext.GetCharacter(source)
-    if character ~= nil then
-        if distanceMult == nil then
-            distanceMult = 1.0
-        end
-        local forwardVector = {
-            -character.Stats.Rotation[7] * distanceMult,
-            0,---rot[8] * distanceMult, -- Rot Y is never used since objects can't look "up"
-            -character.Stats.Rotation[9] * distanceMult,
-        }
-        x = x + forwardVector[1]
-        z = z + forwardVector[3]
-    end
-    return {x,y,z}
-end
-GameHelpers.ExtendPositionWithForward = ExtendPositionWithForwardDirection

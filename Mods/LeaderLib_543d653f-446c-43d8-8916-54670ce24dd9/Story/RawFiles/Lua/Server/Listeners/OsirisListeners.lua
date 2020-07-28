@@ -6,7 +6,7 @@ Ext.RegisterOsirisListener("UserConnected", 3, "after", function(id, username, p
 			OpenMessageBox(uuid, "LeaderLib_MessageBox_ExtenderNotInstalled_Client")
 
 			local hostText = GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageText"):gsub("%[1%]", username)
-			GameHelpers.ShowMessageBox(hostText, host, 0, GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageTitle"))
+			GameHelpers.UI.ShowMessageBox(hostText, host, 0, GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageTitle"))
 		end
 	end
 

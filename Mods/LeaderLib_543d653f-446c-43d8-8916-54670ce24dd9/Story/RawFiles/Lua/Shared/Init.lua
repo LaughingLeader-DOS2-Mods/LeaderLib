@@ -6,11 +6,13 @@ end
 
 Classes = {}
 Common = {}
-
-if GameHelpers == nil then
-	GameHelpers = {}
-end
-GameHelpers.Tooltip = {}
+GameHelpers = {
+	Item = {},
+	Math = {},
+	Skill = {},
+	Tooltip = {},
+	UI = {},
+}
 Vars = {
 	Initialized = false,
 	PostLoadEnableLuaListeners = false,

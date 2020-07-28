@@ -199,3 +199,22 @@ Ext.RegisterNetListener("LeaderLib_ClearCombatLog", function(call, filterStr)
 		ui:Invoke("clearFilter", math.tointeger(filter))
 	end
 end)
+
+Ext.RegisterNetListener("LeaderLib_UpdateStatusTurns", function(call, dataStr)
+	local data = MessageData:CreateFromString(dataStr)
+	if data.Params.IsPlayer then
+		local ui = Ext.GetBuiltinUI("Public/Game/GUI/playerInfo.swf")
+		if ui ~= nil then
+			--public function setStatus(createNewIfNotExisting:Boolean, characterHandle:Number, statusHandle:Number, iconId:Number, turns:Number, cooldown:Number, tooltip:String = "") : *
+			ui:Invoke("setStatus", false, Ext.HandleToDouble(data.Params.ObjectHandle), Ext.HandleToDouble(data.Params.StatusHandle), -1, data.Params.Turns, data.Params.Cooldown or 0.0, data.Params.Tooltip or "")
+		end
+	elseif data.Params.IsEnemy then
+		local ui = Ext.GetBuiltinUI("Public/Game/GUI/enemyHealthBar.swf")
+		if ui ~= nil then
+			--public function setStatus(createNewIfNotExisting:Boolean, characterHandle:Number, statusHandle:Number, iconId:Number, turns:Number, cooldown:Number, tooltip:String = "") : *
+			ui:Invoke("setStatus", false, Ext.HandleToDouble(data.Params.ObjectHandle), Ext.HandleToDouble(data.Params.StatusHandle), -1, data.Params.Turns, data.Params.Cooldown or 0.0, data.Params.Tooltip or "")
+		end
+	end
+end)
+
+function 

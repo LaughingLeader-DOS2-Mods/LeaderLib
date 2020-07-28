@@ -1,3 +1,26 @@
+Ext.Require("Server/Game/Helpers/MiscHelpers.lua")
+Ext.Require("Server/Game/Helpers/DamageHelpers.lua")
+Ext.Require("Server/Game/Helpers/HitHelpers.lua")
+Ext.Require("Server/Game/Helpers/ItemHelpers.lua")
+Ext.Require("Server/Game/Helpers/ProjectileHelpers.lua")
+Ext.Require("Server/Game/Helpers/SkillHelpers.lua")
+Ext.Require("Server/Game/Helpers/StatusHelpers.lua")
+Ext.Require("Server/Game/Helpers/UIHelpers.lua")
+Ext.Require("Server/Game/Helpers/MathHelpers.lua")
+Ext.Require("Server/Game/GameEvents.lua")
+Ext.Require("Server/Game/ResistancePenetration.lua")
+Ext.Require("Server/Listeners/ClientMessageReceiver.lua")
+Ext.Require("Server/Listeners/HitListeners.lua")
+Ext.Require("Server/Listeners/SkillListeners.lua")
+Ext.Require("Server/Listeners/OsirisListeners.lua")
+Ext.Require("Server/Settings/GlobalSettings.lua")
+Ext.Require("Server/Timers.lua")
+Ext.Require("Server/OsirisHelpers.lua")
+Ext.Require("Server/Versioning.lua")
+
+Ext.Require("Server/Debug/DebugMain.lua")
+Ext.Require("Server/Debug/ConsoleCommands.lua")
+
 local function table_has_index(tbl, index)
 	if #tbl > index then
 		if tbl[index] ~= nil then

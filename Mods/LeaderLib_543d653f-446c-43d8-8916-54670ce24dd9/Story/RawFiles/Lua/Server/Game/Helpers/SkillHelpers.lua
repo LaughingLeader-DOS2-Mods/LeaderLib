@@ -111,8 +111,8 @@ function SwapSkill(char, targetSkill, replacementSkill, removeTargetSkill)
     end
 end
 
-GameHelpers.StoreSkillCooldownData = StoreSkillCooldownData
-GameHelpers.StoreSkillSlots = StoreSkillSlots
-GameHelpers.TrySetSkillSlot = TrySetSkillSlot
-GameHelpers.RefreshSkill = RefreshSkill
-GameHelpers.SwapSkill = SwapSkill
+GameHelpers.Skill.StoreCooldownData = StoreSkillCooldownData
+GameHelpers.Skill.StoreSlots = StoreSkillSlots
+GameHelpers.Skill.TrySetSlot = TrySetSkillSlot
+GameHelpers.Skill.Refresh = RefreshSkill
+GameHelpers.Skill.Swap = SwapSkill

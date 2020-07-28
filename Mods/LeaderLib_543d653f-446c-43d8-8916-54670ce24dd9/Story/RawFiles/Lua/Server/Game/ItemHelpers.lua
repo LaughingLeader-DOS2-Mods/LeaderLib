@@ -14,22 +14,75 @@ local function CloneItemForCharacter(char, item, completion_event, autolevel)
     CharacterItemSetEvent(char, cloned, completion_event)
 end
 
----Creates an item by stat, using cloning.
+---Creates an item by stat, provided it has an ItemGroup set (for equipment).
 ---@param stat string
 ---@param level integer
+---@param rarity string|nil
+---@param identify integer
+---@param amount integer
+---@param goldValueOverwrite integer
+---@param weightValueOverwrite integer
 ---@return string
-local function CreateItemByStat(stat, level)
-    local x,y,z = GetPosition(CharacterGetHostCharacter())
-    local item = CreateItemTemplateAtPosition("LOOT_LeaderLib_BackPack_Invisible_98fa7688-0810-4113-ba94-9a8c8463f830",x,y,z)
-    NRD_ItemCloneBegin(item)
-    NRD_ItemCloneSetString("GenerationStatsId", stat)
-    NRD_ItemCloneSetString("StatsEntryName", stat)
-    NRD_ItemCloneSetInt("HasGeneratedStats", 0)
-    NRD_ItemCloneSetInt("StatsLevel", level)
-    --NRD_ItemCloneResetProgression()
-    local cloned NRD_ItemClone()
-    ItemLevelUpTo(cloned,level)
-    return cloned
+function GameHelpers.CreateItemByStat(stat, level, rarity, identify, amount, goldValueOverwrite, weightValueOverwrite)
+    local statType = NRD_StatGetType(stat)
+    local rootTemplate = nil
+    local stat = Ext.GetStat(stat, level)
+    local generateRandomBoosts = 0
+    if stat.RootTemplate ~= nil and stat.RootTemplate ~= "" then
+        rootTemplate = stat.RootTemplate
+    elseif stat.ItemGroup ~= nil and stat.ItemGroup ~= "" then
+        generateRandomBoosts = 1
+        local group = Ext.GetItemGroup(stat.ItemGroup)
+        for i,v in pairs(group.LevelGroups) do
+            if v.Name == "All" or v.Name == rarity then
+                if v.MinLevel <= level and v.MaxLevel <= level then
+                    rootTemplate = v.RootGroups[1].RootGroup
+                end
+            end
+        end
+    end
+
+    if rootTemplate ~= nil then
+        NRD_ItemConstructBegin(rootTemplate)
+
+        if rarity == nil or rarity == "" then
+            rarity = "Common"
+        end
+        
+        if statType == "Weapon" then
+            -- Damage type fix
+            -- Deltamods with damage boosts may make the weapon's damage type be all of that type, so overwriting the statType
+            -- fixes this issue.
+            local damageTypeString = stat["Damage Type"]
+            if damageTypeString == nil then damageTypeString = "Physical" end
+            local damageTypeEnum = Data.DamageTypeEnums[damageTypeString]
+            NRD_ItemCloneSetInt("DamageTypeOverwrite", damageTypeEnum)
+        end
+
+        if goldValueOverwrite ~= nil then
+            NRD_ItemCloneSetInt("GoldValueOverwrite", goldValueOverwrite)
+        end
+        if weightValueOverwrite ~= nil then
+            NRD_ItemCloneSetInt("WeightValueOverwrite", weightValueOverwrite)
+        end
+        if amount ~= nil then
+            NRD_ItemCloneSetInt("Amount", amount)
+        end
+
+        NRD_ItemCloneSetString("RootTemplate", rootTemplate)
+        NRD_ItemCloneSetString("OriginalRootTemplate", rootTemplate)
+        NRD_ItemCloneSetString("GenerationStatsId", stat)
+        NRD_ItemCloneSetString("StatsEntryName", stat)
+        NRD_ItemCloneSetInt("HasGeneratedStats", generateRandomBoosts)
+        NRD_ItemCloneSetInt("GenerationLevel", level)
+        NRD_ItemCloneSetInt("StatsLevel", level)
+        NRD_ItemCloneSetInt("IsIdentified", identify or 1)
+        NRD_ItemCloneSetString("ItemType", rarity)
+        NRD_ItemCloneSetString("GenerationItemType", rarity)
+
+        return NRD_ItemClone()
+    end
+    return nil
 end
 
 local function GetEquippedSlot(char, item)
@@ -80,7 +133,7 @@ end
 ---Removes matching rune templates from items in any equipment slots.
 ---@param character string
 ---@param runeTemplates table
-local function RemoveRunes(character, runeTemplates)
+function GameHelpers.RemoveRunes(character, runeTemplates)
 	for _,slotName in Data.VisibleEquipmentSlots:Get() do
 		local item = CharacterGetEquippedItem(character, slotName)
 		if item ~= nil then
@@ -99,7 +152,7 @@ end
 ---@param character string
 ---@param tag string
 ---@return boolean
-local function HasTagEquipped(character, tag)
+function GameHelpers.HasTagEquipped(character, tag)
     if StringHelpers.IsNullOrEmpty(character) or StringHelpers.IsNullOrEmpty(tag) then
         return false
     end
@@ -118,7 +171,6 @@ GameHelpers.ItemIsEquipped = ItemIsEquipped
 GameHelpers.CloneItemForCharacter = CloneItemForCharacter
 GameHelpers.CreateItemByStat = CreateItemByStat
 GameHelpers.RemoveRunes = RemoveRunes
-GameHelpers.HasTagEquipped = HasTagEquipped
 
 --- Removes an item in a slot, if one exists.
 ---@param character string

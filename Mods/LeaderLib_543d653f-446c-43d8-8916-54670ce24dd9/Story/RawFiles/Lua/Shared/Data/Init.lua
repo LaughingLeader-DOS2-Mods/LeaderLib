@@ -373,3 +373,4 @@ SKILL_STATE = {
 }
 
 Ext.Require("Shared/Data/ResistancePenetrationTags.lua")
+Ext.Require("Shared/Data/BasePresets.lua")

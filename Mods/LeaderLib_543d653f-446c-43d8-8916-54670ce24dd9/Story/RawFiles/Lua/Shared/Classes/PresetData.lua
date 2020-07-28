@@ -18,21 +18,21 @@ PresetData.__index = PresetData
 ---@param isPreview boolean Whether this preset should use preview equipment. If previewEquipment is nil or blank, it will try to find the equipment string from the regular equipment + race suffix.
 ---@param previewEquipment string Optional preview equipment 
 ---@return PresetData
-function PresetData:Create(id,equipment,skillset,undeadEquipment, isPreview, previewEquipment)
-    local this =
-    {
+function PresetData:Create(id, equipment, skillset, undeadEquipment, isPreview, previewEquipment)
+	local this =
+	{
 		ClassType = id,
 		Equipment = equipment,
-		Equipment_Undead = undeadEquipment or "",
-		Equipment_Preview = previewEquipment or nil,
+		Equipment_Undead = undeadEquipment or equipment,
+		Equipment_Preview = previewEquipment or "",
 		SkillSet = skillset,
-		isPreview = isPreview or false,
+		IsPreview = isPreview or false,
 	}
 	if undeadEquipment == nil or undeadEquipment == "" then
 		this.Equipment_Undead = this.Equipment
 	end
 	setmetatable(this, self)
-    return this
+	return this
 end
 
 local previewRaceSuffixes = {
@@ -42,24 +42,24 @@ local previewRaceSuffixes = {
 	LIZARD = "Lizards",
 }
 
----Applies a preset's equipment and skillset to a character.
+---Applies a preset's equipment to a character.
 ---This won't change a character's stats, talents, or delete their inventory like CharacterApplyPreset does.
 ---@param char string
 ---@param targetRarity string
 ---@param skipSlots string[] Skip generating equipment for these slots.
----@return PresetData
-function PresetData:ApplyToCharacter(char, targetRarity, skipSlots)
-	if Ext.IsServer() and Ext.OsirisIsCallable() then
+function PresetData:AddEquipmentToCharacter(char, targetRarity, skipSlots)
+	if Ext.IsServer() then
 		local level = CharacterGetLevel(char)
 		local equipment = self.Equipment
-
+		
 		if self.IsPreview then
-			if self.Equipment_Preview == nil then
+			if self.Equipment_Preview == nil or self.Equipment_Preview == "" then
 				for tag,suffix in pairs(previewRaceSuffixes) do
 					if IsTagged(char, tag) == 1 then
-						local racePreviewEquipment = Ext.GetEquipmentSet(self.Equipment .. suffix)
+						local racePreviewSet = self.Equipment.."_"..suffix
+						local racePreviewEquipment = Ext.GetEquipmentSet(racePreviewSet)
 						if racePreviewEquipment ~= nil and #racePreviewEquipment > 0 then
-							equipment = racePreviewEquipment
+							equipment = racePreviewSet
 							break
 						end
 					end
@@ -67,34 +67,66 @@ function PresetData:ApplyToCharacter(char, targetRarity, skipSlots)
 			else
 				equipment = self.Equipment_Preview
 			end
+		elseif self.Equipment_Undead ~= nil and self.Equipment_Undead ~= "" and IsTagged(char, "UNDEAD") == 1 or CharacterHasTalent(char, "Zombie") == 1 then
+			equipment = self.Equipment_Undead
+		end
+		
+		local equipmentEntries = Ext.GetEquipmentSet(equipment)
+		if equipmentEntries ~= nil then
+			for i,statName in pairs(equipmentEntries) do
+				local stat = Ext.GetStat(statName, level)
+				local skip = false
+				if skipSlots ~= nil and stat.Slot ~= nil then
+					for i,slot in pairs(skipSlots) do
+						if string.find(stat.Slot, slot) then
+							skip = true
+							break
+						end
+					end
+				end
+				if not skip then
+					local item = GameHelpers.CreateItemByStat(stat, level, targetRarity, true, 1)
+					if item ~= nil then
+						ItemToInventory(item, char, 1, 0, 1)
+						if ItemIsEquipable(item) == 1 then
+							CharacterEquipItem(char, item)
+						end
+					end
+				end
+			end
 		else
-			if IsTagged(char, "UNDEAD") == 1 or CharacterHasTalent(char, "Zombie") == 1 then
-				equipment = self.Equipment_Undead
-			end
-		end
-
-		for i,statName in pairs(Ext.GetEquipmentSet(equipment)) do
-			local stat = Ext.GetStat(statName, level)
-			local skip = false
-			if skipSlots ~= nil and stat.Slot ~= nil then
-				for i,slot in pairs(skipSlots) do
-					if stat.Slot == slot then
-						skip = true
-					break
-				end
-			end
-			if not skip then
-				local item = GameHelpers.CreateItemByStat(stat, level, targetRarity, 1)
-				if item ~= nil then
-					ItemToInventory(item, char, 1, 0, 1)
-					CharacterEquipItem(char, item)
-				end
-			end
-		end
-		for i,skill in pairs(Ext.GetSkillSet(self.SkillSet)) do
-			CharacterAddSkill(char, skill, 0)
+			Ext.PrintError("[LeaderLib] Failed to get equipment for", equipment, self.ClassType, self.Equipment, self.Equipment_Undead, self.IsPreview)
 		end
 	end
+end
+
+---Applies a preset's equipment and skillset to a character.
+---This won't change a character's stats, talents, or delete their inventory like CharacterApplyPreset does.
+---@param char string
+---@param targetRarity string
+---@param skipSlots string[] Skip generating equipment for these slots.
+function PresetData:ApplyToCharacter(char, targetRarity, skipSlots)
+	--print("Applying",self.ClassType,"to",char, Ext.IsServer(), Ext.OsirisIsCallable())
+	if Ext.IsServer() then
+		local status,err = xpcall(function()
+			self:AddEquipmentToCharacter(char, targetRarity, skipSlots)
+		end, debug.traceback)
+		if not status then
+			Ext.PrintError("[LeaderLib] Error applying preset",self.ClassType,"to character",char)
+			Ext.PrintError(err)
+		end
+		local skills = Ext.GetSkillSet(self.SkillSet)
+		if skills ~= nil then
+			for i,skill in pairs() do
+				CharacterAddSkill(char, skill, 0)
+			end
+		end
+	end
+end
+
+---@return string[]
+function PresetData:GetSkills()
+	return Ext.GetSkillSet(self.SkillSet)
 end
 
 Classes["PresetData"] = PresetData

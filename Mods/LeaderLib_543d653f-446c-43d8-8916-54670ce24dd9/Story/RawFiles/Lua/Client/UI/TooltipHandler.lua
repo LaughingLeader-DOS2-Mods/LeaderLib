@@ -56,22 +56,35 @@ local function OnItemTooltip(item, tooltip)
 				end
 			end
 		end
+		if Features.TooltipGrammarHelper then
+			local requirements = tooltip:GetElements("ItemRequirement")
+			if requirements ~= nil then
+				for i,element in pairs(requirements) do
+					if string.find(element.Label, "Requires  ") then
+						element.Label = string.gsub(element.Label, "  ", " ")
+					end
+				end
+			end
+		end
 	end
 end
 
-local chaosDamagePattern = "<font color=\"#C80030\">(.+)</font>"
+local chaosDamagePattern = "<font color=\"#C80030\">([%d-%s]+)</font>"
+
 ---@param character EsvCharacter
 ---@param status EsvStatus
 ---@param tooltip TooltipData
 local function OnStatusTooltip(character, status, tooltip)
 	if Features.FixChaosDamageDisplay then
-		local element = tooltip:GetElement("StatusDescription")
-		if element ~= nil then
-			local startPos,endPos,damage = string.find(element.Label, chaosDamagePattern)
-			if damage ~= nil then
-				damage = string.gsub(damage, "%s+", "")
-				local removeText = string.sub(element.Label, startPos, endPos):gsub("%-", "%%-")
-				element.Label = string.gsub(element.Label, removeText, GameHelpers.GetDamageText("Chaos", damage))
+		if status.StatusType == "DAMAGE" and string.find(Ext.StatGetAttribute(status.StatusId, "DescriptionParams"), "Damage") then
+			local element = tooltip:GetElement("StatusDescription")
+			if element ~= nil and not string.find(element.Label:lower(), "chaos damage") then
+				local startPos,endPos,damage = string.find(element.Label, chaosDamagePattern)
+				if damage ~= nil then
+					damage = string.gsub(damage, "%s+", "")
+					local removeText = string.sub(element.Label, startPos, endPos):gsub("%-", "%%-")
+					element.Label = string.gsub(element.Label, removeText, GameHelpers.GetDamageText("Chaos", damage))
+				end
 			end
 		end
 	end
@@ -86,7 +99,6 @@ local function OnSkillTooltip(character, skill, tooltip)
 		if element ~= nil then
 			element.Label = string.gsub(element.Label, "a 8", "an 8")
 		end
-
 		-- This fixes the double spaces from removing the "tag" part of Requires tag
 		element = tooltip:GetElement("SkillRequiredEquipment")
 		if element ~= nil and not element.RequirementMet and string.find(element.Label, "Requires  ") then
@@ -95,7 +107,7 @@ local function OnSkillTooltip(character, skill, tooltip)
 	end
 	if Features.FixChaosDamageDisplay then
 		local element = tooltip:GetElement("SkillDescription")
-		if element ~= nil then
+		if element ~= nil and not string.find(element.Label:lower(), "chaos damage") then
 			local startPos,endPos,damage = string.find(element.Label, chaosDamagePattern)
 			if damage ~= nil then
 				damage = string.gsub(damage, "%s+", "")

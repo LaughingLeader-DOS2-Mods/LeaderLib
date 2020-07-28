@@ -3,7 +3,7 @@
 ---@param item string
 ---@param completion_event string
 ---@param autolevel string
-local function CloneItemForCharacter(char, item, completion_event, autolevel)
+function GameHelpers.CloneItemForCharacter(char, item, completion_event, autolevel)
     local autolevel_enabled = autolevel == "Yes"
 	NRD_ItemCloneBegin(item)
     local cloned = NRD_ItemClone()
@@ -18,12 +18,13 @@ end
 ---@param statName string
 ---@param level integer
 ---@param rarity string|nil
+---@param skipLevelCheck boolean
 ---@param identify integer
 ---@param amount integer
 ---@param goldValueOverwrite integer
 ---@param weightValueOverwrite integer
 ---@return string
-function GameHelpers.CreateItemByStat(statName, level, rarity, identify, amount, goldValueOverwrite, weightValueOverwrite)
+function GameHelpers.CreateItemByStat(statName, level, rarity, skipLevelCheck, identify, amount, goldValueOverwrite, weightValueOverwrite)
     ---@type StatEntryWeapon
     local stat = nil
     local statType = ""
@@ -42,9 +43,13 @@ function GameHelpers.CreateItemByStat(statName, level, rarity, identify, amount,
     elseif stat.ItemGroup ~= nil and stat.ItemGroup ~= "" then
         generateRandomBoosts = 1
         local group = Ext.GetItemGroup(stat.ItemGroup)
+        print(stat.ItemGroup, Ext.JsonStringify(group))
         for i,v in pairs(group.LevelGroups) do
             if v.Name == "All" or v.Name == rarity then
-                if v.MinLevel <= level and v.MaxLevel <= level then
+                if skipLevelCheck == true or (v.MinLevel <= level or v.MinLevel <= 0) and (v.MaxLevel <= level or v.MaxLevel <= 0) then
+                    rootTemplate = v.RootGroups[1].RootGroup
+                    break
+                elseif rootTemplate == nil then
                     rootTemplate = v.RootGroups[1].RootGroup
                 end
             end
@@ -80,8 +85,8 @@ function GameHelpers.CreateItemByStat(statName, level, rarity, identify, amount,
 
         NRD_ItemCloneSetString("RootTemplate", rootTemplate)
         NRD_ItemCloneSetString("OriginalRootTemplate", rootTemplate)
-        NRD_ItemCloneSetString("GenerationStatsId", stat)
-        NRD_ItemCloneSetString("StatsEntryName", stat)
+        NRD_ItemCloneSetString("GenerationStatsId", stat.Name)
+        NRD_ItemCloneSetString("StatsEntryName", stat.Name)
         NRD_ItemCloneSetInt("HasGeneratedStats", generateRandomBoosts)
         NRD_ItemCloneSetInt("GenerationLevel", level)
         NRD_ItemCloneSetInt("StatsLevel", level)
@@ -94,7 +99,7 @@ function GameHelpers.CreateItemByStat(statName, level, rarity, identify, amount,
     return nil
 end
 
-local function GetEquippedSlot(char, item)
+function GameHelpers.GetEquippedSlot(char, item)
     for i,slot in Data.EquipmentSlots:Get() do
         local slotItem = CharacterGetEquippedItem(char, slot)
         if slotItem ~= nil and GetUUID(slotItem) == GetUUID(item) then
@@ -175,10 +180,7 @@ function GameHelpers.HasTagEquipped(character, tag)
 end
 
 GameHelpers.EquipInSlot = EquipInSlot
-GameHelpers.GetEquippedSlot = GetEquippedSlot
 GameHelpers.ItemIsEquipped = ItemIsEquipped
-GameHelpers.CloneItemForCharacter = CloneItemForCharacter
-GameHelpers.CreateItemByStat = CreateItemByStat
 GameHelpers.RemoveRunes = RemoveRunes
 
 --- Removes an item in a slot, if one exists.

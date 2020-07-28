@@ -374,3 +374,13 @@ SKILL_STATE = {
 
 Ext.Require("Shared/Data/ResistancePenetrationTags.lua")
 Ext.Require("Shared/Data/BasePresets.lua")
+
+---@param group string Start|Act2|Preview
+---@param id string The preset's ClassType value.
+---@param data PresetData
+function Data.AddPreset(group, id, data)
+	if Data.Presets[group] == nil then
+		Data.Presets[group] = {}
+	end
+	Data.Presets[group][id] = data
+end

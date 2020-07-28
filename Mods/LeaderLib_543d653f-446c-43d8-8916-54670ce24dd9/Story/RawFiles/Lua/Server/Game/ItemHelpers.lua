@@ -15,7 +15,7 @@ local function CloneItemForCharacter(char, item, completion_event, autolevel)
 end
 
 ---Creates an item by stat, provided it has an ItemGroup set (for equipment).
----@param stat string
+---@param statName string
 ---@param level integer
 ---@param rarity string|nil
 ---@param identify integer
@@ -23,10 +23,19 @@ end
 ---@param goldValueOverwrite integer
 ---@param weightValueOverwrite integer
 ---@return string
-function GameHelpers.CreateItemByStat(stat, level, rarity, identify, amount, goldValueOverwrite, weightValueOverwrite)
-    local statType = NRD_StatGetType(stat)
+function GameHelpers.CreateItemByStat(statName, level, rarity, identify, amount, goldValueOverwrite, weightValueOverwrite)
+    ---@type StatEntryWeapon
+    local stat = nil
+    local statType = ""
+    if type(statName) == "string" then
+        stat = Ext.GetStat(stat, level)
+        statType = NRD_StatGetType(statName)
+    else
+        stat = statName
+        statType = NRD_StatGetType(stat.Name)
+    end
+    
     local rootTemplate = nil
-    local stat = Ext.GetStat(stat, level)
     local generateRandomBoosts = 0
     if stat.RootTemplate ~= nil and stat.RootTemplate ~= "" then
         rootTemplate = stat.RootTemplate
@@ -48,7 +57,7 @@ function GameHelpers.CreateItemByStat(stat, level, rarity, identify, amount, gol
         if rarity == nil or rarity == "" then
             rarity = "Common"
         end
-        
+
         if statType == "Weapon" then
             -- Damage type fix
             -- Deltamods with damage boosts may make the weapon's damage type be all of that type, so overwriting the statType

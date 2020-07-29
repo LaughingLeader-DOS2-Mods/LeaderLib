@@ -10,6 +10,7 @@ GameHelpers = {
 	Item = {},
 	Math = {},
 	Skill = {},
+	Status = {},
 	Tooltip = {},
 	UI = {},
 }

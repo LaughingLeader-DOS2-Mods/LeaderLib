@@ -85,7 +85,7 @@ function PresetData:AddEquipmentToCharacter(char, targetRarity, skipSlots)
 					end
 				end
 				if not skip then
-					local item = GameHelpers.CreateItemByStat(stat, level, targetRarity, true, 1)
+					local item = GameHelpers.Item.CreateItemByStat(stat, level, targetRarity, true, 1)
 					if item ~= nil then
 						ItemToInventory(item, char, 1, 0, 1)
 						if ItemIsEquipable(item) == 1 then
@@ -117,7 +117,7 @@ function PresetData:ApplyToCharacter(char, targetRarity, skipSlots)
 		end
 		local skills = Ext.GetSkillSet(self.SkillSet)
 		if skills ~= nil then
-			for i,skill in pairs() do
+			for i,skill in pairs(skills) do
 				CharacterAddSkill(char, skill, 0)
 			end
 		end

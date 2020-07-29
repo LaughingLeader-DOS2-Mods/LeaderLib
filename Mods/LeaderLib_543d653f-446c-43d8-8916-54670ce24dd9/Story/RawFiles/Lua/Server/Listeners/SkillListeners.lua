@@ -196,19 +196,21 @@ function OnSkillHit(source, skillprototype, target, handle, damage)
 		if Features.ApplyBonusWeaponStatuses == true then
 			local canApplyStatuses = target ~= nil and Ext.StatGetAttribute(skill, "UseWeaponProperties") == "Yes"
 			if canApplyStatuses then
-				PrintDebug("Skill Hit:", skill, ". Checking for statuses with a BonusWeapon")
 				---@type EsvCharacter
 				local character = Ext.GetCharacter(source)
 				for i,status in pairs(character:GetStatuses()) do
-					if NRD_StatAttributeExists(status, "StatsId") == 1 then
-						local potion = Ext.StatGetAttribute(status, "StatsId")
-						if potion ~= nil and potion ~= "" then
-							local bonusWeapon = Ext.StatGetAttribute(potion, "BonusWeapon")
-							if bonusWeapon ~= nil and bonusWeapon ~= "" then
-								local extraProps = Ext.StatGetAttribute(bonusWeapon, "ExtraProperties")
-								if extraProps ~= nil then
-									GameHelpers.ApplyProperties(target, source, extraProps)
-								end
+					local potion = nil
+					if type(status) == "string" then
+						potion = Ext.StatGetAttribute(status, "StatsId")
+					elseif status.StatusId ~= nil then
+						potion = Ext.StatGetAttribute(status.StatusId, "StatsId")
+					end
+					if potion ~= nil and potion ~= "" then
+						local bonusWeapon = Ext.StatGetAttribute(potion, "BonusWeapon")
+						if bonusWeapon ~= nil and bonusWeapon ~= "" then
+							local extraProps = Ext.StatGetAttribute(bonusWeapon, "ExtraProperties")
+							if extraProps ~= nil then
+								GameHelpers.ApplyProperties(target, source, extraProps)
 							end
 						end
 					end

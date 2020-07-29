@@ -167,13 +167,13 @@ local function TraceCall(ui, ...)
 end
 
 local function SessionLoaded()
-	local ui = Ext.GetBuiltinUI("Public/Game/GUI/textDisplay.swf")
-	if ui ~= nil then
-		Ext.RegisterUIInvokeListener(ui, "addText", TraceCall)
-		Ext.RegisterUIInvokeListener(ui, "displaySurfaceText", TraceCall)
-		Ext.RegisterUIInvokeListener(ui, "addLabel", TraceCall)
-		Ext.RegisterUIInvokeListener(ui, "moveText", TraceCall)
-	end
+	-- local ui = Ext.GetBuiltinUI("Public/Game/GUI/textDisplay.swf")
+	-- if ui ~= nil then
+	-- 	Ext.RegisterUIInvokeListener(ui, "addText", TraceCall)
+	-- 	Ext.RegisterUIInvokeListener(ui, "displaySurfaceText", TraceCall)
+	-- 	Ext.RegisterUIInvokeListener(ui, "addLabel", TraceCall)
+	-- 	Ext.RegisterUIInvokeListener(ui, "moveText", TraceCall)
+	-- end
 	-- local ui = Ext.GetBuiltinUI("Public/Game/GUI/overhead.swf")
 	-- if ui ~= nil then
 	-- 	Ext.RegisterUIInvokeListener(ui, "setHPBars", function(ui, call, ...)

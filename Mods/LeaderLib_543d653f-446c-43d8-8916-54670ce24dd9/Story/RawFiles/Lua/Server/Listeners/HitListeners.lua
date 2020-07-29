@@ -43,8 +43,14 @@ function OnHit(target, source, damage, handle)
 		--PrintDebug("Basic Attack Hit on", target, ". Checking for statuses with a BonusWeapon")
 		---@type EsvCharacter
 		local character = Ext.GetCharacter(source)
+
 		for i,status in pairs(character:GetStatuses()) do
-			local potion = Ext.StatGetAttribute(status, "StatsId")
+			local potion = nil
+			if type(status) == "string" then
+				potion = Ext.StatGetAttribute(status, "StatsId")
+			elseif status.StatusId ~= nil then
+				potion = Ext.StatGetAttribute(status.StatusId, "StatsId")
+			end
 			if potion ~= nil and potion ~= "" then
 				local bonusWeapon = Ext.StatGetAttribute(potion, "BonusWeapon")
 				if bonusWeapon ~= nil and bonusWeapon ~= "" then

@@ -15,9 +15,9 @@ function LeaderLibIntegerVariable:Create(name,defaultValue)
     local this =
     {
 		name = name,
+		value = defaultValue,
 		defaultValue = defaultValue
 	}
-	self.value = defaultValue
 	setmetatable(this, self)
     return this
 end

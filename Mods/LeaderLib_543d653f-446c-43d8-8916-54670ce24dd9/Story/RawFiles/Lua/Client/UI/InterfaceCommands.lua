@@ -217,4 +217,24 @@ Ext.RegisterNetListener("LeaderLib_UpdateStatusTurns", function(call, dataStr)
 	end
 end)
 
-function 
+function GameHelpers.UI.UpdateStatusTurns(target, statusid)
+	local objectHandle = nil
+	local statusHandle = NRD_StatusGetHandle(target, statusid)
+
+	if ObjectIsCharacter(target) == 1 then
+		objectHandle = Ext.GetCharacter(target).Handle
+	elseif ObjectIsItem(target) == 1 then
+		objectHandle = Ext.GetItem(target).Handle
+	end
+	if objectHandle ~= nil and statusHandle ~= nil then
+		local status = Ext.GetStatus(objectHandle, statusHandle)
+
+		local data = MessageData:CreateFromTable("UpdateStatusUIData", {
+			IsPlayer = CharacterIsPlayer(target) == 1,
+			IsEnemy = CharacterIsPlayer(target) ~= 1,
+			ObjectHandle = objectHandle,
+			StatusHandle = status.StatusHandle,
+			Turns = status.CurrentLifeTime / 6.0
+		})
+	end
+end

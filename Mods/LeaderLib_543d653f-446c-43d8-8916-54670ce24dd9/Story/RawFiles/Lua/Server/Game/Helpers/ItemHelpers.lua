@@ -38,19 +38,22 @@ function GameHelpers.Item.CreateItemByStat(statName, level, rarity, skipLevelChe
     
     local rootTemplate = nil
     local generateRandomBoosts = 0
-    if stat.RootTemplate ~= nil and stat.RootTemplate ~= "" then
-        rootTemplate = stat.RootTemplate
-    elseif stat.ItemGroup ~= nil and stat.ItemGroup ~= "" then
-        generateRandomBoosts = 1
-        local group = Ext.GetItemGroup(stat.ItemGroup)
-        print(stat.ItemGroup, Ext.JsonStringify(group))
-        for i,v in pairs(group.LevelGroups) do
-            if v.Name == "All" or v.Name == rarity then
-                if skipLevelCheck == true or (v.MinLevel <= level or v.MinLevel <= 0) and (v.MaxLevel <= level or v.MaxLevel <= 0) then
-                    rootTemplate = v.RootGroups[1].RootGroup
-                    break
-                elseif rootTemplate == nil then
-                    rootTemplate = v.RootGroups[1].RootGroup
+    if (statType == "Object" or statType == "Potion") then
+        if stat.RootTemplate ~= nil and stat.RootTemplate ~= "" then
+            rootTemplate = stat.RootTemplate
+        end
+    else
+        if stat.ItemGroup ~= nil and stat.ItemGroup ~= "" then
+            generateRandomBoosts = 1
+            local group = Ext.GetItemGroup(stat.ItemGroup)
+            for i,v in pairs(group.LevelGroups) do
+                if v.Name == "All" or v.Name == rarity then
+                    if skipLevelCheck == true or (v.MinLevel <= level or v.MinLevel <= 0) and (v.MaxLevel <= level or v.MaxLevel <= 0) then
+                        rootTemplate = v.RootGroups[1].RootGroup
+                        break
+                    elseif rootTemplate == nil then
+                        rootTemplate = v.RootGroups[1].RootGroup
+                    end
                 end
             end
         end

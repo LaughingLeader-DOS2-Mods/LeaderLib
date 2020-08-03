@@ -10,15 +10,13 @@ FlagData.__index = FlagData
 
 ---@param flag string
 ---@param flagType string Global|User|Character
-function FlagData:Create(flag, flagType)
+---@param enabled boolean
+function FlagData:Create(flag, flagType, enabled)
     local this =
     {
 		FlagType = flagType or "Global",
-		Enabled = false
+		Enabled = enabled or false
 	}
-	if Ext.OsirisIsCallable() and this.FlagType == "Global" then
-		this.Enabled = GlobalGetFlag(flag) == 1
-	end
 	setmetatable(this, self)
     return this
 end
@@ -70,9 +68,10 @@ end
 
 ---@param flag string
 ---@param flagType string Global|User|Character
-function SettingsData:AddFlag(flag, flagType)
+---@param enabled boolean|nil
+function SettingsData:AddFlag(flag, flagType, enabled)
 	if self.Flags[flag] == nil then
-		local flagVar = FlagData:Create(flag, flagType)
+		local flagVar = FlagData:Create(flag, flagType, enabled)
 		self.Flags[flag] = flagVar
 	end
 end
@@ -108,7 +107,37 @@ function SettingsData:UpdateFlags()
 					data.Enabled = false
 				end
 			elseif data.FlagType == "Character" then
-				data.Enabled = ObjectGetFlag(data.Target, flag) == 1
+				data.Enabled = ObjectExists(data.Target) == 1 and ObjectGetFlag(data.Target, flag) == 1
+			end
+		end
+	end
+end
+
+function SettingsData:ApplyFlags()
+	for flag,data in pairs(self.Flags) do
+		if data.FlagType == "Global" then
+			if data.Enabled then
+				GlobalSetFlag(flag)
+			else
+				GlobalClearFlag(flag)
+			end
+		elseif data.Target ~= nil then
+			if data.FlagType == "User" then
+				local userid = tonumber(data.Target)
+				local character = GetCurrentCharacter(userid)
+				if character ~= nil then
+					if data.Enabled then
+						UserSetFlag(character, flag, 0)
+					else
+						UserClearFlag(character, flag, 0)
+					end
+				end
+			elseif data.FlagType == "Character" and ObjectExists(data.Target) == 1 then
+				if data.Enabled then
+					ObjectSetFlag(data.Target, flag, 0)
+				else
+					ObjectClearFlag(data.Target, flag, 0)
+				end
 			end
 		end
 	end
@@ -184,6 +213,13 @@ function ModSettings:Update()
 	self.Global:UpdateFlags()
 	for i,v in pairs(self.Profiles) do
 		v.Settings:UpdateFlags()
+	end
+end
+
+function ModSettings:ApplyFlags()
+	self.Global:ApplyFlags()
+	for i,v in pairs(self.Profiles) do
+		v.Settings:ApplyFlags()
 	end
 end
 

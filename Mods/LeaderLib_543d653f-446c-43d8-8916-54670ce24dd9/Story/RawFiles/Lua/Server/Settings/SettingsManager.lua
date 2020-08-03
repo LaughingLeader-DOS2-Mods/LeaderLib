@@ -61,7 +61,7 @@ local function ParseModData(uuid, tbl)
 		if tbl.Global ~= nil then
 			if tbl.Global.Flags ~= nil then
 				for flag,data in pairs(tbl.Global.Flags) do
-					modSettings.Global:AddFlag(flag, data.FlagType or "Global")
+					modSettings.Global:AddFlag(flag, data.FlagType or "Global", data.Enabled)
 				end
 			end
 			if tbl.Global.Variables ~= nil then
@@ -75,7 +75,7 @@ local function ParseModData(uuid, tbl)
 		if flags ~= nil and type(flags) == "table" then
 			for flag,v in pairs(flags) do
 				if modSettings ~= nil then
-					modSettings.Global:AddFlag(flag)
+					modSettings.Global:AddFlag(flag, "Global", v)
 				end
 			end
 		end
@@ -125,6 +125,11 @@ function LoadGlobalSettings()
 		Ext.PrintError("[LeaderLib:LoadGlobalSettings] Error loading global settings:")
 		Ext.PrintError(err)
 	else
+		if Ext.OsirisIsCallable() then
+			for i,v in pairs(GlobalSettings.Mods) do
+				v:ApplyFlags()
+			end
+		end
 		if #Listeners.ModSettingsLoaded > 0 then
 			for i,callback in ipairs(Listeners.ModSettingsLoaded) do
 				local status,err = xpcall(callback, debug.traceback)

@@ -13,6 +13,58 @@ CombatEnded(_CombatID)
 THEN
 LeaderLib_AutoSaving_OnCombatEnded(_CombatID);
 
+IF
+CharacterStartAttackObject(_, _, _Char)
+AND
+CharacterIsControlled(_Char, 1)
+AND
+DB_CombatCharacters(_Char, _CombatID)
+THEN
+DB_LeaderLib_Autosaving_Temp_Skip(_Char);
+LeaderLib_Timers_StartObjectTimer(_Char, 2000, "Timers_LeaderLib_Autosaving_ClearSkipEntry", "LeaderLib_Autosaving_ClearSkipEntry");
+
+IF
+CharacterStartAttackPosition(_, _, _, _, _Char)
+AND
+CharacterIsControlled(_Char, 1)
+AND
+DB_CombatCharacters(_Char, _CombatID)
+THEN
+DB_LeaderLib_Autosaving_Temp_Skip(_Char);
+LeaderLib_Timers_StartObjectTimer(_Char, 2000, "Timers_LeaderLib_Autosaving_ClearSkipEntry", "LeaderLib_Autosaving_ClearSkipEntry");
+
+IF
+CharacterUsedSkill(_Char, _Skill, _, _)
+AND
+CharacterIsControlled(_Char, 1)
+AND
+DB_CombatCharacters(_Char, _CombatID)
+THEN
+DB_LeaderLib_Autosaving_Temp_Skip(_Char);
+
+IF
+SkillCast(_Char, _Skill, _, _)
+AND
+DB_LeaderLib_Autosaving_Temp_Skip(_Char)
+THEN
+LeaderLib_Timers_StartObjectTimer(_Char, 1500, "Timers_LeaderLib_Autosaving_ClearSkipEntry", "LeaderLib_Autosaving_ClearSkipEntry");
+
+IF
+StoryEvent((CHARACTERGUID)_Char, "LeaderLib_Autosaving_ClearSkipEntry")
+AND
+DB_LeaderLib_Autosaving_Temp_Skip(_Char)
+THEN
+NOT DB_LeaderLib_Autosaving_Temp_Skip(_Char);
+
+IF
+StoryEvent((CHARACTERGUID)_Char, "LeaderLib_Autosaving_ClearSkipEntry")
+AND
+DB_LeaderLib_Autosaving_Temp_SaveOnSkipCleared(1)
+THEN
+NOT DB_LeaderLib_Autosaving_Temp_SaveOnSkipCleared(1);
+LeaderLib_AutoSaving_Internal_SaveNow();
+LeaderLib_Autosaving_Restart();
+
 EXITSECTION
 LeaderLib_AutoSaving_ClearToggleScriptData();
 ENDEXITSECTION

@@ -237,13 +237,29 @@ LeaderLib_Autosaving_Restart();
 //END_REGION
 
 //REGION AUTOSAVING
+// If it's a player's turn when autosaving, loading this save will make them skip their turn again
+QRY
+LeaderLib_Autosaving_QRY_SkipAutoSaving()
+AND
+SysCount("DB_LeaderLib_Autosaving_Temp_Skip", 1, _Count)
+AND
+_Count > 0
+THEN
+DB_LeaderLib_Autosaving_Temp_SaveOnSkipCleared(1);
+
+PROC
+LeaderLib_AutoSaving_Internal_SaveNow()
+AND
+NOT LeaderLib_Autosaving_QRY_SkipAutoSaving()
+THEN
+AutoSave();
+
 PROC
 LeaderLib_Autosaving_Save()
 AND
 NOT DB_GlobalFlag("LeaderLib_DisableAutosavingInCombat")
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Autosaving:LeaderLib_Commands_AutosaveNow] Autosaving now.");
-AutoSave();
+LeaderLib_AutoSaving_Internal_SaveNow();
 
 PROC
 LeaderLib_Autosaving_Save()
@@ -254,8 +270,7 @@ CharacterGetHostCharacter(_Player)
 AND
 CharacterIsInCombat(_Player, 0)
 THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:Autosaving:LeaderLib_Commands_AutosaveNow] Autosaving now.");
-AutoSave();
+LeaderLib_AutoSaving_Internal_SaveNow();
 
 PROC
 LeaderLib_Autosaving_Save()
@@ -280,7 +295,7 @@ CharacterIsInCombat(_Player, 0)
 THEN
 NOT DB_LeaderLib_Autosaving_Temp_SaveAfterCombat(1);
 LeaderLog_Log("DEBUG", "[LeaderLib:Autosaving:CombatEnded] Host left combat. Autosaving.");
-AutoSave();
+LeaderLib_AutoSaving_Internal_SaveNow();
 //Reset timer
 LeaderLib_Autosaving_Start();
 
@@ -499,7 +514,7 @@ NOT DB_LeaderLib_AutoSaving_Temp_CombatSave(_CombatID)
 AND
 LeaderLib_Combat_QRY_HasInvolvedPlayer(_CombatID)
 THEN
-AutoSave();
+LeaderLib_AutoSaving_Internal_SaveNow();
 DB_LeaderLib_AutoSaving_Temp_CombatSave(_CombatID);
 
 PROC
@@ -511,10 +526,10 @@ NOT DB_LeaderLib_AutoSaving_Temp_CombatSave(_CombatID);
 
 PROC
 LeaderLib_AutoSaving_ClearToggleScriptData()
-AND
-DB_LeaderLib_AutoSaving_Temp_CombatSave(_CombatID)
 THEN
-NOT DB_LeaderLib_AutoSaving_Temp_CombatSave(_CombatID);
+SysClear("DB_LeaderLib_AutoSaving_Temp_CombatSave", 1);
+SysClear("DB_LeaderLib_Autosaving_Temp_Skip", 1);
+SysClear("DB_LeaderLib_Autosaving_Temp_Skip", 2);
 //END_REGION
 
 //REGION PAUSING

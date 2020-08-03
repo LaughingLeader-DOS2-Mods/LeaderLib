@@ -81,3 +81,21 @@ function GameHelpers.ClearActionQueue(character, purge)
 	CharacterMoveTo(character, character, 1, "", 1)
 	CharacterSetStill(character)
 end
+
+function GameHelpers.SyncScale(uuid)
+	local targetUUID = ""
+	local scale = 1.0
+	if type(uuid) == "string" then
+		targetUUID = uuid
+		local character = Ext.GetCharacter(uuid)
+		scale = character.Scale
+	elseif uuid.Scale ~= nil then
+		scale = uuid.Scale
+		targetUUID = uuid.MyGuid
+	end
+
+	Ext.BroadcastMessage("LeaderLib_SyncScale", Classes.MessageData:CreateFromTable("SyncScaleData", {
+		UUID = targetUUID,
+		Scale = scale
+	}))
+end

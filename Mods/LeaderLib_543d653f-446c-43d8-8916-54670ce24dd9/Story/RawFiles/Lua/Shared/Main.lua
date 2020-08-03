@@ -55,14 +55,10 @@ function RemoveSkillListener(skill, callback)
 	end
 end
 
-StatusTypes.CHARMED = { CHARMED = true }
---StatusTypes.POLYMORPHED = { POLYMORPHED = true }
-
 local function LeaderLib_Shared_SessionLoading()
 	for i,status in pairs(Ext.GetStatEntries("StatusData")) do
 		local statusType = Ext.StatGetAttribute(status, "StatusType")
 		if statusType ~= nil and statusType ~= "" then
-			statusType = string.upper(statusType)
 			local statusTypeTable = StatusTypes[statusType]
 			if statusTypeTable ~= nil then
 				statusTypeTable[status] = true

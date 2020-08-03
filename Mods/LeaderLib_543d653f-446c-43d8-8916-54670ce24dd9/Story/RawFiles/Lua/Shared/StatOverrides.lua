@@ -117,7 +117,7 @@ local function OverrideStats(syncMode)
 				Ext.Print("[LeaderLib:StatOverrides.lua] Enabled Max AP override ("..tostring(data.Settings.MaxAP)..") for players.")
 				for stat,_ in pairs(player_stats) do
 					local maxAP = Ext.StatGetAttribute(stat, "APMaximum")
-					if maxAP < data.Settings.MaxAP then
+					if maxAP ~= nil and maxAP < data.Settings.MaxAP then
 						if syncMode ~= true then
 							Ext.StatSetAttribute(stat, "APMaximum", data.Settings.MaxAP)
 						else

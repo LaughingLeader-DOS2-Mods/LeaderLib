@@ -35,19 +35,20 @@ Ext.NewQuery(GameHelpers.Status.IsSneakingOrInvisible, "LeaderLib_Ext_QRY_IsSnea
 ---Returns true if the object has a tracked type status.
 ---Current tracked types: ACTIVE_DEFENSE, BLIND, CHARMED, DAMAGE_ON_MOVE, DISARMED, INCAPACITATED, INVISIBLE, KNOCKED_DOWN, MUTED, POLYMORPHED
 ---@param obj string
+---@param statusType string
 ---@return boolean
-function GameHelpers.Status.HasStatusType(obj, statusType)
-	--PrintDebug("LeaderLib_Ext_HasStatusType:",obj,statusType)
+local function ObjectHasStatusType(obj, statusType)
 	if type(statusType) == "table" then
 		for i,v in pairs(statusType) do
-			if HasStatusType(obj, v) then
+			local check = string.upper(v)
+			if HasActiveStatus(obj, check) == 1 or NRD_ObjectHasStatusType(obj, check) == 1 then
 				return true
 			end
 		end
 	else
 		if statusType ~= nil and statusType ~= "" then
 			statusType = string.upper(statusType)
-			if HasActiveStatus(obj, statusType) == 1 then
+			if HasActiveStatus(obj, statusType) == 1 or NRD_ObjectHasStatusType(obj, statusType) == 1 then
 				return true
 			else
 				local statusTypeTable = StatusTypes[statusType]
@@ -57,6 +58,8 @@ function GameHelpers.Status.HasStatusType(obj, statusType)
 							return true
 						end
 					end
+				else
+					return HasActiveStatus(obj, statusType) == 1 or NRD_ObjectHasStatusType(obj, statusType) == 1
 				end
 			end
 		end
@@ -64,4 +67,30 @@ function GameHelpers.Status.HasStatusType(obj, statusType)
     return false
 end
 
-Ext.NewQuery(GameHelpers.Status.HasStatusType, "LeaderLib_Ext_QRY_HasStatusType", "[in](GUIDSTRING)_Object, [in](STRING)_StatusType, [out](INTEGER)_Bool")
+GameHelpers.Status.HasStatusType = ObjectHasStatusType
+
+Ext.NewQuery(ObjectHasStatusType, "LeaderLib_Ext_QRY_HasStatusType", "[in](GUIDSTRING)_Object, [in](STRING)_StatusType, [out](INTEGER)_Bool")
+
+---Returns true if the object is disabled by a status.
+---@param obj string
+---@return boolean
+function GameHelpers.Status.IsDisabled(obj)
+	if ObjectHasStatusType(obj, {"KNOCKED_DOWN", "INCAPACITATED"}) then
+		return true
+	else
+		local statuses = nil
+		if ObjectIsCharacter(obj) == 1 then
+			statuses = Ext.GetCharacter(obj):GetStatuses()
+		elseif ObjectIsItem(obj) == 1 then
+			statuses = Ext.GetItem(obj):GetStatuses()
+		end
+		if statuses ~= nil then
+			for i,status in pairs(statuses) do
+				if Ext.StatGetAttribute(status, "LoseControl") == "Yes" then
+					return true
+				end
+			end
+		end
+	end
+	return false
+end

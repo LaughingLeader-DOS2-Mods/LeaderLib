@@ -255,6 +255,21 @@ THEN
 AutoSave();
 
 PROC
+LeaderLib_AutoSaving_Internal_SaveNow(0)
+AND
+NOT LeaderLib_Autosaving_QRY_SkipAutoSaving()
+THEN
+AutoSave();
+
+PROC
+LeaderLib_AutoSaving_Internal_SaveNow(1)
+AND
+NOT LeaderLib_Autosaving_QRY_SkipAutoSaving()
+THEN
+AutoSave();
+LeaderLib_Autosaving_Restart();
+
+PROC
 LeaderLib_Autosaving_Save()
 AND
 NOT DB_GlobalFlag("LeaderLib_DisableAutosavingInCombat")

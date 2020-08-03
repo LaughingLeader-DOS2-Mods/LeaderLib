@@ -62,8 +62,7 @@ AND
 DB_LeaderLib_Autosaving_Temp_SaveOnSkipCleared(1)
 THEN
 NOT DB_LeaderLib_Autosaving_Temp_SaveOnSkipCleared(1);
-LeaderLib_AutoSaving_Internal_SaveNow();
-LeaderLib_Autosaving_Restart();
+LeaderLib_AutoSaving_Internal_SaveNow(1);
 
 EXITSECTION
 LeaderLib_AutoSaving_ClearToggleScriptData();

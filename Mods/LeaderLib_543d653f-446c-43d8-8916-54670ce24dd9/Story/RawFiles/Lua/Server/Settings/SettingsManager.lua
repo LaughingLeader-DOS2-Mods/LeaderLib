@@ -52,6 +52,11 @@ end
 local function ParseModData(uuid, tbl)
 	local modSettings = SettingsManager.GetMod(uuid, true)
 	local isOldModSettings = tbl.globalflags ~= nil or tbl.integers ~= nil
+
+	if not Ext.IsModLoaded(uuid) and modSettings ~= nil then
+		modSettings.Name = tbl.Name or ""
+	end
+
 	if not isOldModSettings then
 		if tbl.Global ~= nil then
 			if tbl.Global.Flags ~= nil then
@@ -112,7 +117,7 @@ function LoadGlobalSettings()
 		local json = NRD_LoadFile("LeaderLib_GlobalSettings.json")
 		if json ~= nil and json ~= "" then
 			local json_tbl = Ext.JsonParse(json)
-			parse_settings(json_tbl)
+			ParseSettings(json_tbl)
 		end
 		return true
 	end, debug.traceback)
@@ -193,7 +198,7 @@ function GlobalSettings_GetAndStoreModVersion(uuid)
 	if mod_settings ~= nil then
 		local modinfo = Ext.GetModInfo(uuid)
 		if modinfo ~= nil then
-			mod_settings.version = modinfo.Version
+			mod_settings.Version = modinfo.Version
 		end
 	end
 end
@@ -203,7 +208,7 @@ end
 function GlobalSettings_StoreModVersion(uuid, version)
 	local mod_settings = SettingsManager.GetMod(uuid)
 	if mod_settings ~= nil then
-		mod_settings.version = math.tointeger(version)
+		mod_settings.Version = math.tointeger(version)
 	end
 end
 

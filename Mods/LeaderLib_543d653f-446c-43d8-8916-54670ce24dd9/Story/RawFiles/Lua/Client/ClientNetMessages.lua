@@ -10,7 +10,6 @@ Ext.RegisterNetListener("LeaderLib_DisableFeature", function(channel, id)
 end)
 
 Ext.RegisterNetListener("LeaderLib_SyncFeatures", function(call, featuresString)
-	Ext.Print("[LeaderLib] Synced Features", featuresString)
 	Features = Ext.JsonParse(featuresString)
 end)
 

@@ -1,7 +1,6 @@
 ---@class FlagData
 local FlagData = {
 	Type = "FlagData",
-	Flag = "",
 	FlagType = "Global",
 	Target = nil,
 	Enabled = false
@@ -14,7 +13,6 @@ FlagData.__index = FlagData
 function FlagData:Create(flag, flagType)
     local this =
     {
-		Flag = flag or "",
 		FlagType = flagType or "Global",
 		Enabled = false
 	}
@@ -28,7 +26,6 @@ end
 ---@class VariableData
 local VariableData = {
 	Type = "VariableData",
-	Name = "",
 	Value = "",
 	Target = nil,
 	VarType = "",
@@ -36,13 +33,11 @@ local VariableData = {
 
 VariableData.__index = VariableData
 
----@param name string
 ---@param value string|integer|number|number[]
 ---@param varType string string|integer|float|float3
-function VariableData:Create(name, value, varType)
+function VariableData:Create(value, varType)
     local this =
     {
-		Name = name or "",
 		Value = value or "",
 		VarType = varType or type(varType)
 	}
@@ -87,7 +82,7 @@ end
 ---@param varType string string|integer|float|float3
 function SettingsData:AddVariable(name, value, varType)
 	if self.Variables[name] == nil then
-		local varData = VariableData:Create(name, value, varType)
+		local varData = VariableData:Create(value, varType)
 		self.Variables[name] = varData
 	end
 end

@@ -88,7 +88,12 @@ function GetSkillSlots(char, skill, makeLocal)
 end
 
 ---Swaps a skill with another one.
-function SwapSkill(char, targetSkill, replacementSkill, removeTargetSkill)
+---@param char string
+---@param targetSkill string
+---@param replacementSkill string
+---@param removeTargetSkill boolean
+---@param resetCooldowns boolean Defaults to true.
+function SwapSkill(char, targetSkill, replacementSkill, removeTargetSkill, resetCooldowns)
     local slots = GetSkillSlots(char, targetSkill)
     if #slots > 0 then
         if CharacterHasSkill(char, replacementSkill) == 0 then
@@ -102,12 +107,14 @@ function SwapSkill(char, targetSkill, replacementSkill, removeTargetSkill)
         for i,slot in pairs(slots) do
             NRD_SkillBarSetSkill(char, slot, replacementSkill)
         end
-
     else
         CharacterAddSkill(char, replacementSkill, 0)
     end
     if removeTargetSkill ~= nil and removeTargetSkill ~= false then
         CharacterRemoveSkill(char, targetSkill)
+    end
+    if resetCooldowns ~= false then
+        NRD_SkillSetCooldown(char, replacementSkill, 0.0)
     end
 end
 

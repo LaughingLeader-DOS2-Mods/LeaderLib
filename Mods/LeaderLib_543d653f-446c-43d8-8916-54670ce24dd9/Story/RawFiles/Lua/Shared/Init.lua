@@ -13,6 +13,7 @@ GameHelpers = {
 	Status = {},
 	Tooltip = {},
 	UI = {},
+	Ext = {},
 }
 Vars = {
 	Initialized = false,
@@ -26,14 +27,14 @@ Register = {}
 Settings = {}
 StatusTypes = {
 	ACTIVE_DEFENSE = {},
-	BLIND = { BLIND = true },
+	BLIND = {},
 	CHARMED = { CHARMED = true },
-	DAMAGE_ON_MOVE = { DAMAGE_ON_MOVE = true },
-	DISARMED = { DISARMED = true },
+	DAMAGE_ON_MOVE = {},
+	DISARMED = {},
 	INCAPACITATED = {},
-	INVISIBLE = { INVISIBLE = true },
-	KNOCKED_DOWN = { KNOCKED_DOWN = true },
-	MUTED = { MUTED = true },
+	INVISIBLE = {},
+	KNOCKED_DOWN = {},
+	MUTED = {},
 	POLYMORPHED = {},
 }
 IgnoredMods = {
@@ -103,6 +104,7 @@ Features = {
 	RacialTalentsDisplayFix = false,
 	ExtraDataSkillParamReplacement = false,
 	TooltipGrammarHelper = false,
+	StatusParamSkillDamage = false,
 }
 
 if Ext.IsDeveloperMode() then

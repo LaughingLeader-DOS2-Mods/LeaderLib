@@ -75,6 +75,7 @@ Listeners = {
 	OnPrepareHit = {},
 	OnHit = {},
 	LuaReset = {},
+	ModSettingsLoaded = {},
 }
 SkillListeners = {}
 ModListeners = {

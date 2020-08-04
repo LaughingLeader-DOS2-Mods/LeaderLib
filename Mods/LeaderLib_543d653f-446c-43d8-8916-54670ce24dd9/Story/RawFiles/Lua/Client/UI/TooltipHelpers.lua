@@ -2,13 +2,13 @@
 --- Formats a damage range typically returned from GameHelpers.Math.GetSkillDamageRange
 ---@param damageRange table<string,number[]>
 ---@return string
-local function FormatDamageRange(damageRange)
+function GameHelpers.Tooltip.FormatDamageRange(damageRange)
 	if damageRange ~= nil then
 		local damageTexts = {}
 		local totalDamageTypes = 0
 		for damageType,damage in pairs(damageRange) do
-			local min = damage[1]
-			local max = damage[2]
+			local min = damage.Min or damage[1]
+			local max = damage.Max or damage[2]
 			if min ~= nil and max ~= nil then
 				if max == min then
 					table.insert(damageTexts, GameHelpers.GetDamageText(damageType, string.format("%i", max)))
@@ -20,7 +20,7 @@ local function FormatDamageRange(damageRange)
 		end
 		if totalDamageTypes > 0 then
 			if totalDamageTypes > 1 then
-				return Common.StringJoin(", ", damageTexts)
+				return StringHelpers.Join(", ", damageTexts)
 			else
 				return damageTexts[1]
 			end
@@ -28,5 +28,3 @@ local function FormatDamageRange(damageRange)
 	end
 	return ""
 end
-
-UI.Tooltip.FormatDamageRange = FormatDamageRange

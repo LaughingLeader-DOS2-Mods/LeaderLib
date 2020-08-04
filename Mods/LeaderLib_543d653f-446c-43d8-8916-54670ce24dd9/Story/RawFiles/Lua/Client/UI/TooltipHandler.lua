@@ -174,8 +174,8 @@ local function StatusGetDescriptionParam(status, statusSource, target, param1, p
 						local damageTexts = {}
 						local totalDamageTypes = 0
 						for damageType,damage in pairs(damageRange) do
-							local min = damage[1]
-							local max = damage[2]
+							local min = damage.Min or damage[1]
+							local max = damage.Max or damage[2]
 							if min > 0 or max > 0 then
 								if max == min then
 									table.insert(damageTexts, GameHelpers.GetDamageText(damageType, string.format("%i", max)))

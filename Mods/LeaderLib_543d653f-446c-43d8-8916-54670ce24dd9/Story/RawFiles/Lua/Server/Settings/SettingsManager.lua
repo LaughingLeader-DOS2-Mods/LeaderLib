@@ -1,12 +1,4 @@
-SettingsManager = {
-	ModSettings = {}
-}
-
-local GlobalSettings = {
-	---@type ModSettings[]
-	Mods = {},
-	Version = Ext.GetModInfo("7e737d2f-31d2-4751-963f-be6ccc59cd0c").Version,
-}
+SettingsManager = {}
 
 local FlagData = Classes.ModSettingsClasses.FlagData
 local VariableData = Classes.ModSettingsClasses.VariableData
@@ -45,6 +37,23 @@ function SettingsManager.GetMod(uuid, createIfMissing)
 		end
 	end
 	return nil
+end
+
+function SettingsManager.Sync()
+	Ext.BroadcastMessage("LeaderLib_SyncGlobalSettings", Ext.JsonStringify(GlobalSettings), nil)
+end
+
+function SettingsManager.SyncAllSettings(id)
+	local data = {
+		GlobalSettings = GlobalSettings,
+		Features = Features,
+		GameSettings = GameSettings
+	}
+	if id ~= nil then
+		Ext.PostMessageToUser(id, "LeaderLib_SyncAllSettings", Ext.JsonStringify(data))
+	else
+		Ext.BroadcastMessage("LeaderLib_SyncAllSettings", Ext.JsonStringify(data), nil)
+	end
 end
 
 ---@param uuid string

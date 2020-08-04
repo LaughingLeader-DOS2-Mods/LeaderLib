@@ -9,8 +9,28 @@ Ext.RegisterNetListener("LeaderLib_DisableFeature", function(channel, id)
 	Features[id] = false
 end)
 
-Ext.RegisterNetListener("LeaderLib_SyncFeatures", function(call, featuresString)
-	Features = Ext.JsonParse(featuresString)
+Ext.RegisterNetListener("LeaderLib_SyncFeatures", function(call, dataString)
+	Features = Ext.JsonParse(dataString)
+end)
+
+Ext.RegisterNetListener("LeaderLib_SyncGlobalSettings", function(call, dataString)
+	GlobalSettings = Ext.JsonParse(dataString)
+end)
+
+Ext.RegisterNetListener("LeaderLib_SyncAllSettings", function(call, dataString)
+	local data = Ext.JsonParse(dataString)
+	if data.Features ~= nil then Features = data.Features end
+	if data.GlobalSettings ~= nil then GlobalSettings = data.GlobalSettings end
+	if data.GameSettings ~= nil then GameSettings = data.GameSettings end
+	if #Listeners.ModSettingsLoaded > 0 then
+		for i,callback in ipairs(Listeners.ModSettingsLoaded) do
+			local status,err = xpcall(callback, debug.traceback)
+			if not status then
+				Ext.PrintError("[LeaderLib_SyncAllSettings] Error invoking callback for ModSettingsLoaded:")
+				Ext.PrintError(err)
+			end
+		end
+	end
 end)
 
 Ext.RegisterNetListener("LeaderLib_SyncScale", function(call, dataStr)

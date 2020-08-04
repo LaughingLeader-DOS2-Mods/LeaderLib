@@ -14,11 +14,7 @@ Ext.RegisterOsirisListener("UserConnected", 3, "after", function(id, username, p
 		IterateUsers("Iterators_LeaderLib_UI_UnlockPartyInventory")
 	end
 
-	if CharacterGetReservedUserID(host) ~= id then
-		SyncGameSettings(id)
-	end
-
-	Ext.PostMessageToUser(id, "LeaderLib_SyncFeatures", Ext.JsonStringify(Features))
+	SettingsManager.SyncAllSettings(id)
 end)
 
 Ext.RegisterOsirisListener("UserEvent", 2, "after", function(id, event)

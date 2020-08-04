@@ -24,7 +24,13 @@ Main = {}
 ModRegistration = {}
 Register = {}
 ---@type LeaderLibGameSettings
-Settings = {}
+GameSettings = {}
+---@class GlobalSettings
+GlobalSettings = {
+	---@type ModSettings[]
+	Mods = {},
+	Version = Ext.GetModInfo("7e737d2f-31d2-4751-963f-be6ccc59cd0c").Version,
+}
 StatusTypes = {
 	ACTIVE_DEFENSE = {},
 	BLIND = {},
@@ -122,22 +128,21 @@ function LoadGameSettings()
 		if tblString ~= nil then
 			settings = settings:LoadString(tblString)
 		end
-		Settings = settings
-		SaveGameSettings()
 		return settings
 	end)
 	if b then
-		Settings = result
+		GameSettings = result
 	else
-		Settings = Classes.LeaderLibGameSettings:Create()
+		GameSettings = Classes.LeaderLibGameSettings:Create()
+		SaveGameSettings()
 	end
-	return Settings
+	return GameSettings
 end
 
 function SaveGameSettings()
-	if Settings ~= nil then
+	if GameSettings ~= nil then
 		pcall(function() 
-			Ext.SaveFile("LeaderLib_GameSettings.json", Settings:ToString())
+			Ext.SaveFile("LeaderLib_GameSettings.json", GameSettings:ToString())
 		end)
 	end
 end
@@ -154,7 +159,7 @@ end
 if Ext.IsClient() then
 	Ext.RegisterNetListener("LeaderLib_SyncGameSettings", function(call, gameSettingsStr)
 		local settings = Classes.MessageData:CreateFromString(gameSettingsStr)
-		Settings = settings.Params.Settings
+		GameSettings = settings.Params.Settings
 		Ext.Print("[LeaderLib_SyncGameSettings] Synced game settings from server.")
 	end)
 end

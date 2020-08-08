@@ -72,3 +72,10 @@ function GetSkillEntryName(skillPrototype)
 	return string.gsub(skillPrototype, "_%-?%d+$", "")
 end
 Ext.NewQuery(GetSkillEntryName, "LeaderLib_Ext_QRY_GetSkillEntryName", "[in](STRING)_SkillPrototype, [out](STRING)_SkillId")
+
+local function RandomQRY(min,max)
+	if min == nil then min = 0 end
+	if max == nil then max = 0 end
+	return Ext.Random(min,max)
+end
+Ext.NewQuery(RandomQRY, "LeaderLib_Ext_Random", "[in](INTEGER)_Min, [in](INTEGER)_Max, [out](INTEGER)_Ran")

@@ -270,7 +270,7 @@ local function GetStringKeyText(key,fallback)
 	if handle == nil then
 		return fallback
 	end
-	local text = Ext.GetTranslatedString(handle, ref)
+	local text = Ext.GetTranslatedString(handle, ref) or fallback
 	return text
 end
 

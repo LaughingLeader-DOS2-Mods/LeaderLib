@@ -76,6 +76,13 @@ function SettingsData:AddFlag(flag, flagType, enabled)
 	end
 end
 
+---@param flags string[]
+function SettingsData:AddFlags(flags, flagType, enabled)
+	for i,flag in pairs(flags) do
+		self:AddFlag(flag, flagType, enabled)
+	end
+end
+
 ---@param name string
 ---@param value string|integer|number|number[]
 ---@param varType string string|integer|float|float3
@@ -83,13 +90,6 @@ function SettingsData:AddVariable(name, value, varType)
 	if self.Variables[name] == nil then
 		local varData = VariableData:Create(value, varType)
 		self.Variables[name] = varData
-	end
-end
-
----@param flags string[]
-function SettingsData:AddGlobalFlags(flags)
-	for i,flag in pairs(flags) do
-		self:AddFlag(flag)
 	end
 end
 

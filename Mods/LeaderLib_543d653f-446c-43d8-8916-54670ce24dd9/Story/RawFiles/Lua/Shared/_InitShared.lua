@@ -83,6 +83,7 @@ Listeners = {
 	LuaReset = {},
 	ModSettingsLoaded = {},
 }
+
 SkillListeners = {}
 ModListeners = {
 	Registered = {},

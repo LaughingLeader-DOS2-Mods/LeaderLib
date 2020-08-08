@@ -23,6 +23,8 @@ function OnInitialized()
 	end
 
 	SettingsManager.SyncAllSettings()
+
+	IterateUsers("Iterators_LeaderLib_SetClientCharacter")
 end
 
 function OnLuaReset()

@@ -439,3 +439,16 @@ end)
 Ext.RegisterConsoleCommand("refreshskill", function(command, skill, enabled)
 	SetSkillEnabled(CharacterGetHostCharacter(), skill, false)
 end)
+
+Ext.RegisterConsoleCommand("heal", function(command, t)
+	local target = t or CharacterGetHostCharacter()
+	CharacterSetHitpointsPercentage(target, 100.0)
+end)
+
+Ext.RegisterConsoleCommand("resurrectparty", function(command)
+	for i,v in pairs(Osi.DB_IsPlayer:Get(nil)) do
+		if CharacterIsDead(v[1]) == 1 then
+			CharacterResurrect(v[1])
+		end
+	end
+end)

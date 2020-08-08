@@ -1,4 +1,5 @@
 Ext.Require("Shared/_InitShared.lua")
+Ext.Require("Shared/Helpers/ExtenderHelpers.lua")
 Ext.Require("Shared/Helpers/SharedGameHelpers.lua")
 Ext.Require("Shared/Helpers/StringHelpers.lua")
 Ext.Require("Shared/Classes/_Init.lua")

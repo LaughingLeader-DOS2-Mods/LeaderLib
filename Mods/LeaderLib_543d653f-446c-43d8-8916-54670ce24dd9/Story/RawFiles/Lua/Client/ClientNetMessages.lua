@@ -49,3 +49,7 @@ Ext.RegisterNetListener("LeaderLib_SyncScale", function(call, dataStr)
 		end
 	end
 end)
+
+Ext.RegisterNetListener("LeaderLib_SetClientCharacter", function(call, uuid)
+	UI.ClientCharacter = uuid
+end)

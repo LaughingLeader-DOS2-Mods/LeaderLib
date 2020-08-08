@@ -226,11 +226,29 @@ local tooltipSwf = {
 
 local function OnTooltipPositioned(ui, ...)
 	if #UIListeners.OnTooltipPositioned > 0 then
-		for i,callback in ipairs(UIListeners.OnTooltipPositioned) do
-			local status,err = xpcall(callback, debug.traceback, ui, ...)
-			if not status then
-				Ext.PrintError("[LeaderLib:AdjustTagElements] Error invoking callback:")
-				Ext.PrintError(err)
+		local root = ui:GetRoot()
+		if root ~= nil then
+			local tooltips = {}
+			if root.formatTooltip ~= nil and root.formatTooltip.visibile then
+				tooltips[#tooltips+1] = root.formatTooltip.tooltip_mc
+			end
+			if root.compareTooltip ~= nil and root.compareTooltip.visibile then
+				tooltips[#tooltips+1] = root.compareTooltip.tooltip_mc
+			end
+			if root.offhandTooltip ~= nil and root.offhandTooltip.visibile then
+				tooltips[#tooltips+1] = root.offhandTooltip.tooltip_mc
+			end
+	
+			if #tooltips > 0 then
+				for i,tooltip_mc in pairs(tooltips) do
+					for i,callback in ipairs(UIListeners.OnTooltipPositioned) do
+						local status,err = xpcall(callback, debug.traceback, ui, tooltip_mc, ...)
+						if not status then
+							Ext.PrintError("[LeaderLib:AdjustTagElements] Error invoking callback:")
+							Ext.PrintError(err)
+						end
+					end
+				end
 			end
 		end
 	end

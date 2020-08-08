@@ -261,27 +261,9 @@ Ext.RegisterListener("SessionLoaded", function()
 	Game.Tooltip.RegisterListener("Status", nil, OnStatusTooltip)
 	Game.Tooltip.RegisterListener("Stat", nil, OnStatTooltip)
 
-	if Ext.IsDeveloperMode() then
-		local tooltipFunctions = {
-			"showFormattedTooltipAfterPos",
-			"swapCompare",
-			"onShowCompareTooltip",
-			"checkTooltipBoundaries",
-			"strReplace",
-			--"INTshowTooltip",
-		}
-
-		for i,v in pairs(tooltipFunctions) do
-			Ext.RegisterUINameInvokeListener(v, function(ui, ...)
-				print(Ext.JsonStringify({...}))
-				OnTooltipPositioned(ui)
-			end)
-		end
-	else
-		Ext.RegisterUINameInvokeListener("showFormattedTooltipAfterPos", function(ui, ...)
-			OnTooltipPositioned(ui)
-		end)
-	end
+	Ext.RegisterUINameInvokeListener("showFormattedTooltipAfterPos", function(ui, ...)
+		OnTooltipPositioned(ui)
+	end)
 end)
 
 local function EnableTooltipOverride()

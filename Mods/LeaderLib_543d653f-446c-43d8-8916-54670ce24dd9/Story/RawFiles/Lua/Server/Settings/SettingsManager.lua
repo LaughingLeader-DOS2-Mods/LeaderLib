@@ -134,7 +134,7 @@ function LoadGlobalSettings()
 		Ext.PrintError("[LeaderLib:LoadGlobalSettings] Error loading global settings:")
 		Ext.PrintError(err)
 	else
-		if Ext.OsirisIsCallable() then
+		if Ext.OsirisIsCallable() or Osi.DB_LeaderLib_GameStarted:Get(1) ~= nil then
 			for i,v in pairs(GlobalSettings.Mods) do
 				v:ApplyFlags()
 			end

@@ -578,3 +578,110 @@ function GameHelpers.Ext.CreateSkillTable(skillName, useWeaponDamage)
 	end
 	return nil
 end
+
+local function ReplacePlaceholders(str, character)
+	local output = str
+	for v in string.gmatch(output, "%[ExtraData.-%]") do
+		local key = v:gsub("%[ExtraData:", ""):gsub("%]", "")
+		local value = Ext.ExtraData[key] or ""
+		if value ~= "" and type(value) == "number" then
+			if value == math.floor(value) then
+				value = string.format("%i", math.floor(value))
+			else
+				if value <= 1.0 and value >= 0.0 then
+					-- Percentage display
+					value = value * 100
+					value = string.format("%i", math.floor(value))
+				else
+					value = tostring(value)
+				end
+			end
+		end
+		-- The parameter brackets will be considered for pattern matching unless we escape them with a percentage sign.
+		local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
+		output = string.gsub(output, escapedReplace, value)
+	end
+	for v in string.gmatch(output, "%[Stats:.-%]") do
+		local value = ""
+		local statFetcher = v:gsub("%[Stats:", ""):gsub("%]", "")
+		local props = LeaderLib.StringHelpers.Split(statFetcher, ":")
+		local stat = props[1]
+		local property = props[2]
+		if stat ~= nil and property ~= nil then
+			value = Ext.StatGetAttribute(stat, property)
+		end
+		if value ~= nil and value ~= "" then
+			if type(value) == "number" then
+				value = string.format("%i", math.floor(value))
+			end
+		else
+			value = ""
+		end
+		-- The parameter brackets will be considered for pattern matching unless we escape them with a percentage sign.
+		local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
+		output = string.gsub(output, escapedReplace, value)
+	end
+	for v in string.gmatch(output, "%[SkillDamage:.-%]") do
+		local value = ""
+		local skillName = v:gsub("%[SkillDamage:", ""):gsub("%]", "")
+		if skillName ~= nil and skillName ~= "" then
+			local skill = GameHelpers.Ext.CreateSkillTable(skillName)
+			if skill ~= nil then
+				if character == nil and UI.ClientCharacter ~= nil then
+					character = Ext.GetCharacter(UI.CurrentCharacter) or nil
+				end
+				if character ~= nil then
+					local damageRange = Game.Math.GetSkillDamageRange(character.Stats, skill)
+					value = GameHelpers.Tooltip.FormatDamageRange(damageRange)
+				end
+			end
+		end
+		if value ~= nil and value ~= "" then
+			if type(value) == "number" then
+				value = string.format("%i", math.floor(value))
+			end
+		else
+			value = ""
+		end
+		local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
+		output = string.gsub(output, escapedReplace, value)
+	end
+	for v in string.gmatch(output, "%[Key:.-%]") do
+		local key = v:gsub("%[Key:", ""):gsub("%]", "")
+		local translatedText = Ext.GetTranslatedStringFromKey(key)
+		if translatedText == nil then translatedText = "" end
+		-- The parameter brackets will be considered for pattern matching unless we escape them with a percentage sign.
+		local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
+		output = string.gsub(output, escapedReplace, translatedText)
+	end
+	for v in string.gmatch(output, "%[Handle:.-%]") do
+		local text = v:gsub("%[Handle:", ""):gsub("%]", "")
+		local props = LeaderLib.StringHelpers.Split(text, ":")
+		if props[2] == nil then 
+			props[2] = ""
+		end
+		local translatedText = Ext.GetTranslatedString(props[1], props[2])
+		if translatedText == nil then 
+			translatedText = "" 
+		end
+		-- The parameter brackets will be considered for pattern matching unless we escape them with a percentage sign.
+		local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
+		output = string.gsub(output, escapedReplace, translatedText)
+	end
+	return output
+end
+
+---Replace placeholder text in strings, such as ExtraData, Skill, etc.
+---@param str string
+---@param character EclCharacter|EsvCharacter Optional character to use for the tooltip.
+---@return string
+function GameHelpers.Tooltip.ReplacePlaceholders(str, character)
+	local status,result = xpcall(ReplacePlaceholders, debug.traceback, str, character)
+	if status then
+		return result
+	else
+		Ext.PrintError("[LeaderLib:GameHelpers.Tooltip.ReplacePlaceholders] Error replacing placeholders:")
+		Ext.PrintError(result)
+		return str
+	end
+end

@@ -86,6 +86,8 @@ function SettingsData:AddVariable(name, value)
 	if self.Variables[name] == nil then
 		local varData = VariableData:Create(value)
 		self.Variables[name] = varData
+	else
+		self.Variables[name].Value = value
 	end
 end
 

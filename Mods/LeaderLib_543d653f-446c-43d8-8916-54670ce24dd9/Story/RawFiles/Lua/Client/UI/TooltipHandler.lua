@@ -72,11 +72,11 @@ end
 local chaosDamagePattern = "<font color=\"#C80030\">([%d-%s]+)</font>"
 
 ---@param character EsvCharacter
----@param status EclStatus
+---@param status EsvStatus
 ---@param tooltip TooltipData
 local function OnStatusTooltip(character, status, tooltip)
 	if Features.FixChaosDamageDisplay then
-		if status.StatusType == "DAMAGE" and string.find(Ext.StatGetAttribute(status.StatusId, "DescriptionParams"), "Damage") then
+		if Ext.StatGetAttribute(status.StatusId, "StatusType") == "DAMAGE" and string.find(Ext.StatGetAttribute(status.StatusId, "DescriptionParams"), "Damage") then
 			local element = tooltip:GetElement("StatusDescription")
 			if element ~= nil and not string.find(element.Label:lower(), "chaos damage") then
 				local startPos,endPos,damage = string.find(element.Label, chaosDamagePattern)
@@ -94,6 +94,7 @@ end
 ---@param skill EsvStatus
 ---@param tooltip TooltipData
 local function OnSkillTooltip(character, skill, tooltip)
+	UI.ClientCharacter = character.MyGuid
 	if Features.TooltipGrammarHelper then
 		local element = tooltip:GetElement("SkillDescription")
 		if element ~= nil then
@@ -123,6 +124,7 @@ end
 --- @param isFromItem boolean
 --- @param param string
 local function SkillGetDescriptionParam(skill, character, isFromItem, param1, param2)
+	UI.ClientCharacter = character.Character.MyGuid
 	if Features.ExtraDataSkillParamReplacement then
 		if param1 == "ExtraData" then
 			local value = Ext.ExtraData[param2]
@@ -208,10 +210,41 @@ end
 
 Ext.RegisterListener("StatusGetDescriptionParam", StatusGetDescriptionParam)
 
+---@param character EclCharacter
+---@param stat string
+---@param tooltip TooltipData
+local function OnStatTooltip(character, stat, tooltip)
+	UI.ClientCharacter = character.MyGuid
+end
+
+local tooltipSwf = {
+"Public/Game/GUI/LSClasses.swf",
+"Public/Game/GUI/tooltip.swf",
+"Public/Game/GUI/tooltipHelper.swf",
+"Public/Game/GUI/tooltipHelper_kb.swf",
+}
+
+local function OnTooltipPositioned(ui, ...)
+	if #UIListeners.OnTooltipPositioned > 0 then
+		for i,callback in ipairs(UIListeners.OnTooltipPositioned) do
+			local status,err = xpcall(callback, debug.traceback, ui, ...)
+			if not status then
+				Ext.PrintError("[LeaderLib:AdjustTagElements] Error invoking callback:")
+				Ext.PrintError(err)
+			end
+		end
+	end
+end
+
 Ext.RegisterListener("SessionLoaded", function()
 	Game.Tooltip.RegisterListener("Item", nil, OnItemTooltip)
 	Game.Tooltip.RegisterListener("Skill", nil, OnSkillTooltip)
 	Game.Tooltip.RegisterListener("Status", nil, OnStatusTooltip)
+	Game.Tooltip.RegisterListener("Stat", nil, OnStatTooltip)
+
+	Ext.RegisterUINameInvokeListener("showFormattedTooltipAfterPos", function(ui, ...)
+		OnTooltipPositioned(ui)
+	end)
 end)
 
 local function EnableTooltipOverride()

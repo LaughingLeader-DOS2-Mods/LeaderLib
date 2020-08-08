@@ -70,6 +70,8 @@ function SettingsData:AddFlag(flag, flagType, enabled)
 	if self.Flags[flag] == nil then
 		local flagVar = FlagData:Create(flag, flagType, enabled)
 		self.Flags[flag] = flagVar
+	else
+		self.Flags[flag].Enabled = enabled
 	end
 end
 

@@ -25,19 +25,16 @@ end
 local VariableData = {
 	Type = "VariableData",
 	Value = "",
-	Target = nil,
-	VarType = "",
+	Target = nil
 }
 
 VariableData.__index = VariableData
 
 ---@param value string|integer|number|number[]
----@param varType string string|integer|float|float3
-function VariableData:Create(value, varType)
+function VariableData:Create(value)
     local this =
     {
-		Value = value or "",
-		VarType = varType or type(varType)
+		Value = value or ""
 	}
 	setmetatable(this, self)
     return this
@@ -85,10 +82,9 @@ end
 
 ---@param name string
 ---@param value string|integer|number|number[]
----@param varType string string|integer|float|float3
-function SettingsData:AddVariable(name, value, varType)
+function SettingsData:AddVariable(name, value)
 	if self.Variables[name] == nil then
-		local varData = VariableData:Create(value, varType)
+		local varData = VariableData:Create(value)
 		self.Variables[name] = varData
 	end
 end

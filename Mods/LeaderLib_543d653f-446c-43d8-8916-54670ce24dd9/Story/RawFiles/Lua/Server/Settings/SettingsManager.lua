@@ -75,7 +75,7 @@ local function ParseModData(uuid, tbl)
 			end
 			if tbl.Global.Variables ~= nil then
 				for name,data in pairs(tbl.Global.Variables) do
-					modSettings.Global:AddVariable(name, data.Value, data.VarType)
+					modSettings.Global:AddVariable(name, data.Value)
 				end
 			end
 		end

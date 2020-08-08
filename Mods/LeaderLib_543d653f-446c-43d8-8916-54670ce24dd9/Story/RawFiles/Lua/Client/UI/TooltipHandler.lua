@@ -229,13 +229,14 @@ local function OnTooltipPositioned(ui, ...)
 		local root = ui:GetRoot()
 		if root ~= nil then
 			local tooltips = {}
-			if root.formatTooltip ~= nil and root.formatTooltip.visibile then
+
+			if root.formatTooltip ~= nil then
 				tooltips[#tooltips+1] = root.formatTooltip.tooltip_mc
 			end
-			if root.compareTooltip ~= nil and root.compareTooltip.visibile then
+			if root.compareTooltip ~= nil then
 				tooltips[#tooltips+1] = root.compareTooltip.tooltip_mc
 			end
-			if root.offhandTooltip ~= nil and root.offhandTooltip.visibile then
+			if root.offhandTooltip ~= nil then
 				tooltips[#tooltips+1] = root.offhandTooltip.tooltip_mc
 			end
 	
@@ -260,9 +261,27 @@ Ext.RegisterListener("SessionLoaded", function()
 	Game.Tooltip.RegisterListener("Status", nil, OnStatusTooltip)
 	Game.Tooltip.RegisterListener("Stat", nil, OnStatTooltip)
 
-	Ext.RegisterUINameInvokeListener("showFormattedTooltipAfterPos", function(ui, ...)
-		OnTooltipPositioned(ui)
-	end)
+	if Ext.IsDeveloperMode() then
+		local tooltipFunctions = {
+			"showFormattedTooltipAfterPos",
+			"swapCompare",
+			"onShowCompareTooltip",
+			"checkTooltipBoundaries",
+			"strReplace",
+			--"INTshowTooltip",
+		}
+
+		for i,v in pairs(tooltipFunctions) do
+			Ext.RegisterUINameInvokeListener(v, function(ui, ...)
+				print(Ext.JsonStringify({...}))
+				OnTooltipPositioned(ui)
+			end)
+		end
+	else
+		Ext.RegisterUINameInvokeListener("showFormattedTooltipAfterPos", function(ui, ...)
+			OnTooltipPositioned(ui)
+		end)
+	end
 end)
 
 local function EnableTooltipOverride()

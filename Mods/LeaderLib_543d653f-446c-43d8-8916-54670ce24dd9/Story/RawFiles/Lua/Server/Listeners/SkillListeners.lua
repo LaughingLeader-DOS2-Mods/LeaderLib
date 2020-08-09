@@ -174,16 +174,15 @@ end
 ---@param target string
 ---@param handle integer
 ---@param damage integer
-function OnSkillHit(source, skillprototype, target, handle, damage)
-	if skillprototype ~= "" and skillprototype ~= nil then
-		local skill = string.gsub(skillprototype, "_%-?%d+$", "")
+function OnSkillHit(source, skill, target, handle, damage)
+	if skill ~= "" and skill ~= nil then
 		local listeners = SkillListeners[skill]
 		if listeners ~= nil then
 			local uuid = GetUUID(source)
 			---@type HitData
 			local data = Classes.HitData:Create(GetUUID(target), GetUUID(source), damage, handle, skill)
 			if Ext.IsDeveloperMode() then
-				PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillHit] source(",source,") skillprototype(",skillprototype,") skill(",skill,") data(",Ext.JsonStringify(data),")")
+				PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillHit] source(",source,") skill(",skill,") data(",Ext.JsonStringify(data),")")
 			end
 			for i,callback in ipairs(listeners) do
 				local status,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.HIT, data)

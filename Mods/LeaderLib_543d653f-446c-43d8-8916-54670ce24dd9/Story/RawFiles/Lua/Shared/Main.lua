@@ -28,6 +28,12 @@ end
 function RegisterSkillListener(skill, callback)
 	if SkillListeners[skill] == nil then
 		SkillListeners[skill] = {}
+	else
+		-- for i,v in pairs(SkillListeners[skill]) do
+		-- 	if v == callback then
+		-- 		return
+		-- 	end
+		-- end
 	end
 	table.insert(SkillListeners[skill], callback)
 

@@ -34,9 +34,19 @@ function OnHit(target, source, damage, handle)
 			handle = math.tointeger(tonumber(handle))
 		end
 	end
+
+	if target ~= nil then
+		target = GetUUID(target)
+	end
+	if source ~= nil then
+		source = GetUUID(source)
+	end
+
 	local skillprototype = NRD_StatusGetString(target, handle, "SkillId")
+	local skill = nil
 	if skillprototype ~= "" and skillprototype ~= nil then
-		OnSkillHit(source, skillprototype, target, handle, damage)
+		skill = string.gsub(skillprototype, "_%-?%d+$", "")
+		OnSkillHit(source, skill, target, handle, damage)
 	end
 
 	if source ~= nil and Features.ApplyBonusWeaponStatuses == true and GameHelpers.HitWithWeapon(target, handle, nil, nil, source) then
@@ -60,7 +70,7 @@ function OnHit(target, source, damage, handle)
 
 	if #Listeners.OnHit > 0 then
 		for i,callback in ipairs(Listeners.OnHit) do
-			local status,err = xpcall(callback, debug.traceback, target, source, damage, handle)
+			local status,err = xpcall(callback, debug.traceback, target, source, damage, handle, skill)
 			if not status then
 				Ext.PrintError("[LeaderLib:HitListeners.lua] Error calling function for 'OnHit':\n", err)
 			end

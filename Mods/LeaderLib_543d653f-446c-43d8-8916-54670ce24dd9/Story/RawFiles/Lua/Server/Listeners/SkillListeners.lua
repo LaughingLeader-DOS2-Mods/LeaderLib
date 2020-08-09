@@ -199,17 +199,18 @@ function OnSkillHit(source, skill, target, handle, damage)
 				local character = Ext.GetCharacter(source)
 				for i,status in pairs(character:GetStatuses()) do
 					local potion = nil
-					if type(status) == "string" then
-						potion = Ext.StatGetAttribute(status, "StatsId")
-					elseif status.StatusId ~= nil then
-						potion = Ext.StatGetAttribute(status.StatusId, "StatsId")
+					if type(status) ~= "string" and status.StatusId ~= nil then
+						status = status.StatusId
 					end
-					if potion ~= nil and potion ~= "" then
-						local bonusWeapon = Ext.StatGetAttribute(potion, "BonusWeapon")
-						if bonusWeapon ~= nil and bonusWeapon ~= "" then
-							local extraProps = Ext.StatGetAttribute(bonusWeapon, "ExtraProperties")
-							if extraProps ~= nil then
-								GameHelpers.ApplyProperties(target, source, extraProps)
+					if Data.EngineStatus[status] ~= true then
+						potion = Ext.StatGetAttribute(status, "StatsId")
+						if potion ~= nil and potion ~= "" then
+							local bonusWeapon = Ext.StatGetAttribute(potion, "BonusWeapon")
+							if bonusWeapon ~= nil and bonusWeapon ~= "" then
+								local extraProps = Ext.StatGetAttribute(bonusWeapon, "ExtraProperties")
+								if extraProps ~= nil then
+									GameHelpers.ApplyProperties(target, source, extraProps)
+								end
 							end
 						end
 					end

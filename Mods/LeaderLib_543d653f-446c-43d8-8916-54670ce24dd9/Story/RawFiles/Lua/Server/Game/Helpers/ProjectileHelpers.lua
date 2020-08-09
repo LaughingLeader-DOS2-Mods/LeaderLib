@@ -3,21 +3,24 @@ function GameHelpers.ShootProjectile(source, target, skill, forceHit, sourcePosi
     if ObjectIsCharacter(source) == 1 then
         level = CharacterGetLevel(source)
     else
-        SetStoryEvent(source, "LeaderLib_Commands_SetItemLevel")
-        level = GetVarInteger(source, "LeaderLib_Level")
+        level = Ext.GetItem(source).Stats.Level
     end
+
     NRD_ProjectilePrepareLaunch()
+
     NRD_ProjectileSetString("SkillId", skill)
     NRD_ProjectileSetInt("CasterLevel", level)
 
     NRD_ProjectileSetGuidString("Caster", source)
     NRD_ProjectileSetGuidString("Source", source)
+
     local x,y,z = GetPosition(source)
     if sourcePosition == nil then
         NRD_ProjectileSetVector3("SourcePosition", x,y+2,z)
     else
         NRD_ProjectileSetVector3("SourcePosition", sourcePosition[1],sourcePosition[2],sourcePosition[3])
     end
+
     if type(target) == "string" then
         if forceHit == true then
             NRD_ProjectileSetGuidString("HitObject", target)

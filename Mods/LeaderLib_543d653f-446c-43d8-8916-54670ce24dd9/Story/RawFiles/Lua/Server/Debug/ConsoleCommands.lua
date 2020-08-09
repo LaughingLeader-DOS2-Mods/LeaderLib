@@ -452,3 +452,39 @@ Ext.RegisterConsoleCommand("resurrectparty", function(command)
 		end
 	end
 end)
+
+Ext.RegisterConsoleCommand("llshoot", function(cmd, forceHit, source, target, skill)
+	if source == nil then
+		source = CharacterGetHostCharacter()
+	end
+	if target == nil then
+		for i,v in pairs(Ext.GetCharacter(source):GetNearbyCharacters(12.0)) do
+			if CharacterCanSee(v, source) == 1 and GetDistanceTo(v, source) >= 3.0 then
+				target = v
+				break
+			end
+		end
+	end
+
+	if skill == nil then
+		skill = "Projectile_EnemyTotemWater"
+	end
+
+    NRD_ProjectilePrepareLaunch()
+
+    NRD_ProjectileSetString("SkillId", skill)
+    NRD_ProjectileSetInt("CasterLevel", CharacterGetLevel(source))
+
+    NRD_ProjectileSetGuidString("Caster", source)
+    NRD_ProjectileSetGuidString("Source", source)
+
+    local x,y,z = GetPosition(source)
+    NRD_ProjectileSetVector3("SourcePosition", x,y+2,z)
+
+    if forceHit ~= nil then
+		NRD_ProjectileSetGuidString("HitObject", target)
+		NRD_ProjectileSetGuidString("HitObjectPosition", target)
+	end
+	NRD_ProjectileSetGuidString("TargetPosition", target)
+    NRD_ProjectileLaunch()
+end)

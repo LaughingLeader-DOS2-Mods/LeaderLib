@@ -13,19 +13,6 @@ function GameHelpers.Status.IsSneakingOrInvisible(obj)
 				end
 			end
 		end
-        -- if Ext.Version() >= 43 then
-        --     if ObjectIsCharacter(obj) == 1 then
-        --         local statuses = Ext.GetCharacter(obj):GetStatuses()
-        --         if statuses ~= nil then
-        --             for i,v in pairs(statuses) do
-        --                 local statusType = GetStatusType(v)
-        --                 if statusType == "INVISIBLE" then
-        --                     return true
-        --                 end
-        --             end
-        --         end
-        --     end
-        -- end
     end
     return false
 end
@@ -73,21 +60,23 @@ Ext.NewQuery(ObjectHasStatusType, "LeaderLib_Ext_QRY_HasStatusType", "[in](GUIDS
 
 ---Returns true if the object is disabled by a status.
 ---@param obj string
+---@param checkForLoseControl boolean
 ---@return boolean
-function GameHelpers.Status.IsDisabled(obj)
+function GameHelpers.Status.IsDisabled(obj, checkForLoseControl)
 	if ObjectHasStatusType(obj, {"KNOCKED_DOWN", "INCAPACITATED"}) then
 		return true
-	else
-		local statuses = nil
-		if ObjectIsCharacter(obj) == 1 then
-			statuses = Ext.GetCharacter(obj):GetStatuses()
-		elseif ObjectIsItem(obj) == 1 then
-			statuses = Ext.GetItem(obj):GetStatuses()
-		end
+	elseif checkForLoseControl == true and ObjectIsCharacter(obj) == 1 then -- LoseControl on items is a good way to crash
+		local statuses = Ext.GetCharacter(obj):GetStatus()
 		if statuses ~= nil then
 			for i,status in pairs(statuses) do
-				if Ext.StatGetAttribute(status, "LoseControl") == "Yes" then
-					return true
+				if type(status) ~= "string" and status.StatusId ~= nil then
+					status = status.StatusId
+				end
+				if Data.EngineStatus(status) ~= true and Ext.StatGetAttribute(status, "LoseControl") == "Yes" then
+					local handle = NRD_StatusGetHandle(obj, status)
+					local source = NRD_StatusGetGuidString(obj, handle, "StatusSource")
+					-- LoseControl may be from an "AI Control" status, so make sure the source is an enemy.
+					return source ~= nil and CharacterIsEnemy(obj, source) == 1
 				end
 			end
 		end

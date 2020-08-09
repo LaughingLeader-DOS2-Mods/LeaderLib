@@ -40,12 +40,7 @@ function OnHit(target, source, damage, handle)
 	end
 
 	if source ~= nil and Features.ApplyBonusWeaponStatuses == true and GameHelpers.HitWithWeapon(target, handle, nil, nil, source) then
-		--PrintDebug("Basic Attack Hit on", target, ". Checking for statuses with a BonusWeapon")
-		---@type EsvCharacter
-		local character = Ext.GetCharacter(source)
-
-		for i,status in pairs(character:GetStatuses()) do
-			local potion = nil
+		for i,status in pairs(Ext.GetCharacter(source):GetStatuses()) do
 			if type(status) == "string" then
 				potion = Ext.StatGetAttribute(status, "StatsId")
 			elseif status.StatusId ~= nil then

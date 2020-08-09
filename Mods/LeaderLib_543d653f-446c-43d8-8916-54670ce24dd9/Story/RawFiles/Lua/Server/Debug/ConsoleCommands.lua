@@ -325,27 +325,9 @@ Ext.RegisterConsoleCommand("additemstat", function(command, stat, rarity, templa
 			rarity = "Epic"
 		end
 	end
-	if template == nil then
-		template = "374cf6c2-3606-49a9-875b-be0adf103807"
-	end
 	local host = CharacterGetHostCharacter()
-	local x,y,z = GetPosition(host)
-	local itemBase = CreateItemTemplateAtPosition(template, x, y, z)
-	NRD_ItemCloneBegin(itemBase)
-	--NRD_ItemConstructBegin("374cf6c2-3606-49a9-875b-be0adf103807")
-	--NRD_ItemCloneResetProgression()
-	NRD_ItemCloneSetString("GenerationStatsId", stat)
-	NRD_ItemCloneSetString("StatsEntryName", stat)
-	NRD_ItemCloneSetInt("HasGeneratedStats", 1)
-	NRD_ItemCloneSetInt("GenerationLevel", 1)
-	NRD_ItemCloneSetInt("StatsLevel", 1)
-	NRD_ItemCloneSetInt("IsIdentified", 1)
-	NRD_ItemCloneSetString("ItemType", rarity)
-	NRD_ItemCloneSetString("GenerationItemType", rarity)
-	local item = NRD_ItemClone()
+	local item = GameHelpers.Item.CreateItemByStat(stat, CharacterGetLevel(host), rarity, true, 1, 1)
 	ItemToInventory(item, host, 1, 1, 1)
-	NRD_ItemSetIdentified(item, 1)
-	ItemRemove(itemBase)
 end)
 
 Ext.RegisterConsoleCommand("additemtemplate", function(command, template, count)

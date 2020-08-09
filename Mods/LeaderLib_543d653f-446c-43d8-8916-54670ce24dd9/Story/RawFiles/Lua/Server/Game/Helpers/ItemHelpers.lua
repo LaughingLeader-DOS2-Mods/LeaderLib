@@ -35,6 +35,10 @@ function GameHelpers.Item.CreateItemByStat(statName, level, rarity, skipLevelChe
         stat = statName
         statType = NRD_StatGetType(stat.Name)
     end
+
+    if level == nil or level <= 0 then
+        level = CharacterGetLevel(CharacterGetHostCharacter())
+    end
     
     local rootTemplate = nil
     local generateRandomBoosts = 0

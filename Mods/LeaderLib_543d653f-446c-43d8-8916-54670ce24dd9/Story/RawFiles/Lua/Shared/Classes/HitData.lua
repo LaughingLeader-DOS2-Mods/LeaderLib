@@ -7,7 +7,9 @@ local HitData = {
 	Skill = "",
 	Damage = 0,
 	Handle = 0,
-	IsFromSkll = false
+	IsFromSkll = false,
+	---@type boolean The hit did not miss.
+	Success = true
 }
 HitData.__index = HitData
 
@@ -24,8 +26,12 @@ function HitData:Create(target, attacker, damage, handle, skill)
 		Target = target,
 		Attacker = attacker,
 		Damage = damage,
-		Handle = handle
+		Handle = handle,
+		Success = GameHelpers.HitSucceeded(target, handle, 0)
 	}
+	if StringHelpers.IsNullOrEmpty(this.Target) then
+		this.Success = false
+	end
 	if skill ~= nil then
 		this.Skill = skill
 		this.IsFromSkll = true

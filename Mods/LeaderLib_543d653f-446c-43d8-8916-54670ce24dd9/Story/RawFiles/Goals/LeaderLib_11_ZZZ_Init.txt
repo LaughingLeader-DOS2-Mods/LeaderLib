@@ -58,7 +58,12 @@ DB_NOOP(1);
 PROC
 LeaderLib_Initialized((STRING)_Region)
 THEN
-NRD_ModCall("LeaderLib", "OnInitialized");
+NRD_ModCall("LeaderLib", "OnLeaderLibInitialized");
+
+IF
+TimerFinished("Timers_LeaderLib_Initialized_CheckGameState")
+THEN
+NRD_ModCall("LeaderLib", "OnInitialized_CheckGameState");
 */
 //END_REGION
 

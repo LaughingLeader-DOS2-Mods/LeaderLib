@@ -113,7 +113,7 @@ function OnSkillPreparing(char, skillprototype)
 		Osi.LeaderLib_LuaSkillListeners_IgnorePrototype(char, skillprototype, skill)
 	end
 	for callback in GetListeners(skill) do
-		PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillPreparing] char(",char,") skillprototype(",skillprototype,") skill(",skill,")")
+		--PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillPreparing] char(",char,") skillprototype(",skillprototype,") skill(",skill,")")
 		local status,err = xpcall(callback, debug.traceback, skill, GetUUID(char), SKILL_STATE.PREPARE)
 		if not status then
 			Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
@@ -137,7 +137,7 @@ function OnSkillUsed(char, skill, ...)
 		local status,err = nil,nil
 		for callback in GetListeners(skill) do
 			if Ext.IsDeveloperMode() then
-				PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillUsed] char(",char,") skill(",skill,") data(",data:ToString(),")")
+				--PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillUsed] char(",char,") skill(",skill,") data(",data:ToString(),")")
 				--PrintDebug("params(",Ext.JsonStringify({...}),")")
 			end
 			status,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.USED, data)
@@ -156,7 +156,7 @@ function OnSkillCast(char, skill, ...)
 		local status,err = nil,nil
 		for callback in GetListeners(skill) do
 			if Ext.IsDeveloperMode() then
-				PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillCast] char(",char,") skill(",skill,") data(",data:ToString(),")")
+				--PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillCast] char(",char,") skill(",skill,") data(",data:ToString(),")")
 				--PrintDebug("params(",Ext.JsonStringify({...}),")")
 			end
 			status,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.CAST, data)
@@ -181,9 +181,9 @@ function OnSkillHit(source, skill, target, handle, damage)
 			local uuid = GetUUID(source)
 			---@type HitData
 			local data = Classes.HitData:Create(GetUUID(target), GetUUID(source), damage, handle, skill)
-			if Ext.IsDeveloperMode() then
-				PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillHit] source(",source,") skill(",skill,") data(",Ext.JsonStringify(data),")")
-			end
+			-- if Ext.IsDeveloperMode() then
+			-- 	PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillHit] source(",source,") skill(",skill,") data(",Ext.JsonStringify(data),")")
+			-- end
 			for i,callback in ipairs(listeners) do
 				local status,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.HIT, data)
 				if not status then

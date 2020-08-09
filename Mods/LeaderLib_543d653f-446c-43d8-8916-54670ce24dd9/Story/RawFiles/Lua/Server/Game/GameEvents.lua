@@ -1,15 +1,5 @@
-
-
-function OnInitialized()
+local function OnInitialized()
 	Vars.Initialized = true
-	if #Listeners.Initialized > 0 then
-		for i,callback in ipairs(Listeners.Initialized) do
-			local status,err = xpcall(callback, debug.traceback)
-			if not status then
-				Ext.PrintError("[LeaderLib:OnInitialized] Error calling function for 'Initialized':\n", err)
-			end
-		end
-	end
 
 	if Vars.PostLoadEnableLuaListeners then
 		print("**********************Enabling Lua listeners in Osiris*****************")
@@ -22,9 +12,60 @@ function OnInitialized()
 		Osi.LeaderLib_ActivateGoal("LeaderLib_19_TS_HitEvents")
 	end
 
-	SettingsManager.SyncAllSettings()
+	if #Listeners.Initialized > 0 then
+		for i,callback in ipairs(Listeners.Initialized) do
+			local status,err = xpcall(callback, debug.traceback)
+			if not status then
+				Ext.PrintError("[LeaderLib:OnInitialized] Error calling function for 'Initialized':\n", err)
+			end
+		end
+	end
 
-	IterateUsers("Iterators_LeaderLib_SetClientCharacter")
+	if Ext.GetGameState() == "Running" then
+		SettingsManager.SyncAllSettings()
+		IterateUsers("Iterators_LeaderLib_SetClientCharacter")
+	end
+end
+
+function OnInitialized_CheckGameState()
+	if Ext.GetGameState() == "Running" then
+		if not Vars.Initialized then
+			OnInitialized()
+		else
+			SettingsManager.SyncAllSettings()
+			IterateUsers("Iterators_LeaderLib_SetClientCharacter")
+		end
+	else
+		if Ext.IsDeveloperMode() then
+			Ext.PrintWarning("[LeaderLib:OnInitialized_CheckGameState] Game State:", Ext.GetGameState())
+		end
+		TimerCancel("Timers_LeaderLib_Initialized_CheckGameState")
+		TimerLaunch("Timers_LeaderLib_Initialized_CheckGameState", 500)
+	end
+end
+
+Ext.RegisterListener("GameStateChanged", function(from, to)
+	if Ext.IsDeveloperMode() then
+		Ext.Print(string.format("[LeaderLib:GameStateChanged] %s => %s", from, to))
+	end
+	if to == "Running" and Ext.OsirisIsCallable() then
+		if not Vars.Initialized then
+			OnInitialized()
+		else
+			SettingsManager.SyncAllSettings()
+			IterateUsers("Iterators_LeaderLib_SetClientCharacter")
+		end
+	end
+end)
+
+function OnLeaderLibInitialized()
+	if not Vars.Initialized then
+		if Ext.GetGameState() == "Running" then
+			OnInitialized()
+		else
+			OnInitialized_CheckGameState()
+		end
+	end
 end
 
 function OnLuaReset()

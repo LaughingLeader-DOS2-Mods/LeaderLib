@@ -90,11 +90,11 @@ local function OnStatusTooltip(character, status, tooltip)
 	end
 end
 
----@param character EsvCharacter
+---@param character EclCharacter
 ---@param skill EsvStatus
 ---@param tooltip TooltipData
 local function OnSkillTooltip(character, skill, tooltip)
-	UI.ClientCharacter = character.MyGuid
+	if character ~= nil then UI.ClientCharacter = character.MyGuid or character.NetID end
 	if Features.TooltipGrammarHelper then
 		local element = tooltip:GetElement("SkillDescription")
 		if element ~= nil then
@@ -124,7 +124,7 @@ end
 --- @param isFromItem boolean
 --- @param param string
 local function SkillGetDescriptionParam(skill, character, isFromItem, param1, param2)
-	UI.ClientCharacter = character.Character.MyGuid
+	if character.Character ~= nil then UI.ClientCharacter = character.Character.MyGuid or character.NetID end
 	if Features.ExtraDataSkillParamReplacement then
 		if param1 == "ExtraData" then
 			local value = Ext.ExtraData[param2]
@@ -214,14 +214,14 @@ Ext.RegisterListener("StatusGetDescriptionParam", StatusGetDescriptionParam)
 ---@param stat string
 ---@param tooltip TooltipData
 local function OnStatTooltip(character, stat, tooltip)
-	UI.ClientCharacter = character.MyGuid
+	if character ~= nil then UI.ClientCharacter = character.MyGuid or character.NetID end
 end
 
 local tooltipSwf = {
-"Public/Game/GUI/LSClasses.swf",
-"Public/Game/GUI/tooltip.swf",
-"Public/Game/GUI/tooltipHelper.swf",
-"Public/Game/GUI/tooltipHelper_kb.swf",
+	"Public/Game/GUI/LSClasses.swf",
+	"Public/Game/GUI/tooltip.swf",
+	"Public/Game/GUI/tooltipHelper.swf",
+	"Public/Game/GUI/tooltipHelper_kb.swf",
 }
 
 local function OnTooltipPositioned(ui, ...)

@@ -29,7 +29,7 @@ function GameHelpers.Item.CreateItemByStat(statName, level, rarity, skipLevelChe
     local stat = nil
     local statType = ""
     if type(statName) == "string" then
-        stat = Ext.GetStat(stat, level)
+        stat = Ext.GetStat(statName, level)
         statType = NRD_StatGetType(statName)
     else
         stat = statName

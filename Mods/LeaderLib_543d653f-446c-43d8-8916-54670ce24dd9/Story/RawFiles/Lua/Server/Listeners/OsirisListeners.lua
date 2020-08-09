@@ -21,8 +21,14 @@ end)
 
 Ext.RegisterOsirisListener("UserEvent", 2, "after", function(id, event)
 	if event == "Iterators_LeaderLib_UI_UnlockPartyInventory" then
-		local players = Ext.JsonStringify(Osi.DB_IsPlayer:Get(nil))
-		Ext.PostMessageToUser(id, "LeaderLib_UnlockCharacterInventory", players)
+		local playersDB = Osi.DB_IsPlayer:Get(nil)
+		if playersDB ~= nil and #playersDB > 0 then
+			local players = {}
+			for i,v in pairs(playersDB) do
+				table.insert(players, GetUUID(v[1]))
+			end
+			Ext.PostMessageToUser(id, "LeaderLib_UnlockCharacterInventory", Ext.JsonStringify(players))
+		end
 	elseif event == "Iterators_LeaderLib_SetClientCharacter" then
 		local uuid = GetCurrentCharacter(id) or CharacterGetHostCharacter()
 		Ext.PostMessageToUser(id, "LeaderLib_SetClientCharacter", uuid)

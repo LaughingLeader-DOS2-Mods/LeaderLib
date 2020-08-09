@@ -20,6 +20,7 @@ Vars = {
 	PostLoadEnableLuaListeners = false,
 	JustReset = false,
 }
+
 Main = {}
 ModRegistration = {}
 Register = {}

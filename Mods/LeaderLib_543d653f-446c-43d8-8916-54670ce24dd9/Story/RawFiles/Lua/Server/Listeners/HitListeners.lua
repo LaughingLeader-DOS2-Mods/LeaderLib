@@ -51,6 +51,7 @@ function OnHit(target, source, damage, handle)
 
 	if source ~= nil and Features.ApplyBonusWeaponStatuses == true and GameHelpers.HitWithWeapon(target, handle, nil, nil, source) then
 		for i,status in pairs(Ext.GetCharacter(source):GetStatuses()) do
+			local potion = nil
 			if type(status) == "string" then
 				potion = Ext.StatGetAttribute(status, "StatsId")
 			elseif status.StatusId ~= nil then

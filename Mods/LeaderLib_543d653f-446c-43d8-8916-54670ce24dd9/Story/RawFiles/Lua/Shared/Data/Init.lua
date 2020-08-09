@@ -384,3 +384,33 @@ function Data.AddPreset(group, id, data)
 	end
 	Data.Presets[group][id] = data
 end
+
+Data.EngineStatus = {
+	CLIMBING = true,
+	COMBAT = true,
+	DYING = true,
+	ENCUMBERED = true,
+	EXPLODE = true,
+	FLANKED = true,
+	HEALING = true,
+	HIT = true,
+	INSURFACE = true,
+	LEADERSHIP = true,
+	LYING = true,
+	MATERIAL = true,
+	POST_MAGIC_CONTROL = true,
+	POST_PHYS_CONTROL = true,
+	ROTATE = true,
+	SHACKLES_OF_PAIN_CASTER = true,
+	SITTING = true,
+	SMELLY = true,
+	SNEAKING = true,
+	SOURCE_MUTED = true,
+	SPIRIT = true,
+	SPIRIT_VISION = true,
+	SUMMONING = true,
+	TELEPORT_FALLING = true,
+	THROWN = true,
+	TUTORIAL_BED = true,
+	UNSHEATHED = true,
+}

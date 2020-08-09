@@ -611,10 +611,11 @@ DB_LeaderLib_EngineStatus("HEALING");
 DB_LeaderLib_EngineStatus("FLANKED");
 DB_LeaderLib_EngineStatus("INSURFACE");
 DB_LeaderLib_EngineStatus("LYING");
+DB_LeaderLib_EngineStatus("LEADERSHIP");
 DB_LeaderLib_EngineStatus("MATERIAL");
 DB_LeaderLib_EngineStatus("POST_MAGIC_CONTROL"); // HEAL type
 DB_LeaderLib_EngineStatus("POST_PHYS_CONTROL"); // HEAL type
-//DB_LeaderLib_EngineStatus("SHACKLES_OF_PAIN");
+//DB_LeaderLib_EngineStatus("SHACKLES_OF_PAIN"); // May want to have status events for this
 DB_LeaderLib_EngineStatus("SHACKLES_OF_PAIN_CASTER");
 DB_LeaderLib_EngineStatus("ROTATE");
 DB_LeaderLib_EngineStatus("SITTING");

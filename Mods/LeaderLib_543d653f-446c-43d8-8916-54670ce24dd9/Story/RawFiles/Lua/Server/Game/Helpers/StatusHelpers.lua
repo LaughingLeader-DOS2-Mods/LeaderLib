@@ -72,6 +72,9 @@ function GameHelpers.Status.IsDisabled(obj, checkForLoseControl)
 				if type(status) ~= "string" and status.StatusId ~= nil then
 					status = status.StatusId
 				end
+				if status == "CHARMED" then
+					return true
+				end
 				if Data.EngineStatus(status) ~= true and Ext.StatGetAttribute(status, "LoseControl") == "Yes" then
 					local handle = NRD_StatusGetHandle(obj, status)
 					local source = NRD_StatusGetGuidString(obj, handle, "StatusSource")

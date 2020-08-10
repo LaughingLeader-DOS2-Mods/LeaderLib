@@ -74,3 +74,24 @@ function GameHelpers.UI.ShowMessageBox(text, specificCharacters, boxType, title)
 		end
 	end
 end
+
+Ext.RegisterNetListener("LeaderLib_OnDelayTurnClicked", function(call, uuid, ...)
+	--print(call, uuid, "DB_LeaderLib_Combat_ActiveObject", Ext.JsonStringify(Osi.DB_LeaderLib_Combat_ActiveObject:Get(nil,nil)))
+	-- local charMatch = false
+	-- for i,v in pairs(Osi.DB_LeaderLib_Combat_ActiveObject:Get(nil,nil)) do
+	-- 	if GetUUID(v[2]) == uuid then
+	-- 		charMatch = true
+	-- 	end
+	-- end
+	-- if not charMatch then
+	-- 	return
+	-- end
+	if #Listeners.TurnDelayed > 0 then
+		for i,callback in ipairs(Listeners.TurnDelayed) do
+			local status,err = xpcall(callback, debug.traceback, uuid)
+			if not status then
+				Ext.PrintError("Error calling function for 'TurnDelayed':\n", err)
+			end
+		end
+	end
+end)

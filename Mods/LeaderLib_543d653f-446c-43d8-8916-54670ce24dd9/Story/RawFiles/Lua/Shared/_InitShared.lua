@@ -83,6 +83,7 @@ Listeners = {
 	OnHit = {},
 	LuaReset = {},
 	ModSettingsLoaded = {},
+	TurnDelayed = {},
 }
 
 SkillListeners = {}

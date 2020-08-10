@@ -215,6 +215,25 @@ local function RegisterListeners()
 		PrintDebug("[LeaderLib_CharacterSheet.lua:RegisterListeners] Failed to find Public/Game/GUI/characterSheet.swf")
 	end
 
+	-- local ui = Ext.GetBuiltinUI("Public/Game/GUI/statusConsole.swf")
+	-- if ui ~= nil then
+	-- 	---@param ui UIObject
+	-- 	Ext.RegisterUICall(ui, "GuardPressed", function(ui, call, ...)
+	-- 		print("GuardPressed", ui:GetTypeId(), Ext.JsonStringify({...}))
+	-- 	end)
+	-- end
+	-- When the delay turn button is clicked
+	Ext.RegisterUITypeCall(117, "GuardPressed", function(ui, call, ...)
+		Ext.PostMessageToServer("LeaderLib_OnDelayTurnClicked", UI.ClientCharacter)
+		if #Listeners.TurnDelayed > 0 then
+			for i,callback in ipairs(Listeners.TurnDelayed) do
+				local status,err = xpcall(callback, debug.traceback, UI.ClientCharacter)
+				if not status then
+					Ext.PrintError("Error calling function for 'TurnDelayed':\n", err)
+				end
+			end
+		end
+	end)
 	-- Listen to the hotbar for when the sheet opens
 	--[[ local hotbar = Ext.GetBuiltinUI("Public/Game/GUI/hotBar.swf")
 	if hotbar ~= nil then

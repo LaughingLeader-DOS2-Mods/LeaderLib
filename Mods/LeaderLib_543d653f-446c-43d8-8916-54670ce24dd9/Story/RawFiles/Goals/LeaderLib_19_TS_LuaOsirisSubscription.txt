@@ -57,6 +57,11 @@ IF
 CharacterBaseAbilityChanged(_Char, _Ability, _Old, _New)
 THEN
 DB_NOOP(1);
+
+IF
+NRD_OnStatusAttempt(_Target, _StatusId, _StatusHandle, _Instigator)
+THEN
+DB_NOOP(1);
 */
 
 EXITSECTION

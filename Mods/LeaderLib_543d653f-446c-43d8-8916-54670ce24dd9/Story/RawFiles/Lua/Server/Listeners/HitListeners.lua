@@ -53,18 +53,23 @@ function OnHit(target, source, damage, handle)
 
 	if source ~= nil and Features.ApplyBonusWeaponStatuses == true and GameHelpers.HitWithWeapon(target, handle, nil, nil, source) then
 		for i,status in pairs(Ext.GetCharacter(source):GetStatuses()) do
-			local potion = nil
-			if type(status) == "string" then
-				potion = Ext.StatGetAttribute(status, "StatsId")
-			elseif status.StatusId ~= nil then
-				potion = Ext.StatGetAttribute(status.StatusId, "StatsId")
+			if type(status) ~= "string" and status.StatusId ~= nil then
+				status = status.StatusId
 			end
-			if potion ~= nil and potion ~= "" then
-				local bonusWeapon = Ext.StatGetAttribute(potion, "BonusWeapon")
-				if bonusWeapon ~= nil and bonusWeapon ~= "" then
-					local extraProps = Ext.StatGetAttribute(bonusWeapon, "ExtraProperties")
-					if extraProps ~= nil then
-						GameHelpers.ApplyProperties(target, source, extraProps)
+			if not Data.EngineStatus[status] then
+				local potion = nil
+				if type(status) == "string" then
+					potion = Ext.StatGetAttribute(status, "StatsId")
+				elseif status.StatusId ~= nil then
+					potion = Ext.StatGetAttribute(status.StatusId, "StatsId")
+				end
+				if potion ~= nil and potion ~= "" then
+					local bonusWeapon = Ext.StatGetAttribute(potion, "BonusWeapon")
+					if bonusWeapon ~= nil and bonusWeapon ~= "" then
+						local extraProps = Ext.StatGetAttribute(bonusWeapon, "ExtraProperties")
+						if extraProps ~= nil then
+							GameHelpers.ApplyProperties(target, source, extraProps)
+						end
 					end
 				end
 			end

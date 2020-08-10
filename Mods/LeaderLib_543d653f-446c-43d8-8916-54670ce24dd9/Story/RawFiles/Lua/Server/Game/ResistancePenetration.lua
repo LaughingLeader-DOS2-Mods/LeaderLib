@@ -110,7 +110,11 @@ function Game.Math.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, 
 					end
 				end
 			end
-		end
+        end
+        
+        if attacker.Character:HasTag("LeaderLib_IgnoreUndeadPoisonResistance") and target.TALENT_Zombie then
+            resistancePenetration["Poison"] = 200
+        end
 	end
 
     ApplyDamageCharacterBonuses(target, attacker, damageList, resistancePenetration)

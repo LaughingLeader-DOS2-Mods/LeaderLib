@@ -11,16 +11,18 @@ end
 GameHelpers.UI.SetSlotEnabled = SetSlotEnabled
 
 function SetSkillEnabled(client, skill, enabled)
-	if type(enabled) == "string" then
-		enabled = enabled == "true" or enabled == "1"
-	end
-	local slots = GetSkillSlots(client, skill)
-	if #slots > 0 then
-		Ext.PostMessageToClient(client, "LeaderLib_Hotbar_SetSlotEnabled", MessageData:CreateFromTable("SetSlotEnabled", {
-			Slots = slots,
-			Enabled = enabled,
-			UUID = client
-		}):ToString())
+	if CharacterIsPlayer(client) == 1 then
+		if type(enabled) == "string" then
+			enabled = enabled == "true" or enabled == "1"
+		end
+		local slots = GetSkillSlots(client, skill)
+		if #slots > 0 then
+			Ext.PostMessageToClient(client, "LeaderLib_Hotbar_SetSlotEnabled", MessageData:CreateFromTable("SetSlotEnabled", {
+				Slots = slots,
+				Enabled = enabled,
+				UUID = client
+			}):ToString())
+		end
 	end
 end
 

@@ -231,6 +231,14 @@ function Debug_TraceOnHit(target,attacker,damage,handle)
 	PrintDebug("=======================")
 end
 
+-- Ext.RegisterOsirisListener("NRD_OnPrepareHit", 4, "after", function(target, attacker, damage, handle)
+-- 	Debug_TraceHitPrepare(target, attacker, damage, handle)
+-- end)
+
+-- Ext.RegisterOsirisListener("NRD_OnHit", 4, "after", function(target, attacker, damage, handle)
+-- 	Debug_TraceOnHit(target, attacker, damage, handle)
+-- end)
+
 function PrintModDB()
 	PrintDebug("[LeaderLib_Debug.lua:PrintDB] Printing database DB_LeaderLib_Mods_Registered.")
 	local values = Osi.DB_LeaderLib_Mods_Registered:Get(nil, nil, nil, nil, nil, nil, nil, nil)

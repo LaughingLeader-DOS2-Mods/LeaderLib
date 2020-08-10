@@ -197,7 +197,6 @@ end)
 -- !applystatus LLLICH_DOMINATED 145810cc-7e46-43e7-9fdf-ab9bb8ffcdc0 host 18.0 1
 -- !applystatus LLLICH_DOMINATED_BEAM_FX 145810cc-7e46-43e7-9fdf-ab9bb8ffcdc0 host -1.0 1
 Ext.RegisterConsoleCommand("statusapply", function(command,status,duration,force,target,source)
-	print(command,status,target,source,duration,force)
 	local host = CharacterGetHostCharacter()
 	if target == nil or target == "host" then
 		target = host
@@ -218,7 +217,7 @@ Ext.RegisterConsoleCommand("statusapply", function(command,status,duration,force
 	if status == nil then
 		status = "HASTED"
 	end
-	print(CharacterGetDisplayName(target))
+	print(command,status,target,source,duration,force)
 	ApplyStatus(target,status,duration,force,source)
 end)
 
@@ -478,3 +477,285 @@ end)
 -- function h()
 -- 	return CharacterGetHostCharacter()
 -- end
+
+local changedSkillAttributes = {}
+
+Ext.RegisterConsoleCommand("lleditskill", function(cmd, skill, attribute, value)
+	local stat = Ext.GetStat(skill)
+	if stat ~= nil then
+		local curVal = stat[attribute]
+		local attType = type(curVal)
+		if attType ~= nil then
+			if attType == "number" then
+				value = tonumber(value)
+				if math.floor(stat[attribute]) == stat[attribute] then
+					value = math.floor(value)
+				end
+				stat[attribute] = value
+			elseif attType == "string" then
+				stat[attribute] = value
+			elseif attType == "table" then
+				value = Ext.JsonParse(value)
+				if value ~= nil then
+					stat[attribute] = value
+				end
+			end
+			if changedSkillAttributes[skill] == nil then
+				changedSkillAttributes[skill] = {}
+			end
+			changedSkillAttributes[skill][attribute] = value
+			Ext.SyncStat(skill, false)
+			print("[lleditskill] Changed skill attribute",attribute, curVal, "=>", value)
+		end
+	end
+end)
+
+
+Ext.RegisterConsoleCommand("llprintskilledits", function(cmd, skill)
+	local changes = changedSkillAttributes[skill]
+	if changes ~= nil then
+		print("[llprintskilledits]", skill, Ext.JsonStringify(changedSkillAttributes))
+	end
+end)
+
+local skillAttributes = {
+["SkillType"] = "FixedString",
+["Level"] = "ConstantInt",
+["Ability"] = "SkillAbility",
+["Element"] = "SkillElement",
+["Requirement"] = "SkillRequirement",
+["Requirements"] = "Requirements",
+["DisplayName"] = "FixedString",
+["DisplayNameRef"] = "FixedString",
+["Description"] = "FixedString",
+["DescriptionRef"] = "FixedString",
+["StatsDescription"] = "FixedString",
+["StatsDescriptionRef"] = "FixedString",
+["StatsDescriptionParams"] = "FixedString",
+["Icon"] = "FixedString",
+["FXScale"] = "ConstantInt",
+["PrepareAnimationInit"] = "FixedString",
+["PrepareAnimationLoop"] = "FixedString",
+["PrepareEffect"] = "FixedString",
+["PrepareEffectBone"] = "FixedString",
+["CastAnimation"] = "FixedString",
+["CastTextEvent"] = "FixedString",
+["CastAnimationCheck"] = "CastCheckType",
+["CastEffect"] = "FixedString",
+["CastEffectTextEvent"] = "FixedString",
+["TargetCastEffect"] = "FixedString",
+["TargetHitEffect"] = "FixedString",
+["TargetEffect"] = "FixedString",
+["SourceTargetEffect"] = "FixedString",
+["TargetTargetEffect"] = "FixedString",
+["LandingEffect"] = "FixedString",
+["ImpactEffect"] = "FixedString",
+["MaleImpactEffects"] = "FixedString",
+["FemaleImpactEffects"] = "FixedString",
+["OnHitEffect"] = "FixedString",
+["SelectedCharacterEffect"] = "FixedString",
+["SelectedObjectEffect"] = "FixedString",
+["SelectedPositionEffect"] = "FixedString",
+["DisappearEffect"] = "FixedString",
+["ReappearEffect"] = "FixedString",
+["ReappearEffectTextEvent"] = "FixedString",
+["RainEffect"] = "FixedString",
+["StormEffect"] = "FixedString",
+["FlyEffect"] = "FixedString",
+["SpatterEffect"] = "FixedString",
+["ShieldMaterial"] = "FixedString",
+["ShieldEffect"] = "FixedString",
+["ContinueEffect"] = "FixedString",
+["SkillEffect"] = "FixedString",
+["Template"] = "FixedString",
+["TemplateCheck"] = "CastCheckType",
+["TemplateOverride"] = "FixedString",
+["TemplateAdvanced"] = "FixedString",
+["Totem"] = "YesNo",
+["Template1"] = "FixedString",
+["Template2"] = "FixedString",
+["Template3"] = "FixedString",
+["WeaponBones"] = "FixedString",
+["TeleportSelf"] = "YesNo",
+["CanTargetCharacters"] = "YesNo",
+["CanTargetItems"] = "YesNo",
+["CanTargetTerrain"] = "YesNo",
+["ForceTarget"] = "YesNo",
+["TargetProjectiles"] = "YesNo",
+["UseCharacterStats"] = "YesNo",
+["UseWeaponDamage"] = "YesNo",
+["UseWeaponProperties"] = "YesNo",
+["SingleSource"] = "YesNo",
+["ContinueOnKill"] = "YesNo",
+["Autocast"] = "YesNo",
+["AmountOfTargets"] = "ConstantInt",
+["AutoAim"] = "YesNo",
+["AddWeaponRange"] = "YesNo",
+["Memory Cost"] = "ConstantInt",
+["Magic Cost"] = "ConstantInt",
+["ActionPoints"] = "ConstantInt",
+["Cooldown"] = "ConstantInt",
+["CooldownReduction"] = "ConstantInt",
+["ChargeDuration"] = "ConstantInt",
+["CastDelay"] = "ConstantInt",
+["Offset"] = "ConstantInt",
+["Lifetime"] = "ConstantInt",
+["Duration"] = "Qualifier",
+["TargetRadius"] = "ConstantInt",
+["ExplodeRadius"] = "ConstantInt",
+["AreaRadius"] = "ConstantInt",
+["HitRadius"] = "ConstantInt",
+["RadiusMax"] = "ConstantInt",
+["Range"] = "ConstantInt",
+["MaxDistance"] = "ConstantInt",
+["Angle"] = "ConstantInt",
+["TravelSpeed"] = "ConstantInt",
+["Acceleration"] = "ConstantInt",
+["Height"] = "ConstantInt",
+["Damage"] = "DamageSourceType",
+["Damage Multiplier"] = "ConstantInt",
+["Damage Range"] = "ConstantInt",
+["DamageType"] = "Damage Type",
+["DamageMultiplier"] = "PreciseQualifier",
+["DeathType"] = "Death Type",
+["BonusDamage"] = "Qualifier",
+["Chance To Hit Multiplier"] = "ConstantInt",
+["HitPointsPercent"] = "ConstantInt",
+["MinHitsPerTurn"] = "ConstantInt",
+["MaxHitsPerTurn"] = "ConstantInt",
+["HitDelay"] = "ConstantInt",
+["MaxAttacks"] = "ConstantInt",
+["NextAttackChance"] = "ConstantInt",
+["NextAttackChanceDivider"] = "ConstantInt",
+["EndPosRadius"] = "ConstantInt",
+["JumpDelay"] = "ConstantInt",
+["TeleportDelay"] = "ConstantInt",
+["PointsMaxOffset"] = "ConstantInt",
+["RandomPoints"] = "ConstantInt",
+["ChanceToPierce"] = "ConstantInt",
+["MaxPierceCount"] = "ConstantInt",
+["MaxForkCount"] = "ConstantInt",
+["ForkLevels"] = "ConstantInt",
+["ForkChance"] = "ConstantInt",
+["HealAmount"] = "PreciseQualifier",
+["StatusClearChance"] = "ConstantInt",
+["SurfaceType"] = "Surface Type",
+["SurfaceLifetime"] = "ConstantInt",
+["SurfaceStatusChance"] = "ConstantInt",
+["SurfaceTileCollision"] = "SurfaceCollisionFlags",
+["SurfaceGrowInterval"] = "ConstantInt",
+["SurfaceGrowStep"] = "ConstantInt",
+["SurfaceRadius"] = "ConstantInt",
+["TotalSurfaceCells"] = "ConstantInt",
+["SurfaceMinSpawnRadius"] = "ConstantInt",
+["MinSurfaces"] = "ConstantInt",
+["MaxSurfaces"] = "ConstantInt",
+["MinSurfaceSize"] = "ConstantInt",
+["MaxSurfaceSize"] = "ConstantInt",
+["GrowSpeed"] = "ConstantInt",
+["GrowOnSurface"] = "SurfaceCollisionFlags",
+["GrowTimeout"] = "ConstantInt",
+["SkillBoost"] = "FixedString",
+["SkillAttributeFlags"] = "AttributeFlags",
+["SkillProperties"] = "Properties",
+["CleanseStatuses"] = "FixedString",
+["AoEConditions"] = "Conditions",
+["TargetConditions"] = "Conditions",
+["ForkingConditions"] = "Conditions",
+["CycleConditions"] = "Conditions",
+["ShockWaveDuration"] = "ConstantInt",
+["TeleportTextEvent"] = "FixedString",
+["SummonEffect"] = "FixedString",
+["ProjectileCount"] = "ConstantInt",
+["ProjectileDelay"] = "ConstantInt",
+["StrikeCount"] = "ConstantInt",
+["StrikeDelay"] = "ConstantInt",
+["PreviewStrikeHits"] = "YesNo",
+["SummonLevel"] = "ConstantInt",
+["Damage On Jump"] = "YesNo",
+["Damage On Landing"] = "YesNo",
+["StartTextEvent"] = "FixedString",
+["StopTextEvent"] = "FixedString",
+["Healing Multiplier"] = "ConstantInt",
+["Atmosphere"] = "AtmosphereType",
+["ConsequencesStartTime"] = "ConstantInt",
+["ConsequencesDuration"] = "ConstantInt",
+["HealthBarColor"] = "ConstantInt",
+["Skillbook"] = "FixedString",
+["PreviewImpactEffect"] = "FixedString",
+["IgnoreVisionBlock"] = "YesNo",
+["HealEffectId"] = "FixedString",
+["AddRangeFromAbility"] = "Ability",
+["DivideDamage"] = "YesNo",
+["OverrideMinAP"] = "YesNo",
+["OverrideSkillLevel"] = "YesNo",
+["Tier"] = "SkillTier",
+["GrenadeBone"] = "FixedString",
+["GrenadeProjectile"] = "FixedString",
+["GrenadePath"] = "FixedString",
+["MovingObject"] = "FixedString",
+["SpawnObject"] = "FixedString",
+["SpawnEffect"] = "FixedString",
+["SpawnFXOverridesImpactFX"] = "YesNo",
+["SpawnLifetime"] = "ConstantInt",
+["ProjectileTerrainOffset"] = "YesNo",
+["ProjectileType"] = "ProjectileType",
+["HitEffect"] = "FixedString",
+["PushDistance"] = "ConstantInt",
+["ForceMove"] = "YesNo",
+["Stealth"] = "YesNo",
+["Distribution"] = "ProjectileDistribution",
+["Shuffle"] = "YesNo",
+["PushPullEffect"] = "FixedString",
+["Stealth Damage Multiplier"] = "ConstantInt",
+["Distance Damage Multiplier"] = "ConstantInt",
+["BackStart"] = "ConstantInt",
+["FrontOffset"] = "ConstantInt",
+["TargetGroundEffect"] = "FixedString",
+["PositionEffect"] = "FixedString",
+["BeamEffect"] = "FixedString",
+["PreviewEffect"] = "FixedString",
+["CastSelfAnimation"] = "FixedString",
+["IgnoreCursed"] = "YesNo",
+["IsEnemySkill"] = "YesNo",
+["DomeEffect"] = "FixedString",
+["AuraSelf"] = "FixedString",
+["AuraAllies"] = "FixedString",
+["AuraEnemies"] = "FixedString",
+["AuraNeutrals"] = "FixedString",
+["AuraItems"] = "FixedString",
+["AIFlags"] = "AIFlags",
+["Shape"] = "FixedString",
+["Base"] = "ConstantInt",
+["AiCalculationSkillOverride"] = "FixedString",
+["TeleportSurface"] = "YesNo",
+["ProjectileSkills"] = "FixedString",
+["SummonCount"] = "ConstantInt",
+["LinkTeleports"] = "YesNo",
+["TeleportsUseCount"] = "ConstantInt",
+["HeightOffset"] = "ConstantInt",
+["ForGameMaster"] = "YesNo",
+["IsMelee"] = "YesNo",
+["MemorizationRequirements"] = "MemorizationRequirements",
+["IgnoreSilence"] = "YesNo",
+["IgnoreHeight"] = "YesNo",
+}
+
+Ext.RegisterConsoleCommand("llprintskill", function(cmd, skill, printEmpty)
+	local stat = Ext.GetStat(skill)
+	if stat ~= nil then
+		local skillProps = {}
+		for att,attType in pairs(skillAttributes) do
+			local val = stat[att]
+			if val ~= nil then
+				if printEmpty ~= nil then
+					skillProps[att] = val
+				elseif val ~= "" then
+					skillProps[att] = val
+				end
+			end
+		end
+		print("[llprintskill]")
+		print(Ext.JsonStringify(skillProps))
+	end
+end)

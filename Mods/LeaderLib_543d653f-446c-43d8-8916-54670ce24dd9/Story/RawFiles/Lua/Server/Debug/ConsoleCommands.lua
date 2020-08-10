@@ -160,7 +160,11 @@ Ext.RegisterConsoleCommand("printuuids", function(call, radiusVal)
 		radius = tonumber(radiusVal)
 	end
 	local host = CharacterGetHostCharacter()
-	CharacterLaunchIteratorAroundObject(host, radius, "Iterator_LeaderLib_Debug_Ext_PrintCharacter")
+	for i,v in pairs(Ext.GetCharacter(host):GetNearbyCharacters(radius)) do
+		Debug_Iterator_PrintCharacter(v)
+		NRD_CharacterSetPermanentBoostTalent(v, "AttackOfOpportunity", 1)
+		CharacterAddAttribute(v, "Dummy", 0)
+	end
 end)
 
 Ext.RegisterConsoleCommand("listenskill", function (call, skill)
@@ -470,3 +474,7 @@ Ext.RegisterConsoleCommand("llshoot", function(cmd, forceHit, source, target, sk
 	NRD_ProjectileSetGuidString("TargetPosition", target)
     NRD_ProjectileLaunch()
 end)
+
+-- function h()
+-- 	return CharacterGetHostCharacter()
+-- end

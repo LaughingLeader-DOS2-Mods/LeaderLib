@@ -3,6 +3,7 @@
 ---@type damage integer
 ---@type handle integer
 function OnPrepareHit(target, source, damage, handle)
+	--print(target,source,damage,handle,HasActiveStatus(source, "AOO"),HasActiveStatus(target, "AOO"))
 	if Ext.Version() < 50 then
 		if type(damage) == "string" then
 			damage = math.tointeger(tonumber(damage))
@@ -26,6 +27,7 @@ end
 ---@type damage integer
 ---@type handle integer
 function OnHit(target, source, damage, handle)
+	--print(target,source,damage,handle,HasActiveStatus(source, "AOO"),HasActiveStatus(target, "AOO"))
 	if Ext.Version() < 50 then
 		if type(damage) == "string" then
 			damage = math.tointeger(tonumber(damage))

@@ -10,3 +10,7 @@ Ext.Require("Shared/LocalizedText.lua")
 Ext.Require("Shared/SharedDebug.lua")
 Ext.Require("Shared/StatOverrides.lua")
 Ext.Require("Shared/FeaturesHandler.lua")
+
+-- if Ext.IsDeveloperMode() then
+-- 	Ext.Require("Shared/Debug/GameMathTracing.lua")
+-- end

@@ -1,3 +1,7 @@
+if GameHelpers.Damage == nil then
+	GameHelpers.Damage = {}
+end
+
 ---Reduce damage by a percentage (ex. 0.5)
 ---@param target string
 ---@param attacker string
@@ -155,3 +159,99 @@ end
 Ext.NewCall(RedirectDamage, "LeaderLib_Hit_RedirectDamage", "(GUIDSTRING)_Target, (GUIDSTRING)_Defender, (GUIDSTRING)_Attacker, (INTEGER64)_Handle, (REAL)_Percentage, (INTEGER)_IsHitHandle")
 
 GameHelpers.RedirectDamage = RedirectDamage
+
+local HitType = {
+    Melee = "Melee",
+    Magic = "Magic",
+    Ranged = "Ranged",
+    WeaponDamage = "WeaponDamage",
+    Surface = "Surface",
+    DoT = "DoT",
+    Reflected = "Reflected",
+}
+
+local SkillRequirement = {
+    MeleeWeapon = "MeleeWeapon",
+    RangedWeapon = "RangedWeapon",
+    StaffWeapon = "StaffWeapon",
+    DaggerWeapon = "DaggerWeapon",
+    ShieldWeapon = "ShieldWeapon",
+    RifleWeapon = "RifleWeapon",
+    ArrowWeapon = "ArrowWeapon",
+}
+
+---@param skill StatEntrySkillData
+---@return string
+local function GetSkillHitType(skill)
+    local hitType = HitType.Magic
+    if skill.UseWeaponDamage == "Yes" then
+        hitType = HitType.WeaponDamage
+    end
+    if skill.UseCharacterStats ~= "Yes" then
+        return hitType
+    end
+    if skill.Requirement == SkillRequirement.MeleeWeapon
+    or skill.Requirement == SkillRequirement.DaggerWeapon
+    or skill.Requirement == SkillRequirement.ShieldWeapon
+    --or skill.Requirement == SkillRequirement.StaffWeapon -- Not used? :(
+    then
+        return HitType.Melee
+    end
+    if skill.Requirement == SkillRequirement.RangedWeapon
+    or skill.Requirement == SkillRequirement.ArrowWeapon
+    or skill.Requirement == SkillRequirement.RifleWeapon then
+        return HitType.Ranged
+    end
+    return hitType
+end
+
+---@param skill string
+---@param attacker string|StatCharacter
+---@param target string|StatCharacter
+---@param handle integer
+---@param noRandomization boolean
+---@param forceCrit boolean
+---@param alwaysHit boolean
+function GameHelpers.Damage.CalculateSkillDamage(skill, attacker, target, handle, noRandomization, forceCrit, alwaysHit)
+    if type(attacker) == "string" then
+        attacker = Ext.GetCharacter(attacker).Stats
+    end
+    if type(target) == "string" then
+        target = Ext.GetCharacter(target).Stats
+    end
+
+    local skillData = GameHelpers.Ext.CreateSkillTable(skill)
+
+    local damageList, deathType = Game.Math.GetSkillDamage(skillData, attacker, 0, GameHelpers.Status.IsSneakingOrInvisible(attacker.MyGuid), {attacker.Position}, {target.Position}, attacker.Level, noRandomization or false)
+
+    local highGroundFlag = ""
+    if attacker.Character.WorldPos[1] > target.Character.WorldPos[1] then
+        highGroundFlag = "HighGround"
+    elseif attacker.Character.WorldPos[1] < target.Character.WorldPos[1] then
+        highGroundFlag = "LowGround"
+    end
+
+    ---@type HitRequest
+    local hit = {
+        Equipment = 0,
+        TotalDamageDone = 0,
+        DamageDealt = 0,
+        DeathType = deathType,
+        AttackDirection = 0,
+        ArmorAbsorption = 0,
+        LifeSteal = 0,
+        EffectFlags = 0,
+        HitWithWeapon = skillData.UseWeaponDamage == "Yes",
+        DamageList = damageList,
+    }
+
+    local hitType = GetSkillHitType(skill)
+    local criticalRoll = "Roll"
+    if forceCrit == true then
+        criticalRoll = "Critical"
+    elseif forceCrit == false then
+        criticalRoll = "NotCritical"
+    end
+
+    return Game.Math.ComputeCharacterHit(target, attacker, attacker.MainWeapon, damageList, hitType, alwaysHit or false, false, hit, skill.AlwaysBackstab, highGroundFlag, criticalRoll)
+end

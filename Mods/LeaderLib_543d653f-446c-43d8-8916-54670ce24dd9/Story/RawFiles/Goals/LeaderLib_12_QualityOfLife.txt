@@ -132,66 +132,24 @@ CharacterUsedSkill(_Player, "Shout_LeaderLib_UnchainAll", _, _)
 THEN
 LeaderLib_Helper_ClearActionQueue(_Player);
 
-/*
+/* [OSITOOLS_ONLY]
 IF
-SkillCast(_Player, "Shout_LeaderLib_ChainAll", _, _)
+CharacterUsedSkill(_Player, "Shout_LeaderLib_ChainAll", _, _)
+AND
+DB_GlobalFlag("LeaderLib_RemovePathInfluencesOnChainAll")
+AND
+CharacterGetHostCharacter(_Player)
 THEN
-LeaderLib_Timers_StartObjectTimer(_Player, 250, "Timers_LeaderLib_ChainAll_CheckState", "LeaderLib_ChainAll_CheckState");
+DB_LeaderLib_QOL_EnabledPathInfluence(_Player);
+NRD_ModCall("LeaderLib", "ModifyPathInfluenceForAllPlayers");
 
 IF
-StoryEvent((CHARACTERGUID)_Player, "LeaderLib_ChainAll_CheckState")
+CharacterUsedSkill(_Player, "Shout_LeaderLib_UnchainAll", _, _)
+AND
+DB_LeaderLib_QOL_EnabledPathInfluence(_ActivatingPlayer)
 THEN
-LeaderLib_Timers_CancelObjectTimer(_Player, "Timers_LeaderLib_LifeHacks_ClearChainChanged");
-
-IF
-StoryEvent((CHARACTERGUID)_Player, "LeaderLib_ChainAll_CheckState")
-AND
-NOT DB_LeaderLib_LifeHacks_ChainChanged(_Player, _)
-AND
-CharacterGetReservedUserID(_Player, _UserID)
-AND
-LeaderLib_LifeHacks_QRY_AllChained(_Player, _UserID)
-THEN
-LeaderLib_LifeHacks_ChainToggle(_Player, _UserID, 0);
-
-IF
-StoryEvent((CHARACTERGUID)_Player, "LeaderLib_ChainAll_CheckState")
-AND
-DB_LeaderLib_LifeHacks_ChainChanged(_Player, _State)
-THEN
-NOT DB_LeaderLib_LifeHacks_ChainChanged(_Player, _State);
-
-IF
-SkillCast(_Player, "Shout_LeaderLib_ChainAll", _, _)
-THEN
-LeaderLib_Timers_StartObjectTimer(_Player, 250, "Timers_LeaderLib_UnchainAll_CheckState", "LeaderLib_UnchainAll_CheckState");
-
-IF
-StoryEvent((CHARACTERGUID)_Player, "LeaderLib_UnchainAll_CheckState")
-THEN
-LeaderLib_Timers_CancelObjectTimer(_Player, "Timers_LeaderLib_LifeHacks_ClearChainChanged");
-
-IF
-StoryEvent((CHARACTERGUID)_Player, "LeaderLib_UnchainAll_CheckState")
-AND
-NOT DB_LeaderLib_LifeHacks_ChainChanged(_Player, _)
-AND
-GetVarInteger(_Player, "LeaderLib_PartyCount", _Count)
-AND
-_Count > 1
-AND
-CharacterGetReservedUserID(_Player, _UserID)
-AND
-NOT LeaderLib_LifeHacks_QRY_AllChained(_Player, _UserID)
-THEN
-LeaderLib_LifeHacks_ChainToggle(_Player, _UserID, 1);
-
-IF
-StoryEvent((CHARACTERGUID)_Player, "LeaderLib_UnchainAll_CheckState")
-AND
-DB_LeaderLib_LifeHacks_ChainChanged(_Player, _State)
-THEN
-NOT DB_LeaderLib_LifeHacks_ChainChanged(_Player, _State);
+NOT DB_LeaderLib_QOL_EnabledPathInfluence(_ActivatingPlayer);
+NRD_ModCall("LeaderLib", "ModifyPathInfluenceForAllPlayers", "true");
 */
 //END_REGION
 EXITSECTION

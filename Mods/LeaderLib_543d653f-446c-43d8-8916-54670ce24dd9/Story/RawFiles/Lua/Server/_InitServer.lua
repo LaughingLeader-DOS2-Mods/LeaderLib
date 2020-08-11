@@ -18,6 +18,7 @@ Ext.Require("Server/Settings/SettingsManager.lua")
 Ext.Require("Server/Timers.lua")
 Ext.Require("Server/OsirisHelpers.lua")
 Ext.Require("Server/Versioning.lua")
+Ext.Require("Server/QualityOfLife.lua")
 Ext.Require("Server/Debug/DebugMain.lua")
 Ext.Require("Server/Debug/ConsoleCommands.lua")
 

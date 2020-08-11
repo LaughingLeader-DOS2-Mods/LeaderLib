@@ -146,9 +146,9 @@ NRD_ModCall("LeaderLib", "ModifyPathInfluenceForAllPlayers");
 IF
 CharacterUsedSkill(_Player, "Shout_LeaderLib_UnchainAll", _, _)
 AND
-DB_LeaderLib_QOL_EnabledPathInfluence(_ActivatingPlayer)
+DB_LeaderLib_QOL_EnabledPathInfluence(_)
 THEN
-NOT DB_LeaderLib_QOL_EnabledPathInfluence(_ActivatingPlayer);
+SysClear("DB_LeaderLib_QOL_EnabledPathInfluence", 1);
 NRD_ModCall("LeaderLib", "ModifyPathInfluenceForAllPlayers", "true");
 */
 //END_REGION

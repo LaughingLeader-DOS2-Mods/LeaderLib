@@ -62,6 +62,10 @@ function ModifyPathInfluenceForAllPlayers(revert)
 			end
 		end
 	end
+	local players = Osi.DB_IsPlayer:Get(nil) or {}
+	for i,v in pairs(players) do
+		ModifyPathInfluenceForPlayer(v[1], revert)
+	end
 end
 
 function ModifyPathInfluenceForPlayer(uuid, revert)

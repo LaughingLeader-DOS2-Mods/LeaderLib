@@ -174,7 +174,7 @@ end
 ---@param flag string
 function GlobalSettings_StoreGlobalFlag(uuid, flag)
 	if flag ~= nil then
-		local mod_settings = SettingsManager.GetMod(uuid)
+		local mod_settings = SettingsManager.GetMod(uuid, true)
 		if mod_settings ~= nil then
 			mod_settings.Global:AddFlag(flag)
 		end
@@ -185,7 +185,7 @@ end
 ---@param varname string
 ---@param defaultvalue string
 function GlobalSettings_StoreGlobalInteger(uuid, varname, defaultvalue)
-	local mod_settings = SettingsManager.GetMod(uuid)
+	local mod_settings = SettingsManager.GetMod(uuid, true)
 	if mod_settings ~= nil then
 		mod_settings.Global:AddVariable(varname, math.tointeger(tonumber(defaultvalue)), "integer")
 	end
@@ -208,7 +208,7 @@ end
 
 ---@param uuid string
 function GlobalSettings_GetAndStoreModVersion(uuid)
-	local mod_settings = SettingsManager.GetMod(uuid)
+	local mod_settings = SettingsManager.GetMod(uuid, true)
 	if mod_settings ~= nil then
 		local modinfo = Ext.GetModInfo(uuid)
 		if modinfo ~= nil then
@@ -220,7 +220,7 @@ end
 ---@param uuid string
 ---@param version string
 function GlobalSettings_StoreModVersion(uuid, version)
-	local mod_settings = SettingsManager.GetMod(uuid)
+	local mod_settings = SettingsManager.GetMod(uuid, true)
 	if mod_settings ~= nil then
 		mod_settings.Version = math.tointeger(version)
 	end

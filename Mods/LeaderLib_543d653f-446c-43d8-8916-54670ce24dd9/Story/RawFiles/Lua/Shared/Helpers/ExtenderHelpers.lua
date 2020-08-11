@@ -494,20 +494,22 @@ local skillAttributes = {
 	"DamageType",
 	"DeathType",
 	"Distance Damage Multiplier",
-	--"IsEnemySkill",
-	--"IsMelee",
+	"IsEnemySkill",
+	"IsMelee",
 	"Level",
+	"Requirement",
 	--"Magic Cost",
 	--"Memory Cost",
-	--"OverrideMinAP",
+	"OverrideMinAP",
 	"OverrideSkillLevel",
 	--"Range",
-	--"SkillType",
+	"SkillType",
 	"Stealth Damage Multiplier",
 	--"Tier",
 	"UseCharacterStats",
 	"UseWeaponDamage",
 	"UseWeaponProperties",
+	"SkillProperties",
 }
 
 ---@param skillName string
@@ -516,7 +518,8 @@ local skillAttributes = {
 function GameHelpers.Ext.CreateSkillTable(skillName, useWeaponDamage)
 	if skillName ~= nil and skillName ~= "" then
 		local hasValidEntry = false
-		local skill = {Name = skillName}
+		---@type StatEntrySkillData
+		local skill = {Name = skillName, AlwaysBackstab = false}
 		for i,v in pairs(skillAttributes) do
 			local val = Ext.StatGetAttribute(skillName, v)
 			if val ~= nil then
@@ -529,7 +532,13 @@ function GameHelpers.Ext.CreateSkillTable(skillName, useWeaponDamage)
 			return nil
 		end
 		if useWeaponDamage == true then skill["UseWeaponDamage"] = "Yes" end
-		--Ext.Print(Ext.JsonStringify(skill))
+		if skill.SkillProperties ~= nil then
+			for _,tbl in pairs(skill.SkillProperties) do
+				if tbl.Action == "AlwaysBackstab" then
+					skill.AlwaysBackstab = true
+				end
+			end
+		end
 		return skill
 	end
 	return nil

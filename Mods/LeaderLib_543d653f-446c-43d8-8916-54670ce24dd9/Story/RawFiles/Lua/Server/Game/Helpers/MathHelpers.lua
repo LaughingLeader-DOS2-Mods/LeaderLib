@@ -1,6 +1,13 @@
-function GameHelpers.Math.GetForwardPosition(source, distanceMult)
-    local x,y,z = GetPosition(source)
-    local character = Ext.GetCharacter(source)
+if GameHelpers.Math == nil then
+	GameHelpers.Math = {}
+end
+
+---Get a position derived from a character's forward facing direction.
+---@param source string
+---@param distanceMult number
+function GameHelpers.Math.GetForwardPosition(char, distanceMult)
+    local x,y,z = GetPosition(char)
+    local character = Ext.GetCharacter(char)
     if character ~= nil then
         if distanceMult == nil then
             distanceMult = 1.0
@@ -17,7 +24,12 @@ function GameHelpers.Math.GetForwardPosition(source, distanceMult)
 end
 
 function GameHelpers.Math.ExtendPositionWithForwardDirection(source, distanceMult, x,y,z)
-    local character = Ext.GetCharacter(source)
+    local character = nil
+    if type(source) == "string" then
+        character = Ext.GetCharacter(source)
+    else
+        character = source
+    end
     if character ~= nil then
         if distanceMult == nil then
             distanceMult = 1.0
@@ -68,4 +80,28 @@ function GameHelpers.Math.SetRotation(uuid, rotx, rotz, turnTo)
 
 		ItemToTransform(uuid, x, y, z, pitch, 0.0, roll, amount, owner)
 	end
+end
+
+---Get the distance between two Vector3 points.
+---@param pos1 number[]|string
+---@param pos2 number[]|string
+function GameHelpers.Math.GetDistance(pos1, pos2)
+    local x,y,z = 0,0,0
+    local tx,ty,tz = 0,0,0
+    if type(pos1) == "table" then
+        x,y,z = table.unpack(pos1)
+    elseif type(pos2) == "string" then
+        x,y,z = GetPosition(pos1)
+    end
+    if type(pos2) == "table" then
+        tx,ty,tz = table.unpack(pos2)
+    elseif type(pos2) == "string" then
+        tx,ty,tz = GetPosition(pos2)
+    end
+    local diff = {
+        x - tx,
+        y - ty,
+        z - tz
+    }
+    return math.sqrt((diff[1]^2) + (diff[2]^2) + (diff[3]^2))
 end

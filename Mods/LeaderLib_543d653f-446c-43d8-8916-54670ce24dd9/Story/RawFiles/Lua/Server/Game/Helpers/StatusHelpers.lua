@@ -1,3 +1,7 @@
+if GameHelpers.Status == nil then
+	GameHelpers.Status = {}
+end
+
 ---Returns true if the object is sneaking or has an INVISIBLE type status.
 ---@param obj string
 ---@return boolean

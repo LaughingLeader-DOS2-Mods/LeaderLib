@@ -1,3 +1,5 @@
+GameHelpers.Item = {}
+
 ---Clone an item for a character.
 ---@param char string
 ---@param item string

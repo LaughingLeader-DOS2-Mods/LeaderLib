@@ -1,3 +1,7 @@
+if GameHelpers.UI == nil then
+	GameHelpers.UI = {}
+end
+
 local MessageData = Classes.MessageData
 
 function SetSlotEnabled(client, slot, enabled)

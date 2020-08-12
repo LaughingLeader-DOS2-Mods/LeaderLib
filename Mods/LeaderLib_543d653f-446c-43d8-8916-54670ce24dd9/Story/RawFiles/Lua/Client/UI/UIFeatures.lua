@@ -139,10 +139,6 @@ local function DisplayTalents_CC(ui, call, ...)
 					local talentId = Data.TalentEnum[talentEnumName]
 					if not IsInArray(ui, "racialTalentArray", talentId, 0, 2) then
 						talent_mc.addTalentElement(talentId, text.Value, true, false, true)
-						--print("Added talent to array", talent, player.Stats[talent], talentEnumName, talentId, text.Value)
-						--ui:SetValue("racialTalentArray", talentId, i)
-						--ui:SetValue("racialTalentArray", text.Value, i+1)
-						--i = i + 3
 					end
 				end
 			end

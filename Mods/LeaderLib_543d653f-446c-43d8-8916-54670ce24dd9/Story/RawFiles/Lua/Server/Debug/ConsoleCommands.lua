@@ -194,8 +194,9 @@ Ext.RegisterConsoleCommand("movie", function(command,movie)
 	MoviePlay(host,movie)
 end)
 
--- !applystatus LLLICH_DOMINATED 145810cc-7e46-43e7-9fdf-ab9bb8ffcdc0 host 18.0 1
--- !applystatus LLLICH_DOMINATED_BEAM_FX 145810cc-7e46-43e7-9fdf-ab9bb8ffcdc0 host -1.0 1
+-- !statusapply LLLICH_DOMINATED 18.0 1 145810cc-7e46-43e7-9fdf-ab9bb8ffcdc0 host
+-- !statusapply LLLICH_DOMINATED_BEAM_FX 0.0 1 145810cc-7e46-43e7-9fdf-ab9bb8ffcdc0 host
+-- !statusapply TAUNTED 12.0 1 319_31dc549d-dfc0-4558-821a-5e3d468e5b1a host
 Ext.RegisterConsoleCommand("statusapply", function(command,status,duration,force,target,source)
 	local host = CharacterGetHostCharacter()
 	if target == nil or target == "host" then

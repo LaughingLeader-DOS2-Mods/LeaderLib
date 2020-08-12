@@ -199,7 +199,7 @@ local function ComputeCharacterHit(target, attacker, weapon, damageList, hitType
         end
 
         local backstabbed = false
-        if alwaysBackstab or (weapon ~= nil and (weapon.WeaponType == "Knife" or attacker.TALENT_Backstab) and Game.Math.CanBackstab(target, attacker)) then
+        if alwaysBackstab or (weapon ~= nil and (weapon.WeaponType == "Knife" or CanBackstab(attacker, weapon)) and Game.Math.CanBackstab(target, attacker)) then
             hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.Backstab
             backstabbed = true
         end

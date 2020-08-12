@@ -6,7 +6,7 @@ local DefaultSettings = {
 	EnableDeveloperTests = false,
 	BackstabSettings = {
 		Player = {
-			Enabled = false,
+			Enabled = true,
 			TalentRequired = true,
 			MeleeOnly = true
 		},

@@ -2,8 +2,20 @@
 local DefaultSettings = {
 	StarterTierSkillOverrides = false,
 	MaxAP = -1,
-	MaxAPGroup = "Player", -- All, NPC
+	MaxAPGroup = "Player", -- All|Player|NPC
 	EnableDeveloperTests = false,
+	BackstabSettings = {
+		Player = {
+			Enabled = false,
+			TalentRequired = true,
+			MeleeOnly = true
+		},
+		NPC = {
+			Enabled = true,
+			TalentRequired = true,
+			MeleeOnly = true
+		}
+	},
 }
 
 ---@class LeaderLibGameSettings

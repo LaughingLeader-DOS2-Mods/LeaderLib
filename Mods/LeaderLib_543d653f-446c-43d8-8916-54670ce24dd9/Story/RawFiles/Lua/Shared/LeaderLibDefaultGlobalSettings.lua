@@ -17,7 +17,9 @@ settings.Global:AddFlags({
 	"LeaderLib_UnhealableFix_Enabled",
 	"LeaderLog_CombatLog_Disabled",
 	"LeaderLog_Debug_Enabled",
-	"LeaderLog_Status_Disabled",
+	"LeaderLog_Status_Disabled"
 })
 settings.Global:AddVariable("AutosaveInterval", 15)
 table.insert(GlobalSettings.Mods, settings)
+
+LeaderLibGlobalSettings = settings

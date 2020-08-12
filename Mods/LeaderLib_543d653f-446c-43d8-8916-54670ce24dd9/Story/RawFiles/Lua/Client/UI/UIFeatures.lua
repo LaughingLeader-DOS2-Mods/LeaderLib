@@ -40,6 +40,8 @@ local TALENTS_RACIAL = {
 	TALENT_Zombie = Classes.TranslatedString:Create("hffa022a2g03b0g46f7g8ee6gcb8e5811a4d3", "Undead"),
 }
 
+local TALENT_Backstab = Classes.TranslatedString:Create("h9836a401g63f6g49c3g8fa0g9564cbad7628", "Assassin")
+
 local function GetArrayIndexStart(ui, arrayName, offset)
 	local i = 0
 	while i < 9999 do
@@ -71,28 +73,93 @@ local function IsInArray(ui, arrayName, id, start, offset)
 end
 
 ---@param ui UIObject
-local function DisplayRacialTalents(ui, call, ...)
+local function DisplayTalents(ui, call, ...)
 	---@type EsvCharacter
 	local player = nil
 	local handle = ui:GetPlayerHandle()
 	if handle ~= nil then
 		player = Ext.GetCharacter(handle)
+	else
+		player = Ext.GetCharacter(UI.ClientCharacter)
 	end
 	if player ~= nil then
 		local i = GetArrayIndexStart(ui, "talent_array", 3)
-		for talent,text in pairs(TALENTS_RACIAL) do
-			if player.Stats[talent] == true then
-				local talentEnumName = string.gsub(talent, "TALENT_", "")
-				local talentId = Data.TalentEnum[talentEnumName]
-				if not IsInArray(ui, "talent_array", talentId, 1, 3) then
-					--UI.PrintArray(ui, "talent_array")
-					--print("Added talent to array", talent, player.Stats[talent], talentEnumName, talentId, text.Value)
-					ui:SetValue("talent_array", text.Value, i)
-					ui:SetValue("talent_array", talentId, i+1)
-					ui:SetValue("talent_array", 0, i+2)
-					i = i + 3
+		if Features.RacialTalentsDisplayFix then
+			for talent,text in pairs(TALENTS_RACIAL) do
+				if player.Stats[talent] == true then
+					local talentEnumName = string.gsub(talent, "TALENT_", "")
+					local talentId = Data.TalentEnum[talentEnumName]
+					if not IsInArray(ui, "talent_array", talentId, 1, 3) then
+						--UI.PrintArray(ui, "talent_array")
+						--print("Added talent to array", talent, player.Stats[talent], talentEnumName, talentId, text.Value)
+						ui:SetValue("talent_array", text.Value, i)
+						ui:SetValue("talent_array", talentId, i+1)
+						ui:SetValue("talent_array", 0, i+2)
+						i = i + 3
+					end
 				end
 			end
+		end
+		if Features.BackstabCalculation == true then
+			local talentEnumName = "Backstab"
+			local talentId = Data.TalentEnum[talentEnumName]
+			if not IsInArray(ui, "talent_array", talentId, 1, 3) then
+				ui:SetValue("talent_array", TALENT_Backstab.Value, i)
+				ui:SetValue("talent_array", talentId, i+1)
+				if player.Stats.TALENT_Backstab then
+					ui:SetValue("talent_array", 0, i+2)
+				else
+					ui:SetValue("talent_array", 2, i+2)
+				end
+			end
+		end
+	end
+end
+
+-- addTalentElement(talentId:uint, talentName:String, state:Boolean, choosable:Boolean, isRacial:Boolean) : *
+
+---@param ui UIObject
+local function DisplayTalents_CC(ui, call, ...)
+	---@type EsvCharacter
+	local player = nil
+	local handle = ui:GetPlayerHandle()
+	if handle ~= nil then
+		player = Ext.GetCharacter(handle)
+	else
+		player = Ext.GetCharacter(UI.ClientCharacter)
+	end
+	if player ~= nil then
+		local root = ui:GetRoot()
+		local talent_mc = root.CCPanel_mc.talents_mc
+		if Features.RacialTalentsDisplayFix then
+			--local i = GetArrayIndexStart(ui, "racialTalentArray", 2)
+			for talent,text in pairs(TALENTS_RACIAL) do
+				if player.Stats[talent] == true then
+					local talentEnumName = string.gsub(talent, "TALENT_", "")
+					local talentId = Data.TalentEnum[talentEnumName]
+					if not IsInArray(ui, "racialTalentArray", talentId, 0, 2) then
+						talent_mc.addTalentElement(talentId, text.Value, true, false, true)
+						--print("Added talent to array", talent, player.Stats[talent], talentEnumName, talentId, text.Value)
+						--ui:SetValue("racialTalentArray", talentId, i)
+						--ui:SetValue("racialTalentArray", text.Value, i+1)
+						--i = i + 3
+					end
+				end
+			end
+		end
+		if Features.BackstabCalculation == true then
+			if not IsInArray(ui, "talentArray", Data.TalentEnum.Backstab, 1, 4) then
+				talent_mc.addTalentElement(Data.TalentEnum.Backstab, TALENT_Backstab.Value, player.Stats.TALENT_Backstab, true, false)
+			end
+			-- local i = GetArrayIndexStart(ui, "talentArray", 4)
+			-- local talentId = Data.TalentEnum["Backstab"]
+			-- if not IsInArray(ui, "talentArray", talentId, 1, 4) then
+			-- 	ui:SetValue("talentArray", talentId, i)
+			-- 	ui:SetValue("talentArray", TALENT_Backstab.Value, i+1)
+			-- 	ui:SetValue("talentArray", player.Stats.TALENT_Backstab, i+2)
+			-- 	ui:SetValue("talentArray", true, i+3)
+			-- end
+			-- UI.PrintArray(ui, "talentArray")
 		end
 	end
 end
@@ -150,8 +217,15 @@ Ext.RegisterListener("SessionLoaded", function()
 		---@param ui UIObject
 		Ext.RegisterUIInvokeListener(ui, "updateArraySystem", function(...)
 			if Features.RacialTalentsDisplayFix then
-				DisplayRacialTalents(...)
+				DisplayTalents(...)
 			end
 		end)
 	end
+
+	--characterCreation.swf
+	Ext.RegisterUITypeInvokeListener(3, "updateTalents", function(...)
+		if Features.RacialTalentsDisplayFix then
+			DisplayTalents_CC(...)
+		end
+	end)
 end)

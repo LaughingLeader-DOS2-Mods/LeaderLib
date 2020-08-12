@@ -132,16 +132,18 @@ if Ext.IsDeveloperMode() then
 end
 
 function LoadGameSettings()
-	local b,result = pcall(function(settings)
+	local b,result = xpcall(function(settings)
 		if settings == nil then
 			settings = Classes.LeaderLibGameSettings:Create()
 		end
 		local tblString = Ext.LoadFile("LeaderLib_GameSettings.json")
 		if tblString ~= nil then
 			settings = settings:LoadString(tblString)
+			return settings
+		else
+			error("Failed to load LeaderLib_GameSettings.json. Does it exist?")
 		end
-		return settings
-	end)
+	end, debug.traceback)
 	if b then
 		GameSettings = result
 
@@ -155,6 +157,7 @@ function LoadGameSettings()
 			EnableFeature("BackstabCalculation")
 		end
 	else
+		Ext.PrintError("[LeaderLib:LoadGameSettings]", result)
 		GameSettings = Classes.LeaderLibGameSettings:Create()
 		SaveGameSettings()
 	end

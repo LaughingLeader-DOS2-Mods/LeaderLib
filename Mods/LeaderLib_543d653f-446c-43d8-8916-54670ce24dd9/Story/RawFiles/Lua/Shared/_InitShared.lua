@@ -117,16 +117,17 @@ Features = {
 	HideArmor = 0,
 	HideMagicArmor = 0,
 	HideVitality = 0,
-	RacialTalentsDisplayFix = false,
+	RacialTalentsDisplayFix = true,
 	ExtraDataSkillParamReplacement = false,
 	TooltipGrammarHelper = false,
 	StatusParamSkillDamage = false,
+	BackstabCalculation = false,
 }
 
 if Ext.IsDeveloperMode() then
-	Features.HideArmor = 2
-	Features.HideMagicArmor = 2
-	Features.HideVitality = 2
+	-- Features.HideArmor = 2
+	-- Features.HideMagicArmor = 2
+	-- Features.HideVitality = 2
 	Features.RacialTalentsDisplayFix = true
 end
 

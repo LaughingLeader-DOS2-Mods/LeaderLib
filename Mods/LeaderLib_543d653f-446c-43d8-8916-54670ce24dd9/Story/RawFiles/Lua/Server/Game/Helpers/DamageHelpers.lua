@@ -255,3 +255,17 @@ function GameHelpers.Damage.CalculateSkillDamage(skill, attacker, target, handle
 
     return Game.Math.ComputeCharacterHit(target, attacker, attacker.MainWeapon, damageList, hitType, alwaysHit or false, false, hit, skill.AlwaysBackstab, highGroundFlag, criticalRoll)
 end
+
+---Applies hit request flags to a hit status.
+---@param hit HitRequest
+---@param target string|StatCharacter
+---@param handle integer
+function GameHelpers.Damage.ApplyHitEffectFlags(hit, target, handle)
+    for flag,num in pairs(Game.Math.HitFlag) do
+        if hit.EffectFlags & num ~= 0 then
+            NRD_StatusSetInt(target, handle, flag, 1)
+        else
+            NRD_StatusSetInt(target, handle, flag, 0)
+        end
+    end
+end

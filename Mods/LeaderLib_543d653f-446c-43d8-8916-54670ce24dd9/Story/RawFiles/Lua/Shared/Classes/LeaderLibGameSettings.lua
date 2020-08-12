@@ -24,7 +24,6 @@ local DefaultSettings = {
 
 ---@class LeaderLibGameSettings
 local LeaderLibGameSettings = {
-	Version = -1,
 	---@type LeaderLibDefaultSettings
 	Settings = DefaultSettings,
 	Default = DefaultSettings

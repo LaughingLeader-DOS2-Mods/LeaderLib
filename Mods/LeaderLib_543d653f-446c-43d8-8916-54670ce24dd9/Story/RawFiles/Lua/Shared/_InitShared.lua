@@ -144,9 +144,13 @@ function LoadGameSettings()
 	end)
 	if b then
 		GameSettings = result
-		if GameSettings.Settings.Version < GameSettings.Default.Version then
-			SaveGameSettings()
+
+		if GameSettings.Settings ~= nil and GameSettings.Settings.Version ~= nil then
+			if GameSettings.Settings.Version < GameSettings.Default.Version then
+				SaveGameSettings()
+			end
 		end
+		
 		if GameSettings.Settings.BackstabSettings.Player.Enabled or GameSettings.Settings.BackstabSettings.NPC.Enabled then
 			EnableFeature("BackstabCalculation")
 		end

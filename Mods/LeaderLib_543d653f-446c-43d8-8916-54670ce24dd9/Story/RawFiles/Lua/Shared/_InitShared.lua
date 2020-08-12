@@ -144,7 +144,7 @@ function LoadGameSettings()
 	end)
 	if b then
 		GameSettings = result
-		if GameSettings.Version < GameSettings.Default.Version then
+		if GameSettings.Settings.Version < GameSettings.Default.Version then
 			SaveGameSettings()
 		end
 		if GameSettings.Settings.BackstabSettings.Player.Enabled or GameSettings.Settings.BackstabSettings.NPC.Enabled then

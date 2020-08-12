@@ -41,7 +41,6 @@ end
 function LeaderLibGameSettings:Create()
     local this =
     {
-		Version = Ext.GetModInfo("7e737d2f-31d2-4751-963f-be6ccc59cd0c").Version,
 		Settings = DefaultSettings
 	}
 	setmetatable(this, self)
@@ -108,7 +107,7 @@ function LeaderLibGameSettings:LoadString(str)
 			end
 		end
 		if tbl.Version ~= nil then
-			self.Version = tbl.Verion
+			self.Settings.Version = tbl.Verion
 		end
 		return self
 	end, debug.traceback)

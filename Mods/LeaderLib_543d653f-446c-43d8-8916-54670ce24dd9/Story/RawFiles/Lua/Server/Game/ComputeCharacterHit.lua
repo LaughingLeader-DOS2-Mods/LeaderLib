@@ -69,13 +69,18 @@ end
 --- @param weapon StatItem
 local function CanBackstab(attacker, weapon)
     local settings = nil
-    if attacker.IsPlayer and GameSettings.Settings.BackstabSettings.Player.Enabled then
+    if attacker.IsPlayer then
         settings = GameSettings.Settings.BackstabSettings.Player
-    elseif not attacker.IsPlayer and GameSettings.Settings.BackstabSettings.NPC.Enabled then
+    else
         settings = GameSettings.Settings.BackstabSettings.NPC
     end
 
-    if settings ~= nil then
+    -- Enemy Upgrade Overhaul
+    if Ext.IsModLoaded("046aafd8-ba66-4b37-adfb-519c1a5d04d7") and not attacker.IsPlayer and attacker.TALENT_Backstab then
+        return true
+    end
+
+    if settings.Enabled then
         if not settings.TalentRequired or (settings.TalentRequired and attacker.TALENT_Backstab) then
            return not settings.MeleeOnly or (settings.MeleeOnly and (weapon == nil or not Game.Math.IsRangedWeapon(weapon)))
         end

@@ -63,17 +63,21 @@ local function ComputeOverridesEnabled()
     return Features.BackstabCalculation == true or Features.ResistancePenetration == true
 end
 
+local function WithinMeleeDistance(pos1, pos2)
+    return GameHelpers.Math.GetDistance(pos1,pos2) <= (GameSettings.Settings.BackstabSettings.MeleeSpellBackstabMinDistance or 2.5)
+end
 --- This parses the GameSettings options for backstab settings, allowing both players and NPCs to backstab with other weapons if the condition is right.
 --- Lets the Backstab talent work. Also lets ranged weapons backstab if the game settings option MeleeOnly is disabled.
 --- @param attacker StatCharacter
 --- @param weapon StatItem
-local function CanBackstab(attacker, weapon)
+--- @param hitType string
+local function CanBackstab(attacker, weapon, hitType, target)
     if (weapon ~= nil and weapon.WeaponType == "Knife") then
         return true
     end
 
     -- Enemy Upgrade Overhaul - Assassin Upgrade
-    if Ext.IsModLoaded("046aafd8-ba66-4b37-adfb-519c1a5d04d7") and not attacker.IsPlayer and attacker.TALENT_Backstab then
+    if Ext.IsModLoaded("046aafd8-ba66-4b37-adfb-519c1a5d04d7") and not attacker.IsPlayer and weapon ~= nil and (attacker.TALENT_Backstab or attacker.TALENT_RogueLoreDaggerBackStab) then
         return true
     end
 
@@ -85,8 +89,16 @@ local function CanBackstab(attacker, weapon)
     end
 
     if settings.Enabled then
-        if not settings.TalentRequired or (settings.TalentRequired and attacker.TALENT_Backstab) then
-           return not settings.MeleeOnly or (settings.MeleeOnly and (weapon == nil or not Game.Math.IsRangedWeapon(weapon)))
+        if not settings.TalentRequired or (settings.TalentRequired and (attacker.TALENT_Backstab or attacker.TALENT_RogueLoreDaggerBackStab)) then
+            if weapon ~= nil then
+                return not settings.MeleeOnly or (settings.MeleeOnly and not Game.Math.IsRangedWeapon(weapon))
+            elseif settings.SpellsCanBackstab then
+                if settings.MeleeOnly then
+                    return hitType == "Melee" or WithinMeleeDistance(attacker.Position, target.Position)
+                else
+                    return true
+                end
+            end
         end
     end
     return false
@@ -200,18 +212,21 @@ local function ComputeCharacterHit(target, attacker, weapon, damageList, hitType
             return hit
         end
 
+        local backstabbed = false
+
+        if hitType ~= "Surface" and hitType ~= "DoT" and hitType ~= "Reflected" then
+            --print("CanBackstab:",CanBackstab(attacker, weapon), "IsPlayer", attacker.IsPlayer, "TALENT_Backstab", attacker.TALENT_Backstab)
+            if alwaysBackstab or (CanBackstab(attacker, weapon, hitType, target) and Game.Math.CanBackstab(target, attacker)) then
+                hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.Backstab
+                backstabbed = true
+            end
+        end
+
         hit.DamageMultiplier = 1.0 + Game.Math.GetAttackerDamageMultiplier(target, attacker, highGroundFlag)
         if hitType == "Magic" or hitType == "Surface" or hitType == "DoT" or hitType == "Reflected" then
             Game.Math.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll)
             Game.Math.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
             return hit
-        end
-
-        local backstabbed = false
-        --print("CanBackstab:",CanBackstab(attacker, weapon), "IsPlayer", attacker.IsPlayer, "TALENT_Backstab", attacker.TALENT_Backstab)
-        if alwaysBackstab or (CanBackstab(attacker, weapon) and Game.Math.CanBackstab(target, attacker)) then
-            hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.Backstab
-            backstabbed = true
         end
 
         if hitType == "Melee" then

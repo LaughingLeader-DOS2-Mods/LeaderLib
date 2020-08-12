@@ -41,6 +41,7 @@ local TALENTS_RACIAL = {
 }
 
 local TALENT_Backstab = Classes.TranslatedString:Create("h9836a401g63f6g49c3g8fa0g9564cbad7628", "Assassin")
+local TALENT_RogueLoreDaggerBackStab = Classes.TranslatedString:Create("hce5fda5egaeb0g4e2bg8c94g595c0cd029b3", "Backstabber")
 
 local function GetArrayIndexStart(ui, arrayName, offset)
 	local i = 0
@@ -101,12 +102,12 @@ local function DisplayTalents(ui, call, ...)
 			end
 		end
 		if Features.BackstabCalculation == true then
-			local talentEnumName = "Backstab"
-			local talentId = Data.TalentEnum[talentEnumName]
-			if not IsInArray(ui, "talent_array", talentId, 1, 3) then
-				ui:SetValue("talent_array", TALENT_Backstab.Value, i)
-				ui:SetValue("talent_array", talentId, i+1)
-				if player.Stats.TALENT_Backstab then
+			 -- Backstab doesn't have an icon check set, while this RogueLoreDaggerBackStab does
+			--local talentEnumName = "RogueLoreDaggerBackStab" -- "Backstab"
+			if not IsInArray(ui, "talent_array", Data.TalentEnum.RogueLoreDaggerBackStab, 1, 3) then
+				ui:SetValue("talent_array", TALENT_RogueLoreDaggerBackStab.Value, i)
+				ui:SetValue("talent_array", Data.TalentEnum.RogueLoreDaggerBackStab, i+1)
+				if player.Stats.TALENT_RogueLoreDaggerBackStab then
 					ui:SetValue("talent_array", 0, i+2)
 				else
 					ui:SetValue("talent_array", 2, i+2)
@@ -144,8 +145,8 @@ local function DisplayTalents_CC(ui, call, ...)
 			end
 		end
 		if Features.BackstabCalculation == true then
-			if not IsInArray(ui, "talentArray", Data.TalentEnum.Backstab, 1, 4) then
-				talent_mc.addTalentElement(Data.TalentEnum.Backstab, TALENT_Backstab.Value, player.Stats.TALENT_Backstab, true, false)
+			if not IsInArray(ui, "talentArray", Data.TalentEnum.RogueLoreDaggerBackStab, 1, 4) then
+				talent_mc.addTalentElement(Data.TalentEnum.RogueLoreDaggerBackStab, TALENT_RogueLoreDaggerBackStab.Value, player.Stats.TALENT_RogueLoreDaggerBackStab, true, false)
 			end
 			-- local i = GetArrayIndexStart(ui, "talentArray", 4)
 			-- local talentId = Data.TalentEnum["Backstab"]

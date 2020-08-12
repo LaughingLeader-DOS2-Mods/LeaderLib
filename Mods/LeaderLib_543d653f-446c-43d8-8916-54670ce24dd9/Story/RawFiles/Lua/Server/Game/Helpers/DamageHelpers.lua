@@ -260,7 +260,7 @@ end
 ---@param hit HitRequest
 ---@param target string|StatCharacter
 ---@param handle integer
-function GameHelpers.Damage.ApplyHitEffectFlags(hit, target, handle)
+function GameHelpers.Damage.ApplyHitRequestFlags(hit, target, handle)
     for flag,num in pairs(Game.Math.HitFlag) do
         if hit.EffectFlags & num ~= 0 then
             NRD_StatusSetInt(target, handle, flag, 1)

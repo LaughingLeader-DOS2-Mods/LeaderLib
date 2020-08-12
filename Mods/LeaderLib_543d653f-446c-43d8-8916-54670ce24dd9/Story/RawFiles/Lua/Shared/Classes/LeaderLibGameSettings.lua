@@ -5,6 +5,7 @@ local DefaultSettings = {
 	MaxAPGroup = "Player", -- All|Player|NPC
 	EnableDeveloperTests = false,
 	BackstabSettings = {
+		AllowTwoHandedWeapons = false,
 		MeleeSpellBackstabMinDistance = 2.5,
 		Player = {
 			Enabled = false,
@@ -17,7 +18,7 @@ local DefaultSettings = {
 			TalentRequired = true,
 			MeleeOnly = true,
 			SpellsCanBackstab = false,
-		}
+		},
 	},
 	Version = Ext.GetModInfo("7e737d2f-31d2-4751-963f-be6ccc59cd0c").Version
 }

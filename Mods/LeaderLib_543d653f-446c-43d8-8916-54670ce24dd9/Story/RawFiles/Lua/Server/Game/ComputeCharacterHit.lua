@@ -66,6 +66,12 @@ end
 local function WithinMeleeDistance(pos1, pos2)
     return GameHelpers.Math.GetDistance(pos1,pos2) <= (GameSettings.Settings.BackstabSettings.MeleeSpellBackstabMinDistance or 2.5)
 end
+
+---@param weapon StatItem
+local function CanBackstabWithTwoHandedWeapon(weapon)
+    return (GameSettings.Settings.BackstabSettings.AllowTwoHandedWeapons or not weapon.IsTwoHanded)
+end
+
 --- This parses the GameSettings options for backstab settings, allowing both players and NPCs to backstab with other weapons if the condition is right.
 --- Lets the Backstab talent work. Also lets ranged weapons backstab if the game settings option MeleeOnly is disabled.
 --- @param attacker StatCharacter
@@ -81,6 +87,7 @@ local function CanBackstab(attacker, weapon, hitType, target)
         return true
     end
 
+    local backstabSettings = GameSettings.Settings.BackstabSettings
     local settings = nil
     if attacker.IsPlayer then
         settings = GameSettings.Settings.BackstabSettings.Player
@@ -91,7 +98,7 @@ local function CanBackstab(attacker, weapon, hitType, target)
     if settings.Enabled then
         if not settings.TalentRequired or (settings.TalentRequired and (attacker.TALENT_Backstab or attacker.TALENT_RogueLoreDaggerBackStab)) then
             if weapon ~= nil then
-                return not settings.MeleeOnly or (settings.MeleeOnly and not Game.Math.IsRangedWeapon(weapon))
+                return not settings.MeleeOnly or (settings.MeleeOnly and not Game.Math.IsRangedWeapon(weapon) and CanBackstabWithTwoHandedWeapon(weapon))
             elseif settings.SpellsCanBackstab then
                 if settings.MeleeOnly then
                     return hitType == "Melee" or WithinMeleeDistance(attacker.Position, target.Position)

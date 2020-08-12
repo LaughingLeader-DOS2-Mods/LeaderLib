@@ -60,7 +60,7 @@ end
 local doHitOriginal = Game.Math.DoHit
 
 local function ComputeOverridesEnabled()
-    return GameSettings.Settings.BackstabSettings.Player.Enabled or GameSettings.Settings.BackstabSettings.NPC.Enabled or Features.ResistancePenetration == true
+    return Features.BackstabCalculation == true or Features.ResistancePenetration == true
 end
 
 --- This parses the GameSettings options for backstab settings, allowing both players and NPCs to backstab with other weapons if the condition is right.
@@ -68,16 +68,20 @@ end
 --- @param attacker StatCharacter
 --- @param weapon StatItem
 local function CanBackstab(attacker, weapon)
+    if (weapon ~= nil and weapon.WeaponType == "Knife") then
+        return true
+    end
+
+    -- Enemy Upgrade Overhaul - Assassin Upgrade
+    if Ext.IsModLoaded("046aafd8-ba66-4b37-adfb-519c1a5d04d7") and not attacker.IsPlayer and attacker.TALENT_Backstab then
+        return true
+    end
+
     local settings = nil
     if attacker.IsPlayer then
         settings = GameSettings.Settings.BackstabSettings.Player
     else
         settings = GameSettings.Settings.BackstabSettings.NPC
-    end
-
-    -- Enemy Upgrade Overhaul
-    if Ext.IsModLoaded("046aafd8-ba66-4b37-adfb-519c1a5d04d7") and not attacker.IsPlayer and attacker.TALENT_Backstab then
-        return true
     end
 
     if settings.Enabled then
@@ -204,7 +208,8 @@ local function ComputeCharacterHit(target, attacker, weapon, damageList, hitType
         end
 
         local backstabbed = false
-        if alwaysBackstab or (weapon ~= nil and (weapon.WeaponType == "Knife" or CanBackstab(attacker, weapon)) and Game.Math.CanBackstab(target, attacker)) then
+        --print("CanBackstab:",CanBackstab(attacker, weapon), "IsPlayer", attacker.IsPlayer, "TALENT_Backstab", attacker.TALENT_Backstab)
+        if alwaysBackstab or (CanBackstab(attacker, weapon) and Game.Math.CanBackstab(target, attacker)) then
             hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.Backstab
             backstabbed = true
         end

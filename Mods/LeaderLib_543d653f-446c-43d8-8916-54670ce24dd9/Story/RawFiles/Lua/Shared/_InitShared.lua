@@ -131,8 +131,10 @@ if Ext.IsDeveloperMode() then
 end
 
 function LoadGameSettings()
-	local b,result = pcall(function()
-		local settings = Classes.LeaderLibGameSettings:Create()
+	local b,result = pcall(function(settings)
+		if settings == nil then
+			settings = Classes.LeaderLibGameSettings:Create()
+		end
 		local tblString = Ext.LoadFile("LeaderLib_GameSettings.json")
 		if tblString ~= nil then
 			settings = settings:LoadString(tblString)
@@ -141,6 +143,12 @@ function LoadGameSettings()
 	end)
 	if b then
 		GameSettings = result
+		if GameSettings.Version < GameSettings.Default.Version then
+			SaveGameSettings()
+		end
+		if GameSettings.Settings.BackstabSettings.Player.Enabled or GameSettings.Settings.BackstabSettings.NPC.Enabled then
+			EnableFeature("BackstabCalculation")
+		end
 	else
 		GameSettings = Classes.LeaderLibGameSettings:Create()
 		SaveGameSettings()

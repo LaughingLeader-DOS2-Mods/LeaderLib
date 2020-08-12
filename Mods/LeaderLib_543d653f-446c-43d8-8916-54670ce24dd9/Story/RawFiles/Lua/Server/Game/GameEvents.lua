@@ -1,6 +1,8 @@
 local function OnInitialized()
 	Vars.Initialized = true
 
+	pcall(LoadGameSettings)
+
 	if Vars.PostLoadEnableLuaListeners then
 		print("**********************Enabling Lua listeners in Osiris*****************")
 		Osi.LeaderLib_ActivateGoal("LeaderLib_19_TS_LuaSkillListeners")

@@ -16,13 +16,15 @@ local DefaultSettings = {
 			MeleeOnly = true
 		}
 	},
+	Version = Ext.GetModInfo("7e737d2f-31d2-4751-963f-be6ccc59cd0c").Version
 }
 
 ---@class LeaderLibGameSettings
 local LeaderLibGameSettings = {
 	Version = -1,
 	---@type LeaderLibDefaultSettings
-	Settings = DefaultSettings
+	Settings = DefaultSettings,
+	Default = DefaultSettings
 }
 LeaderLibGameSettings.__index = LeaderLibGameSettings
 
@@ -43,6 +45,22 @@ function LeaderLibGameSettings:Create()
     return this
 end
 
+local function ParseTableValue(settings, k, v)
+	if type(v) == "table" then
+		if settings[k] == nil then
+			settings[k] = v
+			PrintDebug("[LeaderLibGameSettings] Set null ",k," to table")
+		else
+			for k2,v2 in pairs(v) do
+				ParseTableValue(settings[k], k2, v2)
+			end
+		end
+	else
+		settings[k] = v
+		PrintDebug("[LeaderLibGameSettings] Set ",k," to ",v)
+	end
+end
+
 ---@param source table
 ---@return LeaderLibGameSettings
 function LeaderLibGameSettings:LoadTable(tbl)
@@ -50,11 +68,11 @@ function LeaderLibGameSettings:LoadTable(tbl)
 		if tbl ~= nil then
 			if tbl.Settings ~= nil and type(tbl.Settings) == "table" then
 				for k,v in pairs(tbl.Settings) do
-					self.Settings[k] = v
+					ParseTableValue(self.Settings, k, v)
 				end
 			elseif tbl.Version == nil then
 				for k,v in pairs(tbl) do
-					self.Settings[k] = v
+					ParseTableValue(self.Settings, k, v)
 				end
 			end
 		end
@@ -78,23 +96,23 @@ function LeaderLibGameSettings:LoadString(str)
 		if tbl ~= nil then
 			if tbl.Settings ~= nil and type(tbl.Settings) == "table" then
 				for k,v in pairs(tbl.Settings) do
-					self.Settings[k] = v
-					Ext.Print("Set " .. k .. " to ",v)
+					ParseTableValue(self.Settings, k, v)
 				end
 			elseif tbl.Version == nil then
 				for k,v in pairs(tbl) do
-					self.Settings[k] = v
-					Ext.Print("Set " .. k .. " to ",v)
+					ParseTableValue(self.Settings, k, v)
 				end
 			end
-		end	
+		end
+		if tbl.Version ~= nil then
+			self.Version = tbl.Verion
+		end
 		return self
-	end, function(err)
-		Ext.PrintError("[LeaderLibGameSettings:CreateFromString] Error parsing string as table:\n" .. tostring(err))
-	end, self, str)
+	end, debug.traceback)
 	if b then
 		return result
 	else
+		Ext.PrintError("[LeaderLibGameSettings:CreateFromString] Error parsing string as table:\n" .. tostring(result))
 		return self
 	end
 end

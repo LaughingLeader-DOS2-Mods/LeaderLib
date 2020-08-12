@@ -222,7 +222,7 @@ function GameHelpers.Damage.CalculateSkillDamage(skill, attacker, target, handle
 
     local skillData = GameHelpers.Ext.CreateSkillTable(skill)
 
-    local damageList, deathType = Game.Math.GetSkillDamage(skillData, attacker, 0, GameHelpers.Status.IsSneakingOrInvisible(attacker.MyGuid), {attacker.Position}, {target.Position}, attacker.Level, noRandomization or false)
+    local damageList, deathType = Game.Math.GetSkillDamage(skillData, attacker, 0, GameHelpers.Status.IsSneakingOrInvisible(attacker.MyGuid), attacker.Position, target.Position, attacker.Level, noRandomization or false)
 
     local highGroundFlag = ""
     if attacker.Character.WorldPos[1] > target.Character.WorldPos[1] then

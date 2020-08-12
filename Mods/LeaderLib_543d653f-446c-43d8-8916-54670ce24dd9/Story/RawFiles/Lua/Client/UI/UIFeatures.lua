@@ -101,7 +101,7 @@ local function DisplayTalents(ui, call, ...)
 				end
 			end
 		end
-		if Features.BackstabCalculation == true then
+		if GameSettings.Settings.BackstabSettings.Player.Enabled == true then
 			 -- Backstab doesn't have an icon check set, while this RogueLoreDaggerBackStab does
 			--local talentEnumName = "RogueLoreDaggerBackStab" -- "Backstab"
 			if not IsInArray(ui, "talent_array", Data.TalentEnum.RogueLoreDaggerBackStab, 1, 3) then
@@ -144,7 +144,7 @@ local function DisplayTalents_CC(ui, call, ...)
 				end
 			end
 		end
-		if Features.BackstabCalculation == true then
+		if GameSettings.Settings.BackstabSettings.Player.Enabled then
 			if not IsInArray(ui, "talentArray", Data.TalentEnum.RogueLoreDaggerBackStab, 1, 4) then
 				talent_mc.addTalentElement(Data.TalentEnum.RogueLoreDaggerBackStab, TALENT_RogueLoreDaggerBackStab.Value, player.Stats.TALENT_RogueLoreDaggerBackStab, true, false)
 			end

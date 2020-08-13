@@ -84,6 +84,7 @@ local function DisplayTalents(ui, call, ...)
 		player = Ext.GetCharacter(UI.ClientCharacter)
 	end
 	if player ~= nil then
+		local root = ui:GetRoot()
 		local i = GetArrayIndexStart(ui, "talent_array", 3)
 		if Features.RacialTalentsDisplayFix then
 			for talent,text in pairs(TALENTS_RACIAL) do
@@ -111,6 +112,22 @@ local function DisplayTalents(ui, call, ...)
 					ui:SetValue("talent_array", 0, i+2)
 				else
 					ui:SetValue("talent_array", 2, i+2)
+				end
+			end
+			local hasPoints = root.lvlBtnTalent_array[0] == true
+			if hasPoints then
+				local talentIsInArray = false
+				local i = #root.lvlBtnTalent_array - 1
+				for i=1,#root.lvlBtnTalent_array,2 do
+					print(i, root.lvlBtnTalent_array[i])
+					if root.lvlBtnTalent_array[i] == Data.TalentEnum.RogueLoreDaggerBackStab then
+						talentIsInArray = true
+						break
+					end
+				end
+				if not talentIsInArray then
+					ui:SetValue("lvlBtnTalent_array", Data.TalentEnum.RogueLoreDaggerBackStab, i)
+					ui:SetValue("lvlBtnTalent_array", player.Stats.TALENT_RogueLoreDaggerBackStab, i+1)
 				end
 			end
 		end

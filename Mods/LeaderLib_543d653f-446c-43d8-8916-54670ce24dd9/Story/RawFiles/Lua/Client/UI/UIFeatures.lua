@@ -162,6 +162,11 @@ end
 
 ---@param ui UIObject
 local function DisplayTalents_CC(ui, call, ...)
+	if GameSettings.Default == nil then
+		-- This function may run before the game is "Running" and the settings load normally.
+		LoadGameSettings()
+	end
+
 	---@type EsvCharacter
 	local player = nil
 	local handle = ui:GetPlayerHandle()
@@ -185,7 +190,7 @@ local function DisplayTalents_CC(ui, call, ...)
 				end
 			end
 		end
-		if player.Stats.TALENT_RogueLoreDaggerBackStab or (GameSettings.Settings.BackstabSettings.Player.Enabled and GameSettings.Settings.BackstabSettings.Player.TalentRequired) then
+		if player.Stats.TALENT_RogueLoreDaggerBackStab or (GameSettings ~= nil and (GameSettings.Settings.BackstabSettings.Player.Enabled and GameSettings.Settings.BackstabSettings.Player.TalentRequired)) then
 			if not IsInArray(ui, "talentArray", Data.TalentEnum.RogueLoreDaggerBackStab, 1, 4) then
 				talent_mc.addTalentElement(Data.TalentEnum.RogueLoreDaggerBackStab, TALENT_RogueLoreDaggerBackStab.Value, player.Stats.TALENT_RogueLoreDaggerBackStab, true, false)
 			end

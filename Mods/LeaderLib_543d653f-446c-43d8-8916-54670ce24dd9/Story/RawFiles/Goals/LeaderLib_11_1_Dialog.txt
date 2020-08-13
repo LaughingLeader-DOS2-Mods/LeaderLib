@@ -313,12 +313,27 @@ StartTrade(_Player, _Object);
 
 IF
 ObjectFlagSet("LeaderLib_StopAnimation", (CHARACTERGUID)_Object, _Instance)
-AND
-LeaderLib_Helper_QRY_ClearObjectFlag(_Object, "LeaderLib_StopAnimation")
 THEN
+ObjectClearFlag(_Object, "LeaderLib_StopAnimation", 0);
 PlayAnimation(_Object, "");
 CharacterSetAnimationOverride(_Object, "");
 LeaderLog_Log("DEBUG", "[LeaderLib:Flag:LeaderLib_StopAnimation] Stopped animations in character.");
+
+IF
+ObjectFlagSet("LeaderLib_LoadGameSettings", _Object, _Instance)
+THEN
+ObjectClearFlag(_Object, "LeaderLib_LoadGameSettings", 0);
+/* [OSITOOLS_ONLY]
+NRD_ModCall("LeaderLib", "LoadGameSettings");
+*/
+
+IF
+ObjectFlagSet("LeaderLib_SaveGameSettings", _Object, _Instance)
+THEN
+ObjectClearFlag(_Object, "LeaderLib_SaveGameSettings", 0);
+/* [OSITOOLS_ONLY]
+NRD_ModCall("LeaderLib", "SaveGameSettings");
+*/
 //END_REGION
 
 //REGION STATUS_FLAGS

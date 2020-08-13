@@ -95,15 +95,23 @@ end
 ---@param tooltip TooltipData
 local function OnSkillTooltip(character, skill, tooltip)
 	if character ~= nil then UI.ClientCharacter = character.MyGuid or character.NetID end
+	print("Features.TooltipGrammarHelper", Features.TooltipGrammarHelper)
 	if Features.TooltipGrammarHelper then
-		local element = tooltip:GetElement("SkillDescription")
-		if element ~= nil then
-			element.Label = string.gsub(element.Label, "a 8", "an 8")
-		end
-		-- This fixes the double spaces from removing the "tag" part of Requires tag
-		element = tooltip:GetElement("SkillRequiredEquipment")
-		if element ~= nil and not element.RequirementMet and string.find(element.Label, "Requires  ") then
-			element.Label = string.gsub(element.Label, "  ", " ")
+		local elements = tooltip:GetElements("SkillDescription")
+		for i,element in pairs(elements) do
+			if element ~= nil then
+				element.Label = string.gsub(element.Label, "a 8", "an 8")
+				local startPos,endPos = string.find(element.Label , "a <font.->8")
+				if startPos then
+					local text = string.sub(element.Label, startPos, endPos)
+					element.Label = string.gsub(element.Label, text, text:gsub("a ", "an "))
+				end
+			end
+			-- This fixes the double spaces from removing the "tag" part of Requires tag
+			element = tooltip:GetElement("SkillRequiredEquipment")
+			if element ~= nil and not element.RequirementMet and string.find(element.Label, "Requires  ") then
+				element.Label = string.gsub(element.Label, "  ", " ")
+			end
 		end
 	end
 	if Features.FixChaosDamageDisplay then

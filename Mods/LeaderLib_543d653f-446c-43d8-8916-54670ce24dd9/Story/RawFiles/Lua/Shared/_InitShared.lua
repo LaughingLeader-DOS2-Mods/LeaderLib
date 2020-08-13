@@ -141,10 +141,11 @@ function LoadGameSettings()
 			settings = settings:LoadString(tblString)
 			return settings
 		else
-			error("Failed to load LeaderLib_GameSettings.json. Does it exist?")
+			Ext.PrintError("Failed to load LeaderLib_GameSettings.json. Does it exist?")
+			return false
 		end
 	end, debug.traceback)
-	if b then
+	if b and result ~= false then
 		GameSettings = result
 
 		if GameSettings.Settings ~= nil and GameSettings.Settings.Version ~= nil then
@@ -157,7 +158,10 @@ function LoadGameSettings()
 			EnableFeature("BackstabCalculation")
 		end
 	else
-		Ext.PrintError("[LeaderLib:LoadGameSettings]", result)
+		if result == false then
+			Ext.Print("[LeaderLib] Generating and saving LeaderLib_GameSettings.json")
+		end
+		--Ext.PrintError("[LeaderLib:LoadGameSettings]", result)
 		GameSettings = Classes.LeaderLibGameSettings:Create()
 		SaveGameSettings()
 	end
@@ -190,3 +194,8 @@ if Ext.IsClient() then
 end
 
 --Ext.RegisterListener("ModuleLoadStarted", LoadSettings)
+
+Ext.RegisterListener("ModuleLoadStarted", function()
+	--- So we can initialize the settings file in the main menu.
+	LoadGameSettings()
+end)

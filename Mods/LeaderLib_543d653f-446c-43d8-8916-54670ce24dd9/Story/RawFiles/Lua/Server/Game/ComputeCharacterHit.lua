@@ -83,7 +83,7 @@ local function CanBackstab(attacker, weapon, hitType, target)
         return true
     end
 
-    -- Enemy Upgrade Overhaul - Assassin Upgrade
+    -- Enemy Upgrade Overhaul - Backstabber Upgrade
     if Ext.IsModLoaded("046aafd8-ba66-4b37-adfb-519c1a5d04d7") and not attacker.IsPlayer and weapon ~= nil and (attacker.TALENT_Backstab or attacker.TALENT_RogueLoreDaggerBackStab) then
         return true
     end

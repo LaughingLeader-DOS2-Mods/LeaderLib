@@ -61,6 +61,24 @@ end
 -- Adds more alignment entities
 Ext.AddPathOverride("Mods/DivinityOrigins_1301db3d-1f54-4e98-9be5-5094030916e4/Story/Alignments/Alignment.lsx", "Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Overrides/OriginsAlignments.lsx")
 
+---Modifies a stat if it differs from the desired value.
+---@param stat string
+---@param attribute string
+---@param nextVal number|integer|string|table
+---@param syncMode boolean
+local function AdjustStat(stat, attribute, nextVal, syncMode)
+	local currentValue = Ext.StatGetAttribute(stat, attribute)
+	if currentValue ~= nil and currentValue ~= nextVal then
+		if syncMode ~= true then
+			Ext.StatSetAttribute(stat, attribute, nextVal)
+		else
+			local statObj = Ext.GetStat(stat)
+			statObj[attribute] = nextVal
+			Ext.SyncStat(stat, false)
+		end
+	end
+end
+
 local function OverrideStats(syncMode)
 	---@type LeaderLibGameSettings
 	local data = LoadGameSettings()
@@ -94,56 +112,33 @@ local function OverrideStats(syncMode)
 		end
 	end
 
-	if data.Settings.MaxAP > 0 then
-		local apGroups = data.Settings.MaxAPGroup:lower()
-		if string.find(apGroups, "all") then
-			Ext.Print("[LeaderLib:StatOverrides.lua] Enabled Max AP override ("..tostring(data.Settings.MaxAP)..") for all characters.")
-			for _,stat in pairs(Ext.GetStatEntries("Character")) do
-				if boost_stats[stat] ~= true then
-					local maxAP = Ext.StatGetAttribute(stat, "APMaximum")
-					if maxAP < data.Settings.MaxAP then
-						if syncMode ~= true then
-							Ext.StatSetAttribute(stat, "APMaximum", data.Settings.MaxAP)
-						else
-							local statObj = Ext.GetStat(stat)
-							statObj.APMaximum = data.Settings.MaxAP
-							Ext.SyncStat(stat, false)
-						end
-					end
-				end
+	if data.Settings.APSettings.Player.Enabled then
+		local settings = data.Settings.APSettings.Player
+		for stat,_ in pairs(player_stats) do
+			if settings.Start > 0 then
+				AdjustStat(stat, "APStart", settings.Start, syncMode)
 			end
-		else
-			if string.find(apGroups, "player") then
-				Ext.Print("[LeaderLib:StatOverrides.lua] Enabled Max AP override ("..tostring(data.Settings.MaxAP)..") for players.")
-				for stat,_ in pairs(player_stats) do
-					local maxAP = Ext.StatGetAttribute(stat, "APMaximum")
-					if maxAP ~= nil and maxAP < data.Settings.MaxAP then
-						if syncMode ~= true then
-							Ext.StatSetAttribute(stat, "APMaximum", data.Settings.MaxAP)
-						else
-							local statObj = Ext.GetStat(stat)
-							statObj.APMaximum = data.Settings.MaxAP
-							Ext.SyncStat(stat, false)
-						end
-					end
-				end
+			if settings.Max > 0 then
+				AdjustStat(stat, "APMaximum", settings.Max, syncMode)
 			end
-			if string.find(apGroups, "npc") then
-				Ext.Print("[LeaderLib:StatOverrides.lua] Enabled Max AP override ("..tostring(data.Settings.MaxAP)..") for non-player characters.")
-				for _,stat in pairs(Ext.GetStatEntries("Character")) do
-					local skip = (not string.find(apGroups, "player") and player_stats[stat] == true) or boost_stats[stat] == true
-					if not skip then
-						local maxAP = Ext.StatGetAttribute(stat, "APMaximum")
-						if maxAP < data.Settings.MaxAP then
-							if syncMode ~= true then
-								Ext.StatSetAttribute(stat, "APMaximum", data.Settings.MaxAP)
-							else
-								local statObj = Ext.GetStat(stat)
-								statObj.APMaximum = data.Settings.MaxAP
-								Ext.SyncStat(stat, false)
-							end
-						end
-					end
+			if settings.Recovery > 0 then
+				AdjustStat(stat, "APRecovery", settings.Recovery, syncMode)
+			end
+		end
+	end
+	if data.Settings.APSettings.NPC.Enabled then
+		local settings = data.Settings.APSettings.NPC
+		for _,stat in pairs(Ext.GetStatEntries("Character")) do
+			local skip = player_stats[stat] == true or boost_stats[stat] == true
+			if not skip then
+				if settings.Start > 0 then
+					AdjustStat(stat, "APStart", settings.Start, syncMode)
+				end
+				if settings.Max > 0 then
+					AdjustStat(stat, "APMaximum", settings.Max, syncMode)
+				end
+				if settings.Recovery > 0 then
+					AdjustStat(stat, "APRecovery", settings.Recovery, syncMode)
 				end
 			end
 		end

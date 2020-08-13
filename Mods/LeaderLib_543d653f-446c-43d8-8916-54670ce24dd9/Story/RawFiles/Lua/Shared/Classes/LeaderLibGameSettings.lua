@@ -1,9 +1,20 @@
 ---@class LeaderLibDefaultSettings
 local DefaultSettings = {
 	StarterTierSkillOverrides = false,
-	MaxAP = -1,
-	MaxAPGroup = "Player", -- All|Player|NPC
-	EnableDeveloperTests = false,
+	APSettings = {
+		Player = {
+			Enabled = false,
+			Max = -1,
+			Start = -1,
+			Recovery = -1,
+		},
+		NPC = {
+			Enabled = false,
+			Max = -1,
+			Start = -1,
+			Recovery = -1,
+		}
+	},
 	BackstabSettings = {
 		AllowTwoHandedWeapons = false,
 		MeleeSpellBackstabMaxDistance = 2.5,
@@ -20,6 +31,7 @@ local DefaultSettings = {
 			SpellsCanBackstab = false,
 		},
 	},
+	EnableDeveloperTests = false,
 	Version = Ext.GetModInfo("7e737d2f-31d2-4751-963f-be6ccc59cd0c").Version
 }
 
@@ -47,6 +59,28 @@ function LeaderLibGameSettings:Create()
     return this
 end
 
+---@param tbl LeaderLibDefaultSettings
+function LeaderLibGameSettings:MigrateSettings(tbl)
+	if tbl.MaxAP ~= nil then
+		if tbl.MaxAPGroup == "Player" or tbl.MaxAPGroup == "All" then
+			self.Settings.APSettings.Player.Max = tbl.MaxAP
+		end
+		if tbl.MaxAPGroup == "NPC" or tbl.MaxAPGroup == "All" then
+			self.Settings.APSettings.NPC.Max = tbl.MaxAP
+		end
+	end
+	if tbl.MaxAPGroup ~= nil then
+		if tbl.MaxAPGroup == "All" then
+			self.Settings.APSettings.Player.Enabled = true
+			self.Settings.APSettings.NPC.Enabled = true
+		elseif tbl.MaxAPGroup == "Player" then
+			self.Settings.APSettings.Player.Enabled = true
+		elseif tbl.MaxAPGroup == "NPC" then
+			self.Settings.APSettings.NPC.Enabled = true
+		end
+	end
+end
+
 local function ParseTableValue(settings, k, v)
 	if type(v) == "table" then
 		if settings[k] == nil then
@@ -69,6 +103,7 @@ function LeaderLibGameSettings:LoadTable(tbl)
 	local b,result = xpcall(function()
 		if tbl ~= nil then
 			if tbl.Settings ~= nil and type(tbl.Settings) == "table" then
+				pcall(self.MigrateSettings, self, tbl)
 				for k,v in pairs(tbl.Settings) do
 					ParseTableValue(self.Settings, k, v)
 				end

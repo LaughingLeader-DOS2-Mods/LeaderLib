@@ -4,13 +4,13 @@ local DefaultSettings = {
 	APSettings = {
 		Player = {
 			Enabled = false,
-			Max = -1,
+			Max = 8,
 			Start = -1,
 			Recovery = -1,
 		},
 		NPC = {
 			Enabled = false,
-			Max = -1,
+			Max = 8,
 			Start = -1,
 			Recovery = -1,
 		}

@@ -95,7 +95,6 @@ end
 ---@param tooltip TooltipData
 local function OnSkillTooltip(character, skill, tooltip)
 	if character ~= nil then UI.ClientCharacter = character.MyGuid or character.NetID end
-	print("Features.TooltipGrammarHelper", Features.TooltipGrammarHelper)
 	if Features.TooltipGrammarHelper then
 		local elements = tooltip:GetElements("SkillDescription")
 		for i,element in pairs(elements) do

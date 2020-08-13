@@ -27,7 +27,7 @@ ModRegistration = {}
 Register = {}
 
 ---@type LeaderLibGameSettings
-GameSettings = {}
+GameSettings = {Settings = {}}
 
 ---@class GlobalSettings
 GlobalSettings = {

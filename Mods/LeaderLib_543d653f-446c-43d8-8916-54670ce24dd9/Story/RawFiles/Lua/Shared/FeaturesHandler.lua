@@ -27,7 +27,9 @@ function EnableFeature(id, val)
 	if Features[id] ~= val then
 		Features[id] = val
 		OnFeatureEnabled(id)
-		--Ext.BroadcastMessage("LeaderLib_EnableFeature", id, nil)
+		if Ext.IsServer() and Ext.GetGameState() == "Running" then
+			Ext.BroadcastMessage("LeaderLib_EnableFeature", id, nil)
+		end
 	end
 end
 
@@ -38,6 +40,8 @@ function DisableFeature(id, val)
 	if Features[id] == val then
 		Features[id] = val
 		OnFeatureDisabled(id)
-		--Ext.BroadcastMessage("LeaderLib_DisableFeature", id, nil)
+		if Ext.IsServer() and Ext.GetGameState() == "Running" then
+			Ext.BroadcastMessage("LeaderLib_DisableFeature", id, nil)
+		end
 	end
 end

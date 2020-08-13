@@ -131,7 +131,7 @@ if Ext.IsDeveloperMode() then
 	Features.RacialTalentsDisplayFix = true
 end
 
-function LoadGameSettings()
+function LoadGameSettings(sync)
 	local b,result = xpcall(function(settings)
 		if settings == nil then
 			settings = Classes.LeaderLibGameSettings:Create()
@@ -153,10 +153,6 @@ function LoadGameSettings()
 				SaveGameSettings()
 			end
 		end
-		
-		if GameSettings.Settings.BackstabSettings.Player.Enabled or GameSettings.Settings.BackstabSettings.NPC.Enabled then
-			EnableFeature("BackstabCalculation")
-		end
 	else
 		if result == false then
 			Ext.Print("[LeaderLib] Generating and saving LeaderLib_GameSettings.json")
@@ -164,6 +160,12 @@ function LoadGameSettings()
 		--Ext.PrintError("[LeaderLib:LoadGameSettings]", result)
 		GameSettings = Classes.LeaderLibGameSettings:Create()
 		SaveGameSettings()
+	end
+	if GameSettings.Settings.BackstabSettings.Player.Enabled or GameSettings.Settings.BackstabSettings.NPC.Enabled then
+		EnableFeature("BackstabCalculation")
+	end
+	if sync ~= nil and Ext.IsServer() and Ext.GetGameState() == "Running" then
+		SyncGameSettings()
 	end
 	return GameSettings
 end
@@ -178,9 +180,11 @@ end
 
 function SyncGameSettings(id)
 	if Ext.IsServer() then
-		local settings = LoadGameSettings()
-		Ext.PostMessageToUser(id, "LeaderLib_SyncGameSettings", Classes.MessageData:CreateFromTable("LeaderLibGameSettings", {Settings = settings}):ToString())
-
+		if id ~= nil then
+			Ext.PostMessageToUser(id, "LeaderLib_SyncGameSettings", Classes.MessageData:CreateFromTable("LeaderLibGameSettings", {Settings = GameSettings}):ToString())
+		else
+			Ext.BroadcastMessage("LeaderLib_SyncGameSettings", Classes.MessageData:CreateFromTable("LeaderLibGameSettings", {Settings = GameSettings}):ToString(), nil)
+		end
 		SyncStatOverrides()
 	end
 end

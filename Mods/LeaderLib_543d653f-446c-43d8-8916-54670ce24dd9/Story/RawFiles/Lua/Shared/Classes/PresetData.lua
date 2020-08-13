@@ -58,7 +58,7 @@ function PresetData:AddEquipmentToCharacter(char, targetRarity, skipSlots)
 					if IsTagged(char, tag) == 1 then
 						local racePreviewSet = self.Equipment.."_"..suffix
 						local racePreviewEquipment = Ext.GetEquipmentSet(racePreviewSet)
-						if racePreviewEquipment ~= nil and #racePreviewEquipment > 0 then
+						if racePreviewEquipment ~= nil and #racePreviewEquipment.Groups > 0 then
 							equipment = racePreviewSet
 							break
 						end
@@ -71,25 +71,27 @@ function PresetData:AddEquipmentToCharacter(char, targetRarity, skipSlots)
 			equipment = self.Equipment_Undead
 		end
 		
-		local equipmentEntries = Ext.GetEquipmentSet(equipment)
-		if equipmentEntries ~= nil then
-			for i,statName in pairs(equipmentEntries) do
-				local stat = Ext.GetStat(statName, level)
-				local skip = false
-				if skipSlots ~= nil and stat.Slot ~= nil then
-					for i,slot in pairs(skipSlots) do
-						if string.find(stat.Slot, slot) then
-							skip = true
-							break
+		local eq = Ext.GetEquipmentSet(equipment)
+		if eq ~= nil then
+			for i,v in pairs(eq.Groups) do
+				local stat = Ext.GetStat(v.Equipment[1], level)
+				if stat ~= nil then
+					local skip = false
+					if skipSlots ~= nil and stat.Slot ~= nil then
+						for i,slot in pairs(skipSlots) do
+							if string.find(stat.Slot, slot) then
+								skip = true
+								break
+							end
 						end
 					end
-				end
-				if not skip then
-					local item = GameHelpers.Item.CreateItemByStat(stat, level, targetRarity, true, 1)
-					if item ~= nil then
-						ItemToInventory(item, char, 1, 0, 1)
-						if ItemIsEquipable(item) == 1 then
-							CharacterEquipItem(char, item)
+					if not skip then
+						local item = GameHelpers.Item.CreateItemByStat(stat, level, targetRarity, true, 1)
+						if item ~= nil then
+							ItemToInventory(item, char, 1, 0, 1)
+							if ItemIsEquipable(item) == 1 then
+								CharacterEquipItem(char, item)
+							end
 						end
 					end
 				end
@@ -115,11 +117,19 @@ function PresetData:ApplyToCharacter(char, targetRarity, skipSlots)
 			Ext.PrintError("[LeaderLib] Error applying preset",self.ClassType,"to character",char)
 			Ext.PrintError(err)
 		end
-		local skills = Ext.GetSkillSet(self.SkillSet)
-		if skills ~= nil then
-			for i,skill in pairs(skills) do
-				CharacterAddSkill(char, skill, 0)
+		local skillSet = Ext.GetSkillSet(self.SkillSet)
+		if skillSet ~= nil then
+			for i,v in pairs(skillSet.Skills) do
+				if type(v) == "table" then
+					for i,skill in pairs(v) do
+						CharacterAddSkill(char, skill, 0)
+					end
+				elseif type(v) == "string" then
+					CharacterAddSkill(char, v, 0)
+				end
+
 			end
+			
 		end
 	end
 end

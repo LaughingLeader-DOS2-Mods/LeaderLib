@@ -114,22 +114,46 @@ local function DisplayTalents(ui, call, ...)
 					ui:SetValue("talent_array", 2, i+2)
 				end
 			end
-			local hasPoints = root.lvlBtnTalent_array[0] == true
-			if hasPoints then
-				local talentIsInArray = false
-				local i = #root.lvlBtnTalent_array - 1
-				for i=1,#root.lvlBtnTalent_array,2 do
-					print(i, root.lvlBtnTalent_array[i])
-					if root.lvlBtnTalent_array[i] == Data.TalentEnum.RogueLoreDaggerBackStab then
-						talentIsInArray = true
-						break
-					end
-				end
-				if not talentIsInArray then
-					ui:SetValue("lvlBtnTalent_array", Data.TalentEnum.RogueLoreDaggerBackStab, i)
-					ui:SetValue("lvlBtnTalent_array", player.Stats.TALENT_RogueLoreDaggerBackStab, i+1)
-				end
-			end
+			-- local talentPoints = root.stats_mc.pointsWarn[3].avPoints;
+			-- print("talentPoints", talentPoints, player.Stats.TALENT_RogueLoreDaggerBackStab, #root.lvlBtnTalent_array)
+			-- if player.Stats.TALENT_RogueLoreDaggerBackStab then
+			-- 	if #root.lvlBtnTalent_array > 0 then
+			-- 		for i=1,#root.lvlBtnTalent_array,3 do
+			-- 			print(i, root.lvlBtnTalent_array[i+1])
+			-- 			if root.lvlBtnTalent_array[i+1] == Data.TalentEnum.RogueLoreDaggerBackStab then
+			-- 				print("root.lvlBtnTalent_array", root.lvlBtnTalent_array[i], root.lvlBtnTalent_array[i+1], root.lvlBtnTalent_array[i+2])
+			-- 				ui:SetValue("lvlBtnTalent_array", false, i+2)
+			-- 			end
+			-- 		end
+			-- 	else
+			-- 		root.setTalentMinusVisible(Data.TalentEnum.RogueLoreDaggerBackStab, true)
+			-- 		ui:SetValue("lvlBtnTalent_array", false, 0)
+			-- 		ui:SetValue("lvlBtnTalent_array", Data.TalentEnum.RogueLoreDaggerBackStab, 1)
+			-- 		ui:SetValue("lvlBtnTalent_array", true, 2)
+			-- 		print("lvlBtnTalent_array", #root.lvlBtnTalent_array)
+			-- 	end
+			-- 	--root.setTalentMinusVisible(Data.TalentEnum.RogueLoreDaggerBackStab, true);
+			-- end
+			-- print("root.lvlBtnTalent_array", root.lvlBtnTalent_array[0], #root.lvlBtnTalent_array)
+			-- for i=1,#root.lvlBtnTalent_array,1 do
+			-- 	print(i, root.lvlBtnTalent_array[i])
+			-- end
+			-- local hasPoints = root.lvlBtnTalent_array[0] == true
+			-- if hasPoints then
+			-- 	local talentIsInArray = false
+			-- 	local i = #root.lvlBtnTalent_array - 1
+			-- 	for i=1,#root.lvlBtnTalent_array,2 do
+			-- 		print(i, root.lvlBtnTalent_array[i])
+			-- 		if root.lvlBtnTalent_array[i] == Data.TalentEnum.RogueLoreDaggerBackStab then
+			-- 			talentIsInArray = true
+			-- 			break
+			-- 		end
+			-- 	end
+			-- 	if not talentIsInArray then
+			-- 		ui:SetValue("lvlBtnTalent_array", Data.TalentEnum.RogueLoreDaggerBackStab, i)
+			-- 		ui:SetValue("lvlBtnTalent_array", player.Stats.TALENT_RogueLoreDaggerBackStab, i+1)
+			-- 	end
+			-- end
 		end
 	end
 end

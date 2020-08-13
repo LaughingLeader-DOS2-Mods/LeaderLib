@@ -596,13 +596,14 @@ NOT DB_LeaderLib_LeaderTrader_CurrentAppearance(_Template);
 
 //REGION TUTORIAL
 IF
-GlobalFlagSet("TUT_LowerDeck_WindegoHasCastSpell")
+CharacterUsedSkill(S_GLO_Windego_d783285f-d3be-4cba-8333-db8976cef182, "Shout_Quest_LureTheKraken", _, _)
 AND
-DB_LeaderLib_Traders_Active(_LeaderTrader, "LeaderLib.LeaderTrader", _Level)
+DB_LeaderLib_Traders_Active(_LeaderTrader, "LeaderLib.LeaderTrader", "TUT_Tutorial_A")
 THEN
 DisplayText(_LeaderTrader, "Hrmph. Best to avoid trouble...");
 CharacterUseSkill(_LeaderTrader, "Shout_ChameleonSkin", _LeaderTrader, 1, 1, 1);
-TimerLaunch("LeaderLib_Timers_LeaderTrader_TUTDisappear", 2000);
+TimerCancel("LeaderLib_Timers_LeaderTrader_TUTDisappear");
+TimerLaunch("LeaderLib_Timers_LeaderTrader_TUTDisappear", 500);
 
 IF
 TimerFinished("LeaderLib_Timers_LeaderTrader_TUTDisappear")

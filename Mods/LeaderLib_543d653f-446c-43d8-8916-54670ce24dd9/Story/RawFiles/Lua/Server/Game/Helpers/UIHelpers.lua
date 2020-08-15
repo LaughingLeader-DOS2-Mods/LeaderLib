@@ -37,8 +37,8 @@ GameHelpers.UI.SetSkillEnabled = SetSkillEnabled
 ---@param specificCharacters string|string[]|nil
 function GameHelpers.UI.CombatLog(text, filter, specificCharacters)
 	local data = MessageData:CreateFromTable("CombatLogData", {
-		Filter = filter,
-		Text = text
+		Filter = filter or 0,
+		Text = GameHelpers.Tooltip.ReplacePlaceholders(text)
 	}):ToString()
 	if specificCharacters == nil then
 		Ext.BroadcastMessage("LeaderLib_AddTextToCombatLog", data, nil)

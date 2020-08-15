@@ -221,7 +221,7 @@ local function ComputeCharacterHit(target, attacker, weapon, damageList, hitType
         end
 
         local backstabbed = false
-
+        
         if hitType ~= "Surface" and hitType ~= "DoT" and hitType ~= "Reflected" then
             --print("CanBackstab:",CanBackstab(attacker, weapon), "IsPlayer", attacker.IsPlayer, "TALENT_Backstab", attacker.TALENT_Backstab)
             if alwaysBackstab or (CanBackstab(attacker, weapon, hitType, target) and Game.Math.CanBackstab(target, attacker)) then
@@ -265,6 +265,7 @@ local function ComputeCharacterHit(target, attacker, weapon, damageList, hitType
         if not noHitRoll then
             local hitChance = Game.Math.CalculateHitChance(attacker, target)
             local hitRoll = math.random(0, 99)
+            print("CalculateHitChance", hitChance, hitRoll, attacker.Accuracy, target.Dodge, attacker.ChanceToHitBoost)
             if hitRoll >= hitChance then
                 if target.TALENT_RangerLoreEvasionBonus and hitRoll < hitChance + 10 then
                     hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.Dodged

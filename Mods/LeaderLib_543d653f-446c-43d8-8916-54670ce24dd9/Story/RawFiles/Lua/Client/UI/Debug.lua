@@ -166,7 +166,15 @@ local function TraceCall(ui, ...)
 	print(Ext.JsonStringify({...}))
 end
 
+local function TraceTooltip(call, val, tooltipdata)
+	print(call, val, Ext.JsonStringify(tooltipdata))
+end
+
 local function SessionLoaded()
+	-- Game.Tooltip.RegisterListener("Stat", nil, function(char,stat,tooltipdata) pcall(TraceTooltip, "Stat", stat, tooltipdata) end)
+	--Game.Tooltip.RegisterListener("Skill", nil, function(char,skill,tooltipdata) pcall(TraceTooltip, "Skill", skill, tooltipdata) end)
+	-- Game.Tooltip.RegisterListener("Status", nil, function(char,status,tooltipdata) pcall(TraceTooltip, "Status", status.StatusId, tooltipdata) end)
+	-- Game.Tooltip.RegisterListener("Item", nil, function(item,tooltipdata) pcall(TraceTooltip, "Item", item.StatsId, tooltipdata) end)
 	-- local ui = Ext.GetBuiltinUI("Public/Game/GUI/textDisplay.swf")
 	-- if ui ~= nil then
 	-- 	Ext.RegisterUIInvokeListener(ui, "addText", TraceCall)

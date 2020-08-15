@@ -481,6 +481,50 @@ end)
 
 local changedSkillAttributes = {}
 
+Ext.RegisterConsoleCommand("flurrytest", function(cmd, skill, attribute, value)
+	local stat = Ext.GetStat("Target_DualWieldingAttack")
+	if stat ~= nil then
+		local newSkill = Ext.GetStat("Projectile_Test_FlurryDamage") or Ext.CreateStat("Projectile_Test_FlurryDamage", "SkillData", "_Projectile_LeaderLib_LeaveAction_DamageBase")
+		newSkill.SkillProperties = {
+			{
+				Type = "Custom",
+				Action = "CanBackstab",
+				Context = {"Target", "AoE"}
+			}
+		}
+		newSkill["Damage Multiplier"]= 41
+		newSkill.UseWeaponDamage = "Yes"
+		newSkill.UseWeaponProperties = "Yes"
+		Ext.SyncStat("Projectile_Test_FlurryDamage", false)
+
+		stat.UseWeaponDamage = "No"
+		stat.UseWeaponProperties = "No"
+		stat["Damage Multiplier"]= 0
+
+		---@type StatusStatProperty
+		local prop = {
+			Type = "Status",
+			Action = "EXPLODE",
+			Context = {"Target", "AoE"},
+			Duration = 0,
+			StatusChance = 1.0,
+			StatsId = "Projectile_Test_FlurryDamage",
+			SurfaceBoost = false,
+			SurfaceBoosts = {},
+			Arg4 = -1,
+			Arg5 = -1,
+		}
+		stat.SkillProperties = {prop}
+		stat.Requirement = "MeleeWeapon"
+		Ext.SyncStat("Target_DualWieldingAttack", false)
+	end
+	local stat = Ext.GetStat("Projectile_EnemyThrowingKnife")
+	if stat ~= nil then
+		stat.Requirement = "MeleeWeapon"
+		Ext.SyncStat("Projectile_EnemyThrowingKnife", false)
+	end
+end)
+
 Ext.RegisterConsoleCommand("lleditskill", function(cmd, skill, attribute, value)
 	local stat = Ext.GetStat(skill)
 	if stat ~= nil then

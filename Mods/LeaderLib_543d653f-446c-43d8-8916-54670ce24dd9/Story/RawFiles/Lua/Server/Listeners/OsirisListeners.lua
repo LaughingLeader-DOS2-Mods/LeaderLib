@@ -2,7 +2,14 @@ Ext.RegisterOsirisListener("UserConnected", 3, "after", function(id, username, p
 	local host = CharacterGetHostCharacter()
 	local uuid = GetCurrentCharacter(id)
 	if uuid ~= nil then
-		Ext.PostMessageToUser(id, "LeaderLib_SetClientCharacter", uuid)
+		if Ext.GetGameState() == "Running" then
+			Ext.PostMessageToUser(id, "LeaderLib_SetClientCharacter", uuid)
+			if GlobalGetFlag("LeaderLib_AutoUnlockInventoryInMultiplayer") == 1 then
+				IterateUsers("Iterators_LeaderLib_UI_UnlockPartyInventory")
+			end
+
+			SettingsManager.SyncAllSettings(id)
+		end
 
 		if host ~= uuid and not Ext.PlayerHasExtender(uuid) then
 			OpenMessageBox(uuid, "LeaderLib_MessageBox_ExtenderNotInstalled_Client")
@@ -11,12 +18,6 @@ Ext.RegisterOsirisListener("UserConnected", 3, "after", function(id, username, p
 			GameHelpers.UI.ShowMessageBox(hostText, host, 0, GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageTitle"))
 		end
 	end
-
-	if GlobalGetFlag("LeaderLib_AutoUnlockInventoryInMultiplayer") == 1 then
-		IterateUsers("Iterators_LeaderLib_UI_UnlockPartyInventory")
-	end
-
-	SettingsManager.SyncAllSettings(id)
 end)
 
 Ext.RegisterOsirisListener("UserEvent", 2, "after", function(id, event)

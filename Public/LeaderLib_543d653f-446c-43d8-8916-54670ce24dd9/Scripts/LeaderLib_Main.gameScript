@@ -742,3 +742,21 @@ ELIF "c1"
 THEN
 	ClearFlag(_Char, "LeaderLib_SkillRequirement_WandWeapon")
 ENDIF
+
+// EVENT LeaderLib_CrashFix_Madness
+// VARS
+// 	ITEM:_Item
+// 	LIST<STATUS>:_RemoveList
+// ON 
+// 	FetchItemApplyStatusData(_Item, MADNESS)
+// ACTIONS
+// 	RETURN(_RemoveList,null,null)
+
+// EVENT LeaderLib_CrashFix_DamageOnMove
+// VARS
+// 	ITEM:_Item
+// 	LIST<STATUS>:_RemoveList
+// ON 
+// 	FetchItemApplyStatusData(_Item, DAMAGE_ON_MOVE)
+// ACTIONS
+// 	RETURN(_RemoveList,null,null)

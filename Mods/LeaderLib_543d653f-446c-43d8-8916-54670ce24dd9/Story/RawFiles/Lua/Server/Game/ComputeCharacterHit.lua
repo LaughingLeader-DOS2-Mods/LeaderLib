@@ -64,7 +64,7 @@ local function ComputeOverridesEnabled()
 end
 
 local function WithinMeleeDistance(pos1, pos2)
-    print(GameSettings.Settings.BackstabSettings.MeleeSpellBackstabMaxDistance, GameHelpers.Math.GetDistance(pos1,pos2))
+    --print(GameSettings.Settings.BackstabSettings.MeleeSpellBackstabMaxDistance, GameHelpers.Math.GetDistance(pos1,pos2))
     return GameHelpers.Math.GetDistance(pos1,pos2) <= (GameSettings.Settings.BackstabSettings.MeleeSpellBackstabMaxDistance or 2.5)
 end
 

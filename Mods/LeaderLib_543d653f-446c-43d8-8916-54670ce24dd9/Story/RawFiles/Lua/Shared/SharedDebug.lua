@@ -75,7 +75,6 @@ local function TraceType(character, attribute, attribute_type)
 end
 
 function Debug_TraceCharacter(character)
-	print("Debug_TraceCharacter")
 	if character == nil then
 		return
 	end

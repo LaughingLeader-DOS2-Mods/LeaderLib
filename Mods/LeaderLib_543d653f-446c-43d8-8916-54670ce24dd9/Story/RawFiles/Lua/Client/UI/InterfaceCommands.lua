@@ -87,7 +87,7 @@ function UI.StatusText(target, text, displayTime, isItem)
 				ui:SetValue("selectionInfo_array", v, i)
 			end
 			ui:Invoke("updateOHs")
-			print("UI.StatusText", target, text, displayTime, isItem)
+			--print("UI.StatusText", target, text, displayTime, isItem)
 			--ui:Invoke("addOverhead", doubleHandle, text, displayTime)
 		end
 	end

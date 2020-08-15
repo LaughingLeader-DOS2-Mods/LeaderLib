@@ -50,7 +50,11 @@ function TranslatedString:ReplacePlaceholders(...)
 			str = values[1]
 		else
 			for i,v in ipairs(values) do
-				str = string.gsub(str, "%["..tostring(i).."%]", v)
+				if type(v) == "number" then
+					str = string.gsub(str, "%["..tostring(i).."%]", math.tointeger(v))
+				else
+					str = string.gsub(str, "%["..tostring(i).."%]", v)
+				end
 			end
 		end
 	end

@@ -83,8 +83,6 @@ end
 Ext.RegisterListener("SessionLoading", LeaderLib_Shared_SessionLoading)
 
 Ext.RegisterListener("SessionLoaded", function()
-	PrintDebug("[LeaderLib] Updating translated strings", #TranslatedStringEntries)
-	--print(Ext.JsonStringify(TranslatedStringEntries))
 	local count = #TranslatedStringEntries
 	if TranslatedStringEntries ~= nil and count > 0 then
 		for i,v in pairs(TranslatedStringEntries) do

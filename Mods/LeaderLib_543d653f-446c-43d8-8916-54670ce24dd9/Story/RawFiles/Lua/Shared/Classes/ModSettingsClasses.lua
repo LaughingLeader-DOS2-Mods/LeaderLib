@@ -46,7 +46,7 @@ local SettingsData = {
 	---@type table<string, FlagData>
 	Flags = {},
 	---@type table<string, VariableData>
-	Variables = {}
+	Variables = {},
 }
 
 SettingsData.__index = SettingsData
@@ -113,6 +113,12 @@ function SettingsData:UpdateFlags()
 	end
 end
 
+function SettingsData:UpdateVariables(func)
+	for name,data in pairs(self.Variables) do
+		pcall(func, self, name, data)
+	end
+end
+
 function SettingsData:ApplyFlags()
 	for flag,data in pairs(self.Flags) do
 		if data.FlagType == "Global" then
@@ -174,7 +180,9 @@ local ModSettings = {
 	Profiles = {},
 	---@type SettingsData
 	Global = nil,
-	Version = -1
+	Version = -1,
+	---@type function<SettingaData,string,any>
+	UpdateVariable = nil
 }
 
 ModSettings.__index = ModSettings
@@ -214,6 +222,12 @@ function ModSettings:Update()
 	for i,v in pairs(self.Profiles) do
 		v.Settings:UpdateFlags()
 	end
+	if self.UpdateVariable ~= nil then
+		self.Global:UpdateVariables(self.UpdateVariable)
+		for i,v in pairs(self.Profiles) do
+			v.Settings:UpdateVariables(self.UpdateVariable)
+		end
+	end
 end
 
 function ModSettings:ApplyFlags()
@@ -221,6 +235,17 @@ function ModSettings:ApplyFlags()
 	for i,v in pairs(self.Profiles) do
 		v.Settings:ApplyFlags()
 	end
+end
+
+function ModSettings:Copy()
+	local copy = {
+		UUID = self.UUID,
+		Name = self.Name,
+		Profiles = self.Profiles,
+		Global = self.Global,
+		Version = self.Version
+	}
+	return copy
 end
 
 Classes.ModSettingsClasses = {

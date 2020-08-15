@@ -75,15 +75,31 @@ local chaosDamagePattern = "<font color=\"#C80030\">([%d-%s]+)</font>"
 ---@param status EsvStatus
 ---@param tooltip TooltipData
 local function OnStatusTooltip(character, status, tooltip)
-	if Features.FixChaosDamageDisplay then
-		if Ext.StatGetAttribute(status.StatusId, "StatusType") == "DAMAGE" and string.find(Ext.StatGetAttribute(status.StatusId, "DescriptionParams"), "Damage") then
-			local element = tooltip:GetElement("StatusDescription")
-			if element ~= nil and not string.find(element.Label:lower(), "chaos damage") then
-				local startPos,endPos,damage = string.find(element.Label, chaosDamagePattern)
-				if damage ~= nil then
-					damage = string.gsub(damage, "%s+", "")
-					local removeText = string.sub(element.Label, startPos, endPos):gsub("%-", "%%-")
-					element.Label = string.gsub(element.Label, removeText, GameHelpers.GetDamageText("Chaos", damage))
+	if Features.ReplaceTooltipPlaceholders or Features.FixChaosDamageDisplay or Features.TooltipGrammarHelper then
+		for i,element in pairs(tooltip:GetElements("StatusDescription")) do
+			if element ~= nil then
+				if Features.TooltipGrammarHelper then
+					element.Label = string.gsub(element.Label, "a 8", "an 8")
+					local startPos,endPos = string.find(element.Label , "a <font.->8")
+					if startPos then
+						local text = string.sub(element.Label, startPos, endPos)
+						element.Label = string.gsub(element.Label, text, text:gsub("a ", "an "))
+					end
+				end
+				if Features.FixChaosDamageDisplay 
+				and status.StatusType == "DAMAGE" 
+				and string.find(status.DescriptionParams, "Damage") 
+				and not string.find(element.Label:lower(), "chaos damage")
+				then
+					local startPos,endPos,damage = string.find(element.Label, chaosDamagePattern)
+					if damage ~= nil then
+						damage = string.gsub(damage, "%s+", "")
+						local removeText = string.sub(element.Label, startPos, endPos):gsub("%-", "%%-")
+						element.Label = string.gsub(element.Label, removeText, GameHelpers.GetDamageText("Chaos", damage))
+					end
+				end
+				if Features.ReplaceTooltipPlaceholders then
+					element.Label = GameHelpers.Tooltip.ReplacePlaceholders(element.Label, character)
 				end
 			end
 		end
@@ -96,31 +112,34 @@ end
 local function OnSkillTooltip(character, skill, tooltip)
 	if character ~= nil then UI.ClientCharacter = character.MyGuid or character.NetID end
 	if Features.TooltipGrammarHelper then
-		local elements = tooltip:GetElements("SkillDescription")
-		for i,element in pairs(elements) do
-			if element ~= nil then
-				element.Label = string.gsub(element.Label, "a 8", "an 8")
-				local startPos,endPos = string.find(element.Label , "a <font.->8")
-				if startPos then
-					local text = string.sub(element.Label, startPos, endPos)
-					element.Label = string.gsub(element.Label, text, text:gsub("a ", "an "))
-				end
-			end
-			-- This fixes the double spaces from removing the "tag" part of Requires tag
-			element = tooltip:GetElement("SkillRequiredEquipment")
-			if element ~= nil and not element.RequirementMet and string.find(element.Label, "Requires  ") then
-				element.Label = string.gsub(element.Label, "  ", " ")
-			end
+		-- This fixes the double spaces from removing the "tag" part of Requires tag
+		local element = tooltip:GetElement("SkillRequiredEquipment")
+		if element ~= nil and not element.RequirementMet and string.find(element.Label, "Requires  ") then
+			element.Label = string.gsub(element.Label, "  ", " ")
 		end
 	end
-	if Features.FixChaosDamageDisplay then
-		local element = tooltip:GetElement("SkillDescription")
-		if element ~= nil and not string.find(element.Label:lower(), "chaos damage") then
-			local startPos,endPos,damage = string.find(element.Label, chaosDamagePattern)
-			if damage ~= nil then
-				damage = string.gsub(damage, "%s+", "")
-				local removeText = string.sub(element.Label, startPos, endPos):gsub("%-", "%%-")
-				element.Label = string.gsub(element.Label, removeText, GameHelpers.GetDamageText("Chaos", damage))
+	if Features.ReplaceTooltipPlaceholders or Features.FixChaosDamageDisplay or Features.TooltipGrammarHelper then
+		for i,element in pairs(tooltip:GetElements("SkillDescription")) do
+			if element ~= nil then
+				if Features.TooltipGrammarHelper then
+					element.Label = string.gsub(element.Label, "a 8", "an 8")
+					local startPos,endPos = string.find(element.Label , "a <font.->8")
+					if startPos then
+						local text = string.sub(element.Label, startPos, endPos)
+						element.Label = string.gsub(element.Label, text, text:gsub("a ", "an "))
+					end
+				end
+				if Features.FixChaosDamageDisplay and not string.find(element.Label:lower(), "chaos damage") then
+					local startPos,endPos,damage = string.find(element.Label, chaosDamagePattern)
+					if damage ~= nil then
+						damage = string.gsub(damage, "%s+", "")
+						local removeText = string.sub(element.Label, startPos, endPos):gsub("%-", "%%-")
+						element.Label = string.gsub(element.Label, removeText, GameHelpers.GetDamageText("Chaos", damage))
+					end
+				end
+				if Features.ReplaceTooltipPlaceholders then
+					element.Label = GameHelpers.Tooltip.ReplacePlaceholders(element.Label, character)
+				end
 			end
 		end
 	end
@@ -132,17 +151,6 @@ end
 --- @param param string
 local function SkillGetDescriptionParam(skill, character, isFromItem, param1, param2)
 	if character.Character ~= nil then UI.ClientCharacter = character.Character.MyGuid or character.NetID end
-	if Features.ExtraDataSkillParamReplacement then
-		if param1 == "ExtraData" then
-			local value = Ext.ExtraData[param2]
-			if value ~= nil then
-				local result = tostring(math.floor(value))
-				if result ~= nil then
-					return result
-				end
-			end
-		end
-	end
 end
 
 Ext.RegisterListener("SkillGetDescriptionParam", SkillGetDescriptionParam)
@@ -154,24 +162,6 @@ Ext.RegisterListener("SkillGetDescriptionParam", SkillGetDescriptionParam)
 ---@param param2 string
 ---@param param3 string
 local function StatusGetDescriptionParam(status, statusSource, target, param1, param2, param3)
-	if Features.ExtraDataSkillParamReplacement then
-		if param1 == "ExtraData" then
-			local success,result = xpcall(function()
-				local value = Ext.ExtraData[param2]
-				if value ~= nil then
-					local result = tostring(math.floor(value))
-					if result ~= nil then
-						return result
-					end
-				end
-			end, debug.traceback)
-			if not success then
-				Ext.PrintError(result)
-			else
-				return result
-			end
-		end
-	end
 	if Features.StatusParamSkillDamage then
 		if param1 == "Skill" and param2 ~= nil then
 			if param3 == "Damage" then

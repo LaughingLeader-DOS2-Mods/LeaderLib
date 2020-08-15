@@ -1437,7 +1437,7 @@ StringConcatenate(_Str3, "].", _Suffix)
 THEN
 LeaderLog_LogInt("DEBUG_EVENTS", "[LeaderLib:Debug:CharacterReceivedDamage] [",_Percentage, _Suffix);
 
-/* [OSITOOLS_ONLY]
+/*
 IF
 CharacterPhysicalHitBy(_Target, _Owner, _Attacker)
 AND

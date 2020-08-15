@@ -86,18 +86,22 @@ local function OnStatusTooltip(character, status, tooltip)
 						element.Label = string.gsub(element.Label, text, text:gsub("a ", "an "))
 					end
 				end
-				if Features.FixChaosDamageDisplay 
-				and status.StatusType == "DAMAGE" 
-				and string.find(status.DescriptionParams, "Damage") 
-				and not string.find(element.Label:lower(), "chaos damage")
-				then
-					local startPos,endPos,damage = string.find(element.Label, chaosDamagePattern)
-					if damage ~= nil then
-						damage = string.gsub(damage, "%s+", "")
-						local removeText = string.sub(element.Label, startPos, endPos):gsub("%-", "%%-")
-						element.Label = string.gsub(element.Label, removeText, GameHelpers.GetDamageText("Chaos", damage))
+
+				if Features.FixChaosDamageDisplay and not Data.EngineStatus[status.StatusId] then
+					local statusType = Ext.StatGetAttribute(status.StatusId, "StatusType")
+					if statusType == "DAMAGE" 
+					and string.find(status.DescriptionParams, "Damage") 
+					and not string.find(element.Label:lower(), "chaos damage")
+					then
+						local startPos,endPos,damage = string.find(element.Label, chaosDamagePattern)
+						if damage ~= nil then
+							damage = string.gsub(damage, "%s+", "")
+							local removeText = string.sub(element.Label, startPos, endPos):gsub("%-", "%%-")
+							element.Label = string.gsub(element.Label, removeText, GameHelpers.GetDamageText("Chaos", damage))
+						end
 					end
 				end
+
 				if Features.ReplaceTooltipPlaceholders then
 					element.Label = GameHelpers.Tooltip.ReplacePlaceholders(element.Label, character)
 				end

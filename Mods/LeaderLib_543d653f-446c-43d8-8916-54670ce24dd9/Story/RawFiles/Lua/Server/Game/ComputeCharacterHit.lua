@@ -73,6 +73,20 @@ local function CanBackstabWithTwoHandedWeapon(weapon)
     return (GameSettings.Settings.BackstabSettings.AllowTwoHandedWeapons or not weapon.IsTwoHanded)
 end
 
+local function BackstabSpellMechanicsEnabled(attacker, hitType)
+    local backstabSettings = GameSettings.Settings.BackstabSettings
+    local settings = nil
+    if attacker.IsPlayer then
+        settings = GameSettings.Settings.BackstabSettings.Player
+    else
+        settings = GameSettings.Settings.BackstabSettings.NPC
+    end
+    if settings.SpellsCanBackstab then
+        return true
+    end
+    return false
+end
+
 --- This parses the GameSettings options for backstab settings, allowing both players and NPCs to backstab with other weapons if the condition is right.
 --- Lets the Backstab talent work. Also lets ranged weapons backstab if the game settings option MeleeOnly is disabled.
 --- @param attacker StatCharacter
@@ -221,9 +235,11 @@ local function ComputeCharacterHit(target, attacker, weapon, damageList, hitType
         end
 
         local backstabbed = false
+        if weapon == nil then
+            weapon = attacker.MainWeapon
+        end
         
-        if hitType ~= "Surface" and hitType ~= "DoT" and hitType ~= "Reflected" then
-            --print("CanBackstab:",CanBackstab(attacker, weapon), "IsPlayer", attacker.IsPlayer, "TALENT_Backstab", attacker.TALENT_Backstab)
+        if hitType == "Magic" and BackstabSpellMechanicsEnabled(attacker) then
             if alwaysBackstab or (CanBackstab(attacker, weapon, hitType, target) and Game.Math.CanBackstab(target, attacker)) then
                 hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.Backstab
                 backstabbed = true
@@ -235,6 +251,11 @@ local function ComputeCharacterHit(target, attacker, weapon, damageList, hitType
             Game.Math.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll)
             Game.Math.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
             return hit
+        end
+
+        if alwaysBackstab or (CanBackstab(attacker, weapon, hitType, target) and Game.Math.CanBackstab(target, attacker)) then
+            hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.Backstab
+            backstabbed = true
         end
 
         if hitType == "Melee" then
@@ -294,4 +315,4 @@ local function ComputeCharacterHit(target, attacker, weapon, damageList, hitType
     end
 end
 
---Ext.RegisterListener("ComputeCharacterHit", ComputeCharacterHit)
+Ext.RegisterListener("ComputeCharacterHit", ComputeCharacterHit)

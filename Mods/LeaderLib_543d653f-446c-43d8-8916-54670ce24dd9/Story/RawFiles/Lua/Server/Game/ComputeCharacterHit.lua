@@ -265,7 +265,6 @@ local function ComputeCharacterHit(target, attacker, weapon, damageList, hitType
         if not noHitRoll then
             local hitChance = Game.Math.CalculateHitChance(attacker, target)
             local hitRoll = math.random(0, 99)
-            print("CalculateHitChance", hitChance, hitRoll, attacker.Accuracy, target.Dodge, attacker.ChanceToHitBoost)
             if hitRoll >= hitChance then
                 if target.TALENT_RangerLoreEvasionBonus and hitRoll < hitChance + 10 then
                     hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.Dodged
@@ -295,4 +294,4 @@ local function ComputeCharacterHit(target, attacker, weapon, damageList, hitType
     end
 end
 
-Ext.RegisterListener("ComputeCharacterHit", ComputeCharacterHit)
+--Ext.RegisterListener("ComputeCharacterHit", ComputeCharacterHit)

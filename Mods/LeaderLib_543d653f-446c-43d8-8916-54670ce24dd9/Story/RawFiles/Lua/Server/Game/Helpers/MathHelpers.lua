@@ -3,7 +3,7 @@ if GameHelpers.Math == nil then
 end
 
 ---Get a position derived from a character's forward facing direction.
----@param source string
+---@param char string
 ---@param distanceMult number
 function GameHelpers.Math.GetForwardPosition(char, distanceMult)
     local x,y,z = GetPosition(char)

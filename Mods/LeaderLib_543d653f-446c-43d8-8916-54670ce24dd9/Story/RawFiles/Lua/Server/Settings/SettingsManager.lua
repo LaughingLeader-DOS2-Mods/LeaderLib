@@ -39,13 +39,25 @@ function SettingsManager.GetMod(uuid, createIfMissing)
 	return nil
 end
 
+local function ExportGlobalSettings()
+	local globalSettings = {
+		Mods = {},
+		Version = GlobalSettings.Version
+	}
+	for i,v in pairs(GlobalSettings.Mods) do
+		v:Update()
+		globalSettings.Mods[#globalSettings.Mods+1] = v:Copy()
+	end
+	return globalSettings
+end
+
 function SettingsManager.Sync()
-	Ext.BroadcastMessage("LeaderLib_SyncGlobalSettings", Ext.JsonStringify(GlobalSettings), nil)
+	Ext.BroadcastMessage("LeaderLib_SyncGlobalSettings", Ext.JsonStringify(ExportGlobalSettings()), nil)
 end
 
 function SettingsManager.SyncAllSettings(id)
 	local data = {
-		GlobalSettings = GlobalSettings,
+		GlobalSettings = ExportGlobalSettings(),
 		Features = Features,
 		GameSettings = GameSettings
 	}
@@ -153,14 +165,7 @@ end
 
 function SaveGlobalSettings()
 	local status,err = xpcall(function()
-		local export = {
-			Mods = {},
-			Version = GlobalSettings.Version
-		}
-		for i,v in pairs(GlobalSettings.Mods) do
-			v:Update()
-			export.Mods[#export.Mods+1] = v:Copy()
-		end
+		local export = ExportGlobalSettings()
 		local json = Ext.JsonStringify(export)
 		NRD_SaveFile("LeaderLib_GlobalSettings.json", json)
 		return true

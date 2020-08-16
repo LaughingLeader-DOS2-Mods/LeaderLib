@@ -5,13 +5,6 @@ LeaderLib_ModCompatibility_Internal_CompleteIfStarted(); // Existing saves
 KBSECTION
 IF
 GameEventSet("GAMEEVENT_GameStarted")
-AND
-NOT DB_LeaderLib_GameStarted(_)
-THEN
-DB_LeaderLib_GameStarted(1);
-
-IF
-GameEventSet("GAMEEVENT_GameStarted")
 THEN
 GoalCompleted;
 

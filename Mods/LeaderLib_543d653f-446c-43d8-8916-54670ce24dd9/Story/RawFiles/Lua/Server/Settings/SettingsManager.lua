@@ -201,7 +201,6 @@ function GlobalSettings_StoreGlobalInteger(uuid, varname, valuestr)
 	local mod_settings = SettingsManager.GetMod(uuid, true)
 	if mod_settings ~= nil then
 		mod_settings.Global:AddVariable(varname, math.tointeger(tonumber(valuestr)))
-		print(varname, uuid, valuestr)
 	end
 end
 

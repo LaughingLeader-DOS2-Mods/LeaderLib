@@ -149,6 +149,14 @@ function SettingsData:ApplyFlags()
 	end
 end
 
+function SettingsData:ApplyVariables(uuid)
+	for name,data in pairs(self.Variables) do
+		if type(data.Value) == "number" then
+			Osi.LeaderLib_GlobalSettings_SetIntegerVariable(uuid, name, math.tointeger(data.Value))
+		end
+	end
+end
+
 ---@class ProfileSettings
 local ProfileSettings = {
 	Type = "ProfileSettings",
@@ -227,6 +235,19 @@ function ModSettings:Update()
 		for i,v in pairs(self.Profiles) do
 			v.Settings:UpdateVariables(self.UpdateVariable)
 		end
+	else
+		if Ext.IsModLoaded(self.UUID) then
+			local last_pricemod = GetGlobalPriceModifier()
+			for name,v in pairs(self.Global.Variables) do
+				SetGlobalPriceModifier(123456)
+				Osi.LeaderLib_GlobalSettings_Internal_GetIntegerVariable(self.UUID, name)
+				local int_value = GetGlobalPriceModifier()
+				if int_value ~= 123456 then
+					v.Value = int_value
+				end
+			end
+			SetGlobalPriceModifier(last_pricemod)
+		end
 	end
 end
 
@@ -234,6 +255,13 @@ function ModSettings:ApplyFlags()
 	self.Global:ApplyFlags()
 	for i,v in pairs(self.Profiles) do
 		v.Settings:ApplyFlags()
+	end
+end
+
+function ModSettings:ApplyVariables()
+	self.Global:ApplyVariables(self.UUID)
+	for i,v in pairs(self.Profiles) do
+		v.Settings:ApplyVariables(self.UUID)
 	end
 end
 

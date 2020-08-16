@@ -105,7 +105,8 @@ local function ParseModData(uuid, tbl)
 			for varname,v in pairs(integers) do
 				local intnum = math.tointeger(v)
 				if modSettings ~= nil then
-					modSettings.Global:AddVariable(varname, intnum, "integer")
+					modSettings.Global:AddVariable(varname, intnum)
+					Osi.LeaderLib_GlobalSettings_SetIntegerVariable(uuid, varname, intnum)
 				end
 			end
 		end
@@ -146,9 +147,10 @@ function LoadGlobalSettings()
 		Ext.PrintError("[LeaderLib:LoadGlobalSettings] Error loading global settings:")
 		Ext.PrintError(err)
 	else
-		if Ext.OsirisIsCallable() or Osi.DB_LeaderLib_GameStarted:Get(1) ~= nil then
+		if Ext.OsirisIsCallable() or Ext.GetGameState() == "Running" then
 			for i,v in pairs(GlobalSettings.Mods) do
 				v:ApplyFlags()
+				v:ApplyVariables()
 			end
 		end
 		if #Listeners.ModSettingsLoaded > 0 then
@@ -168,6 +170,7 @@ function SaveGlobalSettings()
 		local export = ExportGlobalSettings()
 		local json = Ext.JsonStringify(export)
 		NRD_SaveFile("LeaderLib_GlobalSettings.json", json)
+		PrintDebug("[LeaderLib] Saved LeaderLib_GlobalSettings.json")
 		return true
 	end, debug.traceback)
 	if not status then
@@ -193,11 +196,12 @@ end
 
 ---@param uuid string
 ---@param varname string
----@param defaultvalue string
-function GlobalSettings_StoreGlobalInteger(uuid, varname, defaultvalue)
+---@param valuestr string
+function GlobalSettings_StoreGlobalInteger(uuid, varname, valuestr)
 	local mod_settings = SettingsManager.GetMod(uuid, true)
 	if mod_settings ~= nil then
-		mod_settings.Global:AddVariable(varname, math.tointeger(tonumber(defaultvalue)), "integer")
+		mod_settings.Global:AddVariable(varname, math.tointeger(tonumber(valuestr)))
+		print(varname, uuid, valuestr)
 	end
 end
 

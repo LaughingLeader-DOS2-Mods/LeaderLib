@@ -95,7 +95,7 @@ local function ReplacePlaceholders(str, character)
 			local skill = GameHelpers.Ext.CreateSkillTable(skillName)
 			if skill ~= nil then
 				if character == nil and UI.ClientCharacter ~= nil then
-					character = Ext.GetCharacter(UI.CurrentCharacter) or nil
+					character = Ext.GetCharacter(UI.ClientCharacter) or nil
 				end
 				if character ~= nil then
 					local damageRange = Game.Math.GetSkillDamageRange(character.Stats, skill)

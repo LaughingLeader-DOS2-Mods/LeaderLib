@@ -140,6 +140,7 @@ DB_NOOP(1);
 PROC
 LeaderLib_StoryStarted()
 THEN
+DB_LeaderLib_GameStarted(1);
 NOT DB_LeaderLib_Extender_LuaInitialized(1);
 /* [OSITOOLS_ONLY]
 DB_LeaderLib_Extender_LuaInitialized(1);
@@ -173,6 +174,13 @@ SavegameLoading(_,_,_,_)
 THEN
 LeaderLib_System_SetExtenderFlag();
 DB_LeaderLib_System_Temp_SaveLoad(1);
+
+IF
+GameStarted(_,_)
+AND
+NOT DB_LeaderLib_GameStarted(1)
+THEN
+DB_LeaderLib_GameStarted(1);
 
 IF
 GameStarted(_,_)

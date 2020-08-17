@@ -72,19 +72,25 @@ function GameHelpers.ShootProjectileAtPosition(source, tx, ty, tz, skill, forceH
     NRD_ProjectileLaunch()
 end
 
-function GameHelpers.ExplodeProjectile(source, target, skill)
-    local level = 1
-    if ObjectIsCharacter(source) == 1 then
+function GameHelpers.ExplodeProjectile(source, target, skill, skillLevel)
+    local level = skillLevel or 1
+    if source ~= nil then
+        if ObjectIsCharacter(source) == 1 then
+            level = CharacterGetLevel(source)
+        else
+            local item = Ext.GetItem(source)
+            if item ~= nil and item.Stats ~= nil then
+                level = item.Stats.Level
+            end
+        end
+        NRD_ProjectileSetGuidString("Caster", source)
+        NRD_ProjectileSetGuidString("Source", source)
+    elseif skillLevel == nil and type(target) == "string" and ObjectIsCharacter(target) == 1 then
         level = CharacterGetLevel(source)
-    else
-        SetStoryEvent(source, "LeaderLib_Commands_SetItemLevel")
-        level = GetVarInteger(source, "LeaderLib_Level")
     end
     NRD_ProjectilePrepareLaunch()
     NRD_ProjectileSetString("SkillId", skill)
     NRD_ProjectileSetInt("CasterLevel", level)
-    NRD_ProjectileSetGuidString("Caster", source)
-    NRD_ProjectileSetGuidString("Source", source)
 
     if type(target) == "string" then
         NRD_ProjectileSetGuidString("SourcePosition", target)
@@ -93,7 +99,11 @@ function GameHelpers.ExplodeProjectile(source, target, skill)
         NRD_ProjectileSetGuidString("TargetPosition", target)
     elseif type(target) == "table" then
         -- Exploding at a position
-        local x,y,z = GetPosition(source)
+        local x,y,z = 0,0,0
+        if source ~= nil then
+            x,y,z = GetPosition(source)
+        end
+
         local tx,ty,tz = table.unpack(target)
         if tx == nil then
             tx = x

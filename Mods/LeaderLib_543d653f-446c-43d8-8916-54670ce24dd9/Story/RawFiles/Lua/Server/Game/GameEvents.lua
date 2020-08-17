@@ -1,6 +1,51 @@
-local function OnInitialized()
-	Vars.Initialized = true
+local function CanOverrideLeaveActionStatus(status)
+	for i,prefix in pairs(Vars.LeaveActionData.Prefixes) do
+		if string.find(status, prefix) then
+			return true
+		end
+	end
+	return false
+end
 
+-- LeaveAction damage is delayed after its first application in combat, due to a forced half second wait for the status object to be removed.
+-- Instead, for WeaponEx statuses, we'll explode it with the extender, but keep LeaveAction in the status for compatibility,
+-- so other mods can change the projectiles used.
+local function OverrideLeaveActionStatuses()
+	if #Vars.LeaveActionData.Prefixes > 0 then
+		for i,stat in pairs(Ext.GetStatEntries("StatusData")) do
+			if CanOverrideLeaveActionStatus(stat) then
+				local leaveActionSkill = Ext.StatGetAttribute(stat, "LeaveAction")
+				if leaveActionSkill == "" then
+					local savedSkill = Osi.DB_LeaderLib_LeaveAction_StatusToSkill:Get(stat, nil)
+					if savedSkill ~= nil and #savedSkill > 0 then
+						leaveActionSkill = savedSkill[1][2]
+						if leaveActionSkill ~= nil and leaveActionSkill ~= "" then
+							Vars.LeaveActionData.Statuses[stat] = leaveActionSkill
+							Vars.LeaveActionData.Total = Vars.LeaveActionData.Total + 1
+						end
+					end
+				else
+					Vars.LeaveActionData.Statuses[stat] = leaveActionSkill
+					Vars.LeaveActionData.Total = Vars.LeaveActionData.Total + 1
+					local statObj = Ext.GetStat(stat)
+					statObj.LeaveAction = ""
+					Ext.SyncStat(stat, false)
+				end
+			end
+		end
+
+		LeaderLib.PrintDebug("[LeaderLib:OverrideLeaveActionStatuses] Saved statuses to the Vars.LeaveActionData table.")
+		LeaderLib.PrintDebug(Ext.JsonStringify(Vars.LeaveActionData))
+	end
+end
+
+local function OnInitialized()
+	local status,err = xpcall(OverrideLeaveActionStatuses, debug.traceback)
+	if not status then
+		print(err)
+	end
+	print("OnInitialized", Ext.JsonStringify(Vars.LeaveActionData))
+	Vars.Initialized = true
 	pcall(LoadGameSettings)
 
 	if Vars.PostLoadEnableLuaListeners then
@@ -71,6 +116,7 @@ function OnLeaderLibInitialized()
 end
 
 function OnLuaReset()
+	print("OnLuaReset")
 	OnInitialized()
 	if #Listeners.LuaReset > 0 then
 		for i,callback in ipairs(Listeners.LuaReset) do

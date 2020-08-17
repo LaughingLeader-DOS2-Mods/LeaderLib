@@ -101,6 +101,20 @@ THEN
 NRD_ModCall("LeaderLib", "DisableFeature", _Feature);
 */
 //END_REGION
+
+//REGION LEAVE_ACTION_HELPERS
+PROC
+LeaderLib_Lua_SaveLeaveActionSkill((STRING)_Status, (STRING)_Skill)
+THEN
+DB_LeaderLib_LeaveAction_StatusToSkill(_Status, _Skill);
+
+PROC
+LeaderLib_Lua_ClearLeaveActionSkill((STRING)_Status)
+AND
+DB_LeaderLib_LeaveAction_StatusToSkill(_Status, _Skill)
+THEN
+NOT DB_LeaderLib_LeaveAction_StatusToSkill(_Status, _Skill);
+//END_REGION
 EXITSECTION
 ENDEXITSECTION
 ParentTargetEdge "LaughingLeader__LeaderLib"

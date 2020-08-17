@@ -38,7 +38,7 @@ local function OnStatusApplied(target,status,source)
 		local skill = Vars.LeaveActionData.Statuses[status]
 		if skill ~= nil then
 			local turns = GetStatusTurns(target, status)
-			if turns == 0 then
+			if turns == nil or turns == 0 then
 				GameHelpers.ExplodeProjectile(source, target, skill)
 			elseif not StringHelpers.IsNullOrEmpty(source) then
 				TrackStatusSource(target, status, source)
@@ -61,6 +61,9 @@ local function OnStatusRemoved(target,status)
 end
 
 local function GetUUIDFromString(str)
+	if str == "NULL_00000000-0000-0000-0000-000000000000" then
+		return str
+	end
 	local start = string.find(str, "_[^_]*$")
 	if start then
 		return string.sub(str, start+1, #str)
@@ -69,14 +72,14 @@ local function GetUUIDFromString(str)
 end
 
 local function ParseStatusApplied(target,status,source)
-	if not Data.EngineStatus[status] then
+	if Data.EngineStatus[status] ~= true then
 		OnStatusApplied(GetUUIDFromString(target), status, GetUUIDFromString(source))
 	end
 end
 
-local function ParseStatusRemoved(target,status,source)
-	if not Data.EngineStatus[status] then
-		OnStatusApplied(GetUUIDFromString(target), status, GetUUIDFromString(source))
+local function ParseStatusRemoved(target,status)
+	if Data.EngineStatus[status] ~= true then
+		OnStatusRemoved(GetUUIDFromString(target), status)
 	end
 end
 

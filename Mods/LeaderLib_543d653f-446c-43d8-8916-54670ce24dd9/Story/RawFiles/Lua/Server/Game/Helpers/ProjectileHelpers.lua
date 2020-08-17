@@ -1,14 +1,13 @@
 function GameHelpers.ShootProjectile(source, target, skill, forceHit, sourcePosition)
+    NRD_ProjectilePrepareLaunch()
+    NRD_ProjectileSetString("SkillId", skill)
+    
     local level = 1
     if ObjectIsCharacter(source) == 1 then
         level = CharacterGetLevel(source)
     else
         level = Ext.GetItem(source).Stats.Level
     end
-
-    NRD_ProjectilePrepareLaunch()
-
-    NRD_ProjectileSetString("SkillId", skill)
     NRD_ProjectileSetInt("CasterLevel", level)
 
     NRD_ProjectileSetGuidString("Caster", source)
@@ -47,6 +46,8 @@ function GameHelpers.ShootProjectile(source, target, skill, forceHit, sourcePosi
 end
 
 function GameHelpers.ShootProjectileAtPosition(source, tx, ty, tz, skill, forceHit)
+    NRD_ProjectilePrepareLaunch()
+    NRD_ProjectileSetString("SkillId", skill)
     local level = 1
     if ObjectIsCharacter(source) == 1 then
         level = CharacterGetLevel(source)
@@ -54,8 +55,6 @@ function GameHelpers.ShootProjectileAtPosition(source, tx, ty, tz, skill, forceH
         SetStoryEvent(source, "LeaderLib_Commands_SetItemLevel")
         level = GetVarInteger(source, "LeaderLib_Level")
     end
-    NRD_ProjectilePrepareLaunch()
-    NRD_ProjectileSetString("SkillId", skill)
     NRD_ProjectileSetInt("CasterLevel", level)
 
     NRD_ProjectileSetGuidString("Caster", source)
@@ -73,6 +72,9 @@ function GameHelpers.ShootProjectileAtPosition(source, tx, ty, tz, skill, forceH
 end
 
 function GameHelpers.ExplodeProjectile(source, target, skill, skillLevel)
+    NRD_ProjectilePrepareLaunch()
+    NRD_ProjectileSetString("SkillId", skill)
+
     local level = skillLevel or 1
     if source ~= nil then
         if ObjectIsCharacter(source) == 1 then
@@ -86,10 +88,8 @@ function GameHelpers.ExplodeProjectile(source, target, skill, skillLevel)
         NRD_ProjectileSetGuidString("Caster", source)
         NRD_ProjectileSetGuidString("Source", source)
     elseif skillLevel == nil and type(target) == "string" and ObjectIsCharacter(target) == 1 then
-        level = CharacterGetLevel(source)
+        level = CharacterGetLevel(target)
     end
-    NRD_ProjectilePrepareLaunch()
-    NRD_ProjectileSetString("SkillId", skill)
     NRD_ProjectileSetInt("CasterLevel", level)
 
     if type(target) == "string" then

@@ -50,7 +50,7 @@ end
 local function OnStatusRemoved(target,status)
 	if Vars.LeaveActionData.Total > 0 then
 		local source = GetStatusSource(target, status)
-		if source then
+		if source ~= nil then
 			local skill = Vars.LeaveActionData.Statuses[status]
 			if skill ~= nil then
 				GameHelpers.ExplodeProjectile(source, target, skill)

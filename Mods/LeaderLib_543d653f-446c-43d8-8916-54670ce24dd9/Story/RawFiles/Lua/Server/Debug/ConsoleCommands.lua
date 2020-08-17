@@ -320,6 +320,18 @@ Ext.RegisterConsoleCommand("addskill", function(command, skill)
 	CharacterAddSkill(host, skill, 1)
 end)
 
+Ext.RegisterConsoleCommand("removeunmemorizedskills", function(cmd)
+	local host = CharacterGetHostCharacter()
+	local char = Ext.GetCharacter(host)
+	for i,skill in pairs(char:GetSkills()) do
+		local skillInfo = char:GetSkillInfo(skill)
+		print(string.format("%[%s%] IsActivated(%s) IsLearned(%s), ZeroMemory(%s)", skill, skillInfo.IsActivated, skillInfo.IsLearned, skillInfo.ZeroMemory))
+		if skillInfo.IsActivated and skillInfo.IsLearned then
+			CharacterRemoveSkill(host, skill)
+		end
+	end
+end)
+
 --!additemstat ARM_UNIQUE_LLWEAPONEX_ThiefGloves_A Unique fe0754e3-5f0b-409e-a856-31e646201ee4
 Ext.RegisterConsoleCommand("additemstat", function(command, stat, rarity, template)
 	if rarity == nil then

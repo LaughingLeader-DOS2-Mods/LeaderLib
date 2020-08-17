@@ -61,7 +61,7 @@ function RemoveSkillListener(skill, callback)
 	end
 end
 
-local function LeaderLib_Shared_SessionLoading()
+Ext.RegisterListener("SessionLoading", function()
 	for i,status in pairs(Ext.GetStatEntries("StatusData")) do
 		local statusType = Ext.StatGetAttribute(status, "StatusType")
 		if statusType ~= nil and statusType ~= "" then
@@ -78,11 +78,42 @@ local function LeaderLib_Shared_SessionLoading()
 			Data.OriginalSkillTiers = PersistentVars["OriginalSkillTiers"]
 		end
 	end
+end)
+
+local function CanOverrideLeaveActionStatus(status)
+	for i,prefix in pairs(Vars.LeaveActionData.Prefixes) do
+		if string.find(status, prefix) then
+			return true
+		end
+	end
+	return false
 end
 
-Ext.RegisterListener("SessionLoading", LeaderLib_Shared_SessionLoading)
+-- LeaveAction damage is delayed after its first application in combat, due to a forced half second wait for the status object to be removed.
+-- Instead, for WeaponEx statuses, we'll explode it with the extender, but keep LeaveAction in the status for compatibility,
+-- so other mods can change the projectiles used.
+local function OverrideLeaveActionStatuses()
+	if #Vars.LeaveActionData.Prefixes > 0 then
+		local total = 0
+		for i,stat in pairs(Ext.GetStatEntries("StatusData")) do
+			if CanOverrideLeaveActionStatus(stat) then
+				local leaveActionSkill = Ext.StatGetAttribute(stat, "LeaveAction")
+				if not StringHelpers.IsNullOrEmpty(leaveActionSkill) then
+					local statObj = Ext.GetStat(stat)
+					statObj.LeaveAction = ""
+					Ext.SyncStat(stat, false)
+					Vars.LeaveActionData.Statuses[stat] = leaveActionSkill
+					Vars.LeaveActionData.Total = Vars.LeaveActionData.Total + 1
+				end
+			end
+		end
+		LeaderLib.PrintDebug("[WeaponExpansion:OverrideLeaveActionStatuses] Registered ("..tostring(Vars.LeaveActionData.Total)..") statuses to the Vars.LeaveActionData.Statuses table.")
+		LeaderLib.PrintDebug(Ext.JsonStringify(Vars.LeaveActionData))
+	end
+end
 
 Ext.RegisterListener("SessionLoaded", function()
+	OverrideLeaveActionStatuses()
 	local count = #TranslatedStringEntries
 	if TranslatedStringEntries ~= nil and count > 0 then
 		for i,v in pairs(TranslatedStringEntries) do

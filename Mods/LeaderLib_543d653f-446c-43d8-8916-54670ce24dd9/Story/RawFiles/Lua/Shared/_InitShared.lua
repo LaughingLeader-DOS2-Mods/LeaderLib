@@ -20,7 +20,18 @@ Vars = {
 	Initialized = false,
 	PostLoadEnableLuaListeners = false,
 	JustReset = false,
+	LeaveActionData = {
+		Prefixes = {},
+		Statuses = {},
+		Total = 0
+	}
 }
+
+--- Adds a prefix to check statuses for when building Vars.LeaveActionData
+---@param prefix string
+function RegisterLeaveActionPrefix(prefix)
+	table.insert(Vars.LeaveActionData.Prefixes, prefix)
+end
 
 Main = {}
 ModRegistration = {}

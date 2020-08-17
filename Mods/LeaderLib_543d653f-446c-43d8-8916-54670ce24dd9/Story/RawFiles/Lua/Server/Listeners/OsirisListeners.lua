@@ -36,6 +36,12 @@ Ext.RegisterOsirisListener("UserEvent", 2, "after", function(id, event)
 	end
 end)
 
+Ext.RegisterOsirisListener("CharacterReservedUserIDChanged", 3, "after", function(char, old, new)
+	if Ext.GetGameState() == "Running" and CharacterIsControlled(char) == 1 then
+		Ext.PostMessageToUser(new, "LeaderLib_SetClientCharacter", GetUUID(char))
+	end
+end)
+
 Ext.RegisterOsirisListener("GameStarted", 2, "after", function(region, isEditorMode)
 	Ext.BroadcastMessage("LeaderLib_SyncFeatures", Ext.JsonStringify(Features), nil)
 end)

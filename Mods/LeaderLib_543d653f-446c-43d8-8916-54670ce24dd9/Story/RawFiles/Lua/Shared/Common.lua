@@ -138,6 +138,18 @@ local function TableHasEntry(tbl, key)
 end
 
 ---@param tbl table
+---@return boolean
+local function TableHasAnyEntry(tbl)
+	if tbl == nil then
+		return false
+	end
+	for i,v in pairs(tbl) do
+		return true
+	end
+	return false
+end
+
+---@param tbl table
 ---@param key any
 ---@param fallback any
 ---@return any
@@ -278,6 +290,7 @@ Common = {
 	CopyTable = CopyTable,
 	FlattenTable = FlattenTable,
 	TableHasEntry = TableHasEntry,
+	TableHasAnyEntry = TableHasAnyEntry,
 	StringEquals = StringHelpers.Equals,
 	StringIsNullOrEmpty = StringHelpers.IsNullOrEmpty,
 	Split = Split,

@@ -5,6 +5,11 @@
 ---@type table<string,TagTooltipData>
 local TagTooltips = {}
 
+---@type TranslatedString
+local ts = Classes.TranslatedString
+
+local AutoLevelingDescription = ts:Create("hca27994egc60eg495dg8146g7f81c970e265", "<font color='#80FFC3'>Automatically levels up with the wearer.</font>")
+
 ---@param item EsvItem
 ---@param tooltip TooltipData
 local function OnItemTooltip(item, tooltip)
@@ -63,6 +68,16 @@ local function OnItemTooltip(item, tooltip)
 					if string.find(element.Label, "Requires  ") then
 						element.Label = string.gsub(element.Label, "  ", " ")
 					end
+				end
+			end
+		end
+		if item:HasTag("LeaderLib_AutoLevel") then
+			local element = tooltip:GetElement("ItemDescription")
+			if element ~= nil and not string.find(element.Label, "Automatically levels") then
+				if not StringHelpers.IsNullOrEmpty(element.Label) then
+					element.Label = element.Label .. "<br>" .. AutoLevelingDescription.Value
+				else
+					element.Label = AutoLevelingDescription.Value
 				end
 			end
 		end

@@ -25,6 +25,17 @@ local function OnSheetEvent(ui, call, ...)
 		if buttonID == ID.HOTBAR.CharacterSheet then
 			Ext.PostMessageToServer("LeaderLib_GlobalMessage", ID.MESSAGE.STORE_PARTY_VALUES)
 		end
+	elseif call == "selectCharacter" or call == "centerCamOnCharacter" then
+		local id = params[1]
+		if id ~= nil then
+			local handle = Ext.DoubleToHandle(id)
+			if handle ~= nil then
+				local character = Ext.GetCharacter(handle)
+				if character ~= nil then
+					UI.ClientCharacter = character.MyGuid
+				end
+			end
+		end
 	end
 end
 

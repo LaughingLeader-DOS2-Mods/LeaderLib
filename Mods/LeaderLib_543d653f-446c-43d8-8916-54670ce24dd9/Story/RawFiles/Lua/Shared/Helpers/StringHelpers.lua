@@ -103,3 +103,10 @@ function StringHelpers.ReplacePlaceholders(text, ...)
 	end
 	return text
 end
+
+--- Remove leading/trailing whitespaces from a string.
+--- @param s string
+--- @return string
+function StringHelpers.Trim(s)
+	return (s:gsub("^%s*(.-)%s*$", "%1"))
+end

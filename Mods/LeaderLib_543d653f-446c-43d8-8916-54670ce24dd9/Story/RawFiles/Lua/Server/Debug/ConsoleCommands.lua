@@ -320,15 +320,33 @@ Ext.RegisterConsoleCommand("addskill", function(command, skill)
 	CharacterAddSkill(host, skill, 1)
 end)
 
+local removedSkills = {}
+
 Ext.RegisterConsoleCommand("removeunmemorizedskills", function(cmd)
 	local host = CharacterGetHostCharacter()
 	local char = Ext.GetCharacter(host)
+	removedSkills[host] = {}
 	for i,skill in pairs(char:GetSkills()) do
-		local skillInfo = char:GetSkillInfo(skill)
-		print(string.format("%[%s%] IsActivated(%s) IsLearned(%s), ZeroMemory(%s)", skill, skillInfo.IsActivated, skillInfo.IsLearned, skillInfo.ZeroMemory))
-		if skillInfo.IsActivated and skillInfo.IsLearned then
+		local slot = NRD_SkillBarFindSkill(host, skill)
+		if slot == nil then
+			table.insert(removedSkills[host], {Skill=skill, Slot=slot})
+			print("[LeaderLib:removeunmemorizedskills] Removing "..skill)
 			CharacterRemoveSkill(host, skill)
+			--local skillInfo = char:GetSkillInfo(skill)
+			--print(string.format("[%s](%i) IsActivated(%s) IsLearned(%s), ZeroMemory(%s)", skill, slot, skillInfo.IsActivated, skillInfo.IsLearned, skillInfo.ZeroMemory))
 		end
+	end
+end)
+
+Ext.RegisterConsoleCommand("undoremoveunmemorizedskills", function(cmd)
+	local host = CharacterGetHostCharacter()
+	local skills = removedSkills[host]
+	if skills ~= nil then
+		for i,v in pairs(skills) do
+			CharacterAddSkill(host, v.Skill, 0)
+			GameHelpers.Skill.TrySetSlot(host, v.Slot, v.Skill, true)
+		end
+		removedSkills[host] = nil
 	end
 end)
 

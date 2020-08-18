@@ -1,3 +1,7 @@
+if GameHelpers.Skill == nil then
+    GameHelpers.Skill = {}
+end
+
 ---Get a skill's slot and cooldown, and store it in DB_LeaderLib_Helper_Temp_RefreshUISkill.
 ---@param char string
 ---@param skill string
@@ -35,11 +39,19 @@ local function StoreSkillSlots(char)
 end
 
 ---Sets a skill into an empty slot, or finds empty space.
-local function TrySetSkillSlot(char, slot, addskill)
+local function TrySetSkillSlot(char, slot, addskill, clearCurrentSlot)
     if type(slot) == "string" then
         slot = math.tointeger(slot)
     end
     if slot == nil or slot < 0 then slot = 0 end
+
+    if clearCurrentSlot == true then
+        local slot = NRD_SkillBarFindSkill(char, addskill)
+        if slot ~= nil then
+            NRD_SkillBarClear(char, slot)
+        end
+    end
+
     local skill = NRD_SkillBarGetSkill(char, slot)
     if skill == nil then
         NRD_SkillBarSetSkill(char, slot, addskill)

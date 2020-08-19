@@ -106,9 +106,12 @@ function UI.DisplayMessageBox(text, title, popupType)
 	local ui = Ext.GetBuiltinUI("Public/Game/GUI/msgBox.swf")
 	if ui ~= nil then
 		ui:Hide()
-		if popupType == 1 then
-			ui:Invoke("setText", text)
-			ui:Invoke("showMsgbox")
+		if popupType <= 1 then
+			local root = ui:GetRoot()
+			--root.addButton(3, LocalizedText.UI.Close.Value, "", "")
+			root.setPopupType(1)
+			root.setText(text)
+			root.showMsgbox()
 		else
 			--ui:Invoke("setAnchor", 0)
 			--ui:Invoke("setPos", 50.0, 50.0)

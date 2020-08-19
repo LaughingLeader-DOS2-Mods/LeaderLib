@@ -147,7 +147,7 @@ Ext.RegisterNetListener("LeaderLib_UnlockCharacterInventory", function(call, pla
 			local players = Ext.JsonParse(playersTableString)
 			if players ~= nil and #players > 0 then
 				for i,v in pairs(players) do
-					local character = Ext.GetCharacter(v[1])
+					local character = Ext.GetCharacter(v)
 					if character ~= nil then
 						ui:ExternalInterfaceCall("lockInventory", Ext.HandleToDouble(character.Handle), false)
 					end

@@ -100,6 +100,8 @@ Ext.RegisterNetListener("LeaderLib_DisplayStatusText", function(call, dataStr)
 	end
 end)
 
+local specialMessageBoxOpen = false
+
 function UI.DisplayMessageBox(text, title, popupType)
 	local ui = Ext.GetBuiltinUI("Public/Game/GUI/msgBox.swf")
 	if ui ~= nil then
@@ -118,11 +120,12 @@ function UI.DisplayMessageBox(text, title, popupType)
 			ui:Invoke("showWin")
 			ui:Invoke("fadeIn")
 			--ui:Invoke("setWaiting", true)
-			ui:Invoke("setPopupType", 3)
+			ui:Invoke("setPopupType", 2)
 			ui:Invoke("setInputEnabled", true)
 			ui:Invoke("showPopup", title, text)
 		end
 		ui:Show()
+		specialMessageBoxOpen = true
 	end
 end
 
@@ -245,3 +248,13 @@ function GameHelpers.UI.UpdateStatusTurns(target, statusid)
 		})
 	end
 end
+
+Ext.RegisterListener("SessionLoaded", function()
+	Ext.RegisterUITypeCall(29, "ButtonPressed", function(ui, call, id, currentDevice)
+		--print("ButtonPressed", call, id, currentDevice)
+		if specialMessageBoxOpen and id == 3 then
+			specialMessageBoxOpen = false
+			ui:Hide()
+		end
+	end)
+end)

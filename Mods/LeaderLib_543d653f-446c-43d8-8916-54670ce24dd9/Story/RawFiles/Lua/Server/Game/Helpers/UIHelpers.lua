@@ -45,10 +45,10 @@ function GameHelpers.UI.CombatLog(text, filter, specificCharacters)
 	else
 		local charType = type(specificCharacters)
 		if charType == "string" then
-			Ext.PostMessageToClient(specificCharacters, "LeaderLib_DisplayMessageBox", data)
+			Ext.PostMessageToClient(specificCharacters, "LeaderLib_AddTextToCombatLog", data)
 		elseif charType == "table" then
 			for i,v in pairs(specificCharacters) do
-				Ext.PostMessageToClient(v, "LeaderLib_DisplayMessageBox", data)
+				Ext.PostMessageToClient(v, "LeaderLib_AddTextToCombatLog", data)
 			end
 		end
 	end
@@ -61,7 +61,7 @@ end
 ---@param title string|nil
 function GameHelpers.UI.ShowMessageBox(text, specificCharacters, boxType, title)
 	local data = MessageData:CreateFromTable("MessageBoxData", {
-		Type = boxType,
+		Type = boxType or 1,
 		Text = text,
 		Title = title
 	}):ToString()

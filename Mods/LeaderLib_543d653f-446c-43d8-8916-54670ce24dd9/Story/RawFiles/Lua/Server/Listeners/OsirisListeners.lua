@@ -11,11 +11,10 @@ Ext.RegisterOsirisListener("UserConnected", 3, "after", function(id, username, p
 			SettingsManager.SyncAllSettings(id)
 		end
 
-		if host ~= uuid and not Ext.PlayerHasExtender(uuid) then
+		if not StringHelpers.IsNullOrEmpty(uuid) and host ~= uuid and not Ext.PlayerHasExtender(uuid) then
 			OpenMessageBox(uuid, "LeaderLib_MessageBox_ExtenderNotInstalled_Client")
-
 			local hostText = GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageText"):gsub("%[1%]", username)
-			GameHelpers.UI.ShowMessageBox(hostText, host, 0, GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageTitle"))
+			GameHelpers.UI.ShowMessageBox(hostText, host, 1, GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageTitle"))
 		end
 	end
 end)

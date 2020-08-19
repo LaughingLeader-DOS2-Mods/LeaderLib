@@ -66,7 +66,7 @@
 	<content contentuid="h3d81a0d7g267ag45f9g985egffeffa0119e2">Preset changed. Have a wonderful day.</content>
 	<content contentuid="h3db4fa28g041bg45ceg9fd6g91d77d5e154f">[GLOBAL] Prevent LeaderLib registered mod books from being automatically be added to the party&apos;s inventory. (Books are currently enabled)</content>
 	<content contentuid="h3e1f5e00g58f7g4b23g97c4g979be6586c6f">Opening the LeaderLib settings menu...</content>
-	<content contentuid="h3e28d8d8g362bg4d7dga097gf8fcac3fbfe3">&lt;font color=&apos;#FF00CC&apos;&gt;One or more players are missing the script extender.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#FF0000&apos;&gt;The script extender is needed for mods to work correctly.&lt;/font&gt;&lt;br&gt;[1]</content>
+	<content contentuid="h3e28d8d8g362bg4d7dga097gf8fcac3fbfe3">&lt;font color=&apos;#FF00CC&apos;&gt;One or more players are missing the script extender.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#FF0000&apos;&gt;The script extender is needed for mods to work correctly.&lt;/font&gt;&lt;br&gt;Players missing the extender:&lt;br&gt;[1]</content>
 	<content contentuid="h3eb917d7g036fg483dg8ee5gc83743845400">Welcome!</content>
 	<content contentuid="h3ed2c7c5gf6c0g4c9dga916g5782593327ab">Open Mod Menu</content>
 	<content contentuid="h3fb60439g4406g4623ga6b7gb53cda538fcb">*The old man runs his hands over his clothes, trying to iron out the wrinkles.* What can I do for you, stranger?</content>

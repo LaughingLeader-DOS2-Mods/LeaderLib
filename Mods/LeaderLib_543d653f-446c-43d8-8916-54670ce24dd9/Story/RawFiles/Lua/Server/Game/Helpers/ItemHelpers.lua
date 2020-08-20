@@ -219,3 +219,22 @@ function GameHelpers.Item.FindTaggedEquipment(character, tag)
 	end
 	return items
 end
+
+--- Checks if a character has an item equipped with a specific tag.
+---@param uuid string
+---@return boolean
+function GameHelpers.Item.ItemIsLocked(uuid)
+    local item = Ext.GetItem(uuid)
+    if item ~= nil then
+        return item.UnEquipLocked
+    end
+    return false
+end
+
+local function ItemIsLockedQRY(item)
+    if GameHelpers.Item.ItemIsLocked(item) then
+        return 1
+    end
+    return 0
+end
+Ext.NewQuery(GameHelpers.Item.ItemIsLocked, "LeaderLib_Ext_QRY_ItemIsLocked", "[in](STRING)_Item, [out](INTEGER)_Locked")

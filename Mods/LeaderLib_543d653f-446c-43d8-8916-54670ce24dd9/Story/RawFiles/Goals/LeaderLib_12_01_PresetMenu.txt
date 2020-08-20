@@ -407,6 +407,7 @@ ItemLockUnEquip(_Item, 0);
 DB_LeaderLib_PresetMenu_Temp_HadSourceCollar(_Player, _Item);
 ItemToInventory(_Item, _Backpack);
 
+// [BEGIN_NO_OSITOOLS]
 PROC
 LeaderLib_PresetMenu_RecordEquipment((CHARACTERGUID)_Player, (ITEMGUID)_Backpack)
 AND
@@ -418,8 +419,30 @@ _Item != NULL_00000000-0000-0000-0000-000000000000
 AND
 NOT GetTemplate(_Item, "RC_FTJ_Amulet_SourceCollar_8bf8b97c-556e-4e69-8fc7-39241783dcc1")
 THEN
+ItemLockUnEquip(_Item, 0);
 DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, _Slot, _Item);
 ItemToInventory(_Item, _Backpack);
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+PROC
+LeaderLib_PresetMenu_RecordEquipment((CHARACTERGUID)_Player, (ITEMGUID)_Backpack)
+AND
+DB_LeaderLib_EquipmentSlots(_Slot)
+AND
+CharacterGetEquippedItem(_Player, _Slot, (ITEMGUID)_Item)
+AND
+_Item != NULL_00000000-0000-0000-0000-000000000000
+AND
+NOT GetTemplate(_Item, "RC_FTJ_Amulet_SourceCollar_8bf8b97c-556e-4e69-8fc7-39241783dcc1")
+AND
+LeaderLib_Ext_QRY_ItemIsLocked(_Item, _IsLocked)
+THEN
+ItemLockUnEquip(_Item, 0);
+DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, _Slot, _Item);
+DB_LeaderLib_PresetMenu_Temp_LockedEquipment(_Player, _Item, _IsLocked);
+ItemToInventory(_Item, _Backpack);
+*/
 
 PROC
 LeaderLib_PresetMenu_RecordTalents((CHARACTERGUID)_Player, (STRING)_ArrayID)
@@ -606,18 +629,6 @@ NOT DB_LeaderLib_PresetMenu_Temp_ItemBackpack(_Player, _Backpack);
 LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:LeaderLib_Timers_PresetMenu_OnPresetApplied_EquipItems] Deleting backpack.");
 ItemRemove(_Backpack);
 
-PROC
-ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied_EquipItems")
-AND
-DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, _Slot, (ITEMGUID)_Item)
-AND
-_Slot != "Weapon"
-AND
-_Slot != "Shield"
-THEN
-NOT DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, _Slot, (ITEMGUID)_Item);
-CharacterEquipItem(_Player, _Item);
-
 QRY
 LeaderLib_PresetMenu_Internal_QRY_WeaponsSaved((CHARACTERGUID)_Player)
 AND
@@ -635,6 +646,34 @@ AND
 _Item != NULL_00000000-0000-0000-0000-000000000000
 THEN
 DB_NOOP(1);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied_EquipItems")
+AND
+DB_LeaderLib_PresetMenu_Temp_HadSourceCollar(_Player, _Item)
+THEN
+NOT DB_LeaderLib_PresetMenu_Temp_HadSourceCollar(_Player, _Item);
+NOT DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, "Amulet", _Item);
+LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:LeaderLib_Timers_PresetMenu_OnPresetApplied_EquipItems] Character had a source collar on. Re-equipping and locking.");
+CharacterEquipItem(_Player, _Item);
+ItemLockUnEquip(_Item, 1);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied_EquipItems")
+AND
+DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, _Slot, (ITEMGUID)_Item)
+AND
+_Slot != "Weapon"
+AND
+_Slot != "Shield"
+THEN
+NOT DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, _Slot, (ITEMGUID)_Item);
+// [BEGIN_NO_OSITOOLS]
+CharacterEquipItem(_Player, _Item);
+// [END_NO_OSITOOLS]
+/* [OSITOOLS_ONLY]
+NRD_CharacterEquipItem(_Player, _Item, _Slot, 0, 0, 1, 1);
+*/
 
 PROC
 ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied_EquipItems")
@@ -653,15 +692,39 @@ LeaderLib_PresetMenu_Internal_EquipWeapons((CHARACTERGUID)_Player)
 AND
 DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, "Weapon", (ITEMGUID)_Item)
 THEN
+// [BEGIN_NO_OSITOOLS]
 CharacterEquipItem(_Player, _Item);
+// [END_NO_OSITOOLS]
+/* [OSITOOLS_ONLY]
+NRD_CharacterEquipItem(_Player, _Item, "Weapon", 0, 0, 1, 1);
+*/
 
 PROC
 LeaderLib_PresetMenu_Internal_EquipWeapons((CHARACTERGUID)_Player)
 AND
 DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, "Shield", (ITEMGUID)_Item)
 THEN
-//CharacterEquipItem(_Player, _Item);
+// [BEGIN_NO_OSITOOLS]
 LeaderLib_Timers_StartCharacterItemTimer(_Player, _Item, 250, "LeaderLib_Timers_PresetMenu_EquipShield", "LeaderLib_Commands_EquipItem");
+// [END_NO_OSITOOLS]
+/* [OSITOOLS_ONLY]
+NRD_CharacterEquipItem(_Player, _Item, "Shield", 0, 0, 1, 1);
+
+IF
+ItemEquipped(_Item, _Player)
+AND
+DB_LeaderLib_PresetMenu_Temp_LockedEquipment(_Player, _Item, _IsLocked)
+THEN
+NOT DB_LeaderLib_PresetMenu_Temp_LockedEquipment(_Player, _Item, _IsLocked);
+ItemLockUnEquip(_Item, _IsLocked);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied_RestoreTalents")
+AND
+DB_LeaderLib_PresetMenu_Temp_LockedEquipment(_Player, _Item, _IsLocked)
+THEN
+NOT DB_LeaderLib_PresetMenu_Temp_LockedEquipment(_Player, _Item, _IsLocked);
+*/
 
 PROC
 ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied_EquipItems")
@@ -670,16 +733,6 @@ DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, _Slot, (ITEMGUID)_Item)
 THEN
 NOT DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, _Slot, (ITEMGUID)_Item);
 LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:LeaderLib_Timers_PresetMenu_OnPresetApplied_EquipItems] Equipped previous armor.");
-
-PROC
-ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied_EquipItems")
-AND
-DB_LeaderLib_PresetMenu_Temp_HadSourceCollar(_Player, _Item)
-THEN
-NOT DB_LeaderLib_PresetMenu_Temp_HadSourceCollar(_Player, _Item);
-LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:LeaderLib_Timers_PresetMenu_OnPresetApplied_EquipItems] Character had a source collar on. Re-equipping and locking.");
-CharacterEquipItem(_Player, _Item);
-ItemLockUnEquip(_Item, 1);
 
 //Skills
 PROC

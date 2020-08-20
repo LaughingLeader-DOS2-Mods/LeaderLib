@@ -39,7 +39,7 @@ local function StoreSkillSlots(char)
 end
 
 local function ClearSlotsWithSkill(char, skill)
-    local maxslots = 144 - slot
+    local maxslots = 144
     local slot = 0
     while slot < 144 do
         local checkskill = NRD_SkillBarGetSkill(char, slot)
@@ -65,7 +65,6 @@ local function TrySetSkillSlot(char, slot, addskill, clearCurrentSlot)
     end
 
     local skill = NRD_SkillBarGetSkill(char, slot)
-    print(slot, skill, addskill)
     if skill == nil or skill == "" then
         NRD_SkillBarSetSkill(char, slot, addskill)
         return true
@@ -76,7 +75,6 @@ local function TrySetSkillSlot(char, slot, addskill, clearCurrentSlot)
         local nextslot = slot
         while nextslot < maxslots do
             skill = NRD_SkillBarGetSkill(char, nextslot)
-            print(slot, skill, addskill)
             if skill == nil then
                 NRD_SkillBarSetSkill(char, slot, addskill)
                 return true

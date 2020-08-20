@@ -820,14 +820,7 @@ THEN
 NOT DB_LeaderLib_PresetMenu_Temp_Skills(_Player, _Skill, _Slot);
 LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:OnPresetApplied] Adding skill [",_Skill,"] to player.");
 CharacterAddSkill(_Player, _Skill);
-LeaderLib_PresetMenu_Internal_AddSkillToSlot(_Player, _Skill, _Slot);
-
-PROC
-LeaderLib_PresetMenu_Internal_AddSkillToSlot((CHARACTERGUID)_Player, (STRING)_Skill, (INTEGER)_Slot)
-AND
-_Slot >= 0
-THEN
-NRD_SkillBarSetSkill(_Player, _Slot, _Skill);
+LeaderLib_Ext_TrySetSkillSlot(_Player, _Slot, _Skill, 1);
 */
 
 //Talents

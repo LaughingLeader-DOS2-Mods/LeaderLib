@@ -237,4 +237,4 @@ local function ItemIsLockedQRY(item)
     end
     return 0
 end
-Ext.NewQuery(GameHelpers.Item.ItemIsLocked, "LeaderLib_Ext_QRY_ItemIsLocked", "[in](STRING)_Item, [out](INTEGER)_Locked")
+Ext.NewQuery(GameHelpers.Item.ItemIsLocked, "LeaderLib_Ext_QRY_ItemIsLocked", "[in](ITEMGUID)_Item, [out](INTEGER)_Locked")

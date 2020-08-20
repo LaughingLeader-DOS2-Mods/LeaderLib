@@ -14,10 +14,13 @@ end
 
 GameHelpers.UI.SetSlotEnabled = SetSlotEnabled
 
+---@type client string
+---@type skill string
+---@type enabled string
 function SetSkillEnabled(client, skill, enabled)
 	if CharacterIsPlayer(client) == 1 then
 		if type(enabled) == "string" then
-			enabled = enabled == "true" or enabled == "1"
+			enabled = string.lower(enabled) == "true" or enabled == "1"
 		end
 		local slots = GetSkillSlots(client, skill)
 		if #slots > 0 then

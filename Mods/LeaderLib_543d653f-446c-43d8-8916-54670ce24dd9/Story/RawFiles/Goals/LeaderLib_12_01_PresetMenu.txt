@@ -474,6 +474,7 @@ THEN
 LeaderLog_LogInt("DEBUG", "[LeaderLib:PresetMenu:RecordTalents] Character has [",_TalentPoints,"] talent points.");
 DB_LeaderLib_PresetMenu_Temp_TalentPoints(_Player, _TalentPoints);
 
+// [BEGIN_NO_OSITOOLS]
 PROC
 LeaderLib_PresetMenu_RecordSkills((CHARACTERGUID)_Player, (STRING)_Preset, (INTEGER)_IsRace)
 AND
@@ -494,7 +495,8 @@ AND
 DB_LeaderLib_PresetMenu_Temp_CopySkills(_DummyID, _Dummy, _Player, _Preset, _IsRace)
 THEN
 LeaderLib_PresetMenu_BlockSkillCopying(_Player, _Preset, _Skill, _IsRace);
-LeaderLib_PresetMenu_Internal_AddSkill(_Player, _Preset, _Skill, _IsRace);
+LeaderLib_PresetMenu_Internal_AddSkill(_Player, _Preset, _Skill, _IsRace, -1);
+// [END_NO_OSITOOLS]
 
 //Set DB_LeaderLib_PresetMenu_Temp_BlockSkill(_Player, _Skill) to block
 PROC
@@ -503,7 +505,7 @@ THEN
 DB_NOOP(1);
 
 PROC
-LeaderLib_PresetMenu_Internal_AddSkill((CHARACTERGUID)_Player, (STRING)_Preset, (STRING)_Skill, (INTEGER)_ChangingRace)
+LeaderLib_PresetMenu_Internal_AddSkill((CHARACTERGUID)_Player, (STRING)_Preset, (STRING)_Skill, (INTEGER)_ChangingRace, (INTEGER)_Slot)
 AND
 NOT DB_LeaderLib_BlockedSkill(_Skill) // Globally blocked
 AND
@@ -511,10 +513,10 @@ NOT DB_LeaderLib_PresetMenu_Temp_BlockSkill(_Player, _Skill)
 AND
 NOT LeaderLib_Helper_QRY_IsRaceOrOriginSkill(_Skill)
 THEN
-DB_LeaderLib_PresetMenu_Temp_Skills(_Player, _Skill);
+DB_LeaderLib_PresetMenu_Temp_Skills(_Player, _Skill, _Slot);
 
 PROC
-LeaderLib_PresetMenu_Internal_AddSkill((CHARACTERGUID)_Player, (STRING)_Preset, (STRING)_Skill, (INTEGER)_ChangingRace)
+LeaderLib_PresetMenu_Internal_AddSkill((CHARACTERGUID)_Player, (STRING)_Preset, (STRING)_Skill, (INTEGER)_ChangingRace, (INTEGER)_Slot)
 AND
 DB_LeaderLib_PresetMenu_Temp_BlockSkill(_Player, _Skill)
 THEN
@@ -526,6 +528,7 @@ LeaderLib_PresetMenu_BlockSkillCopying((CHARACTERGUID)_Player, (STRING)_Preset, 
 THEN
 LeaderLib_PresetMenu_Internal_CheckRaceSkill(_Player, _Preset, _Skill);
 
+// [BEGIN_NO_OSITOOLS]
 PROC
 LeaderLib_PresetMenu_Internal_CheckRaceSkill((CHARACTERGUID)_Player, (STRING)_Race, (STRING)_Skill)
 AND
@@ -533,7 +536,58 @@ DB_LeaderLib_RacialSkills(_RaceTag, _Skill)
 AND
 DB_LeaderLib_RaceTags(_Race, _RaceTag, _BaseRaceTag) // The target race matches, so save this skill
 THEN
-DB_LeaderLib_PresetMenu_Temp_Skills(_Player, _Skill);
+DB_LeaderLib_PresetMenu_Temp_Skills(_Player, _Skill, -1);
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+PROC
+LeaderLib_PresetMenu_Internal_CheckRaceSkill((CHARACTERGUID)_Player, (STRING)_Race, (STRING)_Skill)
+AND
+DB_LeaderLib_RacialSkills(_RaceTag, _Skill)
+AND
+DB_LeaderLib_RaceTags(_Race, _RaceTag, _BaseRaceTag)
+AND
+NRD_SkillBarFindSkill(_Player, _Skill, _Slot)
+THEN
+DB_LeaderLib_PresetMenu_Temp_Skills(_Player, _Skill, _Slot);
+
+PROC
+LeaderLib_PresetMenu_Internal_CheckRaceSkill((CHARACTERGUID)_Player, (STRING)_Race, (STRING)_Skill)
+AND
+DB_LeaderLib_RacialSkills(_RaceTag, _Skill)
+AND
+DB_LeaderLib_RaceTags(_Race, _RaceTag, _BaseRaceTag)
+AND
+NOT NRD_SkillBarFindSkill(_Player, _Skill, _)
+THEN
+DB_LeaderLib_PresetMenu_Temp_Skills(_Player, _Skill, -1);
+
+PROC
+LeaderLib_PresetMenu_RecordSkills((CHARACTERGUID)_Player, (STRING)_Preset, (INTEGER)_IsRace)
+THEN
+DB_LeaderLib_PresetMenu_Temp_CopySkills("", NULL_00000000-0000-0000-0000-000000000000, _Player, _Preset, _IsRace);
+NRD_CharacterIterateSkills(_Player, "Iterators_LeaderLib_PresetMenu_Skills");
+
+IF
+NRD_SkillIteratorEvent("Iterators_LeaderLib_PresetMenu_Skills", _Player, _Skill, _IsLearned, _IsActivated)
+AND
+NRD_SkillBarFindSkill(_Player, _Skill, _Slot)
+AND
+DB_LeaderLib_PresetMenu_Temp_CopySkills(_, _, _Player, _Preset, _IsRace)
+THEN
+LeaderLib_PresetMenu_BlockSkillCopying(_Player, _Preset, _Skill, _IsRace);
+LeaderLib_PresetMenu_Internal_AddSkill(_Player, _Preset, _Skill, _IsRace, _Slot);
+
+IF
+NRD_SkillIteratorEvent("Iterators_LeaderLib_PresetMenu_Skills", _Player, _Skill, _IsLearned, _IsActivated)
+AND
+NOT NRD_SkillBarFindSkill(_Player, _Skill, _)
+AND
+DB_LeaderLib_PresetMenu_Temp_CopySkills(_, _, _Player, _Preset, _IsRace)
+THEN
+LeaderLib_PresetMenu_BlockSkillCopying(_Player, _Preset, _Skill, _IsRace);
+LeaderLib_PresetMenu_Internal_AddSkill(_Player, _Preset, _Skill, _IsRace, -1);
+*/
 
 PROC
 ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_ApplyPreset")
@@ -597,6 +651,7 @@ ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_App
 THEN
 ProcObjectTimer(_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied", 250);
 
+// [BEGIN_NO_OSITOOLS]
 PROC
 ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_ApplyPreset")
 AND
@@ -605,6 +660,16 @@ THEN
 NOT DB_LeaderLib_PresetMenu_Temp_CopySkills(_DummyID, _Dummy, _Player, _Preset, _IsRace);
 LeaderLib_Skills_ResetDummy(_Dummy);
 LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:LeaderLib_Timers_PresetMenu_ApplyPreset] Reset skill dummy (used to copy pre-preset skills).");
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_ApplyPreset")
+AND
+DB_LeaderLib_PresetMenu_Temp_CopySkills(_DummyID, _Dummy, _Player, _Preset, _IsRace)
+THEN
+NOT DB_LeaderLib_PresetMenu_Temp_CopySkills(_DummyID, _Dummy, _Player, _Preset, _IsRace);
+*/
 
 //Equipment/Items
 PROC
@@ -735,14 +800,35 @@ NOT DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, _Slot, (ITEMGUID)_Item);
 LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:LeaderLib_Timers_PresetMenu_OnPresetApplied_EquipItems] Equipped previous armor.");
 
 //Skills
+// [BEGIN_NO_OSITOOLS]
 PROC
 ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied")
 AND
-DB_LeaderLib_PresetMenu_Temp_Skills(_Player, _Skill)
+DB_LeaderLib_PresetMenu_Temp_Skills(_Player, _Skill, _Slot)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:OnPresetApplied] Adding skill [",_Skill,"] to player.");
 CharacterAddSkill(_Player, _Skill);
-NOT DB_LeaderLib_PresetMenu_Temp_Skills(_Player, _Skill);
+NOT DB_LeaderLib_PresetMenu_Temp_Skills(_Player, _Skill, _Slot);
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied")
+AND
+DB_LeaderLib_PresetMenu_Temp_Skills(_Player, _Skill, _Slot)
+THEN
+NOT DB_LeaderLib_PresetMenu_Temp_Skills(_Player, _Skill, _Slot);
+LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:OnPresetApplied] Adding skill [",_Skill,"] to player.");
+CharacterAddSkill(_Player, _Skill);
+LeaderLib_PresetMenu_Internal_AddSkillToSlot(_Player, _Skill, _Slot);
+
+PROC
+LeaderLib_PresetMenu_Internal_AddSkillToSlot((CHARACTERGUID)_Player, (STRING)_Skill, (INTEGER)_Slot)
+AND
+_Slot >= 0
+THEN
+NRD_SkillBarSetSkill(_Player, _Slot, _Skill);
+*/
 
 //Talents
 PROC

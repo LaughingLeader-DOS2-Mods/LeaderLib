@@ -812,7 +812,7 @@ NOT DB_LeaderLib_Skills_SetSlotResolved(_Char, _Skill, _Slot);
 PROC
 LeaderLib_Skills_Internal_SetSlotToSkill((CHARACTERGUID)_Char, (INTEGER)_Slot, (STRING)_Skill)
 THEN
-LeaderLib_Ext_TrySetSkillSlot(_Char, _Slot, _SKill);
+LeaderLib_Ext_TrySetSkillSlot(_Char, _Slot, _Skill, 1);
 */
 //END_REGION
 EXITSECTION

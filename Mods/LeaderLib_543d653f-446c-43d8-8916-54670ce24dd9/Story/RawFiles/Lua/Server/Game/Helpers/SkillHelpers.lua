@@ -38,31 +38,45 @@ local function StoreSkillSlots(char)
    end
 end
 
+local function ClearSlotsWithSkill(char, skill)
+    local maxslots = 144 - slot
+    local slot = 0
+    while slot < 144 do
+        local checkskill = NRD_SkillBarGetSkill(char, slot)
+        if checkskill == skill then
+            NRD_SkillBarClear(char, slot)
+        end
+        slot = slot + 1
+    end
+end
+
 ---Sets a skill into an empty slot, or finds empty space.
 local function TrySetSkillSlot(char, slot, addskill, clearCurrentSlot)
     if type(slot) == "string" then
         slot = math.tointeger(slot)
     end
-    if slot == nil or slot < 0 then slot = 0 end
+    if slot == nil then slot = 0 end
+    if slot < 0 then
+        return false
+    end
 
-    if clearCurrentSlot == true then
-        local slot = NRD_SkillBarFindSkill(char, addskill)
-        if slot ~= nil then
-            NRD_SkillBarClear(char, slot)
-        end
+    if clearCurrentSlot == 1 or clearCurrentSlot == true or clearCurrentSlot == "true" then
+        ClearSlotsWithSkill(char, addskill)
     end
 
     local skill = NRD_SkillBarGetSkill(char, slot)
-    if skill == nil then
+    print(slot, skill, addskill)
+    if skill == nil or skill == "" then
         NRD_SkillBarSetSkill(char, slot, addskill)
         return true
     elseif skill == addskill then
         return true
     else
         local maxslots = 144 - slot
-        local nextslot = slot + 1
+        local nextslot = slot
         while nextslot < maxslots do
             skill = NRD_SkillBarGetSkill(char, nextslot)
+            print(slot, skill, addskill)
             if skill == nil then
                 NRD_SkillBarSetSkill(char, slot, addskill)
                 return true
@@ -74,7 +88,7 @@ local function TrySetSkillSlot(char, slot, addskill, clearCurrentSlot)
     end
     return false
 end
-Ext.NewCall(TrySetSkillSlot, "LeaderLib_Ext_TrySetSkillSlot", "(CHARACTERGUID)_Character, (INTEGER)_Slot, (STRING)_Skill")
+Ext.NewCall(TrySetSkillSlot, "LeaderLib_Ext_TrySetSkillSlot", "(CHARACTERGUID)_Character, (INTEGER)_Slot, (STRING)_Skill, (INTEGER)_ClearCurrentSlot")
 
 ---Refreshes a skill if the character has it.
 local function RefreshSkill(char, skill)

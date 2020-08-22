@@ -5,11 +5,13 @@ end
 local MessageData = Classes.MessageData
 
 function SetSlotEnabled(client, slot, enabled)
-	Ext.PostMessageToClient(client, "LeaderLib_Hotbar_SetSlotEnabled", MessageData:CreateFromTable("SetSlotEnabled", {
-		Slot = slot,
-		Enabled = enabled,
-		UUID = client
-	}):ToString())
+	if CharacterGetReservedUserID(client) ~= nil then
+		Ext.PostMessageToClient(client, "LeaderLib_Hotbar_SetSlotEnabled", MessageData:CreateFromTable("SetSlotEnabled", {
+			Slot = slot,
+			Enabled = enabled,
+			UUID = client
+		}):ToString())
+	end
 end
 
 GameHelpers.UI.SetSlotEnabled = SetSlotEnabled
@@ -18,7 +20,7 @@ GameHelpers.UI.SetSlotEnabled = SetSlotEnabled
 ---@type skill string
 ---@type enabled string
 function SetSkillEnabled(client, skill, enabled)
-	if CharacterIsPlayer(client) == 1 then
+	if CharacterIsPlayer(client) == 1 and CharacterGetReservedUserID(client) ~= nil then
 		if type(enabled) == "string" then
 			enabled = string.lower(enabled) == "true" or enabled == "1"
 		end

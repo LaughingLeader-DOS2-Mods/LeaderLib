@@ -48,8 +48,9 @@ Ext.RegisterOsirisListener("GameStarted", 2, "after", function(region, isEditorM
 end)
 
 Ext.RegisterOsirisListener("ObjectTurnStarted", 2, "after", function(char, combatid)
-	if CharacterIsControlled(char) == 1 then
+	local id = CharacterGetReservedUserID(char)
+	if id ~= nil then
 		-- For hopefully making sure the delay turn listener stays accurate
-		Ext.PostMessageToClient(char, "LeaderLib_SetClientCharacter", GetUUID(char))
+		Ext.PostMessageToUser(id, "LeaderLib_SetClientCharacter", GetUUID(char))
 	end
 end)

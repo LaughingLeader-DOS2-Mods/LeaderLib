@@ -71,7 +71,7 @@ local function ReplacePlaceholders(str, character)
 	for v in string.gmatch(output, "%[Stats:.-%]") do
 		local value = ""
 		local statFetcher = v:gsub("%[Stats:", ""):gsub("%]", "")
-		local props = LeaderLib.StringHelpers.Split(statFetcher, ":")
+		local props = StringHelpers.Split(statFetcher, ":")
 		local stat = props[1]
 		local property = props[2]
 		if stat ~= nil and property ~= nil then
@@ -123,7 +123,7 @@ local function ReplacePlaceholders(str, character)
 	end
 	for v in string.gmatch(output, "%[Handle:.-%]") do
 		local text = v:gsub("%[Handle:", ""):gsub("%]", "")
-		local props = LeaderLib.StringHelpers.Split(text, ":")
+		local props = StringHelpers.Split(text, ":")
 		if props[2] == nil then 
 			props[2] = ""
 		end

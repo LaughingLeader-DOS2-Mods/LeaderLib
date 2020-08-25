@@ -7,6 +7,9 @@ end
 ---@param skill string
 ---@param clearSkill boolean
 function StoreSkillCooldownData(char, skill, clearSkill)
+    if CharacterIsPlayer(char) == 0 then
+        return false
+    end
     local slot = NRD_SkillBarFindSkill(char, skill)
     if slot ~= nil then
         local success,cd = pcall(NRD_SkillGetCooldown, char, skill)
@@ -25,20 +28,26 @@ function StoreSkillCooldownData(char, skill, clearSkill)
  end
 
 local function StoreSkillSlots(char)
-	-- Until we can fetch the active skill bar, iterate through every skill slot for now
-   for i=0,144 do
-	   local skill = NRD_SkillBarGetSkill(char, i)
-	   if skill ~= nil then
-		   local success,cd = pcall(NRD_SkillGetCooldown, char, skill)
-		   if success == false or cd == nil then cd = 0.0 end;
-		   cd = math.max(cd, 0.0)
-		   Osi.LeaderLib_RefreshUI_Internal_StoreSkillCooldownData(char, skill, i, cd)
-           PrintDebug("[LeaderLib_RefreshSkills] Storing skill slot data (" .. tostring(skill) ..") for (" .. tostring(char) .. ") [" .. tostring(cd) .. "]")
-	   end
-   end
+    if CharacterIsPlayer(char) == 0 then
+        return false
+    end
+    -- Until we can fetch the active skill bar, iterate through every skill slot for now
+    for i=0,144 do
+        local skill = NRD_SkillBarGetSkill(char, i)
+        if skill ~= nil then
+            local success,cd = pcall(NRD_SkillGetCooldown, char, skill)
+            if success == false or cd == nil then cd = 0.0 end;
+            cd = math.max(cd, 0.0)
+            Osi.LeaderLib_RefreshUI_Internal_StoreSkillCooldownData(char, skill, i, cd)
+            PrintDebug("[LeaderLib_RefreshSkills] Storing skill slot data (" .. tostring(skill) ..") for (" .. tostring(char) .. ") [" .. tostring(cd) .. "]")
+        end
+    end
 end
 
 local function ClearSlotsWithSkill(char, skill)
+    if CharacterIsPlayer(char) == 0 then
+        return false
+    end
     local maxslots = 144
     local slot = 0
     while slot < 144 do
@@ -52,6 +61,9 @@ end
 
 ---Sets a skill into an empty slot, or finds empty space.
 local function TrySetSkillSlot(char, slot, addskill, clearCurrentSlot)
+    if CharacterIsPlayer(char) == 0 then
+        return false
+    end
     if type(slot) == "string" then
         slot = math.tointeger(slot)
     end
@@ -121,6 +133,13 @@ end
 ---@param removeTargetSkill boolean
 ---@param resetCooldowns boolean Defaults to true.
 function SwapSkill(char, targetSkill, replacementSkill, removeTargetSkill, resetCooldowns)
+    if CharacterIsPlayer(char) == 0 then
+        if removeTargetSkill then
+            CharacterRemoveSkill(char, targetSkill)
+        end
+        CharacterAddSkill(char, replacementSkill, 0)
+        return false
+    end
     local slots = GetSkillSlots(char, targetSkill)
     if #slots > 0 then
         if CharacterHasSkill(char, replacementSkill) == 0 then

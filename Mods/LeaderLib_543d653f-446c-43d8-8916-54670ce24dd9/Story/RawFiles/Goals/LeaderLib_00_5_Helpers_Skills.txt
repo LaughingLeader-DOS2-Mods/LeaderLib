@@ -788,6 +788,8 @@ DB_NOOP(1);
 PROC
 LeaderLib_Skills_SetSlot((CHARACTERGUID)_Char, (STRING)_Skill, (INTEGER)_Slot)
 AND
+CharacterIsPlayer(_Char, 1)
+AND
 NRD_SkillBarFindSkill(_Char, _Skill, _OldSlot)
 THEN
 DB_LeaderLib_Skills_SetSlotResolved(_Char, _Skill, _Slot);

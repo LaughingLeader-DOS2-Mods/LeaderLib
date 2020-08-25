@@ -95,8 +95,9 @@ end
 ---@param obj string
 ---@param statusId string
 ---@param turns integer
+---@param allInstances boolean|nil
 ---@return boolean
-function GameHelpers.Status.SetTurns(obj, statusId, turns)
+function GameHelpers.Status.SetTurns(obj, statusId, turns, allInstances)
 	if HasActiveStatus(obj, statusId) == 0 then
 		--ApplyStatus(obj, statusId, turns * 6.0, 0, obj)
 		return false
@@ -105,17 +106,41 @@ function GameHelpers.Status.SetTurns(obj, statusId, turns)
 			local character = Ext.GetCharacter(obj)
 			if character ~= nil then
 				local success = false
-				for _,status in pairs(character:GetStatusObjects()) do
-					if status.StatusId == statusId then
-						NRD_StatusSetInt(obj, status.StatusHandle, "CurrentLifeTime", turns * 6.0)
-						NRD_StatusSetInt(obj, status.StatusHandle, "LifeTime", turns * 6.0)
-						print(string.format("[%s] CurrentLifeTime(%s) LifeTime(%s) TurnTimer(%s) StartTimer(%s)", statusId, status.CurrentLifeTime, status.LifeTime, status.TurnTimer, status.StartTimer))
-						success = true
+				if allInstances == true then
+					for _,status in pairs(character:GetStatusObjects()) do
+						if status.StatusId == statusId then
+							if Ext.Version() >= 52 and Ext.IsDeveloperMode() then
+								Ext.EnableExperimentalPropertyWrites()
+								status.RequestClientSync = true
+								status.CurrentLifeTime = turns * 6.0
+								status.LifeTime = turns * 6.0
+							else
+								NRD_StatusSetInt(obj, status.StatusHandle, "CurrentLifeTime", turns * 6.0)
+								NRD_StatusSetInt(obj, status.StatusHandle, "LifeTime", turns * 6.0)
+								NRD_StatusSetInt(obj, status.StatusHandle, "RequestClientSync", 1)
+							end
+							--print(string.format("[%s] CurrentLifeTime(%s) LifeTime(%s) TurnTimer(%s) StartTimer(%s)", statusId, status.CurrentLifeTime, status.LifeTime, status.TurnTimer, status.StartTimer))
+							success = true
+						end
+					end
+				else
+					local status = character:GetStatus(statusId)
+					if status ~= nil then
+						if Ext.Version() >= 52 and Ext.IsDeveloperMode() then
+							Ext.EnableExperimentalPropertyWrites()
+							status.RequestClientSync = true
+							status.CurrentLifeTime = turns * 6.0
+							status.LifeTime = turns * 6.0
+						else
+							NRD_StatusSetInt(obj, status.StatusHandle, "CurrentLifeTime", turns * 6.0)
+							NRD_StatusSetInt(obj, status.StatusHandle, "LifeTime", turns * 6.0)
+							--NRD_StatusSetInt(obj, status.StatusHandle, "RequestClientSync", 1)
+						end
 					end
 				end
 
 				if success and character.IsPlayer then
-					GameHelpers.UI.RefreshStatusTurns(obj, statusId, turns)
+					--GameHelpers.UI.RefreshStatusTurns(obj, statusId, turns)
 				end
 
 				return success

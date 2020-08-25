@@ -238,13 +238,13 @@ Ext.RegisterConsoleCommand("statusremove", function(command,status,target)
 	end
 end)
 
-Ext.RegisterConsoleCommand("refreshstatusui", function(command,target,status,turnsStr)
+Ext.RegisterConsoleCommand("setstatusturns", function(command,target,status,turnsStr)
 	local host = CharacterGetHostCharacter()
 	if target == nil or target == "host" then
 		target = host
 	end
 	if status == nil then
-		status = "ACID"
+		status = "ENCOURAGED"
 	end
 	local turns = 1
 	if turnsStr ~= nil then

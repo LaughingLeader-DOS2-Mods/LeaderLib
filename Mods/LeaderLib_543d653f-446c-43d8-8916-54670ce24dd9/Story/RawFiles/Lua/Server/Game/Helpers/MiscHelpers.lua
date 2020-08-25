@@ -106,15 +106,14 @@ function GameHelpers.SyncScale(uuid)
 		UUID = targetUUID,
 		Scale = scale,
 		IsItem = isItem
-	}))
+	}):ToString())
 end
 
 ---Set an item or character's scale, and sync it to clients.
 ---@param uuid string
----@param number scale
+---@param scale number
 function GameHelpers.SetScale(uuid, scale)
-	local targetUUID = ""
-	local scale = 1.0
+	scale = scale or 1.0
 	local isItem = false
 	if ObjectIsCharacter(uuid) == 1 then
 		Ext.GetCharacter(uuid):SetScale(scale)
@@ -123,8 +122,8 @@ function GameHelpers.SetScale(uuid, scale)
 		isItem = true
 	end
 	Ext.BroadcastMessage("LeaderLib_SyncScale", Classes.MessageData:CreateFromTable("SyncScaleData", {
-		UUID = targetUUID,
+		UUID = uuid,
 		Scale = scale,
 		IsItem = isItem
-	}))
+	}):ToString())
 end

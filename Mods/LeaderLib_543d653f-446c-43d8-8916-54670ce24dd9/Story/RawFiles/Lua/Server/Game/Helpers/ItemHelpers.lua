@@ -220,7 +220,7 @@ function GameHelpers.Item.FindTaggedEquipment(character, tag)
 	return items
 end
 
---- Checks if a character has an item equipped with a specific tag.
+--- Checks if an item is locked from unequip.
 ---@param uuid string
 ---@return boolean
 function GameHelpers.Item.ItemIsLocked(uuid)

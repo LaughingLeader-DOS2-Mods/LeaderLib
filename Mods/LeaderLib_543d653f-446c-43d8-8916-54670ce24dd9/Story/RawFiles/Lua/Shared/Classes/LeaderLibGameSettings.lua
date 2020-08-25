@@ -85,7 +85,7 @@ local function ParseTableValue(settings, k, v)
 	if type(v) == "table" then
 		if settings[k] == nil then
 			settings[k] = v
-			PrintDebug("[LeaderLibGameSettings] Set null ",k," to table")
+			--PrintDebug("[LeaderLibGameSettings] Set null ",k," to table")
 		else
 			for k2,v2 in pairs(v) do
 				ParseTableValue(settings[k], k2, v2)
@@ -93,7 +93,7 @@ local function ParseTableValue(settings, k, v)
 		end
 	else
 		settings[k] = v
-		PrintDebug("[LeaderLibGameSettings] Set ",k," to ",v)
+		--PrintDebug("[LeaderLibGameSettings] Set ",k," to ",v)
 	end
 end
 

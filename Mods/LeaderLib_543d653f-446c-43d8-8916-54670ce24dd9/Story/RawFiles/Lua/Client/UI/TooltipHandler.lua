@@ -104,9 +104,11 @@ local function OnStatusTooltip(character, status, tooltip)
 
 				if Features.FixChaosDamageDisplay and not Data.EngineStatus[status.StatusId] then
 					local statusType = Ext.StatGetAttribute(status.StatusId, "StatusType")
+					local descParams = Ext.StatGetAttribute(status.StatusId, "DescriptionParams")
 					if statusType == "DAMAGE" 
-					and string.find(status.DescriptionParams, "Damage") 
-					and not string.find(element.Label:lower(), "chaos damage")
+						and not StringHelpers.IsNullOrEmpty(descParams)
+						and string.find(descParams, "Damage") 
+						and not string.find(element.Label:lower(), "chaos damage")
 					then
 						local startPos,endPos,damage = string.find(element.Label, chaosDamagePattern)
 						if damage ~= nil then

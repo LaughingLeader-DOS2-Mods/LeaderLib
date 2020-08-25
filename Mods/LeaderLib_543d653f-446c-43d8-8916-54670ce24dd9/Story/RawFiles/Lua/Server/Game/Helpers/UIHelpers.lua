@@ -84,6 +84,20 @@ function GameHelpers.UI.ShowMessageBox(text, specificCharacters, boxType, title)
 	end
 end
 
+---@param player string
+---@param status string
+---@param turns integer
+function GameHelpers.UI.RefreshStatusTurns(player, status, turns)
+	if CharacterIsPlayer(player) == 1 then
+		local data = MessageData:CreateFromTable("MessageBoxData", {
+			UUID = GetUUID(player),
+			Status = status,
+			Turns = turns
+		}):ToString()
+		Ext.BroadcastMessage("LeaderLib_UI_RefreshStatusTurns", data, nil)
+	end
+end
+
 Ext.RegisterNetListener("LeaderLib_OnDelayTurnClicked", function(call, uuid, ...)
 	--print(call, uuid, "DB_LeaderLib_Combat_ActiveObject", Ext.JsonStringify(Osi.DB_LeaderLib_Combat_ActiveObject:Get(nil,nil)))
 	-- local charMatch = false

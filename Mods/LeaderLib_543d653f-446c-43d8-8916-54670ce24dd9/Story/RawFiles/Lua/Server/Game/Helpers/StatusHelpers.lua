@@ -90,3 +90,37 @@ function GameHelpers.Status.IsDisabled(obj, checkForLoseControl)
 	end
 	return false
 end
+
+---Set an active status' turns.
+---@param obj string
+---@param statusId string
+---@param turns integer
+---@return boolean
+function GameHelpers.Status.SetTurns(obj, statusId, turns)
+	if HasActiveStatus(obj, statusId) == 0 then
+		--ApplyStatus(obj, statusId, turns * 6.0, 0, obj)
+		return false
+	else
+		if ObjectIsCharacter(obj) == 1 then
+			local character = Ext.GetCharacter(obj)
+			if character ~= nil then
+				local success = false
+				for _,status in pairs(character:GetStatusObjects()) do
+					if status.StatusId == statusId then
+						NRD_StatusSetInt(obj, status.StatusHandle, "CurrentLifeTime", turns * 6.0)
+						NRD_StatusSetInt(obj, status.StatusHandle, "LifeTime", turns * 6.0)
+						print(string.format("[%s] CurrentLifeTime(%s) LifeTime(%s) TurnTimer(%s) StartTimer(%s)", statusId, status.CurrentLifeTime, status.LifeTime, status.TurnTimer, status.StartTimer))
+						success = true
+					end
+				end
+
+				if success and character.IsPlayer then
+					GameHelpers.UI.RefreshStatusTurns(obj, statusId, turns)
+				end
+
+				return success
+			end
+		end
+	end
+	return false
+end

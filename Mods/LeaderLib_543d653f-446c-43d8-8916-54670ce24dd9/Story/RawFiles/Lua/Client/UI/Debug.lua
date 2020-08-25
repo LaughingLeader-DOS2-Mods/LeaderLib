@@ -244,6 +244,33 @@ local function SessionLoaded()
 	-- else
 	-- 	PrintDebug("[LeaderLib_ModMenuClient.lua:UIHookTest] Failed to get Public/Game/GUI/characterSheet.swf")
 	-- end
+	-- local ui = Ext.GetBuiltinUI("Public/Game/GUI/playerInfo.swf")
+	-- if ui ~= nil then
+	-- 	Ext.RegisterUIInvokeListener(ui, "updateStatuses", function(ui, call, ...)
+	-- 		local root = ui:GetRoot()
+	-- 		local status_array = root.status_array
+	-- 		if #status_array > 0 then
+	-- 			UI.PrintArray(ui, "status_array")
+	-- 			for i=0,#status_array,6 do
+	-- 				local playerHandle = Ext.DoubleToHandle(status_array[i])
+	-- 				local statusHandle = Ext.DoubleToHandle(status_array[i+1])
+	-- 				local iconId = status_array[i+2]
+	-- 				local turns = status_array[i+3]
+	-- 				local cooldown = status_array[i+4]
+	-- 				local tooltip = status_array[i+5] or ""
+
+	-- 				if playerHandle ~= nil and statusHandle ~= nil then
+	-- 					local character = Ext.GetCharacter(playerHandle)
+	-- 					local status = Ext.GetStatus(character.MyGuid, statusHandle)
+	-- 					if status ~= nil then
+	-- 						print(string.format("[%s] (%s) CurrentLifeTime(%s) LifeTime(%s) TurnTimer(%s) StartTimer(%s)", i, status.StatusId, status.CurrentLifeTime, status.LifeTime, status.TurnTimer, status.StartTimer))
+	-- 						print(string.format(" turns(%s) cooldown(%s)", turns, cooldown))
+	-- 					end
+	-- 				end
+	-- 			end
+	-- 		end
+	-- 	end)
+	-- end
 end
 
 if Ext.IsDeveloperMode() then

@@ -238,6 +238,24 @@ Ext.RegisterConsoleCommand("statusremove", function(command,status,target)
 	end
 end)
 
+Ext.RegisterConsoleCommand("refreshstatusui", function(command,target,status,turnsStr)
+	local host = CharacterGetHostCharacter()
+	if target == nil or target == "host" then
+		target = host
+	end
+	if status == nil then
+		status = "ACID"
+	end
+	local turns = 1
+	if turnsStr ~= nil then
+		turns = tonumber(turnsStr)
+	else
+		turns = Ext.Random(2,5)
+	end
+	--GameHelpers.UI.RefreshStatusTurns(target, status)
+	GameHelpers.Status.SetTurns(target, status, turns)
+end)
+
 Ext.RegisterConsoleCommand("testrespen", function(command, level)
 	local host = CharacterGetHostCharacter()
 	local x,y,z = GetPosition(host)
@@ -378,7 +396,7 @@ Ext.RegisterConsoleCommand("printdeltamods", function(command, ...)
 	local host = CharacterGetHostCharacter()
 	---@type EsvCharacter
 	local character = Ext.GetCharacter(host)
-	for i,slot in LeaderLib.Data.EquipmentSlots:Get() do
+	for i,slot in Data.EquipmentSlots:Get() do
 		---@type StatItem
 		--local item = character.Stats:GetItemBySlot(slot)
 		local itemUUID = CharacterGetEquippedItem(host, slot)

@@ -178,16 +178,17 @@ function OnSkillHit(source, skill, target, handle, damage)
 	if skill ~= "" and skill ~= nil then
 		local listeners = SkillListeners[skill]
 		if listeners ~= nil then
-			local uuid = GetUUID(source)
-			---@type HitData
-			local data = Classes.HitData:Create(GetUUID(target), GetUUID(source), damage, handle, skill)
-			-- if Ext.IsDeveloperMode() then
-			-- 	PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillHit] source(",source,") skill(",skill,") data(",Ext.JsonStringify(data),")")
-			-- end
-			for i,callback in pairs(listeners) do
-				local status,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.HIT, data)
-				if not status then
-					Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
+			local length = #listeners
+			if length > 0 then
+				local uuid = GetUUID(source)
+				---@type HitData
+				local data = Classes.HitData:Create(GetUUID(target), uuid, damage, handle, skill)
+				for i=1,length do
+					local callback = listeners[i]
+					local status,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.HIT, data)
+					if not status then
+						Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
+					end
 				end
 			end
 		end

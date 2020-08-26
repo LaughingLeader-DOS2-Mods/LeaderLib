@@ -109,8 +109,10 @@ Ext.RegisterNetListener("LeaderLib_OnDelayTurnClicked", function(call, uuid, ...
 	-- if not charMatch then
 	-- 	return
 	-- end
-	if #Listeners.TurnDelayed > 0 then
-		for i,callback in pairs(Listeners.TurnDelayed) do
+	local length = #Listeners.TurnDelayed
+	if length > 0 then
+		for i=1,length do
+			local callback = Listeners.TurnDelayed[i]
 			local status,err = xpcall(callback, debug.traceback, uuid)
 			if not status then
 				Ext.PrintError("Error calling function for 'TurnDelayed':\n", err)

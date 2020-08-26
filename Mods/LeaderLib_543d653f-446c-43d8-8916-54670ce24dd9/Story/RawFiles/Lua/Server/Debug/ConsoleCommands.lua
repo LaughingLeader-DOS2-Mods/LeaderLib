@@ -186,6 +186,12 @@ Ext.RegisterConsoleCommand("luareset", function(command)
 	Vars.JustReset = true
 end)
 
+Ext.RegisterConsoleCommand("teleport", function(cmd,target)
+	local host = CharacterGetHostCharacter()
+	print("Teleporting",host,"to",target,GetPosition(target))
+	TeleportTo(host, target, "", 1, 0, 1)
+end)
+
 Ext.RegisterConsoleCommand("movie", function(command,movie)
 	if movie == nil then
 		movie = "Splash_Logo_Larian"

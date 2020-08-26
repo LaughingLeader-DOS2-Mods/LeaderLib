@@ -37,6 +37,15 @@ end
 
 GameHelpers.UI.SetSkillEnabled = SetSkillEnabled
 
+---@type client string
+function RefreshSkillBar(client)
+	if CharacterIsPlayer(client) == 1 and CharacterGetReservedUserID(client) ~= nil then
+		Ext.PostMessageToClient(client, "LeaderLib_Hotbar_Refresh", GetUUID(client))
+	end
+end
+
+GameHelpers.UI.RefreshSkillBar = RefreshSkillBar
+
 ---@param text string
 ---@param filter integer
 ---@param specificCharacters string|string[]|nil

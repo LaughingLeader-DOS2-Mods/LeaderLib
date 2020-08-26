@@ -190,6 +190,13 @@ Ext.RegisterNetListener("LeaderLib_Hotbar_SetSlotEnabled", function(call, dataSt
 	end
 end)
 
+Ext.RegisterNetListener("LeaderLib_Hotbar_Refresh", function(call, uuid)
+	local ui = Ext.GetBuiltinUI("Public/Game/GUI/hotBar.swf")
+	if ui ~= nil then
+		ui:ExternalInterfaceCall("updateSlots", ui:GetValue("maxSlots", "number"))
+	end
+end)
+
 Ext.RegisterNetListener("LeaderLib_AddTextToCombatLog", function(call, dataStr)
 	local data = MessageData:CreateFromString(dataStr)
 	if data.Params ~= nil then

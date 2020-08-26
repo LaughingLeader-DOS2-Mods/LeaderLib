@@ -96,7 +96,7 @@ end
 function TimerFinished(event, ...)
 	--PrintDebug("[LeaderLib_Timers.lua:TimerFinished] ", event, Common.Dump({...}))
 	if OneshotTimerData[event] ~= nil then
-		for i,callback in ipairs(OneshotTimerData[event]) do
+		for i,callback in pairs(OneshotTimerData[event]) do
 			local status,err = xpcall(callback, debug.traceback, event, ...)
 			if not status then
 				Ext.PrintError("[LeaderLib:CancelTimer] Error calling oneshot timer callback:\n", err)
@@ -105,7 +105,7 @@ function TimerFinished(event, ...)
 		OneshotTimerData[event] = nil
 	end
 	if #Listeners.TimerFinished > 0 then
-		for i,callback in ipairs(Listeners.TimerFinished) do
+		for i,callback in pairs(Listeners.TimerFinished) do
 			local status,err = xpcall(callback, debug.traceback, event, ...)
 			if not status then
 				Ext.PrintError("[LeaderLib:CancelTimer] Error sending timer finished event:\n", err)

@@ -72,14 +72,14 @@ local function PrintDynamicStats(dynamicStats)
 	for i,v in pairs(dynamicStats) do
 		Ext.Print("["..tostring(i) .. "]")
 		if v ~= nil and v.DamageFromBase > 0 then
-			for i,attribute in ipairs(dynamicStatsVars) do
+			for i,attribute in pairs(dynamicStatsVars) do
 				local val = v[attribute]
 				if val ~= nil then
 					Ext.Print(string.format("  [%s] = (%s)", attribute, val))
 				end
 			end
 			if v.StatsType ~= "Weapon" then
-				for i,attribute in ipairs(armorBoostProps) do
+				for i,attribute in pairs(armorBoostProps) do
 					local val = v[attribute]
 					if val ~= nil then
 						Ext.Print(string.format("  [%s] = (%s)", attribute, val))
@@ -111,7 +111,7 @@ Ext.RegisterConsoleCommand("printitemstats", function(command, slot)
 	---@type EsvCharacter
 	local characterObject = Ext.GetCharacter(target)
 	if slot == nil then
-		for i,item in ipairs(characterObject:GetInventoryItems()) do
+		for i,item in pairs(characterObject:GetInventoryItems()) do
 			PrintItemStats(item)
 		end
 	else
@@ -409,7 +409,7 @@ Ext.RegisterConsoleCommand("printdeltamods", function(command, ...)
 				print("=======")
 				print("Item Boost Stats:")
 				print("=======")
-				for i,stat in ipairs(item.Stats.DynamicStats) do
+				for i,stat in pairs(item.Stats.DynamicStats) do
 					if not StringHelpers.IsNullOrEmpty(stat.BoostName) then
 						print(i,stat.BoostName)
 					end
@@ -462,7 +462,7 @@ Ext.RegisterConsoleCommand("printrespentags", function(command)
 	print("Data.ResistancePenetrationTags = {")
 	for damageType,_ in pairs(Data.DamageTypeToResistance) do
 		print("\t"..damageType.." = {")
-		for i,entry in ipairs(Data.ResistancePenetrationTags[damageType]) do
+		for i,entry in pairs(Data.ResistancePenetrationTags[damageType]) do
 			print(string.format("\t\t[%i] = {Tag=\"%s\", Amount=%i},", i, entry.Tag, entry.Amount))
 		end
 		print("\t},")

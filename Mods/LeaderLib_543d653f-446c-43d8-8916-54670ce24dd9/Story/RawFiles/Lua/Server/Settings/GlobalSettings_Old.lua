@@ -76,7 +76,7 @@ local function do_addflags(tbl, x)
 	if type(x) == "string" then
 		tbl[x] = LeaderLibFlagVariable:Create(x)
 	elseif type(x) == "table" then
-		for _,y in ipairs(x) do
+		for _,y in pairs(x) do
 			do_addflags(tbl, y)
 		end
 	end
@@ -85,7 +85,7 @@ end
 function LeaderLibModSettings:AddFlags(...)
 	local flags = {...}
 	local target = self.globalflags
-	for _,f in ipairs(flags) do
+	for _,f in pairs(flags) do
 		do_addflags(target, f)
 	end
 	self.globalflags = target
@@ -150,7 +150,7 @@ function LeaderLibGlobalSettings:Create()
 		mods = {}
 	}
 	
-	for _,v in ipairs(global_settings) do
+	for _,v in pairs(global_settings) do
 		local export = v:Export()
 		this.mods[#this.mods+1] = export
 	end

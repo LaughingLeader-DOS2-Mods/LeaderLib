@@ -8,7 +8,7 @@ function Log(...)
 	if printEnabled then
 		local logArgs = {...}
 		local output_str = ""
-		for i,v in ipairs(logArgs) do
+		for i,v in pairs(logArgs) do
 			output_str = output_str .. tostring(v)
 		end
 		Ext.Print(output_str)
@@ -31,7 +31,7 @@ end
 local function FlattenTable(tbl)
 	local result = {}
 	local function flatten(tbl)
-		for _, v in ipairs(tbl) do
+		for _, v in pairs(tbl) do
 			if type(v) == "table" then
 				flatten(v)
 			else

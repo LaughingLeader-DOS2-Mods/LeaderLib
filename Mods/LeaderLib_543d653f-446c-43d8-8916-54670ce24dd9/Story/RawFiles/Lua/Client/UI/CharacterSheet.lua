@@ -241,7 +241,7 @@ local function RegisterListeners()
 	Ext.RegisterUITypeCall(117, "GuardPressed", function(ui, call, ...)
 		Ext.PostMessageToServer("LeaderLib_OnDelayTurnClicked", UI.ClientCharacter)
 		if #Listeners.TurnDelayed > 0 then
-			for i,callback in ipairs(Listeners.TurnDelayed) do
+			for i,callback in pairs(Listeners.TurnDelayed) do
 				local status,err = xpcall(callback, debug.traceback, UI.ClientCharacter)
 				if not status then
 					Ext.PrintError("Error calling function for 'TurnDelayed':\n", err)

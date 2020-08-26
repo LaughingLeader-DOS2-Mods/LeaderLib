@@ -208,7 +208,7 @@ function LoadMods()
 	Osi.LeaderLib_Mods_OnModLoaded("7e737d2f-31d2-4751-963f-be6ccc59cd0c", "LeaderLib", mod.Name, mod.Author, versionInt, major, minor, revision, build)
 
 	local loadOrder = Ext.GetModLoadOrder()
-	for _,uuid in ipairs(loadOrder) do
+	for _,uuid in pairs(loadOrder) do
 		if IgnoredMods[uuid] ~= true then
 			local mod = Ext.GetModInfo(uuid)
 			local versionInt = tonumber(mod.Version)

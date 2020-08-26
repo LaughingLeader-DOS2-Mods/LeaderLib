@@ -49,7 +49,7 @@ function TranslatedString:ReplacePlaceholders(...)
 		if str == "" then
 			str = values[1]
 		else
-			for i,v in ipairs(values) do
+			for i,v in pairs(values) do
 				if type(v) == "number" then
 					str = string.gsub(str, "%["..tostring(i).."%]", math.tointeger(v))
 				else

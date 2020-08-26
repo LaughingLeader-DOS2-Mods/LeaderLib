@@ -22,7 +22,7 @@ local function ModuleResume()
 	-- 	end
 	-- end
 	if #Listeners.ModuleResume > 0 then
-		for i,callback in ipairs(Listeners.ModuleResume) do
+		for i,callback in pairs(Listeners.ModuleResume) do
 			local status,err = xpcall(callback, debug.traceback)
 			if not status then
 				Ext.PrintError("Error calling function for 'ModuleResume':\n", err)
@@ -34,7 +34,7 @@ Ext.RegisterListener("ModuleResume", ModuleResume)
 
 local function SessionLoaded()
 	if #Listeners.SessionLoaded > 0 then
-		for i,callback in ipairs(Listeners.SessionLoaded) do
+		for i,callback in pairs(Listeners.SessionLoaded) do
 			local status,err = xpcall(callback, debug.traceback)
 			if not status then
 				Ext.PrintError("Error calling function for 'SessionLoaded':\n", err)

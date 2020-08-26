@@ -1,6 +1,6 @@
 local function OnFeatureEnabled(id)
 	if #Listeners.FeatureEnabled > 0 then
-		for i,callback in ipairs(Listeners.FeatureEnabled) do
+		for i,callback in pairs(Listeners.FeatureEnabled) do
 			local status,err = xpcall(callback, debug.traceback, id)
 			if not status then
 				Ext.PrintError("Error calling function for 'FeatureEnabled':\n", err)
@@ -11,7 +11,7 @@ end
 
 local function OnFeatureDisabled(id)
 	if #Listeners.FeatureDisabled > 0 then
-		for i,callback in ipairs(Listeners.FeatureDisabled) do
+		for i,callback in pairs(Listeners.FeatureDisabled) do
 			local status,err = xpcall(callback, debug.traceback, id)
 			if not status then
 				Ext.PrintError("Error calling function for 'FeatureDisabled':\n", err)

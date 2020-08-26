@@ -102,7 +102,7 @@ local function BuildMenu(ui)
 	end)
 
 	local buttonInt = 0
-	for _,uuid in ipairs(loadOrder) do
+	for _,uuid in pairs(loadOrder) do
 		if IgnoredMods[uuid] ~= true then
 			local mod = Ext.GetModInfo(uuid)
 			local modName = mod.Name:gsub(" %- Definitive Edition", "")

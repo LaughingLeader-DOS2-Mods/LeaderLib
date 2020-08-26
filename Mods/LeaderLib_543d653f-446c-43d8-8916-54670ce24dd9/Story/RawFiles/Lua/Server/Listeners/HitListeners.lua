@@ -13,7 +13,7 @@ function OnPrepareHit(target, source, damage, handle)
 		end
 	end
 	if #Listeners.OnPrepareHit > 0 then
-		for i,callback in ipairs(Listeners.OnPrepareHit) do
+		for i,callback in pairs(Listeners.OnPrepareHit) do
 			local status,err = xpcall(callback, debug.traceback, target, source, damage, handle)
 			if not status then
 				Ext.PrintError("[LeaderLib:HitListeners.lua] Error calling function for 'OnPrepareHit':\n", err)
@@ -77,7 +77,7 @@ function OnHit(target, source, damage, handle)
 	end
 
 	if #Listeners.OnHit > 0 then
-		for i,callback in ipairs(Listeners.OnHit) do
+		for i,callback in pairs(Listeners.OnHit) do
 			local status,err = xpcall(callback, debug.traceback, target, source, damage, handle, skill)
 			if not status then
 				Ext.PrintError("[LeaderLib:HitListeners.lua] Error calling function for 'OnHit':\n", err)

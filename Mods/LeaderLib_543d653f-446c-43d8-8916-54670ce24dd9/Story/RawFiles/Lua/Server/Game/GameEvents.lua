@@ -60,7 +60,7 @@ local function OnInitialized()
 	end
 
 	if #Listeners.Initialized > 0 then
-		for i,callback in ipairs(Listeners.Initialized) do
+		for i,callback in pairs(Listeners.Initialized) do
 			local status,err = xpcall(callback, debug.traceback)
 			if not status then
 				Ext.PrintError("[LeaderLib:OnInitialized] Error calling function for 'Initialized':\n", err)
@@ -119,7 +119,7 @@ function OnLuaReset()
 	print("OnLuaReset")
 	OnInitialized()
 	if #Listeners.LuaReset > 0 then
-		for i,callback in ipairs(Listeners.LuaReset) do
+		for i,callback in pairs(Listeners.LuaReset) do
 			local status,err = xpcall(callback, debug.traceback)
 			if not status then
 				Ext.PrintError("[LeaderLib:OnLuaReset] Error calling function for 'LuaReset':\n", err)

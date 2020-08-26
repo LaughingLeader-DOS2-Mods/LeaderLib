@@ -3,7 +3,7 @@
 ---@param source string|nil
 ---@param properties StatProperty[]
 function GameHelpers.ApplyProperties(target, source, properties)
-	for i,v in ipairs(properties) do
+	for i,v in pairs(properties) do
 		if v.Type == "Status" then
 			if v.Context[1] == "Target" then
 				if target ~= nil then

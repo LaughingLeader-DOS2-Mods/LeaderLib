@@ -154,7 +154,7 @@ function Game.Math.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, 
 	if attacker ~= nil and attacker.Character ~= nil then
 		---@type EsvItem[]
 		local resPenItems = {}
-		for i,itemId in ipairs(attacker.Character:GetInventoryItems()) do
+		for i,itemId in pairs(attacker.Character:GetInventoryItems()) do
 			---@type EsvItem
 			local item = Ext.GetItem(itemId)
 			--print(i, item.Slot, item.StatsId)

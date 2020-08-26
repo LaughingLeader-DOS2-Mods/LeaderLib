@@ -184,7 +184,7 @@ function OnSkillHit(source, skill, target, handle, damage)
 			-- if Ext.IsDeveloperMode() then
 			-- 	PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillHit] source(",source,") skill(",skill,") data(",Ext.JsonStringify(data),")")
 			-- end
-			for i,callback in ipairs(listeners) do
+			for i,callback in pairs(listeners) do
 				local status,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.HIT, data)
 				if not status then
 					Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)

@@ -23,7 +23,7 @@ local function OnItemTooltip(item, tooltip)
 					local tags = Data.ResistancePenetrationTags[damageType]
 					if tags ~= nil then
 						local totalResPen = 0
-						for i,tagEntry in ipairs(tags) do
+						for i,tagEntry in pairs(tags) do
 							if item:HasTag(tagEntry.Tag) then
 								totalResPen = totalResPen + tagEntry.Amount
 								tagsCheck[#tagsCheck+1] = tagEntry.Tag
@@ -260,7 +260,7 @@ local function OnTooltipPositioned(ui, ...)
 	
 			if #tooltips > 0 then
 				for i,tooltip_mc in pairs(tooltips) do
-					for i,callback in ipairs(UIListeners.OnTooltipPositioned) do
+					for i,callback in pairs(UIListeners.OnTooltipPositioned) do
 						local status,err = xpcall(callback, debug.traceback, ui, tooltip_mc, ...)
 						if not status then
 							Ext.PrintError("[LeaderLib:AdjustTagElements] Error invoking callback:")

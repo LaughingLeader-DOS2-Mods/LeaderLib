@@ -83,7 +83,7 @@ function UI.StatusText(target, text, displayTime, isItem)
 			-- [19] = [1.0]
 			-- [20] = [true]
 			testSelectionArray[0] = doubleHandle
-			for i,v in ipairs(testSelectionArray) do
+			for i,v in pairs(testSelectionArray) do
 				ui:SetValue("selectionInfo_array", v, i)
 			end
 			ui:Invoke("updateOHs")

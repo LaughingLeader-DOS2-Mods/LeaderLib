@@ -154,7 +154,7 @@ function LoadGlobalSettings()
 			end
 		end
 		if #Listeners.ModSettingsLoaded > 0 then
-			for i,callback in ipairs(Listeners.ModSettingsLoaded) do
+			for i,callback in pairs(Listeners.ModSettingsLoaded) do
 				local status,err = xpcall(callback, debug.traceback)
 				if not status then
 					Ext.PrintError("[LeaderLib:LoadGlobalSettings] Error invoking callback for ModSettingsLoaded:")

@@ -110,7 +110,7 @@ Ext.RegisterNetListener("LeaderLib_OnDelayTurnClicked", function(call, uuid, ...
 	-- 	return
 	-- end
 	if #Listeners.TurnDelayed > 0 then
-		for i,callback in ipairs(Listeners.TurnDelayed) do
+		for i,callback in pairs(Listeners.TurnDelayed) do
 			local status,err = xpcall(callback, debug.traceback, uuid)
 			if not status then
 				Ext.PrintError("Error calling function for 'TurnDelayed':\n", err)

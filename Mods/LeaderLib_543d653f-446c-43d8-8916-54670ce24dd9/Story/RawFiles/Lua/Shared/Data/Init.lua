@@ -4,14 +4,14 @@ end
 
 Data.OriginalSkillTiers = {}
 
-local function _ipairs(t, var)
+local function _pairs(t, var)
 	var = var + 1
 	local value = t[var]
 	if value == nil then return end
 	return var, value
 end
-local function iterateFromZero(t) return _ipairs, t, -1 end
-local function iterateDefault(t) return _ipairs, t, 0 end
+local function iterateFromZero(t) return _pairs, t, -1 end
+local function iterateDefault(t) return _pairs, t, 0 end
 
 local damageTypes = {
 	[0] = "None",

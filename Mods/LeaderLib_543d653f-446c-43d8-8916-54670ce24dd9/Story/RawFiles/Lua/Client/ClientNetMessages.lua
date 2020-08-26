@@ -23,7 +23,7 @@ Ext.RegisterNetListener("LeaderLib_SyncAllSettings", function(call, dataString)
 	if data.GlobalSettings ~= nil then GlobalSettings = data.GlobalSettings end
 	if data.GameSettings ~= nil then GameSettings = data.GameSettings end
 	if #Listeners.ModSettingsLoaded > 0 then
-		for i,callback in ipairs(Listeners.ModSettingsLoaded) do
+		for i,callback in pairs(Listeners.ModSettingsLoaded) do
 			local status,err = xpcall(callback, debug.traceback)
 			if not status then
 				Ext.PrintError("[LeaderLib_SyncAllSettings] Error invoking callback for ModSettingsLoaded:")

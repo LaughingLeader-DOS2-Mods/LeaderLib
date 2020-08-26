@@ -110,3 +110,15 @@ end
 function StringHelpers.Trim(s)
 	return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
+
+---Get the UUID from a template, GUIDSTRING, etc.
+---@type str string
+---@return string
+function StringHelpers.GetUUID(str)
+	local start = string.find(str, "_[^_]*$") or 0
+	if start > 0 then
+		return string.sub(str, start)
+	else
+		return str
+	end
+end

@@ -186,10 +186,24 @@ Ext.RegisterConsoleCommand("luareset", function(command)
 	Vars.JustReset = true
 end)
 
-Ext.RegisterConsoleCommand("teleport", function(cmd,target)
+Ext.RegisterConsoleCommand("teleport", function(cmd,target,param2,param3)
 	local host = CharacterGetHostCharacter()
-	print("Teleporting",host,"to",target,GetPosition(target))
-	TeleportTo(host, target, "", 1, 0, 1)
+	if param2 == nil or param3 == nil then
+		if ObjectExists(target) == 1 then
+			print("Teleporting",host,"to",target,GetPosition(target))
+			TeleportTo(host, target, "", 1, 0, 1)
+		end
+	else
+		local x = tonumber(target)
+		if x ~= nil then
+			local y = tonumber(param2)
+			local z = tonumber(param3)
+
+			if y ~= nil and z ~= nil then
+				TeleportToPosition(target, x, y, z, "", 1, 0)
+			end
+		end
+	end
 end)
 
 Ext.RegisterConsoleCommand("movie", function(command,movie)

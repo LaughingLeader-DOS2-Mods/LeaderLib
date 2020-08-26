@@ -39,7 +39,15 @@ end)
 
 Ext.RegisterOsirisListener("CharacterReservedUserIDChanged", 3, "after", function(char, old, new)
 	if Ext.GetGameState() == "Running" and CharacterIsControlled(char) == 1 then
-		Ext.PostMessageToUser(new, "LeaderLib_SetClientCharacter", GetUUID(char))
+		if not Ext.PlayerHasExtender(char) then
+			local host = CharacterGetHostCharacter()
+			local username = GetUserName(new) or tostring(new)
+			local text = GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageText"):gsub("%[1%]", username)
+			OpenMessageBox(char, "LeaderLib_MessageBox_ExtenderNotInstalled_Client")
+			OpenMessageBox(host, text)
+		else
+			Ext.PostMessageToUser(new, "LeaderLib_SetClientCharacter", GetUUID(char))
+		end
 	end
 end)
 

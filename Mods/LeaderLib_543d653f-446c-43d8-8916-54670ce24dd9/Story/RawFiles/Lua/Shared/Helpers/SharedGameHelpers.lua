@@ -47,6 +47,9 @@ function GameHelpers.GetEnemiesInRange(uuid,radius)
 end
 
 local function ReplacePlaceholders(str, character)
+	if type(character) == "string" then
+		character = Ext.GetCharacter(character)
+	end
 	local output = str
 	for v in string.gmatch(output, "%[ExtraData.-%]") do
 		local key = v:gsub("%[ExtraData:", ""):gsub("%]", "")
@@ -81,7 +84,7 @@ local function ReplacePlaceholders(str, character)
 			if type(value) == "number" then
 				value = string.format("%i", math.floor(value))
 			end
-		else
+		elseif value == nil then
 			value = ""
 		end
 		-- The parameter brackets will be considered for pattern matching unless we escape them with a percentage sign.
@@ -97,27 +100,90 @@ local function ReplacePlaceholders(str, character)
 				if character == nil and UI.ClientCharacter ~= nil then
 					character = Ext.GetCharacter(UI.ClientCharacter) or nil
 				end
-				if character ~= nil then
-					local damageRange = Game.Math.GetSkillDamageRange(character.Stats, skill)
-					value = GameHelpers.Tooltip.FormatDamageRange(damageRange)
+				if character ~= nil and character.Stats ~= nil then
+					local useDefaultSkillDamage = true
+					local length = #Listeners.GetTooltipSkillDamage
+					if length > 0 then
+						for i=1,length do
+							local callback = Listeners.GetTooltipSkillDamage[i]
+							local b,result = xpcall(callback, debug.traceback, skill, character.Stats)
+							if not b then
+								Ext.PrintError("[LeaderLib:ReplacePlaceholders] Error calling function for 'GetTooltipSkillDamage':\n", result)
+							elseif result ~= nil and result ~= "" then
+								value = result
+								useDefaultSkillDamage = false
+							end
+						end
+					end
+					if useDefaultSkillDamage then
+						local damageRange = Game.Math.GetSkillDamageRange(character.Stats, skill)
+						value = GameHelpers.Tooltip.FormatDamageRange(damageRange)
+					end
 				end
 			end
 		end
-		if value ~= nil and value ~= "" then
+		if value ~= nil then
 			if type(value) == "number" then
 				value = string.format("%i", math.floor(value))
 			end
-		else
-			value = ""
+			local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
+			print(output, escapedReplace, value)
+			output = string.gsub(output, escapedReplace, value)
+			print("output:", output)
 		end
-		local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
-		output = string.gsub(output, escapedReplace, value)
 	end
+	local length = #Listeners.GetTooltipSkillParam
+	if length > 0 then
+		local value = ""
+		for v in string.gmatch(output, "%[Skill:.-%]") do
+			local fullParam = v:gsub("%[Skill:", ""):gsub("%]", "")
+			local props = StringHelpers.Split(fullParam, ":")
+			local skillName = ""
+			local param = ""
+			if #props >= 2 then
+				skillName = props[1]
+				param = props[2]
+			end
+			if skillName ~= nil and skillName ~= "" then
+				local skill = GameHelpers.Ext.CreateSkillTable(skillName)
+				if skill ~= nil then
+					if character == nil and UI.ClientCharacter ~= nil then
+						character = Ext.GetCharacter(UI.ClientCharacter) or nil
+					end
+					if character ~= nil and character.Stats ~= nil then
+						for i=1,length do
+							local callback = Listeners.GetTooltipSkillParam[i]
+							local b,result = xpcall(callback, debug.traceback, skill, character.Stats, param)
+							if not b then
+								Ext.PrintError("[LeaderLib:ReplacePlaceholders] Error calling function for 'GetTooltipSkillParam':\n", result)
+							elseif result ~= nil then
+								value = result
+							end
+						end
+					end
+				end
+			end			
+			if value ~= nil and value ~= "" then
+				if type(value) == "number" then
+					value = string.format("%i", math.floor(value))
+				end
+			elseif value == nil then
+				value = ""
+			end
+			local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
+			output = string.gsub(output, escapedReplace, value)
+		end
+	end
+	
 	for v in string.gmatch(output, "%[Key:.-%]") do
 		local key = v:gsub("%[Key:", ""):gsub("%]", "")
 		local translatedText,handle = Ext.GetTranslatedStringFromKey(key)
-		if translatedText == nil then translatedText = "" end
-		-- The parameter brackets will be considered for pattern matching unless we escape them with a percentage sign.
+		if translatedText == nil then 
+			translatedText = "" 
+		else
+			translatedText = string.gsub(translatedText, "%%", "%%%%")
+			translatedText = ReplacePlaceholders(translatedText, character)
+		end
 		local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
 		output = string.gsub(output, escapedReplace, translatedText)
 	end
@@ -131,11 +197,14 @@ local function ReplacePlaceholders(str, character)
 		if translatedText == nil then 
 			translatedText = "" 
 		end
-		-- The parameter brackets will be considered for pattern matching unless we escape them with a percentage sign.
 		local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
 		output = string.gsub(output, escapedReplace, translatedText)
 	end
 	return output
+end
+
+if GameHelpers.Tooltip == nil then
+	GameHelpers.Tooltip = {}
 end
 
 ---Replace placeholder text in strings, such as ExtraData, Skill, etc.

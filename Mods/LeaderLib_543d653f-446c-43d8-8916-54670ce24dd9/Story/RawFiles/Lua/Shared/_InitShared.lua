@@ -101,6 +101,8 @@ Listeners = {
 	LuaReset = {},
 	ModSettingsLoaded = {},
 	TurnDelayed = {},
+	GetTooltipSkillDamage = {},
+	GetTooltipSkillParam = {},
 }
 
 SkillListeners = {}

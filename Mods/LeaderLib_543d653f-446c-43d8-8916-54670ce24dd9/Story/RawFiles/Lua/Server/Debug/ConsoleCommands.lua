@@ -202,6 +202,8 @@ Ext.RegisterConsoleCommand("teleport", function(cmd,target,param2,param3)
 			if y ~= nil and z ~= nil then
 				TeleportToPosition(target, x, y, z, "", 1, 0)
 			end
+		else
+			print("[teleport] Failed to parse position?")	
 		end
 	end
 end)

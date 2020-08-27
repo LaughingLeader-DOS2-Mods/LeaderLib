@@ -128,13 +128,13 @@ end
 
 ---Swaps a skill with another one.
 ---@param char string
----@param targetSkill string
----@param replacementSkill string
----@param removeTargetSkill boolean
----@param resetCooldowns boolean Defaults to true.
-function SwapSkill(char, targetSkill, replacementSkill, removeTargetSkill, resetCooldowns)
+---@param targetSkill string The skill to find and replace.
+---@param replacementSkill string The skill to replace the target one with.
+---@param removeTargetSkill boolean Optional, removes the swapped skill from the character.
+---@param resetCooldowns boolean Optional, defaults to true.
+function GameHelpers.Skill.Swap(char, targetSkill, replacementSkill, removeTargetSkill, resetCooldowns)
     if CharacterIsPlayer(char) == 0 then
-        if removeTargetSkill then
+        if removeTargetSkill ~= nil and removeTargetSkill ~= false then
             CharacterRemoveSkill(char, targetSkill)
         end
         CharacterAddSkill(char, replacementSkill, 0)
@@ -168,4 +168,4 @@ GameHelpers.Skill.StoreCooldownData = StoreSkillCooldownData
 GameHelpers.Skill.StoreSlots = StoreSkillSlots
 GameHelpers.Skill.TrySetSlot = TrySetSkillSlot
 GameHelpers.Skill.Refresh = RefreshSkill
-GameHelpers.Skill.Swap = SwapSkill
+SwapSkill = GameHelpers.Skill.Swap

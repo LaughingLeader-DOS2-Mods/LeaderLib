@@ -24,6 +24,36 @@ THEN
 DB_LeaderLib_Randomization_Entries(_TableID, _EntryID, _Frequency, _StartingDropCount);
 //END_REGION
 
+//REGION CLEAR
+PROC
+LeaderLib_Randomization_Clear_Table((STRING)_TableID, (INTEGER)_ClearActive)
+AND
+DB_LeaderLib_Randomization_Tables(_TableID, _Max)
+THEN
+NOT DB_LeaderLib_Randomization_Tables(_TableID, _Max);
+
+PROC
+LeaderLib_Randomization_Clear_Table((STRING)_TableID, (INTEGER)_ClearActive)
+AND
+DB_LeaderLib_Randomization_Entries(_TableID, _EntryID, _Frequency, _StartingDropCount)
+THEN
+NOT DB_LeaderLib_Randomization_Entries(_TableID, _EntryID, _Frequency, _StartingDropCount);
+
+PROC
+LeaderLib_Randomization_Clear_Table((STRING)_TableID, 1)
+AND
+DB_LeaderLib_Randomization_Temp_ActiveTableTotal(_Object, _TableID, _Total, _Max)
+THEN
+NOT DB_LeaderLib_Randomization_Temp_ActiveTableTotal(_Object, _TableID, _Total, _Max);
+
+PROC
+LeaderLib_Randomization_Clear_Table((STRING)_TableID, 1)
+AND
+DB_LeaderLib_Randomization_Temp_ActiveEntries(_Object, _TableID, _EntryID, _StartingDropCount)
+THEN
+NOT DB_LeaderLib_Randomization_Temp_ActiveEntries(_Object, _TableID, _EntryID, _StartingDropCount);
+//END_REGION
+
 //REGION TABLE_BUILD
 QRY
 LeaderLib_Randomization_Tables_QRY_TableInitialized((GUIDSTRING)_Object, (STRING)_TableID)

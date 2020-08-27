@@ -153,3 +153,24 @@ end)
 Ext.RegisterNetListener("LeaderLib_SetClientCharacter", function(call, uuid)
 	UI.ClientCharacter = uuid
 end)
+
+Ext.RegisterNetListener("LeaderLib_SetHelmetOption", function(call, dataStr)
+	local data = MessageData:CreateFromString(dataStr)
+	if data.Params.UUID ~= nil and data.Params.Enabled ~= nil then
+		local ui = Ext.GetBuiltinUI("Public/Game/GUI/characterSheet.swf")
+		if ui ~= nil then
+			local state = data.Params.Enabled and 1 or 0
+			ui:ExternalInterfaceCall("setHelmetOption", state)
+		end
+	end
+end)
+
+Ext.RegisterNetListener("LeaderLib_SetArmorOption", function(call, dataStr)
+	local data = MessageData:CreateFromString(dataStr)
+	if data.Params.UUID ~= nil and data.Params.State ~= nil then
+		local ui = Ext.GetBuiltinUI("Public/Game/GUI/characterCreation.swf")
+		if ui ~= nil then
+			ui:ExternalInterfaceCall("setArmourState", data.Params.State)
+		end
+	end
+end)

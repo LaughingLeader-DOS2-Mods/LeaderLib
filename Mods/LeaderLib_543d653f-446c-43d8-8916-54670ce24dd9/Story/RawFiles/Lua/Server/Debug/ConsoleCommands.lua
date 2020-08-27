@@ -535,6 +535,23 @@ Ext.RegisterConsoleCommand("resurrectparty", function(command)
 	end
 end)
 
+Ext.RegisterConsoleCommand("sethelmetoption", function(command, param)
+	local host = CharacterGetHostCharacter()
+	local enabled = param == "true"
+	print("[sethelmetoption]",host,enabled)
+	Ext.PostMessageToClient(host, "LeaderLib_SetHelmetOption", MessageData:CreateFromTable("HelmetOption", {UUID = host, Enabled = enabled}):ToString())
+end)
+
+Ext.RegisterConsoleCommand("setarmoroption", function(command, param)
+	local host = CharacterGetHostCharacter()
+	local state = 2
+	if param ~= nil then
+		state = math.tointeger(tonumber(param))
+	end
+	print("[setarmoroption]",host,state)
+	Ext.PostMessageToClient(host, "LeaderLib_SetArmorOption", MessageData:CreateFromTable("ArmorOption", {UUID = host, State = state}):ToString())
+end)
+
 Ext.RegisterConsoleCommand("llshoot", function(cmd, forceHit, source, target, skill)
 	if source == nil then
 		source = CharacterGetHostCharacter()

@@ -360,6 +360,32 @@ Ext.RegisterConsoleCommand("addskill", function(command, skill)
 	CharacterAddSkill(host, skill, 1)
 end)
 
+local cooldownsDisabled = false
+local cooldownsDisabled_AddedListener = false
+Ext.RegisterConsoleCommand("nocooldowns", function(command)
+	cooldownsDisabled = not cooldownsDisabled
+	if cooldownsDisabled then
+		CharacterResetCooldowns(CharacterGetHostCharacter()) 
+		if not cooldownsDisabled_AddedListener then
+			Ext.RegisterOsirisListener("SkillCast", 4, "after", function(char,...)
+				if cooldownsDisabled then
+					CharacterResetCooldowns(char)
+				end
+			end)
+			cooldownsDisabled_AddedListener = true
+		end
+	end
+end)
+
+Ext.RegisterConsoleCommand("ap", function(command, amountStr)
+	local host = CharacterGetHostCharacter()
+	local amount = Ext.GetCharacter(host).Stats.APMaximum
+	if amountStr ~= nil then
+		amount = math.tointeger(tonumber(amountStr))
+	end
+	CharacterAddActionPoints(host, amount)
+end)
+
 local removedSkills = {}
 
 Ext.RegisterConsoleCommand("removeunmemorizedskills", function(cmd)

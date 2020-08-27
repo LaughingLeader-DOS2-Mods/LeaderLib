@@ -15,6 +15,35 @@ local AutoLevelingDescription = ts:Create("hca27994egc60eg495dg8146g7f81c970e265
 local function OnItemTooltip(item, tooltip)
 	--print(item.StatsId, Ext.JsonStringify(item.WorldPos), Ext.JsonStringify(tooltip.Data))
 	if item ~= nil then
+		if Features.FixItemAPCost == true then
+			local character = nil
+			if UI.ClientCharacter ~= nil then
+				character = Ext.GetCharacter(UI.ClientCharacter)
+			elseif item.ParentInventoryHandle ~= nil then
+				character = Ext.GetCharacter(item.ParentInventoryHandle)
+			end
+			if character ~= nil then
+				local apElement = tooltip:GetElement("ItemUseAPCost")
+				if apElement ~= nil then
+					local ap = apElement.Value
+					if ap > 0 then
+						for i,status in pairs(character:GetStatuses()) do
+							if not LeaderLib.Data.EngineStatus[status] then
+								local potion = Ext.StatGetAttribute(status, "StatsId")
+								if potion ~= nil and potion ~= "" then
+									local apCostBoost = Ext.StatGetAttribute(potion, "APCostBoost")
+									if apCostBoost ~= nil and apCostBoost ~= 0 then
+										ap = math.max(0, ap + apCostBoost)
+									end
+								end
+							end
+						end
+						apElement.Value = ap
+					end
+				end
+			end
+		end
+
 		if Features.ResistancePenetration == true then
 			-- Resistance Penetration display
 			if item:HasTag("LeaderLib_HasResistancePenetration") then
@@ -139,10 +168,11 @@ local function OnSkillTooltip(character, skill, tooltip)
 			element.Label = string.gsub(element.Label, "  ", " ")
 		end
 	end
-	if Features.ReplaceTooltipPlaceholders or Features.FixChaosDamageDisplay or Features.TooltipGrammarHelper then
+
+	if Features.ReplaceTooltipPlaceholders or (Features.FixChaosDamageDisplay or Features.FixCorrosiveMagicDamageDisplay) or Features.TooltipGrammarHelper then
 		for i,element in pairs(tooltip:GetElements("SkillDescription")) do
 			if element ~= nil then
-				if Features.TooltipGrammarHelper then
+				if Features.TooltipGrammarHelper == true then
 					element.Label = string.gsub(element.Label, "a 8", "an 8")
 					local startPos,endPos = string.find(element.Label , "a <font.->8")
 					if startPos then
@@ -150,7 +180,7 @@ local function OnSkillTooltip(character, skill, tooltip)
 						element.Label = string.gsub(element.Label, text, text:gsub("a ", "an "))
 					end
 				end
-				if Features.FixChaosDamageDisplay and not string.find(element.Label:lower(), "chaos damage") then
+				if Features.FixChaosDamageDisplay == true and not string.find(element.Label:lower(), "chaos damage") then
 					local startPos,endPos,damage = string.find(element.Label, chaosDamagePattern)
 					if damage ~= nil then
 						damage = string.gsub(damage, "%s+", "")
@@ -158,7 +188,31 @@ local function OnSkillTooltip(character, skill, tooltip)
 						element.Label = string.gsub(element.Label, removeText, GameHelpers.GetDamageText("Chaos", damage))
 					end
 				end
-				if Features.ReplaceTooltipPlaceholders then
+				if Features.FixCorrosiveMagicDamageDisplay == true then
+					local status,err = xpcall(function()
+						local lowerLabel = string.lower(element.Label)
+						local damageText = ""
+						if string.find(lowerLabel, "corrosive damage") then
+							damageText = "corrosive damage"
+						elseif string.find(lowerLabel, "magic damage") then
+							damageText = "magic damage"
+						end
+						if damageText ~= "" then
+							local startPos,endPos = string.find(lowerLabel, "destroy <font.->[%d-]+ "..damageText..".-</font> on")
+							print(startPos,endPos,damageText)
+							if startPos and endPos then
+								local str = string.sub(element.Label, startPos, endPos)
+								local replacement = string.gsub(str, "Destroy","Deal"):gsub("destroy","deal"):gsub(" on"," to")
+							element.Label = replacement..string.sub(element.Label, endPos+1)
+							end
+						end
+						return true
+					end, debug.traceback)
+					if not status then
+						print(err)
+					end
+				end
+				if Features.ReplaceTooltipPlaceholders == true then
 					element.Label = GameHelpers.Tooltip.ReplacePlaceholders(element.Label, character)
 				end
 			end

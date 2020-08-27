@@ -135,6 +135,9 @@ Features = {
 	TooltipGrammarHelper = false,
 	StatusParamSkillDamage = false,
 	BackstabCalculation = false,
+	FixChaosDamageDisplay = false,
+	FixCorrosiveMagicDamageDisplay = false,
+	FixItemAPCost = true,
 }
 
 if Ext.IsDeveloperMode() then

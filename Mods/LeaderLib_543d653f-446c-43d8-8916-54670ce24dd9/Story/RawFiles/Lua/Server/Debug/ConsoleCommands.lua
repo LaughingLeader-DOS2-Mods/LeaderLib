@@ -320,11 +320,15 @@ Ext.RegisterConsoleCommand("clearinventory", function(command)
 end)
 
 local treasureChest = nil
-Ext.RegisterConsoleCommand("addtreasure", function(command, treasure, identifyItems)
+Ext.RegisterConsoleCommand("addtreasure", function(command, treasure, identifyItems, levelstr)
 	if treasure == nil then
 		treasure = "ArenaMode_ArmsTrader"
 	end
 	local host = CharacterGetHostCharacter()
+	local level = CharacterGetLevel(host)
+	if levelstr ~= nil then
+		level = math.tointeger(tonumber(levelstr))
+	end
 	local x,y,z = GetPosition(host)
 	if treasureChest == nil or ObjectExists(treasureChest) == 0 then
 		treasureChest = CreateItemTemplateAtPosition("219f6175-312b-4520-afce-a92c7fadc1ee", x, y, z)

@@ -1,3 +1,5 @@
+local ignoreSkill = {}
+
 --- Gets the base skill from a skill.
 --- @param skill string The skill entry to check.
 --- @return string The base skill, if any, otherwise the skill that was passed in.
@@ -169,6 +171,19 @@ function OnSkillCast(char, skill, ...)
 	end
 end
 
+local function RunSkillListenersForOnSkillHit(source, skill, data, listeners)
+	local length = #listeners
+	if length > 0 then
+		for i=1,length do
+			local callback = listeners[i]
+			local status,err = xpcall(callback, debug.traceback, skill, source, SKILL_STATE.HIT, data)
+			if not status then
+				Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
+			end
+		end
+	end
+end
+
 ---@param source string
 ---@param skillprototype string
 ---@param target string
@@ -176,21 +191,18 @@ end
 ---@param damage integer
 function OnSkillHit(source, skill, target, handle, damage)
 	if skill ~= "" and skill ~= nil then
+
+		local uuid = GetUUID(source)
+		---@type HitData
+		local data = Classes.HitData:Create(GetUUID(target), uuid, damage, handle, skill)
+
 		local listeners = SkillListeners[skill]
 		if listeners ~= nil then
-			local length = #listeners
-			if length > 0 then
-				local uuid = GetUUID(source)
-				---@type HitData
-				local data = Classes.HitData:Create(GetUUID(target), uuid, damage, handle, skill)
-				for i=1,length do
-					local callback = listeners[i]
-					local status,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.HIT, data)
-					if not status then
-						Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
-					end
-				end
-			end
+			RunSkillListenersForOnSkillHit(uuid, skill, data, listeners)
+		end
+		listeners = Listeners.OnSkillHit
+		if listeners ~= nil then
+			RunSkillListenersForOnSkillHit(uuid, skill, data, listeners)
 		end
 
 		if Features.ApplyBonusWeaponStatuses == true then
@@ -220,3 +232,32 @@ function OnSkillHit(source, skill, target, handle, damage)
 		end
 	end
 end
+
+-- Ext.RegisterOsirisListener("NRD_OnActionStateEnter", 2, "after", function(char, state)
+-- 	if state == "PrepareSkill" then
+-- 		local skillprototype = NRD_ActionStateGetString(char, "SkillId")
+-- 		if skillprototype ~= nil and skillprototype ~= "" then
+-- 			OnSkillPreparing(char, skillprototype)
+-- 		end
+-- 	end
+-- end)
+
+-- Ext.RegisterOsirisListener("CharacterUsedSkillOnTarget", 5, "after", function(char, target, skill, skilltype, element)
+-- 	StoreSkillEventData(char, skill, skilltype, element, target)
+-- end)
+
+-- Ext.RegisterOsirisListener("CharacterUsedSkillAtPosition", 7, "after", function(char, x, y, z, skill, skilltype, element)
+-- 	StoreSkillEventData(char, skill, skilltype, element, x, y, z)
+-- end)
+
+-- Ext.RegisterOsirisListener("CharacterUsedSkillOnZoneWithTarget", 5, "after", function(char, target, skill, skilltype, element)
+-- 	StoreSkillEventData(char, skill, skilltype, element, target)
+-- end)
+
+-- Ext.RegisterOsirisListener("CharacterUsedSkill", 4, "after", function(char, skill, skilltype, element)
+-- 	OnSkillUsed(char, skill, skilltype, element)
+-- end)
+
+-- Ext.RegisterOsirisListener("SkillCast", 4, "after", function(char, skill, skilltype, element)
+-- 	SkillCast(char, skill, skilltype, element)
+-- end)

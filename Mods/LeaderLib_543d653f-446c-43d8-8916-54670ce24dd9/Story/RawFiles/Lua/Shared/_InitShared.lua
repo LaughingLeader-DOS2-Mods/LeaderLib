@@ -98,6 +98,7 @@ Listeners = {
 	SessionLoaded = {},
 	OnPrepareHit = {},
 	OnHit = {},
+	OnSkillHit = {},
 	LuaReset = {},
 	ModSettingsLoaded = {},
 	TurnDelayed = {},

@@ -1,4 +1,10 @@
-function GameHelpers.ShootProjectile(source, target, skill, forceHit, sourcePosition)
+---@param source string
+---@param target string|number[]
+---@param skill string
+---@param forceHit boolean|nil
+---@param sourcePosition number[]|nil
+---@param hitObject string
+function GameHelpers.ShootProjectile(source, target, skill, forceHit, sourcePosition, hitObject)
     NRD_ProjectilePrepareLaunch()
     NRD_ProjectileSetString("SkillId", skill)
     
@@ -22,8 +28,13 @@ function GameHelpers.ShootProjectile(source, target, skill, forceHit, sourcePosi
 
     if type(target) == "string" then
         if forceHit == true then
-            NRD_ProjectileSetGuidString("HitObject", target)
-            NRD_ProjectileSetGuidString("HitObjectPosition", target)
+            if hitObject ~= nil then
+                NRD_ProjectileSetGuidString("HitObject", hitObject)
+                NRD_ProjectileSetGuidString("HitObjectPosition", hitObject)
+            else
+                NRD_ProjectileSetGuidString("HitObject", target)
+                NRD_ProjectileSetGuidString("HitObjectPosition", target)
+            end
         end
         NRD_ProjectileSetGuidString("TargetPosition", target)
     elseif type(target) == "table" then
@@ -38,7 +49,13 @@ function GameHelpers.ShootProjectile(source, target, skill, forceHit, sourcePosi
             tz = z
         end
         if forceHit == true then
-            NRD_ProjectileSetVector3("HitObjectPosition", tx,ty,tz)
+            if hitObject ~= nil then
+                NRD_ProjectileSetGuidString("HitObject", hitObject)
+                NRD_ProjectileSetGuidString("HitObjectPosition", hitObject)
+                --NRD_ProjectileSetVector3("HitObjectPosition", tx,ty,tz)
+            else
+                NRD_ProjectileSetVector3("HitObjectPosition", tx,ty,tz)
+            end
         end
         NRD_ProjectileSetVector3("TargetPosition", tx,ty,tz)
     end

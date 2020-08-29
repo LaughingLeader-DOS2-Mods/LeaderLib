@@ -21,7 +21,10 @@ Ext.RegisterNetListener("LeaderLib_SyncAllSettings", function(call, dataString)
 	local data = Ext.JsonParse(dataString)
 	if data.Features ~= nil then Features = data.Features end
 	if data.GlobalSettings ~= nil then GlobalSettings = data.GlobalSettings end
-	if data.GameSettings ~= nil then GameSettings = data.GameSettings end
+	if data.GameSettings ~= nil then 
+		GameSettings = data.GameSettings
+		--SyncStatOverrides(GameSettings)
+	end
 	if #Listeners.ModSettingsLoaded > 0 then
 		for i,callback in pairs(Listeners.ModSettingsLoaded) do
 			local status,err = xpcall(callback, debug.traceback)

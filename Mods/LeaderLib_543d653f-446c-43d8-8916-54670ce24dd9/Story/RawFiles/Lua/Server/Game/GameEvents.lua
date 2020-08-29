@@ -34,8 +34,8 @@ local function OverrideLeaveActionStatuses()
 			end
 		end
 
-		LeaderLib.PrintDebug("[LeaderLib:OverrideLeaveActionStatuses] Saved statuses to the Vars.LeaveActionData table.")
-		LeaderLib.PrintDebug(Ext.JsonStringify(Vars.LeaveActionData))
+		PrintDebug("[LeaderLib:OverrideLeaveActionStatuses] Saved statuses to the Vars.LeaveActionData table.")
+		--PrintDebug(Ext.JsonStringify(Vars.LeaveActionData))
 	end
 end
 
@@ -71,6 +71,9 @@ local function OnInitialized()
 	if Ext.GetGameState() == "Running" then
 		SettingsManager.SyncAllSettings()
 		IterateUsers("Iterators_LeaderLib_SetClientCharacter")
+		if GlobalGetFlag("LeaderLib_AutoUnlockInventoryInMultiplayer") == 1 then
+			IterateUsers("Iterators_LeaderLib_UI_UnlockPartyInventory")
+		end
 	end
 end
 

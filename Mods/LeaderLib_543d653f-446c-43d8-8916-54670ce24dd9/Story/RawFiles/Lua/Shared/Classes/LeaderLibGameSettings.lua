@@ -1,6 +1,7 @@
 ---@class LeaderLibDefaultSettings
 local DefaultSettings = {
 	StarterTierSkillOverrides = false,
+	LowerMemorizationRequirements = false,
 	APSettings = {
 		Player = {
 			Enabled = false,
@@ -38,8 +39,8 @@ local DefaultSettings = {
 ---@class LeaderLibGameSettings
 local LeaderLibGameSettings = {
 	---@type LeaderLibDefaultSettings
-	Settings = DefaultSettings,
-	Default = DefaultSettings
+	Settings = Common.CopyTable(DefaultSettings),
+	Default = Common.CopyTable(DefaultSettings)
 }
 LeaderLibGameSettings.__index = LeaderLibGameSettings
 

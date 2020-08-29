@@ -163,9 +163,9 @@ function LoadGameSettings(sync)
 	end, debug.traceback)
 	if b and result ~= false then
 		GameSettings = result
-
 		if GameSettings.Settings ~= nil and GameSettings.Settings.Version ~= nil then
 			if GameSettings.Settings.Version < GameSettings.Default.Version then
+				GameSettings.Settings.Version = GameSettings.Default.Version
 				SaveGameSettings()
 			end
 		end
@@ -201,7 +201,6 @@ function SyncGameSettings(id)
 		else
 			Ext.BroadcastMessage("LeaderLib_SyncGameSettings", Classes.MessageData:CreateFromTable("LeaderLibGameSettings", {Settings = GameSettings}):ToString(), nil)
 		end
-		SyncStatOverrides()
 	end
 end
 

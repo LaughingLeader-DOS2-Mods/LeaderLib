@@ -66,7 +66,7 @@ Ext.AddPathOverride("Mods/DivinityOrigins_1301db3d-1f54-4e98-9be5-5094030916e4/S
 ---@param attribute string
 ---@param nextVal number|integer|string|table
 ---@param syncMode boolean
-local function AdjustStat(stat, attribute, nextVal, syncMode)
+local function AdjustStat(stat, attribute, nextVal, syncMode, forceSync)
 	local currentValue = Ext.StatGetAttribute(stat, attribute)
 	if currentValue ~= nil and currentValue ~= nextVal then
 		if syncMode ~= true then
@@ -76,19 +76,35 @@ local function AdjustStat(stat, attribute, nextVal, syncMode)
 			statObj[attribute] = nextVal
 			Ext.SyncStat(stat, false)
 		end
+	elseif syncMode == true and forceSync == true then
+		local statObj = Ext.GetStat(stat)
+		statObj[attribute] = nextVal
+		Ext.SyncStat(stat, false)
 	end
 end
 
-local function OverrideStats(syncMode)
-	---@type LeaderLibGameSettings
-	local data = LoadGameSettings()
+---@param syncMode boolean
+---@param data LeaderLibGameSettings
+local function OverrideStats(syncMode, data, forceSync)
+	Ext.Print("[LeaderLib:SyncStatOverrides] Syncing stat overrides from GameSettings. SyncMode:", syncMode)
+	if data == nil or (Ext.IsClient() and GameSettings.Default == nil) then
+		data = LoadGameSettings()
+	end
 	--Ext.IsModLoaded("88d7c1d3-8de9-4494-be12-a8fcbc8171e9")
 	if data.Settings.StarterTierSkillOverrides == true then
 		local originalSkillTiers = {}
+		if Ext.IsServer() then
+			originalSkillTiers = PersistentVars["OriginalSkillTiers"] or {}
+		end
 		local total = 0
 		--Ext.Print("[LeaderLib:StatOverrides.lua] Enabling skill tier overrides.")
 		for _,stat in pairs(Ext.GetStatEntries("SkillData")) do
 			local tier = Ext.StatGetAttribute(stat, "Tier")
+			if syncMode then
+				if originalSkillTiers[stat] ~= nil then
+					tier = originalSkillTiers[stat]
+				end
+			end
 			if CanChangeSkillTier(stat, tier) then
 				originalSkillTiers[stat] = tier
 				total = total + 1
@@ -101,12 +117,60 @@ local function OverrideStats(syncMode)
 				end
 				--PrintDebug("LeaderLib:StatOverrides.lua] Change Tier for skill ("..stat..") "..tier.." => Starter.")
 			end
+			if data.Settings.LowerMemorizationRequirements == true then
+				---@type StatRequirement[]
+				local memorizationReq = Ext.StatGetAttribute(stat, "MemorizationRequirements")
+				local changed = false
+				if memorizationReq ~= nil then
+					for i,v in pairs(memorizationReq) do
+						if Data.AbilityEnum[v.Requirement] ~= nil and v.Param > 1 then
+							v.Param = 1
+						end
+					end
+				end
+				if changed then
+					if syncMode ~= true then
+						Ext.StatSetAttribute(stat, "MemorizationRequirements", memorizationReq)
+					else
+						local statObj = Ext.GetStat(stat)
+						statObj.MemorizationRequirements = memorizationReq
+						Ext.SyncStat(stat, false)
+					end
+				end
+			end
 		end
-		Ext.Print("LeaderLib:StatOverrides.lua] Change skill tier to Starter for ("..tostring(total)..") skills.")
+		if total > 0 then
+			Ext.Print("LeaderLib:StatOverrides.lua] Change skill tier to Starter for ("..tostring(total)..") skills.")
+		else
+			Ext.PrintWarning("LeaderLib:StatOverrides.lua] No skills that need Tier changes found.")
+		end
 		if Ext.IsServer() then
 			PersistentVars["OriginalSkillTiers"] = originalSkillTiers
 		end
 	else
+		if data.Settings.LowerMemorizationRequirements == true then
+			for _,stat in pairs(Ext.GetStatEntries("SkillData")) do
+				---@type StatRequirement[]
+				local memorizationReq = Ext.StatGetAttribute(stat, "MemorizationRequirements")
+				local changed = false
+				if memorizationReq ~= nil then
+					for i,v in pairs(memorizationReq) do
+						if Data.AbilityEnum[v.Requirement] ~= nil and v.Param > 1 then
+							v.Param = 1
+						end
+					end
+				end
+				if changed then
+					if syncMode ~= true then
+						Ext.StatSetAttribute(stat, "MemorizationRequirements", memorizationReq)
+					else
+						local statObj = Ext.GetStat(stat)
+						statObj.MemorizationRequirements = memorizationReq
+						Ext.SyncStat(stat, false)
+					end
+				end
+			end
+		end
 		if Ext.IsServer() then
 			PersistentVars["OriginalSkillTiers"] = nil
 		end
@@ -132,13 +196,13 @@ local function OverrideStats(syncMode)
 			local skip = player_stats[stat] == true or boost_stats[stat] == true
 			if not skip then
 				if settings.Start > 0 then
-					AdjustStat(stat, "APStart", settings.Start, syncMode)
+					AdjustStat(stat, "APStart", settings.Start, syncMode, forceSync)
 				end
 				if settings.Max > 0 then
-					AdjustStat(stat, "APMaximum", settings.Max, syncMode)
+					AdjustStat(stat, "APMaximum", settings.Max, syncMode, forceSync)
 				end
 				if settings.Recovery > 0 then
-					AdjustStat(stat, "APRecovery", settings.Recovery, syncMode)
+					AdjustStat(stat, "APRecovery", settings.Recovery, syncMode, forceSync)
 				end
 			end
 		end
@@ -146,6 +210,6 @@ local function OverrideStats(syncMode)
 end
 Ext.RegisterListener("StatsLoaded", OverrideStats)
 
-function SyncStatOverrides()
-	OverrideStats(true)
+function SyncStatOverrides(data, forceSync)
+	OverrideStats(Ext.IsServer(), data, forceSync)
 end

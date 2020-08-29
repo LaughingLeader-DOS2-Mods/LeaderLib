@@ -56,6 +56,7 @@ function SettingsManager.Sync()
 end
 
 function SettingsManager.SyncAllSettings(id)
+	print("[LeaderLib:SettingsManager.SyncAllSettings] Syncing all settings with clients.")
 	local data = {
 		GlobalSettings = ExportGlobalSettings(),
 		Features = Features,
@@ -66,6 +67,7 @@ function SettingsManager.SyncAllSettings(id)
 	else
 		Ext.BroadcastMessage("LeaderLib_SyncAllSettings", Ext.JsonStringify(data), nil)
 	end
+	SyncStatOverrides(GameSettings, true)
 end
 
 ---@param uuid string

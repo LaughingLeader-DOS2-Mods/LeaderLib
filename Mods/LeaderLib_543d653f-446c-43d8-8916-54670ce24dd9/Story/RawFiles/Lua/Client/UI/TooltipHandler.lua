@@ -28,7 +28,7 @@ local function OnItemTooltip(item, tooltip)
 					local ap = apElement.Value
 					if ap > 0 then
 						for i,status in pairs(character:GetStatuses()) do
-							if not LeaderLib.Data.EngineStatus[status] then
+							if not Data.EngineStatus[status] then
 								local potion = Ext.StatGetAttribute(status, "StatsId")
 								if potion ~= nil and potion ~= "" then
 									local apCostBoost = Ext.StatGetAttribute(potion, "APCostBoost")
@@ -122,6 +122,10 @@ local function OnStatusTooltip(character, status, tooltip)
 	if Features.ReplaceTooltipPlaceholders or Features.FixChaosDamageDisplay or Features.TooltipGrammarHelper then
 		for i,element in pairs(tooltip:GetElements("StatusDescription")) do
 			if element ~= nil then
+				if Features.ReplaceTooltipPlaceholders then
+					element.Label = GameHelpers.Tooltip.ReplacePlaceholders(element.Label, character)
+				end
+
 				if Features.TooltipGrammarHelper then
 					element.Label = string.gsub(element.Label, "a 8", "an 8")
 					local startPos,endPos = string.find(element.Label , "a <font.->8")
@@ -146,10 +150,6 @@ local function OnStatusTooltip(character, status, tooltip)
 							element.Label = string.gsub(element.Label, removeText, GameHelpers.GetDamageText("Chaos", damage))
 						end
 					end
-				end
-
-				if Features.ReplaceTooltipPlaceholders then
-					element.Label = GameHelpers.Tooltip.ReplacePlaceholders(element.Label, character)
 				end
 			end
 		end

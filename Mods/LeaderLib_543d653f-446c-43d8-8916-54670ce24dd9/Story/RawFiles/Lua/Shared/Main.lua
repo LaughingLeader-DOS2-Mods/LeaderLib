@@ -22,6 +22,7 @@ function RegisterModListener(event, uuid, callback)
 	end
 end
 
+TotalSkillListeners = 0
 --- Registers a function to call when a specific skill's events fire.
 ---@param skill string
 ---@param callback function
@@ -36,12 +37,11 @@ function RegisterSkillListener(skill, callback)
 		-- end
 	end
 	table.insert(SkillListeners[skill], callback)
+	TotalSkillListeners = TotalSkillListeners + 1
 
 	if Vars.Initialized then
-		if GlobalGetFlag("LeaderLib_LuaSkillListeners_Enabled") == 0 then
-			Osi.LeaderLib_ActivateGoal("LeaderLib_19_TS_LuaSkillListeners")
-			Osi.LeaderLib_ActivateGoal("LeaderLib_19_TS_LuaEventListeners")
-		end
+		Osi.LeaderLib_ToggleScripts_EnableScript("LeaderLib_LuaSkillListeners_Enabled", "LeaderLib")
+		Osi.LeaderLib_ToggleScripts_EnableScript("LeaderLib_LuaEventListeners_Enabled", "LeaderLib")
 	else
 		Vars.PostLoadEnableLuaListeners = true
 	end

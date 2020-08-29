@@ -48,10 +48,10 @@ local function OnInitialized()
 	Vars.Initialized = true
 	pcall(LoadGameSettings)
 
-	if Vars.PostLoadEnableLuaListeners then
+	if Vars.PostLoadEnableLuaListeners or TotalSkillListeners > 0 then
 		print("**********************Enabling Lua listeners in Osiris*****************")
-		Osi.LeaderLib_ActivateGoal("LeaderLib_19_TS_LuaSkillListeners")
-		Osi.LeaderLib_ActivateGoal("LeaderLib_19_TS_LuaEventListeners")
+		Osi.LeaderLib_ToggleScripts_EnableScript("LeaderLib_LuaSkillListeners_Enabled", "LeaderLib")
+		Osi.LeaderLib_ToggleScripts_EnableScript("LeaderLib_LuaEventListeners_Enabled", "LeaderLib")
 		Vars.PostLoadEnableLuaListeners = false
 	end
 

@@ -5,7 +5,8 @@ end
 ---Get a position derived from a character's forward facing direction.
 ---@param char string
 ---@param distanceMult number
-function GameHelpers.Math.GetForwardPosition(char, distanceMult)
+---@param fromPosition number[]
+function GameHelpers.Math.GetForwardPosition(char, distanceMult, fromPosition)
     local x,y,z = GetPosition(char)
     local character = Ext.GetCharacter(char)
     if character ~= nil then
@@ -19,6 +20,11 @@ function GameHelpers.Math.GetForwardPosition(char, distanceMult)
         }
         x = character.Stats.Position[1] + forwardVector[1]
         z = character.Stats.Position[3] + forwardVector[3]
+        if fromPosition ~= nil then
+            x = fromPosition[1] + forwardVector[1] or x
+            y = fromPosition[2] or y
+            z = fromPosition[3] + forwardVector[3] or z
+        end
     end
     return {x,y,z}
 end

@@ -47,7 +47,7 @@ function GameHelpers.GetEnemiesInRange(uuid,radius)
 end
 
 local function ReplacePlaceholders(str, character)
-	if type(character) == "string" then
+	if character ~= nil and type(character) == "string" then
 		character = Ext.GetCharacter(character)
 	end
 	local output = str
@@ -127,9 +127,7 @@ local function ReplacePlaceholders(str, character)
 				value = string.format("%i", math.floor(value))
 			end
 			local escapedReplace = v:gsub("%[", "%%["):gsub("%]", "%%]")
-			print(output, escapedReplace, value)
 			output = string.gsub(output, escapedReplace, value)
-			print("output:", output)
 		end
 	end
 	local length = #Listeners.GetTooltipSkillParam
@@ -217,7 +215,7 @@ function GameHelpers.Tooltip.ReplacePlaceholders(str, character)
 		return result
 	else
 		Ext.PrintError("[LeaderLib:GameHelpers.Tooltip.ReplacePlaceholders] Error replacing placeholders:")
-		Ext.PrintError(result)
+		print(result)
 		return str
 	end
 end

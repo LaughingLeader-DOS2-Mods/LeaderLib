@@ -421,7 +421,7 @@ Ext.RegisterConsoleCommand("undoremoveunmemorizedskills", function(cmd)
 end)
 
 --!additemstat ARM_UNIQUE_LLWEAPONEX_ThiefGloves_A Unique fe0754e3-5f0b-409e-a856-31e646201ee4
-Ext.RegisterConsoleCommand("additemstat", function(command, stat, rarity, template)
+Ext.RegisterConsoleCommand("additemstat", function(command, stat, rarity, levelstr, template)
 	if rarity == nil then
 		if Ext.StatGetAttribute(stat, "Unique") == 1 then
 			rarity = "Unique"
@@ -430,8 +430,18 @@ Ext.RegisterConsoleCommand("additemstat", function(command, stat, rarity, templa
 		end
 	end
 	local host = CharacterGetHostCharacter()
-	local item = GameHelpers.Item.CreateItemByStat(stat, CharacterGetLevel(host), rarity, true, 1, 1)
-	ItemToInventory(item, host, 1, 1, 1)
+	local level = CharacterGetLevel(host)
+	local skipLevelCheck = true
+	if levelstr ~= nil then
+		level = math.tointeger(tonumber(levelstr)) or level
+		skipLevelCheck = false
+	end
+	local item = GameHelpers.Item.CreateItemByStat(stat, level, rarity, skipLevelCheck, 1, 1)
+	if item ~= nil then
+		ItemToInventory(item, host, 1, 1, 1)
+	else
+		print("[additemstat] Failed to generate item!", stat, rarity, levelstr, template)
+	end
 end)
 
 Ext.RegisterConsoleCommand("additemtemplate", function(command, template, count)

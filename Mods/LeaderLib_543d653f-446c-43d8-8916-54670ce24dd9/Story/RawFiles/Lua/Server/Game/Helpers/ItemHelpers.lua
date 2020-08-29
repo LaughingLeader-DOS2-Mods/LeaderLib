@@ -52,8 +52,12 @@ function GameHelpers.Item.CreateItemByStat(statName, level, rarity, skipLevelChe
         if stat.ItemGroup ~= nil and stat.ItemGroup ~= "" then
             generateRandomBoosts = 1
             local group = Ext.GetItemGroup(stat.ItemGroup)
+            local rarityMatch = false
             for i,v in pairs(group.LevelGroups) do
-                if v.Name == "All" or v.Name == rarity then
+                if v.Name == rarity then 
+                    rarityMatch = true
+                end
+                if v.Name == "All" or v.Name == rarity or not rarityMatch then
                     if skipLevelCheck == true or (v.MinLevel <= level or v.MinLevel <= 0) and (v.MaxLevel <= level or v.MaxLevel <= 0) then
                         rootTemplate = v.RootGroups[1].RootGroup
                         break

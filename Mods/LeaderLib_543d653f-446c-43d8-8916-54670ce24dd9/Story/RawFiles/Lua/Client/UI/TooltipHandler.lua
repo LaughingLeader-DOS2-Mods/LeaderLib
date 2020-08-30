@@ -10,6 +10,45 @@ local ts = Classes.TranslatedString
 
 local AutoLevelingDescription = ts:Create("hca27994egc60eg495dg8146g7f81c970e265", "<font color='#80FFC3'>Automatically levels up with the wearer.</font>")
 
+local extraPropStatusTurnsPattern = "Set (.+) for (%d+) turn%(s%).-%((%d+)%% Chance%)"
+
+---@param item EsvItem
+---@param tooltip TooltipData
+local function CondenseItemStatusText(tooltip, inputElements, addColor)
+	
+	local entries = {}
+	
+	for i,v in pairs(inputElements) do
+		v.Label = string.gsub(v.Label, "  ", " ")
+		local a,b,status,turns,chance = string.find(v.Label, extraPropStatusTurnsPattern)
+		if status ~= nil and turns ~= nil and chance ~= nil then
+			local color = ""
+			tooltip:RemoveElement(v)
+			if addColor == true then
+				
+			end
+			table.insert(entries, {Status = status, Turns = turns, Chance = chance, Color = color})
+		end
+	end
+	
+	if #entries > 0 then
+		local finalStatusText = ""
+		local finalTurnsText = ""
+		local finalChanceText = ""
+		for i,v in pairs(entries) do
+			finalStatusText = finalStatusText .. v.Status
+			finalTurnsText = finalTurnsText .. v.Turns
+			finalChanceText = finalChanceText .. v.Chance.."%"
+			if i >= 1 and i < #entries then
+				finalStatusText = finalStatusText .. "/"
+				finalTurnsText = finalTurnsText .. "/"
+				finalChanceText = finalChanceText .. "/"
+			end
+		end
+		return string.format("Set %s for %s turns(s). (%s Chance)", finalStatusText, finalTurnsText, finalChanceText)
+	end
+end
+
 ---@param item EsvItem
 ---@param tooltip TooltipData
 local function OnItemTooltip(item, tooltip)
@@ -107,6 +146,20 @@ local function OnItemTooltip(item, tooltip)
 					element.Label = element.Label .. "<br>" .. AutoLevelingDescription.Value
 				else
 					element.Label = AutoLevelingDescription.Value
+				end
+			end
+		end
+		if Features.ReduceTooltipSize and Ext.IsDeveloperMode() then
+			--print(Ext.JsonStringify(tooltip.Data))
+			local elements = tooltip:GetElements("ExtraProperties")
+			if elements ~= nil and #elements > 0 then
+				local result = CondenseItemStatusText(tooltip, elements)
+				if result ~= nil then
+					local combined = {
+						Type = "ExtraProperties",
+						Label = result
+					}
+					tooltip:AppendElement(combined)
 				end
 			end
 		end

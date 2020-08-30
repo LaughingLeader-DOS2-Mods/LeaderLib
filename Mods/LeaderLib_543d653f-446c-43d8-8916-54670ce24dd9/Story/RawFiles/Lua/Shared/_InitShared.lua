@@ -139,6 +139,7 @@ Features = {
 	FixChaosDamageDisplay = false,
 	FixCorrosiveMagicDamageDisplay = false,
 	FixItemAPCost = true,
+	ReduceTooltipSize = true,
 }
 
 if Ext.IsDeveloperMode() then

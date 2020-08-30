@@ -46,7 +46,12 @@ local function OnInitialized()
 	end
 	print("OnInitialized", Ext.JsonStringify(Vars.LeaveActionData))
 	Vars.Initialized = true
-	pcall(LoadGameSettings)
+	pcall(function()
+		LoadGameSettings()
+		if GameSettings.Settings.SurfaceSettings.PoisonDoesNotIgnite == true and GameSettings.Settings.EnableDeveloperTests == true then
+			GameHelpers.Surface.UpdateRules()
+		end
+	end)
 
 	if Vars.PostLoadEnableLuaListeners or TotalSkillListeners > 0 then
 		print("**********************Enabling Lua listeners in Osiris*****************")

@@ -42,7 +42,7 @@ local function CreateFollowSurface(projectile)
 end
 
 function GameHelpers.Surface.UpdateRules()
-	if GameSettings.Settings.SurfaceSettings.PoisonDoesNotBurn == true then
+	if GameSettings.Settings.SurfaceSettings.PoisonDoesNotIgnite == true then
 		local rulesUpdated = false
 		local rules = Ext.GetSurfaceTransformRules()
 		for surfaceElement,contents in pairs(rules) do

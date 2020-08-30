@@ -275,6 +275,7 @@ NOT DB_LeaderLib_Statuses_Temp_ExtendDelayResult(_Object, _Status, _LastTurns, _
 ApplyStatus(_Object, _Status, _Duration, _Force, _Source);
 LeaderLib_Statuses_OnStatusExtended(_Object, _Status, _LastTurns, _NextTurns);
 //END_REGION
+
 EXITSECTION
 
 ENDEXITSECTION

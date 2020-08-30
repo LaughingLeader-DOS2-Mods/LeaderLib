@@ -106,6 +106,11 @@ local function PrintItemStats(uuid)
 	end
 end
 
+if Debug == nil then
+	Debug = {}
+end
+Debug.PrintItemStats = PrintItemStats
+
 Ext.RegisterConsoleCommand("printitemstats", function(command, slot)
 	local target = CharacterGetHostCharacter()
 	---@type EsvCharacter
@@ -438,6 +443,10 @@ Ext.RegisterConsoleCommand("additemstat", function(command, stat, rarity, levels
 	end
 	local item = GameHelpers.Item.CreateItemByStat(stat, level, rarity, skipLevelCheck, 1, 1)
 	if item ~= nil then
+		ItemAddDeltaModifier(item, "Boost_Weapon_Status_Set_Bleeding")
+		ItemAddDeltaModifier(item, "Boost_Weapon_Status_Set_Poisoned_Knife")
+		ItemAddDeltaModifier(item, "Boost_Weapon_Status_Set_Crippled")
+		ItemAddDeltaModifier(item, "Boost_Weapon_Status_Set_Suffocating")
 		ItemToInventory(item, host, 1, 1, 1)
 	else
 		print("[additemstat] Failed to generate item!", stat, rarity, levelstr, template)
@@ -956,4 +965,42 @@ Ext.RegisterConsoleCommand("llprintskill", function(cmd, skill, printEmpty)
 		print("[llprintskill]")
 		print(Ext.JsonStringify(skillProps))
 	end
+end)
+
+local defaultRules = Ext.JsonParse(Ext.Require("Server/Debug/DefaultSurfaceTransformationRules.lua"))
+
+Ext.RegisterConsoleCommand("llupdaterules", function(cmd)
+	local rulesUpdated = false
+	local rules = Ext.GetSurfaceTransformRules()
+	for surfaceElement,contents in pairs(rules) do
+		for i,parentTable in pairs(contents) do
+			if parentTable.TransformType == "Ignite" then
+				for i,surfaces in pairs(parentTable.ActionableSurfaces) do
+					local remove = false
+					for i,surface in pairs(surfaces) do
+						if surfaceElement ~= "Poison" and surface == "Poison" then
+							remove = true
+						elseif surfaceElement == "Poison" and surface == "Fire" then
+							remove = true
+						end
+					end
+					if remove then
+						print(string.format("[LeaderLib:SurfaceTransform] Removing surfaces (%s) from [%s] ActionableSurfaces.", StringHelpers.Join(",", surfaces), surfaceElement))
+						parentTable.ActionableSurfaces[i] = nil
+						rulesUpdated = true
+					end
+				end
+			end
+		end
+	end
+	if rulesUpdated then
+		print(Ext.JsonStringify(rules["Fire"][1]))
+		Ext.UpdateSurfaceTransformRules(rules)
+	end
+end)
+
+Ext.RegisterConsoleCommand("llresetrules", function(cmd)
+	Ext.UpdateSurfaceTransformRules(defaultRules)
+	print("[llresetrules] Reset surface rules.")
+	print(Ext.JsonStringify(Ext.GetSurfaceTransformRules()["Fire"][1]))
 end)

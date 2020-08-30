@@ -40,3 +40,35 @@ local function CreateFollowSurface(projectile)
 	--surf.OwnerHandle = projectile.OwnerHandle
 	return surf
 end
+
+function GameHelpers.Surface.UpdateRules()
+	if GameSettings.Settings.SurfaceSettings.PoisonDoesNotBurn == true then
+		local rulesUpdated = false
+		local rules = Ext.GetSurfaceTransformRules()
+		for surfaceElement,contents in pairs(rules) do
+			for i,parentTable in pairs(contents) do
+				if parentTable.TransformType == "Ignite" then
+					for i,surfaces in pairs(parentTable.ActionableSurfaces) do
+						local remove = false
+						for i,surface in pairs(surfaces) do
+							if surfaceElement ~= "Poison" and surface == "Poison" then
+								remove = true
+							elseif surfaceElement == "Poison" and surface == "Fire" then
+								remove = true
+							end
+						end
+						if remove then
+							print(string.format("[LeaderLib.GameHelpers.Surface.UpdateRules] Removing surfaces (%s) from [%s] ActionableSurfaces.", StringHelpers.Join(", ", surfaces), surfaceElement))
+							parentTable.ActionableSurfaces[i] = nil
+							rulesUpdated = true
+						end
+					end
+				end
+			end
+		end
+		if rulesUpdated then
+			Ext.Print("[LeaderLib.GameHelpers.Surface.UpdateRules] Updating surface action rules.")
+			Ext.UpdateSurfaceTransformRules(rules)
+		end
+	end
+end

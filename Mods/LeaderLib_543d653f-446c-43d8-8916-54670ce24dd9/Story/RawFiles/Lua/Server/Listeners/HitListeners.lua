@@ -3,7 +3,9 @@
 ---@type damage integer
 ---@type handle integer
 function OnPrepareHit(target, source, damage, handle)
-	--print(target,source,damage,handle,HasActiveStatus(source, "AOO"),HasActiveStatus(target, "AOO"))
+	if Ext.IsDeveloperMode() then
+		Ext.Print(string.format("[NRD_OnPrepareHit] Target(%s) Source(%s) damage(%i) Handle(%s) HitType(%s)", target, source, damage, handle, NRD_HitGetString(handle, "HitType")))
+	end
 	if Ext.Version() < 50 then
 		if type(damage) == "string" then
 			damage = math.tointeger(tonumber(damage))
@@ -30,6 +32,8 @@ end
 ---@type handle integer
 function OnHit(target, source, damage, handle)
 	--print(target,source,damage,handle,HasActiveStatus(source, "AOO"),HasActiveStatus(target, "AOO"))
+	--print(string.format("[NRD_OnHit] Target(%s) Source(%s) damage(%i) Handle(%i) HitType(%s)", target, source, damage, handle, NRD_StatusGetString(target, handle, "HitType")))
+	
 	if Ext.Version() < 50 then
 		if type(damage) == "string" then
 			damage = math.tointeger(tonumber(damage))

@@ -279,6 +279,24 @@ end
 --- @param param string
 local function SkillGetDescriptionParam(skill, character, isFromItem, param1, param2)
 	if character.Character ~= nil then UI.ClientCharacter = character.Character.MyGuid or character.NetID end
+	if Features.ReplaceTooltipPlaceholders then
+		if param1 == "ExtraData" then
+			local value = Ext.ExtraData[param2]
+			if value ~= nil then
+				if value == math.floor(value) then
+					return string.format("%i", math.floor(value))
+				else
+					if value <= 1.0 and value >= 0.0 then
+						-- Percentage display
+						value = value * 100
+						return string.format("%i", math.floor(value))
+					else
+						return tostring(value)
+					end
+				end
+			end
+		end
+	end
 end
 
 Ext.RegisterListener("SkillGetDescriptionParam", SkillGetDescriptionParam)
@@ -328,6 +346,24 @@ local function StatusGetDescriptionParam(status, statusSource, target, param1, p
 				end
 			elseif param3 == "ExplodeRadius" then
 				return tostring(Ext.StatGetAttribute(param2, param3))
+			end
+		end
+	end
+	if Features.ReplaceTooltipPlaceholders then
+		if param1 == "ExtraData" then
+			local value = Ext.ExtraData[param2]
+			if value ~= nil then
+				if value == math.floor(value) then
+					return string.format("%i", math.floor(value))
+				else
+					if value <= 1.0 and value >= 0.0 then
+						-- Percentage display
+						value = value * 100
+						return string.format("%i", math.floor(value))
+					else
+						return tostring(value)
+					end
+				end
 			end
 		end
 	end

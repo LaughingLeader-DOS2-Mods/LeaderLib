@@ -53,7 +53,7 @@ function GameHelpers.Surface.UpdateRules()
 						for i,surface in pairs(surfaces) do
 							if surfaceElement ~= "Poison" and surface == "Poison" then
 								remove = true
-							elseif surfaceElement == "Poison" and surface == "Fire" then
+							elseif surfaceElement == "Poison" and (surface == "Fire" or surface == "Lava") then
 								remove = true
 							end
 						end

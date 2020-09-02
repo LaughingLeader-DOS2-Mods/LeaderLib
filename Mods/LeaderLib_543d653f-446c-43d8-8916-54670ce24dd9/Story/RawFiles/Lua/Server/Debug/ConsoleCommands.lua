@@ -975,33 +975,10 @@ end)
 local defaultRules = Ext.JsonParse(Ext.Require("Server/Debug/DefaultSurfaceTransformationRules.lua"))
 
 Ext.RegisterConsoleCommand("llupdaterules", function(cmd)
-	local rulesUpdated = false
+	GameHelpers.Surface.UpdateRules()
 	local rules = Ext.GetSurfaceTransformRules()
-	for surfaceElement,contents in pairs(rules) do
-		for i,parentTable in pairs(contents) do
-			if parentTable.TransformType == "Ignite" then
-				for i,surfaces in pairs(parentTable.ActionableSurfaces) do
-					local remove = false
-					for i,surface in pairs(surfaces) do
-						if surfaceElement ~= "Poison" and surface == "Poison" then
-							remove = true
-						elseif surfaceElement == "Poison" and surface == "Fire" then
-							remove = true
-						end
-					end
-					if remove then
-						print(string.format("[LeaderLib:SurfaceTransform] Removing surfaces (%s) from [%s] ActionableSurfaces.", StringHelpers.Join(",", surfaces), surfaceElement))
-						parentTable.ActionableSurfaces[i] = nil
-						rulesUpdated = true
-					end
-				end
-			end
-		end
-	end
-	if rulesUpdated then
-		print(Ext.JsonStringify(rules["Fire"][1]))
-		Ext.UpdateSurfaceTransformRules(rules)
-	end
+	print(Ext.JsonStringify(rules["Fire"]))
+	print(Ext.JsonStringify(rules["Poison"]))
 end)
 
 Ext.RegisterConsoleCommand("llresetrules", function(cmd)

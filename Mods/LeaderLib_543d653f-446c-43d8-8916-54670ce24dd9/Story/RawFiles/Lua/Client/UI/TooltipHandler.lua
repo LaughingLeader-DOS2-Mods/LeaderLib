@@ -415,9 +415,9 @@ local function FormatTagText(tooltip_mc, group)
 						end
 						updatedText = true
 					end
-					if Ext.IsDeveloperMode() then
-						print(string.format("(%s) label_txt.htmlText(%s) color(%s)", group.groupID, element.label_txt.htmlText, element.label_txt.textColor))
-					end
+					-- if Ext.IsDeveloperMode() then
+					-- 	PrintDebug(string.format("(%s) label_txt.htmlText(%s) color(%s)", group.groupID, element.label_txt.htmlText, element.label_txt.textColor))
+					-- end
 				end
 				return true
 			end, debug.traceback)

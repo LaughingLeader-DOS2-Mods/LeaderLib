@@ -329,81 +329,6 @@ local function RepositionElements(tooltip_mc)
 	tooltip_mc.resetBackground()
 end
 
-local function FormatTagElements(tooltip_mc, group, ...)
-	group.iconId = 16
-	--group.setupHeader()
-	local groupHeight = 0
-	local y = 0
-	for i=0,#group.list.content_array,1 do
-		local element = group.list.content_array[i]
-		if element ~= nil then
-			local b,result = xpcall(function()
-				-- local icon = element.getChildAt(3) or element.getChildByName("tt_groupIcon")
-				-- if icon ~= nil then
-				-- 	icon.gotoAndStop(17)
-				-- else
-				-- 	element.removeChildAt(3)
-				-- end
-				element.removeChildAt(3) -- Removes the tag icon
-				--element.removeChild(element.value_txt) -- Removes the tag icon
-
-				element.label_txt.y = 0
-
-				if element.value_txt.htmlText == "" then
-					element.value_txt.y = 0
-					element.value_txt.x = 0
-					element.value_txt.height = 0
-					element.value_txt.width = 0
-				end
-				element.warning_txt.y = 0
-				element.label_txt.x = 0
-				element.warning_txt.x = 0
-
-				local tag = element.label_txt.htmlText
-				local data = TagTooltips[tag]
-
-				if data ~= nil then
-					local tagName = ""
-					if data.Title == nil then
-						tagName = Ext.GetTranslatedStringFromKey(tag)
-					else
-						tagName = data.Title.Value
-					end
-					local tagDesc = ""
-					if data.Description == nil then
-						tagDesc = Ext.GetTranslatedStringFromKey(tag.."_Description")
-					else
-						tagDesc = data.Description.Value
-					end
-					tagName = GameHelpers.Tooltip.ReplacePlaceholders(tagName)
-					tagDesc = GameHelpers.Tooltip.ReplacePlaceholders(tagDesc)
-					-- The description gets loaded again so HTML formatting will be added (the swf tooltip function removes this normally).
-					element.label_txt.autoSize = "none"
-					element.warning_txt.autoSize = "none"
-					element.value_txt.autoSize = "none"
-					element.label_txt.y = element.label_txt.y + group.s_TextSpacing
-					element.label_txt.htmlText = tagName
-					element.warning_txt.htmlText = tagDesc
-					element.warning_txt.y = element.label_txt.y + element.label_txt.textHeight
-					
-					groupHeight = groupHeight + math.ceil(element.label_txt.textHeight + element.warning_txt.textHeight) + -2
-				end
-			end, debug.traceback)
-			if not b then
-				print("[LeaderLib:FormatTagElements] Error:")
-				print(result)
-			end
-		end
-	end
-	--group.heightOverride = math.ceil(element.label_txt.textHeight + element.warning_txt.textHeight) + (group.s_TextSpacing*2)
-	group.heightOverride = groupHeight
-	--tooltip_mc.list.positionElements()
-	--tooltip_mc.resetBackground()
-	--tooltip_mc.applyLeading(group)
-	--tooltip_mc.repositionElements()
-end
-
-
 local lastItem = nil
 
 local function AddTags(tooltip_mc)
@@ -458,10 +383,10 @@ local function FormatTagText(tooltip_mc, group)
 			local b,result = xpcall(function()
 				if element.label_txt ~= nil then
 					local searchText = StringHelpers.Trim(element.label_txt.htmlText):gsub("[\r\n]", "")
-					print(searchText)
 					local tag = replaceText[searchText]
 					local data = TagTooltips[tag]
 					if data ~= nil then
+						local finalText = ""
 						local tagName = ""
 						if data.Title == nil then
 							tagName = Ext.GetTranslatedStringFromKey(tag)
@@ -474,23 +399,30 @@ local function FormatTagText(tooltip_mc, group)
 						else
 							tagDesc = data.Description.Value
 						end
-						tagName = GameHelpers.Tooltip.ReplacePlaceholders(tagName)
-						tagDesc = GameHelpers.Tooltip.ReplacePlaceholders(tagDesc)
-						element.label_txt.htmlText = string.format("<font color='#C7A758'>%s<br>%s</font>", tagName, tagDesc)
-						--ApplyLeading(tooltip_mc, element)
-						-- element.heightOverride = element.label_txt.textHeight + 200
-						-- element.customElHeight = element.heightOverride
-						-- group.list.m_NeedsSorting = true
-						-- group.list.reOrderDepths()
-						-- group.list.positionElements()
+						if tagName ~= "" then
+							tagName = GameHelpers.Tooltip.ReplacePlaceholders(tagName)
+							finalText = tagName
+						end
+						if tagDesc ~= "" then
+							tagDesc = string.format("<font color='#C7A758'>%s</font>", GameHelpers.Tooltip.ReplacePlaceholders(tagDesc))
+							if finalText ~= "" then
+								finalText = finalText .. "<br>"
+							end
+							finalText = finalText .. tagDesc
+						end
+						if finalText ~= "" then
+							element.label_txt.htmlText = finalText
+						end
 						updatedText = true
 					end
-					print(string.format("(%s) label_txt.htmlText(%s) color(%s)", group.groupID, element.label_txt.htmlText, element.label_txt.textColor))
+					if Ext.IsDeveloperMode() then
+						print(string.format("(%s) label_txt.htmlText(%s) color(%s)", group.groupID, element.label_txt.htmlText, element.label_txt.textColor))
+					end
 				end
 				return true
 			end, debug.traceback)
 			if not b then
-				print("[LeaderLib:FormatTagElements] Error:")
+				print("[LeaderLib:FormatTagText] Error:")
 				print(result)
 			end
 		end
@@ -498,64 +430,22 @@ local function FormatTagText(tooltip_mc, group)
 	if updatedText then
 		group.iconId = 16
 		group.setupHeader()
-		--tooltip_mc.equipHeader.updateHeight()
-		--tooltip_mc.list.m_NeedsSorting = true;
-		--tooltip_mc.list.reOrderDepths()
-		--tooltip_mc.list.positionElements()
-		--RepositionElements(tooltip_mc)
-		--tooltip_mc.resetBackground()
-		--group.list.positionElements()
-		--tooltip_mc.list.positionElements()
 	end
 end
 
 local function FormatTagTooltip(ui, tooltip_mc, ...)
-	--AddTags(tooltip_mc)
 	local length = #tooltip_mc.list.content_array
 	if length > 0 then
 		for i=0,length,1 do
 			local group = tooltip_mc.list.content_array[i]
 			if group ~= nil then
-				-- if group.groupID == 15 then
-				-- 	group.orderId = 254
-				-- 	--tooltip_mc.list.moveElementToPosition(i, length-3)
-				-- 	print(group.orderId)
-				-- end
-				print(string.format("[%i] groupID(%i) orderId(%s) icon(%s)", i, group.groupID or -1, group.orderId or -1, group.iconId))
+				--print(string.format("[%i] groupID(%i) orderId(%s) icon(%s)", i, group.groupID or -1, group.orderId or -1, group.iconId))
 				if group.list ~= nil then
 					FormatTagText(tooltip_mc, group)
 				end
-				-- if group.groupID == 13 and group.list ~= nil then
-				-- 	FormatTagElements(tooltip_mc, group, ...)
-				-- 	-- group.base is the LSTooltipClass
-				-- 	--group.base.list.setFrame(group.width, 40)
-				-- 	--group.base.middleBg_mc.height = 40
-				-- 	--group.base.middleBg_mc.setBgWSubsections(group.base.width,group.base.height-40,group.base.list);
-				-- 	RepositionElements(tooltip_mc)
-				-- 	print(i, group.groupID, group.height, tooltip_mc.hasSubSections)
-				-- end
 			end
 		end
 	end
-	--RepositionElements(tooltip_mc)
-	--tooltip_mc.list.sortOnce("orderId",16,true)
-	--tooltip_mc.list.redoSort()
-	--tooltip_mc.list.m_SortOnFieldName = "orderId"
-	--tooltip_mc.list.m_SortOnOptions = 16
-	--tooltip_mc.list.INTSort()
-	--tooltip_mc.list.content_array.sortOn(16, "orderId")
-	-- tooltip_mc.list.positionElements()
-	-- for i=0,#tooltip_mc.list.content_array do
-	-- 	local element = tooltip_mc.list.content_array[i]
-	-- 	if element ~= nil then
-	-- 		print(i, element.groupID, element.orderId)
-	-- 	else
-	-- 		print(i, "null")
-	-- 	end
-	-- end
-	--tooltip_mc.resetBackground()
-	--tooltip_mc.repositionElements()
-	--tooltip_mc.list.sortOnce("orderId",16,false);
 end
 
 local function OnTooltipPositioned(ui, ...)
@@ -590,13 +480,6 @@ local function OnTooltipPositioned(ui, ...)
 			end
 		end
 	end
-end
-
-local function AppendCharacter(str, char, amount)
-	for i=0,amount do
-		str = str .. char
-	end
-	return str
 end
 
 ---@param item EsvItem
@@ -669,31 +552,38 @@ local function OnItemTooltip(item, tooltip)
 		if hasTagTooltip then
 			for tag,data in pairs(TagTooltips) do
 				if item:HasTag(tag) then
-					local fulltext = ""
+					local finalText = ""
 					local tagName = ""
+					local tagDesc = ""
 					if data.Title == nil then
 						tagName = Ext.GetTranslatedStringFromKey(tag)
 					else
 						tagName = data.Title.Value
 					end
-					local tagDesc = ""
 					if data.Description == nil then
 						tagDesc = Ext.GetTranslatedStringFromKey(tag.."_Description")
 					else
 						tagDesc = data.Description.Value
 					end
-					tagName = GameHelpers.Tooltip.ReplacePlaceholders(tagName)
-					tagDesc = GameHelpers.Tooltip.ReplacePlaceholders(tagDesc)
-					fulltext = string.format("%s<br>%s",tagName,tagDesc)
-					tooltip:AppendElement({
-						Type="StatsTalentsBoost",
-						--Label=tag.."xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-						--Label=AppendCharacter(tag, "x", math.ceil(string.len(fulltext)*0.4))
-						Label=fulltext
-					})
-					local searchText = fulltext:gsub("<font.->", ""):gsub("</font>", ""):gsub("<br>", "")
-					print(searchText, tag)
-					replaceText[searchText] = tag
+					if tagName ~= "" then
+						tagName = GameHelpers.Tooltip.ReplacePlaceholders(tagName)
+						finalText = tagName
+					end
+					if tagDesc ~= "" then
+						tagDesc = GameHelpers.Tooltip.ReplacePlaceholders(tagDesc)
+						if finalText ~= "" then
+							finalText = finalText .. "<br>"
+						end
+						finalText = finalText .. tagDesc
+					end
+					if finalText ~= "" then
+						tooltip:AppendElement({
+							Type="StatsTalentsBoost",
+							Label=finalText
+						})
+						local searchText = finalText:gsub("<font.->", ""):gsub("</font>", ""):gsub("<br>", "")
+						replaceText[searchText] = tag
+					end
 				end
 			end
 		end

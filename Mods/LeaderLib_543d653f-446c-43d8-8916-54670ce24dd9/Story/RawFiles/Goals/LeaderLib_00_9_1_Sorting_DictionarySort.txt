@@ -40,13 +40,6 @@ DB_NOOP(1);
 
 //REGION START
 PROC
-LeaderLib_DictionarySort_StartSorting((STRING)_DictionaryID, (INTEGER)_TickRate, (STRING)_CompleteEvent, (INTEGER)_EntryTickRate)
-AND
-IntegertoString(_TickRate, _TickRateStr)
-THEN
-LeaderLog_Log("DEBUG", "[LeaderLib:DictionarySort:StartSorting] Started sorting dictionary '",_DictionaryID,"' at a tick rate of [",_TickRateStr,"].");
-
-PROC
 LeaderLib_DictionarySort_StartSorting((STRING)_DictionaryID, (INTEGER)_TickRate, (STRING)_CompleteEvent)
 THEN
 LeaderLib_DictionarySort_StartSorting(_DictionaryID, _TickRate, _CompleteEvent, 0);
@@ -59,8 +52,23 @@ THEN
 LeaderLib_DictionarySort_CleanupLastTrackedTime(_DictionaryID);
 NOT DB_LeaderLib_DictionarySort_SortingComplete(_DictionaryID);
 
+
 PROC
 LeaderLib_DictionarySort_StartSorting((STRING)_DictionaryID, (INTEGER)_TickRate, (STRING)_CompleteEvent, (INTEGER)_EntryTickRate)
+AND
+NOT LeaderLib_QRY_ExtenderIsActive()
+THEN
+LeaderLib_DictionarySort_StartSorting_Old(_DictionaryID, _TickRate, _CompleteEvent, _EntryTickRate);
+
+PROC
+LeaderLib_DictionarySort_StartSorting_Old((STRING)_DictionaryID, (INTEGER)_TickRate, (STRING)_CompleteEvent, (INTEGER)_EntryTickRate)
+AND
+IntegertoString(_TickRate, _TickRateStr)
+THEN
+LeaderLog_Log("DEBUG", "[LeaderLib:DictionarySort:StartSorting] Started sorting dictionary '",_DictionaryID,"' at a tick rate of [",_TickRateStr,"].");
+
+PROC
+LeaderLib_DictionarySort_StartSorting_Old((STRING)_DictionaryID, (INTEGER)_TickRate, (STRING)_CompleteEvent, (INTEGER)_EntryTickRate)
 AND
 LeaderLib_StringExt_QRY_SafeCombine("LeaderLib_DictionarySort_StartSorting", "LeaderLib_Timers_DictSorter_", _DictionaryID)
 AND
@@ -70,6 +78,16 @@ NOT DB_LeaderLib_StringExt_CombineResult("LeaderLib_DictionarySort_StartSorting"
 DB_LeaderLib_DictionarySort_Temp_SortJob(_DictionaryID, _TimerName, _TickRate, _CompleteEvent, _EntryTickRate);
 DB_LeaderLib_DictionarySort_SortingStarted(_DictionaryID, 1);
 LeaderLib_DictionarySort_Internal_OnTick(_DictionaryID);
+
+/* [OSITOOLS_ONLY]
+PROC
+LeaderLib_DictionarySort_StartSorting((STRING)_DictionaryID, (INTEGER)_TickRate, (STRING)_CompleteEvent, (INTEGER)_EntryTickRate)
+THEN
+//DB_LeaderLib_Dictionary_Data(_DictionaryID, _Index, _CheckID, _CheckDisplayName)
+//LeaderLib_Ext_SortDatabase("DB_LeaderLib_Dictionary_Data", 4, 4);
+NRD_ModCall("LeaderLib", "SortDictionary", _DictionaryID);
+LeaderLib_SendEvent(_CompleteEvent);
+*/
 //END_REGION
 
 //REGION STOP
@@ -146,6 +164,7 @@ THEN
 NOT DB_LeaderLib_DictionarySort_TotalTime(_DictionaryID, _TimeTaken);
 DB_LeaderLib_DictionarySort_TotalTime(_DictionaryID, _NewTime);
 
+// [BEGIN_NO_OSITOOLS]
 PROC
 LeaderLib_DictionarySort_SortingComplete((STRING)_DictionaryID)
 AND
@@ -158,6 +177,7 @@ AND
 IntegertoString(_Length, _LengthStr)
 THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:DictionarySort:SortingComplete] Took ",_TimeStr,"ms to sort [",_LengthStr,"] entries in [",_DictionaryID,"].");
+// [END_NO_OSITOOLS]
 
 PROC
 LeaderLib_DictionarySort_SortingComplete((STRING)_DictionaryID)

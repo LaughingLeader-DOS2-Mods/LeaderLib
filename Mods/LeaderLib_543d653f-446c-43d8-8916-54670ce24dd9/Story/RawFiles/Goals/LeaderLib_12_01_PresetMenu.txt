@@ -60,6 +60,7 @@ TimerCancel("LeaderLib_Timers_SortPresetMenu");
 TimerLaunch("LeaderLib_Timers_SortPresetMenu", 50);
 GlobalSetFlag("LeaderLib_PresetMenu_LockOpening");
 
+// [BEGIN_NO_OSITOOLS]
 IF
 TimerFinished("LeaderLib_Timers_SortPresetMenu")
 AND
@@ -112,9 +113,22 @@ LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:OnPresetMenuSortComplete] Rebuild 
 IF
 StoryEvent(_, "LeaderLib_Events_OnPresetMenuSortComplete")
 THEN
-GlobalClearFlag("LeaderLib_PresetMenu_LockOpening");
 SysClear("DB_LeaderLib_PresetMenu_Temp_PreSortedValues", 2);
 LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:OnPresetMenuSortComplete] The Preset Menu was sorted successfully.");
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+IF
+TimerFinished("LeaderLib_Timers_SortPresetMenu")
+THEN
+NRD_ModCall("LeaderLib", "SortDictionary", "LeaderLib.Settings.PresetMenu");
+LeaderLib_SendEvent("LeaderLib_Events_OnPresetMenuSortComplete");
+*/
+
+IF
+StoryEvent(_, "LeaderLib_Events_OnPresetMenuSortComplete")
+THEN
+GlobalClearFlag("LeaderLib_PresetMenu_LockOpening");
 //END_REGION
 
 //REGION UPDATES

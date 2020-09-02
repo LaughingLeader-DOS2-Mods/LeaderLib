@@ -36,6 +36,7 @@
 	<content contentuid="h1c359033g2e0dg49b1g9befg63f786d3f9fc">Control Summon</content>
 	<content contentuid="h1db4b34cg358dg49a2gbaeag3cb06a86ab4c">Character is selling new items.</content>
 	<content contentuid="h22e00201g6666g4837gaf8ega722712bad2a">[LeaderLib_DynamicMenu_MenuOption3_58379c79-1cf1-4129-bcf5-579f40a9ad11]</content>
+	<content contentuid="h24533724ga73fg4d76gb62egc700a193eb89">Must you, really?</content>
 	<content contentuid="h25737285gb844g4142gad4cg1d5dc420fb0b">[LeaderLib_DynamicMenu_MenuOption5_f450c0eb-c308-4755-9718-f6a1e87305bd]</content>
 	<content contentuid="h25bf34f3g1b21g4b69gb041g896d6e346f36">[LeaderLib_ModMenu_Menu4_337a1066-9a85-4005-a2dc-f0156bf13d16]</content>
 	<content contentuid="h2627dad1g64d8g4d19gaf42g6a12ef1a7d1a">Please stop that...</content>
@@ -169,6 +170,7 @@
 	<content contentuid="h916a5457g6ec8g47fdgb4adg2c5e67174a4b">[LeaderLib_DynamicMenu_MenuOption6_ea90e3a6-30da-411c-8ab5-cae95373ae93]</content>
 	<content contentuid="h919b260ag66c4g4551gb4c7g793a12115cfc">Sulfurology</content>
 	<content contentuid="h92ae656agd5f1g4471g85dcgb2871834dd03">[USER] Enable auto-opening the Mod Settings Menu when closing another mod&apos;s settings menu.&lt;br&gt;Note that this could possibly have unintended side-effects if that mod opens a sub-menu dialog after the main menu dialog is closed.</content>
+	<content contentuid="h938a3bd1gcfc3g4885gacb7geef71a63ea1b">The coast is clear then?</content>
 	<content contentuid="h93f14fd4gf2eag4e9egb5f6g134e1c8f9ad1">Me? Oh, I&apos;m just a retired old man, looking to sell his wares. *He rubs his beard, glancing around on the boat.* Afraid I&apos;m not much of a soldier anymore, so trading is all I&apos;ve got.</content>
 	<content contentuid="h943fc926g7822g4ed0g8f23g217d384bf9d2">Selecting menu option...</content>
 	<content contentuid="h950f9baege3b1g428agbb4dgf70a45676c5a">Chain All</content>
@@ -194,10 +196,12 @@
 	<content contentuid="ha56bd856gb01fg43c3g965dg5447174ab32c">*He snorts.* Why, fishing of course! *He gestures to the fishing rod on his back.*</content>
 	<content contentuid="ha573859bg0e9bg4fefgab91g278749405487">*You notice the old man moves quickly, and seems to be prepared in the blink of an eye.*</content>
 	<content contentuid="ha6c69629g6fbag4268g8826g82af57c354fc">Take a look.</content>
+	<content contentuid="ha702e12egd8bfg4eaeg88a0g5b20c1995179">Leave me be!</content>
 	<content contentuid="ha73d93a8g04fdg4eb0g90fage5e02cd0c4ef">*Step away.*</content>
 	<content contentuid="ha7b4af6cg0f0cg4e02g8839g5f9c756e105b">Registered Mods</content>
 	<content contentuid="ha7f6838bg646eg405bg9d45g91e8f5434cb4">*The old man perks up for a moment.*</content>
 	<content contentuid="ha853bcf9g311dg4e56g8725g0a9188e22344">[GLOBAL] Disable user ID matching when finding the closest character a party member belongs to. This will allow the closest avatar (or persuasive) character in multiplayer to control dialog when a non-avatar player triggers an automatic dialog event.&lt;br&gt;</content>
+	<content contentuid="ha88d3b01gcfc2g470eg97f5g1dafaa65a1bd">Hrmph...</content>
 	<content contentuid="ha9284da0gd161g47d7g8c19g7ac10878ee5c">*He sets his fishing pole down for a moment and rummages through a bag,*</content>
 	<content contentuid="hab87e202g3afcg45f6g9325gbfde5f0f015b">Speaking of, I have a few extra copies of this book I bet you&apos;d like. It&apos;s on the house.</content>
 	<content contentuid="hac41182fg734cg4f90gb787gff3f7dbdfd0e">Change to the opposite gender.&lt;br&gt;&lt;font color=&apos;#188ede&apos;&gt;Warning: Replaces custom appearance settings!&lt;/font&gt;</content>
@@ -219,6 +223,7 @@
 	<content contentuid="hb8f5a682g5a19g4fe4ga26ag701bf0ba4e8b">Give me a moment to prepare my things, and we can begin trading again.</content>
 	<content contentuid="hb955eb39g2068g4c7dga389gfabcaa42462d">Loading mod menu...</content>
 	<content contentuid="hb987d743g981dg43f6g9aa8g08109349d4e9">LeaderLib Successfully Loaded Global Settings</content>
+	<content contentuid="hba8ffff9gf198g45ddg8ee7gf74d6497cd1d">Good riddance.</content>
 	<content contentuid="hbb25dcedgbd28g4408g80dcg3ab34bed0164">Remove the Mod Menu Skill (Party)</content>
 	<content contentuid="hbb9961bcg9dbfg47f9g90fdg6db3aca83f86">[GLOBAL] Allow LeaderLib registered mod books to automatically be added to the party&apos;s inventory. (Books are currently disabled)</content>
 	<content contentuid="hbbc07b7cgc1d4g41c8gbec8gdadfd3486b3f">[LeaderLib_DynamicMenu_MenuOption8_f5ef1f68-8995-4c14-8e62-cf5f330cb31a]</content>
@@ -238,7 +243,9 @@
 	<content contentuid="hc768ad97g83deg41fdgb257g54443e202c5a">As a gesture of goodwill towards future trading, I&apos;ll give you this book for free.</content>
 	<content contentuid="hc78dbfbbg99e3g4b81gbb3fg8068e2d4ecda">*He hands you a peculiar-looking book.*</content>
 	<content contentuid="hca27994egc60eg495dg8146g7f81c970e265">&lt;font color=&apos;#80FFC3&apos; size=&apos;18&apos;&gt;Automatically levels up with the wearer.&lt;/font&gt;</content>
+	<content contentuid="hcb9853aaga052g447dga36fgafeb4902bd4f">I didn&apos;t survive war to end up dead by the likes of you!</content>
 	<content contentuid="hcd40ab3egabe1g4111g9217gb2381b466a2a">Argh!</content>
+	<content contentuid="hce06e1a4gdd0fg44aeg83f5g10ee6caab1d7">I&apos;m too old for this...</content>
 	<content contentuid="hd07402b2g8a4cg4d6dg8b31gecf12983c614">[More Intervals]</content>
 	<content contentuid="hd14d7a41gbb30g4810gaebfgc883c22654d1">Chances are a mod was updated, which deactivates it by default. It&apos;s quite annoying, I know!</content>
 	<content contentuid="hd1e9761cg75bdg4f1bg9676g6040cb7f4a50">Updating settings...</content>
@@ -261,6 +268,7 @@
 	<content contentuid="he037429fgcbf9g4a78gb1c2ge9613039ef62">Preset Menu (Locked - Check Back in 30 Seconds)</content>
 	<content contentuid="he0bf54a8g57fdg4dffg9287gf5c6aac24a35">Selecting preset...</content>
 	<content contentuid="he2de2e0cgda32g4128g9db7g72020fa32c2e">Preset Menu</content>
+	<content contentuid="he4b98edeg7025g4ad9gbb87gcce230263029">Hrmph...</content>
 	<content contentuid="he59d7821g2c4dg4deag8341g27215713bf5e">*Introduce yourself, then ask the man who he is.*</content>
 	<content contentuid="he5a918ecg8f34g4ddbg9af6g98e9f4575d91">Me? Oh, I&apos;m just a retired old man, looking to get some fishing done. *He rubs his beard, glancing at the broken-down scenery.* Afraid I don&apos;t have any fight left in me anywho.</content>
 	<content contentuid="hea20bb8dg93b1g4147g924ag686aa59a1cf8">Checking registered mods...</content>
@@ -279,6 +287,7 @@
 	<content contentuid="hf1ead9c1gbe57g44beg922eg299bf0a05325">Updating menu...</content>
 	<content contentuid="hf250f2d4gb046g4001gbd88g1872e3b857c7">Me? Oh, I&apos;m just a retired old man, looking to sell his wares. *He rubs his beard, glancing around on the boat.* Afraid I&apos;m not much of a soldier anymore, so trading is all I&apos;ve got.</content>
 	<content contentuid="hf2727fbcg6af7g4a95g9888g15dd8338e10c">*He straightens his posture before speaking.* You may call me [LeaderLib_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b]. Pleasure to meet you, [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3].</content>
+	<content contentuid="hf33cf707g6e5eg4674g9d88gc6a9431cdabc">That&apos;s enough of that...</content>
 	<content contentuid="hf3a71217gb65cg43bfg99bbg5c82a6f01901">Autosave interval updated.</content>
 	<content contentuid="hf545a1fbgccb8g481ega4adg32165aaa9288">[GLOBAL] Automatically make the party member with the highest persuasion the redirection target. Still preserves User ID matching in multiplayer, if that setting is enabled.</content>
 	<content contentuid="hf585ea52gbdb4g4a21g82aag836415d7d0d6">*Request a copy of the &quot;Mod Menu&quot; book.*</content>

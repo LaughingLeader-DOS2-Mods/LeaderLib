@@ -343,8 +343,8 @@ LeaderLib_LeaderTrader_Internal_AvoidCombat((CHARACTERGUID)_LeaderTrader, (INTEG
 AND
 ObjectGetFlag(_LeaderTrader, "LeaderLib_LeaderTrader_Hiding", 0)
 THEN
-DisplayText(_LeaderTrader, "I'm too old for this...");
-CharacterStatusText(_LeaderTrader, "<font color='#9400D3'>Stealth Mastery</font>");
+Proc_StartDialog(1, "LeaderLib_AD_LeaderTrader_Hiding", _LeaderTrader);
+CharacterStatusText(_LeaderTrader, "LeaderLib_StatusText_LeaderTrader_StealthText");
 ObjectSetFlag(_LeaderTrader, "LeaderLib_LeaderTrader_Hiding", 0);
 
 PROC
@@ -399,7 +399,7 @@ RemoveStatus(_LeaderTrader, "INVISIBLE");
 PlayEffectAtPosition("RS3_FX_Skills_Arrow_SmokeScreen_Impact_01", _x, _y, _z);
 SetOnStage(_LeaderTrader, 1);
 SetCanJoinCombat(_LeaderTrader, 1);
-DisplayText(_LeaderTrader, "Hrmph...");
+Proc_StartDialog(1, "LeaderLib_AD_LeaderTrader_Returned", _LeaderTrader);
 ObjectClearFlag(_LeaderTrader, "LeaderLib_LeaderTrader_Hiding", 0);
 
 IF
@@ -600,7 +600,7 @@ CharacterUsedSkill(S_GLO_Windego_d783285f-d3be-4cba-8333-db8976cef182, "Shout_Qu
 AND
 DB_LeaderLib_Traders_Active(_LeaderTrader, "LeaderLib.LeaderTrader", "TUT_Tutorial_A")
 THEN
-DisplayText(_LeaderTrader, "Hrmph. Best to avoid trouble...");
+Proc_StartDialog(1, "LeaderLib_AD_LeaderTrader_Hiding", _LeaderTrader);
 CharacterUseSkill(_LeaderTrader, "Shout_ChameleonSkin", _LeaderTrader, 1, 1, 1);
 TimerCancel("LeaderLib_Timers_LeaderTrader_TUTDisappear");
 TimerLaunch("LeaderLib_Timers_LeaderTrader_TUTDisappear", 500);

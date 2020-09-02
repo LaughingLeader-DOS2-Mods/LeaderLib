@@ -117,7 +117,7 @@ end
 function StringHelpers.GetUUID(str)
 	local start = string.find(str, "_[^_]*$") or 0
 	if start > 0 then
-		return string.sub(str, start)
+		return string.sub(str, start+1)
 	else
 		return str
 	end

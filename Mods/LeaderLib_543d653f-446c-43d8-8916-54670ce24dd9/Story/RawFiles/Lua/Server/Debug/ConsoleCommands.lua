@@ -386,6 +386,11 @@ Ext.RegisterConsoleCommand("nocooldowns", function(command)
 	end
 end)
 
+Ext.RegisterConsoleCommand("refreshcd", function(command)
+	local host = CharacterGetHostCharacter()
+	GameHelpers.UI.RefreshSkillBarCooldowns(host)
+end)
+
 Ext.RegisterConsoleCommand("ap", function(command, amountStr)
 	local host = CharacterGetHostCharacter()
 	local amount = Ext.GetCharacter(host).Stats.APMaximum
@@ -443,10 +448,10 @@ Ext.RegisterConsoleCommand("additemstat", function(command, stat, rarity, levels
 	end
 	local item = GameHelpers.Item.CreateItemByStat(stat, level, rarity, skipLevelCheck, 1, 1)
 	if item ~= nil then
-		ItemAddDeltaModifier(item, "Boost_Weapon_Status_Set_Bleeding")
-		ItemAddDeltaModifier(item, "Boost_Weapon_Status_Set_Poisoned_Knife")
-		ItemAddDeltaModifier(item, "Boost_Weapon_Status_Set_Crippled")
-		ItemAddDeltaModifier(item, "Boost_Weapon_Status_Set_Suffocating")
+		-- ItemAddDeltaModifier(item, "Boost_Weapon_Status_Set_Bleeding")
+		-- ItemAddDeltaModifier(item, "Boost_Weapon_Status_Set_Poisoned_Knife")
+		-- ItemAddDeltaModifier(item, "Boost_Weapon_Status_Set_Crippled")
+		-- ItemAddDeltaModifier(item, "Boost_Weapon_Status_Set_Suffocating")
 		ItemToInventory(item, host, 1, 1, 1)
 	else
 		print("[additemstat] Failed to generate item!", stat, rarity, levelstr, template)

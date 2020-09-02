@@ -185,7 +185,7 @@ local function RunSkillListenersForOnSkillHit(source, skill, data, listeners)
 end
 
 ---@param source string
----@param skillprototype string
+---@param skill string
 ---@param target string
 ---@param handle integer
 ---@param damage integer

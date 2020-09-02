@@ -47,6 +47,48 @@ end
 
 GameHelpers.UI.RefreshSkillBar = RefreshSkillBar
 
+---@type client string Client character UUID.
+---@type skill string
+function RefreshSkillBarSkillCooldown(client, skill)
+	if CharacterIsPlayer(client) == 1 and CharacterGetReservedUserID(client) ~= nil then
+		local data = MessageData:CreateFromTable("SkillbarCooldowns", {
+			UUID = GetUUID(client),
+			Slots = {}
+		})
+		local slots = GetSkillSlots(client, skill)
+		if #slots > 0 then
+			local cd = Ext.GetCharacter(client):GetSkillInfo(skill).ActiveCooldown
+			for i,v in pairs(slots) do
+				data.Params.Slots[i] = cd
+			end
+			Ext.PostMessageToClient(client, "LeaderLib_Hotbar_RefreshCooldowns", data:ToString())
+		end
+	end
+end
+
+GameHelpers.UI.RefreshSkillBarSkillCooldown = RefreshSkillBarSkillCooldown
+
+---Refresh the skillbar's cooldowns.
+---@type client string Client character UUID.
+function RefreshSkillBarCooldowns(client)
+	if CharacterIsPlayer(client) == 1 and CharacterGetReservedUserID(client) ~= nil then
+		local character = Ext.GetCharacter(client)
+		local slots = {}
+		for i=0,144,1 do
+			local skill = NRD_SkillBarGetSkill(client, i)
+			if skill ~= nil then
+				local info = character:GetSkillInfo(skill)
+				if info ~= nil and info.ActiveCooldown > 0 then
+					slots[i] = info.ActiveCooldown / 6.0
+				end
+			end
+		end
+		Ext.PostMessageToClient(client, "LeaderLib_Hotbar_RefreshCooldowns", Ext.JsonStringify(slots))
+	end
+end
+
+GameHelpers.UI.RefreshSkillBarCooldowns = RefreshSkillBarCooldowns
+
 ---@param text string
 ---@param filter integer
 ---@param specificCharacters string|string[]|nil

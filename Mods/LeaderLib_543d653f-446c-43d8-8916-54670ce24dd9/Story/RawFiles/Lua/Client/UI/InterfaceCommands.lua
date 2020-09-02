@@ -197,6 +197,27 @@ Ext.RegisterNetListener("LeaderLib_Hotbar_Refresh", function(call, uuid)
 	end
 end)
 
+Ext.RegisterNetListener("LeaderLib_Hotbar_RefreshCooldowns", function(call, datastr)
+	local slotdata = Ext.JsonParse(datastr)
+	if slotdata ~= nil then
+		local ui = Ext.GetBuiltinUI("Public/Game/GUI/hotBar.swf")
+		if ui ~= nil then
+			local slotholder = ui:GetRoot().hotbar_mc.slotholder_mc
+			for i,cd in pairs(slotdata) do
+				local slot = slotholder.slot_array[i]
+				if slot ~= nil then
+					if Ext.IsDeveloperMode() then
+						print(string.format("[slot_array][%i] id(%i) oldCD(%i) nextCD(%s)", i, slot.id, slot.oldCD, cd))
+					end
+					if cd ~= nil then
+						slot.setCoolDown(cd)
+					end
+				end
+			end
+		end
+	end
+end)
+
 Ext.RegisterNetListener("LeaderLib_AddTextToCombatLog", function(call, dataStr)
 	local data = MessageData:CreateFromString(dataStr)
 	if data.Params ~= nil then

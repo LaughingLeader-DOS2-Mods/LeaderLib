@@ -126,6 +126,8 @@ function GetSkillSlots(char, skill, makeLocal)
 	return slots
 end
 
+GameHelpers.Skill.GetSkillSlots = GetSkillSlots
+
 ---Swaps a skill with another one.
 ---@param char string
 ---@param targetSkill string The skill to find and replace.

@@ -205,6 +205,8 @@ local function GetSkillHitType(skill)
     return hitType
 end
 
+GameHelpers.GetSkillHitType = GetSkillHitType
+
 ---@param skill string
 ---@param attacker string|StatCharacter
 ---@param target string|StatCharacter
@@ -244,7 +246,7 @@ function GameHelpers.Damage.CalculateSkillDamage(skill, attacker, target, handle
         HitWithWeapon = skillData.UseWeaponDamage == "Yes",
         DamageList = damageList,
     }
-
+    
     local hitType = GetSkillHitType(skill)
     local criticalRoll = "Roll"
     if forceCrit == true then

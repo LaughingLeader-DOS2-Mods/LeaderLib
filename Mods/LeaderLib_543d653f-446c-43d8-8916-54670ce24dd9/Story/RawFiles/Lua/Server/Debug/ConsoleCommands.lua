@@ -432,6 +432,9 @@ end)
 
 --!additemstat ARM_UNIQUE_LLWEAPONEX_ThiefGloves_A Unique fe0754e3-5f0b-409e-a856-31e646201ee4
 Ext.RegisterConsoleCommand("additemstat", function(command, stat, rarity, levelstr, template)
+	if stat == nil then
+		stat = "WPN_Sword_2H"
+	end
 	if rarity == nil then
 		if Ext.StatGetAttribute(stat, "Unique") == 1 then
 			rarity = "Unique"
@@ -451,7 +454,7 @@ Ext.RegisterConsoleCommand("additemstat", function(command, stat, rarity, levels
 		-- ItemAddDeltaModifier(item, "Boost_Weapon_Status_Set_Bleeding")
 		-- ItemAddDeltaModifier(item, "Boost_Weapon_Status_Set_Poisoned_Knife")
 		-- ItemAddDeltaModifier(item, "Boost_Weapon_Status_Set_Crippled")
-		-- ItemAddDeltaModifier(item, "Boost_Weapon_Status_Set_Suffocating")
+		--ItemAddDeltaModifier(item, "Boost_Weapon_Status_Set_KnockDown_Sword")
 		ItemToInventory(item, host, 1, 1, 1)
 	else
 		print("[additemstat] Failed to generate item!", stat, rarity, levelstr, template)

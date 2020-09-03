@@ -25,6 +25,21 @@ AND
 THEN
 DB_NOOP(1);
 
+QRY
+QRY_LeaderLib_Dialog_DialogDoesNotHaveOriginMoment((STRING)_Dialog)
+AND
+NOT DB_OriginMomentTag(_Dialog,(STRING)_,(STRING)_)
+AND
+NOT DB_OriginMomentTag_HighPriority(_Dialog,(STRING)_,(STRING)_)
+AND
+NOT DB_OriginRecruitmentDialog((CHARACTERGUID)_,_Dialog)
+AND
+NOT DB_OriginMomentTag_3SP(_Dialog,(STRING)_,(STRING)_)
+AND
+NOT DB_OriginMomentTag_HighPriority_3SP(_Dialog,(STRING)_,(STRING)_)
+THEN
+DB_NOOP(1);
+
 //Dummy definition
 QRY
 QRY_PlayOriginMoment((STRING)_Dialog, (GUIDSTRING)_MainNPC, (GUIDSTRING)_Player)
@@ -55,6 +70,8 @@ Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUID
 AND
 NOT QRY_GLOBAL_CrimeDialogIntercept_Wrapper(_Automated, _Speaker1,_Speaker2, NULL_00000000-0000-0000-0000-000000000000, NULL_00000000-0000-0000-0000-000000000000, NULL_00000000-0000-0000-0000-000000000000,  NULL_00000000-0000-0000-0000-000000000000)
 AND
+QRY_LeaderLib_Dialog_DialogDoesNotHaveOriginMoment(_Dialog)
+AND
 NOT QRY_PlayOriginMoment(_Dialog,_Speaker1,_Speaker2)
 AND
 NOT DB_OriginRecruitmentDialog((CHARACTERGUID)_,_Dialog)
@@ -68,6 +85,8 @@ Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUID
 AND
 NOT QRY_GLOBAL_CrimeDialogIntercept_Wrapper(_Automated, _Speaker1,_Speaker2, _Speaker3, NULL_00000000-0000-0000-0000-000000000000, NULL_00000000-0000-0000-0000-000000000000,  NULL_00000000-0000-0000-0000-000000000000)
 AND
+QRY_LeaderLib_Dialog_DialogDoesNotHaveOriginMoment(_Dialog)
+AND
 NOT QRY_PlayOriginMoment(_Dialog,_Speaker1,_Speaker3)
 AND
 GlobalGetFlag("LeaderLib_DialogRedirectionEnabled", _RedirectionEnabled)
@@ -78,6 +97,8 @@ PROC
 Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2,(GUIDSTRING)_Speaker3,(GUIDSTRING)_Speaker4)
 AND
 NOT QRY_GLOBAL_CrimeDialogIntercept_Wrapper(_Automated, _Speaker1,_Speaker2, _Speaker3, _Speaker4, NULL_00000000-0000-0000-0000-000000000000,  NULL_00000000-0000-0000-0000-000000000000)
+AND
+QRY_LeaderLib_Dialog_DialogDoesNotHaveOriginMoment(_Dialog)
 AND
 NOT QRY_PlayOriginMoment(_Dialog,_Speaker1,_Speaker4)
 AND

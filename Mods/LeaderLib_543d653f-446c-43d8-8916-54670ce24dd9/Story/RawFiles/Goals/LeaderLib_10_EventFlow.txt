@@ -15,7 +15,9 @@ AND
 NOT LeaderLib_Helper_QRY_IsLobby(_Level)
 THEN
 LeaderLib_EventFlow_Internal_StartInit(_Level);
+// [BEGIN_NO_OSITOOLS]
 LeaderLib_EventFlow_Init_AddSortFlow();
+// [END_NO_OSITOOLS]
 
 PROC
 LeaderLib_EventFlow_Internal_StartInit((STRING)_Level)

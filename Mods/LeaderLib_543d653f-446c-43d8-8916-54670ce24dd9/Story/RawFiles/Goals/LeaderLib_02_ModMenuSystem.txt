@@ -275,6 +275,7 @@ LeaderLib_ModMenu_Internal_StartSortIfNeeded()
 THEN
 LeaderLib_ModMenu_Internal_CalculateUniqueDialogs();
 
+// [BEGIN_NO_OSITOOLS]
 PROC
 LeaderLib_ModMenu_Internal_StartSortIfNeeded()
 AND
@@ -301,6 +302,16 @@ AND
 LeaderLib_ModMenu_QRY_SortNeeded()
 THEN
 LeaderLib_ModMenu_StartSorting();
+// [END_NO_OSITOOLS]
+
+/* [OSITOOLS_ONLY]
+PROC
+LeaderLib_ModMenu_Internal_StartSortIfNeeded()
+AND
+LeaderLib_ModMenu_QRY_SortNeeded()
+THEN
+LeaderLib_ModMenu_StartSorting();
+*/
 
 IF
 GlobalFlagSet("LeaderLib_DefaultEventFlowRunning")
@@ -382,6 +393,7 @@ NOT DB_LeaderLib_Dictionary_Data("LeaderLib_RegisteredMenus", _, _Dialog, _)
 THEN
 DB_NOOP(1);
 
+// [BEGIN_NO_OSITOOLS]
 QRY
 LeaderLib_ModMenu_Internal_QRY_CanSort((STRING)_Dialog)
 AND
@@ -399,7 +411,6 @@ THEN
 LeaderLog_Log("DEBUG", "[LeaderLib:ModMenu:LeaderLib_ModMenu_StartSorting] Added (",_Dialog,") to sort dictionary.");
 LeaderLib_DictionarySort_AddString("LeaderLib_RegisteredMenus", _Dialog, _DisplayName);
 
-// [BEGIN_NO_OSITOOLS]
 PROC
 LeaderLib_ModMenu_StartSorting()
 AND
@@ -444,6 +455,15 @@ LeaderLib_DictionarySort_StartSorting("LeaderLib_RegisteredMenus", _TickRate, "L
 // [END_NO_OSITOOLS]
 
 /* [OSITOOLS_ONLY]
+PROC
+LeaderLib_ModMenu_StartSorting()
+AND
+DB_LeaderLib_ModMenu_RegisteredMenuData(_ID, _DisplayName, _Dialog, _ModID, _Author)
+AND
+LeaderLib_ModMenu_Internal_QRY_CanSort(_Dialog)
+THEN
+LeaderLib_Array_AddToDictionary("LeaderLib_RegisteredMenus", _Dialog, _DisplayName);
+
 PROC
 LeaderLib_ModMenu_StartSorting()
 THEN

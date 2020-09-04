@@ -140,6 +140,11 @@ DB_LeaderLib_Dictionary_Data("LeaderLib_RegisteredMenus", _Index, _Dialog, _Disp
 //END_REGION
 
 //REGION AUTO_UPDATING
+PROC
+LeaderLib_Mods_OnVersionChanged(7e737d2f-31d2-4751-963f-be6ccc59cd0c, 371130370, (INTEGER)_NextVersion)
+THEN
+LeaderLib_ModMenu_StartSorting();
+
 //Updating empty author/modid
 PROC
 LeaderLib_Mods_OnVersionChanged((GUIDSTRING)_UUID, (INTEGER)_LastVersion, (INTEGER)_NextVersion)

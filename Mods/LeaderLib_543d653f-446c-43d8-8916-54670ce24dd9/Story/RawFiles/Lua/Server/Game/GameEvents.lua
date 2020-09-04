@@ -39,12 +39,23 @@ local function OverrideLeaveActionStatuses()
 	end
 end
 
+local function InvokeOnInitializedCallbacks(region)
+	if #Listeners.Initialized > 0 then
+		for i,callback in pairs(Listeners.Initialized) do
+			local status,err = xpcall(callback, debug.traceback, region)
+			if not status then
+				Ext.PrintError("[LeaderLib:OnInitialized] Error calling function for 'Initialized':\n", err)
+			end
+		end
+	end
+end
+
 local function OnInitialized()
 	local status,err = xpcall(OverrideLeaveActionStatuses, debug.traceback)
 	if not status then
 		print(err)
 	end
-	print("OnInitialized", Ext.JsonStringify(Vars.LeaveActionData))
+
 	Vars.Initialized = true
 	pcall(function()
 		LoadGameSettings()
@@ -63,17 +74,9 @@ local function OnInitialized()
 	if Ext.Version() < 50 then
 		Osi.LeaderLib_ActivateGoal("LeaderLib_19_TS_HitEvents")
 	end
-
-	if #Listeners.Initialized > 0 then
-		for i,callback in pairs(Listeners.Initialized) do
-			local status,err = xpcall(callback, debug.traceback)
-			if not status then
-				Ext.PrintError("[LeaderLib:OnInitialized] Error calling function for 'Initialized':\n", err)
-			end
-		end
-	end
-
+	
 	if Ext.GetGameState() == "Running" then
+		InvokeOnInitializedCallbacks()
 		SettingsManager.SyncAllSettings()
 		IterateUsers("Iterators_LeaderLib_SetClientCharacter")
 		if GlobalGetFlag("LeaderLib_AutoUnlockInventoryInMultiplayer") == 1 then
@@ -82,13 +85,14 @@ local function OnInitialized()
 	end
 end
 
-function OnInitialized_CheckGameState()
+function OnInitialized_CheckGameState(region)
 	if Ext.GetGameState() == "Running" then
 		if not Vars.Initialized then
-			OnInitialized()
+			OnInitialized(region)
 		else
 			SettingsManager.SyncAllSettings()
 			IterateUsers("Iterators_LeaderLib_SetClientCharacter")
+			InvokeOnInitializedCallbacks()
 		end
 	else
 		if Ext.IsDeveloperMode() then
@@ -106,20 +110,22 @@ Ext.RegisterListener("GameStateChanged", function(from, to)
 	if to == "Running" and Ext.OsirisIsCallable() then
 		if not Vars.Initialized then
 			OnInitialized()
-		else
+		elseif from ~= "Paused" then
 			SettingsManager.SyncAllSettings()
 			IterateUsers("Iterators_LeaderLib_SetClientCharacter")
 		end
 	end
 end)
 
-function OnLeaderLibInitialized()
+function OnLeaderLibInitialized(region)
 	if not Vars.Initialized then
 		if Ext.GetGameState() == "Running" then
-			OnInitialized()
+			OnInitialized(region)
 		else
-			OnInitialized_CheckGameState()
+			OnInitialized_CheckGameState(region)
 		end
+	elseif Ext.GetGameState() == "Running" then
+		InvokeOnInitializedCallbacks()
 	end
 end
 

@@ -167,8 +167,6 @@ Ext.RegisterConsoleCommand("printuuids", function(call, radiusVal)
 	local host = CharacterGetHostCharacter()
 	for i,v in pairs(Ext.GetCharacter(host):GetNearbyCharacters(radius)) do
 		Debug_Iterator_PrintCharacter(v)
-		NRD_CharacterSetPermanentBoostTalent(v, "AttackOfOpportunity", 1)
-		CharacterAddAttribute(v, "Dummy", 0)
 	end
 end)
 

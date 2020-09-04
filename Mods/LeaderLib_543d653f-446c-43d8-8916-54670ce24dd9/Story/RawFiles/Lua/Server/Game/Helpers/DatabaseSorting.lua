@@ -46,8 +46,11 @@ function SortDictionary(id)
 			end)
 		end
 		Osi.DB_LeaderLib_Dictionary_Data:Delete(id, nil, nil, nil)
+
+		local index = 0
 		for i,v in pairs(db) do
-			Osi.DB_LeaderLib_Dictionary_Data(id, v[2], v[3], v[4])
+			Osi.DB_LeaderLib_Dictionary_Data(id, index, v[3], v[4])
+			index = index + 1
 		end
 		--PrintDebug(id, Ext.JsonStringify(Osi.DB_LeaderLib_Dictionary_Data:Get(id, nil, nil, nil)))
 		return true
@@ -57,3 +60,5 @@ function SortDictionary(id)
 		Ext.PrintError(result)
 	end
 end
+
+--print(Ext.JsonStringify(Osi.DB_LeaderLib_Dictionary_Data:Get(nil, nil, nil, nil)))

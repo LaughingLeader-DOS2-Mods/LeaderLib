@@ -2,7 +2,7 @@
 local FlagData = {
 	Type = "FlagData",
 	FlagType = "Global",
-	Target = nil,
+	Targets = nil,
 	Enabled = false
 }
 
@@ -25,7 +25,7 @@ end
 local VariableData = {
 	Type = "VariableData",
 	Value = "",
-	Target = nil
+	Targets = nil
 }
 
 VariableData.__index = VariableData
@@ -97,17 +97,22 @@ function SettingsData:UpdateFlags()
 	for flag,data in pairs(self.Flags) do
 		if data.FlagType == "Global" then
 			data.Enabled = GlobalGetFlag(flag) == 1
-		elseif data.Target ~= nil then
-			if data.FlagType == "User" then
-				local userid = tonumber(data.Target)
-				local character = GetCurrentCharacter(userid)
-				if character ~= nil then
-					data.Enabled = UserGetFlag(character, flag) == 1
-				else
-					data.Enabled = false
+		elseif data.FlagType == "User" or data.FlagType == "Character" then
+			for _,db in pairs(Osi.DB_IsPlayer:Get(nil)) do
+				local uuid = GetUUID(db[1])
+				if data.FlagType == "User" then
+					local id = CharacterGetReservedUserID(uuid)
+					local profileid = GetUserProfileID(id)
+					local username = GetUserName(id)
+					data.Targets[profileid] = UserGetFlag(uuid, flag) == 1
+				elseif data.FlagType == "Character" then
+					local enabled = ObjectGetFlag(uuid, flag) == 1
+					if enabled then
+						data.Targets[uuid] = enabled
+					else
+						data.Targets[uuid] = nil
+					end
 				end
-			elseif data.FlagType == "Character" then
-				data.Enabled = ObjectExists(data.Target) == 1 and ObjectGetFlag(data.Target, flag) == 1
 			end
 		end
 	end
@@ -127,22 +132,33 @@ function SettingsData:ApplyFlags()
 			else
 				GlobalClearFlag(flag)
 			end
-		elseif data.Target ~= nil then
-			if data.FlagType == "User" then
-				local userid = tonumber(data.Target)
-				local character = GetCurrentCharacter(userid)
-				if character ~= nil then
-					if data.Enabled then
-						UserSetFlag(character, flag, 0)
-					else
-						UserClearFlag(character, flag, 0)
+		elseif data.Targets ~= nil then
+			for target,enabled in pairs(data.Targets) do
+				if data.FlagType == "User" then
+					local userid = tonumber(target)
+					if userid == nil then
+						-- Username?
+						userid = target
 					end
-				end
-			elseif data.FlagType == "Character" and ObjectExists(data.Target) == 1 then
-				if data.Enabled then
-					ObjectSetFlag(data.Target, flag, 0)
-				else
-					ObjectClearFlag(data.Target, flag, 0)
+					for _,db in pairs(Osi.DB_IsPlayer:Get(nil)) do
+						local uuid = db[1]
+						local id = CharacterGetReservedUserID(uuid)
+						local profileid = GetUserProfileID(id)
+						local username = GetUserName(id)
+						if profileid == userid or username == userid then
+							if enabled then
+								UserSetFlag(uuid, flag, 0)
+							else
+								UserClearFlag(uuid, flag, 0)
+							end
+						end
+					end
+				elseif data.FlagType == "Character" and ObjectExists(target) == 1 then
+					if data.Enabled then
+						ObjectSetFlag(target, flag, 0)
+					else
+						ObjectClearFlag(target, flag, 0)
+					end
 				end
 			end
 		end

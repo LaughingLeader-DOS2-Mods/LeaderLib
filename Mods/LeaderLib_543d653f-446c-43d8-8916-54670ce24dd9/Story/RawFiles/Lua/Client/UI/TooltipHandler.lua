@@ -485,6 +485,9 @@ end
 ---@param item EsvItem
 ---@param tooltip TooltipData
 local function OnItemTooltip(item, tooltip)
+	if tooltip == nil then
+		return
+	end
 	--print(item.StatsId, Ext.JsonStringify(item.WorldPos), Ext.JsonStringify(tooltip.Data))
 	if item ~= nil then
 		lastItem = item

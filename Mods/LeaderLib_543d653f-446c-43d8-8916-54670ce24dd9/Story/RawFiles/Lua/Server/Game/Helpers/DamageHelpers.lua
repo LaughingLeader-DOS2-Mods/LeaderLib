@@ -64,16 +64,15 @@ local function IncreaseDamage(target, attacker, handle_param, increase_perc, is_
     if handle == nil then error("[LeaderLib_GameMechanics.lua:IncreaseDamage] Handle is null! Skipping.") end
     local increase_amount = Common.SafeguardParam(increase_perc, "number", 0.5)
     local is_hit = Common.SafeguardParam(is_hit_param, "number", 0)
-	Log("[LeaderLib_GameMechanics.lua:IncreaseDamage] Increasing damage by ("..tostring(increase_amount).."). Handle("..tostring(handle).."). Target("..tostring(target)..") Attacker("..tostring(attacker)..") IsHit("..tostring(is_hit)..")")
 	local success = false
     for i,damageType in Data.DamageTypes:Get() do
         local damage = nil
         if is_hit == 0 then
-            damage = NRD_HitStatusGetDamage(target, handle, damageType)
+            damage = NRD_HitStatusGetDamage(target, handle, damageType) or 0
         else
-            damage = NRD_HitGetDamage(handle, damageType)
+            damage = NRD_HitGetDamage(handle, damageType) or 0
         end
-        if damage ~= nil and damage > 0 then
+        if damage > 0 then
             --local increased_damage = damage + math.ceil(damage * increase_amount)
             --NRD_HitStatusClearDamage(target, handle, damageType)
             local increased_damage = math.ceil(damage * increase_amount)
@@ -82,7 +81,6 @@ local function IncreaseDamage(target, attacker, handle_param, increase_perc, is_
             else
                 NRD_HitAddDamage(handle, damageType, increased_damage)
             end
-			Log("[LeaderLib_GameMechanics.lua:IncreaseDamage] Increasing damage: "..tostring(damage).." => "..tostring(damage + increased_damage).." for type: "..damageType)
 			success = true
         end
 	end

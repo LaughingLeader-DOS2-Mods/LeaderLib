@@ -1,20 +1,3 @@
-function Log(...)
-	local printEnabled = false
-	if Ext.Version() >= 42 then
-		printEnabled = Ext.IsDeveloperMode() == true
-	else
-		printEnabled = GlobalGetFlag("LeaderLib_IsEditorMode") == 1
-	end
-	if printEnabled then
-		local logArgs = {...}
-		local output_str = ""
-		for i,v in pairs(logArgs) do
-			output_str = output_str .. tostring(v)
-		end
-		Ext.Print(output_str)
-	end
-end
-
 local function init_seed()
 	local rnd = Ext.Random(9999)
 	local seed = (Ext.Random(9999) * 214013) + 2531011

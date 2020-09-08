@@ -7,12 +7,14 @@ local ProfileSettings = Classes.ModSettingsClasses.ProfileSettings
 local ModSettings = Classes.ModSettingsClasses.ModSettings
 
 function SettingsManager.AddSettings(modSettings)
-	for i,v in pairs(GlobalSettings.Mods) do
-		if v.UUID == modSettings.UUID then
-			table.remove(GlobalSettings.Mods, i)
+	if modSettings ~= nil then
+		for i,v in pairs(GlobalSettings.Mods) do
+			if v.UUID == modSettings.UUID then
+				table.remove(GlobalSettings.Mods, i)
+			end
 		end
+		table.insert(GlobalSettings.Mods, modSettings)
 	end
-	table.insert(GlobalSettings.Mods, modSettings)
 end
 
 function SettingsManager.Remove(uuid)

@@ -41,8 +41,10 @@ end
 
 ---@param uuid string Character UUID
 function QuestStateData:Activate(uuid, state)
-	ObjectSetFlag(uuid, self.Flags.Add, 0)
-	if self.Flags.Update ~= nil and self.Flags.Update ~= "" then
+	if self.Flags.Update ~= nil and self.Flags.Update ~= "" and ObjectGetFlag(uuid, self.Flags.Update) == 0 then
+		if Ext.IsDeveloperMode() then
+			Ext.Print(string.format("[LeaderLib:QuestData] Activating quest state (%s:%s) on (%s)[%s]", self.ID, self.Flags.Update, Ext.GetCharacter(uuid).DisplayName, uuid))
+		end
 		ObjectSetFlag(uuid, self.Flags.Update, 0)
 	end
 end
@@ -131,7 +133,12 @@ end
 ---@param uuid string Character UUID
 ---@param state string|QuestStateData Character UUID
 function QuestData:Activate(uuid, state)
-	ObjectSetFlag(uuid, self.Flags.Add, 0)
+	if ObjectGetFlag(uuid, self.Flags.Add) == 0 then
+		if Ext.IsDeveloperMode() then
+			Ext.Print(string.format("[LeaderLib:QuestData] Activating quest (%s:%s) on (%s)[%s]", self.ID, self.Flags.Add, Ext.GetCharacter(uuid).DisplayName, uuid))
+		end
+		ObjectSetFlag(uuid, self.Flags.Add, 0)
+	end
 	if state ~= nil then
 		if state.Type == "QuestStateData" then
 			ObjectSetFlag(uuid, state.Flags.Update, 0)

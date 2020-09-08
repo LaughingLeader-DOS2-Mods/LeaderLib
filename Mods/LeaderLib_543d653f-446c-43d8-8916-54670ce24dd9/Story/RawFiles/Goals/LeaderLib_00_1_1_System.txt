@@ -195,6 +195,27 @@ LeaderLib_OnSaveLoaded()
 THEN
 DB_NOOP(1);
 //END_REGION
+
+//REGION DIFFICULTY
+/*
+0 -> Story
+1 -> Casual
+2 -> Normal
+3 -> Hardcore
+4 -> Honour
+*/
+IF
+DifficultyChanged(_DifficultyLevel)
+AND
+DB_LeaderLib_GameDifficulty(_Last)
+THEN
+NOT DB_LeaderLib_GameDifficulty(_Last);
+
+IF
+DifficultyChanged(_DifficultyLevel)
+THEN
+DB_LeaderLib_GameDifficulty(_DifficultyLevel);
+//END_REGION
 EXITSECTION
 
 ENDEXITSECTION

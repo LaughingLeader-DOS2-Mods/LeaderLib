@@ -120,6 +120,8 @@ ModListeners = {
 ---@field Slots table<string, TranslatedString>
 ---@field ItemBoosts table<string, TranslatedString>
 ---@field UI table<string, TranslatedString> Misc UI text like Confirm/Close.
+
+---@type LeaderLibLocalizedText
 LocalizedText = {}
 
 ---@type TranslatedString[]

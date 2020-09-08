@@ -104,7 +104,7 @@ local function addMissingAbilities(ui)
 			ui:SetValue("ability_array", abilityID, i+2) -- statId
 			ui:SetValue("ability_array", GameHelpers.GetAbilityName(abilityName), i+3) -- displayName
 			ui:SetValue("ability_array", Ext.Random(1,10), i+4) -- valueText
-			ui:SetValue("ability_array", LocalizedText.AbilityPlusTooltip.UI.Value:gsub("%[1%]", Ext.ExtraData.CombatAbilityLevelGrowth), i+5) -- addTooltipText
+			ui:SetValue("ability_array", LocalizedText.UI.AbilityPlusTooltip:ReplacePlaceholders(Ext.ExtraData.CombatAbilityLevelGrowth), i+5) -- addTooltipText
 			ui:SetValue("ability_array", "", i+6) -- removeTooltipText
 			--PrintDebug(string.format("[LeaderLib:addMissingAbilities] Added ability [%s] = (%s)", abilityID, abilityName))
 			i = i + 7

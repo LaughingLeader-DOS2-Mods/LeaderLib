@@ -21,6 +21,29 @@ function FlagData:Create(flag, flagType, enabled)
     return this
 end
 
+local totalFlagTargets = {}
+
+function FlagData:AddTarget(id, enabled)
+	if self.Targets == nil then
+		self.Targets = {}
+	end
+	self.Targets[id] = enabled
+end
+
+function FlagData:RemoveTarget(id)
+	if self.Targets ~= nil then
+		self.Targets[id] = nil
+		local hasTarget = false
+		for i,v in pairs(self.Targets) do
+			hasTarget = true
+		end
+		if not hasTarget then
+			self.Targets = nil
+		end
+	end
+	
+end
+
 ---@class VariableData
 local VariableData = {
 	Type = "VariableData",
@@ -104,13 +127,13 @@ function SettingsData:UpdateFlags()
 					local id = CharacterGetReservedUserID(uuid)
 					local profileid = GetUserProfileID(id)
 					local username = GetUserName(id)
-					data.Targets[profileid] = UserGetFlag(uuid, flag) == 1
+					data:AddTarget(profileid, UserGetFlag(uuid, flag) == 1)
 				elseif data.FlagType == "Character" then
 					local enabled = ObjectGetFlag(uuid, flag) == 1
 					if enabled then
-						data.Targets[uuid] = enabled
+						data:AddTarget(uuid, true)
 					else
-						data.Targets[uuid] = nil
+						data:RemoveTarget(uuid)
 					end
 				end
 			end

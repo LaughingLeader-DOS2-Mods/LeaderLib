@@ -1,10 +1,13 @@
+---@type table<string,TagTooltipData>
+UI.Tooltip.TagTooltips = {}
+UI.Tooltip.HasTagTooltipData = false
+
 ---@class TagTooltipData
 ---@field Title TranslatedString
 ---@field Description TranslatedString
 
----@type table<string,TagTooltipData>
-local TagTooltips = {}
-local hasTagTooltip = false;
+
+local TagTooltips = UI.Tooltip.TagTooltips
 
 ---@type TranslatedString
 local ts = Classes.TranslatedString
@@ -334,7 +337,7 @@ local function AddTags(tooltip_mc)
 	if lastItem == nil then
 		return
 	end
-	if hasTagTooltip then
+	if UI.Tooltip.HasTagTooltipData then
 		local text = ""
 		for tag,data in pairs(TagTooltips) do
 			if lastItem:HasTag(tag) then
@@ -374,13 +377,14 @@ end
 
 local replaceText = {}
 
-local function FormatTagText(content_array, group)
+local function FormatTagText(content_array, group, isControllerMode)
 	local updatedText = false
 	for i=0,#content_array,1 do
 		local element = content_array[i]
 		if element ~= nil then
 			local b,result = xpcall(function()
 				if element.label_txt ~= nil then
+					print(element.label_txt)
 					local searchText = StringHelpers.Trim(element.label_txt.htmlText):gsub("[\r\n]", "")
 					local tag = replaceText[searchText]
 					local data = TagTooltips[tag]
@@ -442,7 +446,7 @@ local function FormatTagTooltip(ui, tooltip_mc, ...)
 			if group ~= nil then
 				--print(string.format("[%i] groupID(%i) orderId(%s) icon(%s)", i, group.groupID or -1, group.orderId or -1, group.iconId))
 				if group.list ~= nil then
-					FormatTagText(tooltip_mc.list.content_array, group)
+					FormatTagText(tooltip_mc.list.content_array, group, false)
 				end
 			end
 		end
@@ -450,7 +454,7 @@ local function FormatTagTooltip(ui, tooltip_mc, ...)
 end
 
 local function OnTooltipPositioned(ui, ...)
-	if hasTagTooltip or #UIListeners.OnTooltipPositioned > 0 then
+	if UI.Tooltip.HasTagTooltipData or #UIListeners.OnTooltipPositioned > 0 then
 		local root = ui:GetRoot()
 		if root ~= nil then
 			local tooltips = {}
@@ -471,7 +475,7 @@ local function OnTooltipPositioned(ui, ...)
 						FormatTagTooltip(ui, tooltip_mc)
 					end
 					for i,callback in pairs(UIListeners.OnTooltipPositioned) do
-						local status,err = xpcall(callback, debug.traceback, ui, tooltip_mc, ...)
+						local status,err = xpcall(callback, debug.traceback, ui, tooltip_mc, false, ...)
 						if not status then
 							Ext.PrintError("[LeaderLib:AdjustTagElements] Error invoking callback:")
 							Ext.PrintError(err)
@@ -553,7 +557,7 @@ local function OnItemTooltip(item, tooltip)
 				--print("ResPen tags:", Ext.JsonStringify(tagsCheck))
 			end
 		end
-		if hasTagTooltip then
+		if UI.Tooltip.HasTagTooltipData then
 			for tag,data in pairs(TagTooltips) do
 				if item:HasTag(tag) then
 					local finalText = ""
@@ -663,7 +667,7 @@ function UI.RegisterItemTooltipTag(tag, title, description)
 		data.Description = description
 	end
 	TagTooltips[tag] = data
-	hasTagTooltip = true
+	UI.Tooltip.HasTagTooltipData = true
 end
 
 -- Ext.RegisterListener("ModuleLoading", EnableTooltipOverride)

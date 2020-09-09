@@ -101,7 +101,8 @@ local UITYPE = {
 local TooltipVariables = {
 	[UITYPE.CHARACTER_CREATION] = {
 		Array = {Main = "tooltipArray"},
-		MC = {Main = function(main) return main.tooltipMC end}
+		MC = {Main = function(main) return main.tooltipMC end},
+		UpdateEvent = "showTooltip"
 	},
 	[UITYPE.PARTY_INVENTORY] = {
 		Array = {
@@ -112,15 +113,18 @@ local TooltipVariables = {
 		MC = {
 			Main = function(main) return main.inventoryPanel_mc.tooltip_mc.tooltip_mc.tooltip_mc end,
 			Compare = function(main) return main.inventoryPanel_mc.tooltip_mc.tooltip_mc.compare_mc end,
-		}
+		},
+		UpdateEvent = "updateTooltip"
 	},
 	[UITYPE.BOTTOMBAR] = {
 		Array = {Main = "tooltip_array"},
-		MC = {Main = function(main) return main.bottombar_mc.tooltipHolder_mc.tooltip_mc end}
+		MC = {Main = function(main) return main.bottombar_mc.tooltipHolder_mc.tooltip_mc end},
+		UpdateEvent = "updateTooltip"
 	},
 	[UITYPE.EXAMINE] = {
 		Array = {Main = "tooltipArray"},
-		MC = {Main = function(main) return main.examine_mc.tooltip_mc end}
+		MC = {Main = function(main) return main.examine_mc.tooltip_mc end},
+		UpdatEvent = "showFormattedTooltip"
 	},
 	[UITYPE.TRADE] = {
 		Array = {
@@ -131,23 +135,26 @@ local TooltipVariables = {
 		MC = {
 			Main = function(main) return main.trade_mc.TTHolder_mc.tooltip_mc end,
 			Compare = function(main) return main.trade_mc.TTHolder_mc.compare_mc end,
-		}
+		},
+		UpdateEvent = "updateTooltip" -- "showTooltip"
 	},
 	[UITYPE.REWARD] = {
 		Array = {Main = "tooltip_array"},
-		MC = {Main = function(main) return main.reward_mc.tooltip_mc end}
+		MC = {Main = function(main) return main.reward_mc.tooltip_mc end},
+		UpdateEvent = "updateTooltip"
 	}
 }
 
 local function FormatTagTooltip(ui, tooltip_mc, ...)
 	local length = #tooltip_mc.list.content_array
+	print(tooltip_mc.name, "tooltip length:", length)
 	if length > 0 then
 		for i=0,length,1 do
 			local group = tooltip_mc.list.content_array[i]
 			if group ~= nil then
-				--print(string.format("[%i] groupID(%i) orderId(%s) icon(%s)", i, group.groupID or -1, group.orderId or -1, group.iconId))
+				print(string.format("[%i] groupID(%i) orderId(%s) icon(%s)", i, group.groupID or -1, group.orderId or -1, group.iconId))
 				if group.list ~= nil then
-					UI.FormatArrayTagText(tooltip_mc.list.content_array, group)
+					UI.FormatArrayTagText(group.list.content_array, group, true)
 				end
 			end
 		end
@@ -155,14 +162,13 @@ local function FormatTagTooltip(ui, tooltip_mc, ...)
 end
 
 ---@param ui UIObject
-local function OnConsoleTooltipPositioned(ui, ...)
-	if hasTagTooltip or #UIListeners.OnTooltipPositioned > 0 then
+local function OnConsoleTooltipPositioned(ui, data, ...)
+	print("Updating tooltip:", ui:GetTypeId())
+	if UI.Tooltip.HasTagTooltipData or #UIListeners.OnTooltipPositioned > 0 then
 		local root = ui:GetRoot()
 		if root ~= nil then
-			local data = TooltipVariables[ui:GetTypeId()]
 			if data ~= nil then
 				local tooltips = {}
-
 				if data.MC ~= nil then
 					if data.MC.Main ~= nil then
 						local tooltip_mc = data.MC.Main(root)
@@ -183,7 +189,7 @@ local function OnConsoleTooltipPositioned(ui, ...)
 							FormatTagTooltip(ui, tooltip_mc)
 						end
 						for i,callback in pairs(UIListeners.OnTooltipPositioned) do
-							local status,err = xpcall(callback, debug.traceback, ui, tooltip_mc, ...)
+							local status,err = xpcall(callback, debug.traceback, ui, tooltip_mc, true, ...)
 							if not status then
 								Ext.PrintError("[LeaderLib:AdjustTagElements] Error invoking callback:")
 								Ext.PrintError(err)
@@ -196,16 +202,41 @@ local function OnConsoleTooltipPositioned(ui, ...)
 	end
 end
 
+local updatingTooltip = false
+
+Ext.RegisterNetListener("LeaderLib_UI_OnControllerTooltipPositioned", function(cmd, payload)
+	if payload ~= nil and payload ~= "" then
+		local uiType = tonumber(payload)
+		local ui = Ext.GetUIByType(uiType)
+		if ui ~= nil then
+			local uiData = TooltipVariables[uiType]
+			OnConsoleTooltipPositioned(ui, uiData)
+		end
+	end
+	updatingTooltip = false
+end)
+
+local function OnTooltipUpdating(ui, uiType, ...)
+	if not updatingTooltip then
+		local data = Classes.MessageData:CreateFromTable("TooltipPositioningEventData", {
+			UIType = uiType,
+			Client = UI.ClientCharacter
+		})
+		Ext.PostMessageToServer("LeaderLib_UI_StartControllerTooltipTimer", data:ToString())
+		updatingTooltip = true
+	end
+end
+
 local function RegisterControllerTooltipEvents()
-	Ext.RegisterUINameInvokeListener("showTooltip", function(ui, ...)
-		OnConsoleTooltipPositioned(ui, ...)
-	end)
-	Ext.RegisterUITypeInvokeListener(UITYPE.EXAMINE, "showFormattedTooltip", function(ui, ...)
-		OnConsoleTooltipPositioned(ui, ...)
-	end)
-	Ext.RegisterUINameInvokeListener("setCompareTooltipButtonPrompt", function(ui, ...)
-		OnConsoleTooltipPositioned(ui, ...)
-	end)
+	for typeId,data in pairs(TooltipVariables) do
+		if data.UpdateEvent ~= nil then
+			Ext.RegisterUITypeInvokeListener(typeId, data.UpdateEvent, function(ui, ...)
+				--OnConsoleTooltipPositioned(ui, data, ...)
+				OnTooltipUpdating(ui, typeId, ...)
+			end)
+		end
+	end
+	print("**************Registered controller UI events.************")
 end
 
 Ext.RegisterListener("SessionLoaded", function()
@@ -213,6 +244,8 @@ Ext.RegisterListener("SessionLoaded", function()
 	if bottomBar ~= nil then
 		-- controller mode
 		RegisterControllerTooltipEvents()
+		local ui = Ext.GetBuiltinUI("Public/Game/GUI/partyInventory_c.swf")
+		print("Public/Game/GUI/partyInventory_c.swf", ui:GetTypeId())
 	end
 	-- local ui = Ext.GetBuiltinUI("Public/Game/GUI/examine_c.swf")
 	-- if ui ~= nil then

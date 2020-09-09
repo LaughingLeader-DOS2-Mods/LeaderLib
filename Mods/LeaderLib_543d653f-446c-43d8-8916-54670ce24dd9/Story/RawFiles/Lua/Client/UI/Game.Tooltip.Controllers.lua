@@ -1058,8 +1058,6 @@ function TooltipHooks:OnRequestConsoleInventoryTooltip(ui, method, itemHandleDou
 	}
 
 	if itemHandleDouble == nil then
-		--request = self.LastItemRequest
-
 		local main = ui:GetRoot()
 		if inventoryHandleDouble == nil then
 			inventoryHandleDouble = main.ownerHandle
@@ -1143,8 +1141,6 @@ function TooltipHooks:OnRequestConsoleCCTooltip(ui, method, arg1, arg2)
 			Ext.PrintWarning("Requested tooltip for unknown stat ID " .. request.Stat)
 		end
 	end
-
-	--print(method, Mods.LeaderLib.Common.Dump(request))
 
 	self.NextRequest = request
 end

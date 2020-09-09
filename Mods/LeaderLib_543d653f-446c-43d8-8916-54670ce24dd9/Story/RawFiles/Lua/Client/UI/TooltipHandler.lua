@@ -136,7 +136,6 @@ local function OnSkillTooltip(character, skill, tooltip)
 						end
 						if damageText ~= "" then
 							local startPos,endPos = string.find(lowerLabel, "destroy <font.->[%d-]+ "..damageText..".-</font> on")
-							print(startPos,endPos,damageText)
 							if startPos and endPos then
 								local str = string.sub(element.Label, startPos, endPos)
 								local replacement = string.gsub(str, "Destroy","Deal"):gsub("destroy","deal"):gsub(" on"," to")
@@ -375,10 +374,10 @@ end
 
 local replaceText = {}
 
-local function FormatTagText(tooltip_mc, group)
+local function FormatTagText(content_array, group)
 	local updatedText = false
-	for i=0,#group.list.content_array,1 do
-		local element = group.list.content_array[i]
+	for i=0,#content_array,1 do
+		local element = content_array[i]
 		if element ~= nil then
 			local b,result = xpcall(function()
 				if element.label_txt ~= nil then
@@ -427,11 +426,13 @@ local function FormatTagText(tooltip_mc, group)
 			end
 		end
 	end
-	if updatedText then
+	if updatedText and group ~= nil then
 		group.iconId = 16
 		group.setupHeader()
 	end
 end
+
+UI.FormatArrayTagText = FormatTagText
 
 local function FormatTagTooltip(ui, tooltip_mc, ...)
 	local length = #tooltip_mc.list.content_array
@@ -441,7 +442,7 @@ local function FormatTagTooltip(ui, tooltip_mc, ...)
 			if group ~= nil then
 				--print(string.format("[%i] groupID(%i) orderId(%s) icon(%s)", i, group.groupID or -1, group.orderId or -1, group.iconId))
 				if group.list ~= nil then
-					FormatTagText(tooltip_mc, group)
+					FormatTagText(tooltip_mc.list.content_array, group)
 				end
 			end
 		end

@@ -7,8 +7,6 @@ local setmetatable = setmetatable
 local xpcall = xpcall
 local Ext = Ext
 local print = print
-local string = string
-local Mods = Mods
 
 Game.Tooltip = {}
 
@@ -17,9 +15,11 @@ if setfenv ~= nil then
 	setfenv(1, Game.Tooltip)
 end
 
-local controllerEnabled = false
-local lastPlayer = nil
-local lastOverhead = nil
+local ControllerVars = {
+	Enabled = false,
+	LastPlayer = nil,
+	LastOverhead = nil
+}
 
 TooltipItemIds = {
 	"ItemName","ItemWeight","ItemGoldValue","ItemLevel","ItemDescription","ItemRarity","ItemUseAPCost","ItemAttackAPCost","StatBoost",
@@ -603,7 +603,7 @@ local selectEvents = {
 function TooltipHooks:RegisterControllerHooks()
 	local examine = Ext.GetBuiltinUI("Public/Game/GUI/examine_c.swf")
 	if examine ~= nil then
-		controllerEnabled = true
+		ControllerVars.Enabled = true
 		for i,v in pairs(selectEvents) do
 			Ext.RegisterUICall(examine, v, function(...)
 				self:OnRequestConsoleExamineTooltip(...)
@@ -617,7 +617,7 @@ function TooltipHooks:RegisterControllerHooks()
 	
 	local bottomBar = Ext.GetBuiltinUI("Public/Game/GUI/bottomBar_c.swf")
 	if bottomBar ~= nil then
-		controllerEnabled = true
+		ControllerVars.Enabled = true
 		-- Controller UI for bottombar_c.swf
 		Ext.RegisterUICall(bottomBar, "SlotHover", function (...)
 			self:OnRequestConsoleHotbarTooltip(...)
@@ -627,24 +627,24 @@ function TooltipHooks:RegisterControllerHooks()
 		end)
 		Ext.RegisterUIInvokeListener(bottomBar, "setPlayerHandle", function (ui, method, handle)
 			if handle ~= nil and handle ~= 0 then
-				lastPlayer = Ext.DoubleToHandle(handle)
+				ControllerVars.LastPlayer = Ext.DoubleToHandle(handle)
 			end
 		end)
 		self.GetLastPlayer = function(self)
 			local handle = bottomBar:GetRoot().characterHandle
 			if handle ~= nil then
 				handle = Ext.DoubleToHandle(handle)
-				lastPlayer = handle
+				ControllerVars.LastPlayer = handle
 				return handle
 			else
-				return lastPlayer
+				return ControllerVars.LastPlayer
 			end
 		end
 	end
 
 	local partyInventory = Ext.GetBuiltinUI("Public/Game/GUI/partyInventory_c.swf")
 	if partyInventory ~= nil then
-		controllerEnabled = true
+		ControllerVars.Enabled = true
 		-- Controller UI for bottombar_c.swf
 		Ext.RegisterUICall(partyInventory, "slotOver", function (...)
 			self:OnRequestConsoleInventoryTooltip(...)
@@ -706,14 +706,14 @@ function TooltipHooks:RegisterControllerHooks()
 		self:OnRenderTooltip(TooltipArrayNames.Console.Trade, ...)
 	end)
 
-	if controllerEnabled then
+	if ControllerVars.Enabled then
 		-- This allows examine_c to have a character reference
 		Ext.RegisterUITypeInvokeListener(UI_TYPE.DEFAULT.OVERHEAD, "updateOHs", function (ui, method, ...)
 			local main = ui:GetRoot()
 			for i=0,#main.selectionInfo_array,21 do
 				local id = main.selectionInfo_array[i]
 				if id ~= nil then
-					lastOverhead = Ext.DoubleToHandle(id)
+					ControllerVars.LastOverhead = Ext.DoubleToHandle(id)
 				end
 			end
 		end)
@@ -742,6 +742,7 @@ function TooltipHooks:Init()
 	Ext.RegisterUINameCall("showStatTooltip", onReqTooltip)
 	Ext.RegisterUINameCall("showAbilityTooltip", onReqTooltip)
 	Ext.RegisterUINameCall("showTalentTooltip", onReqTooltip)
+	Ext.RegisterUINameCall("showTagTooltip", onReqTooltip)
 
 	Ext.RegisterUINameInvokeListener("addFormattedTooltip", function (...)
 		self:OnRenderTooltip(TooltipArrayNames.Default, ...)
@@ -822,13 +823,31 @@ function TooltipHooks:OnRequestTooltip(ui, method, arg1, arg2, arg3, ...)
 		end
 
 		request.Talent = Ext.EnumIndexToLabel("TalentType", request.Talent)
+    elseif method == "showTagTooltip" then
+		request.Type = "Tag"
+		request.Tag = arg1
+		request.Category = ""
+		request.Character = nil
+
+		local main = ui:GetRoot()
+		if main ~= nil then
+			request.Character = Ext.GetCharacter(Ext.DoubleToHandle(main.characterHandle))
+			local tag = main.CCPanel_mc.tags_mc.tagList.getElementByString("tagID",arg1)
+			if tag ~= nil then
+				request.Category = tag.categoryID
+			end
+		else
+			request.Character = Ext.GetCharacter(Ext.DoubleToHandle(ui:GetValue("characterHandle", "number")))
+		end
 	else
 		Ext.PrintError("Unknown tooltip request method?", method)
 		return
 	end
 
 	if request.Character ~= nil then
-		lastPlayer = request.Character
+		if ControllerVars.Enabled then
+			ControllerVars.LastPlayer = request.Character
+		end
 		request.Character = Ext.GetCharacter(request.Character)
 	end
 
@@ -993,8 +1012,8 @@ function TooltipHooks:OnRequestConsoleExamineTooltip(ui, method, id)
 	}
 
 	local handle = ui:GetPlayerHandle()
-	if handle == nil and lastOverhead ~= nil then
-		handle = lastOverhead
+	if handle == nil and ControllerVars.LastOverhead ~= nil then
+		handle = ControllerVars.LastOverhead
 	end
 
 	--TODO: Need a way to get the object's handle for what's being examined.
@@ -1201,7 +1220,7 @@ TooltipData = {}
 function TooltipData:Create(data)
 	local tt = {
 		Data = data,
-		ControllerEnabled = controllerEnabled or false
+		ControllerEnabled = ControllerVars.Enabled or false
 	}
 	setmetatable(tt, {__index = self})
 	return tt

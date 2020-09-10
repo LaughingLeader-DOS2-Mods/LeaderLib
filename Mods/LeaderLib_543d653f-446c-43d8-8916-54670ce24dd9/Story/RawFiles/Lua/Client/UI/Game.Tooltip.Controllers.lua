@@ -580,6 +580,9 @@ local TooltipArrayNames = {
 		},
 		StatsPanel = {
 			Main = "tooltipArray",
+		},
+		CraftPanel = {
+			Main = "tooltip_array",
 		}
 	}
 }
@@ -594,10 +597,11 @@ local UI_TYPE = {
 		BOTTOMBAR = 59,
 		TRADE = 73,
 		EXAMINE = 67,
-		PARTYINVENTORY = 142,
+		PARTY_INVENTORY = 142,
 		REWARD = 137,
 		STATS_PANEL = 63, -- a.k.a. the character sheet
-		EQUIPMENT_PANEL = 64 -- a.k.a. the character sheet equipment panel
+		EQUIPMENT_PANEL = 64, -- a.k.a. the character sheet equipment panel,
+		CRAFT_PANEL = 84
 	}
 }
 
@@ -611,7 +615,6 @@ local selectEvents = {
 }
 
 function TooltipHooks:RegisterControllerHooks()
-	-- Character Sheet
 	local equipmentPanel = Ext.GetBuiltinUI("Public/Game/GUI/equipmentPanel_c.swf")
 	if equipmentPanel ~= nil then
 		ControllerVars.Enabled = true
@@ -631,7 +634,7 @@ function TooltipHooks:RegisterControllerHooks()
 			if visible == true then
 				self:OnRequestConsoleInventoryTooltip(ui, method, nil, nil, ...)
 			end
-		end)
+		end, "Before")
 		Ext.RegisterUIInvokeListener(equipmentPanel, "updateTooltip", function (ui, ...)
 			self:OnRenderTooltip(TooltipArrayNames.Console.EquipmentPanel, ui, ...)
 			self.LastItemRequest = nil
@@ -641,23 +644,34 @@ function TooltipHooks:RegisterControllerHooks()
 			self.LastItemRequest = nil
 		end)
 	end
+	local craftPanel = Ext.GetBuiltinUI("Public/Game/GUI/craftPanel_c.swf")
+	if craftPanel ~= nil then
+		ControllerVars.Enabled = true
+		Ext.RegisterUICall(craftPanel, "slotOver", function (ui, method, itemHandle, slotNum)
+			self:OnRequestConsoleInventoryTooltip(ui, method, itemHandle, slotNum)
+		end)
+		-- Ext.RegisterUICall(craftPanel, "overItem", function (ui, method, itemHandle)
+		-- 	print(ui:GetTypeId(), method, itemHandle)
+		-- 	self:OnRequestConsoleInventoryTooltip(ui, method, itemHandle)
+		-- end)
+		Ext.RegisterUIInvokeListener(craftPanel, "updateTooltip", function (ui, ...)
+			self:OnRenderTooltip(TooltipArrayNames.Console.CraftPanel, ui, ...)
+			self.LastItemRequest = nil
+		end)
+	end
 
 	local statsPanel = Ext.GetBuiltinUI("Public/Game/GUI/statsPanel_c.swf")
 	if statsPanel ~= nil then
 		ControllerVars.Enabled = true
 		for i,v in pairs(selectEvents) do
-			print(v)
 			Ext.RegisterUICall(statsPanel, v, function(ui, ...)
-				print(Ext.JsonStringify({...}))
 				self:OnRequestConsoleExamineTooltip(ui, ...)
 			end)
 		end
 		Ext.RegisterUICall(statsPanel, "selectedAttribute", function(ui, method, id)
-			print(method, id)
 			self:OnRequestConsoleExamineTooltip(ui, method, id)
 		end)
 		Ext.RegisterUICall(statsPanel, "selectCustomStat", function(ui, method, id)
-			print(method, id)
 			self:OnRequestConsoleExamineTooltip(ui, method, id)
 		end)
 		-- Ext.RegisterUICall(statsPanel, "selectTag", function(ui, method, emptyWorthlessTagTooltip)
@@ -680,7 +694,6 @@ function TooltipHooks:RegisterControllerHooks()
 		ControllerVars.Enabled = true
 		for i,v in pairs(selectEvents) do
 			Ext.RegisterUICall(examine, v, function(ui, ...)
-				print(Ext.JsonStringify({...}))
 				self:OnRequestConsoleExamineTooltip(ui, ...)
 			end)
 		end
@@ -1161,7 +1174,7 @@ function TooltipHooks:OnRequestConsoleInventoryTooltip(ui, method, itemHandleDou
 		Item = nil,
 		Inventory = nil,
 	}
-	if ui:GetTypeId() == UI_TYPE.CONSOLE.PARTYINVENTORY then
+	if ui:GetTypeId() == UI_TYPE.CONSOLE.PARTY_INVENTORY then
 		local main = ui:GetRoot()
 		if arg3 == nil then
 			arg3 = main.ownerHandle

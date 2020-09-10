@@ -384,10 +384,10 @@ local function FormatTagText(content_array, group, isControllerMode)
 		if element ~= nil then
 			local b,result = xpcall(function()
 				if element.label_txt ~= nil then
-					print(element.label_txt)
 					local searchText = StringHelpers.Trim(element.label_txt.htmlText):gsub("[\r\n]", "")
 					local tag = replaceText[searchText]
 					local data = TagTooltips[tag]
+					print(tag, searchText)
 					if data ~= nil then
 						local finalText = ""
 						local tagName = ""
@@ -415,8 +415,9 @@ local function FormatTagText(content_array, group, isControllerMode)
 						end
 						if finalText ~= "" then
 							element.label_txt.htmlText = finalText
+							updatedText = true
 						end
-						updatedText = true
+						print(string.format("[%s] htmlText(%s) finalText(%s)", group.name, element.label_txt.htmlText, finalText))
 					end
 					-- if Ext.IsDeveloperMode() then
 					-- 	PrintDebug(string.format("(%s) label_txt.htmlText(%s) color(%s)", group.groupID, element.label_txt.htmlText, element.label_txt.textColor))

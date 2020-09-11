@@ -1,6 +1,9 @@
 treasure itemtypes "Common","Uncommon","Rare","Epic","Legendary","Divine","Unique"
+
 new treasuretable "ST_LeaderLib_LeaderTrader"
-new subtable "1,4"
-object category "IngredientEarly",1,1,0,0,0,0,0,0
-new subtable "1,1"
-object category "T_TraderEquipment",1,1,0,0,0,0,0,0
+new subtable "-4"
+object category "T_ST_Ingredients",1,0,0,0,0,0,0,0
+new subtable "-1"
+object category "T_TraderEquipment",1,0,0,0,0,0,0,0
+new subtable "-1"
+object category "Fish",1,0,0,0,0,0,0,0

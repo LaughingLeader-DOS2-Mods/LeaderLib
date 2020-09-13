@@ -15,7 +15,7 @@ local wingsOverride = {
 
 local wingsVisualProps = {
 	Type = "Status",
-	Action = "LEADERLIB_WINGS_VISUAL",
+	Action = "LEADERLIB_WINGS",
 	Context = {"Self"},
 	Duration = 18.0,
 	StatusChance = 1.0,
@@ -48,7 +48,7 @@ end
 local function PropertiesHasWings(props)
 	for i,v in pairs(props) do
 		if v.Type == "Status" and v.Action == "WINGS" then
-			return true,v.Context,v.Duration
+			return i
 		end
 	end
 	return false
@@ -95,11 +95,10 @@ function OverrideWings(syncMode)
 					props = Ext.StatGetAttribute(statName, attribute)
 				end
 				if props ~= nil then
-					local hasWingsStatus,context,duration = PropertiesHasWings(props)
-					if hasWingsStatus and not PropertiesHasWingsVisual(props) then
-						wingsVisualProps.Context = context
-						wingsVisualProps.Duration = duration
-						table.insert(props, wingsVisualProps)
+					-- Swaps WINGS for LEADERLIB_WINGS
+					local wingsPropIndex = PropertiesHasWings(props)
+					if wingsPropIndex ~= false and not PropertiesHasWingsVisual(props) then
+						props[wingsPropIndex].Action = "LEADERLIB_WINGS"
 						if syncMode == true then
 							stat[attribute] = props
 							Ext.SyncStat(statName, false)
@@ -113,4 +112,21 @@ function OverrideWings(syncMode)
 			end
 		end
 	end
+end
+
+if Ext.IsServer() then
+	Ext.RegisterOsirisListener("GameStarted", 2, "after", function(region, isEditorMode)
+		if Features.WingsWorkaround == true and IsGameLevel(region) == 1 and GlobalGetFlag("LeaderLib_SetupWingsWorkaroundForRegion") == 0 then
+			for i,uuid in pairs(Ext.GetAllCharacters(region)) do
+				if HasActiveStatus(uuid, "WINGS") == 1 then
+					local turns = GetStatusTurns(uuid, "WINGS")
+					ApplyStatus(uuid, "LEADERLIB_WINGS", math.max(-1.0, turns * 6.0), 0, uuid)
+				end
+			end
+			GlobalSetFlag("LeaderLib_SetupWingsWorkaroundForRegion")
+		end
+	end)
+	Ext.RegisterOsirisListener("RegionEnded", 1, "after", function(region)
+		GlobalClearFlag("LeaderLib_SetupWingsWorkaroundForRegion")
+	end)
 end

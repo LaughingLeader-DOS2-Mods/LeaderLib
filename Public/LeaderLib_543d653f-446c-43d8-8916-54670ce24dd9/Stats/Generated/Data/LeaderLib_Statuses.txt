@@ -421,7 +421,7 @@ data "Act part" "0"
 data "Hearing" "1"
 data "Duration" "0"
 
-new entry "LEADERLIB_WINGS_VISUAL"
+new entry "LEADERLIB_WINGS"
 type "StatusData"
 data "StatusType" "FLOATING"
 data "ForGameMaster" "No"

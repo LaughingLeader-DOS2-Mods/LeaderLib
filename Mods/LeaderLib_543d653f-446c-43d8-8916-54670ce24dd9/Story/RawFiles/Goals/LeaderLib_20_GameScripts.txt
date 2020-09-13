@@ -7,6 +7,7 @@ PROC
 LeaderLib_GameScripts_InitSettings()
 THEN
 LeaderLib_GameScripts_RegisterScript("LeaderLib.GameScripts", "LeaderLib_21_GS_RequirementEvents");
+LeaderLib_GameScripts_RegisterScript("LeaderLib.GameScripts", "LeaderLib_21_GS_Statuses");
 
 //REGION REGISTERING
 PROC

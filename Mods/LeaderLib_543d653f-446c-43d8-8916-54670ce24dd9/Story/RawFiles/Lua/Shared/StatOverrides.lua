@@ -207,6 +207,7 @@ local function OverrideStats(syncMode, data, forceSync)
 			end
 		end
 	end
+	OverrideWings(syncMode)
 end
 Ext.RegisterListener("StatsLoaded", OverrideStats)
 

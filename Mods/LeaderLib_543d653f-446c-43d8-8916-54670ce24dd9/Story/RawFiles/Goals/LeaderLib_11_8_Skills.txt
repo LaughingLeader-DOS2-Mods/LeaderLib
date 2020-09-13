@@ -4,8 +4,8 @@ INITSECTION
 LeaderLib_Skills_InitSettings();
 
 KBSECTION
-//REGION SETTINGS
 
+//REGION SETTINGS
 PROC
 LeaderLib_Skills_InitSettings()
 THEN

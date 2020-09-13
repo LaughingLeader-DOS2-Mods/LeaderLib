@@ -1,0 +1,37 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+KBSECTION
+//REGION WingsWorkaround
+IF
+CharacterStatusRemoved(_Char, "WINGS", _)
+AND
+DB_LeaderLib_Statuses_Temp_RemoveWings(_Char)
+THEN
+NOT DB_LeaderLib_Statuses_Temp_RemoveWings(_Char);
+RemoveStatus(_Char, "LEADERLIB_WINGS_VISUAL");
+
+IF
+CharacterStatusRemoved(_Char, "LEADERLIB_WINGS_VISUAL", _)
+AND
+DB_LeaderLib_Statuses_Temp_RemoveWings(_Char)
+THEN
+NOT DB_LeaderLib_Statuses_Temp_RemoveWings(_Char);
+RemoveStatus(_Char, "WINGS");
+
+IF
+CharacterStatusApplied(_Char, "LEADERLIB_WINGS_VISUAL", _)
+AND
+GetStatusTurns(_Char, "LEADERLIB_WINGS_VISUAL", _Turns)
+AND
+Real(_Turns, _TurnsR)
+AND
+RealProduct(_TurnsR, 6.0, _Duration)
+THEN
+ApplyStatus(_Char, "WINGS", _Duration, 0, _Char);
+DB_LeaderLib_Statuses_Temp_RemoveWings(_Char);
+//END_REGION
+
+EXITSECTION
+ENDEXITSECTION
+ParentTargetEdge "LeaderLib_20_GameScripts"

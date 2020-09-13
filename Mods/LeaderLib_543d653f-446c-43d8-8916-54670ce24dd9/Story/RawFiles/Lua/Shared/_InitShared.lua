@@ -129,19 +129,20 @@ TranslatedStringEntries = {}
 
 ---@type table<string,boolean>
 Features = {
-	ResistancePenetration = false,
-	HideArmor = 0,
-	HideMagicArmor = 0,
-	HideVitality = 0,
-	RacialTalentsDisplayFix = true,
-	ReplaceTooltipPlaceholders = false,
-	TooltipGrammarHelper = false,
-	StatusParamSkillDamage = false,
 	BackstabCalculation = false,
 	FixChaosDamageDisplay = false,
 	FixCorrosiveMagicDamageDisplay = false,
 	FixItemAPCost = true,
+	HideArmor = 0,
+	HideMagicArmor = 0,
+	HideVitality = 0,
+	RacialTalentsDisplayFix = true,
 	ReduceTooltipSize = true,
+	ReplaceTooltipPlaceholders = false,
+	ResistancePenetration = false,
+	StatusParamSkillDamage = false,
+	TooltipGrammarHelper = false,
+	WingsWorkaround = false,
 }
 
 if Ext.IsDeveloperMode() then

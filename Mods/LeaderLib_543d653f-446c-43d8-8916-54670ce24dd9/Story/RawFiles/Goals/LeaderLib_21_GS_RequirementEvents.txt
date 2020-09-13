@@ -46,4 +46,4 @@ LeaderLib_Requirements_RequirementLocked(_RequirementID);
 EXITSECTION
 
 ENDEXITSECTION
-ParentTargetEdge "LeaderLib_19_ToggledScripts"
+ParentTargetEdge "LeaderLib_20_GameScripts"

@@ -91,15 +91,19 @@ function GameHelpers.Status.IsDisabled(obj, checkForLoseControl)
 	return false
 end
 
----Set an active status' turns.
+---Set an active status' turns, or apply if if applyIfMissing is not false.
 ---@param obj string
 ---@param statusId string
 ---@param turns integer
 ---@param allInstances boolean|nil
+---@param applyIfMissing boolean|nil
 ---@return boolean
-function GameHelpers.Status.SetTurns(obj, statusId, turns, allInstances)
+function GameHelpers.Status.SetTurns(obj, statusId, turns, allInstances, applyIfMissing)
 	if HasActiveStatus(obj, statusId) == 0 then
-		--ApplyStatus(obj, statusId, turns * 6.0, 0, obj)
+		if applyIfMissing ~= false then
+			ApplyStatus(obj, statusId, turns * 6.0, 0, obj)
+			return true
+		end
 		return false
 	else
 		if ObjectIsCharacter(obj) == 1 then

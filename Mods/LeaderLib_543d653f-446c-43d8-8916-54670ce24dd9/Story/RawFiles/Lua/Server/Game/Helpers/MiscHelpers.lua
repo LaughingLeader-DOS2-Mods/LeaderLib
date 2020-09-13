@@ -115,11 +115,19 @@ end
 function GameHelpers.SetScale(uuid, scale)
 	scale = scale or 1.0
 	local isItem = false
-	if ObjectIsCharacter(uuid) == 1 then
-		Ext.GetCharacter(uuid):SetScale(scale)
-	elseif ObjectIsItem(uuid) == 1 then
-		Ext.GetItem(uuid):SetScale(scale)
-		isItem = true
+	if uuid.SetScale ~= nil then
+		uuid:SetScale(scale)
+		if ObjectIsItem(uuid.MyGuid) == 1 then
+			isItem = true
+		end
+		uuid = uuid.MyGuid
+	else
+		if ObjectIsCharacter(uuid) == 1 then
+			Ext.GetCharacter(uuid):SetScale(scale)
+		elseif ObjectIsItem(uuid) == 1 then
+			Ext.GetItem(uuid):SetScale(scale)
+			isItem = true
+		end
 	end
 	Ext.BroadcastMessage("LeaderLib_SyncScale", Classes.MessageData:CreateFromTable("SyncScaleData", {
 		UUID = uuid,

@@ -92,8 +92,8 @@ function GameHelpers.ExplodeProjectile(source, target, skill, skillLevel)
     NRD_ProjectilePrepareLaunch()
     NRD_ProjectileSetString("SkillId", skill)
 
-    local level = skillLevel or 1
-    if source ~= nil then
+    local level = skillLevel or nil
+    if level == nil and source ~= nil then
         if ObjectIsCharacter(source) == 1 then
             level = CharacterGetLevel(source)
         else
@@ -107,6 +107,7 @@ function GameHelpers.ExplodeProjectile(source, target, skill, skillLevel)
     elseif skillLevel == nil and type(target) == "string" and ObjectIsCharacter(target) == 1 then
         level = CharacterGetLevel(target)
     end
+    if level == nil then level = 1 end
     NRD_ProjectileSetInt("CasterLevel", level)
 
     if type(target) == "string" then

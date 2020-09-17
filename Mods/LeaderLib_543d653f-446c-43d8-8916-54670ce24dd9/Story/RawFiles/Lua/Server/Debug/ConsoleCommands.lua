@@ -617,7 +617,7 @@ Ext.RegisterConsoleCommand("llshoot", function(cmd, forceHit, source, target, sk
     NRD_ProjectileLaunch()
 end)
 
-Ext.RegisterConsoleCommand("addpoint", function(cmd, pointType, amount)
+Ext.RegisterConsoleCommand("addpoints", function(cmd, pointType, amount)
 	local host = CharacterGetHostCharacter()
 	if amount == nil then
 		amount = 1
@@ -634,7 +634,9 @@ Ext.RegisterConsoleCommand("addpoint", function(cmd, pointType, amount)
 	elseif pointType == "attribute" then
 		CharacterAddAttributePoint(host, amount)
 	elseif pointType == "civil" then
-		CharacterAddCivilAbilityPoint(host, amount)
+		CharacterAddAttributePoint(host, amount)
+	elseif pointType == "talent" then
+		CharacterAddTalentPoint(host, amount)
 	elseif pointType == "source" then
 		CharacterAddSourcePoints(host, amount)
 	elseif pointType == "sourcemax" then

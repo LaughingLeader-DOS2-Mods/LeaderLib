@@ -43,7 +43,7 @@ StringHelpers.Capitalize = Capitalize
 ---Source: http://www.wellho.net/resources/ex.php4?item=u105/spjo
 ---@param delimiter string
 ---@param list table
-local function Join(delimiter, list)
+local function Join(delimiter, list, uniqueOnly)
 	local len = #list
 	if len == 0 then
 		return ""
@@ -52,7 +52,11 @@ local function Join(delimiter, list)
 	end
 	local string = list[1]
 	for i = 2, len do
-		string = string .. delimiter .. list[i]
+		if uniqueOnly == true and not string.find(string, list[i]) then
+			string = string .. delimiter .. list[i]
+		elseif not uniqueOnly then
+			string = string .. delimiter .. list[i]
+		end
 	end
 	return string
 end

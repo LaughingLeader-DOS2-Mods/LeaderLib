@@ -190,10 +190,28 @@ end
 
 function SettingsData:ApplyVariables(uuid)
 	for name,data in pairs(self.Variables) do
-		if type(data.Value) == "number" then
-			Osi.LeaderLib_GlobalSettings_SetIntegerVariable(uuid, name, math.tointeger(data.Value))
+		if data ~= nil and type(data.Value) == "number" then
+			local intVal = math.tointeger(data.Value) or math.ceil(data.Value)
+			if intVal ~= nil then
+				Osi.LeaderLib_GlobalSettings_SetIntegerVariable(uuid, name, intVal)
+			else
+				Ext.PrintError("[LeaderLib:ModSettingsClasses.lua:ApplyVariables] Error converting variable",name,"to integer.")
+			end
+		elseif data == nil then
+			Ext.PrintError("[LeaderLib:ModSettingsClasses.lua:ApplyVariables] Variable",name,"is nil.")
 		end
 	end
+end
+
+function SettingsData:GetVariable(name, fallback)
+	local data = self.Variables[name]
+	if data ~= nil then
+		if type(fallback) == "number" and type(data.Value) == "string" then
+			return tonumber(data.Value) or fallback
+		end
+		return data.Value or fallback
+	end
+	return fallback
 end
 
 ---@class ProfileSettings
@@ -229,7 +247,8 @@ local ModSettings = {
 	Global = nil,
 	Version = -1,
 	---@type function<SettingaData,string,any>
-	UpdateVariable = nil
+	UpdateVariable = nil,
+	LoadedExternally = false
 }
 
 ModSettings.__index = ModSettings

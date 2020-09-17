@@ -25,6 +25,9 @@ function SettingsManager.Remove(uuid)
 	end
 end
 
+---@param uuid string
+---@param createIfMissing boolean|nil
+---@return ModSettings|nil
 function SettingsManager.GetMod(uuid, createIfMissing)
 	if uuid ~= nil and uuid ~= "" then
 		for i,v in pairs(GlobalSettings.Mods) do
@@ -32,7 +35,7 @@ function SettingsManager.GetMod(uuid, createIfMissing)
 				return v
 			end
 		end
-		if createIfMissing then
+		if createIfMissing == true then
 			local settings = ModSettings:Create(uuid)
 			table.insert(GlobalSettings.Mods, settings)
 			return settings
@@ -81,6 +84,8 @@ local function ParseModData(uuid, tbl)
 	if not Ext.IsModLoaded(uuid) and modSettings ~= nil then
 		modSettings.Name = tbl.Name or ""
 	end
+
+	modSettings.LoadedExternally = true
 
 	if not isOldModSettings then
 		if tbl.Global ~= nil then
@@ -159,7 +164,7 @@ function LoadGlobalSettings()
 		end
 		if #Listeners.ModSettingsLoaded > 0 then
 			for i,callback in pairs(Listeners.ModSettingsLoaded) do
-				local status,err = xpcall(callback, debug.traceback)
+				local status,err = xpcall(callback, debug.traceback, GlobalSettings)
 				if not status then
 					Ext.PrintError("[LeaderLib:LoadGlobalSettings] Error invoking callback for ModSettingsLoaded:")
 					Ext.PrintError(err)

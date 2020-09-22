@@ -309,27 +309,27 @@ local function RegisterControllerTooltipEvents()
 		end, "After")
 	end
 
-	local debugCalls = {
-		"slotOver",
-		"itemDollOver",
-	}
+	-- local debugCalls = {
+	-- 	"slotOver",
+	-- 	"itemDollOver",
+	-- }
 
-	for i,v in pairs(debugCalls) do
-		Ext.RegisterUINameCall(v, function(ui, method, ...)
-			local matched = false
-			local id = ui:GetTypeId()
-			for name,type in pairs(UITYPE) do
-				if type == id then
-					print(string.format("[%s(%s)]:%s params(%s)", name, id, method, Ext.JsonStringify({...})))
-					matched = true
-					break
-				end
-			end
-			if not matched then
-				print(string.format("[%s(%s)]:%s params(%s)", ui:GetRoot().name, id, method, Ext.JsonStringify({...})))
-			end
-		end)
-	end
+	-- for i,v in pairs(debugCalls) do
+	-- 	Ext.RegisterUINameCall(v, function(ui, method, ...)
+	-- 		local matched = false
+	-- 		local id = ui:GetTypeId()
+	-- 		for name,type in pairs(UITYPE) do
+	-- 			if type == id then
+	-- 				print(string.format("[%s(%s)]:%s params(%s)", name, id, method, Ext.JsonStringify({...})))
+	-- 				matched = true
+	-- 				break
+	-- 			end
+	-- 		end
+	-- 		if not matched then
+	-- 			print(string.format("[%s(%s)]:%s params(%s)", ui:GetRoot().name, id, method, Ext.JsonStringify({...})))
+	-- 		end
+	-- 	end)
+	-- end
 end
 
 Ext.RegisterListener("SessionLoaded", function()

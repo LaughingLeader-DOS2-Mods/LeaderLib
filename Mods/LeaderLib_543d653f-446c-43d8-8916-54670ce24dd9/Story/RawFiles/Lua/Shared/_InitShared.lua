@@ -1,5 +1,7 @@
 function PrintDebug(...)
 	if Ext.IsDeveloperMode() then
+		--local lineNum = debug.getinfo(1).currentline
+		--local lineInfo = string.format("[%s:%s]", currentFileName(), debug.getinfo(1).currentline)
 		print(...)
 	end
 end

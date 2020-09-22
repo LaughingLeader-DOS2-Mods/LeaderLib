@@ -674,6 +674,7 @@ function TooltipHooks:RegisterControllerHooks()
 		Ext.RegisterUICall(statsPanel, "selectCustomStat", function(ui, method, id)
 			self:OnRequestConsoleExamineTooltip(ui, method, id)
 		end)
+		-- Disabled for now since this function doesn't include any ID for the tag.
 		-- Ext.RegisterUICall(statsPanel, "selectTag", function(ui, method, emptyWorthlessTagTooltip)
 		-- 	print(method, emptyWorthlessTagTooltip)
 		-- 	local main = ui:GetRoot()

@@ -42,6 +42,18 @@ local function AddModSettingsEntry(ui, mainMenu, name, v)
 				tooltip = v.Tooltip.Value
 			end
 		end
+		if displayName == name or displayName == "stringkey" then
+			local stringKeyText = Ext.GetTranslatedStringFromKey(name)
+			if stringKeyText ~= nil and stringKeyText ~= "" then
+				displayName = stringKeyText
+				if tooltip == "Global Flag" then
+					local tooltipStringKeyText = Ext.GetTranslatedStringFromKey(name.."_Description")
+					if tooltipStringKeyText ~= nil and tooltipStringKeyText ~= "" then
+						tooltip = tooltipStringKeyText
+					end
+				end
+			end
+		end
 		mainMenu.addMenuCheckbox(ModMenuManager.LastID, displayName, true, state, false, tooltip)
 		ModMenuManager.Controls[ModMenuManager.LastID] = v
 		ModMenuManager.LastID = ModMenuManager.LastID + 1

@@ -134,13 +134,10 @@ function SettingsData:AddFlag(flag, flagType, enabled, displayName, tooltip)
 		self.Flags[flag] = FlagData:Create(flag, flagType, enabled, displayName, tooltip)
 	else
 		local existing = self.Flags[flag]
-		existing.Enabled = enabled
+		existing.Enabled = enabled or existing.Enabled
 		existing.FlagType = flagType or existing.FlagType
 		existing.DisplayName = displayName or existing.DisplayName
 		existing.Tooltip = tooltip or existing.Tooltip
-		if flag == "LLENEMY_EnemyLevelingEnabled" then
-			print(flag, existing.DisplayName, tooltip, Ext.IsClient())
-		end
 	end
 end
 
@@ -170,6 +167,21 @@ function SettingsData:AddVariable(name, value, displayName, tooltip, min, max, i
 		existing.Max = max or existing.Max
 		existing.Interval = interval or existing.Interval
 	end
+end
+
+local function skey(key)
+	local text,_ = Ext.GetTranslatedStringFromKey(key)
+	return text
+end
+
+---@param name string
+---@param key string The string key to use. Key_Description will automatically be used for the tooltip.
+---@param value string|integer|number|number[]
+---@param min any
+---@param max any
+---@param interval any
+function SettingsData:AddLocalizedVariable(name, key, value, min, max, interval)
+	self:AddVariable(name, value, skey(key), skey(key.."_Description"), min, max, interval)
 end
 
 function SettingsData:UpdateFlags()

@@ -13,14 +13,70 @@ Ext.RegisterNetListener("LeaderLib_SyncFeatures", function(call, dataString)
 	Features = Ext.JsonParse(dataString)
 end)
 
+local function SetGlobalSettingsMetatables()
+	for _,v in pairs(GlobalSettings.Mods) do
+		setmetatable(v, Classes.ModSettingsClasses.ModSettings)
+		Classes.ModSettingsClasses.SettingsData.SetMetatables(v.Global)
+		setmetatable(v.Global, Classes.ModSettingsClasses.SettingsData)
+		for _,p in pairs(v.Profiles) do
+			Classes.ModSettingsClasses.SettingsData.SetMetatables(p.Settings)
+			setmetatable(p, Classes.ModSettingsClasses.ProfileSettings)
+			setmetatable(p.Settings, Classes.ModSettingsClasses.SettingsData)
+		end
+	end
+end
+
+---@param settings GlobalSettings
+local function SyncGlobalSettings(settings)
+	if GlobalSettings ~= nil then
+		GlobalSettings.Version = settings.Version
+		for k,v in pairs(settings.Mods) do
+			if GlobalSettings.Mods[k] == nil then
+				print("[CLIENT] GlobalSettings ",k,v.Name," is nil.")
+				GlobalSettings.Mods[k] = v
+			else
+				local existing = GlobalSettings.Mods[k]
+				if existing.Global == nil then
+					existing.Global = v.Global
+				else
+					existing.Global:CopySettings(v.Global)
+				end
+				if existing.Profiles == nil then
+					existing.Profiles = v.Profiles
+				else
+					for k2,v2 in pairs(v.Profiles) do
+						local existingProfile = existing.Profiles[k2]
+						if existingProfile ~= nil then
+							existingProfile.Settings:CopySettings(v2.Settings)
+						else
+							existing.Profiles[k2] = v2
+						end
+					end
+				end
+				existing.Version = v.Version
+			end
+		end
+		print("[CLIENT] Updated GlobalSettings.")
+	else
+		print("[CLIENT] GlobalSettings is nil.")
+		GlobalSettings = settings
+	end
+	SetGlobalSettingsMetatables()
+end
+
 Ext.RegisterNetListener("LeaderLib_SyncGlobalSettings", function(call, dataString)
-	GlobalSettings = Ext.JsonParse(dataString)
+	local settings = Ext.JsonParse(dataString)
+	if settings ~= nil then
+		SyncGlobalSettings(settings)
+	end
 end)
 
 Ext.RegisterNetListener("LeaderLib_SyncAllSettings", function(call, dataString)
 	local data = Ext.JsonParse(dataString)
 	if data.Features ~= nil then Features = data.Features end
-	if data.GlobalSettings ~= nil then GlobalSettings = data.GlobalSettings end
+	if data.GlobalSettings ~= nil then 
+		SyncGlobalSettings(data.GlobalSettings)
+	end
 	if data.GameSettings ~= nil then 
 		GameSettings = data.GameSettings
 		--SyncStatOverrides(GameSettings)

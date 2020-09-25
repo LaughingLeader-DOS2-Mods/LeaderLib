@@ -2,8 +2,11 @@
 local FlagData = {
 	Type = "FlagData",
 	FlagType = "Global",
+	ID = "",
 	Targets = nil,
-	Enabled = false
+	Enabled = false,
+	DisplayName = nil,
+	Tooltip = nil,
 }
 
 FlagData.__index = FlagData
@@ -11,12 +14,19 @@ FlagData.__index = FlagData
 ---@param flag string
 ---@param flagType string Global|User|Character
 ---@param enabled boolean
-function FlagData:Create(flag, flagType, enabled)
+function FlagData:Create(flag, flagType, enabled, displayName, tooltip)
     local this =
     {
+		ID = flag,
 		FlagType = flagType or "Global",
-		Enabled = enabled or false
+		Enabled = enabled or false,
 	}
+	if displayName ~= nil then
+		this.DisplayName = displayName
+	end
+	if tooltip ~= nil then
+		this.Tooltip = tooltip
+	end
 	setmetatable(this, self)
     return this
 end
@@ -47,18 +57,46 @@ end
 ---@class VariableData
 local VariableData = {
 	Type = "VariableData",
+	ID = "",
 	Value = "",
-	Targets = nil
+	Targets = nil,
+	DisplayName = nil,
+	Tooltip = nil,
+	Min = 0,
+	Max = 999,
+	Interval = 1,
 }
 
 VariableData.__index = VariableData
 
+---@param id string
 ---@param value string|integer|number|number[]
-function VariableData:Create(value)
+---@param displayName string
+---@param tooltip string
+---@param min any
+---@param max any
+---@param interval any
+function VariableData:Create(id, value, displayName, tooltip, min, max, interval)
     local this =
     {
-		Value = value or ""
+		ID = id,
+		Value = value or "",
 	}
+	if displayName ~= nil then
+		this.DisplayName = displayName
+	end
+	if tooltip ~= nil then
+		this.Tooltip = tooltip
+	end
+	if min ~= nil then
+		this.Min = min
+	end
+	if max ~= nil then
+		this.Max = max
+	end
+	if interval ~= nil then
+		this.Interval = interval
+	end
 	setmetatable(this, self)
     return this
 end
@@ -89,12 +127,20 @@ end
 ---@param flag string
 ---@param flagType string Global|User|Character
 ---@param enabled boolean|nil
-function SettingsData:AddFlag(flag, flagType, enabled)
+---@param displayName string
+---@param tooltip string
+function SettingsData:AddFlag(flag, flagType, enabled, displayName, tooltip)
 	if self.Flags[flag] == nil then
-		local flagVar = FlagData:Create(flag, flagType, enabled)
-		self.Flags[flag] = flagVar
+		self.Flags[flag] = FlagData:Create(flag, flagType, enabled, displayName, tooltip)
 	else
-		self.Flags[flag].Enabled = enabled
+		local existing = self.Flags[flag]
+		existing.Enabled = enabled
+		existing.FlagType = flagType or existing.FlagType
+		existing.DisplayName = displayName or existing.DisplayName
+		existing.Tooltip = tooltip or existing.Tooltip
+		if flag == "LLENEMY_EnemyLevelingEnabled" then
+			print(flag, existing.DisplayName, tooltip, Ext.IsClient())
+		end
 	end
 end
 
@@ -107,12 +153,22 @@ end
 
 ---@param name string
 ---@param value string|integer|number|number[]
-function SettingsData:AddVariable(name, value)
+---@param displayName string
+---@param tooltip string
+---@param min any
+---@param max any
+---@param interval any
+function SettingsData:AddVariable(name, value, displayName, tooltip, min, max, interval)
 	if self.Variables[name] == nil then
-		local varData = VariableData:Create(value)
-		self.Variables[name] = varData
+		self.Variables[name] = VariableData:Create(name, value, displayName, tooltip, min, max, interval)
 	else
-		self.Variables[name].Value = value
+		local existing = self.Variables[name]
+		existing.Value = value
+		existing.DisplayName = displayName or existing.DisplayName
+		existing.Tooltip = tooltip or existing.Tooltip
+		existing.Min = min or existing.Min
+		existing.Max = max or existing.Max
+		existing.Interval = interval or existing.Interval
 	end
 end
 
@@ -214,6 +270,58 @@ function SettingsData:GetVariable(name, fallback)
 	return fallback
 end
 
+function SettingsData:Export()
+	local export = {Flags = {}, Variables = {}}
+	for name,v in pairs(self.Flags) do
+		local data = {Enabled = v.Enabled, FlagType = v.FlagType}
+		if v.Targets ~= nil then
+			data.Targets = v.Targets
+		end
+		export.Flags[name] = data
+	end
+	for name,v in pairs(self.Variables) do
+		local data = {Value = v.Value}
+		if v.Targets ~= nil then
+			data.Targets = v.Targets
+		end
+		export.Variables[name] = data
+	end
+	return export
+end
+
+function SettingsData:SetMetatables()
+	for _,v in pairs(self.Flags) do
+		setmetatable(v, FlagData)
+		if v.DisplayName ~= nil and v.DisplayName.Handle ~= nil then
+			setmetatable(v.DisplayName, Classes.TranslatedString)
+		end
+		if v.Tooltip ~= nil and v.Tooltip.Handle ~= nil then
+			setmetatable(v.Tooltip, Classes.TranslatedString)
+		end
+	end
+	for _,v in pairs(self.Variables) do
+		setmetatable(v, VariableData)
+		if v.DisplayName ~= nil and v.DisplayName.Handle ~= nil then
+			setmetatable(v.DisplayName, Classes.TranslatedString)
+		end
+		if v.Tooltip ~= nil and v.Tooltip.Handle ~= nil then
+			setmetatable(v.Tooltip, Classes.TranslatedString)
+		end
+	end
+	setmetatable(self, SettingsData)
+end
+
+---@param source SettingsData
+function SettingsData:CopySettings(source)
+	for name,v in pairs(source.Flags) do
+		self:AddFlag(name, v.FlagType, v.Enabled, v.DisplayName, v.Tooltip)
+	end
+	for name,v in pairs(source.Variables) do
+		self:AddVariable(name, v.Value, v.DisplayName, v.Tooltip, v.Min, v.Max, v.Interval)
+	end
+	self:SetMetatables()
+end
+
 ---@class ProfileSettings
 local ProfileSettings = {
 	Type = "ProfileSettings",
@@ -244,11 +352,13 @@ local ModSettings = {
 	---@type table<string, ProfileSettings>
 	Profiles = {},
 	---@type SettingsData
-	Global = nil,
+	Global = {},
 	Version = -1,
 	---@type function<SettingaData,string,any>
 	UpdateVariable = nil,
-	LoadedExternally = false
+	LoadedExternally = false,
+	---@type function<string, table<string, string[]>>
+	GetMenuOrder = nil,
 }
 
 ModSettings.__index = ModSettings
@@ -327,10 +437,16 @@ function ModSettings:Copy()
 	local copy = {
 		UUID = self.UUID,
 		Name = self.Name,
-		Profiles = self.Profiles,
-		Global = self.Global,
+		Profiles = {},
+		Global = self.Global:Export(),
 		Version = self.Version
 	}
+	for k,v in pairs(self.Profiles) do
+		copy.Profiles[k] = {
+			ID = v.ID,
+			Settings = v.Settings:Export()
+		}
+	end
 	return copy
 end
 

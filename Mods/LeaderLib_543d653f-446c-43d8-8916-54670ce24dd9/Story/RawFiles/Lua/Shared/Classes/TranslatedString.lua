@@ -1,5 +1,6 @@
 ---@class TranslatedString
 local TranslatedString = {
+	Type = "TranslatedString",
 	Handle = "",
 	Content = "",
 	Value = ""
@@ -24,6 +25,8 @@ end
 function TranslatedString:Update()
 	if self.Handle ~= "" and self.Handle ~= nil then
 		self.Value = Ext.GetTranslatedString(self.Handle, self.Content) or self.Content
+	else
+		self.Value = self.Content
 	end
 	if StringHelpers.IsNullOrEmpty(self.Value) then
 		self.Value = self.Content

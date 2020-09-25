@@ -1,3 +1,5 @@
+Ext.Require("Client/UI/ModMenu/ModMenuManager.lua")
+Ext.Require("Client/UI/ModMenu/OptionsSettingsHooks.lua")
 
 local MODMENU_BUTTON_ID = 734634
 local ModButtons = {}
@@ -35,21 +37,44 @@ end
 
 local function SetupOptionsSettings()
 	addedModMenuToOptions = false
-	local ui = Ext.GetBuiltinUI("Public/Game/GUI/gameMenu.swf")
+	local ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf")
 	if ui ~= nil then
-		Ext.RegisterUICall(ui, "registeranchorId", OnGameMenuEvent)
-		Ext.RegisterUICall(ui, "setAnchor", OnGameMenuEvent)
-		Ext.RegisterUICall(ui, "PlaySound", OnGameMenuEvent)
-		Ext.RegisterUICall(ui, "requestCloseUI", OnGameMenuEvent)
-		Ext.RegisterUICall(ui, "buttonPressed", OnGameMenuEvent)
-		Ext.RegisterUICall(ui, "onEventInit", OnGameMenuEvent)
-		Ext.RegisterUICall(ui, "openMenu", OnGameMenuEvent)
-		Ext.RegisterUICall(ui, "executeSelected", OnGameMenuEvent)
-		Ext.RegisterUICall(ui, "setCursorPosition", OnGameMenuEvent)
-		Ext.RegisterUICall(ui, "onGameMenuButtonAdded", OnGameMenuEvent)
-		Ext.RegisterUICall(ui, "onGameMenuSetup", OnGameMenuEvent)
+		-- Ext.RegisterUICall(ui, "registeranchorId", OnGameMenuEvent)
+		-- Ext.RegisterUICall(ui, "setAnchor", OnGameMenuEvent)
+		-- Ext.RegisterUICall(ui, "PlaySound", OnGameMenuEvent)
+		-- Ext.RegisterUICall(ui, "requestCloseUI", OnGameMenuEvent)
+		-- Ext.RegisterUICall(ui, "buttonPressed", OnGameMenuEvent)
+		-- Ext.RegisterUICall(ui, "onEventInit", OnGameMenuEvent)
+		-- Ext.RegisterUICall(ui, "openMenu", OnGameMenuEvent)
+		-- Ext.RegisterUICall(ui, "executeSelected", OnGameMenuEvent)
+		-- Ext.RegisterUICall(ui, "setCursorPosition", OnGameMenuEvent)
+		-- Ext.RegisterUICall(ui, "onGameMenuButtonAdded", OnGameMenuEvent)
+		-- Ext.RegisterUICall(ui, "onGameMenuSetup", OnGameMenuEvent)
+		---@param ui UIObject
+		Ext.RegisterUIInvokeListener(ui, "parseUpdateArray", function(ui, ...)
+			print({...})
+			--UI.PrintArray(ui, "update_Array")
+			local main = ui:GetRoot()
+			local total = #main.update_Array
+			print("update_Array")
+			for i=0,total do
+				local val = main.update_Array[i]
+				print(string.format("[%i] = %s", i, val))
+			end
+		end)
+		Ext.RegisterUIInvokeListener(ui, "parseBaseUpdateArray", function(ui, ...)
+			print({...})
+			--UI.PrintArray(ui, "update_Array")
+			local main = ui:GetRoot()
+			local total = #main.baseUpdate_Array
+			print("baseUpdate_Array")
+			for i=0,total do
+				local val = main.baseUpdate_Array[i]
+				print(string.format("[%i] = %s", i, val))
+			end
+		end)
 	else
-		PrintDebug("[LeaderLib_ModMenuClient.lua:SetupOptionsSettings] Failed to get Public/Game/GUI/gameMenu.swf")
+		PrintDebug("[LeaderLib_ModMenuClient.lua:SetupOptionsSettings] Failed to get Public/Game/GUI/optionsSettings.swf")
 	end
 end
 
@@ -178,8 +203,8 @@ end
 
 local function OnClientMessage(event, data)
 	if data == "OpenModMenu" then
-		--OpenModMenu()
 		SetupOptionsSettings()
+		OpenModMenu()
 	end
 	if Ext.IsDeveloperMode() then
 		PrintDebug("LeaderLib_ModMenuClient.lua:OnClientMessage] Received client message.")
@@ -189,20 +214,6 @@ local function OnClientMessage(event, data)
 	end
 end
 
-local function Client_ModuleSetup()
-	--Ext.AddPathOverride("Public/Game/GUI/gameMenu.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/gameMenu.swf")
-	--PrintDebug("LeaderLib_ModMenuClient.lua:Client_ModuleSetup] Overrode gameMenu.swf with LeaderLib version.")
-end
-
-local function SessionLoaded()
-	SetupOptionsSettings()
-end
-
-if Ext.IsDeveloperMode() then
-	--Ext.RegisterNetListener("LeaderLib_OnClientMessage", OnClientMessage)
-	--Ext.RegisterListener("ModuleLoading", Client_ModuleSetup)
-	--Ext.RegisterListener("ModuleResume", Client_ModuleSetup)
-	if Ext.Version() >= 43 then
-		--Ext.RegisterListener("SessionLoaded", SetupOptionsSettings)
-	end
-end
+Ext.RegisterListener("SessionLoaded", function()
+	--SetupOptionsSettings()
+end)

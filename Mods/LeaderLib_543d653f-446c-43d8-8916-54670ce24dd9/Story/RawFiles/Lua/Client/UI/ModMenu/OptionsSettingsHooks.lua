@@ -142,6 +142,9 @@ end)
 local registeredListeners = false
 
 local function OnSwitchMenu(ui, call, id)
+	if currentMenu == MOD_MENU_ID then
+		ModMenuManager.SaveScroll(ui)
+	end
 	lastMenu = currentMenu
 	currentMenu = id
 	if id == LarianMenuID.Gameplay then

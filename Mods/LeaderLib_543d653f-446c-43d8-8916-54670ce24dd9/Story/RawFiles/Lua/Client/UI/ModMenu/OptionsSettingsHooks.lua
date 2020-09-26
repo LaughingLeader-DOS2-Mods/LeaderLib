@@ -1,91 +1,45 @@
 --[[
-[0] = 2.0
-[1] = SETTINGS
-[2] = 1.0
-[3] = 0.0
-[4] = Accept
-[5] = 1.0
-[6] = 1.0
-[7] = Cancel
-[8] = 1.0
-[9] = 2.0
-[10] = Apply
-[11] = 0.0
-[12] = 1.0
-[13] = GRAPHICS
-[14] = true
-[15] = 0.0
-[16] = 2.0
-[17] = AUDIO
-[18] = false
-[19] = 0.0
-[20] = 3.0
-[21] = GAMEPLAY
-[22] = false
-[23] = 0.0
-[24] = 4.0
-[25] = CONTROLS
-[26] = false
-[27] = nil
+==============
+    Notes
+==============
+The options setting menu is optionsSettings.swf
+When clicking on the Controls tab, the game switches the menu to optionsInput.swf and recreates the menu buttons.
+
+To allow the Mod Settings button to work from the Controls view (everything is set up for optionsSettings.swf), we get the game to switch to the Graphics tab, and then immediately switch to the Mod Settings tab.
+This seems to be the easiest option since the engine does some weird thing to switch the GUI between both options GUI files.
 ]]
 
+-- optionsSettings.swf
+local OPTIONS_SETTINGS = 45
+-- optionsInput.swf
+local OPTIONS_INPUT = 17
+local OPTIONS_ACCEPT = 1
+
+local LarianMenuID = {
+	Graphics = 1,
+	Audio = 2,
+	Gameplay = 3,
+	Controls = 4,
+}
+
+local MessageBoxButtonID = {
+	ACCEPT = 3,
+	CANCEL = 4,
+}
+
 local MOD_MENU_ID = 69
-local addedModMenuButton = false
+local lastMenu = 1
+local currentMenu = 1
+local switchToModMenu = false
 
----@param ui UIObject
-local function CreateModMenuButton(ui, method, ...)
-	local addToIndex = -1
-	local main = ui:GetRoot()
-	if main ~= nil then
-		---@type MainMenuMC
-		local mainMenu = main.mainMenu_mc
-		local total = #main.baseUpdate_Array
-		if total == 0 then
-			mainMenu.addOptionButton("MOD SETTINGS", "switchToModMenu", MOD_MENU_ID, false)
-		elseif total > 0 then
-			-- local index = total-1
-			-- main.baseUpdate_Array[index] = 0
-			-- main.baseUpdate_Array[index+1] = MOD_MENU_ID
-			-- main.baseUpdate_Array[index+2] = "MOD SETTINGS"
-			-- main.baseUpdate_Array[index+3] = false
-			mainMenu.addOptionButton("MOD SETTINGS", "switchToModMenu", MOD_MENU_ID, false)
-			--local button = mainMenu.menuBtnList.getLastElement()
-		end
-	else
-		ui:SetValue("baseUpdate_Array", 0, 27)
-		ui:SetValue("baseUpdate_Array", MOD_MENU_ID, 28)
-		ui:SetValue("baseUpdate_Array", "MOD SETTINGS", 29)
-		ui:SetValue("baseUpdate_Array", false, 30)
+Ext.RegisterNetListener("LeaderLib_ModMenu_RunParseUpdateArrayMethod", function(cmd,payload)
+	local ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf")
+	if ui ~= nil then
+		ui:Invoke("parseUpdateArray")
 	end
-
-	-- local total = #main.baseUpdate_Array
-	-- for i=0,total do
-	-- 	local val = main.baseUpdate_Array[i]
-	-- 	print(i,val)
-	-- 	if val == "CONTROLS" then
-	-- 		addToIndex = i - 2
-	-- 	elseif val == "MOD SETTINGS" or val == MOD_MENU_ID then
-	-- 		addToIndex = -1
-	-- 		break
-	-- 	end
-	-- end
-
-	-- if addToIndex > -1 then
-	-- 	local controlID = main.baseUpdate_Array[addToIndex] + 1
-	-- 	main.baseUpdate_Array[addToIndex] = 0
-	-- 	main.baseUpdate_Array[addToIndex+1] = MOD_MENU_ID
-	-- 	main.baseUpdate_Array[addToIndex+2] = "MOD SETTINGS"
-	-- 	main.baseUpdate_Array[addToIndex+3] = false
-	-- 	main.baseUpdate_Array[addToIndex+4] = 0
-	-- 	main.baseUpdate_Array[addToIndex+5] = controlID
-	-- 	main.baseUpdate_Array[addToIndex+6] = "CONTROLS"
-	-- 	main.baseUpdate_Array[addToIndex+7] = false
-	-- 	--main.baseUpdate_Array[addToIndex+8] = nil
-	-- end
-end
+end)
 
 local function SwitchToModMenu(ui, ...)
-	print("Switching to mod menu")
 	local main = ui:GetRoot()
 	---@type MainMenuMC
 	local mainMenu = main.mainMenu_mc
@@ -104,6 +58,30 @@ local function SwitchToModMenu(ui, ...)
 	end
 	ModMenuManager.CreateMenu(ui, mainMenu)
 	ModMenuManager.SetScrollPosition(ui)
+end
+
+---@param ui UIObject
+local function CreateModMenuButton(ui, method, ...)
+	local main = ui:GetRoot()
+	if main ~= nil then
+		---@type MainMenuMC
+		local mainMenu = main.mainMenu_mc
+		mainMenu.addOptionButton("MOD SETTINGS", "switchToModMenu", MOD_MENU_ID, switchToModMenu)
+		if switchToModMenu then
+			for i=0,#main.baseUpdate_Array do
+				local val = main.baseUpdate_Array[i]
+				if val == true then
+					main.baseUpdate_Array[i] = false
+					break
+				end
+			end
+			SwitchToModMenu(ui)
+		end
+	end
+	if switchToModMenu then
+		--Ext.PostMessageToServer("LeaderLib_ModMenu_SendParseUpdateArrayMethod", tostring(UI.ClientID))
+		switchToModMenu = false
+	end
 end
 
 local debugEvents = {
@@ -151,22 +129,43 @@ local debugCalls = {
 	"selectorID",
 	"menuSliderID",
 	"buttonPressed",
+	"switchMenu",
 }
 
-local OPTIONS_SETTINGS = 45
-local OPTIONS_SETTINGS2 = 17
-local OPTIONS_ACCEPT = 1
-
 Ext.RegisterNetListener("LeaderLib_ModMenu_CreateMenuButton", function(cmd, payload)
-	--local ui = Ext.GetUIByType(OPTIONS_SETTINGS2) or Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf")
 	local ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf")
-	print(cmd,payload,ui)
 	if ui ~= nil then
 		CreateModMenuButton(ui)
 	end
 end)
 
 local registeredListeners = false
+
+local function OnSwitchMenu(ui, call, id)
+	lastMenu = currentMenu
+	currentMenu = id
+	if id == LarianMenuID.Gameplay then
+		GameSettingsMenu.AddSettings(ui, true)
+	elseif id == LarianMenuID.Controls then
+
+	end
+end
+
+local function OnAcceptChanges(ui, call)
+	if currentMenu == MOD_MENU_ID then
+		ModMenuManager.SaveScroll(ui)
+		ModMenuManager.CommitChanges()
+		registeredListeners = false
+	end
+end
+
+local function OnCancelChanges(ui, call)
+	if currentMenu == MOD_MENU_ID then
+		ModMenuManager.SaveScroll(ui)
+		ModMenuManager.UndoChanges()
+		registeredListeners = false
+	end
+end
 
 Ext.RegisterListener("SessionLoaded", function()
 	if Ext.IsDeveloperMode() then
@@ -184,21 +183,86 @@ Ext.RegisterListener("SessionLoaded", function()
 		end
 	end
 
+	Ext.RegisterUITypeCall(19, "openMenu", function(ui, call)
+		currentMenu = 1
+		lastMenu = 1
+		registeredListeners = false
+	end)
+
 	Ext.RegisterUINameCall("switchToModMenu", function(ui, call, ...)
+		lastMenu = currentMenu
+		currentMenu = MOD_MENU_ID
 		SwitchToModMenu(ui)
 	end)
-	Ext.RegisterUITypeCall(45, "requestCloseUI", function(ui, call, ...)
-		ModMenuManager.SaveScroll(ui)
-		ModMenuManager.UndoChanges()
-		registeredListeners = false
+	---@param ui UIObject
+	Ext.RegisterUINameCall("switchToModMenuFromInput", function(ui, call, ...)
+		switchToModMenu = true
+		ui:ExternalInterfaceCall("switchMenu", 1)
+		--ui:ExternalInterfaceCall("requestCloseUI")
 	end)
-	Ext.RegisterUITypeCall(45, "acceptPressed", function(ui, call, ...)
-		ModMenuManager.SaveScroll(ui)
-		ModMenuManager.CommitChanges()
-		registeredListeners = false
+	Ext.RegisterUITypeCall(29, "ButtonPressed", function(ui, call, id)
+		-- Are you sure you want to discard your changes?
+		if lastMenu == MOD_MENU_ID or currentMenu == MOD_MENU_ID then
+			if id == MessageBoxButtonID.CANCEL then
+
+			elseif id == MessageBoxButtonID.ACCEPT then
+				ModMenuManager.UndoChanges()
+			end
+		end
 	end)
+
+	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "acceptPressed", OnAcceptChanges)
+	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "requestCloseUI", OnCancelChanges)
+	Ext.RegisterUITypeCall(OPTIONS_INPUT, "requestCloseUI", OnCancelChanges)
+
 	Ext.RegisterUITypeCall(1, "applyPressed", function(ui, call, ...)
 		--ModMenuManager.CommitChanges()
+	end)
+
+	---@param ui UIObject
+	Ext.RegisterUINameInvokeListener("parseUpdateArray", function(...)
+		local ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf")
+		if ui ~= nil then
+			if currentMenu == 3 then
+				GameSettingsMenu.AddSettings(ui)
+			end
+		end
+	end)
+
+	---optionsInput.swf version.
+	---@param ui UIObject
+	Ext.RegisterUINameInvokeListener("addMenuButtons", function(ui, method, ...)
+		ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsInput.swf")
+		local main = ui:GetRoot()
+		if main ~= nil then
+			---@type MainMenuMC
+			local mainMenu = main.controlsMenu_mc
+			mainMenu.addMenuButton("MOD SETTINGS", "switchToModMenuFromInput", MOD_MENU_ID, false)
+		end
+	end)
+
+	Ext.RegisterUITypeCall(OPTIONS_INPUT, "switchMenu", OnSwitchMenu)
+	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "switchMenu", OnSwitchMenu)
+
+	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "checkBoxID", function(ui, call, id, state)
+		print(call,id,state)
+		ModMenuManager.OnCheckbox(id, state)
+	end)
+	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "comboBoxID", function(ui, call, id, index)
+		print(call,id,index)
+		ModMenuManager.OnComboBox(id, index)
+	end)
+	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "selectorID", function(ui, call, id, currentSelection)
+		print(call,id,currentSelection)
+		ModMenuManager.OnSelector(id, currentSelection)
+	end)
+	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "menuSliderID", function(ui, call, id, value)
+		print(call,id,value)
+		ModMenuManager.OnSlider(id, value)
+	end)
+	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "buttonPressed", function(ui, call, id)
+		print(call,id)
+		ModMenuManager.OnButtonPressed(id)
 	end)
 
 	---@param ui UIObject
@@ -211,30 +275,29 @@ Ext.RegisterListener("SessionLoaded", function()
 			end
 			--Ext.PostMessageToServer("LeaderLib_ModMenu_CreateMenuButtonAfterDelay", tostring(UI.ClientID))
 		end
-		
 		CreateModMenuButton(ui, method, ...)
-		if not registeredListeners then
-			Ext.RegisterUICall(ui, "checkBoxID", function(ui, call, id, state)
-				print(call,id,state)
-				ModMenuManager.OnCheckbox(id, state)
-			end)
-			Ext.RegisterUICall(ui, "comboBoxID", function(ui, call, id, index)
-				print(call,id,index)
-				ModMenuManager.OnComboBox(id, index)
-			end)
-			Ext.RegisterUICall(ui, "selectorID", function(ui, call, id, currentSelection)
-				print(call,id,currentSelection)
-				ModMenuManager.OnSelector(id, currentSelection)
-			end)
-			Ext.RegisterUICall(ui, "menuSliderID", function(ui, call, id, value)
-				print(call,id,value)
-				ModMenuManager.OnSlider(id, value)
-			end)
-			Ext.RegisterUICall(ui, "buttonPressed", function(ui, call, id)
-				print(call,id)
-				ModMenuManager.OnButtonPressed(id)
-			end)
-			registeredListeners = true
-		end
+		-- if not registeredListeners then
+		-- 	Ext.RegisterUICall(ui, "checkBoxID", function(ui, call, id, state)
+		-- 		print(call,id,state)
+		-- 		ModMenuManager.OnCheckbox(id, state)
+		-- 	end)
+		-- 	Ext.RegisterUICall(ui, "comboBoxID", function(ui, call, id, index)
+		-- 		print(call,id,index)
+		-- 		ModMenuManager.OnComboBox(id, index)
+		-- 	end)
+		-- 	Ext.RegisterUICall(ui, "selectorID", function(ui, call, id, currentSelection)
+		-- 		print(call,id,currentSelection)
+		-- 		ModMenuManager.OnSelector(id, currentSelection)
+		-- 	end)
+		-- 	Ext.RegisterUICall(ui, "menuSliderID", function(ui, call, id, value)
+		-- 		print(call,id,value)
+		-- 		ModMenuManager.OnSlider(id, value)
+		-- 	end)
+		-- 	Ext.RegisterUICall(ui, "buttonPressed", function(ui, call, id)
+		-- 		print(call,id)
+		-- 		ModMenuManager.OnButtonPressed(id)
+		-- 	end)
+		-- 	registeredListeners = true
+		-- end
 	end)
 end)

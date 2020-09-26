@@ -1,5 +1,4 @@
 Ext.RegisterNetListener("LeaderLib_ModMenu_FlagChanged", function(cmd, payload)
-	print(payload)
 	local data = Ext.JsonParse(payload)
 	if data.FlagType == "Global" then
 		if data.Enabled then
@@ -19,7 +18,6 @@ Ext.RegisterNetListener("LeaderLib_ModMenu_FlagChanged", function(cmd, payload)
 end)
 
 Ext.RegisterNetListener("LeaderLib_ModMenu_SaveChanges", function(cmd, payload)
-	print(cmd, payload)
 	local data = Ext.JsonParse(payload)
 	for uuid,changes in pairs(data) do
 		local settings = GlobalSettings.Mods[uuid]
@@ -52,4 +50,9 @@ Ext.RegisterNetListener("LeaderLib_ModMenu_CreateMenuButtonAfterDelay", function
 			Ext.PostMessageToUser(id, "LeaderLib_ModMenu_CreateMenuButton", "")
 		end)
 	end
+end)
+
+Ext.RegisterNetListener("LeaderLib_ModMenu_SendParseUpdateArrayMethod", function(cmd, payload)
+	local id = tonumber(payload)
+	Ext.PostMessageToUser(id, "LeaderLib_ModMenu_RunParseUpdateArrayMethod", "")
 end)

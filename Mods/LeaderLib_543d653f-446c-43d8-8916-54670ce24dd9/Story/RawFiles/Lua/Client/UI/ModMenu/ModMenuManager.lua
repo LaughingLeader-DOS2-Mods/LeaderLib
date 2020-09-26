@@ -81,9 +81,6 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, uuid)
 			local enableControl = UI.IsHost == true or v.FlagType ~= "Global"
 			local state = v.Enabled and 1 or 0
 			local displayName, tooltip = PrepareText(name, v)
-			if string.find(v.ID, "LLNWIZ") then
-				print("Flag:", v.ID, name, displayName)
-			end
 			mainMenu.addMenuCheckbox(ModMenuManager.LastID, displayName, enableControl, state, false, tooltip)
 			ModMenuManager.Controls[ModMenuManager.LastID] = {Entry=v, UUID=uuid, Value=v.Enabled, Last=v.Enabled}
 			ModMenuManager.LastID = ModMenuManager.LastID + 1
@@ -124,11 +121,11 @@ local function ParseModSettings(ui, mainMenu, modSettings, order)
 			if not StringHelpers.IsNullOrEmpty(section.DisplayName) then
 				--mainMenu.addMenuInfoLabel(Ext.Random(500,600), section.DisplayName, "Info?")
 				mainMenu.addMenuLabel(section.DisplayName)
-				local label = mainMenu.list.content_array[#mainMenu.list.content_array-1]
-				if label ~= nil then
-					label.heightOverride = label.label_txt.height + 4
-					label.label_txt.y = 2
-				end
+				-- local label = mainMenu.list.content_array[#mainMenu.list.content_array-1]
+				-- if label ~= nil then
+				-- 	label.heightOverride = label.label_txt.height + 4
+				-- 	label.label_txt.y = 2
+				-- end
 				--mainMenu.totalHeight = mainMenu.totalHeight - 20
 			end
 			if section.Entries ~= nil then
@@ -146,7 +143,6 @@ local function ParseModSettings(ui, mainMenu, modSettings, order)
 	for name,v in pairs(modSettings.Global.Flags) do
 		if added[v.ID] == nil then
 			table.insert(otherEntries, v)
-			print(name, v.ID)
 		end
 	end
 	for name,v in pairs(modSettings.Global.Variables) do
@@ -159,7 +155,6 @@ local function ParseModSettings(ui, mainMenu, modSettings, order)
 	end)
 	for i=1,#otherEntries do
 		local v = otherEntries[i]
-		print(v.ID, v.FlagType, v.Type)
 		AddModSettingsEntry(ui, mainMenu, v.ID, v, modSettings.UUID)
 	end
 	mainMenu.list.positionElements()
@@ -259,7 +254,7 @@ function ModMenuManager.CommitChanges()
 				if v.Entry.Type == "FlagData" then
 					settings.Global.Flags[v.Entry.ID].Enabled = v.Value
 				elseif v.Entry.Type == "VariableData" then
-					settings.Global.Flags[v.Entry.ID].Enabled = v.Value
+					settings.Global.Variables[v.Entry.ID].Value = v.Value
 				end
 			end
 		end

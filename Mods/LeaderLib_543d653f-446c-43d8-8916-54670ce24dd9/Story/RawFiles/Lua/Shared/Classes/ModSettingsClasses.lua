@@ -124,6 +124,12 @@ function SettingsData:Create(flags, variables)
     return this
 end
 
+--- Shortcut to get the string key text without handle.
+local function skey(key)
+	local text,_ = Ext.GetTranslatedStringFromKey(key)
+	return text
+end
+
 ---@param flag string
 ---@param flagType string Global|User|Character
 ---@param enabled boolean|nil
@@ -148,6 +154,25 @@ function SettingsData:AddFlags(flags, flagType, enabled)
 	end
 end
 
+---Adds a flag that uses the flag name and Flag_Description as the DisplayName and Tooltip.
+---@param flag string
+---@param flagType string Global|User|Character
+---@param enabled boolean|nil
+---@param tooltipKey string|nil A string key to use for the tooltip. Will default to Flag_Description.
+function SettingsData:AddLocalizedFlag(flag, flagType, enabled, key, tooltipKey)
+	key = key or flag
+	tooltipKey = tooltipKey or key.."_Description"
+	self:AddFlag(flag, flagType, enabled, skey(key), skey(tooltipKey))
+end
+
+---Same thing as AddFlags, but assumes each flag is its own DisplayName key.
+---@param flags string[]
+function SettingsData:AddLocalizedFlags(flags, flagType, enabled)
+	for i,flag in pairs(flags) do
+		self:AddLocalizedFlag(flag, flagType, enabled)
+	end
+end
+
 ---@param name string
 ---@param value string|integer|number|number[]
 ---@param displayName string
@@ -169,19 +194,16 @@ function SettingsData:AddVariable(name, value, displayName, tooltip, min, max, i
 	end
 end
 
-local function skey(key)
-	local text,_ = Ext.GetTranslatedStringFromKey(key)
-	return text
-end
-
 ---@param name string
----@param key string The string key to use. Key_Description will automatically be used for the tooltip.
+---@param key string The string key to use.
 ---@param value string|integer|number|number[]
 ---@param min any
 ---@param max any
 ---@param interval any
-function SettingsData:AddLocalizedVariable(name, key, value, min, max, interval)
-	self:AddVariable(name, value, skey(key), skey(key.."_Description"), min, max, interval)
+---@param tooltipKey string|nil A string key to use for the tooltip. Will default to Key_Description.
+function SettingsData:AddLocalizedVariable(name, key, value, min, max, interval, tooltipKey)
+	tooltipKey = tooltipKey or key.."_Description"
+	self:AddVariable(name, value, skey(key), skey(tooltipKey), min, max, interval)
 end
 
 function SettingsData:UpdateFlags()

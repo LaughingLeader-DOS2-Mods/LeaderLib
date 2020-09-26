@@ -92,9 +92,9 @@ end
 ---@param order table<string, string[]>|nil
 local function ParseModSettings(ui, mainMenu, modSettings, order)
 	if order ~= nil then
-		for section,keys in pairs(order) do
-			mainMenu.addMenuLabel(section)
-			for _,name in pairs(keys) do
+		for _,section in ipairs(order) do
+			mainMenu.addMenuLabel(section.DisplayName)
+			for _,name in ipairs(section.Entries) do
 				local v = modSettings.Global.Flags[name] or modSettings.Global.Variables[name]
 				if v ~= nil then
 					AddModSettingsEntry(ui, mainMenu, name, v)

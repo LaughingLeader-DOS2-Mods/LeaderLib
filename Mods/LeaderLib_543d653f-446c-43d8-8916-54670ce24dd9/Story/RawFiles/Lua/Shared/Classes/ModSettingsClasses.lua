@@ -318,17 +318,23 @@ function SettingsData:FlagEquals(id, b)
 	return false
 end
 
-function SettingsData:Export()
+function SettingsData:Export(forSyncing)
 	local export = {Flags = {}, Variables = {}}
 	for name,v in pairs(self.Flags) do
-		local data = {ID = v.ID, Enabled = v.Enabled, FlagType = v.FlagType}
+		local data = {Enabled = v.Enabled, FlagType = v.FlagType}
+		if forSyncing == true then
+			data.ID = v.ID
+		end
 		if v.Targets ~= nil then
 			data.Targets = v.Targets
 		end
 		export.Flags[name] = data
 	end
 	for name,v in pairs(self.Variables) do
-		local data = {ID = v.ID, Value = v.Value}
+		local data = {Value = v.Value}
+		if forSyncing == true then
+			data.ID = v.ID
+		end
 		if v.Targets ~= nil then
 			data.Targets = v.Targets
 		end
@@ -362,7 +368,6 @@ end
 ---@param source SettingsData
 function SettingsData:CopySettings(source)
 	for name,v in pairs(source.Flags) do
-		print(name)
 		self:AddFlag(name, v.FlagType, v.Enabled, v.DisplayName, v.Tooltip)
 	end
 	for name,v in pairs(source.Variables) do
@@ -487,18 +492,18 @@ function ModSettings:ApplyToGame()
 	self:ApplyVariables()
 end
 
-function ModSettings:Copy()
+function ModSettings:Copy(forSyncing)
 	local copy = {
 		UUID = self.UUID,
 		Name = self.Name,
 		Profiles = {},
-		Global = self.Global:Export(),
+		Global = self.Global:Export(forSyncing),
 		Version = self.Version
 	}
 	for k,v in pairs(self.Profiles) do
 		copy.Profiles[k] = {
 			ID = v.ID,
-			Settings = v.Settings:Export()
+			Settings = v.Settings:Export(forSyncing)
 		}
 	end
 	return copy

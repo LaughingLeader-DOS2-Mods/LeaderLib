@@ -45,27 +45,27 @@ function SettingsManager.GetMod(uuid, createIfMissing)
 	return nil
 end
 
-local function ExportGlobalSettings()
+local function ExportGlobalSettings(forSyncing)
 	local globalSettings = {
 		Mods = {},
 		Version = GlobalSettings.Version
 	}
 	for uuid,v in pairs(GlobalSettings.Mods) do
 		v:Update()
-		globalSettings.Mods[uuid] = v:Copy()
+		globalSettings.Mods[uuid] = v:Copy(forSyncing)
 	end
 	return globalSettings
 end
 
 if Ext.IsServer() then
 	function SettingsManager.Sync()
-		Ext.BroadcastMessage("LeaderLib_SyncGlobalSettings", Ext.JsonStringify(ExportGlobalSettings()), nil)
+		Ext.BroadcastMessage("LeaderLib_SyncGlobalSettings", Ext.JsonStringify(ExportGlobalSettings(true)), nil)
 	end
 	
 	function SettingsManager.SyncAllSettings(id)
-		print("[LeaderLib:SettingsManager.SyncAllSettings] Syncing all settings with clients.")
+		Ext.Print("[LeaderLib:SettingsManager.SyncAllSettings] Syncing all settings with clients.")
 		local data = {
-			GlobalSettings = ExportGlobalSettings(),
+			GlobalSettings = ExportGlobalSettings(true),
 			Features = Features,
 			GameSettings = GameSettings
 		}

@@ -1,49 +1,8 @@
 Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
-LeaderLib_GlobalSettings_Internal_Init();
+
 KBSECTION
-
-//REGION INIT_SETTING
-PROC
-LeaderLib_GlobalSettings_Internal_Init()
-THEN
-LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLib_AutoAddModMenuBooksDisabled");
-LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLib_AutosaveOnCombatStart");
-LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLib_AutosavingEnabled");
-LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLib_DialogRedirectionEnabled");
-LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLib_DialogRedirection_DisableUserRestriction");
-LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLib_DialogRedirection_HighestPersuasionEnabled");
-LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLib_DisableAutosavingInCombat");
-LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLib_FriendlyFireEnabled");
-LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLog_CombatLog_Disabled");
-LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLog_Debug_Enabled");
-LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLog_Status_Disabled");
-LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLib_DebugModeEnabled", 1);
-LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLib_UnhealableFix_Enabled", 1);
-LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLib_PullPartyIntoCombat", 1);
-LeaderLib_Internal_GlobalSettings_Register_Flag("LeaderLib_AutoUnlockInventoryInMultiplayer", 1);
-
-LeaderLib_GlobalSettings_Register_GlobalInteger(7e737d2f-31d2-4751-963f-be6ccc59cd0c, "AutosaveInterval", 15);
-LeaderLib_GlobalSettings_TransferVariables();
-
-PROC
-LeaderLib_Internal_GlobalSettings_Register_Flag((STRING)_Flag)
-THEN
-LeaderLib_GlobalSettings_Register_GlobalFlag(7e737d2f-31d2-4751-963f-be6ccc59cd0c, _Flag);
-
-PROC
-LeaderLib_Internal_GlobalSettings_Register_Flag((STRING)_Flag, (INTEGER)_SaveWhenFalse)
-THEN
-LeaderLib_GlobalSettings_Register_GlobalFlag(7e737d2f-31d2-4751-963f-be6ccc59cd0c, _Flag, _SaveWhenFalse);
-//END_REGION
-
-//REGION UPDATES
-PROC
-LeaderUpdater_ModUpdated("LeaderLib", "LaughingLeader", (STRING)_PastVersion, (STRING)_NewVersion)
-THEN
-LeaderLib_GlobalSettings_Internal_Init();
-//END_REGION
 
 //REGION VARIABLE_TRANSFER
 QRY

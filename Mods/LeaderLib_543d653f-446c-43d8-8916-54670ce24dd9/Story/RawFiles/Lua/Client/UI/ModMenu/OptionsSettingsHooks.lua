@@ -284,35 +284,9 @@ Ext.RegisterListener("SessionLoaded", function()
 	Ext.RegisterUINameInvokeListener("parseBaseUpdateArray", function(ui, method, ...)
 		-- Initial setup
 		if ui:GetTypeId() == nil then
-			local ui2 = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf")
-			if ui2 ~= nil then
-				ui = ui2
-			end
+			ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf") or ui
 			--Ext.PostMessageToServer("LeaderLib_ModMenu_CreateMenuButtonAfterDelay", tostring(UI.ClientID))
 		end
 		CreateModMenuButton(ui, method, ...)
-		-- if not registeredListeners then
-		-- 	Ext.RegisterUICall(ui, "checkBoxID", function(ui, call, id, state)
-		-- 		print(call,id,state)
-		-- 		ModMenuManager.OnCheckbox(id, state)
-		-- 	end)
-		-- 	Ext.RegisterUICall(ui, "comboBoxID", function(ui, call, id, index)
-		-- 		print(call,id,index)
-		-- 		ModMenuManager.OnComboBox(id, index)
-		-- 	end)
-		-- 	Ext.RegisterUICall(ui, "selectorID", function(ui, call, id, currentSelection)
-		-- 		print(call,id,currentSelection)
-		-- 		ModMenuManager.OnSelector(id, currentSelection)
-		-- 	end)
-		-- 	Ext.RegisterUICall(ui, "menuSliderID", function(ui, call, id, value)
-		-- 		print(call,id,value)
-		-- 		ModMenuManager.OnSlider(id, value)
-		-- 	end)
-		-- 	Ext.RegisterUICall(ui, "buttonPressed", function(ui, call, id)
-		-- 		print(call,id)
-		-- 		ModMenuManager.OnButtonPressed(id)
-		-- 	end)
-		-- 	registeredListeners = true
-		-- end
 	end)
 end)

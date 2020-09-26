@@ -57,6 +57,33 @@ local function ExportGlobalSettings(forSyncing)
 	return globalSettings
 end
 
+function SettingsManager.LoadAllModSettings()
+	local mods = Ext.GetModLoadOrder()
+	for i,uuid in pairs(mods) do
+		if IgnoredMods[uuid] ~= true then
+			local info = Ext.GetModInfo(uuid)
+			local settingsFile = info.Directory .. "/ModSettings.json"
+			local file = Ext.LoadFile(settingsFile)
+			if file ~= nil then
+				local data = Ext.JsonParse(file)
+				if data ~= nil then
+					local settings = SettingsManager.GetMod(uuid, true)
+					if data.Flags ~= nil then
+						for id,flagData in pairs(data.Flags) do
+							local flagType = flagData.FlagType or "Global"
+							local enabled = flagData.Enabled or false
+							local displayName = flagData.DisplayName
+							local tooltip = flagData.Tooltip
+							local canExport = flagData.CanExport or true
+							settings.Global:AddFlag(id, flagType, enabled, displayName, tooltip, canExport)
+						end
+					end
+				end
+			end
+		end
+	end
+end
+
 if Ext.IsServer() then
 	function SettingsManager.Sync()
 		Ext.BroadcastMessage("LeaderLib_SyncGlobalSettings", Ext.JsonStringify(ExportGlobalSettings(true)), nil)

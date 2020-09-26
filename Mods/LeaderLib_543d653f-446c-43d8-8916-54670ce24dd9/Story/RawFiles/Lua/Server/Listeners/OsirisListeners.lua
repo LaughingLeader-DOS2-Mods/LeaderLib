@@ -3,11 +3,10 @@ Ext.RegisterOsirisListener("UserConnected", 3, "after", function(id, username, p
 	local uuid = GetCurrentCharacter(id)
 	if uuid ~= nil then
 		if Ext.GetGameState() == "Running" then
-			Ext.PostMessageToUser(id, "LeaderLib_SetClientCharacter", uuid)
+			SyncClientData(uuid, id)
 			if GlobalGetFlag("LeaderLib_AutoUnlockInventoryInMultiplayer") == 1 then
 				IterateUsers("Iterators_LeaderLib_UI_UnlockPartyInventory")
 			end
-
 			SettingsManager.SyncAllSettings(id)
 		end
 
@@ -33,7 +32,7 @@ Ext.RegisterOsirisListener("UserEvent", 2, "after", function(id, event)
 		end
 	elseif event == "Iterators_LeaderLib_SetClientCharacter" then
 		local uuid = GetCurrentCharacter(id) or CharacterGetHostCharacter()
-		Ext.PostMessageToUser(id, "LeaderLib_SetClientCharacter", uuid)
+		SyncClientData(StringHelpers.GetUUID(uuid), id)
 	end
 end)
 
@@ -46,7 +45,7 @@ Ext.RegisterOsirisListener("CharacterReservedUserIDChanged", 3, "after", functio
 			OpenMessageBox(char, "LeaderLib_MessageBox_ExtenderNotInstalled_Client")
 			OpenMessageBox(host, text)
 		else
-			Ext.PostMessageToUser(new, "LeaderLib_SetClientCharacter", GetUUID(char))
+			SyncClientData(StringHelpers.GetUUID(char))
 		end
 	end
 end)
@@ -59,6 +58,6 @@ Ext.RegisterOsirisListener("ObjectTurnStarted", 2, "after", function(char, comba
 	local id = CharacterGetReservedUserID(char)
 	if id ~= nil then
 		-- For hopefully making sure the delay turn listener stays accurate
-		Ext.PostMessageToUser(id, "LeaderLib_SetClientCharacter", GetUUID(char))
+		SyncClientData(StringHelpers.GetUUID(char), id)
 	end
 end)

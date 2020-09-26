@@ -36,7 +36,6 @@ local addedModMenuButton = false
 local function CreateModMenuButton(ui, method, ...)
 	local addToIndex = -1
 	local main = ui:GetRoot()
-	print(method, main)
 	if main ~= nil then
 		---@type MainMenuMC
 		local mainMenu = main.mainMenu_mc
@@ -104,6 +103,7 @@ local function SwitchToModMenu(ui, ...)
 		end
 	end
 	ModMenuManager.CreateMenu(ui, mainMenu)
+	ModMenuManager.SetScrollPosition(ui)
 end
 
 local debugEvents = {
@@ -141,60 +141,100 @@ local debugEvents = {
 	"resetMenuButtons",
 }
 
+local debugCalls = {
+	"switchToModMenu",
+	"requestCloseUI",
+	"acceptPressed",
+	"applyPressed",
+	"checkBoxID",
+	"comboBoxID",
+	"selectorID",
+	"menuSliderID",
+	"buttonPressed",
+}
+
 local OPTIONS_SETTINGS = 45
+local OPTIONS_SETTINGS2 = 17
+local OPTIONS_ACCEPT = 1
+
+Ext.RegisterNetListener("LeaderLib_ModMenu_CreateMenuButton", function(cmd, payload)
+	--local ui = Ext.GetUIByType(OPTIONS_SETTINGS2) or Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf")
+	local ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf")
+	print(cmd,payload,ui)
+	if ui ~= nil then
+		CreateModMenuButton(ui)
+	end
+end)
+
+local registeredListeners = false
 
 Ext.RegisterListener("SessionLoaded", function()
-	for i,v in pairs(debugEvents) do
-		--Ext.RegisterUITypeInvokeListener(OPTIONS_SETTINGS, v, function(ui, ...)
-		---@param ui UIObject
-		Ext.RegisterUINameInvokeListener(v, function(ui, ...)
-			print(Ext.MonotonicTime(), ui:GetTypeId(), Ext.JsonStringify({...}))
-		end)
+	if Ext.IsDeveloperMode() then
+		for i,v in pairs(debugEvents) do
+			---@param ui UIObject
+			Ext.RegisterUINameInvokeListener(v, function(ui, ...)
+				print(ui:GetTypeId(), Common.Dump({...}), Ext.MonotonicTime())
+			end)
+		end
+		for i,v in pairs(debugCalls) do
+			---@param ui UIObject
+			Ext.RegisterUINameCall(v, function(ui, ...)
+				print(ui:GetTypeId(), Common.Dump({...}), Ext.MonotonicTime())
+			end)
+		end
 	end
-	-- Ext.RegisterUITypeInvokeListener(OPTIONS_SETTINGS, "setButtonDisable", function(ui, method, ...)
-	-- 	if not addedModMenuButton then
-	-- 		CreateModMenuButton(ui, method)
-	-- 		addedModMenuButton = true
-	-- 	end
-	-- end)
 
-	--Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "switchToModMenu", function(ui, call, ...)
 	Ext.RegisterUINameCall("switchToModMenu", function(ui, call, ...)
 		SwitchToModMenu(ui)
 	end)
-	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "requestCloseUI", function(ui, call, ...)
-		addedModMenuButton = false
+	Ext.RegisterUITypeCall(45, "requestCloseUI", function(ui, call, ...)
+		ModMenuManager.SaveScroll(ui)
+		ModMenuManager.UndoChanges()
+		registeredListeners = false
 	end)
-	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "acceptPressed", function(ui, call, ...)
-		addedModMenuButton = false
+	Ext.RegisterUITypeCall(45, "acceptPressed", function(ui, call, ...)
+		ModMenuManager.SaveScroll(ui)
+		ModMenuManager.CommitChanges()
+		registeredListeners = false
+	end)
+	Ext.RegisterUITypeCall(1, "applyPressed", function(ui, call, ...)
+		--ModMenuManager.CommitChanges()
 	end)
 
-	--local ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf")
-	--Ext.RegisterUITypeInvokeListener(OPTIONS_SETTINGS, "parseUpdateArray", function(ui, ...)
-	-- Ext.RegisterUINameInvokeListener("parseUpdateArray", function(ui, ...)
-	-- 	print(ui:GetTypeId(), Ext.JsonStringify({...}))
-	-- 	--UI.PrintArray(ui, "update_Array")
-	-- 	local main = ui:GetRoot()
-	-- 	if main ~= nil then
-	-- 		local total = #main.update_Array
-	-- 		print("update_Array")
-	-- 		for i=0,total do
-	-- 			local val = main.update_Array[i]
-	-- 			print(string.format("[%i] = %s", i, val))
-	-- 		end
-	-- 	end
-	-- end)
-	--Ext.RegisterUITypeInvokeListener(OPTIONS_SETTINGS, "parseBaseUpdateArray", function(ui, method, ...)
+	---@param ui UIObject
 	Ext.RegisterUINameInvokeListener("parseBaseUpdateArray", function(ui, method, ...)
+		-- Initial setup
+		if ui:GetTypeId() == nil then
+			local ui2 = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf")
+			if ui2 ~= nil then
+				ui = ui2
+			end
+			--Ext.PostMessageToServer("LeaderLib_ModMenu_CreateMenuButtonAfterDelay", tostring(UI.ClientID))
+		end
+		
 		CreateModMenuButton(ui, method, ...)
-		-- print(ui:GetTypeId(), Ext.JsonStringify({...}))
-		-- --UI.PrintArray(ui, "update_Array")
-		-- local main = ui:GetRoot()
-		-- local total = #main.baseUpdate_Array
-		-- print("baseUpdate_Array")
-		-- for i=0,total do
-		-- 	local val = main.baseUpdate_Array[i]
-		-- 	print(string.format("[%i] = %s", i, val))
-		-- end
+		if not registeredListeners then
+			Ext.RegisterUICall(ui, "checkBoxID", function(ui, call, id, state)
+				print(call,id,state)
+				ModMenuManager.OnCheckbox(id, state)
+			end)
+			Ext.RegisterUICall(ui, "comboBoxID", function(ui, call, id, index)
+				print(call,id,index)
+				ModMenuManager.OnComboBox(id, index)
+			end)
+			Ext.RegisterUICall(ui, "selectorID", function(ui, call, id, currentSelection)
+				print(call,id,currentSelection)
+				ModMenuManager.OnSelector(id, currentSelection)
+			end)
+			Ext.RegisterUICall(ui, "menuSliderID", function(ui, call, id, value)
+				print(call,id,value)
+				ModMenuManager.OnSlider(id, value)
+			end)
+			Ext.RegisterUICall(ui, "buttonPressed", function(ui, call, id)
+				print(call,id)
+				ModMenuManager.OnButtonPressed(id)
+			end)
+			registeredListeners = true
+		end
 	end)
 end)

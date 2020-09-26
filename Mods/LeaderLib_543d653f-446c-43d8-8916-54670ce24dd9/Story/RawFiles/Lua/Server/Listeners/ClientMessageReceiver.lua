@@ -121,3 +121,15 @@ Ext.RegisterNetListener("LeaderLib_UI_StartControllerTooltipTimer", function(cmd
 		end)
 	end
 end)
+
+function SyncClientData(uuid, id)
+	if uuid == nil and id ~= nil then
+		uuid = StringHelpers.GetUUID(GetCurrentCharacter(id))
+	elseif uuid ~= nil and id == nil then
+		id = CharacterGetReservedUserID(uuid)
+	end
+	local host = CharacterGetHostCharacter()
+	local isHost = CharacterGetReservedUserID(host) == id
+	local data = {UUID = uuid, ID = id, IsHost = isHost}
+	Ext.PostMessageToUser(id, "LeaderLib_SetClientCharacter", Ext.JsonStringify(data))
+end

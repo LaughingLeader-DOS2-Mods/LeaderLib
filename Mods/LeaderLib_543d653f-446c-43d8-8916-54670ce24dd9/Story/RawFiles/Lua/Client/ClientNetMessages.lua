@@ -209,8 +209,11 @@ Ext.RegisterNetListener("LeaderLib_UI_RefreshStatusTurns", function(call, dataSt
 	end
 end)
 
-Ext.RegisterNetListener("LeaderLib_SetClientCharacter", function(call, uuid)
-	UI.ClientCharacter = uuid
+Ext.RegisterNetListener("LeaderLib_SetClientCharacter", function(call, payload)
+	local data = Ext.JsonParse(payload)
+	UI.ClientCharacter = data.UUID
+	UI.ClientID = data.ID
+	UI.IsHost = data.IsHost or false
 end)
 
 Ext.RegisterNetListener("LeaderLib_SetHelmetOption", function(call, dataStr)

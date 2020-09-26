@@ -160,8 +160,7 @@ if Ext.IsServer() then
 		else
 			if Ext.OsirisIsCallable() or Ext.GetGameState() == "Running" then
 				for uuid,v in pairs(GlobalSettings.Mods) do
-					v:ApplyFlags()
-					v:ApplyVariables()
+					v:ApplyToGame()
 				end
 			end
 			if #Listeners.ModSettingsLoaded > 0 then

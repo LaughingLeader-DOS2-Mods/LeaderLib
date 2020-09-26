@@ -32,4 +32,4 @@ LeaderLib_UnhealableFix_Enabled_Description	Fixes the Unhealable status to actua
 LeaderLib_Variables_AutosaveInterval	Autosave Interval	h43868aebg7281g40bfgbc1dgf6fe5a06512b
 LeaderLib_Variables_AutosaveInterval_Description	The time delay between autosaving, in minutes.	h2ecee3dfg9f7eg4c8dga10bg11b0d6347136
 LeaderLib_Variables_AutoCombatRange	Auto-Join Combat Range	hf37c444fg879fg4e62gb3d5g77086202f362
-LeaderLib_Variables_AutoCombatRange	If "Pull Party Into Combat" is enabled, this is the minimum range party members must be from that combat to automatically join. Default: 30m range.	h4c438f27gc833g4b46g8c3eg50716f12ae34
+LeaderLib_Variables_AutoCombatRange_Description	If "Pull Party Into Combat" is enabled, this is the minimum range party members must be from that combat to automatically join. Default: 30m range.	h4c438f27gc833g4b46g8c3eg50716f12ae34

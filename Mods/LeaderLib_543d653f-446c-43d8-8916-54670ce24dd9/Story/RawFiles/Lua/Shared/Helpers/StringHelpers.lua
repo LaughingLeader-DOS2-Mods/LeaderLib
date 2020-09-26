@@ -129,3 +129,33 @@ function StringHelpers.GetUUID(str)
 		return str
 	end
 end
+
+--- Split a version integer into separate values
+---@param version integer
+---@return integer,integer,integer,integer
+local function ParseVersion(version)
+	if type(version) == "string" then
+		version = math.floor(tonumber(version))
+	elseif type(version) == "number" then
+		version = math.tointeger(version)
+	end
+	local major = math.floor(version >> 28)
+	local minor = math.floor(version >> 24) & 0x0F
+	local revision = math.floor(version >> 16) & 0xFF
+	local build = math.floor(version & 0xFFFF)
+	return major,minor,revision,build
+end
+
+--- Turn a version integer into a string.
+---@param version integer
+---@return string
+function StringHelpers.VersionIntegerToVersionString(version)
+	if version == -1 then return "-1" end
+	local major,minor,revision,build = ParseVersion(version)
+	if major ~= -1 and minor ~= -1 and revision ~= -1 and build ~= -1 then
+		return tostring(major).."."..tostring(minor).."."..tostring(revision).."."..tostring(build)
+	elseif major == -1 and minor == -1 and revision == -1 and build == -1 then
+		return "-1"
+	end
+	return nil
+end

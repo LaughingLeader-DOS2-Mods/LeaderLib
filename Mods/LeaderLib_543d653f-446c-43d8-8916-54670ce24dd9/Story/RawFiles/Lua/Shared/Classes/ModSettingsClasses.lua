@@ -7,6 +7,7 @@ local FlagData = {
 	Enabled = false,
 	DisplayName = nil,
 	Tooltip = nil,
+	DebugOnly = false,
 }
 
 FlagData.__index = FlagData
@@ -65,6 +66,7 @@ local VariableData = {
 	Min = 0,
 	Max = 999,
 	Interval = 1,
+	DebugOnly = false,
 }
 
 VariableData.__index = VariableData
@@ -127,6 +129,9 @@ end
 --- Shortcut to get the string key text without handle.
 local function skey(key)
 	local text,_ = Ext.GetTranslatedStringFromKey(key)
+	if text ~= nil and text ~= "" then
+		text = GameHelpers.Tooltip.ReplacePlaceholders(text)
+	end
 	return text
 end
 
@@ -140,6 +145,7 @@ function SettingsData:AddFlag(flag, flagType, enabled, displayName, tooltip)
 		self.Flags[flag] = FlagData:Create(flag, flagType, enabled, displayName, tooltip)
 	else
 		local existing = self.Flags[flag]
+		existing.ID = flag
 		existing.Enabled = enabled or existing.Enabled
 		existing.FlagType = flagType or existing.FlagType
 		existing.DisplayName = displayName or existing.DisplayName
@@ -304,17 +310,25 @@ function SettingsData:GetVariable(name, fallback)
 	return fallback
 end
 
+function SettingsData:FlagEquals(id, b)
+	local data = self.Flags[id]
+	if data ~= nil then
+		return data.Enabled == b
+	end
+	return false
+end
+
 function SettingsData:Export()
 	local export = {Flags = {}, Variables = {}}
 	for name,v in pairs(self.Flags) do
-		local data = {Enabled = v.Enabled, FlagType = v.FlagType}
+		local data = {ID = v.ID, Enabled = v.Enabled, FlagType = v.FlagType}
 		if v.Targets ~= nil then
 			data.Targets = v.Targets
 		end
 		export.Flags[name] = data
 	end
 	for name,v in pairs(self.Variables) do
-		local data = {Value = v.Value}
+		local data = {ID = v.ID, Value = v.Value}
 		if v.Targets ~= nil then
 			data.Targets = v.Targets
 		end
@@ -348,6 +362,7 @@ end
 ---@param source SettingsData
 function SettingsData:CopySettings(source)
 	for name,v in pairs(source.Flags) do
+		print(name)
 		self:AddFlag(name, v.FlagType, v.Enabled, v.DisplayName, v.Tooltip)
 	end
 	for name,v in pairs(source.Variables) do
@@ -465,6 +480,11 @@ function ModSettings:ApplyVariables()
 	for i,v in pairs(self.Profiles) do
 		v.Settings:ApplyVariables(self.UUID)
 	end
+end
+
+function ModSettings:ApplyToGame()
+	self:ApplyFlags()
+	self:ApplyVariables()
 end
 
 function ModSettings:Copy()

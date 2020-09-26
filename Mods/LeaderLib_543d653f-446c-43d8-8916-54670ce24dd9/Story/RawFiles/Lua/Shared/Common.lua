@@ -94,7 +94,7 @@ local function Dump(o, indexMap, innerOnly, recursionLevel)
 				s = s .. ' ['..PrintIndex(k, indexMap)..'] = ' .. Dump(v, indexMap, innerOnly, recursionLevel + 1) .. ','
 			end
 		end
-		return s .. '} \n'
+		return s .. '}'
 	else
 		return tostring(o)
 	end

@@ -99,3 +99,11 @@ Ext.RegisterListener("SessionLoaded", function()
 		PrintDebug(string.format("[LeaderLib_Shared_SessionLoaded] Updated %s TranslatedString entries.", count))
 	end
 end)
+
+---@param uuid string
+---@return ModSettings
+function CreateModSettings(uuid)
+	local settings = Classes.ModSettingsClasses.ModSettings:Create(uuid)
+	GlobalSettings.Mods[uuid] = settings
+	return settings
+end

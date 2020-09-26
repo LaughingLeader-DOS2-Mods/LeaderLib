@@ -131,7 +131,7 @@ local function ParseModSettings(ui, mainMenu, modSettings, order)
 			if section.Entries ~= nil then
 				for k=1,#section.Entries do
 					local name = section.Entries[k]
-					local v = modSettings.Global.Flags[name] or modSettings.Global.Variables[name]
+					local v = modSettings:GetEntry(name)
 					if v ~= nil then
 						added[v.ID] = AddModSettingsEntry(ui, mainMenu, name, v, modSettings.UUID)
 					end
@@ -140,12 +140,7 @@ local function ParseModSettings(ui, mainMenu, modSettings, order)
 		end
 	end
 	local otherEntries = {}
-	for name,v in pairs(modSettings.Global.Flags) do
-		if added[v.ID] == nil then
-			table.insert(otherEntries, v)
-		end
-	end
-	for name,v in pairs(modSettings.Global.Variables) do
+	for _,v in pairs(modSettings:GetAllEntries(UI.Profile)) do
 		if added[v.ID] == nil then
 			table.insert(otherEntries, v)
 		end

@@ -130,6 +130,7 @@ function SyncClientData(uuid, id)
 	end
 	local host = CharacterGetHostCharacter()
 	local isHost = CharacterGetReservedUserID(host) == id
-	local data = {UUID = uuid, ID = id, IsHost = isHost}
+	local profile = GetUserProfileID(id)
+	local data = {UUID = uuid, ID = id, IsHost = isHost, Profile=profile}
 	Ext.PostMessageToUser(id, "LeaderLib_SetClientCharacter", Ext.JsonStringify(data))
 end

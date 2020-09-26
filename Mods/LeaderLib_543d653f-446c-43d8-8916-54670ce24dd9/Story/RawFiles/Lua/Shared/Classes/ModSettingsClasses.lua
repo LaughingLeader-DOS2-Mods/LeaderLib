@@ -8,6 +8,7 @@ local FlagData = {
 	DisplayName = nil,
 	Tooltip = nil,
 	DebugOnly = false,
+	CanExport = true,
 }
 
 FlagData.__index = FlagData
@@ -67,6 +68,7 @@ local VariableData = {
 	Max = 999,
 	Interval = 1,
 	DebugOnly = false,
+	CanExport = true,
 }
 
 VariableData.__index = VariableData
@@ -120,7 +122,7 @@ function SettingsData:Create(flags, variables)
     local this =
     {
 		Flags = flags or {},
-		Variables = variables or {}
+		Variables = variables or {},
 	}
 	setmetatable(this, self)
     return this
@@ -138,11 +140,15 @@ end
 ---@param flag string
 ---@param flagType string Global|User|Character
 ---@param enabled boolean|nil
----@param displayName string
----@param tooltip string
-function SettingsData:AddFlag(flag, flagType, enabled, displayName, tooltip)
+---@param displayName string|nil
+---@param tooltip string|nil
+---@param canExport boolean|nil
+function SettingsData:AddFlag(flag, flagType, enabled, displayName, tooltip, canExport)
 	if self.Flags[flag] == nil then
 		self.Flags[flag] = FlagData:Create(flag, flagType, enabled, displayName, tooltip)
+		if canExport then
+			self.Flags[flag].CanExport = canExport
+		end
 	else
 		local existing = self.Flags[flag]
 		existing.ID = flag
@@ -150,13 +156,17 @@ function SettingsData:AddFlag(flag, flagType, enabled, displayName, tooltip)
 		existing.FlagType = flagType or existing.FlagType
 		existing.DisplayName = displayName or existing.DisplayName
 		existing.Tooltip = tooltip or existing.Tooltip
+		existing.CanExport = canExport or existing.CanExport
 	end
 end
 
 ---@param flags string[]
-function SettingsData:AddFlags(flags, flagType, enabled)
+---@param flagType string Global|User|Character
+---@param enabled boolean|nil
+---@param canExport boolean|nil
+function SettingsData:AddFlags(flags, flagType, enabled, canExport)
 	for i,flag in pairs(flags) do
-		self:AddFlag(flag, flagType, enabled)
+		self:AddFlag(flag, flagType, enabled, nil, nil, canExport)
 	end
 end
 
@@ -165,17 +175,21 @@ end
 ---@param flagType string Global|User|Character
 ---@param enabled boolean|nil
 ---@param tooltipKey string|nil A string key to use for the tooltip. Will default to Flag_Description.
-function SettingsData:AddLocalizedFlag(flag, flagType, enabled, key, tooltipKey)
+---@param canExport boolean|nil
+function SettingsData:AddLocalizedFlag(flag, flagType, enabled, key, tooltipKey, canExport)
 	key = key or flag
 	tooltipKey = tooltipKey or key.."_Description"
-	self:AddFlag(flag, flagType, enabled, skey(key), skey(tooltipKey))
+	self:AddFlag(flag, flagType, enabled, skey(key), skey(tooltipKey), canExport)
 end
 
 ---Same thing as AddFlags, but assumes each flag is its own DisplayName key.
 ---@param flags string[]
-function SettingsData:AddLocalizedFlags(flags, flagType, enabled)
+---@param flagType string Global|User|Character
+---@param enabled boolean|nil
+---@param canExport boolean|nil
+function SettingsData:AddLocalizedFlags(flags, flagType, enabled, canExport)
 	for i,flag in pairs(flags) do
-		self:AddLocalizedFlag(flag, flagType, enabled)
+		self:AddLocalizedFlag(flag, flagType, enabled, nil, nil, canExport)
 	end
 end
 
@@ -186,9 +200,13 @@ end
 ---@param min any
 ---@param max any
 ---@param interval any
-function SettingsData:AddVariable(name, value, displayName, tooltip, min, max, interval)
+---@param canExport boolean|nil
+function SettingsData:AddVariable(name, value, displayName, tooltip, min, max, interval, canExport)
 	if self.Variables[name] == nil then
 		self.Variables[name] = VariableData:Create(name, value, displayName, tooltip, min, max, interval)
+		if canExport then
+			self.Variables[name].CanExport = canExport
+		end
 	else
 		local existing = self.Variables[name]
 		existing.Value = value
@@ -197,6 +215,7 @@ function SettingsData:AddVariable(name, value, displayName, tooltip, min, max, i
 		existing.Min = min or existing.Min
 		existing.Max = max or existing.Max
 		existing.Interval = interval or existing.Interval
+		existing.CanExport = canExport or existing.CanExport
 	end
 end
 
@@ -207,9 +226,10 @@ end
 ---@param max any
 ---@param interval any
 ---@param tooltipKey string|nil A string key to use for the tooltip. Will default to Key_Description.
-function SettingsData:AddLocalizedVariable(name, key, value, min, max, interval, tooltipKey)
+---@param canExport boolean|nil
+function SettingsData:AddLocalizedVariable(name, key, value, min, max, interval, tooltipKey, canExport)
 	tooltipKey = tooltipKey or key.."_Description"
-	self:AddVariable(name, value, skey(key), skey(tooltipKey), min, max, interval)
+	self:AddVariable(name, value, skey(key), skey(tooltipKey), min, max, interval, canExport)
 end
 
 function SettingsData:UpdateFlags()
@@ -321,24 +341,28 @@ end
 function SettingsData:Export(forSyncing)
 	local export = {Flags = {}, Variables = {}}
 	for name,v in pairs(self.Flags) do
-		local data = {Enabled = v.Enabled, FlagType = v.FlagType}
-		if forSyncing == true then
-			data.ID = v.ID
+		if forSyncing == true or v.CanExport ~= false then
+			local data = {Enabled = v.Enabled, FlagType = v.FlagType}
+			if forSyncing == true then
+				data.ID = v.ID
+			end
+			if v.Targets ~= nil then
+				data.Targets = v.Targets
+			end
+			export.Flags[name] = data
 		end
-		if v.Targets ~= nil then
-			data.Targets = v.Targets
-		end
-		export.Flags[name] = data
 	end
 	for name,v in pairs(self.Variables) do
-		local data = {Value = v.Value}
-		if forSyncing == true then
-			data.ID = v.ID
+		if forSyncing == true or v.CanExport ~= false then
+			local data = {Value = v.Value}
+			if forSyncing == true then
+				data.ID = v.ID
+			end
+			if v.Targets ~= nil then
+				data.Targets = v.Targets
+			end
+			export.Variables[name] = data
 		end
-		if v.Targets ~= nil then
-			data.Targets = v.Targets
-		end
-		export.Variables[name] = data
 	end
 	return export
 end
@@ -374,6 +398,24 @@ function SettingsData:CopySettings(source)
 		self:AddVariable(name, v.Value, v.DisplayName, v.Tooltip, v.Min, v.Max, v.Interval)
 	end
 	self:SetMetatables()
+end
+
+function SettingsData:SetFlag(id, enabled)
+	local entry = self.Flags[id]
+	if entry ~= nil then
+		entry.Enabled = enabled
+		return true
+	end
+	return false
+end
+
+function SettingsData:SetVariable(id, value)
+	local entry = self.Variables[id]
+	if entry ~= nil then
+		entry.Value = value
+		return true
+	end
+	return false
 end
 
 ---@class ProfileSettings
@@ -490,6 +532,82 @@ end
 function ModSettings:ApplyToGame()
 	self:ApplyFlags()
 	self:ApplyVariables()
+end
+
+function ModSettings:SetFlag(id, enabled, profile)
+	if profile ~= nil then
+		local profileSettings = self.Profiles[profile]
+		if profileSettings ~= nil then
+			profileSettings.Settings:SetFlag(id, enabled)
+		end
+	else
+		if not self.Global:SetFlag(id, enabled) then
+			-- Try and find the active profile for this option
+			if Ext.IsServer() then
+				profile = GetUserProfileID(CharacterGetReservedUserID(CharacterGetHostCharacter()))
+				local profileSettings = self.Profiles[profile]
+				if profileSettings ~= nil then
+					profileSettings.Settings:SetFlag(id, enabled)
+				end
+			end
+		end
+	end
+end
+
+function ModSettings:SetVariable(id, value, profile)
+	if profile ~= nil then
+		local profileSettings = self.Profiles[profile]
+		if profileSettings ~= nil then
+			profileSettings.Settings:SetVariable(id, value)
+		end
+	else
+		if not self.Global:SetVariable(id, value) then
+			-- Try and find the active profile for this option
+			if Ext.IsServer() then
+				profile = GetUserProfileID(CharacterGetReservedUserID(CharacterGetHostCharacter()))
+				local profileSettings = self.Profiles[profile]
+				if profileSettings ~= nil then
+					profileSettings.Settings:SetVariable(id, value)
+				end
+			end
+		end
+	end
+end
+
+function ModSettings:GetEntry(id, profile)
+	if profile ~= nil then
+		local profileSettings = self.Profiles[profile]
+		if profileSettings ~= nil then
+			local entry = profileSettings.Settings.Variables[id] or profileSettings.Settings.Flags[id]
+			if entry ~= nil then
+				return entry
+			end
+		end
+	end
+	local entry = self.Global.Variables[id] or self.Global.Flags[id]
+	return entry
+end
+
+function ModSettings:GetAllEntries(profile)
+	local entries = {}
+	for _,v in pairs(self.Global.Flags) do
+		table.insert(entries, v)
+	end
+	for _,v in pairs(self.Global.Variables) do
+		table.insert(entries, v)
+	end
+	if profile ~= nil and profile ~= "" then
+		local data = self.Profiles[profile]
+		if data ~= nil and data.Settings ~= nil then
+			for _,v in pairs(data.Settings.Flags) do
+				table.insert(entries, v)
+			end
+			for _,v in pairs(data.Settings.Variables) do
+				table.insert(entries, v)
+			end
+		end
+	end
+	return entries
 end
 
 function ModSettings:Copy(forSyncing)

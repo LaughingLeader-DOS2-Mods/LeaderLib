@@ -214,6 +214,7 @@ Ext.RegisterNetListener("LeaderLib_SetClientCharacter", function(call, payload)
 	UI.ClientCharacter = data.UUID
 	UI.ClientID = data.ID
 	UI.IsHost = data.IsHost or false
+	UI.Profile = data.Profile
 end)
 
 Ext.RegisterNetListener("LeaderLib_SetHelmetOption", function(call, dataStr)

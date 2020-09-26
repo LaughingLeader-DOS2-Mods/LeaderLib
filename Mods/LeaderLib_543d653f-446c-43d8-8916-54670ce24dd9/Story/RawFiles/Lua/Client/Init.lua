@@ -6,6 +6,7 @@ UI.Tooltip = {}
 ---@type string
 UI.ClientCharacter = nil
 UI.ClientID = -1
+UI.Profile = ""
 UI.IsHost = false
 
 

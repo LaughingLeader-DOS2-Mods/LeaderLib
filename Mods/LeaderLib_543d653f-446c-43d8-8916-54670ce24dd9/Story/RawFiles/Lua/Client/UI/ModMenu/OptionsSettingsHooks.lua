@@ -32,6 +32,8 @@ local lastMenu = 1
 local currentMenu = 1
 local switchToModMenu = false
 
+local ModMenuTabButtonText = Classes.TranslatedString:Create("h5945db23gdaafg400ega4d6gc2ffa7a53f92", "Mod Settings")
+
 Ext.RegisterNetListener("LeaderLib_ModMenu_RunParseUpdateArrayMethod", function(cmd,payload)
 	local ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf")
 	if ui ~= nil then
@@ -66,7 +68,7 @@ local function CreateModMenuButton(ui, method, ...)
 	if main ~= nil then
 		---@type MainMenuMC
 		local mainMenu = main.mainMenu_mc
-		mainMenu.addOptionButton("MOD SETTINGS", "switchToModMenu", MOD_MENU_ID, switchToModMenu)
+		mainMenu.addOptionButton(ModMenuTabButtonText.Value, "switchToModMenu", MOD_MENU_ID, switchToModMenu)
 		if switchToModMenu then
 			for i=0,#main.baseUpdate_Array do
 				local val = main.baseUpdate_Array[i]
@@ -240,7 +242,7 @@ Ext.RegisterListener("SessionLoaded", function()
 		if main ~= nil then
 			---@type MainMenuMC
 			local mainMenu = main.controlsMenu_mc
-			mainMenu.addMenuButton("MOD SETTINGS", "switchToModMenuFromInput", MOD_MENU_ID, false)
+			mainMenu.addMenuButton(ModMenuTabButtonText.Value, "switchToModMenuFromInput", MOD_MENU_ID, false)
 		end
 	end)
 
@@ -249,23 +251,33 @@ Ext.RegisterListener("SessionLoaded", function()
 
 	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "checkBoxID", function(ui, call, id, state)
 		print(call,id,state)
-		ModMenuManager.OnCheckbox(id, state)
+		if currentMenu == MOD_MENU_ID then
+			ModMenuManager.OnCheckbox(id, state)
+		end
 	end)
 	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "comboBoxID", function(ui, call, id, index)
 		print(call,id,index)
-		ModMenuManager.OnComboBox(id, index)
+		if currentMenu == MOD_MENU_ID then
+			ModMenuManager.OnComboBox(id, index)
+		end
 	end)
 	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "selectorID", function(ui, call, id, currentSelection)
 		print(call,id,currentSelection)
-		ModMenuManager.OnSelector(id, currentSelection)
+		if currentMenu == MOD_MENU_ID then
+			ModMenuManager.OnSelector(id, currentSelection)
+		end
 	end)
 	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "menuSliderID", function(ui, call, id, value)
 		print(call,id,value)
-		ModMenuManager.OnSlider(id, value)
+		if currentMenu == MOD_MENU_ID then
+			ModMenuManager.OnSlider(id, value)
+		end
 	end)
 	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "buttonPressed", function(ui, call, id)
 		print(call,id)
-		ModMenuManager.OnButtonPressed(id)
+		if currentMenu == MOD_MENU_ID then
+			ModMenuManager.OnButtonPressed(id)
+		end
 	end)
 
 	---@param ui UIObject

@@ -39,6 +39,7 @@
 	<content contentuid="h1c1d8acag9819g4028g860fg9a546af236ee">[LOAD] Load Global Settings - These are global extender mod settings LeaderLib manages.&lt;br&gt;Path: &lt;b&gt;Documents/Larian Studios/Divinity Original Sin 2 Definitive Edition/Osiris Data/LeaderLib_GlobalSettings.json&lt;/b&gt;</content>
 	<content contentuid="h1c359033g2e0dg49b1g9befg63f786d3f9fc">Control Summon</content>
 	<content contentuid="h1db4b34cg358dg49a2gbaeag3cb06a86ab4c">Character is selling new items.</content>
+	<content contentuid="h1e7b9070ga8cag46f3ga7b4gfccd1addb8ba">[1]&lt;br&gt;Created by [2]</content>
 	<content contentuid="h2033bb71g7004g4423ga633gd50bfc8fdd50">When combat starts, LeaderLib will autosave the game.</content>
 	<content contentuid="h22e00201g6666g4837gaf8ega722712bad2a">[LeaderLib_DynamicMenu_MenuOption3_58379c79-1cf1-4129-bcf5-579f40a9ad11]</content>
 	<content contentuid="h24533724ga73fg4d76gb62egc700a193eb89">Must you, really?</content>
@@ -202,7 +203,7 @@
 	<content contentuid="h951be36bg6ed7g49e4ga343gaa5c47a4c98e">*Lothar grunts, rubbing his lower back as he chews on something.* Once I saw this beautiful ship in the distance, I knew it was my chance to escape. I swam like a fish.</content>
 	<content contentuid="h966d6fabgc29cg4602gad0dg0c50f9418e24">A &lt;font color=&apos;#D040D0&apos;&gt;Story Compilation Error&lt;/font&gt; occurred with your active mods.&lt;br&gt;&lt;font color=&apos;#F7BA14&apos; size=&apos;22&apos;&gt;You may be missing mod requirements.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#FF0000&apos; size=&apos;24&apos;&gt;Mods will not work correctly.&lt;/font&gt;&lt;br&gt;To potentially fix this, please check the requirements of your active mods, such as required dependency mods, the script extender, and/or an updated game version.</content>
 	<content contentuid="h97e93b5eg2e78g46f0gac84g8250aeaa1984">*The old man looks to you as you approach.* Welcome! *He looks around.* Bit of a dreary place now, mm?</content>
-	<content contentuid="h9863bb3eg058dg45acg8926gefb0f24ece72">Autosave on Combat</content>
+	<content contentuid="h9863bb3eg058dg45acg8926gefb0f24ece72">Autosave When Combat Starts</content>
 	<content contentuid="h98bf1217gf2bfg4d82g99b9g6747f36f9aab">&lt;font color=&apos;#FF0000&apos;&gt;Script Extender Missing!&lt;/font&gt;</content>
 	<content contentuid="h98d315c5g189cg431eg9862g7cea569a5e3b">Hmm?</content>
 	<content contentuid="h9b843d3agc42eg4295g8381ge2eb54eeac08">Dialog Redirection Settings</content>
@@ -248,7 +249,7 @@
 	<content contentuid="hb796e45cgaab4g4fcega4a2g2e424ed8b66c">[GLOBAL] Enable Combat Log Logging</content>
 	<content contentuid="hb7be1cf4gcd0ag4fadga064g72a74b996f1a">[GLOBAL] Disable Autosaving when Combat Starts</content>
 	<content contentuid="hb8f5a682g5a19g4fe4ga26ag701bf0ba4e8b">Give me a moment to prepare my things, and we can begin trading again.</content>
-	<content contentuid="hb9335219gb6b3g49ffg9291gd3bf78a2f84f">Disable Autosaving in Combat</content>
+	<content contentuid="hb9335219gb6b3g49ffg9291gd3bf78a2f84f">Pause Autosaving in Combat</content>
 	<content contentuid="hb955eb39g2068g4c7dga389gfabcaa42462d">Loading mod menu...</content>
 	<content contentuid="hb987d743g981dg43f6g9aa8g08109349d4e9">LeaderLib Successfully Loaded Global Settings</content>
 	<content contentuid="hba8ffff9gf198g45ddg8ee7gf74d6497cd1d">Good riddance.</content>

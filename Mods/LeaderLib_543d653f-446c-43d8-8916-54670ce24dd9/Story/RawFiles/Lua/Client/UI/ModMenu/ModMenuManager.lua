@@ -33,21 +33,26 @@ ModMenuManager = {
 
 local CreatedByText = Classes.TranslatedString:Create("h1e7b9070ga8cag46f3ga7b4gfccd1addb8ba", "[1]<br>Created by [2]")
 
+---@param name string
+---@param v FlagData|VariableData
+---@return string,string
 local function PrepareText(name, v)
 	local displayName = name
 	local tooltip = ""
-	if v.DisplayName ~= nil and v.DisplayName ~= "" then
-		if type(v.DisplayName) == "string" then
-			displayName = v.DisplayName
-		elseif v.DisplayName.Type == Classes.TranslatedString.Type and not StringHelpers.IsNullOrEmpty(v.DisplayName.Value) then
-			displayName = v.DisplayName.Value
+	if v ~= nil then
+		if v.DisplayName ~= nil and v.DisplayName ~= "" then
+			if type(v.DisplayName) == "string" then
+				displayName = v.DisplayName
+			elseif v.DisplayName.Type == Classes.TranslatedString.Type and not StringHelpers.IsNullOrEmpty(v.DisplayName.Value) then
+				displayName = v.DisplayName.Value
+			end
 		end
-	end
-	if v.Tooltip ~= nil and v.Tooltip ~= "" then
-		if type(v.Tooltip) == "string" then
-			tooltip = v.Tooltip
-		elseif v.DisplayName.Type == Classes.TranslatedString.Type and not StringHelpers.IsNullOrEmpty(v.Tooltip.Value) then
-			tooltip = v.Tooltip.Value
+		if v.Tooltip ~= nil and v.Tooltip ~= "" then
+			if type(v.Tooltip) == "string" then
+				tooltip = v.Tooltip
+			elseif v.DisplayName.Type == Classes.TranslatedString.Type and not StringHelpers.IsNullOrEmpty(v.Tooltip.Value) then
+				tooltip = v.Tooltip.Value
+			end
 		end
 	end
 	if displayName == name or displayName == "stringkey" then
@@ -70,6 +75,16 @@ local function PrepareText(name, v)
 	return displayName, tooltip
 end
 
+local function AddControl(entry, uuid, value)
+	ModMenuManager.Controls[ModMenuManager.LastID] = {Entry=entry, UUID=uuid, Value=value, Last=value}
+	ModMenuManager.LastID = ModMenuManager.LastID + 1
+end
+
+---@param ui UIObject
+---@param mainMenu MainMenuMC
+---@param name string
+---@param v FlagData|VariableData
+---@param uuid string The mod's UUID
 local function AddModSettingsEntry(ui, mainMenu, name, v, uuid)
 	local debugEnabled = false
 	local LeaderLibSettings = GlobalSettings.Mods["7e737d2f-31d2-4751-963f-be6ccc59cd0c"]
@@ -82,8 +97,7 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, uuid)
 			local state = v.Enabled and 1 or 0
 			local displayName, tooltip = PrepareText(name, v)
 			mainMenu.addMenuCheckbox(ModMenuManager.LastID, displayName, enableControl, state, false, tooltip)
-			ModMenuManager.Controls[ModMenuManager.LastID] = {Entry=v, UUID=uuid, Value=v.Enabled, Last=v.Enabled}
-			ModMenuManager.LastID = ModMenuManager.LastID + 1
+			AddControl(v, uuid, v.Enabled)
 		elseif v.Type == "VariableData" then
 			local varType = type(v.Value)
 			if varType == "number" then
@@ -92,15 +106,31 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, uuid)
 				local max = v.Max or 999
 				local displayName, tooltip = PrepareText(name, v)
 				mainMenu.addMenuSlider(ModMenuManager.LastID, displayName, v.Value, min, max, interval, false, tooltip)
-				ModMenuManager.Controls[ModMenuManager.LastID] = {Entry=v, UUID=uuid, Value=v.Value, Last=v.Value}
-				ModMenuManager.LastID = ModMenuManager.LastID + 1
-	
+				AddControl(v, uuid, v.Value)
+
 				if UI.IsHost ~= true then
 					local slider = mainMenu.list.content_array[#mainMenu.list.content_array-1]
 					if slider ~= nil then
 						slider.alpha = 0.3
 						slider.slider_mc.m_disabled = true
 					end
+				end
+			elseif varType == "boolean" then
+				local enableControl = UI.IsHost == true -- TODO: Specify on entries whether clients can edit them?
+				local state = v.Value == true and 1 or 0
+				local displayName, tooltip = PrepareText(name, v)
+				mainMenu.addMenuCheckbox(ModMenuManager.LastID, displayName, enableControl, state, false, tooltip)
+				AddControl(v, uuid, v.Value)
+			elseif varType == "table" then
+				local enableControl = UI.IsHost == true
+				local state = v.Value == true and 1 or 0
+				local displayName, tooltip = PrepareText(name, v)
+				mainMenu.addMenuDropDown(ModMenuManager.LastID, displayName, tooltip)
+				AddControl(v, uuid, v.Value.Selected)
+				for _,entry in pairs(v.Value.Entries) do
+					local entryName,_ = PrepareText(entry)
+					mainMenu.addMenuDropDownEntry(ModMenuManager.LastID, entryName)
+					ModMenuManager.LastID = ModMenuManager.LastID + 1
 				end
 			end
 		end

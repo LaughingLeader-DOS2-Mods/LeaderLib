@@ -335,7 +335,7 @@ function SettingsData:FlagEquals(id, b)
 	if data ~= nil then
 		return data.Enabled == b
 	end
-	return false
+	return b == false -- Flag doesn't exist, so it's not set
 end
 
 function SettingsData:Export(forSyncing)

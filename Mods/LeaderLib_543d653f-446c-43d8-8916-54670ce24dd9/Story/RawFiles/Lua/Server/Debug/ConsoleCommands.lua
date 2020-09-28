@@ -989,3 +989,25 @@ Ext.RegisterConsoleCommand("llresetrules", function(cmd)
 	print("[llresetrules] Reset surface rules.")
 	print(Ext.JsonStringify(Ext.GetSurfaceTransformRules()["Fire"][1]))
 end)
+
+Ext.RegisterConsoleCommand("modorder", function(cmd, uuidOnly)
+	if uuidOnly ~= nil then
+		for i,v in ipairs(Ext.GetModLoadOrder()) do
+			print(string.format("%i. %s", i, v))
+		end
+	else
+		local order = {}
+		for i,v in ipairs(Ext.GetModLoadOrder()) do
+			local info = Ext.GetModInfo(v)
+			if info ~= nil then
+				table.insert(order, string.format("%s %s", info.Name, StringHelpers.VersionIntegerToVersionString(info.Version)))
+			else
+				table.insert(order, v)
+			end
+		end
+		--print(Ext.JsonStringify(order))
+		for i,v in ipairs(order) do
+			print(string.format("%i. %s", i, v))
+		end
+	end
+end)

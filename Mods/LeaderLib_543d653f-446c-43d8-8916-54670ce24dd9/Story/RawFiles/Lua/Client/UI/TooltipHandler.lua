@@ -81,7 +81,7 @@ local function OnStatusTooltip(character, status, tooltip)
 					if statusType == "DAMAGE" 
 						and not StringHelpers.IsNullOrEmpty(descParams)
 						and string.find(descParams, "Damage") 
-						and not string.find(element.Label:lower(), "chaos damage")
+						and not string.find(element.Label:lower(), LocalizedText.DamageTypeHandles.Chaos.Text.Value)
 					then
 						local startPos,endPos,damage = string.find(element.Label, chaosDamagePattern)
 						if damage ~= nil then
@@ -120,7 +120,7 @@ local function OnSkillTooltip(character, skill, tooltip)
 						element.Label = string.gsub(element.Label, text, text:gsub("a ", "an "))
 					end
 				end
-				if Features.FixChaosDamageDisplay == true and not string.find(element.Label:lower(), "chaos damage") then
+				if Features.FixChaosDamageDisplay == true and not string.find(element.Label:lower(), LocalizedText.DamageTypeHandles.Chaos.Text.Value) then
 					local startPos,endPos,damage = string.find(element.Label, chaosDamagePattern)
 					if damage ~= nil then
 						damage = string.gsub(damage, "%s+", "")
@@ -132,10 +132,10 @@ local function OnSkillTooltip(character, skill, tooltip)
 					local status,err = xpcall(function()
 						local lowerLabel = string.lower(element.Label)
 						local damageText = ""
-						if string.find(lowerLabel, "corrosive damage") then
-							damageText = "corrosive damage"
-						elseif string.find(lowerLabel, "magic damage") then
-							damageText = "magic damage"
+						if string.find(lowerLabel, LocalizedText.DamageTypeHandles.Corrosive.Text.Value) then
+							damageText = LocalizedText.DamageTypeHandles.Corrosive.Text.Value
+						elseif string.find(lowerLabel, LocalizedText.DamageTypeHandles.Magic.Text.Value) then
+							damageText = LocalizedText.DamageTypeHandles.Magic.Text.Value
 						end
 						if damageText ~= "" then
 							local startPos,endPos = string.find(lowerLabel, "destroy <font.->[%d-]+ "..damageText..".-</font> on")

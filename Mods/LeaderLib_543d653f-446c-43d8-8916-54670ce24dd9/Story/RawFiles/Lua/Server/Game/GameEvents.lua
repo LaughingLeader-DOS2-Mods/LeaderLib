@@ -130,7 +130,6 @@ function OnLeaderLibInitialized(region)
 end
 
 function OnLuaReset()
-	print("OnLuaReset")
 	OnInitialized()
 	if #Listeners.LuaReset > 0 then
 		for i,callback in pairs(Listeners.LuaReset) do
@@ -140,4 +139,8 @@ function OnLuaReset()
 			end
 		end
 	end
+	local region = Osi.DB_CurrentLevel:Get(nil)[1][1]
+	GameHelpers.Data.SetRegion(region)
+	IterateUsers("LeaderLib_StoreUserData")
+	GameHelpers.Data.StartSyncTimer()
 end

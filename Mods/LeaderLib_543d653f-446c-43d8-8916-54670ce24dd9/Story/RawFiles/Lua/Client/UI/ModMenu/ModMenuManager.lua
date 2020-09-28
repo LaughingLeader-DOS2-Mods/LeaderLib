@@ -93,7 +93,7 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, uuid)
 	end
 	if not v.DebugOnly or debugEnabled then
 		if v.Type == "FlagData" then
-			local enableControl = UI.IsHost == true or v.FlagType ~= "Global"
+			local enableControl = SharedData.IsHost == true or v.FlagType ~= "Global"
 			local state = v.Enabled and 1 or 0
 			local displayName, tooltip = PrepareText(name, v)
 			mainMenu.addMenuCheckbox(ModMenuManager.LastID, displayName, enableControl, state, false, tooltip)
@@ -108,7 +108,7 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, uuid)
 				mainMenu.addMenuSlider(ModMenuManager.LastID, displayName, v.Value, min, max, interval, false, tooltip)
 				AddControl(v, uuid, v.Value)
 
-				if UI.IsHost ~= true then
+				if SharedData.IsHost ~= true then
 					local slider = mainMenu.list.content_array[#mainMenu.list.content_array-1]
 					if slider ~= nil then
 						slider.alpha = 0.3
@@ -116,21 +116,23 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, uuid)
 					end
 				end
 			elseif varType == "boolean" then
-				local enableControl = UI.IsHost == true -- TODO: Specify on entries whether clients can edit them?
+				local enableControl = SharedData.IsHost == true -- TODO: Specify on entries whether clients can edit them?
 				local state = v.Value == true and 1 or 0
 				local displayName, tooltip = PrepareText(name, v)
 				mainMenu.addMenuCheckbox(ModMenuManager.LastID, displayName, enableControl, state, false, tooltip)
 				AddControl(v, uuid, v.Value)
 			elseif varType == "table" then
-				local enableControl = UI.IsHost == true
+				local enableControl = SharedData.IsHost == true
 				local state = v.Value == true and 1 or 0
 				local displayName, tooltip = PrepareText(name, v)
 				mainMenu.addMenuDropDown(ModMenuManager.LastID, displayName, tooltip)
 				AddControl(v, uuid, v.Value.Selected)
-				for _,entry in pairs(v.Value.Entries) do
-					local entryName,_ = PrepareText(entry)
-					mainMenu.addMenuDropDownEntry(ModMenuManager.LastID, entryName)
-					ModMenuManager.LastID = ModMenuManager.LastID + 1
+				if v.Value.Entries ~= nil and type(v.Value.Entries) == "table" then
+					for _,entry in pairs(v.Value.Entries) do
+						local entryName,_ = PrepareText(entry)
+						mainMenu.addMenuDropDownEntry(ModMenuManager.LastID, entryName)
+						ModMenuManager.LastID = ModMenuManager.LastID + 1
+					end
 				end
 			end
 		end
@@ -217,7 +219,11 @@ function ModMenuManager.CreateMenu(ui, mainMenu)
 			mainMenu.addMenuLabel(modName)
 			local label = mainMenu.list.content_array[#mainMenu.list.content_array-1]
 			if label ~= nil then
-				label.tooltip = CreatedByText:ReplacePlaceholders(string.format("%s v%s", modName, StringHelpers.VersionIntegerToVersionString(modInfo.Version)), modInfo.Author)
+				if modInfo ~= nil then
+					label.tooltip = CreatedByText:ReplacePlaceholders(string.format("%s v%s", modName, StringHelpers.VersionIntegerToVersionString(modInfo.Version)), modInfo.Author)
+				else
+					label.tooltip = string.format("%s v%s", modName, StringHelpers.VersionIntegerToVersionString(modSettings.Version))
+				end
 			end
 
 			if modSettings.GetMenuOrder ~= nil then

@@ -32,7 +32,6 @@ local function SyncGlobalSettings(settings)
 		GlobalSettings.Version = settings.Version
 		for k,v in pairs(settings.Mods) do
 			if GlobalSettings.Mods[k] == nil then
-				print("[CLIENT] GlobalSettings ",k,v.Name," is nil.")
 				GlobalSettings.Mods[k] = v
 			else
 				local existing = GlobalSettings.Mods[k]

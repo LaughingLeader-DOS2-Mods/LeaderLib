@@ -89,7 +89,7 @@ if Ext.IsServer() then
 		Ext.BroadcastMessage("LeaderLib_SyncGlobalSettings", Ext.JsonStringify(ExportGlobalSettings(true)), nil)
 	end
 	
-	function SettingsManager.SyncAllSettings(id)
+	function SettingsManager.SyncAllSettings(id, skipSyncStatOverrides)
 		Ext.Print("[LeaderLib:SettingsManager.SyncAllSettings] Syncing all settings with clients.")
 		local data = {
 			GlobalSettings = ExportGlobalSettings(true),
@@ -101,7 +101,9 @@ if Ext.IsServer() then
 		else
 			Ext.BroadcastMessage("LeaderLib_SyncAllSettings", Ext.JsonStringify(data), nil)
 		end
-		SyncStatOverrides(GameSettings, true)
+		if skipSyncStatOverrides ~= true then
+			SyncStatOverrides(GameSettings, true)
+		end
 	end
 	
 	---@param uuid string

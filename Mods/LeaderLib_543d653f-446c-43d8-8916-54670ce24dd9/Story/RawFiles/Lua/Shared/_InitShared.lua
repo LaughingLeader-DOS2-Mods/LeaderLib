@@ -104,6 +104,8 @@ Listeners = {
 	TurnDelayed = {},
 	GetTooltipSkillDamage = {},
 	GetTooltipSkillParam = {},
+	SyncData = {},
+	ClientDataSynced = {},
 }
 
 SkillListeners = {}

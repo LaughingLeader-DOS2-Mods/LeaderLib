@@ -47,11 +47,21 @@ local OneshotTimerData = {}
 function StartOneshotTimer(timerName, delay, callback)
 	if OneshotTimerData[timerName] == nil then
 		OneshotTimerData[timerName] = {}
+	else
+		-- Skip duplicate callbacks
+		for i,v in pairs(OneshotTimerData[timerName]) do
+			if v == callback then
+				TimerCancel(timerName)
+				TimerLaunch(timerName, delay)
+				return true
+			end
+		end
 	end
 	table.insert(OneshotTimerData[timerName], callback)
 	Osi.LeaderLib_Timers_Internal_StoreLuaData(timerName, timerName)
 	TimerCancel(timerName)
 	TimerLaunch(timerName, delay)
+	return true
 end
 
 ---Cancels an Osiris timer with a variable amount of UUIDs (or none).

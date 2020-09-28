@@ -191,18 +191,16 @@ end
 ---@param damage integer
 function OnSkillHit(source, skill, target, handle, damage)
 	if skill ~= "" and skill ~= nil then
-
-		local uuid = GetUUID(source)
 		---@type HitData
-		local data = Classes.HitData:Create(GetUUID(target), uuid, damage, handle, skill)
+		local data = Classes.HitData:Create(target, source, damage, handle, skill)
 
 		local listeners = SkillListeners[skill]
 		if listeners ~= nil then
-			RunSkillListenersForOnSkillHit(uuid, skill, data, listeners)
+			RunSkillListenersForOnSkillHit(source, skill, data, listeners)
 		end
 		listeners = Listeners.OnSkillHit
 		if listeners ~= nil then
-			RunSkillListenersForOnSkillHit(uuid, skill, data, listeners)
+			RunSkillListenersForOnSkillHit(source, skill, data, listeners)
 		end
 
 		if Features.ApplyBonusWeaponStatuses == true then

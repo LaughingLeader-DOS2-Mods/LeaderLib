@@ -33,21 +33,12 @@ end
 function OnHit(target, source, damage, handle)
 	--print(target,source,damage,handle,HasActiveStatus(source, "AOO"),HasActiveStatus(target, "AOO"))
 	--print(string.format("[NRD_OnHit] Target(%s) Source(%s) damage(%i) Handle(%i) HitType(%s)", target, source, damage, handle, NRD_StatusGetString(target, handle, "HitType")))
-	
-	if Ext.Version() < 50 then
-		if type(damage) == "string" then
-			damage = math.tointeger(tonumber(damage))
-		end
-		if type(handle) == "string" then
-			handle = math.tointeger(tonumber(handle))
-		end
-	end
 
 	if target ~= nil then
-		target = GetUUID(target)
+		target = StringHelpers.GetUUID(target)
 	end
 	if source ~= nil then
-		source = GetUUID(source)
+		source = StringHelpers.GetUUID(source)
 	end
 
 	local skillprototype = NRD_StatusGetString(target, handle, "SkillId")

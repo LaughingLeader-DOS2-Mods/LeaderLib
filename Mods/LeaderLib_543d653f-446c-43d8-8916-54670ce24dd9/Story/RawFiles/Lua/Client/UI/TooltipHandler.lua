@@ -633,11 +633,47 @@ local function OnItemTooltip(item, tooltip)
 	end
 end
 
+local debugTooltipCalls = {
+	"tooltipClicked",
+	"tooltipOut",
+	"tooltipOver",
+	"showItemTooltip",
+	"showTooltip",
+	"hideTooltip",
+	"setTooltipSize",
+}
+
 Ext.RegisterListener("SessionLoaded", function()
 	Game.Tooltip.RegisterListener("Item", nil, OnItemTooltip)
 	Game.Tooltip.RegisterListener("Skill", nil, OnSkillTooltip)
 	Game.Tooltip.RegisterListener("Status", nil, OnStatusTooltip)
 	Game.Tooltip.RegisterListener("Stat", nil, OnStatTooltip)
+
+	---@param ui UIObject
+	-- Ext.RegisterUITypeInvokeListener(44, "updateTooltips", function(ui, method, ...)
+	-- 	print(ui:GetTypeId(), method, Common.Dump{...})
+	-- end)
+	-- Ext.RegisterUITypeInvokeListener(44, "showTooltipLong", function(ui, method, ...)
+	-- 	print(ui:GetTypeId(), method, Common.Dump{...})
+	-- end)
+	Ext.RegisterUITypeInvokeListener(44, "addTooltip", function(ui, method, text, xPos, yPos, ...)
+		for i,callback in pairs(UIListeners.OnWorldTooltip) do
+			local status,err = xpcall(callback, debug.traceback, ui, text, xPos, yPos, ...)
+			if not status then
+				Ext.PrintError("[LeaderLib:OnWorldTooltip] Error invoking callback:")
+				Ext.PrintError(err)
+			end
+		end
+	end, "After")
+	-- Ext.RegisterUITypeInvokeListener(44, "addFormattedTooltip", function(ui, method, ...)
+	-- 	print(ui:GetTypeId(), method, Common.Dump{...})
+	-- end)
+
+	-- for i,v in pairs(debugTooltipCalls) do
+	-- 	Ext.RegisterUINameCall(v, function(ui, call, ...)
+	-- 		print(ui:GetTypeId(), call, Common.Dump{...})
+	-- 	end)
+	-- end
 
 	Ext.RegisterUINameInvokeListener("showFormattedTooltipAfterPos", function(ui, ...)
 		OnTooltipPositioned(ui)

@@ -11,7 +11,8 @@ UI.IsHost = false
 
 
 UIListeners = {
-	OnTooltipPositioned = {}
+	OnTooltipPositioned = {},
+	OnWorldTooltip = {}
 }
 
 --- Registers a function to call when a specific Lua LeaderLib UI event fires.

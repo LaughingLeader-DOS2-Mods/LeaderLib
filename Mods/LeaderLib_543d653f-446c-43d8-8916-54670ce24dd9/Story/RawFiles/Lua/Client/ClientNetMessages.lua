@@ -199,7 +199,6 @@ local function RefreshStatusTurns(data)
 end
 
 Ext.RegisterNetListener("LeaderLib_UI_RefreshStatusTurns", function(call, dataStr)
-	print(dataStr)
 	local data = MessageData:CreateFromString(dataStr)
 	if data ~= nil then
 		local b,err = xpcall(RefreshStatusTurns, debug.traceback, data)

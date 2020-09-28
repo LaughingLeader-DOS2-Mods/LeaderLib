@@ -39,36 +39,6 @@ local function OnSheetEvent(ui, call, ...)
 	end
 end
 
-local combatAbilityGroupID = {
-	[0] = "Weapons",
-	[1] = "Defense",
-	[2] = "Skills",
-}
-
-local civilAbilityGroupID = {
-	[0] = "Personality",
-	[1] = "Craftsmanship",
-	[2] = "Nasty Deeds",
-}
-
-local missingAbilities = {
-	Shield = {Group=0, Civil=false},
-	Reflexes = {Group=1, Civil=false},
-	PhysicalArmorMastery = {Group=1, Civil=false},
-	Sourcery = {Group=2, Civil=false},
-	Sulfurology = {Group=2, Civil=false},
-	Repair = {Group=1, Civil=true},
-	Crafting = {Group=1, Civil=true},
-	Charm = {Group=3, Civil=true},
-	Intimidate = {Group=3, Civil=true},
-	Reason = {Group=3, Civil=true},
-	Wand = {Group=0, Civil=false},
-	MagicArmorMastery = {Group=1, Civil=false},
-	VitalityMastery = {Group=1, Civil=false},
-	Runecrafting = {Group=4, Civil=true},
-	Brewmaster = {Group=4, Civil=true},
-}
-
 local function GetArrayIndexStart(ui, arrayName, checkType, offset)
 	local i = 0
 	while i < 9999 do
@@ -81,79 +51,11 @@ local function GetArrayIndexStart(ui, arrayName, checkType, offset)
 	return -1
 end
 
---[[ 
-ability_array Mapping:
-0 = isCivilAbility:boolean
-1 = groupId:number, 
-2 = statId:number
-3 = displayName:string
-4 = valueText:string
-5 = addTooltipText:string
-6 = removeTooltipText:string
-]]
-
----@param ui UIObject
-local function addMissingAbilities(ui)
-	local i = GetArrayIndexStart(ui, "ability_array", "boolean", 7)
-	if i > -1 then
-		local total = 0
-		for abilityName,data in pairs(missingAbilities) do
-			local abilityID = Data.AbilityEnum[abilityName]
-			ui:SetValue("ability_array", data.Civil, i) -- isCivilAbility
-			ui:SetValue("ability_array", data.Group, i+1) -- groupId
-			ui:SetValue("ability_array", abilityID, i+2) -- statId
-			ui:SetValue("ability_array", GameHelpers.GetAbilityName(abilityName), i+3) -- displayName
-			ui:SetValue("ability_array", Ext.Random(1,10), i+4) -- valueText
-			ui:SetValue("ability_array", LocalizedText.UI.AbilityPlusTooltip:ReplacePlaceholders(Ext.ExtraData.CombatAbilityLevelGrowth), i+5) -- addTooltipText
-			ui:SetValue("ability_array", "", i+6) -- removeTooltipText
-			--PrintDebug(string.format("[LeaderLib:addMissingAbilities] Added ability [%s] = (%s)", abilityID, abilityName))
-			i = i + 7
-			total = total + 1
-		end
-		PrintDebug(string.format("[LeaderLib:addMissingAbilities] Added abilities to the character sheet. i[%s] Total(%s)", i, total))
-	else
-		Ext.PrintError("[LeaderLib:addMissingAbilities] Failed to finding starting index for ability_array!")
-	end
-end
-
---[[ 
-Array Mapping:
-0 - hasPoints:boolean
-1 = isCivilAbility:boolean
-2 = groupId:number, 
-3 = statId:number
-4 = isVisible:boolean
-]]
----@param ui UIObject
----@param hasPoints boolean
-local function toggleAbilityButtonVisibility(ui, hasPoints)
-	local i = GetArrayIndexStart(ui, "lvlBtnAbility_array", "boolean", 5)
-	if i > -1 then
-		for abilityName,data in pairs(missingAbilities) do
-			local abilityID = Data.AbilityEnum[abilityName]
-			ui:SetValue("lvlBtnAbility_array", true, i) -- hasPoints
-			ui:SetValue("lvlBtnAbility_array", data.Civil, i+1) -- isCivilAbility
-			ui:SetValue("lvlBtnAbility_array", data.Group, i+2) -- groupId
-			ui:SetValue("lvlBtnAbility_array", abilityID, i+3) -- statId
-			ui:SetValue("lvlBtnAbility_array", true, i+4) -- isVisible
-			--PrintDebug(string.format("[LeaderLib:addMissingAbilities] Enabled point button for [%s] = (%s)", abilityID, abilityName))
-			i = i + 5
-		end
-	else
-		Ext.PrintError("[LeaderLib:addMissingAbilities] Failed to finding starting index for ability_array!")
-	end
-end
-
 ---@param ui UIObject
 local function OnCharacterSheetUpdating(ui)
-	local arrayValueSet = ui:GetValue("ability_array", "boolean", 0)
-	if arrayValueSet ~= nil then
-		addMissingAbilities(ui)
-	end
-	local hasPoints = ui:GetValue("lvlBtnAbility_array", "boolean", 0)
-	if hasPoints ~= nil then
-		toggleAbilityButtonVisibility(ui)
-	end
+	local arrayValueSet = ui:GetValue("ability_array", "boolean", 0) ~= nil
+	local hasPoints = ui:GetValue("lvlBtnAbility_array", "boolean", 0) ~= nil
+	AbilityManager.OnCharacterSheetUpdating(ui, arrayValueSet, hasPoints)
 end
 
 local pointEvents = {

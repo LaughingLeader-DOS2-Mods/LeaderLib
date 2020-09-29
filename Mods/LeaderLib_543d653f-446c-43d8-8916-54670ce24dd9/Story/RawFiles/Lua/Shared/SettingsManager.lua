@@ -26,7 +26,9 @@ end
 function SettingsManager.Remove(uuid)
 	if GlobalSettings.Mods[uuid] ~= nil then
 		GlobalSettings.Mods[uuid] = nil
-		SettingsManager.SyncGlobalSettings()
+		if Ext.GetGameState() == "Running" then
+			SettingsManager.SyncGlobalSettings()
+		end
 	end
 end
 

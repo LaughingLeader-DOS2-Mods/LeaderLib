@@ -99,7 +99,7 @@ if Ext.IsClient() then
 	---@param ui UIObject
 	local function addMissingAbilities(ui, main)
 		---@type EclCharacter
-		local character = Ext.GetCharacter(Client.UUID)
+		local character = Ext.GetCharacter(ClientData.Character.UUID)
 		local ability_array = main.ability_array
 		if ability_array ~= nil then
 			local i = #ability_array
@@ -160,14 +160,6 @@ if Ext.IsClient() then
 					--main.stats_mc.setAbilityPlusVisible(data.Civil,data.Group,abilityID,hasPoints)
 				end
 			end
-			-- for i=0,#lvlBtnAbility_array,5 do
-			-- 	local abilityName = Data.Ability[lvlBtnAbility_array[i+3]]
-			-- 	print("lvlBtnAbility_array", i, lvlBtnAbility_array[i])
-			-- 	print("lvlBtnAbility_array", i+1, lvlBtnAbility_array[i+1])
-			-- 	print("lvlBtnAbility_array", i+2, lvlBtnAbility_array[i+2])
-			-- 	print("lvlBtnAbility_array", i+3, lvlBtnAbility_array[i+3], abilityName)
-			-- 	print("lvlBtnAbility_array", i+4, lvlBtnAbility_array[i+4])
-			-- end
 		else
 			Ext.PrintError("[LeaderLib:addMissingAbilities] Failed to finding starting index for ability_array!")
 		end

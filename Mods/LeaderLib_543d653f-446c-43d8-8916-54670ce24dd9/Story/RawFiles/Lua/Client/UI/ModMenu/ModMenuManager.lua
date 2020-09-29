@@ -93,8 +93,13 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, uuid)
 	end
 	if not v.DebugOnly or debugEnabled then
 		if v.Type == "FlagData" then
-			local enableControl = SharedData.IsHost == true or v.FlagType ~= "Global"
-			local state = v.Enabled and 1 or 0
+			local enableControl = Client.IsHost or v.FlagType ~= "Global"
+			local state = 0
+			if v.Default then
+				state = v.Enabled and 0 or 1
+			else
+				state = v.Enabled and 1 or 0
+			end
 			local displayName, tooltip = PrepareText(name, v)
 			mainMenu.addMenuCheckbox(ModMenuManager.LastID, displayName, enableControl, state, false, tooltip)
 			AddControl(v, uuid, v.Enabled)
@@ -108,7 +113,7 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, uuid)
 				mainMenu.addMenuSlider(ModMenuManager.LastID, displayName, v.Value, min, max, interval, false, tooltip)
 				AddControl(v, uuid, v.Value)
 
-				if SharedData.IsHost ~= true then
+				if Client.IsHost ~= true then
 					local slider = mainMenu.list.content_array[#mainMenu.list.content_array-1]
 					if slider ~= nil then
 						slider.alpha = 0.3
@@ -116,13 +121,13 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, uuid)
 					end
 				end
 			elseif varType == "boolean" then
-				local enableControl = SharedData.IsHost == true -- TODO: Specify on entries whether clients can edit them?
+				local enableControl = Client.IsHost == true -- TODO: Specify on entries whether clients can edit them?
 				local state = v.Value == true and 1 or 0
 				local displayName, tooltip = PrepareText(name, v)
 				mainMenu.addMenuCheckbox(ModMenuManager.LastID, displayName, enableControl, state, false, tooltip)
 				AddControl(v, uuid, v.Value)
 			elseif varType == "table" then
-				local enableControl = SharedData.IsHost == true
+				local enableControl = Client.IsHost == true
 				local state = v.Value == true and 1 or 0
 				local displayName, tooltip = PrepareText(name, v)
 				mainMenu.addMenuDropDown(ModMenuManager.LastID, displayName, tooltip)
@@ -208,32 +213,28 @@ function ModMenuManager.CreateMenu(ui, mainMenu)
 
 	for _,modSettings in pairs(settings) do
 		if modSettings.Global ~= nil then
-			local modName = modSettings.Name
-			local modInfo = nil
 			if Ext.IsModLoaded(modSettings.UUID) then
-				modInfo = Ext.GetModInfo(modSettings.UUID)
-				if modInfo ~= nil then
-					modName = modInfo.Name
+				local modInfo = Ext.GetModInfo(modSettings.UUID)
+				local modName = modInfo.Name or modSettings.Name
+				mainMenu.addMenuLabel(modName)
+				local label = mainMenu.list.content_array[#mainMenu.list.content_array-1]
+				if label ~= nil then
+					if modInfo ~= nil then
+						label.tooltip = CreatedByText:ReplacePlaceholders(string.format("%s v%s", modName, StringHelpers.VersionIntegerToVersionString(modInfo.Version)), modInfo.Author)
+					else
+						label.tooltip = string.format("%s v%s", modName, StringHelpers.VersionIntegerToVersionString(modSettings.Version))
+					end
 				end
-			end
-			mainMenu.addMenuLabel(modName)
-			local label = mainMenu.list.content_array[#mainMenu.list.content_array-1]
-			if label ~= nil then
-				if modInfo ~= nil then
-					label.tooltip = CreatedByText:ReplacePlaceholders(string.format("%s v%s", modName, StringHelpers.VersionIntegerToVersionString(modInfo.Version)), modInfo.Author)
+	
+				if modSettings.GetMenuOrder ~= nil then
+					local b,result = xpcall(modSettings.GetMenuOrder, debug.traceback)
+					if not b then
+						Ext.PrintError(result)
+					end
+					ParseModSettings(ui, mainMenu, modSettings, result)
 				else
-					label.tooltip = string.format("%s v%s", modName, StringHelpers.VersionIntegerToVersionString(modSettings.Version))
+					ParseModSettings(ui, mainMenu, modSettings)
 				end
-			end
-
-			if modSettings.GetMenuOrder ~= nil then
-				local b,result = xpcall(modSettings.GetMenuOrder, debug.traceback)
-				if not b then
-					Ext.PrintError(result)
-				end
-				ParseModSettings(ui, mainMenu, modSettings, result)
-			else
-				ParseModSettings(ui, mainMenu, modSettings)
 			end
 		end
 	end
@@ -242,7 +243,11 @@ end
 function ModMenuManager.OnCheckbox(id, state)
 	local controlData = ModMenuManager.Controls[id]
 	if controlData ~= nil then
-		controlData.Value = state ~= 0
+		if controlData.Entry.Default then
+			controlData.Value = state ~= 1
+		else
+			controlData.Value = state ~= 0
+		end
 	end
 end
 

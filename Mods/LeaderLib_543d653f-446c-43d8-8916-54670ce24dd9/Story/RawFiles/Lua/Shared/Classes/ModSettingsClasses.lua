@@ -5,6 +5,7 @@ local FlagData = {
 	ID = "",
 	Targets = nil,
 	Enabled = false,
+	Default = false,
 	DisplayName = nil,
 	Tooltip = nil,
 	DebugOnly = false,
@@ -23,6 +24,13 @@ function FlagData:Create(flag, flagType, enabled, displayName, tooltip)
 		FlagType = flagType or "Global",
 		Enabled = enabled or false,
 	}
+	if string.find(string.lower(flag), "disable") then
+		this.Default = true
+	elseif string.find(string.lower(flag), "enable") then
+		this.Default = false
+	else
+		this.Default = this.Enabled
+	end
 	if displayName ~= nil then
 		this.DisplayName = displayName
 	end
@@ -61,6 +69,7 @@ local VariableData = {
 	Type = "VariableData",
 	ID = "",
 	Value = "",
+	Default = "",
 	Targets = nil,
 	DisplayName = nil,
 	Tooltip = nil,
@@ -86,6 +95,7 @@ function VariableData:Create(id, value, displayName, tooltip, min, max, interval
 		ID = id,
 		Value = value or "",
 	}
+	this.Default = this.Value
 	if displayName ~= nil then
 		this.DisplayName = displayName
 	end

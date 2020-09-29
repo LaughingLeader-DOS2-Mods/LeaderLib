@@ -70,6 +70,7 @@ local function GetArrayIndexStart(ui, array, offset)
 		local i = 0
 		while i < total do
 			local arrayValue = array[i]
+			print(i, arrayValue, offset)
 			if arrayValue == nil then
 				return i
 			end
@@ -98,8 +99,8 @@ local function addMissingAbilities(ui)
 		character = Ext.GetCharacter(UI.ClientCharacter)
 	end
 	local ability_array = ui:GetRoot().ability_array
-	local i = GetArrayIndexStart(ui, ability_array, 7)
-	if i > -1 then
+	if ability_array ~= nil then
+		local i = #ability_array
 		local total = 0
 		for abilityName,data in pairs(missingAbilities) do
 			if AbilityManager.RegisteredCount[abilityName] > 0 then
@@ -138,8 +139,8 @@ Array Mapping:
 ---@param hasPoints boolean
 local function toggleAbilityButtonVisibility(ui, hasPoints)
 	local lvlBtnAbility_array = ui:GetRoot().lvlBtnAbility_array
-	local i = GetArrayIndexStart(ui, lvlBtnAbility_array, 5)
-	if i > -1 then
+	if lvlBtnAbility_array ~= nil then
+		local i = #lvlBtnAbility_array
 		for abilityName,data in pairs(missingAbilities) do
 			if AbilityManager.RegisteredCount[abilityName] > 0 then
 				local abilityID = Data.AbilityEnum[abilityName]

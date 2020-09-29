@@ -64,6 +64,26 @@ THEN
 DB_NOOP(1);
 */
 
+IF
+UserConnected(_,_,_)
+THEN
+DB_NOOP(1);
+
+IF
+UserEvent(_,_)
+THEN
+DB_NOOP(1);
+
+IF
+UserDisconnected(_,_,_)
+THEN
+DB_NOOP(1);
+
+IF
+CharacterReservedUserIDChanged(_,_,_)
+THEN
+DB_NOOP(1);
+
 EXITSECTION
 ENDEXITSECTION
 ParentTargetEdge "LeaderLib_19_ToggledScripts"

@@ -52,6 +52,7 @@ if Ext.IsServer() then
 						local data = {
 							Shared = SharedData,
 							Profile = profile,
+							IsHost = isHost
 						}
 						Ext.PostMessageToUser(id, "LeaderLib_SharedData_StoreData", Ext.JsonStringify(data))
 					end
@@ -78,6 +79,7 @@ if Ext.IsServer() then
 				local data = {
 					Shared = SharedData,
 					Profile = profile,
+					IsHost = isHost
 				}
 				Ext.PostMessageToUser(id, "LeaderLib_SharedData_StoreData", Ext.JsonStringify(data))
 			end
@@ -95,8 +97,8 @@ if Ext.IsServer() then
 	end
 
 	function GameHelpers.Data.StartSyncTimer(delay, syncSettings)
-		if skipSettingsSync == true then
-			skipNextSettingsSync = true
+		if syncSettingsNext == true then
+			syncSettingsNext = true
 		end
 		StartOneshotTimer("Timers_LeaderLib_SyncSharedData", delay or 50, OnSyncTimer)
 	end
@@ -262,6 +264,7 @@ if Ext.IsClient() then
 			SharedData = data.Shared
 			Client.Profile = data.Profile
 			Client.Character = GetClientCharacter()
+			Client.IsHost = data.IsHost
 			if #Listeners.ClientDataSynced > 0 then
 				for i,callback in pairs(Listeners.ClientDataSynced) do
 					local status,err = xpcall(callback, debug.traceback, SharedData.ModData)

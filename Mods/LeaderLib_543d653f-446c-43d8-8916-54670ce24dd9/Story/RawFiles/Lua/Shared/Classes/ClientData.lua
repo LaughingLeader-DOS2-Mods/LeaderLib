@@ -30,18 +30,21 @@ local ClientData = {
 	Profile = "",
 	---@type ClientCharacterData
 	Character = {},
+	IsHost = false,
 }
 ClientData.__index = ClientData
 
 setmetatable(ClientData.Character, ClientCharacterData)
 
 ---@param profile string Unique profile ID.
+---@param isHost boolean
 ---@return ClientData
-function ClientData:Create(profile)
+function ClientData:Create(profile, isHost)
 	---@type ClientData
     local this =
     {
-		Profile = profile
+		Profile = profile,
+		IsHost = isHost or false,
 	}
 	setmetatable(this, self)
     return this

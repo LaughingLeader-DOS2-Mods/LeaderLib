@@ -1,5 +1,7 @@
 GameHelpers.Data = {}
 
+local ClientCharacterData = Classes.ClientCharacterData
+
 ---@class LEVELTYPE
 LEVELTYPE = {
 	GAME = 1,
@@ -7,27 +9,6 @@ LEVELTYPE = {
 	LOBBY = 3,
 	EDITOR = 4,
 }
-
----@class ClientCharacterData
-local ClientCharacterData = {
-	UUID = "",
-	ID = "",
-	Profile = "",
-	IsHost = false
-}
-
-ClientCharacterData.__index = ClientCharacterData
-
-function ClientCharacterData:Create(uuid, id, profile, isHost)
-	local this = {
-		UUID = uuid,
-		ID = id,
-		Profile = profile,
-		IsHost = isHost or false
-	}
-	setmetatable(this, ClientCharacterData)
-	return this
-end
 
 local UserIds = {}
 
@@ -43,12 +24,8 @@ SharedData = {
 	ModData = {}
 }
 if Ext.IsClient() then
-	Client = {
-		IsHost = false,
-		ID = -1,
-		Profile = "",
-		UUID = ""
-	}
+	---@type ClientData
+	Client = Classes.ClientData:Create("")
 end
 
 if Ext.IsServer() then
@@ -70,12 +47,7 @@ if Ext.IsServer() then
 					local isHost = StringHelpers.GetUUID(CharacterGetHostCharacter()) == uuid
 					local data = {
 						Shared = SharedData,
-						Client = {
-							ID = id, 
-							Profile = profile,
-							IsHost = isHost,
-							UUID = uuid
-						}
+						Profile = profile,
 					}
 					Ext.PostMessageToUser(id, "LeaderLib_SharedData_StoreData", Ext.JsonStringify(data))
 				end
@@ -100,12 +72,7 @@ if Ext.IsServer() then
 				local isHost = StringHelpers.GetUUID(CharacterGetHostCharacter()) == StringHelpers.GetUUID(GetCurrentCharacter(id))
 				local data = {
 					Shared = SharedData,
-					Client = {
-						ID = id, 
-						Profile = profile,
-						IsHost = isHost,
-						UUID = uuid
-					}
+					Profile = profile,
 				}
 				Ext.PostMessageToUser(id, "LeaderLib_SharedData_StoreData", Ext.JsonStringify(data))
 			end
@@ -138,20 +105,32 @@ if Ext.IsServer() then
 	end
 	Ext.RegisterOsirisListener("RegionStarted", 1, "after", GameHelpers.Data.SetRegion)
 
-	function GameHelpers.Data.SetCharacterData(id, profileId)
+	local function GetUserData(uuid)
+		local id = CharacterGetReservedUserID(uuid)
+		if id ~= nil then
+			local profile = GetUserProfileID(id)
+			return id,profile
+		end
+		return nil
+	end
+
+	function GameHelpers.Data.SetCharacterData(id, profileId, uuid, isInCharacterCreation)
 		if profileId == nil then
 			profileId = GetUserProfileID(id)
 		end
-		local uuid = StringHelpers.GetUUID(GetCurrentCharacter(id) or "")
+		uuid = StringHelpers.GetUUID(uuid or GetCurrentCharacter(id))
 		local isHost = StringHelpers.GetUUID(CharacterGetHostCharacter()) == uuid
 		if SharedData.CharacterData[profileId] == nil then
-			SharedData.CharacterData[profileId] = ClientCharacterData:Create(uuid, id, profileId, isHost)
+			SharedData.CharacterData[profileId] = ClientCharacterData:Create(uuid, id, profileId, isHost, isInCharacterCreation)
 		else
 			local data = SharedData.CharacterData[profileId]
 			data.UUID = uuid
 			data.Profile = profileId
 			data.ID = id
 			data.IsHost = isHost
+			if isInCharacterCreation ~= nil then
+				data.IsInCharacterCreation = isInCharacterCreation
+			end
 		end
 	end
 
@@ -182,6 +161,28 @@ if Ext.IsServer() then
 		GameHelpers.Data.StartSyncTimer()
 	end)
 
+	Ext.RegisterOsirisListener("PROC_HandleMagicMirrorResult", 2, "after", function(uuid, result)
+		if not StringHelpers.IsNullOrEmpty(uuid) and result == 1 then
+			uuid = StringHelpers.GetUUID(uuid)
+			local id,profile = GetUserData(uuid)
+			if id ~= nil then
+				GameHelpers.Data.SetCharacterData(id, profile, uuid, true)
+				GameHelpers.Data.StartSyncTimer()
+			end
+		end
+	end)
+
+	Ext.RegisterOsirisListener("CharacterCreationFinished", 1, "after", function(uuid)
+		if not StringHelpers.IsNullOrEmpty(uuid) then
+			uuid = StringHelpers.GetUUID(uuid)
+			local id,profile = GetUserData(uuid)
+			if id ~= nil then
+				GameHelpers.Data.SetCharacterData(id, profile, uuid, false)
+				GameHelpers.Data.StartSyncTimer()
+			end
+		end
+	end)
+
 	Ext.RegisterListener("GameStateChanged", function(from, to)
 		if to == "Running" and from ~= "Paused" then
 			GameHelpers.Data.StartSyncTimer()
@@ -190,11 +191,13 @@ if Ext.IsServer() then
 
 	Ext.RegisterNetListener("LeaderLib_SharedData_CharacterSelected", function(cmd, payload)
 		local data = Ext.JsonParse(payload)
-		local profile = data.Profile
-		local uuid = data.UUID
-		if profile ~= nil and uuid ~= nil and SharedData.CharacterData[profile] ~= nil then
-			SharedData.CharacterData[profile].UUID = uuid
-			GameHelpers.Data.SyncSharedData(nil, profile, true)
+		if data ~= nil then
+			local profile = data.Profile
+			local uuid = data.UUID
+			if profile ~= nil and uuid ~= nil and SharedData.CharacterData[profile] ~= nil then
+				SharedData.CharacterData[profile].UUID = uuid
+				GameHelpers.Data.SyncSharedData(nil, profile, true)
+			end
 		end
 	end)
 end
@@ -204,21 +207,38 @@ if Ext.IsClient() then
 		if SharedData.CharacterData ~= nil and Client.Profile ~= nil then
 			return SharedData.CharacterData[Client.Profile]	
 		end
-		return nil
+		return {UUID = "", ID = -1, Profile = ""}
 	end
-	GameHelpers.Data.GetClientCharacterData = GetClientCharacter
+	GameHelpers.Data.GetClientCharacter = GetClientCharacter
+
+	local function ActiveCharacterChanged(currentCharacter)
+		currentCharacter = currentCharacter or GetClientCharacter()
+		if #Listeners.ClientCharacterChanged > 0 then
+			for i,callback in pairs(Listeners.ClientCharacterChanged) do
+				local status,err = xpcall(callback, debug.traceback, currentCharacter.UUID, currentCharacter.ID, currentCharacter.Profile, currentCharacter.IsHost)
+				if not status then
+					Ext.PrintError("Error calling function for 'ClientCharacterChanged':\n", err)
+				end
+			end
+		end
+	end
 
 	Ext.RegisterNetListener("LeaderLib_SharedData_StoreData", function(cmd, payload)
+		local last = GetClientCharacter().UUID
 		local data = Ext.JsonParse(payload)
 		SharedData = data.Shared
-		Client = data.Client
+		Client.Profile = data.Profile
+		Client.Character = GetClientCharacter()
 		if #Listeners.ClientDataSynced > 0 then
 			for i,callback in pairs(Listeners.ClientDataSynced) do
-				local status,err = xpcall(callback, debug.traceback, SharedData)
+				local status,err = xpcall(callback, debug.traceback, SharedData.ModData)
 				if not status then
 					Ext.PrintError("Error calling function for 'ClientDataSynced':\n", err)
 				end
 			end
+		end
+		if Client.Character.UUID ~= last then
+			ActiveCharacterChanged(Client.Character)
 		end
 	end)
 
@@ -232,6 +252,7 @@ if Ext.IsClient() then
 				if currentCharacter ~= nil then
 					--print(currentCharacter.UUID, "=>", character.MyGuid)
 					currentCharacter.UUID = character.MyGuid
+					ActiveCharacterChanged(currentCharacter)
 				end
 				if skipSync ~= true then
 					Ext.PostMessageToServer("LeaderLib_SharedData_CharacterSelected", Ext.JsonStringify({Profile = SharedData.Profile, UUID = character.MyGuid}))
@@ -254,6 +275,7 @@ if Ext.IsClient() then
 				if currentCharacter ~= nil then
 					--print(currentCharacter.UUID, "=>", lastCharacterOutsideTrade)
 					currentCharacter.UUID = lastCharacterOutsideTrade
+					ActiveCharacterChanged(currentCharacter)
 				end
 			end
 		end)

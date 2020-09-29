@@ -244,7 +244,7 @@ local function OnTooltipUpdating(ui, uiType, ...)
 	if not updatingTooltip then
 		local data = Classes.MessageData:CreateFromTable("TooltipPositioningEventData", {
 			UIType = uiType,
-			Client = UI.ClientCharacter
+			Client = Client.Character.UUID
 		})
 		Ext.PostMessageToServer("LeaderLib_UI_StartControllerTooltipTimer", data:ToString())
 		updatingTooltip = true

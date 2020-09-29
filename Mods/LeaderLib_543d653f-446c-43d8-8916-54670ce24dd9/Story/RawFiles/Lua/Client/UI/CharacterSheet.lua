@@ -25,17 +25,6 @@ local function OnSheetEvent(ui, call, ...)
 		if buttonID == ID.HOTBAR.CharacterSheet then
 			Ext.PostMessageToServer("LeaderLib_GlobalMessage", ID.MESSAGE.STORE_PARTY_VALUES)
 		end
-	elseif call == "selectCharacter" or call == "centerCamOnCharacter" then
-		local id = params[1]
-		if id ~= nil then
-			local handle = Ext.DoubleToHandle(id)
-			if handle ~= nil then
-				local character = Ext.GetCharacter(handle)
-				if character ~= nil then
-					UI.ClientCharacter = character.MyGuid
-				end
-			end
-		end
 	end
 end
 
@@ -140,10 +129,10 @@ local function RegisterListeners()
 	-- end
 	-- When the delay turn button is clicked
 	Ext.RegisterUITypeCall(117, "GuardPressed", function(ui, call, ...)
-		Ext.PostMessageToServer("LeaderLib_OnDelayTurnClicked", UI.ClientCharacter)
+		Ext.PostMessageToServer("LeaderLib_OnDelayTurnClicked", Client.Character.UUID)
 		if #Listeners.TurnDelayed > 0 then
 			for i,callback in pairs(Listeners.TurnDelayed) do
-				local status,err = xpcall(callback, debug.traceback, UI.ClientCharacter)
+				local status,err = xpcall(callback, debug.traceback, Client.Character.UUID)
 				if not status then
 					Ext.PrintError("Error calling function for 'TurnDelayed':\n", err)
 				end

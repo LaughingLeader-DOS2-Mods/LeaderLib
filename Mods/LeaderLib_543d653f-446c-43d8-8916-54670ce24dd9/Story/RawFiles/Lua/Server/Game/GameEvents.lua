@@ -78,7 +78,6 @@ local function OnInitialized()
 	if Ext.GetGameState() == "Running" then
 		InvokeOnInitializedCallbacks()
 		SettingsManager.SyncAllSettings()
-		IterateUsers("Iterators_LeaderLib_SetClientCharacter")
 		if GlobalGetFlag("LeaderLib_AutoUnlockInventoryInMultiplayer") == 1 then
 			IterateUsers("Iterators_LeaderLib_UI_UnlockPartyInventory")
 		end
@@ -91,7 +90,6 @@ function OnInitialized_CheckGameState(region)
 			OnInitialized(region)
 		else
 			SettingsManager.SyncAllSettings()
-			IterateUsers("Iterators_LeaderLib_SetClientCharacter")
 			InvokeOnInitializedCallbacks()
 		end
 	else
@@ -112,7 +110,6 @@ Ext.RegisterListener("GameStateChanged", function(from, to)
 			OnInitialized()
 		elseif from ~= "Paused" then
 			SettingsManager.SyncAllSettings()
-			IterateUsers("Iterators_LeaderLib_SetClientCharacter")
 		end
 	end
 end)
@@ -142,5 +139,5 @@ function OnLuaReset()
 	local region = Osi.DB_CurrentLevel:Get(nil)[1][1]
 	GameHelpers.Data.SetRegion(region)
 	IterateUsers("LeaderLib_StoreUserData")
-	GameHelpers.Data.StartSyncTimer()
+	GameHelpers.Data.StartSyncTimer(250, true)
 end

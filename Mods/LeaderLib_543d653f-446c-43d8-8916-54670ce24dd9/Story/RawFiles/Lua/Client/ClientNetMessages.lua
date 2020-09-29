@@ -207,14 +207,6 @@ Ext.RegisterNetListener("LeaderLib_UI_RefreshStatusTurns", function(call, dataSt
 	end
 end)
 
-Ext.RegisterNetListener("LeaderLib_SetClientCharacter", function(call, payload)
-	local data = Ext.JsonParse(payload)
-	UI.ClientCharacter = data.UUID
-	UI.ClientID = data.ID
-	UI.IsHost = data.IsHost or false
-	UI.Profile = data.Profile
-end)
-
 Ext.RegisterNetListener("LeaderLib_SetHelmetOption", function(call, dataStr)
 	local data = MessageData:CreateFromString(dataStr)
 	if data.Params.UUID ~= nil and data.Params.Enabled ~= nil then

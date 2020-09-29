@@ -97,8 +97,8 @@ local function ReplacePlaceholders(str, character)
 		if skillName ~= nil and skillName ~= "" then
 			local skill = GameHelpers.Ext.CreateSkillTable(skillName)
 			if skill ~= nil then
-				if character == nil and UI.ClientCharacter ~= nil then
-					character = Ext.GetCharacter(UI.ClientCharacter) or nil
+				if character == nil then
+					character = Client.GetCharacter()
 				end
 				if character ~= nil and character.Stats ~= nil then
 					local useDefaultSkillDamage = true
@@ -145,8 +145,8 @@ local function ReplacePlaceholders(str, character)
 			if skillName ~= nil and skillName ~= "" then
 				local skill = GameHelpers.Ext.CreateSkillTable(skillName)
 				if skill ~= nil then
-					if character == nil and UI.ClientCharacter ~= nil then
-						character = Ext.GetCharacter(UI.ClientCharacter) or nil
+					if character == nil then
+						character = Client.GetCharacter()
 					end
 					if character ~= nil and character.Stats ~= nil then
 						for i=1,length do

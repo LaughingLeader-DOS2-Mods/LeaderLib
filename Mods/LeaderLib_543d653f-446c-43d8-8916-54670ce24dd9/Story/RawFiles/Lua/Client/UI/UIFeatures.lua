@@ -81,7 +81,7 @@ local function DisplayTalents(ui, call, ...)
 	if handle ~= nil then
 		player = Ext.GetCharacter(handle)
 	else
-		player = Ext.GetCharacter(UI.ClientCharacter)
+		player = Client:GetCharacter()
 	end
 	if player ~= nil then
 		local root = ui:GetRoot()
@@ -173,7 +173,7 @@ local function DisplayTalents_CC(ui, call, ...)
 	if handle ~= nil then
 		player = Ext.GetCharacter(handle)
 	else
-		player = Ext.GetCharacter(UI.ClientCharacter)
+		player = Client:GetCharacter()
 	end
 	if player ~= nil then
 		local root = ui:GetRoot()

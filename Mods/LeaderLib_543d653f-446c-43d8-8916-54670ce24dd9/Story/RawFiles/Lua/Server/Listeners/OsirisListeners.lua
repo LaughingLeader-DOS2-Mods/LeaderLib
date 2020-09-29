@@ -3,7 +3,6 @@ Ext.RegisterOsirisListener("UserConnected", 3, "after", function(id, username, p
 	local uuid = GetCurrentCharacter(id)
 	if uuid ~= nil then
 		if Ext.GetGameState() == "Running" then
-			SyncClientData(uuid, id)
 			if GlobalGetFlag("LeaderLib_AutoUnlockInventoryInMultiplayer") == 1 then
 				IterateUsers("Iterators_LeaderLib_UI_UnlockPartyInventory")
 			end
@@ -30,9 +29,6 @@ Ext.RegisterOsirisListener("UserEvent", 2, "after", function(id, event)
 			end
 			Ext.PostMessageToUser(id, "LeaderLib_UnlockCharacterInventory", Ext.JsonStringify(players))
 		end
-	elseif event == "Iterators_LeaderLib_SetClientCharacter" then
-		local uuid = GetCurrentCharacter(id) or CharacterGetHostCharacter()
-		SyncClientData(StringHelpers.GetUUID(uuid), id)
 	end
 end)
 
@@ -44,20 +40,10 @@ Ext.RegisterOsirisListener("CharacterReservedUserIDChanged", 3, "after", functio
 			local text = GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageText"):gsub("%[1%]", username)
 			OpenMessageBox(char, "LeaderLib_MessageBox_ExtenderNotInstalled_Client")
 			OpenMessageBox(host, text)
-		else
-			SyncClientData(StringHelpers.GetUUID(char))
 		end
 	end
 end)
 
 Ext.RegisterOsirisListener("GameStarted", 2, "after", function(region, isEditorMode)
 	Ext.BroadcastMessage("LeaderLib_SyncFeatures", Ext.JsonStringify(Features), nil)
-end)
-
-Ext.RegisterOsirisListener("ObjectTurnStarted", 2, "after", function(char, combatid)
-	local id = CharacterGetReservedUserID(char)
-	if id ~= nil then
-		-- For hopefully making sure the delay turn listener stays accurate
-		SyncClientData(StringHelpers.GetUUID(char), id)
-	end
 end)

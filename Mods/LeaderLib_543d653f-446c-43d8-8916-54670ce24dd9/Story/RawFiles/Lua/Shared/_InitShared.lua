@@ -106,6 +106,7 @@ Listeners = {
 	GetTooltipSkillParam = {},
 	SyncData = {},
 	ClientDataSynced = {},
+	ClientCharacterChanged = {},
 }
 
 SkillListeners = {}

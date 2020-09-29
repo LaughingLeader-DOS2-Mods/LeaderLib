@@ -172,7 +172,7 @@ local function ParseModSettings(ui, mainMenu, modSettings, order)
 		end
 	end
 	local otherEntries = {}
-	for _,v in pairs(modSettings:GetAllEntries(UI.Profile)) do
+	for _,v in pairs(modSettings:GetAllEntries(Client.Profile)) do
 		if added[v.ID] == nil then
 			table.insert(otherEntries, v)
 		end
@@ -325,10 +325,10 @@ end
 
 local function SyncControl(control)
 	if control.Type == "FlagData" then
-		local data = {ID=control.ID, FlagType=control.FlagType, Enabled=enabled, User=UI.ClientID}
+		local data = {ID=control.ID, FlagType=control.FlagType, Enabled=enabled, User=Client.Character.ID}
 		Ext.PostMessageToServer("LeaderLib_ModMenu_FlagChanged", Ext.JsonStringify(data))
 	elseif control.Type == "VariableData" then
-		local data = {ID=control.ID, Value=control.Value, User=UI.ClientID}
+		local data = {ID=control.ID, Value=control.Value, User=Client.Character.ID}
 		Ext.PostMessageToServer("LeaderLib_ModMenu_VariableChanged", Ext.JsonStringify(data))
 	end
 end

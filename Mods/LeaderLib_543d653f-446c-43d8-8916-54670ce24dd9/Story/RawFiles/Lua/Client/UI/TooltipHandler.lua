@@ -100,7 +100,6 @@ end
 ---@param skill EsvStatus
 ---@param tooltip TooltipData
 local function OnSkillTooltip(character, skill, tooltip)
-	if character ~= nil then UI.ClientCharacter = character.MyGuid or character.NetID end
 	if Features.TooltipGrammarHelper then
 		-- This fixes the double spaces from removing the "tag" part of Requires tag
 		local element = tooltip:GetElement("SkillRequiredEquipment")
@@ -164,7 +163,6 @@ end
 --- @param isFromItem boolean
 --- @param param string
 local function SkillGetDescriptionParam(skill, character, isFromItem, param1, param2)
-	if character.Character ~= nil then UI.ClientCharacter = character.Character.MyGuid or character.NetID end
 	if Features.ReplaceTooltipPlaceholders then
 		if param1 == "ExtraData" then
 			local value = Ext.ExtraData[param2]
@@ -261,7 +259,7 @@ Ext.RegisterListener("StatusGetDescriptionParam", StatusGetDescriptionParam)
 ---@param stat string
 ---@param tooltip TooltipData
 local function OnStatTooltip(character, stat, tooltip)
-	if character ~= nil then UI.ClientCharacter = character.MyGuid or character.NetID end
+	
 end
 
 local tooltipSwf = {
@@ -498,10 +496,8 @@ local function OnItemTooltip(item, tooltip)
 	if item ~= nil then
 		lastItem = item
 		if Features.FixItemAPCost == true then
-			local character = nil
-			if UI.ClientCharacter ~= nil then
-				character = Ext.GetCharacter(UI.ClientCharacter)
-			elseif item.ParentInventoryHandle ~= nil then
+			local character = Client:GetCharacter()
+			if character == nil and item.ParentInventoryHandle ~= nil then
 				character = Ext.GetCharacter(item.ParentInventoryHandle)
 			end
 			if character ~= nil then

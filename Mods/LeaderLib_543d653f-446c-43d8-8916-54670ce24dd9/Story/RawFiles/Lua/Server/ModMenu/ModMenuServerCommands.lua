@@ -24,9 +24,9 @@ Ext.RegisterNetListener("LeaderLib_ModMenu_SaveChanges", function(cmd, payload)
 		if settings ~= nil then
 			for i,v in pairs(changes) do
 				if v.Type == "FlagData" then
-					settings.SetFlag(v.ID, v.Value)
+					settings:SetFlag(v.ID, v.Value)
 				elseif v.Type == "VariableData" then
-					settings.SetVariable(v.ID, v.Value)
+					settings:SetVariable(v.ID, v.Value)
 				end
 			end
 			settings:ApplyToGame()

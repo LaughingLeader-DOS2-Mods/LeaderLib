@@ -62,7 +62,6 @@ IF
 NRD_OnStatusAttempt(_Target, _StatusId, _StatusHandle, _Instigator)
 THEN
 DB_NOOP(1);
-*/
 
 IF
 UserConnected(_,_,_)
@@ -83,6 +82,12 @@ IF
 CharacterReservedUserIDChanged(_,_,_)
 THEN
 DB_NOOP(1);
+
+PROC
+PROC_HandleMagicMirrorResult((CHARACTERGUID)_Player, (INTEGER)_Result)
+THEN
+DB_NOOP(1);
+*/
 
 EXITSECTION
 ENDEXITSECTION

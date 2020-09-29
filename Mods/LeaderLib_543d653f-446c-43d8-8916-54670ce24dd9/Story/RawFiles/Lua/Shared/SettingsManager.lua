@@ -24,7 +24,10 @@ function SettingsManager.AddSettings(modSettings)
 end
 
 function SettingsManager.Remove(uuid)
-	GlobalSettings.Mods[uuid] = nil
+	if GlobalSettings.Mods[uuid] ~= nil then
+		GlobalSettings.Mods[uuid] = nil
+		SettingsManager.SyncGlobalSettings()
+	end
 end
 
 ---@param uuid string
@@ -85,7 +88,7 @@ function SettingsManager.LoadAllModSettings()
 end
 
 if Ext.IsServer() then
-	function SettingsManager.Sync()
+	function SettingsManager.SyncGlobalSettings()
 		Ext.BroadcastMessage("LeaderLib_SyncGlobalSettings", Ext.JsonStringify(ExportGlobalSettings(true)), nil)
 	end
 	

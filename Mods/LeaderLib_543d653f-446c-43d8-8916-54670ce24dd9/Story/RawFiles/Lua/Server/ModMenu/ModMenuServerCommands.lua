@@ -33,7 +33,7 @@ Ext.RegisterNetListener("LeaderLib_ModMenu_SaveChanges", function(cmd, payload)
 		end
 	end
 	SaveGlobalSettings()
-	SettingsManager.Sync()
+	SettingsManager.SyncGlobalSettings()
 end)
 
 Ext.RegisterNetListener("LeaderLib_ModMenu_CreateSidebarButton", function(cmd, payload)

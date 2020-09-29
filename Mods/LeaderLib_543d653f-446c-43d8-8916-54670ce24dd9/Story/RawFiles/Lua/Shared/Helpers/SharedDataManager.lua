@@ -43,9 +43,12 @@ SharedData = {
 	ModData = {}
 }
 if Ext.IsClient() then
-	SharedData.IsHost = false
-	SharedData.ID = -1
-	SharedData.Profile = ""
+	Client = {
+		IsHost = false,
+		ID = -1,
+		Profile = "",
+		UUID = ""
+	}
 end
 
 if Ext.IsServer() then
@@ -63,51 +66,48 @@ if Ext.IsServer() then
 			for id,b in pairs(UserIds) do
 				local profile = GetUserProfileID(id)
 				if profile ~= ignoreProfile then
-					local isHost = StringHelpers.GetUUID(CharacterGetHostCharacter()) == StringHelpers.GetUUID(GetCurrentCharacter(id))
+					local uuid = StringHelpers.GetUUID(GetCurrentCharacter(id))
+					local isHost = StringHelpers.GetUUID(CharacterGetHostCharacter()) == uuid
 					local data = {
-						RegionData = SharedData.RegionData, 
-						CharacterData = SharedData.CharacterData, 
-						ModData = SharedData.ModData, 
-						ID = id, 
-						Profile = profile,
-						IsHost = isHost
+						Shared = SharedData,
+						Client = {
+							ID = id, 
+							Profile = profile,
+							IsHost = isHost,
+							UUID = uuid
+						}
 					}
 					Ext.PostMessageToUser(id, "LeaderLib_SharedData_StoreData", Ext.JsonStringify(data))
 				end
 			end
 		else
 			local clientType = type(client)
+			local id = nil
+			local uuid = nil
+			local profile = nil
 			if clientType == "string" then
-				local id = CharacterGetReservedUserID(client)
-				local profile = GetUserProfileID(id)
-				if profile ~= ignoreProfile then
-					local isHost = StringHelpers.GetUUID(CharacterGetHostCharacter()) == StringHelpers.GetUUID(GetCurrentCharacter(id))
-					local data = {
-						RegionData = SharedData.RegionData, 
-						CharacterData = SharedData.CharacterData, 
-						ModData = SharedData.ModData, 
-						ID = id, 
-						Profile = profile,
-						IsHost = isHost
-					}
-					Ext.PostMessageToUser(id, "LeaderLib_SharedData_StoreData", Ext.JsonStringify(data))
-				end
+				id = CharacterGetReservedUserID(client)
+				profile = GetUserProfileID(id)
+				uuid = client
 			elseif clientType == "number" then
-				local profile = GetUserProfileID(client)
-				if profile ~= ignoreProfile then
-					local isHost = StringHelpers.GetUUID(CharacterGetHostCharacter()) == StringHelpers.GetUUID(GetCurrentCharacter(client))
-					local data = {
-						RegionData = SharedData.RegionData, 
-						CharacterData = SharedData.CharacterData, 
-						ModData = SharedData.ModData, 
-						ID = client, 
-						profile,
-						IsHost = isHost
-					}
-					Ext.PostMessageToClient(client, "LeaderLib_SharedData_StoreData", Ext.JsonStringify(data))
-				end
+				profile = GetUserProfileID(client)
+				uuid = StringHelpers.GetUUID(GetCurrentCharacter(client))
+				id = client
 			else
 				Ext.PrintError("[LeaderLib:GameHelpers.Data.SyncSharedData] Error syncing data: client is an incorrect type:", clientType, client)
+			end
+			if profile ~= ignoreProfile then
+				local isHost = StringHelpers.GetUUID(CharacterGetHostCharacter()) == StringHelpers.GetUUID(GetCurrentCharacter(id))
+				local data = {
+					Shared = SharedData,
+					Client = {
+						ID = id, 
+						Profile = profile,
+						IsHost = isHost,
+						UUID = uuid
+					}
+				}
+				Ext.PostMessageToUser(id, "LeaderLib_SharedData_StoreData", Ext.JsonStringify(data))
 			end
 		end
 		if skipSettingsSync ~= true then
@@ -201,13 +201,17 @@ end
 
 if Ext.IsClient() then
 	local function GetClientCharacter()
-		if SharedData.CharacterData ~= nil and SharedData.Profile ~= nil then
-			return SharedData.CharacterData[SharedData.Profile]	
+		if SharedData.CharacterData ~= nil and Client.Profile ~= nil then
+			return SharedData.CharacterData[Client.Profile]	
 		end
+		return nil
 	end
+	GameHelpers.Data.GetClientCharacterData = GetClientCharacter
 
 	Ext.RegisterNetListener("LeaderLib_SharedData_StoreData", function(cmd, payload)
-		SharedData = Ext.JsonParse(payload)
+		local data = Ext.JsonParse(payload)
+		SharedData = data.Shared
+		Client = data.Client
 		if #Listeners.ClientDataSynced > 0 then
 			for i,callback in pairs(Listeners.ClientDataSynced) do
 				local status,err = xpcall(callback, debug.traceback, SharedData)

@@ -53,9 +53,8 @@ end
 
 ---@param ui UIObject
 local function OnCharacterSheetUpdating(ui)
-	local arrayValueSet = ui:GetValue("ability_array", "boolean", 0) ~= nil
-	local hasPoints = ui:GetValue("lvlBtnAbility_array", "boolean", 0) ~= nil
-	AbilityManager.OnCharacterSheetUpdating(ui, arrayValueSet, hasPoints)
+	local main = ui:GetRoot()
+	AbilityManager.OnCharacterSheetUpdating(ui, main, #main.ability_array > 0)
 end
 
 local pointEvents = {

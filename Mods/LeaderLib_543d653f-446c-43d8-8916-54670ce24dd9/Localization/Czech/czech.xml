@@ -80,7 +80,7 @@
 	<content contentuid="h3ed2c7c5gf6c0g4c9dga916g5782593327ab">Open Mod Menu</content>
 	<content contentuid="h3fb60439g4406g4623ga6b7gb53cda538fcb">*The old man runs his hands over his clothes, trying to iron out the wrinkles.* What can I do for you, stranger?</content>
 	<content contentuid="h40ac3891g3661g43eag878dg6510b001704a">[LeaderLib_DynamicMenu_MenuOption4_e6bea606-b29a-4bfe-8959-94e8be8330cb]</content>
-	<content contentuid="h41a533b7g535bg4e76gbc7eg202d33a73740">Disable Auto-Adding Mod Books</content>
+	<content contentuid="h41a533b7g535bg4e76gbc7eg202d33a73740">Enable Auto-Adding Mod Books</content>
 	<content contentuid="h4252ff7cgb624g4b24gbf03g1772392f3988">Old Man Lothar</content>
 	<content contentuid="h43868aebg7281g40bfgbc1dgf6fe5a06512b">Autosave Interval</content>
 	<content contentuid="h45f478cdg3b77g400aga94fg04b3a60b7ad9">Hidden Backpack</content>
@@ -94,7 +94,7 @@
 	<content contentuid="h4d75e3c0ge0c3g4078gb94dg8e1e054aecb6">*He yawns.* Anything else?</content>
 	<content contentuid="h4db42cd2g9575g4c9ag8eb8ga362b3e2e2dc">&lt;b&gt;[Error] Missing Mod Dependencies&lt;/b&gt;</content>
 	<content contentuid="h4de9aea3ga486g4e1egbb56gef0bc6191f9c">Auto-Unlock Inventory in Multiplayer</content>
-	<content contentuid="h4e45ba6fg348eg433eg8655g400e79b9a53c">Dialog redirection will no longer be restricted to characters you own as a user. For instance, if another player in multiplayer has the highest persuasion, they may get the dialog redirected to them.</content>
+	<content contentuid="h4e45ba6fg348eg433eg8655g400e79b9a53c">Dialog redirection will be restricted to characters you own as a user. For instance, if disabled, and another player in multiplayer has the highest persuasion, they may get dialog redirected to them.</content>
 	<content contentuid="h4f43d13bgeb18g4af9gb7e0g6b49fda77d33">Hnng! Really?!</content>
 	<content contentuid="h503525aeg41e0g459bg9c2cg0ad0080cfed9">*Take your leave.*</content>
 	<content contentuid="h50452891g891bg45a7gb700g348998ff32b5">*He hands you copy of the requested sacred text.*</content>
@@ -112,6 +112,7 @@
 	<content contentuid="h58262db3g3059g425cgb07age9b560e30cbf">Character is shapeshifted.</content>
 	<content contentuid="h58d6052fgd3bag4cd9gb6e0gfe94189dfdb6">*The old man yawns, barely giving an indication to your presence.*</content>
 	<content contentuid="h59075d75g55f1g4ba4g87b7g4953c6818ee3">[USER] Teleport your avatar to the dialog event when dialog gets redirected.</content>
+	<content contentuid="h5945db23gdaafg400ega4d6gc2ffa7a53f92">Mod Settings</content>
 	<content contentuid="h5a3c3cb9g4168g48eaga773g6e5cd41223b5">*He reaches for his bag.*</content>
 	<content contentuid="h5be7351cgb6eeg438fgbb32g65c8295bfb3b">[GLOBAL] Disable Timed Autosaves</content>
 	<content contentuid="h5c245164g58d8g4449g958dg68236099e6f6">[SAVE] Save Game Settings - This file is automatically loaded/saved when you get in-game (loading saves, new games, etc). This will overwrite whatever changes you may have recently made.</content>
@@ -123,7 +124,7 @@
 	<content contentuid="h5f603b9bg4c0fg4b80g9cfagfce9ed3b295b">Speaking of old junk, I have a few extra copies of this book I bet you&apos;d like. It&apos;s on the house.</content>
 	<content contentuid="h608a3fb1g869eg45b6g93f6g9ec6d52a02d8">Welcome [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3]. Seems we&apos;re nearing the end of our journey together.</content>
 	<content contentuid="h60d869f2gcb5cg4b29gafa4g9d94ef2ae4f7">[LeaderLib_DynamicMenu_MenuOption3_58379c79-1cf1-4129-bcf5-579f40a9ad11]</content>
-	<content contentuid="h612f84f2gd275g41bdga76fg0b54166becb0">Disables certain mod books from automatically being added to your inventory.</content>
+	<content contentuid="h612f84f2gd275g41bdga76fg0b54166becb0">Certain mod books will be automatically added to your inventory initially, if enabled.</content>
 	<content contentuid="h617f92ceg5e39g4dbbg84c7g4b20985cddfe">Clear any active shapeshifting statuses.</content>
 	<content contentuid="h62a23d87g39e8g464fg84ddg63b7f53d6a9b">*Ask the man who he is.*</content>
 	<content contentuid="h62fcf915g9babg41e3gbc1fg7cec5eeb59ce">[GLOBAL] Disable Combat Log Logging</content>
@@ -149,7 +150,7 @@
 	<content contentuid="h6f8c74d8g77d3g469ega859g41d644a06c6a">LeaderLib Settings</content>
 	<content contentuid="h7051ecdfgb5d8g4d31gb3f4g075f8d99c61b">[GLOBAL] Change Autosave Interval</content>
 	<content contentuid="h70808d00g222dg4b4ega35cg661cb7eccd45">Urgh!</content>
-	<content contentuid="h70864c17g1034g48ccgb6edg03dbeb743375">Disable User Restriction</content>
+	<content contentuid="h70864c17g1034g48ccgb6edg03dbeb743375">Enable User Restriction</content>
 	<content contentuid="h71766947g9564g4a6bg936bga055cccc01a0">&lt;font color=&apos;#13D177&apos;&gt;Pure Resistance&lt;/font&gt;</content>
 	<content contentuid="h71f43d4fg54f9g4ba5gac4dg71e8d4c4e056">[GLOBAL] Enable Autosaving when Combat Starts</content>
 	<content contentuid="h72b6a94cgb4dbg42f3ga2b0g97d70ba67eef">[Next]</content>
@@ -231,7 +232,7 @@
 	<content contentuid="ha88d3b01gcfc2g470eg97f5g1dafaa65a1bd">Hrmph...</content>
 	<content contentuid="ha9284da0gd161g47d7g8c19g7ac10878ee5c">*He sets his fishing pole down for a moment and rummages through a bag,*</content>
 	<content contentuid="hab87e202g3afcg45f6g9325gbfde5f0f015b">Speaking of, I have a few extra copies of this book I bet you&apos;d like. It&apos;s on the house.</content>
-	<content contentuid="hac0a7cb5g419ag4698g8b2cg0fc57a03a385">Enables friendly fire, which can allow skills to target allies.</content>
+	<content contentuid="hac0a7cb5g419ag4698g8b2cg0fc57a03a385">Enables friendly fire, which can allow skills or other mod mechanics to target allies.</content>
 	<content contentuid="hac41182fg734cg4f90gb787gff3f7dbdfd0e">Change to the opposite gender.&lt;br&gt;&lt;font color=&apos;#188ede&apos;&gt;Warning: Replaces custom appearance settings!&lt;/font&gt;</content>
 	<content contentuid="hae52ff4bg54e7g4eabgb930gca752c4ba072">Armour Specialist</content>
 	<content contentuid="hae65b472g6a61g4c8fgb05dge94cc8e853d4">Pacifism</content>
@@ -272,6 +273,7 @@
 	<content contentuid="hc768ad97g83deg41fdgb257g54443e202c5a">As a gesture of goodwill towards future trading, I&apos;ll give you this book for free.</content>
 	<content contentuid="hc789b3e9g19dfg4670g9df6g1e2b18cb59ae">Enable redirecting automatically started dialog to characters that match your preferences, such as an avatar or character with the highest persuasion.</content>
 	<content contentuid="hc78dbfbbg99e3g4b81gbb3fg8068e2d4ecda">*He hands you a peculiar-looking book.*</content>
+	<content contentuid="hc9cc1024g797fg4770g8ffagf1b4041e4c48">&lt;font color=&apos;#9400D3&apos;&gt;Stealth Mastery&lt;/font&gt;</content>
 	<content contentuid="hca27994egc60eg495dg8146g7f81c970e265">&lt;font color=&apos;#80FFC3&apos; size=&apos;18&apos;&gt;Automatically levels up with the wearer.&lt;/font&gt;</content>
 	<content contentuid="hcb2933a4g9bf6g4b7ega556g974d319d1faf">Redirect to Highest Persuasion</content>
 	<content contentuid="hcb9853aaga052g447dga36fgafeb4902bd4f">I didn&apos;t survive war to end up dead by the likes of you!</content>

@@ -1,20 +1,20 @@
 Ext.RegisterOsirisListener("UserConnected", 3, "after", function(id, username, profileId)
-	local host = CharacterGetHostCharacter()
-	local uuid = GetCurrentCharacter(id)
-	if uuid ~= nil then
-		if Ext.GetGameState() == "Running" then
-			if GlobalGetFlag("LeaderLib_AutoUnlockInventoryInMultiplayer") == 1 then
-				IterateUsers("Iterators_LeaderLib_UI_UnlockPartyInventory")
-			end
-			SettingsManager.SyncAllSettings(id)
+	if Ext.GetGameState() == "Running" then
+		if GlobalGetFlag("LeaderLib_AutoUnlockInventoryInMultiplayer") == 1 then
+			IterateUsers("Iterators_LeaderLib_UI_UnlockPartyInventory")
 		end
+		SettingsManager.SyncAllSettings(id)
 
-		if not StringHelpers.IsNullOrEmpty(uuid) and host ~= uuid and not Ext.PlayerHasExtender(uuid) then
-			OpenMessageBox(uuid, "LeaderLib_MessageBox_ExtenderNotInstalled_Client")
-			local text = GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageText"):gsub("%[1%]", username)
-			OpenMessageBox(host, text)
-			--local hostText = GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageText"):gsub("%[1%]", username)
-			--GameHelpers.UI.ShowMessageBox(hostText, host, 0, GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageTitle"))
+		local host = CharacterGetHostCharacter()
+		local uuid = GetCurrentCharacter(id)
+		if uuid ~= nil then
+			if not StringHelpers.IsNullOrEmpty(uuid) and host ~= uuid and not Ext.PlayerHasExtender(uuid) then
+				OpenMessageBox(uuid, "LeaderLib_MessageBox_ExtenderNotInstalled_Client")
+				local text = GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageText"):gsub("%[1%]", username)
+				OpenMessageBox(host, text)
+				--local hostText = GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageText"):gsub("%[1%]", username)
+				--GameHelpers.UI.ShowMessageBox(hostText, host, 0, GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageTitle"))
+			end
 		end
 	end
 end)

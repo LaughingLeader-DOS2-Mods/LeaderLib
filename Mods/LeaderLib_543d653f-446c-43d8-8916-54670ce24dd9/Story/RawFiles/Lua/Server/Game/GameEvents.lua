@@ -122,7 +122,7 @@ function OnLeaderLibInitialized(region)
 			OnInitialized_CheckGameState(region)
 		end
 	elseif Ext.GetGameState() == "Running" then
-		InvokeOnInitializedCallbacks()
+		InvokeOnInitializedCallbacks(region)
 	end
 end
 

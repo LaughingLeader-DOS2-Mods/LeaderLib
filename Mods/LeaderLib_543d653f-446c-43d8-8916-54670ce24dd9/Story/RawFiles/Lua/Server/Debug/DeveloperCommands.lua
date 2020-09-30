@@ -28,6 +28,14 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 end)
  
 Ext.RegisterConsoleCommand("luareset", function(command)
+	local varData = {}
+	for name,data in pairs(Mods) do
+		if data.PersistentVars ~= nil then
+			print(name)
+			varData[name] = data.PersistentVars
+		end
+	end
+	Ext.SaveFile("LeaderLib_Debug_PersistentVars.json", Ext.JsonStringify(varData))
 	TimerCancel("Timers_LeaderLib_Debug_LuaReset")
 	TimerLaunch("Timers_LeaderLib_Debug_LuaReset", 500)
 	print("[LeaderLib:luareset] Reseting lua.")

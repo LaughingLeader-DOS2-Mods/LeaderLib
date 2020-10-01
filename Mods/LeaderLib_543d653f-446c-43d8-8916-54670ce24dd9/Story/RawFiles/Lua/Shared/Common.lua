@@ -1,4 +1,6 @@
-local function init_seed()
+if Common == nil then Common = {} end
+
+function Common.InitSeed()
 	local rnd = Ext.Random(9999)
 	local seed = (Ext.Random(9999) * 214013) + 2531011
 	_G["LEADERLIB_RAN_SEED"] = seed
@@ -7,13 +9,10 @@ local function init_seed()
 		Ext.BroadcastMessage("LeaderLib_SyncRanSeed", tostring(seed), nil)
 	end
 end
-if _G["LEADERLIB_RAN_SEED"] == nil then
-	init_seed()
-end
 
-local function FlattenTable(tbl)
+function Common.FlattenTable(tbl)
 	local result = {}
-	local function flatten(tbl)
+	function Common.flatten(tbl)
 		for _, v in pairs(tbl) do
 			if type(v) == "table" then
 				flatten(v)
@@ -27,22 +26,22 @@ local function FlattenTable(tbl)
 	return result
 end
 
-local function DeepCopyTable(orig)
+function Common.DeepCopyTable(orig)
 	local orig_type = type(orig)
 	local copy
 	if orig_type == 'table' then
 		copy = {}
 		for orig_key, orig_value in next, orig, nil do
-			copy[DeepCopyTable(orig_key)] = DeepCopyTable(orig_value)
+			copy[Common.DeepCopyTable(orig_key)] = Common.DeepCopyTable(orig_value)
 		end
-		setmetatable(copy, DeepCopyTable(getmetatable(orig)))
+		setmetatable(copy, Common.DeepCopyTable(getmetatable(orig)))
 	else -- number, string, boolean, etc
 		copy = orig
 	end
 	return copy
 end
 
-local function CopyTable(orig, deep)
+function Common.CopyTable(orig, deep)
 	if deep ~= true then
 		local orig_type = type(orig)
 		local copy
@@ -56,7 +55,7 @@ local function CopyTable(orig, deep)
 		end
 		return copy
 	else
-		return DeepCopyTable(orig)
+		return Common.DeepCopyTable(orig)
 	end
 end
 
@@ -79,19 +78,19 @@ end
 ---@param indexMap table
 ---@param innerOnly boolean
 ---@return string
-local function Dump(o, indexMap, innerOnly, recursionLevel)
+function Common.Dump(o, indexMap, innerOnly, recursionLevel)
 	if recursionLevel == nil then recursionLevel = 0 end
 	if type(o) == 'table' then
 		local s = '{ '
 		for k,v in pairs(o) do
 			if innerOnly == true then
 				if recursionLevel > 0 then
-					s = s .. ' ['..PrintIndex(k, indexMap)..'] = ' .. Dump(v, indexMap, innerOnly, recursionLevel + 1) .. ','
+					s = s .. ' ['..PrintIndex(k, indexMap)..'] = ' .. Common.Dump(v, indexMap, innerOnly, recursionLevel + 1) .. ','
 				else
-					s = s .. ' ['..PrintIndex(k, nil)..'] = ' .. Dump(v, indexMap, innerOnly, recursionLevel + 1) .. ','
+					s = s .. ' ['..PrintIndex(k, nil)..'] = ' .. Common.Dump(v, indexMap, innerOnly, recursionLevel + 1) .. ','
 				end
 			else
-				s = s .. ' ['..PrintIndex(k, indexMap)..'] = ' .. Dump(v, indexMap, innerOnly, recursionLevel + 1) .. ','
+				s = s .. ' ['..PrintIndex(k, indexMap)..'] = ' .. Common.Dump(v, indexMap, innerOnly, recursionLevel + 1) .. ','
 			end
 		end
 		return s .. '}'
@@ -103,7 +102,7 @@ end
 ---@param tbl table
 ---@param key any
 ---@return boolean
-local function TableHasEntry(tbl, key)
+function Common.TableHasEntry(tbl, key)
 	if tbl == nil then
 		return false
 	end
@@ -113,7 +112,7 @@ local function TableHasEntry(tbl, key)
 	elseif #tbl > 0 or next(tbl, nil) ~= nil then
 		for k,v2 in pairs(tbl) do
 			if type(v2) == "table" then
-				return TableHasEntry(v2, key)
+				return Common.TableHasEntry(v2, key)
 			end
 		end
 	end
@@ -122,7 +121,7 @@ end
 
 ---@param tbl table
 ---@return boolean
-local function TableHasAnyEntry(tbl)
+function Common.TableHasAnyEntry(tbl)
 	if tbl == nil then
 		return false
 	end
@@ -136,7 +135,7 @@ end
 ---@param key any
 ---@param fallback any
 ---@return any
-local function GetTableEntry(tbl, key, fallback)
+function Common.GetTableEntry(tbl, key, fallback)
 	local v = tbl[key]
 	if v ~= nil then
 		return v
@@ -147,7 +146,7 @@ end
 ---Get a random entry from a table.
 ---@param tbl table
 ---@return any
-local function GetRandomTableEntry(tbl)
+function Common.GetRandomTableEntry(tbl)
 	if #tbl > 0 then
 		local rnd = Ext.Random(1,#tbl)
 		--local ran = math.max(1, math.fmod(rnd,#tbl))
@@ -159,7 +158,7 @@ end
 ---Get a random entry from a table after removing it.
 ---@param tbl table
 ---@return any
-local function PopRandomTableEntry(tbl)
+function Common.PopRandomTableEntry(tbl)
 	if #tbl > 0 then
 		local rnd = Ext.Random(1,#tbl)
 		--local ran = math.max(1, math.fmod(rnd,#tbl))
@@ -170,7 +169,7 @@ local function PopRandomTableEntry(tbl)
 	return nil
 end
 
-local function ShuffleTable(tbl)
+function Common.ShuffleTable(tbl)
 	for i = #tbl, 2, -1 do
 		local j = Ext.Random(i)
 		tbl[i], tbl[j] = tbl[j], tbl[i]
@@ -181,7 +180,7 @@ end
 ---@param max integer
 ---@param min integer
 ---@return integer
-local function GetRandom(max,min)
+function Common.GetRandom(max,min)
 	if max == nil then max = 999 end
 	if min == nil then min = 0 end
 	local rnd = Ext.Random(0, _G["LEADERLIB_RAN_SEED"])
@@ -194,7 +193,7 @@ end
 ---@param names table
 ---@param offset integer
 ---@return table
-local function Enum(names, offset)
+function Common.Enum(names, offset)
 	offset=offset or 1
 	local objects = {}
 	local size=0
@@ -227,7 +226,7 @@ end
 ---@param param_type string
 ---@param fallback_value any
 ---@return any
-local function SafeguardParam(in_value, param_type, fallback_value)
+function Common.SafeguardParam(in_value, param_type, fallback_value)
 	if in_value == nil then return fallback_value end
 	local in_type = type(in_value)
 	if in_type == param_type then
@@ -243,7 +242,7 @@ local function SafeguardParam(in_value, param_type, fallback_value)
 	end
 end
 
-local function Split(s, sep)
+function Common.Split(s, sep)
     local fields = {}
     local sep = sep or " "
     local pattern = string.format("([^%s]+)", sep)
@@ -257,7 +256,7 @@ end
 
 ---Formats a number with commas.
 ---@param amount integer
-local function FormatNumber(amount)
+function Common.FormatNumber(amount)
 	local formatted = amount
 	while true do  
 		formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", '%1,%2')
@@ -268,23 +267,20 @@ local function FormatNumber(amount)
 	return formatted
 end
 
-Common = {
-	Dump = Dump,
-	CopyTable = CopyTable,
-	FlattenTable = FlattenTable,
-	TableHasEntry = TableHasEntry,
-	TableHasAnyEntry = TableHasAnyEntry,
-	StringEquals = StringHelpers.Equals,
-	StringIsNullOrEmpty = StringHelpers.IsNullOrEmpty,
-	Split = Split,
-	ShuffleTable = ShuffleTable,
-	GetTableEntry = GetTableEntry,
-	GetRandomTableEntry = GetRandomTableEntry,
-	PopRandomTableEntry = PopRandomTableEntry,
-	GetRandom = GetRandom,
-	Enum = Enum,
-	SafeguardParam = SafeguardParam,
-	StringJoin = StringHelpers.Join,
-	StringSplit = StringHelpers.Split,
-	FormatNumber = FormatNumber
-}
+function Common.TableLength(tbl, isKeyValueType)
+	if isKeyValueType ~= true then
+		return #tbl
+	else
+		local total = 0
+		for k,v in pairs(tbl) do
+			total = total + 1
+		end
+		return total
+	end
+end
+
+-- Legacy
+Common.StringEquals = StringHelpers.Equals
+Common.StringIsNullOrEmpty = StringHelpers.IsNullOrEmpty
+Common.StringJoin = StringHelpers.Join
+Common.StringSplit = StringHelpers.Split

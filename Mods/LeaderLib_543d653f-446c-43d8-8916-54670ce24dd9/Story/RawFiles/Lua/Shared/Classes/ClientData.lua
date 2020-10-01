@@ -28,6 +28,7 @@ Classes.ClientCharacterData = ClientCharacterData
 local ClientData = {
 	Type = "ClientData",
 	Profile = "",
+	ID = -1,
 	---@type ClientCharacterData
 	Character = {},
 	IsHost = false,
@@ -39,13 +40,17 @@ setmetatable(ClientData.Character, ClientCharacterData)
 ---@param profile string Unique profile ID.
 ---@param isHost boolean
 ---@return ClientData
-function ClientData:Create(profile, isHost)
+function ClientData:Create(profile, id, isHost)
 	---@type ClientData
     local this =
     {
 		Profile = profile,
-		IsHost = isHost or false,
+		IsHost = isHost,
+		ID = id or -1,
 	}
+	if this.IsHost == nil then
+		this.IsHost = false
+	end
 	setmetatable(this, self)
     return this
 end

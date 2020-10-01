@@ -24,10 +24,13 @@ local function AddTitleToArray(index, array, text)
 end
 
 local function AddCheckboxToArray(index, array, property, displayName, tooltip, enabled, enableControl, filterBool)
+	if enableControl == nil then
+		enableControl = true
+	end
 	array[index] = CONTROL_TYPE.CHECKBOX
 	array[index+1] = GameSettingsMenu.LastControlID
 	array[index+2] = displayName
-	array[index+3] = enableControl or true
+	array[index+3] = enableControl
 	array[index+4] = enabled and 1 or 0
 	array[index+5] = filterBool or false
 	array[index+6] = tooltip or ""

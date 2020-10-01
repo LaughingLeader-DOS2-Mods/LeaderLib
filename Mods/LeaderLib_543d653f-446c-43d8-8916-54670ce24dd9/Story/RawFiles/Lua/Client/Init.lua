@@ -20,9 +20,7 @@ function UI.RegisterListener(event, callback)
 	end
 end
 
-if Ext.IsDeveloperMode() then
-	Ext.Require("Client/UI/Game.Tooltip.Controllers.lua")
-end
+Ext.Require("Client/UI/Game.Tooltip.Controllers.lua")
 
 Ext.Require("Client/UI/CharacterSheet.lua")
 Ext.Require("Client/UI/ModMenu/_Init.lua")

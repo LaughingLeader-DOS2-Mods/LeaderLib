@@ -26,12 +26,11 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 		Ext.PrintWarning("[LeaderLib:listenskill] Please provide a valid skill ID to listen for!")
 	end
 end)
- 
-Ext.RegisterConsoleCommand("luareset", function(command)
+
+local function ResetLua()
 	local varData = {}
 	for name,data in pairs(Mods) do
 		if data.PersistentVars ~= nil then
-			print(name)
 			varData[name] = data.PersistentVars
 		end
 	end
@@ -41,6 +40,19 @@ Ext.RegisterConsoleCommand("luareset", function(command)
 	print("[LeaderLib:luareset] Reseting lua.")
 	NRD_LuaReset(1,1,1)
 	Vars.JustReset = true
+end
+ 
+Ext.RegisterConsoleCommand("luareset", function(command, delay)
+	if delay ~= nil then
+		delay = tonumber(delay)
+		if delay > 0 then
+			StartOneshotTimer("Timers_LeaderLib_Debug_ResetLua_"..tostring(Ext.MonotonicTime()), delay, ResetLua)
+		else
+			ResetLua()
+		end
+	else
+		ResetLua()
+	end
 end)
 
 
@@ -640,4 +652,28 @@ Ext.RegisterConsoleCommand("printitemstats", function(command, slot)
 			Ext.PrintError("[LeaderLib:printitemstats] Item as slot", slot, "does not exist!")
 		end
 	end
+end)
+
+Ext.RegisterConsoleCommand("refreshui", function(cmd)
+	local host = CharacterGetHostCharacter()
+	Ext.PostMessageToClient(host, "LeaderLib_UI_RefreshAll", host)
+end)
+
+Ext.RegisterConsoleCommand("permaboosttest", function(cmd)
+	local host = Ext.GetCharacter(CharacterGetHostCharacter())
+	local weapon = Ext.GetItem(CharacterGetEquippedItem(host.MyGuid, "Weapon"))
+	NRD_ItemSetPermanentBoostInt(weapon.MyGuid, "StrengthBoost", Ext.Random(1,30))
+	
+	print(weapon.Stats.StrengthBoost, NRD_ItemGetPermanentBoostInt(weapon.MyGuid, "StrengthBoost"))
+	for i,v in pairs(weapon.Stats.DynamicStats) do
+		if v ~= nil and v.ObjectInstanceName ~= nil then
+			print(i,v.ObjectInstanceName,v.StrengthBoost)
+		else
+			print(i, "nil")
+		end
+	end
+	for i,v in pairs(weapon:GetGeneratedBoosts()) do
+		print(i,v)
+	end
+	Ext.PostMessageToClient(host.MyGuid, "LeaderLib_UI_RefreshAll", host.MyGuid)
 end)

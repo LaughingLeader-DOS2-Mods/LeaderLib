@@ -674,6 +674,47 @@ Ext.RegisterListener("SessionLoaded", function()
 	Ext.RegisterUINameInvokeListener("showFormattedTooltipAfterPos", function(ui, ...)
 		OnTooltipPositioned(ui)
 	end)
+
+	-- Ext.RegisterUITypeCall(104, "showTooltip", function (ui, call, mcType, doubleHandle, ...)
+	-- end)
+	-- Ext.RegisterUITypeInvokeListener(Data.UIType.examine, "update", function(ui, method)
+	-- 	print(ui:GetTypeId(), method)
+	-- 	local main = ui:GetRoot()
+	-- 	local array = main.addStats_array
+	-- 	if main ~= nil and array ~= nil then
+	-- 		for i=0,#array do
+	-- 			print(i, array[i])
+	-- 		end
+	-- 	end
+	-- end)
+	-- Ext.RegisterUITypeInvokeListener(Data.UIType.examine, "updateStatusses", function(ui, method)
+	-- 	local main = ui:GetRoot()
+	-- 	local array = main.status_array
+	-- 	if main ~= nil and array ~= nil then
+	-- 		local handleDouble = array[0]
+	-- 		if handleDouble ~= nil then
+	-- 			local character = Ext.GetCharacter(Ext.DoubleToHandle(handleDouble))
+	-- 			if character ~= nil then
+	-- 				print(character.MyGuid, handleDouble)
+	-- 			end
+	-- 		end
+	-- 		for i=0,#array do
+	-- 			print(i, array[i])
+	-- 		end
+	-- 	end
+	-- end)
+	-- Ext.RegisterUITypeInvokeListener(Data.UIType.contextMenu, "updateButtons", function(ui, method)
+	-- 	print(ui:GetTypeId(), method)
+	-- 	local main = ui:GetRoot()
+	-- 	if main ~= nil and main.buttonArr ~= nil then
+	-- 		for i=0,#main.buttonArr do
+	-- 			print(i, main.buttonArr[i])
+	-- 		end
+	-- 	end
+	-- end)
+	-- Ext.RegisterUITypeCall(Data.UIType.contextMenu, "buttonPressed", function(ui, ...)
+	-- 	print(Common.Dump({...}))
+	-- end)
 end)
 
 local function EnableTooltipOverride()

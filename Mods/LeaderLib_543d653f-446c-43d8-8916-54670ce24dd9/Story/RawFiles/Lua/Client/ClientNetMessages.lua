@@ -227,3 +227,8 @@ Ext.RegisterNetListener("LeaderLib_SetArmorOption", function(call, dataStr)
 		end
 	end
 end)
+
+Ext.RegisterNetListener("LeaderLib_UI_RefreshAll", function(cmd, uuid)
+	local host = Ext.GetCharacter(uuid)
+	Ext.UISetDirty(host, 0xffffffffffff)
+end)

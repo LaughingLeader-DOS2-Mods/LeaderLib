@@ -226,3 +226,7 @@ Ext.RegisterListener("ModuleLoadStarted", function()
 	--- So we can initialize the settings file in the main menu.
 	LoadGameSettings()
 end)
+
+Ext.RegisterListener("SessionLoading", function()
+	SettingsManager.LoadConfigFiles()
+end)

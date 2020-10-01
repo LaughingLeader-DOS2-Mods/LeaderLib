@@ -127,12 +127,10 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, uuid)
 				mainMenu.addMenuCheckbox(ModMenuManager.LastID, displayName, enableControl, state, false, tooltip)
 				AddControl(v, uuid, v.Value)
 			elseif varType == "table" then
-				local enableControl = Client.IsHost == true
-				local state = v.Value == true and 1 or 0
-				local displayName, tooltip = PrepareText(name, v)
-				mainMenu.addMenuDropDown(ModMenuManager.LastID, displayName, tooltip)
-				AddControl(v, uuid, v.Value.Selected)
 				if v.Value.Entries ~= nil and type(v.Value.Entries) == "table" then
+					local displayName, tooltip = PrepareText(name, v)
+					mainMenu.addMenuDropDown(ModMenuManager.LastID, displayName, tooltip)
+					AddControl(v, uuid, v.Value.Selected)
 					for _,entry in pairs(v.Value.Entries) do
 						local entryName,_ = PrepareText(entry)
 						mainMenu.addMenuDropDownEntry(ModMenuManager.LastID, entryName)
@@ -155,9 +153,15 @@ local function ParseModSettings(ui, mainMenu, modSettings, order)
 	if order ~= nil then
 		for i=1,#order do
 			local section = order[i]
-			if not StringHelpers.IsNullOrEmpty(section.DisplayName) then
+			local name = section.DisplayName or section.Name
+			if not StringHelpers.IsNullOrEmpty(name) then
 				--mainMenu.addMenuInfoLabel(Ext.Random(500,600), section.DisplayName, "Info?")
-				mainMenu.addMenuLabel(section.DisplayName)
+				if string.sub(name, 0) == "h" then
+					mainMenu.addMenuLabel(Ext.GetTranslatedString(name, name))
+				else
+					local translatedName = GameHelpers.GetStringKeyText(name, name)
+					mainMenu.addMenuLabel(translatedName)
+				end
 				-- local label = mainMenu.list.content_array[#mainMenu.list.content_array-1]
 				-- if label ~= nil then
 				-- 	label.heightOverride = label.label_txt.height + 4

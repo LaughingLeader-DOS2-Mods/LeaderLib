@@ -106,7 +106,5 @@ end)
 ---@param uuid string
 ---@return ModSettings
 function CreateModSettings(uuid)
-	local settings = Classes.ModSettingsClasses.ModSettings:Create(uuid)
-	GlobalSettings.Mods[uuid] = settings
-	return settings
+	return SettingsManager.GetMod(uuid, true)
 end

@@ -11,7 +11,6 @@ LEVELTYPE = {
 }
 
 local UserIds = {}
-local TotalUsers = 0
 
 ---@class SharedData
 SharedData = {
@@ -30,18 +29,26 @@ if Ext.IsClient() then
 end
 
 if Ext.IsServer() then
-	function GameHelpers.Data.SyncSharedData(client, ignoreProfile, syncSettings)
+	---@param id integer
+	---@param profile string
+	---@param uuid string
+	---@param isHost boolean
+	local function SendSyncListenerEvent(id, profile, uuid, isHost)
 		if #Listeners.SyncData > 0 then
 			for i,callback in pairs(Listeners.SyncData) do
-				local status,result = xpcall(callback, debug.traceback, SharedData.ModData, client)
+				local status,result = xpcall(callback, debug.traceback, id, profile, uuid, isHost)
 				if not status then
 					Ext.PrintError("Error calling function for 'SyncData':\n", result)
 				end
 			end
 		end
+	end
+
+	function GameHelpers.Data.SyncSharedData(syncSettings, client, ignoreProfile)
 		if client == nil then
+			local totalUsers = Common.TableLength(UserIds, true)
 			--Ext.BroadcastMessage("LeaderLib_SharedData_StoreData", Ext.JsonStringify(SharedData), nil)
-			if TotalUsers <= 0 then
+			if totalUsers <= 0 then
 				IterateUsers("LeaderLib_StoreUserData")
 			else
 				for id,b in pairs(UserIds) do
@@ -52,9 +59,11 @@ if Ext.IsServer() then
 						local data = {
 							Shared = SharedData,
 							Profile = profile,
-							IsHost = isHost
+							IsHost = isHost,
+							ID = id
 						}
 						Ext.PostMessageToUser(id, "LeaderLib_SharedData_StoreData", Ext.JsonStringify(data))
+						SendSyncListenerEvent(id, profile, uuid, isHost)
 					end
 				end
 			end
@@ -79,9 +88,11 @@ if Ext.IsServer() then
 				local data = {
 					Shared = SharedData,
 					Profile = profile,
-					IsHost = isHost
+					IsHost = isHost,
+					ID = id
 				}
 				Ext.PostMessageToUser(id, "LeaderLib_SharedData_StoreData", Ext.JsonStringify(data))
+				SendSyncListenerEvent(id, profile, uuid, isHost)
 			end
 		end
 		if syncSettings == true then
@@ -92,7 +103,7 @@ if Ext.IsServer() then
 	local syncSettingsNext = false
 
 	local function OnSyncTimer()
-		GameHelpers.Data.SyncSharedData(nil, nil, syncSettingsNext)
+		GameHelpers.Data.SyncSharedData(syncSettingsNext)
 		syncSettingsNext = false
 	end
 
@@ -150,15 +161,14 @@ if Ext.IsServer() then
 	Ext.RegisterOsirisListener("UserConnected", 3, "after", function(id, username, profileId)
 		if UserIds[id] ~= true then
 			UserIds[id] = true
-			TotalUsers = TotalUsers + 1
 		end
 		GameHelpers.Data.SetCharacterData(id, profileId)
 	end)
 
 	Ext.RegisterOsirisListener("UserEvent", 2, "after", function(id, event)
+		print(event, id)
 		if UserIds[id] ~= true then
 			UserIds[id] = true
-			TotalUsers = TotalUsers + 1
 		end
 		if event == "LeaderLib_StoreUserData" then
 			GameHelpers.Data.SetCharacterData(id)
@@ -168,7 +178,6 @@ if Ext.IsServer() then
 	Ext.RegisterOsirisListener("UserDisconnected", 3, "after", function(id, username, profileId)
 		if UserIds[id] == true then
 			UserIds[id] = nil
-			TotalUsers = math.max(TotalUsers - 1, 0)
 		end
 		SharedData.CharacterData[profileId] = nil
 		GameHelpers.Data.StartSyncTimer()
@@ -177,11 +186,9 @@ if Ext.IsServer() then
 	Ext.RegisterOsirisListener("CharacterReservedUserIDChanged", 3, "after", function(uuid, last, id)
 		if UserIds[last] == true then
 			UserIds[last] = nil
-			TotalUsers = math.max(TotalUsers - 1, 0)
 		end
 		if UserIds[id] ~= true then
 			UserIds[id] = true
-			TotalUsers = TotalUsers + 1
 		end
 		GameHelpers.Data.SetCharacterData(id)
 	end)
@@ -228,7 +235,7 @@ if Ext.IsServer() then
 			local uuid = data.UUID
 			if profile ~= nil and uuid ~= nil and SharedData.CharacterData[profile] ~= nil then
 				SharedData.CharacterData[profile].UUID = uuid
-				GameHelpers.Data.SyncSharedData(nil, profile, true)
+				GameHelpers.Data.SyncSharedData(true, nil, profile)
 			end
 		end
 	end)
@@ -265,6 +272,7 @@ if Ext.IsClient() then
 			Client.Profile = data.Profile
 			Client.Character = GetClientCharacter()
 			Client.IsHost = data.IsHost
+			Client.ID = data.ID
 			if #Listeners.ClientDataSynced > 0 then
 				for i,callback in pairs(Listeners.ClientDataSynced) do
 					local status,err = xpcall(callback, debug.traceback, SharedData.ModData)
@@ -282,6 +290,7 @@ if Ext.IsClient() then
 	end
 
 	Ext.RegisterNetListener("LeaderLib_SharedData_StoreData", function(cmd, payload, ...)
+		print(cmd)
 		local b,err = xpcall(StoreData, debug.traceback, payload)
 		if not b then
 			Ext.PrintError(err)

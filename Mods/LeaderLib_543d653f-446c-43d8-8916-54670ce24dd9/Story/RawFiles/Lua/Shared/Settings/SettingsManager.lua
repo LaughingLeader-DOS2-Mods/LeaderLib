@@ -40,10 +40,9 @@ function SettingsManager.GetMod(uuid, createIfMissing)
 		local data = GlobalSettings.Mods[uuid]
 		if data ~= nil then
 			return data
-		end
-		if createIfMissing == true then
+		elseif createIfMissing == true then
 			local settings = ModSettings:Create(uuid)
-			table.insert(GlobalSettings.Mods, settings)
+			GlobalSettings.Mods[uuid] = settings
 			return settings
 		end
 	end
@@ -79,7 +78,10 @@ function SettingsManager.LoadAllModSettings()
 							local enabled = flagData.Enabled or false
 							local displayName = flagData.DisplayName
 							local tooltip = flagData.Tooltip
-							local canExport = flagData.CanExport or true
+							local canExport = flagData.CanExport
+							if canExport == nil then
+								canExport = true
+							end
 							settings.Global:AddFlag(id, flagType, enabled, displayName, tooltip, canExport)
 						end
 					end
@@ -181,6 +183,7 @@ if Ext.IsServer() then
 	
 	function LoadGlobalSettings()
 		local status,err = xpcall(function()
+			--SettingsManager.LoadConfigFiles()
 			local json = NRD_LoadFile("LeaderLib_GlobalSettings.json")
 			if json ~= nil and json ~= "" then
 				local json_tbl = Ext.JsonParse(json)

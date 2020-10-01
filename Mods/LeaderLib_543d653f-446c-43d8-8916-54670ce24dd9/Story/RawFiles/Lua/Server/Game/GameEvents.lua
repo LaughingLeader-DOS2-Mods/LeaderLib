@@ -154,5 +154,4 @@ function OnLuaReset()
 	local region = Osi.DB_CurrentLevel:Get(nil)[1][1]
 	GameHelpers.Data.SetRegion(region)
 	IterateUsers("LeaderLib_StoreUserData")
-	GameHelpers.Data.StartSyncTimer(250, true)
 end

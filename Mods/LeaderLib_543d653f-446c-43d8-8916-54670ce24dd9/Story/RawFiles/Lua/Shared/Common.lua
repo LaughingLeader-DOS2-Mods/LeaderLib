@@ -12,7 +12,7 @@ end
 
 function Common.FlattenTable(tbl)
 	local result = {}
-	function Common.flatten(tbl)
+	local function flatten(tbl)
 		for _, v in pairs(tbl) do
 			if type(v) == "table" then
 				flatten(v)
@@ -21,7 +21,6 @@ function Common.FlattenTable(tbl)
 			end
 		end
 	end
-	
 	flatten(tbl)
 	return result
 end

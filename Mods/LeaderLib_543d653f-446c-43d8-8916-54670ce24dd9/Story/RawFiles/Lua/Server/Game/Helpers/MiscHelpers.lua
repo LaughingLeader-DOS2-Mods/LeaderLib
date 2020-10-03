@@ -110,7 +110,7 @@ function GameHelpers.SyncScale(uuid)
 end
 
 ---Set an item or character's scale, and sync it to clients.
----@param uuid string
+---@param uuid EsvCharacter|string
 ---@param scale number
 function GameHelpers.SetScale(uuid, scale)
 	scale = scale or 1.0

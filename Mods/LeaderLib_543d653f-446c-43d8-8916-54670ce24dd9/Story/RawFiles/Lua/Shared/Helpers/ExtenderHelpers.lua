@@ -539,6 +539,7 @@ function GameHelpers.Ext.CreateSkillTable(skillName, useWeaponDamage)
 				end
 			end
 		end
+		skill.IsTable = true
 		return skill
 	end
 	return nil

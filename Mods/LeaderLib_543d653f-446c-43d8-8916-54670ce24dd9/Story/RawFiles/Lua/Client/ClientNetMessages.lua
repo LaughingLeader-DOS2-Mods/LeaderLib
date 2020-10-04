@@ -96,11 +96,17 @@ Ext.RegisterNetListener("LeaderLib_SyncScale", function(call, dataStr)
 	if data.Params.UUID ~= nil and data.Params.Scale ~= nil then
 		if data.Params.IsItem == true then
 			local item = Ext.GetItem(data.Params.UUID)
+			if item == nil and data.Params.Handle ~= nil then
+				item = Ext.GetItem(data.Params.Handle)
+			end
 			if item ~= nil then
 				item:SetScale(data.Params.Scale)
 			end
 		else
 			local character = Ext.GetCharacter(data.Params.UUID)
+			if character == nil and data.Params.Handle ~= nil then
+				character = Ext.GetCharacter(data.Params.Handle)
+			end
 			if character ~= nil then
 				character:SetScale(data.Params.Scale)
 			end

@@ -83,55 +83,40 @@ function GameHelpers.ClearActionQueue(character, purge)
 end
 
 ---Sync an item or character's scale to clients.
----@param uuid string|EsvCharacter|EsvItem
-function GameHelpers.SyncScale(uuid)
-	local targetUUID = ""
-	local scale = 1.0
-	local isItem = false
-	if type(uuid) == "string" then
-		targetUUID = uuid
-		if ObjectIsCharacter(uuid) == 1 then
-			scale = Ext.GetCharacter(uuid).Scale
-		elseif ObjectIsItem(uuid) == 1 then
-			scale = Ext.GetItem(uuid).Scale
-			isItem = true
+---@param object string|EsvCharacter|EsvItem
+function GameHelpers.SyncScale(object)
+	if type(object) == "string" then
+		if ObjectIsCharacter(object) == 1 then
+			object = Ext.GetCharacter(object)
+		elseif ObjectIsItem(object) == 1 then
+			object = Ext.GetItem(object)
 		end
-	elseif uuid.Scale ~= nil then
-		scale = uuid.Scale
-		targetUUID = uuid.MyGuid
-		isItem = ObjectIsItem(targetUUID) == 1
 	end
-
-	Ext.BroadcastMessage("LeaderLib_SyncScale", Classes.MessageData:CreateFromTable("SyncScaleData", {
-		UUID = targetUUID,
-		Scale = scale,
-		IsItem = isItem
-	}):ToString())
+	if object ~= nil then
+		local isItem = ObjectIsItem(object.MyGuid) == 1
+		Ext.BroadcastMessage("LeaderLib_SyncScale", Classes.MessageData:CreateFromTable("SyncScaleData", {
+			UUID = object.MyGuid,
+			Scale = object.Scale,
+			IsItem = isItem,
+			Handle = object.NetID
+			--Handle = Ext.HandleToDouble(object.Handle)
+		}):ToString())
+	end
 end
 
 ---Set an item or character's scale, and sync it to clients.
----@param uuid EsvCharacter|string
+---@param object EsvCharacter|string
 ---@param scale number
-function GameHelpers.SetScale(uuid, scale)
-	scale = scale or 1.0
-	local isItem = false
-	if uuid.SetScale ~= nil then
-		uuid:SetScale(scale)
-		if ObjectIsItem(uuid.MyGuid) == 1 then
-			isItem = true
-		end
-		uuid = uuid.MyGuid
-	else
-		if ObjectIsCharacter(uuid) == 1 then
-			Ext.GetCharacter(uuid):SetScale(scale)
-		elseif ObjectIsItem(uuid) == 1 then
-			Ext.GetItem(uuid):SetScale(scale)
-			isItem = true
+function GameHelpers.SetScale(object, scale)
+	if type(object) == "string" then
+		if ObjectIsCharacter(object) == 1 then
+			object = Ext.GetCharacter(object)
+		elseif ObjectIsItem(object) == 1 then
+			object = Ext.GetItem(object)
 		end
 	end
-	Ext.BroadcastMessage("LeaderLib_SyncScale", Classes.MessageData:CreateFromTable("SyncScaleData", {
-		UUID = uuid,
-		Scale = scale,
-		IsItem = isItem
-	}):ToString())
+	if object.SetScale ~= nil then
+		object:SetScale(scale)
+		GameHelpers.SyncScale(object)
+	end
 end

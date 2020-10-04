@@ -2,7 +2,7 @@
 ---Pass in an object if this is a status.
 ---@param target string
 ---@param handle integer
----@param is_hit integer
+---@param is_hit integer|boolean
 ---@return boolean
 local function HitSucceeded(target, handle, is_hit)
     if is_hit == 1 or is_hit == true then

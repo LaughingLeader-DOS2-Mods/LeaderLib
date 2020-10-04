@@ -382,3 +382,17 @@ Ext.RegisterConsoleCommand("modorder", function(cmd, uuidOnly)
 		end
 	end
 end)
+
+Ext.RegisterConsoleCommand("printitemboosts", function(cmd)
+	local host = Ext.GetCharacter(CharacterGetHostCharacter())
+	local weapon = Ext.GetItem(CharacterGetEquippedItem(host.MyGuid, "Weapon"))
+	print(weapon.MyGuid, weapon.StatsId)
+	print(weapon.Stats.Boosts)
+	for i,v in pairs(weapon:GetGeneratedBoosts()) do
+		print(i,v)
+	end
+	for i,v in pairs(weapon:GetDeltaMods()) do
+		print(i,v)
+	end
+	print(weapon.Stats["Damage Type"])
+end)

@@ -16,9 +16,11 @@ NRD_StatusPreventApply(_Target, _Handle, 1);
 IF
 NRD_OnStatusAttempt(_Target, _Status, _Handle, _)
 AND
-ObjectIsItem(_Target, 1)
+NOT DB_LeaderLib_EngineStatus(_Status)
 AND
 GetStatusType(_Status, "DAMAGE_ON_MOVE")
+AND
+ObjectIsItem(_Target, 1)
 THEN
 NRD_StatusPreventApply(_Target, _Handle, 1);
 */

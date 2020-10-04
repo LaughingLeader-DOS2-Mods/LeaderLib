@@ -474,7 +474,7 @@ local function OnTooltipPositioned(ui, ...)
 						FormatTagTooltip(ui, tooltip_mc)
 					end
 					for i,callback in pairs(UIListeners.OnTooltipPositioned) do
-						local status,err = xpcall(callback, debug.traceback, ui, tooltip_mc, false, ...)
+						local status,err = xpcall(callback, debug.traceback, ui, tooltip_mc, false, lastItem, ...)
 						if not status then
 							Ext.PrintError("[LeaderLib:AdjustTagElements] Error invoking callback:")
 							Ext.PrintError(err)
@@ -672,7 +672,7 @@ Ext.RegisterListener("SessionLoaded", function()
 	-- end
 
 	Ext.RegisterUINameInvokeListener("showFormattedTooltipAfterPos", function(ui, ...)
-		OnTooltipPositioned(ui)
+		OnTooltipPositioned(ui, ...)
 	end)
 
 	-- Ext.RegisterUITypeCall(104, "showTooltip", function (ui, call, mcType, doubleHandle, ...)

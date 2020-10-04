@@ -103,7 +103,7 @@ Ext.NewCall(TrySetSkillSlot, "LeaderLib_Ext_TrySetSkillSlot", "(CHARACTERGUID)_C
 ---Refreshes a skill if the character has it.
 local function RefreshSkill(char, skill)
     if CharacterHasSkill(char, skill) == 1 then
-        NRD_SkillSetCooldown(skill, 0.0)
+        NRD_SkillSetCooldown(char, skill, 0.0)
     end
 end
 Ext.NewCall(RefreshSkill, "LeaderLib_Ext_RefreshSkill", "(CHARACTERGUID)_Character, (STRING)_Skill")

@@ -141,19 +141,17 @@ if Ext.IsServer() then
 		if profileId == nil then
 			profileId = GetUserProfileID(id)
 		end
+		if profileId == nil then
+			return false
+		end
 		uuid = StringHelpers.GetUUID(uuid or GetCurrentCharacter(id))
+		local character = Ext.GetCharacter(uuid)
 		local isHost = StringHelpers.GetUUID(CharacterGetHostCharacter()) == uuid
 		if SharedData.CharacterData[profileId] == nil then
-			SharedData.CharacterData[profileId] = ClientCharacterData:Create(uuid, id, profileId, isHost, isInCharacterCreation)
+			SharedData.CharacterData[profileId] = ClientCharacterData:Create(uuid, id, profileId, character.NetID, isHost, isInCharacterCreation)
 		else
 			local data = SharedData.CharacterData[profileId]
-			data.UUID = uuid
-			data.Profile = profileId
-			data.ID = id
-			data.IsHost = isHost
-			if isInCharacterCreation ~= nil then
-				data.IsInCharacterCreation = isInCharacterCreation
-			end
+			data:Set(uuid, id, profileId, character.NetID, isHost, isInCharacterCreation)
 		end
 		GameHelpers.Data.StartSyncTimer()
 	end
@@ -231,21 +229,57 @@ if Ext.IsServer() then
 		local data = Ext.JsonParse(payload)
 		if data ~= nil then
 			local profile = data.Profile
-			local uuid = data.UUID
-			if profile ~= nil and uuid ~= nil and SharedData.CharacterData[profile] ~= nil then
-				SharedData.CharacterData[profile].UUID = uuid
-				GameHelpers.Data.SyncSharedData(true, nil, profile)
+			local netid = tonumber(data.NetID)
+			if profile ~= nil and netid ~= nil and SharedData.CharacterData[profile] ~= nil then
+				local character = Ext.GetCharacter(netid)
+				if character ~= nil then
+					local charData = SharedData.CharacterData[profile]
+					charData.UUID = character.MyGuid
+					charData.NetID = netid
+					GameHelpers.Data.SyncSharedData(true, nil, profile)
+				end
 			end
 		end
 	end)
 end
 
+function GameHelpers.Data.GetPersistentVars(modTable, createIfMissing, ...)
+	if modTable ~= nil then
+		if Mods[modTable].PersistentVars == nil then
+			Mods[modTable].PersistentVars = {}
+		end
+		local pvars = Mods[modTable].PersistentVars
+		local variablePath = {...}
+		local lastTable = pvars
+		for i=1,#variablePath do
+			local tableName = variablePath[i]
+			if tableName ~= nil and type(tableName) == "string" then
+				local ref = lastTable[tableName]
+				if ref == nil and createIfMissing == true then
+					ref = {}
+					lastTable[tableName] = ref
+				end
+				if ref ~= nil then
+					lastTable = ref
+				else
+					return nil
+				end
+			end
+		end
+		return lastTable
+	end
+	return nil
+end
+
 if Ext.IsClient() then
 	local defaultEmptyCharacter = Classes.ClientCharacterData:Create()
 
-	local function GetClientCharacter()
-		if SharedData.CharacterData ~= nil and Client.Profile ~= nil then
-			return SharedData.CharacterData[Client.Profile] or defaultEmptyCharacter
+	local function GetClientCharacter(profile)
+		if profile == nil then
+			profile = Client.Profile
+		end
+		if SharedData.CharacterData ~= nil and profile ~= nil then
+			return SharedData.CharacterData[profile] or defaultEmptyCharacter
 		end
 		return defaultEmptyCharacter
 	end
@@ -268,10 +302,7 @@ if Ext.IsClient() then
 		local data = Ext.JsonParse(payload)
 		if data ~= nil then
 			SharedData = data.Shared
-			Client.Profile = data.Profile
-			Client.Character = GetClientCharacter()
-			Client.IsHost = data.IsHost
-			Client.ID = data.ID
+			Client:Set(data.ID, data.Profile, data.IsHost, GetClientCharacter(data.Profile))
 			if #Listeners.ClientDataSynced > 0 then
 				for i,callback in pairs(Listeners.ClientDataSynced) do
 					local status,err = xpcall(callback, debug.traceback, SharedData.ModData)
@@ -304,11 +335,14 @@ if Ext.IsClient() then
 				local currentCharacter = GetClientCharacter()
 				if currentCharacter ~= nil then
 					--print(currentCharacter.UUID, "=>", character.MyGuid)
-					currentCharacter.UUID = character.MyGuid
+					if character.MyGuid ~= nil then
+						currentCharacter.UUID = character.MyGuid
+					end
+					currentCharacter.NetID = character.NetID
 					ActiveCharacterChanged(currentCharacter)
 				end
 				if skipSync ~= true then
-					Ext.PostMessageToServer("LeaderLib_SharedData_CharacterSelected", Ext.JsonStringify({Profile = SharedData.Profile, UUID = character.MyGuid}))
+					Ext.PostMessageToServer("LeaderLib_SharedData_CharacterSelected", Ext.JsonStringify({Profile = SharedData.Profile, UUID = character.MyGuid, NetID=character.NetID}))
 				end
 			end
 		end

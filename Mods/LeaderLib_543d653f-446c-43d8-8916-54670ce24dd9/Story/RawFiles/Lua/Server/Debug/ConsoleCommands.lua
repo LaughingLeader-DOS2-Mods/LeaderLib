@@ -21,7 +21,21 @@ Ext.RegisterConsoleCommand("printuuids", function(call, radiusVal)
 	end
 	local host = CharacterGetHostCharacter()
 	for i,v in pairs(Ext.GetCharacter(host):GetNearbyCharacters(radius)) do
-		Debug_Iterator_PrintCharacter(v)
+		---@type EsvCharacter
+		local character = Ext.GetCharacter(uuid)
+		---@type StatCharacter
+		local characterStats = character.Stats
+
+		print("CHARACTER")
+		print("===============")
+		print("UUID:", uuid)
+		print("NetID:", character.NetID)
+		print("Name:", CharacterGetDisplayName(uuid))
+		print("Stat:", characterStats.Name)
+		print("Archetype:", character.Archetype)
+		print("Pos:", Ext.JsonStringify(characterStats.Position))
+		print("Rot:", Ext.JsonStringify(characterStats.Rotation))
+	print("===============")
 	end
 end)
 
@@ -305,8 +319,8 @@ Ext.RegisterConsoleCommand("printdeltamods", function(command, ...)
 end)
 
 Ext.RegisterConsoleCommand("clearcombatlog", function(command, text)
-	local host = CharacterGetHostCharacter()
-	Ext.PostMessageToClient(host, "LeaderLib_ClearCombatLog", "0")
+	local host = Ext.GetCharacter(CharacterGetHostCharacter())
+	Ext.PostMessageToUser(host.UserID, "LeaderLib_ClearCombatLog", "0")
 end)
 
 Ext.RegisterConsoleCommand("refreshskill", function(command, skill, enabled)
@@ -343,7 +357,7 @@ Ext.RegisterConsoleCommand("addpoints", function(cmd, pointType, amount)
 	if pointType == nil then
 		pointType = "ability"
 	else
-		pointType = string.lower(pointType)
+		pointType = StringHelpers.Trim(string.lower(pointType))
 	end
 	if pointType == "ability" then
 		CharacterAddAbilityPoint(host, amount)

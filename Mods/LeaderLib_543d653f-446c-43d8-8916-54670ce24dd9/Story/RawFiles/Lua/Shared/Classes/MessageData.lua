@@ -12,7 +12,7 @@ function MessageData:ToString()
 end
 
 local function TryParseTable(str)
-	local tbl = Ext.JsonParse(str)
+	local tbl = Common.JsonParse(str)
 	if tbl ~= nil then
 		if tbl.ID ~= nil and tbl.Params ~= nil then
 			return MessageData:CreateFromTable(tbl.ID, tbl.Params)

@@ -176,6 +176,32 @@ function Common.ShuffleTable(tbl)
 	return tbl
 end
 
+---Converts a table string keys to numbers. Useful for converting JsonStringify number keys back to numbers.
+---@param tbl table
+---@param recursive boolean
+function Common.ConvertTableKeysToNumbers(tbl, recursive)
+	for k,v in pairs(tbl) do
+		if type(k) ~= "number" then
+			local num = tonumber(k)
+			if num ~= nil then
+				tbl[num] = v
+				tbl[k] = nil
+			end
+			if recursive == true and type(v) == "table" then
+				Common.ConvertTableKeysToNumbers(v, recursive)
+			end
+		end
+	end
+end
+
+function Common.JsonParse(str)
+	local tbl = Ext.JsonParse(str)
+	if tbl ~= nil then
+		Common.ConvertTableKeysToNumbers(tbl, true)
+	end
+	return tbl
+end
+
 ---@param max integer
 ---@param min integer
 ---@return integer

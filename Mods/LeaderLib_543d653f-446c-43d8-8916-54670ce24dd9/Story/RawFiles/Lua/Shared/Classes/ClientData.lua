@@ -10,16 +10,51 @@ local ClientCharacterData = {
 
 ClientCharacterData.__index = ClientCharacterData
 
-function ClientCharacterData:Create(uuid, id, profile, isHost, isInCharacterCreation)
+function ClientCharacterData:Create(uuid, id, profile, netid, isHost, isInCharacterCreation)
 	local this = {
 		UUID = uuid,
+		NetID = netid or -1,
 		ID = id,
 		Profile = profile,
-		IsHost = isHost or false,
-		IsInCharacterCreation = isInCharacterCreation or false
+		IsHost = isHost,
+		IsInCharacterCreation = isInCharacterCreation
 	}
+	if this.IsHost == nil then
+		this.IsHost = false
+	end
+	if this.IsInCharacterCreation == nil then
+		this.IsInCharacterCreation = false
+	end
 	setmetatable(this, ClientCharacterData)
 	return this
+end
+
+---@param character EsvCharacter|EclCharacter
+function ClientCharacterData:CreateFromCharacter(character, id, profile, isHost, isInCharacterCreation)
+	local this = self:Create(character.MyGuid, id, profile, isHost, isInCharacterCreation)
+	this.NetID = character.NetID
+	return this
+end
+
+function ClientCharacterData:Set(id, profile, uuid, netid, isHost, isInCharacterCreation)
+	if id ~= nil then
+		self.ID = id
+	end
+	if profile ~= nil then
+		self.Profile = profile
+	end
+	if uuid ~= nil then
+		self.UUID = uuid
+	end
+	if netid ~= nil then
+		self.NetID = netid
+	end
+	if isHost ~= nil then
+		self.IsHost = isHost
+	end
+	if isInCharacterCreation ~= nil then
+		self.IsInCharacterCreation = isInCharacterCreation
+	end
 end
 
 Classes.ClientCharacterData = ClientCharacterData
@@ -57,10 +92,31 @@ end
 
 ---@return EclCharacter
 function ClientData:GetCharacter()
-	if self.Character ~= nil and self.Character.UUID ~= "" then
-		return Ext.GetCharacter(self.Character.UUID)
+	local character = nil
+	if self.Character ~= nil then
+		if self.Character.NetID ~= -1 then
+			character = Ext.GetCharacter(self.Character.NetID)
+		end
+		if character == nil and not StringHelpers.IsNullOrEmpty(self.Character.UUID) then
+			character = Ext.GetCharacter(self.Character.UUID)
+		end
 	end
-	return nil
+	return character
+end
+
+function ClientData:Set(id, profile, isHost, character)
+	if id ~= nil then
+		self.ID = id
+	end
+	if profile ~= nil then
+		self.Profile = profile
+	end
+	if isHost ~= nil then
+		self.IsHost = isHost
+	end
+	if character ~= nil then
+		self.Character = character
+	end
 end
 
 Classes.ClientData = ClientData

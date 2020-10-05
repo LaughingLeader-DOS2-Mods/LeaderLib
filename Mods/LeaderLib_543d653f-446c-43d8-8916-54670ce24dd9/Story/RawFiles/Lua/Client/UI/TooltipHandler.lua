@@ -496,9 +496,6 @@ local function OnItemTooltip(item, tooltip)
 		lastItem = item
 		if Features.FixItemAPCost == true then
 			local character = Client:GetCharacter()
-			if character == nil and item.ParentInventoryHandle ~= nil then
-				character = Ext.GetCharacter(item.ParentInventoryHandle)
-			end
 			if character ~= nil then
 				local apElement = tooltip:GetElement("ItemUseAPCost")
 				if apElement ~= nil then

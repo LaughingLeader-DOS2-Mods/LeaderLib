@@ -148,7 +148,7 @@ local function GetPlayerStatusMovieClips(character, matchStatus)
 					if status_mc ~= nil then
 						local handle = Ext.DoubleToHandle(status_mc.id)
 						if handle ~= nil then
-							local statusObj = Ext.GetStatus(character.MyGuid, handle) or {}
+							local statusObj = Ext.GetStatus(character.NetID, handle) or {}
 							--print(string.format("[%i] id(%s) name(%s) iconId(%s) tooltip(%s) handle(%s) StatusId(%s)", i, status_mc.id, status_mc.name, status_mc.iconId, status_mc.tooltip, handle, statusObj.StatusId))
 							if statusObj ~= nil then
 								if matchStatus == nil then

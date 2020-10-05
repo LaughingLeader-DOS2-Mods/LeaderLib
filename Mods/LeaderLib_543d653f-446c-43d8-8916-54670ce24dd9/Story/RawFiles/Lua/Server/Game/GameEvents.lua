@@ -131,7 +131,7 @@ function OnLuaReset()
 	pcall(function()
 		local fileStr = Ext.LoadFile("LeaderLib_Debug_PersistentVars.json")
 		if fileStr ~= nil then
-			local varData = Ext.JsonParse(fileStr)
+			local varData = Common.JsonParse(fileStr)
 			if varData ~= nil then
 				for name,data in pairs(varData) do
 					if Mods[name] ~= nil and Mods[name].PersistentVars ~= nil then

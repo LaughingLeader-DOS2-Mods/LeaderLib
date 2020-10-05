@@ -106,7 +106,7 @@ Ext.RegisterListener("SessionLoaded", function()
 				end, debug.traceback)
 				if not status then
 					print("[LeaderLib:SessionLoaded] Error updating TranslatedString entry:")
-					print(err)
+					Ext.PrintError(err)
 				end
 			end
 		end

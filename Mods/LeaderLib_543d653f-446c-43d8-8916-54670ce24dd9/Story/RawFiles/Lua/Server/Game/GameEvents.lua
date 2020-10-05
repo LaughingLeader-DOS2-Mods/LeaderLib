@@ -53,7 +53,7 @@ end
 local function OnInitialized(region, isRunning)
 	local status,err = xpcall(OverrideLeaveActionStatuses, debug.traceback)
 	if not status then
-		print(err)
+		Ext.PrintError(err)
 	end
 
 	Vars.Initialized = true
@@ -75,7 +75,7 @@ local function OnInitialized(region, isRunning)
 	if Ext.Version() < 50 then
 		Osi.LeaderLib_ActivateGoal("LeaderLib_19_TS_HitEvents")
 	end
-	
+
 	if isRunning == true or Ext.GetGameState() == "Running" then
 		InvokeOnInitializedCallbacks()
 		SettingsManager.SyncAllSettings()

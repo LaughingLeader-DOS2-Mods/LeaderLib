@@ -68,7 +68,7 @@ public function setSlotTooltip(slot:MovieClip) : *
 ]]
 
 local function OnControllerEvent(ui, event, ...)
-	print(event, Common.Dump({...}))
+	--print(event, Common.Dump({...}))
 	if event == "updateStatusses" then
 		UI.PrintArray(ui, "status_array")
 	elseif event == "update" then
@@ -172,12 +172,11 @@ local TooltipVariables = {
 
 local function FormatTagTooltip(ui, tooltip_mc, ...)
 	local length = #tooltip_mc.list.content_array
-	print(tooltip_mc.name, "tooltip length:", length, tooltip_mc.name)
 	if length > 0 then
 		for i=0,length,1 do
 			local group = tooltip_mc.list.content_array[i]
 			if group ~= nil then
-				print(string.format("[%i] groupID(%i) orderId(%s) icon(%s)", i, group.groupID or -1, group.orderId or -1, group.iconId))
+				--print(string.format("[%i] groupID(%i) orderId(%s) icon(%s)", i, group.groupID or -1, group.orderId or -1, group.iconId))
 				if group.list ~= nil then
 					UI.FormatArrayTagText(group.list.content_array, group, true)
 				end
@@ -272,64 +271,44 @@ local function RegisterControllerTooltipEvents()
 	end
 	print("**************Registered controller UI events.************")
 
-	local debugEvents = {
-		"setTooltip",
-		"setEquippedTitle",
-		"toggleTooltip",
-		"enableCompare",
-		"ShowCellTooltip",
-		"SendTooltipRequest",
-		"setTooltipGroupLabel",
-		"setTooltipCompareHint",
-		"setTooltipPanelVisible",
-		"updateTooltip",
-		"updateEquipTooltip",
-		"clearTooltip",
-		"clearEquipTooltip",
-		"tooltipFadeDone",
-	}
+	if Ext.IsDeveloperMode() then
+		local debugEvents = {
+			"setTooltip",
+			"setEquippedTitle",
+			"toggleTooltip",
+			"enableCompare",
+			"ShowCellTooltip",
+			"SendTooltipRequest",
+			"setTooltipGroupLabel",
+			"setTooltipCompareHint",
+			"setTooltipPanelVisible",
+			"updateTooltip",
+			"updateEquipTooltip",
+			"clearTooltip",
+			"clearEquipTooltip",
+			"tooltipFadeDone",
+		}
 
-	for i,v in pairs(debugEvents) do
-		Ext.RegisterUINameInvokeListener(v, function(ui, method, ...)
-			local matched = false
-			local id = ui:GetTypeId()
-			for name,type in pairs(UITYPE) do
-				if type == id then
-					print(string.format("[%s(%s)]:%s params(%s)", name, id, method, Ext.JsonStringify({...})))
-					matched = true
-					break
+		for i,v in pairs(debugEvents) do
+			Ext.RegisterUINameInvokeListener(v, function(ui, method, ...)
+				local matched = false
+				local id = ui:GetTypeId()
+				for name,type in pairs(UITYPE) do
+					if type == id then
+						--print(string.format("[%s(%s)]:%s params(%s)", name, id, method, Ext.JsonStringify({...})))
+						matched = true
+						break
+					end
 				end
-			end
-			if not matched then
-				print(string.format("[%s(%s)]:%s params(%s)", ui:GetRoot().name, id, method, Ext.JsonStringify({...})))
-			end
-			if method == "updateEquipTooltip" then
-				UI.PrintArray(ui, "equipTooltip_array")
-			end
-		end, "After")
+				if not matched then
+					--print(string.format("[%s(%s)]:%s params(%s)", ui:GetRoot().name, id, method, Ext.JsonStringify({...})))
+				end
+				if method == "updateEquipTooltip" then
+					UI.PrintArray(ui, "equipTooltip_array")
+				end
+			end, "After")
+		end
 	end
-
-	-- local debugCalls = {
-	-- 	"slotOver",
-	-- 	"itemDollOver",
-	-- }
-
-	-- for i,v in pairs(debugCalls) do
-	-- 	Ext.RegisterUINameCall(v, function(ui, method, ...)
-	-- 		local matched = false
-	-- 		local id = ui:GetTypeId()
-	-- 		for name,type in pairs(UITYPE) do
-	-- 			if type == id then
-	-- 				print(string.format("[%s(%s)]:%s params(%s)", name, id, method, Ext.JsonStringify({...})))
-	-- 				matched = true
-	-- 				break
-	-- 			end
-	-- 		end
-	-- 		if not matched then
-	-- 			print(string.format("[%s(%s)]:%s params(%s)", ui:GetRoot().name, id, method, Ext.JsonStringify({...})))
-	-- 		end
-	-- 	end)
-	-- end
 end
 
 Ext.RegisterListener("SessionLoaded", function()

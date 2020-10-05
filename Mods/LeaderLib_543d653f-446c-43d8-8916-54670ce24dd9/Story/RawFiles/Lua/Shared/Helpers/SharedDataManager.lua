@@ -166,7 +166,6 @@ if Ext.IsServer() then
 	end)
 
 	Ext.RegisterOsirisListener("UserEvent", 2, "after", function(id, event)
-		print(event, id)
 		if UserIds[id] ~= true then
 			UserIds[id] = true
 		end
@@ -290,7 +289,6 @@ if Ext.IsClient() then
 	end
 
 	Ext.RegisterNetListener("LeaderLib_SharedData_StoreData", function(cmd, payload, ...)
-		print(cmd)
 		local b,err = xpcall(StoreData, debug.traceback, payload)
 		if not b then
 			Ext.PrintError(err)

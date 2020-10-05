@@ -66,7 +66,6 @@ function GameSettingsMenu.AddSettings(ui, addDirectly)
 	local settings = GameSettings.Settings
 	local main = ui:GetRoot()
 	if main ~= nil then
-		print("Setting up Gameplay menu")
 		if addDirectly == true then
 			---@type MainMenuMC
 			local mainMenu = main.mainMenu_mc

@@ -55,9 +55,9 @@ local function SyncGlobalSettings(settings)
 				existing.Version = v.Version
 			end
 		end
-		print("[CLIENT] Updated GlobalSettings.")
+		PrintDebug("[LeaderLib:CLIENT] Updated GlobalSettings.")
 	else
-		print("[CLIENT] GlobalSettings is nil.")
+		Ext.PrintError("[LeaderLib:CLIENT] GlobalSettings is nil.")
 		GlobalSettings = settings
 	end
 	SetGlobalSettingsMetatables()
@@ -208,7 +208,7 @@ Ext.RegisterNetListener("LeaderLib_UI_RefreshStatusTurns", function(call, dataSt
 	if data ~= nil then
 		local b,err = xpcall(RefreshStatusTurns, debug.traceback, data)
 		if not b then
-			print(err)
+			Ext.PrintError(err)
 		end
 	end
 end)

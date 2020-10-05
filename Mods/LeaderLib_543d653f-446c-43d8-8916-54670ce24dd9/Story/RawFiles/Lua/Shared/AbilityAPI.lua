@@ -75,7 +75,6 @@ if Ext.IsClient() then
 			local i = 0
 			while i < total do
 				local arrayValue = array[i]
-				print(i, arrayValue, offset)
 				if arrayValue == nil then
 					return i
 				end

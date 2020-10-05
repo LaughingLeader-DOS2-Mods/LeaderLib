@@ -323,7 +323,7 @@ function SettingsData:ApplyVariables(uuid, callback)
 			if type(data.Value) == "number" then
 				local intVal = math.tointeger(data.Value) or math.ceil(data.Value)
 				if intVal ~= nil then
-					print("Osi.LeaderLib_GlobalSettings_SetIntegerVariable", uuid, name, intVal)
+					--print("Osi.LeaderLib_GlobalSettings_SetIntegerVariable", uuid, name, intVal)
 					Osi.LeaderLib_GlobalSettings_SetIntegerVariable(uuid, name, intVal)
 				else
 					Ext.PrintError("[LeaderLib:ModSettingsClasses.lua:ApplyVariables] Error converting variable",name,"to integer.")

@@ -215,7 +215,7 @@ function GameHelpers.Tooltip.ReplacePlaceholders(str, character)
 		return result
 	else
 		Ext.PrintError("[LeaderLib:GameHelpers.Tooltip.ReplacePlaceholders] Error replacing placeholders:")
-		print(result)
+		Ext.PrintError(result)
 		return str
 	end
 end

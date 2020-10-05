@@ -147,7 +147,7 @@ local function OnSkillTooltip(character, skill, tooltip)
 						return true
 					end, debug.traceback)
 					if not status then
-						print(err)
+						Ext.PrintError(err)
 					end
 				end
 				if Features.ReplaceTooltipPlaceholders == true then
@@ -366,7 +366,7 @@ local function AddTags(tooltip_mc)
 				group.addDescription(text)
 				--group.addWhiteSpace(0,0)
 			else
-				print("Failed to create group")
+				Ext.PrintError("[LeaderLib:TooltipHandler:AddTags] Failed to create group.")
 			end
 		end
 	end
@@ -385,7 +385,6 @@ local function FormatTagText(content_array, group, isControllerMode)
 					local searchText = StringHelpers.Trim(element.label_txt.htmlText):gsub("[\r\n]", "")
 					local tag = replaceText[searchText]
 					local data = TagTooltips[tag]
-					print(tag, searchText)
 					if data ~= nil then
 						local finalText = ""
 						local tagName = ""
@@ -415,7 +414,7 @@ local function FormatTagText(content_array, group, isControllerMode)
 							element.label_txt.htmlText = finalText
 							updatedText = true
 						end
-						print(string.format("[%s] htmlText(%s) finalText(%s)", group.name, element.label_txt.htmlText, finalText))
+						--print(string.format("[%s] htmlText(%s) finalText(%s)", group.name, element.label_txt.htmlText, finalText))
 					end
 					-- if Ext.IsDeveloperMode() then
 					-- 	PrintDebug(string.format("(%s) label_txt.htmlText(%s) color(%s)", group.groupID, element.label_txt.htmlText, element.label_txt.textColor))
@@ -425,7 +424,7 @@ local function FormatTagText(content_array, group, isControllerMode)
 			end, debug.traceback)
 			if not b then
 				print("[LeaderLib:FormatTagText] Error:")
-				print(result)
+				Ext.PrintError(result)
 			end
 		end
 	end

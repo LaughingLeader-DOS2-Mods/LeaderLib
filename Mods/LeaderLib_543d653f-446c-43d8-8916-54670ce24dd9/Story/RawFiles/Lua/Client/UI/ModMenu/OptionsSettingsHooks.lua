@@ -259,31 +259,31 @@ Ext.RegisterListener("SessionLoaded", function()
 	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "switchMenu", OnSwitchMenu)
 
 	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "checkBoxID", function(ui, call, id, state)
-		print(call,id,state)
+		--print(call,id,state)
 		if currentMenu == MOD_MENU_ID then
 			ModMenuManager.OnCheckbox(id, state)
 		end
 	end)
 	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "comboBoxID", function(ui, call, id, index)
-		print(call,id,index)
+		--print(call,id,index)
 		if currentMenu == MOD_MENU_ID then
 			ModMenuManager.OnComboBox(id, index)
 		end
 	end)
 	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "selectorID", function(ui, call, id, currentSelection)
-		print(call,id,currentSelection)
+		--print(call,id,currentSelection)
 		if currentMenu == MOD_MENU_ID then
 			ModMenuManager.OnSelector(id, currentSelection)
 		end
 	end)
 	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "menuSliderID", function(ui, call, id, value)
-		print(call,id,value)
+		--print(call,id,value)
 		if currentMenu == MOD_MENU_ID then
 			ModMenuManager.OnSlider(id, value)
 		end
 	end)
 	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "buttonPressed", function(ui, call, id)
-		print(call,id)
+		--print(call,id)
 		if currentMenu == MOD_MENU_ID then
 			ModMenuManager.OnButtonPressed(id)
 		end

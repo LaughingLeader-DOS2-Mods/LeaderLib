@@ -37,7 +37,6 @@ local function LoadModSettingsConfig(uuid, file)
 					if data.Entries ~= nil then
 						for _,id in pairs(data.Entries) do
 							settings.Global:AddLocalizedFlag(id, flagType, false)
-							print("Added flag", id)
 						end
 					end
 					if data.Settings ~= nil then
@@ -46,7 +45,6 @@ local function LoadModSettingsConfig(uuid, file)
 							if flag ~= nil then
 								for param,value in pairs(paramSettings) do
 									flag[param] = value
-									print("Set flag", id, param, "=>", value)
 								end
 							end
 						end
@@ -66,7 +64,6 @@ local function LoadModSettingsConfig(uuid, file)
 						local value = GetValue(varSettings.Value or 0)
 						local increment = GetValue(varSettings.Increment or defaultIncrement)
 						settings.Global:AddLocalizedVariable(id, namePrefix .. id, value, min, max, increment)
-						print("Added var", id, value, min, max, increment)
 					end
 				end
 			end

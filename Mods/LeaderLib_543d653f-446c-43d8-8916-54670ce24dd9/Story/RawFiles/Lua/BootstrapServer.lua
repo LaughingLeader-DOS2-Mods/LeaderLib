@@ -2,6 +2,20 @@ PersistentVars = {}
 PersistentVars.TimerData = {}
 PersistentVars.StatusSource = {}
 
+--- Registers a function that is called when certain Osiris functions are called, but only when a game level is loaded and the gamestate is running.
+--- Supports events, built-in queries, DBs, PROCs, QRYs (user queries).
+--- @param name string Osiris function/database name
+--- @param arity number Number of columns for DBs or the number of parameters (both IN and OUT) for functions
+--- @param event string Event type ('before' - triggered before Osiris call; 'after' - after Osiris call; 'beforeDelete'/'afterDelete' - before/after delete from DB)
+--- @param handler function Lua function to run when the event fires
+function RegisterProtectedOsirisListener(name, arity, event, handler)
+	Ext.RegisterOsirisListener(name, arity, event, function(...)
+		if Ext.GetGameState() == "Running" and SharedData.RegionData.LevelType == LEVELTYPE.GAME then
+			handler(...)
+		end
+	end)
+end
+
 -- local function LeaderLib_GameSessionLoad()
 -- 	PrintDebug("[LeaderLib:Bootstrap.lua] Session is loading.")
 -- end

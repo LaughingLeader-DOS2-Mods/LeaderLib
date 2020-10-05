@@ -20,7 +20,10 @@ function UI.RegisterListener(event, callback)
 	end
 end
 
-Ext.Require("Client/UI/Game.Tooltip.Controllers.lua")
+local controllerUI = Ext.GetBuiltinUI("Public/Game/GUI/equipmentPanel_c.swf")
+if controllerUI ~= nil then
+	Ext.Require("Client/UI/Game.Tooltip.Controllers.lua")
+end
 
 Ext.Require("Client/UI/CharacterSheet.lua")
 Ext.Require("Client/UI/ModMenu/_Init.lua")

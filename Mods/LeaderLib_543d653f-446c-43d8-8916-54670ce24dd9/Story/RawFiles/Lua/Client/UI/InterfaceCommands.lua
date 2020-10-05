@@ -269,14 +269,15 @@ function GameHelpers.UI.UpdateStatusTurns(target, statusid)
 	end
 	if objectHandle ~= nil and statusHandle ~= nil then
 		local status = Ext.GetStatus(objectHandle, statusHandle)
-
-		local data = MessageData:CreateFromTable("UpdateStatusUIData", {
-			IsPlayer = CharacterIsPlayer(target) == 1,
-			IsEnemy = CharacterIsPlayer(target) ~= 1,
-			ObjectHandle = objectHandle,
-			StatusHandle = status.StatusHandle,
-			Turns = status.CurrentLifeTime / 6.0
-		})
+		if status ~= nil then
+			local data = MessageData:CreateFromTable("UpdateStatusUIData", {
+				IsPlayer = CharacterIsPlayer(target) == 1,
+				IsEnemy = CharacterIsPlayer(target) ~= 1,
+				ObjectHandle = objectHandle,
+				StatusHandle = status.StatusHandle,
+				Turns = status.CurrentLifeTime / 6.0
+			})
+		end
 	end
 end
 

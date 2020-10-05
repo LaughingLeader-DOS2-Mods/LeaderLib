@@ -7,6 +7,7 @@ local setmetatable = setmetatable
 local xpcall = xpcall
 local Ext = Ext
 local print = print
+local Mods = Mods
 
 Game.Tooltip = {}
 
@@ -995,11 +996,11 @@ end
 function TooltipHooks:GetCompareItem(ui, item, offHand)
 	local owner = ui:GetPlayerHandle()
 	if owner == nil then
-		owner = item:GetOwnerCharacter()
+		owner = item:GetOwnerCharacter() or ControllerVars.LastPlayer or Mods.LeaderLib.Client.Character.UUID
 	end
 
 	if owner == nil then
-		Ext.PrintError("Tooltip compare render failed: Couldn't find owner of item")
+		Ext.PrintError("Tooltip compare render failed: Couldn't find owner of item", ControllerVars.LastPlayer)
 		return nil
 	end
 

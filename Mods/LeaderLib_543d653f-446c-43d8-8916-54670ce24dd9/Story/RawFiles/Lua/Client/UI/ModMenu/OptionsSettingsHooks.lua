@@ -62,6 +62,13 @@ local function SwitchToModMenu(ui, ...)
 	ModMenuManager.SetScrollPosition(ui)
 end
 
+Ext.RegisterNetListener("LeaderLib_ModMenu_Open", function(cmd,payload)
+	local ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf")
+	if ui ~= nil then
+		SwitchToModMenu(ui)
+	end
+end)
+
 ---@param ui UIObject
 local function CreateModMenuButton(ui, method, ...)
 	local main = ui:GetRoot()
@@ -78,6 +85,7 @@ local function CreateModMenuButton(ui, method, ...)
 				end
 			end
 			SwitchToModMenu(ui)
+			--Ext.PostMessageToServer("LeaderLib_ModMenu_RequestOpen", tostring(Client.ID))
 		end
 	end
 	if switchToModMenu then
@@ -198,6 +206,7 @@ Ext.RegisterListener("SessionLoaded", function()
 		lastMenu = currentMenu
 		currentMenu = MOD_MENU_ID
 		SwitchToModMenu(ui)
+		--Ext.PostMessageToServer("LeaderLib_ModMenu_RequestOpen", tostring(Client.ID))
 	end)
 	---@param ui UIObject
 	Ext.RegisterUINameCall("switchToModMenuFromInput", function(ui, call, ...)

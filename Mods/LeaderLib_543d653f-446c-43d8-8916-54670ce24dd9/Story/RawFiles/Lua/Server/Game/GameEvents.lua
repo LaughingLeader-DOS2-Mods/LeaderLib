@@ -50,7 +50,7 @@ local function InvokeOnInitializedCallbacks(region)
 	end
 end
 
-local function OnInitialized()
+local function OnInitialized(region, isRunning)
 	local status,err = xpcall(OverrideLeaveActionStatuses, debug.traceback)
 	if not status then
 		print(err)
@@ -58,6 +58,7 @@ local function OnInitialized()
 
 	Vars.Initialized = true
 	pcall(function()
+		LoadGlobalSettings()
 		LoadGameSettings()
 		if GameSettings.Settings.SurfaceSettings.PoisonDoesNotIgnite == true and GameSettings.Settings.EnableDeveloperTests == true then
 			GameHelpers.Surface.UpdateRules()
@@ -75,7 +76,7 @@ local function OnInitialized()
 		Osi.LeaderLib_ActivateGoal("LeaderLib_19_TS_HitEvents")
 	end
 	
-	if Ext.GetGameState() == "Running" then
+	if isRunning == true or Ext.GetGameState() == "Running" then
 		InvokeOnInitializedCallbacks()
 		SettingsManager.SyncAllSettings()
 		if GlobalGetFlag("LeaderLib_AutoUnlockInventoryInMultiplayer") == 1 then
@@ -87,7 +88,7 @@ end
 function OnInitialized_CheckGameState(region)
 	if Ext.GetGameState() == "Running" then
 		if not Vars.Initialized then
-			OnInitialized(region)
+			OnInitialized(region, true)
 		else
 			SettingsManager.SyncAllSettings()
 			InvokeOnInitializedCallbacks()
@@ -107,7 +108,7 @@ Ext.RegisterListener("GameStateChanged", function(from, to)
 	end
 	if to == "Running" and Ext.OsirisIsCallable() then
 		if not Vars.Initialized then
-			OnInitialized()
+			OnInitialized(nil, true)
 		elseif from ~= "Paused" then
 			SettingsManager.SyncAllSettings()
 		end
@@ -117,7 +118,7 @@ end)
 function OnLeaderLibInitialized(region)
 	if not Vars.Initialized then
 		if Ext.GetGameState() == "Running" then
-			OnInitialized(region)
+			OnInitialized(region, true)
 		else
 			OnInitialized_CheckGameState(region)
 		end
@@ -142,7 +143,8 @@ function OnLuaReset()
 			end
 		end
 	end)
-	OnInitialized()
+	local region = Osi.DB_CurrentLevel:Get(nil)[1][1]
+	OnInitialized(region, true)
 	if #Listeners.LuaReset > 0 then
 		for i,callback in pairs(Listeners.LuaReset) do
 			local status,err = xpcall(callback, debug.traceback)
@@ -151,7 +153,6 @@ function OnLuaReset()
 			end
 		end
 	end
-	local region = Osi.DB_CurrentLevel:Get(nil)[1][1]
 	GameHelpers.Data.SetRegion(region)
 	IterateUsers("LeaderLib_StoreUserData")
 end

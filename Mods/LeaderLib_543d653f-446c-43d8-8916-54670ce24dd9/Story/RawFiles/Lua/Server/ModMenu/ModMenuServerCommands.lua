@@ -56,3 +56,10 @@ Ext.RegisterNetListener("LeaderLib_ModMenu_SendParseUpdateArrayMethod", function
 	local id = tonumber(payload)
 	Ext.PostMessageToUser(id, "LeaderLib_ModMenu_RunParseUpdateArrayMethod", "")
 end)
+
+Ext.RegisterNetListener("LeaderLib_ModMenu_RequestOpen", function(cmd, payload)
+	local id = tonumber(payload)
+	LoadGlobalSettings()
+	SettingsManager.SyncGlobalSettings()
+	Ext.PostMessageToUser(id, "LeaderLib_ModMenu_Open", "")
+end)

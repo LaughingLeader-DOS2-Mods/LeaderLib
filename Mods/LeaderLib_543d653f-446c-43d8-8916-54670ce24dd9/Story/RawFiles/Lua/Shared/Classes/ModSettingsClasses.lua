@@ -314,14 +314,20 @@ function SettingsData:ApplyFlags()
 	end
 end
 
-function SettingsData:ApplyVariables(uuid)
+function SettingsData:ApplyVariables(uuid, callback)
 	for name,data in pairs(self.Variables) do
-		if data ~= nil and type(data.Value) == "number" then
-			local intVal = math.tointeger(data.Value) or math.ceil(data.Value)
-			if intVal ~= nil then
-				Osi.LeaderLib_GlobalSettings_SetIntegerVariable(uuid, name, intVal)
-			else
-				Ext.PrintError("[LeaderLib:ModSettingsClasses.lua:ApplyVariables] Error converting variable",name,"to integer.")
+		if data ~= nil then
+			if callback ~= nil then
+				pcall(callback, uuid, name, data)
+			end
+			if type(data.Value) == "number" then
+				local intVal = math.tointeger(data.Value) or math.ceil(data.Value)
+				if intVal ~= nil then
+					print("Osi.LeaderLib_GlobalSettings_SetIntegerVariable", uuid, name, intVal)
+					Osi.LeaderLib_GlobalSettings_SetIntegerVariable(uuid, name, intVal)
+				else
+					Ext.PrintError("[LeaderLib:ModSettingsClasses.lua:ApplyVariables] Error converting variable",name,"to integer.")
+				end
 			end
 		elseif data == nil then
 			Ext.PrintError("[LeaderLib:ModSettingsClasses.lua:ApplyVariables] Variable",name,"is nil.")
@@ -462,6 +468,7 @@ local ModSettings = {
 	Version = -1,
 	---@type function<SettingaData,string,any>
 	UpdateVariable = nil,
+	OnVariableSet = nil,
 	LoadedExternally = false,
 	---@type function<string, table<string, string[]>>
 	GetMenuOrder = nil,
@@ -477,7 +484,12 @@ function ModSettings:Create(uuid, globalSettings)
 		UUID = uuid,
 		Name = "",
 		Profiles = {},
-		Global = globalSettings or SettingsData:Create()
+		Global = globalSettings or SettingsData:Create(),
+		Version = -1,
+		UpdateVariable = nil,
+		OnVariableSet = nil,
+		LoadedExternally = false,
+		GetMenuOrder = nil,
 	}
 	local info = Ext.GetModInfo(uuid)
 	if info ~= nil then
@@ -533,9 +545,9 @@ function ModSettings:ApplyFlags()
 end
 
 function ModSettings:ApplyVariables()
-	self.Global:ApplyVariables(self.UUID)
+	self.Global:ApplyVariables(self.UUID, self.OnVariableSet)
 	for i,v in pairs(self.Profiles) do
-		v.Settings:ApplyVariables(self.UUID)
+		v.Settings:ApplyVariables(self.UUID, self.OnVariableSet)
 	end
 end
 

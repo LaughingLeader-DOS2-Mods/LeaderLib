@@ -410,3 +410,14 @@ Ext.RegisterConsoleCommand("printitemboosts", function(cmd)
 	end
 	print(weapon.Stats["Damage Type"])
 end)
+
+Ext.RegisterConsoleCommand("fx", function(cmd, effect, bone, target)
+	if target == nil then target = CharacterGetHostCharacter() end
+	if bone == nil then bone = "" end
+	PlayEffect(target, effect, bone)
+end)
+
+Ext.RegisterConsoleCommand("sfx", function(cmd, soundevent, target)
+	if target == nil then target = CharacterGetHostCharacter() end
+	PlaySound(target, soundevent)
+end)

@@ -129,12 +129,12 @@ if Ext.IsServer() then
 			if tbl.Global ~= nil then
 				if tbl.Global.Flags ~= nil then
 					for flag,data in pairs(tbl.Global.Flags) do
-						modSettings.Global:AddFlag(flag, data.FlagType or "Global", data.Enabled)
+						modSettings.Global:AddFlag(flag, data.FlagType or "Global", data.Enabled, nil, nil, true, true)
 					end
 				end
 				if tbl.Global.Variables ~= nil then
 					for name,data in pairs(tbl.Global.Variables) do
-						modSettings.Global:AddVariable(name, data.Value)
+						modSettings.Global:AddVariable(name, data.Value, nil, nil, nil, nil, nil, true, true)
 					end
 				end
 			end
@@ -143,7 +143,7 @@ if Ext.IsServer() then
 			if flags ~= nil and type(flags) == "table" then
 				for flag,v in pairs(flags) do
 					if modSettings ~= nil then
-						modSettings.Global:AddFlag(flag, "Global", v)
+						modSettings.Global:AddFlag(flag, "Global", v, nil, nil, true, true)
 					end
 				end
 			end
@@ -152,7 +152,7 @@ if Ext.IsServer() then
 				for varname,v in pairs(integers) do
 					local intnum = math.tointeger(v)
 					if modSettings ~= nil then
-						modSettings.Global:AddVariable(varname, intnum)
+						modSettings.Global:AddVariable(varname, intnum, nil, nil, nil, nil, nil, true, true)
 						Osi.LeaderLib_GlobalSettings_SetIntegerVariable(uuid, varname, intnum)
 					end
 				end

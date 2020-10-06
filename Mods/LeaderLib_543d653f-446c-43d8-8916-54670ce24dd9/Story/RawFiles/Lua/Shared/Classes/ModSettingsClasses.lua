@@ -10,6 +10,7 @@ local FlagData = {
 	Tooltip = nil,
 	DebugOnly = false,
 	CanExport = true,
+	IsFromFile = false
 }
 
 FlagData.__index = FlagData
@@ -17,13 +18,17 @@ FlagData.__index = FlagData
 ---@param flag string
 ---@param flagType string Global|User|Character
 ---@param enabled boolean
-function FlagData:Create(flag, flagType, enabled, displayName, tooltip)
+function FlagData:Create(flag, flagType, enabled, displayName, tooltip, isFromFile)
     local this =
     {
 		ID = flag,
 		FlagType = flagType or "Global",
 		Enabled = enabled or false,
+		IsFromFile = false
 	}
+	if isFromFile ~= nil then
+		this.IsFromFile = isFromFile
+	end
 	if string.find(string.lower(flag), "disable") then
 		this.Default = true
 	elseif string.find(string.lower(flag), "enable") then
@@ -78,6 +83,7 @@ local VariableData = {
 	Interval = 1,
 	DebugOnly = false,
 	CanExport = true,
+	IsFromFile = false
 }
 
 VariableData.__index = VariableData
@@ -89,12 +95,16 @@ VariableData.__index = VariableData
 ---@param min any
 ---@param max any
 ---@param interval any
-function VariableData:Create(id, value, displayName, tooltip, min, max, interval)
+function VariableData:Create(id, value, displayName, tooltip, min, max, interval, isFromFile)
     local this =
     {
 		ID = id,
 		Value = value or "",
+		IsFromFile = false
 	}
+	if isFromFile ~= nil then
+		this.IsFromFile = isFromFile
+	end
 	this.Default = this.Value
 	if displayName ~= nil then
 		this.DisplayName = displayName
@@ -153,9 +163,10 @@ end
 ---@param displayName string|nil
 ---@param tooltip string|nil
 ---@param canExport boolean|nil
-function SettingsData:AddFlag(flag, flagType, enabled, displayName, tooltip, canExport)
+---@param isFromFile boolean|nil
+function SettingsData:AddFlag(flag, flagType, enabled, displayName, tooltip, canExport, isFromFile)
 	if self.Flags[flag] == nil then
-		self.Flags[flag] = FlagData:Create(flag, flagType, enabled, displayName, tooltip)
+		self.Flags[flag] = FlagData:Create(flag, flagType, enabled, displayName, tooltip, isFromFile)
 		if canExport then
 			self.Flags[flag].CanExport = canExport
 		end
@@ -167,6 +178,9 @@ function SettingsData:AddFlag(flag, flagType, enabled, displayName, tooltip, can
 		existing.DisplayName = displayName or existing.DisplayName
 		existing.Tooltip = tooltip or existing.Tooltip
 		existing.CanExport = canExport or existing.CanExport
+	end
+	if isFromFile ~= nil then
+		print(flag, isFromFile, self.Flags[flag].IsFromFile)
 	end
 end
 
@@ -211,9 +225,9 @@ end
 ---@param max any
 ---@param interval any
 ---@param canExport boolean|nil
-function SettingsData:AddVariable(name, value, displayName, tooltip, min, max, interval, canExport)
+function SettingsData:AddVariable(name, value, displayName, tooltip, min, max, interval, canExport, isFromFile)
 	if self.Variables[name] == nil then
-		self.Variables[name] = VariableData:Create(name, value, displayName, tooltip, min, max, interval)
+		self.Variables[name] = VariableData:Create(name, value, displayName, tooltip, min, max, interval, isFromFile)
 		if canExport then
 			self.Variables[name].CanExport = canExport
 		end
@@ -361,6 +375,7 @@ function SettingsData:Export(forSyncing)
 			local data = {Enabled = v.Enabled, FlagType = v.FlagType}
 			if forSyncing == true then
 				data.ID = v.ID
+				data.IsFromFile = v.IsFromFile
 			end
 			if v.Targets ~= nil then
 				data.Targets = v.Targets
@@ -373,6 +388,7 @@ function SettingsData:Export(forSyncing)
 			local data = {Value = v.Value}
 			if forSyncing == true then
 				data.ID = v.ID
+				data.IsFromFile = v.IsFromFile
 			end
 			if v.Targets ~= nil then
 				data.Targets = v.Targets
@@ -408,10 +424,10 @@ end
 ---@param source SettingsData
 function SettingsData:CopySettings(source)
 	for name,v in pairs(source.Flags) do
-		self:AddFlag(name, v.FlagType, v.Enabled, v.DisplayName, v.Tooltip)
+		self:AddFlag(name, v.FlagType, v.Enabled, v.DisplayName, v.Tooltip, nil, v.IsFromFile)
 	end
 	for name,v in pairs(source.Variables) do
-		self:AddVariable(name, v.Value, v.DisplayName, v.Tooltip, v.Min, v.Max, v.Interval)
+		self:AddVariable(name, v.Value, v.DisplayName, v.Tooltip, v.Min, v.Max, v.Interval, nil, v.IsFromFile)
 	end
 	self:SetMetatables()
 end
@@ -613,19 +629,28 @@ end
 function ModSettings:GetAllEntries(profile)
 	local entries = {}
 	for _,v in pairs(self.Global.Flags) do
-		table.insert(entries, v)
+		print(v.ID, v.IsFromFile)
+		if not v.IsFromFile then
+			table.insert(entries, v)
+		end
 	end
 	for _,v in pairs(self.Global.Variables) do
-		table.insert(entries, v)
+		if not v.IsFromFile then
+			table.insert(entries, v)
+		end
 	end
 	if profile ~= nil and profile ~= "" then
 		local data = self.Profiles[profile]
 		if data ~= nil and data.Settings ~= nil then
 			for _,v in pairs(data.Settings.Flags) do
-				table.insert(entries, v)
+				if not v.IsFromFile then
+					table.insert(entries, v)
+				end
 			end
 			for _,v in pairs(data.Settings.Variables) do
-				table.insert(entries, v)
+				if not v.IsFromFile then
+					table.insert(entries, v)
+				end
 			end
 		end
 	end

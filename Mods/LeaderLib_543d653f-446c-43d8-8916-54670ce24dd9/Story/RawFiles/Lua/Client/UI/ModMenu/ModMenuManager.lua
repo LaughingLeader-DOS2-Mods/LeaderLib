@@ -173,7 +173,7 @@ local function ParseModSettings(ui, mainMenu, modSettings, order)
 				for k=1,#section.Entries do
 					local name = section.Entries[k]
 					local v = modSettings:GetEntry(name)
-					if v ~= nil then
+					if v ~= nil and not v.IsFromFile then
 						added[v.ID] = AddModSettingsEntry(ui, mainMenu, name, v, modSettings.UUID)
 					end
 				end

@@ -228,5 +228,7 @@ Ext.RegisterListener("ModuleLoadStarted", function()
 end)
 
 Ext.RegisterListener("SessionLoading", function()
-	SettingsManager.LoadConfigFiles()
+	if Ext.Version() >= 53 then
+		SettingsManager.LoadConfigFiles()
+	end
 end)

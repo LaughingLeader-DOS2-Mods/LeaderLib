@@ -158,7 +158,9 @@ local function OnSwitchMenu(ui, call, id)
 	lastMenu = currentMenu
 	currentMenu = id
 	if id == LarianMenuID.Gameplay then
-		GameSettingsMenu.AddSettings(ui, true)
+		if Ext.IsDeveloperMode() then
+			GameSettingsMenu.AddSettings(ui, true)
+		end
 	elseif id == LarianMenuID.Controls then
 
 	end

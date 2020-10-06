@@ -229,6 +229,9 @@ Ext.RegisterConsoleCommand("flurrytest", function(cmd, skill, attribute, value)
 	end
 end)
 
+--!lleditskill Projectile_LLWEAPONEX_ArmCannon_Disperse_Explosion Template 04bdf5e2-3c6a-4711-b516-1a275ccbd720
+--!lleditskill Projectile_LLWEAPONEX_ArmCannon_Disperse_Explosion Template 1945ebb4-c7c5-447e-a40e-aa59b8952be9
+
 Ext.RegisterConsoleCommand("lleditskill", function(cmd, skill, attribute, value)
 	local stat = Ext.GetStat(skill)
 	if stat ~= nil then

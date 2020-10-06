@@ -2,6 +2,29 @@ INIT
 
 EVENTS
 
+EVENT LeaderLib_Commands_ExplodeProjectile_AtPos
+VARS
+	FLOAT3:_Target
+	CHARACTER:_Cause
+	SKILL:_Skill
+	INT:_Level
+	FLOAT:_LevelF
+ON
+	OnCharacterEvent(_Cause, "LeaderLib_Commands_ExplodeProjectileAtPosition")
+ACTIONS
+IF "c1&c2"
+	GetVar(_Skill, _Cause, "LeaderLib_Explode_ProjectileSkill")
+	GetVar(_Target, _Cause, "LeaderLib_Explode_Position")
+THEN
+	Set(_LevelF, 1.0)
+	IF "c1"
+		CharacterGetStat(_LevelF, _Cause, Level)
+	THEN
+	ENDIF
+	Cast(_Level, _LevelF)
+	ExplodeAt(_Target, _Skill, _Level, _Cause)
+ENDIF
+
 EVENT LeaderLib_Commands_ExplodeProjectile_CharChar
 VARS
 	CHARACTER:_Target

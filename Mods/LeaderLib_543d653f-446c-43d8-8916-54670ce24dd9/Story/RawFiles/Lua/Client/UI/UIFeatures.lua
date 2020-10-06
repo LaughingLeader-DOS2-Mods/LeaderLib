@@ -80,7 +80,7 @@ local function DisplayTalents(ui, call, ...)
 	local handle = ui:GetPlayerHandle()
 	if handle ~= nil then
 		player = Ext.GetCharacter(handle)
-	else
+	elseif Client.Character ~= nil then
 		player = Client:GetCharacter()
 	end
 	if player ~= nil then
@@ -172,7 +172,7 @@ local function DisplayTalents_CC(ui, call, ...)
 	local handle = ui:GetPlayerHandle()
 	if handle ~= nil then
 		player = Ext.GetCharacter(handle)
-	else
+	elseif  Client.Character ~= nil then
 		player = Client:GetCharacter()
 	end
 	if player ~= nil then

@@ -98,7 +98,7 @@ if Ext.IsClient() then
 	---@param ui UIObject
 	local function addMissingAbilities(ui, main)
 		---@type EclCharacter
-		local character = Ext.GetCharacter(ClientData.Character.UUID)
+		local character = Client:GetCharacter()
 		local ability_array = main.ability_array
 		if ability_array ~= nil then
 			local i = #ability_array

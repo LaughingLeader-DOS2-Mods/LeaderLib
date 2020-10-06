@@ -40,6 +40,7 @@ local function OverrideLeaveActionStatuses()
 end
 
 local function InvokeOnInitializedCallbacks(region)
+	region = region or ""
 	if #Listeners.Initialized > 0 then
 		for i,callback in pairs(Listeners.Initialized) do
 			local status,err = xpcall(callback, debug.traceback, region)
@@ -48,6 +49,7 @@ local function InvokeOnInitializedCallbacks(region)
 			end
 		end
 	end
+	Osi.LeaderLib_LoadingDone(region)
 end
 
 local function OnInitialized(region, isRunning)
@@ -77,7 +79,13 @@ local function OnInitialized(region, isRunning)
 	end
 
 	if isRunning == true or Ext.GetGameState() == "Running" then
-		InvokeOnInitializedCallbacks()
+		if region == nil then
+			local db = Osi.DB_CurrentLevel:Get(nil)
+			if db ~= nil then
+				region = db[1][1] or ""
+			end
+		end
+		InvokeOnInitializedCallbacks(region)
 		SettingsManager.SyncAllSettings()
 		if GlobalGetFlag("LeaderLib_AutoUnlockInventoryInMultiplayer") == 1 then
 			IterateUsers("Iterators_LeaderLib_UI_UnlockPartyInventory")
@@ -91,7 +99,7 @@ function OnInitialized_CheckGameState(region)
 			OnInitialized(region, true)
 		else
 			SettingsManager.SyncAllSettings()
-			InvokeOnInitializedCallbacks()
+			InvokeOnInitializedCallbacks(region)
 		end
 	else
 		if Ext.IsDeveloperMode() then
@@ -108,7 +116,7 @@ Ext.RegisterListener("GameStateChanged", function(from, to)
 	end
 	if to == "Running" and Ext.OsirisIsCallable() then
 		if not Vars.Initialized then
-			OnInitialized(nil, true)
+			OnInitialized("", true)
 		elseif from ~= "Paused" then
 			SettingsManager.SyncAllSettings()
 		end

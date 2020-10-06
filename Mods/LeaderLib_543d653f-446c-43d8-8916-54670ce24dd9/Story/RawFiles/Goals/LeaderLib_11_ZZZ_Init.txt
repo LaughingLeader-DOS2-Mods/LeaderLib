@@ -67,6 +67,14 @@ NRD_ModCall("LeaderLib", "OnInitialized_CheckGameState");
 */
 //END_REGION
 
+//REGION GAME_DONE_LOADING
+// Called by Lua when the game is initialized, and the current GameState is Running. GameStarted can fire before loading is actually done.
+PROC
+LeaderLib_LoadingDone((STRING)_Region)
+THEN
+DB_NOOP(1);
+//END_REGION
+
 //REGION ENDING_EVENT
 //Sent so behavior can react to a level ending
 IF

@@ -119,8 +119,8 @@ end
 ---@type str string
 ---@return string
 function StringHelpers.GetUUID(str)
-	if str == nil then
-		return nil
+	if StringHelpers.IsNullOrEmpty(str) then
+		return str
 	end
 	local start = string.find(str, "_[^_]*$") or 0
 	if start > 0 then

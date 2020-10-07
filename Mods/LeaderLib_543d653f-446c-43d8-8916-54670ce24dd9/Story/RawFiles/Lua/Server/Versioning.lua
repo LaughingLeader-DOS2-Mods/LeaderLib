@@ -163,13 +163,11 @@ end
 ---@param uuid string
 ---@param version integer
 function OnModRegistered(uuid,version)
-	if #ModListeners.Registered > 0 then
-		local callback = ModListeners.Registered[uuid]
-		if callback ~= nil then
-			local status,err = xpcall(callback, debug.traceback, version)
-			if not status then
-				Ext.PrintError("[LeaderLib:OnModRegistered] Error calling function:\n", err)
-			end
+	local callback = ModListeners.Registered[uuid]
+	if callback ~= nil then
+		local status,err = xpcall(callback, debug.traceback, version)
+		if not status then
+			Ext.PrintError("[LeaderLib:OnModRegistered] Error calling function:\n", err)
 		end
 	end
 end
@@ -184,13 +182,11 @@ end
 ---@param past_version integer
 ---@param new_version integer
 function OnModVersionChanged(uuid,past_version,new_version)
-	if #ModListeners.Updated > 0 then
-		local callback = ModListeners.Updated[uuid]
-		if callback ~= nil then
-			local status,err = xpcall(callback, debug.traceback, past_version, new_version)
-			if not status then
-				Ext.PrintError("[LeaderLib:OnModVersionChanged] Error calling function:\n", err)
-			end
+	local callback = ModListeners.Updated[uuid]
+	if callback ~= nil then
+		local status,err = xpcall(callback, debug.traceback, past_version, new_version)
+		if not status then
+			Ext.PrintError("[LeaderLib:OnModVersionChanged] Error calling function:\n", err)
 		end
 	end
 end
@@ -219,6 +215,22 @@ function LoadMods()
 			local author = mod.Author or ""
 			if modName == nil then
 				modName = ""
+			end
+			local callback = ModListeners.Loaded[uuid]
+			if callback ~= nil then
+				--DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _LastAuthor, _LastVersion, _LastMajor, _LastMinor, _LastRevision, _LastBuild)
+				local lastVersion = -1
+				local db = Osi.DB_LeaderLib_Mods_Registered:Get(uuid, nil, nil, nil, nil, nil, nil, nil, nil)
+				if db ~= nil then
+					local _,_,_,_,lastVersionStored = table.unpack(db[1])
+					if lastVersionStored ~= nil then
+						lastVersion = lastVersionStored
+					end
+				end
+				local b,err = xpcall(callback, debug.traceback, lastVersion, versionInt)
+				if not b then
+					Ext.PrintError(err)
+				end
 			end
 			Osi.LeaderLib_Mods_OnModLoaded(uuid, modid, modName, author, versionInt, major, minor, revision, build)
 		end

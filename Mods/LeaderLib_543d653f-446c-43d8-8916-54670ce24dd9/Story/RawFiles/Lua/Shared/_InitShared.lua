@@ -113,6 +113,7 @@ SkillListeners = {}
 ModListeners = {
 	Registered = {},
 	Updated = {},
+	Loaded = {},
 }
 
 ---@class LeaderLibLocalizedText A table of translated strings used by the game.

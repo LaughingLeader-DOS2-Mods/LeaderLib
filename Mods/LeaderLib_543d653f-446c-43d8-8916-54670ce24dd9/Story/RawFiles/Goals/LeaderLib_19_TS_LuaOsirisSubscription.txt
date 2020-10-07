@@ -87,6 +87,20 @@ PROC
 PROC_HandleMagicMirrorResult((CHARACTERGUID)_Player, (INTEGER)_Result)
 THEN
 DB_NOOP(1);
+
+IF
+CharacterKilledBy(_Victim, _Owner, _Attacker)
+AND
+LeaderLib_Party_QRY_IsEnemyOfParty(_Victim)
+THEN
+DB_NOOP(1);
+
+IF
+CharacterKilledBy(_Victim, _Owner, _Attacker)
+AND
+LeaderLib_Party_QRY_IsEnemyOfParty(_Owner, _Victim)
+THEN
+DB_NOOP(1);
 */
 
 EXITSECTION

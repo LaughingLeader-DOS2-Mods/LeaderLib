@@ -45,6 +45,8 @@ Ext.RegisterConsoleCommand("teleport", function(cmd,target,param2,param3)
 		if ObjectExists(target) == 1 then
 			print("Teleporting",host,"to",target,GetPosition(target))
 			TeleportTo(host, target, "", 1, 0, 1)
+		else
+			print("Target",target,"does not exist")
 		end
 	else
 		local x = tonumber(target)

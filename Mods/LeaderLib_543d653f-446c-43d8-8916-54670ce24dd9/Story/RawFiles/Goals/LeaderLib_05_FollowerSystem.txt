@@ -97,8 +97,8 @@ ClearVarObject(_Follower, "LeaderLib_Follower_Owner");
 ClearTag(_Follower, "LeaderLib_IsFollower");
 ObjectClearFlag(_Follower, "LeaderLib_CharacterIsFollowing", 0);
 ProcCharacterStopFollow(_Follower);
-CharacterRemoveFromPlayerCharacter(_Follower, _Owner);
 CharacterDetachFromGroup(_Follower);
+CharacterRemoveFromPlayerCharacter(_Follower, _Owner);
 
 PROC
 LeaderLib_Follower_Internal_ClearFollowerData((CHARACTERGUID)_Owner, (CHARACTERGUID)_Follower)

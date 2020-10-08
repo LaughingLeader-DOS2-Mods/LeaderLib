@@ -615,7 +615,7 @@ ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_App
 AND
 DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _Preset, _Instance, _IsRace)
 AND
-NOT GetVarString(_Player, "LeaderLib_CurrentPreset", _)
+NOT GetVarFixedString(_Player, "LeaderLib_CurrentPreset", _)
 AND
 GetVarFixedString(_Player, "LeaderLib_CharacterCreationPreset", _CurrentPreset)
 THEN
@@ -626,7 +626,7 @@ ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_App
 AND
 DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _Preset, _Instance, 0)
 AND
-GetVarString(_Player, "LeaderLib_CurrentPreset", _CurrentPreset)
+GetVarFixedString(_Player, "LeaderLib_CurrentPreset", _CurrentPreset)
 THEN
 SetVarString(_Player, "LeaderLib_LastAppliedPreset", _CurrentPreset);
 
@@ -638,7 +638,7 @@ THEN
 NOT DB_LeaderLib_PresetMenu_SelectedPreset(_Player, _Preset, _Instance, 0);
 LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:LeaderLib_Timers_PresetMenu_ApplyPreset] Applying class preset [",_Preset,"] to player.");
 LeaderLib_ApplyCharacterPreset(_Player, _Preset);
-SetVarString(_Player, "LeaderLib_CurrentPreset", _Preset);
+SetVarFixedString(_Player, "LeaderLib_CurrentPreset", _Preset);
 DB_LeaderLib_PresetMenu_Temp_AppliedPreset(_Player, _Preset, 0);
 
 PROC
@@ -759,7 +759,7 @@ ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_OnP
 AND
 GetVarString(_Player, "LeaderLib_LastAppliedPreset", _Preset)
 AND
-GetVarString(_Player, "LeaderLib_CurrentPreset", _Preset)
+GetVarFixedString(_Player, "LeaderLib_CurrentPreset", _Preset)
 AND
 LeaderLib_PresetMenu_Internal_QRY_WeaponsSaved(_Player)
 THEN

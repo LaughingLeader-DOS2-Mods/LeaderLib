@@ -4,7 +4,7 @@
 ---@param handle integer
 ---@param is_hit integer|boolean
 ---@return boolean
-local function HitSucceeded(target, handle, is_hit)
+function GameHelpers.HitSucceeded(target, handle, is_hit)
     if is_hit == 1 or is_hit == true then
         return NRD_HitGetInt(handle, "Dodged") == 0 and NRD_HitGetInt(handle, "Missed") == 0 and NRD_HitGetInt(handle, "Blocked") == 0
     else
@@ -15,7 +15,7 @@ end
 --Ext.NewQuery(HitSucceeded, "LeaderLib_Ext_QRY_HitSucceeded", "[in](GUIDSTRING)_Target, [in](INTEGER64)_Handle, [in](INTEGER)_IsHitType, [out](INTEGER)_Bool")
 
 -- HitReason
--- // 0 - ASAttack
+-- // 0 - ASAttacks
 -- // 1 - Character::ApplyDamage, StatusDying, ExecPropertyDamage, StatusDamage
 -- // 2 - AI hit test
 -- // 3 - Explode, Projectile Skill Hit
@@ -30,7 +30,7 @@ end
 ---@param allowSkills boolean
 ---@param source string|nil
 ---@return boolean
-local function HitWithWeapon(target, handle, is_hit, allowSkills, source)
+function GameHelpers.HitWithWeapon(target, handle, is_hit, allowSkills, source)
     if handle == nil or handle < 0 then 
         return false
     end
@@ -40,6 +40,10 @@ local function HitWithWeapon(target, handle, is_hit, allowSkills, source)
         return (hitType == 0) and hitWithWeapon
     else
         local hitReason = NRD_StatusGetInt(target, handle, "HitReason")
+        local hitWithWeapon = NRD_StatusGetInt(target, handle, "HitWithWeapon") == 1
+        if hitReason == 0 and hitWithWeapon then
+            return true
+        end
         local weaponHandle = NRD_StatusGetGuidString(target, handle, "WeaponHandle")
         local sourceType = NRD_StatusGetInt(target, handle, "DamageSourceType")
 
@@ -63,8 +67,3 @@ local function HitWithWeapon(target, handle, is_hit, allowSkills, source)
         return false
     end
 end
-
---Ext.NewQuery(HitWithWeapon, "LeaderLib_Ext_QRY_HitWithWeapon", "[in](GUIDSTRING)_Target, [in](INTEGER64)_Handle, [in](INTEGER)_IsHitType, [out](INTEGER)_Bool")
-
-GameHelpers.HitSucceeded = HitSucceeded
-GameHelpers.HitWithWeapon = HitWithWeapon

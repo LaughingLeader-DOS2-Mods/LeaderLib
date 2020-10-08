@@ -289,12 +289,12 @@ local allUIFiles = {
 }
 
 local function SessionLoaded()
-	-- for i,v in pairs(allUIFiles) do
-	-- 	local ui = Ext.GetBuiltinUI("Public/Game/GUI/"..v)
-	-- 	if ui ~= nil then
-	-- 		print(v, ui:GetTypeId())
-	-- 	end
-	-- end
+	for i,v in pairs(allUIFiles) do
+		local ui = Ext.GetBuiltinUI("Public/Game/GUI/"..v)
+		if ui ~= nil then
+			print(v, ui:GetTypeId())
+		end
+	end
 	-- Game.Tooltip.RegisterListener("Stat", nil, function(char,stat,tooltipdata) pcall(TraceTooltip, "Stat", stat, tooltipdata) end)
 	--Game.Tooltip.RegisterListener("Skill", nil, function(char,skill,tooltipdata) pcall(TraceTooltip, "Skill", skill, tooltipdata) end)
 	-- Game.Tooltip.RegisterListener("Status", nil, function(char,status,tooltipdata) pcall(TraceTooltip, "Status", status.StatusId, tooltipdata) end)
@@ -398,5 +398,11 @@ local function SessionLoaded()
 end
 
 if Ext.IsDeveloperMode() then
-	Ext.RegisterListener("SessionLoaded", SessionLoaded)
+	for i,v in pairs(allUIFiles) do
+		local ui = Ext.GetBuiltinUI("Public/Game/GUI/"..v)
+		if ui ~= nil then
+			print("Pre Session Loaded:", v, ui:GetTypeId())
+		end
+	end
+	--Ext.RegisterListener("SessionLoaded", SessionLoaded)
 end

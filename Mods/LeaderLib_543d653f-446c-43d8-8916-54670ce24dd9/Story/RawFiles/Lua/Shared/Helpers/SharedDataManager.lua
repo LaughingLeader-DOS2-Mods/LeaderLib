@@ -327,7 +327,7 @@ if Ext.IsClient() then
 	end)
 
 	local function OnCharacterSelected(ui, call, doubleHandle, skipSync)
-		--print(ui:GetTypeId(), call, doubleHandle)
+		print(ui:GetTypeId(), call, doubleHandle)
 		local handle = Ext.DoubleToHandle(doubleHandle)
 		if handle ~= nil then
 			local character = Ext.GetCharacter(handle)
@@ -357,6 +357,7 @@ if Ext.IsClient() then
 		Ext.RegisterUITypeCall(Data.UIType.trade, "selectCharacter", function(ui, call, doubleHandle)
 			OnCharacterSelected(ui, call, doubleHandle, true)
 		end)
+		Ext.RegisterUITypeCall(Data.UIType.partyManagement_c, "setActiveChar", OnCharacterSelected)
 		Ext.RegisterUITypeCall(Data.UIType.trade, "cancel", function(ui, call)
 			if lastCharacterOutsideTrade ~= "" then
 				local currentCharacter = GetClientCharacter()

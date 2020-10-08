@@ -179,9 +179,6 @@ function SettingsData:AddFlag(flag, flagType, enabled, displayName, tooltip, can
 		existing.Tooltip = tooltip or existing.Tooltip
 		existing.CanExport = canExport or existing.CanExport
 	end
-	if isFromFile ~= nil then
-		print(flag, isFromFile, self.Flags[flag].IsFromFile)
-	end
 end
 
 ---@param flags string[]
@@ -629,7 +626,6 @@ end
 function ModSettings:GetAllEntries(profile)
 	local entries = {}
 	for _,v in pairs(self.Global.Flags) do
-		print(v.ID, v.IsFromFile)
 		if not v.IsFromFile then
 			table.insert(entries, v)
 		end

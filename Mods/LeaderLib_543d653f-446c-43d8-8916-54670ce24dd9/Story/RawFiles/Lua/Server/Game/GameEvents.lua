@@ -74,10 +74,6 @@ local function OnInitialized(region, isRunning)
 		Vars.PostLoadEnableLuaListeners = false
 	end
 
-	if Ext.Version() < 50 then
-		Osi.LeaderLib_ActivateGoal("LeaderLib_19_TS_HitEvents")
-	end
-
 	if isRunning == true or Ext.GetGameState() == "Running" then
 		if region == nil then
 			local db = Osi.DB_CurrentLevel:Get(nil)

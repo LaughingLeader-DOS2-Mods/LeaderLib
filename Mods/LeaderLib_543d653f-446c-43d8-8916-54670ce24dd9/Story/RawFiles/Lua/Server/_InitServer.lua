@@ -64,10 +64,7 @@ end
 ---@param handle string
 ---@param fallback string
 function SetCustomNameWithLocalization(char,handle,fallback)
-	local name = fallback
-	if Ext.Version() >= 43 then
-		name = Ext.GetTranslatedString(handle, fallback)
-	end
+	local name,_ = Ext.GetTranslatedString(handle, fallback)
 	CharacterSetCustomName(char, name)
 end
 

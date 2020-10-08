@@ -260,12 +260,6 @@ function LeaderLog(logType, ...)
 	end
 end
 
-if Ext.Version() >= 50 then
-	for i=2,17,1 do
-		Ext.RegisterOsirisListener("LeaderLog_Log", i, "before", LeaderLog)
-	end
-end
-
 function Debug_TestSkillScaleMath(level)
 	local stat = Ext.GetStat("Damage_Burning")
 	local dmgFromBase = stat.DamageFromBase * 0.01

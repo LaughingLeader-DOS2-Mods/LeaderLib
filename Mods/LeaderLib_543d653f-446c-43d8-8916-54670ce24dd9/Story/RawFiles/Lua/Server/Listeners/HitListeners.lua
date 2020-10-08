@@ -2,17 +2,10 @@
 ---@type source string
 ---@type damage integer
 ---@type handle integer
-function OnPrepareHit(target, source, damage, handle)
+local function OnPrepareHit(target, source, damage, handle)
 	if Ext.IsDeveloperMode() then
 		Ext.Print(string.format("[NRD_OnPrepareHit] Target(%s) Source(%s) damage(%i) Handle(%s) HitType(%s)", target, source, damage, handle, NRD_HitGetString(handle, "HitType")))
-	end
-	if Ext.Version() < 50 then
-		if type(damage) == "string" then
-			damage = math.tointeger(tonumber(damage))
-		end
-		if type(handle) == "string" then
-			handle = math.tointeger(tonumber(handle))
-		end
+		--Debug_TraceHitPrepare(target, source, damage, handle)
 	end
 	local length = #Listeners.OnPrepareHit
 	if length > 0 then
@@ -55,17 +48,11 @@ end
 ---@type source string
 ---@type damage integer
 ---@type handle integer
-function OnHit(target, source, damage, handle)
+local function OnHit(target, source, damage, handle)
 	--print(target,source,damage,handle,HasActiveStatus(source, "AOO"),HasActiveStatus(target, "AOO"))
-	--print(string.format("[NRD_OnHit] Target(%s) Source(%s) damage(%i) Handle(%i) HitType(%s)", target, source, damage, handle, NRD_StatusGetString(target, handle, "HitType")))
-
-	if target ~= nil then
-		target = StringHelpers.GetUUID(target)
+	if Ext.IsDeveloperMode() then 
+		Ext.Print(string.format("[NRD_OnHit] Target(%s) Source(%s) damage(%i) Handle(%i) HitType(%s)", target, source, damage, handle, NRD_StatusGetInt(target, handle, "HitReason")))
 	end
-	if source ~= nil then
-		source = StringHelpers.GetUUID(source)
-	end
-
 	local skillprototype = NRD_StatusGetString(target, handle, "SkillId")
 	local skill = nil
 	if skillprototype ~= "" and skillprototype ~= nil then
@@ -89,7 +76,9 @@ function OnHit(target, source, damage, handle)
 	end
 end
 
-if Ext.Version() >= 50 then
-	Ext.RegisterOsirisListener("NRD_OnPrepareHit", 4, "after", OnPrepareHit)
-	Ext.RegisterOsirisListener("NRD_OnHit", 4, "after", OnHit)
-end
+Ext.RegisterOsirisListener("NRD_OnPrepareHit", 4, "before", function(target, attacker, damage, handle)
+	OnPrepareHit(StringHelpers.GetUUID(target), StringHelpers.GetUUID(attacker), damage, handle)
+end)
+Ext.RegisterOsirisListener("NRD_OnHit", 4, "before", function(target, attacker, damage, handle)
+	OnHit(StringHelpers.GetUUID(target), StringHelpers.GetUUID(attacker), damage, handle)
+end)

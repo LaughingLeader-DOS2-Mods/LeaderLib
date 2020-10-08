@@ -123,11 +123,7 @@ function GameHelpers.Item.GetEquippedSlot(char, item)
 end
 
 function EquipInSlot(char, item, slot)
-    if Ext.Version() >= 42 then
-        NRD_CharacterEquipItem(char, item, slot, 0, 0, 1, 1)
-    else
-        CharacterEquipItem(char, item)
-    end
+    NRD_CharacterEquipItem(char, item, slot, 0, 0, 1, 1)
 end
 
 GameHelpers.Item.EquipInSlot = EquipInSlot

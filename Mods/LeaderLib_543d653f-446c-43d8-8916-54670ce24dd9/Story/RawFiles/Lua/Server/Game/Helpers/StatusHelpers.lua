@@ -113,16 +113,9 @@ function GameHelpers.Status.SetTurns(obj, statusId, turns, allInstances, applyIf
 				if allInstances == true then
 					for _,status in pairs(character:GetStatusObjects()) do
 						if status.StatusId == statusId then
-							if Ext.Version() >= 52 and Ext.IsDeveloperMode() then
-								Ext.EnableExperimentalPropertyWrites()
-								status.RequestClientSync = true
-								status.CurrentLifeTime = turns * 6.0
-								status.LifeTime = turns * 6.0
-							else
-								NRD_StatusSetInt(obj, status.StatusHandle, "CurrentLifeTime", turns * 6.0)
-								NRD_StatusSetInt(obj, status.StatusHandle, "LifeTime", turns * 6.0)
-								NRD_StatusSetInt(obj, status.StatusHandle, "RequestClientSync", 1)
-							end
+							status.RequestClientSync = true
+							status.CurrentLifeTime = turns * 6.0
+							status.LifeTime = turns * 6.0
 							--print(string.format("[%s] CurrentLifeTime(%s) LifeTime(%s) TurnTimer(%s) StartTimer(%s)", statusId, status.CurrentLifeTime, status.LifeTime, status.TurnTimer, status.StartTimer))
 							success = true
 						end
@@ -130,16 +123,9 @@ function GameHelpers.Status.SetTurns(obj, statusId, turns, allInstances, applyIf
 				else
 					local status = character:GetStatus(statusId)
 					if status ~= nil then
-						if Ext.Version() >= 52 and Ext.IsDeveloperMode() then
-							Ext.EnableExperimentalPropertyWrites()
-							status.RequestClientSync = true
-							status.CurrentLifeTime = turns * 6.0
-							status.LifeTime = turns * 6.0
-						else
-							NRD_StatusSetInt(obj, status.StatusHandle, "CurrentLifeTime", turns * 6.0)
-							NRD_StatusSetInt(obj, status.StatusHandle, "LifeTime", turns * 6.0)
-							--NRD_StatusSetInt(obj, status.StatusHandle, "RequestClientSync", 1)
-						end
+						status.RequestClientSync = true
+						status.CurrentLifeTime = turns * 6.0
+						status.LifeTime = turns * 6.0
 					end
 				end
 

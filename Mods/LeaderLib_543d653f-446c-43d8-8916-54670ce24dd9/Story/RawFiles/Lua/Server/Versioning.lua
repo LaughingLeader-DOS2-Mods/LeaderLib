@@ -221,7 +221,7 @@ function LoadMods()
 				--DB_LeaderLib_Mods_Registered(_UUID, _ModID, _DisplayName, _LastAuthor, _LastVersion, _LastMajor, _LastMinor, _LastRevision, _LastBuild)
 				local lastVersion = -1
 				local db = Osi.DB_LeaderLib_Mods_Registered:Get(uuid, nil, nil, nil, nil, nil, nil, nil, nil)
-				if db ~= nil then
+				if db ~= nil and #db > 0 then
 					local _,_,_,_,lastVersionStored = table.unpack(db[1])
 					if lastVersionStored ~= nil then
 						lastVersion = lastVersionStored

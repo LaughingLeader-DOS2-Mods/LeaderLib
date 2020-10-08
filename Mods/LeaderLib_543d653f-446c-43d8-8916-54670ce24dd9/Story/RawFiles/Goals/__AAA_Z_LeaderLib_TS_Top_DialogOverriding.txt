@@ -54,7 +54,27 @@ DB_NOOP(1);
 IF    
 DialogStartRequested(_Target, _Player)
 THEN
-ObjectSetFlag((CHARACTERGUID)_Player, "LeaderLib_DialogOverride_PlayerStarted", 0);
+ObjectSetFlag(_Player, "LeaderLib_DialogOverride_PlayerStarted", 0);
+
+// Mod dialogs
+PROC
+Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2)
+AND
+_Speaker1 == _Speaker2
+AND
+CharacterIsPlayer((CHARACTERGUID)_Speaker2, 1)
+THEN
+ObjectSetFlag(_Speaker2, "LeaderLib_DialogOverride_PlayerStarted", 0);
+
+// Mod dialogs with books or whatever
+PROC
+Proc_StartDialog((INTEGER)_Automated,(STRING)_Dialog,(GUIDSTRING)_Speaker1,(GUIDSTRING)_Speaker2)
+AND
+CharacterIsPlayer((CHARACTERGUID)_Speaker2, 1)
+AND
+ObjectIsItem(_Speaker1, 1)
+THEN
+ObjectSetFlag(_Speaker2, "LeaderLib_DialogOverride_PlayerStarted", 0);
 //END_REGION
 
 //REGION Proc_StartDialog_Override

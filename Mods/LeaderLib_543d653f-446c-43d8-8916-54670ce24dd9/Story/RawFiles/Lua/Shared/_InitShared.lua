@@ -61,6 +61,7 @@ StatusTypes = {
 	MUTED = {},
 	POLYMORPHED = {},
 }
+
 IgnoredMods = {
 	--["7e737d2f-31d2-4751-963f-be6ccc59cd0c"] = true,--LeaderLib
 	["2bd9bdbe-22ae-4aa2-9c93-205880fc6564"] = true,--Shared

@@ -105,6 +105,28 @@ function Data.EquipmentSlots:Get()
 	return iterateFromZero(self)
 end
 
+local itemslot = {
+	[0] = "Helmet",
+	"Breast",
+	"Leggings",
+	"Weapon",
+	"Shield",
+	"Ring",
+	"Belt",
+	"Boots",
+	"Gloves",
+	"Amulet",
+	"Ring2",
+	"Wings",
+	"Horns",
+	"Overhead",
+}
+
+Data.DeltaModSlotType = setmetatable({},{__index = itemslot})
+function Data.DeltaModSlotType:Get()
+	return iterateFromZero(self)
+end
+
 local visibleEquipmentSlots = {
 	[0] = "Weapon",
 	"Shield",
@@ -497,6 +519,7 @@ Data.Surfaces = {
 
 Data.UIType = {
 	actionProgression = 0,
+	characterCreation = 3,
 	characterSheet = 119,
 	chatLog = 6,
 	combatLog = 7,

@@ -191,7 +191,7 @@ end)
 
 local cooldownsDisabled = false
 local cooldownsDisabled_AddedListener = false
-Ext.RegisterConsoleCommand("nocooldowns", function(command)
+Ext.RegisterConsoleCommand("nocd", function(command)
 	cooldownsDisabled = not cooldownsDisabled
 	if cooldownsDisabled then
 		CharacterResetCooldowns(CharacterGetHostCharacter()) 
@@ -276,6 +276,9 @@ Ext.RegisterConsoleCommand("additemstat", function(command, stat, rarity, levels
 		-- ItemAddDeltaModifier(item, "Boost_Weapon_Status_Set_Crippled")
 		--ItemAddDeltaModifier(item, "Boost_Weapon_Status_Set_KnockDown_Sword")
 		ItemToInventory(item, host, 1, 1, 1)
+		if Mods.WeaponExpansion ~= nil then
+			Mods.WeaponExpansion.OnTreasureItemGenerate(Ext.GetItem(item))
+		end
 	else
 		print("[additemstat] Failed to generate item!", stat, rarity, levelstr, template)
 	end
@@ -291,7 +294,7 @@ Ext.RegisterConsoleCommand("additemtemplate", function(command, template, count)
 	ItemTemplateAddTo(template, host, count, 1)
 end)
 
-Ext.RegisterConsoleCommand("printdeltamods", function(command, ...)
+Ext.RegisterConsoleCommand("printalldeltamods", function(command, ...)
 	local host = CharacterGetHostCharacter()
 	---@type EsvCharacter
 	local character = Ext.GetCharacter(host)
@@ -366,7 +369,7 @@ Ext.RegisterConsoleCommand("addpoints", function(cmd, pointType, amount)
 	elseif pointType == "attribute" then
 		CharacterAddAttributePoint(host, amount)
 	elseif pointType == "civil" then
-		CharacterAddAttributePoint(host, amount)
+		CharacterAddCivilAbilityPoint(host, amount)
 	elseif pointType == "talent" then
 		CharacterAddTalentPoint(host, amount)
 	elseif pointType == "source" then
@@ -387,7 +390,7 @@ Ext.RegisterConsoleCommand("modorder", function(cmd, uuidOnly)
 		for i,v in ipairs(Ext.GetModLoadOrder()) do
 			local info = Ext.GetModInfo(v)
 			if info ~= nil then
-				table.insert(order, string.format("%s %s", info.Name, StringHelpers.VersionIntegerToVersionString(info.Version)))
+				table.insert(order, string.format("%s %s (%s)", info.Name, StringHelpers.VersionIntegerToVersionString(info.Version), info.UUID))
 			else
 				table.insert(order, v)
 			end
@@ -422,4 +425,44 @@ end)
 Ext.RegisterConsoleCommand("sfx", function(cmd, soundevent, target)
 	if target == nil then target = CharacterGetHostCharacter() end
 	PlaySound(target, soundevent)
+end)
+
+local modifierTypes = {
+	"Armor",
+	"Weapon",
+	"Shield",
+}
+
+Ext.RegisterConsoleCommand("printdeltamods", function(cmd, attributeFilter, filterValue, filter2, filter2Value)
+	---@type DeltaMod[]
+	local deltamods = Ext.GetStatEntries("DeltaMod")
+	for _,v in pairs(deltamods) do
+		local deltamod = Ext.GetDeltaMod(v.Name, v.ModifierType)
+		local canPrint = false
+		local slotType = Data.DeltaModSlotType[deltamod.SlotType]
+		if attributeFilter == "SlotType" then
+			canPrint = slotType == filterValue
+		else
+			canPrint = attributeFilter == nil or deltamod[attributeFilter] == filterValue
+		end
+		if canPrint and filter2 ~= nil then
+			if string.sub(filter2Value, 1, 1) == "!" then
+				canPrint = deltamod[filter2] ~= string.sub(filter2Value, 2)
+			else
+				canPrint = deltamod[filter2] == filter2Value
+			end
+		end
+		--print(deltamod.Name, deltamod.ModifierType, deltamod.SlotType)
+		-- if string.find(deltamod.Name, "Belt") or deltamod.SlotType == "Belt" then
+		-- 	print(deltamod.SlotType, slotType)
+		-- 	--print(deltamod.Name, canPrint, deltamod.SlotType, deltamod.BoostType)
+		-- end
+		if canPrint then
+			print(deltamod.Name)
+			--print(string.format("[%s] BoostType(%s) LevelRange(%s-%s) Frequency(%s) ModifierType(%s) SlotType(%s:%s)\nBoosts:", deltamod.Name, deltamod.BoostType, deltamod.MinLevel, deltamod.MaxLevel, deltamod.Frequency, deltamod.ModifierType, deltamod.SlotType, slotType))
+			-- for i,boost in pairs(deltamod.Boosts) do
+			-- 	print("  ", i, boost.Boost, boost.Count)
+			-- end
+		end
+	end
 end)

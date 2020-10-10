@@ -34,6 +34,12 @@ data "Description" ""
 data "Icon" ""
 data "PeaceOnly" "No"
 
+new entry "_Stats_LeaderLib_Base"
+type "Potion"
+data "Act" "1"
+data "Act part" "0"
+data "Duration" "1"
+
 new entry "LEADERLIB_PACIFIST"
 type "StatusData"
 data "StatusType" "CONSUME"

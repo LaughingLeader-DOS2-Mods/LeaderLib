@@ -6,6 +6,7 @@ local ClientCharacterData = {
 	Profile = "",
 	IsHost = false,
 	IsInCharacterCreation = false,
+	NetID = -1,
 }
 
 ClientCharacterData.__index = ClientCharacterData
@@ -94,7 +95,7 @@ end
 function ClientData:GetCharacter()
 	local character = nil
 	if self.Character ~= nil then
-		if self.Character.NetID ~= -1 then
+		if self.Character.NetID ~= -1 and self.Character.NetID ~= nil then
 			character = Ext.GetCharacter(self.Character.NetID)
 		end
 		if character == nil and not StringHelpers.IsNullOrEmpty(self.Character.UUID) then

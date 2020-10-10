@@ -249,3 +249,25 @@ function GameHelpers.Tooltip.FormatDamageRange(damageRange)
 	end
 	return ""
 end
+
+---Get a character's user id, if any.
+---@param uuid string
+---@return integer|nil
+function GameHelpers.GetUserID(uuid)
+	if Ext.IsServer() then
+		local id = CharacterGetReservedUserID(uuid)
+		if id ~= -65536 then
+			return id
+		end
+	elseif Ext.IsClient() then
+		local character = Ext.GetCharacter(uuid)
+		if character ~= nil then
+			if character.UserID ~= -65536 then
+				return character.UserID
+			elseif Ext.Version() >= 53 and character.ReservedUserID ~= nil and character.ReservedUserID ~= -65536 then
+				return character.ReservedUserID
+			end
+		end
+	end
+	return nil
+end

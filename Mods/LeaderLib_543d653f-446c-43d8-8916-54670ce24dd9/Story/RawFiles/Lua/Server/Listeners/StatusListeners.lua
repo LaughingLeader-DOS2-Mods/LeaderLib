@@ -34,6 +34,7 @@ local function ClearStatusSource(target, status, source)
 end
 
 local function OnStatusApplied(target,status,source)
+	--PrintDebug("OnStatusApplied", target,status,source)
 	if Vars.LeaveActionData.Total > 0 then
 		local skill = Vars.LeaveActionData.Statuses[status]
 		if skill ~= nil then
@@ -48,6 +49,7 @@ local function OnStatusApplied(target,status,source)
 end
 
 local function OnStatusRemoved(target,status)
+	--PrintDebug("OnStatusRemoved", target,status)
 	if Vars.LeaveActionData.Total > 0 then
 		local source = GetStatusSource(target, status)
 		if source ~= nil then
@@ -60,26 +62,15 @@ local function OnStatusRemoved(target,status)
 	end
 end
 
-local function GetUUIDFromString(str)
-	if str == "NULL_00000000-0000-0000-0000-000000000000" then
-		return str
-	end
-	local start = string.find(str, "_[^_]*$")
-	if start then
-		return string.sub(str, start+1, #str)
-	end
-	return str
-end
-
 local function ParseStatusApplied(target,status,source)
 	if Data.EngineStatus[status] ~= true then
-		OnStatusApplied(GetUUIDFromString(target), status, GetUUIDFromString(source))
+		OnStatusApplied(StringHelpers.GetUUID(target), status, StringHelpers.GetUUID(source))
 	end
 end
 
 local function ParseStatusRemoved(target,status)
 	if Data.EngineStatus[status] ~= true then
-		OnStatusRemoved(GetUUIDFromString(target), status)
+		OnStatusRemoved(StringHelpers.GetUUID(target), status)
 	end
 end
 

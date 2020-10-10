@@ -19,6 +19,10 @@ local function OnPrepareHit(target, source, damage, handle)
 	end
 end
 
+RegisterProtectedOsirisListener("NRD_OnPrepareHit", 4, "before", function(target, attacker, damage, handle)
+	OnPrepareHit(StringHelpers.GetUUID(target), StringHelpers.GetUUID(attacker), damage, handle)
+end)
+
 function GameHelpers.ApplyBonusWeaponStatuses(source, target)
 	for i,status in pairs(Ext.GetCharacter(source):GetStatuses()) do
 		if type(status) ~= "string" and status.StatusId ~= nil then
@@ -76,9 +80,6 @@ local function OnHit(target, source, damage, handle)
 	end
 end
 
-Ext.RegisterOsirisListener("NRD_OnPrepareHit", 4, "before", function(target, attacker, damage, handle)
-	OnPrepareHit(StringHelpers.GetUUID(target), StringHelpers.GetUUID(attacker), damage, handle)
-end)
-Ext.RegisterOsirisListener("NRD_OnHit", 4, "before", function(target, attacker, damage, handle)
+RegisterProtectedOsirisListener("NRD_OnHit", 4, "before", function(target, attacker, damage, handle)
 	OnHit(StringHelpers.GetUUID(target), StringHelpers.GetUUID(attacker), damage, handle)
 end)

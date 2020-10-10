@@ -20,7 +20,7 @@ Ext.RegisterOsirisListener("UserConnected", 3, "after", function(id, username, p
 end)
 
 Ext.RegisterOsirisListener("UserEvent", 2, "after", function(id, event)
-	if event == "Iterators_LeaderLib_UI_UnlockPartyInventory" then
+	if event == "Iterators_LeaderLib_UI_UnlockPartyInventory" and SharedData.RegionData.LevelType == LEVELTYPE.GAME then
 		local playersDB = Osi.DB_IsPlayer:Get(nil)
 		if playersDB ~= nil and #playersDB > 0 then
 			local players = {}

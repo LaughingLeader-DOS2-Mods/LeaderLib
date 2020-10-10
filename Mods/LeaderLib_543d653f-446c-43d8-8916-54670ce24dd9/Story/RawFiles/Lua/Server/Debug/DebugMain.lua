@@ -340,15 +340,6 @@ function Debug_Iterator_PrintDeltamod(item, deltamod, isGenerated)
     end
 end
 
---[[SkillProperties = {{
-Type = "Status",
-Action = "LLWEAPONEX_SUCKER_PUNCH",
-Context = {"Target"},
-Duration = 6.0,
-StatusChance = 1.0,
-Arg3 = "",
-Arg4 = -1,
-Arg5 = -1,
-SurfaceBoost = false
-}}
-]]
+-- Ext.RegisterOsirisListener("NRD_OnStatusAttempt", 4, "after", function(target, status, handle, source)
+-- 	print("NRD_OnStatusAttempt", target, status, handle, source)
+-- end)

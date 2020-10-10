@@ -62,6 +62,7 @@ function UI.PrintArray(ui, arrayName)
 end
 
 local addedTalents = false
+local addedAbilities = false
 
 local function GetArrayIndexStart(ui, arrayName, offset)
 	local i = 0

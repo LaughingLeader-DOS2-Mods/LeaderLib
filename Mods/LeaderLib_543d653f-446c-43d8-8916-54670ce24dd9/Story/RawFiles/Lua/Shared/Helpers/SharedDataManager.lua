@@ -184,10 +184,12 @@ if Ext.IsServer() then
 		if UserIds[last] == true then
 			UserIds[last] = nil
 		end
-		if UserIds[id] ~= true then
-			UserIds[id] = true
+		if id > -1 then
+			if UserIds[id] ~= true then
+				UserIds[id] = true
+			end
+			GameHelpers.Data.SetCharacterData(id)
 		end
-		GameHelpers.Data.SetCharacterData(id)
 	end)
 
 	Ext.RegisterOsirisListener("PROC_HandleMagicMirrorResult", 2, "after", function(uuid, result)
@@ -221,6 +223,7 @@ if Ext.IsServer() then
 
 	Ext.RegisterListener("GameStateChanged", function(from, to)
 		if to == "Running" and from ~= "Paused" then
+			IterateUsers("LeaderLib_StoreUserData")
 			GameHelpers.Data.StartSyncTimer()
 		end
 	end)
@@ -285,11 +288,12 @@ if Ext.IsClient() then
 	end
 	GameHelpers.Data.GetClientCharacter = GetClientCharacter
 
+	---@param currentCharacter ClientCharacterData
 	local function ActiveCharacterChanged(currentCharacter)
 		currentCharacter = currentCharacter or GetClientCharacter()
 		if #Listeners.ClientCharacterChanged > 0 then
 			for i,callback in pairs(Listeners.ClientCharacterChanged) do
-				local status,err = xpcall(callback, debug.traceback, currentCharacter.UUID, currentCharacter.ID, currentCharacter.Profile, currentCharacter.IsHost)
+				local status,err = xpcall(callback, debug.traceback, currentCharacter.UUID, currentCharacter.ID, currentCharacter.Profile, currentCharacter.NetID, currentCharacter.IsHost)
 				if not status then
 					Ext.PrintError("Error calling function for 'ClientCharacterChanged':\n", err)
 				end
@@ -327,7 +331,6 @@ if Ext.IsClient() then
 	end)
 
 	local function OnCharacterSelected(ui, call, doubleHandle, skipSync)
-		print(ui:GetTypeId(), call, doubleHandle)
 		local handle = Ext.DoubleToHandle(doubleHandle)
 		if handle ~= nil then
 			local character = Ext.GetCharacter(handle)

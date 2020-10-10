@@ -590,8 +590,37 @@ local TooltipArrayNames = {
 
 local UI_TYPE = {
 	DEFAULT = {
-		OVERHEAD = 5,
-		TRADE = 46
+		actionProgression = 0,
+		characterCreation = 3,
+		characterSheet = 119,
+		chatLog = 6,
+		combatLog = 7,
+		containerInventory = 37,
+		contextMenu = 11,
+		dummyOverhead = 15,
+		enemyHealthBar = 42,
+		examine = 104,
+		fullScreenHUD = 100,
+		gameMenu = 19,
+		hotBar = 40,
+		journal = 22,
+		loadingScreen = 23,
+		minimap = 30,
+		mouseIcon = 31,
+		msgBox = 29,
+		msgBox_c = 75,
+		notification = 36,
+		overhead = 5,
+		partyInventory = 116,
+		playerInfo = 38,
+		skills = 41,
+		statusConsole = 117,
+		textDisplay = 43,
+		tooltip = 44,
+		tutorialBox = 55,
+		uiCraft = 102,
+		uiFade = 16,
+		worldTooltip = 48,
 	},
 	CONSOLE = {
 		CHARACTER_CREATION = 4,
@@ -798,7 +827,7 @@ function TooltipHooks:RegisterControllerHooks()
 
 	if ControllerVars.Enabled then
 		-- This allows examine_c to have a character reference
-		Ext.RegisterUITypeInvokeListener(UI_TYPE.DEFAULT.OVERHEAD, "updateOHs", function (ui, method, ...)
+		Ext.RegisterUITypeInvokeListener(UI_TYPE.DEFAULT.overhead, "updateOHs", function (ui, method, ...)
 			local main = ui:GetRoot()
 			for i=0,#main.selectionInfo_array,21 do
 				local id = main.selectionInfo_array[i]
@@ -845,6 +874,7 @@ function TooltipHooks:Init()
 		self:OnRequestExamineUITooltip(...)
 	end)
 
+	---@param ui UIObject
 	Ext.RegisterListener("UIObjectCreated", function (ui)
 		ui:CaptureExternalInterfaceCalls()
 		ui:CaptureInvokes()

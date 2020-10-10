@@ -103,7 +103,7 @@ function CancelTimer(event, ...)
 	end
 end
 
-function TimerFinished(event, ...)
+function OnTimerFinished(event, ...)
 	--PrintDebug("[LeaderLib_Timers.lua:TimerFinished] ", event, Common.Dump({...}))
 	if OneshotTimerData[event] ~= nil then
 		for i,callback in pairs(OneshotTimerData[event]) do

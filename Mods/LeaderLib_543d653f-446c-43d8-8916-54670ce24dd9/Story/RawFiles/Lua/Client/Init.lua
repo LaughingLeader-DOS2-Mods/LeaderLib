@@ -21,10 +21,11 @@ function UI.RegisterListener(event, callback)
 end
 
 -- Should exist before SessionLoaded
-local controllerUI = Ext.GetBuiltinUI("Public/Game/GUI/msgBox_c.swf") or Ext.GetUIByType(75)
-if controllerUI ~= nil then
-	Ext.Require("Client/UI/Game.Tooltip.Controllers.lua")
-end
+-- local controllerUI = Ext.GetBuiltinUI("Public/Game/GUI/msgBox_c.swf") or Ext.GetUIByType(75)
+-- if controllerUI ~= nil then
+-- 	Ext.Require("Client/UI/Game.Tooltip.Controllers.lua")
+-- end
+Ext.Require("Client/UI/Game.Tooltip.Controllers.lua")
 
 Ext.Require("Client/UI/CharacterSheet.lua")
 Ext.Require("Client/UI/ModMenu/_Init.lua")

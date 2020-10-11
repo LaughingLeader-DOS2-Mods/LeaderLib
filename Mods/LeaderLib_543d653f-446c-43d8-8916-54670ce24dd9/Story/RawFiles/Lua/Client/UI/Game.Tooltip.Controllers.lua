@@ -1026,11 +1026,17 @@ end
 function TooltipHooks:GetCompareItem(ui, item, offHand)
 	local owner = ui:GetPlayerHandle()
 	if owner == nil then
-		owner = item:GetOwnerCharacter() or ControllerVars.LastPlayer or Mods.LeaderLib.Client.Character.UUID
+		owner = item:GetOwnerCharacter() or ControllerVars.LastPlayer
+		if owner == nil then
+			local client = Mods.LeaderLib.Client:GetCharacter()
+			if client ~= nil then
+				owner = client.MyGuid
+			end
+		end
 	end
 
 	if owner == nil then
-		Ext.PrintError("Tooltip compare render failed: Couldn't find owner of item", ControllerVars.LastPlayer)
+		Ext.PrintWarning("Tooltip compare render failed: Couldn't find owner of item", item.StatsId)
 		return nil
 	end
 
@@ -1057,7 +1063,7 @@ end
 ---@param arrayData TooltipArrayData
 function TooltipHooks:OnRenderTooltip(arrayData, ui, method, ...)
 	if self.NextRequest == nil then
-		Ext.PrintError("Got tooltip render request, but did not find original tooltip info!")
+		Ext.PrintWarning("Got tooltip render request, but did not find original tooltip info!")
 		return
 	end
 

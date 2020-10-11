@@ -94,27 +94,23 @@ GameHelpers.IncreaseDamage = IncreaseDamage
 ---@param target string
 ---@param defender string
 ---@param attacker string
----@param handle_param integer
----@param reduction_perc number
----@param is_hit_param integer
+---@param handle integer
+---@param reduction number
+---@param isHit boolean
 ---@return boolean
-local function RedirectDamage(target, defender, attacker, handle_param, reduction_perc, is_hit_param)
-    local handle = Common.SafeguardParam(handle_param, "integer", nil)
-    if handle == nil then error("[LeaderLib_GameMechanics.lua:RedirectDamage] Handle is null! Skipping.") end
-    local reduction = Common.SafeguardParam(reduction_perc, "number", 0.5)
-    local is_hit = Common.SafeguardParam(is_hit_param, "integer", 0)
-	Log("[LeaderLib_GameMechanics.lua:RedirectDamage] Reducing damage to ("..tostring(reduction)..") of total. Handle("..tostring(handle).."). Target("..tostring(target)..") Defender("..tostring(defender)..") Attacker("..tostring(attacker)..") IsHit("..tostring(is_hit)..")")
+function GameHelpers.RedirectDamage(target, defender, attacker, handle, reduction, isHit)
+	PrintDebug("[LeaderLib_GameMechanics.lua:RedirectDamage] Reducing damage to ("..tostring(reduction)..") of total. Handle("..tostring(handle).."). Target("..tostring(target)..") Defender("..tostring(defender)..") Attacker("..tostring(attacker)..") IsHit("..tostring(isHit)..")")
     --if CanRedirectHit(defender, handle, hit_type) then -- Ignore surface, DoT, and reflected damage
     --local hit_type_name = NRD_StatusGetString(defender, handle, "DamageSourceType")
     --local hit_type = NRD_StatusGetInt(defender, handle, "HitType")
-    --Log("[LeaderLib_GameMechanics.lua:RedirectDamage] Redirecting damage Handle("..handlestr.."). Blocker(",target,") Target(",defender,") Attacker(",attacker,")")
-    local redirected_hit = NRD_HitPrepare(target, attacker)
+    --PrintDebug("[LeaderLib_GameMechanics.lua:RedirectDamage] Redirecting damage Handle("..handlestr.."). Blocker(",target,") Target(",defender,") Attacker(",attacker,")")
+    local redirected_hit = NRD_HitPrepare(defender, attacker)
     local damageRedirected = false
 
     for i,damageType in Data.DamageTypes:Get() do
         local damage = nil
-        if is_hit == 0 then
-            damage = NRD_HitStatusGetDamage(defender, handle, damageType)
+        if isHit ~= true then
+            damage = NRD_HitStatusGetDamage(target, handle, damageType)
         else
             damage = NRD_HitGetDamage(handle, damageType)
         end
@@ -122,41 +118,58 @@ local function RedirectDamage(target, defender, attacker, handle_param, reductio
             local reduced_damage = math.max(math.ceil(damage * reduction), 1)
             --NRD_HitStatusClearDamage(defender, handle, damageType)
             local removed_damage = damage * -1
-            if is_hit == 0 then
-                NRD_HitStatusAddDamage(defender, handle, damageType, removed_damage)
+            if isHit ~= true then
+                NRD_HitStatusAddDamage(target, handle, damageType, removed_damage)
             else
                 NRD_HitAddDamage(handle, damageType, removed_damage)
             end
             NRD_HitAddDamage(redirected_hit, damageType, reduced_damage)
-            Log("[LeaderLib_GameMechanics.lua:RedirectDamage] Redirected damage: "..tostring(damage).." => "..tostring(reduced_damage).." for type: "..damageType)
+            PrintDebug("[LeaderLib_GameMechanics.lua:RedirectDamage] Redirected damage: "..tostring(damage).." => "..tostring(reduced_damage).." for type: "..damageType)
             damageRedirected = true
         end
     end
 
     if damageRedirected then
-        local is_crit = 0
-        if is_hit == 0 then
+        local is_crit = false
+        if isHit ~= true then
             is_crit = NRD_StatusGetInt(defender, handle, "CriticalHit") == 1
         else
             is_crit = NRD_HitGetInt(handle, "CriticalHit") == 1
         end
         if is_crit then
-            NRD_HitSetInt(redirected_hit, "CriticalRoll", 1);
+            NRD_HitSetInt(redirected_hit, "CriticalRoll", 1)
         else
-            NRD_HitSetInt(redirected_hit, "CriticalRoll", 2);
+            NRD_HitSetInt(redirected_hit, "CriticalRoll", 2)
         end
-        NRD_HitSetInt(redirected_hit, "SimulateHit", 1);
-        NRD_HitSetInt(redirected_hit, "HitType", 6);
-        NRD_HitSetInt(redirected_hit, "Hit", 1);
-        NRD_HitSetInt(redirected_hit, "NoHitRoll", 1);
-        NRD_HitExecute(redirected_hit);
+        NRD_HitSetInt(redirected_hit, "SimulateHit", 1)
+        NRD_HitSetInt(redirected_hit, "HitType", 6)
+        NRD_HitSetInt(redirected_hit, "Hit", 1)
+        NRD_HitSetInt(redirected_hit, "NoHitRoll", 1)
+        NRD_HitExecute(redirected_hit)
 	end
-	return damageRedirected;
+	return damageRedirected
 end
 
-Ext.NewCall(RedirectDamage, "LeaderLib_Hit_RedirectDamage", "(GUIDSTRING)_Target, (GUIDSTRING)_Defender, (GUIDSTRING)_Attacker, (INTEGER64)_Handle, (REAL)_Percentage, (INTEGER)_IsHitHandle")
+---Redirect damage to another target.
+---@param target string
+---@param defender string
+---@param attacker string
+---@param handle_param integer
+---@param reduction_perc number
+---@param is_hit_param integer
+---@return boolean
+local function RedirectDamage_Call(target, defender, attacker, handle_param, reduction_perc, is_hit_param)
+    local handle = Common.SafeguardParam(handle_param, "integer", nil)
+    if handle == nil then 
+        error("[LeaderLib_GameMechanics.lua:RedirectDamage] Handle is null! Skipping.") 
+    else
+        local reduction = Common.SafeguardParam(reduction_perc, "number", 0.5)
+        local isHit = is_hit_param == true or (Common.SafeguardParam(is_hit_param, "integer", 0) and is_hit_param == 1)
+        GameHelpers.RedirectDamage(target, defender, attacker, handle, reduction, isHit)
+    end
+end
 
-GameHelpers.RedirectDamage = RedirectDamage
+Ext.NewCall(RedirectDamage_Call, "LeaderLib_Hit_RedirectDamage", "(GUIDSTRING)_Target, (GUIDSTRING)_Defender, (GUIDSTRING)_Attacker, (INTEGER64)_Handle, (REAL)_Percentage, (INTEGER)_IsHitHandle")
 
 local HitType = {
     Melee = "Melee",

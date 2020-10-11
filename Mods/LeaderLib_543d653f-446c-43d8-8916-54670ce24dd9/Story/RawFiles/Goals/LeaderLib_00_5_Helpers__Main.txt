@@ -2084,7 +2084,7 @@ GetPosition(_Char, _x, _y, _z)
 THEN
 ClearVarObject(_Char, "LeaderLib_ClearAnimationOverride_TargetPosition");
 CharacterMoveToPosition(_Char, _tx, _ty, _tz, 1, "LeaderLib_ClearAnimationOverride_ByMovement_Done");
-TeleportToPosition(_Char, _x, _y, _z, "", 0, 1);
+LeaderLib_Behavior_TeleportTo(_Char, _x, _y, _z);
 
 IF
 StoryEvent((CHARACTERGUID)_Char, "LeaderLib_ClearAnimationOverride_ByMovement_Run")

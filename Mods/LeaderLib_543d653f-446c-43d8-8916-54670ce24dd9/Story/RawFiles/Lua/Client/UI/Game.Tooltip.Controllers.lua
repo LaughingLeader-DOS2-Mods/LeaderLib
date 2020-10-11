@@ -589,50 +589,48 @@ local TooltipArrayNames = {
 }
 
 local UI_TYPE = {
-	DEFAULT = {
-		actionProgression = 0,
-		characterCreation = 3,
-		characterSheet = 119,
-		chatLog = 6,
-		combatLog = 7,
-		containerInventory = 37,
-		contextMenu = 11,
-		dummyOverhead = 15,
-		enemyHealthBar = 42,
-		examine = 104,
-		fullScreenHUD = 100,
-		gameMenu = 19,
-		hotBar = 40,
-		journal = 22,
-		loadingScreen = 23,
-		minimap = 30,
-		mouseIcon = 31,
-		msgBox = 29,
-		msgBox_c = 75,
-		notification = 36,
-		overhead = 5,
-		partyInventory = 116,
-		playerInfo = 38,
-		skills = 41,
-		statusConsole = 117,
-		textDisplay = 43,
-		tooltip = 44,
-		tutorialBox = 55,
-		uiCraft = 102,
-		uiFade = 16,
-		worldTooltip = 48,
-	},
-	CONSOLE = {
-		CHARACTER_CREATION = 4,
-		BOTTOMBAR = 59,
-		TRADE = 73,
-		EXAMINE = 67,
-		PARTY_INVENTORY = 142,
-		REWARD = 137,
-		STATS_PANEL = 63, -- a.k.a. the character sheet
-		EQUIPMENT_PANEL = 64, -- a.k.a. the character sheet equipment panel,
-		CRAFT_PANEL = 84
-	}
+	actionProgression = 0,
+	bottomBar_c = 59,
+	characterCreation = 3,
+	characterCreation_c = 4,
+	characterSheet = 119,
+	chatLog = 6,
+	combatLog = 7,
+	containerInventory = 37,
+	contextMenu = 11,
+	craftPanel_c = 84,
+	dummyOverhead = 15,
+	enemyHealthBar = 42,
+	equipmentPanel_c = 64,
+	examine = 104,
+	examine_c = 67,
+	fullScreenHUD = 100,
+	gameMenu = 19,
+	hotBar = 40,
+	journal = 22,
+	loadingScreen = 23,
+	minimap = 30,
+	mouseIcon = 31,
+	msgBox = 29,
+	msgBox_c = 75,
+	notification = 36,
+	overhead = 5,
+	partyInventory = 116,
+	partyInventory_c = 142,
+	partyManagement_c = 82,
+	playerInfo = 38,
+	reward_c = 137,
+	skills = 41,
+	statsPanel_c = 63,
+	statusConsole = 117,
+	textDisplay = 43,
+	tooltip = 44,
+	trade = 46,
+	trade_c = 73,
+	tutorialBox = 55,
+	uiCraft = 102,
+	uiFade = 16,
+	worldTooltip = 48,
 }
 
 local selectEvents = {
@@ -780,7 +778,7 @@ function TooltipHooks:RegisterControllerHooks()
 	end
 
 	-- reward_c
-	Ext.RegisterUITypeCall(UI_TYPE.CONSOLE.REWARD, "refreshTooltip", function (ui, method, itemHandleDouble)
+	Ext.RegisterUITypeCall(UI_TYPE.reward_c, "refreshTooltip", function (ui, method, itemHandleDouble)
 		local itemHandle = Ext.DoubleToHandle(itemHandleDouble)
 		local request = {
 			Type = "Item",
@@ -788,32 +786,32 @@ function TooltipHooks:RegisterControllerHooks()
 		}
 		self.NextRequest = request
 	end)
-	Ext.RegisterUITypeInvokeListener(UI_TYPE.CONSOLE.REWARD, "updateTooltipData", function (ui, method, ...)
+	Ext.RegisterUITypeInvokeListener(UI_TYPE.reward_c, "updateTooltipData", function (ui, method, ...)
 		self:OnRenderTooltip(TooltipArrayNames.Console.Reward, ui, method, ...)
 	end)
 
 	-- characterCreation_c
 	---@param ui UIObject
-	Ext.RegisterUITypeCall(UI_TYPE.CONSOLE.CHARACTER_CREATION, "requestSkillTooltip", function(ui, method, id)
+	Ext.RegisterUITypeCall(UI_TYPE.characterCreation_c, "requestSkillTooltip", function(ui, method, id)
 		self:OnRequestConsoleCCTooltip(ui, method, id)
 	end)
-	Ext.RegisterUITypeCall(UI_TYPE.CONSOLE.CHARACTER_CREATION, "requestAttributeTooltip", function(ui, method, id)
+	Ext.RegisterUITypeCall(UI_TYPE.characterCreation_c, "requestAttributeTooltip", function(ui, method, id)
 		self:OnRequestConsoleCCTooltip(ui, method, id)
 	end)
-	Ext.RegisterUITypeCall(UI_TYPE.CONSOLE.CHARACTER_CREATION, "requestAbilityTooltip", function(ui, method, id)
+	Ext.RegisterUITypeCall(UI_TYPE.characterCreation_c, "requestAbilityTooltip", function(ui, method, id)
 		self:OnRequestConsoleCCTooltip(ui, method, id)
 	end)
-	Ext.RegisterUITypeCall(UI_TYPE.CONSOLE.CHARACTER_CREATION, "requestTalentTooltip", function(ui, method, id)
+	Ext.RegisterUITypeCall(UI_TYPE.characterCreation_c, "requestTalentTooltip", function(ui, method, id)
 		self:OnRequestConsoleCCTooltip(ui, method, id)
 	end)
-	Ext.RegisterUITypeCall(UI_TYPE.CONSOLE.CHARACTER_CREATION, "requestTagTooltip", function(ui, method, categoryId, contentId)
+	Ext.RegisterUITypeCall(UI_TYPE.characterCreation_c, "requestTagTooltip", function(ui, method, categoryId, contentId)
 		self:OnRequestConsoleCCTooltip(ui, method, categoryId, contentId)
 	end)
-	Ext.RegisterUITypeInvokeListener(UI_TYPE.CONSOLE.CHARACTER_CREATION, "showTooltip", function(...)
+	Ext.RegisterUITypeInvokeListener(UI_TYPE.characterCreation_c, "showTooltip", function(...)
 		self:OnRenderTooltip(TooltipArrayNames.Console.CharacterCreation, ...)
 	end)
 	-- trade_c
-	Ext.RegisterUITypeCall(UI_TYPE.CONSOLE.TRADE, "overItem", function(ui, method, itemHandleDouble)
+	Ext.RegisterUITypeCall(UI_TYPE.trade_c, "overItem", function(ui, method, itemHandleDouble)
 		local itemHandle = Ext.DoubleToHandle(itemHandleDouble)
 		local request = {
 			Type = "Item",
@@ -821,13 +819,13 @@ function TooltipHooks:RegisterControllerHooks()
 		}
 		self.NextRequest = request
 	end)
-	Ext.RegisterUITypeInvokeListener(UI_TYPE.CONSOLE.TRADE, "updateTooltip", function(...)
+	Ext.RegisterUITypeInvokeListener(UI_TYPE.trade_c, "updateTooltip", function(...)
 		self:OnRenderTooltip(TooltipArrayNames.Console.Trade, ...)
 	end)
 
 	if ControllerVars.Enabled then
 		-- This allows examine_c to have a character reference
-		Ext.RegisterUITypeInvokeListener(UI_TYPE.DEFAULT.overhead, "updateOHs", function (ui, method, ...)
+		Ext.RegisterUITypeInvokeListener(UI_TYPE.overhead, "updateOHs", function (ui, method, ...)
 			local main = ui:GetRoot()
 			for i=0,#main.selectionInfo_array,21 do
 				local id = main.selectionInfo_array[i]
@@ -1028,33 +1026,35 @@ function TooltipHooks:GetCompareItem(ui, item, offHand)
 	--- @type EclCharacter
 	local char = nil
 
-	if owner == nil then
-		owner = item:GetOwnerCharacter()
-		if owner ~= nil then
-			local char = Ext.GetCharacter(owner)
-			if char == nil or char.Stats == nil or char.Stats.IsPlayer ~= true then
-				owner = nil
+	if owner ~= nil then
+		char = Ext.GetCharacter(owner)
+	else
+		local handle = nil
+		if not ControllerVars.Enabled then
+			local hotbar = Ext.GetUIByType(UI_TYPE.hotBar)
+			if hotbar ~= nil then
+				local main = hotbar:GetRoot()
+				if main ~= nil then
+					handle = Ext.DoubleToHandle(main.hotbar_mc.characterHandle)
+				end
 			end
-		end
-		if owner == nil then
-			if ControllerVars.Enabled and ControllerVars.LastPlayer ~= nil then
-				owner = ControllerVars.LastPlayer
-			else
-				local client = Mods.LeaderLib.Client:GetCharacter()
-				if client ~= nil then
-					char = client
+		else
+			local hotbar = Ext.GetUIByType(UI_TYPE.bottomBar_c)
+			if hotbar ~= nil then
+				local main = hotbar:GetRoot()
+				if main ~= nil then
+					handle = Ext.DoubleToHandle(main.characterHandle)
 				end
 			end
 		end
-	end
-
-	if owner == nil then
-		Ext.PrintWarning("Tooltip compare render failed: Couldn't find owner of item", item.StatsId)
-		return nil
+		if handle ~= nil then
+			char = Ext.GetCharacter(handle)
+		end
 	end
 
 	if char == nil then
-		char = Ext.GetCharacter(owner)
+		Ext.PrintWarning("Tooltip compare render failed: Couldn't find owner of item", item.StatsId)
+		return nil
 	end
 
 	if item.Stats.ItemSlot == "Weapon" then
@@ -1154,11 +1154,11 @@ function TooltipHooks:OnRequestConsoleExamineTooltip(ui, method, id, characterHa
 	if characterHandle == nil then
 		local uiType = ui:GetTypeId()
 		--TODO: Need a way to get the object's characterHandle for what's being examined.
-		if uiType == UI_TYPE.CONSOLE.EXAMINE then
+		if uiType == UI_TYPE.examine_c then
 			characterHandle = ControllerVars.LastOverhead
 		else
 			characterHandle = ui:GetPlayerHandle()
-			if characterHandle == nil and uiType == UI_TYPE.CONSOLE.STATS_PANEL then
+			if characterHandle == nil and uiType == UI_TYPE.statsPanel_c then
 				characterHandle = self:GetLastPlayer() -- Get the bottomBar player
 			end
 		end
@@ -1226,7 +1226,7 @@ function TooltipHooks:OnRequestConsoleInventoryTooltip(ui, method, itemHandleDou
 		Item = nil,
 		Inventory = nil,
 	}
-	if ui:GetTypeId() == UI_TYPE.CONSOLE.PARTY_INVENTORY then
+	if ui:GetTypeId() == UI_TYPE.partyInventory_c then
 		local main = ui:GetRoot()
 		if arg3 == nil then
 			arg3 = main.ownerHandle

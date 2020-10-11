@@ -176,6 +176,19 @@ function Common.ShuffleTable(tbl)
 	return tbl
 end
 
+---Copies nil keys from the source table to the target, if it's nil on the target.
+---@param source table
+---@param target table
+function Common.InitializeTableFromSource(target, source)
+	for k,v in pairs(source) do
+		if target[k] == nil then
+			target[k] = v
+		elseif type(v) == "table" then
+			Common.InitializeTableFromSource(target[k], v)
+		end		
+	end
+end
+
 ---Converts a table string keys to numbers. Useful for converting JsonStringify number keys back to numbers.
 ---@param tbl table
 ---@param recursive boolean

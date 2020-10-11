@@ -1026,11 +1026,21 @@ end
 function TooltipHooks:GetCompareItem(ui, item, offHand)
 	local owner = ui:GetPlayerHandle()
 	if owner == nil then
-		owner = item:GetOwnerCharacter() or ControllerVars.LastPlayer
+		owner = item:GetOwnerCharacter()
+		if owner ~= nil then
+			local char = Ext.GetCharacter(owner)
+			if char ~= nil and char.Stats.IsPlayer ~= true then -- Not a player
+				owner = nil
+			end
+		end
 		if owner == nil then
-			local client = Mods.LeaderLib.Client:GetCharacter()
-			if client ~= nil then
-				owner = client.MyGuid
+			if ControllerVars.Enabled and ControllerVars.LastPlayer ~= nil then
+				owner = ControllerVars.LastPlayer
+			else
+				local client = Mods.LeaderLib.Client:GetCharacter()
+				if client ~= nil then
+					owner = client.MyGuid
+				end
 			end
 		end
 	end
@@ -1073,6 +1083,7 @@ function TooltipHooks:OnRenderTooltip(arrayData, ui, method, ...)
 
 	if req.Type == "Item" then
 		local reqItem = req.Item
+
 		if arrayData.CompareMain ~= nil and ui:GetValue(arrayData.CompareMain, nil, 0) ~= nil then
 			local compareItem = self:GetCompareItem(ui, reqItem, false)
 			if compareItem ~= nil then

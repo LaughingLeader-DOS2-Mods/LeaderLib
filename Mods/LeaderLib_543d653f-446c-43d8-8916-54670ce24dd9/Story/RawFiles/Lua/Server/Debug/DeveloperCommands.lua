@@ -34,7 +34,9 @@ local function ResetLua()
 			varData[name] = data.PersistentVars
 		end
 	end
-	Ext.SaveFile("LeaderLib_Debug_PersistentVars.json", Ext.JsonStringify(varData))
+	if varData ~= nil then
+		Ext.SaveFile("LeaderLib_Debug_PersistentVars.json", Ext.JsonStringify(varData))
+	end
 	TimerCancel("Timers_LeaderLib_Debug_LuaReset")
 	TimerLaunch("Timers_LeaderLib_Debug_LuaReset", 500)
 	print("[LeaderLib:luareset] Reseting lua.")

@@ -392,6 +392,7 @@ SKILL_STATE = {
 	USED = "USED",
 	CAST = "CAST",
 	HIT = "HIT",
+	PROJECTILEHIT = "PROJECTILEHIT",
 }
 
 Ext.Require("Shared/Data/ResistancePenetrationTags.lua")

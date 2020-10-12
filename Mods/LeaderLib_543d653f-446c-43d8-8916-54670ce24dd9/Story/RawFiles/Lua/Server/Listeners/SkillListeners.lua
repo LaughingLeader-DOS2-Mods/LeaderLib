@@ -89,7 +89,7 @@ end
 function StoreSkillEventData(char, skill, skillType, skillAbility, ...)
 	local listeners = SkillListeners[skill]
 	if listeners ~= nil or SkillListeners["All"] ~= nil then
-		local uuid = GetUUID(char)
+		local uuid = StringHelpers.GetUUID(char)
 		local eventParams = {...}
 		---@type SkillEventData
 		local data = GetCharacterSkillData(skill, uuid, true, skillType, skillAbility)
@@ -116,14 +116,14 @@ function OnSkillPreparing(char, skillprototype)
 	end
 	for callback in GetListeners(skill) do
 		--PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillPreparing] char(",char,") skillprototype(",skillprototype,") skill(",skill,")")
-		local status,err = xpcall(callback, debug.traceback, skill, GetUUID(char), SKILL_STATE.PREPARE)
+		local status,err = xpcall(callback, debug.traceback, skill, StringHelpers.GetUUID(char), SKILL_STATE.PREPARE)
 		if not status then
 			Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
 		end
 	end
 
 	-- Clear previous data for this character in case SkillCast never fired (interrupted)
-	RemoveCharacterSkillData(GetUUID(char))
+	RemoveCharacterSkillData(StringHelpers.GetUUID(char))
 end
 
 -- Fires when CharacterUsedSkill fires. This happens after all the target events.
@@ -133,7 +133,7 @@ function OnSkillUsed(char, skill, ...)
 	else
 		Osi.LeaderLib_LuaSkillListeners_RemoveIgnoredPrototype(char)
 	end
-	local uuid = GetUUID(char)
+	local uuid = StringHelpers.GetUUID(char)
 	local data = GetCharacterSkillData(skill, uuid)
 	if data ~= nil then
 		local status,err = nil,nil
@@ -151,7 +151,7 @@ function OnSkillUsed(char, skill, ...)
 end
 
 function OnSkillCast(char, skill, ...)
-	local uuid = GetUUID(char)
+	local uuid = StringHelpers.GetUUID(char)
 	---@type SkillEventData
 	local data = GetCharacterSkillData(skill, uuid)
 	if data ~= nil then
@@ -171,17 +171,28 @@ function OnSkillCast(char, skill, ...)
 	end
 end
 
-local function RunSkillListenersForOnSkillHit(source, skill, data, listeners)
+local function RunSkillListenersForSkillEvent(source, skill, data, listeners, state)
 	local length = #listeners
 	if length > 0 then
 		for i=1,length do
 			local callback = listeners[i]
-			local status,err = xpcall(callback, debug.traceback, skill, source, SKILL_STATE.HIT, data)
+			local status,err = xpcall(callback, debug.traceback, skill, source, state, data)
 			if not status then
 				Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
 			end
 		end
 	end
+end
+
+local function IgnoreHitTarget(target)
+	if IsTagged(target, "MovingObject") == 1 then
+		return true
+	elseif ObjectIsCharacter(target) == 1 and Osi.LeaderLib_Helper_QRY_IgnoreCharacter(target) == true then
+		return true
+	elseif ObjectIsItem(target) == 1 and Osi.LeaderLib_Helper_QRY_IgnoreItem(target) == true then
+		return true
+	end
+	return false
 end
 
 ---@param source string
@@ -190,17 +201,17 @@ end
 ---@param handle integer
 ---@param damage integer
 function OnSkillHit(source, skill, target, handle, damage)
-	if skill ~= "" and skill ~= nil then
+	if skill ~= "" and skill ~= nil and not IgnoreHitTarget(target) then
 		---@type HitData
 		local data = Classes.HitData:Create(target, source, damage, handle, skill)
 
 		local listeners = SkillListeners[skill]
 		if listeners ~= nil then
-			RunSkillListenersForOnSkillHit(source, skill, data, listeners)
+			RunSkillListenersForSkillEvent(source, skill, data, listeners, SKILL_STATE.HIT)
 		end
 		listeners = Listeners.OnSkillHit
 		if listeners ~= nil then
-			RunSkillListenersForOnSkillHit(source, skill, data, listeners)
+			RunSkillListenersForSkillEvent(source, skill, data, listeners, SKILL_STATE.HIT)
 		end
 
 		if Features.ApplyBonusWeaponStatuses == true then
@@ -230,6 +241,29 @@ function OnSkillHit(source, skill, target, handle, damage)
 		end
 	end
 end
+
+---@param projectile EsvProjectile
+---@param hitObject EsvGameObject
+---@param position number[]
+Ext.RegisterListener("ProjectileHit", function (projectile, hitObject, position)
+	if not StringHelpers.IsNullOrEmpty(projectile.SkillId) then
+		local skill = GetSkillEntryName(projectile.SkillId)
+		if projectile.CasterHandle ~= nil then
+			local uuid = projectile.CasterHandle ~= nil and Ext.GetGameObject(projectile.CasterHandle).MyGuid or ""
+			local target = hitObject ~= nil and hitObject.MyGuid or ""
+			---@type ProjectileHitData
+			local data = Classes.ProjectileHitData:Create(target, uuid, projectile, position, skill)
+			local listeners = SkillListeners[skill]
+			if listeners ~= nil then
+				RunSkillListenersForSkillEvent(uuid, skill, data, listeners, SKILL_STATE.PROJECTILEHIT)
+			end
+			listeners = Listeners.OnSkillHit
+			if listeners ~= nil then
+				RunSkillListenersForSkillEvent(uuid, skill, data, listeners, SKILL_STATE.PROJECTILEHIT)
+			end
+		end
+	end
+end)
 
 -- Ext.RegisterOsirisListener("NRD_OnActionStateEnter", 2, "after", function(char, state)
 -- 	if state == "PrepareSkill" then

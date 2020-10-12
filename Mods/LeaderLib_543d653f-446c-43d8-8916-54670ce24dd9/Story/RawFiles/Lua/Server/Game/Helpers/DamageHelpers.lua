@@ -282,3 +282,40 @@ function GameHelpers.Damage.ApplyHitRequestFlags(hit, target, handle)
         end
     end
 end
+
+---@param source EsvCharacter
+---@param target string
+---@param skill string
+---@param hitParams table<string,any>|nil
+---@param mainWeapon StatItem|nil
+---@param offhandWeapon StatItem|nil
+---@param applySkillProperties boolean|nil
+function GameHelpers.Damage.ApplySkillDamage(source, target, skill, hitParams, mainWeapon, offhandWeapon, applySkillProperties)
+    local hit = NRD_HitPrepare(target, source.MyGuid)
+    if hitParams ~= nil then
+        for k,v in pairs(hitParams) do
+            if type(k) == "string" then
+                local t = type(v)
+                if t == "number" then
+                    NRD_HitSetInt(hit, k, v)
+                elseif t == "string" then
+                    NRD_HitSetString(hit, k, v)
+                end
+            end
+        end
+    end
+
+    local skillData = GameHelpers.Ext.CreateSkillTable(skill)
+    local pos = source.WorldPos
+    local targetPos = table.pack(GetPosition(target))
+    local level = source.Stats.Level
+
+    local damageList,deathType = Game.Math.GetSkillDamage(skillData, source.Stats, false, false, pos, targetPos, level, false, mainWeapon, offhandWeapon)
+    for _,damage in pairs(damageList:ToTable()) do
+        NRD_HitAddDamage(hit, damage.DamageType, damage.Amount)
+    end
+    if not StringHelpers.IsNullOrEmpty(deathType) then
+        NRD_HitSetString(hit, "DeathType", deathType)
+    end
+    NRD_HitExecute(hit)
+end

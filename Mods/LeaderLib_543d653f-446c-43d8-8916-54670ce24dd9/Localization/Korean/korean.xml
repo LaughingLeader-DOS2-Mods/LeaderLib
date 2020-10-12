@@ -11,6 +11,7 @@
 	<content contentuid="h05e3a637g0755g4659g9aa9g99888bc32ed5">Undead Lizard</content>
 	<content contentuid="h07b0d455gbe0fg48a4gbe1eg3ae23e84b2eb">Confirm Preset Selection</content>
 	<content contentuid="h08bb8216g9d40g49f9g91d4g8a77ecb090d2">Swap between the undead and non-undead equivalent of your current race.</content>
+	<content contentuid="h0a77a6c9g8b1ag49cdgaf0eg45c159b82b32">No rifle equipped</content>
 	<content contentuid="h0ab95fb3g7cfbg483dga66bg5daf233e945a">Loading presets...</content>
 	<content contentuid="h0d0af957g4dc8g4ddagb0fag6c38340bb6de">Hello!</content>
 	<content contentuid="h109e781dg2032g4b77gacdagce8034c4e49e">Okay.</content>
@@ -80,6 +81,7 @@
 	<content contentuid="h3ed2c7c5gf6c0g4c9dga916g5782593327ab">Open Mod Menu</content>
 	<content contentuid="h3fb60439g4406g4623ga6b7gb53cda538fcb">*The old man runs his hands over his clothes, trying to iron out the wrinkles.* What can I do for you, stranger?</content>
 	<content contentuid="h40ac3891g3661g43eag878dg6510b001704a">[LeaderLib_DynamicMenu_MenuOption4_e6bea606-b29a-4bfe-8959-94e8be8330cb]</content>
+	<content contentuid="h4120c4e5g4931g46dbgad0fga7a57514ac42">Rifle</content>
 	<content contentuid="h41a533b7g535bg4e76gbc7eg202d33a73740">Enable Auto-Adding Mod Books</content>
 	<content contentuid="h4252ff7cgb624g4b24gbf03g1772392f3988">Old Man Lothar</content>
 	<content contentuid="h43868aebg7281g40bfgbc1dgf6fe5a06512b">Autosave Interval</content>
@@ -220,6 +222,7 @@
 	<content contentuid="ha2901d46g7ba5g408cg91ffg6b14b45b4c09">Dynamic Menu Sample</content>
 	<content contentuid="ha35fc503g56dbg4adag963dga359d961e0c8">Horns</content>
 	<content contentuid="ha3662eaeg1dedg441eg9acdg2b9dbaabf295">Summoner&apos;s Guide to Management</content>
+	<content contentuid="ha3a18e3fge9e4g4496g84b8g5590844143f0">Rifle Weapon</content>
 	<content contentuid="ha54e3050g2d5dg46d7g9340g419ead1f437f">[LeaderLib_DynamicMenu_MenuOption7_36c11cee-0a1b-4f4b-bd66-3bf0d100439b]</content>
 	<content contentuid="ha56bd856gb01fg43c3g965dg5447174ab32c">*He snorts.* Why, fishing of course! *He gestures to the fishing rod on his back.*</content>
 	<content contentuid="ha573859bg0e9bg4fefgab91g278749405487">*You notice the old man moves quickly, and seems to be prepared in the blink of an eye.*</content>

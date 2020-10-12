@@ -25,7 +25,7 @@ end
 TotalSkillListeners = 0
 --- Registers a function to call when a specific skill's events fire.
 ---@param skill string
----@param callback function
+---@param callback fun(skill:string, char:string, state:SkillState, data:SkillEventData|HitData)
 function RegisterSkillListener(skill, callback)
 	if SkillListeners[skill] == nil then
 		SkillListeners[skill] = {}

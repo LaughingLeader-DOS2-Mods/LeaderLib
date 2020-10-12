@@ -1,5 +1,7 @@
 if UI == nil then
-	UI = {}
+	UI = {
+		ControllerEnabled = false,
+	}
 end
 
 UI.Tooltip = {}
@@ -20,11 +22,20 @@ function UI.RegisterListener(event, callback)
 	end
 end
 
+---@param ui UIObject
+Ext.RegisterListener("UIObjectCreated", function(ui)
+	if ui:GetTypeId() == Data.UIType.msgBox_c then
+		print("msgBox_c was created ************************")
+		UI.ControllerEnabled = true
+	end
+end)
+
 -- Should exist before SessionLoaded
--- local controllerUI = Ext.GetBuiltinUI("Public/Game/GUI/msgBox_c.swf") or Ext.GetUIByType(75)
+UI.ControllerEnabled = (Ext.GetBuiltinUI("Public/Game/GUI/msgBox_c.swf") or Ext.GetUIByType(Data.UIType.msgBox_c)) ~= nil
 -- if controllerUI ~= nil then
 -- 	Ext.Require("Client/UI/Game.Tooltip.Controllers.lua")
 -- end
+Ext.Require("Client/ClientHelpers.lua")
 Ext.Require("Client/UI/Game.Tooltip.Controllers.lua")
 
 Ext.Require("Client/UI/CharacterSheet.lua")

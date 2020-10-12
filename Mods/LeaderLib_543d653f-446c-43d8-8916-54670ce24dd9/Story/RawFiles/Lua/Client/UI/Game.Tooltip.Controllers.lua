@@ -642,10 +642,11 @@ local selectEvents = {
 	"selectTitle",
 }
 
+ControllerVars.Enabled = (Ext.GetBuiltinUI("Public/Game/GUI/msgBox_c.swf") or Ext.GetUIByType(UI_TYPE.msgBox_c)) ~= nil
+
 function TooltipHooks:RegisterControllerHooks()
 	local equipmentPanel = Ext.GetBuiltinUI("Public/Game/GUI/equipmentPanel_c.swf")
 	if equipmentPanel ~= nil then
-		ControllerVars.Enabled = true
 		-- slotOver is called when selecting any slot, item or not
 		Ext.RegisterUICall(equipmentPanel, "slotOver", function (ui, method, itemHandle, slotNum)
 			self:OnRequestConsoleInventoryTooltip(ui, method, itemHandle, slotNum)
@@ -674,7 +675,6 @@ function TooltipHooks:RegisterControllerHooks()
 	end
 	local craftPanel = Ext.GetBuiltinUI("Public/Game/GUI/craftPanel_c.swf")
 	if craftPanel ~= nil then
-		ControllerVars.Enabled = true
 		Ext.RegisterUICall(craftPanel, "slotOver", function (ui, method, itemHandle, slotNum)
 			self:OnRequestConsoleInventoryTooltip(ui, method, itemHandle, slotNum)
 		end)
@@ -690,7 +690,6 @@ function TooltipHooks:RegisterControllerHooks()
 
 	local statsPanel = Ext.GetBuiltinUI("Public/Game/GUI/statsPanel_c.swf")
 	if statsPanel ~= nil then
-		ControllerVars.Enabled = true
 		for i,v in pairs(selectEvents) do
 			Ext.RegisterUICall(statsPanel, v, function(ui, ...)
 				self:OnRequestConsoleExamineTooltip(ui, ...)
@@ -720,7 +719,6 @@ function TooltipHooks:RegisterControllerHooks()
 
 	local examine = Ext.GetBuiltinUI("Public/Game/GUI/examine_c.swf")
 	if examine ~= nil then
-		ControllerVars.Enabled = true
 		for i,v in pairs(selectEvents) do
 			Ext.RegisterUICall(examine, v, function(ui, ...)
 				self:OnRequestConsoleExamineTooltip(ui, ...)
@@ -733,8 +731,6 @@ function TooltipHooks:RegisterControllerHooks()
 	
 	local bottomBar = Ext.GetBuiltinUI("Public/Game/GUI/bottomBar_c.swf")
 	if bottomBar ~= nil then
-		ControllerVars.Enabled = true
-		-- Controller UI for bottombar_c.swf
 		Ext.RegisterUICall(bottomBar, "SlotHover", function (...)
 			self:OnRequestConsoleHotbarTooltip(...)
 		end)
@@ -760,7 +756,6 @@ function TooltipHooks:RegisterControllerHooks()
 
 	local partyInventory = Ext.GetBuiltinUI("Public/Game/GUI/partyInventory_c.swf")
 	if partyInventory ~= nil then
-		ControllerVars.Enabled = true
 		-- Controller UI for bottombar_c.swf
 		Ext.RegisterUICall(partyInventory, "slotOver", function (...)
 			self:OnRequestConsoleInventoryTooltip(...)
@@ -1017,40 +1012,56 @@ function TooltipHooks:OnRequestExamineUITooltip(ui, method, typeIndex, id, ...)
 	self.NextRequest = request
 end
 
+---@param ui UIObject
+---@param item EclItem
+---@return EclCharacter
+function TooltipHooks:GetCompareOwner(ui, item)
+	local owner = ui:GetPlayerHandle()
+	if owner ~= nil then
+		local char = Ext.GetCharacter(owner)
+		if char.Stats.IsPlayer then
+			return char
+		end
+	end
+
+	local itemOwner = item:GetOwnerCharacter()
+	if itemOwner ~= nil then
+		local ownerCharacter = Ext.GetCharacter(itemOwner)
+		if ownerCharacter ~= nil and ownerCharacter.Stats.IsPlayer then
+			return ownerCharacter
+		end
+	end
+
+	local handle = nil
+	if not ControllerVars.Enabled then
+		local hotbar = Ext.GetUIByType(UI_TYPE.hotBar)
+		if hotbar ~= nil then
+			local main = hotbar:GetRoot()
+			if main ~= nil then
+				handle = Ext.DoubleToHandle(main.hotbar_mc.characterHandle)
+			end
+		end
+	else
+		local hotbar = Ext.GetUIByType(UI_TYPE.bottomBar_c)
+		if hotbar ~= nil then
+			local main = hotbar:GetRoot()
+			if main ~= nil then
+				handle = Ext.DoubleToHandle(main.characterHandle)
+			end
+		end
+	end
+	if handle ~= nil then
+		return Ext.GetCharacter(handle)
+	end
+	return nil
+end
+
 --- @param ui UIObject
 --- @param item EclItem
 --- @param offHand boolean
 --- @return string|nil
 function TooltipHooks:GetCompareItem(ui, item, offHand)
-	local owner = ui:GetPlayerHandle()
-	--- @type EclCharacter
-	local char = nil
-
-	if owner ~= nil then
-		char = Ext.GetCharacter(owner)
-	else
-		local handle = nil
-		if not ControllerVars.Enabled then
-			local hotbar = Ext.GetUIByType(UI_TYPE.hotBar)
-			if hotbar ~= nil then
-				local main = hotbar:GetRoot()
-				if main ~= nil then
-					handle = Ext.DoubleToHandle(main.hotbar_mc.characterHandle)
-				end
-			end
-		else
-			local hotbar = Ext.GetUIByType(UI_TYPE.bottomBar_c)
-			if hotbar ~= nil then
-				local main = hotbar:GetRoot()
-				if main ~= nil then
-					handle = Ext.DoubleToHandle(main.characterHandle)
-				end
-			end
-		end
-		if handle ~= nil then
-			char = Ext.GetCharacter(handle)
-		end
-	end
+	local char = self:GetCompareOwner(ui, item)
 
 	if char == nil then
 		Ext.PrintWarning("Tooltip compare render failed: Couldn't find owner of item", item.StatsId)

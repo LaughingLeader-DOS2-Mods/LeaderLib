@@ -97,14 +97,38 @@ local function OnStatusTooltip(character, status, tooltip)
 end
 
 ---@param character EclCharacter
----@param skill EsvStatus
+---@param skill string
 ---@param tooltip TooltipData
 local function OnSkillTooltip(character, skill, tooltip)
 	if Features.TooltipGrammarHelper then
 		-- This fixes the double spaces from removing the "tag" part of Requires tag
-		local element = tooltip:GetElement("SkillRequiredEquipment")
-		if element ~= nil and not element.RequirementMet and string.find(element.Label, "Requires  ") then
-			element.Label = string.gsub(element.Label, "  ", " ")
+		for i,element in pairs(tooltip:GetElements("SkillRequiredEquipment")) do
+			element.Label = string.gsub(element.Label, "%s+", " ")
+		end
+	end
+
+	if Features.FixRifleWeaponRequirement then
+		local requirement = Ext.StatGetAttribute(skill, "Requirement")
+		if requirement == "RifleWeapon" then
+			local skillRequirements = tooltip:GetElements("SkillRequiredEquipment")
+			local addRifleText = true
+			if skillRequirements ~= nil and #skillRequirements > 0 then
+				for i,element in pairs(skillRequirements) do
+					if string.find(element.Label, LocalizedText.SkillTooltip.RifleWeapon.Value) then
+						addRifleText = false
+						break
+					end
+				end
+			end
+			if addRifleText then
+				local hasRequirement = character.Stats.MainWeapon ~= nil and character.Stats.MainWeapon.WeaponType == "Rifle"
+				local text = LocalizedText.SkillTooltip.SkillRequiredEquipment:ReplacePlaceholders(LocalizedText.SkillTooltip.RifleWeapon.Value)
+				tooltip:AppendElement({
+					Type="SkillRequiredEquipment",
+					RequirementMet = hasRequirement,
+					Label = text
+				})
+			end
 		end
 	end
 
@@ -592,9 +616,7 @@ local function OnItemTooltip(item, tooltip)
 			local requirements = tooltip:GetElements("ItemRequirement")
 			if requirements ~= nil then
 				for i,element in pairs(requirements) do
-					if string.find(element.Label, "Requires  ") then
-						element.Label = string.gsub(element.Label, "  ", " ")
-					end
+					element.Label = string.gsub(element.Label, "%s+", " ")
 				end
 			end
 		end

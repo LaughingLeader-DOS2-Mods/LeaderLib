@@ -145,7 +145,6 @@ LeaderLog_Log("DEBUG", "[LeaderLib:Deltamods:ApplyDeltamodsByGroup[",_Group,"]] 
 DB_LeaderLib_Deltamods_Temp_WaitingForRarity(_Item, _Group);
 SetVarString(_Item, "LeaderLib_ItemVariablesSetEvent", "LeaderLib_Deltamods_VariablesSet");
 SetStoryEvent(_Item, "LeaderLib_Commands_SetItemVariables");
-// [END_NO_OSITOOLS]
 
 IF
 StoryEvent((ITEMGUID)_Item, "LeaderLib_Deltamods_VariablesSet")
@@ -157,6 +156,7 @@ THEN
 NOT DB_LeaderLib_Deltamods_Temp_WaitingForRarity(_Item, _Group);
 LeaderLog_Log("DEBUG", "[LeaderLib:Deltamods:LeaderLib_Deltamods_VariablesSet[",_Group,"]] Item rarity is [",_Rarity,"]. Applying deltamod by group.");
 LeaderLib_Deltamods_Internal_ApplyDeltamodsByGroup(_Item, _Group, _Rarity);
+// [END_NO_OSITOOLS]
 
 PROC
 LeaderLib_Deltamods_Internal_ApplyDeltamodsByGroup((ITEMGUID)_Item, (STRING)_Group, (STRING)_BaseRarity)

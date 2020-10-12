@@ -682,3 +682,37 @@ Ext.RegisterConsoleCommand("permaboosttest", function(cmd)
 	end
 	Ext.PostMessageToClient(host.MyGuid, "LeaderLib_UI_RefreshAll", host.MyGuid)
 end)
+
+
+Ext.RegisterConsoleCommand("heal", function(command, t)
+	local target = t or CharacterGetHostCharacter()
+	if CharacterIsDead(target) == 1 then
+		CharacterResurrect(target)
+	end
+	CharacterSetHitpointsPercentage(target, 100.0)
+end)
+
+Ext.RegisterConsoleCommand("healall", function(command)
+	for i,v in pairs(Osi.DB_IsPlayer:Get(nil)) do
+		local uuid = uuid
+		if CharacterIsDead(uuid) == 1 then
+			CharacterResurrect(uuid)
+		end
+		CharacterSetHitpointsPercentage(uuid, 100.0)
+	end
+end)
+
+Ext.RegisterConsoleCommand("mostlydead", function(command, t)
+	local target = t or CharacterGetHostCharacter()
+	CharacterSetHitpointsPercentage(target, 1.0)
+	CharacterSetArmorPercentage(target, 0.0)
+	CharacterSetMagicArmorPercentage(target, 0.0)
+end)
+
+Ext.RegisterConsoleCommand("resurrectparty", function(command)
+	for i,v in pairs(Osi.DB_IsPlayer:Get(nil)) do
+		if CharacterIsDead(v[1]) == 1 then
+			CharacterResurrect(v[1])
+		end
+	end
+end)

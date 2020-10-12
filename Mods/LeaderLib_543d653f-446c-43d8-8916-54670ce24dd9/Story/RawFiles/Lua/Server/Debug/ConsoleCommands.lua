@@ -332,19 +332,6 @@ Ext.RegisterConsoleCommand("refreshskill", function(command, skill, enabled)
 	SetSkillEnabled(CharacterGetHostCharacter(), skill, false)
 end)
 
-Ext.RegisterConsoleCommand("heal", function(command, t)
-	local target = t or CharacterGetHostCharacter()
-	CharacterSetHitpointsPercentage(target, 100.0)
-end)
-
-Ext.RegisterConsoleCommand("resurrectparty", function(command)
-	for i,v in pairs(Osi.DB_IsPlayer:Get(nil)) do
-		if CharacterIsDead(v[1]) == 1 then
-			CharacterResurrect(v[1])
-		end
-	end
-end)
-
 Ext.RegisterConsoleCommand("sethelmetoption", function(command, param)
 	local host = CharacterGetHostCharacter()
 	local enabled = param == "true"
@@ -465,4 +452,45 @@ Ext.RegisterConsoleCommand("printdeltamods", function(cmd, attributeFilter, filt
 			-- end
 		end
 	end
+end)
+
+local PlayerCustomDataAttributes = {
+	"Name",
+	"Race",
+	"OriginName",
+	"ClassType",
+	"IsMale",
+	"CustomLookEnabled",
+	"SkinColor",
+	"HairColor",
+	"ClothColor1",
+	"ClothColor2",
+	"ClothColor3",
+	"Icon",
+	"MusicInstrument",
+	"OwnerProfileID",
+	"ReservedProfileID",
+	"AiPersonality",
+	"Speaker",
+}
+
+Ext.RegisterConsoleCommand("printpdata", function(cmd, target)
+	target = target or CharacterGetHostCharacter()
+	local character = Ext.GetCharacter(target)
+	if character ~= nil and character.PlayerCustomData ~= nil then
+		local pdata = character.PlayerCustomData
+		print(string.format("[%s] %s", target, character.DisplayName))
+		for i,v in ipairs(PlayerCustomDataAttributes) do
+			print(string.format("[%s] %s", v, pdata[v]))
+		end
+	else
+		Ext.PrintError(target, "has no PlayerCustomData!")
+	end
+end)
+
+Ext.RegisterConsoleCommand("levelup", function(command, amount)
+	amount = amount or "1"
+	amount = tonumber(amount)
+	local host = CharacterGetHostCharacter()
+	CharacterLevelUpTo(host, amount)
 end)

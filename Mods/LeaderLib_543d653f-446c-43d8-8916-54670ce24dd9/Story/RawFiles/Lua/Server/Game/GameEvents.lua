@@ -60,7 +60,9 @@ local function OnInitialized(region, isRunning)
 
 	Vars.Initialized = true
 	pcall(function()
-		LoadGlobalSettings()
+		if not LoadGlobalSettings() then
+			SaveGlobalSettings()
+		end
 		LoadGameSettings()
 		if GameSettings.Settings.SurfaceSettings.PoisonDoesNotIgnite == true and GameSettings.Settings.EnableDeveloperTests == true then
 			GameHelpers.Surface.UpdateRules()

@@ -182,7 +182,7 @@ if Ext.IsServer() then
 	end
 	
 	function LoadGlobalSettings()
-		local status,err = xpcall(function()
+		local b,result = xpcall(function()
 			--SettingsManager.LoadConfigFiles()
 			local json = NRD_LoadFile("LeaderLib_GlobalSettings.json")
 			if json ~= nil and json ~= "" then
@@ -191,9 +191,10 @@ if Ext.IsServer() then
 			end
 			return true
 		end, debug.traceback)
-		if not status then
+		if not b then
 			Ext.PrintError("[LeaderLib:LoadGlobalSettings] Error loading global settings:")
-			Ext.PrintError(err)
+			Ext.PrintError(result)
+			return false
 		else
 			if Ext.OsirisIsCallable() or Ext.GetGameState() == "Running" then
 				for uuid,v in pairs(GlobalSettings.Mods) do
@@ -209,6 +210,7 @@ if Ext.IsServer() then
 					end
 				end
 			end
+			return result
 		end
 	end
 	

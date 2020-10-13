@@ -166,6 +166,20 @@ function GameHelpers.Skill.Swap(char, targetSkill, replacementSkill, removeTarge
     end
 end
 
+---Set a skill cooldown if the character has the skill.
+---@param char string
+---@param skill string
+---@param cooldown number
+---@param refreshBar boolean|nil
+function GameHelpers.Skill.SetCooldown(char, skill, cooldown, refreshBar)
+    if CharacterHasSkill(char, skill) == 1 then
+        NRD_SkillSetCooldown(char, skill, cooldown)
+        if refreshBar == true then
+            GameHelpers.UI.RefreshSkillBar(char)
+        end
+    end
+end
+
 GameHelpers.Skill.StoreCooldownData = StoreSkillCooldownData
 GameHelpers.Skill.StoreSlots = StoreSkillSlots
 GameHelpers.Skill.TrySetSlot = TrySetSkillSlot

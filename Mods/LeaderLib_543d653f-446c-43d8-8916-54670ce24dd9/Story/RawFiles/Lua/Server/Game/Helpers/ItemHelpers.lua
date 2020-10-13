@@ -114,9 +114,32 @@ end
 
 function GameHelpers.Item.GetEquippedSlot(char, item)
     for i,slot in Data.EquipmentSlots:Get() do
-        local slotItem = CharacterGetEquippedItem(char, slot)
-        if slotItem ~= nil and GetUUID(slotItem) == GetUUID(item) then
+        local slotItem = StringHelpers.GetUUID(CharacterGetEquippedItem(char, slot))
+        if slotItem ~= nil and slotItem == StringHelpers.GetUUID(item) then
             return slot
+        end
+    end
+    return nil
+end
+
+function GameHelpers.Item.GetEquippedTemplateSlot(char, template)
+    template = StringHelpers.GetUUID(template)
+    for i,slot in Data.EquipmentSlots:Get() do
+        local slotItem = StringHelpers.GetUUID(CharacterGetEquippedItem(char, slot))
+        if slotItem ~= nil then
+            if StringHelpers.GetUUID(GetTemplate(slotItem)) == template then
+                return slot,slotItem
+            end
+        end
+    end
+    return nil
+end
+
+function GameHelpers.Item.GetEquippedTaggedItemSlot(char, tag)
+    for i,slot in Data.EquipmentSlots:Get() do
+        local slotItem = StringHelpers.GetUUID(CharacterGetEquippedItem(char, slot))
+        if slotItem ~= nil and IsTagged(slotItem, tag) == 1 then
+            return slot,slotItem
         end
     end
     return nil

@@ -105,6 +105,10 @@ function ClientData:GetCharacter()
 	return character
 end
 
+---@param id integer
+---@param profile string
+---@param isHost boolean
+---@param character ClientCharacterData
 function ClientData:Set(id, profile, isHost, character)
 	if id ~= nil then
 		self.ID = id
@@ -115,8 +119,13 @@ function ClientData:Set(id, profile, isHost, character)
 	if isHost ~= nil then
 		self.IsHost = isHost
 	end
-	if character ~= nil then
+	if character ~= nil and character.ID >= 0 then
 		self.Character = character
+	else
+		local char = GameHelpers.Client.GetCharacter()
+		if char ~= nil then
+			self.Character:CreateFromCharacter(char, id, profile, isHost)
+		end
 	end
 end
 

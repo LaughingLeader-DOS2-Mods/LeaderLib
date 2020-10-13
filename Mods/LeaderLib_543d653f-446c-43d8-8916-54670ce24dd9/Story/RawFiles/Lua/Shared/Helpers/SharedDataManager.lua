@@ -319,8 +319,9 @@ if Ext.IsClient() then
 				ActiveCharacterChanged(Client.Character)
 			end
 			return true
+		else
+			error("Error parsing json?", payload)
 		end
-		error("Error parsing json?")
 	end
 
 	Ext.RegisterNetListener("LeaderLib_SharedData_StoreData", function(cmd, payload, ...)

@@ -110,9 +110,9 @@ Ext.NewCall(RefreshSkill, "LeaderLib_Ext_RefreshSkill", "(CHARACTERGUID)_Charact
 
 function GetSkillSlots(char, skill, makeLocal)
 	local slots = {}
-    if CharacterHasSkill(char, skill) == 0 then
-        return slots
-    end
+    -- if CharacterHasSkill(char, skill) == 0 then
+    --     return slots
+    -- end
 	for i=0,144,1 do
 		local slot = NRD_SkillBarGetSkill(char, i)
 		if slot ~= nil and slot == skill then
@@ -153,6 +153,7 @@ function GameHelpers.Skill.Swap(char, targetSkill, replacementSkill, removeTarge
         end
 
         for i,slot in pairs(slots) do
+            print(i,slot,targetSkill)
             NRD_SkillBarSetSkill(char, slot, replacementSkill)
         end
     else

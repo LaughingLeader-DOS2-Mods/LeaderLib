@@ -71,6 +71,16 @@ LeaderLib_StringExt_DetermineStringLength(_DisplayName);
 LeaderLib_ModMenu_Internal_StartSortIfNeeded();
 LeaderLog_Log("DEBUG", "[LeaderLib_02_ModMenuSystem:LeaderLib_Register_ModMenu] Register mod menu UUID(",_UUID,") Dialog(",_Dialog,") DisplayName(",_DisplayName,") ModID(",_ModID,") Author(",_Author,")");
 
+PROC
+LeaderLib_ClearModMenuEntry((STRING)_UUID, (STRING)_Dialog)
+AND
+DB_LeaderLib_ModMenu_RegisteredMenuData(_UUID, _DisplayName, _Dialog, _ModID, _Author)
+THEN
+NOT DB_LeaderLib_ModMenu_RegisteredMenuData(_UUID, _DisplayName, _Dialog, _ModID, _Author);
+LeaderLib_ModMenu_Internal_ClearLastForID(_UUID);
+LeaderLib_ModMenu_Internal_ClearLastForDialog(_Dialog);
+LeaderLib_ModMenu_Internal_StartSortIfNeeded();
+
 /* [OSITOOLS_ONLY]
 PROC
 LeaderLib_ModMenu_Internal_GetInfoForUUID((STRING)_ID, (STRING)_Dialog, (STRING)_DisplayName)

@@ -622,7 +622,7 @@ local function OnItemTooltip(item, tooltip)
 		end
 		if item:HasTag("LeaderLib_AutoLevel") then
 			local element = tooltip:GetElement("ItemDescription")
-			if element ~= nil and not string.find(element.Label, "Automatically levels") then
+			if element ~= nil and not string.find(string.lower(element.Label), "automatically level") then
 				if not StringHelpers.IsNullOrEmpty(element.Label) then
 					element.Label = element.Label .. "<br>" .. AutoLevelingDescription.Value
 				else

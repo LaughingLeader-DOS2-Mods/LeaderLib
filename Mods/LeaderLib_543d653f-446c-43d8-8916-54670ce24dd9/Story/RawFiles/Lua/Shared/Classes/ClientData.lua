@@ -2,7 +2,7 @@
 local ClientCharacterData = {
 	Type = "ClientCharacterData",
 	UUID = "",
-	ID = "",
+	ID = -1,
 	Profile = "",
 	IsHost = false,
 	IsInCharacterCreation = false,
@@ -15,7 +15,7 @@ function ClientCharacterData:Create(uuid, id, profile, netid, isHost, isInCharac
 	local this = {
 		UUID = uuid,
 		NetID = netid or -1,
-		ID = id,
+		ID = id or -1,
 		Profile = profile,
 		IsHost = isHost,
 		IsInCharacterCreation = isInCharacterCreation
@@ -101,6 +101,9 @@ function ClientData:GetCharacter()
 		if character == nil and not StringHelpers.IsNullOrEmpty(self.Character.UUID) then
 			character = Ext.GetCharacter(self.Character.UUID)
 		end
+		if character == nil then
+			character = GameHelpers.Client.GetCharacter()
+		end
 	end
 	return character
 end
@@ -119,13 +122,8 @@ function ClientData:Set(id, profile, isHost, character)
 	if isHost ~= nil then
 		self.IsHost = isHost
 	end
-	if character ~= nil and character.ID >= 0 then
+	if character ~= nil then
 		self.Character = character
-	else
-		local char = GameHelpers.Client.GetCharacter()
-		if char ~= nil then
-			self.Character:CreateFromCharacter(char, id, profile, isHost)
-		end
 	end
 end
 

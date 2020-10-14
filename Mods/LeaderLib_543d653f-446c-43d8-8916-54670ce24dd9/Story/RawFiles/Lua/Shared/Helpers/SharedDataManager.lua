@@ -139,7 +139,7 @@ if Ext.IsServer() then
 
 	function GameHelpers.Data.SetCharacterData(id, profileId, uuid, isInCharacterCreation)
 		if profileId == nil then
-			profileId = GetUserProfileID(id)
+			profileId = GetUserProfileID(id) or GetUserProfileID(CharacterGetReservedUserID(CharacterGetHostCharacter()))
 		end
 		if profileId == nil then
 			return false

@@ -110,11 +110,8 @@ Ext.NewCall(RefreshSkill, "LeaderLib_Ext_RefreshSkill", "(CHARACTERGUID)_Charact
 
 function GetSkillSlots(char, skill, makeLocal)
 	local slots = {}
-    -- if CharacterHasSkill(char, skill) == 0 then
-    --     return slots
-    -- end
 	for i=0,144,1 do
-		local slot = NRD_SkillBarGetSkill(char, i)
+        local slot = NRD_SkillBarGetSkill(char, i)
 		if slot ~= nil and slot == skill then
 			if makeLocal == true then
 				slots[#slots+1] = i%29
@@ -135,6 +132,10 @@ GameHelpers.Skill.GetSkillSlots = GetSkillSlots
 ---@param removeTargetSkill boolean Optional, removes the swapped skill from the character.
 ---@param resetCooldowns boolean Optional, defaults to true.
 function GameHelpers.Skill.Swap(char, targetSkill, replacementSkill, removeTargetSkill, resetCooldowns)
+    local cd = nil
+    if CharacterHasSkill(char, targetSkill) == 1 then
+        cd = NRD_SkillGetCooldown(char, targetSkill)
+    end
     if CharacterIsPlayer(char) == 0 then
         if removeTargetSkill ~= nil and removeTargetSkill ~= false then
             CharacterRemoveSkill(char, targetSkill)
@@ -146,24 +147,25 @@ function GameHelpers.Skill.Swap(char, targetSkill, replacementSkill, removeTarge
     if #slots > 0 then
         if CharacterHasSkill(char, replacementSkill) == 0 then
             CharacterAddSkill(char, replacementSkill, 0)
-            local newSlot = NRD_SkillBarFindSkill(char, replacementSkill)
-            if newSlot ~= nil then
-                NRD_SkillBarClear(char, newSlot)
-            end
+        end
+        local newSlot = NRD_SkillBarFindSkill(char, replacementSkill)
+        if newSlot ~= nil then
+            NRD_SkillBarClear(char, newSlot)
         end
 
         for i,slot in pairs(slots) do
-            print(i,slot,targetSkill)
             NRD_SkillBarSetSkill(char, slot, replacementSkill)
         end
     else
         CharacterAddSkill(char, replacementSkill, 0)
     end
-    if removeTargetSkill ~= nil and removeTargetSkill ~= false then
+    if removeTargetSkill ~= false then
         CharacterRemoveSkill(char, targetSkill)
     end
     if resetCooldowns ~= false then
         NRD_SkillSetCooldown(char, replacementSkill, 0.0)
+    elseif cd ~= nil then
+        NRD_SkillSetCooldown(char, replacementSkill, cd)
     end
 end
 

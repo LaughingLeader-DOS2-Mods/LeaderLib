@@ -180,12 +180,14 @@ end
 ---@param source table
 ---@param target table
 function Common.InitializeTableFromSource(target, source)
-	for k,v in pairs(source) do
-		if target[k] == nil then
-			target[k] = v
-		elseif type(v) == "table" then
-			Common.InitializeTableFromSource(target[k], v)
-		end		
+	if source ~= nil then
+		for k,v in pairs(source) do
+			if target[k] == nil then
+				target[k] = v
+			elseif type(v) == "table" then
+				Common.InitializeTableFromSource(target[k], v)
+			end		
+		end
 	end
 end
 

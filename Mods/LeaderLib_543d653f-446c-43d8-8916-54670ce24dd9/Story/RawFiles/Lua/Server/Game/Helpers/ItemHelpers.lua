@@ -184,7 +184,7 @@ end
 function GameHelpers.Item.RemoveRunes(character, runeTemplates)
 	for _,slotName in Data.VisibleEquipmentSlots:Get() do
 		local item = CharacterGetEquippedItem(character, slotName)
-		if item ~= nil then
+		if not StringHelpers.IsNullOrEmpty(item) then
 			for runeSlot=0,2,1 do
 				local runeTemplate = ItemGetRuneItemTemplate(item, runeSlot)
 				if runeTemplate ~= nil and runeTemplates[runeTemplate] == true then
@@ -261,3 +261,17 @@ local function ItemIsLockedQRY(item)
     return 0
 end
 Ext.NewQuery(GameHelpers.Item.ItemIsLocked, "LeaderLib_Ext_QRY_ItemIsLocked", "[in](ITEMGUID)_Item, [out](INTEGER)_Locked")
+
+function ContainerHasContents(uuid)
+    local item = uuid
+    if type(uuid) == "string" then
+        item = Ext.GetItem(uuid)
+    end
+    if item ~= nil and item.GetInventoryItems ~= nil then
+        local contents = item:GetInventoryItems()
+        return contents ~= nil and #contents > 0
+    end
+    return false
+end
+
+GameHelpers.Item.ContainerHasContents = ContainerHasContents

@@ -1,3 +1,15 @@
+local function ContextContains(context, find)
+	local findType = type(find)
+	for i,v in pairs(context) do
+		if findType == "string" and StringHelpers.Equals(find, v, true) then
+			return true
+		elseif findType == "table" and Common.TableHasEntry(find, v, true) then
+			return true
+		end
+	end
+	return false
+end
+
 --- Applies ExtraProperties/SkillProperties.
 ---@param target string
 ---@param source string|nil
@@ -5,22 +17,43 @@
 function GameHelpers.ApplyProperties(target, source, properties)
 	for i,v in pairs(properties) do
 		if v.Type == "Status" then
-			if v.Context[1] == "Target" then
-				if target ~= nil then
+			if ContextContains(v.Context, "Target") then
+				if v.Action == "EXPLODE" then
 					if v.StatusChance >= 1.0 then
-						ApplyStatus(target, v.Action, v.Duration, 0, source)
+						GameHelpers.ExplodeProjectile(source, target, v.StatsId)
 					elseif v.StatusChance > 0 then
 						if Ext.Random(0.0, 1.0) <= v.StatusChance then
+							GameHelpers.ExplodeProjectile(source, target, v.StatsId)
+						end
+					end
+				else
+					if target ~= nil then
+						if v.StatusChance >= 1.0 then
 							ApplyStatus(target, v.Action, v.Duration, 0, source)
+						elseif v.StatusChance > 0 then
+							if Ext.Random(0.0, 1.0) <= v.StatusChance then
+								ApplyStatus(target, v.Action, v.Duration, 0, source)
+							end
 						end
 					end
 				end
-			elseif v.Context[1] == "Self" then
-				if v.StatusChance >= 1.0 then
-					ApplyStatus(source, v.Action, v.Duration, 0, source)
-				elseif v.StatusChance > 0 then
-					if Ext.Random(0.0, 1.0) <= v.StatusChance then
+			end
+			if ContextContains(v.Context, "Self") then
+				if v.Action == "EXPLODE" then
+					if v.StatusChance >= 1.0 then
+						GameHelpers.ExplodeProjectile(source, source, v.StatsId)
+					elseif v.StatusChance > 0 then
+						if Ext.Random(0.0, 1.0) <= v.StatusChance then
+							GameHelpers.ExplodeProjectile(source, source, v.StatsId)
+						end
+					end
+				else
+					if v.StatusChance >= 1.0 then
 						ApplyStatus(source, v.Action, v.Duration, 0, source)
+					elseif v.StatusChance > 0 then
+						if Ext.Random(0.0, 1.0) <= v.StatusChance then
+							ApplyStatus(source, v.Action, v.Duration, 0, source)
+						end
 					end
 				end
 			end

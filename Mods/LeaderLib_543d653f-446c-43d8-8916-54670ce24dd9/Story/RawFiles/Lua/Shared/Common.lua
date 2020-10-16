@@ -100,18 +100,42 @@ end
 
 ---@param tbl table
 ---@param key any
+---@param caseInsensitive boolean|nil
 ---@return boolean
-function Common.TableHasEntry(tbl, key)
+function Common.TableHasKey(tbl, key, caseInsensitive)
 	if tbl == nil then
 		return false
 	end
 	local v = tbl[key]
+	if caseInsensitive == true and v == nil and type(key) == "string" then
+		v = tbl[string.lower(key)]
+	end
 	if v ~= nil then
 		return true
 	elseif #tbl > 0 or next(tbl, nil) ~= nil then
 		for k,v2 in pairs(tbl) do
 			if type(v2) == "table" then
 				return Common.TableHasEntry(v2, key)
+			end
+		end
+	end
+	return false
+end
+
+---@param tbl table
+---@param key any
+---@param caseInsensitive boolean|nil
+---@return boolean
+function Common.TableHasEntry(tbl, value, caseInsensitive)
+	if tbl == nil then
+		return false
+	end
+	for k,v in pairs(tbl) do
+		if StringHelpers.Equals(value, v, caseInsensitive) then
+			return true
+		elseif type(v) == "table" then
+			if Common.TableHasAnyEntry(v, value, caseInsensitive) then
+				return true
 			end
 		end
 	end
@@ -188,6 +212,8 @@ function Common.InitializeTableFromSource(target, source)
 				Common.InitializeTableFromSource(target[k], v)
 			end		
 		end
+	else
+		Ext.PrintError("[LeaderLib:Common.InitializeTableFromSource] Source table is nil!")
 	end
 end
 

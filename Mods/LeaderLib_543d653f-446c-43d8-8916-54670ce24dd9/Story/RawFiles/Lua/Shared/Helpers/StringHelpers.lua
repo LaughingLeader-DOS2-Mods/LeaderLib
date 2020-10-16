@@ -10,7 +10,7 @@ end
 local function Equals(a,b, insensitive)
 	if insensitive == nil then insensitive = true end
 	if a ~= nil and b ~= nil then
-		if insensitive then
+		if insensitive and type(a) == "string" and type(b) == "string" then
 			return string.upper(a) == string.upper(b)
 		else
 			return a == b

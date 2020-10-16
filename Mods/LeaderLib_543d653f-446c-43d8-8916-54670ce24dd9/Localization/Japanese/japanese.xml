@@ -79,6 +79,7 @@
 	<content contentuid="h3e28d8d8g362bg4d7dga097gf8fcac3fbfe3">&lt;font color=&apos;#FF00CC&apos;&gt;One or more players are missing the script extender.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#FF0000&apos;&gt;The script extender is needed for mods to work correctly.&lt;/font&gt;&lt;br&gt;Players missing the extender:&lt;br&gt;[1]</content>
 	<content contentuid="h3eb917d7g036fg483dg8ee5gc83743845400">Welcome!</content>
 	<content contentuid="h3ed2c7c5gf6c0g4c9dga916g5782593327ab">Open Mod Menu</content>
+	<content contentuid="h3eff6bc1gb26dg4bb5gb3b9g2551c65026e0">On Hit:&lt;br&gt;[1] for [2] turns(s). ([3] Chance)</content>
 	<content contentuid="h3fb60439g4406g4623ga6b7gb53cda538fcb">*The old man runs his hands over his clothes, trying to iron out the wrinkles.* What can I do for you, stranger?</content>
 	<content contentuid="h40ac3891g3661g43eag878dg6510b001704a">[LeaderLib_DynamicMenu_MenuOption4_e6bea606-b29a-4bfe-8959-94e8be8330cb]</content>
 	<content contentuid="h4120c4e5g4931g46dbgad0fga7a57514ac42">Rifle</content>

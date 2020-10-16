@@ -357,10 +357,38 @@ function SettingsData:GetVariable(name, fallback)
 	return fallback
 end
 
-function SettingsData:FlagEquals(id, b)
+function SettingsData:FlagEquals(id, b, target)
 	local data = self.Flags[id]
 	if data ~= nil then
-		return data.Enabled == b
+		if data.FlagType == "Global" then
+			return data.Enabled == b
+		elseif data.FlagType == "User" or data.FlagType == "Character" then
+			if target ~= nil then
+				local enabled = false
+				if data.FlagType == "User" then
+					enabled = UserGetFlag(target, data.ID) == 1
+				elseif data.FlagType == "Character" then
+					enabled = ObjectGetFlag(target, data.ID) == 1
+				end
+				return enabled == b
+			else
+				for _,db in pairs(Osi.DB_IsPlayer:Get(nil)) do
+					local uuid = GetUUID(db[1])
+					if data.FlagType == "User" then
+						if UserGetFlag(uuid, data.ID) == 1 then
+							if b then
+								return true
+							end
+						end
+					elseif data.FlagType == "Character" then
+						local enabled = ObjectGetFlag(uuid, flag) == 1
+						if enabled and b then
+							return true
+						end
+					end
+				end
+			end
+		end
 	end
 	return b == false -- Flag doesn't exist, so it's not set
 end

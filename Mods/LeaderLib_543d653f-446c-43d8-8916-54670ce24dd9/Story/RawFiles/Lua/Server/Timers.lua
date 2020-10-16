@@ -29,6 +29,7 @@ end
 ---Starts an Osiris timer with a variable amount of UUIDs (or none).
 ---@param event string
 ---@param delay integer
+---@vararg string
 function StartTimer(event, delay, ...)
 	--PrintDebug("LeaderLib:StartTimer: ", event, delay, Common.Dump({...}))
 	local status,err = xpcall(TryStartTimer, debug.traceback, event, delay, {...})
@@ -36,7 +37,6 @@ function StartTimer(event, delay, ...)
 		Ext.PrintError("[LeaderLib:StartTimer] Error starting timer:\n", err)
 	end
 end
-
 local OneshotTimerData = {}
 
 --- Starts an Osiris timer with a callback function to run when the timer is finished.

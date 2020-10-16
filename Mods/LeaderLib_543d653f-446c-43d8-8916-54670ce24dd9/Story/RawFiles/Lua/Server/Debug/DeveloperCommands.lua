@@ -45,10 +45,19 @@ local function ResetLua()
 end
  
 Ext.RegisterConsoleCommand("luareset", function(command, delay)
+	if #Listeners.BeforeLuaReset > 0 then
+		for i,callback in pairs(Listeners.BeforeLuaReset) do
+			local status,err = xpcall(callback, debug.traceback)
+			if not status then
+				Ext.PrintError("[LeaderLib:OnLuaReset] Error calling function for 'BeforeLuaReset':\n", err)
+			end
+		end
+	end
+	delay = delay or 250
 	if delay ~= nil then
 		delay = tonumber(delay)
 		if delay > 0 then
-			StartOneshotTimer("Timers_LeaderLib_Debug_ResetLua_"..tostring(Ext.MonotonicTime()), delay, ResetLua)
+			StartOneshotTimer("Timers_LeaderLib_Debug_ResetLua", delay, ResetLua)
 		else
 			ResetLua()
 		end

@@ -21,7 +21,7 @@ function VersionIntegerToVersionString(version)
 	if version == -1 then return "-1" end
 	local major,minor,revision,build = ParseVersion(version)
 	if major ~= -1 and minor ~= -1 and revision ~= -1 and build ~= -1 then
-		return tostring(major).."."..tostring(minor).."."..tostring(revision).."."..tostring(build)
+		return string.format("%s.%s.%s.%s", major, minor, revision, build)
 	elseif major == -1 and minor == -1 and revision == -1 and build == -1 then
 		return "-1"
 	end

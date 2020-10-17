@@ -1034,7 +1034,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[GLOBAL] Disable user ID matching when finding the closest character a party member belongs to. This will allow the closest avatar (or persuasive) character in multiplayer to control dialog when a non-avatar player triggers an automatic dialog event.<br>",
+																	"value": "[GLOBAL] Disable user ID matching when finding the closest character a party member belongs to. This will allow the closest avatar (or persuasive) character in multiplayer to control dialog when a non-avatar player triggers an automatic dialog event. (Current Enabled)",
 																	"handle": "ha853bcf9g311dg4e56g8725g0a9188e22344"
 																},
 																"stub": {
@@ -1292,7 +1292,7 @@
 															{
 																"TagText": {
 																	"type": 28,
-																	"value": "[GLOBAL] Disable user ID matching when finding the closest character a party member belongs to. This will allow the closest avatar (or persuasive) character in multiplayer to control dialog when a non-avatar player triggers an automatic dialog event.",
+																	"value": "[GLOBAL] Enable user ID matching when finding the closest character a party member belongs to. This will only allow the closest avatar (or persuasive) character a user controls (for the initial dialog character) to be selected when redirecting. (Currently Disabled)",
 																	"handle": "h861c65b9g0db7g4799gaeb2g67ac42f57540"
 																},
 																"stub": {

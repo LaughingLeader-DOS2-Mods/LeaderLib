@@ -177,7 +177,7 @@
 	<content contentuid="h81a0d6b9g43adg4223gbcc9g0fceadeff883">*He coughs out some sea water.*  That she-beast of a sourceress nearly wiped me out with the others on the boat... *He trails off for a moment before returning his gaze back to you.*</content>
 	<content contentuid="h8311eb63g89cfg41c1g961cgde31f8d79927"></content>
 	<content contentuid="h85c3e4fag683cg471agaef1g448f3023e955">Selected Preset: [LeaderLib_PresetMenu_CurrentPreset_2e904bf9-1a93-447a-8f07-5383aea20068]</content>
-	<content contentuid="h861c65b9g0db7g4799gaeb2g67ac42f57540">[GLOBAL] Disable user ID matching when finding the closest character a party member belongs to. This will allow the closest avatar (or persuasive) character in multiplayer to control dialog when a non-avatar player triggers an automatic dialog event.</content>
+	<content contentuid="h861c65b9g0db7g4799gaeb2g67ac42f57540">[GLOBAL] Enable user ID matching when finding the closest character a party member belongs to. This will only allow the closest avatar (or persuasive) character a user controls (for the initial dialog character) to be selected when redirecting. (Currently Disabled)</content>
 	<content contentuid="h8664487cga940g4aacg8d6agc10d7e80b33e">Autosave Settings</content>
 	<content contentuid="h8679b603g4c2cg4d2eg8e25g5c17e7078f22">*Take your leave.*</content>
 	<content contentuid="h86a5860ag96ddg46e0g84f7g82aac62689f9">Fixes</content>
@@ -232,7 +232,7 @@
 	<content contentuid="ha73d93a8g04fdg4eb0g90fage5e02cd0c4ef">*Step away.*</content>
 	<content contentuid="ha7b4af6cg0f0cg4e02g8839g5f9c756e105b">Registered Mods</content>
 	<content contentuid="ha7f6838bg646eg405bg9d45g91e8f5434cb4">*The old man perks up for a moment.*</content>
-	<content contentuid="ha853bcf9g311dg4e56g8725g0a9188e22344">[GLOBAL] Disable user ID matching when finding the closest character a party member belongs to. This will allow the closest avatar (or persuasive) character in multiplayer to control dialog when a non-avatar player triggers an automatic dialog event.&lt;br&gt;</content>
+	<content contentuid="ha853bcf9g311dg4e56g8725g0a9188e22344">[GLOBAL] Disable user ID matching when finding the closest character a party member belongs to. This will allow the closest avatar (or persuasive) character in multiplayer to control dialog when a non-avatar player triggers an automatic dialog event. (Current Enabled)</content>
 	<content contentuid="ha88d3b01gcfc2g470eg97f5g1dafaa65a1bd">Hrmph...</content>
 	<content contentuid="ha9284da0gd161g47d7g8c19g7ac10878ee5c">*He sets his fishing pole down for a moment and rummages through a bag,*</content>
 	<content contentuid="hab87e202g3afcg45f6g9325gbfde5f0f015b">Speaking of, I have a few extra copies of this book I bet you&apos;d like. It&apos;s on the house.</content>

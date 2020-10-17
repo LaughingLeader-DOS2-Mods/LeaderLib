@@ -10,7 +10,15 @@ Ext.RegisterNetListener("LeaderLib_DisableFeature", function(channel, id)
 end)
 
 Ext.RegisterNetListener("LeaderLib_SyncFeatures", function(call, dataString)
-	Features = Ext.JsonParse(dataString)
+	if Features == nil then
+		Features = {}
+	end
+	local data = Ext.JsonParse(dataString)
+	if data ~= nil then
+		for k,b in pairs(data) do
+			Features[k] = b
+		end
+	end
 end)
 
 local function SetGlobalSettingsMetatables()

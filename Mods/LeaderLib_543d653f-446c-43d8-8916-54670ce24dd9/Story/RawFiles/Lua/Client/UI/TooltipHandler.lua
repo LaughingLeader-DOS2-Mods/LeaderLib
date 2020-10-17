@@ -55,6 +55,11 @@ local function OnStatusTooltip(character, status, tooltip)
 	end
 end
 
+local FarOutManFixSkillTypes = {
+	Cone = "Range",
+	Zone = "Range",
+}
+
 ---@param character EclCharacter
 ---@param skill string
 ---@param tooltip TooltipData
@@ -136,6 +141,19 @@ local function OnSkillTooltip(character, skill, tooltip)
 				if Features.ReplaceTooltipPlaceholders == true then
 					element.Label = GameHelpers.Tooltip.ReplacePlaceholders(element.Label, character)
 				end
+			end
+		end
+	end
+
+	if Features.FixFarOutManSkillRangeTooltip and (character ~= nil and character.Stats ~= nil and character.Stats.TALENT_FaroutDude == true) then
+		local skillType = Ext.StatGetAttribute(skill, "SkillType")
+		local rangeAttribute = FarOutManFixSkillTypes[skillType]
+		if rangeAttribute ~= nil then
+			local element = tooltip:GetElement("SkillRange")
+			if element ~= nil then
+				print(Ext.JsonStringify(element))
+				local range = Ext.StatGetAttribute(skill, rangeAttribute)
+				element.Value = tostring(range).."m"
 			end
 		end
 	end

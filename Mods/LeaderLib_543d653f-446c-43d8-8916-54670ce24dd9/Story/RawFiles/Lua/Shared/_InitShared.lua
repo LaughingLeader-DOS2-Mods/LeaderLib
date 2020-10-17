@@ -139,7 +139,8 @@ Features = {
 	StatusParamSkillDamage = false,
 	TooltipGrammarHelper = false,
 	WingsWorkaround = false,
-	FixRifleWeaponRequirement = false
+	FixRifleWeaponRequirement = false,
+	FixFarOutManSkillRangeTooltip = false,
 }
 
 if Ext.IsDeveloperMode() then

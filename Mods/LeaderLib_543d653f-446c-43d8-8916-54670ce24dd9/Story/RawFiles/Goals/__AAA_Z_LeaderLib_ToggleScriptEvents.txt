@@ -1,0 +1,40 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+KBSECTION
+//REGION OBJECT_SCRIPT_AUTO
+IF
+ObjectFlagSet(_TagOrFlag, _Object, _Instance)
+AND
+DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _TagOrFlag, _IsTag)
+AND
+NOT DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_Object, _TagOrFlag, _)
+THEN
+LeaderLib_ToggleScripts_EnableScriptForObject(_Object, _TagOrFlag, "LeaderLib", 0);
+
+IF
+ObjectFlagCleared(_TagOrFlag, _Object, _Instance)
+AND
+DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_Object, _TagOrFlag, _EnablingModID)
+THEN
+LeaderLib_ToggleScripts_DisableScriptForObjectAfterDelay(_Object, _TagOrFlag, _EnablingModID, 500);
+
+IF
+ObjectWasTagged(_Object, _TagOrFlag)
+AND
+DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _TagOrFlag, 1)
+AND
+NOT DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_Object, _TagOrFlag, _)
+THEN
+LeaderLib_ToggleScripts_EnableScriptForObject(_Object, _TagOrFlag, "LeaderLib", 0);
+
+IF
+ObjectLostTag(_Object, _TagOrFlag)
+AND
+DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_Object, _TagOrFlag, _EnablingModID)
+THEN
+LeaderLib_ToggleScripts_DisableScriptForObjectAfterDelay(_Object, _TagOrFlag, _EnablingModID, 500);
+//END_REGION
+EXITSECTION
+ENDEXITSECTION
+ParentTargetEdge "__AAA_Z_LaughingLeader_LeaderLib_Top"

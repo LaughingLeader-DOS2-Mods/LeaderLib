@@ -405,7 +405,7 @@ local function FormatTagText(content_array, group, isControllerMode)
 							finalText = tagName
 						end
 						if tagDesc ~= "" then
-							tagDesc = string.format("<font color='#C7A758'>%s</font>", GameHelpers.Tooltip.ReplacePlaceholders(tagDesc))
+							tagDesc = GameHelpers.Tooltip.ReplacePlaceholders(tagDesc)
 							if finalText ~= "" then
 								finalText = finalText .. "<br>"
 							end

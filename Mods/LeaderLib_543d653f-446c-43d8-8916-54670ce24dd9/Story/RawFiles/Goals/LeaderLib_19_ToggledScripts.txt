@@ -791,8 +791,8 @@ LeaderLib_ToggleScripts_Internal_EnableScriptForObject(_Object, _TagOrFlag, _Ena
 PROC
 LeaderLib_ToggleScripts_Internal_EnableScriptForObject((GUIDSTRING)_Object, (STRING)_TagOrFlag, (STRING)_EnablingModID, 1, 1)
 THEN
-LeaderLib_Tags_PreserveTag(_Object, _TagOrFlag);
 DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_Object, _TagOrFlag, _EnablingModID);
+LeaderLib_Tags_PreserveTag(_Object, _TagOrFlag);
 LeaderLib_ToggleScripts_EnableScriptForObject_OnActivated(_Object, _TagOrFlag, _EnablingModID);
 
 PROC

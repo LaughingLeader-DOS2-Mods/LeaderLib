@@ -93,7 +93,8 @@ end
 function GameHelpers.ExplodeProjectile(source, target, skill, skillLevel, noForcedHit)
     NRD_ProjectilePrepareLaunch()
     NRD_ProjectileSetString("SkillId", skill)
-
+    NRD_ProjectileSetInt("CanDeflect", 0)
+    
     local level = skillLevel
     if source ~= nil then
         NRD_ProjectileSetGuidString("Caster", source)

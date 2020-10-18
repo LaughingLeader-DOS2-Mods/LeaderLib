@@ -6,6 +6,8 @@ KBSECTION
 IF
 ObjectFlagSet(_TagOrFlag, _Object, _Instance)
 AND
+ObjectIsCharacter(_Object, 1)
+AND
 DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _TagOrFlag, _IsTag)
 AND
 NOT DB_LeaderLib_ToggleScripts_Temp_ActiveScripts(_Object, _TagOrFlag, _)
@@ -21,6 +23,8 @@ LeaderLib_ToggleScripts_DisableScriptForObjectAfterDelay(_Object, _TagOrFlag, _E
 
 IF
 ObjectWasTagged(_Object, _TagOrFlag)
+AND
+ObjectIsCharacter(_Object, 1)
 AND
 DB_LeaderLib_ToggleScripts_Registered(_GoalTitle, _TagOrFlag, 1)
 AND

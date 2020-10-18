@@ -443,9 +443,9 @@ local function FormatTagTooltip(ui, tooltip_mc, ...)
 		for i=0,length,1 do
 			local group = tooltip_mc.list.content_array[i]
 			if group ~= nil then
-				--print(string.format("[%i] groupID(%i) orderId(%s) icon(%s)", i, group.groupID or -1, group.orderId or -1, group.iconId))
+				--print(string.format("[%i] groupID(%i) orderId(%s) icon(%s) list(%s)", i, group.groupID or -1, group.orderId or -1, group.iconId, group.list))
 				if group.list ~= nil then
-					FormatTagText(tooltip_mc.list.content_array, group, false)
+					FormatTagText(group.list.content_array, group, false)
 				end
 			end
 		end
@@ -467,7 +467,7 @@ local function OnTooltipPositioned(ui, ...)
 			if root.offhandTooltip ~= nil then
 				tooltips[#tooltips+1] = root.offhandTooltip.tooltip_mc
 			end
-	
+
 			if #tooltips > 0 then
 				for i,tooltip_mc in pairs(tooltips) do
 					if Features.FormatTagElementTooltips then
@@ -611,6 +611,12 @@ local function OnItemTooltip(item, tooltip)
 			--print(Ext.JsonStringify(tooltip.Data))
 			local elements = tooltip:GetElements("ExtraProperties")
 			if elements ~= nil and #elements > 0 then
+				for i,v in pairs(elements) do
+					if StringHelpers.IsNullOrEmpty(StringHelpers.Trim(v.Label)) then
+						elements[i] = nil
+						tooltip:RemoveElement(v)
+					end
+				end
 				local result = GameHelpers.Tooltip.CondensePropertiesText(tooltip, elements)
 				if result ~= nil then
 					local combined = {

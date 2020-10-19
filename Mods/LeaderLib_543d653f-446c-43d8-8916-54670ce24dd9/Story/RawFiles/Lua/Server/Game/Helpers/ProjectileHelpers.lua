@@ -4,10 +4,11 @@
 ---@param forceHit boolean|nil
 ---@param sourcePosition number[]|nil
 ---@param hitObject string
-function GameHelpers.ShootProjectile(source, target, skill, forceHit, sourcePosition, hitObject)
+---@param canDeflect boolean
+function GameHelpers.ShootProjectile(source, target, skill, forceHit, sourcePosition, hitObject, canDeflect)
     NRD_ProjectilePrepareLaunch()
     NRD_ProjectileSetString("SkillId", skill)
-    
+    NRD_ProjectileSetInt("CanDeflect", canDeflect == true and 1 or 0)
     local level = 1
     if ObjectIsCharacter(source) == 1 then
         level = CharacterGetLevel(source)
@@ -62,32 +63,15 @@ function GameHelpers.ShootProjectile(source, target, skill, forceHit, sourcePosi
     NRD_ProjectileLaunch()
 end
 
-function GameHelpers.ShootProjectileAtPosition(source, tx, ty, tz, skill, forceHit)
-    NRD_ProjectilePrepareLaunch()
-    NRD_ProjectileSetString("SkillId", skill)
-    local level = 1
-    if ObjectIsCharacter(source) == 1 then
-        level = CharacterGetLevel(source)
-    else
-        SetStoryEvent(source, "LeaderLib_Commands_SetItemLevel")
-        level = GetVarInteger(source, "LeaderLib_Level")
-    end
-    NRD_ProjectileSetInt("CasterLevel", level)
-
-    NRD_ProjectileSetGuidString("Caster", source)
-    NRD_ProjectileSetGuidString("Source", source)
-    NRD_ProjectileSetVector3("TargetPosition", tx,ty,tz)
-
-    local pos = GameHelpers.Math.GetForwardPosition(source, 1.5)
-    local x,y,z = table.unpack(pos)
-    NRD_ProjectileSetVector3("SourcePosition", x,y,z)
-
-    if forceHit == true then
-        NRD_ProjectileSetVector3("HitObjectPosition", tx,ty,tz)
-    end
-
-    --print(string.format("Mods.LeaderLib.GameHelpers.ShootProjectileAtPosition(\"%s\", {%s,%s,%s}, \"%s\", %s)", source, tx,ty,tz, skill, forceHit))
-    NRD_ProjectileLaunch()
+---@param source string
+---@param x number
+---@param y number
+---@param z number
+---@param skill string
+---@param forceHit boolean|nil
+---@param canDeflect boolean
+function GameHelpers.ShootProjectileAtPosition(source, x, y, z, skill, forceHit, canDeflect)
+    GameHelpers.ShootProjectile(source, {x,y,z}, skill, forceHit, nil, nil, canDeflect)
 end
 
 function GameHelpers.ExplodeProjectile(source, target, skill, skillLevel, noForcedHit)

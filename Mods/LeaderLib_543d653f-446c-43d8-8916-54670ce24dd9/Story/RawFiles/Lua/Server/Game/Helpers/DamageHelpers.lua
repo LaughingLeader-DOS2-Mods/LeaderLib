@@ -293,7 +293,8 @@ end
 ---@param mainWeapon StatItem|nil
 ---@param offhandWeapon StatItem|nil
 ---@param applySkillProperties boolean|nil
-function GameHelpers.Damage.ApplySkillDamage(source, target, skill, hitParams, mainWeapon, offhandWeapon, applySkillProperties)
+---@param getDamageFunction function|nil
+function GameHelpers.Damage.ApplySkillDamage(source, target, skill, hitParams, mainWeapon, offhandWeapon, applySkillProperties, getDamageFunction)
     local hit = NRD_HitPrepare(target, source.MyGuid)
     if hitParams ~= nil then
         for k,v in pairs(hitParams) do
@@ -313,12 +314,21 @@ function GameHelpers.Damage.ApplySkillDamage(source, target, skill, hitParams, m
     local targetPos = table.pack(GetPosition(target))
     local level = source.Stats.Level
 
-    local damageList,deathType = Game.Math.GetSkillDamage(skillData, source.Stats, false, false, pos, targetPos, level, false, mainWeapon, offhandWeapon)
-    for _,damage in pairs(damageList:ToTable()) do
-        NRD_HitAddDamage(hit, damage.DamageType, damage.Amount)
+    if getDamageFunction == nil then
+        getDamageFunction = Game.Math.GetSkillDamage
     end
-    if not StringHelpers.IsNullOrEmpty(deathType) then
-        NRD_HitSetString(hit, "DeathType", deathType)
+
+    local b,damageList,deathType = xpcall(getDamageFunction, debug.traceback, skillData, source.Stats, false, false, pos, targetPos, level, false, mainWeapon, offhandWeapon)
+
+    if not b then
+        Ext.PrintError(damageList)
+    else
+        for _,damage in pairs(damageList:ToTable()) do
+            NRD_HitAddDamage(hit, damage.DamageType, damage.Amount)
+        end
+        if not StringHelpers.IsNullOrEmpty(deathType) then
+            NRD_HitSetString(hit, "DeathType", deathType)
+        end
+        NRD_HitExecute(hit)
     end
-    NRD_HitExecute(hit)
 end

@@ -9,7 +9,7 @@ end
 ---@param reduction number The amount to reduce the damage by, i.e. 0.5
 ---@param isHitHandle boolean Whether the handle is a hit or status handle.
 ---@return boolean
-local function ReduceDamage(target, attacker, handle, reduction, isHitHandle)
+function GameHelpers.Damage.ReduceDamage(target, attacker, handle, reduction, isHitHandle)
 	--PrintDebug("[LeaderLib_GameMechanics.lua:ReduceDamage] Reducing damage to ("..tostring(reduction)..") of total. Handle("..tostring(handle).."). Target("..tostring(target)..") Attacker("..tostring(attacker)..") IsHit("..tostring(is_hit)..")")
 	local success = false
     for i,damageType in Data.DamageTypes:Get() do
@@ -34,7 +34,8 @@ local function ReduceDamage(target, attacker, handle, reduction, isHitHandle)
 	return success
 end
 
-GameHelpers.ReduceDamage = ReduceDamage
+-- Legacy
+GameHelpers.ReduceDamage = GameHelpers.Damage.ReduceDamage
 
 ---Reduce damage by a percentage (ex. 0.5)
 ---@param target string
@@ -47,7 +48,7 @@ local function ReduceDamage_Call(target, attacker, handle_param, reduction_perc,
     local handle = Common.SafeguardParam(handle_param, "integer", nil)
     if handle == nil then error("[LeaderLib_GameMechanics.lua:ReduceDamage] Handle is null! Skipping.") end
     local reduction = Common.SafeguardParam(reduction_perc, "number", 0.5)
-    return ReduceDamage(target, attacker, handle, reduction, is_hit_param == 1)
+    return GameHelpers.Damage.ReduceDamage(target, attacker, handle, reduction, is_hit_param == 1)
 end
 
 Ext.NewCall(ReduceDamage_Call, "LeaderLib_Hit_ReduceDamage", "(GUIDSTRING)_Target, (GUIDSTRING)_Attacker, (INTEGER64)_Handle, (REAL)_Percentage, (INTEGER)_IsHitHandle")
@@ -88,6 +89,8 @@ local function IncreaseDamage(target, attacker, handle_param, increase_perc, is_
 end
 
 Ext.NewCall(IncreaseDamage, "LeaderLib_Hit_IncreaseDamage", "(GUIDSTRING)_Target, (GUIDSTRING)_Attacker, (INTEGER64)_Handle, (REAL)_Percentage, (INTEGER)_IsHitHandle")
+GameHelpers.Damage.IncreaseDamage = IncreaseDamage
+-- Legacy
 GameHelpers.IncreaseDamage = IncreaseDamage
 
 ---Redirect damage to another target.
@@ -98,7 +101,7 @@ GameHelpers.IncreaseDamage = IncreaseDamage
 ---@param reduction number
 ---@param isHit boolean
 ---@return boolean
-function GameHelpers.RedirectDamage(target, defender, attacker, handle, reduction, isHit)
+function GameHelpers.Damage.RedirectDamage(target, defender, attacker, handle, reduction, isHit)
 	PrintDebug("[LeaderLib_GameMechanics.lua:RedirectDamage] Reducing damage to ("..tostring(reduction)..") of total. Handle("..tostring(handle).."). Target("..tostring(target)..") Defender("..tostring(defender)..") Attacker("..tostring(attacker)..") IsHit("..tostring(isHit)..")")
     --if CanRedirectHit(defender, handle, hit_type) then -- Ignore surface, DoT, and reflected damage
     --local hit_type_name = NRD_StatusGetString(defender, handle, "DamageSourceType")

@@ -287,16 +287,16 @@ THEN
 DB_LeaderLib_CBS_Temp_EquipItem(_Object, _Item);
 
 IF
-ItemAddedToCharacter(_Item, _Object)
+ItemAddedToCharacter(_Item, _Char)
 AND
-DB_LeaderLib_CBS_Temp_EquipItem(_Object, _Item)
+DB_LeaderLib_CBS_Temp_EquipItem(_Char, _Item)
 AND
 ObjectExists(_Item, 1)
 AND
-ObjectExists(_Object, 1)
+ObjectExists(_Char, 1)
 THEN
-NOT DB_LeaderLib_CBS_Temp_EquipItem(_Object, _Item);
-CharacterEquipItem(_Object, _Item);
+NOT DB_LeaderLib_CBS_Temp_EquipItem(_Char, _Item);
+CharacterEquipItem((CHARACTERGUID)_Char, (ITEMGUID)_Item);
 //END_REGION
 
 //REGION UPDATER

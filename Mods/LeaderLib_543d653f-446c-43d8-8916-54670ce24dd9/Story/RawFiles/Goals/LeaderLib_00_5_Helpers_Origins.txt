@@ -94,7 +94,7 @@ ObjectExists(_Item, 1)
 AND
 ObjectExists(_Char, 1)
 THEN
-CharacterEquipItem(_Char, _Item);
+CharacterEquipItem((CHARACTERGUID)_Char, (ITEMGUID)_Item);
 //END_REGION
 
 //REGION GAME_LEVEL_INIT

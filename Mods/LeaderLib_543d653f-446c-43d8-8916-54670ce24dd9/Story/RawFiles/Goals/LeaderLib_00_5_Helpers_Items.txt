@@ -234,7 +234,7 @@ AND
 ObjectExists(_Character, 1)
 THEN
 NOT DB_LeaderLib_Helper_Temp_UnequippedItem(_Character, _Item);
-CharacterEquipItem(_Character, _Item);
+CharacterEquipItem((CHARACTERGUID)_Character, (ITEMGUID)_Item);
 
 IF
 StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Helper_OnEquipTimerFinished")
@@ -299,7 +299,7 @@ ObjectExists(_Item, 1)
 AND
 ObjectExists(_Character, 1)
 THEN
-CharacterEquipItem(_Character, _Item);
+CharacterEquipItem((CHARACTERGUID)_Character, (ITEMGUID)_Item);
 
 PROC
 LeaderLib_Helper_RefreshEquipment((CHARACTERGUID)_Character)
@@ -450,7 +450,7 @@ ObjectExists(_Item, 1)
 AND
 ObjectExists(_Character, 1)
 THEN
-CharacterEquipItem(_Character, _Item);
+CharacterEquipItem((CHARACTERGUID)_Character, (ITEMGUID)_Item);
 
 IF
 StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Commands_UnequipItemInSlot")
@@ -952,7 +952,7 @@ ObjectExists(_Item, 1)
 AND
 ObjectExists(_Char, 1)
 THEN
-CharacterEquipItem(_Char, _Item);
+CharacterEquipItem((CHARACTERGUID)_Char, (ITEMGUID)_Item);
 
 QRY
 LeaderLib_Helper_QRY_EquipOrAddItemTemplate((CHARACTERGUID)_Char, (STRING)_Template)
@@ -982,7 +982,7 @@ ObjectExists(_Item, 1)
 THEN
 NOT DB_LeaderLib_Helper_Temp_ItemFound(_Char, _Template, _Item);
 DB_LeaderLib_Helper_Temp_ItemFoundAndEquipped(_Char, _Template, _Item);
-CharacterEquipItem(_Char, _Item);
+CharacterEquipItem((CHARACTERGUID)_Char, (ITEMGUID)_Item);
 
 PROC
 LeaderLib_Helper_EquipOrAddItemTemplate((CHARACTERGUID)_Char, (STRING)_Template, (INTEGER)_ShowNotification)
@@ -1101,7 +1101,7 @@ ObjectExists(_Item, 1)
 AND
 ObjectExists(_Char, 1)
 THEN
-CharacterEquipItem(_Char, _Item);
+CharacterEquipItem((CHARACTERGUID)_Char, (ITEMGUID)_Item);
 // [END_NO_OSITOOLS]
 
 /* [OSITOOLS_ONLY]

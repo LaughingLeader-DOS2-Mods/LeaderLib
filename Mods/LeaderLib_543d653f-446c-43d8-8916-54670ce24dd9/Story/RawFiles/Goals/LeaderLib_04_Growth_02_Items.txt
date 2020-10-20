@@ -650,7 +650,7 @@ AND
 DB_LeaderLib_Growth_Items_Temp_ItemWasEquipped(_Character, _Item)
 THEN
 NOT DB_LeaderLib_Growth_Items_Temp_ItemWasEquipped(_Character, _Item);
-CharacterEquipItem(_Character, _Item);
+CharacterEquipItem((CHARACTERGUID)_Character, (ITEMGUID)_Item);
 
 IF
 CharacterItemEvent(_Character, _Item, "LeaderLib_OnGrowthItemTransformed")
@@ -714,13 +714,13 @@ ItemSetOwner(_NewItem, _Owner);
 LeaderLib_Growth_Items_Internal_Transform_EquipResetItem(_Character, _NewItem);
 
 PROC
-LeaderLib_Growth_Items_Internal_Transform_EquipResetItem((CHARACTERGUID)_Character, (ITEMGUID)_NewItem)
+LeaderLib_Growth_Items_Internal_Transform_EquipResetItem((CHARACTERGUID)_Character, (ITEMGUID)_Item)
 AND
-ObjectExists(_NewItem, 1)
+ObjectExists(_Item, 1)
 AND
 ObjectExists(_Character, 1)
 THEN
-CharacterEquipItem(_Character, _NewItem);
+CharacterEquipItem((CHARACTERGUID)_Character, (ITEMGUID)_Item);
 
 PROC
 LeaderLib_Growth_Items_Internal_Transform_EquipResetItem((CHARACTERGUID)_Character, (ITEMGUID)_NewItem)

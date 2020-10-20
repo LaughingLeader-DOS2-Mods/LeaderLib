@@ -1115,12 +1115,12 @@ LeaderLib_Helper_OnCopyEquipmentFinished(_CopyTo, _CopyFrom);
 PROC
 LeaderLib_Helper_Internal_EquipCopiedEquipment((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_Dummy)
 AND
-DB_LeaderLib_Helper_Temp_EquipmentCopy(_Dummy, _Item, _SLot)
+DB_LeaderLib_Helper_Temp_EquipmentCopy(_Dummy, _Item, _Slot)
 AND
-LeaderLib_Helper_QRY_UnequipInSlot(_CopyTo, _SLot) // Prevent moving unequipped items to the Dummy
+LeaderLib_Helper_QRY_UnequipInSlot(_CopyTo, _Slot) // Prevent moving unequipped items to the Dummy
 THEN
-CharacterEquipItem(_CopyTo, _Item);
-NOT DB_LeaderLib_Helper_Temp_EquipmentCopy(_Dummy, _Item, _SLot);
+CharacterEquipItem((CHARACTERGUID)_CopyTo, (ITEMGUID)_Item);
+NOT DB_LeaderLib_Helper_Temp_EquipmentCopy(_Dummy, _Item, _Slot);
 
 PROC
 LeaderLib_Helper_OnCopyEquipmentFinished((CHARACTERGUID)_CopyTo, (CHARACTERGUID)_CopyFrom)

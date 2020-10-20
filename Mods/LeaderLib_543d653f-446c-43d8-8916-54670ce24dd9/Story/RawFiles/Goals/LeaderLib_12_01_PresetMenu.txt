@@ -743,7 +743,7 @@ THEN
 NOT DB_LeaderLib_PresetMenu_Temp_HadSourceCollar(_Player, _Item);
 NOT DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, "Amulet", _Item);
 LeaderLog_Log("DEBUG", "[LeaderLib:PresetMenu:LeaderLib_Timers_PresetMenu_OnPresetApplied_EquipItems] Character had a source collar on. Re-equipping and locking.");
-CharacterEquipItem(_Player, _Item);
+CharacterEquipItem((CHARACTERGUID)_Player, (ITEMGUID)_Item);
 ItemLockUnEquip(_Item, 1);
 
 PROC
@@ -757,7 +757,7 @@ _Slot != "Shield"
 THEN
 NOT DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, _Slot, (ITEMGUID)_Item);
 // [BEGIN_NO_OSITOOLS]
-CharacterEquipItem(_Player, _Item);
+CharacterEquipItem((CHARACTERGUID)_Player, (ITEMGUID)_Item);
 // [END_NO_OSITOOLS]
 /* [OSITOOLS_ONLY]
 NRD_CharacterEquipItem(_Player, _Item, _Slot, 0, 0, 1, 1);
@@ -781,7 +781,7 @@ AND
 DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, "Weapon", (ITEMGUID)_Item)
 THEN
 // [BEGIN_NO_OSITOOLS]
-CharacterEquipItem(_Player, _Item);
+CharacterEquipItem((CHARACTERGUID)_Player, (ITEMGUID)_Item);
 // [END_NO_OSITOOLS]
 /* [OSITOOLS_ONLY]
 NRD_CharacterEquipItem(_Player, _Item, "Weapon", 0, 0, 1, 1);

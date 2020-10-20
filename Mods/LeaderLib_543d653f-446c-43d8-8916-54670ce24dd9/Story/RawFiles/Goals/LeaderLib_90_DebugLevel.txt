@@ -2003,7 +2003,7 @@ AND
 CharacterGetLevel(_Char, _Level)
 THEN
 //ItemLevelUpTo(_Item, _Level);
-CharacterEquipItem(_Char, _Item);
+CharacterEquipItem((CHARACTERGUID)_Char, (ITEMGUID)_Item);
 
 IF
 ItemTemplateAddedToCharacter(_TemplateGUID, CHARACTERGUID_S_LeaderLib_Dummy_TargetHelper_A_36069245-0e2d-44b1-9044-6797bd29bb15, _Item)

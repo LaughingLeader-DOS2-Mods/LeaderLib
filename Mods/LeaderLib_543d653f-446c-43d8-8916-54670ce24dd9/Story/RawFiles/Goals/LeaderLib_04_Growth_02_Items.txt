@@ -643,6 +643,10 @@ LeaderLib_Growth_Items_Internal_Transform_EquipItem(_Character, _Item);
 PROC
 LeaderLib_Growth_Items_Internal_Transform_EquipItem((CHARACTERGUID)_Character, (ITEMGUID)_Item)
 AND
+ObjectExists(_Item, 1)
+AND
+ObjectExists(_Character, 1)
+AND
 DB_LeaderLib_Growth_Items_Temp_ItemWasEquipped(_Character, _Item)
 THEN
 NOT DB_LeaderLib_Growth_Items_Temp_ItemWasEquipped(_Character, _Item);
@@ -712,10 +716,18 @@ LeaderLib_Growth_Items_Internal_Transform_EquipResetItem(_Character, _NewItem);
 PROC
 LeaderLib_Growth_Items_Internal_Transform_EquipResetItem((CHARACTERGUID)_Character, (ITEMGUID)_NewItem)
 AND
+ObjectExists(_NewItem, 1)
+AND
+ObjectExists(_Character, 1)
+THEN
+CharacterEquipItem(_Character, _NewItem);
+
+PROC
+LeaderLib_Growth_Items_Internal_Transform_EquipResetItem((CHARACTERGUID)_Character, (ITEMGUID)_NewItem)
+AND
 DB_LeaderLib_Growth_Items_Temp_ItemWasEquipped(_Character, _OldItem)
 THEN
 NOT DB_LeaderLib_Growth_Items_Temp_ItemWasEquipped(_Character, _OldItem);
-CharacterEquipItem(_Character, _NewItem);
 //END_REGION
 
 EXITSECTION

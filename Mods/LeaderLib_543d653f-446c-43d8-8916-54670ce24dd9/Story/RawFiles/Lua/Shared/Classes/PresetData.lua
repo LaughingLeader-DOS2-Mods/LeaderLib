@@ -91,6 +91,7 @@ function PresetData:AddEquipmentToCharacter(char, targetRarity, skipSlots)
 							ItemToInventory(item, char, 1, 0, 1)
 							if ItemIsEquipable(item) == 1 then
 								CharacterEquipItem(char, item)
+								--NRD_CharacterEquipItem(char, item, stat.Slot, 0, 0, 1, 1)
 							end
 						end
 					end

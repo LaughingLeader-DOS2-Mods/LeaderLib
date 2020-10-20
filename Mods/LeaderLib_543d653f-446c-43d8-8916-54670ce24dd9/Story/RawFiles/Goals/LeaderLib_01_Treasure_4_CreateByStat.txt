@@ -290,6 +290,10 @@ IF
 ItemAddedToCharacter(_Item, _Object)
 AND
 DB_LeaderLib_CBS_Temp_EquipItem(_Object, _Item)
+AND
+ObjectExists(_Item, 1)
+AND
+ObjectExists(_Object, 1)
 THEN
 NOT DB_LeaderLib_CBS_Temp_EquipItem(_Object, _Item);
 CharacterEquipItem(_Object, _Item);

@@ -729,6 +729,15 @@ DB_NOOP(1);
 PROC
 ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied_EquipItems")
 AND
+DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, _Slot, (ITEMGUID)_Item)
+AND
+ObjectExists(_Item, 0)
+THEN
+NOT DB_LeaderLib_PresetMenu_Temp_Equipment(_Player, _Slot, (ITEMGUID)_Item);
+
+PROC
+ProcObjectTimerFinished((CHARACTERGUID)_Player, "LeaderLib_Timers_PresetMenu_OnPresetApplied_EquipItems")
+AND
 DB_LeaderLib_PresetMenu_Temp_HadSourceCollar(_Player, _Item)
 THEN
 NOT DB_LeaderLib_PresetMenu_Temp_HadSourceCollar(_Player, _Item);

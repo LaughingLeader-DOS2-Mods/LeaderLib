@@ -89,6 +89,10 @@ PROC
 LeaderLib_Origins_Internal_MoveGlobalItem((CHARACTERGUID)_Char, (ITEMGUID)_Item, 1)
 AND
 ItemIsEquipable(_Item, 1)
+AND
+ObjectExists(_Item, 1)
+AND
+ObjectExists(_Char, 1)
 THEN
 CharacterEquipItem(_Char, _Item);
 //END_REGION

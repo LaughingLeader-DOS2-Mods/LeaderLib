@@ -146,7 +146,9 @@ function GameHelpers.Item.GetEquippedTaggedItemSlot(char, tag)
 end
 
 function EquipInSlot(char, item, slot)
-    NRD_CharacterEquipItem(char, item, slot, 0, 0, 1, 1)
+    if ObjectExists(item) == 1 and ObjectExists(char) == 1 then
+        NRD_CharacterEquipItem(char, item, slot, 0, 0, 1, 1)
+    end
 end
 
 GameHelpers.Item.EquipInSlot = EquipInSlot

@@ -228,9 +228,20 @@ IF
 StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Helper_OnEquipTimerFinished")
 AND
 DB_LeaderLib_Helper_Temp_UnequippedItem(_Character, _Item)
+AND
+ObjectExists(_Item, 1)
+AND
+ObjectExists(_Character, 1)
 THEN
 NOT DB_LeaderLib_Helper_Temp_UnequippedItem(_Character, _Item);
 CharacterEquipItem(_Character, _Item);
+
+IF
+StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Helper_OnEquipTimerFinished")
+AND
+DB_LeaderLib_Helper_Temp_UnequippedItem(_Character, _Item)
+THEN
+NOT DB_LeaderLib_Helper_Temp_UnequippedItem(_Character, _Item);
 
 PROC
 LeaderLib_Helper_UnequipAllAndSave((CHARACTERGUID)_Character)
@@ -283,6 +294,10 @@ PROC
 LeaderLib_Helper_Internal_EquipItem((CHARACTERGUID)_Character, (ITEMGUID)_Item)
 AND
 NOT DB_CustomUseItemResponse(_Character, _Item, 0)
+AND
+ObjectExists(_Item, 1)
+AND
+ObjectExists(_Character, 1)
 THEN
 CharacterEquipItem(_Character, _Item);
 
@@ -430,9 +445,12 @@ IF
 CharacterItemEvent(_Character, _Item, "LeaderLib_Commands_EquipItem")
 AND
 ItemIsEquipable(_Item, 1)
+AND
+ObjectExists(_Item, 1)
+AND
+ObjectExists(_Character, 1)
 THEN
 CharacterEquipItem(_Character, _Item);
-//CharacterUseItem(_Character, _Item, "");
 
 IF
 StoryEvent((CHARACTERGUID)_Character, "LeaderLib_Commands_UnequipItemInSlot")
@@ -929,6 +947,10 @@ AND
 LeaderLib_Helper_QRY_AddItemTemplateTo(_Char, _Template, 1, _ShowNotification)
 AND
 GetItemForItemTemplateInInventory(_Char, _Template, _Item)
+AND
+ObjectExists(_Item, 1)
+AND
+ObjectExists(_Char, 1)
 THEN
 CharacterEquipItem(_Char, _Item);
 
@@ -950,9 +972,13 @@ LeaderLib_Helper_EquipOrAddItemTemplate(_Char, _Template, 1);
 PROC
 LeaderLib_Helper_EquipOrAddItemTemplate((CHARACTERGUID)_Char, (STRING)_Template, (INTEGER)_ShowNotification)
 AND
+ObjectExists(_Char, 1)
+AND
 LeaderLib_Helper_QRY_GetItemByTemplate(_Char, _Template)
 AND
 DB_LeaderLib_Helper_Temp_ItemFound(_Char, _Template, _Item)
+AND
+ObjectExists(_Item, 1)
 THEN
 NOT DB_LeaderLib_Helper_Temp_ItemFound(_Char, _Template, _Item);
 DB_LeaderLib_Helper_Temp_ItemFoundAndEquipped(_Char, _Template, _Item);
@@ -1070,6 +1096,10 @@ SetStoryEvent(_Proxy, "LeaderLib_CreateByStat_Generate");
 // [BEGIN_NO_OSITOOLS]
 PROC
 LeaderLib_Helper_EquipInSlot((CHARACTERGUID)_Char, (ITEMGUID)_Item, (STRING)_Slot)
+AND
+ObjectExists(_Item, 1)
+AND
+ObjectExists(_Char, 1)
 THEN
 CharacterEquipItem(_Char, _Item);
 // [END_NO_OSITOOLS]
@@ -1077,6 +1107,10 @@ CharacterEquipItem(_Char, _Item);
 /* [OSITOOLS_ONLY]
 PROC
 LeaderLib_Helper_EquipInSlot((CHARACTERGUID)_Char, (ITEMGUID)_Item, (STRING)_Slot)
+AND
+ObjectExists(_Item, 1)
+AND
+ObjectExists(_Char, 1)
 AND
 String(_Char, _CharStr)
 AND

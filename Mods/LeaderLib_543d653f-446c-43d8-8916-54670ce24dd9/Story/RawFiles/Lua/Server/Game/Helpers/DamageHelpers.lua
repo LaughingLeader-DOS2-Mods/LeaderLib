@@ -56,39 +56,44 @@ Ext.NewCall(ReduceDamage_Call, "LeaderLib_Hit_ReduceDamage", "(GUIDSTRING)_Targe
 ---Increase damage by a percentage (0.5).
 ---@param target string
 ---@param attacker string
----@param handle_param integer
----@param increase_perc number
----@param is_hit_param integer
+---@param handle integer
+---@param damageIncrease number
+---@param isHitType boolean
 ---@return boolean
-local function IncreaseDamage(target, attacker, handle_param, increase_perc, is_hit_param)
-    local handle = Common.SafeguardParam(handle_param, "number", nil)
+local function IncreaseDamage(target, attacker, handle, damageIncrease, isHitType)
+    handle = Common.SafeguardParam(handle, "number", nil)
     if handle == nil then error("[LeaderLib_GameMechanics.lua:IncreaseDamage] Handle is null! Skipping.") end
-    local increase_amount = Common.SafeguardParam(increase_perc, "number", 0.5)
-    local is_hit = Common.SafeguardParam(is_hit_param, "number", 0)
+    damageIncrease = Common.SafeguardParam(damageIncrease, "number", 0.5)
+    local isHit = isHitType == true or isHitType == 1
 	local success = false
     for i,damageType in Data.DamageTypes:Get() do
         local damage = nil
-        if is_hit == 0 then
+        if isHit ~= true then
             damage = NRD_HitStatusGetDamage(target, handle, damageType) or 0
         else
             damage = NRD_HitGetDamage(handle, damageType) or 0
         end
         if damage > 0 then
-            --local increased_damage = damage + math.ceil(damage * increase_amount)
             --NRD_HitStatusClearDamage(target, handle, damageType)
-            local increased_damage = math.ceil(damage * increase_amount)
-            if is_hit == 0 then
-                NRD_HitStatusAddDamage(target, handle, damageType, increased_damage)
-            else
-                NRD_HitAddDamage(handle, damageType, increased_damage)
+            local increased_damage = Ext.Round(damage * damageIncrease)
+            if increased_damage ~= 0 then
+                if isHit ~= true then
+                    NRD_HitStatusAddDamage(target, handle, damageType, increased_damage)
+                else
+                    NRD_HitAddDamage(handle, damageType, increased_damage)
+                end
+                success = true
             end
-			success = true
         end
 	end
 	return success
 end
 
-Ext.NewCall(IncreaseDamage, "LeaderLib_Hit_IncreaseDamage", "(GUIDSTRING)_Target, (GUIDSTRING)_Attacker, (INTEGER64)_Handle, (REAL)_Percentage, (INTEGER)_IsHitHandle")
+local function IncreaseDamage_Call(target, attacker, handle, amount, is_hit_param)
+    IncreaseDamage(target, attacker, handle, amount, is_hit_param == 1)
+end
+
+Ext.NewCall(IncreaseDamage_Call, "LeaderLib_Hit_IncreaseDamage", "(GUIDSTRING)_Target, (GUIDSTRING)_Attacker, (INTEGER64)_Handle, (REAL)_Percentage, (INTEGER)_IsHitHandle")
 GameHelpers.Damage.IncreaseDamage = IncreaseDamage
 -- Legacy
 GameHelpers.IncreaseDamage = IncreaseDamage

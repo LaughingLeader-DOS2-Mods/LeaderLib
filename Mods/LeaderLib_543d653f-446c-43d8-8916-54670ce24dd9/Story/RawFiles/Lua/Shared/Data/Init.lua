@@ -562,3 +562,12 @@ Data.UIType = {
 	uiFade = 16,
 	worldTooltip = 48,
 }
+
+Data.ArmorType = {
+	None = "None",
+	Cloth = "Cloth",
+	Leather = "Leather",
+	Mail = "Male",
+	Plate = "Plate",
+	Robe = "Robe"
+}

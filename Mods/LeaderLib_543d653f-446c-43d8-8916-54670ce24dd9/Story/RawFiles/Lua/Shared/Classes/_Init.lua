@@ -6,6 +6,7 @@ Ext.Require("Shared/Classes/SkillData/HitData.lua")
 Ext.Require("Shared/Classes/SkillData/ProjectileHitData.lua")
 Ext.Require("Shared/Classes/SkillData/SkillEventData.lua")
 Ext.Require("Shared/Classes/PresetData.lua")
+Ext.Require("Shared/Classes/VisualElementData.lua")
 Ext.Require("Shared/Classes/ModSettingsClasses.lua")
 
 if Ext.IsServer() then

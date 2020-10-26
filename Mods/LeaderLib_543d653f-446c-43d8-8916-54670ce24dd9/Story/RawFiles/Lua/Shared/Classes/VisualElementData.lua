@@ -5,7 +5,7 @@ local VisualResourceData = {
 	VisualSlot = -1,
 	IfEmpty = "",
 }
-VisualResourceData.__visualSlot = VisualResourceData
+VisualResourceData.__index = VisualResourceData
 
 ---@param resourceName string
 ---@param visualSlot integer
@@ -51,28 +51,11 @@ Classes.VisualResourceData = VisualResourceData
 ---@param equipped boolean
 local function OnEquipmentChanged(self, char, item, equipped)
 	local armorType = item.Stats.ArmorType
-	local slot = item.Stats.Slot
+	local slot = GameHelpers.Item.GetEquippedSlot(char.MyGuid, item.MyGuid) or item.Stats.Slot
 	if not equipped then
 		armorType = "None"
 	end
-	local visualElements = self:GetVisuals(armorType, slot)
-	if visualElements ~= nil then
-		for i,element in pairs(visualElements) do
-			local changeVisual = true
-			if armorType == "None" and element.IfEmpty ~= "" then
-				local otherItem = char.Stats:GetItemBySlot(element.IfEmpty)
-				if otherItem ~= nil then
-					changeVisual = false
-				end
-			end
-			if changeVisual then
-				element:SetVisualOnCharacter(char.MyGuid)
-				if Vars.DebugMode then
-					Ext.Print("[LeaderLib:OnEquipmentChanged] char(%s) ArmorType(%s) Slot(%s) Resource(%s) VisualSet(%s)", char.MyGuid, armorType, slot, element.Resource, self.VisualSet)
-				end
-			end
-		end
-	end
+	self:ApplyVisualsForArmorType(char, armorType, slot)
 end
 
 ---@class VisualElementData
@@ -81,9 +64,10 @@ local VisualElementData = {
 	---@type table<string, VisualResourceData>
 	Visuals = {},
 	VisualSet = "",
-	OnEquipmentChanged = OnEquipmentChanged
+	OnEquipmentChanged = OnEquipmentChanged,
+	OnEquipmentChangedDefault = OnEquipmentChanged
 }
-VisualElementData.__visualSlot = VisualElementData
+VisualElementData.__index = VisualElementData
 
 ---@param params table|nil
 ---@return VisualElementData
@@ -116,7 +100,7 @@ end
 ---@param visualSlot integer
 ---@param params table|nil
 ---@return VisualElementData
-function VisualElementData:VisualForSlot(resource, armorType, slot, visualSlot, params)
+function VisualElementData:AddVisualForSlot(resource, armorType, slot, visualSlot, params)
 	local armorTypeData = self.Visuals[armorType]
 	if armorTypeData == nil then
 		armorTypeData = {}
@@ -133,6 +117,9 @@ end
 ---@param params table|nil
 ---@return VisualElementData
 function VisualElementData:AddVisualsForType(armorType, visuals)
+	if self == nil or armorType == nil or visuals == nil then
+		return
+	end
 	local armorTypeData = self.Visuals[armorType]
 	if armorTypeData == nil then
 		armorTypeData = {}
@@ -163,6 +150,30 @@ function VisualElementData:GetVisuals(armorType, slot)
 		end
 	end
 	return nil
+end
+
+---@param char EsvCharacter
+---@param armorType string
+---@param slot string
+function VisualElementData:ApplyVisualsForArmorType(char, armorType, slot)
+	local visualElements = self:GetVisuals(armorType, slot)
+	if visualElements ~= nil then
+		for i,element in pairs(visualElements) do
+			local changeVisual = true
+			if armorType == "None" and element.IfEmpty ~= "" then
+				local otherItem = char.Stats:GetItemBySlot(element.IfEmpty)
+				if otherItem ~= nil then
+					changeVisual = false
+				end
+			end
+			if changeVisual then
+				element:SetVisualOnCharacter(char.MyGuid)
+				if Vars.DebugMode then
+					Ext.Print(string.format("[LeaderLib:OnEquipmentChanged] char(%s) ArmorType(%s) Slot(%s) Resource(%s) VisualSet(%s)", char.MyGuid, armorType, slot, element.Resource, self.VisualSet))
+				end
+			end
+		end
+	end
 end
 
 Classes.VisualElementData = VisualElementData

@@ -112,6 +112,9 @@ function GameHelpers.Item.CreateItemByStat(statName, level, rarity, skipLevelChe
     return nil
 end
 
+---@param char string
+---@param item string
+---@return string|nil
 function GameHelpers.Item.GetEquippedSlot(char, item)
     for i,slot in Data.EquipmentSlots:Get() do
         local slotItem = StringHelpers.GetUUID(CharacterGetEquippedItem(char, slot))
@@ -122,6 +125,9 @@ function GameHelpers.Item.GetEquippedSlot(char, item)
     return nil
 end
 
+---@param char string
+---@param template string
+---@return string|nil
 function GameHelpers.Item.GetEquippedTemplateSlot(char, template)
     template = StringHelpers.GetUUID(template)
     for i,slot in Data.EquipmentSlots:Get() do
@@ -135,6 +141,9 @@ function GameHelpers.Item.GetEquippedTemplateSlot(char, template)
     return nil
 end
 
+---@param char string
+---@param tag string
+---@return string|nil
 function GameHelpers.Item.GetEquippedTaggedItemSlot(char, tag)
     for i,slot in Data.EquipmentSlots:Get() do
         local slotItem = StringHelpers.GetUUID(CharacterGetEquippedItem(char, slot))

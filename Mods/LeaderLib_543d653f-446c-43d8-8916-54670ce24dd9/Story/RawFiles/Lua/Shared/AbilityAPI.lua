@@ -160,7 +160,9 @@ if Ext.IsClient() then
 				end
 			end
 		else
-			Ext.PrintError("[LeaderLib:addMissingAbilities] Failed to finding starting index for ability_array!")
+			if Vars.DebugMode then
+				Ext.PrintError("[LeaderLib:addMissingAbilities] Failed to finding starting index for ability_array!")
+			end
 		end
 	end
 

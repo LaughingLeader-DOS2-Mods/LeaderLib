@@ -2,6 +2,21 @@ local MessageData = Classes["MessageData"]
 
 local pointAddedSound = "UI_Game_CharacterSheet_Attribute_Plus_Click_Release"
 
+local lastHelmetState = {}
+
+local function OnSetHelmetOptionState(ui, method, state)
+	local uuid = Client:GetCharacter().MyGuid
+	if lastHelmetState[uuid] ~= state then
+		local state = math.tointeger(state)
+		local data = {
+			UUID = uuid,
+			State = state
+		}
+		Ext.PostMessageToServer("LeaderLib_OnHelmetToggled", Ext.JsonStringify(data))
+		lastHelmetState[uuid] = state
+	end
+end
+
 local function OnSheetEvent(ui, call, ...)
 	local params = Common.FlattenTable({...})
 	--PrintDebug("[LeaderLib_CharacterSheet.lua:OnSheetEvent] Event called. call("..tostring(call)..") params("..tostring(Common.Dump(params))..")")
@@ -25,6 +40,13 @@ local function OnSheetEvent(ui, call, ...)
 		if buttonID == ID.HOTBAR.CharacterSheet then
 			Ext.PostMessageToServer("LeaderLib_GlobalMessage", ID.MESSAGE.STORE_PARTY_VALUES)
 		end
+	elseif call == "setHelmetOption" then
+		local state = math.tointeger(params[1])
+		local data = {
+			UUID = Client:GetCharacter().MyGuid,
+			State = state
+		}
+		Ext.PostMessageToServer("LeaderLib_OnHelmetToggled", Ext.JsonStringify(data))
 	end
 end
 
@@ -112,9 +134,8 @@ local function RegisterListeners()
 		for i,v in pairs(sheetEvents) do
 			Ext.RegisterUICall(ui, v, OnSheetEvent)
 		end
-		if data.Settings.EnableDeveloperTests == true and Ext.IsDeveloperMode() then
-			Ext.RegisterUIInvokeListener(ui, "updateArraySystem", OnCharacterSheetUpdating)
-		end
+		Ext.RegisterUIInvokeListener(ui, "updateArraySystem", OnCharacterSheetUpdating)
+		Ext.RegisterUIInvokeListener(ui, "setHelmetOptionState", OnSetHelmetOptionState)
 		PrintDebug("[LeaderLib_CharacterSheet.lua:RegisterListeners] Found (characterSheet.swf). Registered listeners.")
 	else
 		PrintDebug("[LeaderLib_CharacterSheet.lua:RegisterListeners] Failed to find Public/Game/GUI/characterSheet.swf")

@@ -148,10 +148,10 @@ if Ext.IsServer() then
 		local character = Ext.GetCharacter(uuid)
 		local isHost = StringHelpers.GetUUID(CharacterGetHostCharacter()) == uuid
 		if SharedData.CharacterData[profileId] == nil then
-			SharedData.CharacterData[profileId] = ClientCharacterData:Create(uuid, id, profileId, character.NetID, isHost, isInCharacterCreation)
+			SharedData.CharacterData[profileId] = ClientCharacterData:Create(character.MyGuid, id, profileId, character.NetID, isHost, isInCharacterCreation)
 		else
 			local data = SharedData.CharacterData[profileId]
-			data:Set(uuid, id, profileId, character.NetID, isHost, isInCharacterCreation)
+			data:SetClientCharacterData(uuid, id, profileId, character.NetID, isHost, isInCharacterCreation)
 		end
 		GameHelpers.Data.StartSyncTimer()
 	end
@@ -306,7 +306,7 @@ if Ext.IsClient() then
 		local data = Ext.JsonParse(payload)
 		if data ~= nil then
 			SharedData = data.Shared
-			Client:Set(data.ID, data.Profile, data.IsHost, GetClientCharacter(data.Profile))
+			Client:SetClientData(data.ID, data.Profile, data.IsHost, GetClientCharacter(data.Profile))
 			if #Listeners.ClientDataSynced > 0 then
 				for i,callback in pairs(Listeners.ClientDataSynced) do
 					local status,err = xpcall(callback, debug.traceback, SharedData.ModData)

@@ -37,7 +37,7 @@ function ClientCharacterData:CreateFromCharacter(character, id, profile, isHost,
 	return this
 end
 
-function ClientCharacterData:Set(id, profile, uuid, netid, isHost, isInCharacterCreation)
+function ClientCharacterData:SetClientCharacterData(uuid, id, profile, netid, isHost, isInCharacterCreation)
 	if id ~= nil then
 		self.ID = id
 	end
@@ -112,7 +112,7 @@ end
 ---@param profile string
 ---@param isHost boolean
 ---@param character ClientCharacterData
-function ClientData:Set(id, profile, isHost, character)
+function ClientData:SetClientData(id, profile, isHost, character)
 	if id ~= nil then
 		self.ID = id
 	end
@@ -124,6 +124,7 @@ function ClientData:Set(id, profile, isHost, character)
 	end
 	if character ~= nil then
 		self.Character = character
+		print("ClientData:Set", self.Character.ID, self.Character.UUID)
 	end
 end
 

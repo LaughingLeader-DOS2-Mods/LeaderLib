@@ -122,9 +122,7 @@ if Ext.IsClient() then
 					total = total + 1
 				end
 			end
-			PrintDebug(string.format("[LeaderLib:addMissingAbilities] Added abilities to the character sheet. i[%s] Total(%s)", i, total))
-		else
-			--Ext.PrintError("[LeaderLib:addMissingAbilities] Failed to finding starting index for ability_array!")
+			--PrintDebug(string.format("[LeaderLib:addMissingAbilities] Added abilities to the character sheet. i[%s] Total(%s)", i, total))
 		end
 	end
 
@@ -158,10 +156,6 @@ if Ext.IsClient() then
 					i = i + 5
 					--main.stats_mc.setAbilityPlusVisible(data.Civil,data.Group,abilityID,hasPoints)
 				end
-			end
-		else
-			if Vars.DebugMode then
-				Ext.PrintError("[LeaderLib:addMissingAbilities] Failed to finding starting index for ability_array!")
 			end
 		end
 	end

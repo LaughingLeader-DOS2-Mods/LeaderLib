@@ -64,6 +64,7 @@ local FarOutManFixSkillTypes = {
 ---@param skill string
 ---@param tooltip TooltipData
 local function OnSkillTooltip(character, skill, tooltip)
+	--print(Ext.JsonStringify(tooltip.Data))
 	if Features.TooltipGrammarHelper then
 		-- This fixes the double spaces from removing the "tag" part of Requires tag
 		for i,element in pairs(tooltip:GetElements("SkillRequiredEquipment")) do
@@ -96,7 +97,9 @@ local function OnSkillTooltip(character, skill, tooltip)
 		end
 	end
 
-	if Features.ReplaceTooltipPlaceholders or (Features.FixChaosDamageDisplay or Features.FixCorrosiveMagicDamageDisplay) or Features.TooltipGrammarHelper then
+	if Features.ReplaceTooltipPlaceholders
+	or (Features.FixChaosDamageDisplay or Features.FixCorrosiveMagicDamageDisplay)
+	or Features.TooltipGrammarHelper then
 		for i,element in pairs(tooltip:GetElements("SkillDescription")) do
 			if element ~= nil then
 				if Features.TooltipGrammarHelper == true then
@@ -486,18 +489,22 @@ local function OnTooltipPositioned(ui, ...)
 	end
 end
 
----@param item EsvItem
+---RootTemplate -> Skill -> Enabled
+---@type table<string,table<string,boolean>>
+local skillBookAssociatedSkills = {}
+
+---@param item EclItem
 ---@param tooltip TooltipData
 local function OnItemTooltip(item, tooltip)
 	if tooltip == nil then
 		return
 	end
-	--print(item.StatsId, Ext.JsonStringify(item.WorldPos), Ext.JsonStringify(tooltip.Data))
 	if item ~= nil then
+		print(item.StatsId, Ext.JsonStringify(item.WorldPos), Ext.JsonStringify(tooltip.Data))
 		lastItem = item
-		if Features.FixItemAPCost == true then
-			local character = Client:GetCharacter()
-			if character ~= nil then
+		local character = Client:GetCharacter()
+		if character ~= nil then
+			if Features.FixItemAPCost == true then
 				local apElement = tooltip:GetElement("ItemUseAPCost")
 				if apElement ~= nil then
 					local ap = apElement.Value
@@ -514,6 +521,39 @@ local function OnItemTooltip(item, tooltip)
 							end
 						end
 						apElement.Value = ap
+					end
+				end
+			end
+
+			if item.RootTemplate ~= nil and not StringHelpers.IsNullOrEmpty(item.RootTemplate.Id) then
+				local skillBookSkillDisplayName = GameHelpers.Tooltip.GetElementAttribute(tooltip:GetElement("SkillbookSkill"), "Value")
+				if not StringHelpers.IsNullOrEmpty(skillBookSkillDisplayName) then
+					local savedSkills = skillBookAssociatedSkills[item.RootTemplate.Id]
+					if savedSkills == nil then
+						local tooltipIcon = GameHelpers.Tooltip.GetElementAttribute(tooltip:GetElement("SkillIcon"), "Label")
+						local tooltipSkillDescription = GameHelpers.Tooltip.GetElementAttribute(tooltip:GetElement("SkillDescription"), "Label")
+						for i,skill in pairs(Ext.GetStatEntries("SkillData")) do
+							local icon = Ext.StatGetAttribute(skill, "Icon")
+							if tooltipIcon == icon then
+								local displayName = GameHelpers.GetStringKeyText(Ext.StatGetAttribute(skill, "DisplayName"))
+								local description = GameHelpers.GetStringKeyText(Ext.StatGetAttribute(skill, "Description"))
+		
+								if displayName == skillBookSkillDisplayName and description == tooltipSkillDescription then
+									if skillBookAssociatedSkills[item.RootTemplate.Id] == nil then
+										skillBookAssociatedSkills[item.RootTemplate.Id] = {}
+										savedSkills = skillBookAssociatedSkills[item.RootTemplate.Id]
+									end
+									skillBookAssociatedSkills[item.RootTemplate.Id][skill] = true
+								end
+							end
+						end
+					end
+					if savedSkills ~= nil then
+						for skill,b in pairs(savedSkills) do
+							if b then
+								OnSkillTooltip(character, skill, tooltip)
+							end
+						end
 					end
 				end
 			end

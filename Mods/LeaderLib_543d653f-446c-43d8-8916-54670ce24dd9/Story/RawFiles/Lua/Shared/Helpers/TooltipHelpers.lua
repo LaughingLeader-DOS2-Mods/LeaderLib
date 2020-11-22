@@ -243,4 +243,17 @@ function GameHelpers.Tooltip.CondensePropertiesText(tooltip, inputElements, addC
 	end
 end
 
+---@alias TooltipElementParam table<string,string|number>
+
+---@param element TooltipElementParam
+---@param attribute string
+---@param fallback any|nil An optional fallback value to use. Returns an empty string by default.
+---@return string|number
+function GameHelpers.Tooltip.GetElementAttribute(element, attribute, fallback)
+	if element ~= nil and element[attribute] ~= nil then
+		return element[attribute]
+	end
+	return fallback or ""
+end
+
 end

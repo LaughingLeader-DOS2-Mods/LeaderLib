@@ -58,16 +58,17 @@ function SkillEventData:Clear()
 end
 
 ---@alias SkillEventDataTarget string|number[]
+---@alias SkillEventDataForEachCallback fun(target:SkillEventDataTarget, targetType:string, self:SkillEventData):void
 
 ---Run a function on all target objects. The function is wrapped in an error handler.
----@param func fun(target:SkillEventDataTarget):void
+---@param func SkillEventDataForEachCallback
 ---@param mode integer Run the function on objects, positions, or both. Defaults to just objects. 0:Objects, 1:Positions, 2:All
 function SkillEventData:ForEach(func, mode)
 	if mode == nil then mode = 0 end
 	local runOnObjects = mode ~= 1 and self.TotalTargetObjects > 0
 	if runOnObjects then
 		for i,v in pairs(self.TargetObjects) do
-			local status,err = xpcall(func, debug.traceback, v)
+			local status,err = xpcall(func, debug.traceback, v, "string", self)
 			if not status then
 				Ext.PrintError("[LeaderLib:SkillEventData:ForEach] Error:", err)
 				Ext.PrintError(err)
@@ -77,7 +78,7 @@ function SkillEventData:ForEach(func, mode)
 	local runOnPositions = mode ~= 0 and self.TotalTargetPositions > 0
 	if runOnPositions then
 		for i,v in pairs(self.TargetPositions) do
-			local status,err = xpcall(func, debug.traceback, v)
+			local status,err = xpcall(func, debug.traceback, v, "table", self)
 			if not status then
 				Ext.PrintError("[LeaderLib:SkillEventData:ForEach] Error:", err)
 				Ext.PrintError(err)

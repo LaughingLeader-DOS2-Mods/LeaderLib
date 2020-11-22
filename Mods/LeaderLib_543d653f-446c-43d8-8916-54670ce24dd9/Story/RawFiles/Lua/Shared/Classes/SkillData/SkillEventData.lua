@@ -57,8 +57,10 @@ function SkillEventData:Clear()
 	self.TotalTargetPositions = 0
 end
 
+---@alias SkillEventDataTarget string|number[]
+
 ---Run a function on all target objects. The function is wrapped in an error handler.
----@param func function<string>
+---@param func fun(target:SkillEventDataTarget):void
 ---@param mode integer Run the function on objects, positions, or both. Defaults to just objects. 0:Objects, 1:Positions, 2:All
 function SkillEventData:ForEach(func, mode)
 	if mode == nil then mode = 0 end

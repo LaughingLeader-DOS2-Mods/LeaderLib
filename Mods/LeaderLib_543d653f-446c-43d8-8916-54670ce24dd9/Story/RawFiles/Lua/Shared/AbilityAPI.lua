@@ -48,11 +48,11 @@ function AbilityManager.EnableAbility(abilityName, modID)
 	end
 end
 
-if Ext.IsDeveloperMode() then
-	for k,v in pairs(missingAbilities) do
-		AbilityManager.EnableAbility(k, "7e737d2f-31d2-4751-963f-be6ccc59cd0c")
-	end
-end
+-- if Ext.IsDeveloperMode() then
+-- 	for k,v in pairs(missingAbilities) do
+-- 		AbilityManager.EnableAbility(k, "7e737d2f-31d2-4751-963f-be6ccc59cd0c")
+-- 	end
+-- end
 
 function AbilityManager.DisableAbility(abilityName, modID)
 	local data = AbilityManager.RegisteredAbilities[abilityName]

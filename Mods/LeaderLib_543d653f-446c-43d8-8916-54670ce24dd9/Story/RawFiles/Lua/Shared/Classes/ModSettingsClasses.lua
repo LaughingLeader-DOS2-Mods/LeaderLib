@@ -66,7 +66,6 @@ function FlagData:RemoveTarget(id)
 			self.Targets = nil
 		end
 	end
-	
 end
 
 ---@class VariableData

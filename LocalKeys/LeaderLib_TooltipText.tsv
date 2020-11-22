@@ -2,4 +2,4 @@ Key	Content	Handle
 LeaderLib_Tooltip_ResistancePenetrationBoost	[1] Penetration	hf638bc67g5cb6g4dcfg8663gce1951caad2b
 LeaderLib_Tooltip_ItemDescription_AutoLeveling	<font color='#80FFC3' size='18'>Automatically levels up with the wearer.</font>	hca27994egc60eg495dg8146g7f81c970e265
 LeaderLib_Tooltip_CreatedBy	[1]<br>Created by [2]	h1e7b9070ga8cag46f3ga7b4gfccd1addb8ba
-LeaderLib_Tooltip_ExtraPropertiesCondensed	On Hit:<br>[1] for [2] turns(s). ([3] Chance)	h3eff6bc1gb26dg4bb5gb3b9g2551c65026e0
+LeaderLib_Tooltip_ExtraPropertiesCondensed	Apply On Hit:<br>[1] for [2] turns(s). ([3] Chance)	h3eff6bc1gb26dg4bb5gb3b9g2551c65026e0

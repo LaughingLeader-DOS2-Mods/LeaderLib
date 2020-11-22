@@ -142,7 +142,7 @@ LocalizedText.WeaponType = {
 
 LocalizedText.Tooltip = {
 	AutoLevel = ts:Create("hca27994egc60eg495dg8146g7f81c970e265", "<font color='#80FFC3'>Automatically levels up with the wearer.</font>"),
-	ExtraPropertiesOnHit = ts:Create("h3eff6bc1gb26dg4bb5gb3b9g2551c65026e0", "On Hit:<br>[1] for [2] turns(s). ([3] Chance)"),
+	ExtraPropertiesOnHit = ts:Create("h3eff6bc1gb26dg4bb5gb3b9g2551c65026e0", "Apply On Hit:<br>[1] for [2] turns(s). ([3] Chance)"),
 	ExtraPropertiesPermanent = ts:Create("h233bf83cg2204g4f14gb46agad27f95deb43", "Set [1].[2][3]"),
 	ExtraPropertiesWithTurns = ts:Create("hf90daa3cgba5cg471cgbebcgedb58a337a9f", "Set [1] for [4] turn(s).[2][3]"),
 	ChanceToSucceed = ts:Create("h54e0b91cg48a7g4d5agaedcgbde756a109ea", "[1]% chance to succeed."),

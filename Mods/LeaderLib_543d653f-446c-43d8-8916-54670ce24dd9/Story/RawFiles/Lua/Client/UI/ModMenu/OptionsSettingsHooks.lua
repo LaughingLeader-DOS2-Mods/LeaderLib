@@ -159,7 +159,7 @@ local function OnSwitchMenu(ui, call, id)
 	currentMenu = id
 	if id == LarianMenuID.Gameplay then
 		if Ext.IsDeveloperMode() then
-			GameSettingsMenu.AddSettings(ui, false)
+			GameSettingsMenu.AddSettings(ui, true)
 		end
 	elseif id == LarianMenuID.Controls then
 
@@ -240,7 +240,7 @@ Ext.RegisterListener("SessionLoaded", function()
 		local ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf")
 		if ui ~= nil then
 			if currentMenu == 3 then
-				GameSettingsMenu.AddSettings(ui)
+				GameSettingsMenu.AddSettings(ui, true)
 			end
 		end
 	end)

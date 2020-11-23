@@ -50,7 +50,7 @@ local function AddTitleToArray(text)
 	index = index+2
 end
 
-local function AddCheckboxToArray(id, displayName, enabled, value, filterBool, tooltip)
+local function AddCheckboxToArray(id, displayName, enabled, state, filterBool, tooltip)
 	if enableControl == nil then
 		enableControl = true
 	end
@@ -58,7 +58,7 @@ local function AddCheckboxToArray(id, displayName, enabled, value, filterBool, t
 	array[index+1] = id
 	array[index+2] = displayName
 	array[index+3] = enabled
-	array[index+4] = value and 1 or 0
+	array[index+4] = state
 	array[index+5] = filterBool ~= nil and filterBool or false
 	array[index+6] = tooltip or ""
 	index = index+7
@@ -117,14 +117,15 @@ local mainMenuArrayAccess = {
 }
 
 ---@param ui UIObject
-function GameSettingsMenu.AddSettings(ui, addDirectly)
+function GameSettingsMenu.AddSettings(ui, addToArray)
+	GameSettingsMenu.LastID = 600
 	local settings = GameSettings.Settings
 	local main = ui:GetRoot()
 	if main ~= nil then
 		---@type MainMenuMC
 		local mainMenu = main.mainMenu_mc
 
-		if addDirectly == false then
+		if addToArray == true then
 			array = main.update_Array
 			index = #array
 			mainMenu = mainMenuArrayAccess

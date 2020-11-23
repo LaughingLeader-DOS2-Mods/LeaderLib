@@ -14,14 +14,16 @@ function ApplyGameSettings(sync)
 			if sync == true then
 				SyncGameSettings()
 			end
-			if GameSettings.Settings.APSettings.Player.Enabled then
-				local settings = GameSettings.Settings.APSettings.Player
-				local statChanges = {}
-				for i,v in pairs(Osi.DB_IsPlayer:Get(nil)) do
-					local character = Ext.GetCharacter(v[1])
-					if character ~= nil then
-						local userid = CharacterGetReservedUserID(v[1])
-						local stats = {}
+			SyncStatOverrides(GameSettings, true)
+
+			local settings = GameSettings.Settings.APSettings.Player
+			local statChanges = {}
+			for i,v in pairs(Osi.DB_IsPlayer:Get(nil)) do
+				local character = Ext.GetCharacter(v[1])
+				if character ~= nil then
+					local userid = CharacterGetReservedUserID(v[1])
+					local stats = {}
+					if GameSettings.Settings.APSettings.Player.Enabled then
 						if settings.Start > 0 then
 							stats.APStart = settings.Start
 						end
@@ -31,14 +33,20 @@ function ApplyGameSettings(sync)
 						if settings.Recovery > 0 then
 							stats.APRecovery = settings.Recovery
 						end
-						table.insert(statChanges, {
-							NetID = character.NetID,
-							Stats = stats
-						})
+					else
+						stats.APStart = character.Stats.APStart
+						stats.APMaximum = settings.Stats.APMaximum
+						stats.APRecovery = settings.Stats.APRecovery
 					end
+					
+					table.insert(statChanges, {
+						NetID = character.NetID,
+						Stats = stats
+					})
 				end
-				Ext.BroadcastMessage("LeaderLib_SetGameSettingsStats", Ext.JsonStringify(statChanges), nil)
 			end
+			Ext.BroadcastMessage("LeaderLib_SetGameSettingsStats", Ext.JsonStringify(statChanges), nil)
+
 		elseif state == "Paused" then
 			applyGameSettingsOnRunning = true
 			syncGameSettingsOnRunning = sync ~= nil and sync or false

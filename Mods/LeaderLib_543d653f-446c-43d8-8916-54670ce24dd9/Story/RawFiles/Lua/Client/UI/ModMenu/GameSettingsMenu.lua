@@ -55,9 +55,6 @@ local function AddTitleToArray(text)
 end
 
 local function AddCheckboxToArray(id, displayName, enabled, state, filterBool, tooltip)
-	if enableControl == nil then
-		enableControl = true
-	end
 	array[index] = CONTROL_TYPE.CHECKBOX
 	array[index+1] = id
 	array[index+2] = displayName
@@ -120,6 +117,61 @@ local mainMenuArrayAccess = {
 	addMenuSlider = AddSliderToArray
 }
 
+function GameSettingsMenu.OnControlAdded(ui, controlType, id, listIndex, listProperty)
+	if GameSettingsMenu.Controls[id] == nil then
+		return
+	end
+	local controlsEnabled = Client.IsHost == true
+	local main = ui:GetRoot()
+	if main ~= nil then
+		---@type MainMenuMC
+		local mainMenu = main.mainMenu_mc
+		local list = mainMenu[listProperty]
+		if list ~= nil then
+			local element = list.content_array[listIndex]
+			if element ~= nil then
+				if controlType == "slider" then
+					element.alpha = controlsEnabled and 1.0 or 0.3
+					element.slider_mc.m_disabled = controlsEnabled
+				else
+					element.enable = controlsEnabled
+					element.alpha = controlsEnabled and 1.0 or 0.3
+				end
+			end
+		end
+	end
+end
+
+function GameSettingsMenu.UpdateControlsEnabled(ui)
+	local main = ui:GetRoot()
+	if main ~= nil then
+		---@type MainMenuMC
+		local mainMenu = main.mainMenu_mc
+		local controlsEnabled = false--Client.IsHost == true
+		local i = 0
+		print("#mainMenu.list.content_array", #mainMenu.list.content_array)
+		while i < #mainMenu.list.content_array do
+			local element = mainMenu.list.content_array[i]
+			if element ~= nil then
+				local id = element.id or element.buttonID
+				print(i, id)
+				if GameSettingsMenu.Controls[element.id] ~= nil then
+					if element.slider_mc ~= nil then
+						local slider = mainMenu.list.content_array[#mainMenu.list.content_array-1]
+						if slider ~= nil then
+							slider.alpha = controlsEnabled and 1.0 or 0.3
+							slider.slider_mc.m_disabled = controlsEnabled
+						end
+					else
+						element.enable = controlsEnabled
+						element.alpha = controlsEnabled and 1.0 or 0.3
+					end
+				end
+			end
+		end
+	end
+end
+
 ---@param ui UIObject
 function GameSettingsMenu.AddSettings(ui, addToArray)
 	GameSettingsMenu.Controls = {}
@@ -136,42 +188,44 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 			mainMenu = mainMenuArrayAccess
 		end
 
+		local controlsEnabled = Client.IsHost == true
+
 		mainMenu.addMenuLabel(text.MainTitle.Value)
 
-		mainMenu.addMenuCheckbox(AddControl(settings, "StarterTierSkillOverrides"), text.StarterTierOverrides.Value, true, settings.StarterTierSkillOverrides and 1 or 0, false, text.StarterTierOverrides_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings, "StarterTierSkillOverrides"), text.StarterTierOverrides.Value, controlsEnabled, settings.StarterTierSkillOverrides and 1 or 0, false, text.StarterTierOverrides_Description.Value)
 		
 		mainMenu.addMenuLabel(text.Section_AP.Value)
 
 		local apSliderMax = 30
 
 		mainMenu.addMenuLabel(text.Group_Player.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.APSettings.Player, "Enabled"), text.APSettings_Enabled.Value, true, settings.APSettings.Player.Enabled and 1 or 0, false, text.APSettings_Enabled_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.APSettings.Player, "Enabled"), text.APSettings_Enabled.Value, controlsEnabled, settings.APSettings.Player.Enabled and 1 or 0, false, text.APSettings_Enabled_Description.Value)
 		mainMenu.addMenuSlider(AddControl(settings.APSettings.Player, "Start"), text.APSettings_Start.Value, settings.APSettings.Player.Start, -1, apSliderMax, 1, false, text.APSettings_Start_Description.Value)
 		mainMenu.addMenuSlider(AddControl(settings.APSettings.Player, "Recovery"), text.APSettings_Recovery.Value, settings.APSettings.Player.Recovery, -1, apSliderMax, 1, false, text.APSettings_Recovery_Description.Value)
 		mainMenu.addMenuSlider(AddControl(settings.APSettings.Player, "Max"), text.APSettings_Max.Value, settings.APSettings.Player.Max, -1, apSliderMax, 1, false, text.APSettings_Max_Description.Value)
 
 		mainMenu.addMenuLabel(text.Group_NPC.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.APSettings.NPC, "Enabled"), text.APSettings_Enabled.Value, true, settings.APSettings.NPC.Enabled and 1 or 0, false, text.APSettings_Enabled_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.APSettings.NPC, "Enabled"), text.APSettings_Enabled.Value, controlsEnabled, settings.APSettings.NPC.Enabled and 1 or 0, false, text.APSettings_Enabled_Description.Value)
 		mainMenu.addMenuSlider(AddControl(settings.APSettings.NPC, "Start"), text.APSettings_Start.Value, settings.APSettings.NPC.Start, -1, apSliderMax, 1, false, text.APSettings_Start_Description.Value)
 		mainMenu.addMenuSlider(AddControl(settings.APSettings.NPC, "Recovery"), text.APSettings_Recovery.Value, settings.APSettings.NPC.Recovery, -1, apSliderMax, 1, false, text.APSettings_Recovery_Description.Value)
 		mainMenu.addMenuSlider(AddControl(settings.APSettings.NPC, "Max"), text.APSettings_Max.Value, settings.APSettings.NPC.Max, -1, apSliderMax, 1, false, text.APSettings_Max_Description.Value)
 
 		mainMenu.addMenuLabel(text.Section_Backstab.Value)
 
-		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings, "AllowTwoHandedWeapons"), text.BackstabSettings_AllowTwoHandedWeapons.Value, true, settings.BackstabSettings.AllowTwoHandedWeapons and 1 or 0, false, text.BackstabSettings_AllowTwoHandedWeapons_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings, "AllowTwoHandedWeapons"), text.BackstabSettings_AllowTwoHandedWeapons.Value, controlsEnabled, settings.BackstabSettings.AllowTwoHandedWeapons and 1 or 0, false, text.BackstabSettings_AllowTwoHandedWeapons_Description.Value)
 		mainMenu.addMenuSlider(AddControl(settings.BackstabSettings, "MeleeSpellBackstabMaxDistance"), text.BackstabSettings_MeleeSpellBackstabMaxDistance.Value, settings.BackstabSettings.MeleeSpellBackstabMaxDistance, 0.1, 30.0, 0.1, false, text.BackstabSettings_MeleeSpellBackstabMaxDistance_Description.Value)
 
 		mainMenu.addMenuLabel(text.Group_Player.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.Player, "Enabled", "BackstabSettings.Player.Enabled"), text.BackstabSetting_Enabled.Value, true, settings.BackstabSettings.Player.Enabled and 1 or 0, false, text.BackstabSettings_Enabled_Description.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.Player, "TalentRequired"), text.BackstabSettings_TalentRequired.Value, true, settings.BackstabSettings.Player.TalentRequired and 1 or 0, false, text.BackstabSettings_TalentRequired_Description.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.Player, "MeleeOnly"), text.BackstabSettings_MeleeOnly.Value, true, settings.BackstabSettings.Player.MeleeOnly and 1 or 0, false, text.BackstabSettings_MeleeOnly_Description.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.Player, "SpellsCanBackstab"), text.BackstabSettings_SpellsCanBackstab.Value, true, settings.BackstabSettings.Player.SpellsCanBackstab and 1 or 0, false, text.BackstabSettings_SpellsCanBackstab_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.Player, "Enabled", "BackstabSettings.Player.Enabled"), text.BackstabSetting_Enabled.Value, controlsEnabled, settings.BackstabSettings.Player.Enabled and 1 or 0, false, text.BackstabSettings_Enabled_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.Player, "TalentRequired"), text.BackstabSettings_TalentRequired.Value, controlsEnabled, settings.BackstabSettings.Player.TalentRequired and 1 or 0, false, text.BackstabSettings_TalentRequired_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.Player, "MeleeOnly"), text.BackstabSettings_MeleeOnly.Value, controlsEnabled, settings.BackstabSettings.Player.MeleeOnly and 1 or 0, false, text.BackstabSettings_MeleeOnly_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.Player, "SpellsCanBackstab"), text.BackstabSettings_SpellsCanBackstab.Value, controlsEnabled, settings.BackstabSettings.Player.SpellsCanBackstab and 1 or 0, false, text.BackstabSettings_SpellsCanBackstab_Description.Value)
 
 		mainMenu.addMenuLabel(text.Group_NPC.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.NPC, "Enabled"), text.BackstabSetting_Enabled.Value, true, settings.BackstabSettings.NPC.Enabled and 1 or 0, false, text.BackstabSettings_Enabled_Description.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.NPC, "TalentRequired"), text.BackstabSettings_TalentRequired.Value, true, settings.BackstabSettings.NPC.TalentRequired and 1 or 0, false, text.BackstabSettings_TalentRequired_Description.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.NPC, "MeleeOnly"), text.BackstabSettings_MeleeOnly.Value, true, settings.BackstabSettings.NPC.MeleeOnly and 1 or 0, false, text.BackstabSettings_MeleeOnly_Description.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.NPC, "SpellsCanBackstab"), text.BackstabSettings_SpellsCanBackstab.Value, true, settings.BackstabSettings.NPC.SpellsCanBackstab and 1 or 0, false, text.BackstabSettings_SpellsCanBackstab_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.NPC, "Enabled"), text.BackstabSetting_Enabled.Value, controlsEnabled, settings.BackstabSettings.NPC.Enabled and 1 or 0, false, text.BackstabSettings_Enabled_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.NPC, "TalentRequired"), text.BackstabSettings_TalentRequired.Value, controlsEnabled, settings.BackstabSettings.NPC.TalentRequired and 1 or 0, false, text.BackstabSettings_TalentRequired_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.NPC, "MeleeOnly"), text.BackstabSettings_MeleeOnly.Value, controlsEnabled, settings.BackstabSettings.NPC.MeleeOnly and 1 or 0, false, text.BackstabSettings_MeleeOnly_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.NPC, "SpellsCanBackstab"), text.BackstabSettings_SpellsCanBackstab.Value, controlsEnabled, settings.BackstabSettings.NPC.SpellsCanBackstab and 1 or 0, false, text.BackstabSettings_SpellsCanBackstab_Description.Value)
 	end
 end
 
@@ -208,25 +262,29 @@ function GameSettingsMenu.OnButtonPressed(id)
 end
 
 function GameSettingsMenu.CommitChanges()
-	for i,v in pairs(GameSettingsMenu.Controls) do
-		if v.Data ~= nil and v.Value ~= v.Last then
-			v.Data[v.Key] = v.Value
-			--Ext.Print(string.format("[LeaderLib:GameSettingsMenu.CommitChanges] Set %s to %s Data(%s) EqualsLast(%s)", v.Name, v.Value, v.Data, v.Value ~= v.Last))
-		end
-	end
-	Ext.Print("Committed LeaderLib_GameSettings changes.")
-	SaveGameSettings()
 	if Client.IsHost then
-		Ext.PostMessageToServer("LeaderLib_GameSettingsChanged", Ext.JsonStringify({Settings=GameSettings.Settings}))
+		for i,v in pairs(GameSettingsMenu.Controls) do
+			if v.Data ~= nil and v.Value ~= v.Last then
+				v.Data[v.Key] = v.Value
+				--Ext.Print(string.format("[LeaderLib:GameSettingsMenu.CommitChanges] Set %s to %s Data(%s) EqualsLast(%s)", v.Name, v.Value, v.Data, v.Value ~= v.Last))
+			end
+		end
+		Ext.Print("Committed LeaderLib_GameSettings changes.")
+		SaveGameSettings()
+		if Client.IsHost then
+			Ext.PostMessageToServer("LeaderLib_GameSettingsChanged", Ext.JsonStringify({Settings=GameSettings.Settings}))
+		end
+		--Ext.PostMessageToServer("LeaderLib_ModMenu_SaveChanges", Ext.JsonStringify(changes))
 	end
-	--Ext.PostMessageToServer("LeaderLib_ModMenu_SaveChanges", Ext.JsonStringify(changes))
 end
 
 function GameSettingsMenu.UndoChanges()
-	for i,v in pairs(GameSettingsMenu.Controls) do
-		if v.Value ~= v.Last then
-			v.Value = v.Last
-			Ext.Print(string.format("[LeaderLib:GameSettingsMenu.UndoChanges] Reverted %s back to %s", v.Key, v.Value))
+	if Client.IsHost then
+		for i,v in pairs(GameSettingsMenu.Controls) do
+			if v.Value ~= v.Last then
+				v.Value = v.Last
+				Ext.Print(string.format("[LeaderLib:GameSettingsMenu.UndoChanges] Reverted %s back to %s", v.Key, v.Value))
+			end
 		end
 	end
 end

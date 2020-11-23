@@ -159,7 +159,7 @@ local function OnSwitchMenu(ui, call, id)
 	currentMenu = id
 	if id == LarianMenuID.Gameplay then
 		if Ext.IsDeveloperMode() then
-			GameSettingsMenu.AddSettings(ui, true)
+			GameSettingsMenu.AddSettings(ui, false)
 		end
 	elseif id == LarianMenuID.Controls then
 
@@ -264,30 +264,40 @@ Ext.RegisterListener("SessionLoaded", function()
 		--print(call,id,state)
 		if currentMenu == MOD_MENU_ID then
 			ModMenuManager.OnCheckbox(id, state)
+		elseif currentMenu == LarianMenuID.Gameplay then
+			GameSettingsMenu.OnCheckbox(id, state)
 		end
 	end)
 	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "comboBoxID", function(ui, call, id, index)
 		--print(call,id,index)
 		if currentMenu == MOD_MENU_ID then
 			ModMenuManager.OnComboBox(id, index)
+		elseif currentMenu == LarianMenuID.Gameplay then
+			GameSettingsMenu.OnComboBox(id, index)
 		end
 	end)
 	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "selectorID", function(ui, call, id, currentSelection)
 		--print(call,id,currentSelection)
 		if currentMenu == MOD_MENU_ID then
 			ModMenuManager.OnSelector(id, currentSelection)
+		elseif currentMenu == LarianMenuID.Gameplay then
+			GameSettingsMenu.OnSelector(id, currentSelection)
 		end
 	end)
 	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "menuSliderID", function(ui, call, id, value)
 		--print(call,id,value)
 		if currentMenu == MOD_MENU_ID then
 			ModMenuManager.OnSlider(id, value)
+		elseif currentMenu == LarianMenuID.Gameplay then
+			GameSettingsMenu.OnSlider(id, value)
 		end
 	end)
 	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "buttonPressed", function(ui, call, id)
 		--print(call,id)
 		if currentMenu == MOD_MENU_ID then
 			ModMenuManager.OnButtonPressed(id)
+		elseif currentMenu == LarianMenuID.Gameplay then
+			GameSettingsMenu.OnButtonPressed(id)
 		end
 	end)
 

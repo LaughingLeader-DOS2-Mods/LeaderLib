@@ -177,7 +177,7 @@ local function OnAcceptChanges(ui, call)
 end
 
 local function OnApplyPressed(ui, call, ...)
-	
+
 end
 
 local function OnCancelChanges(ui, call)
@@ -326,6 +326,20 @@ Ext.RegisterListener("SessionLoaded", function()
 	end
 	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "buttonPressed", OnButton)
 	Ext.RegisterUITypeCall(OPTIONS_INPUT, "buttonPressed", OnButton)
+
+	local onControlAdded = function(ui, call, controlType, id, listIndex, listProperty)
+		--ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf") or ui
+		if Vars.DebugMode then
+			print(ui:GetTypeId(), call, controlType, id, listIndex, listProperty)
+		end
+		if currentMenu == LarianMenuID.Gameplay then
+			GameSettingsMenu.OnControlAdded(ui, controlType, id, listIndex, listProperty)
+		end
+	end
+
+	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "controlAdded", onControlAdded)
+	Ext.RegisterUITypeCall(OPTIONS_INPUT, "controlAdded", onControlAdded)
+	Ext.RegisterUITypeCall(OPTIONS_ACCEPT, "controlAdded", onControlAdded)
 
 	---@param ui UIObject
 	Ext.RegisterUINameInvokeListener("parseBaseUpdateArray", function(ui, method, ...)

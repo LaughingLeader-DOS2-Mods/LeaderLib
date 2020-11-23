@@ -14,6 +14,7 @@
 	<content contentuid="h0a77a6c9g8b1ag49cdgaf0eg45c159b82b32">No rifle equipped</content>
 	<content contentuid="h0ab95fb3g7cfbg483dga66bg5daf233e945a">Loading presets...</content>
 	<content contentuid="h0d0af957g4dc8g4ddagb0fag6c38340bb6de">Hello!</content>
+	<content contentuid="h0f81de28g5065g4e70g90adg806a046b02c5">Skills Can Backstab</content>
 	<content contentuid="h109e781dg2032g4b77gacdagce8034c4e49e">Okay.</content>
 	<content contentuid="h1145733eg9ec6g4f50ga44bg313f8a4e1cb2">A &lt;font color=&apos;#D040D0&apos;&gt;Story Compilation Error&lt;/font&gt; occurred with your active mods.&lt;br&gt;&lt;font color=&apos;#F7BA14&apos; size=&apos;22&apos;&gt;You may be missing mod requirements.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#FF0000&apos; size=&apos;24&apos;&gt;Mods will not work correctly.&lt;/font&gt;&lt;br&gt;To potentially fix this, please check the requirements of your active mods, such as required dependency mods, the script extender, and/or an updated game version.</content>
 	<content contentuid="h12a0d291g8a48g4448g97adgf3dd1d053aa6">Me? Oh, I&apos;m nobody... Just an old bag of bones, keen on seeing the sights. I hear this cruise ship has a great buffet. *He snorts.*</content>
@@ -33,6 +34,7 @@
 	<content contentuid="h16793f3dgb128g4b51g9e24g7b19ef78b894">Loading menus...</content>
 	<content contentuid="h17519925gf609g4110gbe37g25a3aae8b390">Unchain all chained characters under your control that are within [1].</content>
 	<content contentuid="h17e6d1bbgbe95g4944gb37dgfe5059a58a2d">&lt;font color=&apos;#9A00FF&apos;&gt;Chaos Resistance&lt;/font&gt;</content>
+	<content contentuid="h17e92683g5626g4266g99dfg34e1fda604f6">The starting amount of action points when combat begins. (Default: 4)</content>
 	<content contentuid="h196cc760g0133g4cb7gb48bg6a902641739f">[LeaderLib_ModMenu_Menu1_783ec14d-2861-4345-8dbc-45974fa34e15]</content>
 	<content contentuid="h199f5401g295eg4b24ga52ag9cf3a9844635">[GLOBAL] Enable Friendly Fire. This setting is for mods that implement friendly fire in their skill targeting conditions. (Currently Disabled)</content>
 	<content contentuid="h1a6318dcgb094g4b3cg8492g6e26d8e3a11d">Mod Menu Settings</content>
@@ -40,7 +42,9 @@
 	<content contentuid="h1c1d8acag9819g4028g860fg9a546af236ee">[LOAD] Load Global Settings - These are global extender mod settings LeaderLib manages.&lt;br&gt;Path: &lt;b&gt;Documents/Larian Studios/Divinity Original Sin 2 Definitive Edition/Osiris Data/LeaderLib_GlobalSettings.json&lt;/b&gt;</content>
 	<content contentuid="h1c359033g2e0dg49b1g9befg63f786d3f9fc">Control Summon</content>
 	<content contentuid="h1db4b34cg358dg49a2gbaeag3cb06a86ab4c">Character is selling new items.</content>
+	<content contentuid="h1e2cb2ddgb67cg4845g9182g8980274100ef">Melee Skill Maximum Distance</content>
 	<content contentuid="h1e7b9070ga8cag46f3ga7b4gfccd1addb8ba">[1]&lt;br&gt;Created by [2]</content>
+	<content contentuid="h1f78d457g2ef2g4eafgb6ecg44534f672a0f">If enabled, only melee weapons or skills can backstab. Melee skills will use the Skill Minimum Distance setting. (Default: Enabled)</content>
 	<content contentuid="h2033bb71g7004g4423ga633gd50bfc8fdd50">When combat starts, LeaderLib will autosave the game.</content>
 	<content contentuid="h22e00201g6666g4837gaf8ega722712bad2a">[LeaderLib_DynamicMenu_MenuOption3_58379c79-1cf1-4129-bcf5-579f40a9ad11]</content>
 	<content contentuid="h24533724ga73fg4d76gb62egc700a193eb89">Must you, really?</content>
@@ -79,11 +83,13 @@
 	<content contentuid="h3e28d8d8g362bg4d7dga097gf8fcac3fbfe3">&lt;font color=&apos;#FF00CC&apos;&gt;One or more players are missing the script extender.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#FF0000&apos;&gt;The script extender is needed for mods to work correctly.&lt;/font&gt;&lt;br&gt;Players missing the extender:&lt;br&gt;[1]</content>
 	<content contentuid="h3eb917d7g036fg483dg8ee5gc83743845400">Welcome!</content>
 	<content contentuid="h3ed2c7c5gf6c0g4c9dga916g5782593327ab">Open Mod Menu</content>
-	<content contentuid="h3eff6bc1gb26dg4bb5gb3b9g2551c65026e0">On Hit:&lt;br&gt;[1] for [2] turns(s). ([3] Chance)</content>
+	<content contentuid="h3eff6bc1gb26dg4bb5gb3b9g2551c65026e0">Apply On Hit:&lt;br&gt;[1] for [2] turns(s). ([3] Chance)</content>
 	<content contentuid="h3fb60439g4406g4623ga6b7gb53cda538fcb">*The old man runs his hands over his clothes, trying to iron out the wrinkles.* What can I do for you, stranger?</content>
 	<content contentuid="h40ac3891g3661g43eag878dg6510b001704a">[LeaderLib_DynamicMenu_MenuOption4_e6bea606-b29a-4bfe-8959-94e8be8330cb]</content>
+	<content contentuid="h40eae888g3bfdg4053g8e42ged9ccf00a626">Override skill tiers to make them show up in character creation.</content>
 	<content contentuid="h4120c4e5g4931g46dbgad0fga7a57514ac42">Rifle</content>
 	<content contentuid="h41a533b7g535bg4e76gbc7eg202d33a73740">Enable Auto-Adding Mod Books</content>
+	<content contentuid="h423615f1g07e1g4021gbce3g16a99407b859">The amount of action points gained when a character&apos;s turn starts. (Default: 4)</content>
 	<content contentuid="h4252ff7cgb624g4b24gbf03g1772392f3988">Old Man Lothar</content>
 	<content contentuid="h43868aebg7281g40bfgbc1dgf6fe5a06512b">Autosave Interval</content>
 	<content contentuid="h45f478cdg3b77g400aga94fg04b3a60b7ad9">Hidden Backpack</content>
@@ -103,6 +109,8 @@
 	<content contentuid="h50452891g891bg45a7gb700g348998ff32b5">*He hands you copy of the requested sacred text.*</content>
 	<content contentuid="h513658cbg41f5g40afg809cg1d0830efd3f1">[LeaderLib_DynamicMenu_MenuOption4_e6bea606-b29a-4bfe-8959-94e8be8330cb]</content>
 	<content contentuid="h517cd9b4g30f4g4663ga73cgaaa145863dfc">[LeaderLib_DynamicMenu_MenuOption1_1f7c9690-58b3-4cf6-b17e-0da478b15e0e]</content>
+	<content contentuid="h518569d6gf8adg4d5cg9326gd38d11b62e92">Backstab Settings</content>
+	<content contentuid="h5253c165gb40fg498egb863g5611e12abf5a">Enable backstab settings for this group. (Default: Disabled)</content>
 	<content contentuid="h52804b8ag97ccg478eg90f8gc8b6f735dab2">&lt;font color=&apos;#FF0000&apos; size=&apos;32&apos;&gt;ERROR&lt;/font&gt;&lt;br&gt;You are missing the Script Extender, and the host has mods that require it!&lt;br&gt;&lt;font color=&apos;#FF00CC&apos; size=&apos;22&apos;&gt;Please exit the game and install the Script Extender.&lt;/font&gt;&lt;br&gt;The game will not work correctly, mods will not work correctly, and Kalavinka will weep bloody tears of pain and regret.</content>
 	<content contentuid="h529c36c6g6b68g46e2g867dg863184908d5a">Remove the Mod Menu Skill (Self)</content>
 	<content contentuid="h52a29657gf5f3g4577gb783g6fa0c0052e5e">Timed Autosaving</content>
@@ -137,6 +145,7 @@
 	<content contentuid="h64aef327g59b3g4c63gacb9g834c0ba020e0">Insight on how to manage multiple summons at the same time. For summoners, by summoners. Read this book to learn this skill.</content>
 	<content contentuid="h658b85b9g49abg4c9fg9215ga09ac36d3e53">[GLOBAL] Disable Autosaving in Combat</content>
 	<content contentuid="h65b39fe2gab3ag4f22gbddfg661799bb0841">Remove Chain/Unchain Skills (User - All Owned Characters)&lt;br&gt;</content>
+	<content contentuid="h65d7079eg910cg4b0bgbb77ga834ba715835">Enabled</content>
 	<content contentuid="h669a2b5cg5dd5g48e7g93f6g70770ca6bd33">[Exit]</content>
 	<content contentuid="h66e8b6f3gf140g4ce3gae5eg1fa3b163a8d1">Enable Debug Mode</content>
 	<content contentuid="h6765e77cg13c0g48dcgb708g721355bc5451">[LeaderLib_ModMenu_Menu6_863af621-ff0c-454a-b6a3-7c9d3166a8a0]</content>
@@ -146,6 +155,7 @@
 	<content contentuid="h69590addg7840g4821gb632g52799233bb88">&lt;font color=&apos;#FF0000&apos;&gt;-[1] Attitude&lt;/font&gt;</content>
 	<content contentuid="h6a80ffafg59d9g4848g8d1ag9359a1435030">Enable Timed Autosaving</content>
 	<content contentuid="h6ba6354bg9a76g48c2g90e9gf8aeac752f5c">Fix the Unhealable Status</content>
+	<content contentuid="h6cb67f15gef2bg444fg88d1g0aa89d5faf78">If enabled, characters require the Backstab talent to be able to backstab with non-dagger equipment or skills. (Default: Enabled)</content>
 	<content contentuid="h6d2689a6ge111g43b7g8c87g478a5e501f40">Mods&lt;br&gt;[LeaderLib_ModMenu_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156]</content>
 	<content contentuid="h6d41e8bag5ab9g42c4g8723g2dad9e443b64">*He hands you a peculiar-looking book.*</content>
 	<content contentuid="h6d61f680g2f6cg44c1g8a37g4ad2ad98dc90">I&apos;m also selling some old belongings.</content>
@@ -159,6 +169,7 @@
 	<content contentuid="h72b6a94cgb4dbg42f3ga2b0g97d70ba67eef">[Next]</content>
 	<content contentuid="h7322bed9g2ea5g4abeg9decga21994353d79">*He waits for you to speak.*</content>
 	<content contentuid="h73234319g4e6bg4967gb45cga511b60f0408">&lt;font color=&apos;#FF0000&apos;&gt;LeaderLib Failed to Save Global Settings&lt;/font&gt;</content>
+	<content contentuid="h751b0a4fg6da1g41e0g863fge6bd18ff8c6c">If skill backstabbing is enabled, this is the maximum distance allowed between the attacker and target (meaning they must be within this distance). (Default: 2.5m)</content>
 	<content contentuid="h76b098bdgb9f4g4ae8g8e5bg87f68b4599d9">Hey there, [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3]! You made it off that wreck in one piece, eh? *He snorts.* </content>
 	<content contentuid="h76d37069g565dg458bg8e57gdbd6f9b81b7a">[GLOBAL] Disable automatically unlocking every inventory in multiplayer. (Currently Enabled)</content>
 	<content contentuid="h7942ef1ag44d9g49f0gab10ge07e419c1d32">[GLOBAL] Automatically pull party members within 30m into combat. (Currently Disabled)</content>
@@ -167,6 +178,7 @@
 	<content contentuid="h7b455d51g9be5g4f48g8dffg7e1a4b1ad356">*Ask what his plans are for his time on Reaper&apos;s Eye.*</content>
 	<content contentuid="h7cf6d938g1c71g4431gbbccg85cfdf119735">Lead the way.</content>
 	<content contentuid="h7d86a1e8g8071g444dgb6d8g859c06b2c1e6">[LeaderLib_DynamicMenu_MenuOption8_f5ef1f68-8995-4c14-8e62-cf5f330cb31a]</content>
+	<content contentuid="h7dbc4d90gcd8ag47adg9324g0694dac72835">Max</content>
 	<content contentuid="h7e3e81b3g5215g4168gb89dg97d50baaabd6">[LeaderLib_DynamicMenu_MenuOption7_36c11cee-0a1b-4f4b-bd66-3bf0d100439b]</content>
 	<content contentuid="h7e405c6egfcadg4313gbcb8g0f5f7459d722">[GLOBAL] Disable making the party member with the highest persuasion the redirection target, using the closest Avatar instead. (Default)</content>
 	<content contentuid="h7f407d4bgae1ag466agb7c4g248d44e3a629">One second while I set things up...</content>
@@ -176,6 +188,7 @@
 	<content contentuid="h808d2fe2ge0d2g4e78g94cag05b054d2b96b">[LeaderLib_ModMenu_Menu2_9a2d2990-5cff-420e-ba8a-37f9510ab9e1]</content>
 	<content contentuid="h81a0d6b9g43adg4223gbcc9g0fceadeff883">*He coughs out some sea water.*  That she-beast of a sourceress nearly wiped me out with the others on the boat... *He trails off for a moment before returning his gaze back to you.*</content>
 	<content contentuid="h8311eb63g89cfg41c1g961cgde31f8d79927"></content>
+	<content contentuid="h8479a0c5g7017g4dcegb869g5809e47e046c">Action Point Settings</content>
 	<content contentuid="h85c3e4fag683cg471agaef1g448f3023e955">Selected Preset: [LeaderLib_PresetMenu_CurrentPreset_2e904bf9-1a93-447a-8f07-5383aea20068]</content>
 	<content contentuid="h861c65b9g0db7g4799gaeb2g67ac42f57540">[GLOBAL] Enable user ID matching when finding the closest character a party member belongs to. This will only allow the closest avatar (or persuasive) character a user controls (for the initial dialog character) to be selected when redirecting. (Currently Disabled)</content>
 	<content contentuid="h8664487cga940g4aacg8d6agc10d7e80b33e">Autosave Settings</content>
@@ -188,6 +201,7 @@
 	<content contentuid="h89b19292g87beg4312g9514g63c95313649f">*He straightens his posture before speaking.* You may call me [LeaderLib_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b]. Pleasure to meet you, [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3].</content>
 	<content contentuid="h8b7d56a0g4114g4cf2ga2ceg50db94bad57f">Enable various debug features with LeaderLib. Not recommended.</content>
 	<content contentuid="h8b8cb81bgf46eg435fg9fadg283b2bec5c89">Let&apos;s part ways.</content>
+	<content contentuid="h8c660c40gf186g4f82g8769gf196eacb8bca">Player</content>
 	<content contentuid="h8d5dac42geb51g4b3agae2egfce8019d8387">Dialog Redirection</content>
 	<content contentuid="h8e75b265ge400g4f0agbfcfg9b5a404d48f7">*With a puzzled look on your face, the old man speaks up before you get a chance to respond.*</content>
 	<content contentuid="h8e7bed3eg6e65g4b8agb542g83bc56753d17">Game Settings</content>
@@ -203,6 +217,7 @@
 	<content contentuid="h938a3bd1gcfc3g4885gacb7geef71a63ea1b">The coast is clear then?</content>
 	<content contentuid="h93f14fd4gf2eag4e9egb5f6g134e1c8f9ad1">Me? Oh, I&apos;m just a retired old man, looking to sell his wares. *He rubs his beard, glancing around on the boat.* Afraid I&apos;m not much of a soldier anymore, so trading is all I&apos;ve got.</content>
 	<content contentuid="h943fc926g7822g4ed0g8f23g217d384bf9d2">Selecting menu option...</content>
+	<content contentuid="h94f19e56gcc99g423cgb1c2g147bbae6c868">Allow Two-Handed Weapons</content>
 	<content contentuid="h950f9baege3b1g428agbb4dgf70a45676c5a">Chain All</content>
 	<content contentuid="h951be36bg6ed7g49e4ga343gaa5c47a4c98e">*Lothar grunts, rubbing his lower back as he chews on something.* Once I saw this beautiful ship in the distance, I knew it was my chance to escape. I swam like a fish.</content>
 	<content contentuid="h966d6fabgc29cg4602gad0dg0c50f9418e24">A &lt;font color=&apos;#D040D0&apos;&gt;Story Compilation Error&lt;/font&gt; occurred with your active mods.&lt;br&gt;&lt;font color=&apos;#F7BA14&apos; size=&apos;22&apos;&gt;You may be missing mod requirements.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#FF0000&apos; size=&apos;24&apos;&gt;Mods will not work correctly.&lt;/font&gt;&lt;br&gt;To potentially fix this, please check the requirements of your active mods, such as required dependency mods, the script extender, and/or an updated game version.</content>
@@ -224,6 +239,7 @@
 	<content contentuid="ha35fc503g56dbg4adag963dga359d961e0c8">Horns</content>
 	<content contentuid="ha3662eaeg1dedg441eg9acdg2b9dbaabf295">Summoner&apos;s Guide to Management</content>
 	<content contentuid="ha3a18e3fge9e4g4496g84b8g5590844143f0">Rifle Weapon</content>
+	<content contentuid="ha50c526cg86bbg4068gb527g42632d1ce8d7">Melee Equipment/Skills Only</content>
 	<content contentuid="ha54e3050g2d5dg46d7g9340g419ead1f437f">[LeaderLib_DynamicMenu_MenuOption7_36c11cee-0a1b-4f4b-bd66-3bf0d100439b]</content>
 	<content contentuid="ha56bd856gb01fg43c3g965dg5447174ab32c">*He snorts.* Why, fishing of course! *He gestures to the fishing rod on his back.*</content>
 	<content contentuid="ha573859bg0e9bg4fefgab91g278749405487">*You notice the old man moves quickly, and seems to be prepared in the blink of an eye.*</content>
@@ -243,13 +259,16 @@
 	<content contentuid="hae9e720bgfb0bg43b4gb428g8b7fedf7193e">Hey, [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3]! We made it off that dreadful island!</content>
 	<content contentuid="haee6fb94g2ea6g4f56g800dg3e49e5b131ff">Character has taken a vow to avoid fighting, and will flee if pulled into combat.</content>
 	<content contentuid="haf24c059g3811g4babgb529g348a34b47d05">[LeaderLib_DynamicMenu_MenuOption8_f5ef1f68-8995-4c14-8e62-cf5f330cb31a]</content>
+	<content contentuid="hb0803bc8g8e8bg4c3cgbba8g9ca65f610174">Enabled</content>
 	<content contentuid="hb09fdd2dg134cg4361g8b7dg9a2b23a1ec41">Open Menu</content>
 	<content contentuid="hb2822093gaf6ag417dgab70g447f0b730fb4">[LeaderLib_DynamicMenu_MenuOption1_1f7c9690-58b3-4cf6-b17e-0da478b15e0e]</content>
+	<content contentuid="hb2d5597dg9a9eg47a7g97afg76ac86329f4f">LeaderLib Settings</content>
 	<content contentuid="hb48f1258g4031g4ab2g8d73gbb24956d5d74">I definitely activated these mods at one point! Why are they no longer active?</content>
 	<content contentuid="hb5265b58gcf15g40dfg8769gb5dcc430a99f">[LeaderLib_DynamicMenu_MenuOption5_f450c0eb-c308-4755-9718-f6a1e87305bd]</content>
 	<content contentuid="hb62538b3gfff2g4bb4g9b70g7463f658f4f7">[LeaderLib_DynamicMenu_MenuOption4_e6bea606-b29a-4bfe-8959-94e8be8330cb]</content>
 	<content contentuid="hb6a0d65bga210g4882g939ega32f65189909">[HOST] Enable Balanced Experience for All Parties - Every player character will be brought up to the highest player level across all parties. (Currently Disabled)</content>
 	<content contentuid="hb6ecdc41g4c2fg4940ga84bgc781c616de71">You&apos;re already aware that I&apos;m selling things, right? That&apos;s the plan here too, of course.</content>
+	<content contentuid="hb6f58811gab17g4bccg8921g33c60acd792b">Enable AP settings for this group. (Default: Disabled)</content>
 	<content contentuid="hb78cd437g6402g485bg837dga7c59b959cd3">[Last]</content>
 	<content contentuid="hb796e45cgaab4g4fcega4a2g2e424ed8b66c">[GLOBAL] Enable Combat Log Logging</content>
 	<content contentuid="hb7be1cf4gcd0ag4fadga064g72a74b996f1a">[GLOBAL] Disable Autosaving when Combat Starts</content>
@@ -272,6 +291,7 @@
 	<content contentuid="hc394390bge3c0g4935ga60dg63c11e223a8f">[GLOBAL] Disable Debug Logging</content>
 	<content contentuid="hc3ddccc5g960cg4b23gaeb8g9646ea8f510e">Autosave Now</content>
 	<content contentuid="hc48478ceg4b78g4087g9dd6g27ba0e95a20b">[SAVE] Save Global Settings</content>
+	<content contentuid="hc5778bc9g144cg4ad5gb1cbg239501570df3">Require Backstab Talent</content>
 	<content contentuid="hc6932dc9g399cg48a5gb9cdg722cf1ac26ea">*You take a look at his wares.*</content>
 	<content contentuid="hc70db3e9ga1ecg465egb953g253f7e77db5d">*He hands you a peculiar-looking book.*</content>
 	<content contentuid="hc768ad97g83deg41fdgb257g54443e202c5a">As a gesture of goodwill towards future trading, I&apos;ll give you this book for free.</content>
@@ -279,6 +299,7 @@
 	<content contentuid="hc78dbfbbg99e3g4b81gbb3fg8068e2d4ecda">*He hands you a peculiar-looking book.*</content>
 	<content contentuid="hc9cc1024g797fg4770g8ffagf1b4041e4c48">&lt;font color=&apos;#9400D3&apos;&gt;Stealth Mastery&lt;/font&gt;</content>
 	<content contentuid="hca27994egc60eg495dg8146g7f81c970e265">&lt;font color=&apos;#80FFC3&apos; size=&apos;18&apos;&gt;Automatically levels up with the wearer.&lt;/font&gt;</content>
+	<content contentuid="hca2c17f5ga5d0g4a9eg83dag60f61c7fef12">Start</content>
 	<content contentuid="hcb2933a4g9bf6g4b7ega556g974d319d1faf">Redirect to Highest Persuasion</content>
 	<content contentuid="hcb9853aaga052g447dga36fgafeb4902bd4f">I didn&apos;t survive war to end up dead by the likes of you!</content>
 	<content contentuid="hcd40ab3egabe1g4111g9217gb2381b466a2a">Argh!</content>
@@ -292,6 +313,7 @@
 	<content contentuid="hd2546f5cgd3efg44bfga835g5e02f5b95fbd">Fixes the Unhealable status to actually make it prevent healing. This is a status already in the game that mods may use.</content>
 	<content contentuid="hd36c1438g1728g4d9bg8b9bg21941bffb16a">&lt;font color=&apos;#FF0000&apos;&gt;Failed to find current race.&lt;/font&gt;</content>
 	<content contentuid="hd3baa721g34c3g49f7ga360ge49af2a015b8">*You notice the old man moves quickly, and seems to be prepared in the blink of an eye.*</content>
+	<content contentuid="hd3bcc85cg0d17g4671ga48dg667056b68a9f">If enabled, skills will be able to backstab depending on settings (melee only, minimum distance). (Default: Disabled)</content>
 	<content contentuid="hd4ee1fb0g40aeg4fbcgac8dg907287d435df">Swap Gender</content>
 	<content contentuid="hd525dc1fg4819g40b1g9bb8gc896dad435bd">[LUA] Reset LeaderLib Lua Scripts (&lt;b&gt;*WARNING*&lt;/b&gt; For testing purposes only!)</content>
 	<content contentuid="hd5803cb0ga2cdg4823g9bc1gebcbaec5fd2f">Unchain All</content>
@@ -330,9 +352,12 @@
 	<content contentuid="hf33cf707g6e5eg4674g9d88gc6a9431cdabc">That&apos;s enough of that...</content>
 	<content contentuid="hf37c444fg879fg4e62gb3d5g77086202f362">Auto-Join Combat Range</content>
 	<content contentuid="hf3a71217gb65cg43bfg99bbg5c82a6f01901">Autosave interval updated.</content>
+	<content contentuid="hf3f73399gb6fag40d8g9b34g6180cc34fa36">The maximum amount of action points. (Default: 6)</content>
 	<content contentuid="hf545a1fbgccb8g481ega4adg32165aaa9288">[GLOBAL] Automatically make the party member with the highest persuasion the redirection target. Still preserves User ID matching in multiplayer, if that setting is enabled.</content>
+	<content contentuid="hf557e399gdc8cg4903g9d9eg3208c21c3c7d">Enable Skill Tier Overrides</content>
 	<content contentuid="hf585ea52gbdb4g4a21g82aag836415d7d0d6">*Request a copy of the &quot;Mod Menu&quot; book.*</content>
 	<content contentuid="hf638bc67g5cb6g4dcfg8663gce1951caad2b">[1] Penetration</content>
+	<content contentuid="hf6c459efg2fc0g4ab3g871dg7c001691533b">Recovery</content>
 	<content contentuid="hf6f6cbc6g89efg40dag8c9cg8359c5e0d618">*Ask why he&apos;s here on the Lady Vengeance.*</content>
 	<content contentuid="hf705976fg6f7fg4164g8f87g8db41f062a31">Autosave Interval&lt;br&gt;[LeaderLib_AutosaveMenu_CurrentSettings_b48918b6-4864-4aae-88fd-53d658ccb082]</content>
 	<content contentuid="hf79ed706g92d1g4183g911egf7ea7d927d05">[LeaderLib_DynamicMenu_MenuOption3_58379c79-1cf1-4129-bcf5-579f40a9ad11]</content>

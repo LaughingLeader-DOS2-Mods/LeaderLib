@@ -128,12 +128,12 @@ function LeaderLibGameSettings:LoadTable(tbl)
 	end
 end
 
----Prepares a message for data transfer and converts it to string.
+---Converts a string to a table and applies its properties.
 ---@param str string
 ---@return LeaderLibGameSettings
 function LeaderLibGameSettings:LoadString(str)
 	local b,result = xpcall(function()
-		local tbl = Ext.JsonParse(str)
+		local tbl = Common.JsonParse(str)
 		if tbl ~= nil then
 			if tbl.Settings ~= nil and type(tbl.Settings) == "table" then
 				for k,v in pairs(tbl.Settings) do

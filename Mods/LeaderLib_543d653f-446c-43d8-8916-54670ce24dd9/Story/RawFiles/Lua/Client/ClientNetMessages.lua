@@ -84,8 +84,9 @@ Ext.RegisterNetListener("LeaderLib_SyncAllSettings", function(call, dataString)
 	if data.GlobalSettings ~= nil then 
 		SyncGlobalSettings(data.GlobalSettings)
 	end
-	if data.GameSettings ~= nil then 
+	if data.GameSettings ~= nil then
 		GameSettings = data.GameSettings
+		setmetatable(GameSettings, Classes.LeaderLibGameSettings)
 		--SyncStatOverrides(GameSettings)
 	end
 	if #Listeners.ModSettingsLoaded > 0 then

@@ -2,6 +2,8 @@
 ---@field Data table
 ---@field Key string
 ---@field Value any
+---@field Last any
+---@field Name string
 
 GameSettingsMenu = {
 	---@type table<int, GameSettingsEntryData>
@@ -11,17 +13,19 @@ GameSettingsMenu = {
 GameSettingsMenu.__index = GameSettingsMenu
 
 ---@return GameSettingsEntryData
-local function CreateEntryData(parentTable, tableKey, initialValue)
+local function CreateEntryData(parentTable, tableKey, initialValue, name)
 	return {
 		Data = parentTable,
 		Key = tableKey,
-		Value = initialValue
+		Value = initialValue,
+		Last = initialValue,
+		Name = name or tableKey
 	}
 end
 
 ---@return integer
-local function AddControl(parentTable, tableKey)
-	local entry = CreateEntryData(parentTable, tableKey, parentTable[tableKey])
+local function AddControl(parentTable, tableKey, name)
+	local entry = CreateEntryData(parentTable, tableKey, parentTable[tableKey], name)
 	local currentID = GameSettingsMenu.LastID
 	GameSettingsMenu.Controls[currentID] = entry
 	GameSettingsMenu.LastID = GameSettingsMenu.LastID + 1
@@ -118,6 +122,7 @@ local mainMenuArrayAccess = {
 
 ---@param ui UIObject
 function GameSettingsMenu.AddSettings(ui, addToArray)
+	GameSettingsMenu.Controls = {}
 	GameSettingsMenu.LastID = 600
 	local settings = GameSettings.Settings
 	local main = ui:GetRoot()
@@ -157,7 +162,7 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 		mainMenu.addMenuSlider(AddControl(settings.BackstabSettings, "MeleeSpellBackstabMaxDistance"), text.BackstabSettings_MeleeSpellBackstabMaxDistance.Value, settings.BackstabSettings.MeleeSpellBackstabMaxDistance, 0.1, 30.0, 0.1, false, text.BackstabSettings_MeleeSpellBackstabMaxDistance_Description.Value)
 
 		mainMenu.addMenuLabel(text.Group_Player.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.Player, "Enabled"), text.BackstabSetting_Enabled.Value, true, settings.BackstabSettings.Player.Enabled and 1 or 0, false, text.BackstabSettings_Enabled_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.Player, "Enabled", "BackstabSettings.Player.Enabled"), text.BackstabSetting_Enabled.Value, true, settings.BackstabSettings.Player.Enabled and 1 or 0, false, text.BackstabSettings_Enabled_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.Player, "TalentRequired"), text.BackstabSettings_TalentRequired.Value, true, settings.BackstabSettings.Player.TalentRequired and 1 or 0, false, text.BackstabSettings_TalentRequired_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.Player, "MeleeOnly"), text.BackstabSettings_MeleeOnly.Value, true, settings.BackstabSettings.Player.MeleeOnly and 1 or 0, false, text.BackstabSettings_MeleeOnly_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.Player, "SpellsCanBackstab"), text.BackstabSettings_SpellsCanBackstab.Value, true, settings.BackstabSettings.Player.SpellsCanBackstab and 1 or 0, false, text.BackstabSettings_SpellsCanBackstab_Description.Value)
@@ -173,7 +178,7 @@ end
 function GameSettingsMenu.OnCheckbox(id, state)
 	local controlData = GameSettingsMenu.Controls[id]
 	if controlData ~= nil then
-		controlData.Value = state ~= 1
+		controlData.Value = state == 1
 	end
 end
 
@@ -200,4 +205,28 @@ end
 
 function GameSettingsMenu.OnButtonPressed(id)
 	--local controlData = GameSettingsMenu.Controls[id]
+end
+
+function GameSettingsMenu.CommitChanges()
+	for i,v in pairs(GameSettingsMenu.Controls) do
+		if v.Data ~= nil and v.Value ~= v.Last then
+			v.Data[v.Key] = v.Value
+			--Ext.Print(string.format("[LeaderLib:GameSettingsMenu.CommitChanges] Set %s to %s Data(%s) EqualsLast(%s)", v.Name, v.Value, v.Data, v.Value ~= v.Last))
+		end
+	end
+	Ext.Print("Committed LeaderLib_GameSettings changes.")
+	SaveGameSettings()
+	if Client.IsHost then
+		Ext.PostMessageToServer("LeaderLib_GameSettingsChanged", Ext.JsonStringify({Settings=GameSettings.Settings}))
+	end
+	--Ext.PostMessageToServer("LeaderLib_ModMenu_SaveChanges", Ext.JsonStringify(changes))
+end
+
+function GameSettingsMenu.UndoChanges()
+	for i,v in pairs(GameSettingsMenu.Controls) do
+		if v.Value ~= v.Last then
+			v.Value = v.Last
+			Ext.Print(string.format("[LeaderLib:GameSettingsMenu.UndoChanges] Reverted %s back to %s", v.Key, v.Value))
+		end
+	end
 end

@@ -171,7 +171,13 @@ local function OnAcceptChanges(ui, call)
 		ModMenuManager.SaveScroll(ui)
 		ModMenuManager.CommitChanges()
 		registeredListeners = false
+	elseif currentMenu == LarianMenuID.Gameplay then
+		GameSettingsMenu.CommitChanges()
 	end
+end
+
+local function OnApplyPressed(ui, call, ...)
+	
 end
 
 local function OnCancelChanges(ui, call)
@@ -179,6 +185,8 @@ local function OnCancelChanges(ui, call)
 		ModMenuManager.SaveScroll(ui)
 		ModMenuManager.UndoChanges()
 		registeredListeners = false
+	elseif currentMenu == LarianMenuID.Gameplay then
+		GameSettingsMenu.UndoChanges()
 	end
 end
 
@@ -224,16 +232,21 @@ Ext.RegisterListener("SessionLoaded", function()
 			elseif id == MessageBoxButtonID.ACCEPT then
 				ModMenuManager.UndoChanges()
 			end
+		elseif lastMenu == LarianMenuID.Gameplay or currentMenu == LarianMenuID.Gameplay then
+			if id == MessageBoxButtonID.CANCEL then
+
+			elseif id == MessageBoxButtonID.ACCEPT then
+				GameSettingsMenu.UndoChanges()
+			end
 		end
 	end)
 
 	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "acceptPressed", OnAcceptChanges)
+	Ext.RegisterUITypeCall(OPTIONS_INPUT, "acceptPressed", OnAcceptChanges)
 	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "requestCloseUI", OnCancelChanges)
 	Ext.RegisterUITypeCall(OPTIONS_INPUT, "requestCloseUI", OnCancelChanges)
 
-	Ext.RegisterUITypeCall(1, "applyPressed", function(ui, call, ...)
-		--ModMenuManager.CommitChanges()
-	end)
+	Ext.RegisterUITypeCall(OPTIONS_INPUT, "applyPressed", OnApplyPressed)
 
 	---@param ui UIObject
 	Ext.RegisterUINameInvokeListener("parseUpdateArray", function(...)
@@ -260,46 +273,59 @@ Ext.RegisterListener("SessionLoaded", function()
 	Ext.RegisterUITypeCall(OPTIONS_INPUT, "switchMenu", OnSwitchMenu)
 	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "switchMenu", OnSwitchMenu)
 
-	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "checkBoxID", function(ui, call, id, state)
-		--print(call,id,state)
+	local OnCheckBox = function(ui, call, id, value)
 		if currentMenu == MOD_MENU_ID then
-			ModMenuManager.OnCheckbox(id, state)
+			ModMenuManager.OnCheckbox(id, value)
 		elseif currentMenu == LarianMenuID.Gameplay then
-			GameSettingsMenu.OnCheckbox(id, state)
+			GameSettingsMenu.OnCheckbox(id, value)
 		end
-	end)
-	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "comboBoxID", function(ui, call, id, index)
-		--print(call,id,index)
+	end
+
+	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "checkBoxID", OnCheckBox)
+	Ext.RegisterUITypeCall(OPTIONS_INPUT, "checkBoxID", OnCheckBox)
+
+	local OnComboBox = function(ui, call, id, value)
 		if currentMenu == MOD_MENU_ID then
-			ModMenuManager.OnComboBox(id, index)
+			ModMenuManager.OnComboBox(id, value)
 		elseif currentMenu == LarianMenuID.Gameplay then
-			GameSettingsMenu.OnComboBox(id, index)
+			GameSettingsMenu.OnComboBox(id, value)
 		end
-	end)
-	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "selectorID", function(ui, call, id, currentSelection)
-		--print(call,id,currentSelection)
+	end
+
+	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "comboBoxID", OnComboBox)
+	Ext.RegisterUITypeCall(OPTIONS_INPUT, "comboBoxID", OnComboBox)
+
+	local OnSelector = function(ui, call, id, value)
 		if currentMenu == MOD_MENU_ID then
-			ModMenuManager.OnSelector(id, currentSelection)
+			ModMenuManager.OnSelector(id, value)
 		elseif currentMenu == LarianMenuID.Gameplay then
-			GameSettingsMenu.OnSelector(id, currentSelection)
+			GameSettingsMenu.OnSelector(id, value)
 		end
-	end)
-	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "menuSliderID", function(ui, call, id, value)
-		--print(call,id,value)
+	end
+
+	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "selectorID", OnSelector)
+	Ext.RegisterUITypeCall(OPTIONS_INPUT, "selectorID", OnSelector)
+
+	local OnSlider = function(ui, call, id, value)
 		if currentMenu == MOD_MENU_ID then
 			ModMenuManager.OnSlider(id, value)
 		elseif currentMenu == LarianMenuID.Gameplay then
 			GameSettingsMenu.OnSlider(id, value)
 		end
-	end)
-	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "buttonPressed", function(ui, call, id)
-		--print(call,id)
+	end
+
+	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "menuSliderID", OnSlider)
+	Ext.RegisterUITypeCall(OPTIONS_INPUT, "menuSliderID", OnSlider)
+
+	local OnButton = function(ui, call, id)
 		if currentMenu == MOD_MENU_ID then
 			ModMenuManager.OnButtonPressed(id)
 		elseif currentMenu == LarianMenuID.Gameplay then
 			GameSettingsMenu.OnButtonPressed(id)
 		end
-	end)
+	end
+	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "buttonPressed", OnButton)
+	Ext.RegisterUITypeCall(OPTIONS_INPUT, "buttonPressed", OnButton)
 
 	---@param ui UIObject
 	Ext.RegisterUINameInvokeListener("parseBaseUpdateArray", function(ui, method, ...)

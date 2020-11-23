@@ -252,6 +252,7 @@ function ModMenuManager.OnCheckbox(id, state)
 		else
 			controlData.Value = state ~= 0
 		end
+		--print("ModMenuManager.OnCheckbox", id, state, controlData.Entry.Default, controlData.Value)
 	end
 end
 

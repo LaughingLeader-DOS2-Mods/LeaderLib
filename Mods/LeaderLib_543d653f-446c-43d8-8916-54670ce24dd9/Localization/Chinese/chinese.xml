@@ -46,6 +46,7 @@
 	<content contentuid="h2033bb71g7004g4423ga633gd50bfc8fdd50">When combat starts, LeaderLib will autosave the game.</content>
 	<content contentuid="h22e00201g6666g4837gaf8ega722712bad2a">[LeaderLib_DynamicMenu_MenuOption3_58379c79-1cf1-4129-bcf5-579f40a9ad11]</content>
 	<content contentuid="h24533724ga73fg4d76gb62egc700a193eb89">Must you, really?</content>
+	<content contentuid="h24e93debgf7e1g4a6ag9841g5ecca2c911f5">Non-Player Action Point Settings</content>
 	<content contentuid="h25737285gb844g4142gad4cg1d5dc420fb0b">[LeaderLib_DynamicMenu_MenuOption5_f450c0eb-c308-4755-9718-f6a1e87305bd]</content>
 	<content contentuid="h25bf34f3g1b21g4b69gb041g896d6e346f36">[LeaderLib_ModMenu_Menu4_337a1066-9a85-4005-a2dc-f0156bf13d16]</content>
 	<content contentuid="h2627dad1g64d8g4d19gaf42g6a12ef1a7d1a">Please stop that...</content>
@@ -152,7 +153,7 @@
 	<content contentuid="h6d2689a6ge111g43b7g8c87g478a5e501f40">Mods&lt;br&gt;[LeaderLib_ModMenu_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156]</content>
 	<content contentuid="h6d41e8bag5ab9g42c4g8723g2dad9e443b64">*He hands you a peculiar-looking book.*</content>
 	<content contentuid="h6d61f680g2f6cg44c1g8a37g4ad2ad98dc90">I&apos;m also selling some old belongings.</content>
-	<content contentuid="h6eabd548g4797g423agbe50g8a858704a8c1">Action Point Settings</content>
+	<content contentuid="h6eabd548g4797g423agbe50g8a858704a8c1">Player Action Point Settings</content>
 	<content contentuid="h6f21c7b6gea18g4846gbd07g048402159797">*He waits for you to speak.*</content>
 	<content contentuid="h6f8c74d8g77d3g469ega859g41d644a06c6a">LeaderLib Settings</content>
 	<content contentuid="h6feb8440ge26dg4b31gb9fag5d061db28708">Override skill tiers to make them show up in character creation.</content>
@@ -266,7 +267,6 @@
 	<content contentuid="hb796e45cgaab4g4fcega4a2g2e424ed8b66c">[GLOBAL] Enable Combat Log Logging</content>
 	<content contentuid="hb7be1cf4gcd0ag4fadga064g72a74b996f1a">[GLOBAL] Disable Autosaving when Combat Starts</content>
 	<content contentuid="hb8f5a682g5a19g4fe4ga26ag701bf0ba4e8b">Give me a moment to prepare my things, and we can begin trading again.</content>
-	<content contentuid="hb920b2c0g5c98g43ffg8574ge604cb47bd55">Non-Player Characters</content>
 	<content contentuid="hb9335219gb6b3g49ffg9291gd3bf78a2f84f">Pause Autosaving in Combat</content>
 	<content contentuid="hb955eb39g2068g4c7dga389gfabcaa42462d">Loading mod menu...</content>
 	<content contentuid="hb987d743g981dg43f6g9aa8g08109349d4e9">LeaderLib Successfully Loaded Global Settings</content>
@@ -333,17 +333,18 @@
 	<content contentuid="he4b98edeg7025g4ad9gbb87gcce230263029">Hrmph...</content>
 	<content contentuid="he59d7821g2c4dg4deag8341g27215713bf5e">*Introduce yourself, then ask the man who he is.*</content>
 	<content contentuid="he5a918ecg8f34g4ddbg9af6g98e9f4575d91">Me? Oh, I&apos;m just a retired old man, looking to get some fishing done. *He rubs his beard, glancing at the broken-down scenery.* Afraid I don&apos;t have any fight left in me anywho.</content>
+	<content contentuid="he93fef85gaa09g45c2g92d3ga71a001dfe49">General Backstab Settings</content>
 	<content contentuid="hea20bb8dg93b1g4147g924ag686aa59a1cf8">Checking registered mods...</content>
 	<content contentuid="hea66772cgcbebg47a3g8c80g70763f921d72">Chain all characters under your control that are within [1].</content>
 	<content contentuid="hea8ffe81g16f9g4a76ga9b0gad73bbaa72df">Oh! That reminds me. I have some goodies here. I&apos;m selling them for fishing gear, you see. Part of my retirement plan.</content>
 	<content contentuid="head3fc5eg00dag451dga8bdge0b6896e6a86">[Steam] I subscribed to these mods, but they don&apos;t show up in the mod list!</content>
 	<content contentuid="head5217fga96cg4b34gafb1geb56b80bd8e0">Take control of a summon or follower you own.</content>
-	<content contentuid="hecbe566cg8b1fg43c5ga9a0g7a88cef2c8f3">Backstab Settings</content>
 	<content contentuid="hed9e1aaeg3fceg4d9cg87edg9a4630c24fe7">Character is in an undead form.</content>
 	<content contentuid="hee326232gbe82g49c2gbe8eg1d0511d29248">LeaderLib</content>
 	<content contentuid="hee75e144g1d75g4094ga8c9g4a0508c5cf67">LeaderLib Successfully Saved Global Settings</content>
 	<content contentuid="hef0c737eg2a72g4564ga5cfg088484ac8b45">Shadow Resistance</content>
 	<content contentuid="hefbcc547g9671g4e57g9364g9cc7c9c06fc4">[GLOBAL] Automatically unlock the party inventory in multiplayer. (Currently Disabled)&lt;br&gt;This will allow all players to exchange items between their inventories without having to unlock them first.</content>
+	<content contentuid="hf0e4a66bg853eg4cb3gb663g12ba6fbe412f">Non-Player Backstab Settings</content>
 	<content contentuid="hf0eb5097g325bg4254gaf97g77255a6380ad">[GLOBAL] Enable &lt;b&gt;Dialog Redirection&lt;/b&gt;. If dialog tries to start with a party member that is not an AVATAR (the crown symbol), the avatar that owns that character will be used instead.</content>
 	<content contentuid="hf15fdd63gddedg435bgaa2egdd0574ce2c3c">Registered Mods:&lt;br&gt;[LeaderLib_Settings_ModList_50c55fbe-ad1e-490e-92d1-8836ca42ca12]</content>
 	<content contentuid="hf1c7aa42g3e2fg4338ga672g59a3a935cff4">New Items in Stock</content>
@@ -356,7 +357,6 @@
 	<content contentuid="hf545a1fbgccb8g481ega4adg32165aaa9288">[GLOBAL] Automatically make the party member with the highest persuasion the redirection target. Still preserves User ID matching in multiplayer, if that setting is enabled.</content>
 	<content contentuid="hf585ea52gbdb4g4a21g82aag836415d7d0d6">*Request a copy of the &quot;Mod Menu&quot; book.*</content>
 	<content contentuid="hf638bc67g5cb6g4dcfg8663gce1951caad2b">[1] Penetration</content>
-	<content contentuid="hf6eef76ag4ed3g482ega8cfg40f0759f0618">Players</content>
 	<content contentuid="hf6f6cbc6g89efg40dag8c9cg8359c5e0d618">*Ask why he&apos;s here on the Lady Vengeance.*</content>
 	<content contentuid="hf705976fg6f7fg4164g8f87g8db41f062a31">Autosave Interval&lt;br&gt;[LeaderLib_AutosaveMenu_CurrentSettings_b48918b6-4864-4aae-88fd-53d658ccb082]</content>
 	<content contentuid="hf79ed706g92d1g4183g911egf7ea7d927d05">[LeaderLib_DynamicMenu_MenuOption3_58379c79-1cf1-4129-bcf5-579f40a9ad11]</content>

@@ -87,6 +87,19 @@ local function OnCharacterSheetUpdating(ui)
 	AbilityManager.OnCharacterSheetUpdating(ui, main, #main.ability_array > 0)
 end
 
+---@param ui UIObject
+local function UpdateCharacterSheetPoints(ui, method, amount)
+	if method == "setAvailableCombatAbilityPoints" or method == "setAvailableCivilAbilityPoints" then
+		local main = ui:GetRoot()
+		AbilityManager.UpdateCharacterSheetPoints(ui, method, amount, main)
+	end
+end
+
+---@param ui UIObject
+local function OnCharacterCreationUpdating(ui, method)
+	AbilityManager.OnCharacterCreationUpdating(ui, method, ui:GetRoot())
+end
+
 local pointEvents = {
 	"minusAbility",
 	"plusAbility",
@@ -154,11 +167,19 @@ local function RegisterListeners()
 			Ext.RegisterUICall(ui, v, OnSheetEvent)
 		end
 		Ext.RegisterUIInvokeListener(ui, "updateArraySystem", OnCharacterSheetUpdating)
+		Ext.RegisterUIInvokeListener(ui, "setAvailableStatPoints", UpdateCharacterSheetPoints)
+		Ext.RegisterUIInvokeListener(ui, "setAvailableCombatAbilityPoints", UpdateCharacterSheetPoints)
+		Ext.RegisterUIInvokeListener(ui, "setAvailableCivilAbilityPoints", UpdateCharacterSheetPoints)
 		Ext.RegisterUIInvokeListener(ui, "setHelmetOptionState", OnSetHelmetOptionState)
 		PrintDebug("[LeaderLib_CharacterSheet.lua:RegisterListeners] Found (characterSheet.swf). Registered listeners.")
 	else
 		PrintDebug("[LeaderLib_CharacterSheet.lua:RegisterListeners] Failed to find Public/Game/GUI/characterSheet.swf")
 	end
+
+	--Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateAttributes", OnCharacterCreationUpdating)
+	Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateAbilities", OnCharacterCreationUpdating)
+	Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation_c, "updateAbilities", OnCharacterCreationUpdating)
+	--Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateTalents", OnCharacterCreationUpdating)
 
 	-- local ui = Ext.GetBuiltinUI("Public/Game/GUI/statusConsole.swf")
 	-- if ui ~= nil then

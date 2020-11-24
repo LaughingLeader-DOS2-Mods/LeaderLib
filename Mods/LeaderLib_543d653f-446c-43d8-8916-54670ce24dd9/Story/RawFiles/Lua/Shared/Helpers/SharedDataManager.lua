@@ -332,21 +332,31 @@ if Ext.IsClient() then
 	end)
 
 	local function OnCharacterSelected(ui, call, doubleHandle, skipSync)
+		--print(call, doubleHandle)
 		local handle = Ext.DoubleToHandle(doubleHandle)
 		if handle ~= nil then
+			---@type EclCharacter
 			local character = Ext.GetCharacter(handle)
-			if character ~= nil then
+			if character ~= nil and not character:HasTag("SUMMON") then
+				local uuid = ""
 				local currentCharacter = GetClientCharacter()
+				local changeDetected = currentCharacter == nil or false
 				if currentCharacter ~= nil then
+					local last = currentCharacter.NetID
 					--print(currentCharacter.UUID, "=>", character.MyGuid)
+					-- MyGuid is null for summons / temp characters
 					if character.MyGuid ~= nil then
 						currentCharacter.UUID = character.MyGuid
+						uuid = character.MyGuid
 					end
 					currentCharacter.NetID = character.NetID
-					ActiveCharacterChanged(currentCharacter)
+					if currentCharacter.NetID ~= last then
+						changeDetected = true
+						ActiveCharacterChanged(currentCharacter)
+					end
 				end
-				if skipSync ~= true then
-					Ext.PostMessageToServer("LeaderLib_SharedData_CharacterSelected", Ext.JsonStringify({Profile = SharedData.Profile, UUID = character.MyGuid, NetID=character.NetID}))
+				if changeDetected and skipSync ~= true then
+					Ext.PostMessageToServer("LeaderLib_SharedData_CharacterSelected", Ext.JsonStringify({Profile = SharedData.Profile, UUID = uuid, NetID=character.NetID}))
 				end
 			end
 		end
@@ -355,13 +365,15 @@ if Ext.IsClient() then
 	local lastCharacterOutsideTrade = ""
 
 	Ext.RegisterListener("SessionLoaded", function()
-		Ext.RegisterUITypeCall(Data.UIType.playerInfo, "charSel", OnCharacterSelected)
-		Ext.RegisterUITypeCall(Data.UIType.characterSheet, "selectCharacter", OnCharacterSelected)
-		Ext.RegisterUITypeCall(Data.UIType.characterSheet, "centerCamOnCharacter", OnCharacterSelected)
+		Ext.RegisterUITypeInvokeListener(Data.UIType.hotBar, "setPlayerHandle", OnCharacterSelected)
+		Ext.RegisterUITypeInvokeListener(Data.UIType.bottomBar_c, "setPlayerHandle", OnCharacterSelected)
+		Ext.RegisterUITypeCall(Data.UIType.playerInfo, "charSel", OnCharacterSelected, "After")
+		Ext.RegisterUITypeCall(Data.UIType.characterSheet, "selectCharacter", OnCharacterSelected, "After")
+		Ext.RegisterUITypeCall(Data.UIType.characterSheet, "centerCamOnCharacter", OnCharacterSelected, "After")
 		Ext.RegisterUITypeCall(Data.UIType.trade, "selectCharacter", function(ui, call, doubleHandle)
 			OnCharacterSelected(ui, call, doubleHandle, true)
-		end)
-		Ext.RegisterUITypeCall(Data.UIType.partyManagement_c, "setActiveChar", OnCharacterSelected)
+		end, "After")
+		Ext.RegisterUITypeCall(Data.UIType.partyManagement_c, "setActiveChar", OnCharacterSelected, "After")
 		Ext.RegisterUITypeCall(Data.UIType.trade, "cancel", function(ui, call)
 			if lastCharacterOutsideTrade ~= "" then
 				local currentCharacter = GetClientCharacter()

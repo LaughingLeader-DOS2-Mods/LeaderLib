@@ -8,7 +8,8 @@
 GameSettingsMenu = {
 	---@type table<int, GameSettingsEntryData>
 	Controls = {},
-	LastID = 600
+	LastID = 600,
+	LastScrollPosition = 0
 }
 GameSettingsMenu.__index = GameSettingsMenu
 
@@ -85,9 +86,8 @@ local text = {
 	MainTitle = ts:CreateFromKey("LeaderLib_UI_GameSettings_MainTitle"),
 	StarterTierOverrides = ts:CreateFromKey("LeaderLib_UI_GameSettings_StarterTierOverrides"),
 	StarterTierOverrides_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_StarterTierOverrides_Description"),
-	Section_AP = ts:CreateFromKey("LeaderLib_UI_GameSettings_Section_AP"),
-	Group_Player = ts:CreateFromKey("LeaderLib_UI_GameSettings_Group_Player"),
-	Group_NPC = ts:CreateFromKey("LeaderLib_UI_GameSettings_Group_NPC"),
+	APSettings_Group_Player = ts:CreateFromKey("LeaderLib_UI_GameSettings_Section_AP_Player"),
+	APSettings_Group_NPC = ts:CreateFromKey("LeaderLib_UI_GameSettings_Section_AP_NPC"),
 	APSettings_Enabled = ts:CreateFromKey("LeaderLib_UI_GameSettings_APSettings_Enabled"),
 	APSettings_Enabled_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_APSettings_Enabled_Description"),
 	APSettings_Max = ts:CreateFromKey("LeaderLib_UI_GameSettings_APSettings_Max"),
@@ -96,7 +96,9 @@ local text = {
 	APSettings_Start_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_APSettings_Start_Description"),
 	APSettings_Recovery = ts:CreateFromKey("LeaderLib_UI_GameSettings_APSettings_Recovery"),
 	APSettings_Recovery_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_APSettings_Recovery_Description"),
-	Section_Backstab = ts:CreateFromKey("LeaderLib_UI_GameSettings_Section_Backstab"),
+	Section_Backstab = ts:CreateFromKey("LeaderLib_UI_GameSettings_Section_BackstabSettings_General"),
+	BackstabSettings_Group_Player = ts:CreateFromKey("LeaderLib_UI_GameSettings_Section_BackstabSettings_Player"),
+	BackstabSettings_Group_NPC = ts:CreateFromKey("LeaderLib_UI_GameSettings_Section_BackstabSettings_NPC"),
 	BackstabSettings_AllowTwoHandedWeapons = ts:CreateFromKey("LeaderLib_UI_GameSettings_BackstabSettings_AllowTwoHandedWeapons"),
 	BackstabSettings_AllowTwoHandedWeapons_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_BackstabSettings_AllowTwoHandedWeapons_Description"),
 	BackstabSettings_MeleeSpellBackstabMaxDistance = ts:CreateFromKey("LeaderLib_UI_GameSettings_BackstabSettings_MeleeSpellBackstabMaxDistance"),
@@ -194,17 +196,16 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 
 		mainMenu.addMenuCheckbox(AddControl(settings, "StarterTierSkillOverrides"), text.StarterTierOverrides.Value, controlsEnabled, settings.StarterTierSkillOverrides and 1 or 0, false, text.StarterTierOverrides_Description.Value)
 		
-		mainMenu.addMenuLabel(text.Section_AP.Value)
-
 		local apSliderMax = 30
-
-		mainMenu.addMenuLabel(text.Group_Player.Value)
+		
+		
+		mainMenu.addMenuLabel(text.APSettings_Group_Player.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.APSettings.Player, "Enabled"), text.APSettings_Enabled.Value, controlsEnabled, settings.APSettings.Player.Enabled and 1 or 0, false, text.APSettings_Enabled_Description.Value)
 		mainMenu.addMenuSlider(AddControl(settings.APSettings.Player, "Start"), text.APSettings_Start.Value, settings.APSettings.Player.Start, -1, apSliderMax, 1, false, text.APSettings_Start_Description.Value)
 		mainMenu.addMenuSlider(AddControl(settings.APSettings.Player, "Recovery"), text.APSettings_Recovery.Value, settings.APSettings.Player.Recovery, -1, apSliderMax, 1, false, text.APSettings_Recovery_Description.Value)
 		mainMenu.addMenuSlider(AddControl(settings.APSettings.Player, "Max"), text.APSettings_Max.Value, settings.APSettings.Player.Max, -1, apSliderMax, 1, false, text.APSettings_Max_Description.Value)
 
-		mainMenu.addMenuLabel(text.Group_NPC.Value)
+		mainMenu.addMenuLabel(text.APSettings_Group_NPC.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.APSettings.NPC, "Enabled"), text.APSettings_Enabled.Value, controlsEnabled, settings.APSettings.NPC.Enabled and 1 or 0, false, text.APSettings_Enabled_Description.Value)
 		mainMenu.addMenuSlider(AddControl(settings.APSettings.NPC, "Start"), text.APSettings_Start.Value, settings.APSettings.NPC.Start, -1, apSliderMax, 1, false, text.APSettings_Start_Description.Value)
 		mainMenu.addMenuSlider(AddControl(settings.APSettings.NPC, "Recovery"), text.APSettings_Recovery.Value, settings.APSettings.NPC.Recovery, -1, apSliderMax, 1, false, text.APSettings_Recovery_Description.Value)
@@ -215,13 +216,13 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings, "AllowTwoHandedWeapons"), text.BackstabSettings_AllowTwoHandedWeapons.Value, controlsEnabled, settings.BackstabSettings.AllowTwoHandedWeapons and 1 or 0, false, text.BackstabSettings_AllowTwoHandedWeapons_Description.Value)
 		mainMenu.addMenuSlider(AddControl(settings.BackstabSettings, "MeleeSpellBackstabMaxDistance"), text.BackstabSettings_MeleeSpellBackstabMaxDistance.Value, settings.BackstabSettings.MeleeSpellBackstabMaxDistance, 0.1, 30.0, 0.1, false, text.BackstabSettings_MeleeSpellBackstabMaxDistance_Description.Value)
 
-		mainMenu.addMenuLabel(text.Group_Player.Value)
+		mainMenu.addMenuLabel(text.BackstabSettings_Group_Player.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.Player, "Enabled", "BackstabSettings.Player.Enabled"), text.BackstabSetting_Enabled.Value, controlsEnabled, settings.BackstabSettings.Player.Enabled and 1 or 0, false, text.BackstabSettings_Enabled_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.Player, "TalentRequired"), text.BackstabSettings_TalentRequired.Value, controlsEnabled, settings.BackstabSettings.Player.TalentRequired and 1 or 0, false, text.BackstabSettings_TalentRequired_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.Player, "MeleeOnly"), text.BackstabSettings_MeleeOnly.Value, controlsEnabled, settings.BackstabSettings.Player.MeleeOnly and 1 or 0, false, text.BackstabSettings_MeleeOnly_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.Player, "SpellsCanBackstab"), text.BackstabSettings_SpellsCanBackstab.Value, controlsEnabled, settings.BackstabSettings.Player.SpellsCanBackstab and 1 or 0, false, text.BackstabSettings_SpellsCanBackstab_Description.Value)
 
-		mainMenu.addMenuLabel(text.Group_NPC.Value)
+		mainMenu.addMenuLabel(text.BackstabSettings_Group_NPC.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.NPC, "Enabled"), text.BackstabSetting_Enabled.Value, controlsEnabled, settings.BackstabSettings.NPC.Enabled and 1 or 0, false, text.BackstabSettings_Enabled_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.NPC, "TalentRequired"), text.BackstabSettings_TalentRequired.Value, controlsEnabled, settings.BackstabSettings.NPC.TalentRequired and 1 or 0, false, text.BackstabSettings_TalentRequired_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.NPC, "MeleeOnly"), text.BackstabSettings_MeleeOnly.Value, controlsEnabled, settings.BackstabSettings.NPC.MeleeOnly and 1 or 0, false, text.BackstabSettings_MeleeOnly_Description.Value)
@@ -287,4 +288,30 @@ function GameSettingsMenu.UndoChanges()
 			end
 		end
 	end
+end
+
+function GameSettingsMenu.SetScrollPosition(ui)
+	if GameSettingsMenu.LastScrollPosition ~= 0 then
+		local main = ui:GetRoot()
+		if main ~= nil then
+			local scrollbar_mc = main.mainMenu_mc.list.m_scrollbar_mc
+			if scrollbar_mc ~= nil then
+				scrollbar_mc.m_tweenY = GameSettingsMenu.LastScrollPosition
+				scrollbar_mc.m_scrollAnimToY = GameSettingsMenu.LastScrollPosition
+				scrollbar_mc.INTScrolledY(GameSettingsMenu.LastScrollPosition)
+			end
+		end
+	end
+	print("[SetScrollPosition] GameSettingsMenu.LastScrollPosition", GameSettingsMenu.LastScrollPosition)
+end
+
+function GameSettingsMenu.SaveScroll(ui)
+	local main = ui:GetRoot()
+	if main ~= nil then
+		local scrollbar_mc = main.mainMenu_mc.list.m_scrollbar_mc
+		if scrollbar_mc ~= nil then
+			GameSettingsMenu.LastScrollPosition = scrollbar_mc.m_scrolledY
+		end
+	end
+	print("[SaveScroll] GameSettingsMenu.LastScrollPosition", GameSettingsMenu.LastScrollPosition)
 end

@@ -15,6 +15,12 @@ local OPTIONS_SETTINGS = 45
 local OPTIONS_INPUT = 17
 local OPTIONS_ACCEPT = 1
 
+local OPTIONS_UI_TYPE = {
+	OPTIONS_SETTINGS,
+	OPTIONS_INPUT,
+	OPTIONS_ACCEPT
+}
+
 local LarianMenuID = {
 	Graphics = 1,
 	Audio = 2,
@@ -28,7 +34,7 @@ local MessageBoxButtonID = {
 }
 
 local MOD_MENU_ID = 69
-local lastMenu = 1
+local lastMenu = -1
 local currentMenu = 1
 local switchToModMenu = false
 
@@ -154,15 +160,22 @@ local registeredListeners = false
 local function OnSwitchMenu(ui, call, id)
 	if currentMenu == MOD_MENU_ID then
 		ModMenuManager.SaveScroll(ui)
+	elseif currentMenu == LarianMenuID.Gameplay then
+		GameSettingsMenu.SaveScroll(ui)
 	end
 	lastMenu = currentMenu
 	currentMenu = id
-	if id == LarianMenuID.Gameplay then
-		if Ext.IsDeveloperMode() then
-			GameSettingsMenu.AddSettings(ui, true)
-		end
-	elseif id == LarianMenuID.Controls then
 
+	if currentMenu == LarianMenuID.Gameplay then
+		GameSettingsMenu.AddSettings(ui, true)
+	end
+end
+
+local function OnUpdateArrayParsed(ui, call, arrayName)
+	if arrayName == "baseUpdate_Array" then
+		if currentMenu == LarianMenuID.Gameplay then
+			GameSettingsMenu.SetScrollPosition(ui)
+		end
 	end
 end
 
@@ -172,6 +185,7 @@ local function OnAcceptChanges(ui, call)
 		ModMenuManager.CommitChanges()
 		registeredListeners = false
 	elseif currentMenu == LarianMenuID.Gameplay then
+		GameSettingsMenu.SaveScroll(ui)
 		GameSettingsMenu.CommitChanges()
 	end
 end
@@ -186,6 +200,7 @@ local function OnCancelChanges(ui, call)
 		ModMenuManager.UndoChanges()
 		registeredListeners = false
 	elseif currentMenu == LarianMenuID.Gameplay then
+		GameSettingsMenu.SaveScroll(ui)
 		GameSettingsMenu.UndoChanges()
 	end
 end
@@ -206,10 +221,17 @@ Ext.RegisterListener("SessionLoaded", function()
 		end
 	end
 
-	Ext.RegisterUITypeCall(19, "openMenu", function(ui, call)
+	Ext.RegisterUITypeCall(Data.UIType.gameMenu, "openMenu", function(ui, call)
+		registeredListeners = false
 		currentMenu = 1
 		lastMenu = 1
-		registeredListeners = false
+		-- if lastMenu ~= -1 then
+		-- 	currentMenu = lastMenu
+		-- 	ui:ExternalInterfaceCall("switchMenu", currentMenu)
+		-- else
+		-- 	currentMenu = 1
+		-- 	lastMenu = 1
+		-- end
 	end)
 
 	Ext.RegisterUINameCall("switchToModMenu", function(ui, call, ...)
@@ -224,7 +246,8 @@ Ext.RegisterListener("SessionLoaded", function()
 		ui:ExternalInterfaceCall("switchMenu", 1)
 		--ui:ExternalInterfaceCall("requestCloseUI")
 	end)
-	Ext.RegisterUITypeCall(29, "ButtonPressed", function(ui, call, id)
+
+	Ext.RegisterUITypeCall(Data.UIType.msgBox, "ButtonPressed", function(ui, call, id)
 		-- Are you sure you want to discard your changes?
 		if lastMenu == MOD_MENU_ID or currentMenu == MOD_MENU_ID then
 			if id == MessageBoxButtonID.CANCEL then
@@ -241,20 +264,21 @@ Ext.RegisterListener("SessionLoaded", function()
 		end
 	end)
 
-	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "acceptPressed", OnAcceptChanges)
-	Ext.RegisterUITypeCall(OPTIONS_INPUT, "acceptPressed", OnAcceptChanges)
-	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "requestCloseUI", OnCancelChanges)
-	Ext.RegisterUITypeCall(OPTIONS_INPUT, "requestCloseUI", OnCancelChanges)
-
-	Ext.RegisterUITypeCall(OPTIONS_INPUT, "applyPressed", OnApplyPressed)
-
 	---@param ui UIObject
-	Ext.RegisterUINameInvokeListener("parseUpdateArray", function(...)
-		local ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf")
+	Ext.RegisterUINameInvokeListener("parseUpdateArray", function(invokedUI, method, ...)
+		local ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf") or invokedUI
 		if ui ~= nil then
 			if currentMenu == 3 then
 				GameSettingsMenu.AddSettings(ui, true)
 			end
+		end
+	end)
+
+	---@param ui UIObject
+	Ext.RegisterUINameInvokeListener("parseBaseUpdateArray", function(invokedUI, method, ...)
+		local ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf") or invokedUI
+		if ui ~= nil then
+			CreateModMenuButton(ui, method, ...)
 		end
 	end)
 
@@ -270,9 +294,6 @@ Ext.RegisterListener("SessionLoaded", function()
 		end
 	end)
 
-	Ext.RegisterUITypeCall(OPTIONS_INPUT, "switchMenu", OnSwitchMenu)
-	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "switchMenu", OnSwitchMenu)
-
 	local OnCheckBox = function(ui, call, id, value)
 		if currentMenu == MOD_MENU_ID then
 			ModMenuManager.OnCheckbox(id, value)
@@ -280,10 +301,7 @@ Ext.RegisterListener("SessionLoaded", function()
 			GameSettingsMenu.OnCheckbox(id, value)
 		end
 	end
-
-	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "checkBoxID", OnCheckBox)
-	Ext.RegisterUITypeCall(OPTIONS_INPUT, "checkBoxID", OnCheckBox)
-
+	
 	local OnComboBox = function(ui, call, id, value)
 		if currentMenu == MOD_MENU_ID then
 			ModMenuManager.OnComboBox(id, value)
@@ -291,9 +309,6 @@ Ext.RegisterListener("SessionLoaded", function()
 			GameSettingsMenu.OnComboBox(id, value)
 		end
 	end
-
-	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "comboBoxID", OnComboBox)
-	Ext.RegisterUITypeCall(OPTIONS_INPUT, "comboBoxID", OnComboBox)
 
 	local OnSelector = function(ui, call, id, value)
 		if currentMenu == MOD_MENU_ID then
@@ -303,9 +318,6 @@ Ext.RegisterListener("SessionLoaded", function()
 		end
 	end
 
-	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "selectorID", OnSelector)
-	Ext.RegisterUITypeCall(OPTIONS_INPUT, "selectorID", OnSelector)
-
 	local OnSlider = function(ui, call, id, value)
 		if currentMenu == MOD_MENU_ID then
 			ModMenuManager.OnSlider(id, value)
@@ -314,9 +326,6 @@ Ext.RegisterListener("SessionLoaded", function()
 		end
 	end
 
-	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "menuSliderID", OnSlider)
-	Ext.RegisterUITypeCall(OPTIONS_INPUT, "menuSliderID", OnSlider)
-
 	local OnButton = function(ui, call, id)
 		if currentMenu == MOD_MENU_ID then
 			ModMenuManager.OnButtonPressed(id)
@@ -324,30 +333,32 @@ Ext.RegisterListener("SessionLoaded", function()
 			GameSettingsMenu.OnButtonPressed(id)
 		end
 	end
-	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "buttonPressed", OnButton)
-	Ext.RegisterUITypeCall(OPTIONS_INPUT, "buttonPressed", OnButton)
-
+	
 	local onControlAdded = function(ui, call, controlType, id, listIndex, listProperty)
 		--ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf") or ui
 		if Vars.DebugMode then
-			print(ui:GetTypeId(), call, controlType, id, listIndex, listProperty)
+			--print(ui:GetTypeId(), call, controlType, id, listIndex, listProperty)
 		end
 		if currentMenu == LarianMenuID.Gameplay then
 			GameSettingsMenu.OnControlAdded(ui, controlType, id, listIndex, listProperty)
 		end
 	end
 
-	Ext.RegisterUITypeCall(OPTIONS_SETTINGS, "controlAdded", onControlAdded)
-	Ext.RegisterUITypeCall(OPTIONS_INPUT, "controlAdded", onControlAdded)
-	Ext.RegisterUITypeCall(OPTIONS_ACCEPT, "controlAdded", onControlAdded)
+	for _,uiType in pairs(OPTIONS_UI_TYPE) do
+		Ext.RegisterUITypeCall(uiType, "applyPressed", OnApplyPressed)
+		Ext.RegisterUITypeCall(uiType, "acceptPressed", OnAcceptChanges)
+		Ext.RegisterUITypeCall(uiType, "requestCloseUI", OnCancelChanges)
 
-	---@param ui UIObject
-	Ext.RegisterUINameInvokeListener("parseBaseUpdateArray", function(ui, method, ...)
-		-- Initial setup
-		if ui:GetTypeId() == nil then
-			ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf") or ui
-			--Ext.PostMessageToServer("LeaderLib_ModMenu_CreateMenuButtonAfterDelay", tostring(UI.ClientID))
-		end
-		CreateModMenuButton(ui, method, ...)
-	end)
+		Ext.RegisterUITypeCall(uiType, "switchMenu", OnSwitchMenu)
+
+		Ext.RegisterUITypeCall(uiType, "controlAdded", onControlAdded)
+
+		Ext.RegisterUITypeCall(uiType, "buttonPressed", OnButton)
+		Ext.RegisterUITypeCall(uiType, "menuSliderID", OnSlider)
+		Ext.RegisterUITypeCall(uiType, "selectorID", OnSelector)
+		Ext.RegisterUITypeCall(uiType, "checkBoxID", OnCheckBox)
+		Ext.RegisterUITypeCall(uiType, "comboBoxID", OnComboBox)
+
+		Ext.RegisterUITypeCall(uiType, "arrayParsed", OnUpdateArrayParsed)
+	end
 end)

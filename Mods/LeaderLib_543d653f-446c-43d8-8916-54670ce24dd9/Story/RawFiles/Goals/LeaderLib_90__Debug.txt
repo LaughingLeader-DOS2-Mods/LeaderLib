@@ -198,6 +198,7 @@ IF
 TimerFinished("Timers_LeaderLib_Debug_LuaReset")
 THEN
 NRD_ModCall("LeaderLib", "OnLuaReset");
+NRD_ModCall("LeaderLib", "CharacterSheet_StorePartyValues");
 */
 //END_REGION
 EXITSECTION

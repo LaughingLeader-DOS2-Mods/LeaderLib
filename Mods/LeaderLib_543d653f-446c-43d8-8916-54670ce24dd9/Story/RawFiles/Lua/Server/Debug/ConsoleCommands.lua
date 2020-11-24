@@ -255,6 +255,12 @@ end)
 
 --!additemstat ARM_UNIQUE_LLWEAPONEX_ThiefGloves_A Unique fe0754e3-5f0b-409e-a856-31e646201ee4
 Ext.RegisterConsoleCommand("additemstat", function(command, stat, levelstr, rarity, template)
+	local equipmentStatType = {
+		Weapon = true,
+		Armor = true,
+		Shield = true,
+	}
+	
 	if stat == nil then
 		stat = "WPN_Sword_2H"
 	end
@@ -265,6 +271,7 @@ Ext.RegisterConsoleCommand("additemstat", function(command, stat, levelstr, rari
 			rarity = "Epic"
 		end
 	end
+	local statType = NRD_StatGetType(stat)
 	local host = CharacterGetHostCharacter()
 	local level = CharacterGetLevel(host)
 	local skipLevelCheck = true
@@ -279,7 +286,7 @@ Ext.RegisterConsoleCommand("additemstat", function(command, stat, levelstr, rari
 		-- ItemAddDeltaModifier(item, "Boost_Weapon_Status_Set_Crippled")
 		--ItemAddDeltaModifier(item, "Boost_Weapon_Status_Set_KnockDown_Sword")
 		ItemToInventory(item, host, 1, 1, 1)
-		if Mods.WeaponExpansion ~= nil then
+		if Mods.WeaponExpansion ~= nil and equipmentStatType[statType] == true then
 			Mods.WeaponExpansion.OnTreasureItemGenerate(Ext.GetItem(item))
 		end
 	else

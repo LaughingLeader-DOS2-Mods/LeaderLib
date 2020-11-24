@@ -343,3 +343,198 @@ end
 -- Ext.RegisterOsirisListener("NRD_OnStatusAttempt", 4, "after", function(target, status, handle, source)
 -- 	print("NRD_OnStatusAttempt", target, status, handle, source)
 -- end)
+
+local healAttributes = {
+	"EffectTime",
+	"HealAmount",
+	"HealEffect",
+	"HealEffectId",
+	"HealType",
+	"AbsorbSurfaceRange",
+	"TargetDependentHeal",
+}
+
+local statusAttributes = {
+	"StatusType",
+	"StatusId",
+	"CanEnterChance",
+	"StartTimer",
+	"LifeTime",
+	"CurrentLifeTime",
+	"TurnTimer",
+	"Strength",
+	"StatsMultiplier",
+	"DamageSourceType",
+	"StatusHandle",
+	"TargetHandle",
+	"StatusSourceHandle",
+	"KeepAlive",
+	"IsOnSourceSurface",
+	"IsFromItem",
+	"Channeled",
+	"IsLifeTimeSet",
+	"InitiateCombat",
+	"Influence",
+	"BringIntoCombat",
+	"IsHostileAct",
+	"IsInvulnerable",
+	"IsResistingDeath",
+	"ForceStatus",
+	"ForceFailStatus",
+	"RequestClientSync",
+	"RequestDelete",
+	"RequestDeleteAtTurnEnd",
+	"Started",
+}
+
+local statusConsmeAttributes = {
+	"ResetAllCooldowns",
+	"ResetOncePerCombat",
+	"ScaleWithVitality",
+	"LoseControl",
+	"ApplyStatusOnTick",
+	"EffectTime",
+	"StatsId",
+	"StackId",
+	"OriginalWeaponStatsId",
+	"OverrideWeaponStatsId",
+	"OverrideWeaponHandle",
+	"SavingThrow",
+	"SourceDirection",
+	"Turn",
+	"HealEffectOverride",
+	"Poisoned",
+}
+
+local statusHealingAttributes = {
+	"HealAmount",
+	"TimeElapsed",
+	"HealEffect",
+	"HealEffectId",
+	"SkipInitialEffect",
+	"HealingEvent",
+	"HealStat",
+	"AbsorbSurfaceRange",
+}
+
+local statusHitAttributes = {
+	"HitByHandle",
+	"HitWithHandle",
+	"WeaponHandle",
+	"HitReason",
+	"SkillId",
+	"Interruption",
+	"AllowInterruptAction",
+	"ForceInterrupt",
+	"DecDelayDeathCount",
+	"ImpactPosition",
+	"ImpactOrigin",
+	"ImpactDirection",
+}
+
+--[[
+
+-- Ext.RegisterOsirisListener("NRD_OnHeal", 4, "before", function(target, source, amount, handle)
+-- 	print("[NRD_OnHeal]", target, source, amount, handle)
+-- 	---@type EsvStatusHeal
+-- 	local status = Ext.GetStatus(target, handle)
+-- 	if status then
+-- 		Ext.Print("[EsvStatusHeal]")
+-- 		for _,att in ipairs(healAttributes) do
+-- 			print(att, status[att])
+-- 		end
+-- 		Ext.Print("[EsvStatus]")
+-- 		for _,att in ipairs(statusAttributes) do
+-- 			print(att, status[att])
+-- 		end
+-- 		--print(string.format("[NRD_OnHeal] status.HealAmount(%s) status.HealEffect(%s) status.HealEffectId(%s) status.IsFromItem(%s) status.StatusId(%s) status.StatusType(%s)", status.HealAmount, status.HealEffect, status.HealEffectId, status.IsFromItem, status.StatusId, status.StatusType))
+-- 	end
+-- end)
+
+-- Ext.RegisterOsirisListener("NRD_OnHit", 4, "before", function(target, source, amount, handle)
+-- 	print("[NRD_OnHit]", target, source, amount, handle)
+-- 	---@type EsvStatusHeal
+-- 	local status = Ext.GetStatus(target, handle)
+-- 	if status then
+-- 		Ext.Print("[EsvStatusHit]")
+-- 		for _,att in ipairs(statusHitAttributes) do
+-- 			print(att, status[att])
+-- 		end
+-- 		Ext.Print("[EsvStatusHeal]")
+-- 		for _,att in ipairs(healAttributes) do
+-- 			print(att, status[att])
+-- 		end
+-- 		Ext.Print("[EsvStatus]")
+-- 		for _,att in ipairs(statusAttributes) do
+-- 			print(att, status[att])
+-- 		end
+-- 		--print(string.format("[NRD_OnHeal] status.HealAmount(%s) status.HealEffect(%s) status.HealEffectId(%s) status.IsFromItem(%s) status.StatusId(%s) status.StatusType(%s)", status.HealAmount, status.HealEffect, status.HealEffectId, status.IsFromItem, status.StatusId, status.StatusType))
+-- 	end
+-- end)
+
+local potionChangeState = {}
+local blockNextHeal = {}
+
+Ext.RegisterOsirisListener("CharacterStatusAttempt", 3, "before", function(target, statusId, source)
+	target = GetUUID(target)
+	if statusId == "CONSUME" then
+		---@type EsvStatusConsume
+		local status = Ext.GetCharacter(target):GetStatus(statusId)
+		if status and string.find(status.StatsId, "Heal") then
+			RemoveStatus(target, statusId)
+		end
+	end
+end)
+
+local function IsValidString(str)
+	return str ~= nil and str ~= ""
+end
+
+Ext.RegisterOsirisListener("CharacterStatusApplied", 3, "before", function(target, statusId, source)
+	target = GetUUID(target)
+	local character = Ext.GetCharacter(uuid)
+	for _,status in pairs(character:GetStatusObjects()) do
+		if status.StatusId == "CONSUME" and IsValidString(status.StatsId) then
+			---@type StatEntryPotion
+			local potion = Ext.GetStat(status.StatsId)
+			if potion and potion.IsConsumable == "Yes" and IsValidString(potion.RootTemplate) then
+				status.CurrentLifeTime = 0
+				status.RequestClientSync = true
+			end
+		end
+	end
+
+	if statusId == "CONSUME" then
+		---@type EsvStatusConsume
+		local status = Ext.GetCharacter(target):GetStatus(statusId)
+		if status and string.find(status.StatsId, "Heal") then
+			--CharacterUnconsume(target, NRD_StatusGetHandle(target, statusId))
+			--RemoveStatus(target, statusId)
+			if potionChangeState[target] == nil then
+				potionChangeState[target] = 1
+			end
+			if potionChangeState[target] == 1 then
+				blockNextHeal[target] = true
+			elseif potionChangeState[target] > 2 then
+				potionChangeState[target] = 0
+			end
+			potionChangeState[target] = potionChangeState[target] + 1
+		end
+	end
+	print(statusId, "potionChangeState["..target.."]", potionChangeState[target])
+end)
+
+Ext.RegisterOsirisListener("NRD_OnStatusAttempt", 4, "before", function(target, statusId, handle, source)
+	-- print("[NRD_OnStatusAttempt]", target, statusId, handle, source)
+	-- target = GetUUID(target)
+	-- if statusId == "HEAL" and blockNextHeal[target] == true then
+	-- 	blockNextHeal[target] = nil
+	-- 	NRD_StatusPreventApply(target, handle, 1)
+	-- 	local consumeHandle = CharacterConsume(target, "POTION_Minor_Healing_Potion")
+	-- 	StartOneshotTimer("Timers_Debug_ClearConsume"..target, 250, function()
+	-- 		CharacterUnconsume(target, consumeHandle)
+	-- 	end)
+	-- end
+end)
+
+]]

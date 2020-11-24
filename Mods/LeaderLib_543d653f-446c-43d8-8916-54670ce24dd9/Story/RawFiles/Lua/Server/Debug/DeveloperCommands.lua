@@ -258,7 +258,7 @@ Ext.RegisterConsoleCommand("lleditskill", function(cmd, skill, attribute, value)
 			elseif attType == "string" then
 				stat[attribute] = value
 			elseif attType == "table" then
-				value = Ext.JsonParse(value)
+				value = Common.JsonParse(value)
 				if value ~= nil then
 					stat[attribute] = value
 				end

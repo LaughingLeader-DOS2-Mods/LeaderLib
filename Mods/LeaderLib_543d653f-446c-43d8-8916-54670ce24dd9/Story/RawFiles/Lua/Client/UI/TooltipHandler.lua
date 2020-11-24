@@ -154,7 +154,6 @@ local function OnSkillTooltip(character, skill, tooltip)
 		if rangeAttribute ~= nil then
 			local element = tooltip:GetElement("SkillRange")
 			if element ~= nil then
-				print(Ext.JsonStringify(element))
 				local range = Ext.StatGetAttribute(skill, rangeAttribute)
 				element.Value = tostring(range).."m"
 			end
@@ -500,7 +499,7 @@ local function OnItemTooltip(item, tooltip)
 		return
 	end
 	if item ~= nil then
-		print(item.StatsId, Ext.JsonStringify(item.WorldPos), Ext.JsonStringify(tooltip.Data))
+		--print(item.StatsId, Ext.JsonStringify(item.WorldPos), Ext.JsonStringify(tooltip.Data))
 		lastItem = item
 		local character = Client:GetCharacter()
 		if character ~= nil then

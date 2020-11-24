@@ -238,7 +238,7 @@ package optionsSettings_fla
 			val2.x = this.elementX;
 			val2.label_txt.htmlText = param1;
 			val2.name = "item" + this.list.length + "_mc";
-			val2.mHeight = 40;
+			//val2.mHeight = 40;
 			this.totalHeight = this.totalHeight + (val2.mHeight + this.elementHSpacing);
 			if(val2.label_txt.textWidth > this.minWidth)
 			{
@@ -640,7 +640,7 @@ package optionsSettings_fla
 			this.cancel_mc.pressedFunc = this.cancelPressed;
 			this.ok_mc.pressedFunc = this.okPressed;
 			this.apply_mc.pressedFunc = this.applyPressed;
-			this.elementHSpacing = 10;
+			this.elementHSpacing = 2;
 			this.minWidth = 400;
 		}
 	}

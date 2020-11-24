@@ -6,6 +6,10 @@ function PrintDebug(...)
 	end
 end
 
+function PrintLog(str, ...)
+	Ext.Print(string.format(str, ...))
+end
+
 Classes = {}
 Common = {}
 ---@class GameHelpers
@@ -90,8 +94,12 @@ IgnoredMods = {
 	["3da57b9d-8b41-46c7-a33c-afb31eea38a3"] = true,--Armor Sets
 }
 Listeners = {
-	CharacterSheetPointChanged = {},
+	---Server-side event for when base ability or attribute values change on players. Can fire from character sheet interaction or after respec.
+	---@type table<string, fun(uuid:string, stat:string, lastVal:integer, nextVal:integer, statType:string):void>
 	CharacterBasePointsChanged = {},
+	---Client-side event for when sheet buttons are clicked.
+	---@type table<string, fun(character:EclCharacter, stat:string, statType:string):void>
+	CharacterSheetPointChanged = {},
 	TimerFinished = {},
 	FeatureEnabled = {},
 	FeatureDisabled = {},

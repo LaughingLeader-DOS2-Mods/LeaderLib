@@ -17,6 +17,19 @@ local function OnSetHelmetOptionState(ui, method, state)
 	end
 end
 
+local function FireCharacterSheetPointListeners(character, stat, statType)
+	local length = #Listeners.CharacterBasePointsChanged
+	if length > 0 then
+		for i=1,length do
+			local callback = Listeners.CharacterBasePointsChanged[i]
+			local b,err = xpcall(callback, debug.traceback, character, stat, statType)
+			if not b then
+				Ext.PrintError("Error calling function for 'CharacterBasePointsChanged':\n", err)
+			end
+		end
+	end
+end
+
 local function OnSheetEvent(ui, call, ...)
 	local params = Common.FlattenTable({...})
 	--PrintDebug("[LeaderLib_CharacterSheet.lua:OnSheetEvent] Event called. call("..tostring(call)..") params("..tostring(Common.Dump(params))..")")
@@ -24,21 +37,27 @@ local function OnSheetEvent(ui, call, ...)
 	if call == "plusAbility" then
 		local index = math.tointeger(params[1])
 		if index ~= nil then
-			local name = Data.Ability[index]
-			PrintDebug(string.format("[LeaderLib_CharacterSheet.lua:OnSheetEvent:plusAbility] A point was added to the ability [%s](%s).", index, name))
-			Ext.PostMessageToServer("LeaderLib_GlobalMessage", MessageData:Create(ID.MESSAGE.ABILITY_CHANGED, name):ToString())
+			local stat = Data.Ability[index]
+			PrintDebug(string.format("[LeaderLib_CharacterSheet.lua:OnSheetEvent:plusAbility] A point was added to the ability [%s](%s).", index, stat))
+			local character = Client:GetCharacter()
+			local payload = Ext.JsonStringify({Stat=stat, NetID=character.NetID})
+			Ext.PostMessageToServer("LeaderLib_CharacterSheet_AbilityChanged", payload)
+			FireCharacterSheetPointListeners(character, stat, "ability")
 		end
 	elseif call == "plusStat" then
 		local index = math.tointeger(params[1])
 		if index ~= nil then
-			local name = Data.Attribute[index]
+			local stat = Data.Attribute[index]
 			PrintDebug(string.format("[LeaderLib_CharacterSheet.lua:OnSheetEvent:plusStat] A point was added to the attribute [%s](%s).", index, name))
-			Ext.PostMessageToServer("LeaderLib_GlobalMessage", MessageData:Create(ID.MESSAGE.ATTRIBUTE_CHANGED, name):ToString())
+			local character = Client:GetCharacter()
+			local payload = Ext.JsonStringify({Stat=stat, NetID=character.NetID})
+			Ext.PostMessageToServer("LeaderLib_CharacterSheet_AttributeChanged", payload)
+			FireCharacterSheetPointListeners(character, stat, "attribute")
 		end
 	elseif call == "hotbarBtnPressed" then
 		local buttonID = math.tointeger(params[1])
 		if buttonID == ID.HOTBAR.CharacterSheet then
-			Ext.PostMessageToServer("LeaderLib_GlobalMessage", ID.MESSAGE.STORE_PARTY_VALUES)
+			Ext.PostMessageToServer("LeaderLib_CharacterSheet_StorePartyValues", "")
 		end
 	elseif call == "setHelmetOption" then
 		local state = math.tointeger(params[1])

@@ -287,15 +287,86 @@ local allUIFiles = {
 "waypoints.swf",
 "waypoints_c.swf",
 "worldTooltip.swf",
+-- Game Master
+"GM/campaignManager.swf",
+"GM/containerInventoryGM.swf",
+"GM/encounterPanel.swf",
+"GM/gmInventory.swf",
+"GM/GMItemSheet.swf",
+"GM/GMJournal.swf",
+"GM/GMMetadataBox.swf",
+"GM/GMMinimap.swf",
+"GM/GMMoodPanel.swf",
+"GM/GMPanelHUD.swf",
+"GM/GMRewardPanel.swf",
+"GM/GMSkills.swf",
+"GM/itemGenerator.swf",
+"GM/monstersSelection.swf",
+"GM/overviewMap.swf",
+"GM/pause.swf",
+"GM/peace.swf",
+"GM/possessionBar.swf",
+"GM/reputationPanel.swf",
+"GM/roll.swf",
+"GM/statusPanel.swf",
+"GM/stickiesPanel.swf",
+"GM/sticky.swf",
+"GM/surfacePainter.swf",
+"GM/uiElementsGM.swf",
+"GM/vignette.swf",
 }
 
-local function SessionLoaded()
-	for i,v in pairs(allUIFiles) do
-		local ui = Ext.GetBuiltinUI("Public/Game/GUI/"..v)
-		if ui ~= nil then
-			print(v, ui:GetTypeId())
+---@param ui UIObject
+local function TryFindUI(ui)
+	local id = ui:GetTypeId()
+	-- if id == nil then
+	-- 	return nil
+	-- end
+	for i,v in ipairs(allUIFiles) do
+		local builtInUI = Ext.GetBuiltinUI("Public/Game/GUI/"..v)
+		if builtInUI ~= nil then
+			local builtInID = builtInUI:GetTypeId()
+			--print(id, v, builtInID, builtInUI:GetRoot().stage)
+			if builtInID == id or builtInUI == ui then
+				print(string.format("[TryFindUI]%s = %s,", v:gsub("GM/", ""):gsub(".swf", ""), builtInID))
+				return builtInID,v
+			end
 		end
 	end
+end
+
+Ext.RegisterListener("UIObjectCreated", function(ui)
+	TryFindUI(ui)
+end)
+
+local function PrintAllUITypeID()
+	for i,v in ipairs(allUIFiles) do
+		local ui = Ext.GetBuiltinUI("Public/Game/GUI/"..v)
+		if ui ~= nil then
+			--print(v, ui:GetTypeId())
+			print(string.format("[PrintAllUITypeID]%s = %s,", string.gsub(v, "GM/", ""):gsub(".swf", ""), ui:GetTypeId()))
+		end
+	end
+end
+
+local foundUITypeIds = {}
+
+Ext.RegisterConsoleCommand("printuitypeids", function(cmd, ...)
+	PrintAllUITypeID()
+end)
+
+local function SessionLoaded()
+	PrintAllUITypeID()
+	local tryFindUI = function(ui, ...)
+		if not foundUITypeIds[ui:GetTypeId()] then
+			local id,file = TryFindUI(ui)
+			if file ~= nil then
+				foundUITypeIds[id] = file
+			end
+		end
+	end
+	Ext.RegisterUINameCall("PlaySound", tryFindUI)
+	Ext.RegisterUINameCall("UIAssert", tryFindUI)
 	-- Game.Tooltip.RegisterListener("Stat", nil, function(char,stat,tooltipdata) pcall(TraceTooltip, "Stat", stat, tooltipdata) end)
 	--Game.Tooltip.RegisterListener("Skill", nil, function(char,skill,tooltipdata) pcall(TraceTooltip, "Skill", skill, tooltipdata) end)
 	-- Game.Tooltip.RegisterListener("Status", nil, function(char,status,tooltipdata) pcall(TraceTooltip, "Status", status.StatusId, tooltipdata) end)
@@ -399,11 +470,7 @@ local function SessionLoaded()
 end
 
 if Ext.IsDeveloperMode() then
-	for i,v in pairs(allUIFiles) do
-		local ui = Ext.GetBuiltinUI("Public/Game/GUI/"..v)
-		if ui ~= nil then
-			print("Pre Session Loaded:", v, ui:GetTypeId())
-		end
-	end
+	print("Pre Session Loaded UI:")
+	PrintAllUITypeID()
 	--Ext.RegisterListener("SessionLoaded", SessionLoaded)
 end

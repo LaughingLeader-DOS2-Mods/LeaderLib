@@ -91,7 +91,7 @@ end
 local function UpdateCharacterSheetPoints(ui, method, amount)
 	if method == "setAvailableCombatAbilityPoints" or method == "setAvailableCivilAbilityPoints" then
 		local main = ui:GetRoot()
-		AbilityManager.UpdateCharacterSheetPoints(ui, method, amount, main)
+		AbilityManager.UpdateCharacterSheetPoints(ui, method, main, amount)
 	end
 end
 

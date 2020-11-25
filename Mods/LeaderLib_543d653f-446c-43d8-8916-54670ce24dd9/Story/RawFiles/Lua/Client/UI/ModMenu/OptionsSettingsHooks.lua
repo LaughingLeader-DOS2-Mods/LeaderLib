@@ -9,16 +9,10 @@ To allow the Mod Settings button to work from the Controls view (everything is s
 This seems to be the easiest option since the engine does some weird thing to switch the GUI between both options GUI files.
 ]]
 
--- optionsSettings.swf
-local OPTIONS_SETTINGS = 45
--- optionsInput.swf
-local OPTIONS_INPUT = 17
-local OPTIONS_ACCEPT = 1
-
 local OPTIONS_UI_TYPE = {
-	OPTIONS_SETTINGS,
-	OPTIONS_INPUT,
-	OPTIONS_ACCEPT
+	45,
+	17,
+	1
 }
 
 local LarianMenuID = {

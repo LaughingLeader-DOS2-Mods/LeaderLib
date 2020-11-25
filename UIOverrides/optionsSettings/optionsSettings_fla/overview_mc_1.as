@@ -232,11 +232,11 @@ package optionsSettings_fla
 			}
 		}
 		
-		public function addMenuLabel(param1:String) : *
+		public function addMenuLabel(text:String) : *
 		{
 			var val2:MovieClip = new Label();
 			val2.x = this.elementX;
-			val2.label_txt.htmlText = param1;
+			val2.label_txt.htmlText = text;
 			val2.name = "item" + this.list.length + "_mc";
 			//val2.mHeight = 40;
 			this.totalHeight = this.totalHeight + (val2.mHeight + this.elementHSpacing);
@@ -253,7 +253,7 @@ package optionsSettings_fla
 			}
 			this.list.addElement(val2);
 			this.HLCounter = 0;
-			ExternalInterface.call("controlAdded", "menuLabel", val2.name, val2.list_pos, "list");
+			ExternalInterface.call("controlAdded", "menuLabel", val2.name, val2.list_pos, "list", text);
 		}
 		
 		public function addMenuSelector(param1:Number, param2:String) : *

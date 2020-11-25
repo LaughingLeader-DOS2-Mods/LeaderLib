@@ -52,6 +52,8 @@ package
 		{
 			this.base = root as MovieClip;
 			this.label_txt.filters = textEffect.createStrokeFilter(0,1.2,1,1.4,3);
+			this.label_txt.height = 60;
+			this.label_txt.y = 30;
 			this.mHeight = 40;
 			addEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver);
 			addEventListener(MouseEvent.MOUSE_OUT,this.onMouseOut);

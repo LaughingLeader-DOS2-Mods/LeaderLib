@@ -3,6 +3,7 @@ package optionsSettings_fla
 	import flash.display.MovieClip;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
+	import flash.text.TextFormat;
 	import flash.external.ExternalInterface;
 	
 	public dynamic class MainTimeline extends MovieClip
@@ -143,6 +144,12 @@ package optionsSettings_fla
 							val5 = this.update_Array[val2++];
 							val19 = !!this.update_Array[val2++]?Number(1):Number(0);
 							this.setMenuCheckbox(val3,val5,val19);
+							continue;
+						case 10:
+							val3 = this.update_Array[val2++];
+							val4 = this.update_Array[val2++];
+							val8 = this.update_Array[val2++];
+							this.mainMenu_mc.addMenuInfoLabel(val3, val4, val8);
 							continue;
 						default:
 							continue;
@@ -353,6 +360,55 @@ package optionsSettings_fla
 		public function resetMenuButtons(param1:Number) : *
 		{
 			this.mainMenu_mc.resetMenuButtons(param1);
+		}
+
+		public function getElementHeight(id:Number) : *
+		{
+			var mc:MovieClip = this.mainMenu_mc.getElementByID(id);
+			if(!mc)
+			{
+				mc = this.mainMenu_mc.list.content_array[id];
+			}
+			if(mc)
+			{
+				return this.mainMenu_mc.list.getElementHeight(mc);
+			}
+			return -1;
+		}
+
+		public function positionElements() : *
+		{
+			this.mainMenu_mc.list.positionElements();
+		}
+
+		public function setTextFormat(id:Number, underline:Boolean = false, bold:Boolean = false, italic:Boolean = false, size:uint=-1, color:Object = null) : *
+		{
+			var tf:TextFormat = null;
+			var mc:MovieClip = this.mainMenu_mc.getElementByID(id);
+			if(!mc)
+			{
+				mc = this.mainMenu_mc.list.content_array[id];
+			}
+			if(mc && mc.label_txt)
+			{
+				tf = mc.label_txt.getTextFormat();
+				if (tf)
+				{
+					tf.underline = underline;
+					tf.bold = bold;
+					tf.italic = italic;
+					if (size > -1)
+					{
+						tf.size = size
+					}
+					if(color) {
+						tf.color = color
+					}
+					mc.label_txt.setTextFormat(tf);
+					return true;
+				}
+			}
+			return false;
 		}
 		
 		function frame1() : *

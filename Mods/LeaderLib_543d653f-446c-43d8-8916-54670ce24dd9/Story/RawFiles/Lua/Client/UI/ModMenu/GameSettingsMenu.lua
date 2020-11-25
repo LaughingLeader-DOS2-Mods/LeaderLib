@@ -24,6 +24,13 @@ local function CreateEntryData(parentTable, tableKey, initialValue, name)
 	}
 end
 
+local function GetNewID(controlData)
+	local currentID = GameSettingsMenu.LastID
+	GameSettingsMenu.Controls[currentID] = controlData
+	GameSettingsMenu.LastID = GameSettingsMenu.LastID + 1
+	return currentID
+end
+
 ---@return integer
 local function AddControl(parentTable, tableKey, name)
 	local entry = CreateEntryData(parentTable, tableKey, parentTable[tableKey], name)
@@ -43,7 +50,8 @@ local CONTROL_TYPE = {
 	LABEL = 6,
 	TITLE = 7,
 	DROPDOWN_ENABLED = 8,
-	SET_CHECKBOX = 9
+	SET_CHECKBOX = 9,
+	INFOLABEL = 10,
 }
 
 local array = nil
@@ -53,6 +61,14 @@ local function AddTitleToArray(text)
 	array[index] = CONTROL_TYPE.LABEL
 	array[index+1] = text
 	index = index+2
+end
+
+local function AddInfoToArray(id, titleText, infoText)
+	array[index] = CONTROL_TYPE.INFOLABEL
+	array[index+1] = id
+	array[index+2] = titleText
+	array[index+3] = infoText
+	index = index+4
 end
 
 local function AddCheckboxToArray(id, displayName, enabled, state, filterBool, tooltip)
@@ -84,6 +100,7 @@ local ts = Classes.TranslatedString
 
 local text = {
 	MainTitle = ts:CreateFromKey("LeaderLib_UI_GameSettings_MainTitle"),
+	MainTitle_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_MainTitle_Description"),
 	StarterTierOverrides = ts:CreateFromKey("LeaderLib_UI_GameSettings_StarterTierOverrides"),
 	StarterTierOverrides_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_StarterTierOverrides_Description"),
 	APSettings_Group_Player = ts:CreateFromKey("LeaderLib_UI_GameSettings_Section_AP_Player"),
@@ -115,12 +132,14 @@ local text = {
 
 local mainMenuArrayAccess = {
 	addMenuLabel = AddTitleToArray,
+	addMenuInfoLabel = AddInfoToArray,
 	addMenuCheckbox = AddCheckboxToArray,
 	addMenuSlider = AddSliderToArray
 }
 
-function GameSettingsMenu.OnControlAdded(ui, controlType, id, listIndex, listProperty)
-	if GameSettingsMenu.Controls[id] == nil then
+function GameSettingsMenu.OnControlAdded(ui, controlType, id, listIndex, listProperty, extraParam1)
+	print("GameSettingsMenu.OnControlAdded", controlType, id, listIndex, listProperty, extraParam1)
+	if GameSettingsMenu.Controls[id] == nil and controlType ~= "menuLabel" then
 		return
 	end
 	local controlsEnabled = Client.IsHost == true
@@ -135,10 +154,20 @@ function GameSettingsMenu.OnControlAdded(ui, controlType, id, listIndex, listPro
 				if controlType == "slider" then
 					element.alpha = controlsEnabled and 1.0 or 0.3
 					element.slider_mc.m_disabled = controlsEnabled
+				elseif controlType == "menuLabel" then
+					if extraParam1 == text.MainTitle.Value then
+						element.tooltip = text.MainTitle_Description.Value
+						print(element.tooltip)
+						--element.heightOverride = element.height * 2
+						--element.label_txt.y = element.height / 2
+						--print("Set textFormat for", element.name, main.setTextFormat(listIndex, true, true, false, 36))
+					end
+					--print(id, controlType, element.height, element.y, list.EL_SPACING, list.TOP_SPACING, main.getElementHeight(listIndex))
 				else
 					element.enable = controlsEnabled
-					element.alpha = controlsEnabled and 1.0 or 0.3
+					element.alpha = controlsEnabled and 1.0 or 0.3				
 				end
+				--print(id, controlType, element.height, element.y, list.EL_SPACING, list.TOP_SPACING, main.getElementHeight(id))
 			end
 		end
 	end
@@ -198,8 +227,8 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 		
 		local apSliderMax = 30
 		
-		
 		mainMenu.addMenuLabel(text.APSettings_Group_Player.Value)
+		--mainMenu.addMenuInfoLabel(GetNewID({Value=text.APSettings_Group_Player}), text.APSettings_Group_Player.Value, "TesT")
 		mainMenu.addMenuCheckbox(AddControl(settings.APSettings.Player, "Enabled"), text.APSettings_Enabled.Value, controlsEnabled, settings.APSettings.Player.Enabled and 1 or 0, false, text.APSettings_Enabled_Description.Value)
 		mainMenu.addMenuSlider(AddControl(settings.APSettings.Player, "Start"), text.APSettings_Start.Value, settings.APSettings.Player.Start, -1, apSliderMax, 1, false, text.APSettings_Start_Description.Value)
 		mainMenu.addMenuSlider(AddControl(settings.APSettings.Player, "Recovery"), text.APSettings_Recovery.Value, settings.APSettings.Player.Recovery, -1, apSliderMax, 1, false, text.APSettings_Recovery_Description.Value)

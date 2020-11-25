@@ -59,6 +59,7 @@ local function SwitchToModMenu(ui, ...)
 		end
 	end
 	ModMenuManager.CreateMenu(ui, mainMenu)
+	main.positionElements()
 	ModMenuManager.SetScrollPosition(ui)
 end
 
@@ -170,6 +171,7 @@ local function OnUpdateArrayParsed(ui, call, arrayName)
 		if currentMenu == LarianMenuID.Gameplay then
 			GameSettingsMenu.SetScrollPosition(ui)
 		end
+		ui:GetRoot().positionElements()
 	end
 end
 
@@ -328,13 +330,13 @@ Ext.RegisterListener("SessionLoaded", function()
 		end
 	end
 	
-	local onControlAdded = function(ui, call, controlType, id, listIndex, listProperty)
+	local onControlAdded = function(ui, call, controlType, id, listIndex, listProperty, ...)
 		--ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf") or ui
 		if Vars.DebugMode then
 			--print(ui:GetTypeId(), call, controlType, id, listIndex, listProperty)
 		end
 		if currentMenu == LarianMenuID.Gameplay then
-			GameSettingsMenu.OnControlAdded(ui, controlType, id, listIndex, listProperty)
+			GameSettingsMenu.OnControlAdded(ui, controlType, id, listIndex, listProperty, ...)
 		end
 	end
 

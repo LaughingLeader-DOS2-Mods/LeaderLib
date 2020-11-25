@@ -146,7 +146,7 @@
 	<content contentuid="h6765e77cg13c0g48dcgb708g721355bc5451">[LeaderLib_ModMenu_Menu6_863af621-ff0c-454a-b6a3-7c9d3166a8a0]</content>
 	<content contentuid="h67aa23a9g27f2g4e14gac5ag1fcd293324e4">Unchain All Party Members</content>
 	<content contentuid="h680a3621g57dag4544g8c63gb43e64633e24">[GLOBAL] Enable Autosaving in Combat</content>
-	<content contentuid="h68300b5aga3a5g49c9g8e57gbdf5490fd4c1">The amount of action points gained when a character&apos;s turn starts.&lt;br&gt;(Default: 4)</content>
+	<content contentuid="h68300b5aga3a5g49c9g8e57gbdf5490fd4c1">The amount of action points gained when a character&apos;s turn starts.&lt;br&gt;(Default: 4)&lt;br&gt;&lt;font color=&apos;#FF9900&apos;&gt;This option is disabled if the value equals -1.&lt;/font&gt;</content>
 	<content contentuid="h68ad69bfg9d72g4107g8285g691dd3abc27e">Add the Mod Menu Skill (Self)</content>
 	<content contentuid="h69590addg7840g4821gb632g52799233bb88">&lt;font color=&apos;#FF0000&apos;&gt;-[1] Attitude&lt;/font&gt;</content>
 	<content contentuid="h6a80ffafg59d9g4848g8d1ag9359a1435030">Enable Timed Autosaving</content>
@@ -240,7 +240,7 @@
 	<content contentuid="ha54e3050g2d5dg46d7g9340g419ead1f437f">[LeaderLib_DynamicMenu_MenuOption7_36c11cee-0a1b-4f4b-bd66-3bf0d100439b]</content>
 	<content contentuid="ha56bd856gb01fg43c3g965dg5447174ab32c">*He snorts.* Why, fishing of course! *He gestures to the fishing rod on his back.*</content>
 	<content contentuid="ha573859bg0e9bg4fefgab91g278749405487">*You notice the old man moves quickly, and seems to be prepared in the blink of an eye.*</content>
-	<content contentuid="ha5cca930gc538g4846g86f4g0b5c9017c1e5">LeaderLib Game Settings</content>
+	<content contentuid="ha5cca930gc538g4846g86f4g0b5c9017c1e5">&lt;font color=&apos;#4CBCFE&apos; size=&apos;28&apos;&gt;&lt;u&gt;LeaderLib Game Settings&lt;/u&gt;&lt;/font&gt;</content>
 	<content contentuid="ha6c69629g6fbag4268g8826g82af57c354fc">Take a look.</content>
 	<content contentuid="ha702e12egd8bfg4eaeg88a0g5b20c1995179">Leave me be!</content>
 	<content contentuid="ha73d93a8g04fdg4eb0g90fage5e02cd0c4ef">*Step away.*</content>
@@ -278,7 +278,7 @@
 	<content contentuid="hbbc07b7cgc1d4g41c8gbec8gdadfd3486b3f">[LeaderLib_DynamicMenu_MenuOption8_f5ef1f68-8995-4c14-8e62-cf5f330cb31a]</content>
 	<content contentuid="hbbcfe136ge58bg4675gb872g0bbdb98cff28">[LOAD] Load Game Settings - This file is loaded automatically when you get in-game (loading saves, new games, etc).&lt;br&gt;Location: &lt;b&gt;Documents/Larian Studios/Divinity Original Sin 2 Definitive Edition/Osiris Data/LeaderLib_GameSettings.json&lt;/b&gt;</content>
 	<content contentuid="hbd4f0f23g1792g4e99g9665g58b511994c18">*You take a look at the trader&apos;s wares.*</content>
-	<content contentuid="hbde09b0bg3c2eg423cga548g96e2590e887c">The maximum amount of action points.&lt;br&gt;(Default: 6)</content>
+	<content contentuid="hbde09b0bg3c2eg423cga548g96e2590e887c">The maximum amount of action points.&lt;br&gt;(Default: 6)&lt;br&gt;&lt;font color=&apos;#FF9900&apos;&gt;This option is disabled if the value equals -1.&lt;/font&gt;</content>
 	<content contentuid="hbe5db354g0434g4e02g8af6g16dee986c19a">[LeaderLib_DynamicMenu_MenuOption2_9df56ce3-cd42-421b-81b6-91ffe91042fd]</content>
 	<content contentuid="hbe7c777fg3946g4d49g9271g4684744cb15b">[LeaderLib_ModMenu_Menu7_888ce02f-83ff-4173-be8d-f41fd348358f]</content>
 	<content contentuid="hbed70da2g8eb0g4facg9e47g87729f089604">Enable backstab settings for this group.&lt;br&gt;(Default: Disabled)</content>
@@ -313,7 +313,7 @@
 	<content contentuid="hd3baa721g34c3g49f7ga360ge49af2a015b8">*You notice the old man moves quickly, and seems to be prepared in the blink of an eye.*</content>
 	<content contentuid="hd4ee1fb0g40aeg4fbcgac8dg907287d435df">Swap Gender</content>
 	<content contentuid="hd525dc1fg4819g40b1g9bb8gc896dad435bd">[LUA] Reset LeaderLib Lua Scripts (&lt;b&gt;*WARNING*&lt;/b&gt; For testing purposes only!)</content>
-	<content contentuid="hd563faa9ga238g4a5fga229g491dd77d5068">The starting amount of action points when combat begins.&lt;br&gt;(Default: 4)</content>
+	<content contentuid="hd563faa9ga238g4a5fga229g491dd77d5068">The starting amount of action points when combat begins.&lt;br&gt;(Default: 4)&lt;br&gt;&lt;font color=&apos;#FF9900&apos;&gt;This option is disabled if the value equals -1.&lt;/font&gt;</content>
 	<content contentuid="hd5803cb0ga2cdg4823g9bc1gebcbaec5fd2f">Unchain All</content>
 	<content contentuid="hd6575622g90aeg49d1gbe2dg1e81de23a636">[LeaderLib_DynamicMenu_MenuOption6_ea90e3a6-30da-411c-8ab5-cae95373ae93]</content>
 	<content contentuid="hd6d9366dg5fe9g424cga28egc15c030b747c">*The old man looks to you as you approach.* Welcome, welcome!</content>
@@ -349,6 +349,7 @@
 	<content contentuid="hf0eb5097g325bg4254gaf97g77255a6380ad">[GLOBAL] Enable &lt;b&gt;Dialog Redirection&lt;/b&gt;. If dialog tries to start with a party member that is not an AVATAR (the crown symbol), the avatar that owns that character will be used instead.</content>
 	<content contentuid="hf15fdd63gddedg435bgaa2egdd0574ce2c3c">Registered Mods:&lt;br&gt;[LeaderLib_Settings_ModList_50c55fbe-ad1e-490e-92d1-8836ca42ca12]</content>
 	<content contentuid="hf1c7aa42g3e2fg4338ga672g59a3a935cff4">New Items in Stock</content>
+	<content contentuid="hf1cb17f4g7402g499dg95e5g9552ea2c0fc6">Various settings that alter how the game works.&lt;br&gt;&lt;font color=&apos;#FF9900&apos;&gt;These settings can only be changed in singleplayer, or by the host in multiplayer.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#33FF00&apos;&gt;Settings are saved to:&lt;br&gt;Documents/Larian Studios/Divinity Original Sin 2 Definitive Edition/Osiris Data/&lt;/font&gt;&lt;font color=&apos;#22FF99&apos;&gt;LeaderLib_GameSettings.json&lt;/font&gt;</content>
 	<content contentuid="hf1ead9c1gbe57g44beg922eg299bf0a05325">Updating menu...</content>
 	<content contentuid="hf250f2d4gb046g4001gbd88g1872e3b857c7">Me? Oh, I&apos;m just a retired old man, looking to sell his wares. *He rubs his beard, glancing around on the boat.* Afraid I&apos;m not much of a soldier anymore, so trading is all I&apos;ve got.</content>
 	<content contentuid="hf2727fbcg6af7g4a95g9888g15dd8338e10c">*He straightens his posture before speaking.* You may call me [LeaderLib_SpeakerName_9fc648d4-7984-44e7-afa4-b8a07f21185b]. Pleasure to meet you, [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3].</content>

@@ -2,11 +2,11 @@ Key	Content	Handle
 LeaderLib_UI_GameSettings_APSettings_Enabled	Enabled	hcb33afd9g09cbg42e2ga180g1e4fa15cb804
 LeaderLib_UI_GameSettings_APSettings_Enabled_Description	Enable AP settings for this group.<br>(Default: Disabled)	h9beac2d8g0ac3g43b0gba06g27be0710c8c0
 LeaderLib_UI_GameSettings_APSettings_Max	Max	h0b46c751g260fg4dfaga124ga7208595a493
-LeaderLib_UI_GameSettings_APSettings_Max_Description	The maximum amount of action points.<br>(Default: 6)	hbde09b0bg3c2eg423cga548g96e2590e887c
+LeaderLib_UI_GameSettings_APSettings_Max_Description	The maximum amount of action points.<br>(Default: 6)<br><font color='#FF9900'>This option is disabled if the value equals -1.</font>	hbde09b0bg3c2eg423cga548g96e2590e887c
 LeaderLib_UI_GameSettings_APSettings_Recovery	Recovery	ha0c0e557g4b01g46a5ga70fge7793eda87b7
-LeaderLib_UI_GameSettings_APSettings_Recovery_Description	The amount of action points gained when a character's turn starts.<br>(Default: 4)	h68300b5aga3a5g49c9g8e57gbdf5490fd4c1
+LeaderLib_UI_GameSettings_APSettings_Recovery_Description	The amount of action points gained when a character's turn starts.<br>(Default: 4)<br><font color='#FF9900'>This option is disabled if the value equals -1.</font>	h68300b5aga3a5g49c9g8e57gbdf5490fd4c1
 LeaderLib_UI_GameSettings_APSettings_Start	Start	hf7c14c70g2b3bg4512ga89dg862bef756f6c
-LeaderLib_UI_GameSettings_APSettings_Start_Description	The starting amount of action points when combat begins.<br>(Default: 4)	hd563faa9ga238g4a5fga229g491dd77d5068
+LeaderLib_UI_GameSettings_APSettings_Start_Description	The starting amount of action points when combat begins.<br>(Default: 4)<br><font color='#FF9900'>This option is disabled if the value equals -1.</font>	hd563faa9ga238g4a5fga229g491dd77d5068
 LeaderLib_UI_GameSettings_BackstabSetting_Enabled	Enabled	h75a91fefgc531g4bb1g82f2gec7122c62aff
 LeaderLib_UI_GameSettings_BackstabSettings_AllowTwoHandedWeapons	Allow Two-Handed Weapons	hd36f53d3gdebeg4071g864bge92100d3bb9e
 LeaderLib_UI_GameSettings_BackstabSettings_AllowTwoHandedWeapons_Description	If enabled, two-handed weapons can backstab.<br>(Default: Disabled)	h12ee330bga8a5g4b43gba26g78b5fad1727a
@@ -19,7 +19,8 @@ LeaderLib_UI_GameSettings_BackstabSettings_SpellsCanBackstab	Skills Can Backstab
 LeaderLib_UI_GameSettings_BackstabSettings_SpellsCanBackstab_Description	If enabled, skills will be able to backstab depending on settings (melee only, minimum distance).<br>(Default: Disabled)	h809bc35bgaa71g493egaf0agc20c110d90cf
 LeaderLib_UI_GameSettings_BackstabSettings_TalentRequired	Require Backstab Talent	ha0fda551gb11fg4b9eg9ceag34948486896f
 LeaderLib_UI_GameSettings_BackstabSettings_TalentRequired_Description	If enabled, characters require the Backstab talent to be able to backstab with non-dagger equipment or skills.<br>(Default: Enabled)	hba3c2c4fge700g47bfg877dg00a16a26a454
-LeaderLib_UI_GameSettings_MainTitle	LeaderLib Game Settings	ha5cca930gc538g4846g86f4g0b5c9017c1e5
+LeaderLib_UI_GameSettings_MainTitle	<font color='#4CBCFE' size='28'><u>LeaderLib Game Settings</u></font>	ha5cca930gc538g4846g86f4g0b5c9017c1e5
+LeaderLib_UI_GameSettings_MainTitle_Description	Various settings that alter how the game works.<br><font color='#FF9900'>These settings can only be changed in singleplayer, or by the host in multiplayer.</font><br><font color='#33FF00'>Settings are saved to:<br>Documents/Larian Studios/Divinity Original Sin 2 Definitive Edition/Osiris Data/</font><font color='#22FF99'>LeaderLib_GameSettings.json</font>	hf1cb17f4g7402g499dg95e5g9552ea2c0fc6
 LeaderLib_UI_GameSettings_Section_AP_NPC	Non-Player Action Point Settings	h24e93debgf7e1g4a6ag9841g5ecca2c911f5
 LeaderLib_UI_GameSettings_Section_AP_Player	Player Action Point Settings	h6eabd548g4797g423agbe50g8a858704a8c1
 LeaderLib_UI_GameSettings_Section_BackstabSettings_General	General Backstab Settings	he93fef85gaa09g45c2g92d3ga71a001dfe49

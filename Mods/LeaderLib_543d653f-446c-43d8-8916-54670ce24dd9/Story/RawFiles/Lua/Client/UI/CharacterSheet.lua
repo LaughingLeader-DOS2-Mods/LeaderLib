@@ -168,6 +168,15 @@ local function RegisterListeners()
 		Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setAvailableStatPoints", UpdateCharacterSheetPoints)
 		Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setAvailableCombatAbilityPoints", UpdateCharacterSheetPoints)
 		Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setAvailableCivilAbilityPoints", UpdateCharacterSheetPoints)
+
+		local function ResetAbilityPoints(ui, method, ...)
+			UpdateCharacterSheetPoints(ui, "setAvailableCombatAbilityPoints", 0)
+			UpdateCharacterSheetPoints(ui, "setAvailableCivilAbilityPoints", 0)
+		end
+
+		Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setAvailableLabels", ResetAbilityPoints)
+		Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "hideLevelUpAbilityButtons", ResetAbilityPoints)
+
 		Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setHelmetOptionState", OnSetHelmetOptionState)
 
 		Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateAbilities", OnCharacterCreationUpdating)

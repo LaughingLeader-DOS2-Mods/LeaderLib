@@ -41,12 +41,18 @@ for name,v in pairs(missingAbilities) do
 end
 
 function AbilityManager.EnableAbility(abilityName, modID)
-	if AbilityManager.RegisteredAbilities[abilityName] == nil then
-		AbilityManager.RegisteredAbilities[abilityName] = {}
-	end
-	if AbilityManager.RegisteredAbilities[abilityName][modID] ~= true then
-		AbilityManager.RegisteredAbilities[abilityName][modID] = true
-		AbilityManager.RegisteredCount[abilityName] = (AbilityManager.RegisteredCount[abilityName] or 0) + 1
+	if abilityName == "all" then
+		for ability,v in pairs(missingAbilities) do
+			AbilityManager.EnableAbility(ability, modID)
+		end
+	else
+		if AbilityManager.RegisteredAbilities[abilityName] == nil then
+			AbilityManager.RegisteredAbilities[abilityName] = {}
+		end
+		if AbilityManager.RegisteredAbilities[abilityName][modID] ~= true then
+			AbilityManager.RegisteredAbilities[abilityName][modID] = true
+			AbilityManager.RegisteredCount[abilityName] = (AbilityManager.RegisteredCount[abilityName] or 0) + 1
+		end
 	end
 end
 
@@ -172,8 +178,22 @@ if Ext.IsClient() then
 		local points = 0
 		if pointType == "combat" then
 			points = availableCombatPoints[id]
+			if points == nil then
+				if not Vars.ControllerEnabled then
+					points = main.stats_mc.pointsWarn[1].avPoints
+				else
+					points = tonumber(main.mainpanel_mc.stats_mc.combatAbilities_mc.pointsValue_txt.text) or 0
+				end
+			end
 		else
 			points = availableCivilPoints[id]
+			if points == nil then
+				if not Vars.ControllerEnabled then
+					points = main.stats_mc.pointsWarn[2].avPoints
+				else
+					points = tonumber(main.mainpanel_mc.stats_mc.civilAbilities_mc.pointsValue_txt.text) or 0
+				end
+			end
 		end
 		return points or 0
 	end
@@ -204,6 +224,7 @@ if Ext.IsClient() then
 			for abilityName,data in pairs(missingAbilities) do
 				if AbilityManager.RegisteredCount[abilityName] > 0 then
 					local hasPoints = (data.Civil and civilPoints > 0) or (not data.Civil and abilityPoints > 0)
+					--print(abilityName, data.Civil, civilPoints, hasPoints)
 					local abilityID = Data.AbilityEnum[abilityName]
 					if hasPoints then
 						if not Vars.ControllerEnabled then
@@ -216,9 +237,9 @@ if Ext.IsClient() then
 						lvlBtnAbility_array[i+2] = data.Group -- groupId
 						lvlBtnAbility_array[i+3] = abilityID -- statId
 						lvlBtnAbility_array[i+4] = true -- isVisible
-						if Vars.DebugMode then
-							PrintLog("[LeaderLib:addMissingAbilities] Enabled point button for [%s] = (%s)", abilityID, abilityName)
-						end
+						-- if Vars.DebugMode then
+						-- 	PrintLog("[LeaderLib:addMissingAbilities] Enabled point button for [%s] = (%s)", abilityID, abilityName)
+						-- end
 						i = i + 5
 					else
 						--Needs to be hidden again since the button will persist
@@ -249,34 +270,34 @@ if Ext.IsClient() then
 
 	function AbilityManager.UpdateCharacterSheetPoints(ui, method, main, amount)
 		local id = GameHelpers.Client.GetCharacterSheetCharacter(main).NetID
-		setAvailablePoints[id] = true
+		if Vars.DebugMode then
+			PrintLog("%s(%s)[%s]", method, amount, id)
+		end
 		if method == "setAvailableCombatAbilityPoints" then
 			availableCombatPoints[id] = amount
+			setAvailablePoints[id] = true
 		elseif method == "setAvailableCivilAbilityPoints" then
 			availableCivilPoints[id] = amount
+			setAvailablePoints[id] = true
 		end
+
+		local abilityPoints = GetAvailablePoints("combat", main)
+		local civilPoints = GetAvailablePoints("civil", main)
+
 		for abilityName,data in pairs(missingAbilities) do
 			if AbilityManager.RegisteredCount[abilityName] > 0 then
 				local abilityID = Data.AbilityEnum[abilityName]
-				if method == "setAvailableCombatAbilityPoints" and data.Civil then
+				if not data.Civil then
 					if not Vars.ControllerEnabled then
-						main.stats_mc.setAbilityPlusVisible(data.Civil, data.Group, abilityID, amount > 0)
+						main.stats_mc.setAbilityPlusVisible(false, data.Group, abilityID, abilityPoints > 0)
 					else
-						if data.Civil then
-							main.mainpanel_mc.stats_mc.civilAbilities_mc.setBtnVisible(data.Group,abilityID,true,amount > 0)
-						else
-							main.mainpanel_mc.stats_mc.combatAbilities_mc.setBtnVisible(data.Group,abilityID,true,amount > 0)
-						end
+						main.mainpanel_mc.stats_mc.combatAbilities_mc.setBtnVisible(data.Group, abilityID, true, abilityPoints > 0)
 					end
-				elseif method == "setAvailableCivilAbilityPoints" and not data.Civil then
+				else
 					if not Vars.ControllerEnabled then
-						main.stats_mc.setAbilityPlusVisible(data.Civil, data.Group, abilityID, amount > 0)
+						main.stats_mc.setAbilityPlusVisible(true, data.Group, abilityID, civilPoints > 0)
 					else
-						if data.Civil then
-							main.mainpanel_mc.stats_mc.civilAbilities_mc.setBtnVisible(data.Group,abilityID,true,amount > 0)
-						else
-							main.mainpanel_mc.stats_mc.combatAbilities_mc.setBtnVisible(data.Group,abilityID,true,amount > 0)
-						end
+						main.mainpanel_mc.stats_mc.civilAbilities_mc.setBtnVisible(data.Group, abilityID, true, civilPoints > 0)
 					end
 				end
 			end

@@ -218,15 +218,24 @@ if Ext.IsClient() then
 	local function toggleAbilityButtonVisibility(ui, main)
 		local lvlBtnAbility_array = main.lvlBtnAbility_array
 		if lvlBtnAbility_array ~= nil and lvlBtnAbility_array[0] ~= nil then
+			local maxAbility = Ext.ExtraData.CombatAbilityCap or 10
+			local maxCivil = Ext.ExtraData.CivilAbilityCap or 5
+
+			local character = GameHelpers.Client.GetCharacterSheetCharacter(main)
 			local abilityPoints = GetAvailablePoints("combat", main)
 			local civilPoints = GetAvailablePoints("civil", main)
+
 			local i = #lvlBtnAbility_array
 			for abilityName,data in pairs(missingAbilities) do
 				if AbilityManager.RegisteredCount[abilityName] > 0 then
-					local hasPoints = (data.Civil and civilPoints > 0) or (not data.Civil and abilityPoints > 0)
-					--print(abilityName, data.Civil, civilPoints, hasPoints)
+					local canAddPoints = false
+					if not data.Civil then
+						canAddPoints = abilityPoints > 0 and (character.Stats[abilityName] or 0) < maxAbility
+					else
+						canAddPoints = civilPoints > 0 and (character.Stats[abilityName]or 0) < maxCivil
+					end
 					local abilityID = Data.AbilityEnum[abilityName]
-					if hasPoints then
+					if canAddPoints then
 						if not Vars.ControllerEnabled then
 							lvlBtnAbility_array[i] = true -- hasPoints
 							lvlBtnAbility_array[i+1] = data.Civil -- isCivilAbility
@@ -285,20 +294,25 @@ if Ext.IsClient() then
 		local abilityPoints = GetAvailablePoints("combat", main)
 		local civilPoints = GetAvailablePoints("civil", main)
 
+		local maxAbility = Ext.ExtraData.CombatAbilityCap or 10
+		local maxCivil = Ext.ExtraData.CivilAbilityCap or 5
+
 		for abilityName,data in pairs(missingAbilities) do
 			if AbilityManager.RegisteredCount[abilityName] > 0 then
 				local abilityID = Data.AbilityEnum[abilityName]
 				if not data.Civil then
+					local canAddPoints = abilityPoints > 0 and character.Stats[abilityName] < maxAbility
 					if not Vars.ControllerEnabled then
 						main.stats_mc.setAbilityPlusVisible(false, data.Group, abilityID, abilityPoints > 0)
 					else
-						main.mainpanel_mc.stats_mc.combatAbilities_mc.setBtnVisible(data.Group, abilityID, true, abilityPoints > 0)
+						main.mainpanel_mc.stats_mc.combatAbilities_mc.setBtnVisible(data.Group, abilityID, true, canAddPoints)
 					end
 				else
+					local canAddPoints = civilPoints > 0 and character.Stats[abilityName] < maxCivil
 					if not Vars.ControllerEnabled then
 						main.stats_mc.setAbilityPlusVisible(true, data.Group, abilityID, civilPoints > 0)
 					else
-						main.mainpanel_mc.stats_mc.civilAbilities_mc.setBtnVisible(data.Group, abilityID, true, civilPoints > 0)
+						main.mainpanel_mc.stats_mc.civilAbilities_mc.setBtnVisible(data.Group, abilityID, true, canAddPoints)
 					end
 				end
 			end

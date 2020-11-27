@@ -158,67 +158,47 @@ local function RegisterListeners()
 		-- This function may run before the game is "Running" and the settings load normally.
 		data = LoadGameSettings()
 	end
-	local ui = Ext.GetBuiltinUI("Public/Game/GUI/characterSheet.swf")
-	if ui ~= nil then
+	if not Vars.ControllerEnabled then
 		for i,v in pairs(pointEvents) do
-			Ext.RegisterUICall(ui, v, OnSheetEvent)
+			Ext.RegisterUITypeCall(Data.UIType.characterSheet, v, OnSheetEvent)
 		end
 		for i,v in pairs(sheetEvents) do
-			Ext.RegisterUICall(ui, v, OnSheetEvent)
+			Ext.RegisterUITypeCall(Data.UIType.characterSheet, v, OnSheetEvent)
 		end
-		Ext.RegisterUIInvokeListener(ui, "updateArraySystem", OnCharacterSheetUpdating)
-		Ext.RegisterUIInvokeListener(ui, "setAvailableStatPoints", UpdateCharacterSheetPoints)
-		Ext.RegisterUIInvokeListener(ui, "setAvailableCombatAbilityPoints", UpdateCharacterSheetPoints)
-		Ext.RegisterUIInvokeListener(ui, "setAvailableCivilAbilityPoints", UpdateCharacterSheetPoints)
-		Ext.RegisterUIInvokeListener(ui, "setHelmetOptionState", OnSetHelmetOptionState)
-		PrintDebug("[LeaderLib_CharacterSheet.lua:RegisterListeners] Found (characterSheet.swf). Registered listeners.")
-	else
-		PrintDebug("[LeaderLib_CharacterSheet.lua:RegisterListeners] Failed to find Public/Game/GUI/characterSheet.swf")
-	end
+		Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem", OnCharacterSheetUpdating)
+		Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setAvailableStatPoints", UpdateCharacterSheetPoints)
+		Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setAvailableCombatAbilityPoints", UpdateCharacterSheetPoints)
+		Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setAvailableCivilAbilityPoints", UpdateCharacterSheetPoints)
+		Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setHelmetOptionState", OnSetHelmetOptionState)
 
-	--Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateAttributes", OnCharacterCreationUpdating)
-	Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateAbilities", OnCharacterCreationUpdating)
-	Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation_c, "updateAbilities", OnCharacterCreationUpdating)
-	--Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateTalents", OnCharacterCreationUpdating)
+		Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateAbilities", OnCharacterCreationUpdating)
 
-	-- local ui = Ext.GetBuiltinUI("Public/Game/GUI/statusConsole.swf")
-	-- if ui ~= nil then
-	-- 	---@param ui UIObject
-	-- 	Ext.RegisterUICall(ui, "GuardPressed", function(ui, call, ...)
-	-- 		print("GuardPressed", ui:GetTypeId(), Ext.JsonStringify({...}))
-	-- 	end)
-	-- end
-	-- When the delay turn button is clicked
-	Ext.RegisterUITypeCall(117, "GuardPressed", function(ui, call, ...)
-		Ext.PostMessageToServer("LeaderLib_OnDelayTurnClicked", Client.Character.UUID)
-		if #Listeners.TurnDelayed > 0 then
-			for i,callback in pairs(Listeners.TurnDelayed) do
-				local status,err = xpcall(callback, debug.traceback, Client.Character.UUID)
-				if not status then
-					Ext.PrintError("Error calling function for 'TurnDelayed':\n", err)
+		Ext.RegisterUITypeCall(Data.UIType.statusConsole, "GuardPressed", function(ui, call, ...)
+			Ext.PostMessageToServer("LeaderLib_OnDelayTurnClicked", Client.Character.UUID)
+			if #Listeners.TurnDelayed > 0 then
+				for i,callback in pairs(Listeners.TurnDelayed) do
+					local status,err = xpcall(callback, debug.traceback, Client.Character.UUID)
+					if not status then
+						Ext.PrintError("Error calling function for 'TurnDelayed':\n", err)
+					end
 				end
 			end
-		end
-	end)
-	-- Listen to the hotbar for when the sheet opens
-	--[[ local hotbar = Ext.GetBuiltinUI("Public/Game/GUI/hotBar.swf")
-	if hotbar ~= nil then
-		Ext.RegisterUICall(hotbar, "hotbarBtnPressed", OnSheetEvent)
-		Ext.RegisterUICall(hotbar, "PlaySound", OnSheetEvent)
-		PrintDebug("[LeaderLib_CharacterSheet.lua:RegisterListeners] Found (hotBar.swf). Registered listeners.")
+		end)
 	else
-		PrintDebug("[LeaderLib_CharacterSheet.lua:RegisterListeners] Failed to find Public/Game/GUI/hotBar.swf")
-	end ]]
-	--[[ local characterCreation = Ext.GetBuiltinUI("Public/Game/GUI/characterCreation.swf")
-	if characterCreation ~= nil then
-		Ext.RegisterUICall(characterCreation, "selectOption", OnSheetEvent)
-		for i,v in pairs(pointEvents) do
-			Ext.RegisterUICall(characterCreation, v, OnSheetEvent)
-		end
-		PrintDebug("[LeaderLib_CharacterSheet.lua:RegisterListeners] Found (characterCreation.swf). Registered listeners.")
-	else
-		PrintDebug("[LeaderLib_CharacterSheet.lua:RegisterListeners] Failed to find Public/Game/GUI/characterCreation.swf")
-	end ]]
+		Ext.RegisterUITypeInvokeListener(Data.UIType.statsPanel_c, "updateArraySystem", OnCharacterSheetUpdating)
+		---@param ui UIObject
+		---@param method string
+		---@param pointType number One of 4 values: 0,1,2,3 | 0 = attribute, 1 = combat ability points, 2 = civil points, 3 = talent points
+		Ext.RegisterUITypeInvokeListener(Data.UIType.statsPanel_c, "setStatPoints", function(ui, method, pointType, amountString)
+			local points = tonumber(amountString)
+			if pointType == 1 then
+				UpdateCharacterSheetPoints(ui, "setAvailableCombatAbilityPoints", points)
+			elseif pointType == 2 then
+				UpdateCharacterSheetPoints(ui, "setAvailableCivilAbilityPoints", points)
+			end
+		end)
+		Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation_c, "updateAbilities", OnCharacterCreationUpdating)
+	end
 end
 
 Ext.RegisterListener("SessionLoaded", RegisterListeners)

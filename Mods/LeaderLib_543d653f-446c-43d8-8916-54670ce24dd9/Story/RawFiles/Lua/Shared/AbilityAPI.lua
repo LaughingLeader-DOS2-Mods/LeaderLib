@@ -87,20 +87,28 @@ if Ext.IsClient() then
 	end
 
 	--[[ 
-	ability_array Mapping:
+	ability_array mapping:
 	0 = isCivilAbility:boolean
-	1 = groupId:number, 
+	1 = groupId:number,
 	2 = statId:number
 	3 = displayName:string
 	4 = valueText:string
 	5 = addTooltipText:string
 	6 = removeTooltipText:string
+
+	ability_array mapping for statsPanel_c:
+	0 = isCivilAbility:boolean
+	1 = groupID:Number
+	2 = statID:Number
+	3 = labelText:String
+	4 = valueText:String
+	5 = textColor:uint
 	]]
 
 	---@param ui UIObject
 	local function addMissingAbilities(ui, main)
 		---@type EclCharacter
-		local character = Client:GetCharacter()
+		local character = GameHelpers.Client.GetCharacterSheetCharacter(main)
 		local ability_array = main.ability_array
 		if ability_array ~= nil then
 			local i = #ability_array
@@ -117,10 +125,16 @@ if Ext.IsClient() then
 					else
 						ability_array[i+4] = 0
 					end
-					ability_array[i+5] = LocalizedText.UI.AbilityPlusTooltip:ReplacePlaceholders(Ext.ExtraData.CombatAbilityLevelGrowth) -- addTooltipText
-					ability_array[i+6] = "" -- removeTooltipText
-					--PrintDebug(string.format("[LeaderLib:addMissingAbilities] Added ability [%s] = (%s)", abilityID, abilityName))
-					i = i + 7
+					if not Vars.ControllerEnabled then
+						ability_array[i+5] = LocalizedText.UI.AbilityPlusTooltip:ReplacePlaceholders(Ext.ExtraData.CombatAbilityLevelGrowth) -- addTooltipText
+						ability_array[i+6] = "" -- removeTooltipText
+						--PrintDebug(string.format("[LeaderLib:addMissingAbilities] Added ability [%s] = (%s)", abilityID, abilityName))
+						i = i + 7
+					else
+						ability_array[i+5] = 0
+						i = i + 6
+					end
+					
 					total = total + 1
 				end
 			end
@@ -128,11 +142,42 @@ if Ext.IsClient() then
 		end
 	end
 
+	local availableCombatPoints = {}
+	local availableCivilPoints = {}
+
+	local function GetAvailablePoints(pointType, main)
+		local id = GameHelpers.Client.GetCharacterSheetCharacter(main).NetID
+		local points = 0
+		if pointType == "combat" then
+			points = availableCombatPoints[id]
+			-- local storedPoints = main.stats_mc.pointsWarn[1].avPoints
+			-- print(pointType, points, storedPoints, id)
+			-- if storedPoints > points then
+			-- 	return storedPoints
+			-- end
+		else
+			points = availableCivilPoints[id]
+			-- local storedPoints = main.stats_mc.pointsWarn[2].avPoints
+			-- print(pointType, points, storedPoints, id)
+			-- if storedPoints > points then
+			-- 	return storedPoints
+			-- end
+		end
+		return points or 0
+	end
+
 	--[[ 
-	Array Mapping:
+	lvlBtnAbility_array mapping:
 	0 - hasPoints:boolean
 	1 = isCivilAbility:boolean
-	2 = groupId:number, 
+	2 = groupId:number
+	3 = statId:number
+	4 = isVisible:boolean
+
+	lvlBtnAbility_array mapping for statsPanel_c:
+	0 = isCivilAbility:boolean
+	1 - hasPoints:boolean
+	2 = groupId:number
 	3 = statId:number
 	4 = isVisible:boolean
 	]]
@@ -141,16 +186,22 @@ if Ext.IsClient() then
 	local function toggleAbilityButtonVisibility(ui, main)
 		local lvlBtnAbility_array = main.lvlBtnAbility_array
 		if lvlBtnAbility_array ~= nil and lvlBtnAbility_array[0] ~= nil then
-			local abilityPoints = main.stats_mc.pointsWarn[1].avPoints
-			local civilPoints = main.stats_mc.pointsWarn[2].avPoints
+			local abilityPoints = GetAvailablePoints("combat", main)
+			local civilPoints = GetAvailablePoints("civil", main)
 			local i = #lvlBtnAbility_array
 			for abilityName,data in pairs(missingAbilities) do
 				if AbilityManager.RegisteredCount[abilityName] > 0 then
 					local hasPoints = (data.Civil and civilPoints > 0) or (not data.Civil and abilityPoints > 0)
 					local abilityID = Data.AbilityEnum[abilityName]
+					print(hasPoints, abilityName, civilPoints, abilityPoints)
 					if hasPoints then
-						lvlBtnAbility_array[i] = true -- hasPoints
-						lvlBtnAbility_array[i+1] = data.Civil -- isCivilAbility
+						if not Vars.ControllerEnabled then
+							lvlBtnAbility_array[i] = true -- hasPoints
+							lvlBtnAbility_array[i+1] = data.Civil -- isCivilAbility
+						else
+							lvlBtnAbility_array[i] = data.Civil -- isCivilAbility
+							lvlBtnAbility_array[i+1] = true -- hasPoints
+						end
 						lvlBtnAbility_array[i+2] = data.Group -- groupId
 						lvlBtnAbility_array[i+3] = abilityID -- statId
 						lvlBtnAbility_array[i+4] = true -- isVisible
@@ -158,7 +209,17 @@ if Ext.IsClient() then
 						i = i + 5
 					else
 						--Needs to be hidden again since the button will persist
-						main.stats_mc.setAbilityPlusVisible(data.Civil,data.Group,abilityID,false)
+						if not Vars.ControllerEnabled then
+							main.stats_mc.setAbilityPlusVisible(data.Civil,data.Group,abilityID,false)
+						else
+							-- setBtnVisible(groupID:Number, statID:Number, hasPoints:Boolean, isVisible:Boolean)
+							-- hasPoints = true hides the plus button, false hides the minus button
+							if data.Civil then
+								main.mainpanel_mc.stats_mc.civilAbilities_mc.setBtnVisible(data.Group,abilityID,true,false)
+							else
+								main.mainpanel_mc.stats_mc.combatAbilities_mc.setBtnVisible(data.Group,abilityID,true,false)
+							end
+						end
 					end
 				end
 			end
@@ -174,20 +235,52 @@ if Ext.IsClient() then
 	end
 
 	function AbilityManager.UpdateCharacterSheetPoints(ui, method, main, amount)
+		local id = GameHelpers.Client.GetCharacterSheetCharacter(main).NetID
+		if method == "setAvailableCombatAbilityPoints" then
+			availableCombatPoints[id] = amount
+		elseif method == "setAvailableCivilAbilityPoints" then
+			availableCivilPoints[id] = amount
+		end
+		print(method, amount, id, availableCombatPoints[id], availableCivilPoints[id])
 		for abilityName,data in pairs(missingAbilities) do
 			if AbilityManager.RegisteredCount[abilityName] > 0 then
 				local abilityID = Data.AbilityEnum[abilityName]
 				if method == "setAvailableCombatAbilityPoints" and data.Civil then
-					main.stats_mc.setAbilityPlusVisible(data.Civil, data.Group, abilityID, amount > 0)
+					if not Vars.ControllerEnabled then
+						main.stats_mc.setAbilityPlusVisible(data.Civil, data.Group, abilityID, amount > 0)
+					else
+						if data.Civil then
+							main.mainpanel_mc.stats_mc.civilAbilities_mc.setBtnVisible(data.Group,abilityID,true,amount > 0)
+						else
+							main.mainpanel_mc.stats_mc.combatAbilities_mc.setBtnVisible(data.Group,abilityID,true,amount > 0)
+						end
+					end
 				elseif method == "setAvailableCivilAbilityPoints" and not data.Civil then
-					main.stats_mc.setAbilityPlusVisible(data.Civil, data.Group, abilityID, amount > 0)
+					if not Vars.ControllerEnabled then
+						main.stats_mc.setAbilityPlusVisible(data.Civil, data.Group, abilityID, amount > 0)
+					else
+						if data.Civil then
+							main.mainpanel_mc.stats_mc.civilAbilities_mc.setBtnVisible(data.Group,abilityID,true,amount > 0)
+						else
+							main.mainpanel_mc.stats_mc.combatAbilities_mc.setBtnVisible(data.Group,abilityID,true,amount > 0)
+						end
+					end
 				end
 			end
 		end
 	end
 
 	--[[ 
-	ability_array Mapping:
+	abilityArray mapping:
+	0 = group:uint
+	1 = title:string -- The group header, like Skills, Weapons, Defense, Craftsmanship, Nasty Deeds, Personality
+	2 = abilityID:number
+	3 = displayName:string
+	4 = valueText:integer
+	5 = delta:integer -- ability cap?
+	6 = isCivil:boolean
+
+	abilityArray mapping for characterCreation_c:
 	0 = group:uint
 	1 = title:string -- The group header, like Skills, Weapons, Defense, Craftsmanship, Nasty Deeds, Personality
 	2 = abilityID:number
@@ -201,9 +294,9 @@ if Ext.IsClient() then
 	local function addMissingAbilitiesToCC(ui, main, arrayName)
 		---@type EclCharacter
 		local character = Client:GetCharacter()
-		local ability_array = main[arrayName]
-		if ability_array ~= nil then
-			local i = #ability_array
+		local abilityArray = main[arrayName]
+		if abilityArray ~= nil then
+			local i = #abilityArray
 			local total = 0
 			for abilityName,data in pairs(missingAbilities) do
 				if AbilityManager.RegisteredCount[abilityName] > 0 then
@@ -214,17 +307,17 @@ if Ext.IsClient() then
 					else
 						groupTitle = civilAbilityGroupTitle[data.Group].Value
 					end
-					ability_array[i] = data.Group -- groupId
-					ability_array[i+1] = groupTitle
-					ability_array[i+2] = abilityID -- abilityID
-					ability_array[i+3] = GameHelpers.GetAbilityName(abilityName) -- displayName
+					abilityArray[i] = data.Group -- groupId
+					abilityArray[i+1] = groupTitle
+					abilityArray[i+2] = abilityID -- abilityID
+					abilityArray[i+3] = GameHelpers.GetAbilityName(abilityName) -- displayName
 					local statVal = 0
 					if character ~= nil then
 						statVal = character.Stats[abilityName] or 0
 					end
-					ability_array[i+4] = statVal -- value
-					ability_array[i+5] = statVal --delta
-					ability_array[i+6] = data.Civil -- isCivilAbility
+					abilityArray[i+4] = statVal -- value
+					abilityArray[i+5] = statVal --delta
+					abilityArray[i+6] = data.Civil -- isCivilAbility
 					--PrintDebug(string.format("[LeaderLib:addMissingAbilities] Added ability [%s] = (%s)", abilityID, abilityName))
 					i = i + 7
 					total = total + 1
@@ -240,9 +333,6 @@ if Ext.IsClient() then
 			local hasArrayValues = #main.abilityArray > 0
 			if hasArrayValues then
 				addMissingAbilitiesToCC(ui, main, "abilityArray")
-				-- for i=0,#main.abilityArray do
-				-- 	print(i, main.abilityArray[i])
-				-- end
 			end
 		end
 	end

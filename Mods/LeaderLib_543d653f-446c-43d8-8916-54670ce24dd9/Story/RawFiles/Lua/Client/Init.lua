@@ -1,7 +1,5 @@
 if UI == nil then
-	UI = {
-		ControllerEnabled = false,
-	}
+	UI = {}
 end
 
 UI.Tooltip = {}
@@ -25,13 +23,13 @@ end
 ---@param ui UIObject
 Ext.RegisterListener("UIObjectCreated", function(ui)
 	if ui:GetTypeId() == Data.UIType.msgBox_c then
-		UI.ControllerEnabled = true
+		Vars.ControllerEnabled = true
 		Ext.Print("[LeaderLib] Controller mod enabled.")
 	end
 end)
 
 -- Should exist before SessionLoaded
-UI.ControllerEnabled = (Ext.GetBuiltinUI("Public/Game/GUI/msgBox_c.swf") or Ext.GetUIByType(Data.UIType.msgBox_c)) ~= nil
+Vars.ControllerEnabled = (Ext.GetBuiltinUI("Public/Game/GUI/msgBox_c.swf") or Ext.GetUIByType(Data.UIType.msgBox_c)) ~= nil
 -- if controllerUI ~= nil then
 -- 	Ext.Require("Client/UI/Game.Tooltip.Controllers.lua")
 -- end

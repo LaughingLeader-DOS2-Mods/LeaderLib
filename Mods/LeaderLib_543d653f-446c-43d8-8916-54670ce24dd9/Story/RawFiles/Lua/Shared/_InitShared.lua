@@ -31,7 +31,8 @@ Vars = {
 		Statuses = {},
 		Total = 0
 	},
-	DebugMode = Ext.IsDeveloperMode() == true
+	DebugMode = Ext.IsDeveloperMode() == true,
+	ControllerEnabled = false
 }
 
 --- Adds a prefix to check statuses for when building Vars.LeaveActionData

@@ -27,4 +27,6 @@ LeaderLib_UI_GameSettings_Section_BackstabSettings_General	General Backstab Sett
 LeaderLib_UI_GameSettings_Section_BackstabSettings_NPC	Non-Player Backstab Settings	hf0e4a66bg853eg4cb3gb663g12ba6fbe412f
 LeaderLib_UI_GameSettings_Section_BackstabSettings_Player	Player Backstab Settings	h504a8593g083bg450fgb542gcf686bf36e5b
 LeaderLib_UI_GameSettings_StarterTierOverrides	Enable Skill Tier Overrides	he2e6e5cdg9372g4805g92b1ge2e4b7b1a0db
-LeaderLib_UI_GameSettings_StarterTierOverrides_Description	Override skill tiers to make them show up in character creation.	h6feb8440ge26dg4b31gb9fag5d061db28708
+LeaderLib_UI_GameSettings_StarterTierOverrides_Description	If enabled, Novice/Adept/Master tiered skills will be set to Starter instead, allowing them show up in character creation.<br><font color='#FF9933'>Note that if you don't have the required ability levels for memorization, the skill won't show up (enable Lower Skill Memorization Requirements to avoid that).</font><br>(Default: Disabled)	h6feb8440ge26dg4b31gb9fag5d061db28708
+LeaderLib_UI_GameSettings_LowerMemorizationRequirements	Lower Skill Memorization Requirements	hfda4adafgd642g477fgbbdbg268fe17118b4
+LeaderLib_UI_GameSettings_LowerMemorizationRequirements_Description	If enabled, skill memorization requirements will be lowered (such as Necromancy 4 to Necromancy 1).<br><font color='#FF9933'>Ideally enable this alongside Skill Tier Overrides, so more skills can be selected in character creation.</font><br>(Default: Disabled)	ha1c04ddag65a8g4deagbbe6g8c401710cad9

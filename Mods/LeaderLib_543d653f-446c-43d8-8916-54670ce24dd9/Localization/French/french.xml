@@ -157,7 +157,7 @@
 	<content contentuid="h6eabd548g4797g423agbe50g8a858704a8c1">Player Action Point Settings</content>
 	<content contentuid="h6f21c7b6gea18g4846gbd07g048402159797">*He waits for you to speak.*</content>
 	<content contentuid="h6f8c74d8g77d3g469ega859g41d644a06c6a">LeaderLib Settings</content>
-	<content contentuid="h6feb8440ge26dg4b31gb9fag5d061db28708">Override skill tiers to make them show up in character creation.</content>
+	<content contentuid="h6feb8440ge26dg4b31gb9fag5d061db28708">If enabled, Novice/Adept/Master tiered skills will be set to Starter instead, allowing them show up in character creation.&lt;br&gt;&lt;font color=&apos;#FF9933&apos;&gt;Note that if you don&apos;t have the required ability levels for memorization, the skill won&apos;t show up (enable Lower Skill Memorization Requirements to avoid that).&lt;/font&gt;&lt;br&gt;(Default: Disabled)</content>
 	<content contentuid="h7051ecdfgb5d8g4d31gb3f4g075f8d99c61b">[GLOBAL] Change Autosave Interval</content>
 	<content contentuid="h70808d00g222dg4b4ega35cg661cb7eccd45">Urgh!</content>
 	<content contentuid="h70864c17g1034g48ccgb6edg03dbeb743375">Enable User Restriction</content>
@@ -232,6 +232,7 @@
 	<content contentuid="ha0fda551gb11fg4b9eg9ceag34948486896f">Require Backstab Talent</content>
 	<content contentuid="ha1260afagf673g4e7eg983ag834907ffeb4e">[GLOBAL] Enable the Unhealable fix - If Unhealable is applied, the target will not be able to be healed by statuses (Regeneration, etc). (Currently Disabled)</content>
 	<content contentuid="ha140cb94g4fd8g4651gacf2g9c54f0a8b74a">*Take your leave.*</content>
+	<content contentuid="ha1c04ddag65a8g4deagbbe6g8c401710cad9">If enabled, skill memorization requirements will be lowered (such as Necromancy 4 to Necromancy 1).&lt;br&gt;&lt;font color=&apos;#FF9933&apos;&gt;Ideally enable this alongside Skill Tier Overrides, so more skills can be selected in character creation.&lt;/font&gt;&lt;br&gt;(Default: Disabled)</content>
 	<content contentuid="ha267dc3cg888dg4f53g956ag3b6a6a9cbbef">[LeaderLib_DynamicMenu_MenuOption6_ea90e3a6-30da-411c-8ab5-cae95373ae93]</content>
 	<content contentuid="ha2901d46g7ba5g408cg91ffg6b14b45b4c09">Dynamic Menu Sample</content>
 	<content contentuid="ha35fc503g56dbg4adag963dga359d961e0c8">Horns</content>
@@ -368,6 +369,7 @@
 	<content contentuid="hf94f7e90ge895g48bcg98e0g7350149e94de">Mod Menu</content>
 	<content contentuid="hfb5e41d2gbcc7g4ed4gb962g13f831ed95c8">I&apos;ll stay here.</content>
 	<content contentuid="hfc57ba23gd6adg420fg814cgeb89ab9347b6">This is likely an issue of the mod not copying to the right folder after subscribing.&lt;br&gt;Check the discussion pinned at LeaderLib&apos;s steam workshop page titled:&lt;br&gt;&lt;b&gt;Support: Mod Doesn&apos;t Appear in the Mod List&lt;/b&gt;</content>
+	<content contentuid="hfda4adafgd642g477fgbbdbg268fe17118b4">Lower Skill Memorization Requirements</content>
 	<content contentuid="hfdc7dcb0g648cg4021gb530g011b5d8c242d">Skills Can Backstab</content>
 	<content contentuid="hfe0169eagd031g41a8gbcd3g6b992d81fba5">[GLOBAL] Enable Status Logging</content>
 	<content contentuid="hff1084efgf4efg450aga177g1311cbce0ebb">&lt;font color=&apos;#2EFE2E&apos;&gt;+[1] Attitude&lt;/font&gt;</content>

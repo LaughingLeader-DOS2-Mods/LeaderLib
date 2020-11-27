@@ -92,9 +92,9 @@ function SaveGameSettings()
 			Ext.SaveFile("LeaderLib_GameSettings.json", Ext.JsonStringify(GameSettings))
 		end, debug.traceback)
 		if not b then
-			print(err)
+			Ext.PrintError(err)
 		end
-	elseif Ext.IsDeveloperMode() then
+	elseif Vars.DebugMode then
 		Ext.PrintWarning("[LeaderLib:GameSettingsManager:SaveGameSettings] GameSettings is nil?")
 	end
 end
@@ -183,7 +183,9 @@ if Ext.IsServer() then
 	end)
 
 	Ext.RegisterListener("GameStateChanged", function(from, to)
-		print("[GameSettingsManager:GameStateChanged]", from, to, applyGameSettingsOnRunning, syncGameSettingsOnRunning)
+		if Vars.DebugMode then
+			PrintLog("[GameSettingsManager:GameStateChanged] (%s => %s) applyGameSettingsOnRunning(%s) syncGameSettingsOnRunning(%s)", from, to, applyGameSettingsOnRunning, syncGameSettingsOnRunning)
+		end
 		if to == "Running" and from == "Paused" then
 			if applyGameSettingsOnRunning or syncGameSettingsOnRunning then
 				ApplyGameSettings(syncGameSettingsOnRunning)

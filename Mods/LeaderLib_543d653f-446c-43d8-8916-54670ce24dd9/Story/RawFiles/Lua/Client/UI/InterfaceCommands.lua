@@ -207,7 +207,7 @@ Ext.RegisterNetListener("LeaderLib_Hotbar_RefreshCooldowns", function(call, data
 				local slot = slotholder.slot_array[i]
 				if slot ~= nil then
 					if Ext.IsDeveloperMode() then
-						print(string.format("[slot_array][%i] id(%i) oldCD(%i) nextCD(%s)", i, slot.id, slot.oldCD, cd))
+						PrintLog("[slot_array][%i] id(%i) oldCD(%i) nextCD(%s)", i, slot.id, slot.oldCD, cd)
 					end
 					if cd ~= nil then
 						slot.setCoolDown(cd)

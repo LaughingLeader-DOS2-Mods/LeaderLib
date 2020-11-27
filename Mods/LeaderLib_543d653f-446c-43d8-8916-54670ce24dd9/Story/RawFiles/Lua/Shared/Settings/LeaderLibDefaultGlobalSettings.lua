@@ -1,6 +1,7 @@
 ---@type ModSettings
 local ModSettings = Classes.ModSettingsClasses.ModSettings
 local settings = ModSettings:Create("7e737d2f-31d2-4751-963f-be6ccc59cd0c")
+settings.TitleColor = "#369BFF"
 settings.Global:AddLocalizedFlags({
 	"LeaderLib_RemovePathInfluencesOnChainAll",
 	"LeaderLib_AutoAddModMenuBooksDisabled",

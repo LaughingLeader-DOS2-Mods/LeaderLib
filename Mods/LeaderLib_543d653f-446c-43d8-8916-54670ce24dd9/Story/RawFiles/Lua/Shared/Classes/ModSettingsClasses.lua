@@ -499,6 +499,7 @@ end
 ---@class ModSettings
 local ModSettings = {
 	Type = "ModSettings",
+	TitleColor = "#FFFFFF",
 	UUID = "",
 	Name = "",
 	---@type table<string, ProfileSettings>
@@ -518,6 +519,7 @@ ModSettings.__index = ModSettings
 
 ---@param uuid string The mod's UUID.
 ---@param globalSettings SettingsData|nil Default global settings.
+---@return ModSettings
 function ModSettings:Create(uuid, globalSettings)
     local this =
     {

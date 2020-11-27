@@ -30,6 +30,9 @@ local function LoadModSettingsConfig(uuid, file)
 	local settings = SettingsManager.GetMod(uuid, true)
 	local config = Ext.JsonParse(file)
 	if config ~= nil then
+		if config.TitleColor ~= nil then
+			settings.TitleColor = config.TitleColor
+		end
 		if config.Data ~= nil then
 			if config.Data.Flags ~= nil then
 				for _,data in pairs(config.Data.Flags) do

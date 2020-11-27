@@ -218,8 +218,9 @@ function ModMenuManager.CreateMenu(ui, mainMenu)
 	for _,modSettings in pairs(settings) do
 		if modSettings.Global ~= nil then
 			if Ext.IsModLoaded(modSettings.UUID) then
+				local titleColor = not StringHelpers.IsNullOrEmpty(modSettings.TitleColor) and modSettings.TitleColor or "#369BFF"
 				local modInfo = Ext.GetModInfo(modSettings.UUID)
-				local modName = modInfo.Name or modSettings.Name
+				local modName = string.format("<font color='%s' size='24'>%s</font>", titleColor, modInfo.Name or modSettings.Name)
 				mainMenu.addMenuLabel(modName)
 				local label = mainMenu.list.content_array[#mainMenu.list.content_array-1]
 				if label ~= nil then

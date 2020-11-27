@@ -46,6 +46,8 @@ function TranslatedString:Update()
 		if not StringHelpers.IsNullOrEmpty(handle) then
 			self.Handle = handle
 			self.Content = content or self.Content or ""
+		else
+			self.Content = self.Key
 		end
 	end
 	if not StringHelpers.IsNullOrEmpty(self.Handle) then

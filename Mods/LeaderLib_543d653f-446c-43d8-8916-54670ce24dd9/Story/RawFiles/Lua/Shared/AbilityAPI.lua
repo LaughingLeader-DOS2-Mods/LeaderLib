@@ -144,24 +144,36 @@ if Ext.IsClient() then
 
 	local availableCombatPoints = {}
 	local availableCivilPoints = {}
+	local setAvailablePoints = {}
+
+	local function SetAvailablePointsFromStored(main)
+		if main == nil then
+			if not Vars.ControllerEnabled then
+				main = Ext.GetUIByType(Data.UIType.characterSheet):GetRoot()
+			else
+				main = Ext.GetUIByType(Data.UIType.statsPanel_c):GetRoot()
+			end
+		end
+		local id = GameHelpers.Client.GetCharacterSheetCharacter(main).NetID
+		if not Vars.ControllerEnabled then
+			availableCombatPoints[id] = main.stats_mc.pointsWarn[1].avPoints
+			availableCivilPoints[id] = main.stats_mc.pointsWarn[2].avPoints
+		else
+			availableCombatPoints[id] = tonumber(main.mainpanel_mc.stats_mc.combatAbilities_mc.pointsValue_txt.text) or 0
+			availableCivilPoints[id] = tonumber(main.mainpanel_mc.stats_mc.civilAbilities_mc.pointsValue_txt.text) or 0
+		end
+	end
 
 	local function GetAvailablePoints(pointType, main)
 		local id = GameHelpers.Client.GetCharacterSheetCharacter(main).NetID
+		if setAvailablePoints[id] ~= true then
+			SetAvailablePointsFromStored(main)
+		end
 		local points = 0
 		if pointType == "combat" then
 			points = availableCombatPoints[id]
-			-- local storedPoints = main.stats_mc.pointsWarn[1].avPoints
-			-- print(pointType, points, storedPoints, id)
-			-- if storedPoints > points then
-			-- 	return storedPoints
-			-- end
 		else
 			points = availableCivilPoints[id]
-			-- local storedPoints = main.stats_mc.pointsWarn[2].avPoints
-			-- print(pointType, points, storedPoints, id)
-			-- if storedPoints > points then
-			-- 	return storedPoints
-			-- end
 		end
 		return points or 0
 	end
@@ -193,7 +205,6 @@ if Ext.IsClient() then
 				if AbilityManager.RegisteredCount[abilityName] > 0 then
 					local hasPoints = (data.Civil and civilPoints > 0) or (not data.Civil and abilityPoints > 0)
 					local abilityID = Data.AbilityEnum[abilityName]
-					print(hasPoints, abilityName, civilPoints, abilityPoints)
 					if hasPoints then
 						if not Vars.ControllerEnabled then
 							lvlBtnAbility_array[i] = true -- hasPoints
@@ -205,7 +216,9 @@ if Ext.IsClient() then
 						lvlBtnAbility_array[i+2] = data.Group -- groupId
 						lvlBtnAbility_array[i+3] = abilityID -- statId
 						lvlBtnAbility_array[i+4] = true -- isVisible
-						PrintDebug(string.format("[LeaderLib:addMissingAbilities] Enabled point button for [%s] = (%s)", abilityID, abilityName))
+						if Vars.DebugMode then
+							PrintLog("[LeaderLib:addMissingAbilities] Enabled point button for [%s] = (%s)", abilityID, abilityName)
+						end
 						i = i + 5
 					else
 						--Needs to be hidden again since the button will persist
@@ -236,12 +249,12 @@ if Ext.IsClient() then
 
 	function AbilityManager.UpdateCharacterSheetPoints(ui, method, main, amount)
 		local id = GameHelpers.Client.GetCharacterSheetCharacter(main).NetID
+		setAvailablePoints[id] = true
 		if method == "setAvailableCombatAbilityPoints" then
 			availableCombatPoints[id] = amount
 		elseif method == "setAvailableCivilAbilityPoints" then
 			availableCivilPoints[id] = amount
 		end
-		print(method, amount, id, availableCombatPoints[id], availableCivilPoints[id])
 		for abilityName,data in pairs(missingAbilities) do
 			if AbilityManager.RegisteredCount[abilityName] > 0 then
 				local abilityID = Data.AbilityEnum[abilityName]
@@ -268,6 +281,12 @@ if Ext.IsClient() then
 				end
 			end
 		end
+	end
+
+	if Vars.DebugMode then
+		RegisterListener("LuaReset", function()
+			SetAvailablePointsFromStored()
+		end)
 	end
 
 	--[[ 

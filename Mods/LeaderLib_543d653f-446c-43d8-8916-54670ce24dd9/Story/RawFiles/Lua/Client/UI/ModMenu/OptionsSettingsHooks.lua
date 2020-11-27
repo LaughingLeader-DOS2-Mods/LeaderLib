@@ -152,14 +152,27 @@ end)
 
 local registeredListeners = false
 
+local function SetCurrentMenu(id)
+	if currentMenu ~= id then
+		lastMenu = currentMenu
+		currentMenu = math.floor(id)
+		if Vars.DebugMode then
+			PrintLog("[LeaderLib] Options menu changed: lastMenu(%s) currentMenu(%s)", lastMenu, currentMenu)
+		end
+	end
+end
+
+local function OnOptionsClosed()
+	SetCurrentMenu(1)
+end
+
 local function OnSwitchMenu(ui, call, id)
 	if currentMenu == MOD_MENU_ID then
 		ModMenuManager.SaveScroll(ui)
 	elseif currentMenu == LarianMenuID.Gameplay then
 		GameSettingsMenu.SaveScroll(ui)
 	end
-	lastMenu = currentMenu
-	currentMenu = id
+	SetCurrentMenu(id)
 
 	if currentMenu == LarianMenuID.Gameplay then
 		GameSettingsMenu.AddSettings(ui, true)
@@ -184,6 +197,7 @@ local function OnAcceptChanges(ui, call)
 		GameSettingsMenu.SaveScroll(ui)
 		GameSettingsMenu.CommitChanges()
 	end
+	OnOptionsClosed()
 end
 
 local function OnApplyPressed(ui, call, ...)
@@ -199,6 +213,7 @@ local function OnCancelChanges(ui, call)
 		GameSettingsMenu.SaveScroll(ui)
 		GameSettingsMenu.UndoChanges()
 	end
+	OnOptionsClosed()
 end
 
 Ext.RegisterListener("SessionLoaded", function()
@@ -217,22 +232,8 @@ Ext.RegisterListener("SessionLoaded", function()
 		end
 	end
 
-	Ext.RegisterUITypeCall(Data.UIType.gameMenu, "openMenu", function(ui, call)
-		registeredListeners = false
-		currentMenu = 1
-		lastMenu = 1
-		-- if lastMenu ~= -1 then
-		-- 	currentMenu = lastMenu
-		-- 	ui:ExternalInterfaceCall("switchMenu", currentMenu)
-		-- else
-		-- 	currentMenu = 1
-		-- 	lastMenu = 1
-		-- end
-	end)
-
 	Ext.RegisterUINameCall("switchToModMenu", function(ui, call, ...)
-		lastMenu = currentMenu
-		currentMenu = MOD_MENU_ID
+		SetCurrentMenu(MOD_MENU_ID)
 		SwitchToModMenu(ui)
 		--Ext.PostMessageToServer("LeaderLib_ModMenu_RequestOpen", tostring(Client.ID))
 	end)
@@ -264,7 +265,7 @@ Ext.RegisterListener("SessionLoaded", function()
 	Ext.RegisterUINameInvokeListener("parseUpdateArray", function(invokedUI, method, ...)
 		local ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf") or invokedUI
 		if ui ~= nil then
-			if currentMenu == 3 then
+			if currentMenu == LarianMenuID.Gameplay then
 				GameSettingsMenu.AddSettings(ui, true)
 			end
 		end
@@ -339,6 +340,12 @@ Ext.RegisterListener("SessionLoaded", function()
 			GameSettingsMenu.OnControlAdded(ui, controlType, id, listIndex, listProperty, ...)
 		end
 	end
+
+	Ext.RegisterUITypeCall(Data.UIType.gameMenu, "requestCloseUI", OnOptionsClosed)
+	Ext.RegisterUITypeInvokeListener(Data.UIType.gameMenu, "openMenu", function(...)
+		registeredListeners = false
+		SetCurrentMenu(1)
+	end)
 
 	for _,uiType in pairs(OPTIONS_UI_TYPE) do
 		Ext.RegisterUITypeCall(uiType, "applyPressed", OnApplyPressed)

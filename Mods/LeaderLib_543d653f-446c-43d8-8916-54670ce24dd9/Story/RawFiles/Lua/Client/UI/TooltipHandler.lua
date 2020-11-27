@@ -426,7 +426,7 @@ local function FormatTagText(content_array, group, isControllerMode)
 				return true
 			end, debug.traceback)
 			if not b then
-				print("[LeaderLib:FormatTagText] Error:")
+				Ext.PrintError("[LeaderLib:FormatTagText] Error:")
 				Ext.PrintError(result)
 			end
 		end

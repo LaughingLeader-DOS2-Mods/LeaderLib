@@ -148,7 +148,9 @@ if Ext.IsClient() then
 						else
 							target[k] = v
 						end
-						print(string.format("[LeaderLib_SetCharacterStats] Set %s | %s => %s", k, current, target[k]))
+						if Vars.DebugMode then
+							PrintLog("[LeaderLib_SetCharacterStats] Set %s | %s => %s", k, current, target[k])
+						end
 					end
 				end, debug.traceback)
 				if not b then

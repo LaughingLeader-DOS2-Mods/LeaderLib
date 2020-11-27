@@ -25,8 +25,8 @@ end
 ---@param ui UIObject
 Ext.RegisterListener("UIObjectCreated", function(ui)
 	if ui:GetTypeId() == Data.UIType.msgBox_c then
-		print("msgBox_c was created ************************")
 		UI.ControllerEnabled = true
+		Ext.Print("[LeaderLib] Controller mod enabled.")
 	end
 end)
 

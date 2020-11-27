@@ -316,8 +316,6 @@ Ext.RegisterListener("SessionLoaded", function()
 	if bottomBar ~= nil then
 		-- controller mode
 		RegisterControllerTooltipEvents()
-		local ui = Ext.GetBuiltinUI("Public/Game/GUI/partyInventory_c.swf")
-		print("Public/Game/GUI/partyInventory_c.swf", ui:GetTypeId())
 	end
 	-- local ui = Ext.GetBuiltinUI("Public/Game/GUI/examine_c.swf")
 	-- if ui ~= nil then

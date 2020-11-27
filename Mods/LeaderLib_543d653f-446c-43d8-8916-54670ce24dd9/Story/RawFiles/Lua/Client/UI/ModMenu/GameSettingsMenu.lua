@@ -138,7 +138,7 @@ local mainMenuArrayAccess = {
 }
 
 function GameSettingsMenu.OnControlAdded(ui, controlType, id, listIndex, listProperty, extraParam1)
-	print("GameSettingsMenu.OnControlAdded", controlType, id, listIndex, listProperty, extraParam1)
+	--print("GameSettingsMenu.OnControlAdded", controlType, id, listIndex, listProperty, extraParam1)
 	if GameSettingsMenu.Controls[id] == nil and controlType ~= "menuLabel" then
 		return
 	end
@@ -157,7 +157,6 @@ function GameSettingsMenu.OnControlAdded(ui, controlType, id, listIndex, listPro
 				elseif controlType == "menuLabel" then
 					if extraParam1 == text.MainTitle.Value then
 						element.tooltip = text.MainTitle_Description.Value
-						print(element.tooltip)
 						--element.heightOverride = element.height * 2
 						--element.label_txt.y = element.height / 2
 						--print("Set textFormat for", element.name, main.setTextFormat(listIndex, true, true, false, 36))
@@ -180,12 +179,10 @@ function GameSettingsMenu.UpdateControlsEnabled(ui)
 		local mainMenu = main.mainMenu_mc
 		local controlsEnabled = false--Client.IsHost == true
 		local i = 0
-		print("#mainMenu.list.content_array", #mainMenu.list.content_array)
 		while i < #mainMenu.list.content_array do
 			local element = mainMenu.list.content_array[i]
 			if element ~= nil then
 				local id = element.id or element.buttonID
-				print(i, id)
 				if GameSettingsMenu.Controls[element.id] ~= nil then
 					if element.slider_mc ~= nil then
 						local slider = mainMenu.list.content_array[#mainMenu.list.content_array-1]
@@ -331,7 +328,7 @@ function GameSettingsMenu.SetScrollPosition(ui)
 			end
 		end
 	end
-	print("[SetScrollPosition] GameSettingsMenu.LastScrollPosition", GameSettingsMenu.LastScrollPosition)
+	--print("[SetScrollPosition] GameSettingsMenu.LastScrollPosition", GameSettingsMenu.LastScrollPosition)
 end
 
 function GameSettingsMenu.SaveScroll(ui)
@@ -342,5 +339,5 @@ function GameSettingsMenu.SaveScroll(ui)
 			GameSettingsMenu.LastScrollPosition = scrollbar_mc.m_scrolledY
 		end
 	end
-	print("[SaveScroll] GameSettingsMenu.LastScrollPosition", GameSettingsMenu.LastScrollPosition)
+	--print("[SaveScroll] GameSettingsMenu.LastScrollPosition", GameSettingsMenu.LastScrollPosition)
 end

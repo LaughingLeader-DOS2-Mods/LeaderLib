@@ -269,9 +269,10 @@ if Ext.IsClient() then
 	end
 
 	function AbilityManager.UpdateCharacterSheetPoints(ui, method, main, amount)
-		local id = GameHelpers.Client.GetCharacterSheetCharacter(main).NetID
+		local character = GameHelpers.Client.GetCharacterSheetCharacter(main)
+		local id = character.NetID
 		if Vars.DebugMode then
-			PrintLog("%s(%s)[%s]", method, amount, id)
+			PrintLog("%s(%s) for %s (%s)", method, amount, character.MyGuid, character.NetID)
 		end
 		if method == "setAvailableCombatAbilityPoints" then
 			availableCombatPoints[id] = amount

@@ -112,13 +112,12 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, uuid)
 				local displayName, tooltip = PrepareText(name, v)
 				mainMenu.addMenuSlider(ModMenuManager.LastID, displayName, v.Value, min, max, interval, false, tooltip)
 				AddControl(v, uuid, v.Value)
-
-				if Client.IsHost ~= true then
-					local slider = mainMenu.list.content_array[#mainMenu.list.content_array-1]
-					if slider ~= nil then
-						slider.alpha = 0.3
-						slider.slider_mc.m_disabled = true
-					end
+				
+				local slider = mainMenu.list.content_array[#mainMenu.list.content_array-1]
+				if slider ~= nil and slider.slider_mc ~= nil then
+					local controlsEnabled = Client.IsHost == true
+					slider.alpha = controlsEnabled and 1.0 or 0.3
+					slider.slider_mc.m_disabled = not controlsEnabled
 				end
 			elseif varType == "boolean" then
 				local enableControl = Client.IsHost == true -- TODO: Specify on entries whether clients can edit them?

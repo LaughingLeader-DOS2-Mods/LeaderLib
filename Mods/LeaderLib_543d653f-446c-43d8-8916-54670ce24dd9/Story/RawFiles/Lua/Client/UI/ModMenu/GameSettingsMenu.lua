@@ -153,7 +153,7 @@ function GameSettingsMenu.OnControlAdded(ui, controlType, id, listIndex, listPro
 			if element ~= nil then
 				if controlType == "slider" then
 					element.alpha = controlsEnabled and 1.0 or 0.3
-					element.slider_mc.m_disabled = controlsEnabled
+					element.slider_mc.m_disabled = not controlsEnabled
 				elseif controlType == "menuLabel" then
 					if extraParam1 == text.MainTitle.Value then
 						element.tooltip = text.MainTitle_Description.Value
@@ -167,34 +167,6 @@ function GameSettingsMenu.OnControlAdded(ui, controlType, id, listIndex, listPro
 					element.alpha = controlsEnabled and 1.0 or 0.3				
 				end
 				--print(id, controlType, element.height, element.y, list.EL_SPACING, list.TOP_SPACING, main.getElementHeight(id))
-			end
-		end
-	end
-end
-
-function GameSettingsMenu.UpdateControlsEnabled(ui)
-	local main = ui:GetRoot()
-	if main ~= nil then
-		---@type MainMenuMC
-		local mainMenu = main.mainMenu_mc
-		local controlsEnabled = false--Client.IsHost == true
-		local i = 0
-		while i < #mainMenu.list.content_array do
-			local element = mainMenu.list.content_array[i]
-			if element ~= nil then
-				local id = element.id or element.buttonID
-				if GameSettingsMenu.Controls[element.id] ~= nil then
-					if element.slider_mc ~= nil then
-						local slider = mainMenu.list.content_array[#mainMenu.list.content_array-1]
-						if slider ~= nil then
-							slider.alpha = controlsEnabled and 1.0 or 0.3
-							slider.slider_mc.m_disabled = controlsEnabled
-						end
-					else
-						element.enable = controlsEnabled
-						element.alpha = controlsEnabled and 1.0 or 0.3
-					end
-				end
 			end
 		end
 	end

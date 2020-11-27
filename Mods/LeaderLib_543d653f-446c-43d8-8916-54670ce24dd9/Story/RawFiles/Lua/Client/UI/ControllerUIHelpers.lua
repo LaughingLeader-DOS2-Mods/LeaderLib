@@ -271,7 +271,7 @@ local function RegisterControllerTooltipEvents()
 	end
 	print("**************Registered controller UI events.************")
 
-	if Ext.IsDeveloperMode() then
+	if Vars.DebugMode then
 		local debugEvents = {
 			"setTooltip",
 			"setEquippedTitle",

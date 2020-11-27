@@ -3,7 +3,7 @@
 ---@type damage integer
 ---@type handle integer
 local function OnPrepareHit(target, source, damage, handle)
-	if Ext.IsDeveloperMode() then
+	if Vars.DebugMode then
 		Ext.Print(string.format("[NRD_OnPrepareHit] Target(%s) Source(%s) damage(%i) Handle(%s) HitType(%s)", target, source, damage, handle, NRD_HitGetString(handle, "HitType")))
 		--Debug_TraceHitPrepare(target, source, damage, handle)
 	end
@@ -56,7 +56,7 @@ end
 ---@type handle integer
 local function OnHit(target, source, damage, handle)
 	--print(target,source,damage,handle,HasActiveStatus(source, "AOO"),HasActiveStatus(target, "AOO"))
-	if Ext.IsDeveloperMode() then 
+	if Vars.DebugMode then 
 		Ext.Print(string.format("[NRD_OnHit] Target(%s) Source(%s) damage(%i) Handle(%i) HitType(%s)", target, source, damage, handle, NRD_StatusGetInt(target, handle, "HitReason")))
 	end
 	local skillprototype = NRD_StatusGetString(target, handle, "SkillId")

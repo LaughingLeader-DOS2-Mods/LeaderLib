@@ -469,7 +469,7 @@ local function SessionLoaded()
 	-- end
 end
 
-if Ext.IsDeveloperMode() then
+if Vars.DebugMode then
 	print("Pre Session Loaded UI:")
 	PrintAllUITypeID()
 	--Ext.RegisterListener("SessionLoaded", SessionLoaded)

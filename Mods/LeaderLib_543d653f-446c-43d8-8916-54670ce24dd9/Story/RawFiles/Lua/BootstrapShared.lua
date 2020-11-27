@@ -19,6 +19,6 @@ Ext.Require("Shared/StatOverrides.lua")
 Ext.Require("Shared/FeaturesHandler.lua")
 Ext.Require("Shared/WingsWorkaround.lua")
 Ext.Require("Shared/AbilityAPI.lua")
--- if Ext.IsDeveloperMode() then
+-- if Vars.DebugMode then
 -- 	Ext.Require("Shared/Debug/GameMathTracing.lua")
 -- end

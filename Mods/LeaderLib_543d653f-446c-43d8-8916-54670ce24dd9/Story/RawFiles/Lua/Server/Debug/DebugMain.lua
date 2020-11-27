@@ -33,7 +33,7 @@ function DebugInit()
 		end
 	end
 
-	if Ext.IsDeveloperMode() then
+	if Vars.DebugMode then
 		--Debug_TorturerBugTest()
 	end
 end

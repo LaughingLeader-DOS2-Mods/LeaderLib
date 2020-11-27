@@ -24,7 +24,7 @@ Ext.Require("Server/Timers.lua")
 Ext.Require("Server/OsirisHelpers.lua")
 Ext.Require("Server/Versioning.lua")
 Ext.Require("Server/Debug/ConsoleCommands.lua")
-if Ext.IsDeveloperMode() then
+if Vars.DebugMode then
 	Ext.Require("Server/Debug/DebugMain.lua")
 	Ext.Require("Server/Debug/DeveloperCommands.lua")
 end

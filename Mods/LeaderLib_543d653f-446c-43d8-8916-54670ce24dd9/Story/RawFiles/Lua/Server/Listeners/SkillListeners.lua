@@ -138,7 +138,7 @@ function OnSkillUsed(char, skill, ...)
 	if data ~= nil then
 		local status,err = nil,nil
 		for callback in GetListeners(skill) do
-			if Ext.IsDeveloperMode() then
+			if Vars.DebugMode then
 				--PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillUsed] char(",char,") skill(",skill,") data(",data:ToString(),")")
 				--PrintDebug("params(",Ext.JsonStringify({...}),")")
 			end
@@ -157,7 +157,7 @@ function OnSkillCast(char, skill, ...)
 	if data ~= nil then
 		local status,err = nil,nil
 		for callback in GetListeners(skill) do
-			if Ext.IsDeveloperMode() then
+			if Vars.DebugMode then
 				--PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillCast] char(",char,") skill(",skill,") data(",data:ToString(),")")
 				--PrintDebug("params(",Ext.JsonStringify({...}),")")
 			end

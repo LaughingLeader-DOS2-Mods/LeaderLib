@@ -1,15 +1,3 @@
-function PrintDebug(...)
-	if Vars.DebugMode then
-		--local lineNum = debug.getinfo(1).currentline
-		--local lineInfo = string.format("[%s:%s]", currentFileName(), debug.getinfo(1).currentline)
-		print(...)
-	end
-end
-
-function PrintLog(str, ...)
-	Ext.Print(string.format(str, ...))
-end
-
 Classes = {}
 Common = {}
 ---@class GameHelpers
@@ -34,6 +22,18 @@ Vars = {
 	DebugMode = Ext.IsDeveloperMode() == true,
 	ControllerEnabled = false
 }
+
+function PrintDebug(...)
+	if Vars.DebugMode then
+		--local lineNum = debug.getinfo(1).currentline
+		--local lineInfo = string.format("[%s:%s]", currentFileName(), debug.getinfo(1).currentline)
+		print(...)
+	end
+end
+
+function PrintLog(str, ...)
+	Ext.Print(string.format(str, ...))
+end
 
 --- Adds a prefix to check statuses for when building Vars.LeaveActionData
 ---@param prefix string
@@ -153,7 +153,7 @@ Features = {
 	FixFarOutManSkillRangeTooltip = false,
 }
 
-if Ext.IsDeveloperMode() then
+if Vars.DebugMode then
 	-- Features.HideArmor = 2
 	-- Features.HideMagicArmor = 2
 	-- Features.HideVitality = 2

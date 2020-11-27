@@ -419,7 +419,7 @@ local function FormatTagText(content_array, group, isControllerMode)
 						end
 						--print(string.format("[%s] htmlText(%s) finalText(%s)", group.name, element.label_txt.htmlText, finalText))
 					end
-					-- if Ext.IsDeveloperMode() then
+					-- if Vars.DebugMode then
 					-- 	PrintDebug(string.format("(%s) label_txt.htmlText(%s) color(%s)", group.groupID, element.label_txt.htmlText, element.label_txt.textColor))
 					-- end
 				end

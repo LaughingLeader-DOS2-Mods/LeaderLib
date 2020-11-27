@@ -30,7 +30,7 @@ end
 
 local function ModuleResume()
 	--PrintDebug("[LeaderLib:Bootstrap.lua] Module is loading.")
-	-- if Ext.IsDeveloperMode() then
+	-- if Vars.DebugMode then
 	-- 	for file,override in pairs(pathOverrides) do
 	-- 		Ext.AddPathOverride(file, override)
 	-- 	end

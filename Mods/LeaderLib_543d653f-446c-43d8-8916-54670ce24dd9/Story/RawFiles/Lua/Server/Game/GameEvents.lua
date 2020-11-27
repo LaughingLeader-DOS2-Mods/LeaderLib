@@ -100,7 +100,7 @@ function OnInitialized_CheckGameState(region)
 			InvokeOnInitializedCallbacks(region)
 		end
 	else
-		if Ext.IsDeveloperMode() then
+		if Vars.DebugMode then
 			Ext.PrintWarning("[LeaderLib:OnInitialized_CheckGameState] Game State:", Ext.GetGameState())
 		end
 		TimerCancel("Timers_LeaderLib_Initialized_CheckGameState")
@@ -109,7 +109,7 @@ function OnInitialized_CheckGameState(region)
 end
 
 Ext.RegisterListener("GameStateChanged", function(from, to)
-	if Ext.IsDeveloperMode() then
+	if Vars.DebugMode then
 		Ext.Print(string.format("[LeaderLib:GameStateChanged] %s => %s", from, to))
 	end
 	if to == "Running" and Ext.OsirisIsCallable() then

@@ -217,7 +217,7 @@ local function OnCancelChanges(ui, call)
 end
 
 Ext.RegisterListener("SessionLoaded", function()
-	if Ext.IsDeveloperMode() then
+	if Vars.DebugMode then
 		for i,v in pairs(debugEvents) do
 			---@param ui UIObject
 			Ext.RegisterUINameInvokeListener(v, function(ui, ...)

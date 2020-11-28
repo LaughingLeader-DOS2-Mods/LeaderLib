@@ -49,7 +49,7 @@ function GameHelpers.Item.CreateItemByStat(statName, level, rarity, skipLevelChe
             rootTemplate = stat.RootTemplate
         end
     else
-        if stat.ItemGroup ~= nil and stat.ItemGroup ~= "" then
+        if stat ~= nil and stat.ItemGroup ~= nil and stat.ItemGroup ~= "" then
             generateRandomBoosts = 1
             local group = Ext.GetItemGroup(stat.ItemGroup)
             local rarityMatch = false

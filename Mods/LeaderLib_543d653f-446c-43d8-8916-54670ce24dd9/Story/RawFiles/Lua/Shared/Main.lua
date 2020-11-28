@@ -101,9 +101,6 @@ Ext.RegisterListener("SessionLoaded", function()
 		end
 		PrintDebug(string.format("[LeaderLib_Shared_SessionLoaded] Updated %s TranslatedString entries.", count))
 	end
-	if Vars.DebugMode then
-		AbilityManager.EnableAbility("all", "7e737d2f-31d2-4751-963f-be6ccc59cd0c")
-	end
 end)
 
 ---@param uuid string

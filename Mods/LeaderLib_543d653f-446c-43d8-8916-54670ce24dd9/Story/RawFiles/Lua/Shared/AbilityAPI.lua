@@ -63,15 +63,21 @@ end
 -- end
 
 function AbilityManager.DisableAbility(abilityName, modID)
-	local data = AbilityManager.RegisteredAbilities[abilityName]
-	if data ~= nil then
-		if AbilityManager.RegisteredAbilities[abilityName][modID] ~= nil then
-			AbilityManager.RegisteredAbilities[abilityName][modID] = nil
-			AbilityManager.RegisteredCount[abilityName] = AbilityManager.RegisteredCount[abilityName] - 1
+	if abilityName == "all" then
+		for ability,v in pairs(missingAbilities) do
+			AbilityManager.DisableAbility(ability, modID)
 		end
-		if AbilityManager.RegisteredCount[abilityName] <= 0 then
-			AbilityManager.RegisteredAbilities[abilityName] = nil
-			AbilityManager.RegisteredCount[abilityName] = 0
+	else
+		local data = AbilityManager.RegisteredAbilities[abilityName]
+		if data ~= nil then
+			if AbilityManager.RegisteredAbilities[abilityName][modID] ~= nil then
+				AbilityManager.RegisteredAbilities[abilityName][modID] = nil
+				AbilityManager.RegisteredCount[abilityName] = AbilityManager.RegisteredCount[abilityName] - 1
+			end
+			if AbilityManager.RegisteredCount[abilityName] <= 0 then
+				AbilityManager.RegisteredAbilities[abilityName] = nil
+				AbilityManager.RegisteredCount[abilityName] = 0
+			end
 		end
 	end
 end

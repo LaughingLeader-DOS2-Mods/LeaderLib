@@ -16,9 +16,9 @@ end
 
 GameHelpers.UI.SetSlotEnabled = SetSlotEnabled
 
----@type client string
----@type skill string
----@type enabled string
+---@param client string
+---@param skill string
+---@param enabled string
 function SetSkillEnabled(client, skill, enabled)
 	if CharacterIsPlayer(client) == 1 and CharacterGetReservedUserID(client) ~= nil then
 		if type(enabled) == "string" then
@@ -38,7 +38,7 @@ end
 GameHelpers.UI.SetSkillEnabled = SetSkillEnabled
 
 ---Refresh the whole active skillbar. Useful for refreshing if a skill is clickable from tag requirements changing.
----@type client string Client character UUID.
+---@param client string Client character UUID.
 function RefreshSkillBar(client)
 	if CharacterIsPlayer(client) == 1 and Ext.GetGameState() == "Running" then
 		local id = CharacterGetReservedUserID(client)
@@ -51,8 +51,8 @@ end
 
 GameHelpers.UI.RefreshSkillBar = RefreshSkillBar
 
----@type client string Client character UUID.
----@type skill string
+---@param client string Client character UUID.
+---@param skill string
 function RefreshSkillBarSkillCooldown(client, skill)
 	if CharacterIsPlayer(client) == 1 and CharacterGetReservedUserID(client) ~= nil then
 		local data = MessageData:CreateFromTable("SkillbarCooldowns", {
@@ -73,7 +73,7 @@ end
 GameHelpers.UI.RefreshSkillBarSkillCooldown = RefreshSkillBarSkillCooldown
 
 ---Refresh the skillbar's cooldowns.
----@type client string Client character UUID.
+---@param client string Client character UUID.
 function RefreshSkillBarCooldowns(client)
 	if CharacterIsPlayer(client) == 1 and CharacterGetReservedUserID(client) ~= nil then
 		local character = Ext.GetCharacter(client)

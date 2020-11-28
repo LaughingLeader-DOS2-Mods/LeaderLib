@@ -27,26 +27,27 @@ TotalSkillListeners = 0
 ---@alias LeaderLibSkillListenerCallback fun(skill:string, char:string, state:SKILL_STATE, data:SkillEventData|HitData)
 
 --- Registers a function to call when a specific skill's events fire.
----@param skill string
+---@param skill string|string[]
 ---@param callback LeaderLibSkillListenerCallback
 function RegisterSkillListener(skill, callback)
-	if SkillListeners[skill] == nil then
-		SkillListeners[skill] = {}
-	else
-		-- for i,v in pairs(SkillListeners[skill]) do
-		-- 	if v == callback then
-		-- 		return
-		-- 	end
-		-- end
-	end
-	table.insert(SkillListeners[skill], callback)
-	TotalSkillListeners = TotalSkillListeners + 1
+	local t = type(skill)
+	if t == "string" then
+		if SkillListeners[skill] == nil then
+			SkillListeners[skill] = {}
+		end
+		table.insert(SkillListeners[skill], callback)
+		TotalSkillListeners = TotalSkillListeners + 1
 
-	if Vars.Initialized then
-		Osi.LeaderLib_ToggleScripts_EnableScript("LeaderLib_LuaSkillListeners_Enabled", "LeaderLib")
-		Osi.LeaderLib_ToggleScripts_EnableScript("LeaderLib_LuaEventListeners_Enabled", "LeaderLib")
-	else
-		Vars.PostLoadEnableLuaListeners = true
+		if Vars.Initialized then
+			Osi.LeaderLib_ToggleScripts_EnableScript("LeaderLib_LuaSkillListeners_Enabled", "LeaderLib")
+			Osi.LeaderLib_ToggleScripts_EnableScript("LeaderLib_LuaEventListeners_Enabled", "LeaderLib")
+		else
+			Vars.PostLoadEnableLuaListeners = true
+		end
+	elseif t == "table" then
+		for i,v in pairs(skill) do
+			RegisterSkillListener(v, callback)
+		end
 	end
 end
 

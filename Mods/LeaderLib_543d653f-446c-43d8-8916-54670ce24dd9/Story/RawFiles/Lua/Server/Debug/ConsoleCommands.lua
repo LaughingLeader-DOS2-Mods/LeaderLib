@@ -179,12 +179,21 @@ Ext.RegisterConsoleCommand("addreward", function(command, treasure, identifyItem
 	CharacterGiveReward(host, treasure, identified)
 end)
 
-Ext.RegisterConsoleCommand("questreward", function(command, treasure)
+Ext.RegisterConsoleCommand("questreward", function(command, treasure, delay)
 	if treasure == nil then
 		treasure = "RC_GY_RykersContract"
 	end
 	local host = CharacterGetHostCharacter()
-	CharacterGiveQuestReward(host, treasure, "QuestReward")
+	if delay ~= nil then
+		delay = tonumber(delay)
+	end
+	if delay ~= nil then
+		StartOneshotTimer(string.format("Timers_LeaderLib_Debug_QuestReward%s%s%s", host, treasure, delay), delay, function()
+			CharacterGiveQuestReward(host, treasure, "QuestReward")
+		end)
+	else
+		CharacterGiveQuestReward(host, treasure, "QuestReward")
+	end
 end)
 
 Ext.RegisterConsoleCommand("addskill", function(command, skill)

@@ -172,11 +172,11 @@ function SettingsData:AddFlag(flag, flagType, enabled, displayName, tooltip, can
 	else
 		local existing = self.Flags[flag]
 		existing.ID = flag
-		existing.Enabled = enabled or existing.Enabled
+		existing.Enabled = enabled ~= nil and enabled or existing.Enabled
 		existing.FlagType = flagType or existing.FlagType
 		existing.DisplayName = displayName or existing.DisplayName
 		existing.Tooltip = tooltip or existing.Tooltip
-		existing.CanExport = canExport or existing.CanExport
+		existing.CanExport = canExport ~= nil and canExport  or existing.CanExport
 	end
 end
 
@@ -229,7 +229,7 @@ function SettingsData:AddVariable(name, value, displayName, tooltip, min, max, i
 		end
 	else
 		local existing = self.Variables[name]
-		existing.Value = value
+		existing.Value = value ~= nil and value or existing.Value
 		existing.DisplayName = displayName or existing.DisplayName
 		existing.Tooltip = tooltip or existing.Tooltip
 		existing.Min = min or existing.Min
@@ -507,8 +507,9 @@ local ModSettings = {
 	---@type SettingsData
 	Global = {},
 	Version = -1,
-	---@type function<SettingaData,string,any>
+	---@type fun(self:SettingsData, name:string, data:VariableData):void
 	UpdateVariable = nil,
+	---@type fun(uuid:string, name:string, data:VariableData):void
 	OnVariableSet = nil,
 	LoadedExternally = false,
 	---@type function<string, table<string, string[]>>
@@ -624,15 +625,13 @@ function ModSettings:SetVariable(id, value, profile)
 		if profileSettings ~= nil then
 			profileSettings.Settings:SetVariable(id, value)
 		end
-	else
-		if not self.Global:SetVariable(id, value) then
-			-- Try and find the active profile for this option
-			if Ext.IsServer() then
-				profile = GetUserProfileID(CharacterGetReservedUserID(CharacterGetHostCharacter()))
-				local profileSettings = self.Profiles[profile]
-				if profileSettings ~= nil then
-					profileSettings.Settings:SetVariable(id, value)
-				end
+	elseif not self.Global:SetVariable(id, value) then
+		-- Try and find the active profile for this option
+		if Ext.IsServer() then
+			profile = GetUserProfileID(CharacterGetReservedUserID(CharacterGetHostCharacter()))
+			local profileSettings = self.Profiles[profile]
+			if profileSettings ~= nil then
+				profileSettings.Settings:SetVariable(id, value)
 			end
 		end
 	end

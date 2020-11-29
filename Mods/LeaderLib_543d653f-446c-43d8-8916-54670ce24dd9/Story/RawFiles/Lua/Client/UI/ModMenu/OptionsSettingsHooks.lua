@@ -45,8 +45,8 @@ local function SwitchToModMenu(ui, ...)
 	local main = ui:GetRoot()
 	---@type MainMenuMC
 	local mainMenu = main.mainMenu_mc
-	mainMenu.removeItems()
-	mainMenu.resetMenuButtons(MOD_MENU_ID)
+	main.removeItems()
+	main.resetMenuButtons(MOD_MENU_ID)
 	local buttonsArray = mainMenu.menuBtnList.content_array
 	for i=0,#buttonsArray do
 		local button = buttonsArray[i]
@@ -268,6 +268,10 @@ Ext.RegisterListener("SessionLoaded", function()
 			if currentMenu == LarianMenuID.Gameplay then
 				GameSettingsMenu.AddSettings(ui, true)
 			end
+			-- local main = ui:GetRoot()
+			-- for i=0,#main.update_Array do
+			-- 	print(i, main.update_Array[i])
+			-- end
 		end
 	end)
 
@@ -292,42 +296,68 @@ Ext.RegisterListener("SessionLoaded", function()
 	end)
 
 	local OnCheckBox = function(ui, call, id, value)
+		local originalCall = string.sub(call, 3)
 		if currentMenu == MOD_MENU_ID then
 			ModMenuManager.OnCheckbox(id, value)
 		elseif currentMenu == LarianMenuID.Gameplay then
-			GameSettingsMenu.OnCheckbox(id, value)
+			if not GameSettingsMenu.OnCheckbox(id, value) then
+				ui:ExternalInterfaceCall(originalCall, id, value)
+			end
+		else
+			ui:ExternalInterfaceCall(originalCall, id, value)
 		end
 	end
 	
 	local OnComboBox = function(ui, call, id, value)
+		local originalCall = string.sub(call, 3)
 		if currentMenu == MOD_MENU_ID then
 			ModMenuManager.OnComboBox(id, value)
 		elseif currentMenu == LarianMenuID.Gameplay then
-			GameSettingsMenu.OnComboBox(id, value)
+			if not GameSettingsMenu.OnComboBox(id, value) then
+				ui:ExternalInterfaceCall(originalCall, id, value)
+			end
+		else
+			ui:ExternalInterfaceCall(originalCall, id, value)
 		end
 	end
 
 	local OnSelector = function(ui, call, id, value)
+		local originalCall = string.sub(call, 3)
 		if currentMenu == MOD_MENU_ID then
 			ModMenuManager.OnSelector(id, value)
 		elseif currentMenu == LarianMenuID.Gameplay then
-			GameSettingsMenu.OnSelector(id, value)
+			if not GameSettingsMenu.OnSelector(id, value) then
+				ui:ExternalInterfaceCall(originalCall, id, value)
+			end
+		else
+			ui:ExternalInterfaceCall(originalCall, id, value)
 		end
 	end
 
 	local OnSlider = function(ui, call, id, value)
+		local originalCall = string.sub(call, 3)
 		if currentMenu == MOD_MENU_ID then
 			ModMenuManager.OnSlider(id, value)
 		elseif currentMenu == LarianMenuID.Gameplay then
-			GameSettingsMenu.OnSlider(id, value)
+			if not GameSettingsMenu.OnSlider(id, value) then
+				ui:ExternalInterfaceCall(originalCall, id, value)
+			end
+		else
+			ui:ExternalInterfaceCall(originalCall, id, value)
 		end
 	end
 
+	---@param ui UIObject
 	local OnButton = function(ui, call, id)
+		local originalCall = string.sub(call, 3)
 		if currentMenu == MOD_MENU_ID then
 			ModMenuManager.OnButtonPressed(id)
 		elseif currentMenu == LarianMenuID.Gameplay then
-			GameSettingsMenu.OnButtonPressed(id)
+			if not GameSettingsMenu.OnButtonPressed(id) then
+				ui:ExternalInterfaceCall(originalCall, id)
+			end
+		else
+			ui:ExternalInterfaceCall(originalCall, id)
 		end
 	end
 	
@@ -356,11 +386,11 @@ Ext.RegisterListener("SessionLoaded", function()
 
 		Ext.RegisterUITypeCall(uiType, "controlAdded", onControlAdded)
 
-		Ext.RegisterUITypeCall(uiType, "buttonPressed", OnButton)
-		Ext.RegisterUITypeCall(uiType, "menuSliderID", OnSlider)
-		Ext.RegisterUITypeCall(uiType, "selectorID", OnSelector)
-		Ext.RegisterUITypeCall(uiType, "checkBoxID", OnCheckBox)
-		Ext.RegisterUITypeCall(uiType, "comboBoxID", OnComboBox)
+		Ext.RegisterUITypeCall(uiType, "llbuttonPressed", OnButton)
+		Ext.RegisterUITypeCall(uiType, "llmenuSliderID", OnSlider)
+		Ext.RegisterUITypeCall(uiType, "llselectorID", OnSelector)
+		Ext.RegisterUITypeCall(uiType, "llcheckBoxID", OnCheckBox)
+		Ext.RegisterUITypeCall(uiType, "llcomboBoxID", OnComboBox)
 
 		Ext.RegisterUITypeCall(uiType, "arrayParsed", OnUpdateArrayParsed)
 	end

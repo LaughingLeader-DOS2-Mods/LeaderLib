@@ -8,7 +8,7 @@
 GameSettingsMenu = {
 	---@type table<int, GameSettingsEntryData>
 	Controls = {},
-	LastID = 600,
+	LastID = 2000,
 	LastScrollPosition = 0
 }
 GameSettingsMenu.__index = GameSettingsMenu
@@ -235,32 +235,44 @@ function GameSettingsMenu.OnCheckbox(id, state)
 	local controlData = GameSettingsMenu.Controls[id]
 	if controlData ~= nil then
 		controlData.Value = state == 1
+		return true
 	end
+	return false
 end
 
 function GameSettingsMenu.OnComboBox(id, index)
 	local controlData = GameSettingsMenu.Controls[id]
 	if controlData ~= nil then
 		controlData.Value = index
+		return true
 	end
+	return false
 end
 
 function GameSettingsMenu.OnSelector(id, currentSelection)
 	local controlData = GameSettingsMenu.Controls[id]
 	if controlData ~= nil then
 		--controlData = currentSelection
+		return true
 	end
+	return false
 end
 
 function GameSettingsMenu.OnSlider(id, value)
 	local controlData = GameSettingsMenu.Controls[id]
 	if controlData ~= nil then
 		controlData.Value = value
+		return true
 	end
+	return false
 end
 
 function GameSettingsMenu.OnButtonPressed(id)
-	--local controlData = GameSettingsMenu.Controls[id]
+	local controlData = GameSettingsMenu.Controls[id]
+	if controlData ~= nil then
+		return true
+	end
+	return false
 end
 
 function GameSettingsMenu.CommitChanges()

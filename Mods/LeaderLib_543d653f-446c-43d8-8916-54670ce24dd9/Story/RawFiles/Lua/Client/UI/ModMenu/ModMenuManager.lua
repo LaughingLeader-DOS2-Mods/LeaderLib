@@ -27,7 +27,7 @@
 ModMenuManager = {
 	---@type table<int, ModMenuEntryData>
 	Controls = {},
-	LastID = 0,
+	LastID = 1000,
 	LastScrollPosition = 0
 }
 
@@ -273,6 +273,7 @@ end
 function ModMenuManager.OnSlider(id, value)
 	local controlData = ModMenuManager.Controls[id]
 	if controlData ~= nil then
+		print("ModMenuManager.OnSlider", id, value)
 		controlData.Value = value
 	end
 end

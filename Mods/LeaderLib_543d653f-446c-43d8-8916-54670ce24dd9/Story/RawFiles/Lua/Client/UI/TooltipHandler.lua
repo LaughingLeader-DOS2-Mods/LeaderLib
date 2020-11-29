@@ -64,6 +64,9 @@ local FarOutManFixSkillTypes = {
 ---@param skill string
 ---@param tooltip TooltipData
 local function OnSkillTooltip(character, skill, tooltip)
+	if Vars.DebugMode and SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION then
+		print(skill, Common.Dump(Ext.StatGetAttribute(skill, "MemorizationRequirements")))
+	end
 	--print(Ext.JsonStringify(tooltip.Data))
 	if Features.TooltipGrammarHelper then
 		-- This fixes the double spaces from removing the "tag" part of Requires tag

@@ -40,7 +40,15 @@ local ignore_skill_names = {
 	NPC = true
 }
 
+local ignoreSkills = {
+	-- ArmorSets skill with a tier set. Unused
+	Projectile_CON00_SetBonus = true
+}
+
 local function CanChangeSkillTier(stat, tier)
+	if ignoreSkills[stat] == true then
+		return false
+	end
 	if Ext.StatGetAttribute(stat, "ForGameMaster") == "Yes" and Ext.StatGetAttribute(stat, "Ability") ~= "None" then
 		if tier == "" or tier == "Starter" or tier == "None" then
 			return false

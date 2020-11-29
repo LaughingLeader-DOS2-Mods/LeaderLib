@@ -58,7 +58,7 @@ package
 			this.bg_mc.gotoAndStop(2);
 			this.label_txt.y = this.textY;
 			ExternalInterface.call("PlaySound",this.snd_onUp);
-			ExternalInterface.call("buttonPressed",this.id);
+			ExternalInterface.call("llbuttonPressed",this.id);
 			removeEventListener("mouseUp",this.buttonReleased);
 		}
 		

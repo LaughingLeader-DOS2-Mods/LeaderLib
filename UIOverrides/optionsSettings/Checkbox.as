@@ -50,7 +50,7 @@ package
 				}
 				this.bg_mc.gotoAndStop(this.stateID * 3 + 1);
 				ExternalInterface.call("PlaySound","UI_Gen_XButton_Click");
-				ExternalInterface.call("checkBoxID",this.id,this.stateID);
+				ExternalInterface.call("llcheckBoxID",this.id,this.stateID);
 			}
 			removeEventListener(MouseEvent.MOUSE_UP,this.onClick);
 		}

@@ -37,7 +37,7 @@ package
 		{
 			var val2:Number = this.slider_mc.value;
 			this.amount_txt.htmlText = String(this.roundFloat(val2));
-			ExternalInterface.call("menuSliderID",this.id,this.slider_mc.value);
+			ExternalInterface.call("llmenuSliderID",this.id,this.slider_mc.value);
 			this.resetAmountPos();
 		}
 		

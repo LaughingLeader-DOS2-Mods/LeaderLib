@@ -31,7 +31,7 @@ package
 		
 		public function onChange(param1:Event) : *
 		{
-			ExternalInterface.call("selectorID",this.id,this.selList.currentSelection);
+			ExternalInterface.call("llselectorID",this.id,this.selList.currentSelection);
 			ExternalInterface.call("PlaySound","UI_Gen_OptMenu_Slider");
 		}
 		

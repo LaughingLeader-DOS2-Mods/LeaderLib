@@ -36,7 +36,7 @@ package
 		
 		public function onChange(param1:Event) : *
 		{
-			ExternalInterface.call("comboBoxID",this.id,this.combo_mc.selectedIndex);
+			ExternalInterface.call("llcomboBoxID",this.id,this.combo_mc.selectedIndex);
 		}
 		
 		public function deselectElement(param1:MouseEvent) : *

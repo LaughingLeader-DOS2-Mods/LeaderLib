@@ -117,7 +117,7 @@ package optionsSettings_fla
 			ExternalInterface.call("applyPressed");
 			ExternalInterface.call("PlaySound","UI_Gen_Apply");
 			this.apply_mc.onOut();
-			if (this.applyCopy && this.applyCopy.visible)
+			if (this.applyCopy && this.applyCopy.bg_mc.visible)
 			{
 				this.applyCopy.onOut();
 			}
@@ -616,11 +616,22 @@ package optionsSettings_fla
 			this.applyCopy = copy;
 			this.applyCopy.text_txt.filters = textEffect.createStrokeFilter(0,2,0.75,1.4,3);
 			this.applyCopy.pressedFunc = this.applyPressed;
-			this.applyCopy.text_txt.htmlText = this.apply_mc.text_txt.htmlText;
+			this.applyCopy.textY = this.apply_mc.textY;
 			this.applyCopy.text_txt.defaultTextFormat = this.apply_mc.text_txt.defaultTextFormat;
+			this.applyCopy.text_txt.htmlText = this.apply_mc.text_txt.htmlText;
+			//this.applyCopy.text_txt.text = this.apply_mc.text_txt.text;
 			this.applyCopy.disable_mc.visible = false;
 			this.applyCopy.bg_mc.visible = bVisible;
 			this.applyCopy.text_txt.visible = bVisible;
+
+			this.applyCopy.x = this.apply_mc.x;
+			this.applyCopy.y = this.apply_mc.y;
+			this.applyCopy.disable_mc.x = this.apply_mc.disable_mc.x;
+			this.applyCopy.bg_mc.x = this.apply_mc.bg_mc.x;
+			this.applyCopy.text_txt.x = this.apply_mc.text_txt.x;
+			this.applyCopy.disable_mc.y = this.apply_mc.disable_mc.y;
+			this.applyCopy.bg_mc.y = this.apply_mc.bg_mc.y;
+			this.applyCopy.text_txt.y = this.apply_mc.text_txt.y;
 			this.addChild(this.applyCopy);
 		}
 

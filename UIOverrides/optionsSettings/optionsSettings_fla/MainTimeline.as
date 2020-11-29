@@ -187,6 +187,10 @@ package optionsSettings_fla
 							val3 = val6 as Number;
 							val4 = this.baseUpdate_Array[val2++];
 							this.button_array[val3].text_txt.htmlText = val4.toUpperCase();
+							if (this.button_array[val3] == this.mainMenu_mc.apply_mc && this.mainMenu_mc.applyCopy)
+							{
+								this.mainMenu_mc.applyCopy.text_txt.htmlText = this.button_array[val3].text_txt.htmlText;
+							}
 							continue;
 						case 2:
 							val7 = this.baseUpdate_Array[val2++];
@@ -358,23 +362,23 @@ package optionsSettings_fla
 			this.button_array[buttonId].bg_mc.visible = !bDisabled;
 		}
 
-		public function setApplyButtonCopyVisible(bVisible:Boolean) : *
+		public function setApplyButtonCopyVisible(bVisible:Boolean=true) : *
 		{
-			if (!this.mainMenu_mc.applyButtonCopy)
+			if (this.mainMenu_mc.applyCopy)
 			{
 				this.mainMenu_mc.applyCopy.bg_mc.visible = bVisible;
-				this.mainMenu_mc.applyCopy.disable_mc.visible = false;
 				this.mainMenu_mc.applyCopy.text_txt.visible = bVisible;
+				this.mainMenu_mc.applyCopy.disable_mc.visible = false;
 			}
 		}
 
 		public function createApplyButton(bVisible:Boolean = false) : *
 		{
-			if (!this.mainMenu_mc.applyButtonCopy)
+			if (!this.mainMenu_mc.applyCopy)
 			{
 				var original:MovieClip = this.mainMenu_mc.apply_mc;
-				var sourceClass:Class = Object(this.mainMenu_mc.apply_mc).constructor;
-				var applyButtonCopy:MovieClip = new sourceClass();
+				//var sourceClass:Class = Object(this.mainMenu_mc.apply_mc).constructor;
+				var applyButtonCopy:MovieClip = new AcceptButton_5();
 				applyButtonCopy.x = original.x;
 				applyButtonCopy.y = original.y;
 				this.mainMenu_mc.setupApplyCopy(applyButtonCopy, bVisible);

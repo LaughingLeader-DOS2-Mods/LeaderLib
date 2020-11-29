@@ -222,12 +222,10 @@ local function OnAcceptChanges(ui, call)
 end
 
 local function SetApplyButtonClickable(ui, b)
-	--local main = ui:GetRoot()
-	--main.setButtonDisable(3, not b, not b)
-	--main.mainMenu_mc.applyCopy.disable_mc.visible = b ~= true
-	--main.mainMenu_mc.applyCopy.bg_mc.visible = b
+	--local mainMenu_mc = ui:GetRoot().mainMenu_mc
+	--mainMenu_mc.applyCopy.text_txt.htmlText = mainMenu_mc.apply_mc.text_txt.htmlText
+	--mainMenu_mc.applyCopy.text_txt.visible = b
 	ui:Invoke("setApplyButtonCopyVisible", b)
-	--ui:GetRoot().mainMenu_mc.applyCopy.text_txt.visible = b;
 end
 
 local function OnApplyPressed(ui, call, ...)

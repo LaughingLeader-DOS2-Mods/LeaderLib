@@ -306,10 +306,6 @@ Ext.RegisterListener("SessionLoaded", function()
 			if currentMenu == LarianMenuID.Gameplay then
 				GameSettingsMenu.AddSettings(ui, true)
 			end
-			-- local main = ui:GetRoot()
-			-- for i=0,#main.update_Array do
-			-- 	print(i, main.update_Array[i])
-			-- end
 		end
 	end)
 

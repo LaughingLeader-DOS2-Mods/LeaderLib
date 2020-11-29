@@ -186,6 +186,9 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 
 		if addToArray == true then
 			array = main.update_Array
+			if array == nil then
+				return false
+			end
 			index = #array
 			mainMenu = mainMenuArrayAccess
 		end

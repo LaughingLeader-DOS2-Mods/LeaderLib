@@ -20,6 +20,7 @@ package optionsSettings_fla
 		public var Xclose_mc:MovieClip;
 		
 		public var apply_mc:MovieClip;
+		public var applyCopy:MovieClip;
 		
 		public var cancel_mc:MovieClip;
 		
@@ -116,6 +117,10 @@ package optionsSettings_fla
 			ExternalInterface.call("applyPressed");
 			ExternalInterface.call("PlaySound","UI_Gen_Apply");
 			this.apply_mc.onOut();
+			if (this.applyCopy && this.applyCopy.visible)
+			{
+				this.applyCopy.onOut();
+			}
 		}
 		
 		public function okPressed() : *
@@ -603,6 +608,28 @@ package optionsSettings_fla
 					}
 					val3++;
 				}
+			}
+		}
+
+		public function setupApplyCopy(copy:MovieClip, bVisible:Boolean=false):*
+		{
+			this.applyCopy = copy;
+			this.applyCopy.text_txt.filters = textEffect.createStrokeFilter(0,2,0.75,1.4,3);
+			this.applyCopy.pressedFunc = this.applyPressed;
+			this.applyCopy.text_txt.htmlText = this.apply_mc.text_txt.htmlText;
+			this.applyCopy.text_txt.defaultTextFormat = this.apply_mc.text_txt.defaultTextFormat;
+			this.applyCopy.disable_mc.visible = false;
+			this.applyCopy.bg_mc.visible = bVisible;
+			this.applyCopy.text_txt.visible = bVisible;
+			this.addChild(this.applyCopy);
+		}
+
+		public function removeApplyCopy():*
+		{
+			if (this.applyCopy)
+			{
+				this.removeChild(this.applyCopy);
+				this.applyCopy = null;
 			}
 		}
 		

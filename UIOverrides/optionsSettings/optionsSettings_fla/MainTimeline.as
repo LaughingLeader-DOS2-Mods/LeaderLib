@@ -351,10 +351,35 @@ package optionsSettings_fla
 			this.mainMenu_mc.removeItems();
 		}
 		
-		public function setButtonDisable(param1:Number, param2:Boolean) : *
+		public function setButtonDisable(buttonId:Number, bDisabled:Boolean) : *
 		{
-			this.button_array[param1].disable_mc.visible = param2;
-			this.button_array[param1].bg_mc.visible = !param2;
+			//ExternalInterface.call("onSetButtonDisable", buttonId, bDisabled);
+			this.button_array[buttonId].disable_mc.visible = bDisabled;
+			this.button_array[buttonId].bg_mc.visible = !bDisabled;
+		}
+
+		public function setApplyButtonCopyVisible(bVisible:Boolean) : *
+		{
+			if (!this.mainMenu_mc.applyButtonCopy)
+			{
+				this.mainMenu_mc.applyCopy.bg_mc.visible = bVisible;
+				this.mainMenu_mc.applyCopy.disable_mc.visible = false;
+				this.mainMenu_mc.applyCopy.text_txt.visible = bVisible;
+			}
+		}
+
+		public function createApplyButton(bVisible:Boolean = false) : *
+		{
+			if (!this.mainMenu_mc.applyButtonCopy)
+			{
+				var original:MovieClip = this.mainMenu_mc.apply_mc;
+				var sourceClass:Class = Object(this.mainMenu_mc.apply_mc).constructor;
+				var applyButtonCopy:MovieClip = new sourceClass();
+				applyButtonCopy.x = original.x;
+				applyButtonCopy.y = original.y;
+				this.mainMenu_mc.setupApplyCopy(applyButtonCopy, bVisible);
+				//this.button_array[3] = applyButtonCopy
+			}
 		}
 		
 		public function resetMenuButtons(param1:Number) : *
@@ -409,6 +434,13 @@ package optionsSettings_fla
 				}
 			}
 			return false;
+		}
+
+		public function clearAll():*
+		{
+			this.update_Array = new Array();
+			this.removeItems();
+			//this.baseUpdate_Array = new Array();
 		}
 		
 		function frame1() : *

@@ -87,7 +87,7 @@ end
 ---@param data LeaderLibGameSettings
 local function OverrideStats(syncMode, data, forceSync)
 	Ext.Print("[LeaderLib:SyncStatOverrides] Syncing stat overrides from GameSettings. SyncMode:", syncMode)
-	if data == nil or (Ext.IsClient() and GameSettings.Default == nil) then
+	if data == nil then
 		data = LoadGameSettings()
 	end
 	--Ext.IsModLoaded("88d7c1d3-8de9-4494-be12-a8fcbc8171e9")
@@ -125,6 +125,7 @@ local function OverrideStats(syncMode, data, forceSync)
 					for i,v in pairs(memorizationReq) do
 						if Data.AbilityEnum[v.Requirement] ~= nil and v.Param > 1 then
 							v.Param = 1
+							changed = true
 						end
 					end
 				end
@@ -157,6 +158,7 @@ local function OverrideStats(syncMode, data, forceSync)
 					for i,v in pairs(memorizationReq) do
 						if Data.AbilityEnum[v.Requirement] ~= nil and v.Param > 1 then
 							v.Param = 1
+							changed = true
 						end
 					end
 				end

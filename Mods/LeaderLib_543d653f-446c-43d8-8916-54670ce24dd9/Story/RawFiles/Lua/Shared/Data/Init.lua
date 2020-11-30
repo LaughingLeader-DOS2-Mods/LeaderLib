@@ -558,6 +558,7 @@ Data.UIType = {
 	partyInventory_c = 142,
 	partyManagement_c = 82,
 	playerInfo = 38,
+	reward = 136,
 	reward_c = 137,
 	saveLoad = 39,
 	skills = 41,

@@ -290,14 +290,7 @@ Ext.RegisterConsoleCommand("additemstat", function(command, stat, levelstr, rari
 	end
 	local item = GameHelpers.Item.CreateItemByStat(stat, level, rarity, skipLevelCheck, 1, 1)
 	if item ~= nil then
-		-- ItemAddDeltaModifier(item, "Boost_Weapon_Status_Set_Bleeding")
-		-- ItemAddDeltaModifier(item, "Boost_Weapon_Status_Set_Poisoned_Knife")
-		-- ItemAddDeltaModifier(item, "Boost_Weapon_Status_Set_Crippled")
-		--ItemAddDeltaModifier(item, "Boost_Weapon_Status_Set_KnockDown_Sword")
 		ItemToInventory(item, host, 1, 1, 1)
-		if Mods.WeaponExpansion ~= nil and equipmentStatType[statType] == true then
-			Mods.WeaponExpansion.OnTreasureItemGenerate(Ext.GetItem(item))
-		end
 	else
 		print("[additemstat] Failed to generate item!", stat, rarity, levelstr, template)
 	end

@@ -7,8 +7,12 @@ end
 ---@param distanceMult number
 ---@param fromPosition number[]
 function GameHelpers.Math.GetForwardPosition(char, distanceMult, fromPosition)
-    local x,y,z = GetPosition(char)
-    local character = Ext.GetCharacter(char)
+    ---@type EsvCharacter
+    local character = char
+    if type(char) == "string" then
+        character = Ext.GetCharacter(char)
+    end
+    local x,y,z = table.unpack(character.WorldPos)
     if character ~= nil then
         if distanceMult == nil then
             distanceMult = 1.0
@@ -26,6 +30,7 @@ function GameHelpers.Math.GetForwardPosition(char, distanceMult, fromPosition)
             z = fromPosition[3] + forwardVector[3] or z
         end
     end
+    y = GameHelpers.Grid.GetY(x,z)
     return {x,y,z}
 end
 
@@ -48,6 +53,7 @@ function GameHelpers.Math.ExtendPositionWithForwardDirection(source, distanceMul
         x = x + forwardVector[1]
         z = z + forwardVector[3]
     end
+    y = GameHelpers.Grid.GetY(x,z)
     return {x,y,z}
 end
 
@@ -91,6 +97,7 @@ end
 ---Get the distance between two Vector3 points.
 ---@param pos1 number[]|string
 ---@param pos2 number[]|string
+---@return number
 function GameHelpers.Math.GetDistance(pos1, pos2)
     local x,y,z = 0,0,0
     local tx,ty,tz = 0,0,0
@@ -110,4 +117,28 @@ function GameHelpers.Math.GetDistance(pos1, pos2)
         z - tz
     }
     return math.sqrt((diff[1]^2) + (diff[2]^2) + (diff[3]^2))
+end
+
+---Get the directional vector between two Vector3 points.
+---@param pos1 number[]|string
+---@param pos2 number[]|string
+---@return number[]
+function GameHelpers.Math.GetDirectionVector(pos1, pos2)
+    local x,y,z = 0,0,0
+    local x2,y2,z2 = 0,0,0
+    if type(pos1) == "table" then
+        x,y,z = table.unpack(pos1)
+    elseif type(pos2) == "string" then
+        x,y,z = GetPosition(pos1)
+    end
+    if type(pos2) == "table" then
+        x2,y2,z2 = table.unpack(pos2)
+    elseif type(pos2) == "string" then
+        x2,y2,z2 = GetPosition(pos2)
+    end
+    return {
+        x - x2,
+        y - y2,
+        z - z2
+    }
 end

@@ -249,7 +249,8 @@ Ext.RegisterListener("ProjectileHit", function (projectile, hitObject, position)
 	if not StringHelpers.IsNullOrEmpty(projectile.SkillId) then
 		local skill = GetSkillEntryName(projectile.SkillId)
 		if projectile.CasterHandle ~= nil then
-			local uuid = projectile.CasterHandle ~= nil and Ext.GetGameObject(projectile.CasterHandle).MyGuid or ""
+			local object = Ext.GetGameObject(projectile.CasterHandle)
+			local uuid = (object ~= nil and object.MyGuid) or ""
 			local target = hitObject ~= nil and hitObject.MyGuid or ""
 			---@type ProjectileHitData
 			local data = Classes.ProjectileHitData:Create(target, uuid, projectile, position, skill)

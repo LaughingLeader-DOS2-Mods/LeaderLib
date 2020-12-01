@@ -1,9 +1,16 @@
 --- Registers a function to call when a specific Lua LeaderLib event fires.
 ---@param event string OnPrepareHit|OnHit|CharacterSheetPointChanged|CharacterBasePointsChanged|TimerFinished|FeatureEnabled|FeatureDisabled|Initialized|ModuleResume|SessionLoaded
 ---@param callback function
-function RegisterListener(event, callback)
+function RegisterListener(event, callback, param)
 	if Listeners[event] ~= nil then
-		table.insert(Listeners[event], callback)
+		if type(callback) == "string" then
+			if Listeners[event][callback] == nil then
+				Listeners[event][callback] = {}
+			end
+			table.insert(Listeners[event][callback], param)
+		else
+			table.insert(Listeners[event], callback)
+		end
 	else
 		error("[LeaderLib__Main.lua:RegisterListener] Event ("..tostring(event)..") is not a valid LeaderLib listener event!")
 	end

@@ -9,6 +9,7 @@ GameHelpers = {
 	Tooltip = {},
 	UI = {},
 	Ext = {},
+	Internal = {}
 }
 Vars = {
 	Initialized = false,
@@ -32,7 +33,8 @@ function PrintDebug(...)
 end
 
 function PrintLog(str, ...)
-	Ext.Print(string.format(str, ...))
+	--Ext.Print(string.format(str, ...))
+	print(string.format(str, ...))
 end
 
 --- Adds a prefix to check statuses for when building Vars.LeaveActionData
@@ -102,6 +104,8 @@ Listeners = {
 	---@type table<string, fun(character:EclCharacter, stat:string, statType:string):void>
 	CharacterSheetPointChanged = {},
 	TimerFinished = {},
+	---@type table<string,fun(uuid1:string|nil, uuid2:string|nil):void>
+	NamedTimerFinished = {},
 	FeatureEnabled = {},
 	FeatureDisabled = {},
 	Initialized = {},

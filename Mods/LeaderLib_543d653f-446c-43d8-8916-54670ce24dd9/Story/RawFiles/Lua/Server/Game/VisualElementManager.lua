@@ -93,6 +93,9 @@ RegisterProtectedOsirisListener("ItemEquipped", 2, "after", function(item,char)
 end)
 
 RegisterProtectedOsirisListener("ItemUnEquipped", 2, "after", function(item,char)
+	if ObjectExists(item) == 0 then
+		return
+	end
 	VisualManager.Events.OnEquipmentChanged(Ext.GetCharacter(char), Ext.GetItem(item), false)
 end)
 

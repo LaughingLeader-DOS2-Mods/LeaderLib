@@ -1,6 +1,7 @@
 PersistentVars = {}
 PersistentVars.TimerData = {}
 PersistentVars.StatusSource = {}
+PersistentVars.ForceMoveData = {}
 
 --- Registers a function that is called when certain Osiris functions are called, but only when a game level is loaded and the gamestate is running.
 --- Supports events, built-in queries, DBs, PROCs, QRYs (user queries).

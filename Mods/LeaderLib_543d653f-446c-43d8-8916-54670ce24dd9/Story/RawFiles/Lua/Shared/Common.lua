@@ -149,7 +149,9 @@ function Common.TableHasAnyEntry(tbl)
 		return false
 	end
 	for i,v in pairs(tbl) do
-		return true
+		if v ~= nil then
+			return true
+		end
 	end
 	return false
 end

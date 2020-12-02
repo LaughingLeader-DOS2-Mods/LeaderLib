@@ -110,9 +110,9 @@ end
 
 ---Returns true if the object is affected by a "LoseControl" status.
 ---@param character EsvCharacter|string
----@param enemiesOnly boolean|nil Only return true if the source of a status is from an enemy.
+---@param onlyFromEnemy boolean|nil Only return true if the source of a status is from an enemy.
 ---@return boolean
-function GameHelpers.Status.CharacterLostControl(character, enemiesOnly)
+function GameHelpers.Status.CharacterLostControl(character, onlyFromEnemy)
 	if type(character) == "string" then
 		character = Ext.GetCharacter(character)
 	end
@@ -121,7 +121,7 @@ function GameHelpers.Status.CharacterLostControl(character, enemiesOnly)
 	end
 	for i,status in pairs(character:GetStatusObjects()) do
 		if status.StatusId == "CHARMED" then
-			if enemiesOnly ~= true then
+			if onlyFromEnemy ~= true then
 				return true
 			else
 				return GameHelpers.Status.IsFromEnemy(status, character)
@@ -130,7 +130,7 @@ function GameHelpers.Status.CharacterLostControl(character, enemiesOnly)
 		if Data.EngineStatus(status.StatusId) ~= true then
 			local stat = Ext.GetStat(status.StatusId)
 			if stat and stat.LoseControl == "Yes" then
-				if enemiesOnly ~= true then
+				if onlyFromEnemy ~= true then
 					return true
 				else
 					if GameHelpers.Status.IsFromEnemy(status, character) then

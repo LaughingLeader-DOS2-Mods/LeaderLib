@@ -62,28 +62,80 @@ GameHelpers.Status.HasStatusType = ObjectHasStatusType
 
 Ext.NewQuery(ObjectHasStatusType, "LeaderLib_Ext_QRY_HasStatusType", "[in](GUIDSTRING)_Object, [in](STRING)_StatusType, [out](INTEGER)_Bool")
 
----Returns true if the object is disabled by a status.
----@param obj string
+---@param status EsvStatus
+---@param target EsvCharacter|nil
+---@param source EsvCharacter|nil
+---@return boolean
+function GameHelpers.Status.IsFromEnemy(status, target, source)
+	target = target or Ext.GetGameObject(status.TargetHandle)
+	source = source or (status.StatusSourceHandle ~= nil and Ext.GetGameObject(status.StatusSourceHandle) or nil)
+	if target ~= nil and source ~= nil then
+		return CharacterIsEnemy(target.MyGuid, source.MyGuid) == 1
+	end
+	return false
+end
+
+---Returns true if the character is disabled by a status.
+---@param character EsvCharacter|string
 ---@param checkForLoseControl boolean
 ---@return boolean
-function GameHelpers.Status.IsDisabled(obj, checkForLoseControl)
-	if ObjectHasStatusType(obj, {"KNOCKED_DOWN", "INCAPACITATED"}) then
+function GameHelpers.Status.IsDisabled(character, checkForLoseControl)
+	if type(character) == "string" then
+		character = Ext.GetCharacter(character)
+	end
+	if character == nil then
+		return false
+	end
+	if ObjectHasStatusType(character.MyGuid, {"KNOCKED_DOWN", "INCAPACITATED"}) then
 		return true
-	elseif checkForLoseControl == true and ObjectIsCharacter(obj) == 1 then -- LoseControl on items is a good way to crash
-		local statuses = Ext.GetCharacter(obj):GetStatus()
-		if statuses ~= nil then
-			for i,status in pairs(statuses) do
-				if type(status) ~= "string" and status.StatusId ~= nil then
-					status = status.StatusId
+	elseif checkForLoseControl == true then -- LoseControl on items is a good way to crash
+		for _,status in pairs(character:GetStatusObjects()) do
+			if status.StatusId == "CHARMED" then
+				return GameHelpers.Status.IsFromEnemy(status, character)
+			end
+			if Data.EngineStatus(status.StatusId) ~= true then
+				local stat = Ext.GetStat(status.StatusId)
+				if stat and stat.LoseControl == "Yes" then
+					if GameHelpers.Status.IsFromEnemy(status, character) then
+						return true
+					end
 				end
-				if status == "CHARMED" then
+			end
+		end
+	end
+	return false
+end
+
+
+
+---Returns true if the object is affected by a "LoseControl" status.
+---@param character EsvCharacter|string
+---@param enemiesOnly boolean|nil Only return true if the source of a status is from an enemy.
+---@return boolean
+function GameHelpers.Status.CharacterLostControl(character, enemiesOnly)
+	if type(character) == "string" then
+		character = Ext.GetCharacter(character)
+	end
+	if character == nil then
+		return false
+	end
+	for i,status in pairs(character:GetStatusObjects()) do
+		if status.StatusId == "CHARMED" then
+			if enemiesOnly ~= true then
+				return true
+			else
+				return GameHelpers.Status.IsFromEnemy(status, character)
+			end
+		end
+		if Data.EngineStatus(status.StatusId) ~= true then
+			local stat = Ext.GetStat(status.StatusId)
+			if stat and stat.LoseControl == "Yes" then
+				if enemiesOnly ~= true then
 					return true
-				end
-				if Data.EngineStatus(status) ~= true and Ext.StatGetAttribute(status, "LoseControl") == "Yes" then
-					local handle = NRD_StatusGetHandle(obj, status)
-					local source = NRD_StatusGetGuidString(obj, handle, "StatusSource")
-					-- LoseControl may be from an "AI Control" status, so make sure the source is an enemy.
-					return source ~= nil and CharacterIsEnemy(obj, source) == 1
+				else
+					if GameHelpers.Status.IsFromEnemy(status, character) then
+						return true
+					end
 				end
 			end
 		end

@@ -42,7 +42,7 @@ function GameHelpers.Grid.GetValidPositionAlongLine(startPos, directionVector, s
 			end
 		end
 	end
-	return nil
+	return table.unpack(startPos)
 end
 
 ---@param startX number
@@ -73,7 +73,7 @@ function GameHelpers.Grid.GetValidPositionInRadius(startPos, maxRadius, pointsIn
 			radius = radius + 1.0
 		end
 	end
-	return nil
+	return table.unpack(startPos)
 end
 
 ---@param target string

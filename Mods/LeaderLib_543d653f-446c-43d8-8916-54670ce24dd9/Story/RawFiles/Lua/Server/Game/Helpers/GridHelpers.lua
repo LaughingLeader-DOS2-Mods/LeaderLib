@@ -9,7 +9,7 @@ end
 function GameHelpers.Grid.IsValidPosition(x, z, grid)
 	---@type AiGrid
 	grid = grid or Ext.GetAiGrid()
-	print("GameHelpers.Grid.IsValidPosition",x,z,grid:GetAiFlags(x, z), grid:GetAiFlags(x, z)&1==1)
+	--print("GameHelpers.Grid.IsValidPosition",x,z,grid:GetAiFlags(x, z), grid:GetAiFlags(x, z)&1==1)
 	return grid:GetAiFlags(x, z) & 1 ~= 1
 end
 

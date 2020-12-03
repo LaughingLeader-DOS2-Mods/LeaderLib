@@ -7,9 +7,9 @@ KBSECTION
 IF
 GameStarted(_,_)
 AND
-LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", 1,7,9,0)
+LeaderUpdater_QRY_ModUpdateNeeded("LeaderLib", "LaughingLeader", 1,7,9,1)
 THEN
-LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", 1,7,9,0);
+LeaderUpdater_Register_Mod("LeaderLib", "LaughingLeader", 1,7,9,1);
 //END_REGION
 
 //REGION GENERAL_UPDATES

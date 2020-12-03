@@ -67,3 +67,36 @@ function GameHelpers.GetUserID(uuid)
 	end
 	return nil
 end
+
+---@param char1 string|EsvCharacter|EclCharacter
+---@param char2 string|EsvCharacter|EclCharacter
+---@return boolean
+function GameHelpers.CharacterUsersMatch(char1, char2)
+	---@type EsvCharacter
+	local character1 = char1
+	---@type EsvCharacter
+	local character2 = char2
+
+	local t1 = type(char1)
+	local t2 = type(char2)
+
+	if Ext.IsServer() then
+		if t1 == "string" and t2 == t1 then
+			return CharacterGetReservedUserID(char1) == CharacterGetReservedUserID(char2)
+		end
+	else
+
+	if t1 == "string" or t1 == "number" then
+		character1 = Ext.GetCharacter(char1)
+	end
+	if t2 == "string" or t2 == "number" then
+		character2 = Ext.GetCharacter(char2)
+	end
+
+	if Ext.IsServer() then
+		return character1 ~= nil and character2 ~= nil and character1.ReservedUserID == character2.ReservedUserID
+	else
+		Ext.PrintWarning("[LeaderLib:SharedGameHelpers.lua:GameHelpers.CharacterUsersMatch] This check probably won't work on the client since UserID gets unset when a character isn't controlled, and ReservedUserID is not set/accessible.")
+		return character1 ~= nil and character2 ~= nil and character1.UserID == character2.UserID
+	end
+end

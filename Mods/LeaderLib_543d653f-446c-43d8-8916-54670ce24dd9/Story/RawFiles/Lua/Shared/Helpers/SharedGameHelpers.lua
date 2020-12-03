@@ -84,7 +84,7 @@ function GameHelpers.CharacterUsersMatch(char1, char2)
 		if t1 == "string" and t2 == t1 then
 			return CharacterGetReservedUserID(char1) == CharacterGetReservedUserID(char2)
 		end
-	else
+	end
 
 	if t1 == "string" or t1 == "number" then
 		character1 = Ext.GetCharacter(char1)

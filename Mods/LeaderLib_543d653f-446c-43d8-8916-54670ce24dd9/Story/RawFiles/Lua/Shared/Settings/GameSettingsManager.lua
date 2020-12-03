@@ -23,20 +23,27 @@ function ApplyGameSettings(sync)
 				if character ~= nil then
 					local userid = CharacterGetReservedUserID(v[1])
 					local stats = {}
+					local baseStat = Ext.GetStat(character.Stats.Name)
 					if GameSettings.Settings.APSettings.Player.Enabled then
 						if settings.Start > 0 then
 							stats.APStart = settings.Start
+						else
+							stats.APStart = baseStat.APStart
 						end
 						if settings.Max > 0 then
 							stats.APMaximum = settings.Max
+						else
+							stats.APMaximum = baseStat.APMaximum
 						end
 						if settings.Recovery > 0 then
 							stats.APRecovery = settings.Recovery
+						else
+							stats.APRecovery = baseStat.APRecovery
 						end
 					else
-						stats.APStart = character.Stats.APStart
-						stats.APMaximum = settings.Stats.APMaximum
-						stats.APRecovery = settings.Stats.APRecovery
+						stats.APStart = baseStat.APStart
+						stats.APMaximum = baseStat.APMaximum
+						stats.APRecovery = baseStat.APRecovery
 					end
 					
 					table.insert(statChanges, {

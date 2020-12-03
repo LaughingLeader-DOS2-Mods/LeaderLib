@@ -55,7 +55,7 @@ if Ext.IsServer() then
 					local profile = GetUserProfileID(id)
 					if profile ~= ignoreProfile then
 						local uuid = StringHelpers.GetUUID(GetCurrentCharacter(id))
-						local isHost = StringHelpers.GetUUID(CharacterGetHostCharacter()) == uuid
+						local isHost = CharacterGetReservedUserID(CharacterGetHostCharacter()) == id
 						local data = {
 							Shared = SharedData,
 							Profile = profile,
@@ -84,7 +84,7 @@ if Ext.IsServer() then
 				Ext.PrintError("[LeaderLib:GameHelpers.Data.SyncSharedData] Error syncing data: client is an incorrect type:", clientType, client)
 			end
 			if profile ~= ignoreProfile then
-				local isHost = StringHelpers.GetUUID(CharacterGetHostCharacter()) == StringHelpers.GetUUID(GetCurrentCharacter(id))
+				local isHost = CharacterGetReservedUserID(CharacterGetHostCharacter()) == id
 				local data = {
 					Shared = SharedData,
 					Profile = profile,
@@ -146,7 +146,7 @@ if Ext.IsServer() then
 		end
 		uuid = StringHelpers.GetUUID(uuid or GetCurrentCharacter(id))
 		local character = Ext.GetCharacter(uuid)
-		local isHost = StringHelpers.GetUUID(CharacterGetHostCharacter()) == uuid
+		local isHost = CharacterGetReservedUserID(CharacterGetHostCharacter()) == id
 		if SharedData.CharacterData[profileId] == nil then
 			SharedData.CharacterData[profileId] = ClientCharacterData:Create(character.MyGuid, id, profileId, character.NetID, isHost, isInCharacterCreation)
 		else
@@ -301,7 +301,10 @@ if Ext.IsClient() then
 		end
 	end
 
-	local function StoreData(payload)
+	local function StoreData(cmd, payload)
+		if Vars.DebugMode then
+			print(cmd, payload)
+		end
 		local last = GetClientCharacter().UUID
 		local data = Ext.JsonParse(payload)
 		if data ~= nil then
@@ -325,7 +328,7 @@ if Ext.IsClient() then
 	end
 
 	Ext.RegisterNetListener("LeaderLib_SharedData_StoreData", function(cmd, payload, ...)
-		local b,err = xpcall(StoreData, debug.traceback, payload)
+		local b,err = xpcall(StoreData, debug.traceback, cmd, payload)
 		if not b then
 			Ext.PrintError(err)
 		end

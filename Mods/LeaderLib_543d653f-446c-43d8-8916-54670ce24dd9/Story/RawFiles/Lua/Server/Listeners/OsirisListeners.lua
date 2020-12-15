@@ -52,10 +52,13 @@ local function OnLog(logType, ...)
 	if Osi.LeaderLib_QRY_AnyGoalsAreActive("LeaderLib_00_0_TS_StrictLogCalls", "LeaderLib_00_0_TS_AllLogging") == true then
 		return
 	end
-	local params = {...}
-	local msg = StringHelpers.Join("", params)
 	if logType == "COMBINE" or Vars.DebugMode or Osi.LeaderLog_QRY_LogTypeEnabled(logType) == true then
-		Osi.LeaderLog_Log(logType, msg)
+		local params = {...}
+		local msg = StringHelpers.Join("", params)
+		Osi.LeaderLog_Internal_RunString(logType, msg)
+		if Vars.DebugMode then
+			Ext.Print(string.format("[LeaderLib:Log(%s)] %s", logType, msg))
+		end
 	end
 end
 

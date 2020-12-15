@@ -120,6 +120,7 @@ AND LeaderLog_QRY_Log("TRACE", "", "", "", "", "", "", "", "", "", "", "", "")
 AND LeaderLog_QRY_Log("TRACE", "", "", "", "", "", "", "", "", "", "", "", "", "")
 AND LeaderLog_QRY_Log("TRACE", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
 THEN
+LeaderLog_Internal_RunString("TRACE", "");
 LeaderLog_Log("TRACE", "");
 LeaderLog_Log("TRACE", "", "");
 LeaderLog_Log("TRACE", "", "", "");

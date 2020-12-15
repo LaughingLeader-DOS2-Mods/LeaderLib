@@ -44,7 +44,7 @@ StringHelpers.Capitalize = Capitalize
 ---@param delimiter string
 ---@param list table
 local function Join(delimiter, list, uniqueOnly)
-	local len = #list
+	local len = (list ~= nil and type(list) == "table") and #list or 0
 	if len == 0 then
 		return ""
 	elseif len == 1 then

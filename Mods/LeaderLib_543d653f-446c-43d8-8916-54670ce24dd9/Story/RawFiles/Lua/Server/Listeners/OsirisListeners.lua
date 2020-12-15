@@ -47,3 +47,15 @@ end)
 Ext.RegisterOsirisListener("GameStarted", 2, "after", function(region, isEditorMode)
 	Ext.BroadcastMessage("LeaderLib_SyncFeatures", Ext.JsonStringify(Features), nil)
 end)
+
+local function OnLogQuery(logType, ...)
+	local params = {...}
+	local msg = StringHelpers.Join("", params)
+	if logType == "COMBINE" or Vars.DebugMode or Osi.LeaderLog_QRY_LogTypeEnabled(logType) == true then
+		Osi.LeaderLog_Log(logType, msg)
+	end
+end
+
+for i=1,16 do
+	Ext.RegisterOsirisListener("LeaderLog_QRY_Log", i, "before", OnLogQuery)
+end

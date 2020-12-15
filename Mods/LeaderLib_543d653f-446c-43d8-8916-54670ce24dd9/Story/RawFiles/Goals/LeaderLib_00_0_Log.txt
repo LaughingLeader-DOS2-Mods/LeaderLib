@@ -490,9 +490,7 @@ ShowNotification(_Target, _Str);
 LeaderLog_Internal_ClearTargetIfOneshot(_Target);
 
 PROC
-LeaderLog_Internal_RunString((STRING)_Type, (STRING)_Str)
-AND
-_Type == "COMBINE"
+LeaderLog_Internal_RunString("COMBINE", (STRING)_Str)
 THEN
 DB_LeaderLog_Temp_CombinedString(_Str);
 //END_REGION
@@ -915,9 +913,7 @@ THEN
 LeaderLog_Internal_DisplayStatusText(_Target, _Str);
 
 PROC
-LeaderLog_Internal_RunStringOnTarget((STRING)_Type, (GUIDSTRING)_Target, (STRING)_Str)
-AND
-_Type == "COMBINE"
+LeaderLog_Internal_RunStringOnTarget("COMBINE", (GUIDSTRING)_Target, (STRING)_Str)
 THEN
 DB_LeaderLog_Temp_CombinedString(_Str);
 //END_REGION

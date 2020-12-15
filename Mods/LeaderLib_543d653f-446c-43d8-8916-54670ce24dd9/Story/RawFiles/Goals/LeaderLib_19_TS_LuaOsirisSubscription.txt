@@ -101,6 +101,25 @@ AND
 LeaderLib_Party_QRY_IsEnemyOfParty(_Owner, _Victim)
 THEN
 DB_NOOP(1);
+
+IF
+CreditsEnded()
+AND LeaderLog_QRY_Log("TRACE", "")
+AND LeaderLog_QRY_Log("TRACE", "", "")
+AND LeaderLog_QRY_Log("TRACE", "", "", "")
+AND LeaderLog_QRY_Log("TRACE", "", "", "", "")
+AND LeaderLog_QRY_Log("TRACE", "", "", "", "", "")
+AND LeaderLog_QRY_Log("TRACE", "", "", "", "", "", "")
+AND LeaderLog_QRY_Log("TRACE", "", "", "", "", "", "", "")
+AND LeaderLog_QRY_Log("TRACE", "", "", "", "", "", "", "", "")
+AND LeaderLog_QRY_Log("TRACE", "", "", "", "", "", "", "", "", "")
+AND LeaderLog_QRY_Log("TRACE", "", "", "", "", "", "", "", "", "", "")
+AND LeaderLog_QRY_Log("TRACE", "", "", "", "", "", "", "", "", "", "", "")
+AND LeaderLog_QRY_Log("TRACE", "", "", "", "", "", "", "", "", "", "", "", "")
+AND LeaderLog_QRY_Log("TRACE", "", "", "", "", "", "", "", "", "", "", "", "", "")
+AND LeaderLog_QRY_Log("TRACE", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+THEN
+DB_NOOP(1);
 */
 
 EXITSECTION

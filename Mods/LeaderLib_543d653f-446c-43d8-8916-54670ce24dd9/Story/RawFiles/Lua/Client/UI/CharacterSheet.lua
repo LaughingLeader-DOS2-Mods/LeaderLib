@@ -5,15 +5,18 @@ local pointAddedSound = "UI_Game_CharacterSheet_Attribute_Plus_Click_Release"
 local lastHelmetState = {}
 
 local function OnSetHelmetOptionState(ui, method, state)
-	local uuid = Client:GetCharacter().MyGuid
-	if lastHelmetState[uuid] ~= state then
-		local state = math.tointeger(state)
-		local data = {
-			UUID = uuid,
-			State = state
-		}
-		Ext.PostMessageToServer("LeaderLib_OnHelmetToggled", Ext.JsonStringify(data))
-		lastHelmetState[uuid] = state
+	local character = GameHelpers.Client.GetCharacter()
+	if character ~= nil then
+		local id = character.NetID
+		if id ~= nil and lastHelmetState[id] ~= state then
+			local state = math.floor(state)
+			local data = {
+				NetID = id,
+				State = state
+			}
+			Ext.PostMessageToServer("LeaderLib_OnHelmetToggled", Ext.JsonStringify(data))
+			lastHelmetState[id] = state
+		end
 	end
 end
 
@@ -30,39 +33,37 @@ local function FireCharacterSheetPointListeners(character, stat, statType)
 	end
 end
 
-local function OnSheetEvent(ui, call, ...)
-	local params = Common.FlattenTable({...})
+local function OnSheetEvent(ui, call, param1, ...)
+	--local params = Common.FlattenTable({...})
 	--PrintDebug("[LeaderLib_CharacterSheet.lua:OnSheetEvent] Event called. call("..tostring(call)..") params("..tostring(Common.Dump(params))..")")
-
+	local character = GameHelpers.Client.GetCharacter()
 	if call == "plusAbility" then
-		local index = math.tointeger(params[1])
+		local index = math.floor(param1)
 		if index ~= nil then
 			local stat = Data.Ability[index]
 			PrintDebug(string.format("[LeaderLib_CharacterSheet.lua:OnSheetEvent:plusAbility] A point was added to the ability [%s](%s).", index, stat))
-			local character = Client:GetCharacter()
 			local payload = Ext.JsonStringify({Stat=stat, NetID=character.NetID})
 			Ext.PostMessageToServer("LeaderLib_CharacterSheet_AbilityChanged", payload)
 			FireCharacterSheetPointListeners(character, stat, "ability")
 		end
 	elseif call == "plusStat" then
-		local index = math.tointeger(params[1])
+		local index = math.floor(param1)
 		if index ~= nil then
 			local stat = Data.Attribute[index]
-			PrintDebug(string.format("[LeaderLib_CharacterSheet.lua:OnSheetEvent:plusStat] A point was added to the attribute [%s](%s).", index, name))
-			local character = Client:GetCharacter()
+			PrintDebug(string.format("[LeaderLib_CharacterSheet.lua:OnSheetEvent:plusStat] A point was added to the attribute [%s](%s).", index, stat))
 			local payload = Ext.JsonStringify({Stat=stat, NetID=character.NetID})
 			Ext.PostMessageToServer("LeaderLib_CharacterSheet_AttributeChanged", payload)
 			FireCharacterSheetPointListeners(character, stat, "attribute")
 		end
 	elseif call == "hotbarBtnPressed" then
-		local buttonID = math.tointeger(params[1])
+		local buttonID = math.floor(param1)
 		if buttonID == ID.HOTBAR.CharacterSheet then
 			Ext.PostMessageToServer("LeaderLib_CharacterSheet_StorePartyValues", "")
 		end
 	elseif call == "setHelmetOption" then
-		local state = math.tointeger(params[1])
+		local state = math.floor(param1)
 		local data = {
-			UUID = Client:GetCharacter().MyGuid,
+			NetID = character.NetID,
 			State = state
 		}
 		Ext.PostMessageToServer("LeaderLib_OnHelmetToggled", Ext.JsonStringify(data))

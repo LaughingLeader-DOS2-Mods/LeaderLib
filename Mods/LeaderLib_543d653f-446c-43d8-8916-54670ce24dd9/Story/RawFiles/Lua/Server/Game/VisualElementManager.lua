@@ -101,8 +101,8 @@ end)
 
 Ext.RegisterNetListener("LeaderLib_OnHelmetToggled", function(cmd, payload)
 	local data = Common.JsonParse(payload)
-	if data ~= nil and data.UUID ~= nil then
-		local char = Ext.GetCharacter(data.UUID)
+	if data ~= nil and data.NetID ~= nil then
+		local char = Ext.GetCharacter(data.NetID)
 		if char ~= nil then
 			if data.State == 1 then
 				ObjectClearFlag(char.MyGuid, "LeaderLib_HelmetHidden", 0)
@@ -110,7 +110,7 @@ Ext.RegisterNetListener("LeaderLib_OnHelmetToggled", function(cmd, payload)
 				ObjectSetFlag(char.MyGuid, "LeaderLib_HelmetHidden", 0)
 			end
 			local item = nil
-			local helmet = CharacterGetEquippedItem(data.UUID, "Helmet")
+			local helmet = CharacterGetEquippedItem(char.MyGuid, "Helmet")
 			if not StringHelpers.IsNullOrEmpty(helmet) then
 				item = Ext.GetItem(helmet)
 			end

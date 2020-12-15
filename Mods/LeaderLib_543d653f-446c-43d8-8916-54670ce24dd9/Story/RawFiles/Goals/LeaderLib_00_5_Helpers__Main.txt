@@ -2245,6 +2245,13 @@ THEN
 SysCompleteGoal(_GoalTitle);
 
 QRY
+LeaderLib_QRY_GoalIsActive((STRING)_Goal)
+AND
+SysIsActive(_Goal)
+THEN
+DB_NOOP(1);
+
+QRY
 LeaderLib_QRY_AnyGoalsAreActive((STRING)_Goal1, (STRING)_Goal2)
 AND
 SysIsActive(_Goal1)

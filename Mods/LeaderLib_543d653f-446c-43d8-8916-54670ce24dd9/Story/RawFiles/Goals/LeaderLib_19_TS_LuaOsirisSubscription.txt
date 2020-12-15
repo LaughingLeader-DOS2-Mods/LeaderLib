@@ -104,6 +104,7 @@ DB_NOOP(1);
 
 IF
 CreditsEnded()
+AND LeaderLib_QRY_AnyGoalsAreActive("", "")
 AND LeaderLog_QRY_Log("TRACE", "")
 AND LeaderLog_QRY_Log("TRACE", "", "")
 AND LeaderLog_QRY_Log("TRACE", "", "", "")
@@ -119,7 +120,20 @@ AND LeaderLog_QRY_Log("TRACE", "", "", "", "", "", "", "", "", "", "", "", "")
 AND LeaderLog_QRY_Log("TRACE", "", "", "", "", "", "", "", "", "", "", "", "", "")
 AND LeaderLog_QRY_Log("TRACE", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
 THEN
-DB_NOOP(1);
+LeaderLog_Log("TRACE", "");
+LeaderLog_Log("TRACE", "", "");
+LeaderLog_Log("TRACE", "", "", "");
+LeaderLog_Log("TRACE", "", "", "", "");
+LeaderLog_Log("TRACE", "", "", "", "", "");
+LeaderLog_Log("TRACE", "", "", "", "", "", "");
+LeaderLog_Log("TRACE", "", "", "", "", "", "", "");
+LeaderLog_Log("TRACE", "", "", "", "", "", "", "", "");
+LeaderLog_Log("TRACE", "", "", "", "", "", "", "", "", "");
+LeaderLog_Log("TRACE", "", "", "", "", "", "", "", "", "", "");
+LeaderLog_Log("TRACE", "", "", "", "", "", "", "", "", "", "", "");
+LeaderLog_Log("TRACE", "", "", "", "", "", "", "", "", "", "", "", "");
+LeaderLog_Log("TRACE", "", "", "", "", "", "", "", "", "", "", "", "", "");
+LeaderLog_Log("TRACE", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
 */
 
 EXITSECTION

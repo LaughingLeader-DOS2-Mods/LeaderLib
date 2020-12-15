@@ -48,7 +48,10 @@ Ext.RegisterOsirisListener("GameStarted", 2, "after", function(region, isEditorM
 	Ext.BroadcastMessage("LeaderLib_SyncFeatures", Ext.JsonStringify(Features), nil)
 end)
 
-local function OnLogQuery(logType, ...)
+local function OnLog(logType, ...)
+	if Osi.LeaderLib_QRY_AnyGoalsAreActive("LeaderLib_00_0_TS_StrictLogCalls", "LeaderLib_00_0_TS_AllLogging") == true then
+		return
+	end
 	local params = {...}
 	local msg = StringHelpers.Join("", params)
 	if logType == "COMBINE" or Vars.DebugMode or Osi.LeaderLog_QRY_LogTypeEnabled(logType) == true then
@@ -57,5 +60,5 @@ local function OnLogQuery(logType, ...)
 end
 
 for i=1,16 do
-	Ext.RegisterOsirisListener("LeaderLog_QRY_Log", i, "before", OnLogQuery)
+	Ext.RegisterOsirisListener("LeaderLog_Log", i, "before", OnLog)
 end

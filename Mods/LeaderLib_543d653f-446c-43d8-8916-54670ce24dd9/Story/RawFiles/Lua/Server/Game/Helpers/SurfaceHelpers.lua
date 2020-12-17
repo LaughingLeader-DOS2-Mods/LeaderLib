@@ -7,7 +7,7 @@ end
 function GameHelpers.Surface.CreateRectSurface(startPos, endPos, surface, width, lengthModifier, duration, speed, statusChance, deathType, owner, lineCheckBlock)
 	Ext.EnableExperimentalPropertyWrites()
 	---@type EsvRectangleSurfaceAction
-	local surf = Ext.CreateSurfaceAction("RectangleSurfaceAction")
+	local surf = Ext.CreateSurfaceAction("EsvCreateSurfaceAction")
 	surf.Position = startPos
 	surf.Target = endPos
 	surf.SurfaceType = surface or "Water"
@@ -20,6 +20,32 @@ function GameHelpers.Surface.CreateRectSurface(startPos, endPos, surface, width,
 	surf.LineCheckBlock = lineCheckBlock or 0
 	surf.DeathType = deathType or "DoT"
 	surf.OwnerHandle = owner or nil
+	return surf
+end
+
+---@param pos number[]|string
+---@param surface string
+---@param radius number
+---@param duration number
+---@param ownerHandle userdata
+---@param ignoreCursed boolean
+---@param statusChance number
+---@param deathType string
+---@return EsvSurfaceAction
+function GameHelpers.Surface.CreateSurface(pos, surface, radius, duration, ownerHandle, ignoreCursed, statusChance, deathType)
+	if type(pos) == "string" then
+		pos = table.pack(GetPosition(pos))
+	end
+	---@type EsvRectangleSurfaceAction
+	local surf = Ext.CreateSurfaceAction("EsvCreateSurfaceAction")
+	surf.Position = pos
+	surf.SurfaceType = surface or "Water"
+	surf.Radius = radius or 1.0
+	surf.IgnoreIrreplacableSurfaces = ignoreCursed ~= nil and ignoreCursed or true
+	surf.Duration = duration or 3.0
+	surf.StatusChance = statusChance or 1.0
+	surf.DeathType = deathType or "DoT"
+	surf.OwnerHandle = ownerHandle or nil
 	return surf
 end
 

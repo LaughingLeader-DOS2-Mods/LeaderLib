@@ -234,6 +234,11 @@ end)
 
 local removedSkills = {}
 
+Ext.RegisterConsoleCommand("removeskill", function(cmd, skill)
+	local host = CharacterGetHostCharacter()
+	CharacterRemoveSkill(host, skill)
+end)
+
 Ext.RegisterConsoleCommand("removeunmemorizedskills", function(cmd)
 	local host = CharacterGetHostCharacter()
 	local char = Ext.GetCharacter(host)

@@ -199,16 +199,27 @@ function Game.Math.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, 
     if hit.TotalDamageDone > 0 then
         Game.Math.ApplyLifeSteal(hit, target, attacker, hitType)
     else
-        --hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.DontCreateBloodSurface
+        hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.DontCreateBloodSurface
     end
 
     if hitType == "Surface" then
-        --hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.Surface
+        hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.Surface
     end
 
     if hitType == "DoT" then
-        --hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.DoT
-	end
+        hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.DoT
+    end
+    
+    local length = #Listeners.DoHit
+    if length > 0 then
+        for i=1,length do
+            local callback = Listeners.DoHit[i]
+            local b,err = xpcall(callback, debug.traceback, hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
+            if not b then
+                Ext.PrintError("Error calling function for 'DoHit':\n", err)
+            end
+        end
+    end
 	
 	return hit
 end
@@ -309,6 +320,17 @@ local function ComputeCharacterHit(target, attacker, weapon, damageList, hitType
         if not hitBlocked then
             Game.Math.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll)
             Game.Math.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
+        end
+
+        local length = #Listeners.ComputeCharacterHit
+        if length > 0 then
+            for i=1,length do
+                local callback = Listeners.ComputeCharacterHit[i]
+                local b,err = xpcall(callback, debug.traceback, target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
+                if not b then
+                    Ext.PrintError("Error calling function for 'ComputeCharacterHit':\n", err)
+                end
+            end
         end
 
         return hit

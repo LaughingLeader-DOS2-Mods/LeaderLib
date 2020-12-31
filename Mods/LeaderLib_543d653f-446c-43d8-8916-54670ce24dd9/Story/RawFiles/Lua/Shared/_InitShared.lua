@@ -125,6 +125,8 @@ Listeners = {
 	ClientCharacterChanged = {},
 	---@type fun(ui:UIObject, player:EclCharacter, startIndex:integer, talentEnumReference:table<string,integer>):void[]
 	OnTalentArrayUpdating = {},
+	DoHit = {},
+	ComputeCharacterHit = {}
 }
 
 SkillListeners = {}

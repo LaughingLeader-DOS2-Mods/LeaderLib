@@ -296,7 +296,12 @@ function ModMenuManager.CommitChanges()
 				if v.Entry.Type == "FlagData" then
 					settings.Global.Flags[v.Entry.ID].Enabled = v.Value
 				elseif v.Entry.Type == "VariableData" then
-					settings.Global.Variables[v.Entry.ID].Value = v.Value
+					local varData = settings.Global.Variables[v.Entry.ID]
+					if type(varData.Value) == "table" and v.Value.Entries ~= nil then
+						varData.Value.Selected = v.Value
+					else
+						varData.Value = v.Value
+					end
 				end
 			end
 		end

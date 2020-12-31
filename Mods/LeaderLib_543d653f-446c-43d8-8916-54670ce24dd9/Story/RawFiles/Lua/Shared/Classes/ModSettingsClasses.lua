@@ -468,7 +468,11 @@ end
 function SettingsData:SetVariable(id, value)
 	local entry = self.Variables[id]
 	if entry ~= nil then
-		entry.Value = value
+		if type(entry.Value) == "table" and entry.Value.Entries ~= nil then
+			entry.Value.Selected = value
+		else
+			entry.Value = value
+		end
 		return true
 	end
 	return false

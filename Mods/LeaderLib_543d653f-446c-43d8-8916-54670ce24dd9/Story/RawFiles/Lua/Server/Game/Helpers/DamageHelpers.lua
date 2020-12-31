@@ -53,7 +53,7 @@ end
 
 Ext.NewCall(ReduceDamage_Call, "LeaderLib_Hit_ReduceDamage", "(GUIDSTRING)_Target, (GUIDSTRING)_Attacker, (INTEGER64)_Handle, (REAL)_Percentage, (INTEGER)_IsHitHandle")
 
----Increase damage by a percentage (0.5).
+---Increase damage by a percentage (0.5 = 50%).
 ---@param target string
 ---@param attacker string
 ---@param handle integer

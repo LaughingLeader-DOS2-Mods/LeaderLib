@@ -125,7 +125,11 @@ Listeners = {
 	ClientCharacterChanged = {},
 	---@type fun(ui:UIObject, player:EclCharacter, startIndex:integer, talentEnumReference:table<string,integer>):void[]
 	OnTalentArrayUpdating = {},
+	---Server-side
+	---@type fun(hit:HitRequest, damageList:DamageList, statusBonusDmgTypes:DamageList, string:HitType, target:StatCharacter, attacker:StatCharacter):HitRequest[]
 	DoHit = {},
+	---Server-side
+	---@type ExtComputeCharacterHitCallback[]
 	ComputeCharacterHit = {}
 }
 

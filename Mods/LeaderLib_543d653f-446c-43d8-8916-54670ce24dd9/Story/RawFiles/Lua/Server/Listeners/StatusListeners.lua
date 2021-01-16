@@ -74,7 +74,7 @@ local function ParseStatusRemoved(target,status)
 	end
 end
 
-Ext.RegisterOsirisListener("CharacterStatusApplied", 3, "after", ParseStatusApplied)
-Ext.RegisterOsirisListener("ItemStatusChange", 3, "after", ParseStatusApplied)
-Ext.RegisterOsirisListener("CharacterStatusRemoved", 3, "after", ParseStatusRemoved)
-Ext.RegisterOsirisListener("ItemStatusRemoved", 3, "after", ParseStatusRemoved)
+RegisterProtectedOsirisListener("CharacterStatusApplied", 3, "after", ParseStatusApplied)
+RegisterProtectedOsirisListener("ItemStatusChange", 3, "after", ParseStatusApplied)
+RegisterProtectedOsirisListener("CharacterStatusRemoved", 3, "after", ParseStatusRemoved)
+RegisterProtectedOsirisListener("ItemStatusRemoved", 3, "after", ParseStatusRemoved)

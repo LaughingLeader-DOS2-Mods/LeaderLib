@@ -1,9 +1,12 @@
+HitOverrides = {
+    DoHitOriginal = Game.Math.DoHit,
+}
 --- This script tweaks Game.Math functions to allow lowering resistance with Resistance Penetration tags on items of the attacker.
 
 --- @param character StatCharacter
 --- @param type string DamageType enumeration
 --- @param type resistancePenetration integer
-local function GetResistance(character, type, resistancePenetration)
+function HitOverrides.GetResistance(character, type, resistancePenetration)
     if type == "None" or type == "Chaos" then
         return 0
 	end
@@ -20,9 +23,9 @@ end
 --- @param character StatCharacter
 --- @param damageList DamageList
 --- @param resistancePenetration table<string,integer>
-local function ApplyHitResistances(character, damageList, resistancePenetration)
+function HitOverrides.ApplyHitResistances(character, damageList, resistancePenetration)
 	for i,damage in pairs(damageList:ToTable()) do
-        local resistance = GetResistance(character, damage.DamageType, resistancePenetration[damage.DamageType])
+        local resistance = HitOverrides.GetResistance(character, damage.DamageType, resistancePenetration[damage.DamageType])
         damageList:Add(damage.DamageType, math.floor(damage.Amount * -resistance / 100.0))
     end
 end
@@ -30,126 +33,11 @@ end
 --- @param character StatCharacter
 --- @param attacker StatCharacter
 --- @param damageList DamageList
---- @param resistancePenetration table<string,integer>
-local function ApplyDamageCharacterBonuses(character, attacker, damageList, resistancePenetration)
+function HitOverrides.ApplyDamageCharacterBonuses(character, attacker, damageList)
     damageList:AggregateSameTypeDamages()
-    ApplyHitResistances(character, damageList, resistancePenetration)
 
-    Game.Math.ApplyDamageSkillAbilityBonuses(damageList, attacker)
-end
-
---- @param damageList DamageList
---- @param armor integer
-local function ComputeArmorDamage(damageList, armor)
-    local damage = damageList:GetByType("Corrosive") + damageList:GetByType("Physical") + damageList:GetByType("Sulfuric")
-    return math.min(armor, damage)
-end
-
---- @param damageList DamageList
---- @param magicArmor integer
-local function ComputeMagicArmorDamage(damageList, magicArmor)
-    local damage = damageList:GetByType("Magic") 
-        + damageList:GetByType("Fire") 
-        + damageList:GetByType("Water")
-        + damageList:GetByType("Air")
-        + damageList:GetByType("Earth")
-        + damageList:GetByType("Poison")
-    return math.min(magicArmor, damage)
-end
-
-local doHitOriginal = Game.Math.DoHit
-
-local function ComputeOverridesEnabled()
-    return Features.BackstabCalculation == true or Features.ResistancePenetration == true
-end
-
-local function WithinMeleeDistance(pos1, pos2)
-    --print(GameSettings.Settings.BackstabSettings.MeleeSpellBackstabMaxDistance, GameHelpers.Math.GetDistance(pos1,pos2))
-    return GameHelpers.Math.GetDistance(pos1,pos2) <= (GameSettings.Settings.BackstabSettings.MeleeSpellBackstabMaxDistance or 2.5)
-end
-
----@param weapon StatItem
-local function CanBackstabWithTwoHandedWeapon(weapon)
-    return (GameSettings.Settings.BackstabSettings.AllowTwoHandedWeapons or not weapon.IsTwoHanded)
-end
-
-local function BackstabSpellMechanicsEnabled(attacker, hitType)
-    local backstabSettings = GameSettings.Settings.BackstabSettings
-    local settings = nil
-    if attacker.IsPlayer then
-        settings = GameSettings.Settings.BackstabSettings.Player
-    else
-        settings = GameSettings.Settings.BackstabSettings.NPC
-    end
-    if settings.SpellsCanBackstab then
-        return true
-    end
-    return false
-end
-
---- This parses the GameSettings options for backstab settings, allowing both players and NPCs to backstab with other weapons if the condition is right.
---- Lets the Backstab talent work. Also lets ranged weapons backstab if the game settings option MeleeOnly is disabled.
---- @param attacker StatCharacter
---- @param weapon StatItem
---- @param hitType string
-local function CanBackstab(attacker, weapon, hitType, target)
-    if (weapon ~= nil and weapon.WeaponType == "Knife") then
-        return true
-    end
-
-    -- Enemy Upgrade Overhaul - Backstabber Upgrade
-    if Ext.IsModLoaded("046aafd8-ba66-4b37-adfb-519c1a5d04d7") and not attacker.IsPlayer and weapon ~= nil and (attacker.TALENT_Backstab or attacker.TALENT_RogueLoreDaggerBackStab) then
-        return true
-    end
-
-    local backstabSettings = GameSettings.Settings.BackstabSettings
-    local settings = nil
-    if attacker.IsPlayer then
-        settings = GameSettings.Settings.BackstabSettings.Player
-    else
-        settings = GameSettings.Settings.BackstabSettings.NPC
-    end
-
-    if settings.Enabled then
-        if not settings.TalentRequired or (settings.TalentRequired and (attacker.TALENT_Backstab or attacker.TALENT_RogueLoreDaggerBackStab)) then
-            if weapon ~= nil then
-                return not settings.MeleeOnly or (settings.MeleeOnly and not Game.Math.IsRangedWeapon(weapon) and CanBackstabWithTwoHandedWeapon(weapon))
-            elseif settings.SpellsCanBackstab then
-                if settings.MeleeOnly then
-                    return hitType == "Melee" or WithinMeleeDistance(attacker.Position, target.Position)
-                else
-                    return true
-                end
-            end
-        end
-    end
-    return false
-end
-
---- @param hit HitRequest
---- @param damageList DamageList
---- @param statusBonusDmgTypes DamageList
---- @param hitType string HitType enumeration
---- @param target StatCharacter
---- @param attacker StatCharacter
-function Game.Math.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
-    if not ComputeOverridesEnabled() then
-        return doHitOriginal(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
-    end
-    hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.Hit;
-    damageList:AggregateSameTypeDamages()
-	damageList:Multiply(hit.DamageMultiplier)
-	
-    local totalDamage = 0
-    for i,damage in pairs(damageList:ToTable()) do
-        totalDamage = totalDamage + damage.Amount
-    end
-
-    if totalDamage < 0 then
-        damageList:Clear()
-	end
-
-	local resistancePenetration = {}
+    --- @type resistancePenetration table<string,integer>
+    local resistancePenetration = {}
 	
 	if attacker ~= nil and attacker.Character ~= nil then
 		---@type EsvItem[]
@@ -179,37 +67,109 @@ function Game.Math.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, 
 			end
         end
         
-        if attacker.Character:HasTag("LeaderLib_IgnoreUndeadPoisonResistance") and target.TALENT_Zombie then
+        if attacker.Character:HasTag("LeaderLib_IgnoreUndeadPoisonResistance") and character.TALENT_Zombie then
             resistancePenetration["Poison"] = 200
         end
 	end
+    HitOverrides.ApplyHitResistances(character, damageList, resistancePenetration)
 
-    ApplyDamageCharacterBonuses(target, attacker, damageList, resistancePenetration)
-    damageList:AggregateSameTypeDamages()
-    hit.DamageList = Ext.NewDamageList()
+    Game.Math.ApplyDamageSkillAbilityBonuses(damageList, attacker)
+end
 
-    for i,damageType in pairs(statusBonusDmgTypes) do
-        damageList.Add(damageType, math.ceil(totalDamage * 0.1))
-    end
+--- @param damageList DamageList
+--- @param armor integer
+function HitOverrides.ComputeArmorDamage(damageList, armor)
+    local damage = damageList:GetByType("Corrosive") + damageList:GetByType("Physical") + damageList:GetByType("Sulfuric")
+    return math.min(armor, damage)
+end
 
-    Game.Math.ApplyDamagesToHitInfo(damageList, hit)
-    hit.ArmorAbsorption = hit.ArmorAbsorption + ComputeArmorDamage(damageList, target.CurrentArmor)
-    hit.ArmorAbsorption = hit.ArmorAbsorption + ComputeMagicArmorDamage(damageList, target.CurrentMagicArmor)
+--- @param damageList DamageList
+--- @param magicArmor integer
+function HitOverrides.ComputeMagicArmorDamage(damageList, magicArmor)
+    local damage = damageList:GetByType("Magic") 
+        + damageList:GetByType("Fire") 
+        + damageList:GetByType("Water")
+        + damageList:GetByType("Air")
+        + damageList:GetByType("Earth")
+        + damageList:GetByType("Poison")
+    return math.min(magicArmor, damage)
+end
 
-    if hit.TotalDamageDone > 0 then
-        Game.Math.ApplyLifeSteal(hit, target, attacker, hitType)
+function HitOverrides.ComputeOverridesEnabled()
+    return Features.DisableHitOverrides ~= true and (Features.BackstabCalculation == true or Features.ResistancePenetration == true)
+end
+
+function HitOverrides.WithinMeleeDistance(pos1, pos2)
+    --print(GameSettings.Settings.BackstabSettings.MeleeSpellBackstabMaxDistance, GameHelpers.Math.GetDistance(pos1,pos2))
+    return GameHelpers.Math.GetDistance(pos1,pos2) <= (GameSettings.Settings.BackstabSettings.MeleeSpellBackstabMaxDistance or 2.5)
+end
+
+---@param weapon StatItem
+function HitOverrides.CanBackstabWithTwoHandedWeapon(weapon)
+    return (GameSettings.Settings.BackstabSettings.AllowTwoHandedWeapons or not weapon.IsTwoHanded)
+end
+
+function HitOverrides.BackstabSpellMechanicsEnabled(attacker, hitType)
+    local backstabSettings = GameSettings.Settings.BackstabSettings
+    local settings = nil
+    if attacker.IsPlayer then
+        settings = GameSettings.Settings.BackstabSettings.Player
     else
-        hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.DontCreateBloodSurface
+        settings = GameSettings.Settings.BackstabSettings.NPC
+    end
+    if settings.SpellsCanBackstab then
+        return true
+    end
+    return false
+end
+
+--- This parses the GameSettings options for backstab settings, allowing both players and NPCs to backstab with other weapons if the condition is right.
+--- Lets the Backstab talent work. Also lets ranged weapons backstab if the game settings option MeleeOnly is disabled.
+--- @param attacker StatCharacter
+--- @param weapon StatItem
+--- @param hitType string
+function HitOverrides.CanBackstab(attacker, weapon, hitType, target)
+    if (weapon ~= nil and weapon.WeaponType == "Knife") then
+        return true
     end
 
-    if hitType == "Surface" then
-        hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.Surface
+    -- Enemy Upgrade Overhaul - Backstabber Upgrade
+    if Ext.IsModLoaded("046aafd8-ba66-4b37-adfb-519c1a5d04d7") and not attacker.IsPlayer and weapon ~= nil and (attacker.TALENT_Backstab or attacker.TALENT_RogueLoreDaggerBackStab) then
+        return true
     end
 
-    if hitType == "DoT" then
-        hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.DoT
+    local backstabSettings = GameSettings.Settings.BackstabSettings
+    local settings = nil
+    if attacker.IsPlayer then
+        settings = GameSettings.Settings.BackstabSettings.Player
+    else
+        settings = GameSettings.Settings.BackstabSettings.NPC
     end
-    
+
+    if settings.Enabled then
+        if not settings.TalentRequired or (settings.TalentRequired and (attacker.TALENT_Backstab or attacker.TALENT_RogueLoreDaggerBackStab)) then
+            if weapon ~= nil then
+                return not settings.MeleeOnly or (settings.MeleeOnly and not Game.Math.IsRangedWeapon(weapon) and HitOverrides.CanBackstabWithTwoHandedWeapon(weapon))
+            elseif settings.SpellsCanBackstab then
+                if settings.MeleeOnly then
+                    return hitType == "Melee" or HitOverrides.WithinMeleeDistance(attacker.Position, target.Position)
+                else
+                    return true
+                end
+            end
+        end
+    end
+    return false
+end
+
+--- @param hit HitRequest
+--- @param damageList DamageList
+--- @param statusBonusDmgTypes DamageList
+--- @param hitType string HitType enumeration
+--- @param target StatCharacter
+--- @param attacker StatCharacter
+function HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
+    HitOverrides.DoHitOriginal(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
     local length = #Listeners.DoHit
     if length > 0 then
         for i=1,length do
@@ -235,8 +195,8 @@ end
 --- @param alwaysBackstab boolean
 --- @param highGroundFlag string HighGround enumeration
 --- @param criticalRoll string CriticalRoll enumeration
-local function ComputeCharacterHit(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
-    if ComputeOverridesEnabled() then
+function HitOverrides.ComputeCharacterHit(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
+    if HitOverrides.ComputeOverridesEnabled() then
         hit.DamageMultiplier = 1.0
         local statusBonusDmgTypes = {}
         
@@ -250,8 +210,8 @@ local function ComputeCharacterHit(target, attacker, weapon, damageList, hitType
             weapon = attacker.MainWeapon
         end
         
-        if hitType == "Magic" and BackstabSpellMechanicsEnabled(attacker) then
-            if alwaysBackstab or (CanBackstab(attacker, weapon, hitType, target) and Game.Math.CanBackstab(target, attacker)) then
+        if hitType == "Magic" and HitOverrides.BackstabSpellMechanicsEnabled(attacker) then
+            if alwaysBackstab or (HitOverrides.CanBackstab(attacker, weapon, hitType, target) and Game.Math.CanBackstab(target, attacker)) then
                 hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.Backstab
                 backstabbed = true
             end
@@ -264,7 +224,7 @@ local function ComputeCharacterHit(target, attacker, weapon, damageList, hitType
             return hit
         end
 
-        if alwaysBackstab or (CanBackstab(attacker, weapon, hitType, target) and Game.Math.CanBackstab(target, attacker)) then
+        if alwaysBackstab or (HitOverrides.CanBackstab(attacker, weapon, hitType, target) and Game.Math.CanBackstab(target, attacker)) then
             hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.Backstab
             backstabbed = true
         end
@@ -337,4 +297,8 @@ local function ComputeCharacterHit(target, attacker, weapon, damageList, hitType
     end
 end
 
-Ext.RegisterListener("ComputeCharacterHit", ComputeCharacterHit)
+Ext.RegisterListener("ComputeCharacterHit", HitOverrides.ComputeCharacterHit)
+
+Ext.RegisterListener("SessionLoaded", function()
+    Game.Math.DoHit = HitOverrides.DoHit
+end)

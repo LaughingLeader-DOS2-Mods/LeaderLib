@@ -14,8 +14,8 @@ local ts = Classes.TranslatedString
 
 local chaosDamagePattern = "<font color=\"#C80030\">([%d-%s]+)</font>"
 
----@param character EsvCharacter
----@param status EsvStatus
+---@param character EclCharacter
+---@param status EclStatus
 ---@param tooltip TooltipData
 local function OnStatusTooltip(character, status, tooltip)
 	if Features.ReplaceTooltipPlaceholders or Features.FixChaosDamageDisplay or Features.TooltipGrammarHelper then

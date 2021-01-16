@@ -37,8 +37,11 @@ end
 ---@param settings GlobalSettings
 local function SyncGlobalSettings(settings)
 	if GlobalSettings ~= nil then
+		local length = #Listeners.ModSettingsSynced
+
 		GlobalSettings.Version = settings.Version
 		for k,v in pairs(settings.Mods) do
+			local target = v
 			if GlobalSettings.Mods[k] == nil then
 				GlobalSettings.Mods[k] = v
 			else
@@ -61,6 +64,16 @@ local function SyncGlobalSettings(settings)
 					end
 				end
 				existing.Version = v.Version
+				target = existing
+			end
+			if length > 0 then
+				for i=1,length do
+					local callback = Listeners.ModSettingsSynced[i]
+					local status,err = xpcall(callback, debug.traceback, k, target)
+					if not status then
+						Ext.PrintError("[LeaderLib:HitListeners.lua] Error calling function for 'ModSettingsSynced':\n", err)
+					end
+				end
 			end
 		end
 		PrintDebug("[LeaderLib:CLIENT] Updated GlobalSettings.")

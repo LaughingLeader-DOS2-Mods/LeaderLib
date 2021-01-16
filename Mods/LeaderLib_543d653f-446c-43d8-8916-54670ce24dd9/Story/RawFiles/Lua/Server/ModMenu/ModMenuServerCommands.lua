@@ -30,6 +30,17 @@ Ext.RegisterNetListener("LeaderLib_ModMenu_SaveChanges", function(cmd, payload)
 				end
 			end
 			settings:ApplyToGame()
+
+			local length = #Listeners.ModSettingsSynced
+			if length > 0 then
+				for i=1,length do
+					local callback = Listeners.ModSettingsSynced[i]
+					local status,err = xpcall(callback, debug.traceback, uuid, settings)
+					if not status then
+						Ext.PrintError("[LeaderLib:HitListeners.lua] Error calling function for 'ModSettingsSynced':\n", err)
+					end
+				end
+			end
 		end
 	end
 	SaveGlobalSettings()

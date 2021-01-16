@@ -130,7 +130,9 @@ Listeners = {
 	DoHit = {},
 	---Server-side
 	---@type ExtComputeCharacterHitCallback[]
-	ComputeCharacterHit = {}
+	ComputeCharacterHit = {},
+	---@type fun(string:uuid, settings:ModSettings):void[] Callbacks for when ModSettings are synced on both the server and client.
+	ModSettingsSynced = {}
 }
 
 SkillListeners = {}

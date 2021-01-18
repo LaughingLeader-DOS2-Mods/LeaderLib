@@ -131,8 +131,12 @@ Listeners = {
 	---Server-side
 	---@type ExtComputeCharacterHitCallback[]
 	ComputeCharacterHit = {},
-	---@type fun(string:uuid, settings:ModSettings):void[] Callbacks for when ModSettings are synced on both the server and client.
-	ModSettingsSynced = {}
+	---@type fun(uuid:string, settings:ModSettings):void[] Callbacks for when ModSettings are synced on both the server and client.
+	ModSettingsSynced = {},
+
+	-- Client-side Mod Menu events
+	---@type fun(uuid:string, settings:ModSettings, ui:UIObject, mainMenu:MainMenuMC):void[] Callbacks for when a mod's Mod Menu section is created in the options menu.
+	ModMenuSectionCreated = {},
 }
 
 SkillListeners = {}

@@ -123,7 +123,7 @@ function Common.TableHasKey(tbl, key, caseInsensitive)
 end
 
 ---@param tbl table
----@param key any
+---@param value any
 ---@param caseInsensitive boolean|nil
 ---@return boolean
 function Common.TableHasEntry(tbl, value, caseInsensitive)
@@ -135,6 +135,27 @@ function Common.TableHasEntry(tbl, value, caseInsensitive)
 			return true
 		elseif type(v) == "table" then
 			if Common.TableHasAnyEntry(v, value, caseInsensitive) then
+				return true
+			end
+		end
+	end
+	return false
+end
+
+---@param tbl table
+---@param value any
+---@return boolean
+function Common.TableHasValue(tbl, value)
+	if tbl == nil then
+		return false
+	end
+	for _,v in pairs(tbl) do
+		if type(v) == "table" then
+			if Common.TableHasValue(v, value) then
+				return true
+			end
+		else
+			if v == value then
 				return true
 			end
 		end

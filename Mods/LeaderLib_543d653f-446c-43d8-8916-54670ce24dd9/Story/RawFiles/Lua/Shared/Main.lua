@@ -12,7 +12,7 @@ function RegisterListener(event, callback, param)
 			table.insert(Listeners[event], callback)
 		end
 	else
-		error("[LeaderLib__Main.lua:RegisterListener] Event ("..tostring(event)..") is not a valid LeaderLib listener event!")
+		Ext.PrintError("[LeaderLib__Main.lua:RegisterListener] Event ("..tostring(event)..") is not a valid LeaderLib listener event!")
 	end
 end
 
@@ -25,7 +25,7 @@ function RegisterModListener(event, uuid, callback)
 	if ModListeners[event] ~= nil then
 		ModListeners[event][uuid] = callback
 	else
-		error("[LeaderLib__Main.lua:RegisterListener] Event ("..tostring(event)..") is not a valid LeaderLib listener event!")
+		Ext.PrintError("[LeaderLib__Main.lua:RegisterListener] Event ("..tostring(event)..") is not a valid LeaderLib listener event!")
 	end
 end
 

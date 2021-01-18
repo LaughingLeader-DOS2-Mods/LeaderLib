@@ -24,9 +24,17 @@
 ---@field Value boolean|any
 ---@field Last boolean|any
 
+---@alias ModMenuButtonCallback fun(entry:ButtonData, uuid:string, character:EclCharacter):void
+
+---@class ModMenuButtonEntryData
+---@field Entry ButtonData
+---@field UUID string
+
 ModMenuManager = {
 	---@type table<int, ModMenuEntryData>
 	Controls = {},
+	---@type table<int, ModMenuButtonEntryData>
+	Buttons = {},
 	LastID = 1000,
 	LastScrollPosition = 0
 }
@@ -77,6 +85,11 @@ end
 
 local function AddControl(entry, uuid, value)
 	ModMenuManager.Controls[ModMenuManager.LastID] = {Entry=entry, UUID=uuid, Value=value, Last=value}
+	ModMenuManager.LastID = ModMenuManager.LastID + 1
+end
+
+local function AddButton(entry, uuid)
+	ModMenuManager.Buttons[ModMenuManager.LastID] = {Entry=entry, UUID=uuid}
 	ModMenuManager.LastID = ModMenuManager.LastID + 1
 end
 
@@ -137,6 +150,12 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, uuid)
 					end
 				end
 			end
+		elseif v.Type == "ButtonData" then
+			local enableControl = v.Enabled and (Client.IsHost == true or not v.HostOnly)
+			local displayName, tooltip = PrepareText(name, v)
+			local soundUp = v.SoundUp or ""
+			mainMenu.addMenuButton(ModMenuManager.LastID, displayName, soundUp, enableControl, tooltip)
+			AddButton(v, uuid)
 		end
 		return true
 	end
@@ -239,6 +258,17 @@ function ModMenuManager.CreateMenu(ui, mainMenu)
 				else
 					ParseModSettings(ui, mainMenu, modSettings)
 				end
+
+				local length = #Listeners.ModMenuSectionCreated
+				if length > 0 then
+					for i=1,length do
+						local callback = Listeners.ModMenuSectionCreated[i]
+						local b,err = xpcall(callback, debug.traceback, modSettings.UUID, modSettings, ui, mainMenu)
+						if not b then
+							Ext.PrintError("Error calling function for 'ModMenuSectionCreated':\n", err)
+						end
+					end
+				end
 			end
 		end
 	end
@@ -273,13 +303,19 @@ end
 function ModMenuManager.OnSlider(id, value)
 	local controlData = ModMenuManager.Controls[id]
 	if controlData ~= nil then
-		print("ModMenuManager.OnSlider", id, value)
+		PrintDebug("ModMenuManager.OnSlider", id, value)
 		controlData.Value = value
 	end
 end
 
 function ModMenuManager.OnButtonPressed(id)
-	--local controlData = ModMenuManager.Controls[id]
+	local controlData = ModMenuManager.Buttons[id]
+	if controlData ~= nil then
+		PrintDebug("ModMenuManager.OnButtonPressed", id)
+		if controlData.Entry and controlData.Entry.Invoke then
+			controlData.Entry:Invoke(controlData.Entry, controlData.UUID, controlData.Callback)
+		end
+	end
 end
 
 function ModMenuManager.CommitChanges()

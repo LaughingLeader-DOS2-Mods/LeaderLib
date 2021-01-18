@@ -26,6 +26,31 @@ local function GetValue(val)
 	return val
 end
 
+local function TryFindCallback(uuid, name)
+	local b,result = pcall(function()
+		local tbl = Mods[uuid]
+		if tbl then
+			local pathway = StringHelpers.Split(name, ".")
+			local last = tbl
+			for _,key in ipairs(pathway) do
+				local value = last[key]
+				if value then
+					last = value
+				else
+					Ext.PrintError("Error trying to find global variable at Mods[%s].%s", uuid, name)
+					break
+				end
+			end
+			if last ~= nil and type(last) == "function" or type(last) == "table" then
+				return last
+			end
+		end
+		return nil
+	end)
+	
+	return result
+end
+
 local function LoadModSettingsConfig(uuid, file)
 	local settings = SettingsManager.GetMod(uuid, true)
 	local config = Ext.JsonParse(file)
@@ -68,6 +93,21 @@ local function LoadModSettingsConfig(uuid, file)
 						local increment = GetValue(varSettings.Increment or defaultIncrement)
 						settings.Global:AddLocalizedVariable(id, namePrefix .. id, value, min, max, increment)
 					end
+				end
+			end
+			if config.Data.Buttons ~= nil then
+				local buttonid = 0
+				for _,data in pairs(config.Data.Buttons) do
+					local id = data.ID or string.format("%s_%s", uuid, buttonid)
+					local enabled = data.Enabled ~= nil and data.Enabled or true
+					local callbackName = data.Callback
+					local callback = nil
+					if callbackName ~= nil then
+						callback = TryFindCallback(uuid, callbackName)
+					end
+					local namePrefix = data.NamePrefix or ""
+					settings.Global:AddLocalizedButton(id, namePrefix .. id, callback, data.Enabled, data.HostOnly)
+					buttonid = buttonid + 1
 				end
 			end
 		end

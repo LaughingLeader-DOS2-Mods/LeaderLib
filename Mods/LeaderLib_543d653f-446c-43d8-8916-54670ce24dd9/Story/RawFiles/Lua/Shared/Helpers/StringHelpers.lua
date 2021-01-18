@@ -70,6 +70,7 @@ StringHelpers.Join = Join
 local function Split(str, delimiter)
 	local list = {}; local pos = 1
 	if string.find("", delimiter, 1) then
+		table.insert(list, str)
 		return list
 	end
 	while 1 do

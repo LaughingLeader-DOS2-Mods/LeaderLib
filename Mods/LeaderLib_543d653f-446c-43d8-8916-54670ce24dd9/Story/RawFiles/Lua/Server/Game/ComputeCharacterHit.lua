@@ -1,5 +1,9 @@
 HitOverrides = {
+    --- The original ositools version
     DoHitOriginal = Game.Math.DoHit,
+    DoHitModified = nil, -- We get this in SessionLoaded in a case a mod has overwritten it.
+    ApplyDamageCharacterBonusesOriginal = Game.Math.ApplyDamageCharacterBonuses,
+    ApplyDamageCharacterBonusesModified = nil
 }
 --- This script tweaks Game.Math functions to allow lowering resistance with Resistance Penetration tags on items of the attacker.
 
@@ -30,50 +34,81 @@ function HitOverrides.ApplyHitResistances(character, damageList, resistancePenet
     end
 end
 
---- @param character StatCharacter
---- @param attacker StatCharacter
---- @param damageList DamageList
-function HitOverrides.ApplyDamageCharacterBonuses(character, attacker, damageList)
-    damageList:AggregateSameTypeDamages()
-
-    --- @type resistancePenetration table<string,integer>
+---@param character StatCharacter
+---@param attacker StatCharacter
+---@return table<string,integer>
+function HitOverrides.GetResistancePenetration(character, attacker)
+    --- @type table<string,integer>
     local resistancePenetration = {}
-	
-	if attacker ~= nil and attacker.Character ~= nil then
-		---@type EsvItem[]
-		local resPenItems = {}
-		for i,itemId in pairs(attacker.Character:GetInventoryItems()) do
-			---@type EsvItem
-			local item = Ext.GetItem(itemId)
-			--print(i, item.Slot, item.StatsId)
-			if item.Slot < 15 and item:HasTag("LeaderLib_HasResistancePenetration") then
-				resPenItems[#resPenItems+1] = item
-			elseif item.Slot >= 15 then
-				break
-			end
-		end
-		if #resPenItems > 0 then
-			for i,item in pairs(resPenItems) do
-				for damageType,tags in pairs(Data.ResistancePenetrationTags) do
-					for i,tagEntry in pairs(tags) do
-						if item:HasTag(tagEntry.Tag) then
-							if resistancePenetration[damageType] == nil then
-								resistancePenetration[damageType] = 0
-							end
-							resistancePenetration[damageType] = resistancePenetration[damageType] + tagEntry.Amount
-						end
-					end
-				end
-			end
+        
+    if attacker ~= nil and attacker.Character ~= nil then
+        ---@type EsvItem[]
+        local resPenItems = {}
+        for i,itemId in pairs(attacker.Character:GetInventoryItems()) do
+            ---@type EsvItem
+            local item = Ext.GetItem(itemId)
+            --print(i, item.Slot, item.StatsId)
+            if item.Slot < 15 and item:HasTag("LeaderLib_HasResistancePenetration") then
+                resPenItems[#resPenItems+1] = item
+            elseif item.Slot >= 15 then
+                break
+            end
+        end
+        if #resPenItems > 0 then
+            for i,item in pairs(resPenItems) do
+                for damageType,tags in pairs(Data.ResistancePenetrationTags) do
+                    for i,tagEntry in pairs(tags) do
+                        if item:HasTag(tagEntry.Tag) then
+                            if resistancePenetration[damageType] == nil then
+                                resistancePenetration[damageType] = 0
+                            end
+                            resistancePenetration[damageType] = resistancePenetration[damageType] + tagEntry.Amount
+                        end
+                    end
+                end
+            end
         end
         
         if attacker.Character:HasTag("LeaderLib_IgnoreUndeadPoisonResistance") and character.TALENT_Zombie then
             resistancePenetration["Poison"] = 200
         end
-	end
-    HitOverrides.ApplyHitResistances(character, damageList, resistancePenetration)
+    end
+    return resistancePenetration
+end
 
-    Game.Math.ApplyDamageSkillAbilityBonuses(damageList, attacker)
+--- @param character StatCharacter
+--- @param attacker StatCharacter
+--- @param damageList DamageList
+function HitOverrides.ApplyDamageCharacterBonuses(character, attacker, damageList)
+    local preModifiedDamageList = damageList:ToTable()
+    local resistancePenetration = HitOverrides.GetResistancePenetration(character, attacker)
+
+    if HitOverrides.ApplyDamageCharacterBonusesModified ~= nil then
+        -- Since a mod has overwritten ApplyDamageCharacterBonuses, let's swap out Game.Math.ApplyHitResistances for HitOverrides.ApplyDamageSkillAbilityBonuses
+        -- The reason we're not overriding this in the first place is that Game.Math.ApplyHitResistances doesn't have a reference to the attacker character.
+        local funcOriginal = Game.Math.ApplyHitResistances
+        Game.Math.ApplyHitResistances = function(c, d)
+            HitOverrides.ApplyHitResistances(c, d, resistancePenetration)
+        end
+        HitOverrides.ApplyDamageCharacterBonusesModified(character, attacker, damageList)
+        -- Reset it back so we don't have other characters benefitting from this specific resistancePenetration table.
+        Game.Math.ApplyHitResistances = funcOriginal
+    else
+        damageList:AggregateSameTypeDamages()
+        HitOverrides.ApplyHitResistances(character, damageList, resistancePenetration)
+        Game.Math.ApplyDamageSkillAbilityBonuses(damageList, attacker)
+    end
+ 
+    local length = #Listeners.ApplyDamageCharacterBonuses
+    if length > 0 then
+        for i=1,length do
+            local callback = Listeners.ApplyDamageCharacterBonuses[i]
+            local b,err = xpcall(callback, debug.traceback, character, attacker, damageList, preModifiedDamageList, resistancePenetration)
+            if not b then
+                Ext.PrintError("[LeaderLib] Error calling function for 'ApplyDamageCharacterBonuses':\n", err)
+            end
+        end
+    end
 end
 
 --- @param damageList DamageList
@@ -96,7 +131,9 @@ function HitOverrides.ComputeMagicArmorDamage(damageList, magicArmor)
 end
 
 function HitOverrides.ComputeOverridesEnabled()
-    return Features.DisableHitOverrides ~= true and (Features.BackstabCalculation == true or Features.ResistancePenetration == true)
+    return Features.DisableHitOverrides ~= true and (
+        (Features.BackstabCalculation == true or Features.ResistancePenetration == true) 
+            or #Listeners.ComputeCharacterHit > 0)
 end
 
 function HitOverrides.WithinMeleeDistance(pos1, pos2)
@@ -169,14 +206,15 @@ end
 --- @param target StatCharacter
 --- @param attacker StatCharacter
 function HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
-    HitOverrides.DoHitOriginal(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
+    -- We're basically calling Game.Math.DoHit here, but it may be a modified version from a mod.
+    HitOverrides.DoHitModified(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
     local length = #Listeners.DoHit
     if length > 0 then
         for i=1,length do
             local callback = Listeners.DoHit[i]
             local b,err = xpcall(callback, debug.traceback, hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
             if not b then
-                Ext.PrintError("Error calling function for 'DoHit':\n", err)
+                Ext.PrintError("[LeaderLib] Error calling function for 'DoHit':\n", err)
             end
         end
     end
@@ -201,8 +239,8 @@ function HitOverrides.ComputeCharacterHit(target, attacker, weapon, damageList, 
         local statusBonusDmgTypes = {}
         
         if attacker == nil then
-            Game.Math.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
-            return hit
+            HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
+            goto hit_done
         end
 
         local backstabbed = false
@@ -220,8 +258,8 @@ function HitOverrides.ComputeCharacterHit(target, attacker, weapon, damageList, 
         hit.DamageMultiplier = 1.0 + Game.Math.GetAttackerDamageMultiplier(target, attacker, highGroundFlag)
         if hitType == "Magic" or hitType == "Surface" or hitType == "DoT" or hitType == "Reflected" then
             Game.Math.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll)
-            Game.Math.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
-            return hit
+            HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
+            goto hit_done
         end
 
         if alwaysBackstab or (HitOverrides.CanBackstab(attacker, weapon, hitType, target) and Game.Math.CanBackstab(target, attacker)) then
@@ -279,8 +317,10 @@ function HitOverrides.ComputeCharacterHit(target, attacker, weapon, damageList, 
 
         if not hitBlocked then
             Game.Math.ConditionalApplyCriticalHitMultiplier(hit, target, attacker, hitType, criticalRoll)
-            Game.Math.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
+            HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
         end
+
+        ::hit_done::
 
         local length = #Listeners.ComputeCharacterHit
         if length > 0 then
@@ -288,7 +328,7 @@ function HitOverrides.ComputeCharacterHit(target, attacker, weapon, damageList, 
                 local callback = Listeners.ComputeCharacterHit[i]
                 local b,err = xpcall(callback, debug.traceback, target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
                 if not b then
-                    Ext.PrintError("Error calling function for 'ComputeCharacterHit':\n", err)
+                    Ext.PrintError("[LeaderLib] Error calling function for 'ComputeCharacterHit':\n", err)
                 end
             end
         end
@@ -300,5 +340,13 @@ end
 Ext.RegisterListener("ComputeCharacterHit", HitOverrides.ComputeCharacterHit)
 
 Ext.RegisterListener("SessionLoaded", function()
+    -- Set to Game.Math.DoHit here, instead of immediately, in case a mod has overwritten it.
+    HitOverrides.DoHitModified = Game.Math.DoHit
+    -- Original function was changed
+    if (Game.Math.ApplyDamageCharacterBonuses ~= HitOverrides.ApplyDamageCharacterBonusesOriginal 
+    and Game.Math.ApplyDamageCharacterBonuses ~= HitOverrides.ApplyDamageCharacterBonuses) then
+        HitOverrides.ApplyDamageCharacterBonusesModified = Game.Math.ApplyDamageCharacterBonuses
+    end
     Game.Math.DoHit = HitOverrides.DoHit
+    Game.Math.ApplyDamageCharacterBonuses = HitOverrides.ApplyDamageCharacterBonuses
 end)

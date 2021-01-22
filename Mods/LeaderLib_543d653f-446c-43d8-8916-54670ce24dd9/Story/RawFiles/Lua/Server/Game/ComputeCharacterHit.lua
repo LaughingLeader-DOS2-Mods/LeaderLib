@@ -236,14 +236,16 @@ end
 function HitOverrides.ComputeCharacterHit(target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
     if HitOverrides.ComputeOverridesEnabled() then
         hit.DamageMultiplier = 1.0
+        --Declare locals here so goto works
         local statusBonusDmgTypes = {}
-        
+        local backstabbed = false
+        local hitBlocked = false
+
         if attacker == nil then
             HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
             goto hit_done
         end
-
-        local backstabbed = false
+        
         if weapon == nil then
             weapon = attacker.MainWeapon
         end
@@ -289,8 +291,6 @@ function HitOverrides.ComputeCharacterHit(target, attacker, weapon, damageList, 
         if attacker.TALENT_Damage then
             hit.DamageMultiplier = hit.DamageMultiplier + 0.1
         end
-
-        local hitBlocked = false
 
         if not noHitRoll then
             local hitChance = Game.Math.CalculateHitChance(attacker, target)

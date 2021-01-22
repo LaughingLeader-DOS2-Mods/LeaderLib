@@ -386,14 +386,26 @@ end
 
 ---@param source SettingsData
 function SettingsData:CopySettings(source)
-	for name,v in pairs(source.Flags) do
-		self:AddFlag(name, v.FlagType, v.Enabled, v.DisplayName, v.Tooltip, nil, v.IsFromFile)
+	if source.Flags then
+		for name,v in pairs(source.Flags) do
+			self:AddFlag(name, v.FlagType, v.Enabled, v.DisplayName, v.Tooltip, nil, v.IsFromFile)
+		end
+	elseif not self.Flags then
+		self.Flags = {}
 	end
-	for name,v in pairs(source.Variables) do
-		self:AddVariable(name, v.Value, v.DisplayName, v.Tooltip, v.Min, v.Max, v.Interval, nil, v.IsFromFile)
+	if source.Variables then
+		for name,v in pairs(source.Variables) do
+			self:AddVariable(name, v.Value, v.DisplayName, v.Tooltip, v.Min, v.Max, v.Interval, nil, v.IsFromFile)
+		end
+	elseif not self.Variables then
+		self.Variables = {}
 	end
-	for name,v in pairs(source.Buttons) do
-		self:AddButton(name, v.Callback, v.DisplayName, v.Tooltip, v.Enabled, v.HostOnly, v.IsFromFile)
+	if source.Buttons then
+		for name,v in pairs(source.Buttons) do
+			self:AddButton(name, v.Callback, v.DisplayName, v.Tooltip, v.Enabled, v.HostOnly, v.IsFromFile)
+		end
+	elseif not self.Buttons then
+		self.Buttons = {}
 	end
 	self:SetMetatables()
 end

@@ -23,6 +23,8 @@ local ModSettings = {
 
 ModSettings.__index = ModSettings
 
+Classes.ModSettingsClasses.ModSettings = ModSettings
+
 ---@param uuid string The mod's UUID.
 ---@param globalSettings SettingsData|nil Default global settings.
 ---@return ModSettings

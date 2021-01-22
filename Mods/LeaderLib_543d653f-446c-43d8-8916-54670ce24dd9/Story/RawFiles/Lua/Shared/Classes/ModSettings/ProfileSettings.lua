@@ -21,3 +21,5 @@ function ProfileSettings:Create(id, settings)
 	setmetatable(this, self)
     return this
 end
+
+Classes.ModSettingsClasses.ProfileSettings = ProfileSettings

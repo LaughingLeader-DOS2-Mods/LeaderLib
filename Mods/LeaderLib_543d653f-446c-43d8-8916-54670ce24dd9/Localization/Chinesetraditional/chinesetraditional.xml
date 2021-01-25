@@ -50,6 +50,7 @@
 	<content contentuid="h25737285gb844g4142gad4cg1d5dc420fb0b">[LeaderLib_DynamicMenu_MenuOption5_f450c0eb-c308-4755-9718-f6a1e87305bd]</content>
 	<content contentuid="h25bf34f3g1b21g4b69gb041g896d6e346f36">[LeaderLib_ModMenu_Menu4_337a1066-9a85-4005-a2dc-f0156bf13d16]</content>
 	<content contentuid="h2627dad1g64d8g4d19gaf42g6a12ef1a7d1a">Please stop that...</content>
+	<content contentuid="h26695cfdg01c9g421dga695ge2d6661643bf">Actions</content>
 	<content contentuid="h26d9df87gcc82g4b87gb068g6e5e3b053113">[GLOBAL] Disable &lt;b&gt;Dialog Redirection&lt;/b&gt;. Certain dialog events will start with the closest player character available. (Default)</content>
 	<content contentuid="h27d11f50gaecbg4d8fgaf81g0b7f26fb61f3">LeaderLib - Debug</content>
 	<content contentuid="h28bc1942gc4f1g42bag8fc3g83b33f653c17">Anyway, I figure I&apos;ll make this my little home away from home, and sell some old junk I&apos;ve accumulated over the years.</content>
@@ -148,6 +149,7 @@
 	<content contentuid="h680a3621g57dag4544g8c63gb43e64633e24">[GLOBAL] Enable Autosaving in Combat</content>
 	<content contentuid="h68300b5aga3a5g49c9g8e57gbdf5490fd4c1">The amount of action points gained when a character&apos;s turn starts.&lt;br&gt;(Default: 4)&lt;br&gt;&lt;font color=&apos;#FF9900&apos;&gt;This option is disabled if the value equals -1.&lt;/font&gt;</content>
 	<content contentuid="h68ad69bfg9d72g4107g8285g691dd3abc27e">Add the Mod Menu Skill (Self)</content>
+	<content contentuid="h69293304g80a8g47b6gb564g793f098abfb4">Reset all global LeaderLib settings. EXPERIMENTAL!</content>
 	<content contentuid="h69590addg7840g4821gb632g52799233bb88">&lt;font color=&apos;#FF0000&apos;&gt;-[1] Attitude&lt;/font&gt;</content>
 	<content contentuid="h6a80ffafg59d9g4848g8d1ag9359a1435030">Enable Timed Autosaving</content>
 	<content contentuid="h6ba6354bg9a76g48c2g90e9gf8aeac752f5c">Fix the Unhealable Status</content>
@@ -324,6 +326,7 @@
 	<content contentuid="hd9f00ef8g890eg475bg88ddg9cda39e551fe">[LeaderLib_DynamicMenu_MenuOption5_f450c0eb-c308-4755-9718-f6a1e87305bd]</content>
 	<content contentuid="hda816c8bg2b06g4c93ga526gb61ed29a8760">&quot;Let me get my things in order here...&quot; *He presumably situates a bag of goods that&apos;s strangely out of sight.*</content>
 	<content contentuid="hdc5db041g39d0g4a87g81eagb26a0d11358e">[GLOBAL] Disable Status Logging</content>
+	<content contentuid="hdc816addgda80g4d5dg8d6dgccf0824c220a">Reset LeaderLib Settings</content>
 	<content contentuid="hdd673ac0g2ae1g423cg853eg5a7b8149cd13">*He spits out what is presumably seaweed.* So, what can I do for you today?</content>
 	<content contentuid="hdefd7688g4811g445ag94a4gbe304b43168b">I managed to sneak away before that nasty Kraken showed up. *He groans and rubs his shoulders.* Damn if I won&apos;t feel it tomorrow, though...</content>
 	<content contentuid="he037429fgcbf9g4a78gb1c2ge9613039ef62">Preset Menu (Locked - Check Back in 30 Seconds)</content>

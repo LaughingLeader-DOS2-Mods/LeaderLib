@@ -22,7 +22,7 @@ settings.Global:AddLocalizedVariable("AutosaveInterval", "LeaderLib_Variables_Au
 settings.Global:AddLocalizedVariable("AutoCombatRange", "LeaderLib_Variables_AutoCombatRange", 30, 1, 200, 1)
 
 settings.GetMenuOrder = function()
-	return {
+	local order = {
 		{DisplayName = GameHelpers.GetStringKeyText("LeaderLib_UI_Settings_Features", "Features"),
 		Entries = {
 			"LeaderLib_AutoAddModMenuBooksDisabled",
@@ -49,12 +49,16 @@ settings.GetMenuOrder = function()
 		Entries = {
 			"LeaderLib_UnhealableFix_Enabled",
 			"LeaderLib_DebugModeEnabled",
-		}},
-		{DisplayName = GameHelpers.GetStringKeyText("LeaderLib_UI_Settings_Buttons", "Actions"),
-		Entries = {
-			"LeaderLib_Button_Reset",
-		}},
+		}}
 	}
+	if Vars.DebugMode then
+		table.insert(order, {
+			DisplayName = GameHelpers.GetStringKeyText("LeaderLib_UI_Settings_Buttons", "Actions"),
+			Entries = {
+				"LeaderLib_Button_Reset",
+		}})
+	end
+	return order
 end
 
 if Ext.IsDeveloperMode() then

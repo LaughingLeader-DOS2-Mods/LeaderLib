@@ -145,6 +145,9 @@ end
 ---@param hostOnly boolean|nil
 ---@param isFromFile boolean|nil
 function SettingsData:AddButton(id, callback, displayName, tooltip, enabled, hostOnly, isFromFile)
+	if not self.Buttons then
+		self.Buttons = {}
+	end
 	if self.Buttons[id] == nil then
 		self.Buttons[id] = ButtonData:Create(id, callback, enabled, displayName, tooltip, hostOnly, isFromFile)
 	else

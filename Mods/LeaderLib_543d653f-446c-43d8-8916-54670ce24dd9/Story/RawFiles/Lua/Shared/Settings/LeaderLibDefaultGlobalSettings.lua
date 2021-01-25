@@ -50,7 +50,27 @@ settings.GetMenuOrder = function()
 			"LeaderLib_UnhealableFix_Enabled",
 			"LeaderLib_DebugModeEnabled",
 		}},
+		{DisplayName = GameHelpers.GetStringKeyText("LeaderLib_UI_Settings_Buttons", "Actions"),
+		Entries = {
+			"LeaderLib_Button_Reset",
+		}},
 	}
+end
+
+if Ext.IsDeveloperMode() then
+	settings.Global:AddLocalizedButton("LeaderLib_Button_Reset", "LeaderLib_UI_Button_Reset", function(button, uuid, character)
+		for i,v in pairs(settings.Global.Flags) do
+			v.Enabled = v.Default
+		end
+		for i,v in pairs(settings.Global.Variables) do
+			v.Value = v.Default
+		end
+		if Ext.IsClient() then
+			if ModMenuManager.Controls then
+				-- TODO: Update control settings, update actual flash controls.
+			end
+		end
+	end, true, true)
 end
 
 GlobalSettings.Mods["7e737d2f-31d2-4751-963f-be6ccc59cd0c"] = settings

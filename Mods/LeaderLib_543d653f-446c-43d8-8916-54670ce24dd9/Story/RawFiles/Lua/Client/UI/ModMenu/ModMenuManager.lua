@@ -191,8 +191,17 @@ local function ParseModSettings(ui, mainMenu, modSettings, order)
 				for k=1,#section.Entries do
 					local name = section.Entries[k]
 					local v = modSettings:GetEntry(name)
-					if v ~= nil and not v.IsFromFile then
-						added[v.ID] = AddModSettingsEntry(ui, mainMenu, name, v, modSettings.UUID)
+					if v then
+						-- Support duplicate IDs between types, though this isn't recommended
+						if type(v) == "table" and v.Type == nil and #v > 0 then
+							for _,v2 in pairs(v) do
+								if not v2.IsFromFile and v2.Type then
+									added[v2.ID] = AddModSettingsEntry(ui, mainMenu, name, v2, modSettings.UUID)
+								end
+							end
+						elseif not v.IsFromFile and v.Type then
+							added[v.ID] = AddModSettingsEntry(ui, mainMenu, name, v, modSettings.UUID)
+						end
 					end
 				end
 			end

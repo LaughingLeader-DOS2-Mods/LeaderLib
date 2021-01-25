@@ -154,7 +154,11 @@ function ModSettings:GetEntry(id, profile)
 			end
 		end
 	end
-	local entry = self.Global.Variables[id] or self.Global.Flags[id]
+	local entry = self.Global.Buttons[id]
+	if entry then
+		return entry
+	end
+	entry = self.Global.Variables[id] or self.Global.Flags[id]
 	return entry
 end
 

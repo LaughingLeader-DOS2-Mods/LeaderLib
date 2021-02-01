@@ -53,7 +53,7 @@ Ext.RegisterConsoleCommand("luareset", function(command, delay)
 			end
 		end
 	end
-	delay = delay or 250
+	delay = delay or 1000
 	if delay ~= nil then
 		delay = tonumber(delay)
 		if delay > 0 then

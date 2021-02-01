@@ -10,7 +10,7 @@ local function OnNRDOnStatusAttempt(target,status,handle,source)
 	source = StringHelpers.GetUUID(source)
 	local callbacks = StatusListeners.BeforeAttempt[status]
 	if callbacks then
-		for i=0,#callbacks do
+		for i=1,#callbacks do
 			local b,err = xpcall(callbacks[i], debug.traceback, target, status, source, handle)
 			if not b then
 				Ext.PrintError(err)
@@ -32,7 +32,7 @@ local function OnStatusAttempt(target,status,source)
 	source = StringHelpers.GetUUID(source)
 	local callbacks = StatusListeners.Attempt[status]
 	if callbacks then
-		for i=0,#callbacks do
+		for i=1,#callbacks do
 			local b,err = xpcall(callbacks[i], debug.traceback, target, status, source)
 			if not b then
 				Ext.PrintError(err)
@@ -102,7 +102,7 @@ local function OnStatusApplied(target,status,source)
 	end
 	local callbacks = StatusListeners.Applied[status]
 	if callbacks then
-		for i=0,#callbacks do
+		for i=1,#callbacks do
 			local b,err = xpcall(callbacks[i], debug.traceback, target, status, source)
 			if not b then
 				Ext.PrintError(err)
@@ -127,7 +127,7 @@ local function OnStatusRemoved(target,status)
 	end
 	local callbacks = StatusListeners.Removed[status]
 	if callbacks then
-		for i=0,#callbacks do
+		for i=1,#callbacks do
 			local b,err = xpcall(callbacks[i], debug.traceback, target, status, source)
 			if not b then
 				Ext.PrintError(err)

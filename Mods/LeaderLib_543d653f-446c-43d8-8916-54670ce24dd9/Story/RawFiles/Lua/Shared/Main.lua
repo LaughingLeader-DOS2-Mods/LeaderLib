@@ -19,7 +19,7 @@ end
 function InvokeListenerCallbacks(callbacks, ...)
 	local length = callbacks and #callbacks or 0
 	if length > 0 then
-		for i=0,length do
+		for i=1,length do
 			local callback = callbacks[i]
 			local b,err = xpcall(callback, debug.traceback, ...)
 			if not b then

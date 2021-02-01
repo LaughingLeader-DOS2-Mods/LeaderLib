@@ -143,17 +143,17 @@ function GameHelpers.Status.CharacterLostControl(character, onlyFromEnemy)
 	return false
 end
 
----Set an active status' turns, or apply if if applyIfMissing is not false.
+---Set an active status' duration, or apply if if applyIfMissing is not false.
 ---@param obj string
 ---@param statusId string
----@param turns integer
+---@param duration number
 ---@param allInstances boolean|nil
 ---@param applyIfMissing boolean|nil
 ---@return boolean
-function GameHelpers.Status.SetTurns(obj, statusId, turns, allInstances, applyIfMissing)
+function GameHelpers.Status.SetDuration(obj, statusId, duration, allInstances, applyIfMissing)
 	if HasActiveStatus(obj, statusId) == 0 then
 		if applyIfMissing ~= false then
-			ApplyStatus(obj, statusId, turns * 6.0, 0, obj)
+			ApplyStatus(obj, statusId, duration, 0, obj)
 			return true
 		end
 		return false
@@ -166,9 +166,8 @@ function GameHelpers.Status.SetTurns(obj, statusId, turns, allInstances, applyIf
 					for _,status in pairs(character:GetStatusObjects()) do
 						if status.StatusId == statusId then
 							status.RequestClientSync = true
-							status.CurrentLifeTime = turns * 6.0
-							status.LifeTime = turns * 6.0
-							--print(string.format("[%s] CurrentLifeTime(%s) LifeTime(%s) TurnTimer(%s) StartTimer(%s)", statusId, status.CurrentLifeTime, status.LifeTime, status.TurnTimer, status.StartTimer))
+							status.CurrentLifeTime = duration
+							status.LifeTime = duration
 							success = true
 						end
 					end
@@ -176,8 +175,8 @@ function GameHelpers.Status.SetTurns(obj, statusId, turns, allInstances, applyIf
 					local status = character:GetStatus(statusId)
 					if status ~= nil then
 						status.RequestClientSync = true
-						status.CurrentLifeTime = turns * 6.0
-						status.LifeTime = turns * 6.0
+						status.CurrentLifeTime = duration
+						status.LifeTime = duration
 					end
 				end
 
@@ -190,4 +189,83 @@ function GameHelpers.Status.SetTurns(obj, statusId, turns, allInstances, applyIf
 		end
 	end
 	return false
+end
+
+---Set an active status' turns, or apply if if applyIfMissing is not false.
+---@param obj string
+---@param statusId string
+---@param turns integer
+---@param allInstances boolean|nil
+---@param applyIfMissing boolean|nil
+---@return boolean
+function GameHelpers.Status.SetTurns(obj, statusId, turns, allInstances, applyIfMissing)
+	return GameHelpers.Status.SetDuration(obj, statusId, turns*6, allInstances, applyIfMissing)
+end
+
+---Uses a table to determine the next status to apply.
+---@param obj string
+---@param statusTable string[] An array of tiered statuses (must be ipairs-friendly via regular integer indexes).
+---@param duration number The status duration. Defaults to -1.0 for a regular permanent status.
+---@param force boolean|nil Whether to force the status to apply.
+---@param source string|nil The source of the status. Defaults to the target object.
+---@return integer,integer Returns the next tier / last tier.
+function GameHelpers.Status.ApplyTieredStatus(obj, statusTable, duration, force, source)
+	local maxTier = #statusTable
+	local maxStatus = statusTable[maxTier]
+	-- We're at the max tier, so skip the iteration
+	if HasActiveStatus(obj, maxStatus) == 1 then
+		-- Refreshing the status duration
+		if duration and duration > 0 then
+			GameHelpers.Status.SetDuration(obj, maxStatus, duration, true, false)
+		end
+		return maxTier,maxTier
+	end
+	maxTier = maxTier - 1
+	local lastTier = 1
+	local tier = 1
+	for i=1,maxTier do
+		local status = statusTable[i]
+		if HasActiveStatus(obj, status) == 1 then
+			lastTier = tier
+			tier = i+1
+			break
+		end
+	end
+	local status = statusTable[tier]
+	if status ~= nil then
+		--Convoluted way of making force default to 1 if not set, otherwise be 1 or 0 for true/false.
+		local doForce = force == true and 1 or force == false and 0 or 1
+		ApplyStatus(obj, status, duration and duration or -1.0, doForce, source or obj)
+	end
+	return tier,lastTier
+end
+
+---Similar to GameHelpers.Status.ApplyTieredStatus, except it doesn't apply the status.
+---@see GameHelpers.Status.ApplyTieredStatus
+---@param obj string
+---@param statusTable string[] An array of tiered statuses (must be ipairs-friendly via regular integer indexes).
+---@param duration number The status duration. Defaults to -1.0 for a regular permanent status.
+---@param force boolean|nil Whether to force the status to apply.
+---@param source string|nil The source of the status. Defaults to the target object.
+---@return string,integer,integer Returns the next tier's status id, the tier number, and the last tier number.
+function GameHelpers.Status.GetNextTieredStatus(obj, statusTable, duration, force, source)
+	local maxTier = #statusTable
+	local maxStatus = statusTable[maxTier]
+	-- We're at the max tier, so skip the iteration
+	if HasActiveStatus(obj, maxStatus) == 1 then
+		return maxStatus,maxTier,maxTier
+	end
+	maxTier = maxTier - 1
+	local lastTier = 1
+	local tier = 1
+	for i=1,maxTier do
+		local status = statusTable[i]
+		if HasActiveStatus(obj, status) == 1 then
+			lastTier = tier
+			tier = i+1
+			break
+		end
+	end
+	local status = statusTable[tier]
+	return status,tier,lastTier
 end

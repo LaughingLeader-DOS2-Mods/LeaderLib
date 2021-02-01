@@ -357,31 +357,45 @@ function SettingsData:Export(forSyncing)
 end
 
 function SettingsData:SetMetatables()
-	for _,v in pairs(self.Flags) do
-		setmetatable(v, FlagData)
-		if v.DisplayName ~= nil and v.DisplayName.Handle ~= nil then
-			setmetatable(v.DisplayName, Classes.TranslatedString)
-		end
-		if v.Tooltip ~= nil and v.Tooltip.Handle ~= nil then
-			setmetatable(v.Tooltip, Classes.TranslatedString)
-		end
-	end
-	for _,v in pairs(self.Variables) do
-		setmetatable(v, VariableData)
-		if v.DisplayName ~= nil and v.DisplayName.Handle ~= nil then
-			setmetatable(v.DisplayName, Classes.TranslatedString)
-		end
-		if v.Tooltip ~= nil and v.Tooltip.Handle ~= nil then
-			setmetatable(v.Tooltip, Classes.TranslatedString)
+	if not self.Flags then 
+		self.Flags = {} 
+	else
+		for _,v in pairs(self.Flags) do
+			setmetatable(v, FlagData)
+			if v.DisplayName ~= nil and v.DisplayName.Handle ~= nil then
+				setmetatable(v.DisplayName, Classes.TranslatedString)
+			end
+			if v.Tooltip ~= nil and v.Tooltip.Handle ~= nil then
+				setmetatable(v.Tooltip, Classes.TranslatedString)
+			end
 		end
 	end
-	for _,v in pairs(self.Buttons) do
-		setmetatable(v, ButtonData)
-		if v.DisplayName ~= nil and v.DisplayName.Handle ~= nil then
-			setmetatable(v.DisplayName, Classes.TranslatedString)
+	
+	if not self.Variables then 
+		self.Variables = {} 
+	else
+		for _,v in pairs(self.Variables) do
+			setmetatable(v, VariableData)
+			if v.DisplayName ~= nil and v.DisplayName.Handle ~= nil then
+				setmetatable(v.DisplayName, Classes.TranslatedString)
+			end
+			if v.Tooltip ~= nil and v.Tooltip.Handle ~= nil then
+				setmetatable(v.Tooltip, Classes.TranslatedString)
+			end
 		end
-		if v.Tooltip ~= nil and v.Tooltip.Handle ~= nil then
-			setmetatable(v.Tooltip, Classes.TranslatedString)
+	end
+	
+	if not self.Buttons then 
+		self.Buttons = {} 
+	else
+		for _,v in pairs(self.Buttons) do
+			setmetatable(v, ButtonData)
+			if v.DisplayName ~= nil and v.DisplayName.Handle ~= nil then
+				setmetatable(v.DisplayName, Classes.TranslatedString)
+			end
+			if v.Tooltip ~= nil and v.Tooltip.Handle ~= nil then
+				setmetatable(v.Tooltip, Classes.TranslatedString)
+			end
 		end
 	end
 	setmetatable(self, SettingsData)

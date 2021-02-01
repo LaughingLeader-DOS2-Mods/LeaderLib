@@ -7,16 +7,7 @@ local function OnPrepareHit(target, source, damage, handle)
 		Ext.Print(string.format("[NRD_OnPrepareHit] Target(%s) Source(%s) damage(%i) Handle(%s) HitType(%s)", target, source, damage, handle, NRD_HitGetString(handle, "HitType")))
 		--Debug_TraceHitPrepare(target, source, damage, handle)
 	end
-	local length = #Listeners.OnPrepareHit
-	if length > 0 then
-		for i=1,length do
-			local callback = Listeners.OnPrepareHit[i]
-			local status,err = xpcall(callback, debug.traceback, target, source, damage, handle)
-			if not status then
-				Ext.PrintError("[LeaderLib:HitListeners.lua] Error calling function for 'OnPrepareHit':\n", err)
-			end
-		end
-	end
+	InvokeListenerCallbacks(Listeners.OnPrepareHit, target, source, damage, handle)
 end
 
 RegisterProtectedOsirisListener("NRD_OnPrepareHit", 4, "before", function(target, attacker, damage, handle)
@@ -70,16 +61,7 @@ local function OnHit(target, source, damage, handle)
 		GameHelpers.ApplyBonusWeaponStatuses(source, target)
 	end
 
-	local length = #Listeners.OnHit
-	if length > 0 then
-		for i=1,length do
-			local callback = Listeners.OnHit[i]
-			local status,err = xpcall(callback, debug.traceback, target, source, damage, handle, skill)
-			if not status then
-				Ext.PrintError("[LeaderLib:HitListeners.lua] Error calling function for 'OnHit':\n", err)
-			end
-		end
-	end
+	InvokeListenerCallbacks(Listeners.OnHit, target, source, damage, handle, skill)
 end
 
 RegisterProtectedOsirisListener("NRD_OnHit", 4, "before", function(target, attacker, damage, handle)

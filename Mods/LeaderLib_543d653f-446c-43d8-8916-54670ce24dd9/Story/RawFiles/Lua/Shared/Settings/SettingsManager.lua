@@ -201,15 +201,7 @@ if Ext.IsServer() then
 					v:ApplyToGame()
 				end
 			end
-			if #Listeners.ModSettingsLoaded > 0 then
-				for i,callback in pairs(Listeners.ModSettingsLoaded) do
-					local status,err = xpcall(callback, debug.traceback, GlobalSettings)
-					if not status then
-						Ext.PrintError("[LeaderLib:LoadGlobalSettings] Error invoking callback for ModSettingsLoaded:")
-						Ext.PrintError(err)
-					end
-				end
-			end
+			InvokeListenerCallbacks(Listeners.ModSettingsLoaded, GlobalSettings)
 			return result
 		end
 	end

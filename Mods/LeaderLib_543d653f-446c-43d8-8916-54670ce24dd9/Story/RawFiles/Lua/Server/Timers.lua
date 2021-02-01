@@ -114,21 +114,6 @@ function OnTimerFinished(event, ...)
 		end
 		OneshotTimerData[event] = nil
 	end
-	if #Listeners.TimerFinished > 0 then
-		for i,callback in pairs(Listeners.TimerFinished) do
-			local b,err = xpcall(callback, debug.traceback, event, ...)
-			if not b then
-				Ext.PrintError("[LeaderLib:CancelTimer] Error sending timer finished event:\n", err)
-			end
-		end
-	end
-	local callbacks = Listeners.NamedTimerFinished[event]
-	if callbacks ~= nil then
-		for i,callback in pairs(callbacks) do
-			local b,err = xpcall(callback, debug.traceback, event, ...)
-			if not b then
-				Ext.PrintError("[LeaderLib:CancelTimer] Error calling oneshot timer callback:\n", err)
-			end
-		end
-	end
+	InvokeListenerCallbacks(Listeners.TimerFinished, event, ...)
+	InvokeListenerCallbacks(Listeners.NamedTimerFinished[event], event, ...)
 end

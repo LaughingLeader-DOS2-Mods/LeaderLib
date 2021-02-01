@@ -41,14 +41,7 @@ end
 
 local function InvokeOnInitializedCallbacks(region)
 	region = region or ""
-	if #Listeners.Initialized > 0 then
-		for i,callback in pairs(Listeners.Initialized) do
-			local status,err = xpcall(callback, debug.traceback, region)
-			if not status then
-				Ext.PrintError("[LeaderLib:OnInitialized] Error calling function for 'Initialized':\n", err)
-			end
-		end
-	end
+	InvokeListenerCallbacks(Listeners.Initialized, region)
 	Osi.LeaderLib_LoadingDone(region)
 end
 
@@ -151,14 +144,7 @@ function OnLuaReset()
 	end)
 	local region = Osi.DB_CurrentLevel:Get(nil)[1][1]
 	OnInitialized(region, true)
-	if #Listeners.LuaReset > 0 then
-		for i,callback in pairs(Listeners.LuaReset) do
-			local status,err = xpcall(callback, debug.traceback)
-			if not status then
-				Ext.PrintError("[LeaderLib:OnLuaReset] Error calling function for 'LuaReset':\n", err)
-			end
-		end
-	end
+	InvokeListenerCallbacks(Listeners.LuaReset, region)
 	GameHelpers.Data.SetRegion(region)
 	IterateUsers("LeaderLib_StoreUserData")
 end

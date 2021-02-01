@@ -99,16 +99,7 @@ function HitOverrides.ApplyDamageCharacterBonuses(character, attacker, damageLis
         Game.Math.ApplyDamageSkillAbilityBonuses(damageList, attacker)
     end
  
-    local length = #Listeners.ApplyDamageCharacterBonuses
-    if length > 0 then
-        for i=1,length do
-            local callback = Listeners.ApplyDamageCharacterBonuses[i]
-            local b,err = xpcall(callback, debug.traceback, character, attacker, damageList, preModifiedDamageList, resistancePenetration)
-            if not b then
-                Ext.PrintError("[LeaderLib] Error calling function for 'ApplyDamageCharacterBonuses':\n", err)
-            end
-        end
-    end
+    InvokeListenerCallbacks(Listeners.ApplyDamageCharacterBonuses, character, attacker, damageList, preModifiedDamageList, resistancePenetration)
 end
 
 --- @param damageList DamageList
@@ -208,16 +199,7 @@ end
 function HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
     -- We're basically calling Game.Math.DoHit here, but it may be a modified version from a mod.
     HitOverrides.DoHitModified(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
-    local length = #Listeners.DoHit
-    if length > 0 then
-        for i=1,length do
-            local callback = Listeners.DoHit[i]
-            local b,err = xpcall(callback, debug.traceback, hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
-            if not b then
-                Ext.PrintError("[LeaderLib] Error calling function for 'DoHit':\n", err)
-            end
-        end
-    end
+    InvokeListenerCallbacks(Listeners.DoHit, hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
 	
 	return hit
 end
@@ -322,16 +304,7 @@ function HitOverrides.ComputeCharacterHit(target, attacker, weapon, damageList, 
 
         ::hit_done::
 
-        local length = #Listeners.ComputeCharacterHit
-        if length > 0 then
-            for i=1,length do
-                local callback = Listeners.ComputeCharacterHit[i]
-                local b,err = xpcall(callback, debug.traceback, target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
-                if not b then
-                    Ext.PrintError("[LeaderLib] Error calling function for 'ComputeCharacterHit':\n", err)
-                end
-            end
-        end
+        InvokeListenerCallbacks(Listeners.ComputeCharacterHit, target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
 
         return hit
     end

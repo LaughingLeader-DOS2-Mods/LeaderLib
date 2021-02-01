@@ -34,14 +34,7 @@ if Ext.IsServer() then
 	---@param uuid string
 	---@param isHost boolean
 	local function SendSyncListenerEvent(id, profile, uuid, isHost)
-		if #Listeners.SyncData > 0 then
-			for i,callback in pairs(Listeners.SyncData) do
-				local status,result = xpcall(callback, debug.traceback, id, profile, uuid, isHost)
-				if not status then
-					Ext.PrintError("Error calling function for 'SyncData':\n", result)
-				end
-			end
-		end
+		InvokeListenerCallbacks(Listeners.SyncData, id, profile, uuid, isHost)
 	end
 
 	function GameHelpers.Data.SyncSharedData(syncSettings, client, ignoreProfile)
@@ -291,14 +284,7 @@ if Ext.IsClient() then
 	---@param currentCharacter ClientCharacterData
 	local function ActiveCharacterChanged(currentCharacter)
 		currentCharacter = currentCharacter or GetClientCharacter()
-		if #Listeners.ClientCharacterChanged > 0 then
-			for i,callback in pairs(Listeners.ClientCharacterChanged) do
-				local status,err = xpcall(callback, debug.traceback, currentCharacter.UUID, currentCharacter.ID, currentCharacter.Profile, currentCharacter.NetID, currentCharacter.IsHost)
-				if not status then
-					Ext.PrintError("Error calling function for 'ClientCharacterChanged':\n", err)
-				end
-			end
-		end
+		InvokeListenerCallbacks(Listeners.ClientCharacterChanged, currentCharacter.UUID, currentCharacter.ID, currentCharacter.Profile, currentCharacter.NetID, currentCharacter.IsHost)
 	end
 
 	local function StoreData(cmd, payload)
@@ -310,14 +296,7 @@ if Ext.IsClient() then
 		if data ~= nil then
 			SharedData = data.Shared
 			Client:SetClientData(data.ID, data.Profile, data.IsHost, GetClientCharacter(data.Profile))
-			if #Listeners.ClientDataSynced > 0 then
-				for i,callback in pairs(Listeners.ClientDataSynced) do
-					local status,err = xpcall(callback, debug.traceback, SharedData.ModData)
-					if not status then
-						Ext.PrintError("Error calling function for 'ClientDataSynced':\n", err)
-					end
-				end
-			end
+			InvokeListenerCallbacks(Listeners.ClientDataSynced, SharedData.ModData)
 			if Client.Character.UUID ~= last then
 				ActiveCharacterChanged(Client.Character)
 			end

@@ -102,15 +102,7 @@ Ext.RegisterNetListener("LeaderLib_SyncAllSettings", function(call, dataString)
 		setmetatable(GameSettings, Classes.LeaderLibGameSettings)
 		--SyncStatOverrides(GameSettings)
 	end
-	if #Listeners.ModSettingsLoaded > 0 then
-		for i,callback in pairs(Listeners.ModSettingsLoaded) do
-			local status,err = xpcall(callback, debug.traceback)
-			if not status then
-				Ext.PrintError("[LeaderLib_SyncAllSettings] Error invoking callback for ModSettingsLoaded:")
-				Ext.PrintError(err)
-			end
-		end
-	end
+	InvokeListenerCallbacks(Listeners.ModSettingsLoaded)
 end)
 
 Ext.RegisterNetListener("LeaderLib_SyncScale", function(call, dataStr)

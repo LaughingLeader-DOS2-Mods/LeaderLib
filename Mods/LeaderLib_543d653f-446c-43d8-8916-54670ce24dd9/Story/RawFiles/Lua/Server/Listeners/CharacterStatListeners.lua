@@ -48,16 +48,7 @@ if Vars.DebugMode then
 end
 
 local function FireListenerEvents(uuid, stat, lastVal, nextVal, statType)
-	local length = #Listeners.CharacterBasePointsChanged
-	if length > 0 then
-		for i=1,length do
-			local callback = Listeners.CharacterBasePointsChanged[i]
-			local status,err = xpcall(callback, debug.traceback, uuid, stat, lastVal, nextVal, statType)
-			if not status then
-				Ext.PrintError("Error calling function for 'CharacterBasePointsChanged':\n", err)
-			end
-		end
-	end
+	InvokeListenerCallbacks(Listeners.CharacterBasePointsChanged, uuid, stat, lastVal, nextVal, statType)
 end
 
 local function DetectStatChanges(uuid, playerData, stat, statType)

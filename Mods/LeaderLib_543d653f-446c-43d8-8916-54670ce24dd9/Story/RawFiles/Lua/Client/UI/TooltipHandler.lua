@@ -478,13 +478,7 @@ local function OnTooltipPositioned(ui, ...)
 					if Features.FormatTagElementTooltips then
 						FormatTagTooltip(ui, tooltip_mc)
 					end
-					for i,callback in pairs(UIListeners.OnTooltipPositioned) do
-						local status,err = xpcall(callback, debug.traceback, ui, tooltip_mc, false, lastItem, ...)
-						if not status then
-							Ext.PrintError("[LeaderLib:AdjustTagElements] Error invoking callback:")
-							Ext.PrintError(err)
-						end
-					end
+					InvokeListenerCallbacks(UIListeners.OnTooltipPositioned, ui, tooltip_mc, false, lastItem, ...)
 				end
 			end
 		end

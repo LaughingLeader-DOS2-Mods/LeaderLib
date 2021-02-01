@@ -21,16 +21,7 @@ local function OnSetHelmetOptionState(ui, method, state)
 end
 
 local function FireCharacterSheetPointListeners(character, stat, statType)
-	local length = #Listeners.CharacterBasePointsChanged
-	if length > 0 then
-		for i=1,length do
-			local callback = Listeners.CharacterBasePointsChanged[i]
-			local b,err = xpcall(callback, debug.traceback, character, stat, statType)
-			if not b then
-				Ext.PrintError("Error calling function for 'CharacterBasePointsChanged':\n", err)
-			end
-		end
-	end
+	InvokeListenerCallbacks(Listeners.CharacterBasePointsChanged, character, stat, statType)
 end
 
 local function OnSheetEvent(ui, call, param1, ...)
@@ -184,14 +175,7 @@ local function RegisterListeners()
 
 		Ext.RegisterUITypeCall(Data.UIType.statusConsole, "GuardPressed", function(ui, call, ...)
 			Ext.PostMessageToServer("LeaderLib_OnDelayTurnClicked", Client.Character.UUID)
-			if #Listeners.TurnDelayed > 0 then
-				for i,callback in pairs(Listeners.TurnDelayed) do
-					local status,err = xpcall(callback, debug.traceback, Client.Character.UUID)
-					if not status then
-						Ext.PrintError("Error calling function for 'TurnDelayed':\n", err)
-					end
-				end
-			end
+			InvokeListenerCallbacks(Listeners.TurnDelayed, Client.Character.UUID)
 		end)
 	else
 		Ext.RegisterUITypeInvokeListener(Data.UIType.statsPanel_c, "updateArraySystem", OnCharacterSheetUpdating)

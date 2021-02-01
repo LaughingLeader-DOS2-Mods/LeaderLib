@@ -36,26 +36,12 @@ local function ModuleResume()
 	-- 		Ext.AddPathOverride(file, override)
 	-- 	end
 	-- end
-	if #Listeners.ModuleResume > 0 then
-		for i,callback in pairs(Listeners.ModuleResume) do
-			local status,err = xpcall(callback, debug.traceback)
-			if not status then
-				Ext.PrintError("Error calling function for 'ModuleResume':\n", err)
-			end
-		end
-	end
+	InvokeListenerCallbacks(Listeners.ModuleResume)
 end
 Ext.RegisterListener("ModuleResume", ModuleResume)
 
 local function SessionLoaded()
-	if #Listeners.SessionLoaded > 0 then
-		for i,callback in pairs(Listeners.SessionLoaded) do
-			local status,err = xpcall(callback, debug.traceback)
-			if not status then
-				Ext.PrintError("Error calling function for 'SessionLoaded':\n", err)
-			end
-		end
-	end
+	InvokeListenerCallbacks(Listeners.SessionLoaded)
 end
 Ext.RegisterListener("SessionLoaded", SessionLoaded)
 

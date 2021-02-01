@@ -16,6 +16,19 @@ function RegisterListener(event, callback, param)
 	end
 end
 
+function InvokeListenerCallbacks(callbacks, ...)
+	local length = callbacks and #callbacks or 0
+	if length > 0 then
+		for i=0,length do
+			local callback = callbacks[i]
+			local b,err = xpcall(callback, debug.traceback, ...)
+			if not b then
+				Ext.PrintError(err)
+			end
+		end
+	end
+end
+
 --- Registers a function to call when a specific Lua LeaderLib event fires for specific mods.
 --- Events: Registered|Updated
 ---@param event string

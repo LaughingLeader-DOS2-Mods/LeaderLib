@@ -1,3 +1,55 @@
+local function IgnoreStatus(status)
+	if Data.IgnoredStatus[status] == true and Vars.RegisteredIgnoredStatus[status] ~= true then
+		return true
+	end
+	return false
+end
+
+local function OnNRDOnStatusAttempt(target,status,handle,source)
+	target = StringHelpers.GetUUID(target)
+	source = StringHelpers.GetUUID(source)
+	local callbacks = StatusListeners.BeforeAttempt[status]
+	if callbacks then
+		for i=0,#callbacks do
+			local b,err = xpcall(callbacks[i], debug.traceback, target, status, source, handle)
+			if not b then
+				Ext.PrintError(err)
+			end
+		end
+	end
+end
+
+local function ParseNRDOnStatusAttempt(target,status,handle,source)
+	if not IgnoreStatus(status) then
+		OnNRDOnStatusAttempt(StringHelpers.GetUUID(target), status, handle, StringHelpers.GetUUID(source))
+	end
+end
+
+RegisterProtectedOsirisListener("NRD_OnStatusAttempt", 4, "after", ParseNRDOnStatusAttempt)
+
+local function OnStatusAttempt(target,status,source)
+	target = StringHelpers.GetUUID(target)
+	source = StringHelpers.GetUUID(source)
+	local callbacks = StatusListeners.Attempt[status]
+	if callbacks then
+		for i=0,#callbacks do
+			local b,err = xpcall(callbacks[i], debug.traceback, target, status, source)
+			if not b then
+				Ext.PrintError(err)
+			end
+		end
+	end
+end
+
+local function ParseStatusAttempt(target,status,source)
+	if not IgnoreStatus(status) then
+		OnStatusAttempt(target, status, source)
+	end
+end
+
+RegisterProtectedOsirisListener("CharacterStatusAttempt", 3, "after", ParseStatusAttempt)
+RegisterProtectedOsirisListener("ItemStatusAttempt", 3, "after", ParseStatusAttempt)
+
 local function TrackStatusSource(target, status, source)
 	if PersistentVars.StatusSource[status] == nil then
 		PersistentVars.StatusSource[status] = {}
@@ -34,6 +86,8 @@ local function ClearStatusSource(target, status, source)
 end
 
 local function OnStatusApplied(target,status,source)
+	target = StringHelpers.GetUUID(target)
+	source = StringHelpers.GetUUID(source)
 	--PrintDebug("OnStatusApplied", target,status,source)
 	if Vars.LeaveActionData.Total > 0 then
 		local skill = Vars.LeaveActionData.Statuses[status]
@@ -46,31 +100,51 @@ local function OnStatusApplied(target,status,source)
 			end
 		end
 	end
+	local callbacks = StatusListeners.Applied[status]
+	if callbacks then
+		for i=0,#callbacks do
+			local b,err = xpcall(callbacks[i], debug.traceback, target, status, source)
+			if not b then
+				Ext.PrintError(err)
+			end
+		end
+	end
 end
 
 local function OnStatusRemoved(target,status)
+	target = StringHelpers.GetUUID(target)
 	--PrintDebug("OnStatusRemoved", target,status)
+	local source = nil
 	if Vars.LeaveActionData.Total > 0 then
-		local source = GetStatusSource(target, status)
+		source = GetStatusSource(target, status)
 		if source ~= nil then
 			local skill = Vars.LeaveActionData.Statuses[status]
 			if skill ~= nil then
 				GameHelpers.ExplodeProjectile(source, target, skill)
 			end
-			ClearStatusSource(target,status)
+			ClearStatusSource(target, status)
+		end
+	end
+	local callbacks = StatusListeners.Removed[status]
+	if callbacks then
+		for i=0,#callbacks do
+			local b,err = xpcall(callbacks[i], debug.traceback, target, status, source)
+			if not b then
+				Ext.PrintError(err)
+			end
 		end
 	end
 end
 
 local function ParseStatusApplied(target,status,source)
-	if Data.EngineStatus[status] ~= true then
-		OnStatusApplied(StringHelpers.GetUUID(target), status, StringHelpers.GetUUID(source))
+	if not IgnoreStatus(status) then
+		OnStatusApplied(target, status, source)
 	end
 end
 
 local function ParseStatusRemoved(target,status)
-	if Data.EngineStatus[status] ~= true then
-		OnStatusRemoved(StringHelpers.GetUUID(target), status)
+	if not IgnoreStatus(status) then
+		OnStatusRemoved(target, status)
 	end
 end
 

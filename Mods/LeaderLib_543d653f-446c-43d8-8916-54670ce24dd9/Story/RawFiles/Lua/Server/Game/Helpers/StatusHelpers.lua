@@ -202,7 +202,7 @@ function GameHelpers.Status.SetTurns(obj, statusId, turns, allInstances, applyIf
 	return GameHelpers.Status.SetDuration(obj, statusId, turns*6, allInstances, applyIfMissing)
 end
 
----Uses a table to determine the next status to apply.
+---Applies statuses in order of the table supplied. Use this for tiered statuses (i.e. MYMOD_POWERLEVEL1, MYMOD_POWERLEVEL2).
 ---@param obj string
 ---@param statusTable string[] An array of tiered statuses (must be ipairs-friendly via regular integer indexes).
 ---@param duration number The status duration. Defaults to -1.0 for a regular permanent status.

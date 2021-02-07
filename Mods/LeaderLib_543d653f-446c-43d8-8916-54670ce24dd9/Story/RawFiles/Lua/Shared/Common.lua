@@ -177,6 +177,21 @@ function Common.TableHasAnyEntry(tbl)
 	return false
 end
 
+---Checks if a table retrieved via Osi.DB_Whatever:Get has an entry.
+---@param tbl table
+---@return boolean
+function Common.OsirisDatabaseHasAnyEntry(tbl)
+	if tbl == nil or type(tbl) ~= "table" then
+		return false
+	end
+	for i,v in pairs(tbl) do
+		if v and type(v) == "table" and #v > 0 then
+			return true
+		end
+	end
+	return false
+end
+
 ---@param tbl table
 ---@param key any
 ---@param fallback any

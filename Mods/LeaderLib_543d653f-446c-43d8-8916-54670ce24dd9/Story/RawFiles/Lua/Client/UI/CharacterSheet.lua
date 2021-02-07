@@ -21,7 +21,7 @@ local function OnSetHelmetOptionState(ui, method, state)
 end
 
 local function FireCharacterSheetPointListeners(character, stat, statType)
-	InvokeListenerCallbacks(Listeners.CharacterBasePointsChanged, character, stat, statType)
+	InvokeListenerCallbacks(Listeners.CharacterSheetPointChanged, character, stat, statType)
 end
 
 local function OnSheetEvent(ui, call, param1, ...)

@@ -106,18 +106,24 @@ function CharacterData:HasActiveStatus(status)
 	return false
 end
 
-function CharacterData:SetOffStage()
+---@param force boolean|nil Forces the stage change, otherwise it's skipped if they're already on stage.
+function CharacterData:SetOffStage(force)
 	if self:Exists() then
-		SetOnStage(self.UUID, 0)
-		return true
+		if force == true or ObjectIsOnStage(self.UUID) == 1 then
+			SetOnStage(self.UUID, 0)
+			return true
+		end
 	end
 	return false
 end
 
-function CharacterData:SetOnStage()
+---@param force boolean|nil Forces the stage change, otherwise it's skipped if they're already on stage.
+function CharacterData:SetOnStage(force)
 	if self:Exists() then
-		SetOnStage(self.UUID, 1)
-		return true
+		if force == true or ObjectIsOnStage(self.UUID) == 0 then
+			SetOnStage(self.UUID, 1)
+			return true
+		end
 	end
 	return false
 end
@@ -150,6 +156,63 @@ function CharacterData:ApplyOrSetStatus(status, duration, force, source)
 			end
 		end
 	end
+end
+
+
+--- Equips a root template, or creates and equips one if the item doesn't exist.
+---@param template string
+---@param all boolean|nil Equip all instances.
+---@return EsvItem|EsvItem[]
+function CharacterData:EquipTemplate(template, all)
+	local character = self:GetCharacter()
+	if character then
+		local items = character:GetInventoryItems()
+		-- Slots 1-13 are equipment slots
+		if items and #items > 13 then
+			local foundItems
+			if all == true then
+				foundItems = {}
+			end
+			for i=14,#items do
+				local v = items[i]
+				local item = Ext.GetItem(v)
+				if item and item.RootTemplate and item.RootTemplate.Id == template then
+					if ItemIsEquipable(v) == 1 then
+						CharacterEquipItem(self.UUID, v)
+						if all ~= true then
+							return item
+						else
+							foundItems[#foundItems+1] = item
+						end
+						--NRD_CharacterEquipItem(self.UUID, v, item.Stats.ItemSlot, 0, 0, 1, 1)
+					end
+				end
+			end
+			return foundItems
+		end
+		local item = GameHelpers.Item.CreateItemByTemplate(template)
+		if item then
+			ItemToInventory(item.MyGuid, self.UUID)
+			if ItemIsEquipable(item.MyGuid) == 1 then
+				CharacterEquipItem(self.UUID, item.MyGuid)
+			end
+			return item
+		end
+	end
+	return nil
+end
+
+---@param resurrect boolean|nil
+function CharacterData:FullRestore(resurrect)
+	if self:Exists() then
+		if resurrect and self:IsDead(false) then
+			CharacterResurrect(self.UUID)
+		end
+		CharacterSetHitpointsPercentage(self.UUID, 100.0)
+		CharacterSetArmorPercentage(self.UUID, 100.0)
+		CharacterGetMagicArmorPercentage(self.UUID, 100.0)
+	end
+	return false
 end
 
 Classes.CharacterData = CharacterData

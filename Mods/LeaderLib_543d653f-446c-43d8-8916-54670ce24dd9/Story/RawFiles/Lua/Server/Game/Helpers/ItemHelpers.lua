@@ -112,6 +112,31 @@ function GameHelpers.Item.CreateItemByStat(statName, level, rarity, skipLevelChe
     return nil
 end
 
+---@param template string
+---@param setProperties ItemDefinition|nil
+---@return EsvItem
+function GameHelpers.Item.CreateItemByTemplate(template, setProperties)
+    local constructor = Ext.CreateItemConstructor(template)
+    ---@type ItemDefinition
+    local props = constructor[1]
+    if setProperties then
+        for k,v in pairs(setProperties) do
+            if props[k] then
+                props[k] = v
+            else
+                Ext.PrintError(string.format("[LeaderLib:GameHelpers.Item.CreateItemByTemplate] Property %s doesn't exist for ItemDefinition", k))
+            end
+        end
+    end
+    local item = constructor:Construct()
+    if item ~= nil then
+        return item
+    else
+        Ext.PrintError(string.format("[LeaderLib:GameHelpers.Item.CreateItemByTemplate] Error constructing item when invoking Construct() - Returned item is nil for template %s.", template))
+    end
+    return nil
+end
+
 ---@param char string
 ---@param item string
 ---@return string|nil

@@ -31,4 +31,4 @@ function ProjectileHitData:Create(target, attacker, projectile, position, skill)
     return this
 end
 
-Classes["ProjectileHitData"] = ProjectileHitData
+Classes.ProjectileHitData = ProjectileHitData

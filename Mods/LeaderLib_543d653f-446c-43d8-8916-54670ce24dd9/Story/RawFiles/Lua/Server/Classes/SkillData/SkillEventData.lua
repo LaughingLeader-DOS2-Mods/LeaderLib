@@ -123,4 +123,4 @@ function SkillEventData:ToString()
 	return Ext.JsonStringify(printableData)
 end
 
-Classes["SkillEventData"] = SkillEventData
+Classes.SkillEventData = SkillEventData

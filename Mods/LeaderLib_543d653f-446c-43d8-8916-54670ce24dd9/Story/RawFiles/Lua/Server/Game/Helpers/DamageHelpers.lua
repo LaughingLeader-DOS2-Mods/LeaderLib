@@ -53,12 +53,12 @@ end
 
 Ext.NewCall(ReduceDamage_Call, "LeaderLib_Hit_ReduceDamage", "(GUIDSTRING)_Target, (GUIDSTRING)_Attacker, (INTEGER64)_Handle, (REAL)_Percentage, (INTEGER)_IsHitHandle")
 
----Increase damage by a percentage (0.5 = 50%).
----@param target string
----@param attacker string
----@param handle integer
----@param damageIncrease number
----@param isHitType boolean
+---Increase damage by a percentage (0.5 = 50%). This increases damage for all damage types in the hit.
+---@param target string The target object.
+---@param attacker string The attacking character.
+---@param handle integer The hit or status handle.
+---@param damageIncrease number The percentage to increase damage by. 0.5 = 50%, 2.0 = 200%.
+---@param isHitType boolean Whether the handle is from a STATUS or a HIT. NRD_OnPrepareHit uses hit handles, while NRD_OnHit uses status handles.
 ---@return boolean
 local function IncreaseDamage(target, attacker, handle, damageIncrease, isHitType)
     handle = Common.SafeguardParam(handle, "number", nil)

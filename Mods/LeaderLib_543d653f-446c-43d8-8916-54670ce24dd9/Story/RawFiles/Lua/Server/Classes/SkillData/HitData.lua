@@ -40,4 +40,4 @@ function HitData:Create(target, attacker, damage, handle, skill)
     return this
 end
 
-Classes["HitData"] = HitData
+Classes.HitData = HitData

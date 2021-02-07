@@ -46,6 +46,7 @@ end)
 
 Ext.RegisterOsirisListener("GameStarted", 2, "after", function(region, isEditorMode)
 	Ext.BroadcastMessage("LeaderLib_SyncFeatures", Ext.JsonStringify(Features), nil)
+	MonitoredCharacterData:Update(region)
 end)
 
 local function OnLog(logType, ...)

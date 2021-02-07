@@ -66,3 +66,18 @@ end
 for i=1,16 do
 	Ext.RegisterOsirisListener("LeaderLog_Log", i, "before", OnLog)
 end
+
+local function GlobalFlagChanged(flag, enabled)
+	local flagListeners = Listeners.GlobalFlagChanged[flag]
+	if flagListeners then
+		InvokeListenerCallbacks(flagListeners, flag, enabled)
+	end
+end
+
+Ext.RegisterOsirisListener("GlobalFlagSet", 1, "after", function(flag)
+	GlobalFlagChanged(flag, true)
+end)
+
+Ext.RegisterOsirisListener("GlobalFlagCleared", 1, "after", function(flag)
+	GlobalFlagChanged(flag, false)
+end)

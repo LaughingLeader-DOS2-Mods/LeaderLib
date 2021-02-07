@@ -109,19 +109,11 @@ Listeners = {
 	---Client-side event for when sheet buttons are clicked.
 	---@type table<string, fun(character:EclCharacter, stat:string, statType:string):void>
 	CharacterSheetPointChanged = {},
-	TimerFinished = {},
-	---@type table<string,fun(uuid1:string|nil, uuid2:string|nil):void>
-	NamedTimerFinished = {},
 	FeatureEnabled = {},
 	FeatureDisabled = {},
 	Initialized = {},
 	ModuleResume = {},
 	SessionLoaded = {},
-	OnPrepareHit = {},
-	OnHit = {},
-	OnSkillHit = {},
-	BeforeLuaReset = {},
-	LuaReset = {},
 	ModSettingsLoaded = {},
 	TurnDelayed = {},
 	GetTooltipSkillDamage = {},
@@ -138,19 +130,7 @@ Listeners = {
 	-- Client-side Mod Menu events
 	---Callbacks for when a mod's Mod Menu section is created in the options menu.
 	---@type fun(uuid:string, settings:ModSettings, ui:UIObject, mainMenu:MainMenuMC):void[]
-	ModMenuSectionCreated = {},
-
-	--Server-side hit listeners/callbacks, for mod compatibility.
-	---Called from HitOverrides.ComputeCharacterHit at the end of the function, if certain features are enabled or listeners are registered.
-	---@type ExtComputeCharacterHitCallback[]
-	ComputeCharacterHit = {},
-	---Called from HitOverrides.DoHit, which overrides Game.Math.DoHit to wrap listener callbacks. The original Game.Math.DoHit is called for calculation.
-	---If the original function was overwritten by a mod, this should still work.
-	---@type DoHitCallback[]
-	DoHit = {},
-	---Called from a Game.Math.ApplyDamageCharacterBonuses override. This is where resistance penetration happens. 
-	---@type ApplyDamageCharacterBonusesCallback[]
-	ApplyDamageCharacterBonuses = {},
+	ModMenuSectionCreated = {}
 }
 
 SkillListeners = {}

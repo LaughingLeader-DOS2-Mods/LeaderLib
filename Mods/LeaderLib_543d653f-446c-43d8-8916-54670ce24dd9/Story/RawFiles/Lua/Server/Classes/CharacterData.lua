@@ -33,6 +33,11 @@ function CharacterData:GetCharacter()
 	return Ext.GetCharacter(self.UUID)
 end
 
+---@return boolean
+function CharacterData:Exists()
+	return not StringHelpers.IsNullOrEmpty(self.UUID) and ObjectExists(self.UUID) == 1
+end
+
 ---@param allowPlayingDead boolean
 ---@return boolean
 function CharacterData:IsDead(allowPlayingDead)
@@ -53,6 +58,22 @@ function CharacterData:GetPosition(asVector3)
 	else
 		return x,y,z
 	end
+end
+
+function CharacterData:SetOffStage()
+	if self:Exists() then
+		SetOnStage(self.UUID, 0)
+		return true
+	end
+	return false
+end
+
+function CharacterData:SetOnStage()
+	if self:Exists() then
+		SetOnStage(self.UUID, 1)
+		return true
+	end
+	return false
 end
 
 Classes.CharacterData = CharacterData

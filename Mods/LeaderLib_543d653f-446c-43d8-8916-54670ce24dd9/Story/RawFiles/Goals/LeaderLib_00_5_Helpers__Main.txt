@@ -2264,6 +2264,11 @@ AND
 SysIsActive(_Goal2)
 THEN
 DB_NOOP(1);
+
+PROC
+LeaderLib_ClearDatabase((STRING)_Predicate, (INTEGER)_Arity)
+THEN
+SysClear(_Predicate, _Arity);
 //END_REGION
 EXITSECTION
 

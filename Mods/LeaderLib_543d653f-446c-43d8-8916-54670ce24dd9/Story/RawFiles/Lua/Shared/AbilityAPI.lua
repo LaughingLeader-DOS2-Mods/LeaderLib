@@ -326,7 +326,7 @@ if Ext.IsClient() then
 	end
 
 	if Vars.DebugMode then
-		RegisterListener("LuaReset", function()
+		Ext.RegisterConsoleCommand("leaderlib_ap_resetfromstored", function()
 			SetAvailablePointsFromStored()
 		end)
 	end

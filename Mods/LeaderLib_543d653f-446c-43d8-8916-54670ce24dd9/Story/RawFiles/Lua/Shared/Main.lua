@@ -12,7 +12,7 @@ function RegisterListener(event, callback, param)
 			table.insert(Listeners[event], callback)
 		end
 	else
-		Ext.PrintError("[LeaderLib__Main.lua:RegisterListener] Event ("..tostring(event)..") is not a valid LeaderLib listener event!")
+		Ext.PrintError(string.format("[LeaderLib__Main.lua:RegisterListener] Event (%s) is not a valid LeaderLib listener event! Context: %s", event, Ext.IsServer() and "SERVER" or "CLIENT"))
 	end
 end
 

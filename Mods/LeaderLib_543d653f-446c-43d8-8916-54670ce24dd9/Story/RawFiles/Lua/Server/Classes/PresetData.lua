@@ -140,4 +140,4 @@ function PresetData:GetSkills()
 	return Ext.GetSkillSet(self.SkillSet)
 end
 
-Classes["PresetData"] = PresetData
+Classes.PresetData = PresetData

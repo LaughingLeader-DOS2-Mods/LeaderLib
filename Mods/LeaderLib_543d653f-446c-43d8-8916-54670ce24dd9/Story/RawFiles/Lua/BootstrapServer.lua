@@ -3,6 +3,7 @@ PersistentVars.TimerData = {}
 PersistentVars.StatusSource = {}
 PersistentVars.ForceMoveData = {}
 
+Ext.Require("BootstrapShared.lua")
 -- Server-side Listeners
 Listeners.TimerFinished = {}
 ---@type table<string,fun(uuid1:string|nil, uuid2:string|nil):void>
@@ -83,5 +84,4 @@ Ext.RegisterListener("SessionLoaded", SessionLoaded)
 
 -- Ext.RegisterListener("SessionLoading", LeaderLib_GameSessionLoad)
 
-Ext.Require("BootstrapShared.lua")
 Ext.Require("Server/_InitServer.lua")

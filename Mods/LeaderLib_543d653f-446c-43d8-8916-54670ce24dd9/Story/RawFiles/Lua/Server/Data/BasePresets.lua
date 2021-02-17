@@ -51,3 +51,13 @@ Data.Presets = {
 		Wizard = p:Create("Wizard", "Class_Wizard", "Class_Wizard_Act2", "", true),
 	}
 }
+
+---@param group string Start|Act2|Preview
+---@param id string The preset's ClassType value.
+---@param data PresetData
+function Data.AddPreset(group, id, data)
+	if Data.Presets[group] == nil then
+		Data.Presets[group] = {}
+	end
+	Data.Presets[group][id] = data
+end

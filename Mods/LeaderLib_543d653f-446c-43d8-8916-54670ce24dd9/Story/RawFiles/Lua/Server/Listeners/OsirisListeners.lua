@@ -1,3 +1,11 @@
+local function SendMissingExtenderMessage(uuid)
+	local character = Ext.GetCharacter(uuid)
+	if character and character.UserID ~= character.ReservedUserID and character.IsPlayer and CharacterIsControlled(uuid) == 1 then
+		return Ext.PlayerHasExtender(uuid)
+	end
+	return false
+end
+
 Ext.RegisterOsirisListener("UserConnected", 3, "after", function(id, username, profileId)
 	if Ext.GetGameState() == "Running" then
 		if GlobalGetFlag("LeaderLib_AutoUnlockInventoryInMultiplayer") == 1 then
@@ -7,14 +15,12 @@ Ext.RegisterOsirisListener("UserConnected", 3, "after", function(id, username, p
 
 		local host = CharacterGetHostCharacter()
 		local uuid = GetCurrentCharacter(id)
-		if uuid ~= nil then
-			if not StringHelpers.IsNullOrEmpty(uuid) and host ~= uuid and not Ext.PlayerHasExtender(uuid) then
-				OpenMessageBox(uuid, "LeaderLib_MessageBox_ExtenderNotInstalled_Client")
-				local text = GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageText"):gsub("%[1%]", username)
-				OpenMessageBox(host, text)
-				--local hostText = GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageText"):gsub("%[1%]", username)
-				--GameHelpers.UI.ShowMessageBox(hostText, host, 0, GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageTitle"))
-			end
+		if not StringHelpers.IsNullOrEmpty(uuid) and host ~= uuid and SendMissingExtenderMessage(uuid) then
+			OpenMessageBox(uuid, "LeaderLib_MessageBox_ExtenderNotInstalled_Client")
+			local text = GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageText"):gsub("%[1%]", username)
+			OpenMessageBox(host, text)
+			--local hostText = GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageText"):gsub("%[1%]", username)
+			--GameHelpers.UI.ShowMessageBox(hostText, host, 0, GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageTitle"))
 		end
 	end
 end)
@@ -28,18 +34,6 @@ Ext.RegisterOsirisListener("UserEvent", 2, "after", function(id, event)
 				table.insert(players, GetUUID(v[1]))
 			end
 			Ext.PostMessageToUser(id, "LeaderLib_UnlockCharacterInventory", Ext.JsonStringify(players))
-		end
-	end
-end)
-
-Ext.RegisterOsirisListener("CharacterReservedUserIDChanged", 3, "after", function(char, old, new)
-	if Ext.GetGameState() == "Running" and CharacterIsControlled(char) == 1 then
-		if not Ext.PlayerHasExtender(char) then
-			local host = CharacterGetHostCharacter()
-			local username = GetUserName(new) or tostring(new)
-			local text = GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageText"):gsub("%[1%]", username)
-			OpenMessageBox(char, "LeaderLib_MessageBox_ExtenderNotInstalled_Client")
-			OpenMessageBox(host, text)
 		end
 	end
 end)

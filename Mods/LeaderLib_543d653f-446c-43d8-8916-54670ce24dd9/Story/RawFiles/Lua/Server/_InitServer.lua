@@ -1,5 +1,6 @@
 Ext.Require("Server/Classes/_Init.lua")
 Ext.Require("Server/Data/BasePresets.lua")
+Ext.Require("Server/ScriptManager.lua")
 Ext.Require("Server/Game/Helpers/MiscHelpers.lua")
 Ext.Require("Server/Game/Helpers/DamageHelpers.lua")
 Ext.Require("Server/Game/Helpers/HitHelpers.lua")

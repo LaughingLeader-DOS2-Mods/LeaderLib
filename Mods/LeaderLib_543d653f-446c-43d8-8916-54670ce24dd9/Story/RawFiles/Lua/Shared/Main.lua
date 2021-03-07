@@ -1,3 +1,6 @@
+---@class LeaderLib:table
+---@field RegisterListener fun(event:string, callback:InputEventCallback, param:any|nil):void
+
 --- Registers a function to call when a specific Lua LeaderLib event fires.
 ---@param event string OnPrepareHit|OnHit|CharacterSheetPointChanged|CharacterBasePointsChanged|TimerFinished|FeatureEnabled|FeatureDisabled|Initialized|ModuleResume|SessionLoaded
 ---@param callback function

@@ -97,41 +97,12 @@ IgnoredMods = {
 	["3da57b9d-8b41-46c7-a33c-afb31eea38a3"] = true,--Armor Sets
 }
 
----If 
 ---@alias DoHitCallback fun(hit:HitRequest, damageList:DamageList, statusBonusDmgTypes:DamageList, string:HitType, target:StatCharacter, attacker:StatCharacter):HitRequest
 
 ---@alias ApplyDamageCharacterBonusesCallback fun(character:StatCharacter, attacker:StatCharacter, damageList:DamageList, preModifiedDamageList:DamageItem[], resistancePenetration:table<string,integer>)
 
-Listeners = {
-	---Server-side event for when base ability or attribute values change on players. Can fire from character sheet interaction or after respec.
-	---@type table<string, fun(uuid:string, stat:string, lastVal:integer, nextVal:integer, statType:string):void>
-	CharacterBasePointsChanged = {},
-	---Client-side event for when sheet buttons are clicked.
-	---@type table<string, fun(character:EclCharacter, stat:string, statType:string):void>
-	CharacterSheetPointChanged = {},
-	FeatureEnabled = {},
-	FeatureDisabled = {},
-	Initialized = {},
-	ModuleResume = {},
-	SessionLoaded = {},
-	ModSettingsLoaded = {},
-	TurnDelayed = {},
-	GetTooltipSkillDamage = {},
-	GetTooltipSkillParam = {},
-	SyncData = {},
-	ClientDataSynced = {},
-	ClientCharacterChanged = {},
-	---@type fun(ui:UIObject, player:EclCharacter, startIndex:integer, talentEnumReference:table<string,integer>):void[]
-	OnTalentArrayUpdating = {},
-	---Callbacks for when ModSettings are synced on both the server and client.
-	---@type fun(uuid:string, settings:ModSettings):void[]
-	ModSettingsSynced = {},
-
-	-- Client-side Mod Menu events
-	---Callbacks for when a mod's Mod Menu section is created in the options menu.
-	---@type fun(uuid:string, settings:ModSettings, ui:UIObject, mainMenu:MainMenuMC):void[]
-	ModMenuSectionCreated = {}
-}
+Listeners = {}
+Ext.Require("Shared/Listeners.lua")
 
 SkillListeners = {}
 ModListeners = {

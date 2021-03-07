@@ -87,7 +87,7 @@ local function ReplacePlaceholders(str, character)
 			output = string.gsub(output, escapedReplace, value)
 		end
 	end
-	local length = #Listeners.GetTooltipSkillParam
+	local length = Listeners.GetTooltipSkillParam and #Listeners.GetTooltipSkillParam or 0
 	if length > 0 then
 		local value = ""
 		for v in string.gmatch(output, "%[Skill:.-%]") do

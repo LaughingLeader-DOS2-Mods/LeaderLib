@@ -42,6 +42,8 @@ Ext.Require("Client/UI/Debug.lua")
 Ext.Require("Client/UI/TooltipHandler.lua")
 Ext.Require("Client/UI/ControllerUIHelpers.lua")
 Ext.Require("Client/UI/UIFeatures.lua")
+Ext.Require("Client/UI/TalentManager.lua")
 Ext.Require("Client/UI/InterfaceCommands.lua")
 
 Ext.Require("Client/ClientNetMessages.lua")
+Ext.Require("Client/InputManager.lua")

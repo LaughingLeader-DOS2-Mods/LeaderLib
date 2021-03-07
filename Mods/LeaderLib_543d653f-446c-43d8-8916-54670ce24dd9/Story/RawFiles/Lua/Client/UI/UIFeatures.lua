@@ -102,7 +102,9 @@ local function DisplayTalents(ui, call, ...)
 				end
 			end
 		end
-		if player.Stats.TALENT_RogueLoreDaggerBackStab or (GameSettings.Settings.BackstabSettings.Player.Enabled and GameSettings.Settings.BackstabSettings.Player.TalentRequired) then
+		if player.Stats.TALENT_RogueLoreDaggerBackStab or 
+			(GameSettings.Settings.BackstabSettings.Player.Enabled and GameSettings.Settings.BackstabSettings.Player.TalentRequired) 
+		then
 			 -- Backstab doesn't have an icon check set, while this RogueLoreDaggerBackStab does
 			--local talentEnumName = "RogueLoreDaggerBackStab" -- "Backstab"
 			if not IsInArray(ui, "talent_array", Data.TalentEnum.RogueLoreDaggerBackStab, 1, 3) then
@@ -115,6 +117,7 @@ local function DisplayTalents(ui, call, ...)
 				end
 			end
 		end
+		TalentManager.Update(ui, player)
 		local length = #Listeners.OnTalentArrayUpdating
 		if length > 0 then
 			for i=1,length do
@@ -126,6 +129,7 @@ local function DisplayTalents(ui, call, ...)
 				end
 			end
 		end
+		UI.PrintArray(ui, "talent_array")
 	end
 end
 
@@ -175,6 +179,7 @@ local function DisplayTalents_CC(ui, call, ...)
 			-- end
 			-- UI.PrintArray(ui, "talentArray")
 		end
+		TalentManager.Update_CC(ui, talent_mc, player)
 	end
 end
 

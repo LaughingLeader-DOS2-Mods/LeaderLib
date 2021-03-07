@@ -16,7 +16,7 @@ local function SetIsRegistered(name, arity)
 	ScriptManager.RegisteredListenerLookup[name][arity] = true
 end
 
-local function InvokeHandlers(name)
+local function InvokeHandlers(name, ...)
 	local callbacks = ScriptManager.RegisteredHandlers[name]
 	local length = callbacks and #callbacks or 0
 	if length > 0 then
@@ -43,7 +43,7 @@ function ScriptManager.RegisterHandler(name, handler, arity, event)
 		ScriptManager.RegisteredHandlers[name] = {}
 		Ext.RegisterOsirisListener(name, arity, event, function(...)
 			if Ext.GetGameState() == "Running" then
-				InvokeHandlers(name)
+				InvokeHandlers(name, ...)
 			end
 		end)
 		SetIsRegistered(name, arity)

@@ -33,6 +33,7 @@ local function IsRegisteredUnusedTalent(name)
 end
 
 ---@param character EclCharacter
+---@param name string
 ---@return boolean
 local function HasCustomTalentWithName(character, name)
 	--Ext.Print("Checking if char has talent: " .. name)
@@ -68,20 +69,20 @@ local function GetArrayIndexStart(ui, arrayName, offset)
 end
 
 ---@param character EclCharacter
----@param talent string
-local function CharacterMeetsTalentRequirements(character, talent)
+---@param name string
+local function CharacterMeetsTalentRequirements(character, name)
 	Ext.PrintWarning("Talent Requirements not yet implemented! Returning true by default...")
 	return true
 end
 
 
 ---@param character EclCharacter
----@param talent string
+---@param name string
 ---@return TalentState
-local function GetTalentState(character, talent)
+local function GetTalentState(character, name)
 	--Ext.Print("GetTalentState " .. talent)
-	if character.Stats["TALENT_" .. talent] then Ext.Print("Selected") return TalentState.Selected
-	elseif not CharacterMeetsTalentRequirements(character, talent) then Ext.Print("Locked") return TalentState.Locked
+	if character.Stats["TALENT_" .. name] then Ext.Print("Selected") return TalentState.Selected
+	elseif not CharacterMeetsTalentRequirements(character, name) then Ext.Print("Locked") return TalentState.Locked
 	else Ext.Print("Selectable") return TalentState.Selectable
 	end
 end

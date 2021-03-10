@@ -47,3 +47,4 @@ Ext.Require("Client/UI/InterfaceCommands.lua")
 
 Ext.Require("Client/ClientNetMessages.lua")
 Ext.Require("Client/InputManager.lua")
+Ext.Require("Client/UI/TalentsController.lua")

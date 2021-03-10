@@ -36,10 +36,8 @@ end
 ---@param name string
 ---@return boolean
 local function HasCustomTalentWithName(character, name)
-	--Ext.Print("Checking if char has talent: " .. name)
 	local talentNamePrefixed = "TALENT_" .. name
 	if character ~= nil and character.Stats ~= nil and character.Stats[talentNamePrefixed] == true then
-		Ext.Print("Character has custom talent: " .. name)
 		return true
 	end
 	return false
@@ -69,9 +67,18 @@ local function GetArrayIndexStart(ui, arrayName, offset)
 end
 
 ---@param character EclCharacter
----@param name string
-local function CharacterMeetsTalentRequirements(character, name)
-	Ext.PrintWarning("Talent Requirements not yet implemented! Returning true by default...")
+---@param talent string
+local function CharacterMeetsTalentRequirements(character, talent)
+	if TalentManager.RequirementHandlers[talent] == nil then
+		--Ext.PrintWarning("no requirement handler")
+		return true
+	end
+	for modID in pairs(TalentManager.RequirementHandlers[talent]) do
+		local requirementsHandler = TalentManager.RequirementHandlers[talent][modID]
+		if requirementsHandler and requirementsHandler(character) == false then
+			return false
+		end
+	end
 	return true
 end
 
@@ -87,29 +94,18 @@ local function GetTalentState(character, name)
 	end
 end
 
-local testTalents =
-{
-	"SpillNoBlood",
-	"FolkDancer",
-	"Scientist"
-}
-
 ---@param character EclCharacter
 ---@return table
 local function BuildTalentInfoTableForRegisteredTalents(character)
 	local talentInfoTable = {}
-	Ext.PrintWarning("Currently adding hardcoded talents, see local var testTalents! (TalentsController.lua, line 89)")
-	--for name, count in pairs(TalentManager.RegisteredCount) do
-	for i=1,#testTalents,1 do
-		local name = testTalents[i]
+	for talent in pairs(TalentManager.RegisteredTalents) do
 		table.insert(talentInfoTable, {
-			talentId = Data.TalentEnum[name],
-			talentName = Data.Talents[Data.TalentEnum[name]],
-			talentState = GetTalentState(character, name),
-			softSelected = IsSelectedInMenu(name)
+			talentId = Data.TalentEnum[talent],
+			talentName = Data.Talents[Data.TalentEnum[talent]],
+			talentState = GetTalentState(character, talent),
+			softSelected = IsSelectedInMenu(talent)
 		})
 	end
-	--end
 	return talentInfoTable
 end
 
@@ -213,4 +209,18 @@ Ext.RegisterListener("SessionLoaded", function()
 			index = index+3
 		end
     end, "Before")
+end)
+
+local function EnableTestingTalents()
+	TalentManager.EnableTalent("SpillNoBlood", "OpenTalents", function (character) return true end)
+	TalentManager.EnableTalent("FolkDancer", "OpenTalents", function (character) return true end)
+	TalentManager.EnableTalent("Scientist", "OpenTalents", function (character) return false end)
+	TalentManager.EnableTalent("Jitterbug", "OpenTalents", function (character) return false end)
+	TalentManager.EnableTalent("GoldenMage", "OpenTalents")
+	TalentManager.EnableTalent("GoldenMage", "OpenTalents2", function (character) return false end)
+	TalentManager.EnableTalent("GoldenMage", "OpenTalents3", function (character) return true end)
+end
+
+Ext.RegisterConsoleCommand("addControllerTalents", function(cmd)
+	EnableTestingTalents()
 end)

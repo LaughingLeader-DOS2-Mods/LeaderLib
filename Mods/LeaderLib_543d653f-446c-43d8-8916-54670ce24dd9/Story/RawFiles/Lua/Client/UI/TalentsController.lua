@@ -2,11 +2,6 @@
 TalentManager.SelectedTalents = {}
 TalentManager.ControllerUIAvailablePoints = 0
 
-local UIType = {
-	statsPanel_c = 63,
-	msgBox_c = 75,
-}
-
 local msgBox_c_ButtonPressed = {
 	Yes = 1,
 	No = 2,
@@ -104,6 +99,7 @@ local testTalents =
 ---@return table
 local function BuildTalentInfoTableForRegisteredTalents(character)
 	local talentInfoTable = {}
+	Ext.PrintWarning("Currently adding hardcoded talents, see local var testTalents!")
 	--for name, count in pairs(TalentManager.RegisteredCount) do
 	for i=1,#testTalents,1 do
 		local name = testTalents[i]
@@ -141,7 +137,7 @@ end
 
 Ext.RegisterListener("SessionLoaded", function()
 
-	Ext.RegisterUINameCall("removePointsTalent", function(ui, call, talentId, ...)
+	Ext.RegisterUITypeCall(Data.UIType.statsPanel_c, "removePointsTalent", function(ui, call, talentId, ...)
 		Ext.Print("RemovePointsTalent")
 		if IsRegisteredUnusedTalent(Data.Talents[talentId]) and IsSelectedInMenu(Data.Talents[talentId]) then
 			ui:GetRoot().mainpanel_mc.stats_mc.talents_mc.setBtnVisible(false, talentId, false)
@@ -150,7 +146,7 @@ Ext.RegisterListener("SessionLoaded", function()
 		end
 	end, "After")
 
-	Ext.RegisterUINameCall("ButtonPressed", function(ui, call, buttonPressedType, deviceId)
+	Ext.RegisterUITypeInvokeListener(Data.UIType.statsPanel_c, "ButtonPressed", function(ui, call, buttonPressedType, deviceId)
 		Ext.Print("buttonPressed")
 		if buttonPressedType == msgBox_c_ButtonPressed.No then
 			TalentManager.SelectedTalents = {}
@@ -165,7 +161,7 @@ Ext.RegisterListener("SessionLoaded", function()
 		end
 	end, "After")
 
-	Ext.RegisterUINameCall("addPointsTalent", function(ui, call, talentId, ...)
+	Ext.RegisterUITypeCall(Data.UIType.statsPanel_c, "addPointsTalent", function(ui, call, talentId, ...)
 		--Ext.Print(Data.Talents[talentId])
 		if IsRegisteredUnusedTalent(Data.Talents[talentId]) then
 			ui:GetRoot().mainpanel_mc.stats_mc.talents_mc.setBtnVisible(false, talentId, false)
@@ -174,7 +170,7 @@ Ext.RegisterListener("SessionLoaded", function()
 		end
 	end, "After")
 
-	Ext.RegisterUITypeInvokeListener(UIType.statsPanel_c, "updateArraySystem", function(ui, call, ...)
+	Ext.RegisterUITypeInvokeListener(Data.UIType.statsPanel_c, "updateArraySystem", function(ui, call, ...)
 		local character = GameHelpers.Client.GetCharacter()
 		local indexBtnArray = GetArrayIndexStart(ui, "lvlBtnTalent_array", 1)
 

@@ -67,13 +67,11 @@ local function GetArrayIndexStart(ui, arrayName, offset)
 	return -1
 end
 
-ToggleVar = true
-
 ---@param character EclCharacter
 ---@param talent string
 local function CharacterMeetsTalentRequirements(character, talent)
-	--Ext.PrintWarning("Talent Requirements not yet implemented! Returning true by default...")
-	return ToggleVar
+	Ext.PrintWarning("Talent Requirements not yet implemented! Returning true by default...")
+	return true
 end
 
 
@@ -99,7 +97,7 @@ local testTalents =
 ---@return table
 local function BuildTalentInfoTableForRegisteredTalents(character)
 	local talentInfoTable = {}
-	Ext.PrintWarning("Currently adding hardcoded talents, see local var testTalents!")
+	Ext.PrintWarning("Currently adding hardcoded talents, see local var testTalents! (TalentsController.lua, line 89)")
 	--for name, count in pairs(TalentManager.RegisteredCount) do
 	for i=1,#testTalents,1 do
 		local name = testTalents[i]

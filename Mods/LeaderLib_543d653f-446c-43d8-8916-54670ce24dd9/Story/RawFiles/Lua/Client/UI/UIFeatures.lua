@@ -139,7 +139,7 @@ local function DisplayTalents(ui, call, ...)
 				end
 			end
 		end
-		--TalentManager.Update(ui, player)
+		TalentManager.Update(ui, player)
 		local length = #Listeners.OnTalentArrayUpdating
 		if length > 0 then
 			for i=1,length do
@@ -151,7 +151,7 @@ local function DisplayTalents(ui, call, ...)
 				end
 			end
 		end
-		UI.PrintArray(ui, "talent_array")
+		--UI.PrintArray(ui, "talent_array")
 	end
 end
 

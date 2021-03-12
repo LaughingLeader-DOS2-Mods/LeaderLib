@@ -45,8 +45,6 @@ end
 
 function TalentManager.Gamepad.UpdateTalent(ui, player, talentId, talentEnum, lvlBtnTalent_array, talentState)
 	if TalentManager.HasTalent(player, talentId) then
-		Ext.Print("Unselected a talent...")
-		Ext.Print(talentId)
 		UnselectTalent(talentId)
 	end
 	local isSelected = IsSelectedInMenu(talentId)
@@ -57,7 +55,6 @@ end
 function TalentManager.Gamepad.RegisterListeners()
 	Ext.RegisterUITypeCall(Data.UIType.statsPanel_c, "removePointsTalent", function(ui, call, talentEnum, ...)
 		local talentId = Data.Talents[talentEnum]
-		Ext.Print(call, talentEnum, talentId)
 		if TalentManager.IsRegisteredTalent(talentId) and IsSelectedInMenu(talentId) then
 			local talents_mc = ui:GetRoot().mainpanel_mc.stats_mc.talents_mc
 			talents_mc.setBtnVisible(false, talentId, false)
@@ -67,22 +64,18 @@ function TalentManager.Gamepad.RegisterListeners()
 	end, "After")
 
 	Ext.RegisterUITypeInvokeListener(Data.UIType.statsPanel_c, "ButtonPressed", function(ui, call, buttonPressedType, deviceId)
-		Ext.Print("buttonPressed")
 		if buttonPressedType == msgBox_c_ButtonPressed.No then
 			TalentManager.Gamepad.SelectedTalents = {}
 		end
 	end, "After")
 
 	Ext.RegisterUINameInvokeListener("setStatPoints", function(ui, call, statsType, pointsAmount)
-		Ext.Print("setStatPoints")
-		-- statsType = 3 -> talentPoints
 		if statsType == 3 then
 			TalentManager.Gamepad.AvailablePoints = pointsAmount
 		end
 	end, "After")
 
 	Ext.RegisterUITypeCall(Data.UIType.statsPanel_c, "addPointsTalent", function(ui, call, talentEnum, ...)
-		--Ext.Print(Data.Talents[talentId])
 		local talentId = Data.Talents[talentEnum]
 		if TalentManager.IsRegisteredTalent(talentId) then
 			ui:GetRoot().mainpanel_mc.stats_mc.talents_mc.setBtnVisible(false, talentId, false)

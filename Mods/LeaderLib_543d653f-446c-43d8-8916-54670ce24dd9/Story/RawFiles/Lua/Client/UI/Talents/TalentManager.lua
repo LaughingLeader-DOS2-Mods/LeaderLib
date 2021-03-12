@@ -346,7 +346,6 @@ function TalentManager.Update(ui, player)
 			if not TalentManager.TalentIsInArray(talentEnum, talent_array) then
 				local talentState = TalentManager.GetTalentState(player, talentId)
 				local name,requirementsMet = TalentManager.GetTalentDisplayName(player, talentId, talentState)
-				Ext.Print(talentId, talentEnum, name)
 				if not Vars.ControllerEnabled then
 					--addTalent(displayName:String, id:Number, talentState:Number)
 					talent_array[i] = name

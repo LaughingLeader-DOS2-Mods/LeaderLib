@@ -165,18 +165,18 @@ function GameHelpers.Status.SetDuration(obj, statusId, duration, allInstances, a
 				if allInstances == true then
 					for _,status in pairs(character:GetStatusObjects()) do
 						if status.StatusId == statusId then
-							status.RequestClientSync = true
 							status.CurrentLifeTime = duration
 							status.LifeTime = duration
+							status.RequestClientSync = true
 							success = true
 						end
 					end
 				else
 					local status = character:GetStatus(statusId)
 					if status ~= nil then
-						status.RequestClientSync = true
 						status.CurrentLifeTime = duration
 						status.LifeTime = duration
+						status.RequestClientSync = true
 					end
 				end
 

@@ -1,12 +1,19 @@
 local ts = Classes.TranslatedString
 
----@alias TalentRequirementCheckCallback fun(talentid:string, player:EclCharacter):boolean
+---@alias TalentRequirementCheckCallback fun(talentId:string, player:EclCharacter):boolean
+
+local TalentState = {
+	Selected = 0,
+	Selectable = 2,
+	Locked = 3
+}
 
 TalentManager = {
 	RegisteredTalents = {},
 	RegisteredCount = {},
 	---@type table<string, table<string, TalentRequirementCheckCallback>>
-	RequirementHandlers = {}
+	RequirementHandlers = {},
+	TalentState = TalentState
 }
 TalentManager.__index = TalentManager
 
@@ -61,13 +68,13 @@ local missingTalents = {
 	Scientist = "TALENT_Scientist",
 	--Raistlin = "TALENT_Raistlin",
 	MrKnowItAll = "TALENT_MrKnowItAll",
-	WhatARush = "TALENT_WhatARush",
-	FaroutDude = "TALENT_FaroutDude",
+	--WhatARush = "TALENT_WhatARush",
+	--FaroutDude = "TALENT_FaroutDude",
 	--Leech = "TALENT_Leech",
 	--ElementalAffinity = "TALENT_ElementalAffinity",
 	--FiveStarRestaurant = "TALENT_FiveStarRestaurant",
 	Bully = "TALENT_Bully",
-	ElementalRanger = "TALENT_ElementalRanger",
+	--ElementalRanger = "TALENT_ElementalRanger",
 	LightningRod = "TALENT_LightningRod",
 	Politician = "TALENT_Politician",
 	WeatherProof = "TALENT_WeatherProof",
@@ -77,7 +84,7 @@ local missingTalents = {
 	--IceKing = "TALENT_IceKing",
 	Courageous = "TALENT_Courageous",
 	GoldenMage = "TALENT_GoldenMage",
-	WalkItOff = "TALENT_WalkItOff",
+	--WalkItOff = "TALENT_WalkItOff",
 	FolkDancer = "TALENT_FolkDancer",
 	SpillNoBlood = "TALENT_SpillNoBlood",
 	--Stench = "TALENT_Stench",
@@ -118,7 +125,7 @@ local missingTalents = {
 	--Quest_TradeSecrets = "TALENT_Quest_TradeSecrets",
 	--Quest_GhostTree = "TALENT_Quest_GhostTree",
 	BeastMaster = "TALENT_BeastMaster",
-	LivingArmor = "TALENT_LivingArmor",
+	--LivingArmor = "TALENT_LivingArmor",
 	--Torturer = "TALENT_Torturer",
 	--Ambidextrous = "TALENT_Ambidextrous",
 	--Unstable = "TALENT_Unstable",
@@ -144,30 +151,51 @@ local missingTalents = {
 }
 
 for name,v in pairs(missingTalents) do
-	TalentManager.RegisteredCount[name] = 1
+	if not Vars.DebugMode then
+		TalentManager.RegisteredCount[name] = 0
+	else
+		TalentManager.RegisteredCount[name] = 1
+	end
 end
 
----@param talentid string The talent id, i.e. Executioner
+---@param talentId string
+---@return boolean
+function TalentManager.IsRegisteredTalent(talentId)
+	return TalentManager.RegisteredCount[talentId] and TalentManager.RegisteredCount[talentId] > 0
+end
+
+---@param player EclCharacter
+---@param talentId string
+---@return boolean
+function TalentManager.HasTalent(player, talentId)
+	local talentNamePrefixed = "TALENT_" .. talentId
+	if player ~= nil and player.Stats ~= nil and player.Stats[talentNamePrefixed] == true then
+		return true
+	end
+	return false
+end
+
+---@param talentId string The talent id, i.e. Executioner
 ---@param modID string The registering mod's UUID.
 ---@param getRequirements TalentRequirementCheckCallback|nil A function that gets invoked when looking to see if a player has met the talent's requirements.
-function TalentManager.EnableTalent(talentid, modID, getRequirements)
-	if talentid == "all" then
+function TalentManager.EnableTalent(talentId, modID, getRequirements)
+	if talentId == "all" then
 		for talent,v in pairs(missingTalents) do
 			TalentManager.EnableTalent(talent, modID, getRequirements)
 		end
 	else
-		if TalentManager.RegisteredTalents[talentid] == nil then
-			TalentManager.RegisteredTalents[talentid] = {}
+		if TalentManager.RegisteredTalents[talentId] == nil then
+			TalentManager.RegisteredTalents[talentId] = {}
 		end
-		if TalentManager.RegisteredTalents[talentid][modID] ~= true then
-			TalentManager.RegisteredTalents[talentid][modID] = true
-			TalentManager.RegisteredCount[talentid] = (TalentManager.RegisteredCount[talentid] or 0) + 1
+		if TalentManager.RegisteredTalents[talentId][modID] ~= true then
+			TalentManager.RegisteredTalents[talentId][modID] = true
+			TalentManager.RegisteredCount[talentId] = (TalentManager.RegisteredCount[talentId] or 0) + 1
 		end
 		if getRequirements then
-			if not TalentManager.RequirementHandlers[talentid] then
-				TalentManager.RequirementHandlers[talentid] = {}
+			if not TalentManager.RequirementHandlers[talentId] then
+				TalentManager.RequirementHandlers[talentId] = {}
 			end
-			TalentManager.RequirementHandlers[talentid][modID] = getRequirements
+			TalentManager.RequirementHandlers[talentId][modID] = getRequirements
 		end
 	end
 end
@@ -198,37 +226,7 @@ function TalentManager.DisableTalent(talentName, modID)
 	end
 end
 
-local function GetArrayIndexStart(ui, arrayName, offset)
-	local i = 0
-	while i < 9999 do
-		local val = ui:GetValue(arrayName, "number", i)
-		if val == nil then
-			val = ui:GetValue(arrayName, "string", i)
-			if val == nil then
-				val = ui:GetValue(arrayName, "boolean", i)
-			end
-		end
-		if val == nil then
-			return i
-		end
-		i = i + offset
-	end
-	return -1
-end
-
-local function IsInArray(ui, arrayName, id, start, offset)
-	local i = start
-	while i < 200 do
-		local check = ui:GetValue(arrayName,"number", i)
-		if check ~= nil and math.tointeger(check) == id then
-			return true
-		end
-		i = i + offset
-	end
-	return false
-end
-
-function TalentManager.HasRequirements(id, player)
+function TalentManager.HasRequirements(player, id)
 	local getRequirementsHandlers = TalentManager.RequirementHandlers[id]
 	if getRequirementsHandlers then
 		for modid,handler in pairs(getRequirementsHandlers) do
@@ -245,54 +243,145 @@ function TalentManager.HasRequirements(id, player)
 	return true
 end
 
----@param id string
+local TalentFontColor =
+{
+	Selectable = "#403625",
+	Locked = "#C80030"
+}
+
 ---@param player EclCharacter
+---@param id string
 ---@return string,boolean
-function TalentManager.GetTalentName(id, player)
-	local requirementsMet = TalentManager.HasRequirements(id, player)
+function TalentManager.GetTalentDisplayName(player, id, talentState)
 	local name = LocalizedText.TalentNames[id]
 	if not name or StringHelpers.IsNullOrEmpty(name.Value) then
 		name = id
 	else
 		name = name.Value
 	end
-	if not requirementsMet then
-		name = string.format("<font color='#C80030'>%s</font>", name)
+	if talentState == TalentState.Selectable then
+		--name = string.format("<font color='%s'>%s</font>", TalentFontColor.Selectable, name)
+	elseif talentState == TalentState.Locked then
+		name = string.format("<font color='%s'>%s</font>", TalentFontColor.Locked, name)
 	end
-	return name,requirementsMet
+	return name
 end
 
+---@param player EclCharacter
+---@param talentId string
+---@return TalentState
+function TalentManager.GetTalentState(player, talentId)
+	if player.Stats["TALENT_" .. talentId] then 
+		return TalentState.Selected
+	elseif not TalentManager.HasRequirements(player, talentId) then 
+		return TalentState.Locked
+	else
+		 return TalentState.Selectable
+	end
+end
+
+---@class TalentMC_CC
+---@field addTalentElement fun(id:int, name:string, isActive:boolean, isChooseable:boolean, isRacial:boolean):void 
+
+---@param talent_mc TalentMC_CC
 function TalentManager.Update_CC(ui, talent_mc, player)
-	for talentEnumName,talentStat in pairs(missingTalents) do
-		if TalentManager.RegisteredCount[talentEnumName] > 0 then
-			local talentid = Data.TalentEnum[talentEnumName]
-			if not IsInArray(ui, "talentArray", talentid, 1, 4) then
-				local name,requirementsMet = TalentManager.GetTalentName(talentEnumName, player)
-				talent_mc.addTalentElement(talentid, name, player.Stats[talentStat], requirementsMet, false)
-			end
-		end
-	end
-end
-
-function TalentManager.Update(ui, player)
-	for talentEnumName,talentStat in pairs(missingTalents) do
-		if TalentManager.RegisteredCount[talentEnumName] > 0 then
-			local talentid = Data.TalentEnum[talentEnumName]
-			if not IsInArray(ui, "talent_array", talentid, 1, 3) then
-				local i = GetArrayIndexStart(ui, "talent_array", 3)
-				local name,requirementsMet = TalentManager.GetTalentName(talentEnumName, player)
-				ui:SetValue("talent_array", name, i)
-				ui:SetValue("talent_array", talentid, i+1)
-				if player.Stats[talentStat] == true then
-					ui:SetValue("talent_array", 0, i+2)
-				else
-					if requirementsMet then
-						ui:SetValue("talent_array", 2, i+2)
-					else
-						ui:SetValue("talent_array", 3, i+2)
-					end
+	for talentId,talentStat in pairs(missingTalents) do
+		--Same setup for CC in controller mode as well
+		if TalentManager.RegisteredCount[talentId] > 0 then
+			local talentEnum = Data.TalentEnum[talentId]
+			if not UI.IsInArray(ui, "talentArray", talentId, 1, 4) then
+				local talentState = TalentManager.GetTalentState(player, talentId)
+				local name,requirementsMet = TalentManager.GetTalentDisplayName(player, talentId, talentState)
+				talent_mc.addTalentElement(talentEnum, name, player.Stats[talentStat], requirementsMet, false)
+				if Vars.ControllerEnabled then
+					TalentManager.Gamepad.UpdateTalent_CC(ui, player, talentId, alentEnum)
 				end
 			end
 		end
 	end
+end
+
+RegisterListener("LuaReset", function()
+	local ui = Ext.GetUIByType(Data.UIType.statsPanel_c)
+	if ui then
+		ui:GetRoot().mainpanel_mc.stats_mc.talents_mc.statList.clearElements()
+	end
+end)
+
+function TalentManager.TalentIsInArray(talentEnum, talent_array)
+	if not Vars.ControllerEnabled then
+		for i=1,#talent_array,3 do
+			local tEnum = talent_array[i]
+			if tEnum == talentEnum then
+				return true
+			end
+		end
+	else
+		for i=0,#talent_array,3 do
+			local tEnum = talent_array[i]
+			if tEnum == talentEnum then
+				return true
+			end
+		end
+	end
+
+	return false
+end
+
+---@param ui UIObject
+function TalentManager.Update(ui, player)
+	local main = ui:GetRoot()
+	local lvlBtnTalent_array = main.lvlBtnTalent_array
+	local talent_array = main.talent_array
+
+	if Vars.ControllerEnabled then
+		TalentManager.Gamepad.PreUpdate(ui, main)
+	end
+
+	local i = #talent_array
+
+	for talentId,talentStat in pairs(missingTalents) do
+		if TalentManager.RegisteredCount[talentId] > 0 then
+			local talentEnum = Data.TalentEnum[talentId]
+			if not TalentManager.TalentIsInArray(talentEnum, talent_array) then
+				local talentState = TalentManager.GetTalentState(player, talentId)
+				local name,requirementsMet = TalentManager.GetTalentDisplayName(player, talentId, talentState)
+				Ext.Print(talentId, talentEnum, name)
+				if not Vars.ControllerEnabled then
+					--addTalent(displayName:String, id:Number, talentState:Number)
+					talent_array[i] = name
+					talent_array[i+1] = talentEnum
+				else
+					--addTalent(id:Number, displayName:String, talentState:Number)
+					talent_array[i] = talentEnum
+					talent_array[i+1] = name
+				end
+				talent_array[i+2] = talentState
+				i = i + 3
+
+				if Vars.ControllerEnabled then
+					TalentManager.Gamepad.UpdateTalent(ui, player, talentId, talentEnum, lvlBtnTalent_array, talentState)
+				end
+			end
+		end
+	end
+	-- if Vars.DebugMode then
+	-- 	print("lvlBtnTalent_array")
+	-- 	for i=0,#lvlBtnTalent_array,3 do
+	-- 		local canChoose = lvlBtnTalent_array[i]
+	-- 		if canChoose ~= nil then
+	-- 			local talentID = lvlBtnTalent_array[i+1]
+	-- 			local isRacial = lvlBtnTalent_array[i+2]
+	-- 			local displayName = LocalizedText.TalentNames[Data.Talents[talentID]]
+	-- 			if displayName then
+	-- 				displayName = displayName.Value
+	-- 			else
+	-- 				displayName = talentID
+	-- 			end
+	-- 			print(string.format("[%s] %s", i, canChoose))
+	-- 			print(string.format("[%s] %s (%s,%s)", i+1, talentID, Data.Talents[talentID], displayName))
+	-- 			print(string.format("[%s] %s", i+2, isRacial))
+	-- 		end
+	-- 	end
+	-- end
 end

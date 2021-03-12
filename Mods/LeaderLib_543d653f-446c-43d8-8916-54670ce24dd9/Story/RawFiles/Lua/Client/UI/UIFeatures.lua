@@ -43,7 +43,7 @@ local TALENTS_RACIAL = {
 local TALENT_Backstab = Classes.TranslatedString:Create("h9836a401g63f6g49c3g8fa0g9564cbad7628", "Assassin")
 local TALENT_RogueLoreDaggerBackStab = Classes.TranslatedString:Create("hce5fda5egaeb0g4e2bg8c94g595c0cd029b3", "Backstabber")
 
-local function GetArrayIndexStart(ui, arrayName, offset)
+function UI.GetArrayIndexStart(ui, arrayName, offset)
 	local i = 0
 	while i < 9999 do
 		local val = ui:GetValue(arrayName, "number", i)
@@ -61,7 +61,7 @@ local function GetArrayIndexStart(ui, arrayName, offset)
 	return -1
 end
 
-local function IsInArray(ui, arrayName, id, start, offset)
+function UI.IsInArray(ui, arrayName, id, start, offset)
 	local i = start
 	while i < 200 do
 		local check = ui:GetValue(arrayName,"number", i)
@@ -85,19 +85,30 @@ local function DisplayTalents(ui, call, ...)
 	end
 	if player ~= nil then
 		local root = ui:GetRoot()
-		local i = GetArrayIndexStart(ui, "talent_array", 3)
+		local talent_array = root.talent_array
+		local lvlBtnTalent_array = root.lvlBtnTalent_array
+
+		local i = #talent_array
 		if Features.RacialTalentsDisplayFix then
 			for talent,text in pairs(TALENTS_RACIAL) do
 				if player.Stats[talent] == true then
-					local talentEnumName = string.gsub(talent, "TALENT_", "")
-					local talentId = Data.TalentEnum[talentEnumName]
-					if not IsInArray(ui, "talent_array", talentId, 1, 3) then
-						--UI.PrintArray(ui, "talent_array")
-						--print("Added talent to array", talent, player.Stats[talent], talentEnumName, talentId, text.Value)
-						ui:SetValue("talent_array", text.Value, i)
-						ui:SetValue("talent_array", talentId, i+1)
-						ui:SetValue("talent_array", 0, i+2)
+					local talentId = string.gsub(talent, "TALENT_", "")
+					local talentEnum = Data.TalentEnum[talentId]
+					if not TalentManager.TalentIsInArray(talentEnum, talent_array) then
+						if not Vars.ControllerEnabled then
+							--addTalent(displayName:String, id:Number, talentState:Number)
+							talent_array[i] = text.Value
+							talent_array[i+1] = talentEnum
+						else
+							--addTalent(id:Number, displayName:String, talentState:Number)
+							talent_array[i] = talentEnum
+							talent_array[i+1] = text.Value
+						end
+						talent_array[i+2] = 0
 						i = i + 3
+						if Vars.ControllerEnabled then
+							TalentManager.Gamepad.AddButton(lvlBtnTalent_array, talentEnum, false, false)
+						end
 					end
 				end
 			end
@@ -105,24 +116,35 @@ local function DisplayTalents(ui, call, ...)
 		if player.Stats.TALENT_RogueLoreDaggerBackStab or 
 			(GameSettings.Settings.BackstabSettings.Player.Enabled and GameSettings.Settings.BackstabSettings.Player.TalentRequired) 
 		then
+			local talentEnum = Data.TalentEnum.RogueLoreDaggerBackStab
 			 -- Backstab doesn't have an icon check set, while this RogueLoreDaggerBackStab does
 			--local talentEnumName = "RogueLoreDaggerBackStab" -- "Backstab"
-			if not IsInArray(ui, "talent_array", Data.TalentEnum.RogueLoreDaggerBackStab, 1, 3) then
-				ui:SetValue("talent_array", TALENT_RogueLoreDaggerBackStab.Value, i)
-				ui:SetValue("talent_array", Data.TalentEnum.RogueLoreDaggerBackStab, i+1)
-				if player.Stats.TALENT_RogueLoreDaggerBackStab then
-					ui:SetValue("talent_array", 0, i+2)
+			if not TalentManager.TalentIsInArray(Data.TalentEnum.RogueLoreDaggerBackStab, talent_array) then
+				if not Vars.ControllerEnabled then
+					--addTalent(displayName:String, id:Number, talentState:Number)
+					talent_array[i] = TALENT_RogueLoreDaggerBackStab.Value
+					talent_array[i+1] = talentEnum
 				else
-					ui:SetValue("talent_array", 2, i+2)
+					--addTalent(id:Number, displayName:String, talentState:Number)
+					talent_array[i] = talentEnum
+					talent_array[i+1] = TALENT_RogueLoreDaggerBackStab.Value
+				end
+				talent_array[i+2] = player.Stats.TALENT_RogueLoreDaggerBackStab and 0 or 2
+				i = i + 3
+				if Vars.ControllerEnabled then
+					local talentState = TalentManager.GetTalentState(player, "RogueLoreDaggerBackStab")
+					local isSelected = TalentManager.Gamepad.IsSelectedInMenu("RogueLoreDaggerBackStab")
+					local notSelectedHasPointsAndIsSelectable = (not isSelected and TalentManager.Gamepad.AvailablePoints > 0 and talentState == TalentManager.TalentState.Selectable)
+					TalentManager.Gamepad.AddButton(lvlBtnTalent_array, talentEnum, isSelected, notSelectedHasPointsAndIsSelectable)
 				end
 			end
 		end
-		TalentManager.Update(ui, player)
+		--TalentManager.Update(ui, player)
 		local length = #Listeners.OnTalentArrayUpdating
 		if length > 0 then
 			for i=1,length do
 				local callback = Listeners.OnTalentArrayUpdating[i]
-				local talentArrayStartIndex = GetArrayIndexStart(ui, "talent_array", 3)
+				local talentArrayStartIndex = UI.GetArrayIndexStart(ui, "talent_array", 3)
 				local b,err = xpcall(callback, debug.traceback, ui, player, talentArrayStartIndex, Data.TalentEnum)
 				if not b then
 					Ext.PrintError("Error calling function for 'OnTalentArrayUpdating':\n", err)
@@ -154,19 +176,19 @@ local function DisplayTalents_CC(ui, call, ...)
 		local root = ui:GetRoot()
 		local talent_mc = root.CCPanel_mc.talents_mc
 		if Features.RacialTalentsDisplayFix then
-			--local i = GetArrayIndexStart(ui, "racialTalentArray", 2)
+			--local i = UI.GetArrayIndexStart(ui, "racialTalentArray", 2)
 			for talent,text in pairs(TALENTS_RACIAL) do
 				if player.Stats[talent] == true then
 					local talentEnumName = string.gsub(talent, "TALENT_", "")
 					local talentId = Data.TalentEnum[talentEnumName]
-					if not IsInArray(ui, "racialTalentArray", talentId, 0, 2) then
+					if not UI.IsInArray(ui, "racialTalentArray", talentId, 0, 2) then
 						talent_mc.addTalentElement(talentId, text.Value, true, false, true)
 					end
 				end
 			end
 		end
 		if player.Stats.TALENT_RogueLoreDaggerBackStab or (GameSettings ~= nil and (GameSettings.Settings.BackstabSettings.Player.Enabled and GameSettings.Settings.BackstabSettings.Player.TalentRequired)) then
-			if not IsInArray(ui, "talentArray", Data.TalentEnum.RogueLoreDaggerBackStab, 1, 4) then
+			if not UI.IsInArray(ui, "talentArray", Data.TalentEnum.RogueLoreDaggerBackStab, 1, 4) then
 				talent_mc.addTalentElement(Data.TalentEnum.RogueLoreDaggerBackStab, TALENT_RogueLoreDaggerBackStab.Value, player.Stats.TALENT_RogueLoreDaggerBackStab, true, false)
 			end
 			-- local i = GetArrayIndexStart(ui, "talentArray", 4)
@@ -231,20 +253,12 @@ Ext.RegisterListener("SessionLoaded", function()
 			end
 		end)
 	end
-	local ui = Ext.GetBuiltinUI("Public/Game/GUI/characterSheet.swf")
-	if ui ~= nil then
-		---@param ui UIObject
-		Ext.RegisterUIInvokeListener(ui, "updateArraySystem", function(...)
-			if Features.RacialTalentsDisplayFix then
-				DisplayTalents(...)
-			end
-		end)
-	end
+	Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem", DisplayTalents)
+	Ext.RegisterUITypeInvokeListener(Data.UIType.statsPanel_c, "updateArraySystem", DisplayTalents)
 
 	--characterCreation.swf
-	Ext.RegisterUITypeInvokeListener(3, "updateTalents", function(...)
-		if Features.RacialTalentsDisplayFix then
-			DisplayTalents_CC(...)
-		end
-	end)
+	Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateTalents", DisplayTalents_CC)
+	Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation_c, "updateTalents", DisplayTalents_CC)
+
+	TalentManager.Gamepad.RegisterListeners()
 end)

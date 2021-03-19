@@ -35,6 +35,27 @@ local DefaultSettings = {
 	SurfaceSettings = {
 		PoisonDoesNotIgnite = false,
 	},
+	SkipTutorial = {
+		Enabled = false,
+		Destination = "FJ_FortJoy_Main",
+		AddRecipes = false,
+		StartingCharacterLevel = {
+			Enabled = true,
+			FJ_FortJoy_Main = 2,
+			LV_HoE_Main = 8,
+			RC_Main = 8,
+			CoS_Main = 16,
+			Arx_Main = 18
+		},
+		StartingGold = {
+			Enabled = true,
+			FJ_FortJoy_Main = 500,
+			LV_HoE_Main = 2000,
+			RC_Main = 2000,
+			CoS_Main = 4000,
+			Arx_Main = 10000
+		}
+	},
 	EnableDeveloperTests = false,
 	Version = Ext.GetModInfo("7e737d2f-31d2-4751-963f-be6ccc59cd0c").Version
 }

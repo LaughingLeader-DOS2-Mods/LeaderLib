@@ -175,14 +175,35 @@ elseif Ext.IsClient() then
 		Ext.PostMessageToServer("LeaderLib_SetSkipTutorial", state == 0 and "false" or "true")
 	end
 
+	---@param event InputEvent
+	---@param inputMap table<int,boolean>
+	---@param controllerEnabled boolean
+	local function OnInput(event, inputMap, controllerEnabled)
+		if controllerEnabled then
+			print(event)
+		end
+	end
+
 	Ext.RegisterNetListener("LeaderLib_SetupSkipTutorialUI", function(...)
+		local title = "Skip Tutorial"
+		if not Vars.ControllerEnabled then
+			title = GameHelpers.GetStringKeyText("LeaderLib_UI_SkipTutorial_DisplayName", "Skip Tutorial")
+		else
+			title = GameHelpers.GetStringKeyText("LeaderLib_UI_SkipTutorial_Controller_DisplayName", "Skip Tutorial (LB + Start)")
+		end
+		local levelName = GameHelpers.GetStringKeyText(GameSettings.Settings.SkipTutorial.Destination, "Unknown")
+		local description = string.format(GameHelpers.GetStringKeyText("LeaderLib_UI_SkipTutorial_Description", "If enabled, the game will skip the tutorial and go right to the configured starting level (%s)."), levelName)
+		
 		createdCheckboxID = UIExtensions.AddCheckbox(SetSkipTutorial, "Skip Tutorial", "Skips the tutorial and goes right to the configured starting level in LeaderLib_GameSettings.json (Fort Joy by default).", GameSettings.Settings.SkipTutorial.Enabled and 1 or 0, 20, 150)
+
+		Input.RegisterListener(OnInput)
 	end)
 
 	Ext.RegisterListener("SessionLoaded", function()
 		Ext.RegisterUINameCall("startGame", function(...)
 			if createdCheckboxID > -1 then
 				UIExtensions.RemoveControl(createdCheckboxID)
+				Input.RemoveListener(OnInput)
 				createdCheckboxID = -1
 			end
 		end)

@@ -294,9 +294,16 @@ if Ext.IsClient() then
 		local last = GetClientCharacter().UUID
 		local data = Ext.JsonParse(payload)
 		if data ~= nil then
-			SharedData = data.Shared
+			if not SharedData then
+				SharedData = data.Shared
+			else
+				--Update to new values this way, in case mods have set a variable to LeaderLib.SharedData
+				for k,v in pairs(data.Shared) do
+					SharedData[k] = v
+				end
+			end
 			Client:SetClientData(data.ID, data.Profile, data.IsHost, GetClientCharacter(data.Profile))
-			InvokeListenerCallbacks(Listeners.ClientDataSynced, SharedData.ModData)
+			InvokeListenerCallbacks(Listeners.ClientDataSynced, SharedData.ModData, SharedData)
 			if Client.Character.UUID ~= last then
 				ActiveCharacterChanged(Client.Character)
 			end

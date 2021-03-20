@@ -26,7 +26,5 @@ local function OnInputEvent(evt)
 	InvokeListenerCallbacks(Listeners.InputEvent, evt, Input.Keys, Vars.ControllerEnabled)
 end
 
-if Ext.IsDeveloperMode() then
-	---@param evt InputEvent
-	Ext.RegisterListener("InputEvent", OnInputEvent)
-end
+---@param evt InputEvent
+Ext.RegisterListener("InputEvent", OnInputEvent)

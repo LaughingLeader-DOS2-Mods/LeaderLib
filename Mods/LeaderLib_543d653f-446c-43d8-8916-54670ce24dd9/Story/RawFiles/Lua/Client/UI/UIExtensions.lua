@@ -15,6 +15,10 @@ UIExtensions = {
 	SwfPath = "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/LeaderLib_UIExtensions.swf"
 }
 
+local function OnControlAdded(ui, ...)
+	print("OnControlAdded", Ext.JsonStringify({...}))
+end
+
 local function OnControl(ui, controlType, id, ...)
 	local callback = UIExtensions.Controls[id]
 	if callback and type(callback) == "function" then
@@ -33,6 +37,7 @@ local function SetupInstance()
 			UIExtensions.Instance = Ext.CreateUI("LeaderLibUIExtensions", UIExtensions.SwfPath, UIExtensions.Layer)
 			if UIExtensions.Instance then
 				Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_OnControl", OnControl)
+				Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_ControlAdded", OnControlAdded)
 				local main = UIExtensions.Instance:GetRoot()
 				if main then
 					main.clearElements()
@@ -61,6 +66,7 @@ end)
 ---@return number
 function UIExtensions.AddCheckbox(onClick, label, tooltip, state, x, y, filterBool, enabled)
 	SetupInstance()
+	print("UIExtensions.AddCheckbox", onClick, label, tooltip, state, x, y, filterBool, enabled)
 	local id = #UIExtensions.Controls
 	local main = UIExtensions.Instance:GetRoot()
 	if main then

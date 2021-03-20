@@ -5,12 +5,14 @@ package Controls
    import flash.events.MouseEvent;
    import flash.external.ExternalInterface;
    import flash.text.TextField;
+   import flash.text.TextFieldAutoSize;
    
    public dynamic class Checkbox extends MovieClip
    {
       public var bg_mc:MovieClip;
       
       public var label_txt:TextField;
+      public var label_bg_mc:MovieClip;
       
       public var base:MovieClip;
       
@@ -25,7 +27,7 @@ package Controls
       public function onDown(param1:MouseEvent) : *
       {
          this.bg_mc.gotoAndStop(this.stateID * 3 + 3);
-         addEventListener(MouseEvent.MOUSE_UP,this.onClick);
+         bg_mc.addEventListener(MouseEvent.MOUSE_UP,this.onClick);
       }
       
       public function onClick(param1:MouseEvent) : *
@@ -53,7 +55,7 @@ package Controls
       
       public function deselectElement(param1:MouseEvent) : *
       {
-         removeEventListener(MouseEvent.MOUSE_UP,this.onClick);
+         bg_mc.removeEventListener(MouseEvent.MOUSE_UP,this.onClick);
          this.bg_mc.gotoAndStop(this.stateID * 3 + 1);
       }
       
@@ -66,7 +68,6 @@ package Controls
       {
          if(this.enable)
          {
-            this.base.mainMenu_mc.setCursorPosition(this.id);
             if(this.tooltip != null && this.tooltip != "")
             {
                this.base.curTooltip = this.pos;
@@ -85,7 +86,7 @@ package Controls
             this.base.hasTooltip = false;
          }
          this.base.curTooltip = -1;
-         removeEventListener(MouseEvent.MOUSE_UP,this.onClick);
+         bg_mc.removeEventListener(MouseEvent.MOUSE_UP,this.onClick);
       }
       
       public function setState(param1:Number) : *
@@ -98,13 +99,16 @@ package Controls
       {
          this.base = root as MovieClip;
          this.mHeight = 30;
-         addEventListener(MouseEvent.MOUSE_DOWN,this.onDown);
+         this.bg_mc.addEventListener(MouseEvent.MOUSE_DOWN,this.onDown);
+         this.bg_mc.addEventListener(MouseEvent.MOUSE_OVER,this.selectElement);
+         this.bg_mc.addEventListener(MouseEvent.MOUSE_OUT,this.deselectElement);
          addEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver);
          addEventListener(MouseEvent.MOUSE_OUT,this.onMouseOut);
 
          this.label_txt.defaultTextFormat.size = 16;
          this.label_txt.defaultTextFormat.color = 0xFFFFFF;
-         this.label_txt.defaultTextFormat.font = "Ubuntu Mono";
+         this.label_txt.defaultTextFormat.font = "Ubuntu Mono Bold";
+         this.label_txt.autoSize = TextFieldAutoSize.LEFT;
       }
    }
 }

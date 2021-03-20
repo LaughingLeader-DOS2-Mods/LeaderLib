@@ -86,6 +86,7 @@ if Ext.IsServer() then
 					PartySetFlag(uuid,"QuestUpdate_TUT_ShipMurder_WakeUp", 0)
 					if IsTagged(uuid, "AVATAR") == 1 then
 						ObjectSetFlag(uuid, "QuestUpdate_RC_FTJ_SourceCollar_StartSourceCollar", 0)
+						ItemTemplateAddTo("FUR_Humans_Camping_Sleepingbag_B 4d7216c9-c21e-4ab0-b98e-97d744798912", uuid, 1, 0)
 					end
 
 					if GameSettings.Settings.SkipTutorial.AddRecipes then
@@ -115,6 +116,9 @@ if Ext.IsServer() then
 				if IsPlayer(ID.Sebille) and CharacterHasSkill(ID.Sebille, "Shout_Adrenaline") == 0 then
 					CharacterAddSkill(ID.Sebille, "Shout_Adrenaline", 0)
 				end
+
+				GlobalSetFlag("TUT_LowerDeck_OriginsFleeingToTop")
+				GlobalSetFlag("TUT_ChoseRescueOthers")
 			end
 		}
 	}
@@ -156,10 +160,10 @@ if Ext.IsServer() then
 
 	local addedSkipTutorialCheckbox = false
 
-	Ext.RegisterOsirisListener("GameStarted", 2, "after", function(region, isEditorMode)
+	RegisterListener("Initialized", function(region)
 		if IsCharacterCreationLevel(region) == 1 then
 			local host = StringHelpers.GetUUID(CharacterGetHostCharacter())
-			Ext.PostMessageToClient(host, "LeaderLib_SetupSkipTutorialUI", "")
+			Ext.PostMessageToClient(host, "LeaderLib_SetupSkipTutorialUI", region)
 			addedSkipTutorialCheckbox = true
 		end
 	end)
@@ -179,12 +183,15 @@ elseif Ext.IsClient() then
 	---@param inputMap table<int,boolean>
 	---@param controllerEnabled boolean
 	local function OnInput(event, inputMap, controllerEnabled)
+		print("OnInput", event.EventId, inputMap, controllerEnabled)
+		local main = UIExtensions.Instance:GetRoot()
+		print(main.stage.mouseX, main.stage.mouseY)
 		if controllerEnabled then
-			print(event)
 		end
 	end
 
-	Ext.RegisterNetListener("LeaderLib_SetupSkipTutorialUI", function(...)
+	Ext.RegisterNetListener("LeaderLib_SetupSkipTutorialUI", function(cmd, payload)
+		print("LeaderLib_SetupSkipTutorialUI", cmd, payload)
 		local title = "Skip Tutorial"
 		if not Vars.ControllerEnabled then
 			title = GameHelpers.GetStringKeyText("LeaderLib_UI_SkipTutorial_DisplayName", "Skip Tutorial")
@@ -194,7 +201,7 @@ elseif Ext.IsClient() then
 		local levelName = GameHelpers.GetStringKeyText(GameSettings.Settings.SkipTutorial.Destination, "Unknown")
 		local description = string.format(GameHelpers.GetStringKeyText("LeaderLib_UI_SkipTutorial_Description", "If enabled, the game will skip the tutorial and go right to the configured starting level (%s)."), levelName)
 		
-		createdCheckboxID = UIExtensions.AddCheckbox(SetSkipTutorial, "Skip Tutorial", "Skips the tutorial and goes right to the configured starting level in LeaderLib_GameSettings.json (Fort Joy by default).", GameSettings.Settings.SkipTutorial.Enabled and 1 or 0, 20, 150)
+		createdCheckboxID = UIExtensions.AddCheckbox(SetSkipTutorial, title, description, GameSettings.Settings.SkipTutorial.Enabled and 1 or 0, 50, 58)
 
 		Input.RegisterListener(OnInput)
 	end)

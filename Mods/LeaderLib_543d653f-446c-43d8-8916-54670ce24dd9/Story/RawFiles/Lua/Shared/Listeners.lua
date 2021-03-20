@@ -13,6 +13,7 @@ Listeners.ClientDataSynced = {}
 Listeners.ClientCharacterChanged = {}
 Listeners.GetTooltipSkillDamage = {}
 Listeners.GetTooltipSkillParam = {}
+Listeners.LuaReset = {}
 ---Callbacks for when ModSettings are synced on both the server and client.
 ---@type fun(uuid:string, settings:ModSettings):void[]
 Listeners.ModSettingsSynced = {}
@@ -51,7 +52,6 @@ if Ext.IsServer() then
 
 	--Debug listeners
 	Listeners.BeforeLuaReset = {}
-	Listeners.LuaReset = {}
 
 	---Server-side event for when base ability or attribute values change on players. Can fire from character sheet interaction or after respec.
 	---@type table<string, fun(uuid:string, stat:string, lastVal:integer, nextVal:integer, statType:string):void>
@@ -72,4 +72,3 @@ if Ext.IsClient() then
 	---@type InputEventCallback[]
 	Listeners.InputEvent = {}
 end
-print(Ext.JsonStringify(Listeners))

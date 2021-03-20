@@ -143,8 +143,9 @@ function OnLuaReset()
 		end
 	end)
 	local region = Osi.DB_CurrentLevel:Get(nil)[1][1]
+	GameHelpers.Data.SetRegion(region)
 	OnInitialized(region, true)
 	InvokeListenerCallbacks(Listeners.LuaReset, region)
-	GameHelpers.Data.SetRegion(region)
 	IterateUsers("LeaderLib_StoreUserData")
+	Ext.BroadcastMessage("LeaderLib_Client_InvokeLuaResetListeners", region)
 end

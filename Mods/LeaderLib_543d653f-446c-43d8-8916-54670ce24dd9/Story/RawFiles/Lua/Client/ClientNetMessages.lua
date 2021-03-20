@@ -252,3 +252,7 @@ Ext.RegisterNetListener("LeaderLib_UI_RefreshAll", function(cmd, uuid)
 	local host = Ext.GetCharacter(uuid)
 	Ext.UISetDirty(host, 0xffffffffffff)
 end)
+
+Ext.RegisterNetListener("LeaderLib_Client_InvokeLuaResetListeners", function(cmd, region)
+	InvokeListenerCallbacks(Listeners.LuaReset, region)
+end)

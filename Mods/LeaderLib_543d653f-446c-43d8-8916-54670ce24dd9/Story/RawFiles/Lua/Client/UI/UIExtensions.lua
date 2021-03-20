@@ -26,12 +26,28 @@ local function OnControl(ui, controlType, id, ...)
 	end
 end
 
-Ext.RegisterListener("SessionLoaded", function()
-	UIExtensions.Instance = Ext.GetUI("LeaderLibUIExtensions")
+local function SetupInstance()
 	if not UIExtensions.Instance then
-		UIExtensions.Instance = Ext.CreateUI("LeaderLibUIExtensions", UIExtensions.SwfPath, UIExtensions.Layer)
-		Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_OnControl", OnControl)
+		UIExtensions.Instance = Ext.GetUI("LeaderLibUIExtensions")
+		if not UIExtensions.Instance then
+			UIExtensions.Instance = Ext.CreateUI("LeaderLibUIExtensions", UIExtensions.SwfPath, UIExtensions.Layer)
+			if UIExtensions.Instance then
+				Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_OnControl", OnControl)
+				local main = UIExtensions.Instance:GetRoot()
+				if main then
+					main.clearElements()
+				else
+					Ext.PrintError("[LeaderLib] Failed to GetRoot of UI:", UIExtensions.SwfPath)
+				end
+			else
+				Ext.PrintError("[LeaderLib] Failed to create UI:", UIExtensions.SwfPath)
+			end
+		end
 	end
+end
+
+Ext.RegisterListener("SessionLoaded", function()
+	SetupInstance()
 end)
 
 ---@param onClick CheckboxCallback
@@ -44,17 +60,24 @@ end)
 ---@param enabled boolean|nil
 ---@return number
 function UIExtensions.AddCheckbox(onClick, label, tooltip, state, x, y, filterBool, enabled)
+	SetupInstance()
 	local id = #UIExtensions.Controls
-	UIExtensions.Controls[id] = onClick or true
 	local main = UIExtensions.Instance:GetRoot()
-	main.addCheckbox(id, label, tooltip, state or 0, x or 0, y or 0, filterBool ~= nil and filterBool or false, enabled ~= nil and enabled or true)
-	return id
+	if main then
+		UIExtensions.Controls[id] = onClick or true
+		main.addCheckbox(id, label, tooltip, state or 0, x or 0, y or 0, filterBool ~= nil and filterBool or false, enabled ~= nil and enabled or true)
+		return id
+	else
+		Ext.PrintError("[LeaderLib:UIExtensions.AddCheckbox] Failed to get root of UIObject", UIExtensions.SwfPath)
+	end
 end
 
 function UIExtensions.RemoveControl(id)
 	if UIExtensions.Controls[id] ~= nil then
 		UIExtensions.Controls[id] = nil
-		local main = UIExtensions.Instance:GetRoot()
-		main.removeControl(id)
+		if UIExtensions.Instance then
+			local main = UIExtensions.Instance:GetRoot()
+			main.removeControl(id)
+		end
 	end
 end

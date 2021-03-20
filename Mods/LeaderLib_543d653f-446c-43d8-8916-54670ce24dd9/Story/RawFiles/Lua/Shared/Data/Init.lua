@@ -702,3 +702,21 @@ Data.ArmorType = {
 	Plate = "Plate",
 	Robe = "Robe"
 }
+
+Data.Input = {
+	UIAccept = 222,
+	-- B
+	ActionCancel = 223,
+	UIBack = 244,
+	-- B, Escape
+	UICancel = 241,
+	ToggleInGameMenu = 241,
+	-- LB
+	UICreationTabPrev = 226,
+	-- RB
+	UICreationTabNext = 224,
+	-- Start
+	UIStartGame = 241,
+	-- Select
+	ConnectivityMenu = 242,
+}

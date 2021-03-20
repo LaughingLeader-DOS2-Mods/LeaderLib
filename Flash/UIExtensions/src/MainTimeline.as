@@ -15,6 +15,9 @@ package
 		
 		public var curTooltip:String;
       	public var hasTooltip:Boolean;
+
+      	public var controllerEnabled:Boolean = false;
+		public var UICreationTabPrevPressed:Boolean = false;
 		
 		public function MainTimeline()
 		{
@@ -24,24 +27,35 @@ package
 		
 		public function onEventUp(id:Number) : *
 		{
+			switch(this.events[id])
+			{
+				case "IE UICreationTabPrev":
+					this.UICreationTabPrevPressed = false;
+					break;
+			}
 			return false;
 		}
 		
 		public function onEventDown(id:Number) : Boolean
 		{
-			// var isHandled:Boolean = false;
-			// switch(this.events[id])
-			// {
-			//	case "IE UIUp":
-			//		isHandled = true;
-			//		break;
-			//	case "IE UIDown":
-			//		isHandled = true;
-			//		break;
-			//	case "IE UICancel":
-			//		isHandled = true;
-			// }
-			// return isHandled;
+			if(controllerEnabled)
+			{
+				var isHandled:Boolean = false;
+				switch(this.events[id])
+				{
+					case "IE UIUp":
+						isHandled = true;
+						break;
+					case "IE UICreationTabPrev":
+						this.UICreationTabPrevPressed = true;
+						break;
+					case "IE ConnectivityMenu":
+						// Prevents "ConnectivityMenu" from opening the connectivity menu in CC if UICreationTabPrevPressed is held
+						isHandled = this.UICreationTabPrevPressed;
+						break;
+				}
+				return isHandled;
+			}
 			return false;
 		}
 		
@@ -76,10 +90,36 @@ package
 			}
 			//mainPanel_mc.list.addElement(checkbox);
 			mainPanel_mc.addElement(checkbox);
-			checkbox.label_bg_mc.width = checkbox.label_txt.textWidth * 2
+			checkbox.label_bg_mc.width = (checkbox.label_txt.textWidth*1.2) + 12;
 			//this.mainPanel_mc.addChild(checkbox);
 			//checkbox.formHL_mc.alpha = 0;
 			ExternalInterface.call("LeaderLib_ControlAdded", "checkbox", checkbox.id, id, checkbox.label_txt.textWidth, checkbox.label_txt.width, checkbox.label_bg_mc.width);
+		}
+
+		public function setCheckboxState(id:Number, state:Number): *
+		{
+			var obj:MovieClip = mainPanel_mc.elements[id];
+			if(obj != null)
+			{
+				var checkbox:Checkbox = obj as Checkbox;
+				if(checkbox != null)
+				{
+					checkbox.setState(state);
+				}
+			}
+		}
+
+		public function toggleCheckbox(id:Number): *
+		{
+			var obj:MovieClip = mainPanel_mc.elements[id];
+			if(obj != null)
+			{
+				var checkbox:Checkbox = obj as Checkbox;
+				if(checkbox != null)
+				{
+					checkbox.toggle();
+				}
+			}
 		}
 
 		public function clearElements() : * 
@@ -91,7 +131,7 @@ package
 		function frame1() : *
 		{
 			this.layout = "fixed";
-			this.events = new Array("IE UIUp","IE UIDown","IE UICancel");
+			this.events = new Array("IE UICreationTabPrev", "IE UIStartGame", "IE ConnectivityMenu");
 			this.curTooltip = "";
          	this.hasTooltip = false;
 		}

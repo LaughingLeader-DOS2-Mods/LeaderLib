@@ -183,10 +183,21 @@ elseif Ext.IsClient() then
 	---@param inputMap table<int,boolean>
 	---@param controllerEnabled boolean
 	local function OnInput(event, inputMap, controllerEnabled)
-		print("OnInput", event.EventId, inputMap, controllerEnabled)
-		local main = UIExtensions.Instance:GetRoot()
-		print(main.stage.mouseX, main.stage.mouseY)
-		if controllerEnabled then
+		if controllerEnabled and createdCheckboxID > -1 and 
+			(inputMap[Data.Input.UICreationTabPrev] and event.Press and event.EventId == Data.Input.ConnectivityMenu) then
+			local main = UIExtensions.Instance:GetRoot()
+			if main then
+				main.toggleCheckbox(createdCheckboxID)
+			end
+		end
+	end
+
+	local function GetCheckboxPos()
+		if not Vars.ControllerEnabled then
+			--return 50,58
+			return 0,0
+		else
+			return 0,0
 		end
 	end
 
@@ -201,7 +212,8 @@ elseif Ext.IsClient() then
 		local levelName = GameHelpers.GetStringKeyText(GameSettings.Settings.SkipTutorial.Destination, "Unknown")
 		local description = string.format(GameHelpers.GetStringKeyText("LeaderLib_UI_SkipTutorial_Description", "If enabled, the game will skip the tutorial and go right to the configured starting level (%s)."), levelName)
 		
-		createdCheckboxID = UIExtensions.AddCheckbox(SetSkipTutorial, title, description, GameSettings.Settings.SkipTutorial.Enabled and 1 or 0, 50, 58)
+		local x,y = GetCheckboxPos()
+		createdCheckboxID = UIExtensions.AddCheckbox(SetSkipTutorial, title, description, GameSettings.Settings.SkipTutorial.Enabled and 1 or 0, x, y)
 
 		Input.RegisterListener(OnInput)
 	end)

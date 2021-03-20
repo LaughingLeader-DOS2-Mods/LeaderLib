@@ -29,26 +29,31 @@ package Controls
          this.bg_mc.gotoAndStop(this.stateID * 3 + 3);
          bg_mc.addEventListener(MouseEvent.MOUSE_UP,this.onClick);
       }
+
+      public function toggle() : * 
+      {
+         this.stateID++;
+         if(this.filterBool)
+         {
+            if(this.stateID > 2)
+            {
+               this.stateID = 0;
+            }
+         }
+         else if(this.stateID > 1)
+         {
+            this.stateID = 0;
+         }
+         this.bg_mc.gotoAndStop(this.stateID * 3 + 1);
+         ExternalInterface.call("PlaySound","UI_Gen_XButton_Click");
+         ExternalInterface.call("LeaderLib_OnControl", "checkbox", this.id, this.stateID);
+      }
       
       public function onClick(param1:MouseEvent) : *
       {
          if(this.enable)
          {
-            this.stateID++;
-            if(this.filterBool)
-            {
-               if(this.stateID > 2)
-               {
-                  this.stateID = 0;
-               }
-            }
-            else if(this.stateID > 1)
-            {
-               this.stateID = 0;
-            }
-            this.bg_mc.gotoAndStop(this.stateID * 3 + 1);
-            ExternalInterface.call("PlaySound","UI_Gen_XButton_Click");
-            ExternalInterface.call("LeaderLib_OnControl", "checkbox", this.id, this.stateID);
+            toggle();
          }
          removeEventListener(MouseEvent.MOUSE_UP,this.onClick);
       }

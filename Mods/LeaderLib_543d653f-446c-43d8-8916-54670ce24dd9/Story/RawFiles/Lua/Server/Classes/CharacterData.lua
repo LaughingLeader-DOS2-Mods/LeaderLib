@@ -10,7 +10,7 @@ MonitoredCharacterData.__index = MonitoredCharacterData
 
 ---@param region string
 function MonitoredCharacterData:Update(region)
-	for i=1,self.Entries do
+	for i=1,#self.Entries do
 		local entry = self.Entries[i]
 		if entry then
 			local character = entry:GetCharacter()

@@ -41,6 +41,7 @@ local function SetupInstance()
 				local main = UIExtensions.Instance:GetRoot()
 				if main then
 					main.clearElements()
+					main.controllerEnabled = Vars.ControllerEnabled
 				else
 					Ext.PrintError("[LeaderLib] Failed to GetRoot of UI:", UIExtensions.SwfPath)
 				end

@@ -8,18 +8,32 @@ HitOverrides = {
 --- This script tweaks Game.Math functions to allow lowering resistance with Resistance Penetration tags on items of the attacker.
 
 --- @param character StatCharacter
---- @param type string DamageType enumeration
---- @param type resistancePenetration integer
-function HitOverrides.GetResistance(character, type, resistancePenetration)
-    if type == "None" or type == "Chaos" then
+--- @param damageType string DamageType enumeration
+--- @param resistancePenetration integer
+function HitOverrides.GetResistance(character, damageType, resistancePenetration)
+    if damageType == "None" or damageType == "Chaos" then
         return 0
 	end
 	
-	local res = character[type .. "Resistance"]
+	local res = character[damageType .. "Resistance"]
 	if res > 0 and resistancePenetration ~= nil and resistancePenetration > 0 then
 		--PrintDebug(res, " => ", math.max(res - resistancePenetration, 0))
 		res = math.max(res - resistancePenetration, 0)
 	end
+    local length = #Listeners.GetHitResistanceBonus
+    if length > 0 then
+        for i=1,length do
+            local callback = Listeners.GetHitResistanceBonus[i]
+            local b,bonus = xpcall(callback, debug.traceback, character, damageType, resistancePenetration, res)
+            if b then
+                if bonus ~= nil and type(bonus) == "number" then
+                    res = res + bonus
+                end
+            else
+                Ext.PrintError(bonus)
+            end
+        end
+    end
 
     return res
 end

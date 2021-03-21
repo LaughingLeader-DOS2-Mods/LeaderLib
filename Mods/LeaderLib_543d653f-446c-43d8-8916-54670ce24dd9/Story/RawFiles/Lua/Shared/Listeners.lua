@@ -34,6 +34,9 @@ if Ext.IsServer() then
 	---Called from a Game.Math.ApplyDamageCharacterBonuses override. This is where resistance penetration happens. 
 	---@type ApplyDamageCharacterBonusesCallback[]
 	Listeners.ApplyDamageCharacterBonuses = {}
+	---HitOverrides.GetResistance during ComputeCharacterHit.
+	---@type fun(character:StatCharacter, damageType:string, resistancePenetration:integer, currentRes:integer):integer[]
+	Listeners.GetHitResistanceBonus = {}
 	--Flag events
 	---@type table<string, fun(flag:string, enabled:boolean):void[]>
 	Listeners.GlobalFlagChanged = {}

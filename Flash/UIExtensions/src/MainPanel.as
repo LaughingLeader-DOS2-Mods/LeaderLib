@@ -5,7 +5,6 @@ package
 	
 	public dynamic class MainPanel extends MovieClip
 	{
-		public var list:listDisplay;
 		public var elements:Array;
 		public var idInc:uint = 0;
 
@@ -48,8 +47,7 @@ package
 		function frame1() : *
 		{
 			elements = new Array();
-			list = new listDisplay();
-			this.addChild(list);
+			this.mousEnabled = false;
 		}
 	}
 }

@@ -855,6 +855,7 @@ function TooltipHooks:Init()
 	Ext.RegisterUINameCall("showAbilityTooltip", onReqTooltip)
 	Ext.RegisterUINameCall("showTalentTooltip", onReqTooltip)
 	Ext.RegisterUINameCall("showTagTooltip", onReqTooltip)
+	Ext.RegisterUINameCall("showCustomStatTooltip", onReqTooltip)
 
 	Ext.RegisterUINameInvokeListener("addFormattedTooltip", function (...)
 		self:OnRenderTooltip(TooltipArrayNames.Default, ...)
@@ -913,6 +914,16 @@ function TooltipHooks:OnRequestTooltip(ui, method, arg1, arg2, arg3, ...)
 			request.Stat = stat
 		else
 			Ext.PrintWarning("Requested tooltip for unknown stat ID " .. request.Stat)
+		end
+	elseif method == "showCustomStatTooltip" then
+		--ExternalInterface.call(eventName,obj.statId,globalPos.x + tooltipOffsetX,globalPos.y + tooltipOffsetY,tooltipWidth,obj.height,obj.tooltipAlign);
+		request.Type = 'CustomStat'
+		if isCharSheet then
+			request.Character = ui:GetPlayerHandle()
+			request.Stat = Ext.DoubleToHandle(arg1)
+		else
+			request.Character = Ext.DoubleToHandle(arg1)
+			request.Stat = arg2
 		end
 	elseif method == "showAbilityTooltip" then
 		request.Type = 'Ability'
@@ -1131,6 +1142,8 @@ function TooltipHooks:OnRenderSubTooltip(ui, propertyName, req, method, ...)
 		local tooltip = TooltipData:Create(params)
 		if req.Type == "Stat" then
 			self:NotifyListeners("Stat", req.Stat, req, tooltip, req.Character, req.Stat)
+		elseif req.Type == "CustomStat" then
+			self:NotifyListeners("CustomStat", req.Stat, req, tooltip, req.Character, req.Stat)
 		elseif req.Type == "Skill" then
 			self:NotifyListeners("Skill", req.Skill, req, tooltip, req.Character, req.Skill)
 		elseif req.Type == "Ability" then

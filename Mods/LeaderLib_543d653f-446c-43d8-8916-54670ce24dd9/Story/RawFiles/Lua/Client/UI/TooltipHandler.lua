@@ -268,6 +268,13 @@ local function OnStatTooltip(character, stat, tooltip)
 	
 end
 
+---@param character EclCharacter
+---@param stat ObjectHandle
+---@param tooltip TooltipData
+local function OnCustomStatTooltip(character, stat, tooltip)
+
+end
+
 local tooltipSwf = {
 	"Public/Game/GUI/LSClasses.swf",
 	"Public/Game/GUI/tooltip.swf",
@@ -680,7 +687,8 @@ Ext.RegisterListener("SessionLoaded", function()
 	Game.Tooltip.RegisterListener("Item", nil, OnItemTooltip)
 	Game.Tooltip.RegisterListener("Skill", nil, OnSkillTooltip)
 	Game.Tooltip.RegisterListener("Status", nil, OnStatusTooltip)
-	Game.Tooltip.RegisterListener("Stat", nil, OnStatTooltip)
+	--Game.Tooltip.RegisterListener("Stat", nil, OnStatTooltip)
+	--Game.Tooltip.RegisterListener("CustomStat", nil, OnCustomStatTooltip)
 
 	---@param ui UIObject
 	-- Ext.RegisterUITypeInvokeListener(44, "updateTooltips", function(ui, method, ...)

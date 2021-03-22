@@ -252,20 +252,20 @@ local function OnCancelChanges(ui, call)
 end
 
 Ext.RegisterListener("SessionLoaded", function()
-	if Vars.DebugMode then
-		for i,v in pairs(debugEvents) do
-			---@param ui UIObject
-			Ext.RegisterUINameInvokeListener(v, function(ui, ...)
-				print(ui:GetTypeId(), Common.Dump({...}), Ext.MonotonicTime())
-			end)
-		end
-		for i,v in pairs(debugCalls) do
-			---@param ui UIObject
-			Ext.RegisterUINameCall(v, function(ui, ...)
-				print(ui:GetTypeId(), Common.Dump({...}), Ext.MonotonicTime())
-			end)
-		end
-	end
+	-- if Vars.DebugMode then
+	-- 	for i,v in pairs(debugEvents) do
+	-- 		---@param ui UIObject
+	-- 		Ext.RegisterUINameInvokeListener(v, function(ui, ...)
+	-- 			print(ui:GetTypeId(), Common.Dump({...}), Ext.MonotonicTime())
+	-- 		end)
+	-- 	end
+	-- 	for i,v in pairs(debugCalls) do
+	-- 		---@param ui UIObject
+	-- 		Ext.RegisterUINameCall(v, function(ui, ...)
+	-- 			print(ui:GetTypeId(), Common.Dump({...}), Ext.MonotonicTime())
+	-- 		end)
+	-- 	end
+	-- end
 
 	Ext.RegisterUINameCall("switchToModMenu", function(ui, call, ...)
 		switchToModMenu = true

@@ -1,0 +1,1 @@
+Ext.Require("Client/Data/InputEvents.lua")

@@ -38,10 +38,17 @@ local function SetupInstance()
 			if UIExtensions.Instance then
 				Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_OnControl", OnControl)
 				Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_ControlAdded", OnControlAdded)
+				Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_InputEvent", Input.OnFlashEvent)
 				local main = UIExtensions.Instance:GetRoot()
 				if main then
 					main.clearElements()
 					main.controllerEnabled = Vars.ControllerEnabled
+					for i=0,#main.events-1 do
+						if main.events[i] then
+							local eventName = string.gsub(main.events[i], "IE ", "")
+							Input.Keys[eventName] = false
+						end
+					end
 				else
 					Ext.PrintError("[LeaderLib] Failed to GetRoot of UI:", UIExtensions.SwfPath)
 				end
@@ -54,6 +61,9 @@ end
 
 Ext.RegisterListener("SessionLoaded", function()
 	SetupInstance()
+	-- Ext.RegisterUINameInvokeListener("onEventUp", function(ui, ...)
+	-- 	print(Ext.JsonStringify({...}))
+	-- end)
 end)
 
 ---@param onClick CheckboxCallback

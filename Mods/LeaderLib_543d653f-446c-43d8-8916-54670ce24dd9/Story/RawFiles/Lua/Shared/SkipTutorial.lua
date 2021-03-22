@@ -179,12 +179,16 @@ elseif Ext.IsClient() then
 		Ext.PostMessageToServer("LeaderLib_SetSkipTutorial", state == 0 and "false" or "true")
 	end
 
-	---@param event InputEvent
+	--@param event InputEvent
+	--local function OnInput(event, inputMap, controllerEnabled)
+	---@param eventName string
+	---@param pressed boolean
+	---@param id integer
 	---@param inputMap table<int,boolean>
 	---@param controllerEnabled boolean
-	local function OnInput(event, inputMap, controllerEnabled)
+	local function OnInput(eventName, pressed, id, inputMap, controllerEnabled)
 		if controllerEnabled and createdCheckboxID > -1 and 
-			(inputMap[Data.Input.UICreationTabPrev] and event.Press and event.EventId == Data.Input.ConnectivityMenu) then
+			(Input.GetKeyState("UICreationTabPrev") and pressed and eventName == "ConnectivityMenu") then
 			local main = UIExtensions.Instance:GetRoot()
 			if main then
 				main.toggleCheckbox(createdCheckboxID)

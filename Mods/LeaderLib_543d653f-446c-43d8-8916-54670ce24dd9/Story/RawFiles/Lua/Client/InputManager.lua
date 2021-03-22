@@ -3,6 +3,10 @@ Input = {
 	Keys = {}
 }
 
+for i,name in pairs(Data.InputEnum) do
+	Input.Keys[name] = false
+end
+
 --Wrapper around RegisterListener for easier auto-completion.
 ---@param callback InputEventCallback
 function Input.RegisterListener(callback)
@@ -18,16 +22,77 @@ function Input.RemoveListener(callback)
 	end
 end
 
----@param evt InputEvent
-local function OnInputEvent(evt)
-	if evt.Press then
-		--PrintLog("[InputEvent] EventId(%s)\n  InputDeviceId(%s)\n  InputPlayerIndex(%s)\n  Press(%s)\n  Release(%s)\n  ValueChange(%s)\n  Hold(%s)\n  Repeat(%s)\n  AcceleratedRepeat(%s)", evt.EventId, evt.InputDeviceId, evt.InputPlayerIndex, evt.Press, evt.Release, evt.ValueChange, evt.Hold, evt.Repeat, evt.AcceleratedRepeat)
-		PrintLog("(%s) EventId(%s)", Ext.MonotonicTime(), evt.EventId)
+function Input.GetKeyState(name)
+	local ids = Data.Input[name]
+	if ids then
+		if type(ids) == "table" then
+			for _,id in pairs(ids) do
+				local state = Input.Keys[Data.InputEnum[id]]
+				if state == true then
+					return true
+				end
+			end
+		else
+			return Input.Keys[Data.InputEnum[ids]]
+		end
 	end
-	Input.Keys[evt.EventId] = evt.Press
+	return false
+end
 
-	InvokeListenerCallbacks(Listeners.InputEvent, evt, Input.Keys, Vars.ControllerEnabled)
+function Input.GetKeyStateByID(id)
+	local name = Data.InputEnum[id]
+	if name then
+		local state = Input.Keys[name]
+		return state ~= nil and state or false
+	end
+	return false
 end
 
 ---@param evt InputEvent
-Ext.RegisterListener("InputEvent", OnInputEvent)
+Ext.RegisterListener("InputEvent", function(evt)
+	local eventName = Data.InputEnum[evt.EventId]
+	if eventName then
+		local fireListeners = Input.Keys[eventName] ~= evt.Press
+		Input.Keys[eventName] = evt.Press
+		if fireListeners then
+			InvokeListenerCallbacks(Listeners.InputEvent, eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled)
+		end
+	end
+
+	-- if Vars.DebugMode then
+	-- 	if eventName then
+	-- 		PrintLog("[ExtInputEvent] %s(%s) Pressed(%s) Time(%s)", eventName, evt.EventId, evt.Press, Ext.MonotonicTime())
+	-- 	else
+	-- 		PrintLog("[ExtInputEvent] UNKNOWN(%s) Pressed(%s) Time(%s)", evt.EventId, evt.Press, Ext.MonotonicTime())
+	-- 	end
+	-- end
+end)
+
+---@param ui LeaderLibUIExtensions
+---@param pressed boolean
+---@param eventName string
+---@param arrayIndex integer
+function Input.OnFlashEvent(ui, call, pressed, eventName, arrayIndex)
+	local fireListeners = Input.Keys[eventName] ~= pressed
+	eventName = string.gsub(eventName, "IE ", "")
+	Input.Keys[eventName] = pressed
+	if Vars.DebugMode then
+		--PrintLog("[Input.OnFlashEvent] eventName(%s) pressed(%s) index(%i)", eventName, pressed, arrayIndex)
+	end
+	if fireListeners then
+		local id = Data.Input[eventName]
+		if type(id) == "table" then
+			for _,kid in pairs(id) do
+				InvokeListenerCallbacks(Listeners.InputEvent, eventName, pressed, kid, Input.Keys, Vars.ControllerEnabled)
+			end
+		else
+			InvokeListenerCallbacks(Listeners.InputEvent, eventName, pressed, id, Input.Keys, Vars.ControllerEnabled)
+		end
+	end
+end
+
+if Vars.DebugMode then
+	Input.RegisterListener(function(eventName, pressed, id, inputMap, controllerEnabled)
+		PrintLog("[LeaderLib:InputEvent] eventName(%s)[%s] pressed(%s)", eventName, id, pressed)
+	end)
+end

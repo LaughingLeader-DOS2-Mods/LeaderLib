@@ -71,7 +71,7 @@ if Ext.IsClient() then
 	---@type fun(ui:UIObject, player:EclCharacter, startIndex:integer, talentEnumReference:table<string,integer>):void[]
 	Listeners.OnTalentArrayUpdating = {}
 
-	---@alias InputEventCallback fun(event:InputEvent, inputMap:table<int,boolean>, controllerEnabled:boolean):void
+	---@alias InputEventCallback fun(eventName:string, pressed:boolean, id:integer, inputMap:table<int,boolean>, controllerEnabled:boolean):void
 	---@type InputEventCallback[]
 	Listeners.InputEvent = {}
 end

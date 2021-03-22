@@ -36,7 +36,7 @@ function Input.GetKeyState(name)
 			return Input.Keys[Data.InputEnum[ids]]
 		end
 	end
-	return false
+	return Input.Keys[name] == true
 end
 
 function Input.GetKeyStateByID(id)

@@ -1452,6 +1452,28 @@ function TooltipData:AppendElementAfter(ele, appendAfter)
 	table.insert(self.Data, ele)
 end
 
+function TooltipData:AppendElementAfterType(ele, elementType)
+	for i,element in pairs(self.Data) do
+		if element.Type == elementType then
+			table.insert(self.Data, i+1, ele)
+			return
+		end
+	end
+
+	table.insert(self.Data, ele)
+end
+
+function TooltipData:AppendElementBeforeType(ele, elementType)
+	for i,element in pairs(self.Data) do
+		if element.Type == elementType then
+			table.insert(self.Data, i-1, ele)
+			return
+		end
+	end
+
+	table.insert(self.Data, ele)
+end
+
 function RegisterListener(...)
 	local args = {...}
 	if #args == 1 then

@@ -130,6 +130,8 @@ local text = {
 	BackstabSettings_MeleeOnly_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_BackstabSettings_MeleeOnly_Description"),
 	BackstabSettings_SpellsCanBackstab = ts:CreateFromKey("LeaderLib_UI_GameSettings_BackstabSettings_SpellsCanBackstab"),
 	BackstabSettings_SpellsCanBackstab_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_BackstabSettings_SpellsCanBackstab_Description"),
+	AlwaysDisplayWeaponScalingText = ts:CreateFromKey("LeaderLib_UI_GameSettings_AlwaysDisplayWeaponScalingText"),
+	AlwaysDisplayWeaponScalingText_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_AlwaysDisplayWeaponScalingText_Description"),
 }
 
 local mainMenuArrayAccess = {
@@ -199,6 +201,7 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 
 		mainMenu.addMenuCheckbox(AddControl(settings, "StarterTierSkillOverrides"), text.StarterTierOverrides.Value, controlsEnabled, settings.StarterTierSkillOverrides and 1 or 0, false, text.StarterTierOverrides_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings, "LowerMemorizationRequirements"), text.LowerMemorizationRequirements.Value, controlsEnabled, settings.LowerMemorizationRequirements and 1 or 0, false, text.LowerMemorizationRequirements_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings, "AlwaysDisplayWeaponScalingText"), text.AlwaysDisplayWeaponScalingText.Value, controlsEnabled, settings.AlwaysDisplayWeaponScalingText and 1 or 0, false, text.AlwaysDisplayWeaponScalingText_Description.Value)
 		
 		local apSliderMax = 30
 		

@@ -632,11 +632,43 @@ local function OnItemTooltip(item, tooltip)
 				end
 			end
 		end
-		if Features.TooltipGrammarHelper then
+		if Features.TooltipGrammarHelper or GameSettings.Settings.AlwaysDisplayWeaponScalingText then
+			local hasScalesWithText = false
+			local scalesWithTextSub = string.sub(LocalizedText.Tooltip.ScalesWith.Value, 1, 5)
 			local requirements = tooltip:GetElements("ItemRequirement")
 			if requirements ~= nil then
 				for i,element in pairs(requirements) do
-					element.Label = string.gsub(element.Label, "%s+", " ")
+					if Features.TooltipGrammarHelper then
+						element.Label = string.gsub(element.Label, "%s+", " ")
+					end
+					if not hasScalesWithText and string.find(element.Label, scalesWithTextSub) then
+						hasScalesWithText = true
+					end
+				end
+			end
+			if (GameSettings.Settings.AlwaysDisplayWeaponScalingText and not hasScalesWithText 
+			and item.Stats and item.Stats.Requirements ~= nil and #item.Stats.Requirements > 0) then
+				local attributeName = ""
+				for i,v in pairs(item.Stats.Requirements) do
+					if Data.AttributeEnum[v.Requirement] ~= nil then
+						attributeName = LocalizedText.AttributeNames[v.Requirement].Value
+					end
+				end
+				if not StringHelpers.IsNullOrEmpty(attributeName) then
+					local element = {
+						Type = "ItemRequirement",
+						Label = LocalizedText.Tooltip.ScalesWith:ReplacePlaceholders(attributeName),
+						RequirementMet = true
+					}
+					if not requirements then
+						tooltip:AppendElement(element)
+					else
+						tooltip:RemoveElements("ItemRequirement")
+						tooltip:AppendElement(element)
+						for i,v in pairs(requirements) do
+							tooltip:AppendElement(v)
+						end
+					end
 				end
 			end
 		end

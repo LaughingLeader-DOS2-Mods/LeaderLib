@@ -109,6 +109,7 @@ end
 if Ext.IsClient() then
 	Ext.RegisterNetListener("LeaderLib_SyncGameSettings", function(call, gameSettingsStr)
 		GameSettings:LoadString(gameSettingsStr)
+		GameSettings.Loaded = true
 		Ext.Print("[LeaderLib_SyncGameSettings] Synced game settings from server.")
 	end)
 

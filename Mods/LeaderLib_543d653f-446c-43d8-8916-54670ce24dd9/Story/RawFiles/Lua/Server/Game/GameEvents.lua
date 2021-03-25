@@ -46,6 +46,8 @@ local function InvokeOnInitializedCallbacks(region)
 end
 
 local function OnInitialized(region, isRunning)
+	GameHelpers.Data.SetGameMode()
+
 	local status,err = xpcall(OverrideLeaveActionStatuses, debug.traceback)
 	if not status then
 		Ext.PrintError(err)
@@ -144,6 +146,7 @@ function OnLuaReset()
 	end)
 	local region = Osi.DB_CurrentLevel:Get(nil)[1][1]
 	GameHelpers.Data.SetRegion(region)
+	GameHelpers.Data.SetGameMode()
 	OnInitialized(region, true)
 	InvokeListenerCallbacks(Listeners.LuaReset, region)
 	IterateUsers("LeaderLib_StoreUserData")

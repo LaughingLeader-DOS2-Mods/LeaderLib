@@ -10,6 +10,13 @@ LEVELTYPE = {
 	EDITOR = 4,
 }
 
+---@class GAMEMODE
+GAMEMODE = {
+	CAMPAIGN = 1,
+	ARENA = 2,
+	GAMEMASTER = 3
+}
+
 local UserIds = {}
 
 ---@class SharedData
@@ -21,7 +28,8 @@ SharedData = {
 	},
 	---@type table<string, ClientCharacterData>
 	CharacterData = {},
-	ModData = {}
+	ModData = {},
+	GameMode = GAMEMODE.CAMPAIGN
 }
 if Ext.IsClient() then
 	---@type ClientData
@@ -108,6 +116,7 @@ if Ext.IsServer() then
 	end
 
 	function GameHelpers.Data.SetRegion(region)
+		local lastType = SharedData.RegionData.LevelType
 		SharedData.RegionData.Current = region
 		if IsCharacterCreationLevel(region) == 1 then
 			SharedData.RegionData.LevelType = LEVELTYPE.CHARACTER_CREATION
@@ -120,6 +129,30 @@ if Ext.IsServer() then
 		end
 	end
 	Ext.RegisterOsirisListener("RegionStarted", 1, "after", GameHelpers.Data.SetRegion)
+
+	function GameHelpers.Data.SetGameMode(gameMode)
+		if not gameMode then
+			local db = Osi.DB_LeaderLib_GameMode:Get(nil,nil)
+			if db and #db > 0 then
+				gameMode = db[1][1]
+			end
+		end
+		if gameMode then
+			if gameMode == "Campaign" then
+				SharedData.GameMode = GAMEMODE.CAMPAIGN
+			elseif gameMode == "GameMaster" then
+				SharedData.GameMode = GAMEMODE.GAMEMASTER
+			elseif gameMode == "Arena" then
+				SharedData.GameMode = GAMEMODE.ARENA
+			end
+		else
+			SharedData.GameMode = GAMEMODE.CAMPAIGN
+		end
+	end
+
+	Ext.RegisterOsirisListener("GameModeStarted", 2, "after", function(gameMode, isEditorMode)
+		GameHelpers.Data.SetGameMode(gameMode)
+	end)
 
 	local function GetUserData(uuid)
 		local id = CharacterGetReservedUserID(uuid)

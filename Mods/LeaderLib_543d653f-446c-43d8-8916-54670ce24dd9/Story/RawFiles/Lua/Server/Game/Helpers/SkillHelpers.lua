@@ -188,3 +188,31 @@ GameHelpers.Skill.StoreSlots = StoreSkillSlots
 GameHelpers.Skill.TrySetSlot = TrySetSkillSlot
 GameHelpers.Skill.Refresh = RefreshSkill
 SwapSkill = GameHelpers.Skill.Swap
+
+---@param char string
+---@param skill string
+---@return boolean
+function GameHelpers.Skill.CanMemorize(char, skill)
+    local stat = Ext.GetStat(skill)
+    if stat then
+        local memRequirements = stat.MemorizationRequirements
+        if memRequirements then
+            for i,v in pairs(memRequirements) do
+                if v.Not == false and type(v.Param) == "number" and v.Param > 0 then
+                    if Data.AttributeEnum[v.Requirement] ~= nil then
+                        local val = CharacterGetAttribute(char, v.Requirement)
+                        if val < v.Param then
+                            return false
+                        end
+                    elseif Data.AbilityEnum[v.Requirement] ~= nil then
+                        local val = CharacterGetAbility(char, v.Requirement)
+                        if val < v.Param then
+                            return false
+                        end
+                    end
+                end
+            end
+        end
+    end
+    return true
+end

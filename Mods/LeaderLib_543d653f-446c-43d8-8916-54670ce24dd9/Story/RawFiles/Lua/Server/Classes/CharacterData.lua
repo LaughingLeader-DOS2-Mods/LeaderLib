@@ -210,7 +210,7 @@ function CharacterData:FullRestore(resurrect)
 		end
 		CharacterSetHitpointsPercentage(self.UUID, 100.0)
 		CharacterSetArmorPercentage(self.UUID, 100.0)
-		CharacterGetMagicArmorPercentage(self.UUID, 100.0)
+		CharacterSetMagicArmorPercentage(self.UUID, 100.0)
 	end
 	return false
 end

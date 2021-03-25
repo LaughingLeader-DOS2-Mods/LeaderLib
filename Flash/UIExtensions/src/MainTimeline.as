@@ -67,6 +67,11 @@ package
 			ExternalInterface.call("setAnchor","center","screen","center");
 		}
 
+		public function onEventResize() : *
+		{
+			ExternalInterface.call("setPosition","center","screen","center");
+		}
+
 		public function removeControl(id:Number): Boolean
 		{
 			return mainPanel_mc.list.removeElementByListId(id);

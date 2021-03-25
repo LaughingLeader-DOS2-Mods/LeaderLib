@@ -63,18 +63,9 @@ end
 
 function LoadGameSettings(sync)
 	local b,result = xpcall(function()
-		local settings = Classes.LeaderLibGameSettings:Create()
-		local tblString = Ext.LoadFile("LeaderLib_GameSettings.json")
-		if tblString ~= nil then
-			settings = settings:LoadString(tblString)
-			return settings
-		else
-			Ext.PrintError("Failed to load LeaderLib_GameSettings.json. Does it exist?")
-			return false
-		end
+		return GameSettings:LoadString(Ext.LoadFile("LeaderLib_GameSettings.json"))
 	end, debug.traceback)
-	if b and result ~= false then
-		GameSettings = result
+	if b and result then
 		if GameSettings.Settings ~= nil and GameSettings.Settings.Version ~= nil then
 			if GameSettings.Settings.Version < GameSettings.Default.Version then
 				GameSettings.Settings.Version = GameSettings.Default.Version
@@ -82,13 +73,12 @@ function LoadGameSettings(sync)
 			end
 		end
 	else
-		if result == false then
-			Ext.Print("[LeaderLib] Generating and saving LeaderLib_GameSettings.json")
-		end
+		Ext.Print("[LeaderLib] Generating and saving LeaderLib_GameSettings.json")
 		--Ext.PrintError("[LeaderLib:LoadGameSettings]", result)
 		GameSettings = Classes.LeaderLibGameSettings:Create()
 		SaveGameSettings()
 	end
+	GameSettings.Loaded = true
 	ApplyGameSettings(sync)
 	return GameSettings
 end
@@ -96,7 +86,7 @@ end
 function SaveGameSettings()
 	if GameSettings ~= nil then
 		local b,err = xpcall(function() 
-			Ext.SaveFile("LeaderLib_GameSettings.json", Ext.JsonStringify(GameSettings))
+			Ext.SaveFile("LeaderLib_GameSettings.json", GameSettings:ToString())
 		end, debug.traceback)
 		if not b then
 			Ext.PrintError(err)
@@ -109,18 +99,16 @@ end
 function SyncGameSettings(id)
 	if Ext.IsServer() then
 		if id ~= nil then
-			Ext.PostMessageToUser(id, "LeaderLib_SyncGameSettings", Classes.MessageData:CreateFromTable("LeaderLibGameSettings", {Settings = GameSettings}):ToString())
+			Ext.PostMessageToUser(id, "LeaderLib_SyncGameSettings", GameSettings:ToString())
 		else
-			Ext.BroadcastMessage("LeaderLib_SyncGameSettings", Classes.MessageData:CreateFromTable("LeaderLibGameSettings", {Settings = GameSettings}):ToString(), nil)
+			Ext.BroadcastMessage("LeaderLib_SyncGameSettings", GameSettings:ToString())
 		end
 	end
 end
 
 if Ext.IsClient() then
 	Ext.RegisterNetListener("LeaderLib_SyncGameSettings", function(call, gameSettingsStr)
-		local settings = Classes.MessageData:CreateFromString(gameSettingsStr)
-		GameSettings = settings.Params.Settings
-		setmetatable(GameSettings, Classes.LeaderLibGameSettings)
+		GameSettings:LoadString(gameSettingsStr)
 		Ext.Print("[LeaderLib_SyncGameSettings] Synced game settings from server.")
 	end)
 

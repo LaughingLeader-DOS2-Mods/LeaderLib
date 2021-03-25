@@ -49,7 +49,7 @@ local DefaultSettings = {
 		},
 		StartingGold = {
 			Enabled = true,
-			FJ_FortJoy_Main = 500,
+			FJ_FortJoy_Main = 200,
 			LV_HoE_Main = 2000,
 			RC_Main = 2000,
 			CoS_Main = 4000,
@@ -60,18 +60,40 @@ local DefaultSettings = {
 	Version = Ext.GetModInfo("7e737d2f-31d2-4751-963f-be6ccc59cd0c").Version
 }
 
+local function cloneTable(orig)
+	local orig_type = type(orig)
+	local copy
+	if orig_type == 'table' then
+		copy = {}
+		for orig_key, orig_value in pairs(orig) do
+			copy[orig_key] = orig_value
+		end
+	else -- number, string, boolean, etc
+		copy = orig
+	end
+	return copy
+end
+
 ---@class LeaderLibGameSettings
 local LeaderLibGameSettings = {
 	---@type LeaderLibDefaultSettings
-	Settings = Common.CopyTable(DefaultSettings),
-	Default = Common.CopyTable(DefaultSettings)
+	Settings = cloneTable(DefaultSettings),
+	Default = cloneTable(DefaultSettings),
+	Loaded = false
 }
 LeaderLibGameSettings.__index = LeaderLibGameSettings
 
----Prepares a message for data transfer and converts it to string.
+---Seralizes GameSettings to string, which only includes the Settings table.
 ---@return string
 function LeaderLibGameSettings:ToString()
-    return Ext.JsonStringify(self)
+	local copy = {
+		Settings = self.Settings
+	}
+    return Ext.JsonStringify(copy)
+end
+
+function LeaderLibGameSettings:__tostring()
+    return self:ToString()
 end
 
 ---@return LeaderLibGameSettings
@@ -123,7 +145,7 @@ local function ParseTableValue(settings, k, v)
 end
 
 ---@param source table
----@return LeaderLibGameSettings
+---@return boolean
 function LeaderLibGameSettings:LoadTable(tbl)
 	local b,result = xpcall(function()
 		if tbl ~= nil then
@@ -138,20 +160,19 @@ function LeaderLibGameSettings:LoadTable(tbl)
 				end
 			end
 		end
-		return self
+		return true
 	end, function(err)
 		Ext.PrintError("[LeaderLibGameSettings:LoadTable] Error parsing table:\n" .. tostring(err))
 	end, self, tbl)
 	if b then
 		return result
-	else
-		return self
 	end
+	return false
 end
 
 ---Converts a string to a table and applies its properties.
 ---@param str string
----@return LeaderLibGameSettings
+---@return boolean
 function LeaderLibGameSettings:LoadString(str)
 	local b,result = xpcall(function()
 		local tbl = Common.JsonParse(str)
@@ -160,23 +181,20 @@ function LeaderLibGameSettings:LoadString(str)
 				for k,v in pairs(tbl.Settings) do
 					ParseTableValue(self.Settings, k, v)
 				end
-			elseif tbl.Version == nil then
-				for k,v in pairs(tbl) do
-					ParseTableValue(self.Settings, k, v)
-				end
 			end
 		end
 		if tbl.Version ~= nil then
 			self.Settings.Version = tbl.Verion
 		end
-		return self
+		return true
 	end, debug.traceback)
 	if b then
 		return result
 	else
 		Ext.PrintError("[LeaderLibGameSettings:CreateFromString] Error parsing string as table:\n" .. tostring(result))
-		return self
 	end
+	return false
 end
 
 Classes.LeaderLibGameSettings = LeaderLibGameSettings
+GameSettings = LeaderLibGameSettings:Create()

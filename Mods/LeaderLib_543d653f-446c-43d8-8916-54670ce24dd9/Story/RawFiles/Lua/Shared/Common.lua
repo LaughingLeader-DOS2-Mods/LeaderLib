@@ -40,7 +40,7 @@ function Common.DeepCopyTable(orig)
 	return copy
 end
 
-function Common.CopyTable(orig, deep)
+function Common.CloneTable(orig, deep)
 	if deep ~= true then
 		local orig_type = type(orig)
 		local copy
@@ -55,6 +55,27 @@ function Common.CopyTable(orig, deep)
 		return copy
 	else
 		return Common.DeepCopyTable(orig)
+	end
+end
+
+---DEPRECATED, use Common.CloneTable instead.
+function Common.CopyTable(orig, deep)
+	return Common.CloneTable(orig, deep)
+end
+
+function Common.CopyTableToTable(target, copyFrom)
+	if target and copyFrom then
+		for k,v in pairs(copyFrom) do
+			if target[k] == nil then
+				target[k] = v
+			else
+				if type(v) == "table" and type(target[k]) == "table" then
+					Common.CopyTableToTable(target[k], v)
+				else
+					target[k] = v
+				end
+			end
+		end
 	end
 end
 

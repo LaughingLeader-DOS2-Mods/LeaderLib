@@ -103,34 +103,50 @@ function PresetData:AddEquipmentToCharacter(char, targetRarity, skipSlots)
 	end
 end
 
+---Applies a preset's skillset to a character, optionally checking that they have the memorization requirements for each skill.
+---@param char string
+---@param checkMemorizationRequirements boolean
+function PresetData:AddSkillsToCharacter(char, checkMemorizationRequirements)
+	local skillSet = Ext.GetSkillSet(self.SkillSet)
+	if skillSet ~= nil then
+		for i,v in pairs(skillSet.Skills) do
+			if type(v) == "table" then
+				for i,skill in pairs(v) do
+					if checkMemorizationRequirements ~= true or GameHelpers.Skill.CanMemorize(char, skill) then
+						CharacterAddSkill(char, skill, 0)
+					end
+				end
+			elseif type(v) == "string" then
+				if checkMemorizationRequirements ~= true or GameHelpers.Skill.CanMemorize(char, v) then
+					CharacterAddSkill(char, v, 0)
+				end
+			end
+		end
+	end
+end
+
 ---Applies a preset's equipment and skillset to a character.
 ---This won't change a character's stats, talents, or delete their inventory like CharacterApplyPreset does.
 ---@param char string
 ---@param targetRarity string
 ---@param skipSlots string[] Skip generating equipment for these slots.
-function PresetData:ApplyToCharacter(char, targetRarity, skipSlots)
+---@param checkMemorizationRequirements boolean|nil
+function PresetData:ApplyToCharacter(char, targetRarity, skipSlots, checkMemorizationRequirements)
 	--print("Applying",self.ClassType,"to",char, Ext.IsServer(), Ext.OsirisIsCallable())
 	if Ext.IsServer() then
 		local status,err = xpcall(function()
 			self:AddEquipmentToCharacter(char, targetRarity, skipSlots)
 		end, debug.traceback)
 		if not status then
-			Ext.PrintError("[LeaderLib] Error applying preset",self.ClassType,"to character",char)
+			Ext.PrintError("[LeaderLib] Error applying preset equipment",self.ClassType,"to character",char)
 			Ext.PrintError(err)
 		end
-		local skillSet = Ext.GetSkillSet(self.SkillSet)
-		if skillSet ~= nil then
-			for i,v in pairs(skillSet.Skills) do
-				if type(v) == "table" then
-					for i,skill in pairs(v) do
-						CharacterAddSkill(char, skill, 0)
-					end
-				elseif type(v) == "string" then
-					CharacterAddSkill(char, v, 0)
-				end
-
-			end
-			
+		local status,err = xpcall(function()
+			self:AddSkillsToCharacter(char, checkMemorizationRequirements)
+		end, debug.traceback)
+		if not status then
+			Ext.PrintError("[LeaderLib] Error applying preset skills",self.ClassType,"to character",char)
+			Ext.PrintError(err)
 		end
 	end
 end

@@ -1,6 +1,7 @@
 ---@type PresetData
 local p = Classes.PresetData
 
+--@type table<string,table<string, PresetData>>
 Data.Presets = {
 	Start = {
 		Battlemage = p:Create("Battlemage", "Class_Battlemage_Start", "Class_Battlemage", "Class_Battlemage_Start_Undead"),

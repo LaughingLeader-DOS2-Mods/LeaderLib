@@ -15,14 +15,14 @@ UIExtensions = {
 	SwfPath = "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/LeaderLib_UIExtensions.swf"
 }
 
-local function OnControlAdded(ui, ...)
-	print("OnControlAdded", Ext.JsonStringify({...}))
+local function OnControlAdded(ui, call, ...)
+	--print("OnControlAdded", Ext.JsonStringify({...}))
 end
 
-local function OnControl(ui, controlType, id, ...)
+local function OnControl(ui, call, controlType, id, ...)
 	local callback = UIExtensions.Controls[id]
 	if callback and type(callback) == "function" then
-		local b,err = xpcall(callback, debug.traceback, controlType, id, ...)
+		local b,err = xpcall(callback, debug.traceback, ui, controlType, id, ...)
 		if not b then
 			Ext.Print(string.format("[LeaderLib] Error invoking UI control callback for id (%s):", id))
 			Ext.Print(err)
@@ -66,18 +66,18 @@ Ext.RegisterListener("SessionLoaded", function()
 	-- end)
 end)
 
----@param onClick CheckboxCallback
+---Add a checkbox to LeaderLib's UIExtensions UI, which fits the screen.
+---@param onClick CheckboxCallback The callback to invoke when the checkbox is clicked.
 ---@param label string
 ---@param tooltip string
----@param state number The initial state, 0 or 1
+---@param state number The initial state, 0 or 1 if filterBool is not true, otherwise 0-2.
 ---@param x number|nil
 ---@param y number|nil
----@param filterBool boolean|nil
+---@param filterBool boolean|nil If true, the checkbox state progresses from 0-2 until it resets to 0 at > 2, otherwise it just toggles between 0 and 1.
 ---@param enabled boolean|nil
----@return number
+---@return integer Returns the ID of the checkbox created if successful.
 function UIExtensions.AddCheckbox(onClick, label, tooltip, state, x, y, filterBool, enabled)
 	SetupInstance()
-	print("UIExtensions.AddCheckbox", onClick, label, tooltip, state, x, y, filterBool, enabled)
 	local id = #UIExtensions.Controls
 	local main = UIExtensions.Instance:GetRoot()
 	if main then
@@ -89,12 +89,17 @@ function UIExtensions.AddCheckbox(onClick, label, tooltip, state, x, y, filterBo
 	end
 end
 
+---Removes a control with a specific ID.
+---@param id integer
+---@return boolean
 function UIExtensions.RemoveControl(id)
 	if UIExtensions.Controls[id] ~= nil then
 		UIExtensions.Controls[id] = nil
 		if UIExtensions.Instance then
 			local main = UIExtensions.Instance:GetRoot()
 			main.removeControl(id)
+			return true
 		end
 	end
+	return false
 end

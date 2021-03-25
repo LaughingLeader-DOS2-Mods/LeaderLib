@@ -214,6 +214,15 @@ function Data.Attribute:Get()
 	return iterateFromZero(self)
 end
 
+Data.AttributeEnum = {
+	Strength = 0,
+	Finesse = 1,
+	Intelligence = 2,
+	Constitution = 3,
+	Memory = 4,
+	Wit = 5
+}
+
 local talents = {
 	"ItemMovement",
 	"ItemCreation",

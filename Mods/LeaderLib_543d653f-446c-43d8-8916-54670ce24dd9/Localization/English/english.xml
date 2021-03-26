@@ -10,6 +10,7 @@
 	<content contentuid="h0580f26cg207fg494cgbe80g9d468b0c4996">A &lt;font color=&apos;#D040D0&apos;&gt;Story Compilation Error&lt;/font&gt; occurred with your active mods.&lt;br&gt;&lt;font color=&apos;#F7BA14&apos; size=&apos;22&apos;&gt;You may be missing mod requirements.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#FF0000&apos; size=&apos;24&apos;&gt;Mods will not work correctly.&lt;/font&gt;&lt;br&gt;To potentially fix this, please check the requirements of your active mods, such as required dependency mods, the script extender, and/or an updated game version.</content>
 	<content contentuid="h05e3a637g0755g4659g9aa9g99888bc32ed5">Undead Lizard</content>
 	<content contentuid="h07b0d455gbe0fg48a4gbe1eg3ae23e84b2eb">Confirm Preset Selection</content>
+	<content contentuid="h07ede36bgda99g42ecg813bgbc1496640e7d">Skip Tutorial (LB + Select)</content>
 	<content contentuid="h08bb8216g9d40g49f9g91d4g8a77ecb090d2">Swap between the undead and non-undead equivalent of your current race.</content>
 	<content contentuid="h0a77a6c9g8b1ag49cdgaf0eg45c159b82b32">No rifle equipped</content>
 	<content contentuid="h0ab95fb3g7cfbg483dga66bg5daf233e945a">Loading presets...</content>
@@ -108,6 +109,7 @@
 	<content contentuid="h504a8593g083bg450fgb542gcf686bf36e5b">Player Backstab Settings</content>
 	<content contentuid="h513658cbg41f5g40afg809cg1d0830efd3f1">[LeaderLib_DynamicMenu_MenuOption4_e6bea606-b29a-4bfe-8959-94e8be8330cb]</content>
 	<content contentuid="h517cd9b4g30f4g4663ga73cgaaa145863dfc">[LeaderLib_DynamicMenu_MenuOption1_1f7c9690-58b3-4cf6-b17e-0da478b15e0e]</content>
+	<content contentuid="h5279a104g5c7ag4d0fgb191gc963d39c286c">Sourcerer</content>
 	<content contentuid="h52804b8ag97ccg478eg90f8gc8b6f735dab2">&lt;font color=&apos;#FF0000&apos; size=&apos;32&apos;&gt;ERROR&lt;/font&gt;&lt;br&gt;You are missing the Script Extender, and the host has mods that require it!&lt;br&gt;&lt;font color=&apos;#FF00CC&apos; size=&apos;22&apos;&gt;Please exit the game and install the Script Extender.&lt;/font&gt;&lt;br&gt;The game will not work correctly, mods will not work correctly, and Kalavinka will weep bloody tears of pain and regret.</content>
 	<content contentuid="h529c36c6g6b68g46e2g867dg863184908d5a">Remove the Mod Menu Skill (Self)</content>
 	<content contentuid="h52a29657gf5f3g4577gb783g6fa0c0052e5e">Timed Autosaving</content>
@@ -214,6 +216,7 @@
 	<content contentuid="h92ae656agd5f1g4471g85dcgb2871834dd03">[USER] Enable auto-opening the Mod Settings Menu when closing another mod&apos;s settings menu.&lt;br&gt;Note that this could possibly have unintended side-effects if that mod opens a sub-menu dialog after the main menu dialog is closed.</content>
 	<content contentuid="h938a3bd1gcfc3g4885gacb7geef71a63ea1b">The coast is clear then?</content>
 	<content contentuid="h93f14fd4gf2eag4e9egb5f6g134e1c8f9ad1">Me? Oh, I&apos;m just a retired old man, looking to sell his wares. *He rubs his beard, glancing around on the boat.* Afraid I&apos;m not much of a soldier anymore, so trading is all I&apos;ve got.</content>
+	<content contentuid="h941109e1g894dg49efgbd26g139bcb434deb">Skip Tutorial</content>
 	<content contentuid="h943fc926g7822g4ed0g8f23g217d384bf9d2">Selecting menu option...</content>
 	<content contentuid="h950f9baege3b1g428agbb4dgf70a45676c5a">Chain All</content>
 	<content contentuid="h951be36bg6ed7g49e4ga343gaa5c47a4c98e">*Lothar grunts, rubbing his lower back as he chews on something.* Once I saw this beautiful ship in the distance, I knew it was my chance to escape. I swam like a fish.</content>
@@ -237,6 +240,7 @@
 	<content contentuid="ha1c04ddag65a8g4deagbbe6g8c401710cad9">If enabled, skill memorization requirements will be lowered (such as Necromancy 4 to Necromancy 1).&lt;br&gt;&lt;font color=&apos;#FF9933&apos;&gt;Ideally enable this alongside Skill Tier Overrides, so more skills can be selected in character creation.&lt;/font&gt;&lt;br&gt;(Default: Disabled)</content>
 	<content contentuid="ha267dc3cg888dg4f53g956ag3b6a6a9cbbef">[LeaderLib_DynamicMenu_MenuOption6_ea90e3a6-30da-411c-8ab5-cae95373ae93]</content>
 	<content contentuid="ha2901d46g7ba5g408cg91ffg6b14b45b4c09">Dynamic Menu Sample</content>
+	<content contentuid="ha2cbea79g07e1g474dg912age8c7e79abd34">If enabled, the game will skip the tutorial and go right to the configured starting level (%s).</content>
 	<content contentuid="ha35fc503g56dbg4adag963dga359d961e0c8">Horns</content>
 	<content contentuid="ha3662eaeg1dedg441eg9acdg2b9dbaabf295">Summoner&apos;s Guide to Management</content>
 	<content contentuid="ha3a18e3fge9e4g4496g84b8g5590844143f0">Rifle Weapon</content>
@@ -250,6 +254,7 @@
 	<content contentuid="ha7b4af6cg0f0cg4e02g8839g5f9c756e105b">Registered Mods</content>
 	<content contentuid="ha7f6838bg646eg405bg9d45g91e8f5434cb4">*The old man perks up for a moment.*</content>
 	<content contentuid="ha853bcf9g311dg4e56g8725g0a9188e22344">[GLOBAL] Disable user ID matching when finding the closest character a party member belongs to. This will allow the closest avatar (or persuasive) character in multiplayer to control dialog when a non-avatar player triggers an automatic dialog event. (Current Enabled)</content>
+	<content contentuid="ha864ea68gc066g45e8gb0c2gc5ed058a82ff">Always Display Weapon Scaling Text</content>
 	<content contentuid="ha88d3b01gcfc2g470eg97f5g1dafaa65a1bd">Hrmph...</content>
 	<content contentuid="ha9284da0gd161g47d7g8c19g7ac10878ee5c">*He sets his fishing pole down for a moment and rummages through a bag,*</content>
 	<content contentuid="hab87e202g3afcg45f6g9325gbfde5f0f015b">Speaking of, I have a few extra copies of this book I bet you&apos;d like. It&apos;s on the house.</content>
@@ -262,6 +267,7 @@
 	<content contentuid="haf24c059g3811g4babgb529g348a34b47d05">[LeaderLib_DynamicMenu_MenuOption8_f5ef1f68-8995-4c14-8e62-cf5f330cb31a]</content>
 	<content contentuid="hb09fdd2dg134cg4361g8b7dg9a2b23a1ec41">Open Menu</content>
 	<content contentuid="hb2822093gaf6ag417dgab70g447f0b730fb4">[LeaderLib_DynamicMenu_MenuOption1_1f7c9690-58b3-4cf6-b17e-0da478b15e0e]</content>
+	<content contentuid="hb2e82c9dg3175g429cga865g3c670288b3c6">Always display the &quot;Scales With x&quot; text that isn&apos;t visible if the weapon has an attribute requirement above 0.</content>
 	<content contentuid="hb48f1258g4031g4ab2g8d73gbb24956d5d74">I definitely activated these mods at one point! Why are they no longer active?</content>
 	<content contentuid="hb5265b58gcf15g40dfg8769gb5dcc430a99f">[LeaderLib_DynamicMenu_MenuOption5_f450c0eb-c308-4755-9718-f6a1e87305bd]</content>
 	<content contentuid="hb62538b3gfff2g4bb4g9b70g7463f658f4f7">[LeaderLib_DynamicMenu_MenuOption4_e6bea606-b29a-4bfe-8959-94e8be8330cb]</content>
@@ -305,6 +311,7 @@
 	<content contentuid="hcd40ab3egabe1g4111g9217gb2381b466a2a">Argh!</content>
 	<content contentuid="hce06e1a4gdd0fg44aeg83f5g10ee6caab1d7">I&apos;m too old for this...</content>
 	<content contentuid="hce32b71dg0adbg42b7gbbbagb962cc80264a">Enable timed autosaving, using the interval and preferences set.</content>
+	<content contentuid="hcf141983g4e08g405dg83bcg3f66636aa9ec">Deathfog Resistant</content>
 	<content contentuid="hd07402b2g8a4cg4d6dg8b31gecf12983c614">[More Intervals]</content>
 	<content contentuid="hd14d7a41gbb30g4810gaebfgc883c22654d1">Chances are a mod was updated, which deactivates it by default. It&apos;s quite annoying, I know!</content>
 	<content contentuid="hd1e9761cg75bdg4f1bg9676g6040cb7f4a50">Updating settings...</content>
@@ -331,6 +338,7 @@
 	<content contentuid="hdefd7688g4811g445ag94a4gbe304b43168b">I managed to sneak away before that nasty Kraken showed up. *He groans and rubs his shoulders.* Damn if I won&apos;t feel it tomorrow, though...</content>
 	<content contentuid="he037429fgcbf9g4a78gb1c2ge9613039ef62">Preset Menu (Locked - Check Back in 30 Seconds)</content>
 	<content contentuid="he0bf54a8g57fdg4dffg9287gf5c6aac24a35">Selecting preset...</content>
+	<content contentuid="he1b6d26dgfa57g4878g8948g68f08c6c531f">Rager</content>
 	<content contentuid="he2de2e0cgda32g4128g9db7g72020fa32c2e">Preset Menu</content>
 	<content contentuid="he2e6e5cdg9372g4805g92b1ge2e4b7b1a0db">Enable Skill Tier Overrides</content>
 	<content contentuid="he39c524ag19e1g49b8gb60bga1e4bbf30084">In multiplayer, your inventory will be unlocked automatically.</content>

@@ -62,3 +62,54 @@ function SortDictionary(id)
 end
 
 --print(Ext.JsonStringify(Osi.DB_LeaderLib_Dictionary_Data:Get(nil, nil, nil, nil)))
+
+---@param databaseName string
+---@param value any
+---@param arity integer|nil Defaults to 1 if not set.
+---@param checkColumn integer|nil Defaults to 1 if not set.
+---@return boolean
+function GameHelpers.DB.HasValue(databaseName, value, arity, checkColumn)
+	local b,result = xpcall(function()
+		arity = arity or 1
+		checkColumn = checkColumn or 1
+		local db = Osi[databaseName]:Get(GetArity(arity))
+		if db ~= nil and #db > 0 then
+			for i,entry in pairs(db) do
+				if entry[checkColumn] == value then
+					return true
+				end
+			end
+		end
+		return false
+	end, debug.traceback)
+	if not b then
+		fprint(LOGLEVEL.ERROR, "[LeaderLib:GameHelpers.DB.HasValue] Error checking database %s(%s):\n%s", databaseName, arity, result)
+		return false
+	else
+		return result
+	end
+end
+
+---@param database table
+---@param value any
+---@param checkColumn integer|nil Defaults to 1 if not set.
+---@return boolean
+function GameHelpers.DB.HasValue(db, value, checkColumn)
+	local b,result = xpcall(function()
+		if db ~= nil and #db > 0 then
+			checkColumn = checkColumn or 1
+			for i,entry in pairs(db) do
+				if entry[checkColumn] == value then
+					return true
+				end
+			end
+		end
+		return false
+	end, debug.traceback)
+	if not b then
+		fprint(LOGLEVEL.ERROR, "[LeaderLib:GameHelpers.DB.HasValue] Error checking database %s(%s):\n%s", databaseName, arity, result)
+		return false
+	else
+		return result
+	end
+end

@@ -149,6 +149,10 @@ function OnLuaReset()
 	GameHelpers.Data.SetGameMode()
 	OnInitialized(region, true)
 	InvokeListenerCallbacks(Listeners.LuaReset, region)
+	if IsCharacterCreationLevel(region) == 1 then
+		SkipTutorial.Initialize()
+		SkipTutorial.OnLeaderLibInitialized()
+	end
 	IterateUsers("LeaderLib_StoreUserData")
 	Ext.BroadcastMessage("LeaderLib_Client_InvokeLuaResetListeners", region)
 end

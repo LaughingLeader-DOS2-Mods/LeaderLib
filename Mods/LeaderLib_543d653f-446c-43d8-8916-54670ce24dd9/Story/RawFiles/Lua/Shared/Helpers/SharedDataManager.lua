@@ -152,6 +152,8 @@ if Ext.IsServer() then
 
 	Ext.RegisterOsirisListener("GameModeStarted", 2, "after", function(gameMode, isEditorMode)
 		GameHelpers.Data.SetGameMode(gameMode)
+		-- Only needs to be loaded if we'll be going to CC.
+		SkipTutorial.Initialize()
 	end)
 
 	local function GetUserData(uuid)

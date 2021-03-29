@@ -4,7 +4,7 @@ end
 
 local function GetArity(arity)
 	local nilColumns = {}
-	for i=0,arity do
+	for i=1,arity do
 		table.insert(nilColumns, "nil")
 	end
 	return table.unpack(nilColumns)
@@ -94,7 +94,7 @@ end
 ---@param value any
 ---@param checkColumn integer|nil Defaults to 1 if not set.
 ---@return boolean
-function GameHelpers.DB.HasValue(db, value, checkColumn)
+function GameHelpers.DB.TableHasValue(db, value, checkColumn)
 	local b,result = xpcall(function()
 		if db ~= nil and #db > 0 then
 			checkColumn = checkColumn or 1

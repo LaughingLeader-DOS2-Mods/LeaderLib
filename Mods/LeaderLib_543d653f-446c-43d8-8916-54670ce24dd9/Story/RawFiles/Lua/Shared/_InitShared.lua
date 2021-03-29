@@ -37,6 +37,34 @@ function PrintLog(str, ...)
 	print(string.format(str, ...))
 end
 
+---@class LOGLEVEL
+LOGLEVEL = {
+	--- Ext.Print
+	DEFAULT = 0,
+	--- print, will allow the message to show up when in input mode in the command window.
+	TRACE = 1,
+	--- Ext.PrintWarning
+	WARNING = 2,
+	--- Ext.PrintError
+	ERROR = 3,
+}
+
+---Prints a string formatted message with optional severity.
+---@param severity integer|LOGLEVEL
+---@param str string
+function fprint(severity, str, ...)
+	local msg = string.format(str, ...)
+	if severity == LOGLEVEL.ERROR then
+		Ext.PrintError(msg)
+	elseif severity == LOGLEVEL.WARNING then
+		Ext.PrintWarning(msg)
+	elseif severity == LOGLEVEL.TRACE then
+		print(msg)
+	else
+		Ext.Print(msg)
+	end
+end
+
 --- Adds a prefix to check statuses for when building Vars.LeaveActionData
 ---@param prefix string
 function RegisterLeaveActionPrefix(prefix)

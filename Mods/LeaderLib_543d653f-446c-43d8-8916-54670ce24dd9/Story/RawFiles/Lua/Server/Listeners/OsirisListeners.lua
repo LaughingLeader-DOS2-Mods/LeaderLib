@@ -57,8 +57,10 @@ local function OnLog(logType, ...)
 	end
 end
 
-for i=1,16 do
-	Ext.RegisterOsirisListener("LeaderLog_Log", i, "before", OnLog)
+if Vars.DebugMode then
+	for i=1,16 do
+		Ext.RegisterOsirisListener("LeaderLog_Log", i, "before", OnLog)
+	end
 end
 
 local function GlobalFlagChanged(flag, enabled)

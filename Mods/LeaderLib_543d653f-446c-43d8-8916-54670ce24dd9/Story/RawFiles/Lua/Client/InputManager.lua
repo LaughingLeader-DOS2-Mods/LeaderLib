@@ -92,7 +92,7 @@ function Input.OnFlashEvent(ui, call, pressed, eventName, arrayIndex)
 end
 
 if Vars.DebugMode then
-	Input.RegisterListener(function(eventName, pressed, id, inputMap, controllerEnabled)
-		PrintLog("[LeaderLib:InputEvent] eventName(%s)[%s] pressed(%s)", eventName, id, pressed)
-	end)
+	-- Input.RegisterListener(function(eventName, pressed, id, inputMap, controllerEnabled)
+	-- 	PrintLog("[LeaderLib:InputEvent] eventName(%s)[%s] pressed(%s)", eventName, id, pressed)
+	-- end)
 end

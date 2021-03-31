@@ -511,3 +511,22 @@ Ext.RegisterConsoleCommand("levelup", function(command, amount)
 	local host = CharacterGetHostCharacter()
 	CharacterLevelUpTo(host, amount)
 end)
+
+Ext.RegisterConsoleCommand("printrunes", function(command, equipmentSlot)
+	equipmentSlot = equipmentSlot or "Weapon"
+	local host = Ext.GetCharacter(CharacterGetHostCharacter())
+	local item = host:GetItemBySlot(equipmentSlot)
+	if item then
+		local boosts = GameHelpers.Stats.GetRuneBoosts(item.Stats)
+		if boosts then
+			fprint(LOGLEVEL.DEFAULT, "Runes (%s)", equipmentSlot)
+			print("======")
+			for i,v in pairs(boosts) do
+				fprint(LOGLEVEL.DEFAULT, "[%s] (%s) RuneEffectWeapon(%s) RuneEffectUpperbody(%s) RuneEffectAmulet(%s)", v.Slot, v.Name, v.Boosts.RuneEffectWeapon, v.Boosts.RuneEffectUpperbody, v.Boosts.RuneEffectAmulet)
+			end
+			print("======")
+		end
+	else
+		fprint(LOGLEVEL.WARNING, "No item in slot (%s)", equipmentSlot)
+	end
+end)

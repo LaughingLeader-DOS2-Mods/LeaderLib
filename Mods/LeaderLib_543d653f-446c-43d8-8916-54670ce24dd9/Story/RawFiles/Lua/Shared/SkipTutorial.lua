@@ -263,7 +263,6 @@ if Ext.IsServer() then
 			end
 		end)
 	end
-
 elseif Ext.IsClient() then
 	local createdCheckboxID = -1
 

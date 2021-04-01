@@ -6,5 +6,8 @@ end
 --- @param channel string Channel that will receive the message
 --- @param payload string Message payload
 function GameHelpers.Net.PostMessageToHost(channel, payload)
-	Ext.PostMessageToClient(StringHelpers.GetUUID(CharacterGetHostCharacter()), channel, payload)
+	local host = CharacterGetHostCharacter()
+	if not StringHelpers.IsNullOrEmpty(host) then
+		Ext.PostMessageToClient(host, channel, payload or "")
+	end
 end

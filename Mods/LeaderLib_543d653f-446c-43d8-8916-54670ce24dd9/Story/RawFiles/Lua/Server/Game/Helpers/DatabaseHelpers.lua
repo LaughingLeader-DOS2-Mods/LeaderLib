@@ -3,11 +3,53 @@ if GameHelpers.DB == nil then
 end
 
 local function GetArity(arity)
-	local nilColumns = {}
-	for i=1,arity do
-		table.insert(nilColumns, "nil")
+	if arity == 1 then
+		return nil
+	elseif arity == 2 then
+		return nil,nil
+	elseif arity == 3 then
+		return nil,nil,nil
+	elseif arity == 4 then
+		return nil,nil,nil,nil
+	elseif arity == 5 then
+		return nil,nil,nil,nil,nil
+	elseif arity == 6 then
+		return nil,nil,nil,nil,nil,nil
+	elseif arity == 7 then
+		return nil,nil,nil,nil,nil,nil,nil
+	elseif arity == 8 then
+		return nil,nil,nil,nil,nil,nil,nil,nil
+	elseif arity == 9 then
+		return nil,nil,nil,nil,nil,nil,nil,nil,nil
+	elseif arity == 10 then
+		return nil,nil,nil,nil,nil,nil,nil,nil,nil,nil
+	elseif arity == 11 then
+		return nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil
+	elseif arity == 12 then
+		return nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil
+	elseif arity == 13 then
+		return nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil
+	elseif arity == 14 then
+		return nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil
+	elseif arity == 15 then
+		return nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil
+	elseif arity == 16 then
+		return nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil
+	elseif arity == 17 then
+		return nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil
+	elseif arity == 18 then
+		return nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil
+	elseif arity == 19 then
+		return nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil
+	elseif arity == 20 then
+		return nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil
+	else
+		local nilColumns = {}
+		for i=1,arity do
+			table.insert(nilColumns, "nil")
+		end
+		return table.unpack(nilColumns)
 	end
-	return table.unpack(nilColumns)
 end
 
 local function SortDatabase(name, arity, sortColumn)
@@ -69,12 +111,13 @@ end
 ---@param checkColumn integer|nil Defaults to 1 if not set.
 ---@return boolean
 function GameHelpers.DB.HasValue(databaseName, value, arity, checkColumn)
+	arity = arity or 1
+	checkColumn = checkColumn or 1
 	local b,result = xpcall(function()
-		arity = arity or 1
-		checkColumn = checkColumn or 1
 		local db = Osi[databaseName]:Get(GetArity(arity))
 		if db ~= nil and #db > 0 then
 			for i,entry in pairs(db) do
+				print(entry[checkColumn], value)
 				if entry[checkColumn] == value then
 					return true
 				end

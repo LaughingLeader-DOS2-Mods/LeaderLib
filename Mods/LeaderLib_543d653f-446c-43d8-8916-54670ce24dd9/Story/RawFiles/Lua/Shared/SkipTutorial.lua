@@ -224,7 +224,7 @@ if Ext.IsServer() then
 				-- Skip setting up Skip Tutorial stuff if another mod is modifying that already.
 				if GameHelpers.DB.HasValue("DB_GLO_FirstLevelAfterCharacterCreation", "TUT_Tutorial_A") then
 					runSkipTutorialSetup = GameSettings.Settings.SkipTutorial.Enabled
-					GameHelpers.Net.PostMessageToHost("LeaderLib_SetupSkipTutorialUI", region)
+					GameHelpers.Net.PostMessageToHost("LeaderLib_SetupSkipTutorialUI", SharedData.RegionData.Current)
 					skipTutorialControlEnabled = true
 				else
 					Ext.Print("[LeaderLib] The tutorial is already being bypassed. Skipping Skip Tutorial setup.")

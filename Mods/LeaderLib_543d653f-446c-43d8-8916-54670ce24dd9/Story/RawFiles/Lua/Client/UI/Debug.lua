@@ -328,7 +328,7 @@ local function TryFindUI(ui)
 			local builtInID = builtInUI:GetTypeId()
 			--print(id, v, builtInID, builtInUI:GetRoot().stage)
 			if builtInID == id or builtInUI == ui then
-				print(string.format("[TryFindUI]%s = %s,", v:gsub("GM/", ""):gsub(".swf", ""), builtInID))
+				fprint("[TryFindUI]%s = %s,", v:gsub("GM/", ""):gsub(".swf", ""), builtInID)
 				return builtInID,v
 			end
 		end

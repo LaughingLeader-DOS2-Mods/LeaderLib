@@ -78,11 +78,25 @@ end
 ---@param skill string
 ---@param callback function
 function RemoveSkillListener(skill, callback)
-	if SkillListeners[skill] ~= nil then
-		for i,v in pairs(SkillListeners[skill]) do
-			if v == callback then
-				table.remove(SkillListeners[skill], i)
-				break
+	local t = type(skill)
+	if t == "string" then
+		if SkillListeners[skill] ~= nil then
+			for i,v in pairs(SkillListeners[skill]) do
+				if v == callback then
+					table.remove(SkillListeners[skill], i)
+					break
+				end
+			end
+		end
+	elseif t == "table" then
+		for i,v in pairs(skill) do
+			if SkillListeners[v] ~= nil then
+				for i,v in pairs(SkillListeners[v]) do
+					if v == callback then
+						table.remove(SkillListeners[v], i)
+						break
+					end
+				end
 			end
 		end
 	end

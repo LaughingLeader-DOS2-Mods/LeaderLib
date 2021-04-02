@@ -2,7 +2,6 @@ if GameHelpers.Tooltip == nil then
 	GameHelpers.Tooltip = {}
 end
 
-
 local function ReplacePlaceholders(str, character)
 	if character ~= nil and type(character) == "string" then
 		character = Ext.GetCharacter(character)

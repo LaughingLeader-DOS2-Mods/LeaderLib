@@ -7,7 +7,7 @@ end
 ---@param b string
 ---@param insensitive boolean
 ---@return boolean
-local function Equals(a,b, insensitive)
+function StringHelpers.Equals(a,b, insensitive)
 	if insensitive == nil then insensitive = true end
 	if a ~= nil and b ~= nil then
 		if insensitive and type(a) == "string" and type(b) == "string" then
@@ -19,32 +19,26 @@ local function Equals(a,b, insensitive)
 	return false
 end
 
-StringHelpers.Equals = Equals
-
 ---Checks if a string is null or empty.
 ---@type x string
 ---@return boolean
-local function IsNullOrEmpty(x)
+function StringHelpers.IsNullOrEmpty(x)
 	-- CharacterCreationFinished sends 00000000-0000-0000-0000-000000000000 or some reason, omitting the NULL_
 	return x == nil or x == "" or x == "NULL_00000000-0000-0000-0000-000000000000" or x == "00000000-0000-0000-0000-000000000000" or type(x) ~= "string"
 end
 
-StringHelpers.IsNullOrEmpty = IsNullOrEmpty
-
 ---Capitalize a string.
 ---@type s string
 ---@return string
-local function Capitalize(s)
+function StringHelpers.Capitalize(s)
 	return s:sub(1,1):upper()..s:sub(2)
 end
-
-StringHelpers.Capitalize = Capitalize
 
 ---Join a table of string into one string.
 ---Source: http://www.wellho.net/resources/ex.php4?item=u105/spjo
 ---@param delimiter string
 ---@param list table
-local function Join(delimiter, list, uniqueOnly)
+function StringHelpers.Join(delimiter, list, uniqueOnly)
 	local len = (list ~= nil and type(list) == "table") and #list or 0
 	if len == 0 then
 		return ""
@@ -62,13 +56,11 @@ local function Join(delimiter, list, uniqueOnly)
 	return string
 end
 
-StringHelpers.Join = Join
-
 ---Split a string into a table.
 ---Source: http://www.wellho.net/resources/ex.php4?item=u105/spjo
 ---@param str string
 ---@param delimiter string
-local function Split(str, delimiter)
+function StringHelpers.Split(str, delimiter)
 	local list = {}; local pos = 1
 	if string.find("", delimiter, 1) then
 		table.insert(list, str)
@@ -86,8 +78,6 @@ local function Split(str, delimiter)
 	end
 	return list
 end
-
-StringHelpers.Split = Split
 
 --- Replace placeholder values in a string, such as [1], [2], etc. 
 --- Takes a variable numbers of values.

@@ -188,7 +188,7 @@ if Ext.IsServer() then
 							local uuid = StringHelpers.GetUUID(db[1])
 							Osi.ProcObjectTimerCancel(uuid, "FTJ_WakeUpTimer")
 
-							Osi.PROC_UnlockWaypoint("WAYP_FTJ_BeachStatue",uuid)
+							Osi.PROC_UnlockWaypoint("WAYP_FTJ_BeachStatue", uuid)
 
 							CharacterSetAnimationOverride(uuid,"")
 							PlayAnimation(uuid,"knockdown_getup","")

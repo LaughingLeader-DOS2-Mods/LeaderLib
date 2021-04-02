@@ -105,6 +105,37 @@ end
 
 --print(Ext.JsonStringify(Osi.DB_LeaderLib_Dictionary_Data:Get(nil, nil, nil, nil)))
 
+---@param db table
+---@param value any
+---@param checkColumn integer|nil Defaults to 1 if not set.
+---@return boolean
+function GameHelpers.DB.TableHasValue(db, value, checkColumn)
+	checkColumn = checkColumn or 1
+	local b,result = xpcall(function()
+		if type(value) == "table" then
+			for _,v in pairs(value) do
+				for _,entry in pairs(db) do
+					if entry[checkColumn] == v then
+						return true
+					end
+				end
+			end
+		else
+			for _,entry in pairs(db) do
+				if entry[checkColumn] == value then
+					return true
+				end
+			end
+		end
+		return false
+	end, debug.traceback)
+	if b then
+		return result
+	end
+	fprint(LOGLEVEL.ERROR, "[LeaderLib:GameHelpers.DB.TableHasValue] Error checking database table:\n%s", result)
+	return false
+end
+
 ---@param databaseName string
 ---@param value any
 ---@param arity integer|nil Defaults to 1 if not set.
@@ -116,43 +147,60 @@ function GameHelpers.DB.HasValue(databaseName, value, arity, checkColumn)
 	local b,result = xpcall(function()
 		local db = Osi[databaseName]:Get(GetArity(arity))
 		if db ~= nil and #db > 0 then
-			for i,entry in pairs(db) do
-				print(entry[checkColumn], value)
-				if entry[checkColumn] == value then
-					return true
-				end
-			end
+			return db
 		end
-		return false
+		return nil
 	end, debug.traceback)
-	if not b then
+
+	if not b or result == nil then
 		fprint(LOGLEVEL.ERROR, "[LeaderLib:GameHelpers.DB.HasValue] Error checking database %s(%s):\n%s", databaseName, arity, result)
-		return false
 	else
-		return result
+		return GameHelpers.DB.TableHasValue(result, value, checkColumn)
 	end
+	return false
 end
 
----@param database table
----@param value any
+---Similar to GameHelpers.DB.HasValue, but checks the UUID part of the string values, since it may be stored as Name_UUID in the DB.
+---@param databaseName string
+---@param uuid string
+---@param arity integer|nil Defaults to 1 if not set.
 ---@param checkColumn integer|nil Defaults to 1 if not set.
 ---@return boolean
-function GameHelpers.DB.TableHasValue(db, value, checkColumn)
+function GameHelpers.DB.HasUUID(databaseName, uuid, arity, checkColumn)
+	arity = arity or 1
+	checkColumn = checkColumn or 1
 	local b,result = xpcall(function()
+		local db = Osi[databaseName]:Get(GetArity(arity))
 		if db ~= nil and #db > 0 then
-			checkColumn = checkColumn or 1
-			for i,entry in pairs(db) do
-				if entry[checkColumn] == value then
-					return true
-				end
-			end
+			return db
 		end
-		return false
+		return nil
 	end, debug.traceback)
-	if not b then
+
+	if not b or result == nil then
 		fprint(LOGLEVEL.ERROR, "[LeaderLib:GameHelpers.DB.HasValue] Error checking database %s(%s):\n%s", databaseName, arity, result)
 		return false
 	else
-		return result
+		local t = type(uuid)
+		if t == "table" then
+			for _,uuid2 in pairs(uuid) do
+				uuid2 = StringHelpers.GetUUID(uuid2)
+				for _,entry in pairs(result) do
+					if StringHelpers.GetUUID(entry[checkColumn]) == uuid2 then
+						return true
+					end
+				end
+			end
+		elseif t == "string" then
+			uuid = StringHelpers.GetUUID(uuid)
+			for _,entry in pairs(result) do
+				if StringHelpers.GetUUID(entry[checkColumn]) == uuid then
+					return true
+				end
+			end
+		else
+			fprint(LOGLEVEL.ERROR, "[LeaderLib:GameHelpers.DB.HasUUID] uuid value (%s) needs to be a string or table of strings.", uuid)
+		end
 	end
+	return false
 end

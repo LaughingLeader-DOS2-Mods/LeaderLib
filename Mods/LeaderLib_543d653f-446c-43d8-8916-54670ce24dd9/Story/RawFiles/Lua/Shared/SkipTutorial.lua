@@ -19,10 +19,6 @@ if Ext.IsServer() then
 		local runSkipTutorialSetup = false
 		local skipTutorialControlEnabled = false
 	
-		local function IsPlayer(uuid)
-			return CharacterIsPlayer(uuid) == 1 or # Osi.DB_IsPlayer:Get(uuid) > 1
-		end
-	
 		local attributeToPreset = {
 			Strength = "Knight",
 			Finesse = "Rogue",
@@ -70,7 +66,7 @@ if Ext.IsServer() then
 			local players = Osi.DB_IsPlayer:Get(nil)
 			if players then
 				for _,entry in pairs(players) do
-					local uuid = StringHelpers.GetUUID(db[1])
+					local uuid = StringHelpers.GetUUID(entry[1])
 					if settings.StartingCharacterLevel.Enabled then
 						local targetLevel = settings.StartingCharacterLevel[region] or 1
 						if targetLevel > 1 and CharacterGetLevel(uuid) < targetLevel then
@@ -173,18 +169,37 @@ if Ext.IsServer() then
 	
 					-- Make neutral again to players
 					-- TUT_WindegoInterrogation.txt
-					SetRelationFactionToPlayers("FTJ_SW_Windego", 50)
+					Osi.SetRelationFactionToPlayers("FTJ_SW_Windego", 50)
 	
 					-- Give Beast Hat quest
 					GlobalSetFlag("FTJ_BST_BeastEndedTutWithHat")
 	
 					-- Give Sebille Adrenaline from eating the arm
-					if IsPlayer(ID.Sebille) and CharacterHasSkill(ID.Sebille, "Shout_Adrenaline") == 0 then
+					if GameHelpers.Character.IsPlayer(ID.Sebille) and CharacterHasSkill(ID.Sebille, "Shout_Adrenaline") == 0 then
 						CharacterAddSkill(ID.Sebille, "Shout_Adrenaline", 0)
 					end
 	
 					GlobalSetFlag("TUT_LowerDeck_OriginsFleeingToTop")
 					GlobalSetFlag("TUT_ChoseRescueOthers")
+
+					StartOneshotTimer("LeaderLib_SkipTutorial_SkipFTJWakeup", 750, function(...)
+						Ext.Print("[LeaderLib:SkipTutorial] Speeding up Fort Joy beach wake-up.")
+						for _,db in pairs(Osi.DB_IsPlayer:Get(nil)) do
+							local uuid = StringHelpers.GetUUID(db[1])
+							Osi.ProcObjectTimerCancel(uuid, "FTJ_WakeUpTimer")
+
+							Osi.PROC_UnlockWaypoint("WAYP_FTJ_BeachStatue",uuid)
+
+							CharacterSetAnimationOverride(uuid,"")
+							PlayAnimation(uuid,"knockdown_getup","")
+							Osi.ProcIncreaseCounter("FTJ_PlayersWokenUp")
+							Osi.Proc_FTJ_CheckPlayersWokenUp(uuid)
+
+							--Osi.PROC_FTJ_StartWakeUpVoicebark(uuid)
+							--Osi.Proc_FTJ_UnfreezePlayers()
+							--UserSetFlag(uuid,"QuestUpdate_FTJ_Voice_TUT_Voice",0)
+						end
+					end)
 				end
 			}
 		}
@@ -236,6 +251,14 @@ if Ext.IsServer() then
 			SkipTutorial.OnLeaderLibInitialized()
 		end)
 	
+		-- Ext.RegisterOsirisListener("DB_ObjectTimer", 3, "after", function(uuid, timerName, uniqueTimerName)
+		-- 	if timerName == "FTJ_WakeUpTimer" then
+		-- 		print("DB_ObjectTimer", uuid, timerName, uniqueTimerName)
+		-- 		Osi.ProcObjectTimerCancel(uuid, "FTJ_WakeUpTimer")
+		-- 		Osi.ProcObjectTimerFinished(uuid, "FTJ_WakeUpTimer")
+		-- 	end
+		-- end)
+
 		Ext.RegisterOsirisListener("CharacterCreationFinished", 1, "before", function(uuid)
 			-- CharacterCreationFinished(NULL) means that everyone is ready
 			if skipTutorialControlEnabled then

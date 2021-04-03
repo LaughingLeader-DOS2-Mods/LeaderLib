@@ -56,3 +56,13 @@ function GameHelpers.Character.GetHighestPlayerLevel()
 	end
 	return level
 end
+
+function GameHelpers.Character.IsUndead(uuid)
+	local character = Ext.GetCharacter(uuid)
+	if character then
+		if character:HasTag("UNDEAD") or character.Stats.TALENT_Zombie then
+			return true
+		end
+	end
+	return false
+end

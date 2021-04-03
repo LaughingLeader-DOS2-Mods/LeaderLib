@@ -149,8 +149,9 @@ end
 ---@param duration number
 ---@param allInstances boolean|nil
 ---@param applyIfMissing boolean|nil
+---@param extendDuration boolean|nil If true, the current duration is added to the duration value set, instead of replacing it.
 ---@return boolean
-function GameHelpers.Status.SetDuration(obj, statusId, duration, allInstances, applyIfMissing)
+function GameHelpers.Status.SetDuration(obj, statusId, duration, allInstances, applyIfMissing, extendDuration)
 	if HasActiveStatus(obj, statusId) == 0 then
 		if applyIfMissing ~= false then
 			ApplyStatus(obj, statusId, duration, 0, obj)
@@ -165,8 +166,13 @@ function GameHelpers.Status.SetDuration(obj, statusId, duration, allInstances, a
 				if allInstances == true then
 					for _,status in pairs(character:GetStatusObjects()) do
 						if status.StatusId == statusId then
-							status.CurrentLifeTime = duration
-							status.LifeTime = duration
+							if not extendDuration then
+								status.CurrentLifeTime = duration
+								status.LifeTime = duration
+							else
+								status.CurrentLifeTime = status.CurrentLifeTime + duration
+								status.LifeTime = status.LifeTime + duration
+							end
 							status.RequestClientSync = true
 							success = true
 						end
@@ -174,16 +180,17 @@ function GameHelpers.Status.SetDuration(obj, statusId, duration, allInstances, a
 				else
 					local status = character:GetStatus(statusId)
 					if status ~= nil then
-						status.CurrentLifeTime = duration
-						status.LifeTime = duration
+						if not extendDuration then
+							status.CurrentLifeTime = duration
+							status.LifeTime = duration
+						else
+							status.CurrentLifeTime = status.CurrentLifeTime + duration
+							status.LifeTime = status.LifeTime + duration
+						end
 						status.RequestClientSync = true
+						success = true
 					end
 				end
-
-				if success and character.IsPlayer then
-					--GameHelpers.UI.RefreshStatusTurns(obj, statusId, turns)
-				end
-
 				return success
 			end
 		end
@@ -200,6 +207,28 @@ end
 ---@return boolean
 function GameHelpers.Status.SetTurns(obj, statusId, turns, allInstances, applyIfMissing)
 	return GameHelpers.Status.SetDuration(obj, statusId, turns*6, allInstances, applyIfMissing)
+end
+
+---Extend an active status' duration, or apply if if applyIfMissing is not false.
+---@param obj string
+---@param statusId string
+---@param addDuration number
+---@param allInstances boolean|nil
+---@param applyIfMissing boolean|nil
+---@return boolean
+function GameHelpers.Status.ExtendDuration(obj, statusId, addDuration, allInstances, applyIfMissing)
+	return GameHelpers.Status.SetDuration(obj, statusId, addDuration, allInstances, applyIfMissing, true)
+end
+
+---Set an active status' turns, or apply if if applyIfMissing is not false.
+---@param obj string
+---@param statusId string
+---@param addTurns integer
+---@param allInstances boolean|nil
+---@param applyIfMissing boolean|nil
+---@return boolean
+function GameHelpers.Status.ExtendTurns(obj, statusId, addTurns, allInstances, applyIfMissing)
+	return GameHelpers.Status.SetDuration(obj, statusId, addTurns*6, allInstances, applyIfMissing, true)
 end
 
 ---Applies statuses in order of the table supplied. Use this for tiered statuses (i.e. MYMOD_POWERLEVEL1, MYMOD_POWERLEVEL2).

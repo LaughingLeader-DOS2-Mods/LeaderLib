@@ -45,63 +45,6 @@ function RegisterModListener(event, uuid, callback)
 	end
 end
 
-TotalSkillListeners = 0
-
----@alias LeaderLibSkillListenerCallback fun(skill:string, char:string, state:SKILL_STATE, data:SkillEventData|HitData)
-
---- Registers a function to call when a specific skill's events fire.
----@param skill string|string[]
----@param callback LeaderLibSkillListenerCallback
-function RegisterSkillListener(skill, callback)
-	local t = type(skill)
-	if t == "string" then
-		if SkillListeners[skill] == nil then
-			SkillListeners[skill] = {}
-		end
-		table.insert(SkillListeners[skill], callback)
-		TotalSkillListeners = TotalSkillListeners + 1
-
-		if Vars.Initialized then
-			Osi.LeaderLib_ToggleScripts_EnableScript("LeaderLib_LuaSkillListeners_Enabled", "LeaderLib")
-			Osi.LeaderLib_ToggleScripts_EnableScript("LeaderLib_LuaEventListeners_Enabled", "LeaderLib")
-		else
-			Vars.PostLoadEnableLuaListeners = true
-		end
-	elseif t == "table" then
-		for i,v in pairs(skill) do
-			RegisterSkillListener(v, callback)
-		end
-	end
-end
-
---- Removed a function from the listeners table.
----@param skill string
----@param callback function
-function RemoveSkillListener(skill, callback)
-	local t = type(skill)
-	if t == "string" then
-		if SkillListeners[skill] ~= nil then
-			for i,v in pairs(SkillListeners[skill]) do
-				if v == callback then
-					table.remove(SkillListeners[skill], i)
-					break
-				end
-			end
-		end
-	elseif t == "table" then
-		for i,v in pairs(skill) do
-			if SkillListeners[v] ~= nil then
-				for i,v in pairs(SkillListeners[v]) do
-					if v == callback then
-						table.remove(SkillListeners[v], i)
-						break
-					end
-				end
-			end
-		end
-	end
-end
-
 Ext.RegisterListener("SessionLoading", function()
 	for i,status in pairs(Ext.GetStatEntries("StatusData")) do
 		local statusType = Ext.StatGetAttribute(status, "StatusType")

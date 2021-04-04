@@ -229,6 +229,9 @@ function Import(targetModTable, skipExistingCheck)
 end
 
 local ignoreImports = {
+	Game = true,
+	Ext = true,
+	Osi = true,
 	ImportUnsafe = true,
 	Import = true,
 	PersistentVars = true,

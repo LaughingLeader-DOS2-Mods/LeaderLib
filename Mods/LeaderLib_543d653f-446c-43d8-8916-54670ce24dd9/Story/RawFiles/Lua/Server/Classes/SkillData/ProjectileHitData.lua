@@ -5,7 +5,9 @@ local ProjectileHitData = {
 	Target = "",
 	Attacker = "",
 	Skill = "",
+	---@type EsvProjectile
 	Projectile = nil,
+	---@type number[]
 	Position = nil,
 }
 ProjectileHitData.__index = ProjectileHitData

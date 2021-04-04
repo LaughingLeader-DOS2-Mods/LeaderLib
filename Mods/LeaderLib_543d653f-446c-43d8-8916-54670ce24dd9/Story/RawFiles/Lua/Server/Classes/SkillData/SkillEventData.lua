@@ -12,6 +12,11 @@ local SkillEventData = {
 	TargetPositions = {},
 	TotalTargetObjects = 0,
 	TotalTargetPositions = 0,
+	TargetMode = {
+		All = -1,
+		Objects = 0,
+		Positions = 1
+	}
 }
 SkillEventData.__index = SkillEventData
 
@@ -64,13 +69,13 @@ end
 ---@param func SkillEventDataForEachCallback
 ---@param mode integer Run the function on objects, positions, or both. Defaults to just objects. 0:Objects, 1:Positions, 2:All
 function SkillEventData:ForEach(func, mode)
-	if mode == nil then mode = 0 end
+	mode = mode or self.TargetMode.Objects
 	local runOnObjects = mode ~= 1 and self.TotalTargetObjects > 0
 	if runOnObjects then
 		for i,v in pairs(self.TargetObjects) do
 			local status,err = xpcall(func, debug.traceback, v, "string", self)
 			if not status then
-				Ext.PrintError("[LeaderLib:SkillEventData:ForEach] Error:", err)
+				Ext.PrintError("[LeaderLib:SkillEventData:ForEach] Error:")
 				Ext.PrintError(err)
 			end
 		end
@@ -80,7 +85,7 @@ function SkillEventData:ForEach(func, mode)
 		for i,v in pairs(self.TargetPositions) do
 			local status,err = xpcall(func, debug.traceback, v, "table", self)
 			if not status then
-				Ext.PrintError("[LeaderLib:SkillEventData:ForEach] Error:", err)
+				Ext.PrintError("[LeaderLib:SkillEventData:ForEach] Error:")
 				Ext.PrintError(err)
 			end
 		end

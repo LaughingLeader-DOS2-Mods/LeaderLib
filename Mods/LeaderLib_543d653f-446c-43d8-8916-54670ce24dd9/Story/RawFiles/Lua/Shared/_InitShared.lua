@@ -71,7 +71,6 @@ function RegisterLeaveActionPrefix(prefix)
 	table.insert(Vars.LeaveActionData.Prefixes, prefix)
 end
 
-Main = {}
 ModRegistration = {}
 Register = {}
 
@@ -171,35 +170,57 @@ if Vars.DebugMode then
 	Features.RacialTalentsDisplayFix = true
 end
 
+local ignoreImports = {
+	--lua base
+	["_G"] = true,
+	tonumber = true,
+	pairs = true,
+	ipairs = true,
+	table = true,
+	tostring = true,
+	math = true,
+	type = true,
+	print = true,
+	error = true,
+	next = true,
+	string = true,
+	--ositools base
+	Sandboxed = true,
+	ModuleUUID = true,
+	Game = true,
+	Ext = true,
+	Osi = true,
+	PersistentVars = true,
+	--LeaderLib ignores
+	Debug = true,
+	Vars = true,
+	Listeners = true,
+	SkillListeners = true,
+	ModListeners = true,
+	Settings = true,
+	ImportUnsafe = true,
+	Import = true,
+}
+
+--Data/table imports.
 local imports = {
 	All = {
-		"fprint",
 		"LOGLEVEL",
-		"PrintLog",
-		"PrintDebug",
-		"InvokeListenerCallbacks",
-		"EnableFeature",
-		"DisableFeature",
 		"StringHelpers",
 		"GameHelpers",
 		"Common",
 		"SharedData",
 		"LocalizedText",
 		"LEVELTYPE",
+		"Classes",
+		"Data",
 	},
 	Server = {
 		"SKILL_STATE",
-		"RegisterSkillListener",
-		"RemoveSkillListener",
-		"RegisterStatusListener",
-		"RegisterProtectedOsirisListener",
-		"StartOneshotTimer",
-		"StartTimer",
-		"CancelTimer",
-		"RegisterLeaveActionPrefix",
 	},
 	Client = {
-		"UI"
+		"UI",
+		"Client"
 	}
 }
 
@@ -211,35 +232,38 @@ function Import(targetModTable, skipExistingCheck)
 	for _,k in pairs(imports.All) do
 		if skipExistingCheck == true or not targetModTable[k] then
 			targetModTable[k] = Mods.LeaderLib[k]
+		elseif Vars.DebugMode then
+			fprint(LOGLEVEL.WARNING, "Global key (%s) already exists in mod table for mod (%s)", k, targetModTable.ModuleUUID)
+		end
+	end
+	-- Automatically importing global functions
+	for k,v in pairs(Mods.LeaderLib) do
+		if ignoreImports[k] ~= true and type(v) == "function" then
+			if skipExistingCheck == true or not targetModTable[k] then
+				targetModTable[k] = v
+			elseif Vars.DebugMode then
+				fprint(LOGLEVEL.WARNING, "Global function (%s) already exists in mod table for mod (%s)", k, targetModTable.ModuleUUID)
+			end
 		end
 	end
 	if Ext.IsServer() then
 		for _,k in pairs(imports.Server) do
 			if skipExistingCheck == true or not targetModTable[k] then
 				targetModTable[k] = Mods.LeaderLib[k]
+			elseif Vars.DebugMode then
+				fprint(LOGLEVEL.WARNING, "Global key (%s) already exists in mod table for mod (%s)", k, targetModTable.ModuleUUID)
 			end
 		end
 	else
 		for _,k in pairs(imports.Client) do
 			if skipExistingCheck == true or not targetModTable[k] then
 				targetModTable[k] = Mods.LeaderLib[k]
+			elseif Vars.DebugMode then
+				fprint(LOGLEVEL.WARNING, "Global key (%s) already exists in mod table for mod (%s)", k, targetModTable.ModuleUUID)
 			end
 		end
 	end
 end
-
-local ignoreImports = {
-	Game = true,
-	Ext = true,
-	Osi = true,
-	ImportUnsafe = true,
-	Import = true,
-	PersistentVars = true,
-	Vars = true,
-	Listeners = true,
-	SkillListeners = true,
-	ModListeners = true,
-}
 
 ---Imports all of LeaderLib's globals to the target table, excluding PersistentVars.
 ---@param targetModTable table
@@ -250,6 +274,8 @@ function ImportUnsafe(targetModTable, skipExistingCheck)
 		if ignoreImports[k] ~= true then
 			if skipExistingCheck == true or not targetModTable[k] then
 				targetModTable[k] = v
+			elseif Vars.DebugMode then
+				fprint(LOGLEVEL.WARNING, "Global key (%s) already exists in mod table for mod (%s)", k, targetModTable.ModuleUUID)
 			end
 		end
 	end

@@ -170,3 +170,84 @@ if Vars.DebugMode then
 	-- Features.HideVitality = 2
 	Features.RacialTalentsDisplayFix = true
 end
+
+local imports = {
+	All = {
+		"fprint",
+		"LOGLEVEL",
+		"PrintLog",
+		"PrintDebug",
+		"InvokeListenerCallbacks",
+		"EnableFeature",
+		"DisableFeature",
+		"StringHelpers",
+		"GameHelpers",
+		"Common",
+		"SharedData",
+		"LocalizedText",
+		"LEVELTYPE",
+	},
+	Server = {
+		"SKILL_STATE",
+		"RegisterSkillListener",
+		"RemoveSkillListener",
+		"RegisterStatusListener",
+		"RegisterProtectedOsirisListener",
+		"StartOneshotTimer",
+		"StartTimer",
+		"CancelTimer",
+		"RegisterLeaveActionPrefix",
+	},
+	Client = {
+		"UI"
+	}
+}
+
+---Imports a specific group of LeaderLib globals to the target table.
+---@param targetModTable table
+---@param skipExistingCheck boolean If true, each key is set in the target table without checking if it already exists.
+function Import(targetModTable, skipExistingCheck)
+	targetModTable.LeaderLib = Mods.LeaderLib
+	for _,k in pairs(imports.All) do
+		if skipExistingCheck == true or not targetModTable[k] then
+			targetModTable[k] = Mods.LeaderLib[k]
+		end
+	end
+	if Ext.IsServer() then
+		for _,k in pairs(imports.Server) do
+			if skipExistingCheck == true or not targetModTable[k] then
+				targetModTable[k] = Mods.LeaderLib[k]
+			end
+		end
+	else
+		for _,k in pairs(imports.Client) do
+			if skipExistingCheck == true or not targetModTable[k] then
+				targetModTable[k] = Mods.LeaderLib[k]
+			end
+		end
+	end
+end
+
+local ignoreImports = {
+	ImportUnsafe = true,
+	Import = true,
+	PersistentVars = true,
+	Vars = true,
+	Listeners = true,
+	SkillListeners = true,
+	ModListeners = true,
+}
+
+---Imports all of LeaderLib's globals to the target table, excluding PersistentVars.
+---@param targetModTable table
+---@param skipExistingCheck boolean If true, each key is set in the target table without checking if it already exists.
+function ImportUnsafe(targetModTable, skipExistingCheck)
+	targetModTable.LeaderLib = Mods.LeaderLib
+	for k,v in pairs(Mods.LeaderLib) do
+		if ignoreImports[k] ~= true then
+			if skipExistingCheck == true or not targetModTable[k] then
+				targetModTable[k] = v
+			end
+		end
+	end
+end

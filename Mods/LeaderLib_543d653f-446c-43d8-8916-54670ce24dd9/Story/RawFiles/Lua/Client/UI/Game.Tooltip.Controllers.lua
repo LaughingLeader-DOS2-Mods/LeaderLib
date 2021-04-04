@@ -8,6 +8,7 @@ local xpcall = xpcall
 local Ext = Ext
 local print = print
 local Mods = Mods
+local Game = Game
 
 Game.Tooltip = {}
 
@@ -1474,7 +1475,7 @@ function TooltipData:AppendElementBeforeType(ele, elementType)
 	table.insert(self.Data, ele)
 end
 
-function RegisterListener(...)
+function Game.Tooltip.RegisterListener(...)
 	local args = {...}
 	if #args == 1 then
 		TooltipHooks:RegisterListener(nil, nil, args[1])

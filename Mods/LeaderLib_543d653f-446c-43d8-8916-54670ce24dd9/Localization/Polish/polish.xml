@@ -82,6 +82,7 @@
 	<content contentuid="h3db4fa28g041bg45ceg9fd6g91d77d5e154f">[GLOBAL] Prevent LeaderLib registered mod books from being automatically be added to the party&apos;s inventory. (Books are currently enabled)</content>
 	<content contentuid="h3e1f5e00g58f7g4b23g97c4g979be6586c6f">Opening the LeaderLib settings menu...</content>
 	<content contentuid="h3e28d8d8g362bg4d7dga097gf8fcac3fbfe3">&lt;font color=&apos;#FF00CC&apos;&gt;One or more players are missing the script extender.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#FF0000&apos;&gt;The script extender is needed for mods to work correctly.&lt;/font&gt;&lt;br&gt;Players missing the extender:&lt;br&gt;[1]</content>
+	<content contentuid="h3e7215afg3389g4dc4gaa4bg1029c5cda75a">Hide all statuses next to the party member portraits.</content>
 	<content contentuid="h3eb917d7g036fg483dg8ee5gc83743845400">Welcome!</content>
 	<content contentuid="h3ed2c7c5gf6c0g4c9dga916g5782593327ab">Open Mod Menu</content>
 	<content contentuid="h3eff6bc1gb26dg4bb5gb3b9g2551c65026e0">Apply On Hit:&lt;br&gt;[1] for [2] turns(s). ([3] Chance)</content>
@@ -158,6 +159,7 @@
 	<content contentuid="h6d2689a6ge111g43b7g8c87g478a5e501f40">Mods&lt;br&gt;[LeaderLib_ModMenu_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156]</content>
 	<content contentuid="h6d41e8bag5ab9g42c4g8723g2dad9e443b64">*He hands you a peculiar-looking book.*</content>
 	<content contentuid="h6d61f680g2f6cg44c1g8a37g4ad2ad98dc90">I&apos;m also selling some old belongings.</content>
+	<content contentuid="h6d855e34gd141g49f7ga52agc4a30cf700ba">Client-Side Settings</content>
 	<content contentuid="h6eabd548g4797g423agbe50g8a858704a8c1">Player Action Point Settings</content>
 	<content contentuid="h6f21c7b6gea18g4846gbd07g048402159797">*He waits for you to speak.*</content>
 	<content contentuid="h6f8c74d8g77d3g469ega859g41d644a06c6a">LeaderLib Settings</content>
@@ -383,5 +385,6 @@
 	<content contentuid="hfda4adafgd642g477fgbbdbg268fe17118b4">Lower Skill Memorization Requirements</content>
 	<content contentuid="hfdc7dcb0g648cg4021gb530g011b5d8c242d">Skills Can Backstab</content>
 	<content contentuid="hfe0169eagd031g41a8gbcd3g6b992d81fba5">[GLOBAL] Enable Status Logging</content>
+	<content contentuid="hfe94fb21g03b4g46c3gbcaegf551c9b54dc8">Hide Portrait Statuses</content>
 	<content contentuid="hff1084efgf4efg450aga177g1311cbce0ebb">&lt;font color=&apos;#2EFE2E&apos;&gt;+[1] Attitude&lt;/font&gt;</content>
 </contentList>

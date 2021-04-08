@@ -23,11 +23,57 @@ end
 -- // 5 - InSurface
 -- // 6 - SetHP, osi::ApplyDamage, StatusConsume
 
----Returns true if a hit is from a weapon.
+local unarmedHitMatchProperties = {
+    DamageType = 0,
+    DamagedMagicArmor = 0,
+    Equipment = 0,
+    DeathType = 0,
+    Bleeding = 0,
+    DamagedPhysicalArmor = 0,
+    PropagatedFromOwner = 0,
+    -- NoWeapon doesn't set HitWithWeapon until after preparation
+    HitWithWeapon = 0,
+    Surface = 0,
+    NoEvents = 0,
+    Hit = 0,
+    Poisoned = 0,
+    --CounterAttack = 0,
+    --ProcWindWalker = 1,
+    NoDamageOnOwner = 0,
+    Burning = 0,
+    --DamagedVitality = 0,
+    --LifeSteal = 0,
+    --ArmorAbsorption = 0,
+    --AttackDirection = 0,
+    Missed = 0,
+    --CriticalHit = 0,
+    --Backstab = 0,
+    Reflection = 0,
+    DoT = 0,
+    Dodged = 0,
+    --DontCreateBloodSurface = 0,
+    FromSetHP = 0,
+    FromShacklesOfPain = 0,
+    Blocked = 0,
+}
+
+---Returns true if the hit is an unarmed hit. This is for an actual hit handle during NRD_OnPrepareHit.
+---@param hitHandle integer 
+---@return boolean
+function GameHelpers.Hit.IsPreparedUnarmedHit(hitHandle)
+    for prop,val in pairs(unarmedHitMatchProperties) do
+        if NRD_HitGetInt(handle, prop) ~= val then
+            return false
+        end
+    end
+    return true
+end
+
+---Returns true if a hit is from a basic attack.
 ---@param target string
 ---@param handle integer
----@param is_hit integer
----@param allowSkills boolean
+---@param is_hit integer|boolean Whether the handle is for a hit or hit status.
+---@param allowSkills boolean|nil
 ---@param source string|nil
 ---@return boolean
 function GameHelpers.HitWithWeapon(target, handle, is_hit, allowSkills, source)

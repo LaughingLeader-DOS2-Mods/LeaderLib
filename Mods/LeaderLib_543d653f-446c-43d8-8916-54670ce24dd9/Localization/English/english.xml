@@ -82,7 +82,7 @@
 	<content contentuid="h3db4fa28g041bg45ceg9fd6g91d77d5e154f">[GLOBAL] Prevent LeaderLib registered mod books from being automatically be added to the party&apos;s inventory. (Books are currently enabled)</content>
 	<content contentuid="h3e1f5e00g58f7g4b23g97c4g979be6586c6f">Opening the LeaderLib settings menu...</content>
 	<content contentuid="h3e28d8d8g362bg4d7dga097gf8fcac3fbfe3">&lt;font color=&apos;#FF00CC&apos;&gt;One or more players are missing the script extender.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#FF0000&apos;&gt;The script extender is needed for mods to work correctly.&lt;/font&gt;&lt;br&gt;Players missing the extender:&lt;br&gt;[1]</content>
-	<content contentuid="h3e7215afg3389g4dc4gaa4bg1029c5cda75a">Hide all statuses next to the party member portraits.</content>
+	<content contentuid="h3e7215afg3389g4dc4gaa4bg1029c5cda75a">If unchecked, all statuses next to the party&apos;s portraits will be hidden.</content>
 	<content contentuid="h3eb917d7g036fg483dg8ee5gc83743845400">Welcome!</content>
 	<content contentuid="h3ed2c7c5gf6c0g4c9dga916g5782593327ab">Open Mod Menu</content>
 	<content contentuid="h3eff6bc1gb26dg4bb5gb3b9g2551c65026e0">Apply On Hit:&lt;br&gt;[1] for [2] turns(s). ([3] Chance)</content>
@@ -385,6 +385,6 @@
 	<content contentuid="hfda4adafgd642g477fgbbdbg268fe17118b4">Lower Skill Memorization Requirements</content>
 	<content contentuid="hfdc7dcb0g648cg4021gb530g011b5d8c242d">Skills Can Backstab</content>
 	<content contentuid="hfe0169eagd031g41a8gbcd3g6b992d81fba5">[GLOBAL] Enable Status Logging</content>
-	<content contentuid="hfe94fb21g03b4g46c3gbcaegf551c9b54dc8">Hide Portrait Statuses</content>
+	<content contentuid="hfe94fb21g03b4g46c3gbcaegf551c9b54dc8">Display Portrait Statuses</content>
 	<content contentuid="hff1084efgf4efg450aga177g1311cbce0ebb">&lt;font color=&apos;#2EFE2E&apos;&gt;+[1] Attitude&lt;/font&gt;</content>
 </contentList>

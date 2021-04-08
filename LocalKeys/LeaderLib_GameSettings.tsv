@@ -33,5 +33,5 @@ LeaderLib_UI_GameSettings_LowerMemorizationRequirements	Lower Skill Memorization
 LeaderLib_UI_GameSettings_LowerMemorizationRequirements_Description	If enabled, skill memorization requirements will be lowered (such as Necromancy 4 to Necromancy 1).<br><font color='#FF9933'>Ideally enable this alongside Skill Tier Overrides, so more skills can be selected in character creation.</font><br>(Default: Disabled)	ha1c04ddag65a8g4deagbbe6g8c401710cad9
 LeaderLib_UI_GameSettings_Client_AlwaysDisplayWeaponScalingText	Always Display Weapon Scaling Text	ha864ea68gc066g45e8gb0c2gc5ed058a82ff
 LeaderLib_UI_GameSettings_Client_AlwaysDisplayWeaponScalingText_Description	Always display the "Scales With x" text that isn't visible if the weapon has an attribute requirement above 0.	hb2e82c9dg3175g429cga865g3c670288b3c6
-LeaderLib_UI_GameSettings_Client_HideStatuses	Hide Portrait Statuses	hfe94fb21g03b4g46c3gbcaegf551c9b54dc8
-LeaderLib_UI_GameSettings_Client_HideStatuses_Description	Hide all statuses next to the party member portraits.	h3e7215afg3389g4dc4gaa4bg1029c5cda75a
+LeaderLib_UI_GameSettings_Client_HideStatuses	Display Portrait Statuses	hfe94fb21g03b4g46c3gbcaegf551c9b54dc8
+LeaderLib_UI_GameSettings_Client_HideStatuses_Description	If unchecked, all statuses next to the party's portraits will be hidden.	h3e7215afg3389g4dc4gaa4bg1029c5cda75a

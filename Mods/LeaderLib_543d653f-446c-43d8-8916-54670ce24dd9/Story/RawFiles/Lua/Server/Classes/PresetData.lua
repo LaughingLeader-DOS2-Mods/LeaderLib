@@ -51,7 +51,7 @@ function PresetData:AddEquipmentToCharacter(char, targetRarity, skipSlots)
 	if Ext.IsServer() then
 		local level = CharacterGetLevel(char)
 		local equipment = self.Equipment
-		
+		local presetItemStatProperties = {IsIdentified = true, StatsLevel = level, GenerationLevel = level, ItemType = targetRarity}
 		if self.IsPreview then
 			if self.Equipment_Preview == nil or self.Equipment_Preview == "" then
 				for tag,suffix in pairs(previewRaceSuffixes) do
@@ -86,7 +86,7 @@ function PresetData:AddEquipmentToCharacter(char, targetRarity, skipSlots)
 						end
 					end
 					if not skip then
-						local item = GameHelpers.Item.CreateItemByStat(stat, level, targetRarity, true, 1)
+						local item = GameHelpers.Item.CreateItemByStat(stat, true, presetItemStatProperties)
 						if item ~= nil then
 							ItemToInventory(item, char, 1, 0, 1)
 							if ItemIsEquipable(item) == 1 then

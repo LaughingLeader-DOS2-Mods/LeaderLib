@@ -255,4 +255,5 @@ end)
 
 Ext.RegisterNetListener("LeaderLib_Client_InvokeLuaResetListeners", function(cmd, region)
 	InvokeListenerCallbacks(Listeners.LuaReset, region)
+	GameSettings:Apply()
 end)

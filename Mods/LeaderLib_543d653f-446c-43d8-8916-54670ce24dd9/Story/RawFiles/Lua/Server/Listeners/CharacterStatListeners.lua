@@ -44,6 +44,7 @@ end)
 if Vars.DebugMode then
 	RegisterListener("LuaReset", function()
 		StorePartyValues()
+		GameSettings:Apply()
 	end)
 end
 

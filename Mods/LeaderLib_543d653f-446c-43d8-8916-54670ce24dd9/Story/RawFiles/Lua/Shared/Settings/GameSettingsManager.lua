@@ -15,45 +15,7 @@ function ApplyGameSettings(sync)
 				SyncGameSettings()
 			end
 			SyncStatOverrides(GameSettings, true)
-
-			local settings = GameSettings.Settings.APSettings.Player
-			local statChanges = {}
-			for i,v in pairs(Osi.DB_IsPlayer:Get(nil)) do
-				local character = Ext.GetCharacter(v[1])
-				if character ~= nil then
-					local userid = CharacterGetReservedUserID(v[1])
-					local stats = {}
-					local baseStat = Ext.GetStat(character.Stats.Name)
-					if GameSettings.Settings.APSettings.Player.Enabled then
-						if settings.Start > 0 then
-							stats.APStart = settings.Start
-						else
-							stats.APStart = baseStat.APStart
-						end
-						if settings.Max > 0 then
-							stats.APMaximum = settings.Max
-						else
-							stats.APMaximum = baseStat.APMaximum
-						end
-						if settings.Recovery > 0 then
-							stats.APRecovery = settings.Recovery
-						else
-							stats.APRecovery = baseStat.APRecovery
-						end
-					else
-						stats.APStart = baseStat.APStart
-						stats.APMaximum = baseStat.APMaximum
-						stats.APRecovery = baseStat.APRecovery
-					end
-					
-					table.insert(statChanges, {
-						NetID = character.NetID,
-						Stats = stats
-					})
-				end
-			end
-			Ext.BroadcastMessage("LeaderLib_SetGameSettingsStats", Ext.JsonStringify(statChanges), nil)
-
+			GameSettings:Apply()
 		elseif state == "Paused" then
 			applyGameSettingsOnRunning = true
 			syncGameSettingsOnRunning = sync ~= nil and sync or false
@@ -86,6 +48,7 @@ end
 function SaveGameSettings()
 	if GameSettings ~= nil then
 		local b,err = xpcall(function() 
+			GameSettings:Apply()
 			Ext.SaveFile("LeaderLib_GameSettings.json", GameSettings:ToString())
 		end, debug.traceback)
 		if not b then
@@ -108,7 +71,21 @@ end
 
 if Ext.IsClient() then
 	Ext.RegisterNetListener("LeaderLib_SyncGameSettings", function(call, gameSettingsStr)
+		local clientSettings = {}
+		if GameSettings and GameSettings.Settings and GameSettings.Settings.Client then
+			for k,v in pairs(GameSettings.Settings.Client) do
+				clientSettings[k] = v
+			end
+		end
 		GameSettings:LoadString(gameSettingsStr)
+		if not GameSettings.Settings.Client then
+			GameSettings.Settings.Client = clientSettings
+		else
+			for k,v in pairs(clientSettings) do
+				GameSettings.Settings.Client[k] = v
+			end
+		end
+		GameSettings:Apply()
 		GameSettings.Loaded = true
 		Ext.Print("[LeaderLib_SyncGameSettings] Synced game settings from server.")
 	end)

@@ -56,7 +56,10 @@ local DefaultSettings = {
 			Arx_Main = 10000
 		}
 	},
-	AlwaysDisplayWeaponScalingText = true,
+	Client = {
+		HideStatuses = false,
+		AlwaysDisplayWeaponScalingText = true,
+	},
 	EnableDeveloperTests = false,
 	Version = Ext.GetModInfo("7e737d2f-31d2-4751-963f-be6ccc59cd0c").Version
 }
@@ -166,6 +169,7 @@ function LeaderLibGameSettings:LoadTable(tbl)
 		Ext.PrintError("[LeaderLibGameSettings:LoadTable] Error parsing table:\n" .. tostring(err))
 	end, self, tbl)
 	if b then
+		self:Apply()
 		return result
 	end
 	return false
@@ -190,12 +194,67 @@ function LeaderLibGameSettings:LoadString(str)
 		return true
 	end, debug.traceback)
 	if b then
+		self:Apply()
 		return result
 	else
 		Ext.PrintError("[LeaderLibGameSettings:CreateFromString] Error parsing string as table:\n" .. tostring(result))
 	end
 	return false
 end
+
+function LeaderLibGameSettings:Apply()
+	if self.Settings.BackstabSettings.Player.Enabled or self.Settings.BackstabSettings.NPC.Enabled then
+		EnableFeature("BackstabCalculation")
+	end
+	if Ext.IsClient() then
+		UI.ToggleStatusVisibility(self.Settings.Client.HideStatuses)
+	else
+		--GameHelpers.UI.SetStatusVisibility(self.Settings.Client.HideStatuses)
+		local settings = self.Settings.APSettings.Player
+		local statChanges = {}
+		for i,v in pairs(Osi.DB_IsPlayer:Get(nil)) do
+			local character = Ext.GetCharacter(v[1])
+			if character ~= nil then
+				local userid = CharacterGetReservedUserID(v[1])
+				local stats = {}
+				local baseStat = Ext.GetStat(character.Stats.Name)
+				if settings.Enabled then
+					if settings.Start > 0 then
+						stats.APStart = settings.Start
+					else
+						stats.APStart = baseStat.APStart
+					end
+					if settings.Max > 0 then
+						stats.APMaximum = settings.Max
+					else
+						stats.APMaximum = baseStat.APMaximum
+					end
+					if settings.Recovery > 0 then
+						stats.APRecovery = settings.Recovery
+					else
+						stats.APRecovery = baseStat.APRecovery
+					end
+				else
+					stats.APStart = baseStat.APStart
+					stats.APMaximum = baseStat.APMaximum
+					stats.APRecovery = baseStat.APRecovery
+				end
+				
+				table.insert(statChanges, {
+					NetID = character.NetID,
+					Stats = stats
+				})
+			end
+		end
+		if statChanges and #statChanges > 0 then
+			Ext.BroadcastMessage("LeaderLib_SetGameSettingsStats", Ext.JsonStringify(statChanges), nil)
+		end
+	end
+end
+
+Ext.RegisterNetListener("LeaderLib_GameSettings_Apply", function(cmd, payload)
+	GameSettings:Apply()
+end)
 
 Classes.LeaderLibGameSettings = LeaderLibGameSettings
 GameSettings = LeaderLibGameSettings:Create()

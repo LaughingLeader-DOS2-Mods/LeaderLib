@@ -176,3 +176,11 @@ Ext.RegisterNetListener("LeaderLib_OnDelayTurnClicked", function(call, uuid, ...
 		end
 	end
 end)
+
+---@param visible boolean
+---@param client string|nil
+function GameHelpers.UI.SetStatusVisibility(visible, client)
+	visible = visible ~= nil and tostring(visible) or tostring(GameSettings.Settings.Client.HideStatuses)
+	client = client or CharacterGetHostCharacter()
+	Ext.PostMessageToClient(client, "LeaderLib_UI_SetStatusMCVisibility", visible)
+end

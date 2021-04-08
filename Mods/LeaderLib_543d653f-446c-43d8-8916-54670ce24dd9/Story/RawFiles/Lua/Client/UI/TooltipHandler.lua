@@ -632,7 +632,7 @@ local function OnItemTooltip(item, tooltip)
 				end
 			end
 		end
-		if Features.TooltipGrammarHelper or GameSettings.Settings.AlwaysDisplayWeaponScalingText then
+		if Features.TooltipGrammarHelper or GameSettings.Settings.Client.AlwaysDisplayWeaponScalingText then
 			local hasScalesWithText = false
 			local scalesWithTextSub = string.sub(LocalizedText.Tooltip.ScalesWith.Value, 1, 5)
 			local requirements = tooltip:GetElements("ItemRequirement")
@@ -646,7 +646,7 @@ local function OnItemTooltip(item, tooltip)
 					end
 				end
 			end
-			if (GameSettings.Settings.AlwaysDisplayWeaponScalingText and not hasScalesWithText 
+			if (GameSettings.Settings.Client.AlwaysDisplayWeaponScalingText and not hasScalesWithText 
 			and item.Stats and item.Stats.Requirements ~= nil and #item.Stats.Requirements > 0) then
 				local attributeName = ""
 				for i,v in pairs(item.Stats.Requirements) do

@@ -130,8 +130,11 @@ local text = {
 	BackstabSettings_MeleeOnly_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_BackstabSettings_MeleeOnly_Description"),
 	BackstabSettings_SpellsCanBackstab = ts:CreateFromKey("LeaderLib_UI_GameSettings_BackstabSettings_SpellsCanBackstab"),
 	BackstabSettings_SpellsCanBackstab_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_BackstabSettings_SpellsCanBackstab_Description"),
-	AlwaysDisplayWeaponScalingText = ts:CreateFromKey("LeaderLib_UI_GameSettings_AlwaysDisplayWeaponScalingText"),
-	AlwaysDisplayWeaponScalingText_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_AlwaysDisplayWeaponScalingText_Description"),
+	Section_Client = ts:CreateFromKey("LeaderLib_UI_GameSettings_Section_Client"),
+	Client_AlwaysDisplayWeaponScalingText = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_AlwaysDisplayWeaponScalingText"),
+	Client_AlwaysDisplayWeaponScalingText_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_AlwaysDisplayWeaponScalingText_Description"),
+	Client_HideStatuses = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideStatuses"),
+	Client_HideStatuses_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideStatuses_Description"),
 }
 
 local mainMenuArrayAccess = {
@@ -201,7 +204,10 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 
 		mainMenu.addMenuCheckbox(AddControl(settings, "StarterTierSkillOverrides"), text.StarterTierOverrides.Value, controlsEnabled, settings.StarterTierSkillOverrides and 1 or 0, false, text.StarterTierOverrides_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings, "LowerMemorizationRequirements"), text.LowerMemorizationRequirements.Value, controlsEnabled, settings.LowerMemorizationRequirements and 1 or 0, false, text.LowerMemorizationRequirements_Description.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings, "AlwaysDisplayWeaponScalingText"), text.AlwaysDisplayWeaponScalingText.Value, controlsEnabled, settings.AlwaysDisplayWeaponScalingText and 1 or 0, false, text.AlwaysDisplayWeaponScalingText_Description.Value)
+
+		mainMenu.addMenuLabel(text.Section_Client.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.Client, "AlwaysDisplayWeaponScalingText"), text.Client_AlwaysDisplayWeaponScalingText.Value, true, settings.Client.AlwaysDisplayWeaponScalingText and 1 or 0, false, text.Client_AlwaysDisplayWeaponScalingText_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.Client, "HideStatuses"), text.Client_HideStatuses.Value, true, settings.Client.HideStatuses and 1 or 0, false, text.Client_HideStatuses_Description.Value)
 		
 		local apSliderMax = 30
 		
@@ -282,20 +288,18 @@ function GameSettingsMenu.OnButtonPressed(id)
 end
 
 function GameSettingsMenu.CommitChanges()
-	if Client.IsHost then
-		for i,v in pairs(GameSettingsMenu.Controls) do
-			if v.Data ~= nil and v.Value ~= v.Last then
-				v.Data[v.Key] = v.Value
-				--Ext.Print(string.format("[LeaderLib:GameSettingsMenu.CommitChanges] Set %s to %s Data(%s) EqualsLast(%s)", v.Name, v.Value, v.Data, v.Value ~= v.Last))
-			end
+	for i,v in pairs(GameSettingsMenu.Controls) do
+		if v.Data ~= nil and v.Value ~= v.Last then
+			v.Data[v.Key] = v.Value
+			--Ext.Print(string.format("[LeaderLib:GameSettingsMenu.CommitChanges] Set %s to %s Data(%s) EqualsLast(%s)", v.Name, v.Value, v.Data, v.Value ~= v.Last))
 		end
-		Ext.Print("Committed LeaderLib_GameSettings changes.")
-		SaveGameSettings()
-		if Client.IsHost then
-			Ext.PostMessageToServer("LeaderLib_GameSettingsChanged", Ext.JsonStringify({Settings=GameSettings.Settings}))
-		end
-		--Ext.PostMessageToServer("LeaderLib_ModMenu_SaveChanges", Ext.JsonStringify(changes))
 	end
+	Ext.Print("Committed LeaderLib_GameSettings changes.")
+	SaveGameSettings()
+	if Client.IsHost then
+		Ext.PostMessageToServer("LeaderLib_GameSettingsChanged", Ext.JsonStringify({Settings=GameSettings.Settings}))
+	end
+	--Ext.PostMessageToServer("LeaderLib_ModMenu_SaveChanges", Ext.JsonStringify(changes))
 end
 
 function GameSettingsMenu.UndoChanges()

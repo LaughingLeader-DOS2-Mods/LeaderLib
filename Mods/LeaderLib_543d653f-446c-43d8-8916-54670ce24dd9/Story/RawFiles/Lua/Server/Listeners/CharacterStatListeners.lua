@@ -158,6 +158,7 @@ RegisterProtectedOsirisListener("CharacterBaseAbilityChanged", 4, "after", OnCha
 RegisterProtectedOsirisListener("CharacterJoinedParty", 1, "after", function(partyMember)
 	--Create the data
 	GetStoredPlayerValues(StringHelpers.GetUUID(partyMember))
+	Ext.BroadcastMessage("LeaderLib_UI_RefreshStatusMCVisibility", "")
 end)
 
 RegisterProtectedOsirisListener("CharacterLeftParty", 1, "after", function(partyMember)

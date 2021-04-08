@@ -4,6 +4,7 @@
 ---@field Value any
 ---@field Last any
 ---@field Name string
+---@field Reversed boolean|nil
 
 GameSettingsMenu = {
 	---@type table<int, GameSettingsEntryData>
@@ -32,8 +33,11 @@ local function GetNewID(controlData)
 end
 
 ---@return integer
-local function AddControl(parentTable, tableKey, name)
+local function AddControl(parentTable, tableKey, name, reversed)
 	local entry = CreateEntryData(parentTable, tableKey, parentTable[tableKey], name)
+	if reversed then
+		entry.Reversed = true
+	end
 	local currentID = GameSettingsMenu.LastID
 	GameSettingsMenu.Controls[currentID] = entry
 	GameSettingsMenu.LastID = GameSettingsMenu.LastID + 1
@@ -204,10 +208,6 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 
 		mainMenu.addMenuCheckbox(AddControl(settings, "StarterTierSkillOverrides"), text.StarterTierOverrides.Value, controlsEnabled, settings.StarterTierSkillOverrides and 1 or 0, false, text.StarterTierOverrides_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings, "LowerMemorizationRequirements"), text.LowerMemorizationRequirements.Value, controlsEnabled, settings.LowerMemorizationRequirements and 1 or 0, false, text.LowerMemorizationRequirements_Description.Value)
-
-		mainMenu.addMenuLabel(text.Section_Client.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.Client, "AlwaysDisplayWeaponScalingText"), text.Client_AlwaysDisplayWeaponScalingText.Value, true, settings.Client.AlwaysDisplayWeaponScalingText and 1 or 0, false, text.Client_AlwaysDisplayWeaponScalingText_Description.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.Client, "HideStatuses"), text.Client_HideStatuses.Value, true, settings.Client.HideStatuses and 1 or 0, false, text.Client_HideStatuses_Description.Value)
 		
 		local apSliderMax = 30
 		
@@ -240,13 +240,21 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.NPC, "TalentRequired"), text.BackstabSettings_TalentRequired.Value, controlsEnabled, settings.BackstabSettings.NPC.TalentRequired and 1 or 0, false, text.BackstabSettings_TalentRequired_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.NPC, "MeleeOnly"), text.BackstabSettings_MeleeOnly.Value, controlsEnabled, settings.BackstabSettings.NPC.MeleeOnly and 1 or 0, false, text.BackstabSettings_MeleeOnly_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.NPC, "SpellsCanBackstab"), text.BackstabSettings_SpellsCanBackstab.Value, controlsEnabled, settings.BackstabSettings.NPC.SpellsCanBackstab and 1 or 0, false, text.BackstabSettings_SpellsCanBackstab_Description.Value)
+
+		mainMenu.addMenuLabel(text.Section_Client.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.Client, "AlwaysDisplayWeaponScalingText"), text.Client_AlwaysDisplayWeaponScalingText.Value, true, settings.Client.AlwaysDisplayWeaponScalingText and 1 or 0, false, text.Client_AlwaysDisplayWeaponScalingText_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.Client, "HideStatuses", nil, true), text.Client_HideStatuses.Value, true, not settings.Client.HideStatuses and 1 or 0, false, text.Client_HideStatuses_Description.Value)
 	end
 end
 
 function GameSettingsMenu.OnCheckbox(id, state)
 	local controlData = GameSettingsMenu.Controls[id]
 	if controlData ~= nil then
-		controlData.Value = state == 1
+		if not controlData.Reversed then
+			controlData.Value = state == 1
+		else
+			controlData.Value = state == 0
+		end
 		return true
 	end
 	return false

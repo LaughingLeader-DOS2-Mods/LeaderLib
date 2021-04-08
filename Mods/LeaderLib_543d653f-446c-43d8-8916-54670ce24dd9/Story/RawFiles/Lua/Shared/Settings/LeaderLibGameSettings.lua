@@ -207,7 +207,7 @@ function LeaderLibGameSettings:Apply()
 		EnableFeature("BackstabCalculation")
 	end
 	if Ext.IsClient() then
-		UI.ToggleStatusVisibility(self.Settings.Client.HideStatuses)
+		UI.ToggleStatusVisibility(not self.Settings.Client.HideStatuses)
 	else
 		--GameHelpers.UI.SetStatusVisibility(self.Settings.Client.HideStatuses)
 		local settings = self.Settings.APSettings.Player

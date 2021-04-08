@@ -63,6 +63,15 @@ function Common.CopyTable(orig, deep)
 	return Common.CloneTable(orig, deep)
 end
 
+---Merge two arrays.
+---@param target any[]
+---@param mergeFrom any[]
+function Common.MergeTables(target, mergeFrom)
+	for i=1,#mergeFrom do
+		target[#target+1] = mergeFrom[i]
+	end
+end
+
 function Common.CopyTableToTable(target, copyFrom)
 	if target and copyFrom then
 		for k,v in pairs(copyFrom) do

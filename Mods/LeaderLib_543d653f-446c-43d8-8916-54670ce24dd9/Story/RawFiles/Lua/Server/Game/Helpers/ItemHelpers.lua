@@ -1,5 +1,36 @@
 GameHelpers.Item = {}
 
+local itemConstructorProps = {
+    ["RootTemplate"] = true,
+    ["OriginalRootTemplate"] = true,
+    ["Slot"] = true,
+    ["Amount"] = true,
+    ["GoldValueOverwrite"] = true,
+    ["WeightValueOverwrite"] = true,
+    ["DamageTypeOverwrite"] = true,
+    ["ItemType"] = true,
+    ["CustomDisplayName"] = true,
+    ["CustomDescription"] = true,
+    ["CustomBookContent"] = true,
+    ["GenerationStatsId"] = true,
+    ["GenerationItemType"] = true,
+    ["GenerationRandom"] = true,
+    ["GenerationLevel"] = true,
+    ["StatsLevel"] = true,
+    ["Key"] = true,
+    ["LockLevel"] = true,
+    ["EquipmentStatsType"] = true,
+    ["HasModifiedSkills"] = true,
+    ["Skills"] = true,
+    ["HasGeneratedStats"] = true,
+    ["IsIdentified"] = true,
+    ["GMFolding"] = true,
+    ["CanUseRemotely"] = true,
+    ["GenerationBoosts"] = true,
+    ["RuneBoosts"] = true,
+    ["DeltaMods"] = true,
+}
+
 ---Clone an item for a character.
 ---@param char string
 ---@param item string
@@ -16,20 +47,68 @@ function GameHelpers.Item.CloneItemForCharacter(char, item, completion_event, au
     CharacterItemSetEvent(char, cloned, completion_event)
 end
 
+---@param template string The item root template.
+---@param statType string The type of stat, ex. Weapon, Armor, Object.
+---@return string[]
+function GameHelpers.Item.GetRootTemplateStats(template, statType)
+    local matches = {}
+    local stats = {}
+    if statType then
+        stats = Ext.GetStatEntries(statType)
+    end
+    local isEquipment = statType == "Weapon" or statType == "Armor" or statType == "Shield"
+    if isEquipment or not statType then
+        local matchedgroups = {}
+        for _,itemgroupName in pairs(Ext.GetStatEntries("ItemGroup")) do
+            local itemGroup = Ext.GetItemGroup(itemgroupName)
+            if itemGroup then
+                for _,lgroup in pairs(itemGroup.LevelGroups) do
+                    for _,root in pairs(lgroup.RootGroups) do
+                        if root.RootGroup == template then
+                            matchedgroups[itemgroupName] = true
+                        end
+                    end
+                end
+            end
+        end
+        if not statType then
+            Common.MergeTables(stats, Ext.GetStatEntries("Weapon"))
+            Common.MergeTables(stats, Ext.GetStatEntries("Armor"))
+            Common.MergeTables(stats, Ext.GetStatEntries("Shield"))
+        end
+        for _,statName in pairs(stats) do
+            if matchedgroups[Ext.StatGetAttribute(statName, "ItemGroup")] == true then
+                table.insert(matches, statName)
+            end
+        end
+    end
+    if not isEquipment then
+        if not statType then
+            stats = {}
+            Common.MergeTables(stats, Ext.GetStatEntries("Object"))
+            Common.MergeTables(stats, Ext.GetStatEntries("Potion"))
+        end
+        for _,statName in pairs(stats) do
+            if Ext.StatGetAttribute(statName, "RootTemplate") == template then
+                table.insert(matches, statName)
+            end
+        end
+    end
+    return matches
+end
+
 ---Creates an item by stat, provided it has an ItemGroup set (for equipment).
 ---@param statName string
----@param level integer
----@param rarity string|nil
 ---@param skipLevelCheck boolean
----@param identify integer
----@param amount integer
----@param goldValueOverwrite integer
----@param weightValueOverwrite integer
+---@param properties ItemDefinition|nil
 ---@return string
-function GameHelpers.Item.CreateItemByStat(statName, level, rarity, skipLevelCheck, identify, amount, goldValueOverwrite, weightValueOverwrite)
+function GameHelpers.Item.CreateItemByStat(statName, skipLevelCheck, properties)
     ---@type StatEntryWeapon
     local stat = nil
     local statType = ""
+    local level = properties and properties.StatsLevel or 0
+    local rarity = properties and properties.ItemType or "Common"
+
     if type(statName) == "string" then
         stat = Ext.GetStat(statName, level)
         statType = NRD_StatGetType(statName)
@@ -43,14 +122,14 @@ function GameHelpers.Item.CreateItemByStat(statName, level, rarity, skipLevelChe
     end
     
     local rootTemplate = nil
-    local generateRandomBoosts = 0
+    local hasGeneratedStats = false
     if (statType == "Object" or statType == "Potion") then
         if stat.RootTemplate ~= nil and stat.RootTemplate ~= "" then
             rootTemplate = stat.RootTemplate
         end
     else
         if stat ~= nil and stat.ItemGroup ~= nil and stat.ItemGroup ~= "" then
-            generateRandomBoosts = 1
+            hasGeneratedStats = true
             local group = Ext.GetItemGroup(stat.ItemGroup)
             local rarityMatch = false
             for i,v in pairs(group.LevelGroups) do
@@ -70,44 +149,28 @@ function GameHelpers.Item.CreateItemByStat(statName, level, rarity, skipLevelChe
     end
 
     if rootTemplate ~= nil then
-        NRD_ItemConstructBegin(rootTemplate)
+        local constructor = Ext.CreateItemConstructor(rootTemplate)
+        ---@type ItemDefinition
+        local props = constructor[1]
+        props.GMFolding = false
 
-        if rarity == nil or rarity == "" then
-            rarity = "Common"
+        props.RootTemplate = rootTemplate
+        props.OriginalRootTemplate = rootTemplate
+        props.GenerationStatsId = stat.Name
+        props.HasGeneratedStats = hasGeneratedStats
+        props.GenerationLevel = level
+        props.StatsLevel = level
+        props.ItemType = rarity
+        props.GenerationItemType = rarity
+
+        for k,v in pairs(properties) do
+            if itemConstructorProps[k] == true then
+                props[k] = v
+            end
         end
 
-        if statType == "Weapon" then
-            -- Damage type fix
-            -- Deltamods with damage boosts may make the weapon's damage type be all of that type, so overwriting the statType
-            -- fixes this issue.
-            local damageTypeString = stat["Damage Type"]
-            if damageTypeString == nil then damageTypeString = "Physical" end
-            local damageTypeEnum = Data.DamageTypeEnums[damageTypeString]
-            NRD_ItemCloneSetInt("DamageTypeOverwrite", damageTypeEnum)
-        end
-
-        if goldValueOverwrite ~= nil then
-            NRD_ItemCloneSetInt("GoldValueOverwrite", goldValueOverwrite)
-        end
-        if weightValueOverwrite ~= nil then
-            NRD_ItemCloneSetInt("WeightValueOverwrite", weightValueOverwrite)
-        end
-        if amount ~= nil then
-            NRD_ItemCloneSetInt("Amount", amount)
-        end
-
-        NRD_ItemCloneSetString("RootTemplate", rootTemplate)
-        NRD_ItemCloneSetString("OriginalRootTemplate", rootTemplate)
-        NRD_ItemCloneSetString("GenerationStatsId", stat.Name)
-        NRD_ItemCloneSetString("StatsEntryName", stat.Name)
-        NRD_ItemCloneSetInt("HasGeneratedStats", generateRandomBoosts)
-        NRD_ItemCloneSetInt("GenerationLevel", level)
-        NRD_ItemCloneSetInt("StatsLevel", level)
-        NRD_ItemCloneSetInt("IsIdentified", identify or 1)
-        NRD_ItemCloneSetString("ItemType", rarity)
-        NRD_ItemCloneSetString("GenerationItemType", rarity)
-
-        return NRD_ItemClone()
+        local newItem = constructor:Construct()
+        return newItem and newItem.MyGuid or nil
     end
     return nil
 end
@@ -119,12 +182,20 @@ function GameHelpers.Item.CreateItemByTemplate(template, setProperties)
     local constructor = Ext.CreateItemConstructor(template)
     ---@type ItemDefinition
     local props = constructor[1]
+    props:ResetProgression(props)
+    -- if type(template) == "String" then
+    --     props.RootTemplate = template
+    --     props.OriginalRootTemplate = template
+    --     props.GenerationStatsId = "WPN_Sword_1H"
+    --     props.StatsLevel = 1
+    --     props.GenerationLevel = 1
+    -- end
     if setProperties then
         for k,v in pairs(setProperties) do
-            if props[k] then
+            if itemConstructorProps[k] then
                 props[k] = v
             else
-                Ext.PrintError(string.format("[LeaderLib:GameHelpers.Item.CreateItemByTemplate] Property %s doesn't exist for ItemDefinition", k))
+                fprint(LOGLEVEL.WARNING, "[LeaderLib:GameHelpers.Item.CreateItemByTemplate] Property %s doesn't exist for ItemDefinition", k)
             end
         end
     end
@@ -135,6 +206,50 @@ function GameHelpers.Item.CreateItemByTemplate(template, setProperties)
         Ext.PrintError(string.format("[LeaderLib:GameHelpers.Item.CreateItemByTemplate] Error constructing item when invoking Construct() - Returned item is nil for template %s.", template))
     end
     return nil
+end
+
+---@param item string|EsvItem
+---@param setProperties ItemDefinition|nil
+---@param addDeltaMods string[]|nil
+---@return EsvItem
+function GameHelpers.Item.Clone(item, setProperties, addDeltaMods)
+    local constructor = Ext.CreateItemConstructor(item)
+    ---@type ItemDefinition
+    local props = constructor[1]
+    if type(item) == "string" then
+        props.RootTemplate = item
+        props.OriginalRootTemplate = item
+        local stats = GameHelpers.Item.GetRootTemplateStats(item)
+        if stats and #stats > 0 then
+            props.GenerationStatsId = stats[1]
+        end
+        props.StatsLevel = 1
+        props.GenerationLevel = 1
+    end
+    --props:ResetProgression(props)
+    if setProperties then
+        for k,v in pairs(setProperties) do
+            props[k] = v
+            --fprint(LOGLEVEL.ERROR, "[LeaderLib:GameHelpers.Item.Clone] Property %s doesn't exist for ItemDefinition", k)
+        end
+    end
+    if addDeltaMods then
+        local originalDeltaMods = {}
+        for i,v in pairs(props.DeltaMods) do
+            originalDeltaMods[#originalDeltaMods+1] = v
+        end
+        for i=1,#addDeltaMods do
+            if not Common.TableHasValue(originalDeltaMods, addDeltaMods[i]) then
+                originalDeltaMods[#originalDeltaMods+1] = addDeltaMods[i]
+            end
+        end
+        props.DeltaMods = originalDeltaMods
+    end
+    for k,_ in pairs(itemConstructorProps) do
+        print(k, Common.Dump(props[k]))
+    end
+    --constructor[1] = props
+    return constructor:Construct()
 end
 
 ---@param char string

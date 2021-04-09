@@ -18,12 +18,12 @@ function ApplyGameSettings(sync)
 				SyncGameSettings()
 			end
 			SyncStatOverrides(GameSettings, true)
-			GameSettings:Apply()
 		elseif state == "Paused" then
 			applyGameSettingsOnRunning = true
 			syncGameSettingsOnRunning = sync
 		end
 	end
+	GameSettings:Apply()
 end
 
 function LoadGameSettings(sync)

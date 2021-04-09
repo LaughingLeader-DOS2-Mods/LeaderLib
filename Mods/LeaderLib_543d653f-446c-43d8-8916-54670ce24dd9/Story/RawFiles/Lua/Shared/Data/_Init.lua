@@ -686,6 +686,8 @@ Data.UIType = {
 	partyInventory_c = 142,
 	partyManagement_c = 82,
 	playerInfo = 38,
+	--Still playerInfo, but the ID is different.
+	playerInfo_c = 61,
 	reward = 136,
 	reward_c = 137,
 	saveLoad = 39,

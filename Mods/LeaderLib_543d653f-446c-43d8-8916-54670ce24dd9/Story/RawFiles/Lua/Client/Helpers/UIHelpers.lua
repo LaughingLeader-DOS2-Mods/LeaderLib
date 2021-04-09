@@ -2,7 +2,7 @@ function UI.ToggleStatusVisibility(visible)
 	if visible == nil then
 		visible = true
 	end
-	local ui = Ext.GetUIByType(Data.UIType.playerInfo)
+	local ui = not Vars.ControllerEnabled and Ext.GetUIByType(Data.UIType.playerInfo) or Ext.GetUIByType(Data.UIType.playerInfo_c)
 	if ui then
 		local main = ui:GetRoot()
 		if main then

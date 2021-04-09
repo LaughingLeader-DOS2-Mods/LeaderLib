@@ -216,3 +216,207 @@ function GameHelpers.Skill.CanMemorize(char, skill)
     end
     return true
 end
+
+local projectileCreationProperties = {
+    SkillId = "String",
+    CleanseStatuses = "String",
+    CasterLevel = "Integer",
+    StatusClearChance = "Integer",
+    IsTrap = "Flag",
+    UnknownFlag1 = "Flag",
+    IsFromItem = "Flag",
+    IsStealthed = "Flag",
+    IgnoreObjects = "Flag",
+    AlwaysDamage = "Flag",
+    CanDeflect = "Flag",
+    --SourcePosition = "Vector3",
+    SourcePosition = "GuidString",
+    --TargetPosition = "Vector3",
+    TargetPosition = "GuidString",
+    --HitObjectPosition = "Vector3",
+    HitObjectPosition = "GuidString",
+    Caster = "GuidString",
+    Source = "GuidString",
+    Target = "GuidString",
+    HitObject = "GuidString",
+}
+
+local function GetRandomPositionInCircleRadius(tx,ty,tz,radius,angle,theta)
+    local a = angle or (Ext.Random() * 2 * math.pi)
+    local r = theta or (radius * math.sqrt(Ext.Random()))
+
+    local x = tx + (r * math.cos(a))
+    local z = tz - (r * math.sin(a))
+    return GameHelpers.Grid.GetValidPositionInRadius({x,ty,z}, radius)
+end
+
+local function CreateProjectileStrike(props)
+    --print(Ext.JsonStringify(props))
+    NRD_ProjectilePrepareLaunch()
+    for k,v in pairs(props) do
+        local t = type(v)
+        if t == "table" then
+            NRD_ProjectileSetVector3(k, table.unpack(v))
+        elseif t == "number" then
+            NRD_ProjectileSetInt(k, v)
+        elseif t == "string" then
+            if projectileCreationProperties[k] == "GuidString" then
+                NRD_ProjectileSetGuidString(k, v)
+            else
+                NRD_ProjectileSetString(k, v)
+            end
+        end
+    end
+    NRD_ProjectileLaunch()
+end
+
+--Mods.LeaderLib.GameHelpers.Skill.CreateProjectileStrike(CharacterGetHostCharacter(), "ProjectileStrike_HailStrike", CharacterGetHostCharacter())
+
+---@param target string|number[]|EsvCharacter|EsvItem
+---@param skillId string
+---@param source string|EsvCharacter|EsvItem
+function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source)
+    local level = -1
+    local x,y,z = 0,0,0
+    local tx,ty,tz = 0,0,0
+
+    local id = tostring(Ext.Random(9999))
+    local isFromItem = false
+    ---@type EsvShootProjectileRequest
+    local props = {}
+
+    if source then
+        if type(source) == "string" then
+            props.Caster = source
+            props.Source = source
+            id = id .. source
+            x,y,z = GetPosition(source)
+            if ObjectIsCharacter(source) == 1 then
+                level = CharacterGetLevel(source)
+                local character = Ext.GetCharacter(source)
+                if character then
+                    props.IsStealthed = character.Stats.IsSneaking
+                end
+            else
+                if string.find("TRAP", NRD_ItemGetStatsId(source)) then
+                    props.IsTrap = 1
+                end
+                isFromItem = true
+                local item = Ext.GetItem(source)
+                if item and item.Stats then
+                    level = item.Stats.Level
+                end
+            end
+        elseif source.Stats then
+            level = source.Stats.Level
+            isFromItem = ObjectIsItem(source.MyGuid) == 1
+            props.Caster = source.MyGuid
+            props.Source = source.MyGuid
+            x,y,z = table.unpack(source.WorldPos)
+            if string.find("TRAP", source.Stats.Name) then
+                props.IsTrap = 1
+            end
+        end
+    end
+
+    if type(target) == "string" then
+        id = id .. target
+        tx,ty,tz = GetPosition(target)
+        if target ~= source then
+            props.HitObject = target
+            props.HitObjectPosition = target
+            props.Target = target
+        end
+    elseif type(target) == "table" then
+        tx,ty,tz = table.unpack(target)
+    elseif target.WorldPosition ~= nil then
+        tx,ty,tz = table.unpack(target.WorldPosition)
+    else
+        tx = x
+        ty = y
+        tz = z
+    end
+
+    ---@type StatEntrySkillData
+    local skill = Ext.GetStat(skillId, level)
+    local height = skill.Height and (skill.Height / 1000) or 2
+    local radius = math.max(skill.AreaRadius or 0, skill.ExplodeRadius or 0)
+    if radius > 0 then
+        radius = radius / 1000
+    end
+    --tx,ty,tz = GameHelpers.Grid.GetValidPositionInRadius({tx,ty,tz}, radius)
+
+    local fallbackTarget = {tx,ty,tz}
+    props.SkillId = skill.Name
+    props.CanDeflect = skill.ProjectileType == "Arrow" and 1 or 0
+    if not StringHelpers.IsNullOrEmpty(skill.CleanseStatuses) then
+        props.CleanseStatuses = skill.CleanseStatuses
+    end
+    props.CasterLevel = level
+    props.SourcePosition = {x,y+height,z}
+    props.TargetPosition = fallbackTarget
+    props.IsFromItem = isFromItem and 1 or 0
+    props.IgnoreObjects = 0
+    props.AlwaysDamage = skill["Damage Multiplier"] > 0 and 1 or 0
+
+    local count = skill.StrikeCount or 0
+
+    local positions = nil
+
+    if count > 0 then
+        if skill.Distribution == "Random" then
+            positions = {}
+            local angle = Ext.Random() * 2 * math.pi
+            for p=1,count+1 do
+                local cx,cy,cz = GetRandomPositionInCircleRadius(tx,ty,tz,radius)
+                positions[p] = {cx,cy,cz}
+            end
+            props.TargetPosition = positions[1]
+        elseif skill.Distribution == "Edge" then
+            positions = {}
+            for p=1,count+1 do
+                local b = p / count
+                local c = (360 * b)
+                local cx = tx + (radius * math.sin(math.rad(c)))
+                local cz = tz + (radius * math.cos(math.rad(c)))
+                local cx,cy,cz = GameHelpers.Grid.GetValidPositionInRadius({cx, ty, cz}, radius)
+                positions[p] = {cx,cy,cz}
+            end
+            props.TargetPosition = positions[1]
+        end
+    end
+
+    if not StringHelpers.IsNullOrEmpty(skill.CastEffect) then
+        local effects = StringHelpers.Split(skill.CastEffect, ";")
+        for _,effectEntry in pairs(effects) do
+            local effect = string.gsub(effectEntry, ",.+", ""):gsub(":.+", "")
+            local bone = effectEntry:gsub(".+:", "") or ""
+            if not StringHelpers.IsNullOrEmpty(bone) and source then
+                if bone == "root" then
+                    bone = "Dummy_Root"
+                end
+                PlayEffect(source, effect, bone)
+            else
+                PlayEffectAtPosition(effect, x, y, z)
+            end
+        end
+    end
+
+    if count > 0 then
+        local i = 1
+        local timerName = string.format("Timers_LeaderLib_ProjectileStrike%s%s", id, Ext.MonotonicTime())
+        local onTimer = nil
+        onTimer = function()
+            if positions ~= nil then
+                props.TargetPosition = positions[i] or fallbackTarget
+            end
+            CreateProjectileStrike(props)
+            i = i + 1
+            if i <= count then
+                timerName = string.format("Timers_LeaderLib_ProjectileStrike%s%s", id, Ext.MonotonicTime())
+                StartOneshotTimer(timerName, skill.StrikeDelay or 250, onTimer)
+            end
+        end
+        StartOneshotTimer(timerName, skill.ProjectileDelay or 50, onTimer)
+    end
+end

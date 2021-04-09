@@ -10,7 +10,8 @@ function GameHelpers.Grid.IsValidPosition(x, z, grid)
 	---@type AiGrid
 	grid = grid or Ext.GetAiGrid()
 	--print("GameHelpers.Grid.IsValidPosition",x,z,grid:GetAiFlags(x, z), grid:GetAiFlags(x, z)&1==1)
-	return grid:GetAiFlags(x, z) & 1 ~= 1
+	local flag = grid:GetAiFlags(x, z)
+	return flag ~= nil and (flag & 1 ~= 1) or false
 end
 
 ---@param startPos number[]
@@ -49,9 +50,13 @@ end
 ---@param startZ number
 ---@param maxRadius number|nil
 ---@param pointsInCircle number|nil
----@return number,number|nil
+---@return number,number,number|nil
 function GameHelpers.Grid.GetValidPositionInRadius(startPos, maxRadius, pointsInCircle)
 	maxRadius = maxRadius or 30.0
+	-- Convert to meters
+	if maxRadius > 1000 then
+		maxRadius = maxRadius / 1000
+	end
 	pointsInCircle = pointsInCircle or 9
 	---@type AiGrid
 	local grid = Ext.GetAiGrid()

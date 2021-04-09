@@ -104,6 +104,12 @@ function UIExtensions.RemoveControl(id)
 		if UIExtensions.Instance then
 			local main = UIExtensions.Instance:GetRoot()
 			main.removeControl(id)
+			local count = Common.TableLength(UIExtensions.Controls, true)
+			if count == 0 then
+				UIExtensions.Instance:Hide()
+				UIExtensions.Instance:Destroy()
+				UIExtensions.Instance = nil
+			end
 			return true
 		end
 	end

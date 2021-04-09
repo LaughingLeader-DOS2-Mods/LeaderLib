@@ -43,7 +43,9 @@ function Input.GetKeyStateByID(id)
 	local name = Data.InputEnum[id]
 	if name then
 		local state = Input.Keys[name]
-		return state ~= nil and state or false
+		if state ~= nil then
+			return state
+		end
 	end
 	return false
 end

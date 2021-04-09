@@ -3,6 +3,9 @@ local applyGameSettingsOnRunning = false
 local syncGameSettingsOnRunning = false
 
 function ApplyGameSettings(sync)
+	if sync == nil then
+		sync = false
+	end
 	if GameSettings.Settings.BackstabSettings.Player.Enabled or GameSettings.Settings.BackstabSettings.NPC.Enabled then
 		EnableFeature("BackstabCalculation")
 	end
@@ -18,7 +21,7 @@ function ApplyGameSettings(sync)
 			GameSettings:Apply()
 		elseif state == "Paused" then
 			applyGameSettingsOnRunning = true
-			syncGameSettingsOnRunning = sync ~= nil and sync or false
+			syncGameSettingsOnRunning = sync
 		end
 	end
 end
@@ -61,6 +64,7 @@ end
 
 function SyncGameSettings(id)
 	if Ext.IsServer() then
+		GameSettings:Sync()
 		if id ~= nil then
 			Ext.PostMessageToUser(id, "LeaderLib_SyncGameSettings", GameSettings:ToString())
 		else

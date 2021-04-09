@@ -11,7 +11,10 @@ function GameHelpers.Grid.IsValidPosition(x, z, grid)
 	grid = grid or Ext.GetAiGrid()
 	--print("GameHelpers.Grid.IsValidPosition",x,z,grid:GetAiFlags(x, z), grid:GetAiFlags(x, z)&1==1)
 	local flag = grid:GetAiFlags(x, z)
-	return flag ~= nil and (flag & 1 ~= 1) or false
+	if flag ~= nil then
+		return flag & 1 ~= 1
+	end
+	return false
 end
 
 ---@param startPos number[]

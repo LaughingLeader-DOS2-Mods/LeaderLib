@@ -76,17 +76,23 @@ local function AddInfoToArray(id, titleText, infoText)
 end
 
 local function AddCheckboxToArray(id, displayName, enabled, state, filterBool, tooltip)
+	if filterBool == nil then
+		filterBool = false
+	end
 	array[index] = CONTROL_TYPE.CHECKBOX
 	array[index+1] = id
 	array[index+2] = displayName
 	array[index+3] = enabled
 	array[index+4] = state
-	array[index+5] = filterBool ~= nil and filterBool or false
+	array[index+5] = filterBool
 	array[index+6] = tooltip or ""
 	index = index+7
 end
 
 local function AddSliderToArray(id, label, amount, min, max, snapInterval, hide, tooltip)
+	if hide == nil then
+		hide = false
+	end
 	array[index] = CONTROL_TYPE.SLIDER
 	array[index+1] = id
 	array[index+2] = label
@@ -94,7 +100,7 @@ local function AddSliderToArray(id, label, amount, min, max, snapInterval, hide,
 	array[index+4] = min or 0
 	array[index+5] = max or 99
 	array[index+6] = snapInterval or 1
-	array[index+7] = hide ~= nil and hide or false
+	array[index+7] = hide
 	array[index+8] = tooltip or ""
 	index = index+9
 end
@@ -149,7 +155,6 @@ local mainMenuArrayAccess = {
 }
 
 function GameSettingsMenu.OnControlAdded(ui, controlType, id, listIndex, listProperty, extraParam1)
-	--print("GameSettingsMenu.OnControlAdded", controlType, id, listIndex, listProperty, extraParam1)
 	if GameSettingsMenu.Controls[id] == nil and controlType ~= "menuLabel" then
 		return
 	end

@@ -41,7 +41,10 @@ function GameHelpers.Surface.CreateSurface(pos, surface, radius, duration, owner
 	surf.Position = pos
 	surf.SurfaceType = surface or "Water"
 	surf.Radius = radius or 1.0
-	surf.IgnoreIrreplacableSurfaces = ignoreCursed ~= nil and ignoreCursed or true
+	if ignoreCursed == nil then
+		ignoreCursed = true
+	end
+	surf.IgnoreIrreplacableSurfaces = ignoreCursed
 	surf.Duration = duration or 3.0
 	surf.StatusChance = statusChance or 1.0
 	surf.DeathType = deathType or "DoT"

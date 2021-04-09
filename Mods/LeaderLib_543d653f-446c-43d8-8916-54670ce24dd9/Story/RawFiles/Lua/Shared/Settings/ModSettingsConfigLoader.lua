@@ -99,7 +99,7 @@ local function LoadModSettingsConfig(uuid, file)
 				local buttonid = 0
 				for _,data in pairs(config.Data.Buttons) do
 					local id = data.ID or string.format("%s_%s", uuid, buttonid)
-					local enabled = data.Enabled ~= nil and data.Enabled or true
+					local enabled = data.Enabled ~= nil and data.Enabled or data.Enabled == nil and true
 					local callbackName = data.Callback
 					local callback = nil
 					if callbackName ~= nil then

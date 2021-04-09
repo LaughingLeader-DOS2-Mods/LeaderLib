@@ -82,7 +82,13 @@ function UIExtensions.AddCheckbox(onClick, label, tooltip, state, x, y, filterBo
 	local main = UIExtensions.Instance:GetRoot()
 	if main then
 		UIExtensions.Controls[id] = onClick or true
-		main.addCheckbox(id, label, tooltip, state or 0, x or 0, y or 0, filterBool ~= nil and filterBool or false, enabled ~= nil and enabled or true)
+		if filterBool == nil then
+			filterBool = false
+		end
+		if enabled == nil then
+			enabled = true
+		end
+		main.addCheckbox(id, label, tooltip, state or 0, x or 0, y or 0, filterBool, enabled)
 		return id
 	else
 		Ext.PrintError("[LeaderLib:UIExtensions.AddCheckbox] Failed to get root of UIObject", UIExtensions.SwfPath)

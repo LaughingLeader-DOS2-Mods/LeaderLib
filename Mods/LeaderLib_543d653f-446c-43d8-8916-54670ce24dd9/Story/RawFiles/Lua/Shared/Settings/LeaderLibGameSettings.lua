@@ -202,13 +202,8 @@ function LeaderLibGameSettings:LoadString(str)
 	return false
 end
 
-function LeaderLibGameSettings:Apply()
-	if self.Settings.BackstabSettings.Player.Enabled or self.Settings.BackstabSettings.NPC.Enabled then
-		EnableFeature("BackstabCalculation")
-	end
-	if Ext.IsClient() then
-		UI.ToggleStatusVisibility(not self.Settings.Client.HideStatuses)
-	else
+function LeaderLibGameSettings:Sync()
+	if Ext.IsServer() then
 		--GameHelpers.UI.SetStatusVisibility(self.Settings.Client.HideStatuses)
 		local settings = self.Settings.APSettings.Player
 		local statChanges = {}
@@ -249,6 +244,15 @@ function LeaderLibGameSettings:Apply()
 		if statChanges and #statChanges > 0 then
 			Ext.BroadcastMessage("LeaderLib_SetGameSettingsStats", Ext.JsonStringify(statChanges), nil)
 		end
+	end
+end
+
+function LeaderLibGameSettings:Apply()
+	if self.Settings.BackstabSettings.Player.Enabled or self.Settings.BackstabSettings.NPC.Enabled then
+		EnableFeature("BackstabCalculation")
+	end
+	if Ext.IsClient() then
+		UI.ToggleStatusVisibility(not self.Settings.Client.HideStatuses)
 	end
 end
 

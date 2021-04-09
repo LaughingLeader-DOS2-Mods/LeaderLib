@@ -291,6 +291,10 @@ function GameHelpers.Damage.ApplyHitRequestFlags(hit, target, handle)
     end
 end
 
+local defaultHitFlags = {
+    Hit = 1,
+}
+
 ---@param source EsvCharacter
 ---@param target string
 ---@param skill string
@@ -300,7 +304,13 @@ end
 ---@param applySkillProperties boolean|nil
 ---@param getDamageFunction function|nil
 function GameHelpers.Damage.ApplySkillDamage(source, target, skill, hitParams, mainWeapon, offhandWeapon, applySkillProperties, getDamageFunction)
+    if type(source) == "string" then
+        source = Ext.GetCharacter(source)
+    end
     local hit = NRD_HitPrepare(target, source.MyGuid)
+    NRD_HitSetInt(hit, "SimulateHit", 1)
+
+    hitParams = hitParams or defaultHitFlags
     if hitParams ~= nil then
         for k,v in pairs(hitParams) do
             if type(k) == "string" then
@@ -318,6 +328,13 @@ function GameHelpers.Damage.ApplySkillDamage(source, target, skill, hitParams, m
     local pos = source.WorldPos
     local targetPos = table.pack(GetPosition(target))
     local level = source.Stats.Level
+
+    local hitType = GetSkillHitType(skillData)
+    NRD_HitSetString(hit, "HitType", hitType)
+
+    if skillData.UseWeaponDamage then
+        NRD_HitSetInt(hit, "HitWithWeapon", 1)
+    end
 
     if getDamageFunction == nil then
         getDamageFunction = Game.Math.GetSkillDamage

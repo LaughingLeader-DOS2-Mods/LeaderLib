@@ -45,6 +45,9 @@ local OneshotTimerData = {}
 ---@param delay integer
 ---@param callback function
 function StartOneshotTimer(timerName, delay, callback)
+	if StringHelpers.IsNullOrEmpty(timerName) then
+		timerName = string.format("Timers_LeaderLib_%s%s", Ext.MonotonicTime(), Ext.Random())
+	end
 	if OneshotTimerData[timerName] == nil then
 		OneshotTimerData[timerName] = {}
 	else

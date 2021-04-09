@@ -108,6 +108,7 @@ function GameHelpers.Item.CreateItemByStat(statName, skipLevelCheck, properties)
     local statType = ""
     local level = properties and properties.StatsLevel or 0
     local rarity = properties and properties.ItemType or "Common"
+    local rootTemplate = properties and properties.RootTemplate or nil
 
     if type(statName) == "string" then
         stat = Ext.GetStat(statName, level)
@@ -121,27 +122,31 @@ function GameHelpers.Item.CreateItemByStat(statName, skipLevelCheck, properties)
         level = CharacterGetLevel(CharacterGetHostCharacter())
     end
     
-    local rootTemplate = nil
     local hasGeneratedStats = false
-    if (statType == "Object" or statType == "Potion") then
-        if stat.RootTemplate ~= nil and stat.RootTemplate ~= "" then
-            rootTemplate = stat.RootTemplate
-        end
-    else
-        if stat ~= nil and stat.ItemGroup ~= nil and stat.ItemGroup ~= "" then
-            hasGeneratedStats = true
-            local group = Ext.GetItemGroup(stat.ItemGroup)
-            local rarityMatch = false
-            for i,v in pairs(group.LevelGroups) do
-                if v.Name == rarity then 
-                    rarityMatch = true
-                end
-                if v.Name == "All" or v.Name == rarity or not rarityMatch then
-                    if skipLevelCheck == true or (v.MinLevel <= level or v.MinLevel <= 0) and (v.MaxLevel <= level or v.MaxLevel <= 0) then
-                        rootTemplate = v.RootGroups[1].RootGroup
-                        break
-                    elseif rootTemplate == nil then
-                        rootTemplate = v.RootGroups[1].RootGroup
+    if properties and properties.HasGeneratedStats ~= nil then
+        hasGeneratedStats = properties.HasGeneratedStats
+    end
+    if rootTemplate == nil then
+        if (statType == "Object" or statType == "Potion") then
+            if stat.RootTemplate ~= nil and stat.RootTemplate ~= "" then
+                rootTemplate = stat.RootTemplate
+            end
+        else
+            if stat ~= nil and stat.ItemGroup ~= nil and stat.ItemGroup ~= "" then
+                hasGeneratedStats = true
+                local group = Ext.GetItemGroup(stat.ItemGroup)
+                local rarityMatch = false
+                for i,v in pairs(group.LevelGroups) do
+                    if v.Name == rarity then 
+                        rarityMatch = true
+                    end
+                    if v.Name == "All" or v.Name == rarity or not rarityMatch then
+                        if skipLevelCheck == true or (v.MinLevel <= level or v.MinLevel <= 0) and (v.MaxLevel <= level or v.MaxLevel <= 0) then
+                            rootTemplate = v.RootGroups[1].RootGroup
+                            break
+                        elseif rootTemplate == nil then
+                            rootTemplate = v.RootGroups[1].RootGroup
+                        end
                     end
                 end
             end

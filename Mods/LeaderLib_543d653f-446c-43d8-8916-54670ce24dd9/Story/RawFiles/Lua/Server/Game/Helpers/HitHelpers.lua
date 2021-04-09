@@ -1,3 +1,7 @@
+if not GameHelpers.Hit then
+    GameHelpers.Hit = {}
+end
+
 ---Returns true if a hit isn't Dodged, Missed, or Blocked.
 ---Pass in an object if this is a status.
 ---@param target string

@@ -59,12 +59,12 @@ local function SetupInstance()
 	end
 end
 
-Ext.RegisterListener("SessionLoaded", function()
-	SetupInstance()
-	-- Ext.RegisterUINameInvokeListener("onEventUp", function(ui, ...)
-	-- 	print(Ext.JsonStringify({...}))
-	-- end)
-end)
+-- Ext.RegisterListener("SessionLoaded", function()
+-- 	--SetupInstance()
+-- 	-- Ext.RegisterUINameInvokeListener("onEventUp", function(ui, ...)
+-- 	-- 	print(Ext.JsonStringify({...}))
+-- 	-- end)
+-- end)
 
 ---Add a checkbox to LeaderLib's UIExtensions UI, which fits the screen.
 ---@param onClick CheckboxCallback The callback to invoke when the checkbox is clicked.

@@ -512,6 +512,58 @@ Ext.RegisterConsoleCommand("levelup", function(command, amount)
 	CharacterLevelUpTo(host, amount)
 end)
 
+Ext.RegisterConsoleCommand("hidestatusmc", function(command, visible)
+	visible = visible or "false"
+	Ext.PostMessageToClient(CharacterGetHostCharacter(), "LeaderLib_UI_HideStatuses", visible)
+end)
+
+Ext.RegisterConsoleCommand("clonedeltamodtest", function(command, amount)
+	---@type ItemDefinition
+	local properties = {}
+	local deltamods = {
+		"Boost_Weapon_Rune_LOOT_Rune_Venom_Giant",
+		"Boost_Weapon_Damage_Poison_Axe",
+	}
+	properties.GMFolding = false
+	properties.IsIdentified = true
+	properties.DamageTypeOverwrite = "Fire"
+	properties.WeightValueOverwrite = 10
+	--properties.HasGeneratedStats = true
+	properties.DeltaMods = deltamods
+	properties.RootTemplate = "3dd01bc4-65e7-4468-9854-b19bc980b3f8"
+	properties.OriginalRootTemplate = "3dd01bc4-65e7-4468-9854-b19bc980b3f8"
+	properties.GenerationStatsId = "WPN_Sword_1H"
+	properties.StatsLevel = 10
+	properties.GenerationLevel = 10
+	properties.GenerationRandom = LEADERLIB_RAN_SEED
+	properties.ItemType = "Rare"
+	properties.GenerationItemType = "Rare"
+	properties.HasModifiedSkills = true
+	properties.Skills = "Projectile_Fireball"
+	local host = Ext.GetCharacter(CharacterGetHostCharacter())
+	local weapon = CharacterGetEquippedWeapon(host.MyGuid)
+	weapon = not StringHelpers.IsNullOrEmpty(weapon) and Ext.GetItem(weapon) or "3dd01bc4-65e7-4468-9854-b19bc980b3f8"
+	-- local item = GameHelpers.Item.Clone(weapon, properties)
+	-- if item ~= nil then
+	-- 	ItemToInventory(item.MyGuid, host.MyGuid, 1, 1, 0)
+	-- end
+	local item2 = GameHelpers.Item.CreateItemByTemplate("3dd01bc4-65e7-4468-9854-b19bc980b3f8", properties)
+	if item2 ~= nil then
+		ItemToInventory(item2.MyGuid, host.MyGuid, 1, 1, 0)
+		NRD_ItemSetIdentified(item2.MyGuid, 1)
+	end
+	properties.HasGeneratedStats = true
+	local item2 = GameHelpers.Item.CreateItemByTemplate("3dd01bc4-65e7-4468-9854-b19bc980b3f8", properties)
+	if item2 ~= nil then
+		ItemToInventory(item2.MyGuid, host.MyGuid, 1, 1, 0)
+		NRD_ItemSetIdentified(item2.MyGuid, 1)
+	end
+	-- local item3 = GameHelpers.Item.CreateItemByStat("WPN_Sword_1H", true, properties)
+	-- if item3 then
+	-- 	ItemToInventory(item3, host.MyGuid, 1, 1, 0)
+	-- end
+end)
+
 Ext.RegisterConsoleCommand("printrunes", function(command, equipmentSlot)
 	equipmentSlot = equipmentSlot or "Weapon"
 	local host = Ext.GetCharacter(CharacterGetHostCharacter())

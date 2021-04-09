@@ -5,6 +5,10 @@ SkipTutorial = {
 		RC_Main = 3,
 		CoS_Main = 4,
 		Arx_Main = 5
+	},
+	CheckBoxPos = {
+		0,
+		1016
 	}
 }
 
@@ -315,11 +319,7 @@ elseif Ext.IsClient() then
 	end
 
 	local function GetCheckboxPos()
-		if not Vars.ControllerEnabled then
-			return 0,1080-64
-		else
-			return 0,0
-		end
+		return SkipTutorial.CheckBoxPos[1] or 0, SkipTutorial.CheckBoxPos[2] or 1016
 	end
 
 	local function SetupSkipTutorialCheckbox()

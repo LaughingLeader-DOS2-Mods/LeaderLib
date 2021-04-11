@@ -39,7 +39,7 @@ local LarianButtonID = {
 	Apply = 2
 }
 
-local MOD_MENU_ID = 69
+local MOD_MENU_ID = 210
 local lastMenu = -1
 local currentMenu = 1
 local switchToModMenu = false
@@ -78,22 +78,31 @@ local function SwitchToModMenu(ui, ...)
 	---@type MainMenuMC
 	local mainMenu = main.mainMenu_mc
 	SetCurrentMenu(MOD_MENU_ID)
-	main.createApplyButton(false)
 	main.removeItems()
-	main.resetMenuButtons(MOD_MENU_ID)
-	local buttonsArray = mainMenu.menuBtnList.content_array
-	for i=0,#buttonsArray do
-		local button = buttonsArray[i]
-		if button ~= nil then
-			if button.buttonID == MOD_MENU_ID then
-				button.setEnabled(false)
-			else
-				button.setEnabled(true)
+	if not Vars.ControllerEnabled then
+		main.createApplyButton(false)
+		main.resetMenuButtons(MOD_MENU_ID)
+
+		local buttonsArray = mainMenu.menuBtnList.content_array
+		for i=0,#buttonsArray do
+			local button = buttonsArray[i]
+			if button ~= nil then
+				if button.buttonID == MOD_MENU_ID then
+					button.setEnabled(false)
+				else
+					button.setEnabled(true)
+				end
 			end
 		end
 	end
+
 	ModMenuManager.CreateMenu(ui, mainMenu)
-	main.positionElements()
+
+	if not Vars.ControllerEnabled then
+		main.positionElements()
+	else
+		main.mainMenu_mc.addingDone()
+	end
 	ModMenuManager.SetScrollPosition(ui)
 end
 
@@ -108,9 +117,9 @@ end)
 local function CreateModMenuButton(ui, method, ...)
 	local main = ui:GetRoot()
 	if main ~= nil then
-		if not Vars.ControllerEnabled then
-			---@type MainMenuMC
-			local mainMenu = main.mainMenu_mc
+		---@type MainMenuMC
+		local mainMenu = main.mainMenu_mc
+		if mainMenu then
 			mainMenu.addOptionButton(ModMenuTabButtonText.Value, "switchToModMenu", MOD_MENU_ID, switchToModMenu)
 			if switchToModMenu then
 				--ui:ExternalInterfaceCall("switchMenu", MOD_MENU_ID)
@@ -127,10 +136,7 @@ local function CreateModMenuButton(ui, method, ...)
 			end
 		end
 	end
-	if switchToModMenu then
-		--Ext.PostMessageToServer("LeaderLib_ModMenu_SendParseUpdateArrayMethod", tostring(UI.ClientID))
-		switchToModMenu = false
-	end
+	switchToModMenu = false
 end
 
 
@@ -373,9 +379,10 @@ Ext.RegisterListener("SessionLoaded", function()
 		--ui:ExternalInterfaceCall("requestCloseUI")
 	end)
 	if Vars.ControllerEnabled then
-		Ext.RegisterUITypeCall(Data.UIType.mainMenu_c, "menuButtonOver", function(ui, call, id)
+		Ext.RegisterUITypeCall(Data.UIType.mainMenu_c, "buttonPressed", function(ui, call, id)
 			if id == MOD_MENU_ID then
 				switchToModMenu = true
+				ui:ExternalInterfaceCall("buttonPressed", 4)
 			end
 		end)
 	end
@@ -399,25 +406,13 @@ Ext.RegisterListener("SessionLoaded", function()
 
 	---@param ui UIObject
 	Ext.RegisterUINameInvokeListener("parseUpdateArray", function(invokedUI, method, ...)
-		print(method, Ext.JsonStringify({...}))
 		local ui = GetOptionsGUI() or invokedUI
 		if ui ~= nil then
-			local main = ui:GetRoot()
-			if main then
-				for i=0,#main.update_Array do
-					local entry = main.update_Array[i]
-					if entry then
-						print(i, entry)
-					end
-				end
-			end
 			if currentMenu == LarianMenuID.Gameplay then
 				GameSettingsMenu.AddSettings(ui, true)
 			end
 		end
 	end)
-
-	print("parseBaseUpdateArray", Vars.ControllerEnabled)
 
 	if not Vars.ControllerEnabled then
 		Ext.RegisterUINameInvokeListener("parseBaseUpdateArray", function(invokedUI, method, ...)
@@ -437,6 +432,13 @@ Ext.RegisterListener("SessionLoaded", function()
 					end
 				end)
 				--Ext.GetBuiltinUI("Public/Game/GUI/gameMenu_c.swf")
+			end
+		end)
+		Ext.RegisterUINameInvokeListener("addingDone", function(invokedUI, method, id, label, tooltip, enabled)
+			if switchToModMenu then
+				local ui = GetOptionsGUI() or invokedUI
+				SwitchToModMenu(ui)
+				switchToModMenu = false
 			end
 		end)
 	end

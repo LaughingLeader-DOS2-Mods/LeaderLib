@@ -10,9 +10,15 @@ This seems to be the easiest option since the engine does some weird thing to sw
 ]]
 
 local OPTIONS_UI_TYPE = {
-	45,
-	17,
-	1
+	Data.UIType.optionsSettings.Video,
+	Data.UIType.optionsSettings.Audio,
+	Data.UIType.optionsSettings.Game
+}
+
+local OPTIONS_UI_TYPE_C = {
+	Data.UIType.optionsSettings_c.Video,
+	Data.UIType.optionsSettings_c.Audio,
+	Data.UIType.optionsSettings_c.Game
 }
 
 local LarianMenuID = {
@@ -39,9 +45,19 @@ local currentMenu = 1
 local switchToModMenu = false
 
 local ModMenuTabButtonText = Classes.TranslatedString:Create("h5945db23gdaafg400ega4d6gc2ffa7a53f92", "Mod Settings")
+local ModMenuTabButtonTooltip = Classes.TranslatedString:Create("hc5012999g3c27g43bfg9a89g2a6557effb94", "Various mod options for active mods.")
+
+---@return UIObject
+local function GetOptionsGUI()
+	if not Vars.ControllerEnabled then
+		return Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf")
+	else
+		return Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings_c.swf")
+	end
+end
 
 Ext.RegisterNetListener("LeaderLib_ModMenu_RunParseUpdateArrayMethod", function(cmd,payload)
-	local ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf")
+	local ui = GetOptionsGUI()
 	if ui ~= nil then
 		ui:Invoke("parseUpdateArray")
 	end
@@ -82,7 +98,7 @@ local function SwitchToModMenu(ui, ...)
 end
 
 Ext.RegisterNetListener("LeaderLib_ModMenu_Open", function(cmd,payload)
-	local ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf")
+	local ui = GetOptionsGUI()
 	if ui ~= nil then
 		SwitchToModMenu(ui)
 	end
@@ -92,26 +108,40 @@ end)
 local function CreateModMenuButton(ui, method, ...)
 	local main = ui:GetRoot()
 	if main ~= nil then
-		---@type MainMenuMC
-		local mainMenu = main.mainMenu_mc
-		mainMenu.addOptionButton(ModMenuTabButtonText.Value, "switchToModMenu", MOD_MENU_ID, switchToModMenu)
-		if switchToModMenu then
-			--ui:ExternalInterfaceCall("switchMenu", MOD_MENU_ID)
-			main.clearAll()
-			for i=0,#main.baseUpdate_Array do
-				local val = main.baseUpdate_Array[i]
-				if val == true then
-					main.baseUpdate_Array[i] = false
-					break
+		if not Vars.ControllerEnabled then
+			---@type MainMenuMC
+			local mainMenu = main.mainMenu_mc
+			mainMenu.addOptionButton(ModMenuTabButtonText.Value, "switchToModMenu", MOD_MENU_ID, switchToModMenu)
+			if switchToModMenu then
+				--ui:ExternalInterfaceCall("switchMenu", MOD_MENU_ID)
+				main.clearAll()
+				for i=0,#main.baseUpdate_Array do
+					local val = main.baseUpdate_Array[i]
+					if val == true then
+						main.baseUpdate_Array[i] = false
+						break
+					end
 				end
+				SwitchToModMenu(ui)
+				--Ext.PostMessageToServer("LeaderLib_ModMenu_RequestOpen", tostring(Client.ID))
 			end
-			SwitchToModMenu(ui)
-			--Ext.PostMessageToServer("LeaderLib_ModMenu_RequestOpen", tostring(Client.ID))
 		end
 	end
 	if switchToModMenu then
 		--Ext.PostMessageToServer("LeaderLib_ModMenu_SendParseUpdateArrayMethod", tostring(UI.ClientID))
 		switchToModMenu = false
+	end
+end
+
+
+---@param ui UIObject
+local function CreateModMenuButton_Controller(ui, method, ...)
+	local main = ui:GetRoot()
+	print(method, main)
+	if main ~= nil then
+		main.addMenuButton(MOD_MENU_ID, ModMenuTabButtonText.Value, ModMenuTabButtonTooltip.Value, true)
+	else
+		ui:Invoke("addMenuButton", MOD_MENU_ID, ModMenuTabButtonText.Value, ModMenuTabButtonTooltip.Value, true)
 	end
 end
 
@@ -170,8 +200,59 @@ local debugCalls = {
 	--"PlaySound",
 }
 
+local debugEvents_c = {
+	"onEventInit",
+	"onEventResize",
+	"onEventUp",
+	"addingDone",
+	"addCheckBoxOptions",
+	"onEventDown",
+	"addBtnHint",
+	"clearBtnHints",
+	"hideWin",
+	"showWin",
+	"getHeight",
+	"getWidth",
+	"setX",
+	"setY",
+	"setPos",
+	"getX",
+	"getY",
+	"openMenu",
+	"closeMenu",
+	"addMenuLabel",
+	"addMenuInfoLabel",
+	"setTitle",
+	"setTopTitle",
+	"parseUpdateArray",
+	"addMenuCheckbox",
+	"setMenuCheckbox",
+	"addMenuSelector",
+	"addMenuSelectorEntry",
+	"selectMenuSelectorEntry",
+	"addMenuDropDown",
+	"addMenuDropDownEntry",
+	"selectMenuDropDownEntry",
+	"clearMenuDropDownEntries",
+	"setMenuDropDownEnabled",
+	"setMenuDropDownDisabledTooltip",
+	"addMenuSlider",
+	"setMenuSlider",
+	"addMenuButton",
+	"setButtonEnabled",
+	"setButtonText",
+	"removeItems",
+	"setButtonDisable",
+	"resetMenuButtons",
+}
+
+local debugCalls_c = {
+	"menuButtonOver",
+	"buttonPressed",
+}
+
 Ext.RegisterNetListener("LeaderLib_ModMenu_CreateMenuButton", function(cmd, payload)
-	local ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf")
+	local ui = GetOptionsGUI()
 	if ui ~= nil then
 		CreateModMenuButton(ui)
 	end
@@ -184,7 +265,7 @@ local function OnOptionsClosed()
 end
 
 local function OnSwitchMenu(ui, call, id)
-	--ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf")
+	--ui = GetOptionsGUI()
 	if currentMenu == MOD_MENU_ID then
 		ModMenuManager.SaveScroll(ui)
 		ui:GetRoot().mainMenu_mc.removeApplyCopy()
@@ -252,20 +333,30 @@ local function OnCancelChanges(ui, call)
 end
 
 Ext.RegisterListener("SessionLoaded", function()
-	-- if Vars.DebugMode then
-	-- 	for i,v in pairs(debugEvents) do
-	-- 		---@param ui UIObject
-	-- 		Ext.RegisterUINameInvokeListener(v, function(ui, ...)
-	-- 			print(ui:GetTypeId(), Common.Dump({...}), Ext.MonotonicTime())
-	-- 		end)
-	-- 	end
-	-- 	for i,v in pairs(debugCalls) do
-	-- 		---@param ui UIObject
-	-- 		Ext.RegisterUINameCall(v, function(ui, ...)
-	-- 			print(ui:GetTypeId(), Common.Dump({...}), Ext.MonotonicTime())
-	-- 		end)
-	-- 	end
-	-- end
+	if Vars.DebugMode then
+		for i,v in pairs(debugEvents_c) do
+			Ext.RegisterUINameInvokeListener(v, function(ui, ...)
+				print(ui:GetTypeId(), Common.Dump({...}), Ext.MonotonicTime())
+			end)
+		end
+		for i,v in pairs(debugCalls_c) do
+			Ext.RegisterUINameCall(v, function(ui, ...)
+				print(ui:GetTypeId(), Common.Dump({...}), Ext.MonotonicTime())
+			end)
+		end
+		-- for i,v in pairs(debugEvents) do
+		-- 	---@param ui UIObject
+		-- 	Ext.RegisterUINameInvokeListener(v, function(ui, ...)
+		-- 		print(ui:GetTypeId(), Common.Dump({...}), Ext.MonotonicTime())
+		-- 	end)
+		-- end
+		-- for i,v in pairs(debugCalls) do
+		-- 	---@param ui UIObject
+		-- 	Ext.RegisterUINameCall(v, function(ui, ...)
+		-- 		print(ui:GetTypeId(), Common.Dump({...}), Ext.MonotonicTime())
+		-- 	end)
+		-- end
+	end
 
 	Ext.RegisterUINameCall("switchToModMenu", function(ui, call, ...)
 		switchToModMenu = true
@@ -281,6 +372,13 @@ Ext.RegisterListener("SessionLoaded", function()
 		--ui:ExternalInterfaceCall("switchMenu", MOD_MENU_ID)
 		--ui:ExternalInterfaceCall("requestCloseUI")
 	end)
+	if Vars.ControllerEnabled then
+		Ext.RegisterUITypeCall(Data.UIType.mainMenu_c, "menuButtonOver", function(ui, call, id)
+			if id == MOD_MENU_ID then
+				switchToModMenu = true
+			end
+		end)
+	end
 
 	Ext.RegisterUITypeCall(Data.UIType.msgBox, "ButtonPressed", function(ui, call, id)
 		-- Are you sure you want to discard your changes?
@@ -301,21 +399,47 @@ Ext.RegisterListener("SessionLoaded", function()
 
 	---@param ui UIObject
 	Ext.RegisterUINameInvokeListener("parseUpdateArray", function(invokedUI, method, ...)
-		local ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf") or invokedUI
+		print(method, Ext.JsonStringify({...}))
+		local ui = GetOptionsGUI() or invokedUI
 		if ui ~= nil then
+			local main = ui:GetRoot()
+			if main then
+				for i=0,#main.update_Array do
+					local entry = main.update_Array[i]
+					if entry then
+						print(i, entry)
+					end
+				end
+			end
 			if currentMenu == LarianMenuID.Gameplay then
 				GameSettingsMenu.AddSettings(ui, true)
 			end
 		end
 	end)
 
-	---@param ui UIObject
-	Ext.RegisterUINameInvokeListener("parseBaseUpdateArray", function(invokedUI, method, ...)
-		local ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf") or invokedUI
-		if ui ~= nil then
-			CreateModMenuButton(ui, method, ...)
-		end
-	end)
+	print("parseBaseUpdateArray", Vars.ControllerEnabled)
+
+	if not Vars.ControllerEnabled then
+		Ext.RegisterUINameInvokeListener("parseBaseUpdateArray", function(invokedUI, method, ...)
+			local ui = GetOptionsGUI() or invokedUI
+			if ui ~= nil then
+				CreateModMenuButton(ui, method, ...)
+			end
+		end)
+	else
+		local gameButtonText = Ext.GetTranslatedString("h12fb7af4ga5abg47f4g9120ga63d33b2b71d", "Game")
+		Ext.RegisterUINameInvokeListener("addMenuButton", function(invokedUI, method, id, label, tooltip, enabled)
+			if id == 4 and label == gameButtonText then
+				UIExtensions.StartTimer("addModMenuOptionsButton", 10, function()
+					local ui = Ext.GetUIByType(Data.UIType.mainMenu_c) or invokedUI
+					if ui ~= nil then
+						CreateModMenuButton_Controller(ui, method)
+					end
+				end)
+				--Ext.GetBuiltinUI("Public/Game/GUI/gameMenu_c.swf")
+			end
+		end)
+	end
 
 	---optionsInput.swf version.
 	---@param ui UIObject
@@ -411,7 +535,7 @@ Ext.RegisterListener("SessionLoaded", function()
 	end
 	
 	local onControlAdded = function(ui, call, controlType, id, listIndex, listProperty, ...)
-		--ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf") or ui
+		--ui = GetOptionsGUI() or ui
 		if Vars.DebugMode then
 			--print(ui:GetTypeId(), call, controlType, id, listIndex, listProperty)
 		end
@@ -421,14 +545,20 @@ Ext.RegisterListener("SessionLoaded", function()
 	end
 
 	Ext.RegisterUITypeCall(Data.UIType.gameMenu, "requestCloseUI", OnOptionsClosed)
-	Ext.RegisterUITypeInvokeListener(Data.UIType.gameMenu, "openMenu", function(...)
+
+	local onOpenMenu = function(ui, ...)
 		registeredListeners = false
 		SetCurrentMenu(1)
-	end)
+	end
+
+	--Ext.RegisterUINameCall("openMenu", onOpenMenu)
+	Ext.RegisterUITypeInvokeListener(Data.UIType.gameMenu, "openMenu", onOpenMenu)
+	Ext.RegisterUITypeInvokeListener(Data.UIType.gameMenu_c, "openMenu", onOpenMenu)
 
 	Ext.RegisterUITypeCall(Data.UIType.optionsInput, "switchMenu", OnSwitchMenu)
 
-	for _,uiType in pairs(OPTIONS_UI_TYPE) do
+	local uiTypes = not Vars.ControllerEnabled and OPTIONS_UI_TYPE or OPTIONS_UI_TYPE_C
+	for _,uiType in pairs(uiTypes) do
 		Ext.RegisterUITypeCall(uiType, "applyPressed", OnApplyPressed)
 		Ext.RegisterUITypeCall(uiType, "acceptPressed", OnAcceptChanges)
 		Ext.RegisterUITypeCall(uiType, "requestCloseUI", OnCancelChanges)

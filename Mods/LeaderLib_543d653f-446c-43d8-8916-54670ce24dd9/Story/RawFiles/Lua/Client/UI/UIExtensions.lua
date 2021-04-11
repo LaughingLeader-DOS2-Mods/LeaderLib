@@ -6,17 +6,76 @@
 ---@field GetRoot fun():UIExtensonsMain
 
 ---@alias CheckboxCallback fun(ui:LeaderLibUIExtensions, controlType:string, id:number, state:number):void
+---@alias FlashTimerCallback fun(timerName:string, isComplete:boolean):void
 
 UIExtensions = {
 	---@type LeaderLibUIExtensions
 	Instance = nil,
 	Controls = {},
+	---@type table<string, FlashTimerCallback[]>
+	Timers = {},
 	Layer = 12,
 	SwfPath = "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/LeaderLib_UIExtensions.swf"
 }
 
+local function DestroyInstance(force)
+	if force then
+		if UIExtensions.Instance then
+			UIExtensions.Instance:Hide()
+			UIExtensions.Instance:Destroy()
+			UIExtensions.Instance = nil
+		end
+		UIExtensions.Controls = {}
+		UIExtensions.Timers = {}
+	else
+		if UIExtensions.Instance then
+			local count = Common.TableLength(UIExtensions.Controls, true) + Common.TableLength(UIExtensions.Timers, true)
+			if count == 0 then
+				UIExtensions.Instance:Hide()
+				UIExtensions.Instance:Destroy()
+				UIExtensions.Instance = nil
+			end
+		end
+	end
+end
+
+RegisterListener("LuaReset", function()
+	DestroyInstance(true)
+end)
+
+Ext.RegisterConsoleCommand("llresetuiext", function(cmd)
+	DestroyInstance(true)
+end)
+
 local function OnControlAdded(ui, call, ...)
 	--print("OnControlAdded", Ext.JsonStringify({...}))
+end
+
+local function OnTimerComplete(ui, call, timerCallbackName)
+	fprint(LOGLEVEL.WARNING, "[LeaderLib:UIExtensions.OnTimerComplete %s]", timerCallbackName)
+	local callbacks = UIExtensions.Timers[timerCallbackName]
+	if callbacks then
+		for i,v in pairs(callbacks) do
+			local b,result = xpcall(v, debug.traceback, timerCallbackName, true)
+			if not b then
+				Ext.PrintError(result)
+			end
+		end
+	end
+	UIExtensions.Timers[timerCallbackName] = nil
+end
+
+local function OnTimerTick(ui, call, timerCallbackName)
+	fprint(LOGLEVEL.WARNING, "[LeaderLib:UIExtensions.OnTimerTick %s]", timerCallbackName)
+	local callbacks = UIExtensions.Timers[timerCallbackName]
+	if callbacks then
+		for i,v in pairs(callbacks) do
+			local b,result = xpcall(v, debug.traceback, timerCallbackName, false)
+			if not b then
+				Ext.PrintError(result)
+			end
+		end
+	end
 end
 
 local function OnControl(ui, call, controlType, id, ...)
@@ -39,6 +98,7 @@ local function SetupInstance()
 				Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_OnControl", OnControl)
 				Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_ControlAdded", OnControlAdded)
 				Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_InputEvent", Input.OnFlashEvent)
+				Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_TimerComplete", OnTimerComplete)
 				local main = UIExtensions.Instance:GetRoot()
 				if main then
 					main.clearElements()
@@ -103,15 +163,35 @@ function UIExtensions.RemoveControl(id)
 		UIExtensions.Controls[id] = nil
 		if UIExtensions.Instance then
 			local main = UIExtensions.Instance:GetRoot()
-			main.removeControl(id)
-			local count = Common.TableLength(UIExtensions.Controls, true)
-			if count == 0 then
-				UIExtensions.Instance:Hide()
-				UIExtensions.Instance:Destroy()
-				UIExtensions.Instance = nil
+			if main then
+				main.removeControl(id)
+				return true
 			end
-			return true
 		end
 	end
 	return false
+end
+
+---Removes all controls and clears UIExtensions.Controls.
+---@return boolean
+function UIExtensions.RemoveAllControls()
+	UIExtensions.Controls = {}
+	if UIExtensions.Instance then
+		UIExtensions.Instance:Invoke("clearElements")
+		return true
+	end
+	return false
+end
+
+---@param id string The timer name/id.
+---@param delay Number The delay of the timer in milliseconds.
+---@param callbackFunction FlashTimerCallback The callback to invoke when the timer is complete, or when it ticks (if repeatTimer > 1).
+---@param repeatTimer integer|nil The number of times to repeat the timer. If > 1 then the callback will be called each time the timer ticks.
+function UIExtensions.StartTimer(id, delay, callbackFunction, repeatTimer)
+	SetupInstance()
+	if UIExtensions.Timers[id] == nil then
+		UIExtensions.Timers[id] = {}
+	end
+	table.insert(UIExtensions.Timers[id], callbackFunction)
+	UIExtensions.Instance:Invoke("launchTimer", delay, id, repeatTimer or 1)
 end

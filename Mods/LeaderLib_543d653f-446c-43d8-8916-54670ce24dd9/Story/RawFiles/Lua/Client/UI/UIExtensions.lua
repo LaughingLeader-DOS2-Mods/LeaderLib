@@ -19,23 +19,18 @@ UIExtensions = {
 }
 
 local function DestroyInstance(force)
-	if force then
+	local count = Common.TableLength(UIExtensions.Controls, true) + Common.TableLength(UIExtensions.Timers, true)
+	if count == 0 or force then
 		if UIExtensions.Instance then
+			UIExtensions.Instance:Invoke("destroyTiemrs")
 			UIExtensions.Instance:Hide()
 			UIExtensions.Instance:Destroy()
 			UIExtensions.Instance = nil
 		end
+	end
+	if force then
 		UIExtensions.Controls = {}
 		UIExtensions.Timers = {}
-	else
-		if UIExtensions.Instance then
-			local count = Common.TableLength(UIExtensions.Controls, true) + Common.TableLength(UIExtensions.Timers, true)
-			if count == 0 then
-				UIExtensions.Instance:Hide()
-				UIExtensions.Instance:Destroy()
-				UIExtensions.Instance = nil
-			end
-		end
 	end
 end
 

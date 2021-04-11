@@ -10,6 +10,14 @@ function UI.ToggleStatusVisibility(visible)
 				local player_mc = main.player_array[i]
 				if player_mc and player_mc.statusHolder_mc then
 					player_mc.statusHolder_mc.visible = visible
+					if player_mc.summonList then
+						for j=0,#player_mc.summonList.content_array do
+							local summon_mc = player_mc.summonList.content_array[j]
+							if summon_mc then
+								summon_mc.statusHolder_mc.visible = visible
+							end
+						end
+					end
 				end
 			end
 		end

@@ -98,6 +98,7 @@ local function SetupInstance()
 				if main then
 					main.clearElements()
 					main.controllerEnabled = Vars.ControllerEnabled
+					main.isInCharacterCreation = SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION
 					for i=0,#main.events-1 do
 						if main.events[i] then
 							local eventName = string.gsub(main.events[i], "IE ", "")
@@ -113,6 +114,16 @@ local function SetupInstance()
 		end
 	end
 end
+
+RegisterListener("ClientDataSynced", function(modData, sharedData)
+	if UIExtensions.Instance then
+		local main = UIExtensions.Instance:GetRoot()
+		if main then
+			main.controllerEnabled = Vars.ControllerEnabled
+			main.isInCharacterCreation = sharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION
+		end
+	end
+end)
 
 -- Ext.RegisterListener("SessionLoaded", function()
 -- 	--SetupInstance()

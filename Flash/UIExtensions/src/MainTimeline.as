@@ -20,6 +20,7 @@ package
 
 	  	public var controllerEnabled:Boolean = false;
 		public var UICreationTabPrevPressed:Boolean = false;
+		public var isInCharacterCreation:Boolean = false;
 
 		public var timers:Array;
 		
@@ -32,11 +33,14 @@ package
 		public function onEventUp(id:Number) : *
 		{
 			ExternalInterface.call("LeaderLib_InputEvent", false, this.events[id], id);
-			switch(this.events[id])
+			if(isInCharacterCreation)
 			{
-				case "IE UICreationTabPrev":
-					this.UICreationTabPrevPressed = false;
-					break;
+				switch(this.events[id])
+				{
+					case "IE UICreationTabPrev":
+						this.UICreationTabPrevPressed = false;
+						break;
+				}
 			}
 			return false;
 		}
@@ -44,14 +48,11 @@ package
 		public function onEventDown(id:Number) : Boolean
 		{
 			ExternalInterface.call("LeaderLib_InputEvent", true, this.events[id], id);
-			if(controllerEnabled)
+			if(controllerEnabled && isInCharacterCreation)
 			{
 				var isHandled:Boolean = false;
 				switch(this.events[id])
 				{
-					case "IE UIUp":
-						isHandled = true;
-						break;
 					case "IE UICreationTabPrev":
 						this.UICreationTabPrevPressed = true;
 						break;

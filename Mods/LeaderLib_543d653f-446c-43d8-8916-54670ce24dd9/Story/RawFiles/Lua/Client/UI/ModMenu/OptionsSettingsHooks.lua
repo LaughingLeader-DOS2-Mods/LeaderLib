@@ -561,26 +561,23 @@ Ext.RegisterListener("SessionLoaded", function()
 
 	local uiTypes = not Vars.ControllerEnabled and OPTIONS_UI_TYPE or OPTIONS_UI_TYPE_C
 	for _,uiType in pairs(uiTypes) do
-		Ext.RegisterUITypeCall(uiType, "applyPressed", OnApplyPressed)
-		Ext.RegisterUITypeCall(uiType, "acceptPressed", OnAcceptChanges)
+		
 		Ext.RegisterUITypeCall(uiType, "requestCloseUI", OnCancelChanges)
 
-		Ext.RegisterUITypeCall(uiType, "switchMenu", OnSwitchMenu)
+		Ext.RegisterUITypeCall(uiType, "applyPressed", OnApplyPressed)
+		Ext.RegisterUITypeCall(uiType, "acceptPressed", OnAcceptChanges)
 
+		if not Vars.ControllerEnabled then
+			Ext.RegisterUITypeCall(uiType, "switchMenu", OnSwitchMenu)
+		end
+
+		-- LeaderLib additions
 		Ext.RegisterUITypeCall(uiType, "controlAdded", onControlAdded)
-
+		Ext.RegisterUITypeCall(uiType, "arrayParsed", OnUpdateArrayParsed)
 		Ext.RegisterUITypeCall(uiType, "llbuttonPressed", OnButton)
 		Ext.RegisterUITypeCall(uiType, "llmenuSliderID", OnSlider)
 		Ext.RegisterUITypeCall(uiType, "llselectorID", OnSelector)
 		Ext.RegisterUITypeCall(uiType, "llcheckBoxID", OnCheckBox)
 		Ext.RegisterUITypeCall(uiType, "llcomboBoxID", OnComboBox)
-
-		Ext.RegisterUITypeCall(uiType, "arrayParsed", OnUpdateArrayParsed)
-
-		-- Ext.RegisterUITypeCall(uiType, "onSetButtonDisable", function(ui, call, buttonId, bDisabled)
-		-- 	if buttonId ~= LarianButtonID.Apply or currentMenu ~= MOD_MENU_ID then
-		-- 		ui:Invoke("setButtonDisableOriginal", buttonId, bDisabled)
-		-- 	end
-		-- end)
 	end
 end)

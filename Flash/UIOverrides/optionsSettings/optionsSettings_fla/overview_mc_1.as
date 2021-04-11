@@ -582,6 +582,7 @@ package optionsSettings_fla
 			}
 		}
 
+		//LeaderLib Addition
 		public function setupApplyCopy(copy:MovieClip, bVisible:Boolean=false):*
 		{
 			this.applyCopy = copy;
@@ -606,6 +607,7 @@ package optionsSettings_fla
 			this.addChild(this.applyCopy);
 		}
 
+		//LeaderLib Addition
 		public function removeApplyCopy():*
 		{
 			if (this.applyCopy)

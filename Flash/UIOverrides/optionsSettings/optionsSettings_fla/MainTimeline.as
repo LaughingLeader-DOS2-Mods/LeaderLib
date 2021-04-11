@@ -145,6 +145,7 @@ package optionsSettings_fla
 				}
 			}
 			this.update_Array = new Array();
+			//LeaderLib Addition
 			ExternalInterface.call("arrayParsed", "update_Array");
 		}
 		

@@ -1,9 +1,10 @@
 package optionsSettings_c_fla
 {
 	import flash.display.MovieClip;
-	import flash.external.ExternalInterface;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
+	import flash.text.TextFormat;
+	import flash.external.ExternalInterface;
 	
 	public dynamic class MainTimeline extends MovieClip
 	{

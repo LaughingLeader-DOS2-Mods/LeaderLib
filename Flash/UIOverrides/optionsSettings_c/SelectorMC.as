@@ -29,7 +29,7 @@ package
 			addFrameScript(0,this.frame1);
 		}
 		
-		public function onChange(param1:Event) : *
+		public function onChange(e:Event) : *
 		{
 			ExternalInterface.call("PlaySound","UI_Generic_Slider");
 			if(this.isCheckBox)

@@ -19,23 +19,23 @@ UIExtensions = {
 }
 
 local function DestroyInstance(force)
-	local count = Common.TableLength(UIExtensions.Controls, true) + Common.TableLength(UIExtensions.Timers, true)
-	if count == 0 or force then
-		if UIExtensions.Instance then
-			UIExtensions.Instance:Invoke("destroyTiemrs")
+	if UIExtensions.Instance then
+		if force or Common.TableLength(UIExtensions.Controls, true) + Common.TableLength(UIExtensions.Timers, true) == 0then
+			UIExtensions.Instance:Invoke("destroyTimers")
 			UIExtensions.Instance:Hide()
 			UIExtensions.Instance:Destroy()
 			UIExtensions.Instance = nil
 		end
 	end
-	if force then
-		UIExtensions.Controls = {}
-		UIExtensions.Timers = {}
-	end
+	UIExtensions.Controls = {}
+	UIExtensions.Timers = {}
 end
 
 RegisterListener("LuaReset", function()
-	DestroyInstance(true)
+	UIExtensions.Instance = Ext.GetUI("LeaderLibUIExtensions")
+	if UIExtensions.Instance then
+		DestroyInstance(true)
+	end
 end)
 
 Ext.RegisterConsoleCommand("llresetuiext", function(cmd)

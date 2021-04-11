@@ -104,6 +104,9 @@ function GameHelpers.Roll(chance, includeZero)
 	end
 end
 
+---Clears the action queue that may block things like skill usage via scripting.
+---@param character string
+---@param purge boolean|nil
 function GameHelpers.ClearActionQueue(character, purge)
 	if purge then
 		CharacterPurgeQueue(character)

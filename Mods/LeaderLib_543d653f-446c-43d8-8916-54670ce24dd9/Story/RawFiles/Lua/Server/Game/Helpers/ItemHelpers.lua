@@ -168,9 +168,11 @@ function GameHelpers.Item.CreateItemByStat(statName, skipLevelCheck, properties)
         props.ItemType = rarity
         props.GenerationItemType = rarity
 
-        for k,v in pairs(properties) do
-            if itemConstructorProps[k] == true then
-                props[k] = v
+        if properties and type(properties) == "table" then
+            for k,v in pairs(properties) do
+                if itemConstructorProps[k] == true then
+                    props[k] = v
+                end
             end
         end
 

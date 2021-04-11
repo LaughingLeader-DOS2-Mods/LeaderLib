@@ -236,7 +236,8 @@ function TalentManager.HasRequirements(player, id)
 					return false
 				end
 			else
-				Ext.PrintError(string.format("[LeaderLib:TalentManager.HasRequirements] Error invoking requirement handler for talent [%s] modid[%s]", id, modid))
+				fprint(LOGLEVEL.ERROR, "[LeaderLib:TalentManager.HasRequirements] Error invoking requirement handler for talent [%s] modid[%s]", id, modid)
+				Ext.PrintError(result)
 			end
 		end
 	end

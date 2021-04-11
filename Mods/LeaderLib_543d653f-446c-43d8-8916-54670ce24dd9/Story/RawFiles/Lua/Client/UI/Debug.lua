@@ -317,8 +317,13 @@ local allUIFiles = {
 }
 
 ---@param ui UIObject
-local function TryFindUI(ui)
-	local id = ui:GetTypeId()
+local function TryFindUI(ui, tryFindId)
+	local id = tryFindId
+	if type(ui) == "number" then
+		id = ui
+	else
+		id = ui:GetTypeId() or tryFindId
+	end
 	-- if id == nil then
 	-- 	return nil
 	-- end
@@ -328,11 +333,12 @@ local function TryFindUI(ui)
 			local builtInID = builtInUI:GetTypeId()
 			--print(id, v, builtInID, builtInUI:GetRoot().stage)
 			if builtInID == id or builtInUI == ui then
-				fprint("[TryFindUI]%s = %s,", v:gsub("GM/", ""):gsub(".swf", ""), builtInID)
+				fprint(LOGLEVEL.WARNING, "[TryFindUI]%s = %s,", v:gsub("GM/", ""):gsub(".swf", ""), builtInID)
 				return builtInID,v
 			end
 		end
 	end
+	print("Failed to find UI file for UI", ui, id)
 end
 
 Ext.RegisterListener("UIObjectCreated", function(ui)
@@ -344,7 +350,7 @@ local function PrintAllUITypeID()
 		local ui = Ext.GetBuiltinUI("Public/Game/GUI/"..v)
 		if ui ~= nil then
 			--print(v, ui:GetTypeId())
-			print(string.format("[PrintAllUITypeID]%s = %s,", string.gsub(v, "GM/", ""):gsub(".swf", ""), ui:GetTypeId()))
+			fprint(LOGLEVEL.WARNING, "[PrintAllUITypeID]%s = %s,", string.gsub(v, "GM/", ""):gsub(".swf", ""), ui:GetTypeId())
 		end
 	end
 end
@@ -353,6 +359,12 @@ local foundUITypeIds = {}
 
 Ext.RegisterConsoleCommand("printuitypeids", function(cmd, ...)
 	PrintAllUITypeID()
+end)
+
+Ext.RegisterConsoleCommand("tryfindui", function(cmd, uiType)
+	uiType = tonumber(uiType)
+	local ui = Ext.GetUIByType(uiType)
+	TryFindUI(ui, uiType)
 end)
 
 local function SessionLoaded()
@@ -365,6 +377,9 @@ local function SessionLoaded()
 			end
 		end
 	end
+
+	--print(Ext.GetBuiltinUI("Public/Game/GUI/mainMenu.swf"))
+	
 	Ext.RegisterUINameCall("PlaySound", tryFindUI)
 	Ext.RegisterUINameCall("UIAssert", tryFindUI)
 	-- Game.Tooltip.RegisterListener("Stat", nil, function(char,stat,tooltipdata) pcall(TraceTooltip, "Stat", stat, tooltipdata) end)

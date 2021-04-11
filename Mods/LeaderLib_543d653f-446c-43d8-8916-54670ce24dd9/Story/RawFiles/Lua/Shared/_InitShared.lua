@@ -53,15 +53,19 @@ LOGLEVEL = {
 ---@param severity integer|LOGLEVEL
 ---@param str string
 function fprint(severity, str, ...)
-	local msg = string.format(str, ...)
-	if severity == LOGLEVEL.ERROR then
-		Ext.PrintError(msg)
-	elseif severity == LOGLEVEL.WARNING then
-		Ext.PrintWarning(msg)
-	elseif severity == LOGLEVEL.TRACE then
-		print(msg)
+	if type(severity) == "string" then
+		Ext.Print(string.format(severity, str, ...))
 	else
-		Ext.Print(msg)
+		local msg = string.format(str, ...)
+		if severity == LOGLEVEL.ERROR then
+			Ext.PrintError(msg)
+		elseif severity == LOGLEVEL.WARNING then
+			Ext.PrintWarning(msg)
+		elseif severity == LOGLEVEL.TRACE then
+			print(msg)
+		else
+			Ext.Print(msg)
+		end
 	end
 end
 

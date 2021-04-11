@@ -293,7 +293,7 @@ Ext.RegisterConsoleCommand("additemstat", function(command, stat, levelstr, rari
 		level = math.tointeger(tonumber(levelstr)) or level
 		skipLevelCheck = false
 	end
-	local item = GameHelpers.Item.CreateItemByStat(stat, level, rarity, skipLevelCheck, 1, 1)
+	local item = GameHelpers.Item.CreateItemByStat(stat, true, {StatsLevel = level, ItemType = rarity})
 	if item ~= nil then
 		ItemToInventory(item, host, 1, 1, 1)
 	else

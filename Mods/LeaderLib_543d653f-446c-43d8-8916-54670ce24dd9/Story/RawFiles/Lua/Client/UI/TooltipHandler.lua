@@ -502,8 +502,10 @@ local function OnItemTooltip(item, tooltip)
 	if tooltip == nil then
 		return
 	end
+	if Vars.DebugMode then
+		Ext.PrintWarning("OnItemTooltip", item and item.StatsId or "nil", Ext.JsonStringify(tooltip.Data))
+	end
 	if item ~= nil then
-		--print(item.StatsId, Ext.JsonStringify(item.WorldPos), Ext.JsonStringify(tooltip.Data))
 		lastItem = item
 		local character = Client:GetCharacter()
 		if character ~= nil then
@@ -715,8 +717,18 @@ local debugTooltipCalls = {
 	"setTooltipSize",
 }
 
+---@param item EclItem
+---@param rune StatEntryObject
+---@param tooltip TooltipData
+local function OnRuneTooltip(item, rune, slot, tooltip)
+	if Vars.DebugMode then
+		Ext.PrintWarning("OnRuneTooltip", item.StatsId, rune.Name, slot, Ext.JsonStringify(tooltip))
+	end
+end
+
 Ext.RegisterListener("SessionLoaded", function()
 	Game.Tooltip.RegisterListener("Item", nil, OnItemTooltip)
+	Game.Tooltip.RegisterListener("Rune", nil, OnRuneTooltip)
 	Game.Tooltip.RegisterListener("Skill", nil, OnSkillTooltip)
 	Game.Tooltip.RegisterListener("Status", nil, OnStatusTooltip)
 	--Game.Tooltip.RegisterListener("Stat", nil, OnStatTooltip)

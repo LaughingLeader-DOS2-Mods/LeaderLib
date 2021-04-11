@@ -690,46 +690,8 @@ function TooltipHooks:RegisterControllerHooks()
 		Ext.RegisterUICall(craftPanel, "slotOver", function (ui, method, itemHandle, slotNum)
 			self:OnRequestConsoleInventoryTooltip(ui, method, itemHandle, slotNum)
 		end)
-		Ext.RegisterUICall(craftPanel, "runeSlotOver", function (ui, method, slot)
-			local request = {
-				Type = "Rune",
-				Target = nil,
-				Rune = nil,
-				Slot = slot,
-				StatsId = nil
-			}
-			request.Type = "Rune"
-			request.Slot = slot
-
-			local main = ui:GetRoot()
-			local runePanel = main.craftPanel_mc.runePanel_mc
-			for i=0,#runePanel.item_array do
-				local entry = runePanel.item_array[i]
-				if entry then
-					print(i, Ext.GetItem(Ext.DoubleToHandle(entry.itemHandle)).StatsId)
-				end
-			end
-			local item = Ext.GetItem(Ext.DoubleToHandle(main.tooltipHandle))
-			--local item = Ext.GetItem(Ext.DoubleToHandle(runePanel.item_array[runePanel.currentHLSlot].itemHandle))
-			local rune = Ext.GetItem(Ext.DoubleToHandle(runePanel.item_array[runePanel.currentHLSlot].itemHandle))
-			--local rune = Ext.GetItem(Ext.DoubleToHandle(runePanel.currMC.itemHandle))
-
-			request.Target = item
-
-			if rune then
-				request.Rune = Ext.GetStat(rune.StatsId)
-				request.StatsId = rune.StatsId
-			elseif item then
-				if item.Stats then
-					local runeBoost = item.Stats.DynamicStats[3+slot]
-					request.Rune = Ext.GetStat(runeBoost.BoostName, runeBoost.Level)
-					request.StatsId = runeBoost.BoostName
-				end
-			end
-
-			fprint(LOGLEVEL.WARNING, "Item (%s) Rune(%s)", item.StatsId, rune.StatsId)
-
-			self.NextRequest = request
+		Ext.RegisterUICall(craftPanel, "runeSlotOver", function (ui, method, slot, ...)
+			self:OnRequestRuneTooltip(ui, method, slot, ...)
 		end)
 		-- Ext.RegisterUICall(craftPanel, "overItem", function (ui, method, itemHandle)
 		-- 	print(ui:GetTypeId(), method, itemHandle)
@@ -909,7 +871,9 @@ function TooltipHooks:Init()
 	Ext.RegisterUINameCall("showTalentTooltip", onReqTooltip)
 	Ext.RegisterUINameCall("showTagTooltip", onReqTooltip)
 	Ext.RegisterUINameCall("showCustomStatTooltip", onReqTooltip)
-	Ext.RegisterUINameCall("showRuneTooltip", onReqTooltip)
+	Ext.RegisterUINameCall("showRuneTooltip", function(...)
+		self:OnRequestRuneTooltip(...)
+	end)
 
 	Ext.RegisterUINameInvokeListener("addFormattedTooltip", function (...)
 		self:OnRenderTooltip(TooltipArrayNames.Default, ...)
@@ -953,47 +917,6 @@ function TooltipHooks:OnRequestTooltip(ui, method, arg1, arg2, arg3, ...)
 		end
 		request.Type = 'Item'
 		request.Item = Ext.DoubleToHandle(arg1)
-	elseif method == "showRuneTooltip" then
-		if arg1 == nil then
-			-- Item handle will be nil when it's being dragged
-			return
-		end
-		request.Type = "Rune"
-		request.Slot = arg1
-
-		local main = ui:GetRoot()
-		local item = Ext.GetItem(Ext.DoubleToHandle(main.craftPanel_mc.runesPanel_mc.targetHit_mc.itemHandle))
-		if item then
-			request.Target = item
-			local runeBoost = item.Stats.DynamicStats[3+arg1]
-			request.Rune = Ext.GetStat(runeBoost.BoostName, runeBoost.Level)
-			request.StatsId = runeBoost.BoostName
-		end
-		-- print("craftPanel_mc.runesPanel_mc.targetHit_mc.itemHandle", main.craftPanel_mc.runesPanel_mc.targetHit_mc.itemHandle, itemTest.DisplayName, itemTest.StatsId)
-		-- local content_array = main.craftPanel_mc.runesPanel_mc.inventory_mc.inv.content_array
-		-- for i=0,#content_array do
-		-- 	local v = content_array[i]
-		-- 	if v ~= nil then
-		-- 		if v.itemHandle ~= 0.0 then
-		-- 			print(i, v, Ext.GetItem(Ext.DoubleToHandle(v.itemHandle)).StatsId)
-		-- 		end
-		-- 	end
-		-- end
-		-- print("runesPanel_mc.list", main.runeSlotBtnExtractStr.str, main.craftPanel_mc.runesPanel_mc.name_txt.htmlText)
-		-- local content_array = main.craftPanel_mc.runesPanel_mc.list.content_array
-		-- for i=0,#content_array do
-		-- 	local v = content_array[i]
-		-- 	if v ~= nil then
-		-- 		if v.itemHandle and v.itemHandle ~= 0.0 then
-		-- 			print(i, v, Ext.GetItem(Ext.DoubleToHandle(v.itemHandle)).StatsId)
-		-- 		else
-		-- 			print(i, v.title_txt.htmlText, v.name_txt.htmlText)
-		-- 		end
-		-- 	end
-		-- end
-		--print(main.craftPanel_mc.runesPanel_mc.runeTarget_mc, main.craftPanel_mc.runesPanel_mc.runeTarget_mc.itemHandle)
-		-- request.Type = 'Item'
-		-- request.Item = Ext.DoubleToHandle(arg1)
 	elseif method == "showStatTooltip" then
 		request.Type = 'Stat'
 		if isCharSheet then
@@ -1250,7 +1173,7 @@ function TooltipHooks:OnRenderSubTooltip(ui, propertyName, req, method, ...)
 		elseif req.Type == "Item" then
 			self:NotifyListeners("Item", nil, req, tooltip, req.Item)
 		elseif req.Type == "Rune" then
-			self:NotifyListeners("Rune", req.StatsId, req, tooltip, req.Target, req.Rune, req.Slot)
+			self:NotifyListeners("Rune", req.StatsId, req, tooltip, req.Item, req.Rune, req.Slot)
 		elseif req.Type == "Tag" then
 			self:NotifyListeners("Tag", req.Category, req, tooltip, req.Tag)
 		else
@@ -1434,6 +1357,66 @@ function TooltipHooks:OnRequestConsoleCCTooltip(ui, method, arg1, arg2)
 	end
 
 	self.NextRequest = request
+end
+
+function TooltipHooks:OnRequestRuneTooltip(ui, method, slot)
+	local request = {
+		Type = "Rune",
+		Item = nil,
+		Rune = nil,
+		Slot = slot,
+		StatsId = nil
+	}
+
+	local main = ui:GetRoot()
+	if main then
+		if not ControllerVars.Enabled then
+			local item = Ext.GetItem(Ext.DoubleToHandle(main.craftPanel_mc.runesPanel_mc.targetHit_mc.itemHandle))
+			if item then
+				request.Item = item
+				local runeBoost = item.Stats.DynamicStats[3+slot]
+				request.Rune = Ext.GetStat(runeBoost.BoostName, runeBoost.Level)
+				request.StatsId = runeBoost.BoostName
+			end
+		else
+			local runePanel = main.craftPanel_mc.runePanel_mc
+			if runePanel then
+				local item = Ext.GetItem(Ext.DoubleToHandle(runePanel.runes_mc.runeTargetHandle))
+				if slot == 0 then
+					-- The target item is selected instead of a rune, so this should be an item tooltip
+					request = {
+						Type = "Item",
+						Item = item
+					}
+					self.LastItemRequest = request
+					self.NextRequest = request
+				else
+					slot = slot - 1
+					request.Slot = slot
+					--local item = Ext.GetItem(Ext.DoubleToHandle(runePanel.item_array[runePanel.currentHLSlot].itemHandle))
+					local rune = Ext.GetItem(Ext.DoubleToHandle(runePanel.item_array[runePanel.currentHLSlot].itemHandle))
+					--local rune = Ext.GetItem(Ext.DoubleToHandle(runePanel.currMC.itemHandle))
+		
+					request.Item = item
+		
+					if rune then
+						request.Rune = Ext.GetStat(rune.StatsId)
+						request.StatsId = rune.StatsId
+						request.RuneItem = rune
+					elseif item and item.Stats then
+						local runeBoost = item.Stats.DynamicStats[3+slot]
+						request.Rune = Ext.GetStat(runeBoost.BoostName, runeBoost.Level)
+						request.StatsId = runeBoost.BoostName
+					end
+				end
+
+				self.NextRequest = request
+			end
+		end
+	end
+	if request.Item ~= nil then
+		self.NextRequest = request
+	end
 end
 
 function TooltipHooks:NotifyListeners(type, name, request, tooltip, ...)

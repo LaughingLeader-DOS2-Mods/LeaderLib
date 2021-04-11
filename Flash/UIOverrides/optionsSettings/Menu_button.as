@@ -10,20 +10,12 @@ package
 	
 	public dynamic class Menu_button extends MovieClip
 	{
-		 
-		
 		public var bg_mc:MovieClip;
-		
 		public var disable_mc:MovieClip;
-		
 		public var formHL_mc:MovieClip;
-		
 		public var label_txt:TextField;
-		
 		public var textY:Number;
-		
 		public var snd_onUp:String;
-		
 		public var base:MovieClip;
 		
 		public function Menu_button()
@@ -58,6 +50,7 @@ package
 			this.bg_mc.gotoAndStop(2);
 			this.label_txt.y = this.textY;
 			ExternalInterface.call("PlaySound",this.snd_onUp);
+			// LeaderLib: buttonPressed changed to llbuttonPressed so engine stuff doesn't fire when a Mod Settings button is pressed.
 			ExternalInterface.call("llbuttonPressed",this.id);
 			removeEventListener("mouseUp",this.buttonReleased);
 		}

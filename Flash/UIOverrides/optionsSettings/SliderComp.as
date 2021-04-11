@@ -9,22 +9,13 @@ package
 	
 	public dynamic class SliderComp extends MovieClip
 	{
-		 
-		
 		public var amount_txt:TextField;
-		
 		public var formHL_mc:MovieClip;
-		
 		public var label_txt:TextField;
-		
 		public var max_txt:TextField;
-		
 		public var min_txt:TextField;
-		
 		public var slider_mc:SliderMC;
-		
 		public var mHeight:Number;
-		
 		public var base:MovieClip;
 		
 		public function SliderComp()
@@ -35,9 +26,10 @@ package
 		
 		public function onChange(param1:Event) : *
 		{
-			var val2:Number = this.slider_mc.value;
-			this.amount_txt.htmlText = String(this.roundFloat(val2));
-			ExternalInterface.call("llmenuSliderID",this.id,this.slider_mc.value);
+			var sliderValue:Number = this.slider_mc.value;
+			this.amount_txt.htmlText = String(this.roundFloat(sliderValue));
+			// LeaderLib: menuSliderID changed to llmenuSliderID
+			ExternalInterface.call("llmenuSliderID", this.id, sliderValue);
 			this.resetAmountPos();
 		}
 		

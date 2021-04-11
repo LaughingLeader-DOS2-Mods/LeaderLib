@@ -8,34 +8,21 @@ package optionsSettings_fla
 	
 	public dynamic class MainTimeline extends MovieClip
 	{
-		 
-		
 		public var mainMenu_mc:MovieClip;
-		
 		public var selectedInfo_txt:TextField;
-		
 		public var events:Array;
-		
 		public var layout:String;
-		
 		public var curTooltip:String;
-		
 		public var hasTooltip:Boolean;
-		
 		public const ElW:Number = 942;
-		
+
 		public var update_Array:Array;
-		
 		public var baseUpdate_Array:Array;
-		
 		public var button_array:Array;
 		
 		public const anchorId:String = "optionsmenu";
-		
 		public const anchorPos:String = "center";
-		
 		public const anchorTPos:String = "center";
-		
 		public const anchorTarget:String = "screen";
 		
 		public function MainTimeline()
@@ -146,6 +133,7 @@ package optionsSettings_fla
 							this.setMenuCheckbox(val3,val5,val19);
 							continue;
 						case 10:
+							//LeaderLib Addition
 							val3 = this.update_Array[val2++];
 							val4 = this.update_Array[val2++];
 							val8 = this.update_Array[val2++];
@@ -186,6 +174,7 @@ package optionsSettings_fla
 							val6 = this.baseUpdate_Array[val2++];
 							val3 = val6 as Number;
 							val4 = this.baseUpdate_Array[val2++];
+							// LeaderLib Addition, apply button copy workaround
 							this.button_array[val3].text_txt.htmlText = val4.toUpperCase();
 							if (this.button_array[val3] == this.mainMenu_mc.apply_mc && this.mainMenu_mc.applyCopy)
 							{
@@ -202,6 +191,7 @@ package optionsSettings_fla
 				}
 				this.baseUpdate_Array = new Array();
 			}
+			// LeaderLib addition, allows doing stuff after this function "runs"
 			ExternalInterface.call("arrayParsed", "baseUpdate_Array");
 		}
 		
@@ -214,24 +204,24 @@ package optionsSettings_fla
 			return false;
 		}
 		
-		public function onEventDown(param1:Number) : Boolean
+		public function onEventDown(id:Number) : Boolean
 		{
-			var val2:Boolean = false;
-			switch(this.events[param1])
+			var isHandled:Boolean = false;
+			switch(this.events[id])
 			{
 				case "IE UIUp":
 					this.mainMenu_mc.moveCursor(true);
-					val2 = true;
+					isHandled = true;
 					break;
 				case "IE UIDown":
 					this.mainMenu_mc.moveCursor(false);
-					val2 = true;
+					isHandled = true;
 					break;
 				case "IE UICancel":
 					this.cancelChanges();
-					val2 = true;
+					isHandled = true;
 			}
-			return val2;
+			return isHandled;
 		}
 		
 		public function hideWin() : void
@@ -357,11 +347,11 @@ package optionsSettings_fla
 		
 		public function setButtonDisable(buttonId:Number, bDisabled:Boolean) : *
 		{
-			//ExternalInterface.call("onSetButtonDisable", buttonId, bDisabled);
 			this.button_array[buttonId].disable_mc.visible = bDisabled;
 			this.button_array[buttonId].bg_mc.visible = !bDisabled;
 		}
 
+		// LeaderLib Addition
 		public function setApplyButtonCopyVisible(bVisible:Boolean=true) : *
 		{
 			if (this.mainMenu_mc.applyCopy)
@@ -372,6 +362,7 @@ package optionsSettings_fla
 			}
 		}
 
+		// LeaderLib Addition
 		public function createApplyButton(bVisible:Boolean = false) : *
 		{
 			if (!this.mainMenu_mc.applyCopy)
@@ -391,6 +382,7 @@ package optionsSettings_fla
 			this.mainMenu_mc.resetMenuButtons(param1);
 		}
 
+		// LeaderLib Addition
 		public function getElementHeight(id:Number) : *
 		{
 			var mc:MovieClip = this.mainMenu_mc.getElementByID(id);
@@ -405,11 +397,13 @@ package optionsSettings_fla
 			return -1;
 		}
 
+		// LeaderLib Addition
 		public function positionElements() : *
 		{
 			this.mainMenu_mc.list.positionElements();
 		}
 
+		// LeaderLib Addition
 		public function setTextFormat(id:Number, underline:Boolean = false, bold:Boolean = false, italic:Boolean = false, size:uint=-1, color:Object = null) : *
 		{
 			var tf:TextFormat = null;
@@ -440,11 +434,15 @@ package optionsSettings_fla
 			return false;
 		}
 
-		public function clearAll():*
+		/* LeaderLib Addition. Clearing list elements directly via function in Lua can have an error due to sortOn,
+		so this function helps avoid that. */
+		public function clearAll(clearBase:Boolean = false):*
 		{
 			this.update_Array = new Array();
 			this.removeItems();
-			//this.baseUpdate_Array = new Array();
+			if(clearBase) {
+				this.baseUpdate_Array = new Array();
+			}
 		}
 		
 		function frame1() : *

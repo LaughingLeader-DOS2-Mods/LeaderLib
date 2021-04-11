@@ -8,16 +8,10 @@ package
 	
 	public dynamic class Checkbox extends MovieClip
 	{
-		 
-		
 		public var bg_mc:MovieClip;
-		
 		public var formHL_mc:MovieClip;
-		
 		public var label_txt:TextField;
-		
 		public var base:MovieClip;
-		
 		public var mHeight:Number;
 		
 		public function Checkbox()
@@ -50,6 +44,7 @@ package
 				}
 				this.bg_mc.gotoAndStop(this.stateID * 3 + 1);
 				ExternalInterface.call("PlaySound","UI_Gen_XButton_Click");
+				// LeaderLib: checkBoxID changed to llcheckBoxID
 				ExternalInterface.call("llcheckBoxID",this.id,this.stateID);
 			}
 			removeEventListener(MouseEvent.MOUSE_UP,this.onClick);

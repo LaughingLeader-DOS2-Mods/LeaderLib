@@ -9,18 +9,11 @@ package
 	
 	public dynamic class Selector extends MovieClip
 	{
-		 
-		
 		public var cont_mc:emptyBG;
-		
 		public var formHL_mc:MovieClip;
-		
 		public var hl_mc:MovieClip;
-		
 		public var label_txt:TextField;
-		
 		public var selList:coverFlow;
-		
 		public var base:MovieClip;
 		
 		public function Selector()
@@ -31,6 +24,7 @@ package
 		
 		public function onChange(param1:Event) : *
 		{
+			// LeaderLib: selectorID changed to llselectorID
 			ExternalInterface.call("llselectorID",this.id,this.selList.currentSelection);
 			ExternalInterface.call("PlaySound","UI_Gen_OptMenu_Slider");
 		}

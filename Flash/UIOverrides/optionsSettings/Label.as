@@ -7,6 +7,7 @@ package
 	import LS_Classes.tooltipHelper;
 	import flash.external.ExternalInterface;
 	
+	// LeaderLib Changes: Added tooltip support
 	public dynamic class Label extends MovieClip
 	{
 		public var label_txt:TextField;

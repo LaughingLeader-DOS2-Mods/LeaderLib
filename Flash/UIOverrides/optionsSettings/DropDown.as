@@ -9,18 +9,11 @@ package
 	
 	public dynamic class DropDown extends MovieClip
 	{
-		 
-		
 		public var combo_mc:comboBox;
-		
 		public var formHL_mc:MovieClip;
-		
 		public var label_txt:TextField;
-		
 		public var base:MovieClip;
-		
 		public var div:MovieClip;
-		
 		public var mHeight:Number;
 		
 		public function DropDown()
@@ -36,6 +29,7 @@ package
 		
 		public function onChange(param1:Event) : *
 		{
+			// LeaderLib: comboBoxID changed to llcomboBoxID
 			ExternalInterface.call("llcomboBoxID",this.id,this.combo_mc.selectedIndex);
 		}
 		

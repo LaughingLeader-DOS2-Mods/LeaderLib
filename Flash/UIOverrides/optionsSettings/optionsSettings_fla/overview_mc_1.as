@@ -13,67 +13,38 @@ package optionsSettings_fla
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	
+	//LeaderLib Changes: Added controlAdded calls whenever a control is created.
 	public dynamic class overview_mc_1 extends MovieClip
 	{
-		 
-		
 		public var Xclose_mc:MovieClip;
-		
 		public var apply_mc:MovieClip;
 		public var applyCopy:MovieClip;
-		
 		public var cancel_mc:MovieClip;
-		
 		public var listHolder_mc:emptyBG;
-		
 		public var menuButtonContainer_mc:emptyBG;
-		
 		public var ok_mc:MovieClip;
-		
 		public var title_txt:TextField;
-		
 		public var toptitle_txt:TextField;
-		
 		public const hlColour:uint = 0;
-		
 		public const defaultColour:uint = 14077127;
-		
 		public const menuButtonContainerCenterPos:Point = new Point(176,156);
-		
 		public var closeTimeLine:larTween;
-		
 		public var opened:Boolean;
-		
 		public var Root;
-		
 		public var selectedID:Number;
-		
 		public var totalHeight:Number;
-		
 		public var maxWidth:Number;
-		
 		public var factor:Number;
-		
 		public var elementHeight:Number;
-		
 		public var topDist:Number;
-		
 		public var list:scrollList;
-		
 		public var menuBtnList:listDisplay;
-		
 		public var base:MovieClip;
-		
 		public var HLCounter:Number;
-		
 		public const elementX:Number = 0;
-		
 		public const WidthSpacing:Number = 80;
-		
 		public const HeightSpacing:Number = 40;
-		
 		public var elementHSpacing:Number;
-		
 		public var minWidth:Number;
 		
 		public function overview_mc_1()

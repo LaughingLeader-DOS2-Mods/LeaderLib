@@ -413,7 +413,7 @@ if Ext.IsClient() then
 	end)
 
 	Ext.RegisterListener("UIObjectCreated", function(ui)
-		if ui:GetTypeId() == Data.UIType.trade then
+		if ui:GetTypeId() == Data.UIType.trade or ui:GetTypeId() == Data.UIType.trade_c then
 			local currentCharacter = GetClientCharacter()
 			if currentCharacter ~= nil then
 				lastCharacterOutsideTrade = currentCharacter.UUID

@@ -1375,7 +1375,7 @@ function TooltipHooks:OnRequestRuneTooltip(ui, method, slot)
 			if item then
 				request.Item = item
 				local runeBoost = item.Stats.DynamicStats[3+slot]
-				request.Rune = Ext.GetStat(runeBoost.BoostName, runeBoost.Level)
+				request.Rune = Ext.GetStat(runeBoost.BoostName)
 				request.StatsId = runeBoost.BoostName
 			end
 		else
@@ -1405,7 +1405,7 @@ function TooltipHooks:OnRequestRuneTooltip(ui, method, slot)
 						request.RuneItem = rune
 					elseif item and item.Stats then
 						local runeBoost = item.Stats.DynamicStats[3+slot]
-						request.Rune = Ext.GetStat(runeBoost.BoostName, runeBoost.Level)
+						request.Rune = Ext.GetStat(runeBoost.BoostName)
 						request.StatsId = runeBoost.BoostName
 					end
 				end

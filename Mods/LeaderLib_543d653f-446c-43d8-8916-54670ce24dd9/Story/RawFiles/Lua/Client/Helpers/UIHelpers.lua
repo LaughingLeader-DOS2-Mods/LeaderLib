@@ -6,19 +6,24 @@ function UI.ToggleStatusVisibility(visible)
 	if ui then
 		local main = ui:GetRoot()
 		if main then
-			for i=0,#main.player_array do
-				local player_mc = main.player_array[i]
-				if player_mc and player_mc.statusHolder_mc then
-					player_mc.statusHolder_mc.visible = visible
-					if player_mc.summonList then
-						for j=0,#player_mc.summonList.content_array do
-							local summon_mc = player_mc.summonList.content_array[j]
-							if summon_mc then
-								summon_mc.statusHolder_mc.visible = visible
+			local b,err = xpcall(function()
+				for i=0,#main.player_array do
+					local player_mc = main.player_array[i]
+					if player_mc and player_mc.statusHolder_mc then
+						player_mc.statusHolder_mc.visible = visible
+						if player_mc.summonList then
+							for j=0,#player_mc.summonList.content_array do
+								local summon_mc = player_mc.summonList.content_array[j]
+								if summon_mc then
+									summon_mc.statusHolder_mc.visible = visible
+								end
 							end
 						end
 					end
 				end
+			end, debug.traceback)
+			if not b then
+				Ext.PrintError(err)
 			end
 		end
 	end

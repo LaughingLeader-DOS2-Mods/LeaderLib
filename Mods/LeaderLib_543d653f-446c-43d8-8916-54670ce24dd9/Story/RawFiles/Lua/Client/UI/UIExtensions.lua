@@ -14,7 +14,7 @@ UIExtensions = {
 	Controls = {},
 	---@type table<string, FlashTimerCallback[]>
 	Timers = {},
-	Layer = 12,
+	Layer = 10,
 	SwfPath = "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/LeaderLib_UIExtensions.swf"
 }
 

@@ -79,7 +79,7 @@ package
 
 		public function removeControl(id:Number): Boolean
 		{
-			return mainPanel_mc.list.removeElementByListId(id);
+			return mainPanel_mc.removeElementWithID(id);
 		}
 		
 		public function addCheckbox(id:Number, label:String, tooltip:String, stateID:Number=0, x:Number=0, y:Number=0, filterBool:Boolean = false, enabled:Boolean = true) : *

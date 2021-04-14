@@ -24,7 +24,36 @@ package
 		public function removeElement(obj:MovieClip) : *
 		{
 			this.removeChild(obj);
-			elements.splice(obj, 1);
+			var index:uint = 0;
+			while(index < this.elements.length)
+			{
+				if(this.elements[index] == obj)
+				{
+					elements.splice(index, 1);
+					break;
+				}
+				index++;
+			}
+		}
+
+		public function removeElementWithID(id:Number) : Boolean
+		{
+			var success:Boolean = false;
+			var index:uint = 0;
+			while(index < this.elements.length)
+			{
+				if(this.elements[index])
+				{
+					var obj:MovieClip = this.elements[index];
+					if (obj.id == id) {
+						this.removeChild(obj);
+						elements.splice(index, 1);
+						success = true;
+					}
+				}
+				index++;
+			}
+			return success;
 		}
 
 		public function clearElements() : *

@@ -286,6 +286,7 @@ if Ext.IsServer() then
 						Ext.PrintError(err)
 					end
 				end
+				Ext.BroadcastMessage("LeaderLib_ClearSkipTutorialUI", "")
 				runSkipTutorialSetup = false
 			end
 		end)
@@ -343,14 +344,25 @@ elseif Ext.IsClient() then
 	Ext.RegisterNetListener("LeaderLib_SetupSkipTutorialUI", function(cmd, payload)
 		SetupSkipTutorialCheckbox()
 		if not registeredStartListener then
-			Ext.RegisterUINameCall("startGame", function(...)
+			Ext.RegisterUINameCall("startGame", function(ui, call, ...)
 				if createdCheckboxID > -1 then
 					UIExtensions.RemoveControl(createdCheckboxID)
-					Input.RemoveListener(OnInput)
 					createdCheckboxID = -1
+				else
+					--Fallback
+					UIExtensions.RemoveAllControls()
 				end
+				Input.RemoveListener(OnInput)
 			end)
 			registeredStartListener = true
 		end
+	end)
+
+	Ext.RegisterNetListener("LeaderLib_ClearSkipTutorialUI", function(cmd, payload)
+		if createdCheckboxID > -1 then
+			UIExtensions.RemoveControl(createdCheckboxID)
+			createdCheckboxID = -1
+		end
+		Input.RemoveListener(OnInput)
 	end)
 end

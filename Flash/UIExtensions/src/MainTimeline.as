@@ -140,7 +140,7 @@ package
 			mainPanel_mc.clearElements();
 		}
 
-		private function removeTimer(timer:ClientTimer, removeFromArray:Boolean = false) : *
+		public function removeTimer(timer:ClientTimer, removeFromArray:Boolean = false) : *
 		{
 			if(removeFromArray) {
 				var index:uint = 0;
@@ -165,7 +165,7 @@ package
 			{
 				var timer:ClientTimer = this.timers[index] as ClientTimer;
 				if(timer != null) {
-					timer.dispose(false);
+					timer.dispose();
 					timer = null;
 				}
 				index++;

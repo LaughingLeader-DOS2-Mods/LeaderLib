@@ -14,6 +14,7 @@ package
 		public function ClientTimer(name:String, delay:Number, repeat:int, parent:MainTimeline)
 		{
 			super(delay, repeat);
+			this.parent = parent;
 			this.name = name;
 			this.addEventListener(TimerEvent.TIMER_COMPLETE, this.onComplete);
 			if (repeat > 1) {
@@ -39,7 +40,9 @@ package
 			if(this.removeOnTick) {
 				this.removeEventListener(TimerEvent.TIMER, this.onTick);
 			}
-			parent.removeTimer(this, removeFromArray);
+			if (this.parent != null) {
+				parent.removeTimer(this, removeFromArray);
+			}
 		}
 	}
 }

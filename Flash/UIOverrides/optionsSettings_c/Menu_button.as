@@ -52,11 +52,19 @@ package
 		public function deselectElement() : *
 		{
 			this.bg_mc.gotoAndStop(1);
+			if(this.onOut)
+			{
+				this.onOut();
+			}
 		}
 		
 		public function selectElement() : *
 		{
 			this.bg_mc.gotoAndStop(2);
+			if(this.onOver)
+			{
+				this.onOver(this);
+			}
 		}
 		
 		public function handleEvent(eventId:String, param2:Boolean) : Boolean

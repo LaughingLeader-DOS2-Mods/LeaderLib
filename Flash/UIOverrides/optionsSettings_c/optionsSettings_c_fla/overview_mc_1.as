@@ -15,7 +15,8 @@ package optionsSettings_c_fla
 	
 	public dynamic class overview_mc_1 extends MovieClip
 	{
-		public var buttonHint_mc:BtnHintContainer;
+		//public var buttonHint_mc:BtnHintContainer;
+		public var buttonHint_mc:MovieClip;
 		public var listHolderSB_mc:emptyBG;
 		public var listHolder_mc:emptyBG;
 		public var title_txt:TextField;
@@ -541,30 +542,35 @@ package optionsSettings_c_fla
 			return this.list.getElementByNumber("id",param1);
 		}
 		
-		public function addMenuButton(param1:Number, param2:String, param3:Boolean) : *
+		public function addMenuButton(id:Number, displayName:String, enabled:Boolean, tooltip:String = "") : *
 		{
-			var val4:MovieClip = new Menu_button();
-			val4.heightOverride = this.elementHeight;
-			val4.x = this.elementX;
-			val4.label_txt.htmlText = param2;
-			val4.id = param1;
-			val4.name = "item" + this.list.length + "_mc";
-			if(val4.label_txt.textWidth > this.minWidth)
+			var button:MovieClip = new Menu_button();
+			button.heightOverride = this.elementHeight;
+			button.x = this.elementX;
+			button.label_txt.htmlText = displayName;
+			button.id = id;
+			button.name = "item" + this.list.length + "_mc";
+			if (tooltip != "") {
+				button.enabledTooltip = tooltip;
+				button.onOver = this.ddShowTooltip;
+				button.onOut = this.ddHideTooltip;
+			}
+			if(button.label_txt.textWidth > this.minWidth)
 			{
-				if(this.maxWidth < val4.label_txt.textWidth)
+				if(this.maxWidth < button.label_txt.textWidth)
 				{
-					this.maxWidth = val4.label_txt.textWidth;
+					this.maxWidth = button.label_txt.textWidth;
 				}
 			}
 			else
 			{
 				this.maxWidth = this.minWidth;
 			}
-			val4.disable_mc.visible = !param3;
-			val4.bg_mc.visible = param3;
-			this.list.addElement(val4);
+			button.disable_mc.visible = !enabled;
+			button.bg_mc.visible = enabled;
+			this.list.addElement(button);
 			this.resetBG();
-			ExternalInterface.call("controlAdded", "button", val4.id, val4.list_pos, "list");
+			ExternalInterface.call("controlAdded", "button", button.id, button.list_pos, "list");
 		}
 		
 		public function setButtonEnabled(param1:Number, param2:Boolean) : *

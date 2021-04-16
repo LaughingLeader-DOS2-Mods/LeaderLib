@@ -379,9 +379,10 @@ package optionsSettings_c_fla
 			this.mainMenu_mc.setMenuSlider(param1,param2);
 		}
 		
-		public function addMenuButton(param1:Number, param2:String, param3:Boolean) : *
+		//LeaderLib: Added tooltip
+		public function addMenuButton(id:Number, displayName:String, enabled:Boolean, tooltip:String="") : *
 		{
-			this.mainMenu_mc.addMenuButton(param1,param2,param3);
+			this.mainMenu_mc.addMenuButton(id,displayName,enabled,tooltip);
 		}
 		
 		public function setButtonEnabled(param1:Number, param2:Boolean) : *
@@ -427,7 +428,7 @@ package optionsSettings_c_fla
 		}
 
 		// LeaderLib Addition
-		public function setTextFormat(id:Number, underline:Boolean = false, bold:Boolean = false, italic:Boolean = false, size:uint=-1, color:Object = null) : *
+		public function setTextFormat(id:Number, align:String = "center", underline:Boolean = false, bold:Boolean = false, italic:Boolean = false, size:uint=-1, color:Object = null) : *
 		{
 			var tf:TextFormat = null;
 			var mc:MovieClip = this.mainMenu_mc.getElementByID(id);
@@ -445,10 +446,13 @@ package optionsSettings_c_fla
 					tf.italic = italic;
 					if (size > -1)
 					{
-						tf.size = size
+						tf.size = size;
 					}
 					if(color) {
-						tf.color = color
+						tf.color = color;
+					}
+					if(align) {
+						tf.align = align;
 					}
 					mc.label_txt.setTextFormat(tf);
 					return true;

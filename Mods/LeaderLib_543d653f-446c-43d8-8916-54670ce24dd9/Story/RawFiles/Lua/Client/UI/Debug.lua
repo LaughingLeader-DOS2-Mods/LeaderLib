@@ -367,7 +367,7 @@ Ext.RegisterConsoleCommand("tryfindui", function(cmd, uiType)
 	TryFindUI(ui, uiType)
 end)
 
-local function SessionLoaded()
+Ext.RegisterListener("SessionLoaded", function()
 	PrintAllUITypeID()
 	local tryFindUI = function(ui, ...)
 		if not foundUITypeIds[ui:GetTypeId()] then
@@ -482,10 +482,22 @@ local function SessionLoaded()
 	-- 		end
 	-- 	end)
 	-- end
-end
+	if Vars.ControllerEnabled then
+		local areaInteractCalls = {
+			"itemOver",
+			"itemOut",
+			"itemSelected",
+			"showContext",
+		}
+		local printCall = function(ui, ...)
+			Ext.Print(Ext.MonotonicTime(), ui:GetTypeId(), Ext.JsonStringify({...}))
+		end
+		for _,v in pairs(areaInteractCalls) do
+			Ext.RegisterUITypeCall(Data.UIType.areaInteract_c, v, printCall)
+			--Ext.RegisterUINameCall(v, printCall)
+		end
+	end
+end)
 
-if Vars.DebugMode then
-	print("Pre Session Loaded UI:")
-	PrintAllUITypeID()
-	--Ext.RegisterListener("SessionLoaded", SessionLoaded)
-end
+print("Pre Session Loaded UI:")
+PrintAllUITypeID()

@@ -197,7 +197,6 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 	if main ~= nil then
 		---@type MainMenuMC
 		local mainMenu = main.mainMenu_mc
-
 		if addToArray == true then
 			array = main.update_Array
 			if array == nil then

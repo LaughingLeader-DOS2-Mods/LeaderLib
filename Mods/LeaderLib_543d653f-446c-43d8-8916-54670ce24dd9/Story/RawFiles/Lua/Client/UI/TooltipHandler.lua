@@ -742,7 +742,7 @@ Ext.RegisterListener("SessionLoaded", function()
 	-- Ext.RegisterUITypeInvokeListener(44, "showTooltipLong", function(ui, method, ...)
 	-- 	print(ui:GetTypeId(), method, Common.Dump{...})
 	-- end)
-	Ext.RegisterUITypeInvokeListener(44, "addTooltip", function(ui, method, text, xPos, yPos, ...)
+	Ext.RegisterUITypeInvokeListener(Data.UIType.tooltip, "addTooltip", function(ui, method, text, xPos, yPos, ...)
 		for i,callback in pairs(UIListeners.OnWorldTooltip) do
 			local status,err = xpcall(callback, debug.traceback, ui, text, xPos, yPos, ...)
 			if not status then

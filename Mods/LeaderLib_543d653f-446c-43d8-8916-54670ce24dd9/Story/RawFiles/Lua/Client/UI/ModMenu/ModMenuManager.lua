@@ -43,8 +43,9 @@ local CreatedByText = Classes.TranslatedString:Create("h1e7b9070ga8cag46f3ga7b4g
 
 ---@param name string
 ---@param v FlagData|VariableData
+---@param isCheckbox boolean
 ---@return string,string
-local function PrepareText(name, v)
+local function PrepareText(name, v, isCheckbox)
 	local displayName = name
 	local tooltip = ""
 	if v ~= nil then
@@ -79,6 +80,9 @@ local function PrepareText(name, v)
 	tooltip = GameHelpers.Tooltip.ReplacePlaceholders(tooltip)
 	if displayName == "" then
 		displayName = name
+	end
+	if Vars.ControllerEnabled and isCheckbox == true then
+		displayName = string.gsub(displayName, "Enable ", ""):gsub("Disable ", "")
 	end
 	return displayName, tooltip
 end
@@ -135,7 +139,7 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, uuid)
 			elseif varType == "boolean" then
 				local enableControl = Client.IsHost == true -- TODO: Specify on entries whether clients can edit them?
 				local state = v.Value == true and 1 or 0
-				local displayName, tooltip = PrepareText(name, v)
+				local displayName, tooltip = PrepareText(name, v, true)
 				mainMenu.addMenuCheckbox(ModMenuManager.LastID, displayName, enableControl, state, false, tooltip)
 				AddControl(v, uuid, v.Value)
 			elseif varType == "table" then
@@ -154,7 +158,12 @@ local function AddModSettingsEntry(ui, mainMenu, name, v, uuid)
 			local enableControl = v.Enabled and (Client.IsHost == true or not v.HostOnly)
 			local displayName, tooltip = PrepareText(name, v)
 			local soundUp = v.SoundUp or ""
-			mainMenu.addMenuButton(ModMenuManager.LastID, displayName, soundUp, enableControl, tooltip)
+			if not Vars.ControllerEnabled then
+				mainMenu.addMenuButton(ModMenuManager.LastID, displayName, soundUp, enableControl, tooltip)
+			else
+				--addMenuButton(param1:Number, param2:String, param3:Boolean)
+				mainMenu.addMenuButton(ModMenuManager.LastID, displayName, enableControl, tooltip)
+			end
 			AddButton(v, uuid)
 		end
 		return true

@@ -47,10 +47,57 @@ function GameHelpers.Item.CloneItemForCharacter(char, item, completion_event, au
     CharacterItemSetEvent(char, cloned, completion_event)
 end
 
+---@param item EsvItem|string
+---@return integer
+function GameHelpers.Item.GetItemLevel(item)
+    if type(item) == "string" then
+        local itemObject = Ext.GetItem(item)
+        if itemObject then
+            return GameHelpers.Item.GetItemLevel(itemObject)
+        end
+    else
+        if item.Stats then
+            return item.Stats.Level
+        else
+            local levelOverride = (item.LevelOverride and item.LevelOverride > 0) and item.LevelOverride or -1
+            if levelOverride > -1 then
+                return levelOverride
+            else
+                return Ext.GetStat(item.StatsId)["Act part"] or 1
+            end
+        end
+    end
+    return 1
+end
+
+---@param statName string The item stat.
+---@return string[]
+function GameHelpers.Item.GetRootTemplatesForStat(statName)
+    local matches = {}
+    local stat = Ext.GetStat(statName)
+    if stat then
+        if stat.RootTemplate then
+            return stat.RootTemplate
+        elseif stat.ItemGroup then
+            local itemGroup = Ext.GetItemGroup(stat.ItemGroup)
+            if itemGroup then
+                for _,lgroup in pairs(itemGroup.LevelGroups) do
+                    for _,root in pairs(lgroup.RootGroups) do
+                        if not StringHelpers.IsNullOrEmpty(root.RootGroup) then
+                            table.insert(matches, root.RootGroup)
+                        end
+                    end
+                end
+            end
+        end
+    end
+    return matches
+end
+
 ---@param template string The item root template.
 ---@param statType string The type of stat, ex. Weapon, Armor, Object.
 ---@return string[]
-function GameHelpers.Item.GetRootTemplateStats(template, statType)
+function GameHelpers.Item.GetStatsForRootTemplate(template, statType)
     local matches = {}
     local stats = {}
     if statType then
@@ -215,29 +262,47 @@ function GameHelpers.Item.CreateItemByTemplate(template, setProperties)
     return nil
 end
 
----@param item string|EsvItem
+---@param item EsvItem|string
 ---@param setProperties ItemDefinition|nil
----@param addDeltaMods string[]|nil
+---@param addDeltaMods string[]|nil An optional array of deltamods to add to the ItmeDefinition deltamods. The deltamod is checked for before it gets added.
 ---@return EsvItem
 function GameHelpers.Item.Clone(item, setProperties, addDeltaMods)
     local constructor = Ext.CreateItemConstructor(item)
     ---@type ItemDefinition
     local props = constructor[1]
+
+    local level = GameHelpers.Item.GetItemLevel(item)
+    props.StatsLevel = level
+    props.GenerationLevel = level
+
     if type(item) == "string" then
         props.RootTemplate = item
         props.OriginalRootTemplate = item
-        local stats = GameHelpers.Item.GetRootTemplateStats(item)
+        local stats = GameHelpers.Item.GetStatsForRootTemplate(item)
         if stats and #stats > 0 then
             props.GenerationStatsId = stats[1]
         end
-        props.StatsLevel = 1
-        props.GenerationLevel = 1
+    elseif item.StatsId then
+        if item.RootTemplate then
+            props.RootTemplate = item.RootTemplate.Id
+            props.OriginalRootTemplate = item.RootTemplate.Id
+        else
+            local templates = GameHelpers.Item.GetRootTemplatesForStat(item.StatsId)
+            if templates and #templates > 0 then
+                props.RootTemplate = templates[1]
+                props.OriginalRootTemplate = templates[1]
+            end
+        end
+        props.GenerationStatsId = item.StatsId
     end
     --props:ResetProgression(props)
     if setProperties then
         for k,v in pairs(setProperties) do
-            props[k] = v
-            --fprint(LOGLEVEL.ERROR, "[LeaderLib:GameHelpers.Item.Clone] Property %s doesn't exist for ItemDefinition", k)
+            if itemConstructorProps[k] then
+                props[k] = v
+            else
+                fprint(LOGLEVEL.WARNING, "[LeaderLib:GameHelpers.Item.Clone] Property %s doesn't exist for ItemDefinition", k)
+            end
         end
     end
     if addDeltaMods then
@@ -251,9 +316,6 @@ function GameHelpers.Item.Clone(item, setProperties, addDeltaMods)
             end
         end
         props.DeltaMods = originalDeltaMods
-    end
-    for k,_ in pairs(itemConstructorProps) do
-        print(k, Common.Dump(props[k]))
     end
     --constructor[1] = props
     return constructor:Construct()

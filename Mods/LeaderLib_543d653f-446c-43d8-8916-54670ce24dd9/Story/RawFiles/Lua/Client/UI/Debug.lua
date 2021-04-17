@@ -316,6 +316,10 @@ local allUIFiles = {
 "GM/vignette.swf",
 }
 
+local customUIs = {
+	"Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/LeaderLib_UIExtensions.swf",
+}
+
 ---@param ui UIObject
 local function TryFindUI(ui, tryFindId)
 	local id = tryFindId
@@ -329,6 +333,17 @@ local function TryFindUI(ui, tryFindId)
 	-- end
 	for i,v in ipairs(allUIFiles) do
 		local builtInUI = Ext.GetBuiltinUI("Public/Game/GUI/"..v)
+		if builtInUI ~= nil then
+			local builtInID = builtInUI:GetTypeId()
+			--print(id, v, builtInID, builtInUI:GetRoot().stage)
+			if builtInID == id or builtInUI == ui then
+				fprint(LOGLEVEL.WARNING, "[TryFindUI]%s = %s,", v:gsub("GM/", ""):gsub(".swf", ""), builtInID)
+				return builtInID,v
+			end
+		end
+	end
+	for i,v in ipairs(customUIs) do
+		local builtInUI = Ext.GetBuiltinUI(v)
 		if builtInUI ~= nil then
 			local builtInID = builtInUI:GetTypeId()
 			--print(id, v, builtInID, builtInUI:GetRoot().stage)
@@ -367,6 +382,50 @@ Ext.RegisterConsoleCommand("tryfindui", function(cmd, uiType)
 	TryFindUI(ui, uiType)
 end)
 
+local worldTooltipMethods = {
+	"updateTooltips",
+	"setObjPos",
+	"setTooltip",
+	"setWindow",
+	"setControllerMode",
+	"removeNotUpdatedTooltips",
+	"showTooltipLong",
+	"removeTooltipLong",
+	"removeTooltip",
+	"clearAll",
+	"removedTooltipMc",
+	"getTooltip",
+	"checkBoundaries",
+	"checkTooltipBoundaries",
+	"setToTop",
+	"noOverlapAll",
+	"cheaperCollisionCheck",
+}
+
+local worldTooltipCalls = {
+	"tooltipClicked",
+	"tooltipOver",
+	"tooltipOut",
+	"hideTooltip",
+	"showItemTooltip",
+	"showTooltip",
+	"showStatusTooltip",
+	"startDragging",
+}
+
+Ext.RegisterConsoleCommand("tooltiptest", function(cmd, delay)
+	local removeOld = false
+	delay = tonumber(delay or "250")
+	UIExtensions.StartTimer("worldTooltipTest", delay, function(timerName, isComplete)
+		print(timerName, isComplete)
+		local worldTooltip = Ext.GetUIByType(Data.UIType.worldTooltip)
+		if worldTooltip then
+			removeOld = not removeOld
+			worldTooltip:Invoke("updateTooltips", removeOld)
+		end
+	end, 50)
+end)
+
 Ext.RegisterListener("SessionLoaded", function()
 	PrintAllUITypeID()
 	local tryFindUI = function(ui, ...)
@@ -378,6 +437,26 @@ Ext.RegisterListener("SessionLoaded", function()
 		end
 	end
 
+	local worldTooltip = Ext.GetUIByType(Data.UIType.worldTooltip)
+	if worldTooltip then
+		worldTooltip:Invoke("setControllerMode", true)
+	end
+	Ext.RegisterUITypeInvokeListener(Data.UIType.worldTooltip, "setControllerMode", function(ui, method, isEnabled)
+		print(ui:GetTypeId(), method, isEnabled)
+		if not isEnabled then
+			ui:GetRoot().isControllerMode = true
+		end
+	end)
+	for _,v in pairs(worldTooltipMethods) do
+		Ext.RegisterUITypeInvokeListener(Data.UIType.worldTooltip, v, function(ui, method, ...)
+			print("worldTooltip", ui:GetTypeId(), method, Common.Dump({...}))
+		end)
+	end
+	for _,v in pairs(worldTooltipCalls) do
+		Ext.RegisterUITypeCall(Data.UIType.worldTooltip, v, function(ui, method, ...)
+			print("worldTooltip", ui:GetTypeId(), method, Common.Dump({...}))
+		end)
+	end
 	--print(Ext.GetBuiltinUI("Public/Game/GUI/mainMenu.swf"))
 	
 	Ext.RegisterUINameCall("PlaySound", tryFindUI)

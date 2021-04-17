@@ -17,10 +17,10 @@ package
 			this.parent = parent;
 			this.name = name;
 			this.addEventListener(TimerEvent.TIMER_COMPLETE, this.onComplete);
-			if (repeat > 1) {
+			if (repeat != 1) {
 				this.addEventListener(TimerEvent.TIMER, this.onTick);
 			}
-			this.removeOnTick = repeat > 1;
+			this.removeOnTick = repeat != 1;
 		}
 
 		public function onComplete(event:TimerEvent) : *

@@ -47,7 +47,7 @@ local function OnControlAdded(ui, call, ...)
 end
 
 local function OnTimerComplete(ui, call, timerCallbackName)
-	fprint(LOGLEVEL.WARNING, "[LeaderLib:UIExtensions.OnTimerComplete %s]", timerCallbackName)
+	fprint(LOGLEVEL.DEFAULT, "[LeaderLib:UIExtensions.OnTimerComplete %s]", timerCallbackName)
 	local callbacks = UIExtensions.Timers[timerCallbackName]
 	if callbacks then
 		for i,v in pairs(callbacks) do
@@ -61,7 +61,7 @@ local function OnTimerComplete(ui, call, timerCallbackName)
 end
 
 local function OnTimerTick(ui, call, timerCallbackName)
-	fprint(LOGLEVEL.WARNING, "[LeaderLib:UIExtensions.OnTimerTick %s]", timerCallbackName)
+	fprint(LOGLEVEL.DEFAULT, "[LeaderLib:UIExtensions.OnTimerTick %s]", timerCallbackName)
 	local callbacks = UIExtensions.Timers[timerCallbackName]
 	if callbacks then
 		for i,v in pairs(callbacks) do
@@ -94,6 +94,7 @@ local function SetupInstance()
 				Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_ControlAdded", OnControlAdded)
 				Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_InputEvent", Input.OnFlashEvent)
 				Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_TimerComplete", OnTimerComplete)
+				Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_TimerTick", OnTimerTick)
 				local main = UIExtensions.Instance:GetRoot()
 				if main then
 					main.clearElements()

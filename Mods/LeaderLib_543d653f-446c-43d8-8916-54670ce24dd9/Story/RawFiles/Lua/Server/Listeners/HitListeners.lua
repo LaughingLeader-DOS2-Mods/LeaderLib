@@ -47,8 +47,10 @@ end
 ---@type handle integer
 local function OnHit(target, source, damage, handle)
 	--print(target,source,damage,handle,HasActiveStatus(source, "AOO"),HasActiveStatus(target, "AOO"))
-	if Vars.DebugMode then 
-		Ext.Print(string.format("[NRD_OnHit] Target(%s) Source(%s) damage(%i) Handle(%i) HitType(%s)", target, source, damage, handle, NRD_StatusGetInt(target, handle, "HitReason")))
+	if Vars.DebugMode then
+		if Vars.TraceAll or (damage > 0 and not StringHelpers.IsNullOrEmpty(source)) then
+			fprint(LOGLEVEL.TRACE, "[NRD_OnHit] Target(%s) Source(%s) damage(%i) Handle(%i) HitType(%s)", target, source, damage, handle, NRD_StatusGetInt(target, handle, "HitReason"))
+		end
 	end
 	local skillprototype = NRD_StatusGetString(target, handle, "SkillId")
 	local skill = nil

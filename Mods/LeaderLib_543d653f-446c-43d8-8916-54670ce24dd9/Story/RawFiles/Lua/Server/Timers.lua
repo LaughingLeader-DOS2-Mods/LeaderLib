@@ -31,7 +31,9 @@ end
 ---@param delay integer
 ---@vararg string
 function StartTimer(event, delay, ...)
-	--PrintDebug("LeaderLib:StartTimer: ", event, delay, Common.Dump({...}))
+	if Vars.DebugMode then
+		fprint(LOGLEVEL.TRACE, "LeaderLib:StartTimer(%s, %s, %s)", event, delay, Common.Dump({...}))
+	end
 	local status,err = xpcall(TryStartTimer, debug.traceback, event, delay, {...})
 	if not status then
 		Ext.PrintError("[LeaderLib:StartTimer] Error starting timer:\n", err)
@@ -120,3 +122,17 @@ function OnTimerFinished(event, ...)
 	InvokeListenerCallbacks(Listeners.TimerFinished, event, ...)
 	InvokeListenerCallbacks(Listeners.NamedTimerFinished[event], event, ...)
 end
+
+local function OnProcObjectTimerFinished(object, timerName)
+	object = StringHelpers.GetUUID(object)
+	local listeners = Listeners.ProcObjectTimerFinished[timerName]
+	if listeners then
+		InvokeListenerCallbacks(listeners, object, timerName)
+	end
+	local allListeners = Listeners.ProcObjectTimerFinished["all"]
+	if allListeners then
+		InvokeListenerCallbacks(allListeners, object, timerName)
+	end
+end
+
+Ext.RegisterOsirisListener("ProcObjectTimerFinished", 2, "after", OnProcObjectTimerFinished)

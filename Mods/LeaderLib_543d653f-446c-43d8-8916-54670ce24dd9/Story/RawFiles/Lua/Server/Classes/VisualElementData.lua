@@ -33,14 +33,18 @@ local editorVersion = "v3.6.51.9303"
 ---@param visualSlot integer
 ---@param elementName string
 local function SetVisualOnCharacter(char, visualSlot, elementName)
-	if Ext.GameVersion() ~= editorVersion and Ext.OsirisIsCallable() then
-		CharacterSetVisualElement(char, visualSlot, elementName)
-	end
+	CharacterSetVisualElement(char, visualSlot, elementName)
 end
 
 ---@param char string
 function VisualResourceData:SetVisualOnCharacter(char)
 	SetVisualOnCharacter(char, self.VisualSlot, self.Resource)
+end
+
+if Ext.GameVersion() == editorVersion then
+	Ext.PrintWarning("[LeaderLib:VisualResourceData:SetVisualOnCharacter] CharacterSetVisualElement isn't availble in the editor's game version (v3.6.51.9303).")
+	---@param char string
+	function VisualResourceData:SetVisualOnCharacter(char) end
 end
 
 Classes.VisualResourceData = VisualResourceData

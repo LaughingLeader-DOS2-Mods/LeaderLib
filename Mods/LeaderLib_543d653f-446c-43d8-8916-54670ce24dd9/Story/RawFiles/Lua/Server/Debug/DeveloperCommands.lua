@@ -46,6 +46,7 @@ end
  
 Ext.RegisterConsoleCommand("luareset", function(command, delay)
 	InvokeListenerCallbacks(Listeners.BeforeLuaReset)
+	Ext.BroadcastMessage("LeaderLib_Client_InvokeListeners", "BeforeLuaReset")
 	delay = delay or 1000
 	if delay ~= nil then
 		delay = tonumber(delay)

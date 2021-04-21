@@ -39,6 +39,8 @@ Ext.RegisterConsoleCommand("printuuids", function(call, radiusVal)
 	end
 end)
 
+--!teleport "c099caa6-1938-4b4f-9365-d0881c611e71"
+
 Ext.RegisterConsoleCommand("teleport", function(cmd,target,param2,param3)
 	local host = CharacterGetHostCharacter()
 	if param2 == "host" then param2 = host end
@@ -516,6 +518,30 @@ Ext.RegisterConsoleCommand("hidestatusmc", function(command, visible)
 	visible = visible or "false"
 	Ext.PostMessageToClient(CharacterGetHostCharacter(), "LeaderLib_UI_HideStatuses", visible)
 end)
+
+--[[
+---@param item EsvItem
+function CloneItemWithDeltaMods(item, deltamods)
+	--Testing
+	deltamods = deltamods or {"Boost_Weapon_Rune_LOOT_Rune_Venom_Giant", "Boost_Weapon_Damage_Poison_Axe"}
+	---@type ItemDefinition
+	local properties = {
+		GMFolding = false,
+		IsIdentified = true,
+		DeltaMods = item:GetDeltaMods(),
+		HasGeneratedStats = true,
+		ItemType = item.ItemType,
+		GenerationItemType = "Common",
+	}
+	local newItem = GameHelpers.Item.Clone(item, properties, deltamods)
+	if newItem then
+		print("NewItem:", newItem.MyGuid, newItem.StatsId, newItem.ItemType)
+		print("DeltaMods")
+		print(Ext.JsonStringify(newItem:GetDeltaMods()))
+	end
+	return newItem
+end
+]]
 
 Ext.RegisterConsoleCommand("clonedeltamodtest", function(command, amount)
 	---@type ItemDefinition

@@ -253,7 +253,31 @@ Ext.RegisterNetListener("LeaderLib_UI_RefreshAll", function(cmd, uuid)
 	Ext.UISetDirty(host, 0xffffffffffff)
 end)
 
-Ext.RegisterNetListener("LeaderLib_Client_InvokeLuaResetListeners", function(cmd, region)
-	LoadGameSettings()
-	InvokeListenerCallbacks(Listeners.LuaReset, region)
+Ext.RegisterNetListener("LeaderLib_Client_InvokeListeners", function(cmd, payload)
+	if string.find(payload, "{") then
+		local data = Common.JsonParse(payload)
+		local listeners = Listeners[data.Event]
+		if listeners then
+			if data.Event == "LuaReset" then
+				LoadGameSettings()
+			end
+			if data.Args then
+				InvokeListenerCallbacks(listeners, table.unpack(data.Args))
+			else
+				InvokeListenerCallbacks(listeners)
+			end
+		else
+			fprint(LOGLEVEL.ERROR, "[LeaderLib:LeaderLib_Client_InvokeListeners] No listeners for event (%s)", payload)
+		end
+	else
+		local listeners = Listeners[payload]
+		if listeners then
+			if payload == "LuaReset" then
+				LoadGameSettings()
+			end
+			InvokeListenerCallbacks(listeners)
+		else
+			fprint(LOGLEVEL.ERROR, "[LeaderLib:LeaderLib_Client_InvokeListeners] No listeners for event (%s)", payload)
+		end
+	end
 end)

@@ -14,6 +14,39 @@ SkipTutorial = {
 
 if Ext.IsServer() then
 	local initialized = false
+
+	local function skipTutorialWakeup(uuid)
+		fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SkipTutorial] Speeding up Fort Joy beach wake-up for %s", uuid)
+		Osi.ProcObjectTimerCancel(uuid, "FTJ_GameStart_FadeIn")
+		Osi.ProcObjectTimerCancel(uuid, "FTJ_WakeUpTimer")
+		RemoveStatus(uuid, "WET")
+		CharacterUnfreeze(uuid)
+		Osi.PROC_UnlockWaypoint("WAYP_FTJ_BeachStatue", uuid)
+		CharacterSetAnimationOverride(uuid,"")
+		--PlayAnimation(uuid,"knockdown_getup","")
+		Osi.PROC_FTJ_StartWakeUpVoicebark(uuid)
+		--Osi.Proc_FTJ_UnfreezePlayers()
+		UserSetFlag(uuid,"QuestUpdate_FTJ_Voice_TUT_Voice", 0)
+	end
+	
+	local function skipTutorialWakeupTimer(uuid, timerName)
+		StartOneshotTimer("Timers_LeaderLib_SkipWakeup", 50, function()
+			skipTutorialWakeup(uuid)
+		end)
+		--Osi.PROC_FTJ_StartWakeUpVoicebark(uuid)
+		--Osi.Proc_FTJ_UnfreezePlayers()
+		--UserSetFlag(uuid,"QuestUpdate_FTJ_Voice_TUT_Voice",0)
+
+		StartOneshotTimer("Timers_LeaderLib_RemoveFTJWakeUpTimerListener", 2000, function()
+			fprint(LOGLEVEL.TRACE, "Removed listener for ProcObjectTimerFinished[FTJ_GameStart_FadeIn].")
+			RemoveListener("ProcObjectTimerFinished", "FTJ_GameStart_FadeIn", skipTutorialWakeup)
+		end)
+	end
+
+	-- if Vars.DebugMode then
+	-- 	RegisterListener("ProcObjectTimerFinished", "FTJ_GameStart_FadeIn", skipTutorialWakeup)
+	-- end
+
 	function SkipTutorial.Initialize()
 		if initialized then
 			return
@@ -56,7 +89,7 @@ if Ext.IsServer() then
 	
 		---@param settings LeaderLibDefaultSettings
 		local function SkipTutorial_MainSetup(settings, region)
-			Ext.Print(string.format("[LeaderLib] Skipping tutorial and going to region (%s).", region))
+			fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Skipping tutorial and going to region (%s).", region)
 	
 			local host = StringHelpers.GetUUID(CharacterGetHostCharacter())
 			local db = Osi.DB_OriginRecruitmentLocation_Region:Get("TUT_Tutorial_A",nil,nil,nil)
@@ -74,7 +107,7 @@ if Ext.IsServer() then
 					if settings.StartingCharacterLevel.Enabled then
 						local targetLevel = settings.StartingCharacterLevel[region] or 1
 						if targetLevel > 1 and CharacterGetLevel(uuid) < targetLevel then
-							Ext.Print(string.format("[LeaderLib:SkipTutorial] Leveling up player (%s) to (%s).", uuid, targetLevel))
+							fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SkipTutorial] Leveling up player (%s) to (%s).", uuid, targetLevel)
 							CharacterLevelUpTo(uuid, targetLevel)
 						end
 					end
@@ -88,11 +121,11 @@ if Ext.IsServer() then
 							---@type PresetData
 							local act2Preset = Data.Presets.Act2[preset]
 							if act2Preset then
-								Ext.Print(string.format("[LeaderLib:SkipTutorial] Applying preset (%s) to player (%s).", preset, uuid))
+								fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SkipTutorial] Applying preset (%s) to player (%s).", preset, uuid)
 								act2Preset:ApplyToCharacter(uuid, "Uncommon", nil, true)
 							end
 						else
-							Ext.Print(string.format("[LeaderLib:SkipTutorial] Adding Bless to player (%s).", uuid))
+							fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SkipTutorial] Adding Bless to player (%s).", uuid)
 							CharacterAddSkill(uuid, "Target_Bless", 0)
 						end
 					end
@@ -102,7 +135,7 @@ if Ext.IsServer() then
 			if settings.StartingGold.Enabled then
 				local gold = settings.StartingGold[region] or 0
 				if gold > 0 then
-					Ext.Print(string.format("[LeaderLib:SkipTutorial] Adding (%s) party gold.", gold))
+					fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SkipTutorial] Adding (%s) party gold.", gold)
 					PartyAddGold(host, gold)
 				end
 			end
@@ -186,24 +219,14 @@ if Ext.IsServer() then
 					GlobalSetFlag("TUT_LowerDeck_OriginsFleeingToTop")
 					GlobalSetFlag("TUT_ChoseRescueOthers")
 
-					StartOneshotTimer("LeaderLib_SkipTutorial_SkipFTJWakeup", 750, function(...)
-						Ext.Print("[LeaderLib:SkipTutorial] Speeding up Fort Joy beach wake-up.")
+					StartOneshotTimer("Timers_LeaderLib_SkipFTJWakeup", 50, function()
 						for _,db in pairs(Osi.DB_IsPlayer:Get(nil)) do
 							local uuid = StringHelpers.GetUUID(db[1])
-							Osi.ProcObjectTimerCancel(uuid, "FTJ_WakeUpTimer")
-
-							Osi.PROC_UnlockWaypoint("WAYP_FTJ_BeachStatue", uuid)
-
-							CharacterSetAnimationOverride(uuid,"")
-							PlayAnimation(uuid,"knockdown_getup","")
-							Osi.ProcIncreaseCounter("FTJ_PlayersWokenUp")
-							Osi.Proc_FTJ_CheckPlayersWokenUp(uuid)
-
-							--Osi.PROC_FTJ_StartWakeUpVoicebark(uuid)
-							--Osi.Proc_FTJ_UnfreezePlayers()
-							--UserSetFlag(uuid,"QuestUpdate_FTJ_Voice_TUT_Voice",0)
+							skipTutorialWakeup(uuid)
 						end
 					end)
+
+					--RegisterListener("ProcObjectTimerFinished", "FTJ_GameStart_FadeIn", skipTutorialWakeup)
 				end
 			}
 		}

@@ -19,12 +19,17 @@ function StringHelpers.Equals(a,b, insensitive)
 	return false
 end
 
+local NULL_UUID = {
+	["NULL_00000000-0000-0000-0000-000000000000"] = true,
+	["00000000-0000-0000-0000-000000000000"] = true
+}
+
 ---Checks if a string is null or empty.
 ---@type x string
 ---@return boolean
 function StringHelpers.IsNullOrEmpty(x)
 	-- CharacterCreationFinished sends 00000000-0000-0000-0000-000000000000 or some reason, omitting the NULL_
-	return x == nil or x == "" or x == "NULL_00000000-0000-0000-0000-000000000000" or x == "00000000-0000-0000-0000-000000000000" or type(x) ~= "string"
+	return x == nil or x == "" or NULL_UUID[x] or type(x) ~= "string"
 end
 
 ---Capitalize a string.

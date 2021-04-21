@@ -154,5 +154,6 @@ function OnLuaReset()
 		SkipTutorial.OnLeaderLibInitialized()
 	end
 	IterateUsers("LeaderLib_StoreUserData")
-	Ext.BroadcastMessage("LeaderLib_Client_InvokeLuaResetListeners", region)
+	local payload = Ext.JsonStringify({Event="LuaReset", Args={region}})
+	Ext.BroadcastMessage("LeaderLib_Client_InvokeListeners", payload)
 end

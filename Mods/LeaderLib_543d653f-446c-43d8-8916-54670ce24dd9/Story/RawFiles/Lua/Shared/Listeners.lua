@@ -13,7 +13,9 @@ Listeners.ClientDataSynced = {}
 Listeners.ClientCharacterChanged = {}
 Listeners.GetTooltipSkillDamage = {}
 Listeners.GetTooltipSkillParam = {}
+--Debug listeners
 Listeners.LuaReset = {}
+Listeners.BeforeLuaReset = {}
 ---Callbacks for when ModSettings are synced on both the server and client.
 ---@type fun(uuid:string, settings:ModSettings):void[]
 Listeners.ModSettingsSynced = {}
@@ -22,6 +24,9 @@ if Ext.IsServer() then
 	Listeners.TimerFinished = {}
 	---@type table<string,fun(uuid1:string|nil, uuid2:string|nil):void>
 	Listeners.NamedTimerFinished = {}
+	---Wrapper around ProcObjectTimerFinished for timers with a specific name, or "any" for all object timers.
+	---@type table<string, fun(uuid:string, timerName:string):void>
+	Listeners.ProcObjectTimerFinished = {}
 
 	---Hit listeners/callbacks, for mod compatibility.
 	---Called from HitOverrides.ComputeCharacterHit at the end of the function, if certain features are enabled or listeners are registered.
@@ -52,9 +57,6 @@ if Ext.IsServer() then
 	---Fires when a skill hits, or a projectile from a skill hits.
 	---@type OnSkillHitCallback[]
 	Listeners.OnSkillHit = {}
-
-	--Debug listeners
-	Listeners.BeforeLuaReset = {}
 
 	---Server-side event for when base ability or attribute values change on players. Can fire from character sheet interaction or after respec.
 	---@type table<string, fun(uuid:string, stat:string, lastVal:integer, nextVal:integer, statType:string):void>

@@ -19,6 +19,35 @@ function RegisterListener(event, callback, param)
 	end
 end
 
+--- Unregisters a function for a specific listener event.
+---@param event string
+---@param callback function
+function RemoveListener(event, callback, param)
+	if Listeners[event] ~= nil then
+		if type(callback) == "string" then
+			if Listeners[event][callback] ~= nil then
+				local count = 0
+				for i,v in pairs(Listeners[event][callback]) do
+					if v == param then
+						table.remove(Listeners[event][callback], i)
+					else
+						count = count + 1
+					end
+				end
+				if count == 0 then
+					Listeners[event][callback] = nil
+				end
+			end
+		else
+			for i,v in pairs(Listeners[event]) do
+				if v == callback then
+					table.remove(Listeners[event], i)
+				end
+			end
+		end
+	end
+end
+
 function InvokeListenerCallbacks(callbacks, ...)
 	local length = callbacks and #callbacks or 0
 	if length > 0 then

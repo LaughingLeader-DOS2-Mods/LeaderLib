@@ -21,7 +21,7 @@ UIExtensions = {
 local function DestroyInstance(force)
 	if UIExtensions.Instance then
 		if force or Common.TableLength(UIExtensions.Controls, true) + Common.TableLength(UIExtensions.Timers, true) == 0then
-			UIExtensions.Instance:Invoke("destroyTimers")
+			UIExtensions.Instance:Invoke("dispose")
 			UIExtensions.Instance:Hide()
 			UIExtensions.Instance:Destroy()
 			UIExtensions.Instance = nil
@@ -31,11 +31,18 @@ local function DestroyInstance(force)
 	UIExtensions.Timers = {}
 end
 
+RegisterListener("BeforeLuaReset", function()
+	if UIExtensions.Instance then
+		DestroyInstance(true)
+	end
+end)
+
 RegisterListener("LuaReset", function()
 	UIExtensions.Instance = Ext.GetUI("LeaderLibUIExtensions")
 	if UIExtensions.Instance then
 		DestroyInstance(true)
 	end
+	UIExtensions.SetupInstance()
 end)
 
 Ext.RegisterConsoleCommand("llresetuiext", function(cmd)
@@ -84,7 +91,16 @@ local function OnControl(ui, call, controlType, id, ...)
 	end
 end
 
-local function SetupInstance()
+--local function OnMouseMoved(ui, call, x, y, controlDown, altDOwn, shiftDown)
+local function OnMouseMoved(ui, call, ...)
+	print(call, Common.Dump({...}))
+end
+
+local function OnMouseClicked(ui, call, ...)
+	print(call, Common.Dump({...}))
+end
+
+function UIExtensions.SetupInstance()
 	if not UIExtensions.Instance then
 		UIExtensions.Instance = Ext.GetUI("LeaderLibUIExtensions")
 		if not UIExtensions.Instance then
@@ -95,6 +111,8 @@ local function SetupInstance()
 				Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_InputEvent", Input.OnFlashEvent)
 				Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_TimerComplete", OnTimerComplete)
 				Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_TimerTick", OnTimerTick)
+				Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_MouseMoved", OnMouseMoved)
+				Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_MouseClicked", OnMouseClicked)
 				local main = UIExtensions.Instance:GetRoot()
 				if main then
 					main.clearElements()
@@ -144,7 +162,7 @@ end)
 ---@param enabled boolean|nil
 ---@return integer Returns the ID of the checkbox created if successful.
 function UIExtensions.AddCheckbox(onClick, label, tooltip, state, x, y, filterBool, enabled)
-	SetupInstance()
+	UIExtensions.SetupInstance()
 	local id = #UIExtensions.Controls
 	local main = UIExtensions.Instance:GetRoot()
 	if main then
@@ -195,10 +213,26 @@ end
 ---@param callbackFunction FlashTimerCallback The callback to invoke when the timer is complete, or when it ticks (if repeatTimer > 1).
 ---@param repeatTimer integer|nil The number of times to repeat the timer. If > 1 then the callback will be called each time the timer ticks.
 function UIExtensions.StartTimer(id, delay, callbackFunction, repeatTimer)
-	SetupInstance()
+	UIExtensions.SetupInstance()
 	if UIExtensions.Timers[id] == nil then
 		UIExtensions.Timers[id] = {}
 	end
 	table.insert(UIExtensions.Timers[id], callbackFunction)
 	UIExtensions.Instance:Invoke("launchTimer", delay, id, repeatTimer or 1)
 end
+
+function UIExtensions.Invoke(method, ...)
+	UIExtensions.SetupInstance()
+	UIExtensions.Instance:Invoke(method, ...)
+end
+
+function UIExtensions.EnableMouseListeners(enabled)
+	if enabled == nil then
+		enabled = true
+	end
+	UIExtensions.SetupInstance()
+	UIExtensions.Instance:Invoke("enableMouseListeners", enabled)
+	UIExtensions.MouseEnabled = enabled
+end
+
+Ext.RegisterListener("SessionLoaded", UIExtensions.SetupInstance)

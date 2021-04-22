@@ -7,14 +7,12 @@ package Controls
    import flash.text.TextField;
    import flash.text.TextFieldAutoSize;
    
-   public dynamic class Checkbox extends MovieClip
+   public dynamic class Checkbox extends BaseTooltipSupport
    {
       public var bg_mc:MovieClip;
       
       public var label_txt:TextField;
       public var label_bg_mc:MovieClip;
-      
-      public var base:MovieClip;
       
       public var mHeight:Number;
       
@@ -69,29 +67,10 @@ package Controls
          this.bg_mc.gotoAndStop(this.stateID * 3 + 2);
       }
       
-      public function onMouseOver(param1:MouseEvent) : *
+      public override function onMouseOut(e:MouseEvent) : *
       {
-         if(this.enable)
-         {
-            if(this.tooltip != null && this.tooltip != "")
-            {
-               this.base.curTooltip = this.pos;
-               this.tooltipOverrideW = this.base.ElW;
-               this.tooltipYOffset = -4;
-               tooltipHelper.ShowTooltipForMC(this,root,"bottom");
-            }
-         }
-      }
-      
-      public function onMouseOut(param1:MouseEvent) : *
-      {
-         if(this.base.curTooltip == this.pos && this.base.hasTooltip)
-         {
-            ExternalInterface.call("hideTooltip");
-            this.base.hasTooltip = false;
-         }
-         this.base.curTooltip = -1;
-         bg_mc.removeEventListener(MouseEvent.MOUSE_UP,this.onClick);
+         super.onMouseOut(e);
+         bg_mc.removeEventListener(MouseEvent.MOUSE_UP, this.onClick);
       }
       
       public function setState(param1:Number) : *
@@ -102,13 +81,10 @@ package Controls
       
       function frame1() : *
       {
-         this.base = root as MovieClip;
          this.mHeight = 30;
          this.bg_mc.addEventListener(MouseEvent.MOUSE_DOWN,this.onDown);
          this.bg_mc.addEventListener(MouseEvent.MOUSE_OVER,this.selectElement);
          this.bg_mc.addEventListener(MouseEvent.MOUSE_OUT,this.deselectElement);
-         addEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver);
-         addEventListener(MouseEvent.MOUSE_OUT,this.onMouseOut);
 
          this.label_txt.defaultTextFormat.size = 16;
          this.label_txt.defaultTextFormat.color = 0xFFFFFF;

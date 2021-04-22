@@ -36,7 +36,7 @@ package
 		
 		public function onEventUp(id:Number) : *
 		{
-			ExternalInterface.call("LeaderLib_InputEvent", false, this.events[id], id);
+			ExternalInterface.call("LeaderLib_UIExtensions_InputEvent", false, this.events[id], id);
 			if(isInCharacterCreation)
 			{
 				switch(this.events[id])
@@ -51,7 +51,7 @@ package
 		
 		public function onEventDown(id:Number) : Boolean
 		{
-			ExternalInterface.call("LeaderLib_InputEvent", true, this.events[id], id);
+			ExternalInterface.call("LeaderLib_UIExtensions_InputEvent", true, this.events[id], id);
 			if(controllerEnabled && isInCharacterCreation)
 			{
 				var isHandled:Boolean = false;
@@ -141,7 +141,7 @@ package
 			//setupControlForTooltip(checkbox);
 			mainPanel_mc.addElement(checkbox);
 			checkbox.label_bg_mc.width = (checkbox.label_txt.textWidth*1.2) + 12;
-			ExternalInterface.call("LeaderLib_ControlAdded", "checkbox", id, checkbox.list_id);
+			ExternalInterface.call("LeaderLib_UIExtensions_ControlAdded", "checkbox", id, checkbox.list_id);
 		}
 
 		public function setCheckboxState(id:Number, state:Number): *
@@ -183,7 +183,7 @@ package
 			}
 			//setupControlForTooltip(bar);
 			mainPanel_mc.addElement(bar);
-			ExternalInterface.call("LeaderLib_ControlAdded", "bar", id, bar.list_id);
+			ExternalInterface.call("LeaderLib_UIExtensions_ControlAdded", "bar", id, bar.list_id);
 		}
 
 		public function setBar(id:Number, percentage:Number = 1.0, doTween:Boolean = false, color:Number=NaN) : *
@@ -244,17 +244,17 @@ package
 
 		public function fireOnMouseClick(e:MouseEvent) : *
 		{
-			ExternalInterface.call("LeaderLib_MouseClicked", e.stageX, e.stageY);
+			ExternalInterface.call("LeaderLib_UIExtensions_MouseClicked", e.stageX, e.stageY);
 		}
 		
 		public function fireOnMouseMove(e:MouseEvent) : *
 		{
-			ExternalInterface.call("LeaderLib_MouseMoved", e.stageX, e.stageY);
+			ExternalInterface.call("LeaderLib_UIExtensions_MouseMoved", e.stageX, e.stageY);
 		}
 
 		public function fireMouseClicked(eventName:String = "") : *
 		{
-			ExternalInterface.call("LeaderLib_MouseClicked", stage.mouseX, stage.mouseY);
+			ExternalInterface.call("LeaderLib_UIExtensions_MouseClicked", stage.mouseX, stage.mouseY);
 		}
 
 		public function dispose(): *

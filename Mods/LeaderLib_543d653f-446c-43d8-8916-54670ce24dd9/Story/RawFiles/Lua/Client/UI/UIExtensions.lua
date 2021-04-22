@@ -15,7 +15,9 @@ UIExtensions = {
 	---@type table<string, FlashTimerCallback[]>
 	Timers = {},
 	Layer = 10,
-	SwfPath = "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/LeaderLib_UIExtensions.swf"
+	SwfPath = "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/LeaderLib_UIExtensions.swf",
+	Initialized = false,
+	RegisteredListeners = false,
 }
 
 local function DestroyInstance(force)
@@ -38,10 +40,7 @@ RegisterListener("BeforeLuaReset", function()
 end)
 
 RegisterListener("LuaReset", function()
-	UIExtensions.Instance = Ext.GetUI("LeaderLibUIExtensions")
-	if UIExtensions.Instance then
-		DestroyInstance(true)
-	end
+	DestroyInstance(true)
 	UIExtensions.SetupInstance()
 end)
 
@@ -101,36 +100,46 @@ local function OnMouseClicked(ui, call, ...)
 end
 
 function UIExtensions.SetupInstance()
-	if not UIExtensions.Instance then
-		UIExtensions.Instance = Ext.GetUI("LeaderLibUIExtensions")
-		if not UIExtensions.Instance then
-			UIExtensions.Instance = Ext.CreateUI("LeaderLibUIExtensions", UIExtensions.SwfPath, UIExtensions.Layer)
-			if UIExtensions.Instance then
-				Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_OnControl", OnControl)
-				Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_ControlAdded", OnControlAdded)
-				Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_InputEvent", Input.OnFlashEvent)
-				Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_TimerComplete", OnTimerComplete)
-				Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_TimerTick", OnTimerTick)
-				Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_MouseMoved", OnMouseMoved)
-				Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_MouseClicked", OnMouseClicked)
-				local main = UIExtensions.Instance:GetRoot()
-				if main then
-					main.clearElements()
-					main.controllerEnabled = Vars.ControllerEnabled
-					main.isInCharacterCreation = SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION
-					for i=0,#main.events-1 do
-						if main.events[i] then
-							local eventName = string.gsub(main.events[i], "IE ", "")
-							Input.Keys[eventName] = false
-						end
+	if not UIExtensions.RegisteredListeners then
+		-- Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_OnControl", OnControl)
+		-- Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_ControlAdded", OnControlAdded)
+		-- Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_InputEvent", Input.OnFlashEvent)
+		-- Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_TimerComplete", OnTimerComplete)
+		-- Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_TimerTick", OnTimerTick)
+		-- Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_MouseMoved", OnMouseMoved)
+		-- Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_MouseClicked", OnMouseClicked)
+		Ext.RegisterUINameCall("LeaderLib_UIExtensions_OnControl", OnControl)
+		Ext.RegisterUINameCall("LeaderLib_UIExtensions_ControlAdded", OnControlAdded)
+		Ext.RegisterUINameCall("LeaderLib_UIExtensions_InputEvent", Input.OnFlashEvent)
+		Ext.RegisterUINameCall("LeaderLib_UIExtensions_TimerComplete", OnTimerComplete)
+		Ext.RegisterUINameCall("LeaderLib_UIExtensions_TimerTick", OnTimerTick)
+		Ext.RegisterUINameCall("LeaderLib_UIExtensions_MouseMoved", OnMouseMoved)
+		Ext.RegisterUINameCall("LeaderLib_UIExtensions_MouseClicked", OnMouseClicked)
+		UIExtensions.RegisteredListeners = true
+	end
+	if not UIExtensions.Instance or UIExtensions.Instance:GetRoot() == nil then
+		UIExtensions.Instance = Ext.GetUI("LeaderLibUIExtensions") or Ext.CreateUI("LeaderLibUIExtensions", UIExtensions.SwfPath, UIExtensions.Layer)
+	end
+	if UIExtensions.Instance then
+		if not UIExtensions.Initialized then
+			local main = UIExtensions.Instance:GetRoot()
+			if main then
+				main.clearElements()
+				main.controllerEnabled = Vars.ControllerEnabled
+				main.isInCharacterCreation = SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION
+				for i=0,#main.events-1 do
+					if main.events[i] then
+						local eventName = string.gsub(main.events[i], "IE ", "")
+						Input.Keys[eventName] = false
 					end
-				else
-					Ext.PrintError("[LeaderLib] Failed to GetRoot of UI:", UIExtensions.SwfPath)
 				end
+				UIExtensions.Initialized = true
 			else
-				Ext.PrintError("[LeaderLib] Failed to create UI:", UIExtensions.SwfPath)
+				Ext.PrintError("[LeaderLib] Failed to GetRoot of UI:", UIExtensions.SwfPath)
 			end
 		end
+	else
+		Ext.PrintError("[LeaderLib] Failed to create UI:", UIExtensions.SwfPath)
 	end
 end
 

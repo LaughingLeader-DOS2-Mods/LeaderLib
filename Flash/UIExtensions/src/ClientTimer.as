@@ -25,13 +25,13 @@ package
 
 		public function onComplete(event:TimerEvent) : *
 		{
-			ExternalInterface.call("LeaderLib_TimerComplete", this.name);
+			ExternalInterface.call("LeaderLib_UIExtensions_TimerComplete", this.name);
 			this.dispose(true);
 		}
 
 		public function onTick(event:TimerEvent) : *
 		{
-			ExternalInterface.call("LeaderLib_TimerTick", this.name);
+			ExternalInterface.call("LeaderLib_UIExtensions_TimerTick", this.name);
 		}
 
 		public function dispose(removeFromArray:Boolean = false) : *

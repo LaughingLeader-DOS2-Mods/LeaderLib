@@ -44,7 +44,7 @@ package Controls
          }
          this.bg_mc.gotoAndStop(this.stateID * 3 + 1);
          ExternalInterface.call("PlaySound","UI_Gen_XButton_Click");
-         ExternalInterface.call("LeaderLib_OnControl", "checkbox", this.id, this.stateID);
+         ExternalInterface.call("LeaderLib_UIExtensions_OnControl", "checkbox", this.id, this.stateID);
       }
       
       public function onClick(param1:MouseEvent) : *

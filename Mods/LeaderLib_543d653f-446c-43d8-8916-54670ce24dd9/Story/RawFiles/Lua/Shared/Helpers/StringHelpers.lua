@@ -156,3 +156,15 @@ function StringHelpers.VersionIntegerToVersionString(version)
 	end
 	return nil
 end
+
+---Appends two strings together with some text if the first string is not empty, otherwise returns the second string.
+---@param a string
+---@param b string
+---@param appendWith string|nil
+function StringHelpers.Append(a,b,appendWith)
+	if a == nil or a == "" then
+		return b
+	else
+		return string.format("%s%s%s", a, (appendWith or ""), b)
+	end
+end

@@ -47,7 +47,8 @@ local previewRaceSuffixes = {
 ---@param char string
 ---@param targetRarity string
 ---@param skipSlots string[] Skip generating equipment for these slots.
-function PresetData:AddEquipmentToCharacter(char, targetRarity, skipSlots)
+---@param skipIfExists boolean If an item already exists on the target character, skip creating another one.
+function PresetData:AddEquipmentToCharacter(char, targetRarity, skipSlots, skipIfExists)
 	if Ext.IsServer() then
 		local level = CharacterGetLevel(char)
 		local equipment = self.Equipment
@@ -83,6 +84,12 @@ function PresetData:AddEquipmentToCharacter(char, targetRarity, skipSlots)
 								skip = true
 								break
 							end
+						end
+					end
+					if skipIfExists == true then
+						local template = stat.RootTemplate or GameHelpers.Item.GetRootTemplatesForStat(stat.Name)
+						if not StringHelpers.IsNullOrEmpty(template) and ItemTemplateIsInCharacterInventory(char, template) > 0 then
+							skip = true
 						end
 					end
 					if not skip then
@@ -131,11 +138,12 @@ end
 ---@param targetRarity string
 ---@param skipSlots string[] Skip generating equipment for these slots.
 ---@param checkMemorizationRequirements boolean|nil
-function PresetData:ApplyToCharacter(char, targetRarity, skipSlots, checkMemorizationRequirements)
+---@param skipIfExists boolean If an item already exists on the target character, skip creating another one.
+function PresetData:ApplyToCharacter(char, targetRarity, skipSlots, checkMemorizationRequirements, skipIfExists)
 	--print("Applying",self.ClassType,"to",char, Ext.IsServer(), Ext.OsirisIsCallable())
 	if Ext.IsServer() then
 		local status,err = xpcall(function()
-			self:AddEquipmentToCharacter(char, targetRarity, skipSlots)
+			self:AddEquipmentToCharacter(char, targetRarity, skipSlots, skipIfExists)
 		end, debug.traceback)
 		if not status then
 			Ext.PrintError("[LeaderLib] Error applying preset equipment",self.ClassType,"to character",char)

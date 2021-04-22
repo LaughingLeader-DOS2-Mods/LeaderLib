@@ -79,7 +79,7 @@ package Controls
          this.bg_mc.gotoAndStop(this.stateID * 3 + 1);
       }
       
-      function frame1() : *
+      private function frame1() : *
       {
          this.mHeight = 30;
          this.bg_mc.addEventListener(MouseEvent.MOUSE_DOWN,this.onDown);

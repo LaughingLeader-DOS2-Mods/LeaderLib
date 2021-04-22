@@ -170,7 +170,7 @@ package
 			}
 		}
 
-		public function addBar(id:Number, label:String, tooltip:String = "", x:Number=0, y:Number=0, percentage:Number = 1.0, doTween:Boolean = false, color:uint=NaN) : *
+		public function addBar(id:Number, label:String, tooltip:String = "", x:Number=0, y:Number=0, percentage:Number = 1.0, doTween:Boolean = false, color:Number=NaN) : *
 		{
 			var bar:BarHolder = new BarHolder();
 			bar.id = id;
@@ -186,7 +186,7 @@ package
 			ExternalInterface.call("LeaderLib_ControlAdded", "bar", id, bar.list_id);
 		}
 
-		public function setBar(id:Number, percentage:Number = 1.0, doTween:Boolean = false, color:uint=NaN) : *
+		public function setBar(id:Number, percentage:Number = 1.0, doTween:Boolean = false, color:Number=NaN) : *
 		{
 			var obj:MovieClip = mainPanel_mc.elements[id];
 			if(obj != null)
@@ -280,7 +280,7 @@ package
 			this.listeningForMouse = b;
 		}
 		
-		function frame1() : *
+		private function frame1() : *
 		{
 			this.layout = "fixed";
 			//this.events = new Array("IE UICreationTabPrev", "IE UIStartGame", "IE ConnectivityMenu");

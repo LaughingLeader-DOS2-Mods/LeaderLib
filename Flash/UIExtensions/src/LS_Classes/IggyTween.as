@@ -30,11 +30,11 @@ package LS_Classes
 		
 		public var motionFinishCallback:Function = null;
 		
-		private var _time;
+		private var _time:Number;
 		
-		private var _beginTime;
+		private var _beginTime:Number;
 		
-		private var _cachedDelta;
+		private var _cachedDelta:Number;
 		
 		private var _sprite:Sprite;
 		

@@ -36,12 +36,12 @@ package LS_Classes
 			this.hBar_mc.scaleX = this.hBar2_mc.scaleX = 0;
 		}
 		
-		function set onComplete(param1:Function) : *
+		public function set onComplete(param1:Function) : *
 		{
 			this.m_FinishCallback = param1;
 		}
 		
-		function get onComplete() : Function
+		public function get onComplete() : Function
 		{
 			return this.m_FinishCallback;
 		}

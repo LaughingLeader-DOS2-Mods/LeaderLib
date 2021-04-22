@@ -4,20 +4,12 @@ end
 
 UI.Tooltip = {}
 
-UIListeners = {
-	OnTooltipPositioned = {},
-	OnWorldTooltip = {}
-}
-
---- Registers a function to call when a specific Lua LeaderLib UI event fires.
+---Deprecated since UIListeners were moved to the regular Listeners.
+---Registers a function to call when a specific Lua LeaderLib UI event fires.
 ---@param event string OnTooltipPositioned
 ---@param callback function
-function UI.RegisterListener(event, callback)
-	if UIListeners[event] ~= nil then
-		table.insert(UIListeners[event], callback)
-	else
-		error("[LeaderLib:Client/Init.lua:RegisterUIListener] Event ("..tostring(event)..") is not a valid LeaderLib ui event!")
-	end
+function UI.RegisterListener(event, callback, ...)
+	RegisterListener(event, callback, ...)
 end
 
 ---@param ui UIObject

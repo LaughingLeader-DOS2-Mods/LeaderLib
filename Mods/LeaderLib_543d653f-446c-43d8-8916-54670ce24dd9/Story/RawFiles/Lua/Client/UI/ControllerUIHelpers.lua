@@ -187,7 +187,7 @@ end
 
 ---@param ui UIObject
 local function OnConsoleTooltipPositioned(ui, data, ...)
-	if UI.Tooltip.HasTagTooltipData or #UIListeners.OnTooltipPositioned > 0 then
+	if UI.Tooltip.HasTagTooltipData or #Listeners.OnTooltipPositioned > 0 then
 		local root = ui:GetRoot()
 		if root ~= nil then
 			if data ~= nil then
@@ -211,13 +211,7 @@ local function OnConsoleTooltipPositioned(ui, data, ...)
 						if Features.FormatTagElementTooltips then
 							FormatTagTooltip(ui, mc)
 						end
-						for i,callback in pairs(UIListeners.OnTooltipPositioned) do
-							local status,err = xpcall(callback, debug.traceback, ui, mc, true, ...)
-							if not status then
-								Ext.PrintError("[LeaderLib:AdjustTagElements] Error invoking callback:")
-								Ext.PrintError(err)
-							end
-						end
+						InvokeListenerCallbacks(Listeners.OnTooltipPositioned, ui, mc, true, UI.Tooltip.LastItem, ...)
 					end
 				end
 			end

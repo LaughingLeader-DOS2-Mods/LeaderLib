@@ -1,6 +1,7 @@
 ---@type table<string,TagTooltipData>
 UI.Tooltip.TagTooltips = {}
 UI.Tooltip.HasTagTooltipData = false
+UI.Tooltip.LastItem = nil
 
 ---@class TagTooltipData
 ---@field Title TranslatedString
@@ -342,16 +343,14 @@ local function RepositionElements(tooltip_mc)
 	tooltip_mc.resetBackground()
 end
 
-local lastItem = nil
-
 local function AddTags(tooltip_mc)
-	if lastItem == nil then
+	if UI.Tooltip.LastItem == nil then
 		return
 	end
 	if UI.Tooltip.HasTagTooltipData then
 		local text = ""
 		for tag,data in pairs(TagTooltips) do
-			if lastItem:HasTag(tag) then
+			if UI.Tooltip.LastItem:HasTag(tag) then
 				local tagName = ""
 				if data.Title == nil then
 					tagName = Ext.GetTranslatedStringFromKey(tag)
@@ -383,7 +382,7 @@ local function AddTags(tooltip_mc)
 			end
 		end
 	end
-	lastItem = nil
+	UI.Tooltip.LastItem = nil
 end
 
 local replaceText = {}
@@ -465,7 +464,7 @@ local function FormatTagTooltip(ui, tooltip_mc, ...)
 end
 
 local function OnTooltipPositioned(ui, ...)
-	if UI.Tooltip.HasTagTooltipData or #UIListeners.OnTooltipPositioned > 0 then
+	if UI.Tooltip.HasTagTooltipData or #Listeners.OnTooltipPositioned > 0 then
 		local root = ui:GetRoot()
 		if root ~= nil then
 			local tooltips = {}
@@ -485,7 +484,7 @@ local function OnTooltipPositioned(ui, ...)
 					if Features.FormatTagElementTooltips then
 						FormatTagTooltip(ui, tooltip_mc)
 					end
-					InvokeListenerCallbacks(UIListeners.OnTooltipPositioned, ui, tooltip_mc, false, lastItem, ...)
+					InvokeListenerCallbacks(Listeners.OnTooltipPositioned, ui, tooltip_mc, false, UI.Tooltip.LastItem, ...)
 				end
 			end
 		end
@@ -506,7 +505,7 @@ local function OnItemTooltip(item, tooltip)
 		Ext.PrintWarning("OnItemTooltip", item and item.StatsId or "nil", Ext.JsonStringify(tooltip.Data))
 	end
 	if item ~= nil then
-		lastItem = item
+		UI.Tooltip.LastItem = item
 		local character = Client:GetCharacter()
 		if character ~= nil then
 			if Features.FixItemAPCost == true then
@@ -727,6 +726,23 @@ local function OnRuneTooltip(item, rune, slot, tooltip)
 	end
 end
 
+local function InvokeWorldTooltipCallbacks(ui, text, x, y, isFromItem, item)
+	local textResult = text
+	local length = Listeners.OnWorldTooltip and #Listeners.OnWorldTooltip or 0
+	if length > 0 then
+		for i=1,length do
+			local callback = Listeners.OnWorldTooltip[i]
+			local b,result = xpcall(callback, debug.traceback, ui, textResult, x, y, isFromItem, item)
+			if not b then
+				Ext.PrintError(result)
+			elseif result then
+				textResult = result
+			end
+		end
+	end
+	return textResult
+end
+
 Ext.RegisterListener("SessionLoaded", function()
 	Game.Tooltip.RegisterListener("Item", nil, OnItemTooltip)
 	Game.Tooltip.RegisterListener("Rune", nil, OnRuneTooltip)
@@ -735,22 +751,71 @@ Ext.RegisterListener("SessionLoaded", function()
 	--Game.Tooltip.RegisterListener("Stat", nil, OnStatTooltip)
 	--Game.Tooltip.RegisterListener("CustomStat", nil, OnCustomStatTooltip)
 
-	---@param ui UIObject
-	-- Ext.RegisterUITypeInvokeListener(44, "updateTooltips", function(ui, method, ...)
-	-- 	print(ui:GetTypeId(), method, Common.Dump{...})
+	-- Ext.RegisterUITypeInvokeListener(Data.UIType.tooltip, "addTooltip", function(ui, method, text, xPos, yPos, ...)
+	-- 	InvokeListenerCallbacks(Listeners.OnAddTooltip, ui, text, xPos, yPos, ...)
 	-- end)
-	-- Ext.RegisterUITypeInvokeListener(44, "showTooltipLong", function(ui, method, ...)
-	-- 	print(ui:GetTypeId(), method, Common.Dump{...})
-	-- end)
-	Ext.RegisterUITypeInvokeListener(Data.UIType.tooltip, "addTooltip", function(ui, method, text, xPos, yPos, ...)
-		for i,callback in pairs(UIListeners.OnWorldTooltip) do
-			local status,err = xpcall(callback, debug.traceback, ui, text, xPos, yPos, ...)
-			if not status then
-				Ext.PrintError("[LeaderLib:OnWorldTooltip] Error invoking callback:")
-				Ext.PrintError(err)
+
+	local canGetTooltipItem = Ext.GetPickingState ~= nil
+
+	-- Called after addTooltip, so main.tf should be set up.
+	Ext.RegisterUITypeCall(Data.UIType.tooltip, "keepUIinScreen", function(ui, call, b)
+		local main = ui:GetRoot()
+		if main and main.tf then
+			local text = main.tf.shortDesc
+			local param2 = main.tf.newBG_mc.visible and 1 or 0
+			if canGetTooltipItem then
+				local cursorData = Ext.GetPickingState()
+				if cursorData and cursorData.HoverItem then
+					local item = Ext.GetItem(cursorData.HoverItem)
+					if item then
+						local textResult = InvokeWorldTooltipCallbacks(ui, text, main.tf.x, main.tf.y, true, item)
+						if textResult ~= text then
+							main.tf.shortDesc = textResult
+							main.tf.setText(textResult, param2)
+						end
+					end
+				end
+			else
+				local textResult = InvokeWorldTooltipCallbacks(ui, text, main.tf.x, main.tf.y, false, nil)
+				if textResult ~= text then
+					main.tf.shortDesc = textResult
+					main.tf.setText(textResult, param2)
+				end
 			end
 		end
-	end, "After")
+	end)
+	Ext.RegisterUITypeInvokeListener(Data.UIType.worldTooltip, "updateTooltips", function(ui, method)
+		local main = ui:GetRoot()
+		if main then
+			--public function setTooltip(param1:uint, param2:Number, param3:Number, param4:Number, param5:String, param6:Number, param7:Boolean, param8:uint = 16777215, param9:uint = 0
+			--this.setTooltip(val2,val3,val4,val5,val6,this.worldTooltip_array[val2++],this.worldTooltip_array[val2++]);
+			for i=0,#main.worldTooltip_array,6 do
+				local doubleHandle = main.worldTooltip_array[i]
+				if doubleHandle then
+					local x = main.worldTooltip_array[i+1]
+					local y = main.worldTooltip_array[i+2]
+					local text = main.worldTooltip_array[i+3]
+					--local sortHelper = main.worldTooltip_array[i+4]
+					local isItem = main.worldTooltip_array[i+5]
+					if isItem then
+						local handle = Ext.DoubleToHandle(doubleHandle)
+						local item = Ext.GetItem(handle)
+						if item then
+							local textResult = InvokeWorldTooltipCallbacks(ui, text, x, y, true, item)
+							if textResult ~= text then
+								main.worldTooltip_array[i+3] = textResult
+							end
+						end
+					else
+						local textResult = InvokeWorldTooltipCallbacks(ui, text, x, y, false)
+						if textResult ~= text then
+							main.worldTooltip_array[i+3] = textResult
+						end
+					end
+				end
+			end
+		end
+	end)
 	-- Ext.RegisterUITypeInvokeListener(44, "addFormattedTooltip", function(ui, method, ...)
 	-- 	print(ui:GetTypeId(), method, Common.Dump{...})
 	-- end)

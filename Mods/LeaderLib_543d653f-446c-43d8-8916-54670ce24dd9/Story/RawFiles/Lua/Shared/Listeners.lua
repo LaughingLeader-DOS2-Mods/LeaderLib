@@ -76,4 +76,13 @@ if Ext.IsClient() then
 	---@alias InputEventCallback fun(eventName:string, pressed:boolean, id:integer, inputMap:table<int,boolean>, controllerEnabled:boolean):void
 	---@type InputEventCallback[]
 	Listeners.InputEvent = {}
+
+	---@alias OnTooltipPositionedCallback fun(ui:UIObject, tooltip_mc:FlashObject, isControllerMode:boolean, item:EclItem)
+	---Called after showFormattedTooltipAfterPos is invoked.
+	Listeners.OnTooltipPositioned = {}
+
+	---@alias OnWorldTooltipCallback fun(ui:UIObject, text:string, x:number, y:number, isFromItem:boolean, item:EclItem):string
+	---Called when a world tooltip is created either under the cursor, or when the highlight items key is pressed. The callback should return new tooltip text if the text should be modified, else don't return anything.
+	---@type OnWorldTooltipCallback[]
+	Listeners.OnWorldTooltip = {}
 end

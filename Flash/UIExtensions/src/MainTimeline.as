@@ -5,10 +5,11 @@ package
 	import flash.display.MovieClip;
 	import flash.external.ExternalInterface;
 	import flash.geom.Point;
-	import Controls.Checkbox;
+	import Controls.*;
 	import flash.events.TimerEvent;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import LS_Classes.tooltipHelper;
 	
 	public dynamic class MainTimeline extends MovieClip
 	{		
@@ -84,6 +85,40 @@ package
 		{
 			return mainPanel_mc.removeElementWithID(id);
 		}
+
+		public function clearElements() : * 
+		{
+			//mainPanel_mc.list.clearElements();
+			mainPanel_mc.clearElements();
+		}
+
+		private function onMouseOverTooltip(e:MouseEvent) : *
+		{
+			var obj:MovieClip = e.target as MovieClip;
+			if(obj.tooltip != null && obj.tooltip != "")
+			{
+				this.curTooltip = obj.name;
+				obj.tooltipOverrideW = this.base.ElW;
+				obj.tooltipYOffset = -4;
+				tooltipHelper.ShowTooltipForMC(obj,this,"bottom");
+			}
+		}
+
+		private function onMouseOutTooltip(e:MouseEvent) : *
+		{
+			if(this.curTooltip == e.target.name && this.hasTooltip)
+			{
+				ExternalInterface.call("hideTooltip");
+				this.hasTooltip = false;
+			}
+			this.curTooltip = "";
+		}
+
+		private function setupControlForTooltip(obj:MovieClip) : *
+		{
+			obj.addEventListener(MouseEvent.MOUSE_OVER, this.onMouseOverTooltip);
+			obj.addEventListener(MouseEvent.MOUSE_OUT, this.onMouseOutTooltip);
+		}
 		
 		public function addCheckbox(id:Number, label:String, tooltip:String, stateID:Number=0, x:Number=0, y:Number=0, filterBool:Boolean = false, enabled:Boolean = true) : *
 		{
@@ -103,12 +138,10 @@ package
 			{
 				checkbox.alpha = 0.3;
 			}
-			//mainPanel_mc.list.addElement(checkbox);
+			//setupControlForTooltip(checkbox);
 			mainPanel_mc.addElement(checkbox);
 			checkbox.label_bg_mc.width = (checkbox.label_txt.textWidth*1.2) + 12;
-			//this.mainPanel_mc.addChild(checkbox);
-			//checkbox.formHL_mc.alpha = 0;
-			ExternalInterface.call("LeaderLib_ControlAdded", "checkbox", checkbox.id, id, checkbox.label_txt.textWidth, checkbox.label_txt.width, checkbox.label_bg_mc.width);
+			ExternalInterface.call("LeaderLib_ControlAdded", "checkbox", id, checkbox.list_id);
 		}
 
 		public function setCheckboxState(id:Number, state:Number): *
@@ -137,10 +170,36 @@ package
 			}
 		}
 
-		public function clearElements() : * 
+		public function addBar(id:Number, label:String, tooltip:String = "", x:Number=0, y:Number=0, percentage:Number = 1.0, doTween:Boolean = false, color:uint=NaN) : *
 		{
-			//mainPanel_mc.list.clearElements();
-			mainPanel_mc.clearElements();
+			var bar:BarHolder = new BarHolder();
+			bar.id = id;
+			bar.x = x;
+			bar.y = y;
+			bar.tooltip = tooltip;
+			bar.setBar(percentage, doTween);
+			if (!isNaN(color)) {
+				bar.setBarColour(color);
+			}
+			//setupControlForTooltip(bar);
+			mainPanel_mc.addElement(bar);
+			ExternalInterface.call("LeaderLib_ControlAdded", "bar", id, bar.list_id);
+		}
+
+		public function setBar(id:Number, percentage:Number = 1.0, doTween:Boolean = false, color:uint=NaN) : *
+		{
+			var obj:MovieClip = mainPanel_mc.elements[id];
+			if(obj != null)
+			{
+				var bar:BarHolder = obj as BarHolder;
+				if(bar != null)
+				{
+					bar.setBar(percentage, doTween);
+					if (!isNaN(color)) {
+						bar.setBarColour(color);
+					}
+				}
+			}
 		}
 
 		public function removeTimer(timer:ClientTimer, removeFromArray:Boolean = false) : *

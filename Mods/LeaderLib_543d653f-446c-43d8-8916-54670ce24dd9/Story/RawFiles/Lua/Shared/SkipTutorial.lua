@@ -122,7 +122,7 @@ if Ext.IsServer() then
 							local act2Preset = Data.Presets.Act2[preset]
 							if act2Preset then
 								fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SkipTutorial] Applying preset (%s) to player (%s).", preset, uuid)
-								act2Preset:ApplyToCharacter(uuid, "Uncommon", nil, true)
+								act2Preset:ApplyToCharacter(uuid, "Uncommon", nil, true, true)
 							end
 						else
 							fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SkipTutorial] Adding Bless to player (%s).", uuid)

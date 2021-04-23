@@ -159,11 +159,10 @@ local missingTalents = {
 }
 
 for name,v in pairs(missingTalents) do
-	if not Vars.DebugMode then
-		TalentManager.RegisteredCount[name] = 0
-	else
-		TalentManager.RegisteredCount[name] = 1
-	end
+	TalentManager.RegisteredCount[name] = 0
+	-- if Vars.DebugMode then
+	-- 	TalentManager.RegisteredCount[name] = 1
+	-- end
 end
 
 ---@param talentId string

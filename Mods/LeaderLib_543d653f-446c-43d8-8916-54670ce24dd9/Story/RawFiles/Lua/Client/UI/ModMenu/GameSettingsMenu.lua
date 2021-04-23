@@ -250,7 +250,7 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 		mainMenu.addMenuLabel(text.Section_Client.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "AlwaysDisplayWeaponScalingText"), text.Client_AlwaysDisplayWeaponScalingText.Value, true, settings.Client.AlwaysDisplayWeaponScalingText and 1 or 0, false, text.Client_AlwaysDisplayWeaponScalingText_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "HideStatuses", nil, true), text.Client_HideStatuses.Value, true, not settings.Client.HideStatuses and 1 or 0, false, text.Client_HideStatuses_Description.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.Client, "DivineTalentsEnabled", nil, true), text.Client_DivineTalentsEnabled.Value, true, not settings.Client.DivineTalentsEnabled and 1 or 0, false, text.Client_DivineTalentsEnabled_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.Client, "DivineTalentsEnabled"), text.Client_DivineTalentsEnabled.Value, true, settings.Client.DivineTalentsEnabled and 1 or 0, false, text.Client_DivineTalentsEnabled_Description.Value)
 	end
 end
 

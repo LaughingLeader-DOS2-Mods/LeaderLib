@@ -2,9 +2,7 @@
 	"mainClass": "MainTimeline",
 	"compilerOptions": {
 		"source-path": ["src"],
-		"output": "LeaderLib_UIExtensions.swf",
-		"target-player": "10.3",
-		"swf-version": 12
+		"target-player": "10.3"
 	},
 	"files": [
 		"src/MainTimeline.as"

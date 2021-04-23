@@ -168,3 +168,10 @@ function StringHelpers.Append(a,b,appendWith)
 		return string.format("%s%s%s", a, (appendWith or ""), b)
 	end
 end
+
+---Returns an iterator for each line of a string.
+---@param s string
+function StringHelpers.GetLines(s)
+	if s:sub(-1)~="\n" then s=s.."\n" end
+	return s:gmatch("(.-)\n")
+end

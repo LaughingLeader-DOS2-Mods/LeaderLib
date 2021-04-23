@@ -8,12 +8,20 @@ local TalentState = {
 	Locked = 3
 }
 
+local TalentStateFormat = {
+	[TalentState.Selected] = "%s",
+	[TalentState.Selectable] = "<font color='#403625'>%s</font>",
+	[TalentState.Locked] = "<font color='#C80030'>%s</font>"
+}
+
 TalentManager = {
 	RegisteredTalents = {},
 	RegisteredCount = {},
 	---@type table<string, table<string, TalentRequirementCheckCallback>>
 	RequirementHandlers = {},
-	TalentState = TalentState
+	TalentState = TalentState,
+	---@type table<string, StatRequirement[]>
+	BuiltinRequirements = {}
 }
 TalentManager.__index = TalentManager
 
@@ -226,6 +234,8 @@ function TalentManager.DisableTalent(talentName, modID)
 	end
 end
 
+---@param player EclCharacter
+---@param id string
 function TalentManager.HasRequirements(player, id)
 	local getRequirementsHandlers = TalentManager.RequirementHandlers[id]
 	if getRequirementsHandlers then
@@ -241,14 +251,22 @@ function TalentManager.HasRequirements(player, id)
 			end
 		end
 	end
+	local builtinRequirements = TalentManager.BuiltinRequirements[id]
+	if builtinRequirements and #builtinRequirements > 0 then
+		for _,req in pairs(builtinRequirements) do
+			local playerValue = player.Stats[req.Requirement]
+			local t = type(playerValue)
+			if t == "boolean" then
+				if req.Not ~= playerValue then
+					return false
+				end
+			elseif t == "number" and playerValue < req.Param then
+				return false
+			end
+		end
+	end
 	return true
 end
-
-local TalentFontColor =
-{
-	Selectable = "#403625",
-	Locked = "#C80030"
-}
 
 ---@param player EclCharacter
 ---@param id string
@@ -260,12 +278,7 @@ function TalentManager.GetTalentDisplayName(player, id, talentState)
 	else
 		name = name.Value
 	end
-	if talentState == TalentState.Selectable then
-		--name = string.format("<font color='%s'>%s</font>", TalentFontColor.Selectable, name)
-	elseif talentState == TalentState.Locked then
-		name = string.format("<font color='%s'>%s</font>", TalentFontColor.Locked, name)
-	end
-	return name
+	return string.format(TalentStateFormat[talentState], name)
 end
 
 ---@param player EclCharacter
@@ -277,7 +290,7 @@ function TalentManager.GetTalentState(player, talentId)
 	elseif not TalentManager.HasRequirements(player, talentId) then 
 		return TalentState.Locked
 	else
-		 return TalentState.Selectable
+		return TalentState.Selectable
 	end
 end
 
@@ -292,8 +305,8 @@ function TalentManager.Update_CC(ui, talent_mc, player)
 			local talentEnum = Data.TalentEnum[talentId]
 			if not UI.IsInArray(ui, "talentArray", talentId, 1, 4) then
 				local talentState = TalentManager.GetTalentState(player, talentId)
-				local name,requirementsMet = TalentManager.GetTalentDisplayName(player, talentId, talentState)
-				talent_mc.addTalentElement(talentEnum, name, player.Stats[talentStat], requirementsMet, false)
+				local name = TalentManager.GetTalentDisplayName(player, talentId, talentState)
+				talent_mc.addTalentElement(talentEnum, name, player.Stats[talentStat], talentState ~= TalentState.Locked, false)
 				if Vars.ControllerEnabled then
 					TalentManager.Gamepad.UpdateTalent_CC(ui, player, talentId, alentEnum)
 				end
@@ -346,7 +359,7 @@ function TalentManager.Update(ui, player)
 			local talentEnum = Data.TalentEnum[talentId]
 			if not TalentManager.TalentIsInArray(talentEnum, talent_array) then
 				local talentState = TalentManager.GetTalentState(player, talentId)
-				local name,requirementsMet = TalentManager.GetTalentDisplayName(player, talentId, talentState)
+				local name = TalentManager.GetTalentDisplayName(player, talentId, talentState)
 				if not Vars.ControllerEnabled then
 					--addTalent(displayName:String, id:Number, talentState:Number)
 					talent_array[i] = name
@@ -385,3 +398,87 @@ function TalentManager.Update(ui, player)
 	-- 	end
 	-- end
 end
+
+local DivineTalents = {
+	Rager = "TALENT_Rager",
+	Elementalist = "TALENT_Elementalist",
+	Sadist = "TALENT_Sadist",
+	Haymaker = "TALENT_Haymaker",
+	Gladiator = "TALENT_Gladiator",
+	Indomitable = "TALENT_Indomitable",
+	WildMag = "TALENT_WildMag",
+	Jitterbug = "TALENT_Jitterbug",
+	Soulcatcher = "TALENT_Soulcatcher",
+	MasterThief = "TALENT_MasterThief",
+	GreedyVessel = "TALENT_GreedyVessel",
+	MagicCycles = "TALENT_MagicCycles",
+}
+
+function TalentManager.ToggleDivineTalents(enabled)
+	if enabled then
+		for talent,id in pairs(DivineTalents) do
+			TalentManager.EnableTalent(talent, "DivineTalents")
+		end
+	else
+		for talent,id in pairs(DivineTalents) do
+			TalentManager.DisableTalent(talent, "DivineTalents")
+		end
+	end
+end
+
+local pointRequirement = "(.+) (%d+)"
+local talentRequirement = "(%!*)(TALENT_.+)"
+
+local function GetRequirementFromText(text)
+	local requirementName,param = string.match(text, pointRequirement)
+	if requirementName and param then
+		return {
+			Requirement = requirementName,
+			Param = tonumber(param),
+			Not = false
+		}
+	else
+		local notParam,requirementName = string.match(text, talentRequirement)
+		if requirementName then
+			return {
+				Requirement = requirementName,
+				Param = "Talent",
+				Not = notParam and true or false
+			}
+		end
+	end
+	return nil
+end
+
+function TalentManager.LoadRequirements()
+	for _,uuid in pairs(Ext.GetModLoadOrder()) do
+		local modInfo = Ext.GetModInfo(uuid)
+		if modInfo and modInfo.Directory then
+			local talentRequirementsText = Ext.LoadFile("Public/"..modInfo.Directory.."/Stats/Generated/Data/Requirements.txt", "data")
+			if not StringHelpers.IsNullOrEmpty(talentRequirementsText) then
+				for line in StringHelpers.GetLines(talentRequirementsText) do
+					local talent,requirementText = string.match(line, 'requirement.*"(.+)",.*"(.*)"')
+					if talent then
+						TalentManager.BuiltinRequirements[talent] = {}
+						if requirementText then
+							for i,v in pairs(StringHelpers.Split(requirementText, ";")) do
+								local req = GetRequirementFromText(v)
+								if req then
+									table.insert(TalentManager.BuiltinRequirements[talent], req)
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+end
+
+Ext.RegisterListener("SessionLoaded", function()
+	TalentManager.LoadRequirements()
+	---Divine Talents
+	if Ext.IsModLoaded("ca32a698-d63e-4d20-92a7-dd83cba7bc56") or GameSettings.Settings.Client.DivineTalentsEnabled then
+		TalentManager.ToggleDivineTalents(true)
+	end
+end)

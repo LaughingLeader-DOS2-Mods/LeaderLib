@@ -1524,6 +1524,8 @@ function TooltipData:AppendElement(ele)
 	table.insert(self.Data, ele)
 end
 
+---@param ele TooltipElement
+---@param appendAfter TooltipElement
 function TooltipData:AppendElementAfter(ele, appendAfter)
 	for i,element in pairs(self.Data) do
 		if element == appendAfter then
@@ -1535,9 +1537,25 @@ function TooltipData:AppendElementAfter(ele, appendAfter)
 	table.insert(self.Data, ele)
 end
 
-function TooltipData:AppendElementAfterType(ele, elementType)
+---@param ele TooltipElement
+---@param appendAfter TooltipElement
+function TooltipData:AppendElementBefore(ele, appendBefore)
 	for i,element in pairs(self.Data) do
-		if element.Type == elementType then
+		if element == appendBefore then
+			table.insert(self.Data, i-1, ele)
+			return
+		end
+	end
+
+	table.insert(self.Data, ele)
+end
+
+---@param ele TooltipElement
+---@param elementType string|table<string,boolean>
+function TooltipData:AppendElementAfterType(ele, elementType)
+	local t = type(elementType)
+	for i,element in pairs(self.Data) do
+		if (t == "string" and element.Type == elementType) or (t == "table" and elementType[element.Type] == true) then
 			table.insert(self.Data, i+1, ele)
 			return
 		end
@@ -1546,9 +1564,12 @@ function TooltipData:AppendElementAfterType(ele, elementType)
 	table.insert(self.Data, ele)
 end
 
+---@param ele TooltipElement
+---@param elementType string|table<string,boolean>
 function TooltipData:AppendElementBeforeType(ele, elementType)
+	local t = type(elementType)
 	for i,element in pairs(self.Data) do
-		if element.Type == elementType then
+		if (t == "string" and element.Type == elementType) or (t == "table" and elementType[element.Type] == true) then
 			table.insert(self.Data, i-1, ele)
 			return
 		end

@@ -282,6 +282,7 @@ LocalizedText.Tooltip = {
 	ExtraPropertiesWithTurns = ts:Create("hf90daa3cgba5cg471cgbebcgedb58a337a9f", "Set [1] for [4] turn(s).[2][3]"),
 	ChanceToSucceed = ts:Create("h54e0b91cg48a7g4d5agaedcgbde756a109ea", "[1]% chance to succeed."),
 	ScalesWith = ts:Create("h565537edgdec5g4483g938fg296519760088", "Scales With [1]"),
+	Requires = ts:Create("h7de69a95g70cag4bb3gbabcg1cf2df46f12c", "Requires [1]"),
 }
 
 ---Get localized damage text wrapped in that damage type's color.

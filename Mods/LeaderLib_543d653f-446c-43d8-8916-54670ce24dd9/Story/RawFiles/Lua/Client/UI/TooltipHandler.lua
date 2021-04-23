@@ -495,6 +495,8 @@ end
 ---@type table<string,table<string,boolean>>
 local skillBookAssociatedSkills = {}
 
+local appendRequirementsAfterTypes = {ItemLevel=true, APCostBoost=true}
+
 ---@param item EclItem
 ---@param tooltip TooltipData
 local function OnItemTooltip(item, tooltip)
@@ -635,6 +637,7 @@ local function OnItemTooltip(item, tooltip)
 		end
 		if Features.TooltipGrammarHelper or GameSettings.Settings.Client.AlwaysDisplayWeaponScalingText then
 			local hasScalesWithText = false
+			local requiresPointsHigherThanZero = false
 			local scalesWithTextSub = string.sub(LocalizedText.Tooltip.ScalesWith.Value, 1, 5)
 			local requirements = tooltip:GetElements("ItemRequirement")
 			if requirements ~= nil then
@@ -647,28 +650,47 @@ local function OnItemTooltip(item, tooltip)
 					end
 				end
 			end
-			if (GameSettings.Settings.Client.AlwaysDisplayWeaponScalingText and not hasScalesWithText 
-			and item.Stats and item.Stats.Requirements ~= nil and #item.Stats.Requirements > 0) then
+			if item.Stats and item.Stats.Requirements ~= nil and #item.Stats.Requirements > 0 then
 				local attributeName = ""
+				local requirementsMet = true
 				for i,v in pairs(item.Stats.Requirements) do
 					if Data.AttributeEnum[v.Requirement] ~= nil then
 						attributeName = LocalizedText.AttributeNames[v.Requirement].Value
+						if type(v.Param) == "number" and v.Param > 0 then
+							requiresPointsHigherThanZero = true
+							if character.Stats[v.Requirement] < v.Param then
+								requirementsMet = false
+							end
+						end
 					end
 				end
 				if not StringHelpers.IsNullOrEmpty(attributeName) then
-					local element = {
-						Type = "ItemRequirement",
-						Label = LocalizedText.Tooltip.ScalesWith:ReplacePlaceholders(attributeName),
-						RequirementMet = true
-					}
-					if not requirements then
-						tooltip:AppendElement(element)
-					else
-						tooltip:RemoveElements("ItemRequirement")
-						tooltip:AppendElement(element)
-						for i,v in pairs(requirements) do
-							tooltip:AppendElement(v)
+					if item.ItemType == "Weapon" then
+						if GameSettings.Settings.Client.AlwaysDisplayWeaponScalingText and not hasScalesWithText then
+							local element = {
+								Type = "ItemRequirement",
+								Label = LocalizedText.Tooltip.ScalesWith:ReplacePlaceholders(attributeName),
+								RequirementMet = requirementsMet
+							}
+							if not requirements then
+								tooltip:AppendElement(element)
+							else
+								tooltip:RemoveElements("ItemRequirement")
+								tooltip:AppendElementAfterType(element, appendRequirementsAfterTypes)
+								for i,v in pairs(requirements) do
+									tooltip:AppendElementAfter(v, element)
+								end
+							end
 						end
+					elseif hasScalesWithText and requiresPointsHigherThanZero then
+						--Armor doesn't scale with requirements, so just show the attribute requirement.
+						tooltip:RemoveElements("ItemRequirement")
+						local element = {
+							Type = "ItemRequirement",
+							Label = LocalizedText.Tooltip.Requires:ReplacePlaceholders(attributeName),
+							RequirementMet = requirementsMet
+						}
+						tooltip:AppendElementAfterType(element, appendRequirementsAfterTypes)
 					end
 				end
 			end
@@ -743,11 +765,21 @@ local function InvokeWorldTooltipCallbacks(ui, text, x, y, isFromItem, item)
 	return textResult
 end
 
+
+---@param player EclCharacter
+---@param tooltip TooltipData
+local function OnTalentTooltip(player, talent, tooltip)
+	if Vars.DebugMode then
+		print("OnTalentTooltip", player, talent, Ext.JsonStringify(tooltip.Data))
+	end
+end
+
 Ext.RegisterListener("SessionLoaded", function()
 	Game.Tooltip.RegisterListener("Item", nil, OnItemTooltip)
 	Game.Tooltip.RegisterListener("Rune", nil, OnRuneTooltip)
 	Game.Tooltip.RegisterListener("Skill", nil, OnSkillTooltip)
 	Game.Tooltip.RegisterListener("Status", nil, OnStatusTooltip)
+	Game.Tooltip.RegisterListener("Talent", nil, OnTalentTooltip)
 	--Game.Tooltip.RegisterListener("Stat", nil, OnStatTooltip)
 	--Game.Tooltip.RegisterListener("CustomStat", nil, OnCustomStatTooltip)
 

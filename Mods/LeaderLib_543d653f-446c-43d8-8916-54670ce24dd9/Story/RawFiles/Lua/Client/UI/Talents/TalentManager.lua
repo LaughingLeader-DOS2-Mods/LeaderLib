@@ -158,6 +158,18 @@ local missingTalents = {
 	MagicCycles = "TALENT_MagicCycles",
 }
 
+local racialTalents = {
+	Human_Inventive = "TALENT_Human_Inventive",
+	Human_Civil = "TALENT_Human_Civil",
+	Elf_Lore = "TALENT_Elf_Lore",
+	Elf_CorpseEating = "TALENT_Elf_CorpseEating",
+	Dwarf_Sturdy = "TALENT_Dwarf_Sturdy",
+	Dwarf_Sneaking = "TALENT_Dwarf_Sneaking",
+	Lizard_Resistance = "TALENT_Lizard_Resistance",
+	Lizard_Persuasion = "TALENT_Lizard_Persuasion",
+	Zombie = "TALENT_Zombie",
+}
+
 for name,v in pairs(missingTalents) do
 	TalentManager.RegisteredCount[name] = 0
 	-- if Vars.DebugMode then
@@ -293,34 +305,6 @@ function TalentManager.GetTalentState(player, talentId)
 	end
 end
 
----@class TalentMC_CC
----@field addTalentElement fun(id:int, name:string, isActive:boolean, isChooseable:boolean, isRacial:boolean):void 
-
----@param talent_mc TalentMC_CC
-function TalentManager.Update_CC(ui, talent_mc, player)
-	for talentId,talentStat in pairs(missingTalents) do
-		--Same setup for CC in controller mode as well
-		if TalentManager.RegisteredCount[talentId] > 0 then
-			local talentEnum = Data.TalentEnum[talentId]
-			if not UI.IsInArray(ui, "talentArray", talentId, 1, 4) then
-				local talentState = TalentManager.GetTalentState(player, talentId)
-				local name = TalentManager.GetTalentDisplayName(player, talentId, talentState)
-				talent_mc.addTalentElement(talentEnum, name, player.Stats[talentStat], talentState ~= TalentState.Locked, false)
-				if Vars.ControllerEnabled then
-					TalentManager.Gamepad.UpdateTalent_CC(ui, player, talentId, alentEnum)
-				end
-			end
-		end
-	end
-end
-
-RegisterListener("LuaReset", function()
-	local ui = Ext.GetUIByType(Data.UIType.statsPanel_c)
-	if ui then
-		ui:GetRoot().mainpanel_mc.stats_mc.talents_mc.statList.clearElements()
-	end
-end)
-
 function TalentManager.TalentIsInArray(talentEnum, talent_array)
 	if not Vars.ControllerEnabled then
 		for i=1,#talent_array,3 do
@@ -341,7 +325,79 @@ function TalentManager.TalentIsInArray(talentEnum, talent_array)
 	return false
 end
 
+---@class TalentMC_CC
+---@field addTalentElement fun(id:int, name:string, isActive:boolean, isChooseable:boolean, isRacial:boolean):void 
+
+---@param talent_mc TalentMC_CC
+function TalentManager.Update_CC(ui, talent_mc, player)
+	for talentId,talentStat in pairs(missingTalents) do
+		--Same setup for CC in controller mode as well
+		if TalentManager.RegisteredCount[talentId] > 0 then
+			local talentEnum = Data.TalentEnum[talentId]
+			if not UI.IsInArray(ui, "talentArray", talentId, 1, 4) then
+				local talentState = TalentManager.GetTalentState(player, talentId)
+				local name = TalentManager.GetTalentDisplayName(player, talentId, talentState)
+				talent_mc.addTalentElement(talentEnum, name, player.Stats[talentStat], talentState ~= TalentState.Locked, false)
+				if Vars.ControllerEnabled then
+					TalentManager.Gamepad.UpdateTalent_CC(ui, player, talentId, talentEnum)
+				end
+			end
+		end
+	end
+	if Features.RacialTalentsDisplayFix then
+		for talentId,talentStat in pairs(racialTalents) do
+			local talentEnum = Data.TalentEnum[talentId]
+			if not UI.IsInArray(ui, "talentArray", talentId, 1, 4) then
+				local talentState = TalentManager.GetTalentState(player, talentId)
+				local name = TalentManager.GetTalentDisplayName(player, talentId, talentState)
+				talent_mc.addTalentElement(talentEnum, name, player.Stats[talentStat], talentState ~= TalentState.Locked, true)
+				if Vars.ControllerEnabled then
+					TalentManager.Gamepad.UpdateTalent_CC(ui, player, talentId, talentEnum)
+				end
+			end
+		end
+	end
+
+	if player.Stats.TALENT_RogueLoreDaggerBackStab or 
+	(GameSettings.Settings.BackstabSettings.Player.Enabled and GameSettings.Settings.BackstabSettings.Player.TalentRequired) then
+		local talentEnum = Data.TalentEnum["RogueLoreDaggerBackStab"]
+		if not UI.IsInArray(ui, "talentArray", "RogueLoreDaggerBackStab", 1, 4) then
+			local talentState = TalentManager.GetTalentState(player, "RogueLoreDaggerBackStab")
+			local name = TalentManager.GetTalentDisplayName(player, "RogueLoreDaggerBackStab", talentState)
+			talent_mc.addTalentElement(talentEnum, name, player.Stats.TALENT_RogueLoreDaggerBackStab, talentState ~= TalentState.Locked, false)
+			if Vars.ControllerEnabled then
+				TalentManager.Gamepad.UpdateTalent_CC(ui, player, "RogueLoreDaggerBackStab", talentEnum)
+			end
+		end
+	end
+end
+
+local function AddTalentToArray(ui, player, talent_array, talentId, lvlBtnTalent_array, i)
+	local talentEnum = Data.TalentEnum[talentId]
+	if not TalentManager.TalentIsInArray(talentEnum, talent_array) then
+		local talentState = TalentManager.GetTalentState(player, talentId)
+		local name = TalentManager.GetTalentDisplayName(player, talentId, talentState)
+		if not Vars.ControllerEnabled then
+			--addTalent(displayName:String, id:Number, talentState:Number)
+			talent_array[i] = name
+			talent_array[i+1] = talentEnum
+		else
+			--addTalent(id:Number, displayName:String, talentState:Number)
+			talent_array[i] = talentEnum
+			talent_array[i+1] = name
+		end
+		talent_array[i+2] = talentState
+		i = i + 3
+
+		if Vars.ControllerEnabled then
+			TalentManager.Gamepad.UpdateTalent(ui, player, talentId, talentEnum, lvlBtnTalent_array, talentState)
+		end
+	end
+	return i
+end
+
 ---@param ui UIObject
+---@param player EclCharacter
 function TalentManager.Update(ui, player)
 	local main = ui:GetRoot()
 	local lvlBtnTalent_array = main.lvlBtnTalent_array
@@ -355,28 +411,25 @@ function TalentManager.Update(ui, player)
 
 	for talentId,talentStat in pairs(missingTalents) do
 		if TalentManager.RegisteredCount[talentId] > 0 then
-			local talentEnum = Data.TalentEnum[talentId]
-			if not TalentManager.TalentIsInArray(talentEnum, talent_array) then
-				local talentState = TalentManager.GetTalentState(player, talentId)
-				local name = TalentManager.GetTalentDisplayName(player, talentId, talentState)
-				if not Vars.ControllerEnabled then
-					--addTalent(displayName:String, id:Number, talentState:Number)
-					talent_array[i] = name
-					talent_array[i+1] = talentEnum
-				else
-					--addTalent(id:Number, displayName:String, talentState:Number)
-					talent_array[i] = talentEnum
-					talent_array[i+1] = name
-				end
-				talent_array[i+2] = talentState
-				i = i + 3
+			i = AddTalentToArray(ui, player, talent_array, talentId, lvlBtnTalent_array, i)
+		end
+	end
 
-				if Vars.ControllerEnabled then
-					TalentManager.Gamepad.UpdateTalent(ui, player, talentId, talentEnum, lvlBtnTalent_array, talentState)
-				end
+	if Features.RacialTalentsDisplayFix then
+		i = #talent_array
+		for talentId,talentStat in pairs(racialTalents) do
+			if player.Stats[talentStat] == true then
+				i = AddTalentToArray(ui, player, talent_array, talentId, lvlBtnTalent_array, i, true)
 			end
 		end
 	end
+
+	if player.Stats.TALENT_RogueLoreDaggerBackStab or 
+	(GameSettings.Settings.BackstabSettings.Player.Enabled and GameSettings.Settings.BackstabSettings.Player.TalentRequired) then
+		i = #talent_array
+		AddTalentToArray(ui, player, talent_array, "RogueLoreDaggerBackStab", lvlBtnTalent_array, i)
+	end
+
 	-- if Vars.DebugMode then
 	-- 	print("lvlBtnTalent_array")
 	-- 	for i=0,#lvlBtnTalent_array,3 do
@@ -397,6 +450,13 @@ function TalentManager.Update(ui, player)
 	-- 	end
 	-- end
 end
+
+RegisterListener("LuaReset", function()
+	local ui = Ext.GetUIByType(Data.UIType.statsPanel_c)
+	if ui then
+		ui:GetRoot().mainpanel_mc.stats_mc.talents_mc.statList.clearElements()
+	end
+end)
 
 local DivineTalents = {
 	Rager = "TALENT_Rager",

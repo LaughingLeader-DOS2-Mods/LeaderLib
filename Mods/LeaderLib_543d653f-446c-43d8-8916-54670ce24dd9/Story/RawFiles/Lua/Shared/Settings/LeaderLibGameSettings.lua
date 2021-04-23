@@ -59,6 +59,7 @@ local DefaultSettings = {
 	Client = {
 		HideStatuses = false,
 		AlwaysDisplayWeaponScalingText = true,
+		DivineTalentsEnabled = false,
 	},
 	EnableDeveloperTests = false,
 	Version = Ext.GetModInfo("7e737d2f-31d2-4751-963f-be6ccc59cd0c").Version
@@ -253,6 +254,7 @@ function LeaderLibGameSettings:Apply()
 	end
 	if Ext.IsClient() then
 		UI.ToggleStatusVisibility(not self.Settings.Client.HideStatuses)
+		TalentManager.ToggleDivineTalents(self.Settings.Client.DivineTalentsEnabled)
 	end
 end
 

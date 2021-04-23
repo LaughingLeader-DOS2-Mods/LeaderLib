@@ -11,7 +11,9 @@
 	<content contentuid="h05e3a637g0755g4659g9aa9g99888bc32ed5">Undead Lizard</content>
 	<content contentuid="h07b0d455gbe0fg48a4gbe1eg3ae23e84b2eb">Confirm Preset Selection</content>
 	<content contentuid="h07ede36bgda99g42ecg813bgbc1496640e7d">Skip Tutorial (LB + Select)</content>
+	<content contentuid="h085c69c2g47e1g4611g9c72g6f45ecb1768d">Always Show Divine Talents</content>
 	<content contentuid="h08bb8216g9d40g49f9g91d4g8a77ecb090d2">Swap between the undead and non-undead equivalent of your current race.</content>
+	<content contentuid="h0a56f2cfgf36fg4b73gba0cgc31271b3795f">If enabled, the Divine Talents will always be visible in the player UI, regardless if the gift bag is enabled.</content>
 	<content contentuid="h0a77a6c9g8b1ag49cdgaf0eg45c159b82b32">No rifle equipped</content>
 	<content contentuid="h0ab95fb3g7cfbg483dga66bg5daf233e945a">Loading presets...</content>
 	<content contentuid="h0b46c751g260fg4dfaga124ga7208595a493">Max</content>
@@ -335,7 +337,7 @@
 	<content contentuid="hd9f00ef8g890eg475bg88ddg9cda39e551fe">[LeaderLib_DynamicMenu_MenuOption5_f450c0eb-c308-4755-9718-f6a1e87305bd]</content>
 	<content contentuid="hda816c8bg2b06g4c93ga526gb61ed29a8760">&quot;Let me get my things in order here...&quot; *He presumably situates a bag of goods that&apos;s strangely out of sight.*</content>
 	<content contentuid="hdc5db041g39d0g4a87g81eagb26a0d11358e">[GLOBAL] Disable Status Logging</content>
-	<content contentuid="hdc816addgda80g4d5dg8d6dgccf0824c220a">Reset LeaderLib Settings</content>
+	<content contentuid="hdc816addgda80g4d5dg8d6dgccf0824c220a">Reset Settings</content>
 	<content contentuid="hdd673ac0g2ae1g423cg853eg5a7b8149cd13">*He spits out what is presumably seaweed.* So, what can I do for you today?</content>
 	<content contentuid="hdefd7688g4811g445ag94a4gbe304b43168b">I managed to sneak away before that nasty Kraken showed up. *He groans and rubs his shoulders.* Damn if I won&apos;t feel it tomorrow, though...</content>
 	<content contentuid="he037429fgcbf9g4a78gb1c2ge9613039ef62">Preset Menu (Locked - Check Back in 30 Seconds)</content>

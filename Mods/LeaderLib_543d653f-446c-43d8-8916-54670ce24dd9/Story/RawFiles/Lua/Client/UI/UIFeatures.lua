@@ -57,57 +57,6 @@ function UI.IsInArray(ui, arrayName, id, start, offset)
 	return false
 end
 
----@param ui UIObject
-local function DisplayTalents(ui, call, ...)
-	---@type EsvCharacter
-	local player = nil
-	local handle = ui:GetPlayerHandle()
-	if handle ~= nil then
-		player = Ext.GetCharacter(handle)
-	elseif Client.Character ~= nil then
-		player = Client:GetCharacter()
-	end
-	if player ~= nil then
-		TalentManager.Update(ui, player)
-		local length = #Listeners.OnTalentArrayUpdating
-		if length > 0 then
-			for i=1,length do
-				local callback = Listeners.OnTalentArrayUpdating[i]
-				local talentArrayStartIndex = UI.GetArrayIndexStart(ui, "talent_array", 3)
-				local b,err = xpcall(callback, debug.traceback, ui, player, talentArrayStartIndex, Data.TalentEnum)
-				if not b then
-					Ext.PrintError("Error calling function for 'OnTalentArrayUpdating':\n", err)
-				end
-			end
-		end
-		--UI.PrintArray(ui, "talent_array")
-	end
-end
-
--- addTalentElement(talentId:uint, talentName:String, state:Boolean, choosable:Boolean, isRacial:Boolean) : *
-
----@param ui UIObject
-local function DisplayTalents_CC(ui, call, ...)
-	if GameSettings.Default == nil then
-		-- This function may run before the game is "Running" and the settings load normally.
-		LoadGameSettings()
-	end
-
-	---@type EsvCharacter
-	local player = nil
-	local handle = ui:GetPlayerHandle()
-	if handle ~= nil then
-		player = Ext.GetCharacter(handle)
-	elseif  Client.Character ~= nil then
-		player = Client:GetCharacter()
-	end
-	if player ~= nil then
-		local root = ui:GetRoot()
-		local talent_mc = root.CCPanel_mc.talents_mc
-		TalentManager.Update_CC(ui, talent_mc, player)
-	end
-end
-
 local function AddToCombatLog(text)
 	local ui = Ext.GetBuiltinUI("Public/Game/GUI/combatLog.swf")
 	if ui ~= nil then
@@ -156,12 +105,4 @@ Ext.RegisterListener("SessionLoaded", function()
 			end
 		end)
 	end
-	Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem", DisplayTalents)
-	Ext.RegisterUITypeInvokeListener(Data.UIType.statsPanel_c, "updateArraySystem", DisplayTalents)
-
-	--characterCreation.swf
-	Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateTalents", DisplayTalents_CC)
-	Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation_c, "updateTalents", DisplayTalents_CC)
-
-	TalentManager.Gamepad.RegisterListeners()
 end)

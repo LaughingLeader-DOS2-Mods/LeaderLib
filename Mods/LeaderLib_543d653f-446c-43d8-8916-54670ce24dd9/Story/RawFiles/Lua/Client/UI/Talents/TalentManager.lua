@@ -21,7 +21,9 @@ TalentManager = {
 	RequirementHandlers = {},
 	TalentState = TalentState,
 	---@type table<string, StatRequirement[]>
-	BuiltinRequirements = {}
+	BuiltinRequirements = {},
+	HiddenTalents = {},
+	HiddenCount = {}
 }
 TalentManager.__index = TalentManager
 
@@ -177,6 +179,10 @@ for name,v in pairs(missingTalents) do
 	-- end
 end
 
+for talentId,enum in pairs(Data.TalentEnum) do
+	TalentManager.HiddenTalents[talentId] = {}
+end
+
 ---@param talentId string
 ---@return boolean
 function TalentManager.IsRegisteredTalent(talentId)
@@ -187,8 +193,8 @@ end
 ---@param talentId string
 ---@return boolean
 function TalentManager.HasTalent(player, talentId)
-	local talentNamePrefixed = "TALENT_" .. talentId
-	if player ~= nil and player.Stats ~= nil and player.Stats[talentNamePrefixed] == true then
+	local talentIdPrefixed = "TALENT_" .. talentId
+	if player ~= nil and player.Stats ~= nil and player.Stats[talentIdPrefixed] == true then
 		return true
 	end
 	return false
@@ -225,22 +231,67 @@ end
 -- 	end
 -- end
 
-function TalentManager.DisableTalent(talentName, modID)
-	if talentName == "all" then
+function TalentManager.DisableTalent(talentId, modID)
+	if talentId == "all" then
 		for talent,v in pairs(missingTalents) do
 			TalentManager.DisableTalent(talent, modID)
 		end
 	else
-		local data = TalentManager.RegisteredTalents[talentName]
+		local data = TalentManager.RegisteredTalents[talentId]
 		if data ~= nil then
-			if TalentManager.RegisteredTalents[talentName][modID] ~= nil then
-				TalentManager.RegisteredTalents[talentName][modID] = nil
-				TalentManager.RegisteredCount[talentName] = TalentManager.RegisteredCount[talentName] - 1
+			if TalentManager.RegisteredTalents[talentId][modID] ~= nil then
+				TalentManager.RegisteredTalents[talentId][modID] = nil
+				TalentManager.RegisteredCount[talentId] = TalentManager.RegisteredCount[talentId] - 1
 			end
-			if TalentManager.RegisteredCount[talentName] <= 0 then
-				TalentManager.RegisteredTalents[talentName] = nil
-				TalentManager.RegisteredCount[talentName] = 0
+			if TalentManager.RegisteredCount[talentId] <= 0 then
+				TalentManager.RegisteredTalents[talentId] = nil
+				TalentManager.RegisteredCount[talentId] = 0
 			end
+		end
+	end
+end
+
+---Hides a talent from the UI, effectively disabling the ability to select it.
+---@param talentId string
+---@param modID string
+function TalentManager.HideTalent(talentId, modID)
+	if talentId == "all" then
+		for talentId,enum in pairs(Data.TalentEnum) do
+			TalentManager.HideTalent(talentId, modID)
+		end
+	else
+		if TalentManager.HiddenTalents[talentId] == nil then
+			TalentManager.HiddenTalents[talentId] = {}
+		end
+		if TalentManager.HiddenTalents[talentId][modID] ~= true then
+			TalentManager.HiddenTalents[talentId][modID] = true
+			TalentManager.HiddenCount[talentId] = (TalentManager.HiddenCount[talentId] or 0) + 1
+		end
+	end
+end
+
+---Stops hiding a talent from the UI.
+---@param talentId string
+---@param modID string
+function TalentManager.UnhideTalent(talentId, modID)
+	if talentId == "all" then
+		for _,talent in pairs(Data.Talents) do
+			TalentManager.UnhideTalent(talent, modID)
+		end
+	else
+		local count = TalentManager.HiddenCount[talentId] or 0
+		local data = TalentManager.HiddenTalents[talentId]
+		if data ~= nil then
+			if TalentManager.HiddenTalents[talentId][modID] ~= nil then
+				TalentManager.HiddenTalents[talentId][modID] = nil
+				count = count - 1
+			end
+		end
+		if count <= 0 then
+			TalentManager.HiddenTalents[talentId] = nil
+			TalentManager.HiddenCount[talentId] = nil
+		else
+			TalentManager.HiddenCount[talentId] = count
 		end
 	end
 end
@@ -325,6 +376,11 @@ function TalentManager.TalentIsInArray(talentEnum, talent_array)
 	return false
 end
 
+local function TalentIsHidden(talentId)
+	local count = TalentManager.HiddenCount[talentId]
+	return count and count > 0
+end
+
 ---@class TalentMC_CC
 ---@field addTalentElement fun(id:int, name:string, isActive:boolean, isChooseable:boolean, isRacial:boolean):void 
 
@@ -332,7 +388,7 @@ end
 function TalentManager.Update_CC(ui, talent_mc, player)
 	for talentId,talentStat in pairs(missingTalents) do
 		--Same setup for CC in controller mode as well
-		if TalentManager.RegisteredCount[talentId] > 0 then
+		if TalentManager.RegisteredCount[talentId] > 0 and not TalentIsHidden(talentId) then
 			local talentEnum = Data.TalentEnum[talentId]
 			if not UI.IsInArray(ui, "talentArray", talentId, 1, 4) then
 				local talentState = TalentManager.GetTalentState(player, talentId)
@@ -347,7 +403,7 @@ function TalentManager.Update_CC(ui, talent_mc, player)
 	if Features.RacialTalentsDisplayFix then
 		for talentId,talentStat in pairs(racialTalents) do
 			local talentEnum = Data.TalentEnum[talentId]
-			if not UI.IsInArray(ui, "talentArray", talentId, 1, 4) then
+			if not TalentIsHidden(talentId) and not UI.IsInArray(ui, "talentArray", talentId, 1, 4) then
 				local talentState = TalentManager.GetTalentState(player, talentId)
 				local name = TalentManager.GetTalentDisplayName(player, talentId, talentState)
 				talent_mc.addTalentElement(talentEnum, name, player.Stats[talentStat], talentState ~= TalentState.Locked, true)
@@ -358,7 +414,7 @@ function TalentManager.Update_CC(ui, talent_mc, player)
 		end
 	end
 
-	if player.Stats.TALENT_RogueLoreDaggerBackStab or 
+	if not TalentIsHidden("RogueLoreDaggerBackStab") and player.Stats.TALENT_RogueLoreDaggerBackStab or 
 	(GameSettings.Settings.BackstabSettings.Player.Enabled and GameSettings.Settings.BackstabSettings.Player.TalentRequired) then
 		local talentEnum = Data.TalentEnum["RogueLoreDaggerBackStab"]
 		if not UI.IsInArray(ui, "talentArray", "RogueLoreDaggerBackStab", 1, 4) then
@@ -410,7 +466,7 @@ function TalentManager.Update(ui, player)
 	local i = #talent_array
 
 	for talentId,talentStat in pairs(missingTalents) do
-		if TalentManager.RegisteredCount[talentId] > 0 then
+		if not TalentIsHidden(talentId) and TalentManager.RegisteredCount[talentId] > 0 then
 			i = AddTalentToArray(ui, player, talent_array, talentId, lvlBtnTalent_array, i)
 		end
 	end
@@ -418,37 +474,17 @@ function TalentManager.Update(ui, player)
 	if Features.RacialTalentsDisplayFix then
 		i = #talent_array
 		for talentId,talentStat in pairs(racialTalents) do
-			if player.Stats[talentStat] == true then
+			if not TalentIsHidden(talentId) and player.Stats[talentStat] == true then
 				i = AddTalentToArray(ui, player, talent_array, talentId, lvlBtnTalent_array, i, true)
 			end
 		end
 	end
 
-	if player.Stats.TALENT_RogueLoreDaggerBackStab or 
+	if not TalentIsHidden("RogueLoreDaggerBackStab") and player.Stats.TALENT_RogueLoreDaggerBackStab or 
 	(GameSettings.Settings.BackstabSettings.Player.Enabled and GameSettings.Settings.BackstabSettings.Player.TalentRequired) then
 		i = #talent_array
 		AddTalentToArray(ui, player, talent_array, "RogueLoreDaggerBackStab", lvlBtnTalent_array, i)
 	end
-
-	-- if Vars.DebugMode then
-	-- 	print("lvlBtnTalent_array")
-	-- 	for i=0,#lvlBtnTalent_array,3 do
-	-- 		local canChoose = lvlBtnTalent_array[i]
-	-- 		if canChoose ~= nil then
-	-- 			local talentID = lvlBtnTalent_array[i+1]
-	-- 			local isRacial = lvlBtnTalent_array[i+2]
-	-- 			local displayName = LocalizedText.TalentNames[Data.Talents[talentID]]
-	-- 			if displayName then
-	-- 				displayName = displayName.Value
-	-- 			else
-	-- 				displayName = talentID
-	-- 			end
-	-- 			print(string.format("[%s] %s", i, canChoose))
-	-- 			print(string.format("[%s] %s (%s,%s)", i+1, talentID, Data.Talents[talentID], displayName))
-	-- 			print(string.format("[%s] %s", i+2, isRacial))
-	-- 		end
-	-- 	end
-	-- end
 end
 
 RegisterListener("LuaReset", function()
@@ -534,10 +570,136 @@ function TalentManager.LoadRequirements()
 	end
 end
 
+local function HideTalents(uiType)
+	local ui = Ext.GetUIByType(uiType)
+	if ui then
+		local main = ui:GetRoot()
+		if main then
+			local hasEntries = true
+			local removed = false
+			local list = nil
+			local idProperty = "id"
+			if uiType == Data.UIType.characterSheet then
+				list = main.stats_mc.talentHolder_mc.list
+				idProperty = "statId"
+			elseif uiType == Data.UIType.statsPanel_c then
+				list = main.mainpanel_mc.stats_mc.talents_mc.statList
+				idProperty = "id"
+			elseif uiType == Data.UIType.characterCreation then
+				list = main.CCPanel_mc.talents_mc.talentList
+				idProperty = "talentID"
+			elseif uiType == Data.UIType.characterCreation_c then
+				list = main.CCPanel_mc.talents_mc.contentList
+				idProperty = "contentID"
+			end
+			for talentId,count in pairs(TalentManager.HiddenCount) do
+				if count > 0 then
+					hasEntries = true
+					local talentEnum = Data.TalentEnum[talentId]
+					if uiType == Data.UIType.characterCreation_c then
+						if racialTalents[talentId] then
+							list = main.CCPanel_mc.talents_mc.racialList
+						else
+							list = main.CCPanel_mc.talents_mc.contentList
+						end
+					end
+					for i=0,#list.content_array do
+						local entry = list.content_array[i]
+						if entry and entry[idProperty] == talentEnum then
+							list.removeElement(i, false)
+							removed = true
+							break
+						end
+					end
+				end
+			end
+			if removed then
+				list.positionElements()
+			elseif Vars.DebugMode and hasEntries then
+				Ext.PrintError("Failed to remove any talents", Ext.JsonStringify(TalentManager.HiddenCount))
+			end
+		end
+	end
+end
+
+---@param ui UIObject
+local function DisplayTalents(ui, call, ...)
+	---@type EsvCharacter
+	local player = nil
+	local handle = ui:GetPlayerHandle()
+	if handle ~= nil then
+		player = Ext.GetCharacter(handle)
+	elseif Client.Character ~= nil then
+		player = Client:GetCharacter()
+	end
+	if player ~= nil then
+		TalentManager.Update(ui, player)
+		local length = #Listeners.OnTalentArrayUpdating
+		if length > 0 then
+			for i=1,length do
+				local callback = Listeners.OnTalentArrayUpdating[i]
+				local talentArrayStartIndex = UI.GetArrayIndexStart(ui, "talent_array", 3)
+				local b,err = xpcall(callback, debug.traceback, ui, player, talentArrayStartIndex, Data.TalentEnum)
+				if not b then
+					Ext.PrintError("Error calling function for 'OnTalentArrayUpdating':\n", err)
+				end
+			end
+		end
+
+		local typeid = ui:GetTypeId()
+		UIExtensions.StartTimer("LeaderLib_HideTalents_Sheet", 5, function(timerName, isComplete)
+			HideTalents(typeid)
+		end)
+	end
+end
+
+-- addTalentElement(talentId:uint, talentName:String, state:Boolean, choosable:Boolean, isRacial:Boolean) : *
+
+---@param ui UIObject
+local function DisplayTalents_CC(ui, call, ...)
+	if GameSettings.Default == nil then
+		-- This function may run before the game is "Running" and the settings load normally.
+		LoadGameSettings()
+	end
+
+	---@type EsvCharacter
+	local player = nil
+	local handle = ui:GetPlayerHandle()
+	if handle ~= nil then
+		player = Ext.GetCharacter(handle)
+	elseif  Client.Character ~= nil then
+		player = Client:GetCharacter()
+	end
+	if player ~= nil then
+		local root = ui:GetRoot()
+		local talent_mc = root.CCPanel_mc.talents_mc
+		TalentManager.Update_CC(ui, talent_mc, player)
+		local typeid = ui:GetTypeId()
+		UIExtensions.StartTimer("LeaderLib_HideTalents_CharacterCreation", 5, function(timerName, isComplete)
+			HideTalents(typeid)
+		end)
+	end
+end
+
 Ext.RegisterListener("SessionLoaded", function()
+	Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem", DisplayTalents)
+	Ext.RegisterUITypeInvokeListener(Data.UIType.statsPanel_c, "updateArraySystem", DisplayTalents)
+	--characterCreation.swf
+	Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateTalents", DisplayTalents_CC)
+	Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation_c, "updateTalents", DisplayTalents_CC)
+
+
 	TalentManager.LoadRequirements()
 	---Divine Talents
 	if Ext.IsModLoaded("ca32a698-d63e-4d20-92a7-dd83cba7bc56") or GameSettings.Settings.Client.DivineTalentsEnabled then
 		TalentManager.ToggleDivineTalents(true)
+	end
+
+	TalentManager.Gamepad.RegisterListeners()
+
+	if Vars.DebugMode then
+		TalentManager.HideTalent("all", "LeaderLib")
+		--TalentManager.HideTalent("Raistlin", "LeaderLib")
+		TalentManager.UnhideTalent("FaroutDude", "LeaderLib")
 	end
 end)

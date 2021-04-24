@@ -779,7 +779,7 @@ Ext.RegisterListener("SessionLoaded", function()
 	Game.Tooltip.RegisterListener("Rune", nil, OnRuneTooltip)
 	Game.Tooltip.RegisterListener("Skill", nil, OnSkillTooltip)
 	Game.Tooltip.RegisterListener("Status", nil, OnStatusTooltip)
-	Game.Tooltip.RegisterListener("Talent", nil, OnTalentTooltip)
+	--Game.Tooltip.RegisterListener("Talent", nil, OnTalentTooltip)
 	--Game.Tooltip.RegisterListener("Stat", nil, OnStatTooltip)
 	--Game.Tooltip.RegisterListener("CustomStat", nil, OnCustomStatTooltip)
 

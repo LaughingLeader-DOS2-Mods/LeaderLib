@@ -17,11 +17,13 @@ Ext.Require("Shared/Data/_Init.lua")
 Ext.Require("Shared/Helpers/SharedDataManager.lua")
 Ext.Require("Shared/Main.lua")
 Ext.Require("Shared/SharedDebug.lua")
+Ext.Require("Shared/Debug/TestingSystem.lua")
 Ext.Require("Shared/StatOverrides.lua")
 Ext.Require("Shared/FeaturesHandler.lua")
 Ext.Require("Shared/WingsWorkaround.lua")
 Ext.Require("Shared/SkipTutorial.lua")
 Ext.Require("Shared/AbilityAPI.lua")
--- if Vars.DebugMode then
--- 	Ext.Require("Shared/Debug/GameMathTracing.lua")
--- end
+if Vars.DebugMode then
+	--Ext.Require("Shared/Debug/GameMathTracing.lua")
+	Ext.Require("Shared/Debug/TestingSystem.lua")
+end

@@ -60,7 +60,6 @@ Ext.RegisterConsoleCommand("luareset", function(command, delay)
 	end
 end)
 
-
 Ext.RegisterConsoleCommand("testrespen", function(command, level)
 	local host = CharacterGetHostCharacter()
 	local x,y,z = GetPosition(host)
@@ -718,4 +717,12 @@ Ext.RegisterConsoleCommand("resurrectparty", function(command)
 			CharacterResurrect(v[1])
 		end
 	end
+end)
+
+Ext.RegisterConsoleCommand("sleeptest", function(command, delay)
+	delay = delay and tonumber(delay) or 2000
+	local timeStart = Ext.MonotonicTime()
+	fprint(LOGLEVEL.TRACE, "Sleeping Start(%s)", timeStart)
+	Common.Sleep(delay)
+	fprint(LOGLEVEL.TRACE, "Sleep done. Took %s ms", Ext.MonotonicTime() - timeStart)
 end)

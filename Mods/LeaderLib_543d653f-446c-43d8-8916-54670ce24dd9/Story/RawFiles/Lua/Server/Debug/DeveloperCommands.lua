@@ -720,9 +720,9 @@ Ext.RegisterConsoleCommand("resurrectparty", function(command)
 end)
 
 Ext.RegisterConsoleCommand("sleeptest", function(command, delay)
-	ApplyStatus(CharacterGetHostCharacter(), "HASTED", 12.0, 1, CharacterGetHostCharacter())
+	ApplyStatus(CharacterGetHostCharacter(), "HASTED", 6.0, 1, CharacterGetHostCharacter())
 	StartOneshotTimer("Timers_Commands_sleeptest", 500, function()
-		delay = delay and tonumber(delay) or 3000
+		delay = delay and tonumber(delay) or 6000
 		local timeStart = Ext.MonotonicTime()
 		fprint(LOGLEVEL.TRACE, "Sleeping Start(%s)", timeStart)
 		Common.Sleep(delay)

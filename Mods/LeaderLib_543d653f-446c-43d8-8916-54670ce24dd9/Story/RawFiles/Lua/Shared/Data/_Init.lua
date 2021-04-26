@@ -726,6 +726,13 @@ Data.UIType = {
 	worldTooltip = 48,
 }
 
+---@type table<integer, string>
+Data.UITypeToName = {}
+
+for k,v in pairs(Data.UIType) do
+	Data.UITypeToName[v] = k
+end
+
 Data.ArmorType = {
 	None = "None",
 	Cloth = "Cloth",

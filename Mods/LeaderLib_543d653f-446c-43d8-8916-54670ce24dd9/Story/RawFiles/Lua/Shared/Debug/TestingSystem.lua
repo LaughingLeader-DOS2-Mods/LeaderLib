@@ -1,11 +1,14 @@
+---@alias LuaTestOperationCallback fun(self:LuaTest):boolean
+---@alias LuaTestOnCompleteCallback fun(self:LuaTest):boolean
+
 ---@class LuaTest
 local LuaTest = {
 	Type = "LuaTest",
 	Name = "",
 	Context = Ext.IsClient() and "CLIENT" or "SERVER",
-	---@type function
+	---@type LuaTestOperationCallback
 	Operation = nil,
-	---@type function
+	---@type LuaTestOnCompleteCallback
 	OnComplete = nil,
 	Success = 0,
 	Active = false,
@@ -13,8 +16,8 @@ local LuaTest = {
 LuaTest.__index = LuaTest
 
 ---@param name string
----@param operationCallback function
----@param onComplete function|nil
+---@param operationCallback LuaTestOperationCallback
+---@param onComplete LuaTestOnCompleteCallback|nil
 ---@return LuaTest
 function LuaTest:Create(name, operationCallback, onComplete)
     local this =
@@ -29,6 +32,20 @@ function LuaTest:Create(name, operationCallback, onComplete)
     return this
 end
 
+function LuaTest:Complete(success, ...)
+	self.Success = success and 1 or -1
+	if self.OnComplete then
+		local b2,result2 = xpcall(self.OnComplete, debug.traceback, self, ...)
+		if not b2 then
+			fprint(LOGLEVEL.ERROR, "[LeaderLib:LuaTest:Run] Error with test.OnComplete (%s) Time(%s)\n%s", self.Name, Ext.MonotonicTime(), result2)
+			Ext.PrintError(result2)
+		end
+	end
+	fprint(LOGLEVEL.TRACE, "[LeaderLib:LuaTest:Run] Completed test (%s) Time(%s) Success(1)", self.Name, Ext.MonotonicTime())
+	self.Active = false
+	return self.Success
+end
+
 ---@return boolean
 function LuaTest:Run(...)
 	self.Active = true
@@ -41,23 +58,9 @@ function LuaTest:Run(...)
 		self.Active = false
 		return false
 	end
-	if result == true then
-		self.Success = 1
-		if self.OnComplete then
-			local b2,result2 = xpcall(self.OnComplete, debug.traceback, self, ...)
-			if not b2 then
-				fprint(LOGLEVEL.ERROR, "[LeaderLib:LuaTest:Run] Error with test.OnComplete (%s) Time(%s)\n%s", self.Name, Ext.MonotonicTime(), result2)
-				Ext.PrintError(result2)
-			end
-		end
-		fprint(LOGLEVEL.TRACE, "[LeaderLib:LuaTest:Run] Completed test (%s) Time(%s) Success(1)", self.Name, Ext.MonotonicTime())
-		self.Active = false
-		return true
+	if result ~= nil then
+		return self:Complete(result, ...)
 	end
-	fprint(LOGLEVEL.TRACE, "[LeaderLib:LuaTest:Run] Completed test (%s) Time(%s) Success(0)", self.Name, Ext.MonotonicTime())
-	self.Success = 0
-	self.Active = false
-	return true
 end
 
 if Testing == nil then
@@ -65,7 +68,7 @@ if Testing == nil then
 end
 
 ---@param name string
----@param operationCallback function
+---@param operationCallback LuaTestOperationCallback
 ---@return LuaTest
 function Testing.CreateTest(name, operation)
 	return LuaTest:Create(name, operation)

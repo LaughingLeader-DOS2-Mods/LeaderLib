@@ -36,8 +36,8 @@ Ext.Require("Client/UI/Game.Tooltip.Controllers.lua")
 Ext.Require("Client/UI/CharacterSheet.lua")
 Ext.Require("Client/UI/ModMenu/_Init.lua")
 if Vars.DebugMode then
-	Ext.Require("Client/UI/UIGeneralDebug.lua")
-	Ext.Require("Client/UI/Debug.lua")
+	Ext.Require("Client/Debug/UIGeneralDebug.lua")
+	Ext.Require("Client/Debug/UIDebugListeners.lua")
 end
 Ext.Require("Client/UI/TooltipHandler.lua")
 Ext.Require("Client/UI/ControllerUIHelpers.lua")

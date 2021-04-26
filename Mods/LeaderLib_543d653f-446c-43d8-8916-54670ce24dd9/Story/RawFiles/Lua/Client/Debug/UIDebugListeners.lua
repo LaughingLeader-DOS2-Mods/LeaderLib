@@ -11,9 +11,9 @@ UIListenerWrapper.__index = UIListenerWrapper
 
 ---@param self UIListenerWrapper
 ---@param ui UIObject
-local function OnUIListener(self, ui, ...)
+local function OnUIListener(self, ui, event, ...)
 	if self.Enabled then
-		fprint(LOGLEVEL.TRACE, "[UI:%s(%s)] %s", self.Name, ui:GetTypeId(), Common.Dump({...}))
+		fprint(LOGLEVEL.TRACE, "[UI:%s(%s)] %s(%s)", self.Name, ui:GetTypeId(), event, Common.Dump({...}))
 	end
 end
 
@@ -78,3 +78,41 @@ local worldTooltipCalls = {
 }
 
 UIListenerWrapper:Create(Data.UIType.worldTooltip, worldTooltipCalls, worldTooltipMethods)
+
+local examineCalls = {
+	"cancelDragging",
+	"cancelMoveWindow",
+	"hideTooltip",
+	"hideUI",
+	--"PlaySound",
+	"setPosition",
+	"showItemTooltip",
+	"showStatusTooltip",
+	"showTooltip",
+	"showUserInfo",
+	"startMoveWindow",
+}
+
+local examineMethods = {
+	"start",
+	"setAnchor",
+	"clearTooltip",
+	"setText",
+	"setPlayerProfile",
+	"showPortrait",
+	"addStat",
+	"addTitle",
+	"update",
+	"updateStatusses",
+	"addStatus",
+	"setStatusTitle",
+	"clearPanel",
+	"selectStat",
+	"addBtnHint",
+	"clearBtnHints",
+	"getGlobalPositionOfMC",
+	"showTooltipForMC",
+	"startsWith",
+}
+
+UIListenerWrapper:Create(Data.UIType.examine, examineCalls, examineMethods)

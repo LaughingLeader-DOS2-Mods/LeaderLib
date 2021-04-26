@@ -719,13 +719,21 @@ Ext.RegisterConsoleCommand("resurrectparty", function(command)
 	end
 end)
 
+local function sleep(timeInMilliseconds)
+	---This blocks the server thread while running, so best leave this only for debug mode
+	if Vars.DebugMode then
+		local time = Ext.MonotonicTime()
+		while Ext.MonotonicTime() - time <= timeInMilliseconds do end
+	end
+end
+
 Ext.RegisterConsoleCommand("sleeptest", function(command, delay)
 	ApplyStatus(CharacterGetHostCharacter(), "HASTED", 6.0, 1, CharacterGetHostCharacter())
 	StartOneshotTimer("Timers_Commands_sleeptest", 500, function()
 		delay = delay and tonumber(delay) or 6000
 		local timeStart = Ext.MonotonicTime()
 		fprint(LOGLEVEL.TRACE, "Sleeping Start(%s)", timeStart)
-		Common.Sleep(delay)
+		sleep(delay)
 		fprint(LOGLEVEL.TRACE, "Sleep done. Took %s ms", Ext.MonotonicTime() - timeStart)
 	end)
 end)

@@ -125,6 +125,9 @@ local function OnStatusRemoved(target,status)
 			ClearStatusSource(target, status)
 		end
 	end
+	if Vars.DebugMode then
+		fprint(LOGLEVEL.TRACE, "[LeaderLib:OnStatusRemoved] (%s, %s, %s)", target, status, source)
+	end
 	local callbacks = StatusListeners.Removed[status]
 	if callbacks then
 		for i=1,#callbacks do

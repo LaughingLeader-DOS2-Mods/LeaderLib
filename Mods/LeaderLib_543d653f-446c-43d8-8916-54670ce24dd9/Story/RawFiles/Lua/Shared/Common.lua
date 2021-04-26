@@ -420,6 +420,9 @@ Common.StringJoin = StringHelpers.Join
 Common.StringSplit = StringHelpers.Split
 
 function Common.Sleep(timeInMilliseconds)
-	local time = Ext.MonotonicTime()
-	while Ext.MonotonicTime() - time <= timeInMilliseconds do end
+	---This may block server code while running, so best leave this only for debug mode right now
+	if Vars.DebugMode then
+		local time = Ext.MonotonicTime()
+		while Ext.MonotonicTime() - time <= timeInMilliseconds do end
+	end
 end

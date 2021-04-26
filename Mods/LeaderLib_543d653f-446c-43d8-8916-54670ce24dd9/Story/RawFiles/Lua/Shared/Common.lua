@@ -418,3 +418,8 @@ Common.StringEquals = StringHelpers.Equals
 Common.StringIsNullOrEmpty = StringHelpers.IsNullOrEmpty
 Common.StringJoin = StringHelpers.Join
 Common.StringSplit = StringHelpers.Split
+
+function Common.Sleep(timeInMilliseconds)
+	local time = Ext.MonotonicTime()
+	while Ext.MonotonicTime() - time <= timeInMilliseconds do end
+end

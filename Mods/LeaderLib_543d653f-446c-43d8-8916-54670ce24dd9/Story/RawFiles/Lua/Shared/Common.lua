@@ -10,10 +10,55 @@ function Common.InitSeed()
 	end
 end
 
-function Common.FlattenTable(tbl)
+--Source: https://github.com/Luca96/lua-table, MIT License 2010
+---Flattens a nested table.
+---@param t table Either an array-like int indiced table, or any key-value pair type if deep is true.
+---@param deep boolean If true, key-value pair types of tables will be flattened as well.
+---@return table<int,any>
+function Common.FlattenTable(t, deep)
+	local queque = { t }
+	local result = table()
+	local base = 1
+	local top  = 1
+	local k = 1
+
+	if deep then
+		while base <= top do
+			local items = queque[base]
+			base = base + 1
+			for _, v in pairs(items) do
+				if type(v) == "table" then
+					top = top + 1
+					queque[top] = v
+				else
+					result[k] = v
+					k = k + 1
+				end
+			end
+		end
+	else
+		while base <= top do
+			local items = queque[base]
+			base = base + 1
+			for i = 1, #items do
+				local v = items[i]
+				if type(v) == "table" then
+					top = top + 1
+					queque[top] = v
+				else
+					result[k] = v
+					k = k + 1
+				end
+			end
+		end
+	end
+	return result
+end
+
+function Common.FlattenTable(tbl, deep)
 	local result = {}
 	local function flatten(tbl)
-		for _, v in pairs(tbl) do
+		for _,v in pairs(tbl) do
 			if type(v) == "table" then
 				flatten(v)
 			else
@@ -86,6 +131,25 @@ function Common.CopyTableToTable(target, copyFrom)
 			end
 		end
 	end
+end
+
+function Common.TableEquals(t1, t2, deepComparison)
+	deepComparison = deepComparison or false
+	local v1 = Common.FlattenTable(t1, deepComparison)
+	local v2 = Common.FlattenTable(t2, deepComparison)
+	local l1 = #v1
+	local l2 = #v2
+ 
+	if l1 == l2 then
+	   for i = 1, l1 do
+		  if v1[i] ~= v2[i] then
+			 return false
+		  end
+	   end
+	   return true
+	end
+ 
+	return false
 end
 
 local function PrintIndex(k, indexMap)
@@ -377,9 +441,9 @@ function Common.SafeguardParam(in_value, param_type, fallback_value)
 end
 
 function Common.Split(s, sep)
-    local fields = {}
-    local sep = sep or " "
-    local pattern = string.format("([^%s]+)", sep)
+	local fields = {}
+	local sep = sep or " "
+	local pattern = string.format("([^%s]+)", sep)
 	string.gsub(s, pattern, function(c) fields[#fields + 1] = c end)
 	if #fields == 0 then
 		return s

@@ -57,7 +57,15 @@ local DefaultSettings = {
 		}
 	},
 	Client = {
-		HideStatuses = false,
+		StatusOptions = {
+			HideAll = false,
+			---A list of statuses to hide if HideAll is false.
+			---@type table<string,boolean>
+			Blacklist = {},
+			---A list of statuses to show if HideAll is true.
+			---@type table<string,boolean>
+			Whitelist = {},
+		},
 		AlwaysDisplayWeaponScalingText = true,
 		DivineTalentsEnabled = false,
 	},
@@ -130,6 +138,9 @@ function LeaderLibGameSettings:MigrateSettings(tbl)
 		elseif tbl.MaxAPGroup == "NPC" then
 			self.Settings.APSettings.NPC.Enabled = true
 		end
+	end
+	if tbl.Client and tbl.Client.HideStatuses == true then
+		self.Settings.Client.StatusOptions.HideAll = true
 	end
 end
 
@@ -253,7 +264,7 @@ function LeaderLibGameSettings:Apply()
 		EnableFeature("BackstabCalculation")
 	end
 	if Ext.IsClient() then
-		UI.ToggleStatusVisibility(not self.Settings.Client.HideStatuses)
+		UI.ToggleStatusVisibility(not self.Settings.Client.StatusOptions.HideAll)
 		TalentManager.ToggleDivineTalents(self.Settings.Client.DivineTalentsEnabled)
 	end
 end

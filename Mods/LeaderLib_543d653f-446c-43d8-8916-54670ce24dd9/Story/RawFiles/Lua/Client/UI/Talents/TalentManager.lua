@@ -616,7 +616,7 @@ local function HideTalents(uiType)
 			if removed then
 				list.positionElements()
 			elseif Vars.DebugMode and hasEntries then
-				Ext.PrintError("Failed to remove any talents", Ext.JsonStringify(TalentManager.HiddenCount))
+				--Ext.PrintError("Failed to remove any talents", Ext.JsonStringify(TalentManager.HiddenCount))
 			end
 		end
 	end

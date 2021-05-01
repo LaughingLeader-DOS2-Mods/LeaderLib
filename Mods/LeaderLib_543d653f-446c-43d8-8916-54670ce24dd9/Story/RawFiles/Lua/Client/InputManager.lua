@@ -65,9 +65,9 @@ Ext.RegisterListener("InputEvent", function(evt)
 		end
 	end
 
-	if Vars.DebugMode then
-		fprint(LOGLEVEL.DEFAULT, "[ExtInputEvent] (%s) Pressed(%s) Time(%s)", eventName, evt.EventId, evt.Press, Ext.MonotonicTime())
-	end
+	-- if Vars.DebugMode then
+	-- 	fprint(LOGLEVEL.DEFAULT, "[ExtInputEvent] (%s) Pressed(%s) Time(%s)", eventName, evt.EventId, evt.Press, Ext.MonotonicTime())
+	-- end
 end)
 
 ---@param ui LeaderLibUIExtensions
@@ -78,9 +78,9 @@ function Input.OnFlashEvent(ui, call, pressed, eventName, arrayIndex)
 	local fireListeners = Input.Keys[eventName] ~= pressed
 	eventName = string.gsub(eventName, "IE ", "")
 	Input.Keys[eventName] = pressed
-	if Vars.DebugMode then
-		PrintLog("[Input.OnFlashEvent] eventName(%s) pressed(%s) index(%i)", eventName, pressed, arrayIndex)
-	end
+	-- if Vars.DebugMode then
+	-- 	PrintLog("[Input.OnFlashEvent] eventName(%s) pressed(%s) index(%i)", eventName, pressed, arrayIndex)
+	-- end
 	if fireListeners then
 		local id = Data.Input[eventName]
 		if type(id) == "table" then

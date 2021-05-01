@@ -273,7 +273,9 @@ end
 ---@param stat ObjectHandle
 ---@param tooltip TooltipData
 local function OnCustomStatTooltip(character, stat, tooltip)
-
+	if Vars.DebugMode then
+		print(character.Stats.Name, stat, Ext.JsonStringify(tooltip.Data))
+	end
 end
 
 local tooltipSwf = {
@@ -503,9 +505,9 @@ local function OnItemTooltip(item, tooltip)
 	if tooltip == nil then
 		return
 	end
-	if Vars.DebugMode then
-		Ext.PrintWarning("OnItemTooltip", item and item.StatsId or "nil", Ext.JsonStringify(tooltip.Data))
-	end
+	-- if Vars.DebugMode then
+	-- 	Ext.PrintWarning("OnItemTooltip", item and item.StatsId or "nil", Ext.JsonStringify(tooltip.Data))
+	-- end
 	if item ~= nil then
 		UI.Tooltip.LastItem = item
 		local character = Client:GetCharacter()
@@ -781,7 +783,7 @@ Ext.RegisterListener("SessionLoaded", function()
 	Game.Tooltip.RegisterListener("Status", nil, OnStatusTooltip)
 	--Game.Tooltip.RegisterListener("Talent", nil, OnTalentTooltip)
 	--Game.Tooltip.RegisterListener("Stat", nil, OnStatTooltip)
-	--Game.Tooltip.RegisterListener("CustomStat", nil, OnCustomStatTooltip)
+	Game.Tooltip.RegisterListener("CustomStat", nil, OnCustomStatTooltip)
 
 	-- Ext.RegisterUITypeInvokeListener(Data.UIType.tooltip, "addTooltip", function(ui, method, text, xPos, yPos, ...)
 	-- 	InvokeListenerCallbacks(Listeners.OnAddTooltip, ui, text, xPos, yPos, ...)

@@ -66,7 +66,7 @@ function LuaTest:AssertEquals(target, expected, extraMsg, deepTableComparison)
 			self:Failure(ValueErrorMessage("Values not equal. ", target, expected, t1, t2, extraMsg), 2)
 		end
 	elseif target ~= expected then
-		self:Failure(ValueErrorMessage(t"Values not equal. ", target, expected, t1, t2, extraMsg), 2)
+		self:Failure(ValueErrorMessage("Values not equal. ", target, expected, t1, t2, extraMsg), 2)
 	end
 end
 

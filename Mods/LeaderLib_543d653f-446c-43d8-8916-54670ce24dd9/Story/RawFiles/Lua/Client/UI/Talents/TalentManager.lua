@@ -697,9 +697,9 @@ Ext.RegisterListener("SessionLoaded", function()
 
 	TalentManager.Gamepad.RegisterListeners()
 
-	if Vars.DebugMode then
-		TalentManager.HideTalent("all", "LeaderLib")
-		--TalentManager.HideTalent("Raistlin", "LeaderLib")
-		TalentManager.UnhideTalent("FaroutDude", "LeaderLib")
-	end
+	-- if Vars.DebugMode then
+	-- 	TalentManager.HideTalent("all", "LeaderLib")
+	-- 	--TalentManager.HideTalent("Raistlin", "LeaderLib")
+	-- 	TalentManager.UnhideTalent("FaroutDude", "LeaderLib")
+	-- end
 end)

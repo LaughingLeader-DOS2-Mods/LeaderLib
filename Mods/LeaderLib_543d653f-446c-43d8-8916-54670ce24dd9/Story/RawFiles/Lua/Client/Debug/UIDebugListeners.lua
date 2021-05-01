@@ -5,7 +5,8 @@ local UIListenerWrapper = {
 	Calls = {},
 	Methods = {},
 	ID = -1,
-	Enabled = true
+	Enabled = true,
+	CustomCallback = {},
 }
 UIListenerWrapper.__index = UIListenerWrapper
 
@@ -14,6 +15,10 @@ UIListenerWrapper.__index = UIListenerWrapper
 local function OnUIListener(self, ui, event, ...)
 	if self.Enabled then
 		fprint(LOGLEVEL.TRACE, "[UI:%s(%s)] %s(%s)", self.Name, ui:GetTypeId(), event, Common.Dump({...}))
+
+		if self.CustomCallback[event] then
+			self.CustomCallback[event](self, ui, event, ...)
+		end
 	end
 end
 
@@ -22,7 +27,8 @@ function UIListenerWrapper:Create(id, calls, methods)
 		ID = id,
 		Calls = calls or {},
 		Methods = methods or {},
-		Enabled = true
+		Enabled = true,
+		CustomCallback = {}
 	}
 
 	this.Name = Data.UITypeToName[id] or ""
@@ -116,3 +122,57 @@ local examineMethods = {
 }
 
 UIListenerWrapper:Create(Data.UIType.examine, examineCalls, examineMethods)
+
+local tooltipCalls = {
+	"keepUIinScreen",
+	"setTooltipSize",
+}
+
+local tooltipMethods = {
+	"setGroupLabel",
+	"setWindow",
+	"strReplace",
+	"traceArray",
+	"addFormattedTooltip",
+	"addStatusTooltip",
+	"addTooltip",
+	"swapCompare",
+	"showFormattedTooltipAfterPos",
+	"setCompare",
+	"addCompareTooltip",
+	"addCompareOffhandTooltip",
+	"INTshowTooltip",
+	"onShowCompareTooltip",
+	"startModeTimer",
+	"resetTooltipMode",
+	"onMove",
+	"INTRemoveTooltip",
+	"removeTooltip",
+	"fadeOutTooltip",
+	"checkTooltipBoundaries",
+	"getTooltipHeight",
+	"getTooltipWidth",
+}
+
+local tooltipDebug = UIListenerWrapper:Create(Data.UIType.tooltip, tooltipCalls, tooltipMethods)
+-- tooltipDebug.CustomCallback["addFormattedTooltip"] = function(self, ui, call, ...)
+-- 	local main = ui:GetRoot()
+-- 	for i=0,#main.tooltip_array do
+-- 		local obj = main.tooltip_array[i]
+-- 		if obj then
+-- 			print(i, obj)
+-- 		end
+-- 	end
+-- end
+
+local sheetCalls = {
+	"showTooltip",
+	"showStatusTooltip",
+	"showItemTooltip",
+}
+
+local sheetMethods = {
+
+}
+
+local tooltipDebug = UIListenerWrapper:Create(Data.UIType.characterSheet, sheetCalls, sheetMethods)

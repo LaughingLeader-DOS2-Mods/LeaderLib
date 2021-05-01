@@ -328,6 +328,9 @@ local function TryFindUI(ui, tryFindId)
 	else
 		id = ui:GetTypeId() or tryFindId
 	end
+	if id == Data.UIType.characterSheet then
+		ui:Invoke("setGameMasterMode", true, true, true)
+	end
 	-- if id == nil then
 	-- 	return nil
 	-- end

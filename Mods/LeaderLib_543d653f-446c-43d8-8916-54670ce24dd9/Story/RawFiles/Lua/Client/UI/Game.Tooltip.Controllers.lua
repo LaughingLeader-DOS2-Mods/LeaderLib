@@ -11,6 +11,7 @@ local Mods = Mods
 local Game = Game
 local LOGLEVEL = LOGLEVEL
 local fprint = fprint
+local Dump = Common.Dump
 
 Game.Tooltip = {}
 
@@ -903,11 +904,11 @@ function TooltipHooks:OnRequestTooltip(ui, method, arg1, arg2, arg3, ...)
 	local isCharSheet = ui:GetTypeId() == 119
 
 	if method == "showSkillTooltip" then
-		request.Type = 'Skill'
+		request.Type = "Skill"
 		request.Character = Ext.DoubleToHandle(arg1)
 		request.Skill = arg2
 	elseif method == "showStatusTooltip" then
-		request.Type = 'Status'
+		request.Type = "Status"
 		request.Character = Ext.DoubleToHandle(arg1)
 		request.Status = Ext.DoubleToHandle(arg2)
 	elseif method == "showItemTooltip" then
@@ -915,10 +916,10 @@ function TooltipHooks:OnRequestTooltip(ui, method, arg1, arg2, arg3, ...)
 			-- Item handle will be nil when it's being dragged
 			return
 		end
-		request.Type = 'Item'
+		request.Type = "Item"
 		request.Item = Ext.DoubleToHandle(arg1)
 	elseif method == "showStatTooltip" then
-		request.Type = 'Stat'
+		request.Type = "Stat"
 		if isCharSheet then
 			request.Character = ui:GetPlayerHandle()
 			request.Stat = arg1
@@ -935,7 +936,7 @@ function TooltipHooks:OnRequestTooltip(ui, method, arg1, arg2, arg3, ...)
 		end
 	elseif method == "showCustomStatTooltip" then
 		--ExternalInterface.call(eventName,obj.statId,globalPos.x + tooltipOffsetX,globalPos.y + tooltipOffsetY,tooltipWidth,obj.height,obj.tooltipAlign);
-		request.Type = 'CustomStat'
+		request.Type = "CustomStat"
 		if isCharSheet then
 			request.Character = ui:GetPlayerHandle()
 			request.Stat = Ext.DoubleToHandle(arg1)
@@ -944,7 +945,7 @@ function TooltipHooks:OnRequestTooltip(ui, method, arg1, arg2, arg3, ...)
 			request.Stat = arg2
 		end
 	elseif method == "showAbilityTooltip" then
-		request.Type = 'Ability'
+		request.Type = "Ability"
 		if isCharSheet then
 			request.Character = ui:GetPlayerHandle()
 			request.Ability = arg1
@@ -955,7 +956,7 @@ function TooltipHooks:OnRequestTooltip(ui, method, arg1, arg2, arg3, ...)
 
 		request.Ability = Ext.EnumIndexToLabel("AbilityType", request.Ability)
 	elseif method == "showTalentTooltip" then
-		request.Type = 'Talent'
+		request.Type = "Talent"
 		if isCharSheet then
 			request.Character = ui:GetPlayerHandle()
 			request.Talent = arg1
@@ -1002,7 +1003,8 @@ function TooltipHooks:OnRequestTooltip(ui, method, arg1, arg2, arg3, ...)
 	end
 
 	if self.NextRequest ~= nil then
-		Ext.PrintWarning("Previous tooltip request not cleared in render callback?")
+		Ext.PrintWarning(Dump(self.NextRequest))
+		Ext.PrintWarning("Previous tooltip request not cleared in render callback?", method, Dump(request))
 	end
 
 	self.NextRequest = request
@@ -1015,20 +1017,20 @@ function TooltipHooks:OnRequestExamineUITooltip(ui, method, typeIndex, id, ...)
 	}
 
 	if typeIndex == 1 then
-		request.Type = 'Stat'
+		request.Type = "Stat"
 		request.Stat = TooltipStatAttributes[id]
 
 		if request.Stat == nil then
 			Ext.PrintWarning("Requested tooltip for unknown stat ID " .. id)
 		end
 	elseif typeIndex == 2 then
-		request.Type = 'Ability'
+		request.Type = "Ability"
 		request.Ability = Ext.EnumIndexToLabel("AbilityType", id)
 	elseif typeIndex == 3 then
-		request.Type = 'Talent'
+		request.Type = "Talent"
 		request.Talent = Ext.EnumIndexToLabel("TalentType", id)
 	elseif typeIndex == 7 then
-		request.Type = 'Status'
+		request.Type = "Status"
 		request.Status = Ext.GetStatus(request.Character.Handle, Ext.DoubleToHandle(id))
 	else
 		return
@@ -1234,6 +1236,9 @@ function TooltipHooks:OnRequestConsoleExamineTooltip(ui, method, id, characterHa
 		else
 			Ext.PrintWarning("Requested tooltip for unknown stat ID " .. request.Stat)
 		end
+	elseif method == "selectCustomStat" then
+		request.Type = "CustomStat"
+		request.Stat = Ext.DoubleToHandle(id)
 	elseif method == "selectTag" then
 		request.Type = "Tag"
 		request.Tag = id
@@ -1422,16 +1427,22 @@ end
 function TooltipHooks:NotifyListeners(type, name, request, tooltip, ...)
 	local args = {...}
 	table.insert(args, tooltip)
-	self:NotifyAll(self.TypeListeners[type], table.unpack(args))
-	if name ~= nil and self.ObjectListeners[type] ~= nil then
-		self:NotifyAll(self.ObjectListeners[type][name], table.unpack(args))
+	local listeners = self.TypeListeners[type]
+	if listeners then
+		self:NotifyAll(listeners, table.unpack(args))
+		if name and listeners and listeners[name] then
+			self:NotifyAll(listeners[name], table.unpack(args))
+		end
 	end
 
 	self:NotifyAll(self.GlobalListeners, request, tooltip)
 end
 
 function TooltipHooks:NotifyAll(listeners, ...)
-	for i,callback in pairs(listeners or {}) do
+	if not listeners then
+		return
+	end
+	for i,callback in pairs(listeners) do
 		local status, err = xpcall(callback, debug.traceback, ...)
 		if not status then
 			Ext.PrintError("Error during tooltip callback: ", err)

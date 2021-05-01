@@ -27,6 +27,9 @@ package
 		public var timers:Array;
 
 		public var listeningForMouse:Boolean = false;
+
+		public var globalToLocalX:Number = 0;
+		public var globalToLocalY:Number = 0;
 		
 		public function MainTimeline()
 		{
@@ -200,6 +203,14 @@ package
 					}
 				}
 			}
+		}
+
+		public function setGlobalToLocalPosition(x:Number, y:Number) : *
+		{
+			var globalPt:Point = new Point(x,y);
+			var localPt:Point = this.globalToLocal(globalPt);
+			globalToLocalX = localPt.x;
+			globalToLocalY = localPt.y;
 		}
 
 		public function removeTimer(timer:ClientTimer, removeFromArray:Boolean = false) : *

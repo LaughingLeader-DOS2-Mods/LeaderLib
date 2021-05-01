@@ -244,4 +244,23 @@ function UIExtensions.EnableMouseListeners(enabled)
 	UIExtensions.MouseEnabled = enabled
 end
 
+function UIExtensions.GetMousePosition()
+	UIExtensions.SetupInstance()
+	local main = UIExtensions.Instance:GetRoot()
+	if main then
+		return main.mouseX,main.mouseY
+	end
+	return 0,0
+end
+
+function UIExtensions.GlobalToLocalPosition(x, y)
+	UIExtensions.SetupInstance()
+	local main = UIExtensions.Instance:GetRoot()
+	if main then
+		main.setGlobalToLocalPosition(x, y)
+		return main.globalToLocalX,main.globalToLocalY
+	end
+	return 0,0
+end
+
 Ext.RegisterListener("SessionLoaded", UIExtensions.SetupInstance)

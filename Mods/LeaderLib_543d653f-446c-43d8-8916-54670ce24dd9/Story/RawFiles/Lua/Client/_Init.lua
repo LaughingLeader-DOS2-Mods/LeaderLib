@@ -32,14 +32,14 @@ Ext.Require("Client/InputManager.lua")
 
 Ext.Require("Client/Helpers/UIHelpers.lua")
 
-Ext.Require("Client/UI/Game.Tooltip.Controllers.lua")
+Ext.Require("Client/UI/Tooltips/Game.Tooltip.Extended.lua")
 Ext.Require("Client/UI/CharacterSheet.lua")
 Ext.Require("Client/UI/ModMenu/_Init.lua")
 if Vars.DebugMode then
 	Ext.Require("Client/Debug/UIGeneralDebug.lua")
 	Ext.Require("Client/Debug/UIDebugListeners.lua")
 end
-Ext.Require("Client/UI/TooltipHandler.lua")
+Ext.Require("Client/UI/Tooltips/TooltipHandler.lua")
 Ext.Require("Client/UI/ControllerUIHelpers.lua")
 Ext.Require("Client/UI/UIFeatures.lua")
 Ext.Require("Client/UI/UIExtensions.lua")

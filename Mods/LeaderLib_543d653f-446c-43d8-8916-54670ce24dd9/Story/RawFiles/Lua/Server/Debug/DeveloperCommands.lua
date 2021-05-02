@@ -737,3 +737,42 @@ Ext.RegisterConsoleCommand("sleeptest", function(command, delay)
 		fprint(LOGLEVEL.TRACE, "Sleep done. Took %s ms", Ext.MonotonicTime() - timeStart)
 	end)
 end)
+
+local function RemoveTempChar(v)
+	print("Removing", v)
+	SetCanJoinCombat(v, 0)
+	SetCanFight(v, 0)
+	CharacterSetDetached(v, 1)
+	LeaveCombat(v)
+	StartOneshotTimer("Timers_DebugRemoveTemp"..v, 250, function()
+		RemoveTemporaryCharacter(v)
+	end)
+end
+
+Ext.RegisterConsoleCommand("removetemporycharacters", function(command, radius)
+	if radius then
+		local radius = tonumber(radius) or 24.0
+		local host = Ext.GetCharacter(CharacterGetHostCharacter())
+		for i,v in pairs(host:GetNearbyCharacters(radius)) do
+			if IsTagged(v, "LeaderLib_TemporaryCharacter") == 1 then
+				RemoveTempChar(v)
+			else
+				local char = Ext.GetCharacter(v)
+				if char and char.Temporary then
+					RemoveTempChar(v)
+				end
+			end
+		end
+	else
+		for i,v in pairs(Ext.GetAllCharacters(SharedData.RegionData.Current)) do
+			if IsTagged(v, "LeaderLib_TemporaryCharacter") == 1 then
+				RemoveTempChar(v)
+			else
+				local char = Ext.GetCharacter(v)
+				if char and char.Temporary then
+					RemoveTempChar(v)
+				end
+			end
+		end
+	end
+end)

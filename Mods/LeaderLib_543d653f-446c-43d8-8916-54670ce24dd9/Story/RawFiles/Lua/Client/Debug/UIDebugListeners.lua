@@ -154,7 +154,7 @@ local tooltipMethods = {
 	"getTooltipWidth",
 }
 
-local tooltipDebug = UIListenerWrapper:Create(Data.UIType.tooltip, tooltipCalls, tooltipMethods)
+--local tooltipDebug = UIListenerWrapper:Create(Data.UIType.tooltip, tooltipCalls, tooltipMethods)
 -- tooltipDebug.CustomCallback["addFormattedTooltip"] = function(self, ui, call, ...)
 -- 	local main = ui:GetRoot()
 -- 	for i=0,#main.tooltip_array do
@@ -175,4 +175,4 @@ local sheetMethods = {
 
 }
 
-local tooltipDebug = UIListenerWrapper:Create(Data.UIType.characterSheet, sheetCalls, sheetMethods)
+local characterSheetDebug = UIListenerWrapper:Create(Data.UIType.characterSheet, sheetCalls, sheetMethods)

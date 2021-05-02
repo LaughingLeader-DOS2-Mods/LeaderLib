@@ -190,7 +190,7 @@ Ext.RegisterNetListener("LeaderLib_Hotbar_SetSlotEnabled", function(call, dataSt
 	end
 end)
 
-Ext.RegisterNetListener("LeaderLib_Hotbar_Refresh", function(call, uuid)
+Ext.RegisterNetListener("LeaderLib_Hotbar_Refresh", function(call, payload)
 	local ui = Ext.GetBuiltinUI("Public/Game/GUI/hotBar.swf")
 	if ui ~= nil then
 		ui:ExternalInterfaceCall("updateSlots", ui:GetValue("maxSlots", "number"))

@@ -38,14 +38,21 @@ end
 GameHelpers.UI.SetSkillEnabled = SetSkillEnabled
 
 ---Refresh the whole active skillbar. Useful for refreshing if a skill is clickable from tag requirements changing.
----@param client string Client character UUID.
+---@param client string|integer|EsvCharacter Client character UUID, user ID, or EsvCharacter.
 function RefreshSkillBar(client)
-	if CharacterIsPlayer(client) == 1 and Ext.GetGameState() == "Running" then
-		local id = CharacterGetReservedUserID(client)
-		if id ~= nil then
-			Ext.PostMessageToUser(id, "LeaderLib_Hotbar_Refresh", StringHelpers.GetUUID(client))
+	local t = type(client)
+	if t == "string" then
+		if CharacterIsPlayer(client) == 1 and Ext.GetGameState() == "Running" then
+			local id = CharacterGetReservedUserID(client)
+			if id ~= nil then
+				--Ext.PostMessageToClient(client, "LeaderLib_Hotbar_Refresh", "")
+				Ext.PostMessageToUser(id, "LeaderLib_Hotbar_Refresh", "")
+			end
 		end
-		--Ext.PostMessageToClient(client, "LeaderLib_Hotbar_Refresh", GetUUID(client))
+	elseif t == "number" then
+		Ext.PostMessageToUser(client, "LeaderLib_Hotbar_Refresh", "")
+	elseif  t == "userdata" and client.NetID then
+		Ext.PostMessageToUser(client.NetID, "LeaderLib_Hotbar_Refresh", "")
 	end
 end
 

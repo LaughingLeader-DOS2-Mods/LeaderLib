@@ -744,7 +744,7 @@ local function RemoveTempChar(v)
 	SetCanFight(v, 0)
 	CharacterSetDetached(v, 1)
 	LeaveCombat(v)
-	StartOneshotTimer("Timers_DebugRemoveTemp"..v, 250, function()
+	StartOneshotTimer(string.format("Timers_DebugRemoveTemp%s", v), 250, function()
 		RemoveTemporaryCharacter(v)
 	end)
 end

@@ -55,12 +55,12 @@ local function ValueErrorMessage(msg, target, expected, t1, t2, extraMsg)
 		v2 = Common.Dump(expected)
 	end
 	if t1 ~= "nil" and t2 ~= "nil" then
-		return string.format("%s%s Actual (%s)[%s] Expected (%s)[%s]", (extraMsg ~= nil and string.format("%s/", extraMsg) or ""), msg, v1, t1, v2, t2)
+		return string.format("%s%s Actual (%s)[%s] Expected (%s)[%s]", (extraMsg ~= nil and string.format("%s ", extraMsg) or ""), msg, v1, t1, v2, t2)
 	else
 		if v1 == nil and v2 == nil then
-			return string.format("%s%s Both values are nil.", (extraMsg ~= nil and string.format("%s/", extraMsg) or ""), msg)
+			return string.format("%s%s Both values are nil.", (extraMsg ~= nil and string.format("%s ", extraMsg) or ""), msg)
 		else
-			return string.format("%s%s Actual (%s) Expected (%s)", (extraMsg ~= nil and string.format("%s/", extraMsg) or ""), msg, v1, v2)
+			return string.format("%s%s Actual (%s) Expected (%s)", (extraMsg ~= nil and string.format("%s ", extraMsg) or ""), msg, v1, v2)
 		end
 	end
 end
@@ -78,13 +78,13 @@ function LuaTest:AssertEquals(target, expected, extraMsg, deepTableComparison)
 	local t1 = type(target)
 	local t2 = type(expected)
 	if t1 ~= t2 then
-		self:Failure(ValueErrorMessage("Values not equal.", target, expected, t1, t2, extraMsg), 3)
+		self:Failure(ValueErrorMessage("Assert failed: values not equal.", target, expected, t1, t2, extraMsg), 3)
 	elseif t1 == "table" and t2 == "table" then
 		if not Common.TableEquals(target, expected, deepTableComparison) then
-			self:Failure(ValueErrorMessage("Values not equal.", target, expected, t1, t2, extraMsg), 3)
+			self:Failure(ValueErrorMessage("Assert failed: values not equal.", target, expected, t1, t2, extraMsg), 3)
 		end
 	elseif target ~= expected then
-		self:Failure(ValueErrorMessage("Values not equal.", target, expected, t1, t2, extraMsg), 3)
+		self:Failure(ValueErrorMessage("Assert failed: values not equal.", target, expected, t1, t2, extraMsg), 3)
 	end
 end
 

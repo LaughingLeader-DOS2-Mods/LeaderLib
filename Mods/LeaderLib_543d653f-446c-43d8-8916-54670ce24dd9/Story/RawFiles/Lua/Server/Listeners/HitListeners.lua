@@ -52,15 +52,32 @@ local function OnHit(target, source, damage, handle)
 			fprint(LOGLEVEL.TRACE, "[NRD_OnHit] Target(%s) Source(%s) damage(%i) Handle(%i) HitType(%s)", target, source, damage, handle, NRD_StatusGetInt(target, handle, "HitReason"))
 		end
 	end
-	local skillprototype = NRD_StatusGetString(target, handle, "SkillId")
+	if ObjectExists(target) == 0 then
+		return
+	end
+
+	---@type EsvStatusHit
+	local statusObj = Ext.GetStatus(target, handle)
+	if statusObj == nil then
+		return
+	end
+	local skillprototype = statusObj.SkillId
 	local skill = nil
-	if skillprototype ~= "" and skillprototype ~= nil then
-		skill = string.gsub(skillprototype, "_%-?%d+$", "")
+	if not StringHelpers.IsNullOrEmpty(statusObj.SkillId) then
+		skill = string.gsub(statusObj.SkillId, "_%-?%d+$", "")
 		OnSkillHit(source, skill, target, handle, damage)
 	end
 
-	if source ~= nil and Features.ApplyBonusWeaponStatuses == true and GameHelpers.HitWithWeapon(target, handle, nil, nil, source) then
-		GameHelpers.ApplyBonusWeaponStatuses(source, target)
+	if Features.ApplyBonusWeaponStatuses == true and not StringHelpers.IsNullOrEmpty(source) then
+		if skill ~= nil then
+			if Ext.StatGetAttribute(skill, "UseWeaponProperties") == "Yes" and GameHelpers.Hit.IsFromWeapon(statusObj, true) then
+				GameHelpers.ApplyBonusWeaponStatuses(source, target)
+			end
+		else
+			if GameHelpers.Hit.IsFromWeapon(statusObj) then
+				GameHelpers.ApplyBonusWeaponStatuses(source, target)
+			end
+		end
 	end
 
 	InvokeListenerCallbacks(Listeners.OnHit, target, source, damage, handle, skill)

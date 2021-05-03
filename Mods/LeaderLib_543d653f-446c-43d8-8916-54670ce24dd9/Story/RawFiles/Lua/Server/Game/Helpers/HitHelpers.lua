@@ -116,3 +116,67 @@ function GameHelpers.HitWithWeapon(target, handle, is_hit, allowSkills, source)
         return false
     end
 end
+
+-- local HitReasonToInt = {
+--     Melee = 0,
+--     Magic = 1,
+--     Ranged = 2,
+--     WeaponDamage = 3,
+--     Surface = 4,
+--     DoT = 5,
+--     Reflected = 6,
+-- }
+
+-- local DamageSourceTypeToInt = {
+--     None = 0,
+--     SurfaceMove = 1,
+--     SurfaceCreate = 2,
+--     SurfaceStatus = 3,
+--     StatusEnter = 4,
+--     StatusTick = 5,
+--     Attack = 6,
+--     Offhand = 7,
+--     GM = 8,
+-- }
+
+local WeaponHitProperties = {
+    HitReason = {
+        Melee = true,
+        Magic = true,
+    },
+    DamageSourceType = {
+        Attack = true,
+        Offhand = true
+    }
+}
+
+local WeaponSkillHitReason = {
+    Melee = true,
+    Magic = true,
+    WeaponDamage = true,
+}
+
+---Returns true if a hit is from a basic attack.
+---@param hit EsvStatusHit
+---@return boolean
+function GameHelpers.Hit.IsFromWeapon(hit, allowSkills)
+    if hit == nil then
+        return false
+    end
+    if hit.HitReason == "Melee" then
+        return true
+    end
+    
+    if WeaponHitProperties.DamageSourceType[hit.DamageSourceType] == true and hit.HitReason then
+        if allowSkills == true then
+            if not StringHelpers.IsNullOrEmpty(hit.SkillId) then
+                local skill = string.gsub(hit.SkillId, "_%-?%d+$", "")
+                if Ext.StatGetAttribute(skill, "UseWeaponDamage") == "Yes" and WeaponSkillHitReason[hit.HitReason] == true then
+                    return true
+                end
+            end
+        end
+        return WeaponHitProperties.HitReason[hit.HitReason] == true and hit.WeaponHandle ~= nil
+    end
+    return false
+end

@@ -278,6 +278,10 @@ function SettingsData:ApplyVariables(uuid, callback)
 	end
 end
 
+---Gets a variable's value.
+---@param name string
+---@param fallback any
+---@return number|string
 function SettingsData:GetVariable(name, fallback)
 	local data = self.Variables[name]
 	if data ~= nil then

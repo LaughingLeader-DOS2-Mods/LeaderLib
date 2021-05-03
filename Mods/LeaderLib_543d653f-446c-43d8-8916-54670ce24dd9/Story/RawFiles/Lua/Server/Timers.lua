@@ -31,11 +31,11 @@ end
 ---@param delay integer
 ---@vararg string
 function StartTimer(event, delay, ...)
-	if Vars.DebugMode then
-		fprint(LOGLEVEL.TRACE, "LeaderLib:StartTimer(%s, %s, %s)", event, delay, Common.Dump({...}))
-	end
-	local status,err = xpcall(TryStartTimer, debug.traceback, event, delay, {...})
-	if not status then
+	-- if Vars.DebugMode then
+	-- 	fprint(LOGLEVEL.TRACE, "LeaderLib:StartTimer(%s, %s, %s)", event, delay, Common.Dump({...}))
+	-- end
+	local b,err = xpcall(TryStartTimer, debug.traceback, event, delay, {...})
+	if not b then
 		Ext.PrintError("[LeaderLib:StartTimer] Error starting timer:\n", err)
 	end
 end

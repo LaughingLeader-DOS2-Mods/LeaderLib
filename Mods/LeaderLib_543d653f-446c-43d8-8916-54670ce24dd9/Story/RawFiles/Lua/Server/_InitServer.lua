@@ -28,6 +28,7 @@ Ext.Require("Server/Debug/ConsoleCommands.lua")
 if Vars.DebugMode then
 	Ext.Require("Server/Debug/DebugMain.lua")
 	Ext.Require("Server/Debug/DeveloperCommands.lua")
+	Ext.Require("Server/Debug/CoroutineTests.lua")
 end
 
 local function table_has_index(tbl, index)

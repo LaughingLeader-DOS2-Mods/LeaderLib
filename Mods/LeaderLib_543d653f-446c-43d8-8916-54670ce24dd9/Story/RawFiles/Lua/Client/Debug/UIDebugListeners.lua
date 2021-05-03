@@ -176,3 +176,91 @@ local sheetMethods = {
 }
 
 local characterSheetDebug = UIListenerWrapper:Create(Data.UIType.characterSheet, sheetCalls, sheetMethods)
+
+local sheetCalls = {
+	"addPoints",
+	"disablePointsAssign",
+	"enablePointsAssign",
+	"hideTooltip",
+	"hideUI",
+	"inputFocus",
+	"inputFocusLost",
+	"registerAnchorId",
+	"removePoints",
+	"selectAbility",
+	"selectCustomStat",
+	"selectedAttribute",
+	"selectStat",
+	"selectStatsTab",
+	"selectStatus",
+	"selectTag",
+	"selectTalent",
+	"setAnchor",
+	"showEquipment",
+	"showInventory",
+	"showSkills",
+}
+
+local sheetMethods = {
+	"setPanelTitle",
+	"setAnchor",
+	"setPlayer",
+	"setHLOnRT",
+	"setHLOnLT",
+	"clearTooltip",
+	"enableTooltip",
+	"setTooltip",
+	"showTooltip",
+	"setText",
+	"resetReputationPos",
+	"addBtnHint",
+	"clearBtnHints",
+	"showPanel",
+	"addInfoStat",
+	"setInfoStatValue",
+	"addInfoStatSpacing",
+	"clearInfoStats",
+	"setExperience",
+	"setNextLevelStats",
+	"setStatPoints",
+	"showBreadcrumb",
+	"setPointAssignMode",
+	"selectTab",
+	"updateStatuses",
+	"selectFirstStatus",
+	"setStatus",
+	"clearStatuses",
+	"updateArraySystem",
+	"setAmountOfPlayers",
+	"addAbility",
+	"removeAbilities",
+	"addAbilityGroup",
+	"addTalent",
+	"removeTalents",
+	"addTag",
+	"addCustomStat",
+	"clearCustomStats",
+	"clearTags",
+	"addStatsTab",
+	"removeStatsTabs",
+	"selectStatsTab",
+	"setMainInfoStats",
+	"setAttribute",
+	"setAttributeLabel",
+	"setActionsDisabled",
+	"startsWith",		
+}
+
+local statsPanelDebug = UIListenerWrapper:Create(Data.UIType.statsPanel_c, sheetCalls, sheetMethods)
+statsPanelDebug.CustomCallback["updateArraySystem"] = function(self, ui, method)
+	local arr = ui:GetRoot().customStats_array
+	if arr then
+		local length = #arr
+		print("customStats_array", length)
+		if length > 0 then
+			for i=0,length do
+				print(i, arr[i])
+			end
+		end
+	end
+end

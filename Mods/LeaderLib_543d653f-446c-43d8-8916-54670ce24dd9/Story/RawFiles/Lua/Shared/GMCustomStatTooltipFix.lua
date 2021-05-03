@@ -43,7 +43,6 @@ else
 		stat = Ext.DoubleToHandle(statDouble)
 
 		if character then
-			print(character.NetID, character.MyGuid, character.UserID)
 			Ext.PostMessageToServer("LeaderLib_CheckCustomStatCallback", Ext.JsonStringify({
 				Character=character.NetID, 
 				Stat=statDouble, 
@@ -54,6 +53,40 @@ else
 				Height = height,
 				Alignment = alignment
 			}))
+		end
+	end)
+
+	local addedCustomTab = false
+
+	local function addCustomStatsTab_Controller(ui)
+		local title = Ext.GetTranslatedString("ha62e1eccgc1c2g4452g8d78g65ea010f3d85", "Custom Stats")
+		ui:Invoke("addStatsTab", 6, 7, title)
+		addedCustomTab = true
+	end
+
+	Ext.RegisterUITypeInvokeListener(Data.UIType.statsPanel_c, "addStatsTab", function(ui, method, id, imageId, title)
+		if not addedCustomTab and id == 5 then
+			addCustomStatsTab_Controller(ui)
+		end
+	end)
+
+	Ext.RegisterUITypeInvokeListener(Data.UIType.statsPanel_c, "selectStatsTab", function(ui, method, id, imageId, title)
+		if not addedCustomTab and id == 5 then
+			addCustomStatsTab_Controller(ui)
+		end
+	end)
+
+	RegisterListener("LuaReset", function()
+		local ui = Ext.GetUIByType(Data.UIType.statsPanel_c)
+		if ui then
+			local tabBar_mc = ui:GetRoot().mainpanel_mc.stats_mc.tabBar_mc
+			for i=0,tabBar_mc.tabList.length do
+				local entry = tabBar_mc.tabList.content_array[i]
+				if entry and entry.id == 6 then
+					addedCustomTab = true
+					break
+				end
+			end
 		end
 	end)
 

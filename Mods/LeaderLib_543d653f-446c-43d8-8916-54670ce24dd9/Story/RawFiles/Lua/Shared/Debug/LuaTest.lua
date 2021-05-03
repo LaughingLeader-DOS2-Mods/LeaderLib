@@ -104,27 +104,20 @@ function LuaTest:AssertNotEquals(target, expected, extraMsg, deepTableComparison
 end
 
 function LuaTest:Complete(success, ...)
-	self.Success = success == true and 1 or 0
-	if self.OnComplete then
-		local b2,result2 = xpcall(self.OnComplete, debug.traceback, self, ...)
-		if not b2 then
-			fprint(LOGLEVEL.ERROR, "[LuaTest:%s] Error with test.OnComplete. Time(%s)\n%s", self.Name, Ext.MonotonicTime(), result2)
-			Ext.PrintError(result2)
+	print(self.Name, "LuaTest:Complete", self.Active)
+	if self.Active then
+		self.Success = success == true and 1 or 0
+		if self.OnComplete then
+			local b2,result2 = xpcall(self.OnComplete, debug.traceback, self, ...)
+			if not b2 then
+				fprint(LOGLEVEL.ERROR, "[LuaTest:%s] Error with test.OnComplete. Time(%s)\n%s", self.Name, Ext.MonotonicTime(), result2)
+				Ext.PrintError(result2)
+			end
 		end
+		fprint(LOGLEVEL.TRACE, "[LuaTest:%s] Completed test. Time(%s) Success(%s)", self.Name, Ext.MonotonicTime(), self.Success)
+		self:Done()
 	end
-	fprint(LOGLEVEL.TRACE, "[LuaTest:%s] Completed test. Time(%s) Success(%s)", self.Name, Ext.MonotonicTime(), self.Success)
-	self:Done()
 	return self.Success == 1
-end
-
----@param self LuaTest
-local function RunOperation(self, func, ...)
-	local b,result = xpcall(func, debug.traceback, self, ...)
-	if not b then
-		self:Failure(string.format("[LuaTest:%s] Error with test. Time(%s)\n%s", self.Name, Ext.MonotonicTime(), result), 2)
-		return nil
-	end
-	return result ~= nil and result or true
 end
 
 function LuaTest:Dispose()
@@ -155,6 +148,28 @@ end
 
 function LuaTest:Done()
 	self.Active = false
+end
+
+function LuaTest:Wait(ms)
+	local co = coroutine.running()
+	if co ~= nil then
+		local wakeupTime = Testing.CurrentTime + ms
+		Testing.Waiting[co] = wakeupTime
+		return coroutine.yield(co)
+	end
+end
+
+---@param self LuaTest
+local function RunOperation(self, func, ...)
+	local b,result = xpcall(func, debug.traceback, self, ...)
+	if not b then
+		self:Failure(string.format("[LuaTest:%s] Error with test. Time(%s)\n%s", self.Name, Ext.MonotonicTime(), result), 2)
+		return nil
+	end
+	if result ~= nil then
+		return result
+	end
+	return true
 end
 
 ---@return boolean

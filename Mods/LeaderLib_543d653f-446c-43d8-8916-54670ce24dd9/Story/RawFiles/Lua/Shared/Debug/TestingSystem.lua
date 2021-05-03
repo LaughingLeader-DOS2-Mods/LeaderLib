@@ -3,6 +3,10 @@ if Testing == nil then
 end
 
 Testing.Results = {}
+Testing.CurrentTime = 0
+Testing.LastTime = Ext.MonotonicTime()
+Testing.Waiting = {}
+Testing.Active = false
 
 ---@type LuaTest
 local LuaTest = Ext.Require("Shared/Debug/LuaTest.lua")
@@ -21,11 +25,43 @@ function Testing.WriteResults(uuid)
 		Ext.Print("Saved test results to", fileName)
 		Testing.Results[uuid] = nil
 	end
+	Testing.Active = false
 end
+
+function Testing.OnLoop(dt)
+    Testing.CurrentTime = Testing.CurrentTime + dt
+
+    local threadsToWake = {}
+    for co,wakeupTime in pairs(Testing.Waiting) do
+        if wakeupTime <= Testing.CurrentTime then
+            table.insert(threadsToWake, co)
+        end
+    end
+
+    -- Now wake them all up.
+    for _,co in ipairs(threadsToWake) do
+        Testing.Waiting[co] = nil -- Setting a field to nil removes it from the table
+		if coroutine.status(co) == "suspended" then
+        	coroutine.resume(co)
+		end
+    end
+end
+
+RegisterListener("NamedTimerFinished", "LeaderLib_TestingSystemLoop", function()
+	Testing.OnLoop(Ext.MonotonicTime() - Testing.LastTime)
+	Testing.LastTime = Ext.MonotonicTime()
+	if Testing.Active then
+		StartTimer("LeaderLib_TestingSystemLoop", 250)
+	else
+		Testing.Waiting = {}
+	end
+end)
 
 ---@param tbl LuaTest[]
 ---@param delay integer|nil
 function Testing.RunTests(tbl, delay, testingName, ...)
+	Testing.Active = true
+	StartTimer("LeaderLib_TestingSystemLoop", 250)
 	local args = {...}
 	local testUUID = string.format("%s", testingName or Ext.MonotonicTime())
 	Testing.Results[testUUID] = {}
@@ -54,11 +90,14 @@ function Testing.RunTests(tbl, delay, testingName, ...)
 			local test = tbl[i]
 			if test then
 				test.OnComplete = launchTimer
-				local b,result = xpcall(test.Run, debug.traceback, test, table.unpack(args))
-				if not b then
-					Ext.PrintError(result)
-					launchTimer()
-				end
+				local co = coroutine.create(function()
+					local b,result = xpcall(test.Run, debug.traceback, test, table.unpack(args))
+					if not b then
+						Ext.PrintError(result)
+						launchTimer()
+					end
+				end)
+				coroutine.resume(co)
 			else
 				Testing.WriteResults(testUUID)
 			end

@@ -776,3 +776,17 @@ Ext.RegisterConsoleCommand("removetemporycharacters", function(command, radius)
 		end
 	end
 end)
+
+local testScene = SceneManager.CreateScene("TestScene")
+testScene:CreateState("TestState1", function(self)
+	local startTime = Ext.MonotonicTime()
+	print("Hello!", startTime)
+	self:Wait(3000)
+	print("Waiting done", Ext.MonotonicTime() - startTime)
+end)
+
+Ext.RegisterConsoleCommand("scenetest", function(command, id)
+	SceneManager.AddScene(testScene, true)
+	id = id or "TestScene"
+	SceneManager.SetSceneByID(id)
+end)

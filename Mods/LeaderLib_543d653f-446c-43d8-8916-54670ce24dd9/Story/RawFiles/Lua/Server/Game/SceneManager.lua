@@ -7,8 +7,7 @@ end
 
 ---@type SceneData[]
 SceneManager.Scenes = {}
----@type SceneData
-SceneManager.ActiveScene = nil
+SceneManager.ActiveScene = {ID = "", State = ""}
 SceneManager.IsActive = false
 SceneManager.CurrentTime = Ext.MonotonicTime()
 
@@ -25,6 +24,7 @@ SceneManager.Queue = {
 
 function SceneManager.Save()
 	PersistentVars.SceneData.Queue = SceneManager.Queue
+	PersistentVars.SceneData.ActiveScene = SceneManager.ActiveScene
 end
 
 function SceneManager.Load()
@@ -35,10 +35,23 @@ function SceneManager.Load()
 			end
 		end
 	end
+	if PersistentVars.SceneData.Active and PersistentVars.SceneData.ActiveScene.ID then
+		SceneManager.ActiveScene.ID = PersistentVars.SceneData.ActiveScene.ID
+		SceneManager.ActiveScene.State = PersistentVars.SceneData.ActiveScene.State or ""
+	end
 end
 
 RegisterListener("SessionLoaded", function()
 	SceneManager.Load()
+end)
+
+RegisterListener("Initialized", function()
+	if not SceneManager.IsActive and SceneManager.ActiveScene.ID ~= "" then
+		local scene = SceneManager.GetSceneByID(SceneManager.ActiveScene.ID)
+		if scene then
+			SceneManager.SetScene(scene, SceneManager.ActiveScene.State)
+		end
+	end
 end)
 
 ---@return SceneData
@@ -48,8 +61,25 @@ function SceneManager.CreateScene(id, params)
 	return scene
 end
 
+---@param scene SceneData
+---@param uniqueOnly boolean
+function SceneManager.AddScene(scene, uniqueOnly)
+	if uniqueOnly == true then
+		for i,v in pairs(SceneManager.Scenes) do
+			if v.ID == scene.ID then
+				return scene
+			end
+		end
+	else
+		table.insert(SceneManager.Scenes, scene)
+	end
+	return scene
+end
+
+---@param id string
+---@param firstOnly boolean|nil
 ---@return SceneData|SceneData[]
-function SceneManager.GetSceneByID(id)
+function SceneManager.GetSceneByID(id, firstOnly)
 	local scenes = {}
 	for i,v in pairs(SceneManager.Scenes) do
 		if v.ID == id then
@@ -59,27 +89,30 @@ function SceneManager.GetSceneByID(id)
 	if #scenes == 1 then
 		return scenes[1]
 	else
-		return scenes
+		if firstOnly then
+			return scenes[1]
+		else
+			return scenes
+		end
 	end
 end
 
 ---@param scene SceneData
-function SceneManager.SetScene(scene)
-	local scenes = {}
-	for i,v in pairs(SceneManager.Scenes) do
-		if v.ID == id then
-			table.insert(scenes, v)
-		end
-	end
-	if #scenes == 1 then
-		return scenes[1]
+function SceneManager.SetScene(scene, state, ...)
+	if not StringHelpers.IsNullOrEmpty(state) then
+		scene:Resume(state, ...)
 	else
-		scenes.ResumeState = function(self, ...)
-			for i,v in pairs(scenes) do
-				v:ResumeState(...)
-			end
-		end
-		return scenes
+		scene:Start(...)
+	end
+end
+
+
+---@param id string
+---@param state string
+function SceneManager.SetSceneByID(id, state, ...)
+	local scene = SceneManager.GetSceneByID(id, true)
+	if scene then
+		SceneManager.SetScene(scene, state, ...)
 	end
 end
 
@@ -103,7 +136,7 @@ RegisterListener("NamedTimerFinished", "LeaderLib_SceneManager_WaitingTimer", fu
 		if data.Time <= SceneManager.CurrentTime then
 			local scene = SceneManager.GetSceneByID(sceneId)
 			if scene then
-				scene:ResumeState(data.ID)
+				scene:Resume(data.ID)
 				SceneManager.Queue.Waiting[sceneId] = nil
 			end
 		end
@@ -132,7 +165,7 @@ local function OnStoryEvent(obj, event)
 		for sceneId,stateId in pairs(sceneIds) do
 			local scene = SceneManager.GetSceneByID(sceneId)
 			if scene then
-				scene:ResumeState(stateId)
+				scene:Resume(stateId)
 				sceneIds[sceneId] = nil
 			end
 		end

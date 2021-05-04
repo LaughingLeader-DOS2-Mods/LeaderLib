@@ -9,6 +9,7 @@ local SceneData = {
 	---@type string[]
 	StateOrder = {},
 	CurrentState = "",
+	IsActive = false,
 }
 SceneData.__index = SceneData
 
@@ -20,6 +21,9 @@ function SceneData:Create(id, params)
     {
 		ID = id or "",
 		States = {},
+		StateOrder = {},
+		IsActive = false,
+		CurrentState = ""
 	}
 	if params ~= nil then
 		for prop,value in pairs(params) do
@@ -30,8 +34,19 @@ function SceneData:Create(id, params)
     return this
 end
 
+---@param id string
+---@param action SceneStateActionCallback
+---@param params table<string,any>
+---@return SceneStateData
+function SceneData:CreateState(id, action, params)
+	local state = SceneStateData:Create(id, action, params)
+	self:AddState(state)
+	return state
+end
+
 ---@param state SceneStateData
 function SceneData:AddState(state)
+	state.Parent = self
 	self.States[state.ID] = state
 	self.StateOrder[#self.StateOrder+1] = state.ID
 end
@@ -46,24 +61,49 @@ function SceneData:RemoveStateById(id)
 	end
 end
 
+---@param self SceneData
+local function SetInactive(self)
+	if SceneManager.ActiveScene.ID == self.ID then
+		SceneManager.ActiveScene.ID = ""
+		SceneManager.ActiveScene.State = ""
+	end
+	self.CurrentState = ""
+	self.IsActive = false
+end
+
+---@param self SceneData
+local function SetActive(self, state)
+	self.CurrentState = state
+	SceneManager.ActiveScene.ID = self.ID
+	SceneManager.ActiveScene.State = state
+	self.IsActive = true
+end
+
 ---@param id string
-function SceneData:ResumeState(id, ...)
+function SceneData:Resume(id, ...)
+	if id == nil and self.CurrentState == "" then
+		id = self.StateOrder[1]
+	end
+	print("SceneData:Resume", self.ID, id, ...)
 	local state = self.States[id]
 	if state and state:CanResume(...) then
-		state:Resume(...)
+		SetActive(self, id)
+		return state:Resume(...)
 	end
+	SetInactive(self)
+	return false
 end
 
 function SceneData:Start(...)
-	local id = self.StateOrder[1]
-	if id then
-		local state = self.States[id]
-		if state then
-			self.CurrentState = id
-			state:Resume(...)
-			return state
+	if self.CurrentState == "" then
+		local id = self.StateOrder[1]
+		if id then
+			return self:Resume(id, ...)
 		end
+	else
+		SceneData:Resume(self.CurrentState)
 	end
+	SetInactive(self)
 	return false
 end
 
@@ -77,20 +117,16 @@ function SceneData:Next(...)
 	end
 	local id = self.StateOrder[nextIndex]
 	if id then
-		local state = self.States[id]
-		if state then
-			self.CurrentState = id
-			state:Resume(...)
-			return state
-		end
+		return self:Resume(id, ...)
 	end
+	SetInactive(self)
 	return false
 end
 
 ---@param state SceneStateData
 function SceneData:StateDone(state, ...)
 	print("SceneData:StateDone", self.ID, state.ID, ...)
-	self:Next(...)
+	return self:Next(...)
 end
 
 Classes.SceneData = SceneData

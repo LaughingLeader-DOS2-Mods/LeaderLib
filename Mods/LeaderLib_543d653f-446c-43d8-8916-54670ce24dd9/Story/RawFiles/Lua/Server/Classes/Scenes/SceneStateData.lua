@@ -1,10 +1,12 @@
+---@alias SceneStateActionCallback fun(self:SceneStateData):void
+
 ---@class SceneStateData
 local SceneStateData = {
 	Type = "SceneStateData",
 	---@type SceneData
 	Parent = nil,
 	ID = "",
-	---@type fun(self:SceneStateData, ...):void
+	---@type SceneStateActionCallback
 	Action = nil,
 	---@type thread
 	Thread = nil,
@@ -14,16 +16,16 @@ local SceneStateData = {
 }
 SceneStateData.__index = SceneStateData
 
----@param parent SceneData
 ---@param id string
+---@param action SceneStateActionCallback
 ---@param params table<string,any>
 ---@return SceneStateData
-function SceneStateData:Create(id, params)
+function SceneStateData:Create(id, action, params)
     local this =
     {
 		ID = id or "",
 		Parent = nil,
-		Action = nil,
+		Action = action or nil,
 		Active = false
 	}
 	if params ~= nil then
@@ -44,10 +46,11 @@ function SceneStateData:Resume(...)
 	if not self.Thread and self.Action then
 		self.Thread = coroutine.create(self.Action)
 	end
-	if self.Thread then
+	if self.Thread and self:GetStatus() ~= "running" then
 		self.Active = true
 		coroutine.resume(self.Thread, self, ...)
 		self.Parent:StateDone(self, ...)
+		return true
 	end
 end
 function SceneStateData:CanResume(...)

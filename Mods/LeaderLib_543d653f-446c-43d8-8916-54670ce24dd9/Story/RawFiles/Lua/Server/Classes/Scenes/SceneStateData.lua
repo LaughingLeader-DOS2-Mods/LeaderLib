@@ -104,7 +104,7 @@ function SceneStateData:MoveToPosition(character, event, x, y, z, running)
 	character = StringHelpers.GetUUID(character)
 	local dist = GetDistanceToPosition(character, x, y, z)
 	if dist >= self.MoveDistanceThreshold then
-		SceneManager.AddToQueue("StoryEvent", self.Parent.ID, self.ID, event, character)
+		SceneManager.AddToQueue(SceneManager.QueueType.StoryEvent, self.Parent.ID, self.ID, event, character)
 		Osi.ProcCharacterMoveToPosition(character, x, y, z, running or true, event)
 		self:Pause()
 	end
@@ -119,7 +119,7 @@ function SceneStateData:MoveToObject(character, event, target, running)
 	character = StringHelpers.GetUUID(character)
 	local dist = GetDistanceTo(character, target)
 	if dist >= self.MoveDistanceThreshold then
-		SceneManager.AddToQueue("StoryEvent", self.Parent.ID, self.ID, event, character)
+		SceneManager.AddToQueue(SceneManager.QueueType.StoryEvent, self.Parent.ID, self.ID, event, character)
 		Osi.ProcCharacterMoveTo(character, target, running or true, event)
 		self:Pause()
 	end
@@ -129,7 +129,7 @@ end
 ---@param timeInMilliseconds integer How long to wait in milliseconds.
 function SceneStateData:Wait(timeInMilliseconds)
 	print("Waiting", timeInMilliseconds, "ms", self.Parent.ID, self.ID)
-	SceneManager.AddToQueue("Waiting", self.Parent.ID, self.ID, timeInMilliseconds)
+	SceneManager.AddToQueue(SceneManager.QueueType.Waiting, self.Parent.ID, self.ID, timeInMilliseconds)
 	self:Pause()
 	return true
 end
@@ -165,8 +165,16 @@ function SceneStateData:PlayAnimation(character, animation, event)
 		event = "LLSSD_PA_" .. character .. animation
 	end
 	character = StringHelpers.GetUUID(character)
-	SceneManager.AddToQueue("StoryEvent", self.Parent.ID, self.ID, event, character)
+	SceneManager.AddToQueue(SceneManager.QueueType.StoryEvent, self.Parent.ID, self.ID, event, character)
 	PlayAnimation(character, animation, event)
+	self:Pause()
+	return true
+end
+
+---@param signalName string
+---@param timeout integer|nil
+function SceneStateData:WaitForSignal(signalName, timeout)
+	SceneManager.AddToQueue(SceneManager.QueueType.Signal, self.Parent.ID, self.ID, signalName, timeout)
 	self:Pause()
 	return true
 end

@@ -2,6 +2,7 @@ PersistentVars = {}
 PersistentVars.TimerData = {}
 PersistentVars.StatusSource = {}
 PersistentVars.ForceMoveData = {}
+PersistentVars.SceneData = {}
 
 Ext.Require("BootstrapShared.lua")
 

@@ -329,7 +329,7 @@ Ext.RegisterListener("ComputeCharacterHit", HitOverrides.ComputeCharacterHit)
 Ext.RegisterListener("SessionLoaded", function()
     -- Set to Game.Math.DoHit here, instead of immediately, in case a mod has overwritten it.
     HitOverrides.DoHitModified = Game.Math.DoHit
-    -- Original function was changed
+    -- True if the original function was changed
     if (Game.Math.ApplyDamageCharacterBonuses ~= HitOverrides.ApplyDamageCharacterBonusesOriginal 
     and Game.Math.ApplyDamageCharacterBonuses ~= HitOverrides.ApplyDamageCharacterBonuses) then
         HitOverrides.ApplyDamageCharacterBonusesModified = Game.Math.ApplyDamageCharacterBonuses

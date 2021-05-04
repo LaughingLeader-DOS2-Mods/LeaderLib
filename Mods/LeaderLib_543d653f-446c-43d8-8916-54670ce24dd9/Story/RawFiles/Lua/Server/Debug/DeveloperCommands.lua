@@ -799,10 +799,15 @@ testScene:CreateState("TestState3", function(self)
 	self:Wait(2000)
 	self:WaitForDialogEnd("GEB_AD_CannotPickpocket", true, host)
 	self:PlayAnimation(host, "Dance_01")
+	print("All done!", self.ID)
 end)
 
 Ext.RegisterConsoleCommand("scenetest", function(command, id)
 	SceneManager.AddScene(testScene, true)
 	id = id or "TestScene"
 	SceneManager.SetSceneByID(id)
+
+	StartOneshotTimer("Timers_TestState3ShouldBeDone", 30000, function()
+		SceneManager.Signal("TestState3ShouldBeDone")
+	end)
 end)

@@ -16,6 +16,18 @@ SceneManager.QueueType = {
 	DialogEnded = "DialogEnded",
 	Signal = "Signal"
 }
+---@type thread
+SceneManager.LastThread = nil
+
+---Resumes the last coroutine thread saved, possibly before a scene state was resumed.
+function SceneManager.ResumeLastThread()
+	if SceneManager.LastThread then
+		local thread = SceneManager.LastThread
+		SceneManager.LastThread = nil
+		print("[SceneManager.ResumeLastThread] Resuming last thread", thread)
+		coroutine.resume(thread)
+	end
+end
 
 ---@class StoryEventStateData:table
 ---@field State string

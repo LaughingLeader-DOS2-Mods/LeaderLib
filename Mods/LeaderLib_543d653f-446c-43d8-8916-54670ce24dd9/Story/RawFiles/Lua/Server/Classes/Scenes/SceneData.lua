@@ -126,7 +126,9 @@ end
 ---@param state SceneStateData
 function SceneData:StateDone(state, ...)
 	print("SceneData:StateDone", self.ID, state.ID, ...)
-	return self:Next(...)
+	if not self:Next(...) then
+		SceneManager.ResumeLastThread()
+	end
 end
 
 Classes.SceneData = SceneData

@@ -61,12 +61,17 @@ function SceneStateData:Resume(...)
 	end
 	if self.Thread and self:GetStatus() ~= "running" then
 		self.Active = true
+		local last,b = coroutine.running()
+		if last and not b then
+			SceneManager.LastThread = last
+		end
 		coroutine.resume(self.Thread, self, ...)
 		return true
 	end
 	self.Active = self:GetStatus() == "running"
 	return self.Active
 end
+
 function SceneStateData:CanResume(...)
 	if self.CanResumeCallback then
 		return self.CanResumeCallback(...)

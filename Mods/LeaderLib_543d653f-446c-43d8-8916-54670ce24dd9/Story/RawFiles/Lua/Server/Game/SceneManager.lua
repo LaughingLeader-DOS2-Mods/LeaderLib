@@ -116,15 +116,20 @@ function SceneManager.SetSceneByID(id, state, ...)
 	end
 end
 
-function SceneManager.AddToQueue(group, sceneId, stateId, param)
+function SceneManager.AddToQueue(group, sceneId, stateId, param, param2)
 	if group == "StoryEvent" then
 		if not SceneManager.Queue.StoryEvent[param] then
 			SceneManager.Queue.StoryEvent[param] = {}
 		end
-		SceneManager.Queue.StoryEvent[param][sceneId] = stateId
+		if param2 then
+			SceneManager.Queue.StoryEvent[param][sceneId] = {State=stateId, UUID=param2}
+		else
+			SceneManager.Queue.StoryEvent[param][sceneId] = {State=stateId}
+		end
+		
 	elseif group == "Waiting" then
 		SceneManager.CurrentTime = Ext.MonotonicTime()
-		SceneManager.Queue.Waiting[sceneId] = {ID=stateId, Time=SceneManager.CurrentTime + param}
+		SceneManager.Queue.Waiting[sceneId] = {State=stateId, Time=SceneManager.CurrentTime + param}
 		SceneManager.StartTimer()
 	end
 	SceneManager.Save()
@@ -136,7 +141,7 @@ RegisterListener("NamedTimerFinished", "LeaderLib_SceneManager_WaitingTimer", fu
 		if data.Time <= SceneManager.CurrentTime then
 			local scene = SceneManager.GetSceneByID(sceneId)
 			if scene then
-				scene:Resume(data.ID)
+				scene:Resume(data.State)
 				SceneManager.Queue.Waiting[sceneId] = nil
 			end
 		end
@@ -162,11 +167,18 @@ end
 local function OnStoryEvent(obj, event)
 	local sceneIds = SceneManager.Queue.StoryEvent[event]
 	if sceneIds then
-		for sceneId,stateId in pairs(sceneIds) do
+		for sceneId,data in pairs(sceneIds) do
 			local scene = SceneManager.GetSceneByID(sceneId)
 			if scene then
-				scene:Resume(stateId)
-				sceneIds[sceneId] = nil
+				if data.UUID then
+					if data.UUID == obj then
+						scene:Resume(data.State, obj, event)
+						sceneIds[sceneId] = nil
+					end
+				else
+					scene:Resume(data.State, obj, event)
+					sceneIds[sceneId] = nil
+				end
 			end
 		end
 		if Common.TableLength(SceneManager.Queue.StoryEvent[event], true) == 0 then

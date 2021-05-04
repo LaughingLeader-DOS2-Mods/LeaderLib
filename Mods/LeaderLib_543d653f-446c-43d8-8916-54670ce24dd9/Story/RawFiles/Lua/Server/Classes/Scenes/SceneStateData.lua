@@ -12,7 +12,9 @@ local SceneStateData = {
 	Thread = nil,
 	Active = false,
 	---@type fun():boolean
-	CanResumeCallback = nil
+	CanResumeCallback = nil,
+	--If the distance between a character and position are less than this, movement is skipped.
+	MoveDistanceThreshold = 0.5
 }
 SceneStateData.__index = SceneStateData
 
@@ -84,9 +86,32 @@ end
 ---@param z number
 ---@param running boolean
 function SceneStateData:MoveToPosition(character, event, x, y, z, running)
-	SceneManager.AddToQueue("StoryEvent", self.Parent.ID, self.ID, event)
-	CharacterMoveToPosition(character, x, y, z, running or true, event)
-	return self:Pause()
+	character = StringHelpers.GetUUID(character)
+	local dist = GetDistanceToPosition(character, x, y, z)
+	if dist >= self.MoveDistanceThreshold then
+		if self:Pause() then
+			SceneManager.AddToQueue("StoryEvent", self.Parent.ID, self.ID, event, character)
+			--CharacterMoveToPosition(character, x, y, z, running or true, event)
+			Osi.ProcCharacterMoveToPosition(character, x, y, z, running or true, event)
+		end
+	end
+	return true
+end
+
+---@param character string
+---@param event string
+---@param target string
+---@param running boolean
+function SceneStateData:MoveToObject(character, event, target, running)
+	character = StringHelpers.GetUUID(character)
+	local dist = GetDistanceTo(character, target)
+	if dist >= self.MoveDistanceThreshold then
+		if self:Pause() then
+			SceneManager.AddToQueue("StoryEvent", self.Parent.ID, self.ID, event, character)
+			Osi.ProcCharacterMoveTo(character, target, running or true, event)
+		end
+	end
+	return true
 end
 
 ---@param timeInMilliseconds integer How long to wait in milliseconds.

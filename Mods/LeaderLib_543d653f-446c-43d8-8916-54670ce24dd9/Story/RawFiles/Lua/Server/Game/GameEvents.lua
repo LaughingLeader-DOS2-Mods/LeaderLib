@@ -41,8 +41,11 @@ end
 
 local function InvokeOnInitializedCallbacks(region)
 	region = region or ""
+	LoadPersistentVars()
 	InvokeListenerCallbacks(Listeners.Initialized, region)
 	Osi.LeaderLib_LoadingDone(region)
+
+	SceneManager.Load()
 end
 
 local function OnInitialized(region, isRunning)

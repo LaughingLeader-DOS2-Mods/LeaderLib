@@ -1,11 +1,21 @@
-PersistentVars = {}
-PersistentVars.TimerData = {}
-PersistentVars.StatusSource = {}
-PersistentVars.ForceMoveData = {}
-PersistentVars.SceneData = {}
-
 Ext.Require("BootstrapShared.lua")
 
+---@class LeaderLibPersistentVars
+local defaultPersistentVars = {
+	TimerData = {},
+	StatusSource = {},
+	ForceMoveData = {},
+	SceneData = {
+		ActiveScene = {},
+		Queue = {}
+	}
+}
+
+---@type LeaderLibPersistentVars
+PersistentVars = Common.CopyTable(defaultPersistentVars, true)
+function LoadPersistentVars()
+	Common.InitializeTableFromSource(PersistentVars, defaultPersistentVars)
+end
 
 TotalSkillListeners = 0
 

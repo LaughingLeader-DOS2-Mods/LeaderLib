@@ -195,6 +195,7 @@ local ignoreImports = {
 	Ext = true,
 	Osi = true,
 	PersistentVars = true,
+	LoadPersistentVars = true,
 	--LeaderLib ignores
 	Debug = true,
 	Vars = true,

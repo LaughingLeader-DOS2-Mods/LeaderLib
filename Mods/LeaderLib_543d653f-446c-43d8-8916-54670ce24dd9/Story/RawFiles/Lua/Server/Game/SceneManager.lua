@@ -28,31 +28,26 @@ function SceneManager.Save()
 end
 
 function SceneManager.Load()
-	if PersistentVars.SceneData and PersistentVars.SceneData.Queue then
-		for k,v in pairs(PersistentVars.SceneData.Queue) do
-			if v ~= nil then
-				SceneManager.Queue[k] = v
+	if PersistentVars.SceneData then
+		if PersistentVars.SceneData.Queue then
+			for k,v in pairs(PersistentVars.SceneData.Queue) do
+				if v ~= nil then
+					SceneManager.Queue[k] = v
+				end
 			end
 		end
+		if PersistentVars.SceneData.ActiveScene and PersistentVars.SceneData.ActiveScene.ID then
+			SceneManager.ActiveScene.ID = PersistentVars.SceneData.ActiveScene.ID
+			SceneManager.ActiveScene.State = PersistentVars.SceneData.ActiveScene.State or ""
+		end
 	end
-	if PersistentVars.SceneData.Active and PersistentVars.SceneData.ActiveScene.ID then
-		SceneManager.ActiveScene.ID = PersistentVars.SceneData.ActiveScene.ID
-		SceneManager.ActiveScene.State = PersistentVars.SceneData.ActiveScene.State or ""
-	end
-end
-
-RegisterListener("SessionLoaded", function()
-	SceneManager.Load()
-end)
-
-RegisterListener("Initialized", function()
 	if not SceneManager.IsActive and SceneManager.ActiveScene.ID ~= "" then
 		local scene = SceneManager.GetSceneByID(SceneManager.ActiveScene.ID)
 		if scene then
 			SceneManager.SetScene(scene, SceneManager.ActiveScene.State)
 		end
 	end
-end)
+end
 
 ---@return SceneData
 function SceneManager.CreateScene(id, params)
@@ -161,6 +156,7 @@ function SceneManager.StartTimer(tick)
 	if tick == nil then
 		tick = 250
 	end
+	SceneManager.CurrentTime = Ext.MonotonicTime()
 	StartTimer("LeaderLib_SceneManager_WaitingTimer", tick)
 end
 

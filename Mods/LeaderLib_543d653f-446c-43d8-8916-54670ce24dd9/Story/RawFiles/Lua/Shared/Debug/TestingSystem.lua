@@ -47,15 +47,17 @@ function Testing.OnLoop(dt)
     end
 end
 
-RegisterListener("NamedTimerFinished", "LeaderLib_TestingSystemLoop", function()
-	Testing.OnLoop(Ext.MonotonicTime() - Testing.LastTime)
-	Testing.LastTime = Ext.MonotonicTime()
-	if Testing.Active then
-		StartTimer("LeaderLib_TestingSystemLoop", 250)
-	else
-		Testing.Waiting = {}
-	end
-end)
+if Ext.IsServer() then
+	RegisterListener("NamedTimerFinished", "LeaderLib_TestingSystemLoop", function()
+		Testing.OnLoop(Ext.MonotonicTime() - Testing.LastTime)
+		Testing.LastTime = Ext.MonotonicTime()
+		if Testing.Active then
+			StartTimer("LeaderLib_TestingSystemLoop", 250)
+		else
+			Testing.Waiting = {}
+		end
+	end)
+end
 
 ---@param tbl LuaTest[]
 ---@param delay integer|nil

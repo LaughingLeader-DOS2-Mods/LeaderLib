@@ -64,11 +64,15 @@ end
 
 function SceneStateData:Pause()
 	if self.Thread then
-		coroutine.yield()
-		self.Active = coroutine.status(self.Thread) ~= "running"
-		return true
+		if coroutine.running() == self.Thread then
+			coroutine.yield()
+			self.Active = coroutine.status(self.Thread) ~= "running"
+			return true
+		else
+			self.Active = coroutine.status(self.Thread) ~= "running"
+		end
 	end
-	return false
+	return self.Active
 end
 
 ---@return string

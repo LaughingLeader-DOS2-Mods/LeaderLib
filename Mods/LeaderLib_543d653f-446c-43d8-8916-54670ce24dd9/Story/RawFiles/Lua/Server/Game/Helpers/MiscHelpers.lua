@@ -168,3 +168,74 @@ function GameHelpers.IsInCombat(uuid)
 	end
 	return false
 end
+
+---@param dialog string
+---@vararg string
+function GameHelpers.IsInDialog(dialog, ...)
+	local targets = {}
+	for i,v in pairs({...}) do
+		targets[StringHelpers.GetUUID(v)] = true
+	end
+	local instanceDb = Osi.DB_DialogName:Get(dialog, nil)
+	if instanceDb and #instanceDb > 0 then
+		local instance = instanceDb[1][2]
+		if #targets == 0 then
+			return true
+		end
+		local playerDb = Osi.DB_DialogPlayers:Get(instance, nil, nil)
+		if playerDb and #playerDb > 0 then
+			for _,v in pairs(playerDb) do
+				local inst,actor,slot = table.unpack(v)
+				if targets[StringHelpers.GetUUID(actor)] == true then
+					return true
+				end
+			end
+		end
+		local npcDb = Osi.DB_DialogNPCs:Get(instance, nil, nil)
+		if npcDb and #npcDb > 0 then
+			for _,v in pairs(npcDb) do
+				local inst,actor,slot = table.unpack(v)
+				if targets[StringHelpers.GetUUID(actor)] == true then
+					return true
+				end
+			end
+		end
+	end
+	return false
+end
+
+---@param dialog string
+---@vararg string
+---@return integer|nil
+function GameHelpers.GetDialogInstance(dialog, ...)
+	local targets = {}
+	for i,v in pairs({...}) do
+		targets[StringHelpers.GetUUID(v)] = true
+	end
+	local instanceDb = Osi.DB_DialogName:Get(dialog, nil)
+	if instanceDb and #instanceDb > 0 then
+		local instance = instanceDb[1][2]
+		if #targets == 0 then
+			return instance
+		end
+		local playerDb = Osi.DB_DialogPlayers:Get(instance, nil, nil)
+		if playerDb and #playerDb > 0 then
+			for _,v in pairs(playerDb) do
+				local inst,actor,slot = table.unpack(v)
+				if targets[StringHelpers.GetUUID(actor)] == true then
+					return instance
+				end
+			end
+		end
+		local npcDb = Osi.DB_DialogNPCs:Get(instance, nil, nil)
+		if npcDb and #npcDb > 0 then
+			for _,v in pairs(npcDb) do
+				local inst,actor,slot = table.unpack(v)
+				if targets[StringHelpers.GetUUID(actor)] == true then
+					return instance
+				end
+			end
+		end
+	end
+	return nil
+end

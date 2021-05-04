@@ -10,17 +10,63 @@ SceneManager.Scenes = {}
 SceneManager.ActiveScene = {ID = "", State = ""}
 SceneManager.IsActive = false
 SceneManager.CurrentTime = Ext.MonotonicTime()
+SceneManager.QueueType = {
+	StoryEvent = "StoryEvent",
+	Waiting = "Waiting",
+	DialogEnded = "DialogEnded"
+}
+
+---@class StoryEventStateData:table
+---@field State string
+---@field UUID string|nil
 
 ---@class WaitingStateData:table
----@field ID string
+---@field State string
 ---@field Time number
 
+---@class DialogStateData:table
+---@field State string
+---@field Instance integer
+---@field IsAutomated boolean
+
 SceneManager.Queue = {
-	---@type table<string, string[]>
+	---@type table<string, table<string, StoryEventStateData[]>>
 	StoryEvent = {},
 	---@type table<string, WaitingStateData>
-	Waiting = {}
+	Waiting = {},
+	---@type table<string, table<string, DialogStateData>>
+	DialogEnded = {}
 }
+function SceneManager.AddToQueue(group, sceneId, stateId, param, param2, param3, ...)
+	if group == SceneManager.QueueType.StoryEvent then
+		if not SceneManager.Queue.StoryEvent[param] then
+			SceneManager.Queue.StoryEvent[param] = {}
+		end
+		if param2 then
+			SceneManager.Queue.StoryEvent[param][sceneId] = {State=stateId, UUID=param2}
+		else
+			SceneManager.Queue.StoryEvent[param][sceneId] = {State=stateId}
+		end
+	elseif group == SceneManager.QueueType.DialogEnded then
+		local dialog = param
+		local isAutomated = param2
+		local instance = param3
+		if not SceneManager.Queue.DialogEnded[dialog] then
+			SceneManager.Queue.DialogEnded[dialog] = {}
+		end
+		if instance then
+			SceneManager.Queue.DialogEnded[dialog][sceneId] = {State=stateId, IsAutomated=isAutomated, Instance=instance}
+		else
+			SceneManager.Queue.DialogEnded[dialog][sceneId] = {State=stateId, IsAutomated=isAutomated}
+		end
+	elseif group == SceneManager.QueueType.Waiting then
+		SceneManager.CurrentTime = Ext.MonotonicTime()
+		SceneManager.Queue.Waiting[sceneId] = {State=stateId, Time=SceneManager.CurrentTime + param}
+		SceneManager.StartTimer()
+	end
+	print("SceneManager.AddToQueue", group, sceneId, stateId, param, param2, param3, Ext.JsonStringify(SceneManager.Queue))
+	SceneManager.Save()
+end
 
 function SceneManager.Save()
 	PersistentVars.SceneData.Queue = SceneManager.Queue
@@ -116,30 +162,9 @@ function SceneManager.SetSceneByID(id, state, ...)
 	end
 end
 
-function SceneManager.AddToQueue(group, sceneId, stateId, param, param2)
-	if group == "StoryEvent" then
-		if not SceneManager.Queue.StoryEvent[param] then
-			SceneManager.Queue.StoryEvent[param] = {}
-		end
-		if param2 then
-			SceneManager.Queue.StoryEvent[param][sceneId] = {State=stateId, UUID=param2}
-		else
-			SceneManager.Queue.StoryEvent[param][sceneId] = {State=stateId}
-		end
-	elseif group == "Waiting" then
-		SceneManager.CurrentTime = Ext.MonotonicTime()
-		SceneManager.Queue.Waiting[sceneId] = {State=stateId, Time=SceneManager.CurrentTime + param}
-		SceneManager.StartTimer()
-	end
-	print("SceneManager.AddToQueue", Ext.JsonStringify(SceneManager.Queue))
-	SceneManager.Save()
-end
-
 RegisterListener("NamedTimerFinished", "LeaderLib_SceneManager_WaitingTimer", function(...)
-	print("NamedTimerFinished", "LeaderLib_SceneManager_WaitingTimer", Ext.JsonStringify(SceneManager.Queue))
 	SceneManager.CurrentTime = Ext.MonotonicTime()
 	for sceneId,data in pairs(SceneManager.Queue.Waiting) do
-		print(SceneManager.CurrentTime, data.Time)
 		if data.Time <= SceneManager.CurrentTime then
 			local scene = SceneManager.GetSceneByID(sceneId)
 			if scene then
@@ -191,8 +216,61 @@ local function OnStoryEvent(obj, event)
 	end
 end
 
-RegisterProtectedOsirisListener("StoryEvent", 2, "after", function(obj, event)
-	if SceneManager.IsActive then
-		OnStoryEvent(StringHelpers.GetUUID(obj), event)
+Ext.RegisterOsirisListener("StoryEvent", 2, "after", function(obj, event)
+	OnStoryEvent(StringHelpers.GetUUID(obj), event)
+end)
+
+Ext.RegisterOsirisListener("DialogEnded", 2, "after", function(dialog, instance)
+	local sceneIds = SceneManager.Queue.DialogEnded[dialog]
+	if sceneIds then
+		for sceneId,data in pairs(sceneIds) do
+			if not data.IsAutomated and (not data.Instance or data.Instance == instance) then
+				local scene = SceneManager.GetSceneByID(sceneId)
+				if scene then
+					sceneIds[sceneId] = nil
+					scene:Resume(data.State, dialog, instance)
+				end
+			end
+		end
+		if Common.TableLength(SceneManager.Queue.DialogEnded[dialog], true) == 0 then
+			SceneManager.Queue.DialogEnded[dialog] = nil
+		end
+		SceneManager.Save()
+	end
+end)
+
+Ext.RegisterOsirisListener("AutomatedDialogEnded", 2, "after", function(dialog, instance)
+	local sceneIds = SceneManager.Queue.DialogEnded[dialog]
+	if sceneIds then
+		for sceneId,data in pairs(sceneIds) do
+			if data.IsAutomated and (not data.Instance or data.Instance == instance) then
+				local scene = SceneManager.GetSceneByID(sceneId)
+				if scene then
+					sceneIds[sceneId] = nil
+					scene:Resume(data.State, dialog, instance)
+				end
+			end
+		end
+		if Common.TableLength(SceneManager.Queue.DialogEnded[dialog], true) == 0 then
+			SceneManager.Queue.DialogEnded[dialog] = nil
+		end
+		SceneManager.Save()
+	end
+end)
+
+Ext.RegisterOsirisListener("DB_DialogName", 2, "after", function(dialog, instance)
+	local sceneIds = SceneManager.Queue.DialogEnded[dialog]
+	if sceneIds then
+		local saveChanges = false
+		for sceneId,data in pairs(sceneIds) do
+			if not data.Instance then
+				data.Instance = instance
+				saveChanges = true
+			end
+		end
+		if saveChanges then
+			print("SceneManager.DB_DialogName", Ext.JsonStringify(SceneManager.Queue.DialogEnded))
+			SceneManager.Save()
+		end
 	end
 end)

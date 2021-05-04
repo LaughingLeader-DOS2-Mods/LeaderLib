@@ -171,17 +171,18 @@ end
 
 ---@param dialog string
 ---@vararg string
+---@return boolean
 function GameHelpers.IsInDialog(dialog, ...)
 	local targets = {}
 	for i,v in pairs({...}) do
 		targets[StringHelpers.GetUUID(v)] = true
 	end
+	if #targets == 0 then
+		return false
+	end
 	local instanceDb = Osi.DB_DialogName:Get(dialog, nil)
 	if instanceDb and #instanceDb > 0 then
 		local instance = instanceDb[1][2]
-		if #targets == 0 then
-			return true
-		end
 		local playerDb = Osi.DB_DialogPlayers:Get(instance, nil, nil)
 		if playerDb and #playerDb > 0 then
 			for _,v in pairs(playerDb) do
@@ -199,6 +200,24 @@ function GameHelpers.IsInDialog(dialog, ...)
 					return true
 				end
 			end
+		end
+	end
+	return false
+end
+
+---@vararg string
+---@return boolean
+function GameHelpers.IsInAnyDialog(...)
+	local targets = {}
+	for i,v in pairs({...}) do
+		local uuid = StringHelpers.GetUUID(v)
+		local playerDb = Osi.DB_DialogPlayers:Get(nil, uuid, nil)
+		if playerDb and #playerDb > 0 then
+			return true
+		end
+		local npcDb = Osi.DB_DialogNPCs:Get(nil, uuid, nil)
+		if npcDb and #npcDb > 0 then
+			return true
 		end
 	end
 	return false

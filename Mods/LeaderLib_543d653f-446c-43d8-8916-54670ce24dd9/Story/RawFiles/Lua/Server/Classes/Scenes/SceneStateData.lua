@@ -128,9 +128,31 @@ end
 
 ---@param timeInMilliseconds integer How long to wait in milliseconds.
 function SceneStateData:Wait(timeInMilliseconds)
+	print("Waiting", timeInMilliseconds, "ms", self.Parent.ID, self.ID)
 	SceneManager.AddToQueue("Waiting", self.Parent.ID, self.ID, timeInMilliseconds)
-	if self:Pause() then
+	self:Pause()
+	return true
+end
+
+---@param dialog string
+---@param isAutomated boolean
+---@vararg string
+function SceneStateData:WaitForDialogEnd(dialog, isAutomated, ...)
+	if isAutomated == nil then
+		isAutomated = false
+	end
+	if not GameHelpers.IsInDialog(dialog, ...) then
+		SceneManager.AddToQueue(SceneManager.QueueType.DialogEnded, self.Parent.ID, self.ID, dialog, isAutomated)
+		Osi.Proc_StartDialog(isAutomated or false, dialog, ...)
+		self:Pause()
 		return true
+	else
+		local instance = GameHelpers.GetDialogInstance(dialog, ...)
+		if instance ~= -1 then
+			SceneManager.AddToQueue(SceneManager.QueueType.DialogEnded, self.Parent.ID, self.ID, dialog, isAutomated, instance)
+			self:Pause()
+			return true
+		end
 	end
 	return false
 end

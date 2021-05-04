@@ -28,23 +28,28 @@ function SceneManager.Save()
 end
 
 function SceneManager.Load()
-	if PersistentVars.SceneData then
-		if PersistentVars.SceneData.Queue then
-			for k,v in pairs(PersistentVars.SceneData.Queue) do
-				if v ~= nil then
-					SceneManager.Queue[k] = v
+	if Vars.DebugMode then
+		PersistentVars.SceneData.Queue = SceneManager.Queue
+		PersistentVars.SceneData.ActiveScene = SceneManager.ActiveScene
+	else
+		if PersistentVars.SceneData then
+			if PersistentVars.SceneData.Queue then
+				for k,v in pairs(PersistentVars.SceneData.Queue) do
+					if v ~= nil then
+						SceneManager.Queue[k] = v
+					end
 				end
 			end
+			if PersistentVars.SceneData.ActiveScene and PersistentVars.SceneData.ActiveScene.ID then
+				SceneManager.ActiveScene.ID = PersistentVars.SceneData.ActiveScene.ID
+				SceneManager.ActiveScene.State = PersistentVars.SceneData.ActiveScene.State or ""
+			end
 		end
-		if PersistentVars.SceneData.ActiveScene and PersistentVars.SceneData.ActiveScene.ID then
-			SceneManager.ActiveScene.ID = PersistentVars.SceneData.ActiveScene.ID
-			SceneManager.ActiveScene.State = PersistentVars.SceneData.ActiveScene.State or ""
-		end
-	end
-	if not SceneManager.IsActive and SceneManager.ActiveScene.ID ~= "" then
-		local scene = SceneManager.GetSceneByID(SceneManager.ActiveScene.ID)
-		if scene then
-			SceneManager.SetScene(scene, SceneManager.ActiveScene.State)
+		if not SceneManager.IsActive and SceneManager.ActiveScene.ID ~= "" then
+			local scene = SceneManager.GetSceneByID(SceneManager.ActiveScene.ID)
+			if scene then
+				SceneManager.SetScene(scene, SceneManager.ActiveScene.State)
+			end
 		end
 	end
 end
@@ -121,23 +126,25 @@ function SceneManager.AddToQueue(group, sceneId, stateId, param, param2)
 		else
 			SceneManager.Queue.StoryEvent[param][sceneId] = {State=stateId}
 		end
-		
 	elseif group == "Waiting" then
 		SceneManager.CurrentTime = Ext.MonotonicTime()
 		SceneManager.Queue.Waiting[sceneId] = {State=stateId, Time=SceneManager.CurrentTime + param}
 		SceneManager.StartTimer()
 	end
+	print("SceneManager.AddToQueue", Ext.JsonStringify(SceneManager.Queue))
 	SceneManager.Save()
 end
 
 RegisterListener("NamedTimerFinished", "LeaderLib_SceneManager_WaitingTimer", function(...)
+	print("NamedTimerFinished", "LeaderLib_SceneManager_WaitingTimer", Ext.JsonStringify(SceneManager.Queue))
 	SceneManager.CurrentTime = Ext.MonotonicTime()
 	for sceneId,data in pairs(SceneManager.Queue.Waiting) do
+		print(SceneManager.CurrentTime, data.Time)
 		if data.Time <= SceneManager.CurrentTime then
 			local scene = SceneManager.GetSceneByID(sceneId)
 			if scene then
-				scene:Resume(data.State)
 				SceneManager.Queue.Waiting[sceneId] = nil
+				scene:Resume(data.State)
 			end
 		end
 	end
@@ -168,12 +175,12 @@ local function OnStoryEvent(obj, event)
 			if scene then
 				if data.UUID then
 					if data.UUID == obj then
-						scene:Resume(data.State, obj, event)
 						sceneIds[sceneId] = nil
+						scene:Resume(data.State, obj, event)
 					end
 				else
-					scene:Resume(data.State, obj, event)
 					sceneIds[sceneId] = nil
+					scene:Resume(data.State, obj, event)
 				end
 			end
 		end

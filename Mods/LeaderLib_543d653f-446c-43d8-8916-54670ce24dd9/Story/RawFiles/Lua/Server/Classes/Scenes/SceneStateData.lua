@@ -157,4 +157,18 @@ function SceneStateData:WaitForDialogEnd(dialog, isAutomated, ...)
 	return false
 end
 
+---@param character string
+---@param animation string
+---@param event string
+function SceneStateData:PlayAnimation(character, animation, event)
+	if not event then
+		event = "LLSSD_PA_" .. character .. animation
+	end
+	character = StringHelpers.GetUUID(character)
+	SceneManager.AddToQueue("StoryEvent", self.Parent.ID, self.ID, event, character)
+	PlayAnimation(character, animation, event)
+	self:Pause()
+	return true
+end
+
 Classes.SceneStateData = SceneStateData

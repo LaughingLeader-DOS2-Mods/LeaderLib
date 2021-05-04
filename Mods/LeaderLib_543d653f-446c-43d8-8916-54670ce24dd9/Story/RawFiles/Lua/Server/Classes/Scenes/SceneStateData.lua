@@ -18,18 +18,32 @@ local SceneStateData = {
 }
 SceneStateData.__index = SceneStateData
 
+---@param self SceneStateData
+local function RunAction(self, ...)
+	if self.Action then
+		local b,err = xpcall(self.Action, debug.traceback, self, ...)
+		if not b then
+			Ext.PrintError(err)
+		end
+	end
+	if self.Parent then
+		self.Parent:StateDone(self, ...)
+	end
+end
+
 ---@param id string
 ---@param action SceneStateActionCallback
 ---@param params table<string,any>
 ---@return SceneStateData
 function SceneStateData:Create(id, action, params)
-    local this =
-    {
+	local this =
+	{
 		ID = id or "",
 		Parent = nil,
 		Action = action or nil,
 		Active = false
 	}
+	this.Thread = coroutine.create(RunAction)
 	if params ~= nil then
 		for prop,value in pairs(params) do
 			this[prop] = value
@@ -37,23 +51,21 @@ function SceneStateData:Create(id, action, params)
 	end
 	setmetatable(this, self)
 
-	if self.Action then
-		self.Thread = coroutine.create(self.Action)
-	end
-    return this
+	return this
 end
 
 function SceneStateData:Resume(...)
-	print("SceneStateData:Resume", self.Parent.ID, self.ID, ...)
-	if not self.Thread and self.Action then
-		self.Thread = coroutine.create(self.Action)
+	print("SceneStateData:Resume", self.Parent.ID, self.ID, self.Action, self.Thread, self:GetStatus())
+	if not self.Thread or self:GetStatus() == "dead" then
+		self.Thread = coroutine.create(RunAction)
 	end
 	if self.Thread and self:GetStatus() ~= "running" then
 		self.Active = true
 		coroutine.resume(self.Thread, self, ...)
-		self.Parent:StateDone(self, ...)
 		return true
 	end
+	self.Active = self:GetStatus() == "running"
+	return self.Active
 end
 function SceneStateData:CanResume(...)
 	if self.CanResumeCallback then
@@ -63,14 +75,13 @@ function SceneStateData:CanResume(...)
 end
 
 function SceneStateData:Pause()
-	if self.Thread then
-		if coroutine.running() == self.Thread then
-			coroutine.yield()
-			self.Active = coroutine.status(self.Thread) ~= "running"
-			return true
-		else
-			self.Active = coroutine.status(self.Thread) ~= "running"
-		end
+	local doYield = self.Thread and coroutine.running() == self.Thread
+	print("SceneStateData:Pause", self.Active, self:GetStatus())
+	if doYield then
+		self.Active = false
+		coroutine.yield()
+	else
+		self.Active = self:GetStatus() == "running"
 	end
 	return self.Active
 end
@@ -80,7 +91,7 @@ function SceneStateData:GetStatus()
 	if self.Thread then
 		return coroutine.status(self.Thread)
 	end
-	return "dead"
+	return "nil"
 end
 
 ---@param character string
@@ -93,11 +104,9 @@ function SceneStateData:MoveToPosition(character, event, x, y, z, running)
 	character = StringHelpers.GetUUID(character)
 	local dist = GetDistanceToPosition(character, x, y, z)
 	if dist >= self.MoveDistanceThreshold then
-		if self:Pause() then
-			SceneManager.AddToQueue("StoryEvent", self.Parent.ID, self.ID, event, character)
-			--CharacterMoveToPosition(character, x, y, z, running or true, event)
-			Osi.ProcCharacterMoveToPosition(character, x, y, z, running or true, event)
-		end
+		SceneManager.AddToQueue("StoryEvent", self.Parent.ID, self.ID, event, character)
+		Osi.ProcCharacterMoveToPosition(character, x, y, z, running or true, event)
+		self:Pause()
 	end
 	return true
 end
@@ -110,10 +119,9 @@ function SceneStateData:MoveToObject(character, event, target, running)
 	character = StringHelpers.GetUUID(character)
 	local dist = GetDistanceTo(character, target)
 	if dist >= self.MoveDistanceThreshold then
-		if self:Pause() then
-			SceneManager.AddToQueue("StoryEvent", self.Parent.ID, self.ID, event, character)
-			Osi.ProcCharacterMoveTo(character, target, running or true, event)
-		end
+		SceneManager.AddToQueue("StoryEvent", self.Parent.ID, self.ID, event, character)
+		Osi.ProcCharacterMoveTo(character, target, running or true, event)
+		self:Pause()
 	end
 	return true
 end
@@ -121,7 +129,10 @@ end
 ---@param timeInMilliseconds integer How long to wait in milliseconds.
 function SceneStateData:Wait(timeInMilliseconds)
 	SceneManager.AddToQueue("Waiting", self.Parent.ID, self.ID, timeInMilliseconds)
-	return self:Pause()
+	if self:Pause() then
+		return true
+	end
+	return false
 end
 
 Classes.SceneStateData = SceneStateData

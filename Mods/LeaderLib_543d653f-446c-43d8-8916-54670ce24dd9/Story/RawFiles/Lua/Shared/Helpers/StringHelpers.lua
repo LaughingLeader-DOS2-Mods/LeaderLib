@@ -32,6 +32,14 @@ function StringHelpers.IsNullOrEmpty(x)
 	return x == nil or x == "" or NULL_UUID[x] or type(x) ~= "string"
 end
 
+---Checks if a string is null or only whitespace.
+---@type x string
+---@return boolean
+function StringHelpers.IsNullOrWhitespace(x)
+	-- CharacterCreationFinished sends 00000000-0000-0000-0000-000000000000 or some reason, omitting the NULL_
+	return x == nil or x == "" or NULL_UUID[x] or type(x) ~= "string" or string.gsub(x, "%s+", "") == ""
+end
+
 ---Capitalize a string.
 ---@type s string
 ---@return string
@@ -174,4 +182,13 @@ end
 function StringHelpers.GetLines(s)
 	if s:sub(-1)~="\n" then s=s.."\n" end
 	return s:gmatch("(.-)\n")
+end
+
+---Remove font tags from a string.
+---@param str string
+function StringHelpers.StripFont(str)
+	if str == nil or str == "" then
+		return str
+	end
+	return string.gsub(str, "<font.-'>", ""):gsub("</font>", "")
 end

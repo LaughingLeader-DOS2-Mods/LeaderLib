@@ -254,5 +254,4 @@ function GameHelpers.Tooltip.GetElementAttribute(element, attribute, fallback)
 	end
 	return fallback or ""
 end
-
 end

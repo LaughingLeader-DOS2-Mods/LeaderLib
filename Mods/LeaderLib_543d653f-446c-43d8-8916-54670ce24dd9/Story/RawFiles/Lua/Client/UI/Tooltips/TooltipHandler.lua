@@ -65,9 +65,6 @@ local FarOutManFixSkillTypes = {
 ---@param skill string
 ---@param tooltip TooltipData
 local function OnSkillTooltip(character, skill, tooltip)
-	if Vars.DebugMode and SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION then
-		print(skill, Common.Dump(Ext.StatGetAttribute(skill, "MemorizationRequirements")))
-	end
 	--print(Ext.JsonStringify(tooltip.Data))
 	if Features.TooltipGrammarHelper then
 		-- This fixes the double spaces from removing the "tag" part of Requires tag
@@ -76,7 +73,7 @@ local function OnSkillTooltip(character, skill, tooltip)
 		end
 	end
 
-	if Features.FixRifleWeaponRequirement then
+	if Features.FixRifleWeaponRequirement and Data.ActionSkills[skill] ~= true then
 		local requirement = Ext.StatGetAttribute(skill, "Requirement")
 		if requirement == "RifleWeapon" then
 			local skillRequirements = tooltip:GetElements("SkillRequiredEquipment")
@@ -152,7 +149,9 @@ local function OnSkillTooltip(character, skill, tooltip)
 		end
 	end
 
-	if Features.FixFarOutManSkillRangeTooltip and (character ~= nil and character.Stats ~= nil and character.Stats.TALENT_FaroutDude == true) then
+	if Data.ActionSkills[skill] ~= true
+	and Features.FixFarOutManSkillRangeTooltip 
+	and (character ~= nil and character.Stats ~= nil and character.Stats.TALENT_FaroutDude == true) then
 		local skillType = Ext.StatGetAttribute(skill, "SkillType")
 		local rangeAttribute = FarOutManFixSkillTypes[skillType]
 		if rangeAttribute ~= nil then

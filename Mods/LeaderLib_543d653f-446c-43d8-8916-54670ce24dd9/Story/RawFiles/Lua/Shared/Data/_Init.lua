@@ -742,6 +742,14 @@ Data.ArmorType = {
 	Robe = "Robe"
 }
 
+Data.ActionSkills = {
+	ActionSkillSheathe = true,
+	ActionSkillSneak = true,
+	ActionAttackGround = true,
+	ActionSkillFlee = true,
+	ActionSkillGuard = true,
+}
+
 if Ext.IsServer() then
 Data.OsirisEvents = {
 	AttackedByObject = 5,

@@ -3,16 +3,21 @@
 
 --- Registers a function to call when a specific Lua LeaderLib event fires.
 ---@param event string OnPrepareHit|OnHit|CharacterSheetPointChanged|CharacterBasePointsChanged|TimerFinished|FeatureEnabled|FeatureDisabled|Initialized|ModuleResume|SessionLoaded
----@param callback function
-function RegisterListener(event, callback, param)
+---@param callbackOrKey function|string If a string, the function is stored in a subtable of the event, such as NamedTimerFinished.TimerName = function
+---@param callbackOrNil function|nil If callback is a string, then this is the callback.
+function RegisterListener(event, callbackOrKey, callbackOrNil)
 	if Listeners[event] ~= nil then
-		if type(callback) == "string" then
-			if Listeners[event][callback] == nil then
-				Listeners[event][callback] = {}
+		if type(callbackOrKey) == "string" then
+			if callbackOrNil ~= nil then
+				if Listeners[event][callbackOrKey] == nil then
+					Listeners[event][callbackOrKey] = {}
+				end
+				table.insert(Listeners[event][callbackOrKey], callbackOrNil)
+			else
+				Ext.PrintError(string.format("[LeaderLib__Main.lua:RegisterListener] Event (%s) with sub-key (%s) requires a function as the third parameter. Context: %s", event, callbackOrKey, Ext.IsServer() and "SERVER" or "CLIENT"))
 			end
-			table.insert(Listeners[event][callback], param)
 		else
-			table.insert(Listeners[event], callback)
+			table.insert(Listeners[event], callbackOrKey)
 		end
 	else
 		Ext.PrintError(string.format("[LeaderLib__Main.lua:RegisterListener] Event (%s) is not a valid LeaderLib listener event! Context: %s", event, Ext.IsServer() and "SERVER" or "CLIENT"))

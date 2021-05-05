@@ -6,4 +6,31 @@
 		],
 		"description": "Prints a message to the console using LeaderLib's developer-mode print function."
 	},
+	"NewClass": {
+		"prefix": "newclass",
+		"body": [
+			"---@class $1",
+			"local $1 = {",
+			"\tType = \"$1\",",
+			"}",
+			"$1.__index = $1",
+			"",
+			"---@param params table<string,any>",
+			"---@return $1",
+			"function $1:Create(params)",
+			"    local this =",
+			"    {",
+			"\t\t",
+			"\t}",
+			"\tif params then",
+			"\t\tfor prop,value in pairs(params) do",
+			"\t\t\tthis[prop] = value",
+			"\t\tend",
+			"\tend",
+			"\tsetmetatable(this, self)",
+			"    return this",
+			"end",
+		],
+		"description": "Creates a new 'class-type' table."
+	}
 }

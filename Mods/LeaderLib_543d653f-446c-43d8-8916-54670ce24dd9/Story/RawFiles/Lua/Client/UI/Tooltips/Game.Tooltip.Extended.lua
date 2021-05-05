@@ -193,6 +193,8 @@ TooltipSpecs = {
 	StatusMalus = {_Label},
 	StatusDescription = {_Label},
 
+	--Unused / throw errors
+	
 	Title = {_Label},
 	SurfaceDescription = {_Label},
 	Duration = {_Label},
@@ -1425,17 +1427,14 @@ function TooltipHooks:OnRequestRuneTooltip(ui, method, slot)
 end
 
 function TooltipHooks:NotifyListeners(type, name, request, tooltip, ...)
-	local args = {...}
-	table.insert(args, tooltip)
-	local listeners = self.TypeListeners[type]
-	if listeners then
-		self:NotifyAll(listeners, table.unpack(args))
-		if name and listeners and listeners[name] then
-			self:NotifyAll(listeners[name], table.unpack(args))
-		end
-	end
+    local args = {...}
+    table.insert(args, tooltip)
+    self:NotifyAll(self.TypeListeners[type], table.unpack(args))
+    if name ~= nil and self.ObjectListeners[type] ~= nil then
+        self:NotifyAll(self.ObjectListeners[type][name], table.unpack(args))
+    end
 
-	self:NotifyAll(self.GlobalListeners, request, tooltip)
+    self:NotifyAll(self.GlobalListeners, request, tooltip)
 end
 
 function TooltipHooks:NotifyAll(listeners, ...)

@@ -77,15 +77,14 @@ Ext.RegisterListener("InputEvent", function(evt)
 		if fireListeners then
 			InvokeListenerCallbacks(Listeners.InputEvent, eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled)
 			InvokeListenerCallbacks(Listeners.NamedInputEvent[eventName], eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled)
+			if Vars.DebugMode then
+				fprint(LOGLEVEL.DEFAULT, "[ExtInputEvent] (%s) Pressed(%s) Time(%s)", eventName, evt.EventId, evt.Press, Ext.MonotonicTime())
+			end
 		end
 
 		if not UIExtensions.MouseEnabled and evt.Press and eventName == "FlashLeftMouse" or eventName == "FlashRightMouse" then
 			UIExtensions.Invoke("fireMouseClicked", eventName)
 		end
-	end
-
-	if Vars.DebugMode then
-		fprint(LOGLEVEL.DEFAULT, "[ExtInputEvent] (%s) Pressed(%s) Time(%s)", eventName, evt.EventId, evt.Press, Ext.MonotonicTime())
 	end
 end)
 

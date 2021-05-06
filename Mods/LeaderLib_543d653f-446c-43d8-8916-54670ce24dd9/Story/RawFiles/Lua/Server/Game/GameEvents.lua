@@ -45,7 +45,9 @@ local function InvokeOnInitializedCallbacks(region)
 	InvokeListenerCallbacks(Listeners.Initialized, region)
 	Osi.LeaderLib_LoadingDone(region)
 
-	SceneManager.Load()
+	if SceneManager then
+		SceneManager.Load()
+	end
 end
 
 local function OnInitialized(region, isRunning)

@@ -436,7 +436,7 @@ Ext.RegisterConsoleCommand("tooltiptest", function(cmd, delay)
 end)
 
 Ext.RegisterListener("SessionLoaded", function()
-	PrintAllUITypeID()
+	--PrintAllUITypeID()
 	local tryFindUI = function(ui, ...)
 		if not foundUITypeIds[ui:GetTypeId()] then
 			local id,file = TryFindUI(ui)
@@ -587,5 +587,5 @@ Ext.RegisterListener("SessionLoaded", function()
 	end
 end)
 
-print("Pre Session Loaded UI:")
-PrintAllUITypeID()
+--print("Pre Session Loaded UI:")
+--PrintAllUITypeID()

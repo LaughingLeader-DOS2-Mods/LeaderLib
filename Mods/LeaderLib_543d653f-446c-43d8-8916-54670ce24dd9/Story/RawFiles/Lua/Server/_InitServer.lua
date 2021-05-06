@@ -19,7 +19,9 @@ Ext.Require("Server/Game/GameEvents.lua")
 Ext.Require("Server/Game/ComputeCharacterHit.lua")
 Ext.Require("Server/Game/QualityOfLife.lua")
 Ext.Require("Server/Game/VisualElementManager.lua")
+if coroutine then
 Ext.Require("Server/Game/SceneManager.lua")
+end
 Ext.Require("Server/Listeners/_Init.lua")
 Ext.Require("Server/ModMenu/ModMenuServerCommands.lua")
 Ext.Require("Server/Timers.lua")
@@ -29,7 +31,9 @@ Ext.Require("Server/Debug/ConsoleCommands.lua")
 if Vars.DebugMode then
 	Ext.Require("Server/Debug/DebugMain.lua")
 	Ext.Require("Server/Debug/DeveloperCommands.lua")
+	if coroutine then
 	Ext.Require("Server/Debug/CoroutineTests.lua")
+	end
 end
 
 local function table_has_index(tbl, index)

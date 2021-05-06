@@ -84,7 +84,7 @@
 	<content contentuid="h3db4fa28g041bg45ceg9fd6g91d77d5e154f">[GLOBAL] Prevent LeaderLib registered mod books from being automatically be added to the party&apos;s inventory. (Books are currently enabled)</content>
 	<content contentuid="h3e1f5e00g58f7g4b23g97c4g979be6586c6f">Opening the LeaderLib settings menu...</content>
 	<content contentuid="h3e28d8d8g362bg4d7dga097gf8fcac3fbfe3">&lt;font color=&apos;#FF00CC&apos;&gt;One or more players are missing the script extender.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#FF0000&apos;&gt;The script extender is needed for mods to work correctly.&lt;/font&gt;&lt;br&gt;Players missing the extender:&lt;br&gt;[1]</content>
-	<content contentuid="h3e7215afg3389g4dc4gaa4bg1029c5cda75a">If unchecked, all statuses next to the party&apos;s portraits will be hidden.</content>
+	<content contentuid="h3e7215afg3389g4dc4gaa4bg1029c5cda75a">If enabled, all statuses next to the party&apos;s portraits will be hidden.</content>
 	<content contentuid="h3eb917d7g036fg483dg8ee5gc83743845400">Welcome!</content>
 	<content contentuid="h3ed2c7c5gf6c0g4c9dga916g5782593327ab">Open Mod Menu</content>
 	<content contentuid="h3eff6bc1gb26dg4bb5gb3b9g2551c65026e0">Apply On Hit:&lt;br&gt;[1] for [2] turns(s). ([3] Chance)</content>
@@ -94,6 +94,7 @@
 	<content contentuid="h41a533b7g535bg4e76gbc7eg202d33a73740">Enable Auto-Adding Mod Books</content>
 	<content contentuid="h4252ff7cgb624g4b24gbf03g1772392f3988">Old Man Lothar</content>
 	<content contentuid="h43868aebg7281g40bfgbc1dgf6fe5a06512b">Autosave Interval</content>
+	<content contentuid="h455f1349g6528g452bg8624g5d0674b01ac5">If enabled, tooltips that support shift-key expansion will always be expanded.</content>
 	<content contentuid="h45f478cdg3b77g400aga94fg04b3a60b7ad9">Hidden Backpack</content>
 	<content contentuid="h46c05d65g039dg4651gb24eg027244f86897">Undead Dwarf</content>
 	<content contentuid="h473ddea8g74eag4433g8e19gc217b9c1e42d">Undead Human</content>
@@ -225,6 +226,7 @@
 	<content contentuid="h950f9baege3b1g428agbb4dgf70a45676c5a">Chain All</content>
 	<content contentuid="h951be36bg6ed7g49e4ga343gaa5c47a4c98e">*Lothar grunts, rubbing his lower back as he chews on something.* Once I saw this beautiful ship in the distance, I knew it was my chance to escape. I swam like a fish.</content>
 	<content contentuid="h966d6fabgc29cg4602gad0dg0c50f9418e24">A &lt;font color=&apos;#D040D0&apos;&gt;Story Compilation Error&lt;/font&gt; occurred with your active mods.&lt;br&gt;&lt;font color=&apos;#F7BA14&apos; size=&apos;22&apos;&gt;You may be missing mod requirements.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#FF0000&apos; size=&apos;24&apos;&gt;Mods will not work correctly.&lt;/font&gt;&lt;br&gt;To potentially fix this, please check the requirements of your active mods, such as required dependency mods, the script extender, and/or an updated game version.</content>
+	<content contentuid="h975b62eagb7acg46c2gb917g0d5218e2e8ca">Always Expand Tooltips</content>
 	<content contentuid="h97e93b5eg2e78g46f0gac84g8250aeaa1984">*The old man looks to you as you approach.* Welcome! *He looks around.* Bit of a dreary place now, mm?</content>
 	<content contentuid="h9863bb3eg058dg45acg8926gefb0f24ece72">Autosave When Combat Starts</content>
 	<content contentuid="h98bf1217gf2bfg4d82g99b9g6747f36f9aab">&lt;font color=&apos;#FF0000&apos;&gt;Script Extender Missing!&lt;/font&gt;</content>
@@ -387,6 +389,6 @@
 	<content contentuid="hfda4adafgd642g477fgbbdbg268fe17118b4">Lower Skill Memorization Requirements</content>
 	<content contentuid="hfdc7dcb0g648cg4021gb530g011b5d8c242d">Skills Can Backstab</content>
 	<content contentuid="hfe0169eagd031g41a8gbcd3g6b992d81fba5">[GLOBAL] Enable Status Logging</content>
-	<content contentuid="hfe94fb21g03b4g46c3gbcaegf551c9b54dc8">Display Portrait Statuses</content>
+	<content contentuid="hfe94fb21g03b4g46c3gbcaegf551c9b54dc8">Hide All Statuses</content>
 	<content contentuid="hff1084efgf4efg450aga177g1311cbce0ebb">&lt;font color=&apos;#2EFE2E&apos;&gt;+[1] Attitude&lt;/font&gt;</content>
 </contentList>

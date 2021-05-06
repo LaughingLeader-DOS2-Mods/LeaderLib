@@ -40,6 +40,7 @@ if Vars.DebugMode then
 	Ext.Require("Client/Debug/UIDebugListeners.lua")
 end
 Ext.Require("Client/UI/Tooltips/TooltipHandler.lua")
+Ext.Require("Client/UI/Tooltips/TooltipInfoExpander.lua")
 Ext.Require("Client/UI/ControllerUIHelpers.lua")
 Ext.Require("Client/UI/UIFeatures.lua")
 Ext.Require("Client/UI/UIExtensions.lua")

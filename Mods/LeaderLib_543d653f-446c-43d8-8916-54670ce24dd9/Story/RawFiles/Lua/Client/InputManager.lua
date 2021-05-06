@@ -7,17 +7,35 @@ for i,name in pairs(Data.InputEnum) do
 	Input.Keys[name] = false
 end
 
---Wrapper around RegisterListener for easier auto-completion.
----@param callback InputEventCallback
-function Input.RegisterListener(callback)
-	RegisterListener("InputEvent", callback)
+---Wrapper around RegisterListener for easier auto-completion.
+---@param callbackOrInputName InputEventCallback
+function Input.RegisterListener(callbackOrInputName, callbackOrNil)
+	if type(callbackOrInputName) == "string" then
+		if callbackOrNil ~= nil then
+			RegisterListener("NamedInputEvent", callbackOrInputName, callbackOrNil)
+		end
+	else
+		RegisterListener("InputEvent", callbackOrInputName)
+	end
 end
 
----@param callback InputEventCallback
-function Input.RemoveListener(callback)
-	for i,v in pairs(Listeners.InputEvent) do
-		if v == callback then
-			table.remove(Listeners.InputEvent, i)
+---@param callbackOrInputNameOrInputName InputEventCallback
+function Input.RemoveListener(callbackOrInputName, callbackOrNil)
+	local t = type(callbackOrInputName)
+	if t == "string" and callbackOrNil ~= nil then
+		local listeners = Listeners.NamedInputEvent[callbackOrInputName]
+		if listeners then
+			for i,v in pairs(listeners) do
+				if v == callbackOrNil then
+					table.remove(listeners, i)
+				end
+			end
+		end
+	elseif t == "function" then
+		for i,v in pairs(Listeners.InputEvent) do
+			if v == callbackOrInputName then
+				table.remove(Listeners.InputEvent, i)
+			end
 		end
 	end
 end
@@ -58,6 +76,7 @@ Ext.RegisterListener("InputEvent", function(evt)
 		Input.Keys[eventName] = evt.Press
 		if fireListeners then
 			InvokeListenerCallbacks(Listeners.InputEvent, eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled)
+			InvokeListenerCallbacks(Listeners.NamedInputEvent[eventName], eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled)
 		end
 
 		if not UIExtensions.MouseEnabled and evt.Press and eventName == "FlashLeftMouse" or eventName == "FlashRightMouse" then
@@ -65,9 +84,9 @@ Ext.RegisterListener("InputEvent", function(evt)
 		end
 	end
 
-	-- if Vars.DebugMode then
-	-- 	fprint(LOGLEVEL.DEFAULT, "[ExtInputEvent] (%s) Pressed(%s) Time(%s)", eventName, evt.EventId, evt.Press, Ext.MonotonicTime())
-	-- end
+	if Vars.DebugMode then
+		fprint(LOGLEVEL.DEFAULT, "[ExtInputEvent] (%s) Pressed(%s) Time(%s)", eventName, evt.EventId, evt.Press, Ext.MonotonicTime())
+	end
 end)
 
 ---@param ui LeaderLibUIExtensions
@@ -86,15 +105,11 @@ function Input.OnFlashEvent(ui, call, pressed, eventName, arrayIndex)
 		if type(id) == "table" then
 			for _,kid in pairs(id) do
 				InvokeListenerCallbacks(Listeners.InputEvent, eventName, pressed, kid, Input.Keys, Vars.ControllerEnabled)
+				InvokeListenerCallbacks(Listeners.NamedInputEvent[eventName], eventName, pressed, kid, Input.Keys, Vars.ControllerEnabled)
 			end
 		else
 			InvokeListenerCallbacks(Listeners.InputEvent, eventName, pressed, id, Input.Keys, Vars.ControllerEnabled)
+			InvokeListenerCallbacks(Listeners.NamedInputEvent[eventName], eventName, pressed, id, Input.Keys, Vars.ControllerEnabled)
 		end
 	end
-end
-
-if Vars.DebugMode then
-	-- Input.RegisterListener(function(eventName, pressed, id, inputMap, controllerEnabled)
-	-- 	PrintLog("[LeaderLib:InputEvent] eventName(%s)[%s] pressed(%s)", eventName, id, pressed)
-	-- end)
 end

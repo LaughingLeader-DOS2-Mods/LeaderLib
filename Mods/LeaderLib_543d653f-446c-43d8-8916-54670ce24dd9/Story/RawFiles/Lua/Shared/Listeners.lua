@@ -76,6 +76,8 @@ if Ext.IsClient() then
 	---@alias InputEventCallback fun(eventName:string, pressed:boolean, id:integer, inputMap:table<int,boolean>, controllerEnabled:boolean):void
 	---@type InputEventCallback[]
 	Listeners.InputEvent = {}
+	---@type table<string, InputEventCallback>
+	Listeners.NamedInputEvent = {}
 
 	---@alias OnTooltipPositionedCallback fun(ui:UIObject, tooltip_mc:FlashObject, isControllerMode:boolean, item:EclItem)
 	---Called after showFormattedTooltipAfterPos is invoked.

@@ -10,11 +10,17 @@ end
 ---Wrapper around RegisterListener for easier auto-completion.
 ---@param callbackOrInputName InputEventCallback
 function Input.RegisterListener(callbackOrInputName, callbackOrNil)
-	if type(callbackOrInputName) == "string" then
-		if callbackOrNil ~= nil then
-			RegisterListener("NamedInputEvent", callbackOrInputName, callbackOrNil)
+	local t = type(callbackOrInputName)
+	if (t == "string" or t == "number") and callbackOrNil ~= nil then
+		if t == "number" then
+			local id = callbackOrInputName
+			callbackOrInputName = Data.InputEnum[id]
+			if not callbackOrInputName then
+				error(string.format("Invalid input id %s", id))
+			end
 		end
-	else
+		RegisterListener("NamedInputEvent", callbackOrInputName, callbackOrNil)
+	elseif t == "function" then
 		RegisterListener("InputEvent", callbackOrInputName)
 	end
 end
@@ -22,7 +28,14 @@ end
 ---@param callbackOrInputNameOrInputName InputEventCallback
 function Input.RemoveListener(callbackOrInputName, callbackOrNil)
 	local t = type(callbackOrInputName)
-	if t == "string" and callbackOrNil ~= nil then
+	if t == "string" or t == "number" and callbackOrNil ~= nil then
+		if t == "number" then
+			local id = callbackOrInputName
+			callbackOrInputName = Data.InputEnum[id]
+			if not callbackOrInputName then
+				error(string.format("Invalid input id %s", id))
+			end
+		end
 		local listeners = Listeners.NamedInputEvent[callbackOrInputName]
 		if listeners then
 			for i,v in pairs(listeners) do
@@ -78,7 +91,7 @@ Ext.RegisterListener("InputEvent", function(evt)
 			InvokeListenerCallbacks(Listeners.InputEvent, eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled)
 			InvokeListenerCallbacks(Listeners.NamedInputEvent[eventName], eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled)
 			if Vars.DebugMode then
-				fprint(LOGLEVEL.DEFAULT, "[ExtInputEvent] (%s) Pressed(%s) Time(%s)", eventName, evt.EventId, evt.Press, Ext.MonotonicTime())
+				fprint(LOGLEVEL.DEFAULT, "[ExtInputEvent] (%s)[%s] Pressed(%s) Time(%s)", eventName, evt.EventId, evt.Press, Ext.MonotonicTime())
 			end
 		end
 

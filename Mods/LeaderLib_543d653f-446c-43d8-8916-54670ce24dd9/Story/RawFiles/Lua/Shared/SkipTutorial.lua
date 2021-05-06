@@ -334,7 +334,7 @@ elseif Ext.IsClient() then
 	---@param controllerEnabled boolean
 	local function OnInput(eventName, pressed, id, inputMap, controllerEnabled)
 		if controllerEnabled and createdCheckboxID > -1 and 
-			(Input.GetKeyState("UICreationTabPrev") and pressed and eventName == "ConnectivityMenu") then
+			(Input.GetKeyStateByID(Data.Input.UICreationTabPrev) and pressed and eventName == "ConnectivityMenu") then
 			local main = UIExtensions.Instance:GetRoot()
 			if main then
 				main.toggleCheckbox(createdCheckboxID)

@@ -545,7 +545,11 @@ function DebugTooltipEncoding(ui)
 	Ext.Print("Encoding matches: ", Ext.JsonStringify(parsed2) == Ext.JsonStringify(parsed))
 end
 
+---@class TooltipRequest:table
+---@field Type string
+
 TooltipHooks = {
+	---@type TooltipRequest
 	NextRequest = nil,
 	SessionLoaded = false,
 	InitializationRequested = false,
@@ -1157,6 +1161,10 @@ function TooltipHooks:OnRenderTooltip(arrayData, ui, method, ...)
 	self.NextRequest = nil
 end
 
+---@param ui UIObject
+---@param propertyName string
+---@param req TooltipRequest
+---@param method string
 function TooltipHooks:OnRenderSubTooltip(ui, propertyName, req, method, ...)
 	local tt = TableFromFlash(ui, propertyName)
 	local params = ParseTooltipArray(tt)
@@ -1426,6 +1434,11 @@ function TooltipHooks:OnRequestRuneTooltip(ui, method, slot)
 	end
 end
 
+---@param type string
+---@param name string
+---@param request TooltipRequest
+---@param tooltip TooltipData
+---@vararg any
 function TooltipHooks:NotifyListeners(type, name, request, tooltip, ...)
     local args = {...}
     table.insert(args, tooltip)
@@ -1483,20 +1496,42 @@ end
 ---@class TooltipData
 ---@field Data TooltipElement[]
 ---@field ControllerEnabled boolean
+---@field IsExtended boolean Simple variable a mod can check to see if this is a LeaderLib tooltip.
 TooltipData = {}
 
 function TooltipData:Create(data)
 	local tt = {
 		Data = data,
-		ControllerEnabled = ControllerVars.Enabled or false
+		ControllerEnabled = ControllerVars.Enabled or false,
+		IsExtended = true
 	}
 	setmetatable(tt, {__index = self})
 	return tt
 end
 
+---Whether or not the tooltip should be expanded. Check this when setting up tooltip elements.
+---@return boolean
+function TooltipData:IsExpanded()
+	return Mods.LeaderLib.TooltipExpander.IsExpanded()
+end
+
+---Signals to the tooltip expander that pressing or releasing the expand key will cause the current visible tooltip to re-render.
+function TooltipData:MarkDirty()
+	return Mods.LeaderLib.TooltipExpander.MarkDirty()
+end
+
 function TooltipData:GetElement(type)
 	for i,element in pairs(self.Data) do
 		if element.Type == type then
+			return element
+		end
+	end
+end
+
+function TooltipData:GetLastElement(type)
+	for i=#self.Data,1,-1 do
+		local element = self.Data[i]
+		if element and element.Type == type then
 			return element
 		end
 	end

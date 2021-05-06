@@ -65,6 +65,15 @@ local FarOutManFixSkillTypes = {
 ---@param skill string
 ---@param tooltip TooltipData
 local function OnSkillTooltip(character, skill, tooltip)
+	if Vars.DebugMode and skill == "ActionSkillFlee" then
+		tooltip:MarkDirty()
+		if tooltip:IsExpanded() then
+			--tooltip:AppendElement({Type="SkillDescription", Label="<font color='#3399FF'>It's not fleeing, it's a tactical retreat!</font>"})
+			local element = tooltip:GetElement("SkillDescription")
+			element.Label=element.Label .. "<br><font color='#3399FF'>It's not fleeing, it's a tactical retreat!</font>"
+		end
+	end
+
 	--print(Ext.JsonStringify(tooltip.Data))
 	if Features.TooltipGrammarHelper then
 		-- This fixes the double spaces from removing the "tag" part of Requires tag
@@ -775,6 +784,46 @@ local function OnTalentTooltip(player, talent, tooltip)
 	end
 end
 
+local tooltipTypeToElement = {
+	Ability = "AbilityDescription",
+	CustomStat = "StatsDescription",
+	Item = "ItemDescription",
+	Rune = "ItemDescription",
+	Skill = "SkillDescription",
+	Stat = "StatsDescription",
+	Status = "StatusDescription",
+	Tag = "TagDescription",
+	Talent = "TalentDescription",
+}
+
+---@param request TooltipRequest
+---@param tooltip TooltipData
+local function OnAnyTooltip(request, tooltip)
+	local canShowText = not GameSettings.Settings.Client.AlwaysExpandTooltips and not Vars.ControllerEnabled
+	if canShowText and TooltipExpander.IsDirty() then
+		local elementType = tooltipTypeToElement[request.Type]
+		local element = tooltip:GetLastElement(elementType)
+		if element then
+			local target = element.Label or element.Description
+			if target then
+				local nextText = target
+				local format = "<br><br><p align='center'><font color='#CC4400'>%s</font></p>"
+				if TooltipExpander.IsExpanded() then
+					nextText = nextText .. string.format(format, "Release Shift for Less Info")
+				else
+					nextText = nextText .. string.format(format, "Hold Shift for More Info")
+				end
+				if element.Label then
+					element.Label = nextText
+				elseif element.Description then
+					element.Description = nextText
+				end
+			end
+		end
+	end
+	print("OnAnyTooltip", request.Type, Ext.JsonStringify(tooltip.Data))
+end
+
 Ext.RegisterListener("SessionLoaded", function()
 	Game.Tooltip.RegisterListener("Item", nil, OnItemTooltip)
 	Game.Tooltip.RegisterListener("Rune", nil, OnRuneTooltip)
@@ -783,6 +832,7 @@ Ext.RegisterListener("SessionLoaded", function()
 	--Game.Tooltip.RegisterListener("Talent", nil, OnTalentTooltip)
 	--Game.Tooltip.RegisterListener("Stat", nil, OnStatTooltip)
 	Game.Tooltip.RegisterListener("CustomStat", nil, OnCustomStatTooltip)
+	Game.Tooltip.RegisterListener(OnAnyTooltip)
 
 	-- Ext.RegisterUITypeInvokeListener(Data.UIType.tooltip, "addTooltip", function(ui, method, text, xPos, yPos, ...)
 	-- 	InvokeListenerCallbacks(Listeners.OnAddTooltip, ui, text, xPos, yPos, ...)

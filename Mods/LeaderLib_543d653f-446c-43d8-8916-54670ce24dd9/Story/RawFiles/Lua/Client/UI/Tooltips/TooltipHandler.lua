@@ -651,7 +651,7 @@ local function OnItemTooltip(item, tooltip)
 					end
 				end
 			end
-			if item.Stats and item.Stats.Requirements ~= nil and #item.Stats.Requirements > 0 then
+			if not Data.ObjectStats[item.StatsId] and item.Stats and item.Stats.Requirements ~= nil and #item.Stats.Requirements > 0 then
 				local attributeName = ""
 				local requirementsMet = true
 				for i,v in pairs(item.Stats.Requirements) do

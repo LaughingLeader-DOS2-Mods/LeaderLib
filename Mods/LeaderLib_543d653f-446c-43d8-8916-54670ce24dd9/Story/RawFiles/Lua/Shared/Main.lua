@@ -116,6 +116,9 @@ Ext.RegisterListener("SessionLoaded", function()
 		end
 		PrintDebug(string.format("[LeaderLib_Shared_SessionLoaded] Updated %s TranslatedString entries.", count))
 	end
+	for _,stat in pairs(Ext.GetStatEntries("Object")) do
+		Data.ObjectStats[stat] = true
+	end
 end)
 
 ---@param uuid string

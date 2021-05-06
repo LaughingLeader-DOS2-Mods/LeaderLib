@@ -3,6 +3,8 @@ if Data == nil then
 end
 
 Data.OriginalSkillTiers = {}
+---@type table<string,bool>
+Data.ObjectStats = {[""] = true}
 
 local function _pairs(t, var)
 	var = var + 1

@@ -45,28 +45,66 @@ function TooltipExpander.IsExpanded()
 	if not Vars.ControllerEnabled then
 		return Input.GetKeyStateByID(Data.Input.SplitItemToggle) == true
 	else
+		if Vars.DebugMode then
+			-- Left Stick Click?
+			return Input.GetKeyStateByID(Data.Input.ToggleInputMode) == true
+		end
 		return true
 	end
+end
+
+local function SaveTooltipData(ui, call, ...)
+	dirty = false
+	if not rebuildingTooltip then
+		TooltipExpander.CallData.UI = ui:GetTypeId()
+		TooltipExpander.CallData.Args = {...}
+		TooltipExpander.CallData.LastCall = call
+	end
+	rebuildingTooltip = false
 end
 
 local calls = {
 	"showSkillTooltip",
 	"showStatusTooltip",
 	"showItemTooltip",
-	"showTooltip",
+	"showStatTooltip",
+	"showAbilityTooltip",
+	"showTalentTooltip",
+	"showTagTooltip",
+	"showCustomStatTooltip",
+	"showRuneTooltip",
 }
 
 for i,v in pairs(calls) do
-	Ext.RegisterUINameCall(v, function(ui, call, ...)
-		dirty = false
-		if not rebuildingTooltip then
-			TooltipExpander.CallData.UI = ui:GetTypeId()
-			TooltipExpander.CallData.Args = {...}
-			TooltipExpander.CallData.LastCall = call
-		end
-		rebuildingTooltip = false
-		print(call, dirty, rebuildingTooltip, isExpanded)
-	end, "Before")
+	Ext.RegisterUINameCall(v, SaveTooltipData, "Before")
+end
+
+if Vars.DebugMode then
+	local controller_calls = {
+		"itemDollOver",
+		"overItem",
+		"refreshTooltip",
+		"requestAbilityTooltip",
+		"requestAttributeTooltip",
+		"requestSkillTooltip",
+		"requestTagTooltip",
+		"requestTalentTooltip",
+		"runeSlotOver",
+		"selectCustomStat",
+		"selectedAttribute",
+		"setTooltipPanelVisible",
+		"setTooltipVisible",
+		"SlotHover",
+		"slotOver",
+	}
+	
+	for i,v in pairs(controller_calls) do
+		Ext.RegisterUINameCall(v, function(ui, call, ...)
+			if Vars.ControllerEnabled then
+				SaveTooltipData(ui, call, ...)
+			end
+		end, "Before")
+	end
 end
 
 Ext.RegisterUINameCall("hideTooltip", function(ui, call, ...)
@@ -75,7 +113,6 @@ Ext.RegisterUINameCall("hideTooltip", function(ui, call, ...)
 		isExpanded = TooltipExpander.IsExpanded()
 		TooltipExpander.CallData = {}
 	end
-	print(call, dirty, rebuildingTooltip, isExpanded)
 end)
 
 -- "SplitItemToggle": ["key:lshift","key:rshift"],
@@ -90,11 +127,9 @@ Input.RegisterListener(Data.Input.SplitItemToggle, function(eventName, pressed, 
 				dirty = false
 				ui:ExternalInterfaceCall("hideTooltip")
 				ui:ExternalInterfaceCall(TooltipExpander.CallData.LastCall, table.unpack(TooltipExpander.CallData.Args))
-			else
-				rebuildingTooltip = false
+				return
 			end
-		else
-			rebuildingTooltip = false
 		end
 	end
+	rebuildingTooltip = false
 end)

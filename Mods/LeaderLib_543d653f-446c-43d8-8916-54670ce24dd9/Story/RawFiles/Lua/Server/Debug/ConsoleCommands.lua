@@ -151,6 +151,11 @@ end)
 
 local treasureChest = nil
 Ext.RegisterConsoleCommand("addtreasure", function(command, treasure, identifyItems, levelstr)
+	if identifyItems then
+		identifyItems = true
+	else
+		identifyItems = false
+	end
 	if treasure == nil then
 		treasure = "ArenaMode_ArmsTrader"
 	end
@@ -166,7 +171,7 @@ Ext.RegisterConsoleCommand("addtreasure", function(command, treasure, identifyIt
 	local tx,ty,tz = FindValidPosition(x,y,z, 8.0, treasureChest)
 	ItemMoveToPosition(treasureChest, tx,ty,tz,16.0,20.0,"",0)
 	GenerateTreasure(treasureChest, treasure, CharacterGetLevel(host), host)
-	if identifyItems ~= 0 then
+	if identifyItems then
 		ContainerIdentifyAll(treasureChest)
 	end
 end)

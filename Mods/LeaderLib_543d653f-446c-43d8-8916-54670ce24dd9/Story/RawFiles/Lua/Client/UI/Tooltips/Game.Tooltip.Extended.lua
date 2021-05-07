@@ -1223,9 +1223,13 @@ function TooltipHooks:OnRequestConsoleHotbarTooltip(ui, method, slotNum)
 			end
 		end
 		if slotHandle and slotNum ~= slotHandle then
-			request.Type = "Item"
-			request.Item = Ext.GetItem(Ext.DoubleToHandle(slotHandle))
-		else
+			local handle = Ext.DoubleToHandle(slotHandle)
+			if handle then
+				request.Type = "Item"
+				request.Item = Ext.GetItem(handle)
+			end
+		end
+		if not request.Item then
 			request = nil
 		end
 	end

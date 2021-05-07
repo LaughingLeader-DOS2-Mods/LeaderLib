@@ -799,7 +799,7 @@ local tooltipTypeToElement = {
 ---@param request TooltipRequest
 ---@param tooltip TooltipData
 local function OnAnyTooltip(request, tooltip)
-	local canShowText = not GameSettings.Settings.Client.AlwaysExpandTooltips and not Vars.ControllerEnabled
+	local canShowText = not GameSettings.Settings.Client.AlwaysExpandTooltips and (not Vars.ControllerEnabled or Vars.DebugMode)
 	if canShowText and TooltipExpander.IsDirty() then
 		local elementType = tooltipTypeToElement[request.Type]
 		local element = tooltip:GetLastElement(elementType)

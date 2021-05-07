@@ -250,10 +250,10 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 		mainMenu.addMenuCheckbox(AddControl(settings.BackstabSettings.NPC, "SpellsCanBackstab"), text.BackstabSettings_SpellsCanBackstab.Value, controlsEnabled, settings.BackstabSettings.NPC.SpellsCanBackstab and 1 or 0, false, text.BackstabSettings_SpellsCanBackstab_Description.Value)
 
 		mainMenu.addMenuLabel(text.Section_Client.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.Client, "AlwaysExpandTooltips"), text.Client_AlwaysExpandTooltips.Value, true, settings.Client.AlwaysExpandTooltips and 1 or 0, false, text.Client_AlwaysExpandTooltips_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "AlwaysDisplayWeaponScalingText"), text.Client_AlwaysDisplayWeaponScalingText.Value, true, settings.Client.AlwaysDisplayWeaponScalingText and 1 or 0, false, text.Client_AlwaysDisplayWeaponScalingText_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client.StatusOptions, "HideAll"), text.Client_HideStatuses.Value, true, settings.Client.StatusOptions.HideAll and 1 or 0, false, text.Client_HideStatuses_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "DivineTalentsEnabled"), text.Client_DivineTalentsEnabled.Value, true, settings.Client.DivineTalentsEnabled and 1 or 0, false, text.Client_DivineTalentsEnabled_Description.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.Client, "AlwaysExpandTooltips"), text.Client_AlwaysExpandTooltips.Value, true, settings.Client.AlwaysExpandTooltips and 1 or 0, false, text.Client_AlwaysExpandTooltips_Description.Value)
 	end
 end
 

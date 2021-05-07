@@ -12,6 +12,7 @@ local Game = Game
 local LOGLEVEL = LOGLEVEL
 local fprint = fprint
 local Dump = Common.Dump
+local Data = Data
 
 Game.Tooltip = {}
 
@@ -607,51 +608,6 @@ local TooltipArrayNames = {
 	}
 }
 
-local UI_TYPE = {
-	actionProgression = 0,
-	bottomBar_c = 59,
-	characterCreation = 3,
-	characterCreation_c = 4,
-	characterSheet = 119,
-	chatLog = 6,
-	combatLog = 7,
-	containerInventory = 37,
-	contextMenu = 11,
-	craftPanel_c = 84,
-	dummyOverhead = 15,
-	enemyHealthBar = 42,
-	equipmentPanel_c = 64,
-	examine = 104,
-	examine_c = 67,
-	fullScreenHUD = 100,
-	gameMenu = 19,
-	hotBar = 40,
-	journal = 22,
-	loadingScreen = 23,
-	minimap = 30,
-	mouseIcon = 31,
-	msgBox = 29,
-	msgBox_c = 75,
-	notification = 36,
-	overhead = 5,
-	partyInventory = 116,
-	partyInventory_c = 142,
-	partyManagement_c = 82,
-	playerInfo = 38,
-	reward_c = 137,
-	skills = 41,
-	statsPanel_c = 63,
-	statusConsole = 117,
-	textDisplay = 43,
-	tooltip = 44,
-	trade = 46,
-	trade_c = 73,
-	tutorialBox = 55,
-	uiCraft = 102,
-	uiFade = 16,
-	worldTooltip = 48,
-}
-
 local selectEvents = {
 	"selectStat",
 	"selectAbility",
@@ -661,141 +617,127 @@ local selectEvents = {
 	"selectTitle",
 }
 
-ControllerVars.Enabled = (Ext.GetBuiltinUI("Public/Game/GUI/msgBox_c.swf") or Ext.GetUIByType(UI_TYPE.msgBox_c)) ~= nil
+ControllerVars.Enabled = (Ext.GetBuiltinUI("Public/Game/GUI/msgBox_c.swf") or Ext.GetUIByType(Data.UIType.msgBox_c)) ~= nil
 
 function TooltipHooks:RegisterControllerHooks()
-	local equipmentPanel = Ext.GetBuiltinUI("Public/Game/GUI/equipmentPanel_c.swf")
-	if equipmentPanel ~= nil then
-		-- slotOver is called when selecting any slot, item or not
-		Ext.RegisterUICall(equipmentPanel, "slotOver", function (ui, method, itemHandle, slotNum)
-			self:OnRequestConsoleInventoryTooltip(ui, method, itemHandle, slotNum)
-		end)
-		-- itemOver is called when selecting a slot with an item, in addition to slotOver
-		-- Ext.RegisterUICall(equipmentPanel, "itemOver", function (ui, method, itemHandle)
-		-- 	self:OnRequestConsoleInventoryTooltip(ui, method, itemHandle)
-		-- end)
-		Ext.RegisterUICall(equipmentPanel, "itemDollOver", function (...)
-			self:OnRequestConsoleInventoryTooltip(...)
-		end)
-		-- When the tooltip is opened without moving slots
-		Ext.RegisterUIInvokeListener(equipmentPanel, "setTooltipPanelVisible", function (ui, method, visible, ...)
-			if visible == true then
-				self:OnRequestConsoleInventoryTooltip(ui, method, nil, nil, ...)
-			end
-		end, "Before")
-		Ext.RegisterUIInvokeListener(equipmentPanel, "updateTooltip", function (ui, ...)
-			self:OnRenderTooltip(TooltipArrayNames.Console.EquipmentPanel, ui, ...)
-			self.LastItemRequest = nil
-		end)
-		Ext.RegisterUIInvokeListener(equipmentPanel, "updateEquipTooltip", function (ui, ...)
-			self:OnRenderTooltip(TooltipArrayNames.Console.EquipmentPanel, ui, ...)
-			self.LastItemRequest = nil
-		end)
-	end
-	local craftPanel = Ext.GetBuiltinUI("Public/Game/GUI/craftPanel_c.swf")
-	if craftPanel ~= nil then
-		Ext.RegisterUICall(craftPanel, "slotOver", function (ui, method, itemHandle, slotNum)
-			self:OnRequestConsoleInventoryTooltip(ui, method, itemHandle, slotNum)
-		end)
-		Ext.RegisterUICall(craftPanel, "runeSlotOver", function (ui, method, slot, ...)
-			self:OnRequestRuneTooltip(ui, method, slot, ...)
-		end)
-		-- Ext.RegisterUICall(craftPanel, "overItem", function (ui, method, itemHandle)
-		-- 	print(ui:GetTypeId(), method, itemHandle)
-		-- 	self:OnRequestConsoleInventoryTooltip(ui, method, itemHandle)
-		-- end)
-		Ext.RegisterUIInvokeListener(craftPanel, "updateTooltip", function (ui, ...)
-			self:OnRenderTooltip(TooltipArrayNames.Console.CraftPanel, ui, ...)
-			self.LastItemRequest = nil
-		end)
-	end
-
-	local statsPanel = Ext.GetBuiltinUI("Public/Game/GUI/statsPanel_c.swf")
-	if statsPanel ~= nil then
-		for i,v in pairs(selectEvents) do
-			Ext.RegisterUICall(statsPanel, v, function(ui, ...)
-				self:OnRequestConsoleExamineTooltip(ui, ...)
-			end)
+	-- slotOver is called when selecting any slot, item or not
+	Ext.RegisterUITypeCall(Data.UIType.equipmentPanel_c, "slotOver", function (ui, method, itemHandle, slotNum)
+		self:OnRequestConsoleInventoryTooltip(ui, method, itemHandle, slotNum)
+	end)
+	-- itemOver is called when selecting a slot with an item, in addition to slotOver
+	-- Ext.RegisterUICall(equipmentPanel, "itemOver", function (ui, method, itemHandle)
+	-- 	self:OnRequestConsoleInventoryTooltip(ui, method, itemHandle)
+	-- end)
+	Ext.RegisterUITypeCall(Data.UIType.equipmentPanel_c, "itemDollOver", function (...)
+		self:OnRequestConsoleInventoryTooltip(...)
+	end)
+	-- When the tooltip is opened without moving slots
+	Ext.RegisterUITypeInvokeListener(Data.UIType.equipmentPanel_c, "setTooltipPanelVisible", function (ui, method, visible, ...)
+		if visible == true then
+			self:OnRequestConsoleInventoryTooltip(ui, method, nil, nil, ...)
 		end
-		Ext.RegisterUICall(statsPanel, "selectedAttribute", function(ui, method, id)
-			self:OnRequestConsoleExamineTooltip(ui, method, id)
-		end)
-		Ext.RegisterUICall(statsPanel, "selectCustomStat", function(ui, method, id)
-			self:OnRequestConsoleExamineTooltip(ui, method, id)
-		end)
-		-- Disabled for now since this function doesn't include any ID for the tag.
-		-- Ext.RegisterUICall(statsPanel, "selectTag", function(ui, method, emptyWorthlessTagTooltip)
-		-- 	print(method, emptyWorthlessTagTooltip)
-		-- 	local main = ui:GetRoot()
-		-- 	local tags_mc = main.mainpanel_mc.stats_mc.tags_mc
-		-- 	local selectedTag = tags_mc.statList.m_CurrentSelection
-		-- 	if selectedTag ~= nil then
-		-- 		local tagNameText = selectedTag.label_txt.htmlText
-		-- 		self:OnRequestConsoleExamineTooltip(ui, method, tagNameText)
-		-- 	end
-		-- end)
-		Ext.RegisterUIInvokeListener(statsPanel, "showTooltip", function (ui, ...)
-			self:OnRenderTooltip(TooltipArrayNames.Console.StatsPanel, ui, ...)
-		end)
-	end
+	end)
+	Ext.RegisterUITypeInvokeListener(Data.UIType.equipmentPanel_c, "updateTooltip", function (ui, ...)
+		self:OnRenderTooltip(TooltipArrayNames.Console.EquipmentPanel, ui, ...)
+		self.LastItemRequest = nil
+	end)
+	Ext.RegisterUITypeInvokeListener(Data.UIType.equipmentPanel_c, "updateEquipTooltip", function (ui, ...)
+		self:OnRenderTooltip(TooltipArrayNames.Console.EquipmentPanel, ui, ...)
+		self.LastItemRequest = nil
+	end)
 
-	local examine = Ext.GetBuiltinUI("Public/Game/GUI/examine_c.swf")
-	if examine ~= nil then
-		for i,v in pairs(selectEvents) do
-			Ext.RegisterUICall(examine, v, function(ui, ...)
-				self:OnRequestConsoleExamineTooltip(ui, ...)
-			end)
-		end
-		Ext.RegisterUIInvokeListener(examine, "showFormattedTooltip", function (ui, ...)
-			self:OnRenderTooltip(TooltipArrayNames.Console.Examine, ui, ...)
+	Ext.RegisterUITypeCall(Data.UIType.craftPanel_c, "slotOver", function (ui, method, itemHandle, slotNum)
+		self:OnRequestConsoleInventoryTooltip(ui, method, itemHandle, slotNum)
+	end)
+	Ext.RegisterUITypeCall(Data.UIType.craftPanel_c, "runeSlotOver", function (ui, method, slot, ...)
+		self:OnRequestRuneTooltip(ui, method, slot, ...)
+	end)
+	-- Ext.RegisterUITypeCall(Data.UIType.craftPanel_c, "overItem", function (ui, method, itemHandle)
+	-- 	print(ui:GetTypeId(), method, itemHandle)
+	-- 	self:OnRequestConsoleInventoryTooltip(ui, method, itemHandle)
+	-- end)
+	Ext.RegisterUITypeInvokeListener(Data.UIType.craftPanel_c, "updateTooltip", function (ui, ...)
+		self:OnRenderTooltip(TooltipArrayNames.Console.CraftPanel, ui, ...)
+		self.LastItemRequest = nil
+	end)
+
+	Ext.RegisterUITypeCall(Data.UIType.statsPanel_c, "selectedAttribute", function(ui, method, id)
+		self:OnRequestConsoleExamineTooltip(ui, method, id)
+	end)
+	Ext.RegisterUITypeCall(Data.UIType.statsPanel_c, "selectCustomStat", function(ui, method, id)
+		self:OnRequestConsoleExamineTooltip(ui, method, id)
+	end)
+	-- Disabled for now since this function doesn't include any ID for the tag.
+	-- Ext.RegisterUICall(statsPanel, "selectTag", function(ui, method, emptyWorthlessTagTooltip)
+	-- 	print(method, emptyWorthlessTagTooltip)
+	-- 	local main = ui:GetRoot()
+	-- 	local tags_mc = main.mainpanel_mc.stats_mc.tags_mc
+	-- 	local selectedTag = tags_mc.statList.m_CurrentSelection
+	-- 	if selectedTag ~= nil then
+	-- 		local tagNameText = selectedTag.label_txt.htmlText
+	-- 		self:OnRequestConsoleExamineTooltip(ui, method, tagNameText)
+	-- 	end
+	-- end)
+	Ext.RegisterUITypeInvokeListener(Data.UIType.statsPanel_c, "showTooltip", function (ui, ...)
+		self:OnRenderTooltip(TooltipArrayNames.Console.StatsPanel, ui, ...)
+	end)
+
+	Ext.RegisterUITypeInvokeListener(Data.UIType.examine_c, "showFormattedTooltip", function (ui, ...)
+		self:OnRenderTooltip(TooltipArrayNames.Console.Examine, ui, ...)
+	end)
+
+	for i,v in pairs(selectEvents) do
+		Ext.RegisterUITypeCall(Data.UIType.statsPanel_c, v, function(ui, ...)
+			self:OnRequestConsoleExamineTooltip(ui, ...)
+		end)
+		Ext.RegisterUITypeCall(Data.UIType.examine_c, v, function(ui, ...)
+			self:OnRequestConsoleExamineTooltip(ui, ...)
 		end)
 	end
 	
-	local bottomBar = Ext.GetBuiltinUI("Public/Game/GUI/bottomBar_c.swf")
-	if bottomBar ~= nil then
-		Ext.RegisterUICall(bottomBar, "SlotHover", function (...)
-			self:OnRequestConsoleHotbarTooltip(...)
-		end)
-		Ext.RegisterUIInvokeListener(bottomBar, "updateTooltip", function (...)
-			self:OnRenderTooltip(TooltipArrayNames.Console.BottomBar, ...)
-		end)
-		Ext.RegisterUIInvokeListener(bottomBar, "setPlayerHandle", function (ui, method, handle)
-			if handle ~= nil and handle ~= 0 then
-				ControllerVars.LastPlayer = Ext.DoubleToHandle(handle)
-			end
-		end)
-		self.GetLastPlayer = function(self)
-			local handle = bottomBar:GetRoot().characterHandle
-			if handle ~= nil then
-				handle = Ext.DoubleToHandle(handle)
-				ControllerVars.LastPlayer = handle
-				return handle
-			else
-				return ControllerVars.LastPlayer
+	Ext.RegisterUITypeCall(Data.UIType.bottomBar_c, "SlotHover", function (...)
+		self:OnRequestConsoleHotbarTooltip(...)
+	end)
+	Ext.RegisterUITypeInvokeListener(Data.UIType.bottomBar_c, "updateTooltip", function (...)
+		self:OnRenderTooltip(TooltipArrayNames.Console.BottomBar, ...)
+	end)
+	Ext.RegisterUITypeInvokeListener(Data.UIType.bottomBar_c, "setPlayerHandle", function (ui, method, handle)
+		if handle ~= nil and handle ~= 0 then
+			ControllerVars.LastPlayer = Ext.DoubleToHandle(handle)
+		end
+	end)
+	self.GetLastPlayer = function(self)
+		if ControllerVars.Enabled then
+			local ui = Ext.GetUIByType(Data.UIType.bottomBar_c)
+			if ui then
+				local handle = ui:GetRoot().characterHandle
+				if handle ~= nil then
+					handle = Ext.DoubleToHandle(handle)
+					ControllerVars.LastPlayer = handle
+					return handle
+				else
+					return ControllerVars.LastPlayer
+				end
 			end
 		end
 	end
 
-	local partyInventory = Ext.GetBuiltinUI("Public/Game/GUI/partyInventory_c.swf")
-	if partyInventory ~= nil then
-		-- Controller UI for bottombar_c.swf
-		Ext.RegisterUICall(partyInventory, "slotOver", function (...)
-			self:OnRequestConsoleInventoryTooltip(...)
-		end)
-		-- When the tooltip is opened without moving slots
-		Ext.RegisterUICall(partyInventory, "setTooltipVisible", function (ui, method, visible, ...)
-			if visible == true then
-				self:OnRequestConsoleInventoryTooltip(ui, method, nil, nil, ...)
-			end
-		end)
-		Ext.RegisterUIInvokeListener(partyInventory, "updateTooltip", function (...)
-			self:OnRenderTooltip(TooltipArrayNames.Console.PartyInventory, ...)
-			self.LastItemRequest = nil
-		end)
-	end
+	Ext.RegisterUITypeCall(Data.UIType.partyInventory_c, "slotOver", function (...)
+		self:OnRequestConsoleInventoryTooltip(...)
+	end)
+	-- When the tooltip is opened without moving slots
+	Ext.RegisterUITypeCall(Data.UIType.partyInventory_c, "setTooltipVisible", function (ui, method, visible, ...)
+		if visible == true then
+			self:OnRequestConsoleInventoryTooltip(ui, method, nil, nil, ...)
+		end
+	end)
+	Ext.RegisterUITypeInvokeListener(Data.UIType.partyInventory_c, "updateTooltip", function (...)
+		self:OnRenderTooltip(TooltipArrayNames.Console.PartyInventory, ...)
+		self.LastItemRequest = nil
+	end)
 
 	-- reward_c
-	Ext.RegisterUITypeCall(UI_TYPE.reward_c, "refreshTooltip", function (ui, method, itemHandleDouble)
+	Ext.RegisterUITypeCall(Data.UIType.reward_c, "refreshTooltip", function (ui, method, itemHandleDouble)
 		local itemHandle = Ext.DoubleToHandle(itemHandleDouble)
 		local request = {
 			Type = "Item",
@@ -803,32 +745,29 @@ function TooltipHooks:RegisterControllerHooks()
 		}
 		self.NextRequest = request
 	end)
-	Ext.RegisterUITypeInvokeListener(UI_TYPE.reward_c, "updateTooltipData", function (ui, method, ...)
+	Ext.RegisterUITypeInvokeListener(Data.UIType.reward_c, "updateTooltipData", function (ui, method, ...)
 		self:OnRenderTooltip(TooltipArrayNames.Console.Reward, ui, method, ...)
 	end)
 
-	-- characterCreation_c
-	---@param ui UIObject
-	Ext.RegisterUITypeCall(UI_TYPE.characterCreation_c, "requestSkillTooltip", function(ui, method, id)
-		self:OnRequestConsoleCCTooltip(ui, method, id)
-	end)
-	Ext.RegisterUITypeCall(UI_TYPE.characterCreation_c, "requestAttributeTooltip", function(ui, method, id)
-		self:OnRequestConsoleCCTooltip(ui, method, id)
-	end)
-	Ext.RegisterUITypeCall(UI_TYPE.characterCreation_c, "requestAbilityTooltip", function(ui, method, id)
-		self:OnRequestConsoleCCTooltip(ui, method, id)
-	end)
-	Ext.RegisterUITypeCall(UI_TYPE.characterCreation_c, "requestTalentTooltip", function(ui, method, id)
-		self:OnRequestConsoleCCTooltip(ui, method, id)
-	end)
-	Ext.RegisterUITypeCall(UI_TYPE.characterCreation_c, "requestTagTooltip", function(ui, method, categoryId, contentId)
-		self:OnRequestConsoleCCTooltip(ui, method, categoryId, contentId)
-	end)
-	Ext.RegisterUITypeInvokeListener(UI_TYPE.characterCreation_c, "showTooltip", function(...)
+	local characterCreationCalls = {
+		"requestSkillTooltip",
+		"requestAttributeTooltip",
+		"requestAbilityTooltip",
+		"requestTalentTooltip",
+		"requestTagTooltip",
+	}
+
+	for i,v in pairs(characterCreationCalls) do
+		Ext.RegisterUITypeCall(Data.UIType.characterCreation_c, v, function(ui, method, id, ...)
+			self:OnRequestConsoleCCTooltip(ui, method, id, ...)
+		end)
+	end
+
+	Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation_c, "showTooltip", function(...)
 		self:OnRenderTooltip(TooltipArrayNames.Console.CharacterCreation, ...)
 	end)
 	-- trade_c
-	Ext.RegisterUITypeCall(UI_TYPE.trade_c, "overItem", function(ui, method, itemHandleDouble)
+	Ext.RegisterUITypeCall(Data.UIType.trade_c, "overItem", function(ui, method, itemHandleDouble)
 		local itemHandle = Ext.DoubleToHandle(itemHandleDouble)
 		local request = {
 			Type = "Item",
@@ -836,22 +775,23 @@ function TooltipHooks:RegisterControllerHooks()
 		}
 		self.NextRequest = request
 	end)
-	Ext.RegisterUITypeInvokeListener(UI_TYPE.trade_c, "updateTooltip", function(...)
+	Ext.RegisterUITypeInvokeListener(Data.UIType.trade_c, "updateTooltip", function(...)
 		self:OnRenderTooltip(TooltipArrayNames.Console.Trade, ...)
 	end)
 
-	if ControllerVars.Enabled then
-		-- This allows examine_c to have a character reference
-		Ext.RegisterUITypeInvokeListener(UI_TYPE.overhead, "updateOHs", function (ui, method, ...)
+	-- This allows examine_c to have a character reference
+	Ext.RegisterUITypeInvokeListener(Data.UIType.overhead, "updateOHs", function (ui, method, ...)
+		if ControllerVars.Enabled then
 			local main = ui:GetRoot()
 			for i=0,#main.selectionInfo_array,21 do
 				local id = main.selectionInfo_array[i]
-				if id ~= nil then
+				if id then
 					ControllerVars.LastOverhead = Ext.DoubleToHandle(id)
+					break
 				end
 			end
-		end)
-	end
+		end
+	end)
 end
 
 function TooltipHooks:Init()
@@ -889,7 +829,7 @@ function TooltipHooks:Init()
 		self:OnRenderTooltip(TooltipArrayNames.Default, ...)
 	end)
 
-	Ext.RegisterUITypeCall(104, "showTooltip", function (...)
+	Ext.RegisterUITypeCall(Data.UIType.examine, "showTooltip", function (...)
 		self:OnRequestExamineUITooltip(...)
 	end)
 
@@ -1071,7 +1011,7 @@ function TooltipHooks:GetCompareOwner(ui, item)
 
 	local handle = nil
 	if not ControllerVars.Enabled then
-		local hotbar = Ext.GetUIByType(UI_TYPE.hotBar)
+		local hotbar = Ext.GetUIByType(Data.UIType.hotBar)
 		if hotbar ~= nil then
 			local main = hotbar:GetRoot()
 			if main ~= nil then
@@ -1079,7 +1019,7 @@ function TooltipHooks:GetCompareOwner(ui, item)
 			end
 		end
 	else
-		local hotbar = Ext.GetUIByType(UI_TYPE.bottomBar_c)
+		local hotbar = Ext.GetUIByType(Data.UIType.bottomBar_c)
 		if hotbar ~= nil then
 			local main = hotbar:GetRoot()
 			if main ~= nil then
@@ -1210,11 +1150,11 @@ function TooltipHooks:OnRequestConsoleExamineTooltip(ui, method, id, characterHa
 	if characterHandle == nil then
 		local uiType = ui:GetTypeId()
 		--TODO: Need a way to get the object's characterHandle for what's being examined.
-		if uiType == UI_TYPE.examine_c then
+		if uiType == Data.UIType.examine_c then
 			characterHandle = ControllerVars.LastOverhead
 		else
 			characterHandle = ui:GetPlayerHandle()
-			if characterHandle == nil and uiType == UI_TYPE.statsPanel_c then
+			if characterHandle == nil and uiType == Data.UIType.statsPanel_c then
 				characterHandle = self:GetLastPlayer() -- Get the bottomBar player
 			end
 		end
@@ -1285,7 +1225,7 @@ function TooltipHooks:OnRequestConsoleInventoryTooltip(ui, method, itemHandleDou
 		Item = nil,
 		Inventory = nil,
 	}
-	if ui:GetTypeId() == UI_TYPE.partyInventory_c then
+	if ui:GetTypeId() == Data.UIType.partyInventory_c then
 		local main = ui:GetRoot()
 		if arg3 == nil then
 			arg3 = main.ownerHandle

@@ -13,8 +13,9 @@ if not TooltipExpander then
 end
 
 local dirty = false
-local isExpanded = false
 local rebuildingTooltip = false
+local keyboardKey = Data.Input.SplitItemToggle
+local controllerKey = Data.Input.ToggleMap
 
 TooltipExpander.CallData = {
 	---@type integer
@@ -43,13 +44,9 @@ function TooltipExpander.IsExpanded()
 		return true
 	end
 	if not Vars.ControllerEnabled then
-		return Input.GetKeyStateByID(Data.Input.SplitItemToggle) == true
+		return Input.GetKeyStateByID(keyboardKey) == true
 	else
-		if Vars.DebugMode then
-			-- Left Stick Click?
-			return Input.GetKeyStateByID(Data.Input.ToggleInputMode) == true
-		end
-		return true
+		return Input.GetKeyStateByID(controllerKey) == true
 	end
 end
 
@@ -79,46 +76,40 @@ for i,v in pairs(calls) do
 	Ext.RegisterUINameCall(v, SaveTooltipData, "Before")
 end
 
-if Vars.DebugMode then
-	local controller_calls = {
-		"itemDollOver",
-		"overItem",
-		"refreshTooltip",
-		"requestAbilityTooltip",
-		"requestAttributeTooltip",
-		"requestSkillTooltip",
-		"requestTagTooltip",
-		"requestTalentTooltip",
-		"runeSlotOver",
-		"selectCustomStat",
-		"selectedAttribute",
-		"setTooltipPanelVisible",
-		"setTooltipVisible",
-		"SlotHover",
-		"slotOver",
-	}
-	
-	for i,v in pairs(controller_calls) do
-		Ext.RegisterUINameCall(v, function(ui, call, ...)
-			if Vars.ControllerEnabled then
-				SaveTooltipData(ui, call, ...)
-			end
-		end, "Before")
-	end
+local controller_calls = {
+	"itemDollOver",
+	"overItem",
+	"refreshTooltip",
+	"requestAbilityTooltip",
+	"requestAttributeTooltip",
+	"requestSkillTooltip",
+	"requestTagTooltip",
+	"requestTalentTooltip",
+	"runeSlotOver",
+	"selectCustomStat",
+	"selectedAttribute",
+	"setTooltipPanelVisible",
+	"setTooltipVisible",
+	"SlotHover",
+	"slotOver",
+}
+
+for i,v in pairs(controller_calls) do
+	Ext.RegisterUINameCall(v, function(ui, call, ...)
+		if Vars.ControllerEnabled then
+			SaveTooltipData(ui, call, ...)
+		end
+	end, "Before")
 end
 
 Ext.RegisterUINameCall("hideTooltip", function(ui, call, ...)
 	dirty = false
 	if not rebuildingTooltip then
-		isExpanded = TooltipExpander.IsExpanded()
 		TooltipExpander.CallData = {}
 	end
 end)
 
--- "SplitItemToggle": ["key:lshift","key:rshift"],
-Input.RegisterListener(Data.Input.SplitItemToggle, function(eventName, pressed, id, inputMap, controllerEnabled)
-	--fprint(LOGLEVEL.DEFAULT, "[LeaderLib:InputEvent] SplitItemToggle dirty(%s) (%s) (%s)", dirty, TooltipExpander.CallData.UI, TooltipExpander.CallData.LastCall)
-	isExpanded = pressed
+local function RebuildTooltip(eventName, pressed, id, inputMap, controllerEnabled)
 	if dirty then
 		if TooltipExpander.CallData.Args ~= nil then
 			local ui = Ext.GetUIByType(TooltipExpander.CallData.UI)
@@ -132,4 +123,11 @@ Input.RegisterListener(Data.Input.SplitItemToggle, function(eventName, pressed, 
 		end
 	end
 	rebuildingTooltip = false
+end
+
+Input.RegisterListener(keyboardKey, RebuildTooltip)
+Input.RegisterListener(controllerKey, function(eventName, pressed, id, inputMap, controllerEnabled)
+	if controllerEnabled then
+		RebuildTooltip(eventName, pressed, id, inputMap, controllerEnabled)
+	end
 end)

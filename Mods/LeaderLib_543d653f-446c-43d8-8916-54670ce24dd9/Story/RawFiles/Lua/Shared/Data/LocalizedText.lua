@@ -283,6 +283,13 @@ LocalizedText.Tooltip = {
 	ChanceToSucceed = ts:Create("h54e0b91cg48a7g4d5agaedcgbde756a109ea", "[1]% chance to succeed."),
 	ScalesWith = ts:Create("h565537edgdec5g4483g938fg296519760088", "Scales With [1]"),
 	Requires = ts:Create("h7de69a95g70cag4bb3gbabcg1cf2df46f12c", "Requires [1]"),
+	ExpanderInactive = ts:Create("h17380891g0e8eg42d3gbb55g9478bba4f684", "Hold [1] for More Info"),
+	ExpanderActive = ts:Create("h7b3bd7e6g9a34g4959gad11g241f6d8d33c1", "Release [1] for Less Info"),
+}
+
+LocalizedText.Input = {
+	Shift = ts:Create("hbb74f5fag4e95g4e8fgb2b8g2a761e814bd5", "Shift"),
+	Select = ts:Create("hdf10e5a7g950eg4f82gb716ga5a614c00811", "Select"),
 }
 
 ---Get localized damage text wrapped in that damage type's color.

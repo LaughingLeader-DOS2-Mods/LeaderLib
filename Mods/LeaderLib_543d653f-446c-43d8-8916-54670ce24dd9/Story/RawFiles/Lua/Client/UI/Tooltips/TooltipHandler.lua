@@ -807,11 +807,12 @@ local function OnAnyTooltip(request, tooltip)
 			local target = element.Label or element.Description
 			if target then
 				local nextText = target
-				local format = "<br><br><p align='center'><font color='#CC4400'>%s</font></p>"
+				local format = "<br><br><p align='center'><font color='#44CC00'>%s</font></p>"
+				local keyText = not Vars.ControllerEnabled and LocalizedText.Input.Shift.Value or LocalizedText.Input.Select.Value
 				if TooltipExpander.IsExpanded() then
-					nextText = nextText .. string.format(format, "Release Shift for Less Info")
+					nextText = nextText .. string.format(format, LocalizedText.Tooltip.ExpanderActive:ReplacePlaceholders(keyText))
 				else
-					nextText = nextText .. string.format(format, "Hold Shift for More Info")
+					nextText = nextText .. string.format(format, LocalizedText.Tooltip.ExpanderInactive:ReplacePlaceholders(keyText))
 				end
 				if element.Label then
 					element.Label = nextText
@@ -821,7 +822,6 @@ local function OnAnyTooltip(request, tooltip)
 			end
 		end
 	end
-	print("OnAnyTooltip", request.Type, Ext.JsonStringify(tooltip.Data))
 end
 
 Ext.RegisterListener("SessionLoaded", function()

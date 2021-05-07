@@ -695,8 +695,8 @@ function TooltipHooks:RegisterControllerHooks()
 		end)
 	end
 	
-	Ext.RegisterUITypeCall(Data.UIType.bottomBar_c, "SlotHover", function (...)
-		self:OnRequestConsoleHotbarTooltip(...)
+	Ext.RegisterUITypeCall(Data.UIType.bottomBar_c, "SlotHover", function (ui, ...)
+		self:OnRequestConsoleHotbarTooltip(ui, ...)
 	end)
 	Ext.RegisterUITypeInvokeListener(Data.UIType.bottomBar_c, "updateTooltip", function (...)
 		self:OnRenderTooltip(TooltipArrayNames.Console.BottomBar, ...)
@@ -1207,12 +1207,27 @@ function TooltipHooks:OnRequestConsoleHotbarTooltip(ui, method, slotNum)
 		Character = Ext.GetCharacter(Ext.DoubleToHandle(main.characterHandle))
 	}
 
-	if slotsHolder_mc.tooltipSlotType == 1 then
+	local slotType = slotsHolder_mc.tooltipSlotType
+	local slotHandle = slotsHolder_mc.tooltipSlot
+
+	-- 4 is for non-skills like Flee, Sheathe etc
+	if slotType == 1 or slotType == 4 then
 		request.Type = "Skill"
 		request.Skill = slotsHolder_mc.tooltipStr
-	elseif slotsHolder_mc.tooltipSlotType == 2 then
-		request.Type = "Item"
-		-- TODO
+	elseif slotType == 2 then
+		-- Sometimes tooltipSlot will be set to the tooltip index instead of the slot's handle value
+		if slotNum == slotHandle then
+			local slot = slotsHolder_mc.slot_array[slotNum]
+			if slot then
+				slotHandle = slot.handle
+			end
+		end
+		if slotHandle and slotNum ~= slotHandle then
+			request.Type = "Item"
+			request.Item = Ext.GetItem(Ext.DoubleToHandle(slotHandle))
+		else
+			request = nil
+		end
 	end
 
 	self.NextRequest = request

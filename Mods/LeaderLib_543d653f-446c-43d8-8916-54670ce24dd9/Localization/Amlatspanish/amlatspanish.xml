@@ -36,6 +36,7 @@
 	<content contentuid="h15ce233fgbe8fg46adg94eagff09e732a307">Pull Party Into Combat</content>
 	<content contentuid="h162538f5g21e7g4848g97a6g576ab6238d19">Timed autosaving will pause while in combat.</content>
 	<content contentuid="h16793f3dgb128g4b51g9e24g7b19ef78b894">Loading menus...</content>
+	<content contentuid="h17380891g0e8eg42d3gbb55g9478bba4f684">Hold [1] for More Info</content>
 	<content contentuid="h17519925gf609g4110gbe37g25a3aae8b390">Unchain all chained characters under your control that are within [1].</content>
 	<content contentuid="h17e6d1bbgbe95g4944gb37dgfe5059a58a2d">&lt;font color=&apos;#9A00FF&apos;&gt;Chaos Resistance&lt;/font&gt;</content>
 	<content contentuid="h196cc760g0133g4cb7gb48bg6a902641739f">[LeaderLib_ModMenu_Menu1_783ec14d-2861-4345-8dbc-45974fa34e15]</content>
@@ -182,6 +183,7 @@
 	<content contentuid="h79b1fb29g8d95g4bcdg9af6g32e2593b0475">Melee Skill Maximum Distance</content>
 	<content contentuid="h7a4ddc58g1cbeg4e40gaba2g0b2bf5dedd98">[GLOBAL] Enable Debug Logging</content>
 	<content contentuid="h7a60181dg1be6g4e43g99c5g91289ea59f8f">Exiting...</content>
+	<content contentuid="h7b3bd7e6g9a34g4959gad11g241f6d8d33c1">Release [1] for Less Info</content>
 	<content contentuid="h7b455d51g9be5g4f48g8dffg7e1a4b1ad356">*Ask what his plans are for his time on Reaper&apos;s Eye.*</content>
 	<content contentuid="h7cf6d938g1c71g4431gbbccg85cfdf119735">Lead the way.</content>
 	<content contentuid="h7d86a1e8g8071g444dgb6d8g859c06b2c1e6">[LeaderLib_DynamicMenu_MenuOption8_f5ef1f68-8995-4c14-8e62-cf5f330cb31a]</content>

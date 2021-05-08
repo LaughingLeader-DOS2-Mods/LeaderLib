@@ -549,6 +549,19 @@ end
 ---@class TooltipRequest:table
 ---@field Type string
 
+
+---@class GenericTooltipRequest:table
+---@field Type string
+---@field Text string
+---@field X number|nil
+---@field Y number|nil
+---@field Width number|nil
+---@field Height number|nil
+---@field Side string|nil
+---@field AllowDelay boolean|nil
+---@field AnchorEnum integer|nil
+---@field BackgroundType integer|nil
+
 TooltipHooks = {
 	---@type TooltipRequest
 	NextRequest = nil,
@@ -825,12 +838,54 @@ function TooltipHooks:Init()
 	Ext.RegisterUINameInvokeListener("addFormattedTooltip", function (...)
 		self:OnRenderTooltip(TooltipArrayNames.Default, ...)
 	end)
+
 	Ext.RegisterUINameInvokeListener("addStatusTooltip", function (...)
 		self:OnRenderTooltip(TooltipArrayNames.Default, ...)
 	end)
 
-	Ext.RegisterUITypeCall(Data.UIType.examine, "showTooltip", function (...)
-		self:OnRequestExamineUITooltip(...)
+	--Generic tooltips
+	Ext.RegisterUINameCall("showTooltip", function(ui, ...)
+		if ui:GetTypeId() == Data.UIType.examine then
+			self:OnRequestExamineUITooltip(ui, ...)
+		else
+			self:OnRequestGenericTooltip(ui, ...)
+		end
+	end, "Before")
+
+	--Disabled for now since character portrait tooltips get spammed
+	-- Ext.RegisterUINameCall("showCharTooltip", function(ui, call, handle, x, y, width, height, side)
+	-- 	self.NextRequest = {
+	-- 		Type = "Generic",
+	-- 		IsCharacterTooltip = true,
+	--		Handle = handle,
+	-- 		X = x,
+	-- 		Y = y,
+	-- 		Width = width,
+	-- 		Height = height,
+	-- 		Side = side
+	-- 	}
+	-- end, "Before")
+	
+	Ext.RegisterUINameInvokeListener("addTooltip", function (ui, call, text, ...)
+		self:OnRenderGenericTooltip(ui, call, text, ...)
+	end)	
+
+	Ext.RegisterUINameCall("hideTooltip", function (ui, call, ...)
+		if self.NextRequest and self.NextRequest.Type == "Generic" then
+			self.NextRequest = nil
+		end
+	end)
+
+	Ext.RegisterUINameCall("hidetooltip", function (ui, call, ...)
+		if self.NextRequest and self.NextRequest.Type == "Generic" then
+			self.NextRequest = nil
+		end
+	end)
+
+	Ext.RegisterUINameCall("keepUIinScreen", function (ui, method, keepUIinScreen)
+		if self.GenericTooltipData then
+			self:UpdateGenericTooltip(ui, method, keepUIinScreen)
+		end
 	end)
 
 	---@param ui UIObject
@@ -842,6 +897,70 @@ function TooltipHooks:Init()
 	self:RegisterControllerHooks()
 
 	self.Initialized = true
+end
+
+function TooltipHooks:OnRequestGenericTooltip(ui, call, text, x, y, width, height, side, allowDelay)
+	---@type GenericTooltipRequest
+	local request = {
+		Type = "Generic",
+		Text = text
+	}
+	if x then
+		request.X = x
+		request.Y = y
+		request.Width = width
+		request.Height = height
+		request.Side = side
+		request.AllowDelay = allowDelay
+	end
+
+	self.NextRequest = request
+end
+
+function TooltipHooks:UpdateGenericTooltip(ui, method, keepUIinScreen)
+	if not self.GenericTooltipData then
+		return
+	end
+	local this = ui:GetRoot()
+	if this and this.tf then
+		this.tf.shortDesc = self.GenericTooltipData.Text
+		this.tf.setText(self.GenericTooltipData.Text,self.GenericTooltipData.BackgroundType or 0)
+	end
+	self.GenericTooltipData = nil
+end
+
+---@param ui UIObject
+---@param method string
+function TooltipHooks:OnRenderGenericTooltip(ui, method, text, x, y, allowDelay, anchorEnum, backgroundType)
+	---@type GenericTooltipRequest
+	local req = self.NextRequest
+	if not req or req.Type ~= "Generic" then
+		return
+	end
+	if req.IsCharacterTooltip then
+		req.Text = text
+	end
+
+	---@type GenericTooltipRequest
+	self.GenericTooltipData = {}
+	self.GenericTooltipData.Text = text
+	self.GenericTooltipData.X = x
+	self.GenericTooltipData.Y = y
+	req.AllowDelay = allowDelay
+	req.AnchorEnum = anchorEnum
+	req.BackgroundType = backgroundType
+
+	local tooltip = TooltipData:Create(req)
+	self:NotifyListeners("Generic", nil, req, tooltip)
+
+	if tooltip.Data.Text ~= text or tooltip.Data.X ~= x or tooltip.Data.Y ~= y then
+		for k,v in pairs(tooltip.Data) do
+			self.GenericTooltipData[k] = v
+		end
+	else
+		self.GenericTooltipData = nil
+	end
+	self.NextRequest = nil
 end
 
 --- @param ui UIObject

@@ -552,6 +552,7 @@ end
 
 ---@class GenericTooltipRequest:table
 ---@field Type string
+---@field CallingUI integer
 ---@field Text string
 ---@field X number|nil
 ---@field Y number|nil
@@ -903,7 +904,8 @@ function TooltipHooks:OnRequestGenericTooltip(ui, call, text, x, y, width, heigh
 	---@type GenericTooltipRequest
 	local request = {
 		Type = "Generic",
-		Text = text
+		Text = text,
+		CallingUI = ui:GetTypeId()
 	}
 	if x then
 		request.X = x
@@ -1576,6 +1578,9 @@ end
 ---@field ControllerEnabled boolean
 ---@field IsExtended boolean Simple variable a mod can check to see if this is a LeaderLib tooltip.
 TooltipData = {}
+
+---@class GenericTooltipData:TooltipData
+---@field Data GenericTooltipData
 
 function TooltipData:Create(data)
 	local tt = {

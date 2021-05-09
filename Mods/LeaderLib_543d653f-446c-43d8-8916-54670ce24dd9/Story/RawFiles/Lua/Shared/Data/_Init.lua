@@ -662,7 +662,10 @@ Data.UIType = {
 	combatLog = 7,
 	connectionMenu = 33,
 	containerInventory = 37,
-	contextMenu = 10, -- or 11
+	contextMenu = {
+		Default = 10,
+		Alt = 11
+	},
 	contextMenu_c = 12,
 	craftPanel_c = 84,
 	dummyOverhead = 15,
@@ -732,7 +735,13 @@ Data.UIType = {
 Data.UITypeToName = {}
 
 for k,v in pairs(Data.UIType) do
-	Data.UITypeToName[v] = k
+	if type(v) == "table" then
+		for _,v2 in pairs(v) do
+			Data.UITypeToName[v2] = k
+		end
+	else
+		Data.UITypeToName[v] = k
+	end
 end
 
 Data.ArmorType = {

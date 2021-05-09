@@ -226,8 +226,10 @@ function UIExtensions.StartTimer(id, delay, callbackFunction, repeatTimer)
 	if UIExtensions.Timers[id] == nil then
 		UIExtensions.Timers[id] = {}
 	end
-	table.insert(UIExtensions.Timers[id], callbackFunction)
-	UIExtensions.Instance:Invoke("launchTimer", delay, id, repeatTimer or 1)
+	if not Common.TableHasEntry(UIExtensions.Timers[id], callbackFunction) then
+		table.insert(UIExtensions.Timers[id], callbackFunction)
+		UIExtensions.Instance:Invoke("launchTimer", delay, id, repeatTimer or 1)
+	end
 end
 
 function UIExtensions.Invoke(method, ...)

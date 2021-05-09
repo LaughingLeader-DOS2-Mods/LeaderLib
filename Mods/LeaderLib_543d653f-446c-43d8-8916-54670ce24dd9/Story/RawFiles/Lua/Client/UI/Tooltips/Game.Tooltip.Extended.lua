@@ -1580,7 +1580,7 @@ end
 TooltipData = {}
 
 ---@class GenericTooltipData:TooltipData
----@field Data GenericTooltipData
+---@field Data GenericTooltipRequest
 
 function TooltipData:Create(data)
 	local tt = {

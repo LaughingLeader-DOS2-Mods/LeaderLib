@@ -224,14 +224,18 @@ function Common.TableHasEntry(tbl, value, caseInsensitive)
 	if tbl == nil then
 		return false
 	end
+	local t = type(value)
 	for k,v in pairs(tbl) do
-		if StringHelpers.Equals(value, v, caseInsensitive) then
-			return true
-		elseif type(v) == "table" then
-			if Common.TableHasAnyEntry(v, value, caseInsensitive) then
+		if type(v) == t then
+			if t == "string" and StringHelpers.Equals(value, v, caseInsensitive) then
+				return true
+			elseif t == "table" and Common.TableHasAnyEntry(v, value, caseInsensitive) then
+				return true
+			elseif v == value then
 				return true
 			end
 		end
+
 	end
 	return false
 end

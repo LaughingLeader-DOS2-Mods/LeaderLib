@@ -70,6 +70,7 @@ local calls = {
 	"showTagTooltip",
 	"showCustomStatTooltip",
 	"showRuneTooltip",
+	"showTooltip",
 }
 
 for i,v in pairs(calls) do
@@ -92,6 +93,7 @@ local controller_calls = {
 	"setTooltipVisible",
 	"SlotHover",
 	"slotOver",
+	"showTooltip",
 }
 
 for i,v in pairs(controller_calls) do
@@ -102,23 +104,69 @@ for i,v in pairs(controller_calls) do
 	end, "Before")
 end
 
-Ext.RegisterUINameCall("hideTooltip", function(ui, call, ...)
+local function OnHideTooltip(ui, call, ...)
 	dirty = false
 	if not rebuildingTooltip then
 		TooltipExpander.CallData = {}
 	end
-end)
+end
+
+Ext.RegisterUINameCall("hideTooltip", OnHideTooltip)
+--playerInfo/summonInfo.as
+Ext.RegisterUINameCall("hidetooltip", OnHideTooltip)
 
 local function RebuildTooltip(eventName, pressed, id, inputMap, controllerEnabled)
 	if dirty then
 		if TooltipExpander.CallData.Args ~= nil then
-			local ui = Ext.GetUIByType(TooltipExpander.CallData.UI)
-			if ui then
+			if TooltipExpander.CallData.LastCall == "showTooltip" then
 				rebuildingTooltip = true
 				dirty = false
-				ui:ExternalInterfaceCall("hideTooltip")
-				ui:ExternalInterfaceCall(TooltipExpander.CallData.LastCall, table.unpack(TooltipExpander.CallData.Args))
-				return
+				local ui = Ext.GetUIByType(Data.UIType.tooltip)
+				local text, x, y, width, height, side, allowDelay = table.unpack(TooltipExpander.CallData.Args)
+
+				---@type GenericTooltipRequest
+				local request = {
+					Type = "Generic",
+					Text = text,
+					CallingUI = TooltipExpander.CallData.UI,
+					X = x,
+					Y = y,
+					Width = width,
+					Height = height,
+					Side = side,
+					AllowDelay = allowDelay
+				}
+
+				local this = ui:GetRoot()
+				if this and this.tf then
+					request.AllowDelay = this.tf.allowDelay
+					request.BackgroundType = this.tf.bg_mc.visible == true and 0 or 1
+				end
+
+				local tooltip = Game.Tooltip.TooltipData:Create(request)
+				Game.Tooltip.TooltipHooks:NotifyListeners("Generic", nil, request, tooltip)
+
+				if this and this.tf then
+					this.tf.shortDesc = tooltip.Data.Text
+					this.tf.setText(tooltip.Data.Text,tooltip.Data.BackgroundType or 0)
+
+					this.checkTooltipBoundaries(this.getTooltipWidth(),this.getTooltipHeight(), tooltip.Data.X + this.frameSpacing, tooltip.Data.Y + this.frameSpacing)
+
+					if tooltip.Data.BackgroundType and tooltip.Data.BackgroundType > 0 and tooltip.Data.BackgroundType < 5 then
+						ui:ExternalInterfaceCall("keepUIinScreen", true)
+					else
+						ui:ExternalInterfaceCall("keepUIinScreen", false)
+					end
+				end
+			else
+				local ui = Ext.GetUIByType(TooltipExpander.CallData.UI)
+				if ui then
+					rebuildingTooltip = true
+					dirty = false
+					ui:ExternalInterfaceCall("hideTooltip")
+					ui:ExternalInterfaceCall(TooltipExpander.CallData.LastCall, table.unpack(TooltipExpander.CallData.Args))
+					return
+				end
 			end
 		end
 	end

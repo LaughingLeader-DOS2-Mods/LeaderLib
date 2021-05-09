@@ -226,3 +226,41 @@ end
 
 Ext.RegisterUITypeInvokeListener(Data.UIType.playerInfo, "updateStatuses", OnUpdateStatuses)
 Ext.RegisterUITypeInvokeListener(Data.UIType.playerInfo_c, "updateStatuses", OnUpdateStatuses)
+
+local function GetCursorStatus(main, x, y)
+	for i=0,#main.player_array do
+		local player_mc = main.player_array[i]
+		if player_mc and player_mc.statusHolder_mc then
+			for s=0,#player_mc.status_array do
+				local status = player_mc.status_array[s]
+				if status then
+					--local point = main.getGlobalPositionOfMC(status)
+					local isWithin = status.hitTestPoint(main.stageX, main.stageY)
+					print(s, isWithin)
+					if isWithin then
+						return status
+					end
+				end
+			end
+			if player_mc.summonList then
+				for j=0,#player_mc.summonList.content_array do
+					local summon_mc = player_mc.summonList.content_array[j]
+					if summon_mc then
+						for k=0,#summon_mc.status_array do
+							local status = summon_mc.status_array[k]
+							if status then
+								local point = main.getGlobalPositionOfMC(status)
+								local isWithin = status.hitTestPoint(main.stageX, main.stageY)
+								print(k, isWithin)
+								if isWithin then
+									return status
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+	return nil
+end

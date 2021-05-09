@@ -357,9 +357,18 @@ local function TryFindUI(ui, tryFindId)
 		end
 	end
 	for k,v in pairs(Data.UIType) do
-		if v == id then
-			fprint(LOGLEVEL.WARNING, "[TryFindUI]%s = %s,", k, id)
-			return id,k
+		if type(v) == "table" then
+			for _,v2 in pairs(v) do
+				if v2 == id then
+					fprint(LOGLEVEL.WARNING, "[TryFindUI]%s = %s,", k, v2)
+					return v2,k
+				end
+			end
+		else
+			if v == id then
+				fprint(LOGLEVEL.WARNING, "[TryFindUI]%s = %s,", k, id)
+				return id,k
+			end
 		end
 	end
 	print("Failed to find UI file for UI", ui, id)

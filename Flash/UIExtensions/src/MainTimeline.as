@@ -263,6 +263,16 @@ package
 			ExternalInterface.call("LeaderLib_UIExtensions_MouseMoved", e.stageX, e.stageY);
 		}
 
+		public function onRightMouseDown(e:Event) : *
+		{
+			ExternalInterface.call("LeaderLib_UIExtensions_RightMouseDown", stage.mouseX, stage.mouseY);
+		}
+
+		public function onRightMouseUp(e:Event) : *
+		{
+			ExternalInterface.call("LeaderLib_UIExtensions_RightMouseUp", stage.mouseX, stage.mouseY);
+		}
+
 		public function fireMouseClicked(eventName:String = "") : *
 		{
 			ExternalInterface.call("LeaderLib_UIExtensions_MouseClicked", stage.mouseX, stage.mouseY);
@@ -284,9 +294,13 @@ package
 			if (!b && this.listeningForMouse) {
 				stage.removeEventListener(MouseEvent.CLICK,this.fireOnMouseClick);
 				stage.removeEventListener(MouseEvent.MOUSE_MOVE,this.fireOnMouseMove);
+				stage.removeEventListener("rightMouseDown",this.onRightMouseDown);
+				stage.removeEventListener("rightMouseUp",this.onRightMouseUp);
 			} else if (b && !this.listeningForMouse) {
 				stage.addEventListener(MouseEvent.CLICK,this.fireOnMouseClick);
 				stage.addEventListener(MouseEvent.MOUSE_MOVE,this.fireOnMouseMove);
+				stage.addEventListener("rightMouseDown",this.onRightMouseDown);
+				stage.addEventListener("rightMouseUp",this.onRighMouseUp);
 			}
 			this.listeningForMouse = b;
 		}

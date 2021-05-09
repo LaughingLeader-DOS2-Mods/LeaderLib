@@ -18,6 +18,14 @@ UIExtensions = {
 	SwfPath = "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/LeaderLib_UIExtensions.swf",
 	Initialized = false,
 	RegisteredListeners = false,
+	---@class InputMouseEvent:table
+	MouseEvent = {
+		All = "All",
+		Clicked = "Clicked",
+		Moved = "Moved",
+		RightMouseDown = "RightMouseDown",
+		RightMouseUp = "RightMouseUp",
+	}
 }
 
 local function DestroyInstance(force)
@@ -53,7 +61,7 @@ local function OnControlAdded(ui, call, id, listid, ...)
 end
 
 local function OnTimerComplete(ui, call, timerCallbackName)
-	fprint(LOGLEVEL.DEFAULT, "[LeaderLib:UIExtensions.OnTimerComplete %s]", timerCallbackName)
+	--fprint(LOGLEVEL.DEFAULT, "[LeaderLib:UIExtensions.OnTimerComplete %s]", timerCallbackName)
 	local callbacks = UIExtensions.Timers[timerCallbackName]
 	if callbacks then
 		for i,v in pairs(callbacks) do
@@ -67,7 +75,7 @@ local function OnTimerComplete(ui, call, timerCallbackName)
 end
 
 local function OnTimerTick(ui, call, timerCallbackName)
-	fprint(LOGLEVEL.DEFAULT, "[LeaderLib:UIExtensions.OnTimerTick %s]", timerCallbackName)
+	--fprint(LOGLEVEL.DEFAULT, "[LeaderLib:UIExtensions.OnTimerTick %s]", timerCallbackName)
 	local callbacks = UIExtensions.Timers[timerCallbackName]
 	if callbacks then
 		for i,v in pairs(callbacks) do
@@ -91,12 +99,20 @@ local function OnControl(ui, call, controlType, id, ...)
 end
 
 --local function OnMouseMoved(ui, call, x, y, controlDown, altDOwn, shiftDown)
-local function OnMouseMoved(ui, call, ...)
-	print(call, Common.Dump({...}))
+local function OnMouseMoved(ui, call, x, y)
+	Input.OnMouseEvent(UIExtensions.MouseEvent.Moved)
 end
 
-local function OnMouseClicked(ui, call, ...)
-	print(call, Common.Dump({...}))
+local function OnMouseClicked(ui, call, x, y)
+	Input.OnMouseEvent(UIExtensions.MouseEvent.Clicked)
+end
+
+local function OnRightMouseDown(ui, call, x, y)
+	Input.OnMouseEvent(UIExtensions.MouseEvent.RightMouseDown)
+end
+
+local function OnRightMouseUp(ui, call, x, y)
+	Input.OnMouseEvent(UIExtensions.MouseEvent.RightMouseUp)
 end
 
 function UIExtensions.SetupInstance()
@@ -115,6 +131,8 @@ function UIExtensions.SetupInstance()
 		Ext.RegisterUINameCall("LeaderLib_UIExtensions_TimerTick", OnTimerTick)
 		Ext.RegisterUINameCall("LeaderLib_UIExtensions_MouseMoved", OnMouseMoved)
 		Ext.RegisterUINameCall("LeaderLib_UIExtensions_MouseClicked", OnMouseClicked)
+		Ext.RegisterUINameCall("LeaderLib_UIExtensions_RightMouseDown", OnRightMouseDown)
+		Ext.RegisterUINameCall("LeaderLib_UIExtensions_RightMouseUp", OnRightMouseUp)
 		UIExtensions.RegisteredListeners = true
 	end
 	if not UIExtensions.Instance or UIExtensions.Instance:GetRoot() == nil then
@@ -250,6 +268,7 @@ function UIExtensions.GetMousePosition()
 	UIExtensions.SetupInstance()
 	local main = UIExtensions.Instance:GetRoot()
 	if main then
+		print(main.mouseX,main.mouseY, main.stage.mouseX,main.stage.mouseY)
 		return main.mouseX,main.mouseY
 	end
 	return 0,0

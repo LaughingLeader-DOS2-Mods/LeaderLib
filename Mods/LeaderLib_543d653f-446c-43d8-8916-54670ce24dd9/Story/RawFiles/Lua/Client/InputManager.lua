@@ -8,7 +8,8 @@ for i,name in pairs(Data.InputEnum) do
 end
 
 ---Wrapper around RegisterListener for easier auto-completion.
----@param callbackOrInputName InputEventCallback
+---@param callbackOrInputName InputEventCallback|string|integer
+---@param callbackOrNil InputEventCallback|nil
 function Input.RegisterListener(callbackOrInputName, callbackOrNil)
 	local t = type(callbackOrInputName)
 	if (t == "string" or t == "number") and callbackOrNil ~= nil then
@@ -22,6 +23,18 @@ function Input.RegisterListener(callbackOrInputName, callbackOrNil)
 		RegisterListener("NamedInputEvent", callbackOrInputName, callbackOrNil)
 	elseif t == "function" then
 		RegisterListener("InputEvent", callbackOrInputName)
+	end
+end
+
+---Wrapper around RegisterListener for easier auto-completion.
+---@param callbackOrEventName InputEventCallback
+---@param callbackOrNil InputEventCallback|nil
+function Input.RegisterMouseListener(callbackOrEventName, callbackOrNil)
+	local t = type(callbackOrEventName)
+	if t == "string" and callbackOrNil ~= nil then
+		RegisterListener("MouseInputEvent", callbackOrEventName, callbackOrNil)
+	elseif t == "function" then
+		RegisterListener("MouseInputEvent", UIExtensions.MouseEvent.All, callbackOrEventName)
 	end
 end
 
@@ -101,6 +114,11 @@ Ext.RegisterListener("InputEvent", function(evt)
 	end
 end)
 
+function Input.OnMouseEvent(event, x, y)
+	InvokeListenerCallbacks(Listeners.MouseInputEvent[event], x, y)
+	InvokeListenerCallbacks(Listeners.MouseInputEvent[UIExtensions.MouseEvent.All], x, y)
+end
+
 ---@param ui LeaderLibUIExtensions
 ---@param pressed boolean
 ---@param eventName string
@@ -109,9 +127,9 @@ function Input.OnFlashEvent(ui, call, pressed, eventName, arrayIndex)
 	local fireListeners = Input.Keys[eventName] ~= pressed
 	eventName = string.gsub(eventName, "IE ", "")
 	Input.Keys[eventName] = pressed
-	if Vars.DebugMode then
-		PrintLog("[Input.OnFlashEvent] eventName(%s) pressed(%s) index(%i)", eventName, pressed, arrayIndex)
-	end
+	-- if Vars.DebugMode then
+	-- 	PrintLog("[Input.OnFlashEvent] eventName(%s) pressed(%s) index(%i)", eventName, pressed, arrayIndex)
+	-- end
 	if fireListeners then
 		local id = Data.Input[eventName]
 		if type(id) == "table" then

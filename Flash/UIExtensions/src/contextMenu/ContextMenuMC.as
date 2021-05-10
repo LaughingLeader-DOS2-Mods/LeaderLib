@@ -11,6 +11,7 @@ package contextMenu
 	{
 		public var bg_mc:MovieClip;
 		public var list:listDisplay;
+		public var base:MovieClip;
 
 		//MainTimeline
 		public var closing:Boolean;
@@ -41,6 +42,8 @@ package contextMenu
 			this.tweenTime = 0.3;
 			this.text_array = new Array();
 			this.buttonArr = new Array();
+
+			this.base = root as MovieClip;
 		}
 		
 		public function setTitle(text:String) : *
@@ -93,15 +96,37 @@ package contextMenu
 			this.list.scrollRect = new Rectangle(0,0,this.bg_mc.width,this.bg_mc.height);
 			this.bg_mc.bottom_mc.y = this.bg_mc.mid_mc.y + this.bg_mc.mid_mc.height - this.bg_mc.bottomOffset;
 			this.list.alpha = 1;
+			if (this.base.controllerEnabled) {
+				this.list.select(0);
+			}
 			//ExternalInterface.call("setMcSize",this.x + this.bg_mc.x + this.bg_mc.width,this.y + this.bg_mc.y + this.bg_mc.container_mc.y + this.bg_mc.container_mc.height + this.bg_mc.bottom_mc.height);
 		}
 
+		public function setListLoopable(b:Boolean) : *
+		{
+			this.list.m_cyclic = b;
+		}
+
 		// Stuff that used to be in MainTimeline
-		public function onEventUp(id:Number) : Boolean
+		public function next() : *
+		{
+			ExternalInterface.call("PlaySound","UI_Gen_CursorMove");
+			this.list.next();
+			this.setListLoopable(false);
+		}
+		
+		public function previous() : *
+		{
+			ExternalInterface.call("PlaySound","UI_Gen_CursorMove");
+			this.list.previous();
+			this.setListLoopable(false);
+		}
+
+		public function onInputUp(input:String) : Boolean
 		{
 			var currentMC:MovieClip = null;
 			var isHandled:Boolean = false;
-			switch(this.events[id])
+			switch(input)
 			{
 				case "IE UIAccept":
 					currentMC = this.list.getCurrentMovieClip();
@@ -112,12 +137,20 @@ package contextMenu
 					isHandled = true;
 					break;
 				case "IE UIUp":
-					this.list.previous();
-					isHandled = true;
+					if (!this.base.controllerEnabled) {
+						this.previous();
+						isHandled = true;
+					} else {
+						this.setListLoopable(true);
+					}
 					break;
 				case "IE UIDown":
-					this.list.next();
-					isHandled = true;
+					if (!this.base.controllerEnabled) {
+						this.next();
+						isHandled = true;
+					} else {
+						this.setListLoopable(true);
+					}
 					break;
 				case "IE UILeft":
 					ExternalInterface.call("LeaderLib_ContextMenu_PreviousContext");
@@ -131,6 +164,29 @@ package contextMenu
 				case "IE UICancel":
 					this.close();
 					isHandled = true;
+			}
+			return isHandled;
+		}
+
+		public function onInputDown(input:String) : Boolean
+		{
+			var isHandled:Boolean = false;
+			if (this.base.controllerEnabled) {
+				switch(input)
+				{
+					case "IE UIUp":
+						this.previous();
+						isHandled = true;
+						break;
+					case "IE UIDown":
+						this.next();
+						isHandled = true;
+						break;
+					case "IE UIAccept":
+					case "IE UIBack":
+					case "IE UICancel":
+						isHandled = true;
+				}
 			}
 			return isHandled;
 		}

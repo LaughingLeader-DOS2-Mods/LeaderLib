@@ -42,6 +42,7 @@ package
 		public function onEventUp(id:Number) : *
 		{
 			ExternalInterface.call("LeaderLib_UIExtensions_InputEvent", false, this.events[id], id);
+			var isHandled:Boolean = false;
 			if(isInCharacterCreation)
 			{
 				switch(this.events[id])
@@ -51,15 +52,19 @@ package
 						break;
 				}
 			}
-			return false;
+			if (!isHandled && this.context_menu.visible)
+			{
+				isHandled = this.context_menu.onInputUp(this.events[id]);
+			}
+			return isHandled;
 		}
 		
 		public function onEventDown(id:Number) : Boolean
 		{
 			ExternalInterface.call("LeaderLib_UIExtensions_InputEvent", true, this.events[id], id);
+			var isHandled:Boolean = false;
 			if(controllerEnabled && isInCharacterCreation)
 			{
-				var isHandled:Boolean = false;
 				switch(this.events[id])
 				{
 					case "IE UICreationTabPrev":
@@ -70,13 +75,13 @@ package
 						isHandled = this.UICreationTabPrevPressed;
 						break;
 				}
-				if (!isHandled && this.mainPanel_mc.context_menu.visible)
-				{
-					isHandled = this.mainPanel_mc.context_menu.onEventDown(id);
-				}
 				return isHandled;
 			}
-			return false;
+			if (!isHandled && this.context_menu.visible)
+			{
+				isHandled = this.context_menu.onInputDown(this.events[id]);
+			}
+			return isHandled;
 		}
 		
 		public function onEventInit() : *

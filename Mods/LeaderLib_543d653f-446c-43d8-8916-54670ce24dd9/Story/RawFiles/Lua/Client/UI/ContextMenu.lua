@@ -9,7 +9,7 @@
 ---@field Disabled boolean
 ---@field Legal boolean
 ---@field Callback ContextMenuActionCallback
----@field CloseOnClick boolean
+---@field StayOpen boolean|nil
 
 local ACTIONS = {
 	HideStatus = "hideStatus",
@@ -92,7 +92,7 @@ function ContextMenu:OnEntryClicked(ui, event, id, actionID, handle)
 			Ext.PrintError(err)
 		end
 	end
-	if not entry or (entry and entry.CloseOnClick) then
+	if not entry or (entry and not entry.StayOpen) then
 		ui:Invoke("showContextMenu", false)
 	end
 end
@@ -193,7 +193,7 @@ local function GetVar(var, fallback)
 end
 
 local ContextMenuEntry = {
-	CloseOnClick = true,
+	StayOpen = false,
 	Disabled = false,
 	Legal = true,
 	ClickSound = true,
@@ -336,6 +336,15 @@ function ContextMenu:CreateOld()
 			-- end, 200)
 		end
 	end
+end
+
+---@param mc FlashMovieClip
+function ContextMenu:CursorIsOverlappingMC(mc)
+	if mc and mc.hitTest then
+		local x,y = UIExtensions.GetMousePosition()
+		return mc.hitTest(x, y, true) == true
+	end
+	return false
 end
 
 ContextMenu:Init()

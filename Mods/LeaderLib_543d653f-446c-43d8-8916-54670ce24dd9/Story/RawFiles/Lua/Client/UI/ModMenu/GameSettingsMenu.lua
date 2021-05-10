@@ -44,6 +44,18 @@ local function AddControl(parentTable, tableKey, name, reversed)
 	return currentID
 end
 
+---@return integer
+local function AddButton(name, callback)
+	local entry = {
+		Name = name,
+		Callback = callback
+	}
+	local currentID = GameSettingsMenu.LastID
+	GameSettingsMenu.Controls[currentID] = entry
+	GameSettingsMenu.LastID = GameSettingsMenu.LastID + 1
+	return currentID
+end
+
 local CONTROL_TYPE = {
 	CHECKBOX = 0,
 	DROPDOWN = 1,
@@ -145,6 +157,10 @@ local text = {
 	Client_AlwaysDisplayWeaponScalingText_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_AlwaysDisplayWeaponScalingText_Description"),
 	Client_HideStatuses = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideStatuses"),
 	Client_HideStatuses_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideStatuses_Description"),
+	Button_ClearWhitelist = ts:CreateFromKey("LeaderLib_UI_GameSettings_Button_ClearWhitelist"),
+	Button_ClearWhitelist_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Button_ClearWhitelist_Description"),
+	Button_ClearBlacklist = ts:CreateFromKey("LeaderLib_UI_GameSettings_Button_ClearBlacklist"),
+	Button_ClearBlacklist_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Button_ClearBlacklist_Description"),
 	Client_DivineTalentsEnabled = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_DivineTalentsEnabled"),
 	Client_DivineTalentsEnabled_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_DivineTalentsEnabled_Description"),
 	Client_AlwaysExpandTooltips = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_AlwaysExpandTooltips"),
@@ -252,8 +268,17 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 		mainMenu.addMenuLabel(text.Section_Client.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "AlwaysExpandTooltips"), text.Client_AlwaysExpandTooltips.Value, true, settings.Client.AlwaysExpandTooltips and 1 or 0, false, text.Client_AlwaysExpandTooltips_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "AlwaysDisplayWeaponScalingText"), text.Client_AlwaysDisplayWeaponScalingText.Value, true, settings.Client.AlwaysDisplayWeaponScalingText and 1 or 0, false, text.Client_AlwaysDisplayWeaponScalingText_Description.Value)
-		mainMenu.addMenuCheckbox(AddControl(settings.Client.StatusOptions, "HideAll"), text.Client_HideStatuses.Value, true, settings.Client.StatusOptions.HideAll and 1 or 0, false, text.Client_HideStatuses_Description.Value)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "DivineTalentsEnabled"), text.Client_DivineTalentsEnabled.Value, true, settings.Client.DivineTalentsEnabled and 1 or 0, false, text.Client_DivineTalentsEnabled_Description.Value)
+
+		mainMenu.addMenuCheckbox(AddControl(settings.Client.StatusOptions, "HideAll"), text.Client_HideStatuses.Value, true, settings.Client.StatusOptions.HideAll and 1 or 0, false, text.Client_HideStatuses_Description.Value)
+		mainMenu.addMenuButton(AddButton("ClearBlacklist", function()
+			GameSettings.Settings.Client.StatusOptions.Blacklist = {}
+			SaveGameSettings()
+		end), text.Button_ClearBlacklist.Value, "", true, text.Button_ClearBlacklist_Description.Value)
+		mainMenu.addMenuButton(AddButton("ClearWhitelist", function()
+			GameSettings.Settings.Client.StatusOptions.Whitelist = {}
+			SaveGameSettings()
+		end), text.Button_ClearWhitelist.Value, "", true, text.Button_ClearWhitelist_Description.Value)
 	end
 end
 
@@ -299,7 +324,12 @@ end
 
 function GameSettingsMenu.OnButtonPressed(id)
 	local controlData = GameSettingsMenu.Controls[id]
-	if controlData ~= nil then
+	if controlData and controlData.Callback then
+		local b,err = xpcall(controlData.Callback, debug.traceback)
+		if not b then
+			Ext.PrintError(err)
+			return false
+		end
 		return true
 	end
 	return false

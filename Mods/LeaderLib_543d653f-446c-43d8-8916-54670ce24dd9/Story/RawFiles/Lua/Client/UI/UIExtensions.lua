@@ -161,6 +161,13 @@ function UIExtensions.SetupInstance()
 	end
 end
 
+function UIExtensions.GetInstance()
+	if not UIExtensions.Instance then
+		UIExtensions.SetupInstance()
+	end
+	return UIExtensions.Instance
+end
+
 RegisterListener("ClientDataSynced", function(modData, sharedData)
 	if UIExtensions.Instance then
 		local main = UIExtensions.Instance:GetRoot()

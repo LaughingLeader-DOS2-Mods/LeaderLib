@@ -10,12 +10,14 @@ package
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import LS_Classes.tooltipHelper;
+	import contextMenu.ContextMenuMC;
 	
 	public dynamic class MainTimeline extends MovieClip
 	{		
 		public var layout:String;
 		public var events:Array;
-		public var mainPanel_mc:MovieClip;
+		public var mainPanel_mc:MainPanel;
+		public var context_menu:contextMenu.ContextMenuMC;
 		
 		public var curTooltip:String;
 	  	public var hasTooltip:Boolean;
@@ -67,6 +69,10 @@ package
 						// Prevents "ConnectivityMenu" from opening the connectivity menu in CC if UICreationTabPrevPressed is held
 						isHandled = this.UICreationTabPrevPressed;
 						break;
+				}
+				if (!isHandled && this.mainPanel_mc.context_menu.visible)
+				{
+					isHandled = this.mainPanel_mc.context_menu.onEventDown(id);
 				}
 				return isHandled;
 			}
@@ -304,6 +310,18 @@ package
 			}
 			this.listeningForMouse = b;
 		}
+
+		public function showContextMenu(b:Boolean = true) : *
+		{
+			if (b)
+			{
+				context_menu.open(mouseX, mouseY);
+			}
+			else
+			{
+				context_menu.close();
+			}
+		}
 		
 		private function frame1() : *
 		{
@@ -312,6 +330,10 @@ package
 			this.curTooltip = "";
 		 	this.hasTooltip = false;
 			this.timers = new Array();
+
+			context_menu = new contextMenu.ContextMenuMC();
+			this.addChild(context_menu);
+			context_menu.visible = false;
 
 			//this.addEventListener(MouseEvent.CLICK,this.fireOnMouseClick, true);
 			//this.addEventListener(MouseEvent.MOUSE_MOVE,this.fireOnMouseMove, true);

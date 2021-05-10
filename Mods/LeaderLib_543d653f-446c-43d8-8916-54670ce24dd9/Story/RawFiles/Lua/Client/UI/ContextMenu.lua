@@ -4,7 +4,7 @@
 ---@field ID number
 ---@field ActionID number
 ---@field Visible boolean
----@field Sound string
+---@field ClickSound boolean
 ---@field Label string
 ---@field Disabled boolean
 ---@field Legal boolean
@@ -85,7 +85,7 @@ function ContextMenu:OnRightClick(eventName, pressed, id, inputMap, controllerEn
 		else
 			self:AddEntry(ACTIONS.HideStatus, nil, "Hide Status")
 		end
-		self:Create()
+		self:Open()
 		-- UIExtensions.StartTimer("SetupContextMenu", 250, function(...)
 		-- 	self:Create(...)
 		-- end)
@@ -136,18 +136,18 @@ function ContextMenu:OnShowExamineStatusTooltip(ui, event, typeIndex, statusDoub
 end
 
 function ContextMenu:Init()
-	if not self.Instance then
-		self.Instance = Ext.GetUIByType(Data.UIType.contextMenu.Default) or Ext.GetUIByType(Data.UIType.contextMenu.Alt)	
-	end
-
 	if not self.RegisteredListeners then
-		for i,v in pairs(Data.UIType.contextMenu) do
-			Ext.RegisterUITypeInvokeListener(v, "open", function(...) self:OnOpen(...) end)
-			Ext.RegisterUITypeInvokeListener(v, "updateButtons", function(...) self:OnUpdate(...) end)
-			Ext.RegisterUITypeInvokeListener(v, "close", function(...) self:OnClose(...) end)
-			Ext.RegisterUITypeCall(v, "menuClosed", function(...) self:OnClose(...) end)
-			Ext.RegisterUITypeCall(v, "buttonPressed", function(...) self:OnEntryClicked(...) end)
-		end
+		-- for i,v in pairs(Data.UIType.contextMenu) do
+		-- 	Ext.RegisterUITypeInvokeListener(v, "open", function(...) self:OnOpen(...) end)
+		-- 	Ext.RegisterUITypeInvokeListener(v, "updateButtons", function(...) self:OnUpdate(...) end)
+		-- 	Ext.RegisterUITypeInvokeListener(v, "close", function(...) self:OnClose(...) end)
+		-- 	Ext.RegisterUITypeCall(v, "menuClosed", function(...) self:OnClose(...) end)
+		-- 	Ext.RegisterUITypeCall(v, "buttonPressed", function(...) self:OnEntryClicked(...) end)
+		-- end
+
+		Ext.RegisterUINameCall("LeaderLib_ContextMenu_Opened", function(...) self:OnOpen(...) end)
+		Ext.RegisterUINameCall("LeaderLib_ContextMenu_Closed", function(...) self:OnClose(...) end)
+		Ext.RegisterUITypeCall("LeaderLib_ContextMenu_EntryPressed", function(...) self:OnEntryClicked(...) end)
 
 		Ext.RegisterUITypeCall(Data.UIType.playerInfo, "showStatusTooltip", function(...) self:OnShowStatusTooltip(...) end)
 		Ext.RegisterUITypeCall(Data.UIType.examine, "showTooltip", function(...) self:OnShowExamineStatusTooltip(...) end)
@@ -160,30 +160,66 @@ function ContextMenu:Init()
 end
 
 local function GetVar(var, fallback)
-	if var == nil then
+	if var == nil or type(var) ~= type(fallback) then
 		return fallback
 	end
 	return var
 end
 
-function ContextMenu:AddEntry(actionId, callback, label, visible, sound, disabled, isLegal)
+---@param actionId number
+---@param callback ContextMenuActionCallback
+---@param label string
+---@param useClickSound boolean
+---@param disabled boolean
+---@param isLegal boolean
+function ContextMenu:AddEntry(actionId, callback, label, visible, useClickSound, disabled, isLegal)
 	if not self.Entries then
 		self.Entries = {}
 	end
 	local id = #self.Entries
 	self.Entries[#self.Entries+1] = {
 		ID = id,
-		ActionID = GetVar(actionId, string.format("Entry%s", id)),
-		Visible = GetVar(visible, true),
-		Sound = sound or "",
-		Label = label or "Entry",
+		ActionID = GetVar(actionId, id),
+		ClickSound = GetVar(useClickSound, true),
+		Label = GetVar(label, "Entry"),
 		Disabled = GetVar(disabled, false),
 		Legal = GetVar(isLegal, true),
 		Callback = callback
 	}
 end
 
-function ContextMenu:Create()
+function ContextMenu:Open()
+	self.IsOpening = false
+	self:Init()
+	local instance = UIExtensions.GetInstance()
+	if instance then
+		local main = instance:GetRoot()
+		local contextMenu = main.context_menu
+
+		if #self.Entries > 1 then
+			local i = 0
+			for _,v in ipairs(self.Entries) do
+				contextMenu.buttonArr[i] = v.ID
+				contextMenu.buttonArr[i+1] = v.ActionID
+				contextMenu.buttonArr[i+2] = v.ClickSound
+				contextMenu.buttonArr[i+3] = "" -- Unused
+				contextMenu.buttonArr[i+4] = v.Label
+				contextMenu.buttonArr[i+5] = v.Disabled
+				contextMenu.buttonArr[i+6] = v.Legal
+				i = i + 7
+			end
+			contextMenu.updateButtons()
+		else
+			local entry = self.Entries[1]
+			contextMenu.addEntry(entry.ID, entry.ActionID, entry.ClickSound, entry.Label, entry.Disabled, entry.Legal)
+			contextMenu.updateDone()
+		end
+		
+		contextMenu.open()
+	end
+end
+
+function ContextMenu:CreateOld()
 	self.IsOpening = false
 	if not self.Instance then
 		self:Init()
@@ -211,6 +247,7 @@ function ContextMenu:Create()
 			-- x = math.ceil(x * (self.Width/screenW))
 			-- y = math.ceil(y * (self.Height/screenH))
 			contextMenu:SetPosition(x,y)
+			contextMenu:SetPosition(0,0)
 			this.clearButtons()
 			--contextMenu:SetPosition(math.ceil(x),math.ceil(y))
 	

@@ -1,3 +1,6 @@
+--Ext.AddPathOverride("Public/Game/GUI/characterSheet.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/characterSheet.swf")
+--Ext.AddPathOverride("Public/Game/GUI/contextMenu.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/contextMenu.swf")
+
 local function OnGameMenuEvent(ui, call, ...)
 	local params = Common.FlattenTable({...})
 	--PrintDebug("[LeaderLib_ModMenuClient.lua:OnGameMenuEvent] Event called. call("..tostring(call)..") params("..tostring(Common.Dump(params))..")")

@@ -1,8 +1,7 @@
 package
 {
-	import LS_Classes.listDisplay;
 	import flash.display.MovieClip;
-	
+
 	public dynamic class MainPanel extends MovieClip
 	{
 		public var elements:Array;
@@ -73,7 +72,7 @@ package
 			this.idInc = 0;
 		}
 		
-		function frame1() : *
+		private function frame1() : *
 		{
 			elements = new Array();
 			this.mousEnabled = false;

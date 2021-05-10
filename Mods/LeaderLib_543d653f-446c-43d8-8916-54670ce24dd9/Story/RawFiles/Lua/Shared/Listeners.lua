@@ -91,4 +91,17 @@ if Ext.IsClient() then
 	---Called when a world tooltip is created either under the cursor, or when the highlight items key is pressed. The callback should return new tooltip text if the text should be modified, else don't return anything.
 	---@type OnWorldTooltipCallback[]
 	Listeners.OnWorldTooltip = {}
+
+	---@alias ShouldOpenContextMenuCallback fun(contextMenu:ContextMenu, mouseX:number, mouseY:number):boolean
+	---Triggered when right clicking with KB+M.
+	---@type ShouldOpenContextMenuCallback[]
+	Listeners.ShouldOpenContextMenu = {}
+	---@alias OnContextMenuOpeningCallback fun(contextMenu:ContextMenu, mouseX:number, mouseY:number):void
+	---Triggered the custom context menu is opening. For adding entries to it, use contextMenu:AddEntry
+	---@see ContextMenu#AddEntry
+	---@type OnContextMenuOpeningCallback[]
+	Listeners.OnContextMenuOpening = {}
+	---@alias OnContextMenuEntryClickedCallback fun(contextMenu:ContextMenu, ui:UIObject, entryID:integer, actionID:string, handle:number):void
+	---@type OnContextMenuEntryClickedCallback[]
+	Listeners.OnContextMenuEntryClicked = {}
 end

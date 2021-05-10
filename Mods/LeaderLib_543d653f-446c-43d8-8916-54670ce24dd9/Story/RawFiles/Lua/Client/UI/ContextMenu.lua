@@ -92,6 +92,7 @@ function ContextMenu:OnEntryClicked(ui, event, id, actionID, handle)
 			Ext.PrintError(err)
 		end
 	end
+	InvokeListenerCallbacks(Listeners.OnContextMenuEntryClicked, self, ui, id, actionID, handle)
 	if not entry or (entry and not entry.StayOpen) then
 		ui:Invoke("showContextMenu", false)
 	end
@@ -104,18 +105,37 @@ function ContextMenu:OnHideTooltip(ui, event)
 end
 
 function ContextMenu:OnRightClick(eventName, pressed, id, inputMap, controllerEnabled)
-	if not pressed and self.ContextStatus and not self.IsOpening then
-		self.IsOpening = true
-		self.Entries = {}
-		if self.ContextStatus.RemoveFromList then
-			self:AddEntry(ACTIONS.UnhideStatus, nil, "Show Status")
-		else
-			self:AddEntry(ACTIONS.HideStatus, nil, "Hide Status")
+	if not pressed and not self.IsOpening then
+		if self.ContextStatus then
+			self.IsOpening = true
 		end
-		self:Open()
-		-- UIExtensions.StartTimer("SetupContextMenu", 250, function(...)
-		-- 	self:Create(...)
-		-- end)
+		local x,y = UIExtensions.GetMousePosition()
+		local callbacks = Listeners.ShouldOpenContextMenu
+		local length = callbacks and #callbacks or 0
+		if length > 0 then
+			for i=1,length do
+				local callback = callbacks[i]
+				local success,b = xpcall(callback, debug.traceback, self, x, y)
+				if not success then
+					Ext.PrintError(b)
+				elseif b then
+					self.IsOpening = true
+				end
+			end
+		end
+
+		if self.IsOpening then
+			self.Entries = {}
+			if self.ContextStatus then
+				if self.ContextStatus.RemoveFromList then
+					self:AddEntry(ACTIONS.UnhideStatus, nil, "Show Status")
+				else
+					self:AddEntry(ACTIONS.HideStatus, nil, "Hide Status")
+				end
+			end
+			InvokeListenerCallbacks(Listeners.OnContextMenuOpening, self, x, y)
+			self:Open()
+		end
 	end
 end
 
@@ -267,74 +287,6 @@ function ContextMenu:Open()
 		
 		contextMenu.open(x,y)
 		--main.showContextMenu(true)
-	end
-end
-
-function ContextMenu:CreateOld()
-	self.IsOpening = false
-	if not self.Instance then
-		self:Init()
-	end
-	--local playerInfo = Ext.GetUIByType(Data.UIType.playerInfo)
-	local contextMenu = self.Instance 
-	if contextMenu then
-		contextMenu:Show()
-		local this = contextMenu:GetRoot()
-		if this then
-			--local borderX,borderY = 68,42
-			--local borderX,borderY = 21,102
-			--114     188     129.40660095215 329.0625
-			--TODO figure out the screen ratio
-			local screenW, screenH = 1920,1080--1366,768
-			local borderX,borderY = 16,142
-			if self.ContextStatus.CallingUI == Data.UIType.examine then
-				borderX,borderY = 21,102
-			end
-			
-			local x,y = UIExtensions.GetMousePosition()
-			x = math.ceil(x - borderX)
-			y = math.ceil(y - borderY)
-			print(self.Width/screenW, self.Height/screenH)
-			-- x = math.ceil(x * (self.Width/screenW))
-			-- y = math.ceil(y * (self.Height/screenH))
-			contextMenu:SetPosition(x,y)
-			contextMenu:SetPosition(0,0)
-			this.clearButtons()
-			--contextMenu:SetPosition(math.ceil(x),math.ceil(y))
-	
-			this.windowsMenu_mc.visible = true
-			local i = 0
-			for _,v in ipairs(self.Entries) do
-				this.buttonArr[i] = v.ID
-				this.buttonArr[i+1] = v.ActionID
-				this.buttonArr[i+2] = v.Visible
-				this.buttonArr[i+3] = v.Sound
-				this.buttonArr[i+4] = v.Label
-				this.buttonArr[i+5] = v.Disabled
-				this.buttonArr[i+6] = v.Legal
-				i = i + 7
-			end
-
-			this.updateButtons()
-			--contextMenu:ExternalInterfaceCall("showContextMenu", 0,x,y)
-			--this.windowsMenu_mc.addEntry(0, 0, "UI_GM_Generic_Slide_Open", "Hide Status", false, true)
-			
-			this.open()
-			Ext.Print("Opened context menu?", x, y, UIExtensions.GetMousePosition())
-
-			-- UIExtensions.StartTimer("ContextMenuPositionTest", 250, function(...)
-			-- 	if self.Visible then
-			-- 		x = x + 1
-			-- 		--y = y+1
-			-- 		if x < 1920 and y < 1080 then
-			-- 			--contextMenu:Hide()
-			-- 			contextMenu:SetPosition(x,y)
-			-- 			--contextMenu:Show()
-			-- 			print(x,y, UIExtensions.GetMousePosition())
-			-- 		end
-			-- 	end
-			-- end, 200)
-		end
 	end
 end
 

@@ -158,7 +158,7 @@ local function RebuildTooltip(eventName, pressed, id, inputMap, controllerEnable
 						ui:ExternalInterfaceCall("keepUIinScreen", false)
 					end
 				end
-			else
+			elseif TooltipExpander.CallData.UI then
 				local ui = Ext.GetUIByType(TooltipExpander.CallData.UI)
 				if ui then
 					rebuildingTooltip = true

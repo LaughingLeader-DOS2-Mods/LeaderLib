@@ -96,6 +96,7 @@
 	<content contentuid="h4252ff7cgb624g4b24gbf03g1772392f3988">Old Man Lothar</content>
 	<content contentuid="h43868aebg7281g40bfgbc1dgf6fe5a06512b">Autosave Interval</content>
 	<content contentuid="h455f1349g6528g452bg8624g5d0674b01ac5">If enabled, tooltips that support shift-key expansion will always be expanded.</content>
+	<content contentuid="h456c5c8bg7103g4b19g9185ge4cd6ddbab30">Show Status in Portrait UI</content>
 	<content contentuid="h45f478cdg3b77g400aga94fg04b3a60b7ad9">Hidden Backpack</content>
 	<content contentuid="h46c05d65g039dg4651gb24eg027244f86897">Undead Dwarf</content>
 	<content contentuid="h473ddea8g74eag4433g8e19gc217b9c1e42d">Undead Human</content>
@@ -215,6 +216,7 @@
 	<content contentuid="h8ecc120fg9d67g4faegb198gebd73e4c836c">[USER] Disable auto-opening the Mod Settings Menu when closing another mod&apos;s settings menu.</content>
 	<content contentuid="h8fe3bf6cg2791g4a46gb517g396ceb756b43">&lt;font color=&apos;#fcd203&apos; size=&apos;28&apos;&gt;LeaderLib&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#FF0000&apos;&gt;&lt;font size=&apos;24&apos;&gt;* Error *&lt;/font&gt;&lt;br&gt;Required Mods Missing&lt;/font&gt;&lt;br&gt;Check your mod list at the main menu.</content>
 	<content contentuid="h900bb2d3ga5c9g432aga1d8g2c4345909d55">Toggle Undead</content>
+	<content contentuid="h901ab1b9g943dg465cg8583g3ad8e86354b5">Hide Status</content>
 	<content contentuid="h907db4cdg96e4g4597g87f5g9a45d7ae9e70">*Ask to see the goods.*</content>
 	<content contentuid="h91437530g1ddag4b1bgaed7g7e1a7990d43c">Confirm</content>
 	<content contentuid="h916a5457g6ec8g47fdgb4adg2c5e67174a4b">[LeaderLib_DynamicMenu_MenuOption6_ea90e3a6-30da-411c-8ab5-cae95373ae93]</content>
@@ -311,6 +313,7 @@
 	<content contentuid="hc768ad97g83deg41fdgb257g54443e202c5a">As a gesture of goodwill towards future trading, I&apos;ll give you this book for free.</content>
 	<content contentuid="hc789b3e9g19dfg4670g9df6g1e2b18cb59ae">Enable redirecting automatically started dialog to characters that match your preferences, such as an avatar or character with the highest persuasion.</content>
 	<content contentuid="hc78dbfbbg99e3g4b81gbb3fg8068e2d4ecda">*He hands you a peculiar-looking book.*</content>
+	<content contentuid="hc9377dd3g70d6g4d84g8c8fg812246a61029">Hide Status from Portrait UI</content>
 	<content contentuid="hc9cc1024g797fg4770g8ffagf1b4041e4c48">&lt;font color=&apos;#9400D3&apos;&gt;Stealth Mastery&lt;/font&gt;</content>
 	<content contentuid="hca27994egc60eg495dg8146g7f81c970e265">&lt;font color=&apos;#80FFC3&apos; size=&apos;18&apos;&gt;Automatically levels up with the wearer.&lt;/font&gt;</content>
 	<content contentuid="hcb2933a4g9bf6g4b7ega556g974d319d1faf">Redirect to Highest Persuasion</content>

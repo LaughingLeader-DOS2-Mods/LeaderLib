@@ -248,14 +248,12 @@ LocalizedText.Slots = {
 	Offhand = ts:Create("h50110389gc98ag49dbgb58fgae2fd227dff4", "Offhand"),
 }
 
----@type table<string, TranslatedString>
 LocalizedText.ItemBoosts = {
 	ResistancePenetration = ts:Create("hf638bc67g5cb6g4dcfg8663gce1951caad2b", "[1] Penetration")
 }
 
 -- <content contentuid="h9b6e0ed8g07afg413dg939fg5d5b91a9461c">Next level costs [1] ability point(s)</content>
 
----@type table<string, TranslatedString>
 LocalizedText.UI = {
 	AbilityPlusTooltip = ts:Create("h9b6e0ed8g07afg413dg939fg5d5b91a9461c", "Next level costs [1] ability point(s)"),
 	Confirm = ts:Create("h0fb8bf07g3932g4ccbg8659g2f4f5aa7dd82", "Confirm"),
@@ -263,6 +261,12 @@ LocalizedText.UI = {
 	OK = ts:Create("h1cb63048g62e1g4b86gac15gb333158c2c81", "OK"),
 	Yes = ts:Create("hf52bf842g05beg48dega717gca15b3678e0e", "Yes"),
 	No = ts:Create("heded8384gb4f5g439dg9883g5cf950b2bbfc", "No"),
+}
+
+LocalizedText.ContextMenu = {
+	HideStatus = ts:Create("h901ab1b9g943dg465cg8583g3ad8e86354b5", "Hide Status"),
+	HideStatus_Examine = ts:Create("hc9377dd3g70d6g4d84g8c8fg812246a61029", "Hide Status from Portrait UI"),
+	ShowStatus = ts:Create("h456c5c8bg7103g4b19g9185ge4cd6ddbab30", "Show Status in Portrait UI"),
 }
 
 LocalizedText.SkillTooltip = {

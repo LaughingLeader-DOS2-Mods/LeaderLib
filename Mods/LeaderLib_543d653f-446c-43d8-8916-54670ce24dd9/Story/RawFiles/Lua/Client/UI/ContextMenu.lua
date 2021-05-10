@@ -128,9 +128,13 @@ function ContextMenu:OnRightClick(eventName, pressed, id, inputMap, controllerEn
 			self.Entries = {}
 			if self.ContextStatus then
 				if self.ContextStatus.RemoveFromList then
-					self:AddEntry(ACTIONS.UnhideStatus, nil, "Show Status")
+					self:AddEntry(ACTIONS.UnhideStatus, nil, LocalizedText.ContextMenu.ShowStatus.Value)
 				else
-					self:AddEntry(ACTIONS.HideStatus, nil, "Hide Status")
+					if self.ContextStatus.CallingUI == Data.UIType.examine then
+						self:AddEntry(ACTIONS.HideStatus, nil, LocalizedText.ContextMenu.HideStatus_Examine.Value)
+					else
+						self:AddEntry(ACTIONS.HideStatus, nil, LocalizedText.ContextMenu.HideStatus.Value)
+					end
 				end
 			end
 			InvokeListenerCallbacks(Listeners.OnContextMenuOpening, self, x, y)

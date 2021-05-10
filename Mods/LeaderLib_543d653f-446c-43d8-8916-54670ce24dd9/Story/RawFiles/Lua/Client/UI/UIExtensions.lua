@@ -136,6 +136,11 @@ function UIExtensions.SetupInstance()
 		UIExtensions.RegisteredListeners = true
 	end
 	if not UIExtensions.Instance or UIExtensions.Instance:GetRoot() == nil then
+		if not Vars.ControllerEnabled then
+			UIExtensions.Layer = 18 -- May eat inputs
+		else
+			UIExtensions.Layer = 10
+		end
 		UIExtensions.Instance = Ext.GetUI("LeaderLibUIExtensions") or Ext.CreateUI("LeaderLibUIExtensions", UIExtensions.SwfPath, UIExtensions.Layer)
 	end
 	if UIExtensions.Instance then

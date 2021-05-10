@@ -1,4 +1,4 @@
----@alias ContextMenuActionCallback fun(self:ContextMenuEntry, ui:UIObject, id:integer, actionID:integer, handle:number)
+---@alias ContextMenuActionCallback fun(self:ContextMenu, ui:UIObject, id:integer, actionID:integer, handle:number)
 
 ---@class ContextMenuEntry:table
 ---@field ID number
@@ -9,12 +9,19 @@
 ---@field Disabled boolean
 ---@field Legal boolean
 ---@field Callback ContextMenuActionCallback
+---@field CloseOnClick boolean
 
 local ACTIONS = {
-	HideStatus = 0,
-	UnhideStatus = 1
+	HideStatus = "hideStatus",
+	UnhideStatus = "unhideStatus"
 }
 
+---@class ContextStatus:table
+---@field StatusId string
+---@field RemoveFromList boolean
+---@field CallingUI integer
+
+---@class ContextMenu:table
 local ContextMenu = {
 	---@type UIObject
 	Instance = nil,
@@ -22,26 +29,43 @@ local ContextMenu = {
 	Entries = {},
 	---@type table<integer, ContextMenuActionCallback> 
 	Actions = {},
-	Width = 440,
-	Height = 280
+	---@type ContextStatus
+	ContextStatus = nil
 }
 ContextMenu.__index = ContextMenu
 
 ContextMenu.Actions[ACTIONS.HideStatus] = function(self, ui, id, actionID, handle)
 	if self.ContextStatus and not StringHelpers.IsNullOrWhitespace(self.ContextStatus.StatusId) then
-		table.insert(GameSettings.Settings.Client.StatusOptions.Blacklist, self.ContextStatus.StatusId)
-		SaveGameSettings()
+		local addToList = true
+		local blacklist = GameSettings.Settings.Client.StatusOptions.Blacklist or {}
+		for i,v in pairs(blacklist) do
+			if v == self.ContextStatus.StatusId then
+				addToList = false
+				break
+			end
+		end
+		if addToList then
+			table.insert(GameSettings.Settings.Client.StatusOptions.Blacklist, self.ContextStatus.StatusId)
+			SaveGameSettings()
+		end
 	end
 end
 
 ContextMenu.Actions[ACTIONS.UnhideStatus] = function(self, ui, id, actionID, handle)
 	if self.ContextStatus and not StringHelpers.IsNullOrWhitespace(self.ContextStatus.StatusId) then
+		local removedFromList = false
+		local blacklist = {}
 		for i,v in pairs(GameSettings.Settings.Client.StatusOptions.Blacklist) do
-			if v == self.ContextStatus.StatusId then
-				table.remove(GameSettings.Settings.Client.StatusOptions.Blacklist, i)
+			if v ~= self.ContextStatus.StatusId then
+				table.insert(blacklist, v)
+			else
+				removedFromList = true
 			end
 		end
-		SaveGameSettings()
+		if removedFromList then
+			GameSettings.Settings.Client.StatusOptions.Blacklist = blacklist
+			SaveGameSettings()
+		end
 	end
 end
 
@@ -58,13 +82,18 @@ function ContextMenu:OnUpdate(ui, event)
 
 end
 
+---@param ui UIObject
 function ContextMenu:OnEntryClicked(ui, event, id, actionID, handle)
-	local action = self.Actions[actionID] or (self.Entries[id] and self.Entries[id].Callback)
+	local entry = self.Entries[id]
+	local action = self.Actions[actionID] or (entry and entry.Callback)
 	if action then
 		local b,err = xpcall(action, debug.traceback, self, ui, id, actionID, handle)
 		if not b then
 			Ext.PrintError(err)
 		end
+	end
+	if not entry or (entry and entry.CloseOnClick) then
+		ui:Invoke("showContextMenu", false)
 	end
 end
 
@@ -74,9 +103,7 @@ function ContextMenu:OnHideTooltip(ui, event)
 	end
 end
 
---function ContextMenu:OnRightClick(eventName, pressed, id, inputMap, controllerEnabled)
 function ContextMenu:OnRightClick(eventName, pressed, id, inputMap, controllerEnabled)
-	print("ContextMenu:OnRightClick", pressed, self.ContextStatus, self.IsOpening)
 	if not pressed and self.ContextStatus and not self.IsOpening then
 		self.IsOpening = true
 		self.Entries = {}
@@ -93,7 +120,6 @@ function ContextMenu:OnRightClick(eventName, pressed, id, inputMap, controllerEn
 end
 
 function ContextMenu:OnShowStatusTooltip(ui, event, characterDouble, statusDouble, x, y, width, height, side)
-	print(event, characterDouble, statusDouble, x, y, width, height, side)
 	self.ContextStatus = nil
 	if characterDouble and statusDouble then
 		local characterHandle = Ext.DoubleToHandle(characterDouble)
@@ -147,7 +173,7 @@ function ContextMenu:Init()
 
 		Ext.RegisterUINameCall("LeaderLib_ContextMenu_Opened", function(...) self:OnOpen(...) end)
 		Ext.RegisterUINameCall("LeaderLib_ContextMenu_Closed", function(...) self:OnClose(...) end)
-		Ext.RegisterUITypeCall("LeaderLib_ContextMenu_EntryPressed", function(...) self:OnEntryClicked(...) end)
+		Ext.RegisterUINameCall("LeaderLib_ContextMenu_EntryPressed", function(...) self:OnEntryClicked(...) end)
 
 		Ext.RegisterUITypeCall(Data.UIType.playerInfo, "showStatusTooltip", function(...) self:OnShowStatusTooltip(...) end)
 		Ext.RegisterUITypeCall(Data.UIType.examine, "showTooltip", function(...) self:OnShowExamineStatusTooltip(...) end)
@@ -166,7 +192,17 @@ local function GetVar(var, fallback)
 	return var
 end
 
----@param actionId number
+local ContextMenuEntry = {
+	CloseOnClick = true,
+	Disabled = false,
+	Legal = true,
+	ClickSound = true,
+	ID = -1,
+	ActionID = -1,
+}
+ContextMenuEntry.__index = ContextMenuEntry
+
+---@param actionId string
 ---@param callback ContextMenuActionCallback
 ---@param label string
 ---@param useClickSound boolean
@@ -177,15 +213,17 @@ function ContextMenu:AddEntry(actionId, callback, label, visible, useClickSound,
 		self.Entries = {}
 	end
 	local id = #self.Entries
-	self.Entries[#self.Entries+1] = {
+	local entry = {
 		ID = id,
-		ActionID = GetVar(actionId, id),
+		ActionID = GetVar(actionId, string.format("Entry%s", id)),
 		ClickSound = GetVar(useClickSound, true),
 		Label = GetVar(label, "Entry"),
 		Disabled = GetVar(disabled, false),
 		Legal = GetVar(isLegal, true),
 		Callback = callback
 	}
+	setmetatable(entry, ContextMenuEntry)
+	self.Entries[#self.Entries+1] = entry
 end
 
 function ContextMenu:Open()
@@ -195,6 +233,7 @@ function ContextMenu:Open()
 	if instance then
 		local main = instance:GetRoot()
 		local contextMenu = main.context_menu
+		contextMenu.clearButtons()
 
 		if #self.Entries > 1 then
 			local i = 0
@@ -215,7 +254,19 @@ function ContextMenu:Open()
 			contextMenu.updateDone()
 		end
 		
-		contextMenu.open()
+		local x,y = UIExtensions.GetMousePosition()
+		local paddingX,paddingY = 8,-24
+		if self.ContextStatus.CallingUI == Data.UIType.examine then
+			paddingX,paddingY = 8,-16
+		elseif self.ContextStatus.CallingUI == Data.UIType.playerInfo then
+			
+		end
+		Ext.GetUIByType(self.ContextStatus.CallingUI):ExternalInterfaceCall("hideTooltip")
+		x = x + paddingX
+		y = y + paddingY
+		
+		contextMenu.open(x,y)
+		--main.showContextMenu(true)
 	end
 end
 
@@ -287,6 +338,4 @@ function ContextMenu:CreateOld()
 	end
 end
 
-Ext.RegisterListener("SessionLoaded", function()
-	ContextMenu:Init()
-end)
+ContextMenu:Init()

@@ -119,4 +119,5 @@ ehthumbs.db
 Thumbs.db
 Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/story_orphanqueries_found.txt
 LocalKeys/AbilityNamesAndDescriptions.xml
-Flash/UIExtensions/RECOVER_LeaderLib_UIExtensions.fla
+Flash/UIExtensions/RECOVER_*
+Flash/UIOverrides/test/*

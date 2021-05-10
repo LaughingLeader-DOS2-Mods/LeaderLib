@@ -48,7 +48,7 @@ package contextMenu
 			this.bg_mc.title_txt.htmlText = text;
 		}
 		
-		public function addEntry(id:Number, actionID:Number, clickSound:Boolean, text:String, disabled:Boolean, legal:Boolean) : *
+		public function addEntry(id:Number, actionID:String, clickSound:Boolean, text:String, disabled:Boolean, legal:Boolean) : *
 		{
 			var entry:MovieClip = this.list.getElementByNumber("id",id);
 			if(entry == null)
@@ -137,8 +137,8 @@ package contextMenu
 
 		public function open(targetX:Number=0, targetY:Number=0) : *
 		{
-			this.x = x;
-			this.y = y;
+			this.x = targetX;
+			this.y = targetY;
 			
 			if(!this.visible)
 			{
@@ -190,7 +190,7 @@ package contextMenu
 		public function updateButtons() : *
 		{
 			var id:Number = NaN;
-			var actionID:Number = NaN;
+			var actionID:String = "";
 			var clickSound:Boolean = false;
 			var unused:String = null;
 			var text:String = null;
@@ -203,7 +203,7 @@ package contextMenu
 				if(this.buttonArr[index] != undefined)
 				{
 					id = Number(this.buttonArr[index]);
-					actionID = Number(this.buttonArr[index + 1]);
+					actionID = String(this.buttonArr[index + 1]);
 					clickSound = Boolean(this.buttonArr[index + 2]);
 					unused = String(this.buttonArr[index + 3]);
 					text = String(this.buttonArr[index + 4]);

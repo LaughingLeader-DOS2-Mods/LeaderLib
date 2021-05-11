@@ -4,7 +4,8 @@ local TranslatedString = {
 	Handle = "",
 	Content = "",
 	Value = "",
-	Key = ""
+	Key = "",
+	AutoReplacePlaceholders = false,
 }
 TranslatedString.__index = TranslatedString
 
@@ -16,7 +17,8 @@ function TranslatedString:Create(handle,content)
     {
 		Handle = handle,
 		Content = content,
-		Value = ""
+		Value = "",
+		AutoReplacePlaceholders = false,
 	}
 	setmetatable(this, self)
 	this.Update(this)
@@ -57,6 +59,9 @@ function TranslatedString:Update()
 	end
 	if StringHelpers.IsNullOrEmpty(self.Value) then
 		self.Value = self.Content or ""
+	end
+	if self.AutoReplacePlaceholders then
+		self.Value = GameHelpers.Tooltip.ReplacePlaceholders(self.Value)
 	end
 	return self.Value
 end

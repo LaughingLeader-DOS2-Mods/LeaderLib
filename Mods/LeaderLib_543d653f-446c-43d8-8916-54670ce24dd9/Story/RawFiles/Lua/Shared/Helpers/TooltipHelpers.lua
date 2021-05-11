@@ -6,6 +6,9 @@ local function ReplacePlaceholders(str, character)
 	if character ~= nil and type(character) == "string" then
 		character = Ext.GetCharacter(character)
 	end
+	if character == nil and Client then
+		character = Client:GetCharacter()
+	end
 	local output = str
 	for v in string.gmatch(output, "%[ExtraData.-%]") do
 		local key = v:gsub("%[ExtraData:", ""):gsub("%]", "")

@@ -231,7 +231,7 @@
 	<content contentuid="h950f9baege3b1g428agbb4dgf70a45676c5a">Chain All</content>
 	<content contentuid="h951be36bg6ed7g49e4ga343gaa5c47a4c98e">*Lothar grunts, rubbing his lower back as he chews on something.* Once I saw this beautiful ship in the distance, I knew it was my chance to escape. I swam like a fish.</content>
 	<content contentuid="h966d6fabgc29cg4602gad0dg0c50f9418e24">A &lt;font color=&apos;#D040D0&apos;&gt;Story Compilation Error&lt;/font&gt; occurred with your active mods.&lt;br&gt;&lt;font color=&apos;#F7BA14&apos; size=&apos;22&apos;&gt;You may be missing mod requirements.&lt;/font&gt;&lt;br&gt;&lt;font color=&apos;#FF0000&apos; size=&apos;24&apos;&gt;Mods will not work correctly.&lt;/font&gt;&lt;br&gt;To potentially fix this, please check the requirements of your active mods, such as required dependency mods, the script extender, and/or an updated game version.</content>
-	<content contentuid="h96c19068g066dg429bgb939g91ec46051b34">Clear the status whitelist, which is used to show statuses next to portraits when [Key:LeaderLib_UI_GameSettings_Client_HideStatuses] is enabled.</content>
+	<content contentuid="h96c19068g066dg429bgb939g91ec46051b34">Clear the status whitelist, which is used to show statuses next to portraits when &lt;font color=&apos;#CCAA00&apos;&gt;[Key:LeaderLib_UI_GameSettings_Client_HideStatuses]&lt;/font&gt; is enabled.</content>
 	<content contentuid="h975b62eagb7acg46c2gb917g0d5218e2e8ca">Always Expand Tooltips</content>
 	<content contentuid="h97e93b5eg2e78g46f0gac84g8250aeaa1984">*The old man looks to you as you approach.* Welcome! *He looks around.* Bit of a dreary place now, mm?</content>
 	<content contentuid="h9863bb3eg058dg45acg8926gefb0f24ece72">Autosave When Combat Starts</content>
@@ -366,7 +366,7 @@
 	<content contentuid="head3fc5eg00dag451dga8bdge0b6896e6a86">[Steam] I subscribed to these mods, but they don&apos;t show up in the mod list!</content>
 	<content contentuid="head5217fga96cg4b34gafb1geb56b80bd8e0">Take control of a summon or follower you own.</content>
 	<content contentuid="hed9e1aaeg3fceg4d9cg87edg9a4630c24fe7">Character is in an undead form.</content>
-	<content contentuid="hedb1dff8g5ad9g429bgaea8g84ecec77dee1">Clear the status blacklist, which is used to hide statuses next to portraits when [Key:LeaderLib_UI_GameSettings_Client_HideStatuses] is disabled.</content>
+	<content contentuid="hedb1dff8g5ad9g429bgaea8g84ecec77dee1">Clear the status blacklist, which is used to hide statuses next to portraits when &lt;font color=&apos;#CCAA00&apos;&gt;[Key:LeaderLib_UI_GameSettings_Client_HideStatuses]&lt;/font&gt; is disabled.</content>
 	<content contentuid="hee326232gbe82g49c2gbe8eg1d0511d29248">LeaderLib</content>
 	<content contentuid="hee75e144g1d75g4094ga8c9g4a0508c5cf67">LeaderLib Successfully Saved Global Settings</content>
 	<content contentuid="hef0c737eg2a72g4564ga5cfg088484ac8b45">Shadow Resistance</content>

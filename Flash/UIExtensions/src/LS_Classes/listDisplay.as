@@ -1263,7 +1263,7 @@ package LS_Classes
 		}
 
 		// LeaderLib Addition
-		public function isOverlappingPosition(targetX:Number, targetY:Number) : *
+		public function isOverlappingPosition(targetX:Number, targetY:Number, shapeTest:Boolean=true) : *
 		{
 			if(this.content_array && this.content_array.length > 1)
 			{
@@ -1272,13 +1272,14 @@ package LS_Classes
 				while(index < this.content_array.length)
 				{
 					obj = this.content_array[index];
-					if(obj != null && obj.hitTestPoint(targetX, targetY, true))
+					if(obj != null && obj.hitTestPoint(targetX, targetY, shapeTest))
 					{
 						return true;
 					}
 					index++;
 				}
 			}
+			return false;
 		}
 	}
 }

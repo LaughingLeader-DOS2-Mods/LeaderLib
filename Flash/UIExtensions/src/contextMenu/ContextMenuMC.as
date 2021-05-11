@@ -164,6 +164,7 @@ package contextMenu
 				case "IE UICancel":
 					this.close();
 					isHandled = true;
+					break;
 			}
 			return isHandled;
 		}
@@ -188,6 +189,18 @@ package contextMenu
 						isHandled = true;
 				}
 			}
+			else
+			{
+				switch(input)
+				{
+					case "IE FlashLeftMouse":
+					case "IE FlashRightMouse":
+						if(!this.list.isOverlappingPosition(base.mouseX, base.mouseY)) {
+							return true;
+						}
+						break;
+				}
+			}
 			return isHandled;
 		}
 
@@ -203,6 +216,7 @@ package contextMenu
 			}
 			if(!this.isOpen)
 			{
+				stage.addEventListener("rightMouseDown",this.onCloseUI);
 				stage.addEventListener(MouseEvent.CLICK,this.onCloseUI);
 				this.isOpen = true;
 				ExternalInterface.call("LeaderLib_ContextMenu_Opened");

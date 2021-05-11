@@ -77,7 +77,7 @@ ContextMenu.Actions[ACTIONS.UnhideStatus] = function(self, ui, id, actionID, han
 			fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Skipping unhiding status %s from the UI.", self.ContextStatus.StatusId)
 		end
 	else
-		fprint(LOGLEVEL.ERROR, "[LeaderLib] ContextStatus.StatusId is not set.")
+		fprint(LOGLEVEL.ERROR, "[LeaderLib:ContextMenu] ContextStatus.StatusId is not set.")
 	end
 end
 
@@ -86,7 +86,6 @@ function ContextMenu:OnOpen(ui, event)
 end
 
 function ContextMenu:OnClose(ui, call)
-	print("ContextMenu:OnClose", call)
 	self.ContextStatus = nil
 	self.Visible = false
 end
@@ -99,12 +98,13 @@ end
 function ContextMenu:OnEntryClicked(ui, event, id, actionID, handle)
 	local entry = self.Entries[id]
 	local action = self.Actions[actionID] or (entry and entry.Callback)
-	print("ContextMenu:OnEntryClicked", event, id, actionID, handle, entry, action, Ext.JsonStringify(self.Entries))
 	if action then
 		local b,err = xpcall(action, debug.traceback, self, ui, id, actionID, handle)
 		if not b then
 			Ext.PrintError(err)
 		end
+	else
+		fprint(LOGLEVEL.WARNING, "[LeaderLib:ContextMenu:OnEntryClicked] No action registered for (%s).", actionID)
 	end
 	InvokeListenerCallbacks(Listeners.OnContextMenuEntryClicked, self, ui, id, actionID, handle)
 	if not entry or (entry and not entry.StayOpen) then
@@ -116,7 +116,6 @@ function ContextMenu:OnHideTooltip(ui, event)
 	if not self.Visible and not self.IsOpening then
 		self.ContextStatus = nil
 	end
-	print("ContextMenu:OnHideTooltip", event, self.Visible, self.ContextStatus and self.ContextStatus.StatusId or "")
 end
 
 function ContextMenu:OnRightClick(eventName, pressed, id, inputMap, controllerEnabled)
@@ -178,7 +177,6 @@ function ContextMenu:OnShowStatusTooltip(ui, event, characterDouble, statusDoubl
 			end
 		end
 	end
-	print("ContextMenu:OnShowStatusTooltip", event, self.Visible, self.ContextStatus, self.ContextStatus and self.ContextStatus.StatusId or "")
 end
 
 function ContextMenu:OnShowExamineStatusTooltip(ui, event, typeIndex, statusDouble)
@@ -201,7 +199,6 @@ function ContextMenu:OnShowExamineStatusTooltip(ui, event, typeIndex, statusDoub
 			end
 		end
 	end
-	print("ContextMenu:OnShowExamineStatusTooltip", event, self.Visible, self.ContextStatus, self.ContextStatus and self.ContextStatus.StatusId or "")
 end
 
 function ContextMenu:Init()

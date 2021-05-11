@@ -219,8 +219,8 @@ package contextMenu
 				stage.addEventListener("rightMouseDown",this.onCloseUI);
 				stage.addEventListener(MouseEvent.CLICK,this.onCloseUI);
 				this.isOpen = true;
-				ExternalInterface.call("LeaderLib_ContextMenu_Opened");
 			}
+			ExternalInterface.call("LeaderLib_ContextMenu_Opened");
 		}
 
 		public function close() : *
@@ -235,8 +235,8 @@ package contextMenu
 				stage.removeEventListener("rightMouseDown",this.onCloseUI);
 				stage.removeEventListener(MouseEvent.CLICK,this.onCloseUI);
 				this.isOpen = false;
-				ExternalInterface.call("LeaderLib_ContextMenu_Closed");
 			}
+			ExternalInterface.call("LeaderLib_ContextMenu_Closed");
 		}
 
 		public function onCloseUI(e:MouseEvent) : *

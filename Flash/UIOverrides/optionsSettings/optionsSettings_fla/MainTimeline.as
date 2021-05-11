@@ -305,6 +305,11 @@ package optionsSettings_fla
 		{
 			this.mainMenu_mc.addMenuSelectorEntry(param1,param2);
 		}
+
+		public function addMenuButton(id:Number, label:String, clickSound:String, enabled:Boolean, tooltip:String) : *
+		{
+			this.mainMenu_mc.addMenuButton(id, label, clickSound, enabled, tooltip);
+		}
 		
 		public function selectMenuDropDownEntry(param1:Number, param2:Number) : *
 		{

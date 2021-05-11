@@ -117,6 +117,21 @@ local function AddSliderToArray(id, label, amount, min, max, snapInterval, hide,
 	index = index+9
 end
 
+local function AddButtonToArray(id, label, amount, soundUp, enabled, tooltip)
+	if enabled == nil then
+		enabled = true
+	end
+	--id:integer, label:string, soundUp:string, enabled:boolean, tooltip:string
+	array[index] = CONTROL_TYPE.BUTTON
+	array[index+1] = id
+	array[index+2] = label
+	array[index+3] = amount
+	array[index+4] = soundUp or ""
+	array[index+5] = enabled
+	array[index+6] = tooltip
+	index = index+7
+end
+
 ---@type TranslatedString
 local ts = Classes.TranslatedString
 
@@ -167,11 +182,16 @@ local text = {
 	Client_AlwaysExpandTooltips_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_AlwaysExpandTooltips_Description"),
 }
 
+for k,v in pairs(text) do
+	v.AutoReplacePlaceholders = true
+end
+
 local mainMenuArrayAccess = {
 	addMenuLabel = AddTitleToArray,
 	addMenuInfoLabel = AddInfoToArray,
 	addMenuCheckbox = AddCheckboxToArray,
-	addMenuSlider = AddSliderToArray
+	addMenuSlider = AddSliderToArray,
+	addMenuButton = AddButtonToArray,
 }
 
 function GameSettingsMenu.OnControlAdded(ui, controlType, id, listIndex, listProperty, extraParam1)
@@ -271,6 +291,7 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "DivineTalentsEnabled"), text.Client_DivineTalentsEnabled.Value, true, settings.Client.DivineTalentsEnabled and 1 or 0, false, text.Client_DivineTalentsEnabled_Description.Value)
 
 		mainMenu.addMenuCheckbox(AddControl(settings.Client.StatusOptions, "HideAll"), text.Client_HideStatuses.Value, true, settings.Client.StatusOptions.HideAll and 1 or 0, false, text.Client_HideStatuses_Description.Value)
+
 		mainMenu.addMenuButton(AddButton("ClearBlacklist", function()
 			GameSettings.Settings.Client.StatusOptions.Blacklist = {}
 			SaveGameSettings()
@@ -328,7 +349,6 @@ function GameSettingsMenu.OnButtonPressed(id)
 		local b,err = xpcall(controlData.Callback, debug.traceback)
 		if not b then
 			Ext.PrintError(err)
-			return false
 		end
 		return true
 	end

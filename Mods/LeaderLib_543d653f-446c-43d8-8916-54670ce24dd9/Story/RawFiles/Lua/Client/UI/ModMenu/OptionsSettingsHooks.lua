@@ -568,7 +568,7 @@ Ext.RegisterListener("SessionLoaded", function()
 			ModMenuManager.OnButtonPressed(id)
 			SetApplyButtonClickable(ui, true)
 		elseif currentMenu == LarianMenuID.Gameplay then
-			if not GameSettingsMenu.OnButtonPressed(id) then
+			if GameSettingsMenu.OnButtonPressed(id) == false then
 				ui:ExternalInterfaceCall(originalCall, id)
 			else
 				SetApplyButtonClickable(ui, true)

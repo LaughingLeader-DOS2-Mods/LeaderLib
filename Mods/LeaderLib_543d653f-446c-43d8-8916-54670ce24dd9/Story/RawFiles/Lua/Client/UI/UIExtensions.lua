@@ -280,8 +280,19 @@ function UIExtensions.GetMousePosition()
 	UIExtensions.SetupInstance()
 	local main = UIExtensions.Instance:GetRoot()
 	if main then
-		print(main.mouseX,main.mouseY, main.stage.mouseX,main.stage.mouseY)
-		return main.mouseX,main.mouseY
+		local x = main.mouseX
+		local y = main.mouseY
+		if x < 0 or y < 0 then
+			local ui = Ext.GetUIByType(Data.UIType.playerInfo) or Ext.GetBuiltinUI(Data.UIType.playerInfo_c)
+			if ui then
+				local root = ui:GetRoot()
+				if root then
+					x = root.mouseX
+					y = root.mouseY
+				end
+			end
+		end
+		return x,y
 	end
 	return 0,0
 end

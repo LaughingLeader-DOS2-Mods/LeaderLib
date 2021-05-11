@@ -1261,5 +1261,24 @@ package LS_Classes
 				this.m_CurrentSelection.onClick();
 			}
 		}
+
+		// LeaderLib Addition
+		public function isOverlappingPosition(targetX:Number, targetY:Number) : *
+		{
+			if(this.content_array && this.content_array.length > 1)
+			{
+				var index:uint = 0;
+				var obj:MovieClip = null;
+				while(index < this.content_array.length)
+				{
+					obj = this.content_array[index];
+					if(obj != null && obj.hitTestPoint(targetX, targetY, true))
+					{
+						return true;
+					}
+					index++;
+				}
+			}
+		}
 	}
 }

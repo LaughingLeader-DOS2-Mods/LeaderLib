@@ -9,6 +9,8 @@ package
 	import flash.events.TimerEvent;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.events.KeyboardEvent;
+	//import flash.ui.Keyboard;
 	import LS_Classes.tooltipHelper;
 	import contextMenu.ContextMenuMC;
 	
@@ -16,6 +18,8 @@ package
 	{		
 		public var layout:String;
 		public var events:Array;
+		public var anchorId:String;
+		
 		public var mainPanel_mc:MainPanel;
 		public var context_menu:contextMenu.ContextMenuMC;
 		
@@ -32,6 +36,8 @@ package
 
 		public var globalToLocalX:Number = 0;
 		public var globalToLocalY:Number = 0;
+		public var localToGlobalX:Number = 0;
+		public var localToGlobalY:Number = 0;
 		
 		public function MainTimeline()
 		{
@@ -41,46 +47,56 @@ package
 		
 		public function onEventUp(id:Number) : *
 		{
-			ExternalInterface.call("LeaderLib_UIExtensions_InputEvent", false, this.events[id], id);
 			var isHandled:Boolean = false;
-			if(isInCharacterCreation)
+			var input:String = this.events[id];
+			if (input != null)
 			{
-				switch(this.events[id])
+				ExternalInterface.call("LeaderLib_UIExtensions_InputEvent", false, input, id);
+				if(isInCharacterCreation)
 				{
-					case "IE UICreationTabPrev":
-						this.UICreationTabPrevPressed = false;
-						break;
+					switch(input)
+					{
+						case "IE UICreationTabPrev":
+							this.UICreationTabPrevPressed = false;
+							break;
+					}
+				}
+				if (!isHandled && this.context_menu.visible)
+				{
+					isHandled = this.context_menu.onInputUp(input);
 				}
 			}
-			if (!isHandled && this.context_menu.visible)
-			{
-				isHandled = this.context_menu.onInputUp(this.events[id]);
-			}
+
 			return isHandled;
 		}
 		
 		public function onEventDown(id:Number) : Boolean
 		{
-			ExternalInterface.call("LeaderLib_UIExtensions_InputEvent", true, this.events[id], id);
 			var isHandled:Boolean = false;
-			if(controllerEnabled && isInCharacterCreation)
+			var input:String = this.events[id];
+			if (input != null)
 			{
-				switch(this.events[id])
+				ExternalInterface.call("LeaderLib_UIExtensions_InputEvent", true, input, id);
+				if(controllerEnabled && isInCharacterCreation)
 				{
-					case "IE UICreationTabPrev":
-						this.UICreationTabPrevPressed = true;
-						break;
-					case "IE ConnectivityMenu":
-						// Prevents "ConnectivityMenu" from opening the connectivity menu in CC if UICreationTabPrevPressed is held
-						isHandled = this.UICreationTabPrevPressed;
-						break;
+					switch(input)
+					{
+						case "IE UICreationTabPrev":
+							this.UICreationTabPrevPressed = true;
+							break;
+						case "IE ConnectivityMenu":
+							// Prevents "ConnectivityMenu" from opening the connectivity menu in CC if UICreationTabPrevPressed is held
+							isHandled = this.UICreationTabPrevPressed;
+							break;
+					}
+					return isHandled;
 				}
-				return isHandled;
+				if (!isHandled && this.context_menu.visible)
+				{
+					isHandled = this.context_menu.onInputDown(input);
+				}
 			}
-			if (!isHandled && this.context_menu.visible)
-			{
-				isHandled = this.context_menu.onInputDown(this.events[id]);
-			}
+
 			return isHandled;
 		}
 		
@@ -224,6 +240,20 @@ package
 			globalToLocalY = localPt.y;
 		}
 
+		public function setLocalToGlobalPosition(x:Number, y:Number, width:Number, height:Number) : *
+		{
+			var localPt:Point = new Point(x,y);
+			var globalPt:Point = this.localToGlobal(localPt);
+			localToGlobalX = localPt.x;
+			localToGlobalY = localPt.y;
+		}
+
+		public function globalToLocalTest(x:Number, y:Number) : Point
+		{
+			var globalPt:Point = new Point(x,y);
+			return this.globalToLocal(globalPt);
+		}
+
 		public function removeTimer(timer:ClientTimer, removeFromArray:Boolean = false) : *
 		{
 			if(removeFromArray) {
@@ -297,6 +327,7 @@ package
 				this.listeningForMouse = false;
 			}
 			destroyTimers();
+			this.disableKeyboardListeners();
 		}
 
 		public function enableMouseListeners(b:Boolean) : * {
@@ -327,9 +358,37 @@ package
 				context_menu.close();
 			}
 		}
+
+		private function onKeyboardDown(e:KeyboardEvent) : *
+		{
+			trace("onKeyboardDown", e.keyCode, String.fromCharCode(e.charCode));
+			ExternalInterface.call("LeaderLib_UIExtensions_KeyboardEvent", e.keyCode, String.fromCharCode(e.charCode), true);
+		}
+
+		private function onKeyboardUp(e:KeyboardEvent) : *
+		{
+			ExternalInterface.call("LeaderLib_UIExtensions_KeyboardEvent", e.keyCode, String.fromCharCode(e.charCode), false);
+		}
+
+		public function enableKeyboardListeners() : *
+		{
+			//Experimental, doesn't quite seem to work yet.
+			ExternalInterface.call("inputFocus");
+			stage.addEventListener(KeyboardEvent.KEY_DOWN,this.onKeyboardDown, true);
+			stage.addEventListener(KeyboardEvent.KEY_UP,this.onKeyboardUp, true);
+			trace("Enabled keyboard event listeners");
+		}
+
+		public function disableKeyboardListeners() : *
+		{
+			ExternalInterface.call("inputFocusLost");
+			stage.removeEventListener(KeyboardEvent.KEY_DOWN,this.onKeyboardDown);
+			stage.removeEventListener(KeyboardEvent.KEY_UP,this.onKeyboardUp);
+		}
 		
 		private function frame1() : *
 		{
+			this.anchorId = "LeaderLib_UIExtensions";
 			this.layout = "fixed";
 			//this.events = new Array("IE UICreationTabPrev", "IE UIStartGame", "IE ConnectivityMenu");
 			this.curTooltip = "";

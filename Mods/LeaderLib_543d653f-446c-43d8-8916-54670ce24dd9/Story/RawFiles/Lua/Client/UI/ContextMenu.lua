@@ -81,12 +81,26 @@ ContextMenu.Actions[ACTIONS.UnhideStatus] = function(self, ui, id, actionID, han
 	end
 end
 
+function ContextMenu:SetContextStatus(status, uiType)
+	if status then
+		fprint(LOGLEVEL.WARNING, "[ContextMenu:SetContextStatus] Status(%s) UI(%s)", status.StatusId, uiType)
+		self.ContextStatus = {
+			StatusId = status.StatusId,
+			RemoveFromList = Common.TableHasEntry(GameSettings.Settings.Client.StatusOptions.Blacklist, status.StatusId, false),
+			CallingUI = uiType,
+		}
+	elseif self.ContextStatus then
+		fprint(LOGLEVEL.WARNING, "[ContextMenu:SetContextStatus] Cleared.")
+		self.ContextStatus = nil
+	end
+end
+
 function ContextMenu:OnOpen(ui, event)
 	self.Visible = true
 end
 
 function ContextMenu:OnClose(ui, call)
-	self.ContextStatus = nil
+	self:SetContextStatus(nil)
 	self.Visible = false
 end
 
@@ -114,31 +128,57 @@ end
 
 function ContextMenu:OnHideTooltip(ui, event)
 	if not self.Visible and not self.IsOpening then
-		self.ContextStatus = nil
+		self:SetContextStatus(nil)
 	end
 end
 
-function ContextMenu:OnRightClick(eventName, pressed, id, inputMap, controllerEnabled)
-	if not pressed and not self.IsOpening then
-		if self.ContextStatus then
-			self.IsOpening = true
-		end
-		local x,y = UIExtensions.GetMousePosition()
-		local callbacks = Listeners.ShouldOpenContextMenu
-		local length = callbacks and #callbacks or 0
-		if length > 0 then
-			for i=1,length do
-				local callback = callbacks[i]
-				local success,b = xpcall(callback, debug.traceback, self, x, y)
-				if not success then
-					Ext.PrintError(b)
-				elseif b then
-					self.IsOpening = true
-				end
+local function GetShouldOpen(self,x,y)
+	local callbacks = Listeners.ShouldOpenContextMenu
+	local length = callbacks and #callbacks or 0
+	if length > 0 then
+		for i=1,length do
+			local callback = callbacks[i]
+			local success,b = xpcall(callback, debug.traceback, self, x, y)
+			if not success then
+				Ext.PrintError(b)
+			elseif b then
+				return true
 			end
 		end
+	end
+	return false
+end
 
-		if self.IsOpening then
+function ContextMenu:OnRightClick(eventName, pressed, id, inputMap, controllerEnabled)
+	fprint(LOGLEVEL.DEFAULT, "[ContextMenu:OnRightClick] IsOpening(%s) Visible(%s) pressed(%s)", self.IsOpening, self.Visible, pressed)
+	if not pressed and not self.IsOpening then
+		local x,y = UIExtensions.GetMousePosition()
+		local openRequested = GetShouldOpen(self, x, y)
+		if self.Visible then
+			local status,uiType = self:GetCursorStatus(x,y)
+			if status then
+				self:SetContextStatus(status, uiType)
+				self.Entries = {}
+
+				if self.ContextStatus.RemoveFromList then
+					self:AddEntry(ACTIONS.UnhideStatus, nil, LocalizedText.ContextMenu.ShowStatus.Value)
+				else
+					if self.ContextStatus.CallingUI == Data.UIType.examine then
+						self:AddEntry(ACTIONS.HideStatus, nil, LocalizedText.ContextMenu.HideStatus_Examine.Value)
+					else
+						self:AddEntry(ACTIONS.HideStatus, nil, LocalizedText.ContextMenu.HideStatus.Value)
+					end
+				end
+
+				InvokeListenerCallbacks(Listeners.OnContextMenuOpening, self, x, y)
+				self:MoveAndRebuild(x,y)
+				return
+			elseif not openRequested then
+				self:Close()
+				return
+			end
+		end
+		if openRequested or self.ContextStatus then
 			self.Entries = {}
 			if self.ContextStatus then
 				if self.ContextStatus.RemoveFromList then
@@ -165,14 +205,7 @@ function ContextMenu:OnShowStatusTooltip(ui, event, characterDouble, statusDoubl
 			if characterHandle and statusHandle then
 				local status = Ext.GetStatus(characterHandle, statusHandle)
 				if status then
-					---@type StatEntryStatusData
-					--local stat = Ext.GetStat(status.StatusId)
-					self.ContextStatus = {
-						StatusId = status.StatusId,
-						--DisplayName = Ext.GetTranslatedStringFromKey(stat.DisplayName) or stat.DisplayNameRef or status.StatusId
-						RemoveFromList = false,
-						CallingUI = ui:GetTypeId()
-					}
+					self:SetContextStatus(status, ui:GetTypeId())
 				end
 			end
 		end
@@ -187,14 +220,7 @@ function ContextMenu:OnShowExamineStatusTooltip(ui, event, typeIndex, statusDoub
 			if characterHandle and statusHandle then
 				local status = Ext.GetStatus(characterHandle, statusHandle)
 				if status then
-					---@type StatEntryStatusData
-					--local stat = Ext.GetStat(status.StatusId)
-					self.ContextStatus = {
-						StatusId = status.StatusId,
-						RemoveFromList = Common.TableHasEntry(GameSettings.Settings.Client.StatusOptions.Blacklist, status.StatusId, false),
-						CallingUI = ui:GetTypeId()
-						--DisplayName = Ext.GetTranslatedStringFromKey(stat.DisplayName) or stat.DisplayNameRef or status.StatusId
-					}
+					self:SetContextStatus(status, ui:GetTypeId())
 				end
 			end
 		end
@@ -266,6 +292,66 @@ function ContextMenu:AddEntry(actionId, callback, label, visible, useClickSound,
 	self.Entries[id] = entry
 end
 
+function ContextMenu:Close()
+	self.Visible = false
+	self.IsOpening = false
+	local instance = UIExtensions.GetInstance()
+	if instance then
+		local main = instance:GetRoot()
+		local contextMenu = main.context_menu
+		contextMenu.close()
+	end
+end
+
+function ContextMenu:MoveAndRebuild(x,y)
+	local instance = UIExtensions.GetInstance()
+	if instance then
+		local main = instance:GetRoot()
+		local contextMenu = main.context_menu
+		contextMenu.clearButtons()
+
+		if #self.Entries > 1 then
+			local i = 0
+			for _,v in ipairs(self.Entries) do
+				contextMenu.buttonArr[i] = v.ID
+				contextMenu.buttonArr[i+1] = v.ActionID
+				contextMenu.buttonArr[i+2] = v.ClickSound
+				contextMenu.buttonArr[i+3] = "" -- Unused
+				contextMenu.buttonArr[i+4] = v.Label
+				contextMenu.buttonArr[i+5] = v.Disabled
+				contextMenu.buttonArr[i+6] = v.Legal
+				i = i + 7
+			end
+			contextMenu.updateButtons()
+		else
+			local entry = self.Entries[1]
+			contextMenu.addEntry(entry.ID, entry.ActionID, entry.ClickSound, entry.Label, entry.Disabled, entry.Legal)
+			contextMenu.updateDone()
+		end
+		
+		local paddingX,paddingY = 8,-24
+		if self.ContextStatus.CallingUI == Data.UIType.examine then
+			paddingX,paddingY = 8,-16
+		elseif self.ContextStatus.CallingUI == Data.UIType.playerInfo then
+			
+		end
+
+		if self.ContextStatus.CallingUI then
+			local caller = Ext.GetUIByType(self.ContextStatus.CallingUI)
+			if caller then
+				caller:ExternalInterfaceCall("hideTooltip")
+			end
+		end
+		
+		x = x + paddingX
+		y = y + paddingY
+		
+		contextMenu.open(x,y)
+		self.Visible = true
+		--main.showContextMenu(true)
+	end
+end
+
 function ContextMenu:Open()
 	self.IsOpening = false
 	self:Init()
@@ -318,6 +404,97 @@ function ContextMenu:CursorIsOverlappingMC(mc)
 		return mc.hitTest(x, y, true) == true
 	end
 	return false
+end
+
+local function PosIsWithinBounds(x, y, w, h, tx, ty)
+	if x < 0 or y < 0 then
+		return false
+	end
+	tx = tx or 0
+	ty = ty or 0
+	return x >= tx and x < w and y >= ty and y < h
+end
+
+local function GetExamineCursorStatus(x,y)
+	if not x then
+		x,y = UIExtensions.GetMousePosition()
+	end
+	local ui = Ext.GetUIByType(Data.UIType.examine) or Ext.GetUIByType(Data.UIType.examine_c)
+	if not ui then
+		return nil
+	end
+	local main = ui:GetRoot()
+	if not main then
+		return nil
+	end
+	local array = main.examine_mc.statusContainer_mc.list.content_array
+	for i=0,#array do
+		local status = array[i]
+		-- if status then
+		-- 	print("examine.status hitTestPoint", status.hitTestPoint(x, y, false), x, y)
+		-- 	print("examine.status hitTestPoint local", status.hitTestPoint(status.mouseX, status.mouseY, false), status.mouseX, status.mouseY)
+		-- 	print("examine.status PosIsWithinBounds", PosIsWithinBounds(status.mouseX, status.mouseY, status.width, status.height))
+		-- 	print(status.x, status.y, status.width, status.height)
+		-- end
+		if status and PosIsWithinBounds(status.mouseX, status.mouseY, status.width, status.height) then
+			return Ext.DoubleToHandle(status.id), ui:GetPlayerHandle(), ui:GetTypeId()
+		end
+	end
+	return nil
+end
+
+local function GetPlayerInfoCursorStatus(x,y)
+	if not x then
+		x,y = UIExtensions.GetMousePosition()
+	end
+	local ui = Ext.GetUIByType(Data.UIType.playerInfo) or Ext.GetUIByType(Data.UIType.playerInfo_c)
+	if not ui then
+		return nil
+	end
+	local main = ui:GetRoot()
+	if not main then
+		return nil
+	end
+	for i=0,#main.player_array do
+		local player_mc = main.player_array[i]
+		if player_mc and player_mc.statusHolder_mc then
+			for s=0,#player_mc.status_array do
+				local status = player_mc.status_array[s]
+				if status and status.hitTestPoint(x, y, false) then
+					return Ext.DoubleToHandle(status.id), Ext.DoubleToHandle(status.owner), ui:GetTypeId()
+				end
+			end
+			if player_mc.summonList then
+				for j=0,#player_mc.summonList.content_array do
+					local summon_mc = player_mc.summonList.content_array[j]
+					if summon_mc then
+						for k=0,#summon_mc.status_array do
+							local status = summon_mc.status_array[k]
+							if status and status.hitTestPoint(x, y, false) then
+								return Ext.DoubleToHandle(status.id), Ext.DoubleToHandle(status.owner), ui:GetTypeId()
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+	return nil
+end
+
+---@return EsvStatus|nil
+function ContextMenu:GetCursorStatus(x,y)
+	local statusHandle,ownerHandle,uiType = GetExamineCursorStatus(x,y)
+	if not statusHandle then
+		statusHandle,ownerHandle,uiType = GetPlayerInfoCursorStatus(x,y)
+	end
+	if statusHandle then
+		local status = Ext.GetStatus(ownerHandle, statusHandle)
+		if status then
+			return status,uiType
+		end
+	end
+	return nil
 end
 
 ContextMenu:Init()

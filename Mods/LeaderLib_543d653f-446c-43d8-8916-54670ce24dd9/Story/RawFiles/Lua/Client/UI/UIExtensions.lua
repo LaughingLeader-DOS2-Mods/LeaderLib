@@ -116,32 +116,17 @@ local function OnRightMouseUp(ui, call, x, y)
 end
 
 function UIExtensions.SetupInstance()
-	if not UIExtensions.RegisteredListeners then
-		-- Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_OnControl", OnControl)
-		-- Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_ControlAdded", OnControlAdded)
-		-- Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_InputEvent", Input.OnFlashEvent)
-		-- Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_TimerComplete", OnTimerComplete)
-		-- Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_TimerTick", OnTimerTick)
-		-- Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_MouseMoved", OnMouseMoved)
-		-- Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_MouseClicked", OnMouseClicked)
-		Ext.RegisterUINameCall("LeaderLib_UIExtensions_OnControl", OnControl)
-		Ext.RegisterUINameCall("LeaderLib_UIExtensions_ControlAdded", OnControlAdded)
-		Ext.RegisterUINameCall("LeaderLib_UIExtensions_InputEvent", Input.OnFlashEvent)
-		Ext.RegisterUINameCall("LeaderLib_UIExtensions_TimerComplete", OnTimerComplete)
-		Ext.RegisterUINameCall("LeaderLib_UIExtensions_TimerTick", OnTimerTick)
-		Ext.RegisterUINameCall("LeaderLib_UIExtensions_MouseMoved", OnMouseMoved)
-		Ext.RegisterUINameCall("LeaderLib_UIExtensions_MouseClicked", OnMouseClicked)
-		Ext.RegisterUINameCall("LeaderLib_UIExtensions_RightMouseDown", OnRightMouseDown)
-		Ext.RegisterUINameCall("LeaderLib_UIExtensions_RightMouseUp", OnRightMouseUp)
-		UIExtensions.RegisteredListeners = true
-	end
 	if not UIExtensions.Instance or UIExtensions.Instance:GetRoot() == nil then
 		if not Vars.ControllerEnabled then
 			UIExtensions.Layer = 18 -- May eat inputs
 		else
 			UIExtensions.Layer = 10
 		end
-		UIExtensions.Instance = Ext.GetUI("LeaderLibUIExtensions") or Ext.CreateUI("LeaderLibUIExtensions", UIExtensions.SwfPath, UIExtensions.Layer)
+		UIExtensions.Instance = Ext.GetUI("LeaderLibUIExtensions")
+		if not UIExtensions.Instance then
+			UIExtensions.Instance = Ext.CreateUI("LeaderLibUIExtensions", UIExtensions.SwfPath, UIExtensions.Layer)
+			UIExtensions.RegisteredListeners = false
+		end
 	end
 	if UIExtensions.Instance then
 		if not UIExtensions.Initialized then
@@ -156,10 +141,34 @@ function UIExtensions.SetupInstance()
 						Input.Keys[eventName] = false
 					end
 				end
+				--main.enableKeyboardListeners()
 				UIExtensions.Initialized = true
 			else
 				Ext.PrintError("[LeaderLib] Failed to GetRoot of UI:", UIExtensions.SwfPath)
 			end
+		end
+		if not UIExtensions.RegisteredListeners then
+			Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_UIExtensions_OnControl", OnControl)
+			Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_UIExtensions_ControlAdded", OnControlAdded)
+			Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_UIExtensions_InputEvent", Input.OnFlashEvent)
+			Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_UIExtensions_TimerComplete", OnTimerComplete)
+			Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_UIExtensions_TimerTick", OnTimerTick)
+			Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_UIExtensions_MouseMoved", OnMouseMoved)
+			Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_UIExtensions_MouseClicked", OnMouseClicked)
+			Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_UIExtensions_RightMouseDown", OnRightMouseDown)
+			Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_UIExtensions_RightMouseUp", OnRightMouseUp)
+			Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_UIExtensions_KeyboardEvent", Input.OnKeyboardEvent)
+			-- Ext.RegisterUINameCall("LeaderLib_UIExtensions_OnControl", OnControl)
+			-- Ext.RegisterUINameCall("LeaderLib_UIExtensions_ControlAdded", OnControlAdded)
+			-- Ext.RegisterUINameCall("LeaderLib_UIExtensions_InputEvent", Input.OnFlashEvent)
+			-- Ext.RegisterUINameCall("LeaderLib_UIExtensions_TimerComplete", OnTimerComplete)
+			-- Ext.RegisterUINameCall("LeaderLib_UIExtensions_TimerTick", OnTimerTick)
+			-- Ext.RegisterUINameCall("LeaderLib_UIExtensions_MouseMoved", OnMouseMoved)
+			-- Ext.RegisterUINameCall("LeaderLib_UIExtensions_MouseClicked", OnMouseClicked)
+			-- Ext.RegisterUINameCall("LeaderLib_UIExtensions_RightMouseDown", OnRightMouseDown)
+			-- Ext.RegisterUINameCall("LeaderLib_UIExtensions_RightMouseUp", OnRightMouseUp)
+			-- Ext.RegisterUINameCall("LeaderLib_UIExtensions_KeyboardEvent", Input.OnKeyboardEvent)
+			UIExtensions.RegisteredListeners = true
 		end
 	else
 		Ext.PrintError("[LeaderLib] Failed to create UI:", UIExtensions.SwfPath)

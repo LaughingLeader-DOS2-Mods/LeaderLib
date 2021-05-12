@@ -320,13 +320,15 @@ local allUIFiles = {
 }
 
 local customUIs = {
-	"Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/LeaderLib_UIExtensions.swf",
+	--"Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/LeaderLib_UIExtensions.swf",
+	["LeaderLibUIExtensions"] = "LeaderLib_UIExtensions"
 }
 
 ---@param ui UIObject
 local function TryFindUI(ui, tryFindId)
 	local id = tryFindId
-	if type(ui) == "number" then
+	local t = type(ui)
+	if t == "number" then
 		id = ui
 	else
 		id = ui:GetTypeId() or tryFindId
@@ -348,14 +350,18 @@ local function TryFindUI(ui, tryFindId)
 			end
 		end
 	end
-	for i,v in ipairs(customUIs) do
-		local builtInUI = Ext.GetBuiltinUI(v)
-		if builtInUI ~= nil then
-			local builtInID = builtInUI:GetTypeId()
-			--print(id, v, builtInID, builtInUI:GetRoot().stage)
-			if builtInID == id or builtInUI == ui then
-				fprint(LOGLEVEL.WARNING, "[TryFindUI]%s = %s,", v:gsub("GM/", ""):gsub(".swf", ""), builtInID)
-				return builtInID,v
+	for k,v in pairs(customUIs) do
+		local customUI = Ext.GetUI(k)
+		if customUI then
+			local customID = customUI:GetTypeId()
+			if customID == id or customID == ui then
+				fprint(LOGLEVEL.WARNING, "[TryFindUI]%s = %s,", v, customID)
+				return customID,v
+			end
+		elseif t ~= "number" then
+			local main = ui:GetRoot()
+			if main and main.anchorId == v then
+				return id,k
 			end
 		end
 	end
@@ -601,3 +607,30 @@ end)
 
 --print("Pre Session Loaded UI:")
 --PrintAllUITypeID()
+local function iggyTrace()
+	local ui = not Vars.ControllerEnabled and Ext.GetUIByType(Data.UIType.hotBar) or Ext.GetBuiltinUI(Data.UIType.bottomBar_c)
+	if ui then
+		local this = ui:GetRoot()
+		if this then
+			-- local slotHolder = this.hotbar_mc.slotholder_mc
+			-- for i=0,#slotHolder.slot_array do
+			-- 	local slot = slotHolder.slot_array[i]
+			-- 	if slot then
+			-- 		fprint(LOGLEVEL.TRACE, "SLOT[%s] name(%s) numChildren(%s) disable_mc.name(%s)", i, slot.name, slot.numChildren, slot.disable_mc.name)
+			-- 	end
+			-- end
+			local actionSkillHolder_mc = this.actionSkillHolder_mc
+			local list = actionSkillHolder_mc.actionList.content_array
+			fprint(LOGLEVEL.TRACE, "actionSkillHolder_mc.iggy_actions.numChildren(%s)", actionSkillHolder_mc.iggy_actions.numChildren)
+			for i=0,#list do
+				local action_mc = list[i]
+				if action_mc then
+					fprint(LOGLEVEL.TRACE, "action_mc[%s] name(%s) numChildren(%s) actionID(%s)", i, action_mc.name, action_mc.numChildren, action_mc.actionID)
+					fprint(LOGLEVEL.TRACE, "  hit_mc.name(%s) scaleX(%s) scaleY(%s) width(%s) height(%s)", action_mc.hit_mc.name, action_mc.hit_mc.scaleX, action_mc.hit_mc.scaleY, action_mc.hit_mc.width, action_mc.hit_mc.height)
+				end
+			end
+		end
+	end
+end
+
+--Ext.RegisterListener("SessionLoaded", iggyTrace)

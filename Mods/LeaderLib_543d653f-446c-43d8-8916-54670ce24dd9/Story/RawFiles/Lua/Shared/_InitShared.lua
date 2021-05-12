@@ -280,7 +280,7 @@ function ImportUnsafe(targetModTable, skipExistingCheck)
 			if skipExistingCheck == true or not targetModTable[k] then
 				targetModTable[k] = v
 			elseif Vars.DebugMode then
-				fprint(LOGLEVEL.WARNING, "Global key (%s) already exists in mod table for mod (%s)", k, targetModTable.ModuleUUID)
+				fprint(LOGLEVEL.WARNING, "[LeaderLib:ImportUnsafe] Global key (%s) already exists in mod table for mod (%s)", k, targetModTable.ModuleUUID)
 			end
 		end
 	end

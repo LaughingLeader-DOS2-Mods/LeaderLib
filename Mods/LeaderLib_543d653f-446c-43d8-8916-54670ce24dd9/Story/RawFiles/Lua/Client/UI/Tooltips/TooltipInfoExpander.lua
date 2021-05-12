@@ -44,9 +44,9 @@ function TooltipExpander.IsExpanded()
 		return true
 	end
 	if not Vars.ControllerEnabled then
-		return Input.GetKeyStateByID(keyboardKey) == true
+		return Input.IsPressed(keyboardKey)
 	else
-		return Input.GetKeyStateByID(controllerKey) == true
+		return Input.IsPressed(controllerKey)
 	end
 end
 

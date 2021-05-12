@@ -33,7 +33,7 @@ local testSelectionArray = {
 ---@param isItem boolean
 function UI.StatusText(target, text, displayTime, isItem)
 	local ui = Ext.GetBuiltinUI("Public/Game/GUI/overhead.swf")
-	if ui ~= nil then
+	if ui then
 		local handle = nil
 		if isItem == true then
 			handle = Ext.GetItem(target).Handle
@@ -102,9 +102,10 @@ end)
 
 local specialMessageBoxOpen = false
 
+--Experimental
 function UI.DisplayMessageBox(text, title, popupType)
 	local ui = Ext.GetBuiltinUI("Public/Game/GUI/msgBox.swf")
-	if ui ~= nil then
+	if ui then
 		ui:Hide()
 		if popupType <= 1 then
 			local root = ui:GetRoot()
@@ -142,8 +143,8 @@ end)
 Ext.RegisterNetListener("LeaderLib_UnlockCharacterInventory", function(call, playersTableString)
 	if playersTableString ~= nil then
 		--ExternalInterface.call("lockInventory",this.id,this.lockBtn_mc.isActive)
-		local ui = Ext.GetBuiltinUI("Public/Game/GUI/partyInventory.swf")
-		if ui ~= nil then
+		local ui = not Vars.ControllerEnabled and Ext.GetUIByType(Data.UIType.partyInventory) or Vars.ControllerEnabled and Ext.GetBuiltinUI(Data.UIType.partyInventory_c)
+		if ui then
 			local players = Ext.JsonParse(playersTableString)
 			if players ~= nil and #players > 0 then
 				for i,v in pairs(players) do
@@ -158,59 +159,100 @@ Ext.RegisterNetListener("LeaderLib_UnlockCharacterInventory", function(call, pla
 end)
 
 Ext.RegisterNetListener("LeaderLib_AutoSortPlayerInventory", function(call, uuid)
-	local ui = Ext.GetBuiltinUI("Public/Game/GUI/partyInventory.swf")
-	if ui ~= nil then
-		ui:ExternalInterfaceCall("autosort", Ext.HandleToDouble(Ext.GetCharacter(uuid).Handle), false)
+	--TODO No way to sort controller inventories?
+	if not Vars.ControllerEnabled then
+		local ui = Ext.GetUIByType(Data.UIType.partyInventory)
+		if ui then
+			ui:ExternalInterfaceCall("autosort", Ext.HandleToDouble(Ext.GetCharacter(uuid).Handle), false)
+		end
 	end
 end)
 
 Ext.RegisterNetListener("LeaderLib_Hotbar_SetSlotEnabled", function(call, dataStr)
-	local ui = Ext.GetBuiltinUI("Public/Game/GUI/hotBar.swf")
-	if ui ~= nil then
-		local status,err = xpcall(function()
-			local hotbar = ui:GetRoot().hotbar_mc
-			local currentBarIndex = hotbar.cycleHotBar_mc.currentHotBarIndex or 0
-
-			local maxSlot = (29 * currentBarIndex) - 1
-			local minSlot = 29 * (currentBarIndex - 1)
-
-			local data = Classes.MessageData:CreateFromString(dataStr)
-			for i,slot in pairs(data.Params.Slots) do
-				--print("slot", slot, "local slot", slot%29, "currentBarIndex", currentBarIndex, "minSlot", minSlot, "maxSlot", maxSlot)
-				if slot <= maxSlot and slot >= minSlot then
-					hotbar.setSlotEnabled(slot%29, data.Params.Enabled)
-					PrintDebug("[LeaderLib] Set slot ", slot, "enabled to", data.Params.Enabled)
+	if not Vars.ControllerEnabled then
+		local ui = Ext.GetUIByType(Data.UIType.hotBar)
+		if ui then
+			local status,err = xpcall(function()
+				local hotbar = ui:GetRoot().hotbar_mc
+				local currentBarIndex = hotbar.cycleHotBar_mc.currentHotBarIndex or 0
+	
+				local maxSlot = (29 * currentBarIndex) - 1
+				local minSlot = 29 * (currentBarIndex - 1)
+	
+				local data = Classes.MessageData:CreateFromString(dataStr)
+				for i,slot in pairs(data.Params.Slots) do
+					--print("slot", slot, "local slot", slot%29, "currentBarIndex", currentBarIndex, "minSlot", minSlot, "maxSlot", maxSlot)
+					if slot <= maxSlot and slot >= minSlot then
+						hotbar.setSlotEnabled(slot%29, data.Params.Enabled)
+						PrintDebug("[LeaderLib] Set slot ", slot, "enabled to", data.Params.Enabled)
+					end
 				end
+				return true
+			end, debug.traceback)
+			if not status then
+				Ext.PrintError(err)
 			end
-			return true
-		end, debug.traceback)
-		if not status then
-			Ext.PrintError(err)
+		end
+	else
+		local ui = Ext.GetUIByType(Data.UIType.bottomBar_c)
+		if ui then
+			local status,err = xpcall(function()
+				local this = ui:GetRoot()
+				local currentBarIndex = tonumber(this.bottombar_mc.groupList_mc.groupText_mc.groupNr_txt.text) or 0
+	
+				local maxSlot = (29 * currentBarIndex) - 1
+				local minSlot = 29 * (currentBarIndex - 1)
+	
+				local data = Classes.MessageData:CreateFromString(dataStr)
+				for i,slot in pairs(data.Params.Slots) do
+					--print("slot", slot, "local slot", slot%29, "currentBarIndex", currentBarIndex, "minSlot", minSlot, "maxSlot", maxSlot)
+					if slot <= maxSlot and slot >= minSlot then
+						this.setSlotEnabled(slot%29, data.Params.Enabled)
+						PrintDebug("[LeaderLib] Set slot ", slot, "enabled to", data.Params.Enabled)
+					end
+				end
+				return true
+			end, debug.traceback)
+			if not status then
+				Ext.PrintError(err)
+			end
 		end
 	end
 end)
 
 Ext.RegisterNetListener("LeaderLib_Hotbar_Refresh", function(call, payload)
-	local ui = Ext.GetBuiltinUI("Public/Game/GUI/hotBar.swf")
-	if ui ~= nil then
+	local ui = not Vars.ControllerEnabled and Ext.GetUIByType(Data.UIType.hotBar) or Vars.ControllerEnabled and Ext.GetBuiltinUI(Data.UIType.bottomBar_c)
+	if ui then
 		ui:ExternalInterfaceCall("updateSlots", ui:GetValue("maxSlots", "number"))
 	end
 end)
 
 Ext.RegisterNetListener("LeaderLib_Hotbar_RefreshCooldowns", function(call, datastr)
 	local slotdata = Ext.JsonParse(datastr)
-	if slotdata ~= nil then
-		local ui = Ext.GetBuiltinUI("Public/Game/GUI/hotBar.swf")
-		if ui ~= nil then
-			local slotholder = ui:GetRoot().hotbar_mc.slotholder_mc
-			for i,cd in pairs(slotdata) do
-				local slot = slotholder.slot_array[i]
-				if slot ~= nil then
-					if Vars.DebugMode then
-						PrintLog("[slot_array][%i] id(%i) oldCD(%i) nextCD(%s)", i, slot.id, slot.oldCD, cd)
+	if slotdata then
+		if not Vars.ControllerEnabled then
+			local ui = Ext.GetUIByType(Data.UIType.hotBar)
+			if ui then
+				local slotholder = ui:GetRoot().hotbar_mc.slotholder_mc
+				for i,cd in pairs(slotdata) do
+					if cd then
+						local slot = slotholder.slot_array[i]
+						if slot then
+							slot.setCoolDown(cd)
+						end
 					end
-					if cd ~= nil then
-						slot.setCoolDown(cd)
+				end
+			end
+		else
+			local ui = Ext.GetUIByType(Data.UIType.bottomBar_c)
+			if ui then
+				local slotholder = ui:GetRoot().bottombar_mc.slotsHolder_mc
+				for i,cd in pairs(slotdata) do
+					if cd then
+						local slot = slotholder.slot_array[i]
+						if slot then
+							slot.setCoolDown(cd)
+						end
 					end
 				end
 			end
@@ -223,21 +265,34 @@ Ext.RegisterNetListener("LeaderLib_AddTextToCombatLog", function(call, dataStr)
 	if data.Params ~= nil then
 		local filter = data.Params.Filter or 0
 		local text = data.Params.Text
-
 		if text ~= nil then
-			local ui = Ext.GetBuiltinUI("Public/Game/GUI/combatLog.swf")
-			if ui ~= nil then
-				ui:Invoke("addTextToTab", filter, text)
+			if not Vars.ControllerEnabled then
+				local ui = Ext.GetBuiltinUI("Public/Game/GUI/combatLog.swf")
+				if ui then
+					ui:Invoke("addTextToTab", filter, text)
+				end
+			else
+				local ui = Ext.GetBuiltinUI("Public/Game/GUI/combatLog_c.swf")
+				if ui then
+					ui:Invoke("addTextEntry", text, false)
+				end
 			end
 		end
 	end
 end)
 
 Ext.RegisterNetListener("LeaderLib_ClearCombatLog", function(call, filterStr)
-	local filter = tonumber(filterStr)
-	local ui = Ext.GetBuiltinUI("Public/Game/GUI/combatLog.swf")
-	if ui ~= nil then
-		ui:Invoke("clearFilter", math.tointeger(filter))
+	if not Vars.ControllerEnabled then
+		local filter = tonumber(filterStr)
+		local ui = Ext.GetBuiltinUI("Public/Game/GUI/combatLog.swf")
+		if ui then
+			ui:Invoke("clearFilter", math.tointeger(filter))
+		end
+	else
+		local ui = Ext.GetBuiltinUI("Public/Game/GUI/combatLog_c.swf")
+		if ui then
+			ui:Invoke("clearAll")
+		end
 	end
 end)
 
@@ -245,41 +300,18 @@ Ext.RegisterNetListener("LeaderLib_UpdateStatusTurns", function(call, dataStr)
 	local data = MessageData:CreateFromString(dataStr)
 	if data.Params.IsPlayer then
 		local ui = Ext.GetBuiltinUI("Public/Game/GUI/playerInfo.swf")
-		if ui ~= nil then
+		if ui then
 			--public function setStatus(createNewIfNotExisting:Boolean, characterHandle:Number, statusHandle:Number, iconId:Number, turns:Number, cooldown:Number, tooltip:String = "") : *
 			ui:Invoke("setStatus", false, Ext.HandleToDouble(data.Params.ObjectHandle), Ext.HandleToDouble(data.Params.StatusHandle), -1, data.Params.Turns, data.Params.Cooldown or 0.0, data.Params.Tooltip or "")
 		end
 	elseif data.Params.IsEnemy then
 		local ui = Ext.GetBuiltinUI("Public/Game/GUI/enemyHealthBar.swf")
-		if ui ~= nil then
+		if ui then
 			--public function setStatus(createNewIfNotExisting:Boolean, characterHandle:Number, statusHandle:Number, iconId:Number, turns:Number, cooldown:Number, tooltip:String = "") : *
 			ui:Invoke("setStatus", false, Ext.HandleToDouble(data.Params.ObjectHandle), Ext.HandleToDouble(data.Params.StatusHandle), -1, data.Params.Turns, data.Params.Cooldown or 0.0, data.Params.Tooltip or "")
 		end
 	end
 end)
-
-function GameHelpers.UI.UpdateStatusTurns(target, statusid)
-	local objectHandle = nil
-	local statusHandle = NRD_StatusGetHandle(target, statusid)
-
-	if ObjectIsCharacter(target) == 1 then
-		objectHandle = Ext.GetCharacter(target).Handle
-	elseif ObjectIsItem(target) == 1 then
-		objectHandle = Ext.GetItem(target).Handle
-	end
-	if objectHandle ~= nil and statusHandle ~= nil then
-		local status = Ext.GetStatus(objectHandle, statusHandle)
-		if status ~= nil then
-			local data = MessageData:CreateFromTable("UpdateStatusUIData", {
-				IsPlayer = CharacterIsPlayer(target) == 1,
-				IsEnemy = CharacterIsPlayer(target) ~= 1,
-				ObjectHandle = objectHandle,
-				StatusHandle = status.StatusHandle,
-				Turns = status.CurrentLifeTime / 6.0
-			})
-		end
-	end
-end
 
 Ext.RegisterListener("SessionLoaded", function()
 	Ext.RegisterUITypeCall(29, "ButtonPressed", function(ui, call, id, currentDevice)

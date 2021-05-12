@@ -16,9 +16,9 @@ Input = {
 }
 
 local KEYSTATE = Input.KEYSTATE
-
 local lastPressedTimes = {}
 
+--Initialize states
 for i,name in pairs(Data.InputEnum) do
 	Input.Keys[name] = 0
 end
@@ -60,7 +60,8 @@ function Input.RegisterMouseListener(callbackOrEventName, callbackOrNil)
 	end
 end
 
----@param callbackOrInputNameOrInputName InputEventCallback
+---@param callbackOrEventName InputEventCallback
+---@param callbackOrNil InputEventCallback|nil
 function Input.RemoveListener(callbackOrInputName, callbackOrNil)
 	local t = type(callbackOrInputName)
 	if t == "table" then

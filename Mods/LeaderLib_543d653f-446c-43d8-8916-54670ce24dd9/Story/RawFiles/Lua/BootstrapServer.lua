@@ -84,11 +84,23 @@ end
 --- @param event string Event type ('before' - triggered before Osiris call; 'after' - after Osiris call; 'beforeDelete'/'afterDelete' - before/after delete from DB)
 --- @param handler function Lua function to run when the event fires
 function RegisterProtectedOsirisListener(name, arity, event, handler)
-	Ext.RegisterOsirisListener(name, arity, event, function(...)
-		if Ext.GetGameState() == "Running" and SharedData.RegionData.LevelType == LEVELTYPE.GAME then
-			handler(...)
+	--Auto-arity mode
+	if (arity == "before" or arity == "after") and type(event) == "function" and handler == nil then
+		local eventArity = Data.OsirisEvents[name]
+		if eventArity then
+			Ext.RegisterOsirisListener(name, eventArity, arity, function(...)
+				if Ext.GetGameState() == "Running" and SharedData.RegionData.LevelType == LEVELTYPE.GAME then
+					event(...)
+				end
+			end)
 		end
-	end)
+	else
+		Ext.RegisterOsirisListener(name, arity, event, function(...)
+			if Ext.GetGameState() == "Running" and SharedData.RegionData.LevelType == LEVELTYPE.GAME then
+				handler(...)
+			end
+		end)
+	end
 end
 
 -- local function LeaderLib_GameSessionLoad()

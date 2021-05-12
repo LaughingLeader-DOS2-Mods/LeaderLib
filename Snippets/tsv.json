@@ -1,0 +1,9 @@
+{
+	"TagEntry": {
+		"prefix": "tag",
+		"body": [
+			"$1\t${2:Name}\th${UUID/[-]/g/g}",
+			"$1_Description\t${3:Desc}\th${UUID/[-]/g/g}"
+		]
+	}
+}

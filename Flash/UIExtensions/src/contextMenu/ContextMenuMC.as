@@ -209,14 +209,12 @@ package contextMenu
 			this.x = targetX;
 			this.y = targetY;
 			
-			if(!this.visible)
-			{
-				ExternalInterface.call("PlaySound","UI_GM_Generic_Slide_Open");
-				this.visible = true;
-			}
+			ExternalInterface.call("PlaySound","UI_GM_Generic_Slide_Open");
+			this.visible = true;
+
 			if(!this.isOpen)
 			{
-				stage.addEventListener("rightMouseDown",this.onCloseUI);
+				//stage.addEventListener("rightMouseDown",this.onCloseUI);
 				stage.addEventListener(MouseEvent.CLICK,this.onCloseUI);
 				this.isOpen = true;
 			}
@@ -232,7 +230,7 @@ package contextMenu
 			}
 			if(this.isOpen)
 			{
-				stage.removeEventListener("rightMouseDown",this.onCloseUI);
+				//stage.removeEventListener("rightMouseDown",this.onCloseUI);
 				stage.removeEventListener(MouseEvent.CLICK,this.onCloseUI);
 				this.isOpen = false;
 			}

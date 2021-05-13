@@ -813,3 +813,12 @@ if SceneManager then
 		end)
 	end)
 end
+
+Ext.RegisterConsoleCommand("ap", function(command, amountStr)
+	local host = CharacterGetHostCharacter()
+	local amount = Ext.GetCharacter(host).Stats.APMaximum
+	if amountStr ~= nil then
+		amount = math.tointeger(tonumber(amountStr))
+	end
+	CharacterAddActionPoints(host, amount)
+end)

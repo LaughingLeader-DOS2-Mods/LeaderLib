@@ -19,7 +19,7 @@ local KEYSTATE = Input.KEYSTATE
 local lastPressedTimes = {}
 
 --Initialize states
-for i,name in pairs(Data.InputEnum) do
+for name,ids in pairs(Data.InputEnum) do
 	Input.Keys[name] = 0
 end
 
@@ -101,7 +101,7 @@ function Input.IsPressed(name)
 	local t = type(name)
 	if t == "table" then
 		for _,v in pairs(name) do
-			if Input.IsKeyPressed(v) then
+			if Input.IsPressed(v) then
 				return true
 			end
 		end
@@ -118,7 +118,7 @@ function Input.IsReleased(name)
 	local t = type(name)
 	if t == "table" then
 		for _,v in pairs(name) do
-			if Input.IsKeyReleased(v) then
+			if Input.IsReleased(v) then
 				return true
 			end
 		end
@@ -159,22 +159,22 @@ end
 function Input.GetKeyState(name, t)
 	local t = t or type(name)
 	if t == "number" then
-		local ids = Data.InputEnum[name]
-		if ids then
-			if type(ids) == "table" then
-				for _,id in pairs(ids) do
-					local state = Input.Keys[Data.InputEnum[id]]
+		local actualName = Data.InputEnum[name]
+		if actualName then
+			if type(actualName) == "table" then
+				for _,n in pairs(actualName) do
+					local state = Input.Keys[n]
 					if state ~= KEYSTATE.INACTIVE then
 						return state
 					end
 				end
 				return KEYSTATE.INACTIVE
 			else
-				return Input.Keys[Data.InputEnum[ids]] or KEYSTATE.UNREGISTERED
+				return Input.Keys[actualName] or KEYSTATE.UNREGISTERED
 			end
 		end
 	elseif t == "string" then
-		return Input.Keys[Data.Input[name]] or KEYSTATE.UNREGISTERED
+		return Input.Keys[name] or KEYSTATE.UNREGISTERED
 	end
 	fprint(LOGLEVEL.WARNING, "[LeaderLib:Input.GetKeyState] No valid input for name (%s)", name)
 	return KEYSTATE.UNREGISTERED
@@ -189,7 +189,7 @@ Ext.RegisterListener("InputEvent", function(evt)
 			lastPressedTimes[eventName] = Ext.MonotonicTime()
 		end
 		if Vars.DebugMode then
-			fprint(LOGLEVEL.DEFAULT, "[ExtInputEvent] (%s)[%s] Pressed(%s) fireListeners(%s) Time(%s)", eventName, evt.EventId, evt.Press, fireListeners, Ext.MonotonicTime())
+			fprint(LOGLEVEL.DEFAULT, "[ExtInputEvent] (%s)[%s] Pressed(%s) Time(%s)", eventName, evt.EventId, evt.Press, Ext.MonotonicTime())
 		end
 		InvokeListenerCallbacks(Listeners.InputEvent, eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled)
 		InvokeListenerCallbacks(Listeners.NamedInputEvent[eventName], eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled)
@@ -211,7 +211,7 @@ function Input.OnFlashEvent(ui, call, pressed, eventName, arrayIndex)
 		lastPressedTimes[eventName] = Ext.MonotonicTime()
 	end
 	if Vars.DebugMode then
-		PrintLog("[Input.OnFlashEvent] eventName(%s) pressed(%s) index(%i) fireListeners(%s)", eventName, pressed, arrayIndex, Input.Keys[eventName] ~= pressed)
+		PrintLog("[Input.OnFlashEvent] eventName(%s) pressed(%s) index(%i)", eventName, pressed, arrayIndex)
 	end
 	local id = Data.Input[eventName]
 	if type(id) == "table" then

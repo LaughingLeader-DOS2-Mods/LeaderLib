@@ -230,15 +230,6 @@ Ext.RegisterConsoleCommand("refreshcd", function(command)
 	GameHelpers.UI.RefreshSkillBarCooldowns(host)
 end)
 
-Ext.RegisterConsoleCommand("ap", function(command, amountStr)
-	local host = CharacterGetHostCharacter()
-	local amount = Ext.GetCharacter(host).Stats.APMaximum
-	if amountStr ~= nil then
-		amount = math.tointeger(tonumber(amountStr))
-	end
-	CharacterAddActionPoints(host, amount)
-end)
-
 local removedSkills = {}
 
 Ext.RegisterConsoleCommand("removeskill", function(cmd, skill)

@@ -648,6 +648,38 @@ Data.Surfaces = {
 	["SurfaceDeathfogCloud"] = 77,
 }
 
+Data.SurfaceChange = {
+	[0] = "None",
+	"Ignite",
+	"Melt",
+	"Freeze",
+	"Electrify",
+	"Bless",
+	"Curse",
+	"Condense",
+	"Vaporize",
+	"Bloodify",
+	"Contaminate",
+	"Oilify",
+	"Shatter",
+}
+
+Data.SurfaceChangeEnum = {
+	None = 0,
+	Ignite = 1,
+	Melt = 2,
+	Freeze = 3,
+	Electrify = 4,
+	Bless = 5,
+	Curse = 6,
+	Condense = 7,
+	Vaporize = 8,
+	Bloodify = 9,
+	Contaminate = 10,
+	Oilify = 11,
+	Shatter = 12,
+}
+
 Data.UIType = {
 	actionProgression = 0,
 	areaInteract_c = 68,

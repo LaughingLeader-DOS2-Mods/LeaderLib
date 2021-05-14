@@ -822,3 +822,20 @@ Ext.RegisterConsoleCommand("ap", function(command, amountStr)
 	end
 	CharacterAddActionPoints(host, amount)
 end)
+
+Ext.RegisterConsoleCommand("cellCheck", function(command, amountStr)
+	local host = CharacterGetHostCharacter()
+	local x,y,z = GetPosition(host)
+	local surfaceData = GameHelpers.Grid.GetSurfaces(x, z, nil, 3.0)
+	--print(Common.Dump(surfaceData.SurfaceMap))
+	--print(surfaceData.HasSurface("Water", true, 0))
+	if surfaceData then
+		for _,v in pairs(surfaceData.Ground) do
+			local surface = v.Surface
+			if string.find(string.lower(surface.SurfaceType), "water") then
+				GameHelpers.Surface.Transform(v.Position, "Bloodify", 0, surface.LifeTime, surface.OwnerHandle, surface.SurfaceType, surface.StatusChance)
+				GameHelpers.Surface.Transform(v.Position, "Freeze", 0, surface.LifeTime, surface.OwnerHandle, surface.SurfaceType, surface.StatusChance)
+			end
+		end
+	end
+end)

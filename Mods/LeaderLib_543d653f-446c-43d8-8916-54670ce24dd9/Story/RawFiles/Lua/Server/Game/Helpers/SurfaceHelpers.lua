@@ -101,3 +101,39 @@ function GameHelpers.Surface.UpdateRules()
 		end
 	end
 end
+
+---@param pos number[]|string
+---@param action string
+---@param layer integer
+---@param duration number
+---@param ownerHandle userdata
+---@param ignoreCursed boolean
+---@param statusChance number
+---@param deathType string
+---@return EsvSurfaceAction
+function GameHelpers.Surface.Transform(pos, action, layer, duration, ownerHandle, originSurface, statusChance, deathType)
+	if type(pos) == "string" then
+		pos = table.pack(GetPosition(pos))
+	end
+	-- if type(action) == "string" then
+	-- 	local actionEnum = Data.SurfaceChangeEnum[action]
+	-- 	if not action then
+	-- 		fprint(LOGLEVEL.ERROR, "[GameHelpers.Surface.Transform] Invalid surface change action (%s)", action)
+	-- 		return
+	-- 	end
+	-- 	action = actionEnum
+	-- end
+
+	---@type EsvTransformSurfaceAction
+	local surf = Ext.CreateSurfaceAction("TransformSurfaceAction")
+	surf.SurfaceTransformAction = action
+	surf.Position = pos
+	surf.OriginSurface = originSurface or ""
+	surf.SurfaceLayer = layer or 0
+	surf.GrowCellPerSecond = 4.0
+	surf.SurfaceLifetime = duration or 6.0
+	surf.SurfaceStatusChance = statusChance or 1.0
+	--surf.DeathType = deathType or "DoT"
+	surf.OwnerHandle = ownerHandle or nil
+	Ext.ExecuteSurfaceAction(surf)
+end

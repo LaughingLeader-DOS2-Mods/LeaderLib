@@ -56,11 +56,23 @@ local function OnHit(target, source, damage, handle)
 		return
 	end
 
+
 	---@type EsvStatusHit
-	local statusObj = Ext.GetStatus(target, handle)
+	local statusObj = nil
+	if ObjectIsCharacter(target) == 1 then
+		---@type EsvStatusHit
+		statusObj = Ext.GetStatus(target, handle)
+	else
+		local item = Ext.GetItem(target)
+		if item then
+			statusObj = item:GetStatus("HIT")
+		end
+	end
+
 	if statusObj == nil then
 		return
 	end
+
 	local skillprototype = statusObj.SkillId
 	local skill = nil
 	if not StringHelpers.IsNullOrEmpty(statusObj.SkillId) then

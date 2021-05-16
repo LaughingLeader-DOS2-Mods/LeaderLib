@@ -229,8 +229,8 @@ function OnSkillHit(source, skill, target, handle, damage)
 						if potion ~= nil and potion ~= "" then
 							local bonusWeapon = Ext.StatGetAttribute(potion, "BonusWeapon")
 							if bonusWeapon ~= nil and bonusWeapon ~= "" then
-								local extraProps = Ext.StatGetAttribute(bonusWeapon, "ExtraProperties")
-								if extraProps ~= nil then
+								local extraProps = GameHelpers.Stats.GetExtraProperties(bonusWeapon)
+								if extraProps and #extraProps > 0 then
 									GameHelpers.ApplyProperties(target, source, extraProps)
 								end
 							end

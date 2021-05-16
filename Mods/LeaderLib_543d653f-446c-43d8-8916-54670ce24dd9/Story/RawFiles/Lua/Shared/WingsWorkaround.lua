@@ -83,8 +83,6 @@ function OverrideWings(syncMode)
 		end
 		for entryType,attribute in pairs(wingsProps) do
 			for i,statName in pairs(Ext.GetStatEntries(entryType)) do
-				---@type StatPropertyStatus[]
-				local stat = nil
 				local props = GameHelpers.Stats.GetCurrentOrInheritedProperty(statName, attribute)
 				if props ~= nil then
 					-- Swaps WINGS for LEADERLIB_WINGS
@@ -92,12 +90,14 @@ function OverrideWings(syncMode)
 					if wingsPropIndex ~= false and not PropertiesHasWingsVisual(props) then
 						props[wingsPropIndex].Action = "LEADERLIB_WINGS"
 						if syncMode == true then
-							stat[attribute] = props
-							Ext.SyncStat(statName, false)
-							PrintDebug(statName, Ext.JsonStringify(stat[attribute]))
+							--@type StatPropertyStatus[]
+							local stat = Ext.GetStat(statName)
+							if stat then
+								stat[attribute] = props
+								Ext.SyncStat(statName, false)
+							end
 						else
 							Ext.StatSetAttribute(statName, attribute, props)
-							PrintDebug(statName, Ext.JsonStringify(Ext.StatGetAttribute(statName, attribute)))
 						end
 					end
 				end

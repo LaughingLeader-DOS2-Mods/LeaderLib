@@ -44,7 +44,7 @@ function GameHelpers.Surface.CreateSurface(pos, surface, radius, duration, owner
 		ignoreCursed = true
 	end
 	surf.IgnoreIrreplacableSurfaces = ignoreCursed
-	surf.Duration = duration or 3.0
+	surf.Duration = duration or 6.0
 	surf.StatusChance = statusChance or 1.0
 	--surf.DeathType = deathType or "DoT"
 	surf.OwnerHandle = ownerHandle or nil
@@ -134,20 +134,22 @@ function GameHelpers.Surface.TransformSurfaces(transformToSurfaceType, matchName
 	if layer == 0 then
 		for i,v in pairs(surfaces.Ground) do
 			if StringHelpers.IsMatch(v.Surface.SurfaceType, matchNames, explicitMatch) then
-				GameHelpers.Surface.CreateSurface(v.Position, transformToSurfaceType, createdSurfaceSize, duration, ownerHandle, ignoreCursed, statusChance)
+				--CreatePuddle(CharacterGetHostCharacter(), "SurfaceBloodFrozen", 4, 4, 4, 4, 1.0)
+				--CreateSurfaceAtPosition(v.Position[1], v.Position[2], v.Position[3], "SurfaceBloodFrozen", createdSurfaceSize, duration)
+				GameHelpers.Surface.CreateSurface(v.Position, transformToSurfaceType, createdSurfaceSize, duration or v.Surface.LifeTime, ownerHandle, ignoreCursed, statusChance)
 			end
 		end
 	elseif layer == 1 then
 		for i,v in pairs(surfaces.Cloud) do
 			if StringHelpers.IsMatch(v.Surface.SurfaceType, matchNames, explicitMatch) then
-				GameHelpers.Surface.CreateSurface(v.Position, transformToSurfaceType, createdSurfaceSize, duration, ownerHandle, ignoreCursed, statusChance)
+				GameHelpers.Surface.CreateSurface(v.Position, transformToSurfaceType, createdSurfaceSize, duration or v.Surface.LifeTime, ownerHandle, ignoreCursed, statusChance)
 			end
 		end
 	else
 		for k,tbl in pairs(surfaces.SurfaceMap) do
 			if StringHelpers.IsMatch(k, matchNames, explicitMatch) then
 				for _,v in pairs(tbl) do
-					GameHelpers.Surface.CreateSurface(v.Position, transformToSurfaceType, createdSurfaceSize, duration, ownerHandle, ignoreCursed, statusChance)
+					GameHelpers.Surface.CreateSurface(v.Position, transformToSurfaceType, createdSurfaceSize, duration or v.Surface.LifeTime, ownerHandle, ignoreCursed, statusChance)
 				end
 			end
 		end

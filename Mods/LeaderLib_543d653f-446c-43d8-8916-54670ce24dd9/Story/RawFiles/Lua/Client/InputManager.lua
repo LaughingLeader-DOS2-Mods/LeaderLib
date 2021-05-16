@@ -188,9 +188,9 @@ Ext.RegisterListener("InputEvent", function(evt)
 		if evt.Press then
 			lastPressedTimes[eventName] = Ext.MonotonicTime()
 		end
-		if Vars.DebugMode then
-			fprint(LOGLEVEL.DEFAULT, "[ExtInputEvent] (%s)[%s] Pressed(%s) Time(%s)", eventName, evt.EventId, evt.Press, Ext.MonotonicTime())
-		end
+		-- if Vars.DebugMode then
+		-- 	fprint(LOGLEVEL.DEFAULT, "[ExtInputEvent] (%s)[%s] Pressed(%s) Time(%s)", eventName, evt.EventId, evt.Press, Ext.MonotonicTime())
+		-- end
 		InvokeListenerCallbacks(Listeners.InputEvent, eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled)
 		InvokeListenerCallbacks(Listeners.NamedInputEvent[eventName], eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled)
 
@@ -210,9 +210,9 @@ function Input.OnFlashEvent(ui, call, pressed, eventName, arrayIndex)
 	if pressed then
 		lastPressedTimes[eventName] = Ext.MonotonicTime()
 	end
-	if Vars.DebugMode then
-		PrintLog("[Input.OnFlashEvent] eventName(%s) pressed(%s) index(%i)", eventName, pressed, arrayIndex)
-	end
+	-- if Vars.DebugMode then
+	-- 	PrintLog("[Input.OnFlashEvent] eventName(%s) pressed(%s) index(%i)", eventName, pressed, arrayIndex)
+	-- end
 	local id = Data.Input[eventName]
 	if type(id) == "table" then
 		for _,kid in pairs(id) do

@@ -30,14 +30,13 @@ end
 ---@param ownerHandle userdata
 ---@param ignoreCursed boolean
 ---@param statusChance number
----@param deathType string
 ---@return EsvSurfaceAction
-function GameHelpers.Surface.CreateSurface(pos, surface, radius, duration, ownerHandle, ignoreCursed, statusChance, deathType)
+function GameHelpers.Surface.CreateSurface(pos, surface, radius, duration, ownerHandle, ignoreCursed, statusChance)
 	if type(pos) == "string" then
 		pos = table.pack(GetPosition(pos))
 	end
 	---@type EsvRectangleSurfaceAction
-	local surf = Ext.CreateSurfaceAction("EsvCreateSurfaceAction")
+	local surf = Ext.CreateSurfaceAction("CreateSurfaceAction")
 	surf.Position = pos
 	surf.SurfaceType = surface or "Water"
 	surf.Radius = radius or 1.0
@@ -47,9 +46,9 @@ function GameHelpers.Surface.CreateSurface(pos, surface, radius, duration, owner
 	surf.IgnoreIrreplacableSurfaces = ignoreCursed
 	surf.Duration = duration or 3.0
 	surf.StatusChance = statusChance or 1.0
-	surf.DeathType = deathType or "DoT"
+	--surf.DeathType = deathType or "DoT"
 	surf.OwnerHandle = ownerHandle or nil
-	return surf
+	Ext.ExecuteSurfaceAction(surf)
 end
 
 ---@type table<integer,EsvChangeSurfaceOnPathAction>
@@ -111,18 +110,10 @@ end
 ---@param statusChance number
 ---@param deathType string
 ---@return EsvSurfaceAction
-function GameHelpers.Surface.Transform(pos, action, layer, duration, ownerHandle, originSurface, statusChance, deathType)
+function GameHelpers.Surface.Transform(pos, action, layer, duration, ownerHandle, originSurface, statusChance)
 	if type(pos) == "string" then
 		pos = table.pack(GetPosition(pos))
 	end
-	-- if type(action) == "string" then
-	-- 	local actionEnum = Data.SurfaceChangeEnum[action]
-	-- 	if not action then
-	-- 		fprint(LOGLEVEL.ERROR, "[GameHelpers.Surface.Transform] Invalid surface change action (%s)", action)
-	-- 		return
-	-- 	end
-	-- 	action = actionEnum
-	-- end
 
 	---@type EsvTransformSurfaceAction
 	local surf = Ext.CreateSurfaceAction("TransformSurfaceAction")
@@ -133,7 +124,44 @@ function GameHelpers.Surface.Transform(pos, action, layer, duration, ownerHandle
 	surf.GrowCellPerSecond = 4.0
 	surf.SurfaceLifetime = duration or 6.0
 	surf.SurfaceStatusChance = statusChance or 1.0
-	--surf.DeathType = deathType or "DoT"
 	surf.OwnerHandle = ownerHandle or nil
 	Ext.ExecuteSurfaceAction(surf)
+end
+
+function GameHelpers.Surface.TransformSurfaces(transformToSurfaceType, matchNames, x, z, radius, layer, duration, ownerHandle, statusChance, explicitMatch, grid, ignoreCursed, createdSurfaceSize)
+	createdSurfaceSize = createdSurfaceSize or 1.0
+	local surfaces = GameHelpers.Grid.GetSurfaces(x, z, grid, radius, 18)
+	if layer == 0 then
+		for i,v in pairs(surfaces.Ground) do
+			if StringHelpers.IsMatch(v.Surface.SurfaceType, matchNames, explicitMatch) then
+				GameHelpers.Surface.CreateSurface(v.Position, transformToSurfaceType, createdSurfaceSize, duration, ownerHandle, ignoreCursed, statusChance)
+			end
+		end
+	elseif layer == 1 then
+		for i,v in pairs(surfaces.Cloud) do
+			if StringHelpers.IsMatch(v.Surface.SurfaceType, matchNames, explicitMatch) then
+				GameHelpers.Surface.CreateSurface(v.Position, transformToSurfaceType, createdSurfaceSize, duration, ownerHandle, ignoreCursed, statusChance)
+			end
+		end
+	else
+		for k,tbl in pairs(surfaces.SurfaceMap) do
+			if StringHelpers.IsMatch(k, matchNames, explicitMatch) then
+				for _,v in pairs(tbl) do
+					GameHelpers.Surface.CreateSurface(v.Position, transformToSurfaceType, createdSurfaceSize, duration, ownerHandle, ignoreCursed, statusChance)
+				end
+			end
+		end
+	end
+end
+
+---@param x number
+---@param z number
+---@param matchNames string|string[]
+---@param maxRadius number|nil
+---@param containingName boolean Look for surfaces containing the name, instead of explicit matching.
+---@param onlyLayer integer Look only on layer 0 (ground) or 1 (clouds).
+---@param grid AiGrid|nil
+function GameHelpers.Surface.HasSurface(x, z, matchNames, maxRadius, containingName, onlyLayer, grid)
+	local surfaces = GameHelpers.Grid.GetSurfaces(x, z, grid, maxRadius)
+	return surfaces and surfaces.HasSurface(matchNames, containingName, onlyLayer)
 end

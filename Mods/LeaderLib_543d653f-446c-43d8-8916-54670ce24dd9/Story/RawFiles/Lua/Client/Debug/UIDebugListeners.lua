@@ -484,3 +484,27 @@ contextMenu.CustomCallback["updateButtons"] = function(self, ui, method)
 		end
 	end
 end
+
+local contextMenu = UIListenerWrapper:Create(Data.UIType.skills, {}, {
+	"updateSkills",
+})
+
+---@param ui UIObject
+-- contextMenu.CustomCallback["updateSkills"] = function(self, ui, method, b)
+-- 	local this = ui:GetRoot()
+-- 	local array = this.skillsUpdateList
+-- 	for i=0,#array do
+-- 		local entry = array[i]
+-- 		if entry then
+-- 			print(i, entry)
+-- 			if type(entry) == "string" then
+-- 				local stat = Ext.GetStat(entry)
+-- 				if stat then
+-- 					this.skillsUpdateList[i] = "Projectile_Fireball"
+-- 				end
+-- 			end
+-- 		else
+-- 			print(i, "nil")
+-- 		end
+-- 	end
+-- end

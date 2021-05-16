@@ -77,3 +77,29 @@ function GameHelpers.Stats.GetRuneBoosts(item)
 	end
 	return boosts
 end
+
+function GameHelpers.Stats.GetCurrentOrInheritedProperty(statName, attribute)
+	local stat = Ext.GetStat(statName)
+	if stat then
+		if stat[attribute] ~= nil then
+			return stat[attribute]
+		else
+			if not StringHelpers.IsNullOrEmpty(stat.Using) then
+				return GameHelpers.Stats.GetCurrentOrInheritedProperty(stat.Using, attribute)
+			end
+		end
+	end
+	return nil
+end
+
+---@param statName string
+---@return StatProperty[]
+function GameHelpers.Stats.GetSkillProperties(statName)
+	return GameHelpers.Stats.GetCurrentOrInheritedProperty(statName, "SkillProperties") or {}
+end
+
+---@param statName string
+---@return StatProperty[]
+function GameHelpers.Stats.GetExtraProperties(statName)
+	return GameHelpers.Stats.GetCurrentOrInheritedProperty(statName, "ExtraProperties") or {}
+end

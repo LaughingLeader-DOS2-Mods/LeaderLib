@@ -192,3 +192,31 @@ function StringHelpers.StripFont(str)
 	end
 	return string.gsub(str, "<font.-'>", ""):gsub("</font>", "")
 end
+
+function StringHelpers.IsMatch(str, match, explicit)
+	if not explicit then
+		str = string.lower(str)
+	end
+	if type(match) == "table" then
+		for i,v in pairs(match) do
+			if explicit then
+				if v == str then
+					return true
+				end
+			else
+				if string.find(str, string.lower(v)) then
+					return true
+				end
+			end
+		end
+	else
+		if explicit then
+			return str == match
+		else
+			if string.find(str, string.lower(match)) then
+				return true
+			end
+		end
+	end
+	return false
+end

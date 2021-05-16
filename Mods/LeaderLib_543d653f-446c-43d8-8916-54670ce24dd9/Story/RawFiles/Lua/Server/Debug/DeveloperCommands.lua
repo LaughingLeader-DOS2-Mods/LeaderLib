@@ -824,18 +824,42 @@ Ext.RegisterConsoleCommand("ap", function(command, amountStr)
 end)
 
 Ext.RegisterConsoleCommand("cellCheck", function(command, amountStr)
-	local host = CharacterGetHostCharacter()
-	local x,y,z = GetPosition(host)
-	local surfaceData = GameHelpers.Grid.GetSurfaces(x, z, nil, 3.0)
-	--print(Common.Dump(surfaceData.SurfaceMap))
-	--print(surfaceData.HasSurface("Water", true, 0))
-	if surfaceData then
-		for _,v in pairs(surfaceData.Ground) do
-			local surface = v.Surface
-			if string.find(string.lower(surface.SurfaceType), "water") then
-				GameHelpers.Surface.Transform(v.Position, "Bloodify", 0, surface.LifeTime, surface.OwnerHandle, surface.SurfaceType, surface.StatusChance)
-				GameHelpers.Surface.Transform(v.Position, "Freeze", 0, surface.LifeTime, surface.OwnerHandle, surface.SurfaceType, surface.StatusChance)
-			end
-		end
-	end
+	local host = Ext.GetCharacter(CharacterGetHostCharacter())
+	local x,y,z = table.unpack(host.WorldPos)
+
+	-- TransformSurfaceAtPosition(x, y, z, "Bloodify", "Ground", 6.0, 6.0, host)
+	-- StartOneshotTimer("Timers_Test_Freeze", 1500, function()
+	-- 	TransformSurfaceAtPosition(x, y, z, "Freeze", "Ground", 6.0, 6.0, host)
+	-- end)
+
+	GameHelpers.Surface.Transform({x,2.0,z}, "Bloodify", 0, 18.0, host.Handle, "Water", 1.0)
+
+	-- local surfaceData = GameHelpers.Grid.GetSurfaces(x, z, nil, 3.0)
+	-- --print(Common.Dump(surfaceData.SurfaceMap))
+	-- --print(surfaceData.HasSurface("Water", true, 0))
+	-- if surfaceData then
+	-- 	for _,v in pairs(surfaceData.Ground) do
+	-- 		local surface = v.Surface
+	-- 		if string.find(string.lower(surface.SurfaceType), "water") then
+	-- 			GameHelpers.Surface.Transform(v.Position, "Bloodify", 0, surface.LifeTime, surface.OwnerHandle, surface.SurfaceType, surface.StatusChance)
+	-- 			GameHelpers.Surface.Transform(v.Position, "Freeze", 0, surface.LifeTime, surface.OwnerHandle, surface.SurfaceType, surface.StatusChance)
+	-- 		end
+	-- 	end
+	-- end
+
+	-- StartOneshotTimer("Timers_Test_Freeze", 1500, function()
+	-- 	local host = Ext.GetCharacter(host)
+	-- 	--GameHelpers.Surface.Transform(host.WorldPos, "Freeze", 0, 6.0, host.Handle, "Water", 1.0)
+	
+	-- 	local surf = Ext.CreateSurfaceAction("TransformSurfaceAction")
+	-- 	surf.SurfaceTransformAction = "Freeze"
+	-- 	surf.Position = host.WorldPos
+	-- 	--surf.OriginSurface = "Water"
+	-- 	surf.SurfaceLayer = 0
+	-- 	surf.GrowCellPerSecond = 4.0
+	-- 	surf.SurfaceLifetime = 6.0
+	-- 	surf.SurfaceStatusChance = 1.0
+	-- 	surf.OwnerHandle = host.Handle
+	-- 	Ext.ExecuteSurfaceAction(surf)
+	-- end)
 end)

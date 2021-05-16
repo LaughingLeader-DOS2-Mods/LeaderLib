@@ -157,9 +157,9 @@ end
 ---@param x number
 ---@param z number
 ---@return number
-function GameHelpers.Grid.GetY(x,z)
+function GameHelpers.Grid.GetY(x,z,grid)
 	---@type AiGrid
-	local grid = Ext.GetAiGrid()
+	local grid = grid or Ext.GetAiGrid()
 	if grid then
 		local info = grid:GetCellInfo(x,z)
 		if info and info.Height then
@@ -188,7 +188,7 @@ end
 ---@field Cell table<integer, table<integer, ExtenderGridCellInfo>>
 ---@field Ground LeaderLibRadiusDataSurfaceEntry[]
 ---@field Cloud LeaderLibRadiusDataSurfaceEntry[]
----@field SurfaceMap table<string, EsvSurface>
+---@field SurfaceMap table<string, EsvSurface[]>
 ---@field HasSurface fun(name:string, containingName:boolean|nil, onlyLayer:integer|nil):boolean
 
 ---@param data LeaderLibCellSurfaceData
@@ -260,8 +260,9 @@ end
 ---@param z number
 ---@param grid AiGrid|nil
 ---@param maxRadius number|nil
+---@param pointsInCircle number|nil The precision when checking in a radius. Defaults to 9.
 ---@return LeaderLibCellSurfaceData|LeaderLibSurfaceRadiusData
-function GameHelpers.Grid.GetSurfaces(x, z, grid, maxRadius)
+function GameHelpers.Grid.GetSurfaces(x, z, grid, maxRadius, pointsInCircle)
 	---@type AiGrid
 	grid = grid or Ext.GetAiGrid()
 
@@ -295,7 +296,7 @@ function GameHelpers.Grid.GetSurfaces(x, z, grid, maxRadius)
 		data.HasSurface = function(name, containingName, onlyLayer)
 			return HasSurfaceRadius(data, name, containingName, onlyLayer)
 		end
-		local pointsInCircle = 9
+		pointsInCircle = pointsInCircle or 9
 		local radius = 0
 		local slice = 2 * math.pi / pointsInCircle
 		while radius <= maxRadius do

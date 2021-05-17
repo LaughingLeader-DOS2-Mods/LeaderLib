@@ -47,7 +47,7 @@ NRD_ModCall("LeaderLib", "OnSkillUsed", (STRING)_Char, _Skill, _SkillType, _Skil
 IF
 SkillCast(_Char, _Skill, _SkillType, _SkillElement)
 THEN
-NRD_ModCall("LeaderLib", "OnSkillCast", (STRING)_Char, _Skill);
+NRD_ModCall("LeaderLib", "OnSkillCast", (STRING)_Char, _Skill, _SkillType, _SkillElement);
 */
 
 // Skill hits are detected with LeaderLib_Ext_OnHit / OnHit in Lua

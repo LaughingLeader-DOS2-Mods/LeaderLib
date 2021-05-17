@@ -58,7 +58,7 @@ end
 local skillEventDataTable = {}
 
 ---@return SkillEventData
-local function GetCharacterSkillData(skill, uuid, createIfMissing, skillType, skillAbility)
+local function GetCharacterSkillData(skill, uuid, createIfMissing, skillType, skillAbility, printWarning)
 	local data = nil
 	local skillDataHolder = skillEventDataTable[skill]
 	if skillDataHolder ~= nil then
@@ -69,6 +69,9 @@ local function GetCharacterSkillData(skill, uuid, createIfMissing, skillType, sk
 	end
 
 	if data == nil and createIfMissing == true then
+		if Vars.DebugMode and printWarning then
+			fprint(LOGLEVEL.WARNING, "[LeaderLib:OnSkillCast] No skill data for character (%s) and skill (%s)", uuid, skill)
+		end
 		data = Classes.SkillEventData:Create(uuid, skill, skillType, skillAbility)
 		skillDataHolder[uuid] = data
 	end
@@ -211,37 +214,20 @@ function OnSkillUsed(char, skill, ...)
 	end
 end
 
-function OnSkillCast(char, skill, ...)
+function OnSkillCast(char, skill, skilLType, skillAbility)
 	local uuid = StringHelpers.GetUUID(char)
+	--Some skills may not fire any target events, like MultiStrike, so create the data if it doesn't exist.
 	---@type SkillEventData
-	local data = GetCharacterSkillData(skill, uuid)
+	local data = GetCharacterSkillData(skill, uuid, true, skilLType, skillAbility, true)
 	if data ~= nil then
-		local status,err = nil,nil
 		for callback in GetListeners(skill) do
-			if Vars.DebugMode then
-				--PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillCast] char(",char,") skill(",skill,") data(",data:ToString(),")")
-				--PrintDebug("params(",Ext.JsonStringify({...}),")")
-			end
-			status,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.CAST, data)
-			if not status then
-				Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
+			local b,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.CAST, data)
+			if not b then
+				Ext.PrintError("[LeaderLib:SkillListeners:OnSkillCast] Error invoking function:\n", err)
 			end
 		end
 		data:Clear()
 		RemoveCharacterSkillData(uuid, skill)
-	end
-end
-
-local function RunSkillListenersForSkillEvent(source, skill, data, listeners, state)
-	local length = #listeners
-	if length > 0 then
-		for i=1,length do
-			local callback = listeners[i]
-			local status,err = xpcall(callback, debug.traceback, skill, source, state, data)
-			if not status then
-				Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
-			end
-		end
 	end
 end
 
@@ -256,30 +242,29 @@ local function IgnoreHitTarget(target)
 	return false
 end
 
----@param source string
+---@param uuid string
 ---@param skill string
 ---@param target string
 ---@param handle integer
 ---@param damage integer
-function OnSkillHit(source, skill, target, handle, damage)
+function OnSkillHit(uuid, skill, target, handle, damage)
 	if skill ~= "" and skill ~= nil and not IgnoreHitTarget(target) then
 		---@type HitData
-		local data = Classes.HitData:Create(target, source, damage, handle, skill)
+		local data = Classes.HitData:Create(target, uuid, damage, handle, skill)
 
-		local listeners = SkillListeners[skill]
-		if listeners ~= nil then
-			RunSkillListenersForSkillEvent(source, skill, data, listeners, SKILL_STATE.HIT)
+		for callback in GetListeners(skill) do
+			local b,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.HIT, data)
+			if not b then
+				Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
+			end
 		end
-		listeners = Listeners.OnSkillHit
-		if listeners ~= nil then
-			RunSkillListenersForSkillEvent(source, skill, data, listeners, SKILL_STATE.HIT)
-		end
+		InvokeListenerCallbacks(Listeners.OnSkillHit, uuid, skill, SKILL_STATE.HIT, data)
 
 		if Features.ApplyBonusWeaponStatuses == true then
 			local canApplyStatuses = target ~= nil and Ext.StatGetAttribute(skill, "UseWeaponProperties") == "Yes"
 			if canApplyStatuses then
 				---@type EsvCharacter
-				local character = Ext.GetCharacter(source)
+				local character = Ext.GetCharacter(uuid)
 				for i,status in pairs(character:GetStatuses()) do
 					local potion = nil
 					if type(status) ~= "string" and status.StatusId ~= nil then
@@ -292,7 +277,7 @@ function OnSkillHit(source, skill, target, handle, damage)
 							if bonusWeapon ~= nil and bonusWeapon ~= "" then
 								local extraProps = GameHelpers.Stats.GetExtraProperties(bonusWeapon)
 								if extraProps and #extraProps > 0 then
-									GameHelpers.ApplyProperties(target, source, extraProps)
+									GameHelpers.ApplyProperties(target, uuid, extraProps)
 								end
 							end
 						end
@@ -315,14 +300,13 @@ Ext.RegisterListener("ProjectileHit", function (projectile, hitObject, position)
 			local target = hitObject ~= nil and hitObject.MyGuid or ""
 			---@type ProjectileHitData
 			local data = Classes.ProjectileHitData:Create(target, uuid, projectile, position, skill)
-			local listeners = SkillListeners[skill]
-			if listeners ~= nil then
-				RunSkillListenersForSkillEvent(uuid, skill, data, listeners, SKILL_STATE.PROJECTILEHIT)
+			for callback in GetListeners(skill) do
+				local b,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.PROJECTILEHIT, data)
+				if not b then
+					Ext.PrintError("[LeaderLib:SkillListeners:ProjectileHit] Error invoking function:\n", err)
+				end
 			end
-			listeners = Listeners.OnSkillHit
-			if listeners ~= nil then
-				RunSkillListenersForSkillEvent(uuid, skill, data, listeners, SKILL_STATE.PROJECTILEHIT)
-			end
+			InvokeListenerCallbacks(Listeners.OnSkillHit, uuid, skill, SKILL_STATE.PROJECTILEHIT, data)
 		end
 	end
 end)

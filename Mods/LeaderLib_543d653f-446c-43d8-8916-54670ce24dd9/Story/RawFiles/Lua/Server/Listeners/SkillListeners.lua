@@ -181,7 +181,9 @@ end)
 --When the active skill on hotBar or bottomBar_c is cleared
 Ext.RegisterNetListener("LeaderLib_OnActiveSkillCleared", function(cmd, uuid)
 	if not StringHelpers.IsNullOrEmpty(uuid) then
-		SkillSystem.CheckPreparingState(uuid)
+		StartOneshotTimer("Timers_LeaderLib_OnActiveSkillCleared", 50, function()
+			SkillSystem.CheckPreparingState(uuid)
+		end)
 	end
 end)
 

@@ -287,16 +287,23 @@ end)
 local onShowActiveSkillCallbacks = {}
 local lastActiveSkill = -1
 
+-- local function OnShowActiveSkill(ui, method, id)
+-- 	if id == -1 and lastActiveSkill ~= id then
+-- 		local uuid = Client:GetCharacter().MyGuid
+-- 		if not onShowActiveSkillCallbacks[uuid] then
+-- 			onShowActiveSkillCallbacks[uuid] = function()
+-- 				Ext.PostMessageToServer("LeaderLib_OnActiveSkillCleared", uuid)
+-- 				onShowActiveSkillCallbacks[uuid] = nil
+-- 			end
+-- 			UIExtensions.StartTimer("CheckActiveSkillCleared", 50, onShowActiveSkillCallbacks[uuid])
+-- 		end
+-- 	end
+-- 	lastActiveSkill = id
+-- end
+
 local function OnShowActiveSkill(ui, method, id)
 	if id == -1 and lastActiveSkill ~= id then
-		local uuid = Client:GetCharacter().MyGuid
-		if not onShowActiveSkillCallbacks[uuid] then
-			onShowActiveSkillCallbacks[uuid] = function()
-				Ext.PostMessageToServer("LeaderLib_OnActiveSkillCleared", uuid)
-				onShowActiveSkillCallbacks[uuid] = nil
-			end
-			UIExtensions.StartTimer("CheckActiveSkillCleared", 50, onShowActiveSkillCallbacks[uuid])
-		end
+		Ext.PostMessageToServer("LeaderLib_OnActiveSkillCleared", Client:GetCharacter().MyGuid)
 	end
 	lastActiveSkill = id
 end

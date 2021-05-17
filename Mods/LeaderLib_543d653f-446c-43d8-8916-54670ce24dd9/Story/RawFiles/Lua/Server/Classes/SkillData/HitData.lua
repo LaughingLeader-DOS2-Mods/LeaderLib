@@ -40,4 +40,8 @@ function HitData:Create(target, attacker, damage, handle, skill)
     return this
 end
 
+function HitData:PrintTargets()
+	fprint(LOGLEVEL.TRACE, "[HitData:%s] Target(%s)", self.Handle, self.Target)
+end
+
 Classes.HitData = HitData

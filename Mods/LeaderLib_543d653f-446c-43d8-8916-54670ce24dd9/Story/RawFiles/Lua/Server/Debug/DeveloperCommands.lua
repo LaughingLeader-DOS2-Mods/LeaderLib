@@ -895,20 +895,23 @@ Ext.RegisterConsoleCommand("lldebug_keepAlive", function(command)
 	end)
 end)
 
-Ext.RegisterOsirisListener("NRD_OnActionStateEnter", Data.OsirisEvents.NRD_OnActionStateEnter, "after", function(char, state)
-	print("NRD_OnActionStateEnter", char, state)
-	-- StartOneshotTimer(nil, 2000, function()
-	-- 	local action = NRD_CharacterGetCurrentAction(char)
-	-- 	fprint(LOGLEVEL.TRACE, "NRD_CharacterGetCurrentAction(%s) = (%s)", char, action)
-	-- end)
-end)
+-- Ext.RegisterOsirisListener("NRD_OnActionStateEnter", Data.OsirisEvents.NRD_OnActionStateEnter, "after", function(char, state)
+-- 	print("NRD_OnActionStateEnter", char, state)
+-- 	-- StartOneshotTimer(nil, 2000, function()
+-- 	-- 	local action = NRD_CharacterGetCurrentAction(char)
+-- 	-- 	fprint(LOGLEVEL.TRACE, "NRD_CharacterGetCurrentAction(%s) = (%s)", char, action)
+-- 	-- end)
+-- end)
 
-Ext.RegisterOsirisListener("NRD_OnActionStateExit", Data.OsirisEvents.NRD_OnActionStateExit, "after", function(char, state)
-	print("NRD_OnActionStateExit", char, state)
-end)
+-- Ext.RegisterOsirisListener("NRD_OnActionStateExit", Data.OsirisEvents.NRD_OnActionStateExit, "after", function(char, state)
+-- 	print("NRD_OnActionStateExit", char, state)
+-- end)
 
 RegisterSkillListener("All", function(skill, caster, state, data)
-	fprint(LOGLEVEL.TRACE, "[Skill(%s)] state(%s) caster(%s)", skill, state, caster)
+	fprint(LOGLEVEL.TRACE, "[Skill(%s)] state(%s) caster(%s) (%s)", skill, state, caster, data or "")
+	-- if data and data.PrintTargets then
+	-- 	data:PrintTargets()
+	-- end
 	if skill == "Tornado_EnemyAir" then
 		if state == SKILL_STATE.PREPARE then
 			ApplyStatus(caster, "HASTED", -1.0, 0, caster)

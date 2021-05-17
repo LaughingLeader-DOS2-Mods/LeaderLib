@@ -128,4 +128,8 @@ function SkillEventData:ToString()
 	return Ext.JsonStringify(printableData)
 end
 
+function SkillEventData:PrintTargets()
+	fprint(LOGLEVEL.TRACE, "[SkillEventData:%s] Objects(%s) Positions(%s)", self.Skill, self.TotalTargetObjects > 0 and Common.Dump(self.TargetObjects) or "", self.TotalTargetPositions > 0 and Common.Dump(self.TargetPositions) or "")
+end
+
 Classes.SkillEventData = SkillEventData

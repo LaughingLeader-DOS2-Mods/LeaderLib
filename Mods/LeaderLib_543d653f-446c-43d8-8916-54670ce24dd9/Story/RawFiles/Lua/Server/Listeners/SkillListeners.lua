@@ -1,9 +1,14 @@
+if SkillSystem == nil then
+	SkillSystem = {}
+end
+
 local ignoreSkill = {}
+local isPreparingSkill = {}
 
 --- Gets the base skill from a skill.
 --- @param skill string The skill entry to check.
 --- @return string The base skill, if any, otherwise the skill that was passed in.
-local function GetBaseSkill(skill, match)
+function SkillSystem.GetBaseSkill(skill, match)
 	if skill ~= nil then
 		local checkParent = true
 		if match ~= nil and match ~= "" and not string.find(skill, match) then
@@ -12,7 +17,7 @@ local function GetBaseSkill(skill, match)
 		if checkParent then
 			local skill = Ext.StatGetAttribute(skill, "Using")
 			if skill ~= nil then
-				return GetBaseSkill(skill, match)
+				return SkillSystem.GetBaseSkill(skill, match)
 			end
 		end
 	end
@@ -84,6 +89,7 @@ local function RemoveCharacterSkillData(uuid, skill)
 			end
 		end
 	end
+	isPreparingSkill[uuid] = nil
 end
 
 function StoreSkillEventData(char, skill, skillType, skillAbility, ...)
@@ -110,21 +116,79 @@ end
 -- GetBaseSkill(skill, "Enemy")
 
 function OnSkillPreparing(char, skillprototype)
+	char = StringHelpers.GetUUID(char)
 	local skill = string.gsub(skillprototype, "_%-?%d+$", "")
 	if CharacterIsControlled(char) == 0 then
 		Osi.LeaderLib_LuaSkillListeners_IgnorePrototype(char, skillprototype, skill)
 	end
+	local last = isPreparingSkill[char]
+	if last and last ~= skill then
+		SkillSystem.OnSkillPreparingCancel(char, "", last, true)
+	end
+	
 	for callback in GetListeners(skill) do
 		--PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillPreparing] char(",char,") skillprototype(",skillprototype,") skill(",skill,")")
-		local status,err = xpcall(callback, debug.traceback, skill, StringHelpers.GetUUID(char), SKILL_STATE.PREPARE)
+		local status,err = xpcall(callback, debug.traceback, skill, char, SKILL_STATE.PREPARE)
 		if not status then
 			Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
 		end
 	end
 
 	-- Clear previous data for this character in case SkillCast never fired (interrupted)
-	RemoveCharacterSkillData(StringHelpers.GetUUID(char))
+	RemoveCharacterSkillData(char)
+	isPreparingSkill[char] = skill
 end
+
+function SkillSystem.OnSkillPreparingCancel(char, skillprototype, skill, skipRemoval)
+	skill = skill or string.gsub(skillprototype, "_%-?%d+$", "")
+	for callback in GetListeners(skill) do
+		--PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillPreparing] char(",char,") skillprototype(",skillprototype,") skill(",skill,")")
+		local status,err = xpcall(callback, debug.traceback, skill, char, SKILL_STATE.CANCEL)
+		if not status then
+			Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
+		end
+	end
+
+	if skipRemoval ~= true then
+		RemoveCharacterSkillData(char)
+	end
+end
+
+function SkillSystem.CheckPreparingState(uuid)
+	local last = isPreparingSkill[uuid]
+	if last then
+		local action = NRD_CharacterGetCurrentAction(uuid) or ""
+		if StringHelpers.IsNullOrEmpty(action) or not string.find(action, "Skill") then
+			SkillSystem.OnSkillPreparingCancel(uuid, "", last)
+		else
+			local skillPrototype = NRD_ActionStateGetString(uuid, "SkillId")
+			local skill = string.gsub(skillPrototype, "_%-?%d+$", "")
+			if skill ~= last then
+				SkillSystem.OnSkillPreparingCancel(uuid, "", last)
+			end
+		end
+	end
+end
+
+--When the ActionCancel button is pressed.
+Ext.RegisterNetListener("LeaderLib_Input_OnActionCancel", function(cmd, uuid)
+	if not StringHelpers.IsNullOrEmpty(uuid) then
+		local action = NRD_CharacterGetCurrentAction(uuid) or ""
+		if action == "PrepareSkill" then
+			local skillPrototype = NRD_ActionStateGetString(uuid, "SkillId")
+			if not StringHelpers.IsNullOrEmpty(skillPrototype) then
+				SkillSystem.OnSkillPreparingCancel(uuid, skillPrototype)
+			end
+		end
+	end
+end)
+
+--When the active skill on hotBar or bottomBar_c is cleared
+Ext.RegisterNetListener("LeaderLib_OnActiveSkillCleared", function(cmd, uuid)
+	if not StringHelpers.IsNullOrEmpty(uuid) then
+		SkillSystem.CheckPreparingState(uuid)
+	end
+end)
 
 -- Fires when CharacterUsedSkill fires. This happens after all the target events.
 function OnSkillUsed(char, skill, ...)
@@ -266,7 +330,16 @@ Ext.RegisterListener("ProjectileHit", function (projectile, hitObject, position)
 	end
 end)
 
--- Ext.RegisterOsirisListener("NRD_OnActionStateEnter", 2, "after", function(char, state)
+-- Ext.RegisterOsirisListener("NRD_OnActionStateEnter", Data.OsirisEvents.NRD_OnActionStateEnter, "after", function(char, state)
+-- 	if state == "PrepareSkill" then
+-- 		local skillprototype = NRD_ActionStateGetString(char, "SkillId")
+-- 		if skillprototype ~= nil and skillprototype ~= "" then
+-- 			OnSkillPreparing(char, skillprototype)
+-- 		end
+-- 	end
+-- end)
+
+-- Ext.RegisterOsirisListener("NRD_OnActionStateExit", Data.OsirisEvents.NRD_OnActionStateExit, "after", function(char, state)
 -- 	if state == "PrepareSkill" then
 -- 		local skillprototype = NRD_ActionStateGetString(char, "SkillId")
 -- 		if skillprototype ~= nil and skillprototype ~= "" then

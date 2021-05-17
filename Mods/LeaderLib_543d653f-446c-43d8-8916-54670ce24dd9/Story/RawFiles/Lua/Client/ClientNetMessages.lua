@@ -282,3 +282,15 @@ Ext.RegisterNetListener("LeaderLib_Client_InvokeListeners", function(cmd, payloa
 		end
 	end
 end)
+
+Ext.RegisterUITypeInvokeListener(Data.UIType.hotBar, "showActiveSkill", function(ui, method, id)
+	if id == -1 then
+		Ext.PostMessageToServer("LeaderLib_OnActiveSkillCleared", Client:GetCharacter().MyGuid)
+	end
+end)
+
+Ext.RegisterUITypeInvokeListener(Data.UIType.bottomBar_c, "showActiveSkill", function(ui, method, id)
+	if id == -1 then
+		Ext.PostMessageToServer("LeaderLib_OnActiveSkillCleared", Client:GetCharacter().MyGuid)
+	end
+end)

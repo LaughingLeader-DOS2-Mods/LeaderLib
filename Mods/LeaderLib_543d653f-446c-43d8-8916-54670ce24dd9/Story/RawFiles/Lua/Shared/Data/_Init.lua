@@ -404,6 +404,7 @@ SKILL_STATE = {
 	CAST = "CAST",
 	HIT = "HIT",
 	PROJECTILEHIT = "PROJECTILEHIT",
+	CANCEL = "CANCEL" -- When preparing is stopped without casting
 }
 
 Ext.Require("Shared/Data/ResistancePenetrationTags.lua")
@@ -989,6 +990,7 @@ Data.OsirisEvents = {
 	NRD_ItemDeltaModIteratorEvent = 4,
 	NRD_Loop = 3,
 	NRD_OnActionStateEnter = 2,
+	NRD_OnActionStateExit = 2,
 	NRD_OnHeal = 4,
 	NRD_OnHit = 4,
 	NRD_OnPrepareHit = 4,

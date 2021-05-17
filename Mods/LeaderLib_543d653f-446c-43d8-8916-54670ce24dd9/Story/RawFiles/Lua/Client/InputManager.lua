@@ -12,6 +12,10 @@ Input = {
 	},
 	Vars = {
 		JustPressedThreshold = 750
+	},
+	--These controls don't fire events on pressed (only release), so the state change check will fail otherwise
+	SkipStateCheck = {
+		ContextMenu = true
 	}
 }
 
@@ -188,7 +192,7 @@ local function InvokeExtenderEventCallbacks(evt, eventName)
 	-- if Vars.DebugMode then
 	-- 	fprint(LOGLEVEL.DEFAULT, "[ExtInputEvent] (%s)[%s] Pressed(%s) Time(%s)", eventName, evt.EventId, evt.Press, Ext.MonotonicTime())
 	-- end
-	if Input.Keys[eventName] ~= nextState then
+	if Input.SkipStateCheck[eventName] or Input.Keys[eventName] ~= nextState then
 		Input.Keys[eventName] = nextState
 		if evt.Press and eventName == "ActionCancel" then
 			Ext.PostMessageToServer("LeaderLib_Input_OnActionCancel", Client:GetCharacter().MyGuid)
@@ -231,7 +235,7 @@ function Input.OnFlashEvent(ui, call, pressed, eventName, arrayIndex)
 	-- 	PrintLog("[Input.OnFlashEvent] eventName(%s) pressed(%s) index(%s)", eventName, pressed, arrayIndex)
 	-- end
 
-	if Input.Keys[eventName] ~= nextState then
+	if Input.SkipStateCheck[eventName] or Input.Keys[eventName] ~= nextState then
 		if pressed and eventName == "ActionCancel" then
 			Ext.PostMessageToServer("LeaderLib_OnActionCancel", Client:GetCharacter().MyGuid)
 		end

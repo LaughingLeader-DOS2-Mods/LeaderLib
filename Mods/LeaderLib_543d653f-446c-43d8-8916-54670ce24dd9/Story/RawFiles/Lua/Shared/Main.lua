@@ -82,11 +82,10 @@ end
 Ext.RegisterListener("SessionLoading", function()
 	for i,status in pairs(Ext.GetStatEntries("StatusData")) do
 		local statusType = Ext.StatGetAttribute(status, "StatusType")
-		if statusType ~= nil and statusType ~= "" then
+		if not StringHelpers.IsNullOrWhitespace(statusType) then
 			local statusTypeTable = StatusTypes[statusType]
 			if statusTypeTable ~= nil then
 				statusTypeTable[status] = true
-				--PrintDebug("[LeaderLib__Main.lua:LeaderLib_Shared_SessionLoading] Added Status ("..status..") to StatusType table ("..statusType..").")
 			end
 		end
 	end

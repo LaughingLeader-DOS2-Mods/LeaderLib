@@ -86,14 +86,11 @@ local function ClearStatusSource(target, status, source)
 end
 
 local function OnStatusApplied(target,status,source)
-	target = StringHelpers.GetUUID(target)
-	source = StringHelpers.GetUUID(source)
-	--PrintDebug("OnStatusApplied", target,status,source)
 	if Vars.LeaveActionData.Total > 0 then
 		local skill = Vars.LeaveActionData.Statuses[status]
-		if skill ~= nil then
+		if skill then
 			local turns = GetStatusTurns(target, status)
-			if turns == nil or turns == 0 then
+			if not turns or turns == 0 then
 				GameHelpers.ExplodeProjectile(source, target, skill)
 			elseif not StringHelpers.IsNullOrEmpty(source) then
 				TrackStatusSource(target, status, source)
@@ -112,7 +109,6 @@ local function OnStatusApplied(target,status,source)
 end
 
 local function OnStatusRemoved(target,status)
-	target = StringHelpers.GetUUID(target)
 	--PrintDebug("OnStatusRemoved", target,status)
 	local source = nil
 	if Vars.LeaveActionData.Total > 0 then
@@ -141,12 +137,15 @@ end
 
 local function ParseStatusApplied(target,status,source)
 	if not IgnoreStatus(status) then
+		target = StringHelpers.GetUUID(target)
+		source = StringHelpers.GetUUID(source)
 		OnStatusApplied(target, status, source)
 	end
 end
 
 local function ParseStatusRemoved(target,status)
 	if not IgnoreStatus(status) then
+		target = StringHelpers.GetUUID(target)
 		OnStatusRemoved(target, status)
 	end
 end

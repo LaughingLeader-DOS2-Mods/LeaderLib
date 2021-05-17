@@ -823,7 +823,7 @@ Ext.RegisterConsoleCommand("ap", function(command, amountStr)
 	CharacterAddActionPoints(host, amount)
 end)
 
-Ext.RegisterConsoleCommand("cellCheck", function(command, amountStr)
+Ext.RegisterConsoleCommand("lldebug_surfacetransform", function(command, amountStr)
 	local host = Ext.GetCharacter(CharacterGetHostCharacter())
 	local x,y,z = table.unpack(host.WorldPos)
 
@@ -862,4 +862,14 @@ Ext.RegisterConsoleCommand("cellCheck", function(command, amountStr)
 	-- 	surf.OwnerHandle = host.Handle
 	-- 	Ext.ExecuteSurfaceAction(surf)
 	-- end)
+end)
+
+Ext.RegisterConsoleCommand("lldebug_tornadotest", function(command)
+	local host = Ext.GetCharacter(CharacterGetHostCharacter())
+	local x,y,z = table.unpack(host.WorldPos)
+	local tx,ty,tz = table.unpack(GameHelpers.Math.ExtendPositionWithForwardDirection(host, 10.0, x, y, z))
+	local handle = NRD_CreateTornado(host.MyGuid, "Tornado_EnemyAir", x, y, z, tx, ty, tz)
+	StartOneshotTimer(nil, 20000, function()
+		NRD_GameActionDestroy(handle)
+	end)
 end)

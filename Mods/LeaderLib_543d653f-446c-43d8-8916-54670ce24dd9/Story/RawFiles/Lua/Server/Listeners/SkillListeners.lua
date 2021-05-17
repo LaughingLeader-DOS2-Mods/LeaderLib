@@ -191,15 +191,19 @@ Ext.RegisterNetListener("LeaderLib_OnActiveSkillCleared", function(cmd, uuid)
 end)
 
 -- Fires when CharacterUsedSkill fires. This happens after all the target events.
-function OnSkillUsed(char, skill, ...)
+function OnSkillUsed(char, skill, skillType, skillAbility)
 	if skill ~= nil then
 		Osi.LeaderLib_LuaSkillListeners_RemoveIgnoredPrototype(char, skill)
 	else
 		Osi.LeaderLib_LuaSkillListeners_RemoveIgnoredPrototype(char)
 	end
 	local uuid = StringHelpers.GetUUID(char)
-	local data = GetCharacterSkillData(skill, uuid)
-	if data ~= nil then
+	local data = GetCharacterSkillData(skill, uuid, true, skillType, skillAbility, true)
+	if data then
+		--Quake doesn't fire any target events, but works like a shout
+		if skillType == "quake" then
+			data:AddTargetPosition(GetPosition(char))
+		end
 		local status,err = nil,nil
 		for callback in GetListeners(skill) do
 			if Vars.DebugMode then
@@ -307,6 +311,53 @@ Ext.RegisterListener("ProjectileHit", function (projectile, hitObject, position)
 				end
 			end
 			InvokeListenerCallbacks(Listeners.OnSkillHit, uuid, skill, SKILL_STATE.PROJECTILEHIT, data)
+		end
+	end
+end)
+
+RegisterProtectedOsirisListener("SkillAdded", Data.OsirisEvents.SkillAdded, "after", function(uuid, skill, learned)
+	uuid = StringHelpers.GetUUID(uuid)
+	learned = learned == 1 and true or false 
+	for callback in GetListeners(skill) do
+		local b,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.LEARNED, learned)
+		if not b then
+			Ext.PrintError("[LeaderLib:SkillListeners:SkillAdded] Error invoking function:\n", err)
+		end
+	end
+end)
+
+RegisterProtectedOsirisListener("SkillActivated", Data.OsirisEvents.SkillActivated, "after", function(uuid, skill)
+	uuid = StringHelpers.GetUUID(uuid)
+	local learned = false
+	local character = Ext.GetCharacter(uuid)
+	if character then
+		local skillInfo = character:GetSkillInfo(skill)
+		if skillInfo then
+			learned = skillInfo.IsLearned or skillInfo.ZeroMemory
+		end
+	end
+	for callback in GetListeners(skill) do
+		local b,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.MEMORIZED, learned)
+		if not b then
+			Ext.PrintError("[LeaderLib:SkillListeners:SkillActivated] Error invoking function:\n", err)
+		end
+	end
+end)
+
+RegisterProtectedOsirisListener("SkillDeactivated", Data.OsirisEvents.SkillDeactivated, "after", function(uuid, skill)
+	uuid = StringHelpers.GetUUID(uuid)
+	local learned = false
+	local character = Ext.GetCharacter(uuid)
+	if character then
+		local skillInfo = character:GetSkillInfo(skill)
+		if skillInfo then
+			learned = skillInfo.IsLearned or skillInfo.ZeroMemory
+		end
+	end
+	for callback in GetListeners(skill) do
+		local b,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.UNMEMORIZED, learned)
+		if not b then
+			Ext.PrintError("[LeaderLib:SkillListeners:SkillDeactivated] Error invoking function:\n", err)
 		end
 	end
 end)

@@ -404,7 +404,10 @@ SKILL_STATE = {
 	CAST = "CAST",
 	HIT = "HIT",
 	PROJECTILEHIT = "PROJECTILEHIT",
-	CANCEL = "CANCEL" -- When preparing is stopped without casting
+	CANCEL = "CANCEL", -- When preparing is stopped without casting
+	LEARNED = "LEARNED",
+	MEMORIZED = "MEMORIZED",
+	UNMEMORIZED = "UNMEMORIZED",
 }
 
 Ext.Require("Shared/Data/ResistancePenetrationTags.lua")

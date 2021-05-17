@@ -283,14 +283,23 @@ Ext.RegisterNetListener("LeaderLib_Client_InvokeListeners", function(cmd, payloa
 	end
 end)
 
-Ext.RegisterUITypeInvokeListener(Data.UIType.hotBar, "showActiveSkill", function(ui, method, id)
-	if id == -1 then
-		Ext.PostMessageToServer("LeaderLib_OnActiveSkillCleared", Client:GetCharacter().MyGuid)
-	end
-end)
 
-Ext.RegisterUITypeInvokeListener(Data.UIType.bottomBar_c, "showActiveSkill", function(ui, method, id)
-	if id == -1 then
-		Ext.PostMessageToServer("LeaderLib_OnActiveSkillCleared", Client:GetCharacter().MyGuid)
+local onShowActiveSkillCallbacks = {}
+local lastActiveSkill = -1
+
+local function OnShowActiveSkill(ui, method, id)
+	if id == -1 and lastActiveSkill ~= id then
+		local uuid = Client:GetCharacter().MyGuid
+		if not onShowActiveSkillCallbacks[uuid] then
+			onShowActiveSkillCallbacks[uuid] = function()
+				Ext.PostMessageToServer("LeaderLib_OnActiveSkillCleared", uuid)
+				onShowActiveSkillCallbacks[uuid] = nil
+			end
+			UIExtensions.StartTimer("CheckActiveSkillCleared", 50, onShowActiveSkillCallbacks[uuid])
+		end
 	end
-end)
+	lastActiveSkill = id
+end
+
+Ext.RegisterUITypeInvokeListener(Data.UIType.hotBar, "showActiveSkill", OnShowActiveSkill)
+Ext.RegisterUITypeInvokeListener(Data.UIType.bottomBar_c, "showActiveSkill", OnShowActiveSkill)

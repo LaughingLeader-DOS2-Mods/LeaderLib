@@ -907,11 +907,13 @@ Ext.RegisterOsirisListener("NRD_OnActionStateExit", Data.OsirisEvents.NRD_OnActi
 	print("NRD_OnActionStateExit", char, state)
 end)
 
-RegisterSkillListener("Tornado_EnemyAir", function(skill, caster, state, data)
-	print(skill, caster, state)
-	if state == SKILL_STATE.PREPARE then
-		ApplyStatus(caster, "HASTED", -1.0, 0, caster)
-	elseif state == SKILL_STATE.CANCEL or state == SKILL_STATE.CAST then
-		RemoveStatus(caster, "HASTED")
+RegisterSkillListener("All", function(skill, caster, state, data)
+	fprint(LOGLEVEL.TRACE, "[Skill(%s)] state(%s) caster(%s)", skill, state, caster)
+	if skill == "Tornado_EnemyAir" then
+		if state == SKILL_STATE.PREPARE then
+			ApplyStatus(caster, "HASTED", -1.0, 0, caster)
+		elseif state == SKILL_STATE.CANCEL or state == SKILL_STATE.CAST then
+			RemoveStatus(caster, "HASTED")
+		end
 	end
 end)

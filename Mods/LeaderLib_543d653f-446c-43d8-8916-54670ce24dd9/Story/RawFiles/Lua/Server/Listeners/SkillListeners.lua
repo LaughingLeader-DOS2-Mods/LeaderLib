@@ -31,7 +31,7 @@ local function GetListeners(skill)
 		listeners = SkillListeners["All"] 
 		parsingAllTable = true
 	end
-	if listeners ~= nil then
+	if listeners then
 		local i = 0
 		local count = #listeners
 		return function ()
@@ -158,14 +158,9 @@ function SkillSystem.CheckPreparingState(uuid)
 	local last = isPreparingSkill[uuid]
 	if last then
 		local action = NRD_CharacterGetCurrentAction(uuid) or ""
-		if StringHelpers.IsNullOrEmpty(action) or not string.find(action, "Skill") then
+		local skill = string.gsub(NRD_ActionStateGetString(uuid, "SkillId") or "", "_%-?%d+$", "")
+		if StringHelpers.IsNullOrEmpty(skill) or (action ~= "PrepareSkill" and action ~= "UseSkill") or skill ~= last then
 			SkillSystem.OnSkillPreparingCancel(uuid, "", last)
-		else
-			local skillPrototype = NRD_ActionStateGetString(uuid, "SkillId")
-			local skill = string.gsub(skillPrototype, "_%-?%d+$", "")
-			if skill ~= last then
-				SkillSystem.OnSkillPreparingCancel(uuid, "", last)
-			end
 		end
 	end
 end

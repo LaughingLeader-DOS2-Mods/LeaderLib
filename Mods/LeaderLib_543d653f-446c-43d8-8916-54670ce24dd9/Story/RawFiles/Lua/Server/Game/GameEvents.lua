@@ -15,11 +15,11 @@ local function OverrideLeaveActionStatuses()
 		for i,stat in pairs(Ext.GetStatEntries("StatusData")) do
 			if CanOverrideLeaveActionStatus(stat) then
 				local leaveActionSkill = Ext.StatGetAttribute(stat, "LeaveAction")
-				if leaveActionSkill == "" then
+				if StringHelpers.IsNullOrWhitespace(leaveActionSkill) then
 					local savedSkill = Osi.DB_LeaderLib_LeaveAction_StatusToSkill:Get(stat, nil)
-					if savedSkill ~= nil and #savedSkill > 0 then
+					if savedSkill and #savedSkill > 0 then
 						leaveActionSkill = savedSkill[1][2]
-						if leaveActionSkill ~= nil and leaveActionSkill ~= "" then
+						if not StringHelpers.IsNullOrWhitespace(leaveActionSkill) then
 							Vars.LeaveActionData.Statuses[stat] = leaveActionSkill
 							Vars.LeaveActionData.Total = Vars.LeaveActionData.Total + 1
 						end
@@ -27,6 +27,8 @@ local function OverrideLeaveActionStatuses()
 				else
 					Vars.LeaveActionData.Statuses[stat] = leaveActionSkill
 					Vars.LeaveActionData.Total = Vars.LeaveActionData.Total + 1
+					Osi.DB_LeaderLib_LeaveAction_StatusToSkill:Delete(stat, nil)
+					Osi.DB_LeaderLib_LeaveAction_StatusToSkill(stat, leaveActionSkill)
 					local statObj = Ext.GetStat(stat)
 					statObj.LeaveAction = ""
 					Ext.SyncStat(stat, false)

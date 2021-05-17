@@ -1,4 +1,5 @@
 Data.Input = {
+	["Action1"] = 1,
 	["FlashLeftMouse"] = {1, 4},
 	["FlashRightMouse"] = 2,
 	["FlashMiddleMouse"] = 3,
@@ -270,7 +271,7 @@ Data.Input = {
 	["UISend"] = 386
 }
 Data.InputEnum = {
-	[1] = "FlashLeftMouse",
+	[1] = {"FlashLeftMouse", "Action1"},
 	[2] = "FlashRightMouse",
 	[3] = "FlashMiddleMouse",
 	[4] = "FlashLeftMouse",

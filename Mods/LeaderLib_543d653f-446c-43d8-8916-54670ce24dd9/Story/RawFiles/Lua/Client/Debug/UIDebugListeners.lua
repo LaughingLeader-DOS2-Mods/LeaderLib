@@ -393,7 +393,7 @@ local playerInfo = UIListenerWrapper:Create(Data.UIType.playerInfo, {
 	"updateInfos",
 	--"updateStatuses",
 })
-playerInfo.Enabled = false
+playerInfo.Enabled = true
 
 local tooltipMain = UIListenerWrapper:Create(Data.UIType.tooltip, {
 	"setTooltipSize",

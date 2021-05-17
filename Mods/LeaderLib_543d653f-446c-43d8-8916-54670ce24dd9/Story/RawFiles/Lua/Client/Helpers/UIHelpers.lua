@@ -1,4 +1,4 @@
-local function GetStatusVisibility(statusId, allVisible, whitelist, blacklist)
+local function GetStatusVisibility(statusId, whitelist,blacklist,allVisible)
 	local blacklisted = blacklist[statusId] == true
 	local whitelisted = whitelist[statusId] == true
 	if allVisible then
@@ -14,142 +14,7 @@ local function GetStatusVisibility(statusId, allVisible, whitelist, blacklist)
 	end
 end
 
-local function SetStatusesVisibility(ui, statusHolder_mc, array, allVisible, whitelist, blacklist)
-	local makeParentVisible = false
-	local changedVisibility = true
-	for i=0,#array do
-		local statusEntry = array[i]
-		if statusEntry then
-			local statusHandle = Ext.DoubleToHandle(statusEntry.id)
-			local ownerHandle = Ext.DoubleToHandle(statusEntry.owner)
-			local player = Ext.GetCharacter(ownerHandle)
-			local status = Ext.GetStatus(ownerHandle, statusHandle)
-			if status then
-				local visible = GetStatusVisibility(status.StatusId, allVisible, blacklist, whitelist)
-				if visible then
-					if not allVisible then
-						makeParentVisible = true
-					end
-					statusEntry.visible = true
-					statusEntry.alive = true
-				else
-					statusEntry.visible = false
-					statusEntry.alive = false
-				end
-				--fprint("[%s] Owner(%s) Status(%s) Blacklisted(%s) Whitelisted(%s) Visible(%s)", i, player.Stats.Name, status.StatusId, blacklisted, whitelisted, statusEntry.visible)
-			end
-		end
-	end
-	if makeParentVisible then
-		statusHolder_mc.visible = true
-	end
-	return changedVisibility
-end
-
----Checks if the parent statusHolder_mc should be visible.
-local function CheckStatusEntries(ui, statusHolder_mc, array, allVisible, whitelist, blacklist)
-	for i=0,#array do
-		local statusEntry = array[i]
-		if statusEntry then
-			local statusHandle = Ext.DoubleToHandle(statusEntry.id)
-			local ownerHandle = Ext.DoubleToHandle(statusEntry.owner)
-			local player = Ext.GetCharacter(ownerHandle)
-			local status = Ext.GetStatus(ownerHandle, statusHandle)
-			if status then
-				local visible = GetStatusVisibility(status.StatusId, allVisible, blacklist, whitelist)
-				if visible then
-					if not allVisible then
-						return true
-					end
-				end
-			end
-		end
-	end
-	return false
-end
-
-function UI.ToggleStatusVisibility(allVisible)
-	local whitelist = {}
-	local blacklist = {}
-
-	if allVisible then
-		for i,v in pairs(GameSettings.Settings.Client.StatusOptions.Blacklist) do
-			if type(i) == "string" then
-				blacklist[i] = v
-			elseif type(v) == "string" then
-				blacklist[v] = true
-			end
-		end
-	elseif allVisible == false then
-		for i,v in pairs(GameSettings.Settings.Client.StatusOptions.Whitelist) do
-			if type(i) == "string" then
-				whitelist[i] = v
-			elseif type(v) == "string" then
-				whitelist[v] = true
-			end
-		end
-	end
-
-	if allVisible == nil then
-		allVisible = true
-	end
-
-	if Vars.DebugMode then
-		if allVisible then
-			blacklist["LEADERSHIP"] = true
-			blacklist["HASTED"] = true
-		else
-			whitelist["LEADERSHIP"] = true
-			whitelist["HASTED"] = true
-		end
-	end
-
-	local ui = not Vars.ControllerEnabled and Ext.GetUIByType(Data.UIType.playerInfo) or Ext.GetUIByType(Data.UIType.playerInfo_c)
-	if ui then
-		local main = ui:GetRoot()
-		if main then
-			local b,err = xpcall(function()
-				for i=0,#main.player_array do
-					local player_mc = main.player_array[i]
-					if player_mc and player_mc.statusHolder_mc then
-						player_mc.statusHolder_mc.allVisible = allVisible
-						if not allVisible and #whitelist > 0 and CheckStatusEntries(ui, player_mc.statusHolder_mc, player_mc.status_array, allVisible, whitelist, blacklist) then
-							player_mc.statusHolder_mc.visible = true
-						end
-						if player_mc.summonList then
-							for j=0,#player_mc.summonList.content_array do
-								local summon_mc = player_mc.summonList.content_array[j]
-								if summon_mc then
-									summon_mc.statusHolder_mc.allVisible = allVisible
-									if not allVisible and #whitelist > 0 and CheckStatusEntries(ui, summon_mc.statusHolder_mc, summon_mc.status_array, allVisible, whitelist, blacklist) then
-										summon_mc.statusHolder_mc.visible = true
-									end
-								end
-							end
-						end
-					end
-				end
-			end, debug.traceback)
-			if not b then
-				Ext.PrintError(err)
-			end
-		end
-	end
-end
-
-Ext.RegisterNetListener("LeaderLib_UI_SetStatusMCVisibility", function(cmd, payload)
-	UI.ToggleStatusVisibility(payload ~= "false")
-end)
-
-Ext.RegisterNetListener("LeaderLib_UI_RefreshStatusMCVisibility", function(cmd, payload)
-	UI.ToggleStatusVisibility(not GameSettings.Settings.Client.StatusOptions.HideAll)
-end)
-
-local function OnUpdateStatuses(ui, method, addIfNotExists, cleanupAll)
-	if cleanupAll then
-		return
-	end
-		
+local function GetStatusVisibilityLists()
 	local allVisible = not GameSettings.Settings.Client.StatusOptions.HideAll
 	local whitelist = {}
 	local blacklist = {}
@@ -171,58 +36,299 @@ local function OnUpdateStatuses(ui, method, addIfNotExists, cleanupAll)
 			end
 		end
 	end
+	return whitelist,blacklist,allVisible
+end
 
-	if Vars.DebugMode then
-		if allVisible then
-			blacklist["LEADERSHIP"] = true
-			--blacklist["HASTED"] = true
-		else
-			--whitelist["LEADERSHIP"] = true
-			whitelist["HASTED"] = true
+local function UpdateStatusVisibility(array, whitelist, blacklist, allVisible)
+	if not array then
+		return false
+	end
+	local needsUpdate = false
+	for i=0,#array do
+		local statusEntry = array[i]
+		if statusEntry then
+			local statusHandle = Ext.DoubleToHandle(statusEntry.id)
+			local ownerHandle = Ext.DoubleToHandle(statusEntry.owner)
+			local status = Ext.GetStatus(ownerHandle, statusHandle)
+			if status then
+				local visible = GetStatusVisibility(status.StatusId, whitelist,blacklist,allVisible)
+				if statusEntry.visible ~= visible then
+					needsUpdate = true
+				end
+				statusEntry.alive = visible
+				statusEntry.visible = visible
+			end
+		end
+	end
+	return needsUpdate
+end
+
+local PlayerInfo = {}
+PlayerInfo.__index = PlayerInfo
+
+function PlayerInfo:Get()
+	local ui = not Vars.ControllerEnabled and Ext.GetUIByType(Data.UIType.playerInfo) or Ext.GetUIByType(Data.UIType.playerInfo_c)
+	if ui then
+		return ui:GetRoot()
+	end
+	return nil
+end
+
+function PlayerInfo:AddStatus(directly, characterDouble, statusDouble, displayName, turns, cooldown, iconId)
+	local this = self:Get()
+	if directly then
+		this.setStatus(true, characterDouble, statusDouble, iconId or -1, turns, cooldown or 0, displayName)
+	else
+		local index = #this.status_array
+		this.status_array[index] = characterDouble
+		this.status_array[index+1] = statusDouble
+		this.status_array[index+2] = iconId
+		this.status_array[index+3] = turns
+		this.status_array[index+4] = cooldown
+		this.status_array[index+5] = displayName
+	end
+end
+
+---@return FlashObject
+function PlayerInfo:GetCharacterMovieClips()
+	local this = self:Get()
+	local characters = {}
+	for i=0,#this.player_array do
+		local player_mc = this.player_array[i]
+		if player_mc then
+			characters[#characters+1] = player_mc
+			if player_mc.summonList then
+				for j=0,#player_mc.summonList.content_array do
+					local summon_mc = player_mc.summonList.content_array[j]
+					if summon_mc then
+						characters[#characters+1] = summon_mc
+					end
+				end
+			end
 		end
 	end
 
-	local main = ui:GetRoot()
-	local status_array = main.status_array
+	local i = 0
+	local count = #this.characters
+	return function ()
+		i = i + 1
+		if i <= count then
+			return this.characters[i-1]
+		end
+	end
+end
+
+function PlayerInfo:GetPlayerOrSummonByHandle(doubleHandle, this)
+	this = this or self:Get()
+	for i=0,#this.player_array do
+		local entry = this.player_array[i]
+		if entry then
+			if entry.characterHandle == doubleHandle then
+				return entry
+			end
+			if entry.summonList then
+				for j=0,#entry.summonList.content_array do
+					local summon_mc = entry.summonList.content_array[j]
+					if summon_mc and summon_mc.characterHandle == doubleHandle then
+						return summon_mc
+					end
+				end
+			end
+		end
+	end
+	return nil
+end
+
+function PlayerInfo:UpdateStatusVisibility()
+	local this = self:Get()
+	local whitelist,blacklist,allVisible = GetStatusVisibilityLists()
+	local updated = false
+	for mc in self:GetCharacterMovieClips() do
+		if UpdateStatusVisibility(mc.status_array, whitelist, blacklist, allVisible) then
+			this.cleanupStatuses(mc.characterHandle)
+			updated = true
+		end
+	end
+	return updated
+end
+
+local function RequestPlayerInfoRefresh()
+	Ext.PostMessageToServer("LeaderLib_UI_Server_RefreshPlayerInfo", Client:GetCharacter().MyGuid)
+end
+
+local function OnUpdateStatuses(ui, method, addIfNotExists, cleanupAll)
+	local this = ui:GetRoot()
+	local status_array = this.status_array
+	local length = #status_array
+	if length > 0 then
+		local whitelist,blacklist,allVisible = GetStatusVisibilityLists()
+		for i=0,length,6 do
+			local ownerDouble = status_array[i]
+			if ownerDouble then
+				print(this.getPlayerOrSummonByHandle(ownerDouble))
+				-- print(i, status_array[i])
+				-- print(i+1, status_array[i+1])
+				-- print(i+2, status_array[i+2])
+				-- print(i+3, status_array[i+3])
+				-- print(i+4, status_array[i+4])
+				-- print(i+5, status_array[i+5])
+				local ownerHandle = Ext.DoubleToHandle(ownerDouble)
+				if ownerHandle then
+					local statusDouble = status_array[i+1]
+					local statusHandle = Ext.DoubleToHandle(statusDouble)
+					local status = Ext.GetStatus(ownerHandle, statusHandle)
+					if status then
+						local visible = GetStatusVisibility(status.StatusId, whitelist,blacklist,allVisible)
+						local owner_mc = PlayerInfo:GetPlayerOrSummonByHandle(ownerDouble, this)
+						local entryExists = false
+						local status_mc = nil
+						if owner_mc then
+							for k=0,#owner_mc.status_array do
+								status_mc = owner_mc.status_array[k]
+								if status_mc and status_mc.id == statusDouble then
+									status_mc.visible = visible
+									status_mc.alive = visible
+									entryExists = true
+									break
+								end
+							end
+						end
+						if not entryExists and not visible then
+							status_array[i] = ""
+							status_array[i+1] = ""
+						end
+					end
+				end
+			end
+		end
+	end
+end
+
+Ext.RegisterUITypeInvokeListener(Data.UIType.playerInfo, "updateStatuses", OnUpdateStatuses)
+Ext.RegisterUITypeInvokeListener(Data.UIType.playerInfo_c, "updateStatuses", OnUpdateStatuses)
+
+local lastHealthbarOwnerDouble = nil
+
+local function RequestHealthbarRefresh()
+	if not lastHealthbarOwnerDouble then
+		return
+	end
+	local ui = Ext.GetUIByType(Data.UIType.enemyHealthBar)
+	if ui then
+		local character = Ext.GetCharacter(Ext.DoubleToHandle(lastHealthbarOwnerDouble))
+		if character then
+			Ext.PostMessageToServer("LeaderLib_UI_Server_RefreshPlayerInfo", character.MyGuid)
+		end
+	end
+end
+
+---@param ui UIObject
+local function UpdateHealthbarStatusVisibility(ui, this, whitelist,blacklist,allVisible)
+	if not lastHealthbarOwnerDouble then
+		return
+	end
+	ui = ui or Ext.GetUIByType(Data.UIType.enemyHealthBar)
+	if ui then
+		this = this or ui:GetRoot()
+		if this then
+			local characterHandle = lastHealthbarOwnerDouble and Ext.DoubleToHandle(lastHealthbarOwnerDouble) or nil
+			if not characterHandle then
+				return
+			end
+
+			if not whitelist then
+				whitelist,blacklist,allVisible = GetStatusVisibilityLists()
+			end
+
+			local cleanup = false
+			for i=0,this.statusList.length do
+				local status_mc = this.statusList.content_array[i]
+				if status_mc then
+					local statusHandle = Ext.DoubleToHandle(status_mc.id)
+					local status = Ext.GetStatus(characterHandle, statusHandle)
+					if status then
+						local visible = GetStatusVisibility(status.StatusId, whitelist,blacklist,allVisible)
+						if status_mc.visible ~= visible then
+							cleanup = true
+						end
+						status_mc.alive = visible
+						status_mc.visible = visible
+					end
+				end
+			end
+	
+			if cleanup then
+				this.cleanupStatuses()
+			end
+
+			this.statusList.visible = true
+			return cleanup
+		end
+	end
+	return false
+end
+
+local function OnUpdateStatuses_Healthbar_Delay()
+	UpdateHealthbarStatusVisibility()
+end
+
+---@param ui UIObject
+local function OnUpdateStatuses_Healthbar(ui, method, addIfNotExists)
+	local this = ui:GetRoot()
+
+	local whitelist,blacklist,allVisible = GetStatusVisibilityLists()
+	lastHealthbarOwnerDouble = this.status_array[0]
+	if addIfNotExists then
+		--UIExtensions.StartTimer("OnUpdateStatuses_Healthbar_Delay", 1, OnUpdateStatuses_Healthbar_Delay)
+		UpdateHealthbarStatusVisibility(ui, this, whitelist,blacklist,allVisible)
+	end
+	
+	local needsUpdate = false
+	local status_array = this.status_array
 	for i=0,#status_array,6 do
+		local ownerDouble = status_array[i]
+		if ownerDouble then
+			local ownerHandle = Ext.DoubleToHandle(ownerDouble)
+			if ownerHandle then
+				local statusHandle = Ext.DoubleToHandle(status_array[i+1])
+				local status = Ext.GetStatus(ownerHandle, statusHandle)
+				if status then
+					if not GetStatusVisibility(status.StatusId, whitelist,blacklist,allVisible) then
+						needsUpdate = true
+						--ui:SetValue("status_array", false, i+1)
+						--status_array[i+1] = 0
+						-- status_array[i+2] = -1
+						-- status_array[i+3] = 0
+						-- status_array[i+4] = 0
+						-- status_array[i+4] = 0
+						-- status_array[i+5] = ""
+					end
+				end
+			end
+		end
 		-- print(i, status_array[i])
 		-- print(i+1, status_array[i+1])
 		-- print(i+2, status_array[i+2])
 		-- print(i+3, status_array[i+3])
 		-- print(i+4, status_array[i+4])
 		-- print(i+5, status_array[i+5])
-		--[[
-			val4 = Number(this.status_array[val3]);
-			val5 = Number(this.status_array[val3 + 1]);
-			val6 = Number(this.status_array[val3 + 2]);
-			val7 = Number(this.status_array[val3 + 3]);
-			val8 = Number(this.status_array[val3 + 4]);
-			val9 = String(this.status_array[val3 + 5]);
-			this.setStatus(param1,val4,val5,val6,val7,val8,val9);
-		]]
-		local ownerDouble = status_array[i]
-		if ownerDouble then
-			local ownerHandle = Ext.DoubleToHandle(ownerDouble)
-			if ownerHandle then
-				local statusHandle = Ext.DoubleToHandle(status_array[i+1])
-				--local iconId = status_array[i+2]
-				--local turns = status_array[i+3]
-				--local cooldown = status_array[i+4]
-				--local tooltip = status_array[i+5]
-		
-				local status = Ext.GetStatus(ownerHandle, statusHandle)
-				if status then
-					if not GetStatusVisibility(status.StatusId, allVisible, whitelist, blacklist) then
-						status_array[i] = ""
-					end
-				end
-			end
-		end
 	end
-	-- UIExtensions.StartTimer("LeaderLib_playerInfo_updateStatuses", 10, function()
-	-- 	UI.ToggleStatusVisibility(not GameSettings.Settings.Client.StatusOptions.HideAll)
-	-- end)
+
+	if needsUpdate then
+		this.statusList.visible = false
+		UIExtensions.StartTimer("OnUpdateStatuses_Healthbar_Delay", 1, OnUpdateStatuses_Healthbar_Delay)
+	end
+end
+Ext.RegisterUITypeInvokeListener(Data.UIType.enemyHealthBar, "updateStatuses", OnUpdateStatuses_Healthbar)
+Ext.RegisterUITypeInvokeListener(Data.UIType.enemyHealthBar, "hide", function(ui, method)
+	lastHealthbarOwnerDouble = nil
+end)
+
+function UI.RefreshStatusVisibility()
+	RequestPlayerInfoRefresh()
+	RequestHealthbarRefresh()
 end
 
-Ext.RegisterUITypeInvokeListener(Data.UIType.playerInfo, "updateStatuses", OnUpdateStatuses)
-Ext.RegisterUITypeInvokeListener(Data.UIType.playerInfo_c, "updateStatuses", OnUpdateStatuses)
+Ext.RegisterNetListener("LeaderLib_UI_UpdateStatusVisibility", function(cmd, payload)
+	UI.RefreshStatusVisibility()
+end)

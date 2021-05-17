@@ -189,8 +189,14 @@ end)
 function GameHelpers.UI.SetStatusVisibility(visible, client)
 	visible = visible ~= nil and tostring(visible) or tostring(GameSettings.Settings.Client.HideStatuses)
 	client = client or CharacterGetHostCharacter()
-	Ext.PostMessageToClient(client, "LeaderLib_UI_SetStatusMCVisibility", visible)
+	Ext.PostMessageToClient(client, "LeaderLib_UI_UpdateStatusVisibility", visible)
 end
+
+Ext.RegisterNetListener("LeaderLib_UI_Server_RefreshPlayerInfo", function(cmd, uuid)
+	if ObjectExists(uuid) == 1 then
+		ApplyStatus(uuid, "LEADERLIB_RECALC", 0.0, 1, uuid)
+	end
+end)
 
 --[[
 function GameHelpers.UI.UpdateStatusTurns(target, statusid)

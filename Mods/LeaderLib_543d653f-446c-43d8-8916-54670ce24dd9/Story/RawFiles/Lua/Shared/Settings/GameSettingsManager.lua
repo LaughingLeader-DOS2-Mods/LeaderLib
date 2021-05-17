@@ -158,18 +158,23 @@ if Ext.IsServer() then
 		GameSettings:LoadString(gameSettingsStr)
 		ApplyGameSettings()
 	end)
+end
 
-	Ext.RegisterListener("GameStateChanged", function(from, to)
+Ext.RegisterListener("GameStateChanged", function(from, to)
+	local justUnpaused = to == "Running" and from == "Paused"
+	if Ext.IsServer() then
 		if Vars.DebugMode then
 			PrintLog("[GameSettingsManager:GameStateChanged] (%s => %s) applyGameSettingsOnRunning(%s) syncGameSettingsOnRunning(%s)", from, to, applyGameSettingsOnRunning, syncGameSettingsOnRunning)
 		end
-		if to == "Running" and from == "Paused" then
+		if justUnpaused then
 			if applyGameSettingsOnRunning or syncGameSettingsOnRunning then
 				ApplyGameSettings(syncGameSettingsOnRunning)
 			end
 		end
-	end)
-end
+	elseif justUnpaused then
+		GameSettings:Apply()
+	end
+end)
 
 --Ext.RegisterListener("ModuleLoadStarted", LoadSettings)
 

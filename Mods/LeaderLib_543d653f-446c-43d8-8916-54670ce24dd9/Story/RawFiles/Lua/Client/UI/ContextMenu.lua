@@ -50,6 +50,7 @@ ContextMenu.Actions[ACTIONS.HideStatus] = function(self, ui, id, actionID, handl
 			fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Hiding status %s from the UI.", self.ContextStatus.StatusId)
 			table.insert(GameSettings.Settings.Client.StatusOptions.Blacklist, self.ContextStatus.StatusId)
 			SaveGameSettings()
+			UI.RefreshStatusVisibility()
 		else
 			fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Skipping hiding status %s from the UI.", self.ContextStatus.StatusId)
 		end
@@ -73,6 +74,7 @@ ContextMenu.Actions[ACTIONS.UnhideStatus] = function(self, ui, id, actionID, han
 			fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Unhiding status %s from the UI.", self.ContextStatus.StatusId)
 			GameSettings.Settings.Client.StatusOptions.Blacklist = blacklist
 			SaveGameSettings()
+			UI.RefreshStatusVisibility()
 		else
 			fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Skipping unhiding status %s from the UI.", self.ContextStatus.StatusId)
 		end
@@ -150,7 +152,7 @@ local function GetShouldOpen(self,x,y)
 end
 
 function ContextMenu:OnRightClick(eventName, pressed, id, inputMap, controllerEnabled)
-	fprint(LOGLEVEL.DEFAULT, "[ContextMenu:OnRightClick] IsOpening(%s) Visible(%s) pressed(%s)", self.IsOpening, self.Visible, pressed)
+	--fprint(LOGLEVEL.DEFAULT, "[ContextMenu:OnRightClick] IsOpening(%s) Visible(%s) pressed(%s)", self.IsOpening, self.Visible, pressed)
 	if not pressed and not self.IsOpening then
 		local x,y = UIExtensions.GetMousePosition()
 		local openRequested = GetShouldOpen(self, x, y)

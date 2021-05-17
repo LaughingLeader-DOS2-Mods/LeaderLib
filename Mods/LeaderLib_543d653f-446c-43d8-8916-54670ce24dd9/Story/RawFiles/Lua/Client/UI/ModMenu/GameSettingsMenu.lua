@@ -128,7 +128,7 @@ local function AddButtonToArray(id, label, amount, soundUp, enabled, tooltip)
 	array[index+3] = amount
 	array[index+4] = soundUp or ""
 	array[index+5] = enabled
-	array[index+6] = tooltip
+	array[index+6] = tooltip or ""
 	index = index+7
 end
 

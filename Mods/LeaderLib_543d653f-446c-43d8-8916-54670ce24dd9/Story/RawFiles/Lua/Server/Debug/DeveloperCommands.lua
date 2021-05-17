@@ -908,7 +908,7 @@ end)
 -- end)
 
 RegisterSkillListener("All", function(skill, caster, state, data)
-	fprint(LOGLEVEL.TRACE, "[Skill(%s)] state(%s) caster(%s) (%s)", skill, state, caster, data or "")
+	fprint(LOGLEVEL.TRACE, "[Skill(%s)] state(%s) caster(%s) (%s)", skill, state, caster, data == nil and "" or data)
 	-- if data and data.PrintTargets then
 	-- 	data:PrintTargets()
 	-- end

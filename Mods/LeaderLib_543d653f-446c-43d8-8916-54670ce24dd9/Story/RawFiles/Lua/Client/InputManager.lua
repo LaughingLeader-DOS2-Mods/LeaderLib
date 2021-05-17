@@ -180,22 +180,38 @@ function Input.GetKeyState(name, t)
 	return KEYSTATE.UNREGISTERED
 end
 
----@param evt InputEvent
-Ext.RegisterListener("InputEvent", function(evt)
-	local eventName = Data.InputEnum[evt.EventId]
-	if eventName then
-		Input.Keys[eventName] = evt.Press and KEYSTATE.DOWN or KEYSTATE.RELEASED
-		if evt.Press then
-			lastPressedTimes[eventName] = Ext.MonotonicTime()
+local function InvokeExtenderEventCallbacks(evt, eventName)
+	local nextState = evt.Press and KEYSTATE.DOWN or KEYSTATE.RELEASED
+	if evt.Press then
+		lastPressedTimes[eventName] = Ext.MonotonicTime()
+	end
+	-- if Vars.DebugMode then
+	-- 	fprint(LOGLEVEL.DEFAULT, "[ExtInputEvent] (%s)[%s] Pressed(%s) Time(%s)", eventName, evt.EventId, evt.Press, Ext.MonotonicTime())
+	-- end
+	if Input.Keys[eventName] ~= nextState then
+		Input.Keys[eventName] = nextState
+		if evt.Press and eventName == "ActionCancel" then
+			Ext.PostMessageToServer("LeaderLib_Input_OnActionCancel", Client:GetCharacter().MyGuid)
 		end
-		-- if Vars.DebugMode then
-		-- 	fprint(LOGLEVEL.DEFAULT, "[ExtInputEvent] (%s)[%s] Pressed(%s) Time(%s)", eventName, evt.EventId, evt.Press, Ext.MonotonicTime())
-		-- end
 		InvokeListenerCallbacks(Listeners.InputEvent, eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled)
 		InvokeListenerCallbacks(Listeners.NamedInputEvent[eventName], eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled)
 
 		if not UIExtensions.MouseEnabled and evt.Press and eventName == "FlashLeftMouse" or eventName == "FlashRightMouse" then
 			UIExtensions.Invoke("fireMouseClicked", eventName)
+		end
+	end
+end
+
+---@param evt InputEvent
+Ext.RegisterListener("InputEvent", function(evt)
+	local eventName = Data.InputEnum[evt.EventId]
+	if eventName then
+		if type(eventName) == "table" then
+			for i=1,#eventName do
+				InvokeExtenderEventCallbacks(evt, eventName[i])
+			end
+		else
+			InvokeExtenderEventCallbacks(evt, eventName)
 		end
 	end
 end)
@@ -206,22 +222,30 @@ end)
 ---@param arrayIndex integer
 function Input.OnFlashEvent(ui, call, pressed, eventName, arrayIndex)
 	eventName = string.gsub(eventName, "IE ", "")
-	Input.Keys[eventName] = pressed and KEYSTATE.DOWN or KEYSTATE.RELEASED
+	local nextState = pressed and KEYSTATE.DOWN or KEYSTATE.RELEASED
 	if pressed then
 		lastPressedTimes[eventName] = Ext.MonotonicTime()
 	end
+	
 	-- if Vars.DebugMode then
-	-- 	PrintLog("[Input.OnFlashEvent] eventName(%s) pressed(%s) index(%i)", eventName, pressed, arrayIndex)
+	-- 	PrintLog("[Input.OnFlashEvent] eventName(%s) pressed(%s) index(%s)", eventName, pressed, arrayIndex)
 	-- end
-	local id = Data.Input[eventName]
-	if type(id) == "table" then
-		for _,kid in pairs(id) do
-			InvokeListenerCallbacks(Listeners.InputEvent, eventName, pressed, kid, Input.Keys, Vars.ControllerEnabled)
-			InvokeListenerCallbacks(Listeners.NamedInputEvent[eventName], eventName, pressed, kid, Input.Keys, Vars.ControllerEnabled)
+
+	if Input.Keys[eventName] ~= nextState then
+		if pressed and eventName == "ActionCancel" then
+			Ext.PostMessageToServer("LeaderLib_OnActionCancel", Client:GetCharacter().MyGuid)
 		end
-	else
-		InvokeListenerCallbacks(Listeners.InputEvent, eventName, pressed, id, Input.Keys, Vars.ControllerEnabled)
-		InvokeListenerCallbacks(Listeners.NamedInputEvent[eventName], eventName, pressed, id, Input.Keys, Vars.ControllerEnabled)
+		Input.Keys[eventName] = nextState
+		local id = Data.Input[eventName]
+		if type(id) == "table" then
+			for _,kid in pairs(id) do
+				InvokeListenerCallbacks(Listeners.InputEvent, eventName, pressed, kid, Input.Keys, Vars.ControllerEnabled)
+				InvokeListenerCallbacks(Listeners.NamedInputEvent[eventName], eventName, pressed, kid, Input.Keys, Vars.ControllerEnabled)
+			end
+		else
+			InvokeListenerCallbacks(Listeners.InputEvent, eventName, pressed, id, Input.Keys, Vars.ControllerEnabled)
+			InvokeListenerCallbacks(Listeners.NamedInputEvent[eventName], eventName, pressed, id, Input.Keys, Vars.ControllerEnabled)
+		end
 	end
 end
 
@@ -235,3 +259,11 @@ function Input.OnKeyboardEvent(ui, call, keyCode, keyName, pressed)
 		PrintLog("[Input.OnKeyboardEvent] call(%s) keyCode(%s) keyName(%s) pressed(%s)", call, keyCode, keyName, pressed)
 	end
 end
+
+-- if Vars.DebugMode then
+-- 	Input.RegisterListener(function(eventName, pressed, id, keys, controllerEnabled)
+-- 		if pressed then
+-- 			fprint(LOGLEVEL.DEFAULT, "[Input] event(%s) pressed(%s) id(%s) time(%s)", eventName, pressed, id, Ext.MonotonicTime())
+-- 		end
+-- 	end)
+-- end

@@ -277,8 +277,8 @@ end
 --- @param name string MainTimeline property name to write
 --- @param tbl table Table to convert to Flash
 function TableToFlash(ui, name, tbl)
-	for i,value in pairs(tbl) do
-		ui:SetValue(name, value, i-1)
+	for i=1,#tbl do
+		ui:SetValue(name, tbl[i], i-1)
 	end
 end
 
@@ -288,7 +288,6 @@ end
 --- @param originalTooltipArray table Unmodified tooltip array
 function ReplaceTooltipArray(ui, propertyName, tooltipArray, originalTooltipArray)
 	TableToFlash(ui, propertyName, tooltipArray)
-
 	if #tooltipArray < #originalTooltipArray then
 		-- Pad out the tooltip array with dummy values
 		for i=#tooltipArray,#originalTooltipArray do
@@ -500,29 +499,31 @@ end
 --- @return table
 function EncodeTooltipArray(elements)
 	local tt = {}
-	for i,element in pairs(elements) do
-		local type = TooltipItemTypes[element.Type]
-		if type == nil then
-			Ext.PrintWarning("Couldn't encode tooltip element with unknown type:", element.Type)
-		else
-			if element.Type == "SkillProperties" then
-				table.insert(tt, type)
-				EncodeTooltipSkillProperties(tt, element)
-			elseif element.Type == "ArmorSet" then
-				table.insert(tt, type)
-				EncodeTooltipArmorSet(tt, element)
+	for i=1,#elements do
+		local element = elements[i]
+		if element then
+			local type = TooltipItemTypes[element.Type]
+			if type == nil then
+				Ext.PrintWarning("Couldn't encode tooltip element with unknown type:", element.Type)
 			else
-				local spec = TooltipSpecs[element.Type]
-				if spec == nil then
-					Ext.PrintWarning("No encoder found for tooltip element type:", element.Type)
-				else
+				if element.Type == "SkillProperties" then
 					table.insert(tt, type)
-					EncodeTooltipElement(tt, spec, element)
+					EncodeTooltipSkillProperties(tt, element)
+				elseif element.Type == "ArmorSet" then
+					table.insert(tt, type)
+					EncodeTooltipArmorSet(tt, element)
+				else
+					local spec = TooltipSpecs[element.Type]
+					if spec == nil then
+						Ext.PrintWarning("No encoder found for tooltip element type:", element.Type)
+					else
+						table.insert(tt, type)
+						EncodeTooltipElement(tt, spec, element)
+					end
 				end
 			end
 		end
 	end
-
 	return tt
 end
 

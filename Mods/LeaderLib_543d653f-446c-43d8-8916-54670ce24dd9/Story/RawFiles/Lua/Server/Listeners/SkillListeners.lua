@@ -3,7 +3,6 @@ if SkillSystem == nil then
 end
 
 local ignoreSkill = {}
-local isPreparingSkill = {}
 
 --- Gets the base skill from a skill.
 --- @param skill string The skill entry to check.
@@ -59,6 +58,7 @@ local skillEventDataTable = {}
 
 ---@return SkillEventData
 local function GetCharacterSkillData(skill, uuid, createIfMissing, skillType, skillAbility, printWarning)
+	---@type SkillEventData
 	local data = nil
 	local skillDataHolder = skillEventDataTable[skill]
 	if skillDataHolder ~= nil then
@@ -75,7 +75,25 @@ local function GetCharacterSkillData(skill, uuid, createIfMissing, skillType, sk
 		data = Classes.SkillEventData:Create(uuid, skill, skillType, skillAbility)
 		skillDataHolder[uuid] = data
 	end
+	PersistentVars.SkillData[uuid] = data:Serialize()
 	return data
+end
+
+function SkillSystem.LoadSaveData()
+	if PersistentVars.SkillData then
+		for uuid,tbl in pairs(PersistentVars.SkillData) do
+			if ObjectExists(uuid) == 1 and not StringHelpers.IsNullOrWhitespace(tbl.Skill) and NRD_StatExists(tbl.Skill) then
+				local data = Classes.SkillEventData:Create(uuid, "", "", "")
+				data:LoadFromSave(tbl)
+				if skillEventDataTable[data.Skill] == nil then
+					skillEventDataTable[data.Skill] = {}
+				end
+				skillEventDataTable[data.Skill][uuid] = data
+			else
+				PersistentVars.SkillData[uuid] = nil
+			end
+		end
+	end
 end
 
 local function RemoveCharacterSkillData(uuid, skill)
@@ -92,7 +110,8 @@ local function RemoveCharacterSkillData(uuid, skill)
 			end
 		end
 	end
-	isPreparingSkill[uuid] = nil
+	PersistentVars.IsPreparingSkill[uuid] = nil
+	PersistentVars.SkillData[uuid] = nil
 end
 
 function StoreSkillEventData(char, skill, skillType, skillAbility, ...)
@@ -124,7 +143,7 @@ function OnSkillPreparing(char, skillprototype)
 	if CharacterIsControlled(char) == 0 then
 		Osi.LeaderLib_LuaSkillListeners_IgnorePrototype(char, skillprototype, skill)
 	end
-	local last = isPreparingSkill[char]
+	local last = PersistentVars.IsPreparingSkill[char]
 	if last and last ~= skill then
 		SkillSystem.OnSkillPreparingCancel(char, "", last, true)
 	end
@@ -139,7 +158,7 @@ function OnSkillPreparing(char, skillprototype)
 
 	-- Clear previous data for this character in case SkillCast never fired (interrupted)
 	RemoveCharacterSkillData(char)
-	isPreparingSkill[char] = skill
+	PersistentVars.IsPreparingSkill[char] = skill
 end
 
 function SkillSystem.OnSkillPreparingCancel(char, skillprototype, skill, skipRemoval)
@@ -158,7 +177,7 @@ function SkillSystem.OnSkillPreparingCancel(char, skillprototype, skill, skipRem
 end
 
 function SkillSystem.CheckPreparingState(uuid)
-	local last = isPreparingSkill[uuid]
+	local last = PersistentVars.IsPreparingSkill[uuid]
 	if last then
 		local action = NRD_CharacterGetCurrentAction(uuid) or ""
 		local skill = string.gsub(NRD_ActionStateGetString(uuid, "SkillId") or "", "_%-?%d+$", "")

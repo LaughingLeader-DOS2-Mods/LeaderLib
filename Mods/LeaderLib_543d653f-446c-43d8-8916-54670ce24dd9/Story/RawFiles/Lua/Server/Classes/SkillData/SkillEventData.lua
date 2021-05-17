@@ -132,4 +132,41 @@ function SkillEventData:PrintTargets()
 	fprint(LOGLEVEL.TRACE, "[SkillEventData:%s] Objects(%s) Positions(%s)", self.Skill, self.TotalTargetObjects > 0 and Common.Dump(self.TargetObjects) or "", self.TotalTargetPositions > 0 and Common.Dump(self.TargetPositions) or "")
 end
 
+function SkillEventData:Serialize()
+	local tbl = {
+		Source = self.Source,
+		Skill = self.Skill,
+		TargetObjects = self.TargetObjects,
+		TargetPositions = self.TargetPositions,
+	}
+	return tbl
+end
+
+function SkillEventData:LoadFromSave(tbl)
+	if not tbl or type(tbl) ~= "table" then
+		return
+	end
+	if not StringHelpers.IsNullOrWhitespace(tbl.Source) then
+		self.Source = tbl.Source
+	end
+	if not StringHelpers.IsNullOrWhitespace(tbl.Skill) then
+		self.Skill = tbl.Skill
+		local stat = Ext.GetStat(self.Skill)
+		if stat then
+			self.Ability = stat.Ability
+			self.SkillType = stat.SkillType
+		end
+	end
+	if tbl.TargetObjects then
+		for i,v in pairs(tbl.TargetObjects) do
+			self:AddTargetObject(v)
+		end
+	end
+	if tbl.TargetPositions then
+		for i,v in pairs(tbl.TargetPositions) do
+			self:AddTargetPosition(table.unpack(v))
+		end
+	end
+end
+
 Classes.SkillEventData = SkillEventData

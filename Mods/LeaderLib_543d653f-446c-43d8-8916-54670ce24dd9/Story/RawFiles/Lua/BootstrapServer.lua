@@ -8,13 +8,16 @@ local defaultPersistentVars = {
 	SceneData = {
 		ActiveScene = {},
 		Queue = {}
-	}
+	},
+	SkillData = {},
+	IsPreparingSkill = {}
 }
 
 ---@type LeaderLibPersistentVars
 PersistentVars = Common.CopyTable(defaultPersistentVars, true)
 function LoadPersistentVars()
 	Common.InitializeTableFromSource(PersistentVars, defaultPersistentVars)
+	SkillSystem.LoadSaveData()
 end
 
 TotalSkillListeners = 0

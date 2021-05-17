@@ -93,6 +93,9 @@ end
 
 ---@return EclCharacter
 function ClientData:GetCharacter()
+	if not self then
+		self = Client
+	end
 	local character = nil
 	if self.Character ~= nil then
 		if self.Character.NetID ~= -1 and self.Character.NetID ~= nil then
@@ -113,6 +116,9 @@ end
 ---@param isHost boolean
 ---@param character ClientCharacterData
 function ClientData:SetClientData(id, profile, isHost, character)
+	if not self then
+		self = Client
+	end
 	if id ~= nil then
 		self.ID = id
 	end

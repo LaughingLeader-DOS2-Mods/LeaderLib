@@ -508,3 +508,59 @@ local contextMenu = UIListenerWrapper:Create(Data.UIType.skills, {}, {
 -- 		end
 -- 	end
 -- end
+
+local hotbar = UIListenerWrapper:Create(Data.UIType.hotBar, {}, {
+	"allowActionsButton",
+	"clearAll",
+	"resizeExpBar",
+	"setActionPreview",
+	"setActionSkillHolderVisible",
+	"setAllSlotsEnabled",
+	"setAllText",
+	"setButton",
+	"setButtonActive",
+	"setButtonDisabled",
+	"setCurrentHotbar",
+	"setExp",
+	"setFixedBtnTooltips",
+	"setHotbarLocked",
+	"setLockBtnTooltips",
+	"setLockButtonEnabled",
+	"setPlayerHandle",
+	"setText",
+	"showActiveSkill",
+	"showSkillBar",
+	"toggleActionSkillHolder",
+	"updateActionSkills",
+	--"updateSlotData",
+	--"updateSlots",
+})
+hotbar.Enabled = false
+
+-- ---@param ui UIObject
+-- hotbar.CustomCallback["updateSlotData"] = function(self, ui, method)
+-- 	local this = ui:GetRoot()
+-- 	local array = this.slotUpdateDataList
+-- 	for i=0,#array do
+-- 		local entry = array[i]
+-- 		if entry then
+-- 			print(i, entry)
+-- 		else
+-- 			print(i, "nil")
+-- 		end
+-- 	end
+-- end
+
+-- ---@param ui UIObject
+-- hotbar.CustomCallback["updateSlots"] = function(self, ui, method)
+-- 	local this = ui:GetRoot()
+-- 	local array = this.slotUpdateList
+-- 	for i=0,#array do
+-- 		local entry = array[i]
+-- 		if entry then
+-- 			print(i, entry)
+-- 		else
+-- 			print(i, "nil")
+-- 		end
+-- 	end
+-- end

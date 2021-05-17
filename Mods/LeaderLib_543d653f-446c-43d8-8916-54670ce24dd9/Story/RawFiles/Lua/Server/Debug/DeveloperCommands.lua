@@ -823,6 +823,12 @@ Ext.RegisterConsoleCommand("ap", function(command, amountStr)
 	CharacterAddActionPoints(host, amount)
 end)
 
+Ext.RegisterConsoleCommand("animation", function(command, name)
+	local host = CharacterGetHostCharacter()
+	name = name or "Dance_01"
+	PlayAnimation(host, name, "")
+end)
+
 Ext.RegisterConsoleCommand("lldebug_surfacetransform", function(command, amountStr)
 	local host = Ext.GetCharacter(CharacterGetHostCharacter())
 	local x,y,z = table.unpack(host.WorldPos)
@@ -872,4 +878,40 @@ Ext.RegisterConsoleCommand("lldebug_tornadotest", function(command)
 	StartOneshotTimer(nil, 20000, function()
 		NRD_GameActionDestroy(handle)
 	end)
+end)
+
+Ext.RegisterConsoleCommand("lldebug_keepAlive", function(command)
+	local host = Ext.GetCharacter(CharacterGetHostCharacter())
+	ApplyStatus(host.MyGuid, "HASTED", -1.0, 1, host.MyGuid)
+	StartOneshotTimer(nil, 250, function()
+		local status = host:GetStatus("HASTED")
+		if status then
+			status.KeepAlive = true
+			status.CurrentLifeTime = 6.0
+			status.LifeTime = 6.0
+			status.RequestClientSync = true
+			print(status.KeepAlive, status.CurrentLifeTime)
+		end
+	end)
+end)
+
+Ext.RegisterOsirisListener("NRD_OnActionStateEnter", Data.OsirisEvents.NRD_OnActionStateEnter, "after", function(char, state)
+	print("NRD_OnActionStateEnter", char, state)
+	-- StartOneshotTimer(nil, 2000, function()
+	-- 	local action = NRD_CharacterGetCurrentAction(char)
+	-- 	fprint(LOGLEVEL.TRACE, "NRD_CharacterGetCurrentAction(%s) = (%s)", char, action)
+	-- end)
+end)
+
+Ext.RegisterOsirisListener("NRD_OnActionStateExit", Data.OsirisEvents.NRD_OnActionStateExit, "after", function(char, state)
+	print("NRD_OnActionStateExit", char, state)
+end)
+
+RegisterSkillListener("Tornado_EnemyAir", function(skill, caster, state, data)
+	print(skill, caster, state)
+	if state == SKILL_STATE.PREPARE then
+		ApplyStatus(caster, "HASTED", -1.0, 0, caster)
+	elseif state == SKILL_STATE.CANCEL or state == SKILL_STATE.CAST then
+		RemoveStatus(caster, "HASTED")
+	end
 end)

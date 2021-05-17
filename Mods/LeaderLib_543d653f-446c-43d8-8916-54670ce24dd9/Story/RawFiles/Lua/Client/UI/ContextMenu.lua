@@ -83,14 +83,14 @@ end
 
 function ContextMenu:SetContextStatus(status, uiType)
 	if status then
-		fprint(LOGLEVEL.WARNING, "[ContextMenu:SetContextStatus] Status(%s) UI(%s)", status.StatusId, uiType)
+		--fprint(LOGLEVEL.WARNING, "[ContextMenu:SetContextStatus] Status(%s) UI(%s)", status.StatusId, uiType)
 		self.ContextStatus = {
 			StatusId = status.StatusId,
 			RemoveFromList = Common.TableHasEntry(GameSettings.Settings.Client.StatusOptions.Blacklist, status.StatusId, false),
 			CallingUI = uiType,
 		}
 	elseif self.ContextStatus then
-		fprint(LOGLEVEL.WARNING, "[ContextMenu:SetContextStatus] Cleared.")
+		--fprint(LOGLEVEL.WARNING, "[ContextMenu:SetContextStatus] Cleared.")
 		self.ContextStatus = nil
 	end
 end

@@ -1,4 +1,6 @@
-GameHelpers.Item = {}
+if GameHelpers.Item == nil then
+    GameHelpers.Item = {}
+end
 
 local itemConstructorProps = {
     ["RootTemplate"] = true,

@@ -1,4 +1,6 @@
-GameHelpers.Data = {}
+if GameHelpers.Data == nil then
+	GameHelpers.Data = {}
+end
 
 local ClientCharacterData = Classes.ClientCharacterData
 

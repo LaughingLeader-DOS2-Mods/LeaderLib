@@ -1,4 +1,6 @@
-GameHelpers.VoiceMetaData = {}
+if GameHelpers.VoiceMetaData == nil then
+	GameHelpers.VoiceMetaData = {}
+end
 
 ---Contains functions for registering a character's UUID with various existing voices.
 GameHelpers.VoiceMetaData.Register = {

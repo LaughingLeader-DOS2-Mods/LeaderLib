@@ -97,7 +97,10 @@ function Common.CloneTable(orig, deep)
 		else -- number, string, boolean, etc
 			copy = orig
 		end
-		setmetatable(copy, getmetatable(orig))
+		local meta = getmetatable(orig)
+		if meta then
+			setmetatable(copy, meta)
+		end
 		return copy
 	else
 		return Common.DeepCopyTable(orig)

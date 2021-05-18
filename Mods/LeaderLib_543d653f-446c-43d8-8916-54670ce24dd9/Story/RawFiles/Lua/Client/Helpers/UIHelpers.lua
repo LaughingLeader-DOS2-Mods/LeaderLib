@@ -165,7 +165,6 @@ local function OnUpdateStatuses(ui, method, addIfNotExists, cleanupAll)
 		for i=0,length,6 do
 			local ownerDouble = status_array[i]
 			if ownerDouble then
-				print(this.getPlayerOrSummonByHandle(ownerDouble))
 				-- print(i, status_array[i])
 				-- print(i+1, status_array[i+1])
 				-- print(i+2, status_array[i+2])
@@ -210,7 +209,7 @@ Ext.RegisterUITypeInvokeListener(Data.UIType.playerInfo_c, "updateStatuses", OnU
 local lastHealthbarOwnerDouble = nil
 
 local function RequestHealthbarRefresh()
-	if not lastHealthbarOwnerDouble then
+	if not lastHealthbarOwnerDouble or not GameSettings.Settings.Client.StatusOptions.AffectHealthbar then
 		return
 	end
 	local ui = Ext.GetUIByType(Data.UIType.enemyHealthBar)
@@ -274,12 +273,14 @@ end
 
 ---@param ui UIObject
 local function OnUpdateStatuses_Healthbar(ui, method, addIfNotExists)
+	if not GameSettings.Settings.Client.StatusOptions.AffectHealthbar then
+		return
+	end
 	local this = ui:GetRoot()
 
 	local whitelist,blacklist,allVisible = GetStatusVisibilityLists()
 	lastHealthbarOwnerDouble = this.status_array[0]
 	if addIfNotExists then
-		--UIExtensions.StartTimer("OnUpdateStatuses_Healthbar_Delay", 1, OnUpdateStatuses_Healthbar_Delay)
 		UpdateHealthbarStatusVisibility(ui, this, whitelist,blacklist,allVisible)
 	end
 	

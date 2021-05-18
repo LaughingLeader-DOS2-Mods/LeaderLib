@@ -172,6 +172,8 @@ local text = {
 	Client_AlwaysDisplayWeaponScalingText_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_AlwaysDisplayWeaponScalingText_Description"),
 	Client_HideStatuses = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideStatuses"),
 	Client_HideStatuses_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_HideStatuses_Description"),
+	Client_StatusOptions_AffectHealthbar = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_StatusOptions_AffectHealthbar"),
+	Client_StatusOptions_AffectHealthbar_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Client_StatusOptions_AffectHealthbar_Description"),
 	Button_ClearWhitelist = ts:CreateFromKey("LeaderLib_UI_GameSettings_Button_ClearWhitelist"),
 	Button_ClearWhitelist_Description = ts:CreateFromKey("LeaderLib_UI_GameSettings_Button_ClearWhitelist_Description"),
 	Button_ClearBlacklist = ts:CreateFromKey("LeaderLib_UI_GameSettings_Button_ClearBlacklist"),
@@ -291,6 +293,7 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 		mainMenu.addMenuCheckbox(AddControl(settings.Client, "DivineTalentsEnabled"), text.Client_DivineTalentsEnabled.Value, true, settings.Client.DivineTalentsEnabled and 1 or 0, false, text.Client_DivineTalentsEnabled_Description.Value)
 
 		mainMenu.addMenuCheckbox(AddControl(settings.Client.StatusOptions, "HideAll"), text.Client_HideStatuses.Value, true, settings.Client.StatusOptions.HideAll and 1 or 0, false, text.Client_HideStatuses_Description.Value)
+		mainMenu.addMenuCheckbox(AddControl(settings.Client.StatusOptions, "AffectHealthbar"), text.Client_StatusOptions_AffectHealthbar.Value, true, settings.Client.StatusOptions.AffectHealthbar and 1 or 0, false, text.Client_StatusOptions_AffectHealthbar_Description.Value)
 
 		mainMenu.addMenuButton(AddButton("ClearBlacklist", function()
 			GameSettings.Settings.Client.StatusOptions.Blacklist = {}

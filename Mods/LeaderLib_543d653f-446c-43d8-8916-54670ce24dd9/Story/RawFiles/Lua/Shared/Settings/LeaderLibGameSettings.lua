@@ -65,6 +65,7 @@ local DefaultSettings = {
 			---A list of statuses to show if HideAll is true.
 			---@type table<string,boolean>
 			Whitelist = {},
+			AffectHealthbar = false,
 		},
 		AlwaysDisplayWeaponScalingText = true,
 		DivineTalentsEnabled = false,

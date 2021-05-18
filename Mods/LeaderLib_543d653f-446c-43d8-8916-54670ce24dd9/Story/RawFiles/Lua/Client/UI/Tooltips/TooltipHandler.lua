@@ -353,6 +353,31 @@ local function RepositionElements(tooltip_mc)
 	tooltip_mc.resetBackground()
 end
 
+local function ItemHasTag(item, tag)
+	if item:HasTag(tag) then
+		return true
+	end
+	if not GameHelpers.Item.IsObject(item) then
+		if not StringHelpers.IsNullOrWhitespace(item.Stats.Tags) and 
+		Common.TableHasValue(StringHelpers.Split(item.Stats.Tags, ";"), tag) then
+			return true
+		end
+		for _,v in pairs(item:GetDeltaMods()) do
+			local deltamod = Ext.GetDeltaMod(v, item.ItemType)
+			if deltamod then
+				for _,boost in pairs(deltamod.Boosts) do
+					local tags = Ext.StatGetAttribute(boost.Boost, "Tags")
+					if not StringHelpers.IsNullOrWhitespace(tags) and
+					Common.TableHasValue(StringHelpers.Split(tags, ";"), tag) then
+						return true
+					end
+				end
+			end
+		end
+	end
+	return false
+end
+
 local function AddTags(tooltip_mc)
 	if UI.Tooltip.LastItem == nil then
 		return
@@ -360,7 +385,7 @@ local function AddTags(tooltip_mc)
 	if UI.Tooltip.HasTagTooltipData then
 		local text = ""
 		for tag,data in pairs(TagTooltips) do
-			if UI.Tooltip.LastItem:HasTag(tag) then
+			if ItemHasTag(UI.Tooltip.LastItem, tag) then
 				local tagName = ""
 				if data.Title == nil then
 					tagName = Ext.GetTranslatedStringFromKey(tag)
@@ -413,13 +438,23 @@ local function FormatTagText(content_array, group, isControllerMode)
 						if data.Title == nil then
 							tagName = Ext.GetTranslatedStringFromKey(tag)
 						else
-							tagName = data.Title.Value
+							local t = type(data.Title)
+							if t == "string" then
+								tagName = data.Title
+							elseif t == "table" and data.Type == "TranslatedString" then
+								tagName = GameHelpers.Tooltip.ReplacePlaceholders(data.Title.Value)
+							end
 						end
 						local tagDesc = ""
 						if data.Description == nil then
 							tagDesc = Ext.GetTranslatedStringFromKey(tag.."_Description")
 						else
-							tagDesc = data.Description.Value
+							local t = type(data.Description)
+							if t == "string" then
+								tagDesc = data.Description
+							elseif t == "table" and data.Type == "TranslatedString" then
+								tagDesc = GameHelpers.Tooltip.ReplacePlaceholders(data.Description.Value)
+							end
 						end
 						if tagName ~= "" then
 							tagName = GameHelpers.Tooltip.ReplacePlaceholders(tagName)
@@ -608,26 +643,34 @@ local function OnItemTooltip(item, tooltip)
 		end
 		if UI.Tooltip.HasTagTooltipData then
 			for tag,data in pairs(TagTooltips) do
-				if item:HasTag(tag) then
+				if ItemHasTag(item, tag) then
 					local finalText = ""
 					local tagName = ""
 					local tagDesc = ""
 					if data.Title == nil then
 						tagName = Ext.GetTranslatedStringFromKey(tag)
 					else
-						tagName = data.Title.Value
+						local t = type(data.Title)
+						if t == "string" then
+							tagName = data.Title
+						elseif t == "table" and data.Type == "TranslatedString" then
+							tagName = GameHelpers.Tooltip.ReplacePlaceholders(data.Title.Value)
+						end
 					end
 					if data.Description == nil then
 						tagDesc = Ext.GetTranslatedStringFromKey(tag.."_Description")
 					else
-						tagDesc = data.Description.Value
+						local t = type(data.Description)
+						if t == "string" then
+							tagDesc = data.Description
+						elseif t == "table" and data.Type == "TranslatedString" then
+							tagDesc = GameHelpers.Tooltip.ReplacePlaceholders(data.Description.Value)
+						end
 					end
 					if tagName ~= "" then
-						tagName = GameHelpers.Tooltip.ReplacePlaceholders(tagName)
 						finalText = tagName
 					end
 					if tagDesc ~= "" then
-						tagDesc = GameHelpers.Tooltip.ReplacePlaceholders(tagDesc)
 						if finalText ~= "" then
 							finalText = finalText .. "<br>"
 						end

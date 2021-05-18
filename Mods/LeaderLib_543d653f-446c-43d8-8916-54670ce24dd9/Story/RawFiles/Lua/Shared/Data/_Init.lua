@@ -4,7 +4,9 @@ end
 
 Data.OriginalSkillTiers = {}
 ---@type table<string,bool>
-Data.ObjectStats = {[""] = true}
+Data.ObjectStats = {}
+--Valid items with a Stats table can still have an empty StatsId for some reason.
+--Data.ObjectStats = {[""] = true}
 
 local function _pairs(t, var)
 	var = var + 1

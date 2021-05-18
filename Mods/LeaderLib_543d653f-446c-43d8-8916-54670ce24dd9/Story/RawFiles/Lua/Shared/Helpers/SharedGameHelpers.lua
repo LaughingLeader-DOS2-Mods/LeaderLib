@@ -100,3 +100,12 @@ function GameHelpers.CharacterUsersMatch(char1, char2)
 		return character1 ~= nil and character2 ~= nil and character1.UserID == character2.UserID
 	end
 end
+
+---@param item EsvItem|EclItem
+---@return boolean
+function GameHelpers.Item.IsObject(item)
+	if Data.ObjectStats[item.StatsId] or item.ItemType == "Object" or not item.Stats then
+		return true
+	end
+	return false
+end

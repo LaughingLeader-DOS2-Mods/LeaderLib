@@ -51,22 +51,37 @@ end
 ---Source: http://www.wellho.net/resources/ex.php4?item=u105/spjo
 ---@param delimiter string
 ---@param list table
-function StringHelpers.Join(delimiter, list, uniqueOnly)
-	local len = (list ~= nil and type(list) == "table") and #list or 0
-	if len == 0 then
-		return ""
-	elseif len == 1 then
-		return list[1]
-	end
-	local string = list[1]
-	for i = 2, len do
-		if uniqueOnly == true and not string.find(string, list[i]) then
-			string = string .. delimiter .. list[i]
-		elseif not uniqueOnly then
-			string = string .. delimiter .. list[i]
+---@param uniqueOnly boolean 
+---@param getStringFunction table
+function StringHelpers.Join(delimiter, list, uniqueOnly, getStringFunction)
+	local finalResult = ""
+	local useFunction = type(getStringFunction) == "function"
+
+	local i = 0
+	for k,v in TableHelpers.TryOrderedEach(list) do
+		i = i + 1
+		local result = nil
+		if useFunction then
+			local b,str = xpcall(getStringFunction, debug.traceback, k, v)
+			if b then
+				result = str
+			else
+				Ext.PrintError(str)
+			end
+		else
+			result = v
+		end
+		if result then
+			if not uniqueOnly or (uniqueOnly and not string.find(finalResult, result)) then
+				if i > 1 then
+					finalResult = string.format("%s%s%s", finalResult, delimiter, result)
+				else
+					finalResult = result
+				end
+			end
 		end
 	end
-	return string
+	return finalResult
 end
 
 ---Split a string into a table.

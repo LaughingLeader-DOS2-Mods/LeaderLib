@@ -85,6 +85,29 @@ local function ClearStatusSource(target, status, source)
 	end
 end
 
+local forceStatuses = {
+	LEADERLIB_FORCE_PUSH1 = 1,
+	LEADERLIB_FORCE_PUSH2 = 2,
+	LEADERLIB_FORCE_PUSH3 = 3,
+	LEADERLIB_FORCE_PUSH4 = 4,
+	LEADERLIB_FORCE_PUSH5 = 5,
+	LEADERLIB_FORCE_PUSH6 = 6,
+	LEADERLIB_FORCE_PUSH7 = 7,
+	LEADERLIB_FORCE_PUSH8 = 8,
+	LEADERLIB_FORCE_PUSH9 = 9,
+	LEADERLIB_FORCE_PUSH10 = 10,
+	LEADERLIB_FORCE_PUSH11 = 11,
+	LEADERLIB_FORCE_PUSH12 = 12,
+	LEADERLIB_FORCE_PUSH13 = 13,
+	LEADERLIB_FORCE_PUSH14 = 14,
+	LEADERLIB_FORCE_PUSH15 = 15,
+	LEADERLIB_FORCE_PUSH16 = 16,
+	LEADERLIB_FORCE_PUSH17 = 17,
+	LEADERLIB_FORCE_PUSH18 = 18,
+	LEADERLIB_FORCE_PUSH19 = 19,
+	LEADERLIB_FORCE_PUSH20 = 20,
+}
+
 local function OnStatusApplied(target,status,source)
 	if Vars.LeaveActionData.Total > 0 then
 		local skill = Vars.LeaveActionData.Statuses[status]
@@ -105,6 +128,10 @@ local function OnStatusApplied(target,status,source)
 				Ext.PrintError(err)
 			end
 		end
+	end
+	if forceStatuses[status] and not StringHelpers.IsNullOrEmpty(source) and ObjectIsCharacter(source) == 1 then
+		--local distance = tonumber(string.gsub(status, "LEADERLIB_FORCE_PUSH", ""))
+		GameHelpers.ForceMoveObject(Ext.GetCharacter(source), Ext.GetGameObject(target), forceStatuses[status])
 	end
 end
 

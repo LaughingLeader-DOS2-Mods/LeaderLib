@@ -91,6 +91,88 @@ local function AdjustStat(stat, attribute, nextVal, syncMode, forceSync)
 	end
 end
 
+local forceStatuses = {
+	"LEADERLIB_FORCE_PUSH1",
+	"LEADERLIB_FORCE_PUSH2",
+	"LEADERLIB_FORCE_PUSH3",
+	"LEADERLIB_FORCE_PUSH4",
+	"LEADERLIB_FORCE_PUSH5",
+	"LEADERLIB_FORCE_PUSH6",
+	"LEADERLIB_FORCE_PUSH7",
+	"LEADERLIB_FORCE_PUSH8",
+	"LEADERLIB_FORCE_PUSH9",
+	"LEADERLIB_FORCE_PUSH10",
+	"LEADERLIB_FORCE_PUSH11",
+	"LEADERLIB_FORCE_PUSH12",
+	"LEADERLIB_FORCE_PUSH13",
+	"LEADERLIB_FORCE_PUSH14",
+	"LEADERLIB_FORCE_PUSH15",
+	"LEADERLIB_FORCE_PUSH16",
+	"LEADERLIB_FORCE_PUSH17",
+	"LEADERLIB_FORCE_PUSH18",
+	"LEADERLIB_FORCE_PUSH19",
+	"LEADERLIB_FORCE_PUSH20",
+}
+
+local function OverrideForce(syncMode, skills)
+	for i,stat in pairs(forceStatuses) do
+		if syncMode ~= true then
+			Ext.StatSetAttribute(stat, "LeaveAction", "")
+		else
+			local statObj = Ext.GetStat(stat)
+			if statObj then
+				statObj.LeaveAction = ""
+				Ext.SyncStat(stat, false)
+			end
+		end
+	end
+	if Vars.DebugMode then
+		for _,v in pairs(skills) do
+			---@type StatProperty[]
+			local props = nil
+			local statObj = nil
+			if syncMode ~= true then
+				props = Ext.StatGetAttribute(v, "SkillProperties")
+			else
+				statObj = Ext.GetStat(v)
+				if statObj then
+					props = statObj.SkillProperties
+				end
+			end
+			if props then
+				local hasForce = false
+				for i,prop in pairs(props) do
+					if prop.Type == "Force" then
+						local dist = prop.Distance or 1.0
+						hasForce = true
+						props[i] = {
+							Type = "Extender",
+							Action = "SafeForce",
+							Arg1 = dist,
+							Arg2 =  6.0,
+							Arg3 =  "",
+							Arg4 =  -1,
+							Arg5 =  -1,
+							Context = {
+								"Target",
+								"AoE",
+							}
+						}
+					end
+				end
+				if hasForce then
+					if syncMode ~= true then
+						Ext.StatSetAttribute(v, "SkillProperties", props)
+					else
+						statObj.SkillProperties = props
+						Ext.SyncStat(v, false)
+					end
+				end
+			end
+		end
+	end
+end
+
 ---@param syncMode boolean
 ---@param data LeaderLibGameSettings
 local function OverrideStats(syncMode, data, forceSync)
@@ -98,6 +180,7 @@ local function OverrideStats(syncMode, data, forceSync)
 	if data == nil then
 		data = LoadGameSettings()
 	end
+	local skills = Ext.GetStatEntries("SkillData")
 	--Ext.IsModLoaded("88d7c1d3-8de9-4494-be12-a8fcbc8171e9")
 	if data.Settings.StarterTierSkillOverrides == true then
 		local originalSkillTiers = {}
@@ -106,7 +189,7 @@ local function OverrideStats(syncMode, data, forceSync)
 		end
 		local total = 0
 		--Ext.Print("[LeaderLib:StatOverrides.lua] Enabling skill tier overrides.")
-		for _,stat in pairs(Ext.GetStatEntries("SkillData")) do
+		for _,stat in pairs(skills) do
 			local tier = Ext.StatGetAttribute(stat, "Tier")
 			if syncMode then
 				if originalSkillTiers[stat] ~= nil then
@@ -158,7 +241,7 @@ local function OverrideStats(syncMode, data, forceSync)
 		end
 	else
 		if data.Settings.LowerMemorizationRequirements == true then
-			for _,stat in pairs(Ext.GetStatEntries("SkillData")) do
+			for _,stat in pairs(skills) do
 				---@type StatRequirement[]
 				local memorizationReq = Ext.StatGetAttribute(stat, "MemorizationRequirements")
 				local changed = false
@@ -218,6 +301,7 @@ local function OverrideStats(syncMode, data, forceSync)
 		end
 	end
 	OverrideWings(syncMode)
+	OverrideForce(syncMode, skills)
 end
 Ext.RegisterListener("StatsLoaded", OverrideStats)
 

@@ -13,8 +13,8 @@ TranslatedString.__index = TranslatedString
 ---@param content string
 ---@return TranslatedString
 function TranslatedString:Create(handle,content)
-    local this =
-    {
+	local this =
+	{
 		Handle = handle,
 		Content = content,
 		Value = "",
@@ -23,7 +23,7 @@ function TranslatedString:Create(handle,content)
 	setmetatable(this, self)
 	this.Update(this)
 	table.insert(TranslatedStringEntries, this)
-    return this
+	return this
 end
 
 ---@param stringKey string
@@ -34,12 +34,13 @@ function TranslatedString:CreateFromKey(stringKey, fallback)
 		Key = stringKey,
 		Content = fallback or "",
 		Handle = "",
-		Value = ""
+		Value = "",
+		AutoReplacePlaceholders = false,
 	}
 	setmetatable(this, self)
 	this.Update(this)
 	table.insert(TranslatedStringEntries, this)
-    return this
+	return this
 end
 
 function TranslatedString:Update()
@@ -47,20 +48,22 @@ function TranslatedString:Update()
 		local content,handle = Ext.GetTranslatedStringFromKey(self.Key)
 		if not StringHelpers.IsNullOrEmpty(handle) then
 			self.Handle = handle
-			self.Content = content or self.Content or ""
+		end
+		if not StringHelpers.IsNullOrEmpty(content) then
+			self.Value = content
+		elseif not StringHelpers.IsNullOrEmpty(self.Content) then
+			self.Value = self.Content
 		else
-			self.Content = self.Key
+			self.Value = self.Key
+		end
+	else
+		if not StringHelpers.IsNullOrEmpty(self.Handle) then
+			self.Value = Ext.GetTranslatedString(self.Handle, self.Content) or self.Content
+		else
+			self.Value = self.Content
 		end
 	end
-	if not StringHelpers.IsNullOrEmpty(self.Handle) then
-		self.Value = Ext.GetTranslatedString(self.Handle, self.Content) or self.Content
-	else
-		self.Value = self.Content
-	end
-	if StringHelpers.IsNullOrEmpty(self.Value) then
-		self.Value = self.Content or ""
-	end
-	if self.AutoReplacePlaceholders then
+	if not StringHelpers.IsNullOrWhitespace(self.Value) and self.AutoReplacePlaceholders then
 		self.Value = GameHelpers.Tooltip.ReplacePlaceholders(self.Value)
 	end
 	return self.Value

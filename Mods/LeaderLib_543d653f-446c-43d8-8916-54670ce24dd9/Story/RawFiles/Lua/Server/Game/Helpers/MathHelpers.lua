@@ -34,7 +34,7 @@ function GameHelpers.Math.GetForwardPosition(char, distanceMult, fromPosition)
     return {x,y,z}
 end
 
-function GameHelpers.Math.ExtendPositionWithForwardDirection(source, distanceMult, x,y,z)
+function GameHelpers.Math.ExtendPositionWithForwardDirection(source, distanceMult, x,y,z, forwardVector)
     local character = nil
     if type(source) == "string" then
         character = Ext.GetCharacter(source)
@@ -42,10 +42,18 @@ function GameHelpers.Math.ExtendPositionWithForwardDirection(source, distanceMul
         character = source
     end
     if character ~= nil then
-        if distanceMult == nil then
-            distanceMult = 1.0
+        if not x and not y and not z then
+            x,y,z = table.unpack(character.WorldPos)
         end
-        local forwardVector = {
+    end
+    if distanceMult == nil then
+        distanceMult = 1.0
+    end
+    if forwardVector then
+        x = x + (-forwardVector[7] * distanceMult)
+        z = z + (-forwardVector[9] * distanceMult)
+    elseif (character and character.Stats) then
+        forwardVector = {
             -character.Stats.Rotation[7] * distanceMult,
             0,---rot[8] * distanceMult, -- Rot Y is never used since objects can't look "up"
             -character.Stats.Rotation[9] * distanceMult,
@@ -53,6 +61,7 @@ function GameHelpers.Math.ExtendPositionWithForwardDirection(source, distanceMul
         x = x + forwardVector[1]
         z = z + forwardVector[3]
     end
+
     y = GameHelpers.Grid.GetY(x,z)
     return {x,y,z}
 end

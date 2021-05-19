@@ -2,6 +2,26 @@ if GameHelpers.Math == nil then
 	GameHelpers.Math = {}
 end
 
+---@return number,number,number
+local function TryGetPos(x)
+    local t = type(x)
+    if t == "string" then
+        if Ext.IsServer() then
+            return GetPosition(x)
+        else
+            local obj = Ext.GetGameObject(x)
+            if obj and obj.WorldPos then
+                return table.unpack(obj.WorldPos)
+            end
+        end
+    elseif t == "userdata" and t.WorldPos then
+        return table.unpack(x.WorldPos)
+    elseif t == "table" and #x == 3 then
+        table.unpack(x)
+    end
+    return nil
+end
+
 ---Get a position derived from a character's forward facing direction.
 ---@param char string
 ---@param distanceMult number
@@ -72,35 +92,51 @@ end
 ---@param rotz number
 ---@param turnTo boolean
 function GameHelpers.Math.SetRotation(uuid, rotx, rotz, turnTo)
-	if ObjectIsCharacter(uuid) == 1 then
-		local x,y,z = 0.0,0.0,0.0
-		if rotx ~= nil and rotz ~= nil then
-			local character = Ext.GetCharacter(uuid)
-			local pos = character.Stats.Position
-			local forwardVector = {
-				-rotx * 4.0,
-				0,
-				-rotz * 4.0,
-			}
-			x = pos[1] + forwardVector[1]
-			y = pos[2]
-			z = pos[3] + forwardVector[3]
-			local target = CreateItemTemplateAtPosition("98fa7688-0810-4113-ba94-9a8c8463f830", x, y, z)
-			if turnTo ~= true then
-				CharacterLookAt(uuid, target, 1)
-			end
-			Osi.LeaderLib_Timers_StartObjectTimer(target, 250, "LLMIME_Timers_LeaderLib_Commands_RemoveItem", "LeaderLib_Commands_RemoveItem")
-		end
-	else
-		local x,y,z = GetPosition(uuid)
-		local amount = ItemGetAmount(uuid)
-		local owner = ItemGetOwner(uuid)
+    if Ext.IsServer() then
+        if ObjectIsCharacter(uuid) == 1 then
+            local x,y,z = 0.0,0.0,0.0
+            if rotx ~= nil and rotz ~= nil then
+                local character = Ext.GetCharacter(uuid)
+                local pos = character.Stats.Position
+                local forwardVector = {
+                    -rotx * 4.0,
+                    0,
+                    -rotz * 4.0,
+                }
+                x = pos[1] + forwardVector[1]
+                y = pos[2]
+                z = pos[3] + forwardVector[3]
+                local target = CreateItemTemplateAtPosition("98fa7688-0810-4113-ba94-9a8c8463f830", x, y, z)
+                if turnTo ~= true then
+                    CharacterLookAt(uuid, target, 1)
+                end
+                Osi.LeaderLib_Timers_StartObjectTimer(target, 250, "LLMIME_Timers_LeaderLib_Commands_RemoveItem", "LeaderLib_Commands_RemoveItem")
+            end
+        else
+            local x,y,z = GetPosition(uuid)
+            local amount = ItemGetAmount(uuid)
+            local owner = ItemGetOwner(uuid)
+    
+            local pitch = 0.0174533 * rotx
+            local roll = 0.0174533 * rotz
+    
+            ItemToTransform(uuid, x, y, z, pitch, 0.0, roll, amount, owner)
+        end
+    else
+        Ext.PostMessageToServer("LeaderLib_Helpers_SetRotation", Ext.JsonStringify({
+            UUID = uuid,
+            X = rotx,
+            Z = rotz,
+            TurnTo = turnTo
+        }))
+    end
+end
 
-		local pitch = 0.0174533 * rotx
-		local roll = 0.0174533 * rotz
-
-		ItemToTransform(uuid, x, y, z, pitch, 0.0, roll, amount, owner)
-	end
+if Ext.IsServer() then
+    Ext.RegisterNetListener("LeaderLib_Helpers_SetRotation", function(cmd, payload)
+        local data = Common.JsonParse(payload)
+        GameHelpers.Math.SetRotation(data.UUID, data.X, data.Z, data.TurnTo)
+    end)
 end
 
 ---Get the distance between two Vector3 points.
@@ -113,12 +149,12 @@ function GameHelpers.Math.GetDistance(pos1, pos2)
     if type(pos1) == "table" then
         x,y,z = table.unpack(pos1)
     elseif type(pos2) == "string" then
-        x,y,z = GetPosition(pos1)
+        x,y,z = TryGetPos(pos1)
     end
     if type(pos2) == "table" then
         tx,ty,tz = table.unpack(pos2)
     elseif type(pos2) == "string" then
-        tx,ty,tz = GetPosition(pos2)
+        tx,ty,tz = TryGetPos(pos2)
     end
     local diff = {
         x - tx,
@@ -138,16 +174,21 @@ function GameHelpers.Math.GetDirectionVector(pos1, pos2)
     if type(pos1) == "table" then
         x,y,z = table.unpack(pos1)
     elseif type(pos2) == "string" then
-        x,y,z = GetPosition(pos1)
+        x,y,z = TryGetPos(pos1)
     end
     if type(pos2) == "table" then
         x2,y2,z2 = table.unpack(pos2)
     elseif type(pos2) == "string" then
-        x2,y2,z2 = GetPosition(pos2)
+        x2,y2,z2 = TryGetPos(pos2)
     end
     return {
         x - x2,
         y - y2,
         z - z2
     }
+end
+
+function GameHelpers.Math.Round(num, numPlaces)
+	local mult = 10^(numPlaces or 0)
+	return math.floor(num * mult + 0.5) / mult
 end

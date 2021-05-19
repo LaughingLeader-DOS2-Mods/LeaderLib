@@ -1,4 +1,4 @@
----@class MainMenuMC
+---@class MainMenuMC:FlashObject
 ---@field addOptionButton fun(label:string, callback:string, id:integer, isCurrent:boolean)
 ---@field addMenuCheckbox fun(id:integer, label:string, enabled:boolean, state:integer, filterBool:boolean, tooltip:string)
 ---@field setMenuCheckbox fun(id:integer, enabled:boolean, state:integer)

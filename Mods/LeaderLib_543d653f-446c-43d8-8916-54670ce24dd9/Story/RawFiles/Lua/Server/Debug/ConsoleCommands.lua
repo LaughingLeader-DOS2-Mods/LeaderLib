@@ -46,6 +46,8 @@ Ext.RegisterConsoleCommand("teleport", function(cmd,target,param2,param3)
 	if param2 == "host" then param2 = host end
 	if param3 == "host" then param3 = host end
 
+	print(cmd,target,param2,param3)
+
 	if param2 == nil or param3 == nil then
 		if ObjectExists(target) == 1 then
 			print("Teleporting",host,"to",target,GetPosition(target))

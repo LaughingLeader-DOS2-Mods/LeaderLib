@@ -2,6 +2,8 @@ if Data == nil then
 	Data = {}
 end
 
+Ext.Require("Shared/Data/Colors.lua")
+
 Data.OriginalSkillTiers = {}
 ---@type table<string,bool>
 Data.ObjectStats = {}

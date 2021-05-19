@@ -26,6 +26,7 @@ Ext.Require("Shared/WingsWorkaround.lua")
 Ext.Require("Shared/SkipTutorial.lua")
 Ext.Require("Shared/AbilityAPI.lua")
 Ext.Require("Shared/GMCustomStatTooltipFix.lua")
+Ext.Require("Shared/CustomSkillProperties.lua")
 if Vars.DebugMode then
 	--Ext.Require("Shared/Debug/GameMathTracing.lua")
 	Ext.Require("Shared/Debug/TestingSystem.lua")

@@ -153,7 +153,9 @@ function PlayerInfo:UpdateStatusVisibility()
 end
 
 local function RequestPlayerInfoRefresh()
-	Ext.PostMessageToServer("LeaderLib_UI_Server_RefreshPlayerInfo", Client:GetCharacter().MyGuid)
+	if Client then
+		Ext.PostMessageToServer("LeaderLib_UI_Server_RefreshPlayerInfo", Client:GetCharacter().MyGuid)
+	end
 end
 
 local function OnUpdateStatuses(ui, method, addIfNotExists, cleanupAll)
@@ -326,8 +328,10 @@ Ext.RegisterUITypeInvokeListener(Data.UIType.enemyHealthBar, "hide", function(ui
 end)
 
 function UI.RefreshStatusVisibility()
-	RequestPlayerInfoRefresh()
-	RequestHealthbarRefresh()
+	if Ext.GetGameState() == "Running" then
+		RequestPlayerInfoRefresh()
+		RequestHealthbarRefresh()
+	end
 end
 
 Ext.RegisterNetListener("LeaderLib_UI_UpdateStatusVisibility", function(cmd, payload)

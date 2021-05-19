@@ -151,23 +151,6 @@ function GameHelpers.ForceMoveObjectToPosition(source, target, position)
 	end
 end
 
----@type CustomSkillProperty
-local SafeForce = {
-	GetDescription = function(prop)
-		local distance = prop.Arg1 or 1.0
-		return LocalizedText.SkillTooltip.SafeForce:ReplacePlaceholders(GameHelpers.Math.Round(distance, 1))
-	end,
-	ExecuteOnPosition = function(prop, attacker, position, areaRadius, isFromItem, skill, hit)
-
-	end,
-	ExecuteOnTarget = function(prop, attacker, target, position, isFromItem, skill, hit)
-		local distance = prop.Arg1 or 1.0
-		GameHelpers.ForceMoveObject(attacker, target, distance)
-	end
-}
-
-Ext.RegisterSkillProperty("SafeForce", SafeForce)
-
 ---Get the y value of the grid at a specifix coordinate.
 ---@param x number
 ---@param z number

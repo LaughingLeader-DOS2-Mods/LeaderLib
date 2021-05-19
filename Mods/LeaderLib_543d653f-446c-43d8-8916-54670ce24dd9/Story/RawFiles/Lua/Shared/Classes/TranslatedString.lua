@@ -71,7 +71,7 @@ end
 
 --- Replace placeholder values in a string, such as [1], [2], etc. 
 --- Takes a variable numbers of values.
---- @vararg values
+--- @vararg any
 --- @return string
 function TranslatedString:ReplacePlaceholders(...)
 	if self == nil then
@@ -88,11 +88,16 @@ function TranslatedString:ReplacePlaceholders(...)
 			str = values[1]
 		else
 			for i,v in pairs(values) do
+				local pattern = string.format("%%[%i%%]", i)
 				if type(v) == "number" then
-					str = string.gsub(str, "%["..tostring(i).."%]", math.tointeger(v))
+					if math.floor(v) == v then
+						str = string.gsub(str, pattern, string.format("%i", v))
+					else
+						str = string.gsub(str, pattern, tostring(v))
+					end
 				else
 					v = string.gsub(v, "%%", "%%%%")
-					str = string.gsub(str, "%["..tostring(i).."%]", v)
+					str = string.gsub(str, pattern, v)
 				end
 			end
 		end

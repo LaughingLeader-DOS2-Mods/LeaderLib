@@ -272,8 +272,9 @@ LocalizedText.ContextMenu = {
 LocalizedText.SkillTooltip = {
 	SkillRequiredEquipment = ts:Create("h0a088d84g04f9g47b5g8d4dg3021748bfe00", "Requires a [1]"),
 	RifleWeapon = ts:Create("ha3a18e3fge9e4g4496g84b8g5590844143f0", "Rifle Weapon"),
-	SafeForce = ts:Create("h788df33dg4d61g4cb7g8f2cgfb75e14e7ffc", "Pushes [1]m")
-	--BasicAttack = ts:Create("hbdac34fdg43b6g4439g9947g6676e9c03294", "Basic Attack")
+	SafeForce = ts:Create("h788df33dg4d61g4cb7g8f2cgfb75e14e7ffc", "Pushes [1]m"),
+	SafeForceRandom = ts:Create("h9308f157g1e5ag4051gbcc0g9d41c54ffa57", "Pushes [1]m ([2]% Chance)"),
+	--BasicAttack = ts:Create("hbdac34fdg43b6g4439g9947g6676e9c03294", "Basic Attack"),
 }
 
 LocalizedText.WeaponType = {

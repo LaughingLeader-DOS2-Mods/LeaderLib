@@ -17,13 +17,20 @@ local function ReplacePlaceholders(str, character)
 		local key = v:gsub("%[ExtraData:", ""):gsub("%]", "")
 		local value = Ext.ExtraData[key] or ""
 		if value ~= "" and type(value) == "number" then
-			if value == math.floor(value) then
+			local trailingStr = ""
+			local startPos,endPos = string.find(output, v, nil, true)
+			if endPos then
+				trailingStr = string.sub(output, endPos+1, endPos+1)
+			end
+
+			if trailingStr == "%" then
+				-- Percentage display
+				value = value * 100
 				value = string.format("%i", math.floor(value))
 			else
-				if value <= 1.0 and value >= 0.0 then
-					-- Percentage display
-					value = value * 100
-					value = string.format("%i", math.floor(value))
+				local floored = math.floor(value)
+				if floored == value then
+					value = string.format("%i", floored)
 				else
 					value = tostring(value)
 				end

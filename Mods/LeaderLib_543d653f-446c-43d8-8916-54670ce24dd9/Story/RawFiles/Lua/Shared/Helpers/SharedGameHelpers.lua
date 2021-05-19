@@ -109,3 +109,8 @@ function GameHelpers.Item.IsObject(item)
 	end
 	return false
 end
+
+function GameHelpers.Math.Round(num, numPlaces)
+	local mult = 10^(numPlaces or 0)
+	return math.floor(num * mult + 0.5) / mult
+end

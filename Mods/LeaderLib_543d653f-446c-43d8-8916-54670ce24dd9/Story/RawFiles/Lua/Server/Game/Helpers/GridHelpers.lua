@@ -115,7 +115,6 @@ function GameHelpers.ForceMoveObject(source, target, distanceMultiplier)
 	local startPos = GameHelpers.Math.GetForwardPosition(source.MyGuid, distanceMultiplier)
 	local forwardVector = {-source.Stats.Rotation[7], 0, -source.Stats.Rotation[9]}
 	local tx,ty,tz = GameHelpers.Grid.GetValidPositionAlongLine(startPos, forwardVector, distanceMultiplier)
-	PrintLog("[GameHelpers.ForceMoveObject] Moving to position: x(%s) -> x(%s) y(%s) -> y(%s) z(%s) -> z(%s) target(%s) source(%s)", startPos[1], tx, startPos[2], ty, startPos[3], tz, target.MyGuid, source.MyGuid)
 	if tx ~= nil and tz ~= nil then
 		local handle = NRD_CreateGameObjectMove(target.MyGuid, tx, ty, tz, "", source.MyGuid)
 		if handle ~= nil then
@@ -141,7 +140,6 @@ function GameHelpers.ForceMoveObjectToPosition(source, target, position)
 	end
 	local x,y,z = GetPosition(target.MyGuid)
 	local tx,ty,tz = table.unpack(position)
-	PrintLog("[GameHelpers.ForceMoveObjectToPosition] Moving to position: x(%s) -> x(%s) y(%s) -> y(%s) z(%s) -> z(%s) target(%s) source(%s)", x, tx, y, ty, z, tz, target.MyGuid, source.MyGuid)
 	local handle = NRD_CreateGameObjectMove(target.MyGuid, tx, ty, tz, "", source.MyGuid)
 	if handle ~= nil then
 		PersistentVars.ForceMoveData[target.MyGuid] = {
@@ -152,6 +150,23 @@ function GameHelpers.ForceMoveObjectToPosition(source, target, position)
 		StartTimer("Timers_LeaderLib_OnForceMoveAction", 250, target.MyGuid)
 	end
 end
+
+---@type CustomSkillProperty
+local SafeForce = {
+	GetDescription = function(prop)
+		local distance = prop.Arg1 or 1.0
+		return LocalizedText.SkillTooltip.SafeForce:ReplacePlaceholders(GameHelpers.Math.Round(distance, 1))
+	end,
+	ExecuteOnPosition = function(prop, attacker, position, areaRadius, isFromItem, skill, hit)
+
+	end,
+	ExecuteOnTarget = function(prop, attacker, target, position, isFromItem, skill, hit)
+		local distance = prop.Arg1 or 1.0
+		GameHelpers.ForceMoveObject(attacker, target, distance)
+	end
+}
+
+Ext.RegisterSkillProperty("SafeForce", SafeForce)
 
 ---Get the y value of the grid at a specifix coordinate.
 ---@param x number

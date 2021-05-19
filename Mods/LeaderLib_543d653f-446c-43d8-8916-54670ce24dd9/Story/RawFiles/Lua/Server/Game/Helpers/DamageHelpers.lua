@@ -303,7 +303,7 @@ local defaultHitFlags = {
 ---@param offhandWeapon StatItem|nil
 ---@param applySkillProperties boolean|nil
 ---@param getDamageFunction function|nil
-function GameHelpers.Damage.ApplySkillDamage(source, target, skill, hitParams, mainWeapon, offhandWeapon, applySkillProperties, getDamageFunction)
+function GameHelpers.Damage.ApplySkillDamage(source, target, skill, hitParams, mainWeapon, offhandWeapon, applySkillProperties, getDamageFunction, skillDataParamModifiers)
     if type(source) == "string" then
         source = Ext.GetCharacter(source)
     end
@@ -325,6 +325,11 @@ function GameHelpers.Damage.ApplySkillDamage(source, target, skill, hitParams, m
     end
 
     local skillData = GameHelpers.Ext.CreateSkillTable(skill)
+    if skillDataParamModifiers then
+        for k,v in pairs(skillDataParamModifiers) do
+            skillData[k] = v
+        end
+    end
     local pos = source.WorldPos
     local targetPos = table.pack(GetPosition(target))
     local level = source.Stats.Level

@@ -102,6 +102,26 @@ end
 
 RegisterListener("NamedTimerFinished", "Timers_LeaderLib_OnForceMoveAction", GameHelpers.Internal.OnForceMoveTimer)
 
+function GameHelpers.CanForceMove(target, source)
+	local t = type(target)
+	if t == "string" then
+		if CharacterIsDead(target) == 1 then
+			return false
+		end
+		if IsTagged(target, "LeaderLib_Dummy") == 1 or IsTagged(target, "LeaderLib_ForceImmune") == 1 or HasActiveStatus(target, "LEADERLIB_FORCE_IMMUNE") == 1 then
+			return false
+		end
+	elseif t == "userdata" and target.HasTag then
+		if target.Dead then
+			return false
+		end
+		if target:HasTag("LeaderLib_Dummy") or target:HasTag("LeaderLib_ForceImmune") or HasActiveStatus(target.MyGuid, "LEADERLIB_FORCE_IMMUNE") == 1 then
+			return false
+		end
+	end
+	return true
+end
+
 ---@param source EsvCharacter
 ---@param target EsvGameObject
 ---@param distanceMultiplier number|nil
@@ -113,11 +133,12 @@ function GameHelpers.ForceMoveObject(source, target, distanceMultiplier)
 		PersistentVars.ForceMoveData[target.MyGuid] = nil
 	end
 	local startPos = GameHelpers.Math.GetForwardPosition(source.MyGuid, distanceMultiplier)
-	local forwardVector = {-source.Stats.Rotation[7], 0, -source.Stats.Rotation[9]}
+	--local forwardVector = {-source.Stats.Rotation[7], 0, -source.Stats.Rotation[9]}
+	local forwardVector = GameHelpers.Math.GetDirectionVector(source.WorldPos, target.WorldPos, true)
 	local tx,ty,tz = GameHelpers.Grid.GetValidPositionAlongLine(startPos, forwardVector, distanceMultiplier)
-	if tx ~= nil and tz ~= nil then
+	if tx and tz then
 		local handle = NRD_CreateGameObjectMove(target.MyGuid, tx, ty, tz, "", source.MyGuid)
-		if handle ~= nil then
+		if handle then
 			PersistentVars.ForceMoveData[target.MyGuid] = {
 				Position = {tx,ty,tz},
 				Handle = handle,

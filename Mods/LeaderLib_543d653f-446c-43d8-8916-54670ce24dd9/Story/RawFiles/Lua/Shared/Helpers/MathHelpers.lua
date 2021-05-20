@@ -164,11 +164,14 @@ function GameHelpers.Math.GetDistance(pos1, pos2)
     return math.sqrt((diff[1]^2) + (diff[2]^2) + (diff[3]^2))
 end
 
+
+
 ---Get the directional vector between two Vector3 points.
 ---@param pos1 number[]|string
 ---@param pos2 number[]|string
 ---@return number[]
-function GameHelpers.Math.GetDirectionVector(pos1, pos2)
+function GameHelpers.Math.GetDirectionVector(pos1, pos2, reverse)
+    local vec = Classes.Vector3
     local x,y,z = 0,0,0
     local x2,y2,z2 = 0,0,0
     if type(pos1) == "table" then
@@ -181,11 +184,29 @@ function GameHelpers.Math.GetDirectionVector(pos1, pos2)
     elseif type(pos2) == "string" then
         x2,y2,z2 = TryGetPos(pos2)
     end
-    return {
-        x - x2,
-        y - y2,
-        z - z2
-    }
+    local a = vec(x,y,z)
+    local b = vec(x2,y2,z2)
+    a:Sub(b)
+    a:Normalize()
+    if not reverse then
+        return {a:Unpack()}
+    else
+        return {-a.x,-a.y,-a.z}
+    end
+    
+    -- if not reverse then
+    --     return {
+    --         x - x2,
+    --         y - y2,
+    --         z - z2
+    --     }
+    -- else
+    --     return {
+    --         -(x - x2),
+    --         -(y - y2),
+    --         -(z - z2),
+    --     }
+    -- end
 end
 
 function GameHelpers.Math.Round(num, numPlaces)

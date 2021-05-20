@@ -109,11 +109,11 @@ function PlayerInfo:GetCharacterMovieClips()
 	end
 
 	local i = 0
-	local count = #this.characters
+	local count = #characters
 	return function ()
 		i = i + 1
 		if i <= count then
-			return this.characters[i-1]
+			return characters[i-1]
 		end
 	end
 end
@@ -152,9 +152,18 @@ function PlayerInfo:UpdateStatusVisibility()
 	return updated
 end
 
+function PlayerInfo:CleanupStatuses()
+	local this = self:Get()
+	for mc in self:GetCharacterMovieClips() do
+		this.cleanupStatuses(mc.characterHandle)
+	end
+end
+
 local function RequestPlayerInfoRefresh()
 	if Client then
 		Ext.PostMessageToServer("LeaderLib_UI_Server_RefreshPlayerInfo", Client:GetCharacter().MyGuid)
+	else
+		Ext.PostMessageToServer("LeaderLib_UI_Server_RefreshPlayerInfo", GameHelpers.Client.GetCharacter().MyGuid)
 	end
 end
 
@@ -163,6 +172,7 @@ local function OnUpdateStatuses(ui, method, addIfNotExists, cleanupAll)
 	local status_array = this.status_array
 	local length = #status_array
 	if length > 0 then
+		local madeChanges = false
 		local whitelist,blacklist,allVisible = GetStatusVisibilityLists()
 		for i=0,length,6 do
 			local ownerDouble = status_array[i]
@@ -187,14 +197,17 @@ local function OnUpdateStatuses(ui, method, addIfNotExists, cleanupAll)
 							for k=0,#owner_mc.status_array do
 								status_mc = owner_mc.status_array[k]
 								if status_mc and status_mc.id == statusDouble then
-									status_mc.visible = visible
+									if status_mc.alive ~= visible then
+										madeChanges = true
+									end
+									--status_mc.visible = visible
 									status_mc.alive = visible
 									entryExists = true
 									break
 								end
 							end
 						end
-						if not entryExists and not visible then
+						if not visible and entryExists then
 							status_array[i] = ""
 							status_array[i+1] = ""
 						end

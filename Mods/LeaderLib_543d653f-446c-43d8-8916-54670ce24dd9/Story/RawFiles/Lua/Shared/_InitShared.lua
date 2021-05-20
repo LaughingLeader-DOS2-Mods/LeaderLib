@@ -62,7 +62,9 @@ function fprint(severity, str, ...)
 		elseif severity == LOGLEVEL.WARNING then
 			Ext.PrintWarning(msg)
 		elseif severity == LOGLEVEL.TRACE then
-			print(msg)
+			if Vars.DebugMode then
+				print(msg)
+			end
 		else
 			Ext.Print(msg)
 		end

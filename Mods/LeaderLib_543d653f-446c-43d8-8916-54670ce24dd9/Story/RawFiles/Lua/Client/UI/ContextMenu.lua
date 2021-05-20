@@ -38,21 +38,41 @@ ContextMenu.__index = ContextMenu
 
 ContextMenu.Actions[ACTIONS.HideStatus] = function(self, ui, id, actionID, handle)
 	if self.ContextStatus and not StringHelpers.IsNullOrWhitespace(self.ContextStatus.StatusId) then
-		local addToList = true
-		local blacklist = GameSettings.Settings.Client.StatusOptions.Blacklist or {}
-		for i,v in pairs(blacklist) do
-			if v == self.ContextStatus.StatusId then
-				addToList = false
-				break
+		if not GameSettings.Settings.Client.StatusOptions.HideAll then
+			local addToList = true
+			local blacklist = GameSettings.Settings.Client.StatusOptions.Blacklist or {}
+			for i,v in pairs(blacklist) do
+				if v == self.ContextStatus.StatusId then
+					addToList = false
+					break
+				end
 			end
-		end
-		if addToList then
-			fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Hiding status %s from the UI.", self.ContextStatus.StatusId)
-			table.insert(GameSettings.Settings.Client.StatusOptions.Blacklist, self.ContextStatus.StatusId)
-			SaveGameSettings()
-			UI.RefreshStatusVisibility()
+			if addToList then
+				fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Hiding status %s from the UI.", self.ContextStatus.StatusId)
+				table.insert(GameSettings.Settings.Client.StatusOptions.Blacklist, self.ContextStatus.StatusId)
+				SaveGameSettings()
+				UI.RefreshStatusVisibility()
+			else
+				fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Skipping hiding status %s from the UI.", self.ContextStatus.StatusId)
+			end
 		else
-			fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Skipping hiding status %s from the UI.", self.ContextStatus.StatusId)
+			local removedFromList = false
+			local whitelist = {}
+			for i,v in pairs(GameSettings.Settings.Client.StatusOptions.Whitelist) do
+				if v ~= self.ContextStatus.StatusId then
+					table.insert(whitelist, v)
+				else
+					removedFromList = true
+				end
+			end
+			if removedFromList then
+				fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Hiding status %s from the UI.", self.ContextStatus.StatusId)
+				GameSettings.Settings.Client.StatusOptions.Whitelist = whitelist
+				SaveGameSettings()
+				UI.RefreshStatusVisibility()
+			else
+				fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Skipping hiding status %s from the UI.", self.ContextStatus.StatusId)
+			end
 		end
 	else
 		fprint(LOGLEVEL.ERROR, "[LeaderLib] ContextStatus.StatusId is not set.")
@@ -61,22 +81,40 @@ end
 
 ContextMenu.Actions[ACTIONS.UnhideStatus] = function(self, ui, id, actionID, handle)
 	if self.ContextStatus and not StringHelpers.IsNullOrWhitespace(self.ContextStatus.StatusId) then
-		local removedFromList = false
-		local blacklist = {}
-		for i,v in pairs(GameSettings.Settings.Client.StatusOptions.Blacklist) do
-			if v ~= self.ContextStatus.StatusId then
-				table.insert(blacklist, v)
-			else
-				removedFromList = true
+		if not GameSettings.Settings.Client.StatusOptions.HideAll then
+			local removedFromList = false
+			local blacklist = {}
+			for i,v in pairs(GameSettings.Settings.Client.StatusOptions.Blacklist) do
+				if v ~= self.ContextStatus.StatusId then
+					table.insert(blacklist, v)
+				else
+					removedFromList = true
+				end
 			end
-		end
-		if removedFromList then
-			fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Unhiding status %s from the UI.", self.ContextStatus.StatusId)
-			GameSettings.Settings.Client.StatusOptions.Blacklist = blacklist
-			SaveGameSettings()
-			UI.RefreshStatusVisibility()
+			if removedFromList then
+				fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Unhiding status %s from the UI.", self.ContextStatus.StatusId)
+				GameSettings.Settings.Client.StatusOptions.Blacklist = blacklist
+				SaveGameSettings()
+				UI.RefreshStatusVisibility()
+			else
+				fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Skipping unhiding status %s from the UI.", self.ContextStatus.StatusId)
+			end
 		else
-			fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Skipping unhiding status %s from the UI.", self.ContextStatus.StatusId)
+			local addToList = true
+			local whitelist = {}
+			for i,v in pairs(GameSettings.Settings.Client.StatusOptions.Whitelist) do
+				if v == self.ContextStatus.StatusId then
+					addToList = false
+				end
+			end
+			if addToList then
+				fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Unhiding status %s from the UI.", self.ContextStatus.StatusId)
+				table.insert(GameSettings.Settings.Client.StatusOptions.Whitelist, self.ContextStatus.StatusId)
+				SaveGameSettings()
+				UI.RefreshStatusVisibility()
+			else
+				fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Skipping unhiding status %s from the UI.", self.ContextStatus.StatusId)
+			end
 		end
 	else
 		fprint(LOGLEVEL.ERROR, "[LeaderLib:ContextMenu] ContextStatus.StatusId is not set.")
@@ -88,9 +126,13 @@ function ContextMenu:SetContextStatus(status, uiType)
 		--fprint(LOGLEVEL.WARNING, "[ContextMenu:SetContextStatus] Status(%s) UI(%s)", status.StatusId, uiType)
 		self.ContextStatus = {
 			StatusId = status.StatusId,
-			RemoveFromList = Common.TableHasEntry(GameSettings.Settings.Client.StatusOptions.Blacklist, status.StatusId, false),
 			CallingUI = uiType,
 		}
+		if not GameSettings.Settings.Client.StatusOptions.HideAll then
+			self.ContextStatus.RemoveFromList = Common.TableHasEntry(GameSettings.Settings.Client.StatusOptions.Blacklist, status.StatusId, false)
+		else
+			self.ContextStatus.RemoveFromList = Common.TableHasEntry(GameSettings.Settings.Client.StatusOptions.Whitelist, status.StatusId, false)
+		end
 	elseif self.ContextStatus then
 		--fprint(LOGLEVEL.WARNING, "[ContextMenu:SetContextStatus] Cleared.")
 		self.ContextStatus = nil
@@ -162,13 +204,31 @@ function ContextMenu:OnRightClick(eventName, pressed, id, inputMap, controllerEn
 				self:SetContextStatus(status, uiType)
 				self.Entries = {}
 
-				if self.ContextStatus.RemoveFromList then
-					self:AddEntry(ACTIONS.UnhideStatus, nil, LocalizedText.ContextMenu.ShowStatus.Value)
-				else
-					if self.ContextStatus.CallingUI == Data.UIType.examine then
-						self:AddEntry(ACTIONS.HideStatus, nil, LocalizedText.ContextMenu.HideStatus_Examine.Value)
+				if self.ContextStatus then
+					if not GameSettings.Settings.Client.StatusOptions.HideAll then
+						if self.ContextStatus.RemoveFromList then
+							self:AddEntry(ACTIONS.UnhideStatus, nil, LocalizedText.ContextMenu.ShowStatus.Value)
+						else
+							if self.ContextStatus.CallingUI == Data.UIType.examine then
+								self:AddEntry(ACTIONS.HideStatus, nil, LocalizedText.ContextMenu.HideStatus_Examine.Value)
+							else
+								self:AddEntry(ACTIONS.HideStatus, nil, LocalizedText.ContextMenu.HideStatus.Value)
+							end
+						end
 					else
-						self:AddEntry(ACTIONS.HideStatus, nil, LocalizedText.ContextMenu.HideStatus.Value)
+						if self.ContextStatus.CallingUI == Data.UIType.examine then
+							if self.ContextStatus.RemoveFromList then
+								self:AddEntry(ACTIONS.HideStatus, nil, LocalizedText.ContextMenu.HideStatus_Examine.Value)
+							else
+								self:AddEntry(ACTIONS.UnhideStatus, nil, LocalizedText.ContextMenu.ShowStatus.Value)
+							end
+						else
+							if self.ContextStatus.RemoveFromList then
+								self:AddEntry(ACTIONS.HideStatus, nil, LocalizedText.ContextMenu.HideStatus.Value)
+							else
+								self:AddEntry(ACTIONS.UnhideStatus, nil, LocalizedText.ContextMenu.ShowStatus.Value)
+							end
+						end
 					end
 				end
 
@@ -183,13 +243,29 @@ function ContextMenu:OnRightClick(eventName, pressed, id, inputMap, controllerEn
 		if openRequested or self.ContextStatus then
 			self.Entries = {}
 			if self.ContextStatus then
-				if self.ContextStatus.RemoveFromList then
-					self:AddEntry(ACTIONS.UnhideStatus, nil, LocalizedText.ContextMenu.ShowStatus.Value)
+				if not GameSettings.Settings.Client.StatusOptions.HideAll then
+					if self.ContextStatus.RemoveFromList then
+						self:AddEntry(ACTIONS.UnhideStatus, nil, LocalizedText.ContextMenu.ShowStatus.Value)
+					else
+						if self.ContextStatus.CallingUI == Data.UIType.examine then
+							self:AddEntry(ACTIONS.HideStatus, nil, LocalizedText.ContextMenu.HideStatus_Examine.Value)
+						else
+							self:AddEntry(ACTIONS.HideStatus, nil, LocalizedText.ContextMenu.HideStatus.Value)
+						end
+					end
 				else
 					if self.ContextStatus.CallingUI == Data.UIType.examine then
-						self:AddEntry(ACTIONS.HideStatus, nil, LocalizedText.ContextMenu.HideStatus_Examine.Value)
+						if self.ContextStatus.RemoveFromList then
+							self:AddEntry(ACTIONS.HideStatus, nil, LocalizedText.ContextMenu.HideStatus_Examine.Value)
+						else
+							self:AddEntry(ACTIONS.UnhideStatus, nil, LocalizedText.ContextMenu.ShowStatus.Value)
+						end
 					else
-						self:AddEntry(ACTIONS.HideStatus, nil, LocalizedText.ContextMenu.HideStatus.Value)
+						if self.ContextStatus.RemoveFromList then
+							self:AddEntry(ACTIONS.HideStatus, nil, LocalizedText.ContextMenu.HideStatus.Value)
+						else
+							self:AddEntry(ACTIONS.UnhideStatus, nil, LocalizedText.ContextMenu.ShowStatus.Value)
+						end
 					end
 				end
 			end

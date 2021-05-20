@@ -200,14 +200,18 @@ local function OnUpdateStatuses(ui, method, addIfNotExists, cleanupAll)
 									if status_mc.alive ~= visible then
 										madeChanges = true
 									end
-									--status_mc.visible = visible
+									status_mc.visible = visible
 									status_mc.alive = visible
+									if not visible then
+										status_mc.fadingOut = true
+										this.fadeOutStatusComplete(status_mc.id,status_mc.owner)
+									end
 									entryExists = true
 									break
 								end
 							end
 						end
-						if not visible and entryExists then
+						if not visible then
 							status_array[i] = ""
 							status_array[i+1] = ""
 						end

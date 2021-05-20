@@ -28,20 +28,20 @@ Vector3 = {
 		return string.format('(%f, %f, %f)', v.x, v.y, v.z)
 	end,
 
-	__add = function(v, u) return v:Add(u, Vector3()) end,
-	__sub = function(v, u) return v:Sub(u, Vector3()) end,
+	__add = function(v, u) return self:Add(u, Vector3()) end,
+	__sub = function(v, u) return self:Sub(u, Vector3()) end,
 	__mul = function(v, u)
-		if Vector3.IsVector3(u) then return v:Mul(u, Vector3())
-		elseif type(u) == 'number' then return v:Scale(u, Vector3())
+		if Vector3.IsVector3(u) then return self:Mul(u, Vector3())
+		elseif type(u) == 'number' then return self:Scale(u, Vector3())
 		else error('vec3s can only be multiplied by vec3s and numbers') end
 	end,
 	__div = function(v, u)
-		if Vector3.IsVector3(u) then return v:Div(u, Vector3())
-		elseif type(u) == 'number' then return v:Scale(1 / u, Vector3())
+		if Vector3.IsVector3(u) then return self:Div(u, Vector3())
+		elseif type(u) == 'number' then return self:Scale(1 / u, Vector3())
 		else error('vec3s can only be divided by vec3s and numbers') end
 	end,
-	__unm = function(v) return v:Scale(-1) end,
-	__len = function(v) return v:Length() end
+	__unm = function(v) return self:Scale(-1) end,
+	__len = function(v) return self:Length() end
 }
 Vector3.__index = Vector3
 
@@ -49,163 +49,146 @@ function Vector3:IsVector3(x)
 	return getmetatable(x) == Vector3
 end
 
----@param v Vector3
 function Vector3:Clone(v)
-	return Vector3(v.x, v.y, v.z)
+	return Vector3(self.x, self.y, self.z)
 end
 
----@param v Vector3
 ---@return number,number,number
 function Vector3:Unpack(v)
-	return v.x, v.y, v.z
+	return self.x, self.y, self.z
 end
 
----@param v Vector3
 ---@param x number
 ---@param y number
 ---@param z number
 ---@return Vector3
-function Vector3:Set(v, x, y, z)
+function Vector3:Set(x, y, z)
 	if Vector3.IsVector3(x) then x, y, z = x.x, x.y, x.z end
-	v.x = x
-	v.y = y
-	v.z = z
-	return v
+	self.x = x
+	self.y = y
+	self.z = z
+	return self
 end
 
----@param v Vector3
 ---@param u Vector3
 ---@param out Vector3|nil
-function Vector3:Add(v, u, out)
-	out = out or v
-	out.x = v.x + u.x
-	out.y = v.y + u.y
-	out.z = v.z + u.z
+function Vector3:Add(u, out)
+	out = out or self
+	out.x = self.x + u.x
+	out.y = self.y + u.y
+	out.z = self.z + u.z
 	return out
 end
 
----@param v Vector3
 ---@param u Vector3
 ---@param out Vector3|nil
-function Vector3:Sub(v, u, out)
-	out = out or v
-	out.x = v.x - u.x
-	out.y = v.y - u.y
-	out.z = v.z - u.z
+function Vector3:Sub(u, out)
+	out = out or self
+	out.x = self.x - u.x
+	out.y = self.y - u.y
+	out.z = self.z - u.z
 	return out
 end
 
----@param v Vector3
 ---@param u Vector3
 ---@param out Vector3|nil
-function Vector3:Mul(v, u, out)
-	out = out or v
-	out.x = v.x * u.x
-	out.y = v.y * u.y
-	out.z = v.z * u.z
+function Vector3:Mul(u, out)
+	out = out or self
+	out.x = self.x * u.x
+	out.y = self.y * u.y
+	out.z = self.z * u.z
 	return out
 end
 
----@param v Vector3
 ---@param u Vector3
 ---@param out Vector3|nil
-function Vector3:Div(v, u, out)
-	out = out or v
-	out.x = v.x / u.x
-	out.y = v.y / u.y
-	out.z = v.z / u.z
+function Vector3:Div(u, out)
+	out = out or self
+	out.x = self.x / u.x
+	out.y = self.y / u.y
+	out.z = self.z / u.z
 	return out
 end
 
----@param v Vector3
 ---@param s number
 ---@param out Vector3|nil
-function Vector3:Scale(v, s, out)
-	out = out or v
-	out.x = v.x * s
-	out.y = v.y * s
-	out.z = v.z * s
+function Vector3:Scale(s, out)
+	out = out or self
+	out.x = self.x * s
+	out.y = self.y * s
+	out.z = self.z * s
 	return out
 end
 
----@param v Vector3
 function Vector3:Length(v)
-	return math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z)
+	return math.sqrt(self.x * self.x + self.y * self.y + self.z * self.z)
 end
 
----@param v Vector3
 ---@param out Vector3
-function Vector3:Normalize(v, out)
-	out = out or v
-	local len = v:Length()
-	return len == 0 and v or v:Scale(1 / len, out)
+function Vector3:Normalize(out)
+	out = out or self
+	local len = self:Length()
+	return len == 0 and self or self:Scale(1 / len, out)
 end
 
----@param v Vector3
 ---@param u Vector3
-function Vector3:Distance(v, u)
-	return Vector3.sub(v, u, vtmp1):Length()
+function Vector3:Distance(u)
+	return Vector3.sub(u, vtmp1):Length()
 end
 
----@param v Vector3
 ---@param u Vector3
-function Vector3:Angle(v, u)
-	return math.acos(v:Dot(u) / (v:Length() + u:Length()))
+function Vector3:Angle(u)
+	return math.acos(self:Dot(u) / (self:Length() + u:Length()))
 end
 
----@param v Vector3
 ---@param u Vector3
-function Vector3:Dot(v, u)
-	return v.x * u.x + v.y * u.y + v.z * u.z
+function Vector3:Dot(u)
+	return self.x * u.x + self.y * u.y + self.z * u.z
 end
 
----@param v Vector3
 ---@param u Vector3
 ---@param out Vector3|nil
-function Vector3:Cross(v, u, out)
-	out = out or v
-	local a, b, c = v.x, v.y, v.z
+function Vector3:Cross(u, out)
+	out = out or self
+	local a, b, c = self.x, self.y, self.z
 	out.x = b * u.z - c * u.y
 	out.y = c * u.x - a * u.z
 	out.z = a * u.y - b * u.x
 	return out
 end
 
----@param v Vector3
 ---@param u Vector3
 ---@param t number
 ---@param out Vector3|nil
-function Vector3:Lerp(v, u, t, out)
-	out = out or v
-	out.x = v.x + (u.x - v.x) * t
-	out.y = v.y + (u.y - v.y) * t
-	out.z = v.z + (u.z - v.z) * t
+function Vector3:Lerp(u, t, out)
+	out = out or self
+	out.x = self.x + (u.x - self.x) * t
+	out.y = self.y + (u.y - self.y) * t
+	out.z = self.z + (u.z - self.z) * t
 	return out
 end
 
----@param v Vector3
 ---@param u Vector3
 ---@param out Vector3|nil
-function Vector3:Project(v, u, out)
-	out = out or v
+function Vector3:Project(u, out)
+	out = out or self
 	local unorm = vtmp1
 	u:Normalize(unorm)
-	local dot = v:Dot(unorm)
+	local dot = self:Dot(unorm)
 	out.x = unorm.x * dot
 	out.y = unorm.y * dot
 	out.z = unorm.z * dot
 	return out
 end
 
----@param v Vector3
 ---@param q Quaternion
 ---@param out Vector3|nil
-function Vector3:Rotate(v, q, out)
-	out = out or v
+function Vector3:Rotate(q, out)
+	out = out or self
 	local u, c, o = vtmp1, vtmp2, out
 	u.x, u.y, u.z = q.x, q.y, q.z
-	o.x, o.y, o.z = v.x, v.y, v.z
-	u:Cross(v, c)
+	o.x, o.y, o.z = self.x, self.y, self.z
+	u:Cross(c)
 	local uu = u:Dot(u)
 	local uv = u:Dot(v)
 	o:Scale(q.w * q.w - uu)
@@ -240,29 +223,26 @@ function Quaternion:IsQuaternion(x)
 	return getmetatable(x) == Quaternion
 end
 
----@param q Quaternion
-function Quaternion:Clone(q)
-	return Quaternion(q.x, q.y, q.z, q.w)
+function Quaternion:Clone()
+	return Quaternion(self.x, self.y, self.z, self.w)
 end
 
----@param q Quaternion
 ---@return number,number,number
-function Quaternion:Unpack(q)
-	return q.x, q.y, q.z, q.w
+function Quaternion:Unpack()
+	return self.x, self.y, self.z, self.w
 end
 
----@param q Quaternion
 ---@param x number
 ---@param y number
 ---@param z number
 ---@param w number
-function Quaternion:Set(q, x, y, z, w)
+function Quaternion:Set(x, y, z, w)
 	if Quaternion.IsQuaternion(x) then x, y, z, w = x.x, x.y, x.z, x.w end
-	q.x = x
-	q.y = y
-	q.z = z
-	q.w = w
-	return q
+	self.x = x
+	self.y = y
+	self.z = z
+	self.w = w
+	return self
 end
 
 ---@param angle number
@@ -273,28 +253,26 @@ function Quaternion:FromAngleAxis(angle, x, y, z)
 	return Quaternion():SetAngleAxis(angle, x, y, z)
 end
 
----@param q Quaternion
 ---@param angle number
 ---@param x number
 ---@param y number
 ---@param z number
-function Quaternion:SetAngleAxis(q, angle, x, y, z)
+function Quaternion:SetAngleAxis(angle, x, y, z)
 	if Vector3.IsVector3(x) then x, y, z = x.x, x.y, x.z end
 	local s = math.sin(angle * .5)
 	local c = math.cos(angle * .5)
-	q.x = x * s
-	q.y = y * s
-	q.z = z * s
-	q.w = c
-	return q
+	self.x = x * s
+	self.y = y * s
+	self.z = z * s
+	self.w = c
+	return self
 end
 
----@param q Quaternion
-function Quaternion:GetAngleAxis(q)
-	if q.w > 1 or q.w < -1 then q:Normalize() end
-	local s = math.sqrt(1 - q.w * q.w)
+function Quaternion:GetAngleAxis()
+	if self.w > 1 or self.w < -1 then self:Normalize() end
+	local s = math.sqrt(1 - self.w * self.w)
 	s = s < .0001 and 1 or 1 / s
-	return 2 * math.acos(q.w), q.x * s, q.y * s, q.z * s
+	return 2 * math.acos(self.w), self.x * s, self.y * s, self.z * s
 end
 
 ---@param u Vector3
@@ -303,14 +281,13 @@ function Quaternion:Between(u, v)
 	return Quaternion():SetBetween(u, v)
 end
 
----@param q Quaternion
 ---@param u Vector3
 ---@param v Vector3
-function Quaternion:SetBetween(q, u, v)
+function Quaternion:SetBetween(u, v)
 	local dot = u:Dot(v)
 	if dot > .99999 then
-		q.x, q.y, q.z, q.w = 0, 0, 0, 1
-		return q
+		self.x, self.y, self.z, self.w = 0, 0, 0, 1
+		return self
 	elseif dot < -.99999 then
 		vtmp1.x, vtmp1.y, vtmp1.z = 1, 0, 0
 		vtmp1:Cross(u)
@@ -319,13 +296,13 @@ function Quaternion:SetBetween(q, u, v)
 			vtmp1:Cross(u)
 		end
 		vtmp1:Normalize()
-		return q:SetAngleAxis(math.pi, vtmp1)
+		return self:SetAngleAxis(math.pi, vtmp1)
 	end
 	
-	q.x, q.y, q.z = u.x, u.y, u.z
-	Vector3.cross(q, v)
-	q.w = 1 + dot
-	return q:Normalize()
+	self.x, self.y, self.z = u.x, u.y, u.z
+	Vector3.cross(v)
+	self.w = 1 + dot
+	return self:Normalize()
 end
 
 ---@param x number
@@ -335,46 +312,42 @@ function Quaternion:FromDirection(x, y, z)
 	return Quaternion():SetDirection(x, y, z)
 end
 
----@param q Quaternion
 ---@param x number
 ---@param y number
 ---@param z number
-function Quaternion:SetDirection(q, x, y, z)
+function Quaternion:SetDirection(x, y, z)
 	if Vector3.IsVector3(x) then x, y, z = x.x, x.y, x.z end
 	vtmp2.x, vtmp2.y, vtmp2.z = x, y, z
-	return q:SetBetween(forward, vtmp2)
+	return self:SetBetween(forward, vtmp2)
 end
 
----@param q Quaternion
 ---@param r Quaternion
 ---@param out Quaternion
-function Quaternion:Add(q, r, out)
-	out = out or q
-	out.x = q.x + r.x
-	out.y = q.y + r.y
-	out.z = q.z + r.z
-	out.w = q.w + r.w
+function Quaternion:Add(r, out)
+	out = out or self
+	out.x = self.x + r.x
+	out.y = self.y + r.y
+	out.z = self.z + r.z
+	out.w = self.w + r.w
 	return out
 end
 
----@param q Quaternion
 ---@param r Quaternion
 ---@param out Quaternion
-function Quaternion:Sub(q, r, out)
-	out = out or q
-	out.x = q.x - r.x
-	out.y = q.y - r.y
-	out.z = q.z - r.z
-	out.w = q.w - r.w
+function Quaternion:Sub(r, out)
+	out = out or self
+	out.x = self.x - r.x
+	out.y = self.y - r.y
+	out.z = self.z - r.z
+	out.w = self.w - r.w
 	return out
 end
 
----@param q Quaternion
 ---@param r Quaternion
 ---@param out Quaternion
-function Quaternion:Mul(q, r, out)
-	out = out or q
-	local qx, qy, qz, qw = q:Unpack()
+function Quaternion:Mul(r, out)
+	out = out or self
+	local qx, qy, qz, qw = self:Unpack()
 	local rx, ry, rz, rw = r:Unpack()
 	out.x = qx * rw + qw * rx + qy * rz - qz * ry
 	out.y = qy * rw + qw * ry + qz * rx - qx * rz
@@ -383,61 +356,56 @@ function Quaternion:Mul(q, r, out)
 	return out
 end
 
----@param q Quaternion
 ---@param s number
 ---@param out Quaternion
-function Quaternion:Scale(q, s, out)
-	out = out or q
-	out.x = q.x * s
-	out.y = q.y * s
-	out.z = q.z * s
-	out.w = q.w * s
+function Quaternion:Scale(s, out)
+	out = out or self
+	out.x = self.x * s
+	out.y = self.y * s
+	out.z = self.z * s
+	out.w = self.w * s
 	return out
 end
 
----@param q Quaternion
-function Quaternion:Length(q)
-	return math.sqrt(q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w)
+function Quaternion:Length()
+	return math.sqrt(self.x * self.x + self.y * self.y + self.z * self.z + self.w * self.w)
 end
 
----@param q Quaternion
 ---@param out Quaternion
-function Quaternion:Normalize(q, out)
-	out = out or q
-	local len = q:Length()
-	return len == 0 and q or q:Scale(1 / len, out)
+function Quaternion:Normalize(out)
+	out = out or self
+	local len = self:Length()
+	return len == 0 and self or self:Scale(1 / len, out)
 end
 
----@param q Quaternion
 ---@param r Quaternion
 ---@param t number
 ---@param out Quaternion
-function Quaternion:Lerp(q, r, t, out)
-	out = out or q
+function Quaternion:Lerp(r, t, out)
+	out = out or self
 	r:Scale(t, qtmp1)
-	q:Scale(1 - t, out)
+	self:Scale(1 - t, out)
 	return out:Add(qtmp1)
 end
 
----@param q Quaternion
 ---@param r Quaternion
 ---@param t number
 ---@param out Quaternion
-function Quaternion:Slerp(q, r, t, out)
-	out = out or q
+function Quaternion:Slerp(r, t, out)
+	out = out or self
 	
-	local dot = q.x * r.x + q.y * r.y + q.z * r.z + q.w * r.w
+	local dot = self.x * r.x + self.y * r.y + self.z * r.z + self.w * r.w
 	if dot < 0 then
 		dot = -dot
 		r:Scale(-1)
 	end
 	
 	if 1 - dot < .0001 then
-		return q:Lerp(r, t, out)
+		return self:Lerp(r, t, out)
 	end
 	
 	local theta = math.acos(dot)
-	q:Scale(math.sin((1 - t) * theta), out)
+	self:Scale(math.sin((1 - t) * theta), out)
 	r:Scale(math.sin(t * theta), qtmp1)
 	return out:Add(qtmp1):Scale(1 / math.sin(theta))
 end

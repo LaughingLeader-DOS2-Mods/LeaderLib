@@ -310,3 +310,14 @@ end
 
 Ext.RegisterUITypeInvokeListener(Data.UIType.hotBar, "showActiveSkill", OnShowActiveSkill)
 Ext.RegisterUITypeInvokeListener(Data.UIType.bottomBar_c, "showActiveSkill", OnShowActiveSkill)
+
+Ext.RegisterNetListener("LeaderLib_Debug_MusicTest", function(cmd, payload)
+	local data = Common.JsonParse(payload)
+	local mType = data.Type or "Explo"
+	local theme = data.Theme or "Fort_Joy"
+	--Ext.Audio.SetState("Music_Type", "None")
+	local success1 = Ext.Audio.SetState("Music_Type", mType)
+	local success2 = Ext.Audio.SetState("Music_Theme", theme)
+	fprint(LOGLEVEL.TRACE, "Ext.Audio.SetState(\"Music_Type\", \"%s\") = %s", mType, success1)
+	fprint(LOGLEVEL.TRACE, "Ext.Audio.SetState(\"Music_Theme\", \"%s\") = %s", theme, success2)
+end)

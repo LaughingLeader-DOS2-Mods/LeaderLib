@@ -895,6 +895,13 @@ Ext.RegisterConsoleCommand("lldebug_keepAlive", function(command)
 	end)
 end)
 
+Ext.RegisterConsoleCommand("lldebug_music", function(command, mType, theme)
+	Ext.BroadcastMessage("LeaderLib_Debug_MusicTest", Ext.JsonStringify({
+		Type = mType or "Explo",
+		Theme = theme or "Fort_Joy"
+	}))
+end)
+
 -- Ext.RegisterOsirisListener("NRD_OnActionStateEnter", Data.OsirisEvents.NRD_OnActionStateEnter, "after", function(char, state)
 -- 	print("NRD_OnActionStateEnter", char, state)
 -- 	-- StartOneshotTimer(nil, 2000, function()

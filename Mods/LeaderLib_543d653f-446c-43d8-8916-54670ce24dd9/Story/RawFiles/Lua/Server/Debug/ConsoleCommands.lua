@@ -164,7 +164,7 @@ Ext.RegisterConsoleCommand("addtreasure", function(command, treasure, identifyIt
 	local host = CharacterGetHostCharacter()
 	local level = CharacterGetLevel(host)
 	if levelstr ~= nil then
-		level = math.tointeger(tonumber(levelstr))
+		level = Ext.Round(tonumber(levelstr))
 	end
 	local x,y,z = GetPosition(host)
 	if treasureChest == nil or ObjectExists(treasureChest) == 0 then
@@ -172,9 +172,48 @@ Ext.RegisterConsoleCommand("addtreasure", function(command, treasure, identifyIt
 	end
 	local tx,ty,tz = FindValidPosition(x,y,z, 8.0, treasureChest)
 	ItemMoveToPosition(treasureChest, tx,ty,tz,16.0,20.0,"",0)
-	GenerateTreasure(treasureChest, treasure, CharacterGetLevel(host), host)
+	GenerateTreasure(treasureChest, treasure, level, host)
 	if identifyItems then
 		ContainerIdentifyAll(treasureChest)
+	end
+end)
+
+Ext.RegisterConsoleCommand("addtreasureex", function(command, treasure, level, forceRarity, generateAmount)
+	local host = CharacterGetHostCharacter()
+	if treasure == nil then
+		treasure = "ArenaMode_ArmsTrader"
+	end
+	if level == nil then
+		level = CharacterGetLevel(host)
+	else
+		level = Ext.Round(tonumber(level))
+	end
+	if generateAmount then
+		generateAmount = tonumber(generateAmount) or 1
+	end
+	local tbl = Ext.GetTreasureTable(treasure)
+	if tbl then
+		---@type ItemDefinition
+		local props = {
+			Level = level,
+			ItemType = forceRarity or "Rare",
+			GenerationItemType = forceRarity or "Rare",
+			IsIdentified = true,
+			HasGeneratedStats = true,
+		}
+		for _,sub in pairs(tbl.SubTables) do
+			for _,cat in pairs(sub.Categories) do
+				if string.find(cat.TreasureCategory, "I_", nil, true) then
+					local stat = string.gsub(cat.TreasureCategory, "I_", "")
+					for i=0,generateAmount do
+						local item = GameHelpers.Item.CreateItemByStat(stat, true, props)
+						if item then
+							ItemToInventory(item, host, 1, 0, 0)
+						end
+					end
+				end
+			end
+		end
 	end
 end)
 

@@ -362,15 +362,23 @@ local function ItemHasTag(item, tag)
 		Common.TableHasValue(StringHelpers.Split(item.Stats.Tags, ";"), tag) then
 			return true
 		end
-		for _,v in pairs(item:GetDeltaMods()) do
-			local deltamod = Ext.GetDeltaMod(v, item.ItemType)
-			if deltamod then
-				for _,boost in pairs(deltamod.Boosts) do
-					local tags = Ext.StatGetAttribute(boost.Boost, "Tags")
-					if not StringHelpers.IsNullOrWhitespace(tags) and
-					Common.TableHasValue(StringHelpers.Split(tags, ";"), tag) then
-						return true
-					end
+		-- for _,v in pairs(item:GetDeltaMods()) do
+		-- 	local deltamod = Ext.GetDeltaMod(v, item.ItemType)
+		-- 	if deltamod then
+		-- 		for _,boost in pairs(deltamod.Boosts) do
+		-- 			local tags = Ext.StatGetAttribute(boost.Boost, "Tags")
+		-- 			if not StringHelpers.IsNullOrWhitespace(tags) and
+		-- 			Common.TableHasValue(StringHelpers.Split(tags, ";"), tag) then
+		-- 				return true
+		-- 			end
+		-- 		end
+		-- 	end
+		-- end
+		for _,v in pairs(item.Stats.DynamicStats) do
+			if not StringHelpers.IsNullOrWhitespace(v.ObjectInstanceName) then
+				local tags = Ext.StatGetAttribute(v.ObjectInstanceName, "Tags")
+				if not StringHelpers.IsNullOrWhitespace(tags) and Common.TableHasValue(StringHelpers.Split(tags, ";"), tag) then
+					return true
 				end
 			end
 		end

@@ -133,7 +133,7 @@ function ContextMenu:SetContextStatus(status, uiType)
 		else
 			self.ContextStatus.RemoveFromList = Common.TableHasEntry(GameSettings.Settings.Client.StatusOptions.Whitelist, status.StatusId, false)
 		end
-	elseif self.ContextStatus then
+	else
 		--fprint(LOGLEVEL.WARNING, "[ContextMenu:SetContextStatus] Cleared.")
 		self.ContextStatus = nil
 	end
@@ -146,6 +146,7 @@ end
 function ContextMenu:OnClose(ui, call)
 	self:SetContextStatus(nil)
 	self.Visible = false
+	self.IsOpening = false
 end
 
 function ContextMenu:OnUpdate(ui, event)
@@ -195,7 +196,7 @@ end
 
 function ContextMenu:OnRightClick(eventName, pressed, id, inputMap, controllerEnabled)
 	--fprint(LOGLEVEL.DEFAULT, "[ContextMenu:OnRightClick] IsOpening(%s) Visible(%s) pressed(%s)", self.IsOpening, self.Visible, pressed)
-	if not pressed and not self.IsOpening then
+	if not self.IsOpening then
 		local x,y = UIExtensions.GetMousePosition()
 		local openRequested = GetShouldOpen(self, x, y)
 		if self.Visible then
@@ -276,7 +277,7 @@ function ContextMenu:OnRightClick(eventName, pressed, id, inputMap, controllerEn
 end
 
 function ContextMenu:OnShowStatusTooltip(ui, event, characterDouble, statusDouble, x, y, width, height, side)
-	if self.ContextStatus == nil then
+	if self.ContextStatus == nil or not self.Visible then
 		if characterDouble and statusDouble then
 			local characterHandle = Ext.DoubleToHandle(characterDouble)
 			local statusHandle = Ext.DoubleToHandle(statusDouble)
@@ -291,15 +292,13 @@ function ContextMenu:OnShowStatusTooltip(ui, event, characterDouble, statusDoubl
 end
 
 function ContextMenu:OnShowExamineStatusTooltip(ui, event, typeIndex, statusDouble)
-	if self.ContextStatus == nil then
-		if typeIndex == 7 then
-			local characterHandle = ui:GetPlayerHandle()
-			local statusHandle = Ext.DoubleToHandle(statusDouble)
-			if characterHandle and statusHandle then
-				local status = Ext.GetStatus(characterHandle, statusHandle)
-				if status then
-					self:SetContextStatus(status, ui:GetTypeId())
-				end
+	if typeIndex == 7 and (self.ContextStatus == nil or not self.Visible) then
+		local characterHandle = ui:GetPlayerHandle()
+		local statusHandle = Ext.DoubleToHandle(statusDouble)
+		if characterHandle and statusHandle then
+			local status = Ext.GetStatus(characterHandle, statusHandle)
+			if status then
+				self:SetContextStatus(status, ui:GetTypeId())
 			end
 		end
 	end
@@ -465,12 +464,14 @@ function ContextMenu:Open()
 		elseif self.ContextStatus.CallingUI == Data.UIType.playerInfo then
 			
 		end
+		self.IsOpening = true
 		Ext.GetUIByType(self.ContextStatus.CallingUI):ExternalInterfaceCall("hideTooltip")
 		x = x + paddingX
 		y = y + paddingY
 		
 		contextMenu.open(x,y)
 		self.Visible = true
+		self.IsOpening = false
 		--main.showContextMenu(true)
 	end
 end

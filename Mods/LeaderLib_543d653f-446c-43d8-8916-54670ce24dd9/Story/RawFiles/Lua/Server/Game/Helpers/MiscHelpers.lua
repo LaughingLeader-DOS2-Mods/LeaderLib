@@ -169,6 +169,31 @@ function GameHelpers.IsInCombat(uuid)
 	return false
 end
 
+function GameHelpers.IsActiveCombat(id)
+	if not id or id == -1 then
+		return false
+	end
+	local db = Osi.DB_LeaderLib_Combat_ActiveCombat(id)
+	if db and #db > 0 then
+		return true
+	end
+	return false
+end
+
+---@param id integer
+---@return EsvCharacter[]|nil
+function GameHelpers.GetCombatCharacters(id)
+	local combat = Ext.GetCombat(id)
+	if combat then
+		local objects = {}
+		for i,v in pairs(combat:GetAllTeams()) do
+			objects[#objects+1] = v.Character
+		end
+		return objects
+	end
+	return nil
+end
+
 ---@param dialog string
 ---@vararg string
 ---@return boolean

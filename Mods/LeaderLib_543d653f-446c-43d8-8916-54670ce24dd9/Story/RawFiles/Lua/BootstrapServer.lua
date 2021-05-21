@@ -10,7 +10,9 @@ local defaultPersistentVars = {
 		Queue = {}
 	},
 	SkillData = {},
-	IsPreparingSkill = {}
+	IsPreparingSkill = {},
+	---@type table<string,TurnCounterData>
+	TurnCounterData = {}
 }
 
 ---@type LeaderLibPersistentVars

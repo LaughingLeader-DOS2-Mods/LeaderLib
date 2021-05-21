@@ -132,6 +132,7 @@ function Vector3:Normalize(out)
 end
 
 ---@param u Vector3
+---@return number
 function Vector3:Distance(u)
 	return Vector3.sub(u, vtmp1):Length()
 end

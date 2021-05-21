@@ -121,6 +121,7 @@ function OnTimerFinished(event, ...)
 	end
 	InvokeListenerCallbacks(Listeners.TimerFinished, event, ...)
 	InvokeListenerCallbacks(Listeners.NamedTimerFinished[event], event, ...)
+	TurnCounter.OnTimerFinished(event)
 end
 
 local function OnProcObjectTimerFinished(object, timerName)

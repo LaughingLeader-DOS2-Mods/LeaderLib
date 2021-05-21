@@ -20,3 +20,32 @@ function TableHelpers.TryOrderedEach(tbl)
 		return iter,tbl,nil
 	end
 end
+
+local validTypes = {
+	string = true,
+	table = true,
+	number = true,
+	boolean = true,
+}
+---Prepares a table for PersistentVars saving by removing invalid values.
+---@param tbk table
+---@return table<string|number|boolean,string|number|boolean|table>
+function TableHelpers.SanitizeTable(tbl)
+	if type(tbl) ~= "table" then
+		return
+	end
+	local output = {}
+	for k,v in pairs(tbl) do
+		if validTypes[type(k)] then
+			local t = type(v)
+			if validTypes[t] then
+				if t == "table" then
+					output[k] = TableHelpers.SanitizeTable(v)
+				else
+					output[k] = v
+				end
+			end
+		end
+	end
+	return output
+end

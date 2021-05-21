@@ -584,18 +584,19 @@ local function OnItemTooltip(item, tooltip)
 					if savedSkills == nil then
 						local tooltipIcon = GameHelpers.Tooltip.GetElementAttribute(tooltip:GetElement("SkillIcon"), "Label")
 						local tooltipSkillDescription = GameHelpers.Tooltip.GetElementAttribute(tooltip:GetElement("SkillDescription"), "Label")
-						for i,skill in pairs(Ext.GetStatEntries("SkillData")) do
-							local icon = Ext.StatGetAttribute(skill, "Icon")
+						for i,skillId in pairs(Ext.GetStatEntries("SkillData")) do
+							local skill = Ext.GetStat(skillId)
+							local icon = skill.Icon
 							if tooltipIcon == icon then
-								local displayName = GameHelpers.GetStringKeyText(Ext.StatGetAttribute(skill, "DisplayName"))
-								local description = GameHelpers.GetStringKeyText(Ext.StatGetAttribute(skill, "Description"))
+								local displayName = GameHelpers.GetStringKeyText(skill.DisplayName)
+								local description = GameHelpers.GetStringKeyText(skill.Description)
 		
 								if displayName == skillBookSkillDisplayName and description == tooltipSkillDescription then
 									if skillBookAssociatedSkills[item.RootTemplate.Id] == nil then
 										skillBookAssociatedSkills[item.RootTemplate.Id] = {}
 										savedSkills = skillBookAssociatedSkills[item.RootTemplate.Id]
 									end
-									skillBookAssociatedSkills[item.RootTemplate.Id][skill] = true
+									skillBookAssociatedSkills[item.RootTemplate.Id][skill.Name] = true
 								end
 							end
 						end
@@ -816,7 +817,10 @@ local function OnAnyTooltip(request, tooltip)
 				local target = element.Label or element.Description
 				if target then
 					local nextText = target
-					local format = "<br><br><p align='center'><font color='#44CC00'>%s</font></p>"
+					local format = "<br><p align='center'><font color='#44CC00'>%s</font></p>"
+					if not string.find(nextText, "<br>", #nextText-5, true) then
+						format = "<br>"..format
+					end
 					local keyText = not Vars.ControllerEnabled and LocalizedText.Input.Shift.Value or LocalizedText.Input.Select.Value
 					if TooltipExpander.IsExpanded() then
 						nextText = nextText .. string.format(format, LocalizedText.Tooltip.ExpanderActive:ReplacePlaceholders(keyText))

@@ -172,7 +172,6 @@ Ext.RegisterNetListener("LeaderLib_OnDelayTurnClicked", function(call, uuid, ...
 	-- if not charMatch then
 	-- 	return
 	-- end
-	TurnCounter.OnTurnSkipped(uuid)
 	local length = #Listeners.TurnDelayed
 	if length > 0 then
 		for i=1,length do

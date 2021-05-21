@@ -140,12 +140,14 @@ function Input.IsReleased(name)
 end
 
 ---@param name string|integer|string[]|integer[]
+---@param threshold integer|nil Max amount of milliseconds to determine if the key was just pressed.
 ---@return boolean
-function Input.JustPressed(name)
+function Input.JustPressed(name, threshold)
+	threshold = threshold or Input.Vars.JustPressedThreshold
 	local t = type(name)
 	if t == "table" then
 		for _,v in pairs(name) do
-			if Input.IsJustPressed(v) then
+			if Input.IsJustPressed(v, threshold) then
 				return true
 			end
 		end
@@ -157,7 +159,7 @@ function Input.JustPressed(name)
 			local inputName = Data.InputEnum[name]
 			time = inputName and lastPressedTimes[inputName] or nil
 		end
-		if time and Ext.MonotonicTime() - time <= Input.Vars.JustPressedThreshold then
+		if time and Ext.MonotonicTime() - time <= threshold then
 			return true
 		end
 	end
@@ -195,7 +197,7 @@ local lastFiredEventFrom = {}
 
 local function InvokeExtenderEventCallbacks(evt, eventName)
 	local nextState = evt.Press and KEYSTATE.DOWN or KEYSTATE.RELEASED
-	if evt.Press then
+	if evt.Press or Input.SkipStateCheck[eventName] == KEYSTATE.RELEASED then
 		lastPressedTimes[eventName] = Ext.MonotonicTime()
 	end
 	-- if Vars.DebugMode then
@@ -238,7 +240,7 @@ end)
 function Input.OnFlashEvent(ui, call, pressed, eventName, arrayIndex)
 	eventName = string.gsub(eventName, "IE ", "")
 	local nextState = pressed and KEYSTATE.DOWN or KEYSTATE.RELEASED
-	if pressed then
+	if pressed or Input.SkipStateCheck[eventName] == KEYSTATE.RELEASED then
 		lastPressedTimes[eventName] = Ext.MonotonicTime()
 	end
 	
@@ -276,10 +278,10 @@ function Input.OnKeyboardEvent(ui, call, keyCode, keyName, pressed)
 	end
 end
 
-if Vars.DebugMode then
-	Input.RegisterListener(function(eventName, pressed, id, keys, controllerEnabled)
-		if not string.find(eventName, "Mouse") then
-			fprint(LOGLEVEL.DEFAULT, "[Input] event(%s) pressed(%s) id(%s) time(%s)", eventName, pressed, id, Ext.MonotonicTime())
-		end
-	end)
-end
+-- if Vars.DebugMode then
+-- 	Input.RegisterListener(function(eventName, pressed, id, keys, controllerEnabled)
+-- 		if not string.find(eventName, "Mouse") then
+-- 			fprint(LOGLEVEL.DEFAULT, "[Input] event(%s) pressed(%s) id(%s) time(%s)", eventName, pressed, id, Ext.MonotonicTime())
+-- 		end
+-- 	end)
+-- end

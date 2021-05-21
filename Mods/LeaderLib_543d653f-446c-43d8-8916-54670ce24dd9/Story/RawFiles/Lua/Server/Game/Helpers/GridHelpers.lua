@@ -134,7 +134,7 @@ function GameHelpers.ForceMoveObject(source, target, distanceMultiplier)
 	end
 	local startPos = GameHelpers.Math.GetForwardPosition(source.MyGuid, distanceMultiplier)
 	--local forwardVector = {-source.Stats.Rotation[7], 0, -source.Stats.Rotation[9]}
-	local forwardVector = GameHelpers.Math.GetDirectionVector(source.WorldPos, target.WorldPos, true)
+	local forwardVector = GameHelpers.Math.GetDirectionVector(target.WorldPos, source.WorldPos)
 	local tx,ty,tz = GameHelpers.Grid.GetValidPositionAlongLine(startPos, forwardVector, distanceMultiplier)
 	if tx and tz then
 		local handle = NRD_CreateGameObjectMove(target.MyGuid, tx, ty, tz, "", source.MyGuid)

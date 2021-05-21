@@ -167,7 +167,18 @@ local function RequestPlayerInfoRefresh()
 	end
 end
 
+local function NothingIsIgnored()
+	if not GameSettings.Settings.Client.StatusOptions.HideAll then
+		return #GameSettings.Settings.Client.StatusOptions.Blacklist == 0
+	else
+		return #GameSettings.Settings.Client.StatusOptions.Whitelist == 0
+	end
+end
+
 local function OnUpdateStatuses(ui, method, addIfNotExists, cleanupAll)
+	if NothingIsIgnored() then
+		return
+	end
 	local this = ui:GetRoot()
 	local status_array = this.status_array
 	local length = #status_array
@@ -240,6 +251,14 @@ local function RequestHealthbarRefresh()
 	end
 end
 
+local function TryGetStatus(characterHandle, statusHandle)
+	local b,result = xpcall(Ext.GetStatus, debug.traceback, characterHandle, statusHandle)
+	if b then
+		return result
+	end
+	return nil
+end
+
 ---@param ui UIObject
 local function UpdateHealthbarStatusVisibility(ui, this, whitelist,blacklist,allVisible)
 	if not lastHealthbarOwnerDouble then
@@ -263,14 +282,17 @@ local function UpdateHealthbarStatusVisibility(ui, this, whitelist,blacklist,all
 				local status_mc = this.statusList.content_array[i]
 				if status_mc then
 					local statusHandle = Ext.DoubleToHandle(status_mc.id)
-					local status = Ext.GetStatus(characterHandle, statusHandle)
-					if status then
-						local visible = GetStatusVisibility(status.StatusId, whitelist,blacklist,allVisible)
-						if status_mc.visible ~= visible then
-							cleanup = true
+					local character = Ext.GetCharacter(characterHandle)
+					if character then
+						local status = Ext.GetStatus(characterHandle, statusHandle)
+						if status then
+							local visible = GetStatusVisibility(status.StatusId, whitelist,blacklist,allVisible)
+							if status_mc.visible ~= visible then
+								cleanup = true
+							end
+							status_mc.alive = visible
+							status_mc.visible = visible
 						end
-						status_mc.alive = visible
-						status_mc.visible = visible
 					end
 				end
 			end
@@ -292,12 +314,13 @@ end
 
 ---@param ui UIObject
 local function OnUpdateStatuses_Healthbar(ui, method, addIfNotExists)
-	if not GameSettings.Settings.Client.StatusOptions.AffectHealthbar then
+	if not GameSettings.Settings.Client.StatusOptions.AffectHealthbar or NothingIsIgnored() then
 		return
 	end
 	local this = ui:GetRoot()
 
 	local whitelist,blacklist,allVisible = GetStatusVisibilityLists()
+
 	lastHealthbarOwnerDouble = this.status_array[0]
 	if addIfNotExists then
 		UpdateHealthbarStatusVisibility(ui, this, whitelist,blacklist,allVisible)

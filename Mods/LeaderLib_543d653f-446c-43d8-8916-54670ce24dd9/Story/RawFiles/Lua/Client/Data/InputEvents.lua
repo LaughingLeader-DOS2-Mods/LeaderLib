@@ -1,9 +1,13 @@
 Data.Input = {
+	--No id
+	["FlashCtrl"] = -1,
+	["FlashScrollDown"] = -1,
+	["FlashScrollUp"] = -1,
+	["FlashCancel"] = -1,
 	["Action1"] = 1,
 	["FlashLeftMouse"] = {1, 4},
 	["FlashRightMouse"] = 2,
 	["FlashMiddleMouse"] = 3,
-	["FlashCtrl"] = -1, -- No id?
 	["FlashAlt"] = 62,
 	["ActionMenu"] = 110,
 	["CameraCenter"] = 111,

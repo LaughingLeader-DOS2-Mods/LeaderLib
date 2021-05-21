@@ -88,3 +88,14 @@ function ModifyPathInfluenceForPlayer(uuid, revert)
 		Ext.SyncStat(player.Stats.Name, true)
 	end
 end
+
+if Vars.DebugMode then
+	Ext.RegisterOsirisListener("DB_RC_DW_DwarfCommoner_02_ADs", 4, "after", function(event, chance, uuid, dialog)
+		Osi.DB_RC_DW_DwarfCommoner_02_ADs:Delete(nil,nil,nil,nil)
+	end)
+	RegisterListener("Initialized", function()
+		if SharedData.RegionData.Current == "RC_Main" then
+			Osi.DB_RC_DW_DwarfCommoner_02_ADs:Delete(nil,nil,nil,nil)
+		end
+	end)
+end

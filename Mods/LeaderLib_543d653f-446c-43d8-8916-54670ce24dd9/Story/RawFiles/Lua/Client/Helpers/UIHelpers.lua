@@ -259,6 +259,8 @@ local function TryGetStatus(characterHandle, statusHandle)
 	return nil
 end
 
+local healthBarStatusToOwner = {}
+
 ---@param ui UIObject
 local function UpdateHealthbarStatusVisibility(ui, this, whitelist,blacklist,allVisible)
 	if not lastHealthbarOwnerDouble then
@@ -282,17 +284,14 @@ local function UpdateHealthbarStatusVisibility(ui, this, whitelist,blacklist,all
 				local status_mc = this.statusList.content_array[i]
 				if status_mc then
 					local statusHandle = Ext.DoubleToHandle(status_mc.id)
-					local character = Ext.GetCharacter(characterHandle)
-					if character then
-						local status = Ext.GetStatus(characterHandle, statusHandle)
-						if status then
-							local visible = GetStatusVisibility(status.StatusId, whitelist,blacklist,allVisible)
-							if status_mc.visible ~= visible then
-								cleanup = true
-							end
-							status_mc.alive = visible
-							status_mc.visible = visible
+					local status = Ext.GetStatus(characterHandle, statusHandle)
+					if status then
+						local visible = GetStatusVisibility(status.StatusId, whitelist,blacklist,allVisible)
+						if status_mc.visible ~= visible then
+							cleanup = true
 						end
+						status_mc.alive = visible
+						status_mc.visible = visible
 					end
 				end
 			end
@@ -321,10 +320,13 @@ local function OnUpdateStatuses_Healthbar(ui, method, addIfNotExists)
 
 	local whitelist,blacklist,allVisible = GetStatusVisibilityLists()
 
-	lastHealthbarOwnerDouble = this.status_array[0]
-	if addIfNotExists then
+	local nextOwner = this.status_array[0]
+
+	if addIfNotExists and lastHealthbarOwnerDouble == nextOwner then
 		UpdateHealthbarStatusVisibility(ui, this, whitelist,blacklist,allVisible)
 	end
+
+	lastHealthbarOwnerDouble = nextOwner
 	
 	local needsUpdate = false
 	local status_array = this.status_array
@@ -333,28 +335,16 @@ local function OnUpdateStatuses_Healthbar(ui, method, addIfNotExists)
 		if ownerDouble then
 			local ownerHandle = Ext.DoubleToHandle(ownerDouble)
 			if ownerHandle then
-				local statusHandle = Ext.DoubleToHandle(status_array[i+1])
+				local id = status_array[i+1]
+				local statusHandle = Ext.DoubleToHandle(id)
 				local status = Ext.GetStatus(ownerHandle, statusHandle)
 				if status then
 					if not GetStatusVisibility(status.StatusId, whitelist,blacklist,allVisible) then
 						needsUpdate = true
-						--ui:SetValue("status_array", false, i+1)
-						--status_array[i+1] = 0
-						-- status_array[i+2] = -1
-						-- status_array[i+3] = 0
-						-- status_array[i+4] = 0
-						-- status_array[i+4] = 0
-						-- status_array[i+5] = ""
 					end
 				end
 			end
 		end
-		-- print(i, status_array[i])
-		-- print(i+1, status_array[i+1])
-		-- print(i+2, status_array[i+2])
-		-- print(i+3, status_array[i+3])
-		-- print(i+4, status_array[i+4])
-		-- print(i+5, status_array[i+5])
 	end
 
 	if needsUpdate then

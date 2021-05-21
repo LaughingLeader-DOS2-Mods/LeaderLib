@@ -27,10 +27,14 @@ function TurnCounter.CleanupData(uniqueId)
 	PersistentVars.TurnCounterData[uniqueId] = nil
 end
 
+
 ---@param id string Identifier for this countdown.
+---@param turns integer How many turns to count.
+---@param targetTurns integer The target turns, like 0 in decrement mode.
+---@param mode TURNCOUNTER_MODE
 ---@param combat integer The combat id or character to get the combat id from.
 ---@param params TurnCounterData|nil
-function TurnCounter.Countdown(id, turns, combat, params)
+function TurnCounter.CreateTurnCounter(id, turns, targetTurns, mode, combat, params)
 	local t = type(combat)
 	if t == "string" then
 		local cid = CombatGetIDForCharacter(combat)
@@ -49,9 +53,9 @@ function TurnCounter.Countdown(id, turns, combat, params)
 	local tbl = {
 		ID = id,
 		Turns = turns,
-		TargetTurns = 0,
+		TargetTurns = targetTurns,
 		Combat = combat or -1,
-		Mode = TurnCounter.Mode.Decrement
+		Mode = mode,
 		--OutOfCombatSpeed = 6000
 	}
 	if params then
@@ -66,6 +70,22 @@ function TurnCounter.Countdown(id, turns, combat, params)
 		StartTimer(uniqueId, speed)
 	end
 	TurnCounter.Started(tbl, uniqueId)
+end
+
+---@param id string Identifier for this countdown.
+---@param turns integer How many turns to count down for.
+---@param combat integer The combat id or character to get the combat id from.
+---@param params TurnCounterData|nil
+function TurnCounter.CountDown(id, turns, combat, params)
+	TurnCounter.CreateTurnCounter(id, turns, 0,  TurnCounter.Mode.Decrement, combat, params)
+end
+
+---@param id string Identifier for this countdown.
+---@param turns integer How many turns to count down for.
+---@param combat integer The combat id or character to get the combat id from.
+---@param params TurnCounterData|nil
+function TurnCounter.CountUp(id, turns, combat, params)
+	TurnCounter.CreateTurnCounter(id, 0, turns, TurnCounter.Mode.Increment, combat, params)
 end
 
 ---@param data TurnCounterData

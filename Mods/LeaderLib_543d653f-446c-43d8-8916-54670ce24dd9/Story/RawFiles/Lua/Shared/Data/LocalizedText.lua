@@ -433,6 +433,9 @@ GameHelpers.GetResistanceNameFromDamageType = GetResistanceNameFromDamageType
 ---@param fallback string Text to use if the key does not exist.
 ---@return string
 local function GetStringKeyText(key,fallback)
+	if fallback == nil then
+		fallback = key
+	end
 	local ref,handle = Ext.GetTranslatedStringFromKey(key)
 	if handle == nil then
 		return fallback

@@ -15,7 +15,13 @@ Input = {
 	},
 	--These controls don't fire events on pressed (only release), so the state change check will fail otherwise
 	SkipStateCheck = {
-		ContextMenu = true
+		ContextMenu = true,
+		--Ctrl buttons fires on press, not release
+		DragSingleToggle = true,
+		DestructionToggle = true,
+		ToggleInfo = true,
+		FlashCtrl = true,
+		ShowWorldTooltips = true,
 	}
 }
 
@@ -184,15 +190,21 @@ function Input.GetKeyState(name, t)
 	return KEYSTATE.UNREGISTERED
 end
 
+--Used to workaround keys that don't send an opposite event
+local lastExtenderState = {}
 local function InvokeExtenderEventCallbacks(evt, eventName)
+	lastExtenderState[eventName] = Input.Keys[eventName] or KEYSTATE.UNREGISTERED
 	local nextState = evt.Press and KEYSTATE.DOWN or KEYSTATE.RELEASED
 	if evt.Press then
 		lastPressedTimes[eventName] = Ext.MonotonicTime()
 	end
 	-- if Vars.DebugMode then
-	-- 	fprint(LOGLEVEL.DEFAULT, "[ExtInputEvent] (%s)[%s] Pressed(%s) Time(%s)", eventName, evt.EventId, evt.Press, Ext.MonotonicTime())
+	-- 	fprint(LOGLEVEL.DEFAULT, "[ExtInputEvent] (%s)[%s] Pressed(%s) Time(%s) Last(%s)", eventName, evt.EventId, evt.Press, Ext.MonotonicTime(), lastExtenderState[eventName])
 	-- end
-	if Input.SkipStateCheck[eventName] or Input.Keys[eventName] ~= nextState then
+
+	local skipCheck = Input.SkipStateCheck[eventName] or lastExtenderState[eventName] == nextState
+
+	if skipCheck or Input.Keys[eventName] ~= nextState then
 		Input.Keys[eventName] = nextState
 		if evt.Press and eventName == "ActionCancel" then
 			Ext.PostMessageToServer("LeaderLib_Input_OnActionCancel", Client:GetCharacter().MyGuid)
@@ -220,22 +232,28 @@ Ext.RegisterListener("InputEvent", function(evt)
 	end
 end)
 
+--Used to workaround keys that don't send an opposite event
+local lastFlashState = {}
+
 ---@param ui LeaderLibUIExtensions
 ---@param pressed boolean
 ---@param eventName string
 ---@param arrayIndex integer
 function Input.OnFlashEvent(ui, call, pressed, eventName, arrayIndex)
 	eventName = string.gsub(eventName, "IE ", "")
+	lastFlashState[eventName] = Input.Keys[eventName] or KEYSTATE.UNREGISTERED
 	local nextState = pressed and KEYSTATE.DOWN or KEYSTATE.RELEASED
 	if pressed then
 		lastPressedTimes[eventName] = Ext.MonotonicTime()
 	end
 	
-	-- if Vars.DebugMode then
-	-- 	PrintLog("[Input.OnFlashEvent] eventName(%s) pressed(%s) index(%s)", eventName, pressed, arrayIndex)
+	-- if Vars.DebugMode and not string.find(eventName, "Mouse") then
+	-- 	PrintLog("[Input.OnFlashEvent] eventName(%s) pressed(%s) index(%s) Last(%s)", eventName, pressed, arrayIndex, lastFlashState[eventName])
 	-- end
 
-	if Input.SkipStateCheck[eventName] or Input.Keys[eventName] ~= nextState then
+	local skipCheck = Input.SkipStateCheck[eventName] or lastFlashState[eventName] == nextState
+
+	if skipCheck or Input.Keys[eventName] ~= nextState then
 		if pressed and eventName == "ActionCancel" then
 			Ext.PostMessageToServer("LeaderLib_OnActionCancel", Client:GetCharacter().MyGuid)
 		end
@@ -264,10 +282,10 @@ function Input.OnKeyboardEvent(ui, call, keyCode, keyName, pressed)
 	end
 end
 
--- if Vars.DebugMode then
--- 	Input.RegisterListener(function(eventName, pressed, id, keys, controllerEnabled)
--- 		if pressed then
--- 			fprint(LOGLEVEL.DEFAULT, "[Input] event(%s) pressed(%s) id(%s) time(%s)", eventName, pressed, id, Ext.MonotonicTime())
--- 		end
--- 	end)
--- end
+if Vars.DebugMode then
+	Input.RegisterListener(function(eventName, pressed, id, keys, controllerEnabled)
+		if not string.find(eventName, "Mouse") then
+			fprint(LOGLEVEL.DEFAULT, "[Input] event(%s) pressed(%s) id(%s) time(%s)", eventName, pressed, id, Ext.MonotonicTime())
+		end
+	end)
+end

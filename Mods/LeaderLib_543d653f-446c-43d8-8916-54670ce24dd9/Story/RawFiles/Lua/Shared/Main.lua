@@ -6,18 +6,33 @@
 ---@param callbackOrKey function|string If a string, the function is stored in a subtable of the event, such as NamedTimerFinished.TimerName = function
 ---@param callbackOrNil function|nil If callback is a string, then this is the callback.
 function RegisterListener(event, callbackOrKey, callbackOrNil)
-	if Listeners[event] ~= nil then
-		if type(callbackOrKey) == "string" then
-			if callbackOrNil ~= nil then
-				if Listeners[event][callbackOrKey] == nil then
-					Listeners[event][callbackOrKey] = {}
+	local listenerTable = nil
+	if type(event) == "table" then
+		if Common.TableHasValue(Listeners, event) then
+			listenerTable = event
+		else
+			for i,v in pairs(event) do
+				if Listeners[v] then
+					RegisterListener(v, callbackOrKey, callbackOrNil)
 				end
-				table.insert(Listeners[event][callbackOrKey], callbackOrNil)
+			end
+			return
+		end
+	else
+		listenerTable = Listeners[event]
+	end
+	if listenerTable then
+		if type(callbackOrKey) == "string" then
+			if callbackOrNil then
+				if listenerTable[callbackOrKey] == nil then
+					listenerTable[callbackOrKey] = {}
+				end
+				table.insert(listenerTable[callbackOrKey], callbackOrNil)
 			else
 				Ext.PrintError(string.format("[LeaderLib__Main.lua:RegisterListener] Event (%s) with sub-key (%s) requires a function as the third parameter. Context: %s", event, callbackOrKey, Ext.IsServer() and "SERVER" or "CLIENT"))
 			end
 		else
-			table.insert(Listeners[event], callbackOrKey)
+			table.insert(listenerTable, callbackOrKey)
 		end
 	else
 		Ext.PrintError(string.format("[LeaderLib__Main.lua:RegisterListener] Event (%s) is not a valid LeaderLib listener event! Context: %s", event, Ext.IsServer() and "SERVER" or "CLIENT"))

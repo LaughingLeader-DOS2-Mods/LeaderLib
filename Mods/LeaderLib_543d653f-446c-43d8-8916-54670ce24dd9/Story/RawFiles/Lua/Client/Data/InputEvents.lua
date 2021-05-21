@@ -3,6 +3,7 @@ Data.Input = {
 	["FlashLeftMouse"] = {1, 4},
 	["FlashRightMouse"] = 2,
 	["FlashMiddleMouse"] = 3,
+	["FlashCtrl"] = -1, -- No id?
 	["FlashAlt"] = 62,
 	["ActionMenu"] = 110,
 	["CameraCenter"] = 111,

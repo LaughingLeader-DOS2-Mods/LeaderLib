@@ -15,13 +15,13 @@ Input = {
 	},
 	--These controls don't fire events on pressed (only release), so the state change check will fail otherwise
 	SkipStateCheck = {
-		ContextMenu = true,
-		--Ctrl buttons fires on press, not release
-		DragSingleToggle = true,
-		DestructionToggle = true,
-		ToggleInfo = true,
-		FlashCtrl = true,
-		ShowWorldTooltips = true,
+		ContextMenu = 0,
+		-- --Ctrl buttons fires on press, not release
+		DragSingleToggle = 1,
+		DestructionToggle = 1,
+		ToggleInfo = 1,
+		FlashCtrl = 1,
+		ShowWorldTooltips = 1,
 	}
 }
 
@@ -190,10 +190,10 @@ function Input.GetKeyState(name, t)
 	return KEYSTATE.UNREGISTERED
 end
 
---Used to workaround keys that don't send an opposite event
-local lastExtenderState = {}
+--Workaround to prevent key event listeners firing more than once for the same state from a separate extender/flash event
+local lastFiredEventFrom = {}
+
 local function InvokeExtenderEventCallbacks(evt, eventName)
-	lastExtenderState[eventName] = Input.Keys[eventName] or KEYSTATE.UNREGISTERED
 	local nextState = evt.Press and KEYSTATE.DOWN or KEYSTATE.RELEASED
 	if evt.Press then
 		lastPressedTimes[eventName] = Ext.MonotonicTime()
@@ -202,9 +202,7 @@ local function InvokeExtenderEventCallbacks(evt, eventName)
 	-- 	fprint(LOGLEVEL.DEFAULT, "[ExtInputEvent] (%s)[%s] Pressed(%s) Time(%s) Last(%s)", eventName, evt.EventId, evt.Press, Ext.MonotonicTime(), lastExtenderState[eventName])
 	-- end
 
-	local skipCheck = Input.SkipStateCheck[eventName] or lastExtenderState[eventName] == nextState
-
-	if skipCheck or Input.Keys[eventName] ~= nextState then
+	if lastFiredEventFrom[eventName] ~= 1 or Input.Keys[eventName] ~= nextState then
 		Input.Keys[eventName] = nextState
 		if evt.Press and eventName == "ActionCancel" then
 			Ext.PostMessageToServer("LeaderLib_Input_OnActionCancel", Client:GetCharacter().MyGuid)
@@ -215,6 +213,7 @@ local function InvokeExtenderEventCallbacks(evt, eventName)
 		if not UIExtensions.MouseEnabled and evt.Press and eventName == "FlashLeftMouse" or eventName == "FlashRightMouse" then
 			UIExtensions.Invoke("fireMouseClicked", eventName)
 		end
+		lastFiredEventFrom[eventName] = 0
 	end
 end
 
@@ -232,16 +231,12 @@ Ext.RegisterListener("InputEvent", function(evt)
 	end
 end)
 
---Used to workaround keys that don't send an opposite event
-local lastFlashState = {}
-
 ---@param ui LeaderLibUIExtensions
 ---@param pressed boolean
 ---@param eventName string
 ---@param arrayIndex integer
 function Input.OnFlashEvent(ui, call, pressed, eventName, arrayIndex)
 	eventName = string.gsub(eventName, "IE ", "")
-	lastFlashState[eventName] = Input.Keys[eventName] or KEYSTATE.UNREGISTERED
 	local nextState = pressed and KEYSTATE.DOWN or KEYSTATE.RELEASED
 	if pressed then
 		lastPressedTimes[eventName] = Ext.MonotonicTime()
@@ -251,9 +246,7 @@ function Input.OnFlashEvent(ui, call, pressed, eventName, arrayIndex)
 	-- 	PrintLog("[Input.OnFlashEvent] eventName(%s) pressed(%s) index(%s) Last(%s)", eventName, pressed, arrayIndex, lastFlashState[eventName])
 	-- end
 
-	local skipCheck = Input.SkipStateCheck[eventName] or lastFlashState[eventName] == nextState
-
-	if skipCheck or Input.Keys[eventName] ~= nextState then
+	if lastFiredEventFrom[eventName] ~= 0 or Input.Keys[eventName] ~= nextState then
 		if pressed and eventName == "ActionCancel" then
 			Ext.PostMessageToServer("LeaderLib_OnActionCancel", Client:GetCharacter().MyGuid)
 		end
@@ -268,6 +261,7 @@ function Input.OnFlashEvent(ui, call, pressed, eventName, arrayIndex)
 			InvokeListenerCallbacks(Listeners.InputEvent, eventName, pressed, id, Input.Keys, Vars.ControllerEnabled)
 			InvokeListenerCallbacks(Listeners.NamedInputEvent[eventName], eventName, pressed, id, Input.Keys, Vars.ControllerEnabled)
 		end
+		lastFiredEventFrom[eventName] = 1
 	end
 end
 

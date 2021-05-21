@@ -266,7 +266,8 @@ LocalizedText.UI = {
 LocalizedText.ContextMenu = {
 	HideStatus = ts:Create("h901ab1b9g943dg465cg8583g3ad8e86354b5", "Hide Status"),
 	HideStatus_Examine = ts:Create("hc9377dd3g70d6g4d84g8c8fg812246a61029", "Hide Status from Portrait UI"),
-	ShowStatus = ts:Create("h456c5c8bg7103g4b19g9185ge4cd6ddbab30", "Show Status in Portrait UI"),
+	ShowStatus = ts:Create("ha52299cfg95f3g4a46gaa56g3cd74d716741", "Show Status"),
+	ShowStatus_Examine = ts:Create("h456c5c8bg7103g4b19g9185ge4cd6ddbab30", "Show Status in Portrait UI"),
 }
 
 LocalizedText.SkillTooltip = {

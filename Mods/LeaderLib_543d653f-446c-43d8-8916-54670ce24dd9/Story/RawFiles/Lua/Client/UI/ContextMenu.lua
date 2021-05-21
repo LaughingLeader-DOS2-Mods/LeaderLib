@@ -195,10 +195,18 @@ local function GetShouldOpen(self,x,y)
 end
 
 function ContextMenu:OnRightClick(eventName, pressed, id, inputMap, controllerEnabled)
+	local settings = GameSettings.Settings.Client.StatusOptions
 	--fprint(LOGLEVEL.DEFAULT, "[ContextMenu:OnRightClick] IsOpening(%s) Visible(%s) pressed(%s)", self.IsOpening, self.Visible, pressed)
 	if not self.IsOpening then
 		local x,y = UIExtensions.GetMousePosition()
 		local openRequested = GetShouldOpen(self, x, y)
+
+		local hideText,showText = "",""
+		if self.ContextStatus then
+			hideText = (settings.AffectHealthbar or self.ContextStatus.CallingUI ~= Data.UIType.examine) and LocalizedText.ContextMenu.HideStatus.Value or LocalizedText.ContextMenu.HideStatus_Examine.Value
+			showText = (settings.AffectHealthbar or self.ContextStatus.CallingUI ~= Data.UIType.examine) and LocalizedText.ContextMenu.ShowStatus.Value or LocalizedText.ContextMenu.ShowStatus_Examine.Value
+		end
+
 		if self.Visible then
 			local status,uiType = self:GetCursorStatus(x,y)
 			if status then
@@ -206,29 +214,17 @@ function ContextMenu:OnRightClick(eventName, pressed, id, inputMap, controllerEn
 				self.Entries = {}
 
 				if self.ContextStatus then
-					if not GameSettings.Settings.Client.StatusOptions.HideAll then
+					if not settings.HideAll then
 						if self.ContextStatus.RemoveFromList then
-							self:AddEntry(ACTIONS.UnhideStatus, nil, LocalizedText.ContextMenu.ShowStatus.Value)
+							self:AddEntry(ACTIONS.UnhideStatus, nil, showText)
 						else
-							if self.ContextStatus.CallingUI == Data.UIType.examine then
-								self:AddEntry(ACTIONS.HideStatus, nil, LocalizedText.ContextMenu.HideStatus_Examine.Value)
-							else
-								self:AddEntry(ACTIONS.HideStatus, nil, LocalizedText.ContextMenu.HideStatus.Value)
-							end
+							self:AddEntry(ACTIONS.HideStatus, nil, hideText)
 						end
 					else
-						if self.ContextStatus.CallingUI == Data.UIType.examine then
-							if self.ContextStatus.RemoveFromList then
-								self:AddEntry(ACTIONS.HideStatus, nil, LocalizedText.ContextMenu.HideStatus_Examine.Value)
-							else
-								self:AddEntry(ACTIONS.UnhideStatus, nil, LocalizedText.ContextMenu.ShowStatus.Value)
-							end
+						if self.ContextStatus.RemoveFromList then
+							self:AddEntry(ACTIONS.HideStatus, nil, hideText)
 						else
-							if self.ContextStatus.RemoveFromList then
-								self:AddEntry(ACTIONS.HideStatus, nil, LocalizedText.ContextMenu.HideStatus.Value)
-							else
-								self:AddEntry(ACTIONS.UnhideStatus, nil, LocalizedText.ContextMenu.ShowStatus.Value)
-							end
+							self:AddEntry(ACTIONS.UnhideStatus, nil, showText)
 						end
 					end
 				end
@@ -244,29 +240,17 @@ function ContextMenu:OnRightClick(eventName, pressed, id, inputMap, controllerEn
 		if openRequested or self.ContextStatus then
 			self.Entries = {}
 			if self.ContextStatus then
-				if not GameSettings.Settings.Client.StatusOptions.HideAll then
+				if not settings.HideAll then
 					if self.ContextStatus.RemoveFromList then
-						self:AddEntry(ACTIONS.UnhideStatus, nil, LocalizedText.ContextMenu.ShowStatus.Value)
+						self:AddEntry(ACTIONS.UnhideStatus, nil, showText)
 					else
-						if self.ContextStatus.CallingUI == Data.UIType.examine then
-							self:AddEntry(ACTIONS.HideStatus, nil, LocalizedText.ContextMenu.HideStatus_Examine.Value)
-						else
-							self:AddEntry(ACTIONS.HideStatus, nil, LocalizedText.ContextMenu.HideStatus.Value)
-						end
+						self:AddEntry(ACTIONS.HideStatus, nil, hideText)
 					end
 				else
-					if self.ContextStatus.CallingUI == Data.UIType.examine then
-						if self.ContextStatus.RemoveFromList then
-							self:AddEntry(ACTIONS.HideStatus, nil, LocalizedText.ContextMenu.HideStatus_Examine.Value)
-						else
-							self:AddEntry(ACTIONS.UnhideStatus, nil, LocalizedText.ContextMenu.ShowStatus.Value)
-						end
+					if self.ContextStatus.RemoveFromList then
+						self:AddEntry(ACTIONS.HideStatus, nil, hideText)
 					else
-						if self.ContextStatus.RemoveFromList then
-							self:AddEntry(ACTIONS.HideStatus, nil, LocalizedText.ContextMenu.HideStatus.Value)
-						else
-							self:AddEntry(ACTIONS.UnhideStatus, nil, LocalizedText.ContextMenu.ShowStatus.Value)
-						end
+						self:AddEntry(ACTIONS.UnhideStatus, nil, showText)
 					end
 				end
 			end

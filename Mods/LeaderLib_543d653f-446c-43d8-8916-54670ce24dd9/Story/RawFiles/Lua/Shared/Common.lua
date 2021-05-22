@@ -177,7 +177,8 @@ end
 ---@return string
 function Common.Dump(o, indexMap, innerOnly, recursionLevel)
 	if recursionLevel == nil then recursionLevel = 0 end
-	if type(o) == 'table' then
+	local t = type(o)
+	if t == 'table' then
 		local s = '{ '
 		for k,v in pairs(o) do
 			if innerOnly == true then
@@ -191,6 +192,8 @@ function Common.Dump(o, indexMap, innerOnly, recursionLevel)
 			end
 		end
 		return s .. '}'
+	elseif t == "string" then
+		return '"'..o..'"'
 	else
 		return tostring(o)
 	end

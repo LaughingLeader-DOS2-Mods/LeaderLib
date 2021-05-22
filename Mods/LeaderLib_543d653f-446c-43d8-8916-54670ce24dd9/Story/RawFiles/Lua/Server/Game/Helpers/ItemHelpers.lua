@@ -450,7 +450,7 @@ function GameHelpers.Item.UnequipItemInSlot(character, slot, delete)
     end
 end
 
---- Checks if a character has an item equipped with a specific tag.
+---Builds a list of items with a specific tag.
 ---@param character string
 ---@param tag string
 ---@return boolean

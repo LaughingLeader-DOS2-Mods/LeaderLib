@@ -43,8 +43,11 @@ local function ResetLua()
 	NRD_LuaReset(1,1,1)
 	Vars.JustReset = true
 end
- 
-Ext.RegisterConsoleCommand("luareset", function(command, delay)
+
+local function OnLuaResetCommand(cmd, delay)
+	if delay == "" then
+		delay = nil
+	end
 	InvokeListenerCallbacks(Listeners.BeforeLuaReset)
 	Ext.BroadcastMessage("LeaderLib_Client_InvokeListeners", "BeforeLuaReset")
 	delay = delay or 1000
@@ -58,7 +61,10 @@ Ext.RegisterConsoleCommand("luareset", function(command, delay)
 	else
 		ResetLua()
 	end
-end)
+end
+ 
+Ext.RegisterConsoleCommand("luareset", OnLuaResetCommand)
+Ext.RegisterNetListener("LeaderLib_Client_RequestLuaReset", OnLuaResetCommand)
 
 Ext.RegisterConsoleCommand("testrespen", function(command, level)
 	local host = CharacterGetHostCharacter()
@@ -900,6 +906,11 @@ Ext.RegisterConsoleCommand("lldebug_music", function(command, mType, theme)
 		Type = mType or "Explo",
 		Theme = theme or "Fort_Joy"
 	}))
+end)
+
+Ext.RegisterConsoleCommand("lldebug_customstat", function(command, mType, theme)
+	local id = NRD_CreateCustomStat("Test", "TestDescription")
+	NRD_CharacterSetCustomStat(CharacterGetHostCharacter(), id, 10)
 end)
 
 -- Ext.RegisterOsirisListener("NRD_OnActionStateEnter", Data.OsirisEvents.NRD_OnActionStateEnter, "after", function(char, state)

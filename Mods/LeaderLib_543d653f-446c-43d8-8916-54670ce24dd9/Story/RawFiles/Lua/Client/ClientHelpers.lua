@@ -44,6 +44,16 @@ function GameHelpers.Client.GetCharacter()
 				handle = Ext.DoubleToHandle(main.hotbar_mc.characterHandle)
 			end
 		end
+		--print(Ext.GetUIByType(38):GetRoot().selectedCharacterHandle, Ext.GetUIByType(38):GetPlayerHandle())
+		--if SharedData.GameMode == GAMEMODE.GAMEMASTER then
+			-- local possessionBar = Ext.GetUIByType(Data.UIType.possessionBar)
+			-- if possessionBar ~= nil then
+			-- 	local main = possessionBar:GetRoot()
+			-- 	if main and main.selectedPlayer then
+			-- 		handle = Ext.DoubleToHandle(main.selectedPlayer.characterHandle)
+			-- 	end
+			-- end
+		--end
 	else
 		local hotbar = Ext.GetUIByType(Data.UIType.bottomBar_c)
 		if hotbar ~= nil then

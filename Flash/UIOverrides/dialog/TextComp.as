@@ -45,18 +45,20 @@ package
 
 		public function onOver(e:MouseEvent) : *
 		{
-			var pt:Point = tooltipHelper.getGlobalPositionOfMC(this,this.root);
-			pt.x += text_txt.x;
 			var xCheck:Number = Math.max(0, Math.floor(text_txt.mouseX));
 			var yCheck:Number = Math.max(0, Math.floor(text_txt.mouseY));
 			//trace(e.localX, e.localY, text_txt.mouseX, text_txt.mouseY, text_txt.x, text_txt.y)
 			var index:int = text_txt.getCharIndexAtPoint(xCheck, yCheck);
-			ExternalInterface.call("dialogTextHovered", text_txt.htmlText, index, pt.x, pt.y, this.nametxt, this.dialogtxt, this.playerID, xCheck, yCheck);
+			if (index > -1) {
+				var pt:Point = tooltipHelper.getGlobalPositionOfMC(this,this.root);
+				pt.x += text_txt.x;
+				ExternalInterface.call("dialogTextHovered", text_txt.htmlText, index, pt.x, pt.y, this.nametxt, this.dialogtxt, this.playerID, xCheck, yCheck);
+			}
 		}
 		
 		public function onOut(e:MouseEvent) : *
 		{
-			ExternalInterface.call("hideTooltip");
+			ExternalInterface.call("dialogTextHoverCleared");
 		}
 		
 		private function frame1() : *

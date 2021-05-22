@@ -146,15 +146,13 @@ function GameHelpers.DB.HasValue(databaseName, value, arity, checkColumn)
 	checkColumn = checkColumn or 1
 	local b,result = xpcall(function()
 		local db = Osi[databaseName]:Get(GetArity(arity))
-		if db ~= nil and #db > 0 then
+		if db and #db > 0 then
 			return db
 		end
 		return nil
 	end, debug.traceback)
 
-	if not b or result == nil then
-		fprint(LOGLEVEL.ERROR, "[LeaderLib:GameHelpers.DB.HasValue] Error checking database %s(%s):\n%s", databaseName, arity, result)
-	else
+	if b and result then
 		return GameHelpers.DB.TableHasValue(result, value, checkColumn)
 	end
 	return false

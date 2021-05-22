@@ -914,16 +914,16 @@ end)
 -- 	print("NRD_OnActionStateExit", char, state)
 -- end)
 
-RegisterSkillListener("All", function(skill, caster, state, data)
-	fprint(LOGLEVEL.TRACE, "[Skill(%s)] state(%s) caster(%s) (%s)", skill, state, caster, data == nil and "" or data)
-	-- if data and data.PrintTargets then
-	-- 	data:PrintTargets()
-	-- end
-	if skill == "Tornado_EnemyAir" then
-		if state == SKILL_STATE.PREPARE then
-			ApplyStatus(caster, "HASTED", -1.0, 0, caster)
-		elseif state == SKILL_STATE.CANCEL or state == SKILL_STATE.CAST then
-			RemoveStatus(caster, "HASTED")
-		end
-	end
-end)
+-- RegisterSkillListener("All", function(skill, caster, state, data)
+-- 	fprint(LOGLEVEL.TRACE, "[Skill(%s)] state(%s) caster(%s) (%s)", skill, state, caster, data == nil and "" or data)
+-- 	-- if data and data.PrintTargets then
+-- 	-- 	data:PrintTargets()
+-- 	-- end
+-- 	if skill == "Tornado_EnemyAir" then
+-- 		if state == SKILL_STATE.PREPARE then
+-- 			ApplyStatus(caster, "HASTED", -1.0, 0, caster)
+-- 		elseif state == SKILL_STATE.CANCEL or state == SKILL_STATE.CAST then
+-- 			RemoveStatus(caster, "HASTED")
+-- 		end
+-- 	end
+-- end)

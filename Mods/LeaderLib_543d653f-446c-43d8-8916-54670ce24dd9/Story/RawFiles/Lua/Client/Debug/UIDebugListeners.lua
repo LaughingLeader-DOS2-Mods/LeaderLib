@@ -26,6 +26,22 @@ local function OnUIListener(self, eventType, ui, event, ...)
 	end
 end
 
+local deferredRegistrations = {}
+
+function UIListenerWrapper:RegisterListeners(ui)
+	for _,v in pairs(self.Calls) do
+		Ext.RegisterUICall(ui, v, function(...)
+			OnUIListener(self, "call", ...)
+		end)
+	end
+	
+	for _,v in pairs(self.Methods) do
+		Ext.RegisterUIInvokeListener(ui, v, function(...)
+			OnUIListener(self, "method", ...)
+		end)
+	end
+end
+
 function UIListenerWrapper:Create(id, calls, methods)
 	local this = {
 		ID = id,
@@ -36,41 +52,72 @@ function UIListenerWrapper:Create(id, calls, methods)
 		PrintParams = true
 	}
 
-	if type(id) == "table" then
-		for k,id2 in pairs(id) do
+	if type(id) == "string" then
+		local ui = Ext.GetBuiltinUI(id)
+
+		if not ui then
+			deferredRegistrations[id] = this
+		else
 			for _,v in pairs(this.Calls) do
-				Ext.RegisterUITypeCall(id2, v, function(...)
+				Ext.RegisterUICall(ui, v, function(...)
 					OnUIListener(this, "call", ...)
 				end)
 			end
 		
 			for _,v in pairs(this.Methods) do
-				Ext.RegisterUITypeInvokeListener(id2, v, function(...)
+				Ext.RegisterUIInvokeListener(ui, v, function(...)
 					OnUIListener(this, "method", ...)
 				end)
 			end
-			this.Name = Data.UITypeToName[id2] or ""
 		end
 	else
-		for _,v in pairs(this.Calls) do
-			Ext.RegisterUITypeCall(id, v, function(...)
-				OnUIListener(this, "call", ...)
-			end)
-		end
+		if type(id) == "table" then
+			for k,id2 in pairs(id) do
+				for _,v in pairs(this.Calls) do
+					Ext.RegisterUITypeCall(id2, v, function(...)
+						OnUIListener(this, "call", ...)
+					end)
+				end
+			
+				for _,v in pairs(this.Methods) do
+					Ext.RegisterUITypeInvokeListener(id2, v, function(...)
+						OnUIListener(this, "method", ...)
+					end)
+				end
+				this.Name = Data.UITypeToName[id2] or ""
+			end
+		else
+			for _,v in pairs(this.Calls) do
+				Ext.RegisterUITypeCall(id, v, function(...)
+					OnUIListener(this, "call", ...)
+				end)
+			end
+		
+			for _,v in pairs(this.Methods) do
+				Ext.RegisterUITypeInvokeListener(id, v, function(...)
+					OnUIListener(this, "method", ...)
+				end)
+			end
 	
-		for _,v in pairs(this.Methods) do
-			Ext.RegisterUITypeInvokeListener(id, v, function(...)
-				OnUIListener(this, "method", ...)
-			end)
+			this.Name = Data.UITypeToName[id] or ""
 		end
-
-		this.Name = Data.UITypeToName[id] or ""
 	end
 
 	setmetatable(this, UIListenerWrapper)
 
 	return this
 end
+
+---@param ui UIObject
+Ext.RegisterListener("UIObjectCreated", function(ui)
+	for path,data in pairs(deferredRegistrations) do
+		local ui2 = Ext.GetBuiltinUI(path)
+		if ui2 and (ui2:GetTypeId() == ui:GetTypeId() or ui == ui2) then
+			data:RegisterListeners(ui)
+			deferredRegistrations[path] = nil
+		end
+	end
+end)
 
 local enemyHealthBar = UIListenerWrapper:Create(Data.UIType.enemyHealthBar, {"hideTooltip"}, {"clearTweens","setHPBars","setHPColour","setArmourBar","setArmourBarColour","setMagicArmourBar","setMagicArmourBarColour","setText","requestAnchorCombatTurn","requestAnchorScreen","show","hide","hideHPMC","updateStatuses","setStatus","cleanupStatuses","clearStatusses","setIggyImage","removeChildrenOf"})
 enemyHealthBar.Enabled = false
@@ -563,3 +610,71 @@ hotbar.Enabled = false
 -- 		end
 -- 	end
 -- end
+
+--"Public/Game/GUI/dialog.swf"
+local dialog = UIListenerWrapper:Create(Data.UIType.dialog, {
+	"hideTooltip",
+	"inputFocus",
+	"inputFocusLost",
+	"QuestionPressed",
+	"registerAnchorId",
+	"selectedId",
+	"setPosition",
+	"showItemTooltip",
+	"showStatusTooltip",
+	"showTooltip",
+	"StopListening",
+	"toggleInv",
+	"TradeButtonPressed",
+}, {
+	"addAnswerHolder",
+	"addAnswers",
+	"addAnswersDone",
+	"addKeywordAnswer",
+	"addText",
+	"chooseAnswer",
+	"clearAll",
+	"clearAnswers",
+	"clearTexts",
+	"disableRPSButtons",
+	"discussionCountDownStart",
+	"discussionShowBattle",
+	"enableRPSButtons",
+	"executeSelected",
+	"getHeight",
+	"getWidth",
+	"hideDialog",
+	"hideDiscussion",
+	"hideWin",
+	"highlightAnswer",
+	"moveSelection",
+	"removeAnswerHolder",
+	"resetSelection",
+	"setAlternativeScrollMode",
+	"setAnchorId",
+	"setDiscussionCounterText",
+	"setDiscussionLabels",
+	"setDiscussionLabelVisible",
+	"setDiscussionPlayer",
+	"setDiscussionPlayerGainsPoints",
+	"setDiscussionPlayersPoints",
+	"setDiscussionWaitingTextVisible",
+	"setInvButtonKeyTooltip",
+	"setPlayerWonText",
+	"setStopListenBtnVisible",
+	"setTradeBtnDisabled",
+	"setTradeBtnTooltip",
+	"setTradeBtnVisible",
+	"setWaitingText",
+	"setWaitingTextVisible",
+	"setX",
+	"setY",
+	"showBufferedAnswer",
+	"showDialog",
+	"showDiscussion",
+	"showWin",
+	"skipDiscussionAnimation",
+	"startsWith",
+	"updateDialog",
+})
+dialog.Enabled = false

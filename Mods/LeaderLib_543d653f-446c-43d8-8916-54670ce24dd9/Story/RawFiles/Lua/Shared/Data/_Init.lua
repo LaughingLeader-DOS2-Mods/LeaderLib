@@ -708,6 +708,7 @@ Data.UIType = {
 	},
 	contextMenu_c = 12,
 	craftPanel_c = 84,
+	dialog = 14,
 	dummyOverhead = 15,
 	enemyHealthBar = 42,
 	equipmentPanel_c = 64,

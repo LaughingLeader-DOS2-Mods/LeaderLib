@@ -278,11 +278,11 @@ local function OnStatTooltip(character, stat, tooltip)
 end
 
 ---@param character EclCharacter
----@param stat ObjectHandle
+---@param stat CustomStatTooltipData|number
 ---@param tooltip TooltipData
 local function OnCustomStatTooltip(character, stat, tooltip)
 	if Vars.DebugMode then
-		print(character.Stats.Name, Ext.HandleToDouble(stat), Ext.JsonStringify(tooltip.Data))
+		print(character.Stats.Name, Common.Dump(stat), Ext.JsonStringify(tooltip.Data))
 	end
 end
 
@@ -845,8 +845,8 @@ Ext.RegisterListener("SessionLoaded", function()
 	Game.Tooltip.RegisterListener("Status", nil, OnStatusTooltip)
 	--Game.Tooltip.RegisterListener("Talent", nil, OnTalentTooltip)
 	--Game.Tooltip.RegisterListener("Stat", nil, OnStatTooltip)
-	Game.Tooltip.RegisterListener("CustomStat", nil, OnCustomStatTooltip)
 	if Vars.DebugMode then
+		Game.Tooltip.RegisterListener("CustomStat", nil, OnCustomStatTooltip)
 		---@param tooltip GenericTooltipData
 		Game.Tooltip.RegisterListener("Generic", function(tooltip)
 			if tooltip.Data.CallingUI == Data.UIType.hotBar and tooltip.Data.Text == "Toggle Chat" then
@@ -871,7 +871,7 @@ Ext.RegisterListener("SessionLoaded", function()
 	-- Called after addTooltip, so main.tf should be set up.
 	Ext.RegisterUITypeCall(Data.UIType.tooltip, "keepUIinScreen", function(ui, call, b)
 		local main = ui:GetRoot()
-		if main and main.tf then
+		if main and main.tf and main.tf.newBG_mc then
 			local text = main.tf.shortDesc
 			local param2 = main.tf.newBG_mc.visible and 1 or 0
 			if canGetTooltipItem then

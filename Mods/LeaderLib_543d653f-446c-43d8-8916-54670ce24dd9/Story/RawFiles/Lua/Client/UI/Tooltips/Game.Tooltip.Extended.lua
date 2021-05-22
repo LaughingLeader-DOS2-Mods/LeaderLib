@@ -27,6 +27,37 @@ local ControllerVars = {
 	LastOverhead = nil
 }
 
+---@class CustomStatTooltipData:table
+---@field HandleDouble number
+---@field UUID string
+---@field DisplayName string
+---@field Description string
+
+---@type CustomStatTooltipData[]
+Game.Tooltip.CustomStats = {}
+
+---@param data CustomStatTooltipData
+function Game.Tooltip.SaveCustomStat(data)
+	for i,v in pairs(Game.Tooltip.CustomStats) do
+		if v.HandleDouble == data.HandleDouble then
+			table.remove(Game.Tooltip.CustomStats, i)
+			break
+		end
+	end
+	Game.Tooltip.CustomStats[#Game.Tooltip.CustomStats+1] = data
+end
+
+---@param handleDouble number[]
+---@return CustomStatTooltipData
+function Game.Tooltip.GetCustomStatData(handleDouble)
+	for i,v in pairs(Game.Tooltip.CustomStats) do
+		if v.HandleDouble == handleDouble then
+			return v
+		end
+	end
+	return nil
+end
+
 TooltipItemIds = {
 	"ItemName","ItemWeight","ItemGoldValue","ItemLevel","ItemDescription","ItemRarity","ItemUseAPCost","ItemAttackAPCost","StatBoost",
 	"ResistanceBoost","AbilityBoost","OtherStatBoost","VitalityBoost","ChanceToHitBoost","DamageBoost","APCostBoost","APMaximumBoost",
@@ -878,12 +909,6 @@ function TooltipHooks:Init()
 		end
 	end)
 
-	Ext.RegisterUINameCall("hidetooltip", function (ui, call, ...)
-		if self.NextRequest and self.NextRequest.Type == "Generic" then
-			self.NextRequest = nil
-		end
-	end)
-
 	Ext.RegisterUINameCall("keepUIinScreen", function (ui, method, keepUIinScreen)
 		if self.GenericTooltipData then
 			self:UpdateGenericTooltip(ui, method, keepUIinScreen)
@@ -1007,7 +1032,7 @@ function TooltipHooks:OnRequestTooltip(ui, method, arg1, arg2, arg3, ...)
 		request.Type = "CustomStat"
 		if isCharSheet then
 			request.Character = ui:GetPlayerHandle()
-			request.Stat = Ext.DoubleToHandle(arg1)
+			request.Stat = arg1
 		else
 			request.Character = Ext.DoubleToHandle(arg1)
 			request.Stat = arg2
@@ -1235,7 +1260,12 @@ function TooltipHooks:OnRenderSubTooltip(ui, propertyName, req, method, ...)
 		if req.Type == "Stat" then
 			self:NotifyListeners("Stat", req.Stat, req, tooltip, req.Character, req.Stat)
 		elseif req.Type == "CustomStat" then
-			self:NotifyListeners("CustomStat", req.Stat, req, tooltip, req.Character, req.Stat)
+			local statData = Game.Tooltip.GetCustomStatData(req.Stat)
+			if statData ~= nil then
+				self:NotifyListeners("CustomStat", statData.UUID, req, tooltip, req.Character, statData)
+			else
+				self:NotifyListeners("CustomStat", nil, req, tooltip, req.Character, req.Stat)
+			end
 		elseif req.Type == "Skill" then
 			self:NotifyListeners("Skill", req.Skill, req, tooltip, req.Character, req.Skill)
 		elseif req.Type == "Ability" then
@@ -1250,6 +1280,8 @@ function TooltipHooks:OnRenderSubTooltip(ui, propertyName, req, method, ...)
 			self:NotifyListeners("Rune", req.StatsId, req, tooltip, req.Item, req.Rune, req.Slot)
 		elseif req.Type == "Tag" then
 			self:NotifyListeners("Tag", req.Category, req, tooltip, req.Tag)
+		elseif req.Type == "Generic" then
+			-- Skip since it's handled in addTooltip
 		else
 			Ext.PrintError("Unknown tooltip type? ", req.Type)
 		end
@@ -1310,7 +1342,7 @@ function TooltipHooks:OnRequestConsoleExamineTooltip(ui, method, id, characterHa
 		end
 	elseif method == "selectCustomStat" then
 		request.Type = "CustomStat"
-		request.Stat = Ext.DoubleToHandle(id)
+		request.Stat = id
 	elseif method == "selectTag" then
 		request.Type = "Tag"
 		request.Tag = id

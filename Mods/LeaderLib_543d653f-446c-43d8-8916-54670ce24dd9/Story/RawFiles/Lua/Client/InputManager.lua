@@ -206,8 +206,11 @@ local function InvokeExtenderEventCallbacks(evt, eventName)
 
 	if lastFiredEventFrom[eventName] ~= 1 or Input.Keys[eventName] ~= nextState then
 		Input.Keys[eventName] = nextState
-		if evt.Press and eventName == "ActionCancel" then
-			Ext.PostMessageToServer("LeaderLib_Input_OnActionCancel", Client:GetCharacter().MyGuid)
+		if evt.Press and eventName == "ActionCancel" and SharedData.RegionData.LevelType == LEVELTYPE.GAME then
+			local client = Client:GetCharacter()
+			if client then
+				Ext.PostMessageToServer("LeaderLib_Input_OnActionCancel", client.NetID)
+			end
 		end
 		InvokeListenerCallbacks(Listeners.InputEvent, eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled)
 		InvokeListenerCallbacks(Listeners.NamedInputEvent[eventName], eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled)

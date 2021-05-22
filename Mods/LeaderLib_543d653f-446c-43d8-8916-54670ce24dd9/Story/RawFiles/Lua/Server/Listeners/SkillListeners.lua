@@ -69,7 +69,7 @@ local function GetCharacterSkillData(skill, uuid, createIfMissing, skillType, sk
 	end
 
 	if data == nil and createIfMissing == true then
-		if Vars.DebugMode and printWarning then
+		if Vars.DebugMode and printWarning and CharacterIsPlayer(uuid) == 1 then
 			fprint(LOGLEVEL.WARNING, "[LeaderLib:OnSkillCast] No skill data for character (%s) and skill (%s)", uuid, skill)
 		end
 		data = Classes.SkillEventData:Create(uuid, skill, skillType, skillAbility)
@@ -188,13 +188,17 @@ function SkillSystem.CheckPreparingState(uuid)
 end
 
 --When the ActionCancel button is pressed.
-Ext.RegisterNetListener("LeaderLib_Input_OnActionCancel", function(cmd, uuid)
-	if not StringHelpers.IsNullOrEmpty(uuid) then
-		local action = NRD_CharacterGetCurrentAction(uuid) or ""
-		if action == "PrepareSkill" then
-			local skillPrototype = NRD_ActionStateGetString(uuid, "SkillId")
-			if not StringHelpers.IsNullOrEmpty(skillPrototype) then
-				SkillSystem.OnSkillPreparingCancel(uuid, skillPrototype)
+Ext.RegisterNetListener("LeaderLib_Input_OnActionCancel", function(cmd, payload)
+	if not StringHelpers.IsNullOrEmpty(payload) then
+		local netid = tonumber(payload)
+		local character = Ext.GetCharacter(netid)
+		if character then
+			local action = NRD_CharacterGetCurrentAction(character.MyGuid) or ""
+			if action == "PrepareSkill" then
+				local skillPrototype = NRD_ActionStateGetString(character.MyGuid, "SkillId")
+				if not StringHelpers.IsNullOrEmpty(skillPrototype) then
+					SkillSystem.OnSkillPreparingCancel(character.MyGuid, skillPrototype)
+				end
 			end
 		end
 	end

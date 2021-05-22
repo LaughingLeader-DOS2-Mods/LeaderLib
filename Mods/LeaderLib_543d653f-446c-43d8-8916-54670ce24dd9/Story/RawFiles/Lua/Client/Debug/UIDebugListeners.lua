@@ -15,7 +15,7 @@ UIListenerWrapper.__index = UIListenerWrapper
 local function OnUIListener(self, eventType, ui, event, ...)
 	if self.Enabled then
 		if self.PrintParams then
-			fprint(LOGLEVEL.TRACE, "[UI:%s(%s)] [%s] %s [%s]\n%s", self.Name, ui:GetTypeId(), eventType, event, Ext.MonotonicTime(), Common.Dump({...}))
+			fprint(LOGLEVEL.TRACE, "[UI:%s(%s)][%s] [%s] %s(%s)", self.Name, ui:GetTypeId(), eventType, Ext.MonotonicTime(), event, StringHelpers.Join(", ", {...}))
 		else
 			fprint(LOGLEVEL.TRACE, "[UI:%s(%s)] [%s] %s [%s]", self.Name, ui:GetTypeId(), eventType, event, Ext.MonotonicTime())
 		end
@@ -61,7 +61,7 @@ function UIListenerWrapper:Create(id, calls, methods)
 			for _,v in pairs(this.Calls) do
 				Ext.RegisterUICall(ui, v, function(...)
 					OnUIListener(this, "call", ...)
-				end)
+				end, "Before")
 			end
 		
 			for _,v in pairs(this.Methods) do
@@ -76,7 +76,7 @@ function UIListenerWrapper:Create(id, calls, methods)
 				for _,v in pairs(this.Calls) do
 					Ext.RegisterUITypeCall(id2, v, function(...)
 						OnUIListener(this, "call", ...)
-					end)
+					end, "Before")
 				end
 			
 				for _,v in pairs(this.Methods) do
@@ -90,7 +90,7 @@ function UIListenerWrapper:Create(id, calls, methods)
 			for _,v in pairs(this.Calls) do
 				Ext.RegisterUITypeCall(id, v, function(...)
 					OnUIListener(this, "call", ...)
-				end)
+				end, "Before")
 			end
 		
 			for _,v in pairs(this.Methods) do
@@ -194,52 +194,17 @@ local examineMethods = {
 local examine = UIListenerWrapper:Create(Data.UIType.examine, examineCalls, examineMethods)
 examine.Enabled = false
 
-local tooltipCalls = {
-	"keepUIinScreen",
-	"setTooltipSize",
-}
-
-local tooltipMethods = {
-	"setGroupLabel",
-	"setWindow",
-	"strReplace",
-	"traceArray",
-	"addFormattedTooltip",
-	"addStatusTooltip",
-	"addTooltip",
-	"swapCompare",
-	"showFormattedTooltipAfterPos",
-	"setCompare",
-	"addCompareTooltip",
-	"addCompareOffhandTooltip",
-	"INTshowTooltip",
-	"onShowCompareTooltip",
-	"startModeTimer",
-	"resetTooltipMode",
-	"onMove",
-	"INTRemoveTooltip",
-	"removeTooltip",
-	"fadeOutTooltip",
-	"checkTooltipBoundaries",
-	"getTooltipHeight",
-	"getTooltipWidth",
-}
-
---local tooltipDebug = UIListenerWrapper:Create(Data.UIType.tooltip, tooltipCalls, tooltipMethods)
--- tooltipDebug.CustomCallback["addFormattedTooltip"] = function(self, ui, call, ...)
--- 	local main = ui:GetRoot()
--- 	for i=0,#main.tooltip_array do
--- 		local obj = main.tooltip_array[i]
--- 		if obj then
--- 			print(i, obj)
--- 		end
--- 	end
--- end
-
 local sheetCalls = {
 	"showTooltip",
 	"showStatusTooltip",
 	"showItemTooltip",
+	"showStatTooltip",
+	"showAbilityTooltip",
+	"showItemTooltip",
+	"showCustomStatTooltip",
+	"showTooltip",
+	"showStatusTooltip",
+	"showTalentTooltip",
 }
 
 local sheetMethods = {
@@ -270,6 +235,13 @@ local sheetCalls = {
 	"showEquipment",
 	"showInventory",
 	"showSkills",
+	"showStatTooltip",
+	"showAbilityTooltip",
+	"showItemTooltip",
+	"showCustomStatTooltip",
+	"showTooltip",
+	"showStatusTooltip",
+	"showTalentTooltip",
 }
 
 local sheetMethods = {
@@ -473,8 +445,12 @@ local tooltipMain = UIListenerWrapper:Create(Data.UIType.tooltip, {
 	"getTooltipHeight",
 	"getTooltipWidth",
 })
-tooltipMain.PrintParams = false
+tooltipMain.PrintParams = true
 tooltipMain.Enabled = false
+
+-- tooltipMain.CustomCallback["addTooltip"] = function(ui, call, text, ...)
+
+-- end
 
 --Ext.RegisterUINameInvokeListener("addTooltip", function (ui, call, ...)
 -- Ext.RegisterUINameCall("keepUIinScreen", function (ui, call, ...)
@@ -678,3 +654,70 @@ local dialog = UIListenerWrapper:Create(Data.UIType.dialog, {
 	"updateDialog",
 })
 dialog.Enabled = false
+
+local possessionBar = UIListenerWrapper:Create(Data.UIType.possessionBar, {
+	"centerCamOnCharacter",
+	"charSel",
+	"hideTooltip",
+	"onCharOut",
+	"onCharOver",
+	"registerAnchorId",
+	"setAnchor",
+	"showHealthTooltip",
+	"showItemTooltip",
+	"showStatusTooltip",
+	"showTooltip",
+	"stopDragging",
+	"toggleSkills",
+	"UIAssert",
+}, {
+	"addInfo",
+	"addSummonInfo",
+	"centerPositions",
+	"cleanupAllStatuses",
+	"cleanupStatuses",
+	"cleanupStatusesMC",
+	"enabledPlayerButtons",
+	"getPlayerInfo",
+	"getPlayerInfoByHandle",
+	"getPlayerOrSummonByHandle",
+	"removeAllInfos",
+	"removeChildrenOf",
+	"removeInfo",
+	"reorderlist",
+	"repositionPI",
+	"resetHPColour",
+	"selectPlayer",
+	"setActiveInCombat",
+	"setAllowMouseClicking",
+	"setArmourBar",
+	"setArmourBarColour",
+	"setControlledCharacter",
+	"setControllerMode",
+	"setCurrentActionState",
+	"setDefaultHPColour",
+	"setDisabled",
+	"setEquipState",
+	"setGold",
+	"setGUIStatusLabel",
+	"setHighlight",
+	"setHPBar",
+	"setHPColour",
+	"setIggyImage",
+	"setLevelUp",
+	"setMagicArmourBar",
+	"setMagicArmourBarColour",
+	"setMCEquipState",
+	"setMinified",
+	"setMPBar",
+	"setSourcePoints",
+	"setStatus",
+	"setSummonTurnText",
+	"setTooltips",
+	"setVisible",
+	"showPlayerButtons",
+	"showStatusTooltipForMC",
+	"showTooltipForMC",
+	"updateDone",
+	"updateStatuses",
+})

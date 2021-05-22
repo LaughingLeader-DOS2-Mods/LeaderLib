@@ -392,7 +392,7 @@ local function PrintAllUITypeID()
 		local ui = Ext.GetBuiltinUI("Public/Game/GUI/"..v)
 		if ui ~= nil then
 			--print(v, ui:GetTypeId())
-			fprint(LOGLEVEL.WARNING, "[PrintAllUITypeID]%s = %s,", string.gsub(v, "GM/", ""):gsub(".swf", ""), ui:GetTypeId())
+			fprint(LOGLEVEL.TRACE, "%s = %s,", string.gsub(v, "GM/", ""):gsub(".swf", ""), ui:GetTypeId())
 		end
 	end
 end

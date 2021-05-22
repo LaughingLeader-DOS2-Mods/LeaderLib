@@ -72,6 +72,9 @@ function StringHelpers.Join(delimiter, list, uniqueOnly, getStringFunction)
 			result = v
 		end
 		if result then
+			if type(result) ~= "string" then
+				result = tostring(result)
+			end
 			if not uniqueOnly or (uniqueOnly and not string.find(finalResult, result)) then
 				if i > 1 then
 					finalResult = string.format("%s%s%s", finalResult, delimiter, result)

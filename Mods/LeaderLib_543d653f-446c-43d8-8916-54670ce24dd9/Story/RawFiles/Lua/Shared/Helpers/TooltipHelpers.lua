@@ -18,7 +18,7 @@ local function ReplacePlaceholders(str, character)
 		local value = Ext.ExtraData[key] or ""
 		if value ~= "" and type(value) == "number" then
 			local trailingStr = ""
-			local startPos,endPos = string.find(output, v, nil, true)
+			local startPos,endPos = string.find(output, v, 1, true)
 			if endPos then
 				trailingStr = string.sub(output, endPos+1, endPos+1)
 			end

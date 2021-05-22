@@ -938,3 +938,98 @@ end)
 -- 		end
 -- 	end
 -- end)
+
+local printFunctionsBase = {}
+local printFunctions = {}
+local printedTable = {}
+
+local function PrintFunction(k,v,prefix,level)
+	if type(v) == "function" then
+		if level == 0 then
+			printFunctionsBase[#printFunctionsBase+1] = string.format("%s%s", prefix, k)
+		else
+			printFunctions[#printFunctions+1] = string.format("%s%s", prefix, k)
+		end
+	elseif type(v) == "table" then
+		for k2,v2 in pairs(v) do
+			PrintFunction(k2,v2,prefix..k..".",level+1)
+		end
+	end
+end
+
+local function printHelperTable(name, tbl)
+	if not printedTable[name] then
+		printedTable[name] = true
+		printFunctionsBase = {}
+		printFunctions = {}
+		for k,v in pairs(tbl) do
+			PrintFunction(k,v,name..".",0)
+		end
+		table.sort(printFunctionsBase)
+		for _,v in ipairs(printFunctionsBase) do
+			print(v)
+		end
+		table.sort(printFunctions)
+		for _,v in ipairs(printFunctions) do
+			print(v)
+		end
+	end
+end
+
+local ignoreImports = {
+	--lua base
+	["_G"] = true,
+	tonumber = true,
+	pairs = true,
+	ipairs = true,
+	table = true,
+	tostring = true,
+	math = true,
+	type = true,
+	print = true,
+	error = true,
+	next = true,
+	string = true,
+	--ositools base
+	Sandboxed = true,
+	ModuleUUID = true,
+	Game = true,
+	Ext = true,
+	Osi = true,
+	PersistentVars = true,
+	LoadPersistentVars = true,
+	--LeaderLib ignores
+	Debug = true,
+	Vars = true,
+	Listeners = true,
+	SkillListeners = true,
+	ModListeners = true,
+	Settings = true,
+}
+
+Ext.RegisterConsoleCommand("help", function(command, text)
+	if text == "leaderlib" then
+		printedTable = {}
+		printHelperTable("GameHelpers", GameHelpers)
+		printHelperTable("StringHelpers", StringHelpers)
+		printHelperTable("TableHelpers", TableHelpers)
+		printHelperTable("Common", Common)
+		printFunctionsBase = {}
+		printFunctions = {}
+		for k,v in pairs(Mods.LeaderLib) do
+			if not ignoreImports[k] and type(v) == "function" then
+				PrintFunction(k,v,"LeaderLib.",0)
+			end
+		end
+		table.sort(printFunctionsBase)
+		for _,v in ipairs(printFunctionsBase) do
+			local name = string.gsub(v, "LeaderLib.", "")
+			print(name)
+		end
+		table.sort(printFunctions)
+		for _,v in ipairs(printFunctions) do
+			local name = string.gsub(v, "LeaderLib.", "")
+			print(name)
+		end
+	end
+end)

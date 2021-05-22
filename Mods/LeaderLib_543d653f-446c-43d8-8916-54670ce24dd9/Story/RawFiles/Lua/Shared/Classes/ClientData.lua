@@ -132,7 +132,7 @@ function ClientData:SetClientData(id, profile, isHost, character)
 		self.Character = character
 	end
 	if Vars.DebugMode then
-		PrintLog("[LeaderLib:ClientData:SetClientData] ID(%s) UUID(%s) Profile(%s) IsHost(%s) Character(%s)", self.ID, self.Character.UUID, self.Profile, self.Profile, self.IsHost, self.Character)
+		fprint(LOGLEVEL.DEFAULT, "[LeaderLib:ClientData:SetClientData] ID(%s) UUID(%s) Profile(%s) IsHost(%s) Character(%s)", self.ID, self.Character.UUID, self.Profile, self.Profile, self.IsHost, self.Character)
 	end
 end
 

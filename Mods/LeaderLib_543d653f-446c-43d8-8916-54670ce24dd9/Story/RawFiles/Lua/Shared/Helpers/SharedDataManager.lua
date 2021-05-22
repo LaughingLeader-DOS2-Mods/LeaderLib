@@ -47,6 +47,13 @@ if Ext.IsServer() then
 		InvokeListenerCallbacks(Listeners.SyncData, id, profile, uuid, isHost)
 	end
 
+	local function GetNetID(uuid)
+		local character = Ext.GetCharacter(uuid)
+		if character then
+			return character.NetID
+		end
+	end
+
 	function GameHelpers.Data.SyncSharedData(syncSettings, client, ignoreProfile)
 		if client == nil then
 			local totalUsers = Common.TableLength(UserIds, true)
@@ -63,7 +70,8 @@ if Ext.IsServer() then
 							Shared = SharedData,
 							Profile = profile,
 							IsHost = isHost,
-							ID = id
+							ID = id,
+							NetID = GetNetID(uuid)
 						}
 						Ext.PostMessageToUser(id, "LeaderLib_SharedData_StoreData", Ext.JsonStringify(data))
 						SendSyncListenerEvent(id, profile, uuid, isHost)
@@ -92,7 +100,8 @@ if Ext.IsServer() then
 					Shared = SharedData,
 					Profile = profile,
 					IsHost = isHost,
-					ID = id
+					ID = id,
+					NetID = GetNetID(uuid)
 				}
 				Ext.PostMessageToUser(id, "LeaderLib_SharedData_StoreData", Ext.JsonStringify(data))
 				SendSyncListenerEvent(id, profile, uuid, isHost)
@@ -175,15 +184,23 @@ if Ext.IsServer() then
 			return false
 		end
 		uuid = StringHelpers.GetUUID(uuid or GetCurrentCharacter(id))
-		local character = Ext.GetCharacter(uuid)
-		local isHost = CharacterGetReservedUserID(CharacterGetHostCharacter()) == id
-		if SharedData.CharacterData[profileId] == nil then
-			SharedData.CharacterData[profileId] = ClientCharacterData:Create(character.MyGuid, id, profileId, character.NetID, isHost, isInCharacterCreation)
-		else
-			local data = SharedData.CharacterData[profileId]
-			data:SetClientCharacterData(uuid, id, profileId, character.NetID, isHost, isInCharacterCreation)
+		if not StringHelpers.IsNullOrEmpty(uuid) then
+			local character = Ext.GetCharacter(uuid)
+			if character then
+				local isHost = CharacterGetReservedUserID(CharacterGetHostCharacter()) == id
+				if SharedData.CharacterData[profileId] == nil then
+					SharedData.CharacterData[profileId] = ClientCharacterData:Create(character.MyGuid, id, profileId, character.NetID, isHost, isInCharacterCreation)
+				else
+					local data = SharedData.CharacterData[profileId]
+					data:SetClientCharacterData(uuid, id, profileId, character.NetID, isHost, isInCharacterCreation)
+				end
+				GameHelpers.Data.StartSyncTimer()
+				return true
+			end
 		end
-		GameHelpers.Data.StartSyncTimer()
+		--If we're still here then something went wrong, so clear the data for this profile
+		SharedData.CharacterData[profileId] = nil
+		return false
 	end
 
 	Ext.RegisterOsirisListener("UserConnected", 3, "after", function(id, username, profileId)
@@ -219,6 +236,8 @@ if Ext.IsServer() then
 				UserIds[id] = true
 			end
 			GameHelpers.Data.SetCharacterData(id)
+		elseif last > -1 then
+			GameHelpers.Data.SetCharacterData(last)
 		end
 	end)
 
@@ -307,12 +326,20 @@ end
 if Ext.IsClient() then
 	local defaultEmptyCharacter = Classes.ClientCharacterData:Create()
 
-	local function GetClientCharacter(profile)
+	local function GetClientCharacter(profile, netid)
 		if profile == nil then
 			profile = Client.Profile
 		end
-		if SharedData.CharacterData ~= nil and profile ~= nil then
-			return SharedData.CharacterData[profile] or defaultEmptyCharacter
+		if SharedData.CharacterData ~= nil and profile ~= nil and SharedData.CharacterData[profile] then
+			return SharedData.CharacterData[profile]
+		end
+		--Fallback in case all we have is a netid
+		if netid then
+			local character = Ext.GetCharacter(netid)
+			if character then
+				SharedData.CharacterData[profile] = Classes.ClientCharacterData:Create(nil, nil, profile, netid)
+				return SharedData.CharacterData[profile]
+			end
 		end
 		return defaultEmptyCharacter
 	end
@@ -339,7 +366,7 @@ if Ext.IsClient() then
 					SharedData[k] = v
 				end
 			end
-			Client:SetClientData(data.ID, data.Profile, data.IsHost, GetClientCharacter(data.Profile))
+			Client:SetClientData(data.ID, data.Profile, data.IsHost, GetClientCharacter(data.Profile, data.NetID))
 			InvokeListenerCallbacks(Listeners.ClientDataSynced, SharedData.ModData, SharedData)
 			if Client.Character.UUID ~= last then
 				ActiveCharacterChanged(Client.Character)
@@ -358,6 +385,9 @@ if Ext.IsClient() then
 	end)
 
 	local function OnCharacterSelected(ui, call, doubleHandle, skipSync)
+		if not doubleHandle or doubleHandle == 0 then
+			return
+		end
 		--print(call, doubleHandle)
 		local handle = Ext.DoubleToHandle(doubleHandle)
 		if handle ~= nil then
@@ -390,29 +420,31 @@ if Ext.IsClient() then
 
 	local lastCharacterOutsideTrade = ""
 
-	Ext.RegisterListener("SessionLoaded", function()
-		Ext.RegisterUITypeInvokeListener(Data.UIType.hotBar, "setPlayerHandle", OnCharacterSelected)
-		Ext.RegisterUITypeInvokeListener(Data.UIType.bottomBar_c, "setPlayerHandle", OnCharacterSelected)
-		Ext.RegisterUITypeCall(Data.UIType.playerInfo, "charSel", OnCharacterSelected, "After")
-		Ext.RegisterUITypeCall(Data.UIType.characterSheet, "selectCharacter", OnCharacterSelected, "After")
-		Ext.RegisterUITypeCall(Data.UIType.characterSheet, "centerCamOnCharacter", OnCharacterSelected, "After")
-		Ext.RegisterUITypeCall(Data.UIType.trade, "selectCharacter", function(ui, call, doubleHandle)
-			OnCharacterSelected(ui, call, doubleHandle, true)
-		end, "After")
-		Ext.RegisterUITypeCall(Data.UIType.partyManagement_c, "setActiveChar", OnCharacterSelected, "After")
-		Ext.RegisterUITypeCall(Data.UIType.trade, "cancel", function(ui, call)
-			if lastCharacterOutsideTrade ~= "" then
-				local currentCharacter = GetClientCharacter()
-				if currentCharacter ~= nil then
-					--print(currentCharacter.UUID, "=>", lastCharacterOutsideTrade)
-					currentCharacter.UUID = lastCharacterOutsideTrade
-					ActiveCharacterChanged(currentCharacter)
-				end
+	Ext.RegisterUITypeInvokeListener(Data.UIType.playerInfo, "selectPlayer", OnCharacterSelected)
+	Ext.RegisterUITypeInvokeListener(Data.UIType.hotBar, "setPlayerHandle", OnCharacterSelected)
+	Ext.RegisterUITypeInvokeListener(Data.UIType.bottomBar_c, "setPlayerHandle", OnCharacterSelected)
+	Ext.RegisterUITypeCall(Data.UIType.playerInfo, "charSel", OnCharacterSelected, "After")
+	Ext.RegisterUITypeCall(Data.UIType.characterSheet, "selectCharacter", OnCharacterSelected, "After")
+	Ext.RegisterUITypeCall(Data.UIType.characterSheet, "centerCamOnCharacter", OnCharacterSelected, "After")
+	Ext.RegisterUITypeCall(Data.UIType.trade, "selectCharacter", function(ui, call, doubleHandle)
+		OnCharacterSelected(ui, call, doubleHandle, true)
+	end, "After")
+	Ext.RegisterUITypeCall(Data.UIType.partyManagement_c, "setActiveChar", OnCharacterSelected, "After")
+	Ext.RegisterUITypeCall(Data.UIType.trade, "cancel", function(ui, call)
+		if lastCharacterOutsideTrade ~= "" then
+			local currentCharacter = GetClientCharacter()
+			if currentCharacter ~= nil then
+				--print(currentCharacter.UUID, "=>", lastCharacterOutsideTrade)
+				currentCharacter.UUID = lastCharacterOutsideTrade
+				ActiveCharacterChanged(currentCharacter)
 			end
-		end)
-		--Ext.RegisterUINameCall("charSel", OnCharacterSelected)
-		--Ext.RegisterUINameCall("selectCharacter", OnCharacterSelected)
+		end
 	end)
+	
+	-- Ext.RegisterListener("SessionLoaded", function()
+	-- 	--Ext.RegisterUINameCall("charSel", OnCharacterSelected)
+	-- 	--Ext.RegisterUINameCall("selectCharacter", OnCharacterSelected)
+	-- end)
 
 	Ext.RegisterListener("UIObjectCreated", function(ui)
 		if ui:GetTypeId() == Data.UIType.trade or ui:GetTypeId() == Data.UIType.trade_c then

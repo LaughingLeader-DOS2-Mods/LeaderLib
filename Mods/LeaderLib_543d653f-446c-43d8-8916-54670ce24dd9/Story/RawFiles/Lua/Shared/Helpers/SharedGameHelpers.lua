@@ -109,3 +109,101 @@ function GameHelpers.Item.IsObject(item)
 	end
 	return false
 end
+
+---@param item EsvItem|EclItem
+---@param tag string
+function GameHelpers.ItemHasStatsTag(item, tag)
+	if not GameHelpers.Item.IsObject(item) then
+		if not StringHelpers.IsNullOrWhitespace(item.Stats.Tags) and 
+		Common.TableHasValue(StringHelpers.Split(item.Stats.Tags, ";"), tag) then
+			return true
+		end
+		for _,v in pairs(item.Stats.DynamicStats) do
+			if not StringHelpers.IsNullOrWhitespace(v.ObjectInstanceName) then
+				local tags = Ext.StatGetAttribute(v.ObjectInstanceName, "Tags")
+				if not StringHelpers.IsNullOrWhitespace(tags) and Common.TableHasValue(StringHelpers.Split(tags, ";"), tag) then
+					return true
+				end
+			end
+		end
+	end
+	return false
+end
+
+---@param item EsvItem|EclItem
+---@param tag string
+function GameHelpers.ItemHasTag(item, tag)
+	if item:HasTag(tag) then
+		return true
+	end
+	if GameHelpers.ItemHasStatsTag(item, tag) then
+		return true
+	end
+	return false
+end
+
+---@param item EsvItem|EclItem
+---@param inDictionaryFormat boolean|nil
+---@param skipStats boolean|nil
+---@return string[]
+function GameHelpers.GetItemTags(item, inDictionaryFormat, skipStats)
+	local tags = {}
+	for _,v in pairs(item:GetTags()) do
+		tags[v] = true
+	end
+	if not skipStats and not GameHelpers.Item.IsObject(item) then
+		if not StringHelpers.IsNullOrWhitespace(item.Stats.Tags) then
+			for _,v in pairs(StringHelpers.Split(item.Stats.Tags, ";")) do
+				tags[v] = true
+			end
+		end
+		for _,v in pairs(item.Stats.DynamicStats) do
+			if not StringHelpers.IsNullOrWhitespace(v.ObjectInstanceName) then
+				local tagsText = Ext.StatGetAttribute(v.ObjectInstanceName, "Tags")
+				if not StringHelpers.IsNullOrWhitespace(tagsText) then
+					for _,v in pairs(StringHelpers.Split(tagsText, ";")) do
+						tags[v] = true
+					end
+				end
+			end
+		end
+	end
+	if inDictionaryFormat then
+		return tags
+	end
+	local tbl = {}
+	for t,b in pairs(tags) do
+		tbl[#tbl+1] = t
+	end
+	table.sort(tbl)
+	return tbl
+end
+
+---@param character EsvCharacter|EclCharacter
+---@param tag string
+function GameHelpers.CharacterOrEquipmentHasTag(character, tag)
+	if character:HasTag(tag) then
+		return true
+	end
+	local isServer = Ext.IsServer()
+	for _,slot in Data.VisibleEquipmentSlots:Get() do
+		if isServer then
+			local uuid = CharacterGetEquippedItem(character.MyGuid, slot)
+			if not StringHelpers.IsNullOrEmpty(uuid) then
+				local item = Ext.GetItem(uuid)
+				if item and GameHelpers.ItemHasTag(item, tag) then
+					return true
+				end
+			end
+		else
+			local uuid = character:GetItemBySlot(slot)
+			if not StringHelpers.IsNullOrEmpty(uuid) then
+				local item = Ext.GetItem(uuid)
+				if item and GameHelpers.ItemHasTag(item, tag) then
+					return true
+				end
+			end
+		end
+	end
+	return false
+end

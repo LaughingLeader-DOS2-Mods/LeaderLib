@@ -1224,9 +1224,7 @@ CharacterIsDead(_Object, _a)
 AND
 HasAppliedStatus(_Object, "DYING", _b)
 AND
-HasActiveStatus(_Object, "DYING", _c)
-AND
-LeaderLib_Math_QRY_IsEqualToAny(1, _a, _b, _c)
+LeaderLib_Math_QRY_IsEqualToAny(1, _a, _b)
 THEN
 DB_NOOP(1);
 

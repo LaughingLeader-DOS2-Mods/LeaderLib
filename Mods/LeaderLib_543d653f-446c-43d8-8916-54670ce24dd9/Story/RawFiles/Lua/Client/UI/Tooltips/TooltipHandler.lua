@@ -282,7 +282,7 @@ end
 ---@param tooltip TooltipData
 local function OnCustomStatTooltip(character, stat, tooltip)
 	if Vars.DebugMode then
-		print(character.Stats.Name, Common.Dump(stat), Ext.JsonStringify(tooltip.Data))
+		print("CustomStat", character.DisplayName, Common.Dump(stat), Ext.JsonStringify(tooltip.Data))
 	end
 end
 

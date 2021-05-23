@@ -204,6 +204,10 @@ local function InvokeExtenderEventCallbacks(evt, eventName)
 	-- 	fprint(LOGLEVEL.DEFAULT, "[ExtInputEvent] (%s)[%s] Pressed(%s) Time(%s) Last(%s)", eventName, evt.EventId, evt.Press, Ext.MonotonicTime(), lastExtenderState[eventName])
 	-- end
 
+	if eventName == "ToggleCharacterPane" and not evt.Press then
+		CustomStatTooltipFixer.OnToggleCharacterPane()
+	end
+
 	if lastFiredEventFrom[eventName] ~= 1 or Input.Keys[eventName] ~= nextState then
 		Input.Keys[eventName] = nextState
 		if evt.Press and eventName == "ActionCancel" and SharedData.RegionData.LevelType == LEVELTYPE.GAME then

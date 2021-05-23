@@ -402,7 +402,7 @@ local function GetTagTooltipText(tag, data, tooltipType)
 		if t == "string" then
 			tagName = data.Title
 		elseif t == "table" and data.Type == "TranslatedString" then
-			tagName = GameHelpers.Tooltip.ReplacePlaceholders(data.Title.Value)
+			tagName = data.Title.Value
 		elseif t == "function" then
 			local b,result = xpcall(data.Title, debug.traceback, tag, tooltipType)
 			if b then
@@ -419,7 +419,7 @@ local function GetTagTooltipText(tag, data, tooltipType)
 		if t == "string" then
 			tagDesc = data.Description
 		elseif t == "table" and data.Type == "TranslatedString" then
-			tagDesc = GameHelpers.Tooltip.ReplacePlaceholders(data.Description.Value)
+			tagDesc = data.Description.Value
 		elseif t == "function" then
 			local b,result = xpcall(data.Description, debug.traceback, tag, tooltipType)
 			if b then
@@ -438,7 +438,7 @@ local function GetTagTooltipText(tag, data, tooltipType)
 		end
 		finalText = finalText .. tagDesc
 	end
-	return finalText
+	return GameHelpers.Tooltip.ReplacePlaceholders(finalText)
 end
 
 local function FormatTagText(content_array, group, isControllerMode)

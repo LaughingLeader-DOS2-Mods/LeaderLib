@@ -87,6 +87,48 @@ function StringHelpers.Join(delimiter, list, uniqueOnly, getStringFunction)
 	return finalResult
 end
 
+---Join a table of string into one string.
+---Source: http://www.wellho.net/resources/ex.php4?item=u105/spjo
+---@param delimiter string
+---@param list table
+---@param uniqueOnly boolean 
+---@param getStringFunction table
+function StringHelpers.DebugJoin(delimiter, list, uniqueOnly, getStringFunction)
+	local finalResult = ""
+	local useFunction = type(getStringFunction) == "function"
+
+	local i = 0
+	for k,v in TableHelpers.TryOrderedEach(list) do
+		i = i + 1
+		local result = nil
+		if useFunction then
+			local b,str = xpcall(getStringFunction, debug.traceback, k, v)
+			if b then
+				result = str
+			else
+				Ext.PrintError(str)
+			end
+		else
+			result = v
+		end
+		if result then
+			if type(result) ~= "string" then
+				result = tostring(result)
+			else
+				result = '"'..result..'"'
+			end
+			if not uniqueOnly or (uniqueOnly and not string.find(finalResult, result)) then
+				if i > 1 then
+					finalResult = string.format("%s%s%s", finalResult, delimiter, result)
+				else
+					finalResult = result
+				end
+			end
+		end
+	end
+	return finalResult
+end
+
 ---Split a string into a table.
 ---Source: http://www.wellho.net/resources/ex.php4?item=u105/spjo
 ---@param str string

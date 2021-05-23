@@ -15,7 +15,7 @@ UIListenerWrapper.__index = UIListenerWrapper
 local function OnUIListener(self, eventType, ui, event, ...)
 	if self.Enabled then
 		if self.PrintParams then
-			fprint(LOGLEVEL.TRACE, "[UI:%s(%s)][%s] [%s] %s(%s)", self.Name, ui:GetTypeId(), eventType, Ext.MonotonicTime(), event, StringHelpers.Join(", ", {...}))
+			fprint(LOGLEVEL.TRACE, "[UI:%s(%s)][%s] [%s] %s(%s)", self.Name, ui:GetTypeId(), eventType, Ext.MonotonicTime(), event, StringHelpers.DebugJoin(", ", {...}))
 		else
 			fprint(LOGLEVEL.TRACE, "[UI:%s(%s)] [%s] %s [%s]", self.Name, ui:GetTypeId(), eventType, event, Ext.MonotonicTime())
 		end
@@ -445,8 +445,8 @@ local tooltipMain = UIListenerWrapper:Create(Data.UIType.tooltip, {
 	"getTooltipHeight",
 	"getTooltipWidth",
 })
-tooltipMain.PrintParams = true
-tooltipMain.Enabled = false
+--tooltipMain.PrintParams = true
+--tooltipMain.Enabled = false
 
 -- tooltipMain.CustomCallback["addTooltip"] = function(ui, call, text, ...)
 

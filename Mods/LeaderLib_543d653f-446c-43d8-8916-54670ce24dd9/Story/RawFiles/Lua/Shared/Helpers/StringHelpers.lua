@@ -71,7 +71,7 @@ function StringHelpers.Join(delimiter, list, uniqueOnly, getStringFunction)
 		else
 			result = v
 		end
-		if result then
+		if result ~= nil then
 			if type(result) ~= "string" then
 				result = tostring(result)
 			end
@@ -111,7 +111,7 @@ function StringHelpers.DebugJoin(delimiter, list, uniqueOnly, getStringFunction)
 		else
 			result = v
 		end
-		if result then
+		if result ~= nil then
 			if type(result) ~= "string" then
 				result = tostring(result)
 			else

@@ -621,30 +621,6 @@ contextMenu.CustomCallback["updateButtons"] = function(self, ui, method)
 	end
 end
 
-local contextMenu = UIListenerWrapper:Create(Data.UIType.skills, {}, {
-	"updateSkills",
-})
-
----@param ui UIObject
--- contextMenu.CustomCallback["updateSkills"] = function(self, ui, method, b)
--- 	local this = ui:GetRoot()
--- 	local array = this.skillsUpdateList
--- 	for i=0,#array do
--- 		local entry = array[i]
--- 		if entry then
--- 			print(i, entry)
--- 			if type(entry) == "string" then
--- 				local stat = Ext.GetStat(entry)
--- 				if stat then
--- 					this.skillsUpdateList[i] = "Projectile_Fireball"
--- 				end
--- 			end
--- 		else
--- 			print(i, "nil")
--- 		end
--- 	end
--- end
-
 local hotbar = UIListenerWrapper:Create(Data.UIType.hotBar, {}, {
 	"allowActionsButton",
 	"clearAll",
@@ -923,3 +899,69 @@ local statusConsole = UIListenerWrapper:Create(Data.UIType.statusConsole, {
 	"updateArmourBar",
 	"yourTurnAnimation",
 })
+
+local skills = UIListenerWrapper:Create(Data.UIType.skills, {
+	"cancelDragging",
+	"cantUnlearn",
+	"createHoverIcon",
+	"dragActivate",
+	"exclusiveFilter",
+	"filterOnType",
+	"hideTooltip",
+	"hideUI",
+	"inputFocus",
+	"inputFocusLost",
+	"registerAnchorId",
+	"setAnchor",
+	"showAllFilters",
+	"showItemTooltip",
+	"showSkillTooltip",
+	"showStatusTooltip",
+	"showTooltip",
+	"startDragging",
+	"stopDragging",
+	"UIAssert"
+}, {
+	"addFilter",
+	"clearDragging",
+	"forceUpdate",
+	"hideMemoryHighlight",
+	"hideSkillPreview",
+	"hideTooltip",
+	"onTooltipTimerComplete",
+	"resetFilters",
+	"selectAllFilters",
+	"selectSkillByID",
+	"setButtonText",
+	"setMemoryText",
+	"setPlayer",
+	"setPlayerMemory",
+	"setTitle",
+	"showMemoryHighlight",
+	"showSkillPreview",
+	"showTooltip",
+	"updateCooldowns",
+	"updateMemory",
+	"updateMemoryHighlight",
+	"updateSkills",
+})
+
+---@param ui UIObject
+skills.CustomCallback["updateSkills"] = function(self, ui, method, b)
+	local this = ui:GetRoot()
+	local array = this.skillsUpdateList
+	for i=0,#array do
+		local entry = array[i]
+		if entry then
+			print(i, entry)
+			if type(entry) == "string" then
+				local stat = Ext.GetStat(entry)
+				if stat then
+					this.skillsUpdateList[i] = "Projectile_Fireball"
+				end
+			end
+		else
+			print(i, "nil")
+		end
+	end
+end

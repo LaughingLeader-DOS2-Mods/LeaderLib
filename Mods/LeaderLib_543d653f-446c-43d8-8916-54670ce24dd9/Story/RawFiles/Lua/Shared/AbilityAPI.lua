@@ -67,6 +67,9 @@ function AbilityManager.DisableAbility(abilityName, modID)
 		for ability,v in pairs(missingAbilities) do
 			AbilityManager.DisableAbility(ability, modID)
 		end
+		if not Vars.ControllerEnabled then
+			GameHelpers.UI.TryInvoke(Data.UIType.characterSheet, "clearAbilities")
+		end
 	else
 		local data = AbilityManager.RegisteredAbilities[abilityName]
 		if data ~= nil then
@@ -77,6 +80,10 @@ function AbilityManager.DisableAbility(abilityName, modID)
 			if AbilityManager.RegisteredCount[abilityName] <= 0 then
 				AbilityManager.RegisteredAbilities[abilityName] = nil
 				AbilityManager.RegisteredCount[abilityName] = 0
+
+				if not Vars.ControllerEnabled then
+					GameHelpers.UI.TryInvoke(Data.UIType.characterSheet, "clearAbilities")
+				end
 			end
 		end
 	end

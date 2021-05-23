@@ -236,6 +236,7 @@ function TalentManager.DisableTalent(talentId, modID)
 		for talent,v in pairs(missingTalents) do
 			TalentManager.DisableTalent(talent, modID)
 		end
+		GameHelpers.UI.TryInvoke(Data.UIType.characterSheet, "clearTalents")
 	else
 		local data = TalentManager.RegisteredTalents[talentId]
 		if data ~= nil then
@@ -246,6 +247,7 @@ function TalentManager.DisableTalent(talentId, modID)
 			if TalentManager.RegisteredCount[talentId] <= 0 then
 				TalentManager.RegisteredTalents[talentId] = nil
 				TalentManager.RegisteredCount[talentId] = 0
+				GameHelpers.UI.TryInvoke(Data.UIType.characterSheet, "clearTalents")
 			end
 		end
 	end
@@ -259,6 +261,7 @@ function TalentManager.HideTalent(talentId, modID)
 		for talentId,enum in pairs(Data.TalentEnum) do
 			TalentManager.HideTalent(talentId, modID)
 		end
+		GameHelpers.UI.TryInvoke(Data.UIType.characterSheet, "clearTalents")
 	else
 		if TalentManager.HiddenTalents[talentId] == nil then
 			TalentManager.HiddenTalents[talentId] = {}
@@ -266,6 +269,7 @@ function TalentManager.HideTalent(talentId, modID)
 		if TalentManager.HiddenTalents[talentId][modID] ~= true then
 			TalentManager.HiddenTalents[talentId][modID] = true
 			TalentManager.HiddenCount[talentId] = (TalentManager.HiddenCount[talentId] or 0) + 1
+			GameHelpers.UI.TryInvoke(Data.UIType.characterSheet, "clearTalents")
 		end
 	end
 end
@@ -487,12 +491,14 @@ function TalentManager.Update(ui, player)
 	end
 end
 
-RegisterListener("LuaReset", function()
-	local ui = Ext.GetUIByType(Data.UIType.statsPanel_c)
-	if ui then
-		ui:GetRoot().mainpanel_mc.stats_mc.talents_mc.statList.clearElements()
-	end
-end)
+if Vars.DebugMode then
+	RegisterListener("LuaReset", function()
+		local ui = Ext.GetUIByType(Data.UIType.statsPanel_c)
+		if ui then
+			ui:GetRoot().mainpanel_mc.stats_mc.talents_mc.statList.clearElements()
+		end
+	end)
+end
 
 local DivineTalents = {
 	Rager = "TALENT_Rager",

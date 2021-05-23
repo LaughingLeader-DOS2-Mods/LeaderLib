@@ -266,7 +266,7 @@ function LeaderLibGameSettings:Apply()
 		EnableFeature("BackstabCalculation")
 	end
 	if Ext.IsClient() then
-		UI.RefreshStatusVisibility()
+		StatusHider.RefreshStatusVisibility()
 		TalentManager.ToggleDivineTalents(self.Settings.Client.DivineTalentsEnabled)
 	end
 end

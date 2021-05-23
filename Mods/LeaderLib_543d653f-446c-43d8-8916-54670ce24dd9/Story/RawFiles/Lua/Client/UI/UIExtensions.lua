@@ -47,10 +47,18 @@ RegisterListener("BeforeLuaReset", function()
 	end
 end)
 
-RegisterListener("LuaReset", function()
-	DestroyInstance(true)
-	UIExtensions.SetupInstance()
-end)
+if Vars.DebugMode then
+	RegisterListener("LuaReset", function()
+		DestroyInstance(true)
+		UIExtensions.SetupInstance()
+	
+		if not Vars.ControllerEnabled then
+			--Clears any unregistered missing abilities
+			GameHelpers.UI.TryInvoke(Data.UIType.characterSheet, "clearAbilities")
+			GameHelpers.UI.TryInvoke(Data.UIType.characterSheet, "clearTalents")
+		end
+	end)
+end
 
 Ext.RegisterConsoleCommand("llresetuiext", function(cmd)
 	DestroyInstance(true)

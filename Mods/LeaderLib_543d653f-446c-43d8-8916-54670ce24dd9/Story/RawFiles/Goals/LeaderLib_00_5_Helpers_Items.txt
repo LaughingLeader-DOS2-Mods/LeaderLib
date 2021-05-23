@@ -859,7 +859,7 @@ _UseValidPosition != 0
 AND
 GetPosition(_Target, _x, _y, _z)
 AND
-LeaderLib_Helper_QRY_FindValidPosition(_Item, _x, _y, _z, 1.0)
+LeaderLib_Helper_QRY_FindValidPosition((GUIDSTRING)_Item, _x, _y, _z, 1.0)
 AND
 DB_LeaderLib_Helper_Temp_ValidPosition(_Object, _x, _y, _z, _tx, _ty, _tz)
 AND
@@ -871,7 +871,7 @@ RealProduct(_YawDegree, 0.0174533, _Yaw)
 AND
 RealProduct(_RollDegree, 0.0174533, _Roll)
 AND
-ItemGetAmount(_Item, _Amount)
+ItemGetAmount((ITEMGUID)_Item, _Amount)
 AND
 ItemGetOwner(_Item, _Owner)
 THEN

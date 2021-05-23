@@ -109,3 +109,12 @@ function GameHelpers.Character.IsUndead(character)
 	end
 	return false
 end
+
+---@param character string|EsvCharacter|EclCharacter
+---@return boolean
+function GameHelpers.Character.GetDisplayName(character)
+	if type(character) ~= "userdata" then
+		character = Ext.GetCharacter(character)
+	end
+	return character and character.DisplayName or ""
+end

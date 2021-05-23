@@ -1,3 +1,6 @@
+if StatusHider == nil then
+	StatusHider = {}
+end
 local function GetStatusVisibility(statusId, whitelist,blacklist,allVisible)
 	local blacklisted = blacklist[statusId] == true
 	local whitelisted = whitelist[statusId] == true
@@ -357,7 +360,7 @@ Ext.RegisterUITypeInvokeListener(Data.UIType.enemyHealthBar, "hide", function(ui
 	lastHealthbarOwnerDouble = nil
 end)
 
-function UI.RefreshStatusVisibility()
+function StatusHider.RefreshStatusVisibility()
 	if Ext.GetGameState() == "Running" then
 		RequestPlayerInfoRefresh()
 		RequestHealthbarRefresh()
@@ -365,5 +368,5 @@ function UI.RefreshStatusVisibility()
 end
 
 Ext.RegisterNetListener("LeaderLib_UI_UpdateStatusVisibility", function(cmd, payload)
-	UI.RefreshStatusVisibility()
+	StatusHider.RefreshStatusVisibility()
 end)

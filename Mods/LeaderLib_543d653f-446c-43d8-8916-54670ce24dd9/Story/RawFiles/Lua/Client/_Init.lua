@@ -30,8 +30,7 @@ Ext.Require("Client/ClientHelpers.lua")
 Ext.Require("Client/ClientNetMessages.lua")
 Ext.Require("Client/InputManager.lua")
 
-Ext.Require("Client/Helpers/UIHelpers.lua")
-
+Ext.Require("Client/UI/StatusHider.lua")
 Ext.Require("Client/UI/Tooltips/Game.Tooltip.Extended.lua")
 Ext.Require("Client/UI/CharacterSheet.lua")
 Ext.Require("Client/UI/ModMenu/_Init.lua")

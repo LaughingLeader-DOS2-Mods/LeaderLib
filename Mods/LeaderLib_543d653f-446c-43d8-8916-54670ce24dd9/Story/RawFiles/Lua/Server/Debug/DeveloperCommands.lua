@@ -1033,3 +1033,6 @@ Ext.RegisterConsoleCommand("help", function(command, text)
 		end
 	end
 end)
+
+--for i,v in pairs(Ext.GetItem(CharacterGetEquippedItem(CharacterGetHostCharacter(), "Breast")).Stats.DynamicStats) do print(i,v.ObjectInstanceName) end
+--local pa,b1,ma,b2 = 0,0,0,0; for i,v in pairs(Ext.GetItem(CharacterGetEquippedItem(CharacterGetHostCharacter(), "Breast")).Stats.DynamicStats) do pa=pa+v.ArmorValue;b1=b1 + v.ArmorBoost *0.01;ma=ma+v.MagicArmorValue;b2=b2 + v.MagicArmorBoost *0.01; end print("Physical Armor:", pa * (1 + b1));print("Magic Armor:", ma * (1 + b2))

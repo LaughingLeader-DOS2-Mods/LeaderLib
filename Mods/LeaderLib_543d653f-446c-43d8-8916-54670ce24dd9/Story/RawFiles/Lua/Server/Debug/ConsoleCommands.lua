@@ -146,7 +146,8 @@ Ext.RegisterConsoleCommand("clearinventory", function(command)
 	--local backpack = CreateItemTemplateAtPosition("LOOT_LeaderLib_BackPack_Invisible_98fa7688-0810-4113-ba94-9a8c8463f830", x, y, z)
 	for i,item in pairs(Ext.GetCharacter(host):GetInventoryItems()) do
 		if ItemIsStoryItem(item) == 0 and ItemIsDestructible(item) and not GameHelpers.Item.ItemIsEquipped(host, item) then
-			ItemRemove(item)
+			ItemDrop(item)
+			ItemDestroy(item)
 		end
 	end
 end)
@@ -178,6 +179,29 @@ Ext.RegisterConsoleCommand("addtreasure", function(command, treasure, identifyIt
 	end
 end)
 
+local function processTreasure(treasure, props, host, generateAmount)
+	local tbl = Ext.GetTreasureTable(treasure)
+	if tbl then
+		for _,sub in pairs(tbl.SubTables) do
+			for _,cat in pairs(sub.Categories) do
+				if cat.TreasureCategory and string.find(cat.TreasureCategory, "I_", nil, true) then
+					local stat = string.gsub(cat.TreasureCategory, "I_", "")
+					for i=0,generateAmount do
+						local item = GameHelpers.Item.CreateItemByStat(stat, true, props)
+						if item then
+							ItemToInventory(item, host, 1, 0, 0)
+						end
+					end
+				elseif cat.TreasureTable then
+					processTreasure(cat.TreasureTable, props, host, generateAmount)
+				else
+					print(Common.Dump(cat))
+				end
+			end
+		end
+	end
+end
+
 Ext.RegisterConsoleCommand("addtreasureex", function(command, treasure, level, forceRarity, generateAmount)
 	local host = CharacterGetHostCharacter()
 	if treasure == nil then
@@ -191,30 +215,15 @@ Ext.RegisterConsoleCommand("addtreasureex", function(command, treasure, level, f
 	if generateAmount then
 		generateAmount = tonumber(generateAmount) or 1
 	end
-	local tbl = Ext.GetTreasureTable(treasure)
-	if tbl then
-		---@type ItemDefinition
-		local props = {
-			Level = level,
-			ItemType = forceRarity or "Rare",
-			GenerationItemType = forceRarity or "Rare",
-			IsIdentified = true,
-			HasGeneratedStats = true,
-		}
-		for _,sub in pairs(tbl.SubTables) do
-			for _,cat in pairs(sub.Categories) do
-				if string.find(cat.TreasureCategory, "I_", nil, true) then
-					local stat = string.gsub(cat.TreasureCategory, "I_", "")
-					for i=0,generateAmount do
-						local item = GameHelpers.Item.CreateItemByStat(stat, true, props)
-						if item then
-							ItemToInventory(item, host, 1, 0, 0)
-						end
-					end
-				end
-			end
-		end
-	end
+	---@type ItemDefinition
+	local props = {
+		Level = level,
+		ItemType = forceRarity or "Rare",
+		GenerationItemType = forceRarity or "Rare",
+		IsIdentified = true,
+		HasGeneratedStats = true,
+	}
+	processTreasure(treasure, props, host, generateAmount)
 end)
 
 --!addreward ST_LLWEAPONEX_RunebladesRare

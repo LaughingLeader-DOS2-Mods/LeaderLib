@@ -66,12 +66,13 @@ if Ext.IsServer() then
 					if profile ~= ignoreProfile then
 						local uuid = StringHelpers.GetUUID(GetCurrentCharacter(id))
 						local isHost = CharacterGetReservedUserID(CharacterGetHostCharacter()) == id
+						local netid = GetNetID(uuid)
 						local data = {
 							Shared = SharedData,
 							Profile = profile,
 							IsHost = isHost,
 							ID = id,
-							NetID = GetNetID(uuid)
+							NetID = netid
 						}
 						Ext.PostMessageToUser(id, "LeaderLib_SharedData_StoreData", Ext.JsonStringify(data))
 						SendSyncListenerEvent(id, profile, uuid, isHost)
@@ -96,12 +97,13 @@ if Ext.IsServer() then
 			end
 			if profile ~= ignoreProfile then
 				local isHost = CharacterGetReservedUserID(CharacterGetHostCharacter()) == id
+				local netid = GetNetID(uuid)
 				local data = {
 					Shared = SharedData,
 					Profile = profile,
 					IsHost = isHost,
 					ID = id,
-					NetID = GetNetID(uuid)
+					NetID = netid
 				}
 				Ext.PostMessageToUser(id, "LeaderLib_SharedData_StoreData", Ext.JsonStringify(data))
 				SendSyncListenerEvent(id, profile, uuid, isHost)
@@ -346,17 +348,21 @@ if Ext.IsClient() then
 	GameHelpers.Data.GetClientCharacter = GetClientCharacter
 
 	---@param currentCharacter ClientCharacterData
-	local function ActiveCharacterChanged(currentCharacter)
+	local function ActiveCharacterChanged(currentCharacter, last)
 		currentCharacter = currentCharacter or GetClientCharacter()
+		if Vars.DebugMode then
+			fprint(LOGLEVEL.DEFAULT, "[LeaderLib:ActiveCharacterChanged] Profile(%s) NetID(%s) Last(%s)", currentCharacter.Profile, (GameHelpers.Character.GetDisplayName(currentCharacter.NetID)) or currentCharacter.NetID, (last and GameHelpers.Character.GetDisplayName(last)) or -1)
+		end
+		local character = Ext.GetCharacter(currentCharacter.NetID)
+		if character then
+			fprint(LOGLEVEL.DEFAULT, "DisplayNameOverride(%s) StoryDisplayName(%s) OriginalDisplayName(%s) PlayerCustomData.Name(%s)", character.DisplayNameOverride, character.StoryDisplayName, character.OriginalDisplayName, character.PlayerCustomData and character.PlayerCustomData.Name or "")
+		end
 		InvokeListenerCallbacks(Listeners.ClientCharacterChanged, currentCharacter.UUID, currentCharacter.ID, currentCharacter.Profile, currentCharacter.NetID, currentCharacter.IsHost)
 	end
 
 	local function StoreData(cmd, payload)
-		if Vars.DebugMode then
-			print(cmd, payload)
-		end
-		local last = GetClientCharacter().UUID
-		local data = Ext.JsonParse(payload)
+		local last = GetClientCharacter().NetID
+		local data = Common.JsonParse(payload)
 		if data ~= nil then
 			if not SharedData then
 				SharedData = data.Shared
@@ -368,8 +374,8 @@ if Ext.IsClient() then
 			end
 			Client:SetClientData(data.ID, data.Profile, data.IsHost, GetClientCharacter(data.Profile, data.NetID))
 			InvokeListenerCallbacks(Listeners.ClientDataSynced, SharedData.ModData, SharedData)
-			if Client.Character.UUID ~= last then
-				ActiveCharacterChanged(Client.Character)
+			if Client.Character.NetID ~= last then
+				ActiveCharacterChanged(Client.Character, last)
 			end
 			return true
 		else
@@ -408,7 +414,7 @@ if Ext.IsClient() then
 					currentCharacter.NetID = character.NetID
 					if currentCharacter.NetID ~= last then
 						changeDetected = true
-						ActiveCharacterChanged(currentCharacter)
+						ActiveCharacterChanged(currentCharacter, last)
 					end
 				end
 				if changeDetected and skipSync ~= true then

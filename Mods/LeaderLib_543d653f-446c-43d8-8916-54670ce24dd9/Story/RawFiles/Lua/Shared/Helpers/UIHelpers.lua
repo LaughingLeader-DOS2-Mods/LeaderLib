@@ -2,6 +2,8 @@ if GameHelpers.UI == nil then
 	GameHelpers.UI = {}
 end
 
+if Ext.IsServer() then
+
 local MessageData = Classes.MessageData
 
 function SetSlotEnabled(client, slot, enabled)
@@ -222,3 +224,24 @@ function GameHelpers.UI.UpdateStatusTurns(target, statusid)
 	end
 end
 ]]
+
+else
+	---@param id integer|string
+	---@param method string
+	---@vararg any
+	---@return boolean
+	function GameHelpers.UI.TryInvoke(id, method, ...)
+		local ui = nil
+		local t = type(id)
+		if t == "number" then
+			ui = Ext.GetUIByType(id)
+		elseif t == "string" then
+			ui = Ext.GetBuiltinUI(id) or Ext.GetUI(id)
+		end
+		if ui then
+			ui:Invoke(method, ...)
+			return true
+		end
+		return false
+	end
+end

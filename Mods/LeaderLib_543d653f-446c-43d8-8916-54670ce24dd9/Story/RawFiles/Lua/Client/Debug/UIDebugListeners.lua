@@ -560,7 +560,7 @@ local tooltipMain = UIListenerWrapper:Create(Data.UIType.tooltip, {
 	"getTooltipWidth",
 })
 --tooltipMain.PrintParams = true
---tooltipMain.Enabled = false
+tooltipMain.Enabled = false
 
 -- tooltipMain.CustomCallback["addTooltip"] = function(ui, call, text, ...)
 
@@ -621,7 +621,38 @@ contextMenu.CustomCallback["updateButtons"] = function(self, ui, method)
 	end
 end
 
-local hotbar = UIListenerWrapper:Create(Data.UIType.hotBar, {}, {
+local hotbar = UIListenerWrapper:Create(Data.UIType.hotBar, {
+	"cancelDragging",
+	"CombatLogBtnPressed",
+	"hideTooltip",
+	"hotbarBtnPressed",
+	"inputFocus",
+	"inputFocusLost",
+	"nextHotbar",
+	--"PlaySound",
+	"prevHotbar",
+	"registerAnchorId",
+	"setAnchor",
+	"setHotbarLocked",
+	"showCharTooltip",
+	"showExpTooltip",
+	"showItemTooltip",
+	"showLockTut",
+	"showSkillTooltip",
+	"showStatusTooltip",
+	"showTooltip",
+	"SlotHover",
+	"SlotHoverOut",
+	"SlotPressed",
+	"slotUpEnd",
+	"startDragging",
+	"startDraggingAction",
+	"stopDragging",
+	"ToggleChatLog",
+	"UIAssert",
+	"updateSlots",
+	"useAction",
+}, {
 	"allowActionsButton",
 	"clearAll",
 	"resizeExpBar",
@@ -647,7 +678,7 @@ local hotbar = UIListenerWrapper:Create(Data.UIType.hotBar, {}, {
 	--"updateSlotData",
 	--"updateSlots",
 })
-hotbar.Enabled = false
+hotbar.Enabled = true
 
 -- ---@param ui UIObject
 -- hotbar.CustomCallback["updateSlotData"] = function(self, ui, method)
@@ -947,21 +978,21 @@ local skills = UIListenerWrapper:Create(Data.UIType.skills, {
 })
 
 ---@param ui UIObject
-skills.CustomCallback["updateSkills"] = function(self, ui, method, b)
-	local this = ui:GetRoot()
-	local array = this.skillsUpdateList
-	for i=0,#array do
-		local entry = array[i]
-		if entry then
-			print(i, entry)
-			if type(entry) == "string" then
-				local stat = Ext.GetStat(entry)
-				if stat then
-					this.skillsUpdateList[i] = "Projectile_Fireball"
-				end
-			end
-		else
-			print(i, "nil")
-		end
-	end
-end
+-- skills.CustomCallback["updateSkills"] = function(self, ui, method, b)
+-- 	local this = ui:GetRoot()
+-- 	local array = this.skillsUpdateList
+-- 	for i=0,#array do
+-- 		local entry = array[i]
+-- 		if entry then
+-- 			print(i, entry)
+-- 			if type(entry) == "string" then
+-- 				local stat = Ext.GetStat(entry)
+-- 				if stat then
+-- 					this.skillsUpdateList[i] = "Projectile_Fireball"
+-- 				end
+-- 			end
+-- 		else
+-- 			print(i, "nil")
+-- 		end
+-- 	end
+-- end

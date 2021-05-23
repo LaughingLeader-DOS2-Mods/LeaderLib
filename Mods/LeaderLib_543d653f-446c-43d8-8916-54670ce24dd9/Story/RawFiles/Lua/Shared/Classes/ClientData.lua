@@ -58,6 +58,11 @@ function ClientCharacterData:SetClientCharacterData(uuid, id, profile, netid, is
 	end
 end
 
+---@return EclCharacter|EsvCharacter
+function ClientCharacterData:GetCharacter()
+	return Ext.GetCharacter(self.NetID or self.UUID)
+end
+
 Classes.ClientCharacterData = ClientCharacterData
 
 ---@class ClientData

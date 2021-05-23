@@ -351,11 +351,12 @@ if Ext.IsClient() then
 	local function ActiveCharacterChanged(currentCharacter, last)
 		currentCharacter = currentCharacter or GetClientCharacter()
 		if Vars.DebugMode then
-			fprint(LOGLEVEL.DEFAULT, "[LeaderLib:ActiveCharacterChanged] Profile(%s) NetID(%s) Last(%s)", currentCharacter.Profile, (GameHelpers.Character.GetDisplayName(currentCharacter.NetID)) or currentCharacter.NetID, (last and GameHelpers.Character.GetDisplayName(last)) or -1)
-		end
-		local character = Ext.GetCharacter(currentCharacter.NetID)
-		if character then
-			fprint(LOGLEVEL.DEFAULT, "DisplayNameOverride(%s) StoryDisplayName(%s) OriginalDisplayName(%s) PlayerCustomData.Name(%s)", character.DisplayNameOverride, character.StoryDisplayName, character.OriginalDisplayName, character.PlayerCustomData and character.PlayerCustomData.Name or "")
+			fprint(LOGLEVEL.DEFAULT, "[LeaderLib:ActiveCharacterChanged] Profile(%s) NameOrID(%s) Last(%s)", currentCharacter.Profile, (GameHelpers.Character.GetDisplayName(currentCharacter.NetID)) or currentCharacter.NetID, (last and GameHelpers.Character.GetDisplayName(last)) or -1)
+
+			local character = Ext.GetCharacter(currentCharacter.NetID)
+			if character then
+				fprint(LOGLEVEL.DEFAULT, "DisplayName(%s) StoryDisplayName(%s) OriginalDisplayName(%s) PlayerCustomData.Name(%s)", character.DisplayName, character.StoryDisplayName, character.OriginalDisplayName, character.PlayerCustomData and character.PlayerCustomData.Name or "")
+			end
 		end
 		InvokeListenerCallbacks(Listeners.ClientCharacterChanged, currentCharacter.UUID, currentCharacter.ID, currentCharacter.Profile, currentCharacter.NetID, currentCharacter.IsHost)
 	end

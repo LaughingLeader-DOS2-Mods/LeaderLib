@@ -1,4 +1,4 @@
----@class UIExtensonsMain:FlashObject
+---@class UIExtensonsMain:FlashMainTimeline
 ---@field addCheckbox fun(id:number, label:string, tooltip:string, stateID:number|nil, x:number|nil, y:number|nil, filterBool:boolean|nil, enabled:boolean|nil):MovieClip
 ---@field removeControl fun(id:number):boolean
 
@@ -44,12 +44,11 @@ end
 RegisterListener("BeforeLuaReset", function()
 	if UIExtensions.Instance then
 		DestroyInstance(true)
-	end
+	end	
 end)
 
 if Vars.DebugMode then
 	RegisterListener("LuaReset", function()
-		DestroyInstance(true)
 		UIExtensions.SetupInstance()
 	
 		if not Vars.ControllerEnabled then
@@ -137,6 +136,7 @@ function UIExtensions.SetupInstance()
 		end
 	end
 	if UIExtensions.Instance then
+		UIExtensions.Instance:Show()
 		if not UIExtensions.Initialized then
 			local main = UIExtensions.Instance:GetRoot()
 			if main then

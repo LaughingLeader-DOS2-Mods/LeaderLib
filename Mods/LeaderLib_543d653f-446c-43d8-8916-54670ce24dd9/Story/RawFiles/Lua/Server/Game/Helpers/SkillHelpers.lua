@@ -251,7 +251,6 @@ local function GetRandomPositionInCircleRadius(tx,ty,tz,radius,angle,theta)
 end
 
 local function CreateProjectileStrike(props)
-    --print(Ext.JsonStringify(props))
     NRD_ProjectilePrepareLaunch()
     for k,v in pairs(props) do
         local t = type(v)
@@ -275,8 +274,8 @@ end
 ---@param target string|number[]|EsvCharacter|EsvItem
 ---@param skillId string
 ---@param source string|EsvCharacter|EsvItem
-function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source)
-    local level = -1
+function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, level)
+    level = level or 1
     local x,y,z = 0,0,0
     local tx,ty,tz = 0,0,0
 
@@ -284,7 +283,30 @@ function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source)
     local isFromItem = false
     ---@type EsvShootProjectileRequest
     local props = {}
+    
+    local t = type(target)
+    if t == "string" then
+        id = id .. target
+        tx,ty,tz = GetPosition(target)
+        if target ~= source then
+            props.HitObject = target
+            props.HitObjectPosition = target
+            props.Target = target
+        end
+    elseif t == "table" then
+        tx,ty,tz = table.unpack(target)
+    elseif t == "userdata" and target.WorldPosition ~= nil then
+        tx,ty,tz = table.unpack(target.WorldPosition)
+    else
+        tx = x
+        ty = y
+        tz = z
+    end
 
+    x = tx
+    y = ty
+    z = tz
+    
     if source then
         if type(source) == "string" then
             props.Caster = source
@@ -317,24 +339,6 @@ function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source)
                 props.IsTrap = 1
             end
         end
-    end
-
-    if type(target) == "string" then
-        id = id .. target
-        tx,ty,tz = GetPosition(target)
-        if target ~= source then
-            props.HitObject = target
-            props.HitObjectPosition = target
-            props.Target = target
-        end
-    elseif type(target) == "table" then
-        tx,ty,tz = table.unpack(target)
-    elseif target.WorldPosition ~= nil then
-        tx,ty,tz = table.unpack(target.WorldPosition)
-    else
-        tx = x
-        ty = y
-        tz = z
     end
 
     ---@type StatEntrySkillData

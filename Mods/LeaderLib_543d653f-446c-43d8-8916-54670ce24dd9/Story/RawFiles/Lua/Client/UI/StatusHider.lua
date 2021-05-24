@@ -163,10 +163,9 @@ function PlayerInfo:CleanupStatuses()
 end
 
 local function RequestPlayerInfoRefresh()
-	if Client then
-		Ext.PostMessageToServer("LeaderLib_UI_Server_RefreshPlayerInfo", Client:GetCharacter().MyGuid)
-	else
-		Ext.PostMessageToServer("LeaderLib_UI_Server_RefreshPlayerInfo", GameHelpers.Client.GetCharacter().MyGuid)
+	local character = Client and Client:GetCharacter() or GameHelpers.Client.GetCharacter()
+	if character then
+		Ext.PostMessageToServer("LeaderLib_UI_Server_RefreshPlayerInfo", character.MyGuid)
 	end
 end
 

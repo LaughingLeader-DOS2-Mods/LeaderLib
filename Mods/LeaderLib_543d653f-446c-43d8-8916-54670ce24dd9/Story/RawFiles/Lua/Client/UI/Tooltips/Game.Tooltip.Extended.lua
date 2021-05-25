@@ -14,6 +14,7 @@ local LOGLEVEL = LOGLEVEL
 local fprint = fprint
 local Dump = Common.Dump
 local Data = Data
+local CustomStatSystem = CustomStatSystem
 
 Game.Tooltip = {}
 
@@ -28,35 +29,11 @@ local ControllerVars = {
 	LastOverhead = nil
 }
 
----@class CustomStatTooltipData:table
----@field HandleDouble number
----@field UUID string
----@field DisplayName string
----@field Description string
+local tooltipCustomIcons = {}
 
----@type CustomStatTooltipData[]
-Game.Tooltip.CustomStats = {}
-
----@param data CustomStatTooltipData
-function Game.Tooltip.SaveCustomStat(data)
-	for i,v in pairs(Game.Tooltip.CustomStats) do
-		if v.HandleDouble == data.HandleDouble then
-			table.remove(Game.Tooltip.CustomStats, i)
-			break
-		end
-	end
-	Game.Tooltip.CustomStats[#Game.Tooltip.CustomStats+1] = data
-end
-
----@param handleDouble number[]
----@return CustomStatTooltipData
-function Game.Tooltip.GetCustomStatData(handleDouble)
-	for i,v in pairs(Game.Tooltip.CustomStats) do
-		if v.HandleDouble == handleDouble then
-			return v
-		end
-	end
-	return nil
+function Game.Tooltip.PrepareIcon(ui, id, icon, w, h)
+	ui:SetCustomIcon(id, icon, w, h)
+	tooltipCustomIcons[#tooltipCustomIcons+1] = id
 end
 
 TooltipItemIds = {
@@ -1042,6 +1019,13 @@ function TooltipHooks:Init()
 		if self.NextRequest and self.NextRequest.Type == "Generic" then
 			self.NextRequest = nil
 		end
+		local tt = Ext.GetUIByType(Data.UIType.tooltip)
+		if #tooltipCustomIcons > 0 then
+			for _,v in pairs(tooltipCustomIcons) do
+				tt:ClearCustomIcon(v)
+			end
+			tooltipCustomIcons = {}
+		end
 	end)
 
 	Ext.RegisterUINameCall("keepUIinScreen", function (ui, method, keepUIinScreen)
@@ -1388,6 +1372,7 @@ end
 ---@param req TooltipRequest
 ---@param method string
 function TooltipHooks:OnRenderSubTooltip(ui, propertyName, req, method, ...)
+	iconUpdateRequired = false
 	local tt = TableFromFlash(ui, propertyName)
 	local params = ParseTooltipArray(tt)
 	if params ~= nil then
@@ -1395,9 +1380,9 @@ function TooltipHooks:OnRenderSubTooltip(ui, propertyName, req, method, ...)
 		if req.Type == "Stat" then
 			self:NotifyListeners("Stat", req.Stat, req, tooltip, req.Character, req.Stat)
 		elseif req.Type == "CustomStat" then
-			local statData = Game.Tooltip.GetCustomStatData(req.Stat)
+			local statData = CustomStatSystem.GetStatByDouble(req.Stat)
 			if statData ~= nil then
-				self:NotifyListeners("CustomStat", statData.UUID, req, tooltip, req.Character, statData)
+				self:NotifyListeners("CustomStat", statData.ID or statData.UUID, req, tooltip, req.Character, statData)
 			else
 				self:NotifyListeners("CustomStat", nil, req, tooltip, req.Character, req.Stat)
 			end

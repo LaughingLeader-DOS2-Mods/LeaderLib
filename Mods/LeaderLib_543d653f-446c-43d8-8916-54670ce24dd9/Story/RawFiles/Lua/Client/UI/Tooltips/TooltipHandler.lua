@@ -739,16 +739,6 @@ local function OnItemTooltip(item, tooltip)
 	end
 end
 
-local debugTooltipCalls = {
-	"tooltipClicked",
-	"tooltipOut",
-	"tooltipOver",
-	"showItemTooltip",
-	"showTooltip",
-	"hideTooltip",
-	"setTooltipSize",
-}
-
 ---@param item EclItem
 ---@param rune StatEntryObject
 ---@param slot integer
@@ -927,15 +917,6 @@ Ext.RegisterListener("SessionLoaded", function()
 			end
 		end
 	end)
-	-- Ext.RegisterUITypeInvokeListener(44, "addFormattedTooltip", function(ui, method, ...)
-	-- 	print(ui:GetTypeId(), method, Common.Dump{...})
-	-- end)
-
-	-- for i,v in pairs(debugTooltipCalls) do
-	-- 	Ext.RegisterUINameCall(v, function(ui, call, ...)
-	-- 		print(ui:GetTypeId(), call, Common.Dump{...})
-	-- 	end)
-	-- end
 
 	Ext.RegisterUINameInvokeListener("showFormattedTooltipAfterPos", function(ui, ...)
 		OnTooltipPositioned(ui, ...)

@@ -236,6 +236,7 @@ local characterSheetDebug = UIListenerWrapper:Create(Data.UIType.characterSheet,
 	"showItemTooltip",
 	"showSkillTooltip",
 	"showStatusTooltip",
+	"showCustomStatTooltip",
 	"showTooltip",
 	"slotDown",
 	"slotOut",
@@ -532,6 +533,8 @@ local tooltipMain = UIListenerWrapper:Create(Data.UIType.tooltip, {
 	"keepUIinScreen",
 	"inputFocus",
 	"inputFocusLost",
+	"setAnchor",
+	"clearAnchor",
 }, {
 	"setGroupLabel",
 	"setWindow",
@@ -560,7 +563,7 @@ local tooltipMain = UIListenerWrapper:Create(Data.UIType.tooltip, {
 	"getTooltipWidth",
 })
 --tooltipMain.PrintParams = true
-tooltipMain.Enabled = false
+tooltipMain.Enabled = true
 
 -- tooltipMain.CustomCallback["addTooltip"] = function(ui, call, text, ...)
 

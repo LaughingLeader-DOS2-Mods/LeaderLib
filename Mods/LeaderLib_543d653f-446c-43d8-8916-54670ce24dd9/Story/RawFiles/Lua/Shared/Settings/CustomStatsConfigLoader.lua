@@ -29,7 +29,8 @@ local function LoadConfig(uuid, file)
 			for id,data in pairs(config.Stats) do
 				if type(data) == "table" then
 					local statData = {
-						ID = id
+						ID = id,
+						Mod = uuid
 					}
 					for property,value in pairs(data) do
 						if type(property) == "string" then

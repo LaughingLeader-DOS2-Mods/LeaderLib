@@ -53,7 +53,7 @@ end
 
 local function LoadModSettingsConfig(uuid, file)
 	local settings = SettingsManager.GetMod(uuid, true)
-	local config = Ext.JsonParse(file)
+	local config = Common.JsonParse(file)
 	if config ~= nil then
 		if config.TitleColor ~= nil then
 			settings.TitleColor = config.TitleColor
@@ -129,9 +129,6 @@ local function TryFindConfig(info)
 	--local filePath = string.format("Mods/%s/ModSettingsConfig.json", info.Directory)
 	local filePath = string.format("Mods/%s/ModSettingsConfig.json", info.Directory)
 	local file = Ext.LoadFile(filePath, "data")
-	if file ~= nil then
-		Ext.Print("Loaded", filePath)
-	end
 	return file
 end
 --Mods/SuperEnemyUpgradeOverhaul_e21fcd37-daec-490d-baec-f6f3e83f1ac9/ModSettingsConfig.json

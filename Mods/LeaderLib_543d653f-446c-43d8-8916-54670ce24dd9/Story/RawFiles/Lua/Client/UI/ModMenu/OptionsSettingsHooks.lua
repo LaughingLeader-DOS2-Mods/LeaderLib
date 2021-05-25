@@ -500,84 +500,102 @@ Ext.RegisterListener("SessionLoaded", function()
 		end
 	end)
 
+	local controlOriginalCalls = {
+		llbuttonPressed = "buttonPressed",
+		llmenuSliderID = "menuSliderID",
+		llselectorID = "selectorID",
+		llcheckBoxID = "checkBoxID",
+		comboBoxID = "comboBoxID",
+	}
+
 	local OnCheckBox = function(ui, call, id, value)
-		local originalCall = string.sub(call, 3)
-		if currentMenu == MOD_MENU_ID then
-			ModMenuManager.OnCheckbox(id, value)
-			SetApplyButtonClickable(ui, true)
-		elseif currentMenu == LarianMenuID.Gameplay then
-			if not GameSettingsMenu.OnCheckbox(id, value) then
-				ui:ExternalInterfaceCall(originalCall, id, value)
-			else
+		local originalCall = controlOriginalCalls[call]
+		if originalCall then
+			if currentMenu == MOD_MENU_ID then
+				ModMenuManager.OnCheckbox(id, value)
 				SetApplyButtonClickable(ui, true)
+			elseif currentMenu == LarianMenuID.Gameplay then
+				if not GameSettingsMenu.OnCheckbox(id, value) then
+					ui:ExternalInterfaceCall(originalCall, id, value)
+				else
+					SetApplyButtonClickable(ui, true)
+				end
+			else
+				ui:ExternalInterfaceCall(originalCall, id, value)
 			end
-		else
-			ui:ExternalInterfaceCall(originalCall, id, value)
 		end
 	end
 	
 	local OnComboBox = function(ui, call, id, value)
-		local originalCall = string.sub(call, 3)
-		if currentMenu == MOD_MENU_ID then
-			ModMenuManager.OnComboBox(id, value)
-			SetApplyButtonClickable(ui, true)
-		elseif currentMenu == LarianMenuID.Gameplay then
-			if not GameSettingsMenu.OnComboBox(id, value) then
-				ui:ExternalInterfaceCall(originalCall, id, value)
-			else
+		local originalCall = controlOriginalCalls[call]
+		if originalCall then
+			if currentMenu == MOD_MENU_ID then
+				ModMenuManager.OnComboBox(id, value)
 				SetApplyButtonClickable(ui, true)
+			elseif currentMenu == LarianMenuID.Gameplay then
+				if not GameSettingsMenu.OnComboBox(id, value) then
+					ui:ExternalInterfaceCall(originalCall, id, value)
+				else
+					SetApplyButtonClickable(ui, true)
+				end
+			else
+				ui:ExternalInterfaceCall(originalCall, id, value)
 			end
-		else
-			ui:ExternalInterfaceCall(originalCall, id, value)
 		end
 	end
 
 	local OnSelector = function(ui, call, id, value)
-		local originalCall = string.sub(call, 3)
-		if currentMenu == MOD_MENU_ID then
-			ModMenuManager.OnSelector(id, value)
-			SetApplyButtonClickable(ui, true)
-		elseif currentMenu == LarianMenuID.Gameplay then
-			if not GameSettingsMenu.OnSelector(id, value) then
-				ui:ExternalInterfaceCall(originalCall, id, value)
-			else
+		local originalCall = controlOriginalCalls[call]
+		if originalCall then
+			if currentMenu == MOD_MENU_ID then
+				ModMenuManager.OnSelector(id, value)
 				SetApplyButtonClickable(ui, true)
+			elseif currentMenu == LarianMenuID.Gameplay then
+				if not GameSettingsMenu.OnSelector(id, value) then
+					ui:ExternalInterfaceCall(originalCall, id, value)
+				else
+					SetApplyButtonClickable(ui, true)
+				end
+			else
+				ui:ExternalInterfaceCall(originalCall, id, value)
 			end
-		else
-			ui:ExternalInterfaceCall(originalCall, id, value)
 		end
 	end
 
 	local OnSlider = function(ui, call, id, value)
-		local originalCall = string.sub(call, 3)
-		if currentMenu == MOD_MENU_ID then
-			ModMenuManager.OnSlider(id, value)
-			SetApplyButtonClickable(ui, true)
-		elseif currentMenu == LarianMenuID.Gameplay then
-			if not GameSettingsMenu.OnSlider(id, value) then
-				ui:ExternalInterfaceCall(originalCall, id, value)
-			else
+		local originalCall = controlOriginalCalls[call]
+		if originalCall then
+			if currentMenu == MOD_MENU_ID then
+				ModMenuManager.OnSlider(id, value)
 				SetApplyButtonClickable(ui, true)
+			elseif currentMenu == LarianMenuID.Gameplay then
+				if not GameSettingsMenu.OnSlider(id, value) then
+					ui:ExternalInterfaceCall(originalCall, id, value)
+				else
+					SetApplyButtonClickable(ui, true)
+				end
+			else
+				ui:ExternalInterfaceCall(originalCall, id, value)
 			end
-		else
-			ui:ExternalInterfaceCall(originalCall, id, value)
 		end
 	end
 
 	---@param ui UIObject
 	local OnButton = function(ui, call, id)
-		local originalCall = string.sub(call, 3)
-		if currentMenu == MOD_MENU_ID then
-			ModMenuManager.OnButtonPressed(id)
-			SetApplyButtonClickable(ui, true)
-		elseif currentMenu == LarianMenuID.Gameplay then
-			if GameSettingsMenu.OnButtonPressed(id) == false then
-				ui:ExternalInterfaceCall(originalCall, id)
-			else
+		local originalCall = controlOriginalCalls[call]
+		if originalCall then
+			if currentMenu == MOD_MENU_ID then
+				ModMenuManager.OnButtonPressed(id)
 				SetApplyButtonClickable(ui, true)
+			elseif currentMenu == LarianMenuID.Gameplay then
+				if GameSettingsMenu.OnButtonPressed(id) == false then
+					ui:ExternalInterfaceCall(originalCall, id)
+				else
+					SetApplyButtonClickable(ui, true)
+				end
+			else
+				ui:ExternalInterfaceCall(originalCall, id)
 			end
-		else
-			ui:ExternalInterfaceCall(originalCall, id)
 		end
 	end
 	

@@ -1,6 +1,56 @@
-if CustomStatTooltipFixer == nil then
-	CustomStatTooltipFixer = {}
+if CustomStatSystem == nil then
+	CustomStatSystem = {}
 end
+
+---@class CustomStatTooltipType
+CustomStatSystem.TooltipType = {
+	Default = "Stat",
+	Ability = "Ability",
+	Stat = "Stat",
+}
+
+
+---@class CustomStatData:table
+---@field ID string
+---@field DisplayName string
+---@field Description string
+---@field Icon string|nil
+---@field Create boolean|nil Whether the server should create this stat automatically.
+---@field TooltipType CustomStatTooltipType|nil
+
+---@alias MOD_UUID string
+---@alias STAT_ID string
+
+---@type table<MOD_UUID, table<STAT_ID, CustomStatData>>
+CustomStatSystem.Stats = {}
+
+---@type fun():table<string, table<string, CustomStatData>>
+local loader = Ext.Require("Shared/Settings/CustomStatsConfigLoader.lua")
+
+local function LoadCustomStatsData()
+	CustomStatSystem.Stats = loader() or {}
+	print(Ext.IsServer() and "SERVER" or "CLIENT", Ext.JsonStringify(CustomStatSystem.Stats))
+
+	if Ext.IsServer() then
+		for uuid,stats in pairs(CustomStatSystem.Stats) do
+			local modName = Ext.GetModInfo(uuid).Name
+			for id,stat in pairs(stats) do
+				if stat.Create == true then
+					local existingData = Ext.GetCustomStatByName(stat.DisplayName)
+					if not existingData then
+						Ext.CreateCustomStat(stat.DisplayName, stat.Description)
+						fprint(LOGLEVEL.DEFAULT, "[LeaderLib:LoadCustomStatsData] Created a new custom stat for mod [%s]. ID(%s) DisplayName(%s) Description(%s)", modName, id, stat.DisplayName, stat.Description)
+					else
+						print("Found custom stat:", Common.Dump(existingData))
+					end
+				end
+			end
+		end
+	end
+end
+
+Ext.RegisterListener("SessionLoaded", LoadCustomStatsData)
+RegisterListener("LuaReset", LoadCustomStatsData)
 
 if Ext.IsServer() then
 	local canFix = Ext.GetCustomStatByName ~= nil
@@ -37,14 +87,14 @@ if Ext.IsServer() then
 		end
 	end)
 else
-	CustomStatTooltipFixer.Visible = false
-	CustomStatTooltipFixer.Requesting = false
+	CustomStatSystem.Visible = false
+	CustomStatSystem.Requesting = false
 	local lastTooltipX = 0
 	local lastTooltipY = 0
 
 	--ExternalInterface.call(param2,param1.statId,val3.x + val5,val3.y + val4,val6,param1.height,param1.tooltipAlign);
 	Ext.RegisterUINameCall("showCustomStatTooltip", function(ui, call, statId, x, y, width, height, alignment)
-		CustomStatTooltipFixer.Requesting = false
+		CustomStatSystem.Requesting = false
 		---@type EclCharacter
 		local character = nil
 		---@type ObjectHandle
@@ -85,7 +135,7 @@ else
 				StatId = statName or "",
 				Value = statValue
 			})
-			CustomStatTooltipFixer.Requesting = true
+			CustomStatSystem.Requesting = true
 			Ext.PostMessageToServer("LeaderLib_CheckCustomStatCallback", payload)
 		end
 	end, "Before")
@@ -126,9 +176,9 @@ else
 		end)
 	end
 
-	function CustomStatTooltipFixer.HideTooltip()
-		CustomStatTooltipFixer.Requesting = false
-		if CustomStatTooltipFixer.Visible then
+	function CustomStatSystem.HideTooltip()
+		CustomStatSystem.Requesting = false
+		if CustomStatSystem.Visible then
 			local ui = Ext.GetUIByType(Data.UIType.tooltip)
 			if ui then
 				ui:Invoke("removeTooltip")
@@ -140,22 +190,22 @@ else
 					--ui:ExternalInterfaceCall("setAnchor","bottomRight","screen","bottomRight")
 					--ui:ExternalInterfaceCall("keepUIinScreen",true)
 				end
-				CustomStatTooltipFixer.Visible = false
+				CustomStatSystem.Visible = false
 			end
 		end
 	end
 
-	function CustomStatTooltipFixer.OnToggleCharacterPane()
-		if CustomStatTooltipFixer.Visible then
-			CustomStatTooltipFixer.HideTooltip()
+	function CustomStatSystem.OnToggleCharacterPane()
+		if CustomStatSystem.Visible then
+			CustomStatSystem.HideTooltip()
 		end
 	end
 
-	Ext.RegisterUINameCall("hideTooltip", CustomStatTooltipFixer.HideTooltip)
+	Ext.RegisterUINameCall("hideTooltip", CustomStatSystem.HideTooltip)
 
 	Ext.RegisterNetListener("LeaderLib_CreateCustomStatTooltip", function(cmd, payload)
-		if CustomStatTooltipFixer.Requesting then
-			CustomStatTooltipFixer.Requesting = false
+		if CustomStatSystem.Requesting then
+			CustomStatSystem.Requesting = false
 			local data = Common.JsonParse(payload)
 			if data then
 				local statDouble = data.Stat
@@ -219,7 +269,7 @@ else
 						--ui:ExternalInterfaceCall("setAnchor","topright","mouse","bottomleft")
 						ui:Invoke("showFormattedTooltipAfterPos", false)
 
-						CustomStatTooltipFixer.Visible = true
+						CustomStatSystem.Visible = true
 						local tf = this.formatTooltip or this.tf
 						if tf then
 							tf.x = 50

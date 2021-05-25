@@ -765,6 +765,7 @@ local TooltipArrayNames = {
 		}
 	}
 }
+Game.Tooltip.TooltipArrayNames = TooltipArrayNames
 
 local selectEvents = {
 	"selectStat",
@@ -1220,6 +1221,10 @@ function TooltipHooks:OnRequestTooltip(ui, method, arg1, arg2, arg3, ...)
 	end
 
 	self.NextRequest = request
+
+	if method == "showCustomStatTooltip" then
+		CustomStatSystem.OnRequestTooltip(ui, method, request.Stat, arg3, table.unpack({...}))
+	end
 end
 
 --- @param ui UIObject

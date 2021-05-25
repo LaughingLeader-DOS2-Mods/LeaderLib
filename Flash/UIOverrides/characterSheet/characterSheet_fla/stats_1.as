@@ -7,7 +7,6 @@ package characterSheet_fla
 	import LS_Classes.listDisplay;
 	import LS_Classes.textEffect;
 	import LS_Classes.textHelpers;
-	import LS_Classes.scrollList;
 	import fl.motion.easing.Sine;
 	import flash.display.Bitmap;
 	import flash.display.MovieClip;
@@ -83,7 +82,6 @@ package characterSheet_fla
 		public const tabTweenInTime:Number = 0.12;
 		public const PointsFrameW:Number = 160;
 		public const RightFrameW:Number = 304;
-		public var statScrollList:scrollList;
 		
 		public function stats_1()
 		{
@@ -164,18 +162,18 @@ package characterSheet_fla
 			ExternalInterface.call("renameCharacter");
 		}
 		
-		public function updateInventorySlots(param1:Array) : *
+		public function updateInventorySlots(arr:Array) : *
 		{
-			var val3:uint = 0;
-			var val4:Number = NaN;
-			var val5:uint = 0;
-			var val2:uint = 0;
-			while(val2 < param1.length)
+			var slot:uint = 0;
+			var itemHandle:Number = NaN;
+			var frame:uint = 0;
+			var i:uint = 0;
+			while(i < arr.length)
 			{
-				val3 = param1[val2++];
-				val4 = param1[val2++];
-				val5 = param1[val2++];
-				this.invTabHolder_mc.inventory.addItem(val3,val4,val5);
+				slot = arr[i++];
+				itemHandle = arr[i++];
+				frame = arr[i++];
+				this.invTabHolder_mc.inventory.addItem(slot,itemHandle,frame);
 			}
 			this.invTabHolder_mc.inventory.cleanUpItems();
 		}
@@ -406,10 +404,10 @@ package characterSheet_fla
 			}
 		}
 		
-		public function ClickTab(param1:Number) : *
+		public function ClickTab(tabIndex:Number) : *
 		{
-			var val2:MovieClip = null;
-			if(this.currentOpenPanel != param1)
+			var tab_mc:MovieClip = null;
+			if(this.currentOpenPanel != tabIndex)
 			{
 				if(this.currentOpenPanel != -1)
 				{
@@ -424,35 +422,35 @@ package characterSheet_fla
 							}
 						}
 					}
-					val2 = this.getTabById(this.currentOpenPanel);
-					if(val2)
+					tab_mc = this.getTabById(this.currentOpenPanel);
+					if(tab_mc)
 					{
-						val2.setActive(false);
-						val2.icon_mc.y = this.deselectedTabY;
-						val2.icon_mc.alpha = this.deselectedTabAlpha;
-						val2.texty = this.deselectedTabY;
+						tab_mc.setActive(false);
+						tab_mc.icon_mc.y = this.deselectedTabY;
+						tab_mc.icon_mc.alpha = this.deselectedTabAlpha;
+						tab_mc.texty = this.deselectedTabY;
 					}
 				}
-				if(param1 != -1)
+				if(tabIndex != -1)
 				{
-					if(this.panelArray[param1])
+					if(this.panelArray[tabIndex])
 					{
-						this.panelArray[param1].visible = true;
-						if(this.panelArray[param1].list && this.panelArray[param1].list.m_scrollbar_mc)
+						this.panelArray[tabIndex].visible = true;
+						if(this.panelArray[tabIndex].list && this.panelArray[tabIndex].list.m_scrollbar_mc)
 						{
-							this.panelArray[param1].list.m_scrollbar_mc.visible = true;
-							this.panelArray[param1].list.m_scrollbar_mc.scrollbarVisible();
+							this.panelArray[tabIndex].list.m_scrollbar_mc.visible = true;
+							this.panelArray[tabIndex].list.m_scrollbar_mc.scrollbarVisible();
 						}
 					}
-					this.selectTab(param1);
+					this.selectTab(tabIndex);
 				}
-				this.panelBg1_mc.visible = param1 < 5 || param1 == 6;
-				this.panelBg2_mc.visible = param1 == 5;
-				if(param1 == 5)
+				this.panelBg1_mc.visible = tabIndex < 5 || tabIndex == 6 || tabIndex == 8; // LeaderLib change
+				this.panelBg2_mc.visible = tabIndex == 5;
+				if(tabIndex == 5)
 				{
 					this.panelBg2_mc.gotoAndStop(2);
 				}
-				this.currentOpenPanel = param1;
+				this.currentOpenPanel = tabIndex;
 				this.INTSetAvailablePointsVisible();
 				this.pointsFrame_mc.setTab(this.currentOpenPanel);
 			}
@@ -611,17 +609,17 @@ package characterSheet_fla
 			}
 		}
 		
-		public function setupSecondaryStatsButtons(param1:int, param2:Boolean, param3:Boolean, param4:Boolean, param5:Number = 5) : void
+		public function setupSecondaryStatsButtons(id:int, showBoth:Boolean, minusVisible:Boolean, plusVisible:Boolean, maxChars:Number = 5) : void
 		{
-			var val6:MovieClip = this.getSecStat(param1);
-			if(val6.setupButtons != null)
+			var stat_mc:MovieClip = this.getSecStat(id);
+			if(stat_mc.setupButtons != null)
 			{
-				val6.setupButtons(param2,param3,param4,param5);
+				stat_mc.setupButtons(showBoth,minusVisible,plusVisible,maxChars);
 			}
 			else
 			{
-				val6.minus_mc.visible = param3;
-				val6.plus_mc.visible = param4;
+				stat_mc.minus_mc.visible = minusVisible;
+				stat_mc.plus_mc.visible = plusVisible;
 			}
 		}
 		
@@ -765,14 +763,11 @@ package characterSheet_fla
 			if(param3)
 			{
 				this.secondaryStatList.addElement(val4);
-				this.secondaryStatList.height = this.secondaryStatList.getContentHeight();
 			}
 			else
 			{
 				this.primaryStatList.addElement(val4);
-				this.primaryStatList.height = this.primaryStatList.getContentHeight();
 			}
-			this.statScrollList.positionElements();
 		}
 		
 		public function addSpacing(param1:Number, param2:Number) : *
@@ -783,60 +778,60 @@ package characterSheet_fla
 			this.addToListWithId(param1,val3);
 		}
 		
-		public function addAbilityGroup(param1:Boolean, param2:Number, param3:String) : *
+		public function addAbilityGroup(isCivil:Boolean, groupId:Number, labelText:String) : *
 		{
-			var val4:MovieClip = this.combatAbilityHolder_mc;
-			if(param1)
+			var groupHolder:MovieClip = this.combatAbilityHolder_mc;
+			if(isCivil)
 			{
-				val4 = this.civicAbilityHolder_mc;
+				groupHolder = this.civicAbilityHolder_mc;
 			}
-			val4.list.addGroup(param2,param3);
+			groupHolder.list.addGroup(groupId,labelText);
 		}
 		
-		public function addAbility(param1:Boolean, param2:Number, param3:Number, param4:String, param5:String, param6:String, param7:String) : *
+		public function addAbility(isCivil:Boolean, groupId:Number, statId:Number, labelText:String, valueText:String, plusTooltip:String, minusTooltip:String) : *
 		{
-			var val9:MovieClip = null;
-			var val8:MovieClip = this.getAbility(param1,param2,param3);
-			if(!val8)
+			var groupHolder:MovieClip = null;
+			var ability_mc:MovieClip = this.getAbility(isCivil,groupId,statId);
+			if(!ability_mc)
 			{
-				val9 = this.combatAbilityHolder_mc;
-				if(param1)
+				groupHolder = this.combatAbilityHolder_mc;
+				if(isCivil)
 				{
-					val9 = this.civicAbilityHolder_mc;
+					groupHolder = this.civicAbilityHolder_mc;
 				}
-				val8 = new AbilityEl();
-				val8.isCivil = param1;
-				val9.list.addGroupElement(param2,val8,false);
-				val8.texts_mc.plus_mc.visible = false;
-				val8.texts_mc.minus_mc.visible = false;
-				val8.texts_mc.statId = param3;
-				val8.statId = param3;
-				val8.tooltip = param3;
-				val8.texts_mc.id = val9.list.length;
-				val8.texts_mc.plus_mc.currentTooltip = "";
-				val8.texts_mc.minus_mc.currentTooltip = "";
-				val8.texts_mc.label_txt.autoSize = TextFieldAutoSize.LEFT;
+				ability_mc = new AbilityEl();
+				ability_mc.isCivil = isCivil;
+				groupHolder.list.addGroupElement(groupId,ability_mc,false);
+				ability_mc.texts_mc.plus_mc.visible = false;
+				ability_mc.texts_mc.minus_mc.visible = false;
+				ability_mc.texts_mc.statId = statId;
+				ability_mc.statId = statId;
+				ability_mc.tooltip = statId;
+				ability_mc.texts_mc.id = groupHolder.list.length;
+				ability_mc.texts_mc.plus_mc.currentTooltip = "";
+				ability_mc.texts_mc.minus_mc.currentTooltip = "";
+				ability_mc.texts_mc.label_txt.autoSize = TextFieldAutoSize.LEFT;
 			}
-			val8.texts_mc.plus_mc.tooltip = param6;
-			val8.texts_mc.minus_mc.tooltip = param7;
-			if(val8.texts_mc.plus_mc.currentTooltip != "" && val8.texts_mc.plus_mc.currentTooltip != param6)
+			ability_mc.texts_mc.plus_mc.tooltip = plusTooltip;
+			ability_mc.texts_mc.minus_mc.tooltip = minusTooltip;
+			if(ability_mc.texts_mc.plus_mc.currentTooltip != "" && ability_mc.texts_mc.plus_mc.currentTooltip != plusTooltip)
 			{
-				ExternalInterface.call("showTooltip",param6);
-				val8.texts_mc.plus_mc.currentTooltip = param6;
+				ExternalInterface.call("showTooltip",plusTooltip);
+				ability_mc.texts_mc.plus_mc.currentTooltip = plusTooltip;
 			}
-			if(val8.texts_mc.minus_mc.currentTooltip != "" && val8.texts_mc.minus_mc.currentTooltip != param7)
+			if(ability_mc.texts_mc.minus_mc.currentTooltip != "" && ability_mc.texts_mc.minus_mc.currentTooltip != minusTooltip)
 			{
-				ExternalInterface.call("showTooltip",param7);
-				val8.texts_mc.plus_mc.currentTooltip = param7;
+				ExternalInterface.call("showTooltip",minusTooltip);
+				ability_mc.texts_mc.plus_mc.currentTooltip = minusTooltip;
 			}
-			val8.texts_mc.label_txt.htmlText = param4;
-			val8.texts_mc.text_txt.htmlText = param5;
-			val8.textStr = val8.texts_mc.label_txt.text;
-			val8.am = Number(val8.texts_mc.text_txt.text);
-			val8.texts_mc.statBasePoints = Number(param5);
-			val8.texts_mc.statPoints = 0;
-			val8.hl_mc.height = val8.abilTooltip_mc.height = val8.texts_mc.label_txt.y + val8.texts_mc.label_txt.textHeight - val8.hl_mc.y;
-			val8.texts_mc.text_txt.y = Math.round((val8.hl_mc.height - val8.texts_mc.text_txt.textHeight) * 0.5);
+			ability_mc.texts_mc.label_txt.htmlText = labelText;
+			ability_mc.texts_mc.text_txt.htmlText = valueText;
+			ability_mc.textStr = ability_mc.texts_mc.label_txt.text;
+			ability_mc.am = Number(ability_mc.texts_mc.text_txt.text);
+			ability_mc.texts_mc.statBasePoints = Number(valueText);
+			ability_mc.texts_mc.statPoints = 0;
+			ability_mc.hl_mc.height = ability_mc.abilTooltip_mc.height = ability_mc.texts_mc.label_txt.y + ability_mc.texts_mc.label_txt.textHeight - ability_mc.hl_mc.y;
+			ability_mc.texts_mc.text_txt.y = Math.round((ability_mc.hl_mc.height - ability_mc.texts_mc.text_txt.textHeight) * 0.5);
 		}
 		
 		public function recountAbilityPoints(param1:Boolean) : *
@@ -874,28 +869,28 @@ package characterSheet_fla
 			}
 		}
 		
-		public function addTalent(param1:String, param2:Number, param3:Number) : *
+		public function addTalent(labelText:String, statId:Number, talentState:Number) : *
 		{
-			var val4:MovieClip = this.getTalent(param2);
+			var val4:MovieClip = this.getTalent(statId);
 			if(!val4)
 			{
 				val4 = new Talent();
 				val4.label_txt.autoSize = "left";
-				val4.tooltip = param2;
-				val4.statId = param2;
+				val4.tooltip = statId;
+				val4.statId = statId;
 				val4.minus_mc.x = 260;
 				val4.plus_mc.x = val4.minus_mc.x + val4.minus_mc.width;
 				val4.plus_mc.visible = val4.minus_mc.visible = false;
 				val4.id = this.talentHolder_mc.list.length;
 				this.talentHolder_mc.list.addElement(val4,false);
 			}
-			val4.label_txt.htmlText = param1;
+			val4.label_txt.htmlText = labelText;
 			val4.hl_mc.width = this.statsElWidth;
 			val4.hl_mc.height = val4.label_txt.textHeight + val4.label_txt.y;
 			val4.plus_mc.y = val4.minus_mc.y = val4.hl_mc.y + Math.ceil((val4.hl_mc.height - val4.minus_mc.height) * 0.5) - 3;
 			val4.label = val4.label_txt.text;
-			val4.talentState = param3;
-			val4.bullet_mc.gotoAndStop(this.getTalentStateFrame(param3));
+			val4.talentState = talentState;
+			val4.bullet_mc.gotoAndStop(this.getTalentStateFrame(talentState));
 		}
 		
 		public function getTalentStateFrame(param1:Number) : Number
@@ -937,14 +932,6 @@ package characterSheet_fla
 			val5.icon_mc.gotoAndStop(param1 + 1);
 			val5.id = this.primaryStatList.length;
 			this.primaryStatList.addElement(val5);
-			this.primaryStatList.height = this.primaryStatList.getContentHeight();
-			this.statScrollList.positionElements();
-			trace("statScrollList.getContentHeight", this.statScrollList.getContentHeight());
-			trace("primaryStatList.getContentHeight", this.primaryStatList.getContentHeight());
-			trace("primaryStatList.height", this.primaryStatList.height);
-			this.statScrollList.m_scrollbar_mc.scrollbarVisible();
-			this.statScrollList.m_scrollbar_mc.visible = true;
-			this.statScrollList.m_scrollbar_mc.disabled = false;
 		}
 		
 		public function addSecondaryStat(param1:Number, param2:String, param3:String, param4:Number, param5:Number, param6:Number) : *
@@ -1047,24 +1034,24 @@ package characterSheet_fla
 			}
 		}
 		
-		public function addTag(param1:String, param2:Number, param3:String, param4:String) : *
+		public function addTag(labelText:String, statId:Number, tooltipText:String, descriptionText:String) : *
 		{
-			if(param1.length == 0)
+			if(labelText.length == 0)
 			{
 				return;
 			}
-			var val5:MovieClip = this.getTag(param2);
+			var val5:MovieClip = this.getTag(statId);
 			if(!val5)
 			{
 				val5 = new TagMC();
 				val5.label_txt.autoSize = "left";
-				val5.statId = param2;
+				val5.statId = statId;
 				val5.x = 40;
 				val5.id = this.tagsHolder_mc.list.length;
 				this.tagsHolder_mc.list.addElement(val5,false);
 			}
-			val5.setTag(param1,1,param3,param4);
-			val5.label_txt.htmlText = param1;
+			val5.setTag(labelText,1,tooltipText,descriptionText);
+			val5.label_txt.htmlText = labelText;
 		}
 		
 		public function addToListWithId(param1:Number, param2:MovieClip) : *
@@ -1072,33 +1059,25 @@ package characterSheet_fla
 			if(param1 == 0)
 			{
 				this.infoStatList.addElement(param2);
-				this.infoStatList.height = this.infoStatList.getContentHeight();
 			}
 			else if(param1 == 1)
 			{
 				this.secondaryStatList.addElement(param2);
-				this.secondaryStatList.height = this.secondaryStatList.getContentHeight();
 			}
 			else if(param1 == 2)
 			{
 				this.resistanceStatList.addElement(param2);
-				this.resistanceStatList.height = this.resistanceStatList.getContentHeight();
 			}
 			else if(param1 == 3)
 			{
 				this.expStatList.addElement(param2);
-				this.expStatList.height = this.expStatList.getContentHeight();
 			}
-			this.statScrollList.positionElements();
 		}
 		
 		public function clearSecondaryStats() : *
 		{
 			this.secondaryStatList.clearElements();
-			this.secondaryStatList.height = this.secondaryStatList.getContentHeight();
 			this.expStatList.clearElements();
-			this.expStatList.height = this.expStatList.getContentHeight();
-			this.statScrollList.positionElements();
 		}
 		
 		public function addTitle(param1:String) : *
@@ -1107,8 +1086,6 @@ package characterSheet_fla
 			val2.title_txt.autoSize = "left";
 			val2.title_txt.htmlText = param1;
 			this.primaryStatList.addElement(val2);
-			this.primaryStatList.height = this.primaryStatList.getContentHeight();
-			this.statScrollList.positionElements();
 		}
 		
 		public function clearStats() : *
@@ -1118,14 +1095,6 @@ package characterSheet_fla
 			this.expStatList.clearElements();
 			this.infoStatList.clearElements();
 			this.resistanceStatList.clearElements();
-
-			this.primaryStatList.height = this.primaryStatList.getContentHeight();
-			this.secondaryStatList.height = this.secondaryStatList.getContentHeight();
-			this.expStatList.height = this.expStatList.getContentHeight();
-			this.infoStatList.height = this.infoStatList.getContentHeight();
-			this.resistanceStatList.height = this.resistanceStatList.getContentHeight();
-
-			this.statScrollList.positionElements();
 		}
 		
 		public function clearAbilities() : *
@@ -1134,20 +1103,20 @@ package characterSheet_fla
 			this.civicAbilityHolder_mc.list.clearGroupElements();
 		}
 		
-		public function addVisual(param1:String, param2:Number) : *
+		public function addVisual(titleText:String, contentID:Number) : *
 		{
-			var val3:MovieClip = this.getVisual(param2);
+			var val3:MovieClip = this.getVisual(contentID);
 			if(!val3)
 			{
 				val3 = new Visual();
 				val3.title_txt.autoSize = "center";
-				val3.contentID = param2;
+				val3.contentID = contentID;
 				val3.id = this.visualHolder_mc.list.length;
 				this.visualHolder_mc.list.addElement(val3);
 				this.root_mc = root as MovieClip;
 				val3.onInit(this.root_mc);
 			}
-			val3.title_txt.htmlText = param1;
+			val3.title_txt.htmlText = titleText;
 		}
 		
 		public function clearVisualOptions() : *
@@ -1163,18 +1132,18 @@ package characterSheet_fla
 			}
 		}
 		
-		public function addVisualOption(param1:Number, param2:Number, param3:Boolean) : *
+		public function addVisualOption(id:Number, optionId:Number, select:Boolean) : *
 		{
 			var val5:String = null;
-			var val4:MovieClip = this.getVisual(param1);
+			var val4:MovieClip = this.getVisual(id);
 			if(val4)
 			{
-				val5 = val4.title_txt.text + " " + param2;
-				val4.addOption(param2,val5);
+				val5 = val4.title_txt.text + " " + optionId;
+				val4.addOption(optionId,val5);
 				val4.setEnabled(true);
-				if(param3)
+				if(select)
 				{
-					val4.selectOption(param2);
+					val4.selectOption(optionId);
 				}
 			}
 		}
@@ -1189,28 +1158,28 @@ package characterSheet_fla
 			this.customStats_mc.list.clearElements();
 		}
 		
-		public function addCustomStat(param1:Number, param2:String, param3:String) : *
+		public function addCustomStat(doubleHandle:Number, labelText:String, valueText:String) : *
 		{
-			var val4:MovieClip = new CustomStat();
-			val4.hl_mc.alpha = 0;
-			var val5:Boolean = (root as MovieClip).isGameMasterChar;
-			val4.plus_mc.visible = val5;
-			val4.minus_mc.visible = val5;
-			val4.edit_mc.visible = val5;
-			val4.delete_mc.visible = val5;
-			val4.label_txt.autoSize = TextFieldAutoSize.NONE;
-			val4.label_txt.htmlText = param2;
-			val4.text_txt.htmlText = param3;
-			val4.text_txt.width = val4.text_txt.width + 8;
-			val4.tooltipAlign = "right";
-			val4.statId = param1;
-			val4.hl_mc.width = this.statsElWidth;
-			val4.text_txt.mouseEnabled = false;
-			val4.label_txt.mouseEnabled = false;
-			val4.heightOverride = 26;
-			val4.id = this.customStats_mc.list.length;
-			val4.init();
-			this.customStats_mc.list.addElement(val4);
+			var cstat_mc:MovieClip = new CustomStat();
+			cstat_mc.hl_mc.alpha = 0;
+			var isGameMaster:Boolean = (root as MovieClip).isGameMasterChar;
+			cstat_mc.plus_mc.visible = isGameMaster;
+			cstat_mc.minus_mc.visible = isGameMaster;
+			cstat_mc.edit_mc.visible = isGameMaster;
+			cstat_mc.delete_mc.visible = isGameMaster;
+			cstat_mc.label_txt.autoSize = TextFieldAutoSize.NONE;
+			cstat_mc.label_txt.htmlText = labelText;
+			cstat_mc.text_txt.htmlText = valueText;
+			cstat_mc.text_txt.width = cstat_mc.text_txt.width + 8;
+			cstat_mc.tooltipAlign = "right";
+			cstat_mc.statId = doubleHandle;
+			cstat_mc.hl_mc.width = this.statsElWidth;
+			cstat_mc.text_txt.mouseEnabled = false;
+			cstat_mc.label_txt.mouseEnabled = false;
+			cstat_mc.heightOverride = 26;
+			cstat_mc.id = this.customStats_mc.list.length;
+			cstat_mc.init();
+			this.customStats_mc.list.addElement(cstat_mc);
 		}
 		
 		public function justEatClick(param1:MouseEvent) : *
@@ -1344,30 +1313,6 @@ package characterSheet_fla
 				val1++;
 			}
 		}
-
-		public function initScrollList() : *
-		{
-			this.statScrollList = new scrollList("down_id","up_id","handle_id","scrollBgBig_id");
-			this.statScrollList.x = this.mainStats_mc.statHolder_mc.x;
-			this.statScrollList.y = this.mainStats_mc.statHolder_mc.y;
-			this.statScrollList.EL_SPACING = 0;
-			this.statScrollList.setFrame(328,735);
-			this.mainStats_mc.addChild(this.statScrollList);
-			this.statScrollList.TOP_SPACING = 40;
-			this.statScrollList.m_scrollbar_mc.m_hideWhenDisabled = false;
-			this.statScrollList.m_scrollbar_mc.setLength(667);
-			this.statScrollList.m_scrollbar_mc.x = -1;
-			this.statScrollList.m_scrollbar_mc.y = -17;
-			this.scrollbarHolder_mc.addChild(this.statScrollList.m_scrollbar_mc);
-			this.statScrollList.addElement(this.primaryStatList);
-			this.statScrollList.addElement(this.secondaryStatList);
-			this.statScrollList.addElement(this.infoStatList);
-			this.statScrollList.addElement(this.resistanceStatList);
-			this.statScrollList.addElement(this.expStatList);
-			this.statScrollList.positionElements();
-			this.mainStats_mc.list = this.statScrollList;
-			this.mainStats_mc.init = initScrollList;
-		}
 		
 		function frame1() : *
 		{
@@ -1403,11 +1348,11 @@ package characterSheet_fla
 			this.charList.m_autoCenter = false;
 			this.tabsList.EL_SPACING = 0;
 			this.expStatList.y = 240;
-			//this.mainStats_mc.secStatHolder_mc.addChild(this.secondaryStatList);
-			//this.mainStats_mc.secStatHolder_mc.addChild(this.expStatList);
-			//this.mainStats_mc.statHolder_mc.addChild(this.primaryStatList);
-			//this.equip_mc.infoStatHolder_mc.addChild(this.infoStatList);
-			//this.mainStats_mc.resistancesStatHolder_mc.addChild(this.resistanceStatList);
+			this.mainStats_mc.secStatHolder_mc.addChild(this.secondaryStatList);
+			this.mainStats_mc.secStatHolder_mc.addChild(this.expStatList);
+			this.mainStats_mc.statHolder_mc.addChild(this.primaryStatList);
+			this.equip_mc.infoStatHolder_mc.addChild(this.infoStatList);
+			this.mainStats_mc.resistancesStatHolder_mc.addChild(this.resistanceStatList);
 			this.charList_mc.addChild(this.charList);
 			this.tabsHolder_mc.addChild(this.tabsList);
 			this.infoStatList.m_customElementHeight = 22;
@@ -1423,8 +1368,6 @@ package characterSheet_fla
 			this.charInfo_mc.selCharInfo_txt.mouseEnabled = false;
 			this.hitArea_mc.addEventListener(MouseEvent.MOUSE_DOWN,this.justEatClick);
 			this.hitArea_mc.addEventListener(MouseEvent.MOUSE_UP,this.justEatClick);
-
-			this.initScrollList();
 		}
 	}
 }

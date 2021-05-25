@@ -1,4 +1,4 @@
---Ext.AddPathOverride("Public/Game/GUI/characterSheet.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/characterSheet.swf")
+Ext.AddPathOverride("Public/Game/GUI/characterSheet.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/characterSheet.swf")
 --Ext.AddPathOverride("Public/Game/GUI/contextMenu.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/contextMenu.swf")
 
 local function OnGameMenuEvent(ui, call, ...)
@@ -333,9 +333,9 @@ local function TryFindUI(ui, tryFindId)
 	else
 		id = ui:GetTypeId() or tryFindId
 	end
-	if id == Data.UIType.characterSheet then
-		ui:Invoke("setGameMasterMode", true, true, true)
-	end
+	-- if id == Data.UIType.characterSheet then
+	-- 	ui:Invoke("setGameMasterMode", true, true, true)
+	-- end
 	-- if id == nil then
 	-- 	return nil
 	-- end

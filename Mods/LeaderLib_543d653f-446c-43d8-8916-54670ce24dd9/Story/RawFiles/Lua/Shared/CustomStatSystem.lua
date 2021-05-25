@@ -214,14 +214,19 @@ else
 
 	local function OnSheetUpdating(ui, method)
 		local this = ui:GetRoot()
+		ui:Invoke("setGameMasterMode", true, true, true)
 		local length = #this.customStats_array
 		if length == 0 then
 			return
 		end
+		--this.stats_mc.panelBg1_mc.visible = true;
+		--this.stats_mc.panelBg2_mc.visible = true;
+		local sortList = {}
 		for i=0,length,3 do
 			local doubleHandle = this.customStats_array[i]
 			local displayName = this.customStats_array[i+1]
 			local value = this.customStats_array[i+2]
+			local group = 0
 
 			if doubleHandle then
 				local stat = CustomStatSystem.GetStatByName(displayName)
@@ -232,16 +237,48 @@ else
 					else
 						this.customStats_array[i+1] = GameHelpers.Tooltip.ReplacePlaceholders(stat.DisplayName)
 					end
+					group = stat.Group or 0
 				end
+				sortList[#sortList+1] = {DisplayName=this.customStats_array[i+1], Handle=doubleHandle, Value=value, Group=group}
 			end
 		end
+
+		-- table.sort(sortList, function(a,b)
+		-- 	local name1 = a.DisplayName or ""
+		-- 	local name2 = b.DisplayName or ""
+		-- 	return name1 < name2
+		-- end)
+
+		local arrayIndex = 0
+		for _,v in pairs(sortList) do
+			this.customStats_array[arrayIndex] = v.Handle
+			this.customStats_array[arrayIndex+1] = v.DisplayName
+			this.customStats_array[arrayIndex+2] = v.Value
+			this.customStats_array[arrayIndex+3] = v.Group or 0
+			arrayIndex = arrayIndex + 4
+		end
+
+		--this.addAbilityGroup(false, 0, "Test Group")
 	end
 
+	--print(Ext.GetUIByType(119):GetRoot().stats_mc.customStats_mc.clearElements)
+	--local array = Ext.GetUIByType(119):GetRoot().stats_mc.customStats_mc.list.content_array; print(#array)
+
+	-- Ext.RegisterUITypeCall(Data.UIType.characterSheet, "selectedTab", function(ui, call, tab)
+	-- 	if tab == 8 then
+	-- 		local this = ui:GetRoot()
+	-- 		this.stats_mc.panelBg1_mc.visible = true
+
+	-- 		this.stats_mc.customStats_mc.y = 292;
+	-- 		this.stats_mc.customStats_mc.x = 12;
+	-- 		this.stats_mc.create_mc.x = 53;
+	-- 	end
+	-- end, "Before")
 	Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem", OnSheetUpdating)
 	--Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setPlayerInfo", AdjustCustomStatMovieClips)
 
 	--ExternalInterface.call(param2,param1.statId,val3.x + val5,val3.y + val4,val6,param1.height,param1.tooltipAlign);
-	Ext.RegisterUINameCall("showCustomStatTooltip", function(ui, call, statId, x, y, width, height, alignment)
+	function CustomStatSystem.OnRequestTooltip(ui, call, statId, x, y, width, height, alignment)
 		CustomStatSystem.Requesting = false
 		---@type EclCharacter
 		local character = nil
@@ -253,8 +290,10 @@ else
 		if ui:GetTypeId() == Data.UIType.characterSheet then
 			character = Ext.GetCharacter(ui:GetPlayerHandle())
 			local this = ui:GetRoot()
-			for i=0,#this.stats_mc.customStats_mc.list.content_array do
-				local mc = this.stats_mc.customStats_mc.list.content_array[i]
+			local stats = this.stats_mc.customStats_mc.stats_array
+			this.stats_mc.customStats_mc.setGroupTooltip(0, "Misc stats!")
+			for i=0,#stats do
+				local mc = stats[i]
 				if mc and mc.statId == statId then
 					statName = mc.label_txt.htmlText
 					statValue = tonumber(mc.text_txt.htmlText)
@@ -299,7 +338,8 @@ else
 			CustomStatSystem.Requesting = true
 			Ext.PostMessageToServer("LeaderLib_CheckCustomStatCallback", payload)
 		end
-	end, "Before")
+	end
+	--Ext.RegisterUINameCall("showCustomStatTooltip", CustomStatSystem.OnRequestTooltip, "Before")
 
 	local addedCustomTab = false
 
@@ -376,6 +416,7 @@ else
 	end, "After")
 
 	function CustomStatSystem.CreateCustomStatTooltip(displayName, description, width, height, tooltipType, icon, abilityId)
+		Ext.Print("CustomStatSystem.CreateCustomStatTooltip", displayName, description, width, height, tooltipType, icon, abilityId)
 		local ui = Ext.GetUIByType(Data.UIType.tooltip)
 		if ui then
 			local this = ui:GetRoot()
@@ -416,6 +457,8 @@ else
 				--ui:ExternalInterfaceCall("clearAnchor")
 				ui:ExternalInterfaceCall("setAnchor","left","mouse","left")
 				CustomStatSystem.Visible = true
+
+				--Game.Tooltip.TooltipHooks:OnRenderTooltip(Game.Tooltip.TooltipArrayNames.Default, ui, 0, 0, true)
 
 				ui:Invoke("addFormattedTooltip",0,0,true)
 				--ui:ExternalInterfaceCall("setTooltipSize", width, height)

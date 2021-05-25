@@ -20,7 +20,7 @@ Ext.RegisterConsoleCommand("printuuids", function(call, radiusVal)
 		radius = tonumber(radiusVal)
 	end
 	local host = CharacterGetHostCharacter()
-	for i,v in pairs(Ext.GetCharacter(host):GetNearbyCharacters(radius)) do
+	for i,uuid in pairs(Ext.GetCharacter(host):GetNearbyCharacters(radius)) do
 		---@type EsvCharacter
 		local character = Ext.GetCharacter(uuid)
 		---@type StatCharacter
@@ -35,6 +35,7 @@ Ext.RegisterConsoleCommand("printuuids", function(call, radiusVal)
 		print("Archetype:", character.Archetype)
 		print("Pos:", Ext.JsonStringify(characterStats.Position))
 		print("Rot:", Ext.JsonStringify(characterStats.Rotation))
+		print("CustomTradeTreasure:", Ext.JsonStringify(character.CustomTradeTreasure))
 	print("===============")
 	end
 end)

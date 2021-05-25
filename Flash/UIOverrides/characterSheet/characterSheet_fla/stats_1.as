@@ -333,13 +333,13 @@ package characterSheet_fla
 			this.pointsFrame_mc.setTab(this.currentOpenPanel);
 		}
 		
-		public function selectCharacter(param1:Number) : *
+		public function selectCharacter(id:Number) : *
 		{
-			var val2:MovieClip = this.charList.getElementByNumber("id",param1);
-			if(val2)
+			var charPortrait_mc:MovieClip = this.charList.getElementByNumber("id",id);
+			if(charPortrait_mc)
 			{
-				this.charList.selectMC(val2,true);
-				this.invTabHolder_mc.inventory.id = param1;
+				this.charList.selectMC(charPortrait_mc,true);
+				this.invTabHolder_mc.inventory.id = id;
 			}
 			if(this.aiSel_mc.visible && this.aiSel_mc.m_isOpen)
 			{
@@ -351,22 +351,22 @@ package characterSheet_fla
 			}
 		}
 		
-		public function addCharPortrait(param1:Number, param2:String, param3:uint) : *
+		public function addCharPortrait(id:Number, iconId:String, order:uint) : *
 		{
-			var val4:MovieClip = this.charList.getElementByNumber("id",param1);
-			if(!val4)
+			var charPortrait_mc:MovieClip = this.charList.getElementByNumber("id",id);
+			if(!charPortrait_mc)
 			{
-				val4 = new charPortrait();
-				val4.init();
-				val4.id = param1;
-				this.charList.addElement(val4,false);
-				val4.frame_mc.gotoAndStop(3);
+				charPortrait_mc = new charPortrait();
+				charPortrait_mc.init();
+				charPortrait_mc.id = id;
+				this.charList.addElement(charPortrait_mc,false);
+				charPortrait_mc.frame_mc.gotoAndStop(3);
 			}
-			if(val4)
+			if(charPortrait_mc)
 			{
-				val4.order = param3;
-				val4.hasUpdated = true;
-				val4.setIcon("p" + param2);
+				charPortrait_mc.order = order;
+				charPortrait_mc.hasUpdated = true;
+				charPortrait_mc.setIcon("p" + iconId);
 			}
 		}
 		
@@ -390,16 +390,16 @@ package characterSheet_fla
 			this.charList.sortOnce(["order"],[Array.NUMERIC]);
 		}
 		
-		public function removeChildrenOf(param1:MovieClip) : void
+		public function removeChildrenOf(mc:MovieClip) : void
 		{
 			var val2:int = 0;
-			if(param1.numChildren != 0)
+			if(mc.numChildren != 0)
 			{
-				val2 = param1.numChildren;
+				val2 = mc.numChildren;
 				while(val2 > 0)
 				{
 					val2--;
-					param1.removeChildAt(val2);
+					mc.removeChildAt(val2);
 				}
 			}
 		}
@@ -471,25 +471,25 @@ package characterSheet_fla
 			}
 		}
 		
-		public function getTabById(param1:Number) : MovieClip
+		public function getTabById(tabId:Number) : MovieClip
 		{
-			var val2:MovieClip = null;
-			var val3:uint = 0;
-			while(val3 < this.tabsArray.length)
+			var tab_mc:MovieClip = null;
+			var i:uint = 0;
+			while(i < this.tabsArray.length)
 			{
-				if(this.tabsArray[val3].id == param1)
+				if(this.tabsArray[i].id == tabId)
 				{
-					val2 = this.tabsArray[val3];
+					tab_mc = this.tabsArray[i];
 					break;
 				}
-				val3++;
+				i++;
 			}
-			return val2;
+			return tab_mc;
 		}
 		
-		public function setPanelTitle(param1:Number, param2:String) : *
+		public function setPanelTitle(index:Number, titleText:String) : *
 		{
-			this.panelArray[param1].title_txt.htmlText = param2;
+			this.panelArray[index].title_txt.htmlText = titleText;
 		}
 		
 		public function resetScrollBarsPositions() : *

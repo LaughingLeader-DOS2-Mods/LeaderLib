@@ -205,7 +205,7 @@ local function InvokeExtenderEventCallbacks(evt, eventName)
 	-- end
 
 	if eventName == "ToggleCharacterPane" and not evt.Press then
-		CustomStatTooltipFixer.OnToggleCharacterPane()
+		CustomStatSystem.OnToggleCharacterPane()
 	end
 
 	if lastFiredEventFrom[eventName] ~= 1 or Input.Keys[eventName] ~= nextState then

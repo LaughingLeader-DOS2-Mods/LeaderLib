@@ -1385,7 +1385,11 @@ function TooltipHooks:OnRenderSubTooltip(ui, propertyName, req, method, ...)
 		if req.Type == "Stat" then
 			self:NotifyListeners("Stat", req.Stat, req, tooltip, req.Character, req.Stat)
 		elseif req.Type == "CustomStat" then
-			local statData = CustomStatSystem.GetStatByDouble(req.Stat)
+			if req.RequestUpdate then
+				CustomStatSystem.UpdateStatTooltipArray(ui, req.Stat, tooltip, req)
+				req.RequestUpdate = false
+			end
+			local statData = req.StatData or CustomStatSystem.GetStatByDouble(req.Stat)
 			if statData ~= nil then
 				self:NotifyListeners("CustomStat", statData.ID or statData.UUID, req, tooltip, req.Character, statData)
 			else

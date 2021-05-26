@@ -29,7 +29,9 @@ local statPropertyMap = {
 }
 
 ---@class CustomStatDataBase
-local CustomStatDataBase = {}
+local CustomStatDataBase = {
+	Description = ""
+}
 CustomStatDataBase.__index = CustomStatDataBase
 Classes.CustomStatDataBase = CustomStatDataBase
 

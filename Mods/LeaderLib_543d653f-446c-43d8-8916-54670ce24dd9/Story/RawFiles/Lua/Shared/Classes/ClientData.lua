@@ -7,55 +7,48 @@ local ClientCharacterData = {
 	IsHost = false,
 	IsInCharacterCreation = false,
 	NetID = -1,
+	IsPossessed = false,
+	IsGameMaster = false,
+	IsPlayer = true,
 }
 
 ClientCharacterData.__index = ClientCharacterData
 
-function ClientCharacterData:Create(uuid, id, profile, netid, isHost, isInCharacterCreation)
+---@alias ClientCharacterDataParams ClientCharacterData
+
+local default = Common.GetValueOrDefault
+
+---@param params ClientCharacterDataParams|table
+---@return ClientCharacterData
+function ClientCharacterData:Create(params)
 	local this = {
-		UUID = uuid,
-		NetID = netid or -1,
-		ID = id or -1,
-		Profile = profile,
-		IsHost = isHost,
-		IsInCharacterCreation = isInCharacterCreation
+		UUID = "",
+		NetID = -1,
+		ID = -1,
+		Profile = "",
+		IsHost = false,
+		IsInCharacterCreation = false,
+		IsPossessed = false,
+		IsGameMaster = false,
+		IsPlayer = true,
 	}
-	if this.IsHost == nil then
-		this.IsHost = false
-	end
-	if this.IsInCharacterCreation == nil then
-		this.IsInCharacterCreation = false
+	if params and type(params) == "table" then
+		for k,v in pairs(params) do
+			this[k] = v
+		end
 	end
 	setmetatable(this, ClientCharacterData)
 	return this
 end
 
----@param character EsvCharacter|EclCharacter
-function ClientCharacterData:CreateFromCharacter(character, id, profile, isHost, isInCharacterCreation)
-	local this = self:Create(character.MyGuid, id, profile, isHost, isInCharacterCreation)
-	this.NetID = character.NetID
-	return this
-end
-
-function ClientCharacterData:SetClientCharacterData(uuid, id, profile, netid, isHost, isInCharacterCreation)
-	if id ~= nil then
-		self.ID = id
+---@param params ClientCharacterDataParams|table
+function ClientCharacterData:Update(params)
+	if params and type(params) == "table" then
+		for k,v in pairs(params) do
+			self[k] = v
+		end
 	end
-	if profile ~= nil then
-		self.Profile = profile
-	end
-	if uuid ~= nil then
-		self.UUID = uuid
-	end
-	if netid ~= nil then
-		self.NetID = netid
-	end
-	if isHost ~= nil then
-		self.IsHost = isHost
-	end
-	if isInCharacterCreation ~= nil then
-		self.IsInCharacterCreation = isInCharacterCreation
-	end
+	return self
 end
 
 ---@return EclCharacter|EsvCharacter
@@ -114,6 +107,17 @@ function ClientData:GetCharacter()
 		end
 	end
 	return character
+end
+
+---@return ClientCharacterData
+function ClientData:GetCharacterData()
+	if not self then
+		self = Client
+	end
+	if self.Character then
+		return self.Character
+	end
+	return nil
 end
 
 ---@param id integer

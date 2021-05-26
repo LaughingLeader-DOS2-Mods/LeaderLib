@@ -459,24 +459,24 @@ Ext.RegisterListener("SessionLoaded", function()
 	--local this = Ext.GetUIByType(119):GetRoot().stats_mc; this.customStatIconOffsetX = -2; this.customStatIconOffsetX = -2;
 
 	--Ext.GetUIByType(Data.UIType.characterSheet):SetCustomIcon("LL_characterSheetIcon_99", "Tag_Jester_inv", 28, 28)
-	--Ext.GetUIByType(44):SetCustomIcon("LL_skillSchool_99", "Tag_Jester_inv", 32, 32)
+	--Ext.GetUIByType(44):SetCustomIcon("LL_skillSchool_99", "Tag_Jester_inv", 28, 28)
 	--Ext.GetUIByType(44):SetCustomIcon("LL_skillSchool_99", "Ability_DualWielding", 64, 64)
 	--print(Ext.GetUIByType(44):GetRoot().formatTooltip.tooltip_mc.footer_mc.labels_mc.skillSchoolIcon_mc)
+	-- local lastSkillIconName = ""
 	-- Ext.RegisterUINameInvokeListener("showFormattedTooltipAfterPos", function(ui)
 	-- 	local skillIcon = ui:GetRoot().formatTooltip.tooltip_mc.footer_mc.labels_mc.skillSchoolIcon_mc
-	-- 	print(skillIcon.name)
+	-- 	lastSkillIconName = skillIcon.name
 	-- 	skillIcon.name = "iggy_LL_skillSchool_99"
+	-- end)
+	-- Ext.RegisterUINameInvokeListener("hideTooltip", function(ui)
+	-- 	local skillIcon = ui:GetRoot().formatTooltip.tooltip_mc.footer_mc.labels_mc.skillSchoolIcon_mc
+	-- 	skillIcon.name = lastSkillIconName
 	-- end)
 	-- Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem", function(ui, event)
 	-- 	local this = ui:GetRoot()
-	-- 	if #this.secStat_array > 0 then
-	-- 		--local frame = this.secStat_array[5];
+	-- 	-- Icon test by replacing Fire Resistance's frame to trigger a custom icon
+	-- 	if #this.secStat_array > 0 and this.secStat_array[89] then
 	-- 		this.secStat_array[89] = 99
-	-- 		print("secStat_array frame?", this.secStat_array[89], this.secStat_array[87])
-	-- 		--ui:SetCustomIcon("LL_characterSheetIcon_99", "Tag_Jester_inv", 32, 32)
-	-- 		-- for i=0,#this.secStat_array do
-	-- 		-- 	print(i, this.secStat_array[i])
-	-- 		-- end
 	-- 	end
 	-- end)
 	--PrintAllUITypeID()

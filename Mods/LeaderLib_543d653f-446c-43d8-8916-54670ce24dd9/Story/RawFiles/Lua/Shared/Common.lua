@@ -493,3 +493,13 @@ Common.StringEquals = StringHelpers.Equals
 Common.StringIsNullOrEmpty = StringHelpers.IsNullOrEmpty
 Common.StringJoin = StringHelpers.Join
 Common.StringSplit = StringHelpers.Split
+
+---Returns the value is not nil, otherwise returns the fallback value.
+---@param val any|nil
+---@param fallback any
+function Common.GetValueOrDefault(val, fallback)
+	if val == nil then
+		return fallback
+	end
+	return val
+end

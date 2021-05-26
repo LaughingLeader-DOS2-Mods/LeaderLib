@@ -129,7 +129,7 @@ local enemyHealthBar = UIListenerWrapper:Create(Data.UIType.enemyHealthBar, {"hi
 enemyHealthBar.Enabled = false
 
 local worldTooltipMethods = {
-	"updateTooltips",
+	--"updateTooltips",
 	"setObjPos",
 	"setTooltip",
 	"setWindow",

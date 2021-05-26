@@ -278,11 +278,20 @@ local function OnStatTooltip(character, stat, tooltip)
 end
 
 ---@param character EclCharacter
----@param stat CustomStatTooltipData|number
+---@param stat CustomStatData
 ---@param tooltip TooltipData
 local function OnCustomStatTooltip(character, stat, tooltip)
 	if Vars.DebugMode then
-		print("CustomStat", Common.Dump(stat), Ext.JsonStringify(tooltip.Data))
+		--print("CustomStat", Common.Dump(stat), Ext.JsonStringify(tooltip.Data))
+		if stat.ID == "Lucky" then
+			local element = tooltip:GetElement("AbilityDescription")
+			element.CurrentLevelEffect = string.format("Level %s: Gain %s%% more loot.", stat.Value or 1, 200)
+			element.NextLevelEffect = string.format("Next Level %s: Gain %s%% more loot.", (stat.Value or 1)+1, 400)
+			tooltip:AppendElement({
+				Type="StatsTalentsBoost",
+				Label = string.format("Loot Baggins +%s", stat.Value or 1)
+			})
+		end
 	end
 end
 
@@ -837,6 +846,9 @@ Ext.RegisterListener("SessionLoaded", function()
 	--Game.Tooltip.RegisterListener("Stat", nil, OnStatTooltip)
 	if Vars.DebugMode then
 		Game.Tooltip.RegisterListener("CustomStat", nil, OnCustomStatTooltip)
+		Game.Tooltip.RegisterListener("Ability", nil, function(character, stat, tooltip)
+			print(stat, Ext.JsonStringify(tooltip.Data))
+		end)
 		---@param tooltip GenericTooltipData
 		Game.Tooltip.RegisterListener("Generic", function(tooltip)
 			if tooltip.Data.CallingUI == Data.UIType.hotBar and tooltip.Data.Text == "Toggle Chat" then

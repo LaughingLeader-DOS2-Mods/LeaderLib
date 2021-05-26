@@ -84,7 +84,7 @@ package characterSheet_fla
 		public const RightFrameW:Number = 304;
 
 		public var customStatIconOffsetX:Number = -2;
-		public var customStatIconOffsetY:Number = -4;
+		public var customStatIconOffsetY:Number = -6;
 		
 		public function stats_1()
 		{
@@ -1024,7 +1024,7 @@ package characterSheet_fla
 			if(iconFrame != 0)
 			{
 				var targetIcon:MovieClip = stat_mc.icon_mc;
-				if (iconFrame < stat_mc.icon_mc.totalFrames)
+				if (iconFrame <= stat_mc.icon_mc.totalFrames)
 				{
 					if(stat_mc.customIcon_mc != undefined)
 					{

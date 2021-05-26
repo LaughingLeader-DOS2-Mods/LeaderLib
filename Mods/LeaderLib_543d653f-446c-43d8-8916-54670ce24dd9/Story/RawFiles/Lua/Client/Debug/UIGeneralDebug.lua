@@ -458,6 +458,15 @@ Ext.RegisterListener("SessionLoaded", function()
 	--Ext.GetUIByType(Data.UIType.characterSheet):SetCustomIcon("LL_characterSheetIcon_99", "Tag_Jester_inv", 28, 28)
 	--local this = Ext.GetUIByType(119):GetRoot().stats_mc; this.customStatIconOffsetX = -2; this.customStatIconOffsetX = -2;
 
+	--Ext.GetUIByType(Data.UIType.characterSheet):SetCustomIcon("LL_characterSheetIcon_99", "Tag_Jester_inv", 28, 28)
+	--Ext.GetUIByType(44):SetCustomIcon("LL_skillSchool_99", "Tag_Jester_inv", 32, 32)
+	--Ext.GetUIByType(44):SetCustomIcon("LL_skillSchool_99", "Ability_DualWielding", 64, 64)
+	--print(Ext.GetUIByType(44):GetRoot().formatTooltip.tooltip_mc.footer_mc.labels_mc.skillSchoolIcon_mc)
+	-- Ext.RegisterUINameInvokeListener("showFormattedTooltipAfterPos", function(ui)
+	-- 	local skillIcon = ui:GetRoot().formatTooltip.tooltip_mc.footer_mc.labels_mc.skillSchoolIcon_mc
+	-- 	print(skillIcon.name)
+	-- 	skillIcon.name = "iggy_LL_skillSchool_99"
+	-- end)
 	-- Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem", function(ui, event)
 	-- 	local this = ui:GetRoot()
 	-- 	if #this.secStat_array > 0 then

@@ -454,6 +454,7 @@ Ext.RegisterConsoleCommand("tooltiptest", function(cmd, delay)
 end)
 
 Ext.RegisterListener("SessionLoaded", function()
+	Ext.UIEnableCustomDrawCallDebugging(true)
 	--PrintAllUITypeID()
 	local tryFindUI = function(ui, ...)
 		if not foundUITypeIds[ui:GetTypeId()] then

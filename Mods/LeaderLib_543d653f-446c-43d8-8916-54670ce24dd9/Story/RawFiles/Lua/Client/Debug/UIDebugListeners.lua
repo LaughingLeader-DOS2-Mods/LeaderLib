@@ -249,6 +249,7 @@ local characterSheetDebug = UIListenerWrapper:Create(Data.UIType.characterSheet,
 	"stopDraggingOnChar",
 	"UIAssert",
 	"UnlearnSkill",
+	"createCustomStatGroups",
 }, {
 	"addAbility",
 	"addAbilityGroup",

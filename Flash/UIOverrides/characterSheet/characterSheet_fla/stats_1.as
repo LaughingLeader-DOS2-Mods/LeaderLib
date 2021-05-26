@@ -182,94 +182,98 @@ package characterSheet_fla
 		{
 		}
 		
-		public function buildTabs(param1:Number, param2:Boolean = false) : *
+		public function buildTabs(tabState:Number, initializeTabs:Boolean = false) : *
 		{
-			var val3:uint = 0;
-			var val6:MovieClip = null;
-			var val7:MovieClip = null;
-			var val8:MovieClip = null;
-			var val9:MovieClip = null;
-			val3 = 0;
-			while(val3 < this.tabsArray.length)
+			var i:uint = 0;
+			var tab_mc:MovieClip = null;
+			var tab_button:MovieClip = null;
+			var tab_button2:MovieClip = null;
+			var tab_buttonGM:MovieClip = null;
+			i = 0;
+			while(i < this.tabsArray.length)
 			{
-				val6 = this.tabsArray[val3];
-				if(val6 != null && val6.tw != null)
+				tab_mc = this.tabsArray[i];
+				if(tab_mc != null && tab_mc.tw != null)
 				{
-					val6.tw.stop();
-					val6.tw = null;
+					tab_mc.tw.stop();
+					tab_mc.tw = null;
 				}
-				val3++;
+				i++;
 			}
 			this.tabsList.clearElements();
 			this.tabsArray = new Array();
-			val3 = 0;
-			switch(param1)
+			i = 0;
+			switch(tabState)
 			{
 				case 0:
-					val3 = 0;
-					while(val3 < 5)
+					i = 0;
+					while(i < 5)
 					{
-						val7 = new StatsTabButton();
-						val7.id = val3;
-						this.tabsArray.push(val7);
-						val3++;
+						tab_button = new StatsTabButton();
+						tab_button.id = i;
+						this.tabsArray.push(tab_button);
+						i++;
 					}
+					//LeaderLib: Always add the custom stats button
+					tab_button = new StatsTabButton();
+					tab_button.id = 8;
+					this.tabsArray.push(tab_button);
 					this.tabsList.EL_SPACING = -10;
 					break;
 				case 1:
-					val3 = 0;
-					while(val3 < 9)
+					i = 0;
+					while(i < 9)
 					{
-						if(val3 < 4 || val3 == 8)
+						//LeaderLib: Making sure the tags button is added. i < 4 changed to i < 5
+						if(i < 5 || i == 8)
 						{
-							val8 = new StatsTabButton();
-							val8.id = val3;
-							this.tabsArray.push(val8);
+							tab_button2 = new StatsTabButton();
+							tab_button2.id = i;
+							this.tabsArray.push(tab_button2);
 						}
-						val3++;
+						i++;
 					}
 					this.tabsList.EL_SPACING = -10;
 					break;
 				case 2:
-					val3 = 0;
-					while(val3 < 9)
+					i = 0;
+					while(i < 9)
 					{
-						if(val3 != 4)
-						{
-							val9 = new StatsTabButtonGM();
-							val9.id = val3;
-							this.tabsArray.push(val9);
-						}
-						val3++;
+						//if(i != 4)
+						//LeaderLib: Making sure the tags button is added.
+						tab_buttonGM = new StatsTabButtonGM();
+						tab_buttonGM.id = i;
+						this.tabsArray.push(tab_buttonGM);
+						i++;
 					}
 					this.tabsList.EL_SPACING = -15;
 			}
-			var val4:* = this.currentOpenPanel;
-			var val5:Boolean = false;
-			val3 = 0;
-			while(val3 < this.tabsArray.length)
+			var currentPanel:* = this.currentOpenPanel;
+			var isCurrentPanel:Boolean = false;
+			i = 0;
+			while(i < this.tabsArray.length)
 			{
-				this.tabsList.addElement(this.tabsArray[val3],false);
-				if(this.currentOpenPanel == this.tabsArray[val3].id)
+				this.tabsList.addElement(this.tabsArray[i],false);
+				if(this.currentOpenPanel == this.tabsArray[i].id)
 				{
-					val5 = val5 || true;
+					isCurrentPanel = isCurrentPanel || true;
 				}
-				val3++;
+				i++;
 			}
 			this.tabsList.positionElements();
-			this.initTabs(!val5,param2);
-			this.ClickTab(!!val5?Number(val4):Number(0));
+			this.initTabs(!isCurrentPanel,initializeTabs);
+			this.ClickTab(!!isCurrentPanel?Number(currentPanel):Number(0));
 			this.INTSetAvailablePointsVisible();
 		}
 		
-		public function pushTabTooltip(param1:*, param2:*) : *
+		public function pushTabTooltip(tabId:Number, text:String) : *
 		{
 			var val3:uint = 0;
 			while(val3 < this.tabsArray.length)
 			{
-				if(this.tabsArray[val3].id == param1)
+				if(this.tabsArray[val3].id == tabId)
 				{
-					this.tabsArray[val3].tooltip = param2;
+					this.tabsArray[val3].tooltip = text;
 					return;
 				}
 				val3++;

@@ -167,11 +167,11 @@ package characterSheet_fla
 		public function setGameMasterMode(isGameMasterMode:Boolean, isGameMasterChar:Boolean, isPossessed:Boolean) : *
 		{
 			this.isGameMasterChar = isGameMasterChar;
-			var val4:Number = !!isGameMasterChar?Number(2):!!isGameMasterMode?Number(1):Number(0);
-			if(this.tabState != val4)
+			var nextTabState:Number = !!isGameMasterChar?Number(2):!!isGameMasterMode?Number(1):Number(0);
+			if(this.tabState != nextTabState)
 			{
-				this.stats_mc.buildTabs(val4);
-				this.tabState = val4;
+				this.stats_mc.buildTabs(nextTabState);
+				this.tabState = nextTabState;
 			}
 			var tabsCount:uint = this.stats_mc.tabsArray.length;
 			var spaceReduction:uint = 4;
@@ -344,9 +344,9 @@ package characterSheet_fla
 			this.stats_mc.selectCharacter(id);
 		}
 		
-		public function setText(textType:Number, text:String) : *
+		public function setText(tabId:Number, text:String) : *
 		{
-			switch(textType)
+			switch(tabId)
 			{
 				case 0:
 				case 1:
@@ -357,14 +357,14 @@ package characterSheet_fla
 				case 6:
 				case 7:
 				case 8:
-					this.stats_mc.panelArray[textType].labelStr = text;
-					if(this.stats_mc.currentOpenPanel == textType)
+					this.stats_mc.panelArray[tabId].labelStr = text;
+					if(this.stats_mc.currentOpenPanel == tabId)
 					{
 						this.stats_mc.tabTitle_txt.htmlText = text;
 						textHelpers.smallCaps(this.stats_mc.tabTitle_txt);
 					}
-					this.tabsTexts[textType] = text;
-					this.stats_mc.pushTabTooltip(textType,text);
+					this.tabsTexts[tabId] = text;
+					this.stats_mc.pushTabTooltip(tabId,text);
 					break;
 				case 9:
 					this.stats_mc.equipment_txt.htmlText = text;

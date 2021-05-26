@@ -116,7 +116,7 @@ function PlayerInfo:GetCharacterMovieClips()
 	return function ()
 		i = i + 1
 		if i <= count then
-			return characters[i-1]
+			return characters[i]
 		end
 	end
 end

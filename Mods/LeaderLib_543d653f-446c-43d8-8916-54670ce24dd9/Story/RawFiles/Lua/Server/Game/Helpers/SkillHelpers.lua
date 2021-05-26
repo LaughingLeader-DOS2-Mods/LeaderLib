@@ -407,7 +407,7 @@ function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, level
     end
 
     if count > 0 then
-        local i = 1
+        local i = 0
         local timerName = string.format("Timers_LeaderLib_ProjectileStrike%s%s", id, Ext.MonotonicTime())
         local onTimer = nil
         onTimer = function()

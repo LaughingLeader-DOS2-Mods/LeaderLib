@@ -45,7 +45,6 @@ local function LoadCustomStatsData()
 	local categories,stats = loader()
 	TableHelpers.AddOrUpdate(CustomStatSystem.Categories, categories)
 	TableHelpers.AddOrUpdate(CustomStatSystem.Stats, stats)
-	print(Ext.IsServer() and "SERVER" or "CLIENT", Ext.JsonStringify(CustomStatSystem.Stats))
 
 	if Ext.IsServer() then
 		for uuid,stats in pairs(CustomStatSystem.Stats) do
@@ -69,10 +68,16 @@ local function LoadCustomStatsData()
 		end
 	else
 		local categoryId = 1 -- 0 is Misc
-		for category in CustomStatSystem.GetAlLCategories() do
+		for category in CustomStatSystem.GetAllCategories() do
 			category.GroupId = categoryId
 			categoryId = categoryId + 1
 		end
+	end
+
+	if Vars.DebugMode then
+		print(Ext.IsServer() and "SERVER" or "CLIENT")
+		print("Categories", Ext.JsonStringify(CustomStatSystem.Categories))
+		print("Stats", Ext.JsonStringify(CustomStatSystem.Stats))
 	end
 end
 
@@ -147,7 +152,7 @@ end
 ---Get an iterator of sorted categories.
 ---@param skipSort boolean|nil
 ---@return CustomStatCategoryData
-function CustomStatSystem.GetAlLCategories(skipSort)
+function CustomStatSystem.GetAllCategories(skipSort)
 	local allCategories = {}
 
 	--To avoid duplicate categories by the same id, we set a dictionary first
@@ -172,7 +177,7 @@ function CustomStatSystem.GetAlLCategories(skipSort)
 	return function ()
 		i = i + 1
 		if i <= count then
-			return categories[i-1]
+			return categories[i]
 		end
 	end
 end
@@ -327,7 +332,7 @@ else
 
 	function CustomStatSystem.SetupGroups(ui, call)
 		local this = ui:GetRoot().stats_mc.customStats_mc
-		for category in CustomStatSystem.GetAlLCategories() do
+		for category in CustomStatSystem.GetAllCategories() do
 			this.addGroup(category.GroupId, category:GetDisplayName(), false)
 			if category.Description then
 				this.setGroupTooltip(category.GroupId, category:GetDescription())

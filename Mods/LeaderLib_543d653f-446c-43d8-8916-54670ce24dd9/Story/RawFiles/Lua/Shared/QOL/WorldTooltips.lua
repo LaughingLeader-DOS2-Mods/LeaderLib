@@ -1,5 +1,6 @@
 local WorldTooltipper = {
-	TooltipMode = 2
+	TooltipMode = 2,
+	UpdateDelay = 2000
 }
 WorldTooltipper.__index = WorldTooltipper
 
@@ -37,35 +38,40 @@ if Ext.IsClient() then
 	end
 	Ext.RegisterNetListener("LeaderLib_WorldTooltipper_UpdateClient", WorldTooltipper.UpdateItems)
 else
+	---@param item EsvItem
+	local function ItemCanHaveTooltip(item)
+		if item.RootTemplate and item.RootTemplate.Tooltip ~= WorldTooltipper.TooltipMode and not StringHelpers.IsNullOrWhitespace(item.DisplayName) then
+			return true
+		end
+		return false
+	end
+
 	function WorldTooltipper.UpdateWorldItems()
-		--local ids = {}
+		local time = Ext.MonotonicTime()
 		for _,uuid in pairs(Ext.GetAllItems()) do
 			local item = Ext.GetItem(uuid)
-			if item then
-				if item.RootTemplate.Tooltip ~= WorldTooltipper.TooltipMode then
-					item.RootTemplate.Tooltip = WorldTooltipper.TooltipMode
-					--ids[#ids+1] = item.NetID
-				end
+			if item and ItemCanHaveTooltip(item) then
+				item.RootTemplate.Tooltip = WorldTooltipper.TooltipMode
 			end
 		end
-		--Ext.BroadcastMessage("LeaderLib_WorldTooltipper_UpdateClient", Ext.JsonStringify(ids))
+		fprint(LOGLEVEL.DEFAULT, "[LeaderLib:WorldTooltips.UpdateWorldItems] World tooltip updating took (%s) ms.", time - Ext.MonotonicTime())
+	end
+
+	function WorldTooltipper.OnGameStarted(region, editorMode)
+		StartOneshotTimer("Timers_LeaderLib_WorldTooltipper_UpdateItems", WorldTooltipper.UpdateDelay, WorldTooltipper.UpdateWorldItems)
 	end
 
 	---@param item EsvItem
 	function WorldTooltipper.OnItemEnteredWorld(item, region)
-		if item then
+		if item and ItemCanHaveTooltip(item) then
 			--print("SERVER", item.DisplayName, item.RootTemplate.Tooltip)
-			if item.RootTemplate.Tooltip ~= WorldTooltipper.TooltipMode then
-				item.RootTemplate.Tooltip = WorldTooltipper.TooltipMode
-			end
-		else
-			Ext.PrintError("[WorldTooltipper.OnItemEnteredWorld] Item is nil?")
+			item.RootTemplate.Tooltip = WorldTooltipper.TooltipMode
 		end
 	end
 
 	Ext.RegisterOsirisListener("ItemEnteredRegion", Data.OsirisEvents.ItemEnteredRegion, "after", function(uuid, region) WorldTooltipper.OnItemEnteredWorld(Ext.GetItem(uuid), region) end)
 
-	RegisterListener("Initialized", WorldTooltipper.UpdateWorldItems)
+	Ext.RegisterOsirisListener("GameStarted", Data.OsirisEvents.GameStarted, "after", WorldTooltipper.OnGameStarted)
 	if Vars.DebugMode then
 		RegisterListener("LuaReset", WorldTooltipper.UpdateWorldItems)
 	end

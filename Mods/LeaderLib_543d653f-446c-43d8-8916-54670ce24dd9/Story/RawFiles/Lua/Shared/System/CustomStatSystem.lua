@@ -338,6 +338,7 @@ else
 				this.setGroupTooltip(category.GroupId, category:GetDescription())
 			end
 		end
+		this.positionElements()
 	end
 
 	--print(Ext.GetUIByType(119):GetRoot().stats_mc.customStats_mc.clearElements)
@@ -371,7 +372,6 @@ else
 			character = Ext.GetCharacter(ui:GetPlayerHandle())
 			local this = ui:GetRoot()
 			local stats = this.stats_mc.customStats_mc.stats_array
-			this.stats_mc.customStats_mc.setGroupTooltip(0, "Misc stats!")
 			for i=0,#stats do
 				local mc = stats[i]
 				if mc and mc.statId == statId then

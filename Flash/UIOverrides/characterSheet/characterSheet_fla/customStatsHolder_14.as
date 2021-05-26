@@ -7,6 +7,7 @@ package characterSheet_fla
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
 
+	//LeaderLib: Various functions have been added or changed to make this behave and look more like an ability holder.
 	public dynamic class customStatsHolder_14 extends MovieClip
 	{
 		public var create_mc:btnCreateCustomStat;

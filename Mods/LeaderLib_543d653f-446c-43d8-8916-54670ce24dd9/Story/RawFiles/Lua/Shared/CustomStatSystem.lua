@@ -148,7 +148,6 @@ end
 ---@param skipSort boolean|nil
 ---@return CustomStatCategoryData
 function CustomStatSystem.GetAlLCategories(skipSort)
-	local this = self:Get()
 	local allCategories = {}
 
 	--To avoid duplicate categories by the same id, we set a dictionary first

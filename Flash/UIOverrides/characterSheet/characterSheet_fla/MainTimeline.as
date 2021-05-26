@@ -522,6 +522,7 @@ package characterSheet_fla
 				}
 				else
 				{
+					//statType:Number, labelText:String, valueText:String, statId:Number, frame:Number, boostValue:Number
 					this.addSecondaryStat(this.secStat_array[i + 1],this.secStat_array[i + 2],this.secStat_array[i + 3],this.secStat_array[i + 4],this.secStat_array[i + 5],this.secStat_array[i + 6]);
 				}
 				i = i + 7;

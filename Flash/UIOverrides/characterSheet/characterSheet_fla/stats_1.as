@@ -82,6 +82,9 @@ package characterSheet_fla
 		public const tabTweenInTime:Number = 0.12;
 		public const PointsFrameW:Number = 160;
 		public const RightFrameW:Number = 304;
+
+		public var customStatIconOffsetX:Number = -2;
+		public var customStatIconOffsetY:Number = -4;
 		
 		public function stats_1()
 		{
@@ -112,15 +115,15 @@ package characterSheet_fla
 			this.onePlayerOverlay_mc.visible = false;
 			ExternalInterface.call("getStats");
 			this.equip_mc.init();
-			var val1:uint = 0;
-			while(val1 < this.pointsWarn.length)
+			var i:uint = 0;
+			while(i < this.pointsWarn.length)
 			{
-				this.pointsWarn[val1].visible = false;
-				this.pointsWarn[val1].stop();
-				this.pointsWarn[val1].mouseEnabled = false;
-				this.pointsWarn[val1].mouseChildren = false;
-				this.pointsWarn[val1].avPoints = 0;
-				val1++;
+				this.pointsWarn[i].visible = false;
+				this.pointsWarn[i].stop();
+				this.pointsWarn[i].mouseEnabled = false;
+				this.pointsWarn[i].mouseChildren = false;
+				this.pointsWarn[i].avPoints = 0;
+				i++;
 			}
 			this.panelBg1_mc.gotoAndStop(1);
 			this.panelBg2_mc.gotoAndStop(2);
@@ -504,32 +507,32 @@ package characterSheet_fla
 			this.tagsHolder_mc.list.m_scrollbar_mc.resetContentPosition();
 		}
 		
-		public function INTSetWarnAndPoints(param1:Number, param2:Number) : *
+		public function INTSetWarnAndPoints(index:Number, pointsValue:Number) : *
 		{
-			var val3:MovieClip = null;
-			var val4:TextField = null;
-			var val5:MovieClip = null;
+			var pointsWarn_mc:MovieClip = null;
+			var pointsWarn_tf:TextField = null;
+			var pointsWarn_mc2:MovieClip = null;
 			if(!(root as MovieClip).isGameMasterChar)
 			{
-				val3 = this.pointsWarn[param1];
-				val4 = this.pointTexts[param1];
-				if(val3 && val4)
+				pointsWarn_mc = this.pointsWarn[index];
+				pointsWarn_tf = this.pointTexts[index];
+				if(pointsWarn_mc && pointsWarn_tf)
 				{
-					val4.htmlText = param2 + "";
-					textHelpers.smallCaps(val4);
-					val4.x = this.pointsFrame_mc.label_txt.x + this.pointsFrame_mc.label_txt.textWidth + 8;
-					this.pointsFrame_mc.x = this.PointsFrameW - Math.round((val4.x + val4.textWidth) * 0.5);
-					val3.visible = param2 != 0;
-					val3.avPoints = param2;
-					if(val3.visible)
+					pointsWarn_tf.htmlText = pointsValue + "";
+					textHelpers.smallCaps(pointsWarn_tf);
+					pointsWarn_tf.x = this.pointsFrame_mc.label_txt.x + this.pointsFrame_mc.label_txt.textWidth + 8;
+					this.pointsFrame_mc.x = this.PointsFrameW - Math.round((pointsWarn_tf.x + pointsWarn_tf.textWidth) * 0.5);
+					pointsWarn_mc.visible = pointsValue != 0;
+					pointsWarn_mc.avPoints = pointsValue;
+					if(pointsWarn_mc.visible)
 					{
-						val3.play();
+						pointsWarn_mc.play();
 					}
 					else
 					{
-						val3.stop();
+						pointsWarn_mc.stop();
 					}
-					if(this.currentOpenPanel == param1)
+					if(this.currentOpenPanel == index)
 					{
 						this.INTSetAvailablePointsVisible();
 					}
@@ -537,11 +540,11 @@ package characterSheet_fla
 			}
 			else
 			{
-				val5 = this.pointsWarn[param1];
-				if(val5)
+				pointsWarn_mc2 = this.pointsWarn[index];
+				if(pointsWarn_mc2)
 				{
-					val5.stop();
-					val5.visible = false;
+					pointsWarn_mc2.stop();
+					pointsWarn_mc2.visible = false;
 				}
 			}
 		}
@@ -559,57 +562,57 @@ package characterSheet_fla
 			this.tabTitle_txt.visible = !this.pointsFrame_mc.visible;
 		}
 		
-		public function setAvailableStatPoints(param1:Number) : *
+		public function setAvailableStatPoints(points:Number) : *
 		{
-			this.INTSetWarnAndPoints(0,param1);
+			this.INTSetWarnAndPoints(0,points);
 		}
 		
-		public function setAvailableCombatAbilityPoints(param1:Number) : *
+		public function setAvailableCombatAbilityPoints(points:Number) : *
 		{
-			this.INTSetWarnAndPoints(1,param1);
+			this.INTSetWarnAndPoints(1,points);
 		}
 		
-		public function setAvailableCivilAbilityPoints(param1:Number) : *
+		public function setAvailableCivilAbilityPoints(points:Number) : *
 		{
-			this.INTSetWarnAndPoints(2,param1);
+			this.INTSetWarnAndPoints(2,points);
 		}
 		
-		public function setAvailableTalentPoints(param1:Number) : *
+		public function setAvailableTalentPoints(points:Number) : *
 		{
-			this.INTSetWarnAndPoints(3,param1);
+			this.INTSetWarnAndPoints(3,points);
 		}
 		
-		public function setVisibilityStatButtons(param1:Boolean) : *
+		public function setVisibilityStatButtons(isVisible:Boolean) : *
 		{
-			var val3:MovieClip = null;
-			var val2:uint = 0;
-			while(val2 < this.primaryStatList.length)
+			var stat_mc:MovieClip = null;
+			var i:uint = 0;
+			while(i < this.primaryStatList.length)
 			{
-				val3 = this.primaryStatList.content_array[val2];
-				if(val3)
+				stat_mc = this.primaryStatList.content_array[i];
+				if(stat_mc)
 				{
-					val3.plus_mc.visible = param1;
-					val3.minus_mc.visible = param1;
+					stat_mc.plus_mc.visible = isVisible;
+					stat_mc.minus_mc.visible = isVisible;
 				}
-				val2++;
+				i++;
 			}
 		}
 		
-		public function setStatPlusVisible(param1:Number, param2:Boolean) : *
+		public function setStatPlusVisible(id:Number, isVisible:Boolean) : *
 		{
-			var val3:MovieClip = this.getStat(param1);
-			if(val3)
+			var stat_mc:MovieClip = this.getStat(id);
+			if(stat_mc)
 			{
-				val3.plus_mc.visible = param2;
+				stat_mc.plus_mc.visible = isVisible;
 			}
 		}
 		
-		public function setStatMinusVisible(param1:Number, param2:Boolean) : *
+		public function setStatMinusVisible(id:Number, isVisible:Boolean) : *
 		{
-			var val3:MovieClip = this.getStat(param1);
-			if(val3)
+			var stat_mc:MovieClip = this.getStat(id);
+			if(stat_mc)
 			{
-				val3.minus_mc.visible = param2;
+				stat_mc.minus_mc.visible = isVisible;
 			}
 		}
 		
@@ -938,103 +941,130 @@ package characterSheet_fla
 			this.primaryStatList.addElement(val5);
 		}
 		
-		public function addSecondaryStat(param1:Number, param2:String, param3:String, param4:Number, param5:Number, param6:Number) : *
+		public function addSecondaryStat(statId:Number, labelText:String, valueText:String, tooltipId:Number, iconFrame:Number, boostValue:Number) : *
 		{
-			var val11:larTween = null;
-			var val7:Number = 28;
-			var val8:Number = this.statsElWidth;
-			var val9:MovieClip = null;
-			if(param1 == 0)
+			var tween:larTween = null;
+			var xOffset:Number = 28;
+			var xOffset2:Number = this.statsElWidth;
+			var stat_mc:MovieClip = null;
+			if(statId == 0)
 			{
-				val8 = this.statsElWidth;
-				val9 = new InfoStat();
+				xOffset2 = this.statsElWidth;
+				stat_mc = new InfoStat();
 			}
 			else
 			{
-				val9 = new SecStat();
-				if(param1 != 2)
+				stat_mc = new SecStat();
+				if(statId != 2)
 				{
-					val9.heightOverride = 26;
+					stat_mc.heightOverride = 26;
 				}
 			}
-			val9.boostValue = param6;
-			val9.hl_mc.alpha = 0;
-			val9.texts_mc.label_txt.autoSize = TextFieldAutoSize.LEFT;
-			val9.texts_mc.label_txt.htmlText = param2;
-			val9.icon_mc.visible = Boolean(param5 != 0);
-			if(val9.minus_mc != null)
+			stat_mc.boostValue = boostValue;
+			stat_mc.hl_mc.alpha = 0;
+			stat_mc.texts_mc.label_txt.autoSize = TextFieldAutoSize.LEFT;
+			stat_mc.texts_mc.label_txt.htmlText = labelText;
+			stat_mc.icon_mc.visible = Boolean(iconFrame != 0);
+			if(stat_mc.minus_mc != null)
 			{
-				val9.minus_mc.visible = false;
+				stat_mc.minus_mc.visible = false;
 			}
-			if(val9.plus_mc != null)
+			if(stat_mc.plus_mc != null)
 			{
-				val9.plus_mc.visible = false;
+				stat_mc.plus_mc.visible = false;
 			}
-			if(val9.editText_txt != null)
+			if(stat_mc.editText_txt != null)
 			{
-				val9.editText_txt.visible = false;
+				stat_mc.editText_txt.visible = false;
 			}
-			val9.texts_mc.text_txt.autoSize = TextFieldAutoSize.RIGHT;
-			if(param1 == 0)
+			stat_mc.texts_mc.text_txt.autoSize = TextFieldAutoSize.RIGHT;
+			if(statId == 0)
 			{
-				val9.icon_mc.x = 3;
-				val7 = 48;
+				stat_mc.icon_mc.x = 3;
+				xOffset = 48;
 			}
-			else if(param1 == 2)
+			else if(statId == 2)
 			{
-				val9.icon_mc.x = 5;
-				val9.icon_mc.y = 5;
-				val9.icon_mc.x = -23;
-				val8 = val8 + 28;
+				stat_mc.icon_mc.x = 5;
+				stat_mc.icon_mc.y = 5;
+				stat_mc.icon_mc.x = -23;
+				xOffset2 = xOffset2 + 28;
 			}
-			else if(param5 != 0)
+			else if(iconFrame != 0)
 			{
-				val9.icon_mc.x = -23;
-				val8 = val8 + 28;
+				stat_mc.icon_mc.x = -23;
+				xOffset2 = xOffset2 + 28;
 			}
-			val9.tooltipAlign = "right";
-			val9.hl_mc.width = val8 + 8;
-			val9.widthOverride = val9.hl_mc.width;
-			val9.texts_mc.text_txt.htmlText = param3;
-			val9.texts_mc.text_txt.width = val9.texts_mc.text_txt.width + 8;
-			val9.texts_mc.mouseEnabled = false;
-			val9.icon_mc.mouseEnabled = false;
-			val9.texts_mc.text_txt.mouseEnabled = false;
-			val9.texts_mc.label_txt.mouseEnabled = false;
-			val9.texts_mc.statBasePoints = Number(param3);
-			val9.texts_mc.statPoints = 0;
-			val9.tooltip = param4;
-			val9.statId = param4;
-			val9.hl_mc.height = Math.round(val9.texts_mc.height - 4);
-			var val10:Number = val8;
-			if(param5 != 0)
+			stat_mc.tooltipAlign = "right";
+			stat_mc.hl_mc.width = xOffset2 + 8;
+			stat_mc.widthOverride = stat_mc.hl_mc.width;
+			stat_mc.texts_mc.text_txt.htmlText = valueText;
+			stat_mc.texts_mc.text_txt.width = stat_mc.texts_mc.text_txt.width + 8;
+			stat_mc.texts_mc.mouseEnabled = false;
+			stat_mc.icon_mc.mouseEnabled = false;
+			stat_mc.texts_mc.text_txt.mouseEnabled = false;
+			stat_mc.texts_mc.label_txt.mouseEnabled = false;
+			stat_mc.texts_mc.statBasePoints = Number(valueText);
+			stat_mc.texts_mc.statPoints = 0;
+			stat_mc.tooltip = tooltipId;
+			stat_mc.statId = tooltipId;
+			stat_mc.hl_mc.height = Math.round(stat_mc.texts_mc.height - 4);
+			var widthOffsetCheck:Number = xOffset2;
+			if(iconFrame != 0)
 			{
-				val10 = val8 - val7;
+				widthOffsetCheck = xOffset2 - xOffset;
 			}
-			if(val9.texts_mc.text_txt.width > val10 - val9.texts_mc.label_txt.width)
+			if(stat_mc.texts_mc.text_txt.width > widthOffsetCheck - stat_mc.texts_mc.label_txt.width)
 			{
-				val9.texts_mc.text_txt.scaleX = 0.82;
-				val9.texts_mc.text_txt.scaleY = 0.82;
-				val9.texts_mc.text_txt.y = val9.texts_mc.text_txt.y + 2;
+				stat_mc.texts_mc.text_txt.scaleX = 0.82;
+				stat_mc.texts_mc.text_txt.scaleY = 0.82;
+				stat_mc.texts_mc.text_txt.y = stat_mc.texts_mc.text_txt.y + 2;
 			}
-			this.addToListWithId(param1,val9);
-			if(param5 != 0)
+			this.addToListWithId(statId,stat_mc);
+			if(iconFrame != 0)
 			{
-				val9.icon_mc.gotoAndStop(param5);
-				val9.texts_mc.x = val9.icon_mc.x + val7 - 3;
-				if((root as MovieClip).initDone)
+				var targetIcon:MovieClip = stat_mc.icon_mc;
+				if (iconFrame < stat_mc.icon_mc.totalFrames)
 				{
-					val9.icon_mc.alpha = 1;
+					if(stat_mc.customIcon_mc != undefined)
+					{
+						stat_mc.customIcon_mc.visible = false;
+					}
+					stat_mc.icon_mc.visible = true;
+					stat_mc.icon_mc.gotoAndStop(iconFrame);
 				}
 				else
 				{
-					val11 = new larTween(val9.icon_mc,"alpha",Sine.easeOut,val9.icon_mc.alpha,1,0.1);
+					stat_mc.icon_mc.visible = false;
+					if(stat_mc.customIcon_mc == undefined)
+					{
+						stat_mc.customIcon_mc = new IggyIcon();
+						stat_mc.customIcon_mc.mouseEnabled = false;
+						stat_mc.addChild(stat_mc.customIcon_mc);
+						stat_mc.customIcon_mc.scale = 0.4375; // 28/64
+						//stat_mc.customIcon_mc.width = 28;
+						//stat_mc.customIcon_mc.height = 28;
+					}
+					targetIcon = stat_mc.customIcon_mc;
+					stat_mc.customIcon_mc.x = stat_mc.icon_mc.x + customStatIconOffsetX;
+					stat_mc.customIcon_mc.y = stat_mc.icon_mc.y + customStatIconOffsetY;
+					stat_mc.customIcon_mc.name = "iggy_LL_characterSheetIcon_" + iconFrame;
+					stat_mc.customIcon_mc.visible = true;
 				}
-				val9.texts_mc.text_txt.x = val8 - val7 - val9.texts_mc.text_txt.width;
+				stat_mc.texts_mc.x = targetIcon.x + xOffset - 3;
+				if((root as MovieClip).initDone)
+				{
+					targetIcon.alpha = 1;
+				}
+				else
+				{
+					tween = new larTween(targetIcon,"alpha",Sine.easeOut,targetIcon.alpha,1,0.1);
+				}
+				stat_mc.texts_mc.text_txt.x = xOffset2 - xOffset - stat_mc.texts_mc.text_txt.width;
 			}
 			else
 			{
-				val9.texts_mc.text_txt.x = val8 - val9.texts_mc.text_txt.width;
+				stat_mc.texts_mc.text_txt.x = xOffset2 - stat_mc.texts_mc.text_txt.width;
 			}
 		}
 		

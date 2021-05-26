@@ -841,37 +841,37 @@ package characterSheet_fla
 			ability_mc.texts_mc.text_txt.y = Math.round((ability_mc.hl_mc.height - ability_mc.texts_mc.text_txt.textHeight) * 0.5);
 		}
 		
-		public function recountAbilityPoints(param1:Boolean) : *
+		public function recountAbilityPoints(isCivil:Boolean) : *
 		{
-			var val3:uint = 0;
-			var val4:MovieClip = null;
-			var val5:listDisplay = null;
-			var val6:Number = NaN;
-			var val7:uint = 0;
-			var val2:MovieClip = this.combatAbilityHolder_mc;
-			if(param1)
+			var i:uint = 0;
+			var group_mc:MovieClip = null;
+			var group_list:listDisplay = null;
+			var amount:Number = NaN;
+			var group_index:uint = 0;
+			var holder:MovieClip = this.combatAbilityHolder_mc;
+			if(isCivil)
 			{
-				val2 = this.civicAbilityHolder_mc;
+				holder = this.civicAbilityHolder_mc;
 			}
-			if(val2.list.length > 0)
+			if(holder.list.length > 0)
 			{
-				val3 = 0;
-				while(val3 < val2.list.length)
+				i = 0;
+				while(i < holder.list.length)
 				{
-					val4 = val2.list.content_array[val3];
-					if(val4 && val4.list)
+					group_mc = holder.list.content_array[i];
+					if(group_mc && group_mc.list)
 					{
-						val5 = val4.list;
-						val6 = 0;
-						val7 = 0;
-						while(val7 < val5.length)
+						group_list = group_mc.list;
+						amount = 0;
+						group_index = 0;
+						while(group_index < group_list.length)
 						{
-							val6 = val6 + val5.content_array[val7].am;
-							val7++;
+							amount = amount + group_list.content_array[group_index].am;
+							group_index++;
 						}
 					}
-					val4.amount_txt.htmlText = val6;
-					val3++;
+					group_mc.amount_txt.htmlText = amount;
+					i++;
 				}
 			}
 		}

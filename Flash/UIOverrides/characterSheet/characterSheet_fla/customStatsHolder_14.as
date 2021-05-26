@@ -102,6 +102,7 @@ package characterSheet_fla
 				this.list.addGroup(0,"Miscellaneous",true);
 			}
 			this.stats_array = new Array();
+			ExternalInterface.call("createCustomStatGroups");
 		}
 		
 		public function setGameMasterMode(isGM:Boolean) : *

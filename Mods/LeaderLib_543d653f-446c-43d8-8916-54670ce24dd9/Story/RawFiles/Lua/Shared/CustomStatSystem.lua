@@ -5,24 +5,36 @@ end
 ---@class CustomStatTooltipType
 CustomStatSystem.TooltipType = {
 	Default = "Stat",
-	Ability = "Ability",
+	Ability = "Ability", -- Icon
 	Stat = "Stat",
+	Tag = "Tag", -- Icon
 }
 
 
----@class CustomStatData:table
+---@class CustomStatCategoryData:CustomStatDataBase
 ---@field ID string
+---@field Mod string The mod UUID that added this stat, if any. Auto-set.
+---@field DisplayName string
+---@field Description string
+---@field Icon string|nil
+---@field ShowAlways boolean|nil Whether to always show this category or not. If false, it will only show when a child stat is active.
+---@field TooltipType CustomStatTooltipType|nil
+
+---@class CustomStatData:CustomStatDataBase
+---@field ID string
+---@field Mod string The mod UUID that added this stat, if any. Auto-set.
 ---@field DisplayName string
 ---@field Description string
 ---@field Icon string|nil
 ---@field Create boolean|nil Whether the server should create this stat automatically.
 ---@field TooltipType CustomStatTooltipType|nil
----@field Mod string The mod UUID that added this stat, if any. Auto-set.
 ---@field Double number The stat's double (handle) value. Determined dynamically.
 
 ---@alias MOD_UUID string
 ---@alias STAT_ID string
 
+---@type table<MOD_UUID, table<STAT_ID, CustomStatCategoryData>>
+CustomStatSystem.Categories = {}
 ---@type table<MOD_UUID, table<STAT_ID, CustomStatData>>
 CustomStatSystem.Stats = {}
 
@@ -30,7 +42,9 @@ CustomStatSystem.Stats = {}
 local loader = Ext.Require("Shared/Settings/CustomStatsConfigLoader.lua")
 
 local function LoadCustomStatsData()
-	CustomStatSystem.Stats = loader() or {}
+	local categories,stats = loader()
+	TableHelpers.AddOrUpdate(CustomStatSystem.Categories, categories)
+	TableHelpers.AddOrUpdate(CustomStatSystem.Stats, stats)
 	print(Ext.IsServer() and "SERVER" or "CLIENT", Ext.JsonStringify(CustomStatSystem.Stats))
 
 	if Ext.IsServer() then
@@ -52,6 +66,12 @@ local function LoadCustomStatsData()
 					end
 				end
 			end
+		end
+	else
+		local categoryId = 1 -- 0 is Misc
+		for category in CustomStatSystem.GetAlLCategories() do
+			category.GroupId = categoryId
+			categoryId = categoryId + 1
 		end
 	end
 end
@@ -103,6 +123,59 @@ function CustomStatSystem.GetStatByUUID(uuid)
 		end
 	end
 	return nil
+end
+
+---@param id string
+---@param mod string
+---@return CustomStatCategoryData
+function CustomStatSystem.GetCategoryById(id, mod)
+	if mod then
+		local categories = CustomStatSystem.Categories[mod]
+		if categories and categories[id] then
+			return categories[id]
+		end
+	else
+		for uuid,categories in pairs(CustomStatSystem.Categories) do
+			if categories[id] then
+				return categories[id]
+			end
+		end
+	end
+	return nil
+end
+
+---Get an iterator of sorted categories.
+---@param skipSort boolean|nil
+---@return CustomStatCategoryData
+function CustomStatSystem.GetAlLCategories(skipSort)
+	local this = self:Get()
+	local allCategories = {}
+
+	--To avoid duplicate categories by the same id, we set a dictionary first
+	for uuid,categories in pairs(CustomStatSystem.Categories) do
+		for id,category in pairs(categories) do
+			allCategories[id] = category
+		end
+	end
+
+	local categories = {}
+	for k,v in pairs(allCategories) do
+		categories[#categories+1] = v
+	end
+	if skipSort ~= true then
+		table.sort(categories, function(a,b)
+			return a:GetDisplayName() < b:GetDisplayName()
+		end)
+	end
+
+	local i = 0
+	local count = #categories
+	return function ()
+		i = i + 1
+		if i <= count then
+			return categories[i-1]
+		end
+	end
 end
 
 if Ext.IsServer() then
@@ -200,11 +273,7 @@ else
 				if stat then
 					stat.Double = mc.statId
 
-					if string.find(stat.DisplayName, "_", 1, true) then
-						mc.label_txt.htmlText = GameHelpers.Tooltip.ReplacePlaceholders(GameHelpers.GetStringKeyText(stat.DisplayName))
-					else
-						mc.label_txt.htmlText = GameHelpers.Tooltip.ReplacePlaceholders(stat.DisplayName)
-					end
+					mc.label_txt.htmlText = stat:GetDisplayName()
 
 					print(stat, stat.UUID, stat.DisplayName, mc.label_txt.htmlText)
 				end
@@ -214,7 +283,7 @@ else
 
 	local function OnSheetUpdating(ui, method)
 		local this = ui:GetRoot()
-		ui:Invoke("setGameMasterMode", true, true, true)
+
 		local length = #this.customStats_array
 		if length == 0 then
 			return
@@ -232,11 +301,7 @@ else
 				local stat = CustomStatSystem.GetStatByName(displayName)
 				if stat then
 					stat.Double = doubleHandle
-					if string.find(stat.DisplayName, "_", 1, true) then
-						this.customStats_array[i+1] = GameHelpers.Tooltip.ReplacePlaceholders(GameHelpers.GetStringKeyText(stat.DisplayName))
-					else
-						this.customStats_array[i+1] = GameHelpers.Tooltip.ReplacePlaceholders(stat.DisplayName)
-					end
+					this.customStats_array[i+1] = stat:GetDisplayName()
 					group = stat.Group or 0
 				end
 				sortList[#sortList+1] = {DisplayName=this.customStats_array[i+1], Handle=doubleHandle, Value=value, Group=group}
@@ -261,6 +326,16 @@ else
 		--this.addAbilityGroup(false, 0, "Test Group")
 	end
 
+	function CustomStatSystem.SetupGroups(ui, call)
+		local this = ui:GetRoot().stats_mc.customStats_mc
+		for category in CustomStatSystem.GetAlLCategories() do
+			this.addGroup(category.GroupId, category:GetDisplayName(), false)
+			if category.Description then
+				this.setGroupTooltip(category.GroupId, category:GetDescription())
+			end
+		end
+	end
+
 	--print(Ext.GetUIByType(119):GetRoot().stats_mc.customStats_mc.clearElements)
 	--local array = Ext.GetUIByType(119):GetRoot().stats_mc.customStats_mc.list.content_array; print(#array)
 
@@ -275,6 +350,7 @@ else
 	-- 	end
 	-- end, "Before")
 	Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem", OnSheetUpdating)
+	Ext.RegisterUITypeCall(Data.UIType.characterSheet, "createCustomStatGroups", CustomStatSystem.SetupGroups)
 	--Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setPlayerInfo", AdjustCustomStatMovieClips)
 
 	--ExternalInterface.call(param2,param1.statId,val3.x + val5,val3.y + val4,val6,param1.height,param1.tooltipAlign);
@@ -301,16 +377,8 @@ else
 					---@type CustomStatData
 					local stat = CustomStatSystem.GetStatByDouble(statId)
 					if stat then
-						local displayName,description = stat.DisplayName,stat.Description
-						if string.find(displayName, "_", 1, true) then
-							displayName = GameHelpers.Tooltip.ReplacePlaceholders(GameHelpers.GetStringKeyText(displayName))
-						end
-						if string.find(description, "_", 1, true) then
-							description = GameHelpers.Tooltip.ReplacePlaceholders(GameHelpers.GetStringKeyText(description))
-						end
-
+						local displayName,description = stat:GetDisplayName(),stat:GetDescription()
 						stat.IconId = CustomStatSystem.GetNextCustomStatIconId()
-
 						CustomStatSystem.CreateCustomStatTooltip(displayName, description, width, height, stat.TooltipType, stat.Icon, stat.IconId)
 						return
 					end
@@ -481,11 +549,11 @@ else
 			if data then
 				local statDouble = data.Stat
 				if string.find(data.DisplayName, "_", 1, true) then
-					data.DisplayName = GameHelpers.Tooltip.ReplacePlaceholders(GameHelpers.GetStringKeyText(data.DisplayName, data.DisplayName))
+					data.DisplayName = GameHelpers.Tooltip.ReplacePlaceholders(GameHelpers.GetStringKeyText(data.DisplayName))
 					print(data.DisplayName)
 				end
 				if string.find(data.Description, "_", 1, true) then
-					data.Description = GameHelpers.Tooltip.ReplacePlaceholders(GameHelpers.GetStringKeyText(data.Description, data.Description))
+					data.Description = GameHelpers.Tooltip.ReplacePlaceholders(GameHelpers.GetStringKeyText(data.Description))
 				end
 
 				if data.Icon then

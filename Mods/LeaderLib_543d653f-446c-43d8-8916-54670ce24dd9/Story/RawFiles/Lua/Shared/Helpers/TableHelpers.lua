@@ -49,3 +49,17 @@ function TableHelpers.SanitizeTable(tbl)
 	end
 	return output
 end
+
+function TableHelpers.AddOrUpdate(target, addFrom)
+	for k,v in pairs(addFrom) do
+		if not target[k] then
+			target[k] = v
+		else
+			if type(v) == "table" then
+				TableHelpers.AddOrUpdate(target[k], v)
+			else
+				target[k] = v
+			end
+		end
+	end
+end

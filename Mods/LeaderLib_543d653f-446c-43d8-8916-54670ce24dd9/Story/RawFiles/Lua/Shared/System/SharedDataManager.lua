@@ -192,11 +192,23 @@ if Ext.IsServer() then
 			local character = Ext.GetCharacter(uuid)
 			if character then
 				local isHost = CharacterGetReservedUserID(CharacterGetHostCharacter()) == id
+				---@type ClientCharacterData
+				local params = {
+					UUID = character.MyGuid,
+					NetID = character.NetID,
+					IsHost = isHost,
+					IsInCharacterCreation = isInCharacterCreation,
+					IsPossessed = character.IsPossessed,
+					IsGameMaster = character.IsGameMaster,
+					IsPlayer = character.IsPlayer,
+					Profile = profileId,
+					ID = id
+				}
 				if SharedData.CharacterData[profileId] == nil then
-					SharedData.CharacterData[profileId] = ClientCharacterData:Create(character.MyGuid, id, profileId, character.NetID, isHost, isInCharacterCreation)
+					--Create(character.MyGuid, id, profileId, character.NetID, isHost, isInCharacterCreation)
+					SharedData.CharacterData[profileId] = ClientCharacterData:Create(params)
 				else
-					local data = SharedData.CharacterData[profileId]
-					data:SetClientCharacterData(uuid, id, profileId, character.NetID, isHost, isInCharacterCreation)
+					SharedData.CharacterData[profileId]:Update(params)
 				end
 				GameHelpers.Data.StartSyncTimer()
 				return true
@@ -341,7 +353,16 @@ if Ext.IsClient() then
 		if netid then
 			local character = Ext.GetCharacter(netid)
 			if character then
-				SharedData.CharacterData[profile] = Classes.ClientCharacterData:Create(nil, nil, profile, netid)
+				SharedData.CharacterData[profile] = Classes.ClientCharacterData:Create({
+					UUID = character.MyGuid,
+					NetID = character.NetID,
+					IsHost = false,
+					IsInCharacterCreation = SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION,
+					IsPossessed = false,
+					IsGameMaster = false,
+					IsPlayer = true,
+					Profile = profile,
+				})
 				return SharedData.CharacterData[profile]
 			end
 		end

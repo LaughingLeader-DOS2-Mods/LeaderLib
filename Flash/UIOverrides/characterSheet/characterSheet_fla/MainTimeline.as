@@ -543,14 +543,21 @@ package characterSheet_fla
 			{
 				this.addVisualOption(this.visualValues_array[i++],this.visualValues_array[i++],this.visualValues_array[i++]);
 			}
-			this.stats_mc.customStats_mc.resetGroups();
+
+			var updateCustom:Boolean = false;
 			i = 0;
 			while(i < this.customStats_array.length)
 			{
+				updateCustom = true;
 				this.stats_mc.customStats_mc.addCustomStat(this.customStats_array[i],this.customStats_array[i + 1],this.customStats_array[i + 2],this.customStats_array[i + 3]);
 				i = i + 4;
 			}
-			this.stats_mc.customStats_mc.positionElements();
+
+			if(updateCustom) {
+				this.stats_mc.customStats_mc.recountAllPoints();
+				this.stats_mc.customStats_mc.positionElements();
+			}
+
 			i = 0;
 			while(i < this.lvlBtnStat_array.length)
 			{
@@ -722,6 +729,7 @@ package characterSheet_fla
 		public function clearStats() : *
 		{
 			this.stats_mc.clearStats();
+			//this.stats_mc.customStats_mc.resetGroups();
 		}
 		
 		public function clearTags() : *

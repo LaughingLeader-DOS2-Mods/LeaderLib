@@ -94,16 +94,18 @@ package characterSheet_fla
 			this.resetGroups();
 		}
 
-		public function resetGroups() : *
+		public function resetGroups(addDefault:Boolean = true) : *
 		{
 			if(this.list != null)
 			{
 				this.list.clearGroupElements();
 				this.list.clearElements();
-				this.list.addGroup(0,"Miscellaneous",true);
+				if(addDefault) {
+					this.list.addGroup(0,"Miscellaneous",false);
+				}
 			}
 			this.stats_array = new Array();
-			ExternalInterface.call("createCustomStatGroups");
+			//ExternalInterface.call("createCustomStatGroups");
 		}
 		
 		public function setGameMasterMode(isGM:Boolean) : *
@@ -115,6 +117,7 @@ package characterSheet_fla
 		public function addGroup(groupId:Number, labelText:String, reposition:Boolean=false) : *
 		{
 			this.list.addGroup(groupId,labelText,reposition);
+			ExternalInterface.call("customStatsGroupAdded", groupId);
 		}
 
 		public function setGroupTooltip(groupId:Number, text:String) : *
@@ -123,6 +126,33 @@ package characterSheet_fla
 			if (group_mc != null)
 			{
 				group_mc.tooltip = text;
+			}
+		}
+
+		public function recountAllPoints() : *
+		{
+			if(this.list.length > 0)
+			{
+				var i:uint = 0;
+				var j:uint = 0;
+				var group_mc:MovieClip = null;
+				var amount:Number = NaN;
+				while(i < this.list.length)
+				{
+					group_mc = this.list.content_array[i];
+					if(group_mc && group_mc.list)
+					{
+						amount = 0;
+						j = 0;
+						while(j < group_mc.list.length)
+						{
+							amount = amount + group_mc.list.content_array[j].am;
+							j++;
+						}
+					}
+					group_mc.amount_txt.htmlText = amount;
+					i++;
+				}
 			}
 		}
 

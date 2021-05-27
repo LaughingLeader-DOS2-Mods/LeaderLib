@@ -1139,18 +1139,18 @@ package characterSheet_fla
 		
 		public function addVisual(titleText:String, contentID:Number) : *
 		{
-			var val3:MovieClip = this.getVisual(contentID);
-			if(!val3)
+			var visual_mc:MovieClip = this.getVisual(contentID);
+			if(!visual_mc)
 			{
-				val3 = new Visual();
-				val3.title_txt.autoSize = "center";
-				val3.contentID = contentID;
-				val3.id = this.visualHolder_mc.list.length;
-				this.visualHolder_mc.list.addElement(val3);
+				visual_mc = new Visual();
+				visual_mc.title_txt.autoSize = "center";
+				visual_mc.contentID = contentID;
+				visual_mc.id = this.visualHolder_mc.list.length;
+				this.visualHolder_mc.list.addElement(visual_mc);
 				this.root_mc = root as MovieClip;
-				val3.onInit(this.root_mc);
+				visual_mc.onInit(this.root_mc);
 			}
-			val3.title_txt.htmlText = titleText;
+			visual_mc.title_txt.htmlText = titleText;
 		}
 		
 		public function clearVisualOptions() : *
@@ -1168,23 +1168,23 @@ package characterSheet_fla
 		
 		public function addVisualOption(id:Number, optionId:Number, select:Boolean) : *
 		{
-			var val5:String = null;
-			var val4:MovieClip = this.getVisual(id);
-			if(val4)
+			var displayText:String = null;
+			var visual_mc:MovieClip = this.getVisual(id);
+			if(visual_mc)
 			{
-				val5 = val4.title_txt.text + " " + optionId;
-				val4.addOption(optionId,val5);
-				val4.setEnabled(true);
+				displayText = visual_mc.title_txt.text + " " + optionId;
+				visual_mc.addOption(optionId,displayText);
+				visual_mc.setEnabled(true);
 				if(select)
 				{
-					val4.selectOption(optionId);
+					visual_mc.selectOption(optionId);
 				}
 			}
 		}
 		
-		public function getVisual(param1:Number) : MovieClip
+		public function getVisual(contentID:Number) : MovieClip
 		{
-			return this.visualHolder_mc.list.getElementByNumber("contentID",param1);
+			return this.visualHolder_mc.list.getElementByNumber("contentID",contentID);
 		}
 		
 		public function clearCustomStatsOptions() : *

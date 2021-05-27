@@ -14,7 +14,7 @@ UIExtensions = {
 	Controls = {},
 	---@type table<string, FlashTimerCallback[]>
 	Timers = {},
-	Layer = 10,
+	Layer = 18,
 	SwfPath = "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/LeaderLib_UIExtensions.swf",
 	Initialized = false,
 	RegisteredListeners = false,
@@ -127,7 +127,7 @@ function UIExtensions.SetupInstance()
 		if not Vars.ControllerEnabled then
 			UIExtensions.Layer = 18 -- May eat inputs
 		else
-			UIExtensions.Layer = 10
+			UIExtensions.Layer = 9
 		end
 		UIExtensions.Instance = Ext.GetUI("LeaderLibUIExtensions")
 		if not UIExtensions.Instance then

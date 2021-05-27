@@ -68,7 +68,9 @@ local function OnSheetUpdating(ui, method)
 			this.customStats_array[arrayIndex+1] = v.DisplayName
 			this.customStats_array[arrayIndex+2] = v.Value
 			this.customStats_array[arrayIndex+3] = v.GroupId
-			arrayIndex = arrayIndex + 4
+			this.customStats_array[arrayIndex+4] = self:GetCanAddPoints(ui, method, v.Handle)
+			this.customStats_array[arrayIndex+5] = self:GetCanRemovePoints(ui, method, v.Handle)
+			arrayIndex = arrayIndex + 6
 		end
 	end
 end
@@ -111,6 +113,23 @@ Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "clearStats", funct
 Ext.RegisterUITypeCall(Data.UIType.characterSheet, "customStatsGroupAdded", function(...) CustomStatSystem:OnGroupAdded(...) end)
 --Ext.RegisterUITypeCall(Data.UIType.characterSheet, "createCustomStatGroups", CustomStatSystem.SetupGroups)
 --Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setPlayerInfo", AdjustCustomStatMovieClips)
+
+
+---@return FlashCustomStat
+function CustomStatSystem:GetStatMovieClipByDouble(ui, statId)
+	if ui:GetTypeId() == Data.UIType.characterSheet then
+		character = Ext.GetCharacter(ui:GetPlayerHandle())
+		local this = ui:GetRoot()
+		local stats = this.stats_mc.customStats_mc.stats_array
+		for i=0,#stats do
+			local mc = stats[i]
+			if mc and mc.statId == statId then
+				return mc
+			end
+		end
+	end
+	return nil
+end
 
 --ExternalInterface.call(param2,param1.statId,val3.x + val5,val3.y + val4,val6,param1.height,param1.tooltipAlign);
 function CustomStatSystem:OnRequestTooltip(ui, call, statId, x, y, width, height, alignment)

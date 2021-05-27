@@ -1,0 +1,325 @@
+---@class CharacterSheetMainTimeline
+---@field stats_mc stats_1
+---@field charHandle number
+---@field initDone boolean
+---@field events table
+---@field layout string
+---@field alignment string
+---@field curTooltip integer
+---@field hasTooltip boolean
+---@field availableStr string
+---@field uiLeft integer
+---@field uiRight integer
+---@field uiTop integer
+---@field uiMinHeight integer
+---@field uiMinWidth integer
+---@field charList_array table
+---@field invRows integer
+---@field invCols integer
+---@field invCellSize integer
+---@field invCellSpacing integer
+---@field skillList table
+---@field tabsTexts table
+---@field primStat_array table
+---@field secStat_array table
+---@field ability_array table
+---@field tags_array table
+---@field talent_array table
+---@field visual_array table
+---@field visualValues_array table
+---@field customStats_array table
+---@field lvlBtnAbility_array table
+---@field lvlBtnStat_array table
+---@field lvlBtnSecStat_array table
+---@field lvlBtnTalent_array table
+---@field allignmentArray table
+---@field aiArray table
+---@field inventoryUpdateList table
+---@field isGameMasterChar boolean
+---@field EQContainer FlashMovieClip
+---@field slotAmount number
+---@field cellSize number
+---@field slot_array table
+---@field itemsUpdateList table
+---@field renameBtnTooltip string
+---@field alignmentTooltip string
+---@field aiTooltip string
+---@field createNewStatBtnLabel string
+---@field isDragging boolean
+---@field draggingSkill boolean
+---@field tabState number
+---@field screenWidth number
+---@field screenHeight number
+---@field text_array table
+---@field strSelectTreasure string
+---@field strGenerate string
+---@field strClear string
+---@field strLevel string
+---@field listRarity table
+---@field listTreasures table
+---@field generateTreasureRarityId integer
+---@field generateTreasureId integer
+---@field generateTreasureLevel integer
+---@field onWheel fun():void
+---@field onEventResize fun():void
+---@field updateVisuals fun():void
+---@field updateSkills fun():void
+---@field GMShowTargetSkills fun():void
+---@field resetSkillDragging fun():void
+---@field updateInventory fun():void
+---@field updateAllignmentList fun():void
+---@field selectAllignment fun(id:integer):void
+---@field updateAIList fun():void
+---@field selectAI fun(id:integer):void
+---@field setGameMasterMode fun(isGameMasterMode:boolean, isGameMasterChar:boolean, isPossessed:boolean):void
+---@field onEventUp fun(index:number):void
+---@field onEventDown fun(index:number):void
+---@field onEventResolution fun(width:number, height:number):void
+---@field onEventInit fun():void
+---@field setPossessedState fun(param1:boolean):void
+---@field getGlobalPositionOfMC fun(mc:FlashMovieClip):Point
+---@field showTooltipForMC fun(mc:FlashMovieClip, externalCall:string):void
+---@field setActionsDisabled fun(disabled:boolean):void
+---@field updateItems fun():void
+---@field setHelmetOptionState fun(state:number):void
+---@field setHelmetOptionTooltip fun(text:string):void
+---@field setPlayerInfo fun(text:string):void
+---@field setAvailableLabels fun(text:string):void
+---@field pointsTextfieldChanged fun(tf:TextField):void
+---@field selectCharacter fun(id:number):void
+---@field setText fun(tabId:number, text:string):void
+---@field setTitle fun(text:string):void
+---@field addText fun(labelText:string, tooltipText:string, isSecondary:boolean):void
+---@field addPrimaryStat fun(statId:number, labelText:string, valueText:string, tooltipType:number):void
+---@field addSecondaryStat fun(statType:number, labelText:string, valueText:string, statId:number, frame:number, boostValue:number):void
+---@field clearSecondaryStats fun():void
+---@field addAbilityGroup fun(isCivil:boolean, groupId:number, labelText:string):void
+---@field addAbility fun(isCivil:boolean, groupId:number, statId:number, labelText:string, valueText:string, plusTooltip:string = "", minusTooltip:string = ""):void
+---@field addTalent fun(labelText:string, statId:number, talentState:number):void
+---@field addTag fun(tooltipText:string, labelText:string, descriptionText:string, statId:number):void
+---@field addVisual fun(titleText:string, contentID:number):void
+---@field addVisualOption fun(id:number, optionId:number, select:boolean):void
+---@field updateCharList fun():void
+---@field cycleCharList fun(previous:boolean):void
+---@field updateArraySystem fun():void
+---@field setStatPlusVisible fun(statId:number, isVisible:boolean):void
+---@field setStatMinusVisible fun(statId:number, isVisible:boolean):void
+---@field setupSecondaryStatsButtons fun(id:integer, showBoth:boolean, minusVisible:boolean, plusVisible:boolean, maxChars:number):void
+---@field setAbilityPlusVisible fun(isCivil:boolean, groupId:number, statId:number, isVisible:boolean):void
+---@field setAbilityMinusVisible fun(isCivil:boolean, groupId:number, statId:number, isVisible:boolean):void
+---@field setTalentPlusVisible fun(statId:number, isVisible:boolean):void
+---@field setTalentMinusVisible fun(statId:number, isVisible:boolean):void
+---@field addTitle fun(param1:string):void
+---@field hideLevelUpStatButtons fun():void
+---@field hideLevelUpAbilityButtons fun():void
+---@field hideLevelUpTalentButtons fun():void
+---@field clearStats fun():void
+---@field clearTags fun():void
+---@field clearTalents fun():void
+---@field clearAbilities fun():void
+---@field setPanelTitle fun(param1:number, param2:string):void
+---@field showAcceptStatsAcceptButton fun(param1:boolean):void
+---@field showAcceptAbilitiesAcceptButton fun(param1:boolean):void
+---@field showAcceptTalentAcceptButton fun(param1:boolean):void
+---@field setAvailableStatPoints fun(param1:number):void
+---@field setAvailableCombatAbilityPoints fun(param1:number):void
+---@field setAvailableCivilAbilityPoints fun(param1:number):void
+---@field setAvailableTalentPoints fun(param1:number):void
+---@field setAvailableCustomStatPoints fun(amount:number):void
+---@field addSpacing fun(param1:number, param2:number):void
+---@field addGoldWeight fun(param1:string, param2:string):void
+---@field startsWith fun(param1:string, param2:string):boolean
+---@field ShowItemUnEquipAnim fun(param1:integer, param2:integer):void
+---@field ShowItemEquipAnim fun(param1:integer, param2:integer):void
+---@field setupStrings fun():void
+---@field setupRarity fun():void
+---@field setupTreasures fun():void
+---@field onOpenDropList fun(mc:FlashMovieClip):void
+---@field closeDropLists fun():void
+---@field setGenerationRarity fun(id:integer):void
+---@field onSelectGenerationRarity fun(id:integer):void
+---@field onChangeGenerationLevel fun(level:number):void
+---@field onSelectTreasure fun(index:integer):void
+---@field onBtnGenerateStock fun():void
+---@field onBtnClearInventory fun():void
+
+---@class customStatsHolder_14
+---@field create_mc btnCreateCustomStat
+---@field listHolder_mc empty
+---@field list scrollListGrouped
+---@field stats_array FlashCustomStat[]
+---@field init fun():void
+---@field onCreateBtnClicked fun():void
+---@field positionElements fun():void
+---@field clearElements fun():void
+---@field resetGroups fun():void
+---@field setGameMasterMode fun(isGM:boolean):void
+---@field addGroup fun(groupId:number, labelText:string, reposition:boolean):void
+---@field setGroupTooltip fun(groupId:number, text:string):void
+---@field recountAllPoints fun():void
+---@field addCustomStat fun(doubleHandle:number, labelText:string, valueText:string, groupId:number):void
+
+---@class stats_1
+---@field aiSel_mc comboBox
+---@field alignments_mc comboBox
+---@field attrPointsWrn_mc FlashMovieClip
+---@field bg_mc FlashMovieClip
+---@field charInfo_mc FlashMovieClip
+---@field charList_mc empty
+---@field civicAbilityHolder_mc FlashMovieClip
+---@field civilAbilityPointsWrn_mc FlashMovieClip
+---@field close_mc FlashMovieClip
+---@field combatAbilityHolder_mc FlashMovieClip
+---@field combatAbilityPointsWrn_mc FlashMovieClip
+---@field customStats_mc customStatsHolder_14
+---@field dragHit_mc FlashMovieClip
+---@field equip_mc FlashMovieClip
+---@field equipment_txt TextField
+---@field hitArea_mc FlashMovieClip
+---@field invTabHolder_mc FlashMovieClip
+---@field leftCycleBtn_mc FlashMovieClip
+---@field mainStats_mc FlashMovieClip
+---@field onePlayerOverlay_mc FlashMovieClip
+---@field panelBg1_mc FlashMovieClip
+---@field panelBg2_mc FlashMovieClip
+---@field pointsFrame_mc FlashMovieClip
+---@field rightCycleBtn_mc FlashMovieClip
+---@field scrollbarHolder_mc empty
+---@field skillTabHolder_mc FlashMovieClip
+---@field tabTitle_txt TextField
+---@field tabsHolder_mc empty
+---@field tagsHolder_mc FlashMovieClip
+---@field talentHolder_mc FlashMovieClip
+---@field talentPointsWrn_mc FlashMovieClip
+---@field title_txt TextField
+---@field visualHolder_mc FlashMovieClip
+---@field myText string
+---@field closeCenterX number
+---@field closeSideX number
+---@field buttonY number
+---@field base FlashMovieClip
+---@field lvlUP boolean
+---@field cellSize number
+---@field statholderListPosY number
+---@field listOffsetY number
+---@field tabsList horizontalList
+---@field charList horizontalScrollList
+---@field primaryStatList listDisplay
+---@field secondaryStatList listDisplay
+---@field expStatList listDisplay
+---@field infoStatList listDisplay
+---@field resistanceStatList listDisplay
+---@field secELSpacing number
+---@field currentOpenPanel number
+---@field panelArray table
+---@field selectedTabY number
+---@field deselectedTabY number
+---@field selectedTabAlpha number
+---@field deselectedTabAlpha number
+---@field tabsArray table
+---@field pointsWarn table
+---@field pointTexts table
+---@field root_mc FlashMovieClip
+---@field gmSkillsString string
+---@field customStatIconOffsetX number
+---@field customStatIconOffsetY number
+---@field init fun():void
+---@field selectAI fun():void
+---@field selectAlignment fun():void
+---@field renameCallback fun():void
+---@field updateInventorySlots fun(arr:table):void
+---@field resetListPositions fun():void
+---@field buildTabs fun(tabState:number, initializeTabs:boolean):void
+---@field pushTabTooltip fun(tabId:number, text:string):void
+---@field initTabs fun(param1:boolean, param2:boolean):void
+---@field selectCharacter fun(id:number):void
+---@field addCharPortrait fun(id:number, iconId:string, order:integer):void
+---@field cleanupCharListObsoletes fun():void
+---@field removeChildrenOf fun(mc:FlashMovieClip):void
+---@field ClickTab fun(tabIndex:number):void
+---@field selectTab fun(param1:number):void
+---@field getTabById fun(tabId:number):FlashMovieClip
+---@field setPanelTitle fun(index:number, titleText:string):void
+---@field resetScrollBarsPositions fun():void
+---@field INTSetWarnAndPoints fun(index:number, pointsValue:number):void
+---@field INTSetAvailablePointsVisible fun():void
+---@field setAvailableStatPoints fun(points:number):void
+---@field setAvailableCombatAbilityPoints fun(points:number):void
+---@field setAvailableCivilAbilityPoints fun(points:number):void
+---@field setAvailableTalentPoints fun(points:number):void
+---@field setVisibilityStatButtons fun(isVisible:boolean):void
+---@field setStatPlusVisible fun(id:number, isVisible:boolean):void
+---@field setStatMinusVisible fun(id:number, isVisible:boolean):void
+---@field setupSecondaryStatsButtons fun(id:integer, showBoth:boolean, minusVisible:boolean, plusVisible:boolean, maxChars:number):void
+---@field getStat fun(param1:number):FlashMovieClip
+---@field getSecStat fun(param1:number):FlashMovieClip
+---@field getAbility fun(param1:boolean, param2:number, param3:number):FlashMovieClip
+---@field getTalent fun(param1:number):FlashMovieClip
+---@field getTag fun(param1:number):FlashMovieClip
+---@field setVisibilityAbilityButtons fun(param1:boolean, param2:boolean):void
+---@field setAbilityPlusVisible fun(param1:boolean, param2:number, param3:number, param4:boolean):void
+---@field setAbilityMinusVisible fun(param1:boolean, param2:number, param3:number, param4:boolean):void
+---@field setVisibilityTalentButtons fun(param1:boolean):void
+---@field setTalentPlusVisible fun(param1:number, param2:boolean):void
+---@field setTalentMinusVisible fun(param1:number, param2:boolean):void
+---@field addText fun(param1:string, param2:string, param3:boolean):void
+---@field addSpacing fun(param1:number, param2:number):void
+---@field addAbilityGroup fun(isCivil:boolean, groupId:number, labelText:string):void
+---@field addAbility fun(isCivil:boolean, groupId:number, statId:number, labelText:string, valueText:string, plusTooltip:string, minusTooltip:string):void
+---@field recountAbilityPoints fun(isCivil:boolean):void
+---@field addTalent fun(labelText:string, statId:number, talentState:number):void
+---@field getTalentStateFrame fun(param1:number):number
+---@field addPrimaryStat fun(param1:number, param2:string, param3:string, param4:number):void
+---@field addSecondaryStat fun(statId:number, labelText:string, valueText:string, tooltipId:number, iconFrame:number, boostValue:number):void
+---@field addTag fun(labelText:string, statId:number, tooltipText:string, descriptionText:string):void
+---@field addToListWithId fun(param1:number, param2:FlashMovieClip):void
+---@field clearSecondaryStats fun():void
+---@field addTitle fun(param1:string):void
+---@field clearStats fun():void
+---@field clearAbilities fun():void
+---@field addVisual fun(titleText:string, contentID:number):void
+---@field clearVisualOptions fun():void
+---@field addVisualOption fun(id:number, optionId:number, select:boolean):void
+---@field getVisual fun(contentID:number):FlashMovieClip
+---@field clearCustomStatsOptions fun():void
+---@field addCustomStat fun(doubleHandle:number, labelText:string, valueText:string):void
+---@field justEatClick fun(param1:MouseEvent):void
+---@field onBGOut fun(param1:MouseEvent):void
+---@field closeUIOnClick fun(param1:MouseEvent):void
+---@field closeUI fun():void
+---@field addIcon fun(param1:FlashMovieClip, param2:string, param3:number):void
+---@field updateAIs fun(param1:table):void
+---@field updateAllignments fun(param1:table):void
+---@field recheckScrollbarVisibility fun():void
+
+---@class FlashCharacterSheetStatCategory
+---@field amount_txt TextField
+---@field bg_mc FlashMovieClip
+---@field listContainer_mc empty
+---@field title_txt TextField
+---@field isOpen boolean
+---@field texty number
+---@field groupName string
+---@field onMouseOver fun(e:MouseEvent):void
+---@field onMouseOut fun(e:MouseEvent):void
+---@field onDown fun(e:MouseEvent):void
+---@field onUp fun(e:MouseEvent):void
+
+---@class FlashCustomStat
+---@field delete_mc btnDeleteCustomStat
+---@field edit_mc btnEditCustomStat
+---@field hl_mc FlashMovieClip
+---@field label_txt TextField
+---@field line_mc FlashMovieClip
+---@field minus_mc FlashMovieClip
+---@field plus_mc FlashMovieClip
+---@field text_txt TextField
+---@field timeline larTween
+---@field base FlashMovieClip
+---@field tooltip string
+---@field statId number
+---@field init fun():void
+---@field onOver fun(e:MouseEvent):void
+---@field onOut fun(e:MouseEvent):void
+---@field onEditBtnClicked fun():void
+---@field onDeleteBtnClicked fun():void

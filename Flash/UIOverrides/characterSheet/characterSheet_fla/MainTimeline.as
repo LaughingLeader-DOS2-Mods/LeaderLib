@@ -550,8 +550,8 @@ package characterSheet_fla
 			while(i < this.customStats_array.length)
 			{
 				updateCustom = true;
-				this.stats_mc.customStats_mc.addCustomStat(this.customStats_array[i],this.customStats_array[i + 1],this.customStats_array[i + 2],this.customStats_array[i + 3]);
-				i = i + 4;
+				this.stats_mc.customStats_mc.addCustomStat(this.customStats_array[i],this.customStats_array[i + 1],this.customStats_array[i + 2],this.customStats_array[i + 3],this.customStats_array[i + 4],this.customStats_array[i + 5]);
+				i = i + 6;
 			}
 
 			if(updateCustom) {

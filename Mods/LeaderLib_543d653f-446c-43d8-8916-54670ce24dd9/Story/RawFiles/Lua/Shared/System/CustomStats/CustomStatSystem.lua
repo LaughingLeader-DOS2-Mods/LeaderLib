@@ -44,6 +44,7 @@ CustomStatSystem.Stats = {}
 ---@type fun():table<string, table<string, CustomStatData>>
 local loader = Ext.Require("Shared/System/CustomStats/ConfigLoader.lua")
 Ext.Require("Shared/System/CustomStats/Getters.lua")
+Ext.Require("Shared/System/CustomStats/PointsHandler.lua")
 
 local function LoadCustomStatsData()
 	local categories,stats = loader()

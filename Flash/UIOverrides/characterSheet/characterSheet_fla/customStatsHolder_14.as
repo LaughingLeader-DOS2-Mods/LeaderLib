@@ -32,19 +32,6 @@ package characterSheet_fla
 			this.stats_array = new Array();
 			this.list = new scrollListGrouped("down_id","up_id","handle_id","scrollBgBig_id");
 
-			//Original settings
-			// this.list = new scrollList("down_id","up_id","handle_id","scrollBgBig_id");
-			//this.list.EL_SPACING = 0;
-			//this.list.setFrame(328,735);
-			// this.listHolder_mc.addChild(this.list);
-			//this.list.TOP_SPACING = 40;
-			// this.list.m_scrollbar_mc.m_hideWhenDisabled = false;
-			//this.list.m_scrollbar_mc.setLength(667);
-			// this.list.m_scrollbar_mc.x = -1;
-			// this.list.m_scrollbar_mc.y = -17;
-			// (parent as MovieClip).scrollbarHolder_mc.addChild(this.list.m_scrollbar_mc);
-			// this.create_mc.init(this.onCreateBtnClicked);
-
 			//Ability group settings
 			this.list.SUBEL_SPACING = -4;
 			this.list.EL_SPACING = 22;
@@ -78,16 +65,6 @@ package characterSheet_fla
 		
 		public function positionElements() : *
 		{
-			// var mc:MovieClip = null;
-			// var i:Number = 0;
-			// while(i < this.list.size)
-			// {
-			// 	mc = this.list.getAt(i);
-			// 	mc.heightOverride = mc.label_txt.textHeight;
-			// 	mc.hl_mc.height = mc.label_txt.textHeight - this.elemOffset * 2;
-			// 	mc.line_mc.y = mc.label_txt.textHeight - Math.round(mc.line_mc.height * 0.5) - this.elemOffset;
-			// 	i++;
-			// }
 			this.list.sortOn("groupName", Array.CASEINSENSITIVE);
 			this.list.positionElements();
 		}
@@ -161,13 +138,13 @@ package characterSheet_fla
 			}
 		}
 
-		public function addCustomStat(doubleHandle:Number, labelText:String, valueText:String, groupId:Number=0) : *
+		public function addCustomStat(doubleHandle:Number, labelText:String, valueText:String, groupId:Number=0, plusVisible:Boolean=false, minusVisible:Boolean=false) : *
 		{
 			var cstat_mc:MovieClip = new CustomStat();
 			cstat_mc.hl_mc.alpha = 0;
 
-			cstat_mc.plus_mc.visible = this.base.isGameMasterChar;
-			cstat_mc.minus_mc.visible = this.base.isGameMasterChar;
+			cstat_mc.plus_mc.visible = !plusVisible ? this.base.isGameMasterChar : plusVisible;
+			cstat_mc.minus_mc.visible = !minusVisible ? this.base.isGameMasterChar : minusVisible;
 			cstat_mc.edit_mc.visible = this.base.isGameMasterChar;
 			cstat_mc.delete_mc.visible = this.base.isGameMasterChar;
 			cstat_mc.edit_mc.tooltip = "Edit";
@@ -238,6 +215,7 @@ package characterSheet_fla
 			this.list.addGroupElement(groupId,cstat_mc,false);
 
 			this.stats_array.push(cstat_mc);
+			ExternalInterface.call("customStatAdded", doubleHandle, this.stats_array.length-1);
 		}
 
 		private function frame1() : *

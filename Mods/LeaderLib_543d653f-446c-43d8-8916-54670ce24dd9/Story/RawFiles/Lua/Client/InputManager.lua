@@ -227,9 +227,9 @@ local function InvokeExtenderEventCallbacks(evt, eventName)
 	if evt.Press or Input.SkipStateCheck[eventName] == KEYSTATE.RELEASED then
 		lastPressedTimes[eventName] = Ext.MonotonicTime()
 	end
-	if Vars.DebugMode then
-		fprint(LOGLEVEL.DEFAULT, "[ExtInputEvent] (%s)[%s] Pressed(%s) Time(%s) Last(%s) WillFire(%s)", eventName, evt.EventId, evt.Press, Ext.MonotonicTime(), lastFiredEventFrom[eventName], lastFiredEventFrom[eventName] ~= 1 or Input.Keys[eventName] ~= nextState)
-	end
+	-- if Vars.DebugMode then
+	-- 	fprint(LOGLEVEL.DEFAULT, "[ExtInputEvent] (%s)[%s] Pressed(%s) Time(%s) Last(%s) WillFire(%s)", eventName, evt.EventId, evt.Press, Ext.MonotonicTime(), lastFiredEventFrom[eventName], lastFiredEventFrom[eventName] ~= 1 or Input.Keys[eventName] ~= nextState)
+	-- end
 
 	if eventName == "ToggleCharacterPane" and not evt.Press then
 		CustomStatSystem:OnToggleCharacterPane()
@@ -279,9 +279,9 @@ function Input.OnFlashEvent(ui, call, pressed, eventName, arrayIndex)
 		lastPressedTimes[eventName] = Ext.MonotonicTime()
 	end
 	
-	if Vars.DebugMode and not string.find(eventName, "Mouse") then
-		PrintLog("[Input.OnFlashEvent] eventName(%s) pressed(%s) index(%s) Last(%s) WillFire(%s)", eventName, pressed, arrayIndex, lastFiredEventFrom[eventName], lastFiredEventFrom[eventName] ~= 0 or Input.Keys[eventName] ~= nextState)
-	end
+	-- if Vars.DebugMode and not string.find(eventName, "Mouse") then
+	-- 	PrintLog("[Input.OnFlashEvent] eventName(%s) pressed(%s) index(%s) Last(%s) WillFire(%s)", eventName, pressed, arrayIndex, lastFiredEventFrom[eventName], lastFiredEventFrom[eventName] ~= 0 or Input.Keys[eventName] ~= nextState)
+	-- end
 
 	if lastFiredEventFrom[eventName] ~= 0 or Input.Keys[eventName] ~= nextState then
 		if pressed and eventName == "ActionCancel" then

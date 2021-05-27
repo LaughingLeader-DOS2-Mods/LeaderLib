@@ -54,7 +54,8 @@ package characterSheet_fla
 			this.list.m_scrollbar_mc.m_hideWhenDisabled = false;
 			this.listHolder_mc.addChild(this.list);
 			this.list.setGroupMC("StatCategory");
-			this.list.elementsSortOn("textStr");
+			//ExternalInterface.call("setupCustomStatSort");
+
 			this.list.m_scrollbar_mc.setLength(663 + 42);
 			this.list.m_scrollbar_mc.ScaleBG = true;
 			this.list.m_scrollbar_mc.x = -1;
@@ -63,10 +64,12 @@ package characterSheet_fla
 			this.create_mc.init(this.onCreateBtnClicked);
 			this.create_mc.tooltip = "Create Custom Stat";
 
-			this.list.addGroup(0,"Miscellaneous",false);
-
 			this.base = root as MovieClip;
 			//this.base.stats_mc.panelBg2_mc.visible = true;
+
+			this.list.sortOn("groupName", Array.CASEINSENSITIVE);
+			this.list.elementsSortOn("textStr", Array.CASEINSENSITIVE);
+			this.list.addGroup(0,"Miscellaneous",false);
 		}
 		
 		public function onCreateBtnClicked() : *
@@ -86,6 +89,7 @@ package characterSheet_fla
 			// 	mc.line_mc.y = mc.label_txt.textHeight - Math.round(mc.line_mc.height * 0.5) - this.elemOffset;
 			// 	i++;
 			// }
+			this.list.sortOn("groupName", Array.CASEINSENSITIVE);
 			this.list.positionElements();
 		}
 
@@ -102,6 +106,7 @@ package characterSheet_fla
 				this.list.clearElements();
 				if(addDefault) {
 					this.list.addGroup(0,"Miscellaneous",false);
+					this.list.content_array[0].groupName = "Miscellaneous";
 				}
 			}
 			this.stats_array = new Array();
@@ -117,7 +122,12 @@ package characterSheet_fla
 		public function addGroup(groupId:Number, labelText:String, reposition:Boolean=false) : *
 		{
 			this.list.addGroup(groupId,labelText,reposition);
-			ExternalInterface.call("customStatsGroupAdded", groupId);
+			var group_mc:MovieClip = this.list.getElementByNumber("groupId",groupId);
+			if (group_mc != null)
+			{
+				group_mc.groupName = labelText;
+			}
+			ExternalInterface.call("customStatsGroupAdded", groupId, labelText);
 		}
 
 		public function setGroupTooltip(groupId:Number, text:String) : *
@@ -136,7 +146,7 @@ package characterSheet_fla
 				var i:uint = 0;
 				var j:uint = 0;
 				var group_mc:MovieClip = null;
-				var amount:Number = NaN;
+				var amount:Number = 0;
 				while(i < this.list.length)
 				{
 					group_mc = this.list.content_array[i];
@@ -175,6 +185,7 @@ package characterSheet_fla
 			cstat_mc.label_txt.autoSize = TextFieldAutoSize.LEFT;
 			cstat_mc.label_txt.htmlText = labelText;
 			cstat_mc.text_txt.htmlText = valueText;
+			cstat_mc.am = Number(valueText);
 			cstat_mc.text_txt.width = cstat_mc.text_txt.width + 8;
 			cstat_mc.tooltipAlign = "right";
 			cstat_mc.statId = doubleHandle;

@@ -331,6 +331,7 @@ package characterSheet_fla
 			this.setAvailableCombatAbilityPoints(0);
 			this.setAvailableCivilAbilityPoints(0);
 			this.setAvailableTalentPoints(0);
+			this.setAvailableCustomStatPoints(0);
 			this.pointsTextfieldChanged(this.stats_mc.pointsFrame_mc.label_txt);
 		}
 		
@@ -729,7 +730,6 @@ package characterSheet_fla
 		public function clearStats() : *
 		{
 			this.stats_mc.clearStats();
-			//this.stats_mc.customStats_mc.resetGroups();
 		}
 		
 		public function clearTags() : *
@@ -782,6 +782,11 @@ package characterSheet_fla
 		public function setAvailableTalentPoints(param1:Number) : *
 		{
 			this.stats_mc.setAvailableTalentPoints(param1);
+		}	
+
+		public function setAvailableCustomStatPoints(amount:Number) : *
+		{
+			this.stats_mc.INTSetWarnAndPoints(4,amount);
 		}
 		
 		public function addSpacing(param1:Number, param2:Number) : *

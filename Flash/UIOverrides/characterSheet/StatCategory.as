@@ -7,19 +7,13 @@ package
 	
 	public dynamic class StatCategory extends MovieClip
 	{
-		 
-		
 		public var amount_txt:TextField;
-		
 		public var bg_mc:MovieClip;
-		
 		public var listContainer_mc:empty;
-		
 		public var title_txt:TextField;
-		
 		public var isOpen:Boolean;
-		
 		public var texty:Number;
+		public var groupName:String = "";
 		
 		public function StatCategory()
 		{

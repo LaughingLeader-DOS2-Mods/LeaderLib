@@ -73,7 +73,7 @@ if Ext.IsServer() then
 							IsHost = isHost,
 							ID = id,
 							NetID = netid,
-							CustomStats = CustomStatSystem.GetSyncData()
+							CustomStats = CustomStatSystem:GetSyncData()
 						}
 						SendSyncListenerEvent(id, profile, uuid, isHost)
 						Ext.PostMessageToUser(id, "LeaderLib_SharedData_StoreData", Ext.JsonStringify(data))
@@ -105,7 +105,7 @@ if Ext.IsServer() then
 					IsHost = isHost,
 					ID = id,
 					NetID = netid,
-					CustomStats = CustomStatSystem.GetSyncData()
+					CustomStats = CustomStatSystem:GetSyncData()
 				}
 				SendSyncListenerEvent(id, profile, uuid, isHost)
 				Ext.PostMessageToUser(id, "LeaderLib_SharedData_StoreData", Ext.JsonStringify(data))
@@ -389,7 +389,7 @@ if Ext.IsClient() then
 		local data = Common.JsonParse(payload)
 		if data ~= nil then
 			if data.CustomStats then
-				CustomStatSystem.LoadSyncData(data.CustomStats)
+				CustomStatSystem:LoadSyncData(data.CustomStats)
 				data.CustomStats = nil
 			end
 			if not SharedData then

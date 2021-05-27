@@ -1223,7 +1223,7 @@ function TooltipHooks:OnRequestTooltip(ui, method, arg1, arg2, arg3, ...)
 	self.NextRequest = request
 
 	if method == "showCustomStatTooltip" then
-		CustomStatSystem.OnRequestTooltip(ui, method, request.Stat, arg3, table.unpack({...}))
+		CustomStatSystem:OnRequestTooltip(ui, method, request.Stat, arg3, table.unpack({...}))
 	end
 end
 
@@ -1386,10 +1386,10 @@ function TooltipHooks:OnRenderSubTooltip(ui, propertyName, req, method, ...)
 			self:NotifyListeners("Stat", req.Stat, req, tooltip, req.Character, req.Stat)
 		elseif req.Type == "CustomStat" then
 			if req.RequestUpdate then
-				CustomStatSystem.UpdateStatTooltipArray(ui, req.Stat, tooltip, req)
+				CustomStatSystem:UpdateStatTooltipArray(ui, req.Stat, tooltip, req)
 				req.RequestUpdate = false
 			end
-			local statData = req.StatData or CustomStatSystem.GetStatByDouble(req.Stat)
+			local statData = req.StatData or CustomStatSystem:GetStatByDouble(req.Stat)
 			if statData ~= nil then
 				self:NotifyListeners("CustomStat", statData.ID or statData.UUID, req, tooltip, req.Character, statData)
 			else

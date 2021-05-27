@@ -192,6 +192,33 @@ function Input.GetKeyState(name, t)
 	return KEYSTATE.UNREGISTERED
 end
 
+local function OnInputChanged(eventName, pressed, id, keys, controllerEnabled)
+	-- if controllerEnabled then
+	-- 	--Area Interact input workaround
+	-- 	local ui = Ext.GetUIByType(Data.UIType.areaInteract_c)
+	-- 	if ui then
+	-- 		local this = ui:GetRoot()
+	-- 		local areaInteractEventId = -1
+	-- 		for i=0,#this.events-1 do
+	-- 			local name = this.events[i]
+	-- 			print(i,name)
+	-- 			if name == eventName then
+	-- 				areaInteractEventId = i
+	-- 				break
+	-- 			end
+	-- 		end
+	-- 		if areaInteractEventId ~= -1 then
+	-- 			print("OnInputChanged(areaInteract_c fix)", eventName, areaInteractEventId, id)
+	-- 			if pressed then
+	-- 				this.onEventDown(areaInteractEventId)
+	-- 			else
+	-- 				this.onEventUp(areaInteractEventId)
+	-- 			end
+	-- 		end
+	-- 	end
+	-- end
+end
+
 --Workaround to prevent key event listeners firing more than once for the same state from a separate extender/flash event
 local lastFiredEventFrom = {}
 
@@ -205,7 +232,7 @@ local function InvokeExtenderEventCallbacks(evt, eventName)
 	end
 
 	if eventName == "ToggleCharacterPane" and not evt.Press then
-		CustomStatSystem.OnToggleCharacterPane()
+		CustomStatSystem:OnToggleCharacterPane()
 	end
 
 	if lastFiredEventFrom[eventName] ~= 1 or Input.Keys[eventName] ~= nextState then
@@ -216,6 +243,7 @@ local function InvokeExtenderEventCallbacks(evt, eventName)
 				Ext.PostMessageToServer("LeaderLib_Input_OnActionCancel", client.NetID)
 			end
 		end
+		OnInputChanged(eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled)
 		InvokeListenerCallbacks(Listeners.InputEvent, eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled)
 		InvokeListenerCallbacks(Listeners.NamedInputEvent[eventName], eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled)
 
@@ -261,6 +289,7 @@ function Input.OnFlashEvent(ui, call, pressed, eventName, arrayIndex)
 		end
 		Input.Keys[eventName] = nextState
 		local id = Data.Input[eventName]
+		OnInputChanged(eventName, pressed, kid, Input.Keys, Vars.ControllerEnabled)
 		if type(id) == "table" then
 			for _,kid in pairs(id) do
 				InvokeListenerCallbacks(Listeners.InputEvent, eventName, pressed, kid, Input.Keys, Vars.ControllerEnabled)

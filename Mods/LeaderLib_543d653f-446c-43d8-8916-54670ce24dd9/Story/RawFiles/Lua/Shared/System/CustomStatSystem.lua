@@ -76,11 +76,11 @@ local function LoadCustomStatsData()
 		end
 	end
 
-	if Vars.DebugMode then
-		print(Ext.IsServer() and "SERVER" or "CLIENT")
-		print("Categories", Ext.JsonStringify(CustomStatSystem.Categories))
-		print("Stats", Ext.JsonStringify(CustomStatSystem.Stats))
-	end
+	-- if Vars.DebugMode then
+	-- 	print(Ext.IsServer() and "SERVER" or "CLIENT")
+	-- 	print("Categories", Ext.JsonStringify(CustomStatSystem.Categories))
+	-- 	print("Stats", Ext.JsonStringify(CustomStatSystem.Stats))
+	-- end
 end
 
 Ext.RegisterListener("SessionLoaded", LoadCustomStatsData)
@@ -345,6 +345,8 @@ if Ext.IsServer() then
 		return data
 	end
 else
+	Ext.AddPathOverride("Public/Game/GUI/characterSheet.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/characterSheet.swf")
+	--Ext.AddPathOverride("Public/Game/GUI/characterSheet.swf", "Public/Game/GUI/characterSheet.swf")
 	--Loads a table of stat UUIDs from the server.
 	function CustomStatSystem.LoadSyncData(data)
 		for uuid,stats in pairs(data) do
@@ -404,7 +406,7 @@ else
 
 	local function OnSheetUpdating(ui, method)
 		local this = ui:GetRoot()
-
+		CustomStatSystem.SetupGroups(ui, method)
 		local length = #this.customStats_array
 		if length == 0 then
 			return
@@ -443,12 +445,14 @@ else
 				arrayIndex = arrayIndex + 4
 			end
 		end
-		--this.addAbilityGroup(false, 0, "Test Group")
 	end
+
+	local miscGroupDisplayName = Classes.TranslatedString:Create("hb8ed2061ge5a3g4f64g9d54g9a9b65e27e1e", "Miscellaneous")
 
 	function CustomStatSystem.SetupGroups(ui, call)
 		local this = ui:GetRoot().stats_mc.customStats_mc
-		this.resetGroups(true)
+		this.resetGroups()
+		this.addGroup(0, miscGroupDisplayName.Value, false) -- Group for stats without an assigned category
 		for category in CustomStatSystem.GetAllCategories() do
 			this.addGroup(category.GroupId, category:GetDisplayName(), false)
 		end

@@ -69,7 +69,6 @@ package characterSheet_fla
 
 			this.list.sortOn("groupName", Array.CASEINSENSITIVE);
 			this.list.elementsSortOn("textStr", Array.CASEINSENSITIVE);
-			this.list.addGroup(0,"Miscellaneous",false);
 		}
 		
 		public function onCreateBtnClicked() : *
@@ -98,16 +97,12 @@ package characterSheet_fla
 			this.resetGroups();
 		}
 
-		public function resetGroups(addDefault:Boolean = true) : *
+		public function resetGroups() : *
 		{
 			if(this.list != null)
 			{
 				this.list.clearGroupElements();
 				this.list.clearElements();
-				if(addDefault) {
-					this.list.addGroup(0,"Miscellaneous",false);
-					this.list.content_array[0].groupName = "Miscellaneous";
-				}
 			}
 			this.stats_array = new Array();
 			//ExternalInterface.call("createCustomStatGroups");

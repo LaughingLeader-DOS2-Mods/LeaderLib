@@ -115,6 +115,17 @@ DB_LeaderLib_LeaveAction_StatusToSkill(_Status, _Skill)
 THEN
 NOT DB_LeaderLib_LeaveAction_StatusToSkill(_Status, _Skill);
 //END_REGION
+
+//REGION CUSTOM_SKILL_PROPERTIES
+/* [OSITOOLS_ONLY]
+IF
+StoryEvent(_Object, "LeaderLib_SkillProperties_MoveToTargetDone")
+AND
+GetUUID(_Object, _UUID)
+THEN
+NRD_ModCall("LeaderLib", "SkillPropertiesActionDone", "MoveToTarget", _UUID);
+*/
+//END_REGION
 EXITSECTION
 ENDEXITSECTION
 ParentTargetEdge "LaughingLeader__LeaderLib"

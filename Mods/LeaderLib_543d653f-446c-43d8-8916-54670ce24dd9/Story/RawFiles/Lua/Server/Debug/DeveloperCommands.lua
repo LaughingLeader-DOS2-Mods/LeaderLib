@@ -243,6 +243,7 @@ end)
 --!lleditskill Projectile_LLWEAPONEX_ArmCannon_Disperse_Explosion Template 1945ebb4-c7c5-447e-a40e-aa59b8952be9
 
 Ext.RegisterConsoleCommand("lleditskill", function(cmd, skill, attribute, value)
+	print(attribute, value)
 	local stat = Ext.GetStat(skill)
 	if stat ~= nil then
 		local curVal = stat[attribute]

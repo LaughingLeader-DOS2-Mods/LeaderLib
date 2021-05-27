@@ -10,6 +10,11 @@ local defaultPersistentVars = {
 		Queue = {}
 	},
 	SkillData = {},
+	SkillPropertiesAction = {
+		---Stores a UUID and AP to restore.
+		---@type table<string,integer>
+		MoveToTarget = {}
+	},
 	IsPreparingSkill = {},
 	---@type table<string,TurnCounterData>
 	TurnCounterData = {}

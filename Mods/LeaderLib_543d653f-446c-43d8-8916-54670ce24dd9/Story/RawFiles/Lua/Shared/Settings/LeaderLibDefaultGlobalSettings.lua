@@ -16,6 +16,7 @@ settings.Global:AddLocalizedFlags({
 	"LeaderLib_FriendlyFireEnabled",
 	"LeaderLib_PullPartyIntoCombat",
 	"LeaderLib_UnhealableFix_Enabled",
+	"LeaderLib_AllTooltipsForItemsEnabled",
 })
 settings.Global.Flags.LeaderLib_RemovePathInfluencesOnChainAll.DebugOnly = true
 settings.Global:AddLocalizedVariable("AutosaveInterval", "LeaderLib_Variables_AutosaveInterval", 15, 1, 600, 1)

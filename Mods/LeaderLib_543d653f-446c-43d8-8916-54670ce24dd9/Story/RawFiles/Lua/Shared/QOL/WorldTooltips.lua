@@ -47,17 +47,23 @@ else
 	end
 
 	function WorldTooltipper.UpdateWorldItems()
-		local time = Ext.MonotonicTime()
-		for _,uuid in pairs(Ext.GetAllItems()) do
-			local item = Ext.GetItem(uuid)
-			if item and ItemCanHaveTooltip(item) then
-				item.RootTemplate.Tooltip = WorldTooltipper.TooltipMode
+		if SettingsManager.GetMod("7e737d2f-31d2-4751-963f-be6ccc59cd0c").Global:FlagEquals("LeaderLib_AllTooltipsForItemsEnabled", true) then
+			local time = Ext.MonotonicTime()
+			for _,uuid in pairs(Ext.GetAllItems()) do
+				local item = Ext.GetItem(uuid)
+				if item and ItemCanHaveTooltip(item) then
+					item.RootTemplate.Tooltip = WorldTooltipper.TooltipMode
+				end
 			end
+			fprint(LOGLEVEL.DEFAULT, "[LeaderLib:WorldTooltips.UpdateWorldItems] World tooltip updating took (%s) ms.", Ext.MonotonicTime()-time)
 		end
-		fprint(LOGLEVEL.DEFAULT, "[LeaderLib:WorldTooltips.UpdateWorldItems] World tooltip updating took (%s) ms.", time - Ext.MonotonicTime())
 	end
 
 	function WorldTooltipper.OnGameStarted(region, editorMode)
+		StartOneshotTimer("Timers_LeaderLib_WorldTooltipper_UpdateItems", WorldTooltipper.UpdateDelay, WorldTooltipper.UpdateWorldItems)
+	end
+
+	function UpdateWorldTooltips()
 		StartOneshotTimer("Timers_LeaderLib_WorldTooltipper_UpdateItems", WorldTooltipper.UpdateDelay, WorldTooltipper.UpdateWorldItems)
 	end
 
@@ -69,7 +75,11 @@ else
 		end
 	end
 
-	Ext.RegisterOsirisListener("ItemEnteredRegion", Data.OsirisEvents.ItemEnteredRegion, "after", function(uuid, region) WorldTooltipper.OnItemEnteredWorld(Ext.GetItem(uuid), region) end)
+	Ext.RegisterOsirisListener("ItemEnteredRegion", Data.OsirisEvents.ItemEnteredRegion, "after", function(uuid, region)
+		if SettingsManager.GetMod("7e737d2f-31d2-4751-963f-be6ccc59cd0c").Global:FlagEquals("LeaderLib_AllTooltipsForItemsEnabled", true) then
+			WorldTooltipper.OnItemEnteredWorld(Ext.GetItem(uuid), region)
+		end
+	end)
 
 	Ext.RegisterOsirisListener("GameStarted", Data.OsirisEvents.GameStarted, "after", WorldTooltipper.OnGameStarted)
 	if Vars.DebugMode then

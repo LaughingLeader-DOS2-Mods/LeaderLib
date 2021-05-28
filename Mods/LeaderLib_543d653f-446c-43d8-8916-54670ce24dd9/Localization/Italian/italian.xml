@@ -41,6 +41,7 @@
 	<content contentuid="h17e6d1bbgbe95g4944gb37dgfe5059a58a2d">&lt;font color=&apos;#9A00FF&apos;&gt;Chaos Resistance&lt;/font&gt;</content>
 	<content contentuid="h196cc760g0133g4cb7gb48bg6a902641739f">[LeaderLib_ModMenu_Menu1_783ec14d-2861-4345-8dbc-45974fa34e15]</content>
 	<content contentuid="h199f5401g295eg4b24ga52ag9cf3a9844635">[GLOBAL] Enable Friendly Fire. This setting is for mods that implement friendly fire in their skill targeting conditions. (Currently Disabled)</content>
+	<content contentuid="h19d1b9dag302dg4655g86fdgad6fe369db15">Move to the target</content>
 	<content contentuid="h1a6318dcgb094g4b3cg8492g6e26d8e3a11d">Mod Menu Settings</content>
 	<content contentuid="h1ae3aaa5gb444g4372g8b9ag231538f36a86">[LeaderLib_ModMenu_Menu8_a6aa98e6-cde4-491b-a2cb-2cd7d5d71f96]</content>
 	<content contentuid="h1c1d8acag9819g4028g860fg9a546af236ee">[LOAD] Load Global Settings - These are global extender mod settings LeaderLib manages.&lt;br&gt;Path: &lt;b&gt;Documents/Larian Studios/Divinity Original Sin 2 Definitive Edition/Osiris Data/LeaderLib_GlobalSettings.json&lt;/b&gt;</content>
@@ -161,6 +162,7 @@
 	<content contentuid="h69293304g80a8g47b6gb564g793f098abfb4">Reset all global LeaderLib settings. EXPERIMENTAL!</content>
 	<content contentuid="h69590addg7840g4821gb632g52799233bb88">&lt;font color=&apos;#FF0000&apos;&gt;-[1] Attitude&lt;/font&gt;</content>
 	<content contentuid="h6a80ffafg59d9g4848g8d1ag9359a1435030">Enable Timed Autosaving</content>
+	<content contentuid="h6aac0af6g1e02g4a73g9341g53c81e64eb03">Enable World Tooltips for All Items</content>
 	<content contentuid="h6ba6354bg9a76g48c2g90e9gf8aeac752f5c">Fix the Unhealable Status</content>
 	<content contentuid="h6d2689a6ge111g43b7g8c87g478a5e501f40">Mods&lt;br&gt;[LeaderLib_ModMenu_PageInfo_2b744313-9239-412c-80a8-f3b5e8b56156]</content>
 	<content contentuid="h6d41e8bag5ab9g42c4g8723g2dad9e443b64">*He hands you a peculiar-looking book.*</content>
@@ -178,6 +180,7 @@
 	<content contentuid="h72b6a94cgb4dbg42f3ga2b0g97d70ba67eef">[Next]</content>
 	<content contentuid="h7322bed9g2ea5g4abeg9decga21994353d79">*He waits for you to speak.*</content>
 	<content contentuid="h73234319g4e6bg4967gb45cga511b60f0408">&lt;font color=&apos;#FF0000&apos;&gt;LeaderLib Failed to Save Global Settings&lt;/font&gt;</content>
+	<content contentuid="h7372bd33g991dg41c7ga8c2g9b42778c29f5">If enabled, all items will have a &quot;World Tooltip&quot;, showing the item&apos;s name when world tooltips are enabled (alt by default for keyboard + mouse, or clicking the right stick for controllers). Disabling this may require a save/load to get items to reset.</content>
 	<content contentuid="h75a91fefgc531g4bb1g82f2gec7122c62aff">Enabled</content>
 	<content contentuid="h76b098bdgb9f4g4ae8g8e5bg87f68b4599d9">Hey there, [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3]! You made it off that wreck in one piece, eh? *He snorts.* </content>
 	<content contentuid="h76d37069g565dg458bg8e57gdbd6f9b81b7a">[GLOBAL] Disable automatically unlocking every inventory in multiplayer. (Currently Enabled)</content>

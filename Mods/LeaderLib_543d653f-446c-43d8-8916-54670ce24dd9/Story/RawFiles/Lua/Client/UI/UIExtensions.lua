@@ -127,7 +127,8 @@ function UIExtensions.SetupInstance()
 		if not Vars.ControllerEnabled then
 			UIExtensions.Layer = 18 -- May eat inputs
 		else
-			UIExtensions.Layer = 9
+			--Needs to be less than 9
+			UIExtensions.Layer = 7
 		end
 		UIExtensions.Instance = Ext.GetUI("LeaderLibUIExtensions")
 		if not UIExtensions.Instance then

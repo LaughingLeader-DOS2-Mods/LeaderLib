@@ -64,7 +64,8 @@ local function parseTable(tbl, propertyMap, modId)
 			if type(v) == "table" then
 				local data = {
 					ID = k,
-					Mod = modId
+					Mod = modId,
+					AvailablePoints = {}
 				}
 				for property,value in pairs(v) do
 					if type(property) == "string" then

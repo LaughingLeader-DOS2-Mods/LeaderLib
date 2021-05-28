@@ -46,6 +46,56 @@ function CustomStatSystem:GetStatByUUID(uuid)
 	return nil
 end
 
+---Get an iterator of all stats.
+---@param visibleOnly boolean|nil
+---@param sortByDisplayName boolean|nil
+---@return fun():CustomStatData
+function CustomStatSystem:GetAllStats(visibleOnly, sortByDisplayName)
+	local allStats = {}
+
+	local findAll = true
+	if visibleOnly == true and Ext.IsClient() then
+		local ui = Ext.GetUIByType(Data.UIType.characterSheet)
+		if ui then
+			findAll = false
+			local arr = ui:GetRoot().stats_mc.customStats_mc.stats_array
+			print(arr, #arr)
+			for i=0,#arr-1 do
+				local stat_mc = arr[i]
+				if stat_mc and stat_mc.statId then
+					local stat = self:GetStatByDouble(stat_mc.statId)
+					if stat then
+						allStats[#allStats+1] = stat
+					end
+				end
+			end
+		end
+	end
+	--If visibleOnly is false or we failed to get the UI
+	if findAll then
+		for uuid,stats in pairs(self.Stats) do
+			for id,stat in pairs(stats) do
+				allStats[#allStats+1] = stat
+			end
+		end
+	end
+
+	if sortByDisplayName == true then
+		table.sort(allStats, function(a,b)
+			return a:GetDisplayName() < b:GetDisplayName()
+		end)
+	end
+
+	local i = 0
+	local count = #allStats
+	return function ()
+		i = i + 1
+		if i <= count then
+			return allStats[i]
+		end
+	end
+end
+
 ---@param id string
 ---@param mod string
 ---@return CustomStatCategoryData
@@ -100,7 +150,7 @@ end
 
 ---Get an iterator of sorted categories.
 ---@param skipSort boolean|nil
----@return CustomStatCategoryData
+---@return fun():CustomStatCategoryData
 function CustomStatSystem:GetAllCategories(skipSort)
 	local allCategories = {}
 

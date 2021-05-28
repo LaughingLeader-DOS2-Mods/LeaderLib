@@ -6,7 +6,10 @@ local isClient = Ext.IsClient()
 
 function GameHelpers.Character.IsPlayer(uuid)
 	if not isClient then
-		return CharacterIsPlayer(uuid) == 1 or GameHelpers.DB.HasUUID("DB_IsPlayer", uuid)
+		if type(uuid) == "userdata" then
+			uuid = uuid.MyGuid
+		end
+		return CharacterIsPlayer(uuid) == 1 or CharacterGameMaster(uuid) == 1 or GameHelpers.DB.HasUUID("DB_IsPlayer", uuid) 
 	else
 		if type(uuid) ~= "userdata" then
 			uuid = Ext.GetCharacter(uuid)

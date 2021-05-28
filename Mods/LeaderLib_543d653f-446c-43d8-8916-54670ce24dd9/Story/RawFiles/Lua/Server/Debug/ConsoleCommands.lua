@@ -405,8 +405,8 @@ Ext.RegisterConsoleCommand("sethelmetoption", function(command, param)
 	Ext.PostMessageToClient(host, "LeaderLib_SetHelmetOption", MessageData:CreateFromTable("HelmetOption", {UUID = host, Enabled = enabled}):ToString())
 end)
 
-Ext.RegisterConsoleCommand("addpoints", function(cmd, pointType, amount)
-	local host = CharacterGetHostCharacter()
+Ext.RegisterConsoleCommand("addpoints", function(cmd, pointType, amount, id)
+	local host = StringHelpers.GetUUID(CharacterGetHostCharacter())
 	if amount == nil then
 		amount = 1
 	else
@@ -430,6 +430,8 @@ Ext.RegisterConsoleCommand("addpoints", function(cmd, pointType, amount)
 	elseif pointType == "sourcemax" then
 		local next = CharacterGetMaxSourcePoints(host) + amount
 		CharacterOverrideMaxSourcePoints(host, next)
+	elseif pointType == "custom" and id then
+		CustomStatSystem:AddAvailablePoints(host, id, amount)
 	end
 end)
 

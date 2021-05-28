@@ -1,5 +1,7 @@
 Ext.Require("BootstrapShared.lua")
 
+---@alias UUID string
+
 ---@class LeaderLibPersistentVars
 local defaultPersistentVars = {
 	TimerData = {},
@@ -17,7 +19,9 @@ local defaultPersistentVars = {
 	},
 	IsPreparingSkill = {},
 	---@type table<string,TurnCounterData>
-	TurnCounterData = {}
+	TurnCounterData = {},
+	---@type table<UUID,table<STAT_ID,integer>>
+	CustomStatAvailablePoints = {}
 }
 
 ---@type LeaderLibPersistentVars

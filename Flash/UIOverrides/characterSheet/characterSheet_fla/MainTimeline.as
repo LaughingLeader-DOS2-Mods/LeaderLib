@@ -665,6 +665,7 @@ package characterSheet_fla
 			this.stats_mc.resetListPositions();
 			this.stats_mc.recheckScrollbarVisibility();
 			this.initDone = true;
+			ExternalInterface.call("characterSheetUpdateDone");
 		}
 		
 		public function setStatPlusVisible(statId:Number, isVisible:Boolean) : *
@@ -719,6 +720,7 @@ package characterSheet_fla
 			this.stats_mc.setVisibilityAbilityButtons(true,false);
 			this.setAvailableCombatAbilityPoints(0);
 			this.setAvailableCivilAbilityPoints(0);
+			this.setAvailableCustomStatPoints(0);
 		}
 		
 		public function hideLevelUpTalentButtons() : *

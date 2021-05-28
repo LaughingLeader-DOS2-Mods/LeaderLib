@@ -32,6 +32,7 @@ local self = CustomStatSystem
 ---@field TooltipType CustomStatTooltipType|nil
 ---@field Category string The stat's category id, if any.
 ---@field Double number The stat's double (handle) value. Determined dynamically.
+---@field AvailablePoints table<UUID,integer> Amount of points available for a character.
 
 ---@alias MOD_UUID string
 ---@alias STAT_ID string
@@ -44,7 +45,11 @@ CustomStatSystem.Stats = {}
 ---@type fun():table<string, table<string, CustomStatData>>
 local loader = Ext.Require("Shared/System/CustomStats/ConfigLoader.lua")
 Ext.Require("Shared/System/CustomStats/Getters.lua")
+Ext.Require("Shared/System/CustomStats/DataSync.lua")
 Ext.Require("Shared/System/CustomStats/PointsHandler.lua")
+if Vars.DebugMode then
+	Ext.Require("Shared/System/CustomStats/_Debug.lua")
+end
 
 local function LoadCustomStatsData()
 	local categories,stats = loader()
@@ -139,34 +144,8 @@ if Ext.IsServer() then
 			--TODO Need some way to get a custom stat's name and tooltip from the UUID.
 		end
 	end)
-	--Creates a table of stat id to uuid, for sending stat UUIDs to the client
-	function CustomStatSystem:GetSyncData()
-		local data = {}
-		for uuid,stats in pairs(self.Stats) do
-			data[uuid] = {}
-			for id,stat in pairs(stats) do
-				if stat.UUID then
-					data[uuid][id] = stat.UUID
-				end
-			end
-		end
-		return data
-	end
 else
 	Ext.Require("Shared/System/CustomStats/UISetup.lua")
 	Ext.AddPathOverride("Public/Game/GUI/characterSheet.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/characterSheet.swf")
 	--Ext.AddPathOverride("Public/Game/GUI/characterSheet.swf", "Public/Game/GUI/characterSheet.swf")
-	--Loads a table of stat UUIDs from the server.
-	function CustomStatSystem:LoadSyncData(data)
-		for uuid,stats in pairs(data) do
-			local existing = CustomStatSystem.Stats[uuid]
-			if existing then
-				for id,statId in pairs(stats) do
-					if existing[id] then
-						existing[id].UUID = statId
-					end
-				end
-			end
-		end
-	end
 end

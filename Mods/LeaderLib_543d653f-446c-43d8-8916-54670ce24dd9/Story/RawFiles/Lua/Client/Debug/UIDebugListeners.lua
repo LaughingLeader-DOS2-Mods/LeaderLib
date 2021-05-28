@@ -10,6 +10,8 @@ local UIListenerWrapper = {
 }
 UIListenerWrapper.__index = UIListenerWrapper
 
+local lastEvent = "";
+
 ---@param self UIListenerWrapper
 ---@param ui UIObject
 local function OnUIListener(self, eventType, ui, event, ...)
@@ -19,6 +21,8 @@ local function OnUIListener(self, eventType, ui, event, ...)
 			if string.find(txt, "Experience:", 1, true) then
 				return
 			end
+		elseif lastEvent == event and Ext.GetGameState() ~= "Running" then
+			return
 		end
 		if self.PrintParams then
 			fprint(LOGLEVEL.TRACE, "[UI:%s(%s)][%s] [%s] %s(%s)", self.Name, ui:GetTypeId(), eventType, Ext.MonotonicTime(), event, StringHelpers.DebugJoin(", ", {...}))
@@ -29,6 +33,8 @@ local function OnUIListener(self, eventType, ui, event, ...)
 		if self.CustomCallback[event] then
 			self.CustomCallback[event](self, ui, event, ...)
 		end
+
+		lastEvent = event
 	end
 end
 
@@ -564,7 +570,7 @@ local tooltipMain = UIListenerWrapper:Create(Data.UIType.tooltip, {
 	"getTooltipWidth",
 })
 --tooltipMain.PrintParams = true
-tooltipMain.Enabled = true
+tooltipMain.Enabled = false
 
 -- tooltipMain.CustomCallback["addTooltip"] = function(ui, call, text, ...)
 

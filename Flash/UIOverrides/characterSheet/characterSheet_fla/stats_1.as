@@ -14,6 +14,9 @@ package characterSheet_fla
 	import flash.external.ExternalInterface;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
+	import flash.text.TextFieldType;
+	import flash.text.TextFormat;
+	import flash.geom.Point;
 	
 	public dynamic class stats_1 extends MovieClip
 	{
@@ -29,6 +32,8 @@ package characterSheet_fla
 		public var combatAbilityHolder_mc:MovieClip;
 		public var combatAbilityPointsWrn_mc:MovieClip;
 		public var customStats_mc:MovieClip;
+		public var customStatsPointsWrn_mc:mcPlus_Anim_69;
+		public var customStatsPoints_txt:TextField;
 		public var dragHit_mc:MovieClip;
 		public var equip_mc:MovieClip;
 		public var equipment_txt:TextField;
@@ -85,6 +90,8 @@ package characterSheet_fla
 
 		public var customStatIconOffsetX:Number = -2;
 		public var customStatIconOffsetY:Number = -6;
+		public var pointWarningOffsetX:Number = -16;
+		public var customStatPointsTextOffsetX:Number = -1.89;
 		
 		public function stats_1()
 		{
@@ -107,15 +114,15 @@ package characterSheet_fla
 			this.alignments_mc.SND_Close = "UI_GM_Generic_Slide_Close";
 			this.alignments_mc.SND_Click = "UI_GM_Generic_Click";
 			this.panelArray = new Array(this.mainStats_mc,this.combatAbilityHolder_mc,this.civicAbilityHolder_mc,this.talentHolder_mc,this.tagsHolder_mc,this.invTabHolder_mc,this.skillTabHolder_mc,this.visualHolder_mc,this.customStats_mc);
-			this.pointsWarn = new Array(this.attrPointsWrn_mc,this.combatAbilityPointsWrn_mc,this.civilAbilityPointsWrn_mc,this.talentPointsWrn_mc);
-			this.pointTexts = new Array(this.pointsFrame_mc.statPoints_txt,this.pointsFrame_mc.combatAbilPoints_txt,this.pointsFrame_mc.civilAbilPoints_txt,this.pointsFrame_mc.talentPoints_txt);
+			this.pointsWarn = new Array(this.attrPointsWrn_mc,this.combatAbilityPointsWrn_mc,this.civilAbilityPointsWrn_mc,this.talentPointsWrn_mc,this.customStatsPointsWrn_mc);
+			this.pointTexts = new Array(this.pointsFrame_mc.statPoints_txt,this.pointsFrame_mc.combatAbilPoints_txt,this.pointsFrame_mc.civilAbilPoints_txt,this.pointsFrame_mc.talentPoints_txt,this.pointsFrame_mc.customStatPoints_txt);
 			this.bg_mc.mouseEnabled = false;
 			this.bg_mc.mouseChildren = false;
 			this.close_mc.onPressedFunction = this.closeUI;
 			this.onePlayerOverlay_mc.visible = false;
 			ExternalInterface.call("getStats");
 			this.equip_mc.init();
-			var i:uint = 0;
+			var i:int = 0;
 			while(i < this.pointsWarn.length)
 			{
 				this.pointsWarn[i].visible = false;
@@ -264,9 +271,39 @@ package characterSheet_fla
 				i++;
 			}
 			this.tabsList.positionElements();
+			
+			//LeaderLib addition
+			this.alignPointWarningsToButtons();
+
 			this.initTabs(!isCurrentPanel,initializeTabs);
 			this.ClickTab(!!isCurrentPanel?Number(currentPanel):Number(0));
 			this.INTSetAvailablePointsVisible();
+		}
+
+		public function alignPointWarningsToButtons() : *
+		{
+			var i:int = 0;
+			var tabIndex:int = 0;
+			var pw:MovieClip = null;
+			var pt:Point = null;
+			while(i < this.pointsWarn.length)
+			{
+				pw = this.pointsWarn[i];
+				tabIndex = i;
+				if (i == 4)
+				{
+					tabIndex = 8;
+				}
+				var btn:* = this.tabsList.getElementByNumber("id", tabIndex);
+				if (btn != undefined)
+				{
+					pt = this.tabsList.localToGlobal(new Point(btn.x+btn.width,btn.y));
+					pt = this.globalToLocal(pt);
+					pw.x = pt.x+pointWarningOffsetX;
+				}
+
+				i++;
+			}
 		}
 		
 		public function pushTabTooltip(tabId:Number, text:String) : *
@@ -283,60 +320,61 @@ package characterSheet_fla
 			}
 		}
 		
-		public function initTabs(param1:Boolean = false, param2:Boolean = false) : *
+		public function initTabs(bInitTab:Boolean = false, resetTabs:Boolean = false) : *
 		{
-			var val4:uint = 0;
-			var val5:Number = NaN;
-			if(param2)
+			var i:uint = 0;
+			var tabId:Number = NaN;
+			if(resetTabs)
 			{
-				val4 = 0;
-				while(val4 < this.panelArray.length)
+				i = 0;
+				while(i < this.panelArray.length)
 				{
-					this.panelArray[val4].visible = false;
-					if(param1 && this.panelArray[val4].init != null)
+					this.panelArray[i].visible = false;
+					if(bInitTab && this.panelArray[i].init != null)
 					{
-						this.panelArray[val4].init();
+						this.panelArray[i].init();
 					}
-					if(this.panelArray[val4].list)
+					if(this.panelArray[i].list)
 					{
-						this.panelArray[val4].list.enableMouseWheelOnOver = true;
-						this.panelArray[val4].list.m_scrollbar_mc.visible = false;
-						this.panelArray[val4].list.m_scrollbar_mc.disabled = false;
-						this.panelArray[val4].list.m_scrollbar_mc.m_hideWhenDisabled = true;
+						this.panelArray[i].list.enableMouseWheelOnOver = true;
+						this.panelArray[i].list.m_scrollbar_mc.visible = false;
+						this.panelArray[i].list.m_scrollbar_mc.disabled = false;
+						this.panelArray[i].list.m_scrollbar_mc.m_hideWhenDisabled = true;
 					}
-					val4++;
+					i++;
 				}
 			}
-			var val3:uint = 0;
-			while(val3 < this.tabsArray.length)
+			i = 0;
+			while(i < this.tabsArray.length)
 			{
-				val5 = this.tabsArray[val3].id;
-				if((root as MovieClip).tabsTexts.length > val5)
+				tabId = this.tabsArray[i].id;
+				if((root as MovieClip).tabsTexts.length > tabId)
 				{
-					this.tabsArray[val3].tooltip = (root as MovieClip).tabsTexts[val5];
+					this.tabsArray[i].tooltip = (root as MovieClip).tabsTexts[tabId];
 				}
-				this.tabsArray[val3].icon_mc.gotoAndStop(val5 + 1);
-				this.tabsArray[val3].pressedFunc = this.ClickTab;
-				if(val3 == this.currentOpenPanel)
+				this.tabsArray[i].icon_mc.gotoAndStop(tabId + 1);
+				this.tabsArray[i].pressedFunc = this.ClickTab;
+				if(i == this.currentOpenPanel)
 				{
-					this.panelArray[val3].visible = true;
-					this.tabsArray[val3].icon_mc.y = this.selectedTabY;
-					this.tabsArray[val3].tw = new larTween(this.tabsArray[val3].icon_mc,"alpha",Sine.easeOut,this.tabsArray[val3].icon_mc.alpha,this.selectedTabAlpha,this.tabTweenInTime);
-					this.tabsArray[val3].texty = this.selectedTabY;
-					this.tabsArray[val3].setActive(true);
-					this.tabTitle_txt.htmlText = this.panelArray[val5].labelStr;
+					this.panelArray[i].visible = true;
+					this.tabsArray[i].icon_mc.y = this.selectedTabY;
+					this.tabsArray[i].tw = new larTween(this.tabsArray[i].icon_mc,"alpha",Sine.easeOut,this.tabsArray[i].icon_mc.alpha,this.selectedTabAlpha,this.tabTweenInTime);
+					this.tabsArray[i].texty = this.selectedTabY;
+					this.tabsArray[i].setActive(true);
+					this.tabTitle_txt.htmlText = this.panelArray[tabId].labelStr;
 					textHelpers.smallCaps(this.tabTitle_txt);
 				}
 				else
 				{
-					this.panelArray[val3].visible = false;
-					this.tabsArray[val3].icon_mc.y = this.deselectedTabY;
-					this.tabsArray[val3].tw = new larTween(this.tabsArray[val3].icon_mc,"alpha",Sine.easeOut,this.tabsArray[val3].icon_mc.alpha,this.deselectedTabAlpha,this.tabTweenInTime);
-					this.tabsArray[val3].texty = this.deselectedTabY;
-					this.tabsArray[val3].setActive(false);
+					this.panelArray[i].visible = false;
+					this.tabsArray[i].icon_mc.y = this.deselectedTabY;
+					this.tabsArray[i].tw = new larTween(this.tabsArray[i].icon_mc,"alpha",Sine.easeOut,this.tabsArray[i].icon_mc.alpha,this.deselectedTabAlpha,this.tabTweenInTime);
+					this.tabsArray[i].texty = this.deselectedTabY;
+					this.tabsArray[i].setActive(false);
 				}
-				val3++;
+				i++;
 			}
+			trace("[initTabs] this.pointsFrame_mc.setTab", this.currentOpenPanel);
 			this.pointsFrame_mc.setTab(this.currentOpenPanel);
 		}
 		
@@ -459,21 +497,22 @@ package characterSheet_fla
 				}
 				this.currentOpenPanel = tabIndex;
 				this.INTSetAvailablePointsVisible();
+				trace("[ClickTab] this.pointsFrame_mc.setTab", this.currentOpenPanel);
 				this.pointsFrame_mc.setTab(this.currentOpenPanel);
 			}
 			ExternalInterface.call("selectedTab",this.currentOpenPanel);
 		}
 		
-		public function selectTab(param1:Number) : *
+		public function selectTab(index:Number) : *
 		{
-			var val2:MovieClip = this.getTabById(param1);
+			var val2:MovieClip = this.getTabById(index);
 			if(val2)
 			{
 				val2.setActive(true);
 				val2.icon_mc.y = this.selectedTabY;
 				val2.icon_mc.alpha = this.selectedTabAlpha;
 				val2.texty = this.selectedTabY;
-				this.tabTitle_txt.htmlText = this.panelArray[param1].labelStr;
+				this.tabTitle_txt.htmlText = this.panelArray[index].labelStr;
 				textHelpers.smallCaps(this.tabTitle_txt);
 			}
 		}
@@ -511,17 +550,15 @@ package characterSheet_fla
 		{
 			var pointsWarn_mc:MovieClip = null;
 			var pointsWarn_tf:TextField = null;
-			var pointsWarn_mc2:MovieClip = null;
+
+			trace("INTSetWarnAndPoints", index, pointsValue);
+
 			if(!(root as MovieClip).isGameMasterChar)
 			{
 				pointsWarn_mc = this.pointsWarn[index];
 				pointsWarn_tf = this.pointTexts[index];
-				if(pointsWarn_mc && pointsWarn_tf)
+				if(pointsWarn_mc)
 				{
-					pointsWarn_tf.htmlText = pointsValue + "";
-					textHelpers.smallCaps(pointsWarn_tf);
-					pointsWarn_tf.x = this.pointsFrame_mc.label_txt.x + this.pointsFrame_mc.label_txt.textWidth + 8;
-					this.pointsFrame_mc.x = this.PointsFrameW - Math.round((pointsWarn_tf.x + pointsWarn_tf.textWidth) * 0.5);
 					pointsWarn_mc.visible = pointsValue != 0;
 					pointsWarn_mc.avPoints = pointsValue;
 					if(pointsWarn_mc.visible)
@@ -532,32 +569,67 @@ package characterSheet_fla
 					{
 						pointsWarn_mc.stop();
 					}
-					if(this.currentOpenPanel == index)
+				}
+				if(pointsWarn_tf)
+				{
+					pointsWarn_tf.htmlText = pointsValue + "";
+					textHelpers.smallCaps(pointsWarn_tf);
+					pointsWarn_tf.x = (this.pointsFrame_mc.label_txt.x + this.pointsFrame_mc.label_txt.textWidth + 8);
+					this.pointsFrame_mc.x = this.PointsFrameW - Math.round((pointsWarn_tf.x + pointsWarn_tf.textWidth) * 0.5);
+
+					if (index == 4)
 					{
-						this.INTSetAvailablePointsVisible();
+						//For some reason this text is slightly to the right, even though the x position says it's the same as the others.
+						pointsWarn_tf.x = pointsWarn_tf.x + this.customStatPointsTextOffsetX;//this.pointTexts[2].x;
 					}
+
+					trace("pointsWarn_tf.x", pointsWarn_tf.x, "pointsFrame_mc.x", pointsFrame_mc.x, "this.x", this.x);
+				}
+
+				if((this.currentOpenPanel == 8 && index == 4) || this.currentOpenPanel == index)
+				{
+					this.INTSetAvailablePointsVisible();
 				}
 			}
 			else
 			{
-				pointsWarn_mc2 = this.pointsWarn[index];
-				if(pointsWarn_mc2)
+				// pointsWarn_mc = this.pointsWarn[index];
+				// if(pointsWarn_mc)
+				// {
+				// 	pointsWarn_mc.stop();
+				// 	pointsWarn_mc.visible = false;
+				// }
+				//LeaderLib: Fix to make sure all the buttons are hidden.
+				var i:uint = 0;
+				while(i < this.pointsWarn.length)
 				{
-					pointsWarn_mc2.stop();
-					pointsWarn_mc2.visible = false;
+					this.pointsWarn[i].visible = false;
+					this.pointsWarn[i].stop();
+					this.pointsWarn[i].mouseEnabled = false;
+					this.pointsWarn[i].mouseChildren = false;
+					this.pointsWarn[i].avPoints = 0;
+					i++;
 				}
 			}
 		}
 		
 		public function INTSetAvailablePointsVisible() : *
 		{
-			if(this.currentOpenPanel >= 0 && this.currentOpenPanel < this.pointsWarn.length)
+			//LeaderLib: Allowing the custom stats panel to display available points.
+			if(this.currentOpenPanel == 8)
 			{
-				this.pointsFrame_mc.visible = this.pointsWarn[this.currentOpenPanel].visible;
+				this.pointsFrame_mc.visible = this.pointsWarn[4].visible;
 			}
 			else
 			{
-				this.pointsFrame_mc.visible = false;
+				if(this.currentOpenPanel >= 0 && this.currentOpenPanel < 4)
+				{
+					this.pointsFrame_mc.visible = this.pointsWarn[this.currentOpenPanel].visible;
+				}
+				else
+				{
+					this.pointsFrame_mc.visible = false;
+				}
 			}
 			this.tabTitle_txt.visible = !this.pointsFrame_mc.visible;
 		}
@@ -1402,6 +1474,21 @@ package characterSheet_fla
 			this.charInfo_mc.selCharInfo_txt.mouseEnabled = false;
 			this.hitArea_mc.addEventListener(MouseEvent.MOUSE_DOWN,this.justEatClick);
 			this.hitArea_mc.addEventListener(MouseEvent.MOUSE_UP,this.justEatClick);
+
+			//LeaderLib additions
+			customStatsPointsWrn_mc = new mcPlus_Anim_69();
+			customStatsPointsWrn_mc.name = "customStatsPointsWrn_mc";
+			customStatsPointsWrn_mc.visible = false;
+			customStatsPointsWrn_mc.x = 394.5;
+			customStatsPointsWrn_mc.y = 215;
+			customStatsPointsWrn_mc.width = 77;
+			customStatsPointsWrn_mc.height = 77;
+			//customStatsPointsWrn_mc.width = 83.395126342773;
+			//customStatsPointsWrn_mc.height = 83.395126342773;
+			var index:int = this.getChildIndex(this.talentPointsWrn_mc);
+			this.addChildAt(customStatsPointsWrn_mc, index);
+			//this.addChild(customStatsPointsWrn_mc);
+			trace("customStatsPointsWrn_mc index:", index);
 		}
 	}
 }

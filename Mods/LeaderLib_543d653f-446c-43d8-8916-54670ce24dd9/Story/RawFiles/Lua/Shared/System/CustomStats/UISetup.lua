@@ -87,6 +87,10 @@ function CustomStatSystem:SetupGroups(ui, call)
 	this.positionElements()
 end
 
+function CustomStatSystem:OnUpdateDone(ui, call)
+	self:UpdateAvailablePoints(ui, call)
+end
+
 function CustomStatSystem:OnGroupAdded(ui, call, id)
 	local category = self:GetCategoryByGroupId(id)
 	if category and category.Description then
@@ -111,6 +115,7 @@ end
 Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem", OnSheetUpdating)
 Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "clearStats", function(...) CustomStatSystem:SetupGroups(...) end)
 Ext.RegisterUITypeCall(Data.UIType.characterSheet, "customStatsGroupAdded", function(...) CustomStatSystem:OnGroupAdded(...) end)
+Ext.RegisterUITypeCall(Data.UIType.characterSheet, "characterSheetUpdateDone", function(...) CustomStatSystem:OnUpdateDone(...) end, "After")
 --Ext.RegisterUITypeCall(Data.UIType.characterSheet, "createCustomStatGroups", CustomStatSystem.SetupGroups)
 --Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setPlayerInfo", AdjustCustomStatMovieClips)
 

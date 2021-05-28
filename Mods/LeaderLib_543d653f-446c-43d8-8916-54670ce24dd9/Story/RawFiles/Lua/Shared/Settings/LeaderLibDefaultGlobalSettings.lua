@@ -32,6 +32,7 @@ settings.GetMenuOrder = function()
 			"LeaderLib_PullPartyIntoCombat",
 			"AutoCombatRange",
 			"LeaderLib_RemovePathInfluencesOnChainAll",
+			"LeaderLib_AllTooltipsForItemsEnabled",
 		}},
 		{DisplayName = GameHelpers.GetStringKeyText("LeaderLib_UI_Settings_DialogRedirection", "Dialog Redirection"), 
 		Entries = {		

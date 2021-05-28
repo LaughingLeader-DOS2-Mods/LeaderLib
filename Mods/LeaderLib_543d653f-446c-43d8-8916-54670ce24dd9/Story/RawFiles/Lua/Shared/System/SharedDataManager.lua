@@ -105,8 +105,7 @@ if Ext.IsServer() then
 					Profile = profile,
 					IsHost = isHost,
 					ID = id,
-					NetID = netid,
-					CustomStats = CustomStatSystem:GetSyncData()
+					NetID = netid
 				}
 				SendSyncListenerEvent(id, profile, uuid, isHost)
 				Ext.PostMessageToUser(id, "LeaderLib_SharedData_StoreData", Ext.JsonStringify(data))

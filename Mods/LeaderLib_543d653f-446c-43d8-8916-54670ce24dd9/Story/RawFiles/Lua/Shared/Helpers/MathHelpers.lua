@@ -213,3 +213,15 @@ function GameHelpers.Math.Round(num, numPlaces)
 	local mult = 10^(numPlaces or 0)
 	return math.floor(num * mult + 0.5) / mult
 end
+
+function GameHelpers.Math.ScaleToRange(val, minRange, maxRange, minScale, maxScale)
+    if val == minRange then
+        return minScale
+    elseif val >= maxRange then
+        return maxScale
+    end
+	local diff = maxRange - val
+    local diffMult = diff/(maxRange - minRange)
+    local result = diffMult*(maxScale - minScale)
+    return math.min(maxScale, math.max(result, minScale))
+end

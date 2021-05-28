@@ -374,7 +374,7 @@ package characterSheet_fla
 				}
 				i++;
 			}
-			trace("[initTabs] this.pointsFrame_mc.setTab", this.currentOpenPanel);
+
 			this.pointsFrame_mc.setTab(this.currentOpenPanel);
 		}
 		
@@ -497,7 +497,6 @@ package characterSheet_fla
 				}
 				this.currentOpenPanel = tabIndex;
 				this.INTSetAvailablePointsVisible();
-				trace("[ClickTab] this.pointsFrame_mc.setTab", this.currentOpenPanel);
 				this.pointsFrame_mc.setTab(this.currentOpenPanel);
 			}
 			ExternalInterface.call("selectedTab",this.currentOpenPanel);
@@ -551,8 +550,6 @@ package characterSheet_fla
 			var pointsWarn_mc:MovieClip = null;
 			var pointsWarn_tf:TextField = null;
 
-			trace("INTSetWarnAndPoints", index, pointsValue);
-
 			if(!(root as MovieClip).isGameMasterChar)
 			{
 				pointsWarn_mc = this.pointsWarn[index];
@@ -579,11 +576,10 @@ package characterSheet_fla
 
 					if (index == 4)
 					{
-						//For some reason this text is slightly to the right, even though the x position says it's the same as the others.
+						//For some reason this text is slightly too much to the right, even though the x position says it's the same as the others.
+						//Leading, margin values etc. all seem to be the same as well.
 						pointsWarn_tf.x = pointsWarn_tf.x + this.customStatPointsTextOffsetX;//this.pointTexts[2].x;
 					}
-
-					trace("pointsWarn_tf.x", pointsWarn_tf.x, "pointsFrame_mc.x", pointsFrame_mc.x, "this.x", this.x);
 				}
 
 				if((this.currentOpenPanel == 8 && index == 4) || this.currentOpenPanel == index)
@@ -1483,12 +1479,8 @@ package characterSheet_fla
 			customStatsPointsWrn_mc.y = 215;
 			customStatsPointsWrn_mc.width = 77;
 			customStatsPointsWrn_mc.height = 77;
-			//customStatsPointsWrn_mc.width = 83.395126342773;
-			//customStatsPointsWrn_mc.height = 83.395126342773;
 			var index:int = this.getChildIndex(this.talentPointsWrn_mc);
 			this.addChildAt(customStatsPointsWrn_mc, index);
-			//this.addChild(customStatsPointsWrn_mc);
-			trace("customStatsPointsWrn_mc index:", index);
 		}
 	}
 }

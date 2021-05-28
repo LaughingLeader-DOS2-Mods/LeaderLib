@@ -23,7 +23,7 @@ if Ext.IsServer() then
 			end
 			PersistentVars.CustomStatAvailablePoints[uuid][statId] = amount
 			if Vars.DebugMode then
-				fprint(LOGLEVEL.DEFAULT, "Set points for custom stat (%s) to (%s) for character(%s). Total(%s)", statId, amount, uuid, PersistentVars.CustomStatAvailablePoints[uuid][statId])
+				fprint(LOGLEVEL.DEFAULT, "Set available points for custom stat (%s) to (%s) for character(%s). Total(%s)", statId, amount, uuid, PersistentVars.CustomStatAvailablePoints[uuid][statId])
 			end
 
 			if not skipSync then
@@ -49,7 +49,7 @@ if Ext.IsServer() then
 			PersistentVars.CustomStatAvailablePoints[uuid][statId] = current + amount
 
 			if Vars.DebugMode then
-				fprint(LOGLEVEL.DEFAULT, "Added (%s) points for custom stat (%s) to character(%s). Total(%s)", amount, statId, uuid, PersistentVars.CustomStatAvailablePoints[uuid][statId])
+				fprint(LOGLEVEL.DEFAULT, "Added (%s) available points for custom stat (%s) to character(%s). Total(%s)", amount, statId, uuid, PersistentVars.CustomStatAvailablePoints[uuid][statId])
 			end
 
 			-- If a save is loaded or the game is stopped, it'll get synced in the next SharedData cycle anyway
@@ -165,6 +165,7 @@ function CustomStatSystem:OnStatPointAdded(ui, call, doubleHandle)
 		if points == 0 then
 			stat_mc.plus_mc.visible = false
 		end
+		self:SyncAvailablePoints()
 	end
 end
 
@@ -176,6 +177,7 @@ function CustomStatSystem:OnStatPointRemoved(ui, call, doubleHandle)
 	local points = stat.AvailablePoints[character.MyGuid]
 	if points then
 		stat.AvailablePoints[character.MyGuid] = stat.AvailablePoints[character.MyGuid] + 1
+		self:SyncAvailablePoints()
 	end
 end
 

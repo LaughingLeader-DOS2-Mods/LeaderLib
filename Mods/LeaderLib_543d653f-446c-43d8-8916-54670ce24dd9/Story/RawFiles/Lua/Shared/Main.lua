@@ -133,6 +133,11 @@ Ext.RegisterListener("SessionLoaded", function()
 	for _,stat in pairs(Ext.GetStatEntries("Object")) do
 		Data.ObjectStats[stat] = true
 	end
+	for _,stat in pairs(Ext.GetStatEntries("Potion")) do
+		if not StringHelpers.IsNullOrWhitespace(Ext.StatGetAttribute(stat, "RootTemplate")) then
+			Data.ObjectStats[stat] = true
+		end
+	end
 end)
 
 ---@param uuid string

@@ -104,7 +104,10 @@ end
 ---@param item EsvItem|EclItem
 ---@return boolean
 function GameHelpers.Item.IsObject(item)
-	if Data.ObjectStats[item.StatsId] or item.ItemType == "Object" or not item.Stats then
+	if Data.ObjectStats[item.StatsId] or item.ItemType == "Object" then
+		return true
+	end
+	if not item.Stats then
 		return true
 	end
 	return false

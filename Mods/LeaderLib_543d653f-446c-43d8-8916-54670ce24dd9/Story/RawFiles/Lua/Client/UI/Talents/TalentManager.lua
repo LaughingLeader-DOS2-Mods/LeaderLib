@@ -172,6 +172,24 @@ local racialTalents = {
 	Zombie = "TALENT_Zombie",
 }
 
+local DivineTalents = {
+	--Rager = "TALENT_Rager",
+	Elementalist = "TALENT_Elementalist",
+	Sadist = "TALENT_Sadist",
+	Haymaker = "TALENT_Haymaker",
+	Gladiator = "TALENT_Gladiator",
+	Indomitable = "TALENT_Indomitable",
+	WildMag = "TALENT_WildMag",
+	Jitterbug = "TALENT_Jitterbug",
+	Soulcatcher = "TALENT_Soulcatcher",
+	MasterThief = "TALENT_MasterThief",
+	GreedyVessel = "TALENT_GreedyVessel",
+	MagicCycles = "TALENT_MagicCycles",
+}
+
+--Requires a name and description to be manually set in the tooltip, as well as an icon
+local ragerWasEnabled = false
+
 for name,v in pairs(missingTalents) do
 	TalentManager.RegisteredCount[name] = 0
 	-- if Vars.DebugMode then
@@ -204,6 +222,9 @@ end
 ---@param modID string The registering mod's UUID.
 ---@param getRequirements TalentRequirementCheckCallback|nil A function that gets invoked when looking to see if a player has met the talent's requirements.
 function TalentManager.EnableTalent(talentId, modID, getRequirements)
+	if talentId == "Rager" then
+		ragerWasEnabled = true
+	end
 	if talentId == "all" then
 		for talent,v in pairs(missingTalents) do
 			TalentManager.EnableTalent(talent, modID, getRequirements)
@@ -432,25 +453,46 @@ function TalentManager.Update_CC(ui, talent_mc, player)
 	end
 end
 
+local function CanDisplayDivineTalent(talentId, name)
+	if not DivineTalents[talentId] then
+		return true
+	end
+	if string.find(name, "|") then
+		return false
+	end
+	if talentId == "Rager" then
+		-- Seems to have no handles for its name/description
+		return ragerWasEnabled
+	elseif talentId == "Jitterbug" then
+		local tooltip = Ext.GetTranslatedString("h758efe2fgb3bag4935g9500g2c789497e87a", "")
+		if string.find(tooltip, "|") then
+			return false
+		end
+	end
+	return true
+end
+
 local function AddTalentToArray(ui, player, talent_array, talentId, lvlBtnTalent_array, i)
 	local talentEnum = Data.TalentEnum[talentId]
 	if not TalentManager.TalentIsInArray(talentEnum, talent_array) then
 		local talentState = TalentManager.GetTalentState(player, talentId)
 		local name = TalentManager.GetTalentDisplayName(player, talentId, talentState)
-		if not Vars.ControllerEnabled then
-			--addTalent(displayName:String, id:Number, talentState:Number)
-			talent_array[i] = name
-			talent_array[i+1] = talentEnum
-		else
-			--addTalent(id:Number, displayName:String, talentState:Number)
-			talent_array[i] = talentEnum
-			talent_array[i+1] = name
-		end
-		talent_array[i+2] = talentState
-		i = i + 3
-
-		if Vars.ControllerEnabled then
-			TalentManager.Gamepad.UpdateTalent(ui, player, talentId, talentEnum, lvlBtnTalent_array, talentState)
+		--Skip placeholders
+		if CanDisplayDivineTalent(talentId, name) then
+			if not Vars.ControllerEnabled then
+				--addTalent(displayName:String, id:Number, talentState:Number)
+				talent_array[i] = name
+				talent_array[i+1] = talentEnum
+			else
+				--addTalent(id:Number, displayName:String, talentState:Number)
+				talent_array[i] = talentEnum
+				talent_array[i+1] = name
+			end
+			talent_array[i+2] = talentState
+			i = i + 3
+			if Vars.ControllerEnabled then
+				TalentManager.Gamepad.UpdateTalent(ui, player, talentId, talentEnum, lvlBtnTalent_array, talentState)
+			end
 		end
 	end
 	return i
@@ -499,21 +541,6 @@ if Vars.DebugMode then
 		end
 	end)
 end
-
-local DivineTalents = {
-	Rager = "TALENT_Rager",
-	Elementalist = "TALENT_Elementalist",
-	Sadist = "TALENT_Sadist",
-	Haymaker = "TALENT_Haymaker",
-	Gladiator = "TALENT_Gladiator",
-	Indomitable = "TALENT_Indomitable",
-	WildMag = "TALENT_WildMag",
-	Jitterbug = "TALENT_Jitterbug",
-	Soulcatcher = "TALENT_Soulcatcher",
-	MasterThief = "TALENT_MasterThief",
-	GreedyVessel = "TALENT_GreedyVessel",
-	MagicCycles = "TALENT_MagicCycles",
-}
 
 function TalentManager.ToggleDivineTalents(enabled)
 	if enabled then

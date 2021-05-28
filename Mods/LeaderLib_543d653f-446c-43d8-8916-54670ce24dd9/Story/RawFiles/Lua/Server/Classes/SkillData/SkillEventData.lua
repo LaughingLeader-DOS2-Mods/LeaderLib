@@ -55,6 +55,16 @@ function SkillEventData:AddTargetPosition(x,y,z)
 	self.TotalTargetPositions = self.TotalTargetPositions + 1
 end
 
+---@return number[]
+function SkillEventData:GetSkillTargetPosition()
+	if self.TotalTargetPositions > 0 then
+		return self.TargetPositions[1]
+	elseif self.TotalTargetObjects > 0 then
+		return table.pack(GetPosition(self.TargetObjects[1]))
+	end
+	return nil
+end
+
 function SkillEventData:Clear()
 	self.TargetObjects = {}
 	self.TargetPositions = {}

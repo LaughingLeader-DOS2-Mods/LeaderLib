@@ -33,6 +33,12 @@ function ProjectileHitData:Create(target, attacker, projectile, position, skill)
     return this
 end
 
+function ProjectileHitData:Print()
+	PrintDebug("[LeaderLib:ProjectileHitData]")
+	PrintDebug("============")
+	self:PrintTargets()
+	PrintDebug("============")
+end
 function ProjectileHitData:PrintTargets()
 	fprint(LOGLEVEL.TRACE, "[ProjectileHitData:%s] Target(%s) Position(%s)", self.Skill, self.Target, Common.Dump(self.Position))
 end

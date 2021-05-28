@@ -185,6 +185,13 @@ end
 ---@param character EsvCharacter|EclCharacter
 ---@param tag string
 function GameHelpers.CharacterOrEquipmentHasTag(character, tag)
+	if type(character) ~= "userdata" then
+		character = Ext.GetCharacter(character)
+		if not character then
+			error("GameHelpers.CharacterOrEquipmentHasTag requires a uuid, netid, or EsvCharacter/EclCharacter", 1)
+			return false
+		end
+	end
 	if character:HasTag(tag) then
 		return true
 	end

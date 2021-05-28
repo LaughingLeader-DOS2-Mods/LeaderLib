@@ -41,6 +41,12 @@ function HitData:Create(target, attacker, damage, handle, skill)
 end
 
 function HitData:PrintTargets()
+	PrintDebug("[LeaderLib:HitData]")
+	PrintDebug("============")
+	self:PrintTargets()
+	PrintDebug("============")
+end
+function HitData:PrintTargets()
 	fprint(LOGLEVEL.TRACE, "[HitData:%s] Target(%s)", self.Handle, self.Target)
 end
 

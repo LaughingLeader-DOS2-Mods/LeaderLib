@@ -278,7 +278,7 @@ function Input.OnFlashEvent(ui, call, pressed, eventName, arrayIndex)
 	if pressed or Input.SkipStateCheck[eventName] == KEYSTATE.RELEASED then
 		lastPressedTimes[eventName] = Ext.MonotonicTime()
 	end
-	
+
 	-- if Vars.DebugMode and not string.find(eventName, "Mouse") then
 	-- 	PrintLog("[Input.OnFlashEvent] eventName(%s) pressed(%s) index(%s) Last(%s) WillFire(%s)", eventName, pressed, arrayIndex, lastFiredEventFrom[eventName], lastFiredEventFrom[eventName] ~= 0 or Input.Keys[eventName] ~= nextState)
 	-- end

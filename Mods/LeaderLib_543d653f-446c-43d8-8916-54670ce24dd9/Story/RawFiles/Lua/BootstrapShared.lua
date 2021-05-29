@@ -26,7 +26,7 @@ Ext.Require("Shared/Stats/CustomSkillProperties.lua")
 Ext.Require("Shared/Stats/StatOverrides.lua")
 Ext.Require("Shared/System/FeaturesHandler.lua")
 Ext.Require("Shared/System/AbilityAPI.lua")
-if Vars.DebugMode then
+if Vars.DebugMode and Ext.GetCustomStatByName ~= nil then
 Ext.Require("Shared/System/CustomStats/CustomStatSystem.lua")
 else
 -- Intermediate update workaround - Still working on this system

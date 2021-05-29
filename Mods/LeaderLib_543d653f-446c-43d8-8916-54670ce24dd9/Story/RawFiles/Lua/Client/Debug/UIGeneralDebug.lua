@@ -659,13 +659,13 @@ end
 
 --Ext.RegisterListener("SessionLoaded", iggyTrace)
 
-Ext.RegisterUITypeInvokeListener(Data.UIType.enemyHealthBar, "updateStatuses", function(ui)
-	local this = ui:GetRoot()
-	if not this.status_array[0] then
-		return
-	end
-	local character = Ext.GetCharacter(Ext.DoubleToHandle(this.status_array[0]))
-	if character then
-		fprint(LOGLEVEL.DEFAULT, "DisplayName(%s) DisplayNameOverride(%s) StoryDisplayName(%s) OriginalDisplayName(%s) PlayerCustomData.Name(%s) RootTemplate.DisplayName(%s) RootTemplate.Id(%s) UUID(%s)", character.DisplayName, character.DisplayNameOverride, character.StoryDisplayName, character.OriginalDisplayName, character.PlayerCustomData and character.PlayerCustomData.Name or "nil", character.RootTemplate and character.RootTemplate.DisplayName or "nil", character.RootTemplate and character.RootTemplate.Id or "nil", character.MyGuid)
-	end
-end)
+-- Ext.RegisterUITypeInvokeListener(Data.UIType.enemyHealthBar, "updateStatuses", function(ui)
+-- 	local this = ui:GetRoot()
+-- 	if not this.status_array[0] then
+-- 		return
+-- 	end
+-- 	local character = Ext.GetCharacter(Ext.DoubleToHandle(this.status_array[0]))
+-- 	if character then
+-- 		fprint(LOGLEVEL.DEFAULT, "DisplayName(%s) DisplayNameOverride(%s) StoryDisplayName(%s) OriginalDisplayName(%s) PlayerCustomData.Name(%s) RootTemplate.DisplayName(%s) RootTemplate.Id(%s) UUID(%s)", character.DisplayName, character.DisplayNameOverride, character.StoryDisplayName, character.OriginalDisplayName, character.PlayerCustomData and character.PlayerCustomData.Name or "nil", character.RootTemplate and character.RootTemplate.DisplayName or "nil", character.RootTemplate and character.RootTemplate.Id or "nil", character.MyGuid)
+-- 	end
+-- end)

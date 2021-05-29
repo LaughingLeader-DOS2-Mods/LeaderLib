@@ -39,7 +39,7 @@ if Ext.IsClient() then
 	Ext.RegisterNetListener("LeaderLib_WorldTooltipper_UpdateClient", WorldTooltipper.UpdateItems)
 else
 	---@param item EsvItem
-	local function ItemCanHaveTooltip(item)
+	local function ShouldHaveTooltip(item)
 		if item.RootTemplate and item.RootTemplate.Tooltip ~= WorldTooltipper.TooltipMode and not StringHelpers.IsNullOrWhitespace(item.DisplayName) then
 			return true
 		end
@@ -51,7 +51,7 @@ else
 			local time = Ext.MonotonicTime()
 			for _,uuid in pairs(Ext.GetAllItems()) do
 				local item = Ext.GetItem(uuid)
-				if item and ItemCanHaveTooltip(item) then
+				if item and ShouldHaveTooltip(item) then
 					item.RootTemplate.Tooltip = WorldTooltipper.TooltipMode
 				end
 			end
@@ -69,7 +69,7 @@ else
 
 	---@param item EsvItem
 	function WorldTooltipper.OnItemEnteredWorld(item, region)
-		if item and ItemCanHaveTooltip(item) then
+		if item and ShouldHaveTooltip(item) then
 			--print("SERVER", item.DisplayName, item.RootTemplate.Tooltip)
 			item.RootTemplate.Tooltip = WorldTooltipper.TooltipMode
 		end

@@ -1,6 +1,7 @@
 Ext.Require("BootstrapShared.lua")
 
 ---@alias UUID string
+---@alias NETID integer
 
 ---@class LeaderLibPersistentVars
 local defaultPersistentVars = {

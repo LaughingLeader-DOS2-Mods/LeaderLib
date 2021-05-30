@@ -36,6 +36,10 @@ if Ext.IsServer() then
 			error(string.format("Invalid parameters character(%s) uuid(%s) statId(%s) amount(%s)", tostring(character), tostring(uuid), tostring(statId), tostring(amount)), 1)
 		end
 	end
+
+	---@param character EsvCharacter|UUID|NETID
+	---@param statId string A stat id or stat PoolID.
+	---@param amount integer
 	function CustomStatSystem:AddAvailablePoints(character, statId, amount)
 		local uuid = character
 		if type(character) == "userdata" and character.MyGuid then

@@ -26,6 +26,7 @@ local statPropertyMap = {
 	CREATE = {Name="Create", Type = "boolean"},
 	TOOLTIPTYPE = {Name="TooltipType", Type = "string"},
 	CATEGORY = {Name="Category", Type = "string"},
+	POINTSID = {Name="PointsID", Type = "string"},
 }
 
 ---@class CustomStatDataBase
@@ -114,7 +115,7 @@ local function TryFindConfig(info)
 end
 
 
----@return table<string, table<string, CustomCustomStatDataBase>>
+---@return table<string, table<string, CustomStatDataBase>>
 local function LoadConfigFiles()
 	local allCategories,allStats = {},{}
 	local order = Ext.GetModLoadOrder()

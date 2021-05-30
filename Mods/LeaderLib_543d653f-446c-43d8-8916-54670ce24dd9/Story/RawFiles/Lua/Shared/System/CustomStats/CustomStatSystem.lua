@@ -33,6 +33,7 @@ local self = CustomStatSystem
 ---@field Category string The stat's category id, if any.
 ---@field Double number The stat's double (handle) value. Determined dynamically.
 ---@field AvailablePoints table<UUID,integer> Amount of points available for a character.
+---@field PointsID string Optional id for the 'points pool' this stat shares available points with.
 
 ---@alias MOD_UUID string
 ---@alias STAT_ID string

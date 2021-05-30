@@ -13,14 +13,15 @@ function CustomStatSystem:SyncAvailablePoints()
 			if stat.AvailablePoints then
 				local amount = stat.AvailablePoints[character.MyGuid]
 				if amount then
-					data.Stats[stat.ID] = amount
+					if not StringHelpers.IsNullOrWhitespace(stat.PointsID) then
+						if not data.Stats[stat.PointsID] then
+							data.Stats[stat.PointsID] = 0
+						end
+						data.Stats[stat.PointsID] = data.Stats[stat.PointsID] + amount
+					else
+						data.Stats[stat.ID] = amount
+					end
 				end
-				-- for uuid,amount in pairs(stat.AvailablePoints) do
-				-- 	if not data[uuid] then
-				-- 		data[uuid] = {}
-				-- 	end
-				-- 	data[uuid][stat.ID] = stat.AvailablePoints
-				-- end
 			end
 		end
 		Ext.PostMessageToServer("LeaderLib_SyncCustomStatAvailablePoints", Ext.JsonStringify(data))

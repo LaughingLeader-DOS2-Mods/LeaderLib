@@ -11,6 +11,9 @@ function CustomStatSystem:GetNextCustomStatIconId()
 	return self.LastIconId
 end
 
+--Ext.GetUIByType(63):GetRoot().showPanel(6)
+--Ext.GetUIByType(63):GetRoot().addStatsTab(6, 0, "Extra Stats")
+
 local function AdjustCustomStatMovieClips(ui)
 	local this = ui:GetRoot()
 	local arr = this.stats_mc.customStats_mc.list.content_array

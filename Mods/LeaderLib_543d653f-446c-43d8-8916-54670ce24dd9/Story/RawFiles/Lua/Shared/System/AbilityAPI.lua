@@ -211,6 +211,25 @@ if Ext.IsClient() then
 		return points or 0
 	end
 
+	---@param ui UIObject
+	---@param main CharacterSheetMainTimeline
+	local function IsGameMaster(ui, main)
+		if Client and Client.Character and Client.Character.IsGameMaster then
+			return true
+		end
+		if not Vars.ControllerEnabled then
+			local ui = ui or Ext.GetUIByType(Data.UIType.characterSheet)
+			if ui then
+				---@type CharacterSheetMainTimeline
+				local this = main or ui:GetRoot()
+				if this and this.isGameMasterChar then
+					return true
+				end
+			end
+		end
+		return false
+	end
+
 	--[[ 
 	lvlBtnAbility_array mapping:
 	0 - hasPoints:boolean
@@ -227,7 +246,7 @@ if Ext.IsClient() then
 	4 = isVisible:boolean
 	]]
 	---@param ui UIObject
-	---@param hasPoints boolean
+	---@param main CharacterSheetMainTimeline
 	local function toggleAbilityButtonVisibility(ui, main)
 		local lvlBtnAbility_array = main.lvlBtnAbility_array
 		if lvlBtnAbility_array ~= nil and lvlBtnAbility_array[0] ~= nil then
@@ -241,12 +260,15 @@ if Ext.IsClient() then
 			local i = #lvlBtnAbility_array
 			for abilityName,data in pairs(missingAbilities) do
 				if AbilityManager.RegisteredCount[abilityName] > 0 then
-					local canAddPoints = false
-					if not data.Civil then
-						canAddPoints = abilityPoints > 0 and (character.Stats[abilityName] or 0) < maxAbility
-					else
-						canAddPoints = civilPoints > 0 and (character.Stats[abilityName]or 0) < maxCivil
+					local canAddPoints = IsGameMaster(ui, main)
+					if not canAddPoints then
+						if not data.Civil then
+							canAddPoints = abilityPoints > 0 and (character.Stats[abilityName] or 0) < maxAbility
+						else
+							canAddPoints = civilPoints > 0 and (character.Stats[abilityName]or 0) < maxCivil
+						end
 					end
+
 					local abilityID = Data.AbilityEnum[abilityName]
 					if canAddPoints then
 						if not Vars.ControllerEnabled then

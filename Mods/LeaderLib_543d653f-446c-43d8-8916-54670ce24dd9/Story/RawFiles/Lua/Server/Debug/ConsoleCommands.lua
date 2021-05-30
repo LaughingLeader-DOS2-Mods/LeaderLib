@@ -14,28 +14,38 @@ Ext.RegisterConsoleCommand("pos2", function()
 	print("Rotation:", Ext.JsonStringify(character.Rotation))
 end)
 
-Ext.RegisterConsoleCommand("printuuids", function(call, radiusVal)
+Ext.RegisterConsoleCommand("printuuids", function(call, radiusVal, skipSelf)
 	local radius = 6.0
 	if radiusVal ~= nil then
 		radius = tonumber(radiusVal)
 	end
-	local host = CharacterGetHostCharacter()
-	for i,uuid in pairs(Ext.GetCharacter(host):GetNearbyCharacters(radius)) do
-		---@type EsvCharacter
-		local character = Ext.GetCharacter(uuid)
-		---@type StatCharacter
-		local characterStats = character.Stats
-
-		print("CHARACTER")
-		print("===============")
-		print("UUID:", uuid)
-		print("NetID:", character.NetID)
-		print("Name:", CharacterGetDisplayName(uuid))
-		print("Stat:", characterStats.Name)
-		print("Archetype:", character.Archetype)
-		print("Pos:", Ext.JsonStringify(characterStats.Position))
-		print("Rot:", Ext.JsonStringify(characterStats.Rotation))
-		print("CustomTradeTreasure:", Ext.JsonStringify(character.CustomTradeTreasure))
+	local host = StringHelpers.GetUUID(CharacterGetHostCharacter())
+	local characters = nil
+	if radius < 0 then
+		characters = Ext.GetAllCharacters()
+	else
+		characters = Ext.GetCharacter(host):GetNearbyCharacters(radius)
+	end
+	for i,uuid in pairs(characters) do
+		if skipSelf and uuid == host then
+			--Skip
+		else
+			---@type EsvCharacter
+			local character = Ext.GetCharacter(uuid)
+			---@type StatCharacter
+			local characterStats = character.Stats
+	
+			print("CHARACTER")
+			print("===============")
+			print("UUID:", uuid)
+			print("NetID:", character.NetID)
+			print("Name:", CharacterGetDisplayName(uuid))
+			print("Stat:", characterStats.Name)
+			print("Archetype:", character.Archetype)
+			print("Pos:", Ext.JsonStringify(characterStats.Position))
+			print("Rot:", Ext.JsonStringify(characterStats.Rotation))
+			print("CustomTradeTreasure:", Ext.JsonStringify(character.CustomTradeTreasure))
+		end
 	print("===============")
 	end
 end)

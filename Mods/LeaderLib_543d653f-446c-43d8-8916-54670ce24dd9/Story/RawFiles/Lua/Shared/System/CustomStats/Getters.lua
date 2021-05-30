@@ -59,7 +59,6 @@ function CustomStatSystem:GetAllStats(visibleOnly, sortByDisplayName)
 		if ui then
 			findAll = false
 			local arr = ui:GetRoot().stats_mc.customStats_mc.stats_array
-			print(arr, #arr)
 			for i=0,#arr-1 do
 				local stat_mc = arr[i]
 				if stat_mc and stat_mc.statId then
@@ -257,3 +256,29 @@ function CustomStatSystem:GetStatValueForCategory(character, id, mod)
 end
 
 --endregion
+
+---@vararg function[]
+function CustomStatSystem:GetListenerIterator(...)
+	local tables = {...}
+	local i = 0
+	local totalCount = #tables
+	if totalCount == 0 then
+		return
+	end
+	return function ()
+		i = i + 1
+		if i <= totalCount then
+			local tbl = tables[i]
+			if tbl and #tbl > 0 then
+				local j = 0
+				local count = #tbl
+				return function ()
+					j = j + 1
+					if j <= count then
+						return tbl[j]
+					end
+				end
+			end
+		end
+	end
+end

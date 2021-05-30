@@ -1,14 +1,14 @@
 local self = CustomStatSystem
 
----@alias CustomStatGetAvailablePointsCallback fun(id:string, stat:CustomStatData, character:EclCharacter, currentValue:integer):integer
----@alias CustomStatPointsAssignedCallback fun(id:string, currentValue:integer, character:EsvCharacter, stat:CustomStatData):void
+---@alias CustomStatCanRemovePointsCallback fun(id:string, stat:CustomStatData, character:EclCharacter, currentValue:integer):integer
+---@alias CustomStatPointsAssignedCallback fun(id:string, stat:CustomStatData, character:EsvCharacter, previousPoints:integer, currentPoints:integer):void
 
 
 self.Listeners = {
-	---@type table<string, CustomStatGetAvailablePointsCallback[]>
-	GetAvailablePoints = {All = {}},
-	OnPointAdded = {},
-	OnPointRemoved = {},
+	---@type table<string, CustomStatCanRemovePointsCallback[]>
+	CanRemovePoints = {All = {}},
+	---@type table<string, CustomStatPointsAssignedCallback[]>
+	OnPointsChanged = {All = {}}
 }
 
 if Ext.IsServer() then
@@ -63,17 +63,29 @@ if Ext.IsServer() then
 else
 
 ---@param id string
----@param callback CustomStatGetAvailablePointsCallback
-function CustomStatSystem:RegisterGetAvailablePointsHandler(id, callback)
-	if not self.Listeners.GetAvailablePoints[id] then
-		self.Listeners.GetAvailablePoints[id] = {}
+---@param callback CustomStatCanRemovePointsCallback
+function CustomStatSystem:RegisterCanRemovePointsHandler(id, callback)
+	if not self.Listeners.CanRemovePoints[id] then
+		self.Listeners.CanRemovePoints[id] = {}
 	end
-	table.insert(self.Listeners.GetAvailablePoints[id], callback)
+	table.insert(self.Listeners.CanRemovePoints[id], callback)
+end
+
+---@param id string
+---@param callback CustomStatPointsAssignedCallback
+function CustomStatSystem:RegisterPointsChangedListener(id, callback)
+	if not self.Listeners.OnPointsChanged[id] then
+		self.Listeners.OnPointsChanged[id] = {}
+	end
+	table.insert(self.Listeners.OnPointsChanged[id], callback)
 end
 
 if Vars.DebugMode then
-	self:RegisterGetAvailablePointsHandler("Lucky", function(id, stat, character, current)
-		return stat.AvailablePoints[character.MyGuid] or 0
+	CustomStatSystem:RegisterCanRemovePointsHandler("Lucky", function(id, stat, character, current)
+		return current > 0
+	end)
+	CustomStatSystem:RegisterPointsChangedListener("All", function(id, stat, character, previousPoints, currentPoints)
+		fprint(LOGLEVEL.DEFAULT, "[OnPointsChanged:%s] Stat(%s) Character(%s) %s => %s", id, stat.UUID, character.DisplayName, previousPoints, currentPoints)
 	end)
 end
 
@@ -81,10 +93,8 @@ end
 function CustomStatSystem:GetTotalAvailablePoints(character)
 	character = character or Client:GetCharacter()
 	local points = 0
-	print("Iter?")
 	for stat in self:GetAllStats() do
 		points = points + self:GetAvailablePointsForStat(stat, character)
-		print(stat, stat.ID, points)
 	end
 	return points
 end
@@ -95,30 +105,9 @@ function CustomStatSystem:GetAvailablePointsForStat(stat, character)
 	character = character or Client:GetCharacter()
 	local points = 0
 	if stat then
-		local listeners = self.Listeners.GetAvailablePoints[stat.ID]
-		if listeners then
-			for i=1,#listeners do
-				local b,amount = xpcall(listeners[i], debug.traceback, stat.ID, stat, character, points)
-				if b and type(amount) == "number" then
-					points = points + amount
-				else
-					fprint(LOGLEVEL.ERROR, "[LeaderLib.CustomStatSystem:GetAvailablePoints] Error calling listener for stat (%s):\n%s", stat.ID, amount)
-				end
-			end
-		end
-		local listeners = self.Listeners.GetAvailablePoints.All
-		if listeners then
-			for i=1,#listeners do
-				local b,amount = xpcall(listeners[i], debug.traceback, stat.ID, stat, character, points)
-				if b and type(amount) == "number" then
-					points = points + amount
-				else
-					fprint(LOGLEVEL.ERROR, "[LeaderLib.CustomStatSystem:GetAvailablePoints] Error calling listener for stat (%s):\n%s", stat.ID, amount)
-				end
-			end
-		end
+		return stat.AvailablePoints or 0
 	end
-	return points
+	return 0
 end
 
 function CustomStatSystem:GetCanAddPoints(ui, call, doubleHandle)
@@ -129,12 +118,22 @@ function CustomStatSystem:GetCanAddPoints(ui, call, doubleHandle)
 	return false
 end
 
-function CustomStatSystem:GetCanRemovePoints(ui, call, doubleHandle)
-	if Vars.DebugMode then
-		local stat = self:GetStatByDouble(doubleHandle)
-		if stat then
-			local value = self:GetStatValueForCharacter(nil, stat.ID, stat.Mod)
-			return value and value > 0
+function CustomStatSystem:GetCanRemovePoints(ui, call, doubleHandle, character)
+	character = character or Client:GetCharacter()
+	local stat = self:GetStatByDouble(doubleHandle)
+	if stat then
+		local value = self:GetStatValueForCharacter(character, stat.ID, stat.Mod)
+		if value and value > 0 then
+			local canRemove = false
+			for listener in self:GetListenerIterator(self.Listeners.CanRemovePoints[stat.ID], self.Listeners.CanRemovePoints.All) do
+				local b,result = xpcall(listener, debug.traceback, stat.ID, stat, character, value)
+				if b and type(result) == "boolean" then
+					canRemove = result
+				else
+					fprint(LOGLEVEL.ERROR, "[LeaderLib.CustomStatSystem:GetAvailablePoints] Error calling listener for stat (%s):\n%s", stat.ID, result)
+				end
+			end
+			return canRemove
 		end
 	end
 	return false
@@ -158,12 +157,19 @@ function CustomStatSystem:OnStatPointAdded(ui, call, doubleHandle)
 	local character = Client:GetCharacter()
 	local points = stat.AvailablePoints[character.MyGuid]
 	if points then
+		local lastPoints = points
 		if points > 0 then
 			points = points - 1
 			stat.AvailablePoints[character.MyGuid] = points
 		end
 		if points == 0 then
 			stat_mc.plus_mc.visible = false
+		end
+		for listener in self:GetListenerIterator(self.Listeners.OnPointsChanged[stat.ID], self.Listeners.OnPointsChanged.All) do
+			local b,err = xpcall(listener, debug.traceback, stat.ID, stat, character, lastPoints, points)
+			if not b then
+				fprint(LOGLEVEL.ERROR, "[LeaderLib.CustomStatSystem:OnStatPointAdded] Error calling OnPointsChanged listener for stat (%s):\n%s", stat.ID, err)
+			end
 		end
 		self:SyncAvailablePoints()
 	end
@@ -176,7 +182,14 @@ function CustomStatSystem:OnStatPointRemoved(ui, call, doubleHandle)
 	local character = Client:GetCharacter()
 	local points = stat.AvailablePoints[character.MyGuid]
 	if points then
+		local lastPoints = points
 		stat.AvailablePoints[character.MyGuid] = stat.AvailablePoints[character.MyGuid] + 1
+		for listener in self:GetListenerIterator(self.Listeners.OnPointsChanged[stat.ID], self.Listeners.OnPointsChanged.All) do
+			local b,err = xpcall(listener, debug.traceback, stat.ID, stat, character, lastPoints, stat.AvailablePoints[character.MyGuid])
+			if not b then
+				fprint(LOGLEVEL.ERROR, "[LeaderLib.CustomStatSystem:OnStatPointRemoved] Error calling OnPointsChanged listener for stat (%s):\n%s", stat.ID, err)
+			end
+		end
 		self:SyncAvailablePoints()
 	end
 end
@@ -191,8 +204,8 @@ function CustomStatSystem:UpdateAvailablePoints(ui, call)
 end
 
 Ext.RegisterUITypeCall(Data.UIType.characterSheet, "customStatAdded", function(...) CustomStatSystem:OnStatAdded(...) end)
-Ext.RegisterUITypeCall(Data.UIType.characterSheet, "plusCustomStat", function(...) CustomStatSystem:OnStatPointAdded(...) end, "Before")
-Ext.RegisterUITypeCall(Data.UIType.characterSheet, "minusCustomStat", function(...) CustomStatSystem:OnStatPointRemoved(...) end, "Before")
+Ext.RegisterUITypeCall(Data.UIType.characterSheet, "plusCustomStat", function(...) CustomStatSystem:OnStatPointAdded(...) end, "After")
+Ext.RegisterUITypeCall(Data.UIType.characterSheet, "minusCustomStat", function(...) CustomStatSystem:OnStatPointRemoved(...) end, "After")
 end
 
 --[[

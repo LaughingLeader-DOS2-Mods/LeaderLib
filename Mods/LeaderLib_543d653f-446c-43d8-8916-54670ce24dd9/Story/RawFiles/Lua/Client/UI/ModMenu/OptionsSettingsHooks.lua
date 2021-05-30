@@ -505,11 +505,21 @@ Ext.RegisterListener("SessionLoaded", function()
 		llmenuSliderID = "menuSliderID",
 		llselectorID = "selectorID",
 		llcheckBoxID = "checkBoxID",
-		comboBoxID = "comboBoxID",
+		llcomboBoxID = "comboBoxID",
 	}
 
-	local OnCheckBox = function(ui, call, id, value)
+	local function getOriginalCall(call)
 		local originalCall = controlOriginalCalls[call]
+		if originalCall then
+			return originalCall
+		elseif string.find(call, "^ll", 1) then -- safeguard
+			return string.sub(call, 3)
+		end
+		return false
+	end
+
+	local OnCheckBox = function(ui, call, id, value)
+		local originalCall = getOriginalCall(call)
 		if originalCall then
 			if currentMenu == MOD_MENU_ID then
 				ModMenuManager.OnCheckbox(id, value)
@@ -527,7 +537,7 @@ Ext.RegisterListener("SessionLoaded", function()
 	end
 	
 	local OnComboBox = function(ui, call, id, value)
-		local originalCall = controlOriginalCalls[call]
+		local originalCall = getOriginalCall(call)
 		if originalCall then
 			if currentMenu == MOD_MENU_ID then
 				ModMenuManager.OnComboBox(id, value)
@@ -545,7 +555,7 @@ Ext.RegisterListener("SessionLoaded", function()
 	end
 
 	local OnSelector = function(ui, call, id, value)
-		local originalCall = controlOriginalCalls[call]
+		local originalCall = getOriginalCall(call)
 		if originalCall then
 			if currentMenu == MOD_MENU_ID then
 				ModMenuManager.OnSelector(id, value)
@@ -563,7 +573,7 @@ Ext.RegisterListener("SessionLoaded", function()
 	end
 
 	local OnSlider = function(ui, call, id, value)
-		local originalCall = controlOriginalCalls[call]
+		local originalCall = getOriginalCall(call)
 		if originalCall then
 			if currentMenu == MOD_MENU_ID then
 				ModMenuManager.OnSlider(id, value)
@@ -582,7 +592,7 @@ Ext.RegisterListener("SessionLoaded", function()
 
 	---@param ui UIObject
 	local OnButton = function(ui, call, id)
-		local originalCall = controlOriginalCalls[call]
+		local originalCall = getOriginalCall(call)
 		if originalCall then
 			if currentMenu == MOD_MENU_ID then
 				ModMenuManager.OnButtonPressed(id)

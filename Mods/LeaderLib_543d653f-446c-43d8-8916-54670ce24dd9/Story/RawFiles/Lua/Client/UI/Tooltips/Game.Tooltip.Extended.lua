@@ -1880,6 +1880,7 @@ function Game.Tooltip.RegisterListener(...)
 end
 
 local function OnSessionLoaded()
+	ControllerVars.Enabled = (Ext.GetBuiltinUI("Public/Game/GUI/msgBox_c.swf") or Ext.GetUIByType(Data.UIType.msgBox_c)) ~= nil
 	TooltipHooks.SessionLoaded = true
 	if TooltipHooks.InitializationRequested then
 		TooltipHooks:Init()

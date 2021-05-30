@@ -126,12 +126,10 @@ end
 
 function UIExtensions.SetupInstance()
 	if not UIExtensions.Instance or UIExtensions.Instance:GetRoot() == nil then
-		-- if not Vars.ControllerEnabled then
-		-- 	UIExtensions.Layer = 18 -- May eat inputs
-		-- else
-		-- 	----Needs to be less than 9
-		-- 	UIExtensions.Layer = 7
-		-- end
+		if Vars.ControllerEnabled then
+			----Needs to be less than 9
+			UIExtensions.Layer = 7
+		end
 		UIExtensions.Instance = Ext.GetUI("LeaderLibUIExtensions")
 		if not UIExtensions.Instance then
 			UIExtensions.Instance = Ext.CreateUI("LeaderLibUIExtensions", UIExtensions.SwfPath, UIExtensions.Layer)
@@ -339,8 +337,6 @@ function UIExtensions.GlobalToLocalPosition(x, y)
 	return 0,0
 end
 
-Ext.RegisterListener("SessionLoaded", UIExtensions.SetupInstance)
-
 local function SetVisibility(b)
 	if Vars.DebugMode and UIExtensions.Visible ~= b then
 		fprint(LOGLEVEL.DEFAULT, "[LeaderLib] UIExtensions.Visible (%s) => (%s)", UIExtensions.Visible, b)
@@ -358,27 +354,37 @@ local function SetVisibility(b)
 	end
 end
 
-if Vars.ControllerEnabled then
-	Ext.RegisterUITypeInvokeListener(Data.UIType.areaInteract_c, "clearBtnHints", function()
-		SetVisibility(false)
-	end)
-	Ext.RegisterUITypeInvokeListener(Data.UIType.gameMenu_c, "showWin", function()
-		SetVisibility(false)
-	end)
-	Ext.RegisterUITypeInvokeListener(Data.UIType.gameMenu_c, "openMenu", function()
-		SetVisibility(false)
-	end)
-	--Ext.RegisterUITypeCall(Data.UIType.areaInteract_c, "closeUI", function()
-	Ext.RegisterUINameCall("hideUI", function()
-		SetVisibility(true)
-	end)
-	Ext.RegisterUINameCall("closeUI", function()
-		SetVisibility(true)
-	end)
-	Ext.RegisterUINameCall("requestCloseUI", function()
-		SetVisibility(true)
-	end)
-	Ext.RegisterUITypeInvokeListener(Data.UIType.journal_csp, "setMapLegendHidden", function()
-		SetVisibility(false)
-	end)
-end
+local registeredControllerListeners = false
+
+Ext.RegisterListener("SessionLoaded", function()
+	Vars.ControllerEnabled = (Ext.GetBuiltinUI("Public/Game/GUI/msgBox_c.swf") or Ext.GetUIByType(Data.UIType.msgBox_c)) ~= nil
+
+	UIExtensions.SetupInstance()
+
+	if Vars.ControllerEnabled and not registeredControllerListeners then
+		Ext.RegisterUITypeInvokeListener(Data.UIType.areaInteract_c, "clearBtnHints", function()
+			SetVisibility(false)
+		end)
+		Ext.RegisterUITypeInvokeListener(Data.UIType.gameMenu_c, "showWin", function()
+			SetVisibility(false)
+		end)
+		Ext.RegisterUITypeInvokeListener(Data.UIType.gameMenu_c, "openMenu", function()
+			SetVisibility(false)
+		end)
+		--Ext.RegisterUITypeCall(Data.UIType.areaInteract_c, "closeUI", function()
+		Ext.RegisterUINameCall("hideUI", function()
+			SetVisibility(true)
+		end)
+		Ext.RegisterUINameCall("closeUI", function()
+			SetVisibility(true)
+		end)
+		Ext.RegisterUINameCall("requestCloseUI", function()
+			SetVisibility(true)
+		end)
+		Ext.RegisterUITypeInvokeListener(Data.UIType.journal_csp, "setMapLegendHidden", function()
+			SetVisibility(false)
+		end)
+
+		registeredControllerListeners = true
+	end
+end)

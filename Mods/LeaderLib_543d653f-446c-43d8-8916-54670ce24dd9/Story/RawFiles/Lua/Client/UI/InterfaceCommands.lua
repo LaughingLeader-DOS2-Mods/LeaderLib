@@ -94,9 +94,9 @@ function UI.StatusText(target, text, displayTime, isItem)
 end
 
 Ext.RegisterNetListener("LeaderLib_DisplayStatusText", function(call, dataStr)
-	local data = Classes.MessageData:CreateFromString(dataStr)
-	if data.Params.UUID ~= nil then
-		UI.StatusText(data.Params.UUID, data.Params.Text, data.Params.Duration, data.Params.IsItem)
+	local data = Common.JsonParse(dataStr)
+	if data.UUID ~= nil then
+		UI.StatusText(data.UUID, data.Text, data.Duration, data.IsItem)
 	end
 end)
 
@@ -134,9 +134,9 @@ function UI.DisplayMessageBox(text, title, popupType)
 end
 
 Ext.RegisterNetListener("LeaderLib_DisplayMessageBox", function(call, dataStr)
-	local data = Classes.MessageData:CreateFromString(dataStr)
-	if data.Params.Text ~= nil then
-		UI.DisplayMessageBox(data.Params.Text, data.Params.Title, data.Params.Type)
+	local data = Common.JsonParse(dataStr)
+	if data.Text ~= nil then
+		UI.DisplayMessageBox(data.Text, data.Title, data.Type)
 	end
 end)
 
@@ -179,12 +179,12 @@ Ext.RegisterNetListener("LeaderLib_Hotbar_SetSlotEnabled", function(call, dataSt
 				local maxSlot = (29 * currentBarIndex) - 1
 				local minSlot = 29 * (currentBarIndex - 1)
 	
-				local data = Classes.MessageData:CreateFromString(dataStr)
-				for i,slot in pairs(data.Params.Slots) do
+				local data = Common.JsonParse(dataStr)
+				for i,slot in pairs(data.Slots) do
 					--print("slot", slot, "local slot", slot%29, "currentBarIndex", currentBarIndex, "minSlot", minSlot, "maxSlot", maxSlot)
 					if slot <= maxSlot and slot >= minSlot then
-						hotbar.setSlotEnabled(slot%29, data.Params.Enabled)
-						PrintDebug("[LeaderLib] Set slot ", slot, "enabled to", data.Params.Enabled)
+						hotbar.setSlotEnabled(slot%29, data.Enabled)
+						PrintDebug("[LeaderLib] Set slot ", slot, "enabled to", data.Enabled)
 					end
 				end
 				return true
@@ -203,12 +203,12 @@ Ext.RegisterNetListener("LeaderLib_Hotbar_SetSlotEnabled", function(call, dataSt
 				local maxSlot = (29 * currentBarIndex) - 1
 				local minSlot = 29 * (currentBarIndex - 1)
 	
-				local data = Classes.MessageData:CreateFromString(dataStr)
-				for i,slot in pairs(data.Params.Slots) do
+				local data = Common.JsonParse(dataStr)
+				for i,slot in pairs(data.Slots) do
 					--print("slot", slot, "local slot", slot%29, "currentBarIndex", currentBarIndex, "minSlot", minSlot, "maxSlot", maxSlot)
 					if slot <= maxSlot and slot >= minSlot then
-						this.setSlotEnabled(slot%29, data.Params.Enabled)
-						PrintDebug("[LeaderLib] Set slot ", slot, "enabled to", data.Params.Enabled)
+						this.setSlotEnabled(slot%29, data.Enabled)
+						PrintDebug("[LeaderLib] Set slot ", slot, "enabled to", data.Enabled)
 					end
 				end
 				return true
@@ -261,10 +261,10 @@ Ext.RegisterNetListener("LeaderLib_Hotbar_RefreshCooldowns", function(call, data
 end)
 
 Ext.RegisterNetListener("LeaderLib_AddTextToCombatLog", function(call, dataStr)
-	local data = MessageData:CreateFromString(dataStr)
-	if data.Params ~= nil then
-		local filter = data.Params.Filter or 0
-		local text = data.Params.Text
+	local data = Common.JsonParse(dataStr)
+	if data ~= nil then
+		local filter = data.Filter or 0
+		local text = data.Text or ""
 		if text ~= nil then
 			if not Vars.ControllerEnabled then
 				local ui = Ext.GetBuiltinUI("Public/Game/GUI/combatLog.swf")
@@ -297,24 +297,24 @@ Ext.RegisterNetListener("LeaderLib_ClearCombatLog", function(call, filterStr)
 end)
 
 Ext.RegisterNetListener("LeaderLib_UpdateStatusTurns", function(call, dataStr)
-	local data = MessageData:CreateFromString(dataStr)
-	if data.Params.IsPlayer then
+	local data = Common.JsonParse(dataStr)
+	if data.IsPlayer then
 		local ui = Ext.GetBuiltinUI("Public/Game/GUI/playerInfo.swf")
 		if ui then
 			--public function setStatus(createNewIfNotExisting:Boolean, characterHandle:Number, statusHandle:Number, iconId:Number, turns:Number, cooldown:Number, tooltip:String = "") : *
-			ui:Invoke("setStatus", false, Ext.HandleToDouble(data.Params.ObjectHandle), Ext.HandleToDouble(data.Params.StatusHandle), -1, data.Params.Turns, data.Params.Cooldown or 0.0, data.Params.Tooltip or "")
+			ui:Invoke("setStatus", false, Ext.HandleToDouble(data.ObjectHandle), Ext.HandleToDouble(data.StatusHandle), -1, data.Turns, data.Cooldown or 0.0, data.Tooltip or "")
 		end
-	elseif data.Params.IsEnemy then
+	elseif data.IsEnemy then
 		local ui = Ext.GetBuiltinUI("Public/Game/GUI/enemyHealthBar.swf")
 		if ui then
 			--public function setStatus(createNewIfNotExisting:Boolean, characterHandle:Number, statusHandle:Number, iconId:Number, turns:Number, cooldown:Number, tooltip:String = "") : *
-			ui:Invoke("setStatus", false, Ext.HandleToDouble(data.Params.ObjectHandle), Ext.HandleToDouble(data.Params.StatusHandle), -1, data.Params.Turns, data.Params.Cooldown or 0.0, data.Params.Tooltip or "")
+			ui:Invoke("setStatus", false, Ext.HandleToDouble(data.Params.ObjectHandle), Ext.HandleToDouble(data.StatusHandle), -1, data.Turns, data.Cooldown or 0.0, data.Tooltip or "")
 		end
 	end
 end)
 
 Ext.RegisterListener("SessionLoaded", function()
-	Ext.RegisterUITypeCall(29, "ButtonPressed", function(ui, call, id, currentDevice)
+	Ext.RegisterUITypeCall(Data.UIType.msgBox, "ButtonPressed", function(ui, call, id, currentDevice)
 		--print("ButtonPressed", call, id, currentDevice)
 		if specialMessageBoxOpen and id == 3 then
 			specialMessageBoxOpen = false

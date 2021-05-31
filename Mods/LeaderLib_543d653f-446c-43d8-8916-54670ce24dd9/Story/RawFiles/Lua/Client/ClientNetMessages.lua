@@ -190,19 +190,19 @@ local function GetPlayerStatusMovieClips(character, matchStatus)
 end
 
 local function RefreshStatusTurns(data)
-	if data.Params.UUID ~= nil and data.Params.Status ~= nil then
+	if data.UUID ~= nil and data.Status ~= nil then
 		---@type EclCharacter
-		local character = Ext.GetCharacter(data.Params.UUID)
+		local character = Ext.GetCharacter(data.UUID)
 		if character ~= nil then
-			local statusData = GetPlayerStatusMovieClips(character, data.Params.Status)
+			local statusData = GetPlayerStatusMovieClips(character, data.Status)
 			for i,v in pairs(statusData) do
 				---@type EsvStatus
 				local status = v.Status
 				local mc = v.MC
 				local turns = math.ceil(status.CurrentLifeTime / 6.0)
 				local cooldown = status.LifeTime / status.CurrentLifeTime
-				if data.Params.Turns ~= nil then
-					turns = data.Params.Turns
+				if data.Turns ~= nil then
+					turns = data.Turns
 					local nextLifetime = turns * 6.0
 					if nextLifetime >= status.LifeTime then
 						cooldown = 1.0
@@ -218,9 +218,9 @@ local function RefreshStatusTurns(data)
 	end
 end
 
-Ext.RegisterNetListener("LeaderLib_UI_RefreshStatusTurns", function(call, dataStr)
-	local data = MessageData:CreateFromString(dataStr)
-	if data ~= nil then
+Ext.RegisterNetListener("LeaderLib_UI_RefreshStatusTurns", function(call, payload)
+	local data = Common.JsonParse(payload)
+	if data then
 		local b,err = xpcall(RefreshStatusTurns, debug.traceback, data)
 		if not b then
 			Ext.PrintError(err)

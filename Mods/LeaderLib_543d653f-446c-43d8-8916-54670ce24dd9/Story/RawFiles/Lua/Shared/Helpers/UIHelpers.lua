@@ -4,15 +4,13 @@ end
 
 if Ext.IsServer() then
 
-local MessageData = Classes.MessageData
-
 function SetSlotEnabled(client, slot, enabled)
 	if CharacterGetReservedUserID(client) ~= nil then
-		Ext.PostMessageToClient(client, "LeaderLib_Hotbar_SetSlotEnabled", MessageData:CreateFromTable("SetSlotEnabled", {
+		Ext.PostMessageToClient(client, "LeaderLib_Hotbar_SetSlotEnabled", Ext.JsonStringify({
 			Slot = slot,
 			Enabled = enabled,
 			UUID = client
-		}):ToString())
+		}))
 	end
 end
 
@@ -28,11 +26,11 @@ function SetSkillEnabled(client, skill, enabled)
 		end
 		local slots = GetSkillSlots(client, skill)
 		if #slots > 0 then
-			Ext.PostMessageToClient(client, "LeaderLib_Hotbar_SetSlotEnabled", MessageData:CreateFromTable("SetSlotEnabled", {
+			Ext.PostMessageToClient(client, "LeaderLib_Hotbar_SetSlotEnabled", Ext.JsonStringify({
 				Slots = slots,
 				Enabled = enabled,
 				UUID = client
-			}):ToString())
+			}))
 		end
 	end
 end
@@ -64,10 +62,7 @@ GameHelpers.UI.RefreshSkillBar = RefreshSkillBar
 ---@param skill string
 function RefreshSkillBarSkillCooldown(client, skill)
 	if CharacterIsPlayer(client) == 1 and CharacterGetReservedUserID(client) ~= nil then
-		local data = MessageData:CreateFromTable("SkillbarCooldowns", {
-			UUID = GetUUID(client),
-			Slots = {}
-		})
+		local data = Ext.JsonStringify({UUID = StringHelpers.GetUUID(client), Slots = {}})
 		local slots = GetSkillSlots(client, skill)
 		if #slots > 0 then
 			local cd = Ext.GetCharacter(client):GetSkillInfo(skill).ActiveCooldown
@@ -106,10 +101,10 @@ GameHelpers.UI.RefreshSkillBarCooldowns = RefreshSkillBarCooldowns
 ---@param filter integer
 ---@param specificCharacters string|string[]|nil
 function GameHelpers.UI.CombatLog(text, filter, specificCharacters)
-	local data = MessageData:CreateFromTable("CombatLogData", {
+	local data = Ext.JsonStringify({
 		Filter = filter or 0,
 		Text = GameHelpers.Tooltip.ReplacePlaceholders(text)
-	}):ToString()
+	})
 	if specificCharacters == nil then
 		Ext.BroadcastMessage("LeaderLib_AddTextToCombatLog", data, nil)
 	else
@@ -130,11 +125,11 @@ end
 ---@param boxType integer|nil
 ---@param title string|nil
 function GameHelpers.UI.ShowMessageBox(text, specificCharacters, boxType, title)
-	local data = MessageData:CreateFromTable("MessageBoxData", {
+	local data = Ext.JsonStringify({
 		Type = boxType or 1,
 		Text = text,
 		Title = title
-	}):ToString()
+	})
 	if specificCharacters == nil then
 		Ext.BroadcastMessage("LeaderLib_DisplayMessageBox", data, nil)
 	else
@@ -154,11 +149,11 @@ end
 ---@param turns integer
 function GameHelpers.UI.RefreshStatusTurns(player, status, turns)
 	if CharacterIsPlayer(player) == 1 then
-		local data = MessageData:CreateFromTable("MessageBoxData", {
+		local data = Ext.JsonStringify({
 			UUID = GetUUID(player),
 			Status = status,
 			Turns = turns
-		}):ToString()
+		})
 		Ext.BroadcastMessage("LeaderLib_UI_RefreshStatusTurns", data, nil)
 	end
 end
@@ -199,31 +194,6 @@ Ext.RegisterNetListener("LeaderLib_UI_Server_RefreshPlayerInfo", function(cmd, u
 		ApplyStatus(uuid, "LEADERLIB_RECALC", 0.0, 1, uuid)
 	end
 end)
-
---[[
-function GameHelpers.UI.UpdateStatusTurns(target, statusid)
-	local objectHandle = nil
-	local statusHandle = NRD_StatusGetHandle(target, statusid)
-
-	if ObjectIsCharacter(target) == 1 then
-		objectHandle = Ext.GetCharacter(target).Handle
-	elseif ObjectIsItem(target) == 1 then
-		objectHandle = Ext.GetItem(target).Handle
-	end
-	if objectHandle ~= nil and statusHandle ~= nil then
-		local status = Ext.GetStatus(objectHandle, statusHandle)
-		if status ~= nil then
-			local data = MessageData:CreateFromTable("UpdateStatusUIData", {
-				IsPlayer = CharacterIsPlayer(target) == 1,
-				IsEnemy = CharacterIsPlayer(target) ~= 1,
-				ObjectHandle = objectHandle,
-				StatusHandle = status.StatusHandle,
-				Turns = status.CurrentLifeTime / 6.0
-			})
-		end
-	end
-end
-]]
 
 else
 	---@param id integer|string

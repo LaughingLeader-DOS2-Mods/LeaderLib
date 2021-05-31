@@ -221,26 +221,13 @@ end
 
 local updatingTooltip = false
 
-Ext.RegisterNetListener("LeaderLib_UI_OnControllerTooltipPositioned", function(cmd, payload)
-	if payload ~= nil and payload ~= "" then
-		local uiType = tonumber(payload)
-		local ui = Ext.GetUIByType(uiType)
-		if ui ~= nil then
-			local uiData = TooltipVariables[uiType]
-			OnConsoleTooltipPositioned(ui, uiData)
-		end
-	end
-	updatingTooltip = false
-end)
-
 local function OnTooltipUpdating(ui, uiType, ...)
 	if not updatingTooltip then
-		local data = Classes.MessageData:CreateFromTable("TooltipPositioningEventData", {
-			UIType = uiType,
-			Client = Client.Character.UUID
-		})
-		Ext.PostMessageToServer("LeaderLib_UI_StartControllerTooltipTimer", data:ToString())
 		updatingTooltip = true
+		UIExtensions.StartTimer("LeaderLib_UI_StartControllerTooltipTimer", 2, function()
+			updatingTooltip = false
+			OnConsoleTooltipPositioned(ui, TooltipVariables[uiType])
+		end)
 	end
 end
 

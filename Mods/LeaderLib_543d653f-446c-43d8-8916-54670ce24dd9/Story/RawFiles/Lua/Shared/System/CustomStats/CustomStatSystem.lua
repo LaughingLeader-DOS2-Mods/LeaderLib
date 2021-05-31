@@ -12,6 +12,22 @@ CustomStatSystem.TooltipType = {
 
 local self = CustomStatSystem
 
+CustomStatSystem.PointsPool = {}
+if Ext.IsServer() then
+	local PointsPoolHandler = {
+		__index = function(tbl,k)
+			return PersistentVars.CustomStatAvailablePoints[k]
+		end,
+		__newindex = function(tbl,k,v)
+			PersistentVars.CustomStatAvailablePoints[k] = v
+			print("PersistentVars.CustomStatAvailablePoints", Ext.JsonStringify(PersistentVars.CustomStatAvailablePoints))
+		end
+	}
+	setmetatable(CustomStatSystem.PointsPool, PointsPoolHandler)
+end
+
+Ext.AddPathOverride("Public/Game/GUI/characterSheet.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/characterSheet.swf")
+
 ---@class CustomStatCategoryData:CustomStatDataBase
 ---@field ID string
 ---@field Mod string The mod UUID that added this stat, if any. Auto-set.
@@ -33,7 +49,7 @@ local self = CustomStatSystem
 ---@field Category string The stat's category id, if any.
 ---@field Double number The stat's double (handle) value. Determined dynamically.
 ---@field AvailablePoints table<UUID,integer> Amount of points available for a character.
----@field PointsID string Optional id for the 'points pool' this stat shares available points with.
+---@field PointID string Optional id for the 'points pool' this stat shares available points with.
 
 ---@alias MOD_UUID string
 ---@alias STAT_ID string
@@ -42,6 +58,7 @@ local self = CustomStatSystem
 CustomStatSystem.Categories = {}
 ---@type table<MOD_UUID, table<STAT_ID, CustomStatData>>
 CustomStatSystem.Stats = {}
+CustomStatSystem.UnregisteredStats = {}
 
 ---@type fun():table<string, table<string, CustomStatData>>
 local loader = Ext.Require("Shared/System/CustomStats/ConfigLoader.lua")
@@ -58,6 +75,7 @@ local function LoadCustomStatsData()
 	TableHelpers.AddOrUpdate(CustomStatSystem.Stats, stats)
 
 	if Ext.IsServer() then
+		local foundStats = {}
 		for uuid,stats in pairs(CustomStatSystem.Stats) do
 			local modName = Ext.GetModInfo(uuid).Name
 			for id,stat in pairs(stats) do
@@ -73,7 +91,23 @@ local function LoadCustomStatsData()
 					end
 					if existingData then
 						stat.UUID = existingData.Id
+						foundStats[stat.UUID] = true
 					end
+				end
+			end
+		end
+		CustomStatSystem.UnregisteredStats = {}
+	
+		for _,uuid in pairs(Ext.GetAllCustomStats()) do
+			if not foundStats[uuid] then
+				local stat = Ext.GetCustomStatById(uuid)
+				if stat then
+					CustomStatSystem.UnregisteredStats[uuid] = {
+						ID = uuid,
+						DisplayName = stat.Name,
+						Description = stat.Description
+					}
+					foundStats[uuid] = true
 				end
 			end
 		end
@@ -120,7 +154,7 @@ if Ext.IsServer() then
 		if data then
 			local statDouble = data.Stat
 			local character = Ext.GetCharacter(data.Character)
-			if character and CustomStatSystem.IsTooltipWorking(character) then
+			if character and not CustomStatSystem.IsTooltipWorking(character) then
 				if canFix then
 					local stat = Ext.GetCustomStatByName(data.StatId)
 					if stat then
@@ -147,6 +181,4 @@ if Ext.IsServer() then
 	end)
 else
 	Ext.Require("Shared/System/CustomStats/UISetup.lua")
-	Ext.AddPathOverride("Public/Game/GUI/characterSheet.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/characterSheet.swf")
-	--Ext.AddPathOverride("Public/Game/GUI/characterSheet.swf", "Public/Game/GUI/characterSheet.swf")
 end

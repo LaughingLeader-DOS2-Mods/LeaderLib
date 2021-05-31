@@ -36,6 +36,7 @@ end
 local function OnSheetUpdating(ui, method)
 	local this = ui:GetRoot()
 	CustomStatSystem:SetupGroups(ui, method)
+	print(method, #this.customStats_array)
 	local length = #this.customStats_array
 	if length == 0 then
 		return
@@ -51,6 +52,7 @@ local function OnSheetUpdating(ui, method)
 
 		if doubleHandle then
 			local stat = CustomStatSystem:GetStatByName(displayName)
+			print(i, doubleHandle, displayName, stat and stat.UUID or "nil")
 			if stat then
 				stat.Double = doubleHandle
 				this.customStats_array[i+1] = stat:GetDisplayName()
@@ -71,8 +73,9 @@ local function OnSheetUpdating(ui, method)
 			this.customStats_array[arrayIndex+1] = v.DisplayName
 			this.customStats_array[arrayIndex+2] = v.Value
 			this.customStats_array[arrayIndex+3] = v.GroupId
-			this.customStats_array[arrayIndex+4] = self:GetCanAddPoints(ui, method, v.Handle)
-			this.customStats_array[arrayIndex+5] = self:GetCanRemovePoints(ui, method, v.Handle)
+			this.customStats_array[arrayIndex+4] = self:GetCanAddPoints(ui, v.Handle)
+			this.customStats_array[arrayIndex+5] = self:GetCanRemovePoints(ui, v.Handle)
+			print(arrayIndex, v.Handle, v.DisplayName, v.Value, v.GroupId)
 			arrayIndex = arrayIndex + 6
 		end
 	end
@@ -167,35 +170,40 @@ function CustomStatSystem:OnRequestTooltip(ui, call, statId, x, y, width, height
 		alignment = "right"
 	end
 
-	if stat then
-		if not self:IsTooltipWorking() then
+	if not stat then
+		stat = self:GetStatByName(statName)
+	end
+
+	if not self:IsTooltipWorking() then
+		if stat then
 			local displayName,description = stat:GetDisplayName(),stat:GetDescription()
 			if stat.Icon and stat.TooltipType ~= self.TooltipType.Stat then
 				stat.IconId = self:GetNextCustomStatIconId()
 			end
 			self:CreateCustomStatTooltip(displayName, description, width, height, stat.TooltipType, stat.Icon, stat.IconId)
 		else
-			self:UpdateCustomStatTooltip(stat)
+			self:CreateCustomStatTooltip(statName, nil, width, height, stat.TooltipType, stat.Icon, stat.IconId)
 		end
 	else
-		if character then
-			local payload = Ext.JsonStringify({
-				Character=character.NetID, 
-				Stat=statId, 
-				UI=ui:GetTypeId(),
-				X = x,
-				Y = y,
-				Width = width,
-				Height = height,
-				Alignment = alignment,
-				DisplayName = statName or "",
-				StatId = statName or "",
-				Value = statValue
-			})
-			self.Requesting = true
-			Ext.PostMessageToServer("LeaderLib_CheckCustomStatCallback", payload)
-		end
+		self:UpdateCustomStatTooltip(stat)
 	end
+	-- if character then
+	-- 	local payload = Ext.JsonStringify({
+	-- 		Character=character.NetID, 
+	-- 		Stat=statId, 
+	-- 		UI=ui:GetTypeId(),
+	-- 		X = x,
+	-- 		Y = y,
+	-- 		Width = width,
+	-- 		Height = height,
+	-- 		Alignment = alignment,
+	-- 		DisplayName = statName or "",
+	-- 		StatId = statName or "",
+	-- 		Value = statValue
+	-- 	})
+	-- 	self.Requesting = true
+	-- 	Ext.PostMessageToServer("LeaderLib_CheckCustomStatCallback", payload)
+	-- end
 end
 --Ext.RegisterUINameCall("showCustomStatTooltip", CustomStatSystem.OnRequestTooltip, "Before")
 
@@ -276,7 +284,7 @@ end, "After")
 ---@param doubleHandle number
 ---@param tooltip TooltipData
 function CustomStatSystem:UpdateStatTooltipArray(ui, doubleHandle, tooltip, req)
-	local stat = CustomStatSystem:GetStatByDouble(doubleHandle)
+	local stat = self:GetStatByDouble(doubleHandle)
 	if stat then
 		req.StatData = stat
 		tooltip.Data = {}
@@ -379,8 +387,10 @@ function CustomStatSystem:CreateCustomStatTooltip(displayName, description, widt
 			if not resolved then
 				this.tooltip_array[0] = Game.Tooltip.TooltipItemTypes.StatName
 				this.tooltip_array[1] = displayName or ""
-				this.tooltip_array[2] = Game.Tooltip.TooltipItemTypes.StatsDescription
-				this.tooltip_array[3] = description or ""
+				if not StringHelpers.IsNullOrEmpty(description) then
+					this.tooltip_array[2] = Game.Tooltip.TooltipItemTypes.StatsDescription
+					this.tooltip_array[3] = description
+				end
 			end
 
 			--ui:ExternalInterfaceCall("showTooltip", "", data.X, data.Y,data.Width,data.Height,"right",true)

@@ -11,6 +11,11 @@ function CustomStatSystem:GetStatByName(displayName)
 			end
 		end
 	end
+	for uuid,stat in pairs(self.UnregisteredStats) do
+		if stat.DisplayName == displayName then
+			return stat
+		end
+	end
 	return nil
 end
 
@@ -190,6 +195,11 @@ function CustomStatSystem:GetStatByDouble(double)
 			end
 		end
 	end
+	for uuid,stat in pairs(CustomStatSystem.UnregisteredStats) do
+		if stat.Double == double then
+			return stat
+		end
+	end
 	return nil
 end
 --endregion
@@ -260,25 +270,21 @@ end
 ---@vararg function[]
 function CustomStatSystem:GetListenerIterator(...)
 	local tables = {...}
-	local i = 0
 	local totalCount = #tables
 	if totalCount == 0 then
 		return
 	end
+	local listeners = {}
+	for _,v in pairs(tables) do
+		for _,v2 in pairs(v) do
+			listeners[#listeners+1] = v2
+		end
+	end
+	local i = 0
 	return function ()
 		i = i + 1
 		if i <= totalCount then
-			local tbl = tables[i]
-			if tbl and #tbl > 0 then
-				local j = 0
-				local count = #tbl
-				return function ()
-					j = j + 1
-					if j <= count then
-						return tbl[j]
-					end
-				end
-			end
+			return listeners[i]
 		end
 	end
 end

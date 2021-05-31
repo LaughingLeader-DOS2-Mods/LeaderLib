@@ -13,11 +13,8 @@ function CustomStatSystem:SyncAvailablePoints()
 			if stat.AvailablePoints then
 				local amount = stat.AvailablePoints[character.MyGuid]
 				if amount then
-					if not StringHelpers.IsNullOrWhitespace(stat.PointsID) then
-						if not data.Stats[stat.PointsID] then
-							data.Stats[stat.PointsID] = 0
-						end
-						data.Stats[stat.PointsID] = data.Stats[stat.PointsID] + amount
+					if not StringHelpers.IsNullOrWhitespace(stat.PointID) then
+						data.Stats[stat.PointID] = amount
 					else
 						data.Stats[stat.ID] = amount
 					end
@@ -31,12 +28,15 @@ end
 if Ext.IsServer() then
 	--Creates a table of stat id to uuid, for sending stat UUIDs to the client
 	function CustomStatSystem:GetSyncData()
-		local data = {}
+		local data = {
+			Registered = {},
+			Unregistered = self.UnregisteredStats
+		}
 		for uuid,stats in pairs(self.Stats) do
-			data[uuid] = {}
+			data.Registered[uuid] = {}
 			for id,stat in pairs(stats) do
 				if stat.UUID then
-					data[uuid][id] = stat.UUID
+					data.Registered[uuid][id] = stat.UUID
 				end
 			end
 		end
@@ -68,34 +68,37 @@ if Ext.IsServer() then
 else
 	--Loads a table of stat UUIDs from the server.
 	function CustomStatSystem:LoadSyncData(uuidList, availablePoints)
-		for uuid,stats in pairs(uuidList) do
-			local existing = self.Stats[uuid]
-			if existing then
-				for id,statId in pairs(stats) do
-					if existing[id] then
-						existing[id].UUID = statId
+		if uuidList then
+			for uuid,stats in pairs(uuidList) do
+				local existing = self.Stats[uuid]
+				if existing then
+					for id,statId in pairs(stats) do
+						if existing[id] then
+							existing[id].UUID = statId
+						end
 					end
 				end
 			end
 		end
-		for uuid,stats in pairs(availablePoints) do
-			for id,amount in pairs(stats) do
-				local existing = self:GetStatByID(id)
-				if existing then
-					existing.AvailablePoints[uuid] = amount
-				else
-					Ext.PrintError("Failed to find custom stat data for id", id)
-				end
-			end
+		if availablePoints then
+			self.PointsPool = availablePoints
+			print(Ext.JsonStringify(self.PointsPool))
+			self:UpdateAvailablePoints()
 		end
-		self:UpdateAvailablePoints()
 	end
 
 	local function LoadSyncedCustomStatData(cmd, payload)
 		local data = Common.JsonParse(payload)
 		if data ~= nil then
-			if data.CustomStats then
-				self:LoadSyncData(data.CustomStats, data.AvailablePoints)
+			if data.CustomStats or data.AvailablePoints then
+				self:LoadSyncData(data.CustomStats.Registered, data.AvailablePoints)
+			end
+			self.UnregisteredStats = data.CustomStats.Unregistered
+			for uuid,stat in pairs(self.UnregisteredStats) do
+				stat.UUID = uuid
+				stat.Double = nil
+				stat.IsUnregistered = true
+				setmetatable(stat, Classes.CustomStatDataBase)
 			end
 			return true
 		else

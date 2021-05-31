@@ -26,8 +26,10 @@ local statPropertyMap = {
 	CREATE = {Name="Create", Type = "boolean"},
 	TOOLTIPTYPE = {Name="TooltipType", Type = "string"},
 	CATEGORY = {Name="Category", Type = "string"},
-	POINTSID = {Name="PointsID", Type = "string"},
+	POINTID = {Name="PointID", Type = "string"},
 }
+
+local isClient = Ext.IsClient()
 
 ---@class CustomStatDataBase
 local CustomStatDataBase = {
@@ -57,6 +59,36 @@ function CustomStatDataBase:GetDescription()
 	return ""
 end
 
+local function setAvailablePointsHandler(data)
+	local AvailablePointsHandler = {}
+	AvailablePointsHandler.__index = function(table, uuid)
+		local parentTable = nil
+		if isClient then
+			parentTable = CustomStatSystem.PointsPool
+		else
+			parentTable = PersistentVars.CustomStatAvailablePoints
+		end
+		local pointId = data.ID
+		if not StringHelpers.IsNullOrWhitespace(data.PointID) then
+			pointId = data.PointID
+		end
+		local characterData = parentTable[uuid]
+		if characterData then
+			return characterData[pointId]
+		end
+		--fprint(LOGLEVEL.ERROR, "[LeaderLib:CustomStatsData:AvailablePoints] Failed to fetch available points for id (%s) and character(%s). Context(%s).", pointId, uuid, isClient and "CLIENT" or "SERVER")
+		return 0
+	end
+	AvailablePointsHandler.__newindex = function(table, uuid, value)
+		local pointId = data.ID
+		if not StringHelpers.IsNullOrWhitespace(data.PointID) then
+			pointId = data.PointID
+		end
+		CustomStatSystem:SetAvailablePoints(uuid, pointId, value, true)
+	end
+	setmetatable(data.AvailablePoints, AvailablePointsHandler)
+end
+
 local function parseTable(tbl, propertyMap, modId)
 	local tableData = nil
 	if type(tbl) == "table" then
@@ -65,20 +97,23 @@ local function parseTable(tbl, propertyMap, modId)
 			if type(v) == "table" then
 				local data = {
 					ID = k,
-					Mod = modId,
-					AvailablePoints = {}
+					Mod = modId
 				}
 				for property,value in pairs(v) do
 					if type(property) == "string" then
 						local propKey = string.upper(property)
 						local propData = propertyMap[propKey]
 						local t = type(value)
-						if propData and t == propData.Type then
+						if propData and (propData.Type == "any" or t == propData.Type) then
 							data[propData.Name] = value
 						else
 							fprint(LOGLEVEL.ERROR, "[LeaderLib:CustomStatsConfig] Invalid property (%s) with value type(%s)", property, t)
 						end
 					end
+				end
+				if propertyMap == statPropertyMap then
+					data.AvailablePoints = {}
+					setAvailablePointsHandler(data)
 				end
 				setmetatable(data, CustomStatDataBase)
 				tableData[k] = data

@@ -1393,7 +1393,7 @@ function TooltipHooks:OnRenderSubTooltip(ui, propertyName, req, method, ...)
 			if statData ~= nil then
 				self:NotifyListeners("CustomStat", statData.ID or statData.UUID, req, tooltip, req.Character, statData)
 			else
-				self:NotifyListeners("CustomStat", nil, req, tooltip, req.Character, req.Stat)
+				self:NotifyListeners("CustomStat", nil, req, tooltip, req.Character, {ID=req.Stat})
 			end
 		elseif req.Type == "Skill" then
 			self:NotifyListeners("Skill", req.Skill, req, tooltip, req.Character, req.Skill)

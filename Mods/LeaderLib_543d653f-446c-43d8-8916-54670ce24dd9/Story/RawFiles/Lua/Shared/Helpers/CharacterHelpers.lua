@@ -35,6 +35,25 @@ function GameHelpers.Character.IsOrigin(uuid)
 	return false
 end
 
+---@param character EsvCharacter|EclCharacter
+function GameHelpers.Character.IsSummonOrPartyFollower(character)
+	if not isClient then
+		if type(character) == "userdata" then
+			return character.Summon or character.PartyFollower
+		elseif type(character) == "string" then
+			return CharacterIsSummon(character) == 1 or CharacterIsPartyFollower(character) == 1
+		end
+	else
+		if type(character) ~= "userdata" then
+			character = Ext.GetCharacter(character)
+		end
+		if character then
+			return character.Summon or character.PartyFollower
+		end
+	end
+	return false
+end
+
 function GameHelpers.Character.IsAllyOfParty(uuid)
 	if not isClient then
 		for i,v in pairs(Osi.DB_IsPlayer:Get(nil)) do
@@ -120,4 +139,29 @@ function GameHelpers.Character.GetDisplayName(character)
 		character = Ext.GetCharacter(character)
 	end
 	return character and character.DisplayName or ""
+end
+
+if not isClient then
+
+---@param character EsvCharacter|string|integer
+---@param level integer
+function GameHelpers.Character.SetLevel(character, level)
+	if type(character) ~= "userdata" then
+		character = Ext.GetCharacter(character)
+	end
+	if character and character.Stats then
+		local xpNeeded = Data.LevelExperience[level]
+		if xpNeeded then
+			if xpNeeded == 0 then
+				character.Stats.Experience = 1
+				StartOneshotTimer("", 250, function()
+					character.Stats.Experience = 0
+				end)
+			else
+				character.Stats.Experience = xpNeeded
+			end
+		end
+	end
+end
+
 end

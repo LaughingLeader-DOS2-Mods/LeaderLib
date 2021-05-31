@@ -25,23 +25,23 @@ local NULL_UUID = {
 }
 
 ---Checks if a string is null or empty.
----@type x string
+---@param str string
 ---@return boolean
-function StringHelpers.IsNullOrEmpty(x)
+function StringHelpers.IsNullOrEmpty(str)
 	-- CharacterCreationFinished sends 00000000-0000-0000-0000-000000000000 or some reason, omitting the NULL_
-	return x == nil or x == "" or NULL_UUID[x] or type(x) ~= "string"
+	return str == nil or str == "" or NULL_UUID[str] or type(str) ~= "string"
 end
 
 ---Checks if a string is null or only whitespace.
----@type x string
+---@param str string
 ---@return boolean
-function StringHelpers.IsNullOrWhitespace(x)
+function StringHelpers.IsNullOrWhitespace(str)
 	-- CharacterCreationFinished sends 00000000-0000-0000-0000-000000000000 or some reason, omitting the NULL_
-	return x == nil or x == "" or NULL_UUID[x] or type(x) ~= "string" or string.gsub(x, "%s+", "") == ""
+	return str == nil or str == "" or NULL_UUID[str] or type(str) ~= "string" or string.gsub(str, "%s+", "") == ""
 end
 
 ---Capitalize a string.
----@type s string
+---@param s string
 ---@return string
 function StringHelpers.Capitalize(s)
 	return s:sub(1,1):upper()..s:sub(2)
@@ -181,7 +181,7 @@ function StringHelpers.Trim(s)
 end
 
 ---Get the UUID from a template, GUIDSTRING, etc.
----@type str string
+---@param str string
 ---@return string
 function StringHelpers.GetUUID(str)
 	if StringHelpers.IsNullOrEmpty(str) then

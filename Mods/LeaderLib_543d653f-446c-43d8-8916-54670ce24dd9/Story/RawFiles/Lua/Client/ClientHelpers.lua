@@ -68,3 +68,21 @@ function GameHelpers.Client.GetCharacter()
 	end
 	return nil
 end
+
+---@return boolean
+function GameHelpers.Client.IsGameMaster()
+	if Client and Client.Character and Client.Character.IsGameMaster then
+		return true
+	end
+	if not Vars.ControllerEnabled then
+		local ui = ui or Ext.GetUIByType(Data.UIType.characterSheet)
+		if ui then
+			---@type CharacterSheetMainTimeline
+			local this = main or ui:GetRoot()
+			if this and this.isGameMasterChar then
+				return true
+			end
+		end
+	end
+	return false
+end

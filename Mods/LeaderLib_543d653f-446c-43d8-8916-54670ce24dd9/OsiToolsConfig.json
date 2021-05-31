@@ -4,6 +4,8 @@
     "FeatureFlags": [
         "OsirisExtensions",
         "Lua",
-        "Preprocessor"
+        "Preprocessor",
+        "CustomStats",
+        "CustomStatsPane"
     ]
 }

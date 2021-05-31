@@ -174,6 +174,15 @@ local function LoadConfigFiles()
 			end
 		end
 	end
+	if Vars.DebugMode then
+		local categories,stats = LoadConfig(ModuleUUID, Ext.LoadFile("Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/RawFiles/Lua/Shared/Debug/TestCustomStatsConfig.json", "data"))
+		if stats then
+			allStats[ModuleUUID] = stats
+		end
+		if categories then
+			allCategories[ModuleUUID] = categories
+		end
+	end
 	return allCategories,allStats
 end
 

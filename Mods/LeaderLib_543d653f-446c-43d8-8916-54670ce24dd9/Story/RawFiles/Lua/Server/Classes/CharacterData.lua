@@ -30,7 +30,20 @@ local CharacterData = {
 	NetID = -1,
 	Region = ""
 }
-CharacterData.__index = CharacterData
+-- CharacterData.__index = function(tbl, key)
+-- 	if key == "NetID" and tbl.NetID == -1 and tbl.UUID ~= "" then
+-- 		local character = Ext.GetCharacter(tbl.UUID)
+-- 		if character then
+-- 			tbl.NetID = character.NetID
+-- 			return character.NetID
+-- 		end
+-- 	elseif key == "Region" and tbl.Region == "" and tbl.UUID ~= "" then
+-- 		local region = GetRegion(tbl.UUID) or ""
+-- 		tbl.Region = region
+-- 		return region
+-- 	end
+-- 	return tbl[key]
+-- end
 
 ---@param uuid string
 ---@param params table<string,any>|nil
@@ -211,6 +224,15 @@ function CharacterData:FullRestore(resurrect)
 		CharacterSetHitpointsPercentage(self.UUID, 100.0)
 		CharacterSetArmorPercentage(self.UUID, 100.0)
 		CharacterSetMagicArmorPercentage(self.UUID, 100.0)
+	end
+	return false
+end
+
+---@param level integer
+function CharacterData:SetLevel(level)
+	if self:Exists() then
+		GameHelpers.Character.SetLevel(self:GetCharacter(), level)
+		return true
 	end
 	return false
 end

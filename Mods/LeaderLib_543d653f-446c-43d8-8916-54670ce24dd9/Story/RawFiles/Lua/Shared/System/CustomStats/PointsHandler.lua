@@ -1,10 +1,13 @@
 local self = CustomStatSystem
 
----@alias CustomStatCanRemovePointsCallback fun(id:string, stat:CustomStatData, character:EclCharacter, currentValue:integer):integer
+---@alias CustomStatCanAddPointsCallback fun(id:string, stat:CustomStatData, character:EclCharacter, currentValue:integer, availablePoints:integer, canAdd:boolean):boolean
+---@alias CustomStatCanRemovePointsCallback fun(id:string, stat:CustomStatData, character:EclCharacter, currentValue:integer, canRemove:boolean):boolean
 ---@alias CustomStatPointsAssignedCallback fun(id:string, stat:CustomStatData, character:EsvCharacter, previousPoints:integer, currentPoints:integer):void
 
 
 self.Listeners = {
+	---@type table<string, CustomStatCanAddPointsCallback[]>
+	CanAddPoints = {All = {}},
 	---@type table<string, CustomStatCanRemovePointsCallback[]>
 	CanRemovePoints = {All = {}},
 	---@type table<string, CustomStatPointsAssignedCallback[]>
@@ -80,25 +83,61 @@ if Ext.IsServer() then
 else
 
 ---@param id string
+---@param callback CustomStatCanAddPointsCallback
+function CustomStatSystem:RegisterCanAddPointsHandler(id, callback)
+	if tyoe(id) == "table" then
+		for i=1,#id do
+			self:RegisterCanAddPointsHandler(id[i], callback)
+		end
+	else
+		if not self.Listeners.CanAddPoints[id] then
+			self.Listeners.CanAddPoints[id] = {}
+		end
+		table.insert(self.Listeners.CanAddPoints[id], callback)
+	end
+end
+
+---@param id string
 ---@param callback CustomStatCanRemovePointsCallback
 function CustomStatSystem:RegisterCanRemovePointsHandler(id, callback)
-	if not self.Listeners.CanRemovePoints[id] then
-		self.Listeners.CanRemovePoints[id] = {}
+	if tyoe(id) == "table" then
+		for i=1,#id do
+			self:RegisterCanRemovePointsHandler(id[i], callback)
+		end
+	else
+		if not self.Listeners.CanRemovePoints[id] then
+			self.Listeners.CanRemovePoints[id] = {}
+		end
+		table.insert(self.Listeners.CanRemovePoints[id], callback)
 	end
-	table.insert(self.Listeners.CanRemovePoints[id], callback)
 end
 
 ---@param id string
 ---@param callback CustomStatPointsAssignedCallback
 function CustomStatSystem:RegisterPointsChangedListener(id, callback)
-	if not self.Listeners.OnPointsChanged[id] then
-		self.Listeners.OnPointsChanged[id] = {}
+	if tyoe(id) == "table" then
+		for i=1,#id do
+			self:RegisterPointsChangedListener(id[i], callback)
+		end
+	else
+		if not self.Listeners.OnPointsChanged[id] then
+			self.Listeners.OnPointsChanged[id] = {}
+		end
+		table.insert(self.Listeners.OnPointsChanged[id], callback)
 	end
-	table.insert(self.Listeners.OnPointsChanged[id], callback)
 end
 
 if Vars.DebugMode then
-	CustomStatSystem:RegisterCanRemovePointsHandler("Lucky", function(id, stat, character, current)
+	local specialStats = {
+		"Lucky",
+		"Fear",
+		"Pure",
+		"RNGesus"
+	}
+	CustomStatSystem:RegisterCanAddPointsHandler(specialStats, function(id, stat, character, current, availablePoints, canAdd)
+		return availablePoints > 0 and current < 5
+	end)
+	CustomStatSystem:RegisterCanRemovePointsHandler("Lucky", function(id, stat, character, current, canRemove)
 		return current > 0
 	end)
 	CustomStatSystem:RegisterPointsChangedListener("All", function(id, stat, character, previousPoints, currentPoints)
@@ -133,30 +172,37 @@ function CustomStatSystem:GetAvailablePointsForStat(stat, character)
 	return 0
 end
 
-function CustomStatSystem:GetCanAddPoints(ui, doubleHandle)
-	if GameHelpers.Client.IsGameMaster() then
-		return true
-	end
+function CustomStatSystem:GetCanAddPoints(ui, doubleHandle, character)
+	character = character or Client:GetCharacter()
 	local stat = self:GetStatByDouble(doubleHandle)
 	if stat then
-		return self:GetAvailablePointsForStat(stat) > 0
+		local value = self:GetStatValueForCharacter(character, stat.ID, stat.Mod)
+		local availablePoints = self:GetAvailablePointsForStat(stat)
+		local canAdd = GameHelpers.Client.IsGameMaster() or availablePoints > 0
+		for listener in self:GetListenerIterator(self.Listeners.CanAddPoints[stat.ID], self.Listeners.CanRemovePoints.All) do
+			local b,result = xpcall(listener, debug.traceback, stat.ID, stat, character, value, availablePoints, canAdd)
+			if b then
+				if type(result) == "boolean" then
+					canAdd = result
+				end
+			else
+				fprint(LOGLEVEL.ERROR, "[LeaderLib.CustomStatSystem:GetAvailablePoints] Error calling CanAddPoints listener for stat (%s):\n%s", stat.ID, result)
+			end
+		end
+		return canAdd
 	end
 	return false
 end
 
 function CustomStatSystem:GetCanRemovePoints(ui, doubleHandle, character)
-	if GameHelpers.Client.IsGameMaster() then
-		return true
-	end
 	character = character or Client:GetCharacter()
 	local stat = self:GetStatByDouble(doubleHandle)
 	if stat then
 		local value = self:GetStatValueForCharacter(character, stat.ID, stat.Mod)
-		if value and value > 0 then
-			local canRemove = false
+		if value then
+			local canRemove = GameHelpers.Client.IsGameMaster() == true and value > 0
 			for listener in self:GetListenerIterator(self.Listeners.CanRemovePoints[stat.ID], self.Listeners.CanRemovePoints.All) do
-				local b,result = xpcall(listener, debug.traceback, stat.ID, stat, character, value)
-				print(listener, b, result, stat.ID)
+				local b,result = xpcall(listener, debug.traceback, stat.ID, stat, character, value, canRemove)
 				if b then
 					if type(result) == "boolean" then
 						canRemove = result

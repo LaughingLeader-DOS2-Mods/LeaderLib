@@ -231,7 +231,7 @@ local imports = {
 	}
 }
 
----Imports a specific group of LeaderLib globals to the target table.
+---Imports specific 'safe' LeaderLib globals to the target table.
 ---@param targetModTable table
 ---@param skipExistingCheck boolean If true, each key is set in the target table without checking if it already exists.
 function Import(targetModTable, skipExistingCheck)
@@ -272,7 +272,7 @@ function Import(targetModTable, skipExistingCheck)
 	end
 end
 
----Imports all of LeaderLib's globals to the target table, excluding PersistentVars.
+---Imports all of LeaderLib's globals to the target table, excluding PersistentVars and some truly unsafe tables.
 ---@param targetModTable table
 ---@param skipExistingCheck boolean If true, each key is set in the target table without checking if it already exists.
 function ImportUnsafe(targetModTable, skipExistingCheck)

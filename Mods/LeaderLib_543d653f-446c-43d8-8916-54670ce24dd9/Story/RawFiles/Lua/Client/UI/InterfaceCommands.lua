@@ -313,12 +313,10 @@ Ext.RegisterNetListener("LeaderLib_UpdateStatusTurns", function(call, dataStr)
 	end
 end)
 
-Ext.RegisterListener("SessionLoaded", function()
-	Ext.RegisterUITypeCall(Data.UIType.msgBox, "ButtonPressed", function(ui, call, id, currentDevice)
-		--print("ButtonPressed", call, id, currentDevice)
-		if specialMessageBoxOpen and id == 3 then
-			specialMessageBoxOpen = false
-			ui:Hide()
-		end
-	end)
+Ext.RegisterUITypeCall(Data.UIType.msgBox, "ButtonPressed", function(ui, call, id, currentDevice)
+	--print("ButtonPressed", call, id, currentDevice)
+	if specialMessageBoxOpen and id == 3 then
+		specialMessageBoxOpen = false
+		ui:Hide()
+	end
 end)

@@ -45,6 +45,7 @@ Ext.RegisterConsoleCommand("printuuids", function(call, radiusVal, skipSelf)
 			print("Pos:", Ext.JsonStringify(characterStats.Position))
 			print("Rot:", Ext.JsonStringify(characterStats.Rotation))
 			print("CustomTradeTreasure:", Ext.JsonStringify(character.CustomTradeTreasure))
+			print("Gain:", Ext.StatGetAttribute(character.Stats.Name, "Gain"))
 		end
 	print("===============")
 	end
@@ -446,6 +447,7 @@ Ext.RegisterConsoleCommand("addpoints", function(cmd, pointType, amount, id)
 end)
 
 Ext.RegisterConsoleCommand("modorder", function(cmd, uuidOnly)
+
 	if uuidOnly ~= nil then
 		for i,v in ipairs(Ext.GetModLoadOrder()) do
 			print(string.format("%i. %s", i, v))

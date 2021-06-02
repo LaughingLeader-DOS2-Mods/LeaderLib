@@ -137,13 +137,17 @@ end
 ---Set an item or character's scale, and sync it to clients.
 ---@param object EsvCharacter|string
 ---@param scale number
-function GameHelpers.SetScale(object, scale)
+---@param persist boolean|nil
+function GameHelpers.SetScale(object, scale, persist)
 	if object and type(object) ~= "userdata" then
 		object = Ext.GetGameObject(object)
 	end
 	if object and object.SetScale then
 		object:SetScale(scale)
 		GameHelpers.SyncScale(object)
+		if persist == true then
+			PersistentVars.ScaleOverride[object.MyGuid] = scale
+		end
 	end
 end
 

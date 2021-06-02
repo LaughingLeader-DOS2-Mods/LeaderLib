@@ -50,6 +50,14 @@ local function InvokeOnInitializedCallbacks(region)
 	if SceneManager then
 		SceneManager.Load()
 	end
+
+	if PersistentVars.ScaleOverride then
+		for uuid,scale in pairs(PersistentVars.ScaleOverride) do
+			if ObjectExists(uuid) == 1 then
+				GameHelpers.SetScale(uuid, scale, false)
+			end
+		end
+	end
 end
 
 local function OnInitialized(region, isRunning)

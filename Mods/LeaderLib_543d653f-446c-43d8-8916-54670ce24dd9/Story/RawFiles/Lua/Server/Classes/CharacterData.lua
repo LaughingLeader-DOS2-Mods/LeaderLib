@@ -273,9 +273,10 @@ end
 
 ---Sets a character's scale and syncs it to clients.
 ---@param scale number
-function CharacterData:SetScale(scale)
+---@param persist boolean|nil Whether to persist the scale change through saves.
+function CharacterData:SetScale(scale, persist)
 	if self:Exists() then
-		GameHelpers.SetScale(self:GetCharacter(), scale)
+		GameHelpers.SetScale(self:GetCharacter(), scale, persist)
 		return true
 	end
 	return false

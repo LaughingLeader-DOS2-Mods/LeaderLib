@@ -15,14 +15,17 @@ local defaultPersistentVars = {
 	SkillData = {},
 	SkillPropertiesAction = {
 		---Stores a UUID and AP to restore.
-		---@type table<string,integer>
+		---@type table<UUID,integer>
 		MoveToTarget = {}
 	},
+	---@type table<UUID,string>
 	IsPreparingSkill = {},
-	---@type table<string,TurnCounterData>
+	---@type table<UUID,TurnCounterData>
 	TurnCounterData = {},
 	---@type table<UUID,table<STAT_ID,integer>>
-	CustomStatAvailablePoints = {}
+	CustomStatAvailablePoints = {},
+	---@type table<UUID, number>
+	ScaleOverride = {}
 }
 
 ---@type LeaderLibPersistentVars

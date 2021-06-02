@@ -89,7 +89,7 @@ local function setAvailablePointsHandler(data)
 	setmetatable(data.AvailablePoints, AvailablePointsHandler)
 end
 
-local function parseTable(tbl, propertyMap, modId)
+local function parseTable(tbl, propertyMap, modId, defaults)
 	local tableData = nil
 	if type(tbl) == "table" then
 		tableData = {}
@@ -99,6 +99,20 @@ local function parseTable(tbl, propertyMap, modId)
 					ID = k,
 					Mod = modId
 				}
+				if defaults then
+					for property,value in pairs(defaults) do
+						if type(property) == "string" then
+							local propKey = string.upper(property)
+							local propData = propertyMap[propKey]
+							local t = type(value)
+							if propData and (propData.Type == "any" or t == propData.Type) then
+								data[propData.Name] = value
+							else
+								fprint(LOGLEVEL.ERROR, "[LeaderLib:CustomStatsConfig] Invalid default property (%s) with value type(%s)", property, t)
+							end
+						end
+					end
+				end
 				for property,value in pairs(v) do
 					if type(property) == "string" then
 						local propKey = string.upper(property)
@@ -128,9 +142,18 @@ local function LoadConfig(uuid, file)
 	local config = Common.JsonParse(file)
 	local loadedStats = nil
 	local loadedCategories = nil
+	local statDefaults,categoryDefaults = nil,nil
 	if config ~= nil then
-		local categories = parseTable(config.Categories, categoryPropertyMap, uuid)
-		local stats = parseTable(config.Stats, statPropertyMap, uuid)
+		if config.Defaults then
+			if config.Defaults.Stats then
+				statDefaults = config.Defaults.Stats
+			end
+			if config.Defaults.Categories then
+				categoryDefaults = config.Defaults.Categories
+			end
+		end
+		local categories = parseTable(config.Categories, categoryPropertyMap, uuid, statDefaults)
+		local stats = parseTable(config.Stats, statPropertyMap, uuid, categoryDefaults)
 
 		if categories then
 			loadedCategories = categories

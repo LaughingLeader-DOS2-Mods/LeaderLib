@@ -19,10 +19,6 @@
 			"Description": "You eat the sun.",
 			"ShowAlways" : true
 		},
-		"Combat": {
-			"DisplayName": "Combat Stats",
-			"ShowAlways" : true
-		},
 		"Debug": {
 			"DisplayName": "Debug",
 			"ShowAlways" : true
@@ -54,27 +50,6 @@
 			"Create": true,
 			"Category": "Lightbringer",
 			"PointID": "Classes"
-		},
-		"Kills": {
-			"DisplayName": "Kills",
-			"Description": "Your total combat kills.",
-			"TooltipType": "Stat",
-			"Create": true,
-			"Category": "Combat"
-		},
-		"IndirectKills": {
-			"DisplayName": "Indirect Kills",
-			"Description": "Kills you have facilitated.",
-			"TooltipType": "Stat",
-			"Create": true,
-			"Category": "Combat"
-		},
-		"Deaths": {
-			"DisplayName": "Deaths",
-			"Description": "How many times you've died.",
-			"TooltipType": "Stat",
-			"Create": true,
-			"Category": "Combat"
 		},
 		"Debug1": {
 			"DisplayName": "Debug1",

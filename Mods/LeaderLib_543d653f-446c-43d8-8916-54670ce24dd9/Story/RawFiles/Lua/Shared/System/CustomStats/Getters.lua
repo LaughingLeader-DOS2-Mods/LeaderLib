@@ -276,8 +276,13 @@ function CustomStatSystem:GetListenerIterator(...)
 	end
 	local listeners = {}
 	for _,v in pairs(tables) do
-		for _,v2 in pairs(v) do
-			listeners[#listeners+1] = v2
+		local t = type(v)
+		if t == "table" then
+			for _,v2 in pairs(v) do
+				listeners[#listeners+1] = v2
+			end
+		elseif t == "function" then
+			listeners[#listeners+1] = v
 		end
 	end
 	local i = 0

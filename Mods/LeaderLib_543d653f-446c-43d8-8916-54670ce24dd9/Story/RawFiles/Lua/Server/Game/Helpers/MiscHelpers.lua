@@ -121,22 +121,16 @@ end
 ---Sync an item or character's scale to clients.
 ---@param object string|EsvCharacter|EsvItem
 function GameHelpers.SyncScale(object)
-	if type(object) == "string" then
-		if ObjectIsCharacter(object) == 1 then
-			object = Ext.GetCharacter(object)
-		elseif ObjectIsItem(object) == 1 then
-			object = Ext.GetItem(object)
-		end
+	if object and type(object) ~= "userdata" then
+		object = Ext.GetGameObject(object)
 	end
-	if object ~= nil then
-		local isItem = ObjectIsItem(object.MyGuid) == 1
-		Ext.BroadcastMessage("LeaderLib_SyncScale", Classes.MessageData:CreateFromTable("SyncScaleData", {
+	if object then
+		Ext.BroadcastMessage("LeaderLib_SyncScale", Ext.JsonStringify({
 			UUID = object.MyGuid,
 			Scale = object.Scale,
-			IsItem = isItem,
 			Handle = object.NetID
 			--Handle = Ext.HandleToDouble(object.Handle)
-		}):ToString())
+		}))
 	end
 end
 
@@ -144,14 +138,10 @@ end
 ---@param object EsvCharacter|string
 ---@param scale number
 function GameHelpers.SetScale(object, scale)
-	if type(object) == "string" then
-		if ObjectIsCharacter(object) == 1 then
-			object = Ext.GetCharacter(object)
-		elseif ObjectIsItem(object) == 1 then
-			object = Ext.GetItem(object)
-		end
+	if object and type(object) ~= "userdata" then
+		object = Ext.GetGameObject(object)
 	end
-	if object.SetScale ~= nil then
+	if object and object.SetScale then
 		object:SetScale(scale)
 		GameHelpers.SyncScale(object)
 	end

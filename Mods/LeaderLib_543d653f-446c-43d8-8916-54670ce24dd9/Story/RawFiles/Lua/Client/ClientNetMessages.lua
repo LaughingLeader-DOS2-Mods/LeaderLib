@@ -105,26 +105,12 @@ Ext.RegisterNetListener("LeaderLib_SyncAllSettings", function(call, dataString)
 	InvokeListenerCallbacks(Listeners.ModSettingsLoaded)
 end)
 
-local canGetGameObject = false
-if Ext.GetGameObject then
-	canGetGameObject = true
-end
-
-Ext.RegisterNetListener("LeaderLib_SyncScale", function(call, dataStr)
-	local data = MessageData:CreateFromString(dataStr)
-	if data.Params.Scale then
-		local obj = nil
-		if canGetGameObject then
-			obj = Ext.GetGameObject(data.Params.Handle) or Ext.GetGameObject(data.Params.UUID)
-		else
-			local getObjFunc = Ext.GetCharacter
-			if data.Params.IsItem then
-				getObjFunc = Ext.GetItem
-			end
-			obj = getObjFunc(data.Params.Handle) or getObjFunc(data.Params.UUID)
-		end
+Ext.RegisterNetListener("LeaderLib_SyncScale", function(call, payload)
+	local data = Common.JsonParse(payload)
+	if data.Scale then
+		local obj = Ext.GetGameObject(data.Handle) or Ext.GetGameObject(data.UUID)
 		if obj and obj.SetScale then
-			obj:SetScale(data.Params.Scale)
+			obj:SetScale(data.Scale)
 		end
 	end
 end)

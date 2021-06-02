@@ -1,6 +1,3 @@
-local Vector3 = Classes.Vector3
-local Quaternion = Classes.Quaternion
-
 ---A global table used to update instances of CharacterData with the character's NetID.
 MonitoredCharacterData = {
 	---@type CharacterData[]
@@ -30,6 +27,24 @@ local CharacterData = {
 	NetID = -1,
 	Region = ""
 }
+
+setmetatable(CharacterData, {
+	__index = CharacterData,
+	---@param uuid string
+	---@param params table<string,any>|nil
+	__call = function(_, uuid, params)
+		return CharacterData:Create(uuid, params)
+	end,
+	---@param self CharacterData
+	__tostring = function(self)
+		local character = self:GetCharacter()
+		if character then
+			return string.format("[CharacterData] DisplayName(%s) UUID(%s) NetID(%s) StatsId(%s)", character.DisplayName, self.UUID, character.NetID, character.Stats.Name)
+		else
+			return string.format("[CharacterData] UUID(%s)", self.UUID)
+		end
+	end
+})
 -- CharacterData.__index = function(tbl, key)
 -- 	if key == "NetID" and tbl.NetID == -1 and tbl.UUID ~= "" then
 -- 		local character = Ext.GetCharacter(tbl.UUID)
@@ -93,12 +108,28 @@ function CharacterData:IsInCombat()
 	return CharacterIsInCombat(self.UUID) == 1 or Common.OsirisDatabaseHasAnyEntry(Osi.DB_CombatCharacters:Get(self.UUID, nil))
 end
 
+---@return integer
+function CharacterData:GetCombatID()
+	local id = CombatGetIDForCharacter(self.UUID)
+	if id > 0 then
+		return id
+	end
+	local db = Osi.DB_CombatCharacters:Get(self.UUID, nil)
+	if db and #db > 0 then
+		id = db[1][2]
+		if id > 0 then
+			return id
+		end
+	end
+	return 0
+end
+
 ---@param asVector3 boolean|nil
 ---@return number,number,number|Vector3
 function CharacterData:GetPosition(asVector3)
 	local x,y,z = GetPosition(self.UUID)
 	if asVector3 == true then
-		return Vector3(x,y,z)
+		return Classes.Vector3(x,y,z)
 	else
 		return x,y,z
 	end
@@ -171,8 +202,7 @@ function CharacterData:ApplyOrSetStatus(status, duration, force, source)
 	end
 end
 
-
---- Equips a root template, or creates and equips one if the item doesn't exist.
+---Equips a root template, or creates and equips one if the item doesn't exist.
 ---@param template string
 ---@param all boolean|nil Equip all instances.
 ---@return EsvItem|EsvItem[]
@@ -191,7 +221,8 @@ function CharacterData:EquipTemplate(template, all)
 				local item = Ext.GetItem(v)
 				if item and item.RootTemplate and item.RootTemplate.Id == template then
 					if ItemIsEquipable(v) == 1 then
-						CharacterEquipItem(self.UUID, v)
+						NRD_CharacterEquipItem(self.UUID, v, item.Stats.Slot, 0, 0, 1, 1)
+						--CharacterEquipItem(self.UUID, v)
 						if all ~= true then
 							return item
 						else
@@ -207,7 +238,8 @@ function CharacterData:EquipTemplate(template, all)
 		if item then
 			ItemToInventory(item.MyGuid, self.UUID)
 			if ItemIsEquipable(item.MyGuid) == 1 then
-				CharacterEquipItem(self.UUID, item.MyGuid)
+				--CharacterEquipItem(self.UUID, item.MyGuid)
+				NRD_CharacterEquipItem(self.UUID, item.MyGuid, item.Stats.Slot, 0, 0, 1, 1)
 			end
 			return item
 		end
@@ -224,6 +256,8 @@ function CharacterData:FullRestore(resurrect)
 		CharacterSetHitpointsPercentage(self.UUID, 100.0)
 		CharacterSetArmorPercentage(self.UUID, 100.0)
 		CharacterSetMagicArmorPercentage(self.UUID, 100.0)
+		ApplyStatus(self.UUID, "LEADERLIB_RECALC", 0.0, 1, self.UUID)
+		return true
 	end
 	return false
 end
@@ -233,6 +267,82 @@ function CharacterData:SetLevel(level)
 	if self:Exists() then
 		GameHelpers.Character.SetLevel(self:GetCharacter(), level)
 		return true
+	end
+	return false
+end
+
+---Sets a character's scale and syncs it to clients.
+---@param scale number
+function CharacterData:SetScale(scale)
+	if self:Exists() then
+		GameHelpers.SetScale(self:GetCharacter(), scale)
+		return true
+	end
+	return false
+end
+
+---Teleports to a position or object.
+---This uses the behavior scripting teleport function so it doesn't force-teleport connected summons like Osiris' TeleportToPosition does.
+---Supports a string/EsvGameObject/number array as the target, or separate x,y,z values.
+---@param targetOrX number|number[]|string|EsvGameObject
+---@param y number|nil
+---@param z number|nil
+function CharacterData:TeleportTo(targetOrX,y,z)
+	if self:Exists() then
+		local t = type(targetOrX)
+		if t == "number" and y and z then
+			Osi.LeaderLib_Behavior_TeleportTo(self.UUID, targetOrX, y, z)
+			return true
+		elseif t == "table" then
+			targetOrX,y,z = table.unpack(targetOrX)
+			if targetOrX and y and z  then
+				Osi.LeaderLib_Behavior_TeleportTo(self.UUID, targetOrX, y, z)
+				return true
+			end
+		elseif (t == "userdata" and targetOrX.MyGuid) or t == "string" then
+			Osi.LeaderLib_Behavior_TeleportTo(self.UUID, targetOrX.MyGuid)
+			return true
+		end
+	end
+	return false
+end
+
+---Moves the character to the top of the next or current turn order.
+---@param currentRound boolean|nil If true, the current turn order is updated, otherwise the next turn order is updated.
+function CharacterData:JumpToTurn(currentRound)
+	if self:Exists() then
+		local id = self:GetCombatID()
+		if id > 0 then
+			local combat = Ext.GetCombat(id)
+			if combat then
+				---@type EsvCombatTeam[]
+				local order = nil
+				if currentRound == true then
+					order = combat:GetCurrentTurnOrder()
+				else
+					order = combat:GetNextTurnOrder()
+				end
+				if order then
+					local orderMap = {}
+					for i,v in ipairs(order) do
+						if v.Character.MyGuid == self.UUID then
+							orderMap[v.Character.MyGuid] = -1
+						else
+							orderMap[v.Character.MyGuid] = i
+						end
+					end
+					table.sort(order, function(a,b)
+						return orderMap[a.Character.MyGuid] < orderMap[b.Character.MyGuid]
+					end)
+					if currentRound == true then
+						combat:UpdateCurrentTurnOrder(order)
+					else
+						combat:UpdateNextTurnOrder(order)
+					end
+					return true
+				end
+			end
+		end
 	end
 	return false
 end

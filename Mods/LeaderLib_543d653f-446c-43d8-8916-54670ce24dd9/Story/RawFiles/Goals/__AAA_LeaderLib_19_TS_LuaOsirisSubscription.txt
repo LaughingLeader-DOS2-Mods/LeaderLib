@@ -496,7 +496,8 @@ AND LeaderLib_Variables_QRY_StringVariableSet((GUIDSTRING)_Char, "", 0)
 AND LeaderLib_Variables_QRY_StringVariableSet((GUIDSTRING)_Char, "")
 AND LeaderLib_Waypoints_QRY_PlayerMissingShrine("")
 THEN
-DB_NOOP(1);
+LeaderLib_Behavior_TeleportTo((CHARACTERGUID)_Char, 0.0, 0.0, 0.0);
+LeaderLib_Behavior_TeleportTo((CHARACTERGUID)_Char, (GUIDSTRING)_Item);
 */
 
 EXITSECTION

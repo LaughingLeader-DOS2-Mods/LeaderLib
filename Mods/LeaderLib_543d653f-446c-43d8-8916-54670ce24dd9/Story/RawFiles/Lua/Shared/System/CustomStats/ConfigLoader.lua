@@ -33,6 +33,7 @@ local isClient = Ext.IsClient()
 
 ---@class CustomStatDataBase
 local CustomStatDataBase = {
+	Type="CustomStatDataBase",
 	Description = ""
 }
 CustomStatDataBase.__index = CustomStatDataBase
@@ -57,6 +58,25 @@ function CustomStatDataBase:GetDescription()
 		return FormatText(self.Description)
 	end
 	return ""
+end
+
+---@param character UUID|NETID|EsvCharacter|EclCharacter
+---@return integer
+function CustomStatDataBase:GetAmount(character)
+	if self.Type == "CustomStatData" then
+		if StringHelpers.IsNullOrWhitespace(self.UUID) then
+			return 0
+		end
+		if type(character) == "userdata" then
+			return character:GetCustomStat(self.UUID) or 0
+		else
+			character = Ext.GetCharacter(character)
+			if character then
+				return character:GetCustomStat(self.UUID) or 0
+			end
+		end
+	end
+	return 0
 end
 
 local function setAvailablePointsHandler(data)
@@ -126,8 +146,11 @@ local function parseTable(tbl, propertyMap, modId, defaults)
 					end
 				end
 				if propertyMap == statPropertyMap then
+					data.Type = "CustomStatData"
 					data.AvailablePoints = {}
 					setAvailablePointsHandler(data)
+				else
+					data.Type = "CustomStatCategoryData"
 				end
 				setmetatable(data, CustomStatDataBase)
 				tableData[k] = data
@@ -152,8 +175,8 @@ local function LoadConfig(uuid, file)
 				categoryDefaults = config.Defaults.Categories
 			end
 		end
-		local categories = parseTable(config.Categories, categoryPropertyMap, uuid, statDefaults)
-		local stats = parseTable(config.Stats, statPropertyMap, uuid, categoryDefaults)
+		local categories = parseTable(config.Categories, categoryPropertyMap, uuid, categoryDefaults)
+		local stats = parseTable(config.Stats, statPropertyMap, uuid, statDefaults)
 
 		if categories then
 			loadedCategories = categories

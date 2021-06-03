@@ -221,21 +221,39 @@ function GameHelpers.Character.GetPlayers(includeSummons)
 	end
 end
 
+---@param owner EsvCharacter|EclCharacter|string|number|nil
+---@param getItems boolean|nil If on the server, item summons can be grabbed as well.
 ---@return fun():EsvCharacter|EclCharacter
-function GameHelpers.Character.GetSummons()
+function GameHelpers.Character.GetSummons(owner, getItems)
 	local summons = {}
 
+	local matchId = nil
+
 	if not isClient then
-		for owner,tbl in pairs(PersistentVars.Summons) do
-			for i,uuid in pairs(tbl) do
-				local summon = Ext.GetGameObject(uuid)
-				if summon then
-					summons[#summons+1] = summon
+		if type(owner) == "userdata" then
+			matchId = owner.MyGuid
+		elseif type(owner) == "string" then
+			matchId = owner
+		end
+		for ownerId,tbl in pairs(PersistentVars.Summons) do
+			if not matchId or ownerId == matchId then
+				for i,uuid in pairs(tbl) do
+					if getItems == true or ObjectIsItem(uuid) == false then
+						local summon = Ext.GetGameObject(uuid)
+						if summon then
+							summons[#summons+1] = summon
+						end
+					end
 				end
 			end
 		end
 	else
-		for mc in StatusHider.PlayerInfo:GetSummonMovieClips() do
+		if type(owner) == "userdata" then
+			matchId = Ext.HandleToDouble(owner.Handle)
+		else
+			matchId = owner
+		end
+		for mc in StatusHider.PlayerInfo:GetSummonMovieClips(matchId) do
 			local character = Ext.GetCharacter(Ext.DoubleToHandle(mc.characterHandle))
 			if character then
 				summons[#summons+1] = character

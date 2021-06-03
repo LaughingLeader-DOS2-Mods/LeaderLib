@@ -123,18 +123,21 @@ function PlayerInfo:GetCharacterMovieClips(ignoreSummons)
 	end
 end
 
+---@param ownerHandleMatch number
 ---@return FlashObject
-function PlayerInfo:GetSummonMovieClips()
+function PlayerInfo:GetSummonMovieClips(ownerHandleMatch)
 	local this = self:Get()
 	local characters = {}
 	for i=0,#this.player_array do
 		local player_mc = this.player_array[i]
 		if player_mc then
-			if player_mc.summonList then
-				for j=0,#player_mc.summonList.content_array do
-					local summon_mc = player_mc.summonList.content_array[j]
-					if summon_mc then
-						characters[#characters+1] = summon_mc
+			if not ownerHandleMatch or ownerHandleMatch == player_mc.characterHandle then
+				if player_mc.summonList then
+					for j=0,#player_mc.summonList.content_array do
+						local summon_mc = player_mc.summonList.content_array[j]
+						if summon_mc then
+							characters[#characters+1] = summon_mc
+						end
 					end
 				end
 			end

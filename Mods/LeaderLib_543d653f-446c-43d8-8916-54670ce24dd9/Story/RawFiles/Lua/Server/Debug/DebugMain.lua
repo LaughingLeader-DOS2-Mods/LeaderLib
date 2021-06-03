@@ -539,19 +539,32 @@ end)
 
 ]]
 
----@param summon EsvCharacter
+---@param summon EsvCharacter|EsvItem
 ---@param owner EsvCharacter
 ---@param isDying boolean
-RegisterListener("OnSummonChanged", function(summon, owner, isDying)
-	fprint(LOGLEVEL.DEFAULT, "[OnSummonChanged] Summon(%s) Totem(%s) Owner(%s) IsDying(%s)", GameHelpers.Character.GetDisplayName(summon), summon.Totem, GameHelpers.Character.GetDisplayName(owner), isDying)
+---@param isItem boolean
+RegisterListener("OnSummonChanged", function(summon, owner, isDying, isItem)
+	if not isItem then
+		fprint(LOGLEVEL.DEFAULT, "[OnSummonChanged:Character] Summon(%s) Totem(%s) Owner(%s) IsDying(%s) isItem(false)", GameHelpers.Character.GetDisplayName(summon), summon.Totem, GameHelpers.Character.GetDisplayName(owner), isDying)
+		fprint(LOGLEVEL.WARNING, "Dead(%s) Deactivated(%s) CannotDie(%s) DYING(%s)", summon.Dead, summon.Deactivated, summon.CannotDie, summon:GetStatus("DYING") and summon:GetStatus("DYING").Started or "false")
 
-	if summon.Totem then
-		if not isDying then
-			GameHelpers.Skill.Explode(summon.WorldPos, "Projectile_EnemyPyroclasticEruption", owner, summon.Stats.Level, true, true, true, {AlwaysDamage=0})
-		else
-			GameHelpers.Skill.CreateProjectileStrike(summon, "ProjectileStrike_Stormbolt_Oil", owner, summon.Stats.Level, true, true, true, {AlwaysDamage=0})
+		if summon.Totem then
+			if not isDying then
+				GameHelpers.Skill.Explode(summon.WorldPos, "Projectile_EnemyPyroclasticEruption", owner, summon.Stats.Level, true, true, true, {AlwaysDamage=0})
+			else
+				GameHelpers.Skill.CreateProjectileStrike(summon, "ProjectileStrike_Stormbolt_Fire", owner, summon.Stats.Level, true, true, true, {AlwaysDamage=0})
+			end
 		end
+	else
+		fprint(LOGLEVEL.DEFAULT, "[OnSummonChanged:Item] Summon(%s) StatsId(%s) Owner(%s) IsDying(%s) isItem(true)", GameHelpers.Character.GetDisplayName(summon), summon.StatsId, GameHelpers.Character.GetDisplayName(owner), isDying)
 	end
+
+	print("Summons")
+	print("========")
+	for summon in GameHelpers.Character.GetSummons(owner) do
+		print(GameHelpers.Character.GetDisplayName(summon), summon.MyGuid)
+	end
+	print("========")
 end)
 
 _ENV = _G

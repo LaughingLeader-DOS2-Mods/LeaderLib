@@ -185,6 +185,27 @@ function CustomStatSystem:GetAllCategories(skipSort)
 	end
 end
 
+---Gets the total number of registered stats for a category.
+---@param categoryId string
+---@param visibleOnly boolean|nil
+---@return integer
+function CustomStatSystem:GetTotalStatsInCategory(categoryId, visibleOnly)
+	local total = 0
+	local isUnsortedCategory = StringHelpers.IsNullOrWhitespace(id)
+	for mod,stats in pairs(CustomStatSystem.Stats) do
+		for id,stat in pairs(stats) do
+			local statIsVisible = stat.Visible ~= false and not StringHelpers.IsNullOrWhitespace(stat.UUID)
+			if (not visibleOnly or (visibleOnly == true and statIsVisible))
+			and ((isUnsortedCategory and StringHelpers.IsNullOrWhitespace(stat.Category)) 
+			or stat.Category == categoryId)
+			then
+				total = total + 1
+			end
+		end
+	end
+	return total
+end
+
 ---@param double number
 ---@return CustomStatData
 function CustomStatSystem:GetStatByDouble(double)

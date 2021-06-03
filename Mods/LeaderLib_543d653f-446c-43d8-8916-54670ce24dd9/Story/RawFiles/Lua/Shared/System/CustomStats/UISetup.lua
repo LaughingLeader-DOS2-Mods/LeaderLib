@@ -75,7 +75,6 @@ local function OnSheetUpdating(ui, method)
 			this.customStats_array[arrayIndex+3] = v.GroupId
 			this.customStats_array[arrayIndex+4] = self:GetCanAddPoints(ui, v.Handle)
 			this.customStats_array[arrayIndex+5] = self:GetCanRemovePoints(ui, v.Handle)
-			print(arrayIndex, v.Handle, v.DisplayName, v.Value, v.GroupId)
 			arrayIndex = arrayIndex + 6
 		end
 	end
@@ -86,9 +85,11 @@ local miscGroupDisplayName = Classes.TranslatedString:Create("hb8ed2061ge5a3g4f6
 function CustomStatSystem:SetupGroups(ui, call)
 	local this = ui:GetRoot().stats_mc.customStats_mc
 	this.resetGroups()
-	this.addGroup(0, miscGroupDisplayName.Value, false) -- Group for stats without an assigned category
+	-- Group for stats without an assigned category
+	this.addGroup(0, miscGroupDisplayName.Value, false, self:GetTotalStatsInCategory(nil, true) > 0)
 	for category in self:GetAllCategories() do
-		this.addGroup(category.GroupId, category:GetDisplayName(), false)
+		local isVisible = category.ShowAlways or self:GetTotalStatsInCategory(category.ID, true) > 0
+		this.addGroup(category.GroupId, category:GetDisplayName(), false, isVisible)
 	end
 	this.positionElements()
 end

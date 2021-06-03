@@ -91,13 +91,14 @@ package characterSheet_fla
 			this.create_mc.visible = isGM;
 		}
 
-		public function addGroup(groupId:Number, labelText:String, reposition:Boolean=false) : *
+		public function addGroup(groupId:Number, labelText:String, reposition:Boolean=false, visible:Boolean=true) : *
 		{
 			this.list.addGroup(groupId,labelText,reposition);
 			var group_mc:MovieClip = this.list.getElementByNumber("groupId",groupId);
 			if (group_mc != null)
 			{
 				group_mc.groupName = labelText;
+				group_mc.visible = visible;
 			}
 			ExternalInterface.call("customStatsGroupAdded", groupId, labelText);
 		}
@@ -108,6 +109,15 @@ package characterSheet_fla
 			if (group_mc != null)
 			{
 				group_mc.tooltip = text;
+			}
+		}
+
+		public function setGroupVisibility(groupId:Number, visible:Boolean=true) : *
+		{
+			var group_mc:MovieClip = this.list.getElementByNumber("groupId",groupId);
+			if (group_mc != null)
+			{
+				group_mc.visible = visible;
 			}
 		}
 
@@ -143,8 +153,8 @@ package characterSheet_fla
 			var cstat_mc:MovieClip = new CustomStat();
 			cstat_mc.hl_mc.alpha = 0;
 
-			cstat_mc.plus_mc.visible = !plusVisible ? this.base.isGameMasterChar : plusVisible;
-			cstat_mc.minus_mc.visible = !minusVisible ? this.base.isGameMasterChar : minusVisible;
+			cstat_mc.plus_mc.visible = !this.base.isGameMasterChar ? plusVisible : true;
+			cstat_mc.minus_mc.visible = !this.base.isGameMasterChar ? minusVisible : true;
 			cstat_mc.edit_mc.visible = this.base.isGameMasterChar;
 			cstat_mc.delete_mc.visible = this.base.isGameMasterChar;
 			cstat_mc.edit_mc.tooltip = "Edit";

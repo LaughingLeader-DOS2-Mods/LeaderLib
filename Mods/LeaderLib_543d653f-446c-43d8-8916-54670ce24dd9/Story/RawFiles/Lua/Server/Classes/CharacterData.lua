@@ -27,24 +27,21 @@ local CharacterData = {
 	NetID = -1,
 	Region = ""
 }
-
-setmetatable(CharacterData, {
-	__index = CharacterData,
-	---@param uuid string
-	---@param params table<string,any>|nil
-	__call = function(_, uuid, params)
-		return CharacterData:Create(uuid, params)
-	end,
-	---@param self CharacterData
-	__tostring = function(self)
-		local character = self:GetCharacter()
-		if character then
-			return string.format("[CharacterData] DisplayName(%s) UUID(%s) NetID(%s) StatsId(%s)", character.DisplayName, self.UUID, character.NetID, character.Stats.Name)
-		else
-			return string.format("[CharacterData] UUID(%s)", self.UUID)
-		end
+CharacterData.__index = CharacterData
+---@param uuid string
+---@param params table<string,any>|nil
+CharacterData.__call = function(_, uuid, params)
+	return CharacterData:Create(uuid, params)
+end
+---@param self CharacterData
+CharacterData.__tostring = function(self)
+	local character = self:GetCharacter()
+	if character then
+		return string.format("[CharacterData] DisplayName(%s) UUID(%s) NetID(%s) StatsId(%s)", character.DisplayName, self.UUID, character.NetID, character.Stats.Name)
+	else
+		return string.format("[CharacterData] UUID(%s)", self.UUID)
 	end
-})
+end
 -- CharacterData.__index = function(tbl, key)
 -- 	if key == "NetID" and tbl.NetID == -1 and tbl.UUID ~= "" then
 -- 		local character = Ext.GetCharacter(tbl.UUID)

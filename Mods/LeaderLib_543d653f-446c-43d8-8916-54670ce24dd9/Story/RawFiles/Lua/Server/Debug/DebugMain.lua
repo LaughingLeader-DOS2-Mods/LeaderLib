@@ -547,9 +547,9 @@ RegisterListener("OnSummonChanged", function(summon, owner, isDying)
 
 	if summon.Totem then
 		if not isDying then
-			GameHelpers.Skill.Explode(summon.WorldPos, "Projectile_EnemyPyroclasticEruption", owner, summon.Stats.Level, true, nil, true)
+			GameHelpers.Skill.Explode(summon.WorldPos, "Projectile_EnemyPyroclasticEruption", owner, summon.Stats.Level, true, true, true, {AlwaysDamage=0})
 		else
-			GameHelpers.Skill.CreateProjectileStrike(summon, "ProjectileStrike_Stormbolt_Oil", owner, summon.Stats.Level, {AlwaysDamage=0}, true)
+			GameHelpers.Skill.CreateProjectileStrike(summon, "ProjectileStrike_Stormbolt_Oil", owner, summon.Stats.Level, true, true, true, {AlwaysDamage=0})
 		end
 	end
 end)

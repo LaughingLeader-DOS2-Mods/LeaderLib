@@ -186,7 +186,21 @@ function GameHelpers.Character.GetPlayers(includeSummons)
 
 	if not isClient then
 		for _,db in pairs(Osi.DB_IsPlayer:Get(nil)) do
-			players[#players+1] = Ext.GetCharacter(db[1])
+			local player = Ext.GetCharacter(db[1])
+			players[#players+1] = player
+			if includeSummons == true then
+				local summons = PersistentVars.Summons[player.MyGuid]
+				if summons then
+					for i,v in pairs(summons) do
+						if ObjectIsCharacter(v) == 1 then
+							local summon = Ext.GetCharacter(v)
+							if summon then
+								players[#players+1] = summon
+							end
+						end
+					end
+				end
+			end
 		end
 	else
 		for mc in StatusHider.PlayerInfo:GetCharacterMovieClips(not includeSummons) do

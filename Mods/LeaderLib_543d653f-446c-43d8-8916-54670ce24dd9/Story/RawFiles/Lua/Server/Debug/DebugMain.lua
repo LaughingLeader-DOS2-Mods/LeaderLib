@@ -539,6 +539,21 @@ end)
 
 ]]
 
+---@param summon EsvCharacter
+---@param owner EsvCharacter
+---@param isDying boolean
+RegisterListener("OnSummonChanged", function(summon, owner, isDying)
+	fprint(LOGLEVEL.DEFAULT, "[OnSummonChanged] Summon(%s) Totem(%s) Owner(%s) IsDying(%s)", GameHelpers.Character.GetDisplayName(summon), summon.Totem, GameHelpers.Character.GetDisplayName(owner), isDying)
+
+	if summon.Totem then
+		if not isDying then
+			GameHelpers.Skill.Explode(summon.WorldPos, "Projectile_EnemyPyroclasticEruption", owner, summon.Stats.Level, true, nil, true)
+		else
+			GameHelpers.Skill.CreateProjectileStrike(summon, "ProjectileStrike_Stormbolt_Oil", owner, summon.Stats.Level, {AlwaysDamage=0}, true)
+		end
+	end
+end)
+
 _ENV = _G
 if setfenv ~= nil then
 	setfenv(1, _G)

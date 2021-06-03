@@ -138,7 +138,20 @@ function GameHelpers.Character.GetDisplayName(character)
 	if type(character) ~= "userdata" then
 		character = Ext.GetCharacter(character)
 	end
-	return character and character.DisplayName or ""
+	if character then
+		local name = character.DisplayName
+		if StringHelpers.IsNullOrWhitespace(name) or string.find(name, "|", 1, true) then
+			if not isClient then
+				local handle,ref = CharacterGetDisplayName(character.MyGuid)
+				return Ext.GetTranslatedString(handle, not StringHelpers.IsNullOrWhitespace(name) and name or ref)
+			else
+				return name
+			end
+		else
+			return name
+		end
+	end
+	return ""
 end
 
 if not isClient then
@@ -166,8 +179,9 @@ end
 
 end
 
+---@param includeSummons boolean|nil
 ---@return fun():EsvCharacter|EclCharacter
-function GameHelpers.Character.GetPlayers()
+function GameHelpers.Character.GetPlayers(includeSummons)
 	local players = {}
 
 	if not isClient then
@@ -175,7 +189,7 @@ function GameHelpers.Character.GetPlayers()
 			players[#players+1] = Ext.GetCharacter(db[1])
 		end
 	else
-		for mc in StatusHider.PlayerInfo:GetCharacterMovieClips(true) do
+		for mc in StatusHider.PlayerInfo:GetCharacterMovieClips(not includeSummons) do
 			local character = Ext.GetCharacter(Ext.DoubleToHandle(mc.characterHandle))
 			if character then
 				players[#players+1] = character
@@ -189,6 +203,38 @@ function GameHelpers.Character.GetPlayers()
 		i = i + 1
 		if i <= count then
 			return players[i]
+		end
+	end
+end
+
+---@return fun():EsvCharacter|EclCharacter
+function GameHelpers.Character.GetSummons()
+	local summons = {}
+
+	if not isClient then
+		for owner,tbl in pairs(PersistentVars.Summons) do
+			for i,uuid in pairs(tbl) do
+				local summon = Ext.GetGameObject(uuid)
+				if summon then
+					summons[#summons+1] = summon
+				end
+			end
+		end
+	else
+		for mc in StatusHider.PlayerInfo:GetSummonMovieClips() do
+			local character = Ext.GetCharacter(Ext.DoubleToHandle(mc.characterHandle))
+			if character then
+				summons[#summons+1] = character
+			end
+		end
+	end
+
+	local i = 0
+	local count = #summons
+	return function ()
+		i = i + 1
+		if i <= count then
+			return summons[i]
 		end
 	end
 end

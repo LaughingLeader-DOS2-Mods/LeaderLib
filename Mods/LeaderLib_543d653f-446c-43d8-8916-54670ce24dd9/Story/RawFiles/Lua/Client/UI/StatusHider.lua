@@ -123,6 +123,34 @@ function PlayerInfo:GetCharacterMovieClips(ignoreSummons)
 	end
 end
 
+---@return FlashObject
+function PlayerInfo:GetSummonMovieClips()
+	local this = self:Get()
+	local characters = {}
+	for i=0,#this.player_array do
+		local player_mc = this.player_array[i]
+		if player_mc then
+			if player_mc.summonList then
+				for j=0,#player_mc.summonList.content_array do
+					local summon_mc = player_mc.summonList.content_array[j]
+					if summon_mc then
+						characters[#characters+1] = summon_mc
+					end
+				end
+			end
+		end
+	end
+
+	local i = 0
+	local count = #characters
+	return function ()
+		i = i + 1
+		if i <= count then
+			return characters[i]
+		end
+	end
+end
+
 function PlayerInfo:GetPlayerOrSummonByHandle(doubleHandle, this)
 	this = this or self:Get()
 	for i=0,#this.player_array do

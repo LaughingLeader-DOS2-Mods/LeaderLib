@@ -58,6 +58,23 @@ local function InvokeOnInitializedCallbacks(region)
 			end
 		end
 	end
+
+	if PersistentVars.Summons then
+		for uuid,tbl in pairs(PersistentVars.Summons) do
+			if ObjectExists(uuid) == 0 then
+				PersistentVars.Summons[uuid] = nil
+			else
+				for i,v in pairs(tbl) do
+					if ObjectExists(v) == 0 then
+						table.remove(tbl, i)
+					end
+				end
+				if #tbl == 0 then
+					PersistentVars.Summons[uuid] = nil
+				end
+			end
+		end
+	end
 end
 
 local function OnInitialized(region, isRunning)

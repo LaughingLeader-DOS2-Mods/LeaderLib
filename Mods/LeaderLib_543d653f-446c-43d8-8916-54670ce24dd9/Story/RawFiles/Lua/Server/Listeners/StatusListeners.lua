@@ -109,6 +109,22 @@ local forceStatuses = {
 }
 
 local function OnStatusApplied(target,status,source)
+	if status == "SUMMONING" then
+		local summon = Ext.GetGameObject(target)
+		if summon then
+			local owner = nil
+			if summon.OwnerHandle then
+				owner = Ext.GetGameObject(summon.OwnerHandle)
+			end
+			if owner then
+				if not PersistentVars.Summons[owner.MyGuid] then
+					PersistentVars.Summons[owner.MyGuid] = {}
+				end
+				table.insert(PersistentVars.Summons[owner.MyGuid], summon.MyGuid)
+			end
+			InvokeListenerCallbacks(Listeners.OnSummonChanged, summon, owner, false)
+		end
+	end
 	if Vars.LeaveActionData.Total > 0 then
 		local skill = Vars.LeaveActionData.Statuses[status]
 		if skill then
@@ -136,6 +152,24 @@ local function OnStatusApplied(target,status,source)
 end
 
 local function OnStatusRemoved(target,status)
+	if status == "SUMMONING_ABILITY" then
+		local owner = nil
+		local summon = Ext.GetGameObject(target)
+		for ownerId,tbl in pairs(PersistentVars.Summons) do
+			for i,uuid in pairs(tbl) do
+				if uuid == target then
+					owner = Ext.GetGameObject(ownerId)
+					if (summon and summon.Dead) or not summon then
+						table.remove(tbl, i)
+					end
+				end
+			end
+			if #tbl == 0 then
+				PersistentVars.Summons[ownerId] = nil
+			end
+		end
+		InvokeListenerCallbacks(Listeners.OnSummonChanged, summon or target, owner, true)
+	end
 	--PrintDebug("OnStatusRemoved", target,status)
 	local source = nil
 	if Vars.LeaveActionData.Total > 0 then

@@ -25,7 +25,9 @@ local defaultPersistentVars = {
 	---@type table<UUID,table<STAT_ID,integer>>
 	CustomStatAvailablePoints = {},
 	---@type table<UUID, number>
-	ScaleOverride = {}
+	ScaleOverride = {},
+	---@type table<UUID,UUID[]>
+	Summons = {}
 }
 
 ---@type LeaderLibPersistentVars

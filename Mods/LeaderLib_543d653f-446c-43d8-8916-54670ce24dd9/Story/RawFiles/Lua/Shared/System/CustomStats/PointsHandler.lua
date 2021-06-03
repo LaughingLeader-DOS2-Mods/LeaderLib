@@ -80,12 +80,61 @@ if Ext.IsServer() then
 			error(string.format("Invalid parameters character(%s) uuid(%s) statId(%s) amount(%s)", tostring(character), tostring(uuid), tostring(statId), tostring(amount)), 1)
 		end
 	end
+
+	---@param character EsvCharacter|UUID|NETID
+	---@param statId string A stat id.
+	---@param amount integer The amount to modify the stat by.
+	---@param mod string|nil A mod UUID to use when fetching the stat by ID.
+	function CustomStatSystem:ModifyStat(character, statId, amount, mod)
+		if type(character) ~= "userdata" then
+			character = Ext.GetCharacter(character)
+		end
+		if character then
+			local stat = self:GetStatByID(statId, mod)
+			if stat then
+				local current = stat:GetAmount(character)
+				if StringHelpers.IsNullOrWhitespace(stat.UUID) then
+					stat.UUID = Ext.CreateCustomStat(stat.DisplayName, stat.Description)
+				end
+				character:SetCustomStat(stat.UUID, current + amount)
+				return true
+			else
+				error(string.format("Stat does not exist. statId(%s) mod(%s)", statId or "nil", mod or ""), 2)
+			end
+		else
+			error(string.format("Failed to get character from (%s)", character or ""), 2)
+		end
+	end
+
+	---@param character EsvCharacter|UUID|NETID
+	---@param statId string A stat id.
+	---@param amount integer The value to set the stat to.
+	---@param mod string|nil A mod UUID to use when fetching the stat by ID.
+	function CustomStatSystem:SetStat(character, statId, amount, mod)
+		if type(character) ~= "userdata" then
+			character = Ext.GetCharacter(character)
+		end
+		if character then
+			local stat = self:GetStatByID(statId, mod)
+			if stat then
+				if StringHelpers.IsNullOrWhitespace(stat.UUID) then
+					stat.UUID = Ext.CreateCustomStat(stat.DisplayName, stat.Description)
+				end
+				character:SetCustomStat(stat.UUID, amount)
+				return true
+			else
+				error(string.format("Stat does not exist. statId(%s) mod(%s)", statId or "nil", mod or ""), 2)
+			end
+		else
+			error(string.format("Failed to get character from (%s)", character or ""), 2)
+		end
+	end
 else
 
 ---@param id string
 ---@param callback CustomStatCanAddPointsCallback
 function CustomStatSystem:RegisterCanAddPointsHandler(id, callback)
-	if tyoe(id) == "table" then
+	if type(id) == "table" then
 		for i=1,#id do
 			self:RegisterCanAddPointsHandler(id[i], callback)
 		end
@@ -100,7 +149,7 @@ end
 ---@param id string
 ---@param callback CustomStatCanRemovePointsCallback
 function CustomStatSystem:RegisterCanRemovePointsHandler(id, callback)
-	if tyoe(id) == "table" then
+	if type(id) == "table" then
 		for i=1,#id do
 			self:RegisterCanRemovePointsHandler(id[i], callback)
 		end
@@ -115,7 +164,7 @@ end
 ---@param id string
 ---@param callback CustomStatPointsAssignedCallback
 function CustomStatSystem:RegisterPointsChangedListener(id, callback)
-	if tyoe(id) == "table" then
+	if type(id) == "table" then
 		for i=1,#id do
 			self:RegisterPointsChangedListener(id[i], callback)
 		end
@@ -173,12 +222,15 @@ function CustomStatSystem:GetAvailablePointsForStat(stat, character)
 end
 
 function CustomStatSystem:GetCanAddPoints(ui, doubleHandle, character)
+	if GameHelpers.Client.IsGameMaster(ui) == true then
+		return true
+	end
 	character = character or Client:GetCharacter()
 	local stat = self:GetStatByDouble(doubleHandle)
 	if stat then
 		local value = self:GetStatValueForCharacter(character, stat.ID, stat.Mod)
 		local availablePoints = self:GetAvailablePointsForStat(stat)
-		local canAdd = GameHelpers.Client.IsGameMaster() or availablePoints > 0
+		local canAdd = availablePoints > 0
 		for listener in self:GetListenerIterator(self.Listeners.CanAddPoints[stat.ID], self.Listeners.CanRemovePoints.All) do
 			local b,result = xpcall(listener, debug.traceback, stat.ID, stat, character, value, availablePoints, canAdd)
 			if b then
@@ -195,12 +247,15 @@ function CustomStatSystem:GetCanAddPoints(ui, doubleHandle, character)
 end
 
 function CustomStatSystem:GetCanRemovePoints(ui, doubleHandle, character)
+	if GameHelpers.Client.IsGameMaster(ui) == true then
+		return true
+	end
 	character = character or Client:GetCharacter()
 	local stat = self:GetStatByDouble(doubleHandle)
 	if stat then
 		local value = self:GetStatValueForCharacter(character, stat.ID, stat.Mod)
 		if value then
-			local canRemove = GameHelpers.Client.IsGameMaster() == true and value > 0
+			local canRemove = value > 0
 			for listener in self:GetListenerIterator(self.Listeners.CanRemovePoints[stat.ID], self.Listeners.CanRemovePoints.All) do
 				local b,result = xpcall(listener, debug.traceback, stat.ID, stat, character, value, canRemove)
 				if b then
@@ -242,7 +297,11 @@ function CustomStatSystem:OnStatPointAdded(ui, call, doubleHandle)
 				stat.AvailablePoints[character.MyGuid] = points
 			end
 			if points == 0 then
-				stat_mc.plus_mc.visible = not GameHelpers.Client.IsGameMaster()
+				local isGM = GameHelpers.Client.IsGameMaster(ui)
+				stat_mc.plus_mc.visible = isGM
+				if isGM then
+					stat_mc.minus_mc.visible = isGM
+				end
 			end
 			for listener in self:GetListenerIterator(self.Listeners.OnPointsChanged[stat.ID], self.Listeners.OnPointsChanged.All) do
 				local b,err = xpcall(listener, debug.traceback, stat.ID, stat, character, lastPoints, points)

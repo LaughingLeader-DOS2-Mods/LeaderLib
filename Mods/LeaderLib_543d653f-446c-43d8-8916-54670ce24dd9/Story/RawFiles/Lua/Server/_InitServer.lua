@@ -17,6 +17,7 @@ Ext.Require("Server/Game/ComputeCharacterHit.lua")
 Ext.Require("Server/Game/QualityOfLife.lua")
 Ext.Require("Server/Game/VisualElementManager.lua")
 Ext.Require("Server/Game/TurnCounter.lua")
+Ext.Require("Server/Game/OriginFixes.lua")
 if coroutine then
 Ext.Require("Server/Game/SceneManager.lua")
 end

@@ -165,3 +165,30 @@ function GameHelpers.Character.SetLevel(character, level)
 end
 
 end
+
+---@return fun():EsvCharacter|EclCharacter
+function GameHelpers.Character.GetPlayers()
+	local players = {}
+
+	if not isClient then
+		for _,db in pairs(Osi.DB_IsPlayer:Get(nil)) do
+			players[#players+1] = Ext.GetCharacter(db[1])
+		end
+	else
+		for mc in StatusHider.PlayerInfo:GetCharacterMovieClips(true) do
+			local character = Ext.GetCharacter(Ext.DoubleToHandle(mc.characterHandle))
+			if character then
+				players[#players+1] = character
+			end
+		end
+	end
+
+	local i = 0
+	local count = #players
+	return function ()
+		i = i + 1
+		if i <= count then
+			return players[i]
+		end
+	end
+end

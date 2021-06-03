@@ -62,6 +62,13 @@ end
 
 local function OnInitialized(region, isRunning)
 	GameHelpers.Data.SetGameMode()
+	region = region or SharedData.RegionData.Current
+	if region == nil and Ext.OsirisIsCallable() then
+		local db = Osi.DB_CurrentLevel:Get(nil)
+		if db ~= nil then
+			region = db[1][1] or ""
+		end
+	end
 
 	local status,err = xpcall(OverrideLeaveActionStatuses, debug.traceback)
 	if not status then
@@ -87,12 +94,6 @@ local function OnInitialized(region, isRunning)
 	end
 
 	if isRunning == true or Ext.GetGameState() == "Running" then
-		if region == nil then
-			local db = Osi.DB_CurrentLevel:Get(nil)
-			if db ~= nil then
-				region = db[1][1] or ""
-			end
-		end
 		InvokeOnInitializedCallbacks(region)
 		SettingsManager.SyncAllSettings()
 		if GlobalGetFlag("LeaderLib_AutoUnlockInventoryInMultiplayer") == 1 then

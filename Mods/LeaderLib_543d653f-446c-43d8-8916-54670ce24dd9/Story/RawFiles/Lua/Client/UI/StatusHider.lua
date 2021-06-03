@@ -68,6 +68,7 @@ end
 
 local PlayerInfo = {}
 PlayerInfo.__index = PlayerInfo
+StatusHider.PlayerInfo = PlayerInfo
 
 function PlayerInfo:Get()
 	local ui = not Vars.ControllerEnabled and Ext.GetUIByType(Data.UIType.playerInfo) or Ext.GetUIByType(Data.UIType.playerInfo_c)
@@ -92,15 +93,16 @@ function PlayerInfo:AddStatus(directly, characterDouble, statusDouble, displayNa
 	end
 end
 
+---@param ignoreSummons boolean|nil
 ---@return FlashObject
-function PlayerInfo:GetCharacterMovieClips()
+function PlayerInfo:GetCharacterMovieClips(ignoreSummons)
 	local this = self:Get()
 	local characters = {}
 	for i=0,#this.player_array do
 		local player_mc = this.player_array[i]
 		if player_mc then
 			characters[#characters+1] = player_mc
-			if player_mc.summonList then
+			if ignoreSummons ~= true and player_mc.summonList then
 				for j=0,#player_mc.summonList.content_array do
 					local summon_mc = player_mc.summonList.content_array[j]
 					if summon_mc then

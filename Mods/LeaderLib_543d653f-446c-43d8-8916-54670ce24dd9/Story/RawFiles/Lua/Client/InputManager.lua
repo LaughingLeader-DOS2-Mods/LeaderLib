@@ -299,7 +299,7 @@ function Input.OnFlashEvent(ui, call, pressed, eventName, arrayIndex)
 		end
 		Input.Keys[eventName] = nextState
 		local id = Data.Input[eventName]
-		OnInputChanged(eventName, pressed, kid, Input.Keys, Vars.ControllerEnabled)
+		OnInputChanged(eventName, pressed, id, Input.Keys, Vars.ControllerEnabled)
 		if type(id) == "table" then
 			for _,kid in pairs(id) do
 				InvokeListenerCallbacks(Listeners.InputEvent, eventName, pressed, kid, Input.Keys, Vars.ControllerEnabled)
@@ -324,10 +324,64 @@ function Input.OnKeyboardEvent(ui, call, keyCode, keyName, pressed)
 	end
 end
 
--- if Vars.DebugMode then
--- 	Input.RegisterListener(function(eventName, pressed, id, keys, controllerEnabled)
--- 		if not string.find(eventName, "Mouse") then
--- 			fprint(LOGLEVEL.DEFAULT, "[Input] event(%s) pressed(%s) id(%s) time(%s)", eventName, pressed, id, Ext.MonotonicTime())
--- 		end
--- 	end)
--- end
+local brokenCtrlKeys = {
+	"DragSingleToggle",
+	"DestructionToggle",
+	"ToggleInfo",
+	"FlashCtrl",
+}
+
+Ext.RegisterUITypeInvokeListener(Data.UIType.hotBar, "setActionPreview", function(ui, method, skill, b)
+	if skill == "ActionAttackGround" and not b then
+		for _,v in pairs(brokenCtrlKeys) do
+			if Input.Keys[v] ~= KEYSTATE.RELEASED then
+				Input.Keys[v] = KEYSTATE.RELEASED
+				local id = Data.Input[v]
+				OnInputChanged(v, false, id, Input.Keys, Vars.ControllerEnabled)
+				if type(id) == "table" then
+					for _,kid in pairs(id) do
+						InvokeListenerCallbacks(Listeners.InputEvent, v, false, kid, Input.Keys, Vars.ControllerEnabled)
+						InvokeListenerCallbacks(Listeners.NamedInputEvent[v], v, false, kid, Input.Keys, Vars.ControllerEnabled)
+					end
+				else
+					InvokeListenerCallbacks(Listeners.InputEvent, v, false, id, Input.Keys, Vars.ControllerEnabled)
+					InvokeListenerCallbacks(Listeners.NamedInputEvent[v], v, false, id, Input.Keys, Vars.ControllerEnabled)
+				end
+				lastFiredEventFrom[v] = 1
+			end
+		end
+	end
+end)
+
+local brokenAltKeys = {
+	"ShowWorldTooltips",
+	"FlashAlt",
+}
+
+Ext.RegisterUITypeInvokeListener(Data.UIType.worldTooltip, "clearAll", function(ui, method)
+	for _,v in pairs(brokenAltKeys) do
+		if Input.Keys[v] ~= KEYSTATE.RELEASED then
+			Input.Keys[v] = KEYSTATE.RELEASED
+			local id = Data.Input[v]
+			OnInputChanged(v, false, id, Input.Keys, Vars.ControllerEnabled)
+			if type(id) == "table" then
+				for _,kid in pairs(id) do
+					InvokeListenerCallbacks(Listeners.InputEvent, v, false, kid, Input.Keys, Vars.ControllerEnabled)
+					InvokeListenerCallbacks(Listeners.NamedInputEvent[v], v, false, kid, Input.Keys, Vars.ControllerEnabled)
+				end
+			else
+				InvokeListenerCallbacks(Listeners.InputEvent, v, false, id, Input.Keys, Vars.ControllerEnabled)
+				InvokeListenerCallbacks(Listeners.NamedInputEvent[v], v, false, id, Input.Keys, Vars.ControllerEnabled)
+			end
+			lastFiredEventFrom[v] = 1
+		end
+	end
+end)
+
+if Vars.DebugMode then
+	Input.RegisterListener(function(eventName, pressed, id, keys, controllerEnabled)
+		if not string.find(eventName, "Mouse") then
+			fprint(LOGLEVEL.DEFAULT, "[Input] event(%s) pressed(%s) id(%s) time(%s)", eventName, pressed, id, Ext.MonotonicTime())
+		end
+	end)
+end

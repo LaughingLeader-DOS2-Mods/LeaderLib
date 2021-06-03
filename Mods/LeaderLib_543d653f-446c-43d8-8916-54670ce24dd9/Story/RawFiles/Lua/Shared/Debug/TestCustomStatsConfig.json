@@ -11,13 +11,11 @@
 			"DisplayName": "Lightbringer",
 			"Description": "You control the power of the sun.",
 			"Icon": "Peace Mode",
-			"TooltipType" : "Ability",
-			"ShowAlways" : true
+			"TooltipType" : "Ability"
 		},
 		"Suneater": {
 			"DisplayName": "Suneater",
-			"Description": "You eat the sun.",
-			"ShowAlways" : true
+			"Description": "You eat the sun."
 		},
 		"Debug": {
 			"DisplayName": "Debug",

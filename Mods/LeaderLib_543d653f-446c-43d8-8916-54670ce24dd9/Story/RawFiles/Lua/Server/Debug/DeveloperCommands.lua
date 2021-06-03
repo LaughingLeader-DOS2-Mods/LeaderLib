@@ -1040,3 +1040,9 @@ end)
 --Public\WeaponExpansion_c60718c3-ba22-4702-9c5d-5ad92b41ba5f\Stats\Generated\Data\Data.txt
 --for _,uuid in ipairs(Ext.GetModLoadOrder()) do local info = Ext.GetModInfo(uuid); if info.Name ~= "Shared" then print(info.Name); print(Ext.LoadFile(string.format("Public/%s/Stats/Generated/Data/Data.txt", info.Directory), "data")); end end
 --local totalBad = 0; for _,v in pairs(Ext.GetStatEntries("Weapon")) do if string.sub(v, 1, 1) ~= "_" and not string.find(v, "Status_") and not string.find(v, "Damage_") then local stat = Ext.GetStat(v); if stat.AttackAPCost ~= 4 then print(v, stat.AttackAPCost); totalBad = totalBad + 1; end end end;print("Total bad:", totalBad)
+
+Ext.RegisterConsoleCommand("setcustomstat", function(cmd, id, amount)
+	amount = amount or "1"
+	amount = tonumber(amount) or 1
+	CustomStatSystem:SetStat(CharacterGetHostCharacter(), id, amount)
+end)

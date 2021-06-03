@@ -77,3 +77,28 @@ end)
 Ext.RegisterOsirisListener("GlobalFlagCleared", 1, "after", function(flag)
 	GlobalFlagChanged(flag, false)
 end)
+
+local function OnObjectDying(obj)
+	obj = StringHelpers.GetUUID(obj)
+	local isSummon = false
+	local owner = nil
+	local summon = ObjectExists(obj) == 1 and Ext.GetGameObject(obj) or nil
+	for ownerId,tbl in pairs(PersistentVars.Summons) do
+		for i,uuid in pairs(tbl) do
+			if uuid == obj then
+				owner = Ext.GetGameObject(ownerId)
+				table.remove(tbl, i)
+				isSummon = true
+			end
+		end
+		if #tbl == 0 then
+			PersistentVars.Summons[ownerId] = nil
+		end
+	end
+	if isSummon then
+		InvokeListenerCallbacks(Listeners.OnSummonChanged, summon or obj, owner, true, ObjectIsItem(obj) == 1)
+	end
+end
+
+Ext.RegisterOsirisListener("CharacterPrecogDying", Data.OsirisEvents.CharacterPrecogDying, "before", OnObjectDying)
+Ext.RegisterOsirisListener("ItemDestroying", Data.OsirisEvents.ItemDestroying, "before", OnObjectDying)

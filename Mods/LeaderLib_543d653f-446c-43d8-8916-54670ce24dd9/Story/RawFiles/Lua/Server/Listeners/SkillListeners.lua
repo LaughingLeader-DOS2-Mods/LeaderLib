@@ -57,7 +57,7 @@ end
 local skillEventDataTable = {}
 
 ---@return SkillEventData
-local function GetCharacterSkillData(skill, uuid, createIfMissing, skillType, skillAbility, printWarning)
+local function GetCharacterSkillData(skill, uuid, createIfMissing, skillType, skillAbility, printWarning, printContext)
 	---@type SkillEventData
 	local data = nil
 	local skillDataHolder = skillEventDataTable[skill]
@@ -70,7 +70,7 @@ local function GetCharacterSkillData(skill, uuid, createIfMissing, skillType, sk
 
 	if data == nil and createIfMissing == true then
 		if Vars.DebugMode and printWarning and CharacterIsPlayer(uuid) == 1 then
-			fprint(LOGLEVEL.WARNING, "[LeaderLib:OnSkillCast] No skill data for character (%s) and skill (%s)", uuid, skill)
+			fprint(LOGLEVEL.WARNING, "[LeaderLib:OnSkillCast] No skill data for character (%s) and skill (%s) Context(%s)", uuid, skill, printContext or "")
 		end
 		data = Classes.SkillEventData:Create(uuid, skill, skillType, skillAbility)
 		skillDataHolder[uuid] = data
@@ -140,19 +140,21 @@ end
 function OnSkillPreparing(char, skillprototype)
 	char = StringHelpers.GetUUID(char)
 	local skill = string.gsub(skillprototype, "_%-?%d+$", "")
-	if CharacterIsControlled(char) == 0 then
-		Osi.LeaderLib_LuaSkillListeners_IgnorePrototype(char, skillprototype, skill)
-	end
+	-- if CharacterIsControlled(char) == 0 then
+	-- 	Osi.LeaderLib_LuaSkillListeners_IgnorePrototype(char, skillprototype, skill)
+	-- end
 	local last = PersistentVars.IsPreparingSkill[char]
 	if last and last ~= skill then
 		SkillSystem.OnSkillPreparingCancel(char, "", last, true)
 	end
-	
-	for callback in GetListeners(skill) do
-		--PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillPreparing] char(",char,") skillprototype(",skillprototype,") skill(",skill,")")
-		local status,err = xpcall(callback, debug.traceback, skill, char, SKILL_STATE.PREPARE)
-		if not status then
-			Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
+
+	if not last or last ~= skill then
+		for callback in GetListeners(skill) do
+			--PrintDebug("[LeaderLib_SkillListeners.lua:OnSkillPreparing] char(",char,") skillprototype(",skillprototype,") skill(",skill,")")
+			local status,err = xpcall(callback, debug.traceback, skill, char, SKILL_STATE.PREPARE)
+			if not status then
+				Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
+			end
 		end
 	end
 
@@ -215,13 +217,13 @@ end)
 
 -- Fires when CharacterUsedSkill fires. This happens after all the target events.
 function OnSkillUsed(char, skill, skillType, skillAbility)
-	if skill ~= nil then
-		Osi.LeaderLib_LuaSkillListeners_RemoveIgnoredPrototype(char, skill)
-	else
-		Osi.LeaderLib_LuaSkillListeners_RemoveIgnoredPrototype(char)
-	end
+	-- if skill ~= nil then
+	-- 	Osi.LeaderLib_LuaSkillListeners_RemoveIgnoredPrototype(char, skill)
+	-- else
+	-- 	Osi.LeaderLib_LuaSkillListeners_RemoveIgnoredPrototype(char)
+	-- end
 	local uuid = StringHelpers.GetUUID(char)
-	local data = GetCharacterSkillData(skill, uuid, true, skillType, skillAbility, true)
+	local data = GetCharacterSkillData(skill, uuid, true, skillType, skillAbility)
 	if data then
 		--Quake doesn't fire any target events, but works like a shout
 		if skillType == "quake" then
@@ -245,7 +247,7 @@ function OnSkillCast(char, skill, skilLType, skillAbility)
 	local uuid = StringHelpers.GetUUID(char)
 	--Some skills may not fire any target events, like MultiStrike, so create the data if it doesn't exist.
 	---@type SkillEventData
-	local data = GetCharacterSkillData(skill, uuid, true, skilLType, skillAbility, true)
+	local data = GetCharacterSkillData(skill, uuid, true, skilLType, skillAbility, Vars.DebugMode, "OnSkillCast")
 	if data ~= nil then
 		for callback in GetListeners(skill) do
 			local b,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.CAST, data)
@@ -367,7 +369,10 @@ RegisterProtectedOsirisListener("SkillActivated", Data.OsirisEvents.SkillActivat
 	end
 end)
 
-RegisterProtectedOsirisListener("SkillDeactivated", Data.OsirisEvents.SkillDeactivated, "after", function(uuid, skill)
+RegisterProtectedOsirisListener("SkillDeactivated", Data.OsirisEvents.SkillDeactivated, "before", function(uuid, skill)
+	if ObjectExists(uuid) == 0 then
+		return
+	end
 	uuid = StringHelpers.GetUUID(uuid)
 	local learned = false
 	local character = Ext.GetCharacter(uuid)

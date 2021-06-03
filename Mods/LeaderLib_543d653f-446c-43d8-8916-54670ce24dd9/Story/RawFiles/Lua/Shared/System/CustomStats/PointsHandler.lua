@@ -310,7 +310,7 @@ function CustomStatSystem:GetCanRemovePoints(ui, doubleHandle, character)
 	if stat then
 		local value = self:GetStatValueForCharacter(character, stat.ID, stat.Mod)
 		if value then
-			local canRemove = value > 0
+			local canRemove = false
 			for listener in self:GetListenerIterator(self.Listeners.CanRemovePoints[stat.ID], self.Listeners.CanRemovePoints.All) do
 				local b,result = xpcall(listener, debug.traceback, stat.ID, stat, character, value, canRemove)
 				if b then

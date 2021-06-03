@@ -31,54 +31,6 @@ local statPropertyMap = {
 
 local isClient = Ext.IsClient()
 
----@class CustomStatDataBase
-local CustomStatDataBase = {
-	Type="CustomStatDataBase",
-	Description = ""
-}
-CustomStatDataBase.__index = CustomStatDataBase
-Classes.CustomStatDataBase = CustomStatDataBase
-
-local function FormatText(txt)
-	if string.find(txt, "_", 1, true) then
-		txt = GameHelpers.GetStringKeyText(txt)
-	end
-	return GameHelpers.Tooltip.ReplacePlaceholders(txt)
-end
-
-function CustomStatDataBase:GetDisplayName()
-	if self.DisplayName then
-		return FormatText(self.DisplayName)
-	end
-	return self.ID
-end
-
-function CustomStatDataBase:GetDescription()
-	if self.Description then
-		return FormatText(self.Description)
-	end
-	return ""
-end
-
----@param character UUID|NETID|EsvCharacter|EclCharacter
----@return integer
-function CustomStatDataBase:GetAmount(character)
-	if self.Type == "CustomStatData" then
-		if StringHelpers.IsNullOrWhitespace(self.UUID) then
-			return 0
-		end
-		if type(character) == "userdata" then
-			return character:GetCustomStat(self.UUID) or 0
-		else
-			character = Ext.GetCharacter(character)
-			if character then
-				return character:GetCustomStat(self.UUID) or 0
-			end
-		end
-	end
-	return 0
-end
-
 local function setAvailablePointsHandler(data)
 	local AvailablePointsHandler = {}
 	AvailablePointsHandler.__index = function(table, uuid)
@@ -148,11 +100,13 @@ local function parseTable(tbl, propertyMap, modId, defaults)
 				if propertyMap == statPropertyMap then
 					data.Type = "CustomStatData"
 					data.AvailablePoints = {}
+					Classes.CustomStatData.SetDefaults(data)
 					setAvailablePointsHandler(data)
+					setmetatable(data, Classes.CustomStatData)
 				else
-					data.Type = "CustomStatCategoryData"
+					setmetatable(data, Classes.CustomStatCategoryData)
 				end
-				setmetatable(data, CustomStatDataBase)
+
 				tableData[k] = data
 			end
 		end

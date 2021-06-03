@@ -2,6 +2,8 @@ if CustomStatSystem == nil then
 	CustomStatSystem = {}
 end
 
+CustomStatSystem.__index = CustomStatSystem
+
 ---@class CustomStatTooltipType
 CustomStatSystem.TooltipType = {
 	Default = "Stat",
@@ -12,44 +14,22 @@ CustomStatSystem.TooltipType = {
 
 local self = CustomStatSystem
 
+local isClient = Ext.IsClient()
+
 CustomStatSystem.PointsPool = {}
-if Ext.IsServer() then
+if not isClient then
 	local PointsPoolHandler = {
 		__index = function(tbl,k)
 			return PersistentVars.CustomStatAvailablePoints[k]
 		end,
 		__newindex = function(tbl,k,v)
 			PersistentVars.CustomStatAvailablePoints[k] = v
-			print("PersistentVars.CustomStatAvailablePoints", Ext.JsonStringify(PersistentVars.CustomStatAvailablePoints))
 		end
 	}
 	setmetatable(CustomStatSystem.PointsPool, PointsPoolHandler)
 end
 
 Ext.AddPathOverride("Public/Game/GUI/characterSheet.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/characterSheet.swf")
-
----@class CustomStatCategoryData:CustomStatDataBase
----@field ID string
----@field Mod string The mod UUID that added this stat, if any. Auto-set.
----@field DisplayName string
----@field Description string
----@field Icon string|nil
----@field ShowAlways boolean|nil Whether to always show this category or not. If false, it will only show when a child stat is active.
----@field TooltipType CustomStatTooltipType|nil
----@field GroupId integer Auto-generated integer id used in the characterSheet swf.
-
----@class CustomStatData:CustomStatDataBase
----@field ID string
----@field Mod string The mod UUID that added this stat, if any. Auto-set.
----@field DisplayName string
----@field Description string
----@field Icon string|nil
----@field Create boolean|nil Whether the server should create this stat automatically.
----@field TooltipType CustomStatTooltipType|nil
----@field Category string The stat's category id, if any.
----@field Double number The stat's double (handle) value. Determined dynamically.
----@field AvailablePoints table<UUID,integer> Amount of points available for a character.
----@field PointID string Optional id for the 'points pool' this stat shares available points with.
 
 ---@alias MOD_UUID string
 ---@alias STAT_ID string
@@ -59,6 +39,10 @@ CustomStatSystem.Categories = {}
 ---@type table<MOD_UUID, table<STAT_ID, CustomStatData>>
 CustomStatSystem.Stats = {}
 CustomStatSystem.UnregisteredStats = {}
+
+Ext.Require("Shared/System/CustomStats/Data/CustomStatBase.lua")
+Ext.Require("Shared/System/CustomStats/Data/CustomStatData.lua")
+Ext.Require("Shared/System/CustomStats/Data/CustomStatCategoryData.lua")
 
 ---@type fun():table<string, table<string, CustomStatData>>
 local loader = Ext.Require("Shared/System/CustomStats/ConfigLoader.lua")
@@ -74,23 +58,27 @@ local function LoadCustomStatsData()
 	TableHelpers.AddOrUpdate(CustomStatSystem.Categories, categories)
 	TableHelpers.AddOrUpdate(CustomStatSystem.Stats, stats)
 
-	if Ext.IsServer() then
+	if not isClient then
 		local foundStats = {}
 		for uuid,stats in pairs(CustomStatSystem.Stats) do
 			local modName = Ext.GetModInfo(uuid).Name
 			for id,stat in pairs(stats) do
-				if stat.Create == true and stat.DisplayName then
+				if stat.DisplayName then
 					local existingData = Ext.GetCustomStatByName(stat.DisplayName)
 					if not existingData then
-						Ext.CreateCustomStat(stat.DisplayName, stat.Description)
-						fprint(LOGLEVEL.DEFAULT, "[LeaderLib:LoadCustomStatsData] Created a new custom stat for mod [%s]. ID(%s) DisplayName(%s) Description(%s)", modName, id, stat.DisplayName, stat.Description)
-
-						existingData = Ext.GetCustomStatByName(stat.DisplayName)
+						if stat.Create == true then
+							Ext.CreateCustomStat(stat.DisplayName, stat.Description)
+							fprint(LOGLEVEL.DEFAULT, "[LeaderLib:LoadCustomStatsData] Created a new custom stat for mod [%s]. ID(%s) DisplayName(%s) Description(%s)", modName, id, stat.DisplayName, stat.Description)
+	
+							existingData = Ext.GetCustomStatByName(stat.DisplayName)
+						end
 					else
-						print("Found custom stat:", Common.Dump(existingData))
 					end
 					if existingData then
 						stat.UUID = existingData.Id
+						for player in GameHelpers.Character.GetPlayers() do
+							stat:UpdateLastValue(player)
+						end
 						foundStats[stat.UUID] = true
 					end
 				end
@@ -118,16 +106,14 @@ local function LoadCustomStatsData()
 			categoryId = categoryId + 1
 		end
 	end
-
-	-- if Vars.DebugMode then
-	-- 	print(Ext.IsServer() and "SERVER" or "CLIENT")
-	-- 	print("Categories", Ext.JsonStringify(CustomStatSystem.Categories))
-	-- 	print("Stats", Ext.JsonStringify(CustomStatSystem.Stats))
-	-- end
 end
 
-Ext.RegisterListener("SessionLoaded", LoadCustomStatsData)
-RegisterListener("LuaReset", LoadCustomStatsData)
+if not isClient then
+	RegisterListener("Initialized", LoadCustomStatsData)
+else
+	Ext.RegisterListener("SessionLoaded", LoadCustomStatsData)
+end
+--RegisterListener("LuaReset", LoadCustomStatsData)
 
 ---@param character EsvCharacter|EclCharacter
 ---@return boolean
@@ -147,7 +133,7 @@ function CustomStatSystem:IsTooltipWorking(character)
 	return false
 end
 
-if Ext.IsServer() then
+if not isClient then
 	local canFix = Ext.GetCustomStatByName ~= nil
 	Ext.RegisterNetListener("LeaderLib_CheckCustomStatCallback", function(cmd, payload)
 		local data = Common.JsonParse(payload)

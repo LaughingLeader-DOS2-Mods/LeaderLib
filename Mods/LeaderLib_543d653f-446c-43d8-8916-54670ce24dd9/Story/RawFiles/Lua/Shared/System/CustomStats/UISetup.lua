@@ -24,10 +24,7 @@ local function AdjustCustomStatMovieClips(ui)
 			local stat = CustomStatSystem:GetStatByName(displayName)
 			if stat then
 				stat.Double = mc.statId
-
 				mc.label_txt.htmlText = stat:GetDisplayName()
-
-				print(stat, stat.UUID, stat.DisplayName, mc.label_txt.htmlText)
 			end
 		end
 	end
@@ -36,7 +33,25 @@ end
 local function OnSheetUpdating(ui, method)
 	local this = ui:GetRoot()
 	CustomStatSystem:SetupGroups(ui, method)
-	print(method, #this.customStats_array)
+
+	local client = Client:GetCharacter()
+	local changedStats = {NetID=client.NetID,Stats={}}
+	for stat in CustomStatSystem:GetAllStats() do
+		local last = stat.LastValue[client.MyGuid] or 0
+		local value = stat:GetValue(client)
+		if value ~= last then
+			changedStats.Stats[#changedStats.Stats+1] = {
+				ID = stat.ID,
+				Mod = stat.Mod
+			}
+			CustomStatSystem:InvokeStatValueChangedListeners(stat, client, last, value)
+		end
+		stat.LastValue[client.MyGuid] = value
+	end
+	if #changedStats.Stats > 0 then
+		Ext.PostMessageToServer("LeaderLib_CustomStatSystem_StatValuesChanged", Ext.JsonStringify(changedStats))
+	end
+
 	local length = #this.customStats_array
 	if length == 0 then
 		return
@@ -52,7 +67,6 @@ local function OnSheetUpdating(ui, method)
 
 		if doubleHandle then
 			local stat = CustomStatSystem:GetStatByName(displayName)
-			print(i, doubleHandle, displayName, stat and stat.UUID or "nil")
 			if stat then
 				stat.Double = doubleHandle
 				this.customStats_array[i+1] = stat:GetDisplayName()

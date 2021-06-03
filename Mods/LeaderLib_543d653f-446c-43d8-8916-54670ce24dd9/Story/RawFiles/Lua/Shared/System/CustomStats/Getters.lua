@@ -82,6 +82,11 @@ function CustomStatSystem:GetAllStats(visibleOnly, sortByDisplayName)
 				allStats[#allStats+1] = stat
 			end
 		end
+		-- for uuid,stats in pairs(self.UnregisteredStats) do
+		-- 	for id,stat in pairs(stats) do
+		-- 		allStats[#allStats+1] = stat
+		-- 	end
+		-- end
 	end
 
 	if sortByDisplayName == true then

@@ -1,7 +1,9 @@
 local self = CustomStatSystem
 
+local isClient = Ext.IsClient()
+
 function CustomStatSystem:SyncAvailablePoints()
-	if Ext.IsServer() then
+	if not isClient then
 		self:SyncData()
 	else
 		local character = Client:GetCharacter()
@@ -25,7 +27,7 @@ function CustomStatSystem:SyncAvailablePoints()
 	end
 end
 
-if Ext.IsServer() then
+if not isClient then
 	--Creates a table of stat id to uuid, for sending stat UUIDs to the client
 	function CustomStatSystem:GetSyncData()
 		local data = {
@@ -56,7 +58,6 @@ if Ext.IsServer() then
 	end
 
 	Ext.RegisterNetListener("LeaderLib_SyncCustomStatAvailablePoints", function(cmd, payload)
-		print(cmd,payload)
 		local data = Common.JsonParse(payload)
 		if data and data.UUID and data.Stats then
 			local uuid = data.UUID
@@ -69,6 +70,7 @@ else
 	--Loads a table of stat UUIDs from the server.
 	function CustomStatSystem:LoadSyncData(uuidList, availablePoints)
 		if uuidList then
+			local character = Client:GetCharacter()
 			for uuid,stats in pairs(uuidList) do
 				local existing = self.Stats[uuid]
 				if existing then
@@ -82,8 +84,12 @@ else
 		end
 		if availablePoints then
 			self.PointsPool = availablePoints
-			print(Ext.JsonStringify(self.PointsPool))
 			self:UpdateAvailablePoints()
+		end
+		for stat in self:GetAllStats() do
+			for player in GameHelpers.Character.GetPlayers() do
+				stat:UpdateLastValue(player)
+			end
 		end
 	end
 
@@ -107,7 +113,6 @@ else
 	end
 
 	Ext.RegisterNetListener("LeaderLib_SharedData_StoreCustomStatData", function(cmd, payload)
-		print(cmd,payload)
 		local b,err = xpcall(LoadSyncedCustomStatData, debug.traceback, cmd, payload)
 		if not b then
 			Ext.PrintError(err)

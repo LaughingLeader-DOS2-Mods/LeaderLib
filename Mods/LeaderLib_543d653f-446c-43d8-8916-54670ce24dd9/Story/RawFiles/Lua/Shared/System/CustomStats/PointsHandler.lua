@@ -2,17 +2,101 @@ local self = CustomStatSystem
 
 ---@alias CustomStatCanAddPointsCallback fun(id:string, stat:CustomStatData, character:EclCharacter, currentValue:integer, availablePoints:integer, canAdd:boolean):boolean
 ---@alias CustomStatCanRemovePointsCallback fun(id:string, stat:CustomStatData, character:EclCharacter, currentValue:integer, canRemove:boolean):boolean
----@alias CustomStatPointsAssignedCallback fun(id:string, stat:CustomStatData, character:EsvCharacter, previousPoints:integer, currentPoints:integer):void
+---@alias OnAvailablePointsChangedCallback fun(id:string, stat:CustomStatData, character:EsvCharacter, previousPoints:integer, currentPoints:integer):void
+---@alias OnStatValueChangedCallback fun(id:string, stat:CustomStatData, character:EsvCharacter, previousPoints:integer, currentPoints:integer):void
 
+local isClient = Ext.IsClient()
 
-self.Listeners = {
-	---@type table<string, CustomStatCanAddPointsCallback[]>
-	CanAddPoints = {All = {}},
-	---@type table<string, CustomStatCanRemovePointsCallback[]>
-	CanRemovePoints = {All = {}},
-	---@type table<string, CustomStatPointsAssignedCallback[]>
-	OnPointsChanged = {All = {}}
+CustomStatSystem.Listeners = {
+	---@type table<string, OnAvailablePointsChangedCallback[]>
+	OnAvailablePointsChanged = {All = {}},
+	---@type table<string, OnStatValueChangedCallback[]>
+	OnStatValueChanged = {All = {}},
 }
+
+if isClient then
+	---@type table<string, CustomStatCanAddPointsCallback[]>
+	CustomStatSystem.Listeners.CanAddPoints = {All = {}}
+	---@type table<string, CustomStatCanRemovePointsCallback[]>
+	CustomStatSystem.Listeners.CanRemovePoints = {All = {}}
+end
+
+---@param id string
+---@param callback CustomStatCanAddPointsCallback
+function CustomStatSystem:RegisterCanAddPointsHandler(id, callback)
+	if not isClient then
+		fprint(LOGLEVEL.ERROR, "[CustomStatSystem:RegisterCanAddPointsHandler] This listener is only for the client-side. Stat(%s)", Common.Dump(id))
+		return
+	end
+	if type(id) == "table" then
+		for i=1,#id do
+			self:RegisterCanAddPointsHandler(id[i], callback)
+		end
+	else
+		if not self.Listeners.CanAddPoints[id] then
+			self.Listeners.CanAddPoints[id] = {}
+		end
+		table.insert(self.Listeners.CanAddPoints[id], callback)
+	end
+end
+
+---@param id string
+---@param callback CustomStatCanRemovePointsCallback
+function CustomStatSystem:RegisterCanRemovePointsHandler(id, callback)
+	if not isClient then
+		fprint(LOGLEVEL.ERROR, "[CustomStatSystem:RegisterCanRemovePointsHandler] This listener is only for the client-side. Stat(%s)", Common.Dump(id))
+		return
+	end
+	if type(id) == "table" then
+		for i=1,#id do
+			self:RegisterCanRemovePointsHandler(id[i], callback)
+		end
+	else
+		if not self.Listeners.CanRemovePoints[id] then
+			self.Listeners.CanRemovePoints[id] = {}
+		end
+		table.insert(self.Listeners.CanRemovePoints[id], callback)
+	end
+end
+
+---@param id string
+---@param callback OnAvailablePointsChangedCallback
+function CustomStatSystem:RegisterAvailablePointsChangedListener(id, callback)
+	if type(id) == "table" then
+		for i=1,#id do
+			self:RegisterAvailablePointsChangedListener(id[i], callback)
+		end
+	else
+		if not self.Listeners.OnAvailablePointsChanged[id] then
+			self.Listeners.OnAvailablePointsChanged[id] = {}
+		end
+		table.insert(self.Listeners.OnAvailablePointsChanged[id], callback)
+	end
+end
+
+---@param id string
+---@param callback OnAvailablePointsChangedCallback
+function CustomStatSystem:RegisterStatValueChangedListener(id, callback)
+	if type(id) == "table" then
+		for i=1,#id do
+			self:RegisterStatValueChangedListener(id[i], callback)
+		end
+	else
+		if not self.Listeners.OnStatValueChanged[id] then
+			self.Listeners.OnStatValueChanged[id] = {}
+		end
+		table.insert(self.Listeners.OnStatValueChanged[id], callback)
+	end
+end
+
+function CustomStatSystem:InvokeStatValueChangedListeners(stat, character, last, current)
+	for listener in self:GetListenerIterator(self.Listeners.OnStatValueChanged[stat.ID], self.Listeners.OnStatValueChanged.All) do
+		local b,err = xpcall(listener, debug.traceback, stat.ID, stat, character, last, current)
+		if not b then
+			fprint(LOGLEVEL.ERROR, "[LeaderLib.CustomStatSystem:OnStatPointAdded] Error calling OnStatValueChanged listener for stat (%s):\n%s", stat.ID, err)
+		end
+	end
+end
 
 ---@param character EsvCharacter|UUID|NETID
 ---@param statId string A stat id or stat PoolID.
@@ -35,11 +119,11 @@ function CustomStatSystem:SetAvailablePoints(character, statId, amount, skipSync
 				self.PointsPool[uuid] = {}
 			end
 			self.PointsPool[uuid][statId] = amount
-			if Vars.DebugMode then
+			if Vars.DebugMode and amount ~= self.PointsPool[uuid][statId] then
 				fprint(LOGLEVEL.DEFAULT, "Set available points for custom stat or pool (%s) to (%s) for character(%s). Total(%s)", statId, amount, uuid, self.PointsPool[uuid][statId])
 			end
 			if not skipSync then
-				if Ext.IsServer() then
+				if not isClient then
 					-- If a save is loaded or the game is stopped, it'll get synced in the next SharedData cycle anyway
 					StartOneshotTimer("Timers_LeaderLib_SyncCustomStatData", 10, function()
 						self:SyncData()
@@ -52,7 +136,40 @@ function CustomStatSystem:SetAvailablePoints(character, statId, amount, skipSync
 	end
 end
 
-if Ext.IsServer() then
+if not isClient then
+	Ext.RegisterNetListener("LeaderLib_CustomStatSystem_AvailablePointsChanged", function(cmd, payload)
+		local data = Common.JsonParse(payload)
+		if data then
+			local character = Ext.GetCharacter(data.NetID)
+			local stat = CustomStatSystem:GetStatByID(data.Stat, data.Mod)
+			if character and stat then
+				for listener in self:GetListenerIterator(self.Listeners.OnAvailablePointsChanged[stat.ID], self.Listeners.OnAvailablePointsChanged.All) do
+					local b,err = xpcall(listener, debug.traceback, stat.ID, stat, character, data.Last, data.Current)
+					if not b then
+						fprint(LOGLEVEL.ERROR, "[LeaderLib.CustomStatSystem:OnStatPointAdded] Error calling OnAvailablePointsChanged listener for stat (%s):\n%s", stat.ID, err)
+					end
+				end
+			end
+		end
+	end)
+	Ext.RegisterNetListener("LeaderLib_CustomStatSystem_StatValuesChanged", function(cmd, payload)
+		local data = Common.JsonParse(payload)
+		if data then
+			local character = Ext.GetCharacter(data.NetID)
+			for _,v in pairs(data.Stats) do
+				local stat = CustomStatSystem:GetStatByID(v.ID, v.Mod)
+				if stat then
+					local last = stat.LastValue[character.MyGuid] or 0
+					local current = stat:GetValue(character)
+					if last ~= current then
+						CustomStatSystem:InvokeStatValueChangedListeners(stat, character, last, current)
+					end
+					stat.LastValue[character.MyGuid] = current
+				end
+			end
+		end
+	end)
+
 	---@param character EsvCharacter|UUID|NETID
 	---@param statId string A stat id or stat PoolID.
 	---@param amount integer
@@ -92,7 +209,7 @@ if Ext.IsServer() then
 		if character then
 			local stat = self:GetStatByID(statId, mod)
 			if stat then
-				local current = stat:GetAmount(character)
+				local current = stat:GetValue(character)
 				if StringHelpers.IsNullOrWhitespace(stat.UUID) then
 					stat.UUID = Ext.CreateCustomStat(stat.DisplayName, stat.Description)
 				end
@@ -129,71 +246,9 @@ if Ext.IsServer() then
 			error(string.format("Failed to get character from (%s)", character or ""), 2)
 		end
 	end
-else
-
----@param id string
----@param callback CustomStatCanAddPointsCallback
-function CustomStatSystem:RegisterCanAddPointsHandler(id, callback)
-	if type(id) == "table" then
-		for i=1,#id do
-			self:RegisterCanAddPointsHandler(id[i], callback)
-		end
-	else
-		if not self.Listeners.CanAddPoints[id] then
-			self.Listeners.CanAddPoints[id] = {}
-		end
-		table.insert(self.Listeners.CanAddPoints[id], callback)
-	end
 end
 
----@param id string
----@param callback CustomStatCanRemovePointsCallback
-function CustomStatSystem:RegisterCanRemovePointsHandler(id, callback)
-	if type(id) == "table" then
-		for i=1,#id do
-			self:RegisterCanRemovePointsHandler(id[i], callback)
-		end
-	else
-		if not self.Listeners.CanRemovePoints[id] then
-			self.Listeners.CanRemovePoints[id] = {}
-		end
-		table.insert(self.Listeners.CanRemovePoints[id], callback)
-	end
-end
-
----@param id string
----@param callback CustomStatPointsAssignedCallback
-function CustomStatSystem:RegisterPointsChangedListener(id, callback)
-	if type(id) == "table" then
-		for i=1,#id do
-			self:RegisterPointsChangedListener(id[i], callback)
-		end
-	else
-		if not self.Listeners.OnPointsChanged[id] then
-			self.Listeners.OnPointsChanged[id] = {}
-		end
-		table.insert(self.Listeners.OnPointsChanged[id], callback)
-	end
-end
-
-if Vars.DebugMode then
-	local specialStats = {
-		"Lucky",
-		"Fear",
-		"Pure",
-		"RNGesus"
-	}
-	CustomStatSystem:RegisterCanAddPointsHandler(specialStats, function(id, stat, character, current, availablePoints, canAdd)
-		return availablePoints > 0 and current < 5
-	end)
-	CustomStatSystem:RegisterCanRemovePointsHandler("Lucky", function(id, stat, character, current, canRemove)
-		return current > 0
-	end)
-	CustomStatSystem:RegisterPointsChangedListener("All", function(id, stat, character, previousPoints, currentPoints)
-		fprint(LOGLEVEL.DEFAULT, "[OnPointsChanged:%s] Stat(%s) Character(%s) %s => %s", id, stat.UUID, character.DisplayName, previousPoints, currentPoints)
-	end)
-end
-
+if isClient then
 ---@return integer
 function CustomStatSystem:GetTotalAvailablePoints(character)
 	character = character or Client:GetCharacter()
@@ -273,7 +328,6 @@ function CustomStatSystem:GetCanRemovePoints(ui, doubleHandle, character)
 end
 
 function CustomStatSystem:OnStatAdded(ui, call, doubleHandle, index)
-	print(call, doubleHandle, index)
 	---@type CharacterSheetMainTimeline
 	local this = ui:GetRoot()
 	local stat_mc = this.stats_mc.customStats_mc.stats_array[index]
@@ -303,12 +357,19 @@ function CustomStatSystem:OnStatPointAdded(ui, call, doubleHandle)
 					stat_mc.minus_mc.visible = isGM
 				end
 			end
-			for listener in self:GetListenerIterator(self.Listeners.OnPointsChanged[stat.ID], self.Listeners.OnPointsChanged.All) do
+			for listener in self:GetListenerIterator(self.Listeners.OnAvailablePointsChanged[stat.ID], self.Listeners.OnAvailablePointsChanged.All) do
 				local b,err = xpcall(listener, debug.traceback, stat.ID, stat, character, lastPoints, points)
 				if not b then
-					fprint(LOGLEVEL.ERROR, "[LeaderLib.CustomStatSystem:OnStatPointAdded] Error calling OnPointsChanged listener for stat (%s):\n%s", stat.ID, err)
+					fprint(LOGLEVEL.ERROR, "[LeaderLib.CustomStatSystem:OnStatPointAdded] Error calling OnAvailablePointsChanged listener for stat (%s):\n%s", stat.ID, err)
 				end
 			end
+			Ext.PostMessageToServer("LeaderLib_CustomStatSystem_AvailablePointsChanged", Ext.JsonStringify({
+				NetID = character.NetID,
+				Stat = stat.ID,
+				Mod = stat.Mod,
+				Last = lastPoints,
+				Current = points
+			}))
 			self:SyncAvailablePoints()
 		end
 	end
@@ -322,12 +383,19 @@ function CustomStatSystem:OnStatPointRemoved(ui, call, doubleHandle)
 	if points then
 		local lastPoints = points
 		stat.AvailablePoints[character.MyGuid] = stat.AvailablePoints[character.MyGuid] + 1
-		for listener in self:GetListenerIterator(self.Listeners.OnPointsChanged[stat.ID], self.Listeners.OnPointsChanged.All) do
+		for listener in self:GetListenerIterator(self.Listeners.OnAvailablePointsChanged[stat.ID], self.Listeners.OnAvailablePointsChanged.All) do
 			local b,err = xpcall(listener, debug.traceback, stat.ID, stat, character, lastPoints, stat.AvailablePoints[character.MyGuid])
 			if not b then
-				fprint(LOGLEVEL.ERROR, "[LeaderLib.CustomStatSystem:OnStatPointRemoved] Error calling OnPointsChanged listener for stat (%s):\n%s", stat.ID, err)
+				fprint(LOGLEVEL.ERROR, "[LeaderLib.CustomStatSystem:OnStatPointRemoved] Error calling OnAvailablePointsChanged listener for stat (%s):\n%s", stat.ID, err)
 			end
 		end
+		Ext.PostMessageToServer("LeaderLib_CustomStatSystem_AvailablePointsChanged", Ext.JsonStringify({
+			NetID = character.NetID,
+			Stat = stat.ID,
+			Mod = stat.Mod,
+			Last = lastPoints,
+			Current = points
+		}))
 		self:SyncAvailablePoints()
 	end
 end
@@ -370,3 +438,26 @@ local this = Ext.GetUIByType(119):GetRoot().stats_mc; for i=0,4 do local pw = th
 
 local pw = Ext.GetUIByType(119):GetRoot().stats_mc.pointsWarn[4]; pw.x = pw.x - 10; print(pw.x)
 ]]
+
+if Vars.DebugMode then
+	local specialStats = {
+		"Lucky",
+		"Fear",
+		"Pure",
+		"RNGesus"
+	}
+	CustomStatSystem:RegisterAvailablePointsChangedListener("All", function(id, stat, character, previousPoints, currentPoints)
+		fprint(LOGLEVEL.DEFAULT, "[OnAvailablePointsChanged:%s] Stat(%s) Character(%s) %s => %s [%s]", id, stat.UUID, character.DisplayName, previousPoints, currentPoints, isClient and "CLIENT" or "SERVER")
+	end)
+	CustomStatSystem:RegisterStatValueChangedListener("All", function(id, stat, character, previousPoints, currentPoints)
+		fprint(LOGLEVEL.DEFAULT, "[OnStatValueChanged:%s] Stat(%s) Character(%s) %s => %s [%s]", id, stat.UUID, character.DisplayName, previousPoints, currentPoints, isClient and "CLIENT" or "SERVER")
+	end)
+	if isClient then
+		CustomStatSystem:RegisterCanAddPointsHandler(specialStats, function(id, stat, character, current, availablePoints, canAdd)
+			return availablePoints > 0 and current < 5
+		end)
+		CustomStatSystem:RegisterCanRemovePointsHandler("Lucky", function(id, stat, character, current, canRemove)
+			return current > 0
+		end)
+	end
+end

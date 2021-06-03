@@ -4,18 +4,42 @@ end
 
 local isClient = Ext.IsClient()
 
-function GameHelpers.Character.IsPlayer(uuid)
+---@param character EsvCharacter|EclCharacter|string|number
+---@return boolean
+function GameHelpers.Character.IsPlayer(character)
 	if not isClient then
-		if type(uuid) == "userdata" then
-			uuid = uuid.MyGuid
+		local t = type(character) == "userdata"
+		if not Ext.OsirisIsCallable() then
+			if t == "string" or t == "number" then
+				character = Ext.GetCharacter(character)
+			end
+			if character and (character.IsPlayer or character.IsGameMaster) then
+				return true
+			end
+		else
+			if t == "userdata" then
+				if character.IsPlayer then
+					return true
+				end
+				character = character.MyGuid
+			end
+			if type(character) == "string" then
+				return CharacterIsPlayer(character) == 1 or CharacterGameMaster(character) == 1 or GameHelpers.DB.HasUUID("DB_IsPlayer", character) 
+			end
 		end
-		return CharacterIsPlayer(uuid) == 1 or CharacterGameMaster(uuid) == 1 or GameHelpers.DB.HasUUID("DB_IsPlayer", uuid) 
 	else
-		if type(uuid) ~= "userdata" then
-			uuid = Ext.GetCharacter(uuid)
+		if type(character) ~= "userdata" then
+			character = Ext.GetCharacter(character)
 		end
-		if uuid then
-			return uuid.PlayerCustomData ~= nil
+		---@type EclCharacter
+		local clientCharacter = character
+		if clientCharacter then
+			if Client.Character.NetID == clientCharacter.NetID then
+				if Client.Character.IsPlayer or Client.Character.IsGameMaster then
+					return true
+				end
+			end
+			return clientCharacter.PlayerCustomData ~= nil
 		end
 	end
 	return false

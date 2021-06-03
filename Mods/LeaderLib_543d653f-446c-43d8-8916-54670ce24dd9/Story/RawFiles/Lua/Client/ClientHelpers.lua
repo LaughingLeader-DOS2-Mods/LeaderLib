@@ -70,7 +70,7 @@ function GameHelpers.Client.GetCharacter()
 end
 
 ---@return boolean
-function GameHelpers.Client.IsGameMaster()
+function GameHelpers.Client.IsGameMaster(ui, this)
 	if Client and Client.Character and Client.Character.IsGameMaster then
 		return true
 	end
@@ -78,7 +78,7 @@ function GameHelpers.Client.IsGameMaster()
 		local ui = ui or Ext.GetUIByType(Data.UIType.characterSheet)
 		if ui then
 			---@type CharacterSheetMainTimeline
-			local this = main or ui:GetRoot()
+			local this = this or ui:GetRoot()
 			if this and this.isGameMasterChar then
 				return true
 			end

@@ -1,8 +1,15 @@
-
-local MessageData = Classes["MessageData"]
-
-local function LeaderLib_OnGlobalMessage(call, data)
-	print(call, data)
-end
-
---Ext.RegisterNetListener("LeaderLib_GlobalMessage", LeaderLib_OnGlobalMessage)
+Ext.RegisterNetListener("LeaderLib_ToggleChainGroup", function(cmd, payload)
+	---@class ToggleChainGroupData
+	---@field Leader UUID
+	---@field Target UUID[]
+	---@field TotalChained integer
+	---@field TotalUnchained integer
+	local data = Common.JsonParse(payload)
+	if data then
+		if data.TotalChained > data.TotalUnchained then
+			Osi.LeaderLib_LifeHacks_ChainToggle(data.Leader, CharacterGetReservedUserID(data.Leader), 0)
+		else
+			Osi.LeaderLib_LifeHacks_ChainToggle(data.Leader, CharacterGetReservedUserID(data.Leader), 1)
+		end
+	end
+end)

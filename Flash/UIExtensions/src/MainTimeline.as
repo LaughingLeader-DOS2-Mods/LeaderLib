@@ -27,8 +27,9 @@ package
 	  	public var hasTooltip:Boolean;
 
 	  	public var controllerEnabled:Boolean = false;
-		public var UICreationTabPrevPressed:Boolean = false;
 		public var isInCharacterCreation:Boolean = false;
+		public var UICreationTabPrevPressed:Boolean = false;
+		public var CtrlDown:Boolean = false;
 
 		public var timers:Array;
 
@@ -47,6 +48,7 @@ package
 		
 		public function onEventUp(id:Number) : *
 		{
+			this.CtrlDown = false;
 			var isHandled:Boolean = false;
 			var input:String = this.events[id];
 			if (input != null)
@@ -77,19 +79,38 @@ package
 			if (input != null)
 			{
 				ExternalInterface.call("LeaderLib_UIExtensions_InputEvent", true, input, id);
-				if(controllerEnabled && isInCharacterCreation)
+				if(!controllerEnabled)
 				{
-					switch(input)
+					// if(!isInCharacterCreation)
+					// {
+					// 	switch(input)
+					// 	{
+					// 		case "IE UICopy":
+					// 			this.CtrlDown = true;
+					// 			isHandled = true;
+					// 			ExternalInterface.call("LeaderLib_ToggleChainGroup");
+					// 	}
+					// }
+				}
+				else
+				{
+					if(isInCharacterCreation)
 					{
-						case "IE UICreationTabPrev":
-							this.UICreationTabPrevPressed = true;
-							break;
-						case "IE ConnectivityMenu":
-							// Prevents "ConnectivityMenu" from opening the connectivity menu in CC if UICreationTabPrevPressed is held
-							isHandled = this.UICreationTabPrevPressed;
-							break;
+						switch(input)
+						{
+							case "IE UICreationTabPrev":
+								this.UICreationTabPrevPressed = true;
+								break;
+							case "IE ConnectivityMenu":
+								// Prevents "ConnectivityMenu" from opening the connectivity menu in CC if UICreationTabPrevPressed is held
+								isHandled = this.UICreationTabPrevPressed;
+								break;
+						}
+						if (isHandled)
+						{
+							return true;
+						}
 					}
-					return isHandled;
 				}
 				if (!isHandled && this.context_menu.visible)
 				{

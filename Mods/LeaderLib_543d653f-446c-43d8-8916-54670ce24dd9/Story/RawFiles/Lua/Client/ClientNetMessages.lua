@@ -307,3 +307,52 @@ Ext.RegisterNetListener("LeaderLib_Debug_MusicTest", function(cmd, payload)
 	fprint(LOGLEVEL.TRACE, "Ext.Audio.SetState(\"Music_Type\", \"%s\") = %s", mType, success1)
 	fprint(LOGLEVEL.TRACE, "Ext.Audio.SetState(\"Music_Theme\", \"%s\") = %s", theme, success2)
 end)
+
+function UI.ToggleChainGroup()
+	local targetGroupId = -1
+	local client = Client:GetCharacter()
+	local characters = {}
+	local ui = Ext.GetUIByType(Data.UIType.playerInfo)
+	if ui then
+		local this = ui:GetRoot()
+		if this then
+			for i=0,#this.player_array-1 do
+				local player_mc = this.player_array[i]
+				if player_mc then
+					local groupId = player_mc.groupId
+					local character = Ext.GetCharacter(Ext.DoubleToHandle(player_mc.characterHandle))
+					if character then
+						characters[#characters+1] = {
+							Group = groupId,
+							UUID = character.MyGuid
+						}
+						if character.MyGuid == client.MyGuid then
+							targetGroupId = groupId
+						end
+					end
+				end
+			end
+		end
+	end
+	local groupData = {
+		Leader = client.MyGuid,
+		Targets = {},
+		TotalChained = 0,
+		TotalUnchained = 0
+	}
+	for i,v in pairs(characters) do
+		if v.UUID ~= groupData.Leader then
+			groupData.Targets[#groupData.Targets+1] = v.UUID
+			if v.Group ~= targetGroupId then
+				groupData.TotalUnchained = groupData.TotalUnchained + 1
+			else
+				groupData.TotalChained = groupData.TotalChained + 1
+			end
+		end
+	end
+	Ext.PostMessageToServer("LeaderLib_ToggleChainGroup", Ext.JsonStringify(groupData))
+end
+
+Ext.RegisterUINameCall("LeaderLib_ToggleChainGroup", function(...)
+	UI.ToggleChainGroup()
+end)

@@ -13,10 +13,10 @@ Input = {
 	Vars = {
 		JustPressedThreshold = 750
 	},
-	--These controls don't fire events on pressed (only release), so the state change check will fail otherwise
 	SkipStateCheck = {
+		--Doesn't fire events on pressed (only release), so the state change check will fail otherwise
 		ContextMenu = 0,
-		-- --Ctrl buttons fires on press, not release
+		--These buttons fires on press, not release (ctrl)
 		DragSingleToggle = 1,
 		DestructionToggle = 1,
 		ToggleInfo = 1,
@@ -193,6 +193,16 @@ function Input.GetKeyState(name, t)
 end
 
 local function OnInputChanged(eventName, pressed, id, keys, controllerEnabled)
+	if not controllerEnabled then
+		if not Client.Character.IsGameMaster and eventName == "ToggleGMShroud" and not pressed then
+			UI.ToggleChainGroup()
+		end
+		-- if Vars.DebugMode then
+		-- 	if eventName == "UICopy" and pressed then
+		-- 		Ext.GetUIByType(Data.UIType.GMMetadataBox):ExternalInterfaceCall("copy", "Test test")
+		-- 	end
+		-- end
+	end
 	-- if controllerEnabled then
 	-- 	--Area Interact input workaround
 	-- 	local ui = Ext.GetUIByType(Data.UIType.areaInteract_c)

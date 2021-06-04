@@ -64,17 +64,17 @@ Ext.RegisterListener("StatusHitEnter", function(hitStatus, context)
 		OnSkillHit(skill, target, source, hit.TotalDamageDone, hit, context, hitStatus)
 	end
 
-	if Features.ApplyBonusWeaponStatuses == true and source ~= nil then
-		if skill then
-			if skill.UseWeaponProperties == "Yes" and GameHelpers.Hit.IsFromWeapon(hitStatus, true) then
-				GameHelpers.ApplyBonusWeaponStatuses(source, target)
-			end
-		else
-			if GameHelpers.Hit.IsFromWeapon(hitStatus) then
-				GameHelpers.ApplyBonusWeaponStatuses(source, target)
-			end
+	if Features.ApplyBonusWeaponStatuses == true and source then
+		if GameHelpers.Hit.IsFromWeapon(hitStatus, skill) then
+			GameHelpers.ApplyBonusWeaponStatuses(source, target)
 		end
 	end
+
+	if Vars.DebugMode then
+		local wpn = hitStatus.WeaponHandle and Ext.GetItem(hitStatus.WeaponHandle) or nil
+		fprint(LOGLEVEL.DEFAULT, "[StatusHitEnter:%s] Damage(%s) HitReason[%s](%s) DamageSourceType(%s) WeaponHandle(%s) Skill(%s)", context.HitId, hit.TotalDamageDone, hitStatus.HitReason, Data.HitReason[hitStatus.HitReason] or "", hitStatus.DamageSourceType, wpn and wpn.DisplayName or "nil", skillId or "nil")
+	end
+
 
 	--Old listener
 	InvokeListenerCallbacks(Listeners.OnHit, target.MyGuid, source.MyGuid, hit.TotalDamageDone, context.HitId, skillId, hitStatus, context)
@@ -91,37 +91,31 @@ local function OnHit(target, source, damage, handle)
 	end
 
 	---@type EsvStatusHit
-	local statusObj = nil
+	local hitStatus = nil
 	if ObjectIsCharacter(target) == 1 then
 		---@type EsvStatusHit
-		statusObj = Ext.GetStatus(target, handle)
+		hitStatus = Ext.GetStatus(target, handle)
 	else
 		local item = Ext.GetItem(target)
 		if item then
-			statusObj = item:GetStatus("HIT")
+			hitStatus = item:GetStatus("HIT")
 		end
 	end
 
-	if statusObj == nil then
+	if hitStatus == nil then
 		return
 	end
 
-	local skillprototype = statusObj.SkillId
+	local skillprototype = hitStatus.SkillId
 	local skill = nil
-	if not StringHelpers.IsNullOrEmpty(statusObj.SkillId) then
-		skill = string.gsub(statusObj.SkillId, "_%-?%d+$", "")
+	if not StringHelpers.IsNullOrEmpty(hitStatus.SkillId) then
+		skill = string.gsub(hitStatus.SkillId, "_%-?%d+$", "")
 		OnSkillHit(source, skill, target, handle, damage)
 	end
 
-	if Features.ApplyBonusWeaponStatuses == true and not StringHelpers.IsNullOrEmpty(source) then
-		if skill ~= nil then
-			if Ext.StatGetAttribute(skill, "UseWeaponProperties") == "Yes" and GameHelpers.Hit.IsFromWeapon(statusObj, true) then
-				GameHelpers.ApplyBonusWeaponStatuses(source, target)
-			end
-		else
-			if GameHelpers.Hit.IsFromWeapon(statusObj) then
-				GameHelpers.ApplyBonusWeaponStatuses(source, target)
-			end
+	if Features.ApplyBonusWeaponStatuses == true and source ~= nil then
+		if GameHelpers.Hit.IsFromWeapon(hitStatus, skill) then
+			GameHelpers.ApplyBonusWeaponStatuses(source, target)
 		end
 	end
 

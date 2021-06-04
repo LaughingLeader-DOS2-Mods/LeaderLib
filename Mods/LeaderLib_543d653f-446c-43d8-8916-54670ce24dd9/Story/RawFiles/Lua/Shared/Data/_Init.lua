@@ -1027,3 +1027,20 @@ Data.LevelExperience = {
 	[34] = 965264000,
 	[35] = 1341723000
 }
+
+Data.HitReason = {
+    Melee = 0,
+    Magic = 1,
+    Ranged = 2,
+    WeaponDamage = 3,
+    Surface = 4,
+    DoT = 5,
+    Reflected = 6,
+    [0] = "Melee",
+    [1] = "Magic",
+    [2] = "Ranged",
+    [3] = "WeaponDamage",
+    [4] = "Surface",
+    [5] = "DoT",
+    [6] = "Reflected",
+}

@@ -117,16 +117,6 @@ function GameHelpers.HitWithWeapon(target, handle, is_hit, allowSkills, source)
     end
 end
 
--- local HitReasonToInt = {
---     Melee = 0,
---     Magic = 1,
---     Ranged = 2,
---     WeaponDamage = 3,
---     Surface = 4,
---     DoT = 5,
---     Reflected = 6,
--- }
-
 -- local DamageSourceTypeToInt = {
 --     None = 0,
 --     SurfaceMove = 1,
@@ -147,36 +137,53 @@ local WeaponHitProperties = {
     DamageSourceType = {
         Attack = true,
         Offhand = true
+    },
+    SkillHitReason = {
+        Melee = true,
+        Magic = true,
+        WeaponDamage = true,
     }
 }
 
-local WeaponSkillHitReason = {
-    Melee = true,
-    Magic = true,
-    WeaponDamage = true,
-}
+---@param hitReason string|integer
+---@param toInteger boolean|nil
+---@return string|integer
+function GameHelpers.Hit.GetHitReason(hitReason, toInteger)
+    if hitReason then
+        if type(hitReason) == "string" then
+            if not toInteger then
+                return hitReason
+            end
+            return Data.HitReason[hitReason]
+        else
+            if not toInteger then
+                return Data.HitReason[hitReason]
+            end
+            return hitReason
+        end
+    end
+    return hitReason
+end
 
----Returns true if a hit is from a basic attack.
+---Returns true if a hit is from a basic attack or weapon skill, if a skill is provided.
 ---@param hit EsvStatusHit
+---@param skill StatEntrySkillData|nil
 ---@return boolean
-function GameHelpers.Hit.IsFromWeapon(hit, allowSkills)
-    if hit == nil then
+function GameHelpers.Hit.IsFromWeapon(hit, skill)
+    if not hit then
         return false
     end
-    if hit.HitReason == "Melee" then
+    local hitReason = GameHelpers.Hit.GetHitReason(hit.HitReason)
+    if hitReason == "Melee" then
+        return true
+    end
+
+    if skill and skill.UseWeaponDamage == "Yes" and WeaponHitProperties.SkillHitReason[hitReason] == true then
         return true
     end
     
-    if WeaponHitProperties.DamageSourceType[hit.DamageSourceType] == true and hit.HitReason then
-        if allowSkills == true then
-            if not StringHelpers.IsNullOrEmpty(hit.SkillId) then
-                local skill = string.gsub(hit.SkillId, "_%-?%d+$", "")
-                if Ext.StatGetAttribute(skill, "UseWeaponDamage") == "Yes" and WeaponSkillHitReason[hit.HitReason] == true then
-                    return true
-                end
-            end
-        end
-        return WeaponHitProperties.HitReason[hit.HitReason] == true and hit.WeaponHandle ~= nil
+    if WeaponHitProperties.DamageSourceType[hit.DamageSourceType] == true and hitReason then
+        return WeaponHitProperties.HitReason[hitReason] == true and hit.WeaponHandle ~= nil
     end
     return false
 end

@@ -5,13 +5,20 @@ local function IgnoreStatus(status)
 	return false
 end
 
+local redirectStatusType = {
+	DAMAGE = true,
+	DAMAGE_ON_MOVE = true,
+	HIT = true,
+	CHARMED = true,
+}
+
 ---@param statusId string
 ---@param target EsvCharacter|EsvItem
 ---@param status EsvStatus
 ---@param source EsvCharacter|EsvItem
 ---@param handle integer
 local function BeforeStatusAttempt(statusId, target, status, source, handle)
-	if source then 
+	if redirectStatusType[status.StatusType] and source then 
 		if ObjectIsItem(source.MyGuid) == 1 then
 			--Fix for summoned item applied statuses having no source when they're dead
 			--With this, statuses they apply should have their skill caster owner as the source.
@@ -24,12 +31,19 @@ local function BeforeStatusAttempt(statusId, target, status, source, handle)
 						NRD_StatusSetGuidString(target.MyGuid, handle, "StatusSourceHandle", owner.MyGuid)
 					end
 				end
+				if Vars.DebugMode then
+					fprint(LOGLEVEL.DEFAULT, "[BeforeStatusAttempt] Redirected status(%s) source from (%s) to owner (%s)", statusId, source.DisplayName, GameHelpers.Character.GetDisplayName(source.OwnerHandle))
+				end
 			end
 		elseif source:HasTag("LeaderLib_Dummy") then
 			--Redirect the source of statuses applied by dummies to their owners
 			local owner = GetVarObject(source.MyGuid, "LeaderLib_Dummy_Owner")
 			if not StringHelpers.IsNullOrEmpty(owner) then
 				NRD_StatusSetGuidString(target.MyGuid, handle, "StatusSourceHandle", owner)
+
+				if Vars.DebugMode then
+					fprint(LOGLEVEL.DEFAULT, "[BeforeStatusAttempt] Redirected status(%s) source from (%s) to owner (%s)", statusId, source.DisplayName, GameHelpers.Character.GetDisplayName(owner))
+				end
 			end
 		end
 	end

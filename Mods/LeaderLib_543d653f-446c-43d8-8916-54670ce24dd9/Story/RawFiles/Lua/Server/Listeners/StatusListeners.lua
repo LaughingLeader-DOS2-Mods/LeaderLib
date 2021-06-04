@@ -12,6 +12,11 @@ local redirectStatusType = {
 	CHARMED = true,
 }
 
+local redirectStatusId = {
+	TAUNTED = true,
+	MADNESS = true,
+}
+
 ---@param statusId string
 ---@param target EsvCharacter|EsvItem
 ---@param status EsvStatus
@@ -19,11 +24,16 @@ local redirectStatusType = {
 ---@param handle integer
 local function BeforeStatusAttempt(statusId, target, status, source, handle)
 	local statusType = GetStatusType(statusId)
+	--Crash fix
+	if target and ObjectIsItem(target.MyGuid) == 1 and (statusId == "MADNESS" or statusType == "DAMAGE_ON_MOVE") then
+		NRD_StatusPreventApply(target, handle, 1)
+		return
+	end
 	if source then 
-		if source.Summon and source.OwnerHandle then
+		local canRedirect = redirectStatusId[statusId] or redirectStatusType[statusType]
+		if canRedirect and source.Summon and source.OwnerHandle then
 			if ObjectIsItem(source.MyGuid) == 1 then
-				--Fix for summoned item applied statuses having no source when they're dead
-				--With this, statuses they apply should have their skill caster owner as the source.
+				--Set the source of statuses summoned items apply to their caster owner character.
 				if source.Summon and source.OwnerHandle then
 					if status then
 						status.StatusSourceHandle = source.OwnerHandle

@@ -94,7 +94,7 @@
 ---@field addSecondaryStat fun(statType:number, labelText:string, valueText:string, statId:number, frame:number, boostValue:number):void
 ---@field clearSecondaryStats fun():void
 ---@field addAbilityGroup fun(isCivil:boolean, groupId:number, labelText:string):void
----@field addAbility fun(isCivil:boolean, groupId:number, statId:number, labelText:string, valueText:string, plusTooltip:string = "", minusTooltip:string = ""):void
+---@field addAbility fun(isCivil:boolean, groupId:number, statId:number, labelText:string, valueText:string, plusTooltip:string, minusTooltip:string):void
 ---@field addTalent fun(labelText:string, statId:number, talentState:number):void
 ---@field addTag fun(tooltipText:string, labelText:string, descriptionText:string, statId:number):void
 ---@field addVisual fun(titleText:string, contentID:number):void

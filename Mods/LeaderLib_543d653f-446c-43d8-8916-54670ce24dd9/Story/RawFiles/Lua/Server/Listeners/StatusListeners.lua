@@ -18,23 +18,45 @@ local redirectStatusType = {
 ---@param source EsvCharacter|EsvItem
 ---@param handle integer
 local function BeforeStatusAttempt(statusId, target, status, source, handle)
-	if redirectStatusType[status.StatusType] and source then 
-		if ObjectIsItem(source.MyGuid) == 1 then
-			--Fix for summoned item applied statuses having no source when they're dead
-			--With this, statuses they apply should have their skill caster owner as the source.
-			if source.Summon and source.OwnerHandle then
-				if status then
-					status.StatusSourceHandle = source.OwnerHandle
-				else
-					local owner = Ext.GetGameObject(source.OwnerHandle)
-					if owner then
-						NRD_StatusSetGuidString(target.MyGuid, handle, "StatusSourceHandle", owner.MyGuid)
+	local statusType = GetStatusType(statusId)
+	if source then 
+		if source.Summon and source.OwnerHandle then
+			if ObjectIsItem(source.MyGuid) == 1 then
+				--Fix for summoned item applied statuses having no source when they're dead
+				--With this, statuses they apply should have their skill caster owner as the source.
+				if source.Summon and source.OwnerHandle then
+					if status then
+						status.StatusSourceHandle = source.OwnerHandle
+					else
+						local owner = Ext.GetGameObject(source.OwnerHandle)
+						if owner then
+							NRD_StatusSetGuidString(target.MyGuid, handle, "StatusSourceHandle", owner.MyGuid)
+						end
+					end
+					if Vars.DebugMode then
+						fprint(LOGLEVEL.DEFAULT, "[BeforeStatusAttempt] Redirected status(%s) source from (%s) to owner (%s)", statusId, source.DisplayName, GameHelpers.Character.GetDisplayName(Ext.GetCharacter(source.OwnerHandle)))
 					end
 				end
-				if Vars.DebugMode then
-					fprint(LOGLEVEL.DEFAULT, "[BeforeStatusAttempt] Redirected status(%s) source from (%s) to owner (%s)", statusId, source.DisplayName, GameHelpers.Character.GetDisplayName(source.OwnerHandle))
-				end
 			end
+			-- elseif statusId == "INSURFACE" then
+			-- 	--surface owner Swap
+			-- 	local x,y,z = table.unpack(target.WorldPos)
+			-- 	local cell = Ext.GetAiGrid():GetCellInfo(x, z)
+			-- 	if cell then
+			-- 		if cell.GroundSurface then
+			-- 			local surface = Ext.GetSurface(cell.GroundSurface)
+			-- 			if surface then
+			-- 				surface.OwnerHandle = source.OwnerHandle
+			-- 			end
+			-- 		end
+			-- 		if cell.CloudSurface then
+			-- 			local surface = Ext.GetSurface(cell.CloudSurface)
+			-- 			if surface then
+			-- 				surface.OwnerHandle = source.OwnerHandle
+			-- 			end
+			-- 		end
+			-- 	end
+			-- end
 		elseif source:HasTag("LeaderLib_Dummy") then
 			--Redirect the source of statuses applied by dummies to their owners
 			local owner = GetVarObject(source.MyGuid, "LeaderLib_Dummy_Owner")
@@ -42,7 +64,7 @@ local function BeforeStatusAttempt(statusId, target, status, source, handle)
 				NRD_StatusSetGuidString(target.MyGuid, handle, "StatusSourceHandle", owner)
 
 				if Vars.DebugMode then
-					fprint(LOGLEVEL.DEFAULT, "[BeforeStatusAttempt] Redirected status(%s) source from (%s) to owner (%s)", statusId, source.DisplayName, GameHelpers.Character.GetDisplayName(owner))
+					fprint(LOGLEVEL.DEFAULT, "[BeforeStatusAttempt] Redirected status(%s) source from (%s) to owner (%s)", statusId, source.DisplayName, GameHelpers.Character.GetDisplayName(Ext.GetCharacter(owner)))
 				end
 			end
 		end

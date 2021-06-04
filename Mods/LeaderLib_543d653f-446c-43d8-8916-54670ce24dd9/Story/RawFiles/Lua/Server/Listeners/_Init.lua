@@ -17,10 +17,10 @@ StatusListeners.Removed = {}
 Vars.RegisteredIgnoredStatus = {}
 
 ---@class StatusEventValues
----@field BeforeAttempt string BeforeAttempt, NRD_OnStatusAttempt
----@field Attempt string Attempt, CharacterStatusAttempt/ItemStatusAttempt
----@field Applied string Applied, CharacterStatusApplied/ItemStatusChange
----@field Removed string Removed, CharacterStatusRemoved/ItemStatusRemoved
+---@field BeforeAttempt StatusEventID BeforeAttempt, NRD_OnStatusAttempt
+---@field Attempt StatusEventID Attempt, CharacterStatusAttempt/ItemStatusAttempt
+---@field Applied StatusEventID Applied, CharacterStatusApplied/ItemStatusChange
+---@field Removed StatusEventID Removed, CharacterStatusRemoved/ItemStatusRemoved
 Vars.StatusEvent = {
 	BeforeAttempt = "BeforeAttempt",
 	Attempt = "Attempt",
@@ -34,19 +34,17 @@ Vars.StatusEvent = {
 function RegisterStatusListener(event, status, callback)
     local statusEventHolder = StatusListeners[event]
 	if statusEventHolder then
-		if Data.IgnoredStatus[status] == true then
-			Vars.RegisteredIgnoredStatus[status] = true
-		end
         if type(status) == "table" then
 			for i,v in pairs(status) do
-				if type(v) == "string" then
-					if statusEventHolder[v] == nil then
-						statusEventHolder[v] = {}
-					end
-					table.insert(statusEventHolder[v], callback)
-				end
+				RegisterStatusListener(event, v, callback)
             end
         else
+            if StringHelpers.Equals(status, "All", true) then
+                status = "All"
+            elseif Data.IgnoredStatus[status] == true then
+                Vars.RegisteredIgnoredStatus[status] = true
+            end
+
             if statusEventHolder[status] == nil then
                 statusEventHolder[status] = {}
             end

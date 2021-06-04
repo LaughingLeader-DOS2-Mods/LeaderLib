@@ -25,6 +25,12 @@ local function BeforeStatusAttempt(statusId, target, status, source, handle)
 					end
 				end
 			end
+		elseif source:HasTag("LeaderLib_Dummy") then
+			--Redirect the source of statuses applied by dummies to their owners
+			local owner = GetVarObject(source.MyGuid, "LeaderLib_Dummy_Owner")
+			if not StringHelpers.IsNullOrEmpty(owner) then
+				NRD_StatusSetGuidString(target.MyGuid, handle, "StatusSourceHandle", owner)
+			end
 		end
 	end
 	InvokeListenerCallbacks(StatusListeners.BeforeAttempt[statusId], target, status, source, handle)

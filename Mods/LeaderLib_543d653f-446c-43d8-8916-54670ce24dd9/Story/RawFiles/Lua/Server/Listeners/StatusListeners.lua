@@ -5,27 +5,35 @@ local function IgnoreStatus(status)
 	return false
 end
 
-local function OnNRDOnStatusAttempt(target,status,handle,source)
-	target = StringHelpers.GetUUID(target)
-	source = StringHelpers.GetUUID(source)
-	local callbacks = StatusListeners.BeforeAttempt[status]
-	if callbacks then
-		for i=1,#callbacks do
-			local b,err = xpcall(callbacks[i], debug.traceback, target, status, source, handle)
-			if not b then
-				Ext.PrintError(err)
+---@param statusId string
+---@param target EsvCharacter|EsvItem
+---@param status EsvStatus
+---@param source EsvCharacter|EsvItem
+---@param handle integer
+local function BeforeStatusAttempt(statusId, target, status, source, handle)
+	if source then 
+		if ObjectIsItem(source.MyGuid) == 1 then
+			--Fix for summoned item applied statuses having no source when they're dead
+			--With this, statuses they apply should have their skill caster owner as the source.
+			if source.Summon and source.OwnerHandle then
+				if status then
+					status.StatusSourceHandle = source.OwnerHandle
+				else
+					local owner = Ext.GetGameObject(source.OwnerHandle)
+					if owner then
+						NRD_StatusSetGuidString(target.MyGuid, handle, "StatusSourceHandle", owner.MyGuid)
+					end
+				end
 			end
 		end
 	end
+	InvokeListenerCallbacks(StatusListeners.BeforeAttempt[statusId], target, status, source, handle)
+	InvokeListenerCallbacks(StatusListeners.BeforeAttempt.All, target, status, source, handle)
 end
 
-local function ParseNRDOnStatusAttempt(target,status,handle,source)
-	if not IgnoreStatus(status) then
-		OnNRDOnStatusAttempt(StringHelpers.GetUUID(target), status, handle, StringHelpers.GetUUID(source))
-	end
-end
-
-RegisterProtectedOsirisListener("NRD_OnStatusAttempt", 4, "after", ParseNRDOnStatusAttempt)
+RegisterProtectedOsirisListener("NRD_OnStatusAttempt", 4, "after", function(target,status,handle,source)
+	BeforeStatusAttempt(status, GameHelpers.TryGetObject(target), Ext.GetStatus(target, handle), GameHelpers.TryGetObject(source), handle)
+end)
 
 local function OnStatusAttempt(target,status,source)
 	target = StringHelpers.GetUUID(target)

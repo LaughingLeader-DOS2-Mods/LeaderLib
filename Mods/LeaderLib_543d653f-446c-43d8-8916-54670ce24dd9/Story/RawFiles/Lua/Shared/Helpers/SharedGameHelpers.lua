@@ -217,3 +217,21 @@ function GameHelpers.CharacterOrEquipmentHasTag(character, tag)
 	end
 	return false
 end
+
+---Tries and get a string UUID from whatever variable type object is.
+---@param object EsvGameObject|EclGameObject|string|number
+---@return UUID
+function GameHelpers.GetUUID(object)
+	local t = type(object)
+	if t == "userdata" and object.MyGuid then
+		return object.MyGuid
+	elseif t == "string" then
+		return StringHelpers.GetUUID(object)
+	elseif t == "number" then
+		local obj = Ext.GetGameObject(object)
+		if obj then
+			return obj.MyGuid
+		end
+	end
+	return "NULL_00000000-0000-0000-0000-000000000000"
+end

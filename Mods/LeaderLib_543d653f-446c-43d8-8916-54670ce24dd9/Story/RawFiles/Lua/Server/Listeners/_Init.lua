@@ -1,4 +1,4 @@
----@alias BeforeStatusAttemptCallback fun(target:string, status:string, source:string, handle:integer):void
+---@alias BeforeStatusAttemptCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, handle:integer):void
 ---@alias StatusEventCallback fun(target:string, status:string, source:string|nil):void
 ---@alias StatusEventID BeforeAttempt|Attempt|Applied|Removed
 

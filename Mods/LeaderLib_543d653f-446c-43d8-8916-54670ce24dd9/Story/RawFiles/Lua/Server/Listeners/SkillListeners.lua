@@ -271,30 +271,30 @@ local function IgnoreHitTarget(target)
 	return false
 end
 
----@param uuid string
----@param skill string
----@param target string
----@param handle integer
----@param damage integer
-function OnSkillHit(uuid, skill, target, handle, damage)
-	if skill ~= "" and skill ~= nil and not IgnoreHitTarget(target) then
+--- @param skill StatEntrySkillData
+--- @param target EsvCharacter|EsvItem
+--- @param source EsvCharacter|EsvItem
+--- @param damage integer
+--- @param hit HitRequest
+--- @param context HitContext
+--- @param hitStatus EsvStatusHit
+function OnSkillHit(skill, target, source, damage, hit, context, hitStatus)
+	if not IgnoreHitTarget(target.MyGuid) then
 		---@type HitData
-		local data = Classes.HitData:Create(target, uuid, damage, handle, skill)
+		local data = Classes.HitData:Create(target.MyGuid, source.MyGuid, damage, context.HitId, skill.Name, GameHelpers.Hit.Succeeded(hit))
 
-		for callback in GetListeners(skill) do
-			local b,err = xpcall(callback, debug.traceback, skill, uuid, SKILL_STATE.HIT, data)
+		for callback in GetListeners(skill.Name) do
+			local b,err = xpcall(callback, debug.traceback, skill.Name, source.MyGuid, SKILL_STATE.HIT, data)
 			if not b then
 				Ext.PrintError("[LeaderLib_SkillListeners] Error invoking function:\n", err)
 			end
 		end
-		InvokeListenerCallbacks(Listeners.OnSkillHit, uuid, skill, SKILL_STATE.HIT, data)
+		InvokeListenerCallbacks(Listeners.OnSkillHit, source.MyGuid, skill.Name, SKILL_STATE.HIT, data)
 
 		if Features.ApplyBonusWeaponStatuses == true then
-			local canApplyStatuses = target ~= nil and Ext.StatGetAttribute(skill, "UseWeaponProperties") == "Yes"
+			local canApplyStatuses = target and skill.UseWeaponProperties == "Yes"
 			if canApplyStatuses then
-				---@type EsvCharacter
-				local character = Ext.GetCharacter(uuid)
-				for i,status in pairs(character:GetStatuses()) do
+				for i,status in pairs(source:GetStatuses()) do
 					local potion = nil
 					if type(status) ~= "string" and status.StatusId ~= nil then
 						status = status.StatusId
@@ -306,7 +306,7 @@ function OnSkillHit(uuid, skill, target, handle, damage)
 							if bonusWeapon ~= nil and bonusWeapon ~= "" then
 								local extraProps = GameHelpers.Stats.GetExtraProperties(bonusWeapon)
 								if extraProps and #extraProps > 0 then
-									GameHelpers.ApplyProperties(target, uuid, extraProps)
+									GameHelpers.ApplyProperties(target.MyGuid, source.MyGuid, extraProps)
 								end
 							end
 						end

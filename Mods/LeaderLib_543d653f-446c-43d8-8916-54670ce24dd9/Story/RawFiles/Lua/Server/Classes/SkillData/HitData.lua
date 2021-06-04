@@ -18,8 +18,9 @@ HitData.__index = HitData
 ---@param damage integer
 ---@param handle integer
 ---@param skill string|nil
+---@param success boolean|nil
 ---@return HitData
-function HitData:Create(target, attacker, damage, handle, skill)
+function HitData:Create(target, attacker, damage, handle, skill, success)
 	---@type HitData
     local this =
     {
@@ -27,8 +28,23 @@ function HitData:Create(target, attacker, damage, handle, skill)
 		Attacker = attacker,
 		Damage = damage,
 		Handle = handle,
-		Success = GameHelpers.HitSucceeded(target, handle, 0)
+		Success = true
 	}
+	if success ~= nil then
+		this.Success = success
+	else
+		---@type EsvStatusHit
+		local status = Ext.GetStatus(target, handle)
+		if status then
+			if status.Hit then
+				this.Success = GameHelpers.Hit.Succeeded(status.Hit)
+			else
+				this.Success = GameHelpers.HitSucceeded(target, handle, 0)
+			end
+		else
+			this.Success = GameHelpers.HitSucceeded(target, handle, 1)
+		end
+	end
 	if StringHelpers.IsNullOrEmpty(this.Target) then
 		this.Success = false
 	end

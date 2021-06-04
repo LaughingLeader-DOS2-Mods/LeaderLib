@@ -48,12 +48,16 @@ if Ext.IsServer() then
 
 	---@alias OnPrepareHitCallback fun(target:string, source:string, damage:integer, handle:integer):void
 	---@alias OnHitCallback fun(target:string, source:string, damage:integer, handle:integer, skill:string|nil):void
+	---@alias OnStatusHitEnterCallback fun(target:EsvCharacter|EsvItem, source:EsvCharacter|EsvItem, totalDamage:integer, hit:HitRequest, context:HitContext, hitStatus:EsvStatusHit, skill:StatEntrySkillData|nil):void
 	---@alias OnSkillHitCallback fun(skill:string, source:string, state:SKILL_STATE, data:HitData|ProjectileHitData):void
 
 	---@type OnPrepareHitCallback[]
 	Listeners.OnPrepareHit = {}
 	---@type OnHitCallback[]
 	Listeners.OnHit = {}
+	---Newer hit listener.
+	---@type OnStatusHitEnterCallback[]
+	Listeners.StatusHitEnter = {}
 	---Fires when a skill hits, or a projectile from a skill hits.
 	---@type OnSkillHitCallback[]
 	Listeners.OnSkillHit = {}

@@ -15,8 +15,11 @@ RegisterProtectedOsirisListener("NRD_OnPrepareHit", 4, "before", function(target
 end)
 
 function GameHelpers.ApplyBonusWeaponStatuses(source, target)
-	if ObjectIsCharacter(source) == 1 then
-		for i,status in pairs(Ext.GetCharacter(source):GetStatuses()) do
+	if type(source) ~= "userdata" then
+		source = Ext.GetGameObject(source)
+	end
+	if source and source.GetStatuses then
+		for i,status in pairs(source:GetStatuses()) do
 			if type(status) ~= "string" and status.StatusId ~= nil then
 				status = status.StatusId
 			end
@@ -32,7 +35,7 @@ function GameHelpers.ApplyBonusWeaponStatuses(source, target)
 					if bonusWeapon ~= nil and bonusWeapon ~= "" then
 						local extraProps = GameHelpers.Stats.GetExtraProperties(bonusWeapon)
 						if extraProps and #extraProps > 0 then
-							GameHelpers.ApplyProperties(target, source, extraProps)
+							GameHelpers.ApplyProperties(GameHelpers.GetUUID(target), GameHelpers.GetUUID(source), extraProps)
 						end
 					end
 				end
@@ -41,21 +44,51 @@ function GameHelpers.ApplyBonusWeaponStatuses(source, target)
 	end
 end
 
+---@param hitStatus EsvStatusHit
+---@param context HitContext
+Ext.RegisterListener("StatusHitEnter", function(hitStatus, context)
+	local target,source = Ext.GetGameObject(hitStatus.TargetHandle),Ext.GetGameObject(hitStatus.StatusSourceHandle)
+
+	if not target or not source then
+		return
+	end
+
+	---@type HitRequest
+	local hit = context.Hit or hitStatus.Hit
+	fprint(LOGLEVEL.TRACE, "context.Hit(%s) hitStatus.Hit(%s) context.HitId(%s)", context.Hit, hitStatus.Hit, context.HitId)
+
+	local skillId = not StringHelpers.IsNullOrWhitespace(hitStatus.SkillId) and string.gsub(hitStatus.SkillId, "_%-?%d+$", "") or nil
+	local skill = nil
+	if skillId then
+		skill = Ext.GetStat(skillId)
+		OnSkillHit(skill, target, source, hit.TotalDamageDone, hit, context, hitStatus)
+	end
+
+	if Features.ApplyBonusWeaponStatuses == true and source ~= nil then
+		if skill then
+			if skill.UseWeaponProperties == "Yes" and GameHelpers.Hit.IsFromWeapon(hitStatus, true) then
+				GameHelpers.ApplyBonusWeaponStatuses(source, target)
+			end
+		else
+			if GameHelpers.Hit.IsFromWeapon(hitStatus) then
+				GameHelpers.ApplyBonusWeaponStatuses(source, target)
+			end
+		end
+	end
+
+	--Old listener
+	InvokeListenerCallbacks(Listeners.OnHit, target.MyGuid, source.MyGuid, hit.TotalDamageDone, context.HitId, skillId, hitStatus, context)
+	InvokeListenerCallbacks(Listeners.StatusHitEnter, target, source, hit.TotalDamageDone, hit, context, hitStatus, skill)
+end)
+
 ---@type target string
 ---@type source string
 ---@type damage integer
 ---@type handle integer
 local function OnHit(target, source, damage, handle)
-	--print(target,source,damage,handle,HasActiveStatus(source, "AOO"),HasActiveStatus(target, "AOO"))
-	-- if Vars.DebugMode then
-	-- 	if Vars.TraceAll or (damage > 0 and not StringHelpers.IsNullOrEmpty(source)) then
-	-- 		fprint(LOGLEVEL.TRACE, "[NRD_OnHit] Target(%s) Source(%s) damage(%i) Handle(%i) HitType(%s)", target, source, damage, handle, NRD_StatusGetInt(target, handle, "HitReason"))
-	-- 	end
-	-- end
 	if ObjectExists(target) == 0 then
 		return
 	end
-
 
 	---@type EsvStatusHit
 	local statusObj = nil
@@ -95,6 +128,6 @@ local function OnHit(target, source, damage, handle)
 	InvokeListenerCallbacks(Listeners.OnHit, target, source, damage, handle, skill)
 end
 
-RegisterProtectedOsirisListener("NRD_OnHit", 4, "before", function(target, attacker, damage, handle)
-	OnHit(StringHelpers.GetUUID(target), StringHelpers.GetUUID(attacker), damage, handle)
-end)
+-- RegisterProtectedOsirisListener("NRD_OnHit", 4, "before", function(target, attacker, damage, handle)
+-- 	OnHit(StringHelpers.GetUUID(target), StringHelpers.GetUUID(attacker), damage, handle)
+-- end)

@@ -180,3 +180,66 @@ function GameHelpers.Hit.IsFromWeapon(hit, allowSkills)
     end
     return false
 end
+
+local hitFlag = Game.Math.HitFlag
+
+---Returns true if a hit isn't Dodged, Missed, or Blocked.
+---@param hit HitRequest
+---@return boolean
+function GameHelpers.Hit.Succeeded(hit)
+    if (hit.EffectFlags & hitFlag.Dodged) ~= 0 then
+        return false
+    end
+    if (hit.EffectFlags & hitFlag.Missed) ~= 0 then
+        return false
+    end
+    if (hit.EffectFlags & hitFlag.Blocked) ~= 0 then
+        return false
+    end
+    return true
+end
+
+---Returns true if a hit's effect flags have the supplied flag or table of flags.
+---@param hit HitRequest
+---@param flag integer|string|table A flag value or key in Game.Math.HitFlags.
+---@return boolean
+function GameHelpers.Hit.HasFlag(hit, flag)
+    if not flag or not hit or not hit.EffectFlags then
+        error(string.format("Invalid hit (%s) or flag (%s)", hit, flag), 2)
+    end
+    local t = type(flag)
+    if t == "string" then
+        flag = hitFlag[flag]
+    elseif t == "table" then
+        for i,v in pairs(flag) do
+            if GameHelpers.Hit.HasFlag(hit, v) then
+                return true
+            end 
+        end
+        return false
+    end
+    return (hit.EffectFlags & flag) ~= 0
+end
+
+---@param hit HitRequest
+---@param flag integer|string|table A flag value or key in Game.Math.HitFlags.
+---@param b boolean Whether a flag is enabled or disabled.
+function GameHelpers.Hit.SetFlag(hit, flag, b)
+    if not flag or not hit or not hit.EffectFlags then
+        error(string.format("Invalid hit (%s) or flag (%s)", hit, flag), 2)
+    end
+    local t = type(flag)
+    if t == "string" then
+        flag = hitFlag[flag]
+    elseif t == "table" then
+        for i,v in pairs(flag) do
+            GameHelpers.Hit.SetFlag(hit, v, b)
+        end
+        return
+    end
+    if b then
+        hit.EffectFlags = hit.EffectFlags | flag
+    else
+        hit.EffectFlags = hit.EffectFlags & ~flag
+    end
+end

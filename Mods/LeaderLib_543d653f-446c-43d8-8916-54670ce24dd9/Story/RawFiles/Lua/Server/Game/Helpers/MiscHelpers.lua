@@ -20,10 +20,10 @@ function GameHelpers.ApplyProperties(target, source, properties)
 			if ContextContains(v.Context, "Target") then
 				if v.Action == "EXPLODE" then
 					if v.StatusChance >= 1.0 then
-						GameHelpers.ExplodeProjectile(source, target, v.StatsId)
+						GameHelpers.Skill.Explode(source, v.StatsId, target)
 					elseif v.StatusChance > 0 then
 						if Ext.Random(0.0, 1.0) <= v.StatusChance then
-							GameHelpers.ExplodeProjectile(source, target, v.StatsId)
+							GameHelpers.Skill.Explode(source, v.StatsId, target)
 						end
 					end
 				else
@@ -41,10 +41,10 @@ function GameHelpers.ApplyProperties(target, source, properties)
 			if ContextContains(v.Context, "Self") then
 				if v.Action == "EXPLODE" then
 					if v.StatusChance >= 1.0 then
-						GameHelpers.ExplodeProjectile(source, source, v.StatsId)
+						GameHelpers.Skill.Explode(source, v.StatsId, source)
 					elseif v.StatusChance > 0 then
 						if Ext.Random(0.0, 1.0) <= v.StatusChance then
-							GameHelpers.ExplodeProjectile(source, source, v.StatsId)
+							GameHelpers.Skill.Explode(source, v.StatsId, source)
 						end
 					end
 				else
@@ -274,6 +274,20 @@ function GameHelpers.GetDialogInstance(dialog, ...)
 				end
 			end
 		end
+	end
+	return nil
+end
+
+---Tries to get a game object if the target exists, otherwise returns nil.
+---@param id string|integer|ObjectHandle
+---@return EsvCharacter|EsvItem|nil
+function GameHelpers.TryGetObject(id)
+	if type(id) == "string" then
+		if ObjectExists(id) == 1 then
+			return Ext.GetGameObject(id)
+		end
+	else
+		return Ext.GetGameObject(id)
 	end
 	return nil
 end

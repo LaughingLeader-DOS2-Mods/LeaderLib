@@ -683,3 +683,23 @@ function GameHelpers.Ext.ProjectileToTable(projectile)
 		CurrentLevel = projectile.CurrentLevel,
 	}
 end
+
+---@param obj EsvGameObject|EclGameObject
+---@return boolean
+function GameHelpers.Ext.ObjectIsCharacter(obj)
+	local meta = getmetatable(obj)
+	if meta == "esv::Character" or meta == "ecl::Character" then
+		return true
+	end
+	return false
+end
+
+---@param obj EsvGameObject|EclGameObject
+---@return boolean
+function GameHelpers.Ext.ObjectIsItem(obj)
+	local meta = getmetatable(obj)
+	if meta == "esv::Item" or meta == "ecl::Item" then
+		return true
+	end
+	return false
+end

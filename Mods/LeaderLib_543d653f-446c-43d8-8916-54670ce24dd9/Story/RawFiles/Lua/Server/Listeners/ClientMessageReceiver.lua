@@ -13,3 +13,10 @@ Ext.RegisterNetListener("LeaderLib_ToggleChainGroup", function(cmd, payload)
 		end
 	end
 end)
+
+Ext.RegisterNetListener("LeaderLib_RefreshCharacterSheet", function(cmd, uuid)
+	CharacterAddAbilityPoint(uuid, 0)
+	CharacterAddCivilAbilityPoint(uuid, 0)
+	CharacterAddAttributePoint(uuid, 0)
+	CharacterAddAttribute(uuid, "Dummy", 0)
+end)

@@ -746,14 +746,14 @@ package characterSheet_fla
 			return this.tagsHolder_mc.list.getElementByNumber("statId",param1);
 		}
 		
-		public function setVisibilityAbilityButtons(param1:Boolean, param2:Boolean) : *
+		public function setVisibilityAbilityButtons(isCivil:Boolean, isVisible:Boolean) : *
 		{
 			var val4:uint = 0;
 			var val5:MovieClip = null;
 			var val6:uint = 0;
 			var val7:MovieClip = null;
 			var val3:MovieClip = this.combatAbilityHolder_mc;
-			if(param1)
+			if(isCivil)
 			{
 				val3 = this.civicAbilityHolder_mc;
 			}
@@ -769,8 +769,8 @@ package characterSheet_fla
 						val7 = val5.list.getAt(val6);
 						if(val7)
 						{
-							val7.texts_mc.plus_mc.visible = param2;
-							val7.texts_mc.minus_mc.visible = param2;
+							val7.texts_mc.plus_mc.visible = isVisible;
+							val7.texts_mc.minus_mc.visible = isVisible;
 						}
 						val6++;
 					}
@@ -797,15 +797,15 @@ package characterSheet_fla
 			}
 		}
 		
-		public function setVisibilityTalentButtons(param1:Boolean) : *
+		public function setVisibilityTalentButtons(isVisible:Boolean) : *
 		{
 			var val2:uint = 0;
 			while(val2 < this.talentHolder_mc.list.length)
 			{
 				if(this.talentHolder_mc.list.content_array[val2])
 				{
-					this.talentHolder_mc.list.content_array[val2].plus_mc.visible = param1;
-					this.talentHolder_mc.list.content_array[val2].minus_mc.visible = param1;
+					this.talentHolder_mc.list.content_array[val2].plus_mc.visible = isVisible;
+					this.talentHolder_mc.list.content_array[val2].minus_mc.visible = isVisible;
 				}
 				val2++;
 			}

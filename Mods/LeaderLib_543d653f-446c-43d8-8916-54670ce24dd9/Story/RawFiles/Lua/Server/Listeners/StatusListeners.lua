@@ -44,7 +44,7 @@ local function BeforeStatusAttempt(statusId, target, status, source, handle)
 						end
 					end
 					if Vars.DebugMode then
-						fprint(LOGLEVEL.DEFAULT, "[BeforeStatusAttempt] Redirected status(%s) source from (%s) to owner (%s)", statusId, source.DisplayName, GameHelpers.Character.GetDisplayName(Ext.GetCharacter(source.OwnerHandle)))
+						fprint(LOGLEVEL.DEFAULT, "[BeforeStatusAttempt] Redirected status(%s) source from (%s) to owner (%s)", statusId, source.DisplayName, GameHelpers.Character.GetDisplayName(Ext.GetGameObject(source.OwnerHandle)))
 					end
 				end
 			end
@@ -84,7 +84,7 @@ local function BeforeStatusAttempt(statusId, target, status, source, handle)
 end
 
 RegisterProtectedOsirisListener("NRD_OnStatusAttempt", 4, "after", function(target,status,handle,source)
-	BeforeStatusAttempt(status, GameHelpers.TryGetObject(target), Ext.GetStatus(target, handle), GameHelpers.TryGetObject(source), handle)
+	--BeforeStatusAttempt(status, GameHelpers.TryGetObject(target), Ext.GetStatus(target, handle), GameHelpers.TryGetObject(source), handle)
 end)
 
 local function OnStatusAttempt(target,status,source)

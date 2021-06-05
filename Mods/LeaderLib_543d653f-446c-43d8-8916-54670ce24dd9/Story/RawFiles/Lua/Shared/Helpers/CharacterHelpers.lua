@@ -7,7 +7,13 @@ local isClient = Ext.IsClient()
 ---@param character EsvCharacter|EclCharacter|string|number
 ---@return boolean
 function GameHelpers.Character.IsPlayer(character)
+	if not character then
+		return false
+	end
 	local t = type(character)
+	if t == "userdata" and GameHelpers.Ext.ObjectIsItem(character) then
+		return false
+	end
 	if not isClient then
 		if not Ext.OsirisIsCallable() then
 			if t == "string" or t == "number" then
@@ -18,7 +24,7 @@ function GameHelpers.Character.IsPlayer(character)
 			end
 		else
 			if t == "userdata" then
-				if character.IsPlayer then
+				if ObjectIsCharacter(character.MyGuid) == 1 and character.IsPlayer then
 					return true
 				end
 				character = character.MyGuid
@@ -159,6 +165,9 @@ end
 ---@param character string|EsvCharacter|EclCharacter
 ---@return boolean
 function GameHelpers.Character.GetDisplayName(character)
+	if not character then
+		return ""
+	end
 	if type(character) ~= "userdata" then
 		character = Ext.GetCharacter(character)
 	end

@@ -41,7 +41,7 @@ for name,v in pairs(missingAbilities) do
 end
 
 function AbilityManager.EnableAbility(abilityName, modID)
-	if abilityName == "all" then
+	if StringHelpers.Equals(abilityName, "all", true) then
 		for ability,v in pairs(missingAbilities) do
 			AbilityManager.EnableAbility(ability, modID)
 		end
@@ -63,7 +63,7 @@ end
 -- end
 
 function AbilityManager.DisableAbility(abilityName, modID)
-	if abilityName == "all" then
+	if StringHelpers.Equals(abilityName, "all", true) then
 		for ability,v in pairs(missingAbilities) do
 			AbilityManager.DisableAbility(ability, modID)
 		end

@@ -303,6 +303,7 @@ local defaultHitFlags = {
 ---@param offhandWeapon StatItem|nil
 ---@param applySkillProperties boolean|nil
 ---@param getDamageFunction function|nil
+---@param skillDataParamModifiers StatEntrySkillData|nil
 function GameHelpers.Damage.ApplySkillDamage(source, target, skill, hitParams, mainWeapon, offhandWeapon, applySkillProperties, getDamageFunction, skillDataParamModifiers)
     if type(source) == "string" then
         source = Ext.GetCharacter(source)

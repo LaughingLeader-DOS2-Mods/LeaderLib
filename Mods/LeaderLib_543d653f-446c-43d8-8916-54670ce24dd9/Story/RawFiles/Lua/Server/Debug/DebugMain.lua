@@ -561,7 +561,7 @@ RegisterListener("OnSummonChanged", function(summon, owner, isDying, isItem)
 
 	print("Summons")
 	print("========")
-	for summon in GameHelpers.Character.GetSummons(owner) do
+	for summon in GameHelpers.Character.GetSummons(owner, true) do
 		print(GameHelpers.Character.GetDisplayName(summon), summon.MyGuid)
 	end
 	print("========")

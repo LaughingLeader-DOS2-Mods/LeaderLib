@@ -1,3 +1,16 @@
+---@type UIListenerWrapper[]
+local allListeners = {}
+
+Ext.RegisterConsoleCommand("uilogging", function(cmd, enabled)
+	for i,v in pairs(allListeners) do
+		if enabled == "false" then
+			v.Enabled = false
+		else
+			v.Enabled = true
+		end
+	end
+end)
+
 ---@class UIListenerWrapper
 local UIListenerWrapper = {
 	Type = "UIListenerWrapper",
@@ -5,7 +18,7 @@ local UIListenerWrapper = {
 	Calls = {},
 	Methods = {},
 	ID = -1,
-	Enabled = true,
+	Enabled = false,
 	CustomCallback = {},
 }
 UIListenerWrapper.__index = UIListenerWrapper
@@ -25,9 +38,9 @@ local function OnUIListener(self, eventType, ui, event, ...)
 			return
 		end
 		if self.PrintParams then
-			fprint(LOGLEVEL.TRACE, "[UI:%s(%s)][%s] [%s] %s(%s)", self.Name, ui:GetTypeId(), eventType, Ext.MonotonicTime(), event, StringHelpers.DebugJoin(", ", {...}))
+			fprint(LOGLEVEL.DEFAULT, "[UI:%s(%s)][%s] [%s] %s(%s)", self.Name, ui:GetTypeId(), eventType, Ext.MonotonicTime(), event, StringHelpers.DebugJoin(", ", {...}))
 		else
-			fprint(LOGLEVEL.TRACE, "[UI:%s(%s)] [%s] %s [%s]", self.Name, ui:GetTypeId(), eventType, event, Ext.MonotonicTime())
+			fprint(LOGLEVEL.DEFAULT, "[UI:%s(%s)] [%s] %s [%s]", self.Name, ui:GetTypeId(), eventType, event, Ext.MonotonicTime())
 		end
 
 		if self.CustomCallback[event] then
@@ -59,7 +72,7 @@ function UIListenerWrapper:Create(id, calls, methods)
 		ID = id,
 		Calls = calls or {},
 		Methods = methods or {},
-		Enabled = true,
+		Enabled = UIListenerWrapper.Enabled,
 		CustomCallback = {},
 		PrintParams = true
 	}
@@ -116,6 +129,8 @@ function UIListenerWrapper:Create(id, calls, methods)
 	end
 
 	setmetatable(this, UIListenerWrapper)
+
+	allListeners[#allListeners+1] = this
 
 	return this
 end
@@ -335,6 +350,25 @@ local characterSheetDebug = UIListenerWrapper:Create(Data.UIType.characterSheet,
 	"updateVisuals",
 })
 
+local printArrays = {
+	"lvlBtnAbility_array",
+	"lvlBtnStat_array",
+	"lvlBtnTalent_array",
+	"lvlBtnSecStat_array",
+}
+
+characterSheetDebug.CustomCallback.updateArraySystem = function(self, ui, method)
+	local this = ui:GetRoot()
+	for _,arrName in pairs(printArrays) do
+		local array = this[arrName]
+		if array and #array > 0 then
+			for i=0,#array-1 do
+				print(arrName, i, array[i])
+			end
+		end
+	end
+end
+
 local sheetCalls = {
 	"addPoints",
 	"disablePointsAssign",
@@ -533,7 +567,6 @@ local playerInfo = UIListenerWrapper:Create(Data.UIType.playerInfo, {
 	"updateInfos",
 	--"updateStatuses",
 })
-playerInfo.Enabled = true
 
 local tooltipMain = UIListenerWrapper:Create(Data.UIType.tooltip, {
 	"setTooltipSize",
@@ -688,7 +721,6 @@ local hotbar = UIListenerWrapper:Create(Data.UIType.hotBar, {
 	--"updateSlotData",
 	--"updateSlots",
 })
-hotbar.Enabled = true
 
 -- ---@param ui UIObject
 -- hotbar.CustomCallback["updateSlotData"] = function(self, ui, method)

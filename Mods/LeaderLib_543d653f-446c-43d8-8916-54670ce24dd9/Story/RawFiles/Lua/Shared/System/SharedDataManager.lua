@@ -54,6 +54,17 @@ if Ext.IsServer() then
 		end
 	end
 
+	local function PrepareSharedData(profile, isHost, id, netid)
+		local data = {
+			Shared = SharedData,
+			Profile = profile,
+			IsHost = isHost,
+			ID = id,
+			NetID = netid
+		}
+		return data
+	end
+
 	function GameHelpers.Data.SyncSharedData(syncSettings, client, ignoreProfile)
 		if client == nil then
 			local totalUsers = Common.TableLength(UserIds, true)
@@ -67,16 +78,10 @@ if Ext.IsServer() then
 						local uuid = StringHelpers.GetUUID(GetCurrentCharacter(id))
 						local isHost = CharacterGetReservedUserID(CharacterGetHostCharacter()) == id
 						local netid = GetNetID(uuid)
-						local data = {
-							Shared = SharedData,
-							Profile = profile,
-							IsHost = isHost,
-							ID = id,
-							NetID = netid
-						}
+						local data = PrepareSharedData(profile, isHost, id, netid)
 						SendSyncListenerEvent(id, profile, uuid, isHost)
 						Ext.PostMessageToUser(id, "LeaderLib_SharedData_StoreData", Ext.JsonStringify(data))
-
+						GameSettingsManager.Sync(id)
 						CustomStatSystem:SyncData(id)
 					end
 				end
@@ -100,15 +105,10 @@ if Ext.IsServer() then
 			if profile ~= ignoreProfile then
 				local isHost = CharacterGetReservedUserID(CharacterGetHostCharacter()) == id
 				local netid = GetNetID(uuid)
-				local data = {
-					Shared = SharedData,
-					Profile = profile,
-					IsHost = isHost,
-					ID = id,
-					NetID = netid
-				}
+				local data = PrepareSharedData(profile, isHost, id, netid)
 				SendSyncListenerEvent(id, profile, uuid, isHost)
 				Ext.PostMessageToUser(id, "LeaderLib_SharedData_StoreData", Ext.JsonStringify(data))
+				GameSettingsManager.Sync(id)
 				CustomStatSystem:SyncData(id)
 			end
 		end
@@ -128,7 +128,7 @@ if Ext.IsServer() then
 		if syncSettingsNext == true then
 			syncSettingsNext = true
 		end
-		StartOneshotTimer("Timers_LeaderLib_SyncSharedData", delay or 50, OnSyncTimer)
+		StartOneshotTimer("LeaderLib_SyncSharedData", delay or 50, OnSyncTimer)
 	end
 
 	function GameHelpers.Data.SetRegion(region)

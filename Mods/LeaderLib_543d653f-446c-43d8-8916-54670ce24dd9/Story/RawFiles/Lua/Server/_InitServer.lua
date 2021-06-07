@@ -12,7 +12,6 @@ Ext.Require("Server/Game/Helpers/ProjectileHelpers.lua")
 Ext.Require("Server/Game/Helpers/SkillHelpers.lua")
 Ext.Require("Server/Game/Helpers/StatusHelpers.lua")
 Ext.Require("Server/Game/Helpers/SurfaceHelpers.lua")
-Ext.Require("Server/Game/QOL/BuffStatusPreserver.lua")
 Ext.Require("Server/Game/GameEvents.lua")
 Ext.Require("Server/Game/ComputeCharacterHit.lua")
 Ext.Require("Server/Game/QualityOfLife.lua")
@@ -35,6 +34,7 @@ if Vars.DebugMode then
 	if coroutine then
 	Ext.Require("Server/Debug/CoroutineTests.lua")
 	end
+	Ext.Require("Server/Game/QOL/BuffStatusPreserver.lua")
 end
 
 local function table_has_index(tbl, index)

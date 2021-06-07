@@ -51,6 +51,18 @@ function GameHelpers.Character.IsPlayer(character)
 	return false
 end
 
+---@param character EsvCharacter|EclCharacter|string|number
+---@return boolean
+function GameHelpers.Character.IsPlayerOrPartyMember(character)
+	if GameHelpers.Character.IsPlayer(character) then
+		return true
+	end
+	if not isClient then
+		return CharacterIsPartyMember(character) == 1
+	end
+	return false
+end
+
 function GameHelpers.Character.IsOrigin(uuid)
 	if not isClient then
 		return GameHelpers.DB.HasUUID("DB_Origins", uuid)

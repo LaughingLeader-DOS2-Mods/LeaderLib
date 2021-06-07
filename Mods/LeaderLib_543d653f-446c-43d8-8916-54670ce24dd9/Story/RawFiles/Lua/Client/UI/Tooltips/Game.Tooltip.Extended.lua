@@ -2,6 +2,7 @@ local math = math
 local table = table
 local debug = debug
 local pairs = pairs
+local ipairs = ipairs
 local type = type
 local string = string
 local setmetatable = setmetatable
@@ -1784,7 +1785,7 @@ end
 
 function TooltipData:GetElements(type)
 	local elements = {}
-	for i,element in pairs(self.Data) do
+	for i,element in ipairs(self.Data) do
 		if element.Type == type then
 			table.insert(elements, element)
 		end

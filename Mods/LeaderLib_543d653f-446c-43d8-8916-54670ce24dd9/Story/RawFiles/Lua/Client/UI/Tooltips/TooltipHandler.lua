@@ -270,11 +270,25 @@ end
 
 Ext.RegisterListener("StatusGetDescriptionParam", StatusGetDescriptionParam)
 
+local baseText = ts:Create("hbb9884d7g3b9ag43dfga88egdcc32db8bd74", "<br>Base: [1]")
+
 ---@param character EclCharacter
----@param stat string
+---@param name string
 ---@param tooltip TooltipData
-local function OnStatTooltip(character, stat, tooltip)
-	
+local function OnStatTooltip(character, name, tooltip)
+	if name == "APRecovery" then
+		local stat = Ext.GetStat(character.Stats.Name)
+		for i,element in ipairs(tooltip:GetElements("StatsAPBase")) do
+			if i == 1 then
+				element.Label = baseText:ReplacePlaceholders(stat.APMaximum)
+			elseif i == 2 then
+				element.Label = baseText:ReplacePlaceholders(stat.APStart)
+			elseif i == 3 then
+				element.Label = baseText:ReplacePlaceholders(stat.APRecovery)
+			end
+		end
+	end
+	print(name, Ext.JsonStringify(tooltip.Data))
 end
 
 ---@param character EclCharacter
@@ -842,7 +856,7 @@ Ext.RegisterListener("SessionLoaded", function()
 	Game.Tooltip.RegisterListener("Rune", nil, OnRuneTooltip)
 	Game.Tooltip.RegisterListener("Skill", nil, OnSkillTooltip)
 	Game.Tooltip.RegisterListener("Status", nil, OnStatusTooltip)
-	--Game.Tooltip.RegisterListener("Stat", nil, OnStatTooltip)
+	Game.Tooltip.RegisterListener("Stat", nil, OnStatTooltip)
 	if Vars.DebugMode then
 		Game.Tooltip.RegisterListener("Talent", nil, OnTalentTooltip)
 		Game.Tooltip.RegisterListener("CustomStat", nil, OnCustomStatTooltip)

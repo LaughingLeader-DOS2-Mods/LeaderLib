@@ -1,32 +1,22 @@
+if GameSettingsManager == nil then
+	GameSettingsManager = {}
+end
+GameSettingsManager.__index = GameSettingsManager
+function GameSettingsManager.GetSettings()
+	return GameSettings.Settings
+end
 
-local applyGameSettingsOnRunning = false
-local syncGameSettingsOnRunning = false
+local isClient = Ext.IsClient()
+local self = GameSettingsManager
 
-function ApplyGameSettings(sync)
-	if sync == nil then
-		sync = false
-	end
-	if GameSettings.Settings.BackstabSettings.Player.Enabled or GameSettings.Settings.BackstabSettings.NPC.Enabled then
-		EnableFeature("BackstabCalculation")
-	end
-	if Ext.IsServer() then
-		local state = Ext.GetGameState()
-		if state == "Running" then
-			applyGameSettingsOnRunning = false
-			syncGameSettingsOnRunning = false
-			if sync == true then
-				SyncGameSettings()
-			end
-			SyncStatOverrides(GameSettings, true)
-		elseif state == "Paused" then
-			applyGameSettingsOnRunning = true
-			syncGameSettingsOnRunning = sync
-		end
+function GameSettingsManager.Apply(sync)
+	if not isClient and sync then
+		SyncStatOverrides(GameSettings, true)
 	end
 	GameSettings:Apply()
 end
 
-function LoadGameSettings(sync)
+function GameSettingsManager.Load(sync)
 	local b,result = xpcall(function()
 		return GameSettings:LoadString(Ext.LoadFile("LeaderLib_GameSettings.json"))
 	end, debug.traceback)
@@ -34,21 +24,23 @@ function LoadGameSettings(sync)
 		if GameSettings.Settings ~= nil and GameSettings.Settings.Version ~= nil then
 			if GameSettings.Settings.Version < GameSettings.Default.Version then
 				GameSettings.Settings.Version = GameSettings.Default.Version
-				SaveGameSettings()
+				GameSettingsManager.Save()
 			end
 		end
 	else
 		Ext.Print("[LeaderLib] Generating and saving LeaderLib_GameSettings.json")
-		--Ext.PrintError("[LeaderLib:LoadGameSettings]", result)
+		--Ext.PrintError("[LeaderLib:GameSettingsManager.Load]", result)
 		GameSettings = Classes.LeaderLibGameSettings:Create()
-		SaveGameSettings()
+		self.Save()
 	end
 	GameSettings.Loaded = true
-	ApplyGameSettings(sync)
+	self.Apply(sync)
 	return GameSettings
 end
 
-function SaveGameSettings()
+LoadGameSettings = GameSettingsManager.Load
+
+function GameSettingsManager.Save()
 	if GameSettings ~= nil then
 		local b,err = xpcall(function() 
 			GameSettings:Apply()
@@ -58,133 +50,39 @@ function SaveGameSettings()
 			Ext.PrintError(err)
 		end
 	elseif Vars.DebugMode then
-		Ext.PrintWarning("[LeaderLib:GameSettingsManager:SaveGameSettings] GameSettings is nil?")
+		Ext.PrintWarning("[LeaderLib:GameSettingsManager:GameSettingsManager.Save] GameSettings is nil?")
 	end
 end
 
-function SyncGameSettings(id)
-	if Ext.IsServer() then
-		GameSettings:Sync()
+SaveGameSettings = GameSettingsManager.Save
+
+function GameSettingsManager.Sync(id)
+	if not isClient then
 		if id ~= nil then
 			Ext.PostMessageToUser(id, "LeaderLib_SyncGameSettings", GameSettings:ToString())
 		else
 			Ext.BroadcastMessage("LeaderLib_SyncGameSettings", GameSettings:ToString())
 		end
+	else
+		Ext.PostMessageToServer("LeaderLib_SyncGameSettings", GameSettings:ToString())
 	end
 end
 
-if Ext.IsClient() then
-	Ext.RegisterNetListener("LeaderLib_SyncGameSettings", function(call, gameSettingsStr)
-		local clientSettings = {}
-		if GameSettings and GameSettings.Settings and GameSettings.Settings.Client then
-			for k,v in pairs(GameSettings.Settings.Client) do
-				clientSettings[k] = v
-			end
-		end
-		GameSettings:LoadString(gameSettingsStr)
-		if not GameSettings.Settings.Client then
-			GameSettings.Settings.Client = clientSettings
-		else
-			for k,v in pairs(clientSettings) do
-				GameSettings.Settings.Client[k] = v
-			end
-		end
-		GameSettings:Apply()
-		GameSettings.Loaded = true
-		Ext.Print("[LeaderLib_SyncGameSettings] Synced game settings from server.")
-	end)
-
-	local Qualifiers = {
-		Strength = true,
-		Finesse = true,
-		Intelligence = true,
-		Constitution = true,
-		Memory = true,
-		Wits = true,
-		Sight = true,
-		Hearing = true,
-		CriticalChance = true,
-		["Act strength"] = true,
-	}
-	
-	---@param tbl table
-	local function SetCharacterStats(target, tbl)
-		for k,v in pairs(tbl) do
-			if type(v) == "table" and target[k] ~= nil then
-				SetCharacterStats(target[k], v)
-			else
-				local b,err = xpcall(function()
-					if target[k] ~= nil then
-						local current = target[k]
-						if Qualifiers[k] == true then
-							if v == "None" then
-								target[k] = "0"
-							else
-								target[k] = tostring(v)
-							end
-						else
-							target[k] = v
-						end
-						if Vars.DebugMode then
-							PrintLog("[LeaderLib_SetCharacterStats] Set %s | %s => %s", k, current, target[k])
-						end
-					end
-				end, debug.traceback)
-				if not b then
-					Ext.PrintError(err)
-				end
-			end
-		end
-	end
-
-	Ext.RegisterNetListener("LeaderLib_SetGameSettingsStats", function(cmd, dataStr)
-		local data = Common.JsonParse(dataStr)
-		if data ~= nil then
-			for _,v in pairs(data) do
-				if v.NetID ~= nil and v.Stats ~= nil then
-					local character = Ext.GetCharacter(v.NetID)
-					if character ~= nil then
-						SetCharacterStats(character.Stats.DynamicStats[1], v.Stats)
-					end
-				end
-			end
-			SaveGameSettings()
-		end
-	end)
-end
-
-if Ext.IsServer() then
+if not isClient then
 	Ext.RegisterNetListener("LeaderLib_GameSettingsChanged", function(call, gameSettingsStr)
+		fprint(LOGLEVEL.TRACE, "[%s]", call)
 		GameSettings:LoadString(gameSettingsStr)
-		ApplyGameSettings()
+		self.Apply(true)
 	end)
 end
 
 Ext.RegisterListener("GameStateChanged", function(from, to)
-	local justUnpaused = to == "Running" and from == "Paused"
-	if Ext.IsServer() then
-		if Vars.DebugMode then
-			PrintLog("[GameSettingsManager:GameStateChanged] (%s => %s) applyGameSettingsOnRunning(%s) syncGameSettingsOnRunning(%s)", from, to, applyGameSettingsOnRunning, syncGameSettingsOnRunning)
-		end
-		if justUnpaused then
-			if applyGameSettingsOnRunning or syncGameSettingsOnRunning then
-				ApplyGameSettings(syncGameSettingsOnRunning)
-			end
-		end
-	elseif justUnpaused then
-		GameSettings:Apply()
-	end
+	fprint(LOGLEVEL.TRACE, "[GameStateChanged:%s] (%s) => (%s)", isClient and "CLIENT" or "SERVER", from, to)
 end)
 
 --Ext.RegisterListener("ModuleLoadStarted", LoadSettings)
 
 Ext.RegisterListener("ModuleLoadStarted", function()
 	--- So we can initialize the settings file in the main menu.
-	LoadGameSettings()
-end)
-
-Ext.RegisterListener("SessionLoading", function()
-	if Ext.Version() >= 53 then
-		SettingsManager.LoadConfigFiles()
-	end
+	GameSettingsManager.Load()
 end)

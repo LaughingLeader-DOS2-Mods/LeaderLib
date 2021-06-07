@@ -258,7 +258,7 @@ if Ext.IsServer() then
 		Ext.RegisterNetListener("LeaderLib_SetSkipTutorial", function(cmd, isEnabledStr)
 			GameSettings.Settings.SkipTutorial.Enabled = isEnabledStr == "true"
 			runSkipTutorialSetup = GameSettings.Settings.SkipTutorial.Enabled
-			SaveGameSettings()
+			GameSettingsManager.Save()
 		end)
 
 		function SkipTutorial.OnLeaderLibInitialized()

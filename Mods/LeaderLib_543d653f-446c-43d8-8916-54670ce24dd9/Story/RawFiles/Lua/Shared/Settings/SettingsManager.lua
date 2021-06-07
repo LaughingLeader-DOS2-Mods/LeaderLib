@@ -286,3 +286,7 @@ if Ext.IsServer() then
 	
 	end
 end
+
+Ext.RegisterListener("SessionLoading", function()
+	SettingsManager.LoadConfigFiles()
+end)

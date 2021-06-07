@@ -246,7 +246,7 @@ Ext.RegisterNetListener("LeaderLib_Client_InvokeListeners", function(cmd, payloa
 		local listeners = Listeners[data.Event]
 		if listeners then
 			if data.Event == "LuaReset" then
-				LoadGameSettings()
+				GameSettingsManager.Load()
 			end
 			if data.Args then
 				InvokeListenerCallbacks(listeners, table.unpack(data.Args))
@@ -260,7 +260,7 @@ Ext.RegisterNetListener("LeaderLib_Client_InvokeListeners", function(cmd, payloa
 		local listeners = Listeners[payload]
 		if listeners then
 			if payload == "LuaReset" then
-				LoadGameSettings()
+				GameSettingsManager.Load()
 			end
 			InvokeListenerCallbacks(listeners)
 		else

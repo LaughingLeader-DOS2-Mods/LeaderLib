@@ -107,10 +107,6 @@ function LeaderLibGameSettings:ToString()
     return Ext.JsonStringify(copy)
 end
 
-function LeaderLibGameSettings:__tostring()
-    return self:ToString()
-end
-
 ---@return LeaderLibGameSettings
 function LeaderLibGameSettings:Create()
     local this =
@@ -216,49 +212,62 @@ function LeaderLibGameSettings:LoadString(str)
 	return false
 end
 
-function LeaderLibGameSettings:Sync()
+function LeaderLibGameSettings:ApplyAPChanges()
+	local characters = {}
+
 	if Ext.IsServer() then
-		--GameHelpers.UI.SetStatusVisibility(self.Settings.Client.HideStatuses)
-		local settings = self.Settings.APSettings.Player
-		local statChanges = {}
 		for i,v in pairs(Osi.DB_IsPlayer:Get(nil)) do
-			local character = Ext.GetCharacter(v[1])
-			if character ~= nil then
-				local userid = CharacterGetReservedUserID(v[1])
-				local stats = {}
-				local baseStat = Ext.GetStat(character.Stats.Name)
-				if settings.Enabled then
-					if settings.Start > 0 then
-						stats.APStart = settings.Start
-					else
-						stats.APStart = baseStat.APStart
-					end
-					if settings.Max > 0 then
-						stats.APMaximum = settings.Max
-					else
-						stats.APMaximum = baseStat.APMaximum
-					end
-					if settings.Recovery > 0 then
-						stats.APRecovery = settings.Recovery
-					else
-						stats.APRecovery = baseStat.APRecovery
-					end
-				else
-					stats.APStart = baseStat.APStart
-					stats.APMaximum = baseStat.APMaximum
-					stats.APRecovery = baseStat.APRecovery
-				end
-				
-				table.insert(statChanges, {
-					NetID = character.NetID,
-					Stats = stats
-				})
-			end
+			characters[#characters+1] = StringHelpers.GetUUID(v[1])
 		end
-		if statChanges and #statChanges > 0 then
-			Ext.BroadcastMessage("LeaderLib_SetGameSettingsStats", Ext.JsonStringify(statChanges), nil)
+	else
+		for mc in StatusHider.PlayerInfo:GetCharacterMovieClips(true) do
+			characters[#characters+1] = Ext.DoubleToHandle(mc.characterHandle)
 		end
 	end
+
+	local settings = self.Settings.APSettings.Player
+
+	for _,v in pairs(characters) do
+		local character = Ext.GetCharacter(v)
+		if character then
+			local stats = {}
+			local baseStat = Ext.GetStat(character.Stats.Name)
+			if settings.Enabled then
+				if settings.Start > 0 then
+					stats.APStart = settings.Start
+				else
+					stats.APStart = baseStat.APStart
+				end
+				if settings.Max > 0 then
+					stats.APMaximum = settings.Max
+				else
+					stats.APMaximum = baseStat.APMaximum
+				end
+				if settings.Recovery > 0 then
+					stats.APRecovery = settings.Recovery
+				else
+					stats.APRecovery = baseStat.APRecovery
+				end
+			else
+				stats.APStart = baseStat.APStart
+				stats.APMaximum = baseStat.APMaximum
+				stats.APRecovery = baseStat.APRecovery
+			end
+			character.Stats.DynamicStats[1].APMaximum = stats.APMaximum
+			character.Stats.DynamicStats[1].APRecovery = stats.APRecovery
+			character.Stats.DynamicStats[1].APStart = stats.APStart
+			baseStat.APStart = stats.APStart
+			baseStat.APMaximum = stats.APMaximum
+			baseStat.APRecovery = stats.APRecovery
+			if Ext.IsServer() then
+				Ext.SyncStat(baseStat.Name, false)
+			end
+		end
+	end
+end
+
+function LeaderLibGameSettings:Sync(userId)
+
 end
 
 function LeaderLibGameSettings:Apply()
@@ -269,11 +278,38 @@ function LeaderLibGameSettings:Apply()
 		StatusHider.RefreshStatusVisibility()
 		TalentManager.ToggleDivineTalents(self.Settings.Client.DivineTalentsEnabled)
 	end
+	self:ApplyAPChanges()
 end
-
-Ext.RegisterNetListener("LeaderLib_GameSettings_Apply", function(cmd, payload)
-	GameSettings:Apply()
-end)
 
 Classes.LeaderLibGameSettings = LeaderLibGameSettings
 GameSettings = LeaderLibGameSettings:Create()
+
+local isClient = Ext.IsClient()
+Ext.RegisterNetListener("LeaderLib_SyncGameSettings", function(cmd, payload)
+	fprint(LOGLEVEL.DEFAULT, "[LeaderLib_SyncGameSettings:%s] Loading settings.", Ext.IsClient() and "CLIENT" or "SERVER")
+	if isClient then
+		local clientSettings = {}
+		if GameSettings and GameSettings.Settings and GameSettings.Settings.Client then
+			for k,v in pairs(GameSettings.Settings.Client) do
+				clientSettings[k] = v
+			end
+		end
+		GameSettings:LoadString(payload)
+		if not GameSettings.Settings.Client then
+			GameSettings.Settings.Client = clientSettings
+		else
+			for k,v in pairs(clientSettings) do
+				GameSettings.Settings.Client[k] = v
+			end
+		end
+	else
+		GameSettings:LoadString(payload)
+	end
+	GameSettings:Apply()
+	GameSettings.Loaded = true
+	GameSettingsManager.Save()
+
+	if isClient then
+		SyncStatOverrides(GameSettings, false)
+	end
+end)

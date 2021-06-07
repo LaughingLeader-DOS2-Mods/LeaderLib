@@ -161,7 +161,7 @@ local function RegisterListeners()
 	local data = GameSettings
 	if GameSettings == nil or GameSettings.Loaded == false then
 		-- This function may run before the game is "Running" and the settings load normally.
-		data = LoadGameSettings()
+		data = GameSettingsManager.Load()
 	end
 	if not Vars.ControllerEnabled then
 		for i,v in pairs(pointEvents) do

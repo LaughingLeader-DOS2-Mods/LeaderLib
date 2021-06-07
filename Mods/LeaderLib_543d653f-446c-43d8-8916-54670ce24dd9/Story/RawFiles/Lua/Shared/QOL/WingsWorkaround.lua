@@ -61,9 +61,9 @@ local wingsProps = {
 	Shield = "ExtraProperties",
 }
 
-function OverrideWings(syncMode)
+function OverrideWings(isServer)
 	if Features.WingsWorkaround == true then
-		if syncMode == true then
+		if isServer == true then
 			for statName,data in pairs(wingsOverride) do
 				---@type StatEntryStatusData
 				local stat = Ext.GetStat(statName)
@@ -89,7 +89,7 @@ function OverrideWings(syncMode)
 					local wingsPropIndex = PropertiesHasWings(props)
 					if wingsPropIndex ~= false and not PropertiesHasWingsVisual(props) then
 						props[wingsPropIndex].Action = "LEADERLIB_WINGS"
-						if syncMode == true then
+						if isServer == true then
 							--@type StatPropertyStatus[]
 							local stat = Ext.GetStat(statName)
 							if stat then

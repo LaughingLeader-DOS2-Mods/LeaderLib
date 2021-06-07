@@ -692,7 +692,7 @@ end
 local function DisplayTalents_CC(ui, call, ...)
 	if GameSettings.Default == nil then
 		-- This function may run before the game is "Running" and the settings load normally.
-		LoadGameSettings()
+		GameSettingsManager.Load()
 	end
 
 	---@type EsvCharacter

@@ -97,7 +97,7 @@ local function OnInitialized(region, isRunning)
 		if not LoadGlobalSettings() then
 			SaveGlobalSettings()
 		end
-		LoadGameSettings()
+		GameSettingsManager.Load()
 		if GameSettings.Settings.SurfaceSettings.PoisonDoesNotIgnite == true and GameSettings.Settings.EnableDeveloperTests == true then
 			GameHelpers.Surface.UpdateRules()
 		end

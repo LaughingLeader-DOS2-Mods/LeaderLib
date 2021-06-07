@@ -297,11 +297,11 @@ function GameSettingsMenu.AddSettings(ui, addToArray)
 
 		mainMenu.addMenuButton(AddButton("ClearBlacklist", function()
 			GameSettings.Settings.Client.StatusOptions.Blacklist = {}
-			SaveGameSettings()
+			GameSettingsManager.Save()
 		end), text.Button_ClearBlacklist.Value, "", true, text.Button_ClearBlacklist_Description.Value)
 		mainMenu.addMenuButton(AddButton("ClearWhitelist", function()
 			GameSettings.Settings.Client.StatusOptions.Whitelist = {}
-			SaveGameSettings()
+			GameSettingsManager.Save()
 		end), text.Button_ClearWhitelist.Value, "", true, text.Button_ClearWhitelist_Description.Value)
 	end
 end
@@ -366,9 +366,10 @@ function GameSettingsMenu.CommitChanges()
 		end
 	end
 	Ext.Print("Committed LeaderLib_GameSettings changes.")
-	SaveGameSettings()
+	GameSettingsManager.Save()
+	GameSettings:Apply()
 	if Client.IsHost then
-		Ext.PostMessageToServer("LeaderLib_GameSettingsChanged", Ext.JsonStringify({Settings=GameSettings.Settings}))
+		Ext.PostMessageToServer("LeaderLib_GameSettingsChanged", GameSettings:ToString())
 	end
 	--Ext.PostMessageToServer("LeaderLib_ModMenu_SaveChanges", Ext.JsonStringify(changes))
 end

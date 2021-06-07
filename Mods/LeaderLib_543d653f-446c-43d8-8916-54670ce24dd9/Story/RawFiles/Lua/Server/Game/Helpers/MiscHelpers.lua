@@ -65,25 +65,39 @@ end
 ---@param partyMember string
 ---@param includeSummons boolean
 ---@param includeFollowers boolean
----@param includeDead boolean
+---@param excludeDead boolean
 ---@param includeSelf boolean
 ---@return string[]
-function GameHelpers.GetParty(partyMember, includeSummons, includeFollowers, includeDead, includeSelf)
+function GameHelpers.GetParty(partyMember, includeSummons, includeFollowers, excludeDead, includeSelf)
+	partyMember = StringHelpers.GetUUID(partyMember or CharacterGetHostCharacter())
 	local party = {}
+	if includeSelf then
+		party[partyMember] = true
+	end
 	local allParty = Osi.DB_LeaderLib_AllPartyMembers:Get(nil)
 	if allParty ~= nil then
 		for i,v in pairs(allParty) do
-			local uuid = v[1]
-			if CharacterIsDead(uuid) == 0 or includeDead then
-				if (uuid ~= partyMember or includeSelf) and CharacterIsInPartyWith(partyMember, uuid) == 1 then
-					if (CharacterIsSummon(uuid) == 0 or includeSummons) and (CharacterIsPartyFollower(uuid) == 0 or includeFollowers) then
-						party[#party+1] = uuid
+			local uuid = StringHelpers.GetUUID(v[1])
+			local isDead = CharacterIsDead(uuid) == 1
+			if not isDead or excludeDead ~= true then
+				if uuid == partyMember and not includeSelf then
+					--Skip
+				else
+					if CharacterIsInPartyWith(partyMember, uuid) == 1
+					and (CharacterIsSummon(uuid) == 0 or includeSummons) 
+					and (CharacterIsPartyFollower(uuid) == 0 or includeFollowers)
+					then
+						party[uuid] = true
 					end
 				end
 			end
 		end
 	end
-	return party
+	local data = {}
+	for uuid,b in pairs(party) do
+		data[#data+1] = uuid
+	end
+	return data
 end
 
 ---Roll between 0 and 100 and see if the result is below a number.

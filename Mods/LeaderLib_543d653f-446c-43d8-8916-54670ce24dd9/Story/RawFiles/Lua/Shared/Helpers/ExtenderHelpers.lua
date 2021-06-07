@@ -422,9 +422,12 @@ local weaponStatAttributes = {
 ---@param level integer
 ---@param attribute string
 ---@param weaponType string
----@param damageFromBaseBoost integer
+---@param damageFromBaseBoost integer|nil
+---@param isBoostStat boolean|nil
+---@param baseWeaponDamage number|nil
+---@param rarity string|nil
 ---@return StatItem
-function GameHelpers.Ext.CreateWeaponTable(stat,level,attribute,weaponType,damageFromBaseBoost,isBoostStat,baseWeaponDamage)
+function GameHelpers.Ext.CreateWeaponTable(stat,level,attribute,weaponType,damageFromBaseBoost,isBoostStat,baseWeaponDamage,rarity)
 	local weapon = {}
 	weapon.ItemType = "Weapon"
 	weapon.Name = stat

@@ -207,6 +207,7 @@ local ignoreImports = {
 	Settings = true,
 	ImportUnsafe = true,
 	Import = true,
+	CustomSkillProperties = true,
 }
 
 --Data/table imports.

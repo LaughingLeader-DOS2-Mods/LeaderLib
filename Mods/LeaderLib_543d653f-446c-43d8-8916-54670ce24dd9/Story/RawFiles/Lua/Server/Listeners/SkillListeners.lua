@@ -306,7 +306,7 @@ function OnSkillHit(skill, target, source, damage, hit, context, hitStatus)
 							if bonusWeapon ~= nil and bonusWeapon ~= "" then
 								local extraProps = GameHelpers.Stats.GetExtraProperties(bonusWeapon)
 								if extraProps and #extraProps > 0 then
-									GameHelpers.ApplyProperties(target.MyGuid, source.MyGuid, extraProps)
+									GameHelpers.ApplyProperties(source, target, extraProps)
 								end
 							end
 						end

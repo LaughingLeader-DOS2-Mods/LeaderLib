@@ -10,11 +10,28 @@ local function ContextContains(context, find)
 	return false
 end
 
---- Applies ExtraProperties/SkillProperties.
----@param target string
----@param source string|nil
+---Applies ExtraProperties/SkillProperties.
+---@param source EsvCharacter
+---@param target EsvGameObject|number[]
 ---@param properties StatProperty[]
-function GameHelpers.ApplyProperties(target, source, properties)
+---@param targetPosition number[]|nil
+---@param radius number|nil
+---@param skill string|nil
+function GameHelpers.ApplyProperties(source, target, properties, targetPosition, radius, skill)
+	local t = type(target)
+	if skill then
+		local stat = Ext.GetStat(skill)
+		if t == "table" then
+			radius = radius or math.max(stat.ExplodeRadius or stat.AreaRadius or 3)
+			Ext.ExecuteSkillPropertiesOnPosition(skill, source.MyGuid, target, radius, "AoE", false)
+		elseif t == "userdata" then
+			Ext.ExecuteSkillPropertiesOnTarget(skill, source.Handle, target.Handle, targetPosition or target.WorldPos, "Target", false)
+		else
+			target = Ext.GetGameObject(target)
+			Ext.ExecuteSkillPropertiesOnTarget(skill, source.Handle, target.Handle, targetPosition or target.WorldPos, "Target", false)
+		end
+		return true
+	end
 	for i,v in pairs(properties) do
 		if v.Type == "Status" then
 			if ContextContains(v.Context, "Target") then
@@ -59,6 +76,7 @@ function GameHelpers.ApplyProperties(target, source, properties)
 			end
 		end
 	end
+	return true
 end
 
 ---Get a character's party members.

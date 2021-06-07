@@ -35,7 +35,7 @@ function GameHelpers.ApplyBonusWeaponStatuses(source, target)
 					if bonusWeapon ~= nil and bonusWeapon ~= "" then
 						local extraProps = GameHelpers.Stats.GetExtraProperties(bonusWeapon)
 						if extraProps and #extraProps > 0 then
-							GameHelpers.ApplyProperties(GameHelpers.GetUUID(target), GameHelpers.GetUUID(source), extraProps)
+							GameHelpers.ApplyProperties(source, target, extraProps)
 						end
 					end
 				end

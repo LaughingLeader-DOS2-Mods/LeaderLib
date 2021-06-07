@@ -24,6 +24,9 @@ local function FireCharacterSheetPointListeners(character, stat, statType)
 	InvokeListenerCallbacks(Listeners.CharacterSheetPointChanged, character, stat, statType)
 end
 
+local hotBarButtons = {
+	CharacterSheet = 1
+}
 local function OnSheetEvent(ui, call, param1, ...)
 	--local params = Common.FlattenTable({...})
 	--PrintDebug("[LeaderLib_CharacterSheet.lua:OnSheetEvent] Event called. call("..tostring(call)..") params("..tostring(Common.Dump(params))..")")
@@ -48,7 +51,7 @@ local function OnSheetEvent(ui, call, param1, ...)
 		end
 	elseif call == "hotbarBtnPressed" then
 		local buttonID = math.floor(param1)
-		if buttonID == ID.HOTBAR.CharacterSheet then
+		if buttonID == hotBarButtons.CharacterSheet then
 			Ext.PostMessageToServer("LeaderLib_CharacterSheet_StorePartyValues", "")
 		end
 	elseif call == "setHelmetOption" then

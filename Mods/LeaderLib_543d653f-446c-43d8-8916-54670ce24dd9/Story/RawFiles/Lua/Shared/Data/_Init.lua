@@ -390,17 +390,6 @@ Data.RarityEnum = {
 	Divine = 6,
 }
 
-ID = {
-	MESSAGE = {
-		ATTRIBUTE_CHANGED = "ATTRIBUTE_CHANGED",
-		ABILITY_CHANGED = "ABILITY_CHANGED",
-		STORE_PARTY_VALUES = "STORE_PARTY_VALUES"
-	},
-	HOTBAR = {
-		CharacterSheet = 1
-	}
-}
-
 ---@class SKILL_STATE
 SKILL_STATE = {
 	PREPARE = "PREPARE",

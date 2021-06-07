@@ -432,6 +432,25 @@ local statusHitAttributes = {
 	"ImpactDirection",
 }
 
+-- Ext.RegisterOsirisListener("CharacterStatusApplied", 3, "before", function(target, statusId, source)
+-- 	if not Data.EngineStatus[statusId] and CharacterIsControlled(target) == 1 then
+-- 		local status = Ext.GetCharacter(target):GetStatus(statusId)
+-- 		print(statusId)
+-- 		print("=========")
+-- 		local data = {}
+-- 		for _,k in pairs(statusAttributes) do
+-- 			if type(status[k]) == "userdata" then
+-- 				data[k] = tostring(status[k])
+-- 			else
+-- 				data[k] = status[k]
+-- 			end
+-- 		end
+-- 		table.sort(data)
+-- 		print(Ext.JsonStringify(data))
+-- 		print("=========")
+-- 	end
+-- end)
+
 --[[
 
 -- Ext.RegisterOsirisListener("NRD_OnHeal", 4, "before", function(target, source, amount, handle)

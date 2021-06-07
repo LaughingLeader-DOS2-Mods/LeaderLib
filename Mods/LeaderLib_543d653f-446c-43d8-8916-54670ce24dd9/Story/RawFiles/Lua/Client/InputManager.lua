@@ -378,10 +378,10 @@ Ext.RegisterUITypeInvokeListener(Data.UIType.worldTooltip, "clearAll", function(
 	end
 end)
 
-if Vars.DebugMode then
-	Input.RegisterListener(function(eventName, pressed, id, keys, controllerEnabled)
-		if not string.find(eventName, "Mouse") then
-			fprint(LOGLEVEL.DEFAULT, "[Input] event(%s) pressed(%s) id(%s) time(%s)", eventName, pressed, id, Ext.MonotonicTime())
-		end
-	end)
-end
+-- if Vars.DebugMode then
+-- 	Input.RegisterListener(function(eventName, pressed, id, keys, controllerEnabled)
+-- 		if not string.find(eventName, "Mouse") then
+-- 			fprint(LOGLEVEL.DEFAULT, "[Input] event(%s) pressed(%s) id(%s) time(%s)", eventName, pressed, id, Ext.MonotonicTime())
+-- 		end
+-- 	end)
+-- end

@@ -4,7 +4,7 @@ if Ext.IsDeveloperMode() then
 
 	local host = {}
 	setmetatable(host, {
-		__call = function(includeSommons, includeFollowers)
+		__call = function()
 			return Ext.GetCharacter(CharacterGetHostCharacter())
 		end,
 		__index = function(tbl,k)
@@ -24,6 +24,80 @@ if Ext.IsDeveloperMode() then
 		end
 	})
 	consoleEnvironment.host = host
+
+	local character = {}
+	function character.GetAll(props, includeDefault, exportToFileName)
+		local data = Ext.GetAllCharacters()
+		setmetatable(data, {
+			__tostring = function()
+				local text = {}
+				local printProps = props and type(props) == "table"
+				for _,v in pairs(data) do
+					local c = Ext.GetCharacter(v)
+					local entry = {}
+					if printProps then
+						for _,propertyName in pairs(props) do
+							if propertyName == "Tags" then
+								local tags = c:GetTags()
+								table.sort(tags)
+								entry.Tags = tags
+							else
+								local value = c[propertyName] or c.RootTemplate[propertyName] or c.Stats[propertyName] or nil
+								if type(value) == "function" then
+									local b,result = xpcall(value, debug.traceback, c)
+									if not b then
+										Ext.PrintError(result)
+									else
+										if string.find(propertyName, "Statuses") then
+											propertyName = "Statuses"
+										end
+										entry[propertyName] = result
+									end
+								elseif value then
+									entry[propertyName] = tostring(value)
+								end
+							end
+						end
+					end
+					if not printProps or includeDefault then
+						entry.DisplayName = GameHelpers.Character.GetDisplayName(c)
+						entry.NetID = c.NetID
+						entry.StatsId = c.Stats.Name
+						entry.Name = c.RootTemplate.Name
+						entry.RootTemplate = c.RootTemplate.TemplateName
+						if c.OffStage then
+							entry.OffStage = true
+						end
+					end
+					text[v] = entry
+				end
+				return Ext.JsonStringify(text)
+			end
+		})
+		if exportToFileName then
+			Ext.SaveFile(string.format("ConsoleDebug/%s.json", exportToFileName), tostring(data))
+		end
+		return data
+	end
+	setmetatable(character, {
+		__call = function(tbl, uuid)
+			local t = type(uuid)
+			if t == "string" then
+				if ObjectExists(uuid) == 0 then
+					error(string.format("UUID '%s' does not exist!", uuid))
+				end
+				return Ext.GetCharacter(uuid)
+			elseif t == "number" then
+				return Ext.GetCharacter(uuid)
+			end
+			return nil
+		end,
+		__index = function(tbl,k)
+			Ext.PrintWarning("Call character() with a uuid first.")
+			return character
+		end
+	})
+	consoleEnvironment.character = character
 
 	local party = {}
 	function party.ApplyStatus(entries, status, duration, force)

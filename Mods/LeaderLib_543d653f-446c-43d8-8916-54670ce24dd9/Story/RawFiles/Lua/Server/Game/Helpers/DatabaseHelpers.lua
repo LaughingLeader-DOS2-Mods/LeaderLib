@@ -202,3 +202,21 @@ function GameHelpers.DB.HasUUID(databaseName, uuid, arity, checkColumn)
 	end
 	return false
 end
+
+function GameHelpers.DB.Flatten(databaseTable, formatUUID)
+	local data = {}
+	for i,v in pairs(databaseTable) do
+		local params = v
+		for i2,v2 in pairs(params) do
+			if type(v2) == "string" then
+				params[i2] = StringHelpers.GetUUID(v2)
+			end
+		end
+		if #params > 1 then
+			data[i] = params
+		else
+			data[i] = table.unpack(params)
+		end
+	end
+	return data
+end

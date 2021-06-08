@@ -10,6 +10,55 @@ local function ContextContains(context, find)
 	return false
 end
 
+---Applies a status to a target, or targets around a position.
+---@param target EsvGameObject|UUID|number|number[]|nil
+---@param status string
+---@param duration number|nil
+---@param force boolean|nil
+---@param source EsvGameObject|UUID|number|nil
+---@param radius number|nil
+---@param canTargetItems boolean|nil
+function GameHelpers.ApplyStatus(target, status, duration, force, source, radius, canTargetItems)
+	if not duration then
+		duration = 6.0
+		local potion = Ext.StatGetAttribute(status, "StatsId")
+		if not StringHelpers.IsNullOrWhitespace(potion) then
+			if string.find(potion, ";") then
+				for m in string.gmatch(potion, "[%a%d_]+,") do
+					local potionDuration = Ext.StatGetAttribute(string.sub(m, 1, #m-1), "Duration")
+					if potionDuration and potionDuration > duration then
+						duration = potionDuration * 6.0
+					end
+				end
+			else
+				local potionDuration = Ext.StatGetAttribute(potion, "Duration")
+				if potionDuration then
+					duration = potionDuration * 6.0
+				end
+			end
+		end
+	end
+	if force == nil then
+		force = false
+	end
+	source = GameHelpers.GetUUID(source)
+	if type(target) ~= "table" then
+		target = GameHelpers.GetUUID(target)
+	else
+		radius = radius or 1.0
+		local statusType = GetStatusType(status)
+		local x,y,z = table.unpack(target)
+		for _,v in pairs(Ext.GetCharactersAroundPosition(x,y,z,radius)) do
+			ApplyStatus(v, status, duration, force, source)
+		end
+		if canTargetItems and (statusType ~= "CHARMED" and statusType ~= "DAMAGE_ON_MOVE") then
+			for _,v in pairs(Ext.GetItemsAroundPosition(x,y,z,radius)) do
+				ApplyStatus(v, status, duration, force, source)
+			end
+		end
+	end
+end
+
 ---Applies ExtraProperties/SkillProperties.
 ---@param source EsvCharacter
 ---@param target EsvGameObject|number[]
@@ -32,48 +81,69 @@ function GameHelpers.ApplyProperties(source, target, properties, targetPosition,
 		end
 		return true
 	end
+	local canTargetItems = false
+	if skill then
+		if Ext.StatGetAttribute(skill, "CanTargetItems") == "Yes" then
+			canTargetItems = true
+		end
+	end
 	for i,v in pairs(properties) do
+		local actionTarget = target
+		if ContextContains(v.Context, "Target") then
+			actionTarget = target
+		elseif ContextContains(v.Context, "Self") then
+			actionTarget = source
+		end
+		local aType = type(actionTarget)
+		if aType == "string" or aType == "number" then
+			actionTarget = Ext.GetGameObject(actionTarget) or actionTarget
+			aType = type(actionTarget)
+		end
 		if v.Type == "Status" then
-			if ContextContains(v.Context, "Target") then
-				if v.Action == "EXPLODE" then
-					if v.StatusChance >= 1.0 then
-						GameHelpers.Skill.Explode(source, v.StatsId, target)
-					elseif v.StatusChance > 0 then
-						if Ext.Random(0.0, 1.0) <= v.StatusChance then
-							GameHelpers.Skill.Explode(source, v.StatsId, target)
-						end
+			if v.Action == "EXPLODE" then
+				if v.StatusChance >= 1.0 then
+					GameHelpers.Skill.Explode(source, v.StatsId, actionTarget)
+				elseif v.StatusChance > 0 then
+					if Ext.Random(0.0, 1.0) <= v.StatusChance then
+						GameHelpers.Skill.Explode(source, v.StatsId, actionTarget)
 					end
-				else
-					if target ~= nil then
-						if v.StatusChance >= 1.0 then
-							ApplyStatus(target, v.Action, v.Duration, 0, source)
-						elseif v.StatusChance > 0 then
-							if Ext.Random(0.0, 1.0) <= v.StatusChance then
-								ApplyStatus(target, v.Action, v.Duration, 0, source)
-							end
+				end
+			else
+				if actionTarget then
+					if v.StatusChance >= 1.0 then
+						GameHelpers.ApplyStatus(actionTarget, v.Action, v.Duration, 0, source, radius, canTargetItems)
+					elseif v.StatusChance > 0 then
+						local statusObject = {
+							StatusId = v.Action,
+							StatusType = GetStatusType(v.Action, "StatusType"),
+							ForceStatus = false,
+							StatusSourceHandle = source.Handle,
+							TargetHandle = aType == "userdata" and target.Handle or nil,
+							CanEnterChance = Ext.Round(v.StatusChance * 100)
+						}
+						if Ext.Random(0,100) <= Game.Math.StatusGetEnterChance(statusObject, true) then
+							GameHelpers.ApplyStatus(actionTarget, v.Action, v.Duration, 0, source, radius, canTargetItems)
 						end
 					end
 				end
 			end
-			if ContextContains(v.Context, "Self") then
-				if v.Action == "EXPLODE" then
-					if v.StatusChance >= 1.0 then
-						GameHelpers.Skill.Explode(source, v.StatsId, source)
-					elseif v.StatusChance > 0 then
-						if Ext.Random(0.0, 1.0) <= v.StatusChance then
-							GameHelpers.Skill.Explode(source, v.StatsId, source)
-						end
-					end
-				else
-					if v.StatusChance >= 1.0 then
-						ApplyStatus(source, v.Action, v.Duration, 0, source)
-					elseif v.StatusChance > 0 then
-						if Ext.Random(0.0, 1.0) <= v.StatusChance then
-							ApplyStatus(source, v.Action, v.Duration, 0, source)
-						end
-					end
+		elseif v.Type == "SurfaceTransform" then
+			local x,y,z = 0,0,0
+			if targetPosition then
+				x,y,z = table.unpack(targetPosition)
+			else
+				if aType == "table" then
+					x,y,z = table.unpack(actionTarget)
+				elseif aType == "userdata" then
+					x,y,z = table.unpack(actionTarget.WorldPos)
+				elseif aType == "string" then
+					x,y,z = GetPosition(actionTarget)
 				end
 			end
+			TransformSurfaceAtPosition(x, y, z, v.Action, "Ground", 1.0, 6.0, source)
+		elseif v.Type == "Force" then
+			local distance = math.floor(v.Arg2/6) or 1.0
+			GameHelpers.ForceMoveObject(source, actionTarget, distance)
 		end
 	end
 	return true

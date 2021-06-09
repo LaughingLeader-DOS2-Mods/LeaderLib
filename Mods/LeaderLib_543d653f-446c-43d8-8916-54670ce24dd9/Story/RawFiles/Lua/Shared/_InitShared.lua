@@ -21,6 +21,10 @@ Vars = {
 		Total = 0
 	},
 	DebugMode = Ext.IsDeveloperMode() == true,
+	Print = {
+		HitPrepare = false,
+		Hit = false
+	},
 	ControllerEnabled = false
 }
 

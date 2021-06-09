@@ -167,6 +167,12 @@ function OnLuaReset()
 		if fileStr ~= nil then
 			local varData = Common.JsonParse(fileStr)
 			if varData ~= nil then
+				if varData._PrintSettings then
+					for k,v in pairs(varData._PrintSettings) do
+						Vars.Print[k] = v
+					end
+					varData._PrintSettings = nil
+				end
 				for name,data in pairs(varData) do
 					if Mods[name] ~= nil and Mods[name].PersistentVars ~= nil then
 						for k,v in pairs(data) do

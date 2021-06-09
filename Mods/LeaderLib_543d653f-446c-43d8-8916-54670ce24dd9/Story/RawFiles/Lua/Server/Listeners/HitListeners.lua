@@ -9,7 +9,9 @@ local function OnPrepareHit(target, source, damage, handle)
 		data.DamageList.None = nil
 		data.DamageList[data.DamageType] = amount
 		data.DamageType = "Chaos"
-		--print(data:ToDebugString())
+	end
+	if Vars.DebugMode and Vars.Print.HitPrepare then
+		print(data:ToDebugString())
 	end
 	InvokeListenerCallbacks(Listeners.OnPrepareHit, target, source, damage, handle, data)
 end
@@ -59,10 +61,6 @@ Ext.RegisterListener("StatusHitEnter", function(hitStatus, context)
 
 	---@type HitRequest
 	local hit = context.Hit or hitStatus.Hit
-	if Vars.DebugMode then
-		fprint(LOGLEVEL.TRACE, "[%s] hit.HitWithWeapon(%s) hit.Equipment(%s) context.Weapon(%s)", context.HitId, hit.HitWithWeapon, hit.Equipment, context.Weapon)
-		fprint(LOGLEVEL.TRACE, "hit.DamageType(%s) hit.TotalDamageDone(%s) DamageList:\n%s", hit.DamageType, hit.TotalDamageDone, Ext.JsonStringify(hit.DamageList:ToTable()))
-	end
 
 	local skillId = not StringHelpers.IsNullOrWhitespace(hitStatus.SkillId) and string.gsub(hitStatus.SkillId, "_%-?%d+$", "") or nil
 	local skill = nil
@@ -77,9 +75,11 @@ Ext.RegisterListener("StatusHitEnter", function(hitStatus, context)
 		end
 	end
 
-	if Vars.DebugMode then
+	if Vars.DebugMode and Vars.Print.Hit then
 		local wpn = hitStatus.WeaponHandle and Ext.GetItem(hitStatus.WeaponHandle) or nil
 		fprint(LOGLEVEL.DEFAULT, "[StatusHitEnter:%s] Damage(%s) HitReason[%s](%s) DamageSourceType(%s) WeaponHandle(%s) Skill(%s)", context.HitId, hit.TotalDamageDone, hitStatus.HitReason, Data.HitReason[hitStatus.HitReason] or "", hitStatus.DamageSourceType, wpn and wpn.DisplayName or "nil", skillId or "nil")
+		fprint(LOGLEVEL.TRACE, "hit.HitWithWeapon(%s) hit.Equipment(%s) context.Weapon(%s)", hit.HitWithWeapon, hit.Equipment, context.Weapon)
+		fprint(LOGLEVEL.TRACE, "hit.DamageType(%s) hit.TotalDamageDone(%s) DamageList:\n%s", hit.DamageType, hit.TotalDamageDone, Ext.JsonStringify(hit.DamageList:ToTable()))
 	end
 
 

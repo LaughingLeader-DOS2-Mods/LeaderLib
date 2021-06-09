@@ -28,7 +28,9 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 end)
 
 local function ResetLua()
-	local varData = {}
+	local varData = {
+		_PrintSettings = Vars.Print
+	}
 	for name,data in pairs(Mods) do
 		if data.PersistentVars ~= nil then
 			varData[name] = data.PersistentVars

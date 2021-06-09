@@ -43,13 +43,13 @@ local function DestroyInstance(force)
 	UIExtensions.Timers = {}
 end
 
-RegisterListener("BeforeLuaReset", function()
-	if UIExtensions.Instance then
-		DestroyInstance(true)
-	end	
-end)
-
 if Vars.DebugMode then
+	RegisterListener("BeforeLuaReset", function()
+		if UIExtensions.Instance then
+			DestroyInstance(true)
+		end	
+	end)
+
 	RegisterListener("LuaReset", function()
 		UIExtensions.SetupInstance()
 	

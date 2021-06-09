@@ -199,6 +199,62 @@ function CharacterData:ApplyOrSetStatus(status, duration, force, source)
 	end
 end
 
+--- Removes a status or array of statuses, or 'all'.
+---@param status string|string[]
+---@param ignorePermanent boolean|nil Ignore permanent statuses when removing 'all'.
+function CharacterData:RemoveStatus(status, ignorePermanent)
+	if type(status) == "table" then
+		for i,v in pairs(status) do
+			self:RemoveStatus(v)
+		end
+	else
+		if StringHelpers.Equals(status, "all", true) then
+			local character = self:GetCharacter()
+			if character then
+				if ignorePermanent == true then
+					for i,v in pairs(character:GetStatusObjects()) do
+						if v.CurrentLifeTime ~= -1 then
+							RemoveStatus(self.UUID, v.StatusId)
+						end
+					end
+				else
+					for i,v in pairs(character:GetStatuses()) do
+						RemoveStatus(self.UUID, v)
+					end
+				end
+			end
+		else
+			if ignorePermanent == true then
+				local character = self:GetCharacter()
+				if character then
+					for i,v in pairs(character:GetStatusObjects()) do
+						if v.StatusId == status and v.CurrentLifeTime ~= -1 then
+							RemoveStatus(self.UUID, v.StatusId)
+						end
+					end
+				end
+			else
+				RemoveStatus(self.UUID, status)
+			end
+		end
+	end
+end
+
+---Shortcut for calling RemoveStatus with 'all'.
+---@param ignorePermanent boolean|nil Ignore permanent statuses when removing 'all'.
+function CharacterData:RemoveAllStatuses(ignorePermanent)
+	self:RemoveStatus("all", ignorePermanent)
+end
+
+---A better alternative to RemoveHarmfulStatuses since it actually checks for debuffs.
+---@param ignorePermanent boolean|nil Ignore permanent statuses.
+function CharacterData:RemoveHarmfulStatuses(ignorePermanent)
+	local character = self:GetCharacter()
+	if character then
+		GameHelpers.Status.RemoveHarmful(character, ignorePermanent)
+	end
+end
+
 ---Equips a root template, or creates and equips one if the item doesn't exist.
 ---@param template string
 ---@param all boolean|nil Equip all instances.

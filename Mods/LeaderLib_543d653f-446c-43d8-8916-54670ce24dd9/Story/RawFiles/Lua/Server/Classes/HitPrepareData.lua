@@ -3,7 +3,6 @@
 ---@field TotalDamageDone integer
 ---@field DamageList table<string, integer>
 ---@field Handle integer
----@field IsChaos boolean
 ---@field Target string
 ---@field Source string
 ---Hit Attributes
@@ -144,7 +143,7 @@ function HitPrepareData:Create(handle, damage, target, source, skipAttributeLoad
 		Handle = handle or -1,
 		TotalDamageDone = damage or 0,
 		Target = target or "",
-		source = source or "",
+		Source = source or "",
 		DamageList = {}
 	}
 	if not skipAttributeLoading then
@@ -160,16 +159,11 @@ function HitPrepareData:Create(handle, damage, target, source, skipAttributeLoad
 			end
 			local total = 0
 		
-			data.IsChaos = damage > 0 and ChaosDamageTypes[data.DamageType] ~= nil
-		
 			for i,damageType in Data.DamageTypes:Get() do
 				local amount = NRD_HitGetDamage(handle, damageType)
 				if amount and amount > 0 then
 					total = total + amount
 					data.DamageList[damageType] = amount
-					if data.IsChaos and damageType ~= "None" and amount > 0 then
-						data.IsChaos = false
-					end
 				end
 			end
 			if total > data.TotalDamageDone then
@@ -186,6 +180,31 @@ function HitPrepareData:Create(handle, damage, target, source, skipAttributeLoad
 	setmetatable(data, self)
 
 	return data
+end
+
+---Returns true if this hit has all the signs of a projectile weapon with Chaos damage.
+---DamageType will be a random type, while the actual damage in the list will be "None" type.
+function HitPrepareData:IsBuggyChaosDamage()
+	local IsChaos = self.TotalDamageDone > 0 and ChaosDamageTypes[self.DamageType] ~= nil
+	for damageType,amount in pairs(self.DamageList) do
+		if IsChaos and damageType ~= "None" and amount > 0 then
+			IsChaos = false
+		end
+	end
+	return IsChaos
+end
+
+function HitPrepareData:ToDebugString()
+	local keys = {}
+	for k,v in pairs(self) do
+		keys[#keys+1] = k
+	end
+	table.sort(keys)
+	local data = {}
+	for _,k in ipairs(keys) do
+		data[k] = self[k]
+	end
+	return Ext.JsonStringify(data)
 end
 
 Classes.HitPrepareData = HitPrepareData

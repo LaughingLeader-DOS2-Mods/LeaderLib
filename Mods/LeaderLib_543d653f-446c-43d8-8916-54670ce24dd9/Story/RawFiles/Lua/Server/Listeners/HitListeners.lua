@@ -5,13 +5,14 @@
 local function OnPrepareHit(target, source, damage, handle)
 	local data = Classes.HitPrepareData:Create(handle, damage, target, source, false)
 	if Features.FixChaosWeaponProjectileDamage then
-		print(Ext.JsonStringify(data))
-		if data.IsChaos then
+		if data:IsBuggyChaosDamage() then
 			local amount = data.DamageList.None
 			data.DamageList.None = nil
 			data.DamageList[data.DamageType] = amount
 			NRD_HitClearDamage(handle, "None")
 			NRD_HitAddDamage(handle, data.DamageType, amount)
+			NRD_HitSetString(handle, "DamageType", "Chaos")
+			data.DamageType = "Chaos"
 		end
 	end
 	InvokeListenerCallbacks(Listeners.OnPrepareHit, target, source, damage, handle, data)

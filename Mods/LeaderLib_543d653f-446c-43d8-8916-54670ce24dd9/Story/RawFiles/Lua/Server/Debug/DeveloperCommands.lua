@@ -1046,3 +1046,39 @@ Ext.RegisterConsoleCommand("setcustomstat", function(cmd, id, amount)
 	amount = tonumber(amount) or 1
 	CustomStatSystem:SetStat(CharacterGetHostCharacter(), id, amount)
 end)
+
+Ext.RegisterConsoleCommand("testchaoswand", function(cmd)
+	local stat = Ext.GetStat("WPN_Wand_Chaos") or Ext.CreateStat("WPN_Wand_Chaos", "Weapon", "WPN_Wand_Air")
+	stat["Damage Type"] = "Chaos"
+	stat.ObjectCategory = "WandChaos"
+	stat.Projectile = "6770f065-df9b-4a0b-a6cb-bfa5e5c28c0e"
+	stat.ExtraProperties = {
+		{
+			Action = "CreateSurface",
+			Arg1 = 1.0,
+			Arg2 = 0.0,
+			Arg3 = "DamageType",
+			Arg4 = 1.0,
+			Arg5 = 0.0,
+			Context = 
+			{
+				"Target",
+				"AoE"
+			},
+			StatusHealType = "None",
+			Type = "GameAction"
+		}
+	}
+	Ext.SyncStat("WPN_Wand_Chaos", false)
+	local item = GameHelpers.Item.CreateItemByStat("WPN_Wand_Chaos", true, {
+		StatsLevel = math.min(10, CharacterGetLevel(CharacterGetHostCharacter())),
+		ItemType = "Epic",
+		GMFolding = false,
+		IsIdentified = true
+	})
+	if item ~= nil then
+		ItemToInventory(item, CharacterGetHostCharacter(), 1, 1, 1)
+	else
+		error("Failed to create WPN_Wand_Chaos")
+	end
+end)

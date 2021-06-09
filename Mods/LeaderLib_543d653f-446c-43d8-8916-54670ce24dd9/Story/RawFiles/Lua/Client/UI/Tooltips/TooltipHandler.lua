@@ -638,7 +638,7 @@ local function OnItemTooltip(item, tooltip)
 		if Features.FixPureDamageDisplay then
 			if not GameHelpers.Item.IsObject(item) and item.Stats.ItemType == "Weapon" then
 				local hasPureDamage = false
-				if item.Stats.DamageTypeOverwrite == "None" or item.Stats["Damage Type"] == "None" then
+				if item.Stats["Damage Type"] == "None" then
 					hasPureDamage = true
 				end
 				if not hasPureDamage then

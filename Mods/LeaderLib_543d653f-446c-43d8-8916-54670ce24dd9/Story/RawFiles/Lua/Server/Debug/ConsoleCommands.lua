@@ -327,14 +327,43 @@ Ext.RegisterConsoleCommand("undoremoveunmemorizedskills", function(cmd)
 	end
 end)
 
+---@param params ItemDefinition
+local function AddItemStat(stat, params)
+	if not params then
+		params = {}
+	else
+		if params.Level then
+			params.StatsLevel = params.Level
+			params.Level = nil
+		end
+		if params.Rarity then
+			params.ItemType = params.Rarity
+			params.Rarity = nil
+		end
+	end
+	if params.StatsLevel == nil then
+		params.StatsLevel = CharacterGetLevel(CharacterGetHostCharacter())
+	end
+	if params.ItemType == nil then
+		params.ItemType = "Epic"
+	end
+	if params.IsIdentified == nil then
+		params.IsIdentified = true
+	end
+	if params.GMFolding == nil then
+		params.GMFolding = false
+	end
+
+	local item = GameHelpers.Item.CreateItemByStat(stat, true, params)
+	if item ~= nil then
+		ItemToInventory(item, CharacterGetHostCharacter(), 1, 1, 1)
+		return true
+	end
+	return false
+end
+
 --!additemstat ARM_UNIQUE_LLWEAPONEX_ThiefGloves_A Unique fe0754e3-5f0b-409e-a856-31e646201ee4
 Ext.RegisterConsoleCommand("additemstat", function(command, stat, levelstr, rarity, template)
-	local equipmentStatType = {
-		Weapon = true,
-		Armor = true,
-		Shield = true,
-	}
-	
 	if stat == nil then
 		stat = "WPN_Sword_2H"
 	end
@@ -345,21 +374,16 @@ Ext.RegisterConsoleCommand("additemstat", function(command, stat, levelstr, rari
 			rarity = "Epic"
 		end
 	end
-	local statType = NRD_StatGetType(stat)
-	local host = CharacterGetHostCharacter()
-	local level = CharacterGetLevel(host)
-	local skipLevelCheck = true
+	local level = CharacterGetLevel(CharacterGetHostCharacter())
 	if levelstr ~= nil then
 		level = math.tointeger(tonumber(levelstr)) or level
-		skipLevelCheck = false
 	end
-	local item = GameHelpers.Item.CreateItemByStat(stat, true, {StatsLevel = level, ItemType = rarity})
-	if item ~= nil then
-		ItemToInventory(item, host, 1, 1, 1)
-	else
-		print("[additemstat] Failed to generate item!", stat, rarity, levelstr, template)
+	if not AddItemStat(stat, {StatsLevel = level, ItemType = rarity}) then
+		print("[additemstat] Failed to generate item!", stat, {})
 	end
 end)
+
+AddConsoleVariable("additemstat", AddItemStat)
 
 Ext.RegisterConsoleCommand("additemtemplate", function(command, template, count)
 	if count == nil then 

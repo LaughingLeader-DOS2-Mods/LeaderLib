@@ -2,6 +2,13 @@
 if Ext.IsDeveloperMode() then
 	local consoleEnvironment = getmetatable(_ENV).__index
 
+	function AddConsoleVariable(name, value)
+		consoleEnvironment[name] = value
+	end
+
+	AddConsoleVariable("Common", Common)
+	AddConsoleVariable("GameHelpers", GameHelpers)
+
 	local host = {}
 	setmetatable(host, {
 		__call = function()
@@ -23,7 +30,7 @@ if Ext.IsDeveloperMode() then
 			return StringHelpers.GetUUID(CharacterGetHostCharacter())
 		end
 	})
-	consoleEnvironment.host = host
+	AddConsoleVariable("host", host)
 
 	local character = {}
 	function character.GetAll(props, includeDefault, exportToFileName)
@@ -97,7 +104,7 @@ if Ext.IsDeveloperMode() then
 			return character
 		end
 	})
-	consoleEnvironment.character = character
+	AddConsoleVariable("character", character)
 
 	local party = {}
 	function party.ApplyStatus(entries, status, duration, force)
@@ -215,7 +222,7 @@ if Ext.IsDeveloperMode() then
 			return Ext.JsonStringify(data)
 		end
 	})
-	consoleEnvironment.party = party
-	consoleEnvironment.Common = Common
-	consoleEnvironment.GameHelpers = GameHelpers
+	AddConsoleVariable("party", party)
+else
+	AddConsoleVariable = function() end
 end

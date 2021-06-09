@@ -46,7 +46,7 @@ if Ext.IsServer() then
 	---@type table<string, fun(flag:string, enabled:boolean):void[]>
 	Listeners.GlobalFlagChanged = {}
 
-	---@alias OnPrepareHitCallback fun(target:string, source:string, damage:integer, handle:integer):void
+	---@alias OnPrepareHitCallback fun(target:string, source:string, damage:integer, handle:integer, data:HitPrepareData):void
 	---@alias OnHitCallback fun(target:string, source:string, damage:integer, handle:integer, skill:string|nil):void
 	---@alias OnStatusHitEnterCallback fun(target:EsvCharacter|EsvItem, source:EsvCharacter|EsvItem, totalDamage:integer, hit:HitRequest, context:HitContext, hitStatus:EsvStatusHit, skill:StatEntrySkillData|nil):void
 	---@alias OnSkillHitCallback fun(skill:string, source:string, state:SKILL_STATE, data:HitData|ProjectileHitData):void

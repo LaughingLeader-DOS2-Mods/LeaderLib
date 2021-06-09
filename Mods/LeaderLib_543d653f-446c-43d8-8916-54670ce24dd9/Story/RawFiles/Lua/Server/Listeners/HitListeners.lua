@@ -3,17 +3,13 @@
 ---@type damage integer
 ---@type handle integer
 local function OnPrepareHit(target, source, damage, handle)
-	local data = Classes.HitPrepareData:Create(handle, damage, target, source, false)
-	if Features.FixChaosWeaponProjectileDamage then
-		if data:IsBuggyChaosDamage() then
-			local amount = data.DamageList.None
-			data.DamageList.None = nil
-			data.DamageList[data.DamageType] = amount
-			NRD_HitClearDamage(handle, "None")
-			NRD_HitAddDamage(handle, data.DamageType, amount)
-			NRD_HitSetString(handle, "DamageType", "Chaos")
-			data.DamageType = "Chaos"
-		end
+	local data = Classes.HitPrepareData:Create(handle, damage, target, source, true)
+	if Features.FixChaosWeaponProjectileDamage and data:IsBuggyChaosDamage() then
+		local amount = data.DamageList.None
+		data.DamageList.None = nil
+		data.DamageList[data.DamageType] = amount
+		data.DamageType = "Chaos"
+		--print(data:ToDebugString())
 	end
 	InvokeListenerCallbacks(Listeners.OnPrepareHit, target, source, damage, handle, data)
 end

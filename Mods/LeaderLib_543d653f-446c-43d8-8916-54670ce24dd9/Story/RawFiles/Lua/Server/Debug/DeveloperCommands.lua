@@ -1059,7 +1059,7 @@ Ext.RegisterConsoleCommand("testchaoswand", function(cmd)
 			Arg2 = 0.0,
 			Arg3 = "DamageType",
 			Arg4 = 1.0,
-			Arg5 = 0.0,
+			Arg5 = 1.0,
 			Context = 
 			{
 				"Target",

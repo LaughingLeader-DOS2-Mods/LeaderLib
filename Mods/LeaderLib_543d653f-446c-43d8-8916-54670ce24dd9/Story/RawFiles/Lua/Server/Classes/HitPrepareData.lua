@@ -5,6 +5,14 @@
 ---@field Handle integer
 ---@field Target string
 ---@field Source string
+---@field Cached boolean Whether attributes/damage has been cached/saved in the table.
+---Hit API Attributes
+---@field SimulateHit boolean
+---@field HitType string
+---@field NoHitRoll boolean
+---@field CriticalRoll string
+---@field ForceReduceDurability boolean
+---@field HighGround string
 ---Hit Attributes
 ---@field Equipment integer
 ---@field DeathType string
@@ -38,6 +46,14 @@
 ---@field NoEvents boolean
 
 local HIT_ATTRIBUTE = {
+	--Hit Prepare Attributes
+	SimulateHit = "boolean",
+	HitType = "string",
+	NoHitRoll = "boolean",
+	CriticalRoll = "string",
+	ForceReduceDurability = "boolean",
+	HighGround = "string",
+	--Hit Attributes
 	Equipment = "integer",
 	DeathType = "string",
 	DamageType = "string",
@@ -87,6 +103,7 @@ local HitPrepareData = {
 	DamageList = {},
 	Handle = -1,
 }
+
 HitPrepareData.__index = function(tbl,k)
 	if tbl.Handle then
 		local t = HIT_ATTRIBUTE[k]
@@ -99,6 +116,23 @@ HitPrepareData.__index = function(tbl,k)
 		end
 	end
 	return rawget(HitPrepareData, k)
+end
+
+HitPrepareData.__newindex = function(tbl,k,v)
+	if tbl.Handle then
+		local t = HIT_ATTRIBUTE[k]
+		if t == "integer" then
+			NRD_HitSetInt(tbl.Handle, k, v)
+			return
+		elseif t == "boolean" then
+			NRD_HitSetInt(tbl.Handle, k, v)
+			return
+		elseif t == "string" then
+			NRD_HitSetString(tbl.Handle, k, v)
+			return
+		end
+	end
+	rawset(tbl, k, v)
 end
 
 HitPrepareData.__call = function(_, ...)
@@ -117,7 +151,9 @@ local function CreateDamageMetaList(handle)
 	end
 	meta.__newindex = function(tbl,k,value)
 		if Data.DamageTypeEnums[k] then
-			if type(value) == "number" then
+			if value == nil or value == 0 then
+				NRD_HitClearDamage(handle, k)
+			elseif type(value) == "number" then
 				NRD_HitClearDamage(handle, k)
 				NRD_HitAddDamage(handle, k, value)
 			else
@@ -129,6 +165,33 @@ local function CreateDamageMetaList(handle)
 	end
 	setmetatable(damageList, meta)
 	return damageList
+end
+
+local function SaveHitAttributes(handle, data)
+	for k,t in pairs(HIT_ATTRIBUTE) do
+		if t == "integer" then
+			data[k] = NRD_HitGetInt(handle, k) or nil
+		elseif t == "boolean" then
+			data[k] = NRD_HitGetInt(handle, k) == 1 and true or false
+		elseif t == "string" then
+			data[k] = NRD_HitGetString(handle, k) or ""
+		end
+	end
+	local total = 0
+
+	for i,damageType in Data.DamageTypes:Get() do
+		local amount = NRD_HitGetDamage(handle, damageType)
+		if amount and amount > 0 then
+			total = total + amount
+			data.DamageList[damageType] = amount
+		end
+	end
+	if total > data.TotalDamageDone then
+		if Vars.DebugMode then
+			fprint(LOGLEVEL.WARNING, "Damage mismatch? Event's damage(%s) actual total(%s) handle(%s)", data.TotalDamageDone, total, handle)
+		end
+		data.TotalDamageDone = total
+	end
 end
 
 ---@param handle integer The hit handle.
@@ -144,34 +207,12 @@ function HitPrepareData:Create(handle, damage, target, source, skipAttributeLoad
 		TotalDamageDone = damage or 0,
 		Target = target or "",
 		Source = source or "",
-		DamageList = {}
+		DamageList = {},
+		Cached = skipAttributeLoading ~= true
 	}
 	if not skipAttributeLoading then
 		if handle > -1 then
-			for k,t in pairs(HIT_ATTRIBUTE) do
-				if t == "integer" then
-					data[k] = NRD_HitGetInt(handle, k) or nil
-				elseif t == "boolean" then
-					data[k] = NRD_HitGetInt(handle, k) == 1 and true or false
-				elseif t == "string" then
-					data[k] = NRD_HitGetString(handle, k) or ""
-				end
-			end
-			local total = 0
-		
-			for i,damageType in Data.DamageTypes:Get() do
-				local amount = NRD_HitGetDamage(handle, damageType)
-				if amount and amount > 0 then
-					total = total + amount
-					data.DamageList[damageType] = amount
-				end
-			end
-			if total > data.TotalDamageDone then
-				if Vars.DebugMode then
-					fprint(LOGLEVEL.WARNING, "Damage mismatch? Event's damage(%s) actual total(%s) handle(%s)", damage, total, handle)
-				end
-				data.TotalDamageDone = total
-			end
+			SaveHitAttributes(handle, data)
 		end
 	else
 		data.DamageList = CreateDamageMetaList(handle)
@@ -182,27 +223,64 @@ function HitPrepareData:Create(handle, damage, target, source, skipAttributeLoad
 	return data
 end
 
+---Returns true if the hit isn't blocked, dodged, or missed.
+---@return boolean
+function HitPrepareData:Succeeded()
+	return self.Blocked == false and self.Missed == false and self.Dodged == false
+end
+
+---Returns true if the hit isn't blocked, dodged, or missed.
+---@return boolean
+function HitPrepareData:ClearAllDamage()
+	NRD_HitClearAllDamage(self.Handle)
+	if self.Cached then
+		self.DamageList = {}
+	end
+	self.TotalDamageDone = 0
+end
+
 ---Returns true if this hit has all the signs of a projectile weapon with Chaos damage.
 ---DamageType will be a random type, while the actual damage in the list will be "None" type.
 function HitPrepareData:IsBuggyChaosDamage()
-	local IsChaos = self.TotalDamageDone > 0 and ChaosDamageTypes[self.DamageType] ~= nil
-	for damageType,amount in pairs(self.DamageList) do
-		if IsChaos and damageType ~= "None" and amount > 0 then
-			IsChaos = false
+	local isChaos = self.TotalDamageDone > 0 and ChaosDamageTypes[self.DamageType] ~= nil
+	if self.Cached then
+		for damageType,amount in pairs(self.DamageList) do
+			if isChaos and damageType ~= "None" and amount > 0 then
+				isChaos = false
+			end
+		end
+	else
+		for i,damageType in Data.DamageTypes:Get() do
+			local amount = NRD_HitGetDamage(self.Handle, damageType) or 0
+			if isChaos and damageType ~= "None" and amount > 0 then
+				isChaos = false
+			end
 		end
 	end
-	return IsChaos
+	return isChaos
 end
 
 function HitPrepareData:ToDebugString()
+	local target = self
+	if not self.Cached then
+		target = {
+			DamageList={}, 
+			TotalDamageDone = self.TotalDamageDone, 
+			Handle = self.Handle,
+			Target = self.Target,
+			Source = self.Source,
+			Cached = false
+		}
+		SaveHitAttributes(self.Handle, target)
+	end
 	local keys = {}
-	for k,v in pairs(self) do
+	for k,v in pairs(target) do
 		keys[#keys+1] = k
 	end
 	table.sort(keys)
 	local data = {}
 	for _,k in ipairs(keys) do
-		data[k] = self[k]
+		data[k] = target[k]
 	end
 	return Ext.JsonStringify(data)
 end

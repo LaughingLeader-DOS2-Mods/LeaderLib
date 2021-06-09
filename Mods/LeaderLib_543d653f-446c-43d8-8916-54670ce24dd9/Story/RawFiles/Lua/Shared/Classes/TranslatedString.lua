@@ -8,6 +8,12 @@ local TranslatedString = {
 	AutoReplacePlaceholders = false,
 }
 TranslatedString.__index = TranslatedString
+TranslatedString.__tostring = function(t)
+	if t and t.Value then
+		return t.Value
+	end
+	return tostring(t)
+end
 
 ---@param handle string
 ---@param content string

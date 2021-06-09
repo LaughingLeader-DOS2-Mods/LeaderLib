@@ -10,55 +10,6 @@ local function ContextContains(context, find)
 	return false
 end
 
----Applies a status to a target, or targets around a position.
----@param target EsvGameObject|UUID|number|number[]|nil
----@param status string
----@param duration number|nil
----@param force boolean|nil
----@param source EsvGameObject|UUID|number|nil
----@param radius number|nil
----@param canTargetItems boolean|nil
-function GameHelpers.ApplyStatus(target, status, duration, force, source, radius, canTargetItems)
-	if not duration then
-		duration = 6.0
-		local potion = Ext.StatGetAttribute(status, "StatsId")
-		if not StringHelpers.IsNullOrWhitespace(potion) then
-			if string.find(potion, ";") then
-				for m in string.gmatch(potion, "[%a%d_]+,") do
-					local potionDuration = Ext.StatGetAttribute(string.sub(m, 1, #m-1), "Duration")
-					if potionDuration and potionDuration > duration then
-						duration = potionDuration * 6.0
-					end
-				end
-			else
-				local potionDuration = Ext.StatGetAttribute(potion, "Duration")
-				if potionDuration then
-					duration = potionDuration * 6.0
-				end
-			end
-		end
-	end
-	if force == nil then
-		force = false
-	end
-	source = GameHelpers.GetUUID(source)
-	if type(target) ~= "table" then
-		target = GameHelpers.GetUUID(target)
-	else
-		radius = radius or 1.0
-		local statusType = GetStatusType(status)
-		local x,y,z = table.unpack(target)
-		for _,v in pairs(Ext.GetCharactersAroundPosition(x,y,z,radius)) do
-			ApplyStatus(v, status, duration, force, source)
-		end
-		if canTargetItems and (statusType ~= "CHARMED" and statusType ~= "DAMAGE_ON_MOVE") then
-			for _,v in pairs(Ext.GetItemsAroundPosition(x,y,z,radius)) do
-				ApplyStatus(v, status, duration, force, source)
-			end
-		end
-	end
-end
-
 ---Applies ExtraProperties/SkillProperties.
 ---@param source EsvCharacter
 ---@param target EsvGameObject|number[]
@@ -111,7 +62,7 @@ function GameHelpers.ApplyProperties(source, target, properties, targetPosition,
 			else
 				if actionTarget then
 					if v.StatusChance >= 1.0 then
-						GameHelpers.ApplyStatus(actionTarget, v.Action, v.Duration, 0, source, radius, canTargetItems)
+						GameHelpers.Status.Apply(actionTarget, v.Action, v.Duration, 0, source, radius, canTargetItems)
 					elseif v.StatusChance > 0 then
 						local statusObject = {
 							StatusId = v.Action,
@@ -122,7 +73,7 @@ function GameHelpers.ApplyProperties(source, target, properties, targetPosition,
 							CanEnterChance = Ext.Round(v.StatusChance * 100)
 						}
 						if Ext.Random(0,100) <= Game.Math.StatusGetEnterChance(statusObject, true) then
-							GameHelpers.ApplyStatus(actionTarget, v.Action, v.Duration, 0, source, radius, canTargetItems)
+							GameHelpers.Status.Apply(actionTarget, v.Action, v.Duration, 0, source, radius, canTargetItems)
 						end
 					end
 				end

@@ -317,3 +317,196 @@ function GameHelpers.Status.GetNextTieredStatus(obj, statusTable, duration, forc
 	local status = statusTable[tier]
 	return status,tier,lastTier
 end
+
+local potionProperties = {
+	"VitalityBoost",
+	"Strength",
+	"Finesse",
+	"Intelligence",
+	"Constitution",
+	"Memory",
+	"Wits",
+	"SingleHanded",
+	"TwoHanded",
+	"Ranged",
+	"DualWielding",
+	"RogueLore",
+	"WarriorLore",
+	"RangerLore",
+	"FireSpecialist",
+	"WaterSpecialist",
+	"AirSpecialist",
+	"EarthSpecialist",
+	"Sourcery",
+	"Necromancy",
+	"Polymorph",
+	"Summoning",
+	"PainReflection",
+	"Perseverance",
+	"Leadership",
+	"Telekinesis",
+	"Sneaking",
+	"Thievery",
+	"Loremaster",
+	"Repair",
+	"Barter",
+	"Persuasion",
+	"Luck",
+	"FireResistance",
+	"EarthResistance",
+	"WaterResistance",
+	"AirResistance",
+	"PoisonResistance",
+	"PhysicalResistance",
+	"PiercingResistance",
+	"Sight",
+	--"Hearing",
+	"Initiative",
+	"Vitality",
+	"VitalityPercentage",
+	"MagicPoints",
+	"ActionPoints",
+	"ChanceToHitBoost",
+	"AccuracyBoost",
+	"DodgeBoost",
+	"DamageBoost",
+	"APCostBoost",
+	"SPCostBoost",
+	"APMaximum",
+	"APStart",
+	"APRecovery",
+	"Movement",
+	"MovementSpeedBoost",
+	"Armor",
+	"MagicArmor",
+	"ArmorBoost",
+	"MagicArmorBoost",
+	"CriticalChance",
+	--"Reflection",
+	"RangeBoost",
+	"LifeSteal",
+}
+
+---@param stat StatEntryPotion|table
+local function IsHarmfulPotion(stat)
+	for i=1,#potionProperties do
+		local value = stat[potionProperties[i]]
+		local t = type(value)
+		if t == "number" and value < 0 then
+			return true
+		end
+	end
+	return false
+end
+
+local function IsHarmfulStatsId(statsId)
+	if not StringHelpers.IsNullOrWhitespace(statsId) then
+		if string.find(statsId, ";") then
+			for m in string.gmatch(statsId, "[%a%d_]+,") do
+				local statName = string.sub(m, 1, #m-1)
+				local stat = Ext.GetStat(statName)
+				if stat and IsHarmfulPotion(stat) then
+					return true
+				end
+			end
+		else
+			local stat = Ext.GetStat(statsId)
+			if stat and IsHarmfulPotion(stat) then
+				return true
+			end
+		end
+	end
+	return false
+end
+
+---Checks if a potion has any negative attributes.
+---@param stat string|StatEntryPotion|table
+---@return boolean
+GameHelpers.Status.IsHarmfulPotion = function(stat)
+	if type(stat) == "string" then
+		return IsHarmfulStatsId(stat)
+	else
+		return IsHarmfulPotion(stat)
+	end
+end
+
+---Removes harmful statuses by checking their type and potion stat values.
+---@param obj EsvCharacter|EsvItem
+---@param ignorePermanent boolean|nil Ignore permanent statuses.
+function GameHelpers.Status.RemoveHarmful(obj, ignorePermanent)
+	for _,status in pairs(obj:GetStatusObjects()) do
+		if ignorePermanent and status.CurrentLifeTime == -1 then
+			-- skip
+		else
+			local statusType = GetStatusType(status.StatusId)
+			if statusType == "DAMAGE" or statusType == "DAMAGE_ON_MOVE" or statusType == "CHARMED" then
+				RemoveStatus(obj.MyGuid, status.StatusId)
+			elseif statusType ~= "EFFECT" and not Data.IgnoredStatus[status.StatusId] then
+				local statsId = Ext.StatGetAttribute(status.StatusId, "StatsId")
+				if not StringHelpers.IsNullOrWhitespace(statsId) and IsHarmfulStatsId(statsId) then
+					RemoveStatus(obj.MyGuid, status.StatusId)
+				end
+			end
+		end
+	end
+end
+
+---Applies a status to a target, or targets around a position.
+---@param target EsvGameObject|UUID|number|number[]|nil
+---@param status string|string[]
+---@param duration number|nil
+---@param force boolean|nil
+---@param source EsvGameObject|UUID|number|nil
+---@param radius number|nil
+---@param canTargetItems boolean|nil
+function GameHelpers.Status.Apply(target, status, duration, force, source, radius, canTargetItems)
+	if not duration then
+		duration = 6.0
+		local potion = Ext.StatGetAttribute(status, "StatsId")
+		if not StringHelpers.IsNullOrWhitespace(potion) then
+			if string.find(potion, ";") then
+				for m in string.gmatch(potion, "[%a%d_]+,") do
+					local potionDuration = Ext.StatGetAttribute(string.sub(m, 1, #m-1), "Duration")
+					if potionDuration and potionDuration > duration then
+						duration = potionDuration * 6.0
+					end
+				end
+			else
+				local potionDuration = Ext.StatGetAttribute(potion, "Duration")
+				if potionDuration and potionDuration > 0 then
+					duration = potionDuration * 6.0
+				end
+			end
+		end
+	end
+	if force == nil then
+		force = false
+	end
+	local t = type(status)
+	if t == "string" then
+		source = GameHelpers.GetUUID(source)
+		if type(target) ~= "table" then
+			target = GameHelpers.GetUUID(target)
+			if target then
+				ApplyStatus(target, status, duration, force, source)
+			end
+		else
+			radius = radius or 1.0
+			local statusType = GetStatusType(status)
+			local x,y,z = table.unpack(target)
+			for _,v in pairs(Ext.GetCharactersAroundPosition(x,y,z,radius)) do
+				ApplyStatus(v, status, duration, force, source)
+			end
+			if canTargetItems and (statusType ~= "CHARMED" and statusType ~= "DAMAGE_ON_MOVE") then
+				for _,v in pairs(Ext.GetItemsAroundPosition(x,y,z,radius)) do
+					ApplyStatus(v, status, duration, force, source)
+				end
+			end
+		end
+	elseif t == "table" then
+		for i=1,#status do
+			GameHelpers.Status.Apply(target, status[i], duration, force, source, radius, canTargetItems)
+		end
+	end
+
+end

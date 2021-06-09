@@ -14,5 +14,5 @@ Lib.maf = maf
 Lib.inspect = Ext.Require("Shared/Libraries/inspect.lua")
 
 ---@type pprint
---Lib.pprint = Ext.Require("Shared/Libraries/pprint.lua")
+--Lib.pprint = Ext.Require("Shared/Libraries/test/pprint.lua")
 --Lib.pprint.defaults.sort_keys = true

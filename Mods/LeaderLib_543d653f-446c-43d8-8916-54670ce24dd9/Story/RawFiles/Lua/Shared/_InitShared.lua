@@ -152,7 +152,9 @@ TranslatedStringEntries = {}
 ---@type table<string,boolean>
 Features = {
 	BackstabCalculation = false,
-	FixChaosDamageDisplay = false,
+	FixPureDamageDisplay = true,
+	FixChaosDamageDisplay = true,
+	FixChaosWeaponProjectileDamage = true,
 	FixCorrosiveMagicDamageDisplay = false,
 	FixItemAPCost = true,
 	HideArmor = 0,
@@ -232,11 +234,23 @@ local imports = {
 	}
 }
 
+local function SetupMetaTables(targetModTable)
+	local meta = targetModTable.Vars and getmetatable(targetModTable.Vars) or {}
+	if not meta.__index then
+		meta.__index = Vars
+	end
+	if not targetModTable.Vars then
+		targetModTable.Vars = {}
+	end
+	setmetatable(targetModTable.Vars, meta)
+	targetModTable.LeaderLib = Mods.LeaderLib
+end
+
 ---Imports specific 'safe' LeaderLib globals to the target table.
 ---@param targetModTable table
 ---@param skipExistingCheck boolean If true, each key is set in the target table without checking if it already exists.
 function Import(targetModTable, skipExistingCheck)
-	targetModTable.LeaderLib = Mods.LeaderLib
+	SetupMetaTables(targetModTable)
 	for _,k in pairs(imports.All) do
 		if skipExistingCheck == true or not targetModTable[k] then
 			targetModTable[k] = Mods.LeaderLib[k]
@@ -277,7 +291,7 @@ end
 ---@param targetModTable table
 ---@param skipExistingCheck boolean If true, each key is set in the target table without checking if it already exists.
 function ImportUnsafe(targetModTable, skipExistingCheck)
-	targetModTable.LeaderLib = Mods.LeaderLib
+	SetupMetaTables(targetModTable)
 	for k,v in pairs(Mods.LeaderLib) do
 		if ignoreImports[k] ~= true then
 			if skipExistingCheck == true or not targetModTable[k] then

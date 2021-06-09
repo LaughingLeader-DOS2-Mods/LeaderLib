@@ -5,6 +5,7 @@ Ext.Require("Server/Classes/CharacterData.lua")
 Ext.Require("Server/Classes/PresetData.lua")
 Ext.Require("Server/Classes/QuestData.lua")
 Ext.Require("Server/Classes/VisualElementData.lua")
+Ext.Require("Server/Classes/HitPrepareData.lua")
 Ext.Require("Server/Classes/CallbackHandler.lua")
 if coroutine then
 Ext.Require("Server/Classes/Scenes/SceneStateData.lua")

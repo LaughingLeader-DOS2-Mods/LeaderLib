@@ -600,3 +600,80 @@ host = function() return Ext.GetCharacter(CharacterGetHostCharacter()) end
 -- local time = Ext.MonotonicTime(); local names = {}; for k,v in pairs(_G) do names[#names+1] = k end; table.sort(names); for _,v in ipairs(names) do print(v) end; print("Time total:", Ext.MonotonicTime() - time);
 -- local time = Ext.MonotonicTime(); local names = {}; for k,v in pairs(_G) do names[#names+1] = k end; table.sort(names); for _,v in pairs(names) do print(v) end; print("Time total:", Ext.MonotonicTime() - time);
 -- local time = Ext.MonotonicTime(); local names = {}; for k,v in pairs(_G) do if not Mods.LeaderLib.Data.OsirisEvents[k] then names[#names+1] = k end; end; table.sort(names); for i=1,#names do print(names[i]) end; print("Time total:", Ext.MonotonicTime() - time);
+
+---@param request EsvShootProjectileRequest
+Ext.RegisterListener("BeforeShootProjectile", function (request)
+	local data = {
+		UnknownFlag1 = request.UnknownFlag1,
+		Random = request.Random,
+	}
+	fprint(LOGLEVEL.DEFAULT, "[BeforeShootProjectile]\n%s", Ext.JsonStringify(data))
+end)
+
+---@param projectile EsvProjectile
+Ext.RegisterListener("ShootProjectile", function (projectile)
+	local data = {
+		DamageSourceType = projectile.DamageSourceType,
+		DamageType = projectile.DamageType,
+		HitInterpolation = projectile.HitInterpolation,
+		UseCharacterStats = projectile.UseCharacterStats,
+	}
+	fprint(LOGLEVEL.DEFAULT, "[ShootProjectile]\n%s", Ext.JsonStringify(data))
+end)
+
+local lastDamageType = {}
+
+---@param projectile EsvProjectile
+---@param hitObject EsvGameObject
+---@param position number[]
+Ext.RegisterListener("ProjectileHit", function (projectile, hitObject, position)
+	local caster = Ext.GetGameObject(projectile.CasterHandle)
+	if caster then
+		if Features.FixChaosWeaponProjectileDamage and projectile.DamageType ~= "None" then
+			lastDamageType[caster.MyGuid] = projectile.DamageType
+		end
+	end
+	local data = {
+		DamageSourceType = projectile.DamageSourceType,
+		DamageType = projectile.DamageType,
+		HitInterpolation = projectile.HitInterpolation,
+		UseCharacterStats = projectile.UseCharacterStats,
+		Caster = caster and {
+			MyGuid = caster.MyGuid,
+			NetID = caster.NetID
+		} or "nil"
+	}
+	fprint(LOGLEVEL.DEFAULT, "[ProjectileHit]\n%s", Lib.inspect(data))
+end)
+
+--- @param caster EsvGameObject
+--- @param position number[]
+--- @param damageList DamageList
+Ext.RegisterListener("GroundHit", function (caster, position, damageList)
+	if caster then
+		if Features.FixChaosWeaponProjectileDamage then
+			local nextType = lastDamageType[caster.MyGuid]
+			if nextType then
+				local amount = damageList:GetByType("None")
+				if amount > 0 then
+					damageList:Clear("None")
+					damageList:Add(nextType, amount)
+				end
+			end
+		end
+		lastDamageType[caster.MyGuid] = nil
+	end
+	local data = {
+		Caster = {
+			MyGuid = caster.MyGuid,
+			NetID = caster.NetID
+		},
+		Position = position,
+		DamageList = {}
+	}
+	for k,v in pairs(damageList:ToTable()) do
+		data.DamageList[v.DamageType] = v.Amount + (data.DamageList[v.DamageType] or 0)
+	end
+	--fprint(LOGLEVEL.DEFAULT, "[GroundHit]\n%s", Lib.pprint.pformat(data, {sort_keys=true}))
+	fprint(LOGLEVEL.DEFAULT, "[GroundHit]\n%s", Lib.inspect(data))
+end)

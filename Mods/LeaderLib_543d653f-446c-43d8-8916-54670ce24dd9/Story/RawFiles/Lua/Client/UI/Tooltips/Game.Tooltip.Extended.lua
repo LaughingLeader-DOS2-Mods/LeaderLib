@@ -1393,6 +1393,7 @@ function TooltipHooks:OnRenderSubTooltip(ui, propertyName, req, method, ...)
 			local statData = req.StatData or CustomStatSystem:GetStatByDouble(req.Stat)
 			if statData ~= nil then
 				self:NotifyListeners("CustomStat", statData.ID or statData.UUID, req, tooltip, req.Character, statData)
+				CustomStatSystem:OnTooltip(ui, req.Character, statData, tooltip)
 			else
 				self:NotifyListeners("CustomStat", nil, req, tooltip, req.Character, {ID=req.Stat})
 			end
@@ -1766,31 +1767,45 @@ function TooltipData:MarkDirty()
 	return Mods.LeaderLib.TooltipExpander.MarkDirty()
 end
 
-function TooltipData:GetElement(type)
+local function ElementTypeMatch(e,t,isTable)
+	if isTable then
+		for i=1,#t do
+			if t[i] == e then
+				return true
+			end
+		end
+	elseif e == t then
+		return true
+	end
+end
+
+function TooltipData:GetElement(t)
+	local isTable = type(t) == "table"
 	for i,element in pairs(self.Data) do
-		if element.Type == type then
+		if ElementTypeMatch(element.Type, t, isTable) then
 			return element
 		end
 	end
 end
 
-function TooltipData:GetLastElement(type)
+function TooltipData:GetLastElement(t)
+	local isTable = type(t) == "table"
 	for i=#self.Data,1,-1 do
 		local element = self.Data[i]
-		if element and element.Type == type then
+		if element and ElementTypeMatch(element.Type, t, isTable) then
 			return element
 		end
 	end
 end
 
-function TooltipData:GetElements(type)
+function TooltipData:GetElements(t)
+	local isTable = type(t) == "table"
 	local elements = {}
 	for i,element in ipairs(self.Data) do
-		if element.Type == type then
+		if ElementTypeMatch(element.Type, t, isTable) then
 			table.insert(elements, element)
 		end
 	end
-
 	return elements
 end
 

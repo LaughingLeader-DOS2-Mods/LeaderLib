@@ -3,6 +3,7 @@ if CustomStatSystem == nil then
 end
 
 CustomStatSystem.__index = CustomStatSystem
+CustomStatSystem.Loaded = false
 
 ---@class CustomStatTooltipType
 CustomStatSystem.TooltipType = {
@@ -106,6 +107,7 @@ local function LoadCustomStatsData()
 			categoryId = categoryId + 1
 		end
 	end
+	CustomStatSystem.Loaded = true
 end
 
 if not isClient then

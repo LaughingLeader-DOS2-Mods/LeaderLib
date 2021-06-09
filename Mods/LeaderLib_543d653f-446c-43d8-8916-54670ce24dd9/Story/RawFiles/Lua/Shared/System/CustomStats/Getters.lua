@@ -23,6 +23,9 @@ end
 ---@param mod string|nil Optional mod UUID to filter for.
 ---@return CustomStatData
 function CustomStatSystem:GetStatByID(id, mod)
+	if not self.Loaded then
+		return nil
+	end
 	if mod then
 		local stats = self.Stats[mod]
 		if stats and stats[id] then

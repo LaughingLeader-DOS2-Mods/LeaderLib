@@ -260,7 +260,7 @@ function HitPrepareData:IsBuggyChaosDamage()
 	return isChaos
 end
 
-function HitPrepareData:ToDebugString()
+function HitPrepareData:ToDebugString(indentChar)
 	local target = self
 	if not self.Cached then
 		target = {
@@ -282,7 +282,8 @@ function HitPrepareData:ToDebugString()
 	for _,k in ipairs(keys) do
 		data[k] = target[k]
 	end
-	return Ext.JsonStringify(data)
+	--return Ext.JsonStringify(data)
+	return Lib.inspect(data)
 end
 
 Classes.HitPrepareData = HitPrepareData

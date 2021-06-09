@@ -8,10 +8,13 @@ local function OnPrepareHit(target, source, damage, handle)
 		local amount = data.DamageList.None
 		data.DamageList.None = nil
 		data.DamageList[data.DamageType] = amount
-		data.DamageType = "Chaos"
+		--data.DamageType = "Chaos"
+		--data.DamageType = data.DamageType
+		fprint(LOGLEVEL.DEFAULT, "Fixing bad damage type in Chaos basic ranged attack None => %s (%s)", data.DamageType, amount)
 	end
-	if Vars.DebugMode and Vars.Print.HitPrepare then
-		print(data:ToDebugString())
+	if Vars.DebugMode and Vars.Print.HitPrepare 
+	and (Vars.Print.SpammyHits or (data.HitType ~= "Surface" and data.HitType ~= "DoT")) then
+		Ext.Print(data:ToDebugString())
 	end
 	InvokeListenerCallbacks(Listeners.OnPrepareHit, target, source, damage, handle, data)
 end

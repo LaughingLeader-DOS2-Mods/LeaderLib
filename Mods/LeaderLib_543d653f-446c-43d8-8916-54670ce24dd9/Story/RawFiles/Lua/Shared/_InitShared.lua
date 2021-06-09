@@ -23,7 +23,8 @@ Vars = {
 	DebugMode = Ext.IsDeveloperMode() == true,
 	Print = {
 		HitPrepare = false,
-		Hit = false
+		Hit = false,
+		SpammyHits = false, -- To ignore surface and dots, because they get spammy
 	},
 	ControllerEnabled = false
 }

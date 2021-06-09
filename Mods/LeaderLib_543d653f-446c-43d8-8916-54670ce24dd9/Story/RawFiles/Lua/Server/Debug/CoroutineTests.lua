@@ -83,7 +83,7 @@ local function runProcess(func)
     return coroutine.resume(co)
 end
 
-RegisterListener("NamedTimerFinished", "LeaderLib_CoroutineLoop", function(...)
+Timer.RegisterListener("LeaderLib_CoroutineLoop", function()
 	wakeUpWaitingThreads(250)
 	StartTimer("LeaderLib_CoroutineLoop", 250)
 end)

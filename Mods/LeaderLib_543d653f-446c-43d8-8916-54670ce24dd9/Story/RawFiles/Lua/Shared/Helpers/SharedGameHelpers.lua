@@ -220,8 +220,9 @@ end
 
 ---Tries and get a string UUID from whatever variable type object is.
 ---@param object EsvGameObject|EclGameObject|string|number
+---@param returnNullId boolean|nil If true, returns NULL_00000000-0000-0000-0000-000000000000 if a UUID isn't found.
 ---@return UUID
-function GameHelpers.GetUUID(object)
+function GameHelpers.GetUUID(object, returnNullId)
 	local t = type(object)
 	if t == "userdata" and object.MyGuid then
 		return object.MyGuid
@@ -233,5 +234,5 @@ function GameHelpers.GetUUID(object)
 			return obj.MyGuid
 		end
 	end
-	return "NULL_00000000-0000-0000-0000-000000000000"
+	return returnNullId and "NULL_00000000-0000-0000-0000-000000000000" or nil
 end

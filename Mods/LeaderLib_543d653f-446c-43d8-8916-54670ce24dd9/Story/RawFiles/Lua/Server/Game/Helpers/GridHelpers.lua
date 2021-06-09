@@ -100,7 +100,7 @@ function GameHelpers.Internal.OnForceMoveTimer(timerName, target)
 	end
 end
 
-RegisterListener("NamedTimerFinished", "Timers_LeaderLib_OnForceMoveAction", GameHelpers.Internal.OnForceMoveTimer)
+Timer.RegisterListener("Timers_LeaderLib_OnForceMoveAction", GameHelpers.Internal.OnForceMoveTimer)
 
 function GameHelpers.CanForceMove(target, source)
 	local t = type(target)

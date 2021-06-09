@@ -48,7 +48,7 @@ function Testing.OnLoop(dt)
 end
 
 if Ext.IsServer() then
-	RegisterListener("NamedTimerFinished", "LeaderLib_TestingSystemLoop", function()
+	Timer.RegisterListener("LeaderLib_TestingSystemLoop", function()
 		Testing.OnLoop(Ext.MonotonicTime() - Testing.LastTime)
 		Testing.LastTime = Ext.MonotonicTime()
 		if Testing.Active then

@@ -376,7 +376,7 @@ AND
 DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event)
 THEN
 NOT DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event);
-NRD_ModCall("LeaderLib", "OnTimerFinished", _Event);
+NRD_ModCall("LeaderLib", "OnLuaTimerFinished", _Event);
 
 IF
 TimerFinished(_TimerName)
@@ -384,7 +384,7 @@ AND
 DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event, _UUID)
 THEN
 NOT DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event, _UUID);
-NRD_ModCall("LeaderLib", "OnTimerFinished", _Event, _UUID);
+NRD_ModCall("LeaderLib", "OnLuaTimerFinished", _Event, _UUID);
 
 IF
 TimerFinished(_TimerName)
@@ -392,7 +392,7 @@ AND
 DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event, _UUID, _UUID2)
 THEN
 NOT DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event, _UUID, _UUID2);
-NRD_ModCall("LeaderLib", "OnTimerFinished", _Event, _UUID, _UUID2);
+NRD_ModCall("LeaderLib", "OnLuaTimerFinished", _Event, _UUID, _UUID2);
 */
 //END_REGION
 EXITSECTION

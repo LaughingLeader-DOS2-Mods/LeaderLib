@@ -1,7 +1,15 @@
+if Timer == nil then
+	Timer = {}
+end
+
 local function GetParamsCount(tbl)
 	local count = 0
-	for i,v in pairs(tbl) do
-		count = count + 1
+	for i=1,#tbl do
+		local uuid = GameHelpers.GetUUID(tbl[i])
+		if uuid then
+			tbl[i] = uuid
+			count = count + 1
+		end
 	end
 	return count
 end
@@ -30,7 +38,7 @@ end
 ---@param event string
 ---@param delay integer
 ---@vararg string
-function StartTimer(event, delay, ...)
+function Timer.Start(event, delay, ...)
 	-- if Vars.DebugMode then
 	-- 	fprint(LOGLEVEL.TRACE, "LeaderLib:StartTimer(%s, %s, %s)", event, delay, Common.Dump({...}))
 	-- end
@@ -41,12 +49,15 @@ function StartTimer(event, delay, ...)
 end
 local OneshotTimerData = {}
 
+---Deprecated @see Timer.Start
+StartTimer = Timer.Start
+
 --- Starts an Osiris timer with a callback function to run when the timer is finished.
 --- Not save safe since functions can't really be saved.
 ---@param timerName string
 ---@param delay integer
 ---@param callback function
-function StartOneshotTimer(timerName, delay, callback)
+function Timer.StartOneshot(timerName, delay, callback)
 	if StringHelpers.IsNullOrEmpty(timerName) then
 		timerName = string.format("Timers_LeaderLib_%s%s", Ext.MonotonicTime(), Ext.Random())
 	end
@@ -69,9 +80,11 @@ function StartOneshotTimer(timerName, delay, callback)
 	return true
 end
 
+StartOneshotTimer = Timer.StartOneshot
+
 ---Cancels an Osiris timer with a variable amount of UUIDs (or none).
 ---@param event string
-function CancelTimer(event, ...)
+function Timer.Cancel(event, ...)
 	local timerName = event
 	local uuids = {...}
 	local paramCount = GetParamsCount(uuids)
@@ -108,7 +121,12 @@ function CancelTimer(event, ...)
 	end
 end
 
-function OnTimerFinished(event, ...)
+CancelTimer = Timer.Cancel
+
+---Called from Osiris.
+---@param event string
+---@vararg string
+function OnLuaTimerFinished(event, ...)
 	--PrintDebug("[LeaderLib_Timers.lua:TimerFinished] ", event, Common.Dump({...}))
 	if OneshotTimerData[event] ~= nil then
 		for i,callback in pairs(OneshotTimerData[event]) do
@@ -124,16 +142,53 @@ function OnTimerFinished(event, ...)
 	TurnCounter.OnTimerFinished(event)
 end
 
+local function WrapCallbackObjects(tbl)
+	if #tbl == 0 then
+		return
+	else
+		for i=1,#tbl do
+			tbl[i] = Ext.GetGameObject(tbl[i]) or tbl[i]
+		end
+	end
+	return table.unpack(tbl)
+end
+
+---@alias TimerObjectParam string|EsvCharacter|EsvItem|nil
+---@alias TimerCallback fun(timerName:string, obj1:TimerObjectParam, obj2:TimerObjectParam):void
+
+---@param name string|string[]|TimerCallback Timer name or the callback if a ganeric listener.
+---@param callback TimerCallback
+---@param fetchGameObjects boolean If true, any UUIDs passed into the timer callback are transformed into EsvCharacter/EsvItem.
+function Timer.RegisterListener(name, callback, fetchGameObjects)
+	local t = type(name)
+	if t == "string" then
+		if not fetchGameObjects then
+			RegisterListener("NamedTimerFinished", name, callback)
+		else
+			RegisterListener("NamedTimerFinished", name, function(timerName, ...)
+				callback(timerName, WrapCallbackObjects({...}))
+			end)
+		end
+	elseif t == "function" then
+		if not fetchGameObjects then
+			RegisterListener("TimerFinished", name, callback)
+		else
+			RegisterListener("TimerFinished", name, function(timerName, ...)
+				callback(timerName, WrapCallbackObjects({...}))
+			end)
+		end
+	elseif t == "table" then
+		for _,v in pairs(name) do
+			Timer.RegisterListener(v, callback)
+		end
+	end
+end
+
 local function OnProcObjectTimerFinished(object, timerName)
 	object = StringHelpers.GetUUID(object)
-	local listeners = Listeners.ProcObjectTimerFinished[timerName]
-	if listeners then
-		InvokeListenerCallbacks(listeners, object, timerName)
-	end
-	local allListeners = Listeners.ProcObjectTimerFinished["all"]
-	if allListeners then
-		InvokeListenerCallbacks(allListeners, object, timerName)
-	end
+	InvokeListenerCallbacks(Listeners.ProcObjectTimerFinished[timerName], object, timerName)
+	InvokeListenerCallbacks(Listeners.ProcObjectTimerFinished["all"], object, timerName)
+	InvokeListenerCallbacks(Listeners.NamedTimerFinished[timerName], timerName, object)
 end
 
 Ext.RegisterOsirisListener("ProcObjectTimerFinished", 2, "after", OnProcObjectTimerFinished)

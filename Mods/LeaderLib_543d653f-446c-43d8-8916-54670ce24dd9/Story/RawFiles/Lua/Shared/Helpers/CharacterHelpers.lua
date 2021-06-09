@@ -228,7 +228,6 @@ end
 ---@return fun():EsvCharacter|EclCharacter
 function GameHelpers.Character.GetPlayers(includeSummons)
 	local players = {}
-
 	if not isClient then
 		for _,db in pairs(Osi.DB_IsPlayer:Get(nil)) do
 			local player = Ext.GetCharacter(db[1])

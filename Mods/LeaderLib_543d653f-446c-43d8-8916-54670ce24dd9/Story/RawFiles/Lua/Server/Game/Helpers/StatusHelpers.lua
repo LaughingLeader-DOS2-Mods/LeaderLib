@@ -484,7 +484,7 @@ function GameHelpers.Status.Apply(target, status, duration, force, source, radiu
 	end
 	local t = type(status)
 	if t == "string" then
-		source = GameHelpers.GetUUID(source)
+		source = GameHelpers.GetUUID(source, true)
 		if type(target) ~= "table" then
 			target = GameHelpers.GetUUID(target)
 			if target then

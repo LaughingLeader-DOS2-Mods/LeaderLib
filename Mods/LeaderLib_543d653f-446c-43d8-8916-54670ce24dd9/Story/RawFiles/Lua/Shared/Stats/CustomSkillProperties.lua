@@ -115,7 +115,7 @@ for k,v in pairs(CustomSkillProperties) do
 end
 
 if Ext.IsServer() then
-	RegisterListener("NamedTimerFinished", "LeaderLib_SkillProperties_MoveToTargetStart", function(event, uuid)
+	Timer.RegisterListener("LeaderLib_SkillProperties_MoveToTargetStart", function(event, uuid)
 		local data = PersistentVars.SkillPropertiesAction.MoveToTarget[uuid]
 		if data then
 			local x,y,z = table.unpack(data.Pos)

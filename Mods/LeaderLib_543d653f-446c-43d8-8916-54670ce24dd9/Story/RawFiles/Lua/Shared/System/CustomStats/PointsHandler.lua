@@ -327,16 +327,6 @@ function CustomStatSystem:GetCanRemovePoints(ui, doubleHandle, character)
 	return false
 end
 
-function CustomStatSystem:OnStatAdded(ui, call, doubleHandle, index)
-	---@type CharacterSheetMainTimeline
-	local this = ui:GetRoot()
-	local stat_mc = this.stats_mc.customStats_mc.stats_array[index]
-	local stat = self:GetStatByDouble(doubleHandle)
-
-	-- stat_mc.plus_mc.visible = true
-	-- stat_mc.minus_mc.visible = false
-end
-
 function CustomStatSystem:OnStatPointAdded(ui, call, doubleHandle)
 	local stat = self:GetStatByDouble(doubleHandle)
 	local stat_mc = self:GetStatMovieClipByDouble(ui, doubleHandle)
@@ -418,7 +408,6 @@ function CustomStatSystem:UpdateAvailablePoints(ui)
 	end
 end
 
-Ext.RegisterUITypeCall(Data.UIType.characterSheet, "customStatAdded", function(...) CustomStatSystem:OnStatAdded(...) end)
 Ext.RegisterUITypeCall(Data.UIType.characterSheet, "plusCustomStat", function(...) CustomStatSystem:OnStatPointAdded(...) end, "After")
 Ext.RegisterUITypeCall(Data.UIType.characterSheet, "minusCustomStat", function(...) CustomStatSystem:OnStatPointRemoved(...) end, "After")
 end

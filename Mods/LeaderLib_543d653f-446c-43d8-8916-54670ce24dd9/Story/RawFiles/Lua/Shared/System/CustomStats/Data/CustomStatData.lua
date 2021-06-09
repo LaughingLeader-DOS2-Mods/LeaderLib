@@ -43,7 +43,8 @@ local defaults = {
 	Double = nil,
 	PointID = "",
 	LastValue = {},
-	AvailablePoints = {}
+	AvailablePoints = {},
+	--DisplayValueInTooltip = false -- Should be nil by default if not set by user
 }
 function CustomStatData.SetDefaults(data)
 	for k,v in pairs(defaults) do

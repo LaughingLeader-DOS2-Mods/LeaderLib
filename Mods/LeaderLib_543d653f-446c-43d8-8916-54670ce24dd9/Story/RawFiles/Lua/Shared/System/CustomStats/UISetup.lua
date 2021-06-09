@@ -5,6 +5,8 @@ self.Requesting = false
 local lastTooltipX = nil
 local lastTooltipY = nil
 self.LastIconId = 1212
+self.TooltipValueEnabled = {}
+self.MaxVisibleValue = 999 -- Values greater than this are truncated visually in the UI
 
 function CustomStatSystem:GetNextCustomStatIconId()
 	self.LastIconId = self.LastIconId + 1
@@ -137,6 +139,7 @@ Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem"
 Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "clearStats", function(...) CustomStatSystem:SetupGroups(...) end)
 Ext.RegisterUITypeCall(Data.UIType.characterSheet, "customStatsGroupAdded", function(...) CustomStatSystem:OnGroupAdded(...) end)
 Ext.RegisterUITypeCall(Data.UIType.characterSheet, "characterSheetUpdateDone", function(...) CustomStatSystem:OnUpdateDone(...) end, "After")
+Ext.RegisterUITypeCall(Data.UIType.characterSheet, "customStatAdded", function(...) CustomStatSystem:OnStatAdded(...) end, "After")
 --Ext.RegisterUITypeCall(Data.UIType.characterSheet, "createCustomStatGroups", CustomStatSystem.SetupGroups)
 --Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setPlayerInfo", AdjustCustomStatMovieClips)
 
@@ -157,6 +160,27 @@ function CustomStatSystem:GetStatMovieClipByDouble(ui, statId)
 	return nil
 end
 
+function CustomStatSystem:OnStatAdded(ui, call, doubleHandle, index)
+	---@type CharacterSheetMainTimeline
+	local this = ui:GetRoot()
+
+	local stat_mc = this.stats_mc.customStats_mc.stats_array[index]
+	local stat = self:GetStatByDouble(doubleHandle)
+
+	--[[
+		Stat values greater than a certain amount have issues fitting into the UI, 
+		so display a small version and use the tooltip to display the full value.
+	]]
+	if stat_mc.am > self.MaxVisibleValue then
+		stat_mc.text_txt.htmlText = StringHelpers.GetShortNumberString(stat_mc.am)
+		if stat and stat.DisplayValueInTooltip ~= false then
+			self.TooltipValueEnabled[stat.ID] = true
+		end
+	elseif stat and stat.DisplayValueInTooltip ~= true then
+		self.TooltipValueEnabled[stat.ID] = nil
+	end
+end
+
 --ExternalInterface.call(param2,param1.statId,val3.x + val5,val3.y + val4,val6,param1.height,param1.tooltipAlign);
 function CustomStatSystem:OnRequestTooltip(ui, call, statId, x, y, width, height, alignment)
 	self.Requesting = false
@@ -169,13 +193,14 @@ function CustomStatSystem:OnRequestTooltip(ui, call, statId, x, y, width, height
 
 	if ui:GetTypeId() == Data.UIType.characterSheet then
 		character = Ext.GetCharacter(ui:GetPlayerHandle())
+		---@type CharacterSheetMainTimeline
 		local this = ui:GetRoot()
 		local stats = this.stats_mc.customStats_mc.stats_array
 		for i=0,#stats do
 			local mc = stats[i]
 			if mc and mc.statId == statId then
 				statName = mc.label_txt.htmlText
-				statValue = tonumber(mc.text_txt.htmlText)
+				statValue = mc.am
 				stat = self:GetStatByDouble(statId)
 			end
 		end
@@ -467,3 +492,21 @@ end
 Ext.RegisterNetListener("LeaderLib_CreateCustomStatTooltip", function(...)
 	CustomStatSystem:NetRequestCustomStatTooltip(...)
 end)
+
+---Displays custom stat values in a stat tooltip if the stat config has enabled DisplayValueInTooltip.
+---@param ui UIObject
+---@param character EclCharacter
+---@param stat CustomStatData
+---@param tooltip TooltipData
+function CustomStatSystem:OnTooltip(ui, character, stat, tooltip)
+	if self.TooltipValueEnabled[stat.ID] then
+		local element = tooltip:GetLastElement({"StatsDescription", "TagDescription"})
+		if element then
+			if StringHelpers.IsNullOrWhitespace(element.Label) then
+				element.Label = string.format("(%s)", stat:GetValue(character))
+			else
+				element.Label = string.format("%s<br>(%s)", element.Label, stat:GetValue(character))
+			end
+		end
+	end
+end

@@ -27,6 +27,7 @@ local statPropertyMap = {
 	TOOLTIPTYPE = {Name="TooltipType", Type = "string"},
 	CATEGORY = {Name="Category", Type = "string"},
 	POINTID = {Name="PointID", Type = "string"},
+	DISPLAYVALUEINTOOLTIP = {Name="DisplayValueInTooltip", Type = "boolean"},
 }
 
 local isClient = Ext.IsClient()

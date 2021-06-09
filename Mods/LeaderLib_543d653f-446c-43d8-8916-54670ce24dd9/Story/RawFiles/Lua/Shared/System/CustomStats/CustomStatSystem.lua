@@ -50,9 +50,6 @@ local loader = Ext.Require("Shared/System/CustomStats/ConfigLoader.lua")
 Ext.Require("Shared/System/CustomStats/Getters.lua")
 Ext.Require("Shared/System/CustomStats/DataSync.lua")
 Ext.Require("Shared/System/CustomStats/PointsHandler.lua")
-if Vars.DebugMode then
-	Ext.Require("Shared/System/CustomStats/_Debug.lua")
-end
 
 local function LoadCustomStatsData()
 	local categories,stats = loader()
@@ -105,6 +102,12 @@ local function LoadCustomStatsData()
 		for category in CustomStatSystem:GetAllCategories() do
 			category.GroupId = categoryId
 			categoryId = categoryId + 1
+		end
+		CustomStatSystem.TooltipValueEnabled = {}
+		for stat in CustomStatSystem:GetAllStats() do
+			if stat.DisplayValueInTooltip then
+				CustomStatSystem.TooltipValueEnabled[stat.ID] = true
+			end
 		end
 	end
 	CustomStatSystem.Loaded = true

@@ -317,7 +317,8 @@
 ---@field timeline larTween
 ---@field base FlashMovieClip
 ---@field tooltip string
----@field statId number
+---@field statId number Stat double handle.
+---@field am number Stat value.
 ---@field init fun():void
 ---@field onOver fun(e:MouseEvent):void
 ---@field onOut fun(e:MouseEvent):void

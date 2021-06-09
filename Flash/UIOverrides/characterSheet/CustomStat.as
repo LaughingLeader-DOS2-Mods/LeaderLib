@@ -22,6 +22,7 @@ package
 		public var base:MovieClip;
 		public var tooltip:String;
 		public var statId:Number;
+		public var am:Number; // The stat's value
 		
 		public function CustomStat()
 		{

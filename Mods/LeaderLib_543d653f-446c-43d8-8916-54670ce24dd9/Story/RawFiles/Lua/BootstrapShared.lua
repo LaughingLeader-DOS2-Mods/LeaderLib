@@ -29,17 +29,8 @@ Ext.Require("Shared/System/AbilityAPI.lua")
 
 if Ext.Version() >= 55 then
 Ext.Require("Shared/System/CustomStats/CustomStatSystem.lua")
-else
--- Intermediate update workaround - Still working on this system
-CustomStatSystem = {}
-CustomStatSystem.__index = CustomStatSystem
-function CustomStatSystem:OnToggleCharacterPane() end
-function CustomStatSystem:OnRequestTooltip() end
-function CustomStatSystem:UpdateStatTooltipArray() end
-function CustomStatSystem:AddAvailablePoints() end
-function CustomStatSystem:SyncData() end
-function CustomStatSystem:GetStatByDouble() end
 end
+Ext.Require("Shared/System/CustomStats/_Debug.lua")
 Ext.Require("Shared/QOL/WingsWorkaround.lua")
 Ext.Require("Shared/QOL/SkipTutorial.lua")
 Ext.Require("Shared/QOL/WorldTooltips.lua")

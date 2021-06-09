@@ -280,3 +280,28 @@ function StringHelpers.IsMatch(str, match, explicit)
 	end
 	return false
 end
+
+---Formats a number into a short version, such as 1000 to 1K.
+---@param n number
+---@return string
+function StringHelpers.GetShortNumberString(n)
+    local steps = {
+        {1,""},
+        {1e3,"K"},
+        {1e6,"M"},
+        {1e9,"G"},
+        {1e12,"T"},
+    }
+    for _,b in ipairs(steps) do
+        if b[1] <= n+1 then
+            steps.use = _
+        end
+    end
+    local result = string.format("%.1f", n / steps[steps.use][1])
+    if tonumber(result) >= 1e3 and steps.use < #steps then
+        steps.use = steps.use + 1
+        result = string.format("%.1f", tonumber(result) / 1e3)
+    end
+    result = string.sub(result,0,string.sub(result,-1) == "0" and -3 or -1) -- Remove .0 (just if it is zero!)
+    return result .. steps[steps.use][2]
+end

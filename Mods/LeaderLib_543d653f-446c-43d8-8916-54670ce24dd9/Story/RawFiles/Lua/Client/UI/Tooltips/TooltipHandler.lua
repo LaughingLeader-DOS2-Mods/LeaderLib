@@ -635,6 +635,32 @@ local function OnItemTooltip(item, tooltip)
 			end
 		end
 
+		if Features.FixPureDamageDisplay then
+			if not GameHelpers.Item.IsObject(item) and item.Stats.ItemType == "Weapon" then
+				local hasPureDamage = false
+				if item.Stats.DamageTypeOverwrite == "None" or item.Stats["Damage Type"] == "None" then
+					hasPureDamage = true
+				end
+				if not hasPureDamage then
+					for i,v in pairs(item.Stats.DynamicStats) do
+						if v.DamageType == "None" then
+							hasPureDamage = true
+							break
+						end
+					end
+				end
+				if hasPureDamage then
+					for i,v in pairs(tooltip:GetElements("WeaponDamage")) do
+						if v.Label == "" then
+							local entry = LocalizedText.DamageTypeNames.None
+							--v.Label = string.format("<font color='%s'>%s</font>", entry.Color, entry.Text.Value)
+							v.Label = entry.Text.Value
+						end
+					end
+				end
+			end
+		end
+
 		if Features.ResistancePenetration == true then
 			-- Resistance Penetration display
 			if item:HasTag("LeaderLib_HasResistancePenetration") then

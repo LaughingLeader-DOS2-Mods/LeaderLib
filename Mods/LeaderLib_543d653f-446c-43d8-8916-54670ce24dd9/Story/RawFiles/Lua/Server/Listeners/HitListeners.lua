@@ -1,13 +1,140 @@
+---@class HitPrepareData
+---@field TotalDamageDone integer
+---@field DamageList table<string, integer>
+---@field Handle integer
+---@field IsChaos boolean
+---Hit Attributes
+---@field Equipment integer
+---@field DeathType string
+---@field DamageType string
+---@field AttackDirection integer
+---@field ArmorAbsorption integer
+---@field LifeSteal integer
+---@field HitWithWeapon integer
+---@field Hit boolean
+---@field Blocked boolean
+---@field Dodged boolean
+---@field Missed boolean
+---@field CriticalHit boolean
+---@field Backstab boolean
+---@field FromSetHP boolean
+---@field DontCreateBloodSurface boolean
+---@field Reflection boolean
+---@field NoDamageOnOwner boolean
+---@field FromShacklesOfPain boolean
+---@field DamagedMagicArmor boolean
+---@field DamagedPhysicalArmor boolean
+---@field DamagedVitality boolean
+---@field PropagatedFromOwner boolean
+---@field Surface boolean
+---@field DoT boolean
+---@field ProcWindWalker boolean
+---@field CounterAttack boolean
+---@field Poisoned boolean
+---@field Bleeding boolean
+---@field Burning boolean
+---@field NoEvents boolean
+
+local HIT_ATTRIBUTE = {
+	Equipment = "integer",
+	DeathType = "string",
+	DamageType = "string",
+	AttackDirection = "integer",
+	ArmorAbsorption = "integer",
+	LifeSteal = "integer",
+	HitWithWeapon = "integer",
+	Hit = "boolean",
+	Blocked = "boolean",
+	Dodged = "boolean",
+	Missed = "boolean",
+	CriticalHit = "boolean",
+	Backstab = "boolean",
+	FromSetHP = "boolean",
+	DontCreateBloodSurface = "boolean",
+	Reflection = "boolean",
+	NoDamageOnOwner = "boolean",
+	FromShacklesOfPain = "boolean",
+	DamagedMagicArmor = "boolean",
+	DamagedPhysicalArmor = "boolean",
+	DamagedVitality = "boolean",
+	PropagatedFromOwner = "boolean",
+	Surface = "boolean",
+	DoT = "boolean",
+	ProcWindWalker = "boolean",
+	CounterAttack = "boolean",
+	Poisoned = "boolean",
+	Bleeding = "boolean",
+	Burning = "boolean",
+	NoEvents = "boolean",
+}
+
+local ChaosDamageTypes = {
+	Physical = 1,
+	Piercing = 2,
+	Fire = 6,
+	Air = 7,
+	Water = 8,
+	Earth = 9,
+	Poison = 10,
+}
+
+---@return HitPrepareData
+local function CreateHitPrepareDataTable(handle, damage)
+	---@type HitPrepareData
+	local data = {}
+	for k,t in pairs(HIT_ATTRIBUTE) do
+		if t == "integer" then
+			data[k] = NRD_HitGetInt(handle, k) or nil
+		elseif t == "boolean" then
+			data[k] = NRD_HitGetInt(handle, k) == 1 and true or false
+		elseif t == "string" then
+			data[k] = NRD_HitGetString(handle, k) or ""
+		end
+	end
+	data.TotalDamageDone = damage
+	data.DamageList = {}
+	data.Handle = damage
+	local total = 0
+	
+	data.IsChaos = damage > 0 and ChaosDamageTypes[data.DamageType] ~= nil
+
+	for i,damageType in Data.DamageTypes:Get() do
+		local amount = NRD_HitGetDamage(handle, damageType)
+		if amount and amount > 0 then
+			total = total + amount
+			data.DamageList[damageType] = amount
+			if data.IsChaos and damageType ~= "None" and amount > 0 then
+				data.IsChaos = false
+			end
+		end
+	end
+	if total > data.TotalDamageDone then
+		if Vars.DebugMode then
+			fprint(LOGLEVEL.WARNING, "Damage mismatch? Event's damage(%s) actual total(%s) handle(%s)", damage, total, handle)
+		end
+		data.TotalDamageDone = total
+	end
+
+	return data
+end
+
 ---@type target string
 ---@type source string
 ---@type damage integer
 ---@type handle integer
 local function OnPrepareHit(target, source, damage, handle)
-	-- if Vars.DebugMode then
-	-- 	Ext.Print(string.format("[NRD_OnPrepareHit] Target(%s) Source(%s) damage(%i) Handle(%s) HitType(%s)", target, source, damage, handle, NRD_HitGetString(handle, "HitType")))
-	-- 	--Debug_TraceHitPrepare(target, source, damage, handle)
-	-- end
-	InvokeListenerCallbacks(Listeners.OnPrepareHit, target, source, damage, handle)
+	local data = CreateHitPrepareDataTable(handle, damage)
+	if Features.FixChaosWeaponProjectileDamage then
+		print(Ext.JsonStringify(data))
+		if data.IsChaos then
+			local amount = data.DamageList.None
+			data.DamageList.None = nil
+			data.DamageList[data.DamageType] = amount
+			NRD_HitClearDamage(handle, "None")
+			NRD_HitAddDamage(handle, data.DamageType, amount)
+		end
+	end
+	InvokeListenerCallbacks(Listeners.OnPrepareHit, target, source, damage, handle, data)
 end
 
 RegisterProtectedOsirisListener("NRD_OnPrepareHit", 4, "before", function(target, attacker, damage, handle)
@@ -55,7 +182,10 @@ Ext.RegisterListener("StatusHitEnter", function(hitStatus, context)
 
 	---@type HitRequest
 	local hit = context.Hit or hitStatus.Hit
-	fprint(LOGLEVEL.TRACE, "context.Hit(%s) hitStatus.Hit(%s) context.HitId(%s)", context.Hit, hitStatus.Hit, context.HitId)
+	if Vars.DebugMode then
+		fprint(LOGLEVEL.TRACE, "[%s] hit.HitWithWeapon(%s) hit.Equipment(%s) context.Weapon(%s)", context.HitId, hit.HitWithWeapon, hit.Equipment, context.Weapon)
+		fprint(LOGLEVEL.TRACE, "hit.DamageType(%s) hit.TotalDamageDone(%s) DamageList:\n%s", hit.DamageType, hit.TotalDamageDone, Ext.JsonStringify(hit.DamageList:ToTable()))
+	end
 
 	local skillId = not StringHelpers.IsNullOrWhitespace(hitStatus.SkillId) and string.gsub(hitStatus.SkillId, "_%-?%d+$", "") or nil
 	local skill = nil

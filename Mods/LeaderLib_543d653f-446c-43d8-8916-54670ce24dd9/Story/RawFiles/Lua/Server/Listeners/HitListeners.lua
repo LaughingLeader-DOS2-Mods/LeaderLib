@@ -8,9 +8,9 @@ local function OnPrepareHit(target, source, damage, handle)
 		local amount = data.DamageList.None
 		data.DamageList.None = nil
 		data.DamageList[data.DamageType] = amount
-		--data.DamageType = "Chaos"
-		--data.DamageType = data.DamageType
-		fprint(LOGLEVEL.DEFAULT, "Fixing bad damage type in Chaos basic ranged attack None => %s (%s)", data.DamageType, amount)
+		if Vars.DebugMode and Vars.Print.HitPrepare then
+			fprint(LOGLEVEL.DEFAULT, "Fixing bad damage type in Chaos basic ranged attack None => %s (%s)", data.DamageType, amount)
+		end
 	end
 	if Vars.DebugMode and Vars.Print.HitPrepare 
 	and (Vars.Print.SpammyHits or (data.HitType ~= "Surface" and data.HitType ~= "DoT")) then
@@ -67,6 +67,10 @@ Ext.RegisterListener("StatusHitEnter", function(hitStatus, context)
 
 	local skillId = not StringHelpers.IsNullOrWhitespace(hitStatus.SkillId) and string.gsub(hitStatus.SkillId, "_%-?%d+$", "") or nil
 	local skill = nil
+
+	---@type HitData
+	local data = Classes.HitData:Create(target.MyGuid, source.MyGuid, hit.TotalDamageDone, context.HitId, skillId, GameHelpers.Hit.Succeeded(hit))
+
 	if skillId then
 		skill = Ext.GetStat(skillId)
 		OnSkillHit(skill, target, source, hit.TotalDamageDone, hit, context, hitStatus)
@@ -81,14 +85,14 @@ Ext.RegisterListener("StatusHitEnter", function(hitStatus, context)
 	if Vars.DebugMode and Vars.Print.Hit then
 		local wpn = hitStatus.WeaponHandle and Ext.GetItem(hitStatus.WeaponHandle) or nil
 		fprint(LOGLEVEL.DEFAULT, "[StatusHitEnter:%s] Damage(%s) HitReason[%s](%s) DamageSourceType(%s) WeaponHandle(%s) Skill(%s)", context.HitId, hit.TotalDamageDone, hitStatus.HitReason, Data.HitReason[hitStatus.HitReason] or "", hitStatus.DamageSourceType, wpn and wpn.DisplayName or "nil", skillId or "nil")
-		fprint(LOGLEVEL.TRACE, "hit.HitWithWeapon(%s) hit.Equipment(%s) context.Weapon(%s)", hit.HitWithWeapon, hit.Equipment, context.Weapon)
-		fprint(LOGLEVEL.TRACE, "hit.DamageType(%s) hit.TotalDamageDone(%s) DamageList:\n%s", hit.DamageType, hit.TotalDamageDone, Ext.JsonStringify(hit.DamageList:ToTable()))
+		fprint(LOGLEVEL.TRACE, "hit.HitWithWeapon(%s) hit.Equipment(%s) context.Weapon(%s), hit.LifeSteal(%s)", hit.HitWithWeapon, hit.Equipment, context.Weapon, hit.LifeSteal)
+		fprint(LOGLEVEL.TRACE, "hit.DamageType(%s) hit.TotalDamageDone(%s) DamageList:\n%s", hit.DamageType, hit.TotalDamageDone, Lib.inspect(hit.DamageList:ToTable()))
 	end
 
 
 	--Old listener
-	InvokeListenerCallbacks(Listeners.OnHit, target.MyGuid, source.MyGuid, hit.TotalDamageDone, context.HitId, skillId, hitStatus, context)
-	InvokeListenerCallbacks(Listeners.StatusHitEnter, target, source, hit.TotalDamageDone, hit, context, hitStatus, skill)
+	InvokeListenerCallbacks(Listeners.OnHit, target.MyGuid, source.MyGuid, hit.TotalDamageDone, context.HitId, skillId, hitStatus, context, data)
+	InvokeListenerCallbacks(Listeners.StatusHitEnter, target, source, hit.TotalDamageDone, hit, context, hitStatus, skill, data)
 end)
 
 ---@type target string

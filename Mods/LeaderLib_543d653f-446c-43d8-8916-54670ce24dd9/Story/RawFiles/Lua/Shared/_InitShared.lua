@@ -11,6 +11,9 @@ GameHelpers = {
 	Ext = {},
 	Internal = {}
 }
+if Timer == nil then
+	Timer = {}
+end
 Vars = {
 	Initialized = false,
 	PostLoadEnableLuaListeners = false,

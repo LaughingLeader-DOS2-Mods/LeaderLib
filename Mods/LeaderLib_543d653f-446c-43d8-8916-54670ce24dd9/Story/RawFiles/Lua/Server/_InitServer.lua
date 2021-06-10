@@ -23,7 +23,6 @@ Ext.Require("Server/Game/SceneManager.lua")
 end
 Ext.Require("Server/Listeners/_Init.lua")
 Ext.Require("Server/ModMenu/ModMenuServerCommands.lua")
-Ext.Require("Server/Timers.lua")
 Ext.Require("Server/OsirisHelpers.lua")
 Ext.Require("Server/Versioning.lua")
 Ext.Require("Server/Debug/ConsoleWIndowHelpers.lua")

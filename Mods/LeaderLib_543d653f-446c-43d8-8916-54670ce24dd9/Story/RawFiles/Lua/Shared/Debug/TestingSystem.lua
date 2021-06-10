@@ -48,14 +48,16 @@ function Testing.OnLoop(dt)
 end
 
 if Ext.IsServer() then
-	Timer.RegisterListener("LeaderLib_TestingSystemLoop", function()
-		Testing.OnLoop(Ext.MonotonicTime() - Testing.LastTime)
-		Testing.LastTime = Ext.MonotonicTime()
-		if Testing.Active then
-			StartTimer("LeaderLib_TestingSystemLoop", 250)
-		else
-			Testing.Waiting = {}
-		end
+	Ext.RegisterListener("SessionLoaded", function()
+		Timer.RegisterListener("LeaderLib_TestingSystemLoop", function()
+			Testing.OnLoop(Ext.MonotonicTime() - Testing.LastTime)
+			Testing.LastTime = Ext.MonotonicTime()
+			if Testing.Active then
+				StartTimer("LeaderLib_TestingSystemLoop", 250)
+			else
+				Testing.Waiting = {}
+			end
+		end)
 	end)
 end
 

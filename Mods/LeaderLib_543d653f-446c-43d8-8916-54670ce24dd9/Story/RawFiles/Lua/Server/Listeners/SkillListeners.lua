@@ -278,11 +278,8 @@ end
 --- @param hit HitRequest
 --- @param context HitContext
 --- @param hitStatus EsvStatusHit
-function OnSkillHit(skill, target, source, damage, hit, context, hitStatus)
+function OnSkillHit(skill, target, source, damage, hit, context, hitStatus, data)
 	if not IgnoreHitTarget(target.MyGuid) then
-		---@type HitData
-		local data = Classes.HitData:Create(target.MyGuid, source.MyGuid, damage, context.HitId, skill.Name, GameHelpers.Hit.Succeeded(hit))
-
 		for callback in GetListeners(skill.Name) do
 			local b,err = xpcall(callback, debug.traceback, skill.Name, source.MyGuid, SKILL_STATE.HIT, data)
 			if not b then

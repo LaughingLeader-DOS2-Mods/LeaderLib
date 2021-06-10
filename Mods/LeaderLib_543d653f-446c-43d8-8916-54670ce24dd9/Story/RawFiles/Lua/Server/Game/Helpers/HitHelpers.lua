@@ -250,3 +250,43 @@ function GameHelpers.Hit.SetFlag(hit, flag, b)
         hit.EffectFlags = hit.EffectFlags & ~flag
     end
 end
+
+---Calculates LifeSteal like Game.Math.ApplyLifeSteal, but with extra options.
+--- @param hit HitRequest
+--- @param target StatCharacter
+--- @param attacker StatCharacter
+--- @param hitType string HitType enumeration
+--- @param setFlags boolean If true related flags like DontCreateBloodSurface may get set, just like in DoHit.
+--- @param allowArmorDamageTypes boolean If true, Magic/Corrosive damage won't be subtracted from the total damage done.
+--- @see Game.Math#ApplyLifeSteal
+function GameHelpers.Hit.RecalculateLifeSteal(hit, target, attacker, hitType, setFlags, allowArmorDamageTypes)
+    if hit.TotalDamageDone > 0 then
+        if attacker == nil or hitType == "DoT" or hitType == "Surface" then
+            return
+        end
+        
+        local magicDmg = hit.DamageList:GetByType("Magic")
+        local corrosiveDmg = hit.DamageList:GetByType("Corrosive")
+        local lifesteal = 0
+        if not allowArmorDamageTypes then
+            lifesteal = hit.TotalDamageDone - hit.ArmorAbsorption - corrosiveDmg - magicDmg
+        else
+            lifesteal = hit.TotalDamageDone - hit.ArmorAbsorption
+        end
+
+        if (hit.EffectFlags & (Game.Math.HitFlag.FromShacklesOfPain|Game.Math.HitFlag.NoDamageOnOwner|Game.Math.HitFlag.Reflection)) ~= 0 then
+            local modifier = Ext.ExtraData.LifestealFromReflectionModifier
+            lifesteal = math.floor(lifesteal * modifier)
+        end
+    
+        if lifesteal > target.CurrentVitality then
+            lifesteal = target.CurrentVitality
+        end
+    
+        if lifesteal > 0 then
+            hit.LifeSteal = math.max(math.ceil(lifesteal * attacker.LifeSteal / 100), 0)
+        end
+    elseif setFlags then
+        hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.DontCreateBloodSurface
+    end
+end

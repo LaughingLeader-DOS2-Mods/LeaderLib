@@ -108,7 +108,7 @@ HitPrepareData.__index = function(tbl,k)
 	if tbl.Handle then
 		local t = HIT_ATTRIBUTE[k]
 		if t == "integer" then
-			return NRD_HitGetInt(tbl.Handle, k) or nil
+			return NRD_HitGetInt(tbl.Handle, k)
 		elseif t == "boolean" then
 			return NRD_HitGetInt(tbl.Handle, k) == 1 and true or false
 		elseif t == "string" then
@@ -121,10 +121,7 @@ end
 HitPrepareData.__newindex = function(tbl,k,v)
 	if tbl.Handle then
 		local t = HIT_ATTRIBUTE[k]
-		if t == "integer" then
-			NRD_HitSetInt(tbl.Handle, k, v)
-			return
-		elseif t == "boolean" then
+		if t == "integer" or t == "boolean" then
 			NRD_HitSetInt(tbl.Handle, k, v)
 			return
 		elseif t == "string" then

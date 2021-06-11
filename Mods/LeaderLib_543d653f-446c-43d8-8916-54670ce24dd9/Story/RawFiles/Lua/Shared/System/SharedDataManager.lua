@@ -66,6 +66,9 @@ if Ext.IsServer() then
 	end
 
 	function GameHelpers.Data.SyncSharedData(syncSettings, client, ignoreProfile)
+		if CharacterGetHostCharacter() == nil then
+			return
+		end
 		if client == nil then
 			local totalUsers = Common.TableLength(UserIds, true)
 			--Ext.BroadcastMessage("LeaderLib_SharedData_StoreData", Ext.JsonStringify(SharedData), nil)
@@ -168,8 +171,15 @@ if Ext.IsServer() then
 
 	Ext.RegisterOsirisListener("GameModeStarted", 2, "after", function(gameMode, isEditorMode)
 		GameHelpers.Data.SetGameMode(gameMode)
-		-- Only needs to be loaded if we'll be going to CC.
-		SkipTutorial.Initialize()
+		
+		-- Only needs to be loaded if we'll be going to CC, and if Origins is the adventure.
+		local firstLevel = Osi.DB_GLO_FirstLevelAfterCharacterCreation:Get(nil)
+		if firstLevel and #firstLevel > 0 then
+			firstLevel = firstLevel[1][1]
+		end
+		if firstLevel == "TUT_Tutorial_A" then
+			SkipTutorial.Initialize()
+		end
 	end)
 
 	local function GetUserData(uuid)
@@ -232,7 +242,10 @@ if Ext.IsServer() then
 			UserIds[id] = true
 		end
 		if event == "LeaderLib_StoreUserData" then
-			GameHelpers.Data.SetCharacterData(id)
+			local profileId = GetUserProfileID(id)
+			local name = GetUserName(id)
+			Vars.Users[profileId] = {ID=id, Name=name}
+			GameHelpers.Data.SetCharacterData(id, profileId)
 		end
 	end)
 

@@ -28,8 +28,15 @@ local inspect ={
 	  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 	]]
   }
+
+  local function customtostring(obj)
+	if type(obj) == "userdata" then
+		return DebugHelpers.TraceUserData(obj)
+	end
+	return tostring(obj)
+  end
   
-  local tostring = tostring
+  local tostring = customtostring
   
   inspect.KEY       = setmetatable({}, {__tostring = function() return 'inspect.KEY' end})
   inspect.METATABLE = setmetatable({}, {__tostring = function() return 'inspect.METATABLE' end})
@@ -290,7 +297,7 @@ local inspect ={
 	if tv == 'string' then
 	  self:puts(smartQuote(escape(v)))
 	elseif tv == 'number' or tv == 'boolean' or tv == 'nil' or
-		   tv == 'cdata' or tv == 'ctype' then
+		   tv == 'cdata' or tv == 'ctype' or tv == "userdata" then
 	  self:puts(tostring(v))
 	elseif tv == 'table' then
 	  self:putTable(v)

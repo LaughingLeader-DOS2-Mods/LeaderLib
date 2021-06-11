@@ -37,21 +37,24 @@ local function OnSheetUpdating(ui, method)
 	CustomStatSystem:SetupGroups(ui, method)
 
 	local client = Client:GetCharacter()
-	local changedStats = {NetID=client.NetID,Stats={}}
-	for stat in CustomStatSystem:GetAllStats() do
-		local last = stat.LastValue[client.MyGuid] or 0
-		local value = stat:GetValue(client)
-		if value ~= last then
-			changedStats.Stats[#changedStats.Stats+1] = {
-				ID = stat.ID,
-				Mod = stat.Mod
-			}
-			CustomStatSystem:InvokeStatValueChangedListeners(stat, client, last, value)
+	if client then
+		local changedStats = {NetID=client.NetID,Stats={}}
+		for stat in CustomStatSystem:GetAllStats() do
+			local last = stat.LastValue[client.MyGuid] or 0
+			local value = stat:GetValue(client)
+			if value ~= last then
+				changedStats.Stats[#changedStats.Stats+1] = {
+					ID = stat.ID,
+					Mod = stat.Mod
+				}
+				CustomStatSystem:InvokeStatValueChangedListeners(stat, client, last, value)
+			end
+			stat.LastValue[client.MyGuid] = value
 		end
-		stat.LastValue[client.MyGuid] = value
-	end
-	if #changedStats.Stats > 0 then
-		Ext.PostMessageToServer("LeaderLib_CustomStatSystem_StatValuesChanged", Ext.JsonStringify(changedStats))
+
+		if #changedStats.Stats > 0 then
+			Ext.PostMessageToServer("LeaderLib_CustomStatSystem_StatValuesChanged", Ext.JsonStringify(changedStats))
+		end
 	end
 
 	local length = #this.customStats_array

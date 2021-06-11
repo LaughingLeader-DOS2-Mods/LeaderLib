@@ -471,17 +471,34 @@ Ext.RegisterConsoleCommand("addpoints", function(cmd, pointType, amount, id)
 end)
 
 Ext.RegisterConsoleCommand("modorder", function(cmd, uuidOnly)
-
 	if uuidOnly ~= nil then
 		for i,v in ipairs(Ext.GetModLoadOrder()) do
 			print(string.format("%i. %s", i, v))
 		end
 	else
+		local modNames = {}
 		local order = {}
+		local getName = function(i,uuid)
+			if uuid ~= "2bd9bdbe-22ae-4aa2-9c93-205880fc6564" then
+				return modNames[uuid] or uuid
+			end
+		end
+		for i,v in pairs(Ext.GetModLoadOrder()) do
+			local info = Ext.GetModInfo(v)
+			if info then
+				modNames[info.UUID] = info.Name
+			end
+		end
 		for i,v in ipairs(Ext.GetModLoadOrder()) do
 			local info = Ext.GetModInfo(v)
-			if info ~= nil then
-				table.insert(order, string.format("%s %s (%s)", info.Name, StringHelpers.VersionIntegerToVersionString(info.Version), info.UUID))
+			if info then
+				local depStr = StringHelpers.Join(";", info.Dependencies, false, getName)
+				if depStr ~= "" then
+					depStr = "\n\tDependencies: " .. depStr
+				else
+					depStr = ""
+				end
+				table.insert(order, string.format("%s%s %s (%s)%s", info.ModuleType == "Adventure" and "[ADVENTURE] " or "", info.Name, StringHelpers.VersionIntegerToVersionString(info.Version), info.UUID, depStr))
 			else
 				table.insert(order, v)
 			end

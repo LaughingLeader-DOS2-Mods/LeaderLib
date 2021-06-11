@@ -16,6 +16,7 @@ local fprint = fprint
 local Dump = Common.Dump
 local Data = Data
 local CustomStatSystem = CustomStatSystem
+local Client = Client
 
 Game.Tooltip = {}
 
@@ -1301,6 +1302,9 @@ function TooltipHooks:GetCompareOwner(ui, item)
 	end
 	if handle ~= nil then
 		return Ext.GetCharacter(handle)
+	end
+	if Client then
+		Client:GetCharacter()
 	end
 	return nil
 end

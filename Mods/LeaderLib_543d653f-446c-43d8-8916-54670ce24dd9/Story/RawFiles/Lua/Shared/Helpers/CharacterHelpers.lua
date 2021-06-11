@@ -98,8 +98,9 @@ end
 
 function GameHelpers.Character.IsAllyOfParty(uuid)
 	if not isClient then
-		for i,v in pairs(Osi.DB_IsPlayer:Get(nil)) do
-			if CharacterIsAlly(uuid, v[1]) == 1 then
+		uuid = GameHelpers.GetUUID(uuid)
+		for player in GameHelpers.Character.GetPlayers(false) do
+			if CharacterIsAlly(uuid, player.MyGuid) == 1 then
 				return true
 			end
 		end
@@ -109,8 +110,9 @@ end
 
 function GameHelpers.Character.IsEnemyOfParty(uuid)
 	if not isClient then
-		for i,v in pairs(Osi.DB_IsPlayer:Get(nil)) do
-			if CharacterIsEnemy(uuid, v[1]) == 1 then
+		uuid = GameHelpers.GetUUID(uuid)
+		for player in GameHelpers.Character.GetPlayers(false) do
+			if CharacterIsEnemy(uuid, player.MyGuid) == 1 then
 				return true
 			end
 		end
@@ -120,8 +122,9 @@ end
 
 function GameHelpers.Character.IsNeutralToParty(uuid)
 	if not isClient then
-		for i,v in pairs(Osi.DB_IsPlayer:Get(nil)) do
-			if CharacterIsNeutral(uuid, v[1]) == 1 then
+		uuid = GameHelpers.GetUUID(uuid)
+		for player in GameHelpers.Character.GetPlayers(false) do
+			if CharacterIsNeutral(uuid, player.MyGuid) == 1 then
 				return true
 			end
 		end
@@ -143,9 +146,8 @@ end
 function GameHelpers.Character.GetHighestPlayerLevel()
 	local level = 1
 	if not isClient then
-		for i,entry in pairs(Osi.DB_IsPlayer:Get(nil)) do
-			local v = CharacterGetLevel(entry[1])
-			if v > level then
+		for player in GameHelpers.Character.GetPlayers(false) do
+			if player.Stats.Level > level then
 				level = v
 			end
 		end

@@ -97,6 +97,9 @@ end
 ---@return FlashObject
 function PlayerInfo:GetCharacterMovieClips(ignoreSummons)
 	local this = self:Get()
+	if not this then
+		return function() end
+	end
 	local characters = {}
 	for i=0,#this.player_array do
 		local player_mc = this.player_array[i]

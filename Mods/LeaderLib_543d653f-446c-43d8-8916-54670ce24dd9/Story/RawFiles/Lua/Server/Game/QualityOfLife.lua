@@ -14,11 +14,11 @@ local playerStats = {
 	["ElfMaleHero"] = true,
 	["LizardFemaleHero"] = true,
 	["LizardMaleHero"] = true,
-	["Player_Ifan"] = true,
-	["Player_Lohse"] = true,
-	["Player_RedPrince"] = true,
-	["Player_Sebille"] = true,
-	["Player_Beast"] = true,
+	["Player_Ifan"] = Ext.IsModLoaded("1301db3d-1f54-4e98-9be5-5094030916e4"),
+	["Player_Lohse"] = Ext.IsModLoaded("1301db3d-1f54-4e98-9be5-5094030916e4"),
+	["Player_RedPrince"] = Ext.IsModLoaded("1301db3d-1f54-4e98-9be5-5094030916e4"),
+	["Player_Sebille"] = Ext.IsModLoaded("1301db3d-1f54-4e98-9be5-5094030916e4"),
+	["Player_Beast"] = Ext.IsModLoaded("1301db3d-1f54-4e98-9be5-5094030916e4"),
 }
 
 local undeadPlayerStats = {
@@ -30,7 +30,7 @@ local undeadPlayerStats = {
 	["ElfUndeadMaleHero"] = true,
 	["LizardUndeadFemaleHero"] = true,
 	["LizardUndeadMaleHero"] = true,
-	["Player_Fane"] = true,
+	["Player_Fane"] = Ext.IsModLoaded("1301db3d-1f54-4e98-9be5-5094030916e4"),
 }
 
 function ModifyPathInfluenceForAllPlayers(revert)

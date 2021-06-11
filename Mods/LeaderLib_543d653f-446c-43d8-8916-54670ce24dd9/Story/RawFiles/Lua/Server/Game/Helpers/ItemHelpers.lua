@@ -156,7 +156,7 @@ function GameHelpers.Item.CreateItemByStat(statName, skipLevelCheck, properties)
     local stat = nil
     local statType = ""
     local level = properties and properties.StatsLevel or 0
-    local rarity = properties and properties.ItemType or "Common"
+    local rarity = "Common"
     local rootTemplate = properties and properties.RootTemplate or nil
 
     if type(statName) == "string" then
@@ -167,8 +167,18 @@ function GameHelpers.Item.CreateItemByStat(statName, skipLevelCheck, properties)
         statType = NRD_StatGetType(stat.Name)
     end
 
+    if stat and stat.Unique then
+        rarity = "Unique"
+    elseif properties then
+        if properties.ItemType then
+            rarity = properties.ItemType
+        elseif properties.Rarity then
+            rarity = properties.Rarity
+        end
+    end
+
     if level == nil or level <= 0 then
-        level = CharacterGetLevel(CharacterGetHostCharacter())
+        level = GameHelpers.Character.GetHighestPlayerLevel() or 1
     end
     
     local hasGeneratedStats = false

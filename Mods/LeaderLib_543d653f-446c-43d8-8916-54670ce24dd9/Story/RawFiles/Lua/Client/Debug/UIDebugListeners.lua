@@ -1156,6 +1156,11 @@ local skills = UIListenerWrapper:Create(Data.UIType.skills, {
 	"updateSkills",
 })
 
+local mainMenu = UIListenerWrapper:Create(Data.UIType.mainMenu, {
+	"UIAssert"
+}, {
+})
+
 ---@param ui UIObject
 -- skills.CustomCallback["updateSkills"] = function(self, ui, method, b)
 -- 	local this = ui:GetRoot()

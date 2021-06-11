@@ -27,12 +27,12 @@ local player_stats = {
 	["ElfUndeadMaleHero"] = true,
 	["LizardUndeadFemaleHero"] = true,
 	["LizardUndeadMaleHero"] = true,
-	["Player_Ifan"] = true,
-	["Player_Lohse"] = true,
-	["Player_RedPrince"] = true,
-	["Player_Sebille"] = true,
-	["Player_Beast"] = true,
-	["Player_Fane"] = true,
+	["Player_Ifan"] = Ext.IsModLoaded("1301db3d-1f54-4e98-9be5-5094030916e4"),
+	["Player_Lohse"] = Ext.IsModLoaded("1301db3d-1f54-4e98-9be5-5094030916e4"),
+	["Player_RedPrince"] = Ext.IsModLoaded("1301db3d-1f54-4e98-9be5-5094030916e4"),
+	["Player_Sebille"] = Ext.IsModLoaded("1301db3d-1f54-4e98-9be5-5094030916e4"),
+	["Player_Beast"] = Ext.IsModLoaded("1301db3d-1f54-4e98-9be5-5094030916e4"),
+	["Player_Fane"] = Ext.IsModLoaded("1301db3d-1f54-4e98-9be5-5094030916e4"),
 }
 
 local ignore_skill_names = {
@@ -248,18 +248,22 @@ local function OverrideStats(data)
 
 	if data.Settings.APSettings.Player.Enabled then
 		local settings = data.Settings.APSettings.Player
-		for id,_ in pairs(player_stats) do
-			local stat = Ext.GetStat(id)
-			local changedStat = AdjustAP(stat, settings)
-			if not isClient and changedStat then
-				Ext.SyncStat(id, false)
+		for id,b in pairs(player_stats) do
+			if b then
+				local stat = Ext.GetStat(id)
+				if stat then
+					local changedStat = AdjustAP(stat, settings)
+					if not isClient and changedStat then
+						Ext.SyncStat(id, false)
+					end
+				end
 			end
 		end
 	end
 	if data.Settings.APSettings.NPC.Enabled then
 		local settings = data.Settings.APSettings.NPC
 		for _,id in pairs(Ext.GetStatEntries("Character")) do
-			local skip = player_stats[id] == true or boost_stats[id] == true
+			local skip = player_stats[id] ~= nil or boost_stats[id] == true
 			if not skip then
 				local stat = Ext.GetStat(id)
 				local changedStat = AdjustAP(stat, settings)

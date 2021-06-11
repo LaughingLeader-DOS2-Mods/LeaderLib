@@ -295,7 +295,10 @@ function Input.OnFlashEvent(ui, call, pressed, eventName, arrayIndex)
 
 	if lastFiredEventFrom[eventName] ~= 0 or Input.Keys[eventName] ~= nextState then
 		if pressed and eventName == "ActionCancel" then
-			Ext.PostMessageToServer("LeaderLib_OnActionCancel", Client:GetCharacter().MyGuid)
+			local client = Client:GetCharacter()
+			if client then
+				Ext.PostMessageToServer("LeaderLib_Input_OnActionCancel", client.NetID)
+			end
 		end
 		Input.Keys[eventName] = nextState
 		local id = Data.Input[eventName]

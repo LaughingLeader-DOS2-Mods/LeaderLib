@@ -7,6 +7,7 @@ local function SendMissingExtenderMessage(uuid)
 end
 
 Ext.RegisterOsirisListener("UserConnected", 3, "after", function(id, username, profileId)
+	Vars.Users[profileId] = {ID = id, Name=username}
 	if Ext.GetGameState() == "Running" then
 		if GlobalGetFlag("LeaderLib_AutoUnlockInventoryInMultiplayer") == 1 then
 			IterateUsers("Iterators_LeaderLib_UI_UnlockPartyInventory")
@@ -23,6 +24,10 @@ Ext.RegisterOsirisListener("UserConnected", 3, "after", function(id, username, p
 			--GameHelpers.UI.ShowMessageBox(hostText, host, 0, GameHelpers.GetStringKeyText("LeaderLib_MessageBox_ExtenderNotInstalled_HostMessageTitle"))
 		end
 	end
+end)
+
+Ext.RegisterOsirisListener("UserDisconnected", 3, "after", function(id, username, profileId)
+	Vars.Users[profileId] = nil
 end)
 
 Ext.RegisterOsirisListener("UserEvent", 2, "after", function(id, event)

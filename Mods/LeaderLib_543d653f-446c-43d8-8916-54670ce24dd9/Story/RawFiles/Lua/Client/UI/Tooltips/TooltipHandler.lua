@@ -74,7 +74,6 @@ local function OnSkillTooltip(character, skill, tooltip)
 		end
 	end
 
-	--print(Ext.JsonStringify(tooltip.Data))
 	if Features.TooltipGrammarHelper then
 		-- This fixes the double spaces from removing the "tag" part of Requires tag
 		for i,element in pairs(tooltip:GetElements("SkillRequiredEquipment")) do
@@ -288,7 +287,6 @@ local function OnStatTooltip(character, name, tooltip)
 			end
 		end
 	end
-	print(name, Ext.JsonStringify(tooltip.Data))
 end
 
 ---@param character EclCharacter
@@ -296,7 +294,6 @@ end
 ---@param tooltip TooltipData
 local function OnCustomStatTooltip(character, stat, tooltip)
 	if Vars.DebugMode then
-		--print("CustomStat", Common.Dump(stat), Ext.JsonStringify(tooltip.Data))
 		if stat.ID == "Lucky" then
 			local element = tooltip:GetElement("AbilityDescription")
 			element.CurrentLevelEffect = string.format("Level %s: Gain %s%% more loot.", stat.Value or 1, 200)
@@ -572,9 +569,6 @@ local function OnItemTooltip(item, tooltip)
 	if tooltip == nil then
 		return
 	end
-	-- if Vars.DebugMode then
-	-- 	Ext.PrintWarning("OnItemTooltip", item and item.StatsId or "nil", Ext.JsonStringify(tooltip.Data))
-	-- end
 	if item ~= nil then
 		UI.Tooltip.LastItem = item
 		local character = Client:GetCharacter()
@@ -680,7 +674,6 @@ local function OnItemTooltip(item, tooltip)
 							local tString = LocalizedText.ItemBoosts.ResistancePenetration
 							local resistanceText = GameHelpers.GetResistanceNameFromDamageType(damageType)
 							local result = tString:ReplacePlaceholders(GameHelpers.GetResistanceNameFromDamageType(damageType))
-							--PrintDebug(tString.Value, resistanceText, totalResPen, result)
 							local element = {
 								Type = "ResistanceBoost",
 								Label = result,
@@ -766,7 +759,6 @@ local function OnItemTooltip(item, tooltip)
 			end
 		end
 		if Features.ReduceTooltipSize then
-			--print(Ext.JsonStringify(tooltip.Data))
 			local elements = tooltip:GetElements("ExtraProperties")
 			if elements ~= nil and #elements > 0 then
 				for i,v in pairs(elements) do
@@ -819,9 +811,7 @@ end
 ---@param player EclCharacter
 ---@param tooltip TooltipData
 local function OnTalentTooltip(player, talent, tooltip)
-	if Vars.DebugMode then
-		print("OnTalentTooltip", player, talent, Ext.JsonStringify(tooltip.Data))
-	end
+	print("OnTalentTooltip", player, talent, Ext.JsonStringify(tooltip.Data))
 end
 
 local tooltipTypeToElement = {
@@ -884,11 +874,11 @@ Ext.RegisterListener("SessionLoaded", function()
 	Game.Tooltip.RegisterListener("Status", nil, OnStatusTooltip)
 	Game.Tooltip.RegisterListener("Stat", nil, OnStatTooltip)
 	if Vars.DebugMode then
-		Game.Tooltip.RegisterListener("Talent", nil, OnTalentTooltip)
+		--Game.Tooltip.RegisterListener("Talent", nil, OnTalentTooltip)
 		Game.Tooltip.RegisterListener("CustomStat", nil, OnCustomStatTooltip)
-		Game.Tooltip.RegisterListener("Ability", nil, function(character, stat, tooltip)
-			print(stat, Ext.JsonStringify(tooltip.Data))
-		end)
+		-- Game.Tooltip.RegisterListener("Ability", nil, function(character, stat, tooltip)
+		-- 	print(stat, Ext.JsonStringify(tooltip.Data))
+		-- end)
 		---@param tooltip GenericTooltipData
 		Game.Tooltip.RegisterListener("Generic", function(tooltip)
 			if tooltip.Data.CallingUI == Data.UIType.hotBar and tooltip.Data.Text == "Toggle Chat" then

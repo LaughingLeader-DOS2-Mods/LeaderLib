@@ -58,13 +58,15 @@ function StringHelpers.Join(delimiter, list, uniqueOnly, getStringFunction)
 	local useFunction = type(getStringFunction) == "function"
 
 	local i = 0
-	for k,v in TableHelpers.TryOrderedEach(list) do
+	for o,v in TableHelpers.TryOrderedEach(list) do
 		i = i + 1
 		local result = nil
 		if useFunction then
-			local b,str = xpcall(getStringFunction, debug.traceback, k, v)
+			local b,str = xpcall(getStringFunction, debug.traceback, o, v)
 			if b then
-				result = str
+				if str then
+					result = str
+				end
 			else
 				Ext.PrintError(str)
 			end
@@ -76,7 +78,7 @@ function StringHelpers.Join(delimiter, list, uniqueOnly, getStringFunction)
 				result = tostring(result)
 			end
 			if not uniqueOnly or (uniqueOnly and not string.find(finalResult, result)) then
-				if i > 1 then
+				if i > 1 and finalResult ~= "" then
 					finalResult = string.format("%s%s%s", finalResult, delimiter, result)
 				else
 					finalResult = result

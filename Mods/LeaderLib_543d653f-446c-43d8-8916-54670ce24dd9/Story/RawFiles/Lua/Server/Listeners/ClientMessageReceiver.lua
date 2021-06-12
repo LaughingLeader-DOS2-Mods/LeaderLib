@@ -1,4 +1,5 @@
 Ext.RegisterNetListener("LeaderLib_ToggleChainGroup", function(cmd, payload)
+	print(cmd, payload)
 	---@class ToggleChainGroupData
 	---@field Leader UUID
 	---@field Target UUID[]
@@ -6,10 +7,14 @@ Ext.RegisterNetListener("LeaderLib_ToggleChainGroup", function(cmd, payload)
 	---@field TotalUnchained integer
 	local data = Common.JsonParse(payload)
 	if data then
-		if data.TotalChained > data.TotalUnchained then
-			Osi.LeaderLib_LifeHacks_ChainToggle(data.Leader, CharacterGetReservedUserID(data.Leader), 0)
-		else
-			Osi.LeaderLib_LifeHacks_ChainToggle(data.Leader, CharacterGetReservedUserID(data.Leader), 1)
+		local leader = Ext.GetCharacter(data.Leader)
+		print(leader, leader and leader.MyGuid or "nil")
+		if leader then
+			if data.TotalChained > data.TotalUnchained then
+				Osi.LeaderLib_LifeHacks_ChainToggle(leader.MyGuid, CharacterGetReservedUserID(leader.MyGuid), 0)
+			else
+				Osi.LeaderLib_LifeHacks_ChainToggle(leader.MyGuid, CharacterGetReservedUserID(leader.MyGuid), 1)
+			end
 		end
 	end
 end)

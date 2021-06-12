@@ -324,9 +324,9 @@ function UI.ToggleChainGroup()
 					if character then
 						characters[#characters+1] = {
 							Group = groupId,
-							UUID = character.MyGuid
+							NetID = character.NetID
 						}
-						if character.MyGuid == client.MyGuid then
+						if character.NetID == client.NetID then
 							targetGroupId = groupId
 						end
 					end
@@ -335,14 +335,14 @@ function UI.ToggleChainGroup()
 		end
 	end
 	local groupData = {
-		Leader = client.MyGuid,
+		Leader = client.NetID,
 		Targets = {},
 		TotalChained = 0,
 		TotalUnchained = 0
 	}
 	for i,v in pairs(characters) do
-		if v.UUID ~= groupData.Leader then
-			groupData.Targets[#groupData.Targets+1] = v.UUID
+		if v.NetID ~= groupData.Leader then
+			groupData.Targets[#groupData.Targets+1] = v.NetID
 			if v.Group ~= targetGroupId then
 				groupData.TotalUnchained = groupData.TotalUnchained + 1
 			else
@@ -350,7 +350,9 @@ function UI.ToggleChainGroup()
 			end
 		end
 	end
-	Ext.PostMessageToServer("LeaderLib_ToggleChainGroup", Ext.JsonStringify(groupData))
+	if groupData.Leader then
+		Ext.PostMessageToServer("LeaderLib_ToggleChainGroup", Ext.JsonStringify(groupData))
+	end
 end
 
 Ext.RegisterUINameCall("LeaderLib_ToggleChainGroup", function(...)

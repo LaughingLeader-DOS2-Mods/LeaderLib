@@ -12,6 +12,7 @@ package
 		public var listContainer_mc:empty;
 		public var title_txt:TextField;
 		public var isOpen:Boolean;
+		public var hidePoints:Boolean;
 		public var texty:Number;
 		public var groupName:String = "";
 		
@@ -19,6 +20,38 @@ package
 		{
 			super();
 			addFrameScript(0,this.frame1);
+		}
+
+		public function setIsOpen(b:Boolean) : *
+		{
+			this.isOpen = b;
+			this.bg_mc.gotoAndStop(!!this.isOpen?5:2);
+
+			this.listContainer_mc.visible = this.isOpen;
+			if(this.listContainer_mc.visible)
+			{
+				this.listContainer_mc.scaleY = 1;
+				this.listContainer_mc.y = 26;
+			}
+			else
+			{
+				this.listContainer_mc.scaleY = 0;
+				this.listContainer_mc.y = 18;
+			}
+
+			if(this.isOpen)
+			{
+				this.heightOverride = null;
+			}
+			else
+			{
+				this.heightOverride = this.title_txt.textHeight;
+			}
+
+			if(this.mainList)
+			{
+				this.mainList.positionElements();
+			}
 		}
 		
 		public function onMouseOver(e:MouseEvent) : *
@@ -59,40 +92,22 @@ package
 		public function onUp(e:MouseEvent) : *
 		{
 			this.bg_mc.removeEventListener(MouseEvent.MOUSE_UP,this.onUp);
-			this.isOpen = !this.isOpen;
-			this.listContainer_mc.visible = this.isOpen;
-			if(this.listContainer_mc.visible)
-			{
-				this.listContainer_mc.scaleY = 1;
-				this.listContainer_mc.y = 26;
-			}
-			else
-			{
-				this.listContainer_mc.scaleY = 0;
-				this.listContainer_mc.y = 18;
-			}
+			
+			this.setIsOpen(!this.isOpen);
+
 			this.title_txt.y = this.texty;
 			this.amount_txt.y = this.texty;
-			this.bg_mc.gotoAndStop(!!this.isOpen?5:2);
 
-			if(this.isOpen)
+			if (this.onUpCallback)
 			{
-				this.heightOverride = null;
-			}
-			else
-			{
-				this.heightOverride = this.title_txt.textHeight;
-			}
-
-			if(this.mainList)
-			{
-				this.mainList.positionElements();
+				this.onUpCallback(this);
 			}
 		}
 		
 		function frame1() : *
 		{
 			this.isOpen = true;
+			this.hidePoints = false;
 			this.texty = 0;
 			this.title_txt.mouseEnabled = false;
 			this.amount_txt.mouseEnabled = false;

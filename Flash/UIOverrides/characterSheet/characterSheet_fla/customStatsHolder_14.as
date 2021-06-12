@@ -15,6 +15,7 @@ package characterSheet_fla
 		public var list:scrollListGrouped;
 		public const elemOffset:int = 3;
 		public var stats_array:Array;
+		public var groups_array:Array;
 		
 		public function customStatsHolder_14()
 		{
@@ -30,6 +31,7 @@ package characterSheet_fla
 			this.create_mc.x = 53;
 			this.listHolder_mc.x = 44
 			this.stats_array = new Array();
+			this.groups_array = new Array();
 			this.list = new scrollListGrouped("down_id","up_id","handle_id","scrollBgBig_id");
 
 			//Ability group settings
@@ -82,6 +84,7 @@ package characterSheet_fla
 				this.list.clearElements();
 			}
 			this.stats_array = new Array();
+			this.groups_array = new Array();
 			//ExternalInterface.call("createCustomStatGroups");
 		}
 		
@@ -89,6 +92,11 @@ package characterSheet_fla
 		{
 			this.list.setFrame(328,!!isGM?Number(this.create_mc.y):Number(735));
 			this.create_mc.visible = isGM;
+		}
+
+		public function OnGroupClicked(group_mc:StatCategory) : *
+		{
+			ExternalInterface.call("statCategoryCollapseChanged", group_mc.arrayIndex, group_mc.groupId, group_mc.isOpen, group_mc.groupName);
 		}
 
 		public function addGroup(groupId:Number, labelText:String, reposition:Boolean=false, visible:Boolean=true) : *
@@ -99,8 +107,11 @@ package characterSheet_fla
 			{
 				group_mc.groupName = labelText;
 				group_mc.visible = visible;
+				group_mc.arrayIndex = groups_array.length;
+				group_mc.onUpCallback = OnGroupClicked;
+				groups_array.push(group_mc);
+				ExternalInterface.call("customStatsGroupAdded", groupId, labelText, group_mc.arrayIndex);
 			}
-			ExternalInterface.call("customStatsGroupAdded", groupId, labelText);
 		}
 
 		public function setGroupTooltip(groupId:Number, text:String) : *
@@ -132,17 +143,25 @@ package characterSheet_fla
 				while(i < this.list.length)
 				{
 					group_mc = this.list.content_array[i];
-					if(group_mc && group_mc.list)
+					if(group_mc)
 					{
-						amount = 0;
-						j = 0;
-						while(j < group_mc.list.length)
+						if (group_mc.list && group_mc.hidePoints != true)
 						{
-							amount = amount + group_mc.list.content_array[j].am;
-							j++;
+							amount = 0;
+							j = 0;
+							while(j < group_mc.list.length)
+							{
+								amount = amount + group_mc.list.content_array[j].am;
+								j++;
+							}
+							group_mc.amount_txt.visible = false;
+							group_mc.amount_txt.htmlText = amount;
+						}
+						else
+						{
+							group_mc.amount_txt.visible = false;
 						}
 					}
-					group_mc.amount_txt.htmlText = amount;
 					i++;
 				}
 			}

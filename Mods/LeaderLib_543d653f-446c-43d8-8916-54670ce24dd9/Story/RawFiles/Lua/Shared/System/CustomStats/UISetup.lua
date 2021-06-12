@@ -117,11 +117,25 @@ function CustomStatSystem:OnUpdateDone(ui, call)
 	self:UpdateAvailablePoints(ui, call)
 end
 
-function CustomStatSystem:OnGroupAdded(ui, call, id)
+function CustomStatSystem:OnGroupAdded(ui, call, id, label, arrayIndex)
+	local this = ui:GetRoot().stats_mc.customStats_mc
 	local category = self:GetCategoryByGroupId(id)
-	if category and category.Description then
-		local this = ui:GetRoot().stats_mc.customStats_mc
-		this.setGroupTooltip(category.GroupId, category:GetDescription())
+	if category then
+		if category.Description then
+			this.setGroupTooltip(category.GroupId, category:GetDescription())
+		end
+		if this.groups_array then
+			local group_mc = this.groups_array[arrayIndex]
+			if group_mc then
+				if category.IsOpen ~= nil then
+					group_mc.setIsOpen(category.IsOpen)
+				end
+				if category.HideTotalPoints == true then
+					group_mc.hidePoints = true
+					group_mc.amount_txt.visible = false
+				end
+			end
+		end
 	end
 end
 
@@ -138,11 +152,21 @@ end
 -- 		this.stats_mc.create_mc.x = 53;
 -- 	end
 -- end, "Before")
+
+function CustomStatSystem:OnGroupClicked(ui, call, arrayIndex, groupId, isOpen, groupName)
+	print(call, arrayIndex, groupId, isOpen, groupName)
+	local category = self:GetCategoryByGroupId(groupId)
+	if category then
+		category.IsOpen = isOpen
+	end
+end
+
 Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem", OnSheetUpdating)
 Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "clearStats", function(...) CustomStatSystem:SetupGroups(...) end)
 Ext.RegisterUITypeCall(Data.UIType.characterSheet, "customStatsGroupAdded", function(...) CustomStatSystem:OnGroupAdded(...) end)
 Ext.RegisterUITypeCall(Data.UIType.characterSheet, "characterSheetUpdateDone", function(...) CustomStatSystem:OnUpdateDone(...) end, "After")
 Ext.RegisterUITypeCall(Data.UIType.characterSheet, "customStatAdded", function(...) CustomStatSystem:OnStatAdded(...) end, "After")
+Ext.RegisterUITypeCall(Data.UIType.characterSheet, "statCategoryCollapseChanged", function(...) CustomStatSystem:OnGroupClicked(...) end, "After")
 --Ext.RegisterUITypeCall(Data.UIType.characterSheet, "createCustomStatGroups", CustomStatSystem.SetupGroups)
 --Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setPlayerInfo", AdjustCustomStatMovieClips)
 

@@ -875,21 +875,21 @@ Ext.RegisterListener("SessionLoaded", function()
 	Game.Tooltip.RegisterListener("Stat", nil, OnStatTooltip)
 	if Vars.DebugMode then
 		--Game.Tooltip.RegisterListener("Talent", nil, OnTalentTooltip)
-		Game.Tooltip.RegisterListener("CustomStat", nil, OnCustomStatTooltip)
+		--Game.Tooltip.RegisterListener("CustomStat", nil, OnCustomStatTooltip)
 		-- Game.Tooltip.RegisterListener("Ability", nil, function(character, stat, tooltip)
 		-- 	print(stat, Ext.JsonStringify(tooltip.Data))
 		-- end)
 		---@param tooltip GenericTooltipData
-		Game.Tooltip.RegisterListener("Generic", function(tooltip)
-			if tooltip.Data.CallingUI == Data.UIType.hotBar and tooltip.Data.Text == "Toggle Chat" then
-				tooltip:MarkDirty()
-				tooltip.Data.AllowDelay = false
-				--tooltip.Data.Text = tooltip.Data.Text .. "<br>This is appended text! Yahoo!"
-				if tooltip:IsExpanded() then
-					tooltip.Data.Text = "Toggle Chat<br>Global chat was disabled before release ;("
-				end
-			end
-		end)
+		-- Game.Tooltip.RegisterListener("Generic", function(tooltip)
+		-- 	if tooltip.Data.CallingUI == Data.UIType.hotBar and tooltip.Data.Text == "Toggle Chat" then
+		-- 		tooltip:MarkDirty()
+		-- 		tooltip.Data.AllowDelay = false
+		-- 		--tooltip.Data.Text = tooltip.Data.Text .. "<br>This is appended text! Yahoo!"
+		-- 		if tooltip:IsExpanded() then
+		-- 			tooltip.Data.Text = "Toggle Chat<br>Global chat was disabled before release ;("
+		-- 		end
+		-- 	end
+		-- end)
 	end
 
 	Game.Tooltip.RegisterListener(OnAnyTooltip)

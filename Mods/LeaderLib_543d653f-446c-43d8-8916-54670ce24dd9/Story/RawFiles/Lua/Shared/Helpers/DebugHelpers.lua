@@ -253,8 +253,100 @@ local CDivinityStats_Equipment_Attributes = {
 	Blocking = "integer",
 }
 
+local EsvCharacterProps = {
+	RootTemplate = "CharacterTemplate",
+	PlayerCustomData = "PlayerCustomData",
+	Stats = "StatCharacter",
+	DisplayName = "string",
+	Handle = "ObjectHandle",
+	NetID = "integer",
+	MyGuid = "string",
+	WorldPos = "number",
+	CurrentLevel = "string",
+	Scale = "number",
+	AnimationOverride = "string",
+	WalkSpeedOverride = "number",
+	RunSpeedOverride = "number",
+	NeedsUpdateCount = "integer",
+	ScriptForceUpdateCount = "integer",
+	ForceSynchCount = "integer",
+	InventoryHandle = "ObjectHandle",
+	SkillBeingPrepared = "string",
+	LifeTime = "number",
+	TurnTimer = "number",
+	TriggerTrapsTimer = "number",
+	UserID = "integer",
+	ReservedUserID = "integer",
+	OwnerHandle = "ObjectHandle",
+	FollowCharacterHandle = "ObjectHandle",
+	SpiritCharacterHandle = "ObjectHandle",
+	CorpseCharacterHandle = "ObjectHandle",
+	PartialAP = "number",
+	AnimType = "integer",
+	DelayDeathCount = "integer",
+	AnimationSetOverride = "string",
+	OriginalTransformDisplayName = "string",
+	PartyHandle = "ObjectHandle",
+	CustomTradeTreasure = "string",
+	IsAlarmed = "boolean",
+	CrimeWarningsEnabled = "boolean",
+	CrimeInterrogationEnabled = "boolean",
+	MovingCasterHandle = "ObjectHandle",
+	Archetype = "string",
+	EquipmentColor = "string",
+	ProjectileTemplate = "string",
+	ReadyCheckBlocked = "boolean",
+	CorpseLootable = "boolean",
+	CustomBloodSurface = "string",
+	PreviousLevel = "string",
+	IsPlayer = "boolean",
+	Multiplayer = "boolean",
+	InParty = "boolean",
+	HostControl = "boolean",
+	Activated = "boolean",
+	OffStage = "boolean",
+	Dead = "boolean",
+	HasOwner = "boolean",
+	InDialog = "boolean",
+	Summon = "boolean",
+	CannotDie = "boolean",
+	CharacterControl = "boolean",
+	Loaded = "boolean",
+	InArena = "boolean",
+	CharacterCreationFinished = "boolean",
+	Floating = "boolean",
+	SpotSneakers = "boolean",
+	Temporary = "boolean",
+	WalkThrough = "boolean",
+	CoverAmount = "boolean",
+	CanShootThrough = "boolean",
+	PartyFollower = "boolean",
+	Totem = "boolean",
+	NoRotate = "boolean",
+	Deactivated = "boolean",
+	IsHuge = "boolean",
+	MadePlayer = "boolean",
+	LevelTransitionPending = "boolean",
+	RegisteredForAutomatedDialog = "boolean",
+	Global = "boolean",
+	HasOsirisDialog = "boolean",
+	HasDefaultDialog = "boolean",
+	TreasureGeneratedForTrader = "boolean",
+	Trader = "boolean",
+	Resurrected = "boolean",
+	IsPet = "boolean",
+	IsSpectating = "boolean",
+	NoReptuationEffects = "boolean",
+	HasWalkSpeedOverride = "boolean",
+	HasRunSpeedOverride = "boolean",
+	IsGameMaster = "boolean",
+	IsPossessed = "boolean",
+	ManuallyLeveled = "boolean",
+}
+
 local userDataProps = {
 	["esv::Item"] = EsvItemProps,
+	["esv::Character"] = EsvCharacterProps,
 	["CDivinityStats_Item"] = CDivinityStats_Item,
 	["CDivinityStats_Equipment_Attributes"] = CDivinityStats_Equipment_Attributes,
 }
@@ -266,16 +358,22 @@ function DebugHelpers.TraceUserData(obj)
 		local data = {}
 		for k,v in pairs(props) do
 			local value = obj[k]
-			if value then
+			if value ~= nil then
 				if props == userDataProps.CDivinityStats_Equipment_Attributes and ((type(value) == "number" and value == 0) or (type(value) == "string" and value == "None" or value == "")) then
 					-- skip
 				else
 					data[k] = value
 				end
+			else
+				data[k] = string.format("nil (%s)", v)
 			end
 		end
 		return Lib.inspect(data)
 	else
-		return tostring(meta)
+		if meta then
+			return tostring(meta)
+		else
+			return tostring(obj)
+		end
 	end
 end

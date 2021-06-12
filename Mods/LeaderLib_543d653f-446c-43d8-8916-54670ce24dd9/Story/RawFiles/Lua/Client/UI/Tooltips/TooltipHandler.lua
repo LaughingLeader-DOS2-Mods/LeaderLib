@@ -296,12 +296,18 @@ local function OnCustomStatTooltip(character, stat, tooltip)
 	if Vars.DebugMode then
 		if stat.ID == "Lucky" then
 			local element = tooltip:GetElement("AbilityDescription")
-			element.CurrentLevelEffect = string.format("Level %s: Gain %s%% more loot.", stat.Value or 1, 200)
-			element.NextLevelEffect = string.format("Next Level %s: Gain %s%% more loot.", (stat.Value or 1)+1, 400)
-			tooltip:AppendElement({
-				Type="StatsTalentsBoost",
-				Label = string.format("Loot Baggins +%s", stat.Value or 1)
-			})
+			local value = stat:GetValue(character)
+			if value > 0 then
+				element.CurrentLevelEffect = string.format("Level %s: Gain %s%% more loot.", value or 1, 200)
+				element.NextLevelEffect = string.format("Next Level %s: Gain %s%% more loot.", value+1, (value+1)*100)
+				tooltip:AppendElement({
+					Type="StatsTalentsBoost",
+					Label = string.format("Loot Baggins +%s", value or 1)
+				})
+			else
+				element.CurrentLevelEffect = ""
+				element.NextLevelEffect = string.format("Next Level %s: Gain %s%% more loot.", value+1, (value+1)*100)
+			end
 		end
 	end
 end
@@ -875,7 +881,7 @@ Ext.RegisterListener("SessionLoaded", function()
 	Game.Tooltip.RegisterListener("Stat", nil, OnStatTooltip)
 	if Vars.DebugMode then
 		--Game.Tooltip.RegisterListener("Talent", nil, OnTalentTooltip)
-		--Game.Tooltip.RegisterListener("CustomStat", nil, OnCustomStatTooltip)
+		Game.Tooltip.RegisterListener("CustomStat", nil, OnCustomStatTooltip)
 		-- Game.Tooltip.RegisterListener("Ability", nil, function(character, stat, tooltip)
 		-- 	print(stat, Ext.JsonStringify(tooltip.Data))
 		-- end)

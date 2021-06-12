@@ -44,6 +44,7 @@ Ext.RegisterOsirisListener("UserEvent", 2, "after", function(id, event)
 end)
 
 Ext.RegisterOsirisListener("GameStarted", 2, "after", function(region, isEditorMode)
+	Vars.IsEditorMode = isEditorMode
 	Ext.BroadcastMessage("LeaderLib_SyncFeatures", Ext.JsonStringify(Features), nil)
 	MonitoredCharacterData:Update(region)
 end)

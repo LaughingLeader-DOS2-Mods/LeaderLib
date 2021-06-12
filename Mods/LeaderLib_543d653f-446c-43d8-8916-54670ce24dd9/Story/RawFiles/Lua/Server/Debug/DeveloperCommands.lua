@@ -1084,3 +1084,18 @@ Ext.RegisterConsoleCommand("testchaoswand", function(cmd)
 		error("Failed to create WPN_Wand_Chaos")
 	end
 end)
+
+Ext.RegisterConsoleCommand("partyrestore", function(cmd)
+	for player in GameHelpers.Character.GetPlayers(true) do
+		print(player.MyGuid)
+		if player.Dead then
+			CharacterResurrect(player.MyGuid)
+		end
+		player.Stats.CurrentVitality = player.Stats.MaxVitality
+		print(player.Stats.CurrentVitality, player.Stats.MaxVitality)
+		CharacterSetHitpointsPercentage(player.MyGuid, 100.0)
+		CharacterSetArmorPercentage(player.MyGuid, 100.0)
+		CharacterSetMagicArmorPercentage(player.MyGuid, 100.0)
+		ApplyStatus(player.MyGuid, "LEADERLIB_RECALC", 0.0, 1, player.MyGuid)
+	end
+end)

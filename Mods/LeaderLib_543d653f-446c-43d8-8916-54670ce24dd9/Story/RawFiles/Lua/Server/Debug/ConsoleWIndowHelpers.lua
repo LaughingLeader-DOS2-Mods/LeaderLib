@@ -8,6 +8,7 @@ if Ext.IsDeveloperMode() then
 
 	AddConsoleVariable("Common", Common)
 	AddConsoleVariable("GameHelpers", GameHelpers)
+	AddConsoleVariable("inspect", Lib.inspect)
 
 	local host = {}
 	setmetatable(host, {
@@ -16,6 +17,9 @@ if Ext.IsDeveloperMode() then
 		end,
 		__index = function(tbl,k)
 			local char = Ext.GetCharacter(CharacterGetHostCharacter())
+			if k == "Print" then
+				return Lib.inspect(char)
+			end
 			local v = char[k]
 			if type(v) == "function" then
 				return function(...)
@@ -24,6 +28,12 @@ if Ext.IsDeveloperMode() then
 				end
 			else
 				return v
+			end
+		end,
+		__newindex = function(tbl,k,v)
+			local char = Ext.GetCharacter(CharacterGetHostCharacter())
+			if char then
+				char[k] = v
 			end
 		end,
 		__tostring = function()

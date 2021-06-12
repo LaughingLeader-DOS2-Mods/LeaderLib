@@ -30,7 +30,8 @@ Vars = {
 		SpammyHits = false, -- To ignore surface and dots, because they get spammy
 	},
 	ControllerEnabled = false,
-	Users = {}
+	Users = {},
+	IsEditorMode = false
 }
 
 function PrintDebug(...)

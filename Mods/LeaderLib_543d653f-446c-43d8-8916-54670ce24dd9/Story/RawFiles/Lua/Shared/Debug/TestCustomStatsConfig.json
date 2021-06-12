@@ -1,4 +1,9 @@
 {
+	"Defaults": {
+		"Stats": {
+			"Create": true
+		}
+	},
 	"Categories" : {
 		"Personality": {
 			"DisplayName": "Personality",
@@ -24,13 +29,12 @@
 	},
 	"Stats": {
 		"Lucky": {
-			"DisplayName": "LUCKY_DisplayName",
-			"Description": "LUCKY_Description",
+			"DisplayName": "Looting",
+			"Description": "Looting increases your ability to find great treasure.",
 			"Icon": "Ability_Thievery",
 			"TooltipType": "Ability",
 			"Category": "Personality",
-			"PointID": "Personality",
-			"Create": true
+			"PointID": "Personality"
 		},
 		"Fear": {
 			"DisplayName": "FEAR_DisplayName",
@@ -38,20 +42,17 @@
 			"Icon": "Attribute_Finesse",
 			"TooltipType": "Ability",
 			"Category": "Personality",
-			"PointID": "Personality",
-			"Create": true
+			"PointID": "Personality"
 		},
 		"Pure": {
 			"DisplayName": "PURE_DisplayName",
 			"Description": "PURE_Description",
 			"TooltipType": "Stat",
-			"Create": true,
 			"Category": "Lightbringer",
 			"PointID": "Classes"
 		},
 		"Debug1": {
 			"DisplayName": "Debug1",
-			"Create": true,
 			"Category": "Debug"
 		},
 		"Debug2": {
@@ -61,22 +62,20 @@
 		},
 		"Debug3": {
 			"DisplayName": "Debug3",
-			"Create": true,
 			"Category": "Debug"
 		},
 		"Debug4": {
 			"DisplayName": "Debug4",
-			"Create": true,
+			"Create": false,
 			"Category": "Debug"
 		},
 		"Debug5": {
 			"DisplayName": "Debug5",
-			"Create": true,
+			"Create": false,
 			"Category": "Debug"
 		},
 		"Debug6": {
 			"DisplayName": "Debug6",
-			"Create": true,
 			"Category": "Debug"
 		}
 	}

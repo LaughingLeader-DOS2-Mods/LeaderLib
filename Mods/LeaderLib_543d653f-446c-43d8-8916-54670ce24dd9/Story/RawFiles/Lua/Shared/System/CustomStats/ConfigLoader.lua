@@ -17,6 +17,7 @@ local categoryPropertyMap = {
 	ICON = {Name="Icon", Type = "string"},
 	TOOLTIPTYPE = {Name="TooltipType", Type = "string"},
 	SHOWALWAYS = {Name="ShowAlways", Type = "boolean"},
+	HIDETOTALPOINTS = {Name="HideTotalPoints", Type = "boolean"},
 }
 
 local statPropertyMap = {

@@ -7,6 +7,7 @@ local CustomStatCategoryData = {
 	Description = "",
 	Icon = "",
 	ShowAlways = false,
+	HideTotalPoints = false,
 	TooltipType = "Stat",
 	GroupId = nil,
 }

@@ -250,7 +250,7 @@ local function InvokeExtenderEventCallbacks(evt, eventName)
 		if evt.Press and eventName == "ActionCancel" and SharedData.RegionData.LevelType == LEVELTYPE.GAME then
 			local client = Client:GetCharacter()
 			if client then
-				Ext.PostMessageToServer("LeaderLib_Input_OnActionCancel", client.NetID)
+				Ext.PostMessageToServer("LeaderLib_Input_OnActionCancel", tostring(client.NetID))
 			end
 		end
 		OnInputChanged(eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled)
@@ -297,7 +297,7 @@ function Input.OnFlashEvent(ui, call, pressed, eventName, arrayIndex)
 		if pressed and eventName == "ActionCancel" then
 			local client = Client:GetCharacter()
 			if client then
-				Ext.PostMessageToServer("LeaderLib_Input_OnActionCancel", client.NetID)
+				Ext.PostMessageToServer("LeaderLib_Input_OnActionCancel", tostring(client.NetID))
 			end
 		end
 		Input.Keys[eventName] = nextState

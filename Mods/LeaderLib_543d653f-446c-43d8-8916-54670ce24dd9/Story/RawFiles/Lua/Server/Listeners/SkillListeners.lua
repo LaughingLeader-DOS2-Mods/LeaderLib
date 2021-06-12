@@ -207,11 +207,14 @@ Ext.RegisterNetListener("LeaderLib_Input_OnActionCancel", function(cmd, payload)
 end)
 
 --When the active skill on hotBar or bottomBar_c is cleared
-Ext.RegisterNetListener("LeaderLib_OnActiveSkillCleared", function(cmd, uuid)
-	if not StringHelpers.IsNullOrEmpty(uuid) then
-		StartOneshotTimer("Timers_LeaderLib_OnActiveSkillCleared", 50, function()
-			SkillSystem.CheckPreparingState(uuid)
-		end)
+Ext.RegisterNetListener("LeaderLib_OnActiveSkillCleared", function(cmd, id)
+	if not StringHelpers.IsNullOrWhitespace(id) then
+		local character = Ext.GetCharacter(tonumber(id))
+		if character then
+			StartOneshotTimer("Timers_LeaderLib_OnActiveSkillCleared", 50, function()
+				SkillSystem.CheckPreparingState(character.MyGuid)
+			end)
+		end
 	end
 end)
 

@@ -201,7 +201,7 @@ end
 local function RequestPlayerInfoRefresh()
 	local character = Client and Client:GetCharacter() or GameHelpers.Client.GetCharacter()
 	if character then
-		Ext.PostMessageToServer("LeaderLib_UI_Server_RefreshPlayerInfo", character.MyGuid)
+		Ext.PostMessageToServer("LeaderLib_UI_Server_RefreshPlayerInfo", tostring(character.NetID))
 	end
 end
 
@@ -284,7 +284,7 @@ local function RequestHealthbarRefresh()
 	if ui then
 		local character = Ext.GetCharacter(Ext.DoubleToHandle(lastHealthbarOwnerDouble))
 		if character then
-			Ext.PostMessageToServer("LeaderLib_UI_Server_RefreshPlayerInfo", character.MyGuid)
+			Ext.PostMessageToServer("LeaderLib_UI_Server_RefreshPlayerInfo", tostring(character.NetID))
 		end
 	end
 end

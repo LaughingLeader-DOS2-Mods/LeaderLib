@@ -189,9 +189,10 @@ function GameHelpers.UI.SetStatusVisibility(visible, client)
 	Ext.PostMessageToClient(client, "LeaderLib_UI_UpdateStatusVisibility", visible)
 end
 
-Ext.RegisterNetListener("LeaderLib_UI_Server_RefreshPlayerInfo", function(cmd, uuid)
-	if ObjectExists(uuid) == 1 then
-		ApplyStatus(uuid, "LEADERLIB_RECALC", 0.0, 1, uuid)
+Ext.RegisterNetListener("LeaderLib_UI_Server_RefreshPlayerInfo", function(cmd, netid)
+	local character = Ext.GetCharacter(tonumber(netid))
+	if character and not character.Dead and not character.OffStage then
+		ApplyStatus(character.MyGuid, "LEADERLIB_RECALC", 0.0, 1, character.MyGuid)
 	end
 end)
 

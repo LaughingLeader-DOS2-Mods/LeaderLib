@@ -214,7 +214,7 @@ function GameHelpers.Character.SetLevel(character, level)
 		if xpNeeded then
 			if xpNeeded == 0 then
 				character.Stats.Experience = 1
-				StartOneshotTimer("", 250, function()
+				Timer.StartOneshot("", 250, function()
 					character.Stats.Experience = 0
 				end)
 			else

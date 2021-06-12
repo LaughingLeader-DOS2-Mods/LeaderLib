@@ -56,7 +56,7 @@ local function OnLuaResetCommand(cmd, delay)
 	if delay ~= nil then
 		delay = tonumber(delay)
 		if delay > 0 then
-			StartOneshotTimer("Timers_LeaderLib_Debug_ResetLua", delay, ResetLua)
+			Timer.StartOneshot("Timers_LeaderLib_Debug_ResetLua", delay, ResetLua)
 		else
 			ResetLua()
 		end
@@ -88,7 +88,7 @@ end)
 Ext.RegisterConsoleCommand("testrespen2", function(...)
 	local host = CharacterGetHostCharacter()
 	ApplyStatus(host, "LADY_VENGEANCE", -1.0, 0, host)
-	StartOneshotTimer("Timers_LeaderLib_Debug_ResPenTest", 3000, function()
+	Timer.StartOneshot("Timers_LeaderLib_Debug_ResPenTest", 3000, function()
 		--ApplyDamage(CharacterGetHostCharacter(), 50, "Fire", CharacterGetHostCharacter())
 		--ApplyDamage(CharacterGetHostCharacter(), 1, "Physical")
 		--Osi.ApplyDamage(host, 10, "Water")
@@ -119,13 +119,13 @@ Ext.RegisterConsoleCommand("leaderlib_statustext", function(command, text)
 		Duration = 5.0,
 		IsItem = false
 	}):ToString(), nil)
-	-- StartOneshotTimer("Timers_LeaderLib_Debug_StatusTextTest", 2000, function()
+	-- Timer.StartOneshot("Timers_LeaderLib_Debug_StatusTextTest", 2000, function()
 		
 	-- end)
 end)
 
 Ext.RegisterConsoleCommand("leaderlib_messageboxtest", function(command, text)
-	StartOneshotTimer("Timers_LeaderLib_Debug_MessageBoxTest", 2000, function()
+	Timer.StartOneshot("Timers_LeaderLib_Debug_MessageBoxTest", 2000, function()
 		local host = CharacterGetHostCharacter()
 		GameHelpers.UI.ShowMessageBox(string.format("<font  color='#FF00CC'>One or more players are missing the script extender.</font><br>Please help:<br>* %s", "LaughingLeader"), host, 1, "<font color='#FF0000'>Script Extender Missing!</font>")
 	end)
@@ -738,7 +738,7 @@ end
 
 Ext.RegisterConsoleCommand("sleeptest", function(command, delay)
 	ApplyStatus(CharacterGetHostCharacter(), "HASTED", 6.0, 1, CharacterGetHostCharacter())
-	StartOneshotTimer("Timers_Commands_sleeptest", 500, function()
+	Timer.StartOneshot("Timers_Commands_sleeptest", 500, function()
 		delay = delay and tonumber(delay) or 6000
 		local timeStart = Ext.MonotonicTime()
 		fprint(LOGLEVEL.TRACE, "Sleeping Start(%s)", timeStart)
@@ -753,7 +753,7 @@ local function RemoveTempChar(v)
 	SetCanFight(v, 0)
 	CharacterSetDetached(v, 1)
 	LeaveCombat(v)
-	StartOneshotTimer(string.format("Timers_DebugRemoveTemp%s", v), 250, function()
+	Timer.StartOneshot(string.format("Timers_DebugRemoveTemp%s", v), 250, function()
 		RemoveTemporaryCharacter(v)
 	end)
 end
@@ -817,7 +817,7 @@ if SceneManager then
 		id = id or "TestScene"
 		SceneManager.SetSceneByID(id)
 	
-		StartOneshotTimer("Timers_TestState3ShouldBeDone", 30000, function()
+		Timer.StartOneshot("Timers_TestState3ShouldBeDone", 30000, function()
 			SceneManager.Signal("TestState3ShouldBeDone")
 		end)
 	end)
@@ -843,7 +843,7 @@ Ext.RegisterConsoleCommand("lldebug_surfacetransform", function(command, amountS
 	local x,y,z = table.unpack(host.WorldPos)
 
 	-- TransformSurfaceAtPosition(x, y, z, "Bloodify", "Ground", 6.0, 6.0, host)
-	-- StartOneshotTimer("Timers_Test_Freeze", 1500, function()
+	-- Timer.StartOneshot("Timers_Test_Freeze", 1500, function()
 	-- 	TransformSurfaceAtPosition(x, y, z, "Freeze", "Ground", 6.0, 6.0, host)
 	-- end)
 
@@ -862,7 +862,7 @@ Ext.RegisterConsoleCommand("lldebug_surfacetransform", function(command, amountS
 	-- 	end
 	-- end
 
-	-- StartOneshotTimer("Timers_Test_Freeze", 1500, function()
+	-- Timer.StartOneshot("Timers_Test_Freeze", 1500, function()
 	-- 	local host = Ext.GetCharacter(host)
 	-- 	--GameHelpers.Surface.Transform(host.WorldPos, "Freeze", 0, 6.0, host.Handle, "Water", 1.0)
 	
@@ -884,7 +884,7 @@ Ext.RegisterConsoleCommand("lldebug_tornadotest", function(command)
 	local x,y,z = table.unpack(host.WorldPos)
 	local tx,ty,tz = table.unpack(GameHelpers.Math.ExtendPositionWithForwardDirection(host, 10.0, x, y, z))
 	local handle = NRD_CreateTornado(host.MyGuid, "Tornado_EnemyAir", x, y, z, tx, ty, tz)
-	StartOneshotTimer(nil, 20000, function()
+	Timer.StartOneshot(nil, 20000, function()
 		NRD_GameActionDestroy(handle)
 	end)
 end)
@@ -892,7 +892,7 @@ end)
 Ext.RegisterConsoleCommand("lldebug_keepAlive", function(command)
 	local host = Ext.GetCharacter(CharacterGetHostCharacter())
 	ApplyStatus(host.MyGuid, "HASTED", -1.0, 1, host.MyGuid)
-	StartOneshotTimer(nil, 250, function()
+	Timer.StartOneshot(nil, 250, function()
 		local status = host:GetStatus("HASTED")
 		if status then
 			status.KeepAlive = true
@@ -918,7 +918,7 @@ end)
 
 -- Ext.RegisterOsirisListener("NRD_OnActionStateEnter", Data.OsirisEvents.NRD_OnActionStateEnter, "after", function(char, state)
 -- 	print("NRD_OnActionStateEnter", char, state)
--- 	-- StartOneshotTimer(nil, 2000, function()
+-- 	-- Timer.StartOneshot(nil, 2000, function()
 -- 	-- 	local action = NRD_CharacterGetCurrentAction(char)
 -- 	-- 	fprint(LOGLEVEL.TRACE, "NRD_CharacterGetCurrentAction(%s) = (%s)", char, action)
 -- 	-- end)

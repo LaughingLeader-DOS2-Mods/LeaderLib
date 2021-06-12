@@ -556,7 +556,7 @@ Ext.RegisterOsirisListener("NRD_OnStatusAttempt", 4, "before", function(target, 
 	-- 	blockNextHeal[target] = nil
 	-- 	NRD_StatusPreventApply(target, handle, 1)
 	-- 	local consumeHandle = CharacterConsume(target, "POTION_Minor_Healing_Potion")
-	-- 	StartOneshotTimer("Timers_Debug_ClearConsume"..target, 250, function()
+	-- 	Timer.StartOneshot("Timers_Debug_ClearConsume"..target, 250, function()
 	-- 		CharacterUnconsume(target, consumeHandle)
 	-- 	end)
 	-- end

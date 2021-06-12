@@ -463,10 +463,10 @@ function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, level
             i = i + 1
             if i <= count then
                 timerName = string.format("Timers_LeaderLib_ProjectileStrike%s%s", id, Ext.MonotonicTime())
-                StartOneshotTimer(timerName, skill.StrikeDelay or 250, onTimer)
+                Timer.StartOneshot(timerName, skill.StrikeDelay or 250, onTimer)
             end
         end
-        StartOneshotTimer(timerName, skill.ProjectileDelay or 50, onTimer)
+        Timer.StartOneshot(timerName, skill.ProjectileDelay or 50, onTimer)
     end
 end
 

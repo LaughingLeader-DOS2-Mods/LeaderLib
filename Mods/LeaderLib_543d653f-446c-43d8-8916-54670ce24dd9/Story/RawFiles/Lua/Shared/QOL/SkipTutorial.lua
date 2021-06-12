@@ -30,14 +30,14 @@ if Ext.IsServer() then
 	end
 	
 	local function skipTutorialWakeupTimer(uuid, timerName)
-		StartOneshotTimer("Timers_LeaderLib_SkipWakeup", 50, function()
+		Timer.StartOneshot("Timers_LeaderLib_SkipWakeup", 50, function()
 			skipTutorialWakeup(uuid)
 		end)
 		--Osi.PROC_FTJ_StartWakeUpVoicebark(uuid)
 		--Osi.Proc_FTJ_UnfreezePlayers()
 		--UserSetFlag(uuid,"QuestUpdate_FTJ_Voice_TUT_Voice",0)
 
-		StartOneshotTimer("Timers_LeaderLib_RemoveFTJWakeUpTimerListener", 2000, function()
+		Timer.StartOneshot("Timers_LeaderLib_RemoveFTJWakeUpTimerListener", 2000, function()
 			fprint(LOGLEVEL.TRACE, "Removed listener for ProcObjectTimerFinished[FTJ_GameStart_FadeIn].")
 			RemoveListener("ProcObjectTimerFinished", "FTJ_GameStart_FadeIn", skipTutorialWakeup)
 		end)
@@ -219,7 +219,7 @@ if Ext.IsServer() then
 					GlobalSetFlag("TUT_LowerDeck_OriginsFleeingToTop")
 					GlobalSetFlag("TUT_ChoseRescueOthers")
 
-					StartOneshotTimer("Timers_LeaderLib_SkipFTJWakeup", 50, function()
+					Timer.StartOneshot("Timers_LeaderLib_SkipFTJWakeup", 50, function()
 						for _,db in pairs(Osi.DB_IsPlayer:Get(nil)) do
 							local uuid = StringHelpers.GetUUID(db[1])
 							skipTutorialWakeup(uuid)

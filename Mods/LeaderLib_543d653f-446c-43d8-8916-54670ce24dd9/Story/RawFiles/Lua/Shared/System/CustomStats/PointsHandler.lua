@@ -125,7 +125,7 @@ function CustomStatSystem:SetAvailablePoints(character, statId, amount, skipSync
 			if not skipSync then
 				if not isClient then
 					-- If a save is loaded or the game is stopped, it'll get synced in the next SharedData cycle anyway
-					StartOneshotTimer("Timers_LeaderLib_SyncCustomStatData", 10, function()
+					Timer.StartOneshot("Timers_LeaderLib_SyncCustomStatData", 10, function()
 						self:SyncData()
 					end)
 				end
@@ -190,7 +190,7 @@ if not isClient then
 			end
 
 			-- If a save is loaded or the game is stopped, it'll get synced in the next SharedData cycle anyway
-			StartOneshotTimer("Timers_LeaderLib_SyncCustomStatData", 10, function()
+			Timer.StartOneshot("Timers_LeaderLib_SyncCustomStatData", 10, function()
 				self:SyncData()
 			end)
 		else

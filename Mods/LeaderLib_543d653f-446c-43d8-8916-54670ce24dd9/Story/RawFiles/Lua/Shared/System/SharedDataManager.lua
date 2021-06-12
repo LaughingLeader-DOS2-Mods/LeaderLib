@@ -131,7 +131,7 @@ if Ext.IsServer() then
 		if syncSettingsNext == true then
 			syncSettingsNext = true
 		end
-		StartOneshotTimer("LeaderLib_SyncSharedData", delay or 50, OnSyncTimer)
+		Timer.StartOneshot("LeaderLib_SyncSharedData", delay or 50, OnSyncTimer)
 	end
 
 	function GameHelpers.Data.SetRegion(region)

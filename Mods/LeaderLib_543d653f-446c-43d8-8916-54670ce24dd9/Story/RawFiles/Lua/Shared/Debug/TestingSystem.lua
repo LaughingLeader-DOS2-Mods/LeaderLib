@@ -71,7 +71,7 @@ function Testing.RunTests(tbl, delay, testingName, ...)
 	Testing.Results[testUUID] = {}
 	local testTextResults = Testing.Results[testUUID]
 
-	local timerLaunchFunc = Ext.IsServer() and StartOneshotTimer or UIExtensions.StartTimer
+	local timerLaunchFunc = Ext.IsServer() and Timer.StartOneshot or UIExtensions.StartTimer
 	local saveDelay = (#tbl+1) * (delay and delay + 1000 or 2000)
 	timerLaunchFunc("Timers_Testing_SaveResults", saveDelay, function() Testing.WriteResults(testUUID) end)
 

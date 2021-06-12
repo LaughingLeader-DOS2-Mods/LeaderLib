@@ -257,7 +257,7 @@ Ext.RegisterConsoleCommand("questreward", function(command, treasure, delay)
 		delay = tonumber(delay)
 	end
 	if delay ~= nil then
-		StartOneshotTimer(string.format("Timers_LeaderLib_Debug_QuestReward%s%s%s", host, treasure, delay), delay, function()
+		Timer.StartOneshot(string.format("Timers_LeaderLib_Debug_QuestReward%s%s%s", host, treasure, delay), delay, function()
 			CharacterGiveQuestReward(host, treasure, "QuestReward")
 		end)
 	else

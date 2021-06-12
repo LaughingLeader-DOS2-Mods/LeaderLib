@@ -48,7 +48,7 @@ Ext.RegisterNetListener("LeaderLib_ModMenu_CreateMenuButtonAfterDelay", function
 	if Ext.GetGameState() == "Paused" then
 		Ext.PostMessageToUser(id, "LeaderLib_ModMenu_CreateMenuButton", "")
 	else
-		StartOneshotTimer("Timers_LeaderLib_ModMenu_CreateSidebarButton", 1, function()
+		Timer.StartOneshot("Timers_LeaderLib_ModMenu_CreateSidebarButton", 1, function()
 			Ext.PostMessageToUser(id, "LeaderLib_ModMenu_CreateMenuButton", "")
 		end)
 	end

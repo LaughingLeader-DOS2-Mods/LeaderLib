@@ -41,7 +41,7 @@ end
 --Origins
 if Ext.IsModLoaded("1301db3d-1f54-4e98-9be5-5094030916e4") then
 	RegisterListener("Initialized", function(region)
-		StartOneshotTimer("Timers_LeaderLib_RunOriginFixes", 1000, function()
+		Timer.StartOneshot("Timers_LeaderLib_RunOriginFixes", 1000, function()
 			RunOriginFixes(region)
 		end)
 	end)

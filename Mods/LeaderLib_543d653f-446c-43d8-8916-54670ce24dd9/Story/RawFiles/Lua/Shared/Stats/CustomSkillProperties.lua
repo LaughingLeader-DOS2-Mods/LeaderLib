@@ -42,7 +42,7 @@ local function tpSelf(attacker, position, areaRadius)
 		ApplyStatus(attacker.MyGuid, "ETHEREAL_SOLES", 6.0, 1, attacker.MyGuid)
 		ApplyStatus(attacker.MyGuid, "LEADERLIB_COMBAT_MOVE", 6.0, 1, attacker.MyGuid)
 		local ap = attacker.Stats.CurrentAP
-		StartOneshotTimer("", 600, function()
+		Timer.StartOneshot("", 600, function()
 			tping[attacker.MyGuid] = nil
 			-- PlayEffectAtPosition("RS3_FX_GP_ScriptedEvent_Teleport_GenericSmoke_02", table.unpack(attacker.WorldPos))
 			-- TeleportToPosition(attacker.MyGuid, x, y, z, "", 0, 1)
@@ -50,7 +50,7 @@ local function tpSelf(attacker, position, areaRadius)
 			CharacterMoveToPosition(attacker.MyGuid, x, y, z, 1, "")
 			--NRD_CreateGameObjectMove(attacker.MyGuid, x, y, z, "", attacker.MyGuid)
 			print("TeleportSelf.ExecuteOnPosition", attacker.MyGuid, x, y, z, "from", table.unpack(attacker.WorldPos))
-			StartOneshotTimer("MoveDone", 1500, function()
+			Timer.StartOneshot("MoveDone", 1500, function()
 				if attacker.Stats.CurrentAP ~= ap then
 					attacker.Stats.CurrentAP = ap
 					CharacterAddActionPoints(attacker.MyGuid, 0)

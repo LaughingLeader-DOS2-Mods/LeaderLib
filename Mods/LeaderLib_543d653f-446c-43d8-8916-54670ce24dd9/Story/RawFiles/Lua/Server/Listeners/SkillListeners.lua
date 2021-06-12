@@ -211,7 +211,7 @@ Ext.RegisterNetListener("LeaderLib_OnActiveSkillCleared", function(cmd, id)
 	if not StringHelpers.IsNullOrWhitespace(id) then
 		local character = Ext.GetCharacter(tonumber(id))
 		if character then
-			StartOneshotTimer("Timers_LeaderLib_OnActiveSkillCleared", 50, function()
+			Timer.StartOneshot("Timers_LeaderLib_OnActiveSkillCleared", 50, function()
 				SkillSystem.CheckPreparingState(character.MyGuid)
 			end)
 		end

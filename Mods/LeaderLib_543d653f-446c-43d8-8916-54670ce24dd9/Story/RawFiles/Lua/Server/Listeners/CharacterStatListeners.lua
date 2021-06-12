@@ -115,7 +115,7 @@ end
 local function OnCharacterSheetStatChanged(cmd, uuid, stat, statType)
 	--print("OnCharacterSheetStatChanged", cmd, uuid, stat, statType)
 	RunChangesDetectionTimer()
-	-- StartOneshotTimer("Timers_LeaderLib_CheckStatChanges_"..uuid, 1000, function()
+	-- Timer.StartOneshot("Timers_LeaderLib_CheckStatChanges_"..uuid, 1000, function()
 	-- 	Osi.LeaderLib_CharacterSheet_PointsChanged(stat)
 	-- 	local playerData = GetStoredPlayerValues(uuid)
 	-- 	if playerData ~= nil then

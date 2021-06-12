@@ -60,11 +60,11 @@ else
 	end
 
 	function WorldTooltipper.OnGameStarted(region, editorMode)
-		StartOneshotTimer("Timers_LeaderLib_WorldTooltipper_UpdateItems", WorldTooltipper.UpdateDelay, WorldTooltipper.UpdateWorldItems)
+		Timer.StartOneshot("Timers_LeaderLib_WorldTooltipper_UpdateItems", WorldTooltipper.UpdateDelay, WorldTooltipper.UpdateWorldItems)
 	end
 
 	function UpdateWorldTooltips()
-		StartOneshotTimer("Timers_LeaderLib_WorldTooltipper_UpdateItems", WorldTooltipper.UpdateDelay, WorldTooltipper.UpdateWorldItems)
+		Timer.StartOneshot("Timers_LeaderLib_WorldTooltipper_UpdateItems", WorldTooltipper.UpdateDelay, WorldTooltipper.UpdateWorldItems)
 	end
 
 	---@param item EsvItem

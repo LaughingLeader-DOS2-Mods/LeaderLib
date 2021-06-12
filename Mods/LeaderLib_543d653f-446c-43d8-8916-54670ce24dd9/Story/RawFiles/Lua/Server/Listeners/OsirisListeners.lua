@@ -108,3 +108,20 @@ end
 
 Ext.RegisterOsirisListener("CharacterPrecogDying", Data.OsirisEvents.CharacterPrecogDying, "before", OnObjectDying)
 Ext.RegisterOsirisListener("ItemDestroying", Data.OsirisEvents.ItemDestroying, "before", OnObjectDying)
+
+local function OnObjectEvent(event, ...)
+	InvokeListenerCallbacks(Listeners.ObjectEvent[event], ...)
+	InvokeListenerCallbacks(Listeners.ObjectEvent._All, ...)
+end
+
+Ext.RegisterOsirisListener("StoryEvent", Data.OsirisEvents.StoryEvent, "before", function(object, event)
+	OnObjectEvent(event, StringHelpers.GetUUID(object))
+end)
+
+Ext.RegisterOsirisListener("CharacterCharacterEvent", Data.OsirisEvents.CharacterCharacterEvent, "before", function(obj1, obj2, event)
+	OnObjectEvent(event, StringHelpers.GetUUID(obj1), StringHelpers.GetUUID(obj2))
+end)
+
+Ext.RegisterOsirisListener("CharacterItemEvent", Data.OsirisEvents.CharacterItemEvent, "before", function(obj1, obj2, event)
+	OnObjectEvent(event, StringHelpers.GetUUID(obj1), StringHelpers.GetUUID(obj2))
+end)

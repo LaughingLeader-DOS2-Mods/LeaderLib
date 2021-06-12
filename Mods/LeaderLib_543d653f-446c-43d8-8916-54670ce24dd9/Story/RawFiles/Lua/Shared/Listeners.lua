@@ -74,6 +74,8 @@ if Ext.IsServer() then
 	Listeners.OnNamedTurnCounter = {}
 	---@type table<string, fun(summon:EsvCharacter, owner:EsvCharacter, isAlive:boolean)>
 	Listeners.OnSummonChanged = {}
+	---@type table<string, fun(event:string, vararg string)>
+	Listeners.ObjectEvent = {}
 end
 if Ext.IsClient() then
 	-- Client-side Mod Menu events

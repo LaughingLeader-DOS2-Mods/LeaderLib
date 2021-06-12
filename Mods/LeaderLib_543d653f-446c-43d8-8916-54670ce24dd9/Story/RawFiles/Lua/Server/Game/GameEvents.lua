@@ -143,8 +143,8 @@ Ext.RegisterListener("GameStateChanged", function(from, to)
 	if to == "Running" and Ext.OsirisIsCallable() then
 		if not Vars.Initialized then
 			OnInitialized("", true)
-		elseif from ~= "Paused" then
-			SettingsManager.SyncAllSettings()
+		elseif from == "Sync" then
+			SettingsManager.SyncAllSettings(nil, true)
 		end
 	end
 end)

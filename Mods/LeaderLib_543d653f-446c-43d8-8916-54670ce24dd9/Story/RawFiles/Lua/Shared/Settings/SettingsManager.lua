@@ -103,7 +103,7 @@ if Ext.IsServer() then
 			Features = Features,
 			GameSettings = GameSettings
 		}
-		if id ~= nil then
+		if type(id) == "number" then
 			Ext.PostMessageToUser(id, "LeaderLib_SyncAllSettings", Ext.JsonStringify(data))
 		else
 			Ext.BroadcastMessage("LeaderLib_SyncAllSettings", Ext.JsonStringify(data), nil)

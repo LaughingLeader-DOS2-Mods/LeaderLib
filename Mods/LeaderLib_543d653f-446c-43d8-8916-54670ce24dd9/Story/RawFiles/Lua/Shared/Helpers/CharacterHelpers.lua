@@ -148,7 +148,7 @@ function GameHelpers.Character.GetHighestPlayerLevel()
 	if not isClient then
 		for player in GameHelpers.Character.GetPlayers(false) do
 			if player.Stats.Level > level then
-				level = v
+				level = player.Stats.Level
 			end
 		end
 	else

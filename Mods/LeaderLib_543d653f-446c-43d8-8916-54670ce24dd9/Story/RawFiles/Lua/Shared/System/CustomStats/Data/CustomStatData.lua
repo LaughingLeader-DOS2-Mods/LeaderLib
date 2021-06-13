@@ -80,11 +80,11 @@ end
 function CustomStatData:UpdateLastValue(character)
 	if not StringHelpers.IsNullOrWhitespace(self.UUID) then
 		if type(character) == "userdata" then
-			self.LastValue[character.MyGuid] = character:GetCustomStat(self.UUID) or 0
+			self.LastValue[character.NetID] = character:GetCustomStat(self.UUID) or 0
 		else
 			character = Ext.GetCharacter(character)
 			if character then
-				self.LastValue[character.MyGuid] = character:GetCustomStat(self.UUID) or 0
+				self.LastValue[character.NetID] = character:GetCustomStat(self.UUID) or 0
 			end
 		end
 	end
@@ -94,6 +94,18 @@ end
 ---@param value integer
 function CustomStatData:SetValue(character, value)
 	return CustomStatSystem:SetStat(character, self.ID, value, self.Mod)
+end
+
+local isClient = Ext.IsClient()
+
+---@param character EsvCharacter|string|number
+---@param amount integer
+function CustomStatData:AddAvailablePoints(character, amount)
+	if not isClient then
+		return CustomStatSystem:AddAvailablePoints(character, self, amount)
+	else
+		fprint(LOGLEVEL.WARNING, "CustomStatData:AddAvailablePoints(%s, %s, %s) [WARNING] - This function is server-side only!", self.ID, character, amount)
+	end
 end
 
 --setmetatable(CustomStatData, CustomStatData)

@@ -159,19 +159,19 @@ if not isClient then
 			for _,v in pairs(data.Stats) do
 				local stat = CustomStatSystem:GetStatByID(v.ID, v.Mod)
 				if stat then
-					local last = stat.LastValue[character.MyGuid] or 0
+					local last = stat.LastValue[character.NetID] or 0
 					local current = stat:GetValue(character)
 					if last ~= current then
 						CustomStatSystem:InvokeStatValueChangedListeners(stat, character, last, current)
 					end
-					stat.LastValue[character.MyGuid] = current
+					stat.LastValue[character.NetID] = current
 				end
 			end
 		end
 	end)
 
 	---@param character EsvCharacter|UUID|NETID
-	---@param statId string A stat id or stat PoolID.
+	---@param statId string A stat ID or stat PointID.
 	---@param amount integer
 	---@param modId string|nil
 	function CustomStatSystem:AddAvailablePoints(character, statId, amount, modId)
@@ -180,12 +180,27 @@ if not isClient then
 			uuid = character.MyGuid
 		end
 		if type(uuid) == "string" and type(amount) == "number" then
+			--Use the PointID for actual storage key.
 			local pointId = statId
-			local stat = self:GetStatByID(statId, modId)
-			--Use the PointID for actual storage.
+			---@type CustomStatData
+			local stat = nil
+
+			local t = type(statId)
+			if t == "string" then
+				stat = self:GetStatByID(statId, modId)
+			elseif t == "table" and statId.Type == "CustomStatData" then
+				stat = statId
+			elseif t == "number" then
+				stat = self:GetStatByDouble(statId, modId)
+			end
 			if stat and stat.PointID then
 				pointId = stat.PointID
 			end
+
+			if type(pointId) ~= "string" then
+				error("PointID or statId %s is not a correct type. Stat: %s", pointId, statId, 2)
+			end
+
 			if not self.PointsPool[uuid] then
 				self.PointsPool[uuid] = {}
 			end

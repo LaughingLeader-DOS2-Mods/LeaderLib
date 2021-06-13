@@ -145,14 +145,8 @@ Ext.RegisterNetListener("LeaderLib_UnlockCharacterInventory", function(call, pla
 		--ExternalInterface.call("lockInventory",this.id,this.lockBtn_mc.isActive)
 		local ui = not Vars.ControllerEnabled and Ext.GetUIByType(Data.UIType.partyInventory) or Vars.ControllerEnabled and Ext.GetBuiltinUI(Data.UIType.partyInventory_c)
 		if ui then
-			local players = Ext.JsonParse(playersTableString)
-			if players ~= nil and #players > 0 then
-				for i,v in pairs(players) do
-					local character = Ext.GetCharacter(v)
-					if character ~= nil then
-						ui:ExternalInterfaceCall("lockInventory", Ext.HandleToDouble(character.Handle), false)
-					end
-				end
+			for player in GameHelpers.Character.GetPlayers() do
+				ui:ExternalInterfaceCall("lockInventory", Ext.HandleToDouble(player.Handle), false)
 			end
 		end
 	end

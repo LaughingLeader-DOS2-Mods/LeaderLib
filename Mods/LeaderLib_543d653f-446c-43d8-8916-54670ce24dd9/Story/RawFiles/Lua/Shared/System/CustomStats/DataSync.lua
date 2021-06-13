@@ -8,7 +8,7 @@ function CustomStatSystem:SyncAvailablePoints()
 	else
 		local character = Client:GetCharacter()
 		local data = {
-			UUID = character.MyGuid,
+			UUID = character.NetID,
 			Stats = {}
 		}
 		for stat in self:GetAllStats() do
@@ -46,9 +46,17 @@ if not isClient then
 	end
 
 	function CustomStatSystem:SyncData(user)
+		print("ustomStatSystem:SyncData", user)
+		local availablePoints = {}
+		for uuid,data in pairs(PersistentVars.CustomStatAvailablePoints) do
+			local character = Ext.GetCharacter(uuid)
+			if character then
+				availablePoints[character.NetID] = data
+			end
+		end
 		local payload = Ext.JsonStringify({
 			CustomStats = self:GetSyncData(),
-			AvailablePoints = PersistentVars.CustomStatAvailablePoints
+			AvailablePoints = availablePoints
 		})
 		if user then
 			Ext.PostMessageToUser(user, "LeaderLib_SharedData_StoreCustomStatData", payload)
@@ -59,8 +67,8 @@ if not isClient then
 
 	Ext.RegisterNetListener("LeaderLib_SyncCustomStatAvailablePoints", function(cmd, payload)
 		local data = Common.JsonParse(payload)
-		if data and data.UUID and data.Stats then
-			local uuid = data.UUID
+		if data and data.NetID and data.Stats then
+			local uuid = data.NetID
 			for id,amount in pairs(data.Stats) do
 				self:SetAvailablePoints(uuid, id, amount, true)
 			end
@@ -113,6 +121,7 @@ else
 	end
 
 	Ext.RegisterNetListener("LeaderLib_SharedData_StoreCustomStatData", function(cmd, payload)
+		print(cmd,payload)
 		local b,err = xpcall(LoadSyncedCustomStatData, debug.traceback, cmd, payload)
 		if not b then
 			Ext.PrintError(err)

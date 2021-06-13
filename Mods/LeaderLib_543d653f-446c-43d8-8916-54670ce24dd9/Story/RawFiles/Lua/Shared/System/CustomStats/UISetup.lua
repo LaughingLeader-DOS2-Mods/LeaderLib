@@ -40,7 +40,7 @@ local function OnSheetUpdating(ui, method)
 	if client then
 		local changedStats = {NetID=client.NetID,Stats={}}
 		for stat in CustomStatSystem:GetAllStats() do
-			local last = stat.LastValue[client.MyGuid] or 0
+			local last = stat.LastValue[client.NetID] or 0
 			local value = stat:GetValue(client)
 			if value ~= last then
 				changedStats.Stats[#changedStats.Stats+1] = {
@@ -49,7 +49,7 @@ local function OnSheetUpdating(ui, method)
 				}
 				CustomStatSystem:InvokeStatValueChangedListeners(stat, client, last, value)
 			end
-			stat.LastValue[client.MyGuid] = value
+			stat.LastValue[client.NetID] = value
 		end
 
 		if #changedStats.Stats > 0 then
@@ -93,7 +93,7 @@ local function OnSheetUpdating(ui, method)
 		end)
 
 		--Remove any stats that were hidden
-		this.clearArray(this.customStats_array)
+		this.clearArray("customStats_array")
 
 		local arrayIndex = 0
 		for _,v in pairs(sortList) do

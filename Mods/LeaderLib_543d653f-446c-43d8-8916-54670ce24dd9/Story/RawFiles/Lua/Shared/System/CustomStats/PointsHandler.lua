@@ -175,7 +175,7 @@ if not isClient then
 	---@param amount integer
 	function CustomStatSystem:AddAvailablePoints(character, statId, amount)
 		local uuid = character
-		if type(character) == "userdata" and character.MyGuid then
+		if (type(character) == "userdata" or type(character) == "table") and character.MyGuid then
 			uuid = character.MyGuid
 		end
 		if type(uuid) == "string" and type(amount) == "number" then
@@ -254,8 +254,8 @@ function CustomStatSystem:GetTotalAvailablePoints(character)
 	character = character or Client:GetCharacter()
 	local points = 0
 	local pointsTable = nil
-	if character and self.PointsPool[character.MyGuid] then
-		for id,amount in pairs(self.PointsPool[character.MyGuid]) do
+	if character and self.PointsPool[character.NetID] then
+		for id,amount in pairs(self.PointsPool[character.NetID]) do
 			points = points + amount
 		end
 	end
@@ -270,8 +270,9 @@ end
 function CustomStatSystem:GetAvailablePointsForStat(stat, character)
 	character = character or Client:GetCharacter()
 	local points = 0
+	print(Common.Dump(stat.AvailablePoints), Lib.inspect(CustomStatSystem.PointsPool))
 	if stat and character and stat.AvailablePoints then
-		return stat.AvailablePoints[character.MyGuid] or 0
+		return stat.AvailablePoints[character.NetID] or 0
 	end
 	return 0
 end
@@ -285,6 +286,7 @@ function CustomStatSystem:GetCanAddPoints(ui, doubleHandle, character)
 	if stat then
 		local value = self:GetStatValueForCharacter(character, stat.ID, stat.Mod)
 		local availablePoints = self:GetAvailablePointsForStat(stat)
+		print(stat.ID, value, availablePoints)
 		local canAdd = availablePoints > 0
 		for listener in self:GetListenerIterator(self.Listeners.CanAddPoints[stat.ID], self.Listeners.CanRemovePoints.All) do
 			local b,result = xpcall(listener, debug.traceback, stat.ID, stat, character, value, availablePoints, canAdd)
@@ -333,12 +335,12 @@ function CustomStatSystem:OnStatPointAdded(ui, call, doubleHandle)
 
 	local character = Client:GetCharacter()
 	if character then
-		local points = stat.AvailablePoints and stat.AvailablePoints[character.MyGuid] or nil
+		local points = stat.AvailablePoints and stat.AvailablePoints[character.NetID] or nil
 		if points then
 			local lastPoints = points
 			if points > 0 then
 				points = points - 1
-				stat.AvailablePoints[character.MyGuid] = points
+				stat.AvailablePoints[character.NetID] = points
 			end
 			if points == 0 then
 				local isGM = GameHelpers.Client.IsGameMaster(ui)
@@ -369,12 +371,12 @@ function CustomStatSystem:OnStatPointRemoved(ui, call, doubleHandle)
 	local stat = self:GetStatByDouble(doubleHandle)
 	local stat_mc = self:GetStatMovieClipByDouble(ui, doubleHandle)
 	local character = Client:GetCharacter()
-	local points = stat.AvailablePoints and stat.AvailablePoints[character.MyGuid] or nil
+	local points = stat.AvailablePoints and stat.AvailablePoints[character.NetID] or nil
 	if points then
 		local lastPoints = points
-		stat.AvailablePoints[character.MyGuid] = stat.AvailablePoints[character.MyGuid] + 1
+		stat.AvailablePoints[character.NetID] = stat.AvailablePoints[character.NetID] + 1
 		for listener in self:GetListenerIterator(self.Listeners.OnAvailablePointsChanged[stat.ID], self.Listeners.OnAvailablePointsChanged.All) do
-			local b,err = xpcall(listener, debug.traceback, stat.ID, stat, character, lastPoints, stat.AvailablePoints[character.MyGuid])
+			local b,err = xpcall(listener, debug.traceback, stat.ID, stat, character, lastPoints, stat.AvailablePoints[character.NetID])
 			if not b then
 				fprint(LOGLEVEL.ERROR, "[LeaderLib.CustomStatSystem:OnStatPointRemoved] Error calling OnAvailablePointsChanged listener for stat (%s):\n%s", stat.ID, err)
 			end

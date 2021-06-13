@@ -267,6 +267,38 @@ function GameHelpers.Character.GetPlayers(includeSummons)
 	end
 end
 
+function GameHelpers.Character.GetPartySize(includeSummons)
+	local count = 0
+	local players = {}
+	if not isClient then
+		for _,db in pairs(Osi.DB_IsPlayer:Get(nil)) do
+			local player = Ext.GetCharacter(db[1])
+			if player then
+				count = count + 1
+			end
+			if includeSummons == true then
+				local summons = PersistentVars.Summons[player.MyGuid]
+				if summons then
+					for i,v in pairs(summons) do
+						if ObjectIsCharacter(v) == 1 then
+							local summon = Ext.GetCharacter(v)
+							if summon then
+								count = count + 1
+							end
+						end
+					end
+				end
+			end
+		end
+	else
+		for mc in StatusHider.PlayerInfo:GetCharacterMovieClips(not includeSummons) do
+			count = count + 1
+		end
+	end
+
+	return count
+end
+
 ---@param owner EsvCharacter|EclCharacter|string|number|nil
 ---@param getItems boolean|nil If on the server, item summons can be grabbed as well.
 ---@return fun():EsvCharacter|EclCharacter

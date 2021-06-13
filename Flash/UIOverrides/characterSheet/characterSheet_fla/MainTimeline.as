@@ -480,9 +480,14 @@ package characterSheet_fla
 			}
 		}
 
-		public function clearArray(arr:Array): *
+		public function clearArray(name:string): *
 		{
-			arr.length = 0;
+			switch(name)
+			{
+				case "customStats_array":
+					customStats_array.length = 0;
+					break;
+			}
 		}
 		
 		public function updateArraySystem() : *

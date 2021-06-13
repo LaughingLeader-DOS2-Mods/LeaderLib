@@ -36,20 +36,15 @@ local isClient = Ext.IsClient()
 
 local function setAvailablePointsHandler(data)
 	local AvailablePointsHandler = {}
-	AvailablePointsHandler.__index = function(table, uuid)
-		local parentTable = nil
-		if isClient then
-			parentTable = CustomStatSystem.PointsPool
-		else
-			parentTable = PersistentVars.CustomStatAvailablePoints
-		end
+	AvailablePointsHandler.__index = function(table, characterId)
+		local parentTable = CustomStatSystem.PointsPool
 		local pointId = data.ID
 		if not StringHelpers.IsNullOrWhitespace(data.PointID) then
 			pointId = data.PointID
 		end
-		local characterData = parentTable[uuid]
+		local characterData = parentTable[characterId]
 		if characterData then
-			return characterData[pointId]
+			return math.max(characterData[pointId] or 0, characterData[data.ID] or 0)
 		end
 		--fprint(LOGLEVEL.ERROR, "[LeaderLib:CustomStatsData:AvailablePoints] Failed to fetch available points for id (%s) and character(%s). Context(%s).", pointId, uuid, isClient and "CLIENT" or "SERVER")
 		return 0

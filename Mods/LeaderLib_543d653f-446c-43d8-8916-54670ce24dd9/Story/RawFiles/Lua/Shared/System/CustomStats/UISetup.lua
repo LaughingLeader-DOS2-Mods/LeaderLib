@@ -69,6 +69,7 @@ local function OnSheetUpdating(ui, method)
 		local displayName = this.customStats_array[i+1]
 		local value = this.customStats_array[i+2]
 		local groupId = 0
+		local hideStat = false
 
 		if doubleHandle then
 			local stat = CustomStatSystem:GetStatByName(displayName)
@@ -76,8 +77,13 @@ local function OnSheetUpdating(ui, method)
 				stat.Double = doubleHandle
 				this.customStats_array[i+1] = stat:GetDisplayName()
 				groupId = CustomStatSystem:GetCategoryGroupId(stat.Category, stat.Mod)
+				if stat.Visible == false and not GameHelpers.Client.IsGameMaster(ui, this) then
+					hideStat = true
+				end
 			end
-			sortList[#sortList+1] = {DisplayName=this.customStats_array[i+1], Handle=doubleHandle, Value=value, GroupId=groupId}
+			if not hideStat then
+				sortList[#sortList+1] = {DisplayName=this.customStats_array[i+1], Handle=doubleHandle, Value=value, GroupId=groupId}
+			end
 		end
 	end
 
@@ -85,6 +91,9 @@ local function OnSheetUpdating(ui, method)
 		table.sort(sortList, function(a,b)
 			return a.DisplayName < b.DisplayName
 		end)
+
+		--Remove any stats that were hidden
+		this.clearArray(this.customStats_array)
 
 		local arrayIndex = 0
 		for _,v in pairs(sortList) do

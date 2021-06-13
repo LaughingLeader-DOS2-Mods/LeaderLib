@@ -479,6 +479,11 @@ package characterSheet_fla
 				ExternalInterface.call("selectCharacter",character.id);
 			}
 		}
+
+		public function clearArray(arr:Array): *
+		{
+			arr.length = 0;
+		}
 		
 		public function updateArraySystem() : *
 		{

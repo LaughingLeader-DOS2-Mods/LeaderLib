@@ -2,7 +2,8 @@
 local CustomStatDataBase = {
 	Type="CustomStatDataBase",
 	DisplayName = "",
-	Description = ""
+	Description = "",
+	Visible = true,
 }
 CustomStatDataBase.__index = CustomStatDataBase
 

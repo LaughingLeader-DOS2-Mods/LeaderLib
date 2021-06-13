@@ -18,7 +18,7 @@ local CustomStatData = {
 	Double = nil,
 	PointID = "",
 	LastValue = {},
-	AvailablePoints = {}
+	AvailablePoints = {},
 }
 
 CustomStatData.__index = function(t,k)

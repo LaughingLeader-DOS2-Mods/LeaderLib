@@ -16,7 +16,9 @@ local SkillEventData = {
 		All = -1,
 		Objects = 0,
 		Positions = 1
-	}
+	},
+	---@type StatEntrySkillData
+	Stat = {}
 }
 SkillEventData.__index = SkillEventData
 
@@ -36,6 +38,7 @@ function SkillEventData:Create(skillSource, skill, skillType, skillAbility)
 		TargetPositions = {},
 		TotalTargetObjects = 0,
 		TotalTargetPositions = 0,
+		Stat = Ext.GetStat(skill) or {}
 	}
 	setmetatable(this, self)
     return this

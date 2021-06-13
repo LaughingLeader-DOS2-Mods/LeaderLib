@@ -173,20 +173,27 @@ if not isClient then
 	---@param character EsvCharacter|UUID|NETID
 	---@param statId string A stat id or stat PoolID.
 	---@param amount integer
-	function CustomStatSystem:AddAvailablePoints(character, statId, amount)
+	---@param modId string|nil
+	function CustomStatSystem:AddAvailablePoints(character, statId, amount, modId)
 		local uuid = character
 		if (type(character) == "userdata" or type(character) == "table") and character.MyGuid then
 			uuid = character.MyGuid
 		end
 		if type(uuid) == "string" and type(amount) == "number" then
+			local pointId = statId
+			local stat = self:GetStatByID(statId, modId)
+			--Use the PointID for actual storage.
+			if stat and stat.PointID then
+				pointId = stat.PointID
+			end
 			if not self.PointsPool[uuid] then
 				self.PointsPool[uuid] = {}
 			end
-			local current = self.PointsPool[uuid][statId] or 0
-			self.PointsPool[uuid][statId] = current + amount
+			local current = self.PointsPool[uuid][pointId] or 0
+			self.PointsPool[uuid][pointId] = current + amount
 
 			if Vars.DebugMode then
-				fprint(LOGLEVEL.DEFAULT, "Added (%s) available points for custom stat (%s) to character(%s). Total(%s)", amount, statId, uuid, self.PointsPool[uuid][statId])
+				fprint(LOGLEVEL.DEFAULT, "Added (%s) available points for custom stat (%s)[%s] to character(%s). Total(%s)", amount, statId, pointId, uuid, self.PointsPool[uuid][pointId])
 			end
 
 			-- If a save is loaded or the game is stopped, it'll get synced in the next SharedData cycle anyway

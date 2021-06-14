@@ -77,7 +77,7 @@ local function parseTable(tbl, propertyMap, modId, defaults)
 							if propData and (propData.Type == "any" or t == propData.Type) then
 								data[propData.Name] = value
 							else
-								fprint(LOGLEVEL.ERROR, "[LeaderLib:CustomStatsConfig] Invalid default property (%s) with value type(%s)", property, t)
+								fprint(LOGLEVEL.WARNING, "[LeaderLib:CustomStatsConfig] Defaults for stat(%s) has unknown property (%s) with value type(%s)", k, property, t)
 							end
 						end
 					end
@@ -90,7 +90,7 @@ local function parseTable(tbl, propertyMap, modId, defaults)
 						if propData and (propData.Type == "any" or t == propData.Type) then
 							data[propData.Name] = value
 						else
-							fprint(LOGLEVEL.ERROR, "[LeaderLib:CustomStatsConfig] Invalid property (%s) with value type(%s)", property, t)
+							fprint(LOGLEVEL.WARNING, "[LeaderLib:CustomStatsConfig] Stat(%s) has unknown property (%s) with value type(%s)", k, property, t)
 						end
 					end
 				end

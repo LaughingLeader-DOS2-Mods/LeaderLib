@@ -111,12 +111,13 @@ end
 local miscGroupDisplayName = Classes.TranslatedString:Create("hb8ed2061ge5a3g4f64g9d54g9a9b65e27e1e", "Miscellaneous")
 
 function CustomStatSystem:SetupGroups(ui, call)
+	local isGM = GameHelpers.Client.IsGameMaster()
 	local this = ui:GetRoot().stats_mc.customStats_mc
 	this.resetGroups()
 	-- Group for stats without an assigned category
 	this.addGroup(0, miscGroupDisplayName.Value, false, self:GetTotalStatsInCategory(nil, true) > 0)
 	for category in self:GetAllCategories() do
-		local isVisible = category.ShowAlways or self:GetTotalStatsInCategory(category.ID, true) > 0
+		local isVisible = isGM or category.ShowAlways or self:GetTotalStatsInCategory(category.ID, true) > 0
 		this.addGroup(category.GroupId, category:GetDisplayName(), false, isVisible)
 	end
 	this.positionElements()

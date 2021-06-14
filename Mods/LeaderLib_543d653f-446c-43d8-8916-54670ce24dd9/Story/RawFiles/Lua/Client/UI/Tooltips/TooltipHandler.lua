@@ -298,7 +298,7 @@ local function OnCustomStatTooltip(character, stat, tooltip)
 			local element = tooltip:GetElement("AbilityDescription")
 			local value = stat:GetValue(character)
 			if value > 0 then
-				element.CurrentLevelEffect = string.format("Level %s: Gain %s%% more loot.", value or 1, 200)
+				element.CurrentLevelEffect = string.format("Level %s: Gain %s%% more loot.", value or 1, 100)
 				element.NextLevelEffect = string.format("Next Level %s: Gain %s%% more loot.", value+1, (value+1)*100)
 				tooltip:AppendElement({
 					Type="StatsTalentsBoost",

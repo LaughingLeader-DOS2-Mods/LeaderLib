@@ -163,7 +163,6 @@ end
 -- end, "Before")
 
 function CustomStatSystem:OnGroupClicked(ui, call, arrayIndex, groupId, isOpen, groupName)
-	print(call, arrayIndex, groupId, isOpen, groupName)
 	local category = self:GetCategoryByGroupId(groupId)
 	if category then
 		category.IsOpen = isOpen

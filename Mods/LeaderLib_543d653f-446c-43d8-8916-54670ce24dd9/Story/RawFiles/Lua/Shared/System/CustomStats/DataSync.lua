@@ -2,18 +2,18 @@ local self = CustomStatSystem
 
 local isClient = Ext.IsClient()
 
-function CustomStatSystem:SyncAvailablePoints()
+function CustomStatSystem:SyncAvailablePoints(character)
 	if not isClient then
 		self:SyncData()
 	else
-		local character = Client:GetCharacter()
+		character = character or Client:GetCharacter()
 		local data = {
-			UUID = character.NetID,
+			NetID = character.NetID,
 			Stats = {}
 		}
 		for stat in self:GetAllStats() do
 			if stat.AvailablePoints then
-				local amount = stat.AvailablePoints[character.MyGuid]
+				local amount = stat.AvailablePoints[character.NetID]
 				if amount then
 					if not StringHelpers.IsNullOrWhitespace(stat.PointID) then
 						data.Stats[stat.PointID] = amount
@@ -46,7 +46,6 @@ if not isClient then
 	end
 
 	function CustomStatSystem:SyncData(user)
-		print("ustomStatSystem:SyncData", user)
 		local availablePoints = {}
 		for uuid,data in pairs(PersistentVars.CustomStatAvailablePoints) do
 			local character = Ext.GetCharacter(uuid)
@@ -68,9 +67,11 @@ if not isClient then
 	Ext.RegisterNetListener("LeaderLib_SyncCustomStatAvailablePoints", function(cmd, payload)
 		local data = Common.JsonParse(payload)
 		if data and data.NetID and data.Stats then
-			local uuid = data.NetID
-			for id,amount in pairs(data.Stats) do
-				self:SetAvailablePoints(uuid, id, amount, true)
+			local character = Ext.GetCharacter(data.NetID)
+			if character then
+				for id,amount in pairs(data.Stats) do
+					self:SetAvailablePoints(character, id, amount, true)
+				end
 			end
 		end
 	end)
@@ -121,7 +122,6 @@ else
 	end
 
 	Ext.RegisterNetListener("LeaderLib_SharedData_StoreCustomStatData", function(cmd, payload)
-		print(cmd,payload)
 		local b,err = xpcall(LoadSyncedCustomStatData, debug.traceback, cmd, payload)
 		if not b then
 			Ext.PrintError(err)

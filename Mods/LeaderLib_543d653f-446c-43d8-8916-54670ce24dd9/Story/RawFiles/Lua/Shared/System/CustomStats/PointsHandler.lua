@@ -98,41 +98,45 @@ function CustomStatSystem:InvokeStatValueChangedListeners(stat, character, last,
 	end
 end
 
+local function CharacterIdIsValid(id)
+	if not isClient then
+		return type(id) == "string"
+	else
+		return type(id) == "number"
+	end
+end
+
 ---@param character EsvCharacter|UUID|NETID
 ---@param statId string A stat id or stat PoolID.
 ---@param amount integer
 ---@param skipSync boolean Skips syncing if true.
 function CustomStatSystem:SetAvailablePoints(character, statId, amount, skipSync)
-	local uuid = character
-	if type(character) == "userdata" and character.MyGuid then
-		uuid = character.MyGuid
+	local characterId = character
+	if type(character) == "userdata" then
+		if not isClient then
+			characterId = character.MyGuid
+		else
+			characterId = character.NetID
+		end
 	end
-	if type(uuid) == "string" and type(amount) == "number" then
-		-- local targetTable = nil
-		-- if Ext.IsServer() then
-		-- 	targetTable = PersistentVars.CustomStatAvailablePoints
-		-- else
-		-- 	targetTable = self.PointsPool
-		-- end
+	if CharacterIdIsValid(characterId) and type(amount) == "number" then
 		if self.PointsPool then
-			if not self.PointsPool[uuid] then
-				self.PointsPool[uuid] = {}
+			if not self.PointsPool[characterId] then
+				self.PointsPool[characterId] = {}
 			end
-			self.PointsPool[uuid][statId] = amount
-			if Vars.DebugMode and amount ~= self.PointsPool[uuid][statId] then
-				fprint(LOGLEVEL.DEFAULT, "Set available points for custom stat or pool (%s) to (%s) for character(%s). Total(%s)", statId, amount, uuid, self.PointsPool[uuid][statId])
+			self.PointsPool[characterId][statId] = amount
+			if Vars.DebugMode and amount ~= self.PointsPool[characterId][statId] then
+				fprint(LOGLEVEL.DEFAULT, "Set available points for custom stat or pool (%s) to (%s) for character(%s). Total(%s)", statId, amount, characterId, self.PointsPool[characterId][statId])
 			end
-			if not skipSync then
-				if not isClient then
-					-- If a save is loaded or the game is stopped, it'll get synced in the next SharedData cycle anyway
-					Timer.StartOneshot("Timers_LeaderLib_SyncCustomStatData", 10, function()
-						self:SyncData()
-					end)
-				end
+			if not skipSync and not isClient then
+				-- If a save is loaded or the game is stopped, it'll get synced in the next SharedData cycle anyway
+				Timer.StartOneshot("Timers_LeaderLib_SyncCustomStatData", 10, function()
+					self:SyncData()
+				end)
 			end
 		end
 	else
-		error(string.format("Invalid parameters character(%s) uuid(%s) statId(%s) amount(%s)", tostring(character), tostring(uuid), tostring(statId), tostring(amount)), 1)
+		error(string.format("Invalid parameters. character(%s) statId(%s) amount(%s)", tostring(character), tostring(statId), tostring(amount)), 1)
 	end
 end
 
@@ -292,7 +296,6 @@ end
 function CustomStatSystem:GetAvailablePointsForStat(stat, character)
 	character = character or Client:GetCharacter()
 	local points = 0
-	print(Common.Dump(stat.AvailablePoints), Lib.inspect(CustomStatSystem.PointsPool))
 	if stat and character and stat.AvailablePoints then
 		return stat.AvailablePoints[character.NetID] or 0
 	end
@@ -308,7 +311,6 @@ function CustomStatSystem:GetCanAddPoints(ui, doubleHandle, character)
 	if stat then
 		local value = self:GetStatValueForCharacter(character, stat.ID, stat.Mod)
 		local availablePoints = self:GetAvailablePointsForStat(stat)
-		print(stat.ID, value, availablePoints)
 		local canAdd = availablePoints > 0
 		for listener in self:GetListenerIterator(self.Listeners.CanAddPoints[stat.ID], self.Listeners.CanRemovePoints.All) do
 			local b,result = xpcall(listener, debug.traceback, stat.ID, stat, character, value, availablePoints, canAdd)
@@ -352,6 +354,9 @@ function CustomStatSystem:GetCanRemovePoints(ui, doubleHandle, character)
 end
 
 function CustomStatSystem:OnStatPointAdded(ui, call, doubleHandle)
+	if GameHelpers.Client.IsGameMaster(ui) == true then
+		return
+	end
 	local stat = self:GetStatByDouble(doubleHandle)
 	local stat_mc = self:GetStatMovieClipByDouble(ui, doubleHandle)
 
@@ -365,16 +370,13 @@ function CustomStatSystem:OnStatPointAdded(ui, call, doubleHandle)
 				stat.AvailablePoints[character.NetID] = points
 			end
 			if points == 0 then
-				local isGM = GameHelpers.Client.IsGameMaster(ui)
-				stat_mc.plus_mc.visible = isGM
-				if isGM then
-					stat_mc.minus_mc.visible = isGM
-				end
+				stat_mc.plus_mc.visible = false
+				stat_mc.minus_mc.visible = self:GetCanRemovePoints(ui, doubleHandle)
 			end
 			for listener in self:GetListenerIterator(self.Listeners.OnAvailablePointsChanged[stat.ID], self.Listeners.OnAvailablePointsChanged.All) do
 				local b,err = xpcall(listener, debug.traceback, stat.ID, stat, character, lastPoints, points)
 				if not b then
-					fprint(LOGLEVEL.ERROR, "[LeaderLib.CustomStatSystem:OnStatPointAdded] Error calling OnAvailablePointsChanged listener for stat (%s):\n%s", stat.ID, err)
+					fprint(LOGLEVEL.ERROR, "[LeaderLib.CustomStatSystem] Error calling OnAvailablePointsChanged listener for stat (%s):\n%s", stat.ID, err)
 				end
 			end
 			Ext.PostMessageToServer("LeaderLib_CustomStatSystem_AvailablePointsChanged", Ext.JsonStringify({
@@ -384,12 +386,15 @@ function CustomStatSystem:OnStatPointAdded(ui, call, doubleHandle)
 				Last = lastPoints,
 				Current = points
 			}))
-			self:SyncAvailablePoints()
+			self:SyncAvailablePoints(character)
 		end
 	end
 end
 
 function CustomStatSystem:OnStatPointRemoved(ui, call, doubleHandle)
+	if GameHelpers.Client.IsGameMaster(ui) == true then
+		return
+	end
 	local stat = self:GetStatByDouble(doubleHandle)
 	local stat_mc = self:GetStatMovieClipByDouble(ui, doubleHandle)
 	local character = Client:GetCharacter()

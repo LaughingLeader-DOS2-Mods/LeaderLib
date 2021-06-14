@@ -199,7 +199,7 @@ end
 ---@return integer
 function CustomStatSystem:GetTotalStatsInCategory(categoryId, visibleOnly)
 	local total = 0
-	local isUnsortedCategory = StringHelpers.IsNullOrWhitespace(id)
+	local isUnsortedCategory = StringHelpers.IsNullOrWhitespace(categoryId)
 	for mod,stats in pairs(CustomStatSystem.Stats) do
 		for id,stat in pairs(stats) do
 			local statIsVisible = stat.Visible ~= false and not StringHelpers.IsNullOrWhitespace(stat.UUID)

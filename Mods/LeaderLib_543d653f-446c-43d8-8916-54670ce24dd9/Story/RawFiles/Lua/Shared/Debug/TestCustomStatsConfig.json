@@ -53,7 +53,8 @@
 		},
 		"Debug1": {
 			"DisplayName": "Debug1",
-			"Category": "Debug"
+			"Category": "Debug",
+			"Visible": false
 		},
 		"Debug2": {
 			"DisplayName": "Debug2",

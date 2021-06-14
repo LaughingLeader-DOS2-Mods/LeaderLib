@@ -29,7 +29,6 @@ package characterSheet_fla
 		
 		public function setTab(tabIndex:uint) : *
 		{
-			trace("setTab", tabIndex);
 			this.statPoints_txt.visible = Boolean(tabIndex == 0);
 			this.combatAbilPoints_txt.visible = Boolean(tabIndex == 1);
 			this.civilAbilPoints_txt.visible = Boolean(tabIndex == 2);
@@ -40,9 +39,6 @@ package characterSheet_fla
 		function frame1() : *
 		{
 			textHelpers.smallCaps(this.label_txt);
-
-			trace("pointsAvailable frame1")
-
 			//customStatPoints_txt.visible = false;
 			//var tf:TextFormat = this.combatAbilPoints_txt.getTextFormat();
 			// var tf:TextFormat = new TextFormat();

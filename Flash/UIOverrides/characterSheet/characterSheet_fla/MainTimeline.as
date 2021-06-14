@@ -480,12 +480,57 @@ package characterSheet_fla
 			}
 		}
 
-		public function clearArray(name:string): *
+		public function clearArray(name:String): *
 		{
 			switch(name)
 			{
+				case "tabsTexts":
+					tabsTexts.length = 0;
+					break;
+				case "primStat_array":
+					primStat_array.length = 0;
+					break;
+				case "secStat_array":
+					secStat_array.length = 0;
+					break;
+				case "ability_array":
+					ability_array.length = 0;
+					break;
+				case "tags_array":
+					tags_array.length = 0;
+					break;
+				case "talent_array":
+					talent_array.length = 0;
+					break;
+				case "visual_array":
+					visual_array.length = 0;
+					break;
+				case "visualValues_array":
+					visualValues_array.length = 0;
+					break;
 				case "customStats_array":
 					customStats_array.length = 0;
+					break;
+				case "lvlBtnAbility_array":
+					lvlBtnAbility_array.length = 0;
+					break;
+				case "lvlBtnStat_array":
+					lvlBtnStat_array.length = 0;
+					break;
+				case "lvlBtnSecStat_array":
+					lvlBtnSecStat_array.length = 0;
+					break;
+				case "lvlBtnTalent_array":
+					lvlBtnTalent_array.length = 0;
+					break;
+				case "allignmentArray":
+					allignmentArray.length = 0;
+					break;
+				case "aiArray":
+					aiArray.length = 0;
+					break;
+				case "inventoryUpdateList":
+					inventoryUpdateList.length = 0;
 					break;
 			}
 		}

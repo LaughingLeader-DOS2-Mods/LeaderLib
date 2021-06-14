@@ -40,6 +40,8 @@
 			"DisplayName": "FEAR_DisplayName",
 			"Description": "FEAR_Description",
 			"Icon": "Attribute_Finesse",
+			"IconWidth": 64,
+			"IconHeight": 64,
 			"TooltipType": "Ability",
 			"Category": "Personality",
 			"PointID": "Personality"
@@ -58,7 +60,6 @@
 		},
 		"Debug2": {
 			"DisplayName": "Debug2",
-			"Create": true,
 			"Category": "Debug"
 		},
 		"Debug3": {

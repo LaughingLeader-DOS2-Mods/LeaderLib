@@ -9,6 +9,8 @@ local CustomStatData = {
 	DisplayName = "",
 	Description = "",
 	Icon = "",
+	IconWidth = 128,
+	IconHeight = 128,
 	Visible = true,
 	---@type CustomStatTooltipType
 	TooltipType = "Stat",

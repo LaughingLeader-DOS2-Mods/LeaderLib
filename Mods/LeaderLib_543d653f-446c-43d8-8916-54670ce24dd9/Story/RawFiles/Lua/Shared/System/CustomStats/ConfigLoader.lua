@@ -30,6 +30,8 @@ local statPropertyMap = {
 	POINTID = {Name="PointID", Type = "string"},
 	DISPLAYVALUEINTOOLTIP = {Name="DisplayValueInTooltip", Type = "boolean"},
 	VISIBLE = {Name="Visible", Type = "boolean"},
+	ICONWIDTH = {Name="IconWidth", Type = "number"},
+	ICONHEIGHT = {Name="IconHeight", Type = "number"},
 }
 
 local isClient = Ext.IsClient()

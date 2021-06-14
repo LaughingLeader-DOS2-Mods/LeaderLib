@@ -256,7 +256,7 @@ function CustomStatSystem:OnRequestTooltip(ui, call, statId, x, y, width, height
 			if stat.Icon and stat.TooltipType ~= self.TooltipType.Stat then
 				stat.IconId = self:GetNextCustomStatIconId()
 			end
-			self:CreateCustomStatTooltip(displayName, description, width, height, stat.TooltipType, stat.Icon, stat.IconId)
+			self:CreateCustomStatTooltip(displayName, description, width, height, stat.TooltipType, stat.Icon, stat.IconId, stat.IconWidth, stat.IconHeight)
 		else
 			self:CreateCustomStatTooltip(statName, nil, width, height, stat.TooltipType, stat.Icon, stat.IconId)
 		end
@@ -430,8 +430,7 @@ function CustomStatSystem:UpdateCustomStatTooltip(displayName, description, widt
 	-- end
 end
 
-function CustomStatSystem:CreateCustomStatTooltip(displayName, description, width, height, tooltipType, icon, iconId)
-	Ext.Print("CustomStatSystem.CreateCustomStatTooltip", displayName, description, width, height, tooltipType, icon, iconId)
+function CustomStatSystem:CreateCustomStatTooltip(displayName, description, width, height, tooltipType, icon, iconId, iconWidth, iconHeight)
 	local ui = Ext.GetUIByType(Data.UIType.tooltip)
 	if ui then
 		local this = ui:GetRoot()
@@ -444,7 +443,7 @@ function CustomStatSystem:CreateCustomStatTooltip(displayName, description, widt
 					this.tooltip_array[2] = Game.Tooltip.TooltipItemTypes.TagDescription
 					this.tooltip_array[3] = description or ""
 					this.tooltip_array[4] = iconId
-					Game.Tooltip.PrepareIcon(ui, string.format("tt_tag_%i", stat.IconId), stat.Icon, 128, 128)
+					Game.Tooltip.PrepareIcon(ui, string.format("tt_tag_%i", iconId), icon, iconWidth or 128, iconHeight or 128)
 					resolved = true
 				else
 					this.tooltip_array[0] = Game.Tooltip.TooltipItemTypes.StatName
@@ -456,7 +455,7 @@ function CustomStatSystem:CreateCustomStatTooltip(displayName, description, widt
 					this.tooltip_array[6] = ""
 					this.tooltip_array[7] = ""
 
-					Game.Tooltip.PrepareIcon(ui, string.format("tt_ability_%i", iconId), icon, 128, 128)
+					Game.Tooltip.PrepareIcon(ui, string.format("tt_ability_%i", iconId), icon, iconWidth or 128, iconHeight or 128)
 					resolved = true
 				end
 			end
@@ -515,9 +514,9 @@ function CustomStatSystem:NetRequestCustomStatTooltip(cmd, payload)
 				data.Description = GameHelpers.Tooltip.ReplacePlaceholders(GameHelpers.GetStringKeyText(data.Description))
 			end
 
-			if data.Icon then
+			if data.Icon and data.TooltipType ~= "Stat" then
 				local iconId = self:GetNextCustomStatIconId()
-				self:CreateCustomStatTooltip(data.DisplayName, data.Description, data.Width, data.Height, "Ability", data.Icon, iconId)
+				self:CreateCustomStatTooltip(data.DisplayName, data.Description, data.Width, data.Height, data.TooltipType, data.Icon, iconId, data.IconWidth, data.IconHeight)
 			else
 				self:CreateCustomStatTooltip(data.DisplayName, data.Description, data.Width, data.Height)
 			end

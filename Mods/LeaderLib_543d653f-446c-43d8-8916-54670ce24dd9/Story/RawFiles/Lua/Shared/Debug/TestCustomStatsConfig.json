@@ -60,7 +60,10 @@
 		},
 		"Debug2": {
 			"DisplayName": "Debug2",
-			"Category": "Debug"
+			"Description": "Debug test.",
+			"Category": "Debug",
+			"DisplayMode": "Percentage",
+			"DisplayValueInTooltip": true
 		},
 		"Debug3": {
 			"DisplayName": "Debug3",

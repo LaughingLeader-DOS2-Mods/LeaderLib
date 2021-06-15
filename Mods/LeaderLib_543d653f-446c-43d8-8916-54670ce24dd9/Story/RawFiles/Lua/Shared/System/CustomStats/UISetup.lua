@@ -215,6 +215,10 @@ function CustomStatSystem:OnStatAdded(ui, call, doubleHandle, index)
 	elseif stat and stat.DisplayValueInTooltip ~= true then
 		self.TooltipValueEnabled[stat.ID] = nil
 	end
+
+	if stat.DisplayMode == stat.STAT_DISPLAY_MODE.Percentage then
+		stat_mc.text_txt.htmlText = stat_mc.text_txt.htmlText .. "%"
+	end
 end
 
 --ExternalInterface.call(param2,param1.statId,val3.x + val5,val3.y + val4,val6,param1.height,param1.tooltipAlign);
@@ -537,10 +541,11 @@ function CustomStatSystem:OnTooltip(ui, character, stat, tooltip)
 	if self.TooltipValueEnabled[stat.ID] then
 		local element = tooltip:GetLastElement({"StatsDescription", "TagDescription"})
 		if element then
+			local value = string.format("%s%s", stat:GetValue(character), stat.DisplayMode == stat.STAT_DISPLAY_MODE.Percentage and "%" or "")
 			if StringHelpers.IsNullOrWhitespace(element.Label) then
-				element.Label = string.format("(%s)", stat:GetValue(character))
+				element.Label = string.format("(%s)", value)
 			else
-				element.Label = string.format("%s<br>(%s)", element.Label, stat:GetValue(character))
+				element.Label = string.format("%s<br>(%s)", element.Label, value)
 			end
 		end
 	end

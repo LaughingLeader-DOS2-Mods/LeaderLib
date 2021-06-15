@@ -73,7 +73,7 @@ Ext.RegisterListener("StatusHitEnter", function(hitStatus, context)
 
 	if skillId then
 		skill = Ext.GetStat(skillId)
-		OnSkillHit(skill, target, source, hit.TotalDamageDone, hit, context, hitStatus)
+		OnSkillHit(skill, target, source, hit.TotalDamageDone, hit, context, hitStatus, data)
 	end
 
 	if Features.ApplyBonusWeaponStatuses == true and source then

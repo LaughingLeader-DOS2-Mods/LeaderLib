@@ -88,7 +88,7 @@ package
 			if(this.tooltip != null && this.tooltip != "")
 			{
 				this.base.curTooltip = this.pos;
-				tooltipHelper.ShowTooltipForMC(this,root,"bottom");
+				tooltipHelper.ShowTooltipForMC(this,root,"bottom",this.base.hasTooltip == false);
 			}
 		}
 		

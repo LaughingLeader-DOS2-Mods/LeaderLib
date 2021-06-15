@@ -151,7 +151,7 @@ package
 				this.curTooltip = obj.name;
 				obj.tooltipOverrideW = this.base.ElW;
 				obj.tooltipYOffset = -4;
-				tooltipHelper.ShowTooltipForMC(obj,this,"bottom");
+				tooltipHelper.ShowTooltipForMC(obj,this,"bottom",this.hasTooltip == false);
 			}
 		}
 

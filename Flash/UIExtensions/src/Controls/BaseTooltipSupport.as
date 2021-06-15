@@ -19,14 +19,14 @@ package Controls
 			addFrameScript(0, this.setupTooltipListeners);
 		}
 
-		public function showTooltip() : *
+		public function showTooltip(fade:Boolean=true) : *
 		{
 			if(this.tooltip != null && this.tooltip != "")
 			{
 				this.base.curTooltip = this.name;
 				this.tooltipOverrideW = this.base.ElW;
 				this.tooltipYOffset = -4;
-				tooltipHelper.ShowTooltipForMC(this,this.base,this.tooltipSide);
+				tooltipHelper.ShowTooltipForMC(this,this.base,this.tooltipSide,fade);
 			}
 		}
 
@@ -42,7 +42,7 @@ package Controls
 		
 		public function onMouseOver(e:MouseEvent) : *
 		{
-			this.showTooltip();
+			this.showTooltip(this.base.hasTooltip == false);
 		}
 		
 		public function onMouseOut(e:MouseEvent) : *

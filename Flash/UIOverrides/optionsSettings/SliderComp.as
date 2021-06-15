@@ -64,7 +64,7 @@ package
 			{
 				this.base.curTooltip = this.pos;
 				this.tooltipOverrideW = this.base.ElW;
-				tooltipHelper.ShowTooltipForMC(this,root,"bottom");
+				tooltipHelper.ShowTooltipForMC(this,root,"bottom",this.base.hasTooltip == false);
 			}
 		}
 		

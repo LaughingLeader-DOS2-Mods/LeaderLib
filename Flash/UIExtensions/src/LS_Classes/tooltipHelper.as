@@ -7,126 +7,124 @@ package LS_Classes
    
    public class tooltipHelper extends MovieClip
    {
-       
-      
       public function tooltipHelper()
       {
          super();
       }
       
-      public static function ShowItemTooltipForMC(param1:MovieClip, param2:DisplayObject, param3:String = "right") : void
+      public static function ShowItemTooltipForMC(target:MovieClip, parentRoot:DisplayObject, tooltipSide:String = "right") : void
       {
-         var _loc4_:Number = param1.width;
-         var _loc5_:Number = param1.height;
-         var _loc6_:Number = 0;
-         var _loc7_:Number = 0;
-         var _loc8_:Number = -1;
-         if(param1.tooltipOverrideW)
+         var tooltipWidth:Number = target.width;
+         var tooltipHeight:Number = target.height;
+         var offsetX:Number = 0;
+         var offsetY:Number = 0;
+         var contextParam:Number = -1;
+         if(target.tooltipOverrideW)
          {
-            _loc4_ = param1.tooltipOverrideW;
+            tooltipWidth = target.tooltipOverrideW;
          }
-         if(param1.tooltipOverrideH)
+         if(target.tooltipOverrideH)
          {
-            _loc5_ = param1.tooltipOverrideH;
+            tooltipHeight = target.tooltipOverrideH;
          }
-         if(param1.tooltipXOffset)
+         if(target.tooltipXOffset)
          {
-            _loc6_ = param1.tooltipXOffset;
+            offsetX = target.tooltipXOffset;
          }
-         if(param1.tooltipYOffset)
+         if(target.tooltipYOffset)
          {
-            _loc7_ = param1.tooltipYOffset;
+            offsetY = target.tooltipYOffset;
          }
-         if(param1.contextParam)
+         if(target.contextParam)
          {
-            _loc8_ = param1.contextParam;
+            contextParam = target.contextParam;
          }
-         var _loc9_:Point = getGlobalPositionOfMC(param1,param2);
-         ExternalInterface.call("showItemTooltip",param1.itemHandle,_loc9_.x + _loc6_,_loc9_.y + _loc7_,_loc4_,_loc5_,_loc8_,param3);
-         var _loc10_:MovieClip = param2 as MovieClip;
-         _loc10_.hasTooltip = true;
+         var pos:Point = getGlobalPositionOfMC(target,parentRoot);
+         ExternalInterface.call("showItemTooltip",target.itemHandle,pos.x + offsetX,pos.y + offsetY,tooltipWidth,tooltipHeight,contextParam,tooltipSide);
+         var base:MovieClip = parentRoot as MovieClip;
+         base.hasTooltip = true;
       }
       
-      public static function ShowTooltipForMC(param1:MovieClip, param2:DisplayObject, param3:String = "right", param4:Boolean = true) : void
+      public static function ShowTooltipForMC(target:MovieClip, parentRoot:DisplayObject, tooltipSide:String = "right", fadeTooltip:Boolean = true) : void
       {
-         var _loc5_:Number = NaN;
-         var _loc6_:Number = NaN;
-         var _loc7_:Number = NaN;
-         var _loc8_:Number = NaN;
-         var _loc9_:Point = null;
-         var _loc10_:MovieClip = null;
-         if(param1.tooltip && param1.tooltip != "")
+         var offsetX:Number = NaN;
+         var offsetY:Number = NaN;
+         var tooltipWidth:Number = NaN;
+         var tooltipHeight:Number = NaN;
+         var pos:Point = null;
+         var base:MovieClip = null;
+         if(target.tooltip && target.tooltip != "")
          {
-            _loc5_ = 0;
-            _loc6_ = 0;
-            _loc7_ = param1.width;
-            _loc8_ = param1.height;
-            if(param1.tooltipOverrideW)
+            offsetX = 0;
+            offsetY = 0;
+            tooltipWidth = target.width;
+            tooltipHeight = target.height;
+            if(target.tooltipOverrideW)
             {
-               _loc7_ = param1.tooltipOverrideW;
+               tooltipWidth = target.tooltipOverrideW;
             }
-            if(param1.tooltipOverrideH)
+            if(target.tooltipOverrideH)
             {
-               _loc8_ = param1.tooltipOverrideH;
+               tooltipHeight = target.tooltipOverrideH;
             }
-            if(param1.tooltipXOffset)
+            if(target.tooltipXOffset)
             {
-               _loc5_ = param1.tooltipXOffset;
+               offsetX = target.tooltipXOffset;
             }
-            if(param1.tooltipYOffset)
+            if(target.tooltipYOffset)
             {
-               _loc6_ = param1.tooltipYOffset;
+               offsetY = target.tooltipYOffset;
             }
-            _loc9_ = getGlobalPositionOfMC(param1,param2);
-            ExternalInterface.call("showTooltip",param1.tooltip,_loc9_.x + _loc5_,_loc9_.y + _loc6_,_loc7_,_loc8_,param3,param4);
-            _loc10_ = param2 as MovieClip;
-            _loc10_.hasTooltip = true;
-         }
-      }
-      
-      public static function ShowStatusTooltipForMC(param1:MovieClip, param2:DisplayObject, param3:String = "right") : void
-      {
-         var _loc4_:Number = NaN;
-         var _loc5_:Number = NaN;
-         var _loc6_:Number = NaN;
-         var _loc7_:Number = NaN;
-         var _loc8_:Point = null;
-         var _loc9_:MovieClip = null;
-         if(param1.owner && param1.id)
-         {
-            _loc4_ = 0;
-            _loc5_ = 0;
-            _loc6_ = param1.width;
-            _loc7_ = param1.height;
-            if(param1.tooltipOverrideW)
-            {
-               _loc6_ = param1.tooltipOverrideW;
-            }
-            if(param1.tooltipOverrideH)
-            {
-               _loc7_ = param1.tooltipOverrideH;
-            }
-            if(param1.tooltipXOffset)
-            {
-               _loc4_ = param1.tooltipXOffset;
-            }
-            if(param1.tooltipYOffset)
-            {
-               _loc5_ = param1.tooltipYOffset;
-            }
-            _loc8_ = getGlobalPositionOfMC(param1,param2);
-            ExternalInterface.call("showStatusTooltip",param1.owner,param1.id,_loc8_.x + _loc4_,_loc8_.y + _loc5_,_loc6_,_loc7_,param3);
-            _loc9_ = param2 as MovieClip;
-            _loc9_.hasTooltip = true;
+            pos = getGlobalPositionOfMC(target,parentRoot);
+            ExternalInterface.call("showTooltip",target.tooltip,pos.x + offsetX,pos.y + offsetY,tooltipWidth,tooltipHeight,tooltipSide,fadeTooltip);
+            base = parentRoot as MovieClip;
+            base.hasTooltip = true;
          }
       }
       
-      public static function getGlobalPositionOfMC(param1:MovieClip, param2:DisplayObject) : Point
+      public static function ShowStatusTooltipForMC(target:MovieClip, parentRoot:DisplayObject, tooltipSide:String = "right") : void
       {
-         var _loc3_:Point = param1.localToGlobal(new Point(0,0));
-         _loc3_.x = _loc3_.x - param2.x;
-         _loc3_.y = _loc3_.y - param2.y;
-         return _loc3_;
+         var offsetX:Number = NaN;
+         var offsetY:Number = NaN;
+         var tooltipWidth:Number = NaN;
+         var tooltipHeight:Number = NaN;
+         var pos:Point = null;
+         var base:MovieClip = null;
+         if(target.owner && target.id)
+         {
+            offsetX = 0;
+            offsetY = 0;
+            tooltipWidth = target.width;
+            tooltipHeight = target.height;
+            if(target.tooltipOverrideW)
+            {
+               tooltipWidth = target.tooltipOverrideW;
+            }
+            if(target.tooltipOverrideH)
+            {
+               tooltipHeight = target.tooltipOverrideH;
+            }
+            if(target.tooltipXOffset)
+            {
+               offsetX = target.tooltipXOffset;
+            }
+            if(target.tooltipYOffset)
+            {
+               offsetY = target.tooltipYOffset;
+            }
+            pos = getGlobalPositionOfMC(target,parentRoot);
+            ExternalInterface.call("showStatusTooltip",target.owner,target.id,pos.x + offsetX,pos.y + offsetY,tooltipWidth,tooltipHeight,tooltipSide);
+            base = parentRoot as MovieClip;
+            base.hasTooltip = true;
+         }
+      }
+      
+      public static function getGlobalPositionOfMC(target:MovieClip, parentRoot:DisplayObject) : Point
+      {
+         var pos:Point = target.localToGlobal(new Point(0,0));
+         pos.x = pos.x - parentRoot.x;
+         pos.y = pos.y - parentRoot.y;
+         return pos;
       }
    }
 }

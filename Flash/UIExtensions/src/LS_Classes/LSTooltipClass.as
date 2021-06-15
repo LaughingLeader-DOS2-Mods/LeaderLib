@@ -7,102 +7,53 @@ package LS_Classes
 	
 	public class LSTooltipClass extends MovieClip
 	{
-		 
-		
 		public var tooltipW:Number = 441;
-		
 		public var tooltipH:Number = 837;
-		
 		public var scaleH:Boolean;
-		
 		public var maxH:Number = 0;
-		
 		public var tooltipPaddingL:Number = 13;
-		
 		public var tooltipPaddingR:Number = 52;
-		
 		public var tooltipPaddingB:Number = 26;
-		
 		public var SepSpacing:Number = 16;
-		
 		public var fixedTopSpacing:int = -1;
-		
 		public var fixedFooterSpacing:int = -1;
-		
 		private const s_bottomSepSpacing:Number = 8;
-		
 		private const s_TextSpacing:Number = 4;
-		
 		public const s_WGIconSpacing:Number = 2;
-		
 		public const s_WGIconInterSpacing:Number = 12;
-		
 		private const s_WarningCol:uint = 13442847;
-		
 		private const s_ActionInfoCol:uint = 13720083;
-		
 		private const contentFadeIn:Number = 0.1;
-		
 		private const s_BonusColour:uint = 495560;
-		
 		private const s_PenaltyColour:uint = 13107248;
-		
 		public const s_BtnHintOffset:Number = 24;
-		
 		private const footerBottomPos:Number = 808;
-		
 		private const footerLabelOffset:Number = -6;
-		
 		public const s_BtnHintHOffset:Number = 8;
-		
 		private const s_bottomCompareSpacing:Number = 13;
-		
 		private var hasSubSections:Boolean = false;
-		
 		private const s_DividerSpacing:Number = 10;
-		
 		public var m_Leading:Number = 26;
-		
 		public var footerSpace:Number;
-		
 		public var list:scrollList;
-		
 		public var buttonHints:listDisplay;
-		
 		public var equipHeader:MovieClip = null;
-		
 		public var isItem:Boolean;
-		
 		public var isIdentified:Boolean;
-		
 		public var AbilityId:Number;
-		
 		public var TalentId:Number;
-		
 		public var groupLabels:Array;
-		
 		public var groupColours:Array;
-		
 		public var groupValueColours:Array;
-		
 		public var unidentifiedMC:MovieClip;
-		
 		public var forceHideFooter:Boolean = false;
-		
 		public var btnHintHOffset:Number = 0;
-		
 		public var isEquipped:Boolean = false;
-		
 		public var footer_mc:MovieClip;
-		
 		public var container_mc:MovieClip;
-		
 		public var middleBg_mc:MovieClip;
-		
 		public var header_mc:MovieClip;
-		
 		private var codeEnum:Object;
-		
 		private var grpsEnum:Object;
 		
 		public function LSTooltipClass(param1:* = "tt_handle", param2:* = "tt_scrollBg")

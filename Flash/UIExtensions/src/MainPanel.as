@@ -75,7 +75,7 @@ package
 		private function frame1() : *
 		{
 			elements = new Array();
-			this.mousEnabled = false;
+			this.mouseEnabled = false;
 		}
 	}
 }

@@ -472,10 +472,10 @@ if Vars.DebugMode then
 	end)
 	if isClient then
 		CustomStatSystem:RegisterCanAddPointsHandler(specialStats, function(id, stat, character, current, availablePoints, canAdd)
-			return availablePoints > 0 and current < 5
+			return canAdd or (availablePoints > 0 and current < 5)
 		end)
 		CustomStatSystem:RegisterCanRemovePointsHandler("Lucky", function(id, stat, character, current, canRemove)
-			return current > 0
+			return canRemove or current > 0
 		end)
 	end
 end

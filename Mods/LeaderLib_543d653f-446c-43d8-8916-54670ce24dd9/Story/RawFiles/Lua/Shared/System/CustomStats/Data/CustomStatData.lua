@@ -1,3 +1,8 @@
+local STAT_DISPLAY_MODE = {
+	Default = "Integer",
+	Percentage = "Percentage"
+}
+
 ---@class CustomStatData:CustomStatDataBase
 local CustomStatData = {
 	Type="CustomStatData",
@@ -21,6 +26,7 @@ local CustomStatData = {
 	PointID = "",
 	LastValue = {},
 	AvailablePoints = {},
+	DisplayMode = STAT_DISPLAY_MODE.Default,
 }
 
 CustomStatData.__index = function(t,k)

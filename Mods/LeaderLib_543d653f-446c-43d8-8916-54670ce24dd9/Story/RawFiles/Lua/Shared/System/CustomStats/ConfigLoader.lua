@@ -28,6 +28,7 @@ local statPropertyMap = {
 	TOOLTIPTYPE = {Name="TooltipType", Type = "string"},
 	CATEGORY = {Name="Category", Type = "string"},
 	POINTID = {Name="PointID", Type = "string"},
+	DISPLAYMODE = {Name="DisplayMode", Type = "string"},
 	DISPLAYVALUEINTOOLTIP = {Name="DisplayValueInTooltip", Type = "boolean"},
 	VISIBLE = {Name="Visible", Type = "boolean"},
 	ICONWIDTH = {Name="IconWidth", Type = "number"},

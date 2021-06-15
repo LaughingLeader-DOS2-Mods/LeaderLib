@@ -220,3 +220,28 @@ function GameHelpers.DB.Flatten(databaseTable, formatUUID)
 	end
 	return data
 end
+
+---@param name string The database name.
+---@param arity integer The number of parameters for this DB.
+---@param index integer|nil The index to return, if any. Optional.
+---@param unpack boolean If true, table.unpack is called on the result when returning the data.
+function GameHelpers.DB.Get(name, arity, index, unpack)
+	local b,result = xpcall(function()
+		local db = Osi[name]:Get(GetArity(arity))
+		if db then
+			if index and #db >= index then
+				return db[index]
+			end
+		end
+		return db
+	end, debug.traceback)
+	if not b then
+		Ext.PrintError("[LeaderLib:GameHelpers.DB.Get] Error getting database:", name)
+		Ext.PrintError(result)
+		return nil
+	end
+	if unpack and result ~= nil then
+		return table.unpack(result)
+	end
+	return result
+end

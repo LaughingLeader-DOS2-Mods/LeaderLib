@@ -100,21 +100,39 @@ function CustomStatData:UpdateLastValue(character)
 	end
 end
 
+local isClient = Ext.IsClient()
+
+---[SERVER]
 ---@param character EsvCharacter|string|number
 ---@param value integer
 function CustomStatData:SetValue(character, value)
-	return CustomStatSystem:SetStat(character, self.ID, value, self.Mod)
+	if not isClient then
+		return CustomStatSystem:SetStat(character, self.ID, value, self.Mod)
+	end
+	fprint(LOGLEVEL.WARNING("[CustomStatData:SetValue(%s, %s)] This function only works on the server-side.", self.ID, value))
+	return false
 end
 
-local isClient = Ext.IsClient()
+---[SERVER]
+---Adds an amount to the value. Can be negative.
+---@param character EsvCharacter|string|number
+---@param amount integer
+function CustomStatData:ModifyValue(character, amount)
+	if not isClient then
+		return CustomStatSystem:ModifyStat(character, self.ID, amount, self.Mod)
+	end
+	fprint(LOGLEVEL.WARNING("[CustomStatData:ModifyValue(%s, %s)] This function only works on the server-side.", self.ID, amount))
+	return false
+end
 
+---[SERVER]
 ---@param character EsvCharacter|string|number
 ---@param amount integer
 function CustomStatData:AddAvailablePoints(character, amount)
 	if not isClient then
 		return CustomStatSystem:AddAvailablePoints(character, self, amount)
 	else
-		fprint(LOGLEVEL.WARNING, "CustomStatData:AddAvailablePoints(%s, %s, %s) [WARNING] - This function is server-side only!", self.ID, character, amount)
+		fprint(LOGLEVEL.WARNING, "[CustomStatData:AddAvailablePoints(%s, %s, %s)] [WARNING] - This function is server-side only!", self.ID, character, amount)
 	end
 end
 

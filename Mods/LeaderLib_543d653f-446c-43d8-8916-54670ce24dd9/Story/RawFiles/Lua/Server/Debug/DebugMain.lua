@@ -574,11 +574,16 @@ RegisterListener("OnSummonChanged", function(summon, owner, isDying, isItem)
 		fprint(LOGLEVEL.WARNING, "Dead(%s) Deactivated(%s) CannotDie(%s) DYING(%s)", summon.Dead, summon.Deactivated, summon.CannotDie, summon:GetStatus("DYING") and summon:GetStatus("DYING").Started or "false")
 
 		if summon.Totem then
-			if not isDying then
-				GameHelpers.Skill.Explode(summon.WorldPos, "Projectile_EnemyPyroclasticEruption", owner, summon.Stats.Level, true, true, true, {AlwaysDamage=0})
-			else
-				GameHelpers.Skill.CreateProjectileStrike(summon, "ProjectileStrike_Stormbolt_Fire", owner, summon.Stats.Level, true, true, true, {AlwaysDamage=0})
-			end
+			fprint(LOGLEVEL.DEFAULT, "Totem| Dodge(%s)", summon.Stats.Dodge)
+			CharacterSetSummonLifetime(summon.MyGuid, 60)
+			-- summon.Stats.DynamicStats[1].Dodge = 100
+			-- summon.Stats.DynamicStats[1].DodgeBoost = 200
+			ApplyStatus(summon.MyGuid, "EVADING", -1.0, 1, summon.MyGuid)
+			-- if not isDying then
+			-- 	GameHelpers.Skill.Explode(summon.WorldPos, "Projectile_EnemyPyroclasticEruption", owner, summon.Stats.Level, true, true, true, {AlwaysDamage=0})
+			-- else
+			-- 	GameHelpers.Skill.CreateProjectileStrike(summon, "ProjectileStrike_Stormbolt_Fire", owner, summon.Stats.Level, true, true, true, {AlwaysDamage=0})
+			-- end
 		end
 	else
 		fprint(LOGLEVEL.DEFAULT, "[OnSummonChanged:Item] Summon(%s) StatsId(%s) Owner(%s) IsDying(%s) isItem(true)", GameHelpers.Character.GetDisplayName(summon), summon.StatsId, GameHelpers.Character.GetDisplayName(owner), isDying)

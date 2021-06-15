@@ -15,8 +15,6 @@ package LS_Classes
 	
 	public class textHelpers
 	{
-		 
-		
 		public function textHelpers()
 		{
 			super();

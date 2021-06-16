@@ -25,7 +25,9 @@ local CustomStatData = {
 	---@type number
 	Double = nil,
 	PointID = "",
+	---@type table<integer,table<string,integer>>
 	LastValue = {},
+	---@type table<integer,table<string,integer>>
 	AvailablePoints = {},
 	DisplayMode = STAT_DISPLAY_MODE.Default,
 	STAT_DISPLAY_MODE = STAT_DISPLAY_MODE

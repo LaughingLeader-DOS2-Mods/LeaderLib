@@ -124,6 +124,10 @@ function CustomStatSystem:SetAvailablePoints(character, statId, amount, skipSync
 			if not self.PointsPool[characterId] then
 				self.PointsPool[characterId] = {}
 			end
+			local stat = self:GetStatByID(statId)
+			if stat and stat.PointID then
+				statId = stat.PointID
+			end
 			self.PointsPool[characterId][statId] = amount
 			if Vars.DebugMode and amount ~= self.PointsPool[characterId][statId] then
 				fprint(LOGLEVEL.DEFAULT, "Set available points for custom stat or pool (%s) to (%s) for character(%s). Total(%s)", statId, amount, characterId, self.PointsPool[characterId][statId])
@@ -274,6 +278,35 @@ if not isClient then
 	end
 end
 
+---@param stat CustomStatData
+---@param character EclCharacter|EsvCharacter|UUID|integer|nil
+---@return integer
+function CustomStatSystem:GetAvailablePointsForStat(stat, character)
+	if isClient then
+		character = character or Client:GetCharacter()
+		local points = 0
+		if stat and character and stat.AvailablePoints then
+			return stat.AvailablePoints[character.NetID] or 0
+		end
+	else
+		local t = type(character)
+		local characterId = character
+		if t == "userdata" and character.MyGuid then
+			characterId = character.MyGuid
+		elseif t == "number" then
+			character = Ext.GetCharacter(character)
+			if character then
+				characterId = character.MyGuid
+			end
+		end
+		if type(characterId) ~= "string" then
+			error("EsvCharacter or string UUID required.")
+		end
+		return stat.AvailablePoints[characterId] or 0
+	end
+	return 0
+end
+
 if isClient then
 ---@return integer
 function CustomStatSystem:GetTotalAvailablePoints(character)
@@ -289,17 +322,6 @@ function CustomStatSystem:GetTotalAvailablePoints(character)
 	-- 	points = points + self:GetAvailablePointsForStat(stat, character)
 	-- end
 	return points
-end
-
----@param stat CustomStatData
----@return integer
-function CustomStatSystem:GetAvailablePointsForStat(stat, character)
-	character = character or Client:GetCharacter()
-	local points = 0
-	if stat and character and stat.AvailablePoints then
-		return stat.AvailablePoints[character.NetID] or 0
-	end
-	return 0
 end
 
 function CustomStatSystem:GetCanAddPoints(ui, doubleHandle, character)

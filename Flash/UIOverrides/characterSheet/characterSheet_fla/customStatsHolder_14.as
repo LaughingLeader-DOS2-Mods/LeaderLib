@@ -57,7 +57,7 @@ package characterSheet_fla
 			//this.base.stats_mc.panelBg2_mc.visible = true;
 
 			this.list.sortOn("groupName", Array.CASEINSENSITIVE);
-			this.list.elementsSortOn("textStr", Array.CASEINSENSITIVE);
+			//this.list.elementsSortOn("textStr", Array.CASEINSENSITIVE);
 		}
 		
 		public function onCreateBtnClicked() : *
@@ -65,9 +65,11 @@ package characterSheet_fla
 			ExternalInterface.call("createCustomStat");
 		}
 		
-		public function positionElements() : *
+		public function positionElements(sortElements:Boolean=true) : *
 		{
-			this.list.sortOn("groupName", Array.CASEINSENSITIVE);
+			if(sortElements) {
+				this.list.sortOn("groupName", Array.CASEINSENSITIVE);
+			}
 			this.list.positionElements();
 		}
 

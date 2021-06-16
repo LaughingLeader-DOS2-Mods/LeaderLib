@@ -71,14 +71,14 @@
 		},
 		"Debug4": {
 			"DisplayName": "Debug4",
-			"Create": false,
+			"Create": true,
 			"Category": "Debug",
 			"SortValue": -1
 		},
 		"Debug5": {
 			"DisplayName": "Debug5",
-			"Create": false,
-			"Category": "Debug"
+			"Category": "Debug",
+			"Create": true
 		},
 		"Debug6": {
 			"DisplayName": "Debug6",

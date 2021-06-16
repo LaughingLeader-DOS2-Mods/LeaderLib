@@ -60,17 +60,17 @@ local function SortStats(a,b)
 	end
 	if b.Stat then
 		if b.Stat.SortName then
-			name1 = b.Stat.SortName
+			name2 = b.Stat.SortName
 		end
 		if b.Stat.SortValue then
-			sortVal1 = b.Stat.SortValue
+			sortVal2 = b.Stat.SortValue
 			trySortByValue = true
 		end
 	end
 	if trySortByValue and sortVal1 ~= sortVal2 then
 		return sortVal1 < sortVal2
 	end
-	return (a.SortName or a.DisplayName) < (b.SortName or b.DisplayName)
+	return name1 < name2
 end
 
 local function OnSheetUpdating(ui, method)
@@ -130,11 +130,15 @@ local function OnSheetUpdating(ui, method)
 	if #sortList > 0 then
 		table.sort(sortList, SortStats)
 
+		print(Lib.inspect(sortList))
+
 		--Remove any stats that were hidden
 		this.clearArray("customStats_array")
 
 		local arrayIndex = 0
-		for _,v in pairs(sortList) do
+		for i=1,#sortList do
+			local v = sortList[i]
+			print(i,v.DisplayName)
 			this.customStats_array[arrayIndex] = v.Handle
 			this.customStats_array[arrayIndex+1] = v.DisplayName
 			this.customStats_array[arrayIndex+2] = v.Value

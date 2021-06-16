@@ -188,6 +188,9 @@ function CustomStatSystem:OnGroupAdded(ui, call, id, label, arrayIndex)
 				if category.HideTotalPoints == true then
 					group_mc.hidePoints = true
 					group_mc.amount_txt.visible = false
+				else
+					group_mc.hidePoints = false
+					group_mc.amount_txt.visible = true
 				end
 			end
 		end

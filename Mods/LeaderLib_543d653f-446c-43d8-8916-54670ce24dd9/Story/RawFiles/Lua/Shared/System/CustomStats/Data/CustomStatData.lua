@@ -27,6 +27,10 @@ local CustomStatData = {
 	---@type number
 	Double = nil,
 	PointID = "",
+	---@type integer If set, this is the sort value number to use when the list of stats get sorted for display.
+	SortValue = nil,
+	---@type string If set, this is the name to use instead of DisplayName when the list of stats get sorted for display. 
+	SortName = nil,
 	---@type table<NETID,table<string,integer>>
 	LastValue = {},
 	---@type table<NETID,table<string,integer>>

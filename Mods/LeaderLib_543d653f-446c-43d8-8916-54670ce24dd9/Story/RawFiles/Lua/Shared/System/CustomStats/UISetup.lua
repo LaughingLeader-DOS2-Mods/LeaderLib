@@ -33,6 +33,46 @@ local function AdjustCustomStatMovieClips(ui)
 	end
 end
 
+---@class CharacterSheetStatArrayData
+---@field Index integer Original index
+---@field DisplayName string
+---@field Handle number
+---@field Value number
+---@field GroupId integer
+---@field Stat CustomStatData|nil
+
+---@param a CharacterSheetStatArrayData
+---@param b CharacterSheetStatArrayData
+local function SortStats(a,b)
+	local name1 = a.DisplayName
+	local name2 = b.DisplayName
+	local sortVal1 = a.Index
+	local sortVal2 = b.Index
+	local trySortByValue = false
+	if a.Stat then
+		if a.Stat.SortName then
+			name1 = a.Stat.SortName
+		end
+		if a.Stat.SortValue then
+			sortVal1 = a.Stat.SortValue
+			trySortByValue = true
+		end
+	end
+	if b.Stat then
+		if b.Stat.SortName then
+			name1 = b.Stat.SortName
+		end
+		if b.Stat.SortValue then
+			sortVal1 = b.Stat.SortValue
+			trySortByValue = true
+		end
+	end
+	if trySortByValue and sortVal1 ~= sortVal2 then
+		return sortVal1 < sortVal2
+	end
+	return (a.SortName or a.DisplayName) < (b.SortName or b.DisplayName)
+end
+
 local function OnSheetUpdating(ui, method)
 	local this = ui:GetRoot()
 	CustomStatSystem:SetupGroups(ui, method)
@@ -52,7 +92,6 @@ local function OnSheetUpdating(ui, method)
 			end
 			stat.LastValue[client.NetID] = value
 		end
-
 		if #changedStats.Stats > 0 then
 			Ext.PostMessageToServer("LeaderLib_CustomStatSystem_StatValuesChanged", Ext.JsonStringify(changedStats))
 		end
@@ -83,15 +122,13 @@ local function OnSheetUpdating(ui, method)
 				end
 			end
 			if not hideStat then
-				sortList[#sortList+1] = {DisplayName=this.customStats_array[i+1], Handle=doubleHandle, Value=value, GroupId=groupId}
+				sortList[#sortList+1] = {Index=i, DisplayName=this.customStats_array[i+1], Handle=doubleHandle, Value=value, GroupId=groupId, Stat=stat}
 			end
 		end
 	end
 
 	if #sortList > 0 then
-		table.sort(sortList, function(a,b)
-			return a.DisplayName < b.DisplayName
-		end)
+		table.sort(sortList, SortStats)
 
 		--Remove any stats that were hidden
 		this.clearArray("customStats_array")

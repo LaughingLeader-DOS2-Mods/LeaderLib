@@ -72,7 +72,8 @@
 		"Debug4": {
 			"DisplayName": "Debug4",
 			"Create": false,
-			"Category": "Debug"
+			"Category": "Debug",
+			"SortValue": -1
 		},
 		"Debug5": {
 			"DisplayName": "Debug5",
@@ -81,7 +82,8 @@
 		},
 		"Debug6": {
 			"DisplayName": "Debug6",
-			"Category": "Debug"
+			"Category": "Debug",
+			"SortName": "Debug4"
 		}
 	}
 }

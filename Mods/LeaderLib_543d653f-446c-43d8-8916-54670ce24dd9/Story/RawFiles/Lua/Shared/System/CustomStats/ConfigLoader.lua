@@ -33,6 +33,8 @@ local statPropertyMap = {
 	VISIBLE = {Name="Visible", Type = "boolean"},
 	ICONWIDTH = {Name="IconWidth", Type = "number"},
 	ICONHEIGHT = {Name="IconHeight", Type = "number"},
+	SORTNAME = {Name="SortName", Type = "string"},
+	SORTVALUE = {Name="SortValue", Type = "number"},
 }
 
 local isClient = Ext.IsClient()

@@ -24,6 +24,8 @@ local NULL_UUID = {
 	["00000000-0000-0000-0000-000000000000"] = true
 }
 
+StringHelpers.NULL_UUID = "NULL_00000000-0000-0000-0000-000000000000"
+
 ---Checks if a string is null or empty.
 ---@param str string
 ---@return boolean

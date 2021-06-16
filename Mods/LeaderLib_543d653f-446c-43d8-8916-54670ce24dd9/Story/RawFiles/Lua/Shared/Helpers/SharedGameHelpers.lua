@@ -236,3 +236,21 @@ function GameHelpers.GetUUID(object, returnNullId)
 	end
 	return returnNullId and "NULL_00000000-0000-0000-0000-000000000000" or nil
 end
+
+---Tries and get a GetNetID from whatever variable type object is.
+---@param object EsvGameObject|EclGameObject|string|number
+---@return NETID
+function GameHelpers.GetNetID(object)
+	local t = type(object)
+	if t == "userdata" and object.NetID then
+		return object.NetID
+	elseif t == "string" then
+		local obj = Ext.GetGameObject(object)
+		if obj then
+			return obj.NetID
+		end
+	elseif t == "number" then
+		return object
+	end
+	return nil
+end

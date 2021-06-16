@@ -60,6 +60,8 @@ local defaults = {
 	AvailablePoints = {},
 	--DisplayValueInTooltip = false -- Should be nil by default if not set by user
 }
+
+---@protected
 function CustomStatData.SetDefaults(data)
 	for k,v in pairs(defaults) do
 		if data[k] == nil then
@@ -135,6 +137,7 @@ function CustomStatData:GetAvailablePoints(character)
 	end
 end
 
+---@protected
 ---Sets the stat's last value for a character.
 ---@param character EsvCharacter|EclCharacter|UUID|NETID
 function CustomStatData:UpdateLastValue(character)

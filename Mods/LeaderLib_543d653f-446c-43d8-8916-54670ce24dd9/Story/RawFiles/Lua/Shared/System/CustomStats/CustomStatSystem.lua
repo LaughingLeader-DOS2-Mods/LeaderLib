@@ -120,6 +120,7 @@ else
 end
 --RegisterListener("LuaReset", LoadCustomStatsData)
 
+---@private
 ---@param character EsvCharacter|EclCharacter
 ---@return boolean
 function CustomStatSystem:IsTooltipWorking(character)

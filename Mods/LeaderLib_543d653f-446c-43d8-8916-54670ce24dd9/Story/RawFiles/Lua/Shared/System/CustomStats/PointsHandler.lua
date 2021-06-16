@@ -89,6 +89,7 @@ function CustomStatSystem:RegisterStatValueChangedListener(id, callback)
 	end
 end
 
+---@protected
 function CustomStatSystem:InvokeStatValueChangedListeners(stat, character, last, current)
 	for listener in self:GetListenerIterator(self.Listeners.OnStatValueChanged[stat.ID], self.Listeners.OnStatValueChanged.All) do
 		local b,err = xpcall(listener, debug.traceback, stat.ID, stat, character, last, current, isClient)
@@ -293,6 +294,8 @@ function CustomStatSystem:GetAvailablePointsForStat(stat, character)
 end
 
 if isClient then
+
+---@private
 ---@return integer
 function CustomStatSystem:GetTotalAvailablePoints(character)
 	character = character or Client:GetCharacter()
@@ -310,6 +313,7 @@ function CustomStatSystem:GetTotalAvailablePoints(character)
 	return 0
 end
 
+---@private
 function CustomStatSystem:GetCanAddPoints(ui, doubleHandle, character)
 	if GameHelpers.Client.IsGameMaster(ui) == true then
 		return true
@@ -335,6 +339,7 @@ function CustomStatSystem:GetCanAddPoints(ui, doubleHandle, character)
 	return false
 end
 
+---@private
 function CustomStatSystem:GetCanRemovePoints(ui, doubleHandle, character)
 	if GameHelpers.Client.IsGameMaster(ui) == true then
 		return true
@@ -361,6 +366,7 @@ function CustomStatSystem:GetCanRemovePoints(ui, doubleHandle, character)
 	return false
 end
 
+---@private
 function CustomStatSystem:OnStatPointAdded(ui, call, doubleHandle)
 	if GameHelpers.Client.IsGameMaster(ui) == true then
 		return
@@ -400,6 +406,7 @@ function CustomStatSystem:OnStatPointAdded(ui, call, doubleHandle)
 	end
 end
 
+---@private
 function CustomStatSystem:OnStatPointRemoved(ui, call, doubleHandle)
 	if GameHelpers.Client.IsGameMaster(ui) == true then
 		return
@@ -428,6 +435,7 @@ function CustomStatSystem:OnStatPointRemoved(ui, call, doubleHandle)
 	end
 end
 
+---@private
 function CustomStatSystem:UpdateAvailablePoints(ui)
 	if ui == nil then
 		ui = Ext.GetUIByType(Data.UIType.characterSheet)

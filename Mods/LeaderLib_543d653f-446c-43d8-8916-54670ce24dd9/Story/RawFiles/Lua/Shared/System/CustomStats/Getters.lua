@@ -296,6 +296,7 @@ end
 
 --endregion
 
+---@private
 ---@vararg function[]
 function CustomStatSystem:GetListenerIterator(...)
 	local tables = {...}

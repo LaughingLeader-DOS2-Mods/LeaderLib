@@ -2,6 +2,7 @@ local self = CustomStatSystem
 
 local isClient = Ext.IsClient()
 
+---@private
 function CustomStatSystem:SyncAvailablePoints(character)
 	if not isClient then
 		self:SyncData()
@@ -28,6 +29,8 @@ function CustomStatSystem:SyncAvailablePoints(character)
 end
 
 if not isClient then
+
+	---@private
 	--Creates a table of stat id to uuid, for sending stat UUIDs to the client
 	function CustomStatSystem:GetSyncData()
 		local data = {
@@ -45,6 +48,7 @@ if not isClient then
 		return data
 	end
 
+	---@private
 	function CustomStatSystem:SyncData(user)
 		local availablePoints = {}
 		for uuid,data in pairs(PersistentVars.CustomStatAvailablePoints) do
@@ -76,6 +80,8 @@ if not isClient then
 		end
 	end)
 else
+
+	---@private
 	--Loads a table of stat UUIDs from the server.
 	function CustomStatSystem:LoadSyncData(uuidList, availablePoints)
 		if uuidList then

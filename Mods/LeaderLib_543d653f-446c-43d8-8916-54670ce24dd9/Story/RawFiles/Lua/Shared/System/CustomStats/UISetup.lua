@@ -8,6 +8,7 @@ self.LastIconId = 1212
 self.TooltipValueEnabled = {}
 self.MaxVisibleValue = 999 -- Values greater than this are truncated visually in the UI
 
+---@private
 function CustomStatSystem:GetNextCustomStatIconId()
 	self.LastIconId = self.LastIconId + 1
 	return self.LastIconId
@@ -110,6 +111,7 @@ end
 
 local miscGroupDisplayName = Classes.TranslatedString:Create("hb8ed2061ge5a3g4f64g9d54g9a9b65e27e1e", "Miscellaneous")
 
+---@private
 function CustomStatSystem:SetupGroups(ui, call)
 	local isGM = GameHelpers.Client.IsGameMaster()
 	local this = ui:GetRoot().stats_mc.customStats_mc
@@ -123,10 +125,12 @@ function CustomStatSystem:SetupGroups(ui, call)
 	this.positionElements()
 end
 
+---@private
 function CustomStatSystem:OnUpdateDone(ui, call)
 	self:UpdateAvailablePoints(ui, call)
 end
 
+---@private
 function CustomStatSystem:OnGroupAdded(ui, call, id, label, arrayIndex)
 	local this = ui:GetRoot().stats_mc.customStats_mc
 	local category = self:GetCategoryByGroupId(id)
@@ -163,6 +167,7 @@ end
 -- 	end
 -- end, "Before")
 
+---@private
 function CustomStatSystem:OnGroupClicked(ui, call, arrayIndex, groupId, isOpen, groupName)
 	local category = self:GetCategoryByGroupId(groupId)
 	if category then
@@ -180,6 +185,7 @@ Ext.RegisterUITypeCall(Data.UIType.characterSheet, "statCategoryCollapseChanged"
 --Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setPlayerInfo", AdjustCustomStatMovieClips)
 
 
+---@private
 ---@return FlashCustomStat
 function CustomStatSystem:GetStatMovieClipByDouble(ui, statId)
 	if ui:GetTypeId() == Data.UIType.characterSheet then
@@ -196,6 +202,7 @@ function CustomStatSystem:GetStatMovieClipByDouble(ui, statId)
 	return nil
 end
 
+---@private
 function CustomStatSystem:OnStatAdded(ui, call, doubleHandle, index)
 	---@type CharacterSheetMainTimeline
 	local this = ui:GetRoot()
@@ -222,6 +229,8 @@ function CustomStatSystem:OnStatAdded(ui, call, doubleHandle, index)
 end
 
 --ExternalInterface.call(param2,param1.statId,val3.x + val5,val3.y + val4,val6,param1.height,param1.tooltipAlign);
+
+---@private
 function CustomStatSystem:OnRequestTooltip(ui, call, statId, x, y, width, height, alignment)
 	self.Requesting = false
 	---@type EclCharacter
@@ -323,6 +332,7 @@ if Vars.DebugMode then
 	end)
 end
 
+---@private
 function CustomStatSystem:HideTooltip()
 	self.LastIconId = 1212
 	self.Requesting = false
@@ -347,6 +357,7 @@ function CustomStatSystem:HideTooltip()
 	end
 end
 
+---@private
 function CustomStatSystem:OnToggleCharacterPane()
 	if self.Visible then
 		self:HideTooltip()
@@ -361,6 +372,7 @@ Ext.RegisterUITypeCall(Data.UIType.tooltip, "clearAnchor", function(ui)
 	end
 end, "After")
 
+---@private
 ---@param doubleHandle number
 ---@param tooltip TooltipData
 function CustomStatSystem:UpdateStatTooltipArray(ui, doubleHandle, tooltip, req)
@@ -417,6 +429,7 @@ function CustomStatSystem:UpdateStatTooltipArray(ui, doubleHandle, tooltip, req)
 	end
 end
 
+---@private
 function CustomStatSystem:UpdateCustomStatTooltip(displayName, description, width, height, tooltipType, icon, iconId)
 	local request = Game.Tooltip.TooltipHooks.NextRequest
 	if request and request.Type == "CustomStat" then
@@ -434,6 +447,7 @@ function CustomStatSystem:UpdateCustomStatTooltip(displayName, description, widt
 	-- end
 end
 
+---@private
 function CustomStatSystem:CreateCustomStatTooltip(displayName, description, width, height, tooltipType, icon, iconId, iconWidth, iconHeight)
 	local ui = Ext.GetUIByType(Data.UIType.tooltip)
 	if ui then
@@ -504,6 +518,7 @@ function CustomStatSystem:CreateCustomStatTooltip(displayName, description, widt
 	end
 end
 
+---@private
 function CustomStatSystem:NetRequestCustomStatTooltip(cmd, payload)
 	if self.Requesting then
 		self.Requesting = false
@@ -532,6 +547,7 @@ Ext.RegisterNetListener("LeaderLib_CreateCustomStatTooltip", function(...)
 	CustomStatSystem:NetRequestCustomStatTooltip(...)
 end)
 
+---@private
 ---Displays custom stat values in a stat tooltip if the stat config has enabled DisplayValueInTooltip.
 ---@param ui UIObject
 ---@param character EclCharacter

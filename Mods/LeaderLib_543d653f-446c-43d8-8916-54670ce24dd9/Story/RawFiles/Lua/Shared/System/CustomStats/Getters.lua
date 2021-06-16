@@ -139,8 +139,9 @@ function CustomStatSystem:GetCategoryByGroupId(groupId)
 	return nil
 end
 
----@param id string
----@param mod string
+---Gets the Group ID for a stat that will be used in the characterSheet.
+---@param id string The category ID.
+---@param mod string Optional mod UUID.
 ---@return integer
 function CustomStatSystem:GetCategoryGroupId(id, mod)
 	if not id then

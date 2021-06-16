@@ -31,7 +31,7 @@ end
 if not isClient then
 
 	---@private
-	--Creates a table of stat id to uuid, for sending stat UUIDs to the client
+	---Creates a table of stat id to uuid, for sending stat UUIDs to the client
 	function CustomStatSystem:GetSyncData()
 		local data = {
 			Registered = {},
@@ -82,7 +82,7 @@ if not isClient then
 else
 
 	---@private
-	--Loads a table of stat UUIDs from the server.
+	---Loads a table of stat UUIDs from the server.
 	function CustomStatSystem:LoadSyncData(uuidList, availablePoints)
 		if uuidList then
 			local character = Client:GetCharacter()

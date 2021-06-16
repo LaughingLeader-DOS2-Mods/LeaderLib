@@ -100,7 +100,7 @@ end
 
 local function CharacterIdIsValid(id)
 	if not isClient then
-		return type(id) == "string"
+		return not StringHelpers.IsNullOrEmpty(id)
 	else
 		return type(id) == "number"
 	end
@@ -112,12 +112,10 @@ end
 ---@param skipSync boolean Skips syncing if true.
 function CustomStatSystem:SetAvailablePoints(character, statId, amount, skipSync)
 	local characterId = character
-	if type(character) == "userdata" then
-		if not isClient then
-			characterId = character.MyGuid
-		else
-			characterId = character.NetID
-		end
+	if not isClient then
+		characterId = GameHelpers.GetUUID(character)
+	else
+		characterId = GameHelpers.GetNetID(character)
 	end
 	if CharacterIdIsValid(characterId) and type(amount) == "number" then
 		if self.PointsPool then
@@ -279,30 +277,17 @@ if not isClient then
 end
 
 ---@param stat CustomStatData
----@param character EclCharacter|EsvCharacter|UUID|integer|nil
+---@param character EclCharacter|EsvCharacter|UUID|NETID|nil
 ---@return integer
 function CustomStatSystem:GetAvailablePointsForStat(stat, character)
 	if isClient then
 		character = character or Client:GetCharacter()
 		local points = 0
 		if stat and character and stat.AvailablePoints then
-			return stat.AvailablePoints[character.NetID] or 0
+			return stat.AvailablePoints[GameHelpers.GetNetID(character)]
 		end
 	else
-		local t = type(character)
-		local characterId = character
-		if t == "userdata" and character.MyGuid then
-			characterId = character.MyGuid
-		elseif t == "number" then
-			character = Ext.GetCharacter(character)
-			if character then
-				characterId = character.MyGuid
-			end
-		end
-		if type(characterId) ~= "string" then
-			error("EsvCharacter or string UUID required.")
-		end
-		return stat.AvailablePoints[characterId] or 0
+		return stat.AvailablePoints[GameHelpers.GetUUID(character)] or 0
 	end
 	return 0
 end
@@ -311,17 +296,18 @@ if isClient then
 ---@return integer
 function CustomStatSystem:GetTotalAvailablePoints(character)
 	character = character or Client:GetCharacter()
-	local points = 0
-	local pointsTable = nil
-	if character and self.PointsPool[character.NetID] then
-		for id,amount in pairs(self.PointsPool[character.NetID]) do
-			points = points + amount
+	local characterId = GameHelpers.GetNetID(character)
+	if characterId then
+		local points = 0
+		local pointsTable = nil
+		if character and self.PointsPool[characterId] then
+			for id,amount in pairs(self.PointsPool[characterId]) do
+				points = points + amount
+			end
 		end
+		return points
 	end
-	-- for stat in self:GetAllStats() do
-	-- 	points = points + self:GetAvailablePointsForStat(stat, character)
-	-- end
-	return points
+	return 0
 end
 
 function CustomStatSystem:GetCanAddPoints(ui, doubleHandle, character)
@@ -383,13 +369,14 @@ function CustomStatSystem:OnStatPointAdded(ui, call, doubleHandle)
 	local stat_mc = self:GetStatMovieClipByDouble(ui, doubleHandle)
 
 	local character = Client:GetCharacter()
-	if character then
-		local points = stat.AvailablePoints and stat.AvailablePoints[character.NetID] or nil
+	local characterId = GameHelpers.GetNetID(character)
+	if characterId then
+		local points = stat.AvailablePoints and stat.AvailablePoints[characterId] or nil
 		if points then
 			local lastPoints = points
 			if points > 0 then
 				points = points - 1
-				stat.AvailablePoints[character.NetID] = points
+				stat.AvailablePoints[characterId] = points
 			end
 			if points == 0 then
 				stat_mc.plus_mc.visible = false
@@ -402,7 +389,7 @@ function CustomStatSystem:OnStatPointAdded(ui, call, doubleHandle)
 				end
 			end
 			Ext.PostMessageToServer("LeaderLib_CustomStatSystem_AvailablePointsChanged", Ext.JsonStringify({
-				NetID = character.NetID,
+				NetID = characterId,
 				Stat = stat.ID,
 				Mod = stat.Mod,
 				Last = lastPoints,

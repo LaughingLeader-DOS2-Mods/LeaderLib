@@ -1,3 +1,5 @@
+local isClient = Ext.IsClient()
+
 ---@class STAT_DISPLAY_MODE
 local STAT_DISPLAY_MODE = {
 	Default = "Integer",
@@ -25,9 +27,9 @@ local CustomStatData = {
 	---@type number
 	Double = nil,
 	PointID = "",
-	---@type table<integer,table<string,integer>>
+	---@type table<NETID,table<string,integer>>
 	LastValue = {},
-	---@type table<integer,table<string,integer>>
+	---@type table<NETID,table<string,integer>>
 	AvailablePoints = {},
 	DisplayMode = STAT_DISPLAY_MODE.Default,
 	STAT_DISPLAY_MODE = STAT_DISPLAY_MODE
@@ -87,23 +89,6 @@ function CustomStatData:GetValue(character)
 	return 0
 end
 
----Sets the stat's last value for a character.
----@param character UUID|NETID|EsvCharacter|EclCharacter
-function CustomStatData:UpdateLastValue(character)
-	if not StringHelpers.IsNullOrWhitespace(self.UUID) then
-		if type(character) == "userdata" then
-			self.LastValue[character.NetID] = character:GetCustomStat(self.UUID) or 0
-		else
-			character = Ext.GetCharacter(character)
-			if character then
-				self.LastValue[character.NetID] = character:GetCustomStat(self.UUID) or 0
-			end
-		end
-	end
-end
-
-local isClient = Ext.IsClient()
-
 ---[SERVER]
 ---@param character EsvCharacter|string|number
 ---@param value integer
@@ -135,6 +120,32 @@ function CustomStatData:AddAvailablePoints(character, amount)
 		return CustomStatSystem:AddAvailablePoints(character, self, amount)
 	else
 		fprint(LOGLEVEL.WARNING, "[CustomStatData:AddAvailablePoints(%s, %s, %s)] [WARNING] - This function is server-side only!", self.ID, character, amount)
+	end
+end
+
+---Get the amount of available points for this stat's PointID or ID for a specific character.
+---Server-side uses MyGuid for the character, client-side uses NetID.
+---@param character EsvCharacter|EclCharacter|UUID|NETID
+---@return integer
+function CustomStatData:GetAvailablePoints(character)
+	if isClient then
+		return self.AvailablePoints[GameHelpers.GetNetID(character)]
+	else
+		return self.AvailablePoints[GameHelpers.GetUUID(character)]
+	end
+end
+
+---Sets the stat's last value for a character.
+---@param character EsvCharacter|EclCharacter|UUID|NETID
+function CustomStatData:UpdateLastValue(character)
+	if not StringHelpers.IsNullOrWhitespace(self.UUID) then
+		local characterId = character
+		if not isClient then
+			characterId = GameHelpers.GetUUID(character)
+		else
+			characterId = GameHelpers.GetNetID(character)
+		end
+		self.LastValue[characterId] = self:GetValue(type(character) == "userdata" and character or characterId) or 0
 	end
 end
 

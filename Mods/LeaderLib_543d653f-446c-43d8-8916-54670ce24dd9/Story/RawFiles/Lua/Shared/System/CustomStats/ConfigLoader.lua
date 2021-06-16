@@ -40,6 +40,9 @@ local isClient = Ext.IsClient()
 local function setAvailablePointsHandler(data)
 	local AvailablePointsHandler = {}
 	AvailablePointsHandler.__index = function(table, characterId)
+		if characterId == nil then
+			return 0
+		end
 		local pointId = data.ID
 		if not StringHelpers.IsNullOrWhitespace(data.PointID) then
 			pointId = data.PointID

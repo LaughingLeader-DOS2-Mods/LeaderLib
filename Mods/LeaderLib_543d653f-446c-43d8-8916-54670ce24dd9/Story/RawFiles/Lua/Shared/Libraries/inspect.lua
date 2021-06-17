@@ -251,7 +251,7 @@ local inspect ={
 	  if self.tableAppearances[t] > 1 then self:puts('<', self:getId(t), '>') end
   
 	  local nonSequentialKeys, nonSequentialKeysLength, sequenceLength = getNonSequentialKeys(t)
-	  local mt                = getmetatable(t)
+	  local mt = getmetatable(t)
   
 	  self:puts('{')
 	  self:down(function()

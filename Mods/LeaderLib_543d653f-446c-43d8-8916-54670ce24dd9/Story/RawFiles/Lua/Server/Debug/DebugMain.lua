@@ -575,10 +575,10 @@ RegisterListener("OnSummonChanged", function(summon, owner, isDying, isItem)
 
 		if summon.Totem then
 			fprint(LOGLEVEL.DEFAULT, "Totem| Dodge(%s)", summon.Stats.Dodge)
-			CharacterSetSummonLifetime(summon.MyGuid, 60)
+			--CharacterSetSummonLifetime(summon.MyGuid, 60)
 			-- summon.Stats.DynamicStats[1].Dodge = 100
 			-- summon.Stats.DynamicStats[1].DodgeBoost = 200
-			ApplyStatus(summon.MyGuid, "EVADING", -1.0, 1, summon.MyGuid)
+			--ApplyStatus(summon.MyGuid, "EVADING", -1.0, 1, summon.MyGuid)
 			-- if not isDying then
 			-- 	GameHelpers.Skill.Explode(summon.WorldPos, "Projectile_EnemyPyroclasticEruption", owner, summon.Stats.Level, true, true, true, {AlwaysDamage=0})
 			-- else

@@ -108,29 +108,34 @@ if Ext.IsServer() then
 						local targetLevel = settings.StartingCharacterLevel[region] or 1
 						if targetLevel > 1 and CharacterGetLevel(uuid) < targetLevel then
 							fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SkipTutorial] Leveling up player (%s) to (%s).", uuid, targetLevel)
-							CharacterLevelUpTo(uuid, targetLevel)
+							GameHelpers.Character.SetLevel(uuid, targetLevel)
 						end
 					end
 					-- Past Fort Joy, apply the _Act2 presets.
 					if regionLevel > 1 or Vars.DebugMode then
-						local preset = GetVarFixedString(uuid, "LeaderLib_CurrentPreset")
-						if StringHelpers.IsNullOrEmpty(preset) then
-							preset = GetMainAttributePreset(uuid)
-						end
-						if not StringHelpers.IsNullOrEmpty(preset) then
-							---@type PresetData
-							local act2Preset = Data.Presets.Act2[preset]
-							if act2Preset then
-								fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SkipTutorial] Applying preset (%s) to player (%s).", preset, uuid)
-								act2Preset:ApplyToCharacter(uuid, "Uncommon", nil, true, true)
+						Timer.StartOneshot(string.format("LeaderLib_SkipTutorialPostSetup%s", uuid), 1000, function()
+							local preset = GetVarFixedString(uuid, "LeaderLib_CurrentPreset")
+							if StringHelpers.IsNullOrEmpty(preset) then
+								preset = GetMainAttributePreset(uuid)
 							end
-						else
-							fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SkipTutorial] Adding Bless to player (%s).", uuid)
-							CharacterAddSkill(uuid, "Target_Bless", 0)
-						end
+							if not StringHelpers.IsNullOrEmpty(preset) then
+								---@type PresetData
+								local act2Preset = Data.Presets.Act2[preset]
+								if act2Preset then
+									fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SkipTutorial] Applying preset (%s) to player (%s).", preset, uuid)
+									act2Preset:ApplyToCharacter(uuid, "Uncommon", nil, true, true)
+								end
+							else
+								fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SkipTutorial] Adding Bless to player (%s).", uuid)
+								CharacterAddSkill(uuid, "Target_Bless", 0)
+							end
+						end)
 					end
 				end
 			end
+
+			--Mods.LeaderLib.Data.Presets.Preview.LLWEAPONEX_Reaper:AddEquipmentToCharacter(CharacterGetHostCharacter(), "Epic", nil, true)
+			--Mods.LeaderLib.Data.Presets.Preview.LLWEAPONEX_DragonSlayer:AddEquipmentToCharacter(CharacterGetHostCharacter(), "Uncommon", nil, true)
 	
 			if settings.StartingGold.Enabled then
 				local gold = settings.StartingGold[region] or 0
@@ -261,7 +266,7 @@ if Ext.IsServer() then
 			GameSettingsManager.Save()
 		end)
 
-		function SkipTutorial.OnLeaderLibInitialized()
+		function SkipTutorial.OnLeaderLibInitialized(region)
 			if SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION and SharedData.GameMode == GAMEMODE.CAMPAIGN then
 				-- Skip setting up Skip Tutorial stuff if another mod is modifying that already.
 				if GameHelpers.DB.HasValue("DB_GLO_FirstLevelAfterCharacterCreation", "TUT_Tutorial_A") then
@@ -271,11 +276,25 @@ if Ext.IsServer() then
 				else
 					Ext.Print("[LeaderLib] The tutorial is already being bypassed. Skipping Skip Tutorial setup.")
 				end
+			elseif skipTutorialControlEnabled and runSkipTutorialSetup and region == GameSettings.Settings.SkipTutorial.Destination then
+				local data = LevelSettings[region]
+				local settings = GameSettings.Settings.SkipTutorial
+	
+				SkipTutorial_MainSetup(settings, region)
+	
+				if data and data.Setup then
+					local b,err = xpcall(data.Setup, debug.traceback, settings)
+					if not b then
+						Ext.PrintError(err)
+					end
+				end
+				Ext.BroadcastMessage("LeaderLib_ClearSkipTutorialUI", "")
+				runSkipTutorialSetup = false
 			end
 		end
 	
 		RegisterListener("Initialized", function(region)
-			SkipTutorial.OnLeaderLibInitialized()
+			SkipTutorial.OnLeaderLibInitialized(region)
 		end)
 	
 		-- Ext.RegisterOsirisListener("DB_ObjectTimer", 3, "after", function(uuid, timerName, uniqueTimerName)
@@ -293,24 +312,6 @@ if Ext.IsServer() then
 				if StringHelpers.IsNullOrEmpty(uuid) and runSkipTutorialSetup then
 					EnableSkipTutorial()
 				end
-			end
-		end)
-	
-		Ext.RegisterOsirisListener("GameStarted", 2, "before", function(region, isEditorMode)
-			if skipTutorialControlEnabled and runSkipTutorialSetup and region == GameSettings.Settings.SkipTutorial.Destination then
-				local data = LevelSettings[region]
-				local settings = GameSettings.Settings.SkipTutorial
-	
-				SkipTutorial_MainSetup(settings, region)
-	
-				if data and data.Setup then
-					local b,err = xpcall(data.Setup, debug.traceback, settings)
-					if not b then
-						Ext.PrintError(err)
-					end
-				end
-				Ext.BroadcastMessage("LeaderLib_ClearSkipTutorialUI", "")
-				runSkipTutorialSetup = false
 			end
 		end)
 	end

@@ -69,7 +69,7 @@ Ext.RegisterListener("StatusHitEnter", function(hitStatus, context)
 	local skill = nil
 
 	---@type HitData
-	local data = Classes.HitData:Create(target.MyGuid, source.MyGuid, hit.TotalDamageDone, hitStatus.StatusHandle, skillId, GameHelpers.Hit.Succeeded(hit))
+	local data = Classes.HitData:Create(target.MyGuid, source.MyGuid, hit.TotalDamageDone, hitStatus.StatusHandle, skillId, GameHelpers.Hit.Succeeded(hit), hitStatus, context, hit)
 
 	if skillId then
 		skill = Ext.GetStat(skillId)

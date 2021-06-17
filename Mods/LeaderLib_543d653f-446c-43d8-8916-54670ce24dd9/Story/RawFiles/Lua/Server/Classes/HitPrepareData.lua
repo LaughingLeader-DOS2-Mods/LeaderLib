@@ -160,6 +160,17 @@ local function CreateDamageMetaList(handle)
 			error(string.format("%s is not a valid damage type!", k), 2)
 		end
 	end
+	meta.__pairs = function (_)
+		local function iter(_, k)
+			local i = nil
+			i,k = next(Data.DamageTypes, k)
+			if i ~= nil then 
+				return k,NRD_HitGetDamage(handle, k)
+			end
+		end
+		-- Return an iterator function, the table, starting point
+		return iter, damageList, nil
+	end
 	setmetatable(damageList, meta)
 	return damageList
 end

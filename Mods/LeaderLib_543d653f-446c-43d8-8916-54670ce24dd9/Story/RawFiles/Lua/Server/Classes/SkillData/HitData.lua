@@ -97,8 +97,10 @@ function HitData:PrintTargets()
 end
 
 ---Recalculates total damage done and updates all related variables.
----@param recalcLifeSteal Recalculate LifeSteal as well, using Game.Math.ApplyLifeSteal.
-function HitData:Recalculate(recalcLifeSteal)
+---@param recalcLifeSteal boolean|nil Recalculate LifeSteal as well, using Game.Math.ApplyLifeSteal.
+---@param setLifeStealFlags boolean|nil If recalcLifeSteal is true, also set effect flags on the hit.
+---@param allowArmorDamageTypesToLifeSteal boolean|nil Allows Magic/Corrosive damage to affect LifeSteal if true and recalcLifeSteal is true.
+function HitData:Recalculate(recalcLifeSteal, setLifeStealFlags, allowArmorDamageTypesToLifeSteal)
 	local total = 0
 	for k,v in pairs(self.DamageList:ToTable()) do
 		total = total + v.Amount
@@ -110,7 +112,7 @@ function HitData:Recalculate(recalcLifeSteal)
 		self.HitContext.TotalDamageDone = total
 		self.HitRequest.TotalDamageDone = total
 		if recalcLifeSteal and ObjectIsCharacter(self.Target) == 1 and ObjectIsCharacter(self.Attacker) == 1 then
-			Game.Math.ApplyLifeSteal(self.HitRequest, Ext.GetCharacter(self.Target).Stats, Ext.GetCharacter(self.Attacker).Stats, self.HitContext.HitType)
+			GameHelpers.Hit.RecalculateLifeSteal(self.HitRequest, Ext.GetCharacter(self.Target).Stats, Ext.GetCharacter(self.Attacker).Stats, self.HitContext.HitType, setLifeStealFlags, allowArmorDamageTypesToLifeSteal)
 		end
 	end
 end

@@ -155,7 +155,7 @@ function GameHelpers.Item.CreateItemByStat(statName, skipLevelCheck, properties)
     ---@type StatEntryWeapon
     local stat = nil
     local statType = ""
-    local level = properties and properties.StatsLevel or 0
+    local level = properties and properties.StatsLevel or 1
     local rarity = "Common"
     local rootTemplate = properties and properties.RootTemplate or nil
 

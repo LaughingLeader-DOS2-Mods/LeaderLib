@@ -52,7 +52,14 @@ function PresetData:AddEquipmentToCharacter(char, targetRarity, skipSlots, skipI
 	if Ext.IsServer() then
 		local level = CharacterGetLevel(char)
 		local equipment = self.Equipment
-		local presetItemStatProperties = {IsIdentified = true, StatsLevel = level, GenerationLevel = level, ItemType = targetRarity}
+		local presetItemStatProperties = {
+			Amount = 1,
+			IsIdentified = true, 
+			StatsLevel = level, 
+			GenerationLevel = level, 
+			ItemType = targetRarity,
+			HasGeneratedStats = true
+		}
 		if self.IsPreview then
 			if self.Equipment_Preview == nil or self.Equipment_Preview == "" then
 				for tag,suffix in pairs(previewRaceSuffixes) do
@@ -86,12 +93,16 @@ function PresetData:AddEquipmentToCharacter(char, targetRarity, skipSlots, skipI
 							end
 						end
 					end
+					---@type ItemDefinition
+					local props = Common.CloneTable(presetItemStatProperties)
 					if skipIfExists == true then
 						local templates = GameHelpers.Item.GetRootTemplatesForStat(stat.Name)
 						if templates and #templates > 0 then
 							local template = templates[1]
-							if not StringHelpers.IsNullOrEmpty(template) and ItemTemplateIsInCharacterInventory(char, template) > 0 then
-								skip = true
+							if not StringHelpers.IsNullOrEmpty(template) then
+								skip = ItemTemplateIsInCharacterInventory(char, template) > 0
+								props.RootTemplate = template
+								props.OriginalRootTemplate = template
 							end
 						end
 					end
@@ -100,7 +111,8 @@ function PresetData:AddEquipmentToCharacter(char, targetRarity, skipSlots, skipI
 						if item ~= nil and ObjectExists(item) == 1 then
 							ItemToInventory(item, char, 1, 0, 1)
 							if ItemIsEquipable(item) == 1 then
-								CharacterEquipItem(char, item)
+								--Osi.LeaderLib_Timers_StartCharacterItemTimer(char, item, 500, string.format("LLEG%s", item), "LeaderLib_Commands_EquipItem");
+								--CharacterEquipItem(char, item)
 								--NRD_CharacterEquipItem(char, item, stat.Slot, 0, 0, 1, 1)
 							end
 						end

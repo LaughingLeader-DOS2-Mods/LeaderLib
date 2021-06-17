@@ -78,7 +78,7 @@ function GameHelpers.Item.GetRootTemplatesForStat(statName)
     local matches = {}
     local stat = Ext.GetStat(statName)
     if stat then
-        if stat.RootTemplate then
+        if GameHelpers.Item.IsObject(statName) then
             return stat.RootTemplate
         elseif stat.ItemGroup then
             local itemGroup = Ext.GetItemGroup(stat.ItemGroup)
@@ -167,6 +167,8 @@ function GameHelpers.Item.CreateItemByStat(statName, skipLevelCheck, properties)
         statType = NRD_StatGetType(stat.Name)
     end
 
+    Ext.Print(stat.Name, "ItemGroup", stat.ItemGroup)
+
     if stat and stat.Unique then
         rarity = "Unique"
     elseif properties then
@@ -236,7 +238,9 @@ function GameHelpers.Item.CreateItemByStat(statName, skipLevelCheck, properties)
         end
 
         local newItem = constructor:Construct()
-        return newItem and newItem.MyGuid or nil
+        if newItem then
+            return newItem.MyGuid
+        end
     end
     return nil
 end

@@ -87,14 +87,17 @@ function PresetData:AddEquipmentToCharacter(char, targetRarity, skipSlots, skipI
 						end
 					end
 					if skipIfExists == true then
-						local template = stat.RootTemplate or GameHelpers.Item.GetRootTemplatesForStat(stat.Name)
-						if not StringHelpers.IsNullOrEmpty(template) and ItemTemplateIsInCharacterInventory(char, template) > 0 then
-							skip = true
+						local templates = GameHelpers.Item.GetRootTemplatesForStat(stat.Name)
+						if templates and #templates > 0 then
+							local template = templates[1]
+							if not StringHelpers.IsNullOrEmpty(template) and ItemTemplateIsInCharacterInventory(char, template) > 0 then
+								skip = true
+							end
 						end
 					end
 					if not skip then
 						local item = GameHelpers.Item.CreateItemByStat(stat, true, presetItemStatProperties)
-						if item ~= nil then
+						if item ~= nil and ObjectExists(item) == 1 then
 							ItemToInventory(item, char, 1, 0, 1)
 							if ItemIsEquipable(item) == 1 then
 								CharacterEquipItem(char, item)

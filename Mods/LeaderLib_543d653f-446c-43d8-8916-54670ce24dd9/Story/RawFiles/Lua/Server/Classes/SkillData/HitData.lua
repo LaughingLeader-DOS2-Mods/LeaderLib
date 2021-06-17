@@ -21,10 +21,10 @@ local HitData = {
 }
 HitData.__index = HitData
 
-local function CreateDamageMetaList(handle)
+local function CreateDamageMetaList(target, handle)
 	local damageList = Ext.NewDamageList()
 	for _,damageType in Data.DamageTypes:Get() do
-		damageList:Add(damageList, NRD_HitGetDamage(handle, damageType) or 0)
+		damageList:Add(damageList, NRD_HitStatusGetDamage(target, handle, damageType) or 0)
 	end
 	return damageList
 end
@@ -59,7 +59,7 @@ function HitData:Create(target, attacker, damage, handle, skill, success, hitSta
 	if this.HitRequest then
 		this.DamageList = this.HitRequest.DamageList
 	else
-		this.DamageList = CreateDamageMetaList(handle)
+		this.DamageList = CreateDamageMetaList(target, handle)
 	end
 	if success ~= nil then
 		this.Success = success

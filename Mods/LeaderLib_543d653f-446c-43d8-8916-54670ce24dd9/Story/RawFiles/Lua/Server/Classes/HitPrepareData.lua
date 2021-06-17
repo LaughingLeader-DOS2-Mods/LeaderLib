@@ -104,6 +104,8 @@ local HitPrepareData = {
 	Handle = -1,
 }
 
+local canUseRawFunctions = Ext.Version() >= 55
+
 HitPrepareData.__index = function(tbl,k)
 	if tbl.Handle then
 		local t = HIT_ATTRIBUTE[k]
@@ -115,7 +117,10 @@ HitPrepareData.__index = function(tbl,k)
 			return NRD_HitGetString(tbl.Handle, k) or ""
 		end
 	end
-	return rawget(HitPrepareData, k)
+	if canUseRawFunctions then
+		rawget(HitPrepareData, k)
+	end
+	return nil
 end
 
 HitPrepareData.__newindex = function(tbl,k,v)
@@ -129,7 +134,9 @@ HitPrepareData.__newindex = function(tbl,k,v)
 			return
 		end
 	end
-	rawset(tbl, k, v)
+	if canUseRawFunctions then 
+		rawset(tbl, k, v)
+	end
 end
 
 HitPrepareData.__call = function(_, ...)

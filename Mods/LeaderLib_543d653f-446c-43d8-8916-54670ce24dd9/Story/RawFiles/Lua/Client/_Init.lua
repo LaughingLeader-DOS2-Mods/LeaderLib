@@ -51,3 +51,12 @@ Ext.Require("Client/UI/ContextMenu.lua")
 if Vars.DebugMode then
 	Ext.Require("Client/UI/DialogKeywords.lua") -- TODO
 end
+
+--Temp Workaround for mods calling this still on the client side
+if not Data.AddPreset then
+	Data.AddPreset = function() end
+end
+
+if not Classes.PresetData then
+	Classes.PresetData = {Create = function() end}
+end

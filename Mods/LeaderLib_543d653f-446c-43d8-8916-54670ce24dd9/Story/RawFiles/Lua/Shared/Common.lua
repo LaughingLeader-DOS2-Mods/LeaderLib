@@ -440,15 +440,24 @@ function Common.SafeguardParam(in_value, param_type, fallback_value)
 	local in_type = type(in_value)
 	if in_type == param_type then
 		return in_value
-	elseif in_type == "number" and param_type == "integer" then
-		return in_value
-	elseif in_type == "string" and param_type == "number" then
-		return tonumber(in_value)
-	elseif in_type == "string" and param_type == "integer" then
-		return math.tointeger(in_value)
 	else
-		return fallback_value
+		if type(param_type) == "table" then
+			for i,v in pairs(param_type) do
+				if in_type == v then
+					return in_value
+				end
+			end
+		else
+			if in_type == "number" and param_type == "integer" then
+				return in_value
+			elseif in_type == "string" and param_type == "number" then
+				return tonumber(in_value)
+			elseif in_type == "string" and param_type == "integer" then
+				return math.tointeger(in_value)
+			end
+		end
 	end
+	return fallback_value
 end
 
 function Common.Split(s, sep)

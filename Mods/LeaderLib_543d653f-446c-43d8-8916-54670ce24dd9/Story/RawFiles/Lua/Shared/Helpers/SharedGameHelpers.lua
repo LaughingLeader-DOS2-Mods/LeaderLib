@@ -101,14 +101,23 @@ function GameHelpers.CharacterUsersMatch(char1, char2)
 	end
 end
 
----@param item EsvItem|EclItem
+if not GameHelpers.Item then
+	GameHelpers.Item = {}
+end
+
+---@param item EsvItem|EclItem|string
 ---@return boolean
 function GameHelpers.Item.IsObject(item)
-	if Data.ObjectStats[item.StatsId] or item.ItemType == "Object" then
-		return true
-	end
-	if not item.Stats then
-		return true
+	local t = type(item)
+	if t == "userdata" then
+		if Data.ObjectStats[item.StatsId] or item.ItemType == "Object" then
+			return true
+		end
+		if not item.Stats then
+			return true
+		end
+	elseif t == "string" then
+		return Data.ObjectStats[item] == true
 	end
 	return false
 end

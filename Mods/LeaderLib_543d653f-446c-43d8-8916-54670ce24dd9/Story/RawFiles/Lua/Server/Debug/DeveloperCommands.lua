@@ -704,12 +704,11 @@ Ext.RegisterConsoleCommand("heal", function(command, t)
 end)
 
 Ext.RegisterConsoleCommand("healall", function(command)
-	for i,v in pairs(Osi.DB_IsPlayer:Get(nil)) do
-		local uuid = uuid
-		if CharacterIsDead(uuid) == 1 then
-			CharacterResurrect(uuid)
+	for player in GameHelpers.Character.GetPlayers(true) do
+		if player.Dead then
+			CharacterResurrect(player.MyGuid)
 		end
-		CharacterSetHitpointsPercentage(uuid, 100.0)
+		CharacterSetHitpointsPercentage(player.MyGuid, 100.0)
 	end
 end)
 

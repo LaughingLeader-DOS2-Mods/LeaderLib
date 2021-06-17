@@ -106,17 +106,22 @@ local inspect ={
 	-- custom types are sorted out alphabetically
 	return ta < tb
   end
+
+  local canUseRawFunctions = Ext.Version() >= 55
   
   -- For implementation reasons, the behavior of rawlen & # is "undefined" when
   -- tables aren't pure sequences. So we implement our own # operator.
   local function getSequenceLength(t)
 	local len = 1
-	local v = rawget(t,len)
-	while v ~= nil do
-	  len = len + 1
-	  v = rawget(t,len)
+	if canUseRawFunctions then
+		local v = rawget(t,len)
+		while v ~= nil do
+		  len = len + 1
+		  v = rawget(t,len)
+		end
+		return len - 1
 	end
-	return len - 1
+	return len
   end
   
   local function getNonSequentialKeys(t)

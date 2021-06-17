@@ -112,30 +112,31 @@ if Ext.IsServer() then
 						end
 					end
 					-- Past Fort Joy, apply the _Act2 presets.
-					if regionLevel > 1 or Vars.DebugMode then
-						Timer.StartOneshot(string.format("LeaderLib_SkipTutorialPostSetup%s", uuid), 1000, function()
-							local preset = GetVarFixedString(uuid, "LeaderLib_CurrentPreset")
-							if StringHelpers.IsNullOrEmpty(preset) then
-								preset = GetMainAttributePreset(uuid)
-							end
-							if not StringHelpers.IsNullOrEmpty(preset) then
-								---@type PresetData
-								local act2Preset = Data.Presets.Act2[preset]
-								if act2Preset then
-									fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SkipTutorial] Applying preset (%s) to player (%s).", preset, uuid)
-									act2Preset:ApplyToCharacter(uuid, "Uncommon", nil, true, true)
-								end
-							else
-								fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SkipTutorial] Adding Bless to player (%s).", uuid)
-								CharacterAddSkill(uuid, "Target_Bless", 0)
-							end
-						end)
+					if regionLevel > 1 then
+						fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SkipTutorial] Adding Bless to player (%s).", uuid)
+						CharacterAddSkill(uuid, "Target_Bless", 0)
+						-- if Vars.DebugMode then
+						-- 	Timer.StartOneshot(string.format("LeaderLib_SkipTutorialPostSetup%s", uuid), 1000, function()
+						-- 		local preset = GetVarFixedString(uuid, "LeaderLib_CurrentPreset")
+						-- 		if StringHelpers.IsNullOrEmpty(preset) then
+						-- 			preset = GetMainAttributePreset(uuid)
+						-- 		end
+						-- 		if not StringHelpers.IsNullOrEmpty(preset) then
+						-- 			---@type PresetData
+						-- 			local act2Preset = Data.Presets.Act2[preset]
+						-- 			if act2Preset then
+						-- 				fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SkipTutorial] Applying preset (%s) to player (%s).", preset, uuid)
+						-- 				act2Preset:ApplyToCharacter(uuid, "Uncommon", nil, true, true)
+						-- 			end
+						-- 		end
+						-- 	end)
+						-- end
 					end
 				end
 			end
 
-			--Mods.LeaderLib.Data.Presets.Preview.LLWEAPONEX_Reaper:AddEquipmentToCharacter(CharacterGetHostCharacter(), "Epic", nil, true)
-			--Mods.LeaderLib.Data.Presets.Preview.LLWEAPONEX_DragonSlayer:AddEquipmentToCharacter(CharacterGetHostCharacter(), "Uncommon", nil, true)
+			--Mods.LeaderLib.Data.Presets.Preview.LLWEAPONEX_Reaper:AddEquipmentToCharacter(CharacterGetHostCharacter(), "Epic", nil, false)
+			--Mods.LeaderLib.Data.Presets.Preview.LLWEAPONEX_DragonSlayer:AddEquipmentToCharacter(CharacterGetHostCharacter(), "Uncommon", nil, false)
 	
 			if settings.StartingGold.Enabled then
 				local gold = settings.StartingGold[region] or 0

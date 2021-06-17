@@ -156,7 +156,8 @@ function GameHelpers.Item.CreateItemByStat(statName, skipLevelCheck, properties)
     local stat = nil
     local statType = ""
     local level = properties and properties.StatsLevel or 1
-    local rarity = "Common"
+    local generatedRarity = "Common"
+    local targetRarity = "Common"
     local rootTemplate = properties and properties.RootTemplate or nil
 
     if type(statName) == "string" then
@@ -169,14 +170,18 @@ function GameHelpers.Item.CreateItemByStat(statName, skipLevelCheck, properties)
 
     Ext.Print(stat.Name, "ItemGroup", stat.ItemGroup)
 
-    if stat and stat.Unique then
-        rarity = "Unique"
+    if stat and stat.Unique == 1 then
+        targetRarity = "Unique"
     elseif properties then
         if properties.ItemType then
-            rarity = properties.ItemType
+            targetRarity = properties.ItemType
         elseif properties.Rarity then
-            rarity = properties.Rarity
+            targetRarity = properties.Rarity
         end
+    end
+
+    if targetRarity ~= "Unique" then
+        generatedRarity = targetRarity
     end
 
     if level == nil or level <= 0 then
@@ -226,8 +231,8 @@ function GameHelpers.Item.CreateItemByStat(statName, skipLevelCheck, properties)
         props.HasGeneratedStats = hasGeneratedStats
         props.GenerationLevel = level
         props.StatsLevel = level
-        props.ItemType = rarity
-        props.GenerationItemType = rarity
+        props.ItemType = targetRarity
+        props.GenerationItemType = generatedRarity
 
         if properties and type(properties) == "table" then
             for k,v in pairs(properties) do
@@ -236,6 +241,8 @@ function GameHelpers.Item.CreateItemByStat(statName, skipLevelCheck, properties)
                 end
             end
         end
+
+        print("Rarity", rarity)
 
         local newItem = constructor:Construct()
         if newItem then

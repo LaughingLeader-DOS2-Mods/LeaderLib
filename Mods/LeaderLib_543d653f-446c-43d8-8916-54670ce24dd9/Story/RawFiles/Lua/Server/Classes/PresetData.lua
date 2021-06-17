@@ -58,6 +58,7 @@ function PresetData:AddEquipmentToCharacter(char, targetRarity, skipSlots, skipI
 			StatsLevel = level, 
 			GenerationLevel = level, 
 			ItemType = targetRarity,
+			GenerationItemType = targetRarity,
 			HasGeneratedStats = true
 		}
 		if self.IsPreview then

@@ -682,3 +682,9 @@ Ext.RegisterListener("GroundHit", function (caster, position, damageList)
 	--fprint(LOGLEVEL.DEFAULT, "[GroundHit]\n%s", Lib.pprint.pformat(data, {sort_keys=true}))
 	fprint(LOGLEVEL.DEFAULT, "[GroundHit]\n%s", Lib.inspect(data))
 end)
+
+RegisterSkillListener("All", function(skill, uuid, state, data)
+	if Vars.Print.Skills then
+		fprint(LOGLEVEL.DEFAULT, "[Skill:%s] State(%s) Caster(%s) Data%s", skill, state, uuid, data and string.format(":\n%s", Lib.inspect(data)) or "(nil)")
+	end
+end)

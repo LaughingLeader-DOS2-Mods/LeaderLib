@@ -50,6 +50,9 @@ TotalSkillListeners = 0
 function RegisterSkillListener(skill, callback)
 	local t = type(skill)
 	if t == "string" then
+		if StringHelpers.Equals(skill, "all", true) then
+			skill = "All"
+		end
 		if SkillListeners[skill] == nil then
 			SkillListeners[skill] = {}
 		end

@@ -69,7 +69,7 @@ Ext.RegisterListener("StatusHitEnter", function(hitStatus, context)
 	local skill = nil
 
 	---@type HitData
-	local data = Classes.HitData:Create(target.MyGuid, source.MyGuid, hit.TotalDamageDone, context.HitId, skillId, GameHelpers.Hit.Succeeded(hit))
+	local data = Classes.HitData:Create(target.MyGuid, source.MyGuid, hit.TotalDamageDone, hitStatus.StatusHandle, skillId, GameHelpers.Hit.Succeeded(hit))
 
 	if skillId then
 		skill = Ext.GetStat(skillId)
@@ -89,53 +89,7 @@ Ext.RegisterListener("StatusHitEnter", function(hitStatus, context)
 		fprint(LOGLEVEL.TRACE, "hit.DamageType(%s) hit.TotalDamageDone(%s) DamageList:\n%s", hit.DamageType, hit.TotalDamageDone, Lib.inspect(hit.DamageList:ToTable()))
 	end
 
-
-	--Old listener
-	InvokeListenerCallbacks(Listeners.OnHit, target.MyGuid, source.MyGuid, hit.TotalDamageDone, context.HitId, skillId, hitStatus, context, data)
 	InvokeListenerCallbacks(Listeners.StatusHitEnter, target, source, hit.TotalDamageDone, hit, context, hitStatus, skill, data)
+	--Old listener
+	InvokeListenerCallbacks(Listeners.OnHit, target.MyGuid, source.MyGuid, hit.TotalDamageDone, hitStatus.StatusHandle, skillId, hitStatus, context, data)
 end)
-
----@type target string
----@type source string
----@type damage integer
----@type handle integer
-local function OnHit(target, source, damage, handle)
-	if ObjectExists(target) == 0 then
-		return
-	end
-
-	---@type EsvStatusHit
-	local hitStatus = nil
-	if ObjectIsCharacter(target) == 1 then
-		---@type EsvStatusHit
-		hitStatus = Ext.GetStatus(target, handle)
-	else
-		local item = Ext.GetItem(target)
-		if item then
-			hitStatus = item:GetStatus("HIT")
-		end
-	end
-
-	if hitStatus == nil then
-		return
-	end
-
-	local skillprototype = hitStatus.SkillId
-	local skill = nil
-	if not StringHelpers.IsNullOrEmpty(hitStatus.SkillId) then
-		skill = string.gsub(hitStatus.SkillId, "_%-?%d+$", "")
-		OnSkillHit(source, skill, target, handle, damage)
-	end
-
-	if Features.ApplyBonusWeaponStatuses == true and source ~= nil then
-		if GameHelpers.Hit.IsFromWeapon(hitStatus, skill) then
-			GameHelpers.ApplyBonusWeaponStatuses(source, target)
-		end
-	end
-
-	InvokeListenerCallbacks(Listeners.OnHit, target, source, damage, handle, skill)
-end
-
--- RegisterProtectedOsirisListener("NRD_OnHit", 4, "before", function(target, attacker, damage, handle)
--- 	OnHit(StringHelpers.GetUUID(target), StringHelpers.GetUUID(attacker), damage, handle)
--- end)

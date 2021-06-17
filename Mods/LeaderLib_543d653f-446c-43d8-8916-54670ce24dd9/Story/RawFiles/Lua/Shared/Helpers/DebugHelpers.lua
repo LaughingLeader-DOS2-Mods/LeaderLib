@@ -416,26 +416,38 @@ local userDataProps = {
 	["eoc::CombatComponentTemplate"] = CombatComponentTemplate,
 	["CDivinityStats_Item"] = CDivinityStats_Item,
 	["CDivinityStats_Equipment_Attributes"] = CDivinityStats_Equipment_Attributes,
+	["CDamageList"] = function(obj) return obj:ToTable() end,
 }
 
-function DebugHelpers.TraceUserData(obj)
+local function TryGetValue(obj,k)
+	return obj[k]
+end
+
+function DebugHelpers.TraceUserData(obj, printNil)
+	if obj == nil then
+		return "nil"
+	end
 	local meta = getmetatable(obj)
 	local props = userDataProps[meta]
 	if props then
-		local data = {}
-		for k,v in pairs(props) do
-			local value = obj[k]
-			if value ~= nil then
-				if props == userDataProps.CDivinityStats_Equipment_Attributes and ((type(value) == "number" and value == 0) or (type(value) == "string" and value == "None" or value == "")) then
-					-- skip
-				else
-					data[k] = value
+		if type(props) == "function" then
+			return Lib.inspect(props(obj))
+		else
+			local data = {}
+			for k,v in pairs(props) do
+				local b,value = xpcall(TryGetValue, debug.traceback, obj, k)
+				if b and value ~= nil then
+					if props == userDataProps.CDivinityStats_Equipment_Attributes and ((type(value) == "number" and value == 0) or (type(value) == "string" and value == "None" or value == "")) then
+						-- skip
+					else
+						data[k] = value
+					end
+				elseif printNil == true then
+					data[k] = string.format("nil (%s)", v)
 				end
-			else
-				data[k] = string.format("nil (%s)", v)
 			end
+			return Lib.inspect(data)
 		end
-		return Lib.inspect(data)
 	else
 		if meta then
 			return tostring(meta)

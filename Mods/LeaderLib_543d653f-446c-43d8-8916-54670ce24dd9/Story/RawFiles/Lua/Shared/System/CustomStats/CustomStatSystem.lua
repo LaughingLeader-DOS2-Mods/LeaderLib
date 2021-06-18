@@ -4,6 +4,7 @@ end
 
 CustomStatSystem.__index = CustomStatSystem
 CustomStatSystem.Loaded = false
+CustomStatSystem.MISC_CATEGORY = 99999
 
 ---@class CustomStatTooltipType
 CustomStatSystem.TooltipType = {
@@ -106,8 +107,11 @@ local function LoadCustomStatsData()
 			end
 		end
 	else
-		local categoryId = 1 -- 0 is Misc
+		local categoryId = 0
 		for category in CustomStatSystem:GetAllCategories() do
+			if categoryId == CustomStatSystem.MISC_CATEGORY then
+				categoryId = categoryId + 1
+			end
 			category.GroupId = categoryId
 			categoryId = categoryId + 1
 		end

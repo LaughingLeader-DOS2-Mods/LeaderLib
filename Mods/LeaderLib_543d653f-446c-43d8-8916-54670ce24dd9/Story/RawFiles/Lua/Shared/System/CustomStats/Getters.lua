@@ -150,20 +150,20 @@ end
 ---@return integer
 function CustomStatSystem:GetCategoryGroupId(id, mod)
 	if not id then
-		return 0
+		return self.MISC_CATEGORY
 	end
 	if mod then
 		local categories = self.Categories[mod]
 		if categories and categories[id] then
-			return categories[id].GroupId or 0
+			return categories[id].GroupId or self.MISC_CATEGORY
 		end
 	end
 	for uuid,categories in pairs(self.Categories) do
 		if categories[id] then
-			return categories[id].GroupId or 0
+			return categories[id].GroupId or self.MISC_CATEGORY
 		end
 	end
-	return 0
+	return self.MISC_CATEGORY
 end
 
 ---Get an iterator of sorted categories.

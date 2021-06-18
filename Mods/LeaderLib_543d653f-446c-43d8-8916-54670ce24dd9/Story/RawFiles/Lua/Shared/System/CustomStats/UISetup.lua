@@ -111,7 +111,7 @@ local function OnSheetUpdating(ui, method)
 		local doubleHandle = this.customStats_array[i]
 		local displayName = this.customStats_array[i+1]
 		local value = this.customStats_array[i+2]
-		local groupId = 0
+		local groupId = self.MISC_CATEGORY
 		local hideStat = false
 
 		if doubleHandle then
@@ -158,12 +158,13 @@ function CustomStatSystem:SetupGroups(ui, call)
 	local this = ui:GetRoot().stats_mc.customStats_mc
 	this.resetGroups()
 	-- Group for stats without an assigned category
-	this.addGroup(0, miscGroupDisplayName.Value, false, self:GetTotalStatsInCategory(nil, true) > 0)
+	this.addGroup(CustomStatSystem.MISC_CATEGORY, miscGroupDisplayName.Value, false, self:GetTotalStatsInCategory(nil, true) > 0)
 	for category in self:GetAllCategories() do
 		local isVisible = isGM or category.ShowAlways or self:GetTotalStatsInCategory(category.ID, true) > 0
 		this.addGroup(category.GroupId, category:GetDisplayName(), false, isVisible)
 	end
-	this.positionElements()
+	--this.positionElements(false)
+	this.positionElements(true, "groupId")
 end
 
 ---@private

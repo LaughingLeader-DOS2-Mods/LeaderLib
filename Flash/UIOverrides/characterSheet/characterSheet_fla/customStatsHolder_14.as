@@ -56,7 +56,7 @@ package characterSheet_fla
 			this.base = root as MovieClip;
 			//this.base.stats_mc.panelBg2_mc.visible = true;
 
-			this.list.sortOn("groupName", Array.CASEINSENSITIVE);
+			//this.list.sortOn("groupId", Array.NUMERIC);
 			//this.list.elementsSortOn("textStr", Array.CASEINSENSITIVE);
 		}
 		
@@ -65,10 +65,20 @@ package characterSheet_fla
 			ExternalInterface.call("createCustomStat");
 		}
 		
-		public function positionElements(sortElements:Boolean=true) : *
+		public function positionElements(sortElements:Boolean=true, sortValue:String="groupName") : *
 		{
 			if(sortElements) {
-				this.list.sortOn("groupName", Array.CASEINSENSITIVE);
+				switch(sortValue)
+				{
+					case "groupName":
+						this.list.sortOn(sortValue, Array.CASEINSENSITIVE);
+						break;
+					case "groupId":
+						this.list.sortOn(sortValue, Array.NUMERIC);
+						break;
+					default:
+						this.list.sortOn(sortValue, Array.DESCENDING);
+				}
 			}
 			this.list.positionElements();
 		}

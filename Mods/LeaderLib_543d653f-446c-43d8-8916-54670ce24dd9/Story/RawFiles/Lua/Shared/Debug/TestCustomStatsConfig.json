@@ -20,7 +20,8 @@
 		},
 		"Suneater": {
 			"DisplayName": "Suneater",
-			"Description": "You eat the sun."
+			"Description": "You eat the sun.",
+			"SortValue": -1
 		},
 		"Debug": {
 			"DisplayName": "Debug",

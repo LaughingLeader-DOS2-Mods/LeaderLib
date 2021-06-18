@@ -120,6 +120,15 @@ function GameHelpers.Character.IsEnemyOfParty(uuid)
 	return false
 end
 
+function GameHelpers.Character.IsEnemy(obj1, obj2)
+	if not isClient then
+		local a = GameHelpers.GetUUID(obj1)
+		local b = GameHelpers.GetUUID(obj2)
+		return CharacterIsEnemy(a,b) == 1
+	end
+	return false
+end
+
 function GameHelpers.Character.IsNeutralToParty(uuid)
 	if not isClient then
 		uuid = GameHelpers.GetUUID(uuid)

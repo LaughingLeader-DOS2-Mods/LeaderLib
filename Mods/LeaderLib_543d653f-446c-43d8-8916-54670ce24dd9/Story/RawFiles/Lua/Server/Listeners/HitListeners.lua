@@ -55,7 +55,7 @@ end
 
 ---@param hitStatus EsvStatusHit
 ---@param context HitContext
-Ext.RegisterListener("StatusHitEnter", function(hitStatus, context)
+Ext.RegisterListener("StatusHitEnter", function(hitStatus, hitContext)
 	if Ext.GetGameState() ~= "Running" then
 		return
 	end
@@ -66,17 +66,17 @@ Ext.RegisterListener("StatusHitEnter", function(hitStatus, context)
 	end
 
 	---@type HitRequest
-	local hit = context.Hit or hitStatus.Hit
+	local hitRequest = hitContext.Hit or hitStatus.Hit
 
 	local skillId = not StringHelpers.IsNullOrWhitespace(hitStatus.SkillId) and string.gsub(hitStatus.SkillId, "_%-?%d+$", "") or nil
-	local skill = nil
+	local skill = skillId and Ext.GetStat(skillId) or nil
 
 	---@type HitData
-	local data = Classes.HitData:Create(target.MyGuid, source.MyGuid, hit.TotalDamageDone, hitStatus.StatusHandle, skillId, GameHelpers.Hit.Succeeded(hit), hitStatus, context, hit)
+	local data = Classes.HitData:Create(target.MyGuid, source.MyGuid, hitRequest.TotalDamageDone, hitStatus.StatusHandle, skill, GameHelpers.Hit.Succeeded(hitRequest), hitStatus, hitContext, hitRequest)
+	local data = Classes.HitData:Create(target, source, hitStatus, hitContext, hitRequest, skill)
 
 	if skillId then
-		skill = Ext.GetStat(skillId)
-		OnSkillHit(skill, target, source, hit.TotalDamageDone, hit, context, hitStatus, data)
+		OnSkillHit(skill, target, source, hitRequest.TotalDamageDone, hitRequest, hitContext, hitStatus, data)
 	end
 
 	if Features.ApplyBonusWeaponStatuses == true and source then
@@ -87,12 +87,12 @@ Ext.RegisterListener("StatusHitEnter", function(hitStatus, context)
 
 	if Vars.DebugMode and Vars.Print.Hit then
 		local wpn = hitStatus.WeaponHandle and Ext.GetItem(hitStatus.WeaponHandle) or nil
-		fprint(LOGLEVEL.DEFAULT, "[StatusHitEnter:%s] Damage(%s) HitReason[%s](%s) DamageSourceType(%s) WeaponHandle(%s) Skill(%s)", context.HitId, hit.TotalDamageDone, hitStatus.HitReason, Data.HitReason[hitStatus.HitReason] or "", hitStatus.DamageSourceType, wpn and wpn.DisplayName or "nil", skillId or "nil")
-		fprint(LOGLEVEL.TRACE, "hit.HitWithWeapon(%s) hit.Equipment(%s) context.Weapon(%s), hit.LifeSteal(%s)", hit.HitWithWeapon, hit.Equipment, context.Weapon, hit.LifeSteal)
-		fprint(LOGLEVEL.TRACE, "hit.DamageType(%s) hit.TotalDamageDone(%s) DamageList:\n%s", hit.DamageType, hit.TotalDamageDone, Lib.inspect(hit.DamageList:ToTable()))
+		fprint(LOGLEVEL.DEFAULT, "[StatusHitEnter:%s] Damage(%s) HitReason[%s](%s) DamageSourceType(%s) WeaponHandle(%s) Skill(%s)", hitContext.HitId, hitRequest.TotalDamageDone, hitStatus.HitReason, Data.HitReason[hitStatus.HitReason] or "", hitStatus.DamageSourceType, wpn and wpn.DisplayName or "nil", skillId or "nil")
+		fprint(LOGLEVEL.TRACE, "hitRequest.HitWithWeapon(%s) hitRequest.Equipment(%s) hitContext.Weapon(%s), hitRequest.LifeSteal(%s)", hitRequest.HitWithWeapon, hitRequest.Equipment, hitContext.Weapon, hitRequest.LifeSteal)
+		fprint(LOGLEVEL.TRACE, "hitRequest.DamageType(%s) hitRequest.TotalDamageDone(%s) DamageList:\n%s", hitRequest.DamageType, hitRequest.TotalDamageDone, Lib.inspect(hitRequest.DamageList:ToTable()))
 	end
 
-	InvokeListenerCallbacks(Listeners.StatusHitEnter, target, source, hit.TotalDamageDone, hit, context, hitStatus, skill, data)
+	InvokeListenerCallbacks(Listeners.StatusHitEnter, target, source, data)
 	--Old listener
-	InvokeListenerCallbacks(Listeners.OnHit, target.MyGuid, source.MyGuid, hit.TotalDamageDone, hitStatus.StatusHandle, skillId, hitStatus, context, data)
+	InvokeListenerCallbacks(Listeners.OnHit, target.MyGuid, source.MyGuid, hitRequest.TotalDamageDone, hitStatus.StatusHandle, skillId, hitStatus, hitContext, data)
 end)

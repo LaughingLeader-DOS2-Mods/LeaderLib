@@ -1,12 +1,16 @@
 ---Data passed to hit callbacks, such as the various functions in SkillListeners.lua
 ---@class HitData
+---@field Damage integer
+---@field Handle ObjectHandle
+---@field TargetObject EsvGameObject
+---@field Target string
+---@field AttackerObject EsvGameObject
+---@field Attacker string
 local HitData = {
 	ID = "HitData",
-	Target = "",
-	Attacker = "",
 	Skill = "",
-	Damage = 0,
-	Handle = 0,
+	---@type StatEntrySkillData
+	SkillData = nil,
 	IsFromSkll = false,
 	---@type boolean The hit did not miss.
 	Success = true,
@@ -29,59 +33,90 @@ local function CreateDamageMetaList(target, handle)
 	return damageList
 end
 
----@param target string The source of the skill.
----@param attacker string
----@param damage integer
----@param handle integer
----@param skill string|nil
----@param success boolean|nil
----@param hitStatus EsvStatusHit|nil
----@param hitContext HitContext|nil
----@param hitRequest HitRequest|nil
+local canUseRawFunctions = Ext.Version() >= 55
+local readOnlyProperties = {
+	Handle = true,
+	Target = true,
+	Attacker = true,
+}
+
+---@param this HitData
+local function SetMeta(this)
+	setmetatable(this, {
+		__index = function(tbl, k)
+			if k == "Damage" then
+				return this.HitContext.TotalDamageDone
+			elseif k == "Handle" then
+				return this.HitStatus.StatusHandle
+			elseif k == "Success" then
+				if this.TargetObject == nil then
+					tbl.Success = false
+					return false
+				end
+				return GameHelpers.Hit.Succeeded(this.HitRequest)
+			elseif k == "Target" then
+				local target = GameHelpers.GetUUID(this.TargetObject, true)
+				tbl.Target = target
+				return target
+			elseif k == "Attacker" then
+				local source = GameHelpers.GetUUID(this.AttackerObject, true)
+				tbl.Attacker = source
+				return source
+			end
+			if HitData[k] ~= nil then
+				return HitData[k]
+			end
+			if canUseRawFunctions then
+				return rawget(tbl, k)
+			end
+		end,
+		__newindex = function(tbl,k,v)
+			if k == "Damage" then
+				this.HitContext.TotalDamageDone = v
+				this.HitRequest.TotalDamageDone = v
+				return
+			elseif k == "Success" then
+				--this:SetHitFlag("Missed", true)
+				return
+			end
+			if canUseRawFunctions and not readOnlyProperties[k] then
+				rawset(tbl, k, v)
+			end
+		end
+	})
+end
+
+---@param target EsvGameObject
+---@param source EsvGameObject
+---@param hitStatus EsvStatusHit
+---@param hitContext HitContext
+---@param hitRequest HitRequest
+---@param skill StatEntrySkillData|nil
 ---@return HitData
-function HitData:Create(target, attacker, damage, handle, skill, success, hitStatus, hitContext, hitRequest)
+function HitData:Create(target, source, hitStatus, hitContext, hitRequest, skill)
 	---@type HitData
     local this =
     {
-		Target = target,
-		Attacker = attacker,
-		Damage = damage,
-		Handle = handle,
-		Success = true,
+		TargetObject = target,
+		AttackerObject = source,
+		HitStatus = hitStatus,
 		HitContext = hitContext,
-		HitRequest = hitRequest
+		HitRequest = hitRequest,
+		SkillData = skill
 	}
-	---@type EsvStatusHit
-	local status = hitStatus or Ext.GetStatus(target, handle)
-	if status then
-		this.HitStatus = status
-	end
 	if this.HitRequest then
 		this.DamageList = this.HitRequest.DamageList
 	else
-		this.DamageList = CreateDamageMetaList(target, handle)
+		this.DamageList = CreateDamageMetaList(target, this.HitStatus.StatusHandle)
 	end
-	if success ~= nil then
-		this.Success = success
-	else
-		if this.HitStatus then
-			if this.HitStatus.Hit then
-				this.Success = GameHelpers.Hit.Succeeded(this.HitStatus.Hit)
-			else
-				this.Success = GameHelpers.HitSucceeded(target, handle, 0)
-			end
-		else
-			this.Success = GameHelpers.HitSucceeded(target, handle, 1)
-		end
-	end
-	if StringHelpers.IsNullOrEmpty(this.Target) then
-		this.Success = false
-	end
-	if skill ~= nil then
-		this.Skill = skill
+	if this.SkillData ~= nil then
+		this.Skill = skill.Name
 		this.IsFromSkll = true
+	else
+		this.Skill = ""
+		this.IsFromSkll = false
 	end
-	setmetatable(this, self)
+	SetMeta(this)
     return this
 end
 
@@ -130,6 +165,16 @@ function HitData:MultiplyDamage(multiplier, aggregate)
 		NRD_HitStatusAddDamage(self.Target, self.Handle, v.DamageType, v.Amount)
 	end
 	self:Recalculate(true)
+end
+
+---@param flag string|string[]
+---@param value boolean
+function HitData:SetHitFlag(flag, value)
+	GameHelpers.Hit.SetFlag(self.HitRequest, flag, value)
+end
+
+function HitData:IsFromWeapon()
+	return GameHelpers.Hit.IsFromWeapon(self.HitStatus, self.SkillData)
 end
 
 Classes.HitData = HitData

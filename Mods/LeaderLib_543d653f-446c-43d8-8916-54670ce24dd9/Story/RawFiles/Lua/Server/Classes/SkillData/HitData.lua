@@ -173,6 +173,15 @@ function HitData:SetHitFlag(flag, value)
 	GameHelpers.Hit.SetFlag(self.HitRequest, flag, value)
 end
 
+---@param flag string|string[]
+---@param value boolean
+function HitData:HasFlag(flag, value)
+	if value == nil then
+		value = true
+	end
+	return GameHelpers.Hit.HasFlag(self.HitRequest, flag) == value
+end
+
 function HitData:IsFromWeapon()
 	return GameHelpers.Hit.IsFromWeapon(self.HitStatus, self.SkillData)
 end

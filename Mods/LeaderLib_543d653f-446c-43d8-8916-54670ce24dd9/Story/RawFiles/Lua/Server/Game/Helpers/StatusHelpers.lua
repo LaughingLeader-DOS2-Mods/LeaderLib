@@ -459,7 +459,8 @@ end
 ---@param source EsvGameObject|UUID|number|nil
 ---@param radius number|nil
 ---@param canTargetItems boolean|nil
-function GameHelpers.Status.Apply(target, status, duration, force, source, radius, canTargetItems)
+---@param canApplyCallback fun(target:string, source:string, statusId:string, targetIsItem:boolean):boolean|nil An optional function to use when attempting to apply a status in a radius.
+function GameHelpers.Status.Apply(target, status, duration, force, source, radius, canTargetItems, canApplyCallback)
 	if not duration then
 		duration = 6.0
 		local potion = Ext.StatGetAttribute(status, "StatsId")
@@ -495,11 +496,29 @@ function GameHelpers.Status.Apply(target, status, duration, force, source, radiu
 			local statusType = GetStatusType(status)
 			local x,y,z = table.unpack(target)
 			for _,v in pairs(Ext.GetCharactersAroundPosition(x,y,z,radius)) do
-				ApplyStatus(v, status, duration, force, source)
+				if v ~= source then
+					if canApplyCallback then
+						local b,result = pcall(canApplyCallback, v, source, status, false)
+						if b and result == true then
+							ApplyStatus(v, status, duration, force, source)
+						end
+					else
+						ApplyStatus(v, status, duration, force, source)
+					end
+				end
 			end
 			if canTargetItems and (statusType ~= "CHARMED" and statusType ~= "DAMAGE_ON_MOVE") then
 				for _,v in pairs(Ext.GetItemsAroundPosition(x,y,z,radius)) do
-					ApplyStatus(v, status, duration, force, source)
+					if v ~= source then
+						if canApplyCallback then
+							local b,result = pcall(canApplyCallback, v, source, status, true)
+							if b and result == true then
+								ApplyStatus(v, status, duration, force, source)
+							end
+						else
+							ApplyStatus(v, status, duration, force, source)
+						end
+					end
 				end
 			end
 		end
@@ -508,5 +527,15 @@ function GameHelpers.Status.Apply(target, status, duration, force, source, radiu
 			GameHelpers.Status.Apply(target, status[i], duration, force, source, radius, canTargetItems)
 		end
 	end
+end
 
+---@param character EsvGameObject|string
+---@param statusId boolean
+---@return boolean
+function GameHelpers.Status.IsActive(object, statusId)
+	local uuid = GameHelpers.GetUUID(object)
+	if uuid then
+		return HasActiveStatus(uuid, statusId) == 1
+	end
+	return false
 end

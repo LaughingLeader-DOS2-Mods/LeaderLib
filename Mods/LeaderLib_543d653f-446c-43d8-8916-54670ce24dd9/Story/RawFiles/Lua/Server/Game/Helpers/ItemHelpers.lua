@@ -357,6 +357,17 @@ function GameHelpers.Item.GetEquippedSlot(char, item)
     return nil
 end
 
+---@param char EsvCharacter|string
+---@param slot string
+---@return EsvItem|nil
+function GameHelpers.Item.GetItemInSlot(char, slot)
+    local uuid = CharacterGetEquippedItem(GameHelpers.GetUUID(char), slot)
+    if not StringHelpers.IsNullOrEmpty(uuid) then
+        return Ext.GetItem(uuid)
+    end
+    return nil
+end
+
 ---@param char string
 ---@param template string
 ---@return string|nil

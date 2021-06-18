@@ -166,13 +166,7 @@ if not isClient then
 			for _,v in pairs(data.Stats) do
 				local stat = CustomStatSystem:GetStatByID(v.ID, v.Mod)
 				if stat then
-					local last = stat:GetLastValue(character)
-					local current = stat:GetValue(character)
-					if last ~= current then
-						--If last was never saved on the server (GM NPCs), then use the value from the payload.
-						if not last then last = v.Last end
-						CustomStatSystem:InvokeStatValueChangedListeners(stat, character, last, current)
-					end
+					CustomStatSystem:InvokeStatValueChangedListeners(stat, character, v.Last, v.Current)
 					stat:UpdateLastValue(character)
 				end
 			end

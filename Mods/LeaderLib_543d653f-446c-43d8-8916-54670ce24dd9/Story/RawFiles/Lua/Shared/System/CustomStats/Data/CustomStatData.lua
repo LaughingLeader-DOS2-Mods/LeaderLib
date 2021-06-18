@@ -102,15 +102,14 @@ end
 
 ---@param character UUID|NETID|EsvCharacter|EclCharacter
 ---@return integer|boolean Returns false if it's never been set.
-function CustomStatData:GetLastValue(character, fallback)
-	if fallback == nil then fallback = false end
+function CustomStatData:GetLastValue(character)
 	local characterId = character
 	if not isClient then
 		characterId = GameHelpers.GetUUID(character)
 	else
 		characterId = GameHelpers.GetNetID(character)
 	end
-	return self.LastValue[characterId] or fallback
+	return self.LastValue[characterId] or false
 end
 
 ---[SERVER]

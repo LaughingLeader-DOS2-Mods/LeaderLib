@@ -27,10 +27,6 @@ local CustomStatData = {
 	---@type number
 	Double = nil,
 	PointID = "",
-	---@type integer If set, this is the sort value number to use when the list of stats get sorted for display.
-	SortValue = nil,
-	---@type string If set, this is the name to use instead of DisplayName when the list of stats get sorted for display. 
-	SortName = nil,
 	---@type table<NETID,table<string,integer>>
 	LastValue = {},
 	---@type table<NETID,table<string,integer>>
@@ -50,6 +46,7 @@ end
 Classes.UnregisteredCustomStatData = {
 	Type = "UnregisteredCustomStatData",
 	IsUnregistered = true,
+	LastValue = {},
 	__index = function(tbl,k)
 		return Classes.UnregisteredCustomStatData[k] or Classes.CustomStatData[k] or Classes.CustomStatDataBase[k]
 	end
@@ -101,6 +98,18 @@ function CustomStatData:GetValue(character)
 		end
 	end
 	return 0
+end
+
+---@param character UUID|NETID|EsvCharacter|EclCharacter
+---@return integer|boolean Returns false if it's never been set.
+function CustomStatData:GetLastValue(character)
+	local characterId = character
+	if not isClient then
+		characterId = GameHelpers.GetUUID(character)
+	else
+		characterId = GameHelpers.GetNetID(character)
+	end
+	return self.LastValue[characterId] or false
 end
 
 ---[SERVER]
@@ -160,7 +169,10 @@ function CustomStatData:UpdateLastValue(character)
 		else
 			characterId = GameHelpers.GetNetID(character)
 		end
-		self.LastValue[characterId] = self:GetValue(type(character) == "userdata" and character or characterId) or 0
+		local value = self:GetValue(type(character) == "userdata" and character or characterId)
+		if value then
+			self.LastValue[characterId] = value
+		end
 	end
 end
 

@@ -166,12 +166,12 @@ if not isClient then
 			for _,v in pairs(data.Stats) do
 				local stat = CustomStatSystem:GetStatByID(v.ID, v.Mod)
 				if stat then
-					local last = stat.LastValue[character.NetID] or 0
+					local last = stat:GetLastValue(character)
 					local current = stat:GetValue(character)
-					if last ~= current then
+					if last and last ~= current then
 						CustomStatSystem:InvokeStatValueChangedListeners(stat, character, last, current)
 					end
-					stat.LastValue[character.NetID] = current
+					stat:UpdateLastValue(character)
 				end
 			end
 		end
@@ -282,7 +282,7 @@ end
 ---@return integer
 function CustomStatSystem:GetAvailablePointsForStat(stat, character)
 	if isClient then
-		character = character or Client:GetCharacter()
+		character = character or self:GetCharacter()
 		local points = 0
 		if stat and character and stat.AvailablePoints then
 			return stat.AvailablePoints[GameHelpers.GetNetID(character)]
@@ -298,7 +298,7 @@ if isClient then
 ---@private
 ---@return integer
 function CustomStatSystem:GetTotalAvailablePoints(character)
-	character = character or Client:GetCharacter()
+	character = character or self:GetCharacter()
 	local characterId = GameHelpers.GetNetID(character)
 	if characterId then
 		local points = 0
@@ -318,7 +318,7 @@ function CustomStatSystem:GetCanAddPoints(ui, doubleHandle, character)
 	if GameHelpers.Client.IsGameMaster(ui) == true then
 		return true
 	end
-	character = character or Client:GetCharacter()
+	character = character or self:GetCharacter()
 	local stat = self:GetStatByDouble(doubleHandle)
 	if stat then
 		local value = self:GetStatValueForCharacter(character, stat.ID, stat.Mod)
@@ -344,7 +344,7 @@ function CustomStatSystem:GetCanRemovePoints(ui, doubleHandle, character)
 	if GameHelpers.Client.IsGameMaster(ui) == true then
 		return true
 	end
-	character = character or Client:GetCharacter()
+	character = character or self:GetCharacter()
 	local stat = self:GetStatByDouble(doubleHandle)
 	if stat then
 		local value = self:GetStatValueForCharacter(character, stat.ID, stat.Mod)
@@ -374,7 +374,7 @@ function CustomStatSystem:OnStatPointAdded(ui, call, doubleHandle)
 	local stat = self:GetStatByDouble(doubleHandle)
 	local stat_mc = self:GetStatMovieClipByDouble(ui, doubleHandle)
 
-	local character = Client:GetCharacter()
+	local character = self:GetCharacter()
 	local characterId = GameHelpers.GetNetID(character)
 	if characterId then
 		local points = stat.AvailablePoints and stat.AvailablePoints[characterId] or nil
@@ -413,7 +413,7 @@ function CustomStatSystem:OnStatPointRemoved(ui, call, doubleHandle)
 	end
 	local stat = self:GetStatByDouble(doubleHandle)
 	local stat_mc = self:GetStatMovieClipByDouble(ui, doubleHandle)
-	local character = Client:GetCharacter()
+	local character = self:GetCharacter()
 	local points = stat.AvailablePoints and stat.AvailablePoints[character.NetID] or nil
 	if points then
 		local lastPoints = points

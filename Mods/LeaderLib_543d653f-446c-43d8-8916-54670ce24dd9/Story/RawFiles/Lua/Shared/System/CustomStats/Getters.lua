@@ -1,4 +1,5 @@
 local self = CustomStatSystem
+local isClient = Ext.IsClient() 
 
 --region Stat/Category Getting
 ---@param displayName string
@@ -38,6 +39,10 @@ function CustomStatSystem:GetStatByID(id, mod)
 			return stat
 		end
 	end
+	local stat = self.UnregisteredStats[id]
+	if stat then
+		return stat
+	end
 	return nil
 end
 
@@ -58,11 +63,11 @@ end
 ---@param visibleOnly boolean|nil
 ---@param sortByDisplayName boolean|nil
 ---@return fun():CustomStatData
-function CustomStatSystem:GetAllStats(visibleOnly, sortByDisplayName)
+function CustomStatSystem:GetAllStats(visibleOnly, sortByDisplayName, includeUnregisteredStats)
 	local allStats = {}
 
 	local findAll = true
-	if visibleOnly == true and Ext.IsClient() then
+	if visibleOnly == true and isClient then
 		local ui = Ext.GetUIByType(Data.UIType.characterSheet)
 		if ui then
 			findAll = false
@@ -85,11 +90,11 @@ function CustomStatSystem:GetAllStats(visibleOnly, sortByDisplayName)
 				allStats[#allStats+1] = stat
 			end
 		end
-		-- for uuid,stats in pairs(self.UnregisteredStats) do
-		-- 	for id,stat in pairs(stats) do
-		-- 		allStats[#allStats+1] = stat
-		-- 	end
-		-- end
+		if includeUnregisteredStats then
+			for uuid,stat in pairs(self.UnregisteredStats) do
+				allStats[#allStats+1] = stat
+			end
+		end
 	end
 
 	if sortByDisplayName == true then
@@ -167,20 +172,46 @@ end
 function CustomStatSystem:GetAllCategories(skipSort)
 	local allCategories = {}
 
+	local index = 0
 	--To avoid duplicate categories by the same id, we set a dictionary first
 	for uuid,categories in pairs(self.Categories) do
 		for id,category in pairs(categories) do
+			category.Index = index
+			index = index + 1
 			allCategories[id] = category
 		end
 	end
 
+	---@type CustomStatCategoryData[]
 	local categories = {}
 	for k,v in pairs(allCategories) do
 		categories[#categories+1] = v
 	end
 	if skipSort ~= true then
 		table.sort(categories, function(a,b)
-			return a:GetDisplayName() < b:GetDisplayName()
+			local name1 = a:GetDisplayName()
+			local name2 = b:GetDisplayName()
+			local sortVal1 = a.Index
+			local sortVal2 = b.Index
+			local trySortByValue = false
+			if a.SortName then
+				name1 = a.SortName
+			end
+			if a.SortValue then
+				sortVal1 = a.SortValue
+				trySortByValue = true
+			end
+			if b.SortName then
+				name2 = b.SortName
+			end
+			if b.SortValue then
+				sortVal2 = b.SortValue
+				trySortByValue = true
+			end
+			if trySortByValue and sortVal1 ~= sortVal2 then
+				return sortVal1 < sortVal2
+			end
+			return name1 < name2
 		end)
 	end
 
@@ -201,7 +232,7 @@ end
 function CustomStatSystem:GetTotalStatsInCategory(categoryId, visibleOnly)
 	local total = 0
 	local isUnsortedCategory = StringHelpers.IsNullOrWhitespace(categoryId)
-	for mod,stats in pairs(CustomStatSystem.Stats) do
+	for mod,stats in pairs(self.Stats) do
 		for id,stat in pairs(stats) do
 			local statIsVisible = stat.Visible ~= false and not StringHelpers.IsNullOrWhitespace(stat.UUID)
 			if (not visibleOnly or (visibleOnly == true and statIsVisible))
@@ -210,6 +241,11 @@ function CustomStatSystem:GetTotalStatsInCategory(categoryId, visibleOnly)
 			then
 				total = total + 1
 			end
+		end
+	end
+	if isUnsortedCategory then
+		for uuid,stat in pairs(self.UnregisteredStats) do
+			total = total + 1
 		end
 	end
 	return total
@@ -243,7 +279,7 @@ function CustomStatSystem:GetStatValueForCharacter(character, id, mod)
 		if Ext.IsServer() then
 			character = Ext.GetCharacter(CharacterGetHostCharacter())
 		else
-			character = Client:GetCharacter()
+			character = self:GetCharacter()
 		end
 	end
 	local statValue = 0
@@ -271,7 +307,7 @@ function CustomStatSystem:GetStatValueForCategory(character, id, mod)
 		if Ext.IsServer() then
 			character = Ext.GetCharacter(CharacterGetHostCharacter())
 		else
-			character = Client:GetCharacter()
+			character = self:GetCharacter()
 		end
 	end
 	local statValue = 0
@@ -322,5 +358,26 @@ function CustomStatSystem:GetListenerIterator(...)
 		if i <= totalCount then
 			return listeners[i]
 		end
+	end
+end
+
+local function TryGetSheetCharacter(this)
+	return Ext.GetCharacter(Ext.DoubleToHandle(this.charHandle))
+end
+
+---@return EclCharacter
+function CustomStatSystem:GetCharacter(ui, this)
+	if isClient then
+		ui = ui or Ext.GetUIByType(Data.UIType.characterSheet)
+		if ui then
+			this = this or ui:GetRoot()
+			if this then
+				local b,client = xpcall(TryGetSheetCharacter, debug.traceback, this)
+				if b and client ~= nil then
+					return client
+				end
+			end
+		end
+		return Client:GetCharacter()
 	end
 end

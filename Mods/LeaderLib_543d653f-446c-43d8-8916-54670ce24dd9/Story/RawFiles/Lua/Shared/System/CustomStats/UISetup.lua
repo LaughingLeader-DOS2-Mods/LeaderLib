@@ -41,9 +41,10 @@ end
 ---@field GroupId integer
 ---@field Stat CustomStatData|nil
 
+---@private
 ---@param a CharacterSheetStatArrayData
 ---@param b CharacterSheetStatArrayData
-local function SortStats(a,b)
+function CustomStatSystem.SortStats(a,b)
 	local name1 = a.DisplayName
 	local name2 = b.DisplayName
 	local sortVal1 = a.Index
@@ -77,20 +78,20 @@ local function OnSheetUpdating(ui, method)
 	local this = ui:GetRoot()
 	CustomStatSystem:SetupGroups(ui, method)
 
-	local client = Client:GetCharacter()
+	local client = CustomStatSystem:GetCharacter(ui, this)
 	if client then
 		local changedStats = {NetID=client.NetID,Stats={}}
-		for stat in CustomStatSystem:GetAllStats() do
-			local last = stat.LastValue[client.NetID] or 0
+		for stat in CustomStatSystem:GetAllStats(false,false,true) do
+			local last = stat:GetLastValue(client)
 			local value = stat:GetValue(client)
-			if value ~= last then
+			if last and value ~= last then
 				changedStats.Stats[#changedStats.Stats+1] = {
 					ID = stat.ID,
 					Mod = stat.Mod
 				}
 				CustomStatSystem:InvokeStatValueChangedListeners(stat, client, last, value)
 			end
-			stat.LastValue[client.NetID] = value
+			stat:UpdateLastValue(client)
 		end
 		if #changedStats.Stats > 0 then
 			Ext.PostMessageToServer("LeaderLib_CustomStatSystem_StatValuesChanged", Ext.JsonStringify(changedStats))
@@ -128,9 +129,7 @@ local function OnSheetUpdating(ui, method)
 	end
 
 	if #sortList > 0 then
-		table.sort(sortList, SortStats)
-
-		print(Lib.inspect(sortList))
+		table.sort(sortList, CustomStatSystem.SortStats)
 
 		--Remove any stats that were hidden
 		this.clearArray("customStats_array")
@@ -138,7 +137,6 @@ local function OnSheetUpdating(ui, method)
 		local arrayIndex = 0
 		for i=1,#sortList do
 			local v = sortList[i]
-			print(i,v.DisplayName)
 			this.customStats_array[arrayIndex] = v.Handle
 			this.customStats_array[arrayIndex+1] = v.DisplayName
 			this.customStats_array[arrayIndex+2] = v.Value
@@ -175,13 +173,10 @@ end
 function CustomStatSystem:OnGroupAdded(ui, call, id, label, arrayIndex)
 	local this = ui:GetRoot().stats_mc.customStats_mc
 	local category = self:GetCategoryByGroupId(id)
-	if category then
-		if category.Description then
-			this.setGroupTooltip(category.GroupId, category:GetDescription())
-		end
-		if this.groups_array then
-			local group_mc = this.groups_array[arrayIndex]
-			if group_mc then
+	if this.groups_array then
+		local group_mc = this.groups_array[arrayIndex]
+		if group_mc then
+			if category then
 				if category.IsOpen ~= nil then
 					group_mc.setIsOpen(category.IsOpen)
 				end
@@ -192,8 +187,15 @@ function CustomStatSystem:OnGroupAdded(ui, call, id, label, arrayIndex)
 					group_mc.hidePoints = false
 					group_mc.amount_txt.visible = true
 				end
+			else
+				group_mc.setIsOpen(true)
+				group_mc.hidePoints = false
+				group_mc.amount_txt.visible = true
 			end
 		end
+	end
+	if category and category.Description then
+		this.setGroupTooltip(category.GroupId, category:GetDescription())
 	end
 end
 
@@ -573,7 +575,6 @@ function CustomStatSystem:NetRequestCustomStatTooltip(cmd, payload)
 			local statDouble = data.Stat
 			if string.find(data.DisplayName, "_", 1, true) then
 				data.DisplayName = GameHelpers.Tooltip.ReplacePlaceholders(GameHelpers.GetStringKeyText(data.DisplayName))
-				print(data.DisplayName)
 			end
 			if string.find(data.Description, "_", 1, true) then
 				data.Description = GameHelpers.Tooltip.ReplacePlaceholders(GameHelpers.GetStringKeyText(data.Description))

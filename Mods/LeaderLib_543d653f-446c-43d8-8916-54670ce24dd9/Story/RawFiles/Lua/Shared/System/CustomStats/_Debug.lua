@@ -21,3 +21,5 @@ if Ext.Version() < 55 then
 		return function() end
 	end
 end
+
+--CustomStatSystem.DebugEnabled = true

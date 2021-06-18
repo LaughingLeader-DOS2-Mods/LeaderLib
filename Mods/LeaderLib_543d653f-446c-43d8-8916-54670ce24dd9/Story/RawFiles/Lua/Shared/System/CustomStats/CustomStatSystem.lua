@@ -89,13 +89,19 @@ local function LoadCustomStatsData()
 				local stat = Ext.GetCustomStatById(uuid)
 				if stat then
 					local data = {
+						UUID = uuid,
 						ID = uuid,
 						DisplayName = stat.Name,
-						Description = stat.Description
+						Description = stat.Description,
+						LastValue = {}
 					}
 					setmetatable(data, Classes.UnregisteredCustomStatData)
 					CustomStatSystem.UnregisteredStats[uuid] = data
 					foundStats[uuid] = true
+
+					for player in GameHelpers.Character.GetPlayers() do
+						stat:UpdateLastValue(player)
+					end
 				end
 			end
 		end
@@ -126,7 +132,7 @@ end
 ---@param character EsvCharacter|EclCharacter
 ---@return boolean
 function CustomStatSystem:IsTooltipWorking(character)
-	if Ext.IsClient() then
+	if isClient then
 		local characterData = Client:GetCharacterData()
 		if characterData then
 			return characterData.IsGameMaster and not characterData.IsPossessed

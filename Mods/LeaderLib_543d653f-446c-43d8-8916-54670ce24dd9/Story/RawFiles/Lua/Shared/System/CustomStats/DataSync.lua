@@ -7,7 +7,7 @@ function CustomStatSystem:SyncAvailablePoints(character)
 	if not isClient then
 		self:SyncData()
 	else
-		character = character or Client:GetCharacter()
+		character = character or self:GetCharacter()
 		local data = {
 			NetID = character.NetID,
 			Stats = {}
@@ -35,7 +35,7 @@ if not isClient then
 	function CustomStatSystem:GetSyncData()
 		local data = {
 			Registered = {},
-			Unregistered = self.UnregisteredStats
+			Unregistered = {}
 		}
 		for uuid,stats in pairs(self.Stats) do
 			data.Registered[uuid] = {}
@@ -44,6 +44,13 @@ if not isClient then
 					data.Registered[uuid][id] = stat.UUID
 				end
 			end
+		end
+		for uuid,stat in pairs(self.UnregisteredStats) do
+			data.Unregistered[uuid] = {
+				DisplayName = stat.Name,
+				Description = stat.Description,
+				LastValue = stat.LastValue or {}
+			}
 		end
 		return data
 	end
@@ -85,7 +92,7 @@ else
 	---Loads a table of stat UUIDs from the server.
 	function CustomStatSystem:LoadSyncData(uuidList, availablePoints)
 		if uuidList then
-			local character = Client:GetCharacter()
+			local character = self:GetCharacter()
 			for uuid,stats in pairs(uuidList) do
 				local existing = self.Stats[uuid]
 				if existing then
@@ -101,7 +108,7 @@ else
 			self.PointsPool = availablePoints
 			self:UpdateAvailablePoints()
 		end
-		for stat in self:GetAllStats() do
+		for stat in self:GetAllStats(false,false,true) do
 			for player in GameHelpers.Character.GetPlayers() do
 				stat:UpdateLastValue(player)
 			end
@@ -109,17 +116,30 @@ else
 	end
 
 	local function LoadSyncedCustomStatData(cmd, payload)
+		print(payload)
 		local data = Common.JsonParse(payload)
 		if data ~= nil then
 			if data.CustomStats or data.AvailablePoints then
 				self:LoadSyncData(data.CustomStats.Registered, data.AvailablePoints)
 			end
-			self.UnregisteredStats = data.CustomStats.Unregistered
-			for uuid,stat in pairs(self.UnregisteredStats) do
-				stat.UUID = uuid
-				stat.Double = nil
-				stat.IsUnregistered = true
+			self.UnregisteredStats = {}
+			
+			for uuid,statData in pairs(data.CustomStats.Unregistered) do
+				local stat = {
+					ID = uuid,
+					UUID = uuid,
+					DisplayName = statData.DisplayName,
+					Description = statData.Description,
+					IsUnregistered = true,
+					Double = false,
+					LastValue = statData.LastValue
+				}
 				setmetatable(stat, Classes.UnregisteredCustomStatData)
+				self.UnregisteredStats[uuid] = stat
+
+				for player in GameHelpers.Character.GetPlayers() do
+					stat:UpdateLastValue(player)
+				end
 			end
 			return true
 		else

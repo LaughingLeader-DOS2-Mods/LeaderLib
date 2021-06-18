@@ -47,6 +47,14 @@ CustomStatData.__index = function(t,k)
 	return v
 end
 
+Classes.UnregisteredCustomStatData = {
+	Type = "UnregisteredCustomStatData",
+	IsUnregistered = true,
+	__index = function(tbl,k)
+		return Classes.UnregisteredCustomStatData[k] or Classes.CustomStatData[k] or Classes.CustomStatDataBase[k]
+	end
+}
+
 local defaults = {
 	ID = "",
 	UUID = "",

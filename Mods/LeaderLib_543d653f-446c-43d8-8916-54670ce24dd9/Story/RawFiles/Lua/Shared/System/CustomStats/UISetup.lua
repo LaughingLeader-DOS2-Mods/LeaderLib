@@ -267,8 +267,10 @@ function CustomStatSystem:OnStatAdded(ui, call, doubleHandle, index)
 		self.TooltipValueEnabled[stat.ID] = nil
 	end
 
-	if stat.DisplayMode == stat.STAT_DISPLAY_MODE.Percentage then
-		stat_mc.text_txt.htmlText = stat_mc.text_txt.htmlText .. "%"
+	if stat then
+		if stat.DisplayMode == "Percentage" then
+			stat_mc.text_txt.htmlText = stat_mc.text_txt.htmlText .. "%"
+		end
 	end
 end
 

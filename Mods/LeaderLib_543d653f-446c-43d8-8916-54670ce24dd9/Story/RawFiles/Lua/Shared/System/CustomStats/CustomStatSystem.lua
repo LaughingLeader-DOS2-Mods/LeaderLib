@@ -88,11 +88,13 @@ local function LoadCustomStatsData()
 			if not foundStats[uuid] then
 				local stat = Ext.GetCustomStatById(uuid)
 				if stat then
-					CustomStatSystem.UnregisteredStats[uuid] = {
+					local data = {
 						ID = uuid,
 						DisplayName = stat.Name,
 						Description = stat.Description
 					}
+					setmetatable(data, Classes.UnregisteredCustomStatData)
+					CustomStatSystem.UnregisteredStats[uuid] = data
 					foundStats[uuid] = true
 				end
 			end

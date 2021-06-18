@@ -119,7 +119,7 @@ else
 				stat.UUID = uuid
 				stat.Double = nil
 				stat.IsUnregistered = true
-				setmetatable(stat, Classes.CustomStatDataBase)
+				setmetatable(stat, Classes.UnregisteredCustomStatData)
 			end
 			return true
 		else

@@ -116,7 +116,6 @@ else
 	end
 
 	local function LoadSyncedCustomStatData(cmd, payload)
-		print(payload)
 		local data = Common.JsonParse(payload)
 		if data ~= nil then
 			if data.CustomStats or data.AvailablePoints then

@@ -87,7 +87,8 @@ local function OnSheetUpdating(ui, method)
 			if last and value ~= last then
 				changedStats.Stats[#changedStats.Stats+1] = {
 					ID = stat.ID,
-					Mod = stat.Mod
+					Mod = stat.Mod,
+					Last = last
 				}
 				CustomStatSystem:InvokeStatValueChangedListeners(stat, client, last, value)
 			end

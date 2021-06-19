@@ -43,12 +43,24 @@ CustomStatData.__index = function(t,k)
 	return v
 end
 
+local canUseRawFunctions = Ext.Version() >= 55
+
 Classes.UnregisteredCustomStatData = {
 	Type = "UnregisteredCustomStatData",
 	IsUnregistered = true,
 	LastValue = {},
 	__index = function(tbl,k)
-		return Classes.UnregisteredCustomStatData[k] or Classes.CustomStatData[k] or Classes.CustomStatDataBase[k]
+		if k == "Type" then
+			return "UnregisteredCustomStatData"
+		end
+		if canUseRawFunctions then
+			local v = rawget(Classes.UnregisteredCustomStatData, k)
+			if v then
+				tbl[k] = v
+				return v
+			end
+		end
+		return Classes.CustomStatData[k] or Classes.CustomStatDataBase[k]
 	end
 }
 
@@ -171,6 +183,9 @@ function CustomStatData:UpdateLastValue(character)
 		end
 		local value = self:GetValue(type(character) == "userdata" and character or characterId)
 		if value then
+			if Vars.DebugMode and Vars.Print.CustomStats then
+				fprint(LOGLEVEL.WARNING, "[CustomStatData:UpdateLastValue:%s] Set LastValue for (%s) to (%s) [%s]", self.Type, characterId, value, Ext.IsServer() and "SERVER" or "CLIENT")
+			end
 			self.LastValue[characterId] = value
 		end
 	end

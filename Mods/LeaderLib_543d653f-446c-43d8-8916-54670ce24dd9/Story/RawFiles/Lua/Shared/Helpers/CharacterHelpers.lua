@@ -257,6 +257,15 @@ function GameHelpers.Character.GetPlayers(includeSummons)
 				end
 			end
 		end
+		if SharedData.GameMode == GAMEMODE.GAMEMASTER then
+			local gm = StringHelpers.GetUUID(CharacterGetHostCharacter())
+			if not StringHelpers.IsNullOrEmpty(gm) then
+				gm = Ext.GetCharacter(gm)
+				if not Common.TableHasValue(players, gm) then
+					players[#players+1] = gm
+				end
+			end
+		end
 	else
 		for mc in StatusHider.PlayerInfo:GetCharacterMovieClips(not includeSummons) do
 			local character = Ext.GetCharacter(Ext.DoubleToHandle(mc.characterHandle))

@@ -47,7 +47,7 @@ if not isClient then
 		end
 		for uuid,stat in pairs(self.UnregisteredStats) do
 			data.Unregistered[uuid] = {
-				DisplayName = stat.Name,
+				DisplayName = stat.DisplayName,
 				Description = stat.Description,
 				LastValue = stat.LastValue or {}
 			}

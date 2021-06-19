@@ -281,7 +281,7 @@ function CustomStatSystem:GetAvailablePointsForStat(stat, character)
 		character = character or self:GetCharacter()
 		local points = 0
 		if stat and character and stat.AvailablePoints then
-			return stat.AvailablePoints[GameHelpers.GetNetID(character)]
+			return stat.AvailablePoints[GameHelpers.GetNetID(character)] or 0
 		end
 	else
 		return stat.AvailablePoints[GameHelpers.GetUUID(character)] or 0

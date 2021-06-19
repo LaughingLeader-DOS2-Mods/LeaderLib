@@ -322,7 +322,7 @@ function CustomStatSystem:OnRequestTooltip(ui, call, statId, x, y, width, height
 			end
 			self:CreateCustomStatTooltip(displayName, description, width, height, stat.TooltipType, stat.Icon, stat.IconId, stat.IconWidth, stat.IconHeight)
 		else
-			self:CreateCustomStatTooltip(statName, nil, width, height, stat.TooltipType, stat.Icon, stat.IconId)
+			self:CreateCustomStatTooltip(statName, nil, width, height)
 		end
 	else
 		self:UpdateCustomStatTooltip(stat)

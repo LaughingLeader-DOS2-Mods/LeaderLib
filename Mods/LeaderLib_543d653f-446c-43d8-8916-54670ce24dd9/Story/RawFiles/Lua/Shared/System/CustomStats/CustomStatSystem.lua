@@ -68,7 +68,6 @@ local function LoadCustomStatsData()
 						if stat.Create == true then
 							Ext.CreateCustomStat(stat.DisplayName, stat.Description)
 							fprint(LOGLEVEL.DEFAULT, "[LeaderLib:LoadCustomStatsData] Created a new custom stat for mod [%s]. ID(%s) DisplayName(%s) Description(%s)", modName, id, stat.DisplayName, stat.Description)
-	
 							existingData = Ext.GetCustomStatByName(stat.DisplayName)
 						end
 					else
@@ -101,7 +100,7 @@ local function LoadCustomStatsData()
 					foundStats[uuid] = true
 
 					for player in GameHelpers.Character.GetPlayers() do
-						stat:UpdateLastValue(player)
+						data:UpdateLastValue(player)
 					end
 				end
 			end

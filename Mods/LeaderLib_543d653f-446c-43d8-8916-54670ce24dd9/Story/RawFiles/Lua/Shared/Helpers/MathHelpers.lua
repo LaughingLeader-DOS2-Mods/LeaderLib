@@ -225,3 +225,23 @@ function GameHelpers.Math.ScaleToRange(val, minRange, maxRange, minScale, maxSca
     local result = diffMult*(maxScale - minScale)
     return math.min(maxScale, math.max(result, minScale))
 end
+
+function GameHelpers.Math.GetPosition(obj, unpack, fallback)
+    local t = type(obj)
+    if t == "table" then
+        if #obj >= 3 then
+            return unpack and table.unpack(obj) or obj
+        end
+        for k,v in pairs(obj) do
+            if type(k) == "string" and string.find(k, "Pos") then
+                return unpack and table.unpack(v) or v
+            end
+        end
+    elseif t == "userdata" and obj.WorldPos then
+        return unpack and table.unpack(obj.WorldPos) or obj.WorldPos
+    end
+    if unpack and fallback and type(fallback) == "table" then
+        return table.unpack(fallback)
+    end
+    return fallback
+end

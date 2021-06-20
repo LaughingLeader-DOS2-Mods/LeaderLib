@@ -61,7 +61,7 @@ Ext.RegisterListener("StatusHitEnter", function(hitStatus, hitContext)
 	end
 	local target,source = Ext.GetGameObject(hitStatus.TargetHandle),Ext.GetGameObject(hitStatus.StatusSourceHandle)
 
-	if not target or not source then
+	if not target then
 		return
 	end
 

@@ -93,7 +93,7 @@ function GameHelpers.Status.IsDisabled(character, checkForLoseControl)
 			if status.StatusId == "CHARMED" then
 				return GameHelpers.Status.IsFromEnemy(status, character)
 			end
-			if Data.EngineStatus(status.StatusId) ~= true then
+			if Data.EngineStatus[status.StatusId] ~= true then
 				local stat = Ext.GetStat(status.StatusId)
 				if stat and stat.LoseControl == "Yes" then
 					if GameHelpers.Status.IsFromEnemy(status, character) then
@@ -117,7 +117,7 @@ function GameHelpers.Status.IsDisablingStatus(status, checkForLoseControl)
 		if status == "CHARMED" then
 			return true
 		end
-		if not Data.EngineStatus(status) then
+		if not Data.EngineStatus[status] then
 			local stat = Ext.GetStat(status)
 			if stat and stat.LoseControl == "Yes" then
 				return true
@@ -146,7 +146,7 @@ function GameHelpers.Status.CharacterLostControl(character, onlyFromEnemy)
 				return GameHelpers.Status.IsFromEnemy(status, character)
 			end
 		end
-		if Data.EngineStatus(status.StatusId) ~= true then
+		if Data.EngineStatus[status.StatusId] ~= true then
 			local stat = Ext.GetStat(status.StatusId)
 			if stat and stat.LoseControl == "Yes" then
 				if onlyFromEnemy ~= true then
@@ -318,118 +318,6 @@ function GameHelpers.Status.GetNextTieredStatus(obj, statusTable, duration, forc
 	return status,tier,lastTier
 end
 
-local potionProperties = {
-	"VitalityBoost",
-	"Strength",
-	"Finesse",
-	"Intelligence",
-	"Constitution",
-	"Memory",
-	"Wits",
-	"SingleHanded",
-	"TwoHanded",
-	"Ranged",
-	"DualWielding",
-	"RogueLore",
-	"WarriorLore",
-	"RangerLore",
-	"FireSpecialist",
-	"WaterSpecialist",
-	"AirSpecialist",
-	"EarthSpecialist",
-	"Sourcery",
-	"Necromancy",
-	"Polymorph",
-	"Summoning",
-	"PainReflection",
-	"Perseverance",
-	"Leadership",
-	"Telekinesis",
-	"Sneaking",
-	"Thievery",
-	"Loremaster",
-	"Repair",
-	"Barter",
-	"Persuasion",
-	"Luck",
-	"FireResistance",
-	"EarthResistance",
-	"WaterResistance",
-	"AirResistance",
-	"PoisonResistance",
-	"PhysicalResistance",
-	"PiercingResistance",
-	"Sight",
-	--"Hearing",
-	"Initiative",
-	"Vitality",
-	"VitalityPercentage",
-	"MagicPoints",
-	"ActionPoints",
-	"ChanceToHitBoost",
-	"AccuracyBoost",
-	"DodgeBoost",
-	"DamageBoost",
-	"APCostBoost",
-	"SPCostBoost",
-	"APMaximum",
-	"APStart",
-	"APRecovery",
-	"Movement",
-	"MovementSpeedBoost",
-	"Armor",
-	"MagicArmor",
-	"ArmorBoost",
-	"MagicArmorBoost",
-	"CriticalChance",
-	--"Reflection",
-	"RangeBoost",
-	"LifeSteal",
-}
-
----@param stat StatEntryPotion|table
-local function IsHarmfulPotion(stat)
-	for i=1,#potionProperties do
-		local value = stat[potionProperties[i]]
-		local t = type(value)
-		if t == "number" and value < 0 then
-			return true
-		end
-	end
-	return false
-end
-
-local function IsHarmfulStatsId(statsId)
-	if not StringHelpers.IsNullOrWhitespace(statsId) then
-		if string.find(statsId, ";") then
-			for m in string.gmatch(statsId, "[%a%d_]+,") do
-				local statName = string.sub(m, 1, #m-1)
-				local stat = Ext.GetStat(statName)
-				if stat and IsHarmfulPotion(stat) then
-					return true
-				end
-			end
-		else
-			local stat = Ext.GetStat(statsId)
-			if stat and IsHarmfulPotion(stat) then
-				return true
-			end
-		end
-	end
-	return false
-end
-
----Checks if a potion has any negative attributes.
----@param stat string|StatEntryPotion|table
----@return boolean
-GameHelpers.Status.IsHarmfulPotion = function(stat)
-	if type(stat) == "string" then
-		return IsHarmfulStatsId(stat)
-	else
-		return IsHarmfulPotion(stat)
-	end
-end
-
 ---Removes harmful statuses by checking their type and potion stat values.
 ---@param obj EsvCharacter|EsvItem
 ---@param ignorePermanent boolean|nil Ignore permanent statuses.
@@ -437,16 +325,8 @@ function GameHelpers.Status.RemoveHarmful(obj, ignorePermanent)
 	for _,status in pairs(obj:GetStatusObjects()) do
 		if ignorePermanent and status.CurrentLifeTime == -1 then
 			-- skip
-		else
-			local statusType = GetStatusType(status.StatusId)
-			if statusType == "DAMAGE" or statusType == "DAMAGE_ON_MOVE" or statusType == "CHARMED" then
-				RemoveStatus(obj.MyGuid, status.StatusId)
-			elseif statusType ~= "EFFECT" and not Data.IgnoredStatus[status.StatusId] then
-				local statsId = Ext.StatGetAttribute(status.StatusId, "StatsId")
-				if not StringHelpers.IsNullOrWhitespace(statsId) and IsHarmfulStatsId(statsId) then
-					RemoveStatus(obj.MyGuid, status.StatusId)
-				end
-			end
+		elseif GameHelpers.Status.IsHarmful(status.StatusId) then
+			RemoveStatus(obj.MyGuid, status.StatusId)
 		end
 	end
 end

@@ -64,6 +64,8 @@ local StatusToType = {
 	DARK_AVENGER = "DARK_AVENGER",
 }
 
+---@param statusId string
+---@return string
 function GameHelpers.Status.GetStatusType(statusId)
 	if StatusToType[statusId] then
 		return StatusToType[statusId]
@@ -183,7 +185,7 @@ end
 ---Checks if a potion has any negative attributes.
 ---@param stat string|StatEntryPotion|table
 ---@return boolean
-GameHelpers.Status.IsHarmfulPotion = function(stat)
+function GameHelpers.Status.IsHarmfulPotion(stat)
 	if type(stat) == "string" then
 		return IsHarmfulStatsId(stat)
 	else

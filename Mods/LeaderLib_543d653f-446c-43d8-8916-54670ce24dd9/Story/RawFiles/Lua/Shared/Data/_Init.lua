@@ -475,8 +475,8 @@ setmetatable(Data.EngineStatus, {
 ---Statuses ignored by default in status listeners
 ---If a mod registers a callback for one of these, it will no longer be ignored in listeners.
 Data.IgnoredStatus = {}
-for i,v in pairs(Data.EngineStatus) do
-	Data.IgnoredStatus[v] = true
+for k,b in pairs(Data.EngineStatus) do
+	Data.IgnoredStatus[k] = true
 end
 
 Data.Surfaces = {

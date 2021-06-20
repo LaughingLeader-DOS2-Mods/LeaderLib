@@ -466,6 +466,12 @@ Data.EngineStatus = {
 	WIND_WALKER = true,
 }
 
+setmetatable(Data.EngineStatus, {
+	__call = function(status)
+		return Data.EngineStatus[status] == true
+	end
+})
+
 ---Statuses ignored by default in status listeners
 ---If a mod registers a callback for one of these, it will no longer be ignored in listeners.
 Data.IgnoredStatus = {}

@@ -139,9 +139,10 @@ function HitData:Recalculate(recalcLifeSteal, setLifeStealFlags, allowArmorDamag
 	self.Damage = total
 
 	--Recalculate LifeSteal
-	if self.HitContext and self.HitRequest then
-		self.HitContext.TotalDamageDone = total
+	if self.HitRequest then
 		self.HitRequest.TotalDamageDone = total
+	end
+	if self.HitContext and self.HitRequest then
 		if recalcLifeSteal and ObjectIsCharacter(self.Target) == 1 and ObjectIsCharacter(self.Attacker) == 1 then
 			GameHelpers.Hit.RecalculateLifeSteal(self.HitRequest, Ext.GetCharacter(self.Target).Stats, Ext.GetCharacter(self.Attacker).Stats, self.HitContext.HitType, setLifeStealFlags, allowArmorDamageTypesToLifeSteal)
 		end
@@ -163,6 +164,30 @@ function HitData:MultiplyDamage(multiplier, aggregate)
 	self:Recalculate(true)
 end
 
+---Multiplies all damage by a value.
+---@param damageType string Target damage type to convert.
+---@param toDamageType string Damage type to convert to.
+---@param aggregate boolean|nil Combine multiple entries for the same damage types into one.
+function HitData:ConvertDamageTypeTo(damageType, toDamageType, aggregate)
+	if aggregate then
+		self.DamageList:AggregateSameTypeDamages()
+	end
+	local damages = self.DamageList:ToTable()
+	local damageList = Ext.NewDamageList()
+	for k,v in pairs(damages) do
+		if v.DamageType == damageType then
+			v.DamageType = toDamageType
+		end
+		damageList:Add(v.DamageType, v.Amount)
+	end
+	self.DamageList:Clear()
+	self.DamageList:Merge(damageList)
+	if self.HitRequest then
+		self.HitRequest.DamageList = self.DamageList
+	end
+	self:Recalculate(false)
+end
+
 ---@param flag string|string[]
 ---@param value boolean
 function HitData:SetHitFlag(flag, value)
@@ -171,7 +196,7 @@ end
 
 ---@param flag string|string[]
 ---@param value boolean
-function HitData:HasFlag(flag, value)
+function HitData:HasHitFlag(flag, value)
 	if value == nil then
 		value = true
 	end

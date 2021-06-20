@@ -197,6 +197,9 @@ end
 ---@param checkDamageEvent boolean|nil Checks the DamageEvent attribute, and returns false if it's "None".
 ---@return boolean
 function GameHelpers.Status.StatusDealsDamage(statusId, checkDamageEvent)
+	if Data.EngineStatus[statusId] then
+		return false
+	end
 	if checkDamageEvent == true then
 		local damageEvent = Ext.StatGetAttribute(statusId, "DamageEvent")
 		if damageEvent == "None" then

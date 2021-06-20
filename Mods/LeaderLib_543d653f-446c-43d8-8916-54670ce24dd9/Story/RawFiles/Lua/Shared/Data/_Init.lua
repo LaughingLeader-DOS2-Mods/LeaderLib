@@ -405,6 +405,7 @@ SKILL_STATE = {
 
 Ext.Require("Shared/Data/ResistancePenetrationTags.lua")
 Ext.Require("Shared/Data/LocalizedText.lua")
+Ext.Require("Shared/Data/ValueTypes.lua")
 
 Data.EngineStatus = {
 	ACTIVE_DEFENSE = true,

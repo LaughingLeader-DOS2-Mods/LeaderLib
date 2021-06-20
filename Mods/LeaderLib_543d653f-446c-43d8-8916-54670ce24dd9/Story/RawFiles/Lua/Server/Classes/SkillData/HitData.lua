@@ -23,7 +23,6 @@ local HitData = {
 	---@type DamageList
 	DamageList = {}
 }
-HitData.__index = HitData
 
 local function CreateDamageMetaList(target, handle)
 	local damageList = Ext.NewDamageList()
@@ -45,7 +44,10 @@ local function SetMeta(this)
 	setmetatable(this, {
 		__index = function(tbl, k)
 			if k == "Damage" then
-				return this.HitContext.TotalDamageDone
+				if this.HitRequest then
+					return this.HitRequest.TotalDamageDone
+				end
+				return 0
 			elseif k == "Handle" then
 				return this.HitStatus.StatusHandle
 			elseif k == "Success" then
@@ -63,16 +65,10 @@ local function SetMeta(this)
 				tbl.Attacker = source
 				return source
 			end
-			if HitData[k] ~= nil then
-				return HitData[k]
-			end
-			if canUseRawFunctions then
-				return rawget(tbl, k)
-			end
+			return HitData[k]
 		end,
 		__newindex = function(tbl,k,v)
 			if k == "Damage" then
-				this.HitContext.TotalDamageDone = v
 				this.HitRequest.TotalDamageDone = v
 				return
 			elseif k == "Success" then

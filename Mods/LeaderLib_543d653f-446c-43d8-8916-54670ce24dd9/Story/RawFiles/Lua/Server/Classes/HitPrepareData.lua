@@ -106,39 +106,6 @@ local HitPrepareData = {
 
 local canUseRawFunctions = Ext.Version() >= 55
 
-HitPrepareData.__index = function(tbl,k)
-	if tbl.Handle then
-		local t = HIT_ATTRIBUTE[k]
-		if t == "integer" then
-			return NRD_HitGetInt(tbl.Handle, k)
-		elseif t == "boolean" then
-			return NRD_HitGetInt(tbl.Handle, k) == 1 and true or false
-		elseif t == "string" then
-			return NRD_HitGetString(tbl.Handle, k) or ""
-		end
-	end
-	if canUseRawFunctions then
-		rawget(HitPrepareData, k)
-	end
-	return nil
-end
-
-HitPrepareData.__newindex = function(tbl,k,v)
-	if tbl.Handle then
-		local t = HIT_ATTRIBUTE[k]
-		if t == "integer" or t == "boolean" then
-			NRD_HitSetInt(tbl.Handle, k, v)
-			return
-		elseif t == "string" then
-			NRD_HitSetString(tbl.Handle, k, v)
-			return
-		end
-	end
-	if canUseRawFunctions then 
-		rawset(tbl, k, v)
-	end
-end
-
 HitPrepareData.__call = function(_, ...)
 	return HitPrepareData:Create(...)
 end
@@ -209,6 +176,40 @@ local function SaveHitAttributes(handle, data)
 	end
 end
 
+local function SetMeta(data)
+	local meta = {
+		__index = function(tbl,k)
+			if tbl.Handle then
+				local t = HIT_ATTRIBUTE[k]
+				if t == "integer" then
+					return NRD_HitGetInt(tbl.Handle, k)
+				elseif t == "boolean" then
+					return NRD_HitGetInt(tbl.Handle, k) == 1 and true or false
+				elseif t == "string" then
+					return NRD_HitGetString(tbl.Handle, k) or ""
+				end
+			end
+			return HitPrepareData[k]
+		end,
+		__newindex = function(tbl,k,v)
+			if tbl.Handle then
+				local t = HIT_ATTRIBUTE[k]
+				if t == "integer" or t == "boolean" then
+					NRD_HitSetInt(tbl.Handle, k, v)
+					return
+				elseif t == "string" then
+					NRD_HitSetString(tbl.Handle, k, v)
+					return
+				end
+			end
+			if canUseRawFunctions then 
+				rawset(tbl, k, v)
+			end
+		end
+	}
+	setmetatable(data, meta)
+end
+
 ---@param handle integer The hit handle.
 ---@param damage integer Total damage passed in by the event listener.
 ---@param target string|nil
@@ -233,7 +234,7 @@ function HitPrepareData:Create(handle, damage, target, source, skipAttributeLoad
 		data.DamageList = CreateDamageMetaList(handle)
 	end
 
-	setmetatable(data, self)
+	SetMeta(data)
 
 	return data
 end

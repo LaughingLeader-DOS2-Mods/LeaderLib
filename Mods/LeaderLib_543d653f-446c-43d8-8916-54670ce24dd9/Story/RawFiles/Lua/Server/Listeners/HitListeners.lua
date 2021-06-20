@@ -71,8 +71,6 @@ Ext.RegisterListener("StatusHitEnter", function(hitStatus, hitContext)
 	local skillId = not StringHelpers.IsNullOrWhitespace(hitStatus.SkillId) and string.gsub(hitStatus.SkillId, "_%-?%d+$", "") or nil
 	local skill = skillId and Ext.GetStat(skillId) or nil
 
-	---@type HitData
-	local data = Classes.HitData:Create(target.MyGuid, source.MyGuid, hitRequest.TotalDamageDone, hitStatus.StatusHandle, skill, GameHelpers.Hit.Succeeded(hitRequest), hitStatus, hitContext, hitRequest)
 	local data = Classes.HitData:Create(target, source, hitStatus, hitContext, hitRequest, skill)
 
 	if skillId then

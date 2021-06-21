@@ -158,7 +158,7 @@ end
 
 --- Replace placeholder values in a string, such as [1], [2], etc. 
 --- Takes a variable numbers of values.
---- @vararg values
+--- @vararg any
 --- @return string
 function StringHelpers.ReplacePlaceholders(text, ...)
 	local values = {...}

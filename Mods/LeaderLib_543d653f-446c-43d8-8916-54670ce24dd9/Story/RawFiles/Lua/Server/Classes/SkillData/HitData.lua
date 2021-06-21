@@ -164,7 +164,7 @@ function HitData:MultiplyDamage(multiplier, aggregate)
 	self:Recalculate(true)
 end
 
----Multiplies all damage by a value.
+---Converts specific damage types to another.
 ---@param damageType string Target damage type to convert.
 ---@param toDamageType string Damage type to convert to.
 ---@param aggregate boolean|nil Combine multiple entries for the same damage types into one.
@@ -182,10 +182,14 @@ function HitData:ConvertDamageTypeTo(damageType, toDamageType, aggregate)
 	end
 	self.DamageList:Clear()
 	self.DamageList:Merge(damageList)
-	if self.HitRequest then
-		self.HitRequest.DamageList = self.DamageList
-	end
 	self:Recalculate(false)
+end
+
+---Clears all damage, or damage from a specific type, from the damage list and recalculates totals / lifesteal.
+---@param damageType string|nil If set, only damage from this specific type is cleared.
+function HitData:ClearDamage(damageType)
+	self.DamageList:Clear(damageType)
+	self:Recalculate(true, true)
 end
 
 ---@param flag string|string[]

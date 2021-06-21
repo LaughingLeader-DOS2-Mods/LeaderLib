@@ -230,8 +230,15 @@ local harmfulStatusTypes = {
 	--DAMAGE = true,
 	--DAMAGE_ON_MOVE = true,
 	CHARMED = true,
-	KNOCKED_DOWN = true,
+	CONSTRAINED = true,
+	DECAYING_TOUCH = true,
+	FLANKED = true,
 	INCAPACITATED = true,
+	INFECTIOUS_DISEASED = true,
+	KNOCKED_DOWN = true,
+	SHACKLES_OF_PAIN = true,
+	SHACKLES_OF_PAIN_CASTER = true,
+	UNHEALABLE = true,
 }
 
 ---A status is harmful if it deals damage, is a specific type (KNOCKED_DOWN etc), or has negative potion attributes.

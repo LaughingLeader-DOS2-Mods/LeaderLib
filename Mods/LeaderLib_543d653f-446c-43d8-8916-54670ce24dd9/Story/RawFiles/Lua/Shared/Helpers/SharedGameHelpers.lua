@@ -21,10 +21,18 @@ end
 
 --- Get an ExtraData entry, with an optional fallback value if the key does not exist.
 ---@param key string
----@param fallback number
----@return number
-function GameHelpers.GetExtraData(key,fallback)
-	return Ext.ExtraData[key] or fallback
+---@param fallback number|integer
+---@param asInteger boolean|nil If true, return the result as an integer.
+---@return number|integer
+function GameHelpers.GetExtraData(key, fallback, asInteger)
+	local value = Ext.ExtraData[key]
+	if value then
+		if asInteger then
+			return math.tointeger(value) or fallback
+		end
+		return value
+	end
+	return fallback
 end
 
 --- Get all enemies within range.

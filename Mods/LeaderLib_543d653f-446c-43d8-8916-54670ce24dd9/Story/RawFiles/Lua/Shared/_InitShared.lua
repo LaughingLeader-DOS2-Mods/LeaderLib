@@ -204,6 +204,8 @@ local ignoreImports = {
 	error = true,
 	next = true,
 	string = true,
+	rawget = true,
+	rawset = true,
 	--ositools base
 	Sandboxed = true,
 	ModuleUUID = true,
@@ -236,6 +238,7 @@ local imports = {
 		"LEVELTYPE",
 		"Classes",
 		"Data",
+		"Timer",
 	},
 	Server = {
 		"SKILL_STATE",

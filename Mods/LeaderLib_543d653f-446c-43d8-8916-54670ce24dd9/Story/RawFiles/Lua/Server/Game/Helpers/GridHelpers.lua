@@ -198,6 +198,7 @@ end
 ---@field Cell ExtenderGridCellInfo
 ---@field Ground EsvSurface|nil
 ---@field Cloud EsvSurface|nil
+---@field HasSurface fun(name:string, containingName:boolean|nil, onlyLayer:integer|nil):boolean
 
 ---@class LeaderLibRadiusDataSurfaceEntry:table
 ---@field Surface EsvSurface
@@ -244,7 +245,6 @@ local function HasSurfaceRadius(data, name, containingName, onlyLayer)
 			end
 		end
 	else
-		print("HasSurfaceRadius", data, name, containingName, onlyLayer, #data.Ground)
 		if containingName then
 			local matchName = string.lower(name)
 			if not onlyLayer then

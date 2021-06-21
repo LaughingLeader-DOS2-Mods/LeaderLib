@@ -1,6 +1,6 @@
 ---@alias BeforeStatusAttemptCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, handle:integer):void
 ---@alias StatusEventCallback fun(target:string, status:string, source:string|nil):void
----@alias StatusEventID BeforeAttempt|Attempt|Applied|Removed
+---@alias StatusEventID string
 
 StatusListeners = {}
 ---@type table<string, BeforeStatusAttemptCallback[]>
@@ -16,6 +16,7 @@ StatusListeners.Removed = {}
 ---@type table<string,boolean>
 Vars.RegisteredIgnoredStatus = {}
 
+---Values for the RegisterStatusListener event parameter.
 ---@class StatusEventValues
 ---@field BeforeAttempt StatusEventID BeforeAttempt, NRD_OnStatusAttempt
 ---@field Attempt StatusEventID Attempt, CharacterStatusAttempt/ItemStatusAttempt
@@ -28,7 +29,7 @@ Vars.StatusEvent = {
 	Removed = "Removed",
 }
 
----@param event StatusEventID
+---@param event StatusEventID BeforeAttempt, Attempt, Applied, Removed
 ---@param status string
 ---@param callback StatusEventCallback
 function RegisterStatusListener(event, status, callback)

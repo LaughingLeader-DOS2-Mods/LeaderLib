@@ -331,10 +331,7 @@ function GameHelpers.GetDialogInstance(dialog, ...)
 	return nil
 end
 
----Tries to get a game object if the target exists, otherwise returns nil.
----@param id string|integer|ObjectHandle
----@return EsvCharacter|EsvItem|nil
-function GameHelpers.TryGetObject(id)
+local function TryGetObject(id)
 	if type(id) == "string" then
 		if ObjectExists(id) == 1 then
 			return Ext.GetGameObject(id)
@@ -342,5 +339,23 @@ function GameHelpers.TryGetObject(id)
 	else
 		return Ext.GetGameObject(id)
 	end
-	return nil
+	return id
+end
+
+---Tries to get a game object if the target exists, otherwise returns nil.
+---@param id string|integer|ObjectHandle
+---@param returnNil boolean|nil Return nil if failed. Defaults to false, so the id value is returned.
+---@return EsvCharacter|EsvItem|nil
+function GameHelpers.TryGetObject(id, returnNil)
+	local b,result = xpcall(TryGetObject, debug.traceback, id)
+	if not b then
+		if Vars.DebugMode then
+			fprint(LOGLEVEL.ERROR, "[GameHelpers.TryGetObject] Error getting object from id (%s):\n%s", id, result)
+		end
+		return returnNil ~= true and id or nil
+	end
+	if result == nil and returnNil ~= true then
+		return id
+	end
+	return result
 end

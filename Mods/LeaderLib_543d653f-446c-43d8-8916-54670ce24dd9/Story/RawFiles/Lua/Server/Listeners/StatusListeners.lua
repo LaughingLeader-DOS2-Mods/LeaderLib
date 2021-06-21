@@ -17,22 +17,32 @@ local redirectStatusId = {
 	MADNESS = true,
 }
 
+local function TryGetStatus(target, handle)
+	return Ext.GetStatus(target, handle)
+end
+
 ---@param statusId string
 ---@param target EsvCharacter|EsvItem
----@param status EsvStatus
 ---@param source EsvCharacter|EsvItem
 ---@param handle integer
-local function BeforeStatusAttempt(statusId, target, status, source, handle)
-	local statusType = GetStatusType(statusId)
+local function BeforeStatusAttempt(statusId, target, source, handle, targetId, sourceId)
+	local statusType = GameHelpers.Status.GetStatusType(statusId)
 	--Crash fix
-	if target and ObjectIsItem(target.MyGuid) == 1 and (statusId == "MADNESS" or statusType == "DAMAGE_ON_MOVE") then
-		NRD_StatusPreventApply(target, handle, 1)
+	if ObjectIsItem(targetId) == 1 and (statusId == "MADNESS" or statusType == "DAMAGE_ON_MOVE") then
+		NRD_StatusPreventApply(targetId, handle, 1)
 		return
 	end
-	if source then 
+	local b,status = xpcall(TryGetStatus, debug.traceback, targetId, handle)
+	if not b then
+		if Vars.DebugMode then
+			fprint(LOGLEVEL.ERROR, "[LeaderLib:BeforeStatusAttempt] Error getting status (%s) by handle(%s) for target(%s):\n%s", statusId, handle, target.MyGuid, status)
+		end
+		status = statusId
+	end
+	if target and source then 
 		local canRedirect = redirectStatusId[statusId] or redirectStatusType[statusType]
 		if canRedirect and source.Summon and source.OwnerHandle then
-			if ObjectIsItem(source.MyGuid) == 1 then
+			if ObjectIsItem(sourceId) == 1 then
 				--Set the source of statuses summoned items apply to their caster owner character.
 				if source.Summon and source.OwnerHandle then
 					if status then
@@ -40,7 +50,7 @@ local function BeforeStatusAttempt(statusId, target, status, source, handle)
 					else
 						local owner = Ext.GetGameObject(source.OwnerHandle)
 						if owner then
-							NRD_StatusSetGuidString(target.MyGuid, handle, "StatusSourceHandle", owner.MyGuid)
+							NRD_StatusSetGuidString(targetId, handle, "StatusSourceHandle", owner.MyGuid)
 						end
 					end
 					if Vars.DebugMode then
@@ -48,43 +58,29 @@ local function BeforeStatusAttempt(statusId, target, status, source, handle)
 					end
 				end
 			end
-			-- elseif statusId == "INSURFACE" then
-			-- 	--surface owner Swap
-			-- 	local x,y,z = table.unpack(target.WorldPos)
-			-- 	local cell = Ext.GetAiGrid():GetCellInfo(x, z)
-			-- 	if cell then
-			-- 		if cell.GroundSurface then
-			-- 			local surface = Ext.GetSurface(cell.GroundSurface)
-			-- 			if surface then
-			-- 				surface.OwnerHandle = source.OwnerHandle
-			-- 			end
-			-- 		end
-			-- 		if cell.CloudSurface then
-			-- 			local surface = Ext.GetSurface(cell.CloudSurface)
-			-- 			if surface then
-			-- 				surface.OwnerHandle = source.OwnerHandle
-			-- 			end
-			-- 		end
-			-- 	end
-			-- end
 		elseif source:HasTag("LeaderLib_Dummy") then
 			--Redirect the source of statuses applied by dummies to their owners
-			local owner = GetVarObject(source.MyGuid, "LeaderLib_Dummy_Owner")
+			local owner = GetVarObject(sourceId, "LeaderLib_Dummy_Owner")
 			if not StringHelpers.IsNullOrEmpty(owner) then
-				NRD_StatusSetGuidString(target.MyGuid, handle, "StatusSourceHandle", owner)
-
+				NRD_StatusSetGuidString(targetId, handle, "StatusSourceHandle", owner)
 				if Vars.DebugMode then
 					fprint(LOGLEVEL.DEFAULT, "[BeforeStatusAttempt] Redirected status(%s) source from (%s) to owner (%s)", statusId, source.DisplayName, GameHelpers.Character.GetDisplayName(Ext.GetCharacter(owner)))
 				end
 			end
 		end
 	end
+	target = target or targetId
+	source = source or sourceId
 	InvokeListenerCallbacks(StatusListeners.BeforeAttempt[statusId], target, status, source, handle)
 	InvokeListenerCallbacks(StatusListeners.BeforeAttempt.All, target, status, source, handle)
 end
 
 RegisterProtectedOsirisListener("NRD_OnStatusAttempt", 4, "after", function(target,status,handle,source)
-	--BeforeStatusAttempt(status, GameHelpers.TryGetObject(target), Ext.GetStatus(target, handle), GameHelpers.TryGetObject(source), handle)
+	if not IgnoreStatus(status) then
+		target = GameHelpers.GetUUID(target, true)
+		source = GameHelpers.GetUUID(source, true)
+		BeforeStatusAttempt(status, GameHelpers.TryGetObject(target, true), GameHelpers.TryGetObject(source, true), handle, target, source)
+	end
 end)
 
 local function OnStatusAttempt(target,status,source)

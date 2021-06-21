@@ -74,6 +74,7 @@ function GameHelpers.ShootProjectileAtPosition(source, x, y, z, skill, forceHit,
     GameHelpers.ShootProjectile(source, {x,y,z}, skill, forceHit, nil, nil, canDeflect)
 end
 
+---@see GameHelpers.Skill.Explode
 function GameHelpers.ExplodeProjectile(source, target, skill, skillLevel, noForcedHit)
     NRD_ProjectilePrepareLaunch()
     NRD_ProjectileSetString("SkillId", skill)

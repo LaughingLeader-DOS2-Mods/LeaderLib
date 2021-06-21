@@ -1,9 +1,11 @@
 {
-    "RequiredExtensionVersion": 54,
+    "RequiredExtensionVersion": 55,
     "ModTable": "LeaderLib",
     "FeatureFlags": [
         "OsirisExtensions",
         "Lua",
-        "Preprocessor"
+        "Preprocessor",
+        "CustomStats",
+        "CustomStatsPane"
     ]
 }

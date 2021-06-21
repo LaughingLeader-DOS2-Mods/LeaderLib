@@ -2,9 +2,9 @@
 ---@class HitData
 ---@field Damage integer
 ---@field Handle ObjectHandle
----@field TargetObject EsvGameObject
+---@field TargetObject EsvCharacter|EsvItem
 ---@field Target string
----@field AttackerObject EsvGameObject
+---@field AttackerObject EsvCharacter|EsvItem
 ---@field Attacker string
 local HitData = {
 	ID = "HitData",

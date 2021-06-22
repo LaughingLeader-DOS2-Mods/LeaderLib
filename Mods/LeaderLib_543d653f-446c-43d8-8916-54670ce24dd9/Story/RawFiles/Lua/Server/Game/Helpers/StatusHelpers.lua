@@ -366,7 +366,8 @@ function GameHelpers.Status.Apply(target, status, duration, force, source, radiu
 	local t = type(status)
 	if t == "string" then
 		source = GameHelpers.GetUUID(source, true)
-		if type(target) ~= "table" then
+		local targetType = type(target)
+		if targetType ~= "table" then
 			target = GameHelpers.GetUUID(target)
 			if target then
 				ApplyStatus(target, status, duration, force, source)
@@ -375,6 +376,9 @@ function GameHelpers.Status.Apply(target, status, duration, force, source, radiu
 			radius = radius or 1.0
 			local statusType = GetStatusType(status)
 			local x,y,z = table.unpack(target)
+			if not x or not y or not z then
+				error(string.format("No valid position set (%s). Failed to apply status (%s)", Lib.inspect(target), status), 2)
+			end
 			for _,v in pairs(Ext.GetCharactersAroundPosition(x,y,z,radius)) do
 				if v ~= source then
 					if canApplyCallback then

@@ -27,7 +27,9 @@ local defaultPersistentVars = {
 	---@type table<UUID, number>
 	ScaleOverride = {},
 	---@type table<UUID,UUID[]>
-	Summons = {}
+	Summons = {},
+	---@type table<UUID,table<string,number>>
+	BuffStatuses = {}
 }
 
 ---@type LeaderLibPersistentVars

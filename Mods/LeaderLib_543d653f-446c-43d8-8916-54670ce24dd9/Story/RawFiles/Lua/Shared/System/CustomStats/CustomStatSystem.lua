@@ -1,10 +1,33 @@
 if CustomStatSystem == nil then
+	---@class CustomStatSystem
 	CustomStatSystem = {}
 end
 
 CustomStatSystem.__index = CustomStatSystem
 CustomStatSystem.Loaded = false
 CustomStatSystem.MISC_CATEGORY = 99999
+
+CustomStatSystem.Listeners = {
+	---@type table<string, OnAvailablePointsChangedCallback[]>
+	OnAvailablePointsChanged = {All = {}},
+	---@type table<string, OnStatValueChangedCallback[]>
+	OnStatValueChanged = {All = {}},
+	Loaded = {},
+}
+
+---@param callback fun(self:CustomStatSystem):void
+function CustomStatSystem:RegisterLoadedListener(callback)
+	if callback == nil then
+		return
+	end
+	if type(callback) == "table" then
+		for i=1,#callback do
+			self:RegisterLoadedListener(callback[i])
+		end
+	else
+		table.insert(self.Listeners.Loaded, callback)
+	end
+end
 
 ---@class CustomStatTooltipType
 CustomStatSystem.TooltipType = {
@@ -122,6 +145,8 @@ local function LoadCustomStatsData()
 		end
 	end
 	CustomStatSystem.Loaded = true
+
+	InvokeListenerCallbacks(CustomStatSystem.Listeners.Loaded, CustomStatSystem)
 end
 
 if not isClient then

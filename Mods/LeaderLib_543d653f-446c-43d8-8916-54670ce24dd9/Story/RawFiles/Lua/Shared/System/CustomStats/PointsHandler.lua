@@ -7,13 +7,6 @@ local self = CustomStatSystem
 
 local isClient = Ext.IsClient()
 
-CustomStatSystem.Listeners = {
-	---@type table<string, OnAvailablePointsChangedCallback[]>
-	OnAvailablePointsChanged = {All = {}},
-	---@type table<string, OnStatValueChangedCallback[]>
-	OnStatValueChanged = {All = {}},
-}
-
 if isClient then
 	---@type table<string, CustomStatCanAddPointsCallback[]>
 	CustomStatSystem.Listeners.CanAddPoints = {All = {}}

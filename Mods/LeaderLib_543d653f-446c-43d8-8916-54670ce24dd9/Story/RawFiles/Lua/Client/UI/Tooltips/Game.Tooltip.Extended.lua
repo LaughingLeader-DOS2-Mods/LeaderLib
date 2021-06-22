@@ -1267,18 +1267,11 @@ end
 ---@return EclCharacter
 function TooltipHooks:GetCompareOwner(ui, item)
 	local owner = ui:GetPlayerHandle()
+
 	if owner ~= nil then
 		local char = Ext.GetCharacter(owner)
 		if char.Stats.IsPlayer then
 			return char
-		end
-	end
-
-	local itemOwner = item:GetOwnerCharacter()
-	if itemOwner ~= nil then
-		local ownerCharacter = Ext.GetCharacter(itemOwner)
-		if ownerCharacter ~= nil and ownerCharacter.Stats.IsPlayer then
-			return ownerCharacter
 		end
 	end
 
@@ -1300,12 +1293,29 @@ function TooltipHooks:GetCompareOwner(ui, item)
 			end
 		end
 	end
+
 	if handle ~= nil then
 		return Ext.GetCharacter(handle)
 	end
+
+	local character = nil
 	if Client then
-		Client:GetCharacter()
+		character = Client:GetCharacter()
 	end
+
+	if character == nil then
+		--Default to the item's owner last since it may not be the active character.
+		local itemOwner = item:GetOwnerCharacter()
+		if itemOwner ~= nil then
+			local ownerCharacter = Ext.GetCharacter(itemOwner)
+			if ownerCharacter ~= nil and ownerCharacter.Stats.IsPlayer then
+				return ownerCharacter
+			end
+		end
+	else
+		return character
+	end
+	
 	return nil
 end
 
@@ -1339,6 +1349,7 @@ function TooltipHooks:GetCompareItem(ui, item, offHand)
 end
 
 ---@param arrayData TooltipArrayData
+---@param ui UIObject
 function TooltipHooks:OnRenderTooltip(arrayData, ui, method, ...)
 	if self.NextRequest == nil then
 		Ext.PrintWarning("Got tooltip render request, but did not find original tooltip info!")
@@ -1349,9 +1360,15 @@ function TooltipHooks:OnRenderTooltip(arrayData, ui, method, ...)
 
 	self:OnRenderSubTooltip(ui, arrayData.Main, req, method, ...)
 
+	
 	if req.Type == "Item" then
+		local this = ui:GetRoot()
+
 		local reqItem = req.Item
-		if arrayData.CompareMain ~= nil and ui:GetValue(arrayData.CompareMain, nil, 0) ~= nil then
+		local mainArray = arrayData.CompareMain and this[arrayData.CompareMain] or nil
+		local compareArray = arrayData.CompareOff and this[arrayData.CompareOff] or nil
+
+		if mainArray and mainArray[0] ~= nil then
 			local compareItem = self:GetCompareItem(ui, reqItem, false)
 			if compareItem ~= nil then
 				req.Item = Ext.GetItem(compareItem)
@@ -1362,7 +1379,7 @@ function TooltipHooks:OnRenderTooltip(arrayData, ui, method, ...)
 			end
 		end
 
-		if arrayData.CompareOff ~= nil and ui:GetValue(arrayData.CompareOff, nil, 0) ~= nil then
+		if compareArray and compareArray[0] ~= nil then
 			local compareItem = self:GetCompareItem(ui, reqItem, true)
 			if compareItem ~= nil then
 				req.Item = Ext.GetItem(compareItem)

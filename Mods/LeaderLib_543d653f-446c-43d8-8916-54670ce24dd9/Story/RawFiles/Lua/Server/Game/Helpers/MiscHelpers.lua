@@ -339,7 +339,7 @@ local function TryGetObject(id)
 	else
 		return Ext.GetGameObject(id)
 	end
-	return id
+	return nil
 end
 
 ---Tries to get a game object if the target exists, otherwise returns nil.

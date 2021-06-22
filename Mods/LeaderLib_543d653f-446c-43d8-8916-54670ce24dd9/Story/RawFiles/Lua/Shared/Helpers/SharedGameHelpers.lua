@@ -1,3 +1,5 @@
+local isClient = Ext.IsClient()
+
 ---@param pickpocketSkill integer
 ---@return number
 function GameHelpers.GetPickpocketPricing(pickpocketSkill)
@@ -212,9 +214,8 @@ function GameHelpers.CharacterOrEquipmentHasTag(character, tag)
 	if character:HasTag(tag) then
 		return true
 	end
-	local isServer = Ext.IsServer()
 	for _,slot in Data.VisibleEquipmentSlots:Get() do
-		if isServer then
+		if not isClient then
 			local uuid = CharacterGetEquippedItem(character.MyGuid, slot)
 			if not StringHelpers.IsNullOrEmpty(uuid) then
 				local item = Ext.GetItem(uuid)

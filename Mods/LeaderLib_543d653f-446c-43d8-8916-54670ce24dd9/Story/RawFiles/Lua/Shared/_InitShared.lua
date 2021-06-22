@@ -266,11 +266,17 @@ end
 ---@param skipExistingCheck boolean If true, each key is set in the target table without checking if it already exists.
 function Import(targetModTable, skipExistingCheck)
 	SetupMetaTables(targetModTable)
+	local modName = Ext.GetModInfo(targetModTable.ModuleUUID)
+	if modName then
+		modName = modName.Name
+	else
+		modName = targetModTable.ModuleUUID
+	end
 	for _,k in pairs(imports.All) do
 		if skipExistingCheck == true or not targetModTable[k] then
 			targetModTable[k] = Mods.LeaderLib[k]
 		elseif Vars.DebugMode then
-			fprint(LOGLEVEL.WARNING, "Global key (%s) already exists in mod table for mod (%s)", k, targetModTable.ModuleUUID)
+			fprint(LOGLEVEL.WARNING, "Global key (%s) already exists in mod table for mod (%s)", k, modName)
 		end
 	end
 	-- Automatically importing global functions
@@ -279,7 +285,7 @@ function Import(targetModTable, skipExistingCheck)
 			if skipExistingCheck == true or not targetModTable[k] then
 				targetModTable[k] = v
 			elseif Vars.DebugMode then
-				fprint(LOGLEVEL.WARNING, "Global function (%s) already exists in mod table for mod (%s)", k, targetModTable.ModuleUUID)
+				fprint(LOGLEVEL.WARNING, "Global function (%s) already exists in mod table for mod (%s)", k, modName)
 			end
 		end
 	end
@@ -288,7 +294,7 @@ function Import(targetModTable, skipExistingCheck)
 			if skipExistingCheck == true or not targetModTable[k] then
 				targetModTable[k] = Mods.LeaderLib[k]
 			elseif Vars.DebugMode then
-				fprint(LOGLEVEL.WARNING, "Global key (%s) already exists in mod table for mod (%s)", k, targetModTable.ModuleUUID)
+				fprint(LOGLEVEL.WARNING, "Global key (%s) already exists in mod table for mod (%s)", k, modName)
 			end
 		end
 	else
@@ -296,7 +302,7 @@ function Import(targetModTable, skipExistingCheck)
 			if skipExistingCheck == true or not targetModTable[k] then
 				targetModTable[k] = Mods.LeaderLib[k]
 			elseif Vars.DebugMode then
-				fprint(LOGLEVEL.WARNING, "Global key (%s) already exists in mod table for mod (%s)", k, targetModTable.ModuleUUID)
+				fprint(LOGLEVEL.WARNING, "Global key (%s) already exists in mod table for mod (%s)", k, modName)
 			end
 		end
 	end
@@ -307,12 +313,18 @@ end
 ---@param skipExistingCheck boolean If true, each key is set in the target table without checking if it already exists.
 function ImportUnsafe(targetModTable, skipExistingCheck)
 	SetupMetaTables(targetModTable)
+	local modName = Ext.GetModInfo(targetModTable.ModuleUUID)
+	if modName then
+		modName = modName.Name
+	else
+		modName = targetModTable.ModuleUUID
+	end
 	for k,v in pairs(Mods.LeaderLib) do
 		if ignoreImports[k] ~= true then
 			if skipExistingCheck == true or not targetModTable[k] then
 				targetModTable[k] = v
 			elseif Vars.DebugMode then
-				fprint(LOGLEVEL.WARNING, "[LeaderLib:ImportUnsafe] Global key (%s) already exists in mod table for mod (%s)", k, targetModTable.ModuleUUID)
+				fprint(LOGLEVEL.WARNING, "[LeaderLib:ImportUnsafe] Global key (%s) already exists in mod table for mod (%s)", k, modName)
 			end
 		end
 	end

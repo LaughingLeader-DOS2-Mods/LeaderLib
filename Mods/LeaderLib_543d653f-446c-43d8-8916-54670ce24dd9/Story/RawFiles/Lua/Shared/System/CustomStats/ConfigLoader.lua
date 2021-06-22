@@ -20,6 +20,7 @@ local categoryPropertyMap = {
 	HIDETOTALPOINTS = {Name="HideTotalPoints", Type = "boolean"},
 	SORTNAME = {Name="SortName", Type = "string"},
 	SORTVALUE = {Name="SortValue", Type = "number"},
+	LOADSTRINGKEY = {Name="LoadStringKey", Type = "boolean"},
 }
 
 local statPropertyMap = {
@@ -37,6 +38,7 @@ local statPropertyMap = {
 	ICONHEIGHT = {Name="IconHeight", Type = "number"},
 	SORTNAME = {Name="SortName", Type = "string"},
 	SORTVALUE = {Name="SortValue", Type = "number"},
+	LOADSTRINGKEY = {Name="LoadStringKey", Type = "boolean"},
 }
 
 local isClient = Ext.IsClient()

@@ -7,7 +7,7 @@ local isClient = Ext.IsClient()
 function CustomStatSystem:GetStatByName(displayName)
 	for uuid,stats in pairs(self.Stats) do
 		for id,stat in pairs(stats) do
-			if stat.DisplayName == displayName then
+			if stat.DisplayName == displayName or stat:GetDisplayName() == displayName then
 				return stat
 			end
 		end
@@ -62,6 +62,7 @@ end
 ---Get an iterator of all stats.
 ---@param visibleOnly boolean|nil
 ---@param sortByDisplayName boolean|nil
+---@param includeUnregisteredStats boolean|nil
 ---@return fun():CustomStatData
 function CustomStatSystem:GetAllStats(visibleOnly, sortByDisplayName, includeUnregisteredStats)
 	local allStats = {}

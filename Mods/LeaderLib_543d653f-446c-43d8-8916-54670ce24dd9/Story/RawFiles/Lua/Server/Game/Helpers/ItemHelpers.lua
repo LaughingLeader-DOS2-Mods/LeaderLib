@@ -168,8 +168,6 @@ function GameHelpers.Item.CreateItemByStat(statName, skipLevelCheck, properties)
         statType = NRD_StatGetType(stat.Name)
     end
 
-    Ext.Print(stat.Name, "ItemGroup", stat.ItemGroup)
-
     if stat and stat.Unique == 1 then
         targetRarity = "Unique"
     elseif properties then
@@ -241,8 +239,6 @@ function GameHelpers.Item.CreateItemByStat(statName, skipLevelCheck, properties)
                 end
             end
         end
-
-        print("Rarity", rarity)
 
         local newItem = constructor:Construct()
         if newItem then

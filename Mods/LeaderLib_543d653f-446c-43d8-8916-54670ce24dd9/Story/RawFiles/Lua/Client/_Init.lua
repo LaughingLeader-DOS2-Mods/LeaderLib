@@ -2,8 +2,6 @@ if UI == nil then
 	UI = {}
 end
 
-UI.Tooltip = {}
-
 ---Deprecated since UIListeners were moved to the regular Listeners.
 ---Registers a function to call when a specific Lua LeaderLib UI event fires.
 ---@param event string OnTooltipPositioned

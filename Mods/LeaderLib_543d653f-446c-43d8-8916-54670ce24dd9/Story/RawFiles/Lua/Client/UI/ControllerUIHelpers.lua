@@ -187,7 +187,7 @@ end
 
 ---@param ui UIObject
 local function OnConsoleTooltipPositioned(ui, data, ...)
-	if UI.Tooltip.HasTagTooltipData or #Listeners.OnTooltipPositioned > 0 then
+	if TooltipHandler.HasTagTooltipData or #Listeners.OnTooltipPositioned > 0 then
 		local root = ui:GetRoot()
 		if root ~= nil then
 			if data ~= nil then
@@ -211,7 +211,7 @@ local function OnConsoleTooltipPositioned(ui, data, ...)
 						if Features.FormatTagElementTooltips then
 							FormatTagTooltip(ui, mc)
 						end
-						InvokeListenerCallbacks(Listeners.OnTooltipPositioned, ui, mc, true, UI.Tooltip.LastItem, ...)
+						InvokeListenerCallbacks(Listeners.OnTooltipPositioned, ui, mc, true, TooltipHandler.LastItem, ...)
 					end
 				end
 			end

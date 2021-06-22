@@ -293,6 +293,7 @@ LocalizedText.Tooltip = {
 	Requires = ts:Create("h7de69a95g70cag4bb3gbabcg1cf2df46f12c", "Requires [1]"),
 	ExpanderInactive = ts:Create("h17380891g0e8eg42d3gbb55g9478bba4f684", "Hold [1] for More Info"),
 	ExpanderActive = ts:Create("h7b3bd7e6g9a34g4959gad11g241f6d8d33c1", "Release [1] for Less Info"),
+	StatBase = ts:Create("hbb9884d7g3b9ag43dfga88egdcc32db8bd74", "<br>Base: [1]"),
 }
 
 LocalizedText.Input = {

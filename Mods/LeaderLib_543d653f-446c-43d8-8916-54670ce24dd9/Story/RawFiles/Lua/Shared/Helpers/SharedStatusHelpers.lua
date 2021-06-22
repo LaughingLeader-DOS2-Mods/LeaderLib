@@ -160,7 +160,7 @@ local function IsHarmfulPotion(stat)
 				return true
 			end
 		elseif t == "string" then
-			if value ~= "None" and b == "Penalty PreciseQualifier" then
+			if value ~= "None" and string.find(b, "Qualifier") then
 				local realValue = tonumber(value)
 				if realValue and realValue < 0 then
 					return true
@@ -250,6 +250,91 @@ function GameHelpers.Status.IsHarmful(statusId)
 	elseif statusType ~= "EFFECT" and not Data.IgnoredStatus[statusId] then
 		local statsId = Ext.StatGetAttribute(statusId, "StatsId")
 		if not StringHelpers.IsNullOrWhitespace(statsId) and IsHarmfulStatsId(statsId) then
+			return true
+		end
+	end
+	return false
+end
+
+local beneficialStatusTypes = {
+	ACTIVE_DEFENSE = true,
+	ADRENALINE = true,
+	BOOST = true,
+	EXTRA_TURN = true,
+	FLOATING = true,
+	GUARDIAN_ANGEL = true,
+	HEAL = true,
+	HEAL_SHARING = true,
+	HEAL_SHARING_CASTER = true,
+	HEALING = true,
+	INVISIBLE = true,
+	LEADERSHIP = true,
+	PLAY_DEAD = true,
+	STANCE = true,
+	WIND_WALKER = true,
+}
+
+---@param stat StatEntryPotion|table
+local function IsBeneficialPotion(stat)
+	for k,b in pairs(potionProperties) do
+		local value = stat[k]
+		local t = type(value)
+		if t == "number" then
+			if (b == true and value > 0) or (b == false and value < 0) then
+				return true
+			end
+		elseif t == "string" then
+			if value ~= "None" and string.find(b, "Qualifier") then
+				local realValue = tonumber(value)
+				if realValue and realValue > 0 then
+					return true
+				end
+			end
+		end
+	end
+	return false
+end
+
+local function IsBeneficialStatsId(statsId)
+	if not StringHelpers.IsNullOrWhitespace(statsId) then
+		if string.find(statsId, ";") then
+			for m in string.gmatch(statsId, "[%a%d_]+,") do
+				local statName = string.sub(m, 1, #m-1)
+				local stat = Ext.GetStat(statName)
+				if stat and IsBeneficialPotion(stat) then
+					return true
+				end
+			end
+		else
+			local stat = Ext.GetStat(statsId)
+			if stat and IsBeneficialPotion(stat) then
+				return true
+			end
+		end
+	end
+	return false
+end
+
+---Checks if a potion has any negative attributes.
+---@param stat string|StatEntryPotion|table
+---@return boolean
+function GameHelpers.Status.IsBeneficialPotion(stat)
+	if type(stat) == "string" then
+		return IsBeneficialStatsId(stat)
+	else
+		return IsBeneficialPotion(stat)
+	end
+end
+
+---A status is beneficial if it grants bonuses or is a beneficial type (FLOATING, ACTIVE_DEFENSE, HEAL etc).
+---@param statusId string
+function GameHelpers.Status.IsBeneficial(statusId)
+	local statusType = GameHelpers.Status.GetStatusType(statusId)
+	if beneficialStatusTypes[statusType] == true then
+		return true
+	elseif statusType ~= "EFFECT" and not Data.IgnoredStatus[statusId] then
+		local statsId = Ext.StatGetAttribute(statusId, "StatsId")
+		if not StringHelpers.IsNullOrWhitespace(statsId) and IsBeneficialStatsId(statsId) then
 			return true
 		end
 	end

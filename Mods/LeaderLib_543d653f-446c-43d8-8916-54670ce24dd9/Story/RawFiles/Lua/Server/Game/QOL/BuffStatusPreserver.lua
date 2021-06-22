@@ -18,7 +18,6 @@ end
 ---@param character EsvCharacter
 ---@param status EsvStatus
 function BuffStatusPreserver.PreserveStatus(character, status)
-	print(status.StatusId, status.CurrentLifeTime, status.LifeTime, status.KeepAlive, status.IsLifeTimeSet)
 	if status.CurrentLifeTime > 0 and GameHelpers.Status.IsBeneficial(status.StatusId, true) then
 		if not PersistentVars.BuffStatuses[character.MyGuid] then
 			PersistentVars.BuffStatuses[character.MyGuid] = {}
@@ -28,7 +27,9 @@ function BuffStatusPreserver.PreserveStatus(character, status)
 		status.CurrentLifeTime = -1.0
 		status.LifeTime = -1.0
 		status.RequestClientSync = true
-		print("Preserving", status.StatusId, status.CurrentLifeTime)
+		if Vars.DebugMode then
+			fprint(LOGLEVEL.DEFAULT, "[BuffStatusPreserver.PreserveStatus] Preserving status(%q). Saved Duration (%s)", status.StatusId, savedStatusData[status.StatusId])
+		end
 	end
 end
 

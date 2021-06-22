@@ -11,6 +11,7 @@ Ext.Require("Shared/Helpers/StatsHelpers.lua")
 Ext.Require("Shared/Helpers/SharedStatusHelpers.lua")
 Ext.Require("Shared/Helpers/CharacterHelpers.lua")
 Ext.Require("Shared/Helpers/VoiceMetaDataRegistration.lua")
+Ext.Require("Shared/Helpers/CombatLogHelper.lua")
 Ext.Require("Shared/Common.lua")
 Ext.Require("Shared/Classes/_Init.lua")
 Ext.Require("Shared/System/Timers.lua")
@@ -40,3 +41,4 @@ if Vars.DebugMode then
 	--Ext.Require("Shared/Debug/GameMathTracing.lua")
 	Ext.Require("Shared/Debug/TestingSystem.lua")
 end
+Ext.Require("Shared/Debug/ConsoleWIndowHelpers.lua")

@@ -180,7 +180,8 @@ local worldTooltipCalls = {
 	"startDragging",
 }
 
-UIListenerWrapper:Create(Data.UIType.worldTooltip, worldTooltipCalls, worldTooltipMethods)
+local worldTooltip = UIListenerWrapper:Create(Data.UIType.worldTooltip, worldTooltipCalls, worldTooltipMethods)
+worldTooltip.Enabled = false
 
 local examineCalls = {
 	"cancelDragging",
@@ -1180,3 +1181,39 @@ local mainMenu = UIListenerWrapper:Create(Data.UIType.mainMenu, {
 -- 		end
 -- 	end
 -- end
+
+local combatLog = UIListenerWrapper:Create(Data.UIType.combatLog,
+{"InputOut",
+"InputOver",
+"PlaySound",
+"UIAssert",
+"cancelMoveWindow",
+"fadeBGVisibility",
+"hidePressed",
+"hideTooltip",
+"lockMouse",
+"resized",
+"selectFilter",
+"showItemTooltip",
+"showStatusTooltip",
+"showTooltip",
+"startMoveWindow"},
+{"addFilter",
+"addTab",
+"addTextToFilter",
+"addTextToTab",
+"clearAll",
+"clearAllTexts",
+"clearFilter",
+"clearTab",
+"reOpen",
+"requestSize",
+"selectFilter",
+"setBGVisibility",
+"setFilterSelection",
+"setLockInput",
+"setLogSize",
+"setLogVisible",
+"setTooltip",
+"startsWith"})
+combatLog.Enabled = true

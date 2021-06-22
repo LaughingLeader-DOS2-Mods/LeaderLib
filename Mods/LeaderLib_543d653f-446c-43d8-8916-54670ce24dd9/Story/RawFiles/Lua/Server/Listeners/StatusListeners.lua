@@ -216,7 +216,7 @@ local function BeforeStatusAttempt(statusId, target, source, handle, targetId, s
 	end
 	target = target or targetId
 	source = source or sourceId
-	InvokeStatusListeners(Vars.StatusEvent.BeforeAttempt, target, status, source, handle, statusType)
+	InvokeStatusListeners(Vars.StatusEvent.BeforeAttempt, status, statusType, target, status, source, handle, statusType)
 end
 
 RegisterProtectedOsirisListener("NRD_OnStatusAttempt", 4, "after", function(target,status,handle,source)
@@ -231,7 +231,7 @@ local function OnStatusAttempt(target,status,source)
 	target = StringHelpers.GetUUID(target)
 	source = StringHelpers.GetUUID(source)
 	local statusType = GameHelpers.Status.GetStatusType(status)
-	InvokeStatusListeners(Vars.StatusEvent.Attempt, target, status, source, statusType)
+	InvokeStatusListeners(Vars.StatusEvent.Attempt, status, statusType, target, status, source, statusType)
 end
 
 local function ParseStatusAttempt(target,status,source)
@@ -330,7 +330,7 @@ local function OnStatusApplied(target,status,source)
 			end
 		end
 	end
-	InvokeStatusListeners(Vars.StatusEvent.Applied, target, status, source, statusType)
+	InvokeStatusListeners(Vars.StatusEvent.Applied, status, statusType, target, status, source, statusType)
 	if forceStatuses[status] and not StringHelpers.IsNullOrEmpty(source) and ObjectIsCharacter(source) == 1 then
 		--local distance = tonumber(string.gsub(status, "LEADERLIB_FORCE_PUSH", ""))
 		GameHelpers.ForceMoveObject(Ext.GetCharacter(source), Ext.GetGameObject(target), forceStatuses[status])
@@ -352,7 +352,7 @@ local function OnStatusRemoved(target,status)
 		end
 	end
 	source = source or StringHelpers.NULL_UUID
-	InvokeStatusListeners(Vars.StatusEvent.Removed, target, status, source, statusType)
+	InvokeStatusListeners(Vars.StatusEvent.Removed, status, statusType, target, status, source, statusType)
 end
 
 local function ParseStatusApplied(target,status,source)

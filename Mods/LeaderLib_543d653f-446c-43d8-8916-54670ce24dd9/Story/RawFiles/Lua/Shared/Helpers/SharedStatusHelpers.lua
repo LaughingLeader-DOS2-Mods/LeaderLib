@@ -279,6 +279,9 @@ local function IsBeneficialPotion(stat, ignoreItemPotions)
 	if ignoreItemPotions == true and stat.IsFood == "Yes" or stat.IsConsumable == "Yes" then
 		return false
 	end
+	if not StringHelpers.IsNullOrWhitespace(stat.BonusWeapon) then
+		return true
+	end
 	for k,b in pairs(potionProperties) do
 		local value = stat[k]
 		local t = type(value)

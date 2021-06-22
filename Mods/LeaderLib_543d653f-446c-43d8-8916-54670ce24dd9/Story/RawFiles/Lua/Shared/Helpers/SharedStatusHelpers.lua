@@ -275,7 +275,10 @@ local beneficialStatusTypes = {
 }
 
 ---@param stat StatEntryPotion|table
-local function IsBeneficialPotion(stat)
+local function IsBeneficialPotion(stat, ignoreItemPotions)
+	if ignoreItemPotions == true and stat.IsFood == "Yes" or stat.IsConsumable == "Yes" then
+		return false
+	end
 	for k,b in pairs(potionProperties) do
 		local value = stat[k]
 		local t = type(value)
@@ -295,19 +298,19 @@ local function IsBeneficialPotion(stat)
 	return false
 end
 
-local function IsBeneficialStatsId(statsId)
+local function IsBeneficialStatsId(statsId, ignoreItemPotions)
 	if not StringHelpers.IsNullOrWhitespace(statsId) then
 		if string.find(statsId, ";") then
 			for m in string.gmatch(statsId, "[%a%d_]+,") do
 				local statName = string.sub(m, 1, #m-1)
 				local stat = Ext.GetStat(statName)
-				if stat and IsBeneficialPotion(stat) then
+				if stat and IsBeneficialPotion(stat, ignoreItemPotions) then
 					return true
 				end
 			end
 		else
 			local stat = Ext.GetStat(statsId)
-			if stat and IsBeneficialPotion(stat) then
+			if stat and IsBeneficialPotion(stat, ignoreItemPotions) then
 				return true
 			end
 		end
@@ -317,24 +320,26 @@ end
 
 ---Checks if a potion has any negative attributes.
 ---@param stat string|StatEntryPotion|table
+---@param ignoreItemPotions boolean|nil Ignore potions with IsFood or IsConsumable.
 ---@return boolean
-function GameHelpers.Status.IsBeneficialPotion(stat)
+function GameHelpers.Status.IsBeneficialPotion(stat, ignoreItemPotions)
 	if type(stat) == "string" then
-		return IsBeneficialStatsId(stat)
+		return IsBeneficialStatsId(stat, ignoreItemPotions)
 	else
-		return IsBeneficialPotion(stat)
+		return IsBeneficialPotion(stat, ignoreItemPotions)
 	end
 end
 
 ---A status is beneficial if it grants bonuses or is a beneficial type (FLOATING, ACTIVE_DEFENSE, HEAL etc).
 ---@param statusId string
-function GameHelpers.Status.IsBeneficial(statusId)
+---@param ignoreItemPotions boolean|nil Ignore potions with IsFood or IsConsumable.
+function GameHelpers.Status.IsBeneficial(statusId, ignoreItemPotions)
 	local statusType = GameHelpers.Status.GetStatusType(statusId)
 	if beneficialStatusTypes[statusType] == true then
 		return true
 	elseif statusType ~= "EFFECT" and not Data.IgnoredStatus[statusId] then
 		local statsId = Ext.StatGetAttribute(statusId, "StatsId")
-		if not StringHelpers.IsNullOrWhitespace(statsId) and IsBeneficialStatsId(statsId) then
+		if not StringHelpers.IsNullOrWhitespace(statsId) and IsBeneficialStatsId(statsId, ignoreItemPotions) then
 			return true
 		end
 	end

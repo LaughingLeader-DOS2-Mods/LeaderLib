@@ -25,7 +25,6 @@ Ext.Require("Server/Listeners/_Init.lua")
 Ext.Require("Server/ModMenu/ModMenuServerCommands.lua")
 Ext.Require("Server/OsirisHelpers.lua")
 Ext.Require("Server/Versioning.lua")
-Ext.Require("Server/Debug/ConsoleWIndowHelpers.lua")
 Ext.Require("Server/Debug/ConsoleCommands.lua")
 if Vars.DebugMode then
 	Ext.Require("Server/Debug/DebugMain.lua")

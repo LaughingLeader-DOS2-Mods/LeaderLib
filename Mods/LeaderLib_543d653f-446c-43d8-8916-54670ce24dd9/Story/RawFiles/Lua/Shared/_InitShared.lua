@@ -33,7 +33,8 @@ Vars = {
 	},
 	ControllerEnabled = false,
 	Users = {},
-	IsEditorMode = false
+	IsEditorMode = false,
+	ConsoleWindowVariables = {}
 }
 
 function PrintDebug(...)
@@ -275,7 +276,7 @@ function Import(targetModTable, skipExistingCheck)
 	for _,k in pairs(imports.All) do
 		if skipExistingCheck == true or not targetModTable[k] then
 			targetModTable[k] = Mods.LeaderLib[k]
-		elseif Vars.DebugMode then
+		elseif Vars.DebugMode and not Vars.ConsoleWindowVariables[k] then
 			fprint(LOGLEVEL.WARNING, "Global key (%s) already exists in mod table for mod (%s)", k, modName)
 		end
 	end
@@ -284,7 +285,7 @@ function Import(targetModTable, skipExistingCheck)
 		if ignoreImports[k] ~= true and type(v) == "function" then
 			if skipExistingCheck == true or not targetModTable[k] then
 				targetModTable[k] = v
-			elseif Vars.DebugMode then
+			elseif Vars.DebugMode and not Vars.ConsoleWindowVariables[k] then
 				fprint(LOGLEVEL.WARNING, "Global function (%s) already exists in mod table for mod (%s)", k, modName)
 			end
 		end
@@ -293,7 +294,7 @@ function Import(targetModTable, skipExistingCheck)
 		for _,k in pairs(imports.Server) do
 			if skipExistingCheck == true or not targetModTable[k] then
 				targetModTable[k] = Mods.LeaderLib[k]
-			elseif Vars.DebugMode then
+			elseif Vars.DebugMode and not Vars.ConsoleWindowVariables[k] then
 				fprint(LOGLEVEL.WARNING, "Global key (%s) already exists in mod table for mod (%s)", k, modName)
 			end
 		end
@@ -301,7 +302,7 @@ function Import(targetModTable, skipExistingCheck)
 		for _,k in pairs(imports.Client) do
 			if skipExistingCheck == true or not targetModTable[k] then
 				targetModTable[k] = Mods.LeaderLib[k]
-			elseif Vars.DebugMode then
+			elseif Vars.DebugMode and not Vars.ConsoleWindowVariables[k] then
 				fprint(LOGLEVEL.WARNING, "Global key (%s) already exists in mod table for mod (%s)", k, modName)
 			end
 		end
@@ -323,7 +324,7 @@ function ImportUnsafe(targetModTable, skipExistingCheck)
 		if ignoreImports[k] ~= true then
 			if skipExistingCheck == true or not targetModTable[k] then
 				targetModTable[k] = v
-			elseif Vars.DebugMode then
+			elseif Vars.DebugMode and not Vars.ConsoleWindowVariables[k] then
 				fprint(LOGLEVEL.WARNING, "[LeaderLib:ImportUnsafe] Global key (%s) already exists in mod table for mod (%s)", k, modName)
 			end
 		end

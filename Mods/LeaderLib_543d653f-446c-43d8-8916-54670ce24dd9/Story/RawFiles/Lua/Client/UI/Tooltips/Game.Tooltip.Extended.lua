@@ -695,7 +695,6 @@ end
 ---@class TooltipRequest:table
 ---@field Type string
 
-
 ---@class GenericTooltipRequest:table
 ---@field Type string
 ---@field CallingUI integer
@@ -718,6 +717,8 @@ TooltipHooks = {
 	GlobalListeners = {},
 	TypeListeners = {},
 	ObjectListeners = {},
+	LastTooltipRequestEvent = "",
+	LastRequestType = "",
 }
 
 ---@class TooltipArrayData
@@ -905,6 +906,7 @@ function TooltipHooks:RegisterControllerHooks()
 			Item = Ext.GetItem(itemHandle)
 		}
 		self.NextRequest = request
+		self.LastTooltipRequestEvent = method
 	end)
 	Ext.RegisterUITypeInvokeListener(Data.UIType.reward_c, "updateTooltipData", function (ui, method, ...)
 		self:OnRenderTooltip(TooltipArrayNames.Console.Reward, ui, method, ...)
@@ -935,6 +937,7 @@ function TooltipHooks:RegisterControllerHooks()
 			Item = Ext.GetItem(itemHandle)
 		}
 		self.NextRequest = request
+		self.LastTooltipRequestEvent = method
 	end)
 	Ext.RegisterUITypeInvokeListener(Data.UIType.trade_c, "updateTooltip", function(...)
 		self:OnRenderTooltip(TooltipArrayNames.Console.Trade, ...)
@@ -1019,6 +1022,7 @@ function TooltipHooks:Init()
 	end)	
 
 	Ext.RegisterUINameCall("hideTooltip", function (ui, call, ...)
+		self.LastRequestType = ""
 		if self.NextRequest and self.NextRequest.Type == "Generic" then
 			self.NextRequest = nil
 		end
@@ -1065,6 +1069,7 @@ function TooltipHooks:OnRequestGenericTooltip(ui, call, text, x, y, width, heigh
 	end
 
 	self.NextRequest = request
+	self.LastTooltipRequestEvent = call
 end
 
 function TooltipHooks:UpdateGenericTooltip(ui, method, keepUIinScreen)
@@ -1110,6 +1115,7 @@ function TooltipHooks:OnRenderGenericTooltip(ui, method, text, x, y, allowDelay,
 	else
 		self.GenericTooltipData = nil
 	end
+	self.LastRequestType = "Generic"
 	self.NextRequest = nil
 end
 
@@ -1223,6 +1229,7 @@ function TooltipHooks:OnRequestTooltip(ui, method, arg1, arg2, arg3, ...)
 	end
 
 	self.NextRequest = request
+	self.LastTooltipRequestEvent = method
 
 	if method == "showCustomStatTooltip" then
 		CustomStatSystem:OnRequestTooltip(ui, method, request.Stat, arg3, table.unpack({...}))
@@ -1260,6 +1267,7 @@ function TooltipHooks:OnRequestExamineUITooltip(ui, method, typeIndex, id, ...)
 	end
 
 	self.NextRequest = request
+	self.LastTooltipRequestEvent = method
 end
 
 ---@param ui UIObject
@@ -1357,9 +1365,9 @@ function TooltipHooks:OnRenderTooltip(arrayData, ui, method, ...)
 	end
 
 	local req = self.NextRequest
+	self.LastRequestType = req.Type
 
 	self:OnRenderSubTooltip(ui, arrayData.Main, req, method, ...)
-
 	
 	if req.Type == "Item" then
 		local this = ui:GetRoot()
@@ -1502,6 +1510,7 @@ function TooltipHooks:OnRequestConsoleExamineTooltip(ui, method, id, characterHa
 	end
 
 	self.NextRequest = request
+	self.LastTooltipRequestEvent = method
 end
 
 --- @param ui UIObject
@@ -1541,6 +1550,7 @@ function TooltipHooks:OnRequestConsoleHotbarTooltip(ui, method, slotNum)
 	end
 
 	self.NextRequest = request
+	self.LastTooltipRequestEvent = method
 end
 
 --- @param ui UIObject
@@ -1598,6 +1608,7 @@ function TooltipHooks:OnRequestConsoleInventoryTooltip(ui, method, itemHandleDou
 
 	self.LastItemRequest = request
 	self.NextRequest = request
+	self.LastTooltipRequestEvent = method
 end
 
 --- @param ui UIObject
@@ -1637,6 +1648,7 @@ function TooltipHooks:OnRequestConsoleCCTooltip(ui, method, arg1, arg2)
 	end
 
 	self.NextRequest = request
+	self.LastTooltipRequestEvent = method
 end
 
 function TooltipHooks:OnRequestRuneTooltip(ui, method, slot)
@@ -1647,6 +1659,8 @@ function TooltipHooks:OnRequestRuneTooltip(ui, method, slot)
 		Slot = slot,
 		StatsId = nil
 	}
+
+	self.LastTooltipRequestEvent = method
 
 	local main = ui:GetRoot()
 	if main then
@@ -1800,12 +1814,19 @@ local function ElementTypeMatch(e,t,isTable)
 	end
 end
 
-function TooltipData:GetElement(t)
+---@param t string|string[] The tooltip element type.
+---@param fallback TooltipElement|nil If an element of the type isn't found, the fallback is appended and returned, if set.
+function TooltipData:GetElement(t, fallback)
 	local isTable = type(t) == "table"
 	for i,element in pairs(self.Data) do
 		if ElementTypeMatch(element.Type, t, isTable) then
 			return element
 		end
+	end
+	--If this element wasn't found, and fallback is set, append it.
+	if fallback ~= nil then
+		self:AppendElement(fallback)
+		return fallback
 	end
 end
 
@@ -1914,6 +1935,13 @@ function Game.Tooltip.RegisterListener(...)
 	else
 		TooltipHooks:RegisterListener(args[1], args[2], args[3])
 	end
+end
+
+function Game.Tooltip.LastRequestTypeEquals(t)
+	if TooltipHooks.LastRequestType == t or (TooltipHooks.NextRequest and TooltipHooks.NextRequest.Type == t) then
+		return true
+	end
+	return false
 end
 
 local function OnSessionLoaded()

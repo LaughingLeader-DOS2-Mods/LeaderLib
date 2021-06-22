@@ -1,3 +1,140 @@
+---@alias BeforeStatusAttemptCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, handle:integer):void
+---@alias StatusEventCallback fun(target:string, status:string, source:string|nil):void
+---@alias StatusEventID string
+
+---Values for the RegisterStatusListener event parameter.
+---@class StatusEventValues
+---@field BeforeAttempt StatusEventID BeforeAttempt, NRD_OnStatusAttempt
+---@field Attempt StatusEventID Attempt, CharacterStatusAttempt/ItemStatusAttempt
+---@field Applied StatusEventID Applied, CharacterStatusApplied/ItemStatusChange
+---@field Removed StatusEventID Removed, CharacterStatusRemoved/ItemStatusRemoved
+Vars.StatusEvent = {
+	BeforeAttempt = "BeforeAttempt",
+	Attempt = "Attempt",
+	Applied = "Applied",
+	Removed = "Removed",
+}
+
+StatusListeners = {
+	---@type table<string, BeforeStatusAttemptCallback[]>
+	[Vars.StatusEvent.BeforeAttempt] = {},
+	---@type table<string, StatusEventCallback[]>
+	[Vars.StatusEvent.Attempt] = {},
+	---@type table<string, StatusEventCallback[]>
+	[Vars.StatusEvent.Applied] = {},
+	---@type table<string, StatusEventCallback[]>
+	[Vars.StatusEvent.Removed] = {},
+}
+
+StatusTypeListeners = {
+	---@type table<string, BeforeStatusAttemptCallback[]>
+	[Vars.StatusEvent.BeforeAttempt] = {},
+	---@type table<string, StatusEventCallback[]>
+	[Vars.StatusEvent.Attempt] = {},
+	---@type table<string, StatusEventCallback[]>
+	[Vars.StatusEvent.Applied] = {},
+	---@type table<string, StatusEventCallback[]>
+	[Vars.StatusEvent.Removed] = {},
+}
+
+---If a mod registers a listener for an ignored status (such as HIT), it will be added to this table to allow callbacks to run for that status.
+---@type table<string,boolean>
+Vars.RegisteredIgnoredStatus = {}
+
+---@param event StatusEventID BeforeAttempt, Attempt, Applied, Removed
+---@param status string A status id or status type.
+---@param callback StatusEventCallback
+function RegisterStatusListener(event, status, callback)
+    local statusEventHolder = StatusListeners[event]
+	if statusEventHolder then
+        if type(status) == "table" then
+			for i,v in pairs(status) do
+				RegisterStatusListener(event, v, callback)
+            end
+        else
+            if StringHelpers.Equals(status, "All", true) then
+                status = "All"
+            elseif Data.IgnoredStatus[status] == true then
+                Vars.RegisteredIgnoredStatus[status] = true
+            end
+
+            if statusEventHolder[status] == nil then
+                statusEventHolder[status] = {}
+            end
+            table.insert(statusEventHolder[status], callback)
+        end
+    end
+end
+
+---@param event StatusEventID
+---@param status string
+---@param callback StatusEventCallback
+---@param removeAll boolean|nil
+function RemoveStatusListener(event, status, callback, removeAll)
+    local statusEventHolder = StatusListeners[event]
+    if statusEventHolder then
+        local tbl = statusEventHolder[status]
+        if tbl then
+            if removeAll ~= true then
+                for i,v in pairs(tbl) do
+                    if v == callback then
+                        table.remove(tbl, i)
+                    end
+                end
+            else
+                statusEventHolder[status] = nil
+            end
+        end
+    end
+end
+
+---@param event StatusEventID BeforeAttempt, Attempt, Applied, Removed
+---@param statusType string
+---@param callback StatusEventCallback
+function RegisterStatusTypeListener(event, statusType, callback)
+    local statusEventHolder = StatusTypeListeners[event]
+	if statusEventHolder then
+        if type(statusType) == "table" then
+			for i,v in pairs(statusType) do
+				RegisterStatusTypeListener(event, v, callback)
+            end
+        else
+            if StringHelpers.Equals(statusType, "All", true) then
+                statusType = "All"
+            elseif Data.IgnoredStatus[statusType] == true then
+                Vars.RegisteredIgnoredStatus[statusType] = true
+            end
+
+            if statusEventHolder[statusType] == nil then
+                statusEventHolder[statusType] = {}
+            end
+            table.insert(statusEventHolder[statusType], callback)
+        end
+    end
+end
+
+---@param event StatusEventID
+---@param statusType string
+---@param callback StatusEventCallback
+---@param removeAll boolean|nil
+function RemoveStatusTypeListener(event, statusType, callback, removeAll)
+    local statusEventHolder = StatusTypeListeners[event]
+    if statusEventHolder then
+        local tbl = statusEventHolder[statusType]
+        if tbl then
+            if removeAll ~= true then
+                for i,v in pairs(tbl) do
+                    if v == callback then
+                        table.remove(tbl, i)
+                    end
+                end
+            else
+                statusEventHolder[statusType] = nil
+            end
+        end
+    end
+end
+
 local function IgnoreStatus(status)
 	if Data.IgnoredStatus[status] == true and Vars.RegisteredIgnoredStatus[status] ~= true then
 		return true
@@ -19,6 +156,14 @@ local redirectStatusId = {
 
 local function TryGetStatus(target, handle)
 	return Ext.GetStatus(target, handle)
+end
+
+local function InvokeStatusListeners(event, status, statusType, ...)
+	local statusEventHolder, statusTypeEventHolder = StatusListeners[event], StatusTypeListeners[event]
+	InvokeListenerCallbacks(statusEventHolder[status], ...)
+	InvokeListenerCallbacks(statusEventHolder.All, ...)
+	InvokeListenerCallbacks(statusTypeEventHolder[statusType], ...)
+	InvokeListenerCallbacks(statusTypeEventHolder.All, ...)
 end
 
 ---@param statusId string
@@ -71,8 +216,7 @@ local function BeforeStatusAttempt(statusId, target, source, handle, targetId, s
 	end
 	target = target or targetId
 	source = source or sourceId
-	InvokeListenerCallbacks(StatusListeners.BeforeAttempt[statusId], target, status, source, handle)
-	InvokeListenerCallbacks(StatusListeners.BeforeAttempt.All, target, status, source, handle)
+	InvokeStatusListeners(Vars.StatusEvent.BeforeAttempt, target, status, source, handle, statusType)
 end
 
 RegisterProtectedOsirisListener("NRD_OnStatusAttempt", 4, "after", function(target,status,handle,source)
@@ -86,15 +230,8 @@ end)
 local function OnStatusAttempt(target,status,source)
 	target = StringHelpers.GetUUID(target)
 	source = StringHelpers.GetUUID(source)
-	local callbacks = StatusListeners.Attempt[status]
-	if callbacks then
-		for i=1,#callbacks do
-			local b,err = xpcall(callbacks[i], debug.traceback, target, status, source)
-			if not b then
-				Ext.PrintError(err)
-			end
-		end
-	end
+	local statusType = GameHelpers.Status.GetStatusType(status)
+	InvokeStatusListeners(Vars.StatusEvent.Attempt, target, status, source, statusType)
 end
 
 local function ParseStatusAttempt(target,status,source)
@@ -165,6 +302,7 @@ local forceStatuses = {
 }
 
 local function OnStatusApplied(target,status,source)
+	local statusType = GameHelpers.Status.GetStatusType(status)
 	if status == "SUMMONING" then
 		local summon = Ext.GetGameObject(target)
 		if summon then
@@ -192,15 +330,7 @@ local function OnStatusApplied(target,status,source)
 			end
 		end
 	end
-	local callbacks = StatusListeners.Applied[status]
-	if callbacks then
-		for i=1,#callbacks do
-			local b,err = xpcall(callbacks[i], debug.traceback, target, status, source)
-			if not b then
-				Ext.PrintError(err)
-			end
-		end
-	end
+	InvokeStatusListeners(Vars.StatusEvent.Applied, target, status, source, statusType)
 	if forceStatuses[status] and not StringHelpers.IsNullOrEmpty(source) and ObjectIsCharacter(source) == 1 then
 		--local distance = tonumber(string.gsub(status, "LEADERLIB_FORCE_PUSH", ""))
 		GameHelpers.ForceMoveObject(Ext.GetCharacter(source), Ext.GetGameObject(target), forceStatuses[status])
@@ -208,30 +338,21 @@ local function OnStatusApplied(target,status,source)
 end
 
 local function OnStatusRemoved(target,status)
+	local statusType = GameHelpers.Status.GetStatusType(status)
 	--PrintDebug("OnStatusRemoved", target,status)
 	local source = nil
 	if Vars.LeaveActionData.Total > 0 then
 		source = GetStatusSource(target, status)
-		if source ~= nil then
-			local skill = Vars.LeaveActionData.Statuses[status]
-			if skill ~= nil then
-				GameHelpers.ExplodeProjectile(source, target, skill)
-			end
+		local skill = Vars.LeaveActionData.Statuses[status]
+		if skill then
+			GameHelpers.Skill.Explode(target, skill, source)
+		end
+		if source then
 			ClearStatusSource(target, status)
 		end
 	end
-	-- if Vars.DebugMode then
-	-- 	fprint(LOGLEVEL.TRACE, "[LeaderLib:OnStatusRemoved] (%s, %s, %s)", target, status, source)
-	-- end
-	local callbacks = StatusListeners.Removed[status]
-	if callbacks then
-		for i=1,#callbacks do
-			local b,err = xpcall(callbacks[i], debug.traceback, target, status, source)
-			if not b then
-				Ext.PrintError(err)
-			end
-		end
-	end
+	source = source or StringHelpers.NULL_UUID
+	InvokeStatusListeners(Vars.StatusEvent.Removed, target, status, source, statusType)
 end
 
 local function ParseStatusApplied(target,status,source)

@@ -60,6 +60,8 @@ LOGLEVEL = {
 	WARNING = 2,
 	--- Ext.PrintError
 	ERROR = 3,
+	--- Ext.Print if in DeveloperMode
+	TRACE2 = 4,
 }
 
 ---Prints a string formatted message with optional severity.
@@ -77,6 +79,10 @@ function fprint(severity, str, ...)
 		elseif severity == LOGLEVEL.TRACE then
 			if Vars.DebugMode then
 				print(msg)
+			end
+		elseif severity == LOGLEVEL.TRACE2 then
+			if Vars.DebugMode then
+				Ext.Print(msg)
 			end
 		else
 			Ext.Print(msg)
@@ -101,19 +107,6 @@ GlobalSettings = {
 	---@type table<string, ModSettings>
 	Mods = {},
 	Version = Ext.GetModInfo("7e737d2f-31d2-4751-963f-be6ccc59cd0c").Version,
-}
-
-StatusTypes = {
-	ACTIVE_DEFENSE = {},
-	BLIND = {},
-	CHARMED = { CHARMED = true },
-	DAMAGE_ON_MOVE = {},
-	DISARMED = {},
-	INCAPACITATED = {},
-	INVISIBLE = {},
-	KNOCKED_DOWN = {},
-	MUTED = {},
-	POLYMORPHED = {},
 }
 
 IgnoredMods = {

@@ -95,16 +95,6 @@ function RegisterModListener(event, uuid, callback)
 end
 
 Ext.RegisterListener("SessionLoading", function()
-	for i,status in pairs(Ext.GetStatEntries("StatusData")) do
-		local statusType = Ext.StatGetAttribute(status, "StatusType")
-		if not StringHelpers.IsNullOrWhitespace(statusType) then
-			local statusTypeTable = StatusTypes[statusType]
-			if statusTypeTable ~= nil then
-				statusTypeTable[status] = true
-			end
-		end
-	end
-
 	if Ext.IsServer() then
 		if PersistentVars["OriginalSkillTiers"] ~= nil then
 			Data.OriginalSkillTiers = PersistentVars["OriginalSkillTiers"]

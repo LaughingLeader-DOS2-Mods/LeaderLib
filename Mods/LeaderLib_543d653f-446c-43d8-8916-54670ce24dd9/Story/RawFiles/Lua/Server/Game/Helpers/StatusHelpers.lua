@@ -6,25 +6,15 @@ end
 ---@param obj string
 ---@return boolean
 function GameHelpers.Status.IsSneakingOrInvisible(obj)
-    if HasActiveStatus(obj, "SNEAKING") == 1 or HasActiveStatus(obj, "INVISIBLE") == 1 then
+    if HasActiveStatus(obj, "SNEAKING") == 1 or HasActiveStatus(obj, "INVISIBLE") == 1 or NRD_ObjectHasStatusType(obj, "INVISIBLE") == 1 then
         return true
-	else
-		local invisibleTable = StatusTypes["INVISIBLE"]
-		if invisibleTable ~= nil then
-			for status,b in pairs(invisibleTable) do
-				if HasActiveStatus(obj, status) == 1 then
-					return true
-				end
-			end
-		end
     end
     return false
 end
 
 Ext.NewQuery(GameHelpers.Status.IsSneakingOrInvisible, "LeaderLib_Ext_QRY_IsSneakingOrInvisible", "[in](GUIDSTRING)_Object, [out](INTEGER)_Bool")
 
----Returns true if the object has a tracked type status.
----Current tracked types: ACTIVE_DEFENSE, BLIND, CHARMED, DAMAGE_ON_MOVE, DISARMED, INCAPACITATED, INVISIBLE, KNOCKED_DOWN, MUTED, POLYMORPHED
+---Returns true if the object has a status with a specific type.
 ---@param obj string
 ---@param statusType string
 ---@return boolean
@@ -36,23 +26,9 @@ local function ObjectHasStatusType(obj, statusType)
 				return true
 			end
 		end
-	else
-		if statusType ~= nil and statusType ~= "" then
-			statusType = string.upper(statusType)
-			if HasActiveStatus(obj, statusType) == 1 or NRD_ObjectHasStatusType(obj, statusType) == 1 then
-				return true
-			else
-				local statusTypeTable = StatusTypes[statusType]
-				if statusTypeTable ~= nil then
-					for status,b in pairs(statusTypeTable) do
-						if HasActiveStatus(obj, status) == 1 then
-							return true
-						end
-					end
-				else
-					return HasActiveStatus(obj, statusType) == 1 or NRD_ObjectHasStatusType(obj, statusType) == 1
-				end
-			end
+	elseif not StringHelpers.IsNullOrWhitespace(statusType) then
+		if HasActiveStatus(obj, statusType) == 1 or NRD_ObjectHasStatusType(obj, statusType) == 1 then
+			return true
 		end
 	end
     return false
@@ -110,7 +86,8 @@ end
 ---@param checkForLoseControl boolean
 ---@return boolean
 function GameHelpers.Status.IsDisablingStatus(status, checkForLoseControl)
-	if StatusTypes.KNOCKED_DOWN[status] == true or StatusTypes.INCAPACITATED[status] == true then
+	local statusType = GameHelpers.Status.GetStatusType(status)
+	if statusType == "KNOCKED_DOWN" or statusType == "INCAPACITATED" then
 		return true
 	end
 	if checkForLoseControl == true then

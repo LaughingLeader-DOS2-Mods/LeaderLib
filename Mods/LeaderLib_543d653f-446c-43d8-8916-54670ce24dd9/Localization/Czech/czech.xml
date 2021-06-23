@@ -91,6 +91,7 @@
 	<content contentuid="h3ed2c7c5gf6c0g4c9dga916g5782593327ab">Open Mod Menu</content>
 	<content contentuid="h3eff6bc1gb26dg4bb5gb3b9g2551c65026e0">Apply On Hit:&lt;br&gt;[1] for [2] turns(s). ([3] Chance)</content>
 	<content contentuid="h3fb60439g4406g4623ga6b7gb53cda538fcb">*The old man runs his hands over his clothes, trying to iron out the wrinkles.* What can I do for you, stranger?</content>
+	<content contentuid="h4068702bg907fg461fg9a40gc81903183c0b">Enable Buff Status Preservation</content>
 	<content contentuid="h409bfd42g2257g4cb8gb3fbgedcb8adecaed">Extra Stats</content>
 	<content contentuid="h40ac3891g3661g43eag878dg6510b001704a">[LeaderLib_DynamicMenu_MenuOption4_e6bea606-b29a-4bfe-8959-94e8be8330cb]</content>
 	<content contentuid="h4120c4e5g4931g46dbgad0fga7a57514ac42">Rifle</content>
@@ -148,6 +149,7 @@
 	<content contentuid="h62fcf915g9babg41e3gbc1fg7cec5eeb59ce">[GLOBAL] Disable Combat Log Logging</content>
 	<content contentuid="h632cbbd2g4193g4921g979fg1abd006f1e0b">Running command...</content>
 	<content contentuid="h6349d1c7g6af8g4bb0g9d17g1e09f64a3d6f">[LeaderLib_LeaderTrader_Greeting_f143b90b-9afc-477e-b133-6a1574341261]</content>
+	<content contentuid="h64555a73gf2e7g4a0cga2efgd3b6adf97f25">If enabled, beneficial statuses applied by skills outside of combat will be permanent until you enter combat. Some status types are ignored, like Invisible and healing statuses. </content>
 	<content contentuid="h6472ecb0g5977g4c93g8a51g6444c9402d47">So. How about a trade?</content>
 	<content contentuid="h64aef327g59b3g4c63gacb9g834c0ba020e0">Insight on how to manage multiple summons at the same time. For summoners, by summoners. Read this book to learn this skill.</content>
 	<content contentuid="h658b85b9g49abg4c9fg9215ga09ac36d3e53">[GLOBAL] Disable Autosaving in Combat</content>

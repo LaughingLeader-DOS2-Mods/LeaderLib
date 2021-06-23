@@ -405,6 +405,14 @@ function SettingsData:SetMetatables()
 	setmetatable(self, SettingsData)
 end
 
+---@param id string
+---@param value any
+---@param data FlagData|VariableData
+function SettingsData:InvokeListenerCallbacks(id, value, data)
+	InvokeListenerCallbacks(Listeners.ModSettingsChanged.All, id, value, data, self)
+	InvokeListenerCallbacks(Listeners.ModSettingsChanged[id], id, value, data, self)
+end
+
 ---@param source SettingsData
 function SettingsData:CopySettings(source)
 	if source.Flags then
@@ -435,6 +443,7 @@ function SettingsData:SetFlag(id, enabled)
 	local entry = self.Flags[id]
 	if entry ~= nil then
 		entry.Enabled = enabled
+		self:InvokeListenerCallbacks(id, enabled, entry)
 		return true
 	end
 	return false
@@ -448,6 +457,7 @@ function SettingsData:SetVariable(id, value)
 		else
 			entry.Value = value
 		end
+		self:InvokeListenerCallbacks(id, value, entry)
 		return true
 	end
 	return false

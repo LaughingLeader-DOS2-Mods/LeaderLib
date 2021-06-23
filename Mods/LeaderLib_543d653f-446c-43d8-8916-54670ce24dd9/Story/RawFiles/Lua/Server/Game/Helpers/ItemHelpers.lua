@@ -146,6 +146,49 @@ function GameHelpers.Item.GetStatsForRootTemplate(template, statType)
     return matches
 end
 
+local function WithinLevelRange(targetMin, targetMax, compareMin, compareMax)
+    return ((targetMin == 0 or compareMin == 0) or compareMin >= targetMin) and ((targetMax == 0 or compareMax == 0) or compareMax >= targetMax)
+end
+
+---@param itemGroupId string
+---@param minLevel integer
+---@param maxLevel integer
+---@param fallbackRarity string
+---@return integer,string,ItemRootGroup[]|nil
+function GameHelpers.Item.GetSupportedGenerationValues(itemGroupId, minLevel, maxLevel, fallbackRarity)
+    local rarity = "Common"
+    local rootGroups = nil
+    local level = minLevel
+    local group = Ext.GetItemGroup(itemGroupId)
+    if group then
+        for i,v in pairs(group.LevelGroups) do
+            if WithinLevelRange(v.MinLevel, v.MaxLevel, minLevel, maxLevel) then
+                if v.Name == "All" then
+                    level = math.max(1, math.max(v.MinLevel, v.MaxLevel))
+                    return level,fallbackRarity,v.RootGroups
+                else
+                    if v.Name == fallbackRarity then
+                        level = math.max(1, math.max(v.MinLevel, v.MaxLevel))
+                        return level,fallbackRarity,v.RootGroups
+                    else
+                        local rarityVal = Data.RarityEnum[v.Name]
+                        local lastRarityVal = Data.RarityEnum[rarity]
+                        if rarityVal > lastRarityVal then
+                            level = math.max(1, math.max(v.MinLevel, v.MaxLevel))
+                            rarity = v.Name
+                            rootGroups = v.RootGroups
+                        end
+                    end
+                end
+            end
+        end
+    end
+    if rarity == "" then
+        rarity = fallbackRarity
+    end
+    return level,rarity,rootGroups
+end
+
 ---Creates an item by stat, provided it has an ItemGroup set (for equipment).
 ---@param statName string
 ---@param skipLevelCheck boolean
@@ -156,9 +199,11 @@ function GameHelpers.Item.CreateItemByStat(statName, skipLevelCheck, properties)
     local stat = nil
     local statType = ""
     local level = properties and properties.StatsLevel or 1
+    local generationLevel = level
     local generatedRarity = "Common"
     local targetRarity = "Common"
     local rootTemplate = properties and properties.RootTemplate or nil
+    local itemGroup = nil
 
     if type(statName) == "string" then
         stat = Ext.GetStat(statName, level)
@@ -190,29 +235,22 @@ function GameHelpers.Item.CreateItemByStat(statName, skipLevelCheck, properties)
     if properties and properties.HasGeneratedStats ~= nil then
         hasGeneratedStats = properties.HasGeneratedStats
     end
+
+    if stat and (statType ~= "Object" and statType ~= "Potion") then
+        if not StringHelpers.IsNullOrWhitespace(stat.ItemGroup) then
+            itemGroup = stat.ItemGroup
+            local rootGroups = nil
+            generationLevel,generatedRarity,rootGroups = GameHelpers.Item.GetSupportedGenerationValues(itemGroup, level, 0, "Common")
+            if not rootTemplate and (rootGroups and #rootGroups > 0) then
+                rootTemplate = rootGroups[1].RootGroup
+            end
+        end
+    end
+
     if rootTemplate == nil then
         if (statType == "Object" or statType == "Potion") then
             if stat.RootTemplate ~= nil and stat.RootTemplate ~= "" then
                 rootTemplate = stat.RootTemplate
-            end
-        else
-            if stat ~= nil and stat.ItemGroup ~= nil and stat.ItemGroup ~= "" then
-                hasGeneratedStats = true
-                local group = Ext.GetItemGroup(stat.ItemGroup)
-                local rarityMatch = false
-                for i,v in pairs(group.LevelGroups) do
-                    if v.Name == rarity then 
-                        rarityMatch = true
-                    end
-                    if v.Name == "All" or v.Name == rarity or not rarityMatch then
-                        if skipLevelCheck == true or (v.MinLevel <= level or v.MinLevel <= 0) and (v.MaxLevel <= level or v.MaxLevel <= 0) then
-                            rootTemplate = v.RootGroups[1].RootGroup
-                            break
-                        elseif rootTemplate == nil then
-                            rootTemplate = v.RootGroups[1].RootGroup
-                        end
-                    end
-                end
             end
         end
     end
@@ -227,10 +265,10 @@ function GameHelpers.Item.CreateItemByStat(statName, skipLevelCheck, properties)
         props.OriginalRootTemplate = rootTemplate
         props.GenerationStatsId = stat.Name
         props.HasGeneratedStats = hasGeneratedStats
-        props.GenerationLevel = level
+        props.GenerationLevel = generationLevel
+        props.GenerationItemType = generatedRarity
         props.StatsLevel = level
         props.ItemType = targetRarity
-        props.GenerationItemType = generatedRarity
 
         if properties and type(properties) == "table" then
             for k,v in pairs(properties) do

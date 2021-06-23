@@ -258,9 +258,9 @@ end
 
 local beneficialStatusTypes = {
 	ACTIVE_DEFENSE = true,
-	ADRENALINE = true,
-	BOOST = true,
-	EXTRA_TURN = true,
+	--ADRENALINE = true,
+	--BOOST = true,
+	--EXTRA_TURN = true,
 	FLOATING = true,
 	GUARDIAN_ANGEL = true,
 	HEAL = true,
@@ -269,9 +269,16 @@ local beneficialStatusTypes = {
 	HEALING = true,
 	INVISIBLE = true,
 	LEADERSHIP = true,
-	PLAY_DEAD = true,
+	--PLAY_DEAD = true,
 	STANCE = true,
 	WIND_WALKER = true,
+}
+
+local healingStatusTypes = {
+	HEAL = true,
+	HEAL_SHARING = true,
+	HEAL_SHARING_CASTER = true,
+	HEALING = true,
 }
 
 ---@param stat StatEntryPotion|table
@@ -336,8 +343,12 @@ end
 ---A status is beneficial if it grants bonuses or is a beneficial type (FLOATING, ACTIVE_DEFENSE, HEAL etc).
 ---@param statusId string
 ---@param ignoreItemPotions boolean|nil Ignore potions with IsFood or IsConsumable.
-function GameHelpers.Status.IsBeneficial(statusId, ignoreItemPotions)
+---@param ignoreStatusTypes table<string,boolean>|nil Status types to ignore.
+function GameHelpers.Status.IsBeneficial(statusId, ignoreItemPotions, ignoreStatusTypes)
 	local statusType = GameHelpers.Status.GetStatusType(statusId)
+	if ignoreStatusTypes and ignoreStatusTypes[statusType] then
+		return false
+	end
 	if beneficialStatusTypes[statusType] == true then
 		return true
 	elseif statusType ~= "EFFECT" and not Data.IgnoredStatus[statusId] then

@@ -1,5 +1,5 @@
----@alias BeforeStatusAttemptCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, handle:integer):void
----@alias StatusEventCallback fun(target:string, status:string, source:string|nil):void
+---@alias BeforeStatusAttemptCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, handle:integer, statusType:string):void
+---@alias StatusEventCallback fun(target:string, status:string, source:string|nil, statusType:string):void
 ---@alias StatusEventID string
 
 ---Values for the RegisterStatusListener event parameter.

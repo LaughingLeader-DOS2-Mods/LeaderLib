@@ -2,23 +2,26 @@ if BuffStatusPreserver == nil then
 	BuffStatusPreserver = {}
 end
 BuffStatusPreserver.Enabled = false
+BuffStatusPreserver.NextBuffStatus = {}
 if Vars.DebugMode then
-	BuffStatusPreserver.Enabled = true
+	--BuffStatusPreserver.Enabled = true
 end
 local self = BuffStatusPreserver
 
----@param potion StatEntryPotion
-local function IsBuffPotion(potion)
-	if potion.IsFood == "Yes" or potion.IsConsumable == "Yes" then
-		return false
-	end
-	return GameHelpers.Status.IsBeneficialPotion(potion)
-end
+BuffStatusPreserver.IgnoreStatusTypes = {
+	HEAL = true,
+	HEAL_SHARING = true,
+	HEAL_SHARING_CASTER = true,
+	HEALING = true,
+	INVISIBLE = true,
+	EXTRA_TURN = true,
+	GUARDIAN_ANGEL = true,
+}
 
 ---@param character EsvCharacter
 ---@param status EsvStatus
-function BuffStatusPreserver.PreserveStatus(character, status)
-	if status.CurrentLifeTime > 0 and GameHelpers.Status.IsBeneficial(status.StatusId, true) then
+function BuffStatusPreserver.PreserveStatus(character, status, skipCheck)
+	if status.CurrentLifeTime > 0 and (skipCheck == true or GameHelpers.Status.IsBeneficial(status.StatusId, true, self.IgnoreStatusTypes)) then
 		if not PersistentVars.BuffStatuses[character.MyGuid] then
 			PersistentVars.BuffStatuses[character.MyGuid] = {}
 		end
@@ -72,11 +75,36 @@ end
 function BuffStatusPreserver.OnStatusApplied(target, status, source, statusType)
 	if not self.Enabled then return end
 	if CharacterIsInCombat(target) == 0 and GameHelpers.Character.IsPlayerOrPartyMember(target) then
-		local character = Ext.GetCharacter(target)
-		self.PreserveStatus(character, character:GetStatus(status))
+		local data = self.NextBuffStatus[target]
+		if data and data[status] then
+			self.NextBuffStatus[target][status] = nil
+			local character = Ext.GetCharacter(target)
+			self.PreserveStatus(character, character:GetStatus(status), true)
+		end
+	end
+end
+
+--Only preserve beneficial statuses applied by skills.
+function BuffStatusPreserver.OnSkillUsed(caster, skill, skillType, skillElement)
+	if not self.Enabled then return end
+	if CharacterIsInCombat(caster) == 0 and GameHelpers.Character.IsPlayerOrPartyMember(caster) then
+		caster = StringHelpers.GetUUID(caster)
+		---@type StatProperty[]
+		local props = Ext.StatGetAttribute(skill, "SkillProperties")
+		if props then
+			for i,v in pairs(props) do
+				if v.Type == "Status" and GameHelpers.Status.IsBeneficial(v.Action, true, self.IgnoreStatusTypes) then
+					if self.NextBuffStatus[caster] == nil then
+						self.NextBuffStatus[caster] = {}
+					end
+					self.NextBuffStatus[caster][v.Action] = true
+				end
+			end
+		end
 	end
 end
 
 Ext.RegisterOsirisListener("ObjectLeftCombat", 2, "after", BuffStatusPreserver.OnLeftCombat)
 Ext.RegisterOsirisListener("ObjectEnteredCombat", 2, "after", BuffStatusPreserver.OnEnteredCombat)
+Ext.RegisterOsirisListener("CharacterUsedSkill", 4, "after", BuffStatusPreserver.OnSkillUsed)
 RegisterStatusTypeListener(Vars.StatusEvent.Applied, "CONSUME", BuffStatusPreserver.OnStatusApplied)

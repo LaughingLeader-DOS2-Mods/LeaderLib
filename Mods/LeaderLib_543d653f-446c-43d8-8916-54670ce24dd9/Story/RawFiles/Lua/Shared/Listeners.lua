@@ -15,11 +15,16 @@ Listeners.GetTooltipSkillParam = {}
 --Debug listeners
 Listeners.LuaReset = {}
 Listeners.BeforeLuaReset = {}
+
 Listeners.ModSettingsLoaded = {}
 ---Callbacks for when ModSettings are synced on both the server and client.
 ---@type fun(uuid:string, settings:ModSettings):void[]
 Listeners.ModSettingsSynced = {}
----@type table<string, fun(id:string, value:boolean|integer|any, data:FlagData|VariableData, settings:SettingsData):void>
+
+---@alias ModSettingsFlagDataChangedListener fun(id:string, enabled:boolean, data:FlagData, settings:SettingsData):void
+---@alias ModSettingsVariableDataChangedListener fun(id:string, value:integer, data:VariableData, settings:SettingsData):void
+
+---@type table<string, ModSettingsFlagDataChangedListener|ModSettingsVariableDataChangedListener>
 Listeners.ModSettingsChanged = {All = {}}
 
 if Ext.IsServer() then

@@ -54,4 +54,21 @@ function VariableData:Create(id, value, displayName, tooltip, min, max, interval
     return this
 end
 
+---@param listener ModSettingsVariableDataChangedListener|ModSettingsVariableDataChangedListener[]
+function VariableData:AddListener(listener)
+	local t = type(listener)
+	if t == "function" then
+		if Listeners.ModSettingsChanged[self.ID] == nil then
+			Listeners.ModSettingsChanged[self.ID] = {}
+		end
+		table.insert(Listeners.ModSettingsChanged[self.ID], listener)
+	elseif t == "table" then
+		for i,v in pairs(listener) do
+			self:AddListener(v)
+		end
+	else
+		error(string.format("[LeaderLib:VariableData:AddListener(%s)] The listener param must be a function or table of functions. Type(%s)", self.ID, t))
+	end
+end
+
 Classes.ModSettingsClasses.VariableData = VariableData

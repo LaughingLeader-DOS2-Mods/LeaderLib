@@ -17,6 +17,7 @@ settings.Global:AddLocalizedFlags({
 	"LeaderLib_PullPartyIntoCombat",
 	"LeaderLib_UnhealableFix_Enabled",
 	"LeaderLib_AllTooltipsForItemsEnabled",
+	"LeaderLib_BuffStatusPreserverEnabled",
 })
 settings.Global.Flags.LeaderLib_RemovePathInfluencesOnChainAll.DebugOnly = true
 settings.Global:AddLocalizedVariable("AutosaveInterval", "LeaderLib_Variables_AutosaveInterval", 15, 1, 600, 1)
@@ -33,6 +34,7 @@ settings.GetMenuOrder = function()
 			"AutoCombatRange",
 			"LeaderLib_RemovePathInfluencesOnChainAll",
 			"LeaderLib_AllTooltipsForItemsEnabled",
+			"LeaderLib_BuffStatusPreserverEnabled",
 		}},
 		{DisplayName = GameHelpers.GetStringKeyText("LeaderLib_UI_Settings_DialogRedirection", "Dialog Redirection"), 
 		Entries = {		
@@ -80,3 +82,9 @@ if Ext.IsDeveloperMode() then
 end
 
 GlobalSettings.Mods["7e737d2f-31d2-4751-963f-be6ccc59cd0c"] = settings
+
+if Ext.IsServer() then
+	settings.Global.Flags.LeaderLib_BuffStatusPreserverEnabled:AddListener(function(id, enabled, data, settingsData)
+		BuffStatusPreserver:SetEnabled(enabled)
+	end)
+end

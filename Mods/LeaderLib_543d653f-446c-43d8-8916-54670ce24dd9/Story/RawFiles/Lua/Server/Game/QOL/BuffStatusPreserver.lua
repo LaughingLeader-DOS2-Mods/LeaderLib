@@ -54,8 +54,7 @@ function BuffStatusPreserver.OnLeftCombat(obj, id)
 	end
 end
 
-function BuffStatusPreserver.OnEnteredCombat(obj, id)
-	if not self.Enabled then return end
+function BuffStatusPreserver.OnEnteredCombat(obj, combatId)
 	local uuid = StringHelpers.GetUUID(obj)
 	local data = PersistentVars.BuffStatuses[uuid]
 	if data then
@@ -108,3 +107,14 @@ Ext.RegisterOsirisListener("ObjectLeftCombat", 2, "after", BuffStatusPreserver.O
 Ext.RegisterOsirisListener("ObjectEnteredCombat", 2, "after", BuffStatusPreserver.OnEnteredCombat)
 Ext.RegisterOsirisListener("CharacterUsedSkill", 4, "after", BuffStatusPreserver.OnSkillUsed)
 RegisterStatusTypeListener(Vars.StatusEvent.Applied, "CONSUME", BuffStatusPreserver.OnStatusApplied)
+
+function BuffStatusPreserver:SetEnabled(enabled)
+	self.Enabled = enabled
+	if not enabled then
+		if self.PersistentVars.BuffStatuses then
+			for uuid,data in pairs(PersistentVars.BuffStatuses) do
+				self.OnEnteredCombat(uuid, 0)
+			end
+		end
+	end
+end

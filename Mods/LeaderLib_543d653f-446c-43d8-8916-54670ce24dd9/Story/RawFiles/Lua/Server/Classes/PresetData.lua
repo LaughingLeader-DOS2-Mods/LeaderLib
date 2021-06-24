@@ -108,7 +108,7 @@ function PresetData:AddEquipmentToCharacter(char, targetRarity, skipSlots, skipI
 						end
 					end
 					if not skip then
-						local item = GameHelpers.Item.CreateItemByStat(stat, true, presetItemStatProperties)
+						local item = GameHelpers.Item.CreateItemByStat(stat, presetItemStatProperties)
 						if item ~= nil and ObjectExists(item) == 1 then
 							ItemToInventory(item, char, 1, 0, 1)
 							if ItemIsEquipable(item) == 1 then

@@ -167,17 +167,12 @@ function GameHelpers.Item.GetSupportedGenerationValues(itemGroupId, minLevel, ma
                     level = math.max(1, math.max(v.MinLevel, v.MaxLevel))
                     return level,fallbackRarity,v.RootGroups
                 else
-                    if v.Name == fallbackRarity then
+                    local rarityVal = Data.RarityEnum[v.Name]
+                    local lastRarityVal = Data.RarityEnum[rarity]
+                    if rarityVal > lastRarityVal then
                         level = math.max(1, math.max(v.MinLevel, v.MaxLevel))
-                        return level,fallbackRarity,v.RootGroups
-                    else
-                        local rarityVal = Data.RarityEnum[v.Name]
-                        local lastRarityVal = Data.RarityEnum[rarity]
-                        if rarityVal > lastRarityVal then
-                            level = math.max(1, math.max(v.MinLevel, v.MaxLevel))
-                            rarity = v.Name
-                            rootGroups = v.RootGroups
-                        end
+                        rarity = v.Name
+                        rootGroups = v.RootGroups
                     end
                 end
             end
@@ -191,10 +186,9 @@ end
 
 ---Creates an item by stat, provided it has an ItemGroup set (for equipment).
 ---@param statName string
----@param skipLevelCheck boolean
 ---@param properties ItemDefinition|nil
----@return string
-function GameHelpers.Item.CreateItemByStat(statName, skipLevelCheck, properties)
+---@return string,EsvItem
+function GameHelpers.Item.CreateItemByStat(statName, properties)
     ---@type StatEntryWeapon
     local stat = nil
     local statType = ""
@@ -241,6 +235,7 @@ function GameHelpers.Item.CreateItemByStat(statName, skipLevelCheck, properties)
             itemGroup = stat.ItemGroup
             local rootGroups = nil
             generationLevel,generatedRarity,rootGroups = GameHelpers.Item.GetSupportedGenerationValues(itemGroup, level, 0, "Common")
+            print(generationLevel,generatedRarity,rootGroups)
             if not rootTemplate and (rootGroups and #rootGroups > 0) then
                 rootTemplate = rootGroups[1].RootGroup
             end
@@ -265,8 +260,6 @@ function GameHelpers.Item.CreateItemByStat(statName, skipLevelCheck, properties)
         props.OriginalRootTemplate = rootTemplate
         props.GenerationStatsId = stat.Name
         props.HasGeneratedStats = hasGeneratedStats
-        props.GenerationLevel = generationLevel
-        props.GenerationItemType = generatedRarity
         props.StatsLevel = level
         props.ItemType = targetRarity
 
@@ -278,9 +271,21 @@ function GameHelpers.Item.CreateItemByStat(statName, skipLevelCheck, properties)
             end
         end
 
+        props.GenerationLevel = generationLevel
+        props.GenerationItemType = generatedRarity
+
         local newItem = constructor:Construct()
         if newItem then
-            return newItem.MyGuid
+            if not hasGeneratedStats then
+                if properties.IsIdentified then
+                    NRD_ItemSetIdentified(newItem.MyGuid, 1)
+                end
+                if properties.StatsLevel then
+                    ItemLevelUpTo(newItem.MyGuid, properties.StatsLevel)
+                end
+            end
+
+            return newItem.MyGuid,newItem
         end
     end
     return nil

@@ -1071,7 +1071,7 @@ Ext.RegisterConsoleCommand("testchaoswand", function(cmd)
 		}
 	}
 	Ext.SyncStat("WPN_Wand_Chaos", false)
-	local item = GameHelpers.Item.CreateItemByStat("WPN_Wand_Chaos", true, {
+	local item = GameHelpers.Item.CreateItemByStat("WPN_Wand_Chaos", {
 		StatsLevel = math.min(10, CharacterGetLevel(CharacterGetHostCharacter())),
 		ItemType = "Epic",
 		GMFolding = false,
@@ -1081,6 +1081,140 @@ Ext.RegisterConsoleCommand("testchaoswand", function(cmd)
 		ItemToInventory(item, CharacterGetHostCharacter(), 1, 1, 1)
 	else
 		error("Failed to create WPN_Wand_Chaos")
+	end
+end)
+
+local StatEntryArmor = {
+	ArmorBoost = "integer",
+	MagicArmorBoost = "integer",
+	Movement = "integer",
+	Initiative = "integer",
+	--Value = "integer",
+	Fire = "integer",
+	Air = "integer",
+	Water = "integer",
+	Earth = "integer",
+	Poison = "integer",
+	Piercing = "integer",
+	Physical = "integer",
+	StrengthBoost = "Penalty Qualifier",
+	FinesseBoost = "Penalty Qualifier",
+	IntelligenceBoost = "Penalty Qualifier",
+	ConstitutionBoost = "Penalty Qualifier",
+	MemoryBoost = "Penalty Qualifier",
+	WitsBoost = "Penalty Qualifier",
+	SingleHanded = "integer",
+	TwoHanded = "integer",
+	Ranged = "integer",
+	DualWielding = "integer",
+	RogueLore = "integer",
+	WarriorLore = "integer",
+	RangerLore = "integer",
+	FireSpecialist = "integer",
+	WaterSpecialist = "integer",
+	AirSpecialist = "integer",
+	EarthSpecialist = "integer",
+	Sourcery = "integer",
+	Necromancy = "integer",
+	Polymorph = "integer",
+	Summoning = "integer",
+	PainReflection = "integer",
+	Perseverance = "integer",
+	Leadership = "integer",
+	Telekinesis = "integer",
+	Sneaking = "integer",
+	Thievery = "integer",
+	Loremaster = "integer",
+	Repair = "integer",
+	Barter = "integer",
+	Persuasion = "integer",
+	Luck = "integer",
+	SightBoost = "Penalty Qualifier",
+	HearingBoost = "Penalty Qualifier",
+	VitalityBoost = "integer",
+	MagicPointsBoost = "Penalty Qualifier",
+	ChanceToHitBoost = "integer",
+	APMaximum = "integer",
+	APStart = "integer",
+	APRecovery = "integer",
+	AccuracyBoost = "integer",
+	DodgeBoost = "integer",
+	CriticalChance = "integer",
+	--Weight = "integer",
+	--Flags = "string See AttributeFlags enumeration",
+	--ArmorType = "string See ArmorType enumeration",
+	--Boosts = "string",
+	--Skills = "string",
+	--ItemColor = "string",
+	Reflection = "string",
+	MaxSummons = "integer",
+	-- RuneSlots = "integer",
+	-- RuneSlots_V1 = "integer",
+	MaxCharges = "integer",
+	--Talents = "string",
+}
+
+Ext.RegisterConsoleCommand("createitemtest", function()
+	local deltamods = {
+		"Boost_Armor_All_Armour_Physical_Base_Large_Leather",
+		"Boost_Armor_Helmet_Ability_Fire",
+		"Boost_Armor_Helmet_Ability_Rogues",
+		"Boost_Armor_Helmet_Primary_Finesse",
+		"Boost_Armor_Helmet_Skill_Water",
+	}
+	local uuid,item = GameHelpers.Item.CreateItemByStat("ARM_Light_Helmet", {
+		StatsLevel = 10,
+		ItemType = "Legendary",
+		GMFolding = false,
+		IsIdentified = true,
+		--DeltaMods = deltamods,
+		HasGeneratedStats = false,
+		RootTemplate = "6bbd09df-f19c-463a-a12a-ab8ac2111b47",
+		OriginalRootTemplate = "6bbd09df-f19c-463a-a12a-ab8ac2111b47",
+	})
+	if item ~= nil then
+		local boosts = {}
+		if item.Stats then
+			print(Lib.inspect(item.Stats.DynamicStats))
+			-- for i,v in pairs(deltamods) do
+			-- 	local data = Ext.GetDeltaMod(v, "Armor")
+			-- 	if data then
+			-- 		for _,boostData in pairs(data.Boosts) do
+			-- 			local boost = Ext.GetStat(boostData.Boost, 10)
+			-- 			if boost then
+			-- 				for k,typeName in pairs(StatEntryArmor) do
+			-- 					print(k)
+			-- 					local b,existing = xpcall(function() return item.Stats.DynamicStats[1][k] end, debug.traceback)
+			-- 					local value = boost[k]
+			-- 					print(value,existing)
+			-- 					if value and b and existing then
+			-- 						local t = type(value)
+			-- 						if t == "number" then
+			-- 							if value ~= 0 then
+			-- 								item.Stats.DynamicStats[1][k] = value + existing
+			-- 							end
+			-- 						elseif t == "string" and string.find(typeName, "Qualifier") and value ~= "None" then
+			-- 							local v = tonumber(value)
+			-- 							if v ~= 0 then
+			-- 								existing = existing == "None" and 0 or tonumber(existing)
+			-- 								item.Stats.DynamicStats[1][k] = tostring(value + existing)
+			-- 							end
+			-- 						end
+			-- 					end
+			-- 				end
+			-- 			end
+			-- 			--boosts[#boosts+1] = boost.Boost
+			-- 		end
+			-- 	end
+			-- end
+		end
+		--item:SetGeneratedBoosts(boosts)
+		--print(Lib.inspect(item:GetGeneratedBoosts()))
+		--print(Ext.JsonStringify(boosts))
+		--item:SetDeltaMods(deltamods)
+		ItemToInventory(uuid, CharacterGetHostCharacter(), 1, 1, 1)
+	else
+		error("Failed to create ARM_Light_Helmet")
 	end
 end)
 

@@ -156,10 +156,13 @@ Ext.RegisterConsoleCommand("clearinventory", function(command)
 	local host = CharacterGetHostCharacter()
 	local x,y,z = GetPosition(host)
 	--local backpack = CreateItemTemplateAtPosition("LOOT_LeaderLib_BackPack_Invisible_98fa7688-0810-4113-ba94-9a8c8463f830", x, y, z)
-	for i,item in pairs(Ext.GetCharacter(host):GetInventoryItems()) do
-		if ItemIsStoryItem(item) == 0 and ItemIsDestructible(item) and not GameHelpers.Item.ItemIsEquipped(host, item) then
-			ItemDrop(item)
-			ItemDestroy(item)
+	for player in GameHelpers.Character.GetPlayers(false) do
+		local items = player:GetInventoryItems()
+		for i,v in pairs(player:GetInventoryItems()) do
+			local item = Ext.GetItem(v)
+			if item.Slot > 13 and not item.StoryItem then
+				ItemRemove(v)
+			end
 		end
 	end
 end)
@@ -199,7 +202,7 @@ local function processTreasure(treasure, props, host, generateAmount)
 				if cat.TreasureCategory and string.find(cat.TreasureCategory, "I_", nil, true) then
 					local stat = string.gsub(cat.TreasureCategory, "I_", "")
 					for i=0,generateAmount do
-						local item = GameHelpers.Item.CreateItemByStat(stat, true, props)
+						local item = GameHelpers.Item.CreateItemByStat(stat, props)
 						if item then
 							ItemToInventory(item, host, 1, 0, 0)
 						end

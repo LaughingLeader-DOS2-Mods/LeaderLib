@@ -14,6 +14,16 @@ if isClient then
 	CustomStatSystem.Listeners.CanRemovePoints = {All = {}}
 end
 
+local function CanAddListenerCallback(tbl, id, callback)
+	if tbl[id] == nil then
+		tbl[id] = {}
+		return true
+	elseif not Common.TableHasValue(tbl, callback) then
+		return true
+	end
+	return false
+end
+
 ---@param id string
 ---@param callback CustomStatCanAddPointsCallback
 function CustomStatSystem:RegisterCanAddPointsHandler(id, callback)
@@ -25,10 +35,7 @@ function CustomStatSystem:RegisterCanAddPointsHandler(id, callback)
 		for i=1,#id do
 			self:RegisterCanAddPointsHandler(id[i], callback)
 		end
-	else
-		if not self.Listeners.CanAddPoints[id] then
-			self.Listeners.CanAddPoints[id] = {}
-		end
+	elseif CanAddListenerCallback(self.Listeners.CanAddPoints, id, callback) then
 		table.insert(self.Listeners.CanAddPoints[id], callback)
 	end
 end
@@ -44,10 +51,7 @@ function CustomStatSystem:RegisterCanRemovePointsHandler(id, callback)
 		for i=1,#id do
 			self:RegisterCanRemovePointsHandler(id[i], callback)
 		end
-	else
-		if not self.Listeners.CanRemovePoints[id] then
-			self.Listeners.CanRemovePoints[id] = {}
-		end
+	elseif CanAddListenerCallback(self.Listeners.CanRemovePoints, id, callback) then
 		table.insert(self.Listeners.CanRemovePoints[id], callback)
 	end
 end
@@ -59,10 +63,7 @@ function CustomStatSystem:RegisterAvailablePointsChangedListener(id, callback)
 		for i=1,#id do
 			self:RegisterAvailablePointsChangedListener(id[i], callback)
 		end
-	else
-		if not self.Listeners.OnAvailablePointsChanged[id] then
-			self.Listeners.OnAvailablePointsChanged[id] = {}
-		end
+	elseif CanAddListenerCallback(self.Listeners.OnAvailablePointsChanged, id, callback) then
 		table.insert(self.Listeners.OnAvailablePointsChanged[id], callback)
 	end
 end
@@ -74,10 +75,7 @@ function CustomStatSystem:RegisterStatValueChangedListener(id, callback)
 		for i=1,#id do
 			self:RegisterStatValueChangedListener(id[i], callback)
 		end
-	else
-		if not self.Listeners.OnStatValueChanged[id] then
-			self.Listeners.OnStatValueChanged[id] = {}
-		end
+	elseif CanAddListenerCallback(self.Listeners.OnStatValueChanged, id, callback) then
 		table.insert(self.Listeners.OnStatValueChanged[id], callback)
 	end
 end

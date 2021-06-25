@@ -15,7 +15,7 @@ CustomStatDataBase.__index = CustomStatDataBase
 
 local function FormatText(txt, forceCheckForStringKey)
 	if forceCheckForStringKey or string.find(txt, "_", 1, true) then
-		txt = GameHelpers.GetStringKeyText(txt, txt)
+		txt = GameHelpers.GetStringKeyText(txt)
 	end
 	return GameHelpers.Tooltip.ReplacePlaceholders(txt)
 end

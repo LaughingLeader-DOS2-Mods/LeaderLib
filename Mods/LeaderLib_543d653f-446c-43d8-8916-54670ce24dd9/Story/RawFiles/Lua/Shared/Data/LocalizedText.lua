@@ -439,12 +439,7 @@ local function GetStringKeyText(key,fallback)
 	if fallback == nil then
 		fallback = key
 	end
-	local ref,handle = Ext.GetTranslatedStringFromKey(key)
-	if handle == nil then
-		return fallback
-	end
-	local text = Ext.GetTranslatedString(handle, ref) or fallback
-	return text
+	return Ext.GetTranslatedStringFromKey(key) or fallback
 end
 
 GameHelpers.GetStringKeyText = GetStringKeyText

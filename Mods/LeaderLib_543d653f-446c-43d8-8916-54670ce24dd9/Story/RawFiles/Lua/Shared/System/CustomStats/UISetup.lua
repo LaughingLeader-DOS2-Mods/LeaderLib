@@ -273,6 +273,7 @@ function CustomStatSystem:OnStatAdded(ui, call, doubleHandle, index)
 	end
 
 	if stat then
+		stat_mc.label_txt.htmlText = stat:GetDisplayName()
 		if stat.DisplayMode == "Percentage" then
 			stat_mc.text_txt.htmlText = stat_mc.text_txt.htmlText .. "%"
 		end

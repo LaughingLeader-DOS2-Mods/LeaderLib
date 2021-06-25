@@ -36,6 +36,9 @@ if isClient then
 	---@param frame integer|nil
 	function CombatLog.AddFilter(id, tooltip, enabled, frame)
 		local this = self.GetInstance()
+		if not this then 
+			return false
+		end
 		local arr = this.log_mc.filterList.content_array
 		frame = frame or 1
 		local exists = false

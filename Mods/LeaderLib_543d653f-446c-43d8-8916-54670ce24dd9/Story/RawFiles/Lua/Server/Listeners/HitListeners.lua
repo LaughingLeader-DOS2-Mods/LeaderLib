@@ -55,10 +55,7 @@ end
 
 ---@param hitStatus EsvStatusHit
 ---@param context HitContext
-Ext.RegisterListener("StatusHitEnter", function(hitStatus, hitContext)
-	if Ext.GetGameState() ~= "Running" then
-		return
-	end
+RegisterProtectedExtenderListener("StatusHitEnter", function(hitStatus, hitContext)
 	local target,source = Ext.GetGameObject(hitStatus.TargetHandle),Ext.GetGameObject(hitStatus.StatusSourceHandle)
 
 	if not target then

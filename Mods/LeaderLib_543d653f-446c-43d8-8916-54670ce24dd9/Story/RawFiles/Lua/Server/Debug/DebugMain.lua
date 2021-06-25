@@ -607,7 +607,7 @@ host = function() return Ext.GetCharacter(CharacterGetHostCharacter()) end
 -- local time = Ext.MonotonicTime(); local names = {}; for k,v in pairs(_G) do if not Mods.LeaderLib.Data.OsirisEvents[k] then names[#names+1] = k end; end; table.sort(names); for i=1,#names do print(names[i]) end; print("Time total:", Ext.MonotonicTime() - time);
 
 ---@param request EsvShootProjectileRequest
-Ext.RegisterListener("BeforeShootProjectile", function (request)
+RegisterProtectedExtenderListener("BeforeShootProjectile", function (request)
 	local data = {
 		UnknownFlag1 = request.UnknownFlag1,
 		Random = request.Random,
@@ -616,7 +616,7 @@ Ext.RegisterListener("BeforeShootProjectile", function (request)
 end)
 
 ---@param projectile EsvProjectile
-Ext.RegisterListener("ShootProjectile", function (projectile)
+RegisterProtectedExtenderListener("ShootProjectile", function (projectile)
 	local data = {
 		DamageSourceType = projectile.DamageSourceType,
 		DamageType = projectile.DamageType,
@@ -631,7 +631,7 @@ local lastDamageType = {}
 ---@param projectile EsvProjectile
 ---@param hitObject EsvGameObject
 ---@param position number[]
-Ext.RegisterListener("ProjectileHit", function (projectile, hitObject, position)
+RegisterProtectedExtenderListener("ProjectileHit", function (projectile, hitObject, position)
 	local caster = Ext.GetGameObject(projectile.CasterHandle)
 	if caster then
 		if Features.FixChaosWeaponProjectileDamage and projectile.DamageType ~= "None" then
@@ -639,6 +639,7 @@ Ext.RegisterListener("ProjectileHit", function (projectile, hitObject, position)
 		end
 	end
 	local data = {
+		Skill = projectile.SkillId,
 		DamageSourceType = projectile.DamageSourceType,
 		DamageType = projectile.DamageType,
 		HitInterpolation = projectile.HitInterpolation,
@@ -654,7 +655,7 @@ end)
 --- @param caster EsvGameObject
 --- @param position number[]
 --- @param damageList DamageList
-Ext.RegisterListener("GroundHit", function (caster, position, damageList)
+RegisterProtectedExtenderListener("GroundHit", function (caster, position, damageList)
 	if caster then
 		if Features.FixChaosWeaponProjectileDamage then
 			local nextType = lastDamageType[caster.MyGuid]

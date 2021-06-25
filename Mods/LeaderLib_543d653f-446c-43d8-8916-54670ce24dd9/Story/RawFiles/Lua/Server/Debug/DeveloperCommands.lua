@@ -716,9 +716,10 @@ Ext.RegisterConsoleCommand("mostlydead", function(command, t)
 end)
 
 Ext.RegisterConsoleCommand("resurrectparty", function(command)
-	for i,v in pairs(Osi.DB_IsPlayer:Get(nil)) do
-		if CharacterIsDead(v[1]) == 1 then
-			CharacterResurrect(v[1])
+	for player in GameHelpers.Character.GetPlayers() do
+		if player.Dead then
+			--CharacterResurrect(player.MyGuid)
+			CharacterResurrectCustom(player.MyGuid, "Dance_01")
 		end
 	end
 end)

@@ -320,7 +320,7 @@ end
 ---@param projectile EsvProjectile
 ---@param hitObject EsvGameObject
 ---@param position number[]
-Ext.RegisterListener("ProjectileHit", function (projectile, hitObject, position)
+RegisterProtectedExtenderListener("ProjectileHit", function (projectile, hitObject, position)
 	if not StringHelpers.IsNullOrEmpty(projectile.SkillId) then
 		local skill = GetSkillEntryName(projectile.SkillId)
 		if projectile.CasterHandle ~= nil then

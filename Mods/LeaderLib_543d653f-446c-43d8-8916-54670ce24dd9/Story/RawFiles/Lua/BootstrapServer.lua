@@ -102,30 +102,56 @@ function RemoveSkillListener(skill, callback)
 	end
 end
 
+local function CanInvokeListener(anyLevelType)
+	return Ext.GetGameState() == "Running" and (anyLevelType or ((not anyLevelType and SharedData.RegionData.LevelType == LEVELTYPE.GAME)))
+end
+
 --- Registers a function that is called when certain Osiris functions are called, but only when a game level is loaded and the gamestate is running.
 --- Supports events, built-in queries, DBs, PROCs, QRYs (user queries).
 --- @param name string Osiris function/database name
 --- @param arity number Number of columns for DBs or the number of parameters (both IN and OUT) for functions
 --- @param event string Event type ('before' - triggered before Osiris call; 'after' - after Osiris call; 'beforeDelete'/'afterDelete' - before/after delete from DB)
 --- @param handler function Lua function to run when the event fires
-function RegisterProtectedOsirisListener(name, arity, event, handler)
+--- @param anyLevelType boolean|nil If true, the function will only be called for non-game levels as well (lobby, character creation).
+function RegisterProtectedOsirisListener(name, arity, event, handler, anyLevelType)
 	--Auto-arity mode
 	if (arity == "before" or arity == "after") and type(event) == "function" and handler == nil then
 		local eventArity = Data.OsirisEvents[name]
 		if eventArity then
 			Ext.RegisterOsirisListener(name, eventArity, arity, function(...)
-				if Ext.GetGameState() == "Running" and SharedData.RegionData.LevelType == LEVELTYPE.GAME then
-					event(...)
+				if CanInvokeListener(anyLevelType) then
+					local b,result = xpcall(event, debug.traceback, ...)
+					if not b then
+						error(string.format("Error invoking listener for %s:\n%s", name, result), 2)
+					end
 				end
 			end)
 		end
 	else
 		Ext.RegisterOsirisListener(name, arity, event, function(...)
-			if Ext.GetGameState() == "Running" and SharedData.RegionData.LevelType == LEVELTYPE.GAME then
-				handler(...)
+			if CanInvokeListener(anyLevelType) then
+				local b,result = xpcall(handler, debug.traceback, ...)
+				if not b then
+					error(string.format("Error invoking listener for %s:\n%s", name, result), 2)
+				end
 			end
 		end)
 	end
+end
+
+--- Wraps an extender listener in a check to make sure the game is running before calling the supplied function.
+--- @param event string
+--- @param listener function Lua function to run when the event fires
+--- @param anyLevelType boolean|nil If true, the function will only be called for non-game levels as well (lobby, character creation).
+function RegisterProtectedExtenderListener(event, listener, anyLevelType)
+	Ext.RegisterListener(event, function(...)
+		if CanInvokeListener(anyLevelType) then
+			local b,result = xpcall(listener, debug.traceback, ...)
+			if not b then
+				error(string.format("Error invoking listener for %s:\n%s", event, result), 2)
+			end
+		end
+	end)
 end
 
 -- local function LeaderLib_GameSessionLoad()

@@ -188,7 +188,13 @@ end
 ---@param statName string
 ---@param properties ItemDefinition|nil
 ---@return string,EsvItem
-function GameHelpers.Item.CreateItemByStat(statName, properties)
+function GameHelpers.Item.CreateItemByStat(statName, properties, ...)
+    if type(properties) == "boolean" then
+        local args = {...}
+        if #args > 0 and type(args[1]) == "table" then
+            properties = args[1]
+        end
+    end
     ---@type StatEntryWeapon
     local stat = nil
     local statType = ""

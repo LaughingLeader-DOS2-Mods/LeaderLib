@@ -309,3 +309,14 @@ function StringHelpers.GetShortNumberString(n)
     result = string.sub(result,0,string.sub(result,-1) == "0" and -3 or -1) -- Remove .0 (just if it is zero!)
     return result .. steps[steps.use][2]
 end
+
+---Add commas to a number.
+---@param n number
+---@return string
+function StringHelpers.CommaNumber(n)
+	if n == nil then
+		return ""
+	end
+	local left,num,right = string.match(n,'^([^%d]*%d)(%d*)(.-)$')
+	return left..(num:reverse():gsub('(%d%d%d)','%1,'):reverse())..right
+end

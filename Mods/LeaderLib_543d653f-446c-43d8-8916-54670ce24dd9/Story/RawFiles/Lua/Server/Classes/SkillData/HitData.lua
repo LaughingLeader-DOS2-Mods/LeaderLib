@@ -127,6 +127,18 @@ function HitData:PrintTargets()
 	fprint(LOGLEVEL.TRACE, "[HitData:%s] Target(%s)", self.Handle, self.Target)
 end
 
+---Applies any DamageList changes to the actual hit.
+---@param recalculate boolean|nil If true, lifesteal is recalculated.
+function HitData:ApplyDamageList(recalculate)
+	NRD_HitStatusClearAllDamage(self.Target, self.Handle)
+	for k,v in pairs(self.DamageList:ToTable()) do
+		NRD_HitStatusAddDamage(self.Target, self.Handle, v.DamageType, v.Amount)
+	end
+	if recalculate then
+		self:Recalculate(true, true)
+	end
+end
+
 ---Recalculates total damage done and updates all related variables.
 ---@param recalcLifeSteal boolean|nil Recalculate LifeSteal as well, using Game.Math.ApplyLifeSteal.
 ---@param setLifeStealFlags boolean|nil If recalcLifeSteal is true, also set effect flags on the hit.
@@ -157,11 +169,7 @@ function HitData:MultiplyDamage(multiplier, aggregate)
 		self.DamageList:AggregateSameTypeDamages()
 	end
 	self.DamageList:Multiply(multiplier)
-	NRD_HitStatusClearAllDamage(self.Target, self.Handle)
-	for k,v in pairs(self.DamageList:ToTable()) do
-		NRD_HitStatusAddDamage(self.Target, self.Handle, v.DamageType, v.Amount)
-	end
-	self:Recalculate(true)
+	self:ApplyDamageList(true)
 end
 
 ---Converts specific damage types to another.
@@ -182,14 +190,14 @@ function HitData:ConvertDamageTypeTo(damageType, toDamageType, aggregate)
 	end
 	self.DamageList:Clear()
 	self.DamageList:Merge(damageList)
-	self:Recalculate(false)
+	self:ApplyDamageList(false)
 end
 
 ---Clears all damage, or damage from a specific type, from the damage list and recalculates totals / lifesteal.
 ---@param damageType string|nil If set, only damage from this specific type is cleared.
 function HitData:ClearDamage(damageType)
 	self.DamageList:Clear(damageType)
-	self:Recalculate(true, true)
+	self:ApplyDamageList(true)
 end
 
 ---@param flag string|string[]

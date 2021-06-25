@@ -192,9 +192,6 @@ local ragerWasEnabled = false
 
 for name,v in pairs(missingTalents) do
 	TalentManager.RegisteredCount[name] = 0
-	-- if Vars.DebugMode then
-	-- 	TalentManager.RegisteredCount[name] = 1
-	-- end
 end
 
 for talentId,enum in pairs(Data.TalentEnum) do

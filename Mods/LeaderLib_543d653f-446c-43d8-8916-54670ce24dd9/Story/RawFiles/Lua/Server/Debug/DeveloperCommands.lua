@@ -697,18 +697,14 @@ end)
 
 Ext.RegisterConsoleCommand("heal", function(command, t)
 	local target = t or CharacterGetHostCharacter()
-	if CharacterIsDead(target) == 1 then
-		CharacterResurrect(target)
-	end
-	CharacterSetHitpointsPercentage(target, 100.0)
+	local data = Classes.CharacterData:Create(target)
+	data:FullRestore(true)
 end)
 
 Ext.RegisterConsoleCommand("healall", function(command)
 	for player in GameHelpers.Character.GetPlayers(true) do
-		if player.Dead then
-			CharacterResurrect(player.MyGuid)
-		end
-		CharacterSetHitpointsPercentage(player.MyGuid, 100.0)
+		local data = Classes.CharacterData:Create(player.MyGuid)
+		data:FullRestore(true)
 	end
 end)
 
@@ -725,6 +721,21 @@ Ext.RegisterConsoleCommand("resurrectparty", function(command)
 			CharacterResurrect(v[1])
 		end
 	end
+end)
+
+Ext.RegisterConsoleCommand("levelup", function(command, amount)
+	amount = amount or "1"
+	amount = tonumber(amount)
+	local host = Ext.GetCharacter(CharacterGetHostCharacter())
+	local nextLevel = math.min(Ext.ExtraData.LevelCap, host.Stats.Level + amount)
+	GameHelpers.Character.SetLevel(host, nextLevel)
+end)
+
+Ext.RegisterConsoleCommand("setlevel", function(command, level)
+	level = level or "1"
+	level = tonumber(level)
+	local host = Ext.GetCharacter(CharacterGetHostCharacter())
+	GameHelpers.Character.SetLevel(host, level)
 end)
 
 local function sleep(timeInMilliseconds)

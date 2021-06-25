@@ -613,13 +613,6 @@ Ext.RegisterConsoleCommand("printpdata", function(cmd, target)
 	end
 end)
 
-Ext.RegisterConsoleCommand("levelup", function(command, amount)
-	amount = amount or "1"
-	amount = tonumber(amount)
-	local host = CharacterGetHostCharacter()
-	CharacterLevelUpTo(host, amount)
-end)
-
 Ext.RegisterConsoleCommand("hidestatusmc", function(command, visible)
 	visible = visible or "false"
 	Ext.PostMessageToClient(CharacterGetHostCharacter(), "LeaderLib_UI_HideStatuses", visible)

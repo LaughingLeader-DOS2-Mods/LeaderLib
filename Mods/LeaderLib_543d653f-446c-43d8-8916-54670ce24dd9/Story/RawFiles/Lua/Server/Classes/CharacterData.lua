@@ -306,10 +306,25 @@ function CharacterData:FullRestore(resurrect)
 		if resurrect and self:IsDead(false) then
 			CharacterResurrect(self.UUID)
 		end
+		local character = self:GetCharacter()
 		CharacterSetHitpointsPercentage(self.UUID, 100.0)
 		CharacterSetArmorPercentage(self.UUID, 100.0)
 		CharacterSetMagicArmorPercentage(self.UUID, 100.0)
 		ApplyStatus(self.UUID, "LEADERLIB_RECALC", 0.0, 1, self.UUID)
+		StartOneshotTimer("", 500, function()
+			if Vars.DebugMode then
+				fprint(LOGLEVEL.DEFAULT, "[CharacterData:FullRestore] (%s) Vitality(%s/%s) Armor(%s/%s) Magic Armor(%s/%s) ", character.DisplayName,
+				StringHelpers.CommaNumber(character.Stats.CurrentVitality or 0),
+				StringHelpers.CommaNumber(character.Stats.MaxVitality or 0),
+				StringHelpers.CommaNumber(character.Stats.CurrentArmor or 0),
+				StringHelpers.CommaNumber(character.Stats.MaxArmor or 0),
+				StringHelpers.CommaNumber(character.Stats.CurrentMagicArmor or 0),
+				StringHelpers.CommaNumber(character.Stats.MaxMagicArmor or 0))
+			end
+			character.Stats.CurrentVitality = character.Stats.MaxVitality
+			character.Stats.CurrentArmor = character.Stats.MaxArmor or 0
+			character.Stats.CurrentMagicArmor = character.Stats.MaxMagicArmor or 0
+		end)
 		return true
 	end
 	return false

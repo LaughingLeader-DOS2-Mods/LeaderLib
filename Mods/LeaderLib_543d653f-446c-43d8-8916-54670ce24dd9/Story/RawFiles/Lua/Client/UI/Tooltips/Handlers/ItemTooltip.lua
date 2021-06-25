@@ -1,4 +1,4 @@
-local appendRequirementsAfterTypes = {ItemLevel=true, APCostBoost=true}
+local appendRequirementsAfterTypes = {ItemRequirement=true, ItemLevel=true, APCostBoost=true}
 
 ---@param item EclItem
 ---@param tooltip TooltipData
@@ -125,62 +125,67 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 		if TooltipHandler.HasTagTooltipData then
 			TooltipHandler.AddTooltipTags(item, tooltip)
 		end
-		if Features.TooltipGrammarHelper or GameSettings.Settings.Client.AlwaysDisplayWeaponScalingText then
+		if (Features.TooltipGrammarHelper or GameSettings.Settings.Client.AlwaysDisplayWeaponScalingText)
+		and not GameHelpers.Item.IsObject(item)
+		and item.Stats.Requirements ~= nil
+		and #item.Stats.Requirements > 0
+		then
 			local hasScalesWithText = false
 			local requiresPointsHigherThanZero = false
 			local scalesWithTextSub = string.sub(LocalizedText.Tooltip.ScalesWith.Value, 1, 5)
 			local requirements = tooltip:GetElements("ItemRequirement")
-			if requirements ~= nil then
+			if #requirements > 0 then
 				for i,element in pairs(requirements) do
-					if Features.TooltipGrammarHelper then
-						element.Label = string.gsub(element.Label, "%s+", " ")
-					end
+					--Replaces double spacing or more with single spaces
+					element.Label = string.gsub(element.Label, "%s+", " ")
 					if not hasScalesWithText and string.find(element.Label, scalesWithTextSub) then
 						hasScalesWithText = true
 					end
 				end
 			end
-			if not GameHelpers.Item.IsObject(item) and item.Stats.Requirements ~= nil and #item.Stats.Requirements > 0 then
-				local attributeName = ""
-				local requirementsMet = true
-				for i,v in pairs(item.Stats.Requirements) do
-					if Data.AttributeEnum[v.Requirement] ~= nil then
-						attributeName = LocalizedText.AttributeNames[v.Requirement].Value
-						if type(v.Param) == "number" and v.Param > 0 then
-							requiresPointsHigherThanZero = true
-							if character.Stats[v.Requirement] < v.Param then
-								requirementsMet = false
-							end
+			local attributeName = ""
+			local requirementsMet = true
+			for i,v in pairs(item.Stats.Requirements) do
+				if Data.AttributeEnum[v.Requirement] ~= nil then
+					attributeName = LocalizedText.AttributeNames[v.Requirement].Value
+					if type(v.Param) == "number" and v.Param > 0 then
+						requiresPointsHigherThanZero = true
+						if character.Stats[v.Requirement] < v.Param then
+							requirementsMet = false
 						end
 					end
 				end
-				if not StringHelpers.IsNullOrEmpty(attributeName) then
-					if item.ItemType == "Weapon" then
-						if GameSettings.Settings.Client.AlwaysDisplayWeaponScalingText and not hasScalesWithText then
-							local element = {
-								Type = "ItemRequirement",
-								Label = LocalizedText.Tooltip.ScalesWith:ReplacePlaceholders(attributeName),
-								RequirementMet = requirementsMet
-							}
-							if not requirements then
-								tooltip:AppendElement(element)
-							else
-								tooltip:RemoveElements("ItemRequirement")
-								tooltip:AppendElementAfterType(element, appendRequirementsAfterTypes)
-								for i,v in pairs(requirements) do
-									tooltip:AppendElementAfter(v, element)
-								end
-							end
-						end
-					elseif hasScalesWithText and requiresPointsHigherThanZero then
-						--Armor doesn't scale with requirements, so just show the attribute requirement.
-						tooltip:RemoveElements("ItemRequirement")
-						local element = {
-							Type = "ItemRequirement",
-							Label = LocalizedText.Tooltip.Requires:ReplacePlaceholders(attributeName),
-							RequirementMet = requirementsMet
-						}
-						tooltip:AppendElementAfterType(element, appendRequirementsAfterTypes)
+			end
+			if not StringHelpers.IsNullOrEmpty(attributeName) then
+				tooltip:RemoveElements("ItemRequirement")
+				--Remove elements mentioning the attribute
+				for i,v in pairs(requirements) do
+					if string.find(v.Label, attributeName) then
+						table.remove(requirements, i)
+					end
+				end
+				if requiresPointsHigherThanZero then
+					--Armor doesn't scale with requirements, so just show the attribute requirement.
+					local element = {
+						Type = "ItemRequirement",
+						Label = LocalizedText.Tooltip.Requires:ReplacePlaceholders(attributeName),
+						RequirementMet = requirementsMet
+					}
+					tooltip:AppendElementAfterType(element, appendRequirementsAfterTypes)
+				end
+				--Also show the 'Scales With' text for weapons.
+				if item.ItemType == "Weapon" and not hasScalesWithText and GameSettings.Settings.Client.AlwaysDisplayWeaponScalingText then
+					local element = {
+						Type = "ItemRequirement",
+						Label = LocalizedText.Tooltip.ScalesWith:ReplacePlaceholders(attributeName),
+						RequirementMet = requirementsMet
+					}
+					tooltip:AppendElementAfterType(element, appendRequirementsAfterTypes)
+				end
+				--Append other requirements the item may have had
+				if #requirements > 0 then
+					for i,v in pairs(requirements) do
+						tooltip:AppendElementAfterType(v, appendRequirementsAfterTypes)
 					end
 				end
 			end

@@ -1888,7 +1888,8 @@ end
 ---@param ele TooltipElement
 ---@param appendAfter TooltipElement
 function TooltipData:AppendElementBefore(ele, appendBefore)
-	for i,element in pairs(self.Data) do
+	for i=1,#self.Data do
+		local element = self.Data[i]
 		if element == appendBefore then
 			table.insert(self.Data, i-1, ele)
 			return
@@ -1902,7 +1903,8 @@ end
 ---@param elementType string|table<string,boolean>
 function TooltipData:AppendElementAfterType(ele, elementType)
 	local t = type(elementType)
-	for i,element in pairs(self.Data) do
+	for i=1,#self.Data do
+		local element = self.Data[i]
 		if (t == "string" and element.Type == elementType) or (t == "table" and elementType[element.Type] == true) then
 			table.insert(self.Data, i+1, ele)
 			return
@@ -1916,7 +1918,8 @@ end
 ---@param elementType string|table<string,boolean>
 function TooltipData:AppendElementBeforeType(ele, elementType)
 	local t = type(elementType)
-	for i,element in pairs(self.Data) do
+	for i=1,#self.Data do
+		local element = self.Data[i]
 		if (t == "string" and element.Type == elementType) or (t == "table" and elementType[element.Type] == true) then
 			table.insert(self.Data, i-1, ele)
 			return

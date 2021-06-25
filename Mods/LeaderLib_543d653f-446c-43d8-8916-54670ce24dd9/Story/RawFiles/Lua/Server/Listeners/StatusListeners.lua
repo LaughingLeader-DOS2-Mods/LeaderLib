@@ -57,7 +57,6 @@ function RegisterStatusListener(event, status, callback)
             elseif Data.IgnoredStatus[status] == true then
                 Vars.RegisteredIgnoredStatus[status] = true
             end
-
             if statusEventHolder[status] == nil then
                 statusEventHolder[status] = {}
             end
@@ -216,7 +215,7 @@ local function BeforeStatusAttempt(statusId, target, source, handle, targetId, s
 	end
 	target = target or targetId
 	source = source or sourceId
-	InvokeStatusListeners(Vars.StatusEvent.BeforeAttempt, status, statusType, target, status, source, handle, statusType)
+	InvokeStatusListeners(Vars.StatusEvent.BeforeAttempt, statusId, statusType, target, status, source, handle, statusType)
 end
 
 RegisterProtectedOsirisListener("NRD_OnStatusAttempt", 4, "after", function(target,status,handle,source)

@@ -152,11 +152,17 @@ end
 
 local miscGroupDisplayName = Classes.TranslatedString:Create("hb8ed2061ge5a3g4f64g9d54g9a9b65e27e1e", "Miscellaneous")
 
+local initializedGroups = false
+local lastScrollY = 0
+
 ---@private
 function CustomStatSystem:SetupGroups(ui, call)
 	local isGM = GameHelpers.Client.IsGameMaster()
 	local this = ui:GetRoot().stats_mc.customStats_mc
-	this.resetGroups()
+	lastScrollY = this.list.m_scrollbar_mc.m_scrolledY
+	if not initializedGroups then
+		this.resetGroups()
+	end
 	-- Group for stats without an assigned category
 	this.addGroup(CustomStatSystem.MISC_CATEGORY, miscGroupDisplayName.Value, false, self:GetTotalStatsInCategory(nil, true) > 0)
 	for category in self:GetAllCategories() do
@@ -164,12 +170,19 @@ function CustomStatSystem:SetupGroups(ui, call)
 		this.addGroup(category.GroupId, category:GetDisplayName(), false, isVisible)
 	end
 	--this.positionElements(false)
-	this.positionElements(true, "groupId")
+	if not initializedGroups then
+		this.positionElements(true, "groupId")
+		initializedGroups = true
+	end
 end
 
 ---@private
 function CustomStatSystem:OnUpdateDone(ui, call)
+	local this = ui:GetRoot().stats_mc.customStats_mc
+	this.recountAllPoints()
 	self:UpdateAvailablePoints(ui, call)
+	this.positionElements()
+	this.list.m_scrollbar_mc.scrollTo(lastScrollY)
 end
 
 ---@private
@@ -275,7 +288,10 @@ function CustomStatSystem:OnStatAdded(ui, call, doubleHandle, index)
 	if stat then
 		stat_mc.label_txt.htmlText = stat:GetDisplayName()
 		if stat.DisplayMode == "Percentage" then
-			stat_mc.text_txt.htmlText = stat_mc.text_txt.htmlText .. "%"
+			local text = string.format("%s%%", math.floor(stat_mc.am))
+			if stat_mc.text_txt.htmlText ~= text then
+				stat_mc.text_txt.htmlText = text
+			end
 		end
 	end
 end

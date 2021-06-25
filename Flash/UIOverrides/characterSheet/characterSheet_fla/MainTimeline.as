@@ -610,8 +610,8 @@ package characterSheet_fla
 			}
 
 			if(updateCustom) {
-				this.stats_mc.customStats_mc.recountAllPoints();
-				this.stats_mc.customStats_mc.positionElements();
+				//this.stats_mc.customStats_mc.recountAllPoints();
+				//this.stats_mc.customStats_mc.positionElements();
 			}
 
 			i = 0;

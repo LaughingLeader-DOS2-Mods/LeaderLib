@@ -181,9 +181,14 @@ package characterSheet_fla
 
 		public function addCustomStat(doubleHandle:Number, labelText:String, valueText:String, groupId:Number=0, plusVisible:Boolean=false, minusVisible:Boolean=false) : *
 		{
-			var cstat_mc:MovieClip = new CustomStat();
+			var initCustom:Boolean = false;
+			var cstat_mc:MovieClip = this.list.getGroupElementByNumber("statId",doubleHandle);
+			if (cstat_mc == null)
+			{
+				initCustom = true;
+				cstat_mc = new CustomStat();
+			}
 			cstat_mc.hl_mc.alpha = 0;
-
 			cstat_mc.plus_mc.visible = !this.base.isGameMasterChar ? plusVisible : true;
 			cstat_mc.minus_mc.visible = !this.base.isGameMasterChar ? minusVisible : true;
 			cstat_mc.edit_mc.visible = this.base.isGameMasterChar;
@@ -197,8 +202,12 @@ package characterSheet_fla
 			//cstat_mc.label_txt.autoSize = TextFieldAutoSize.NONE;
 			cstat_mc.label_txt.autoSize = TextFieldAutoSize.LEFT;
 			cstat_mc.label_txt.htmlText = labelText;
-			cstat_mc.text_txt.htmlText = valueText;
-			cstat_mc.am = Number(valueText);
+			var val:Number = Number(valueText);
+			if (cstat_mc.am != val)
+			{
+				cstat_mc.am = val;
+				cstat_mc.text_txt.htmlText = valueText;
+			}
 			cstat_mc.text_txt.width = cstat_mc.text_txt.width + 8;
 			cstat_mc.tooltipAlign = "right";
 			cstat_mc.statId = doubleHandle;
@@ -250,13 +259,18 @@ package characterSheet_fla
 			cstat_mc.hl_mc.height = cstat_mc.label_txt.y + cstat_mc.label_txt.textHeight - cstat_mc.hl_mc.y;
 			cstat_mc.label_txt.y = Math.round((cstat_mc.hl_mc.height - cstat_mc.label_txt.textHeight) * 0.5);
 
-			cstat_mc.id = this.list.length;
-			cstat_mc.init();
+			if(initCustom)
+			{
+				cstat_mc.id = this.list.length;
+				cstat_mc.statIndex = this.stats_array.length;
+				cstat_mc.init();
 
-			this.list.addGroupElement(groupId,cstat_mc,false);
+				this.list.addGroupElement(groupId,cstat_mc,false);
 
-			this.stats_array.push(cstat_mc);
-			ExternalInterface.call("customStatAdded", doubleHandle, this.stats_array.length-1);
+				this.stats_array.push(cstat_mc);
+			}
+
+			ExternalInterface.call("customStatAdded", doubleHandle, cstat_mc.statIndex);
 		}
 
 		private function frame1() : *

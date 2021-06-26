@@ -46,6 +46,7 @@
 	<content contentuid="h1ae3aaa5gb444g4372g8b9ag231538f36a86">[LeaderLib_ModMenu_Menu8_a6aa98e6-cde4-491b-a2cb-2cd7d5d71f96]</content>
 	<content contentuid="h1c1d8acag9819g4028g860fg9a546af236ee">[LOAD] Load Global Settings - These are global extender mod settings LeaderLib manages.&lt;br&gt;Path: &lt;b&gt;Documents/Larian Studios/Divinity Original Sin 2 Definitive Edition/Osiris Data/LeaderLib_GlobalSettings.json&lt;/b&gt;</content>
 	<content contentuid="h1c359033g2e0dg49b1g9befg63f786d3f9fc">Control Summon</content>
+	<content contentuid="h1d68f897g1430g4ed6gb61dg88018af310e8">Enable Buff Status Preservation</content>
 	<content contentuid="h1db4b34cg358dg49a2gbaeag3cb06a86ab4c">Character is selling new items.</content>
 	<content contentuid="h1e7b9070ga8cag46f3ga7b4gfccd1addb8ba">[1]&lt;br&gt;Created by [2]</content>
 	<content contentuid="h2033bb71g7004g4423ga633gd50bfc8fdd50">When combat starts, LeaderLib will autosave the game.</content>
@@ -91,7 +92,6 @@
 	<content contentuid="h3ed2c7c5gf6c0g4c9dga916g5782593327ab">Open Mod Menu</content>
 	<content contentuid="h3eff6bc1gb26dg4bb5gb3b9g2551c65026e0">Apply On Hit:&lt;br&gt;[1] for [2] turns(s). ([3] Chance)</content>
 	<content contentuid="h3fb60439g4406g4623ga6b7gb53cda538fcb">*The old man runs his hands over his clothes, trying to iron out the wrinkles.* What can I do for you, stranger?</content>
-	<content contentuid="h4068702bg907fg461fg9a40gc81903183c0b">Enable Buff Status Preservation</content>
 	<content contentuid="h409bfd42g2257g4cb8gb3fbgedcb8adecaed">Extra Stats</content>
 	<content contentuid="h40ac3891g3661g43eag878dg6510b001704a">[LeaderLib_DynamicMenu_MenuOption4_e6bea606-b29a-4bfe-8959-94e8be8330cb]</content>
 	<content contentuid="h4120c4e5g4931g46dbgad0fga7a57514ac42">Rifle</content>
@@ -149,7 +149,6 @@
 	<content contentuid="h62fcf915g9babg41e3gbc1fg7cec5eeb59ce">[GLOBAL] Disable Combat Log Logging</content>
 	<content contentuid="h632cbbd2g4193g4921g979fg1abd006f1e0b">Running command...</content>
 	<content contentuid="h6349d1c7g6af8g4bb0g9d17g1e09f64a3d6f">[LeaderLib_LeaderTrader_Greeting_f143b90b-9afc-477e-b133-6a1574341261]</content>
-	<content contentuid="h64555a73gf2e7g4a0cga2efgd3b6adf97f25">If enabled, beneficial statuses applied by skills outside of combat will be permanent until you enter combat. Some status types are ignored, like Invisible and healing statuses. </content>
 	<content contentuid="h6472ecb0g5977g4c93g8a51g6444c9402d47">So. How about a trade?</content>
 	<content contentuid="h64aef327g59b3g4c63gacb9g834c0ba020e0">Insight on how to manage multiple summons at the same time. For summoners, by summoners. Read this book to learn this skill.</content>
 	<content contentuid="h658b85b9g49abg4c9fg9215ga09ac36d3e53">[GLOBAL] Disable Autosaving in Combat</content>
@@ -245,6 +244,7 @@
 	<content contentuid="h9863bb3eg058dg45acg8926gefb0f24ece72">Autosave When Combat Starts</content>
 	<content contentuid="h98bf1217gf2bfg4d82g99b9g6747f36f9aab">&lt;font color=&apos;#FF0000&apos;&gt;Script Extender Missing!&lt;/font&gt;</content>
 	<content contentuid="h98d315c5g189cg431eg9862g7cea569a5e3b">Hmm?</content>
+	<content contentuid="h9b4fce0fge5a9g4369gb3e8g1567058cc47c">If enabled, beneficial statuses applied by skills outside of combat will be permanent until you enter combat. Some status types are ignored, like Invisible and healing statuses. </content>
 	<content contentuid="h9b843d3agc42eg4295g8381ge2eb54eeac08">Dialog Redirection Settings</content>
 	<content contentuid="h9bb57fccg3ddag4112g9047g2a8f557b4f0d">A peculiar tome said to be extremely convenient.&lt;br&gt;Read to access the &quot;Mod Menu&quot;.</content>
 	<content contentuid="h9be57347g863eg400fg997dg19c57c3c657e">Hidden Backpack</content>

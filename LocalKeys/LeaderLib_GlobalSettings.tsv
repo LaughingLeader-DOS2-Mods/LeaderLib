@@ -38,5 +38,5 @@ LeaderLib_Variables_AutoCombatRange	Auto-Join Combat Range	hf37c444fg879fg4e62gb
 LeaderLib_Variables_AutoCombatRange_Description	If "Pull Party Into Combat" is enabled, this is the minimum range party members must be from that combat to automatically join. Default: 30m range.	h4c438f27gc833g4b46g8c3eg50716f12ae34
 LeaderLib_AllTooltipsForItemsEnabled	Enable World Tooltips for All Items	h6aac0af6g1e02g4a73g9341g53c81e64eb03
 LeaderLib_AllTooltipsForItemsEnabled_Description	If enabled, all items will have a "World Tooltip", showing the item's name when world tooltips are enabled (ALT by default for keyboard + mouse, or clicking the Right Stick for controllers).<br>Disabling this may require a save/load to get items to reset.	h7372bd33g991dg41c7ga8c2g9b42778c29f5
-LeaderLib_BuffStatusPreserverEnabled	Enable Buff Status Preservation	h4068702bg907fg461fg9a40gc81903183c0b
-LeaderLib_BuffStatusPreserverEnabled_Description	If enabled, beneficial statuses applied by skills outside of combat will be permanent until you enter combat. Some status types are ignored, like Invisible and healing statuses. 	h64555a73gf2e7g4a0cga2efgd3b6adf97f25
+LeaderLib_BuffStatusPreserverEnabled	Enable Buff Status Preservation	h1d68f897g1430g4ed6gb61dg88018af310e8
+LeaderLib_BuffStatusPreserverEnabled_Description	If enabled, beneficial statuses applied by skills outside of combat will be permanent until you enter combat. Some status types are ignored, like Invisible and healing statuses. 	h9b4fce0fge5a9g4369gb3e8g1567058cc47c

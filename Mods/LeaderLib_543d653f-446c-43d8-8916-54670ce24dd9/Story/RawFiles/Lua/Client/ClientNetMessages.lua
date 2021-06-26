@@ -13,7 +13,7 @@ Ext.RegisterNetListener("LeaderLib_SyncFeatures", function(call, dataString)
 	if Features == nil then
 		Features = {}
 	end
-	local data = Ext.JsonParse(dataString)
+	local data = Common.JsonParse(dataString)
 	if data ~= nil then
 		for k,b in pairs(data) do
 			Features[k] = b
@@ -85,14 +85,14 @@ local function SyncGlobalSettings(settings)
 end
 
 Ext.RegisterNetListener("LeaderLib_SyncGlobalSettings", function(call, dataString)
-	local settings = Ext.JsonParse(dataString)
+	local settings = Common.JsonParse(dataString)
 	if settings ~= nil then
 		SyncGlobalSettings(settings)
 	end
 end)
 
 Ext.RegisterNetListener("LeaderLib_SyncAllSettings", function(call, dataString)
-	local data = Ext.JsonParse(dataString)
+	local data = Common.JsonParse(dataString)
 	if data.Features ~= nil then Features = data.Features end
 	if data.GlobalSettings ~= nil then 
 		SyncGlobalSettings(data.GlobalSettings)

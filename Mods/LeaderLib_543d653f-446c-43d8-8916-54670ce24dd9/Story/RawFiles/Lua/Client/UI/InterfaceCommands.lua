@@ -222,13 +222,19 @@ Ext.RegisterNetListener("LeaderLib_Hotbar_Refresh", function(call, payload)
 end)
 
 Ext.RegisterNetListener("LeaderLib_Hotbar_RefreshCooldowns", function(call, datastr)
-	local slotdata = Ext.JsonParse(datastr)
-	if slotdata then
+	local data = Common.JsonParse(datastr)
+	if data and data.Slots then
+		if data.NetID then
+			if Client.Character.NetID ~= data.NetID then
+				--Current character isn't the one the slot data is for, so skip.
+				return
+			end
+		end
 		if not Vars.ControllerEnabled then
 			local ui = Ext.GetUIByType(Data.UIType.hotBar)
 			if ui then
 				local slotholder = ui:GetRoot().hotbar_mc.slotholder_mc
-				for i,cd in pairs(slotdata) do
+				for i,cd in pairs(data.Slots) do
 					if cd then
 						local slot = slotholder.slot_array[i]
 						if slot then
@@ -241,7 +247,7 @@ Ext.RegisterNetListener("LeaderLib_Hotbar_RefreshCooldowns", function(call, data
 			local ui = Ext.GetUIByType(Data.UIType.bottomBar_c)
 			if ui then
 				local slotholder = ui:GetRoot().bottombar_mc.slotsHolder_mc
-				for i,cd in pairs(slotdata) do
+				for i,cd in pairs(data.Slots) do
 					if cd then
 						local slot = slotholder.slot_array[i]
 						if slot then

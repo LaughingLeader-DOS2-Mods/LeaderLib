@@ -127,7 +127,7 @@ local function OnCharacterSheetStatChanged(cmd, uuid, stat, statType)
 end
 
 Ext.RegisterNetListener("LeaderLib_CharacterSheet_AttributeChanged", function(cmd, payload)
-	local data = Ext.JsonParse(payload)
+	local data = Common.JsonParse(payload)
 	if data then
 		local uuid = Ext.GetCharacter(data.NetID).MyGuid
 		OnCharacterSheetStatChanged(cmd, uuid, data.Stat, "attribute")
@@ -135,7 +135,7 @@ Ext.RegisterNetListener("LeaderLib_CharacterSheet_AttributeChanged", function(cm
 end)
 
 Ext.RegisterNetListener("LeaderLib_CharacterSheet_AbilityChanged", function(cmd, payload)
-	local data = Ext.JsonParse(payload)
+	local data = Common.JsonParse(payload)
 	if data then
 		local uuid = Ext.GetCharacter(data.NetID).MyGuid
 		OnCharacterSheetStatChanged(cmd, uuid, data.Stat, "ability")

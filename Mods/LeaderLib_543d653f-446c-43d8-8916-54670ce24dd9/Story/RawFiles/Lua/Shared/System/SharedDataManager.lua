@@ -308,10 +308,10 @@ if Ext.IsServer() then
 	end)
 
 	Ext.RegisterNetListener("LeaderLib_SharedData_CharacterSelected", function(cmd, payload)
-		local data = Ext.JsonParse(payload)
+		local data = Common.JsonParse(payload)
 		if data ~= nil then
 			local profile = data.Profile
-			local netid = tonumber(data.NetID)
+			local netid = data.NetID
 			if profile ~= nil and netid ~= nil and SharedData.CharacterData[profile] ~= nil then
 				local character = Ext.GetCharacter(netid)
 				if character ~= nil then

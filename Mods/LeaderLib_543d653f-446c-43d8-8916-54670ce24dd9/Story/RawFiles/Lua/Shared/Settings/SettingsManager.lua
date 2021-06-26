@@ -69,7 +69,7 @@ function SettingsManager.LoadAllModSettings()
 			local settingsFile = info.Directory .. "/ModSettings.json"
 			local file = Ext.LoadFile(settingsFile)
 			if file ~= nil then
-				local data = Ext.JsonParse(file)
+				local data = Common.JsonParse(file)
 				if data ~= nil then
 					local settings = SettingsManager.GetMod(uuid, true)
 					if data.Flags ~= nil then
@@ -186,7 +186,7 @@ if Ext.IsServer() then
 			--SettingsManager.LoadConfigFiles()
 			local json = NRD_LoadFile("LeaderLib_GlobalSettings.json")
 			if json ~= nil and json ~= "" then
-				local json_tbl = Ext.JsonParse(json)
+				local json_tbl = Common.JsonParse(json)
 				ParseSettings(json_tbl)
 			end
 			return true

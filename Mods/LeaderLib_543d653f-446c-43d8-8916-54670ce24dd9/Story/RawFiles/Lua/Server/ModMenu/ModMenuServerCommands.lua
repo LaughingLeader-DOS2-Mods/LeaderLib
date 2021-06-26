@@ -1,5 +1,5 @@
 Ext.RegisterNetListener("LeaderLib_ModMenu_FlagChanged", function(cmd, payload)
-	local data = Ext.JsonParse(payload)
+	local data = Common.JsonParse(payload)
 	if data.FlagType == "Global" then
 		if data.Enabled then
 			GlobalSetFlag(data.ID)
@@ -18,7 +18,7 @@ Ext.RegisterNetListener("LeaderLib_ModMenu_FlagChanged", function(cmd, payload)
 end)
 
 Ext.RegisterNetListener("LeaderLib_ModMenu_SaveChanges", function(cmd, payload)
-	local data = Ext.JsonParse(payload)
+	local data = Common.JsonParse(payload)
 	for uuid,changes in pairs(data) do
 		local settings = GlobalSettings.Mods[uuid]
 		if settings ~= nil then

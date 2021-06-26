@@ -19,12 +19,12 @@ GameHelpers.UI.SetSlotEnabled = SetSlotEnabled
 ---@param client string
 ---@param skill string
 ---@param enabled string
-function SetSkillEnabled(client, skill, enabled)
+function GameHelpers.UI.SetSkillEnabled(client, skill, enabled)
 	if CharacterIsPlayer(client) == 1 and CharacterGetReservedUserID(client) ~= nil then
 		if type(enabled) == "string" then
 			enabled = string.lower(enabled) == "true" or enabled == "1"
 		end
-		local slots = GetSkillSlots(client, skill)
+		local slots = GameHelpers.Skill.GetSkillSlots(client, skill, true)
 		if #slots > 0 then
 			Ext.PostMessageToClient(client, "LeaderLib_Hotbar_SetSlotEnabled", Ext.JsonStringify({
 				Slots = slots,
@@ -35,7 +35,7 @@ function SetSkillEnabled(client, skill, enabled)
 	end
 end
 
-GameHelpers.UI.SetSkillEnabled = SetSkillEnabled
+SetSkillEnabled = GameHelpers.UI.SetSkillEnabled
 
 ---Refresh the whole active skillbar. Useful for refreshing if a skill is clickable from tag requirements changing.
 ---@param client string|integer|EsvCharacter Client character UUID, user ID, or EsvCharacter.
@@ -63,11 +63,15 @@ RefreshSkillBar = GameHelpers.UI.RefreshSkillBar
 function GameHelpers.UI.RefreshSkillBarSkillCooldown(client, skill)
 	if CharacterIsPlayer(client) == 1 and CharacterGetReservedUserID(client) ~= nil then
 		local data = {NetID = GameHelpers.GetNetID(client), Slots = {}}
-		local slots = GetSkillSlots(client, skill)
+		local slots = GameHelpers.Skill.GetSkillSlots(client, skill, true)
+		print(Lib.inspect(slots))
 		if #slots > 0 then
 			local cd = Ext.GetCharacter(client):GetSkillInfo(skill).ActiveCooldown
-			for i,v in pairs(slots) do
-				data.Slots[i] = cd
+			for _,index in pairs(slots) do
+				table.insert(data.Slots, {
+					Index = index,
+					Cooldown = math.ceil(cd/6)
+				})
 			end
 			Ext.PostMessageToClient(client, "LeaderLib_Hotbar_RefreshCooldowns", Ext.JsonStringify(data))
 		end
@@ -83,11 +87,14 @@ function GameHelpers.UI.RefreshSkillBarCooldowns(client)
 		local character = Ext.GetCharacter(client)
 		local data = {NetID = GameHelpers.GetNetID(client), Slots = {}}
 		for i=0,144,1 do
-			local skill = NRD_SkillBarGetSkill(client, i)
+			local skill = NRD_SkillBarGetSkill(client, i, true)
 			if skill ~= nil then
 				local info = character:GetSkillInfo(skill)
 				if info ~= nil and info.ActiveCooldown > 0 then
-					data.Slots[i] = info.ActiveCooldown / 6.0
+					table.insert(data.Slots, {
+						Index = i,
+						Cooldown = math.ceil(info.ActiveCooldown/6)
+					})
 				end
 			end
 		end

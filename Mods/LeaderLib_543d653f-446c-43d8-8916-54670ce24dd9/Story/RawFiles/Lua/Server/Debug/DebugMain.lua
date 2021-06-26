@@ -692,3 +692,9 @@ RegisterSkillListener("All", function(skill, uuid, state, data)
 		fprint(LOGLEVEL.DEFAULT, "[Skill:%s] State(%s) Caster(%s) Data%s", skill, state, uuid, data and string.format(":\n%s", Lib.inspect(data)) or "(nil)")
 	end
 end)
+
+RegisterSkillListener("Shout_InspireStart", function(skill, uuid, state, data)
+	if state == SKILL_STATE.CAST then
+		GameHelpers.Skill.SetCooldown(uuid, skill, 18.0, true)
+	end
+end)

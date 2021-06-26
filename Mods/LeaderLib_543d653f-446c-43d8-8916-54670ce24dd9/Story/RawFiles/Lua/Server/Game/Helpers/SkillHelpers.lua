@@ -108,7 +108,7 @@ local function RefreshSkill(char, skill)
 end
 Ext.NewCall(RefreshSkill, "LeaderLib_Ext_RefreshSkill", "(CHARACTERGUID)_Character, (STRING)_Skill")
 
-function GetSkillSlots(char, skill, makeLocal)
+function GameHelpers.Skill.GetSkillSlots(char, skill, makeLocal)
 	local slots = {}
 	for i=0,144,1 do
         local slot = NRD_SkillBarGetSkill(char, i)
@@ -123,7 +123,7 @@ function GetSkillSlots(char, skill, makeLocal)
 	return slots
 end
 
-GameHelpers.Skill.GetSkillSlots = GetSkillSlots
+GetSkillSlots = GameHelpers.Skill.GetSkillSlots
 
 ---Swaps a skill with another one.
 ---@param char string
@@ -173,12 +173,17 @@ end
 ---@param char string
 ---@param skill string
 ---@param cooldown number
----@param refreshBar boolean|nil
-function GameHelpers.Skill.SetCooldown(char, skill, cooldown, refreshBar)
+function GameHelpers.Skill.SetCooldown(char, skill, cooldown)
     if CharacterHasSkill(char, skill) == 1 then
-        NRD_SkillSetCooldown(char, skill, cooldown)
-        if refreshBar == true then
-            GameHelpers.UI.RefreshSkillBar(char)
+        if cooldown ~= 0 then
+            --Cooldown 0 makes the engine stop sending updateSlotData invokes to hotBar.fla
+            NRD_SkillSetCooldown(char, skill, 0)
+            --Set the actual cooldown after a frame, now that the previous engine cooldown timer is done
+            Timer.StartOneshot("", 1, function()
+                NRD_SkillSetCooldown(char, skill, cooldown)
+            end)
+        else
+            NRD_SkillSetCooldown(char, skill, 0)
         end
     end
 end

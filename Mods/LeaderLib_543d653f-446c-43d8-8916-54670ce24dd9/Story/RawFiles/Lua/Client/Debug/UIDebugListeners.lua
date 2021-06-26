@@ -370,6 +370,8 @@ characterSheetDebug.CustomCallback.updateArraySystem = function(self, ui, method
 	end
 end
 
+characterSheetDebug.Enabled = true
+
 local sheetCalls = {
 	"addPoints",
 	"disablePointsAssign",
@@ -719,37 +721,39 @@ local hotbar = UIListenerWrapper:Create(Data.UIType.hotBar, {
 	"showSkillBar",
 	"toggleActionSkillHolder",
 	"updateActionSkills",
-	--"updateSlotData",
+	"updateSlotData",
 	--"updateSlots",
 })
 
--- ---@param ui UIObject
--- hotbar.CustomCallback["updateSlotData"] = function(self, ui, method)
--- 	local this = ui:GetRoot()
--- 	local array = this.slotUpdateDataList
--- 	for i=0,#array do
--- 		local entry = array[i]
--- 		if entry then
--- 			print(i, entry)
--- 		else
--- 			print(i, "nil")
--- 		end
--- 	end
--- end
+---@param ui UIObject
+hotbar.CustomCallback["updateSlotData"] = function(self, ui, method)
+	local this = ui:GetRoot()
+	local array = this.slotUpdateDataList
+	for i=0,#array-1 do
+		local entry = array[i]
+		if entry then
+			print(i, entry)
+		else
+			print(i, "nil")
+		end
+	end
+end
 
--- ---@param ui UIObject
--- hotbar.CustomCallback["updateSlots"] = function(self, ui, method)
--- 	local this = ui:GetRoot()
--- 	local array = this.slotUpdateList
--- 	for i=0,#array do
--- 		local entry = array[i]
--- 		if entry then
--- 			print(i, entry)
--- 		else
--- 			print(i, "nil")
--- 		end
--- 	end
--- end
+---@param ui UIObject
+hotbar.CustomCallback["updateSlots"] = function(self, ui, method)
+	local this = ui:GetRoot()
+	local array = this.slotUpdateList
+	for i=0,#array do
+		local entry = array[i]
+		if entry then
+			print(i, entry)
+		else
+			print(i, "nil")
+		end
+	end
+end
+
+--hotbar.Enabled = true
 
 --"Public/Game/GUI/dialog.swf"
 local dialog = UIListenerWrapper:Create(Data.UIType.dialog, {

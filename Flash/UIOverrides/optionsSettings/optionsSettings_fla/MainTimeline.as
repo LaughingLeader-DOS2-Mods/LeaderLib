@@ -19,6 +19,8 @@ package optionsSettings_fla
 		public var update_Array:Array;
 		public var baseUpdate_Array:Array;
 		public var button_array:Array;
+
+		public var focusedObject:MovieClip;
 		
 		public const anchorId:String = "optionsmenu";
 		public const anchorPos:String = "center";
@@ -43,6 +45,7 @@ package optionsSettings_fla
 		
 		public function parseUpdateArray() : *
 		{
+			this.focusedObject = null;
 			var val2:uint = 0;
 			var val3:Number = NaN;
 			var val4:String = null;
@@ -200,14 +203,24 @@ package optionsSettings_fla
 		{
 		}
 		
-		public function onEventUp(param1:Number) : Boolean
+		public function onEventUp(id:Number) : Boolean
 		{
-			return false;
+			var isHandled:Boolean = false;
+			if(focusedObject != null && focusedObject.handleEvent)
+			{
+				isHandled = focusedObject.handleEvent(this.events[id], false);
+			}
+			return isHandled;
 		}
 		
 		public function onEventDown(id:Number) : Boolean
 		{
 			var isHandled:Boolean = false;
+			trace("focusedObject", focusedObject);
+			if(focusedObject != null && focusedObject.handleEvent)
+			{
+				isHandled = focusedObject.handleEvent(this.events[id], true);
+			}
 			switch(this.events[id])
 			{
 				case "IE UIUp":
@@ -453,7 +466,7 @@ package optionsSettings_fla
 		
 		function frame1() : *
 		{
-			this.events = new Array("IE UIUp","IE UIDown","IE UICancel");
+			this.events = new Array("IE UIUp","IE UIDown","IE UICancel", "IE UILeft", "IE UIRight");
 			this.layout = "fixed";
 			this.curTooltip = "";
 			this.hasTooltip = false;

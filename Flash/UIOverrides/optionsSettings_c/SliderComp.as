@@ -82,7 +82,7 @@ package
 			}
 		}
 		
-		public function onMouseOver(param1:MouseEvent = null) : *
+		public function onMouseOver(e:MouseEvent = null) : *
 		{
 			this.base.mainMenu_mc.setCursorPosition(this.id);
 			if(this.tooltip != null && this.tooltip != "")
@@ -92,7 +92,7 @@ package
 			}
 		}
 		
-		public function onMouseOut(param1:MouseEvent = null) : *
+		public function onMouseOut(e:MouseEvent = null) : *
 		{
 			if(this.base.curTooltip == this.pos && this.base.hasTooltip)
 			{
@@ -102,30 +102,31 @@ package
 			this.base.curTooltip = -1;
 		}
 		
-		public function handleEvent(param1:String, param2:Boolean) : Boolean
+		public function handleEvent(eventName:String, isDown:Boolean) : Boolean
 		{
-			var val3:Boolean = false;
-			switch(param1)
+			var isHandled:Boolean = false;
+			switch(eventName)
 			{
 				case "IE UILeft":
-					if(param2)
+					if(isDown)
 					{
 						this.slider_mc.value = this.slider_mc.value - this.slider_mc.snapInterval;
 						this.onChange(null);
 						ExternalInterface.call("PlaySound","UI_Game_Dialog_Click");
 					}
-					val3 = true;
+					isHandled = true;
 					break;
 				case "IE UIRight":
-					if(param2)
+					if(isDown)
 					{
 						this.slider_mc.value = this.slider_mc.value + this.slider_mc.snapInterval;
 						this.onChange(null);
 						ExternalInterface.call("PlaySound","UI_Game_Dialog_Click");
 					}
-					val3 = true;
+					isHandled = true;
+					break;
 			}
-			return val3;
+			return isHandled;
 		}
 		
 		function frame1() : *

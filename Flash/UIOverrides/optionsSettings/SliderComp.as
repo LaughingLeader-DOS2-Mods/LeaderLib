@@ -24,7 +24,7 @@ package
 			addFrameScript(0,this.frame1);
 		}
 		
-		public function onChange(param1:Event) : *
+		public function onChange(e:Event) : *
 		{
 			var sliderValue:Number = this.slider_mc.value;
 			this.amount_txt.htmlText = String(this.roundFloat(sliderValue));
@@ -38,9 +38,14 @@ package
 			return Math.round(param1 * 100) / 100;
 		}
 		
-		public function onhandleUp(param1:Event) : *
+		public function onHandleUp(e:Event) : *
 		{
 			ExternalInterface.call("sliderHandleUp",this.id);
+		}
+
+		public function onHandleDown(e:Event) : *
+		{
+			this.base.focusedObject = this;
 		}
 		
 		public function resetAmountPos() : *
@@ -48,12 +53,20 @@ package
 			this.amount_txt.x = this.slider_mc.x + this.slider_mc.m_handle_mc.x + Math.round((this.slider_mc.m_handle_mc.width - this.amount_txt.textWidth) * 0.5);
 		}
 		
-		public function deselectElement(param1:MouseEvent) : *
+		public function deselectElement(e:MouseEvent) : *
 		{
+			if(this.base != null && this.base.focusedObject == this)
+			{
+				this.base.focusedObject = null;
+			}
 		}
 		
-		public function selectElement(param1:MouseEvent) : *
+		public function selectElement(e:MouseEvent) : *
 		{
+			if(this.base != null)
+			{
+				this.base.focusedObject = this;
+			}
 			ExternalInterface.call("PlaySound","UI_Generic_Over");
 		}
 		
@@ -77,11 +90,39 @@ package
 			}
 			this.base.curTooltip = -1;
 		}
+
+		public function handleEvent(eventName:String, isDown:Boolean) : Boolean
+		{
+			var isHandled:Boolean = false;
+			switch(eventName)
+			{
+				case "IE UILeft":
+					if(isDown)
+					{
+						this.slider_mc.value = this.slider_mc.value - this.slider_mc.snapInterval;
+						this.onChange(null);
+						ExternalInterface.call("PlaySound","UI_Game_Dialog_Click");
+					}
+					isHandled = true;
+					break;
+				case "IE UIRight":
+					if(isDown)
+					{
+						this.slider_mc.value = this.slider_mc.value + this.slider_mc.snapInterval;
+						this.onChange(null);
+						ExternalInterface.call("PlaySound","UI_Game_Dialog_Click");
+					}
+					isHandled = true;
+					break;
+			}
+			return isHandled;
+		}
 		
 		function frame1() : *
 		{
 			this.slider_mc.addEventListener(Event.CHANGE,this.onChange);
-			this.slider_mc.addEventListener("handleReleased",this.onhandleUp);
+			this.slider_mc.addEventListener("handleReleased",this.onHandleUp);
+			this.slider_mc.addEventListener("handlePressed",this.onHandleDown);
 			this.mHeight = 30;
 			this.base = root as MovieClip;
 			addEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver);

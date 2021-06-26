@@ -254,7 +254,9 @@ end
 ---@return EsvShootProjectileRequest
 local function PrepareProjectileProps(target, skill, source, level, enemiesOnly, extraParams)
     level = level or 1
+    ---@type number[]
     local targetPos,sourcePos = nil,nil
+    ---@type EsvCharacter|EsvItem
     local targetObject,sourceObject = nil,nil
 
     local isFromItem = false
@@ -273,11 +275,11 @@ local function PrepareProjectileProps(target, skill, source, level, enemiesOnly,
         end
         if targetObject then
             if target ~= source then
-                props.HitObject = target.MyGuid
-                props.HitObjectPosition = target.WorldPos
-                props.Target = target.MyGuid
+                props.HitObject = targetObject.MyGuid
+                props.HitObjectPosition = targetObject.WorldPos
+                props.Target = targetObject.MyGuid
             end
-            targetPos = target.WorldPos
+            targetPos = targetObject.WorldPos
         end
     end
 
@@ -290,8 +292,8 @@ local function PrepareProjectileProps(target, skill, source, level, enemiesOnly,
             props.SourcePosition = source
         end
         if sourceObject then
-            props.Caster = source.MyGuid
-            props.Source = source.MyGuid
+            props.Caster = sourceObject.MyGuid
+            props.Source = sourceObject.MyGuid
             local canCheckStats = ObjectIsItem(sourceObject.MyGuid) == 0 or not GameHelpers.Item.IsObject(sourceObject)
             if canCheckStats and sourceObject.Stats then
                 level = sourceObject.Stats.Level
@@ -303,7 +305,7 @@ local function PrepareProjectileProps(target, skill, source, level, enemiesOnly,
                     isFromItem = true
                 end
             end
-            props.SourcePosition = source.WorldPos
+            props.SourcePosition = sourceObject.WorldPos
         end
     end
 

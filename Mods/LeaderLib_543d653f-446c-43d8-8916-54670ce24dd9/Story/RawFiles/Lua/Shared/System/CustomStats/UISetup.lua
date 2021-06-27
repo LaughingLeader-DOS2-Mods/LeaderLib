@@ -299,30 +299,46 @@ end
 --ExternalInterface.call(param2,param1.statId,val3.x + val5,val3.y + val4,val6,param1.height,param1.tooltipAlign);
 
 ---@private
-function CustomStatSystem:OnRequestTooltip(ui, call, statId, x, y, width, height, alignment)
+---@param statId number
+---@param character EclCharacter
+function CustomStatSystem:OnRequestTooltip(ui, call, statId, character, x, y, width, height, alignment)
 	self.Requesting = false
-	---@type EclCharacter
-	local character = nil
 	---@type CustomStatData
-	local stat = nil
+	local stat = self:GetStatByDouble(statId)
 	local statName = ""
 	local statValue = nil
 
+	if not character then
+		if ui:GetTypeId() == Data.UIType.characterSheet then
+			character = Ext.GetCharacter(ui:GetPlayerHandle())
+			if not character then
+				character = Client:GetCharacter()
+			end
+		else
+			character = GameHelpers.Client.GetCharacter()
+		end
+	end
+
+	if stat then
+		statName = stat:GetDisplayName()
+		statValue = stat:GetValue(character)
+	end
+
 	if ui:GetTypeId() == Data.UIType.characterSheet then
-		character = Ext.GetCharacter(ui:GetPlayerHandle())
-		---@type CharacterSheetMainTimeline
-		local this = ui:GetRoot()
-		local stats = this.stats_mc.customStats_mc.stats_array
-		for i=0,#stats do
-			local mc = stats[i]
-			if mc and mc.statId == statId then
-				statName = mc.label_txt.htmlText
-				statValue = mc.am
-				stat = self:GetStatByDouble(statId)
+		if not stat then
+			---@type CharacterSheetMainTimeline
+			local this = ui:GetRoot()
+			local stats = this.stats_mc.customStats_mc.stats_array
+			for i=0,#stats do
+				local mc = stats[i]
+				if mc and mc.statId == statId then
+					statName = mc.label_txt.htmlText
+					statValue = mc.am
+					stat = self:GetStatByDouble(statId)
+				end
 			end
 		end
 	else
-		character = GameHelpers.Client.GetCharacter()
 		x,y,width,height = 0,0,413,196
 		alignment = "right"
 	end

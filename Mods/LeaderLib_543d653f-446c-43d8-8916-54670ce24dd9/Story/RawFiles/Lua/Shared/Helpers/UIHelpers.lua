@@ -64,7 +64,6 @@ function GameHelpers.UI.RefreshSkillBarSkillCooldown(client, skill)
 	if CharacterIsPlayer(client) == 1 and CharacterGetReservedUserID(client) ~= nil then
 		local data = {NetID = GameHelpers.GetNetID(client), Slots = {}}
 		local slots = GameHelpers.Skill.GetSkillSlots(client, skill, true)
-		print(Lib.inspect(slots))
 		if #slots > 0 then
 			local cd = Ext.GetCharacter(client):GetSkillInfo(skill).ActiveCooldown
 			for _,index in pairs(slots) do

@@ -75,6 +75,12 @@ if Ext.IsServer() then
 			if totalUsers <= 0 then
 				IterateUsers("LeaderLib_StoreUserData")
 			else
+				if SharedData.GameMode == GAMEMODE.GAMEMASTER then
+					local gm = Ext.GetCharacter(CharacterGetHostCharacter())
+					if gm then
+						UserIds[gm.ReservedUserID] = true
+					end
+				end
 				for id,b in pairs(UserIds) do
 					local profile = GetUserProfileID(id)
 					if profile ~= ignoreProfile then
@@ -128,9 +134,7 @@ if Ext.IsServer() then
 	end
 
 	function GameHelpers.Data.StartSyncTimer(delay, syncSettings)
-		if syncSettingsNext == true then
-			syncSettingsNext = true
-		end
+		syncSettingsNext = true
 		Timer.StartOneshot("LeaderLib_SyncSharedData", delay or 50, OnSyncTimer)
 	end
 
@@ -210,7 +214,7 @@ if Ext.IsServer() then
 					IsHost = isHost,
 					IsInCharacterCreation = isInCharacterCreation,
 					IsPossessed = character.IsPossessed,
-					IsGameMaster = character.IsGameMaster,
+					IsGameMaster = character.IsGameMaster or (SharedData.GameMode == GAMEMODE.GAMEMASTER and isHost),
 					IsPlayer = character.IsPlayer,
 					Profile = profileId,
 					ID = id
@@ -250,21 +254,15 @@ if Ext.IsServer() then
 	end)
 
 	Ext.RegisterOsirisListener("UserDisconnected", 3, "after", function(id, username, profileId)
-		if UserIds[id] == true then
-			UserIds[id] = nil
-		end
+		UserIds[id] = nil
 		SharedData.CharacterData[profileId] = nil
 		GameHelpers.Data.StartSyncTimer()
 	end)
 
 	Ext.RegisterOsirisListener("CharacterReservedUserIDChanged", 3, "after", function(uuid, last, id)
-		if UserIds[last] == true then
-			UserIds[last] = nil
-		end
+		UserIds[last] = nil
 		if id > -1 then
-			if UserIds[id] ~= true then
-				UserIds[id] = true
-			end
+			UserIds[id] = true
 			GameHelpers.Data.SetCharacterData(id)
 		elseif last > -1 then
 			GameHelpers.Data.SetCharacterData(last)
@@ -389,7 +387,6 @@ if Ext.IsClient() then
 		currentCharacter = currentCharacter or GetClientCharacter()
 		if Vars.DebugMode then
 			fprint(LOGLEVEL.DEFAULT, "[LeaderLib:ActiveCharacterChanged] Profile(%s) NameOrID(%s) Last(%s)", currentCharacter.Profile, (GameHelpers.Character.GetDisplayName(currentCharacter.NetID)) or currentCharacter.NetID, (last and GameHelpers.Character.GetDisplayName(last)) or -1)
-
 			local character = Ext.GetCharacter(currentCharacter.NetID)
 			if character then
 				fprint(LOGLEVEL.DEFAULT, "DisplayName(%s) StoryDisplayName(%s) OriginalDisplayName(%s) PlayerCustomData.Name(%s)", character.DisplayName, character.StoryDisplayName, character.OriginalDisplayName, character.PlayerCustomData and character.PlayerCustomData.Name or "")

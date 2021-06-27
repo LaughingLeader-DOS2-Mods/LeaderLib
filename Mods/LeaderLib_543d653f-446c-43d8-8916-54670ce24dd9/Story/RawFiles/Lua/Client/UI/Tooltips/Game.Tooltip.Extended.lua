@@ -1019,7 +1019,7 @@ function TooltipHooks:Init()
 	
 	Ext.RegisterUINameInvokeListener("addTooltip", function (ui, call, text, ...)
 		self:OnRenderGenericTooltip(ui, call, text, ...)
-	end)	
+	end)
 
 	Ext.RegisterUINameCall("hideTooltip", function (ui, call, ...)
 		self.LastRequestType = ""
@@ -1053,23 +1053,25 @@ function TooltipHooks:Init()
 end
 
 function TooltipHooks:OnRequestGenericTooltip(ui, call, text, x, y, width, height, side, allowDelay)
-	---@type GenericTooltipRequest
-	local request = {
-		Type = "Generic",
-		Text = text,
-		CallingUI = ui:GetTypeId()
-	}
-	if x then
-		request.X = x
-		request.Y = y
-		request.Width = width
-		request.Height = height
-		request.Side = side
-		request.AllowDelay = allowDelay
-	end
+	if self.NextRequest == nil then
+		---@type GenericTooltipRequest
+		local request = {
+			Type = "Generic",
+			Text = text,
+			CallingUI = ui:GetTypeId()
+		}
+		if x then
+			request.X = x
+			request.Y = y
+			request.Width = width
+			request.Height = height
+			request.Side = side
+			request.AllowDelay = allowDelay
+		end
 
-	self.NextRequest = request
-	self.LastTooltipRequestEvent = call
+		self.NextRequest = request
+		self.LastTooltipRequestEvent = call
+	end
 end
 
 function TooltipHooks:UpdateGenericTooltip(ui, method, keepUIinScreen)
@@ -1213,6 +1215,8 @@ function TooltipHooks:OnRequestTooltip(ui, method, arg1, arg2, arg3, ...)
 			ControllerVars.LastPlayer = request.Character
 		end
 		request.Character = Ext.GetCharacter(request.Character)
+	else
+		request.Character = Client:GetCharacter()
 	end
 
 	if request.Status ~= nil then
@@ -1232,7 +1236,7 @@ function TooltipHooks:OnRequestTooltip(ui, method, arg1, arg2, arg3, ...)
 	self.LastTooltipRequestEvent = method
 
 	if method == "showCustomStatTooltip" then
-		CustomStatSystem:OnRequestTooltip(ui, method, request.Stat, arg3, table.unpack({...}))
+		CustomStatSystem:OnRequestTooltip(ui, method, request.Stat, request.Character, arg3, table.unpack({...}))
 	end
 end
 

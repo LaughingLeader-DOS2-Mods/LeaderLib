@@ -163,16 +163,23 @@ function CustomStatSystem:IsTooltipWorking(character)
 	if isClient then
 		local characterData = Client:GetCharacterData()
 		if characterData then
-			return characterData.IsGameMaster and not characterData.IsPossessed
+			if characterData.IsGameMaster then
+				return not characterData.IsPossessed
+			else
+				return false
+			end
 		end
 	else
-		character = character or (Client and Client:GetCharacter()) or nil
+		character = character or Ext.GetCharacter(CharacterGetHostCharacter())
 		if character then
-			--return character.IsPossessed or (not character.IsGameMaster and character.IsPlayer) and character.UserID > -1
-			return character.IsGameMaster and not character.IsPossessed
+			if character.IsGameMaster then
+				return not character.IsPossessed
+			else
+				return false
+			end
 		end
 	end
-	return false
+	return true
 end
 
 if not isClient then

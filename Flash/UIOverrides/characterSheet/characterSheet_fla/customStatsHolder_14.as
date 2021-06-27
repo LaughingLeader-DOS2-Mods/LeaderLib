@@ -119,9 +119,11 @@ package characterSheet_fla
 			{
 				group_mc.groupName = labelText;
 				group_mc.visible = visible;
-				group_mc.arrayIndex = groups_array.length;
 				group_mc.onUpCallback = OnGroupClicked;
-				groups_array.push(group_mc);
+				if(group_mc.isNew) {
+					group_mc.arrayIndex = groups_array.length;
+					groups_array.push(group_mc);
+				}
 				ExternalInterface.call("customStatsGroupAdded", groupId, labelText, group_mc.arrayIndex);
 			}
 		}
@@ -181,12 +183,11 @@ package characterSheet_fla
 
 		public function addCustomStat(doubleHandle:Number, labelText:String, valueText:String, groupId:Number=0, plusVisible:Boolean=false, minusVisible:Boolean=false) : *
 		{
-			var initCustom:Boolean = false;
 			var cstat_mc:MovieClip = this.list.getGroupElementByNumber("statId",doubleHandle);
 			if (cstat_mc == null)
 			{
-				initCustom = true;
 				cstat_mc = new CustomStat();
+				cstat_mc.isNew = true;
 			}
 			cstat_mc.hl_mc.alpha = 0;
 			cstat_mc.plus_mc.visible = !this.base.isGameMasterChar ? plusVisible : true;
@@ -259,15 +260,14 @@ package characterSheet_fla
 			cstat_mc.hl_mc.height = cstat_mc.label_txt.y + cstat_mc.label_txt.textHeight - cstat_mc.hl_mc.y;
 			cstat_mc.label_txt.y = Math.round((cstat_mc.hl_mc.height - cstat_mc.label_txt.textHeight) * 0.5);
 
-			if(initCustom)
+			if(cstat_mc.isNew)
 			{
 				cstat_mc.id = this.list.length;
 				cstat_mc.statIndex = this.stats_array.length;
 				cstat_mc.init();
-
 				this.list.addGroupElement(groupId,cstat_mc,false);
-
 				this.stats_array.push(cstat_mc);
+				cstat_mc.isNew = false;
 			}
 
 			ExternalInterface.call("customStatAdded", doubleHandle, cstat_mc.statIndex);

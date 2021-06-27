@@ -255,6 +255,15 @@ function HitPrepareData:ClearAllDamage()
 	self.TotalDamageDone = 0
 end
 
+---Recalculates total damage done and updates all related variables.
+function HitPrepareData:Recalculate()
+	local total = 0
+	for k,v in pairs(self.DamageList) do
+		total = total + v
+	end
+	self.TotalDamageDone = total
+end
+
 ---Returns true if this hit has all the signs of a projectile weapon with Chaos damage.
 ---DamageType will be a random type, while the actual damage in the list will be "None" type.
 function HitPrepareData:IsBuggyChaosDamage()

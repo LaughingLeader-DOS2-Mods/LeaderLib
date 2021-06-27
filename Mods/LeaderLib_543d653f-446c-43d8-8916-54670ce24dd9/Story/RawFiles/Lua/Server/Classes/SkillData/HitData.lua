@@ -212,6 +212,15 @@ function HitData:ClearDamage(damageType)
 	self:ApplyDamageList(true)
 end
 
+---Sets the amount of LifeSteal done.
+---@param amount integer
+function HitData:SetLifeSteal(amount)
+	if self.HitRequest then
+		self.HitRequest.LifeSteal = amount
+	end
+	self:UpdateHitRequest()
+end
+
 ---@param flag string|string[]
 ---@param value boolean
 function HitData:SetHitFlag(flag, value)

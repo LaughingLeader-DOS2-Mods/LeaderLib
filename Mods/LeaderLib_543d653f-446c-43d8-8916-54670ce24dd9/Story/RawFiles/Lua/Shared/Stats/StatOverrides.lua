@@ -1,6 +1,6 @@
 local isClient = Ext.IsClient()
 
-local boost_stats = {
+local skip_stats = {
 	["StoryPlayer"] = true,
 	["CasualPlayer"] = true,
 	["NormalPlayer"] = true,
@@ -8,6 +8,9 @@ local boost_stats = {
 	["CasualNPC"] = true,
 	["NormalNPC"] = true,
 	["HardcoreNPC"] = true,
+	["_Base"] = true,
+	["_Hero"] = true,
+	["PlaceholderStatEntry"] = true,
 }
 
 local player_stats = {
@@ -261,9 +264,23 @@ local function OverrideStats(data)
 		end
 	end
 	if data.Settings.APSettings.NPC.Enabled then
+		local base = {
+			Max = Ext.StatGetAttribute("_Base", "APMaximum"),
+			Start = Ext.StatGetAttribute("_Base", "APStart"),
+			Recovery = Ext.StatGetAttribute("_Base", "APRecovery"),
+		}
 		local settings = data.Settings.APSettings.NPC
 		for _,id in pairs(Ext.GetStatEntries("Character")) do
-			local skip = player_stats[id] ~= nil or boost_stats[id] == true
+			local skip = skip_stats[id] == true or player_stats[id] ~= nil
+			if not skip then
+				local max = Ext.StatGetAttribute(id, "APMaximum")
+				local start = Ext.StatGetAttribute(id, "APStart")
+				local recovery = Ext.StatGetAttribute(id, "APRecovery")
+				--This stat is overriding a base AP value, so skip since it could be a totem or boss etc
+				if max ~= base.Max or start ~= base.Start or recovery ~= base.Recovery then
+					skip = true
+				end
+			end
 			if not skip then
 				local stat = Ext.GetStat(id)
 				local changedStat = AdjustAP(stat, settings)

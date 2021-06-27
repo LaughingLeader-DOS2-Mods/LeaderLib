@@ -194,7 +194,7 @@ if not isClient then
 						data.Description = ""
 					end
 				end
-				Ext.PostMessageToClient(character.MyGuid, "LeaderLib_CreateCustomStatTooltip", Ext.JsonStringify(data))
+				Ext.PostMessageToUser(character.ReservedUserID, "LeaderLib_CreateCustomStatTooltip", Ext.JsonStringify(data))
 			end
 		end
 	end)
@@ -203,7 +203,7 @@ if not isClient then
 		if data then
 			local uuid = data.UUID
 			local character = Ext.GetCharacter(data.Character)
-			local statValue = NRD_CharacterGetCustomStat(character.MyGuid, uuid)
+			local statValue = character:GetCustomStat(uuid)
 			--TODO Need some way to get a custom stat's name and tooltip from the UUID.
 		end
 	end)

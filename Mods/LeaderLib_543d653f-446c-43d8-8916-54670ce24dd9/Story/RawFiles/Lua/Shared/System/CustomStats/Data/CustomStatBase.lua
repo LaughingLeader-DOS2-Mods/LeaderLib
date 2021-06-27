@@ -10,6 +10,7 @@ local CustomStatDataBase = {
 	SortName = nil,
 	---Optional setting to force the string key conversion for DisplayName, in case the value doesn't have an underscore.
 	LoadStringKey = false,
+	AutoAddAvailablePointsOnRemove = true,
 }
 CustomStatDataBase.__index = CustomStatDataBase
 

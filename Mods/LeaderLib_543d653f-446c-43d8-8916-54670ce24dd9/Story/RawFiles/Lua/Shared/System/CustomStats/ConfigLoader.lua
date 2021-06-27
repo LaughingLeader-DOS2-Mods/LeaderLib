@@ -39,6 +39,8 @@ local statPropertyMap = {
 	SORTNAME = {Name="SortName", Type = "string"},
 	SORTVALUE = {Name="SortValue", Type = "number"},
 	LOADSTRINGKEY = {Name="LoadStringKey", Type = "boolean"},
+	--Defaults to true. AvailablePoints are added to when a stat is lowered in the UI.
+	AUTOADDAVAILABLEPOINTSONREMOVE = {Name="AutoAddAvailablePointsOnRemove", Type = "boolean"},
 }
 
 local isClient = Ext.IsClient()

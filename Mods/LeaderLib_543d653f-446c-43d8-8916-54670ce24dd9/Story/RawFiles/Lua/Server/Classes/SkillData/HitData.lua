@@ -127,6 +127,15 @@ function HitData:PrintTargets()
 	fprint(LOGLEVEL.TRACE, "[HitData:%s] Target(%s)", self.Handle, self.Target)
 end
 
+function HitData:UpdateHitRequest()
+	if self.HitRequest then
+		self.HitStatus.Hit = self.HitRequest
+		if self.HitContext and self.HitContext.Hit then
+			self.HitContext.Hit = self.HitRequest
+		end
+	end
+end
+
 ---Applies any DamageList changes to the actual hit.
 ---@param recalculate boolean|nil If true, lifesteal is recalculated.
 function HitData:ApplyDamageList(recalculate)
@@ -136,6 +145,8 @@ function HitData:ApplyDamageList(recalculate)
 	end
 	if recalculate then
 		self:Recalculate(true, true)
+	else
+		self:UpdateHitRequest()
 	end
 end
 
@@ -159,6 +170,7 @@ function HitData:Recalculate(recalcLifeSteal, setLifeStealFlags, allowArmorDamag
 			GameHelpers.Hit.RecalculateLifeSteal(self.HitRequest, Ext.GetCharacter(self.Target).Stats, Ext.GetCharacter(self.Attacker).Stats, self.HitContext.HitType, setLifeStealFlags, allowArmorDamageTypesToLifeSteal)
 		end
 	end
+	self:UpdateHitRequest()
 end
 
 ---Multiplies all damage by a value.
@@ -204,6 +216,7 @@ end
 ---@param value boolean
 function HitData:SetHitFlag(flag, value)
 	GameHelpers.Hit.SetFlag(self.HitRequest, flag, value)
+	self:UpdateHitRequest()
 end
 
 ---@param flag string|string[]

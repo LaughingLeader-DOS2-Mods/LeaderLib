@@ -87,7 +87,7 @@ RegisterProtectedExtenderListener("StatusHitEnter", function(hitStatus, hitConte
 		fprint(LOGLEVEL.TRACE, "hitRequest.DamageType(%s) hitRequest.TotalDamageDone(%s) DamageList:\n%s", hitRequest.DamageType, hitRequest.TotalDamageDone, Lib.inspect(hitRequest.DamageList:ToTable()))
 	end
 
-	InvokeListenerCallbacks(Listeners.StatusHitEnter, target, source, data)
+	InvokeListenerCallbacks(Listeners.StatusHitEnter, target, source, data, hitStatus)
 	--Old listener
 	InvokeListenerCallbacks(Listeners.OnHit, target.MyGuid, source.MyGuid, hitRequest.TotalDamageDone, hitStatus.StatusHandle, skillId, hitStatus, hitContext, data)
 end)

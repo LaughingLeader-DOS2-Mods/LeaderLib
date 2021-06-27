@@ -693,8 +693,26 @@ RegisterSkillListener("All", function(skill, uuid, state, data)
 	end
 end)
 
+local originalCooldown = 6
+
 RegisterSkillListener("Shout_InspireStart", function(skill, uuid, state, data)
+	-- if state == SKILL_STATE.PREPARE then
+	-- 	local stat = Ext.GetStat(skill)
+	-- 	originalCooldown = stat.Cooldown
+	-- 	stat.Cooldown = 2
+	-- 	Ext.SyncStat(skill, false)
+	-- elseif state == SKILL_STATE.CAST or state == SKILL_STATE.CANCEL then
+	-- 	local stat = Ext.GetStat(skill)
+	-- 	stat.Cooldown = originalCooldown
+	-- 	Ext.SyncStat(skill, false)
+	-- end
 	if state == SKILL_STATE.CAST then
 		GameHelpers.Skill.SetCooldown(uuid, skill, 18.0, true)
+	end
+end)
+
+RegisterListener("LuaReset", function()
+	for player in GameHelpers.Character.GetPlayers(true) do
+		CharacterResetCooldowns(player.MyGuid)
 	end
 end)

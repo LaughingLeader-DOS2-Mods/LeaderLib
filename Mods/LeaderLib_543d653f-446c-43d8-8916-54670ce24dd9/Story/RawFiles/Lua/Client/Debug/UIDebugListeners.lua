@@ -370,7 +370,7 @@ characterSheetDebug.CustomCallback.updateArraySystem = function(self, ui, method
 	end
 end
 
-characterSheetDebug.Enabled = true
+--characterSheetDebug.Enabled = true
 
 local sheetCalls = {
 	"addPoints",

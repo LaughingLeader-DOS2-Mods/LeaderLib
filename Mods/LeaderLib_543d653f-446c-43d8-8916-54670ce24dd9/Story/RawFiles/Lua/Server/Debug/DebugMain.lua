@@ -716,3 +716,37 @@ RegisterListener("LuaReset", function()
 		CharacterResetCooldowns(player.MyGuid)
 	end
 end)
+
+
+---@param target EsvCharacter|EsvItem
+---@param source EsvCharacter|nil
+---@param data HitData
+-- RegisterListener("StatusHitEnter", function(target, source, data)
+-- 	--data.HitRequest.LifeSteal = 1000
+-- 	--print(data.HitRequest.LifeSteal)
+-- 	--NRD_StatusSetInt(target.MyGuid, data.HitStatus.StatusHandle, "LifeSteal", 1000)
+-- 	--print(Lib.inspect(data))
+-- end)
+
+local fields = {
+	"HitId",
+	"Weapon",
+	"Hit",
+	"HitType",
+	"NoHitRoll",
+	"ProcWindWalker",
+	"ForceReduceDurability",
+	"HighGround",
+	"CriticalRoll",
+	"HitStatus",
+}
+
+
+---@param hitStatus EsvStatusHit
+---@param context HitContext
+-- RegisterProtectedExtenderListener("StatusHitEnter", function(hitStatus, hitContext)
+-- 	Ext.Print("hitContext")
+-- 	for i,v in pairs(fields) do
+-- 		print(v, Lib.inspect(hitContext[v]))
+-- 	end
+-- end)

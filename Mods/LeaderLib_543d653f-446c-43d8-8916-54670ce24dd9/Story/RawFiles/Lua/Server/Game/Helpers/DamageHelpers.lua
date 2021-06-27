@@ -296,8 +296,8 @@ local defaultHitFlags = {
     Hit = 1,
 }
 
----@param source EsvCharacter
----@param target string
+---@param source EsvCharacter|UUID|NETID
+---@param target UUID
 ---@param skill string
 ---@param hitParams table<string,any>|nil
 ---@param mainWeapon StatItem|nil
@@ -306,7 +306,7 @@ local defaultHitFlags = {
 ---@param getDamageFunction function|nil
 ---@param skillDataParamModifiers StatEntrySkillData|nil
 function GameHelpers.Damage.ApplySkillDamage(source, target, skill, hitParams, mainWeapon, offhandWeapon, applySkillProperties, getDamageFunction, skillDataParamModifiers)
-    if type(source) == "string" then
+    if type(source) == "string" or type(source) == "number" then
         source = Ext.GetCharacter(source)
     end
     local hit = NRD_HitPrepare(target, source.MyGuid)
@@ -359,5 +359,9 @@ function GameHelpers.Damage.ApplySkillDamage(source, target, skill, hitParams, m
             NRD_HitSetString(hit, "DeathType", deathType)
         end
         NRD_HitExecute(hit)
+    end
+
+    if applySkillProperties then
+        Ext.ExecuteSkillPropertiesOnTarget(skill, source, target, targetPos, "Target", false)
     end
 end

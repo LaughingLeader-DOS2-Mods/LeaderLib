@@ -272,6 +272,7 @@ local characterSheetDebug = UIListenerWrapper:Create(Data.UIType.characterSheet,
 	"UIAssert",
 	"UnlearnSkill",
 	"createCustomStatGroups",
+	"talentAdded",
 }, {
 	"addAbility",
 	"addAbilityGroup",
@@ -358,17 +359,17 @@ local printArrays = {
 	"lvlBtnSecStat_array",
 }
 
-characterSheetDebug.CustomCallback.updateArraySystem = function(self, ui, method)
-	local this = ui:GetRoot()
-	for _,arrName in pairs(printArrays) do
-		local array = this[arrName]
-		if array and #array > 0 then
-			for i=0,#array-1 do
-				print(arrName, i, array[i])
-			end
-		end
-	end
-end
+-- characterSheetDebug.CustomCallback.updateArraySystem = function(self, ui, method)
+-- 	local this = ui:GetRoot()
+-- 	for _,arrName in pairs(printArrays) do
+-- 		local array = this[arrName]
+-- 		if array and #array > 0 then
+-- 			for i=0,#array-1 do
+-- 				print(arrName, i, array[i])
+-- 			end
+-- 		end
+-- 	end
+-- end
 
 --characterSheetDebug.Enabled = true
 

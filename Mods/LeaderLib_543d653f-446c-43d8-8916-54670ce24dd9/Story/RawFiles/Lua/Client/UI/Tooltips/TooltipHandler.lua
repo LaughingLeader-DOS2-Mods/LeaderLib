@@ -135,7 +135,7 @@ Ext.RegisterListener("SessionLoaded", function()
 	Game.Tooltip.RegisterListener("Stat", nil, TooltipHandler.OnStatTooltip)
 	if Vars.DebugMode then
 		Game.Tooltip.RegisterListener("Rune", nil, TooltipHandler.OnRuneTooltip)
-		--Game.Tooltip.RegisterListener("Talent", nil, TooltipHandler.OnTalentTooltip)
+		--Game.Tooltip.RegisterListener("Talent", nil, OnTalentTooltip)
 		Game.Tooltip.RegisterListener("CustomStat", nil, TooltipHandler.OnCustomStatTooltip)
 		--Game.Tooltip.RegisterListener("Ability", nil, TooltipHandler.OnAbilityTooltip)
 	end

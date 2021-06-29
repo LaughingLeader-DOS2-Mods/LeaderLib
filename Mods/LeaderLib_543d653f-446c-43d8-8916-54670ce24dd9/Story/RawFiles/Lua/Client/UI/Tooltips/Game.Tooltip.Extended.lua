@@ -695,6 +695,46 @@ end
 ---@class TooltipRequest:table
 ---@field Type string
 
+---@class TooltipItemRequest:TooltipRequest
+---@field Item EclItem
+---@field Character EclCharacter
+
+---@class TooltipRuneRequest:TooltipRequest
+---@field Item EclItem
+---@field Character EclCharacter
+---@field Rune StatEntryObject The rune stat entry.
+---@field Slot integer
+---@field StatsId string The rune stat id.
+
+---@class TooltipSkillRequest:TooltipRequest
+---@field Character EclCharacter
+---@field Skill string
+
+---@class TooltipStatusRequest:TooltipRequest
+---@field Character EclCharacter
+---@field Status EclStatus
+
+---@class TooltipStatRequest:TooltipRequest
+---@field Character EclCharacter
+---@field Stat string
+
+---@class TooltipAbilityRequest:TooltipRequest
+---@field Character EclCharacter
+---@field Ability string
+
+---@class TooltipTalentRequest:TooltipRequest
+---@field Character EclCharacter
+---@field Talent string
+
+---@class TooltipTagRequest:TooltipRequest
+---@field Character EclCharacter
+---@field Tag string
+---@field Category string
+
+---@class TooltipCustomStatRequest:TooltipRequest
+---@field Character EclCharacter
+---@field Stat number
+
 ---@class GenericTooltipRequest:table
 ---@field Type string
 ---@field CallingUI integer
@@ -711,14 +751,20 @@ end
 TooltipHooks = {
 	---@type TooltipRequest
 	NextRequest = nil,
+	Last = {
+		---@type TooltipRequest
+		Request = nil,
+		Event = "",
+		Type = "",
+		---@type integer
+		UIType = -1,
+	},
 	SessionLoaded = false,
 	InitializationRequested = false,
 	Initialized = false,
 	GlobalListeners = {},
 	TypeListeners = {},
 	ObjectListeners = {},
-	LastTooltipRequestEvent = "",
-	LastRequestType = "",
 }
 
 ---@class TooltipArrayData
@@ -801,11 +847,9 @@ function TooltipHooks:RegisterControllerHooks()
 	end)
 	Ext.RegisterUITypeInvokeListener(Data.UIType.equipmentPanel_c, "updateTooltip", function (ui, ...)
 		self:OnRenderTooltip(TooltipArrayNames.Console.EquipmentPanel, ui, ...)
-		self.LastItemRequest = nil
 	end)
 	Ext.RegisterUITypeInvokeListener(Data.UIType.equipmentPanel_c, "updateEquipTooltip", function (ui, ...)
 		self:OnRenderTooltip(TooltipArrayNames.Console.EquipmentPanel, ui, ...)
-		self.LastItemRequest = nil
 	end)
 
 	Ext.RegisterUITypeCall(Data.UIType.craftPanel_c, "slotOver", function (ui, method, itemHandle, slotNum)
@@ -820,7 +864,6 @@ function TooltipHooks:RegisterControllerHooks()
 	-- end)
 	Ext.RegisterUITypeInvokeListener(Data.UIType.craftPanel_c, "updateTooltip", function (ui, ...)
 		self:OnRenderTooltip(TooltipArrayNames.Console.CraftPanel, ui, ...)
-		self.LastItemRequest = nil
 	end)
 
 	Ext.RegisterUITypeCall(Data.UIType.statsPanel_c, "selectedAttribute", function(ui, method, id)
@@ -895,7 +938,6 @@ function TooltipHooks:RegisterControllerHooks()
 	end)
 	Ext.RegisterUITypeInvokeListener(Data.UIType.partyInventory_c, "updateTooltip", function (...)
 		self:OnRenderTooltip(TooltipArrayNames.Console.PartyInventory, ...)
-		self.LastItemRequest = nil
 	end)
 
 	-- reward_c
@@ -903,10 +945,12 @@ function TooltipHooks:RegisterControllerHooks()
 		local itemHandle = Ext.DoubleToHandle(itemHandleDouble)
 		local request = {
 			Type = "Item",
-			Item = Ext.GetItem(itemHandle)
+			Item = Ext.GetItem(itemHandle),
+			Character = Client:GetCharacter()
 		}
 		self.NextRequest = request
-		self.LastTooltipRequestEvent = method
+		self.Last.Event = method
+		self.Last.UIType = ui:GetTypeId()
 	end)
 	Ext.RegisterUITypeInvokeListener(Data.UIType.reward_c, "updateTooltipData", function (ui, method, ...)
 		self:OnRenderTooltip(TooltipArrayNames.Console.Reward, ui, method, ...)
@@ -934,10 +978,12 @@ function TooltipHooks:RegisterControllerHooks()
 		local itemHandle = Ext.DoubleToHandle(itemHandleDouble)
 		local request = {
 			Type = "Item",
-			Item = Ext.GetItem(itemHandle)
+			Item = Ext.GetItem(itemHandle),
+			Character = Client:GetCharacter()
 		}
 		self.NextRequest = request
-		self.LastTooltipRequestEvent = method
+		self.Last.Event = method
+		self.Last.UIType = ui:GetTypeId()
 	end)
 	Ext.RegisterUITypeInvokeListener(Data.UIType.trade_c, "updateTooltip", function(...)
 		self:OnRenderTooltip(TooltipArrayNames.Console.Trade, ...)
@@ -1022,8 +1068,8 @@ function TooltipHooks:Init()
 	end)
 
 	Ext.RegisterUINameCall("hideTooltip", function (ui, call, ...)
-		self.LastRequestType = ""
 		if self.NextRequest and self.NextRequest.Type == "Generic" then
+			self.Last.Request = self.NextRequest
 			self.NextRequest = nil
 		end
 		local tt = Ext.GetUIByType(Data.UIType.tooltip)
@@ -1070,7 +1116,8 @@ function TooltipHooks:OnRequestGenericTooltip(ui, call, text, x, y, width, heigh
 		end
 
 		self.NextRequest = request
-		self.LastTooltipRequestEvent = call
+		self.Last.Event = call
+		self.Last.UIType = ui:GetTypeId()
 	end
 end
 
@@ -1117,7 +1164,8 @@ function TooltipHooks:OnRenderGenericTooltip(ui, method, text, x, y, allowDelay,
 	else
 		self.GenericTooltipData = nil
 	end
-	self.LastRequestType = "Generic"
+	self.Last.Type = "Generic"
+	self.Last.Request = self.NextRequest
 	self.NextRequest = nil
 end
 
@@ -1126,13 +1174,15 @@ function TooltipHooks:OnRequestTooltip(ui, method, arg1, arg2, arg3, ...)
 	local request = {}
 	local isCharSheet = ui:GetTypeId() == 119
 
+	local characterHandle = ui:GetPlayerHandle()
+
 	if method == "showSkillTooltip" then
 		request.Type = "Skill"
-		request.Character = Ext.DoubleToHandle(arg1)
+		characterHandle = Ext.DoubleToHandle(arg1)
 		request.Skill = arg2
 	elseif method == "showStatusTooltip" then
 		request.Type = "Status"
-		request.Character = Ext.DoubleToHandle(arg1)
+		characterHandle = Ext.DoubleToHandle(arg1)
 		request.Status = Ext.DoubleToHandle(arg2)
 	elseif method == "showItemTooltip" then
 		if arg1 == nil then
@@ -1140,14 +1190,13 @@ function TooltipHooks:OnRequestTooltip(ui, method, arg1, arg2, arg3, ...)
 			return
 		end
 		request.Type = "Item"
-		request.Item = Ext.DoubleToHandle(arg1)
+		request.Item = Ext.GetItem(Ext.DoubleToHandle(arg1))
 	elseif method == "showStatTooltip" then
 		request.Type = "Stat"
 		if isCharSheet then
-			request.Character = ui:GetPlayerHandle()
 			request.Stat = arg1
 		else
-			request.Character = Ext.DoubleToHandle(arg1)
+			characterHandle = Ext.DoubleToHandle(arg1)
 			request.Stat = arg2
 		end
 
@@ -1161,19 +1210,17 @@ function TooltipHooks:OnRequestTooltip(ui, method, arg1, arg2, arg3, ...)
 		--ExternalInterface.call(eventName,obj.statId,globalPos.x + tooltipOffsetX,globalPos.y + tooltipOffsetY,tooltipWidth,obj.height,obj.tooltipAlign);
 		request.Type = "CustomStat"
 		if isCharSheet then
-			request.Character = ui:GetPlayerHandle()
 			request.Stat = arg1
 		else
-			request.Character = Ext.DoubleToHandle(arg1)
+			characterHandle = Ext.DoubleToHandle(arg1)
 			request.Stat = arg2
 		end
 	elseif method == "showAbilityTooltip" then
 		request.Type = "Ability"
 		if isCharSheet then
-			request.Character = ui:GetPlayerHandle()
 			request.Ability = arg1
 		else
-			request.Character = Ext.DoubleToHandle(arg1)
+			characterHandle = Ext.DoubleToHandle(arg1)
 			request.Ability = arg2
 		end
 
@@ -1181,10 +1228,9 @@ function TooltipHooks:OnRequestTooltip(ui, method, arg1, arg2, arg3, ...)
 	elseif method == "showTalentTooltip" then
 		request.Type = "Talent"
 		if isCharSheet then
-			request.Character = ui:GetPlayerHandle()
 			request.Talent = arg1
 		else
-			request.Character = Ext.DoubleToHandle(arg1)
+			characterHandle = Ext.DoubleToHandle(arg1)
 			request.Talent = arg2
 		end
 
@@ -1193,38 +1239,36 @@ function TooltipHooks:OnRequestTooltip(ui, method, arg1, arg2, arg3, ...)
 		request.Type = "Tag"
 		request.Tag = arg1
 		request.Category = ""
-		request.Character = nil
 
 		local main = ui:GetRoot()
 		if main ~= nil then
-			request.Character = Ext.GetCharacter(Ext.DoubleToHandle(main.characterHandle))
+			characterHandle = Ext.DoubleToHandle(main.characterHandle)
 			local tag = main.CCPanel_mc.tags_mc.tagList.getElementByString("tagID",arg1)
 			if tag ~= nil then
 				request.Category = tag.categoryID
 			end
 		else
-			request.Character = Ext.GetCharacter(Ext.DoubleToHandle(ui:GetValue("characterHandle", "number")))
+			characterHandle = Ext.DoubleToHandle(ui:GetValue("characterHandle", "number"))
 		end
 	else
 		Ext.PrintError("Unknown tooltip request method?", method)
 		return
 	end
 
-	if request.Character ~= nil then
-		if ControllerVars.Enabled then
-			ControllerVars.LastPlayer = request.Character
-		end
-		request.Character = Ext.GetCharacter(request.Character)
-	else
+	if characterHandle ~= nil and not request.Character then
+		request.Character = Ext.GetCharacter(characterHandle)
+	end
+
+	if request.Character == nil then
 		request.Character = Client:GetCharacter()
 	end
 
-	if request.Status ~= nil then
-		request.Status = Ext.GetStatus(request.Character.Handle, request.Status)
+	if ControllerVars.Enabled then
+		ControllerVars.LastPlayer = request.Character
 	end
 
-	if request.Item ~= nil then
-		request.Item = Ext.GetItem(request.Item)
+	if request.Status ~= nil and request.Character then
+		request.Status = Ext.GetStatus(request.Character.Handle, request.Status)
 	end
 
 	if self.NextRequest ~= nil then
@@ -1233,7 +1277,8 @@ function TooltipHooks:OnRequestTooltip(ui, method, arg1, arg2, arg3, ...)
 	end
 
 	self.NextRequest = request
-	self.LastTooltipRequestEvent = method
+	self.Last.Event = method
+	self.Last.UIType = ui:GetTypeId()
 
 	if method == "showCustomStatTooltip" then
 		CustomStatSystem:OnRequestTooltip(ui, method, request.Stat, request.Character, arg3, table.unpack({...}))
@@ -1245,6 +1290,10 @@ function TooltipHooks:OnRequestExamineUITooltip(ui, method, typeIndex, id, ...)
 	local request = {
 		Character = Ext.GetCharacter(ui:GetPlayerHandle())
 	}
+
+	if request.Character == nil then
+		request.Character = Client:GetCharacter()
+	end
 
 	if typeIndex == 1 then
 		request.Type = "Stat"
@@ -1261,7 +1310,10 @@ function TooltipHooks:OnRequestExamineUITooltip(ui, method, typeIndex, id, ...)
 		request.Talent = Ext.EnumIndexToLabel("TalentType", id)
 	elseif typeIndex == 7 then
 		request.Type = "Status"
-		request.Status = Ext.GetStatus(request.Character.Handle, Ext.DoubleToHandle(id))
+		local handle = Ext.DoubleToHandle(id)
+		if handle and request.Character then
+			request.Status = Ext.GetStatus(request.Character.Handle, handle)
+		end
 	else
 		return
 	end
@@ -1271,7 +1323,8 @@ function TooltipHooks:OnRequestExamineUITooltip(ui, method, typeIndex, id, ...)
 	end
 
 	self.NextRequest = request
-	self.LastTooltipRequestEvent = method
+	self.Last.Event = method
+	self.Last.UIType = ui:GetTypeId()
 end
 
 ---@param ui UIObject
@@ -1369,7 +1422,7 @@ function TooltipHooks:OnRenderTooltip(arrayData, ui, method, ...)
 	end
 
 	local req = self.NextRequest
-	self.LastRequestType = req.Type
+	self.Last.Type = req.Type
 
 	self:OnRenderSubTooltip(ui, arrayData.Main, req, method, ...)
 	
@@ -1403,6 +1456,7 @@ function TooltipHooks:OnRenderTooltip(arrayData, ui, method, ...)
 		end
 	end
 
+	self.Last.Request = self.NextRequest
 	self.NextRequest = nil
 end
 
@@ -1514,7 +1568,8 @@ function TooltipHooks:OnRequestConsoleExamineTooltip(ui, method, id, characterHa
 	end
 
 	self.NextRequest = request
-	self.LastTooltipRequestEvent = method
+	self.Last.Event = method
+	self.Last.UIType = ui:GetTypeId()
 end
 
 --- @param ui UIObject
@@ -1553,8 +1608,13 @@ function TooltipHooks:OnRequestConsoleHotbarTooltip(ui, method, slotNum)
 		end
 	end
 
+	if request.Character == nil then
+		request.Character = Client:GetCharacter()
+	end
+
 	self.NextRequest = request
-	self.LastTooltipRequestEvent = method
+	self.Last.Event = method
+	self.Last.UIType = ui:GetTypeId()
 end
 
 --- @param ui UIObject
@@ -1610,9 +1670,13 @@ function TooltipHooks:OnRequestConsoleInventoryTooltip(ui, method, itemHandleDou
 		end
 	end
 
-	self.LastItemRequest = request
+	if request.Character == nil then
+		request.Character = Client:GetCharacter()
+	end
+
 	self.NextRequest = request
-	self.LastTooltipRequestEvent = method
+	self.Last.Event = method
+	self.Last.UIType = ui:GetTypeId()
 end
 
 --- @param ui UIObject
@@ -1626,20 +1690,13 @@ function TooltipHooks:OnRequestConsoleCCTooltip(ui, method, arg1, arg2)
 	if handle ~= nil then
 		request.Character = Ext.GetCharacter(handle)
 	end
-	
-	if method == "requestSkillTooltip" then
-		request.Type = "Skill"
-		request.Skill = arg1
-	elseif method == "requestAbilityTooltip" then
+
+	if method == "requestAbilityTooltip" then
 		request.Type = "Ability"
 		request.Ability = Ext.EnumIndexToLabel("AbilityType", arg1)
-	elseif method == "requestTalentTooltip" then
-		request.Type = "Talent"
-		request.Talent = Ext.EnumIndexToLabel("TalentType", arg1)
-	elseif method == "requestTagTooltip" then
-		request.Type = "Tag"
-		request.Category = arg1
-		request.Tag = arg2
+	elseif method == "requestSkillTooltip" then
+		request.Type = "Skill"
+		request.Skill = arg1
 	elseif method == "requestAttributeTooltip" then
 		request.Type = "Stat"
 		request.Stat = arg1
@@ -1649,10 +1706,22 @@ function TooltipHooks:OnRequestConsoleCCTooltip(ui, method, arg1, arg2)
 		else
 			Ext.PrintWarning("Requested tooltip for unknown stat ID " .. request.Stat)
 		end
+	elseif method == "requestTalentTooltip" then
+		request.Type = "Talent"
+		request.Talent = Ext.EnumIndexToLabel("TalentType", arg1)
+    elseif method == "requestTagTooltip" then
+		request.Type = "Tag"
+		request.Category = arg1
+		request.Tag = arg2
+	end
+
+	if request.Character == nil then
+		request.Character = Client:GetCharacter()
 	end
 
 	self.NextRequest = request
-	self.LastTooltipRequestEvent = method
+	self.Last.Event = method
+	self.Last.UIType = ui:GetTypeId()
 end
 
 function TooltipHooks:OnRequestRuneTooltip(ui, method, slot)
@@ -1664,7 +1733,8 @@ function TooltipHooks:OnRequestRuneTooltip(ui, method, slot)
 		StatsId = nil
 	}
 
-	self.LastTooltipRequestEvent = method
+	self.Last.Event = method
+	self.Last.UIType = ui:GetTypeId()
 
 	local main = ui:GetRoot()
 	if main then
@@ -1686,7 +1756,6 @@ function TooltipHooks:OnRequestRuneTooltip(ui, method, slot)
 						Type = "Item",
 						Item = item
 					}
-					self.LastItemRequest = request
 					self.NextRequest = request
 				else
 					slot = slot - 1
@@ -1713,6 +1782,7 @@ function TooltipHooks:OnRequestRuneTooltip(ui, method, slot)
 		end
 	end
 	if request.Item ~= nil then
+		request.Character = Client:GetCharacter()
 		self.NextRequest = request
 	end
 end
@@ -1945,7 +2015,7 @@ function Game.Tooltip.RegisterListener(...)
 end
 
 function Game.Tooltip.LastRequestTypeEquals(t)
-	if TooltipHooks.LastRequestType == t or (TooltipHooks.NextRequest and TooltipHooks.NextRequest.Type == t) then
+	if TooltipHooks.Last.Type == t or (TooltipHooks.NextRequest and TooltipHooks.NextRequest.Type == t) then
 		return true
 	end
 	return false

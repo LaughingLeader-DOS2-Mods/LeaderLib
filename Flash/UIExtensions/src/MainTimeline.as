@@ -39,6 +39,8 @@ package
 		public var globalToLocalY:Number = 0;
 		public var localToGlobalX:Number = 0;
 		public var localToGlobalY:Number = 0;
+		public var screenWidth:Number = 0;
+		public var screenHeight:Number = 0;
 		
 		public function MainTimeline()
 		{
@@ -130,6 +132,12 @@ package
 		public function onEventResize() : *
 		{
 			ExternalInterface.call("setPosition","center","screen","center");
+		}
+
+		public function onEventResolution(w:Number, h:Number) : *
+		{
+			this.screenWidth = w;
+			this.screenHeight = h;
 		}
 
 		public function removeControl(id:Number): Boolean
@@ -415,6 +423,9 @@ package
 			this.curTooltip = "";
 		 	this.hasTooltip = false;
 			this.timers = new Array();
+
+			this.screenWidth = this.width;
+			this.screenHeight = this.height;
 
 			context_menu = new contextMenu.ContextMenuMC();
 			this.addChild(context_menu);

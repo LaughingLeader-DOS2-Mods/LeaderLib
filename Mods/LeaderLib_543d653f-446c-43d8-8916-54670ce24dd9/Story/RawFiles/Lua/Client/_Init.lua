@@ -41,6 +41,7 @@ Ext.Require("Client/UI/Talents/TalentManager.lua")
 Ext.Require("Client/UI/Talents/GamepadSupport.lua")
 Ext.Require("Client/UI/InterfaceCommands.lua")
 Ext.Require("Client/UI/ContextMenu.lua")
+
 if Vars.DebugMode then
 	Ext.Require("Client/UI/DialogKeywords.lua") -- TODO
 	Ext.Require("Client/Debug/UIGeneralDebug.lua")

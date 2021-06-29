@@ -111,5 +111,11 @@ function TranslatedString:ReplacePlaceholders(...)
 	return str
 end
 
+---@param val string
+---@param caseInsensitive boolean|nil
+function TranslatedString:Equals(val, caseInsensitive)
+	return StringHelpers.Equals(self.Value, val, caseInsensitive)
+end
+
 Classes["TranslatedString"] = TranslatedString
 --local TranslatedString = Classes["TranslatedString"]

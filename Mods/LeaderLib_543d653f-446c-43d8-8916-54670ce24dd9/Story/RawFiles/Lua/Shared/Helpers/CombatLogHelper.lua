@@ -69,7 +69,6 @@ if isClient then
 		if enabled ~= nil then
 			this.setFilterSelection(data.Index, enabled)
 		end
-		print("CombatLog.Filters", Lib.inspect(CombatLog.Filters))
 		return data
 	end
 
@@ -78,8 +77,10 @@ if isClient then
 		local filter = self.Filters[id]
 		if filter then
 			local this = self.GetInstance()
-			this.clearFilter(filter.Index)
-			this.log_mc.filterList.removeElement(filter.Index)
+			if this then
+				this.clearFilter(filter.Index)
+				this.log_mc.filterList.removeElement(filter.Index)
+			end
 		else
 			fprint(LOGLEVEL.WARNING, "[CombatLog.AddTextToFilter] Filter (%s) was not added!", id)
 		end
@@ -91,7 +92,9 @@ if isClient then
 		local filter = self.Filters[id]
 		if filter then
 			local this = self.GetInstance()
-			this.addTextToFilter(filter.Index, text)
+			if this then 
+				this.addTextToFilter(filter.Index, text)
+			end
 		else
 			fprint(LOGLEVEL.WARNING, "[CombatLog.AddTextToFilter] Filter (%s) was not added!", id)
 		end
@@ -101,9 +104,22 @@ if isClient then
 		local filter = self.Filters[id]
 		if filter then
 			local this = self.GetInstance()
-			this.setFilterSelection(filter.Index, enabled)
+			if this then 
+				this.setFilterSelection(filter.Index, enabled)
+			end
 		else
 			fprint(LOGLEVEL.WARNING, "[CombatLog.AddTextToFilter] Filter (%s) was not added!", id)
+		end
+	end
+
+	function CombatLog.Clear()
+		local this = self.GetInstance()
+		if this then
+			if not Vars.ControllerEnabled then
+				this.clearAllTexts()
+			else
+				this.clearAll()
+			end
 		end
 	end
 

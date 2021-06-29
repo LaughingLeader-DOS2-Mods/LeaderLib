@@ -736,7 +736,7 @@ end
 ---@field Stat number The stat handle.
 ---@field StatData CustomStatData
 
----@class GenericTooltipRequest:table
+---@class TooltipGenericRequest:table
 ---@field Type string
 ---@field CallingUI integer
 ---@field Text string
@@ -1109,7 +1109,7 @@ end
 
 function TooltipHooks:OnRequestGenericTooltip(ui, call, text, x, y, width, height, side, allowDelay)
 	if self.NextRequest == nil then
-		---@type GenericTooltipRequest
+		---@type TooltipGenericRequest
 		local request = {
 			Type = "Generic",
 			Text = text,
@@ -1145,7 +1145,7 @@ end
 ---@param ui UIObject
 ---@param method string
 function TooltipHooks:OnRenderGenericTooltip(ui, method, text, x, y, allowDelay, anchorEnum, backgroundType)
-	---@type GenericTooltipRequest
+	---@type TooltipGenericRequest
 	local req = self.NextRequest
 	if not req or req.Type ~= "Generic" then
 		return
@@ -1154,7 +1154,9 @@ function TooltipHooks:OnRenderGenericTooltip(ui, method, text, x, y, allowDelay,
 		req.Text = text
 	end
 
-	---@type GenericTooltipRequest
+	self.IsOpen = true
+
+	---@type TooltipGenericRequest
 	self.GenericTooltipData = {}
 	self.GenericTooltipData.Text = text
 	self.GenericTooltipData.X = x
@@ -1866,7 +1868,7 @@ end
 TooltipData = {}
 
 ---@class GenericTooltipData:TooltipData
----@field Data GenericTooltipRequest
+---@field Data TooltipGenericRequest
 
 function TooltipData:Create(data)
 	local tt = {

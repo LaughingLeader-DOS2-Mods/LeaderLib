@@ -32,7 +32,9 @@ local ContextMenu = {
 	---@type ContextStatus
 	ContextStatus = nil,
 	IsOpening = false,
-	Visible = false
+	Visible = false,
+	---@private
+	RegisteredListeners = false
 }
 ContextMenu.__index = ContextMenu
 local self = ContextMenu
@@ -467,9 +469,17 @@ function ContextMenu:Open()
 		if self.ContextStatus then
 			Ext.GetUIByType(self.ContextStatus.CallingUI):ExternalInterfaceCall("hideTooltip")
 		end
-		x = x + paddingX
-		y = y + paddingY
-		
+		if x+contextMenu.width > main.screenWidth then
+			x = x - contextMenu.width - paddingX
+		else
+			x = x + paddingX
+		end
+		if y+contextMenu.height > main.screenHeight then
+			y = y - contextMenu.height - paddingY
+		else
+			y = y + paddingY
+		end
+
 		contextMenu.open(x,y)
 		self.Visible = true
 		self.IsOpening = false

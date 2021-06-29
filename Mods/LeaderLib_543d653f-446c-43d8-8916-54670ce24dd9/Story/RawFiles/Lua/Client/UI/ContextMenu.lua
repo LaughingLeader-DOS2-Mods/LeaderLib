@@ -51,7 +51,7 @@ ContextMenu.Actions[ACTIONS.HideStatus] = function(self, ui, id, actionID, handl
 				fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Hiding status %s from the UI.", self.ContextStatus.StatusId)
 				table.insert(GameSettings.Settings.Client.StatusOptions.Blacklist, self.ContextStatus.StatusId)
 				GameSettingsManager.Save()
-				UI.RefreshStatusVisibility()
+				StatusHider.RefreshStatusVisibility()
 			else
 				fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Skipping hiding status %s from the UI.", self.ContextStatus.StatusId)
 			end
@@ -69,7 +69,7 @@ ContextMenu.Actions[ACTIONS.HideStatus] = function(self, ui, id, actionID, handl
 				fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Hiding status %s from the UI.", self.ContextStatus.StatusId)
 				GameSettings.Settings.Client.StatusOptions.Whitelist = whitelist
 				GameSettingsManager.Save()
-				UI.RefreshStatusVisibility()
+				StatusHider.RefreshStatusVisibility()
 			else
 				fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Skipping hiding status %s from the UI.", self.ContextStatus.StatusId)
 			end
@@ -95,7 +95,7 @@ ContextMenu.Actions[ACTIONS.UnhideStatus] = function(self, ui, id, actionID, han
 				fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Unhiding status %s from the UI.", self.ContextStatus.StatusId)
 				GameSettings.Settings.Client.StatusOptions.Blacklist = blacklist
 				GameSettingsManager.Save()
-				UI.RefreshStatusVisibility()
+				StatusHider.RefreshStatusVisibility()
 			else
 				fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Skipping unhiding status %s from the UI.", self.ContextStatus.StatusId)
 			end
@@ -111,7 +111,7 @@ ContextMenu.Actions[ACTIONS.UnhideStatus] = function(self, ui, id, actionID, han
 				fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Unhiding status %s from the UI.", self.ContextStatus.StatusId)
 				table.insert(GameSettings.Settings.Client.StatusOptions.Whitelist, self.ContextStatus.StatusId)
 				GameSettingsManager.Save()
-				UI.RefreshStatusVisibility()
+				StatusHider.RefreshStatusVisibility()
 			else
 				fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Skipping unhiding status %s from the UI.", self.ContextStatus.StatusId)
 			end

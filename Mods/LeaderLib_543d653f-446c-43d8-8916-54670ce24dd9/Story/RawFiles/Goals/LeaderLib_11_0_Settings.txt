@@ -628,6 +628,8 @@ DB_LeaderLib_EngineStatus("TELEPORT_FALLING");
 DB_LeaderLib_EngineStatus("THROWN");
 DB_LeaderLib_EngineStatus("TUTORIAL_BED");
 DB_LeaderLib_EngineStatus("UNSHEATHED");
+//Custom status used to get the UI to refresh
+DB_LeaderLib_EngineStatus("LEADERLIB_RECALC");
 
 //Auras to ignore, or aura statuses that can be resisted, and result in event spam
 PROC

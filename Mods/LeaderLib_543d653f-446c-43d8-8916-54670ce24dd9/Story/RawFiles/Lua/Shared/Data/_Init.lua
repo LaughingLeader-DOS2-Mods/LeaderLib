@@ -465,6 +465,8 @@ Data.EngineStatus = {
 	UNLOCK = true,
 	UNSHEATHED = true,
 	WIND_WALKER = true,
+	--Custom
+	LEADERLIB_RECALC = true,
 }
 
 setmetatable(Data.EngineStatus, {

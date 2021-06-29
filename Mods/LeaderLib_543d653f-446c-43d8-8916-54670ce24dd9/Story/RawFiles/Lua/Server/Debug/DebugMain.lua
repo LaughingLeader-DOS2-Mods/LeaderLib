@@ -751,14 +751,19 @@ local fields = {
 -- 	end
 -- end)
 
--- ---@param item EsvItem
--- ---@param statsId string
+---@param item EsvItem
+---@param statsId string
 -- RegisterListener("TreasureItemGenerated", function(item, statsId)
--- 	if item == nil or item.MyGuid == nil or GameHelpers.Item.IsObject(item) then
+-- 	if item == nil or GameHelpers.Item.IsObject(item) then
 -- 		return
 -- 	end
--- 	if statsId == "WPN_GW_Dervish_Scythe" or statsId == "WPN_Sword_2H" then
+-- 	if statsId == "WPN_Sword_2H" then
 -- 		item.CustomDisplayName = "TEST"
+-- 		--item:SetGeneratedBoosts({"_Boost_Weapon_Skill_Whirlwind", "_Boost_Weapon_Secondary_Vitality_Normal"})
+-- 		if item.Stats then
+-- 			 -- Not sure what this does
+-- 			item.Stats.ShouldSyncStats = true
+-- 			item.Stats.DamageTypeOverwrite = "Shadow"
+-- 		end
 -- 	end
--- 	print(Lib.inspect(item))
 -- end)

@@ -198,7 +198,10 @@ end
 Ext.RegisterNetListener("LeaderLib_UI_Server_RefreshPlayerInfo", function(cmd, netid)
 	local character = Ext.GetCharacter(tonumber(netid))
 	if character and not character.Dead and not character.OffStage then
-		ApplyStatus(character.MyGuid, "LEADERLIB_RECALC", 0.0, 1, character.MyGuid)
+		local timerName = string.format("LeaderLib_Recalc_%s", character.MyGuid)
+		Timer.StartOneshot(timerName, 10, function()
+			ApplyStatus(character.MyGuid, "LEADERLIB_RECALC", 0.0, 1, character.MyGuid)
+		end)
 	end
 end)
 

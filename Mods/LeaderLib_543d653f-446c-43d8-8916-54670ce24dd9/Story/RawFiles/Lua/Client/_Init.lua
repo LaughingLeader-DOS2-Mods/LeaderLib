@@ -32,11 +32,6 @@ Ext.Require("Client/UI/StatusHider.lua")
 Ext.Require("Client/UI/Tooltips/Game.Tooltip.Extended.lua")
 Ext.Require("Client/UI/CharacterSheet.lua")
 Ext.Require("Client/UI/ModMenu/_Init.lua")
-if Vars.DebugMode then
-	Ext.Require("Client/Debug/UIGeneralDebug.lua")
-	Ext.Require("Client/Debug/UIDebugListeners.lua")
-	Ext.Require("Client/Debug/ClientConsoleCommands.lua")
-end
 Ext.Require("Client/UI/Tooltips/TooltipHandler.lua")
 Ext.Require("Client/UI/Tooltips/TooltipInfoExpander.lua")
 Ext.Require("Client/UI/ControllerUIHelpers.lua")
@@ -48,6 +43,9 @@ Ext.Require("Client/UI/InterfaceCommands.lua")
 Ext.Require("Client/UI/ContextMenu.lua")
 if Vars.DebugMode then
 	Ext.Require("Client/UI/DialogKeywords.lua") -- TODO
+	Ext.Require("Client/Debug/UIGeneralDebug.lua")
+	Ext.Require("Client/Debug/UIDebugListeners.lua")
+	Ext.Require("Client/Debug/ClientConsoleCommands.lua")
 end
 
 --Temp Workaround for mods calling this still on the client side

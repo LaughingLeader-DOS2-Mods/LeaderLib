@@ -37,3 +37,42 @@ Input.RegisterListener("ToggleCraft", function(event, pressed, id, keys, control
 		end
 	end
 end)
+
+-- Ext.RegisterListener("SessionLoaded", function()
+	
+-- end)
+
+local registeredContextListeners = false
+Ext.RegisterConsoleCommand("contextRollTest", function()
+	if not registeredContextListeners then
+		UI.ContextMenu.Register.ShouldOpenListener(function(contextMenu, x, y)
+			if Game.Tooltip.LastRequestTypeEquals("CustomStat") then
+				return true
+			end
+		end)
+		
+		UI.ContextMenu.Register.OpeningListener(function(contextMenu, x, y)
+			if Game.Tooltip.RequestTypeEquals("CustomStat") and Game.Tooltip.IsOpen() then
+				---@type TooltipCustomStatRequest
+				local request = Game.Tooltip.GetCurrentOrLastRequest()
+				local characterId = request.Character.NetID
+				local modId = nil
+				local statId = request.Stat
+				if request.StatData then
+					modId = request.StatData.Mod
+					statId = request.StatData.ID
+				end
+				contextMenu:AddEntry("RollCustomStat", function(cMenu, ui, id, actionID, handle)
+					CustomStatSystem:RequestStatChange(statId, characterId, Ext.Random(1,10), modId)
+				end, "<font color='#33AA33'>Roll</font>")
+			end
+		end)
+		
+		UI.ContextMenu.Register.EntryClickedListener(function(...)
+			fprint(LOGLEVEL.DEFAULT, "[ContextMenu.EntryClickedListener] %s", Lib.inspect({...}))
+		end)
+
+		registeredContextListeners = true
+	end
+end)
+

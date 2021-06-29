@@ -750,3 +750,15 @@ local fields = {
 -- 		print(v, Lib.inspect(hitContext[v]))
 -- 	end
 -- end)
+
+-- ---@param item EsvItem
+-- ---@param statsId string
+-- RegisterListener("TreasureItemGenerated", function(item, statsId)
+-- 	if item == nil or item.MyGuid == nil or GameHelpers.Item.IsObject(item) then
+-- 		return
+-- 	end
+-- 	if statsId == "WPN_GW_Dervish_Scythe" or statsId == "WPN_Sword_2H" then
+-- 		item.CustomDisplayName = "TEST"
+-- 	end
+-- 	print(Lib.inspect(item))
+-- end)

@@ -112,7 +112,7 @@ function PresetData:AddEquipmentToCharacter(char, targetRarity, skipSlots, skipI
 						if item ~= nil and ObjectExists(item) == 1 then
 							ItemToInventory(item, char, 1, 0, 1)
 							if ItemIsEquipable(item) == 1 then
-								--Osi.LeaderLib_Timers_StartCharacterItemTimer(char, item, 500, string.format("LLEG%s", item), "LeaderLib_Commands_EquipItem");
+								Osi.LeaderLib_Timers_StartCharacterItemTimer(char, item, 500, string.format("LLEG%s", item), "LeaderLib_Commands_EquipItem")
 								--CharacterEquipItem(char, item)
 								--NRD_CharacterEquipItem(char, item, stat.Slot, 0, 0, 1, 1)
 							end

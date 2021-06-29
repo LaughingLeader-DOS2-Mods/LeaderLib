@@ -357,7 +357,12 @@ local function AddItemStat(stat, params)
 		params.GMFolding = false
 	end
 
-	local item = GameHelpers.Item.CreateItemByStat(stat, true, params)
+	-- local item,obj = GameHelpers.Item.CreateItemByStat("ARM_Metamorph_UpperBody", { GenerationLevel=20, StatsLevel = 1, GenerationItemType = "Divine", ItemType = "Common", IsIdentified = true, GMFolding = false, HasGeneratedStats = true,}); ItemToInventory(item, CharacterGetHostCharacter(), 1, 0, 0); ItemDrop(item); SetOnStage(item); print("OffStage", obj.OffStage);
+
+	--local item = GameHelpers.Item.CreateItemByStat("ARM_Metamorph_UpperBody", { StatsLevel = 4, GenerationItemType = "Rare", ItemType = "Rare", IsIdentified = true, GMFolding = false, HasGeneratedStats = true,}); ItemToInventory(item, CharacterGetHostCharacter(), 1, 0, 0)
+	--local item = GameHelpers.Item.CreateItemByStat("WPN_Sword", { StatsLevel = 4, GenerationItemType = "Rare", ItemType = "Rare", IsIdentified = true, GMFolding = false, HasGeneratedStats = true,}); ItemToInventory(item, CharacterGetHostCharacter(), 1, 0, 0)
+
+	local item = GameHelpers.Item.CreateItemByStat(stat, params)
 	if item ~= nil then
 		ItemToInventory(item, CharacterGetHostCharacter(), 1, 1, 1)
 		return true
@@ -381,7 +386,7 @@ Ext.RegisterConsoleCommand("additemstat", function(command, stat, rarity, levels
 	if levelstr ~= nil then
 		level = math.tointeger(tonumber(levelstr)) or level
 	end
-	if not AddItemStat(stat, {StatsLevel = level, ItemType = rarity}) then
+	if not AddItemStat(stat, {StatsLevel = level, GenerationLevel = level, ItemType = rarity, GenerationItemType = rarity, HasGeneratedStats = rarity ~= "Unique"}) then
 		print("[additemstat] Failed to generate item!", stat, {})
 	end
 end)

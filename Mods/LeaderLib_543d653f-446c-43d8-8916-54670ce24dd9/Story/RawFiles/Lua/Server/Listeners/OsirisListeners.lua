@@ -118,3 +118,8 @@ end)
 Ext.RegisterOsirisListener("CharacterItemEvent", Data.OsirisEvents.CharacterItemEvent, "before", function(obj1, obj2, event)
 	OnObjectEvent(event, StringHelpers.GetUUID(obj1), StringHelpers.GetUUID(obj2))
 end)
+
+---@param item EsvItem
+RegisterProtectedExtenderListener("TreasureItemGenerated", function(item)
+	InvokeListenerCallbacks(Listeners.TreasureItemGenerated, item, item and item.StatsId or "")
+end)

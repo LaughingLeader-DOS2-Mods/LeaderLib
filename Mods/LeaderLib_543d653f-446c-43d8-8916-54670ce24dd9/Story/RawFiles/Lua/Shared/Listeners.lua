@@ -35,6 +35,9 @@ if Ext.IsServer() then
 	---@type table<string, fun(uuid:string, timerName:string):void>
 	Listeners.ProcObjectTimerFinished = {}
 
+	---@type table<integer, fun(item:EsvItem, statsId:string):void>
+	Listeners.TreasureItemGenerated = {}
+
 	---Hit listeners/callbacks, for mod compatibility.
 	---Called from HitOverrides.ComputeCharacterHit at the end of the function, if certain features are enabled or listeners are registered.
 	---@type ExtComputeCharacterHitCallback[]

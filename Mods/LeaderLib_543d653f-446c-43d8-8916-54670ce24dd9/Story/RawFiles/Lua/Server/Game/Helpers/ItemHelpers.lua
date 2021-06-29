@@ -284,6 +284,7 @@ function GameHelpers.Item.CreateItemByStat(statName, properties, ...)
 
         local newItem = constructor:Construct()
         if newItem then
+            newItem = Ext.GetItem(newItem.Handle)
             if not hasGeneratedStats then
                 if properties.IsIdentified then
                     NRD_ItemSetIdentified(newItem.MyGuid, 1)
@@ -292,7 +293,6 @@ function GameHelpers.Item.CreateItemByStat(statName, properties, ...)
                     ItemLevelUpTo(newItem.MyGuid, properties.StatsLevel)
                 end
             end
-            newItem.StatsId = statName
             InvokeListenerCallbacks(Listeners.TreasureItemGenerated, newItem, statName)
             return newItem.MyGuid,newItem
         end
@@ -326,6 +326,7 @@ function GameHelpers.Item.CreateItemByTemplate(template, setProperties)
     end
     local item = constructor:Construct()
     if item ~= nil then
+        item = Ext.GetItem(item.Handle)
         InvokeListenerCallbacks(Listeners.TreasureItemGenerated, item)
         return item
     else
@@ -392,6 +393,7 @@ function GameHelpers.Item.Clone(item, setProperties, addDeltaMods)
     --constructor[1] = props
     local clone = constructor:Construct()
     if clone then
+        clone = Ext.GetItem(clone.Handle)
         InvokeListenerCallbacks(Listeners.TreasureItemGenerated, clone, item.StatsId or clone.StatsId)
         return item
     else

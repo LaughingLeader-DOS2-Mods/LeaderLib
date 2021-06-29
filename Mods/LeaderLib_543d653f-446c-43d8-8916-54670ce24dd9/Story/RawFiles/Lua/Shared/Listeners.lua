@@ -122,7 +122,7 @@ if Ext.IsClient() then
 	---@type ShouldOpenContextMenuCallback[]
 	Listeners.ShouldOpenContextMenu = {}
 	---@alias OnContextMenuOpeningCallback fun(contextMenu:ContextMenu, mouseX:number, mouseY:number):void
-	---Triggered the custom context menu is opening. For adding entries to it, use contextMenu:AddEntry
+	---Triggered when the custom context menu is opening. For adding entries to it, use contextMenu:AddEntry
 	---@see ContextMenu#AddEntry
 	---@type OnContextMenuOpeningCallback[]
 	Listeners.OnContextMenuOpening = {}

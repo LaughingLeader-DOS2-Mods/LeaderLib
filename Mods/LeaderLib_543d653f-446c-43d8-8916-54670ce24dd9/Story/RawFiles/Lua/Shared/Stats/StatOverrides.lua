@@ -264,20 +264,22 @@ local function OverrideStats(data)
 		end
 	end
 	if data.Settings.APSettings.NPC.Enabled then
-		local base = {
-			Max = Ext.StatGetAttribute("_Base", "APMaximum"),
-			Start = Ext.StatGetAttribute("_Base", "APStart"),
-			Recovery = Ext.StatGetAttribute("_Base", "APRecovery"),
-		}
+		-- local base = {
+		-- 	Max = Ext.StatGetAttribute("_Base", "APMaximum"),
+		-- 	Start = Ext.StatGetAttribute("_Base", "APStart"),
+		-- 	Recovery = Ext.StatGetAttribute("_Base", "APRecovery"),
+		-- }
 		local settings = data.Settings.APSettings.NPC
 		for _,id in pairs(Ext.GetStatEntries("Character")) do
 			local skip = skip_stats[id] == true or player_stats[id] ~= nil
 			if not skip then
 				local max = Ext.StatGetAttribute(id, "APMaximum")
-				local start = Ext.StatGetAttribute(id, "APStart")
-				local recovery = Ext.StatGetAttribute(id, "APRecovery")
+				--local start = Ext.StatGetAttribute(id, "APStart")
+				--local recovery = Ext.StatGetAttribute(id, "APRecovery")
 				--This stat is overriding a base AP value, so skip since it could be a totem or boss etc
-				if max ~= base.Max or start ~= base.Start or recovery ~= base.Recovery then
+				--if max ~= base.Max or start ~= base.Start or recovery ~= base.Recovery then
+				--Skip totems etc
+				if max <= 1 then
 					skip = true
 				end
 			end

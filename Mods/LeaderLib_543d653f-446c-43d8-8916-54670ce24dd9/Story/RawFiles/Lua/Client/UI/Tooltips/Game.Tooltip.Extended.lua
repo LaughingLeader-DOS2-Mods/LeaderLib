@@ -733,7 +733,8 @@ end
 
 ---@class TooltipCustomStatRequest:TooltipRequest
 ---@field Character EclCharacter
----@field Stat number
+---@field Stat number The stat handle.
+---@field StatData CustomStatData
 
 ---@class GenericTooltipRequest:table
 ---@field Type string
@@ -748,9 +749,11 @@ end
 ---@field AnchorEnum integer|nil
 ---@field BackgroundType integer|nil
 
+---@class TooltipHooks
 TooltipHooks = {
 	---@type TooltipRequest
 	NextRequest = nil,
+	ActiveType = "",
 	Last = {
 		---@type TooltipRequest
 		Request = nil,
@@ -759,6 +762,7 @@ TooltipHooks = {
 		---@type integer
 		UIType = -1,
 	},
+	IsOpen = false,
 	SessionLoaded = false,
 	InitializationRequested = false,
 	Initialized = false,
@@ -766,6 +770,9 @@ TooltipHooks = {
 	TypeListeners = {},
 	ObjectListeners = {},
 }
+
+--Auto-completion
+Game.Tooltip.TooltipHooks = TooltipHooks
 
 ---@class TooltipArrayData
 ---@field Main string
@@ -1068,6 +1075,8 @@ function TooltipHooks:Init()
 	end)
 
 	Ext.RegisterUINameCall("hideTooltip", function (ui, call, ...)
+		self.IsOpen = false
+		self.ActiveType = ""
 		if self.NextRequest and self.NextRequest.Type == "Generic" then
 			self.Last.Request = self.NextRequest
 			self.NextRequest = nil
@@ -1421,7 +1430,10 @@ function TooltipHooks:OnRenderTooltip(arrayData, ui, method, ...)
 		return
 	end
 
+	self.IsOpen = true
+	
 	local req = self.NextRequest
+	self.ActiveType = req.Type
 	self.Last.Type = req.Type
 
 	self:OnRenderSubTooltip(ui, arrayData.Main, req, method, ...)
@@ -1479,6 +1491,7 @@ function TooltipHooks:OnRenderSubTooltip(ui, propertyName, req, method, ...)
 			end
 			local statData = req.StatData or CustomStatSystem:GetStatByDouble(req.Stat)
 			if statData ~= nil then
+				req.StatData = statData
 				self:NotifyListeners("CustomStat", statData.ID or statData.UUID, req, tooltip, req.Character, statData)
 				CustomStatSystem:OnTooltip(ui, req.Character, statData, tooltip)
 			else
@@ -2014,11 +2027,31 @@ function Game.Tooltip.RegisterListener(...)
 	end
 end
 
+function Game.Tooltip.RequestTypeEquals(t)
+	if TooltipHooks.ActiveType == t or (TooltipHooks.NextRequest and TooltipHooks.NextRequest.Type == t) then
+		return true
+	end
+	return false
+end
+
 function Game.Tooltip.LastRequestTypeEquals(t)
 	if TooltipHooks.Last.Type == t or (TooltipHooks.NextRequest and TooltipHooks.NextRequest.Type == t) then
 		return true
 	end
 	return false
+end
+
+---@return TooltipRequest
+function Game.Tooltip.GetCurrentOrLastRequest()
+	if TooltipHooks.NextRequest then
+		return TooltipHooks.NextRequest
+	end
+	return TooltipHooks.Last.Request
+end
+
+---@return boolean
+function Game.Tooltip.IsOpen()
+	return TooltipHooks.IsOpen
 end
 
 local function OnSessionLoaded()

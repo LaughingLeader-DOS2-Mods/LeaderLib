@@ -27,7 +27,7 @@ function CustomStatSystem:GetStatByID(id, mod)
 	if not self.Loaded then
 		return nil
 	end
-	if mod then
+	if not StringHelpers.IsNullOrWhitespace(mod) then
 		local stats = self.Stats[mod]
 		if stats and stats[id] then
 			return stats[id]
@@ -43,6 +43,7 @@ function CustomStatSystem:GetStatByID(id, mod)
 	if stat then
 		return stat
 	end
+	fprint(LOGLEVEL.WARNING, "[CustomStatSystem:GetStatByID] Failed to find stat for id(%s) and mod(%s)", id, mod or "")
 	return nil
 end
 

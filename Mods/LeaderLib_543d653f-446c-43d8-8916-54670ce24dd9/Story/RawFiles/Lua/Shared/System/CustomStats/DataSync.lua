@@ -29,7 +29,6 @@ function CustomStatSystem:SyncAvailablePoints(character)
 end
 
 if not isClient then
-
 	---@private
 	---Creates a table of stat id to uuid, for sending stat UUIDs to the client
 	function CustomStatSystem:GetSyncData()
@@ -86,8 +85,27 @@ if not isClient then
 			end
 		end
 	end)
-else
 
+	Ext.RegisterNetListener("LeaderLib_CustomStatSystem_SetStatValue", function(cmd, payload)
+		local data = Common.JsonParse(payload)
+		if data and data.NetID and data.ID and data.Value then
+			local character = Ext.GetCharacter(data.NetID)
+			local t = type(data.ID)
+			---@type CustomStatData
+			local stat = nil
+			if t == "number" then
+				stat = CustomStatSystem:GetStatByDouble(data.ID)
+			elseif t == "string" then
+				stat = CustomStatSystem:GetStatByID(data.ID, data.Mod)
+			end
+			if stat then
+				stat:SetValue(character, data.Value)
+			else
+				fprint(LOGLEVEL.WARNING, "[LeaderLib_CustomStatSystem_SetStatValue] Failed to find stat for id (%s) and mod(%s)", data.ID, data.Mod or "")
+			end
+		end
+	end)
+else
 	---@private
 	---Loads a table of stat UUIDs from the server.
 	function CustomStatSystem:LoadSyncData(uuidList, availablePoints)
@@ -152,4 +170,17 @@ else
 			Ext.PrintError(err)
 		end
 	end)
+
+	---@param statId number|string The stat double or id.
+	---@param netId integer Character NetID to change the stat on.
+	---@param value integer
+	---@param modId MOD_UUID|nil Optional mod UUID.
+	function CustomStatSystem:RequestStatChange(statId, netId, value, modId)
+		Ext.PostMessageToServer("LeaderLib_CustomStatSystem_SetStatValue", Ext.JsonStringify({
+			ID = statId,
+			NetID = netId,
+			Value = value,
+			Mod = modId
+		}))
+	end
 end

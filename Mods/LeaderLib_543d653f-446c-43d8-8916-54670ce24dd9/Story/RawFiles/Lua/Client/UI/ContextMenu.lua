@@ -35,6 +35,7 @@ local ContextMenu = {
 	Visible = false
 }
 ContextMenu.__index = ContextMenu
+local self = ContextMenu
 
 ContextMenu.Actions[ACTIONS.HideStatus] = function(self, ui, id, actionID, handle)
 	if self.ContextStatus and not StringHelpers.IsNullOrWhitespace(self.ContextStatus.StatusId) then
@@ -121,6 +122,7 @@ ContextMenu.Actions[ACTIONS.UnhideStatus] = function(self, ui, id, actionID, han
 	end
 end
 
+---@private
 function ContextMenu:SetContextStatus(status, uiType)
 	if status then
 		--fprint(LOGLEVEL.WARNING, "[ContextMenu:SetContextStatus] Status(%s) UI(%s)", status.StatusId, uiType)
@@ -139,20 +141,24 @@ function ContextMenu:SetContextStatus(status, uiType)
 	end
 end
 
+---@private
 function ContextMenu:OnOpen(ui, event)
 	self.Visible = true
 end
 
+---@private
 function ContextMenu:OnClose(ui, call)
 	self:SetContextStatus(nil)
 	self.Visible = false
 	self.IsOpening = false
 end
 
+---@private
 function ContextMenu:OnUpdate(ui, event)
 
 end
 
+---@private
 ---@param ui UIObject
 function ContextMenu:OnEntryClicked(ui, event, id, actionID, handle)
 	local entry = self.Entries[id]
@@ -171,6 +177,7 @@ function ContextMenu:OnEntryClicked(ui, event, id, actionID, handle)
 	end
 end
 
+---@private
 function ContextMenu:OnHideTooltip(ui, event)
 	if not self.Visible and not self.IsOpening then
 		self:SetContextStatus(nil)
@@ -194,6 +201,7 @@ local function GetShouldOpen(self,x,y)
 	return false
 end
 
+---@private
 function ContextMenu:OnRightClick(eventName, pressed, id, inputMap, controllerEnabled)
 	local settings = GameSettings.Settings.Client.StatusOptions
 	--fprint(LOGLEVEL.DEFAULT, "[ContextMenu:OnRightClick] IsOpening(%s) Visible(%s) pressed(%s)", self.IsOpening, self.Visible, pressed)
@@ -260,6 +268,7 @@ function ContextMenu:OnRightClick(eventName, pressed, id, inputMap, controllerEn
 	end
 end
 
+---@private
 function ContextMenu:OnShowStatusTooltip(ui, event, characterDouble, statusDouble, x, y, width, height, side)
 	if self.ContextStatus == nil or not self.Visible then
 		if characterDouble and statusDouble then
@@ -275,6 +284,7 @@ function ContextMenu:OnShowStatusTooltip(ui, event, characterDouble, statusDoubl
 	end
 end
 
+---@private
 function ContextMenu:OnShowExamineStatusTooltip(ui, event, typeIndex, statusDouble)
 	if typeIndex == 7 and (self.ContextStatus == nil or not self.Visible) then
 		local characterHandle = ui:GetPlayerHandle()
@@ -288,6 +298,7 @@ function ContextMenu:OnShowExamineStatusTooltip(ui, event, typeIndex, statusDoub
 	end
 end
 
+---@private
 function ContextMenu:Init()
 	if not self.RegisteredListeners then
 		-- for i,v in pairs(Data.UIType.contextMenu) do
@@ -365,6 +376,7 @@ function ContextMenu:Close()
 	end
 end
 
+---@private
 function ContextMenu:MoveAndRebuild(x,y)
 	local instance = UIExtensions.GetInstance()
 	if instance then
@@ -444,13 +456,17 @@ function ContextMenu:Open()
 		
 		local x,y = UIExtensions.GetMousePosition()
 		local paddingX,paddingY = 8,-24
-		if self.ContextStatus.CallingUI == Data.UIType.examine then
-			paddingX,paddingY = 8,-16
-		elseif self.ContextStatus.CallingUI == Data.UIType.playerInfo then
-			
+		if self.ContextStatus then
+			if self.ContextStatus.CallingUI == Data.UIType.examine then
+				paddingX,paddingY = 8,-16
+			elseif self.ContextStatus.CallingUI == Data.UIType.playerInfo then
+				
+			end
 		end
 		self.IsOpening = true
-		Ext.GetUIByType(self.ContextStatus.CallingUI):ExternalInterfaceCall("hideTooltip")
+		if self.ContextStatus then
+			Ext.GetUIByType(self.ContextStatus.CallingUI):ExternalInterfaceCall("hideTooltip")
+		end
 		x = x + paddingX
 		y = y + paddingY
 		
@@ -562,3 +578,22 @@ function ContextMenu:GetCursorStatus(x,y)
 end
 
 ContextMenu:Init()
+
+ContextMenu.Register = {}
+
+---@param callback ShouldOpenContextMenuCallback
+function ContextMenu.Register.ShouldOpenListener(callback)
+	RegisterListener("ShouldOpenContextMenu", callback)
+end
+
+---@param callback OnContextMenuOpeningCallback
+function ContextMenu.Register.OpeningListener(callback)
+	RegisterListener("OnContextMenuOpening", callback)
+end
+
+---@param callback OnContextMenuEntryClickedCallback
+function ContextMenu.Register.EntryClickedListener(callback)
+	RegisterListener("OnContextMenuEntryClicked", callback)
+end
+
+UI.ContextMenu = ContextMenu

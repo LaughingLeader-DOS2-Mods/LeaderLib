@@ -71,7 +71,7 @@ end
 
 ---@return boolean
 function GameHelpers.Client.IsGameMaster(ui, this)
-	if Client and Client.Character and Client.Character.IsGameMaster then
+	if Client and Client.Character and (Client.Character.IsGameMaster and not Client.Character.IsPossessed) then
 		return true
 	end
 	if not Vars.ControllerEnabled then

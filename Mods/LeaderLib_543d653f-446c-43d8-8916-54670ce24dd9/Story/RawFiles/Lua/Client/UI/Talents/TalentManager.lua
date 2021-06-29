@@ -187,6 +187,175 @@ local DivineTalents = {
 	MagicCycles = "TALENT_MagicCycles",
 }
 
+local talentStatAttributes = {
+	ItemMovement = "TALENT_ItemMovement",
+	ItemCreation = "TALENT_ItemCreation",
+	Flanking = "TALENT_Flanking",
+	AttackOfOpportunity = "TALENT_AttackOfOpportunity",
+	Backstab = "TALENT_Backstab",
+	Trade = "TALENT_Trade",
+	Lockpick = "TALENT_Lockpick",
+	ChanceToHitRanged = "TALENT_ChanceToHitRanged",
+	ChanceToHitMelee = "TALENT_ChanceToHitMelee",
+	Damage = "TALENT_Damage",
+	ActionPoints = "TALENT_ActionPoints",
+	ActionPoints2 = "TALENT_ActionPoints2",
+	Criticals = "TALENT_Criticals",
+	IncreasedArmor = "TALENT_IncreasedArmor",
+	Sight = "TALENT_Sight",
+	ResistFear = "TALENT_ResistFear",
+	ResistKnockdown = "TALENT_ResistKnockdown",
+	ResistStun = "TALENT_ResistStun",
+	ResistPoison = "TALENT_ResistPoison",
+	ResistSilence = "TALENT_ResistSilence",
+	ResistDead = "TALENT_ResistDead",
+	Carry = "TALENT_Carry",
+	Throwing = "TALENT_Throwing",
+	Repair = "TALENT_Repair",
+	ExpGain = "TALENT_ExpGain",
+	ExtraStatPoints = "TALENT_ExtraStatPoints",
+	ExtraSkillPoints = "TALENT_ExtraSkillPoints",
+	Durability = "TALENT_Durability",
+	Awareness = "TALENT_Awareness",
+	Vitality = "TALENT_Vitality",
+	FireSpells = "TALENT_FireSpells",
+	WaterSpells = "TALENT_WaterSpells",
+	AirSpells = "TALENT_AirSpells",
+	EarthSpells = "TALENT_EarthSpells",
+	Charm = "TALENT_Charm",
+	Intimidate = "TALENT_Intimidate",
+	Reason = "TALENT_Reason",
+	Luck = "TALENT_Luck",
+	Initiative = "TALENT_Initiative",
+	InventoryAccess = "TALENT_InventoryAccess",
+	AvoidDetection = "TALENT_AvoidDetection",
+	AnimalEmpathy = "TALENT_AnimalEmpathy",
+	Escapist = "TALENT_Escapist",
+	StandYourGround = "TALENT_StandYourGround",
+	SurpriseAttack = "TALENT_SurpriseAttack",
+	LightStep = "TALENT_LightStep",
+	ResurrectToFullHealth = "TALENT_ResurrectToFullHealth",
+	Scientist = "TALENT_Scientist",
+	Raistlin = "TALENT_Raistlin",
+	MrKnowItAll = "TALENT_MrKnowItAll",
+	WhatARush = "TALENT_WhatARush",
+	FaroutDude = "TALENT_FaroutDude",
+	Leech = "TALENT_Leech",
+	ElementalAffinity = "TALENT_ElementalAffinity",
+	FiveStarRestaurant = "TALENT_FiveStarRestaurant",
+	Bully = "TALENT_Bully",
+	ElementalRanger = "TALENT_ElementalRanger",
+	LightningRod = "TALENT_LightningRod",
+	Politician = "TALENT_Politician",
+	WeatherProof = "TALENT_WeatherProof",
+	LoneWolf = "TALENT_LoneWolf",
+	Zombie = "TALENT_Zombie",
+	Demon = "TALENT_Demon",
+	IceKing = "TALENT_IceKing",
+	Courageous = "TALENT_Courageous",
+	GoldenMage = "TALENT_GoldenMage",
+	WalkItOff = "TALENT_WalkItOff",
+	FolkDancer = "TALENT_FolkDancer",
+	SpillNoBlood = "TALENT_SpillNoBlood",
+	Stench = "TALENT_Stench",
+	Kickstarter = "TALENT_Kickstarter",
+	WarriorLoreNaturalArmor = "TALENT_WarriorLoreNaturalArmor",
+	WarriorLoreNaturalHealth = "TALENT_WarriorLoreNaturalHealth",
+	WarriorLoreNaturalResistance = "TALENT_WarriorLoreNaturalResistance",
+	RangerLoreArrowRecover = "TALENT_RangerLoreArrowRecover",
+	RangerLoreEvasionBonus = "TALENT_RangerLoreEvasionBonus",
+	RangerLoreRangedAPBonus = "TALENT_RangerLoreRangedAPBonus",
+	RogueLoreDaggerAPBonus = "TALENT_RogueLoreDaggerAPBonus",
+	RogueLoreDaggerBackStab = "TALENT_RogueLoreDaggerBackStab",
+	RogueLoreMovementBonus = "TALENT_RogueLoreMovementBonus",
+	RogueLoreHoldResistance = "TALENT_RogueLoreHoldResistance",
+	NoAttackOfOpportunity = "TALENT_NoAttackOfOpportunity",
+	WarriorLoreGrenadeRange = "TALENT_WarriorLoreGrenadeRange",
+	RogueLoreGrenadePrecision = "TALENT_RogueLoreGrenadePrecision",
+	WandCharge = "TALENT_WandCharge",
+	DualWieldingDodging = "TALENT_DualWieldingDodging",
+	DualWieldingBlock = "TALENT_DualWieldingBlock",
+	Human_Inventive = "TALENT_Human_Inventive",
+	Human_Civil = "TALENT_Human_Civil",
+	Elf_Lore = "TALENT_Elf_Lore",
+	Elf_CorpseEating = "TALENT_Elf_CorpseEating",
+	Dwarf_Sturdy = "TALENT_Dwarf_Sturdy",
+	Dwarf_Sneaking = "TALENT_Dwarf_Sneaking",
+	Lizard_Resistance = "TALENT_Lizard_Resistance",
+	Lizard_Persuasion = "TALENT_Lizard_Persuasion",
+	Perfectionist = "TALENT_Perfectionist",
+	Executioner = "TALENT_Executioner",
+	ViolentMagic = "TALENT_ViolentMagic",
+	QuickStep = "TALENT_QuickStep",
+	Quest_SpidersKiss_Str = "TALENT_Quest_SpidersKiss_Str",
+	Quest_SpidersKiss_Int = "TALENT_Quest_SpidersKiss_Int",
+	Quest_SpidersKiss_Per = "TALENT_Quest_SpidersKiss_Per",
+	Quest_SpidersKiss_Null = "TALENT_Quest_SpidersKiss_Null",
+	Memory = "TALENT_Memory",
+	Quest_TradeSecrets = "TALENT_Quest_TradeSecrets",
+	Quest_GhostTree = "TALENT_Quest_GhostTree",
+	BeastMaster = "TALENT_BeastMaster",
+	LivingArmor = "TALENT_LivingArmor",
+	Torturer = "TALENT_Torturer",
+	Ambidextrous = "TALENT_Ambidextrous",
+	Unstable = "TALENT_Unstable",
+	ResurrectExtraHealth = "TALENT_ResurrectExtraHealth",
+	NaturalConductor = "TALENT_NaturalConductor",
+	Quest_Rooted = "TALENT_Quest_Rooted",
+	PainDrinker = "TALENT_PainDrinker",
+	DeathfogResistant = "TALENT_DeathfogResistant",
+	Sourcerer = "TALENT_Sourcerer",
+	-- Divine Talents
+	Rager = "TALENT_Rager",
+	Elementalist = "TALENT_Elementalist",
+	Sadist = "TALENT_Sadist",
+	Haymaker = "TALENT_Haymaker",
+	Gladiator = "TALENT_Gladiator",
+	Indomitable = "TALENT_Indomitable",
+	WildMag = "TALENT_WildMag",
+	Jitterbug = "TALENT_Jitterbug",
+	Soulcatcher = "TALENT_Soulcatcher",
+	MasterThief = "TALENT_MasterThief",
+	GreedyVessel = "TALENT_GreedyVessel",
+	MagicCycles = "TALENT_MagicCycles",
+}
+
+local defaultVisible = {
+	Ambidextrous = "TALENT_Ambidextrous",
+	AnimalEmpathy = "TALENT_AnimalEmpathy",
+	AttackOfOpportunity = "TALENT_AttackOfOpportunity",
+	Demon = "TALENT_Demon",
+	DualWieldingDodging = "TALENT_DualWieldingDodging",
+	ElementalAffinity = "TALENT_ElementalAffinity",
+	ElementalRanger = "TALENT_ElementalRanger",
+	Escapist = "TALENT_Escapist",
+	Executioner = "TALENT_Executioner",
+	ExtraSkillPoints = "TALENT_ExtraSkillPoints",
+	ExtraStatPoints = "TALENT_ExtraStatPoints",
+	FaroutDude = "TALENT_FaroutDude",
+	FiveStarRestaurant = "TALENT_FiveStarRestaurant",
+	IceKing = "TALENT_IceKing",
+	Leech = "TALENT_Leech",
+	LivingArmor = "TALENT_LivingArmor",
+	LoneWolf = "TALENT_LoneWolf",
+	Memory = "TALENT_Memory",
+	NoAttackOfOpportunity = "TALENT_NoAttackOfOpportunity",
+	Perfectionist = "TALENT_Perfectionist",
+	QuickStep = "TALENT_QuickStep",
+	Raistlin = "TALENT_Raistlin",
+	RangerLoreArrowRecover = "TALENT_RangerLoreArrowRecover",
+	ResistDead = "TALENT_ResistDead",
+	Stench = "TALENT_Stench",
+	SurpriseAttack = "TALENT_SurpriseAttack",
+	Torturer = "TALENT_Torturer",
+	Unstable = "TALENT_Unstable",
+	ViolentMagic = "TALENT_ViolentMagic",
+	WalkItOff = "TALENT_WalkItOff",
+	WarriorLoreGrenadeRange = "TALENT_WarriorLoreGrenadeRange",
+	WarriorLoreNaturalHealth = "TALENT_WarriorLoreNaturalHealth",
+	WhatARush = "TALENT_WhatARush",
+}
+
 --Requires a name and description to be manually set in the tooltip, as well as an icon
 local ragerWasEnabled = false
 
@@ -242,12 +411,6 @@ function TalentManager.EnableTalent(talentId, modID, getRequirements)
 		end
 	end
 end
-
--- if Vars.DebugMode then
--- 	for k,v in pairs(missingTalents) do
--- 		TalentManager.EnableTalent(k, "7e737d2f-31d2-4751-963f-be6ccc59cd0c")
--- 	end
--- end
 
 function TalentManager.DisableTalent(talentId, modID)
 	if talentId == "all" then
@@ -341,7 +504,9 @@ function TalentManager.HasRequirements(player, id)
 			local playerValue = player.Stats[req.Requirement]
 			local t = type(playerValue)
 			if t == "boolean" then
-				if req.Not ~= playerValue then
+				if req.Not and playerValue then
+					return false
+				elseif req.Not == false and not playerValue then
 					return false
 				end
 			elseif t == "number" and playerValue < req.Param then
@@ -368,8 +533,11 @@ end
 ---@param player EclCharacter
 ---@param talentId string
 ---@return TalentState
-function TalentManager.GetTalentState(player, talentId)
-	if player.Stats["TALENT_" .. talentId] then 
+function TalentManager.GetTalentState(player, talentId, statAttribute)
+	if not statAttribute then
+		statAttribute = "TALENT_" .. talentId
+	end
+	if player.Stats[statAttribute] == true then 
 		return TalentState.Selected
 	elseif not TalentManager.HasRequirements(player, talentId) then 
 		return TalentState.Locked
@@ -497,7 +665,7 @@ end
 
 ---@param ui UIObject
 ---@param player EclCharacter
-function TalentManager.Update(ui, player)
+local function Update_Old(ui, player)
 	local main = ui:GetRoot()
 	local lvlBtnTalent_array = main.lvlBtnTalent_array
 	local talent_array = main.talent_array
@@ -530,6 +698,102 @@ function TalentManager.Update(ui, player)
 	end
 end
 
+local function CanAddTalent(talentId, player, talentStat)
+	if TalentIsHidden(talentId) then
+		return false
+	end
+	if player[talentStat] == true then
+		return true
+	end
+	if TalentManager.RegisteredCount[talentId] and TalentManager.RegisteredCount[talentId] > 0 then
+		return true
+	end
+	if talentId == "RogueLoreDaggerBackStab" 
+	and GameSettings.Settings.BackstabSettings.Player.Enabled
+	and GameSettings.Settings.BackstabSettings.Player.TalentRequired
+	then
+		return true
+	end
+	if defaultVisible[talentId] then
+		return true
+	end
+end
+
+---@param ui UIObject
+---@param player EclCharacter
+function TalentManager.Update(ui, player)
+	if Vars.ControllerEnabled then
+		Update_Old(ui, player)
+		return
+	end
+	local main = ui:GetRoot()
+	local lvlBtnTalent_array = main.lvlBtnTalent_array
+	local talent_array = main.talent_array
+
+	main.clearArray("talent_array")
+	main.clearArray("lvlBtnTalent_array")
+
+	local talents = {}
+
+	for numId,talentId in Data.Talents:Get() do
+		if talents[talentId] == nil and CanAddTalent(talentId, player.Stats, talentStatAttributes[talentId]) then
+			local statAttribute = talentStatAttributes[talentId]
+			local talentState = TalentManager.GetTalentState(player, talentId, statAttribute)
+			local name = TalentManager.GetTalentDisplayName(player, talentId, talentState)
+			talents[talentId] = {
+				Label = name,
+				State = talentState,
+				ID = Data.TalentEnum[talentId]
+			}
+		end
+	end
+
+	local i = 0
+	for id,talentId in Data.Talents:Get() do
+		local data = talents[talentId]
+		if data then
+			talent_array[i] = data.Label
+			talent_array[i+1] = data.ID
+			talent_array[i+2] = data.State
+			i = i + 3
+		end
+	end
+end
+
+function TalentManager.OnTalentAdded(ui, call, index)
+	local main = ui:GetRoot()
+	---@type FlashCharacterSheetStatsMC
+	local this = main.stats_mc
+	local talent_mc = this.talentHolder_mc.list.content_array[index]
+	if talent_mc then
+		local talentState = talent_mc.talentState
+		local talentId = Data.Talents[talent_mc.statId]
+		local statAttribute = talentStatAttributes[talentId]
+		if talentId and statAttribute then
+			local player = Client:GetCharacter()
+			local points = this.pointsWarn[3].avPoints
+	
+			local hasTalent = player.Stats[statAttribute] == true
+			local canAdd = false
+			local canRemove = false
+	
+			if not racialTalents[talentId] then
+				--TalentManager.HasRequirements(player, talentId)
+				if not hasTalent and points > 0 and talentState == TalentState.Selectable then
+					canAdd = true
+				elseif hasTalent then
+					canRemove = GameHelpers.Client.IsGameMaster(ui, main)
+				end
+			end
+	
+			talent_mc.plus_mc.visible = canAdd
+			talent_mc.minus_mc.visible = canRemove
+	
+			--fprint(LOGLEVEL.DEFAULT, "[%s] Talent(%s)[%s] Label(%s) StatAttribute(%s) canAdd(%s) canRemove(%s) Index[%s] State(%s)", call, talentId, talent_mc.statId, talent_mc.label, statAttribute, canAdd, canRemove, index, talentState)
+		end
+	end
+end
+
 if Vars.DebugMode then
 	RegisterListener("LuaReset", function()
 		local ui = Ext.GetUIByType(Data.UIType.statsPanel_c)
@@ -540,6 +804,7 @@ if Vars.DebugMode then
 end
 
 function TalentManager.ToggleDivineTalents(enabled)
+	if true then return end
 	if enabled then
 		for talent,id in pairs(DivineTalents) do
 			TalentManager.EnableTalent(talent, "DivineTalents")
@@ -713,11 +978,11 @@ end
 
 Ext.RegisterListener("SessionLoaded", function()
 	Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem", DisplayTalents)
+	Ext.RegisterUITypeCall(Data.UIType.characterSheet, "talentAdded", TalentManager.OnTalentAdded)
 	Ext.RegisterUITypeInvokeListener(Data.UIType.statsPanel_c, "updateArraySystem", DisplayTalents)
 	--characterCreation.swf
 	Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateTalents", DisplayTalents_CC)
 	Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation_c, "updateTalents", DisplayTalents_CC)
-
 
 	TalentManager.LoadRequirements()
 	---Divine Talents
@@ -725,11 +990,7 @@ Ext.RegisterListener("SessionLoaded", function()
 		TalentManager.ToggleDivineTalents(true)
 	end
 
-	TalentManager.Gamepad.RegisterListeners()
+	--TalentManager.HideTalent("LoneWolf", ModuleUUID)
 
-	-- if Vars.DebugMode then
-	-- 	TalentManager.HideTalent("all", "LeaderLib")
-	-- 	--TalentManager.HideTalent("Raistlin", "LeaderLib")
-	-- 	TalentManager.UnhideTalent("FaroutDude", "LeaderLib")
-	-- end
+	TalentManager.Gamepad.RegisterListeners()
 end)

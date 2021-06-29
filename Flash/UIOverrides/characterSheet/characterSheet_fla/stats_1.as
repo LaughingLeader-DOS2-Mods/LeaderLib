@@ -811,21 +811,21 @@ package characterSheet_fla
 			}
 		}
 		
-		public function setTalentPlusVisible(param1:Number, param2:Boolean) : *
+		public function setTalentPlusVisible(talentId:Number, visible:Boolean) : *
 		{
-			var val3:MovieClip = this.getTalent(param1);
+			var val3:MovieClip = this.getTalent(talentId);
 			if(val3)
 			{
-				val3.plus_mc.visible = param2;
+				val3.plus_mc.visible = visible;
 			}
 		}
 		
-		public function setTalentMinusVisible(param1:Number, param2:Boolean) : *
+		public function setTalentMinusVisible(talentId:Number, visible:Boolean) : *
 		{
-			var val3:MovieClip = this.getTalent(param1);
+			var val3:MovieClip = this.getTalent(talentId);
 			if(val3)
 			{
-				val3.minus_mc.visible = param2;
+				val3.minus_mc.visible = visible;
 			}
 		}
 		
@@ -946,26 +946,30 @@ package characterSheet_fla
 		
 		public function addTalent(labelText:String, statId:Number, talentState:Number) : *
 		{
-			var val4:MovieClip = this.getTalent(statId);
-			if(!val4)
+			if(statId != undefined && statId != null)
 			{
-				val4 = new Talent();
-				val4.label_txt.autoSize = "left";
-				val4.tooltip = statId;
-				val4.statId = statId;
-				val4.minus_mc.x = 260;
-				val4.plus_mc.x = val4.minus_mc.x + val4.minus_mc.width;
-				val4.plus_mc.visible = val4.minus_mc.visible = false;
-				val4.id = this.talentHolder_mc.list.length;
-				this.talentHolder_mc.list.addElement(val4,false);
+				var talent_mc:MovieClip = this.getTalent(statId);
+				if(!talent_mc)
+				{
+					talent_mc = new Talent();
+					talent_mc.label_txt.autoSize = "left";
+					talent_mc.tooltip = statId;
+					talent_mc.statId = statId;
+					talent_mc.minus_mc.x = 260;
+					talent_mc.plus_mc.x = talent_mc.minus_mc.x + talent_mc.minus_mc.width;
+					talent_mc.plus_mc.visible = talent_mc.minus_mc.visible = false;
+					talent_mc.id = this.talentHolder_mc.list.length;
+					this.talentHolder_mc.list.addElement(talent_mc,false);
+				}
+				talent_mc.label_txt.htmlText = labelText;
+				talent_mc.hl_mc.width = this.statsElWidth;
+				talent_mc.hl_mc.height = talent_mc.label_txt.textHeight + talent_mc.label_txt.y;
+				talent_mc.plus_mc.y = talent_mc.minus_mc.y = talent_mc.hl_mc.y + Math.ceil((talent_mc.hl_mc.height - talent_mc.minus_mc.height) * 0.5) - 3;
+				talent_mc.label = talent_mc.label_txt.text;
+				talent_mc.talentState = talentState;
+				talent_mc.bullet_mc.gotoAndStop(this.getTalentStateFrame(talentState));
+				ExternalInterface.call("talentAdded", talent_mc.id)
 			}
-			val4.label_txt.htmlText = labelText;
-			val4.hl_mc.width = this.statsElWidth;
-			val4.hl_mc.height = val4.label_txt.textHeight + val4.label_txt.y;
-			val4.plus_mc.y = val4.minus_mc.y = val4.hl_mc.y + Math.ceil((val4.hl_mc.height - val4.minus_mc.height) * 0.5) - 3;
-			val4.label = val4.label_txt.text;
-			val4.talentState = talentState;
-			val4.bullet_mc.gotoAndStop(this.getTalentStateFrame(talentState));
 		}
 		
 		public function getTalentStateFrame(param1:Number) : Number

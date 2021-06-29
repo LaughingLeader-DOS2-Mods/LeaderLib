@@ -1,5 +1,5 @@
 ---@class CharacterSheetMainTimeline
----@field stats_mc stats_1
+---@field stats_mc FlashCharacterSheetStatsMC
 ---@field charHandle number
 ---@field initDone boolean
 ---@field events table
@@ -159,7 +159,7 @@
 ---@field recountAllPoints fun():void
 ---@field addCustomStat fun(doubleHandle:number, labelText:string, valueText:string, groupId:number):void
 
----@class stats_1
+---@class FlashCharacterSheetStatsMC:FlashMovieClip
 ---@field aiSel_mc comboBox
 ---@field alignments_mc comboBox
 ---@field attrPointsWrn_mc FlashMovieClip

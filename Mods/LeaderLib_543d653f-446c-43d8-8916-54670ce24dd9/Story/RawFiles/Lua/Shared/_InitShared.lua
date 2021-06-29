@@ -177,13 +177,6 @@ Features = {
 	FixFarOutManSkillRangeTooltip = false,
 }
 
-if Vars.DebugMode then
-	-- Features.HideArmor = 2
-	-- Features.HideMagicArmor = 2
-	-- Features.HideVitality = 2
-	Features.RacialTalentsDisplayFix = true
-end
-
 local ignoreImports = {
 	--lua base
 	["_G"] = true,

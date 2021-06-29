@@ -153,7 +153,7 @@ end
 ---@param itemGroupId string
 ---@param minLevel integer
 ---@param maxLevel integer
----@param fallbackRarity string
+---@param fallbackRarity string If any rarity is supported, use this rarity.
 ---@return integer,string,ItemRootGroup[]|nil
 function GameHelpers.Item.GetSupportedGenerationValues(itemGroupId, minLevel, maxLevel, fallbackRarity)
     local rarity = "Common"
@@ -164,7 +164,11 @@ function GameHelpers.Item.GetSupportedGenerationValues(itemGroupId, minLevel, ma
         for i,v in pairs(group.LevelGroups) do
             if WithinLevelRange(v.MinLevel, v.MaxLevel, minLevel, maxLevel) then
                 if v.Name == "All" then
-                    level = math.max(1, math.max(v.MinLevel, v.MaxLevel))
+                    if v.MinLevel == 0 or v.MaxLevel == 0 then
+                        level = minLevel
+                    else
+                        level = math.max(1, math.max(v.MinLevel, v.MaxLevel))
+                    end
                     return level,fallbackRarity,v.RootGroups
                 else
                     local rarityVal = Data.RarityEnum[v.Name]
@@ -179,7 +183,7 @@ function GameHelpers.Item.GetSupportedGenerationValues(itemGroupId, minLevel, ma
         end
     end
     if rarity == "" then
-        rarity = fallbackRarity
+        rarity = "Common"
     end
     return level,rarity,rootGroups
 end
@@ -194,14 +198,17 @@ function GameHelpers.Item.CreateItemByStat(statName, properties, ...)
         if #args > 0 and type(args[1]) == "table" then
             properties = args[1]
         end
+        if type(properties) == "boolean" then
+            properties = {}
+        end
     end
     ---@type StatEntryWeapon
     local stat = nil
     local statType = ""
     local level = properties and properties.StatsLevel or 1
-    local generationLevel = level
-    local generatedRarity = "Common"
-    local targetRarity = "Common"
+    local generationLevel = properties and properties.GenerationLevel or level
+    local targetRarity = properties and properties.ItemType or "Common"
+    local generatedRarity = properties and properties.GenerationItemType or targetRarity
     local rootTemplate = properties and properties.RootTemplate or nil
     local itemGroup = nil
 
@@ -223,10 +230,6 @@ function GameHelpers.Item.CreateItemByStat(statName, properties, ...)
         end
     end
 
-    if targetRarity ~= "Unique" then
-        generatedRarity = targetRarity
-    end
-
     if level == nil or level <= 0 then
         level = GameHelpers.Character.GetHighestPlayerLevel() or 1
     end
@@ -240,8 +243,7 @@ function GameHelpers.Item.CreateItemByStat(statName, properties, ...)
         if not StringHelpers.IsNullOrWhitespace(stat.ItemGroup) then
             itemGroup = stat.ItemGroup
             local rootGroups = nil
-            generationLevel,generatedRarity,rootGroups = GameHelpers.Item.GetSupportedGenerationValues(itemGroup, level, 0, "Common")
-            print(generationLevel,generatedRarity,rootGroups)
+            generationLevel,generatedRarity,rootGroups = GameHelpers.Item.GetSupportedGenerationValues(itemGroup, generationLevel, 0, generatedRarity)
             if not rootTemplate and (rootGroups and #rootGroups > 0) then
                 rootTemplate = rootGroups[1].RootGroup
             end
@@ -290,7 +292,8 @@ function GameHelpers.Item.CreateItemByStat(statName, properties, ...)
                     ItemLevelUpTo(newItem.MyGuid, properties.StatsLevel)
                 end
             end
-
+            newItem.StatsId = statName
+            InvokeListenerCallbacks(Listeners.TreasureItemGenerated, newItem, statName)
             return newItem.MyGuid,newItem
         end
     end
@@ -323,6 +326,7 @@ function GameHelpers.Item.CreateItemByTemplate(template, setProperties)
     end
     local item = constructor:Construct()
     if item ~= nil then
+        InvokeListenerCallbacks(Listeners.TreasureItemGenerated, item)
         return item
     else
         Ext.PrintError(string.format("[LeaderLib:GameHelpers.Item.CreateItemByTemplate] Error constructing item when invoking Construct() - Returned item is nil for template %s.", template))
@@ -386,7 +390,13 @@ function GameHelpers.Item.Clone(item, setProperties, addDeltaMods)
         props.DeltaMods = originalDeltaMods
     end
     --constructor[1] = props
-    return constructor:Construct()
+    local clone = constructor:Construct()
+    if clone then
+        InvokeListenerCallbacks(Listeners.TreasureItemGenerated, clone, item.StatsId or clone.StatsId)
+        return item
+    else
+        error("Error cloning item.", 2)
+    end
 end
 
 ---@param char string

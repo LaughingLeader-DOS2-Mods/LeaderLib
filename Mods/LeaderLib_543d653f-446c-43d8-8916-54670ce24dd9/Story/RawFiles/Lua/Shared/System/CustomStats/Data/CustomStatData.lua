@@ -131,7 +131,7 @@ function CustomStatData:SetValue(character, value)
 	if not isClient then
 		return CustomStatSystem:SetStat(character, self.ID, value, self.Mod)
 	end
-	fprint(LOGLEVEL.WARNING("[CustomStatData:SetValue(%s, %s)] This function only works on the server-side.", self.ID, value))
+	fprint(LOGLEVEL.WARNING, "[CustomStatData:SetValue(%s, %s)] This function only works on the server-side.", self.ID, value)
 	return false
 end
 
@@ -143,7 +143,7 @@ function CustomStatData:ModifyValue(character, amount)
 	if not isClient then
 		return CustomStatSystem:ModifyStat(character, self.ID, amount, self.Mod)
 	end
-	fprint(LOGLEVEL.WARNING("[CustomStatData:ModifyValue(%s, %s)] This function only works on the server-side.", self.ID, amount))
+	fprint(LOGLEVEL.WARNING, "[CustomStatData:ModifyValue(%s, %s)] This function only works on the server-side.", self.ID, amount)
 	return false
 end
 

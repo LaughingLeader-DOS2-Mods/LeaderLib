@@ -5,6 +5,9 @@ Ext.Require("BootstrapShared.lua")
 
 ---@class LeaderLibPersistentVars
 local defaultPersistentVars = {
+	---Associates a unique timer name (uuid-concatenated) with a general timer name.
+	---@type table<string,string>
+	TimerNameMap = {},
 	---@type table<string,table[]>
 	TimerData = {},
 	StatusSource = {},

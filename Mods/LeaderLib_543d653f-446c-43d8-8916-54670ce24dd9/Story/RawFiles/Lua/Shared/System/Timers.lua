@@ -4,17 +4,6 @@ end
 
 local IsClient = Ext.IsClient()
 
-local function TryStartTimer(timerName, delay, data)
-	if not IsClient then
-		if #data > 0 then
-			Timer.StoreData(timerName, data)
-		end
-		--PrintDebug("[LeaderLib_Timers.lua:TryStartTimer] ", Common.Dump(Osi.DB_LeaderLib_Helper_Temp_LuaTimer:Get(nil,nil)))
-		TimerCancel(timerName)
-		TimerLaunch(timerName, delay)
-	end
-end
-
 ---[SERVER]
 ---Starts an Osiris timer with optional data to include in the callback. Only strings, numbers, and booleans are accepted for optional parameters.
 ---@param timerName string
@@ -22,14 +11,42 @@ end
 ---@vararg string|number|boolean
 function Timer.Start(timerName, delay, ...)
 	if not IsClient then
-		local b,err = xpcall(TryStartTimer, debug.traceback, timerName, delay, {...})
-		if not b then
-			Ext.PrintError("[LeaderLib:StartTimer] Error starting timer:\n", err)
+		local data = {...}
+		if #data > 0 then
+			Timer.StoreData(timerName, data)
 		end
+		TimerCancel(timerName)
+		TimerLaunch(timerName, delay)
 	else
 		Ext.PrintWarning("[LeaderLib:StartTimer] This function is intended for server-side. Use Timer.StartOneshot on the client!")
 	end
 end
+
+---[SERVER]
+---Starts an Osiris timer for an object, with optional data to include in the callback. Only strings, numbers, and booleans are accepted for optional parameters.
+---@param timerName string The generalized timer name. A unique name will be created using the timer name and object.
+---@param object UUID|NETID|EsvGameObject
+---@param delay integer
+---@vararg string|number|boolean
+function Timer.StartObjectTimer(timerName, object, delay, ...)
+	if not IsClient then
+		local uuid = GameHelpers.GetUUID(object)
+		if uuid then
+			local uniqueTimerName = string.format("%s%s", timerName, uuid)
+			local data = {...}
+			if #data > 0 then
+				Timer.StoreObjectData(uniqueTimerName, timerName, data)
+			end
+			TimerCancel(uniqueTimerName)
+			TimerLaunch(uniqueTimerName, delay)
+		else
+			fprint(LOGLEVEL.WARNING, "[LeaderLib:StartObjectTimer] A valid object is required. Parameter (%s) is invalid!", object or "nil")
+		end
+	else
+		Ext.PrintWarning("[LeaderLib:StartObjectTimer] This function is intended for server-side. Use Timer.StartOneshot on the client!")
+	end
+end
+
 local OneshotTimerData = {}
 
 ---Deprecated @see Timer.Start
@@ -69,46 +86,29 @@ end
 
 StartOneshotTimer = Timer.StartOneshot
 
----Cancels an Osiris timer with a variable amount of UUIDs (or none).
----@param event string
-function Timer.Cancel(event, ...)
+---Cancels a timer with an optional UUID for object timers.
+---@param timerName string
+---@param object UUID|NETID|EsvGameObject|nil
+function Timer.Cancel(timerName, object)
 	if not IsClient then
-		local timerName = event
-		local uuids = {...}
-		local paramCount = GetParamsCount(uuids)
-		local entry = nil
-		if paramCount >= 1 then
-			timerName = event..uuids[1]
-			entry = Osi.DB_LeaderLib_Helper_Temp_LuaTimer:Get(nil, event, uuids[1])
-			--PrintDebug("[LeaderLib:CancelTimer] DB: ", Ext.JsonStringify(entry))
-			if entry ~= nil and #entry > 0 then
-				timerName = entry[1][1]
-				if timerName ~= nil then
-					Osi.DB_LeaderLib_Helper_Temp_LuaTimer:Delete(timerName, event, uuids[1])
-				end
-			end
-		elseif paramCount >= 2 then
-			timerName = event..uuids[1]..uuids[2]
-			entry = Osi.DB_LeaderLib_Helper_Temp_LuaTimer:Get(nil, event, uuids[1], uuids[2])
-			if entry ~= nil and #entry > 0 then
-				--PrintDebug("[LeaderLib:CancelTimer] DB: ", Ext.JsonStringify(entry))
-				timerName = entry[1][1]
-				if timerName ~= nil then
-					Osi.DB_LeaderLib_Helper_Temp_LuaTimer:Delete(timerName, event, uuids[1], uuids[2])
+		if object ~= nil then
+			local uuid = GameHelpers.GetUUID(object)
+			if uuid then
+				local uniqueTimerName = string.format("%s%s", timerName, uuid)
+				if PersistentVars.TimerNameMap[uniqueTimerName] == timerName then
+					PersistentVars.TimerNameMap[uniqueTimerName] = nil
+					PersistentVars.TimerData[uniqueTimerName] = nil
+					TimerCancel(uniqueTimerName)
 				end
 			end
 		else
-			Osi.DB_LeaderLib_Helper_Temp_LuaTimer:Delete(timerName, event)
-		end
-		--PrintDebug("[LeaderLib:CancelTimer] Canceling timer: ", timerName)
-		if timerName ~= nil then
 			TimerCancel(timerName)
-		end
-		if OneshotTimerData[event] ~= nil then
-			OneshotTimerData[event] = nil
+			OneshotTimerData[timerName] = nil
+			PersistentVars.TimerNameMap[timerName] = nil
+			PersistentVars.TimerData[timerName] = nil
 		end
 	else
-		--UIExtensions.RemoveTimerCallback(event)
+		--UIExtensions.RemoveTimerCallback(timerName)
 	end
 end
 
@@ -171,6 +171,12 @@ if not IsClient then
 		table.insert(PersistentVars.TimerData[timerName], Lib.smallfolk.dumps(data))
 	end
 
+	---@private
+	function Timer.StoreObjectData(uniqueTimerName, generalTimerName, data)
+		PersistentVars.TimerNameMap[uniqueTimerName] = generalTimerName
+		Timer.StoreData(uniqueTimerName, data)
+	end
+
 	local function InvokeTimerListeners(tbl, timerName, data)
 		if data then
 			InvokeListenerCallbacks(tbl, timerName, table.unpack(data))
@@ -181,6 +187,13 @@ if not IsClient then
 
 	local function OnTimerFinished(timerName)
 		local data = PersistentVars.TimerData[timerName]
+		PersistentVars.TimerData[timerName] = nil
+		
+		if PersistentVars.TimerNameMap[timerName] then
+			local realTimerName = PersistentVars.TimerNameMap[timerName]
+			PersistentVars.TimerNameMap[timerName] = nil
+			timerName = realTimerName
+		end
 		if data then
 			for i=1,#data do
 				local timerData = Lib.smallfolk.loads(data[i])
@@ -191,7 +204,7 @@ if not IsClient then
 				InvokeTimerListeners(Listeners.TimerFinished, timerName, timerData)
 				InvokeTimerListeners(Listeners.NamedTimerFinished[timerName], timerName, timerData)
 			end
-			PersistentVars.TimerData[timerName] = nil
+			
 		else
 			if OneshotTimerData[timerName] ~= nil then
 				InvokeTimerListeners(OneshotTimerData[timerName], timerName, data)

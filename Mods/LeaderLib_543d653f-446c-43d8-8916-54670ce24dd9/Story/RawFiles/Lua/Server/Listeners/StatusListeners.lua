@@ -42,7 +42,7 @@ StatusTypeListeners = {
 Vars.RegisteredIgnoredStatus = {}
 
 ---@param event StatusEventID BeforeAttempt, Attempt, Applied, Removed
----@param status string A status id or status type.
+---@param status string|string[] A status id or status type.
 ---@param callback StatusEventCallback
 function RegisterStatusListener(event, status, callback)
     local statusEventHolder = StatusListeners[event]

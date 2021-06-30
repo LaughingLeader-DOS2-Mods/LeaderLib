@@ -27,6 +27,7 @@ end
 local isClient = Ext.IsClient()
 
 if Vars.DebugMode then
+	--CustomStatSystem.DebugEnabled = true
 	if not isClient then
 		Ext.RegisterConsoleCommand("clearavailablepoints", function()
 			PersistentVars.CustomStatAvailablePoints = {}

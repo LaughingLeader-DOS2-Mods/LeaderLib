@@ -13,6 +13,9 @@ Lib.maf = maf
 ---@type inspect
 Lib.inspect = Ext.Require("Shared/Libraries/inspect.lua")
 
+---@type smallfolk
+Lib.smallfolk = Ext.Require("Shared/Libraries/smallfolk.lua")
+
 ---@type pprint
 --Lib.pprint = Ext.Require("Shared/Libraries/test/pprint.lua")
 --Lib.pprint.defaults.sort_keys = true

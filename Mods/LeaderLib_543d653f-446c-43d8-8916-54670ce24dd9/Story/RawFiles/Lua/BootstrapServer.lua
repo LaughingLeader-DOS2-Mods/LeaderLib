@@ -5,6 +5,7 @@ Ext.Require("BootstrapShared.lua")
 
 ---@class LeaderLibPersistentVars
 local defaultPersistentVars = {
+	---@type table<string,table[]>
 	TimerData = {},
 	StatusSource = {},
 	ForceMoveData = {},

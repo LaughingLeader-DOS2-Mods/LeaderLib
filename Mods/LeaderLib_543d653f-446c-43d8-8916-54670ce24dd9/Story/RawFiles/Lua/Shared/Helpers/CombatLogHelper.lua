@@ -47,7 +47,6 @@ if isClient then
 			---@type CombatLogFlashFilter
 			local filter = arr[i]
 			if filter then
-				print(filter.tooltip, i, filter.tooltip.id, filter.currentFrame)
 				if filter.tooltip == tooltip then
 					CombatLog.Filters[id] = {
 						Index = i,

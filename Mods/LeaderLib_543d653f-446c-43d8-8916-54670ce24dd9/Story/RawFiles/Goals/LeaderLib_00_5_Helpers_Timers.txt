@@ -310,7 +310,6 @@ TimerCancel(_TimerName);
 //END_REGION
 
 //REGION LUA_TIMERS
-// [BEGIN_NO_OSITOOLS]
 PROC
 LeaderLib_Timers_StartLuaTimer((STRING)_Event, (INTEGER)_Delay)
 THEN
@@ -325,7 +324,6 @@ PROC
 LeaderLib_Timers_StartLuaTimer((STRING)_Event, (INTEGER)_Delay, (GUIDSTRING)_Obj, (GUIDSTRING)_Obj2)
 THEN
 DB_NOOP(1);
-// [END_NO_OSITOOLS]
 
 PROC
 LeaderLib_Timers_Internal_StoreLuaData((STRING)_TimerName, (STRING)_Event)
@@ -341,59 +339,6 @@ PROC
 LeaderLib_Timers_Internal_StoreLuaData((STRING)_TimerName, (STRING)_Event, (STRING)_UUID, (STRING)_UUID2)
 THEN
 DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event, _UUID, _UUID2);
-
-/* [OSITOOLS_ONLY]
-PROC
-LeaderLib_Timers_StartLuaTimer((STRING)_Event, (INTEGER)_d)
-AND
-IntegertoString(_d, _Delay)
-THEN
-NRD_ModCall("LeaderLib", "StartTimer", _Event, _Delay);
-
-PROC
-LeaderLib_Timers_StartLuaTimer((STRING)_Event, (INTEGER)_d, (GUIDSTRING)_Obj)
-AND
-IntegertoString(_d, _Delay)
-AND
-GetUUID(_Obj, _UUID)
-THEN
-NRD_ModCall("LeaderLib", "StartTimer", _Event, _Delay, _UUID);
-
-PROC
-LeaderLib_Timers_StartLuaTimer((STRING)_Event, (INTEGER)_d, (GUIDSTRING)_Obj, (GUIDSTRING)_Obj2)
-AND
-IntegertoString(_d, _Delay)
-AND
-GetUUID(_Obj, _UUID)
-AND
-GetUUID(_Obj, _UUID2)
-THEN
-NRD_ModCall("LeaderLib", "StartTimer", _Event, _Delay, _UUID, _UUID2);
-
-IF
-TimerFinished(_TimerName)
-AND
-DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event)
-THEN
-NOT DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event);
-NRD_ModCall("LeaderLib", "OnLuaTimerFinished", _Event);
-
-IF
-TimerFinished(_TimerName)
-AND
-DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event, _UUID)
-THEN
-NOT DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event, _UUID);
-NRD_ModCall("LeaderLib", "OnLuaTimerFinished", _Event, _UUID);
-
-IF
-TimerFinished(_TimerName)
-AND
-DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event, _UUID, _UUID2)
-THEN
-NOT DB_LeaderLib_Helper_Temp_LuaTimer(_TimerName, _Event, _UUID, _UUID2);
-NRD_ModCall("LeaderLib", "OnLuaTimerFinished", _Event, _UUID, _UUID2);
-*/
 //END_REGION
 EXITSECTION
 

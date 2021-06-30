@@ -4,34 +4,10 @@ end
 
 local IsClient = Ext.IsClient()
 
-local function GetParamsCount(tbl)
-	local count = 0
-	for i=1,#tbl do
-		local uuid = GameHelpers.GetUUID(tbl[i])
-		if uuid then
-			tbl[i] = uuid
-			count = count + 1
-		end
-	end
-	return count
-end
-
-
-local function TryStartTimer(event, delay, uuids)
+local function TryStartTimer(timerName, delay, data)
 	if not IsClient then
-		local timerName = event
-		local paramCount = GetParamsCount(uuids)
-		--PrintDebug("[LeaderLib_Timers.lua:TryStartTimer] ", event, delay, Common.Dump(uuids), paramCount)
-		if uuids == nil or paramCount == 0 then
-			Osi.LeaderLib_Timers_Internal_StoreLuaData(timerName, event)
-		else
-			if paramCount == 1 then
-				timerName = event..uuids[1]
-				Osi.LeaderLib_Timers_Internal_StoreLuaData(timerName, event, uuids[1])
-			elseif paramCount >= 2 then
-				timerName = event..uuids[1]..uuids[2]
-				Osi.LeaderLib_Timers_Internal_StoreLuaData(timerName, event, uuids[1], uuids[2])
-			end
+		if data and #data > 0 then
+			Timer.StoreData(timerName, data)
 		end
 		--PrintDebug("[LeaderLib_Timers.lua:TryStartTimer] ", Common.Dump(Osi.DB_LeaderLib_Helper_Temp_LuaTimer:Get(nil,nil)))
 		TimerCancel(timerName)
@@ -39,17 +15,19 @@ local function TryStartTimer(event, delay, uuids)
 	end
 end
 
----Starts an Osiris timer with a variable amount of UUIDs (or none).
----@param event string
+---[SERVER]
+---Starts an Osiris timer with optional data to include in the callback. Only strings, numbers, and booleans are accepted for optional parameters.
+---@param timerName string
 ---@param delay integer
----@vararg string
-function Timer.Start(event, delay, ...)
-	-- if Vars.DebugMode then
-	-- 	fprint(LOGLEVEL.TRACE, "LeaderLib:StartTimer(%s, %s, %s)", event, delay, Common.Dump({...}))
-	-- end
-	local b,err = xpcall(TryStartTimer, debug.traceback, event, delay, {...})
-	if not b then
-		Ext.PrintError("[LeaderLib:StartTimer] Error starting timer:\n", err)
+---@vararg string|number|boolean
+function Timer.Start(timerName, delay, ...)
+	if not IsClient then
+		local b,err = xpcall(TryStartTimer, debug.traceback, timerName, delay, {...})
+		if not b then
+			Ext.PrintError("[LeaderLib:StartTimer] Error starting timer:\n", err)
+		end
+	else
+		Ext.PrintWarning("[LeaderLib:StartTimer] This function is intended for server-side. Use Timer.StartOneshot on the client!")
 	end
 end
 local OneshotTimerData = {}
@@ -136,24 +114,11 @@ end
 
 CancelTimer = Timer.Cancel
 
----Called from Osiris.
+---@private
+---Called from Osiris. Deprecated.
 ---@param event string
 ---@vararg string
-function OnLuaTimerFinished(event, ...)
-	--PrintDebug("[LeaderLib_Timers.lua:TimerFinished] ", event, Common.Dump({...}))
-	if OneshotTimerData[event] ~= nil then
-		for i,callback in pairs(OneshotTimerData[event]) do
-			local b,err = xpcall(callback, debug.traceback, event, ...)
-			if not b then
-				Ext.PrintError("[LeaderLib:CancelTimer] Error calling oneshot timer callback:\n", err)
-			end
-		end
-		OneshotTimerData[event] = nil
-	end
-	InvokeListenerCallbacks(Listeners.TimerFinished, event, ...)
-	InvokeListenerCallbacks(Listeners.NamedTimerFinished[event], event, ...)
-	TurnCounter.OnTimerFinished(event)
-end
+function OnLuaTimerFinished(event, ...) end
 
 local function WrapCallbackObjects(tbl)
 	if #tbl == 0 then
@@ -198,6 +163,49 @@ function Timer.RegisterListener(name, callback, fetchGameObjects)
 end
 
 if not IsClient then
+	---@private
+	function Timer.StoreData(timerName, data)
+		if not PersistentVars.TimerData[timerName] then
+			PersistentVars.TimerData[timerName] = {}
+		end
+		table.insert(PersistentVars.TimerData[timerName], Lib.smallfolk.dumps(data))
+	end
+
+	local function InvokeTimerListeners(tbl, timerName, data)
+		if data then
+			InvokeListenerCallbacks(tbl, timerName, table.unpack(data))
+		else
+			InvokeListenerCallbacks(tbl, timerName)
+		end
+	end
+
+	local function OnTimerFinished(timerName)
+		local data = PersistentVars.TimerData[timerName]
+		if data then
+			for i=1,#data do
+				local timerData = Lib.smallfolk.loads(data[i])
+				if OneshotTimerData[timerName] ~= nil then
+					InvokeTimerListeners(OneshotTimerData[timerName], timerName, timerData)
+					OneshotTimerData[timerName] = nil
+				end
+				InvokeTimerListeners(Listeners.TimerFinished, timerName, timerData)
+				InvokeTimerListeners(Listeners.NamedTimerFinished[timerName], timerName, timerData)
+			end
+			PersistentVars.TimerData[timerName] = nil
+		else
+			if OneshotTimerData[timerName] ~= nil then
+				InvokeTimerListeners(OneshotTimerData[timerName], timerName, data)
+				OneshotTimerData[timerName] = nil
+			end
+			InvokeTimerListeners(Listeners.TimerFinished, timerName, data)
+			InvokeTimerListeners(Listeners.NamedTimerFinished[timerName], timerName, data)
+		end
+
+		TurnCounter.OnTimerFinished(timerName)
+	end
+
+	Ext.RegisterOsirisListener("TimerFinished", 1, "after", OnTimerFinished)
+
 	local function OnProcObjectTimerFinished(object, timerName)
 		object = StringHelpers.GetUUID(object)
 		InvokeListenerCallbacks(Listeners.ProcObjectTimerFinished[timerName], object, timerName)

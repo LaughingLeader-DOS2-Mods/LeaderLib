@@ -8,6 +8,24 @@ self.LastIconId = 1212
 self.TooltipValueEnabled = {}
 self.MaxVisibleValue = 999 -- Values greater than this are truncated visually in the UI
 
+---Called when a stat movieclip is added or updated in the UI.
+---@alias CustomStatMovieClipAddedCallback fun(id:string, stat:CustomStatData, character:EsvCharacter, stat_mc:FlashCustomStat):void
+
+---@type table<string, CustomStatMovieClipAddedCallback[]>
+CustomStatSystem.Listeners.StatAdded = {All = {}}
+
+---@param id string
+---@param callback CustomStatMovieClipAddedCallback
+function CustomStatSystem:RegisterStatAddedHandler(id, callback)
+	if type(id) == "table" then
+		for i=1,#id do
+			self:RegisterStatAddedHandler(id[i], callback)
+		end
+	elseif self:CanAddListenerCallback(self.Listeners.StatAdded, id, callback) then
+		table.insert(self.Listeners.StatAdded[id], callback)
+	end
+end
+
 ---@private
 function CustomStatSystem:GetNextCustomStatIconId()
 	self.LastIconId = self.LastIconId + 1
@@ -281,6 +299,8 @@ function CustomStatSystem:OnStatAdded(ui, call, doubleHandle, index)
 		if stat and stat.DisplayValueInTooltip ~= false then
 			self.TooltipValueEnabled[stat.ID] = true
 		end
+		--stat_mc.text_txt.x = 187.5;
+		--stat_mc.text_txt.width = 64
 	elseif stat and stat.DisplayValueInTooltip ~= true then
 		self.TooltipValueEnabled[stat.ID] = nil
 	end
@@ -291,6 +311,14 @@ function CustomStatSystem:OnStatAdded(ui, call, doubleHandle, index)
 			local text = string.format("%s%%", math.floor(stat_mc.am))
 			if stat_mc.text_txt.htmlText ~= text then
 				stat_mc.text_txt.htmlText = text
+			end
+		end
+
+		local character = Client:GetCharacter()
+		for listener in self:GetListenerIterator(self.Listeners.StatAdded[stat.ID], self.Listeners.StatAdded.All) do
+			local b,err = xpcall(listener, debug.traceback, stat.ID, stat, character, stat_mc)
+			if not b then
+				fprint(LOGLEVEL.ERROR, "[LeaderLib.CustomStatSystem:OnStatPointRemoved] Error calling OnAvailablePointsChanged listener for stat (%s):\n%s", stat.ID, err)
 			end
 		end
 	end
@@ -640,11 +668,13 @@ function CustomStatSystem:OnTooltip(ui, character, stat, tooltip)
 	if self.TooltipValueEnabled[stat.ID] then
 		local element = tooltip:GetLastElement({"StatsDescription", "TagDescription"})
 		if element then
-			local value = string.format("%s%s", stat:GetValue(character), stat.DisplayMode == stat.STAT_DISPLAY_MODE.Percentage and "%" or "")
+			local valueFormatted = StringHelpers.CommaNumber(stat:GetValue(character))
+			local total = Ext.GetTranslatedString("h79b967bcg4197g498fgb1dcged15f69f7913", "Total")
+			local text = string.format("<font color='#11D77A'>%s: %s%s</font>", total, valueFormatted, stat.DisplayMode == stat.STAT_DISPLAY_MODE.Percentage and "%" or "")
 			if StringHelpers.IsNullOrWhitespace(element.Label) then
-				element.Label = string.format("(%s)", value)
+				element.Label = text
 			else
-				element.Label = string.format("%s<br>(%s)", element.Label, value)
+				element.Label = string.format("%s<br>%s", element.Label, text)
 			end
 		end
 	end

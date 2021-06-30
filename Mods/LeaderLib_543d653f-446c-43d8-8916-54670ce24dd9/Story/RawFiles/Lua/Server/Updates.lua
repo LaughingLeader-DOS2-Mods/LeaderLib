@@ -16,3 +16,8 @@ RegisterModListener("Loaded", ModuleUUID, function(lastVersion, nextVersion)
 		Osi.DB_LeaderLib_Helper_Temp_LuaTimer:Delete(nil,nil,nil)
 	end
 end)
+
+-- Timer.RegisterListener("TestTimer", function(...) print(Lib.inspect({...})) end)
+-- Timer.Start("TestTimer", 1500, "Test1", false, 49, "Hello")
+--Mods.LeaderLib.Timer.RegisterListener("TestTimer", function(...) print("TimerFinished", Mods.LeaderLib.Lib.inspect({...})) end)
+--Mods.LeaderLib.Timer.Start("TestTimer", 1500, "Test1", false, 49, "Hello", Ext.GetCharacter(host.MyGuid), function() print('test') end)

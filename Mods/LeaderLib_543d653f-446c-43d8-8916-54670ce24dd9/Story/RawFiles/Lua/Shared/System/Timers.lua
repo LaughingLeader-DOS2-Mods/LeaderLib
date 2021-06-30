@@ -6,7 +6,7 @@ local IsClient = Ext.IsClient()
 
 local function TryStartTimer(timerName, delay, data)
 	if not IsClient then
-		if data and #data > 0 then
+		if #data > 0 then
 			Timer.StoreData(timerName, data)
 		end
 		--PrintDebug("[LeaderLib_Timers.lua:TryStartTimer] ", Common.Dump(Osi.DB_LeaderLib_Helper_Temp_LuaTimer:Get(nil,nil)))

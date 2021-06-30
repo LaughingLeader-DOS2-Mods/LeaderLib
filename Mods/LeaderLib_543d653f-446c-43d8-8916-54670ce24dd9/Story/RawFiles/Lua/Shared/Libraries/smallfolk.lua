@@ -2,7 +2,8 @@
 local M = {}
 local expect_object, dump_object
 local error, tostring, pairs, type, floor, huge, concat = error, tostring, pairs, type, math.floor, math.huge, table.concat
-
+local printError = Ext.PrintError
+local devMode = Ext.IsDeveloperMode
 local dump_type = {}
 
 function dump_type:string(nmemo, memo, acc)
@@ -30,14 +31,20 @@ function dump_type:table(nmemo, memo, acc)
 	local nself = #self
 	for i = 1, nself do -- don't use ipairs here, we need the gaps
 		nmemo = dump_object(self[i], nmemo, memo, acc)
-		acc[#acc + 1] = ','
+		if nmemo then
+			acc[#acc + 1] = ','
+		end
 	end
 	for k, v in pairs(self) do
 		if type(k) ~= 'number' or floor(k) ~= k or k < 1 or k > nself then
 			nmemo = dump_object(k, nmemo, memo, acc)
-			acc[#acc + 1] = ':'
+			if nmemo then
+				acc[#acc + 1] = ':'
+			end
 			nmemo = dump_object(v, nmemo, memo, acc)
-			acc[#acc + 1] = ','
+			if nmemo then
+				acc[#acc + 1] = ','
+			end
 		end
 	end
 	acc[#acc] = acc[#acc] == '{' and '{}' or '}'
@@ -63,10 +70,14 @@ function dump_object(object, nmemo, memo, acc)
 		acc[#acc + 1] = 'i'
 	else
 		local t = type(object)
-		if not dump_type[t] then
-			error('cannot dump type ' .. t)
+		if dump_type[t] then
+			return dump_type[t](object, nmemo, memo, acc)
+		else
+			if devMode() then
+				printError("[LeaderLib:Lib.smallfolk] Invalid type for serialization: " .. t)
+			end
+			return nil
 		end
-		return dump_type[t](object, nmemo, memo, acc)
 	end
 	return nmemo
 end

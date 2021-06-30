@@ -197,7 +197,7 @@ function Timer.RegisterListener(name, callback, fetchGameObjects)
 	end
 end
 
-if not Ext.IsClient() then
+if not IsClient then
 	local function OnProcObjectTimerFinished(object, timerName)
 		object = StringHelpers.GetUUID(object)
 		InvokeListenerCallbacks(Listeners.ProcObjectTimerFinished[timerName], object, timerName)

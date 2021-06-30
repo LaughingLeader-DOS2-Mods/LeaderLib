@@ -46,7 +46,7 @@ local registeredContextListeners = false
 Ext.RegisterConsoleCommand("contextRollTest", function()
     if not registeredContextListeners then
         UI.ContextMenu.Register.ShouldOpenListener(function(contextMenu, x, y)
-            if Game.Tooltip.LastRequestTypeEquals("CustomStat") then
+            if Game.Tooltip.RequestTypeEquals("CustomStat") then
                 return true
             end
         end)

@@ -124,11 +124,16 @@ function CustomStatData:GetLastValue(character)
 	return self.LastValue[characterId] or false
 end
 
+local STAT_VALUE_MAX = 1874919423
+
 ---[SERVER]
 ---@param character EsvCharacter|string|number
 ---@param value integer
 function CustomStatData:SetValue(character, value)
 	if not isClient then
+		if value > STAT_VALUE_MAX then
+			value = STAT_VALUE_MAX
+		end
 		return CustomStatSystem:SetStat(character, self.ID, value, self.Mod)
 	end
 	fprint(LOGLEVEL.WARNING, "[CustomStatData:SetValue(%s, %s)] This function only works on the server-side.", self.ID, value)

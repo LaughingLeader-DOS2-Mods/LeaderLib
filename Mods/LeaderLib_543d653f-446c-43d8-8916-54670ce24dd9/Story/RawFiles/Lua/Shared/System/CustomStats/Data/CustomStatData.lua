@@ -124,7 +124,7 @@ function CustomStatData:GetLastValue(character)
 	return self.LastValue[characterId] or false
 end
 
-local STAT_VALUE_MAX = 1874919423
+local STAT_VALUE_MAX = 2147483647
 
 ---[SERVER]
 ---@param character EsvCharacter|string|number

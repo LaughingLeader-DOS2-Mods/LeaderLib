@@ -209,7 +209,7 @@ package characterSheet_fla
 				cstat_mc.am = val;
 				cstat_mc.text_txt.htmlText = valueText;
 			}
-			cstat_mc.text_txt.width = cstat_mc.text_txt.width + 8;
+			//cstat_mc.text_txt.width = cstat_mc.text_txt.width + 8;
 			cstat_mc.tooltipAlign = "right";
 			cstat_mc.statId = doubleHandle;
 			cstat_mc.textStr = cstat_mc.label_txt.text;
@@ -222,9 +222,11 @@ package characterSheet_fla
 			var tf:TextFormat = cstat_mc.text_txt.getTextFormat();
 			tf.align = TextFormatAlign.CENTER;
 			cstat_mc.text_txt.setTextFormat(tf);
-			cstat_mc.text_txt.x = 203.5;
+			//cstat_mc.text_txt.x = 203.5;
+			//cstat_mc.text_txt.width = 48;
+			cstat_mc.text_txt.x = 187.5; // Adjusted for 64 width
+			cstat_mc.text_txt.width = 64; // Wider for larger text like 33.3M
 			cstat_mc.text_txt.y = 0;
-			cstat_mc.text_txt.width = 35;
 			cstat_mc.text_txt.height = 24;
 
 			//tf:TextFormat = cstat_mc.label_txt.getTextFormat();

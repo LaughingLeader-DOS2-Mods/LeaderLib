@@ -437,7 +437,9 @@ function ContextMenu:Open()
 		local contextMenu = main.context_menu
 		contextMenu.clearButtons()
 
-		if #self.Entries > 1 then
+		local totalEntries = #self.Entries
+
+		if totalEntries > 1 then
 			local i = 0
 			for _,v in ipairs(self.Entries) do
 				contextMenu.buttonArr[i] = v.ID
@@ -450,10 +452,12 @@ function ContextMenu:Open()
 				i = i + 7
 			end
 			contextMenu.updateButtons()
-		else
+		elseif totalEntries == 1 then
 			local entry = self.Entries[1]
 			contextMenu.addEntry(entry.ID, entry.ActionID, entry.ClickSound, entry.Label, entry.Disabled, entry.Legal)
 			contextMenu.updateDone()
+		else
+			fprint(LOGLEVEL.WARNING, "[LeaderLib:ContextMenu:Open] No entries were added to the context menu! Who's opening it?")
 		end
 		
 		local x,y = UIExtensions.GetMousePosition()
@@ -461,8 +465,7 @@ function ContextMenu:Open()
 		if self.ContextStatus then
 			if self.ContextStatus.CallingUI == Data.UIType.examine then
 				paddingX,paddingY = 8,-16
-			elseif self.ContextStatus.CallingUI == Data.UIType.playerInfo then
-				
+			--elseif self.ContextStatus.CallingUI == Data.UIType.playerInfo then
 			end
 		end
 		self.IsOpening = true

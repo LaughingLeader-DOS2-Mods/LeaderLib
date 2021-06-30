@@ -699,7 +699,8 @@ local function Update_Old(ui, player)
 end
 
 local function CanAddTalent(talentId, player, talentStat)
-	if TalentIsHidden(talentId) then
+	local isGM = GameHelpers.Client.IsGameMaster()
+	if TalentIsHidden(talentId) and not isGM then
 		return false
 	end
 	if player[talentStat] == true then
@@ -717,6 +718,10 @@ local function CanAddTalent(talentId, player, talentStat)
 	if defaultVisible[talentId] then
 		return true
 	end
+	if racialTalents[talentId] and isGM then
+		return true
+	end
+	return false
 end
 
 ---@param ui UIObject

@@ -130,11 +130,23 @@ if isClient then
 		end
 	end)
 else
+	---@param filterId string
+	---@param tooltip string
+	function CombatLog.AddTextToHost(filterId, text)
+		Ext.PostMessageToClient(CharacterGetHostCharacter(), "LeaderLib_CombatLog_AddTextToFilter", Ext.JsonStringify({ID=filterId, Text=text}))
+	end
+	
 	---@param client EsvCharacter|UUID|NETID
 	---@param filterId string
 	---@param tooltip string
-	function CombatLog.AddTextForPlayer(client, filterId, text)
+	function CombatLog.AddTextToPlayer(client, filterId, text)
 		local uuid = GameHelpers.GetUUID(client)
 		Ext.PostMessageToClient(uuid, "LeaderLib_CombatLog_AddTextToFilter", Ext.JsonStringify({ID=filterId, Text=text}))
+	end
+
+	---@param filterId string
+	---@param tooltip string
+	function CombatLog.AddTextToAllPlayers(filterId, text)
+		Ext.BroadcastMessage("LeaderLib_CombatLog_AddTextToFilter", Ext.JsonStringify({ID=filterId, Text=text}))
 	end
 end

@@ -27,7 +27,7 @@ end
 ---@param timerName string The generalized timer name. A unique name will be created using the timer name and object.
 ---@param object UUID|NETID|EsvGameObject
 ---@param delay integer
----@vararg string|number|boolean
+---@vararg string|number|boolean|table
 function Timer.StartObjectTimer(timerName, object, delay, ...)
 	if not IsClient then
 		local uuid = GameHelpers.GetUUID(object)

@@ -195,10 +195,11 @@ function HitData:ConvertDamageTypeTo(damageType, toDamageType, aggregate)
 	local damages = self.DamageList:ToTable()
 	local damageList = Ext.NewDamageList()
 	for k,v in pairs(damages) do
-		if v.DamageType == damageType then
-			v.DamageType = toDamageType
+		local dType = v.DamageType
+		if dType == damageType then
+			dType = toDamageType
 		end
-		damageList:Add(v.DamageType, v.Amount)
+		damageList:Add(dType, v.Amount)
 	end
 	self.DamageList:Clear()
 	self.DamageList:Merge(damageList)

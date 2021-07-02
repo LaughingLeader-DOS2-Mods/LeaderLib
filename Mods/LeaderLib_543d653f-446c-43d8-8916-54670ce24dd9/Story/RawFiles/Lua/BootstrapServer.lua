@@ -37,10 +37,11 @@ local defaultPersistentVars = {
 }
 
 ---@type LeaderLibPersistentVars
-PersistentVars = Common.CopyTable(defaultPersistentVars, true)
+PersistentVars = Common.CloneTable(defaultPersistentVars, true)
 function LoadPersistentVars()
 	Common.InitializeTableFromSource(PersistentVars, defaultPersistentVars)
 	SkillSystem.LoadSaveData()
+	InvokeListenerCallbacks(Listeners.PersistentVarsLoaded)
 end
 
 TotalSkillListeners = 0

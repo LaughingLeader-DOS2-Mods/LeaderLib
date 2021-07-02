@@ -86,6 +86,10 @@ if Ext.IsServer() then
 	Listeners.OnSummonChanged = {}
 	---@type table<string, fun(event:string, vararg string)>
 	Listeners.ObjectEvent = {}
+
+	---Called when PersistentVars should be initialized from a table of default values.
+	---@type function[]
+	Listeners.PersistentVarsLoaded = {}
 end
 if Ext.IsClient() then
 	-- Client-side Mod Menu events

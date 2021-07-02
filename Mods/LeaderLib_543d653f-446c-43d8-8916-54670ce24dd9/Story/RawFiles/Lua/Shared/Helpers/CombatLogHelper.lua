@@ -47,7 +47,7 @@ if isClient then
 			---@type CombatLogFlashFilter
 			local filter = arr[i]
 			if filter then
-				if filter.tooltip == tooltip then
+				if filter.registeredId == id or filter.tooltip == tooltip then
 					CombatLog.Filters[id] = {
 						Index = i,
 						DisplayName = tooltip
@@ -58,11 +58,16 @@ if isClient then
 			end
 		end
 		if not exists then
+			local intId = #arr
 			CombatLog.Filters[id] = {
-				Index = #arr,
+				Index = intId,
 				DisplayName = tooltip
 			}
-			this.addFilter(#arr, tooltip, frame)
+			this.addFilter(intId, tooltip, frame)
+			local filter = arr[CombatLog.Filters[id].Index]
+			if filter then
+				filter.registeredId = id
+			end
 		end
 		local data = CombatLog.Filters[id]
 		if enabled ~= nil then
@@ -148,4 +153,10 @@ else
 	function CombatLog.AddTextToAllPlayers(filterId, text)
 		Ext.BroadcastMessage("LeaderLib_CombatLog_AddTextToFilter", Ext.JsonStringify({ID=filterId, Text=text}))
 	end
+end
+
+if Vars.DebugMode then
+	Ext.RegisterListener("SessionLoaded", function()
+		AddConsoleVariable("combatlog", CombatLog)
+	end)
 end

@@ -1,6 +1,7 @@
 ---@class UIExtensonsMain:FlashMainTimeline
 ---@field addCheckbox fun(id:number, label:string, tooltip:string, stateID:number|nil, x:number|nil, y:number|nil, filterBool:boolean|nil, enabled:boolean|nil):MovieClip
 ---@field removeControl fun(id:number):boolean
+---@field addBar fun(id:number, label:string, tooltip:string|nil, x:number|nil, y:number|nil, percentage:number|nil, doTween:boolean|nil, color:number|nil):void
 
 ---@class LeaderLibUIExtensions:UIObject
 ---@field GetRoot fun():UIExtensonsMain
@@ -386,5 +387,15 @@ Ext.RegisterListener("SessionLoaded", function()
 		end)
 
 		registeredControllerListeners = true
+	end
+end)
+
+Ext.RegisterConsoleCommand("barTest", function()
+	local ui = UIExtensions.GetInstance()
+	if ui then
+		local this = ui:GetRoot()
+		if this then
+			this.addBar("BeetusAdrenaline", "Adrenaline", "Is this working?", 100, 100, 0.5, true)
+		end
 	end
 end)

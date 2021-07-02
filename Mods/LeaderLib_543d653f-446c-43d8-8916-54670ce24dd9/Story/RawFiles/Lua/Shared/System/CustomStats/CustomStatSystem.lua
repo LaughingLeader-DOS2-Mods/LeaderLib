@@ -54,8 +54,6 @@ if not isClient then
 	setmetatable(CustomStatSystem.PointsPool, PointsPoolHandler)
 end
 
-Ext.AddPathOverride("Public/Game/GUI/characterSheet.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/characterSheet.swf")
-
 ---@alias MOD_UUID string
 ---@alias STAT_ID string
 

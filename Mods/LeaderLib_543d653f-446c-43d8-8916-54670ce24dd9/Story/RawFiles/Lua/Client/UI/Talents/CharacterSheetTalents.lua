@@ -1,3 +1,6 @@
+---@private
+TalentManager.Sheet = {}
+
 ---@class FlashCharacterCreationTalentsMC:FlashMovieClip
 ---@field addTalentElement fun(talentID:integer, talentLabel:string, isUnlocked:boolean, isChoosable:boolean, isRacial:boolean) : void
 
@@ -12,17 +15,17 @@ local function updateTalents(ui, event)
 	local player = Ext.GetCharacter(handle) or Client:GetCharacter()
 
 	for numId,talentId in Data.Talents:Get() do
-		local statAttribute = TalentManager.Data.TalentStatAttributes[talentId]
-		if TalentManager.CanAddTalent(talentId, player.Stats, statAttribute) then
-			local talentState = TalentManager.GetTalentState(player, talentId, statAttribute)
-			local name = TalentManager.GetTalentDisplayName(player, talentId, talentState)
-			print(call, name, Data.TalentEnum[talentId], talentState)
+		local hasTalent = player.Stats[TalentManager.Data.TalentStatAttributes[talentId]] == true
+		if TalentManager.CanAddTalent(talentId, hasTalent) then
+			local talentState = TalentManager.GetTalentState(player, talentId, hasTalent)
+			local name = TalentManager.GetTalentDisplayName(talentId, talentState)
 			this.stats_mc.addTalent(name, Data.TalentEnum[talentId], talentState)
 		end
 	end
 
-	--[[
-		TalentManager.Update(ui, call, player)
+	this.stats_mc.talentHolder_mc.list.positionElements()
+
+	--[[ -- Old/Needs a second look
 		local length = #Listeners.OnTalentArrayUpdating
 		if length > 0 then
 			for i=1,length do
@@ -40,8 +43,6 @@ local function updateTalents(ui, event)
 			TalentManager.HideTalents(typeid)
 		end)
 	]]
-
-	this.stats_mc.talentHolder_mc.list.positionElements()
 end
 
 ---@param ui UIObject
@@ -83,3 +84,77 @@ Ext.RegisterUITypeCall(Data.UIType.characterSheet, "characterSheetUpdateDone", u
 Ext.RegisterUITypeInvokeListener(Data.UIType.statsPanel_c, "updateArraySystem", updateTalents_c)
 
 --Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem", DisplayTalents)
+
+local function onTalentAdded(ui, call, index)
+	---@type CharacterSheetMainTimeline
+	local this = ui:GetRoot()
+	local talent_mc = this.stats_mc.talentHolder_mc.list.content_array[index]
+	if talent_mc then
+		local talentState = talent_mc.talentState
+		local talentId = Data.Talents[talent_mc.statId]
+		local statAttribute = TalentManager.Data.TalentStatAttributes[talentId]
+		if talentId and statAttribute then
+			local player = Client:GetCharacter()
+			local points = this.stats_mc.pointsWarn[3].avPoints
+	
+			local hasTalent = player.Stats[statAttribute] == true
+			local canAdd = false
+			local canRemove = false
+	
+			if not TalentManager.Data.RacialTalents[talentId] then
+				--TalentManager.HasRequirements(player, talentId)
+				if not hasTalent and points > 0 and talentState == TalentManager.Data.TalentState.Selectable then
+					canAdd = true
+				elseif hasTalent then
+					canRemove = GameHelpers.Client.IsGameMaster(ui, this)
+				end
+			end
+	
+			talent_mc.plus_mc.visible = canAdd
+			talent_mc.minus_mc.visible = canRemove
+	
+			--fprint(LOGLEVEL.DEFAULT, "[%s] Talent(%s)[%s] Label(%s) StatAttribute(%s) canAdd(%s) canRemove(%s) Index[%s] State(%s)", call, talentId, talent_mc.statId, talent_mc.label, statAttribute, canAdd, canRemove, index, talentState)
+		end
+	end
+end
+Ext.RegisterUITypeCall(Data.UIType.characterSheet, "talentAdded", onTalentAdded)
+
+---@private
+function TalentManager.Sheet.HideTalents()
+	local list = nil
+	local idProperty = nil
+	if not Vars.ControllerEnabled then
+		---@type CharacterSheetMainTimeline
+		local this = GameHelpers.UI.TryGetRoot(Data.UIType.characterSheet)
+		if this then
+			list = this.stats_mc.talentHolder_mc.list
+			idProperty = "statId"
+		end
+	else
+		local this = GameHelpers.UI.TryGetRoot(Data.UIType.statsPanel_c)
+		if this then
+			list = this.mainpanel_mc.stats_mc.talents_mc.statList
+			idProperty = "id"
+		end
+	end
+
+	local removedTalent = false
+	if list and idProperty then
+		local count = #list.content_array-1
+		for i=0,count do
+			local talent_mc = list.content_array[i]
+			if talent_mc then
+				local talentId = Data.Talents[talent_mc[idProperty]]
+				if talentId and TalentManager.TalentIsHidden(talentId) then
+					--public function removeElement(index:Number, repositionElements:Boolean = true, toPosition:Boolean = false, yPos:Number = 0.3) : *
+					list.removeElement(i, false, false)
+					removedTalent = true
+				end
+			end
+		end
+	
+		if removedTalent then
+			list.positionElements()
+		end
+	end
+end

@@ -697,14 +697,14 @@ package LS_Classes
 			this.containerContent_mc.removeChild(param1);
 		}
 		
-		public function removeElement(param1:Number, param2:Boolean = true, param3:Boolean = false, param4:Number = 0.3) : *
+		public function removeElement(index:Number, repositionElements:Boolean = true, toPosition:Boolean = false, yPos:Number = 0.3) : *
 		{
 			var val5:MovieClip = null;
 			var val6:Number = NaN;
 			var val7:MovieClip = null;
-			if(param1 >= 0 && param1 < this.content_array.length)
+			if(index >= 0 && index < this.content_array.length)
 			{
-				val5 = this.content_array[param1];
+				val5 = this.content_array[index];
 				if(val5)
 				{
 					this.stopElementMCTweens(val5);
@@ -714,9 +714,9 @@ package LS_Classes
 						val7.removeChild(val5);
 					}
 				}
-				this.content_array.splice(param1,1);
+				this.content_array.splice(index,1);
 				val6 = this.currentSelection;
-				if(param1 == val6 && this.content_array.length > 0)
+				if(index == val6 && this.content_array.length > 0)
 				{
 					if(val6 > 0)
 					{
@@ -736,11 +736,11 @@ package LS_Classes
 					this.m_CurrentSelection = null;
 				}
 				this.resetListPos();
-				if(param2)
+				if(repositionElements)
 				{
-					if(param3)
+					if(toPosition)
 					{
-						this.moveElementsToPosition(param4);
+						this.moveElementsToPosition(yPos);
 					}
 					else
 					{

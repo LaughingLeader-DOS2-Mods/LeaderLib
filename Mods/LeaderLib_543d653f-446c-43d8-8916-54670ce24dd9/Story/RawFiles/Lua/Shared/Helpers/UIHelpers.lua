@@ -224,4 +224,20 @@ else
 		end
 		return false
 	end
+
+	---@param id integer|string
+	---@return FlashMainTimeline
+	function GameHelpers.UI.TryGetRoot(id)
+		local ui = nil
+		local t = type(id)
+		if t == "number" then
+			ui = Ext.GetUIByType(id)
+		elseif t == "string" then
+			ui = Ext.GetBuiltinUI(id) or Ext.GetUI(id)
+		end
+		if ui then
+			return ui:GetRoot()
+		end
+		return nil
+	end
 end

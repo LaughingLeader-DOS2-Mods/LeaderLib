@@ -51,7 +51,6 @@ package characterCreation_fla
 		public var layout:String;
 		public var alignment:String;
 		public var isDragging:Boolean;
-		public var characterHandle:Number;
 		public var isGM:Boolean;
 		public var isMaster:Boolean;
 		public var screenWidth:uint;
@@ -79,6 +78,12 @@ package characterCreation_fla
 		public const maxPanelPosX:uint = 1636.0;
 		public var textArray:Array;
 		public var enableOrigin:Boolean;
+
+		//LeaderLib
+		public var characterHandle:Number;
+		//In case mods are still using this.
+		public var charHandle:Number;
+		public var initialized:Boolean = false;
 		
 		public function MainTimeline()
 		{
@@ -311,6 +316,7 @@ package characterCreation_fla
 			this.header_mc.setTabLabel(tabIndex,text);
 		}
 
+		//LeaderLib
 		public function clearArray(name:String): *
 		{
 			switch(name)
@@ -407,6 +413,7 @@ package characterCreation_fla
 		
 		public function updateTalents() : *
 		{
+			//LeaderLib - Disabled since we're just adding talents through Lua.
 			/*this.CCPanel_mc.talents_mc.updateTalents(this.talentArray,this.racialTalentArray);*/
 			this.talentArray = new Array();
 			this.racialTalentArray = new Array();
@@ -484,6 +491,12 @@ package characterCreation_fla
 		
 		public function setFreeClassPoints(pointId:uint, amount:int) : *
 		{
+			//LeaderLib
+			if(!this.initialized)
+			{
+				ExternalInterface.call("characterCreationStarted");
+				this.initialized = true;
+			}
 			switch(pointId)
 			{
 				case 0:
@@ -560,6 +573,8 @@ package characterCreation_fla
 			this.CCPanel_mc.addEventListener(MouseEvent.ROLL_OUT,this.onOutScrollEat,false);
 			this.textArray = new Array(this.header_mc.title_txt,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,this.CCPanel_mc.tags_mc.tagTitle_txt,this.CCPanel_mc.tags_mc.summaryTitle_txt,this.CCPanel_mc.instruments_mc.title_txt,null,null,null,null,null,null,null,null,this.letterB_mc.stopOriginText_txt,this.CCPanel_mc.skills_mc.noSkill_txt,this.CCPanel_mc.class_mc.presetCaption_mc,null);
 			this.enableOrigin = true;
+			trace("characterCreation frame 1");
+			ExternalInterface.call("characterCreationStarted");
 		}
 	}
 }

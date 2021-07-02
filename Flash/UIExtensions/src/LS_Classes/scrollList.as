@@ -8,37 +8,21 @@ package LS_Classes
    
    public class scrollList extends listDisplay
    {
-       
-      
       public var m_scrollbar_mc:scrollbar;
-      
       public var m_bottomAligned:Boolean = false;
-      
       public var m_allowAutoScroll:Boolean = true;
-      
       private var m_SBSpacing:Number = 10;
-      
       private var m_mouseWheelWhenOverEnabled:Boolean = false;
-      
       private var m_mouseWheelEnabled:Boolean = false;
-      
       private var m_ScrollHeight:Number = 0;
-      
       public var m_allowKeepIntoView:Boolean = true;
-
       // Mod Menu Addition
       public var leftAligned:Boolean = false;
-      
       public var m_TextGlowOffset:Number = 3;
-      
       private var m_dragAutoScroll:Boolean = false;
-      
       public var m_dragAutoScrollDistance:Number = 100;
-      
       public var m_dragAutoScrollMod:Number = 0.2;
-      
       private var m_bgTile1_mc:MovieClip = null;
-      
       private var m_bgTile2_mc:MovieClip = null;
       
       public function scrollList(param1:String = "down_id", param2:String = "up_id", param3:String = "handle_id", param4:String = "scrollBg_id", param5:String = "", param6:String = "")

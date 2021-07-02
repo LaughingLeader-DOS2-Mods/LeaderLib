@@ -1,0 +1,24 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build SWF Override",
+			"type": "shell",
+			"command": "${fileDirname}\\Build.bat",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared",
+				"showReuseMessage": false,
+				"clear": false
+			},
+			"detail": "Builds the current swf override.",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		}
+	]
+}

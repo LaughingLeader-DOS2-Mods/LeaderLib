@@ -100,12 +100,31 @@ package characterCreation_fla
 			talent_mc.setState(isUnlocked);
 			talent_mc.isUpdated = true;
 		}
+
+		public function addCustomTalentElement(customTalentId:String, talentLabel:String, isUnlocked:Boolean, isChoosable:Boolean, isRacial:Boolean) : *
+		{
+			var talent_mc:MovieClip = this.talentList.getElementByString("customTalentId", customTalentId);
+			if(!talent_mc)
+			{
+				talent_mc = new talentEl();
+				talent_mc.onInit(this.root_mc,isRacial);
+				talent_mc.setText(talentLabel);
+				talent_mc.talName = talentLabel;
+				talent_mc.isCustom = true;
+				talent_mc.customTalentId = customTalentId;
+				this.talentList.addElement(talent_mc,false);
+			}
+			talent_mc.dColour = !!isChoosable?0:12910617;
+			talent_mc.choosable = isChoosable;
+			talent_mc.setState(isUnlocked);
+			talent_mc.isUpdated = true;
+		}
 		
 		public function positionLists() : *
 		{
 			this.talentList.cleanUpElements();
 		}
 		
-		private function frame1() : {}
+		private function frame1() : * {}
 	}
 }

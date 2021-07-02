@@ -3,6 +3,7 @@ TalentManager.Sheet = {}
 
 ---@class FlashCharacterCreationTalentsMC:FlashMovieClip
 ---@field addTalentElement fun(talentID:integer, talentLabel:string, isUnlocked:boolean, isChoosable:boolean, isRacial:boolean) : void
+---@field addCustomTalentElement fun(customTalentId:string, talentLabel:string, isUnlocked:boolean, isChoosable:boolean, isRacial:boolean) : void
 
 ---@param ui UIObject
 ---@param event string

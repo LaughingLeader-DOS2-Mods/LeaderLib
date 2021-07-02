@@ -133,4 +133,10 @@ if Ext.IsClient() then
 	---@alias OnContextMenuEntryClickedCallback fun(contextMenu:ContextMenu, ui:UIObject, entryID:integer, actionID:string, handle:number):void
 	---@type OnContextMenuEntryClickedCallback[]
 	Listeners.OnContextMenuEntryClicked = {}
+
+	---@alias UICreatedCallback fun(ui:UIObject, this:FlashMainTimeline, player:EclCharacter):void
+	---Called after a UI is created, when the main timeline is hopefully ready.
+	---Register to a UIType or "All" for all UIs.
+	---@type table<integer,UICreatedCallback>
+	Listeners.UICreated = {All = {}}
 end

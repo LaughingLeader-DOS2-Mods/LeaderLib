@@ -12,7 +12,6 @@ package characterSheet_fla
 	public dynamic class MainTimeline extends MovieClip
 	{
 		public var stats_mc:MovieClip;
-		public var charHandle:Number;
 		public var initDone:Boolean;
 		public var events:Array;
 		public var layout:String;
@@ -89,6 +88,11 @@ package characterSheet_fla
 		public var generateTreasureRarityId:int;
 		public var generateTreasureId:int;
 		public var generateTreasureLevel:int;
+
+		//LeaderLib
+		public var characterHandle:Number;
+		//In case mods are still using this.
+		public var charHandle:Number;
 		
 		public function MainTimeline()
 		{
@@ -287,6 +291,32 @@ package characterSheet_fla
 				{
 					ExternalInterface.call(externalCall,mc.tooltip,globalPos.x + offsetX,globalPos.y + offsetY,tWidth,mc.height,mc.tooltipAlign);
 				}
+			}
+		}
+
+		public function showCustomTooltipForMC(mc:MovieClip, externalCall:String, id:*) : *
+		{
+			var tWidth:Number = NaN;
+			var globalPos:Point = this.getGlobalPositionOfMC(mc);
+			this.hasTooltip = true;
+			var offsetY:Number = 0;
+			var offsetX:Number = 0;
+			if(mc)
+			{
+				tWidth = mc.width;
+				if(mc.widthOverride)
+				{
+					tWidth = mc.widthOverride;
+				}
+				if(mc.mOffsetY)
+				{
+					offsetY = mc.mOffsetY;
+				}
+				if(mc.mOffsetX)
+				{
+					offsetX = mc.mOffsetX;
+				}
+				ExternalInterface.call(externalCall, this.characterHandle, id, globalPos.x + offsetX,globalPos.y + offsetY,tWidth,mc.height,mc.tooltipAlign);
 			}
 		}
 		

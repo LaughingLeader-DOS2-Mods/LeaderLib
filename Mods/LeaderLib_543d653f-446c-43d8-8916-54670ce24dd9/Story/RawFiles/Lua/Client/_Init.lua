@@ -28,6 +28,8 @@ Ext.Require("Client/ClientHelpers.lua")
 Ext.Require("Client/ClientNetMessages.lua")
 Ext.Require("Client/InputManager.lua")
 
+Ext.Require("Client/UI/UITypeWorkaround.lua")
+Ext.Require("Client/UI/UIListeners.lua")
 Ext.Require("Client/UI/StatusHider.lua")
 Ext.Require("Client/UI/Tooltips/Game.Tooltip.Extended.lua")
 Ext.Require("Client/UI/CharacterSheet.lua")
@@ -40,6 +42,7 @@ Ext.Require("Client/UI/UIExtensions.lua")
 Ext.Require("Client/UI/Talents/TalentManager.lua")
 Ext.Require("Client/UI/InterfaceCommands.lua")
 Ext.Require("Client/UI/ContextMenu.lua")
+Ext.Require("Client/UI/Overrides/_Init.lua")
 
 if Vars.DebugMode then
 	Ext.Require("Client/UI/DialogKeywords.lua") -- TODO

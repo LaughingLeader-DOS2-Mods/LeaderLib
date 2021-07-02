@@ -583,11 +583,13 @@ package characterSheet_fla
 				}
 				i = i + 7;
 			}
+			/*
 			i = 0;
 			while(i < this.talent_array.length)
 			{
 				this.addTalent(this.talent_array[i++],this.talent_array[i++],this.talent_array[i++]);
 			}
+			*/
 			i = 0;
 			while(i < this.tags_array.length)
 			{
@@ -669,6 +671,7 @@ package characterSheet_fla
 				}
 				i = i + 5;
 			}
+			/*
 			i = 0;
 			while(i < this.lvlBtnTalent_array.length)
 			{
@@ -683,6 +686,7 @@ package characterSheet_fla
 				}
 				i = i + 3;
 			}
+			*/
 			if(updateCivil)
 			{
 				this.stats_mc.civicAbilityHolder_mc.list.positionElements();
@@ -697,10 +701,10 @@ package characterSheet_fla
 			{
 				this.stats_mc.tagsHolder_mc.list.positionElements();
 			}
-			if(this.talent_array.length > 0)
-			{
-				this.stats_mc.talentHolder_mc.list.positionElements();
-			}
+			// if(this.talent_array.length > 0)
+			// {
+			// 	this.stats_mc.talentHolder_mc.list.positionElements();
+			// }
 			if(this.customStats_array.length > 0)
 			{
 				this.stats_mc.customStats_mc.positionElements();

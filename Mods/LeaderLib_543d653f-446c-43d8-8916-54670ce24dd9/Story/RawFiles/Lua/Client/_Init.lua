@@ -38,7 +38,6 @@ Ext.Require("Client/UI/ControllerUIHelpers.lua")
 Ext.Require("Client/UI/UIFeatures.lua")
 Ext.Require("Client/UI/UIExtensions.lua")
 Ext.Require("Client/UI/Talents/TalentManager.lua")
-Ext.Require("Client/UI/Talents/GamepadSupport.lua")
 Ext.Require("Client/UI/InterfaceCommands.lua")
 Ext.Require("Client/UI/ContextMenu.lua")
 

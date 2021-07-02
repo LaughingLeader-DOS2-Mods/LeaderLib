@@ -2,32 +2,32 @@ local ts = Classes.TranslatedString
 
 ---@alias TalentRequirementCheckCallback fun(talentId:string, player:EclCharacter):boolean
 
-local TalentState = {
-	Selected = 0,
-	Selectable = 2,
-	Locked = 3
-}
-
-local TalentStateFormat = {
-	[TalentState.Selected] = "%s",
-	[TalentState.Selectable] = "<font color='#403625'>%s</font>",
-	[TalentState.Locked] = "<font color='#C80030'>%s</font>"
-}
-
 TalentManager = {
 	RegisteredTalents = {},
 	RegisteredCount = {},
 	---@type table<string, table<string, TalentRequirementCheckCallback>>
 	RequirementHandlers = {},
-	TalentState = TalentState,
 	---@type table<string, StatRequirement[]>
 	BuiltinRequirements = {},
 	HiddenTalents = {},
-	HiddenCount = {}
+	HiddenCount = {},
+	Data = {}
 }
 TalentManager.__index = TalentManager
 
-local missingTalents = {
+TalentManager.Data.TalentState = {
+	Selected = 0,
+	Selectable = 2,
+	Locked = 3
+}
+
+TalentManager.Data.TalentStateFormat = {
+	[TalentManager.Data.TalentState.Selected] = "%s",
+	[TalentManager.Data.TalentState.Selectable] = "<font color='#403625'>%s</font>",
+	[TalentManager.Data.TalentState.Locked] = "<font color='#C80030'>%s</font>"
+}
+
+TalentManager.Data.DOSTalents = {
 	ItemMovement = "TALENT_ItemMovement",
 	ItemCreation = "TALENT_ItemCreation",
 	--Flanking = "TALENT_Flanking",
@@ -160,7 +160,7 @@ local missingTalents = {
 	MagicCycles = "TALENT_MagicCycles",
 }
 
-local racialTalents = {
+TalentManager.Data.RacialTalents = {
 	Human_Inventive = "TALENT_Human_Inventive",
 	Human_Civil = "TALENT_Human_Civil",
 	Elf_Lore = "TALENT_Elf_Lore",
@@ -172,7 +172,7 @@ local racialTalents = {
 	Zombie = "TALENT_Zombie",
 }
 
-local DivineTalents = {
+TalentManager.Data.DivineTalents = {
 	--Rager = "TALENT_Rager",
 	Elementalist = "TALENT_Elementalist",
 	Sadist = "TALENT_Sadist",
@@ -187,7 +187,7 @@ local DivineTalents = {
 	MagicCycles = "TALENT_MagicCycles",
 }
 
-local talentStatAttributes = {
+TalentManager.Data.TalentStatAttributes = {
 	ItemMovement = "TALENT_ItemMovement",
 	ItemCreation = "TALENT_ItemCreation",
 	Flanking = "TALENT_Flanking",
@@ -320,7 +320,7 @@ local talentStatAttributes = {
 	MagicCycles = "TALENT_MagicCycles",
 }
 
-local defaultVisible = {
+TalentManager.Data.DefaultVisible = {
 	Ambidextrous = "TALENT_Ambidextrous",
 	AnimalEmpathy = "TALENT_AnimalEmpathy",
 	AttackOfOpportunity = "TALENT_AttackOfOpportunity",
@@ -359,7 +359,7 @@ local defaultVisible = {
 --Requires a name and description to be manually set in the tooltip, as well as an icon
 local ragerWasEnabled = false
 
-for name,v in pairs(missingTalents) do
+for name,v in pairs(TalentManager.Data.DOSTalents) do
 	TalentManager.RegisteredCount[name] = 0
 end
 
@@ -392,7 +392,7 @@ function TalentManager.EnableTalent(talentId, modID, getRequirements)
 		ragerWasEnabled = true
 	end
 	if talentId == "all" then
-		for talent,v in pairs(missingTalents) do
+		for talent,v in pairs(TalentManager.Data.DOSTalents) do
 			TalentManager.EnableTalent(talent, modID, getRequirements)
 		end
 	else
@@ -414,7 +414,7 @@ end
 
 function TalentManager.DisableTalent(talentId, modID)
 	if talentId == "all" then
-		for talent,v in pairs(missingTalents) do
+		for talent,v in pairs(TalentManager.Data.DOSTalents) do
 			TalentManager.DisableTalent(talent, modID)
 		end
 		GameHelpers.UI.TryInvoke(Data.UIType.characterSheet, "clearTalents")
@@ -527,22 +527,22 @@ function TalentManager.GetTalentDisplayName(player, id, talentState)
 	else
 		name = name.Value
 	end
-	return string.format(TalentStateFormat[talentState], name)
+	return string.format(TalentManager.Data.TalentStateFormat[talentState], name)
 end
 
 ---@param player EclCharacter
 ---@param talentId string
----@return TalentState
+---@return TalentManager.Data.TalentState
 function TalentManager.GetTalentState(player, talentId, statAttribute)
 	if not statAttribute then
 		statAttribute = "TALENT_" .. talentId
 	end
 	if player.Stats[statAttribute] == true then 
-		return TalentState.Selected
+		return TalentManager.Data.TalentState.Selected
 	elseif not TalentManager.HasRequirements(player, talentId) then 
-		return TalentState.Locked
+		return TalentManager.Data.TalentState.Locked
 	else
-		return TalentState.Selectable
+		return TalentManager.Data.TalentState.Selectable
 	end
 end
 
@@ -576,14 +576,14 @@ end
 
 ---@param talent_mc TalentMC_CC
 function TalentManager.Update_CC(ui, talent_mc, player)
-	for talentId,talentStat in pairs(missingTalents) do
+	for talentId,talentStat in pairs(TalentManager.Data.DOSTalents) do
 		--Same setup for CC in controller mode as well
 		if TalentManager.RegisteredCount[talentId] > 0 and not TalentIsHidden(talentId) then
 			local talentEnum = Data.TalentEnum[talentId]
 			if not UI.IsInArray(ui, "talentArray", talentId, 1, 4) then
 				local talentState = TalentManager.GetTalentState(player, talentId)
 				local name = TalentManager.GetTalentDisplayName(player, talentId, talentState)
-				talent_mc.addTalentElement(talentEnum, name, player.Stats[talentStat], talentState ~= TalentState.Locked, false)
+				talent_mc.addTalentElement(talentEnum, name, player.Stats[talentStat], talentState ~= TalentManager.Data.TalentState.Locked, false)
 				if Vars.ControllerEnabled then
 					TalentManager.Gamepad.UpdateTalent_CC(ui, player, talentId, talentEnum)
 				end
@@ -591,12 +591,12 @@ function TalentManager.Update_CC(ui, talent_mc, player)
 		end
 	end
 	if Features.RacialTalentsDisplayFix then
-		for talentId,talentStat in pairs(racialTalents) do
+		for talentId,talentStat in pairs(TalentManager.Data.RacialTalents) do
 			local talentEnum = Data.TalentEnum[talentId]
 			if not TalentIsHidden(talentId) and not UI.IsInArray(ui, "talentArray", talentId, 1, 4) then
 				local talentState = TalentManager.GetTalentState(player, talentId)
 				local name = TalentManager.GetTalentDisplayName(player, talentId, talentState)
-				talent_mc.addTalentElement(talentEnum, name, player.Stats[talentStat], talentState ~= TalentState.Locked, true)
+				talent_mc.addTalentElement(talentEnum, name, player.Stats[talentStat], talentState ~= TalentManager.Data.TalentState.Locked, true)
 				if Vars.ControllerEnabled then
 					TalentManager.Gamepad.UpdateTalent_CC(ui, player, talentId, talentEnum)
 				end
@@ -610,7 +610,7 @@ function TalentManager.Update_CC(ui, talent_mc, player)
 		if not UI.IsInArray(ui, "talentArray", "RogueLoreDaggerBackStab", 1, 4) then
 			local talentState = TalentManager.GetTalentState(player, "RogueLoreDaggerBackStab")
 			local name = TalentManager.GetTalentDisplayName(player, "RogueLoreDaggerBackStab", talentState)
-			talent_mc.addTalentElement(talentEnum, name, player.Stats.TALENT_RogueLoreDaggerBackStab, talentState ~= TalentState.Locked, false)
+			talent_mc.addTalentElement(talentEnum, name, player.Stats.TALENT_RogueLoreDaggerBackStab, talentState ~= TalentManager.Data.TalentState.Locked, false)
 			if Vars.ControllerEnabled then
 				TalentManager.Gamepad.UpdateTalent_CC(ui, player, "RogueLoreDaggerBackStab", talentEnum)
 			end
@@ -619,7 +619,7 @@ function TalentManager.Update_CC(ui, talent_mc, player)
 end
 
 local function CanDisplayDivineTalent(talentId, name)
-	if not DivineTalents[talentId] then
+	if not TalentManager.Data.DivineTalents[talentId] then
 		return true
 	end
 	if string.find(name, "|") then
@@ -663,42 +663,8 @@ local function AddTalentToArray(ui, player, talent_array, talentId, lvlBtnTalent
 	return i
 end
 
----@param ui UIObject
----@param player EclCharacter
-local function Update_Old(ui, player)
-	local main = ui:GetRoot()
-	local lvlBtnTalent_array = main.lvlBtnTalent_array
-	local talent_array = main.talent_array
-
-	if Vars.ControllerEnabled then
-		TalentManager.Gamepad.PreUpdate(ui, main)
-	end
-
-	local i = #talent_array
-
-	for talentId,talentStat in pairs(missingTalents) do
-		if not TalentIsHidden(talentId) and TalentManager.RegisteredCount[talentId] > 0 then
-			i = AddTalentToArray(ui, player, talent_array, talentId, lvlBtnTalent_array, i)
-		end
-	end
-
-	if Features.RacialTalentsDisplayFix then
-		i = #talent_array
-		for talentId,talentStat in pairs(racialTalents) do
-			if not TalentIsHidden(talentId) and player.Stats[talentStat] == true then
-				i = AddTalentToArray(ui, player, talent_array, talentId, lvlBtnTalent_array, i, true)
-			end
-		end
-	end
-
-	if not TalentIsHidden("RogueLoreDaggerBackStab") and player.Stats.TALENT_RogueLoreDaggerBackStab or 
-	(GameSettings.Settings.BackstabSettings.Player.Enabled and GameSettings.Settings.BackstabSettings.Player.TalentRequired) then
-		i = #talent_array
-		AddTalentToArray(ui, player, talent_array, "RogueLoreDaggerBackStab", lvlBtnTalent_array, i)
-	end
-end
-
-local function CanAddTalent(talentId, player, talentStat)
+---@private
+function TalentManager.CanAddTalent(talentId, player, talentStat)
 	local isGM = GameHelpers.Client.IsGameMaster()
 	if TalentIsHidden(talentId) and not isGM then
 		return false
@@ -715,79 +681,38 @@ local function CanAddTalent(talentId, player, talentStat)
 	then
 		return true
 	end
-	if defaultVisible[talentId] then
+	if TalentManager.Data.DefaultVisible[talentId] then
 		return true
 	end
-	if racialTalents[talentId] and isGM then
+	if TalentManager.Data.RacialTalents[talentId] and isGM then
 		return true
 	end
 	return false
 end
 
----@param ui UIObject
----@param player EclCharacter
-function TalentManager.Update(ui, player)
-	if Vars.ControllerEnabled then
-		Update_Old(ui, player)
-		return
-	end
-	local main = ui:GetRoot()
-	local lvlBtnTalent_array = main.lvlBtnTalent_array
-	local talent_array = main.talent_array
-
-	main.clearArray("talent_array")
-	main.clearArray("lvlBtnTalent_array")
-
-	local talents = {}
-
-	for numId,talentId in Data.Talents:Get() do
-		if talents[talentId] == nil and CanAddTalent(talentId, player.Stats, talentStatAttributes[talentId]) then
-			local statAttribute = talentStatAttributes[talentId]
-			local talentState = TalentManager.GetTalentState(player, talentId, statAttribute)
-			local name = TalentManager.GetTalentDisplayName(player, talentId, talentState)
-			talents[talentId] = {
-				Label = name,
-				State = talentState,
-				ID = Data.TalentEnum[talentId]
-			}
-		end
-	end
-
-	local i = 0
-	for id,talentId in Data.Talents:Get() do
-		local data = talents[talentId]
-		if data then
-			talent_array[i] = data.Label
-			talent_array[i+1] = data.ID
-			talent_array[i+2] = data.State
-			i = i + 3
-		end
-	end
-end
-
 function TalentManager.OnTalentAdded(ui, call, index)
-	local main = ui:GetRoot()
-	---@type FlashCharacterSheetStatsMC
-	local this = main.stats_mc
-	local talent_mc = this.talentHolder_mc.list.content_array[index]
+	---@type CharacterSheetMainTimeline
+	local this = ui:GetRoot()
+	local talent_mc = this.stats_mc.talentHolder_mc.list.content_array[index]
+	print(call, index, talent_mc)
 	if talent_mc then
 		local talentState = talent_mc.talentState
 		local talentId = Data.Talents[talent_mc.statId]
-		local statAttribute = talentStatAttributes[talentId]
+		local statAttribute = TalentManager.Data.TalentStatAttributes[talentId]
 		if talentId and statAttribute then
 			local player = Client:GetCharacter()
-			local points = this.pointsWarn[3].avPoints
+			local points = this.stats_mc.pointsWarn[3].avPoints
 	
 			local hasTalent = player.Stats[statAttribute] == true
 			local canAdd = false
 			local canRemove = false
 	
-			if not racialTalents[talentId] then
+			if not TalentManager.Data.RacialTalents[talentId] then
 				--TalentManager.HasRequirements(player, talentId)
-				if not hasTalent and points > 0 and talentState == TalentState.Selectable then
+				if not hasTalent and points > 0 and talentState == TalentManager.Data.TalentState.Selectable then
 					canAdd = true
 				elseif hasTalent then
-					canRemove = GameHelpers.Client.IsGameMaster(ui, main)
+					canRemove = GameHelpers.Client.IsGameMaster(ui, this)
 				end
 			end
 	
@@ -796,6 +721,8 @@ function TalentManager.OnTalentAdded(ui, call, index)
 	
 			--fprint(LOGLEVEL.DEFAULT, "[%s] Talent(%s)[%s] Label(%s) StatAttribute(%s) canAdd(%s) canRemove(%s) Index[%s] State(%s)", call, talentId, talent_mc.statId, talent_mc.label, statAttribute, canAdd, canRemove, index, talentState)
 		end
+	else
+		print("this.stats_mc.talentHolder_mc.list.content_array", #this.stats_mc.talentHolder_mc.list.content_array)
 	end
 end
 
@@ -811,12 +738,12 @@ end
 function TalentManager.ToggleDivineTalents(enabled)
 	if true then return end
 	if enabled then
-		for talent,id in pairs(DivineTalents) do
-			TalentManager.EnableTalent(talent, "DivineTalents")
+		for talent,id in pairs(TalentManager.Data.DivineTalents) do
+			TalentManager.EnableTalent(talent, "TalentManager.Data.DivineTalents")
 		end
 	else
-		for talent,id in pairs(DivineTalents) do
-			TalentManager.DisableTalent(talent, "DivineTalents")
+		for talent,id in pairs(TalentManager.Data.DivineTalents) do
+			TalentManager.DisableTalent(talent, "TalentManager.Data.DivineTalents")
 		end
 	end
 end
@@ -870,7 +797,8 @@ function TalentManager.LoadRequirements()
 	end
 end
 
-local function HideTalents(uiType)
+---@private
+function TalentManager.HideTalents(uiType)
 	local ui = Ext.GetUIByType(uiType)
 	if ui then
 		local main = ui:GetRoot()
@@ -897,7 +825,7 @@ local function HideTalents(uiType)
 					hasEntries = true
 					local talentEnum = Data.TalentEnum[talentId]
 					if uiType == Data.UIType.characterCreation_c then
-						if racialTalents[talentId] then
+						if TalentManager.Data.RacialTalents[talentId] then
 							list = main.CCPanel_mc.talents_mc.racialList
 						else
 							list = main.CCPanel_mc.talents_mc.contentList
@@ -922,80 +850,18 @@ local function HideTalents(uiType)
 	end
 end
 
----@param ui UIObject
-local function DisplayTalents(ui, call, ...)
-	---@type EsvCharacter
-	local player = nil
-	local handle = ui:GetPlayerHandle()
-	if handle ~= nil then
-		player = Ext.GetCharacter(handle)
-	elseif Client.Character ~= nil then
-		player = Client:GetCharacter()
-	end
-	if player ~= nil then
-		TalentManager.Update(ui, player)
-		local length = #Listeners.OnTalentArrayUpdating
-		if length > 0 then
-			for i=1,length do
-				local callback = Listeners.OnTalentArrayUpdating[i]
-				local talentArrayStartIndex = UI.GetArrayIndexStart(ui, "talent_array", 3)
-				local b,err = xpcall(callback, debug.traceback, ui, player, talentArrayStartIndex, Data.TalentEnum)
-				if not b then
-					Ext.PrintError("Error calling function for 'OnTalentArrayUpdating':\n", err)
-				end
-			end
-		end
+Ext.Require("Client/UI/Talents/CharacterSheetTalents.lua")
+Ext.Require("Client/UI/Talents/CharacterCreationTalents.lua")
+Ext.Require("Client/UI/Talents/GamepadSupport.lua")
 
-		local typeid = ui:GetTypeId()
-		UIExtensions.StartTimer("LeaderLib_HideTalents_Sheet", 5, function(timerName, isComplete)
-			HideTalents(typeid)
-		end)
-	end
-end
-
--- addTalentElement(talentId:uint, talentName:String, state:Boolean, choosable:Boolean, isRacial:Boolean) : *
-
----@param ui UIObject
-local function DisplayTalents_CC(ui, call, ...)
-	if GameSettings.Default == nil then
-		-- This function may run before the game is "Running" and the settings load normally.
-		GameSettingsManager.Load()
-	end
-
-	---@type EsvCharacter
-	local player = nil
-	local handle = ui:GetPlayerHandle()
-	if handle ~= nil then
-		player = Ext.GetCharacter(handle)
-	elseif  Client.Character ~= nil then
-		player = Client:GetCharacter()
-	end
-	if player ~= nil then
-		local root = ui:GetRoot()
-		local talent_mc = root.CCPanel_mc.talents_mc
-		TalentManager.Update_CC(ui, talent_mc, player)
-		local typeid = ui:GetTypeId()
-		UIExtensions.StartTimer("LeaderLib_HideTalents_CharacterCreation", 5, function(timerName, isComplete)
-			HideTalents(typeid)
-		end)
-	end
-end
+Ext.RegisterUITypeCall(Data.UIType.characterSheet, "talentAdded", TalentManager.OnTalentAdded)
 
 Ext.RegisterListener("SessionLoaded", function()
-	Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem", DisplayTalents)
-	Ext.RegisterUITypeCall(Data.UIType.characterSheet, "talentAdded", TalentManager.OnTalentAdded)
-	Ext.RegisterUITypeInvokeListener(Data.UIType.statsPanel_c, "updateArraySystem", DisplayTalents)
-	--characterCreation.swf
-	Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateTalents", DisplayTalents_CC)
-	Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation_c, "updateTalents", DisplayTalents_CC)
-
 	TalentManager.LoadRequirements()
 	---Divine Talents
 	if Ext.IsModLoaded("ca32a698-d63e-4d20-92a7-dd83cba7bc56") or GameSettings.Settings.Client.DivineTalentsEnabled then
 		TalentManager.ToggleDivineTalents(true)
 	end
-
 	--TalentManager.HideTalent("LoneWolf", ModuleUUID)
-
 	TalentManager.Gamepad.RegisterListeners()
 end)

@@ -768,6 +768,7 @@ package LS_Classes
 		
 		public function clearElements() : *
 		{
+			trace("clearElements", this.name);
 			var val2:MovieClip = null;
 			var val1:uint = 0;
 			while(val1 < this.content_array.length)

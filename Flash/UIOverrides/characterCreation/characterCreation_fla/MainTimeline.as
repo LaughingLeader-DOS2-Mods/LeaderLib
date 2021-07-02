@@ -310,6 +310,76 @@ package characterCreation_fla
 		{
 			this.header_mc.setTabLabel(tabIndex,text);
 		}
+
+		public function clearArray(name:String): *
+		{
+			switch(name)
+			{
+				case "all":
+					this.contentArray = new Array();
+					this.stepArray = new Array();
+					this.attributeArray = new Array();
+					this.abilityArray = new Array();
+					this.skillArray = new Array();
+					this.skillSchoolString = new Array();
+					this.talentArray = new Array();
+					this.racialTalentArray = new Array();
+					this.tagArray = new Array();
+					this.racialTagArray = new Array();
+					this.chosenSkills = new Array();
+					this.racialSkills = new Array();
+					this.panelTitles = new Array();
+					this.playerArray = new Array();
+					break;
+				case "contentArray":
+					this.contentArray.length = 0;
+					break;
+				case "stepArray":
+					this.stepArray.length = 0;
+					break;
+				case "skillArray":
+					this.skillArray.length = 0;
+					break;
+				case "attributeArray":
+					this.attributeArray.length = 0;
+					break;
+				case "abilityArray":
+					this.abilityArray.length = 0;
+					break;
+				case "skillArray":
+					this.skillArray.length = 0;
+					break;
+				case "skillSchoolString":
+					this.skillSchoolString.length = 0;
+					break;
+				case "talentArray":
+					this.talentArray.length = 0;
+					break;
+				case "racialTalentArray":
+					this.racialTalentArray.length = 0;
+					break;
+				case "tagArray":
+					this.tagArray.length = 0;
+					break;
+				case "racialTagArray":
+					this.racialTagArray.length = 0;
+					break;
+				case "chosenSkills":
+					this.chosenSkills.length = 0;
+					break;
+				case "racialSkills":
+					this.racialSkills.length = 0;
+					break;
+				case "panelTitles":
+					this.panelTitles.length = 0;
+					break;
+				case "playerArray":
+					this.playerArray.length = 0;
+					break;
+				default:
+					ExternalInterface.call("UIAssert","[characterSheet:clearArray] name ("+String(name)+") isn't valid.");
+			}
+		}
 		
 		public function updateContent() : *
 		{
@@ -337,7 +407,7 @@ package characterCreation_fla
 		
 		public function updateTalents() : *
 		{
-			this.CCPanel_mc.talents_mc.updateTalents(this.talentArray,this.racialTalentArray);
+			/*this.CCPanel_mc.talents_mc.updateTalents(this.talentArray,this.racialTalentArray);*/
 			this.talentArray = new Array();
 			this.racialTalentArray = new Array();
 		}

@@ -573,8 +573,6 @@ package characterCreation_fla
 			this.CCPanel_mc.addEventListener(MouseEvent.ROLL_OUT,this.onOutScrollEat,false);
 			this.textArray = new Array(this.header_mc.title_txt,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,this.CCPanel_mc.tags_mc.tagTitle_txt,this.CCPanel_mc.tags_mc.summaryTitle_txt,this.CCPanel_mc.instruments_mc.title_txt,null,null,null,null,null,null,null,null,this.letterB_mc.stopOriginText_txt,this.CCPanel_mc.skills_mc.noSkill_txt,this.CCPanel_mc.class_mc.presetCaption_mc,null);
 			this.enableOrigin = true;
-			trace("characterCreation frame 1");
-			ExternalInterface.call("characterCreationStarted");
 		}
 	}
 }

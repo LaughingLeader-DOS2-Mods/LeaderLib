@@ -101,9 +101,9 @@ package characterCreation_fla
 			talent_mc.isUpdated = true;
 		}
 
-		public function addCustomTalentElement(customTalentId:String, talentLabel:String, isUnlocked:Boolean, isChoosable:Boolean, isRacial:Boolean) : *
+		public function addCustomTalentElement(customID:String, talentLabel:String, isUnlocked:Boolean, isChoosable:Boolean, isRacial:Boolean) : *
 		{
-			var talent_mc:MovieClip = this.talentList.getElementByString("customTalentId", customTalentId);
+			var talent_mc:MovieClip = this.talentList.getElementByString("customID", customID);
 			if(!talent_mc)
 			{
 				talent_mc = new talentEl();
@@ -111,7 +111,7 @@ package characterCreation_fla
 				talent_mc.setText(talentLabel);
 				talent_mc.talName = talentLabel;
 				talent_mc.isCustom = true;
-				talent_mc.customTalentId = customTalentId;
+				talent_mc.customID = customID;
 				this.talentList.addElement(talent_mc,false);
 			}
 			talent_mc.dColour = !!isChoosable?0:12910617;

@@ -19,7 +19,7 @@ package
 		//public var contentID:uint;
 		public var talentID:uint;
 		//Custom non-standard talents
-		public var customTalentId:String;
+		public var customID:String;
 		public var isCustom:Boolean = false;
 		
 		public function tagTalent()
@@ -72,7 +72,7 @@ package
 				}
 				else
 				{
-					ExternalInterface.call("selectCustomTalent", this.customTalentId);
+					ExternalInterface.call("selectCustomTalent", this.customID);
 				}
 			}
 			else

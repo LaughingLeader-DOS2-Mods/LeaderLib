@@ -88,33 +88,63 @@ package characterCreation_c_fla
 			this.talents_mc.contentList.select(0,true);
 		}
 		
-		public function addTalentElement(param1:uint, param2:String, param3:Boolean, param4:Boolean, param5:Boolean) : *
+		public function addTalentElement(talentID:uint, talentLabel:String, isUnlocked:Boolean, isChoosable:Boolean, isRacial:Boolean) : *
 		{
-			var val6:MovieClip = null;
-			if(param5)
+			var talent_mc:MovieClip = null;
+			if(isRacial)
 			{
-				val6 = this.talents_mc.racialList.getElementByNumber("contentID",param1);
+				talent_mc = this.talents_mc.racialList.getElementByNumber("talentID",talentID);
 			}
 			else
 			{
-				val6 = this.talents_mc.contentList.getElementByNumber("contentID",param1);
+				talent_mc = this.talents_mc.contentList.getElementByNumber("talentID",talentID);
 			}
-			if(!val6)
+			if(!talent_mc)
 			{
-				val6 = new tagTalent();
-				val6.onInit(this.root_mc);
-				val6.contentID = param1;
-				val6.contentName = param2;
-				val6.isRacial = param5;
-				val6.isTalent = true;
-				this.talents_mc.addContent(val6,param5);
+				talent_mc = new tagTalent();
+				talent_mc.onInit(this.root_mc);
+				talent_mc.talentID = talentID;
+				talent_mc.contentName = talentLabel;
+				talent_mc.isRacial = isRacial;
+				talent_mc.isTalent = true;
+				this.talents_mc.addContent(talent_mc,isRacial);
 			}
-			val6.dColour = !!param4?0:12910617;
-			val6.choosable = param4;
-			val6.setLabel(param2);
-			val6.setActive(param3);
-			val6.bg_mc.gotoAndStop(2);
-			val6.isUpdated = true;
+			talent_mc.dColour = !!isChoosable?0:12910617;
+			talent_mc.choosable = isChoosable;
+			talent_mc.setLabel(talentLabel);
+			talent_mc.setActive(isUnlocked);
+			talent_mc.bg_mc.gotoAndStop(2);
+			talent_mc.isUpdated = true;
+		}
+
+		public function addCustomTalentElement(customID:String, talentLabel:String, isUnlocked:Boolean, isChoosable:Boolean, isRacial:Boolean) : *
+		{
+			var talent_mc:MovieClip = null;
+			if(isRacial)
+			{
+				talent_mc = this.talents_mc.racialList.getElementByString("customID",customID);
+			}
+			else
+			{
+				talent_mc = this.talents_mc.contentList.getElementByString("customID",customID);
+			}
+			if(!talent_mc)
+			{
+				talent_mc = new tagTalent();
+				talent_mc.onInit(this.root_mc);
+				talent_mc.customID = customID;
+				talent_mc.isCustom = true;
+				talent_mc.contentName = talentLabel;
+				talent_mc.isRacial = isRacial;
+				talent_mc.isTalent = true;
+				this.talents_mc.addContent(talent_mc,isRacial);
+			}
+			talent_mc.dColour = !!isChoosable?0:12910617;
+			talent_mc.choosable = isChoosable;
+			talent_mc.setLabel(talentLabel);
+			talent_mc.setActive(isUnlocked);
+			talent_mc.bg_mc.gotoAndStop(2);
+			talent_mc.isUpdated = true;
 		}
 		
 		private function frame1() : * { }

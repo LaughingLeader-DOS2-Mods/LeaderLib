@@ -23,7 +23,7 @@ package
 		// Set in talentsMC_51.addTalentElement, we're just adding it here for sanity
 		public var talentID:uint;
 		//Custom non-standard talents
-		public var customTalentId:String;
+		public var customID:String;
 		public var isCustom:Boolean = false;
 		
 		public function talentEl()
@@ -79,7 +79,7 @@ package
 			}
 			else
 			{
-				ExternalInterface.call("showCustomTalentTooltip",this.root_mc.characterHandle,this.customTalentId,globalPos.x - this.root_mc.x,globalPos.y,this.hit_mc.width,this.hit_mc.height,"left");
+				ExternalInterface.call("showCustomTalentTooltip",this.root_mc.characterHandle,this.customID,globalPos.x - this.root_mc.x,globalPos.y,this.hit_mc.width,this.hit_mc.height,"left");
 			}
 		}
 		

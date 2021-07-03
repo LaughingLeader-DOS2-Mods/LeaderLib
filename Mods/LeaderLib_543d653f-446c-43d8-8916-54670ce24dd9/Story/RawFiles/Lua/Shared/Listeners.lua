@@ -82,7 +82,8 @@ if Ext.IsServer() then
 	Listeners.OnTurnCounter = {}
 	---@type table<string, TurnCounterCallback>
 	Listeners.OnNamedTurnCounter = {}
-	---@type table<string, fun(summon:EsvCharacter, owner:EsvCharacter, isAlive:boolean)>
+	---Called when a summon is created or destroyed. Includes items like mines.
+	---@type table<string, fun(summon:EsvCharacter, owner:EsvCharacter, isDying:boolean, isItem:boolean)>
 	Listeners.OnSummonChanged = {}
 	---@type table<string, fun(event:string, vararg string)>
 	Listeners.ObjectEvent = {}

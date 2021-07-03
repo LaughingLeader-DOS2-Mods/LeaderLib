@@ -317,8 +317,9 @@ function GameHelpers.Character.GetPartySize(includeSummons)
 	return count
 end
 
+---Gets all the active summons of a character.
 ---@param owner EsvCharacter|EclCharacter|string|number|nil
----@param getItems boolean|nil If on the server, item summons can be grabbed as well.
+---@param getItems boolean|nil If on the server, item summons can be fetched as well.
 ---@return fun():EsvCharacter|EclCharacter
 function GameHelpers.Character.GetSummons(owner, getItems)
 	local summons = {}

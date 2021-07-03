@@ -29,7 +29,9 @@ Vars = {
 		Hit = false,
 		SpammyHits = false, -- To ignore surface and dots, because they get spammy
 		Skills = false,
-		CustomStats = false
+		CustomStats = false,
+		--UI listeners
+		UI = false
 	},
 	ControllerEnabled = false,
 	Users = {},

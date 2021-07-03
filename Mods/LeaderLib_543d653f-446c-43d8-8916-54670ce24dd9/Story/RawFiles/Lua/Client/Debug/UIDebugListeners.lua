@@ -1,3 +1,7 @@
+if Debug == nil then
+	Debug = {}
+end
+
 ---@type UIListenerWrapper[]
 local allListeners = {}
 
@@ -23,12 +27,14 @@ local UIListenerWrapper = {
 }
 UIListenerWrapper.__index = UIListenerWrapper
 
+Debug.UIListenerWrapper = UIListenerWrapper
+
 local lastEvent = "";
 
 ---@param self UIListenerWrapper
 ---@param ui UIObject
 local function OnUIListener(self, eventType, ui, event, ...)
-	if self.Enabled then
+	if self.Enabled and Vars.DebugMode and Vars.Print.UI then
 		if event == "addTooltip" then
 			local txt = table.unpack({...})
 			if string.find(txt, "Experience:", 1, true) then
@@ -846,7 +852,7 @@ local hotbar = UIListenerWrapper:Create(Data.UIType.hotBar, {
 	"updateSlotData",
 	--"updateSlots",
 })
-hotbar.Enabled = true
+hotbar.Enabled = false
 
 --[[
 ---@param ui UIObject

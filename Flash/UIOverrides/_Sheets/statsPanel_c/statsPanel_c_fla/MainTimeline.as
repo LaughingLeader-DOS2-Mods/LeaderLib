@@ -462,6 +462,57 @@ package statsPanel_c_fla
 		{
 			this.mainpanel_mc.stats_mc.clearStatuses();
 		}
+
+		public function clearArray(name:String): *
+		{
+			switch(name)
+			{
+				case "all":
+					this.ability_array = new Array();
+					this.customStats_array = new Array();
+					this.infoStat_array = new Array();
+					this.lvlBtnAbility_array = new Array();
+					this.lvlBtnStat_array = new Array();
+					this.lvlBtnTalent_array = new Array();
+					this.status_array = new Array();
+					this.tags_array = new Array();
+					this.talent_array = new Array();
+					this.tooltipArray = new Array();
+					break;
+				case "ability_array":
+					this.ability_array.length = 0;
+					break;
+				case "customStats_array":
+					this.customStats_array.length = 0;
+					break;
+				case "infoStat_array":
+					this.infoStat_array.length = 0;
+					break;
+				case "lvlBtnAbility_array":
+					this.lvlBtnAbility_array.length = 0;
+					break;
+				case "lvlBtnStat_array":
+					this.lvlBtnStat_array.length = 0;
+					break;
+				case "lvlBtnTalent_array":
+					this.lvlBtnTalent_array.length = 0;
+					break;
+				case "status_array":
+					this.status_array.length = 0;
+					break;
+				case "tags_array":
+					this.tags_array.length = 0;
+					break;
+				case "talent_array":
+					this.talent_array.length = 0;
+					break;
+				case "tooltipArray":
+					this.tooltipArray.length = 0;
+					break;
+				default:
+					ExternalInterface.call("UIAssert","[characterSheet:clearArray] name ("+String(name)+") isn't valid.");
+			}
+		}
 		
 		public function updateArraySystem() : *
 		{
@@ -689,7 +740,7 @@ package statsPanel_c_fla
 			return param2 == param1.substr(0,param2.length);
 		}
 		
-		function frame1() : *
+		private function frame1() : *
 		{
 			this.events = new Array("IE UIUp","IE UIDown","IE UILeft","IE UIRight","IE UIRemovePoints","IE UIAddPoints","IE UIAccept","IE UICancel","IE UITabPrev","IE UITabNext","IE UIShowTooltip","IE UITooltipUp","IE UITooltipDown","IE UIBack");
 			this.layout = "fixed";

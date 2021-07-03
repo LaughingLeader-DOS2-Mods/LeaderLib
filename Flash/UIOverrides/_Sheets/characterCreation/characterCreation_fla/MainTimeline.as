@@ -383,7 +383,7 @@ package characterCreation_fla
 					this.playerArray.length = 0;
 					break;
 				default:
-					ExternalInterface.call("UIAssert","[characterSheet:clearArray] name ("+String(name)+") isn't valid.");
+					ExternalInterface.call("UIAssert","[characterCreation:clearArray] name ("+String(name)+") isn't valid.");
 			}
 		}
 		

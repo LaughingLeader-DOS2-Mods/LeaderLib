@@ -514,6 +514,32 @@ package characterSheet_fla
 		{
 			switch(name)
 			{
+				case "all":
+					this.charList_array = new Array();
+					this.skillList = new Array();
+					this.tabsTexts = new Array();
+					this.primStat_array = new Array();
+					this.secStat_array = new Array();
+					this.ability_array = new Array();
+					this.tags_array = new Array();
+					this.talent_array = new Array();
+					this.visual_array = new Array();
+					this.visualValues_array = new Array();
+					this.customStats_array = new Array();
+					this.lvlBtnAbility_array = new Array();
+					this.lvlBtnStat_array = new Array();
+					this.lvlBtnSecStat_array = new Array();
+					this.lvlBtnTalent_array = new Array();
+					this.allignmentArray = new Array();
+					this.aiArray = new Array();
+					this.inventoryUpdateList = new Array();
+					break;
+				case "charList_array":
+					charList_array.length = 0;
+					break;
+				case "skillList":
+					skillList.length = 0;
+					break;
 				case "tabsTexts":
 					tabsTexts.length = 0;
 					break;
@@ -562,6 +588,8 @@ package characterSheet_fla
 				case "inventoryUpdateList":
 					inventoryUpdateList.length = 0;
 					break;
+				default:
+					ExternalInterface.call("UIAssert","[characterSheet:clearArray] name ("+String(name)+") isn't valid.");
 			}
 		}
 		

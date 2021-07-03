@@ -644,6 +644,66 @@ package characterCreation_c_fla
 		{
 			this.header_mc.setTabLabel(param1,param2);
 		}
+
+		//LeaderLib
+		public function clearArray(name:String): *
+		{
+			switch(name)
+			{
+				case "all":
+					this.buttonHints = new Array();
+					this.contentArray = new Array();
+					this.stepArray = new Array();
+					this.attributeArray = new Array();
+					this.abilityArray = new Array();
+					this.skillArray = new Array();
+					this.talentArray = new Array();
+					this.racialTalentArray = new Array();
+					this.tagArray = new Array();
+					this.racialTagArray = new Array();
+					this.tooltipArray = new Array();
+					this.playerArray = new Array();
+					break;
+				case "buttonHints":
+					this.buttonHints.length = 0;
+					break;
+				case "contentArray":
+					this.contentArray.length = 0;
+					break;
+				case "stepArray":
+					this.stepArray.length = 0;
+					break;
+				case "attributeArray":
+					this.attributeArray.length = 0;
+					break;
+				case "abilityArray":
+					this.abilityArray.length = 0;
+					break;
+				case "skillArray":
+					this.skillArray.length = 0;
+					break;
+				case "talentArray":
+					this.talentArray.length = 0;
+					break;
+				case "racialTalentArray":
+					this.racialTalentArray.length = 0;
+					break;
+				case "tagArray":
+					this.tagArray.length = 0;
+					break;
+				case "racialTagArray":
+					this.racialTagArray.length = 0;
+					break;
+				case "tooltipArray":
+					this.tooltipArray.length = 0;
+					break;
+				case "playerArray":
+					this.playerArray.length = 0;
+					break;
+				default:
+					ExternalInterface.call("UIAssert","[characterCreation_c:clearArray] name ("+String(name)+") isn't valid.");
+			}
+		}
 		
 		public function updateContent() : *
 		{
@@ -785,7 +845,7 @@ package characterCreation_c_fla
 		{
 		}
 		
-		function frame1() : *
+		private function frame1() : *
 		{
 			this.canShowTooltip = false;
 			this.tooltipVisible = false;
@@ -811,8 +871,6 @@ package characterCreation_c_fla
 			this.enableOrigin = true;
 			this.eatup = false;
 			this.textArray = new Array(this.header_mc.title_txt,this.CCPanel_mc.origins_mc.title_txt,null,this.CCPanel_mc.skills_mc.title_txt,null,this.CCPanel_mc.appearance_mc.title_txt,this.CCPanel_mc.class_mc.title_txt,this.CCPanel_mc.combatAbilities_mc.title_txt,this.CCPanel_mc.attributes_mc.title_txt,this.CCPanel_mc.talents_mc.title_txt,this.CCPanel_mc.tags_mc.title_txt,this.CCPanel_mc.class_mc.currentClass_txt,null,null,null,null,null,null,null,null,null,null,null,this.CCPanel_mc.tags_mc.tagTitle_txt,null,this.CCPanel_mc.instruments_mc.title_txt,null,null,null,null,null,null,null,this.CCPanel_mc.loreBox_mc.title_txt,null,this.CCPanel_mc.skills_mc.noSkill_txt,null,this.portraits_mc.hint_mc.hint_txt);
-
-			ExternalInterface.call("characterCreationStarted");
 		}
 	}
 }

@@ -10,7 +10,7 @@ package statsPanel_c_fla
 	public dynamic class statsMC_2 extends MovieClip
 	{
 		public var attributes_mc:MovieClip;
-		public var bg_mc:MPBGData_c;
+		public var bg_mc:MovieClip;//MPBGData_c; //in texture_lib_c
 		public var civilAbilities_mc:MovieClip;
 		public var combatAbilities_mc:MovieClip;
 		public var customStats_mc:MovieClip;
@@ -19,7 +19,7 @@ package statsPanel_c_fla
 		public var tabBar_mc:MovieClip;
 		public var tags_mc:MovieClip;
 		public var talents_mc:MovieClip;
-		public var tooltip_mc:tt_tooltipObj;
+		public var tooltip_mc:MovieClip;//tt_tooltipObj; //in tooltipHelper
 		public var statsList:scrollList;
 		public var prevSelectedStatId:Number;
 		public var prevY:Number;

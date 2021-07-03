@@ -2,9 +2,9 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "Build SWF Override",
+			"label": "Build SWF Overrides",
 			"type": "shell",
-			"command": "${fileDirname}\\Build.bat",
+			"command": "py \"${fileWorkspaceFolder}\\_Sheets\\build.py\"",
 			"problemMatcher": [],
 			"presentation": {
 				"echo": true,
@@ -14,7 +14,6 @@
 				"showReuseMessage": false,
 				"clear": false
 			},
-			"detail": "Builds the current swf override.",
 			"group": {
 				"kind": "build",
 				"isDefault": true

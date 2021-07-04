@@ -31,7 +31,7 @@ Vars = {
 		Skills = false,
 		CustomStats = false,
 		--UI listeners
-		UI = false
+		UI = true
 	},
 	ControllerEnabled = false,
 	Users = {},

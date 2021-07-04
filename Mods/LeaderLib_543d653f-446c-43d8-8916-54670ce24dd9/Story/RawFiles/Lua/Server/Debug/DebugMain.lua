@@ -684,14 +684,14 @@ RegisterProtectedExtenderListener("GroundHit", function (caster, position, damag
 	fprint(LOGLEVEL.DEFAULT, "[GroundHit]\n%s", Lib.inspect(data))
 end)
 
-RegisterSkillListener("All", function(skill, uuid, state, data)
-	-- if state == SKILL_STATE.HIT then
-	-- 	data:MultiplyDamage(3,true)
-	-- end
-	if Vars.Print.Skills then
-		fprint(LOGLEVEL.DEFAULT, "[Skill:%s] State(%s) Caster(%s) Data%s", skill, state, uuid, data and string.format(":\n%s", Lib.inspect(data)) or "(nil)")
-	end
-end)
+-- RegisterSkillListener("All", function(skill, uuid, state, data)
+-- 	-- if state == SKILL_STATE.HIT then
+-- 	-- 	data:MultiplyDamage(3,true)
+-- 	-- end
+-- 	if Vars.Print.Skills then
+-- 		fprint(LOGLEVEL.DEFAULT, "[Skill:%s] State(%s) Caster(%s) Data%s", skill, state, uuid, data and string.format(":\n%s", Lib.inspect(data)) or "(nil)")
+-- 	end
+-- end)
 
 local originalCooldown = 6
 

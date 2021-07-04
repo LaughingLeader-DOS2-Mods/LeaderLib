@@ -25,6 +25,7 @@ package characterSheet_fla
 		
 		public function init() : *
 		{
+			trace("customStatsHolder_14 init");
 			//Ability holder position
 			this.y = 292;
 			this.x = 12;
@@ -275,10 +276,14 @@ package characterSheet_fla
 			ExternalInterface.call("customStatAdded", doubleHandle, cstat_mc.statIndex);
 		}
 
-		private function frame1() : *
+		public function frame1() : *
 		{
 			//Hide the BG
-			this.getChildAt(0).visible = false;
+			var obj:MovieClip = this.getChildAt(0);
+			if(obj != null)
+			{
+				obj.visible = false;
+			}
 		}
 	}
 }

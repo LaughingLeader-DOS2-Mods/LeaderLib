@@ -58,7 +58,7 @@ package
 			ExternalInterface.call("hideTooltip");
 		}
 		
-		private function frame1() : *
+		public function frame1() : *
 		{
 			this.base = root as MovieClip;
 			this.hl_mc.addEventListener(MouseEvent.ROLL_OVER,this.onOver);

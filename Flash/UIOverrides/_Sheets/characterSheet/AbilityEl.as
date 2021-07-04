@@ -75,7 +75,7 @@ package
 			this.hl_mc.visible = false;
 		}
 		
-		private function frame1() : *
+		public function frame1() : *
 		{
 			this.base = root as MovieClip;
 			addEventListener(MouseEvent.ROLL_OVER,this.onOver);

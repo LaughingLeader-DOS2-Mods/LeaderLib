@@ -36,7 +36,7 @@ package characterSheet_fla
 			this.customStatPoints_txt.visible = Boolean(tabIndex == 8);
 		}
 		
-		private function frame1() : *
+		public function frame1() : *
 		{
 			textHelpers.smallCaps(this.label_txt);
 			//customStatPoints_txt.visible = false;

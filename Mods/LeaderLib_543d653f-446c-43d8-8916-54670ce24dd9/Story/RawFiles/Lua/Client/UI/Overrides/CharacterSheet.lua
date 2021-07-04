@@ -6,36 +6,59 @@ local self = CharacterSheet
 ---@private
 ---@param ui UIObject
 function CharacterSheet.Update(ui, method, updateTalents, updateAbilities, updateCivil)
+	print("CharacterSheet.Update", method, updateTalents, updateAbilities, updateCivil)
 	local this = self.Root
 	--this.clearArray("talentArray")
 	local player = Ext.GetCharacter(Ext.DoubleToHandle(this.characterHandle)) or Client:GetCharacter()
 
-	local updatedCivil,updatedCombat,updatedTalents = false,false,false
+	local updatedAbilities,updatedCombat,updatedTalents = false,false,false
+
+	-- if method == "setAvailableCombatAbilityPoints" then
+	-- 	availableCombatPoints[id] = amount
+	-- 	setAvailablePoints[id] = true
+	-- elseif method == "setAvailableCivilAbilityPoints" then
+	-- 	availableCivilPoints[id] = amount
+	-- 	setAvailablePoints[id] = true
+	-- end
 
 	if updateTalents then
-		for talent in TalentManager.GetVisibleTalents(player) do
+		local points = this.stats_mc.pointsWarn[3].avPoints
+	
+		for talent in TalentManager.GetVisible(player) do
+			local canAdd = false
+			local canRemove = false
 			updatedTalents = true
+			if not talent.IsRacial then
+				if not talent.HasTalent and points > 0 and talent.State == TalentManager.Data.TalentState.Selectable then
+					canAdd = true
+				elseif talent.HasTalent then
+					canRemove = GameHelpers.Client.IsGameMaster(ui, this)
+				end
+			end
 			if not Vars.ControllerEnabled then
 				if not talent.IsCustom then
-					this.stats_mc.addTalent(talent.DisplayName, talent.IntegerID, talent.State)
+					this.stats_mc.addTalent(talent.DisplayName, talent.IntegerID, talent.State, canAdd, canRemove)
 				else
-					this.stats_mc.addCustomTalent(talent.DisplayName, talent.ID, talent.State)
+					this.stats_mc.addCustomTalent(talent.DisplayName, talent.ID, talent.State, canAdd, canRemove)
 				end
 			else
 				if not talent.IsCustom then
-					this.mainpanel_mc.stats_mc.talents_mc.addTalent(talent.DisplayName, talent.IntegerID, talent.State)
+					this.mainpanel_mc.stats_mc.talents_mc.addTalent(talent.DisplayName, talent.IntegerID, talent.State, canAdd, canRemove)
 				else
-					this.mainpanel_mc.stats_mc.talents_mc.addCustomTalent(talent.DisplayName, talent.ID, talent.State)
+					this.mainpanel_mc.stats_mc.talents_mc.addCustomTalent(talent.DisplayName, talent.ID, talent.State, canAdd, canRemove)
 				end
 			end
 		end
 	end
 
 	if updateAbilities then
-		if updateCivil then
-
-		else
-
+		for ability in AbilityManager.GetVisible(player, updateCivil, this) do
+			if not ability.IsCustom then
+				this.stats_mc.addAbility(ability.IsCivil, ability.GroupID, ability.IntegerID, ability.DisplayName, ability.Value, ability.AddPointsTooltip, "", ability.CanAdd, ability.CanRemove)
+			else
+				this.stats_mc.addCustomAbility(ability.IsCivil, ability.GroupID, ability.ID, ability.DisplayName, ability.Value, ability.AddPointsTooltip, "", ability.CanAdd, ability.CanRemove)
+			end
+			updatedAbilities = true
 		end
 	end
 
@@ -43,23 +66,25 @@ function CharacterSheet.Update(ui, method, updateTalents, updateAbilities, updat
 		if updatedTalents then
 			this.stats_mc.talentHolder_mc.list.positionElements()
 		end
-		if updatedCivil then
-			this.stats_mc.civicAbilityHolder_mc.list.positionElements()
-			this.stats_mc.recountAbilityPoints(true)
-		end
-		if updatedCombat then
-			this.stats_mc.combatAbilityHolder_mc.list.positionElements()
-			this.stats_mc.recountAbilityPoints(false)
+		if updatedAbilities then
+			if updateCivil then
+				this.stats_mc.civicAbilityHolder_mc.list.positionElements()
+				this.stats_mc.recountAbilityPoints(true)
+			else
+				this.stats_mc.combatAbilityHolder_mc.list.positionElements()
+				this.stats_mc.recountAbilityPoints(false)
+			end
 		end
 	else
 		if updatedTalents then
 			this.mainpanel_mc.stats_mc.talents_mc.updateDone()
 		end
-		if updatedCivil then
-			this.mainpanel_mc.stats_mc.combatAbilities_mc.updateDone()
-		end
-		if updatedCombat then
-			this.mainpanel_mc.stats_mc.civilAbilities_mc.updateDone()
+		if updatedAbilities then
+			if updateCivil then
+				this.mainpanel_mc.stats_mc.civilAbilities_mc.updateDone()
+			else
+				this.mainpanel_mc.stats_mc.combatAbilities_mc.updateDone()
+			end
 		end
 	end
 end

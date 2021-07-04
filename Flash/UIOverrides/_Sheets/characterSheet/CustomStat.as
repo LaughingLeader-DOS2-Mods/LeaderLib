@@ -73,7 +73,7 @@ package
 			ExternalInterface.call("removeCustomStat",this.statId, this.id);
 		}
 		
-		private function frame1() : *
+		public function frame1() : *
 		{
 			this.base = root as MovieClip;
 			this.hl_mc.addEventListener(MouseEvent.ROLL_OVER,this.onOver);

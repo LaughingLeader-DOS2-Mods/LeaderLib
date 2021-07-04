@@ -73,7 +73,7 @@ package characterSheet_fla
 			ExternalInterface.call("PlaySound","UI_GM_Generic_Click_Release");
 		}
 		
-		private function frame1() : *
+		public function frame1() : *
 		{
 			this.base = root as MovieClip;
 			this.stat = parent as MovieClip;

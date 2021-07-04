@@ -108,7 +108,7 @@ package
 			}
 		}
 		
-		private function frame1() : *
+		public function frame1() : *
 		{
 			addEventListener(MouseEvent.ROLL_OVER,this.onOver);
 			addEventListener(MouseEvent.ROLL_OUT,this.onOut);

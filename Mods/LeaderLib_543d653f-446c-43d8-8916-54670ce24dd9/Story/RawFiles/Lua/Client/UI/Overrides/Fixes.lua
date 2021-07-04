@@ -31,9 +31,9 @@ Ext.RegisterUITypeInvokeListener(Data.UIType.bottomBar_c, "setPlayerHandle", Upd
 
 Ext.RegisterNetListener("LeaderLib_CCStarted", function(cmd, netid)
 	print(cmd, netid)
-	local ui = Ext.GetUIByType(Data.UIType.characterCreation)
-	if ui then
-		ui:CaptureExternalInterfaceCalls()
-		ui:CaptureInvokes()
-	end
+	-- local ui = Ext.GetUIByType(Data.UIType.characterCreation)
+	-- if ui then
+	-- 	ui:CaptureExternalInterfaceCalls()
+	-- 	ui:CaptureInvokes()
+	-- end
 end)

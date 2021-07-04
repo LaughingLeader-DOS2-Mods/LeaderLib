@@ -317,7 +317,7 @@ package characterSheet_fla
 				{
 					offsetX = mc.mOffsetX;
 				}
-				ExternalInterface.call(externalCall, this.characterHandle, id, globalPos.x + offsetX,globalPos.y + offsetY,tWidth,mc.height,mc.tooltipAlign);
+				ExternalInterface.call(externalCall, id, globalPos.x + offsetX,globalPos.y + offsetY,tWidth,mc.height,mc.tooltipAlign);
 			}
 		}
 		
@@ -616,23 +616,7 @@ package characterSheet_fla
 				this.addPrimaryStat(this.primStat_array[i],this.primStat_array[i + 1],this.primStat_array[i + 2],this.primStat_array[i + 3]);
 				i = i + 4;
 			}
-			/*
-			i = 0;
-			while(i < this.ability_array.length)
-			{
-				isCivil = Boolean(this.ability_array[i]);
-				if(isCivil)
-				{
-					updateCivil = true;
-				}
-				else
-				{
-					updateCombat = true;
-				}
-				this.addAbility(isCivil,this.ability_array[i + 1],this.ability_array[i + 2],this.ability_array[i + 3],this.ability_array[i + 4],this.ability_array[i + 5],this.ability_array[i + 6]);
-				i = i + 7;
-			}
-			*/
+
 			i = 0;
 			while(i < this.secStat_array.length)
 			{
@@ -647,13 +631,7 @@ package characterSheet_fla
 				}
 				i = i + 7;
 			}
-			/*
-			i = 0;
-			while(i < this.talent_array.length)
-			{
-				this.addTalent(this.talent_array[i++],this.talent_array[i++],this.talent_array[i++]);
-			}
-			*/
+
 			i = 0;
 			while(i < this.tags_array.length)
 			{
@@ -666,11 +644,9 @@ package characterSheet_fla
 				this.addVisualOption(this.visualValues_array[i++],this.visualValues_array[i++],this.visualValues_array[i++]);
 			}
 
-			var updateCustom:Boolean = false;
 			i = 0;
 			while(i < this.customStats_array.length)
 			{
-				updateCustom = true;
 				this.stats_mc.customStats_mc.addCustomStat(this.customStats_array[i],this.customStats_array[i + 1],this.customStats_array[i + 2],this.customStats_array[i + 3],this.customStats_array[i + 4],this.customStats_array[i + 5]);
 				i = i + 6;
 			}
@@ -689,6 +665,7 @@ package characterSheet_fla
 				}
 				i = i + 3;
 			}
+			i = 0;
 			if(this.lvlBtnSecStat_array.length > 0)
 			{
 				hasButtons = this.lvlBtnSecStat_array[0];
@@ -716,52 +693,6 @@ package characterSheet_fla
 					i = i + 4;
 				}
 			}
-			i = 0;
-			/*
-			while(i < this.lvlBtnAbility_array.length)
-			{
-				canAddPoints = Boolean(this.lvlBtnAbility_array[i]);
-				if(canAddPoints)
-				{
-					this.setAbilityPlusVisible(this.lvlBtnAbility_array[i + 1],this.lvlBtnAbility_array[i + 2],this.lvlBtnAbility_array[i + 3],this.lvlBtnAbility_array[i + 4]);
-				}
-				else
-				{
-					this.setAbilityMinusVisible(this.lvlBtnAbility_array[i + 1],this.lvlBtnAbility_array[i + 2],this.lvlBtnAbility_array[i + 3],this.lvlBtnAbility_array[i + 4]);
-				}
-				i = i + 5;
-			}
-			i = 0;
-			while(i < this.lvlBtnTalent_array.length)
-			{
-				canAddPoints = Boolean(this.lvlBtnTalent_array[i]);
-				if(canAddPoints)
-				{
-					this.setTalentPlusVisible(this.lvlBtnTalent_array[i + 1],this.lvlBtnTalent_array[i + 2]);
-				}
-				else
-				{
-					this.setTalentMinusVisible(this.lvlBtnTalent_array[i + 1],this.lvlBtnTalent_array[i + 2]);
-				}
-				i = i + 3;
-			}
-			
-			if(updateCivil)
-			{
-				this.stats_mc.civicAbilityHolder_mc.list.positionElements();
-				this.stats_mc.recountAbilityPoints(true);
-			}
-			if(updateCombat)
-			{
-				this.stats_mc.combatAbilityHolder_mc.list.positionElements();
-				this.stats_mc.recountAbilityPoints(false);
-			}
-			if(this.talent_array.length > 0)
-			{
-				this.stats_mc.talentHolder_mc.list.positionElements();
-			}
-			*/
-
 			if(this.tags_array.length > 0)
 			{
 				this.stats_mc.tagsHolder_mc.list.positionElements();
@@ -874,36 +805,36 @@ package characterSheet_fla
 			this.stats_mc.setPanelTitle(param1,param2);
 		}
 		
-		public function showAcceptStatsAcceptButton(param1:Boolean) : *
+		public function showAcceptStatsAcceptButton(b:Boolean) : *
 		{
 		}
 		
-		public function showAcceptAbilitiesAcceptButton(param1:Boolean) : *
+		public function showAcceptAbilitiesAcceptButton(b:Boolean) : *
 		{
 		}
 		
-		public function showAcceptTalentAcceptButton(param1:Boolean) : *
+		public function showAcceptTalentAcceptButton(b:Boolean) : *
 		{
 		}
 		
-		public function setAvailableStatPoints(param1:Number) : *
+		public function setAvailableStatPoints(amount:Number) : *
 		{
-			this.stats_mc.setAvailableStatPoints(param1);
+			this.stats_mc.setAvailableStatPoints(amount);
 		}
 		
-		public function setAvailableCombatAbilityPoints(param1:Number) : *
+		public function setAvailableCombatAbilityPoints(amount:Number) : *
 		{
-			this.stats_mc.setAvailableCombatAbilityPoints(param1);
+			this.stats_mc.setAvailableCombatAbilityPoints(amount);
 		}
 		
-		public function setAvailableCivilAbilityPoints(param1:Number) : *
+		public function setAvailableCivilAbilityPoints(amount:Number) : *
 		{
-			this.stats_mc.setAvailableCivilAbilityPoints(param1);
+			this.stats_mc.setAvailableCivilAbilityPoints(amount);
 		}
 		
-		public function setAvailableTalentPoints(param1:Number) : *
+		public function setAvailableTalentPoints(amount:Number) : *
 		{
-			this.stats_mc.setAvailableTalentPoints(param1);
+			this.stats_mc.setAvailableTalentPoints(amount);
 		}	
 
 		public function setAvailableCustomStatPoints(amount:Number) : *
@@ -1038,7 +969,7 @@ package characterSheet_fla
 			ExternalInterface.call("onClearInventory");
 		}
 		
-		function frame1() : *
+		public function frame1() : *
 		{
 			this.initDone = false;
 			this.events = new Array("IE ContextMenu","IE UIAccept","IE ToggleInGameMenu");

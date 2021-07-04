@@ -14,7 +14,6 @@ package characterSheet_fla
 		public function talentsHolder_11()
 		{
 			super();
-			addFrameScript(0,this.frame1);
 		}
 		
 		public function init() : *
@@ -44,11 +43,9 @@ package characterSheet_fla
 			});
 		}
 		
-		public function updateBGPos(param1:Event) : *
+		public function updateBGPos(e:Event) : *
 		{
 			this.bgGlow_mc.y = this.list.m_scrollbar_mc.scrolledY;
 		}
-		
-		private function frame1() : * {}
 	}
 }

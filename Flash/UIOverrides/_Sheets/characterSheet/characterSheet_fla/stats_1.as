@@ -148,6 +148,7 @@ package characterSheet_fla
 			this.rightCycleBtn_mc.visible = false;
 			this.onePlayerOverlay_mc.mouseEnabled = false;
 			this.currentOpenPanel = -1;
+			trace("Calling buildTabs");
 			this.buildTabs(0,true);
 		}
 		
@@ -203,6 +204,7 @@ package characterSheet_fla
 			while(i < this.tabsArray.length)
 			{
 				tab_mc = this.tabsArray[i];
+				trace("tabsArray", i, tab_mc);
 				if(tab_mc != null && tab_mc.tw != null)
 				{
 					tab_mc.tw.stop();
@@ -220,6 +222,7 @@ package characterSheet_fla
 					while(i < 5)
 					{
 						tab_button = new StatsTabButton();
+						trace("tab_button", i, tab_button);
 						tab_button.id = i;
 						this.tabsArray.push(tab_button);
 						i++;
@@ -270,13 +273,18 @@ package characterSheet_fla
 				}
 				i++;
 			}
+			trace("this.tabsList.positionElements()");
 			this.tabsList.positionElements();
 			
+			trace("this.alignPointWarningsToButtons()");
 			//LeaderLib addition
 			this.alignPointWarningsToButtons();
 
+			trace("this.initTabs");
 			this.initTabs(!isCurrentPanel,initializeTabs);
+			trace("this.ClickTab");
 			this.ClickTab(!!isCurrentPanel?Number(currentPanel):Number(0));
+			trace("this.INTSetAvailablePointsVisible");
 			this.INTSetAvailablePointsVisible();
 		}
 
@@ -332,8 +340,10 @@ package characterSheet_fla
 					this.panelArray[i].visible = false;
 					if(bInitTab && this.panelArray[i].init != null)
 					{
+						trace("this.panelArray[i].init()", this.panelArray[i].name);
 						this.panelArray[i].init();
 					}
+					trace("this.panelArray[i] checking list");
 					if(this.panelArray[i].list)
 					{
 						this.panelArray[i].list.enableMouseWheelOnOver = true;
@@ -881,9 +891,14 @@ package characterSheet_fla
 				groupHolder = this.civicAbilityHolder_mc;
 			}
 			groupHolder.list.addGroup(groupId,labelText);
+			var group_mc:MovieClip = groupHolder.list.getElementByNumber("groupId",groupId);
+			if (group_mc != null)
+			{
+				group_mc.groupName = labelText;
+			}
 		}
 		
-		public function addAbility(isCivil:Boolean, groupId:Number, statId:Number, labelText:String, valueText:String, plusTooltip:String, minusTooltip:String) : *
+		public function addAbility(isCivil:Boolean, groupId:Number, statId:Number, labelText:String, valueText:String, plusTooltip:String = "", minusTooltip:String = "", plusVisible:Boolean = false, minusVisible:Boolean = false) : *
 		{
 			var groupHolder:MovieClip = null;
 			var ability_mc:MovieClip = this.getAbility(isCivil,groupId,statId);
@@ -909,6 +924,8 @@ package characterSheet_fla
 			}
 			ability_mc.texts_mc.plus_mc.tooltip = plusTooltip;
 			ability_mc.texts_mc.minus_mc.tooltip = minusTooltip;
+			ability_mc.texts_mc.plus_mc.visible = plusVisible;
+			ability_mc.texts_mc.minus_mc.visible = minusVisible;
 			if(ability_mc.texts_mc.plus_mc.currentTooltip != "" && ability_mc.texts_mc.plus_mc.currentTooltip != plusTooltip)
 			{
 				ExternalInterface.call("showTooltip",plusTooltip);
@@ -929,7 +946,7 @@ package characterSheet_fla
 			ability_mc.texts_mc.text_txt.y = Math.round((ability_mc.hl_mc.height - ability_mc.texts_mc.text_txt.textHeight) * 0.5);
 		}
 
-		public function addCustomAbility(isCivil:Boolean, groupId:Number, customID:String, labelText:String, valueText:String, plusTooltip:String, minusTooltip:String) : *
+		public function addCustomAbility(isCivil:Boolean, groupId:Number, customID:String, labelText:String, valueText:String, plusTooltip:String = "", minusTooltip:String = "", plusVisible:Boolean = false, minusVisible:Boolean = false) : *
 		{
 			var groupHolder:MovieClip = null;
 			var ability_mc:MovieClip = this.getCustomAbility(isCivil,groupId,customID);
@@ -957,6 +974,8 @@ package characterSheet_fla
 			}
 			ability_mc.texts_mc.plus_mc.tooltip = plusTooltip;
 			ability_mc.texts_mc.minus_mc.tooltip = minusTooltip;
+			ability_mc.texts_mc.plus_mc.visible = plusVisible;
+			ability_mc.texts_mc.minus_mc.visible = minusVisible;
 			if(ability_mc.texts_mc.plus_mc.currentTooltip != "" && ability_mc.texts_mc.plus_mc.currentTooltip != plusTooltip)
 			{
 				ExternalInterface.call("showTooltip",plusTooltip);
@@ -1012,7 +1031,7 @@ package characterSheet_fla
 			}
 		}
 		
-		public function addTalent(labelText:String, statId:Number, talentState:Number) : *
+		public function addTalent(labelText:String, statId:Number, talentState:Number, plusVisible:Boolean = false, minusVisible:Boolean = false) : *
 		{
 			var talent_mc:MovieClip = this.getTalent(statId);
 			if(!talent_mc)
@@ -1023,10 +1042,12 @@ package characterSheet_fla
 				talent_mc.statId = statId;
 				talent_mc.minus_mc.x = 260;
 				talent_mc.plus_mc.x = talent_mc.minus_mc.x + talent_mc.minus_mc.width;
-				talent_mc.plus_mc.visible = talent_mc.minus_mc.visible = false;
+				//talent_mc.plus_mc.visible = talent_mc.minus_mc.visible = false;
 				talent_mc.id = this.talentHolder_mc.list.length;
 				this.talentHolder_mc.list.addElement(talent_mc,false);
 			}
+			talent_mc.plus_mc.visible = plusVisible;
+			talent_mc.minus_mc.visible = minusVisible;
 			talent_mc.label_txt.htmlText = labelText;
 			talent_mc.hl_mc.width = this.statsElWidth;
 			talent_mc.hl_mc.height = talent_mc.label_txt.textHeight + talent_mc.label_txt.y;
@@ -1038,7 +1059,7 @@ package characterSheet_fla
 			ExternalInterface.call("talentAdded", talent_mc.id);
 		}
 
-		public function addCustomTalent(labelText:String, customID:String, talentState:Number) : *
+		public function addCustomTalent(labelText:String, customID:String, talentState:Number, plusVisible:Boolean = false, minusVisible:Boolean = false) : *
 		{
 			var talent_mc:MovieClip = this.getCustomTalent(customID);
 			if(!talent_mc)
@@ -1050,10 +1071,12 @@ package characterSheet_fla
 				talent_mc.isCustom = true;
 				talent_mc.minus_mc.x = 260;
 				talent_mc.plus_mc.x = talent_mc.minus_mc.x + talent_mc.minus_mc.width;
-				talent_mc.plus_mc.visible = talent_mc.minus_mc.visible = false;
+				//talent_mc.plus_mc.visible = talent_mc.minus_mc.visible = false;
 				talent_mc.id = this.talentHolder_mc.list.length;
 				this.talentHolder_mc.list.addElement(talent_mc,false);
 			}
+			talent_mc.plus_mc.visible = plusVisible;
+			talent_mc.minus_mc.visible = minusVisible;
 			talent_mc.label_txt.htmlText = labelText;
 			talent_mc.hl_mc.width = this.statsElWidth;
 			talent_mc.hl_mc.height = talent_mc.label_txt.textHeight + talent_mc.label_txt.y;
@@ -1359,26 +1382,7 @@ package characterSheet_fla
 		
 		public function addCustomStat(doubleHandle:Number, labelText:String, valueText:String) : *
 		{
-			var cstat_mc:MovieClip = new CustomStat();
-			cstat_mc.hl_mc.alpha = 0;
-			var isGameMaster:Boolean = (root as MovieClip).isGameMasterChar;
-			cstat_mc.plus_mc.visible = isGameMaster;
-			cstat_mc.minus_mc.visible = isGameMaster;
-			cstat_mc.edit_mc.visible = isGameMaster;
-			cstat_mc.delete_mc.visible = isGameMaster;
-			cstat_mc.label_txt.autoSize = TextFieldAutoSize.NONE;
-			cstat_mc.label_txt.htmlText = labelText;
-			cstat_mc.text_txt.htmlText = valueText;
-			cstat_mc.text_txt.width = cstat_mc.text_txt.width + 8;
-			cstat_mc.tooltipAlign = "right";
-			cstat_mc.statId = doubleHandle;
-			cstat_mc.hl_mc.width = this.statsElWidth;
-			cstat_mc.text_txt.mouseEnabled = false;
-			cstat_mc.label_txt.mouseEnabled = false;
-			cstat_mc.heightOverride = 26;
-			cstat_mc.id = this.customStats_mc.list.length;
-			cstat_mc.init();
-			this.customStats_mc.list.addElement(cstat_mc);
+			this.customStats_mc.addCustomStat(doubleHandle, labelText, valueText);
 		}
 		
 		public function justEatClick(param1:MouseEvent) : *
@@ -1513,7 +1517,7 @@ package characterSheet_fla
 			}
 		}
 		
-		private function frame1() : *
+		public function frame1() : *
 		{
 			LSPanelHelpers.makeDraggable(this.dragHit_mc);
 			this.myText = "";

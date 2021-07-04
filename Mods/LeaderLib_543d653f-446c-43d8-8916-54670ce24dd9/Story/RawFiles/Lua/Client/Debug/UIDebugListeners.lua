@@ -44,9 +44,9 @@ local function OnUIListener(self, eventType, ui, event, ...)
 			return
 		end
 		if self.PrintParams then
-			fprint(LOGLEVEL.DEFAULT, "[UI:%s(%s)][%s] [%s] %s(%s)", self.Name, ui:GetTypeId(), eventType, Ext.MonotonicTime(), event, StringHelpers.DebugJoin(", ", {...}))
+			fprint(LOGLEVEL.TRACE, "[UI:%s(%s)][%s] [%s] %s(%s)", self.Name, ui:GetTypeId(), eventType, Ext.MonotonicTime(), event, StringHelpers.DebugJoin(", ", {...}))
 		else
-			fprint(LOGLEVEL.DEFAULT, "[UI:%s(%s)] [%s] %s [%s]", self.Name, ui:GetTypeId(), eventType, event, Ext.MonotonicTime())
+			fprint(LOGLEVEL.TRACE, "[UI:%s(%s)] [%s] %s [%s]", self.Name, ui:GetTypeId(), eventType, event, Ext.MonotonicTime())
 		end
 
 		if self.CustomCallback[event] then

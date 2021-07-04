@@ -1,41 +1,70 @@
 local ts = Classes.TranslatedString
 
-local combatAbilityGroupTitle = {
-	[0] = ts:Create("h5fb2ef9cg4258g446eg9522gd6be58f3ab23", "Weapons"), -- May be a different handle
-	[1] = ts:Create("ha65cecedg819dg4d17g9f0ag1bf646ec4f6c", "Defence"),
-	[2] = ts:Create("hb5277ad5gafbcg4f31g8022gaeedf7a516aa", "Skills"), -- May be a different handle
-}
-
-local civilAbilityGroupTitle = {
-	[0] = ts:Create("h3df7f54fg51f4g4355g93ecgb0b7add14018", "Personality"), -- or h5b78d698gab2ag4423g88d5gbfb549b015f8
-	[1] = ts:Create("h2890aceag6c58g41a7gb286g5044fc11d7f1", "Craftsmanship"), -- or h7cc0941cg4b22g43a6gae93g3f3b240741cd
-	[2] = ts:Create("he920062fg4553g4b1eg9935gec94a4c1aa59", "Nasty Deeds"), -- or hc92a5451g8a18g40f4g9a80g40bb23b98a8a
-}
-
-local missingAbilities = {
-	Shield = {Group=0, Civil=false},
-	Reflexes = {Group=1, Civil=false},
-	PhysicalArmorMastery = {Group=1, Civil=false},
-	Sourcery = {Group=2, Civil=false},
-	Sulfurology = {Group=2, Civil=false},
-	Repair = {Group=1, Civil=true},
-	Crafting = {Group=1, Civil=true},
-	Charm = {Group=3, Civil=true},
-	Intimidate = {Group=3, Civil=true},
-	Reason = {Group=3, Civil=true},
-	Wand = {Group=0, Civil=false},
-	MagicArmorMastery = {Group=1, Civil=false},
-	VitalityMastery = {Group=1, Civil=false},
-	Runecrafting = {Group=4, Civil=true},
-	Brewmaster = {Group=4, Civil=true},
-}
-
 AbilityManager = {
 	RegisteredAbilities = {},
-	RegisteredCount = {}
+	RegisteredCount = {},
+	Data = {
+		GroupTitle = {
+			Combat = {
+				[0] = ts:Create("h5fb2ef9cg4258g446eg9522gd6be58f3ab23", "Weapons"), -- May be a different handle
+				[1] = ts:Create("ha65cecedg819dg4d17g9f0ag1bf646ec4f6c", "Defence"),
+				[2] = ts:Create("hb5277ad5gafbcg4f31g8022gaeedf7a516aa", "Skills"), -- May be a different handle
+			},
+			Civil = {
+				[0] = ts:Create("h3df7f54fg51f4g4355g93ecgb0b7add14018", "Personality"), -- or h5b78d698gab2ag4423g88d5gbfb549b015f8
+				[1] = ts:Create("h2890aceag6c58g41a7gb286g5044fc11d7f1", "Craftsmanship"), -- or h7cc0941cg4b22g43a6gae93g3f3b240741cd
+				[2] = ts:Create("he920062fg4553g4b1eg9935gec94a4c1aa59", "Nasty Deeds"), -- or hc92a5451g8a18g40f4g9a80g40bb23b98a8a
+			}
+		},
+		Abilities = {
+			SingleHanded = {Group=0, Civil=false},
+			TwoHanded = {Group=0, Civil=false},
+			Ranged = {Group=0, Civil=false},
+			DualWielding = {Group=0, Civil=false},
+			PainReflection = {Group=1, Civil=false},
+			Leadership = {Group=1, Civil=false},
+			Perseverance = {Group=1, Civil=false},
+			WarriorLore = {Group=2, Civil=false},
+			RangerLore = {Group=2, Civil=false},
+			RogueLore = {Group=2, Civil=false},
+			FireSpecialist = {Group=2, Civil=false},
+			WaterSpecialist = {Group=2, Civil=false},
+			AirSpecialist = {Group=2, Civil=false},
+			EarthSpecialist = {Group=2, Civil=false},
+			Necromancy = {Group=2, Civil=false},
+			Summoning = {Group=2, Civil=false},
+			Polymorph = {Group=2, Civil=false},
+			Barter = {Group=3, Civil=true},
+			Persuasion = {Group=3, Civil=true},
+			Luck = {Group=3, Civil=true},
+			Telekinesis = {Group=4, Civil=true},
+			Loremaster = {Group=4, Civil=true},
+			Sneaking = {Group=5, Civil=true},
+			Pickpocket = {Group=5, Civil=true},
+			Thievery = {Group=5, Civil=true},
+		},
+		DOSAbilities = {
+			Shield = {Group=0, Civil=false},
+			Reflexes = {Group=1, Civil=false},
+			PhysicalArmorMastery = {Group=1, Civil=false},
+			Sourcery = {Group=2, Civil=false},
+			Sulfurology = {Group=2, Civil=false},
+			Repair = {Group=1, Civil=true},
+			Crafting = {Group=1, Civil=true},
+			Charm = {Group=3, Civil=true},
+			Intimidate = {Group=3, Civil=true},
+			Reason = {Group=3, Civil=true},
+			Wand = {Group=0, Civil=false},
+			MagicArmorMastery = {Group=1, Civil=false},
+			VitalityMastery = {Group=1, Civil=false},
+			Runecrafting = {Group=4, Civil=true},
+			Brewmaster = {Group=4, Civil=true},
+		}
+	}
 }
 AbilityManager.__index = AbilityManager
 
+local missingAbilities = AbilityManager.Data.DOSAbilities
 for name,v in pairs(missingAbilities) do
 	AbilityManager.RegisteredCount[name] = 0
 end
@@ -90,75 +119,14 @@ function AbilityManager.DisableAbility(abilityName, modID)
 end
 
 if Ext.IsClient() then
-	local function GetArrayIndexStart(ui, array, offset)
-		local total = #array
-		if total > 0 then
-			local i = 0
-			while i < total do
-				local arrayValue = array[i]
-				if arrayValue == nil then
-					return i
-				end
-				i = i + offset
-			end
+	function AbilityManager.CanAddAbility(id, player)
+		if AbilityManager.Data.Abilities[id] then
+			return true
 		end
-		return -1
-	end
-
-	--[[ 
-	ability_array mapping:
-	0 = isCivilAbility:boolean
-	1 = groupId:number,
-	2 = statId:number
-	3 = displayName:string
-	4 = valueText:string
-	5 = addTooltipText:string
-	6 = removeTooltipText:string
-
-	ability_array mapping for statsPanel_c:
-	0 = isCivilAbility:boolean
-	1 = groupID:Number
-	2 = statID:Number
-	3 = labelText:String
-	4 = valueText:String
-	5 = textColor:uint
-	]]
-
-	---@param ui UIObject
-	local function addMissingAbilities(ui, main)
-		---@type EclCharacter
-		local character = GameHelpers.Client.GetCharacterSheetCharacter(main)
-		local ability_array = main.ability_array
-		if ability_array ~= nil then
-			local i = #ability_array
-			local total = 0
-			for abilityName,data in pairs(missingAbilities) do
-				if AbilityManager.RegisteredCount[abilityName] > 0 then
-					local abilityID = Data.AbilityEnum[abilityName]
-					ability_array[i] = data.Civil -- isCivilAbility
-					ability_array[i+1] = data.Group -- groupId
-					ability_array[i+2] = abilityID -- statId
-					ability_array[i+3] = GameHelpers.GetAbilityName(abilityName) -- displayName
-					if character ~= nil then
-						ability_array[i+4] = character.Stats[abilityName] or 0 -- valueText
-					else
-						ability_array[i+4] = 0
-					end
-					if not Vars.ControllerEnabled then
-						ability_array[i+5] = LocalizedText.UI.AbilityPlusTooltip:ReplacePlaceholders(Ext.ExtraData.CombatAbilityLevelGrowth) -- addTooltipText
-						ability_array[i+6] = "" -- removeTooltipText
-						--PrintDebug(string.format("[LeaderLib:addMissingAbilities] Added ability [%s] = (%s)", abilityID, abilityName))
-						i = i + 7
-					else
-						ability_array[i+5] = 0
-						i = i + 6
-					end
-					
-					total = total + 1
-				end
-			end
-			--PrintDebug(string.format("[LeaderLib:addMissingAbilities] Added abilities to the character sheet. i[%s] Total(%s)", i, total))
+		if AbilityManager.Data.DOSAbilities[id] and AbilityManager.RegisteredCount[id] > 0 then
+			return true
 		end
+		return false
 	end
 
 	local availableCombatPoints = {}
@@ -211,109 +179,8 @@ if Ext.IsClient() then
 		return points or 0
 	end
 
-	---@param ui UIObject
-	---@param main CharacterSheetMainTimeline
-	local function IsGameMaster(ui, main)
-		if Client and Client.Character and Client.Character.IsGameMaster then
-			return true
-		end
-		if not Vars.ControllerEnabled then
-			local ui = ui or Ext.GetUIByType(Data.UIType.characterSheet)
-			if ui then
-				---@type CharacterSheetMainTimeline
-				local this = main or ui:GetRoot()
-				if this and this.isGameMasterChar then
-					return true
-				end
-			end
-		end
-		return false
-	end
-
-	--[[ 
-	lvlBtnAbility_array mapping:
-	0 - hasPoints:boolean
-	1 = isCivilAbility:boolean
-	2 = groupId:number
-	3 = statId:number
-	4 = isVisible:boolean
-
-	lvlBtnAbility_array mapping for statsPanel_c:
-	0 = isCivilAbility:boolean
-	1 - hasPoints:boolean
-	2 = groupId:number
-	3 = statId:number
-	4 = isVisible:boolean
-	]]
-	---@param ui UIObject
-	---@param main CharacterSheetMainTimeline
-	local function toggleAbilityButtonVisibility(ui, main)
-		local lvlBtnAbility_array = main.lvlBtnAbility_array
-		if lvlBtnAbility_array ~= nil and lvlBtnAbility_array[0] ~= nil then
-			local maxAbility = Ext.ExtraData.CombatAbilityCap or 10
-			local maxCivil = Ext.ExtraData.CivilAbilityCap or 5
-
-			local character = GameHelpers.Client.GetCharacterSheetCharacter(main)
-			local abilityPoints = GetAvailablePoints("combat", main)
-			local civilPoints = GetAvailablePoints("civil", main)
-
-			local i = #lvlBtnAbility_array
-			for abilityName,data in pairs(missingAbilities) do
-				if AbilityManager.RegisteredCount[abilityName] > 0 then
-					local canAddPoints = IsGameMaster(ui, main)
-					if not canAddPoints then
-						if not data.Civil then
-							canAddPoints = abilityPoints > 0 and (character.Stats[abilityName] or 0) < maxAbility
-						else
-							canAddPoints = civilPoints > 0 and (character.Stats[abilityName]or 0) < maxCivil
-						end
-					end
-
-					local abilityID = Data.AbilityEnum[abilityName]
-					if canAddPoints then
-						if not Vars.ControllerEnabled then
-							lvlBtnAbility_array[i] = true -- hasPoints
-							lvlBtnAbility_array[i+1] = data.Civil -- isCivilAbility
-						else
-							lvlBtnAbility_array[i] = data.Civil -- isCivilAbility
-							lvlBtnAbility_array[i+1] = true -- hasPoints
-						end
-						lvlBtnAbility_array[i+2] = data.Group -- groupId
-						lvlBtnAbility_array[i+3] = abilityID -- statId
-						lvlBtnAbility_array[i+4] = true -- isVisible
-						-- if Vars.DebugMode then
-						-- 	PrintLog("[LeaderLib:addMissingAbilities] Enabled point button for [%s] = (%s)", abilityID, abilityName)
-						-- end
-						i = i + 5
-					else
-						--Needs to be hidden again since the button will persist
-						if not Vars.ControllerEnabled then
-							main.stats_mc.setAbilityPlusVisible(data.Civil,data.Group,abilityID,false)
-						else
-							-- setBtnVisible(groupID:Number, statID:Number, hasPoints:Boolean, isVisible:Boolean)
-							-- hasPoints = true hides the plus button, false hides the minus button
-							if data.Civil then
-								main.mainpanel_mc.stats_mc.civilAbilities_mc.setBtnVisible(data.Group,abilityID,true,false)
-							else
-								main.mainpanel_mc.stats_mc.combatAbilities_mc.setBtnVisible(data.Group,abilityID,true,false)
-							end
-						end
-					end
-				end
-			end
-		end
-	end
-
-	---@param ui UIObject
-	function AbilityManager.OnCharacterSheetUpdating(ui, main, hasArrayValues)
-		if hasArrayValues then
-			addMissingAbilities(ui, main)
-		end
-		toggleAbilityButtonVisibility(ui, main)
-	end
-
 	function AbilityManager.UpdateCharacterSheetPoints(ui, method, main, amount)
-		local character = GameHelpers.Client.GetCharacterSheetCharacter(main)
+		local character = Client:GetCharacter()
 		local id = character.NetID
 		if Vars.DebugMode then
 			PrintLog("%s(%s) for %s (%s)", method, amount, character.MyGuid, character.NetID)
@@ -360,69 +227,70 @@ if Ext.IsClient() then
 		end)
 	end
 
-	--[[ 
-	abilityArray mapping:
-	0 = group:uint
-	1 = title:string -- The group header, like Skills, Weapons, Defense, Craftsmanship, Nasty Deeds, Personality
-	2 = abilityID:number
-	3 = displayName:string
-	4 = valueText:integer
-	5 = delta:integer -- ability cap?
-	6 = isCivil:boolean
+	---@class AbilityManagerUIEntry
+	---@field ID string
+	---@field IntegerID integer
+	---@field DisplayName string
+	---@field IsCivil boolean
+	---@field GroupID integer
+	---@field GroupTitle string
+	---@field AddPointsTooltip string
+	---@field Value integer
+	---@field Delta integer
+	---@field IsCustom boolean
 
-	abilityArray mapping for characterCreation_c:
-	0 = group:uint
-	1 = title:string -- The group header, like Skills, Weapons, Defense, Craftsmanship, Nasty Deeds, Personality
-	2 = abilityID:number
-	3 = displayName:string
-	4 = valueText:integer
-	5 = delta:integer -- ability cap?
-	6 = isCivil:boolean
-	]]
+	---@private
+	---@param player EclCharacter
+	---@param civilOnly boolean|nil
+	---@return fun():AbilityManagerUIEntry
+	function AbilityManager.GetVisible(player, civilOnly, this)
+		local abilities = {}
+		local tooltip = LocalizedText.UI.AbilityPlusTooltip:ReplacePlaceholders(Ext.ExtraData.CombatAbilityLevelGrowth)
 
-	---@param ui UIObject
-	local function addMissingAbilitiesToCC(ui, main, arrayName)
-		---@type EclCharacter
-		local character = Client:GetCharacter()
-		local abilityArray = main[arrayName]
-		if abilityArray ~= nil then
-			local i = #abilityArray
-			local total = 0
-			for abilityName,data in pairs(missingAbilities) do
-				if AbilityManager.RegisteredCount[abilityName] > 0 then
-					local abilityID = Data.AbilityEnum[abilityName]
-					local groupTitle = ""
-					if not data.Civil then
-						groupTitle = combatAbilityGroupTitle[data.Group].Value
+		local abilityPoints = GetAvailablePoints("combat", this)
+		local civilPoints = GetAvailablePoints("civil", this)
+	
+		local maxAbility = Ext.ExtraData.CombatAbilityCap or 10
+		local maxCivil = Ext.ExtraData.CivilAbilityCap or 5
+
+		for numId,id in Data.Ability:Get() do
+			local data = AbilityManager.Data.Abilities[id] or AbilityManager.Data.DOSAbilities[id]
+			if data ~= nil and (civilOnly == true and data.Civil) or (civilOnly == false and not data.Civil) then
+				if AbilityManager.CanAddAbility(id, player) then
+					local canAddPoints = false
+					if civilOnly then
+						canAddPoints = civilPoints > 0 and player.Stats[id] < maxCivil
 					else
-						groupTitle = civilAbilityGroupTitle[data.Group].Value
+						canAddPoints = abilityPoints > 0 and player.Stats[id] < maxAbility
 					end
-					abilityArray[i] = data.Group -- groupId
-					abilityArray[i+1] = groupTitle
-					abilityArray[i+2] = abilityID -- abilityID
-					abilityArray[i+3] = GameHelpers.GetAbilityName(abilityName) -- displayName
-					local statVal = 0
-					if character ~= nil then
-						statVal = character.Stats[abilityName] or 0
-					end
-					abilityArray[i+4] = statVal -- value
-					abilityArray[i+5] = statVal --delta
-					abilityArray[i+6] = data.Civil -- isCivilAbility
-					--PrintDebug(string.format("[LeaderLib:addMissingAbilities] Added ability [%s] = (%s)", abilityID, abilityName))
-					i = i + 7
-					total = total + 1
+					local name = GameHelpers.GetAbilityName(id)
+					local isCivil = data.Civil == true
+					local groupID = data.Group
+					local statVal = player.Stats[id] or 0
+					---@type TalentManagerUITalentEntry
+					local data = {
+						ID = id,
+						IntegerID = Data.AbilityEnum[id],
+						DisplayName = name,
+						IsCivil = isCivil,
+						GroupID = groupID,
+						IsCustom = false,
+						Value = statVal,
+						Delta = statVal,
+						AddPointsTooltip = tooltip,
+						CanAdd = canAddPoints,
+						CanRemove = false,
+					}
+					abilities[#abilities+1] = data
 				end
 			end
-			--PrintDebug(string.format("[LeaderLib:addMissingAbilities] Added abilities to the character sheet. i[%s] Total(%s)", i, total))
 		end
-	end
-
-	---@param ui UIObject
-	function AbilityManager.OnCharacterCreationUpdating(ui, method, main)
-		if method == "updateAbilities" then
-			local hasArrayValues = #main.abilityArray > 0
-			if hasArrayValues then
-				addMissingAbilitiesToCC(ui, main, "abilityArray")
+		local i = 0
+		local count = #abilities
+		return function ()
+			i = i + 1
+			if i <= count then
+				return abilities[i]
 			end
 		end
 	end

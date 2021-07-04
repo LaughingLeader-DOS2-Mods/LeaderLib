@@ -477,11 +477,13 @@ function CustomStatSystem:UpdateAvailablePoints(ui)
 		local this = ui:GetRoot()
 		this.setAvailableCustomStatPoints(self:GetTotalAvailablePoints())
 		local stats = this.stats_mc.customStats_mc.stats_array
-		for i=0,#stats-1 do
-			local stats_mc = stats[i]
-			if stats_mc then
-				stats_mc.plus_mc.visible = self:GetCanAddPoints(ui, stats_mc.statId)
-				stats_mc.minus_mc.visible = self:GetCanRemovePoints(ui, stats_mc.statId)
+		if stats then
+			for i=0,#stats-1 do
+				local stats_mc = stats[i]
+				if stats_mc then
+					stats_mc.plus_mc.visible = self:GetCanAddPoints(ui, stats_mc.statId)
+					stats_mc.minus_mc.visible = self:GetCanRemovePoints(ui, stats_mc.statId)
+				end
 			end
 		end
 	end

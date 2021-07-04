@@ -697,7 +697,7 @@ end
 ---@private
 ---@param player EclCharacter
 ---@return fun():TalentManagerUITalentEntry
-function TalentManager.GetVisibleTalents(player)
+function TalentManager.GetVisible(player)
 	local talents = {}
 	for numId,talentId in Data.Talents:Get() do
 		local hasTalent = player.Stats[TalentManager.Data.TalentStatAttributes[talentId]] == true
@@ -733,9 +733,9 @@ function TalentManager.GetVisibleTalents(player)
 	end
 end
 
-Ext.Require("Client/UI/Talents/CharacterSheetTalents.lua")
-Ext.Require("Client/UI/Talents/CharacterCreationTalents.lua")
-Ext.Require("Client/UI/Talents/GamepadSupport.lua")
+-- Ext.Require("Client/UI/Talents/CharacterSheetTalents.lua")
+-- Ext.Require("Client/UI/Talents/CharacterCreationTalents.lua")
+-- Ext.Require("Client/UI/Talents/GamepadSupport.lua")
 
 Ext.RegisterListener("SessionLoaded", function()
 	TalentManager.LoadRequirements()
@@ -744,5 +744,5 @@ Ext.RegisterListener("SessionLoaded", function()
 		TalentManager.ToggleDivineTalents(true)
 	end
 	--TalentManager.HideTalent("LoneWolf", ModuleUUID)
-	TalentManager.Gamepad.RegisterListeners()
+	--TalentManager.Gamepad.RegisterListeners()
 end)

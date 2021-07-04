@@ -73,7 +73,7 @@ package characterSheet_fla
 			removeEventListener(MouseEvent.MOUSE_UP,this.onUp);
 		}
 		
-		private function frame1() : *
+		public function frame1() : *
 		{
 			this.base = root as MovieClip;
 			this.stat = parent as MovieClip;

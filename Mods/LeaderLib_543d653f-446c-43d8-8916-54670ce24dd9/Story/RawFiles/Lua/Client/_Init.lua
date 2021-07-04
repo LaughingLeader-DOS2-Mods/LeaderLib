@@ -23,6 +23,8 @@ Vars.ControllerEnabled = (Ext.GetBuiltinUI("Public/Game/GUI/msgBox_c.swf") or Ex
 -- if controllerUI ~= nil then
 -- 	Ext.Require("Client/UI/Game.Tooltip.Controllers.lua")
 -- end
+
+Ext.Require("Client/Classes/_Init.lua")
 Ext.Require("Client/Data/_Init.lua")
 Ext.Require("Client/ClientHelpers.lua")
 Ext.Require("Client/ClientNetMessages.lua")

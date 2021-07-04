@@ -784,7 +784,8 @@ package characterCreation_c_fla
 		
 		public function updateTalents() : *
 		{
-			this.CCPanel_mc.talents_mc.updateTalents(this.talentArray,this.racialTalentArray);
+			//LeaderLib - Disabled since we're just adding talents through Lua.
+			/*this.CCPanel_mc.talents_mc.updateTalents(this.talentArray,this.racialTalentArray);*/
 			this.talentArray = new Array();
 			this.racialTalentArray = new Array();
 		}

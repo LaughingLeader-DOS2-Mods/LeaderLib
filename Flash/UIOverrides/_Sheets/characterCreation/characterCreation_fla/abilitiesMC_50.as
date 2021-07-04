@@ -125,6 +125,14 @@ package characterCreation_fla
 			this.postUpdate(this.civilAbilityGroupList);
 			this.postUpdate(this.abilityGroupList);
 		}
+
+		public function updateComplete() : *
+		{
+			this.freePoints_txt.htmlText = this.root_mc.textArray[13] + " " + this.root_mc.availableAbilityPoints;
+			this.freePoints2_txt.htmlText = this.root_mc.textArray[13] + " " + this.root_mc.availableCivilPoints;
+			this.postUpdate(this.civilAbilityGroupList);
+			this.postUpdate(this.abilityGroupList);
+		}
 		
 		public function postUpdate(param1:scrollList) : *
 		{
@@ -141,6 +149,12 @@ package characterCreation_fla
 		{
 			var abilityGroup_mc:MovieClip = this.findGroup(groupID,groupTitle,isCivil);
 			abilityGroup_mc.addAbility(abilityID,abilityLabel,abilityValue,abilityDelta,isCivil);
+		}
+
+		public function addCustomAbility(groupID:uint, groupTitle:String, customID:String, abilityLabel:String, abilityValue:Number, abilityDelta:Number, isCivil:Boolean) : *
+		{
+			var abilityGroup_mc:MovieClip = this.findGroup(groupID,groupTitle,isCivil);
+			abilityGroup_mc.addCustomAbility(customID,abilityLabel,abilityValue,abilityDelta,isCivil);
 		}
 		
 		public function findGroup(groupID:uint, title:String, isCivil:Boolean) : MovieClip

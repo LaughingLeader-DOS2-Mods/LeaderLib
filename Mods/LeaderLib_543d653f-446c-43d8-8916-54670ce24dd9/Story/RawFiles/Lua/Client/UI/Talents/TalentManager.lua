@@ -684,6 +684,53 @@ function TalentManager.HideTalents(uiType)
 	end
 end
 
+---@class TalentManagerUITalentEntry
+---@field ID string
+---@field IntegerID integer
+---@field HasTalent boolean
+---@field DisplayName string
+---@field IsRacial boolean
+---@field IsChoosable boolean
+---@field IsCustom boolean
+
+---@private
+---@param player EclCharacter
+---@return fun():TalentManagerUITalentEntry
+function TalentManager.GetVisibleTalents(player)
+	local talents = {}
+	for numId,talentId in Data.Talents:Get() do
+		local hasTalent = player.Stats[TalentManager.Data.TalentStatAttributes[talentId]] == true
+		if TalentManager.CanAddTalent(talentId, hasTalent) then
+			local talentState = TalentManager.GetTalentState(player, talentId, hasTalent)
+			local name = TalentManager.GetTalentDisplayName(talentId, talentState)
+			local id = Data.TalentEnum[talentId]
+			local isRacial = TalentManager.Data.RacialTalents[talentId] ~= nil
+			local isChoosable = not isRacial and talentState ~= TalentManager.Data.TalentState.Locked
+			if hasTalent then 
+				fprint(LOGLEVEL.WARNING, "[%s] Name(%s) State(%s) hasTalent(%s) isChoosable(%s) isRacial(%s)", talentId, name, talentState, hasTalent, isChoosable, isRacial)
+			end
+			---@type TalentManagerUITalentEntry
+			local data = {
+				ID = talentId,
+				IntegerID = Data.TalentEnum[talentId],
+				HasTalent = hasTalent,
+				DisplayName = name,
+				IsRacial = isRacial,
+				IsChoosable = isChoosable
+			}
+			talents[#talents+1] = data
+		end
+	end
+	local i = 0
+	local count = #talents
+	return function ()
+		i = i + 1
+		if i <= count then
+			return talents[i]
+		end
+	end
+end
+
 Ext.Require("Client/UI/Talents/CharacterSheetTalents.lua")
 Ext.Require("Client/UI/Talents/CharacterCreationTalents.lua")
 Ext.Require("Client/UI/Talents/GamepadSupport.lua")

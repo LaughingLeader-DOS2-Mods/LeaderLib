@@ -51,13 +51,14 @@ package
 
 		public function addCustomAbility(customID:String, label:String, value:int, delta:int, isCivil:Boolean) : *
 		{
-			var ability_mc:MovieClip = this.abilities.getElementByNumber("customID",customID);
+			var ability_mc:MovieClip = this.abilities.getElementByString("customID",customID);
 			if(!ability_mc)
 			{
 				ability_mc = new abilEntry();
 				ability_mc.onInit(this.root_mc,this.root_mc.CCPanel_mc.abilities_mc.onPlus,this.root_mc.CCPanel_mc.abilities_mc.onMin);
 				this.abilities.addElement(ability_mc,false);
 				ability_mc.customID = customID;
+				ability_mc.isCustom = true;
 				ability_mc.isCivil = isCivil;
 				ability_mc.scrollList = this.ownerList;
 			}

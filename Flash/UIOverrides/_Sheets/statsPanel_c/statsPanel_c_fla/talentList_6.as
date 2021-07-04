@@ -49,40 +49,79 @@ package statsPanel_c_fla
 			}
 		}
 		
-		public function addTalent(param1:Number, param2:String, param3:Number) : *
+		public function addTalent(id:Number, displayName:String, state:Number) : *
 		{
-			var val4:MovieClip = this.statList.getElementByNumber("id",param1);
-			if(val4 == null)
+			var talent_mc:MovieClip = this.statList.getElementByNumber("id",id);
+			if(talent_mc == null)
 			{
-				val4 = new Talent();
-				val4.isStat = true;
-				val4.hl_mc.visible = false;
-				this.statList.addElement(val4,false);
-				val4.id = param1;
+				talent_mc = new Talent();
+				talent_mc.isStat = true;
+				talent_mc.hl_mc.visible = false;
+				this.statList.addElement(talent_mc,false);
+				talent_mc.id = id;
 			}
-			val4.talentState = param3;
-			val4.label_txt.htmlText = param2;
-			val4.labelStr = val4.label_txt.text;
-			val4.heightOverride = Math.ceil(val4.label_txt.textHeight / this.elementDist) * this.elementDist;
-			switch(param3)
+			talent_mc.talentState = state;
+			talent_mc.label_txt.htmlText = displayName;
+			talent_mc.labelStr = talent_mc.label_txt.text;
+			talent_mc.heightOverride = Math.ceil(talent_mc.label_txt.textHeight / this.elementDist) * this.elementDist;
+			switch(state)
 			{
 				case 0:
 				case 1:
-					val4.bullet_mc.visible = true;
-					val4.label_txt.textColor = this.defaultColour;
-					val4.plus_mc.visible = false;
+					talent_mc.bullet_mc.visible = true;
+					talent_mc.label_txt.textColor = this.defaultColour;
+					talent_mc.plus_mc.visible = false;
 					break;
 				case 2:
-					val4.bullet_mc.visible = false;
-					val4.label_txt.textColor = this.defaultColour;
-					val4.plus_mc.visible = this.base.pointsMode;
+					talent_mc.bullet_mc.visible = false;
+					talent_mc.label_txt.textColor = this.defaultColour;
+					talent_mc.plus_mc.visible = this.base.pointsMode;
 					break;
 				case 3:
-					val4.bullet_mc.visible = false;
-					val4.label_txt.textColor = 13312300;
-					val4.plus_mc.visible = false;
+					talent_mc.bullet_mc.visible = false;
+					talent_mc.label_txt.textColor = 13312300;
+					talent_mc.plus_mc.visible = false;
 			}
-			val4.bullet_mc.gotoAndStop(this.getTalentStateFrame(param3));
+			talent_mc.bullet_mc.gotoAndStop(this.getTalentStateFrame(state));
+			ExternalInterface.call("talentAdded", talent_mc.id);
+		}
+		
+		public function addCustomTalent(customID:String, displayName:String, state:Number) : *
+		{
+			var talent_mc:MovieClip = this.statList.getElementByString("customID",customID);
+			if(talent_mc == null)
+			{
+				talent_mc = new Talent();
+				talent_mc.isStat = true;
+				talent_mc.hl_mc.visible = false;
+				this.statList.addElement(talent_mc,false);
+				talent_mc.customID = customID;
+				talent_mc.isCustom = true;
+			}
+			talent_mc.talentState = state;
+			talent_mc.label_txt.htmlText = displayName;
+			talent_mc.labelStr = talent_mc.label_txt.text;
+			talent_mc.heightOverride = Math.ceil(talent_mc.label_txt.textHeight / this.elementDist) * this.elementDist;
+			switch(state)
+			{
+				case 0:
+				case 1:
+					talent_mc.bullet_mc.visible = true;
+					talent_mc.label_txt.textColor = this.defaultColour;
+					talent_mc.plus_mc.visible = false;
+					break;
+				case 2:
+					talent_mc.bullet_mc.visible = false;
+					talent_mc.label_txt.textColor = this.defaultColour;
+					talent_mc.plus_mc.visible = this.base.pointsMode;
+					break;
+				case 3:
+					talent_mc.bullet_mc.visible = false;
+					talent_mc.label_txt.textColor = 13312300;
+					talent_mc.plus_mc.visible = false;
+			}
+			talent_mc.bullet_mc.gotoAndStop(this.getTalentStateFrame(state));
+			ExternalInterface.call("customTalentAdded", talent_mc.customID);
 		}
 		
 		public function getTalentStateFrame(param1:Number) : Number

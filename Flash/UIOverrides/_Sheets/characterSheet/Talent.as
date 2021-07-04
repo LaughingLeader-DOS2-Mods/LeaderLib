@@ -21,7 +21,7 @@ package
 		// Set in talentsMC_51.addTalentElement, we're just adding it here for sanity
 		public var talentID:uint;
 		//Custom non-standard talents
-		public var customTalentId:String;
+		public var customID:String;
 		public var isCustom:Boolean = false;
 		
 		public function Talent()
@@ -40,7 +40,7 @@ package
 			}
 			else
 			{
-				this.base.showCustomTooltipForMC(this, "showCustomTalentTooltip", this.customTalentId);
+				this.base.showCustomTooltipForMC(this, "showCustomTalentTooltip", this.customID);
 			}
 			
 			this.hl_mc.visible = true;

@@ -692,6 +692,7 @@ end
 ---@field IsRacial boolean
 ---@field IsChoosable boolean
 ---@field IsCustom boolean
+---@field State integer
 
 ---@private
 ---@param player EclCharacter
@@ -716,7 +717,8 @@ function TalentManager.GetVisibleTalents(player)
 				HasTalent = hasTalent,
 				DisplayName = name,
 				IsRacial = isRacial,
-				IsChoosable = isChoosable
+				IsChoosable = isChoosable,
+				State = talentState
 			}
 			talents[#talents+1] = data
 		end

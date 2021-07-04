@@ -603,8 +603,11 @@ package characterSheet_fla
 			var minusVisible:Boolean = false;
 			var plusVisible:Boolean = false;
 			var spacing:Number = NaN;
-			var updateCivil:Boolean = false;
-			var updateCombat:Boolean = false;
+
+			var updateAbilities:Boolean = this.ability_array.length > 0;
+			var updateCivil:Boolean = updateAbilities && this.ability_array[0] == true;
+			var updateTalents:Boolean = this.talent_array.length > 0;
+
 			var val4:Number = getTimer();
 			var i:uint = 0;
 			while(i < this.primStat_array.length)
@@ -612,6 +615,7 @@ package characterSheet_fla
 				this.addPrimaryStat(this.primStat_array[i],this.primStat_array[i + 1],this.primStat_array[i + 2],this.primStat_array[i + 3]);
 				i = i + 4;
 			}
+			/*
 			i = 0;
 			while(i < this.ability_array.length)
 			{
@@ -627,6 +631,7 @@ package characterSheet_fla
 				this.addAbility(isCivil,this.ability_array[i + 1],this.ability_array[i + 2],this.ability_array[i + 3],this.ability_array[i + 4],this.ability_array[i + 5],this.ability_array[i + 6]);
 				i = i + 7;
 			}
+			*/
 			i = 0;
 			while(i < this.secStat_array.length)
 			{
@@ -667,11 +672,6 @@ package characterSheet_fla
 				updateCustom = true;
 				this.stats_mc.customStats_mc.addCustomStat(this.customStats_array[i],this.customStats_array[i + 1],this.customStats_array[i + 2],this.customStats_array[i + 3],this.customStats_array[i + 4],this.customStats_array[i + 5]);
 				i = i + 6;
-			}
-
-			if(updateCustom) {
-				//this.stats_mc.customStats_mc.recountAllPoints();
-				//this.stats_mc.customStats_mc.positionElements();
 			}
 
 			i = 0;
@@ -716,6 +716,7 @@ package characterSheet_fla
 				}
 			}
 			i = 0;
+			/*
 			while(i < this.lvlBtnAbility_array.length)
 			{
 				canAddPoints = Boolean(this.lvlBtnAbility_array[i]);
@@ -729,7 +730,6 @@ package characterSheet_fla
 				}
 				i = i + 5;
 			}
-			/*
 			i = 0;
 			while(i < this.lvlBtnTalent_array.length)
 			{
@@ -744,7 +744,7 @@ package characterSheet_fla
 				}
 				i = i + 3;
 			}
-			*/
+			
 			if(updateCivil)
 			{
 				this.stats_mc.civicAbilityHolder_mc.list.positionElements();
@@ -755,14 +755,16 @@ package characterSheet_fla
 				this.stats_mc.combatAbilityHolder_mc.list.positionElements();
 				this.stats_mc.recountAbilityPoints(false);
 			}
+			if(this.talent_array.length > 0)
+			{
+				this.stats_mc.talentHolder_mc.list.positionElements();
+			}
+			*/
+
 			if(this.tags_array.length > 0)
 			{
 				this.stats_mc.tagsHolder_mc.list.positionElements();
 			}
-			// if(this.talent_array.length > 0)
-			// {
-			// 	this.stats_mc.talentHolder_mc.list.positionElements();
-			// }
 			if(this.customStats_array.length > 0)
 			{
 				this.stats_mc.customStats_mc.positionElements();
@@ -782,7 +784,7 @@ package characterSheet_fla
 			this.stats_mc.resetListPositions();
 			this.stats_mc.recheckScrollbarVisibility();
 			this.initDone = true;
-			ExternalInterface.call("characterSheetUpdateDone");
+			ExternalInterface.call("characterSheetUpdateDone", updateTalents, updateAbilities, updateCivil);
 		}
 		
 		public function setStatPlusVisible(statId:Number, isVisible:Boolean) : *

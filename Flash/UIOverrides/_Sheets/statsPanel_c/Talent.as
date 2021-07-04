@@ -15,7 +15,7 @@ package
 		//LeaderLib Changes
 		public var talentID:uint;
 		//Custom non-standard talents
-		public var customTalentId:String;
+		public var customID:String;
 		public var isCustom:Boolean = false;
 		
 		public function Talent()
@@ -33,7 +33,7 @@ package
 			}
 			else
 			{
-				ExternalInterface.call("selectCustomTalent", this.customTalentId);
+				ExternalInterface.call("selectCustomTalent", this.customID);
 			}
 		}
 		

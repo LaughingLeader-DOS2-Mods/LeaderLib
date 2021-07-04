@@ -629,6 +629,7 @@ package statsPanel_c_fla
 			this.lvlBtnTalent_array = new Array();
 			this.customStats_array = new Array();
 			this.initDone = true;
+			ExternalInterface.call("characterSheetUpdateDone");
 		}
 		
 		public function setAmountOfPlayers(param1:Number) : *
@@ -665,9 +666,14 @@ package statsPanel_c_fla
 			}
 		}
 		
-		public function addTalent(param1:Number, param2:String, param3:Number) : *
+		public function addTalent(id:Number, displayName:String, state:Number) : *
 		{
-			this.mainpanel_mc.stats_mc.talents_mc.addTalent(param1,param2,param3);
+			this.mainpanel_mc.stats_mc.talents_mc.addTalent(id,displayName,state);
+		}
+
+		public function addCustomTalent(id:String, displayName:String, state:Number) : *
+		{
+			this.mainpanel_mc.stats_mc.talents_mc.addCustomTalent(id,displayName,state);
 		}
 		
 		public function removeTalents() : *

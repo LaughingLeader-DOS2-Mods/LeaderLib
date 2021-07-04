@@ -736,14 +736,19 @@ package characterSheet_fla
 			return null;
 		}
 		
-		public function getTalent(param1:Number) : MovieClip
+		public function getTalent(id:Number) : MovieClip
 		{
-			return this.talentHolder_mc.list.getElementByNumber("statId",param1);
+			return this.talentHolder_mc.list.getElementByNumber("statId",id);
+		}
+
+		public function getCustomTalent(customID:String) : MovieClip
+		{
+			return this.talentHolder_mc.list.getElementByString("customID",customID);
 		}
 		
-		public function getTag(param1:Number) : MovieClip
+		public function getTag(id:Number) : MovieClip
 		{
-			return this.tagsHolder_mc.list.getElementByNumber("statId",param1);
+			return this.tagsHolder_mc.list.getElementByNumber("statId",id);
 		}
 		
 		public function setVisibilityAbilityButtons(isCivil:Boolean, isVisible:Boolean) : *
@@ -967,7 +972,34 @@ package characterSheet_fla
 			talent_mc.talentState = talentState;
 			talent_mc.bullet_mc.gotoAndStop(this.getTalentStateFrame(talentState));
 			//trace("addTalent", labelText, statId, talentState, talent_mc);
-			ExternalInterface.call("talentAdded", talent_mc.id)
+			ExternalInterface.call("talentAdded", talent_mc.id);
+		}
+
+		public function addCustomTalent(labelText:String, customID:String, talentState:Number) : *
+		{
+			var talent_mc:MovieClip = this.getCustomTalent(customID);
+			if(!talent_mc)
+			{
+				talent_mc = new Talent();
+				talent_mc.label_txt.autoSize = "left";
+				talent_mc.tooltip = statId;
+				talent_mc.customID = customID;
+				talent_mc.isCustom = true;
+				talent_mc.minus_mc.x = 260;
+				talent_mc.plus_mc.x = talent_mc.minus_mc.x + talent_mc.minus_mc.width;
+				talent_mc.plus_mc.visible = talent_mc.minus_mc.visible = false;
+				talent_mc.id = this.talentHolder_mc.list.length;
+				this.talentHolder_mc.list.addElement(talent_mc,false);
+			}
+			talent_mc.label_txt.htmlText = labelText;
+			talent_mc.hl_mc.width = this.statsElWidth;
+			talent_mc.hl_mc.height = talent_mc.label_txt.textHeight + talent_mc.label_txt.y;
+			talent_mc.plus_mc.y = talent_mc.minus_mc.y = talent_mc.hl_mc.y + Math.ceil((talent_mc.hl_mc.height - talent_mc.minus_mc.height) * 0.5) - 3;
+			talent_mc.label = talent_mc.label_txt.text;
+			talent_mc.talentState = talentState;
+			talent_mc.bullet_mc.gotoAndStop(this.getTalentStateFrame(talentState));
+			//trace("addTalent", labelText, statId, talentState, talent_mc);
+			ExternalInterface.call("customTalentAdded", talent_mc.customID);
 		}
 		
 		public function getTalentStateFrame(param1:Number) : Number

@@ -708,30 +708,37 @@ package characterSheet_fla
 			}
 		}
 		
-		public function getStat(param1:Number) : MovieClip
+		public function getStat(id:*, isCustom:Boolean=false) : MovieClip
 		{
-			return this.primaryStatList.getElementByNumber("statId",param1);
+			if(!isCustom)
+			{
+				return this.primaryStatList.getElementByNumber("statId",id);
+			}
+			else
+			{
+				return this.primaryStatList.getElementByString("statId",id);
+			}
 		}
 		
-		public function getSecStat(param1:Number) : MovieClip
+		public function getSecStat(id:*, isCustom:Boolean=false) : MovieClip
 		{
-			var val2:MovieClip = this.resistanceStatList.getElementByNumber("statId",param1);
-			if(val2 == null)
+			var stat_mc:MovieClip = !isCustom?this.resistanceStatList.getElementByNumber("statId",id) : this.resistanceStatList.getElementByString("statId",id);
+			if(stat_mc == null)
 			{
-				val2 = this.secondaryStatList.getElementByNumber("statId",param1);
+				stat_mc = !isCustom?this.secondaryStatList.getElementByNumber("statId",id) : this.secondaryStatList.getElementByString("statId",id);
 			}
-			if(val2 == null)
+			if(stat_mc == null)
 			{
-				val2 = this.infoStatList.getElementByNumber("statId",param1);
+				stat_mc = !isCustom?this.infoStatList.getElementByNumber("statId",id) : this.infoStatList.getElementByString("statId",id);
 			}
-			if(val2 == null)
+			if(stat_mc == null)
 			{
-				val2 = this.expStatList.getElementByNumber("statId",param1);
+				stat_mc = !isCustom?this.expStatList.getElementByNumber("statId",id) : this.expStatList.getElementByString("statId",id);
 			}
-			return val2;
+			return stat_mc;
 		}
 		
-		public function getAbility(isCivil:Boolean, groupId:Number, statId:Number) : MovieClip
+		public function getAbility(isCivil:Boolean, groupId:Number, statId:*, isCustom:Boolean=false) : MovieClip
 		{
 			var holder:MovieClip = this.combatAbilityHolder_mc;
 			if(isCivil)
@@ -741,39 +748,19 @@ package characterSheet_fla
 			var ability_mc:MovieClip = holder.list.getElementByNumber("groupId",groupId);
 			if(ability_mc)
 			{
-				return ability_mc.list.getElementByNumber("statId",statId);
+				return !isCustom ? ability_mc.list.getElementByNumber("statId",statId) : ability_mc.list.getElementByString("statId",statId);
 			}
 			return null;
 		}
 		
-		public function getCustomAbility(isCivil:Boolean, groupId:Number, customID:String) : MovieClip
+		public function getTalent(id:*, isCustom:Boolean=false) : MovieClip
 		{
-			var holder:MovieClip = this.combatAbilityHolder_mc;
-			if(isCivil)
-			{
-				holder = this.civicAbilityHolder_mc;
-			}
-			var ability_mc:MovieClip = holder.list.getElementByNumber("groupId",groupId);
-			if(ability_mc)
-			{
-				return ability_mc.list.getElementByString("customID",customID);
-			}
-			return null;
+			return !isCustom ? this.talentHolder_mc.list.getElementByNumber("statId",id) : this.talentHolder_mc.list.getElementByString("statId",id);
 		}
 		
-		public function getTalent(id:Number) : MovieClip
+		public function getTag(id:*, isCustom:Boolean=false) : MovieClip
 		{
-			return this.talentHolder_mc.list.getElementByNumber("statId",id);
-		}
-
-		public function getCustomTalent(customID:String) : MovieClip
-		{
-			return this.talentHolder_mc.list.getElementByString("customID",customID);
-		}
-		
-		public function getTag(id:Number) : MovieClip
-		{
-			return this.tagsHolder_mc.list.getElementByNumber("statId",id);
+			return !isCustom ? this.tagsHolder_mc.list.getElementByNumber("statId",id) : this.tagsHolder_mc.list.getElementByString("statId",id);
 		}
 		
 		public function setVisibilityAbilityButtons(isCivil:Boolean, isVisible:Boolean) : *
@@ -859,28 +846,28 @@ package characterSheet_fla
 			}
 		}
 		
-		public function addText(param1:String, param2:String, param3:Boolean) : *
+		public function addText(text:String, tooltip:String, isSecondary:Boolean) : *
 		{
-			var val4:MovieClip = new Text();
-			val4.label_txt.autoSize = "left";
-			val4.label_txt.htmlText = param1;
-			val4.tooltip = param2;
-			if(param3)
+			var text_mc:MovieClip = new Text();
+			text_mc.label_txt.autoSize = "left";
+			text_mc.label_txt.htmlText = text;
+			text_mc.tooltip = tooltip;
+			if(isSecondary)
 			{
-				this.secondaryStatList.addElement(val4);
+				this.secondaryStatList.addElement(text_mc);
 			}
 			else
 			{
-				this.primaryStatList.addElement(val4);
+				this.primaryStatList.addElement(text_mc);
 			}
 		}
 		
-		public function addSpacing(param1:Number, param2:Number) : *
+		public function addSpacing(listId:Number, height:Number) : *
 		{
-			var val3:MovieClip = new Spacing();
-			val3.height = param2;
-			val3.heightOverride = param2;
-			this.addToListWithId(param1,val3);
+			var spacing_mc:MovieClip = new Spacing();
+			spacing_mc.height = height;
+			spacing_mc.heightOverride = height;
+			this.addToListWithId(listId,spacing_mc);
 		}
 		
 		public function addAbilityGroup(isCivil:Boolean, groupId:Number, labelText:String) : *
@@ -898,10 +885,10 @@ package characterSheet_fla
 			}
 		}
 		
-		public function addAbility(isCivil:Boolean, groupId:Number, statId:Number, labelText:String, valueText:String, plusTooltip:String = "", minusTooltip:String = "", plusVisible:Boolean = false, minusVisible:Boolean = false) : *
+		public function addAbility(isCivil:Boolean, groupId:Number, statId:*, labelText:String, valueText:String, plusTooltip:String = "", minusTooltip:String = "", plusVisible:Boolean = false, minusVisible:Boolean = false, isCustom:Boolean=false) : *
 		{
 			var groupHolder:MovieClip = null;
-			var ability_mc:MovieClip = this.getAbility(isCivil,groupId,statId);
+			var ability_mc:MovieClip = this.getAbility(isCivil,groupId,statId,isCustom);
 			if(!ability_mc)
 			{
 				groupHolder = this.combatAbilityHolder_mc;
@@ -944,56 +931,8 @@ package characterSheet_fla
 			ability_mc.texts_mc.statPoints = 0;
 			ability_mc.hl_mc.height = ability_mc.abilTooltip_mc.height = ability_mc.texts_mc.label_txt.y + ability_mc.texts_mc.label_txt.textHeight - ability_mc.hl_mc.y;
 			ability_mc.texts_mc.text_txt.y = Math.round((ability_mc.hl_mc.height - ability_mc.texts_mc.text_txt.textHeight) * 0.5);
-		}
-
-		public function addCustomAbility(isCivil:Boolean, groupId:Number, customID:String, labelText:String, valueText:String, plusTooltip:String = "", minusTooltip:String = "", plusVisible:Boolean = false, minusVisible:Boolean = false) : *
-		{
-			var groupHolder:MovieClip = null;
-			var ability_mc:MovieClip = this.getCustomAbility(isCivil,groupId,customID);
-			if(!ability_mc)
-			{
-				groupHolder = this.combatAbilityHolder_mc;
-				if(isCivil)
-				{
-					groupHolder = this.civicAbilityHolder_mc;
-				}
-				ability_mc = new AbilityEl();
-				ability_mc.isCivil = isCivil;
-				groupHolder.list.addGroupElement(groupId,ability_mc,false);
-				ability_mc.texts_mc.plus_mc.visible = false;
-				ability_mc.texts_mc.minus_mc.visible = false;
-				ability_mc.customID = customID;
-				ability_mc.isCustom = true;
-				ability_mc.texts_mc.minus_mc.callbackStr = "minusCustomAbility";
-				ability_mc.texts_mc.plus_mc.callbackStr = "plusCustomAbility";
-				ability_mc.tooltip = customID;
-				ability_mc.texts_mc.id = groupHolder.list.length;
-				ability_mc.texts_mc.plus_mc.currentTooltip = "";
-				ability_mc.texts_mc.minus_mc.currentTooltip = "";
-				ability_mc.texts_mc.label_txt.autoSize = TextFieldAutoSize.LEFT;
-			}
-			ability_mc.texts_mc.plus_mc.tooltip = plusTooltip;
-			ability_mc.texts_mc.minus_mc.tooltip = minusTooltip;
-			ability_mc.texts_mc.plus_mc.visible = plusVisible;
-			ability_mc.texts_mc.minus_mc.visible = minusVisible;
-			if(ability_mc.texts_mc.plus_mc.currentTooltip != "" && ability_mc.texts_mc.plus_mc.currentTooltip != plusTooltip)
-			{
-				ExternalInterface.call("showTooltip",plusTooltip);
-				ability_mc.texts_mc.plus_mc.currentTooltip = plusTooltip;
-			}
-			if(ability_mc.texts_mc.minus_mc.currentTooltip != "" && ability_mc.texts_mc.minus_mc.currentTooltip != minusTooltip)
-			{
-				ExternalInterface.call("showTooltip",minusTooltip);
-				ability_mc.texts_mc.plus_mc.currentTooltip = minusTooltip;
-			}
-			ability_mc.texts_mc.label_txt.htmlText = labelText;
-			ability_mc.texts_mc.text_txt.htmlText = valueText;
-			ability_mc.textStr = ability_mc.texts_mc.label_txt.text;
-			ability_mc.am = Number(ability_mc.texts_mc.text_txt.text);
-			ability_mc.texts_mc.statBasePoints = Number(valueText);
-			ability_mc.texts_mc.statPoints = 0;
-			ability_mc.hl_mc.height = ability_mc.abilTooltip_mc.height = ability_mc.texts_mc.label_txt.y + ability_mc.texts_mc.label_txt.textHeight - ability_mc.hl_mc.y;
-			ability_mc.texts_mc.text_txt.y = Math.round((ability_mc.hl_mc.height - ability_mc.texts_mc.text_txt.textHeight) * 0.5);
+			ability_mc.MakeCustom(statId, isCustom);
+			ExternalInterface.call("abilityAdded", ability_mc.statId, ability_mc.id);
 		}
 		
 		public function recountAbilityPoints(isCivil:Boolean) : *
@@ -1031,9 +970,9 @@ package characterSheet_fla
 			}
 		}
 		
-		public function addTalent(labelText:String, statId:Number, talentState:Number, plusVisible:Boolean = false, minusVisible:Boolean = false) : *
+		public function addTalent(labelText:String, statId:Number, talentState:Number, plusVisible:Boolean = false, minusVisible:Boolean = false, isCustom:Boolean=false) : *
 		{
-			var talent_mc:MovieClip = this.getTalent(statId);
+			var talent_mc:MovieClip = this.getTalent(statId, isCustom);
 			if(!talent_mc)
 			{
 				talent_mc = new Talent();
@@ -1055,42 +994,13 @@ package characterSheet_fla
 			talent_mc.label = talent_mc.label_txt.text;
 			talent_mc.talentState = talentState;
 			talent_mc.bullet_mc.gotoAndStop(this.getTalentStateFrame(talentState));
-			//trace("addTalent", labelText, statId, talentState, talent_mc);
-			ExternalInterface.call("talentAdded", talent_mc.id);
+			talent_mc.MakeCustom(statId, isCustom);
+			ExternalInterface.call("talentAdded", talent_mc.statId, talent_mc.id);
 		}
 
-		public function addCustomTalent(labelText:String, customID:String, talentState:Number, plusVisible:Boolean = false, minusVisible:Boolean = false) : *
+		public function getTalentStateFrame(state:Number) : Number
 		{
-			var talent_mc:MovieClip = this.getCustomTalent(customID);
-			if(!talent_mc)
-			{
-				talent_mc = new Talent();
-				talent_mc.label_txt.autoSize = "left";
-				talent_mc.tooltip = statId;
-				talent_mc.customID = customID;
-				talent_mc.isCustom = true;
-				talent_mc.minus_mc.x = 260;
-				talent_mc.plus_mc.x = talent_mc.minus_mc.x + talent_mc.minus_mc.width;
-				//talent_mc.plus_mc.visible = talent_mc.minus_mc.visible = false;
-				talent_mc.id = this.talentHolder_mc.list.length;
-				this.talentHolder_mc.list.addElement(talent_mc,false);
-			}
-			talent_mc.plus_mc.visible = plusVisible;
-			talent_mc.minus_mc.visible = minusVisible;
-			talent_mc.label_txt.htmlText = labelText;
-			talent_mc.hl_mc.width = this.statsElWidth;
-			talent_mc.hl_mc.height = talent_mc.label_txt.textHeight + talent_mc.label_txt.y;
-			talent_mc.plus_mc.y = talent_mc.minus_mc.y = talent_mc.hl_mc.y + Math.ceil((talent_mc.hl_mc.height - talent_mc.minus_mc.height) * 0.5) - 3;
-			talent_mc.label = talent_mc.label_txt.text;
-			talent_mc.talentState = talentState;
-			talent_mc.bullet_mc.gotoAndStop(this.getTalentStateFrame(talentState));
-			//trace("addTalent", labelText, statId, talentState, talent_mc);
-			ExternalInterface.call("customTalentAdded", talent_mc.customID);
-		}
-		
-		public function getTalentStateFrame(param1:Number) : Number
-		{
-			switch(param1)
+			switch(state)
 			{
 				case 0:
 					return 2;
@@ -1105,31 +1015,33 @@ package characterSheet_fla
 			}
 		}
 		
-		public function addPrimaryStat(param1:Number, param2:String, param3:String, param4:Number) : *
+		public function addPrimaryStat(statId:*, displayName:String, value:String, tooltipId:Number, plusVisible:Boolean = false, minusVisible:Boolean = false, isCustom:Boolean=false) : *
 		{
-			var val5:MovieClip = new Stat();
-			val5.tooltipAlign = "right";
-			val5.hl_mc.alpha = 0;
-			val5.plus_mc.visible = false;
-			val5.minus_mc.visible = false;
-			val5.label_txt.autoSize = TextFieldAutoSize.LEFT;
-			val5.label_txt.htmlText = param2;
-			val5.text_txt.htmlText = param3;
-			val5.text_txt.width = val5.text_txt.width + 8;
-			val5.statBasePoints = Number(param3);
-			val5.statPoints = 0;
-			val5.tooltip = param4;
-			val5.statId = param1;
-			val5.hl_mc.width = this.statsElWidth;
-			val5.text_txt.mouseEnabled = false;
-			val5.label_txt.mouseEnabled = false;
-			val5.heightOverride = 26;
-			val5.icon_mc.gotoAndStop(param1 + 1);
-			val5.id = this.primaryStatList.length;
-			this.primaryStatList.addElement(val5);
+			var stat_mc:MovieClip = new Stat();
+			stat_mc.tooltipAlign = "right";
+			stat_mc.hl_mc.alpha = 0;
+			stat_mc.plus_mc.visible = plusVisible;
+			stat_mc.minus_mc.visible = minusVisible;
+			stat_mc.label_txt.autoSize = TextFieldAutoSize.LEFT;
+			stat_mc.label_txt.htmlText = displayName;
+			stat_mc.text_txt.htmlText = value;
+			stat_mc.text_txt.width = stat_mc.text_txt.width + 8;
+			stat_mc.statBasePoints = Number(value);
+			stat_mc.statPoints = 0;
+			stat_mc.tooltip = tooltipId;
+			stat_mc.statId = statId;
+			stat_mc.hl_mc.width = this.statsElWidth;
+			stat_mc.text_txt.mouseEnabled = false;
+			stat_mc.label_txt.mouseEnabled = false;
+			stat_mc.heightOverride = 26;
+			stat_mc.icon_mc.gotoAndStop(statId + 1);
+			stat_mc.id = this.primaryStatList.length;
+			this.primaryStatList.addElement(stat_mc);
+			stat_mc.MakeCustom(statId, isCustom);
+			ExternalInterface.call("statAdded", stat_mc.statId, stat_mc.id);
 		}
 		
-		public function addSecondaryStat(statId:Number, labelText:String, valueText:String, tooltipId:Number, iconFrame:Number, boostValue:Number) : *
+		public function addSecondaryStat(statId:Number, labelText:String, valueText:String, tooltipId:Number, iconFrame:Number, boostValue:Number, plusVisible:Boolean = false, minusVisible:Boolean = false, isCustom:Boolean=false) : *
 		{
 			var tween:larTween = null;
 			var xOffset:Number = 28;
@@ -1155,11 +1067,11 @@ package characterSheet_fla
 			stat_mc.icon_mc.visible = Boolean(iconFrame != 0);
 			if(stat_mc.minus_mc != null)
 			{
-				stat_mc.minus_mc.visible = false;
+				stat_mc.minus_mc.visible = minusVisible;
 			}
 			if(stat_mc.plus_mc != null)
 			{
-				stat_mc.plus_mc.visible = false;
+				stat_mc.plus_mc.visible = plusVisible;
 			}
 			if(stat_mc.editText_txt != null)
 			{
@@ -1254,6 +1166,8 @@ package characterSheet_fla
 			{
 				stat_mc.texts_mc.text_txt.x = xOffset2 - stat_mc.texts_mc.text_txt.width;
 			}
+			stat_mc.MakeCustom(statId, isCustom);
+			ExternalInterface.call("statAdded", stat_mc.statId, stat_mc.id);
 		}
 		
 		public function addTag(labelText:String, statId:Number, tooltipText:String, descriptionText:String) : *
@@ -1276,23 +1190,23 @@ package characterSheet_fla
 			val5.label_txt.htmlText = labelText;
 		}
 		
-		public function addToListWithId(param1:Number, param2:MovieClip) : *
+		public function addToListWithId(id:Number, mc:MovieClip) : *
 		{
-			if(param1 == 0)
+			if(id == 0)
 			{
-				this.infoStatList.addElement(param2);
+				this.infoStatList.addElement(mc);
 			}
-			else if(param1 == 1)
+			else if(id == 1)
 			{
-				this.secondaryStatList.addElement(param2);
+				this.secondaryStatList.addElement(mc);
 			}
-			else if(param1 == 2)
+			else if(id == 2)
 			{
-				this.resistanceStatList.addElement(param2);
+				this.resistanceStatList.addElement(mc);
 			}
-			else if(param1 == 3)
+			else if(id == 3)
 			{
-				this.expStatList.addElement(param2);
+				this.expStatList.addElement(mc);
 			}
 		}
 		

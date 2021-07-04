@@ -36,28 +36,17 @@ function CharacterSheet.Update(ui, method, updateTalents, updateAbilities, updat
 				end
 			end
 			if not Vars.ControllerEnabled then
-				if not talent.IsCustom then
-					this.stats_mc.addTalent(talent.DisplayName, talent.IntegerID, talent.State, canAdd, canRemove)
-				else
-					this.stats_mc.addCustomTalent(talent.DisplayName, talent.ID, talent.State, canAdd, canRemove)
-				end
+				this.stats_mc.addTalent(talent.DisplayName, talent.ID, talent.State, canAdd, canRemove, talent.IsCustom)
 			else
-				if not talent.IsCustom then
-					this.mainpanel_mc.stats_mc.talents_mc.addTalent(talent.DisplayName, talent.IntegerID, talent.State, canAdd, canRemove)
-				else
-					this.mainpanel_mc.stats_mc.talents_mc.addCustomTalent(talent.DisplayName, talent.ID, talent.State, canAdd, canRemove)
-				end
+				this.mainpanel_mc.stats_mc.talents_mc.addTalent(talent.DisplayName, talent.ID, talent.State, canAdd, canRemove, talent.IsCustom)
 			end
 		end
+		this.stats_mc.addCustomTalent("Test", "testTalent", 0, true, false, true)
 	end
 
 	if updateAbilities then
 		for ability in AbilityManager.GetVisible(player, updateCivil, this) do
-			if not ability.IsCustom then
-				this.stats_mc.addAbility(ability.IsCivil, ability.GroupID, ability.IntegerID, ability.DisplayName, ability.Value, ability.AddPointsTooltip, "", ability.CanAdd, ability.CanRemove)
-			else
-				this.stats_mc.addCustomAbility(ability.IsCivil, ability.GroupID, ability.ID, ability.DisplayName, ability.Value, ability.AddPointsTooltip, "", ability.CanAdd, ability.CanRemove)
-			end
+			this.stats_mc.addAbility(ability.IsCivil, ability.GroupID, ability.ID, ability.DisplayName, ability.Value, ability.AddPointsTooltip, "", ability.CanAdd, ability.CanRemove, ability.IsCustom)
 			updatedAbilities = true
 		end
 	end

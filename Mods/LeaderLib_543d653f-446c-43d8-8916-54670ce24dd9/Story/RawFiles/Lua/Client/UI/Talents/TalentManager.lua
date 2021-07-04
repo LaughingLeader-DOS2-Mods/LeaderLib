@@ -685,8 +685,8 @@ function TalentManager.HideTalents(uiType)
 end
 
 ---@class TalentManagerUITalentEntry
----@field ID string
----@field IntegerID integer
+---@field ID integer|string
+---@field Enum string
 ---@field HasTalent boolean
 ---@field DisplayName string
 ---@field IsRacial boolean
@@ -712,13 +712,14 @@ function TalentManager.GetVisible(player)
 			end
 			---@type TalentManagerUITalentEntry
 			local data = {
-				ID = talentId,
-				IntegerID = Data.TalentEnum[talentId],
+				ID = Data.TalentEnum[talentId],
+				Enum = talentId,
 				HasTalent = hasTalent,
 				DisplayName = name,
 				IsRacial = isRacial,
 				IsChoosable = isChoosable,
-				State = talentState
+				State = talentState,
+				IsCustom = false,
 			}
 			talents[#talents+1] = data
 		end

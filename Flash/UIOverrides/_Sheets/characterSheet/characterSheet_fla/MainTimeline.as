@@ -283,14 +283,7 @@ package characterSheet_fla
 				{
 					offsetX = mc.mOffsetX;
 				}
-				if(externalCall == "showCustomStatTooltip")
-				{
-					ExternalInterface.call(externalCall,mc.statId,globalPos.x + offsetX,globalPos.y + offsetY,tWidth,mc.height,mc.tooltipAlign);
-				}
-				else
-				{
-					ExternalInterface.call(externalCall,mc.tooltip,globalPos.x + offsetX,globalPos.y + offsetY,tWidth,mc.height,mc.tooltipAlign);
-				}
+				ExternalInterface.call(externalCall,mc.tooltip,globalPos.x + offsetX,globalPos.y + offsetY,tWidth,mc.height,mc.tooltipAlign);
 			}
 		}
 

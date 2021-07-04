@@ -5,21 +5,21 @@ package
 	import flash.display.MovieClip;
 	import flash.events.MouseEvent;
 	import flash.external.ExternalInterface;
-	import flash.text.TextField;
 	
-	public dynamic class Talent extends MovieClip
+	public dynamic class InfoStat extends MovieClip
 	{
-		public var bullet_mc:MovieClip;
 		public var hl_mc:MovieClip;
-		public var label_txt:TextField;
+		public var icon_mc:MovieClip;
 		public var minus_mc:MovieClip;
 		public var plus_mc:MovieClip;
+		public var texts_mc:MovieClip;
 		public var timeline:larTween;
 		public var base:MovieClip;
 
 		//LeaderLib Changes
 		public var statId:*;
-		public var callbackStr:String = "showTalentTooltip";
+		public var tooltip:Number; // The tooltip ID
+		public var callbackStr:String = "showStatTooltip";
 		public var isCustom:Boolean = false;
 
 		public function MakeCustom(id:*, b:Boolean=true) : *
@@ -28,19 +28,19 @@ package
 			this.isCustom = b;
 			if(b)
 			{
-				this.callbackStr = "showTalentTooltipCustom";
-				this.minus_mc.callbackStr = "minusTalentCustom";
-				this.plus_mc.callbackStr = "plusTalentCustom";
+				this.callbackStr = "showStatTooltipCustom";
+				this.minus_mc.callbackStr = "minusSecStatCustom";
+				this.plus_mc.callbackStr = "plusSecStatCustom";
 			}
 			else
 			{
-				this.callbackStr = "showTalentTooltip";
-				this.minus_mc.callbackStr = "minusTalent";
-				this.plus_mc.callbackStr = "plusTalent";
+				this.callbackStr = "showStatTooltip";
+				this.minus_mc.callbackStr = "minusSecStat";
+				this.plus_mc.callbackStr = "plusSecStat";
 			}
 		}
 		
-		public function Talent()
+		public function InfoStat()
 		{
 			super();
 			addFrameScript(0,this.frame1);
@@ -48,23 +48,23 @@ package
 		
 		public function onOver(e:MouseEvent) : *
 		{
-			this.widthOverride = 269 + 44;
-			this.mOffsetY = -this.base.stats_mc.talentHolder_mc.list.m_scrollbar_mc.scrolledY - 26;
-			this.base.showCustomTooltipForMC(this, this.callbackStr, this.statId);
-			
-			this.hl_mc.visible = true;
+			!isCustom ? this.base.showCustomTooltipForMC(this, this.callbackStr, this.tooltip) : this.base.showCustomTooltipForMC(this, this.callbackStr, this.statId);
 			if(this.timeline && this.timeline.isPlaying)
 			{
 				this.timeline.stop();
 			}
-			this.timeline = new larTween(this.hl_mc,"alpha",Quartic.easeIn,this.hl_mc.alpha,1,0.01);
+			this.timeline = new larTween(this.hl_mc,"alpha",Quartic.easeIn,this.hl_mc.alpha,0.4,0.01);
 		}
 		
 		public function onOut(e:MouseEvent) : *
 		{
-			this.timeline = new larTween(this.hl_mc,"alpha",Quartic.easeOut,this.hl_mc.alpha,0,0.01);
+			this.timeline = new larTween(this.hl_mc,"alpha",Quartic.easeOut,this.hl_mc.alpha,0,0.01,this.hlInvis);
 			this.base.hasTooltip = false;
 			ExternalInterface.call("hideTooltip");
+		}
+		
+		public function hlInvis() : *
+		{
 		}
 		
 		public function frame1() : *
@@ -73,10 +73,8 @@ package
 			this.hl_mc.addEventListener(MouseEvent.ROLL_OVER,this.onOver);
 			this.hl_mc.addEventListener(MouseEvent.ROLL_OUT,this.onOut);
 			this.hl_mc.alpha = 0;
-			this.hl_mc.height = 24;
-			this.label_txt.mouseEnabled = false;
-			this.minus_mc.callbackStr = "minusTalent";
-			this.plus_mc.callbackStr = "plusTalent";
+			this.minus_mc.callbackStr = "minusSecStat";
+			this.plus_mc.callbackStr = "plusSecStat";
 		}
 	}
 }

@@ -11,6 +11,7 @@ package characterSheet_fla
 		public var base:MovieClip;
 		public var stat:MovieClip;
 		public var callbackStr:String;
+		public var tooltip:String;
 		public var currentTooltip:String;
 		
 		public function minusButton_65()
@@ -57,14 +58,7 @@ package characterSheet_fla
 			this.bg_mc.gotoAndStop(2);
 			if(this.stat)
 			{
-				if(!this.stat.isCustom)
-				{
-					ExternalInterface.call(this.callbackStr, this.stat.statId);
-				}
-				else
-				{
-					ExternalInterface.call(this.callbackStr, this.stat.customID);
-				}
+				ExternalInterface.call(this.callbackStr, this.stat.statId);
 			}
 			else
 			{

@@ -11,6 +11,7 @@ package characterSheet_fla
 		public var base:MovieClip;
 		public var stat:MovieClip;
 		public var callbackStr:String;
+		public var tooltip:String;
 		public var currentTooltip:String;
 		
 		public function plusButton_62()
@@ -57,14 +58,7 @@ package characterSheet_fla
 			ExternalInterface.call("PlaySound","UI_Game_CharacterSheet_Attribute_Plus_Click_Release");
 			if(this.stat)
 			{
-				if(!this.stat.isCustom)
-				{
-					ExternalInterface.call(this.callbackStr, this.stat.statId);
-				}
-				else
-				{
-					ExternalInterface.call(this.callbackStr, this.stat.customID);
-				}
+				ExternalInterface.call(this.callbackStr, this.stat.statId);
 			}
 			else
 			{

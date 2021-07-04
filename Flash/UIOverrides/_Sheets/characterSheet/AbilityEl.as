@@ -16,11 +16,27 @@ package
 		public var isCivil:Boolean;
 
 		//LeaderLib Changes
-		public var statId:uint;
-		public var isCivil:Boolean = false;
-		//Custom non-standard talents
-		public var customID:String;
+		public var statId:*;
+		public var callbackStr:String = "showAbilityTooltip";
 		public var isCustom:Boolean = false;
+
+		public function MakeCustom(id:*, b:Boolean=true) : *
+		{
+			this.statId = id;
+			this.isCustom = b;
+			if(b)
+			{
+				this.callbackStr = "showAbilityTooltipCustom";
+				this.minus_mc.callbackStr = "minusAbilityCustom";
+				this.plus_mc.callbackStr = "plusAbilityCustom";
+			}
+			else
+			{
+				this.callbackStr = "showAbilityTooltip";
+				this.minus_mc.callbackStr = "minusAbility";
+				this.plus_mc.callbackStr = "plusAbility";
+			}
+		}
 		
 		public function AbilityEl()
 		{
@@ -54,14 +70,7 @@ package
 				this.mOffsetY = -this.base.stats_mc.combatAbilityHolder_mc.list.m_scrollbar_mc.scrolledY - 27;
 			}
 			this.mOffsetX = -26;
-			if(!this.isCustom)
-			{
-				this.base.showCustomTooltipForMC(this,"showAbilityTooltip", this.statId);
-			}
-			else
-			{
-				this.base.showCustomTooltipForMC(this,"showCustomAbilityTooltip", this.customID);
-			}
+			this.base.showCustomTooltipForMC(this, this.callbackStr, this.statId);
 		}
 		
 		public function onHLOut(param1:MouseEvent) : *

@@ -47,7 +47,7 @@ package
 		
 		public function onOver(param1:MouseEvent) : *
 		{
-			this.base.showTooltipForMC(this,"showCustomStatTooltip");
+			this.base.showCustomTooltipForMC(this,"showCustomStatTooltip",this.statId, this.id);
 			if(this.timeline && this.timeline.isPlaying)
 			{
 				this.timeline.stop();

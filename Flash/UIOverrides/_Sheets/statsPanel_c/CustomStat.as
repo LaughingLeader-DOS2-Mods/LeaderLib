@@ -10,7 +10,13 @@ package
 		public var label_txt:TextField;
 		public var line_mc:MovieClip;
 		public var val_txt:TextField;
-		
+		//LeaderLib
+		public var statId:Number; // Double handle
+		public var id:Number; // Set to the statList length
+		public var statIndex:int;
+		public var tooltip:String;
+		public var am:Number;
+
 		public function CustomStat()
 		{
 			super();
@@ -20,16 +26,24 @@ package
 		public function selectElement() : *
 		{
 			this.hl_mc.visible = true;
-			ExternalInterface.call("selectCustomStat",this.id);
+			ExternalInterface.call("selectCustomStat", this.statId, this.id);
 		}
 		
 		public function deselectElement() : *
 		{
 			this.hl_mc.visible = false;
 		}
-		
-		function frame1() : *
+
+		public function editCustomStat() : *
 		{
+			ExternalInterface.call("editCustomStat",this.statId, this.id);
 		}
+		
+		public function removeCustomStat() : *
+		{
+			ExternalInterface.call("removeCustomStat",this.statId, this.id);
+		}
+		
+		private function frame1() : * {}
 	}
 }

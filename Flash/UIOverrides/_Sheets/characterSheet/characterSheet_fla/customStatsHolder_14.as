@@ -277,18 +277,6 @@ package characterSheet_fla
 
 		private function frame1() : *
 		{
-			// var obj:MovieClip = null;
-			// var i:int = 0;
-			// while(i < this.numChildren)
-			// {
-			// 	obj = this.getChildAt(i) as MovieClip;
-			// 	if(obj != null && obj != this.listHolder_mc && obj != this.create_mc)
-			// 	{
-			// 		trace("BG?", i, obj.name);
-			// 		obj.visible = false;
-			// 	}
-			// 	i++;
-			// }
 			//Hide the BG
 			this.getChildAt(0).visible = false;
 		}

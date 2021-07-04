@@ -22,7 +22,11 @@ package
 		public var base:MovieClip;
 		public var tooltip:String;
 		public var statId:Number;
+
+		//LeaderLib
 		public var am:Number; // The stat's value
+		public var id:int; // index in the group list
+		public var statIndex:int; // Index in stats_array
 		
 		public function CustomStat()
 		{

@@ -12,6 +12,7 @@ package statsPanel_c_fla
 		public var statList:scrollList;
 		public var base:MovieClip;
 		public var hintContainer:MovieClip;
+		public var stats_array:Array;
 		
 		public function customStatList_3()
 		{
@@ -26,35 +27,41 @@ package statsPanel_c_fla
 		public function init() : *
 		{
 			this.savedSelection = -1;
+			this.stats_array = new Array();
 		}
 		
 		public function updateHints() : *
 		{
 		}
 		
-		public function addStat(param1:Number, param2:String, param3:String, param4:uint) : *
+		public function addStat(statId:Number, label:String, value:String, textColor:uint) : *
 		{
-			var val5:MovieClip = this.statList.getElementByNumber("id",param1);
-			if(!val5)
+			var stat_mc:MovieClip = this.statList.getElementByNumber("id",statId);
+			if(!stat_mc)
 			{
-				val5 = new CustomStat();
-				val5.statId = param1;
-				this.statList.addElement(val5,true);
-				val5.isStat = true;
-				val5.id = param1;
-				val5.label_txt.autoSize = TextFieldAutoSize.LEFT;
-				val5.label_txt.wordWrap = true;
-				val5.label_txt.multiline = true;
-				val5.hl_mc.visible = false;
+				stat_mc = new CustomStat();
+				stat_mc.statId = statId;
+				stat_mc.id = this.statList.length;
+				this.statList.addElement(stat_mc,true);
+				stat_mc.isStat = true;
+				stat_mc.label_txt.autoSize = TextFieldAutoSize.LEFT;
+				stat_mc.label_txt.wordWrap = true;
+				stat_mc.label_txt.multiline = true;
+				stat_mc.hl_mc.visible = false;
+
+				stat_mc.statIndex = this.stats_array.length;
+				this.stats_array.push(stat_mc);
 			}
-			val5.label_txt.htmlText = param2;
-			val5.textStr = val5.label_txt.text;
-			val5.val_txt.htmlText = param3;
-			val5.label_txt.textColor = param4;
-			val5.val_txt.textColor = param4;
-			val5.heightOverride = Math.ceil(val5.label_txt.textHeight / this.elementDist) * this.elementDist;
-			val5.hl_mc.height = val5.label_txt.textHeight + val5.label_txt.y;
-			val5.line_mc.y = val5.hl_mc.height - Math.round(val5.line_mc.height * 0.5) - 3;
+			stat_mc.label_txt.htmlText = label;
+			stat_mc.textStr = stat_mc.label_txt.text;
+			stat_mc.val_txt.htmlText = value;
+			stat_mc.label_txt.textColor = textColor;
+			stat_mc.val_txt.textColor = textColor;
+			stat_mc.heightOverride = Math.ceil(stat_mc.label_txt.textHeight / this.elementDist) * this.elementDist;
+			stat_mc.hl_mc.height = stat_mc.label_txt.textHeight + stat_mc.label_txt.y;
+			stat_mc.line_mc.y = stat_mc.hl_mc.height - Math.round(stat_mc.line_mc.height * 0.5) - 3;
+
+			ExternalInterface.call("customStatAdded", statId, cstat_mc.statIndex);
 		}
 		
 		public function removeStats() : *
@@ -63,12 +70,12 @@ package statsPanel_c_fla
 			this.statList.clearElements();
 		}
 		
-		public function selectStat(param1:Number) : *
+		public function selectStat(statId:Number) : *
 		{
-			var val2:MovieClip = this.statList.getElementByNumber("id",param1);
-			if(val2)
+			var stat_mc:MovieClip = this.statList.getElementByNumber("statId",id);
+			if(stat_mc)
 			{
-				this.statList.selectMC(val2);
+				this.statList.selectMC(stat_mc);
 				this.refreshPos();
 			}
 		}
@@ -83,9 +90,9 @@ package statsPanel_c_fla
 			this.statList.next();
 		}
 		
-		public function setListLoopable(param1:Boolean) : *
+		public function setListLoopable(b:Boolean) : *
 		{
-			this.statList.m_cyclic = param1;
+			this.statList.m_cyclic = b;
 		}
 		
 		public function clearSelection() : *
@@ -120,7 +127,7 @@ package statsPanel_c_fla
 			return this.statList.getCurrentMovieClip();
 		}
 		
-		function frame1() : *
+		private function frame1() : *
 		{
 			this.statList = new scrollList("empty","empty");
 			this.statList.m_scrollbar_mc.ScaleBG = true;

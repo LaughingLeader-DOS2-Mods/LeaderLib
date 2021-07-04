@@ -243,14 +243,14 @@ package statsPanel_c_fla
 			this.hasTooltip = true;
 		}
 		
-		public function setTooltip(param1:String, param2:String, param3:Boolean) : *
+		public function setTooltip(title:String, text:String, unused:Boolean) : *
 		{
-			var val4:Array = new Array(1,param1);
-			val4.push(58);
-			val4.push(param2);
-			this.mainpanel_mc.stats_mc.tooltip_mc.setupTooltip(val4);
+			var arr:Array = new Array(1,title);
+			arr.push(58);
+			arr.push(text);
+			this.mainpanel_mc.stats_mc.tooltip_mc.setupTooltip(arr);
 			this.mainpanel_mc.stats_mc.setTooltipSide();
-			if(param2 != "")
+			if(text != "")
 			{
 				this.enableTooltip();
 			}

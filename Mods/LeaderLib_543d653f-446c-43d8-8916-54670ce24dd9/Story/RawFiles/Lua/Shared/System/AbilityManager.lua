@@ -40,7 +40,6 @@ AbilityManager = {
 			Telekinesis = {Group=4, Civil=true},
 			Loremaster = {Group=4, Civil=true},
 			Sneaking = {Group=5, Civil=true},
-			Pickpocket = {Group=5, Civil=true},
 			Thievery = {Group=5, Civil=true},
 		},
 		DOSAbilities = {
@@ -59,6 +58,7 @@ AbilityManager = {
 			VitalityMastery = {Group=1, Civil=false},
 			Runecrafting = {Group=4, Civil=true},
 			Brewmaster = {Group=4, Civil=true},
+			Pickpocket = {Group=5, Civil=true},
 		}
 	}
 }

@@ -294,6 +294,7 @@ package characterSheet_fla
 			}
 		}
 
+		//Just a tweak so we can pass the id parameter to use.
 		public function showCustomTooltipForMC(mc:MovieClip, externalCall:String, id:*) : *
 		{
 			var tWidth:Number = NaN;

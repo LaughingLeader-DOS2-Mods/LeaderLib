@@ -104,7 +104,7 @@ package
 			}
 		}
 		
-		function frame1() : *
+		private function frame1() : *
 		{
 			this.isOpen = true;
 			this.hidePoints = false;

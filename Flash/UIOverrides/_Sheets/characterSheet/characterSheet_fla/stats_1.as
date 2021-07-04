@@ -721,17 +721,32 @@ package characterSheet_fla
 			return val2;
 		}
 		
-		public function getAbility(param1:Boolean, param2:Number, param3:Number) : MovieClip
+		public function getAbility(isCivil:Boolean, groupId:Number, statId:Number) : MovieClip
 		{
-			var val4:MovieClip = this.combatAbilityHolder_mc;
-			if(param1)
+			var holder:MovieClip = this.combatAbilityHolder_mc;
+			if(isCivil)
 			{
-				val4 = this.civicAbilityHolder_mc;
+				holder = this.civicAbilityHolder_mc;
 			}
-			var val5:MovieClip = val4.list.getElementByNumber("groupId",param2);
-			if(val5)
+			var ability_mc:MovieClip = holder.list.getElementByNumber("groupId",groupId);
+			if(ability_mc)
 			{
-				return val5.list.getElementByNumber("statId",param3);
+				return ability_mc.list.getElementByNumber("statId",statId);
+			}
+			return null;
+		}
+		
+		public function getCustomAbility(isCivil:Boolean, groupId:Number, customID:String) : MovieClip
+		{
+			var holder:MovieClip = this.combatAbilityHolder_mc;
+			if(isCivil)
+			{
+				holder = this.civicAbilityHolder_mc;
+			}
+			var ability_mc:MovieClip = holder.list.getElementByNumber("groupId",groupId);
+			if(ability_mc)
+			{
+				return ability_mc.list.getElementByString("customID",customID);
 			}
 			return null;
 		}
@@ -887,6 +902,54 @@ package characterSheet_fla
 				ability_mc.texts_mc.statId = statId;
 				ability_mc.statId = statId;
 				ability_mc.tooltip = statId;
+				ability_mc.texts_mc.id = groupHolder.list.length;
+				ability_mc.texts_mc.plus_mc.currentTooltip = "";
+				ability_mc.texts_mc.minus_mc.currentTooltip = "";
+				ability_mc.texts_mc.label_txt.autoSize = TextFieldAutoSize.LEFT;
+			}
+			ability_mc.texts_mc.plus_mc.tooltip = plusTooltip;
+			ability_mc.texts_mc.minus_mc.tooltip = minusTooltip;
+			if(ability_mc.texts_mc.plus_mc.currentTooltip != "" && ability_mc.texts_mc.plus_mc.currentTooltip != plusTooltip)
+			{
+				ExternalInterface.call("showTooltip",plusTooltip);
+				ability_mc.texts_mc.plus_mc.currentTooltip = plusTooltip;
+			}
+			if(ability_mc.texts_mc.minus_mc.currentTooltip != "" && ability_mc.texts_mc.minus_mc.currentTooltip != minusTooltip)
+			{
+				ExternalInterface.call("showTooltip",minusTooltip);
+				ability_mc.texts_mc.plus_mc.currentTooltip = minusTooltip;
+			}
+			ability_mc.texts_mc.label_txt.htmlText = labelText;
+			ability_mc.texts_mc.text_txt.htmlText = valueText;
+			ability_mc.textStr = ability_mc.texts_mc.label_txt.text;
+			ability_mc.am = Number(ability_mc.texts_mc.text_txt.text);
+			ability_mc.texts_mc.statBasePoints = Number(valueText);
+			ability_mc.texts_mc.statPoints = 0;
+			ability_mc.hl_mc.height = ability_mc.abilTooltip_mc.height = ability_mc.texts_mc.label_txt.y + ability_mc.texts_mc.label_txt.textHeight - ability_mc.hl_mc.y;
+			ability_mc.texts_mc.text_txt.y = Math.round((ability_mc.hl_mc.height - ability_mc.texts_mc.text_txt.textHeight) * 0.5);
+		}
+
+		public function addCustomAbility(isCivil:Boolean, groupId:Number, customID:String, labelText:String, valueText:String, plusTooltip:String, minusTooltip:String) : *
+		{
+			var groupHolder:MovieClip = null;
+			var ability_mc:MovieClip = this.getCustomAbility(isCivil,groupId,customID);
+			if(!ability_mc)
+			{
+				groupHolder = this.combatAbilityHolder_mc;
+				if(isCivil)
+				{
+					groupHolder = this.civicAbilityHolder_mc;
+				}
+				ability_mc = new AbilityEl();
+				ability_mc.isCivil = isCivil;
+				groupHolder.list.addGroupElement(groupId,ability_mc,false);
+				ability_mc.texts_mc.plus_mc.visible = false;
+				ability_mc.texts_mc.minus_mc.visible = false;
+				ability_mc.customID = customID;
+				ability_mc.isCustom = true;
+				ability_mc.texts_mc.minus_mc.callbackStr = "minusCustomAbility";
+				ability_mc.texts_mc.plus_mc.callbackStr = "plusCustomAbility";
+				ability_mc.tooltip = customID;
 				ability_mc.texts_mc.id = groupHolder.list.length;
 				ability_mc.texts_mc.plus_mc.currentTooltip = "";
 				ability_mc.texts_mc.minus_mc.currentTooltip = "";
@@ -1450,7 +1513,7 @@ package characterSheet_fla
 			}
 		}
 		
-		function frame1() : *
+		private function frame1() : *
 		{
 			LSPanelHelpers.makeDraggable(this.dragHit_mc);
 			this.myText = "";

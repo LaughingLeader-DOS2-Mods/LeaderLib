@@ -6,14 +6,9 @@ package
 	
 	public dynamic class CustomStat extends MovieClip
 	{
-		 
-		
 		public var hl_mc:MovieClip;
-		
 		public var label_txt:TextField;
-		
 		public var line_mc:MovieClip;
-		
 		public var val_txt:TextField;
 		
 		public function CustomStat()

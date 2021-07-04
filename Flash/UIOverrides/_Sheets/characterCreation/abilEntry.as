@@ -21,7 +21,6 @@ package
 		public var value:uint;
 
 		//LeaderLib Changes
-		// Set in talentsMC_51.addTalentElement, we're just adding it here for sanity
 		public var abilityID:uint;
 		public var isCivil:Boolean = false;
 		//Custom non-standard talents

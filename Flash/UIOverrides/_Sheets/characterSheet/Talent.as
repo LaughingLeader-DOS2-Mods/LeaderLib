@@ -18,8 +18,8 @@ package
 		public var base:MovieClip;
 
 		//LeaderLib Changes
-		// Set in talentsMC_51.addTalentElement, we're just adding it here for sanity
-		public var talentID:uint;
+		//Just adding it here for sanity
+		public var statId:uint;
 		//Custom non-standard talents
 		public var customID:String;
 		public var isCustom:Boolean = false;
@@ -36,7 +36,7 @@ package
 			this.mOffsetY = -this.base.stats_mc.talentHolder_mc.list.m_scrollbar_mc.scrolledY - 26;
 			if(!this.isCustom)
 			{
-				this.base.showCustomTooltipForMC(this, "showTalentTooltip", this.talentID);
+				this.base.showCustomTooltipForMC(this, "showTalentTooltip", this.statId);
 			}
 			else
 			{

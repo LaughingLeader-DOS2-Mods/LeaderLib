@@ -62,6 +62,9 @@ RegisterProtectedExtenderListener("StatusHitEnter", function(hitStatus, hitConte
 		return
 	end
 
+	local targetId = GameHelpers.GetUUID(target, true)
+	local sourceId = GameHelpers.GetUUID(source, true)
+
 	---@type HitRequest
 	local hitRequest = hitContext.Hit or hitStatus.Hit
 
@@ -89,5 +92,5 @@ RegisterProtectedExtenderListener("StatusHitEnter", function(hitStatus, hitConte
 
 	InvokeListenerCallbacks(Listeners.StatusHitEnter, target, source, data, hitStatus)
 	--Old listener
-	InvokeListenerCallbacks(Listeners.OnHit, target.MyGuid, source.MyGuid, hitRequest.TotalDamageDone, hitStatus.StatusHandle, skillId, hitStatus, hitContext, data)
+	InvokeListenerCallbacks(Listeners.OnHit, targetId, sourceId, hitRequest.TotalDamageDone, hitStatus.StatusHandle, skillId, hitStatus, hitContext, data)
 end)

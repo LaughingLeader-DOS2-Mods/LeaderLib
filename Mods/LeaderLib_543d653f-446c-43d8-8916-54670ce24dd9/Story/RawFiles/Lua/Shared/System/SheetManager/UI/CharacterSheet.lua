@@ -1,6 +1,6 @@
 
 ---@class CharacterSheetWrapper:LeaderLibUIWrapper
-CharacterSheet = Classes.UIWrapper:CreateFromType(Data.UIType.characterSheet, {ControllerID = Data.UIType.statsPanel_c, IsControllerSupported = true})
+local CharacterSheet = Classes.UIWrapper:CreateFromType(Data.UIType.characterSheet, {ControllerID = Data.UIType.statsPanel_c, IsControllerSupported = true})
 local self = CharacterSheet
 
 ---@private
@@ -20,16 +20,16 @@ function CharacterSheet.Update(ui, method, updateTalents, updateAbilities, updat
 	-- 	availableCivilPoints[id] = amount
 	-- 	setAvailablePoints[id] = true
 	-- end
-
+	
 	if updateTalents then
 		local points = this.stats_mc.pointsWarn[3].avPoints
 	
-		for talent in TalentManager.GetVisible(player) do
+		for talent in SheetManager.Talent.GetVisible(player) do
 			local canAdd = false
 			local canRemove = false
 			updatedTalents = true
 			if not talent.IsRacial then
-				if not talent.HasTalent and points > 0 and talent.State == TalentManager.Data.TalentState.Selectable then
+				if not talent.HasTalent and points > 0 and talent.State == SheetManager.Talent.Data.TalentState.Selectable then
 					canAdd = true
 				elseif talent.HasTalent then
 					canRemove = GameHelpers.Client.IsGameMaster(ui, this)
@@ -45,7 +45,7 @@ function CharacterSheet.Update(ui, method, updateTalents, updateAbilities, updat
 	end
 
 	if updateAbilities then
-		for ability in AbilityManager.GetVisible(player, updateCivil, this) do
+		for ability in SheetManager.Ability.GetVisible(player, updateCivil, this) do
 			this.stats_mc.addAbility(ability.IsCivil, ability.GroupID, ability.ID, ability.DisplayName, ability.Value, ability.AddPointsTooltip, "", ability.CanAdd, ability.CanRemove, ability.IsCustom)
 			updatedAbilities = true
 		end

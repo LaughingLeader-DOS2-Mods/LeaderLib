@@ -10,7 +10,7 @@ CustomStatSystem.MISC_CATEGORY = 99999
 CustomStatSystem.Listeners = {
 	---@type table<string, OnAvailablePointsChangedCallback[]>
 	OnAvailablePointsChanged = {All = {}},
-	---@type table<string, OnStatValueChangedCallback[]>
+	---@type table<string, OnCustomStatValueChangedCallback[]>
 	OnStatValueChanged = {All = {}},
 	Loaded = {},
 }

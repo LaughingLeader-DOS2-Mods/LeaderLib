@@ -3,7 +3,7 @@ local self = CustomStatSystem
 ---@alias CustomStatCanAddPointsCallback fun(id:string, stat:CustomStatData, character:EclCharacter, currentValue:integer, availablePoints:integer, canAdd:boolean):boolean
 ---@alias CustomStatCanRemovePointsCallback fun(id:string, stat:CustomStatData, character:EclCharacter, currentValue:integer, canRemove:boolean):boolean
 ---@alias OnAvailablePointsChangedCallback fun(id:string, stat:CustomStatData, character:EsvCharacter, previousPoints:integer, currentPoints:integer, isClientSide:boolean):void
----@alias OnStatValueChangedCallback fun(id:string, stat:CustomStatData, character:EsvCharacter, previousPoints:integer, currentPoints:integer, isClientSide:boolean):void
+---@alias OnCustomStatValueChangedCallback fun(id:string, stat:CustomStatData, character:EsvCharacter, previousPoints:integer, currentPoints:integer, isClientSide:boolean):void
 
 local isClient = Ext.IsClient()
 
@@ -57,7 +57,7 @@ function CustomStatSystem:RegisterCanRemovePointsHandler(id, callback)
 	end
 end
 
----@param id string
+---@param id string|string[]
 ---@param callback OnAvailablePointsChangedCallback
 function CustomStatSystem:RegisterAvailablePointsChangedListener(id, callback)
 	if type(id) == "table" then

@@ -43,7 +43,6 @@ Ext.Require("Client/UI/UIFeatures.lua")
 Ext.Require("Client/UI/UIExtensions.lua")
 Ext.Require("Client/UI/InterfaceCommands.lua")
 Ext.Require("Client/UI/ContextMenu.lua")
-Ext.Require("Client/UI/Overrides/_Init.lua")
 
 if Vars.DebugMode then
 	Ext.Require("Client/UI/DialogKeywords.lua") -- TODO

@@ -28,6 +28,8 @@ local defaultPersistentVars = {
 	TurnCounterData = {},
 	---@type table<UUID,table<STAT_ID,integer>>
 	CustomStatAvailablePoints = {},
+	---@type table<SHEET_ENTRY_ID,table<UUID, integer|boolean>>
+	CharacterSheetValues = {},
 	---@type table<UUID, number>
 	ScaleOverride = {},
 	---@type table<UUID,UUID[]>

@@ -1,5 +1,7 @@
 local ts = Classes.TranslatedString
 
+local isClient = Ext.IsClient()
+
 ---@alias TalentRequirementCheckCallback fun(talentId:string, player:EclCharacter):boolean
 
 TalentManager = {
@@ -355,9 +357,6 @@ TalentManager.Data.DefaultVisible = {
 	WhatARush = "TALENT_WhatARush",
 }
 
---Requires a name and description to be manually set in the tooltip, as well as an icon
-local ragerWasEnabled = false
-
 for name,v in pairs(TalentManager.Data.DOSTalents) do
 	TalentManager.RegisteredCount[name] = 0
 end
@@ -372,7 +371,7 @@ function TalentManager.IsRegisteredTalent(talentId)
 	return TalentManager.RegisteredCount[talentId] and TalentManager.RegisteredCount[talentId] > 0
 end
 
----@param player EclCharacter
+---@param player EclCharacter|EsvCharacter
 ---@param talentId string
 ---@return boolean
 function TalentManager.HasTalent(player, talentId)
@@ -382,6 +381,19 @@ function TalentManager.HasTalent(player, talentId)
 	end
 	return false
 end
+
+local function TryRequestRefresh()
+	if isClient then
+		if Vars.ControllerEnabled then
+			GameHelpers.UI.TryInvoke(Data.UIType.characterSheet, "clearTalents")
+		else
+			GameHelpers.UI.TryInvoke(Data.UIType.statsPanel_c, "clearTalents")
+		end
+	end
+end
+
+--Requires a name and description to be manually set in the tooltip, as well as an icon
+local ragerWasEnabled = false
 
 ---@param talentId string The talent id, i.e. Executioner
 ---@param modID string The registering mod's UUID.
@@ -411,12 +423,14 @@ function TalentManager.EnableTalent(talentId, modID, getRequirements)
 	end
 end
 
+---@param talentId string The talent id, i.e. Executioner
+---@param modID string The registering mod's UUID.
 function TalentManager.DisableTalent(talentId, modID)
 	if talentId == "all" then
 		for talent,v in pairs(TalentManager.Data.DOSTalents) do
 			TalentManager.DisableTalent(talent, modID)
 		end
-		GameHelpers.UI.TryInvoke(Data.UIType.characterSheet, "clearTalents")
+		TryRequestRefresh()
 	else
 		local data = TalentManager.RegisteredTalents[talentId]
 		if data ~= nil then
@@ -427,7 +441,7 @@ function TalentManager.DisableTalent(talentId, modID)
 			if TalentManager.RegisteredCount[talentId] <= 0 then
 				TalentManager.RegisteredTalents[talentId] = nil
 				TalentManager.RegisteredCount[talentId] = 0
-				GameHelpers.UI.TryInvoke(Data.UIType.characterSheet, "clearTalents")
+				TryRequestRefresh()
 			end
 		end
 	end
@@ -441,7 +455,7 @@ function TalentManager.HideTalent(talentId, modID)
 		for talentId,enum in pairs(Data.TalentEnum) do
 			TalentManager.HideTalent(talentId, modID)
 		end
-		--GameHelpers.UI.TryInvoke(Data.UIType.characterSheet, "clearTalents")
+		TryRequestRefresh()
 	else
 		if TalentManager.HiddenTalents[talentId] == nil then
 			TalentManager.HiddenTalents[talentId] = {}
@@ -449,7 +463,7 @@ function TalentManager.HideTalent(talentId, modID)
 		if TalentManager.HiddenTalents[talentId][modID] ~= true then
 			TalentManager.HiddenTalents[talentId][modID] = true
 			TalentManager.HiddenCount[talentId] = (TalentManager.HiddenCount[talentId] or 0) + 1
-			--GameHelpers.UI.TryInvoke(Data.UIType.characterSheet, "clearTalents")
+			TryRequestRefresh()
 		end
 	end
 end
@@ -605,12 +619,18 @@ function TalentManager.CanAddTalent(talentId, hasTalent)
 end
 
 if Vars.DebugMode then
-	RegisterListener("LuaReset", function()
-		local ui = Ext.GetUIByType(Data.UIType.statsPanel_c)
-		if ui then
-			ui:GetRoot().mainpanel_mc.stats_mc.talents_mc.statList.clearElements()
-		end
-	end)
+	if isClient then
+		RegisterListener("LuaReset", function()
+			if not Vars.ControllerEnabled then
+
+			else
+				local ui = Ext.GetUIByType(Data.UIType.statsPanel_c)
+				if ui then
+					ui:GetRoot().mainpanel_mc.stats_mc.talents_mc.statList.clearElements()
+				end
+			end
+		end)
+	end
 end
 
 function TalentManager.ToggleDivineTalents(enabled)
@@ -675,6 +695,8 @@ function TalentManager.LoadRequirements()
 	end
 end
 
+if isClient then
+
 ---@private
 function TalentManager.HideTalents(uiType)
 	if uiType == Data.UIType.characterSheet or uiType == Data.UIType.statsPanel_c then
@@ -734,15 +756,20 @@ function TalentManager.GetVisible(player)
 	end
 end
 
+end
+
 -- Ext.Require("Client/UI/Talents/CharacterSheetTalents.lua")
 -- Ext.Require("Client/UI/Talents/CharacterCreationTalents.lua")
 -- Ext.Require("Client/UI/Talents/GamepadSupport.lua")
 
 Ext.RegisterListener("SessionLoaded", function()
 	TalentManager.LoadRequirements()
-	---Divine Talents
-	if Ext.IsModLoaded("ca32a698-d63e-4d20-92a7-dd83cba7bc56") or GameSettings.Settings.Client.DivineTalentsEnabled then
-		TalentManager.ToggleDivineTalents(true)
+
+	if isClient then
+		---Divine Talents
+		if Ext.IsModLoaded("ca32a698-d63e-4d20-92a7-dd83cba7bc56") or GameSettings.Settings.Client.DivineTalentsEnabled then
+			TalentManager.ToggleDivineTalents(true)
+		end
 	end
 	--TalentManager.HideTalent("LoneWolf", ModuleUUID)
 	--TalentManager.Gamepad.RegisterListeners()

@@ -29,6 +29,7 @@ Ext.Require("Shared/Stats/CustomSkillProperties.lua")
 Ext.Require("Shared/Stats/StatOverrides.lua")
 Ext.Require("Shared/System/FeaturesHandler.lua")
 Ext.Require("Shared/System/AbilityManager.lua")
+Ext.Require("Shared/System/TalentManager.lua")
 
 if Ext.Version() >= 55 then
 Ext.Require("Shared/System/CustomStats/CustomStatSystem.lua")

@@ -42,4 +42,4 @@ if Vars.DebugMode then
 	--Ext.Require("Shared/Debug/GameMathTracing.lua")
 	Ext.Require("Shared/Debug/TestingSystem.lua")
 end
-Ext.Require("Shared/Debug/ConsoleWIndowHelpers.lua")
+Ext.Require("Shared/Debug/ConsoleWindowHelpers.lua")

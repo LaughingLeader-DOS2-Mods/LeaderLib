@@ -28,8 +28,6 @@ local defaultPersistentVars = {
 	TurnCounterData = {},
 	---@type table<UUID,table<STAT_ID,integer>>
 	CustomStatAvailablePoints = {},
-	---@type table<SHEET_ENTRY_ID,table<UUID, integer|boolean>>
-	CharacterSheetValues = {},
 	---@type table<UUID, number>
 	ScaleOverride = {},
 	---@type table<UUID,UUID[]>
@@ -39,11 +37,10 @@ local defaultPersistentVars = {
 }
 
 ---@type LeaderLibPersistentVars
-PersistentVars = Common.CloneTable(defaultPersistentVars, true)
+PersistentVars = Common.CopyTable(defaultPersistentVars, true)
 function LoadPersistentVars()
 	Common.InitializeTableFromSource(PersistentVars, defaultPersistentVars)
 	SkillSystem.LoadSaveData()
-	InvokeListenerCallbacks(Listeners.PersistentVarsLoaded)
 end
 
 TotalSkillListeners = 0

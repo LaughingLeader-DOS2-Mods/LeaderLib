@@ -23,15 +23,11 @@ Vars.ControllerEnabled = (Ext.GetBuiltinUI("Public/Game/GUI/msgBox_c.swf") or Ex
 -- if controllerUI ~= nil then
 -- 	Ext.Require("Client/UI/Game.Tooltip.Controllers.lua")
 -- end
-
-Ext.Require("Client/Classes/_Init.lua")
 Ext.Require("Client/Data/_Init.lua")
 Ext.Require("Client/ClientHelpers.lua")
 Ext.Require("Client/ClientNetMessages.lua")
 Ext.Require("Client/InputManager.lua")
 
-Ext.Require("Client/UI/UITypeWorkaround.lua")
-Ext.Require("Client/UI/UIListeners.lua")
 Ext.Require("Client/UI/StatusHider.lua")
 Ext.Require("Client/UI/Tooltips/Game.Tooltip.Extended.lua")
 Ext.Require("Client/UI/CharacterSheet.lua")
@@ -41,6 +37,8 @@ Ext.Require("Client/UI/Tooltips/TooltipInfoExpander.lua")
 Ext.Require("Client/UI/ControllerUIHelpers.lua")
 Ext.Require("Client/UI/UIFeatures.lua")
 Ext.Require("Client/UI/UIExtensions.lua")
+Ext.Require("Client/UI/Talents/TalentManager.lua")
+Ext.Require("Client/UI/Talents/GamepadSupport.lua")
 Ext.Require("Client/UI/InterfaceCommands.lua")
 Ext.Require("Client/UI/ContextMenu.lua")
 

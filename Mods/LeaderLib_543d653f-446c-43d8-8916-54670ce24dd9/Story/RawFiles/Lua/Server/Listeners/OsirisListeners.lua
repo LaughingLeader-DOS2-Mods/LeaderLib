@@ -36,14 +36,6 @@ Ext.RegisterOsirisListener("UserEvent", 2, "after", function(id, event)
 	end
 end)
 
--- Ext.RegisterOsirisListener("CharacterAddToCharacterCreation", 3, "after", function(uuid, respec, success)
--- 	if success == 1 then
--- 		Timer.StartOneshot("", 1, function()
--- 			Ext.PostMessageToClient(uuid, "LeaderLib_CCStarted", Ext.GetCharacter(uuid).NetID)
--- 		end)
--- 	end
--- end)
-
 Ext.RegisterOsirisListener("GameStarted", 2, "after", function(region, isEditorMode)
 	Vars.IsEditorMode = isEditorMode
 	Ext.BroadcastMessage("LeaderLib_SyncFeatures", Ext.JsonStringify(Features), nil)

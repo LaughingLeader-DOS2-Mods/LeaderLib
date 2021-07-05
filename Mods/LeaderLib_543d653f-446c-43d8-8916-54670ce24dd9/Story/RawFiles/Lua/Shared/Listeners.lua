@@ -82,15 +82,10 @@ if Ext.IsServer() then
 	Listeners.OnTurnCounter = {}
 	---@type table<string, TurnCounterCallback>
 	Listeners.OnNamedTurnCounter = {}
-	---Called when a summon is created or destroyed. Includes items like mines.
-	---@type table<string, fun(summon:EsvCharacter, owner:EsvCharacter, isDying:boolean, isItem:boolean)>
+	---@type table<string, fun(summon:EsvCharacter, owner:EsvCharacter, isAlive:boolean)>
 	Listeners.OnSummonChanged = {}
 	---@type table<string, fun(event:string, vararg string)>
 	Listeners.ObjectEvent = {}
-
-	---Called when PersistentVars should be initialized from a table of default values.
-	---@type function[]
-	Listeners.PersistentVarsLoaded = {}
 end
 if Ext.IsClient() then
 	-- Client-side Mod Menu events
@@ -134,10 +129,4 @@ if Ext.IsClient() then
 	---@alias OnContextMenuEntryClickedCallback fun(contextMenu:ContextMenu, ui:UIObject, entryID:integer, actionID:string, handle:number):void
 	---@type OnContextMenuEntryClickedCallback[]
 	Listeners.OnContextMenuEntryClicked = {}
-
-	---@alias UICreatedCallback fun(ui:UIObject, this:FlashMainTimeline, player:EclCharacter):void
-	---Called after a UI is created, when the main timeline is hopefully ready.
-	---Register to a UIType or "All" for all UIs.
-	---@type table<integer,UICreatedCallback>
-	Listeners.UICreated = {All = {}}
 end

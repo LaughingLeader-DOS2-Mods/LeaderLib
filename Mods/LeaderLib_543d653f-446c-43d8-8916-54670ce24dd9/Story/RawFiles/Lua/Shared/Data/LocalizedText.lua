@@ -81,7 +81,6 @@ LocalizedText.AbilityNames = {
 	MagicArmorMastery = ts:Create("h3478fd51gb40bg4a9ega851g25a1b5e62ea5","Willpower"),
 	VitalityMastery = ts:Create("h9e592393gda0fg4841gb7eegbfa847582e82","Bodybuilding"),
 	Perseverance = ts:Create("h5b61fccfg5d2ag4a81g9cacg068403d61b5c","Perseverance"), -- Or hfc4ae314g920ag4fdagbc50ge73b91cfa7c7
-	PainReflection = ts:Create("h591d7502gb8c3g443cg86ebga0b3a903155a", "Retribution"), -- Or h19487a02g5b86g4129ga879g0ec268a9f50b
 	Runecrafting = ts:Create("h87db6c3cg511dg4db1gad59g58ace25f71d1","Rune Crafting"),
 	Brewmaster = ts:Create("hab7acde6g5af6g47a7ga65dgc633aef193cf","Brew Master"),
 }

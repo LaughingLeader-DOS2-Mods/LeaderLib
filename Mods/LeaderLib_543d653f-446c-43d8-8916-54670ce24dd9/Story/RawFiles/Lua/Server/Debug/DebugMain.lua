@@ -568,34 +568,34 @@ end)
 ---@param owner EsvCharacter
 ---@param isDying boolean
 ---@param isItem boolean
--- RegisterListener("OnSummonChanged", function(summon, owner, isDying, isItem)
--- 	if not isItem then
--- 		fprint(LOGLEVEL.DEFAULT, "[OnSummonChanged:Character] Summon(%s) Totem(%s) Owner(%s) IsDying(%s) isItem(false)", GameHelpers.Character.GetDisplayName(summon), summon.Totem, GameHelpers.Character.GetDisplayName(owner), isDying)
--- 		fprint(LOGLEVEL.WARNING, "Dead(%s) Deactivated(%s) CannotDie(%s) DYING(%s)", summon.Dead, summon.Deactivated, summon.CannotDie, summon:GetStatus("DYING") and summon:GetStatus("DYING").Started or "false")
+RegisterListener("OnSummonChanged", function(summon, owner, isDying, isItem)
+	if not isItem then
+		fprint(LOGLEVEL.DEFAULT, "[OnSummonChanged:Character] Summon(%s) Totem(%s) Owner(%s) IsDying(%s) isItem(false)", GameHelpers.Character.GetDisplayName(summon), summon.Totem, GameHelpers.Character.GetDisplayName(owner), isDying)
+		fprint(LOGLEVEL.WARNING, "Dead(%s) Deactivated(%s) CannotDie(%s) DYING(%s)", summon.Dead, summon.Deactivated, summon.CannotDie, summon:GetStatus("DYING") and summon:GetStatus("DYING").Started or "false")
 
--- 		if summon.Totem then
--- 			fprint(LOGLEVEL.DEFAULT, "Totem| Dodge(%s)", summon.Stats.Dodge)
--- 			--CharacterSetSummonLifetime(summon.MyGuid, 60)
--- 			-- summon.Stats.DynamicStats[1].Dodge = 100
--- 			-- summon.Stats.DynamicStats[1].DodgeBoost = 200
--- 			--ApplyStatus(summon.MyGuid, "EVADING", -1.0, 1, summon.MyGuid)
--- 			-- if not isDying then
--- 			-- 	GameHelpers.Skill.Explode(summon.WorldPos, "Projectile_EnemyPyroclasticEruption", owner, summon.Stats.Level, true, true, true, {AlwaysDamage=0})
--- 			-- else
--- 			-- 	GameHelpers.Skill.CreateProjectileStrike(summon, "ProjectileStrike_Stormbolt_Fire", owner, summon.Stats.Level, true, true, true, {AlwaysDamage=0})
--- 			-- end
--- 		end
--- 	else
--- 		fprint(LOGLEVEL.DEFAULT, "[OnSummonChanged:Item] Summon(%s) StatsId(%s) Owner(%s) IsDying(%s) isItem(true)", GameHelpers.Character.GetDisplayName(summon), summon.StatsId, GameHelpers.Character.GetDisplayName(owner), isDying)
--- 	end
+		if summon.Totem then
+			fprint(LOGLEVEL.DEFAULT, "Totem| Dodge(%s)", summon.Stats.Dodge)
+			--CharacterSetSummonLifetime(summon.MyGuid, 60)
+			-- summon.Stats.DynamicStats[1].Dodge = 100
+			-- summon.Stats.DynamicStats[1].DodgeBoost = 200
+			--ApplyStatus(summon.MyGuid, "EVADING", -1.0, 1, summon.MyGuid)
+			-- if not isDying then
+			-- 	GameHelpers.Skill.Explode(summon.WorldPos, "Projectile_EnemyPyroclasticEruption", owner, summon.Stats.Level, true, true, true, {AlwaysDamage=0})
+			-- else
+			-- 	GameHelpers.Skill.CreateProjectileStrike(summon, "ProjectileStrike_Stormbolt_Fire", owner, summon.Stats.Level, true, true, true, {AlwaysDamage=0})
+			-- end
+		end
+	else
+		fprint(LOGLEVEL.DEFAULT, "[OnSummonChanged:Item] Summon(%s) StatsId(%s) Owner(%s) IsDying(%s) isItem(true)", GameHelpers.Character.GetDisplayName(summon), summon.StatsId, GameHelpers.Character.GetDisplayName(owner), isDying)
+	end
 
--- 	print("Summons")
--- 	print("========")
--- 	for summon in GameHelpers.Character.GetSummons(owner, true) do
--- 		print(GameHelpers.Character.GetDisplayName(summon), summon.MyGuid)
--- 	end
--- 	print("========")
--- end)
+	print("Summons")
+	print("========")
+	for summon in GameHelpers.Character.GetSummons(owner, true) do
+		print(GameHelpers.Character.GetDisplayName(summon), summon.MyGuid)
+	end
+	print("========")
+end)
 
 _ENV = _G
 if setfenv ~= nil then
@@ -684,14 +684,14 @@ RegisterProtectedExtenderListener("GroundHit", function (caster, position, damag
 	fprint(LOGLEVEL.DEFAULT, "[GroundHit]\n%s", Lib.inspect(data))
 end)
 
--- RegisterSkillListener("All", function(skill, uuid, state, data)
--- 	-- if state == SKILL_STATE.HIT then
--- 	-- 	data:MultiplyDamage(3,true)
--- 	-- end
--- 	if Vars.Print.Skills then
--- 		fprint(LOGLEVEL.DEFAULT, "[Skill:%s] State(%s) Caster(%s) Data%s", skill, state, uuid, data and string.format(":\n%s", Lib.inspect(data)) or "(nil)")
--- 	end
--- end)
+RegisterSkillListener("All", function(skill, uuid, state, data)
+	-- if state == SKILL_STATE.HIT then
+	-- 	data:MultiplyDamage(3,true)
+	-- end
+	if Vars.Print.Skills then
+		fprint(LOGLEVEL.DEFAULT, "[Skill:%s] State(%s) Caster(%s) Data%s", skill, state, uuid, data and string.format(":\n%s", Lib.inspect(data)) or "(nil)")
+	end
+end)
 
 local originalCooldown = 6
 

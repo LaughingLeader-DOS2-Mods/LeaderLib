@@ -194,7 +194,7 @@ Data.AbilityEnum = {
 	Runecrafting = 37,
 	Brewmaster = 38,
 	Sulfurology = 39,
-	--Sentinel = 40,
+	Sentinel = 40,
 }
 local abilityValues = {}
 for name,i in pairs(Data.AbilityEnum) do

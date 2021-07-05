@@ -3,7 +3,7 @@ local self = CustomStatSystem
 ---@alias CustomStatCanAddPointsCallback fun(id:string, stat:CustomStatData, character:EclCharacter, currentValue:integer, availablePoints:integer, canAdd:boolean):boolean
 ---@alias CustomStatCanRemovePointsCallback fun(id:string, stat:CustomStatData, character:EclCharacter, currentValue:integer, canRemove:boolean):boolean
 ---@alias OnAvailablePointsChangedCallback fun(id:string, stat:CustomStatData, character:EsvCharacter, previousPoints:integer, currentPoints:integer, isClientSide:boolean):void
----@alias OnCustomStatValueChangedCallback fun(id:string, stat:CustomStatData, character:EsvCharacter, previousPoints:integer, currentPoints:integer, isClientSide:boolean):void
+---@alias OnStatValueChangedCallback fun(id:string, stat:CustomStatData, character:EsvCharacter, previousPoints:integer, currentPoints:integer, isClientSide:boolean):void
 
 local isClient = Ext.IsClient()
 
@@ -57,7 +57,7 @@ function CustomStatSystem:RegisterCanRemovePointsHandler(id, callback)
 	end
 end
 
----@param id string|string[]
+---@param id string
 ---@param callback OnAvailablePointsChangedCallback
 function CustomStatSystem:RegisterAvailablePointsChangedListener(id, callback)
 	if type(id) == "table" then
@@ -477,13 +477,11 @@ function CustomStatSystem:UpdateAvailablePoints(ui)
 		local this = ui:GetRoot()
 		this.setAvailableCustomStatPoints(self:GetTotalAvailablePoints())
 		local stats = this.stats_mc.customStats_mc.stats_array
-		if stats then
-			for i=0,#stats-1 do
-				local stats_mc = stats[i]
-				if stats_mc then
-					stats_mc.plus_mc.visible = self:GetCanAddPoints(ui, stats_mc.statId)
-					stats_mc.minus_mc.visible = self:GetCanRemovePoints(ui, stats_mc.statId)
-				end
+		for i=0,#stats-1 do
+			local stats_mc = stats[i]
+			if stats_mc then
+				stats_mc.plus_mc.visible = self:GetCanAddPoints(ui, stats_mc.statId)
+				stats_mc.minus_mc.visible = self:GetCanRemovePoints(ui, stats_mc.statId)
 			end
 		end
 	end

@@ -1182,7 +1182,6 @@ end
 
 --- @param ui UIObject
 function TooltipHooks:OnRequestTooltip(ui, method, arg1, arg2, arg3, ...)
-	print(method, arg1, arg2, arg3, table.unpack({...}))
 	local request = {}
 	local isCharSheet = ui:GetTypeId() == 119
 
@@ -1235,7 +1234,6 @@ function TooltipHooks:OnRequestTooltip(ui, method, arg1, arg2, arg3, ...)
 			characterHandle = Ext.DoubleToHandle(arg1)
 			request.Ability = arg2
 		end
-		print("request.Ability", request.Ability)
 
 		request.Ability = Ext.EnumIndexToLabel("AbilityType", request.Ability)
 	elseif method == "showTalentTooltip" then

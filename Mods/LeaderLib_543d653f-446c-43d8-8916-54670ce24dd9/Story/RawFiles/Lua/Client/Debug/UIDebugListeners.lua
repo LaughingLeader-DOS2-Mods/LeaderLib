@@ -1,7 +1,3 @@
-if Debug == nil then
-	Debug = {}
-end
-
 ---@type UIListenerWrapper[]
 local allListeners = {}
 
@@ -27,14 +23,12 @@ local UIListenerWrapper = {
 }
 UIListenerWrapper.__index = UIListenerWrapper
 
-Debug.UIListenerWrapper = UIListenerWrapper
-
 local lastEvent = "";
 
 ---@param self UIListenerWrapper
 ---@param ui UIObject
 local function OnUIListener(self, eventType, ui, event, ...)
-	if self.Enabled and Vars.DebugMode and Vars.Print.UI then
+	if self.Enabled then
 		if event == "addTooltip" then
 			local txt = table.unpack({...})
 			if string.find(txt, "Experience:", 1, true) then
@@ -44,9 +38,9 @@ local function OnUIListener(self, eventType, ui, event, ...)
 			return
 		end
 		if self.PrintParams then
-			fprint(LOGLEVEL.TRACE, "[UI:%s(%s)][%s] [%s] %s(%s)", self.Name, ui:GetTypeId(), eventType, Ext.MonotonicTime(), event, StringHelpers.DebugJoin(", ", {...}))
+			fprint(LOGLEVEL.DEFAULT, "[UI:%s(%s)][%s] [%s] %s(%s)", self.Name, ui:GetTypeId(), eventType, Ext.MonotonicTime(), event, StringHelpers.DebugJoin(", ", {...}))
 		else
-			fprint(LOGLEVEL.TRACE, "[UI:%s(%s)] [%s] %s [%s]", self.Name, ui:GetTypeId(), eventType, event, Ext.MonotonicTime())
+			fprint(LOGLEVEL.DEFAULT, "[UI:%s(%s)] [%s] %s [%s]", self.Name, ui:GetTypeId(), eventType, event, Ext.MonotonicTime())
 		end
 
 		if self.CustomCallback[event] then
@@ -73,22 +67,15 @@ function UIListenerWrapper:RegisterListeners(ui)
 	end
 end
 
-function UIListenerWrapper:Create(id, calls, methods, params)
+function UIListenerWrapper:Create(id, calls, methods)
 	local this = {
 		ID = id,
 		Calls = calls or {},
 		Methods = methods or {},
 		Enabled = UIListenerWrapper.Enabled,
 		CustomCallback = {},
-		PrintParams = true,
-		Initialized = nil
+		PrintParams = true
 	}
-
-	if params and type(params) == "table" then
-		for k,v in pairs(params) do
-			this[k] = v
-		end
-	end
 
 	if type(id) == "string" then
 		local ui = Ext.GetBuiltinUI(id)
@@ -107,13 +94,6 @@ function UIListenerWrapper:Create(id, calls, methods, params)
 					OnUIListener(this, "method", ...)
 				end)
 			end
-
-			if this.Initialized then
-				local b,err = xpcall(this.Initialized, debug.traceback, ui)
-				if not b then
-					Ext.PrintError(err)
-				end
-			end
 		end
 	else
 		if type(id) == "table" then
@@ -130,16 +110,6 @@ function UIListenerWrapper:Create(id, calls, methods, params)
 					end)
 				end
 				this.Name = Data.UITypeToName[id2] or ""
-
-				if this.Initialized then
-					local ui = Ext.GetBuiltinUI(id2)
-					if ui then
-						local b,err = xpcall(this.Initialized, debug.traceback, ui)
-						if not b then
-							Ext.PrintError(err)
-						end
-					end
-				end
 			end
 		else
 			for _,v in pairs(this.Calls) do
@@ -155,17 +125,6 @@ function UIListenerWrapper:Create(id, calls, methods, params)
 			end
 	
 			this.Name = Data.UITypeToName[id] or ""
-
-			
-			if this.Initialized then
-				local ui = Ext.GetUIByType(id)
-				if ui then
-					local b,err = xpcall(this.Initialized, debug.traceback, ui)
-					if not b then
-						Ext.PrintError(err)
-					end
-				end
-			end
 		end
 	end
 
@@ -183,12 +142,6 @@ Ext.RegisterListener("UIObjectCreated", function(ui)
 		if ui2 and (ui2:GetTypeId() == ui:GetTypeId() or ui == ui2) then
 			data:RegisterListeners(ui)
 			deferredRegistrations[path] = nil
-			if data.Initialized then
-				local b,err = xpcall(this.Initialized, debug.traceback, ui)
-				if not b then
-					Ext.PrintError(err)
-				end
-			end
 		end
 	end
 end)
@@ -268,86 +221,6 @@ local examineMethods = {
 
 local examine = UIListenerWrapper:Create(Data.UIType.examine, examineCalls, examineMethods)
 examine.Enabled = false
-
-local characterCreation = UIListenerWrapper:Create(Data.UIType.characterCreation, {
-	"characterCreationStarted",
-	"blockMouseWheelInput",
-	"cancelDragging",
-	"dragactivate",
-	"editClass",
-	"handleTextInput",
-	"hideTooltip",
-	"inputFocus",
-	"inputFocusLost",
-	"mainMenu",
-	"minAbility",
-	"minAttribute",
-	"nextStep",
-	"openConnectivity",
-	"playOriginStory",
-	--"PlaySound",
-	"plusAbility",
-	"plusAttribute",
-	"previousStep",
-	"registerAnchorId",
-	"rotateCharacter",
-	"selectOption",
-	"setAnchor",
-	"setArmourState",
-	"setGender",
-	"setInstrument",
-	"setPanel",
-	"showAbilityTooltip",
-	"showClassEditTooltip",
-	"showItemTooltip",
-	"showSkillTooltip",
-	"showStatTooltip",
-	"showStatusTooltip",
-	"showTagTooltip",
-	"showTalentTooltip",
-	"showTooltip",
-	"startDragging",
-	"startGame",
-	"stopOriginStory",
-	"toggleTag",
-	"toggleTalent",
-	"UIAssert",
-	"useSkill",
-}, {
-	"clearPanelSelectors",
-	"closeOriginPreview",
-	"creationDone",
-	"enableStoryPlayback",
-	"onDragDown",
-	"onOutScrollEat",
-	"onOverScrollEat",
-	"onStartButton",
-	"selectOption",
-	"setArmourState",
-	"setAvailableSkillSlots",
-	"setBackButtonVisible",
-	"setClassEditTabLabel",
-	"setDetails",
-	"setFreeClassPoints",
-	"setGM",
-	"setInstrument",
-	"setInstrumentName",
-	"setLetterBoxText",
-	"setLetterBoxVisibility",
-	"setPanel",
-	"setStepLabel",
-	"setText",
-	"setTextField",
-	"updateAbilities",
-	"updateAttributes",
-	"updateContent",
-	"updatePortraits",	
-	"updateSkills",
-	"updateSteps",
-	"updateTags",
-	"updateTalents",
-})
-characterCreation.Enabled = true
 
 local characterSheetDebug = UIListenerWrapper:Create(Data.UIType.characterSheet, {
 	"cancelDragging",
@@ -498,7 +371,7 @@ local printArrays = {
 -- 	end
 -- end
 
-characterSheetDebug.Enabled = true
+--characterSheetDebug.Enabled = true
 
 local sheetCalls = {
 	"addPoints",
@@ -852,9 +725,7 @@ local hotbar = UIListenerWrapper:Create(Data.UIType.hotBar, {
 	"updateSlotData",
 	--"updateSlots",
 })
-hotbar.Enabled = false
 
---[[
 ---@param ui UIObject
 hotbar.CustomCallback["updateSlotData"] = function(self, ui, method)
 	local this = ui:GetRoot()
@@ -882,7 +753,8 @@ hotbar.CustomCallback["updateSlots"] = function(self, ui, method)
 		end
 	end
 end
-]]
+
+--hotbar.Enabled = true
 
 --"Public/Game/GUI/dialog.swf"
 local dialog = UIListenerWrapper:Create(Data.UIType.dialog, {
@@ -1350,147 +1222,3 @@ local combatLog = UIListenerWrapper:Create(Data.UIType.combatLog,
 "setTooltip",
 "startsWith"})
 combatLog.Enabled = true
-
-local GMPanelHUD = UIListenerWrapper:Create(Data.UIType.GMPanelHUD, {
-	"addSticky",
-	"buttonCallback_1",
-	"buttonCallback_2",
-	"buttonCallback_3",
-	"buttonCallback_4",
-	"buttonCallback_5",
-	"buttonCallback_6",
-	"buttonCallback_7",
-	"buttonCallback_8",
-	"buttonCallback_9",
-	"buttonCallback_10",
-	"buttonCallback_11",
-	"buttonCallback_12",
-	"buttonCallback_13",
-	"buttonCallback_14",
-	"buttonCallback_15",
-	"buttonCallback_16",
-	"buttonCallback_17",
-	"buttonCallback_18",
-	"buttonCallback_19",
-	"cancelDragging",
-	"centerCharacter",
-	"hideTooltip",
-	--"PlaySound",
-	--"playSound",
-	"possess",
-	"registerAnchorId",
-	"setPosition",
-	"showCharTooltip",
-	"showItemTooltip",
-	"showStatusTooltip",
-	"showTooltip",
-	"stopDragOnPanel",
-	"toggleStickiesPanel",
-	"UIAssert",
-}, {
-	"addAction",
-	"addButton",
-	"addIggyIcon",
-	"addSticky",
-	"calculateGMBarPosition",
-	"fadeInButton",
-	"fadeInTargetBar",
-	"fadeOutTargetBar",
-	"findButtonByID",
-	"initActionSlots",
-	"initButtons",
-	"onTargetDeselected",
-	"setButtonActive",
-	--"setButtonEnable",
-	"setPossessBtnTooltip",
-	"setStickyBarText",
-	"showTargetBar",
-	"toggleStickiesPanel",
-	"updateShortkeys",
-}, {
-	---@param ui UIObject
-	Initialized = function(ui)
-		Ext.PrintError("GMPANELHUD")
-		local this = ui:GetRoot()
-		if this then
-			local printArr = function(name, arr)
-				print(name, #arr)
-				for i=0,#arr-1 do
-					print(name, i, arr[i].id)
-				end
-			end
-			local arr = this.GMBar_mc.slotList.content_array
-			printArr("GMBar_mc", this.GMBar_mc.slotList.content_array)
-			printArr("targetBar_mc", this.targetBar_mc.slotList.content_array)
-			printArr("secActionList", this.secActionList.content_array)
-		end
-	end
-})
-GMPanelHUD.Enabled = true
-
-local roll = UIListenerWrapper:Create(Data.UIType.roll, {
-	"cancelMoveWindow",
-	"closedUI",
-	"halt",
-	"hideTooltip",
-	"hideUI",
-	"inputFocus",
-	"inputFocusLost",
-	"minimizeUI",
-	--"PlaySound",
-	"registerAnchorId",
-	"requestRoll",
-	"resetRolls",
-	"result",
-	"resume",
-	"roll",
-	"setPosition",
-	"showItemTooltip",
-	"showRollTooltip",
-	"showStatusTooltip",
-	"showTooltip",
-	"startMoveWindow",
-	"UIAssert",
-}, {
-	"cycleRoll",
-	"foundInRollList",
-	"Initialize",
-	"nextRoll",
-	"onClientRollsActivate",
-	"onClose",
-	"onGMRollClicked",
-	"onGMRollsActivate",
-	"onMinimize",
-	"onPartyRollsActivate",
-	"onPartyRollsDeactivate",
-	"onRollClicked",
-	"onSmallBlueButtonClicked",
-	"onSmallRedButtonClicked",
-	"prevRoll",
-	"resetRolls",
-	"roll",
-	"setControllerMode",
-	"setIsGM",
-	"setPanelVisible",
-	"update",
-	"updateAbilities",
-	"updateButtons",
-	"updateCharacters",
-	"updateRolls",
-}, {
-	---@param ui UIObject
-	Initialized = function(ui)
-		Ext.PrintError("roll")
-		local this = ui:GetRoot()
-		if this then
-			this.setIsGM(Client.Character.IsGameMaster)
-		end
-	end
-})
-roll.Enabled = true
-roll.CustomCallback["updateRolls"] = function(self, ui, call, b)
-	local this = ui:GetRoot()
-	this.ownerCharacter = Ext.HandleToDouble(Client:GetCharacter().Handle)
-	this.isGM = Client.Character.IsGameMaster
-	this.Initialize()
-end

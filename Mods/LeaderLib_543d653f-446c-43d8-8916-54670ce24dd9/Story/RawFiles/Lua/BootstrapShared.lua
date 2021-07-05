@@ -28,7 +28,7 @@ Ext.Require("Shared/SharedDebug.lua")
 Ext.Require("Shared/Stats/CustomSkillProperties.lua")
 Ext.Require("Shared/Stats/StatOverrides.lua")
 Ext.Require("Shared/System/FeaturesHandler.lua")
-Ext.Require("Shared/System/CharacterSheet/_Init.lua")
+Ext.Require("Shared/System/AbilityAPI.lua")
 
 if Ext.Version() >= 55 then
 Ext.Require("Shared/System/CustomStats/CustomStatSystem.lua")
@@ -42,4 +42,4 @@ if Vars.DebugMode then
 	--Ext.Require("Shared/Debug/GameMathTracing.lua")
 	Ext.Require("Shared/Debug/TestingSystem.lua")
 end
-Ext.Require("Shared/Debug/ConsoleWindowHelpers.lua")
+Ext.Require("Shared/Debug/ConsoleWIndowHelpers.lua")

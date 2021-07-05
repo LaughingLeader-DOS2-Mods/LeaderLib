@@ -206,17 +206,6 @@ function HitData:ConvertDamageTypeTo(damageType, toDamageType, aggregate)
 	self:ApplyDamageList(false)
 end
 
----Converts all damage to a specific type.
----@param damageType string Damage type to convert everything to.
----@param aggregate boolean|nil Combine multiple entries for the same damage types into one.
-function HitData:ConvertAllDamageTo(damageType, aggregate)
-	self.DamageList:ConvertDamageType(damageType)
-	if aggregate then
-		self.DamageList:AggregateSameTypeDamages()
-	end
-	self:ApplyDamageList(false)
-end
-
 ---Clears all damage, or damage from a specific type, from the damage list and recalculates totals / lifesteal.
 ---@param damageType string|nil If set, only damage from this specific type is cleared.
 function HitData:ClearDamage(damageType)

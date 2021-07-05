@@ -22,8 +22,7 @@ function RegisterListener(event, callbackOrKey, callbackOrNil)
 		listenerTable = Listeners[event]
 	end
 	if listenerTable then
-		local keyType = type(callbackOrKey)
-		if keyType == "string" or keyType == "number" then
+		if type(callbackOrKey) == "string" then
 			if callbackOrNil then
 				if listenerTable[callbackOrKey] == nil then
 					listenerTable[callbackOrKey] = {}

@@ -66,7 +66,7 @@ function GameHelpers.ApplyProperties(source, target, properties, targetPosition,
 					elseif v.StatusChance > 0 then
 						local statusObject = {
 							StatusId = v.Action,
-							StatusType = GameHelpers.Status.GetStatusType(v.Action),
+							StatusType = GetStatusType(v.Action, "StatusType"),
 							ForceStatus = false,
 							StatusSourceHandle = source.Handle,
 							TargetHandle = aType == "userdata" and target.Handle or nil,

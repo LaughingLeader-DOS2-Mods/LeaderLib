@@ -76,6 +76,13 @@ local function GetArrayIndexStart(ui, arrayName, checkType, offset)
 	return -1
 end
 
+---@param ui UIObject
+local function OnCharacterSheetUpdating(ui)
+	local main = ui:GetRoot()
+	AbilityManager.OnCharacterSheetUpdating(ui, main, #main.ability_array > 0)
+
+end
+
 local function OnCharacterSheetUpdateDone(ui)
 	local this = ui:GetRoot()
 	if this.isGameMasterChar then
@@ -91,6 +98,11 @@ local function UpdateCharacterSheetPoints(ui, method, amount)
 	if method == "setAvailableCombatAbilityPoints" or method == "setAvailableCivilAbilityPoints" then
 		AbilityManager.UpdateCharacterSheetPoints(ui, method, ui:GetRoot(), amount)
 	end
+end
+
+---@param ui UIObject
+local function OnCharacterCreationUpdating(ui, method)
+	AbilityManager.OnCharacterCreationUpdating(ui, method, ui:GetRoot())
 end
 
 local pointEvents = {
@@ -158,7 +170,7 @@ local function RegisterListeners()
 		for i,v in pairs(sheetEvents) do
 			Ext.RegisterUITypeCall(Data.UIType.characterSheet, v, OnSheetEvent)
 		end
-		--Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem", OnCharacterSheetUpdating)
+		Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem", OnCharacterSheetUpdating)
 		Ext.RegisterUITypeCall(Data.UIType.characterSheet, "characterSheetUpdateDone", OnCharacterSheetUpdateDone)
 		Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setAvailableStatPoints", UpdateCharacterSheetPoints)
 		Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setAvailableCombatAbilityPoints", UpdateCharacterSheetPoints)
@@ -174,14 +186,14 @@ local function RegisterListeners()
 
 		Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setHelmetOptionState", OnSetHelmetOptionState)
 
-		--Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateAbilities", OnCharacterCreationUpdating)
+		Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateAbilities", OnCharacterCreationUpdating)
 
 		Ext.RegisterUITypeCall(Data.UIType.statusConsole, "GuardPressed", function(ui, call, ...)
 			Ext.PostMessageToServer("LeaderLib_OnDelayTurnClicked", Client.Character.UUID)
 			InvokeListenerCallbacks(Listeners.TurnDelayed, Client.Character.UUID)
 		end)
 	else
-		--Ext.RegisterUITypeInvokeListener(Data.UIType.statsPanel_c, "updateArraySystem", OnCharacterSheetUpdating)
+		Ext.RegisterUITypeInvokeListener(Data.UIType.statsPanel_c, "updateArraySystem", OnCharacterSheetUpdating)
 		---@param ui UIObject
 		---@param method string
 		---@param pointType number One of 4 values: 0,1,2,3 | 0 = attribute, 1 = combat ability points, 2 = civil points, 3 = talent points
@@ -193,7 +205,7 @@ local function RegisterListeners()
 				UpdateCharacterSheetPoints(ui, "setAvailableCivilAbilityPoints", points)
 			end
 		end)
-		--Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation_c, "updateAbilities", OnCharacterCreationUpdating)
+		Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation_c, "updateAbilities", OnCharacterCreationUpdating)
 	end
 end
 

@@ -1,1 +1,0 @@
-Ext.Require("Client/Classes/UIWrapper.lua")

@@ -72,8 +72,12 @@ function CustomStatSystem:GetAllStats(visibleOnly, sortByDisplayName, includeUnr
 	if visibleOnly == true and isClient then
 		local ui = Ext.GetUIByType(Data.UIType.characterSheet)
 		if ui then
+			local this = ui:GetRoot()
+			if not this then
+				return
+			end
 			findAll = false
-			local arr = ui:GetRoot().stats_mc.customStats_mc.stats_array
+			local arr = this.stats_mc.customStats_mc.stats_array
 			for i=0,#arr-1 do
 				local stat_mc = arr[i]
 				if stat_mc and stat_mc.statId then

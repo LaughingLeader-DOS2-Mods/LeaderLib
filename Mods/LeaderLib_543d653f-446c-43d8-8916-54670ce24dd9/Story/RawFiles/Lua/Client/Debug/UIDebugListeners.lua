@@ -586,10 +586,10 @@ statsPanelDebug.CustomCallback["updateArraySystem"] = function(self, ui, method)
 	local arr = ui:GetRoot().customStats_array
 	if arr then
 		local length = #arr
-		print("customStats_array", length)
+		PrintDebug("customStats_array", length)
 		if length > 0 then
 			for i=0,length do
-				print(i, arr[i])
+			PrintDebug(i, arr[i])
 			end
 		end
 	end
@@ -781,15 +781,15 @@ local contextMenu = UIListenerWrapper:Create(Data.UIType.contextMenu, {
 ---@param ui UIObject
 contextMenu.CustomCallback["updateButtons"] = function(self, ui, method)
 	local this = ui:GetRoot()
-	print("windowsMenu_mc", this.windowsMenu_mc.x, this.windowsMenu_mc.y)
-	print("stage", this.x, this.y)
+	PrintDebug("windowsMenu_mc", this.windowsMenu_mc.x, this.windowsMenu_mc.y)
+	PrintDebug("stage", this.x, this.y)
 	local arr = this.buttonArr
 	if arr then
 		local length = #arr
-		print("buttonArr", length)
+		PrintDebug("buttonArr", length)
 		if length > 0 then
 			for i=0,length do
-				print(i, arr[i])
+				PrintDebug(i, arr[i])
 			end
 		end
 	end
@@ -862,9 +862,9 @@ hotbar.CustomCallback["updateSlotData"] = function(self, ui, method)
 	for i=0,#array-1 do
 		local entry = array[i]
 		if entry then
-			print(i, entry)
+			PrintDebug(i, entry)
 		else
-			print(i, "nil")
+			PrintDebug(i, "nil")
 		end
 	end
 end
@@ -876,9 +876,9 @@ hotbar.CustomCallback["updateSlots"] = function(self, ui, method)
 	for i=0,#array do
 		local entry = array[i]
 		if entry then
-			print(i, entry)
+			PrintDebug(i, entry)
 		else
-			print(i, "nil")
+			PrintDebug(i, "nil")
 		end
 	end
 end
@@ -1414,9 +1414,9 @@ local GMPanelHUD = UIListenerWrapper:Create(Data.UIType.GMPanelHUD, {
 		local this = ui:GetRoot()
 		if this then
 			local printArr = function(name, arr)
-				print(name, #arr)
+				PrintDebug(name, #arr)
 				for i=0,#arr-1 do
-					print(name, i, arr[i].id)
+					PrintDebug(name, i, arr[i].id)
 				end
 			end
 			local arr = this.GMBar_mc.slotList.content_array

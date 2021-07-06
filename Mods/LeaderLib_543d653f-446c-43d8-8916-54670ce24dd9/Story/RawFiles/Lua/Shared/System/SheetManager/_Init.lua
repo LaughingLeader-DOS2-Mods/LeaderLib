@@ -1,4 +1,3 @@
-Ext.Require("Shared/System/SheetManager/SheetDataValues.lua")
 Ext.Require("Shared/System/SheetManager/Classes/SheetBaseData.lua")
 Ext.Require("Shared/System/SheetManager/Classes/SheetTalentData.lua")
 Ext.Require("Shared/System/SheetManager/Classes/SheetAbilityData.lua")

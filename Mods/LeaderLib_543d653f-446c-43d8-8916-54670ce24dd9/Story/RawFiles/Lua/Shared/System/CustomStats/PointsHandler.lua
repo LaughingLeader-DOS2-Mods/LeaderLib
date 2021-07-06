@@ -475,6 +475,9 @@ function CustomStatSystem:UpdateAvailablePoints(ui)
 	end
 	if ui then
 		local this = ui:GetRoot()
+		if not this then
+			return
+		end
 		this.setAvailableCustomStatPoints(self:GetTotalAvailablePoints())
 		local stats = this.stats_mc.customStats_mc.stats_array
 		if stats then

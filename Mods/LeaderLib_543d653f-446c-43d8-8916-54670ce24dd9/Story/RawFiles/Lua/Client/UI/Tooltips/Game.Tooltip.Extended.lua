@@ -1182,7 +1182,7 @@ end
 
 --- @param ui UIObject
 function TooltipHooks:OnRequestTooltip(ui, method, arg1, arg2, arg3, ...)
-	print(method, arg1, arg2, arg3, table.unpack({...}))
+	PrintDebug(method, arg1, arg2, arg3, table.unpack({...}))
 	local request = {}
 	local isCharSheet = ui:GetTypeId() == 119
 

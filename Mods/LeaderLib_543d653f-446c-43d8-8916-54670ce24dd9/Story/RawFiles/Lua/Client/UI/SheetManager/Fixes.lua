@@ -1,6 +1,6 @@
 --local function ActuallySetCharacterHandle(ui, this, player, uiType, uiName)
 local function ActuallySetCharacterHandle(ui, call)
-	print("ActuallySetCharacterHandle", Data.UITypeToName[ui:GetTypeId()], call)
+	PrintDebug("ActuallySetCharacterHandle", Data.UITypeToName[ui:GetTypeId()], call)
 	local player = Client:GetCharacter()
 	if player then
 		local doubleHandle = Ext.HandleToDouble(player.Handle)
@@ -30,7 +30,7 @@ Ext.RegisterUITypeInvokeListener(Data.UIType.hotBar, "setPlayerHandle", UpdateSh
 Ext.RegisterUITypeInvokeListener(Data.UIType.bottomBar_c, "setPlayerHandle", UpdateSheetHandlesAfterHotbar)
 
 Ext.RegisterNetListener("LeaderLib_CCStarted", function(cmd, netid)
-	print(cmd, netid)
+	PrintDebug(cmd, netid)
 	-- local ui = Ext.GetUIByType(Data.UIType.characterCreation)
 	-- if ui then
 	-- 	ui:CaptureExternalInterfaceCalls()

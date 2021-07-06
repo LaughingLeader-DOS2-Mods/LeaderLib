@@ -55,7 +55,7 @@ function SceneStateData:Create(id, action, params)
 end
 
 function SceneStateData:Resume(...)
-	print("SceneStateData:Resume", self.Parent.ID, self.ID, self.Action, self.Thread, self:GetStatus())
+	PrintDebug("SceneStateData:Resume", self.Parent.ID, self.ID, self.Action, self.Thread, self:GetStatus())
 	if not self.Thread or self:GetStatus() == "dead" then
 		self.Thread = coroutine.create(RunAction)
 	end
@@ -81,7 +81,7 @@ end
 
 function SceneStateData:Pause()
 	local doYield = self.Thread and coroutine.running() == self.Thread
-	print("SceneStateData:Pause", self.Active, self:GetStatus())
+	PrintDebug("SceneStateData:Pause", self.Active, self:GetStatus())
 	if doYield then
 		self.Active = false
 		coroutine.yield()
@@ -133,7 +133,7 @@ end
 
 ---@param timeInMilliseconds integer How long to wait in milliseconds.
 function SceneStateData:Wait(timeInMilliseconds)
-	print("Waiting", timeInMilliseconds, "ms", self.Parent.ID, self.ID)
+	PrintDebug("Waiting", timeInMilliseconds, "ms", self.Parent.ID, self.ID)
 	SceneManager.AddToQueue(SceneManager.QueueType.Waiting, self.Parent.ID, self.ID, timeInMilliseconds)
 	self:Pause()
 	return true

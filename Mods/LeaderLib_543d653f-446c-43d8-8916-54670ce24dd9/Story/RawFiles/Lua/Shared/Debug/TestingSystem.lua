@@ -119,13 +119,13 @@ end
 
 local function printModList(event)
 	fprint(LOGLEVEL.TRACE, "[%s] Mods [%s]", event, Ext.IsClient() and "CLIENT" or "SERVER")
-	print("=============")
+	PrintDebug("=============")
 	local mods = Ext.GetModLoadOrder()
 	for i=1,#mods do
 		local info = Ext.GetModInfo(mods[i])
 		fprint(LOGLEVEL.TRACE, "[%i] %s (%s) [%s]", i, info and info.Name or "???", mods[i], info and info.ModuleType or "")
 	end
-	print("=============")
+	PrintDebug("=============")
 end
 
 Ext.RegisterListener("GameStateChanged", function(l,n) if n == "UnloadLevel" or (n == "Running" and l == "Sync") then printModList(string.format("GameStateChanged(%s=>%s)", l, n)) end end)

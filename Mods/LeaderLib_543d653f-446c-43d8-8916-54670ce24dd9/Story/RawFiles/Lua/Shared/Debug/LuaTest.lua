@@ -104,7 +104,7 @@ function LuaTest:AssertNotEquals(target, expected, extraMsg, deepTableComparison
 end
 
 function LuaTest:Complete(success, ...)
-	print(self.Name, "LuaTest:Complete", self.Active)
+	PrintDebug(self.Name, "LuaTest:Complete", self.Active)
 	if self.Active then
 		self.Success = success == true and 1 or 0
 		if self.OnComplete then

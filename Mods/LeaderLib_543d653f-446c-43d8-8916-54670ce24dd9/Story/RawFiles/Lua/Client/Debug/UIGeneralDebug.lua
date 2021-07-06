@@ -47,20 +47,20 @@ local function PrintArrayValue(ui, index, arrayName)
 		end
 	end
 	if val ~= nil then
-		print(" ["..index.."] = ["..tostring(val).."]")
+		PrintDebug(" ["..index.."] = ["..tostring(val).."]")
 	end
 end
 
 function UI.PrintArray(ui, arrayName)
-	print("==============")
-	print(arrayName)
-	print("==============")
+	PrintDebug("==============")
+	PrintDebug(arrayName)
+	PrintDebug("==============")
 	local i = 0
 	while i < 300 do
 		PrintArrayValue(ui, i, arrayName)
 		i = i + 1
 	end
-	print("==============")
+	PrintDebug("==============")
 end
 
 local addedTalents = false
@@ -166,11 +166,11 @@ local overheadFunctions = {
 }
 
 local function TraceCall(ui, ...)
-	print(Ext.JsonStringify({...}))
+	PrintDebug(Ext.JsonStringify({...}))
 end
 
 local function TraceTooltip(call, val, tooltipdata)
-	print(call, val, Ext.JsonStringify(tooltipdata))
+	PrintDebug(call, val, Ext.JsonStringify(tooltipdata))
 end
 
 local allUIFiles = {
@@ -379,7 +379,7 @@ local function TryFindUI(ui, tryFindId)
 			end
 		end
 	end
-	print("Failed to find UI file for UI", ui, id)
+	PrintDebug("Failed to find UI file for UI", ui, id)
 end
 
 Ext.RegisterListener("UIObjectCreated", function(ui)
@@ -412,7 +412,7 @@ Ext.RegisterConsoleCommand("tooltiptest", function(cmd, delay)
 	local removeOld = false
 	delay = tonumber(delay or "250")
 	UIExtensions.StartTimer("worldTooltipTest", delay, function(timerName, isComplete)
-		print(timerName, isComplete)
+	PrintDebug(timerName, isComplete)
 		local worldTooltip = Ext.GetUIByType(Data.UIType.worldTooltip)
 		if worldTooltip then
 			removeOld = not removeOld

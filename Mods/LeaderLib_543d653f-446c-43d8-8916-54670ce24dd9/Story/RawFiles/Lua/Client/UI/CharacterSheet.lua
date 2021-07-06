@@ -144,6 +144,7 @@ local sheetEvents = {
 	--"unregisterAnchorId",
 }
 
+--TODO Remove?
 local function RegisterListeners()
 	---@type LeaderLibGameSettings
 	local data = GameSettings
@@ -196,5 +197,4 @@ local function RegisterListeners()
 		--Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation_c, "updateAbilities", OnCharacterCreationUpdating)
 	end
 end
-
 Ext.RegisterListener("SessionLoaded", RegisterListeners)

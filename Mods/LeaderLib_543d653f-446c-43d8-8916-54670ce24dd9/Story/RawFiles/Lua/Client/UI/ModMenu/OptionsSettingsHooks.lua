@@ -364,25 +364,25 @@ local function setupDebugListeners()
 		if Vars.ControllerEnabled then
 			for i,v in pairs(debugEvents_c) do
 				Ext.RegisterUINameInvokeListener(v, function(ui, ...)
-					print(ui:GetTypeId(), Common.Dump({...}), Ext.MonotonicTime())
+					PrintDebug(ui:GetTypeId(), Common.Dump({...}), Ext.MonotonicTime())
 				end)
 			end
 			for i,v in pairs(debugCalls_c) do
 				Ext.RegisterUINameCall(v, function(ui, ...)
-					print(ui:GetTypeId(), Common.Dump({...}), Ext.MonotonicTime())
+					PrintDebug(ui:GetTypeId(), Common.Dump({...}), Ext.MonotonicTime())
 				end)
 			end
 		else
 			for i,v in pairs(debugEvents) do
 				---@param ui UIObject
 				Ext.RegisterUINameInvokeListener(v, function(ui, ...)
-					print(ui:GetTypeId(), Common.Dump({...}), Ext.MonotonicTime())
+					PrintDebug(ui:GetTypeId(), Common.Dump({...}), Ext.MonotonicTime())
 				end)
 			end
 			for i,v in pairs(debugCalls) do
 				---@param ui UIObject
 				Ext.RegisterUINameCall(v, function(ui, ...)
-					print(ui:GetTypeId(), Common.Dump({...}), Ext.MonotonicTime())
+					PrintDebug(ui:GetTypeId(), Common.Dump({...}), Ext.MonotonicTime())
 				end)
 			end
 		end

@@ -126,7 +126,7 @@ if Ext.IsDeveloperMode() then
 			if entries == party or entries == nil then
 				entries = GameHelpers.GetParty(nil, true, true, false, true)
 			end
-			print(entries, #entries, status)
+			PrintDebug(entries, #entries, status)
 			if status then
 				duration = duration or 6.0
 				if force == nil then
@@ -167,7 +167,7 @@ if Ext.IsDeveloperMode() then
 			for k,v in pairs(party) do
 				if type(v) == "function" then
 					meta[k] = function(tbl, ...)
-						print("meta", k, tbl == data, ...)
+						PrintDebug("meta", k, tbl == data, ...)
 						local b,result = pcall(v, data, ...)
 						return result
 					end

@@ -104,7 +104,7 @@ local function OnInitialized(region, isRunning)
 	end)
 
 	if Vars.PostLoadEnableLuaListeners or TotalSkillListeners > 0 then
-		print("**********************Enabling Lua listeners in Osiris*****************")
+		PrintDebug("**********************Enabling Lua listeners in Osiris*****************")
 		Osi.LeaderLib_ToggleScripts_EnableScript("LeaderLib_LuaSkillListeners_Enabled", "LeaderLib")
 		Osi.LeaderLib_ToggleScripts_EnableScript("LeaderLib_LuaEventListeners_Enabled", "LeaderLib")
 		Vars.PostLoadEnableLuaListeners = false

@@ -2,7 +2,7 @@
 
 ---@param ui UIObject
 local function PrintCall(ui, call, ...)
-	print("[PrintCall]",call, Ext.JsonStringify({...}))
+	PrintDebug("[PrintCall]",call, Ext.JsonStringify({...}))
 end
 
 local PATTERN_HIDE_CURRENT = "%d+/"

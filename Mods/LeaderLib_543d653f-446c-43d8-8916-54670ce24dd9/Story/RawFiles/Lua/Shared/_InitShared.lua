@@ -48,7 +48,7 @@ function PrintDebug(...)
 end
 
 function PrintLog(str, ...)
-	--Ext.Print(string.format(str, ...))
+	Ext.Print(string.format(str, ...))
 	print(string.format(str, ...))
 end
 
@@ -71,8 +71,12 @@ LOGLEVEL = {
 ---@param str string
 function fprint(severity, str, ...)
 	if type(severity) == "string" then
-		Ext.Print(string.format(severity, str, ...))
-	else
+		if string.find(severity, "%s", 1, true) then
+			Ext.Print(string.format(severity, str, ...))
+		else
+			Ext.Print(severity, str, ...)
+		end
+	elseif type(str) == "string" then
 		local msg = string.format(str, ...)
 		if severity == LOGLEVEL.ERROR then
 			Ext.PrintError(msg)
@@ -87,8 +91,10 @@ function fprint(severity, str, ...)
 				Ext.Print(msg)
 			end
 		else
-			Ext.Print(msg)
+			Ext.Print(msg, ...)
 		end
+	else
+		print(severity,str,...)
 	end
 end
 

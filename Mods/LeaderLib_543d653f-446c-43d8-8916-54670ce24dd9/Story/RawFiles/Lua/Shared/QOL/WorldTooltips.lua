@@ -11,11 +11,11 @@ if Ext.IsClient() then
 			local this = ui:GetRoot()
 			local arr = this.worldTooltip_array
 			for i=0,#arr-1 do
-				print("worldTooltip_array", i, arr[i])
+				PrintDebug("worldTooltip_array", i, arr[i])
 			end
 			arr = this.repos_array
 			for i=0,#arr-1 do
-				print("repos_array", i, arr[i])
+				PrintDebug("repos_array", i, arr[i])
 			end
 		end
 	end
@@ -28,7 +28,7 @@ if Ext.IsClient() then
 			for i=1,#ids do
 				local item = Ext.GetItem(ids[i])
 				if item then
-					print("CLIENT", item.DisplayName, item.RootTemplate.Tooltip)
+					PrintDebug("CLIENT", item.DisplayName, item.RootTemplate.Tooltip)
 					if item.RootTemplate.Tooltip ~= WorldTooltipper.TooltipMode then
 						item.RootTemplate.Tooltip = WorldTooltipper.TooltipMode
 					end

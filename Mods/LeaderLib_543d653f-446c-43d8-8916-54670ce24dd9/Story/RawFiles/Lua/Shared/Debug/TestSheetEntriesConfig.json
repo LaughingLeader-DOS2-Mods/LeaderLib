@@ -1,0 +1,19 @@
+{
+	"Abilities": {
+		"Test1": {
+			"DisplayName": "Debug1",
+			"Icon": "Ability_Necromancy"
+		}
+	},
+	"Stats": {
+		"DebugStat1": {
+			"DisplayName": "Debug1"
+		}
+	},
+	"Talents": {
+		"DebugTalent1": {
+			"DisplayName": "Debug1",
+			"Icon": "Talent_Jitterbug"
+		}
+	}
+}

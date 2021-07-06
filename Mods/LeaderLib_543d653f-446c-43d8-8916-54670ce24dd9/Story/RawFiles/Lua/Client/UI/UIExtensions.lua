@@ -67,7 +67,7 @@ Ext.RegisterConsoleCommand("llresetuiext", function(cmd)
 end)
 
 local function OnControlAdded(ui, call, id, listid, ...)
-	print("OnControlAdded", id, listid, Ext.JsonStringify({...}))
+	PrintDebug("OnControlAdded", id, listid, Ext.JsonStringify({...}))
 end
 
 local function OnTimerComplete(ui, call, timerCallbackName)

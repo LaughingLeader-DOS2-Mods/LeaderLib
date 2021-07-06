@@ -44,7 +44,7 @@ UI.RegisterItemTooltipTag = TooltipHandler.RegisterItemTooltipTag
 ---@param player EclCharacter
 ---@param tooltip TooltipData
 local function OnTalentTooltip(player, talent, tooltip)
-	print("OnTalentTooltip", player, talent, Ext.JsonStringify(tooltip.Data))
+	PrintDebug("OnTalentTooltip", player, talent, Ext.JsonStringify(tooltip.Data))
 end
 
 local tooltipTypeToElement = {
@@ -115,7 +115,7 @@ end
 ---@param tooltip TooltipData
 function TooltipHandler.OnAbilityTooltip(character, stat, tooltip)
 	if Vars.DebugMode then
-		print(stat, Ext.JsonStringify(tooltip.Data))
+		PrintDebug(stat, Ext.JsonStringify(tooltip.Data))
 	end
 end
 

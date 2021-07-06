@@ -1,4 +1,4 @@
-if Ext.Version() < 55 then
+if Ext.Version() < 55 or CustomStatSystem == nil then
 	-- Intermediate update workaround - Still working on this system
 
 	--Prevent EmmyLua from pointing towards here

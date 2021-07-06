@@ -238,7 +238,7 @@ Ext.RegisterNetListener("LeaderLib_Hotbar_RefreshCooldowns", function(call, data
 				for _,slotData in pairs(data.Slots) do
 					if slotData.Index and slotData.Cooldown then
 						local slot_mc = slotholder.slot_array[slotData.Index]
-						print(slotData.Index, slot_mc, slotData.Cooldown, slot_mc and slot_mc.cd_mc.cd_txt.htmlText or "")
+						PrintDebug(slotData.Index, slot_mc, slotData.Cooldown, slot_mc and slot_mc.cd_mc.cd_txt.htmlText or "")
 						if slot_mc then
 							slot_mc.setCoolDown(slotData.Cooldown)
 						end

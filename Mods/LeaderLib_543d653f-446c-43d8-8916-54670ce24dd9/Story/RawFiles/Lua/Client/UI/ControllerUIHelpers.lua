@@ -250,7 +250,7 @@ local function RegisterControllerTooltipEvents()
 			end
 		end
 	end
-	print("**************Registered controller UI events.************")
+	PrintDebug("**************Registered controller UI events.************")
 
 	if Vars.DebugMode then
 		local debugEvents = {

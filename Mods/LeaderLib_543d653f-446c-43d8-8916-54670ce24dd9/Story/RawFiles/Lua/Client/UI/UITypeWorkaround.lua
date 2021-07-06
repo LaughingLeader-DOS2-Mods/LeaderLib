@@ -47,20 +47,20 @@ local function PrintArrayValue(ui, index, arrayName)
 		end
 	end
 	if val ~= nil then
-		print(" ["..index.."] = ["..tostring(val).."]")
+		PrintDebug(" ["..index.."] = ["..tostring(val).."]")
 	end
 end
 
 function UI.PrintArray(ui, arrayName)
-	print("==============")
-	print(arrayName)
-	print("==============")
+	PrintDebug("==============")
+	PrintDebug(arrayName)
+	PrintDebug("==============")
 	local i = 0
 	while i < 300 do
 		PrintArrayValue(ui, i, arrayName)
 		i = i + 1
 	end
-	print("==============")
+	PrintDebug("==============")
 end
 
 local addedTalents = false
@@ -166,11 +166,11 @@ local overheadFunctions = {
 }
 
 local function TraceCall(ui, ...)
-	print(Ext.JsonStringify({...}))
+	PrintDebug(Ext.JsonStringify({...}))
 end
 
 local function TraceTooltip(call, val, tooltipdata)
-	print(call, val, Ext.JsonStringify(tooltipdata))
+	PrintDebug(call, val, Ext.JsonStringify(tooltipdata))
 end
 
 local allUIFiles = {

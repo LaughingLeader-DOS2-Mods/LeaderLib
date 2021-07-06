@@ -84,7 +84,7 @@ function SceneData:Resume(id, ...)
 	if id == nil and self.CurrentState == "" then
 		id = self.StateOrder[1]
 	end
-	print("SceneData:Resume", self.ID, id, ...)
+	PrintDebug("SceneData:Resume", self.ID, id, ...)
 	local state = self.States[id]
 	if state and state:CanResume(...) then
 		SetActive(self, id)
@@ -125,7 +125,7 @@ end
 
 ---@param state SceneStateData
 function SceneData:StateDone(state, ...)
-	print("SceneData:StateDone", self.ID, state.ID, ...)
+	PrintDebug("SceneData:StateDone", self.ID, state.ID, ...)
 	if not self:Next(...) then
 		SceneManager.ResumeLastThread()
 	end

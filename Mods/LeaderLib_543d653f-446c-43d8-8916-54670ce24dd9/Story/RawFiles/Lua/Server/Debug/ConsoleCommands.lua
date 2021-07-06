@@ -3,15 +3,15 @@ local MessageData = Classes.MessageData
 Ext.RegisterConsoleCommand("pos", function()
 	---@type StatCharacter
 	local character = CharacterGetHostCharacter()
-	print("Pos:", GetPosition(character))
-	print("Rot:", GetRotation(character))
+	fprint("Pos:", GetPosition(character))
+	fprint("Rot:", GetRotation(character))
 end)
 
 Ext.RegisterConsoleCommand("pos2", function()
 	---@type StatCharacter
 	local character = Ext.GetCharacter(CharacterGetHostCharacter()).Stats
-	print("Position:", Ext.JsonStringify(character.Position))
-	print("Rotation:", Ext.JsonStringify(character.Rotation))
+	fprint("Position:", Ext.JsonStringify(character.Position))
+	fprint("Rotation:", Ext.JsonStringify(character.Rotation))
 end)
 
 Ext.RegisterConsoleCommand("printuuids", function(call, radiusVal, skipSelf)
@@ -35,19 +35,19 @@ Ext.RegisterConsoleCommand("printuuids", function(call, radiusVal, skipSelf)
 			---@type StatCharacter
 			local characterStats = character.Stats
 	
-			print("CHARACTER")
-			print("===============")
-			print("UUID:", uuid)
-			print("NetID:", character.NetID)
-			print("Name:", CharacterGetDisplayName(uuid))
-			print("Stat:", characterStats.Name)
-			print("Archetype:", character.Archetype)
-			print("Pos:", Ext.JsonStringify(characterStats.Position))
-			print("Rot:", Ext.JsonStringify(characterStats.Rotation))
-			print("CustomTradeTreasure:", Ext.JsonStringify(character.CustomTradeTreasure))
-			print("Gain:", Ext.StatGetAttribute(character.Stats.Name, "Gain"))
+			fprint("CHARACTER")
+			fprint("===============")
+			fprint("UUID:", uuid)
+			fprint("NetID:", character.NetID)
+			fprint("Name:", CharacterGetDisplayName(uuid))
+			fprint("Stat:", characterStats.Name)
+			fprint("Archetype:", character.Archetype)
+			fprint("Pos:", Ext.JsonStringify(characterStats.Position))
+			fprint("Rot:", Ext.JsonStringify(characterStats.Rotation))
+			fprint("CustomTradeTreasure:", Ext.JsonStringify(character.CustomTradeTreasure))
+			fprint("Gain:", Ext.StatGetAttribute(character.Stats.Name, "Gain"))
+			fprint("===============")
 		end
-	print("===============")
 	end
 end)
 
@@ -58,14 +58,14 @@ Ext.RegisterConsoleCommand("teleport", function(cmd,target,param2,param3)
 	if param2 == "host" then param2 = host end
 	if param3 == "host" then param3 = host end
 
-	print(cmd,target,param2,param3)
+	PrintDebug(cmd,target,param2,param3)
 
 	if param2 == nil or param3 == nil then
 		if ObjectExists(target) == 1 then
-			print("Teleporting",host,"to",target,GetPosition(target))
+			PrintDebug("Teleporting",host,"to",target,GetPosition(target))
 			TeleportTo(host, target, "", 1, 0, 1)
 		else
-			print("Target",target,"does not exist")
+			PrintDebug("Target",target,"does not exist")
 		end
 	else
 		local x = tonumber(target)
@@ -77,7 +77,7 @@ Ext.RegisterConsoleCommand("teleport", function(cmd,target,param2,param3)
 				TeleportToPosition(target, x, y, z, "", 1, 0)
 			end
 		else
-			print("[teleport] Failed to parse position?")	
+			PrintDebug("[teleport] Failed to parse position?")	
 		end
 	end
 end)
@@ -114,7 +114,7 @@ Ext.RegisterConsoleCommand("statusapply", function(command,status,duration,force
 	if status == nil then
 		status = "HASTED"
 	end
-	print(command,status,target,source,duration,force)
+	PrintDebug(command,status,target,source,duration,force)
 	ApplyStatus(target,status,duration,force,source)
 end)
 
@@ -210,7 +210,7 @@ local function processTreasure(treasure, props, host, generateAmount)
 				elseif cat.TreasureTable then
 					processTreasure(cat.TreasureTable, props, host, generateAmount)
 				else
-					print(Common.Dump(cat))
+					PrintDebug(Common.Dump(cat))
 				end
 			end
 		end
@@ -310,7 +310,7 @@ Ext.RegisterConsoleCommand("removeunmemorizedskills", function(cmd)
 		local slot = NRD_SkillBarFindSkill(host, skill)
 		if slot == nil then
 			table.insert(removedSkills[host], {Skill=skill, Slot=slot})
-			print("[LeaderLib:removeunmemorizedskills] Removing "..skill)
+			PrintDebug("[LeaderLib:removeunmemorizedskills] Removing "..skill)
 			CharacterRemoveSkill(host, skill)
 			--local skillInfo = char:GetSkillInfo(skill)
 			--print(string.format("[%s](%i) IsActivated(%s) IsLearned(%s), ZeroMemory(%s)", skill, slot, skillInfo.IsActivated, skillInfo.IsLearned, skillInfo.ZeroMemory))
@@ -387,7 +387,7 @@ Ext.RegisterConsoleCommand("additemstat", function(command, stat, rarity, levels
 		level = math.tointeger(tonumber(levelstr)) or level
 	end
 	if not AddItemStat(stat, {StatsLevel = level, GenerationLevel = level, ItemType = rarity, GenerationItemType = rarity, HasGeneratedStats = rarity ~= "Unique"}) then
-		print("[additemstat] Failed to generate item!", stat, {})
+		PrintDebug("[additemstat] Failed to generate item!", stat, {})
 	end
 end)
 
@@ -415,17 +415,17 @@ Ext.RegisterConsoleCommand("printalldeltamods", function(command, ...)
 			---@type EsvItem
 			local item = Ext.GetItem(itemUUID)
 			if item ~= nil then
-				print(slot, itemUUID)
-				print("Stat:", item.StatsId)
-				print("=======")
-				print("Item Boost Stats:")
-				print("=======")
+				PrintDebug(slot, itemUUID)
+				PrintDebug("Stat:", item.StatsId)
+				PrintDebug("=======")
+				PrintDebug("Item Boost Stats:")
+				PrintDebug("=======")
 				for i,stat in pairs(item.Stats.DynamicStats) do
 					if not StringHelpers.IsNullOrEmpty(stat.BoostName) then
-						print(i,stat.BoostName)
+						PrintDebug(i,stat.BoostName)
 					end
 				end
-				print("=======")
+				PrintDebug("=======")
 				NRD_ItemIterateDeltaModifiers(itemUUID, "LLWEAPONEX_Debug_PrintDeltamod")
 			end
 		end
@@ -444,7 +444,7 @@ end)
 Ext.RegisterConsoleCommand("sethelmetoption", function(command, param)
 	local host = CharacterGetHostCharacter()
 	local enabled = param == "true"
-	print("[sethelmetoption]",host,enabled)
+	PrintDebug("[sethelmetoption]",host,enabled)
 	Ext.PostMessageToClient(host, "LeaderLib_SetHelmetOption", MessageData:CreateFromTable("HelmetOption", {UUID = host, Enabled = enabled}):ToString())
 end)
 
@@ -481,7 +481,7 @@ end)
 Ext.RegisterConsoleCommand("modorder", function(cmd, uuidOnly)
 	if uuidOnly ~= nil then
 		for i,v in ipairs(Ext.GetModLoadOrder()) do
-			print(string.format("%i. %s", i, v))
+			PrintDebug(string.format("%i. %s", i, v))
 		end
 	else
 		local modNames = {}
@@ -513,7 +513,7 @@ Ext.RegisterConsoleCommand("modorder", function(cmd, uuidOnly)
 		end
 		--print(Ext.JsonStringify(order))
 		for i,v in ipairs(order) do
-			print(string.format("%i. %s", i, v))
+			PrintDebug(string.format("%i. %s", i, v))
 		end
 	end
 end)
@@ -521,15 +521,15 @@ end)
 Ext.RegisterConsoleCommand("printitemboosts", function(cmd)
 	local host = Ext.GetCharacter(CharacterGetHostCharacter())
 	local weapon = Ext.GetItem(CharacterGetEquippedItem(host.MyGuid, "Weapon"))
-	print(weapon.MyGuid, weapon.StatsId)
-	print(weapon.Stats.Boosts)
+	PrintDebug(weapon.MyGuid, weapon.StatsId)
+	PrintDebug(weapon.Stats.Boosts)
 	for i,v in pairs(weapon:GetGeneratedBoosts()) do
-		print(i,v)
+		PrintDebug(i,v)
 	end
 	for i,v in pairs(weapon:GetDeltaMods()) do
-		print(i,v)
+		PrintDebug(i,v)
 	end
-	print(weapon.Stats["Damage Type"])
+	PrintDebug(weapon.Stats["Damage Type"])
 end)
 
 Ext.RegisterConsoleCommand("fx", function(cmd, effect, bone, target)
@@ -575,7 +575,7 @@ Ext.RegisterConsoleCommand("printdeltamods", function(cmd, attributeFilter, filt
 		-- 	--print(deltamod.Name, canPrint, deltamod.SlotType, deltamod.BoostType)
 		-- end
 		if canPrint then
-			print(deltamod.Name)
+			PrintDebug(deltamod.Name)
 			--print(string.format("[%s] BoostType(%s) LevelRange(%s-%s) Frequency(%s) ModifierType(%s) SlotType(%s:%s)\nBoosts:", deltamod.Name, deltamod.BoostType, deltamod.MinLevel, deltamod.MaxLevel, deltamod.Frequency, deltamod.ModifierType, deltamod.SlotType, slotType))
 			-- for i,boost in pairs(deltamod.Boosts) do
 			-- 	print("  ", i, boost.Boost, boost.Count)
@@ -609,9 +609,9 @@ Ext.RegisterConsoleCommand("printpdata", function(cmd, target)
 	local character = Ext.GetCharacter(target)
 	if character ~= nil and character.PlayerCustomData ~= nil then
 		local pdata = character.PlayerCustomData
-		print(string.format("[%s] %s", target, character.DisplayName))
+			PrintDebug(string.format("[%s] %s", target, character.DisplayName))
 		for i,v in ipairs(PlayerCustomDataAttributes) do
-			print(string.format("[%s] %s", v, pdata[v]))
+			PrintDebug(string.format("[%s] %s", v, pdata[v]))
 		end
 	else
 		Ext.PrintError(target, "has no PlayerCustomData!")
@@ -639,9 +639,9 @@ function CloneItemWithDeltaMods(item, deltamods)
 	}
 	local newItem = GameHelpers.Item.Clone(item, properties, deltamods)
 	if newItem then
-		print("NewItem:", newItem.MyGuid, newItem.StatsId, newItem.ItemType)
-		print("DeltaMods")
-		print(Ext.JsonStringify(newItem:GetDeltaMods()))
+		PrintDebug("NewItem:", newItem.MyGuid, newItem.StatsId, newItem.ItemType)
+		PrintDebug("DeltaMods")
+		PrintDebug(Ext.JsonStringify(newItem:GetDeltaMods()))
 	end
 	return newItem
 end
@@ -702,11 +702,11 @@ Ext.RegisterConsoleCommand("printrunes", function(command, equipmentSlot)
 		local boosts = GameHelpers.Stats.GetRuneBoosts(item.Stats)
 		if boosts then
 			fprint(LOGLEVEL.DEFAULT, "Runes (%s)", equipmentSlot)
-			print("======")
+			PrintDebug("======")
 			for i,v in pairs(boosts) do
 				fprint(LOGLEVEL.DEFAULT, "[%s] (%s) RuneEffectWeapon(%s) RuneEffectUpperbody(%s) RuneEffectAmulet(%s)", v.Slot, v.Name, v.Boosts.RuneEffectWeapon, v.Boosts.RuneEffectUpperbody, v.Boosts.RuneEffectAmulet)
 			end
-			print("======")
+			PrintDebug("======")
 		end
 	else
 		fprint(LOGLEVEL.WARNING, "No item in slot (%s)", equipmentSlot)

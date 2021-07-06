@@ -18,13 +18,13 @@ package
 		public var base:MovieClip;
 
 		//LeaderLib Changes
-		public var statID:*;
+		public var statID:Number;
 		public var callbackStr:String = "showTalentTooltip";
 		public var isCustom:Boolean = false;
 
-		public function MakeCustom(id:*, b:Boolean=true) : *
+		public function MakeCustom(statID:Number, b:Boolean=true) : *
 		{
-			this.statID = id;
+			this.statID = statID;
 			this.isCustom = b;
 			if(b)
 			{

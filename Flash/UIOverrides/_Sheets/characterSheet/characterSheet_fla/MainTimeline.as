@@ -288,7 +288,7 @@ package characterSheet_fla
 		}
 
 		//Just a tweak so we can pass the id parameter to use.
-		public function showCustomTooltipForMC(mc:MovieClip, externalCall:String, id:*) : *
+		public function showCustomTooltipForMC(mc:MovieClip, externalCall:String, statID:Number) : *
 		{
 			var tWidth:Number = NaN;
 			var globalPos:Point = this.getGlobalPositionOfMC(mc);
@@ -310,7 +310,14 @@ package characterSheet_fla
 				{
 					offsetX = mc.mOffsetX;
 				}
-				ExternalInterface.call(externalCall, this.characterHandle, id, globalPos.x + offsetX,globalPos.y + offsetY,tWidth,mc.height,mc.tooltipAlign);
+				if(!mc.IsCustom)
+				{
+					ExternalInterface.call(externalCall, statID, globalPos.x + offsetX,globalPos.y + offsetY,tWidth,mc.height,mc.tooltipAlign);
+				}
+				else
+				{
+					ExternalInterface.call(externalCall, this.characterHandle, statID, globalPos.x + offsetX,globalPos.y + offsetY,tWidth,mc.height,mc.tooltipAlign);
+				}
 			}
 		}
 		
@@ -636,14 +643,6 @@ package characterSheet_fla
 			{
 				this.addVisualOption(this.visualValues_array[i++],this.visualValues_array[i++],this.visualValues_array[i++]);
 			}
-
-			i = 0;
-			while(i < this.customStats_array.length)
-			{
-				this.stats_mc.customStats_mc.addCustomStat(this.customStats_array[i],this.customStats_array[i + 1],this.customStats_array[i + 2],this.customStats_array[i + 3],this.customStats_array[i + 4],this.customStats_array[i + 5]);
-				i = i + 6;
-			}
-
 			i = 0;
 			while(i < this.lvlBtnStat_array.length)
 			{
@@ -689,6 +688,13 @@ package characterSheet_fla
 			if(this.tags_array.length > 0)
 			{
 				this.stats_mc.tagsHolder_mc.list.positionElements();
+			}
+			
+			i = 0;
+			while(i < this.customStats_array.length)
+			{
+				this.stats_mc.customStats_mc.addCustomStat(this.customStats_array[i],this.customStats_array[i + 1],this.customStats_array[i + 2],this.customStats_array[i + 3],this.customStats_array[i + 4],this.customStats_array[i + 5]);
+				i = i + 6;
 			}
 			if(this.customStats_array.length > 0)
 			{

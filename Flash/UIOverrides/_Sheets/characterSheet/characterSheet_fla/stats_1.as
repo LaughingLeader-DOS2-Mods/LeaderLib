@@ -708,37 +708,30 @@ package characterSheet_fla
 			}
 		}
 		
-		public function getStat(id:*, isCustom:Boolean=false) : MovieClip
+		public function getStat(statID:Number, isCustom:Boolean=false) : MovieClip
 		{
-			if(!isCustom)
-			{
-				return this.primaryStatList.getElementByNumber("statID",id);
-			}
-			else
-			{
-				return this.primaryStatList.getElementByString("statID",id);
-			}
+			return this.primaryStatList.getElementByNumber("statID",statID);
 		}
 		
-		public function getSecStat(id:*, isCustom:Boolean=false) : MovieClip
+		public function getSecStat(statID:Number, isCustom:Boolean=false) : MovieClip
 		{
-			var stat_mc:MovieClip = !isCustom?this.resistanceStatList.getElementByNumber("statID",id) : this.resistanceStatList.getElementByString("statID",id);
+			var stat_mc:MovieClip = this.resistanceStatList.getElementByNumber("statID",statID);
 			if(stat_mc == null)
 			{
-				stat_mc = !isCustom?this.secondaryStatList.getElementByNumber("statID",id) : this.secondaryStatList.getElementByString("statID",id);
+				stat_mc = this.secondaryStatList.getElementByNumber("statID",statID);
 			}
 			if(stat_mc == null)
 			{
-				stat_mc = !isCustom?this.infoStatList.getElementByNumber("statID",id) : this.infoStatList.getElementByString("statID",id);
+				stat_mc = this.infoStatList.getElementByNumber("statID",statID);
 			}
 			if(stat_mc == null)
 			{
-				stat_mc = !isCustom?this.expStatList.getElementByNumber("statID",id) : this.expStatList.getElementByString("statID",id);
+				stat_mc = this.expStatList.getElementByNumber("statID",statID);
 			}
 			return stat_mc;
 		}
 		
-		public function getAbility(isCivil:Boolean, groupId:Number, statID:*, isCustom:Boolean=false) : MovieClip
+		public function getAbility(isCivil:Boolean, groupId:Number, statID:Number, isCustom:Boolean=false) : MovieClip
 		{
 			var holder:MovieClip = this.combatAbilityHolder_mc;
 			if(isCivil)
@@ -748,19 +741,19 @@ package characterSheet_fla
 			var ability_mc:MovieClip = holder.list.getElementByNumber("groupId",groupId);
 			if(ability_mc)
 			{
-				return !isCustom ? ability_mc.list.getElementByNumber("statID",statID) : ability_mc.list.getElementByString("statID",statID);
+				return ability_mc.list.getElementByNumber("statID",statID);
 			}
 			return null;
 		}
 		
-		public function getTalent(id:*, isCustom:Boolean=false) : MovieClip
+		public function getTalent(statID:Number, isCustom:Boolean=false) : MovieClip
 		{
-			return !isCustom ? this.talentHolder_mc.list.getElementByNumber("statID",id) : this.talentHolder_mc.list.getElementByString("statID",id);
+			return this.talentHolder_mc.list.getElementByNumber("statID",statID);
 		}
 		
-		public function getTag(id:*, isCustom:Boolean=false) : MovieClip
+		public function getTag(statID:Number) : MovieClip
 		{
-			return !isCustom ? this.tagsHolder_mc.list.getElementByNumber("statID",id) : this.tagsHolder_mc.list.getElementByString("statID",id);
+			return this.tagsHolder_mc.list.getElementByNumber("statID", statID);
 		}
 		
 		public function setVisibilityAbilityButtons(isCivil:Boolean, isVisible:Boolean) : *
@@ -885,7 +878,7 @@ package characterSheet_fla
 			}
 		}
 		
-		public function addAbility(isCivil:Boolean, groupId:Number, statID:*, labelText:String, valueText:String, plusTooltip:String = "", minusTooltip:String = "", plusVisible:Boolean = false, minusVisible:Boolean = false, isCustom:Boolean=false) : *
+		public function addAbility(isCivil:Boolean, groupId:Number, statID:Number, labelText:String, valueText:String, plusTooltip:String = "", minusTooltip:String = "", plusVisible:Boolean = false, minusVisible:Boolean = false, isCustom:Boolean=false) : *
 		{
 			var groupHolder:MovieClip = null;
 			var ability_mc:MovieClip = this.getAbility(isCivil,groupId,statID,isCustom);
@@ -1015,7 +1008,7 @@ package characterSheet_fla
 			}
 		}
 		
-		public function addPrimaryStat(statID:*, displayName:String, value:String, tooltipId:Number, plusVisible:Boolean = false, minusVisible:Boolean = false, isCustom:Boolean=false) : *
+		public function addPrimaryStat(statID:Number, displayName:String, value:String, tooltipId:Number, plusVisible:Boolean = false, minusVisible:Boolean = false, isCustom:Boolean=false) : *
 		{
 			var stat_mc:MovieClip = new Stat();
 			stat_mc.tooltipAlign = "right";
@@ -1037,8 +1030,8 @@ package characterSheet_fla
 			stat_mc.icon_mc.gotoAndStop(statID + 1);
 			stat_mc.id = this.primaryStatList.length;
 			this.primaryStatList.addElement(stat_mc);
-			stat_mc.MakeCustom(statID, isCustom);
-			ExternalInterface.call("statAdded", stat_mc.statID, stat_mc.id);
+			//stat_mc.MakeCustom(statID, isCustom);
+			//ExternalInterface.call("statAdded", stat_mc.statID, stat_mc.id);
 		}
 		
 		public function addSecondaryStat(statID:Number, labelText:String, valueText:String, tooltipId:Number, iconFrame:Number, boostValue:Number, plusVisible:Boolean = false, minusVisible:Boolean = false, isCustom:Boolean=false) : *
@@ -1166,8 +1159,8 @@ package characterSheet_fla
 			{
 				stat_mc.texts_mc.text_txt.x = xOffset2 - stat_mc.texts_mc.text_txt.width;
 			}
-			stat_mc.MakeCustom(statID, isCustom);
-			ExternalInterface.call("statAdded", stat_mc.statID, stat_mc.id);
+			//stat_mc.MakeCustom(statID, isCustom);
+			//ExternalInterface.call("statAdded", stat_mc.statID, stat_mc.id);
 		}
 		
 		public function addTag(labelText:String, statID:Number, tooltipText:String, descriptionText:String) : *

@@ -310,7 +310,7 @@ package characterSheet_fla
 				{
 					offsetX = mc.mOffsetX;
 				}
-				ExternalInterface.call(externalCall, id, globalPos.x + offsetX,globalPos.y + offsetY,tWidth,mc.height,mc.tooltipAlign);
+				ExternalInterface.call(externalCall, this.characterHandle, id, globalPos.x + offsetX,globalPos.y + offsetY,tWidth,mc.height,mc.tooltipAlign);
 			}
 		}
 		

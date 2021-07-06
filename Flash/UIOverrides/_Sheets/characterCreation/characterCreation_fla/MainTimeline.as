@@ -1,6 +1,7 @@
 package characterCreation_fla
 {
 	import flash.display.MovieClip;
+	import flash.display.DisplayObject;
 	import flash.events.MouseEvent;
 	import flash.external.ExternalInterface;
 	import flash.geom.Point;

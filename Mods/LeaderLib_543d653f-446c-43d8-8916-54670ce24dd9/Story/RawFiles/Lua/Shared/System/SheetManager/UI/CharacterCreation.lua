@@ -18,11 +18,7 @@ function CharacterCreation.UpdateTalents(ui, method)
 	local talentsMC = this.CCPanel_mc.talents_mc
 
 	for talent in SheetManager.Talents.GetVisible(player) do
-		if not talent.IsCustom then
-			talentsMC.addTalentElement(talent.IntegerID, talent.DisplayName, talent.HasTalent, talent.IsChoosable, talent.IsRacial)
-		else
-			talentsMC.addCustomTalentElement(talent.ID, talent.DisplayName, talent.HasTalent, talent.IsChoosable, talent.IsRacial)
-		end
+		talentsMC.addTalentElement(talent.IntegerID, talent.DisplayName, talent.HasTalent, talent.IsChoosable, talent.IsRacial, talent.IsCustom)
 	end
 
 	if not Vars.ControllerEnabled then

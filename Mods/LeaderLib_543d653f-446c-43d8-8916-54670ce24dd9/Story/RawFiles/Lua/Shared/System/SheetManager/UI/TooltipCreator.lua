@@ -1,37 +1,9 @@
-local customSelection = {
-	"selectAbilityCustom",
-	"selectStatCustom",
-	"selectTalentCustom",
-	"selectStatCustom",
-	"selectSecStatCustom",
-}
-
-local pointRemoved = {
-	"minAbilityCustom",
-	"minTalentCustom",
-	"minStatCustom",
-	"minSecStatCustom",
-}
-
-local pointAdded = {
-	"plusAbilityCustom",
-	"plusTalentCustom",
-	"plusStatCustom",
-	"plusSecStatCustom",
-}
-
-local showTooltip = {
-	"showAbilityTooltipCustom",
-	"showTalentTooltipCustom",
-	"showStatTooltipCustom",
-}
-
 local lastIconId = 7777
 local isVisible = false
 local lastTooltipX = nil
 local lastTooltipY = nil
 
-local function CreateTooltip(requestedUI, call, id)
+local function CreateTooltip(tooltipType, requestedUI, call, id)
 	local ui = Ext.GetUIByType(Data.UIType.tooltip)
 	if ui then
 		local this = ui:GetRoot()
@@ -129,9 +101,17 @@ end
 
 Ext.RegisterUINameCall("hideTooltip", HideTooltip, "Before")
 
-for _,v in pairs(showTooltip) do
-	Ext.RegisterUITypeCall(Data.UIType.characterCreation, v, CreateTooltip, "Before")
-	Ext.RegisterUITypeCall(Data.UIType.characterSheet, v, CreateTooltip, "Before")
-	-- Ext.RegisterUITypeCall(Data.UIType.statsPanel_c, v, CreateTooltip, "Before")
-	-- Ext.RegisterUITypeCall(Data.UIType.characterCreation_c, v, CreateTooltip, "Before")
+for t,v in pairs(SheetManager.Data.Calls.Tooltip) do
+	local func = function(...)
+		CreateTooltip(t, ...)
+	end
+	Ext.RegisterUITypeCall(Data.UIType.characterSheet, v, func, "Before")
+	Ext.RegisterUITypeCall(Data.UIType.characterCreation, v, func, "Before")
+end
+for t,v in pairs(SheetManager.Data.Calls.TooltipController) do
+	local func = function(...)
+		CreateTooltip(t, ...)
+	end
+	Ext.RegisterUITypeCall(Data.UIType.statsPanel_c, v, func, "Before")
+	Ext.RegisterUITypeCall(Data.UIType.characterCreation_c, v, func, "Before")
 end

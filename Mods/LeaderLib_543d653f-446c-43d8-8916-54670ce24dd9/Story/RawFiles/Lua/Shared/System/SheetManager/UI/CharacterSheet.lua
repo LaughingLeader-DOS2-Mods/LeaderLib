@@ -41,7 +41,7 @@ function CharacterSheet.Update(ui, method, updateTalents, updateAbilities, updat
 				this.mainpanel_mc.stats_mc.talents_mc.addTalent(talent.DisplayName, talent.ID, talent.State, canAdd, canRemove, talent.IsCustom)
 			end
 		end
-		this.stats_mc.addCustomTalent("Test", "testTalent", 0, true, false, true)
+		this.stats_mc.addTalent("Test", "testTalent", 0, true, false, true)
 	end
 
 	if updateAbilities then
@@ -49,6 +49,8 @@ function CharacterSheet.Update(ui, method, updateTalents, updateAbilities, updat
 			this.stats_mc.addAbility(ability.IsCivil, ability.GroupID, ability.ID, ability.DisplayName, ability.Value, ability.AddPointsTooltip, "", ability.CanAdd, ability.CanRemove, ability.IsCustom)
 			updatedAbilities = true
 		end
+		this.stats_mc.addAbility(false, 0, "TestAbility1", "Test Ability", 0, "", "", false, false, true)
+		this.stats_mc.addAbility(true, 0, "TestAbility2", "Test Ability2", 0, "", "", false, false, true)
 	end
 
 	if not Vars.ControllerEnabled then

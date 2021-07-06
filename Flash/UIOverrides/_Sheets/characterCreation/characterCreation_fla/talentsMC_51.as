@@ -45,7 +45,21 @@ package characterCreation_fla
 		{
 			if(talent_mc.choosable)
 			{
-				ExternalInterface.call(talent_mc.toggleStr,talent_mc.statID);
+				if(!talent_mc.isCustom)
+				{
+					ExternalInterface.call("toggleTalent",talent_mc.statID);
+				}
+				else
+				{
+					if(talent_mc.isActive)
+					{
+						ExternalInterface.call(mc.plus_mc.callbackStr,mc.statID);
+					}
+					else
+					{
+						ExternalInterface.call(mc.min_mc.callbackStr,mc.statID);
+					}
+				}
 			}
 		}
 		

@@ -1,3 +1,2 @@
-Ext.Require("Shared/System/CharacterSheet/SheetManager.lua")
-Ext.Require("Shared/System/CharacterSheet/AbilityManager.lua")
-Ext.Require("Shared/System/CharacterSheet/TalentManager.lua")
+Ext.Require("Shared/System/SheetManager/SheetDataValues.lua")
+Ext.Require("Shared/System/SheetManager/SheetManager.lua")

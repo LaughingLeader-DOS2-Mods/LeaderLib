@@ -1,4 +1,4 @@
-Ext.Require("Client/UI/Overrides/CharacterCreation.lua")
-Ext.Require("Client/UI/Overrides/CharacterSheet.lua")
-Ext.Require("Client/UI/Overrides/Fixes.lua")
-Ext.Require("Client/UI/Overrides/TooltipCreator.lua")
+Ext.Require("Shared/System/SheetManager/UI/CharacterCreation.lua")
+Ext.Require("Shared/System/SheetManager/UI/CharacterSheet.lua")
+Ext.Require("Shared/System/SheetManager/UI/Fixes.lua")
+Ext.Require("Shared/System/SheetManager/UI/TooltipCreator.lua")

@@ -22,7 +22,6 @@ package
 		//LeaderLib Changes
 		public var statID:*;
 		public var callbackStr:String = "showTalentTooltip";
-		public var toggleStr:String = "toggleTalent";
 		public var isCustom:Boolean = false;
 
 		public function MakeCustom(id:*, b:Boolean=true) : *
@@ -32,12 +31,14 @@ package
 			if(b)
 			{
 				this.callbackStr = "showTalentTooltipCustom";
-				this.toggleStr = "toggleTalentCustom";
+				this.min_mc.callbackStr = "minusTalentCustom";
+				this.plus_mc.callbackStr = "plusTalentCustom";
 			}
 			else
 			{
 				this.callbackStr = "showTalentTooltip";
-				this.toggleStr = "toggleTalent";
+				this.min_mc.callbackStr = "minusTalent";
+				this.plus_mc.callbackStr = "plusTalent";
 			}
 		}
 		

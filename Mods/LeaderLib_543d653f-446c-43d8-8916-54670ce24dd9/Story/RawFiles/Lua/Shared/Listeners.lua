@@ -140,4 +140,8 @@ if Ext.IsClient() then
 	---Register to a UIType or "All" for all UIs.
 	---@type table<integer,UICreatedCallback>
 	Listeners.UICreated = {All = {}}
+
+	---Simple listener called when Vars.ControllerEnabled is set to true.
+	---@type function[]
+	Listeners.ControllerModeEnabled = {}
 end

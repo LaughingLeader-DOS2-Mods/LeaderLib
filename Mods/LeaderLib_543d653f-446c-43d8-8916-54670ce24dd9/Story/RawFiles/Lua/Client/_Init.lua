@@ -13,8 +13,11 @@ end
 ---@param ui UIObject
 Ext.RegisterListener("UIObjectCreated", function(ui)
 	if ui:GetTypeId() == Data.UIType.msgBox_c then
-		Vars.ControllerEnabled = true
-		Ext.Print("[LeaderLib] Controller mod enabled.")
+		if not Vars.ControllerEnabled then
+			Vars.ControllerEnabled = true
+			Ext.Print("[LeaderLib] Controller mod enabled.")
+			InvokeListenerCallbacks(Listeners.ControllerModeEnabled)
+		end
 	end
 end)
 
@@ -59,3 +62,9 @@ end
 if not Classes.PresetData then
 	Classes.PresetData = {Create = function() end}
 end
+
+Ext.RegisterListener("SessionLoading", function()
+	if Vars.ControllerEnabled then
+		InvokeListenerCallbacks(Listeners.ControllerModeEnabled)
+	end
+end)

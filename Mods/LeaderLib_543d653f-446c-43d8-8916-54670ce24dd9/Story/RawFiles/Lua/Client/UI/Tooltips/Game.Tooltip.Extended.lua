@@ -1205,12 +1205,8 @@ function TooltipHooks:OnRequestTooltip(ui, method, arg1, arg2, arg3, ...)
 		request.Item = Ext.GetItem(Ext.DoubleToHandle(arg1))
 	elseif method == "showStatTooltip" then
 		request.Type = "Stat"
-		if isCharSheet then
-			request.Stat = arg1
-		else
-			characterHandle = Ext.DoubleToHandle(arg1)
-			request.Stat = arg2
-		end
+		characterHandle = Ext.DoubleToHandle(arg1)
+		request.Stat = arg2
 
 		local stat = TooltipStatAttributes[request.Stat]
 		if stat ~= nil then
@@ -1221,32 +1217,17 @@ function TooltipHooks:OnRequestTooltip(ui, method, arg1, arg2, arg3, ...)
 	elseif method == "showCustomStatTooltip" then
 		--ExternalInterface.call(eventName,obj.statId,globalPos.x + tooltipOffsetX,globalPos.y + tooltipOffsetY,tooltipWidth,obj.height,obj.tooltipAlign);
 		request.Type = "CustomStat"
-		if isCharSheet then
-			request.Stat = arg1
-		else
-			characterHandle = Ext.DoubleToHandle(arg1)
-			request.Stat = arg2
-		end
+		characterHandle = Ext.DoubleToHandle(arg1)
+		request.Stat = arg2
 	elseif method == "showAbilityTooltip" then
 		request.Type = "Ability"
-		if isCharSheet then
-			request.Ability = arg1
-		else
-			characterHandle = Ext.DoubleToHandle(arg1)
-			request.Ability = arg2
-		end
-		print("request.Ability", request.Ability)
-
+		characterHandle = Ext.DoubleToHandle(arg1)
+		request.Ability = arg2
 		request.Ability = Ext.EnumIndexToLabel("AbilityType", request.Ability)
 	elseif method == "showTalentTooltip" then
 		request.Type = "Talent"
-		if isCharSheet then
-			request.Talent = arg1
-		else
-			characterHandle = Ext.DoubleToHandle(arg1)
-			request.Talent = arg2
-		end
-
+		characterHandle = Ext.DoubleToHandle(arg1)
+		request.Talent = arg2
 		request.Talent = Ext.EnumIndexToLabel("TalentType", request.Talent)
     elseif method == "showTagTooltip" then
 		request.Type = "Tag"

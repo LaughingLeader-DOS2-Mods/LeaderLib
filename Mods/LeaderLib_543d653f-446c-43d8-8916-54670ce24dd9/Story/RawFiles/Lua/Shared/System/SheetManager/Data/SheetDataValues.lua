@@ -8,6 +8,12 @@ SheetManager.Data.Calls = {
 		Stat = "showStatTooltipCustom",
 		SecondaryStat = "showStatTooltipCustom",
 	},
+	TooltipController = {
+		Ability = "selectAbilityCustom",
+		Talent = "selectTalentCustom",
+		Stat = "selectStatCustom",
+		SecondaryStat = "selectSecStatCustom",
+	},
 	PointRemoved = {
 		Ability = "minAbilityCustom",
 		Talent = "minTalentCustom",
@@ -21,12 +27,3 @@ SheetManager.Data.Calls = {
 		SecondaryStat = "plusSecStatCustom",
 	}
 }
-
-RegisterListener("ControllerModeEnabled", function()
-	SheetManager.Data.Calls.Tooltip = {
-		Ability = "selectAbilityCustom",
-		Talent = "selectTalentCustom",
-		Stat = "selectStatCustom",
-		SecondaryStat = "selectSecStatCustom",
-	}
-end)

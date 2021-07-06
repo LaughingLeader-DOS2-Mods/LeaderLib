@@ -27,14 +27,14 @@ package
 			if(b)
 			{
 				this.callbackStr = "showAbilityTooltipCustom";
-				this.minus_mc.callbackStr = "minusAbilityCustom";
-				this.plus_mc.callbackStr = "plusAbilityCustom";
+				this.texts_mc.minus_mc.callbackStr = "minusAbilityCustom";
+				this.texts_mc.plus_mc.callbackStr = "plusAbilityCustom";
 			}
 			else
 			{
 				this.callbackStr = "showAbilityTooltip";
-				this.minus_mc.callbackStr = "minusAbility";
-				this.plus_mc.callbackStr = "plusAbility";
+				this.texts_mc.minus_mc.callbackStr = "minusAbility";
+				this.texts_mc.plus_mc.callbackStr = "plusAbility";
 			}
 		}
 		

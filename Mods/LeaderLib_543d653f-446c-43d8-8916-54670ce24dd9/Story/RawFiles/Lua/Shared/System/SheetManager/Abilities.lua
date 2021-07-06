@@ -230,7 +230,7 @@ if Ext.IsClient() then
 
 	---@class SheetManager.AbilityManagerUIEntry
 	---@field ID string
-	---@field IntegerID integer
+	---@field SheetID integer
 	---@field DisplayName string
 	---@field IsCivil boolean
 	---@field GroupID integer
@@ -271,7 +271,7 @@ if Ext.IsClient() then
 					---@type TalentManagerUITalentEntry
 					local data = {
 						ID = id,
-						IntegerID = Data.AbilityEnum[id],
+						SheetID = Data.AbilityEnum[id],
 						DisplayName = name,
 						IsCivil = isCivil,
 						GroupID = groupID,

@@ -6,7 +6,7 @@ local self = CharacterSheet
 ---@private
 ---@param ui UIObject
 function CharacterSheet.Update(ui, method, updateTalents, updateAbilities, updateCivil)
-	print("CharacterSheet.Update", method, updateTalents, updateAbilities, updateCivil)
+	PrintDebug("CharacterSheet.Update", method, updateTalents, updateAbilities, updateCivil)
 	local this = self.Root
 	--this.clearArray("talentArray")
 	local player = Ext.GetCharacter(Ext.DoubleToHandle(this.characterHandle)) or Client:GetCharacter()
@@ -36,9 +36,9 @@ function CharacterSheet.Update(ui, method, updateTalents, updateAbilities, updat
 				end
 			end
 			if not Vars.ControllerEnabled then
-				this.stats_mc.addTalent(talent.DisplayName, talent.ID, talent.State, canAdd, canRemove, talent.IsCustom)
+				this.stats_mc.addTalent(talent.DisplayName, talent.SheetID, talent.State, canAdd, canRemove, talent.IsCustom)
 			else
-				this.mainpanel_mc.stats_mc.talents_mc.addTalent(talent.DisplayName, talent.ID, talent.State, canAdd, canRemove, talent.IsCustom)
+				this.mainpanel_mc.stats_mc.talents_mc.addTalent(talent.DisplayName, talent.SheetID, talent.State, canAdd, canRemove, talent.IsCustom)
 			end
 		end
 		this.stats_mc.addTalent("Test", "testTalent", 0, true, false, true)
@@ -46,11 +46,11 @@ function CharacterSheet.Update(ui, method, updateTalents, updateAbilities, updat
 
 	if updateAbilities then
 		for ability in SheetManager.AbilityManager.GetVisible(player, updateCivil, this) do
-			this.stats_mc.addAbility(ability.IsCivil, ability.GroupID, ability.ID, ability.DisplayName, ability.Value, ability.AddPointsTooltip, "", ability.CanAdd, ability.CanRemove, ability.IsCustom)
+			this.stats_mc.addAbility(ability.IsCivil, ability.GroupID, ability.SheetID, ability.DisplayName, ability.Value, ability.AddPointsTooltip, "", ability.CanAdd, ability.CanRemove, ability.IsCustom)
 			updatedAbilities = true
 		end
-		this.stats_mc.addAbility(false, 0, "TestAbility1", "Test Ability", 0, "", "", false, false, true)
-		this.stats_mc.addAbility(true, 0, "TestAbility2", "Test Ability2", 0, "", "", false, false, true)
+		this.stats_mc.addAbility(false, 0, 77, "Test Ability", 0, "", "", false, false, true)
+		this.stats_mc.addAbility(true, 0, 78, "Test Ability2", 0, "", "", false, false, true)
 	end
 
 	if not Vars.ControllerEnabled then

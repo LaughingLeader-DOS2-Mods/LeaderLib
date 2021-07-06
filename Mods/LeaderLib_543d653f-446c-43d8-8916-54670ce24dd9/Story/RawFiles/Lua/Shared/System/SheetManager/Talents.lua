@@ -366,8 +366,6 @@ for talentId,enum in pairs(Data.TalentEnum) do
 	SheetManager.TalentManager.HiddenTalents[talentId] = {}
 end
 
-Ext.Require("Shared/System/Talents/Data/CustomTalentData.lua")
-
 ---@param talentId string
 ---@return boolean
 function SheetManager.TalentManager.IsRegisteredTalent(talentId)
@@ -710,7 +708,8 @@ function SheetManager.TalentManager.HideTalents(uiType)
 end
 
 ---@class SheetManager.TalentManagerUITalentEntry
----@field ID integer|string
+---@field ID string
+---@field SheetID integer
 ---@field Enum string
 ---@field HasTalent boolean
 ---@field DisplayName string
@@ -729,7 +728,6 @@ function SheetManager.TalentManager.GetVisible(player)
 		if SheetManager.TalentManager.CanAddTalent(talentId, hasTalent) then
 			local talentState = SheetManager.TalentManager.GetTalentState(player, talentId, hasTalent)
 			local name = SheetManager.TalentManager.GetTalentDisplayName(talentId, talentState)
-			local id = Data.TalentEnum[talentId]
 			local isRacial = SheetManager.TalentManager.Data.RacialTalents[talentId] ~= nil
 			local isChoosable = not isRacial and talentState ~= SheetManager.TalentManager.Data.TalentState.Locked
 			if hasTalent then 
@@ -737,7 +735,8 @@ function SheetManager.TalentManager.GetVisible(player)
 			end
 			---@type SheetManager.TalentManagerUITalentEntry
 			local data = {
-				ID = Data.TalentEnum[talentId],
+				ID = talentId,
+				SheetID = Data.TalentEnum[talentId],
 				Enum = talentId,
 				HasTalent = hasTalent,
 				DisplayName = name,

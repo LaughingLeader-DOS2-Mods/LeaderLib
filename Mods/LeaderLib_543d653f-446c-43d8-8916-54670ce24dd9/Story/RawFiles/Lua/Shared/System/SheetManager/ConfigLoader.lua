@@ -68,7 +68,7 @@ local function parseTable(tbl, propertyMap, modId, defaults, class)
 							if propData and (propData.Type == "any" or t == propData.Type) then
 								data[propData.Name] = value
 							else
-								fprint(LOGLEVEL.WARNING, "[LeaderLib:CustomStatsConfig] Defaults for stat(%s) has unknown property (%s) with value type(%s)", k, property, t)
+								fprint(LOGLEVEL.WARNING, "[LeaderLib:SheetManager.ConfigLoader] Defaults for stat(%s) has unknown property (%s) with value type(%s)", k, property, t)
 							end
 						end
 					end
@@ -81,7 +81,7 @@ local function parseTable(tbl, propertyMap, modId, defaults, class)
 						if propData and (propData.Type == "any" or t == propData.Type) then
 							data[propData.Name] = value
 						else
-							fprint(LOGLEVEL.WARNING, "[LeaderLib:CustomStatsConfig] Stat(%s) has unknown property (%s) with value type(%s)", k, property, t)
+							fprint(LOGLEVEL.WARNING, "[LeaderLib:SheetManager.ConfigLoader] Stat(%s) has unknown property (%s) with value type(%s)", k, property, t)
 						end
 					end
 				end
@@ -137,7 +137,7 @@ end
 
 local function TryFindConfig(info)
 	--local filePath = string.format("Mods/%s/ModSettingsConfig.json", info.Directory)
-	local filePath = string.format("Mods/%s/CustomStatsConfig.json", info.Directory)
+	local filePath = string.format("Mods/%s/CharacterSheetConfig.json", info.Directory)
 	local file = Ext.LoadFile(filePath, "data")
 	return file
 end

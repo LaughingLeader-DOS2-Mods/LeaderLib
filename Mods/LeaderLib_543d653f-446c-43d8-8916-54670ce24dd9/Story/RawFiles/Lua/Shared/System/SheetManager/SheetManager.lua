@@ -10,6 +10,7 @@ SheetManager.__index = SheetManager
 SheetManager.Loaded = false
 local isClient = Ext.IsClient()
 
+Ext.Require("Shared/System/SheetManager/Data/SheetDataValues.lua")
 
 SheetManager.Listeners = {
 	---@type table<string, OnSheetEntryValueChangedCallback[]>

@@ -43,3 +43,14 @@ if Vars.DebugMode then
 	Ext.Require("Shared/Debug/TestingSystem.lua")
 end
 Ext.Require("Shared/Debug/ConsoleWindowHelpers.lua")
+
+Ext.RegisterConsoleCommand("modorder", function(cmd, uuidOnly)
+	fprint(LOGLEVEL.TRACE, "Mods [%s]", Ext.IsClient() and "CLIENT" or "SERVER")
+	PrintDebug("=============")
+	local mods = Ext.GetModLoadOrder()
+	for i=1,#mods do
+		local info = Ext.GetModInfo(mods[i])
+		fprint(LOGLEVEL.TRACE, "[%i] %s (%s) [%s]", i, info and info.Name or "???", mods[i], info and info.ModuleType or "")
+	end
+	PrintDebug("=============")
+end)

@@ -70,20 +70,19 @@ end
 ---@type table<MOD_UUID, table<SHEET_ENTRY_ID, SheetEntryData>>
 SheetManager.Entries = {}
 
-Ext.Require("Shared/System/SheetManager/Data/SheetEntryData.lua")
-Ext.Require("Shared/System/SheetManager/Data/SheetEntryTalentData.lua")
-Ext.Require("Shared/System/SheetManager/Data/SheetEntryAbilityData.lua")
-Ext.Require("Shared/System/SheetManager/Data/SheetEntryStatData.lua")
-
----@type fun():table<string, table<string, CustomStatData>>
+---@type fun():table<string, table<string, SheetAbilityData|SheetTalentData|SheetStatData>>
 local loader = Ext.Require("Shared/System/SheetManager/ConfigLoader.lua")
-Ext.Require("Shared/System/SheetManager/DataSync.lua")
-Ext.Require("Shared/System/SheetManager/Getters.lua")
-Ext.Require("Shared/System/SheetManager/PointsHandler.lua")
+--Ext.Require("Shared/System/SheetManager/DataSync.lua")
+--Ext.Require("Shared/System/SheetManager/Getters.lua")
+--Ext.Require("Shared/System/SheetManager/PointsHandler.lua")
 
 local function LoadData()
-	local entries = loader()
-	TableHelpers.AddOrUpdate(SheetManager.Entries, entries)
+	local b,entries = xpcall(loader, debug.traceback)
+	if b and entries then
+		TableHelpers.AddOrUpdate(SheetManager.Entries, entries)
+	else
+		Ext.PrintError(entries)
+	end
 
 	SheetManager.Talents.LoadRequirements()
 
@@ -104,5 +103,5 @@ if not isClient then
 	RegisterListener("Initialized", LoadData)
 else
 	Ext.RegisterListener("SessionLoaded", LoadData)
-	Ext.Require("Shared/System/SheetManager/UI/_Init.lua")
+	--Ext.Require("Shared/System/SheetManager/UI/_Init.lua")
 end

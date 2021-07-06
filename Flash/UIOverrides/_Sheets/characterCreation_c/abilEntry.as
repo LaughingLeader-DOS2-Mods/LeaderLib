@@ -22,7 +22,7 @@ package
 
 		//LeaderLib Changes
 		// Set in talentsMC_51.addTalentElement, we're just adding it here for sanity
-		public var abilityID:uint;
+		public var statID:uint;
 		public var isCivil:Boolean = false;
 		//Custom non-standard talents
 		public var customID:String;
@@ -80,11 +80,11 @@ package
 			this.hl_mc.startAnimHL();
 			if(!isCustom)
 			{
-				ExternalInterface.call("requestAbilityTooltip",this.abilityID);
+				ExternalInterface.call("requestAbilityTooltip",this.statID);
 			}
 			else
 			{
-				ExternalInterface.call("requestCustomAbilityTooltip",this.abilityID);
+				ExternalInterface.call("requestCustomAbilityTooltip",this.statID);
 			}
 		}
 		
@@ -95,6 +95,6 @@ package
 			this.min_mc.visible = this.plus_mc.visible = false;
 		}
 		
-		private function frame1() : * {}
+		public function frame1() : * {}
 	}
 }

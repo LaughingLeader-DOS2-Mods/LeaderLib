@@ -407,14 +407,14 @@ package characterSheet_fla
 			this.stats_mc.addText(labelText,tooltipText,isSecondary);
 		}
 		
-		public function addPrimaryStat(statId:Number, labelText:String, valueText:String, tooltipType:Number) : *
+		public function addPrimaryStat(statID:Number, labelText:String, valueText:String, tooltipType:Number) : *
 		{
-			this.stats_mc.addPrimaryStat(statId,labelText,valueText,tooltipType);
+			this.stats_mc.addPrimaryStat(statID,labelText,valueText,tooltipType);
 		}
 		
-		public function addSecondaryStat(statType:Number, labelText:String, valueText:String, statId:Number, frame:Number, boostValue:Number) : *
+		public function addSecondaryStat(statType:Number, labelText:String, valueText:String, statID:Number, frame:Number, boostValue:Number) : *
 		{
-			this.stats_mc.addSecondaryStat(statType,labelText,valueText,statId,frame,boostValue);
+			this.stats_mc.addSecondaryStat(statType,labelText,valueText,statID,frame,boostValue);
 		}
 		
 		public function clearSecondaryStats() : *
@@ -427,19 +427,19 @@ package characterSheet_fla
 			this.stats_mc.addAbilityGroup(isCivil,groupId,labelText);
 		}
 		
-		public function addAbility(isCivil:Boolean, groupId:Number, statId:Number, labelText:String, valueText:String, plusTooltip:String = "", minusTooltip:String = "") : *
+		public function addAbility(isCivil:Boolean, groupId:Number, statID:Number, labelText:String, valueText:String, plusTooltip:String = "", minusTooltip:String = "") : *
 		{
-			this.stats_mc.addAbility(isCivil, groupId, statId, labelText, valueText, plusTooltip, minusTooltip);
+			this.stats_mc.addAbility(isCivil, groupId, statID, labelText, valueText, plusTooltip, minusTooltip);
 		}
 		
-		public function addTalent(labelText:String, statId:Number, talentState:Number) : *
+		public function addTalent(labelText:String, statID:Number, talentState:Number) : *
 		{
-			this.stats_mc.addTalent(labelText,statId,talentState);
+			this.stats_mc.addTalent(labelText,statID,talentState);
 		}
 
-		public function addTag(tooltipText:String, labelText:String, descriptionText:String, statId:Number) : *
+		public function addTag(tooltipText:String, labelText:String, descriptionText:String, statID:Number) : *
 		{
-			this.stats_mc.addTag(labelText,statId,tooltipText,descriptionText);
+			this.stats_mc.addTag(labelText,statID,tooltipText,descriptionText);
 		}
 		
 		public function addVisual(titleText:String, contentID:Number) : *
@@ -592,7 +592,7 @@ package characterSheet_fla
 			var canAddPoints:Boolean = false;
 			var isCivil:Boolean = false;
 			var hasButtons:Boolean = false;
-			var statId:int = 0;
+			var statID:int = 0;
 			var showBothButtons:Boolean = false;
 			var minusVisible:Boolean = false;
 			var plusVisible:Boolean = false;
@@ -619,7 +619,7 @@ package characterSheet_fla
 				}
 				else
 				{
-					//statType:Number, labelText:String, valueText:String, statId:Number, frame:Number, boostValue:Number
+					//statType:Number, labelText:String, valueText:String, statID:Number, frame:Number, boostValue:Number
 					this.addSecondaryStat(this.secStat_array[i + 1],this.secStat_array[i + 2],this.secStat_array[i + 3],this.secStat_array[i + 4],this.secStat_array[i + 5],this.secStat_array[i + 6]);
 				}
 				i = i + 7;
@@ -665,23 +665,23 @@ package characterSheet_fla
 				i = 1;
 				while(i < this.lvlBtnSecStat_array.length)
 				{
-					statId = this.lvlBtnSecStat_array[i];
+					statID = this.lvlBtnSecStat_array[i];
 					if(hasButtons)
 					{
 						showBothButtons = this.lvlBtnSecStat_array[i + 1];
 						minusVisible = this.lvlBtnSecStat_array[i + 2];
 						plusVisible = this.lvlBtnSecStat_array[i + 3];
 						spacing = 5;
-						if(statId == 44)
+						if(statID == 44)
 						{
 							spacing = 9;
 						}
 						//id:int, showBoth:Boolean, minusVisible:Boolean, plusVisible:Boolean, param5:Number = 5
-						this.setupSecondaryStatsButtons(statId,showBothButtons,minusVisible,plusVisible,spacing);
+						this.setupSecondaryStatsButtons(statID,showBothButtons,minusVisible,plusVisible,spacing);
 					}
 					else
 					{
-						this.setupSecondaryStatsButtons(statId,false,false,false);
+						this.setupSecondaryStatsButtons(statID,false,false,false);
 					}
 					i = i + 4;
 				}
@@ -712,14 +712,14 @@ package characterSheet_fla
 			ExternalInterface.call("characterSheetUpdateDone", updateTalents, updateAbilities, updateCivil);
 		}
 		
-		public function setStatPlusVisible(statId:Number, isVisible:Boolean) : *
+		public function setStatPlusVisible(statID:Number, isVisible:Boolean) : *
 		{
-			this.stats_mc.setStatPlusVisible(statId,isVisible);
+			this.stats_mc.setStatPlusVisible(statID,isVisible);
 		}
 		
-		public function setStatMinusVisible(statId:Number, isVisible:Boolean) : *
+		public function setStatMinusVisible(statID:Number, isVisible:Boolean) : *
 		{
-			this.stats_mc.setStatMinusVisible(statId,isVisible);
+			this.stats_mc.setStatMinusVisible(statID,isVisible);
 		}
 		
 		public function setupSecondaryStatsButtons(id:int, showBoth:Boolean, minusVisible:Boolean, plusVisible:Boolean, maxChars:Number = 5) : void
@@ -727,24 +727,24 @@ package characterSheet_fla
 			this.stats_mc.setupSecondaryStatsButtons(id,showBoth,minusVisible,plusVisible,maxChars);
 		}
 		
-		public function setAbilityPlusVisible(isCivil:Boolean, groupId:Number, statId:Number, isVisible:Boolean) : *
+		public function setAbilityPlusVisible(isCivil:Boolean, groupId:Number, statID:Number, isVisible:Boolean) : *
 		{
-			this.stats_mc.setAbilityPlusVisible(isCivil,groupId,statId,isVisible);
+			this.stats_mc.setAbilityPlusVisible(isCivil,groupId,statID,isVisible);
 		}
 		
-		public function setAbilityMinusVisible(isCivil:Boolean, groupId:Number, statId:Number, isVisible:Boolean) : *
+		public function setAbilityMinusVisible(isCivil:Boolean, groupId:Number, statID:Number, isVisible:Boolean) : *
 		{
-			this.stats_mc.setAbilityMinusVisible(isCivil,groupId,statId,isVisible);
+			this.stats_mc.setAbilityMinusVisible(isCivil,groupId,statID,isVisible);
 		}
 		
-		public function setTalentPlusVisible(statId:Number, isVisible:Boolean) : *
+		public function setTalentPlusVisible(statID:Number, isVisible:Boolean) : *
 		{
-			this.stats_mc.setTalentPlusVisible(statId,isVisible);
+			this.stats_mc.setTalentPlusVisible(statID,isVisible);
 		}
 		
-		public function setTalentMinusVisible(statId:Number, isVisible:Boolean) : *
+		public function setTalentMinusVisible(statID:Number, isVisible:Boolean) : *
 		{
-			this.stats_mc.setTalentMinusVisible(statId,isVisible);
+			this.stats_mc.setTalentMinusVisible(statID,isVisible);
 		}
 		
 		public function addTitle(param1:String) : *

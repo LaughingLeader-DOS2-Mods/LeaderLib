@@ -18,13 +18,13 @@ package
 		public var base:MovieClip;
 
 		//LeaderLib Changes
-		public var statId:*;
+		public var statID:*;
 		public var callbackStr:String = "showTalentTooltip";
 		public var isCustom:Boolean = false;
 
 		public function MakeCustom(id:*, b:Boolean=true) : *
 		{
-			this.statId = id;
+			this.statID = id;
 			this.isCustom = b;
 			if(b)
 			{
@@ -50,7 +50,7 @@ package
 		{
 			this.widthOverride = 269 + 44;
 			this.mOffsetY = -this.base.stats_mc.talentHolder_mc.list.m_scrollbar_mc.scrolledY - 26;
-			this.base.showCustomTooltipForMC(this, this.callbackStr, this.statId);
+			this.base.showCustomTooltipForMC(this, this.callbackStr, this.statID);
 			
 			this.hl_mc.visible = true;
 			if(this.timeline && this.timeline.isPlaying)

@@ -28,16 +28,16 @@ package statsPanel_c_fla
 			this.pointsLabel_txt.autoSize = TextFieldAutoSize.LEFT;
 		}
 		
-		public function addAbility(groupID:Number, statId:Number, displayName:String, value:String, textColor:uint) : *
+		public function addAbility(groupID:Number, statID:Number, displayName:String, value:String, textColor:uint) : *
 		{
-			var ability_mc:MovieClip = this.getAbility(groupID,statId);
+			var ability_mc:MovieClip = this.getAbility(groupID,statID);
 			if(!ability_mc)
 			{
 				ability_mc = new Ability();
-				ability_mc.statId = statId;
+				ability_mc.statID = statID;
 				this.statList.addGroupElement(groupID,ability_mc,false);
 				ability_mc.isStat = true;
-				ability_mc.id = statId;
+				ability_mc.id = statID;
 				ability_mc.plus_mc.visible = false;
 				ability_mc.min_mc.visible = false;
 				ability_mc.label_txt.autoSize = TextFieldAutoSize.LEFT;
@@ -52,12 +52,12 @@ package statsPanel_c_fla
 			ability_mc.icon_mc.visible = Boolean(ability_mc.val_txt.text != "0");
 		}
 		
-		public function getAbility(groupID:Number, statId:Number) : MovieClip
+		public function getAbility(groupID:Number, statID:Number) : MovieClip
 		{
 			var group:MovieClip = this.statList.getElementByNumber("groupId",groupID);
 			if(group)
 			{
-				return group.list.getElementByNumber("statId",statId);
+				return group.list.getElementByNumber("statID",statID);
 			}
 			return null;
 		}
@@ -72,7 +72,7 @@ package statsPanel_c_fla
 				ability_mc.isCustom = true;
 				this.statList.addGroupElement(groupID,ability_mc,false);
 				ability_mc.isStat = true;
-				//ability_mc.id = statId;
+				//ability_mc.id = statID;
 				ability_mc.plus_mc.visible = false;
 				ability_mc.min_mc.visible = false;
 				ability_mc.label_txt.autoSize = TextFieldAutoSize.LEFT;

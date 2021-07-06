@@ -21,7 +21,7 @@ package
 		public var timeline:larTween;
 		public var base:MovieClip;
 		public var tooltip:String;
-		public var statId:Number;
+		public var statID:Number;
 
 		//LeaderLib
 		public var am:Number; // The stat's value
@@ -47,7 +47,7 @@ package
 		
 		public function onOver(param1:MouseEvent) : *
 		{
-			this.base.showCustomTooltipForMC(this,"showCustomStatTooltip",this.statId, this.id);
+			this.base.showCustomTooltipForMC(this,"showCustomStatTooltip",this.statID, this.id);
 			if(this.timeline && this.timeline.isPlaying)
 			{
 				this.timeline.stop();
@@ -65,12 +65,12 @@ package
 		
 		public function onEditBtnClicked() : *
 		{
-			ExternalInterface.call("editCustomStat",this.statId, this.id);
+			ExternalInterface.call("editCustomStat",this.statID, this.id);
 		}
 		
 		public function onDeleteBtnClicked() : *
 		{
-			ExternalInterface.call("removeCustomStat",this.statId, this.id);
+			ExternalInterface.call("removeCustomStat",this.statID, this.id);
 		}
 		
 		public function frame1() : *

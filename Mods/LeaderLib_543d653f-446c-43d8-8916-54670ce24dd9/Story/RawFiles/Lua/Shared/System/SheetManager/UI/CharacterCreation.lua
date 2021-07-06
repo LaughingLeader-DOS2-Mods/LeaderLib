@@ -17,7 +17,7 @@ function CharacterCreation.UpdateTalents(ui, method)
 	---@type FlashCharacterCreationTalentsMC
 	local talentsMC = this.CCPanel_mc.talents_mc
 
-	for talent in SheetManager.Talent.GetVisible(player) do
+	for talent in SheetManager.Talents.GetVisible(player) do
 		if not talent.IsCustom then
 			talentsMC.addTalentElement(talent.IntegerID, talent.DisplayName, talent.HasTalent, talent.IsChoosable, talent.IsRacial)
 		else
@@ -45,7 +45,7 @@ function CharacterCreation.UpdateAbilities(ui, method)
 	local class_mc = this.root_mc.CCPanel_mc.class_mc
 	local classEdit = class_mc.classEditList[1]
 	classEdit.contentList.clearElements()
-	for ability in SheetManager.Ability.GetVisible(player) do
+	for ability in SheetManager.Abilities.GetVisible(player) do
 		if not ability.IsCustom then
 			classEdit.addContentString(1,ability.IntegerID,ability.DisplayName)
 			abilities_mc.addAbility(ability.Group.ID, ability.Group.DisplayName, ability.IntegerID, ability.DisplayName, ability.Value, ability.Delta, ability.IsCivil)

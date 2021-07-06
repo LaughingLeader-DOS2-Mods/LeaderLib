@@ -16,13 +16,13 @@ package
 		public var isCivil:Boolean;
 
 		//LeaderLib Changes
-		public var statId:*;
+		public var statID:*;
 		public var callbackStr:String = "showAbilityTooltip";
 		public var isCustom:Boolean = false;
 
 		public function MakeCustom(id:*, b:Boolean=true) : *
 		{
-			this.statId = id;
+			this.statID = id;
 			this.isCustom = b;
 			if(b)
 			{
@@ -70,7 +70,7 @@ package
 				this.mOffsetY = -this.base.stats_mc.combatAbilityHolder_mc.list.m_scrollbar_mc.scrolledY - 27;
 			}
 			this.mOffsetX = -26;
-			this.base.showCustomTooltipForMC(this, this.callbackStr, this.statId);
+			this.base.showCustomTooltipForMC(this, this.callbackStr, this.statID);
 		}
 		
 		public function onHLOut(param1:MouseEvent) : *

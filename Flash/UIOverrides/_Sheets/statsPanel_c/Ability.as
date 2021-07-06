@@ -43,6 +43,6 @@ package
 			this.hl_mc.visible = false;
 		}
 		
-		private function frame1() : * {}
+		public function frame1() : * {}
 	}
 }

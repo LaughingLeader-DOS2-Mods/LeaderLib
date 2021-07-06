@@ -71,7 +71,7 @@ package
 			this.hl_mc.setHeight(this.desc_txt.textHeight + this.desc_txt.y + 9);
 		}
 		
-		private function frame1() : *
+		public function frame1() : *
 		{
 			this.base = root as MovieClip;
 		}

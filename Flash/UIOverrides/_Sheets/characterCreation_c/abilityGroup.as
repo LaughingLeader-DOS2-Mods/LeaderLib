@@ -112,15 +112,15 @@ package
 			val4.scrollIntoView(val2,this.elementHeight * 2);
 		}
 		
-		public function addAbility(abilityID:uint, label:String, value:int, delta:int) : *
+		public function addAbility(statID:uint, label:String, value:int, delta:int) : *
 		{
-			var ability_mc:MovieClip = this.abilityList.getElementByNumber("abilityID",abilityID);
+			var ability_mc:MovieClip = this.abilityList.getElementByNumber("statID",statID);
 			if(!ability_mc)
 			{
 				ability_mc = new abilEntry();
 				ability_mc.onInit(this.root_mc);
 				this.abilityList.addElement(ability_mc,false);
-				ability_mc.abilityID = abilityID;
+				ability_mc.statID = statID;
 				ability_mc.isCivil = this.isCivil;
 			}
 			ability_mc.setAbility(label,value,delta);

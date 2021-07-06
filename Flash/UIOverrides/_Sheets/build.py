@@ -25,10 +25,10 @@ JPEXS = Path(os.environ["JPEXS_PATH"]).joinpath("ffdec.bat")
 SOURCE_FILES = Path(os.environ["DOS2DE_EXTRACTED_PATH"]).joinpath("Public/Game/GUI/")
 DOS2 = Path(os.environ["DOS2_PATH"])
 DOS2DE_PUBLIC = DOS2.joinpath("DefEd/Data/Public/")
-OUTPUT = DOS2DE_PUBLIC.joinpath("LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/")
+OUTPUT = DOS2DE_PUBLIC.joinpath("LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/Overrides/")
 
 targets = [
-    # "characterCreation",
+    "characterCreation",
     # "characterCreation_c",
     "characterSheet",
     # "statsPanel_c",

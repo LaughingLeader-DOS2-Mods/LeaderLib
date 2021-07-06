@@ -88,22 +88,22 @@ package characterCreation_c_fla
 			this.talents_mc.contentList.select(0,true);
 		}
 		
-		public function addTalentElement(talentID:uint, talentLabel:String, isUnlocked:Boolean, isChoosable:Boolean, isRacial:Boolean) : *
+		public function addTalentElement(statID:uint, talentLabel:String, isUnlocked:Boolean, isChoosable:Boolean, isRacial:Boolean) : *
 		{
 			var talent_mc:MovieClip = null;
 			if(isRacial)
 			{
-				talent_mc = this.talents_mc.racialList.getElementByNumber("talentID",talentID);
+				talent_mc = this.talents_mc.racialList.getElementByNumber("statID",statID);
 			}
 			else
 			{
-				talent_mc = this.talents_mc.contentList.getElementByNumber("talentID",talentID);
+				talent_mc = this.talents_mc.contentList.getElementByNumber("statID",statID);
 			}
 			if(!talent_mc)
 			{
 				talent_mc = new tagTalent();
 				talent_mc.onInit(this.root_mc);
-				talent_mc.talentID = talentID;
+				talent_mc.statID = statID;
 				talent_mc.contentName = talentLabel;
 				talent_mc.isRacial = isRacial;
 				talent_mc.isTalent = true;
@@ -147,6 +147,6 @@ package characterCreation_c_fla
 			talent_mc.isUpdated = true;
 		}
 		
-		private function frame1() : * { }
+		public function frame1() : * { }
 	}
 }

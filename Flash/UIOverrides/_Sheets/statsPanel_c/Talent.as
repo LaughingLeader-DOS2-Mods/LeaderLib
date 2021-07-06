@@ -13,7 +13,7 @@ package
 		public var plus_mc:MovieClip;
 
 		//LeaderLib Changes
-		public var statId:uint;
+		public var statID:uint;
 		//Custom non-standard talents
 		public var customID:String;
 		public var isCustom:Boolean = false;
@@ -42,6 +42,6 @@ package
 			this.hl_mc.visible = false;
 		}
 		
-		private function frame1() : * {}
+		public function frame1() : * {}
 	}
 }

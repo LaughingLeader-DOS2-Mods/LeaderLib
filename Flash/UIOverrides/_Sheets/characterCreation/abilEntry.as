@@ -21,11 +21,27 @@ package
 		public var value:uint;
 
 		//LeaderLib Changes
-		public var abilityID:uint;
-		public var isCivil:Boolean = false;
-		//Custom non-standard talents
-		public var customID:String;
+		public var statID:*;
+		public var callbackStr:String = "showAbilityTooltip";
 		public var isCustom:Boolean = false;
+
+		public function MakeCustom(id:*, b:Boolean=true) : *
+		{
+			this.statID = id;
+			this.isCustom = b;
+			if(b)
+			{
+				this.callbackStr = "showAbilityTooltipCustom";
+				this.min_mc.callbackStr = "minusAbilityCustom";
+				this.plus_mc.callbackStr = "plusAbilityCustom";
+			}
+			else
+			{
+				this.callbackStr = "showAbilityTooltip";
+				this.min_mc.callbackStr = "minusAbility";
+				this.plus_mc.callbackStr = "plusAbility";
+			}
+		}
 		
 		public function abilEntry()
 		{
@@ -62,14 +78,7 @@ package
 		{
 			ExternalInterface.call("PlaySound","UI_Generic_Over");
 			var globalPos:Point = this.localToGlobal(new Point(0,0));
-			if(!isCustom)
-			{
-				ExternalInterface.call("showAbilityTooltip",this.root_mc.characterHandle,this.abilityID,globalPos.x - this.root_mc.x,globalPos.y,this.hit_mc.width,this.hit_mc.height,"left");
-			}
-			else
-			{
-				ExternalInterface.call("showCustomAbilityTooltip",this.root_mc.characterHandle,this.customID,globalPos.x - this.root_mc.x,globalPos.y,this.hit_mc.width,this.hit_mc.height,"left");
-			}
+			ExternalInterface.call(this.callbackStr,this.root_mc.characterHandle,this.statID,globalPos.x - this.root_mc.x,globalPos.y,this.hit_mc.width,this.hit_mc.height,"left");
 		}
 		
 		public function onOut(param1:MouseEvent) : *
@@ -77,6 +86,6 @@ package
 			ExternalInterface.call("hideTooltip");
 		}
 		
-		private function frame1() : * {}
+		public function frame1() : * {}
 	}
 }

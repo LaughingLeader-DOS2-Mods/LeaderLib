@@ -85,14 +85,14 @@ local function LoadData()
 	local entries = loader()
 	TableHelpers.AddOrUpdate(SheetManager.Entries, entries)
 
-	SheetManager.Talent.LoadRequirements()
+	SheetManager.Talents.LoadRequirements()
 
-	--SheetManager.Talent.HideTalent("LoneWolf", ModuleUUID)
+	--SheetManager.Talents.HideTalent("LoneWolf", ModuleUUID)
 
 	if isClient then
 		---Divine Talents
 		if Ext.IsModLoaded("ca32a698-d63e-4d20-92a7-dd83cba7bc56") or GameSettings.Settings.Client.DivineTalentsEnabled then
-			SheetManager.Talent.ToggleDivineTalents(true)
+			SheetManager.Talents.ToggleDivineTalents(true)
 		end
 	end
 

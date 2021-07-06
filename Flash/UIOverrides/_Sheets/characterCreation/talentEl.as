@@ -20,11 +20,26 @@ package
 		public var dColour:Number;
 
 		//LeaderLib Changes
-		// Set in talentsMC_51.addTalentElement, we're just adding it here for sanity
-		public var talentID:uint;
-		//Custom non-standard talents
-		public var customID:String;
+		public var statID:*;
+		public var callbackStr:String = "showTalentTooltip";
+		public var toggleStr:String = "toggleTalent";
 		public var isCustom:Boolean = false;
+
+		public function MakeCustom(id:*, b:Boolean=true) : *
+		{
+			this.statID = id;
+			this.isCustom = b;
+			if(b)
+			{
+				this.callbackStr = "showTalentTooltipCustom";
+				this.toggleStr = "toggleTalentCustom";
+			}
+			else
+			{
+				this.callbackStr = "showTalentTooltip";
+				this.toggleStr = "toggleTalent";
+			}
+		}
 		
 		public function talentEl()
 		{
@@ -72,15 +87,10 @@ package
 		
 		public function onOver(e:MouseEvent) : *
 		{
-			var globalPos:Point = this.localToGlobal(new Point(0,0));
-			if(!isCustom)
-			{
-				ExternalInterface.call("showTalentTooltip",this.root_mc.characterHandle,this.talentID,globalPos.x - this.root_mc.x,globalPos.y,this.hit_mc.width,this.hit_mc.height,"left");
-			}
-			else
-			{
-				ExternalInterface.call("showCustomTalentTooltip",this.root_mc.characterHandle,this.customID,globalPos.x - this.root_mc.x,globalPos.y,this.hit_mc.width,this.hit_mc.height,"left");
-			}
+			//var globalPos:Point = this.localToGlobal(new Point(0,0));
+			//this.base.showCustomTooltipForMC(this, this.callbackStr, this.statID);
+			ExternalInterface.call(this.callbackStr,this.root_mc.characterHandle,this.statID,globalPos.x - this.root_mc.x,globalPos.y,this.hit_mc.width,this.hit_mc.height,"left");
+			//ExternalInterface.call("showTalentTooltip",this.root_mc.characterHandle,this.statID,globalPos.x - this.root_mc.x,globalPos.y,this.hit_mc.width,this.hit_mc.height,"left");
 		}
 		
 		public function onOut(e:MouseEvent) : *
@@ -88,6 +98,8 @@ package
 			ExternalInterface.call("hideTooltip");
 		}
 		
-		private function frame1() : * {}
+		public function frame1() : * {
+			this.base = root as MovieClip;
+		}
 	}
 }

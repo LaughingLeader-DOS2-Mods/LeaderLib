@@ -52,7 +52,7 @@ package statsPanel_c_fla
 				this.statsList.addElement(val7,false);
 				val7.heightOverride = 31;
 			}
-			val7.statId = param2;
+			val7.statID = param2;
 			val7.label_txt.htmlText = param3;
 			val7.value_txt.htmlText = param4;
 			val7.label_txt.textColor = param6;

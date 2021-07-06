@@ -62,28 +62,14 @@ package characterCreation_fla
 			this.freePoints2_txt.autoSize = TextFieldAutoSize.CENTER;
 		}
 		
-		public function onPlus(ability_mc:MovieClip) : *
+		public function onPlus(mc:MovieClip) : *
 		{
-			if(ability_mc.isCustom != true)
-			{
-				ExternalInterface.call("plusAbility",ability_mc.abilityID, ability_mc.isCivil);
-			}
-			else
-			{
-				ExternalInterface.call("plusCustomAbility",ability_mc.customID, ability_mc.isCivil);
-			}
+			ExternalInterface.call(mc.plus_mc.callbackStr,mc.statID);
 		}
 		
-		public function onMin(ability_mc:MovieClip) : *
+		public function onMin(mc:MovieClip) : *
 		{
-			if(ability_mc.isCustom != true)
-			{
-				ExternalInterface.call("minAbility", ability_mc.abilityID, ability_mc.isCivil);
-			}
-			else
-			{
-				ExternalInterface.call("minCustomAbility", ability_mc.customID, ability_mc.isCivil);
-			}
+			ExternalInterface.call(mc.min_mc.callbackStr,mc.statID);
 		}
 		
 		public function updateAbilities(param1:Array) : *
@@ -145,16 +131,10 @@ package characterCreation_fla
 			param1.cleanUpElements();
 		}
 		
-		public function addAbility(groupID:uint, groupTitle:String, abilityID:uint, abilityLabel:String, abilityValue:Number, abilityDelta:Number, isCivil:Boolean) : *
+		public function addAbility(groupID:uint, groupTitle:String, statID:uint, abilityLabel:String, abilityValue:Number, abilityDelta:Number, isCivil:Boolean, isCustom:Boolean=false) : *
 		{
 			var abilityGroup_mc:MovieClip = this.findGroup(groupID,groupTitle,isCivil);
-			abilityGroup_mc.addAbility(abilityID,abilityLabel,abilityValue,abilityDelta,isCivil);
-		}
-
-		public function addCustomAbility(groupID:uint, groupTitle:String, customID:String, abilityLabel:String, abilityValue:Number, abilityDelta:Number, isCivil:Boolean) : *
-		{
-			var abilityGroup_mc:MovieClip = this.findGroup(groupID,groupTitle,isCivil);
-			abilityGroup_mc.addCustomAbility(customID,abilityLabel,abilityValue,abilityDelta,isCivil);
+			abilityGroup_mc.addAbility(statID,abilityLabel,abilityValue,abilityDelta,isCivil,isCustom);
 		}
 		
 		public function findGroup(groupID:uint, title:String, isCivil:Boolean) : MovieClip
@@ -179,6 +159,6 @@ package characterCreation_fla
 			return abilityGroup_mc;
 		}
 		
-		private function frame1() : * {}
+		public function frame1() : * {}
 	}
 }

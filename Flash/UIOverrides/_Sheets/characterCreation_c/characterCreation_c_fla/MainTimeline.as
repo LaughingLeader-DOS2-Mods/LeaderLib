@@ -846,7 +846,7 @@ package characterCreation_c_fla
 		{
 		}
 		
-		private function frame1() : *
+		public function frame1() : *
 		{
 			this.canShowTooltip = false;
 			this.tooltipVisible = false;

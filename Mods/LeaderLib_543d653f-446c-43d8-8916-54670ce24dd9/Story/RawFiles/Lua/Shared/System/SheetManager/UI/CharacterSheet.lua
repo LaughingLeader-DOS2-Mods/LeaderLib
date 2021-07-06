@@ -24,12 +24,12 @@ function CharacterSheet.Update(ui, method, updateTalents, updateAbilities, updat
 	if updateTalents then
 		local points = this.stats_mc.pointsWarn[3].avPoints
 	
-		for talent in SheetManager.Talent.GetVisible(player) do
+		for talent in SheetManager.Talents.GetVisible(player) do
 			local canAdd = false
 			local canRemove = false
 			updatedTalents = true
 			if not talent.IsRacial then
-				if not talent.HasTalent and points > 0 and talent.State == SheetManager.Talent.Data.TalentState.Selectable then
+				if not talent.HasTalent and points > 0 and talent.State == SheetManager.Talents.Data.TalentState.Selectable then
 					canAdd = true
 				elseif talent.HasTalent then
 					canRemove = GameHelpers.Client.IsGameMaster(ui, this)
@@ -45,7 +45,7 @@ function CharacterSheet.Update(ui, method, updateTalents, updateAbilities, updat
 	end
 
 	if updateAbilities then
-		for ability in SheetManager.Ability.GetVisible(player, updateCivil, this) do
+		for ability in SheetManager.Abilities.GetVisible(player, updateCivil, this) do
 			this.stats_mc.addAbility(ability.IsCivil, ability.GroupID, ability.ID, ability.DisplayName, ability.Value, ability.AddPointsTooltip, "", ability.CanAdd, ability.CanRemove, ability.IsCustom)
 			updatedAbilities = true
 		end

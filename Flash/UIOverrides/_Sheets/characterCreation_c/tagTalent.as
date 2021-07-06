@@ -15,12 +15,27 @@ package
 		public var dColour:Number;
 
 		//LeaderLib Changes
-		//This is a different var name than KB+M, so we're fixing that.
-		//public var contentID:uint;
-		public var talentID:uint;
-		//Custom non-standard talents
-		public var customID:String;
+		public var statID:*;
+		public var callbackStr:String = "selectTalent";
 		public var isCustom:Boolean = false;
+
+		public function MakeCustom(id:*, b:Boolean=true) : *
+		{
+			this.statID = id;
+			this.isCustom = b;
+			if(b)
+			{
+				this.callbackStr = "selectTalentCustom";
+				this.minus_mc.callbackStr = "minusTalentCustom";
+				this.plus_mc.callbackStr = "plusTalentCustom";
+			}
+			else
+			{
+				this.callbackStr = "selectTalent";
+				this.minus_mc.callbackStr = "minusTalent";
+				this.plus_mc.callbackStr = "plusTalent";
+			}
+		}
 		
 		public function tagTalent()
 		{
@@ -66,14 +81,7 @@ package
 		{
 			if(this.isTalent)
 			{
-				if(!this.isCustom)
-				{
-					ExternalInterface.call("selectTalent", this.talentID);
-				}
-				else
-				{
-					ExternalInterface.call("selectCustomTalent", this.customID);
-				}
+				ExternalInterface.call(this.callbackStr, this.statID);
 			}
 			else
 			{
@@ -89,6 +97,6 @@ package
 			this.hl_mc.visible = false;
 		}
 		
-		private function frame1() : * {}
+		public function frame1() : * {}
 	}
 }

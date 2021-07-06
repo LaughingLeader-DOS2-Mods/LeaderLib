@@ -34,13 +34,13 @@ package statsPanel_c_fla
 		{
 		}
 		
-		public function addStat(statId:Number, label:String, value:String, textColor:uint) : *
+		public function addStat(statID:Number, label:String, value:String, textColor:uint) : *
 		{
-			var stat_mc:MovieClip = this.statList.getElementByNumber("id",statId);
+			var stat_mc:MovieClip = this.statList.getElementByNumber("id",statID);
 			if(!stat_mc)
 			{
 				stat_mc = new CustomStat();
-				stat_mc.statId = statId;
+				stat_mc.statID = statID;
 				stat_mc.id = this.statList.length;
 				this.statList.addElement(stat_mc,true);
 				stat_mc.isStat = true;
@@ -61,7 +61,7 @@ package statsPanel_c_fla
 			stat_mc.hl_mc.height = stat_mc.label_txt.textHeight + stat_mc.label_txt.y;
 			stat_mc.line_mc.y = stat_mc.hl_mc.height - Math.round(stat_mc.line_mc.height * 0.5) - 3;
 
-			ExternalInterface.call("customStatAdded", statId, cstat_mc.statIndex);
+			ExternalInterface.call("customStatAdded", statID, cstat_mc.statIndex);
 		}
 		
 		public function removeStats() : *
@@ -70,9 +70,9 @@ package statsPanel_c_fla
 			this.statList.clearElements();
 		}
 		
-		public function selectStat(statId:Number) : *
+		public function selectStat(statID:Number) : *
 		{
-			var stat_mc:MovieClip = this.statList.getElementByNumber("statId",id);
+			var stat_mc:MovieClip = this.statList.getElementByNumber("statID",id);
 			if(stat_mc)
 			{
 				this.statList.selectMC(stat_mc);
@@ -127,7 +127,7 @@ package statsPanel_c_fla
 			return this.statList.getCurrentMovieClip();
 		}
 		
-		private function frame1() : *
+		public function frame1() : *
 		{
 			this.statList = new scrollList("empty","empty");
 			this.statList.m_scrollbar_mc.ScaleBG = true;

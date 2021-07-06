@@ -746,7 +746,7 @@ package statsPanel_c_fla
 			return param2 == param1.substr(0,param2.length);
 		}
 		
-		private function frame1() : *
+		public function frame1() : *
 		{
 			this.events = new Array("IE UIUp","IE UIDown","IE UILeft","IE UIRight","IE UIRemovePoints","IE UIAddPoints","IE UIAccept","IE UICancel","IE UITabPrev","IE UITabNext","IE UIShowTooltip","IE UITooltipUp","IE UITooltipDown","IE UIBack");
 			this.layout = "fixed";

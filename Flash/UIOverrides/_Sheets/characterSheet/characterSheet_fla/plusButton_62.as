@@ -58,7 +58,7 @@ package characterSheet_fla
 			ExternalInterface.call("PlaySound","UI_Game_CharacterSheet_Attribute_Plus_Click_Release");
 			if(this.stat)
 			{
-				ExternalInterface.call(this.callbackStr, this.stat.statId);
+				ExternalInterface.call(this.callbackStr, this.stat.statID);
 			}
 			else
 			{

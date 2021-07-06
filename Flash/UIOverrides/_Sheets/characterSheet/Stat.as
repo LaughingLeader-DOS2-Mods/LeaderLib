@@ -19,14 +19,14 @@ package
 		public var base:MovieClip;
 
 		//LeaderLib Changes
-		public var statId:*;
+		public var statID:*;
 		public var tooltip:Number; // The tooltip ID
 		public var callbackStr:String = "showStatTooltip";
 		public var isCustom:Boolean = false;
 
 		public function MakeCustom(id:*, b:Boolean=true) : *
 		{
-			this.statId = id;
+			this.statID = id;
 			this.isCustom = b;
 			if(b)
 			{
@@ -51,7 +51,7 @@ package
 		public function onOver(param1:MouseEvent) : *
 		{
 			this.widthOverride = 269;
-			!isCustom ? this.base.showCustomTooltipForMC(this, this.callbackStr, this.tooltip) : this.base.showCustomTooltipForMC(this, this.callbackStr, this.statId);
+			!isCustom ? this.base.showCustomTooltipForMC(this, this.callbackStr, this.tooltip) : this.base.showCustomTooltipForMC(this, this.callbackStr, this.statID);
 			if(this.timeline && this.timeline.isPlaying)
 			{
 				this.timeline.stop();

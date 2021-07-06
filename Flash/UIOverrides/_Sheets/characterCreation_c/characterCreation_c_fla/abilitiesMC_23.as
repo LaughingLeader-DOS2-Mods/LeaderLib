@@ -128,7 +128,7 @@ package characterCreation_c_fla
 						ExternalInterface.call("PlaySound","UI_Gen_XButton_Click");
 						if(val7.min_mc.visible)
 						{
-							ExternalInterface.call("minAbility",val7.abilityID,val3.isCivil);
+							ExternalInterface.call("minAbility",val7.statID,val3.isCivil);
 						}
 					}
 					val8 = true;
@@ -140,7 +140,7 @@ package characterCreation_c_fla
 						ExternalInterface.call("PlaySound","UI_Gen_XButton_Click");
 						if(val7.plus_mc.visible)
 						{
-							ExternalInterface.call("plusAbility",val7.abilityID,val3.isCivil);
+							ExternalInterface.call("plusAbility",val7.statID,val3.isCivil);
 						}
 					}
 					val8 = true;
@@ -173,10 +173,10 @@ package characterCreation_c_fla
 			this.abilityGroupList.cleanUpElements();
 		}
 
-		public function addAbility(groupID:uint, groupTitle:String, abilityID:uint, abilityLabel:String, abilityValue:Number, abilityDelta:Number, isCivil:Boolean) : *
+		public function addAbility(groupID:uint, groupTitle:String, statID:uint, abilityLabel:String, abilityValue:Number, abilityDelta:Number, isCivil:Boolean) : *
 		{
 			var abilityGroup_mc:MovieClip = this.findGroup(groupID,groupTitle,isCivil);
-			abilityGroup_mc.addAbility(abilityID,abilityLabel,abilityValue,abilityDelta,isCivil);
+			abilityGroup_mc.addAbility(statID,abilityLabel,abilityValue,abilityDelta,isCivil);
 		}
 
 		public function addCustomAbility(groupID:uint, groupTitle:String, customID:String, abilityLabel:String, abilityValue:Number, abilityDelta:Number, isCivil:Boolean) : *
@@ -201,6 +201,6 @@ package characterCreation_c_fla
 			return abilityGroup_mc;
 		}
 		
-		private function frame1() : * {}
+		public function frame1() : * {}
 	}
 }

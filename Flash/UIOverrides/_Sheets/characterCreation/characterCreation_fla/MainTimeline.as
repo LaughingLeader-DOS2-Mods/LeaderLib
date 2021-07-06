@@ -543,8 +543,49 @@ package characterCreation_fla
 			this.portraits_mc.updatePortraits(this.playerArray);
 			this.playerArray = new Array();
 		}
+
+		public function getGlobalPositionOfMC(mc:MovieClip) : Point
+		{
+			var pos:Point = new Point(mc.x - root.x,mc.y - root.y);
+			var parentObj:DisplayObject = mc.parent;
+			while(parentObj && (parentObj != root || parentObj != stage))
+			{
+				pos.x = pos.x + parentObj.x;
+				pos.y = pos.y + parentObj.y;
+				parentObj = parentObj.parent;
+			}
+			return pos;
+		}
+
+		//LeaderLib
+		//Just a tweak so we can pass the id parameter to use.
+		public function showCustomTooltipForMC(mc:MovieClip, externalCall:String, id:*, align:String = "left") : *
+		{
+			var tWidth:Number = NaN;
+			var globalPos:Point = this.getGlobalPositionOfMC(mc);
+			this.hasTooltip = true;
+			var offsetY:Number = 0;
+			var offsetX:Number = 0;
+			if(mc)
+			{
+				tWidth = mc.width;
+				if(mc.widthOverride)
+				{
+					tWidth = mc.widthOverride;
+				}
+				if(mc.mOffsetY)
+				{
+					offsetY = mc.mOffsetY;
+				}
+				if(mc.mOffsetX)
+				{
+					offsetX = mc.mOffsetX;
+				}
+				ExternalInterface.call(externalCall, id, globalPos.x + offsetX,globalPos.y + offsetY,tWidth,mc.height,mc.tooltipAlign != null ? mc.tooltipAlign : align);
+			}
+		}
 		
-		private function frame1() : *
+		public function frame1() : *
 		{
 			this.events = new Array("IE ToggleInGameMenu");
 			this.numberOfSlots = 3;

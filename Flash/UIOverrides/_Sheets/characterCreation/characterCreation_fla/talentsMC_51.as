@@ -45,14 +45,14 @@ package characterCreation_fla
 		{
 			if(talent_mc.choosable)
 			{
-				ExternalInterface.call("toggleTalent",talent_mc.talentID);
+				ExternalInterface.call(talent_mc.toggleStr,talent_mc.statID);
 			}
 		}
 		
 		public function updateTalents(talentArray:Array, racialtalentArray:Array) : *
 		{
 			var index:uint = 0;
-			var talentID:uint = 0;
+			var statID:uint = 0;
 			var talentLabel:String = null;
 			var isUnlocked:Boolean = false;
 			var choosable:Boolean = false;
@@ -63,11 +63,11 @@ package characterCreation_fla
 				index = 1;
 				while(index < talentArray.length)
 				{
-					talentID = talentArray[index++];
+					statID = talentArray[index++];
 					talentLabel = talentArray[index++];
 					isUnlocked = talentArray[index++];
 					choosable = talentArray[index++];
-					this.addTalentElement(talentID,talentLabel,isUnlocked,choosable,false);
+					this.addTalentElement(statID,talentLabel,isUnlocked,choosable,false);
 				}
 			}
 			if(racialtalentArray.length > 0)
@@ -75,56 +75,38 @@ package characterCreation_fla
 				index = 0;
 				while(index < racialtalentArray.length)
 				{
-					talentID = racialtalentArray[index++];
+					statID = racialtalentArray[index++];
 					talentLabel = racialtalentArray[index++];
-					this.addTalentElement(talentID,talentLabel,true,false,true);
+					this.addTalentElement(statID,talentLabel,true,false,true);
 				}
 			}
 			this.positionLists();
 		}
 		
-		public function addTalentElement(talentID:uint, talentLabel:String, isUnlocked:Boolean, isChoosable:Boolean, isRacial:Boolean) : *
+		public function addTalentElement(statID:*, talentLabel:String, isUnlocked:Boolean, isChoosable:Boolean, isRacial:Boolean, isCustom:Boolean=false) : *
 		{
-			var talent_mc:MovieClip = this.talentList.getElementByNumber("talentID",talentID);
+			var talent_mc:MovieClip = !isCustom ? this.talentList.getElementByNumber("statID",statID) : this.talentList.getElementByString("statID",statID);
 			if(!talent_mc)
 			{
 				talent_mc = new talentEl();
 				talent_mc.onInit(this.root_mc,isRacial);
 				talent_mc.setText(talentLabel);
 				talent_mc.talName = talentLabel;
-				talent_mc.talentID = talentID;
+				talent_mc.statID = statID;
 				this.talentList.addElement(talent_mc,false);
 			}
+			talent_mc.MakeCustom(statID, isCustom);
 			talent_mc.dColour = !!isChoosable?0:12910617;
 			talent_mc.choosable = isChoosable;
 			talent_mc.setState(isUnlocked);
 			talent_mc.isUpdated = true;
 		}
 
-		public function addCustomTalentElement(customID:String, talentLabel:String, isUnlocked:Boolean, isChoosable:Boolean, isRacial:Boolean) : *
-		{
-			var talent_mc:MovieClip = this.talentList.getElementByString("customID", customID);
-			if(!talent_mc)
-			{
-				talent_mc = new talentEl();
-				talent_mc.onInit(this.root_mc,isRacial);
-				talent_mc.setText(talentLabel);
-				talent_mc.talName = talentLabel;
-				talent_mc.isCustom = true;
-				talent_mc.customID = customID;
-				this.talentList.addElement(talent_mc,false);
-			}
-			talent_mc.dColour = !!isChoosable?0:12910617;
-			talent_mc.choosable = isChoosable;
-			talent_mc.setState(isUnlocked);
-			talent_mc.isUpdated = true;
-		}
-		
 		public function positionLists() : *
 		{
 			this.talentList.cleanUpElements();
 		}
 		
-		private function frame1() : * {}
+		public function frame1() : * {}
 	}
 }

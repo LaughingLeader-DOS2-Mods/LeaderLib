@@ -33,35 +33,19 @@ package
 			this.title_txt.htmlText = param1;
 		}
 		
-		public function addAbility(abilityID:uint, label:String, value:int, delta:int, isCivil:Boolean) : *
+		public function addAbility(statID:*, label:String, value:int, delta:int, isCivil:Boolean, isCustom:Boolean=false) : *
 		{
-			var ability_mc:MovieClip = this.abilities.getElementByNumber("abilityID",abilityID);
+			var ability_mc:MovieClip = !isCustom ? this.abilities.getElementByNumber("statID",statID) : this.abilities.getElementByString("statID",statID);
 			if(!ability_mc)
 			{
 				ability_mc = new abilEntry();
 				ability_mc.onInit(this.root_mc,this.root_mc.CCPanel_mc.abilities_mc.onPlus,this.root_mc.CCPanel_mc.abilities_mc.onMin);
 				this.abilities.addElement(ability_mc,false);
-				ability_mc.abilityID = abilityID;
+				ability_mc.statID = statID;
 				ability_mc.isCivil = isCivil;
 				ability_mc.scrollList = this.ownerList;
 			}
-			ability_mc.setAbility(label,value,delta);
-			ability_mc.isUpdated = true;
-		}
-
-		public function addCustomAbility(customID:String, label:String, value:int, delta:int, isCivil:Boolean) : *
-		{
-			var ability_mc:MovieClip = this.abilities.getElementByString("customID",customID);
-			if(!ability_mc)
-			{
-				ability_mc = new abilEntry();
-				ability_mc.onInit(this.root_mc,this.root_mc.CCPanel_mc.abilities_mc.onPlus,this.root_mc.CCPanel_mc.abilities_mc.onMin);
-				this.abilities.addElement(ability_mc,false);
-				ability_mc.customID = customID;
-				ability_mc.isCustom = true;
-				ability_mc.isCivil = isCivil;
-				ability_mc.scrollList = this.ownerList;
-			}
+			ability_mc.MakeCustom(statID, isCustom);
 			ability_mc.setAbility(label,value,delta);
 			ability_mc.isUpdated = true;
 		}
@@ -77,6 +61,6 @@ package
 			this.value_txt.htmlText = String(total);
 		}
 		
-		private function frame1() : * {}
+		public function frame1() : * {}
 	}
 }

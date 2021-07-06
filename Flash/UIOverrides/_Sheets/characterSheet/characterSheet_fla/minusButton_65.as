@@ -58,7 +58,7 @@ package characterSheet_fla
 			this.bg_mc.gotoAndStop(2);
 			if(this.stat)
 			{
-				ExternalInterface.call(this.callbackStr, this.stat.statId);
+				ExternalInterface.call(this.callbackStr, this.stat.statID);
 			}
 			else
 			{

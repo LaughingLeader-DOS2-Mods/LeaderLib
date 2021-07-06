@@ -23,14 +23,14 @@ package
 		public var boostValue:Number;
 
 		//LeaderLib Changes
-		public var statId:*;
+		public var statID:*;
 		public var tooltip:Number; // The tooltip ID
 		public var callbackStr:String = "showStatTooltip";
 		public var isCustom:Boolean = false;
 
 		public function MakeCustom(id:*, b:Boolean=true) : *
 		{
-			this.statId = id;
+			this.statID = id;
 			this.isCustom = b;
 			if(b)
 			{
@@ -126,16 +126,16 @@ package
 			this.editText_txt.removeEventListener(FocusEvent.FOCUS_OUT,this.onValueAccept);
 			this.editText_txt.visible = false;
 			this.texts_mc.text_txt.visible = true;
-			if(this.statId != null)
+			if(this.statID != null)
 			{
-				!isCustom ? ExternalInterface.call("changeSecStat",this.statId,int(this.editText_txt.text)) : ExternalInterface.call("changeSecStatCustom",this.statId,int(this.editText_txt.text));
+				!isCustom ? ExternalInterface.call("changeSecStat",this.statID,int(this.editText_txt.text)) : ExternalInterface.call("changeSecStatCustom",this.statID,int(this.editText_txt.text));
 			}
 		}
 		
 		public function onOver(e:MouseEvent) : *
 		{
 			this.widthOverride = 269;
-			!isCustom ? this.base.showCustomTooltipForMC(this, this.callbackStr, this.tooltip) : this.base.showCustomTooltipForMC(this, this.callbackStr, this.statId);
+			!isCustom ? this.base.showCustomTooltipForMC(this, this.callbackStr, this.tooltip) : this.base.showCustomTooltipForMC(this, this.callbackStr, this.statID);
 			if(this.timeline && this.timeline.isPlaying)
 			{
 				this.timeline.stop();

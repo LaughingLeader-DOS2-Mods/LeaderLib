@@ -184,7 +184,7 @@ package characterSheet_fla
 
 		public function addCustomStat(doubleHandle:Number, labelText:String, valueText:String, groupId:Number=0, plusVisible:Boolean=false, minusVisible:Boolean=false) : *
 		{
-			var cstat_mc:MovieClip = this.list.getGroupElementByNumber("statId",doubleHandle);
+			var cstat_mc:MovieClip = this.list.getGroupElementByNumber("statID",doubleHandle);
 			if (cstat_mc == null)
 			{
 				cstat_mc = new CustomStat();
@@ -212,7 +212,7 @@ package characterSheet_fla
 			}
 			//cstat_mc.text_txt.width = cstat_mc.text_txt.width + 8;
 			cstat_mc.tooltipAlign = "right";
-			cstat_mc.statId = doubleHandle;
+			cstat_mc.statID = doubleHandle;
 			cstat_mc.textStr = cstat_mc.label_txt.text;
 			//cstat_mc.hl_mc.width = this.statsElWidth;
 			cstat_mc.text_txt.mouseEnabled = false;

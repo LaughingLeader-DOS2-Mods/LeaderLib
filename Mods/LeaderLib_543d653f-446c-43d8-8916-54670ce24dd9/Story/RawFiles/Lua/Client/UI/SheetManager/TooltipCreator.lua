@@ -101,14 +101,14 @@ end
 
 Ext.RegisterUINameCall("hideTooltip", HideTooltip, "Before")
 
-for t,v in pairs(SheetManager.Data.Calls.Tooltip) do
+for t,v in pairs(SheetManager.Config.Calls.Tooltip) do
 	local func = function(...)
 		CreateTooltip(t, ...)
 	end
 	Ext.RegisterUITypeCall(Data.UIType.characterSheet, v, func, "Before")
 	Ext.RegisterUITypeCall(Data.UIType.characterCreation, v, func, "Before")
 end
-for t,v in pairs(SheetManager.Data.Calls.TooltipController) do
+for t,v in pairs(SheetManager.Config.Calls.TooltipController) do
 	local func = function(...)
 		CreateTooltip(t, ...)
 	end

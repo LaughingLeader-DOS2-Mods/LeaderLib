@@ -56,3 +56,5 @@ function SheetStatData:SetValue(character, value)
 	fprint(LOGLEVEL.WARNING, "[SheetBaseData:SetValue(%s, %s)] This function only works on the server-side.", self.ID, value)
 	return false
 end
+
+Classes.SheetStatData = SheetStatData

@@ -67,8 +67,14 @@ if not isClient then
 	setmetatable(SheetManager.CurrentValues, Handler)
 end
 
----@type table<MOD_UUID, table<SHEET_ENTRY_ID, SheetEntryData>>
-SheetManager.Entries = {}
+SheetManager.Data = {
+	---@type table<MOD_UUID, table<SHEET_ENTRY_ID, SheetAbilityData>>
+	Abilities = {},
+	---@type table<MOD_UUID, table<SHEET_ENTRY_ID, SheetTalentData>>
+	Talents = {},
+	---@type table<MOD_UUID, table<SHEET_ENTRY_ID, SheetStatData>>
+	Stats = {}
+}
 
 ---@type fun():table<string, table<string, SheetAbilityData|SheetTalentData|SheetStatData>>
 local loader = Ext.Require("Shared/System/SheetManager/ConfigLoader.lua")
@@ -77,21 +83,41 @@ local loader = Ext.Require("Shared/System/SheetManager/ConfigLoader.lua")
 --Ext.Require("Shared/System/SheetManager/PointsHandler.lua")
 
 local function LoadData()
-	local b,entries = xpcall(loader, debug.traceback)
-	if b and entries then
-		TableHelpers.AddOrUpdate(SheetManager.Entries, entries)
+	local b,data = xpcall(loader, debug.traceback)
+	if b and data then
+		for uuid,entryData in pairs(data) do
+			if not SheetManager.Data.Abilities[uuid] then
+				SheetManager.Data.Abilities[uuid] = {}
+			end
+			if not SheetManager.Data.Talents[uuid] then
+				SheetManager.Data.Talents[uuid] = {}
+			end
+			if not SheetManager.Data.Stats[uuid] then
+				SheetManager.Data.Stats[uuid] = {}
+			end
+			if data.Abilities then
+				TableHelpers.AddOrUpdate(SheetManager.Data.Abilities[uuid], data.Abilities)
+			end
+			if data.Talents then
+				TableHelpers.AddOrUpdate(SheetManager.Data.Talents[uuid], data.Talents)
+			end
+			if data.Stats then
+				TableHelpers.AddOrUpdate(SheetManager.Data.Stats[uuid], data.Stats)
+			end
+		end
+		
 	else
-		Ext.PrintError(entries)
+		Ext.PrintError(data)
 	end
 
-	SheetManager.Talents.LoadRequirements()
+	SheetManager.TalentManager.LoadRequirements()
 
-	--SheetManager.Talents.HideTalent("LoneWolf", ModuleUUID)
+	--SheetManager.TalentManager.HideTalent("LoneWolf", ModuleUUID)
 
 	if isClient then
 		---Divine Talents
 		if Ext.IsModLoaded("ca32a698-d63e-4d20-92a7-dd83cba7bc56") or GameSettings.Settings.Client.DivineTalentsEnabled then
-			SheetManager.Talents.ToggleDivineTalents(true)
+			SheetManager.TalentManager.ToggleDivineTalents(true)
 		end
 	end
 

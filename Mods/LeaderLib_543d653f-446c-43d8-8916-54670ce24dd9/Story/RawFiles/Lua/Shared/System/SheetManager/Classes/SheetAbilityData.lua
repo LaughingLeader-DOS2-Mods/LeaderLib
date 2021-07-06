@@ -8,6 +8,7 @@ local SheetAbilityData = {
 	Icon = "",
 	IconWidth = 128,
 	IconHeight = 128,
+	GroupID = 0
 }
 
 SheetAbilityData.__index = function(t,k)
@@ -22,7 +23,8 @@ local defaults = {
 	Icon = "",
 	IconWidth = SheetAbilityData.IconWidth,
 	IconHeight = SheetAbilityData.IconHeight,
-	Value = 0
+	Value = 0,
+	GroupID = 0
 }
 
 ---@protected
@@ -62,3 +64,5 @@ function SheetAbilityData:SetValue(character, value)
 	fprint(LOGLEVEL.WARNING, "[SheetBaseData:SetValue(%s, %s)] This function only works on the server-side.", self.ID, value)
 	return false
 end
+
+Classes.SheetAbilityData = SheetAbilityData

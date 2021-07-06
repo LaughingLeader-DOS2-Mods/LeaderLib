@@ -1,7 +1,7 @@
-if SheetManager.Data == nil then
-	SheetManager.Data = {}
+if SheetManager.Config == nil then
+	SheetManager.Config = {}
 end
-SheetManager.Data.Calls = {
+SheetManager.Config.Calls = {
 	Tooltip = {
 		Ability = "showAbilityTooltipCustom",
 		Talent = "showTalentTooltipCustom",

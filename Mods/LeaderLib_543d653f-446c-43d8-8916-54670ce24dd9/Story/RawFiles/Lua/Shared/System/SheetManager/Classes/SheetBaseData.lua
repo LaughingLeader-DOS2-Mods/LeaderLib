@@ -10,7 +10,13 @@ local SheetBaseData = {
 	DisplayName = "",
 	Description = "",
 	Visible = true,
-	Value = 0
+	Value = 0,
+	---@type integer If set, this is the sort value number to use when the list of stats get sorted for display.
+	SortValue = nil,
+	---@type string If set, this is the name to use instead of DisplayName when the list of stats get sorted for display. 
+	SortName = nil,
+	---Optional setting to force the string key conversion for DisplayName, in case the value doesn't have an underscore.
+	LoadStringKey = false,
 }
 
 local defaults = {

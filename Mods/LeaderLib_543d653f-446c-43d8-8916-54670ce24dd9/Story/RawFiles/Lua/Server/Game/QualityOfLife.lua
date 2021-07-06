@@ -5,7 +5,7 @@ local defaultUndeadPathInfluence = "Web,50;BloodCloudCursed,70;BloodCloudElectri
 local ignoreSurfacesPathInfluence = "Web,50;Lava,700;Deathfog,200"
 local ignoreUndeadSurfacesPathInfluence = "Web,50;Lava,700"
 
-local playerStats = {
+local player_stats = {
 	["HumanFemaleHero"] = true,
 	["HumanMaleHero"] = true,
 	["DwarfFemaleHero"] = true,
@@ -14,14 +14,15 @@ local playerStats = {
 	["ElfMaleHero"] = true,
 	["LizardFemaleHero"] = true,
 	["LizardMaleHero"] = true,
-	["Player_Ifan"] = Ext.IsModLoaded("1301db3d-1f54-4e98-9be5-5094030916e4"),
-	["Player_Lohse"] = Ext.IsModLoaded("1301db3d-1f54-4e98-9be5-5094030916e4"),
-	["Player_RedPrince"] = Ext.IsModLoaded("1301db3d-1f54-4e98-9be5-5094030916e4"),
-	["Player_Sebille"] = Ext.IsModLoaded("1301db3d-1f54-4e98-9be5-5094030916e4"),
-	["Player_Beast"] = Ext.IsModLoaded("1301db3d-1f54-4e98-9be5-5094030916e4"),
+	["Player_Ifan"] = "1301db3d-1f54-4e98-9be5-5094030916e4",
+	["Player_Lohse"] = "1301db3d-1f54-4e98-9be5-5094030916e4",
+	["Player_RedPrince"] = "1301db3d-1f54-4e98-9be5-5094030916e4",
+	["Player_Sebille"] = "1301db3d-1f54-4e98-9be5-5094030916e4",
+	["Player_Beast"] = "1301db3d-1f54-4e98-9be5-5094030916e4",
+	["Player_Fane"] = "1301db3d-1f54-4e98-9be5-5094030916e4",
 }
 
-local undeadPlayerStats = {
+local player_stats_undead = {
 	["HumanUndeadFemaleHero"] = true,
 	["HumanUndeadMaleHero"] = true,
 	["DwarfUndeadFemaleHero"] = true,
@@ -34,8 +35,8 @@ local undeadPlayerStats = {
 }
 
 function ModifyPathInfluenceForAllPlayers(revert)
-	for statname,b in pairs(playerStats) do
-		if b then
+	for statname,b in pairs(player_stats) do
+		if b == true or (type(b) == "string" and Ext.IsModLoaded(b)) then
 			---@type StatEntryCharacter
 			local stat = Ext.GetStat(statname)
 			if stat ~= nil then
@@ -48,7 +49,7 @@ function ModifyPathInfluenceForAllPlayers(revert)
 			end
 		end
 	end
-	for statname,b in pairs(undeadPlayerStats) do
+	for statname,b in pairs(player_stats_undead) do
 		if b then
 			---@type StatEntryCharacter
 			local stat = Ext.GetStat(statname)

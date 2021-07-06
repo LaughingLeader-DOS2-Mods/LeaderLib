@@ -30,12 +30,12 @@ local player_stats = {
 	["ElfUndeadMaleHero"] = true,
 	["LizardUndeadFemaleHero"] = true,
 	["LizardUndeadMaleHero"] = true,
-	["Player_Ifan"] = Ext.IsModLoaded("1301db3d-1f54-4e98-9be5-5094030916e4"),
-	["Player_Lohse"] = Ext.IsModLoaded("1301db3d-1f54-4e98-9be5-5094030916e4"),
-	["Player_RedPrince"] = Ext.IsModLoaded("1301db3d-1f54-4e98-9be5-5094030916e4"),
-	["Player_Sebille"] = Ext.IsModLoaded("1301db3d-1f54-4e98-9be5-5094030916e4"),
-	["Player_Beast"] = Ext.IsModLoaded("1301db3d-1f54-4e98-9be5-5094030916e4"),
-	["Player_Fane"] = Ext.IsModLoaded("1301db3d-1f54-4e98-9be5-5094030916e4"),
+	["Player_Ifan"] = "1301db3d-1f54-4e98-9be5-5094030916e4",
+	["Player_Lohse"] = "1301db3d-1f54-4e98-9be5-5094030916e4",
+	["Player_RedPrince"] = "1301db3d-1f54-4e98-9be5-5094030916e4",
+	["Player_Sebille"] = "1301db3d-1f54-4e98-9be5-5094030916e4",
+	["Player_Beast"] = "1301db3d-1f54-4e98-9be5-5094030916e4",
+	["Player_Fane"] = "1301db3d-1f54-4e98-9be5-5094030916e4",
 }
 
 local ignore_skill_names = {
@@ -252,7 +252,7 @@ local function OverrideStats(data)
 	if data.Settings.APSettings.Player.Enabled then
 		local settings = data.Settings.APSettings.Player
 		for id,b in pairs(player_stats) do
-			if b then
+			if b == true or (type(b) == "string" and Ext.IsModLoaded(b)) then
 				local stat = Ext.GetStat(id)
 				if stat then
 					local changedStat = AdjustAP(stat, settings)

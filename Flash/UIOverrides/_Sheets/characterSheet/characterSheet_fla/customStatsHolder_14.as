@@ -25,7 +25,6 @@ package characterSheet_fla
 		
 		public function init() : *
 		{
-			trace("customStatsHolder_14 init");
 			//Ability holder position
 			this.y = 292;
 			this.x = 12;

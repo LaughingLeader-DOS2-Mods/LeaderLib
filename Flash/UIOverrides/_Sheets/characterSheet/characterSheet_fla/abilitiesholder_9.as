@@ -15,18 +15,14 @@ package characterSheet_fla
 		
 		public function init() : *
 		{
-			trace("abilitiesholder_9.init");
 			this.list = new scrollListGrouped("down_id","up_id","handle_id","scrollBgBig_id");
-			trace("abilitiesholder_9 scrollListGrouped created");
 			this.list.SUBEL_SPACING = -4;
 			this.list.EL_SPACING = 22;
 			this.list.SB_SPACING = -10;
-			trace("abilitiesholder_9.list.setFrame");
 			this.list.setFrame(270,735);
 			this.list.m_scrollbar_mc.m_hideWhenDisabled = false;
 			this.listHolder_mc.addChild(this.list);
 			this.list.TOP_SPACING = 40;
-			trace("abilitiesholder_9.list.setGroupMC");
 			this.list.setGroupMC("StatCategory");
 			this.list.elementsSortOn("textStr");
 			this.list.m_scrollbar_mc.setLength(663 + 42);
@@ -34,7 +30,6 @@ package characterSheet_fla
 			this.list.m_scrollbar_mc.x = -1;
 			this.list.m_scrollbar_mc.y = -17;
 			(parent as MovieClip).scrollbarHolder_mc.addChild(this.list.m_scrollbar_mc);
-			trace("abilitiesholder_9 done?");
 		}
 	}
 }

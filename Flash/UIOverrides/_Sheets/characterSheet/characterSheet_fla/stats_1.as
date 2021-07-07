@@ -148,7 +148,6 @@ package characterSheet_fla
 			this.rightCycleBtn_mc.visible = false;
 			this.onePlayerOverlay_mc.mouseEnabled = false;
 			this.currentOpenPanel = -1;
-			trace("Calling buildTabs");
 			this.buildTabs(0,true);
 		}
 		
@@ -204,7 +203,6 @@ package characterSheet_fla
 			while(i < this.tabsArray.length)
 			{
 				tab_mc = this.tabsArray[i];
-				trace("tabsArray", i, tab_mc);
 				if(tab_mc != null && tab_mc.tw != null)
 				{
 					tab_mc.tw.stop();
@@ -222,7 +220,6 @@ package characterSheet_fla
 					while(i < 5)
 					{
 						tab_button = new StatsTabButton();
-						trace("tab_button", i, tab_button);
 						tab_button.id = i;
 						this.tabsArray.push(tab_button);
 						i++;
@@ -273,18 +270,13 @@ package characterSheet_fla
 				}
 				i++;
 			}
-			trace("this.tabsList.positionElements()");
 			this.tabsList.positionElements();
 			
-			trace("this.alignPointWarningsToButtons()");
 			//LeaderLib addition
 			this.alignPointWarningsToButtons();
 
-			trace("this.initTabs");
 			this.initTabs(!isCurrentPanel,initializeTabs);
-			trace("this.ClickTab");
 			this.ClickTab(!!isCurrentPanel?Number(currentPanel):Number(0));
-			trace("this.INTSetAvailablePointsVisible");
 			this.INTSetAvailablePointsVisible();
 		}
 
@@ -340,10 +332,8 @@ package characterSheet_fla
 					this.panelArray[i].visible = false;
 					if(bInitTab && this.panelArray[i].init != null)
 					{
-						trace("this.panelArray[i].init()", this.panelArray[i].name);
 						this.panelArray[i].init();
 					}
-					trace("this.panelArray[i] checking list");
 					if(this.panelArray[i].list)
 					{
 						this.panelArray[i].list.enableMouseWheelOnOver = true;

@@ -1185,6 +1185,8 @@ function TooltipHooks:OnRequestTooltip(ui, method, arg1, arg2, arg3, ...)
 	local request = {}
 	local isCharSheet = ui:GetTypeId() == 119
 
+	--print(method, arg1, arg2, arg3, ...)
+
 	local characterHandle = ui:GetPlayerHandle()
 
 	if method == "showSkillTooltip" then

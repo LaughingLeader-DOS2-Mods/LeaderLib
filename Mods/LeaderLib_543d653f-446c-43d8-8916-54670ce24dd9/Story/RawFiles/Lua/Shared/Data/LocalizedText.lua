@@ -305,6 +305,11 @@ LocalizedText.Input = {
 	Select = ts:Create("hdf10e5a7g950eg4f82gb716ga5a614c00811", "Select"),
 }
 
+LocalizedText.Base = {
+	Experience = ts:Create("he50fce4dg250cg4449g9f33g7706377086f6", "Experience"),
+	Total = ts:Create("h9e9c017dg3bceg4c21ga665g71b50ca351b6", "Total"),
+}
+
 ---Get localized damage text wrapped in that damage type's color.
 ---@param damageType string
 ---@param damageValue string|integer|number

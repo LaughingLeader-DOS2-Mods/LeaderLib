@@ -5,6 +5,21 @@ local self = CharacterSheet
 
 ---@private
 ---@param ui UIObject
+function CharacterSheet.PreUpdate(ui, method, updateTalents, updateAbilities, updateCivil)
+	local this = self.Root
+	local secStat_array = this.secStat_array
+	for i=0,#secStat_array-1,7 do
+		if not secStat_array[i] then
+			local label = this.secStat_array[i + 2]
+			if LocalizedText.Base.Experience:Equals(label) then
+				secStat_array[i+2] = LocalizedText.Base.Total.Value
+				break
+			end
+		end
+	end
+end
+---@private
+---@param ui UIObject
 function CharacterSheet.Update(ui, method, updateTalents, updateAbilities, updateCivil)
 	PrintDebug("CharacterSheet.Update", method, updateTalents, updateAbilities, updateCivil)
 	local this = self.Root
@@ -80,5 +95,16 @@ function CharacterSheet.Update(ui, method, updateTalents, updateAbilities, updat
 	end
 end
 
+Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem", CharacterSheet.PreUpdate)
 Ext.RegisterUITypeCall(Data.UIType.characterSheet, "characterSheetUpdateDone", CharacterSheet.Update)
+Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setTitle", function(ui, method)
+	local this = ui:GetRoot()
+	if this then
+		this = this.stats_mc
+		this.setMainStatsGroupName(this.GROUP_MAIN_ATTRIBUTES, Ext.GetTranslatedString("h15c226f2g54dag4f0eg80e6g121098c0766e", "Attributes"))
+		this.setMainStatsGroupName(this.GROUP_MAIN_STATS, Ext.GetTranslatedString("h3d70a7c1g6f19g4f28gad0cgf0722eea9850", "Stats"))
+		this.setMainStatsGroupName(this.GROUP_MAIN_EXPERIENCE, Ext.GetTranslatedString("he50fce4dg250cg4449g9f33g7706377086f6", "Experience"))
+		this.setMainStatsGroupName(this.GROUP_MAIN_RESISTANCES, Ext.GetTranslatedString("h5a0c9b53gd3f7g4e01gb43ege4a255e1c8ee", "Resistances"))
+	end
+end)
 Ext.RegisterUITypeCall(Data.UIType.statsPanel_c, "characterSheetUpdateDone", CharacterSheet.Update)

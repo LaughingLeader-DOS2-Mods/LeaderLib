@@ -89,7 +89,7 @@ end
 ---@param ui UIObject
 local function UpdateCharacterSheetPoints(ui, method, amount)
 	if method == "setAvailableCombatAbilityPoints" or method == "setAvailableCivilAbilityPoints" then
-		AbilityManager.UpdateCharacterSheetPoints(ui, method, ui:GetRoot(), amount)
+		SheetManager.AbilityManager.UpdateCharacterSheetPoints(ui, method, ui:GetRoot(), amount)
 	end
 end
 

@@ -4,9 +4,9 @@ end)
 
 Ext.RegisterConsoleCommand("abilityTest", function(cmd, enabled)
     if enabled == "false" then
-        AbilityManager.DisableAbility("all", ModuleUUID)
+        SheetManager.AbilityManager.DisableAbility("all", ModuleUUID)
     else
-        AbilityManager.EnableAbility("all", ModuleUUID)
+        SheetManager.AbilityManager.EnableAbility("all", ModuleUUID)
     end
 end)
 

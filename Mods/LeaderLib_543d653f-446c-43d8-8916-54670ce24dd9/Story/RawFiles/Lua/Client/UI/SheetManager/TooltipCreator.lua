@@ -11,7 +11,7 @@ local function CreateTooltip(tooltipType, requestedUI, call, id)
 			local resolved = false
 			--[[
 			if call == "showAbilityTooltipCustom" then
-				local data = AbilityManager.GetCustomAbility(id)
+				local data = SheetManager.AbilityManager.GetCustomAbility(id)
 				this.tooltip_array[0] = Game.Tooltip.TooltipItemTypes.StatName
 				this.tooltip_array[1] = data.DisplayName or ""
 				this.tooltip_array[2] = Game.Tooltip.TooltipItemTypes.AbilityDescription

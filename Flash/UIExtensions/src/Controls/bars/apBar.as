@@ -252,7 +252,7 @@ package Controls.bars
 			}
 		}
 		
-		function frame1() : *
+		public function frame1() : *
 		{
 			this.maxAPs = 20;
 			this.apOverflow_mc.overflow_txt.autoSize = TextFieldAutoSize.LEFT;

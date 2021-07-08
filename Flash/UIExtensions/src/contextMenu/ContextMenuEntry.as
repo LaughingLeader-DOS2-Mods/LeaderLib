@@ -72,7 +72,7 @@ package contextMenu
 			this.base.selectButton(null);
 		}
 		
-		private function frame1() : *
+		public function frame1() : *
 		{
 			addEventListener(MouseEvent.MOUSE_DOWN,this.buttonDown);
 			addEventListener(MouseEvent.ROLL_OVER,this.buttonOver);

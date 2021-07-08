@@ -10,9 +10,9 @@ package Controls
 			addFrameScript(0,this.frame1);
 		}
 		
-		function frame1() : *
+		public function frame1() : *
 		{
-			stop();
+			this.stop();
 		}
 	}
 }

@@ -28,7 +28,7 @@ package contextMenu
 			addFrameScript(0,this.frame1);
 		}
 
-		private function frame1() : *
+		public function frame1() : *
 		{
 			this.list = new listDisplay();
 			this.list.EL_SPACING = 0;

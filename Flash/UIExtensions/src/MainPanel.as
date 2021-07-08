@@ -72,7 +72,7 @@ package
 			this.idInc = 0;
 		}
 		
-		private function frame1() : *
+		public function frame1() : *
 		{
 			elements = new Array();
 			this.mouseEnabled = false;

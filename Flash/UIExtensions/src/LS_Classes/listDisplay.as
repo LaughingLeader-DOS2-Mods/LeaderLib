@@ -272,7 +272,7 @@ package LS_Classes
 			var val5:MovieClip = null;
 			var val6:Number = NaN;
 			var val3:Boolean = false;
-			param1 = param1 + this.TOP_SPACING;
+			param1 += this.TOP_SPACING;
 			var val4:uint = 0;
 			while(val4 < this.content_array.length)
 			{
@@ -375,14 +375,14 @@ package LS_Classes
 					{
 						this.content_array[val2].INTUpd4PosEl();
 					}
-					val1 = val1 + (this.getElementHeight(this.content_array[val2]) + this.EL_SPACING);
+					val1 += this.getElementHeight(this.content_array[val2]) + this.EL_SPACING;
 					if(this.m_sideSpacing != 0)
 					{
 						this.content_array[val2].x = this.SIDE_SPACING;
 					}
 					if(this.content_array[val2].visible)
 					{
-						this.m_visibleLength++;
+						++this.m_visibleLength;
 					}
 				}
 				val2++;
@@ -431,7 +431,7 @@ package LS_Classes
 			{
 				if(val3 && val3.visible)
 				{
-					val1 = val1 + (this.getElementHeight(val3) + val2);
+					val1 += this.getElementHeight(val3) + val2;
 					val2 = this.EL_SPACING;
 				}
 			}
@@ -466,9 +466,8 @@ package LS_Classes
 			var val5:uint = 0;
 			while(val5 < this.content_array.length)
 			{
-				this.m_tweeningMcs++;
-				val6 = this.content_array[val5];
-				val6.tweening = true;
+				++this.m_tweeningMcs;
+				(val6 = this.content_array[val5]).tweening = true;
 				val6.tweenToY = val3;
 				this.stopElementMCPosTweens(val6);
 				val6.list_tweenY = new larTween(val6,"y",this.m_PositionTweenFunc,NaN,val3,param1,this.removeTweenState,val6.list_id);
@@ -476,7 +475,7 @@ package LS_Classes
 				{
 					val6.list_tweenX = new larTween(val6,"x",this.m_PositionTweenFunc,NaN,this.m_sideSpacing,param1);
 				}
-				val3 = val3 + (this.getElementHeight(val6) + this.EL_SPACING);
+				val3 += this.getElementHeight(val6) + this.EL_SPACING;
 				val5++;
 			}
 		}
@@ -484,7 +483,7 @@ package LS_Classes
 		protected function removeTweenState(param1:uint) : *
 		{
 			var val2:MovieClip = this.getElementByNumber("list_id",param1);
-			this.m_tweeningMcs--;
+			--this.m_tweeningMcs;
 			if(this.m_tweeningMcs == 0)
 			{
 				dispatchEvent(new Event("listMoveStop"));
@@ -557,14 +556,14 @@ package LS_Classes
 		
 		public function addElementOnPosition(param1:DisplayObject, param2:uint, param3:Boolean = true, param4:Boolean = true) : *
 		{
-			var val5:MovieClip = param1 as MovieClip;
-			if(val5.deselectElement)
+			var val5:MovieClip;
+			if((val5 = param1 as MovieClip).deselectElement)
 			{
 				val5.deselectElement();
 			}
 			this.containerContent_mc.addChild(param1);
 			val5.list_id = this.idInc;
-			this.idInc++;
+			++this.idInc;
 			val5.selectable = param4;
 			this.content_array.splice(param2,0,val5);
 			this.m_NeedsSorting = true;
@@ -697,14 +696,14 @@ package LS_Classes
 			this.containerContent_mc.removeChild(param1);
 		}
 		
-		public function removeElement(index:Number, repositionElements:Boolean = true, toPosition:Boolean = false, yPos:Number = 0.3) : *
+		public function removeElement(param1:Number, param2:Boolean = true, param3:Boolean = false, param4:Number = 0.3) : *
 		{
 			var val5:MovieClip = null;
 			var val6:Number = NaN;
 			var val7:MovieClip = null;
-			if(index >= 0 && index < this.content_array.length)
+			if(param1 >= 0 && param1 < this.content_array.length)
 			{
-				val5 = this.content_array[index];
+				val5 = this.content_array[param1]
 				if(val5)
 				{
 					this.stopElementMCTweens(val5);
@@ -714,9 +713,9 @@ package LS_Classes
 						val7.removeChild(val5);
 					}
 				}
-				this.content_array.splice(index,1);
+				this.content_array.splice(param1,1);
 				val6 = this.currentSelection;
-				if(index == val6 && this.content_array.length > 0)
+				if(param1 == val6 && this.content_array.length > 0)
 				{
 					if(val6 > 0)
 					{
@@ -736,11 +735,11 @@ package LS_Classes
 					this.m_CurrentSelection = null;
 				}
 				this.resetListPos();
-				if(repositionElements)
+				if(param2)
 				{
-					if(toPosition)
+					if(param3)
 					{
-						this.moveElementsToPosition(yPos);
+						this.moveElementsToPosition(param4);
 					}
 					else
 					{
@@ -768,7 +767,6 @@ package LS_Classes
 		
 		public function clearElements() : *
 		{
-			trace("clearElements", this.name);
 			var val2:MovieClip = null;
 			var val1:uint = 0;
 			while(val1 < this.content_array.length)
@@ -1262,7 +1260,7 @@ package LS_Classes
 				this.m_CurrentSelection.onClick();
 			}
 		}
-
+		
 		// LeaderLib Addition
 		public function isOverlappingPosition(targetX:Number, targetY:Number, shapeTest:Boolean=true) : *
 		{

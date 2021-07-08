@@ -415,7 +415,7 @@ package
 			stage.removeEventListener(KeyboardEvent.KEY_UP,this.onKeyboardUp);
 		}
 		
-		private function frame1() : *
+		public function frame1() : *
 		{
 			this.anchorId = "LeaderLib_UIExtensions";
 			this.layout = "fixed";

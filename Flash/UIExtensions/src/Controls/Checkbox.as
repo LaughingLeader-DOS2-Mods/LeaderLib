@@ -19,7 +19,7 @@ package Controls
       public function Checkbox()
       {
          super();
-         addFrameScript(0,this.frame1);
+         addFrameScript(0,this.initframe1);
       }
       
       public function onDown(param1:MouseEvent) : *
@@ -79,7 +79,7 @@ package Controls
          this.bg_mc.gotoAndStop(this.stateID * 3 + 1);
       }
       
-      private function frame1() : *
+      public function initframe1() : *
       {
          this.mHeight = 30;
          this.bg_mc.addEventListener(MouseEvent.MOUSE_DOWN,this.onDown);

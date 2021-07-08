@@ -16,7 +16,7 @@ package Controls
 		public function BaseTooltipSupport()
 		{
 			super();
-			addFrameScript(0, this.setupTooltipListeners);
+			addFrameScript(0,this.frame1);
 		}
 
 		public function showTooltip(fade:Boolean=true) : *
@@ -50,7 +50,7 @@ package Controls
 			this.hideTooltip();
 		}
 		
-		private function setupTooltipListeners() : *
+		public function frame1() : *
 		{
 			this.base = root as MovieClip;
 			addEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver);

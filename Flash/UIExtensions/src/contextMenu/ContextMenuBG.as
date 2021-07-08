@@ -72,7 +72,7 @@ package contextMenu
 			this.bottom_mc.y = this.mid_mc.y + this.mid_mc.height - this.bottomOffset;
 		}
 		
-		private function frame1() : *
+		public function frame1() : *
 		{
 			this.contextContent = null;
 			this.scaleTween = null;

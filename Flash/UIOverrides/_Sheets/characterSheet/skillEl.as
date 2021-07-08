@@ -99,7 +99,7 @@ package
 		
 		public function onDragging(param1:MouseEvent) : *
 		{
-			if(stage.mouseX > this.mousePosDown.x + this.dragTreshHold || stage.mouseX < this.mousePosDown.x - this.dragTreshHold || stage.mouseY > this.mousePosDown.y + this.dragTreshHold || stage.mouseY < this.mousePosDown.y - this.dragTreshHold)
+			if(this.stage.mouseX > this.mousePosDown.x + this.dragTreshHold || this.stage.mouseX < this.mousePosDown.x - this.dragTreshHold || this.stage.mouseY > this.mousePosDown.y + this.dragTreshHold || this.stage.mouseY < this.mousePosDown.y - this.dragTreshHold)
 			{
 				removeEventListener(MouseEvent.MOUSE_UP,this.onUp);
 				removeEventListener(MouseEvent.MOUSE_MOVE,this.onDragging);

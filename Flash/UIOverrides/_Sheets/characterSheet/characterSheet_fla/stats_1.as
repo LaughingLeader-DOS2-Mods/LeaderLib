@@ -7,6 +7,7 @@ package characterSheet_fla
 	import LS_Classes.listDisplay;
 	import LS_Classes.textEffect;
 	import LS_Classes.textHelpers;
+	import LS_Classes.scrollListGrouped;
 	import fl.motion.easing.Sine;
 	import flash.display.Bitmap;
 	import flash.display.MovieClip;
@@ -69,8 +70,8 @@ package characterSheet_fla
 		public var primaryStatList:listDisplay;
 		public var secondaryStatList:listDisplay;
 		public var expStatList:listDisplay;
-		public var infoStatList:listDisplay;
 		public var resistanceStatList:listDisplay;
+		public var infoStatList:listDisplay;
 		public const statsElWidth:Number = 240;
 		public var secELSpacing:Number;
 		public var currentOpenPanel:Number;
@@ -88,10 +89,17 @@ package characterSheet_fla
 		public const PointsFrameW:Number = 160;
 		public const RightFrameW:Number = 304;
 
+		//LeaderLib
 		public var customStatIconOffsetX:Number = -2;
 		public var customStatIconOffsetY:Number = -6;
 		public var pointWarningOffsetX:Number = -16;
 		public var customStatPointsTextOffsetX:Number = -1.89;
+
+		public var mainStatsList:scrollListGrouped;
+		public var GROUP_MAIN_ATTRIBUTES:int = 0;
+		public var GROUP_MAIN_STATS:int = 1;
+		public var GROUP_MAIN_EXPERIENCE:int = 2;
+		public var GROUP_MAIN_RESISTANCES:int = 3;
 		
 		public function stats_1()
 		{
@@ -843,6 +851,7 @@ package characterSheet_fla
 			{
 				this.primaryStatList.addElement(text_mc);
 			}
+			this.mainStatsList.positionElements();
 		}
 		
 		public function addSpacing(listId:Number, height:Number) : *
@@ -1020,6 +1029,7 @@ package characterSheet_fla
 			stat_mc.icon_mc.gotoAndStop(statID + 1);
 			stat_mc.id = this.primaryStatList.length;
 			this.primaryStatList.addElement(stat_mc);
+			this.mainStatsList.positionElements();
 			//stat_mc.MakeCustom(statID, isCustom);
 			//ExternalInterface.call("statAdded", stat_mc.statID, stat_mc.id);
 		}
@@ -1191,12 +1201,16 @@ package characterSheet_fla
 			{
 				this.expStatList.addElement(mc);
 			}
+			this.mainStatsList.positionElements();
 		}
 		
 		public function clearSecondaryStats() : *
 		{
-			this.secondaryStatList.clearElements();
-			this.expStatList.clearElements();
+			this.mainStatsList.clearGroup(GROUP_MAIN_STATS, false);
+			this.mainStatsList.clearGroup(GROUP_MAIN_EXPERIENCE, false);
+			this.mainStatsList.positionElements();
+			//this.secondaryStatList.clearElements();
+			//this.expStatList.clearElements();
 		}
 		
 		public function addTitle(param1:String) : *
@@ -1205,15 +1219,17 @@ package characterSheet_fla
 			val2.title_txt.autoSize = "left";
 			val2.title_txt.htmlText = param1;
 			this.primaryStatList.addElement(val2);
+			this.mainStatsList.positionElements();
 		}
 		
 		public function clearStats() : *
 		{
-			this.primaryStatList.clearElements();
-			this.secondaryStatList.clearElements();
-			this.expStatList.clearElements();
+			//this.primaryStatList.clearElements();
+			//this.secondaryStatList.clearElements();
+			//this.expStatList.clearElements();
+			//this.resistanceStatList.clearElements();
 			this.infoStatList.clearElements();
-			this.resistanceStatList.clearElements();
+			this.mainStatsList.clearGroupElements();
 		}
 		
 		public function clearAbilities() : *
@@ -1413,6 +1429,15 @@ package characterSheet_fla
 				val1++;
 			}
 		}
+
+		public function setMainStatsGroupName(groupId:int, name:String) : *
+		{
+			var group_mc:MovieClip = this.mainStatsList.getElementByNumber("groupId", groupId);
+			if(group_mc != null && group_mc.title_txt != null)
+			{
+				group_mc.title_txt.htmlText = name;
+			}
+		}
 		
 		public function frame1() : *
 		{
@@ -1429,11 +1454,41 @@ package characterSheet_fla
 			this.listOffsetY = 15;
 			this.tabsList = new horizontalList();
 			this.charList = new horizontalScrollList("empty","empty","empty","empty");
-			this.primaryStatList = new listDisplay();
-			this.secondaryStatList = new listDisplay();
-			this.expStatList = new listDisplay();
+			//this.primaryStatList = new listDisplay();
+			//this.secondaryStatList = new listDisplay();
+			//this.expStatList = new listDisplay();
+			//this.resistanceStatList = new listDisplay();
+			//LeaderLib - Making the main stats scrollable
+			//Moving it to the left so icons aren't cut off
+			this.mainStats_mc.x = 0;//44;
+			this.mainStatsList = new scrollListGrouped("down_id","up_id","handle_id","scrollBgBig_id");
+			this.mainStatsList.SUBEL_SPACING = 0;
+			this.mainStatsList.EL_SPACING = 2;//22;
+			this.mainStatsList.SB_SPACING = -10;
+			this.mainStatsList.SIDE_SPACING = 44;
+			//302 - 293 = 9
+			this.mainStatsList.TOP_SPACING = 9;
+			//this.mainStatsList.setFrame(270,735);
+			this.mainStatsList.setFrame(328,735);
+			this.mainStatsList.m_scrollbar_mc.m_hideWhenDisabled = true;
+			this.mainStatsList.mouseWheelWhenOverEnabled = true;
+			this.mainStats_mc.addChild(this.mainStatsList);
+			this.mainStatsList.setGroupMC("StatCategory");
+			//this.mainStatsList.elementsSortOn("statId");
+			this.mainStatsList.m_scrollbar_mc.setLength(663 + 42);
+			this.mainStatsList.m_scrollbar_mc.ScaleBG = true;
+			this.mainStatsList.m_scrollbar_mc.x = -1;
+			this.mainStatsList.m_scrollbar_mc.y = -17;
+			this.scrollbarHolder_mc.addChild(this.mainStatsList.m_scrollbar_mc);
+
+			this.primaryStatList = this.mainStatsList.addGroup(this.GROUP_MAIN_ATTRIBUTES, "Attributes", false).list;
+			this.secondaryStatList = this.mainStatsList.addGroup(this.GROUP_MAIN_STATS, "Stats", false).list;
+			this.expStatList = this.mainStatsList.addGroup(this.GROUP_MAIN_EXPERIENCE, "Experience", false).list;
+			this.resistanceStatList = this.mainStatsList.addGroup(this.GROUP_MAIN_RESISTANCES, "Resistances", false).list;
+
+			this.mainStats_mc.list = mainStatsList;
+
 			this.infoStatList = new listDisplay();
-			this.resistanceStatList = new listDisplay();
 			this.charList.m_customElementWidth = 92;
 			this.charList.EL_SPACING = 2;
 			this.primaryStatList.EL_SPACING = 0;
@@ -1447,12 +1502,21 @@ package characterSheet_fla
 			this.charList.m_cyclic = true;
 			this.charList.m_autoCenter = false;
 			this.tabsList.EL_SPACING = 0;
-			this.expStatList.y = 240;
-			this.mainStats_mc.secStatHolder_mc.addChild(this.secondaryStatList);
-			this.mainStats_mc.secStatHolder_mc.addChild(this.expStatList);
-			this.mainStats_mc.statHolder_mc.addChild(this.primaryStatList);
+			//this.expStatList.y = 240;
+			
+			// this.mainStats_mc.secStatHolder_mc.addChild(this.secondaryStatList);
+			// this.mainStats_mc.secStatHolder_mc.addChild(this.expStatList);
+			// this.mainStats_mc.statHolder_mc.addChild(this.primaryStatList);
+			// this.mainStats_mc.resistancesStatHolder_mc.addChild(this.resistanceStatList);
+
+			//this.mainStatsList.addGroupElement(0, this.primaryStatList, false);
+			//this.mainStatsList.addGroupElement(1, this.secondaryStatList, false);
+			//this.mainStatsList.addGroupElement(2, this.expStatList, false);
+			//this.mainStatsList.addGroupElement(3, this.resistanceStatList, false);
+
+			this.mainStatsList.positionElements();
+
 			this.equip_mc.infoStatHolder_mc.addChild(this.infoStatList);
-			this.mainStats_mc.resistancesStatHolder_mc.addChild(this.resistanceStatList);
 			this.charList_mc.addChild(this.charList);
 			this.tabsHolder_mc.addChild(this.tabsList);
 			this.infoStatList.m_customElementHeight = 22;

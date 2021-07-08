@@ -103,6 +103,24 @@ package
 				this.onUpCallback(this);
 			}
 		}
+
+		public function get length() : Number
+		{
+			if(this.list != null)
+			{
+				return this.list.length;
+			}
+			return 0;
+		}
+
+		public function get content_array() : Array
+		{
+			if(this.list != null)
+			{
+				return this.list.content_array;
+			}
+			return null;
+		}
 		
 		public function frame1() : *
 		{

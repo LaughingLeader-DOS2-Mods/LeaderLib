@@ -108,3 +108,13 @@ Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setTitle", functio
 	end
 end)
 Ext.RegisterUITypeCall(Data.UIType.statsPanel_c, "characterSheetUpdateDone", CharacterSheet.Update)
+
+if Vars.DebugMode then
+	RegisterListener("BeforeLuaReset", function()
+		local ui = CharacterSheet.Instance
+		if ui then
+			CharacterSheet.Instance:ExternalInterfaceCall("closeCharacterUIs")
+			CharacterSheet.Instance:ExternalInterfaceCall("hideUI")
+		end
+	end)
+end

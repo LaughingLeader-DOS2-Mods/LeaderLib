@@ -12,3 +12,5 @@ local function LeaderLib_SyncRanSeed(call, seedstr)
 end
 
 Ext.RegisterNetListener("LeaderLib_SyncRanSeed", LeaderLib_SyncRanSeed)
+
+InvokeListenerCallbacks(Listeners.Loaded)

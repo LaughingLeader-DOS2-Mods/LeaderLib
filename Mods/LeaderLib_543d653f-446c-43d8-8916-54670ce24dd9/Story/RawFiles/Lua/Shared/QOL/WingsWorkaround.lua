@@ -121,4 +121,23 @@ if Ext.IsServer() then
 	Ext.RegisterOsirisListener("RegionEnded", 1, "after", function(region)
 		GlobalClearFlag("LeaderLib_SetupWingsWorkaroundForRegion")
 	end)
+
+	RegisterListener("Loaded", function()
+		RegisterStatusListener("Applied", "LEADERLIB_WINGS", function(target, statusId, source, statusType)
+			local obj = Ext.GetGameObject(target)
+			---@type EsvStatusFloating
+			local wingsStatus = obj:GetStatus("WINGS")
+			if wingsStatus then
+				wingsStatus.CurrentLifeTime = -1.0
+				wingsStatus.LifeTime = -1.0
+				wingsStatus.RequestClientSync = true
+			else
+				ApplyStatus(target, "WINGS", -1.0, 0, source)
+			end
+		end)
+	
+		RegisterStatusListener("Removed", "LEADERLIB_WINGS", function(target, statusId, source, statusType)
+			RemoveStatus(target, "WINGS")
+		end)
+	end)
 end

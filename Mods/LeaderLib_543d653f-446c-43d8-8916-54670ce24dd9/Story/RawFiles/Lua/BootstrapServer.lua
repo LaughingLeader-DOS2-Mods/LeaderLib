@@ -192,3 +192,5 @@ Ext.RegisterListener("SessionLoaded", SessionLoaded)
 -- Ext.RegisterListener("SessionLoading", LeaderLib_GameSessionLoad)
 
 Ext.Require("Server/_InitServer.lua")
+
+InvokeListenerCallbacks(Listeners.Loaded)

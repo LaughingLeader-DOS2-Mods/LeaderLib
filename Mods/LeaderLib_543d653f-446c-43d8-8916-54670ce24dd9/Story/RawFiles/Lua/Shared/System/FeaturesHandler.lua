@@ -6,12 +6,10 @@ local function OnFeatureDisabled(id)
 	InvokeListenerCallbacks(Listeners.FeatureDisabled, id)
 end
 
-function EnableFeature(id, val)
-	if val == nil then
-		val = true
-	end
-	if Features[id] ~= val then
-		Features[id] = val
+---@param id string
+function EnableFeature(id)
+	if Features[id] ~= true then
+		Features[id] = true
 		OnFeatureEnabled(id)
 		if Ext.IsServer() and Ext.GetGameState() == "Running" then
 			Ext.BroadcastMessage("LeaderLib_EnableFeature", id, nil)
@@ -19,12 +17,10 @@ function EnableFeature(id, val)
 	end
 end
 
-function DisableFeature(id, val)
-	if val == nil then
-		val = false
-	end
-	if Features[id] == val then
-		Features[id] = val
+---@param id string
+function DisableFeature(id)
+	if Features[id] ~= false then
+		Features[id] = false
 		OnFeatureDisabled(id)
 		if Ext.IsServer() and Ext.GetGameState() == "Running" then
 			Ext.BroadcastMessage("LeaderLib_DisableFeature", id, nil)

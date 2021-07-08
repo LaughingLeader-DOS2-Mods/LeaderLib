@@ -62,7 +62,9 @@ function RegisterStatusListener(event, status, callback)
             end
             table.insert(statusEventHolder[status], callback)
         end
-    end
+    else
+		error(string.format("%s is not a valid status event!", event), 2)
+	end
 end
 
 ---@param event StatusEventID

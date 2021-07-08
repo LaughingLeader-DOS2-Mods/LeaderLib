@@ -15,6 +15,8 @@ Listeners.GetTooltipSkillParam = {}
 --Debug listeners
 Listeners.LuaReset = {}
 Listeners.BeforeLuaReset = {}
+---Called when LeaderLib finishes loading its server-side or client-side scripts.
+Listeners.Loaded = {}
 
 Listeners.ModSettingsLoaded = {}
 ---Callbacks for when ModSettings are synced on both the server and client.

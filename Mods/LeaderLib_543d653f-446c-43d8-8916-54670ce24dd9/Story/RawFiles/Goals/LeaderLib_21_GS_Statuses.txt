@@ -2,37 +2,19 @@ Version 1
 SubGoalCombiner SGC_AND
 INITSECTION
 KBSECTION
+// [BEGIN_NO_OSITOOLS]
 //REGION WingsWorkaround
 IF
-CharacterStatusRemoved(_Char, "WINGS", _)
-AND
-DB_LeaderLib_Statuses_Temp_RemoveWings(_Char)
-THEN
-NOT DB_LeaderLib_Statuses_Temp_RemoveWings(_Char);
-RemoveStatus(_Char, "LEADERLIB_WINGS");
-
-IF
 CharacterStatusRemoved(_Char, "LEADERLIB_WINGS", _)
-AND
-DB_LeaderLib_Statuses_Temp_RemoveWings(_Char)
 THEN
-NOT DB_LeaderLib_Statuses_Temp_RemoveWings(_Char);
 RemoveStatus(_Char, "WINGS");
 
 IF
 CharacterStatusApplied(_Char, "LEADERLIB_WINGS", _)
-AND
-GetStatusTurns(_Char, "LEADERLIB_WINGS", _Turns)
-AND
-Real(_Turns, _TurnsR)
-AND
-RealProduct(_TurnsR, 6.0, _Duration)
-AND
-RealMax(_Duration, -1.0, _FinalDuration)
 THEN
-ApplyStatus(_Char, "WINGS", _FinalDuration, 0, _Char);
-DB_LeaderLib_Statuses_Temp_RemoveWings(_Char);
+ApplyStatus(_Char, "WINGS", -1.0, 0, _Char);
 //END_REGION
+// [END_NO_OSITOOLS]
 
 EXITSECTION
 ENDEXITSECTION

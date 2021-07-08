@@ -144,11 +144,13 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 				end
 			end
 			local attributeName = ""
+			local attributeValue = 0
 			local requirementsMet = true
 			for i,v in pairs(item.Stats.Requirements) do
 				if Data.AttributeEnum[v.Requirement] ~= nil then
 					attributeName = LocalizedText.AttributeNames[v.Requirement].Value
 					if type(v.Param) == "number" and v.Param > 0 then
+						attributeValue = v.Param
 						requiresPointsHigherThanZero = true
 						if character.Stats[v.Requirement] < v.Param then
 							requirementsMet = false
@@ -168,7 +170,7 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 					--Armor doesn't scale with requirements, so just show the attribute requirement.
 					local element = {
 						Type = "ItemRequirement",
-						Label = LocalizedText.Tooltip.Requires:ReplacePlaceholders(attributeName),
+						Label = LocalizedText.Tooltip.RequiresWithParam:ReplacePlaceholders(attributeName, attributeValue),
 						RequirementMet = requirementsMet
 					}
 					tooltip:AppendElementAfterType(element, appendRequirementsAfterTypes)
@@ -178,7 +180,7 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 					local element = {
 						Type = "ItemRequirement",
 						Label = LocalizedText.Tooltip.ScalesWith:ReplacePlaceholders(attributeName),
-						RequirementMet = requirementsMet
+						RequirementMet = true
 					}
 					tooltip:AppendElementAfterType(element, appendRequirementsAfterTypes)
 				end

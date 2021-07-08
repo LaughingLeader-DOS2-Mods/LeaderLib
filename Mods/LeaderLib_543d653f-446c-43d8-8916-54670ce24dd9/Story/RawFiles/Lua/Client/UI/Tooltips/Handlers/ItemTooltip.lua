@@ -130,7 +130,6 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 		and item.Stats.Requirements ~= nil
 		and #item.Stats.Requirements > 0
 		then
-			local hasScalesWithText = false
 			local requiresPointsHigherThanZero = false
 			local scalesWithTextSub = string.sub(LocalizedText.Tooltip.ScalesWith.Value, 1, 5)
 			local requirements = tooltip:GetElements("ItemRequirement")
@@ -138,9 +137,6 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 				for i,element in pairs(requirements) do
 					--Replaces double spacing or more with single spaces
 					element.Label = string.gsub(element.Label, "%s+", " ")
-					if not hasScalesWithText and string.find(element.Label, scalesWithTextSub) then
-						hasScalesWithText = true
-					end
 				end
 			end
 			local attributeName = ""
@@ -176,7 +172,7 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 					tooltip:AppendElementAfterType(element, appendRequirementsAfterTypes)
 				end
 				--Also show the 'Scales With' text for weapons.
-				if item.ItemType == "Weapon" and not hasScalesWithText and GameSettings.Settings.Client.AlwaysDisplayWeaponScalingText then
+				if item.ItemType == "Weapon" and GameSettings.Settings.Client.AlwaysDisplayWeaponScalingText then
 					local element = {
 						Type = "ItemRequirement",
 						Label = LocalizedText.Tooltip.ScalesWith:ReplacePlaceholders(attributeName),

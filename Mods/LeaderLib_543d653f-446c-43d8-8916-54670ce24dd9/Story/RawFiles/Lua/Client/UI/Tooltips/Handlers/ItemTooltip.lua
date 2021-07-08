@@ -176,7 +176,7 @@ function TooltipHandler.OnItemTooltip(item, tooltip)
 					tooltip:AppendElementAfterType(element, appendRequirementsAfterTypes)
 				end
 				--Also show the 'Scales With' text for weapons.
-				if item.ItemType == "Weapon" and (requiresPointsHigherThanZero or GameSettings.Settings.Client.AlwaysDisplayWeaponScalingText) then
+				if item.ItemType == "Weapon" and (not requiresPointsHigherThanZero or GameSettings.Settings.Client.AlwaysDisplayWeaponScalingText) then
 					local element = {
 						Type = "ItemRequirement",
 						Label = LocalizedText.Tooltip.ScalesWith:ReplacePlaceholders(attributeName),

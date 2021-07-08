@@ -37,7 +37,7 @@ package LS_Classes
 		public var m_ToggleSelections:Boolean = false;
 		public var m_ClearClosedGroups:Boolean = false;
 		
-		public function scrollListGrouped(param1:String = "down_id", param2:String = "up_id", param3:String = "handle_id", param4:String = "scrollBg_id", param5:String = "", param6:String = "")
+		public function scrollListGrouped(downClassName:String = "down_id", upClassName:String = "up_id", handleClassName:String = "handle_id", bgClassName:String = "scrollBg_id", ffDownClassName:String = "", ffUpClassName:String = "")
 		{
 			this.groupClass = MovieClip;
 			this.m_frameHit_mc = new MovieClip();
@@ -49,7 +49,7 @@ package LS_Classes
 			this.m_frameHit_mc.addChild(sprite);
 			sprite.alpha = 0;
 			this.addChild(this.m_frameHit_mc);
-			this.m_scrollbar_mc = new scrollbar(param1,param2,param3,param4,param5,param6);
+			this.m_scrollbar_mc = new scrollbar(downClassName,upClassName,handleClassName,bgClassName,ffDownClassName,ffUpClassName);
 			super();
 			this.m_scrollbar_mc.visible = false;
 			this.addChild(this.m_scrollbar_mc);
@@ -130,12 +130,13 @@ package LS_Classes
 		
 		public function addGroup(param1:Number, param2:String, param3:Boolean = true) : MovieClip
 		{
-			var val4:MovieClip;
-			if((val4 = getElementByNumber("groupId",param1)) == null)
+			var val4:MovieClip = this.getElementByNumber("groupId",param1);
+			if(val4 == null)
 			{
-				(val4 = new this.groupClass()).list = new listDisplay();
+				val4 = new this.groupClass();
+				val4.list = new listDisplay();
 				val4.list.m_cyclic = false;
-				val4.list.EL_SPACING = this.m_SubElementSpacing == -1 ? EL_SPACING : this.m_SubElementSpacing;
+				val4.list.EL_SPACING = this.m_SubElementSpacing == -1 ? this.EL_SPACING : this.m_SubElementSpacing;
 				if(val4.listContainer_mc == null)
 				{
 					val4.listContainer_mc = new MovieClip();

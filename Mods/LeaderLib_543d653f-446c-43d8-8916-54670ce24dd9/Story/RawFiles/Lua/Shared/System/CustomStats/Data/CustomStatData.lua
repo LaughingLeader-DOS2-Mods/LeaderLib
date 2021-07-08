@@ -22,16 +22,24 @@ local CustomStatData = {
 	Visible = true,
 	---@type CustomStatTooltipType
 	TooltipType = "Stat",
+	---If true, the custom stat is created automatically on the server.
 	Create = false,
+	---A category ID this stat belongs to, if any.
 	Category = "",
+	---The generated double the game creates for the stat on the client side.
 	---@type number
 	Double = nil,
+	---An ID to use for a common pool of available points.
 	PointID = "",
+	---@private
 	---@type table<NETID,table<string,integer>>
 	LastValue = {},
+	---@private
 	---@type table<NETID,table<string,integer>>
 	AvailablePoints = {},
+	---Alternative display modes for a stat, such as percentage display.
 	DisplayMode = STAT_DISPLAY_MODE.Default,
+	---Enum values for DisplayMode.
 	STAT_DISPLAY_MODE = STAT_DISPLAY_MODE
 }
 

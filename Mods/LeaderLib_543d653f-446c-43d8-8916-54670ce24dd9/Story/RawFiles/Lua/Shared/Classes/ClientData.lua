@@ -1,4 +1,13 @@
+---@class ClientCharacterPointsData
+---@field Attribute integer
+---@field Ability integer
+---@field Civil integer
+---@field SourceBase integer
+---@field SourceCurrent integer
+---@field SourceMax integer
+
 ---@class ClientCharacterData
+---@field Points ClientCharacterPointsData
 local ClientCharacterData = {
 	Type = "ClientCharacterData",
 	UUID = "",
@@ -10,6 +19,15 @@ local ClientCharacterData = {
 	IsPossessed = false,
 	IsGameMaster = false,
 	IsPlayer = true,
+	Points = {
+		Attribute = 0,
+		Ability = 0,
+		Civil = 0,
+		Talent = 0,
+		SourceBase = 0,
+		SourceCurrent = 0,
+		SourceMax = 0
+	}
 }
 
 ClientCharacterData.__index = ClientCharacterData
@@ -31,11 +49,27 @@ function ClientCharacterData:Create(params)
 		IsPossessed = false,
 		IsGameMaster = false,
 		IsPlayer = true,
+		Points = {}
 	}
 	if params and type(params) == "table" then
 		for k,v in pairs(params) do
 			this[k] = v
 		end
+	end
+	if Ext.IsServer() then
+		this.Points = {}
+		setmetatable(this.Points, {
+			__index = function(tbl,k)
+				if k == "Attribute" then return CharacterGetAttributePoints(this.UUID) end
+				if k == "Ability" then return CharacterGetAbilityPoints(this.UUID) end
+				if k == "Civil" then return CharacterGetCivilAbilityPoints(this.UUID) end
+				if k == "Talent" then return CharacterGetTalentPoints(this.UUID) end
+				if k == "SourceBase" then return CharacterGetBaseSourcePoints(this.UUID) end
+				if k == "SourceCurrent" then return CharacterGetSourcePoints(this.UUID) end
+				if k == "SourceMax" then return CharacterGetMaxSourcePoints(this.UUID) end
+				error(string.format("[LeaderLib:ClientCharacterData] Invalid key for Points: (%s)", k), 2)
+			end
+		})
 	end
 	setmetatable(this, ClientCharacterData)
 	return this
@@ -48,12 +82,59 @@ function ClientCharacterData:Update(params)
 			self[k] = v
 		end
 	end
+	self:UpdatePoints(self.UUID)
 	return self
 end
 
 ---@return EclCharacter|EsvCharacter
 function ClientCharacterData:GetCharacter()
 	return Ext.GetCharacter(self.NetID or self.UUID)
+end
+
+---@private
+function ClientCharacterData:UpdatePoints(uuid)
+	local uuid = uuid or self.UUID
+	if not uuid then
+		local character = self:GetCharacter()
+		if character then
+			uuid = character.MyGuid
+		end
+	end
+	if uuid then
+		self.Points.Attribute = CharacterGetAttributePoints(uuid)
+		self.Points.Ability = CharacterGetAbilityPoints(uuid)
+		self.Points.Civil = CharacterGetCivilAbilityPoints(uuid)
+		self.Points.Talent = CharacterGetTalentPoints(uuid)
+		self.Points.SourceBase = CharacterGetBaseSourcePoints(uuid)
+		self.Points.SourceCurrent = CharacterGetSourcePoints(uuid)
+		self.Points.SourceMax = CharacterGetMaxSourcePoints(uuid)
+	end
+end
+
+---@private
+---@return ClientCharacterData
+function ClientCharacterData:Export()
+	local data = {
+		UUID = self.UUID,
+		NetID = self.NetID,
+		ID = self.ID,
+		Profile = self.Profile,
+		IsHost = self.IsHost,
+		IsInCharacterCreation = self.IsInCharacterCreation,
+		IsPossessed = self.IsPossessed,
+		IsGameMaster = self.IsGameMaster,
+		IsPlayer = self.IsPlayer,
+		Points = {
+			Attribute = self.Points.Attribute or 0,
+			Ability = self.Points.Ability or 0,
+			Civil = self.Points.Civil or 0,
+			Talent = self.Points.Talent or 0,
+			SourceBase = self.Points.SourceBase or 0,
+			SourceCurrent = self.Points.SourceCurrent or 0,
+			SourceMax = self.Points.SourceMax or 0
+		}
+	}
+	return data
 end
 
 Classes.ClientCharacterData = ClientCharacterData
@@ -143,6 +224,18 @@ function ClientData:SetClientData(id, profile, isHost, character)
 	if Vars.DebugMode then
 		fprint(LOGLEVEL.DEFAULT, "[LeaderLib:ClientData:SetClientData] ID(%s) UUID(%s) Profile(%s) IsHost(%s) Character(%s)", self.ID, self.Character.UUID, self.Profile, self.Profile, self.IsHost, self.Character)
 	end
+end
+
+---@private
+---@return ClientData
+function ClientData:Export()
+	local data = {
+		ID = self.ID,
+		Profile = self.Profile,
+		IsHost = self.IsHost,
+		Character = self.Character:Export()
+	}
+	return data
 end
 
 Classes.ClientData = ClientData

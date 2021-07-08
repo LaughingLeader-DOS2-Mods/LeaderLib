@@ -33,6 +33,7 @@ SharedData = {
 	ModData = {},
 	GameMode = GAMEMODE.CAMPAIGN
 }
+
 if Ext.IsClient() then
 	---@type ClientData
 	Client = Classes.ClientData:Create("")
@@ -56,12 +57,20 @@ if Ext.IsServer() then
 
 	local function PrepareSharedData(profile, isHost, id, netid)
 		local data = {
-			Shared = SharedData,
+			Shared = {
+				RegionData = SharedData.RegionData,
+				ModData = SharedData.ModData,
+				GameMode = SharedData.GameMode,
+				CharacterData = {}
+			},
 			Profile = profile,
 			IsHost = isHost,
 			ID = id,
 			NetID = netid
 		}
+		for k,v in pairs(SharedData.CharacterData) do
+			data.Shared.CharacterData[k] = v:Export()
+		end
 		return data
 	end
 
@@ -217,7 +226,7 @@ if Ext.IsServer() then
 					IsGameMaster = character.IsGameMaster or (SharedData.GameMode == GAMEMODE.GAMEMASTER and isHost),
 					IsPlayer = character.IsPlayer,
 					Profile = profileId,
-					ID = id
+					ID = id,
 				}
 				if SharedData.CharacterData[profileId] == nil then
 					--Create(character.MyGuid, id, profileId, character.NetID, isHost, isInCharacterCreation)
@@ -310,13 +319,21 @@ if Ext.IsServer() then
 		if data ~= nil then
 			local profile = data.Profile
 			local netid = data.NetID
-			if profile ~= nil and netid ~= nil and SharedData.CharacterData[profile] ~= nil then
+			local id = -1
+			if netid ~= nil then
 				local character = Ext.GetCharacter(netid)
-				if character ~= nil then
-					local charData = SharedData.CharacterData[profile]
-					charData.UUID = character.MyGuid
-					charData.NetID = netid
-					GameHelpers.Data.SyncSharedData(true, nil, profile)
+				if character then
+					if profile ~= nil and SharedData.CharacterData[profile] ~= nil then
+						local charData = SharedData.CharacterData[profile]
+						charData.UUID = character.MyGuid
+						charData.NetID = netid
+						GameHelpers.Data.SyncSharedData(true, nil, profile)
+					else
+						local id,profile = GetUserData(character.MyGuid)
+						if id ~= nil then
+							GameHelpers.Data.SetCharacterData(id, profile, character.MyGuid, false)
+						end
+					end
 				end
 			end
 		end
@@ -429,7 +446,6 @@ if Ext.IsClient() then
 		if not doubleHandle or doubleHandle == 0 then
 			return
 		end
-		--print(call, doubleHandle)
 		local handle = Ext.DoubleToHandle(doubleHandle)
 		if handle ~= nil then
 			---@type EclCharacter
@@ -451,6 +467,8 @@ if Ext.IsClient() then
 						changeDetected = true
 						ActiveCharacterChanged(currentCharacter, last)
 					end
+				else
+					--changeDetected = true
 				end
 				if changeDetected and skipSync ~= true then
 					Ext.PostMessageToServer("LeaderLib_SharedData_CharacterSelected", Ext.JsonStringify({Profile = SharedData.Profile, UUID = uuid, NetID=character.NetID}))

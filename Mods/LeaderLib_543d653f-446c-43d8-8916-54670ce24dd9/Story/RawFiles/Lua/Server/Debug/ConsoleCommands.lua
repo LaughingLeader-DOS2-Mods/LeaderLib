@@ -35,19 +35,43 @@ Ext.RegisterConsoleCommand("printuuids", function(call, radiusVal, skipSelf)
 			---@type StatCharacter
 			local characterStats = character.Stats
 	
-			fprint("CHARACTER")
-			fprint("===============")
-			fprint("UUID:", uuid)
-			fprint("NetID:", character.NetID)
-			fprint("Name:", CharacterGetDisplayName(uuid))
-			fprint("Stat:", characterStats.Name)
-			fprint("Archetype:", character.Archetype)
-			fprint("Pos:", Ext.JsonStringify(characterStats.Position))
-			fprint("Rot:", Ext.JsonStringify(characterStats.Rotation))
-			fprint("CustomTradeTreasure:", Ext.JsonStringify(character.CustomTradeTreasure))
-			fprint("Gain:", Ext.StatGetAttribute(character.Stats.Name, "Gain"))
-			fprint("===============")
+			print("CHARACTER")
+			print("===============")
+			print("UUID:", uuid)
+			print("NetID:", character.NetID)
+			print("Name:", character.DisplayName)
+			print("Stat:", characterStats.Name)
+			print("Archetype:", character.Archetype)
+			print("Pos:", table.unpack(characterStats.Position))
+			print("Rot:", table.unpack(characterStats.Rotation))
+			print("CustomTradeTreasure:", Common.Dump(character.CustomTradeTreasure))
+			print("Gain:", Ext.StatGetAttribute(character.Stats.Name, "Gain"))
+			print("===============")
 		end
+	end
+	local items = nil
+	if radius < 0 then
+		items = Ext.GetAllItems()
+	else
+		items = {}
+		for _,v in pairs(Ext.GetAllItems()) do
+			if GetDistanceTo(v, host) <= radius then
+				items[#items+1] = v
+			end
+		end
+	end
+	for i,uuid in pairs(items) do
+		---@type EsvItem
+		local item = Ext.GetItem(uuid)
+		print("ITEM")
+		print("===============")
+		print("UUID:", uuid)
+		print("NetID:", item.NetID)
+		print("Name:", item.DisplayName)
+		print("StatsId:", item.StatsId)
+		print("Pos:", table.unpack(item.WorldPos))
+		print("Rot:", GetRotation(item.MyGuid))
+		print("===============")
 	end
 end)
 

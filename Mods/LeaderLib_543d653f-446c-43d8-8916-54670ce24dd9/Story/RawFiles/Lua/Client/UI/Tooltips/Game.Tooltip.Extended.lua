@@ -20,7 +20,7 @@ local Client = Client
 
 Game.Tooltip = {}
 ---@type TooltipRequestProcessor
-local RequestProcessor = Ext.Require("Client/UI/Tooltips/TooltipRequests.lua")
+local RequestProcessor = Ext.Require("Client/UI/Tooltips/TooltipRequestProcessor.lua")
 
 _ENV = Game.Tooltip
 if setfenv ~= nil then
@@ -32,6 +32,7 @@ local ControllerVars = {
 	LastPlayer = nil,
 	LastOverhead = nil
 }
+Game.Tooltip.ControllerVars = ControllerVars
 
 local tooltipCustomIcons = {}
 

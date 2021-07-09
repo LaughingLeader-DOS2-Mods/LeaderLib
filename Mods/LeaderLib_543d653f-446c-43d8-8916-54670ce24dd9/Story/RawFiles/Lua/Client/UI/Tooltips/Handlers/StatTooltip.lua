@@ -1,10 +1,10 @@
-
 ---@module LeaderLibStatTooltipHandler
 ---@param character EclCharacter
----@param name string
+---@param stat string
 ---@param tooltip TooltipData
-function TooltipHandler.OnStatTooltip(character, name, tooltip)
-	if name == "APRecovery" then
+function TooltipHandler.OnStatTooltip(character, stat, tooltip)
+	--fprint(LOGLEVEL.DEFAULT, "[OnStatTooltip:%s]\n%s", stat, Ext.JsonStringify(tooltip.Data))
+	if stat == "APRecovery" then
 		local stat = Ext.GetStat(character.Stats.Name)
 		for i,element in ipairs(tooltip:GetElements("StatsAPBase")) do
 			if i == 1 then

@@ -307,6 +307,26 @@ if Ext.IsServer() then
 		end
 	end)
 
+	local function OnPointsChanged(uuid, amount)
+		if amount == 0 then
+			return
+		end
+		uuid = StringHelpers.GetUUID(uuid)
+		local id,profile = GetUserData(uuid)
+		if id ~= nil then
+			GameHelpers.Data.SetCharacterData(id, profile, uuid, false)
+		end
+	end
+	--Calls not supported.
+	-- Ext.RegisterOsirisListener("CharacterAddAttributePoint", 2, "after", OnPointsChanged)
+	-- Ext.RegisterOsirisListener("CharacterAddAbilityPoint", 2, "after", OnPointsChanged)
+	-- Ext.RegisterOsirisListener("CharacterAddCivilAbilityPoint", 2, "after", OnPointsChanged)
+	-- Ext.RegisterOsirisListener("CharacterAddTalentPoint", 2, "after", OnPointsChanged)
+	-- Ext.RegisterOsirisListener("CharacterAddTalentPoint", 2, "after", OnPointsChanged)
+	-- Ext.RegisterOsirisListener("CharacterAddSourcePoints", 2, "after", OnPointsChanged)
+	-- Ext.RegisterOsirisListener("CharacterOverrideMaxSourcePoints", 2, "after", OnPointsChanged)
+	-- Ext.RegisterOsirisListener("CharacterRemoveMaxSourcePointsOverride", 2, "after", OnPointsChanged)
+
 	Ext.RegisterListener("GameStateChanged", function(from, to)
 		if to == "Running" and from ~= "Paused" then
 			IterateUsers("LeaderLib_StoreUserData")

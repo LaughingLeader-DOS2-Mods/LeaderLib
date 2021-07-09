@@ -729,7 +729,12 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 		amount = tonumber(amount)
 		local host = Ext.GetCharacter(CharacterGetHostCharacter())
 		local nextLevel = math.min(Ext.ExtraData.LevelCap, host.Stats.Level + amount)
-		GameHelpers.Character.SetLevel(host, nextLevel)
+		if amount > 0 then
+			CharacterLevelUpTo(host.MyGuid, nextLevel)
+		else
+			GameHelpers.Character.SetLevel(host, nextLevel)
+		end
+		Osi.CharacterLeveledUp(host.MyGuid)
 	end)
 	
 	Ext.RegisterConsoleCommand("setlevel", function(command, level)
@@ -737,6 +742,7 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 		level = tonumber(level)
 		local host = Ext.GetCharacter(CharacterGetHostCharacter())
 		GameHelpers.Character.SetLevel(host, level)
+		Osi.CharacterLeveledUp(host.MyGuid)
 	end)
 	
 	local function sleep(timeInMilliseconds)

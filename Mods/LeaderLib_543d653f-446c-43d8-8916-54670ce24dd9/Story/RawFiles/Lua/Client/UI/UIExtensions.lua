@@ -44,23 +44,15 @@ local function DestroyInstance(force)
 	UIExtensions.Timers = {}
 end
 
-if Vars.DebugMode then
-	RegisterListener("BeforeLuaReset", function()
-		if UIExtensions.Instance then
-			DestroyInstance(true)
-		end	
-	end)
+RegisterListener("BeforeLuaReset", function()
+	if UIExtensions.Instance then
+		DestroyInstance(true)
+	end	
+end)
 
-	RegisterListener("LuaReset", function()
-		UIExtensions.SetupInstance()
-	
-		if not Vars.ControllerEnabled then
-			--Clears any unregistered missing abilities
-			GameHelpers.UI.TryInvoke(Data.UIType.characterSheet, "clearAbilities")
-			GameHelpers.UI.TryInvoke(Data.UIType.characterSheet, "clearTalents")
-		end
-	end)
-end
+RegisterListener("LuaReset", function()
+	UIExtensions.SetupInstance()
+end)
 
 Ext.RegisterConsoleCommand("llresetuiext", function(cmd)
 	DestroyInstance(true)

@@ -17,6 +17,10 @@ function CharacterSheet.PreUpdate(ui, method, updateTalents, updateAbilities, up
 			end
 		end
 	end
+
+	-- for i=0,#this.primStat_array-1 do
+	-- 	print("primStat_array",i,this.primStat_array[i])
+	-- end
 end
 ---@private
 ---@param ui UIObject
@@ -56,7 +60,7 @@ function CharacterSheet.Update(ui, method, updateTalents, updateAbilities, updat
 				this.mainpanel_mc.stats_mc.talents_mc.addTalent(talent.DisplayName, talent.SheetID, talent.State, canAdd, canRemove, talent.IsCustom)
 			end
 		end
-		this.stats_mc.addTalent("Test", 404, 1, true, false, true)
+		--this.stats_mc.addTalent("Test", 404, 1, true, false, true)
 	end
 
 	if updateAbilities then
@@ -64,8 +68,8 @@ function CharacterSheet.Update(ui, method, updateTalents, updateAbilities, updat
 			this.stats_mc.addAbility(ability.IsCivil, ability.GroupID, ability.SheetID, ability.DisplayName, ability.Value, ability.AddPointsTooltip, "", ability.CanAdd, ability.CanRemove, ability.IsCustom)
 			updatedAbilities = true
 		end
-		this.stats_mc.addAbility(false, 1, 77, "Test Ability", "0", "", "", false, false, true)
-		this.stats_mc.addAbility(true, 3, 78, "Test Ability2", "0", "", "", false, false, true)
+		--this.stats_mc.addAbility(false, 1, 77, "Test Ability", "0", "", "", false, false, true)
+		--this.stats_mc.addAbility(true, 3, 78, "Test Ability2", "0", "", "", false, false, true)
 	end
 
 	if not Vars.ControllerEnabled then
@@ -115,6 +119,13 @@ if Vars.DebugMode then
 		if ui then
 			CharacterSheet.Instance:ExternalInterfaceCall("closeCharacterUIs")
 			CharacterSheet.Instance:ExternalInterfaceCall("hideUI")
+		end
+	end)
+	RegisterListener("LuaReset", function()
+		local ui = CharacterSheet.Instance
+		if ui then
+			-- CharacterSheet.Instance:ExternalInterfaceCall("clearAbilities")
+			-- CharacterSheet.Instance:ExternalInterfaceCall("clearTalents")
 		end
 	end)
 end

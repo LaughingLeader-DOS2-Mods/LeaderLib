@@ -91,7 +91,7 @@ function fprint(severity, str, ...)
 				Ext.Print(msg)
 			end
 		else
-			Ext.Print(msg, ...)
+			Ext.Print(msg)
 		end
 	else
 		print(severity,str,...)

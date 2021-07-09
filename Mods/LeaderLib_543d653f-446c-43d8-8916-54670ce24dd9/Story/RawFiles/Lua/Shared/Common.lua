@@ -4,7 +4,7 @@ function Common.InitSeed()
 	local rnd = Ext.Random(9999)
 	local seed = (Ext.Random(9999) * 214013) + 2531011
 	_G["LEADERLIB_RAN_SEED"] = seed
-	PrintDebug("[LeaderLib:Common.lua] Set LEADERLIB_RAN_SEED to ("..tostring(seed)..")")
+	--PrintDebug("[LeaderLib:Common.lua] Set LEADERLIB_RAN_SEED to ("..tostring(seed)..")")
 	if Ext.IsServer() then
 		Ext.BroadcastMessage("LeaderLib_SyncRanSeed", tostring(seed), nil)
 	end

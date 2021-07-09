@@ -20,7 +20,6 @@ if isClient then
 	Ext.RegisterListener("SessionLoaded", function()
 		UI.ContextMenu.Register.ShouldOpenListener(function(contextMenu, x, y)
 			openTarget = ""
-			print(Game.Tooltip.TooltipHooks.ActiveType, Game.Tooltip.IsOpen())
 			if Game.Tooltip.LastRequestTypeEquals("Generic") and Game.Tooltip.IsOpen() then
 				---@type TooltipGenericRequest
 				local data = Game.Tooltip.GetCurrentOrLastRequest()

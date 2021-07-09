@@ -177,6 +177,9 @@ local lastScrollY = 0
 function CustomStatSystem:SetupGroups(ui, call)
 	local isGM = GameHelpers.Client.IsGameMaster()
 	local this = ui:GetRoot().stats_mc.customStats_mc
+	if not this.list then
+		return
+	end
 	lastScrollY = this.list.m_scrollbar_mc.m_scrolledY
 	if not initializedGroups then
 		this.resetGroups()

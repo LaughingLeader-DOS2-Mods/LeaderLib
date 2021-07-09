@@ -1030,8 +1030,8 @@ package characterSheet_fla
 			stat_mc.id = this.primaryStatList.length;
 			this.primaryStatList.addElement(stat_mc);
 			this.mainStatsList.positionElements();
-			//stat_mc.MakeCustom(statID, isCustom);
-			//ExternalInterface.call("statAdded", stat_mc.statID, stat_mc.id);
+			stat_mc.MakeCustom(statID, isCustom);
+			ExternalInterface.call("statAdded", stat_mc.statID, stat_mc.id, stat_mc.tooltipId);
 		}
 		
 		public function addSecondaryStat(statID:Number, labelText:String, valueText:String, tooltipId:Number, iconFrame:Number, boostValue:Number, plusVisible:Boolean = false, minusVisible:Boolean = false, isCustom:Boolean=false) : *

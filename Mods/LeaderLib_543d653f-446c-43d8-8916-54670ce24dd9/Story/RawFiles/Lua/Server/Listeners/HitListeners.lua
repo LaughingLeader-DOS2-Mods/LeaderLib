@@ -14,7 +14,7 @@ local function OnPrepareHit(target, source, damage, handle)
 	end
 	if Vars.DebugMode and Vars.Print.HitPrepare 
 	and (Vars.Print.SpammyHits or (data.HitType ~= "Surface" and data.HitType ~= "DoT")) then
-		Ext.Print(data:ToDebugString())
+		Ext.Print("[HitPrepareData]", data:ToDebugString())
 	end
 	InvokeListenerCallbacks(Listeners.OnPrepareHit, target, source, damage, handle, data)
 end

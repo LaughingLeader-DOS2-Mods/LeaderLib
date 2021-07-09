@@ -1,3 +1,4 @@
+---@class TooltipRequestProcessor
 local RequestProcessor = {
 	---@type table<string,fun(request:TooltipRequest, ui:UIObject, uiType:integer, event:string, vararg any):Request>
 	CallbackHandler = {},
@@ -173,21 +174,33 @@ function RequestProcessor.HandleStatCallback(requestType, ui, uiType, event, idO
 
 	---@type EclCharacter
 	local character = nil
+	local id = idOrHandle
+
 	local characterHandle = ui:GetPlayerHandle()
-	if this and this.characterHandle then
-		characterHandle = this.characterHandle
+	if event == "showSkillTooltip" then
+		id = statOrWidth
+		characterHandle = idOrHandle
 	end
+
+	if not characterHandle then
+		if this and this.characterHandle then
+			characterHandle = this.characterHandle
+		end
+	end
+
 	if characterHandle then
 		character = Ext.GetCharacter(Ext.DoubleToHandle(characterHandle))
 	end
+
 	if not character then
 		character = Client:GetCharacter()
 	end
 
-	local id = idOrHandle
-
 	if uiType == Data.UIType.characterCreation or event == "showStatusTooltip" then
 		id = statOrWidth
+	elseif event == "showSkillTooltip" then
+		id = statOrWidth
+		characterHandle = id
 	end
 	local request = {
 		Type = requestType,
@@ -201,7 +214,7 @@ function RequestProcessor.HandleStatCallback(requestType, ui, uiType, event, idO
 			Ext.PrintError(string.format("[LeaderLib:RequestProcessor] Error invoking tooltip handler for event (%s):\n%s", event, r))
 		end
 	end
-	if Game.Tooltip.ControllerVars.Enabled then
+	if Vars.ControllerEnabled then
 		Game.Tooltip.ControllerVars.LastPlayer = request.Character
 	end
 	RequestProcessor.Tooltip.Last.Event = event
@@ -210,6 +223,8 @@ function RequestProcessor.HandleStatCallback(requestType, ui, uiType, event, idO
 	if event == "showCustomStatTooltip" then
 		CustomStatSystem:OnRequestTooltip(ui, event, request.Stat, request.Character, table.unpack(params))
 	end
+
+	print(Lib.inspect(request))
 end
 
 ---@param tooltip TooltipHooks
@@ -250,7 +265,7 @@ function RequestProcessor:Init(tooltip)
 				end
 			end
 		end
-		RequestProcessor.HandleStatCallback(requestType, ui, ui:GetTypeId(), event, id, ...)
+		RequestProcessor.HandleStatCallback(requestType, ui, ui:GetTypeId(), event, id)
 	end, "Before")
 	-- slotOver is called when selecting any slot, item or not
 	Ext.RegisterUITypeCall(Data.UIType.equipmentPanel_c, "slotOver", function (ui, event, ...)
@@ -293,3 +308,5 @@ function RequestProcessor:Init(tooltip)
 		RequestProcessor.HandleStatCallback("Item", ui, ui:GetTypeId(), event, itemHandleDouble)
 	end)
 end
+
+return RequestProcessor

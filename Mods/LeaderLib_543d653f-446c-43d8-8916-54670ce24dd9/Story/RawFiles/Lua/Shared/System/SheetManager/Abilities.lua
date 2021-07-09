@@ -183,9 +183,6 @@ if Ext.IsClient() then
 	function SheetManager.AbilityManager.UpdateCharacterSheetPoints(ui, method, main, amount)
 		local character = Client:GetCharacter()
 		local id = character.NetID
-		if Vars.DebugMode then
-			PrintLog("%s(%s) for %s (%s)", method, amount, character.MyGuid, character.NetID)
-		end
 		if method == "setAvailableCombatAbilityPoints" then
 			availableCombatPoints[id] = amount
 			setAvailablePoints[id] = true

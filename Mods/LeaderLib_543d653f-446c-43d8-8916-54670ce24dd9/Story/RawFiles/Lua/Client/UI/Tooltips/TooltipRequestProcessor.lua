@@ -223,8 +223,6 @@ function RequestProcessor.HandleStatCallback(requestType, ui, uiType, event, idO
 	if event == "showCustomStatTooltip" then
 		CustomStatSystem:OnRequestTooltip(ui, event, request.Stat, request.Character, table.unpack(params))
 	end
-
-	print(Lib.inspect(request))
 end
 
 ---@param tooltip TooltipHooks

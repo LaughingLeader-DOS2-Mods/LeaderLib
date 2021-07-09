@@ -622,6 +622,15 @@ local function CanDisplayDivineTalent(talentId, name)
 	if not DivineTalents[talentId] then
 		return true
 	end
+	if name == nil then
+		name = LocalizedText.TalentNames[talentId]
+		if name then
+			name = name.Value
+		end
+	end
+	if not name then
+		return true
+	end
 	if string.find(name, "|") then
 		return false
 	end
@@ -706,7 +715,7 @@ local function CanAddTalent(talentId, player, talentStat)
 	if player[talentStat] == true then
 		return true
 	end
-	if TalentManager.RegisteredCount[talentId] and TalentManager.RegisteredCount[talentId] > 0 then
+	if (TalentManager.RegisteredCount[talentId] and TalentManager.RegisteredCount[talentId] > 0) and CanDisplayDivineTalent(talentId) then
 		return true
 	end
 	if talentId == "RogueLoreDaggerBackStab" 
@@ -809,7 +818,6 @@ if Vars.DebugMode then
 end
 
 function TalentManager.ToggleDivineTalents(enabled)
-	if true then return end
 	if enabled then
 		for talent,id in pairs(DivineTalents) do
 			TalentManager.EnableTalent(talent, "DivineTalents")

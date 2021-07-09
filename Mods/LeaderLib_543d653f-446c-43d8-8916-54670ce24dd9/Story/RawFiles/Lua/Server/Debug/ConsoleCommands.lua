@@ -254,10 +254,13 @@ Ext.RegisterConsoleCommand("addtreasureex", function(command, treasure, level, f
 	end
 	if generateAmount then
 		generateAmount = tonumber(generateAmount) or 1
+	else
+		generateAmount = 1
 	end
 	---@type ItemDefinition
 	local props = {
-		Level = level,
+		StatsLevel = level,
+		GenerationLevel = level,
 		ItemType = forceRarity or "Rare",
 		GenerationItemType = forceRarity or "Rare",
 		IsIdentified = true,

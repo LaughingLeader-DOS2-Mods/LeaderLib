@@ -20,7 +20,7 @@
 ---@field AttackDirection integer
 ---@field ArmorAbsorption integer
 ---@field LifeSteal integer
----@field HitWithWeapon integer
+---@field HitWithWeapon boolean
 ---@field Hit boolean
 ---@field Blocked boolean
 ---@field Dodged boolean
@@ -60,7 +60,7 @@ local HIT_ATTRIBUTE = {
 	AttackDirection = "integer",
 	ArmorAbsorption = "integer",
 	LifeSteal = "integer",
-	HitWithWeapon = "integer",
+	HitWithWeapon = "boolean",
 	Hit = "boolean",
 	Blocked = "boolean",
 	Dodged = "boolean",
@@ -285,6 +285,18 @@ function HitPrepareData:IsBuggyChaosDamage()
 	return isChaos
 end
 
+---Returns true if the hit is probably from a weapon (HitType is Melee, Ranged, or WeaponDamage).
+---@param ignoreSkills boolean|nil Require Melee/Ranged hit reasons only (basic attacks).
+---@param ignoreUnarmed boolean|nil If true and ignoreSkills is true, only return true if HitWithWeapon is set.
+function HitPrepareData:IsFromWeapon(ignoreSkills, ignoreUnarmed)
+	local hitReason = self.HitType
+	if ignoreSkills then
+		return (hitReason == "Melee" or hitReason == "Ranged") and (not ignoreUnarmed or self.HitWithWeapon)
+	else
+		return (hitReason == "Melee" or hitReason == "Ranged" or hitReason == "WeaponDamage")
+	end
+end
+
 function HitPrepareData:ToDebugString(indentChar)
 	local target = self
 	if not self.Cached then
@@ -294,18 +306,28 @@ function HitPrepareData:ToDebugString(indentChar)
 			Handle = self.Handle,
 			Target = self.Target,
 			Source = self.Source,
-			Cached = false
+			Cached = false,
+			IsFromWeapon = target.IsFromWeapon
 		}
 		SaveHitAttributes(self.Handle, target)
 	end
-	local keys = {}
+	local keys = {
+		"IsFromWeapon"
+	}
 	for k,v in pairs(target) do
 		keys[#keys+1] = k
 	end
 	table.sort(keys)
 	local data = {}
 	for _,k in ipairs(keys) do
-		data[k] = target[k]
+		if type(target[k]) == "function" then
+			local b,result = pcall(target[k], target)
+			if b then
+				data[k] = result
+			end
+		else
+			data[k] = target[k]
+		end
 	end
 	--return Ext.JsonStringify(data)
 	return Lib.inspect(data)

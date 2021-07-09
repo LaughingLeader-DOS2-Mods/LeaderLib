@@ -179,17 +179,17 @@ function RequestProcessor.HandleStatCallback(requestType, ui, uiType, event, idO
 	local characterHandle = ui:GetPlayerHandle()
 	if event == "showSkillTooltip" then
 		id = statOrWidth
-		characterHandle = idOrHandle
+		characterHandle = Ext.DoubleToHandle(idOrHandle)
 	end
 
 	if not characterHandle then
 		if this and this.characterHandle then
-			characterHandle = this.characterHandle
+			characterHandle = Ext.DoubleToHandle(this.characterHandle)
 		end
 	end
 
 	if characterHandle then
-		character = Ext.GetCharacter(Ext.DoubleToHandle(characterHandle))
+		character = Ext.GetCharacter(characterHandle)
 	end
 
 	if not character then

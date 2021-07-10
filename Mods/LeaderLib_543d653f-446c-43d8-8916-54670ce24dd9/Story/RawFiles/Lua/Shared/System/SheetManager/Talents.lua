@@ -638,11 +638,11 @@ function SheetManager.TalentManager.ToggleDivineTalents(enabled)
 	if true then return end
 	if enabled then
 		for talent,id in pairs(SheetManager.TalentManager.Data.DivineTalents) do
-			SheetManager.TalentManager.EnableTalent(talent, "SheetManager.TalentManager.Data.DivineTalents")
+			SheetManager.TalentManager.EnableTalent(talent, ModuleUUID)
 		end
 	else
 		for talent,id in pairs(SheetManager.TalentManager.Data.DivineTalents) do
-			SheetManager.TalentManager.DisableTalent(talent, "SheetManager.TalentManager.Data.DivineTalents")
+			SheetManager.TalentManager.DisableTalent(talent, ModuleUUID)
 		end
 	end
 end

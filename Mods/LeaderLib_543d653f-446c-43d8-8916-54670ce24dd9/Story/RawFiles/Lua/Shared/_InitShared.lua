@@ -11,6 +11,12 @@ GameHelpers = {
 	Ext = {},
 	Internal = {}
 }
+
+---Simple wrapper around assigning a variable to another without making EmmyLua pick up the result.
+function GameHelpers.SetVariable(v1,v2)
+	v1 = v2
+end
+
 if Timer == nil then
 	Timer = {}
 end

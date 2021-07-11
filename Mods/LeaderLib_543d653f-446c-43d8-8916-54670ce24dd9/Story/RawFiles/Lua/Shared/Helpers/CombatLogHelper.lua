@@ -93,14 +93,21 @@ if isClient then
 	---@param id string
 	---@param tooltip string
 	function CombatLog.AddTextToFilter(id, text)
-		local filter = self.Filters[id]
-		if filter then
-			local this = self.GetInstance()
-			if this then 
-				this.addTextToFilter(filter.Index, text)
+		local this = self.GetInstance()
+		if this then 
+			local t = type(id)
+			if t == "string" and not StringHelpers.IsNullOrWhitespace(id) then
+				local filter = self.Filters[id]
+				if filter then
+					this.addTextToFilter(filter.Index, text)
+				else
+					fprint(LOGLEVEL.WARNING, "[CombatLog.AddTextToFilter] Filter (%s) was not added!", id)
+				end
+			elseif t == "number" then
+				this.addTextToFilter(id, text)
+			else
+				this.addTextToFilter(0, text)
 			end
-		else
-			fprint(LOGLEVEL.WARNING, "[CombatLog.AddTextToFilter] Filter (%s) was not added!", id)
 		end
 	end
 

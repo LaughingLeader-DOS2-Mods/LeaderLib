@@ -2,6 +2,30 @@ if TableHelpers == nil then
 	TableHelpers = {}
 end
 
+---@param orgin table
+---@param deep boolean|nil If true, metatables are copied as well.
+function TableHelpers.Clone(orig, deep)
+	if deep ~= true then
+		local orig_type = type(orig)
+		local copy
+		if orig_type == 'table' then
+			copy = {}
+			for orig_key, orig_value in pairs(orig) do
+				copy[orig_key] = orig_value
+			end
+		else -- number, string, boolean, etc
+			copy = orig
+		end
+		local meta = getmetatable(orig)
+		if meta then
+			setmetatable(copy, meta)
+		end
+		return copy
+	else
+		return Common.DeepCopyTable(orig)
+	end
+end
+
 ---Returns an ordered iterator if the table is structured like that, otherwise returns a regular next iterator.
 function TableHelpers.TryOrderedEach(tbl)
 	local len = tbl and #tbl or 0

@@ -1652,10 +1652,10 @@ Ext.RegisterListener("SessionLoaded", OnSessionLoaded)
 ---@param ui UIObject
 Ext.RegisterListener("UIObjectCreated", function (ui)
 	local t = ui:GetTypeId()
-	if t then
+	if t and ui:GetRoot() ~= nil then
 		ui:CaptureExternalInterfaceCalls()
 		ui:CaptureInvokes()
-	else
+	elseif Ext.GetGameState() == "Running" then
 		Ext.PostMessageToServer("LeaderLib_DeferUICapture", tostring(Client.ID))
 	end
 end)

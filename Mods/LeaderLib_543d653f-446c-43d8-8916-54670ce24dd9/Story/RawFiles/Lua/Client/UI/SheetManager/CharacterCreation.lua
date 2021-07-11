@@ -58,7 +58,7 @@ function CharacterCreation.UpdateAbilities(ui, method)
 	end
 end
 
-Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateTalents", CharacterCreation.UpdateTalents)
-Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation_c, "updateTalents", CharacterCreation.UpdateTalents)
+--Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateTalents", CharacterCreation.UpdateTalents)
+--Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation_c, "updateTalents", CharacterCreation.UpdateTalents)
 -- Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateAbilities", CharacterCreation.UpdateAbilities)
 -- Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation_c, "updateAbilities", CharacterCreation.UpdateAbilities)

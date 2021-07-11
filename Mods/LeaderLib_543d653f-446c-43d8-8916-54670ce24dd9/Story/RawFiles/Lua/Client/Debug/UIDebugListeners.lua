@@ -127,7 +127,17 @@ function UIListenerWrapper:Create(id, params)
 	return this
 end
 
+local defaultIgnored = {
+	hideTooltip = true,
+	PlaySound = true,
+	dollOut = true,
+	slotUp = true,
+}
+
 Ext.RegisterListener("UICall", function(ui, event, ...)
+	if defaultIgnored[event] then
+		return
+	end
 	local t = ui:GetTypeId()
 	local listener = typeListeners[t]
 	if listener then
@@ -136,6 +146,9 @@ Ext.RegisterListener("UICall", function(ui, event, ...)
 end)
 
 Ext.RegisterListener("UIInvoke", function(ui, event, ...)
+	if defaultIgnored[event] then
+		return
+	end
 	local t = ui:GetTypeId()
 	local listener = typeListeners[t]
 	if listener then

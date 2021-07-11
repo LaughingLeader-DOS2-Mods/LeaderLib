@@ -298,6 +298,8 @@ LocalizedText.Tooltip = {
 	ExpanderInactive = ts:Create("h17380891g0e8eg42d3gbb55g9478bba4f684", "Hold [1] for More Info"),
 	ExpanderActive = ts:Create("h7b3bd7e6g9a34g4959gad11g241f6d8d33c1", "Release [1] for Less Info"),
 	StatBase = ts:Create("hbb9884d7g3b9ag43dfga88egdcc32db8bd74", "<br>Base: [1]"),
+	AbilityCurrentLevel = ts:Create("h8154ae8eg2b37g4f0fgb6b6gd7e27fed37a6", "Level [1]: [2]"),
+	AbilityNextLevel = ts:Create("he31d5820g9ddbg4e08gac83g1358e22e499b", "Next Level [1]: [2]"),
 }
 
 LocalizedText.Input = {

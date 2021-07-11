@@ -11,8 +11,13 @@ self.MaxVisibleValue = 999 -- Values greater than this are truncated visually in
 ---Called when a stat movieclip is added or updated in the UI.
 ---@alias CustomStatMovieClipAddedCallback fun(id:string, stat:CustomStatData, character:EsvCharacter, stat_mc:FlashCustomStat):void
 
+---Called when a stat is being added to the sheet.
+---@alias CustomStatVisibilityCallback fun(id:string, stat:CustomStatData, character:EsvCharacter, isVisible:boolean):boolean
+
 ---@type table<string, CustomStatMovieClipAddedCallback[]>
 CustomStatSystem.Listeners.StatAdded = {All = {}}
+---@type table<string, CustomStatVisibilityCallback[]>
+CustomStatSystem.Listeners.GetStatVisibility = {All = {}}
 
 ---@param id string
 ---@param callback CustomStatMovieClipAddedCallback
@@ -23,6 +28,18 @@ function CustomStatSystem:RegisterStatAddedHandler(id, callback)
 		end
 	elseif self:CanAddListenerCallback(self.Listeners.StatAdded, id, callback) then
 		table.insert(self.Listeners.StatAdded[id], callback)
+	end
+end
+
+---@param id string
+---@param callback CustomStatVisibilityCallback
+function CustomStatSystem:RegisterStatVisibilityHandler(id, callback)
+	if type(id) == "table" then
+		for i=1,#id do
+			self:RegisterStatVisibilityHandler(id[i], callback)
+		end
+	elseif self:CanAddListenerCallback(self.Listeners.GetStatVisibility, id, callback) then
+		table.insert(self.Listeners.GetStatVisibility[id], callback)
 	end
 end
 
@@ -138,7 +155,8 @@ local function OnSheetUpdating(ui, method)
 				stat.Double = doubleHandle
 				this.customStats_array[i+1] = stat:GetDisplayName()
 				groupId = CustomStatSystem:GetCategoryGroupId(stat.Category, stat.Mod)
-				if stat.Visible == false and not GameHelpers.Client.IsGameMaster(ui, this) then
+				local isVisible = CustomStatSystem:GetStatVisibility(ui, doubleHandle, stat, client)
+				if isVisible == false then
 					hideStat = true
 				end
 			end

@@ -240,7 +240,7 @@ function CustomStatSystem:GetTotalStatsInCategory(categoryId, visibleOnly)
 	local isUnsortedCategory = StringHelpers.IsNullOrWhitespace(categoryId)
 	for mod,stats in pairs(self.Stats) do
 		for id,stat in pairs(stats) do
-			local statIsVisible = stat.Visible ~= false and not StringHelpers.IsNullOrWhitespace(stat.UUID)
+			local statIsVisible = not StringHelpers.IsNullOrWhitespace(stat.UUID) and self:GetStatVisibility(nil, stat.Double, stat) == true
 			if (not visibleOnly or (visibleOnly == true and statIsVisible))
 			and ((isUnsortedCategory and StringHelpers.IsNullOrWhitespace(stat.Category)) 
 			or stat.Category == categoryId)
@@ -385,5 +385,34 @@ function CustomStatSystem:GetCharacter(ui, this)
 			end
 		end
 		return Client:GetCharacter()
+	end
+end
+
+if isClient then
+	---@private
+	function CustomStatSystem:GetStatVisibility(ui, doubleHandle, stat, character)
+		if GameHelpers.Client.IsGameMaster(ui) == true then
+			return true
+		end
+		character = character or self:GetCharacter()
+		stat = stat or (doubleHandle and self:GetStatByDouble(doubleHandle))
+		if stat then
+			local isVisible = true
+			if stat.Visible ~= nil then
+				isVisible = stat.Visible
+			end
+			for listener in self:GetListenerIterator(self.Listeners.GetStatVisibility[stat.ID], self.Listeners.GetStatVisibility.All) do
+				local b,result = xpcall(listener, debug.traceback, stat.ID, stat, character, isVisible)
+				if b then
+					if type(result) == "boolean" then
+						isVisible = result
+					end
+				else
+					fprint(LOGLEVEL.ERROR, "[LeaderLib.CustomStatSystem:GetStatVisibility] Error calling GetStatVisibility listener for stat (%s):\n%s", stat.ID, result)
+				end
+			end
+			return isVisible
+		end
+		return true
 	end
 end

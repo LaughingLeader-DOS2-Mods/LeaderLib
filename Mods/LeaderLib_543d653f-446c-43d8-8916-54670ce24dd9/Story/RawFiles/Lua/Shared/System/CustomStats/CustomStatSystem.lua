@@ -91,7 +91,6 @@ local function LoadCustomStatsData()
 							fprint(LOGLEVEL.DEFAULT, "[LeaderLib:LoadCustomStatsData] Created a new custom stat for mod [%s]. ID(%s) DisplayName(%s) Description(%s)", modName, id, stat.DisplayName, stat.Description)
 							existingData = Ext.GetCustomStatByName(stat.DisplayName)
 						end
-					else
 					end
 					if existingData then
 						stat.UUID = existingData.Id

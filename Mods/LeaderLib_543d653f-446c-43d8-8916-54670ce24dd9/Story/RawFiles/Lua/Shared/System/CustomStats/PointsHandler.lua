@@ -353,6 +353,9 @@ function CustomStatSystem:GetCanAddPoints(ui, doubleHandle, character, stat)
 		local value = self:GetStatValueForCharacter(character, stat.ID, stat.Mod)
 		local availablePoints = self:GetAvailablePointsForStat(stat)
 		local canAdd = availablePoints > 0
+		if canAdd and stat.MaxAmount then
+			canAdd = value < stat.MaxAmount
+		end
 		for listener in self:GetListenerIterator(self.Listeners.CanAddPoints[stat.ID], self.Listeners.CanAddPoints.All) do
 			local b,result = xpcall(listener, debug.traceback, stat.ID, stat, character, value, availablePoints, canAdd)
 			if b then

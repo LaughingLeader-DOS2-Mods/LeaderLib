@@ -41,6 +41,7 @@ local statPropertyMap = {
 	LOADSTRINGKEY = {Name="LoadStringKey", Type = "boolean"},
 	--Defaults to true. AvailablePoints are added to when a stat is lowered in the UI.
 	AUTOADDAVAILABLEPOINTSONREMOVE = {Name="AutoAddAvailablePointsOnRemove", Type = "boolean"},
+	MAXAMOUNT = {Name="MaxAmount", Type = "number"},
 }
 
 local isClient = Ext.IsClient()

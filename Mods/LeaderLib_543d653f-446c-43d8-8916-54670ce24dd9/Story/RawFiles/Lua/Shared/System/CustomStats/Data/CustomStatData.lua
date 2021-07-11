@@ -40,7 +40,10 @@ local CustomStatData = {
 	---Alternative display modes for a stat, such as percentage display.
 	DisplayMode = STAT_DISPLAY_MODE.Default,
 	---Enum values for DisplayMode.
-	STAT_DISPLAY_MODE = STAT_DISPLAY_MODE
+	STAT_DISPLAY_MODE = STAT_DISPLAY_MODE,
+	---If set, the add button logic will check the current amount against this value when determining if the stat can be added to.
+	---@type integer
+	MaxAmount = nil
 }
 
 CustomStatData.__index = function(t,k)

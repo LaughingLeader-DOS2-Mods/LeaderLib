@@ -23,3 +23,12 @@ Ext.RegisterNetListener("LeaderLib_RefreshCharacterSheet", function(cmd, uuid)
 	CharacterAddAttributePoint(uuid, 0)
 	CharacterAddAttribute(uuid, "Dummy", 0)
 end)
+
+Ext.RegisterNetListener("LeaderLib_DeferUICapture", function(cmd, userId)
+	if userId then
+		userId = tonumber(userId)
+	end
+	Timer.StartOneshot(string.format("LeaderLib_DeferUICapture_%s", userId), 1, function()
+		Ext.PostMessageToUser(userId, "LeaderLib_CaptureActiveUIs", "")
+	end)
+end)

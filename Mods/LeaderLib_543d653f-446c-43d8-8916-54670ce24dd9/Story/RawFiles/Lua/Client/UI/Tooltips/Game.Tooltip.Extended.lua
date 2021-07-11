@@ -945,14 +945,6 @@ function TooltipHooks:Init()
 		return
 	end
 
-	for i = 1,150 do
-		local ui = Ext.GetUIByType(i)
-		if ui ~= nil then
-			ui:CaptureExternalInterfaceCalls()
-			ui:CaptureInvokes()
-		end
-	end
-
 	RequestProcessor:Init(self)
 
 	Ext.RegisterUINameInvokeListener("addFormattedTooltip", function (...)
@@ -1010,12 +1002,6 @@ function TooltipHooks:Init()
 		if self.GenericTooltipData then
 			self:UpdateGenericTooltip(ui, method, keepUIinScreen)
 		end
-	end)
-
-	---@param ui UIObject
-	Ext.RegisterListener("UIObjectCreated", function (ui)
-		ui:CaptureExternalInterfaceCalls()
-		ui:CaptureInvokes()
 	end)
 
 	self:RegisterControllerHooks()
@@ -1641,12 +1627,39 @@ function Game.Tooltip.IsOpen()
 	return TooltipHooks.IsOpen
 end
 
+local function CaptureBuiltInUIs()
+	for i = 1,150 do
+		local ui = Ext.GetUIByType(i)
+		if ui ~= nil then
+			ui:CaptureExternalInterfaceCalls()
+			ui:CaptureInvokes()
+		end
+	end
+end
+
 local function OnSessionLoaded()
 	ControllerVars.Enabled = (Ext.GetBuiltinUI("Public/Game/GUI/msgBox_c.swf") or Ext.GetUIByType(Data.UIType.msgBox_c)) ~= nil
 	TooltipHooks.SessionLoaded = true
 	if TooltipHooks.InitializationRequested then
 		TooltipHooks:Init()
 	end
+
+	CaptureBuiltInUIs()
 end
 
 Ext.RegisterListener("SessionLoaded", OnSessionLoaded)
+
+---@param ui UIObject
+Ext.RegisterListener("UIObjectCreated", function (ui)
+	local t = ui:GetTypeId()
+	if t then
+		ui:CaptureExternalInterfaceCalls()
+		ui:CaptureInvokes()
+	else
+		Ext.PostMessageToServer("LeaderLib_DeferUICapture", tostring(Client.ID))
+	end
+end)
+
+Ext.RegisterNetListener("LeaderLib_CaptureActiveUIs", function()
+	CaptureBuiltInUIs()
+end)

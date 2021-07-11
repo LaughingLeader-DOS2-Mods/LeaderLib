@@ -202,6 +202,7 @@
 	<content contentuid="h80766295g4589g4681gb03cgf6c692463084">&lt;font color=&apos;#9A00FF&apos;&gt;[1] chaos damage&lt;/font&gt;</content>
 	<content contentuid="h808d2fe2ge0d2g4e78g94cag05b054d2b96b">[LeaderLib_ModMenu_Menu2_9a2d2990-5cff-420e-ba8a-37f9510ab9e1]</content>
 	<content contentuid="h809bc35bgaa71g493egaf0agc20c110d90cf">If enabled, skills will be able to backstab depending on settings (melee only, minimum distance).&lt;br&gt;(Default: Disabled)</content>
+	<content contentuid="h8154ae8eg2b37g4f0fgb6b6gd7e27fed37a6">Level [1]: [2]</content>
 	<content contentuid="h81a0d6b9g43adg4223gbcc9g0fceadeff883">*He coughs out some sea water.*  That she-beast of a sourceress nearly wiped me out with the others on the boat... *He trails off for a moment before returning his gaze back to you.*</content>
 	<content contentuid="h81c5d767gca44g446fg8d4bg56bdf03699a6">Clear Whitelist</content>
 	<content contentuid="h8311eb63g89cfg41c1g961cgde31f8d79927"></content>
@@ -366,6 +367,7 @@
 	<content contentuid="he1b6d26dgfa57g4878g8948g68f08c6c531f">Rager</content>
 	<content contentuid="he2de2e0cgda32g4128g9db7g72020fa32c2e">Preset Menu</content>
 	<content contentuid="he2e6e5cdg9372g4805g92b1ge2e4b7b1a0db">Enable Skill Tier Overrides</content>
+	<content contentuid="he31d5820g9ddbg4e08gac83g1358e22e499b">Next Level [1]: [2]</content>
 	<content contentuid="he39c524ag19e1g49b8gb60bga1e4bbf30084">In multiplayer, your inventory will be unlocked automatically.</content>
 	<content contentuid="he4354422gdcc8g4681gb4c4g7b22456af08c">If enabled, only melee weapons or skills can backstab. Melee skills will use the Skill Minimum Distance setting.&lt;br&gt;(Default: Enabled)</content>
 	<content contentuid="he4b98edeg7025g4ad9gbb87gcce230263029">Hrmph...</content>

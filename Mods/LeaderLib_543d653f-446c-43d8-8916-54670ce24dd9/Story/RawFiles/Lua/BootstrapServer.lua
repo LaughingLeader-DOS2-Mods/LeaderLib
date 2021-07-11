@@ -38,8 +38,13 @@ local defaultPersistentVars = {
 	BuffStatuses = {}
 }
 
+---@private
 ---@type LeaderLibPersistentVars
 PersistentVars = Common.CloneTable(defaultPersistentVars, true)
+
+---@type LeaderLibPersistentVars
+LeaderLibPersistentVars = PersistentVars
+
 function LoadPersistentVars()
 	Common.InitializeTableFromSource(PersistentVars, defaultPersistentVars)
 	SkillSystem.LoadSaveData()

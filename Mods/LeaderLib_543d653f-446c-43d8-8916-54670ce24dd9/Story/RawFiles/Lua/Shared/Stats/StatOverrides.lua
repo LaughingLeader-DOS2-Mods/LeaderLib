@@ -245,6 +245,7 @@ local function OverrideStats(data)
 			end
 		end
 		if not isClient then
+			---@private
 			PersistentVars["OriginalSkillTiers"] = originalSkillTiers
 		end
 	end

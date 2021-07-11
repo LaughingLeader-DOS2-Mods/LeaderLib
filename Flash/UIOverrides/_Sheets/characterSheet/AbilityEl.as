@@ -20,9 +20,9 @@ package
 		public var callbackStr:String = "showAbilityTooltip";
 		public var isCustom:Boolean = false;
 
-		public function MakeCustom(statID:Number, b:Boolean=true) : *
+		public function MakeCustom(id:Number, b:Boolean=true) : *
 		{
-			this.statID = statID;
+			this.statID = id;
 			this.isCustom = b;
 			if(b)
 			{
@@ -54,12 +54,12 @@ package
 			this.timeline = new larTween(this.hl_mc,"alpha",Quartic.easeIn,this.hl_mc.alpha,1,0.01);
 		}
 		
-		public function onOut(param1:MouseEvent) : *
+		public function onOut(e:MouseEvent) : *
 		{
 			this.timeline = new larTween(this.hl_mc,"alpha",Quartic.easeOut,this.hl_mc.alpha,0,0.01,this.hlInvis);
 		}
 		
-		public function onHLOver(param1:MouseEvent) : *
+		public function onHLOver(e:MouseEvent) : *
 		{
 			if(this.isCivil)
 			{
@@ -73,7 +73,7 @@ package
 			this.base.showCustomTooltipForMC(this, this.callbackStr, this.statID);
 		}
 		
-		public function onHLOut(param1:MouseEvent) : *
+		public function onHLOut(e:MouseEvent) : *
 		{
 			this.base.hasTooltip = false;
 			ExternalInterface.call("hideTooltip");

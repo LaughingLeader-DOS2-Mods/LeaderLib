@@ -177,7 +177,7 @@ function RequestProcessor.HandleStatCallback(requestType, ui, uiType, event, idO
 	local id = idOrHandle
 
 	local characterHandle = ui:GetPlayerHandle()
-	if event == "showSkillTooltip" then
+	if event == "showSkillTooltip" or event == "showStatusTooltip" then
 		id = statOrWidth
 		characterHandle = Ext.DoubleToHandle(idOrHandle)
 	end
@@ -196,7 +196,7 @@ function RequestProcessor.HandleStatCallback(requestType, ui, uiType, event, idO
 		character = Client:GetCharacter()
 	end
 
-	if uiType == Data.UIType.characterCreation or event == "showStatusTooltip" then
+	if uiType == Data.UIType.characterCreation then
 		id = statOrWidth
 	elseif event == "showSkillTooltip" then
 		id = statOrWidth

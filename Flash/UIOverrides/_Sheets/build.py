@@ -97,6 +97,7 @@ with alive_bar(len(script_data)) as bar:
             stdout=subprocess.PIPE, 
             stderr=subprocess.PIPE)
         # Poll process for new output until finished
+        #print("{}".format(subprocess.list2cmdline(cmds)))
         while True:
             nextline = process.stdout.readline()
             if nextline == '' and process.poll() is not None:

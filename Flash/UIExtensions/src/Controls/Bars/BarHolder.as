@@ -1,12 +1,13 @@
-package Controls
+package Controls.Bars
 {
 	import fl.motion.Color;
 	import fl.motion.easing.Sine;
 	import flash.display.MovieClip;
 	import flash.geom.ColorTransform;
 	import LS_Classes.larTween;
+	import Controls.TooltipHandler;
 	
-	public dynamic class BarHolder extends BaseTooltipSupport
+	public dynamic class BarHolder extends MovieClip
 	{
 		public var hBar_mc:MovieClip;
 		public var hBar2_mc:MovieClip;
@@ -24,6 +25,12 @@ package Controls
 			super();
 			this.easingFunction = Sine.easeOut;
 			this.hBar_mc.scaleX = this.hBar2_mc.scaleX = 0;
+			addFrameScript(0,this.frame1);
+		}
+
+		private function frame1():void
+		{
+			TooltipHandler.init(this);
 		}
 		
 		private function set onComplete(func:Function) : *

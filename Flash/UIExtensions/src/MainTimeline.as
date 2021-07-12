@@ -3,16 +3,17 @@ package
 	import fl.motion.Color;
 	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
+	import flash.events.Event;
+	import flash.events.KeyboardEvent;
+	import flash.events.MouseEvent;
+	import flash.events.TimerEvent;
 	import flash.external.ExternalInterface;
 	import flash.geom.Point;
-	import Controls.*;
-	import flash.events.TimerEvent;
-	import flash.events.Event;
-	import flash.events.MouseEvent;
-	import flash.events.KeyboardEvent;
-	//import flash.ui.Keyboard;
-	import LS_Classes.tooltipHelper;
 	import ContextMenu.ContextMenuMC;
+	import Controls.*;
+	import Controls.Bars.BarHolder;
+	import Controls.Panels.DraggablePanelDark;
+	import LS_Classes.tooltipHelper;
 	import System.PanelManager;
 	
 	public dynamic class MainTimeline extends MovieClip
@@ -43,11 +44,19 @@ package
 		public var localToGlobalY:Number = 0;
 		public var screenWidth:Number = 0;
 		public var screenHeight:Number = 0;
+
+		private static var instance:MainTimeline;
 		
 		public function MainTimeline()
 		{
 			super();
+			instance = this;
 			addFrameScript(0,this.frame1);
+		}
+
+		public static function get Instance():MainTimeline
+		{
+			return instance;
 		}
 		
 		public function onEventUp(id:Number) : *
@@ -415,6 +424,16 @@ package
 			ExternalInterface.call("inputFocusLost");
 			stage.removeEventListener(KeyboardEvent.KEY_DOWN,this.onKeyboardDown);
 			stage.removeEventListener(KeyboardEvent.KEY_UP,this.onKeyboardUp);
+		}
+
+		public function addDarkPanel(id:String, panelX:Number=0, panelY:Number=0) : int
+		{
+			var panel:DraggablePanelDark = new DraggablePanelDark();
+			panel.id = id;
+			panel.x = panelX;
+			panel.y = panelY;
+			panel.init();
+			return this.panels.addPanel(panel);
 		}
 		
 		public function frame1() : *

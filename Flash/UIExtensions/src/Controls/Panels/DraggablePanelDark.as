@@ -8,23 +8,22 @@ package Controls.Panels
 	import flash.external.ExternalInterface;
 	import LS_Classes.LSPanelHelpers;
 	
-	public dynamic class DraggablePanelDark extends MovieClip implements IPanel
+	public dynamic class DraggablePanelDark extends BaseDraggablePanel implements IPanel
 	{
 		public var listHolder_mc:MovieClip;
 		public var hit_mc:MovieClip;
 		public var title_txt:TextField;
+		public var bg_mc:MovieClip;
 		public var minimize_mc:MinimizeButton;
 		public var close_mc:CloseButton;
 		public var list:scrollList;
 
 		public var id:String = "";
 		public var minimized:Boolean = false;
-		private var base:MainTimeline;
 		
 		public function DraggablePanelDark()
 		{
 			super();
-			addFrameScript(0,this.frame1);
 		}
 		
 		public function init() : void
@@ -34,11 +33,11 @@ package Controls.Panels
 				this.list.clearElements();
 				this.listHolder_mc.removeChild(this.list);
 			}
-			this.list = new scrollList("ScrollDown","ScrollUp","ScrollHandle","ScrollMover");
+			this.list = new scrollList("Controls.Scrollbar.ScrollDown","Controls.Scrollbar.ScrollUp","Controls.Scrollbar.ScrollHandle","Controls.Scrollbar.ScrollMover");
 			this.list.dragAutoScroll = true;
 			this.list.EL_SPACING = 0;
 			this.list.scrollbarSpacing = 0;
-			this.list.m_scrollbar_mc.m_hideWhenDisabled = true;
+			this.list.m_scrollbar_mc.m_hideWhenDisabled = false;
 			this.list.mouseWheelWhenOverEnabled = true;
 			this.list.setFrame(412,792);
 			this.list.m_scrollbar_mc.SND_Click = "UI_GM_Generic_Click_Press";
@@ -49,8 +48,9 @@ package Controls.Panels
 		
 		public function addText(text:String) : void
 		{
-			var tf:TextField = new TextField();
-			tf.htmlText = text;
+			var tf:PanelTextEntry = new PanelTextEntry();
+			tf.setText(text);
+			tf.text_txt.width = 410;
 			this.list.addElement(tf);
 		}
 		
@@ -70,7 +70,8 @@ package Controls.Panels
 				this.list.clearElements();
 				this.listHolder_mc.removeChild(this.list);
 			}
-			this.base.panelManager.removePanel(this);
+
+			MainTimeline.Instance.panels.removePanel(this);
 		}
 
 		public function onMinimize(): void
@@ -80,15 +81,23 @@ package Controls.Panels
 			{
 				this.list.visible = !this.minimized;
 			}
+			if(this.minimized)
+			{
+				this.bg_mc.gotoAndStop(2);
+			}
+			else
+			{
+				this.bg_mc.gotoAndStop(1);
+			}
 		}
 		
-		private function frame1() : void
+		public override function frame1() : void
 		{
+			super.frame1();
 			this.close_mc.init(this.onClose);
 			this.minimize_mc.init(this.onMinimize);
-			LSPanelHelpers.makeDraggable(this.hitArea_mc);
-
-			this.base = this.root as MainTimeline;
+			this.initializeDrag(this.hit_mc);
+			//LSPanelHelpers.makeDraggable(this.hit_mc);
 		}
 	}
 }

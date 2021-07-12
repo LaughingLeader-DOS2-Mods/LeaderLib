@@ -9,62 +9,33 @@ package LS_Classes
    
    public class LSSlider extends MovieClip
    {
-       
-      
       public var SND_Over:String = "UI_Generic_Over";
-      
       public var SND_Down:String = "UI_MainMenu_Slider_Press";
-      
       public var SND_Up:String = "UI_MainMenu_Slider_Release";
-      
       private var m_disabled:Boolean = false;
-      
       private var m_content_mc:MovieClip;
-      
       private var m_SCROLLSPEED:Number = 10;
-      
       private var m_last_X:Number = 0;
-      
       private var m_scrollerDiff:Number = 0;
-      
       public var m_right_mc:MovieClip;
-      
       public var m_left_mc:MovieClip;
-      
       public var m_handle_mc:MovieClip;
-      
       public var m_bg_mc:MovieClip;
-      
       public var m_visualBG_mc:MovieClip;
-      
       public var m_notches_mc:MovieClip;
-      
       private var m_bgToWidthDiff:Number = 0;
-      
       private var m_liveDragging:Boolean = false;
-      
-      private var m_snapStepSize = 1;
-      
-      private var m_scrolledX = 0;
-      
+      private var m_snapStepSize:Number = 1;
+      private var m_scrolledX:Number = 0;
       private var m_value:Number = 0;
-      
       private var m_max:Number = 100;
-      
       private var m_min:Number = 0;
-      
       private var m_handleResizable:Boolean = false;
-      
       private var m_notchStr:String = "";
-      
       private var m_useNotches:Boolean = false;
-      
       private var m_handleDown:Boolean = false;
-      
       private var m_handleOver:Boolean = false;
-      
       public var m_NotchLeftOffset:Number = 0;
-      
       public var m_NotchRightOffset:Number = 0;
       
       public function LSSlider(param1:String = "notch_id")

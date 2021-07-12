@@ -7,7 +7,6 @@ package System
 	public dynamic class PanelManager extends MovieClip
 	{
 		public var panels:Array;
-		public var idInc:uint = 0;
 
 		public function PanelManager()
 		{
@@ -15,19 +14,13 @@ package System
 			addFrameScript(0,this.frame1);
 		}
 
-		public function addPanel(obj:MovieClip) : *
+		public function addPanel(obj:MovieClip) : int
 		{
+			obj.list_id = this.panels.length;
 			this.panels.push(obj);
 			this.addChild(obj);
-			obj.list_id = this.idInc++;
-			if (obj is IPanel)
-			{
-				ExternalInterface.call("LeaderLib_PanelAdded", obj.list_id, obj.id);
-			}
-			else
-			{
-				ExternalInterface.call("LeaderLib_PanelAdded", obj.list_id);
-			}
+			//ExternalInterface.call("LeaderLib_PanelAdded", obj.list_id, obj.id);
+			return obj.list_id;
 		}
 
 		public function removePanel(obj:MovieClip) : *
@@ -79,7 +72,6 @@ package System
 				index++;
 			}
 			this.panels = new Array();
-			this.idInc = 0;
 		}
 		
 		public function frame1() : *

@@ -7,28 +7,26 @@ package Controls
    import flash.text.TextField;
    import flash.text.TextFieldAutoSize;
    
-   public dynamic class Checkbox extends BaseTooltipSupport
+   public dynamic class Checkbox extends MovieClip
    {
       public var bg_mc:MovieClip;
-      
       public var label_txt:TextField;
       public var label_bg_mc:MovieClip;
-      
       public var mHeight:Number;
       
       public function Checkbox()
       {
          super();
-         addFrameScript(0,this.initframe1);
+         addFrameScript(0,this.frame1);
       }
       
-      public function onDown(param1:MouseEvent) : *
+      public function onDown(e:MouseEvent) : void
       {
          this.bg_mc.gotoAndStop(this.stateID * 3 + 3);
          bg_mc.addEventListener(MouseEvent.MOUSE_UP,this.onClick);
       }
 
-      public function toggle() : * 
+      public function toggle() : void 
       {
          this.stateID++;
          if(this.filterBool)
@@ -47,7 +45,7 @@ package Controls
          ExternalInterface.call("LeaderLib_UIExtensions_OnControl", "checkbox", this.id, this.stateID);
       }
       
-      public function onClick(param1:MouseEvent) : *
+      public function onClick(e:MouseEvent) : void
       {
          if(this.enable)
          {
@@ -56,39 +54,40 @@ package Controls
          removeEventListener(MouseEvent.MOUSE_UP,this.onClick);
       }
       
-      public function deselectElement(param1:MouseEvent) : *
+      public function deselectElement(e:MouseEvent) : void
       {
          bg_mc.removeEventListener(MouseEvent.MOUSE_UP,this.onClick);
          this.bg_mc.gotoAndStop(this.stateID * 3 + 1);
       }
       
-      public function selectElement(param1:MouseEvent) : *
+      public function selectElement(e:MouseEvent) : void
       {
          this.bg_mc.gotoAndStop(this.stateID * 3 + 2);
       }
       
-      public override function onMouseOut(e:MouseEvent) : *
+      public function onMouseOut(e:MouseEvent) : void
       {
-         super.onMouseOut(e);
          bg_mc.removeEventListener(MouseEvent.MOUSE_UP, this.onClick);
       }
       
-      public function setState(param1:Number) : *
+      public function setState(state:Number) : void
       {
-         this.stateID = param1;
+         this.stateID = state;
          this.bg_mc.gotoAndStop(this.stateID * 3 + 1);
       }
       
-      public function initframe1() : *
+      public function frame1() : void
       {
+         TooltipHandler.init(this);
          this.mHeight = 30;
+
          this.bg_mc.addEventListener(MouseEvent.MOUSE_DOWN,this.onDown);
          this.bg_mc.addEventListener(MouseEvent.MOUSE_OVER,this.selectElement);
          this.bg_mc.addEventListener(MouseEvent.MOUSE_OUT,this.deselectElement);
 
          this.label_txt.defaultTextFormat.size = 16;
          this.label_txt.defaultTextFormat.color = 0xFFFFFF;
-         this.label_txt.defaultTextFormat.font = "Ubuntu Mono Bold";
+         this.label_txt.defaultTextFormat.font = "Quadraat Offc Pro";
          this.label_txt.autoSize = TextFieldAutoSize.LEFT;
       }
    }

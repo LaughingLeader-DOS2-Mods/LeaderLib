@@ -7,7 +7,7 @@ package LS_Classes
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	
-	public class LSButton extends MovieClip
+	public dynamic class LSButton extends MovieClip
 	{
 		private var pressedFunc:Function = null;
 		public var onOverFunc:Function = null;

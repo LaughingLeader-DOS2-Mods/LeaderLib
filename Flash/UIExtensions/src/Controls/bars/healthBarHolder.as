@@ -1,10 +1,12 @@
 package Controls.Bars
 {
-	import Controls.BarHolder;
+	import flash.display.MovieClip;
 	
-	public dynamic class healthBarHolder extends BarHolder
+	//TODO Need to make this instead an option in BarHolder since library symbols don't like being two subclasses away from MovieClip
+
+	public dynamic class HealthBarHolder extends MovieClip
 	{
-		public function healthBarHolder()
+		public function HealthBarHolder()
 		{
 			super();
 		}

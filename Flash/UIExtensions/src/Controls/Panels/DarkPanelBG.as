@@ -1,10 +1,10 @@
-package Controls.Buttons
+package Controls.Panels
 {
 	import flash.display.MovieClip;
-	
-	public dynamic class ButtonBG extends MovieClip
+
+	public dynamic class DarkPanelBG extends MovieClip
 	{
-		public function ButtonBG()
+		public function DarkPanelBG()
 		{
 			super();
 			addFrameScript(0,this.frame1);

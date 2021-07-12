@@ -531,24 +531,24 @@ package LS_Classes
 			}
 		}
 		
-		public function addElement(param1:DisplayObject, param2:Boolean = true, param3:Boolean = true) : *
+		public function addElement(obj:DisplayObject, reposition:Boolean = true, isSelectable:Boolean = true) : *
 		{
-			var val4:MovieClip = param1 as MovieClip;
-			this.containerContent_mc.addChild(param1);
-			val4.list_pos = this.content_array.length;
-			this.content_array.push(val4);
-			param1.addEventListener(Event.REMOVED_FROM_STAGE,this.onRemovedFromStage);
-			val4.list_id = this.idInc++;
-			if(val4.deselectElement)
+			var mc:MovieClip = obj as MovieClip;
+			this.containerContent_mc.addChild(obj);
+			mc.list_pos = this.content_array.length;
+			this.content_array.push(mc);
+			obj.addEventListener(Event.REMOVED_FROM_STAGE,this.onRemovedFromStage);
+			mc.list_id = this.idInc++;
+			if(mc.deselectElement)
 			{
-				val4.deselectElement();
+				mc.deselectElement();
 			}
-			val4.selectable = param3;
-			val4.m_filteredObject = false;
+			mc.selectable = isSelectable;
+			mc.m_filteredObject = false;
 			this.m_NeedsSorting = true;
 			this.reOrderDepths();
-			val4.ownerList = this;
-			if(param2)
+			mc.ownerList = this;
+			if(reposition)
 			{
 				this.positionElements();
 			}

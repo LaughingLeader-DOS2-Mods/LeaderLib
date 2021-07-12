@@ -1,6 +1,6 @@
 package Controls.Bars
 {
-	import Controls.BarHolder;
+	import flash.display.MovieClip;
 	
 	public dynamic class ArmorBarHolderPhys extends BarHolder
 	{

@@ -7,48 +7,27 @@ package LS_Classes
    import flash.text.TextField;
    import flash.text.TextFormat;
    
-   public class LSStateButton extends MovieClip
+   public dynamic class LSStateButton extends MovieClip
    {
-       
-      
       private var pressedFunc:Function;
-      
       private var pressedParams:Object;
-      
       private var m_Active:Boolean = false;
-      
       private var m_Disabled:Boolean = false;
-      
       public var SND_Over:String = "UI_Generic_Over";
-      
       public var SND_Press:String = "";
-      
       public var SND_Click:String = "UI_Gen_XButton_Click";
-      
       public var textY:Number;
-      
       public var textInActiveAlpha:Number = 1;
-      
       public var textActiveAlpha:Number = 1;
-      
       public var interactiveTextOnClick:Boolean = true;
-      
       public var m_AllowToggleActive:Boolean = true;
-      
       public var hitArea_mc:MovieClip;
-      
       public var text_txt:TextField;
-      
       public var bg_mc:MovieClip;
-      
       public var activeBG_mc:MovieClip;
-      
       public var disabled_mc:MovieClip;
-      
       public var onOverFunc:Function;
-      
       public var onDownFunc:Function;
-      
       public var onOutFunc:Function;
       
       public function LSStateButton()

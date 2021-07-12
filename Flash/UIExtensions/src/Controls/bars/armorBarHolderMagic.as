@@ -1,7 +1,7 @@
 package Controls.Bars
 {
-	import Controls.BarHolder;
-	
+	import flash.display.MovieClip;
+
 	public dynamic class ArmorBarHolderMagic extends BarHolder
 	{
 		public function ArmorBarHolderMagic()

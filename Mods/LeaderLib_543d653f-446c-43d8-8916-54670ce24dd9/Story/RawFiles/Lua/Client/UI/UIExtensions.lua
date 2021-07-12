@@ -1,14 +1,16 @@
----@class UIExtensonsMain:FlashMainTimeline
+---@class UIExtensionsMain:FlashMainTimeline
 ---@field addCheckbox fun(id:number, label:string, tooltip:string, stateID:number|nil, x:number|nil, y:number|nil, filterBool:boolean|nil, enabled:boolean|nil):MovieClip
 ---@field removeControl fun(id:number):boolean
 ---@field addBar fun(id:number, label:string, tooltip:string|nil, x:number|nil, y:number|nil, percentage:number|nil, doTween:boolean|nil, color:number|nil):void
 
 ---@class LeaderLibUIExtensions:UIObject
----@field GetRoot fun():UIExtensonsMain
+---@field GetRoot fun():UIExtensionsMain
 
 ---@alias CheckboxCallback fun(ui:LeaderLibUIExtensions, controlType:string, id:number, state:number):void
 ---@alias FlashTimerCallback fun(timerName:string, isComplete:boolean):void
 
+---@class UIExtensions
+---@field Root UIExtensionsMain
 UIExtensions = {
 	---@type LeaderLibUIExtensions
 	Instance = nil,
@@ -29,6 +31,17 @@ UIExtensions = {
 	},
 	Visible = false
 }
+
+setmetatable(UIExtensions, {
+	__index = function(tbl,k)
+		if k == "Root" then
+			local ui = UIExtensions.GetInstance()
+			if ui then
+				return ui:GetRoot()
+			end
+		end
+	end
+})
 
 local function DestroyInstance(force)
 	if UIExtensions.Instance then

@@ -132,6 +132,11 @@ local defaultIgnored = {
 	PlaySound = true,
 	dollOut = true,
 	slotUp = true,
+	update = true,
+	updateStatuses = true,
+	removeLabel = true,
+	LeaderLib_UIExtensions_InputEvent = true,
+	setAllSlotsEnabled = true,
 }
 
 Ext.RegisterListener("UICall", function(ui, event, ...)

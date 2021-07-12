@@ -16,7 +16,6 @@ local fprint = fprint
 local Dump = Common.Dump
 local Data = Data
 local CustomStatSystem = CustomStatSystem
-local Client = Client
 
 Game.Tooltip = {}
 ---@type TooltipRequestProcessor
@@ -1089,7 +1088,7 @@ function TooltipHooks:OnRequestExamineUITooltip(ui, method, typeIndex, id, ...)
 	}
 
 	if request.Character == nil then
-		request.Character = Client:GetCharacter()
+		request.Character = Mods.LeaderLib.Client:GetCharacter()
 	end
 
 	if typeIndex == 1 then
@@ -1161,8 +1160,8 @@ function TooltipHooks:GetCompareOwner(ui, item)
 	end
 
 	local character = nil
-	if Client then
-		character = Client:GetCharacter()
+	if Mods.LeaderLib.Client then
+		character = Mods.LeaderLib.Client:GetCharacter()
 	end
 
 	if character == nil then
@@ -1656,7 +1655,7 @@ Ext.RegisterListener("UIObjectCreated", function (ui)
 		ui:CaptureExternalInterfaceCalls()
 		ui:CaptureInvokes()
 	elseif Ext.GetGameState() == "Running" then
-		Ext.PostMessageToServer("LeaderLib_DeferUICapture", tostring(Client.ID))
+		Ext.PostMessageToServer("LeaderLib_DeferUICapture", tostring(Mods.LeaderLib.Client.ID))
 	end
 end)
 

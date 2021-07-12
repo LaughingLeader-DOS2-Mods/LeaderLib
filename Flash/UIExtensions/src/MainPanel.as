@@ -74,6 +74,7 @@ package
 		
 		public function frame1() : void
 		{
+			this.stop();
 			this.elements = new Array();
 			this.mouseEnabled = false;
 		}

@@ -26,8 +26,9 @@ package Controls.Panels
 			super();
 		}
 		
-		public function init() : void
+		public function init(title:String="") : void
 		{
+			this.title_txt.htmlText = title;
 			if(this.list != null)
 			{
 				this.list.clearElements();

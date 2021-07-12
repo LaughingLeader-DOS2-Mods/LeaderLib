@@ -131,6 +131,9 @@ local function OnRightMouseUp(ui, call, x, y)
 end
 
 function UIExtensions.SetupInstance()
+	if Ext.GetGameState() == "Menu" then
+		Ext.PrintError("[UIExtensions.SetupInstance] Game not ready yet.")
+	end
 	if not UIExtensions.Instance or UIExtensions.Instance:GetRoot() == nil then
 		if Vars.ControllerEnabled then
 			----Needs to be less than 9
@@ -142,6 +145,8 @@ function UIExtensions.SetupInstance()
 			UIExtensions.Instance = Ext.CreateUI("LeaderLibUIExtensions", UIExtensions.SwfPath, UIExtensions.Layer)
 			UIExtensions.RegisteredListeners = false
 			UIExtensions.Visible = true
+		else
+			print("Found existing LeaderLibUIExtensions")
 		end
 	end
 	if UIExtensions.Instance then

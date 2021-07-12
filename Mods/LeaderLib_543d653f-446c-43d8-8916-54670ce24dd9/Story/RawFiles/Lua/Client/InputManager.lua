@@ -257,8 +257,10 @@ local function InvokeExtenderEventCallbacks(evt, eventName)
 		InvokeListenerCallbacks(Listeners.InputEvent, eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled)
 		InvokeListenerCallbacks(Listeners.NamedInputEvent[eventName], eventName, evt.Press, evt.EventId, Input.Keys, Vars.ControllerEnabled)
 
-		if not UIExtensions.MouseEnabled and evt.Press and eventName == "FlashLeftMouse" or eventName == "FlashRightMouse" then
-			UIExtensions.Invoke("fireMouseClicked", eventName)
+		if Ext.GetGameState() == "Running" then
+			if not UIExtensions.MouseEnabled and evt.Press and eventName == "FlashLeftMouse" or eventName == "FlashRightMouse" then
+				UIExtensions.Invoke("fireMouseClicked", eventName)
+			end
 		end
 		lastFiredEventFrom[eventName] = 0
 	end

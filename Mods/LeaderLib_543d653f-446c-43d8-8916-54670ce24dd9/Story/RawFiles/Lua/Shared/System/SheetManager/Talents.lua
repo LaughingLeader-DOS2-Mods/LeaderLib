@@ -18,6 +18,10 @@ SheetManager.TalentManager = {
 }
 SheetManager.TalentManager.__index = SheetManager.TalentManager
 
+if not TalentManager then
+	TalentManager = SheetManager.TalentManager
+end
+
 SheetManager.TalentManager.Data.TalentState = {
 	Selected = 0,
 	Selectable = 2,

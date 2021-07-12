@@ -70,6 +70,10 @@ for name,v in pairs(missingAbilities) do
 	SheetManager.AbilityManager.RegisteredCount[name] = 0
 end
 
+if not AbilityManager then
+	AbilityManager = SheetManager.AbilityManager
+end
+
 function SheetManager.AbilityManager.EnableAbility(abilityName, modID)
 	if StringHelpers.Equals(abilityName, "all", true) then
 		for ability,v in pairs(missingAbilities) do

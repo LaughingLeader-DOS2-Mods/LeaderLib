@@ -1,11 +1,12 @@
-package Controls.bars
+package Controls.Bars
 {
 	import LS_Classes.horizontalList;
 	import flash.display.MovieClip;
 	import flash.geom.Rectangle;
 	import flash.text.TextFieldAutoSize;
+	import Controls.APUnit;
 	
-	public dynamic class apBar extends MovieClip
+	public dynamic class APBar extends MovieClip
 	{
 		public var apGlow_mc:MovieClip;
 		public var apHolder_mc:MovieClip;
@@ -23,7 +24,7 @@ package Controls.bars
 		public var originalPosX:int;
 		public var originalStudX:int;
 		
-		public function apBar()
+		public function APBar()
 		{
 			super();
 			addFrameScript(0,this.frame1);
@@ -142,7 +143,7 @@ package Controls.bars
 		
 		public function addApC(param1:Boolean = false) : *
 		{
-			var val2:MovieClip = new apUnit();
+			var val2:MovieClip = new APUnit();
 			var val3:Number = 1;
 			val2.gotoAndStop(val3);
 			val2.state = val3;

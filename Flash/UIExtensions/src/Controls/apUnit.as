@@ -2,9 +2,9 @@ package Controls
 {
 	import flash.display.MovieClip;
 	
-	public dynamic class apUnit extends MovieClip
+	public dynamic class APUnit extends MovieClip
 	{
-		public function apUnit()
+		public function APUnit()
 		{
 			super();
 			addFrameScript(0,this.frame1);

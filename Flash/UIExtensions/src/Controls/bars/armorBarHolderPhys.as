@@ -1,10 +1,10 @@
-package Controls.bars
+package Controls.Bars
 {
 	import Controls.BarHolder;
 	
-	public dynamic class armorBarHolderPhys extends BarHolder
+	public dynamic class ArmorBarHolderPhys extends BarHolder
 	{
-		public function armorBarHolderPhys()
+		public function ArmorBarHolderPhys()
 		{
 			super();
 		}

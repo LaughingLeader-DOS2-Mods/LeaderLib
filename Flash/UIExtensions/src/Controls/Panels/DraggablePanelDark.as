@@ -1,0 +1,94 @@
+package Controls.Panels
+{
+	import LS_Classes.scrollList;
+	import flash.display.MovieClip;
+	import flash.text.TextField;
+	import Controls.Buttons.MinimizeButton;
+	import Controls.Buttons.CloseButton;
+	import flash.external.ExternalInterface;
+	import LS_Classes.LSPanelHelpers;
+	
+	public dynamic class DraggablePanelDark extends MovieClip implements IPanel
+	{
+		public var listHolder_mc:MovieClip;
+		public var hit_mc:MovieClip;
+		public var title_txt:TextField;
+		public var minimize_mc:MinimizeButton;
+		public var close_mc:CloseButton;
+		public var list:scrollList;
+
+		public var id:String = "";
+		public var minimized:Boolean = false;
+		private var base:MainTimeline;
+		
+		public function DraggablePanelDark()
+		{
+			super();
+			addFrameScript(0,this.frame1);
+		}
+		
+		public function init() : void
+		{
+			if(this.list != null)
+			{
+				this.list.clearElements();
+				this.listHolder_mc.removeChild(this.list);
+			}
+			this.list = new scrollList("ScrollDown","ScrollUp","ScrollHandle","ScrollMover");
+			this.list.dragAutoScroll = true;
+			this.list.EL_SPACING = 0;
+			this.list.scrollbarSpacing = 0;
+			this.list.m_scrollbar_mc.m_hideWhenDisabled = true;
+			this.list.mouseWheelWhenOverEnabled = true;
+			this.list.setFrame(412,792);
+			this.list.m_scrollbar_mc.SND_Click = "UI_GM_Generic_Click_Press";
+			this.list.m_scrollbar_mc.SND_Over = "";
+			this.list.m_scrollbar_mc.SND_Release = "UI_GM_Generic_Click_Release";
+			this.listHolder_mc.addChild(this.list);
+		}
+		
+		public function addText(text:String) : void
+		{
+			var tf:TextField = new TextField();
+			tf.htmlText = text;
+			this.list.addElement(tf);
+		}
+		
+		public function positionElements() : void
+		{
+			if(this.list != null)
+			{
+				this.list.positionElements();
+			}
+		}
+
+		public function onClose(): void
+		{
+			ExternalInterface.call("hideTooltip");
+			if(this.list != null)
+			{
+				this.list.clearElements();
+				this.listHolder_mc.removeChild(this.list);
+			}
+			this.base.panelManager.removePanel(this);
+		}
+
+		public function onMinimize(): void
+		{
+			this.minimized = !this.minimized;
+			if(this.list != null)
+			{
+				this.list.visible = !this.minimized;
+			}
+		}
+		
+		private function frame1() : void
+		{
+			this.close_mc.init(this.onClose);
+			this.minimize_mc.init(this.onMinimize);
+			LSPanelHelpers.makeDraggable(this.hitArea_mc);
+
+			this.base = this.root as MainTimeline;
+		}
+	}
+}

@@ -1,4 +1,4 @@
-package contextMenu
+package ContextMenu
 {
 	import fl.motion.easing.Quartic;
 	import flash.display.MovieClip;

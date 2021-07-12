@@ -12,7 +12,8 @@ package
 	import flash.events.KeyboardEvent;
 	//import flash.ui.Keyboard;
 	import LS_Classes.tooltipHelper;
-	import contextMenu.ContextMenuMC;
+	import ContextMenu.ContextMenuMC;
+	import System.PanelManager;
 	
 	public dynamic class MainTimeline extends MovieClip
 	{		
@@ -21,7 +22,8 @@ package
 		public var anchorId:String;
 		
 		public var mainPanel_mc:MainPanel;
-		public var context_menu:contextMenu.ContextMenuMC;
+		public var panels:PanelManager;
+		public var context_menu:ContextMenu.ContextMenuMC;
 		
 		public var curTooltip:String;
 	  	public var hasTooltip:Boolean;
@@ -427,9 +429,12 @@ package
 			this.screenWidth = this.width;
 			this.screenHeight = this.height;
 
-			context_menu = new contextMenu.ContextMenuMC();
+			this.context_menu = new ContextMenu.ContextMenuMC();
 			this.addChild(context_menu);
-			context_menu.visible = false;
+			this.context_menu.visible = false;
+
+			this.panels = new PanelManager();
+			this.addChild(this.panels);
 
 			//this.addEventListener(MouseEvent.CLICK,this.fireOnMouseClick, true);
 			//this.addEventListener(MouseEvent.MOUSE_MOVE,this.fireOnMouseMove, true);

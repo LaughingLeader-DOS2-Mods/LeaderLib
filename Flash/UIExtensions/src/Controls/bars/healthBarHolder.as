@@ -1,4 +1,4 @@
-package Controls.bars
+package Controls.Bars
 {
 	import Controls.BarHolder;
 	

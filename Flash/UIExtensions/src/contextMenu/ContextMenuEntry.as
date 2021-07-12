@@ -1,4 +1,4 @@
-package contextMenu
+package ContextMenu
 {
 	import flash.display.MovieClip;
 	import flash.events.MouseEvent;

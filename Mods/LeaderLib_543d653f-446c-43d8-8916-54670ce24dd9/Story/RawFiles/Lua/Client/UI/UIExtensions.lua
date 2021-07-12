@@ -32,7 +32,7 @@ UIExtensions = {
 
 local function DestroyInstance(force)
 	if UIExtensions.Instance then
-		if force or Common.TableLength(UIExtensions.Controls, true) + Common.TableLength(UIExtensions.Timers, true) == 0then
+		if force or Common.TableLength(UIExtensions.Controls, true) + Common.TableLength(UIExtensions.Timers, true) == 0 then
 			UIExtensions.Instance:Invoke("dispose")
 			UIExtensions.Instance:Hide()
 			UIExtensions.Instance:Destroy()

@@ -3,11 +3,11 @@ package System
 	//Source: https://gist.github.com/lavie/3272627
 	public class KeyCodeNames
 	{
-		protected var m : Array = new Array(256);
+		protected static var m : Array = new Array(256);
 		
 		// This map is based on http://www.adobe.com/livedocs/flash/9.0/main/wwhelp/wwhimpl/common/html/wwhelp.htm?context=LiveDocs_Parts&file=00001136.html
 		
-		public function KeyCodeNames()
+		public static function Init():void
 		{
 			m[65] = "A";
 			m[66] = "B";
@@ -139,14 +139,13 @@ package System
 			m[188] = ",";
 			m[190] = ".";
 			m[191] = "/";
-			
 		}
 			
-		public function keyName(keyCode : int) : String
+		public static function GetName(keyCode : int) : String
 		{
 			if (keyCode < 0 || keyCode > 255)
 				return "UNKNOWN";
-			var ret : String = m[keyCode];
+			var ret : String = KeyCodeNames.m[keyCode];
 			if (ret == null)
 				ret = "UNKNOWN";
 			return ret;

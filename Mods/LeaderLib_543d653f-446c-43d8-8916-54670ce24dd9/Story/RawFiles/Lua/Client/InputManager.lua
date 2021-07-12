@@ -322,7 +322,7 @@ function Input.OnMouseEvent(event, x, y)
 end
 
 function Input.OnKeyboardEvent(ui, call, keyCode, keyName, pressed)
-	if Vars.DebugMode then
+	if Vars.DebugMode and Vars.Print.Input then
 		PrintLog("[Input.OnKeyboardEvent] call(%s) keyCode(%s) keyName(%s) pressed(%s)", call, keyCode, keyName, pressed)
 	end
 end

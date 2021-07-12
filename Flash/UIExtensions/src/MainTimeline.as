@@ -17,6 +17,7 @@ package
 	import System.PanelManager;
 	import flash.ui.Keyboard;
 	import System.KeyCodeNames;
+	import flash.utils.Dictionary;
 	
 	public dynamic class MainTimeline extends MovieClip
 	{		
@@ -403,29 +404,47 @@ package
 
 		private function onKeyboardDown(e:KeyboardEvent) : *
 		{
-			trace("onKeyboardDown", e.keyCode, String.fromCharCode(e.charCode));
-			ExternalInterface.call("LeaderLib_UIExtensions_KeyboardEvent", e.keyCode, String.fromCharCode(e.charCode), true);
+			var inputName:String = workingKeys[e.keyCode];
+			if(inputName != null)
+			{
+				ExternalInterface.call("LeaderLib_UIExtensions_KeyboardEvent", e.keyCode, inputName, true);
+			}
+			else
+			{
+				ExternalInterface.call("LeaderLib_UIExtensions_KeyboardEvent", e.keyCode, KeyCodeNames.GetName(e.keyCode), true);
+			}
 		}
 
 		private function onKeyboardUp(e:KeyboardEvent) : *
 		{
-			ExternalInterface.call("LeaderLib_UIExtensions_KeyboardEvent", e.keyCode, String.fromCharCode(e.charCode), false);
+			var inputName:String = workingKeys[e.keyCode];
+			if(inputName != null)
+			{
+				ExternalInterface.call("LeaderLib_UIExtensions_KeyboardEvent", e.keyCode, inputName, false);
+			}
+			else
+			{
+				ExternalInterface.call("LeaderLib_UIExtensions_KeyboardEvent", e.keyCode, KeyCodeNames.GetName(e.keyCode), false);
+			}
 		}
+
+		private var workingKeys:Dictionary = new Dictionary();
 
 		public function enableKeyboardListeners() : *
 		{
 			//Experimental, doesn't quite seem to work yet.
-			ExternalInterface.call("inputFocus");
-			stage.addEventListener(KeyboardEvent.KEY_DOWN,this.onKeyboardDown, true);
-			stage.addEventListener(KeyboardEvent.KEY_UP,this.onKeyboardUp, true);
+			//ExternalInterface.call("inputFocus");
+			this.stage.addEventListener(KeyboardEvent.KEY_DOWN,this.onKeyboardDown);
+			this.stage.addEventListener(KeyboardEvent.KEY_UP,this.onKeyboardUp);
 			trace("Enabled keyboard event listeners");
+			this.stage.focus = this;
 		}
 
 		public function disableKeyboardListeners() : *
 		{
-			ExternalInterface.call("inputFocusLost");
-			stage.removeEventListener(KeyboardEvent.KEY_DOWN,this.onKeyboardDown);
-			stage.removeEventListener(KeyboardEvent.KEY_UP,this.onKeyboardUp);
+			//ExternalInterface.call("inputFocusLost");
+			this.stage.removeEventListener(KeyboardEvent.KEY_DOWN,this.onKeyboardDown);
+			this.stage.removeEventListener(KeyboardEvent.KEY_UP,this.onKeyboardUp);
 		}
 
 		public function addDarkPanel(id:String, panelX:Number=0, panelY:Number=0, title:String="") : int
@@ -445,6 +464,23 @@ package
 			//this.events = new Array("IE UICreationTabPrev", "IE UIStartGame", "IE ConnectivityMenu");
 			this.curTooltip = "";
 		 	this.hasTooltip = false;
+
+			KeyCodeNames.Init();
+			workingKeys[8] = "FlashBackspace";
+			workingKeys[9] = "FlashTab";
+			workingKeys[13] = "FlashEnter";
+			workingKeys[17] = "FlashCtrl";
+			workingKeys[18] = "FlashAlt";
+			workingKeys[33] = "FlashPgUp";
+			workingKeys[34] = "FlashPgDn";
+			workingKeys[35] = "FlashEnd";
+			workingKeys[36] = "FlashHome";
+			workingKeys[37] = "FlashArrowLeft";
+			workingKeys[38] = "FlashArrowUp";
+			workingKeys[39] = "FlashArrowRight";
+			workingKeys[40] = "FlashArrowDown";
+			workingKeys[46] = "FlashDelete";
+
 			this.timers = new Array();
 
 			this.screenWidth = this.width;
@@ -459,8 +495,6 @@ package
 
 			//this.addEventListener(MouseEvent.CLICK,this.fireOnMouseClick, true);
 			//this.addEventListener(MouseEvent.MOUSE_MOVE,this.fireOnMouseMove, true);
-
-			// var keyCodeNames:KeyCodeNames = new KeyCodeNames();
 			
 			// this.stage.addEventListener(KeyboardEvent.KEY_DOWN, function(e:KeyboardEvent):void
 			// {

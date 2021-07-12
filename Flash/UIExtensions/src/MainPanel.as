@@ -10,7 +10,7 @@ package
 		public function MainPanel()
 		{
 			super();
-			addFrameScript(0,this.frame1);
+			this.addFrameScript(0,this.frame1);
 		}
 
 		public function addElement(obj:MovieClip) : *
@@ -72,9 +72,9 @@ package
 			this.idInc = 0;
 		}
 		
-		public function frame1() : *
+		public function frame1() : void
 		{
-			elements = new Array();
+			this.elements = new Array();
 			this.mouseEnabled = false;
 		}
 	}

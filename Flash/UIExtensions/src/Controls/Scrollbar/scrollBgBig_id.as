@@ -7,7 +7,7 @@ package Controls.Scrollbar
 		public function scrollBgBig_id()
 		{
 			super();
-			addFrameScript(0,this.frame1);
+			this.addFrameScript(0,this.frame1);
 		}
 		
 		private function frame1() : *

@@ -20,7 +20,7 @@ package ContextMenu
 		{
 			super();
 			this.base = parent;
-			addFrameScript(0,this.frame1);
+			this.addFrameScript(0,this.frame1);
 		}
 		
 		public function deselectElement(e:MouseEvent) : *
@@ -48,7 +48,7 @@ package ContextMenu
 		
 		public function buttonUp(e:MouseEvent) : *
 		{
-			removeEventListener(MouseEvent.MOUSE_UP,this.buttonUp);
+			this.removeEventListener(MouseEvent.MOUSE_UP,this.buttonUp);
 			if(this.clickSound)
 			{
 				ExternalInterface.call("PlaySound","UI_GM_Generic_Click");
@@ -58,7 +58,7 @@ package ContextMenu
 		
 		public function buttonDown(e:MouseEvent) : *
 		{
-			addEventListener(MouseEvent.MOUSE_UP,this.buttonUp);
+			this.addEventListener(MouseEvent.MOUSE_UP,this.buttonUp);
 		}
 		
 		public function buttonOver(e:MouseEvent) : *
@@ -68,15 +68,15 @@ package ContextMenu
 		
 		public function buttonOut(e:MouseEvent) : *
 		{
-			removeEventListener(MouseEvent.MOUSE_UP,this.buttonUp);
+			this.removeEventListener(MouseEvent.MOUSE_UP,this.buttonUp);
 			this.base.selectButton(null);
 		}
 		
-		public function frame1() : *
+		public function frame1() : void
 		{
-			addEventListener(MouseEvent.MOUSE_DOWN,this.buttonDown);
-			addEventListener(MouseEvent.ROLL_OVER,this.buttonOver);
-			addEventListener(MouseEvent.ROLL_OUT,this.buttonOut);
+			this.addEventListener(MouseEvent.MOUSE_DOWN,this.buttonDown);
+			this.addEventListener(MouseEvent.ROLL_OVER,this.buttonOver);
+			this.addEventListener(MouseEvent.ROLL_OUT,this.buttonOut);
 		}
 	}
 }

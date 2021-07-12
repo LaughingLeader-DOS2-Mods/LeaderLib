@@ -25,7 +25,7 @@ package ContextMenu
 		public function ContextMenuBG()
 		{
 			super();
-			addFrameScript(0,this.frame1);
+			this.addFrameScript(0,this.frame1);
 		}
 		
 		public function setHeight(height:Number, contextContent:MovieClip) : *
@@ -72,7 +72,7 @@ package ContextMenu
 			this.bottom_mc.y = this.mid_mc.y + this.mid_mc.height - this.bottomOffset;
 		}
 		
-		public function frame1() : *
+		public function frame1() : void
 		{
 			this.contextContent = null;
 			this.scaleTween = null;

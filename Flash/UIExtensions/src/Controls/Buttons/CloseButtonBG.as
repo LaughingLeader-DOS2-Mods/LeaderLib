@@ -7,7 +7,7 @@ package Controls.Buttons
 		public function CloseButtonBG()
 		{
 			super();
-			addFrameScript(0,this.frame1);
+			this.addFrameScript(0,this.frame1);
 		}
 		
 		private function frame1() : *

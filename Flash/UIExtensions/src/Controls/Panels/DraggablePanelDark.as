@@ -49,8 +49,8 @@ package Controls.Panels
 		public function addText(text:String) : void
 		{
 			var tf:PanelTextEntry = new PanelTextEntry();
-			tf.setText(text);
 			tf.text_txt.width = 410;
+			tf.setText(text);
 			this.list.addElement(tf);
 		}
 		
@@ -70,8 +70,7 @@ package Controls.Panels
 				this.list.clearElements();
 				this.listHolder_mc.removeChild(this.list);
 			}
-
-			MainTimeline.Instance.panels.removePanel(this);
+			MainTimeline.Instance.panels_mc.removePanel(this);
 		}
 
 		public function onMinimize(): void

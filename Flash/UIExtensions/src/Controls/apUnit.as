@@ -7,10 +7,10 @@ package Controls
 		public function APUnit()
 		{
 			super();
-			addFrameScript(0,this.frame1);
+			this.addFrameScript(0,this.frame1);
 		}
 		
-		public function frame1() : *
+		public function frame1() : void
 		{
 			this.stop();
 		}

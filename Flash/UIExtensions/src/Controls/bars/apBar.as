@@ -27,7 +27,7 @@ package Controls.Bars
 		public function APBar()
 		{
 			super();
-			addFrameScript(0,this.frame1);
+			this.addFrameScript(0,this.frame1);
 		}
 		
 		public function initAp() : *
@@ -253,7 +253,7 @@ package Controls.Bars
 			}
 		}
 		
-		public function frame1() : *
+		public function frame1() : void
 		{
 			this.maxAPs = 20;
 			this.apOverflow_mc.overflow_txt.autoSize = TextFieldAutoSize.LEFT;

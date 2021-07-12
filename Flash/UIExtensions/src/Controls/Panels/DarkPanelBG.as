@@ -7,7 +7,7 @@ package Controls.Panels
 		public function DarkPanelBG()
 		{
 			super();
-			addFrameScript(0,this.frame1);
+			this.addFrameScript(0,this.frame1);
 		}
 		
 		private function frame1() : *

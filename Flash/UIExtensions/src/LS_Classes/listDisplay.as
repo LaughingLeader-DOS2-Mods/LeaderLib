@@ -767,17 +767,17 @@ package LS_Classes
 		
 		public function clearElements() : *
 		{
-			var val2:MovieClip = null;
-			var val1:uint = 0;
-			while(val1 < this.content_array.length)
+			var mc:MovieClip = null;
+			var i:uint = 0;
+			while(i < this.content_array.length)
 			{
-				if(this.content_array[val1])
+				if(this.content_array[i])
 				{
-					val2 = this.content_array[val1];
-					this.stopElementMCTweens(val2);
-					this.containerContent_mc.removeChild(this.content_array[val1]);
+					mc = this.content_array[i];
+					this.stopElementMCTweens(mc);
+					this.containerContent_mc.removeChild(this.content_array[i]);
 				}
-				val1++;
+				i++;
 			}
 			this.content_array = new Array();
 			this.idInc = 0;

@@ -17,7 +17,7 @@ package Controls
       public function Checkbox()
       {
          super();
-         addFrameScript(0,this.frame1);
+         this.addFrameScript(0,this.frame1);
       }
       
       public function onDown(e:MouseEvent) : void

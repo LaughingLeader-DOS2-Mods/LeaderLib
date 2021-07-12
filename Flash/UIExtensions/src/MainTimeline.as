@@ -23,7 +23,7 @@ package
 		public var anchorId:String;
 		
 		public var mainPanel_mc:MainPanel;
-		public var panels:PanelManager;
+		public var panels_mc:PanelManager;
 		public var context_menu:ContextMenu.ContextMenuMC;
 		
 		public var curTooltip:String;
@@ -51,7 +51,7 @@ package
 		{
 			super();
 			instance = this;
-			addFrameScript(0,this.frame1);
+			this.addFrameScript(0,this.frame1);
 		}
 
 		public static function get Instance():MainTimeline
@@ -433,10 +433,10 @@ package
 			panel.x = panelX;
 			panel.y = panelY;
 			panel.init();
-			return this.panels.addPanel(panel);
+			return this.panels_mc.addPanel(panel);
 		}
 		
-		public function frame1() : *
+		public function frame1() : void
 		{
 			this.anchorId = "LeaderLib_UIExtensions";
 			this.layout = "fixed";
@@ -452,8 +452,8 @@ package
 			this.addChild(context_menu);
 			this.context_menu.visible = false;
 
-			this.panels = new PanelManager();
-			this.addChild(this.panels);
+			this.panels_mc = new PanelManager();
+			this.addChild(this.panels_mc);
 
 			//this.addEventListener(MouseEvent.CLICK,this.fireOnMouseClick, true);
 			//this.addEventListener(MouseEvent.MOUSE_MOVE,this.fireOnMouseMove, true);

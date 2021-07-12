@@ -6,12 +6,14 @@ package System
 
 	public dynamic class PanelManager extends MovieClip
 	{
-		public var panels:Array;
+		public var panels:Array = new Array();
 
 		public function PanelManager()
 		{
 			super();
-			addFrameScript(0,this.frame1);
+
+			this.mouseEnabled = false;
+			this.stop();
 		}
 
 		public function addPanel(obj:MovieClip) : int
@@ -60,6 +62,7 @@ package System
 
 		public function clearPanels() : *
 		{
+			trace("clearPanels");
 			var obj:MovieClip = null;
 			var index:uint = 0;
 			while(index < this.panels.length)
@@ -71,13 +74,7 @@ package System
 				}
 				index++;
 			}
-			this.panels = new Array();
-		}
-		
-		public function frame1() : *
-		{
-			this.panels = new Array();
-			this.mouseEnabled = false;
+			this.panels.length = 0;
 		}
 	}
 }

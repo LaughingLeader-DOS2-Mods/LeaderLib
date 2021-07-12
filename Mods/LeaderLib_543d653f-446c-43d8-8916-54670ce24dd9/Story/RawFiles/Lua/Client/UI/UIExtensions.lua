@@ -138,6 +138,7 @@ function UIExtensions.SetupInstance()
 		end
 		UIExtensions.Instance = Ext.GetUI("LeaderLibUIExtensions")
 		if not UIExtensions.Instance then
+			print("Creating LeaderLibUIExtensions")
 			UIExtensions.Instance = Ext.CreateUI("LeaderLibUIExtensions", UIExtensions.SwfPath, UIExtensions.Layer)
 			UIExtensions.RegisteredListeners = false
 			UIExtensions.Visible = true
@@ -401,6 +402,17 @@ Ext.RegisterConsoleCommand("barTest", function()
 		local this = ui:GetRoot()
 		if this then
 			this.addBar("BeetusAdrenaline", "Adrenaline", "Is this working?", 100, 100, 0.5, true)
+		end
+	end
+end)
+
+Ext.RegisterConsoleCommand("panelTest", function()
+	local this = UIExtensions.Root
+	if this then
+		local panel = this.panels_mc.panels[this.addDarkPanel("test", 100, 100)]
+		if panel then
+			panel.addText("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer eu nibh aliquam, lacinia tellus sed, imperdiet elit. Mauris ultricies nunc at tortor tristique porttitor. Nam orci est, varius iaculis laoreet vel, ultricies in nisi. Pellentesque nec scelerisque nisi. Ut molestie sagittis tempor. Sed tincidunt purus sit amet magna accumsan, ut sollicitudin felis elementum. Mauris posuere malesuada mattis. Duis maximus non massa eu sodales. Pellentesque nibh felis, pellentesque in mauris pretium, vulputate malesuada nunc. Maecenas eget lacinia ex. Integer nec dui vel massa gravida elementum eget nec massa. Aenean tincidunt non est a scelerisque. Nam eu enim mi.\n\nMauris molestie commodo leo quis ultrices. Quisque elementum felis et neque vestibulum scelerisque. Cras sodales felis lorem, vel tempus justo porttitor quis. Suspendisse potenti. Phasellus nisi leo, cursus sed lorem sit amet, semper consequat orci. Aliquam sagittis pellentesque libero et interdum. Sed iaculis facilisis velit, quis hendrerit libero dapibus auctor.\n\n<font color='#FFCC11'>Phasellus mi metus, congue a tincidunt eget, viverra ut lectus. Cras elit quam, fringilla in dui sit amet, tristique faucibus mauris. Ut bibendum rutrum sem, efficitur malesuada nunc euismod quis. Morbi eros leo, commodo quis aliquet eget, pretium sit amet diam. Nullam posuere augue vel ligula gravida fermentum. Proin a consequat risus. Integer ac ligula condimentum, pretium est ac, feugiat lorem. Sed suscipit ut neque vel facilisis. Nullam lobortis lacinia lacus a mattis. Maecenas eget mi fermentum, aliquet odio at, feugiat risus. Integer finibus vitae tortor sed tristique. Pellentesque pellentesque venenatis velit, sit amet euismod dui eleifend eget. Donec malesuada ex nisi, sit amet imperdiet ex scelerisque at.\n\nNulla eget dui sed nulla tempus interdum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Duis a lobortis lacus. Morbi neque nulla, rutrum sit amet leo ac, rutrum efficitur magna. Nulla odio nisi, dignissim a justo rutrum, malesuada eleifend lectus. Fusce nec cursus augue. Morbi at sem iaculis, eleifend libero vel, posuere velit.</font>\n\nMauris non justo nec justo congue laoreet. Maecenas porttitor magna at libero rhoncus bibendum. Phasellus vel sem cursus, semper erat quis, aliquet metus. Aenean quis metus egestas, ultrices velit in, molestie tellus. Etiam nec purus nec quam varius luctus. Nulla quis suscipit tellus, maximus accumsan felis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed viverra quis nisi sit amet luctus. Cras dapibus sodales mauris ut tristique. Aliquam orci purus, suscipit in porttitor nec, tincidunt eget lectus.")
+			print(panel.list_id, panel.id)
 		end
 	end
 end)

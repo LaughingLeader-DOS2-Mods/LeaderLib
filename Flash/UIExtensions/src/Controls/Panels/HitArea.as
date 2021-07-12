@@ -9,7 +9,7 @@ package Controls.Panels
 		public function HitArea()
 		{
 			super();
-			addFrameScript(0,this.frame1);
+			this.addFrameScript(0,this.frame1);
 		}
 		
 		public function onDown(e:MouseEvent) : *

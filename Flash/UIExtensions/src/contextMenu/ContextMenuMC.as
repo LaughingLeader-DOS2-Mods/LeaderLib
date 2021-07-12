@@ -11,7 +11,6 @@ package ContextMenu
 	{
 		public var bg_mc:MovieClip;
 		public var list:listDisplay;
-		public var base:MovieClip;
 
 		//MainTimeline
 		public var closing:Boolean;
@@ -25,10 +24,10 @@ package ContextMenu
 		public function ContextMenuMC()
 		{
 			super();
-			addFrameScript(0,this.frame1);
+			this.addFrameScript(0,this.frame1);
 		}
 
-		public function frame1() : *
+		public function frame1() : void
 		{
 			this.list = new listDisplay();
 			this.list.EL_SPACING = 0;
@@ -42,8 +41,6 @@ package ContextMenu
 			this.tweenTime = 0.3;
 			this.text_array = new Array();
 			this.buttonArr = new Array();
-
-			this.base = root as MovieClip;
 		}
 		
 		public function setTitle(text:String) : *
@@ -96,7 +93,7 @@ package ContextMenu
 			this.list.scrollRect = new Rectangle(0,0,this.bg_mc.width,this.bg_mc.height);
 			this.bg_mc.bottom_mc.y = this.bg_mc.mid_mc.y + this.bg_mc.mid_mc.height - this.bg_mc.bottomOffset;
 			this.list.alpha = 1;
-			if (this.base.controllerEnabled) {
+			if (MainTimeline.Instance.controllerEnabled) {
 				this.list.select(0);
 			}
 			//ExternalInterface.call("setMcSize",this.x + this.bg_mc.x + this.bg_mc.width,this.y + this.bg_mc.y + this.bg_mc.container_mc.y + this.bg_mc.container_mc.height + this.bg_mc.bottom_mc.height);
@@ -137,7 +134,7 @@ package ContextMenu
 					isHandled = true;
 					break;
 				case "IE UIUp":
-					if (!this.base.controllerEnabled) {
+					if (!MainTimeline.Instance.controllerEnabled) {
 						this.previous();
 						isHandled = true;
 					} else {
@@ -145,7 +142,7 @@ package ContextMenu
 					}
 					break;
 				case "IE UIDown":
-					if (!this.base.controllerEnabled) {
+					if (!MainTimeline.Instance.controllerEnabled) {
 						this.next();
 						isHandled = true;
 					} else {
@@ -172,7 +169,7 @@ package ContextMenu
 		public function onInputDown(input:String) : Boolean
 		{
 			var isHandled:Boolean = false;
-			if (this.base.controllerEnabled) {
+			if (MainTimeline.Instance.controllerEnabled) {
 				switch(input)
 				{
 					case "IE UIUp":
@@ -195,7 +192,7 @@ package ContextMenu
 				{
 					case "IE FlashLeftMouse":
 					case "IE FlashRightMouse":
-						if(!this.list.isOverlappingPosition(base.mouseX, base.mouseY)) {
+						if(!this.list.isOverlappingPosition(MainTimeline.Instance.mouseX, MainTimeline.Instance.mouseY)) {
 							return true;
 						}
 						break;

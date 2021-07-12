@@ -21,7 +21,7 @@ package Controls.Panels
 		public function BaseDraggablePanel()
 		{
 			super();
-			addFrameScript(0,this.frame1);
+			this.addFrameScript(0,this.frame1);
 		}
 
 		private function get targetStage():Stage
@@ -81,6 +81,7 @@ package Controls.Panels
 
 		public function frame1() : void
 		{
+			this.stop();
 			this.windowDragStarted = false;
 			this.dragStartMP = new Point();
 		}

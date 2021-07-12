@@ -25,7 +25,7 @@ package Controls.Bars
 			super();
 			this.easingFunction = Sine.easeOut;
 			this.hBar_mc.scaleX = this.hBar2_mc.scaleX = 0;
-			addFrameScript(0,this.frame1);
+			this.addFrameScript(0,this.frame1);
 		}
 
 		private function frame1():void

@@ -173,7 +173,7 @@ local racialTalents = {
 }
 
 local DivineTalents = {
-	--Rager = "TALENT_Rager",
+	Rager = "TALENT_Rager",
 	Elementalist = "TALENT_Elementalist",
 	Sadist = "TALENT_Sadist",
 	Haymaker = "TALENT_Haymaker",
@@ -618,6 +618,21 @@ function TalentManager.Update_CC(ui, talent_mc, player)
 	end
 end
 
+local VisibleDivineTalents = {
+	--Rager = "TALENT_Rager",
+	Elementalist = "TALENT_Elementalist",
+	Sadist = "TALENT_Sadist",
+	Haymaker = "TALENT_Haymaker",
+	Gladiator = "TALENT_Gladiator",
+	Indomitable = "TALENT_Indomitable",
+	--WildMag = "TALENT_WildMag",
+	--Jitterbug = "TALENT_Jitterbug",
+	Soulcatcher = "TALENT_Soulcatcher",
+	MasterThief = "TALENT_MasterThief",
+	GreedyVessel = "TALENT_GreedyVessel",
+	MagicCycles = "TALENT_MagicCycles",
+}
+
 local function CanDisplayDivineTalent(talentId, name)
 	if not DivineTalents[talentId] then
 		return true
@@ -715,8 +730,18 @@ local function CanAddTalent(talentId, player, talentStat)
 	if player[talentStat] == true then
 		return true
 	end
-	if (TalentManager.RegisteredCount[talentId] and TalentManager.RegisteredCount[talentId] > 0) and CanDisplayDivineTalent(talentId) then
+	local isRegistered = TalentManager.RegisteredCount[talentId] and TalentManager.RegisteredCount[talentId] > 0
+
+	if isRegistered then
 		return true
+	else
+		if VisibleDivineTalents[talentId] then
+			if Ext.IsModLoaded("ca32a698-d63e-4d20-92a7-dd83cba7bc56") or GameSettings.Settings.Client.DivineTalentsEnabled then
+				return CanDisplayDivineTalent(talentId)
+			else
+				return false
+			end
+		end
 	end
 	if talentId == "RogueLoreDaggerBackStab" 
 	and GameSettings.Settings.BackstabSettings.Player.Enabled
@@ -819,12 +844,12 @@ end
 
 function TalentManager.ToggleDivineTalents(enabled)
 	if enabled then
-		for talent,id in pairs(DivineTalents) do
-			TalentManager.EnableTalent(talent, "DivineTalents")
+		for talent,id in pairs(VisibleDivineTalents) do
+			TalentManager.EnableTalent(talent, ModuleUUID)
 		end
 	else
-		for talent,id in pairs(DivineTalents) do
-			TalentManager.DisableTalent(talent, "DivineTalents")
+		for talent,id in pairs(VisibleDivineTalents) do
+			TalentManager.DisableTalent(talent, ModuleUUID)
 		end
 	end
 end

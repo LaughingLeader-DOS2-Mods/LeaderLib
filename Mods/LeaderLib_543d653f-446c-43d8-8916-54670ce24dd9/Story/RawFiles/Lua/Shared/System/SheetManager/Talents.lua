@@ -179,7 +179,7 @@ SheetManager.TalentManager.Data.RacialTalents = {
 }
 
 SheetManager.TalentManager.Data.DivineTalents = {
-	--Rager = "TALENT_Rager",
+	Rager = "TALENT_Rager",
 	Elementalist = "TALENT_Elementalist",
 	Sadist = "TALENT_Sadist",
 	Haymaker = "TALENT_Haymaker",
@@ -187,6 +187,18 @@ SheetManager.TalentManager.Data.DivineTalents = {
 	Indomitable = "TALENT_Indomitable",
 	WildMag = "TALENT_WildMag",
 	Jitterbug = "TALENT_Jitterbug",
+	Soulcatcher = "TALENT_Soulcatcher",
+	MasterThief = "TALENT_MasterThief",
+	GreedyVessel = "TALENT_GreedyVessel",
+	MagicCycles = "TALENT_MagicCycles",
+}
+
+SheetManager.TalentManager.Data.VisibleDivineTalents = {
+	Elementalist = "TALENT_Elementalist",
+	Sadist = "TALENT_Sadist",
+	Haymaker = "TALENT_Haymaker",
+	Gladiator = "TALENT_Gladiator",
+	Indomitable = "TALENT_Indomitable",
 	Soulcatcher = "TALENT_Soulcatcher",
 	MasterThief = "TALENT_MasterThief",
 	GreedyVessel = "TALENT_GreedyVessel",
@@ -605,9 +617,16 @@ function SheetManager.TalentManager.CanAddTalent(talentId, hasTalent)
 	if hasTalent == true then
 		return true
 	end
-	if SheetManager.TalentManager.RegisteredCount[talentId] and SheetManager.TalentManager.RegisteredCount[talentId] > 0 and CanDisplayDivineTalent(talentId) then
+
+	local isRegistered = SheetManager.TalentManager.RegisteredCount[talentId] and SheetManager.TalentManager.RegisteredCount[talentId] > 0
+	if isRegistered then
 		return true
 	end
+
+	if SheetManager.TalentManager.Data.VisibleDivineTalents[talentId] and CanDisplayDivineTalent(talentId) then
+		return true
+	end
+
 	if talentId == "RogueLoreDaggerBackStab" 
 	and GameSettings.Settings.BackstabSettings.Player.Enabled
 	and GameSettings.Settings.BackstabSettings.Player.TalentRequired
@@ -639,13 +658,12 @@ if Vars.DebugMode then
 end
 
 function SheetManager.TalentManager.ToggleDivineTalents(enabled)
-	if true then return end
 	if enabled then
-		for talent,id in pairs(SheetManager.TalentManager.Data.DivineTalents) do
+		for talent,id in pairs(SheetManager.TalentManager.Data.VisibleDivineTalents) do
 			SheetManager.TalentManager.EnableTalent(talent, ModuleUUID)
 		end
 	else
-		for talent,id in pairs(SheetManager.TalentManager.Data.DivineTalents) do
+		for talent,id in pairs(SheetManager.TalentManager.Data.VisibleDivineTalents) do
 			SheetManager.TalentManager.DisableTalent(talent, ModuleUUID)
 		end
 	end

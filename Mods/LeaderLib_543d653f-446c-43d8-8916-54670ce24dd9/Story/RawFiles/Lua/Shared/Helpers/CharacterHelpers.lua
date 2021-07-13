@@ -219,16 +219,20 @@ function GameHelpers.Character.SetLevel(character, level)
 		character = Ext.GetCharacter(character)
 	end
 	if character and character.Stats then
-		local xpNeeded = Data.LevelExperience[level]
-		if xpNeeded then
-			if xpNeeded == 0 then
-				character.Stats.Experience = 1
-				Timer.StartOneshot("", 250, function()
-					character.Stats.Experience = 0
-				end)
-			else
-				character.Stats.Experience = xpNeeded
+		if level < character.Stats.Level or Ext.IsClient() then
+			local xpNeeded = Data.LevelExperience[level]
+			if xpNeeded then
+				if xpNeeded == 0 then
+					character.Stats.Experience = 1
+					Timer.StartOneshot("", 250, function()
+						character.Stats.Experience = 0
+					end)
+				else
+					character.Stats.Experience = xpNeeded
+				end
 			end
+		else
+			CharacterLevelUpTo(character.MyGuid, level)
 		end
 	end
 end

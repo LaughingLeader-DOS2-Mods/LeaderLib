@@ -605,10 +605,6 @@ package characterSheet_fla
 			var plusVisible:Boolean = false;
 			var spacing:Number = NaN;
 
-			var updateAbilities:Boolean = this.ability_array.length > 0;
-			var updateCivil:Boolean = updateAbilities && this.ability_array[0] == true;
-			var updateTalents:Boolean = this.talent_array.length > 0;
-
 			var val4:Number = getTimer();
 			var i:uint = 0;
 			while(i < this.primStat_array.length)
@@ -715,7 +711,7 @@ package characterSheet_fla
 			this.stats_mc.resetListPositions();
 			this.stats_mc.recheckScrollbarVisibility();
 			this.initDone = true;
-			ExternalInterface.call("characterSheetUpdateDone", updateTalents, updateAbilities, updateCivil);
+			ExternalInterface.call("characterSheetUpdateDone");
 		}
 		
 		public function setStatPlusVisible(statID:Number, isVisible:Boolean) : *

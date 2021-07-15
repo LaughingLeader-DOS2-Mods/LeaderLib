@@ -276,7 +276,7 @@ function LeaderLibGameSettings:Apply()
 	end
 	if Ext.IsClient() then
 		StatusHider.RefreshStatusVisibility()
-		SheetManager.TalentManager.ToggleDivineTalents(self.Settings.Client.DivineTalentsEnabled)
+		SheetManager.Talents.ToggleDivineTalents(self.Settings.Client.DivineTalentsEnabled)
 	end
 	self:ApplyAPChanges()
 end

@@ -1,7 +1,7 @@
 local ts = Classes.TranslatedString
 
 ---@class AbilityManager
-SheetManager.AbilityManager = {
+SheetManager.Abilities = {
 	RegisteredAbilities = {},
 	RegisteredCount = {},
 	Data = {
@@ -63,57 +63,57 @@ SheetManager.AbilityManager = {
 		}
 	}
 }
-SheetManager.AbilityManager.__index = SheetManager.AbilityManager
+SheetManager.Abilities.__index = SheetManager.Abilities
 
-local missingAbilities = SheetManager.AbilityManager.Data.DOSAbilities
+local missingAbilities = SheetManager.Abilities.Data.DOSAbilities
 for name,v in pairs(missingAbilities) do
-	SheetManager.AbilityManager.RegisteredCount[name] = 0
+	SheetManager.Abilities.RegisteredCount[name] = 0
 end
 
 if not AbilityManager then
-	AbilityManager = SheetManager.AbilityManager
+	AbilityManager = SheetManager.Abilities
 end
 
-function SheetManager.AbilityManager.EnableAbility(abilityName, modID)
+function SheetManager.Abilities.EnableAbility(abilityName, modID)
 	if StringHelpers.Equals(abilityName, "all", true) then
 		for ability,v in pairs(missingAbilities) do
-			SheetManager.AbilityManager.EnableAbility(ability, modID)
+			SheetManager.Abilities.EnableAbility(ability, modID)
 		end
 	else
-		if SheetManager.AbilityManager.RegisteredAbilities[abilityName] == nil then
-			SheetManager.AbilityManager.RegisteredAbilities[abilityName] = {}
+		if SheetManager.Abilities.RegisteredAbilities[abilityName] == nil then
+			SheetManager.Abilities.RegisteredAbilities[abilityName] = {}
 		end
-		if SheetManager.AbilityManager.RegisteredAbilities[abilityName][modID] ~= true then
-			SheetManager.AbilityManager.RegisteredAbilities[abilityName][modID] = true
-			SheetManager.AbilityManager.RegisteredCount[abilityName] = (SheetManager.AbilityManager.RegisteredCount[abilityName] or 0) + 1
+		if SheetManager.Abilities.RegisteredAbilities[abilityName][modID] ~= true then
+			SheetManager.Abilities.RegisteredAbilities[abilityName][modID] = true
+			SheetManager.Abilities.RegisteredCount[abilityName] = (SheetManager.Abilities.RegisteredCount[abilityName] or 0) + 1
 		end
 	end
 end
 
 -- if Vars.DebugMode then
 -- 	for k,v in pairs(missingAbilities) do
--- 		SheetManager.AbilityManager.EnableAbility(k, "7e737d2f-31d2-4751-963f-be6ccc59cd0c")
+-- 		SheetManager.Abilities.EnableAbility(k, "7e737d2f-31d2-4751-963f-be6ccc59cd0c")
 -- 	end
 -- end
 
-function SheetManager.AbilityManager.DisableAbility(abilityName, modID)
+function SheetManager.Abilities.DisableAbility(abilityName, modID)
 	if StringHelpers.Equals(abilityName, "all", true) then
 		for ability,v in pairs(missingAbilities) do
-			SheetManager.AbilityManager.DisableAbility(ability, modID)
+			SheetManager.Abilities.DisableAbility(ability, modID)
 		end
 		if not Vars.ControllerEnabled then
 			GameHelpers.UI.TryInvoke(Data.UIType.characterSheet, "clearAbilities")
 		end
 	else
-		local data = SheetManager.AbilityManager.RegisteredAbilities[abilityName]
+		local data = SheetManager.Abilities.RegisteredAbilities[abilityName]
 		if data ~= nil then
-			if SheetManager.AbilityManager.RegisteredAbilities[abilityName][modID] ~= nil then
-				SheetManager.AbilityManager.RegisteredAbilities[abilityName][modID] = nil
-				SheetManager.AbilityManager.RegisteredCount[abilityName] = SheetManager.AbilityManager.RegisteredCount[abilityName] - 1
+			if SheetManager.Abilities.RegisteredAbilities[abilityName][modID] ~= nil then
+				SheetManager.Abilities.RegisteredAbilities[abilityName][modID] = nil
+				SheetManager.Abilities.RegisteredCount[abilityName] = SheetManager.Abilities.RegisteredCount[abilityName] - 1
 			end
-			if SheetManager.AbilityManager.RegisteredCount[abilityName] <= 0 then
-				SheetManager.AbilityManager.RegisteredAbilities[abilityName] = nil
-				SheetManager.AbilityManager.RegisteredCount[abilityName] = 0
+			if SheetManager.Abilities.RegisteredCount[abilityName] <= 0 then
+				SheetManager.Abilities.RegisteredAbilities[abilityName] = nil
+				SheetManager.Abilities.RegisteredCount[abilityName] = 0
 
 				if not Vars.ControllerEnabled then
 					GameHelpers.UI.TryInvoke(Data.UIType.characterSheet, "clearAbilities")
@@ -124,11 +124,11 @@ function SheetManager.AbilityManager.DisableAbility(abilityName, modID)
 end
 
 if Ext.IsClient() then
-	function SheetManager.AbilityManager.CanAddAbility(id, player)
-		if SheetManager.AbilityManager.Data.Abilities[id] then
+	function SheetManager.Abilities.CanAddAbility(id, player)
+		if SheetManager.Abilities.Data.Abilities[id] then
 			return true
 		end
-		if SheetManager.AbilityManager.Data.DOSAbilities[id] and SheetManager.AbilityManager.RegisteredCount[id] > 0 then
+		if SheetManager.Abilities.Data.DOSAbilities[id] and SheetManager.Abilities.RegisteredCount[id] > 0 then
 			return true
 		end
 		return false
@@ -184,7 +184,7 @@ if Ext.IsClient() then
 		return points or 0
 	end
 
-	function SheetManager.AbilityManager.UpdateCharacterSheetPoints(ui, method, main, amount)
+	function SheetManager.Abilities.UpdateCharacterSheetPoints(ui, method, main, amount)
 		local character = Client:GetCharacter()
 		local id = character.NetID
 		if method == "setAvailableCombatAbilityPoints" then
@@ -202,7 +202,7 @@ if Ext.IsClient() then
 		local maxCivil = Ext.ExtraData.CivilAbilityCap or 5
 
 		for abilityName,data in pairs(missingAbilities) do
-			if SheetManager.AbilityManager.RegisteredCount[abilityName] > 0 then
+			if SheetManager.Abilities.RegisteredCount[abilityName] > 0 then
 				local abilityID = Data.AbilityEnum[abilityName]
 				if not data.Civil then
 					local canAddPoints = abilityPoints > 0 and character.Stats[abilityName] < maxAbility
@@ -229,7 +229,7 @@ if Ext.IsClient() then
 		end)
 	end
 
-	---@class SheetManager.AbilityManagerUIEntry
+	---@class SheetManager.AbilitiesUIEntry
 	---@field ID string
 	---@field SheetID integer
 	---@field DisplayName string
@@ -244,21 +244,23 @@ if Ext.IsClient() then
 	---@private
 	---@param player EclCharacter
 	---@param civilOnly boolean|nil
-	---@return fun():SheetManager.AbilityManagerUIEntry
-	function SheetManager.AbilityManager.GetVisible(player, civilOnly, this)
+	---@return fun():SheetManager.AbilitiesUIEntry
+	function SheetManager.Abilities.GetVisible(player, civilOnly, this)
 		local abilities = {}
 		local tooltip = LocalizedText.UI.AbilityPlusTooltip:ReplacePlaceholders(Ext.ExtraData.CombatAbilityLevelGrowth)
 
-		local abilityPoints = GetAvailablePoints("combat", this)
-		local civilPoints = GetAvailablePoints("civil", this)
+		local abilityPoints = Client.Character.Points.Ability
+		local civilPoints = Client.Character.Points.Civil
+		--local abilityPoints = GetAvailablePoints("combat", this)
+		--local civilPoints = GetAvailablePoints("civil", this)
 	
 		local maxAbility = Ext.ExtraData.CombatAbilityCap or 10
 		local maxCivil = Ext.ExtraData.CivilAbilityCap or 5
 
 		for numId,id in Data.Ability:Get() do
-			local data = SheetManager.AbilityManager.Data.Abilities[id] or SheetManager.AbilityManager.Data.DOSAbilities[id]
+			local data = SheetManager.Abilities.Data.Abilities[id] or SheetManager.Abilities.Data.DOSAbilities[id]
 			if data ~= nil and (civilOnly == true and data.Civil) or (civilOnly == false and not data.Civil) then
-				if SheetManager.AbilityManager.CanAddAbility(id, player) then
+				if SheetManager.Abilities.CanAddAbility(id, player) then
 					local canAddPoints = false
 					if civilOnly then
 						canAddPoints = civilPoints > 0 and player.Stats[id] < maxCivil

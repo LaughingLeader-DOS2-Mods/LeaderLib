@@ -101,13 +101,13 @@ function ClientCharacterData:UpdatePoints(uuid)
 		end
 	end
 	if uuid then
-		self.Points.Attribute = CharacterGetAttributePoints(uuid)
-		self.Points.Ability = CharacterGetAbilityPoints(uuid)
-		self.Points.Civil = CharacterGetCivilAbilityPoints(uuid)
-		self.Points.Talent = CharacterGetTalentPoints(uuid)
-		self.Points.SourceBase = CharacterGetBaseSourcePoints(uuid)
-		self.Points.SourceCurrent = CharacterGetSourcePoints(uuid)
-		self.Points.SourceMax = CharacterGetMaxSourcePoints(uuid)
+		self.Points.Attribute = CharacterGetAttributePoints(uuid) or 0
+		self.Points.Ability = CharacterGetAbilityPoints(uuid) or 0
+		self.Points.Civil = CharacterGetCivilAbilityPoints(uuid) or 0
+		self.Points.Talent = CharacterGetTalentPoints(uuid) or 0
+		self.Points.SourceBase = CharacterGetBaseSourcePoints(uuid) or 0
+		self.Points.SourceCurrent = CharacterGetSourcePoints(uuid) or 0
+		self.Points.SourceMax = CharacterGetMaxSourcePoints(uuid) or 0
 	end
 end
 

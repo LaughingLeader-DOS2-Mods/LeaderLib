@@ -4,10 +4,27 @@ local CharacterSheet = Classes.UIWrapper:CreateFromType(Data.UIType.characterShe
 local self = CharacterSheet
 
 ---@private
+---@class SheetUpdateTargets
+local updateTargetsDefaults = {
+	Abilities = false,
+	Civil = false,
+	Talents = false,
+	PrimaryStats = false,
+	SecondaryStats = false,
+	Tags = false,
+}
+
+---@type SheetUpdateTargets
+local updateTargets = TableHelpers.Clone(updateTargetsDefaults)
+
+---@private
 ---@param ui UIObject
 function CharacterSheet.PreUpdate(ui, method, updateTalents, updateAbilities, updateCivil)
+	---@type CharacterSheetMainTimeline
 	local this = self.Root
 	local secStat_array = this.secStat_array
+
+	--Renaming "Experience" to "Total"
 	for i=0,#secStat_array-1,7 do
 		if not secStat_array[i] then
 			local label = this.secStat_array[i + 2]
@@ -21,16 +38,30 @@ function CharacterSheet.PreUpdate(ui, method, updateTalents, updateAbilities, up
 	-- for i=0,#this.primStat_array-1 do
 	-- 	print("primStat_array",i,this.primStat_array[i])
 	-- end
+
+	updateTargets.Abilities = #this.ability_array > 0
+	updateTargets.Civil = updateTargets.Abilities and this.ability_array[0] == true
+	updateTargets.Talents = #this.talent_array > 0
+	updateTargets.PrimaryStats = #this.primStat_array > 0
+	updateTargets.SecondaryStats = #this.secStat_array > 0
+	updateTargets.Tags = #this.tags_array > 0
 end
+
+local function getParamsValue(params, index, default)
+	if params[index] ~= nil then
+		return params[index]
+	else
+		return default
+	end
+end
+
 ---@private
 ---@param ui UIObject
-function CharacterSheet.Update(ui, method, updateTalents, updateAbilities, updateCivil)
-	PrintDebug("CharacterSheet.Update", method, updateTalents, updateAbilities, updateCivil)
+function CharacterSheet.Update(ui, method, ...)
+	PrintDebug("CharacterSheet.Update", method, ...)
 	local this = self.Root
 	--this.clearArray("talentArray")
 	local player = Ext.GetCharacter(Ext.DoubleToHandle(this.characterHandle)) or Client:GetCharacter()
-
-	local updatedAbilities,updatedCombat,updatedTalents = false,false,false
 
 	-- if method == "setAvailableCombatAbilityPoints" then
 	-- 	availableCombatPoints[id] = amount
@@ -39,16 +70,27 @@ function CharacterSheet.Update(ui, method, updateTalents, updateAbilities, updat
 	-- 	availableCivilPoints[id] = amount
 	-- 	setAvailablePoints[id] = true
 	-- end
+
+	---@type SheetUpdateTargets
+	local targetsUpdated = TableHelpers.Clone(updateTargetsDefaults)
+
+	if updateTargets.PrimaryStats then
+
+	end
 	
-	if updateTalents then
-		local points = this.stats_mc.pointsWarn[3].avPoints
+	if updateTargets.SecondaryStats then
+
+	end
 	
-		for talent in SheetManager.TalentManager.GetVisible(player) do
+	if updateTargets.Talents then
+		--local points = this.stats_mc.pointsWarn[3].avPoints
+		local points = Client.Character.Points.Talent
+		for talent in SheetManager.Talents.GetVisible(player) do
 			local canAdd = false
 			local canRemove = false
-			updatedTalents = true
+			targetsUpdated.Talents = true
 			if not talent.IsRacial then
-				if not talent.HasTalent and points > 0 and talent.State == SheetManager.TalentManager.Data.TalentState.Selectable then
+				if not talent.HasTalent and points > 0 and talent.State == SheetManager.Talents.Data.TalentState.Selectable then
 					canAdd = true
 				elseif talent.HasTalent then
 					canRemove = GameHelpers.Client.IsGameMaster(ui, this)
@@ -63,21 +105,22 @@ function CharacterSheet.Update(ui, method, updateTalents, updateAbilities, updat
 		--this.stats_mc.addTalent("Test", 404, 1, true, false, true)
 	end
 
-	if updateAbilities then
-		for ability in SheetManager.AbilityManager.GetVisible(player, updateCivil, this) do
+	if updateTargets.Abilities then
+		for ability in SheetManager.Abilities.GetVisible(player, updateTargets.Civil, this) do
 			this.stats_mc.addAbility(ability.IsCivil, ability.GroupID, ability.SheetID, ability.DisplayName, ability.Value, ability.AddPointsTooltip, "", ability.CanAdd, ability.CanRemove, ability.IsCustom)
-			updatedAbilities = true
+			targetsUpdated.Abilities = true
+			targetsUpdated.Civil = updateTargets.Civil
 		end
 		--this.stats_mc.addAbility(false, 1, 77, "Test Ability", "0", "", "", false, false, true)
 		--this.stats_mc.addAbility(true, 3, 78, "Test Ability2", "0", "", "", false, false, true)
 	end
 
 	if not Vars.ControllerEnabled then
-		if updatedTalents then
+		if targetsUpdated.Talents then
 			this.stats_mc.talentHolder_mc.list.positionElements()
 		end
-		if updatedAbilities then
-			if updateCivil then
+		if targetsUpdated.Abilities then
+			if targetsUpdated.Civil then
 				this.stats_mc.civicAbilityHolder_mc.list.positionElements()
 				this.stats_mc.recountAbilityPoints(true)
 			else
@@ -86,11 +129,11 @@ function CharacterSheet.Update(ui, method, updateTalents, updateAbilities, updat
 			end
 		end
 	else
-		if updatedTalents then
+		if targetsUpdated.Talents then
 			this.mainpanel_mc.stats_mc.talents_mc.updateDone()
 		end
-		if updatedAbilities then
-			if updateCivil then
+		if targetsUpdated.Abilities then
+			if targetsUpdated.Civil then
 				this.mainpanel_mc.stats_mc.civilAbilities_mc.updateDone()
 			else
 				this.mainpanel_mc.stats_mc.combatAbilities_mc.updateDone()

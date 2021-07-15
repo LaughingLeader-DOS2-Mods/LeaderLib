@@ -246,7 +246,7 @@ if Ext.IsClient() then
 	---@param civilOnly boolean|nil
 	---@return fun():SheetManager.AbilitiesUIEntry
 	function SheetManager.Abilities.GetVisible(player, civilOnly, this)
-		local abilities = {}
+		local entries = {}
 		local tooltip = LocalizedText.UI.AbilityPlusTooltip:ReplacePlaceholders(Ext.ExtraData.CombatAbilityLevelGrowth)
 
 		local abilityPoints = Client.Character.Points.Ability
@@ -257,6 +257,7 @@ if Ext.IsClient() then
 		local maxAbility = Ext.ExtraData.CombatAbilityCap or 10
 		local maxCivil = Ext.ExtraData.CivilAbilityCap or 5
 
+		--Defaults
 		for numId,id in Data.Ability:Get() do
 			local data = SheetManager.Abilities.Data.Abilities[id] or SheetManager.Abilities.Data.DOSAbilities[id]
 			if data ~= nil and (civilOnly == true and data.Civil) or (civilOnly == false and not data.Civil) then
@@ -273,8 +274,8 @@ if Ext.IsClient() then
 					local statVal = player.Stats[id] or 0
 					---@type TalentManagerUITalentEntry
 					local data = {
-						ID = id,
-						SheetID = Data.AbilityEnum[id],
+						--ID = id,
+						ID = Data.AbilityEnum[id],
 						DisplayName = name,
 						IsCivil = isCivil,
 						GroupID = groupID,
@@ -285,16 +286,44 @@ if Ext.IsClient() then
 						CanAdd = canAddPoints,
 						CanRemove = false,
 					}
-					abilities[#abilities+1] = data
+					entries[#entries+1] = data
 				end
 			end
 		end
+
+		for mod,dataTable in pairs(SheetManager.Data.Abilities) do
+			for id,data in pairs(dataTable) do
+				--TODO
+				local canAddPoints = false
+				if civilOnly then
+					canAddPoints = civilPoints > 0
+				else
+					canAddPoints = abilityPoints > 0
+				end
+				local value = data:GetValue(player)
+				---@type TalentManagerUITalentEntry
+				local data = {
+					ID = data.GeneratedID,
+					DisplayName = data.DisplayName,
+					IsCivil = data.IsCivil,
+					GroupID = data.GroupID,
+					IsCustom = true,
+					Value = string.format("%s", value),
+					Delta = value,
+					AddPointsTooltip = tooltip,
+					CanAdd = canAddPoints,
+					CanRemove = false,
+				}
+				entries[#entries+1] = data
+			end
+		end
+
 		local i = 0
-		local count = #abilities
+		local count = #entries
 		return function ()
 			i = i + 1
 			if i <= count then
-				return abilities[i]
+				return entries[i]
 			end
 		end
 	end

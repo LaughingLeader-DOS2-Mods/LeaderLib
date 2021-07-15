@@ -23,7 +23,7 @@
 ---@field addCustomStat fun(doubleHandle:number, labelText:string, valueText:string, groupId:number, plusVisible:boolean, minusVisible:boolean):void
 
 ---@class CharacterSheetMainTimeline:FlashMainTimeline
----@field stats_mc FlashMovieClip
+---@field stats_mc stats_1
 ---@field initDone boolean
 ---@field events table
 ---@field layout string
@@ -217,7 +217,7 @@
 ---@field close_mc FlashMovieClip
 ---@field combatAbilityHolder_mc FlashMovieClip
 ---@field combatAbilityPointsWrn_mc FlashMovieClip
----@field customStats_mc FlashMovieClip
+---@field customStats_mc customStatsHolder_14
 ---@field customStatsPointsWrn_mc mcPlus_Anim_69
 ---@field customStatsPoints_txt TextField
 ---@field dragHit_mc FlashMovieClip

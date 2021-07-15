@@ -49,7 +49,7 @@ local abilityPropertyMap = {
 
 local isClient = Ext.IsClient()
 
-local function parseTable(tbl, propertyMap, modId, defaults, class)
+local function parseTable(tbl, propertyMap, modId, defaults, class, id_map)
 	local tableData = nil
 	if type(tbl) == "table" then
 		tableData = {}
@@ -85,6 +85,8 @@ local function parseTable(tbl, propertyMap, modId, defaults, class)
 						end
 					end
 				end
+				id_map.NEXT_ID = id_map.NEXT_ID + 1
+				data.GeneratedID = id_map.NEXT_ID
 				if class then
 					if class.SetDefaults then
 						class.SetDefaults(data)
@@ -92,6 +94,7 @@ local function parseTable(tbl, propertyMap, modId, defaults, class)
 					setmetatable(data, class)
 				end
 				tableData[k] = data
+				id_map.Entries[data.GeneratedID] = data
 			end
 		end
 	end
@@ -115,9 +118,9 @@ local function LoadConfig(uuid, file)
 				talentDefaults = config.Defaults.Talents
 			end
 		end
-		local stats = parseTable(config.Stats, basePropertyMap, uuid, statDefaults, Classes.SheetStatData)
-		local talents = parseTable(config.Talents, talentPropertyMap, uuid, talentDefaults, Classes.SheetTalentData)
-		local abilities = parseTable(config.Ablities, abilityPropertyMap, uuid, abilityDefaults, Classes.SheetAbilityData)
+		local stats = parseTable(config.Stats, basePropertyMap, uuid, statDefaults, Classes.SheetStatData, SheetManager.Data.ID_MAP.Stats)
+		local talents = parseTable(config.Talents, talentPropertyMap, uuid, talentDefaults, Classes.SheetTalentData, SheetManager.Data.ID_MAP.Talents)
+		local abilities = parseTable(config.Ablities, abilityPropertyMap, uuid, abilityDefaults, Classes.SheetAbilityData, SheetManager.Data.ID_MAP.Abilities)
 
 		if stats then
 			loaded.Stats = stats

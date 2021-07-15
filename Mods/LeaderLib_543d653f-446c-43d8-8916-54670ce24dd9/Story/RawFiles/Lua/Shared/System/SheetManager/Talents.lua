@@ -744,7 +744,8 @@ end
 ---@param player EclCharacter
 ---@return fun():SheetManager.TalentsUITalentEntry
 function SheetManager.Talents.GetVisible(player)
-	local talents = {}
+	local entries = {}
+	--Default entries
 	for numId,talentId in Data.Talents:Get() do
 		local hasTalent = player.Stats[SheetManager.Talents.Data.TalentStatAttributes[talentId]] == true
 		if SheetManager.Talents.CanAddTalent(talentId, hasTalent) then
@@ -757,9 +758,8 @@ function SheetManager.Talents.GetVisible(player)
 			end
 			---@type SheetManager.TalentsUITalentEntry
 			local data = {
-				ID = talentId,
-				SheetID = Data.TalentEnum[talentId],
-				Enum = talentId,
+				--ID = talentId,
+				ID = Data.TalentEnum[talentId],
 				HasTalent = hasTalent,
 				DisplayName = name,
 				IsRacial = isRacial,
@@ -767,15 +767,35 @@ function SheetManager.Talents.GetVisible(player)
 				State = talentState,
 				IsCustom = false,
 			}
-			talents[#talents+1] = data
+			entries[#entries+1] = data
+		end
+	end
+	for mod,dataTable in pairs(SheetManager.Data.Talents) do
+		for id,data in pairs(dataTable) do
+			local hasTalent = data:GetValue(player) == true
+			local talentState = SheetManager.Talents.GetTalentState(player, data.ID, hasTalent)
+			local name = SheetManager.Talents.GetTalentDisplayName(data.ID, talentState)
+			local isRacial = data.IsRacial
+			local isChoosable = not isRacial and talentState ~= SheetManager.Talents.Data.TalentState.Locked
+			---@type SheetManager.TalentsUITalentEntry
+			local data = {
+				ID = data.GeneratedID,
+				HasTalent = hasTalent,
+				DisplayName = name,
+				IsRacial = isRacial,
+				IsChoosable = isChoosable,
+				State = talentState,
+				IsCustom = true,
+			}
+			entries[#entries+1] = data
 		end
 	end
 	local i = 0
-	local count = #talents
+	local count = #entries
 	return function ()
 		i = i + 1
 		if i <= count then
-			return talents[i]
+			return entries[i]
 		end
 	end
 end

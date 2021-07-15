@@ -59,6 +59,7 @@ end
 ---@param ui UIObject
 function CharacterSheet.Update(ui, method, ...)
 	PrintDebug("CharacterSheet.Update", method, ...)
+	---@type CharacterSheetMainTimeline
 	local this = self.Root
 	--this.clearArray("talentArray")
 	local player = Ext.GetCharacter(Ext.DoubleToHandle(this.characterHandle)) or Client:GetCharacter()
@@ -73,13 +74,27 @@ function CharacterSheet.Update(ui, method, ...)
 
 	---@type SheetUpdateTargets
 	local targetsUpdated = TableHelpers.Clone(updateTargetsDefaults)
+	local canRemove = GameHelpers.Client.IsGameMaster(ui, this)
 
-	if updateTargets.PrimaryStats then
-
-	end
-	
-	if updateTargets.SecondaryStats then
-
+	if updateTargets.PrimaryStats or updateTargets.SecondaryStats then
+		for stat in SheetManager.Stats.GetVisible(player) do
+			if not Vars.ControllerEnabled then
+				if stat.IsPrimary then
+					targetsUpdated.PrimaryStats = true
+					this.stats_mc.addPrimaryStat(stat.ID, stat.DisplayName, stat.Value, stat.TooltipID, stat.CanAdd, canRemove, stat.IsCustom)
+				else
+					targetsUpdated.SecondaryStats = true
+					if not stat.IsSpacing then
+						this.stats_mc.addSecondaryStat(stat.ID, stat.DisplayName, stat.Value, stat.TooltipID, stat.Frame, stat.BoostValue, stat.CanAdd, canRemove, stat.IsCustom)
+					else
+						this.stats_mc.addSpacing(stat.ID, stat.Height)
+					end
+				end
+			else
+				--TODO
+				--this.mainpanel_mc.stats_mc.addPrimaryStat(stat.ID, stat.DisplayName, stat.Value, stat.TooltipID, canAdd, canRemove, stat.IsCustom)
+			end
+		end
 	end
 	
 	if updateTargets.Talents then
@@ -97,9 +112,9 @@ function CharacterSheet.Update(ui, method, ...)
 				end
 			end
 			if not Vars.ControllerEnabled then
-				this.stats_mc.addTalent(talent.DisplayName, talent.SheetID, talent.State, canAdd, canRemove, talent.IsCustom)
+				this.stats_mc.addTalent(talent.DisplayName, talent.ID, talent.State, canAdd, canRemove, talent.IsCustom)
 			else
-				this.mainpanel_mc.stats_mc.talents_mc.addTalent(talent.DisplayName, talent.SheetID, talent.State, canAdd, canRemove, talent.IsCustom)
+				this.mainpanel_mc.stats_mc.talents_mc.addTalent(talent.DisplayName, talent.ID, talent.State, canAdd, canRemove, talent.IsCustom)
 			end
 		end
 		--this.stats_mc.addTalent("Test", 404, 1, true, false, true)

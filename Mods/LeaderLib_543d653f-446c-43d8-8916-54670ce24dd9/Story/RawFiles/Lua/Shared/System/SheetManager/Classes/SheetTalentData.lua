@@ -1,6 +1,6 @@
 local isClient = Ext.IsClient()
 
----@class SheetTalentData:SheetTalentData
+---@class SheetTalentData:SheetBaseData
 local SheetTalentData = {
 	Type = "SheetTalentData",
 	TooltipType = "Talent",
@@ -8,6 +8,7 @@ local SheetTalentData = {
 	Icon = "",
 	IconWidth = 128,
 	IconHeight = 128,
+	IsRacial = false,
 }
 
 SheetTalentData.__index = function(t,k)
@@ -22,7 +23,8 @@ local defaults = {
 	Icon = "",
 	IconWidth = SheetTalentData.IconWidth,
 	IconHeight = SheetTalentData.IconHeight,
-	Value = false
+	Value = false,
+	IsRacial = false
 }
 
 ---@protected
@@ -60,6 +62,12 @@ function SheetTalentData:SetValue(character, value)
 		return SheetManager:SetEntryValue(character, self, value)
 	end
 	fprint(LOGLEVEL.WARNING, "[SheetTalentData:SetValue(%s, %s)] This function only works on the server-side.", self.ID, value)
+	return false
+end
+
+---@param character EsvCharacter|string|number
+function SheetTalentData:HasTalent(character)
+	--TODO
 	return false
 end
 

@@ -1,6 +1,6 @@
 local isClient = Ext.IsClient()
 
----@class SheetAbilityData:SheetAbilityData
+---@class SheetAbilityData:SheetBaseData
 local SheetAbilityData = {
 	Type = "SheetAbilityData",
 	TooltipType = "Ability",
@@ -8,7 +8,8 @@ local SheetAbilityData = {
 	Icon = "",
 	IconWidth = 128,
 	IconHeight = 128,
-	GroupID = 0
+	GroupID = 0,
+	IsCivil = false
 }
 
 SheetAbilityData.__index = function(t,k)
@@ -24,7 +25,8 @@ local defaults = {
 	IconWidth = SheetAbilityData.IconWidth,
 	IconHeight = SheetAbilityData.IconHeight,
 	Value = 0,
-	GroupID = 0
+	GroupID = 0,
+	IsCivil = false
 }
 
 ---@protected

@@ -17,6 +17,8 @@ local SheetBaseData = {
 	SortName = nil,
 	---Optional setting to force the string key conversion for DisplayName, in case the value doesn't have an underscore.
 	LoadStringKey = false,
+	---A generated ID assigned by the SheetManager, used to associate a stat in the UI with this data.
+	GeneratedID = -1
 }
 
 local defaults = {
@@ -28,6 +30,7 @@ local defaults = {
 	IconWidth = SheetBaseData.IconWidth,
 	IconHeight = SheetBaseData.IconHeight,
 	Visible = true,
+	GeneratedID = -1
 }
 
 ---@protected

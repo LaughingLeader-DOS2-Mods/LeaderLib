@@ -74,7 +74,24 @@ SheetManager.Data = {
 	---@type table<MOD_UUID, table<SHEET_ENTRY_ID, SheetTalentData>>
 	Talents = {},
 	---@type table<MOD_UUID, table<SHEET_ENTRY_ID, SheetStatData>>
-	Stats = {}
+	Stats = {},
+	ID_MAP = {
+		Abilities = {
+			NEXT_ID = 1999,
+			---@type table<integer, SheetAbilityData>
+			Entries = {}
+		},
+		---@type table<integer, SheetTalentData>
+		Talents = {
+			NEXT_ID = 1999,
+			Entries = {}
+		},
+		---@type table<integer, SheetTalentData>
+		Stats = {
+			NEXT_ID = 1999,
+			Entries = {}
+		},
+	}
 }
 
 ---@type fun():table<string, table<string, SheetAbilityData|SheetTalentData|SheetStatData>>

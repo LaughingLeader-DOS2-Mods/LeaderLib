@@ -1,6 +1,6 @@
 local isClient = Ext.IsClient()
 
----@class SheetStatData:SheetStatData
+---@class SheetStatData:SheetBaseData
 local SheetStatData = {
 	Type = "SheetStatData",
 	TooltipType = "Stat",

@@ -37,7 +37,7 @@ package statsPanel_c_fla
 		public function addStat(statID:Number, label:String, value:String, textColor:uint) : *
 		{
 			var stat_mc:MovieClip = this.statList.getElementByNumber("id",statID);
-			if(!stat_mc)
+			if(stat_mc == null)
 			{
 				stat_mc = new CustomStat();
 				stat_mc.statID = statID;

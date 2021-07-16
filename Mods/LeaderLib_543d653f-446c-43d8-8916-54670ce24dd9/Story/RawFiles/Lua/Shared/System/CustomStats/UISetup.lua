@@ -139,10 +139,9 @@ local function OnSheetUpdating(ui, method)
 	if length == 0 then
 		return
 	end
-	--this.stats_mc.panelBg1_mc.visible = true;
-	--this.stats_mc.panelBg2_mc.visible = true;
+
 	local sortList = {}
-	for i=0,length,3 do
+	for i=0,length-1,3 do
 		local doubleHandle = this.customStats_array[i]
 		local displayName = this.customStats_array[i+1]
 		local value = this.customStats_array[i+2]

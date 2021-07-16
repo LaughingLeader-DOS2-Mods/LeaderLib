@@ -258,7 +258,7 @@ end
 ---@param skill StatEntrySkillData
 ---@return EsvShootProjectileRequest
 local function PrepareProjectileProps(target, skill, source, level, enemiesOnly, extraParams)
-    level = level or 1
+    local sourceLevel = level or 1
     ---@type number[]
     local targetPos,sourcePos = nil,nil
     ---@type EsvCharacter|EsvItem
@@ -301,7 +301,9 @@ local function PrepareProjectileProps(target, skill, source, level, enemiesOnly,
             props.Source = sourceObject.MyGuid
             local canCheckStats = ObjectIsItem(sourceObject.MyGuid) == 0 or not GameHelpers.Item.IsObject(sourceObject)
             if canCheckStats and sourceObject.Stats then
-                level = sourceObject.Stats.Level
+                if not level then
+                    sourceLevel = sourceObject.Stats.Level
+                end
                 if sourceObject.Stats.IsSneaking ~= nil then
                     props.IsStealthed = sourceObject.Stats.IsSneaking
                 end
@@ -317,7 +319,7 @@ local function PrepareProjectileProps(target, skill, source, level, enemiesOnly,
     if targetObject and sourceObject and enemiesOnly == true then
         if ObjectIsCharacter(sourceObject.MyGuid) == 1 
         and ObjectIsCharacter(targetObject.MyGuid) == 1 
-        and CharacterIsEnemy(targetObject.MyGuid, sourceObject.MyGuid) == 0
+        and (CharacterIsEnemy(targetObject.MyGuid, sourceObject.MyGuid) == 0 and IsTagged(target.MyGuid, "LeaderLib_FriendlyFireEnabled") == 0)
         then
             props.HitObject = nil
             props.HitObjectPosition = nil
@@ -337,7 +339,7 @@ local function PrepareProjectileProps(target, skill, source, level, enemiesOnly,
     if not StringHelpers.IsNullOrEmpty(skill.CleanseStatuses) then
         props.CleanseStatuses = skill.CleanseStatuses
     end
-    props.CasterLevel = level
+    props.CasterLevel = sourceLevel
     props.SourcePosition = sourcePos
     props.TargetPosition = fallbackTarget
     props.IsFromItem = isFromItem and 1 or 0

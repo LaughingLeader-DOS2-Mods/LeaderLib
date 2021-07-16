@@ -325,7 +325,7 @@ local function OnStatusApplied(target,status,source)
 		if skill then
 			local turns = GetStatusTurns(target, status)
 			if not turns or turns == 0 then
-				GameHelpers.ExplodeProjectile(source, target, skill)
+				GameHelpers.Skill.Explode(target, skill, source)
 			elseif not StringHelpers.IsNullOrEmpty(source) then
 				TrackStatusSource(target, status, source)
 			end

@@ -4,7 +4,9 @@ local isClient = Ext.IsClient()
 local SheetStatData = {
 	Type = "SheetStatData",
 	TooltipType = "Stat",
+	StatType = "Stat",
 	Value = 0,
+	IsPrimary = false
 }
 
 SheetStatData.__index = function(t,k)
@@ -16,7 +18,9 @@ SheetStatData.__index = function(t,k)
 end
 
 local defaults = {
-	Value = 0
+	Value = 0,
+	IsPrimary = false,
+	StatType = "Stat",
 }
 
 ---@protected
@@ -46,14 +50,23 @@ function SheetStatData:GetValue(character)
 	end
 end
 
----[SERVER]
----@param character EsvCharacter|string|number
+---@param character EsvCharacter|EclCharacter|string|number
 ---@param value integer
-function SheetStatData:SetValue(character, value)
+---@param skipListenerInvoke boolean|nil If true, Listeners.OnEntryChanged invoking is skipped.
+---@param skipSync boolean|nil If on the client and this is true, the value change won't be sent to the server.
+function SheetStatData:SetValue(character, value, skipListenerInvoke, skipSync)
+	return SheetManager:SetEntryValue(self, character, value, skipListenerInvoke, skipSync)
+end
+
+---@param character EsvCharacter|EclCharacter|string|number
+---@param amount integer
+function SheetAbilityData:ModifyValue(character, amount)
+	local nextValue = self:GetValue(character) + amount
 	if not isClient then
-		return SheetManager:SetEntryValue(character, self, value)
+		return SheetManager:SetEntryValue(character, self, nextValue)
+	else
+		SheetManager:RequestValueChange(self, character, nextValue)
 	end
-	fprint(LOGLEVEL.WARNING, "[SheetBaseData:SetValue(%s, %s)] This function only works on the server-side.", self.ID, value)
 	return false
 end
 

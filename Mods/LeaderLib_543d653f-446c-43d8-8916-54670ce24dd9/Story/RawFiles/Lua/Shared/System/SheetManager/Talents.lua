@@ -773,7 +773,7 @@ function SheetManager.Talents.GetVisible(player)
 	for mod,dataTable in pairs(SheetManager.Data.Talents) do
 		for id,data in pairs(dataTable) do
 			local hasTalent = data:GetValue(player) == true
-			local talentState = SheetManager.Talents.GetTalentState(player, data.ID, hasTalent)
+			local talentState = data:GetState(player)
 			local name = SheetManager.Talents.GetTalentDisplayName(data.ID, talentState)
 			local isRacial = data.IsRacial
 			local isChoosable = not isRacial and talentState ~= SheetManager.Talents.Data.TalentState.Locked

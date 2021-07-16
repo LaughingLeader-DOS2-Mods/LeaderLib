@@ -5,25 +5,25 @@ SheetManager.Config.Calls = {
 	Tooltip = {
 		Ability = "showAbilityTooltipCustom",
 		Talent = "showTalentTooltipCustom",
-		Stat = "showStatTooltipCustom",
+		PrimaryStat = "showStatTooltipCustom",
 		SecondaryStat = "showStatTooltipCustom",
 	},
 	TooltipController = {
 		Ability = "selectAbilityCustom",
 		Talent = "selectTalentCustom",
-		Stat = "selectStatCustom",
+		PrimaryStat = "selectStatCustom",
 		SecondaryStat = "selectSecStatCustom",
 	},
 	PointRemoved = {
 		Ability = "minAbilityCustom",
 		Talent = "minTalentCustom",
-		Stat = "minStatCustom",
+		PrimaryStat = "minStatCustom",
 		SecondaryStat = "minSecStatCustom",
 	},
 	PointAdded = {
 		Ability = "plusAbilityCustom",
 		Talent = "plusTalentCustom",
-		Stat = "plusStatCustom",
+		PrimaryStat = "plusStatCustom",
 		SecondaryStat = "plusSecStatCustom",
 	}
 }

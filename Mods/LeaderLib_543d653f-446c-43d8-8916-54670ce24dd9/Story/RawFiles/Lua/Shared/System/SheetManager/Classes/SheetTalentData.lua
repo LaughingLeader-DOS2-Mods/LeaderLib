@@ -3,6 +3,7 @@ local isClient = Ext.IsClient()
 ---@class SheetTalentData:SheetBaseData
 local SheetTalentData = {
 	Type = "SheetTalentData",
+	StatType = "Talent",
 	TooltipType = "Talent",
 	Value = false,
 	Icon = "",
@@ -54,21 +55,17 @@ function SheetTalentData:GetValue(character)
 	end
 end
 
----[SERVER]
----@param character EsvCharacter|string|number
+---@param character EsvCharacter|EclCharacter|string|number
 ---@param value boolean
-function SheetTalentData:SetValue(character, value)
-	if not isClient then
-		return SheetManager:SetEntryValue(character, self, value)
-	end
-	fprint(LOGLEVEL.WARNING, "[SheetTalentData:SetValue(%s, %s)] This function only works on the server-side.", self.ID, value)
-	return false
+---@param skipListenerInvoke boolean|nil If true, Listeners.OnEntryChanged invoking is skipped.
+---@param skipSync boolean|nil If on the client and this is true, the value change won't be sent to the server.
+function SheetTalentData:SetValue(character, value, skipListenerInvoke, skipSync)
+	return SheetManager:SetEntryValue(self, character, value, skipListenerInvoke, skipSync)
 end
 
----@param character EsvCharacter|string|number
+---@param character EsvCharacter|EclCharacter|string|number
 function SheetTalentData:HasTalent(character)
-	--TODO
-	return false
+	return self:GetValue(character) == true
 end
 
 Classes.SheetTalentData = SheetTalentData

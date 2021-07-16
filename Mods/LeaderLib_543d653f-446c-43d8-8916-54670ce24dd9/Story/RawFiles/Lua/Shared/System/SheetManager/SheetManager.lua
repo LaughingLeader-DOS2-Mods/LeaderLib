@@ -4,7 +4,9 @@ if SheetManager == nil then
 end
 
 ---@alias SHEET_ENTRY_ID string
----@alias OnSheetEntryValueChangedCallback fun(id:string, stat:CustomStatData, character:EsvCharacter, previousPoints:integer, currentPoints:integer, isClientSide:boolean):void
+---@alias OnSheetStatChangedCallback fun(id:string, stat:SheetStatData, character:EsvCharacter, lastValue:integer, value:integer, isClientSide:boolean):void
+---@alias OnSheetAbilityChangedCallback fun(id:string, stat:SheetAbilityData, character:EsvCharacter, lastValue:integer, value:integer, isClientSide:boolean):void
+---@alias OnSheetTalentChangedCallback fun(id:string, stat:SheetTalentData, character:EsvCharacter, lastValue:boolean, value:boolean, isClientSide:boolean):void
 
 SheetManager.__index = SheetManager
 SheetManager.Loaded = false
@@ -13,9 +15,9 @@ local isClient = Ext.IsClient()
 Ext.Require("Shared/System/SheetManager/Data/SheetDataValues.lua")
 
 SheetManager.Listeners = {
-	---@type table<string, OnSheetEntryValueChangedCallback[]>
-	OnValueChanged = {All = {}},
 	Loaded = {},
+	---@type table<string, OnSheetStatChangedCallback|OnSheetAbilityChangedCallback|OnSheetTalentChangedCallback[]>
+	OnEntryChanged = {All = {}}
 }
 
 local self = SheetManager
@@ -46,12 +48,30 @@ function SheetManager:RegisterLoadedListener(callback)
 end
 
 ---@param id string|string[]|number|number[]
----@param callback OnSheetEntryValueChangedCallback
-function SheetManager:RegisterValueChangedListener(id, callback)
+---@param callback OnSheetStatChangedCallback
+function SheetManager:RegisterStatChangedListener(id, callback)
 	if StringHelpers.Equals(id, "All", true) then
 		id = "All"
 	end
-	self:RegisterListener(self.Listeners.OnValueChanged, callback, id)
+	self:RegisterListener(self.Listeners.OnEntryChanged, callback, id)
+end
+
+---@param id string|string[]|number|number[]
+---@param callback OnSheetAbilityChangedCallback
+function SheetManager:RegisterAbilityChangedListener(id, callback)
+	if StringHelpers.Equals(id, "All", true) then
+		id = "All"
+	end
+	self:RegisterListener(self.Listeners.OnEntryChanged, callback, id)
+end
+
+---@param id string|string[]|number|number[]
+---@param callback OnSheetTalentChangedCallback
+function SheetManager:RegisterTalentChangedListener(id, callback)
+	if StringHelpers.Equals(id, "All", true) then
+		id = "All"
+	end
+	self:RegisterListener(self.Listeners.OnEntryChanged, callback, id)
 end
 
 ---@type table<SHEET_ENTRY_ID,table<UUID|NETID, integer|boolean>>
@@ -148,4 +168,112 @@ if not isClient then
 else
 	Ext.RegisterListener("SessionLoaded", LoadData)
 	--Ext.Require("Shared/System/SheetManager/UI/_Init.lua")
+end
+
+---Gets custom sheet data from a string id.
+---@param id string
+---@param mod string|nil
+---@param statType string|nil Stat,PrimaryStat,SecondaryStat,Ability,Talent
+---@return SheetAbilityData|SheetStatData|SheetTalentData
+function SheetManager:GetStatByID(id, mod, statType)
+	local targetTable = nil
+	if statType then
+		if statType == "Stat" or statType == "PrimaryStat" or statType == "SecondaryStat" then
+			targetTable = self.Data.Stats
+		elseif statType == "Ability" then
+			targetTable = self.Data.Abilities
+		elseif statType == "Talent" then
+			targetTable = self.Data.Talents
+		end
+	end
+	if targetTable then
+		if mod then
+			return targetTable[mod][id]
+		else
+			for modId,tbl in pairs(targetTable) do
+				if tbl[id] then
+					return tbl[id]
+				end
+			end
+		end
+	end
+	return nil
+end
+
+---Gets custom sheet data from a generated id.
+---@param generatedId integer
+---@param statType string|nil PrimaryStat,SecondaryStat,Ability,Talent
+---@return SheetAbilityData|SheetStatData|SheetTalentData
+function SheetManager:GetStatByGeneratedID(generatedId, statType)
+	if statType then
+		if statType == "Stat" or statType == "PrimaryStat" or statType == "SecondaryStat" then
+			return self.Data.ID_MAP.Stats[generatedId]
+		elseif statType == "Ability" then
+			return self.Data.ID_MAP.Abilities[generatedId]
+		elseif statType == "Talent" then
+			return self.Data.ID_MAP.Talents[generatedId]
+		end
+	end
+	for t,tbl in pairs(self.Data.ID_MAP) do
+		for checkId,data in pairs(tbl) do
+			if checkId == generatedId then
+				return data
+			end
+		end
+	end
+	return nil
+end
+
+---@param stat SheetAbilityData|SheetStatData|SheetTalentData
+---@param characterId UUID|NETID
+---@param value integer|boolean
+---@param skipListenerInvoke boolean|nil If true, Listeners.OnEntryChanged invoking is skipped.
+---@param skipSync boolean|nil If on the client and this is true, the value change won't be sent to the server.
+function SheetManager:SetEntryValue(stat, characterId, value, skipListenerInvoke, skipSync)
+	local last = stat:GetValue(characterId)
+	if last ~= value then
+		if self.CurrentValues[stat.ID] == nil then
+			self.CurrentValues[stat.ID] = {}
+		end
+		self.CurrentValues[stat.ID][characterId] = value
+		if not skipListenerInvoke then
+			local character = Ext.GetGameObject(characterId)
+			for listener in self:GetListenerIterator(self.Listeners.OnEntryChanged[stat.ID], self.Listeners.OnEntryChanged.All) do
+				local b,err = xpcall(listener, debug.traceback, stat.ID, stat, character, last, value, isClient)
+				if not b then
+					fprint(LOGLEVEL.ERROR, "[LeaderLib.CustomStatSystem:OnStatPointAdded] Error calling OnAvailablePointsChanged listener for stat (%s):\n%s", stat.ID, err)
+				end
+			end
+		end
+		if isClient and not skipSync then
+			self:RequestValueChange(stat, characterId, value)
+		end
+	end
+end
+
+if isClient then
+	---Gets custom sheet data from a generated id.
+	---@param stat SheetAbilityData|SheetStatData|SheetTalentData
+	---@param character EsvCharacter|EclCharacter|string|number
+	---@param value integer|boolean
+	function SheetManager:RequestValueChange(stat, character, value)
+		local netid = GameHelpers.GetNetID(character)
+		Ext.PostMessageToServer("LeaderLib_SheetManager_RequestValueChange", Ext.JsonStringify({
+			ID = stat.ID,
+			Mod = stat.Mod,
+			NetID = netid,
+			Value = value,
+			StatType = stat.StatType
+		}))
+	end
+else
+	Ext.RegisterNetListener("LeaderLib_SheetManager_RequestValueChange", function(cmd, payload)
+		local data = Common.JsonParse(payload)
+		if data then
+			local stat = SheetManager:GetStatByID(data.ID, data.Mod, data.StatType)
+			if stat then
+				SheetManager:SetEntryValue(stat, Ext.GetCharacter(data.NetID), data.Value)
+			end
+		end
+	end)
 end

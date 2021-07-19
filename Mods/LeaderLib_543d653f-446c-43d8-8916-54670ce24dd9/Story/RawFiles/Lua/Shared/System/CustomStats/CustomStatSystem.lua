@@ -41,6 +41,7 @@ local self = CustomStatSystem
 
 local isClient = Ext.IsClient()
 
+---@type table<UUID|NETID, table<CUSTOMSTATID, integer>>
 CustomStatSystem.PointsPool = {}
 if not isClient then
 	local PointsPoolHandler = {
@@ -54,12 +55,25 @@ if not isClient then
 	setmetatable(CustomStatSystem.PointsPool, PointsPoolHandler)
 end
 
----@alias MOD_UUID string
----@alias STAT_ID string
+---@type table<UUID|NETID, table<MOD_UUID, table<CUSTOMSTATID, integer>>>
+CustomStatSystem.CharacterStatValues = {}
+if not isClient then
+	setmetatable(CustomStatSystem.CharacterStatValues, {
+		__index = function(tbl,k)
+			return PersistentVars.CustomStatValues[k]
+		end,
+		__newindex = function(tbl,k,v)
+			PersistentVars.CustomStatValues[k] = v
+		end
+	})
+end
 
----@type table<MOD_UUID, table<STAT_ID, CustomStatCategoryData>>
+---@alias MOD_UUID string
+---@alias CUSTOMSTATID string
+
+---@type table<MOD_UUID, table<CUSTOMSTATID, CustomStatCategoryData>>
 CustomStatSystem.Categories = {}
----@type table<MOD_UUID, table<STAT_ID, CustomStatData>>
+---@type table<MOD_UUID, table<CUSTOMSTATID, CustomStatData>>
 CustomStatSystem.Stats = {}
 CustomStatSystem.UnregisteredStats = {}
 
@@ -67,11 +81,18 @@ Ext.Require("Shared/System/CustomStats/Data/CustomStatBase.lua")
 Ext.Require("Shared/System/CustomStats/Data/CustomStatData.lua")
 Ext.Require("Shared/System/CustomStats/Data/CustomStatCategoryData.lua")
 
+Ext.Require("Shared/System/CustomStats/StoryModeWorkaround.lua")
 ---@type fun():table<string, table<string, CustomStatData>>
 local loader = Ext.Require("Shared/System/CustomStats/ConfigLoader.lua")
 Ext.Require("Shared/System/CustomStats/Getters.lua")
 Ext.Require("Shared/System/CustomStats/DataSync.lua")
 Ext.Require("Shared/System/CustomStats/PointsHandler.lua")
+
+---Returns true if actual custom stats can be used, which are currently disabled if not in GM mode.
+---This is due to the fact that custom stats may be added to every NPC, which can be an issue in story mode.
+function CustomStatSystem:GMStatsEnabled()
+	return SharedData.GameMode == GAMEMODE.GAMEMASTER
+end
 
 local function LoadCustomStatsData()
 	local categories,stats = loader()
@@ -86,7 +107,7 @@ local function LoadCustomStatsData()
 				if stat.DisplayName then
 					local existingData = Ext.GetCustomStatByName(stat.DisplayName)
 					if not existingData then
-						if stat.Create == true then
+						if stat.Create == true and CustomStatSystem:GMStatsEnabled() then
 							Ext.CreateCustomStat(stat.DisplayName, stat.Description)
 							fprint(LOGLEVEL.DEFAULT, "[LeaderLib:LoadCustomStatsData] Created a new custom stat for mod [%s]. ID(%s) DisplayName(%s) Description(%s)", modName, id, stat.DisplayName, stat.Description)
 							existingData = Ext.GetCustomStatByName(stat.DisplayName)

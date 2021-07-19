@@ -154,7 +154,7 @@ package
 			this.screenHeight = h;
 		}
 
-		public function removeControl(id:Number): Boolean
+		public function removeControl(id:Number) : Boolean
 		{
 			return mainPanel_mc.removeElementWithID(id);
 		}

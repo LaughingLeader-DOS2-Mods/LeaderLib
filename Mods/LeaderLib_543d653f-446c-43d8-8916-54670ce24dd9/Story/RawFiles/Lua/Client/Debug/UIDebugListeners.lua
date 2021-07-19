@@ -242,7 +242,7 @@ contextMenu.CustomCallback["updateButtons"] = function(self, ui, method)
 end
 
 local hotbar = UIListenerWrapper:Create(Data.UIType.hotBar)
-
+hotbar.Enabled = true
 --[[
 ---@param ui UIObject
 hotbar.CustomCallback["updateSlotData"] = function(self, ui, method)

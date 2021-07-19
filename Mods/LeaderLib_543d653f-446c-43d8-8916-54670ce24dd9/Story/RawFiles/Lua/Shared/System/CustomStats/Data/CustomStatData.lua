@@ -113,11 +113,11 @@ function CustomStatData:GetValue(character)
 		return 0
 	end
 	if type(character) == "userdata" then
-		return character:GetCustomStat(self.UUID) or 0
+		return CustomStatSystem:GetStatValueOnCharacter(character, self)
 	else
 		character = Ext.GetCharacter(character)
 		if character then
-			return character:GetCustomStat(self.UUID) or 0
+			return CustomStatSystem:GetStatValueOnCharacter(character, self)
 		end
 	end
 	return 0

@@ -789,7 +789,6 @@ function TalentManager.Update(ui, player)
 		end
 	end
 
-	local i = 0
 	for i=0,#talentOrder-1 do
 		local talentId = talentOrder[i+1]
 		local data = talents[talentId]

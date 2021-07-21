@@ -14,7 +14,15 @@ Ext.RegisterConsoleCommand("pos2", function()
 	fprint("Rotation:", Ext.JsonStringify(character.Rotation))
 end)
 
-Ext.RegisterConsoleCommand("printuuids", function(call, radiusVal, skipSelf)
+Ext.RegisterConsoleCommand("printuuids", function(call, radiusVal, skipSelfParam, charactersOnlyParam)
+	local skipSelf = false
+	local charactersOnly = false
+	if skipSelfParam == true or skipSelfParam == "true" then
+		skipSelf = true
+	end
+	if charactersOnlyParam == true or charactersOnlyParam == "true" then
+		charactersOnly = true
+	end
 	local radius = 6.0
 	if radiusVal ~= nil then
 		radius = tonumber(radiusVal)
@@ -41,6 +49,7 @@ Ext.RegisterConsoleCommand("printuuids", function(call, radiusVal, skipSelf)
 			print("NetID:", character.NetID)
 			print("Name:", character.DisplayName)
 			print("Stat:", characterStats.Name)
+			print("Faction:", character.RootTemplate.CombatTemplate.Alignment)
 			print("Archetype:", character.Archetype)
 			print("Pos:", table.unpack(characterStats.Position))
 			print("Rot:", table.unpack(characterStats.Rotation))
@@ -49,29 +58,31 @@ Ext.RegisterConsoleCommand("printuuids", function(call, radiusVal, skipSelf)
 			print("===============")
 		end
 	end
-	local items = nil
-	if radius < 0 then
-		items = Ext.GetAllItems()
-	else
-		items = {}
-		for _,v in pairs(Ext.GetAllItems()) do
-			if GetDistanceTo(v, host) <= radius then
-				items[#items+1] = v
+	if charactersOnly ~= true then
+		local items = nil
+		if radius < 0 then
+			items = Ext.GetAllItems()
+		else
+			items = {}
+			for _,v in pairs(Ext.GetAllItems()) do
+				if GetDistanceTo(v, host) <= radius then
+					items[#items+1] = v
+				end
 			end
 		end
-	end
-	for i,uuid in pairs(items) do
-		---@type EsvItem
-		local item = Ext.GetItem(uuid)
-		print("ITEM")
-		print("===============")
-		print("UUID:", uuid)
-		print("NetID:", item.NetID)
-		print("Name:", item.DisplayName)
-		print("StatsId:", item.StatsId)
-		print("Pos:", table.unpack(item.WorldPos))
-		print("Rot:", GetRotation(item.MyGuid))
-		print("===============")
+		for i,uuid in pairs(items) do
+			---@type EsvItem
+			local item = Ext.GetItem(uuid)
+			print("ITEM")
+			print("===============")
+			print("UUID:", uuid)
+			print("NetID:", item.NetID)
+			print("Name:", item.DisplayName)
+			print("StatsId:", item.StatsId)
+			print("Pos:", table.unpack(item.WorldPos))
+			print("Rot:", GetRotation(item.MyGuid))
+			print("===============")
+		end
 	end
 end)
 

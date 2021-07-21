@@ -239,9 +239,11 @@ end
 
 ---@private
 function CustomStatSystem:Enable()
-	Ext.AddPathOverride("Public/Game/GUI/characterSheet.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/Overrides/characterSheet.swf")
-	CustomStatSystem.Enabled = true
-	fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Enabled the CustomStatSystem.")
+	if not CustomStatSystem.Enabled then
+		Ext.AddPathOverride("Public/Game/GUI/characterSheet.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/Overrides/characterSheet.swf")
+		CustomStatSystem.Enabled = true
+		fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Enabled the CustomStatSystem.")
+	end
 end
 
 RegisterListener("FeatureEnabled", function(id)

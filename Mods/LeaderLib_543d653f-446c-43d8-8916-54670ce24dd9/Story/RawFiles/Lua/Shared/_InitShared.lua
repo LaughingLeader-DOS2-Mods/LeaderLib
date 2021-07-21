@@ -176,6 +176,7 @@ Features = {
 	WingsWorkaround = false,
 	FixRifleWeaponRequirement = false,
 	FixFarOutManSkillRangeTooltip = false,
+	CustomStatsSystem = false
 }
 
 local ignoreImports = {

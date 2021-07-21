@@ -93,6 +93,10 @@ function CustomStatSystem.SortStats(a,b)
 end
 
 local function OnSheetUpdating(ui, method)
+	if not CustomStatSystem.Enabled then
+		return
+	end
+	
 	local this = ui:GetRoot()
 	CustomStatSystem:SetupGroups(ui, method)
 
@@ -259,7 +263,7 @@ function CustomStatSystem:OnGroupClicked(ui, call, arrayIndex, groupId, isOpen, 
 end
 
 Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem", OnSheetUpdating)
-Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "clearStats", function(...) CustomStatSystem:SetupGroups(...) end)
+Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "clearStats", function(...) if CustomStatSystem.Enabled then CustomStatSystem:SetupGroups(...) end end)
 Ext.RegisterUITypeCall(Data.UIType.characterSheet, "customStatsGroupAdded", function(...) CustomStatSystem:OnGroupAdded(...) end)
 Ext.RegisterUITypeCall(Data.UIType.characterSheet, "characterSheetUpdateDone", function(...) CustomStatSystem:OnUpdateDone(...) end, "After")
 Ext.RegisterUITypeCall(Data.UIType.characterSheet, "customStatAdded", function(...) CustomStatSystem:OnStatAdded(...) end, "After")

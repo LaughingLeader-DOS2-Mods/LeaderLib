@@ -55,13 +55,6 @@ if not isClient then
 	setmetatable(CustomStatSystem.PointsPool, PointsPoolHandler)
 end
 
-RegisterListener("FeatureEnabled", function(id)
-	if id == "CustomStatsSystem" then
-		Ext.AddPathOverride("Public/Game/GUI/characterSheet.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/Overrides/characterSheet.swf")
-		CustomStatSystem.Enabled = true
-	end
-end)
-
 ---@alias MOD_UUID string
 ---@alias STAT_ID string
 
@@ -224,6 +217,21 @@ else
 	Ext.Require("Shared/System/CustomStats/UISetup.lua")
 end
 
+---@private
+function CustomStatSystem:Enable()
+	if not CustomStatSystem.Enabled then
+		Ext.AddPathOverride("Public/Game/GUI/characterSheet.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/Overrides/characterSheet.swf")
+		CustomStatSystem.Enabled = true
+		fprint(LOGLEVEL.DEFAULT, "[LeaderLib] Enabled the CustomStatSystem.")
+	end
+end
+
+RegisterListener("FeatureEnabled", function(id)
+	if id == "CustomStatsSystem" then
+		CustomStatSystem:Enable()
+	end
+end)
+
 local function TryFindOsiToolsConfig(info)
 	--local filePath = string.format("Mods/%s/ModSettingsConfig.json", info.Directory)
 	local filePath = string.format("Mods/%s/OsiToolsConfig.json", info.Directory)
@@ -232,7 +240,10 @@ local function TryFindOsiToolsConfig(info)
 end
 
 --Enable the CustomStatsSystem if a mod has the CustomStats flag.
-Ext.RegisterListener("StatsLoaded", function()
+Ext.RegisterListener("SessionLoading", function()
+	if CustomStatSystem.Enabled then
+		return
+	end
 	local order = Ext.GetModLoadOrder()
 	for i=1,#order do
 		local uuid = order[i]
@@ -245,7 +256,7 @@ Ext.RegisterListener("StatsLoaded", function()
 				elseif result ~= nil then
 					if result.FeatureFlags 
 					and (Common.TableHasValue(result.FeatureFlags, "CustomStats") or Common.TableHasValue(result.FeatureFlags, "CustomStatsPane")) then
-						EnableFeature("CustomStatsSystem")
+						CustomStatSystem:Enable()
 						return
 					end
 				end

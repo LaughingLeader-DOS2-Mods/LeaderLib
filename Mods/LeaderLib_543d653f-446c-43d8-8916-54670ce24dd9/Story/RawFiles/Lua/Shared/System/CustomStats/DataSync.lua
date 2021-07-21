@@ -56,6 +56,9 @@ if not isClient then
 
 	---@private
 	function CustomStatSystem:SyncData(user)
+		if not self.Enabled then
+			return
+		end
 		local availablePoints = {}
 		for uuid,data in pairs(PersistentVars.CustomStatAvailablePoints) do
 			local character = Ext.GetCharacter(uuid)

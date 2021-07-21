@@ -96,4 +96,4 @@ end
 
 Input.RegisterMouseListener(UIExtensions.MouseEvent.Moved, DialogEx.OnMouseMoved)
 
-Ext.AddPathOverride("Public/Game/GUI/dialog.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/dialog.swf")
+--Ext.AddPathOverride("Public/Game/GUI/dialog.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/Overrides/dialog.swf")

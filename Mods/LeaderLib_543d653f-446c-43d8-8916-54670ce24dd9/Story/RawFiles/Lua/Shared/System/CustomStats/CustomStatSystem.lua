@@ -236,7 +236,10 @@ local function TryFindOsiToolsConfig(info)
 	--local filePath = string.format("Mods/%s/ModSettingsConfig.json", info.Directory)
 	local filePath = string.format("Mods/%s/OsiToolsConfig.json", info.Directory)
 	local file = Ext.LoadFile(filePath, "data")
-	return Common.JsonParse(file)
+	if file then
+		return Common.JsonParse(file)
+	end
+	return nil
 end
 
 --Enable the CustomStatsSystem if a mod has the CustomStats flag.

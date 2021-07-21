@@ -53,10 +53,27 @@ function GameHelpers.ApplyBonusWeaponStatuses(source, target)
 	end
 end
 
+---@return EsvCharacter|EsvItem
+local function TryGetObject(data, property)
+	local b,result = xpcall(function()
+		local b2,result2 = xpcall(Ext.GetGameObject, debug.traceback, data[property])
+		if b2 then
+			return result2
+		else
+			fprint(LOGLEVEL.ERROR, "[LeaderLib] Error calling Ext.GetGameObject:\n%s", result2)
+		end
+	end, debug.traceback)
+	if b then
+		return result
+	else
+		fprint(LOGLEVEL.ERROR, "[LeaderLib] Error calling Ext.GetGameObject:\n%s", result)
+	end
+end
+
 ---@param hitStatus EsvStatusHit
 ---@param context HitContext
 RegisterProtectedExtenderListener("StatusHitEnter", function(hitStatus, hitContext)
-	local target,source = Ext.GetGameObject(hitStatus.TargetHandle),Ext.GetGameObject(hitStatus.StatusSourceHandle)
+	local target,source = TryGetObject(hitStatus, "TargetHandle"),TryGetObject(hitStatus, "StatusSourceHandle")
 
 	if not target then
 		return

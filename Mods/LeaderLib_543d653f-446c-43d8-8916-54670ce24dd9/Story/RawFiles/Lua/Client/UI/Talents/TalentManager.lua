@@ -761,18 +761,19 @@ end
 ---@param ui UIObject
 ---@param player EclCharacter
 function TalentManager.Update(ui, player)
-	if Vars.ControllerEnabled then
+	local main = ui:GetRoot()
+	if Vars.ControllerEnabled or not main.clearArray then
 		Update_Old(ui, player)
 		return
 	end
-	local main = ui:GetRoot()
 	local lvlBtnTalent_array = main.lvlBtnTalent_array
 	local talent_array = main.talent_array
 
-	main.clearArray("talent_array")
-	main.clearArray("lvlBtnTalent_array")
+	ui:Invoke("clearArray", "talent_array")
+	ui:Invoke("clearArray", "lvlBtnTalent_array")
 
 	local talents = {}
+	local talentOrder = {}
 
 	for numId,talentId in Data.Talents:Get() do
 		if talents[talentId] == nil and CanAddTalent(talentId, player.Stats, talentStatAttributes[talentId]) then
@@ -784,11 +785,13 @@ function TalentManager.Update(ui, player)
 				State = talentState,
 				ID = Data.TalentEnum[talentId]
 			}
+			talentOrder[#talentOrder+1] = talentId
 		end
 	end
 
 	local i = 0
-	for id,talentId in Data.Talents:Get() do
+	for i=0,#talentOrder-1 do
+		local talentId = talentOrder[i+1]
 		local data = talents[talentId]
 		if data then
 			talent_array[i] = data.Label

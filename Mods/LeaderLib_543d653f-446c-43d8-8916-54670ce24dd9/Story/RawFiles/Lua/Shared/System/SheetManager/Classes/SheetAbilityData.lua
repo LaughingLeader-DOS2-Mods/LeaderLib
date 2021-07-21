@@ -13,6 +13,8 @@ local SheetAbilityData = {
 	IsCivil = false,
 }
 
+Classes.SheetAbilityData = SheetAbilityData
+
 SheetAbilityData.__index = function(t,k)
 	local v = Classes.SheetAbilityData[k] or Classes.SheetBaseData[k]
 	if v then
@@ -77,5 +79,3 @@ function SheetAbilityData:ModifyValue(character, amount)
 	end
 	return false
 end
-
-Classes.SheetAbilityData = SheetAbilityData

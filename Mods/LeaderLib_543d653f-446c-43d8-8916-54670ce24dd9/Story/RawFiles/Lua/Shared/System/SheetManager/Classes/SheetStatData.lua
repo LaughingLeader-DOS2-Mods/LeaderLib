@@ -60,7 +60,7 @@ end
 
 ---@param character EsvCharacter|EclCharacter|string|number
 ---@param amount integer
-function SheetAbilityData:ModifyValue(character, amount)
+function SheetStatData:ModifyValue(character, amount)
 	local nextValue = self:GetValue(character) + amount
 	if not isClient then
 		return SheetManager:SetEntryValue(character, self, nextValue)

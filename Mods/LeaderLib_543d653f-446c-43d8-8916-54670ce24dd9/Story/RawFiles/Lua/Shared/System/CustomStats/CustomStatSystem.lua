@@ -4,6 +4,7 @@ if CustomStatSystem == nil then
 end
 
 CustomStatSystem.__index = CustomStatSystem
+CustomStatSystem.Enabled = false
 CustomStatSystem.Loaded = false
 CustomStatSystem.MISC_CATEGORY = 99999
 
@@ -235,3 +236,48 @@ if not isClient then
 else
 	Ext.Require("Shared/System/CustomStats/UISetup.lua")
 end
+
+---@private
+function CustomStatSystem:Enable()
+	Ext.AddPathOverride("Public/Game/GUI/characterSheet.swf", "Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/Overrides/characterSheet.swf")
+	CustomStatSystem.Enabled = true
+end
+
+RegisterListener("FeatureEnabled", function(id)
+	if id == "CustomStatsSystem" then
+		CustomStatSystem:Enable()
+	end
+end)
+
+local function TryFindOsiToolsConfig(info)
+	--local filePath = string.format("Mods/%s/ModSettingsConfig.json", info.Directory)
+	local filePath = string.format("Mods/%s/OsiToolsConfig.json", info.Directory)
+	local file = Ext.LoadFile(filePath, "data")
+	return Common.JsonParse(file)
+end
+
+--Enable the CustomStatsSystem if a mod has the CustomStats flag.
+Ext.RegisterListener("SessionLoading", function()
+	if CustomStatSystem.Enabled then
+		return
+	end
+	local order = Ext.GetModLoadOrder()
+	for i=1,#order do
+		local uuid = order[i]
+		if IgnoredMods[uuid] ~= true then
+			local info = Ext.GetModInfo(uuid)
+			if info ~= nil then
+				local b,result = xpcall(TryFindOsiToolsConfig, debug.traceback, info)
+				if not b then
+					Ext.PrintError(result)
+				elseif result ~= nil then
+					if result.FeatureFlags 
+					and (Common.TableHasValue(result.FeatureFlags, "CustomStats") or Common.TableHasValue(result.FeatureFlags, "CustomStatsPane")) then
+						CustomStatSystem:Enable()
+						return
+					end
+				end
+			end
+		end
+	end
+end)

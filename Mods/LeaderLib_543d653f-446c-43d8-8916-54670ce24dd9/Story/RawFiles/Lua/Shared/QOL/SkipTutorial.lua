@@ -4,7 +4,8 @@ SkipTutorial = {
 		LV_HoE_Main = 2,
 		RC_Main = 3,
 		CoS_Main = 4,
-		Arx_Main = 5
+		ARX_Main = 5,
+		ARX_Endgame = 6
 	},
 	CheckBoxPos = {
 		0,
@@ -108,9 +109,11 @@ if Ext.IsServer() then
 						local targetLevel = settings.StartingCharacterLevel[region] or 1
 						if targetLevel > 1 and CharacterGetLevel(uuid) < targetLevel then
 							fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SkipTutorial] Leveling up player (%s) to (%s).", uuid, targetLevel)
-							GameHelpers.Character.SetLevel(uuid, targetLevel)
+							--GameHelpers.Character.SetLevel(uuid, targetLevel)
+							CharacterLevelUpTo(uuid, targetLevel)
 						end
 					end
+					
 					-- Past Fort Joy, apply the _Act2 presets.
 					if regionLevel > 1 then
 						fprint(LOGLEVEL.DEFAULT, "[LeaderLib:SkipTutorial] Adding Bless to player (%s).", uuid)
@@ -147,6 +150,7 @@ if Ext.IsServer() then
 			end
 		end
 	
+		--TODO Make StartTrigger another GameSettings configuration value.
 		local LevelSettings = {
 			TUT_Tutorial_A = {
 				StartTrigger = "fe2995bf-aa16-8ce7-33a2-8cb8cf228152",
@@ -234,11 +238,49 @@ if Ext.IsServer() then
 
 					--RegisterListener("ProcObjectTimerFinished", "FTJ_GameStart_FadeIn", skipTutorialWakeup)
 				end
-			}
+			},
+			LV_HoE_Main = {
+				StartTrigger = "ce65a666-74e4-4903-bbcf-200251975965",
+				Setup = function(settings)
+
+				end
+			},
+			RC_Main = {
+				StartTrigger = "e30fe0c4-9b40-4040-9670-e8edd53a34ce",
+				Setup = function(settings)
+
+				end
+			},
+			CoS_Main = {
+				StartTrigger = "8c00afb8-43af-4de7-953a-a7456f996a4c",
+				Setup = function(settings)
+
+				end
+			},
+			ARX_Main = {
+				StartTrigger = "fb573f96-d837-0033-4143-3bf31d88ae49",
+				Setup = function(settings)
+
+				end
+			},
+			ARX_Endgame = {
+				StartTrigger = "bd166e2a-7623-490e-94df-78079e7cbacc",
+				Setup = function(settings)
+
+				end
+			},
 		}
 	
 		local function IsValidLevel(region)
-			return region and SkipTutorial.Regions[region] ~= nil
+			if not region or not SkipTutorial.Regions[region] then
+				fprint(LOGLEVEL.ERROR, "[LeaderLib:SkipTutorial] region(%s) is not a valid value.", tostring(region))
+				return false
+			end
+			if not LevelSettings[region] or not LevelSettings[region].StartTrigger then
+				fprint(LOGLEVEL.WARNING, "[LeaderLib:SkipTutorial] No valid global StartTrigger for region (%s).", tostring(region))
+				return false
+			end
+			return true
 		end
 	
 		local function EnableSkipTutorial(targetRegion)
@@ -252,9 +294,12 @@ if Ext.IsServer() then
 			-- NOT DB_CharacterCreationTransitionInfo("FJ_FortJoy_Main",(TRIGGERGUID)TRIGGERGUID_StartPoint_001_34d67d87-441c-427d-97bb-4cc506b42fe0,"CS_Drowning");
 			-- NOT DB_CharacterCreationTransitionInfo("TUT_Tutorial_A",(TRIGGERGUID)TRIGGERGUID_StartPoint_000__000_fe2995bf-aa16-8ce7-33a2-8cb8cf228152,"CS_Intro");
 			
-			Osi.DB_GLO_FirstLevelAfterCharacterCreation:Delete("TUT_Tutorial_A")
-			Osi.DB_CharacterCreationTransitionInfo:Delete("FJ_FortJoy_Main",nil,"CS_Drowning")
-			Osi.DB_CharacterCreationTransitionInfo:Delete("TUT_Tutorial_A",nil,"CS_Intro")
+			-- Osi.DB_GLO_FirstLevelAfterCharacterCreation:Delete("TUT_Tutorial_A")
+			-- Osi.DB_CharacterCreationTransitionInfo:Delete("FJ_FortJoy_Main",nil,"CS_Drowning")
+			-- Osi.DB_CharacterCreationTransitionInfo:Delete("TUT_Tutorial_A",nil,"CS_Intro")
+			Osi.DB_GLO_FirstLevelAfterCharacterCreation:Delete(nil)
+			Osi.DB_CharacterCreationTransitionInfo:Delete(nil,nil,nil)
+			Osi.DB_CharacterCreationTransitionInfo:Delete(nil,nil,nil)
 	
 			local data = LevelSettings[region]
 			Osi.DB_GLO_FirstLevelAfterCharacterCreation(region)

@@ -142,8 +142,8 @@ local function OverrideForce(syncMode, skills)
 						props[i] = {
 							Type = "Extender",
 							Action = "SafeForce",
-							Arg1 = dist,
-							Arg2 =  6.0,
+							Arg1 = 1.0,
+							Arg2 =  Ext.Round(dist * 6),
 							Arg3 =  "",
 							Arg4 =  -1,
 							Arg5 =  -1,

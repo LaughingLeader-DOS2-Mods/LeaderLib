@@ -84,6 +84,7 @@ function GameHelpers.Grid.GetValidPositionInRadius(startPos, maxRadius, pointsIn
 	return table.unpack(startPos)
 end
 
+---@private
 ---@param target string
 function GameHelpers.Internal.OnForceMoveTimer(timerName, target)
 	if target ~= nil then
@@ -102,6 +103,7 @@ end
 
 Timer.RegisterListener("Timers_LeaderLib_OnForceMoveAction", GameHelpers.Internal.OnForceMoveTimer)
 
+---@private
 function GameHelpers.CanForceMove(target, source)
 	local t = type(target)
 	if t == "string" then
@@ -122,8 +124,8 @@ function GameHelpers.CanForceMove(target, source)
 	return true
 end
 
----@param source EsvCharacter
----@param target EsvGameObject
+---@param source EsvCharacter|EsvItem
+---@param target EsvCharacter|EsvItem
 ---@param distanceMultiplier number|nil
 ---@return number,number|nil
 function GameHelpers.ForceMoveObject(source, target, distanceMultiplier)
@@ -132,10 +134,9 @@ function GameHelpers.ForceMoveObject(source, target, distanceMultiplier)
 		NRD_GameActionDestroy(existingData.Handle)
 		PersistentVars.ForceMoveData[target.MyGuid] = nil
 	end
-	local startPos = GameHelpers.Math.GetForwardPosition(source.MyGuid, distanceMultiplier)
-	--local forwardVector = {-source.Stats.Rotation[7], 0, -source.Stats.Rotation[9]}
-	local forwardVector = GameHelpers.Math.GetDirectionVector(target.WorldPos, source.WorldPos)
-	local tx,ty,tz = GameHelpers.Grid.GetValidPositionAlongLine(startPos, forwardVector, distanceMultiplier)
+	--local startPos = GameHelpers.Math.GetForwardPosition(source.MyGuid, distanceMultiplier)
+	local directionVector = GameHelpers.Math.GetDirectionVector(target.WorldPos, source.WorldPos)
+	local tx,ty,tz = GameHelpers.Grid.GetValidPositionAlongLine(source.WorldPos, directionVector, distanceMultiplier)
 	if tx and tz then
 		local handle = NRD_CreateGameObjectMove(target.MyGuid, tx, ty, tz, "", source.MyGuid)
 		if handle then

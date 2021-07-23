@@ -193,20 +193,6 @@ function GameHelpers.Math.GetDirectionVector(pos1, pos2, reverse)
     else
         return {-a.x,-a.y,-a.z}
     end
-    
-    -- if not reverse then
-    --     return {
-    --         x - x2,
-    --         y - y2,
-    --         z - z2
-    --     }
-    -- else
-    --     return {
-    --         -(x - x2),
-    --         -(y - y2),
-    --         -(z - z2),
-    --     }
-    -- end
 end
 
 function GameHelpers.Math.Round(num, numPlaces)

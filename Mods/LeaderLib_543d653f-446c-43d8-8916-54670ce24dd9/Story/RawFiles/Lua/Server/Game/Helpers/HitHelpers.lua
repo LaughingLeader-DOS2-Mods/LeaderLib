@@ -194,6 +194,9 @@ local hitFlag = Game.Math.HitFlag
 ---@param hit HitRequest
 ---@return boolean
 function GameHelpers.Hit.Succeeded(hit)
+    if getmetatable(hit) == "esv::HStatus" then
+        hit = hit.Hit
+    end
     if (hit.EffectFlags & hitFlag.Dodged) ~= 0 then
         return false
     end

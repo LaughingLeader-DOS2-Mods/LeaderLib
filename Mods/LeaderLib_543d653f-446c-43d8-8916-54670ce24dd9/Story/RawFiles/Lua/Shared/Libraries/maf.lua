@@ -188,10 +188,10 @@ function Vector3:Rotate(q, out)
 	out = out or self
 	local u, c, o = vtmp1, vtmp2, out
 	u.x, u.y, u.z = q.x, q.y, q.z
-	o.x, o.y, o.z = self.x, self.y, self.z
+	o.x, o.y, o.z = out.x, out.y, out.z
 	u:Cross(c)
 	local uu = u:Dot(u)
-	local uv = u:Dot(v)
+	local uv = u:Dot(out)
 	o:Scale(q.w * q.w - uu)
 	u:Scale(2 * uv)
 	c:Scale(2 * q.w)

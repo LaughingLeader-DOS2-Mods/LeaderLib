@@ -62,7 +62,9 @@ function RegisterStatusListener(event, status, callback)
             end
             table.insert(statusEventHolder[status], callback)
         end
-    end
+    else
+		error(string.format("%s is not a valid status event!", event), 2)
+	end
 end
 
 ---@param event StatusEventID
@@ -259,12 +261,14 @@ end
 local function ClearStatusSource(target, status, source)
 	if PersistentVars.StatusSource[status] ~= nil then
 		local canRemove = true
-		if HasActiveStatus(target, status) == 1 then
-			local handle = NRD_StatusGetHandle(target, status)
-			if handle ~= nil then
-				local otherSource = NRD_StatusGetGuidString(char, handle, "StatusSourceHandle")
-				if otherSource ~= source then
-					canRemove = true
+		---@type EsvCharacter|EsvItem
+		local obj = Ext.GetGameObject(target)
+		if obj then
+			local activeStatus = obj:GetStatus(status)
+			if activeStatus and activeStatus.StatusSourceHandle then
+				local otherSource = Ext.GetGameObject(activeStatus.StatusSourceHandle)
+				if otherSource and otherSource.MyGuid == source then
+					canRemove = false
 				end
 			end
 		end
@@ -321,9 +325,9 @@ local function OnStatusApplied(target,status,source)
 	if Vars.LeaveActionData.Total > 0 then
 		local skill = Vars.LeaveActionData.Statuses[status]
 		if skill then
-			local turns = GetStatusTurns(target, status)
-			if not turns or turns == 0 then
-				GameHelpers.ExplodeProjectile(source, target, skill)
+			local turns = GetStatusTurns(target, status) or 0
+			if turns == 0 then
+				GameHelpers.Skill.Explode(target, skill, source)
 			elseif not StringHelpers.IsNullOrEmpty(source) then
 				TrackStatusSource(target, status, source)
 			end
@@ -338,19 +342,20 @@ end
 
 local function OnStatusRemoved(target,status)
 	local statusType = GameHelpers.Status.GetStatusType(status)
-	--PrintDebug("OnStatusRemoved", target,status)
 	local source = nil
 	if Vars.LeaveActionData.Total > 0 then
 		source = GetStatusSource(target, status)
-		local skill = Vars.LeaveActionData.Statuses[status]
-		if skill then
-			GameHelpers.Skill.Explode(target, skill, source)
-		end
 		if source then
-			ClearStatusSource(target, status)
+			local skill = Vars.LeaveActionData.Statuses[status]
+			if skill then
+				GameHelpers.Skill.Explode(target, skill, source)
+			end
 		end
 	end
-	source = source or StringHelpers.NULL_UUID
+	ClearStatusSource(target, status)
+	if not source then
+		source = StringHelpers.NULL_UUID
+	end
 	InvokeStatusListeners(Vars.StatusEvent.Removed, status, statusType, target, status, source, statusType)
 end
 

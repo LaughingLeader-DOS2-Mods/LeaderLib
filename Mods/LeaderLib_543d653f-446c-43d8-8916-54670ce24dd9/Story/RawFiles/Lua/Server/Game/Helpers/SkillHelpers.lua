@@ -283,6 +283,11 @@ local function PrepareProjectileProps(target, skill, source, level, enemiesOnly,
                 props.HitObject = targetObject.MyGuid
                 props.HitObjectPosition = targetObject.WorldPos
                 props.Target = targetObject.MyGuid
+                if ObjectIsCharacter(targetObject.MyGuid) == 1 then
+                    sourceLevel = CharacterGetLevel(targetObject.MyGuid)
+                end
+                props.Caster = targetObject.MyGuid
+                props.Source = targetObject.MyGuid
             end
             targetPos = targetObject.WorldPos
         end
@@ -314,6 +319,8 @@ local function PrepareProjectileProps(target, skill, source, level, enemiesOnly,
             end
             props.SourcePosition = sourceObject.WorldPos
         end
+    else
+        props.SourcePosition = target
     end
 
     if targetObject and sourceObject and enemiesOnly == true then
@@ -333,29 +340,59 @@ local function PrepareProjectileProps(target, skill, source, level, enemiesOnly,
     end
     --tx,ty,tz = GameHelpers.Grid.GetValidPositionInRadius({tx,ty,tz}, radius)
 
-    local fallbackTarget = targetPos
     props.SkillId = skill.Name
     props.CanDeflect = skill.ProjectileType == "Arrow" and 1 or 0
     if not StringHelpers.IsNullOrEmpty(skill.CleanseStatuses) then
         props.CleanseStatuses = skill.CleanseStatuses
     end
     props.CasterLevel = sourceLevel
-    props.SourcePosition = sourcePos
-    props.TargetPosition = fallbackTarget
+    props.SourcePosition = sourcePos or {0,0,0}
+    props.TargetPosition = targetPos or {0,0,0}
     props.IsFromItem = isFromItem and 1 or 0
     props.IgnoreObjects = 0
     props.AlwaysDamage = skill["Damage Multiplier"] > 0 and 1 or 0
 
+    --Failsafes to prevent crashes from not having a source/caster
+    if not props.Caster then
+        --Target Dummy
+        props.Caster = "36069245-0e2d-44b1-9044-6797bd29bb15"
+    end
+    if not props.Source then
+        props.Source = "36069245-0e2d-44b1-9044-6797bd29bb15"
+    end
+
     if extraParams and type(extraParams) == "table" then
         for k,v in pairs(extraParams) do
-            props[k] = v
+            if v ~= nil then
+                props[k] = v
+            end
         end
     end
 
     return props,radius
 end
 
+--[[
+ProcessProjectileProps  {
+  AlwaysDamage = 1,
+  CanDeflect = 0,
+  CasterLevel = 1,
+  HitObject = "e446752a-13cc-4a88-a32e-5df244c90d8b",
+  HitObjectPosition = { 186.28746032715, -17.0, 359.96667480469 },
+  IgnoreObjects = 0,
+  IsFromItem = 0,
+  SkillId = "Projectile_LLWEAPONEX_Greatbow_LightningStrike",
+  SourcePosition = <1>{ 186.28746032715, -17.0, 359.96667480469 },
+  Target = "e446752a-13cc-4a88-a32e-5df244c90d8b",
+  TargetPosition = <table 1>
+}
+]]
+
+---@param props EsvShootProjectileRequest
 local function ProcessProjectileProps(props)
+    if not props.SourcePosition or not props.TargetPosition or not props.Source then
+        error(string.format("[LeaderLib:ProcessProjectileProps] Invalid projectile properties. Skipping launch to avoid crashing!\n%s", Lib.inspect(props)), 2)
+    end
     NRD_ProjectilePrepareLaunch()
     for k,v in pairs(props) do
         local t = type(v)

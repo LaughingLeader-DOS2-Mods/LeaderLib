@@ -164,7 +164,30 @@ function GameHelpers.Math.GetDistance(pos1, pos2)
     return math.sqrt((diff[1]^2) + (diff[2]^2) + (diff[3]^2))
 end
 
+---Get the directional vector between two Vector3 points.
+---@param obj1 EsvCharacter|EsvItem
+---@param obj2 EsvCharacter|EsvItem
+---@return number[]
+function GameHelpers.Math.GetDirectionalVectorBetweenObjects(obj1, obj2, reverse)
+    local vec = Classes.Vector3
+    local a = vec(table.unpack(obj1.WorldPos))
+    local b = vec(table.unpack(obj2.WorldPos))
+    a:Sub(b)
+    
+    if getmetatable(obj2) == "esv::Character" then
+        local quat = Classes.Quaternion
+        ---@type Quaternion
+        local angle = quat(obj2.Stats.Rotation[7], 0, obj2.Stats.Rotation[9])
+        a:Rotate(angle)
+    end
 
+    a:Normalize()
+    if not reverse then
+        return {a:Unpack()}
+    else
+        return {-a.x,-a.y,-a.z}
+    end
+end
 
 ---Get the directional vector between two Vector3 points.
 ---@param pos1 number[]|string

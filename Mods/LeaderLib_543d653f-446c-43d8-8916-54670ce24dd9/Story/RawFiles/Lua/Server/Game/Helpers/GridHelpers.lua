@@ -135,8 +135,8 @@ function GameHelpers.ForceMoveObject(source, target, distanceMultiplier)
 		PersistentVars.ForceMoveData[target.MyGuid] = nil
 	end
 	--local startPos = GameHelpers.Math.GetForwardPosition(source.MyGuid, distanceMultiplier)
-	local directionVector = GameHelpers.Math.GetDirectionVector(target.WorldPos, source.WorldPos)
-	local tx,ty,tz = GameHelpers.Grid.GetValidPositionAlongLine(source.WorldPos, directionVector, distanceMultiplier)
+	local directionalVector = GameHelpers.Math.GetDirectionalVectorBetweenObjects(target, source)
+	local tx,ty,tz = GameHelpers.Grid.GetValidPositionAlongLine(source.WorldPos, directionalVector, distanceMultiplier)
 	if tx and tz then
 		local handle = NRD_CreateGameObjectMove(target.MyGuid, tx, ty, tz, "", source.MyGuid)
 		if handle then

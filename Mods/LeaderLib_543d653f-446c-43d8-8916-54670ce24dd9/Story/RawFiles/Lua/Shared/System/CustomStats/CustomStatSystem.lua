@@ -204,6 +204,9 @@ end
 if not isClient then
 	local canFix = Ext.GetCustomStatByName ~= nil
 	Ext.RegisterNetListener("LeaderLib_CheckCustomStatCallback", function(cmd, payload)
+		if not payload then
+			return
+		end
 		local data = Common.JsonParse(payload)
 		if data then
 			local statDouble = data.Stat
@@ -256,7 +259,9 @@ local function TryFindOsiToolsConfig(info)
 	--local filePath = string.format("Mods/%s/ModSettingsConfig.json", info.Directory)
 	local filePath = string.format("Mods/%s/OsiToolsConfig.json", info.Directory)
 	local file = Ext.LoadFile(filePath, "data")
-	return Common.JsonParse(file)
+	if file then
+		return Common.JsonParse(file)
+	end
 end
 
 --Enable the CustomStatsSystem if a mod has the CustomStats flag.

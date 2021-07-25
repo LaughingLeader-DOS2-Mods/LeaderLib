@@ -175,9 +175,8 @@ function GameHelpers.Math.GetDirectionalVectorBetweenObjects(obj1, obj2, reverse
     a:Sub(b)
     
     if getmetatable(obj2) == "esv::Character" then
-        local quat = Classes.Quaternion
         ---@type Quaternion
-        local angle = quat(obj2.Stats.Rotation[7], 0, obj2.Stats.Rotation[9])
+        local angle = Classes.Quaternion(obj2.Stats.Rotation[7], obj2.Stats.Rotation[8], obj2.Stats.Rotation[9], 1)
         a:Rotate(angle)
     end
 

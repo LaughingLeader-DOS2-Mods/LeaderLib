@@ -200,7 +200,7 @@ end
 
 Quaternion = {
 	__call = function(_, x, y, z, w)
-		return setmetatable({ x = x, y = y, z = z, w = w }, Quaternion)
+		return setmetatable({ x = x or 0.0, y = y or 0.0, z = z or 0.0, w = w or 1.0 }, Quaternion)
 	end,
 
 	__tostring = function(q)

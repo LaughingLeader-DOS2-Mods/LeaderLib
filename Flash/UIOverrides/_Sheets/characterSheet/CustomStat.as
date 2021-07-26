@@ -27,6 +27,23 @@ package
 		public var am:Number; // The stat's value
 		public var id:int; // index in the group list
 		public var statIndex:int; // Index in stats_array
+		public var isCustom:Boolean = false; // Used to avoid calling the base Larian calls for add/remove/edit/delete
+
+		public function MakeCustom(id:Number, b:Boolean=true) : *
+		{
+			this.statID = id;
+			this.isCustom = b;
+			if(b)
+			{
+				this.minus_mc.callbackStr = "minusCustomStatCustom";
+				this.plus_mc.callbackStr = "plusCustomStatCustom";
+			}
+			else
+			{
+				this.minus_mc.callbackStr = "minusCustomStat";
+				this.plus_mc.callbackStr = "plusCustomStat";
+			}
+		}
 		
 		public function CustomStat()
 		{
@@ -65,12 +82,16 @@ package
 		
 		public function onEditBtnClicked() : *
 		{
-			ExternalInterface.call("editCustomStat", this.statID);
+			if(!this.isCustom) {
+				ExternalInterface.call("editCustomStat", this.statID);
+			}
 		}
 		
 		public function onDeleteBtnClicked() : *
 		{
-			ExternalInterface.call("removeCustomStat", this.statID);
+			if(!this.isCustom) {
+				ExternalInterface.call("removeCustomStat", this.statID);
+			}
 		}
 		
 		public function frame1() : *

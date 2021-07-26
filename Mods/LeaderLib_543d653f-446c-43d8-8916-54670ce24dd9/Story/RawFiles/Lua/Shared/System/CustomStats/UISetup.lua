@@ -135,52 +135,66 @@ local function OnSheetUpdating(ui, method)
 		end
 	end
 
-	local length = #this.customStats_array
-	if length == 0 then
-		return
-	end
-
-	local sortList = {}
-	for i=0,length-1,3 do
-		local doubleHandle = this.customStats_array[i]
-		local displayName = this.customStats_array[i+1]
-		local value = this.customStats_array[i+2]
-		local groupId = self.MISC_CATEGORY
-		local hideStat = false
-
-		if doubleHandle then
-			local stat = CustomStatSystem:GetStatByName(displayName)
-			if stat then
-				stat.Double = doubleHandle
-				this.customStats_array[i+1] = stat:GetDisplayName()
-				groupId = CustomStatSystem:GetCategoryGroupId(stat.Category, stat.Mod)
-				local isVisible = CustomStatSystem:GetStatVisibility(ui, doubleHandle, stat, client)
-				if isVisible == false then
-					hideStat = true
+	
+	if SharedData.GameMode == GAMEMODE.GAMEMASTER then
+		local length = #this.customStats_array
+		if length == 0 then
+			return
+		end
+		local sortList = {}
+		
+		for i=0,length-1,3 do
+			local doubleHandle = this.customStats_array[i]
+			local displayName = this.customStats_array[i+1]
+			local value = this.customStats_array[i+2]
+			local groupId = self.MISC_CATEGORY
+			local hideStat = false
+	
+			if doubleHandle then
+				local stat = CustomStatSystem:GetStatByName(displayName)
+				if stat then
+					stat.Double = doubleHandle
+					this.customStats_array[i+1] = stat:GetDisplayName()
+					groupId = CustomStatSystem:GetCategoryGroupId(stat.Category, stat.Mod)
+					local isVisible = CustomStatSystem:GetStatVisibility(ui, doubleHandle, stat, client)
+					if isVisible == false then
+						hideStat = true
+					end
+				end
+				if not hideStat then
+					sortList[#sortList+1] = {Index=i, DisplayName=this.customStats_array[i+1], Handle=doubleHandle, Value=value, GroupId=groupId, Stat=stat}
 				end
 			end
-			if not hideStat then
-				sortList[#sortList+1] = {Index=i, DisplayName=this.customStats_array[i+1], Handle=doubleHandle, Value=value, GroupId=groupId, Stat=stat}
+		end
+
+		if #sortList > 0 then
+			table.sort(sortList, CustomStatSystem.SortStats)
+	
+			--Remove any stats that were hidden
+			this.clearArray("customStats_array")
+	
+			local arrayIndex = 0
+			for i=1,#sortList do
+				local v = sortList[i]
+				this.customStats_array[arrayIndex] = v.Handle
+				this.customStats_array[arrayIndex+1] = v.DisplayName
+				this.customStats_array[arrayIndex+2] = v.Value
+				this.customStats_array[arrayIndex+3] = v.GroupId
+				this.customStats_array[arrayIndex+4] = self:GetCanAddPoints(ui, v.Handle)
+				this.customStats_array[arrayIndex+5] = self:GetCanRemovePoints(ui, v.Handle)
+				arrayIndex = arrayIndex + 6
 			end
 		end
-	end
-
-	if #sortList > 0 then
-		table.sort(sortList, CustomStatSystem.SortStats)
-
-		--Remove any stats that were hidden
-		this.clearArray("customStats_array")
-
-		local arrayIndex = 0
-		for i=1,#sortList do
-			local v = sortList[i]
-			this.customStats_array[arrayIndex] = v.Handle
-			this.customStats_array[arrayIndex+1] = v.DisplayName
-			this.customStats_array[arrayIndex+2] = v.Value
-			this.customStats_array[arrayIndex+3] = v.GroupId
-			this.customStats_array[arrayIndex+4] = self:GetCanAddPoints(ui, v.Handle)
-			this.customStats_array[arrayIndex+5] = self:GetCanRemovePoints(ui, v.Handle)
-			arrayIndex = arrayIndex + 6
+	else
+		for stat in CustomStatSystem:GetAllStats(false, true, true) do
+			local visible = CustomStatSystem:GetStatVisibility(ui, stat.Double, stat, client)
+			if visible then
+				local value = stat:GetValue(client)
+				local groupId = CustomStatSystem:GetCategoryGroupId(stat.Category, stat.Mod)
+				local plusVisible = self:GetCanAddPoints(ui, stat.Double)
+				local minusVisible = self:GetCanRemovePoints(ui, stat.Double)
+				this.stats_mc.customStats_mc.addCustomStat(stat.Double, stat:GetDisplayName(), tostring(value), groupId, plusVisible, minusVisible, true)
+			end
 		end
 	end
 end

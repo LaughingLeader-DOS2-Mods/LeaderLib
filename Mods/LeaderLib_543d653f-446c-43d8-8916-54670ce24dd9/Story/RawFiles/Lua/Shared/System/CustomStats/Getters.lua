@@ -61,15 +61,16 @@ function CustomStatSystem:GetStatByUUID(uuid)
 end
 
 ---Get an iterator of all stats.
----@param visibleOnly boolean|nil
+---@param inSheetOnly boolean|nil Only get stats in the character sheet,
 ---@param sortByDisplayName boolean|nil
 ---@param includeUnregisteredStats boolean|nil
 ---@return fun():CustomStatData
-function CustomStatSystem:GetAllStats(visibleOnly, sortByDisplayName, includeUnregisteredStats)
+function CustomStatSystem:GetAllStats(inSheetOnly, sortByDisplayName, includeUnregisteredStats)
 	local allStats = {}
 
 	local findAll = true
-	if visibleOnly == true and isClient then
+
+	if inSheetOnly == true and isClient then
 		local ui = Ext.GetUIByType(Data.UIType.characterSheet)
 		if ui then
 			local this = ui:GetRoot()
@@ -89,7 +90,7 @@ function CustomStatSystem:GetAllStats(visibleOnly, sortByDisplayName, includeUnr
 			end
 		end
 	end
-	--If visibleOnly is false or we failed to get the UI
+
 	if findAll then
 		for uuid,stats in pairs(self.Stats) do
 			for id,stat in pairs(stats) do

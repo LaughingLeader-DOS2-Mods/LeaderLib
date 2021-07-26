@@ -93,6 +93,8 @@ local defaults = {
 	--DisplayValueInTooltip = false -- Should be nil by default if not set by user
 }
 
+local ID_MAP = 0
+
 ---@protected
 function CustomStatData.SetDefaults(data)
 	for k,v in pairs(defaults) do
@@ -103,6 +105,10 @@ function CustomStatData.SetDefaults(data)
 				data[k] = v
 			end
 		end
+	end
+	if SharedData.GameMode ~= GAMEMODE.GAMEMASTER then
+		data.Double = ID_MAP
+		ID_MAP = ID_MAP + 1
 	end
 end
 

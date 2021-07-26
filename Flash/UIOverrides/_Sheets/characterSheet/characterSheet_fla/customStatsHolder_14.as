@@ -181,7 +181,7 @@ package characterSheet_fla
 			}
 		}
 
-		public function addCustomStat(doubleHandle:Number, labelText:String, valueText:String, groupId:Number=0, plusVisible:Boolean=false, minusVisible:Boolean=false) : *
+		public function addCustomStat(doubleHandle:Number, labelText:String, valueText:String, groupId:Number=0, plusVisible:Boolean=false, minusVisible:Boolean=false, isCustom:Boolean=false) : *
 		{
 			var cstat_mc:MovieClip = this.list.getGroupElementByNumber("statID",doubleHandle);
 			if (cstat_mc == null)
@@ -190,10 +190,6 @@ package characterSheet_fla
 				cstat_mc.isNew = true;
 			}
 			cstat_mc.hl_mc.alpha = 0;
-			cstat_mc.plus_mc.visible = !this.base.isGameMasterChar ? plusVisible : true;
-			cstat_mc.minus_mc.visible = !this.base.isGameMasterChar ? minusVisible : true;
-			cstat_mc.edit_mc.visible = this.base.isGameMasterChar;
-			cstat_mc.delete_mc.visible = this.base.isGameMasterChar;
 			cstat_mc.edit_mc.tooltip = "Edit";
 			cstat_mc.delete_mc.tooltip = "Delete";
 			cstat_mc.edit_mc.alignTooltip = "top";
@@ -271,6 +267,12 @@ package characterSheet_fla
 				this.stats_array.push(cstat_mc);
 				cstat_mc.isNew = false;
 			}
+
+			cstat_mc.MakeCustom(doubleHandle, isCustom);
+			cstat_mc.plus_mc.visible = !this.base.isGameMasterChar ? plusVisible : true;
+			cstat_mc.minus_mc.visible = !this.base.isGameMasterChar ? minusVisible : true;
+			cstat_mc.edit_mc.visible = !isCustom && this.base.isGameMasterChar;
+			cstat_mc.delete_mc.visible = !isCustom && this.base.isGameMasterChar;
 
 			ExternalInterface.call("customStatAdded", doubleHandle, cstat_mc.statIndex);
 		}

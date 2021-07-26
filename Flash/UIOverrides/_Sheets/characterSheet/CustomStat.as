@@ -21,7 +21,7 @@ package
 		public var timeline:larTween;
 		public var base:MovieClip;
 		public var tooltip:String;
-		public var statID:Number;
+		public var statID:Number; // Double handle
 
 		//LeaderLib
 		public var am:Number; // The stat's value
@@ -65,19 +65,19 @@ package
 		
 		public function onEditBtnClicked() : *
 		{
-			ExternalInterface.call("editCustomStat",this.statID, this.id);
+			ExternalInterface.call("editCustomStat", this.statID);
 		}
 		
 		public function onDeleteBtnClicked() : *
 		{
-			ExternalInterface.call("removeCustomStat",this.statID, this.id);
+			ExternalInterface.call("removeCustomStat", this.statID);
 		}
 		
 		public function frame1() : *
 		{
 			this.base = root as MovieClip;
-			this.hl_mc.addEventListener(MouseEvent.ROLL_OVER,this.onOver);
-			this.hl_mc.addEventListener(MouseEvent.ROLL_OUT,this.onOut);
+			this.hl_mc.addEventListener(MouseEvent.ROLL_OVER, this.onOver);
+			this.hl_mc.addEventListener(MouseEvent.ROLL_OUT, this.onOut);
 		}
 	}
 }

@@ -275,12 +275,27 @@ function CustomStatSystem:OnGroupClicked(ui, call, arrayIndex, groupId, isOpen, 
 	end
 end
 
+---@private
+function CustomStatSystem:OnStatRemoved(ui, call, doubleHandle)
+	local uuid = self:RemoveStatByDouble(doubleHandle)
+	if uuid then
+		local client = Client:GetCharacter()
+		if client then
+			client = client.MyGuid
+		else
+			client = ""
+		end
+		Ext.PostMessageToServer("LeaderLib_CustomStatSystem_RemoveStatByUUID", Ext.JsonStringify({UUID=uuid, Client=client}))
+	end
+end
+
 Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem", OnSheetUpdating)
 Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "clearStats", function(...) CustomStatSystem:SetupGroups(...) end)
 Ext.RegisterUITypeCall(Data.UIType.characterSheet, "customStatsGroupAdded", function(...) CustomStatSystem:OnGroupAdded(...) end)
 Ext.RegisterUITypeCall(Data.UIType.characterSheet, "characterSheetUpdateDone", function(...) CustomStatSystem:OnUpdateDone(...) end, "After")
 Ext.RegisterUITypeCall(Data.UIType.characterSheet, "customStatAdded", function(...) CustomStatSystem:OnStatAdded(...) end, "After")
 Ext.RegisterUITypeCall(Data.UIType.characterSheet, "statCategoryCollapseChanged", function(...) CustomStatSystem:OnGroupClicked(...) end, "After")
+Ext.RegisterUITypeCall(Data.UIType.characterSheet, "removeCustomStat", function(...) CustomStatSystem:OnStatRemoved(...) end, "Before")
 --Ext.RegisterUITypeCall(Data.UIType.characterSheet, "createCustomStatGroups", CustomStatSystem.SetupGroups)
 --Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setPlayerInfo", AdjustCustomStatMovieClips)
 

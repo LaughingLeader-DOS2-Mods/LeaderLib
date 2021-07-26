@@ -201,6 +201,28 @@ function CustomStatSystem:IsTooltipWorking(character)
 	return true
 end
 
+---@private
+---@param double number
+---@return UUID
+function CustomStatSystem:RemoveStatByDouble(double)
+	local removedId = nil
+	for mod,stats in pairs(CustomStatSystem.Stats) do
+		for id,stat in pairs(stats) do
+			if stat.Double == double then
+				removedId = stat.UUID
+				stats[id] = nil
+			end
+		end
+	end
+	for uuid,stat in pairs(CustomStatSystem.UnregisteredStats) do
+		if stat.Double == double then
+			removedId = uuid
+			CustomStatSystem.UnregisteredStats[uuid] = nil
+		end
+	end
+	return removedId
+end
+
 if not isClient then
 	local canFix = Ext.GetCustomStatByName ~= nil
 	Ext.RegisterNetListener("LeaderLib_CheckCustomStatCallback", function(cmd, payload)

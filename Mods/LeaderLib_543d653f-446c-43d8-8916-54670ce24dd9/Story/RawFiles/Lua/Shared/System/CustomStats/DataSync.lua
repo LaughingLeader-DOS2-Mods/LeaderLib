@@ -184,3 +184,23 @@ else
 		}))
 	end
 end
+
+Ext.RegisterNetListener("LeaderLib_CustomStatSystem_RemoveStatByUUID", function(cmd, payload)
+	local data = Ext.JsonParse(payload)
+	if data then
+		if StringHelpers.IsNullOrEmpty(data.UUID) then
+			return
+		end
+		for mod,stats in pairs(CustomStatSystem.Stats) do
+			for id,stat in pairs(stats) do
+				if stat.UUID == data.UUID then
+					stats[id] = nil
+				end
+			end
+		end
+		CustomStatSystem.UnregisteredStats[data.UUID] = nil
+		if not isClient then
+			Ext.BroadcastMessage("LeaderLib_CustomStatSystem_RemoveStatByUUID", data.UUID, data.Client)
+		end
+	end
+end)

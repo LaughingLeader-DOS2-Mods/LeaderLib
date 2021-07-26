@@ -1,12 +1,10 @@
 --local function ActuallySetCharacterHandle(ui, this, player, uiType, uiName)
 local function ActuallySetCharacterHandle(ui, call)
-	PrintDebug("ActuallySetCharacterHandle", Data.UITypeToName[ui:GetTypeId()], call)
 	local player = Client:GetCharacter()
 	if player then
 		local doubleHandle = Ext.HandleToDouble(player.Handle)
 		ui:SetValue("characterHandle", doubleHandle)
 		ui:SetValue("charHandle", doubleHandle)
-		fprint(LOGLEVEL.ERROR, "Set characterHandle to (%s) in UI (%s)[%s]", player.DisplayName, uiName, uiType)
 	end
 end
 

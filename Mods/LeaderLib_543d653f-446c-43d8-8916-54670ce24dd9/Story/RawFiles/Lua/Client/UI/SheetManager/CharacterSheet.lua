@@ -61,6 +61,9 @@ function CharacterSheet.Update(ui, method, ...)
 	PrintDebug("CharacterSheet.Update", method, ...)
 	---@type CharacterSheetMainTimeline
 	local this = self.Root
+	if not this or not this.isExtended then
+		return
+	end
 	--this.clearArray("talentArray")
 	local player = Ext.GetCharacter(Ext.DoubleToHandle(this.characterHandle)) or Client:GetCharacter()
 
@@ -162,13 +165,13 @@ Ext.RegisterUITypeCall(Data.UIType.characterSheet, "characterSheetUpdateDone", C
 --Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "changeSecStatCustom", function(...) CharacterSheet:ValueChanged("SecondaryStat", ...))
 
 Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setTitle", function(ui, method)
-	local this = ui:GetRoot()
-	if this then
-		this = this.stats_mc
-		this.setMainStatsGroupName(this.GROUP_MAIN_ATTRIBUTES, Ext.GetTranslatedString("h15c226f2g54dag4f0eg80e6g121098c0766e", "Attributes"))
-		this.setMainStatsGroupName(this.GROUP_MAIN_STATS, Ext.GetTranslatedString("h3d70a7c1g6f19g4f28gad0cgf0722eea9850", "Stats"))
-		this.setMainStatsGroupName(this.GROUP_MAIN_EXPERIENCE, Ext.GetTranslatedString("he50fce4dg250cg4449g9f33g7706377086f6", "Experience"))
-		this.setMainStatsGroupName(this.GROUP_MAIN_RESISTANCES, Ext.GetTranslatedString("h5a0c9b53gd3f7g4e01gb43ege4a255e1c8ee", "Resistances"))
+	local this = CharacterSheet.Root
+	if this and this.isExtended then
+		local stats_mc = this.stats_mc
+		stats_mc.setMainStatsGroupName(stats_mc.GROUP_MAIN_ATTRIBUTES, Ext.GetTranslatedString("h15c226f2g54dag4f0eg80e6g121098c0766e", "Attributes"))
+		stats_mc.setMainStatsGroupName(stats_mc.GROUP_MAIN_STATS, Ext.GetTranslatedString("h3d70a7c1g6f19g4f28gad0cgf0722eea9850", "Stats"))
+		stats_mc.setMainStatsGroupName(stats_mc.GROUP_MAIN_EXPERIENCE, Ext.GetTranslatedString("he50fce4dg250cg4449g9f33g7706377086f6", "Experience"))
+		stats_mc.setMainStatsGroupName(stats_mc.GROUP_MAIN_RESISTANCES, Ext.GetTranslatedString("h5a0c9b53gd3f7g4e01gb43ege4a255e1c8ee", "Resistances"))
 	end
 end)
 Ext.RegisterUITypeCall(Data.UIType.statsPanel_c, "characterSheetUpdateDone", CharacterSheet.Update)

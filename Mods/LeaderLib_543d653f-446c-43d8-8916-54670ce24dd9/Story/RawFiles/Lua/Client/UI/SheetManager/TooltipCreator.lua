@@ -1,4 +1,3 @@
-local lastIconId = 7777
 local isVisible = false
 local lastTooltipX = nil
 local lastTooltipY = nil
@@ -7,57 +6,48 @@ local function CreateTooltip(tooltipType, requestedUI, call, id)
 	local ui = Ext.GetUIByType(Data.UIType.tooltip)
 	if ui then
 		local this = ui:GetRoot()
-		if this and this.tooltip_array then
+		local data = SheetManager:GetStatByID(id, nil, tooltipType)
+		if this and this.tooltip_array and data then
 			local resolved = false
-			--[[
-			if call == "showAbilityTooltipCustom" then
-				local data = SheetManager.Abilities.GetCustomAbility(id)
+			if tooltipType == "Ability" then
 				this.tooltip_array[0] = Game.Tooltip.TooltipItemTypes.StatName
-				this.tooltip_array[1] = data.DisplayName or ""
+				this.tooltip_array[1] = data:GetDisplayName()
 				this.tooltip_array[2] = Game.Tooltip.TooltipItemTypes.AbilityDescription
-				this.tooltip_array[3] = data.IconId
-				this.tooltip_array[4] = data.Description or ""
+				this.tooltip_array[3] = data.GeneratedID
+				this.tooltip_array[4] = data:GetDescription()
 				this.tooltip_array[5] = ""
 				this.tooltip_array[6] = ""
 				this.tooltip_array[7] = ""
 
-				Game.Tooltip.PrepareIcon(ui, string.format("tt_ability_%i", data.IconId), data.Icon, data.IconWidth or 128, data.IconHeight or 128)
+				Game.Tooltip.PrepareIcon(ui, string.format("tt_ability_%i", data.GeneratedID), data.Icon, data.IconWidth or 128, data.IconHeight or 128)
 				resolved = true
-			elseif call == "showTalentTooltipCustom" then
-				local data = TalentManager.GetCustomTalent(id)
-				this.tooltip_array[0] = Game.Tooltip.TooltipItemTypes.TalentTitle
-				this.tooltip_array[1] = data.DisplayName or ""
+			elseif tooltipType == "Talent" then
+				this.tooltip_array[0] = Game.Tooltip.TooltipItemTypes.StatName
+				this.tooltip_array[1] = data:GetDisplayName()
 				this.tooltip_array[2] = Game.Tooltip.TooltipItemTypes.TalentDescription
-				this.tooltip_array[3] = data.IconId
-				this.tooltip_array[4] = data.Description or ""
+				this.tooltip_array[3] = data.GeneratedID
+				this.tooltip_array[4] = data:GetDescription()
 				this.tooltip_array[5] = ""
 				this.tooltip_array[6] = ""
 				this.tooltip_array[7] = ""
 
 				if data.Icon then
-					Game.Tooltip.PrepareIcon(ui, string.format("tt_talent_%i", data.IconId), data.Icon, data.IconWidth or 128, data.IconHeight or 128)
+					Game.Tooltip.PrepareIcon(ui, string.format("tt_talent_%i", data.GeneratedID), data.Icon, data.IconWidth or 128, data.IconHeight or 128)
 				end
 				resolved = true
-			elseif call == "showStatTooltipCustom" then
-				-- this.tooltip_array[0] = Game.Tooltip.TooltipItemTypes.StatName
-				-- this.tooltip_array[1] = displayName or ""
-				-- this.tooltip_array[2] = Game.Tooltip.TooltipItemTypes.StatsDescription
-				-- this.tooltip_array[3] = iconId
-				-- this.tooltip_array[4] = description or ""
-				-- this.tooltip_array[5] = ""
-				-- this.tooltip_array[6] = ""
-				-- this.tooltip_array[7] = ""
-
-				-- Game.Tooltip.PrepareIcon(ui, string.format("tt_ability_%i", iconId), icon, iconWidth or 128, iconHeight or 128)
-				-- resolved = true
+			elseif tooltipType == "PrimaryStat" or tooltipType == "SecondaryStat" then
+				this.tooltip_array[0] = Game.Tooltip.TooltipItemTypes.StatName
+				this.tooltip_array[1] = data:GetDisplayName()
+				this.tooltip_array[2] = Game.Tooltip.TooltipItemTypes.StatsDescription
+				this.tooltip_array[3] = data:GetDescription()
+				resolved = true
 			end
-			]]
 
 			if not resolved then
 				this.tooltip_array[0] = Game.Tooltip.TooltipItemTypes.StatName
-				this.tooltip_array[1] = string.format("%s_%s", call, id)
+				this.tooltip_array[1] = data:GetDisplayName()
 				this.tooltip_array[2] = Game.Tooltip.TooltipItemTypes.StatsDescription
-				this.tooltip_array[3] = "Testing"
+				this.tooltip_array[3] = data:GetDescription()
 			end
 
 			isVisible = true
@@ -79,7 +69,6 @@ local function CreateTooltip(tooltipType, requestedUI, call, id)
 end
 
 local function HideTooltip(ui, call)
-	lastIconId = 7777
 	if isVisible then
 		isVisible = false
 		local ui = Ext.GetUIByType(Data.UIType.tooltip)

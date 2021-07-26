@@ -93,6 +93,7 @@ package characterSheet_fla
 		public var characterHandle:Number;
 		//In case mods are still using this.
 		public var charHandle:Number;
+		public var isExtended:Boolean = true;
 		
 		public function MainTimeline()
 		{

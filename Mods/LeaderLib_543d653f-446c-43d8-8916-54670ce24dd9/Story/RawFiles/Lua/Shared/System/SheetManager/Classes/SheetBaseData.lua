@@ -46,4 +46,32 @@ function SheetBaseData.SetDefaults(data)
 	end
 end
 
+local function FormatText(txt, forceCheckForStringKey)
+	if forceCheckForStringKey or string.find(txt, "_", 1, true) then
+		txt = GameHelpers.GetStringKeyText(txt)
+	end
+	return GameHelpers.Tooltip.ReplacePlaceholders(txt)
+end
+
+function SheetBaseData:GetDisplayName()
+	if self.DisplayName then
+		return FormatText(self.DisplayName, self.LoadStringKey)
+	end
+	return self.ID
+end
+
+function SheetBaseData:GetDescription()
+	if self.Description then
+		local text = FormatText(self.Description, self.LoadStringKey)
+		if self.Mod then
+			local info = Ext.GetModInfo(self.Mod)
+			if info and not StringHelpers.IsNullOrWhitespace(info.Name) then
+				text = string.format("%s<br><font color='#2299FF' size='18'>(%s)</font>", text, info.Name)
+			end
+		end
+		return text
+	end
+	return ""
+end
+
 Classes.SheetBaseData = SheetBaseData

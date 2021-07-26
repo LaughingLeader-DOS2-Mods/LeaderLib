@@ -593,7 +593,7 @@ local function CanDisplayDivineTalent(talentId)
 	else
 		name = name.Value
 	end
-	if string.find(name, "|") then
+	if string.find(name, "|", 1, false) then
 		return false
 	end
 	if talentId == "Rager" then
@@ -601,7 +601,7 @@ local function CanDisplayDivineTalent(talentId)
 		return ragerWasEnabled
 	elseif talentId == "Jitterbug" then
 		local tooltip = Ext.GetTranslatedString("h758efe2fgb3bag4935g9500g2c789497e87a", "")
-		if string.find(tooltip, "|") then
+		if string.find(tooltip, "|", 1, false) then
 			return false
 		end
 	end

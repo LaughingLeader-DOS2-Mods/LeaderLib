@@ -136,7 +136,7 @@ local function OnSheetUpdating(ui, method)
 	end
 
 	
-	if SharedData.GameMode == GAMEMODE.GAMEMASTER then
+	if CustomStatSystem:GMStatsEnabled() then
 		local length = #this.customStats_array
 		if length == 0 then
 			return
@@ -313,6 +313,19 @@ Ext.RegisterUITypeCall(Data.UIType.characterSheet, "removeCustomStat", function(
 --Ext.RegisterUITypeCall(Data.UIType.characterSheet, "createCustomStatGroups", CustomStatSystem.SetupGroups)
 --Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setPlayerInfo", AdjustCustomStatMovieClips)
 
+--Story mode changes so custom stats don't use the custom stats system, since they get added to every character apparently
+Ext.RegisterUITypeCall(Data.UIType.characterSheet, "minusCustomStatCustom", function(ui, call, statId)
+	local stat = CustomStatSystem:GetStatByDouble(statId)
+	if stat then
+		stat:ModifyValue(Client:GetCharacter(), -1)
+	end
+end)
+Ext.RegisterUITypeCall(Data.UIType.characterSheet, "plusCustomStatCustom", function(ui, call, statId)
+	local stat = CustomStatSystem:GetStatByDouble(statId)
+	if stat then
+		stat:ModifyValue(Client:GetCharacter(), 1)
+	end
+end)
 
 ---@private
 ---@return FlashCustomStat

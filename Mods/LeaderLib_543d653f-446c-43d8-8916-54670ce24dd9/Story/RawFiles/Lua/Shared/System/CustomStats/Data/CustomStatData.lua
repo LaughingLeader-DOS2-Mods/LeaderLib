@@ -106,7 +106,7 @@ function CustomStatData.SetDefaults(data)
 			end
 		end
 	end
-	if SharedData.GameMode ~= GAMEMODE.GAMEMASTER then
+	if CustomStatSystem:GMStatsEnabled() then
 		data.Double = ID_MAP
 		ID_MAP = ID_MAP + 1
 	end

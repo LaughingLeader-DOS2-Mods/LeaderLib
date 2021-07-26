@@ -268,10 +268,14 @@ if not isClient then
 			local stat = self:GetStatByID(statId, mod)
 			if stat then
 				local current = stat:GetValue(character)
-				if StringHelpers.IsNullOrWhitespace(stat.UUID) then
-					stat.UUID = Ext.CreateCustomStat(stat.DisplayName, stat.Description)
+				if self:GMStatsEnabled() then
+					if StringHelpers.IsNullOrWhitespace(stat.UUID) then
+						stat.UUID = Ext.CreateCustomStat(stat.DisplayName, stat.Description)
+					end
+					character:SetCustomStat(stat.UUID, current + amount)
+				else
+					CustomStatSystem:SetStatValueOnCharacter(character, stat, current + amount)
 				end
-				character:SetCustomStat(stat.UUID, current + amount)
 				return true
 			else
 				error(string.format("Stat does not exist. statId(%s) mod(%s)", statId or "nil", mod or ""), 2)
@@ -292,10 +296,14 @@ if not isClient then
 		if character then
 			local stat = self:GetStatByID(statId, mod)
 			if stat then
-				if StringHelpers.IsNullOrWhitespace(stat.UUID) then
-					stat.UUID = Ext.CreateCustomStat(stat.DisplayName, stat.Description)
+				if self:GMStatsEnabled() then
+					if StringHelpers.IsNullOrWhitespace(stat.UUID) then
+						stat.UUID = Ext.CreateCustomStat(stat.DisplayName, stat.Description)
+					end
+					character:SetCustomStat(stat.UUID, amount)
+				else
+					CustomStatSystem:SetStatValueOnCharacter(character, stat, amount)
 				end
-				character:SetCustomStat(stat.UUID, amount)
 				return true
 			else
 				error(string.format("Stat does not exist. statId(%s) mod(%s)", statId or "nil", mod or ""), 2)

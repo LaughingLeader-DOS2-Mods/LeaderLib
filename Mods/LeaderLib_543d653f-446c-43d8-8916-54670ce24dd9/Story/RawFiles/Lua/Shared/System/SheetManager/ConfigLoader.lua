@@ -63,7 +63,7 @@ local function parseTable(tbl, propertyMap, modId, defaults, class, id_map)
 					for property,value in pairs(defaults) do
 						if type(property) == "string" then
 							local propKey = string.upper(property)
-							local propData = propertyMap[propKey]
+							local propData = propertyMap[propKey] or basePropertyMap[propKey]
 							local t = type(value)
 							if propData and (propData.Type == "any" or t == propData.Type) then
 								data[propData.Name] = value
@@ -76,7 +76,7 @@ local function parseTable(tbl, propertyMap, modId, defaults, class, id_map)
 				for property,value in pairs(v) do
 					if type(property) == "string" then
 						local propKey = string.upper(property)
-						local propData = propertyMap[propKey]
+						local propData = propertyMap[propKey] or basePropertyMap[propKey]
 						local t = type(value)
 						if propData and (propData.Type == "any" or t == propData.Type) then
 							data[propData.Name] = value
@@ -102,7 +102,6 @@ local function parseTable(tbl, propertyMap, modId, defaults, class, id_map)
 end
 
 local function LoadConfig(uuid, file)
-	local settings = SettingsManager.GetMod(uuid, true)
 	local config = Common.JsonParse(file)
 	local loaded = {}
 	local statDefaults,talentDefaults,abilityDefaults = nil,nil,nil
@@ -120,7 +119,7 @@ local function LoadConfig(uuid, file)
 		end
 		local stats = parseTable(config.Stats, basePropertyMap, uuid, statDefaults, Classes.SheetStatData, SheetManager.Data.ID_MAP.Stats)
 		local talents = parseTable(config.Talents, talentPropertyMap, uuid, talentDefaults, Classes.SheetTalentData, SheetManager.Data.ID_MAP.Talents)
-		local abilities = parseTable(config.Ablities, abilityPropertyMap, uuid, abilityDefaults, Classes.SheetAbilityData, SheetManager.Data.ID_MAP.Abilities)
+		local abilities = parseTable(config.Abilities, abilityPropertyMap, uuid, abilityDefaults, Classes.SheetAbilityData, SheetManager.Data.ID_MAP.Abilities)
 
 		if stats then
 			loaded.Stats = stats
@@ -167,7 +166,8 @@ local function LoadConfigFiles()
 			end
 		end
 	end
-	if Vars.DebugMode and CustomStatSystem.DebugEnabled then
+
+	if Vars.DebugMode and SheetManager.DebugEnabled then
 		local data = LoadConfig(ModuleUUID, Ext.LoadFile("Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/RawFiles/Lua/Shared/Debug/TestSheetEntriesConfig.json", "data"))
 		if data and data.Success then
 			entries[ModuleUUID] = data

@@ -13,7 +13,7 @@ local SheetTalentData = {
 }
 
 SheetTalentData.__index = function(t,k)
-	local v = Classes.SheetTalentData[k] or Classes.SheetTalentData[k]
+	local v = Classes.SheetTalentData[k] or Classes.SheetBaseData[k]
 	if v then
 		t[k] = v
 	end
@@ -49,9 +49,29 @@ function SheetTalentData:GetValue(character)
 		return false
 	end
 	if not isClient then
-		return SheetManager:GetValue(GameHelpers.GetUUID(character, self.Type, self.ID, self.Mod))
+		return SheetManager:GetValueByEntry(self, GameHelpers.GetUUID(character))
 	else
-		return SheetManager:GetValue(GameHelpers.GetNetID(character, self.Type, self.ID, self.Mod))
+		return SheetManager:GetValueByEntry(self, GameHelpers.GetNetID(character))
+	end
+end
+
+---@class TalentState
+local TalentState = {
+	Selected = 0,
+	Selectable = 2,
+	Locked = 3
+}
+
+---@param character UUID|NETID|EsvCharacter|EclCharacter
+---@return boolean
+function SheetTalentData:GetState(character)
+	local value = self:GetValue(character)
+	if value then
+		return TalentState.Selected
+	else
+		--TODO
+		-- Hook into talent requirement listener
+		return TalentState.Selectable
 	end
 end
 

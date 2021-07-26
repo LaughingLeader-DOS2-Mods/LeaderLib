@@ -6,7 +6,7 @@ local function CreateTooltip(tooltipType, requestedUI, call, id)
 	local ui = Ext.GetUIByType(Data.UIType.tooltip)
 	if ui then
 		local this = ui:GetRoot()
-		local data = SheetManager:GetStatByID(id, nil, tooltipType)
+		local data = SheetManager:GetStatByGeneratedID(id, tooltipType)
 		if this and this.tooltip_array and data then
 			local resolved = false
 			if tooltipType == "Ability" then
@@ -19,7 +19,9 @@ local function CreateTooltip(tooltipType, requestedUI, call, id)
 				this.tooltip_array[6] = ""
 				this.tooltip_array[7] = ""
 
-				Game.Tooltip.PrepareIcon(ui, string.format("tt_ability_%i", data.GeneratedID), data.Icon, data.IconWidth or 128, data.IconHeight or 128)
+				if data.Icon then
+					Game.Tooltip.PrepareIcon(ui, string.format("tt_ability_%i", data.GeneratedID), data.Icon, data.IconWidth or 128, data.IconHeight or 128)
+				end
 				resolved = true
 			elseif tooltipType == "Talent" then
 				this.tooltip_array[0] = Game.Tooltip.TooltipItemTypes.StatName

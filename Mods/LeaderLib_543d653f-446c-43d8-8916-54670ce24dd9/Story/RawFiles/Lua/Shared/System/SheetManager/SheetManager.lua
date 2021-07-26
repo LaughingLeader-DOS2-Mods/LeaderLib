@@ -10,6 +10,7 @@ end
 
 SheetManager.__index = SheetManager
 SheetManager.Loaded = false
+SheetManager.DebugEnabled = false
 local isClient = Ext.IsClient()
 
 Ext.Require("Shared/System/SheetManager/Data/SheetDataValues.lua")
@@ -124,23 +125,23 @@ local function LoadData()
 	local b,data = xpcall(loader, debug.traceback)
 	if b and data then
 		for uuid,entryData in pairs(data) do
+
 			if not SheetManager.Data.Abilities[uuid] then
-				SheetManager.Data.Abilities[uuid] = {}
+				SheetManager.Data.Abilities[uuid] = entryData.Abilities or {}
+			elseif entryData.Abilities then
+				TableHelpers.AddOrUpdate(SheetManager.Data.Abilities[uuid], entryData.Abilities)
 			end
+
 			if not SheetManager.Data.Talents[uuid] then
-				SheetManager.Data.Talents[uuid] = {}
+				SheetManager.Data.Talents[uuid] = entryData.Talents or {}
+			elseif entryData.Talents then
+				TableHelpers.AddOrUpdate(SheetManager.Data.Talents[uuid], entryData.Talents)
 			end
+
 			if not SheetManager.Data.Stats[uuid] then
-				SheetManager.Data.Stats[uuid] = {}
-			end
-			if data.Abilities then
-				TableHelpers.AddOrUpdate(SheetManager.Data.Abilities[uuid], data.Abilities)
-			end
-			if data.Talents then
-				TableHelpers.AddOrUpdate(SheetManager.Data.Talents[uuid], data.Talents)
-			end
-			if data.Stats then
-				TableHelpers.AddOrUpdate(SheetManager.Data.Stats[uuid], data.Stats)
+				SheetManager.Data.Stats[uuid] = entryData.Stats or {}
+			elseif entryData.Stats then
+				TableHelpers.AddOrUpdate(SheetManager.Data.Stats[uuid], entryData.Stats)
 			end
 		end
 		
@@ -207,15 +208,15 @@ end
 function SheetManager:GetStatByGeneratedID(generatedId, statType)
 	if statType then
 		if statType == "Stat" or statType == "PrimaryStat" or statType == "SecondaryStat" then
-			return self.Data.ID_MAP.Stats[generatedId]
+			return self.Data.ID_MAP.Stats.Entries[generatedId]
 		elseif statType == "Ability" then
-			return self.Data.ID_MAP.Abilities[generatedId]
+			return self.Data.ID_MAP.Abilities.Entries[generatedId]
 		elseif statType == "Talent" then
-			return self.Data.ID_MAP.Talents[generatedId]
+			return self.Data.ID_MAP.Talents.Entries[generatedId]
 		end
 	end
 	for t,tbl in pairs(self.Data.ID_MAP) do
-		for checkId,data in pairs(tbl) do
+		for checkId,data in pairs(tbl.Entries) do
 			if checkId == generatedId then
 				return data
 			end
@@ -249,6 +250,22 @@ function SheetManager:SetEntryValue(stat, characterId, value, skipListenerInvoke
 			self:RequestValueChange(stat, characterId, value)
 		end
 	end
+end
+
+---@param stat SheetAbilityData|SheetStatData|SheetTalentData
+---@param characterId UUID|NETID
+function SheetManager:GetValueByEntry(stat, characterId)
+	local dataTable = self.CurrentValues[stat.ID]
+	if dataTable then
+		local charValue = dataTable[characterId]
+		if charValue ~= nil then
+			return charValue
+		end
+	end
+	if stat.StatType == "Talent" then
+		return false
+	end
+	return 0
 end
 
 if isClient then

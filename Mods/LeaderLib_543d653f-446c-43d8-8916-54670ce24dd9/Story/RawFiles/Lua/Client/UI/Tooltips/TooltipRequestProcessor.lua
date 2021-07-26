@@ -86,11 +86,25 @@ RequestProcessor.CallbackHandler[TooltipCalls.CustomStat] = function(request, ui
 end
 
 RequestProcessor.CallbackHandler[TooltipCalls.Ability] = function(request, ui, uiType, event, id)
+	if SheetManager then
+		local stat = SheetManager:GetStatByGeneratedID(id, "Ability")
+		if stat then
+			request.Ability = stat.ID
+			return request
+		end
+	end
 	request.Ability = Ext.EnumIndexToLabel("AbilityType", id)
 	return request
 end
 
 RequestProcessor.CallbackHandler[TooltipCalls.Talent] = function(request, ui, uiType, event, id)
+	if SheetManager then
+		local stat = SheetManager:GetStatByGeneratedID(id, "Talent")
+		if stat then
+			request.Talent = stat.ID
+			return request
+		end
+	end
 	request.Talent = Ext.EnumIndexToLabel("TalentType", id)
 	return request
 end

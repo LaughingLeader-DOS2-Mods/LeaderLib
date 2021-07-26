@@ -80,6 +80,7 @@ function CharacterSheet.Update(ui, method, ...)
 	local canRemove = GameHelpers.Client.IsGameMaster(ui, this)
 
 	if updateTargets.PrimaryStats or updateTargets.SecondaryStats then
+		--this.clearStats()
 		for stat in SheetManager.Stats.GetVisible(player) do
 			if not Vars.ControllerEnabled then
 				if stat.IsPrimary then
@@ -101,6 +102,7 @@ function CharacterSheet.Update(ui, method, ...)
 	end
 	
 	if updateTargets.Talents then
+		--this.clearTalents()
 		--local points = this.stats_mc.pointsWarn[3].avPoints
 		local points = Client.Character.Points.Talent
 		for talent in SheetManager.Talents.GetVisible(player) do
@@ -124,8 +126,9 @@ function CharacterSheet.Update(ui, method, ...)
 	end
 
 	if updateTargets.Abilities then
+		--this.clearAbilities()
 		for ability in SheetManager.Abilities.GetVisible(player, updateTargets.Civil, this) do
-			this.stats_mc.addAbility(ability.IsCivil, ability.GroupID, ability.SheetID, ability.DisplayName, ability.Value, ability.AddPointsTooltip, "", ability.CanAdd, ability.CanRemove, ability.IsCustom)
+			this.stats_mc.addAbility(ability.IsCivil, ability.GroupID, ability.ID, ability.DisplayName, ability.Value, ability.AddPointsTooltip, "", ability.CanAdd, ability.CanRemove, ability.IsCustom)
 			targetsUpdated.Abilities = true
 			targetsUpdated.Civil = updateTargets.Civil
 		end
@@ -187,8 +190,8 @@ if Vars.DebugMode then
 	RegisterListener("LuaReset", function()
 		local ui = CharacterSheet.Instance
 		if ui then
-			-- CharacterSheet.Instance:ExternalInterfaceCall("clearAbilities")
-			-- CharacterSheet.Instance:ExternalInterfaceCall("clearTalents")
+			CharacterSheet.Instance:ExternalInterfaceCall("clearAbilities")
+			CharacterSheet.Instance:ExternalInterfaceCall("clearTalents")
 		end
 	end)
 end

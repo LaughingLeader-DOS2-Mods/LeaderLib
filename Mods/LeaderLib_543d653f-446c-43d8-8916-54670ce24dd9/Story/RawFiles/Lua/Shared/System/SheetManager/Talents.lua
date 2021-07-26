@@ -194,7 +194,6 @@ SheetManager.Talents.Data.DivineTalents = {
 }
 
 SheetManager.Talents.Data.VisibleDivineTalents = {
-	Elementalist = "TALENT_Elementalist",
 	Sadist = "TALENT_Sadist",
 	Haymaker = "TALENT_Haymaker",
 	Gladiator = "TALENT_Gladiator",
@@ -593,7 +592,7 @@ local function CanDisplayDivineTalent(talentId)
 	else
 		name = name.Value
 	end
-	if string.find(name, "|", 1, false) then
+	if string.find(name, "|", 1, true) then
 		return false
 	end
 	if talentId == "Rager" then
@@ -601,7 +600,7 @@ local function CanDisplayDivineTalent(talentId)
 		return ragerWasEnabled
 	elseif talentId == "Jitterbug" then
 		local tooltip = Ext.GetTranslatedString("h758efe2fgb3bag4935g9500g2c789497e87a", "")
-		if string.find(tooltip, "|", 1, false) then
+		if string.find(tooltip, "|", 1, true) then
 			return false
 		end
 	end

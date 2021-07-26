@@ -736,10 +736,10 @@ package characterSheet_fla
 			{
 				holder = this.civicAbilityHolder_mc;
 			}
-			var ability_mc:MovieClip = holder.list.getElementByNumber("groupId",groupId);
-			if(ability_mc)
+			var group_mc:MovieClip = holder.list.getElementByNumber("groupId",groupId);
+			if(group_mc)
 			{
-				return ability_mc.list.getElementByNumber("statID",statID);
+				return group_mc.list.getElementByNumber("statID",statID);
 			}
 			return null;
 		}
@@ -881,7 +881,7 @@ package characterSheet_fla
 		{
 			var groupHolder:MovieClip = null;
 			var ability_mc:MovieClip = this.getAbility(isCivil,groupId,statID,isCustom);
-			if(!ability_mc)
+			if(ability_mc == null)
 			{
 				groupHolder = this.combatAbilityHolder_mc;
 				if(isCivil)

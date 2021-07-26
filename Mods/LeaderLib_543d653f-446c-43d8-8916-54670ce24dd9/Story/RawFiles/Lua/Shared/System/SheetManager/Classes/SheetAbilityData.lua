@@ -53,9 +53,9 @@ function SheetAbilityData:GetValue(character)
 		return 0
 	end
 	if not isClient then
-		return SheetManager:GetValue(GameHelpers.GetUUID(character, self.ID, self.Mod))
+		return SheetManager:GetValueByEntry(self, GameHelpers.GetUUID(character))
 	else
-		return SheetManager:GetValue(GameHelpers.GetNetID(character, self.ID, self.Mod))
+		return SheetManager:GetValueByEntry(self, GameHelpers.GetNetID(character))
 	end
 end
 

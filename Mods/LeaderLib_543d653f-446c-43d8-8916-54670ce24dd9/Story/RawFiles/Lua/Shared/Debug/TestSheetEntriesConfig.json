@@ -2,17 +2,20 @@
 	"Abilities": {
 		"Test1": {
 			"DisplayName": "Debug1",
+			"Description": "This is a test ability!",
 			"Icon": "Ability_Necromancy"
 		}
 	},
 	"Stats": {
 		"DebugStat1": {
-			"DisplayName": "Debug1"
+			"DisplayName": "Debug1",
+			"Description": "This is a test stat!"
 		}
 	},
 	"Talents": {
 		"DebugTalent1": {
 			"DisplayName": "Debug1",
+			"Description": "This is a test talent!",
 			"Icon": "Talent_Jitterbug"
 		}
 	}

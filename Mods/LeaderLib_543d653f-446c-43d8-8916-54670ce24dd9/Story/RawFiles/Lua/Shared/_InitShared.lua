@@ -30,6 +30,7 @@ Vars = {
 		Total = 0
 	},
 	DebugMode = Ext.IsDeveloperMode() == true,
+	LeaderDebugMode = false,
 	Print = {
 		HitPrepare = false,
 		Hit = false,

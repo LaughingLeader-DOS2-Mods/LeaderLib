@@ -167,7 +167,7 @@ local function LoadConfigFiles()
 		end
 	end
 
-	if Vars.DebugMode and SheetManager.DebugEnabled then
+	if Vars.DebugMode and Vars.LeaderDebugMode then
 		local data = LoadConfig(ModuleUUID, Ext.LoadFile("Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/RawFiles/Lua/Shared/Debug/TestSheetEntriesConfig.json", "data"))
 		if data and data.Success then
 			entries[ModuleUUID] = data

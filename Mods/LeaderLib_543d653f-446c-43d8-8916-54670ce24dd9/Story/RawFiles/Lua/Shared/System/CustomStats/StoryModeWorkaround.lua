@@ -64,6 +64,7 @@ if not isClient then
 			local stat = CustomStatSystem:GetStatByID(data.Stat, data.Mod)
 			if character and stat then
 				CustomStatSystem:SetStatValueOnCharacter(character, stat, data.Value)
+				--TODO Trigger a stat sync for clients, to update the UI
 			end
 		end
 	end)

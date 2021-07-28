@@ -15,7 +15,8 @@ local TooltipCalls = {
 	Talent = "showTalentTooltip",
 	Tag = "showTagTooltip",
 	CustomStat = "showCustomStatTooltip",
-	Rune = "showRuneTooltip"
+	Rune = "showRuneTooltip",
+	Pyramid = "pyramidOver"
 }
 local ControllerCharacterCreationCalls = {
 	Skill = "requestSkillTooltip",
@@ -24,7 +25,8 @@ local ControllerCharacterCreationCalls = {
 	Item = {"slotOver", "itemDollOver"},
 	Talent = "requestTalentTooltip",
 	Tag = "requestTagTooltip",
-	Rune = "runeSlotOver"
+	Rune = "runeSlotOver",
+	Pyramid = "pyramidOver"
 }
 
 RequestProcessor.CallbackHandler[TooltipCalls.Skill] = function(request, ui, uiType, event, id)
@@ -37,7 +39,7 @@ RequestProcessor.CallbackHandler[TooltipCalls.Status] = function(request, ui, ui
 	return request
 end
 
-RequestProcessor.CallbackHandler[TooltipCalls.Item] = function(request, ui, uiType, event, id, slot, extraArg)
+RequestProcessor.CallbackHandler[TooltipCalls.Item] = function (request, ui, uiType, event, id, slot, extraArg)
 	if uiType == Data.UIType.partyInventory_c then
 		local this = ui:GetRoot()
 		local ownerHandle = extraArg
@@ -71,6 +73,12 @@ RequestProcessor.CallbackHandler[TooltipCalls.Item] = function(request, ui, uiTy
 	else
 		request.Item = Ext.GetItem(Ext.DoubleToHandle(id))
 	end
+	return request
+end
+
+--ExternalInterface.call("pyramidOver",param1.id,val2.x,val2.y,param1.width,param1.height,"bottom");
+RequestProcessor.CallbackHandler[TooltipCalls.Pyramid] = function(request, ui, uiType, event, id, x, y, width, height, side)
+	request.Item = Ext.GetItem(Ext.DoubleToHandle(id))
 	return request
 end
 

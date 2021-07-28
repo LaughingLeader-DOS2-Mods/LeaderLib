@@ -364,17 +364,26 @@ end
 ---@param tbl table
 ---@param recursive boolean
 function Common.ConvertTableKeysToNumbers(tbl, recursive)
+	local replaceKeys = {}
+	local tables = {}
 	for k,v in pairs(tbl) do
 		if type(k) ~= "number" then
 			local num = tonumber(k)
 			if num ~= nil then
-				tbl[num] = v
-				tbl[k] = nil
+				replaceKeys[k] = {newKey = num, value = v}
 			end
 			if recursive == true and type(v) == "table" then
-				Common.ConvertTableKeysToNumbers(v, recursive)
+				tables[#tables+1] = v
 			end
 		end
+	end
+	for k,d in pairs(replaceKeys) do
+		tbl[k] = nil
+		tbl[d.newKey] = d.value
+	end
+
+	for i=1,#tables do
+		Common.ConvertTableKeysToNumbers(tables[i], recursive)
 	end
 end
 

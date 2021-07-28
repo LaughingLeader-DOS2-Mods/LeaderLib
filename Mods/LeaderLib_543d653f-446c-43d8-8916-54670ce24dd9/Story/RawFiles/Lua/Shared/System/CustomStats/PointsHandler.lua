@@ -340,7 +340,7 @@ function CustomStatSystem:GetTotalAvailablePoints(character)
 	if characterId then
 		local points = 0
 		local pointsTable = nil
-		if character and self.PointsPool[characterId] then
+		if self.PointsPool[characterId] then
 			for id,amount in pairs(self.PointsPool[characterId]) do
 				points = points + amount
 			end
@@ -474,7 +474,7 @@ function CustomStatSystem:OnStatPointRemoved(ui, call, doubleHandle)
 				Last = lastPoints,
 				Current = points
 			}))
-			self:SyncAvailablePoints()
+			self:SyncAvailablePoints(character)
 		end
 	end
 end
@@ -489,7 +489,8 @@ function CustomStatSystem:UpdateAvailablePoints(ui)
 		if not this then
 			return
 		end
-		this.setAvailableCustomStatPoints(self:GetTotalAvailablePoints())
+		local totalPoints = self:GetTotalAvailablePoints()
+		this.setAvailableCustomStatPoints(totalPoints)
 		local stats = this.stats_mc.customStats_mc.stats_array
 		if stats then
 			for i=0,#stats-1 do

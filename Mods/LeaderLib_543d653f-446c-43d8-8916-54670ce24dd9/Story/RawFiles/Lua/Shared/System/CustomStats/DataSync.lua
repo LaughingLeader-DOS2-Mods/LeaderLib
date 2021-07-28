@@ -61,6 +61,9 @@ if not isClient then
 			if ObjectExists(uuid) == 1 then
 				local character = Ext.GetCharacter(uuid)
 				if character then
+					if data[""] then
+						data[""] = nil
+					end
 					availablePoints[character.NetID] = data
 				end
 			end

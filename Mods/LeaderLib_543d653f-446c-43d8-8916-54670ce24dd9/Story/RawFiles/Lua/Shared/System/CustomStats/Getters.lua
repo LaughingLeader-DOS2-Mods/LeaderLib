@@ -81,8 +81,8 @@ function CustomStatSystem:GetAllStats(inSheetOnly, sortByDisplayName, includeUnr
 			local arr = this.stats_mc.customStats_mc.stats_array
 			for i=0,#arr-1 do
 				local stat_mc = arr[i]
-				if stat_mc and stat_mc.statId then
-					local stat = self:GetStatByDouble(stat_mc.statId)
+				if stat_mc and stat_mc.statID then
+					local stat = self:GetStatByDouble(stat_mc.statID)
 					if stat then
 						allStats[#allStats+1] = stat
 					end

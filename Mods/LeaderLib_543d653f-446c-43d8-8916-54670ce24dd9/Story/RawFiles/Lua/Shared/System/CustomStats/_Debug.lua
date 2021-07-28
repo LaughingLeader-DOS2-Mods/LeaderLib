@@ -56,7 +56,10 @@ if Vars.DebugMode then
 			return canRemove or current > 0
 		end)
 		-- CustomStatSystem:RegisterCanAddPointsHandler("All", function(id, stat, character, current, availablePoints, canAdd)
-		-- 	return true
+		-- 	if availablePoints > 0 then
+		-- 		print(id,canAdd,availablePoints,current)
+		-- 		return true
+		-- 	end
 		-- end)
 		-- CustomStatSystem:RegisterCanRemovePointsHandler("All", function(id, stat, character, current, canRemove)
 		-- 	return true

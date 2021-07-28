@@ -61,7 +61,7 @@ local function AdjustCustomStatMovieClips(ui)
 			local displayName = mc.label_txt.htmlText
 			local stat = CustomStatSystem:GetStatByName(displayName)
 			if stat then
-				stat.Double = mc.statId
+				stat.Double = mc.statID
 				mc.label_txt.htmlText = stat:GetDisplayName()
 			end
 		end
@@ -336,7 +336,7 @@ function CustomStatSystem:GetStatMovieClipByDouble(ui, statId)
 		local stats = this.stats_mc.customStats_mc.stats_array
 		for i=0,#stats do
 			local mc = stats[i]
-			if mc and mc.statId == statId then
+			if mc and mc.statID == statId then
 				return mc
 			end
 		end
@@ -386,7 +386,7 @@ function CustomStatSystem:OnStatAdded(ui, call, doubleHandle, index)
 	end
 end
 
---ExternalInterface.call(param2,param1.statId,val3.x + val5,val3.y + val4,val6,param1.height,param1.tooltipAlign);
+--ExternalInterface.call(param2,param1.statID,val3.x + val5,val3.y + val4,val6,param1.height,param1.tooltipAlign);
 
 ---@private
 ---@param statId number
@@ -421,7 +421,7 @@ function CustomStatSystem:OnRequestTooltip(ui, call, statId, character, x, y, wi
 			local stats = this.stats_mc.customStats_mc.stats_array
 			for i=0,#stats do
 				local mc = stats[i]
-				if mc and mc.statId == statId then
+				if mc and mc.statID == statId then
 					statName = mc.label_txt.htmlText
 					statValue = mc.am
 					stat = self:GetStatByDouble(statId)

@@ -64,6 +64,9 @@ function FlagData:AddListener(listener)
 end
 
 function FlagData:AddTarget(id, enabled)
+	if not id then
+		return
+	end
 	if self.Targets == nil then
 		self.Targets = {}
 	end

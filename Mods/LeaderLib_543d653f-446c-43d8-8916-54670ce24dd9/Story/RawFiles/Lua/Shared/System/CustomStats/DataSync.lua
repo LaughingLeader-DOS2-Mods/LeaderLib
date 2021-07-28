@@ -58,9 +58,11 @@ if not isClient then
 	function CustomStatSystem:SyncData(user)
 		local availablePoints = {}
 		for uuid,data in pairs(PersistentVars.CustomStatAvailablePoints) do
-			local character = Ext.GetCharacter(uuid)
-			if character then
-				availablePoints[character.NetID] = data
+			if ObjectExists(uuid) == 1 then
+				local character = Ext.GetCharacter(uuid)
+				if character then
+					availablePoints[character.NetID] = data
+				end
 			end
 		end
 		local payload = Ext.JsonStringify({

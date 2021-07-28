@@ -790,6 +790,7 @@ Data.UIType = {
 	playerInfo = 38,
 	playerInfo_c = 61, --Still playerInfo.swf, but the ID is different.
 	possessionBar = 110,
+	pyramid = 129,
 	reputationPanel = 138,
 	reward = 136,
 	reward_c = 137,

@@ -194,9 +194,12 @@ function SettingsData:UpdateFlags()
 				local uuid = GetUUID(db[1])
 				if data.FlagType == "User" then
 					local id = CharacterGetReservedUserID(uuid)
-					local profileid = GetUserProfileID(id)
-					local username = GetUserName(id)
-					data:AddTarget(profileid, UserGetFlag(uuid, flag) == 1)
+					if id then
+						local profileid = GetUserProfileID(id)
+						if profileid then
+							data:AddTarget(profileid, UserGetFlag(uuid, flag) == 1)
+						end
+					end
 				elseif data.FlagType == "Character" then
 					local enabled = ObjectGetFlag(uuid, flag) == 1
 					if enabled then

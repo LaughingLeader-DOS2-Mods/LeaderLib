@@ -16,6 +16,7 @@ local fprint = fprint
 local Dump = Common.Dump
 local Data = Data
 local CustomStatSystem = CustomStatSystem
+local tostring = tostring
 
 Game.Tooltip = {}
 ---@type TooltipRequestProcessor

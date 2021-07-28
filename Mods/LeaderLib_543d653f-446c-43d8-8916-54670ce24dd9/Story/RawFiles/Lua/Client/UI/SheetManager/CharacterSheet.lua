@@ -64,8 +64,9 @@ function CharacterSheet.Update(ui, method, ...)
 	if not this or not this.isExtended then
 		return
 	end
+
 	--this.clearArray("talentArray")
-	local player = Ext.GetCharacter(Ext.DoubleToHandle(this.characterHandle)) or Client:GetCharacter()
+	local player = CustomStatSystem:GetCharacter(ui, this)
 
 	-- if method == "setAvailableCombatAbilityPoints" then
 	-- 	availableCombatPoints[id] = amount

@@ -168,19 +168,22 @@ if not isClient then
 		Timer.StartOneshot("CustomStatSystem_InvokeChangedListener", 10, function()
 			for netid,data in pairs(statChanges) do
 				local character = Ext.GetCharacter(netid)
-				for mod,stats in pairs(data) do
-					for id,b in pairs(stats) do
-						local stat = CustomStatSystem:GetStatByID(id, mod)
-						if stat then
-							local val = stat:GetValue(character)
-							local last = stat:GetLastValue(character)
-							if not last or last ~= val then
-								CustomStatSystem:InvokeStatValueChangedListeners(stat, character, last or 0, val)
-								stat:UpdateLastValue(character)
+				if not character then
+					fprint(LOGLEVEL.ERROR, "[LeaderLib:CustomStatSystem_InvokeChangedListener] Failed to get character with NetID(%s)", netid)
+				else
+					for mod,stats in pairs(data) do
+						for id,b in pairs(stats) do
+							local stat = CustomStatSystem:GetStatByID(id, mod)
+							if stat then
+								local val = stat:GetValue(character)
+								local last = stat:GetLastValue(character)
+								if not last or last ~= val then
+									CustomStatSystem:InvokeStatValueChangedListeners(stat, character, last or 0, val)
+									stat:UpdateLastValue(character)
+								end
 							end
 						end
 					end
-
 				end
 			end
 			statChanges = {}
@@ -211,11 +214,8 @@ if not isClient then
 	---@param amount integer
 	---@param modId string|nil
 	function CustomStatSystem:AddAvailablePoints(character, statId, amount, modId)
-		local uuid = character
-		if (type(character) == "userdata" or type(character) == "table") and character.MyGuid then
-			uuid = character.MyGuid
-		end
-		if type(uuid) == "string" and type(amount) == "number" then
+		local characterId = GameHelpers.GetUUID(character)
+		if type(characterId) == "string" and type(amount) == "number" then
 			--Use the PointID for actual storage key.
 			local pointId = statId
 			---@type CustomStatData
@@ -237,14 +237,14 @@ if not isClient then
 				error("PointID or statId %s is not a correct type. Stat: %s", pointId, statId, 2)
 			end
 
-			if not self.PointsPool[uuid] then
-				self.PointsPool[uuid] = {}
+			if not self.PointsPool[characterId] then
+				self.PointsPool[characterId] = {}
 			end
-			local current = self.PointsPool[uuid][pointId] or 0
-			self.PointsPool[uuid][pointId] = current + amount
+			local current = self.PointsPool[characterId][pointId] or 0
+			self.PointsPool[characterId][pointId] = current + amount
 
 			if Vars.DebugMode then
-				fprint(LOGLEVEL.DEFAULT, "Added (%s) available points for custom stat (%s)[%s] to character(%s). Total(%s)", amount, statId, pointId, uuid, self.PointsPool[uuid][pointId])
+				fprint(LOGLEVEL.DEFAULT, "Added (%s) available points for custom stat (%s)[%s] to character(%s). Total(%s)", amount, statId, pointId, characterId, self.PointsPool[characterId][pointId])
 			end
 
 			-- If a save is loaded or the game is stopped, it'll get synced in the next SharedData cycle anyway
@@ -252,7 +252,7 @@ if not isClient then
 				self:SyncData()
 			end)
 		else
-			error(string.format("Invalid parameters character(%s) uuid(%s) statId(%s) amount(%s)", tostring(character), tostring(uuid), tostring(statId), tostring(amount)), 1)
+			error(string.format("Invalid parameters character(%s) characterId(%s) statId(%s) amount(%s)", tostring(character), tostring(characterId), tostring(statId), tostring(amount)), 1)
 		end
 	end
 
@@ -495,8 +495,8 @@ function CustomStatSystem:UpdateAvailablePoints(ui)
 			for i=0,#stats-1 do
 				local stats_mc = stats[i]
 				if stats_mc then
-					stats_mc.plus_mc.visible = self:GetCanAddPoints(ui, stats_mc.statId)
-					stats_mc.minus_mc.visible = self:GetCanRemovePoints(ui, stats_mc.statId)
+					stats_mc.plus_mc.visible = self:GetCanAddPoints(ui, stats_mc.statID)
+					stats_mc.minus_mc.visible = self:GetCanRemovePoints(ui, stats_mc.statID)
 				end
 			end
 		end

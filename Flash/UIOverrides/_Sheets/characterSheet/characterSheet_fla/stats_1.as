@@ -551,6 +551,7 @@ package characterSheet_fla
 			this.civicAbilityHolder_mc.list.m_scrollbar_mc.resetContentPosition();
 			this.talentHolder_mc.list.m_scrollbar_mc.resetContentPosition();
 			this.tagsHolder_mc.list.m_scrollbar_mc.resetContentPosition();
+			this.customStats_mc.list.m_scrollbar_mc.resetContentPosition();
 		}
 		
 		public function INTSetWarnAndPoints(index:Number, pointsValue:Number) : *

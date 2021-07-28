@@ -230,11 +230,16 @@ end
 
 ---@private
 function CustomStatSystem:OnUpdateDone(ui, call)
-	local this = ui:GetRoot().stats_mc.customStats_mc
+	local stats_mc = ui:GetRoot().stats_mc
+	local this = stats_mc.customStats_mc
 	this.recountAllPoints()
 	self:UpdateAvailablePoints(ui, call)
-	this.positionElements()
-	this.list.m_scrollbar_mc.scrollTo(lastScrollY)
+	if stats_mc.currentOpenPanel == 8 then
+		this.positionElements()
+		this.list.m_scrollbar_mc.scrollTo(lastScrollY)
+	else
+		this.list.m_scrollbar_mc.visible = false
+	end
 end
 
 ---@private

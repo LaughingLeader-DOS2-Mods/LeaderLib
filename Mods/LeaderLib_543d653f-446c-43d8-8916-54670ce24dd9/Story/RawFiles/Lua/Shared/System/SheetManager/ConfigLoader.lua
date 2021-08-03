@@ -68,6 +68,7 @@ local statPropertyMap = {
 	ICON = {Name="Icon", Type = "string"},
 	ICONWIDTH = {Name="IconWidth", Type = "number"},
 	ICONHEIGHT = {Name="IconHeight", Type = "number"},
+	SPACINGHEIGHT = {Name="SpacingHeight", Type = "number"},
 }
 
 local talentPropertyMap = {

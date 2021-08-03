@@ -84,15 +84,18 @@ function CharacterSheet.Update(ui, method, ...)
 		--this.clearStats()
 		for stat in SheetManager.Stats.GetVisible(player, false, isGM) do
 			if not Vars.ControllerEnabled then
-				if stat.IsPrimary then
+				if stat.StatType == SheetManager.Stats.Data.StatType.Primary then
 					targetsUpdated.PrimaryStats = true
-					this.stats_mc.addPrimaryStat(stat.ID, stat.DisplayName, stat.Value, stat.TooltipID, stat.CanAdd, stat.CanRemove, stat.IsCustom)
+					this.stats_mc.addPrimaryStat(stat.ID, stat.DisplayName, stat.Value, stat.ID, stat.CanAdd, stat.CanRemove, stat.IsCustom)
 				else
 					targetsUpdated.SecondaryStats = true
-					if not stat.IsSpacing then
-						this.stats_mc.addSecondaryStat(stat.ID, stat.DisplayName, stat.Value, stat.TooltipID, stat.Frame, stat.BoostValue, stat.CanAdd, stat.CanRemove, stat.IsCustom)
+					if stat.StatType == SheetManager.Stats.Data.StatType.Spacing then
+						this.stats_mc.addSpacing(stat.ID, stat.SpacingHeight)
 					else
-						this.stats_mc.addSpacing(stat.ID, stat.Height)
+						this.stats_mc.addSecondaryStat(stat.SecondaryStatTypeInteger, stat.DisplayName, stat.Value, stat.ID, stat.Frame, stat.BoostValue, stat.CanAdd, stat.CanRemove, stat.IsCustom, stat.IconClipName or "")
+						if not StringHelpers.IsNullOrWhitespace(stat.IconClipName) then
+							ui:SetCustomIcon(stat.IconDrawCallName, stat.Icon, stat.IconWidth. stat.IconHeight)
+						end
 					end
 				end
 			else

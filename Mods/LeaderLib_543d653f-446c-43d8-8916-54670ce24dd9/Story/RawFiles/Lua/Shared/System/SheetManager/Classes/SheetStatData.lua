@@ -7,8 +7,10 @@ local SheetStatData = {
 	---@type SheetStatType
 	StatType = "Secondary",
 	---@type SheetSecondaryStatType
-	SheetSecondaryStatType = "Info",
+	SecondaryStatType = "Info",
 	Value = 0,
+	---For if the StatType is "Spacing".
+	SpacingHeight = 0,
 	Icon = "",
 	IconWidth = 16,
 	IconHeight = 16,
@@ -24,8 +26,9 @@ end
 
 local defaults = {
 	StatType = "Secondary",
-	SheetSecondaryStatType = "Info",
+	SecondaryStatType = "Info",
 	Value = 0,
+	SpacingHeight = 0,
 	Icon = "",
 	IconWidth = SheetStatData.IconWidth,
 	IconHeight = SheetStatData.IconHeight,

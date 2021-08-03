@@ -1035,7 +1035,7 @@ package characterSheet_fla
 			ExternalInterface.call("statAdded", stat_mc.statID, stat_mc.id, stat_mc.tooltipId);
 		}
 		
-		public function addSecondaryStat(statType:Number, labelText:String, valueText:String, statID:Number, iconFrame:Number, boostValue:Number, plusVisible:Boolean = false, minusVisible:Boolean = false, isCustom:Boolean=false) : *
+		public function addSecondaryStat(statType:Number, labelText:String, valueText:String, statID:Number, iconFrame:Number, boostValue:Number, plusVisible:Boolean = false, minusVisible:Boolean = false, isCustom:Boolean=false, iggyIconName:String = "") : *
 		{
 			var tween:larTween = null;
 			var xOffset:Number = 28;
@@ -1127,7 +1127,7 @@ package characterSheet_fla
 					stat_mc.icon_mc.visible = true;
 					stat_mc.icon_mc.gotoAndStop(iconFrame);
 				}
-				else
+				else if (iggyIconName != "")
 				{
 					stat_mc.icon_mc.visible = false;
 					if(stat_mc.customIcon_mc == undefined)
@@ -1142,7 +1142,7 @@ package characterSheet_fla
 					targetIcon = stat_mc.customIcon_mc;
 					stat_mc.customIcon_mc.x = stat_mc.icon_mc.x + customStatIconOffsetX;
 					stat_mc.customIcon_mc.y = stat_mc.icon_mc.y + customStatIconOffsetY;
-					stat_mc.customIcon_mc.name = "iggy_LL_characterSheetIcon_" + iconFrame;
+					stat_mc.customIcon_mc.name = iggyIconName;
 					stat_mc.customIcon_mc.visible = true;
 				}
 				stat_mc.texts_mc.x = targetIcon.x + xOffset - 3;

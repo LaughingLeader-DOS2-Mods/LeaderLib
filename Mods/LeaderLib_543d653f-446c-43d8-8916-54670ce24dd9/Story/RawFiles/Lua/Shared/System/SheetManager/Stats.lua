@@ -34,18 +34,22 @@ SheetManager.Stats.__index = SheetManager.Stats
 
 if isClient then
 	---@class SheetManager.StatsUIEntry
-	---@field ID string
-	---@field SheetID integer
+	---@field ID integer
 	---@field DisplayName string
-	---@field IsCivil boolean
-	---@field GroupID integer
-	---@field GroupTitle string
-	---@field AddPointsTooltip string
-	---@field Value integer
-	---@field Delta integer
+	---@field Value string
+	---@field StatType string
+	---@field SecondaryStatType string
+	---@field SecondaryStatTypeInteger integer
 	---@field CanAdd boolean
 	---@field CanRemove boolean
 	---@field IsCustom boolean
+	---@field SpacingHeight number
+	---@field Frame integer stat_mc.icon_mc's frame. If > totalFrames, then a custom iggy icon is used.
+	---@field IconClipName string iggy_LL_ID
+	---@field IconDrawCallName string LL_ID
+	---@field Icon string
+	---@field IconWidth number
+	---@field IconHeight number
 
 	---@private
 	---@param player EclCharacter
@@ -65,16 +69,30 @@ if isClient then
 		for mod,dataTable in pairs(SheetManager.Data.Stats) do
 			for id,data in pairs(dataTable) do
 				local value = data:GetValue(player)
-				entries[#entries+1] = {
+				local entry = {
 					ID = data.GeneratedID,
 					DisplayName = data.DisplayName,
 					Value = string.format("%s", value),
-					TooltipID = data.TooltipID,
 					CanAdd = SheetManager:GetIsPlusVisible(data, player, isGM, value),
 					CanRemove = SheetManager:GetIsMinusVisible(data, player, isGM, value),
 					IsCustom = true,
-					IsPrimary = data.IsPrimary
+					StatType = data.StatType,
+					Frame = 0,
+					SecondaryStatType = data.SecondaryStatType,
+					SecondaryStatTypeInteger = SheetManager.Stats.Data.SecondaryStatTypeInteger[data.SecondaryStatType] or 0,
+					SpacingHeight = data.SpacingHeight,
+					Icon = data.Icon,
+					IconWidth = data.IconWidth,
+					IconHeight = data.IconHeight,
+					IconClipName = "",
+					IconDrawCallName = ""
 				}
+				if not StringHelpers.IsNullOrEmpty(data.Icon) then
+					entry.Frame = 99
+					entry.IconDrawCallName = string.format("LL_%s", data.ID)
+					entry.IconClipName = "iggy_" + entry.IconDrawCallName
+				end
+				entries[#entries+1] = entry
 			end
 		end
 

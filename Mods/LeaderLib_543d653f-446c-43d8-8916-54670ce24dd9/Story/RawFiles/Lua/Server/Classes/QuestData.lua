@@ -140,9 +140,10 @@ function QuestData:Activate(uuid, state)
 		ObjectSetFlag(uuid, self.Flags.Add, 0)
 	end
 	if state ~= nil then
-		if state.Type == "QuestStateData" then
+		local t = type(state)
+		if t == "table" and state.Type == "QuestStateData" then
 			ObjectSetFlag(uuid, state.Flags.Update, 0)
-		elseif type(state) == "string" then
+		elseif t == "string" then
 			if not string.find(state, "QuestUpdate_") then
 				ObjectSetFlag(uuid, string.format("QuestUpdate_%s_%s", self.ID, state), 0)
 			else

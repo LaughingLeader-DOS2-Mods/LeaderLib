@@ -62,10 +62,10 @@ end
 
 ---Get an iterator of all stats.
 ---@param inSheetOnly boolean|nil Only get stats in the character sheet,
----@param sortByDisplayName boolean|nil
+---@param sortStats boolean|nil
 ---@param includeUnregisteredStats boolean|nil
 ---@return fun():CustomStatData
-function CustomStatSystem:GetAllStats(inSheetOnly, sortByDisplayName, includeUnregisteredStats)
+function CustomStatSystem:GetAllStats(inSheetOnly, sortStats, includeUnregisteredStats)
 	local allStats = {}
 
 	local findAll = true
@@ -104,10 +104,11 @@ function CustomStatSystem:GetAllStats(inSheetOnly, sortByDisplayName, includeUnr
 		end
 	end
 
-	if sortByDisplayName == true then
-		table.sort(allStats, function(a,b)
-			return a:GetDisplayName() < b:GetDisplayName()
-		end)
+	if sortStats == true then
+		-- table.sort(allStats, function(a,b)
+		-- 	return a:GetDisplayName() < b:GetDisplayName()
+		-- end)
+		table.sort(allStats, CustomStatSystem.SortStats)
 	end
 
 	local i = 0

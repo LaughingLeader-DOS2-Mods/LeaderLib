@@ -157,7 +157,7 @@ Ext.RegisterListener("UIInvoke", function(ui, event, ...)
 	local t = ui:GetTypeId()
 	local listener = typeListeners[t]
 	if listener then
-		OnUIListener(listener, "call", ui, event, ...)
+		OnUIListener(listener, "method", ui, event, ...)
 	end
 end)
 
@@ -186,6 +186,7 @@ local examine = UIListenerWrapper:Create(Data.UIType.examine)
 local characterCreation = UIListenerWrapper:Create(Data.UIType.characterCreation, enabledParam)
 local characterSheetDebug = UIListenerWrapper:Create(Data.UIType.characterSheet, enabledParam)
 local partyInventory = UIListenerWrapper:Create(Data.UIType.partyInventory, enabledParam)
+local pyramid = UIListenerWrapper:Create(Data.UIType.pyramid, enabledParam)
 
 local printArrays = {
 	"lvlBtnAbility_array",

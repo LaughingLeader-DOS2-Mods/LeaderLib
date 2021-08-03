@@ -1,5 +1,7 @@
 local ts = Classes.TranslatedString
 
+---@alias SheetAbilityGroupID string |"Weapons"|"Defense"|"Skills"|"Personality"|"Craftsmanship"|"NastyDeeds"
+
 ---@class AbilityManager
 SheetManager.Abilities = {
 	RegisteredAbilities = {},
@@ -16,6 +18,22 @@ SheetManager.Abilities = {
 				[1] = ts:Create("h2890aceag6c58g41a7gb286g5044fc11d7f1", "Craftsmanship"), -- or h7cc0941cg4b22g43a6gae93g3f3b240741cd
 				[2] = ts:Create("he920062fg4553g4b1eg9935gec94a4c1aa59", "Nasty Deeds"), -- or hc92a5451g8a18g40f4g9a80g40bb23b98a8a
 			}
+		},
+		GroupID = {
+			Weapons = 0,
+			Defense = 1,
+			Skills = 2,
+			Personality = 3,
+			Craftsmanship = 4,
+			NastyDeeds = 5,
+		},
+		GroupIDInteger = {
+			[0] = "Weapons",
+			[1] = "Defense",
+			[2] = "Skills",
+			[3] = "Personality",
+			[4] = "Craftsmanship",
+			[5] = "NastyDeeds",
 		},
 		Abilities = {
 			SingleHanded = {Group=0, Civil=false},

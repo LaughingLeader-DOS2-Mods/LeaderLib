@@ -59,27 +59,46 @@ local statPropertyMap = {
 		elseif t == "number" then
 			local id = SheetManager.Stats.Data.SecondaryStatTypeInteger[val]
 			if id then
-				return id
+				return val
 			end
-		else
-			fprint(LOGLEVEL.WARNING, "[SheetManager:ConfigLoader] Property value type [%s](%s) is incorrect for property StatType.", t, val)
 		end
+		fprint(LOGLEVEL.WARNING, "[SheetManager:ConfigLoader] Property value type [%s](%s) is incorrect for property Stat StatType. Using default.", t, val)
 		return SheetManager.Stats.Data.SecondaryStatType.Info
 	end},
 	ICON = {Name="Icon", Type = "string"},
+	ICONWIDTH = {Name="IconWidth", Type = "number"},
+	ICONHEIGHT = {Name="IconHeight", Type = "number"},
 }
 
 local talentPropertyMap = {
 	ICON = {Name="Icon", Type = "string"},
 	ICONWIDTH = {Name="IconWidth", Type = "number"},
 	ICONHEIGHT = {Name="IconHeight", Type = "number"},
+	ISRACIAL = {Name="IsRacial", Type = "boolean"},
 }
 
 local abilityPropertyMap = {
 	ICON = {Name="Icon", Type = "string"},
 	ICONWIDTH = {Name="IconWidth", Type = "number"},
 	ICONHEIGHT = {Name="IconHeight", Type = "number"},
-	GROUPID = {Name="GroupID", Type = "number"},
+	ISCIVIL = {Name="IsCivil", Type = "boolean"},
+	GROUPID = {Name="GroupID", Type = "enum", Parse = function(val,t)
+		if t == "string" then
+			local id = string.lower(val)
+			for k,v in pairs(SheetManager.Abilities.Data.GroupID) do
+				if string.lower(k) == id then
+					return v
+				end
+			end
+		elseif t == "number" then
+			local id = SheetManager.Abilities.Data.GroupID[val]
+			if id then
+				return val
+			end
+		end
+		fprint(LOGLEVEL.WARNING, "[SheetManager:ConfigLoader] Property value type [%s](%s) is incorrect for property Ability GroupID. Using default.", t, val)
+		return SheetManager.Abilities.Data.GroupID.Skills
+	end},
 }
 
 local isClient = Ext.IsClient()

@@ -5,10 +5,13 @@ local SheetStatData = {
 	Type = "SheetStatData",
 	TooltipType = "Stat",
 	---@type SheetStatType
-	StatType = "Stat",
-	---@type SheetStatType
+	StatType = "Secondary",
+	---@type SheetSecondaryStatType
 	SheetSecondaryStatType = "Info",
 	Value = 0,
+	Icon = "",
+	IconWidth = 16,
+	IconHeight = 16,
 }
 
 SheetStatData.__index = function(t,k)
@@ -20,9 +23,12 @@ SheetStatData.__index = function(t,k)
 end
 
 local defaults = {
-	StatType = "Stat",
+	StatType = "Secondary",
 	SheetSecondaryStatType = "Info",
 	Value = 0,
+	Icon = "",
+	IconWidth = SheetStatData.IconWidth,
+	IconHeight = SheetStatData.IconHeight,
 }
 
 ---@protected

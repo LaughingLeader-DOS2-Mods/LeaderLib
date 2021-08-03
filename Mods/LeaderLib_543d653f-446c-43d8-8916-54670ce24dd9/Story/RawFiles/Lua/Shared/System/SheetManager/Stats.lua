@@ -17,14 +17,16 @@ SheetManager.Stats = {
 		},
 		SecondaryStatType = {
 			Info = 0,
-			Normal = 1,
+			Stat = 1,
 			Resistance = 2,
+			Experience = 3,
 		},
 		---@type table<integer,SheetSecondaryStatType>
 		SecondaryStatTypeInteger = {
 			[0] = "Info",
-			[1] = "Normal",
+			[1] = "Stat",
 			[2] = "Resistance",
+			[3] = "Experience",
 		}
 	}
 }

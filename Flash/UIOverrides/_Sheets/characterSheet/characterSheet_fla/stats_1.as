@@ -855,12 +855,12 @@ package characterSheet_fla
 			this.mainStatsList.positionElements();
 		}
 		
-		public function addSpacing(listId:Number, height:Number) : *
+		public function addSpacing(statType:Number, height:Number) : *
 		{
 			var spacing_mc:MovieClip = new Spacing();
 			spacing_mc.height = height;
 			spacing_mc.heightOverride = height;
-			this.addToListWithId(listId,spacing_mc);
+			this.addToListWithId(statType,spacing_mc);
 		}
 		
 		public function addAbilityGroup(isCivil:Boolean, groupId:Number, labelText:String) : *
@@ -1114,7 +1114,7 @@ package characterSheet_fla
 				stat_mc.texts_mc.text_txt.scaleY = 0.82;
 				stat_mc.texts_mc.text_txt.y = stat_mc.texts_mc.text_txt.y + 2;
 			}
-			this.addToListWithId(statID,stat_mc);
+			this.addToListWithId(statType,stat_mc);
 			if(iconFrame != 0)
 			{
 				var targetIcon:MovieClip = stat_mc.icon_mc;
@@ -1184,21 +1184,21 @@ package characterSheet_fla
 			val5.label_txt.htmlText = labelText;
 		}
 		
-		public function addToListWithId(id:Number, mc:MovieClip) : *
+		public function addToListWithId(statType:Number, mc:MovieClip) : *
 		{
-			if(id == 0)
+			if(statType == 0)
 			{
 				this.infoStatList.addElement(mc);
 			}
-			else if(id == 1)
+			else if(statType == 1)
 			{
 				this.secondaryStatList.addElement(mc);
 			}
-			else if(id == 2)
+			else if(statType == 2)
 			{
 				this.resistanceStatList.addElement(mc);
 			}
-			else if(id == 3)
+			else if(statType == 3)
 			{
 				this.expStatList.addElement(mc);
 			}

@@ -1,15 +1,48 @@
 {
-	"Abilities": {
-		"Test1": {
-			"DisplayName": "Debug1",
-			"Description": "This is a test ability!",
-			"Icon": "Ability_Necromancy"
-		}
-	},
 	"Stats": {
 		"DebugStat1": {
-			"DisplayName": "Debug1",
-			"Description": "This is a test stat!"
+			"DisplayName": "Debug Attribute",
+			"Description": "This is a test stat!",
+			"StatType": "Primary"
+		},
+		"DebugStat2": {
+			"DisplayName": "Debug Resistance?",
+			"Description": "This is a test stat!",
+			"StatType": "Secondary",
+			"SecondaryStatType": "Resistance"
+		},
+		"DebugStat3": {
+			"DisplayName": "Debug Experience Modifier",
+			"Description": "This is a test stat!",
+			"StatType": "Secondary",
+			"SecondaryStatType": "Experience"
+		},
+		"DebugStat4": {
+			"DisplayName": "Debug Info",
+			"Description": "This is a test stat!",
+			"StatType": "Secondary",
+			"SecondaryStatType": "Info"
+		}
+	},
+	"Abilities": {
+		"Test1": {
+			"DisplayName": "Debug Defense",
+			"Description": "This is a test ability!",
+			"Icon": "Tag_Elf_inv",
+			"GroupID": "Defense"
+		},
+		"Test2": {
+			"DisplayName": "Debug Combat Ability",
+			"Description": "This is a test ability!",
+			"Icon": "Tag_Barbarian_inv",
+			"GroupID": "Skills"
+		},
+		"Test3": {
+			"DisplayName": "Debug Civil",
+			"Description": "This is a test ability!",
+			"Icon": "Tag_ChampionFortJoy_inv",
+			"GroupID": "Personality",
+			"IsCivil": true
 		}
 	},
 	"Talents": {
@@ -17,6 +50,16 @@
 			"DisplayName": "Debug1",
 			"Description": "This is a test talent!",
 			"Icon": "Talent_Jitterbug"
+		},
+		"DebugTalent2": {
+			"DisplayName": "Debug2",
+			"Description": "This is a test talent!",
+			"Icon": "statIcons_Lucky"
+		},
+		"DebugRacialTalent1": {
+			"DisplayName": "Debug Race",
+			"Description": "This is a test talent!",
+			"Icon": "Talent_IceKing"
 		}
 	}
 }

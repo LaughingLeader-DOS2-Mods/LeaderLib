@@ -4,75 +4,13 @@ if SheetManager == nil then
 end
 
 ---@alias SHEET_ENTRY_ID string
----@alias OnSheetStatChangedCallback fun(id:string, stat:SheetStatData, character:EsvCharacter, lastValue:integer, value:integer, isClientSide:boolean):void
----@alias OnSheetAbilityChangedCallback fun(id:string, stat:SheetAbilityData, character:EsvCharacter, lastValue:integer, value:integer, isClientSide:boolean):void
----@alias OnSheetTalentChangedCallback fun(id:string, stat:SheetTalentData, character:EsvCharacter, lastValue:boolean, value:boolean, isClientSide:boolean):void
 
 SheetManager.__index = SheetManager
 SheetManager.Loaded = false
 local isClient = Ext.IsClient()
 
 Ext.Require("Shared/System/SheetManager/Data/SheetDataValues.lua")
-
-SheetManager.Listeners = {
-	Loaded = {},
-	---@type table<string, OnSheetStatChangedCallback|OnSheetAbilityChangedCallback|OnSheetTalentChangedCallback[]>
-	OnEntryChanged = {All = {}}
-}
-
-local self = SheetManager
-
----@private
-function SheetManager:RegisterListener(tbl, callback, key)
-	if callback == nil then
-		return
-	end
-	local t = type(key)
-	if t == "table" then
-		for i=1,#key do
-			self:RegisterListener(tbl, callback, key[i])
-		end
-	elseif t == "number" or t == "string" then
-		if tbl[key] == nil then
-			tbl[key] = {}
-		end
-		table.insert(tbl[key], callback)
-	elseif key == nil then
-		table.insert(tbl, callback)
-	end
-end
-
----@param callback fun(self:SheetManager):void
-function SheetManager:RegisterLoadedListener(callback)
-	self:RegisterListener(self.Listeners.Loaded, callback)
-end
-
----@param id string|string[]|number|number[]
----@param callback OnSheetStatChangedCallback
-function SheetManager:RegisterStatChangedListener(id, callback)
-	if StringHelpers.Equals(id, "All", true) then
-		id = "All"
-	end
-	self:RegisterListener(self.Listeners.OnEntryChanged, callback, id)
-end
-
----@param id string|string[]|number|number[]
----@param callback OnSheetAbilityChangedCallback
-function SheetManager:RegisterAbilityChangedListener(id, callback)
-	if StringHelpers.Equals(id, "All", true) then
-		id = "All"
-	end
-	self:RegisterListener(self.Listeners.OnEntryChanged, callback, id)
-end
-
----@param id string|string[]|number|number[]
----@param callback OnSheetTalentChangedCallback
-function SheetManager:RegisterTalentChangedListener(id, callback)
-	if StringHelpers.Equals(id, "All", true) then
-		id = "All"
-	end
-	self:RegisterListener(self.Listeners.OnEntryChanged, callback, id)
-end
+Ext.Require("Shared/System/SheetManager/Listeners.lua")
 
 ---@type table<SHEET_ENTRY_ID,table<UUID|NETID, integer|boolean>>
 SheetManager.CurrentValues = {}

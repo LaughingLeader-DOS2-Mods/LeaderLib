@@ -237,15 +237,26 @@ if Ext.IsClient() then
 	---@field GroupID integer
 	---@field GroupTitle string
 	---@field AddPointsTooltip string
+	---@field RemovePointsTooltip string
 	---@field Value integer
 	---@field Delta integer
+	---@field CanAdd boolean
+	---@field CanRemove boolean
 	---@field IsCustom boolean
 
 	---@private
 	---@param player EclCharacter
 	---@param civilOnly boolean|nil
+	---@param isCharacterCreation boolean|nil
+	---@param isGM boolean|nil
 	---@return fun():SheetManager.AbilitiesUIEntry
-	function SheetManager.Abilities.GetVisible(player, civilOnly, this)
+	function SheetManager.Abilities.GetVisible(player, civilOnly, isCharacterCreation, isGM)
+		if isCharacterCreation == nil then
+			isCharacterCreation = false
+		end
+		if isGM == nil then
+			isGM = false
+		end
 		local entries = {}
 		local tooltip = LocalizedText.UI.AbilityPlusTooltip:ReplacePlaceholders(Ext.ExtraData.CombatAbilityLevelGrowth)
 
@@ -262,11 +273,13 @@ if Ext.IsClient() then
 			local data = SheetManager.Abilities.Data.Abilities[id] or SheetManager.Abilities.Data.DOSAbilities[id]
 			if data ~= nil and (civilOnly == true and data.Civil) or (civilOnly == false and not data.Civil) then
 				if SheetManager.Abilities.CanAddAbility(id, player) then
-					local canAddPoints = false
-					if civilOnly then
-						canAddPoints = civilPoints > 0 and player.Stats[id] < maxCivil
-					else
-						canAddPoints = abilityPoints > 0 and player.Stats[id] < maxAbility
+					local canAddPoints = isGM
+					if not canAddPoints then
+						if civilOnly then
+							canAddPoints = civilPoints > 0 and player.Stats[id] < maxCivil
+						else
+							canAddPoints = abilityPoints > 0 and player.Stats[id] < maxAbility
+						end
 					end
 					local name = GameHelpers.GetAbilityName(id)
 					local isCivil = data.Civil == true
@@ -283,8 +296,9 @@ if Ext.IsClient() then
 						Value = statVal,
 						Delta = statVal,
 						AddPointsTooltip = tooltip,
+						RemovePointsTooltip = "",
 						CanAdd = canAddPoints,
-						CanRemove = false,
+						CanRemove = isCharacterCreation or isGM,
 					}
 					entries[#entries+1] = data
 				end
@@ -311,8 +325,9 @@ if Ext.IsClient() then
 					Value = string.format("%s", value),
 					Delta = value,
 					AddPointsTooltip = tooltip,
-					CanAdd = canAddPoints,
-					CanRemove = false,
+					RemovePointsTooltip = "",
+					CanAdd = SheetManager:GetIsPlusVisible(data, player, canAddPoints, value),
+					CanRemove = SheetManager:GetIsMinusVisible(data, player, isCharacterCreation, value),
 				}
 				entries[#entries+1] = data
 			end

@@ -78,19 +78,19 @@ function CharacterSheet.Update(ui, method, ...)
 
 	---@type SheetUpdateTargets
 	local targetsUpdated = TableHelpers.Clone(updateTargetsDefaults)
-	local canRemove = GameHelpers.Client.IsGameMaster(ui, this)
+	local isGM = GameHelpers.Client.IsGameMaster(ui, this)
 
 	if updateTargets.PrimaryStats or updateTargets.SecondaryStats then
 		--this.clearStats()
-		for stat in SheetManager.Stats.GetVisible(player) do
+		for stat in SheetManager.Stats.GetVisible(player, false, isGM) do
 			if not Vars.ControllerEnabled then
 				if stat.IsPrimary then
 					targetsUpdated.PrimaryStats = true
-					this.stats_mc.addPrimaryStat(stat.ID, stat.DisplayName, stat.Value, stat.TooltipID, stat.CanAdd, canRemove, stat.IsCustom)
+					this.stats_mc.addPrimaryStat(stat.ID, stat.DisplayName, stat.Value, stat.TooltipID, stat.CanAdd, stat.CanRemove, stat.IsCustom)
 				else
 					targetsUpdated.SecondaryStats = true
 					if not stat.IsSpacing then
-						this.stats_mc.addSecondaryStat(stat.ID, stat.DisplayName, stat.Value, stat.TooltipID, stat.Frame, stat.BoostValue, stat.CanAdd, canRemove, stat.IsCustom)
+						this.stats_mc.addSecondaryStat(stat.ID, stat.DisplayName, stat.Value, stat.TooltipID, stat.Frame, stat.BoostValue, stat.CanAdd, stat.CanRemove, stat.IsCustom)
 					else
 						this.stats_mc.addSpacing(stat.ID, stat.Height)
 					end
@@ -107,20 +107,11 @@ function CharacterSheet.Update(ui, method, ...)
 		--local points = this.stats_mc.pointsWarn[3].avPoints
 		local points = Client.Character.Points.Talent
 		for talent in SheetManager.Talents.GetVisible(player) do
-			local canAdd = false
-			local canRemove = false
 			targetsUpdated.Talents = true
-			if not talent.IsRacial then
-				if not talent.HasTalent and points > 0 and talent.State == SheetManager.Talents.Data.TalentState.Selectable then
-					canAdd = true
-				elseif talent.HasTalent then
-					canRemove = GameHelpers.Client.IsGameMaster(ui, this)
-				end
-			end
 			if not Vars.ControllerEnabled then
-				this.stats_mc.addTalent(talent.DisplayName, talent.ID, talent.State, canAdd, canRemove, talent.IsCustom)
+				this.stats_mc.addTalent(talent.DisplayName, talent.ID, talent.State, talent.CanAdd, talent.CanRemove, talent.IsCustom)
 			else
-				this.mainpanel_mc.stats_mc.talents_mc.addTalent(talent.DisplayName, talent.ID, talent.State, canAdd, canRemove, talent.IsCustom)
+				this.mainpanel_mc.stats_mc.talents_mc.addTalent(talent.DisplayName, talent.ID, talent.State, talent.CanAdd, talent.CanRemove, talent.IsCustom)
 			end
 		end
 		--this.stats_mc.addTalent("Test", 404, 1, true, false, true)
@@ -128,8 +119,8 @@ function CharacterSheet.Update(ui, method, ...)
 
 	if updateTargets.Abilities then
 		--this.clearAbilities()
-		for ability in SheetManager.Abilities.GetVisible(player, updateTargets.Civil, this) do
-			this.stats_mc.addAbility(ability.IsCivil, ability.GroupID, ability.ID, ability.DisplayName, ability.Value, ability.AddPointsTooltip, "", ability.CanAdd, ability.CanRemove, ability.IsCustom)
+		for ability in SheetManager.Abilities.GetVisible(player, updateTargets.Civil, false) do
+			this.stats_mc.addAbility(ability.IsCivil, ability.GroupID, ability.ID, ability.DisplayName, ability.Value, ability.AddPointsTooltip, ability.RemovePointsTooltip, ability.CanAdd, ability.CanRemove, ability.IsCustom)
 			targetsUpdated.Abilities = true
 			targetsUpdated.Civil = updateTargets.Civil
 		end

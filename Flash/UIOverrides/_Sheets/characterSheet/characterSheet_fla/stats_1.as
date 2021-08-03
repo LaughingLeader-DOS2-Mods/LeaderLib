@@ -1035,13 +1035,13 @@ package characterSheet_fla
 			ExternalInterface.call("statAdded", stat_mc.statID, stat_mc.id, stat_mc.tooltipId);
 		}
 		
-		public function addSecondaryStat(statID:Number, labelText:String, valueText:String, tooltipId:Number, iconFrame:Number, boostValue:Number, plusVisible:Boolean = false, minusVisible:Boolean = false, isCustom:Boolean=false) : *
+		public function addSecondaryStat(statType:Number, labelText:String, valueText:String, statID:Number, iconFrame:Number, boostValue:Number, plusVisible:Boolean = false, minusVisible:Boolean = false, isCustom:Boolean=false) : *
 		{
 			var tween:larTween = null;
 			var xOffset:Number = 28;
 			var xOffset2:Number = this.statsElWidth;
 			var stat_mc:MovieClip = null;
-			if(statID == 0)
+			if(statType == 0)
 			{
 				xOffset2 = this.statsElWidth;
 				stat_mc = new InfoStat();
@@ -1049,7 +1049,7 @@ package characterSheet_fla
 			else
 			{
 				stat_mc = new SecStat();
-				if(statID != 2)
+				if(statType != 2)
 				{
 					stat_mc.heightOverride = 26;
 				}
@@ -1072,12 +1072,12 @@ package characterSheet_fla
 				stat_mc.editText_txt.visible = false;
 			}
 			stat_mc.texts_mc.text_txt.autoSize = TextFieldAutoSize.RIGHT;
-			if(statID == 0)
+			if(statType == 0)
 			{
 				stat_mc.icon_mc.x = 3;
 				xOffset = 48;
 			}
-			else if(statID == 2)
+			else if(statType == 2)
 			{
 				stat_mc.icon_mc.x = 5;
 				stat_mc.icon_mc.y = 5;
@@ -1100,8 +1100,8 @@ package characterSheet_fla
 			stat_mc.texts_mc.label_txt.mouseEnabled = false;
 			stat_mc.texts_mc.statBasePoints = Number(valueText);
 			stat_mc.texts_mc.statPoints = 0;
-			stat_mc.tooltip = tooltipId;
-			stat_mc.statID = tooltipId;
+			stat_mc.tooltip = statID;
+			stat_mc.statID = statID;
 			stat_mc.hl_mc.height = Math.round(stat_mc.texts_mc.height - 4);
 			var widthOffsetCheck:Number = xOffset2;
 			if(iconFrame != 0)
@@ -1160,7 +1160,7 @@ package characterSheet_fla
 			{
 				stat_mc.texts_mc.text_txt.x = xOffset2 - stat_mc.texts_mc.text_txt.width;
 			}
-			//stat_mc.MakeCustom(statID, isCustom);
+			stat_mc.MakeCustom(statID, isCustom);
 			//ExternalInterface.call("statAdded", stat_mc.statID, stat_mc.id);
 		}
 		

@@ -183,7 +183,7 @@ package characterSheet_fla
 
 		public function addCustomStat(doubleHandle:Number, labelText:String, valueText:String, groupId:Number=0, plusVisible:Boolean=false, minusVisible:Boolean=false, isCustom:Boolean=false) : *
 		{
-			var cstat_mc:MovieClip = this.list.getGroupElementByNumber("statID",doubleHandle);
+			var cstat_mc:MovieClip = this.list.getGroupElementByNumber("statID", doubleHandle);
 			if (cstat_mc == null)
 			{
 				cstat_mc = new CustomStat();

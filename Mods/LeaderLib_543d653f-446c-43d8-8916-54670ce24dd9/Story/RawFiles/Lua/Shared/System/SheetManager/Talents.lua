@@ -736,13 +736,26 @@ end
 ---@field DisplayName string
 ---@field IsRacial boolean
 ---@field IsChoosable boolean
+---@field CanAdd boolean
+---@field CanRemove boolean
 ---@field IsCustom boolean
 ---@field State integer
 
 ---@private
 ---@param player EclCharacter
+---@param isCharacterCreation boolean|nil
+---@param isGM boolean|nil
 ---@return fun():SheetManager.TalentsUITalentEntry
-function SheetManager.Talents.GetVisible(player)
+function SheetManager.Talents.GetVisible(player, isCharacterCreation, isGM)
+	if isCharacterCreation == nil then
+		isCharacterCreation = false
+	end
+	if isGM == nil then
+		isGM = false
+	end
+
+	local talentPoints = Client.Character.Points.Talent
+
 	local entries = {}
 	--Default entries
 	for numId,talentId in Data.Talents:Get() do
@@ -755,6 +768,10 @@ function SheetManager.Talents.GetVisible(player)
 			if hasTalent then 
 				fprint(LOGLEVEL.WARNING, "[%s] Name(%s) State(%s) hasTalent(%s) isChoosable(%s) isRacial(%s)", talentId, name, talentState, hasTalent, isChoosable, isRacial)
 			end
+
+			local canAdd = not hasTalent and (isGM or (talentPoints > 0 and talentState == SheetManager.Talents.Data.TalentState.Selectable))
+			local canRemove = hasTalent and ((not isRacial and isCharacterCreation) or isGM)
+
 			---@type SheetManager.TalentsUITalentEntry
 			local data = {
 				--ID = talentId,
@@ -765,6 +782,8 @@ function SheetManager.Talents.GetVisible(player)
 				IsChoosable = isChoosable,
 				State = talentState,
 				IsCustom = false,
+				CanAdd = canAdd,
+				CanRemove = canRemove,
 			}
 			entries[#entries+1] = data
 		end
@@ -776,6 +795,8 @@ function SheetManager.Talents.GetVisible(player)
 			local name = SheetManager.Talents.GetTalentDisplayName(data.ID, talentState)
 			local isRacial = data.IsRacial
 			local isChoosable = not isRacial and talentState ~= SheetManager.Talents.Data.TalentState.Locked
+			local canAdd = not hasTalent and isChoosable and talentPoints > 0
+			local canRemove = hasTalent and isCharacterCreation
 			---@type SheetManager.TalentsUITalentEntry
 			local data = {
 				ID = data.GeneratedID,
@@ -783,6 +804,8 @@ function SheetManager.Talents.GetVisible(player)
 				DisplayName = name,
 				IsRacial = isRacial,
 				IsChoosable = isChoosable,
+				CanAdd = SheetManager:GetIsPlusVisible(data, player, canAdd, hasTalent),
+				CanRemove = SheetManager:GetIsMinusVisible(data, player, canRemove, hasTalent),
 				State = talentState,
 				IsCustom = true,
 			}

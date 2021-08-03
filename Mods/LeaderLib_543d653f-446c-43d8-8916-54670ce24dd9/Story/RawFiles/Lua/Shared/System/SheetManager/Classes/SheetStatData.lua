@@ -4,9 +4,11 @@ local isClient = Ext.IsClient()
 local SheetStatData = {
 	Type = "SheetStatData",
 	TooltipType = "Stat",
+	---@type SheetStatType
 	StatType = "Stat",
+	---@type SheetStatType
+	SheetSecondaryStatType = "Info",
 	Value = 0,
-	IsPrimary = false
 }
 
 SheetStatData.__index = function(t,k)
@@ -18,9 +20,9 @@ SheetStatData.__index = function(t,k)
 end
 
 local defaults = {
-	Value = 0,
-	IsPrimary = false,
 	StatType = "Stat",
+	SheetSecondaryStatType = "Info",
+	Value = 0,
 }
 
 ---@protected

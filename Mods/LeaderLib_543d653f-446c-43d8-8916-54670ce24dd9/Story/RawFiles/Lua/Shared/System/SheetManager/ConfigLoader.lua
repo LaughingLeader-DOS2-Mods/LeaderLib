@@ -34,6 +34,41 @@ local basePropertyMap = {
 	LOADSTRINGKEY = {Name="LoadStringKey", Type = "boolean"},
 }
 
+local statPropertyMap = {
+	STATTYPE = {Name="StatType", Type = "enum", Parse = function(val,t)
+		if t == "string" then
+			local id = string.lower(val)
+			for k,v in pairs(SheetManager.Stats.Data.StatType) do
+				if string.lower(k) == id then
+					return v
+				end
+			end
+		else
+			fprint(LOGLEVEL.WARNING, "[SheetManager:ConfigLoader] Property value type [%s](%s) is incorrect for property StatType.", t, val)
+		end
+		return SheetManager.Stats.Data.StatType.Secondary
+	end},
+	SECONDARYSTATTYPE = {Name="SecondaryStatType", Type = "enum", Parse = function(val,t) 
+		if t == "string" then
+			local id = string.lower(val)
+			for k,v in pairs(SheetManager.Stats.Data.SecondaryStatType) do
+				if string.lower(k) == id then
+					return v
+				end
+			end
+		elseif t == "number" then
+			local id = SheetManager.Stats.Data.SecondaryStatTypeInteger[val]
+			if id then
+				return id
+			end
+		else
+			fprint(LOGLEVEL.WARNING, "[SheetManager:ConfigLoader] Property value type [%s](%s) is incorrect for property StatType.", t, val)
+		end
+		return SheetManager.Stats.Data.SecondaryStatType.Info
+	end},
+	ICON = {Name="Icon", Type = "string"},
+}
+
 local talentPropertyMap = {
 	ICON = {Name="Icon", Type = "string"},
 	ICONWIDTH = {Name="IconWidth", Type = "number"},
@@ -65,7 +100,9 @@ local function parseTable(tbl, propertyMap, modId, defaults, class, id_map)
 							local propKey = string.upper(property)
 							local propData = propertyMap[propKey] or basePropertyMap[propKey]
 							local t = type(value)
-							if propData and (propData.Type == "any" or t == propData.Type) then
+							if propData.Type == "enum" then
+								data[propData.Name] = propData.Parse(value,t)
+							elseif propData and (propData.Type == "any" or t == propData.Type) then
 								data[propData.Name] = value
 							else
 								fprint(LOGLEVEL.WARNING, "[LeaderLib:SheetManager.ConfigLoader] Defaults for stat(%s) has unknown property (%s) with value type(%s)", k, property, t)
@@ -78,7 +115,9 @@ local function parseTable(tbl, propertyMap, modId, defaults, class, id_map)
 						local propKey = string.upper(property)
 						local propData = propertyMap[propKey] or basePropertyMap[propKey]
 						local t = type(value)
-						if propData and (propData.Type == "any" or t == propData.Type) then
+						if propData.Type == "enum" then
+							data[propData.Name] = propData.Parse(value,t)
+						elseif propData and (propData.Type == "any" or t == propData.Type) then
 							data[propData.Name] = value
 						else
 							fprint(LOGLEVEL.WARNING, "[LeaderLib:SheetManager.ConfigLoader] Stat(%s) has unknown property (%s) with value type(%s)", k, property, t)
@@ -117,7 +156,7 @@ local function LoadConfig(uuid, file)
 				talentDefaults = config.Defaults.Talents
 			end
 		end
-		local stats = parseTable(config.Stats, basePropertyMap, uuid, statDefaults, Classes.SheetStatData, SheetManager.Data.ID_MAP.Stats)
+		local stats = parseTable(config.Stats, statPropertyMap, uuid, statDefaults, Classes.SheetStatData, SheetManager.Data.ID_MAP.Stats)
 		local talents = parseTable(config.Talents, talentPropertyMap, uuid, talentDefaults, Classes.SheetTalentData, SheetManager.Data.ID_MAP.Talents)
 		local abilities = parseTable(config.Abilities, abilityPropertyMap, uuid, abilityDefaults, Classes.SheetAbilityData, SheetManager.Data.ID_MAP.Abilities)
 

@@ -791,14 +791,6 @@
                             <attribute id="Name" value="Origin_Sebille" type="22" />
                         </node>
                         <node id="Entity">
-                            <attribute id="Alignment" value="Origin" type="22" />
-                            <attribute id="Name" value="Origin_LLWEAPONEX_Harken" type="22" />
-                        </node>
-                        <node id="Entity">
-                            <attribute id="Alignment" value="Origin" type="22" />
-                            <attribute id="Name" value="Origin_LLWEAPONEX_Korvash" type="22" />
-                        </node>
-                        <node id="Entity">
                             <attribute id="Alignment" value="Good" type="22" />
                             <attribute id="Name" value="Pets" type="22" />
                         </node>

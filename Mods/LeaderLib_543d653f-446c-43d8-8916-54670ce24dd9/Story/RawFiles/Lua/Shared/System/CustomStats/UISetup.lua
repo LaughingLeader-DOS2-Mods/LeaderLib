@@ -186,6 +186,9 @@ local function OnSheetUpdating(ui, method)
 			end
 		end
 	else
+		if this.isExtended then
+			this.clearArray("customStats_array")
+		end
 		for stat in CustomStatSystem:GetAllStats(false, true, true) do
 			local visible = CustomStatSystem:GetStatVisibility(ui, stat.Double, stat, client)
 			if visible then

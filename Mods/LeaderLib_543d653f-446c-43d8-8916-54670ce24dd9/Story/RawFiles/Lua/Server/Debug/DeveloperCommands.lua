@@ -29,11 +29,12 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 	
 	local function ResetLua()
 		local varData = {
-		_PrintSettings = Vars.Print
+			_PrintSettings = Vars.Print
 		}
+		
 		for name,data in pairs(Mods) do
 			if data.PersistentVars ~= nil then
-				varData[name] = data.PersistentVars
+				varData[name] = TableHelpers.SanitizeTable(data.PersistentVars)
 			end
 		end
 		if varData ~= nil then

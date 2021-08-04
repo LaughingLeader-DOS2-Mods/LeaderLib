@@ -880,15 +880,10 @@ package characterSheet_fla
 		
 		public function addAbility(isCivil:Boolean, groupId:Number, statID:Number, labelText:String, valueText:String, plusTooltip:String = "", minusTooltip:String = "", plusVisible:Boolean = false, minusVisible:Boolean = false, isCustom:Boolean=false) : *
 		{
-			var groupHolder:MovieClip = null;
+			var groupHolder:MovieClip = !isCivil ? this.combatAbilityHolder_mc : this.civicAbilityHolder_mc;
 			var ability_mc:MovieClip = this.getAbility(isCivil,groupId,statID,isCustom);
 			if(ability_mc == null)
 			{
-				groupHolder = this.combatAbilityHolder_mc;
-				if(isCivil)
-				{
-					groupHolder = this.civicAbilityHolder_mc;
-				}
 				ability_mc = new AbilityEl();
 				ability_mc.isCivil = isCivil;
 				groupHolder.list.addGroupElement(groupId,ability_mc,false);
@@ -925,7 +920,7 @@ package characterSheet_fla
 			ability_mc.hl_mc.height = ability_mc.abilTooltip_mc.height = ability_mc.texts_mc.label_txt.y + ability_mc.texts_mc.label_txt.textHeight - ability_mc.hl_mc.y;
 			ability_mc.texts_mc.text_txt.y = Math.round((ability_mc.hl_mc.height - ability_mc.texts_mc.text_txt.textHeight) * 0.5);
 			ability_mc.MakeCustom(statID, isCustom);
-			ExternalInterface.call("abilityAdded", ability_mc.statID, ability_mc.id);
+			ExternalInterface.call("entryAdded", isCustom, ability_mc.statID, groupHolder.name);
 		}
 		
 		public function recountAbilityPoints(isCivil:Boolean) : *
@@ -988,7 +983,7 @@ package characterSheet_fla
 			talent_mc.talentState = talentState;
 			talent_mc.bullet_mc.gotoAndStop(this.getTalentStateFrame(talentState));
 			talent_mc.MakeCustom(statID, isCustom);
-			ExternalInterface.call("talentAdded", talent_mc.statID, talent_mc.id);
+			ExternalInterface.call("entryAdded", isCustom, talent_mc.statID, "talentHolder_mc");
 		}
 
 		public function getTalentStateFrame(state:Number) : Number
@@ -1032,7 +1027,7 @@ package characterSheet_fla
 			this.primaryStatList.addElement(stat_mc);
 			this.mainStatsList.positionElements();
 			stat_mc.MakeCustom(statID, isCustom);
-			ExternalInterface.call("statAdded", stat_mc.statID, stat_mc.id, stat_mc.tooltipId);
+			ExternalInterface.call("entryAdded", isCustom, stat_mc.statID, "primaryStatList", stat_mc.tooltipId);
 		}
 		
 		public function addSecondaryStat(statType:Number, labelText:String, valueText:String, statID:Number, iconFrame:Number, boostValue:Number, plusVisible:Boolean = false, minusVisible:Boolean = false, isCustom:Boolean=false, iggyIconName:String = "") : *
@@ -1114,7 +1109,7 @@ package characterSheet_fla
 				stat_mc.texts_mc.text_txt.scaleY = 0.82;
 				stat_mc.texts_mc.text_txt.y = stat_mc.texts_mc.text_txt.y + 2;
 			}
-			this.addToListWithId(statType,stat_mc);
+			
 			if(iconFrame != 0)
 			{
 				var targetIcon:MovieClip = stat_mc.icon_mc;
@@ -1135,9 +1130,7 @@ package characterSheet_fla
 						stat_mc.customIcon_mc = new IggyIcon();
 						stat_mc.customIcon_mc.mouseEnabled = false;
 						stat_mc.addChild(stat_mc.customIcon_mc);
-						stat_mc.customIcon_mc.scale = 0.4375; // 28/64
-						//stat_mc.customIcon_mc.width = 28;
-						//stat_mc.customIcon_mc.height = 28;
+						stat_mc.customIcon_mc.scale = 0.4375;
 					}
 					targetIcon = stat_mc.customIcon_mc;
 					stat_mc.customIcon_mc.x = stat_mc.icon_mc.x + customStatIconOffsetX;
@@ -1161,7 +1154,7 @@ package characterSheet_fla
 				stat_mc.texts_mc.text_txt.x = xOffset2 - stat_mc.texts_mc.text_txt.width;
 			}
 			stat_mc.MakeCustom(statID, isCustom);
-			//ExternalInterface.call("statAdded", stat_mc.statID, stat_mc.id);
+			this.addToListWithId(statType, stat_mc, true);
 		}
 		
 		public function addTag(labelText:String, statID:Number, tooltipText:String, descriptionText:String) : *
@@ -1184,23 +1177,35 @@ package characterSheet_fla
 			val5.label_txt.htmlText = labelText;
 		}
 		
-		public function addToListWithId(statType:Number, mc:MovieClip) : *
+		public function addToListWithId(statType:Number, mc:MovieClip, invokeCallback:Boolean = false) : *
 		{
 			if(statType == 0)
 			{
 				this.infoStatList.addElement(mc);
+				if (invokeCallback == true) {
+					ExternalInterface.call("entryAdded", mc.isCustom, mc.statID, "infoStatList");
+				}
 			}
 			else if(statType == 1)
 			{
 				this.secondaryStatList.addElement(mc);
+				if (invokeCallback == true) {
+					ExternalInterface.call("entryAdded", mc.isCustom, mc.statID, "secondaryStatList");
+				}
 			}
 			else if(statType == 2)
 			{
 				this.resistanceStatList.addElement(mc);
+				if (invokeCallback == true) {
+					ExternalInterface.call("entryAdded", mc.isCustom, mc.statID, "resistanceStatList");
+				}
 			}
 			else if(statType == 3)
 			{
 				this.expStatList.addElement(mc);
+				if (invokeCallback == true) {
+					ExternalInterface.call("entryAdded", mc.isCustom, mc.statID, "expStatList");
+				}
 			}
 			this.mainStatsList.positionElements();
 		}

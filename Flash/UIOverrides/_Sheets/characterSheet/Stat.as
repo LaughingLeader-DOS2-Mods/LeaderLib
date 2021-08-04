@@ -72,8 +72,8 @@ package
 			this.base = root as MovieClip;
 			this.hl_mc.addEventListener(MouseEvent.ROLL_OVER,this.onOver);
 			this.hl_mc.addEventListener(MouseEvent.ROLL_OUT,this.onOut);
-			this.minus_mc.callbackStr = "minusStat";
-			this.plus_mc.callbackStr = "plusStat";
+			// this.minus_mc.callbackStr = "minusStat";
+			// this.plus_mc.callbackStr = "plusStat";
 		}
 	}
 }

@@ -75,8 +75,8 @@ package
 			this.hl_mc.alpha = 0;
 			this.hl_mc.height = 24;
 			this.label_txt.mouseEnabled = false;
-			this.minus_mc.callbackStr = "minusTalent";
-			this.plus_mc.callbackStr = "plusTalent";
+			// this.minus_mc.callbackStr = "minusTalent";
+			// this.plus_mc.callbackStr = "plusTalent";
 		}
 	}
 }

@@ -44,6 +44,9 @@ function SheetBaseData.SetDefaults(data)
 			end
 		end
 	end
+	if isClient then
+		data.ListHolder = ""
+	end
 end
 
 local function FormatText(txt, forceCheckForStringKey)

@@ -160,8 +160,8 @@ package
 			this.hl_mc.addEventListener(MouseEvent.ROLL_OVER,this.onOver);
 			this.hl_mc.addEventListener(MouseEvent.ROLL_OUT,this.onOut);
 			this.hl_mc.alpha = 0;
-			this.minus_mc.callbackStr = "minusSecStat";
-			this.plus_mc.callbackStr = "plusSecStat";
+			// this.minus_mc.callbackStr = "minusSecStat";
+			// this.plus_mc.callbackStr = "plusSecStat";
 		}
 	}
 }

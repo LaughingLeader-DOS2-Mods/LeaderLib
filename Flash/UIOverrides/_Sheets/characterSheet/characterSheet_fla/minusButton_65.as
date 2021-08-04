@@ -20,7 +20,7 @@ package characterSheet_fla
 			addFrameScript(0,this.frame1);
 		}
 		
-		public function onMouseOver(param1:MouseEvent) : *
+		public function onMouseOver(e:MouseEvent) : *
 		{
 			if(this.tooltip != "")
 			{
@@ -32,7 +32,7 @@ package characterSheet_fla
 			ExternalInterface.call("PlaySound","UI_Game_Inventory_Over");
 		}
 		
-		public function onMouseOut(param1:MouseEvent) : *
+		public function onMouseOut(e:MouseEvent) : *
 		{
 			if(this.base.hasTooltip)
 			{
@@ -44,7 +44,7 @@ package characterSheet_fla
 			removeEventListener(MouseEvent.MOUSE_UP,this.onUp);
 		}
 		
-		public function onDown(param1:MouseEvent) : *
+		public function onDown(e:MouseEvent) : *
 		{
 			ExternalInterface.call("PlaySound","UI_GM_Generic_Click_Press");
 			stage.focus = null;
@@ -52,7 +52,7 @@ package characterSheet_fla
 			addEventListener(MouseEvent.MOUSE_UP,this.onUp);
 		}
 		
-		public function onUp(param1:MouseEvent) : *
+		public function onUp(e:MouseEvent) : *
 		{
 			removeEventListener(MouseEvent.MOUSE_UP,this.onUp);
 			this.bg_mc.gotoAndStop(2);

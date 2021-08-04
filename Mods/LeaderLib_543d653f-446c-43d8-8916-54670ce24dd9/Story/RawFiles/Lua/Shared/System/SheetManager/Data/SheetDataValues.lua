@@ -15,10 +15,10 @@ SheetManager.Config.Calls = {
 		SecondaryStat = "selectSecStatCustom",
 	},
 	PointRemoved = {
-		Ability = "minAbilityCustom",
-		Talent = "minTalentCustom",
-		PrimaryStat = "minStatCustom",
-		SecondaryStat = "minSecStatCustom",
+		Ability = "minusAbilityCustom",
+		Talent = "minusTalentCustom",
+		PrimaryStat = "minusStatCustom",
+		SecondaryStat = "minusSecStatCustom",
 	},
 	PointAdded = {
 		Ability = "plusAbilityCustom",

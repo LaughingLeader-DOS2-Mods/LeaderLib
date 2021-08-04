@@ -791,25 +791,27 @@ function SheetManager.Talents.GetVisible(player, isCharacterCreation, isGM)
 	for mod,dataTable in pairs(SheetManager.Data.Talents) do
 		for id,data in pairs(dataTable) do
 			local hasTalent = data:GetValue(player) == true
-			local talentState = data:GetState(player)
-			local name = SheetManager.Talents.GetTalentDisplayName(data.ID, talentState)
-			local isRacial = data.IsRacial
-			local isChoosable = not isRacial and talentState ~= SheetManager.Talents.Data.TalentState.Locked
-			local canAdd = not hasTalent and isChoosable and talentPoints > 0
-			local canRemove = hasTalent and isCharacterCreation
-			---@type SheetManager.TalentsUITalentEntry
-			local data = {
-				ID = data.GeneratedID,
-				HasTalent = hasTalent,
-				DisplayName = name,
-				IsRacial = isRacial,
-				IsChoosable = isChoosable,
-				CanAdd = SheetManager:GetIsPlusVisible(data, player, canAdd, hasTalent),
-				CanRemove = SheetManager:GetIsMinusVisible(data, player, canRemove, hasTalent),
-				State = talentState,
-				IsCustom = true,
-			}
-			entries[#entries+1] = data
+			if SheetManager:IsEntryVisible(data, player, hasTalent) then
+				local talentState = data:GetState(player)
+				local name = SheetManager.Talents.GetTalentDisplayName(data.ID, talentState)
+				local isRacial = data.IsRacial
+				local isChoosable = not isRacial and talentState ~= SheetManager.Talents.Data.TalentState.Locked
+				local canAdd = not hasTalent and isChoosable and talentPoints > 0
+				local canRemove = hasTalent and isCharacterCreation
+				---@type SheetManager.TalentsUITalentEntry
+				local data = {
+					ID = data.GeneratedID,
+					HasTalent = hasTalent,
+					DisplayName = name,
+					IsRacial = isRacial,
+					IsChoosable = isChoosable,
+					CanAdd = SheetManager:GetIsPlusVisible(data, player, canAdd, hasTalent),
+					CanRemove = SheetManager:GetIsMinusVisible(data, player, canRemove, hasTalent),
+					State = talentState,
+					IsCustom = true,
+				}
+				entries[#entries+1] = data
+			end
 		end
 	end
 	local i = 0

@@ -5,15 +5,15 @@ local SheetStatData = {
 	Type = "SheetStatData",
 	TooltipType = "Stat",
 	---@type SheetStatType
-	StatType = "Secondary",
+	StatType = "SecondaryStat",
 	---@type SheetSecondaryStatType
 	SecondaryStatType = "Info",
 	Value = 0,
 	---For if the StatType is "Spacing".
 	SpacingHeight = 0,
 	Icon = "",
-	IconWidth = 16,
-	IconHeight = 16,
+	IconWidth = 28,
+	IconHeight = 28,
 }
 
 SheetStatData.__index = function(t,k)

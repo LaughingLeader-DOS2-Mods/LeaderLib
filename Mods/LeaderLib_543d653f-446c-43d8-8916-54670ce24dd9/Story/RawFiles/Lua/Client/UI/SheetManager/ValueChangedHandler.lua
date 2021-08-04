@@ -1,5 +1,5 @@
 local function OnPointsAdded(statType, ui, event, generatedId, ...)
-	print(statType, event, generatedId, ...)
+	print("OnPointsAdded", statType, event, generatedId, ...)
 	local stat = SheetManager:GetStatByGeneratedID(generatedId, statType)
 	if stat then
 		if statType ~= "Talent" then
@@ -16,7 +16,7 @@ local function OnPointsAdded(statType, ui, event, generatedId, ...)
 end
 
 local function OnPointsRemove(statType, ui, event, generatedId, ...)
-	print(statType, event, generatedId, ...)
+	print("OnPointsRemove", statType, event, generatedId, ...)
 	local stat = SheetManager:GetStatByGeneratedID(generatedId, statType)
 	if stat then
 		if statType ~= "Talent" then
@@ -33,11 +33,15 @@ for t,v in pairs(SheetManager.Config.Calls.PointAdded) do
 	end
 	Ext.RegisterUITypeCall(Data.UIType.characterSheet, v, func, "Before")
 	Ext.RegisterUITypeCall(Data.UIType.characterCreation, v, func, "Before")
+	Ext.RegisterUITypeCall(Data.UIType.statsPanel_c, v, func, "Before")
+	Ext.RegisterUITypeCall(Data.UIType.characterCreation_c, v, func, "Before")
 end
 for t,v in pairs(SheetManager.Config.Calls.PointRemoved) do
 	local func = function(...)
 		OnPointsRemove(t, ...)
 	end
+	Ext.RegisterUITypeCall(Data.UIType.characterSheet, v, func, "Before")
+	Ext.RegisterUITypeCall(Data.UIType.characterCreation, v, func, "Before")
 	Ext.RegisterUITypeCall(Data.UIType.statsPanel_c, v, func, "Before")
 	Ext.RegisterUITypeCall(Data.UIType.characterCreation_c, v, func, "Before")
 end

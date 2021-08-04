@@ -2,7 +2,7 @@ local ts = Classes.TranslatedString
 
 local isClient = Ext.IsClient()
 
----@alias SheetStatType string | "Primary" | "Secondary" | "Spacing"
+---@alias SheetStatType string | "PrimaryStat" | "SecondaryStat" | "Spacing"
 ---@alias SheetSecondaryStatType string | "Info" | "Normal" | "Resistance"
 
 ---@class StatsManager
@@ -11,8 +11,8 @@ SheetManager.Stats = {
 		Attributes = {},
 		Resistances = {},
 		StatType = {
-			Primary = "Primary",
-			Secondary = "Secondary",
+			PrimaryStat = "PrimaryStat",
+			SecondaryStat = "SecondaryStat",
 			Spacing = "Spacing"
 		},
 		SecondaryStatType = {
@@ -69,30 +69,32 @@ if isClient then
 		for mod,dataTable in pairs(SheetManager.Data.Stats) do
 			for id,data in pairs(dataTable) do
 				local value = data:GetValue(player)
-				local entry = {
-					ID = data.GeneratedID,
-					DisplayName = data.DisplayName,
-					Value = string.format("%s", value),
-					CanAdd = SheetManager:GetIsPlusVisible(data, player, isGM, value),
-					CanRemove = SheetManager:GetIsMinusVisible(data, player, isGM, value),
-					IsCustom = true,
-					StatType = data.StatType,
-					Frame = 0,
-					SecondaryStatType = data.SecondaryStatType,
-					SecondaryStatTypeInteger = SheetManager.Stats.Data.SecondaryStatTypeInteger[data.SecondaryStatType] or 0,
-					SpacingHeight = data.SpacingHeight,
-					Icon = data.Icon,
-					IconWidth = data.IconWidth,
-					IconHeight = data.IconHeight,
-					IconClipName = "",
-					IconDrawCallName = ""
-				}
-				if not StringHelpers.IsNullOrEmpty(data.Icon) then
-					entry.Frame = 99
-					entry.IconDrawCallName = string.format("LL_%s", data.ID)
-					entry.IconClipName = "iggy_" + entry.IconDrawCallName
+				if SheetManager:IsEntryVisible(data, player, value) then
+					local entry = {
+						ID = data.GeneratedID,
+						DisplayName = data.DisplayName,
+						Value = string.format("%s", value),
+						CanAdd = SheetManager:GetIsPlusVisible(data, player, isGM, value),
+						CanRemove = SheetManager:GetIsMinusVisible(data, player, isGM, value),
+						IsCustom = true,
+						StatType = data.StatType,
+						Frame = 0,
+						SecondaryStatType = data.SecondaryStatType,
+						SecondaryStatTypeInteger = SheetManager.Stats.Data.SecondaryStatType[data.SecondaryStatType] or 0,
+						SpacingHeight = data.SpacingHeight,
+						Icon = data.Icon,
+						IconWidth = data.IconWidth,
+						IconHeight = data.IconHeight,
+						IconClipName = "",
+						IconDrawCallName = ""
+					}
+					if not StringHelpers.IsNullOrEmpty(data.Icon) then
+						entry.Frame = 99
+						entry.IconDrawCallName = string.format("LL_%s", data.ID)
+						entry.IconClipName = "iggy_" .. entry.IconDrawCallName
+					end
+					entries[#entries+1] = entry
 				end
-				entries[#entries+1] = entry
 			end
 		end
 

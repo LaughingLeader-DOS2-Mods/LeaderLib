@@ -9,7 +9,7 @@ local function CreateTooltip(tooltipType, requestedUI, call, id)
 		local data = SheetManager:GetStatByGeneratedID(id, tooltipType)
 		if this and this.tooltip_array and data then
 			local request = {
-				Type = tooltipType,
+				Type = data.TooltipType,
 				Character = Client:GetCharacter()
 			}
 

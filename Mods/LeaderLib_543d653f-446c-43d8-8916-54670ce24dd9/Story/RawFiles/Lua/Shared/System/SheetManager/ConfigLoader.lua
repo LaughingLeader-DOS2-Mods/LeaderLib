@@ -40,7 +40,7 @@ local statPropertyMap = {
 			local id = string.lower(val)
 			for k,v in pairs(SheetManager.Stats.Data.StatType) do
 				if string.lower(k) == id then
-					return v
+					return k
 				end
 			end
 		else
@@ -53,13 +53,13 @@ local statPropertyMap = {
 			local id = string.lower(val)
 			for k,v in pairs(SheetManager.Stats.Data.SecondaryStatType) do
 				if string.lower(k) == id then
-					return v
+					return k
 				end
 			end
 		elseif t == "number" then
 			local id = SheetManager.Stats.Data.SecondaryStatTypeInteger[val]
 			if id then
-				return val
+				return id
 			end
 		end
 		fprint(LOGLEVEL.WARNING, "[SheetManager:ConfigLoader] Property value type [%s](%s) is incorrect for property Stat StatType. Using default.", t, val)

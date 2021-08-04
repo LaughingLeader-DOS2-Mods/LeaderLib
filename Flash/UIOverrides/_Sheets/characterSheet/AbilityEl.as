@@ -93,8 +93,8 @@ package
 			this.abilTooltip_mc.addEventListener(MouseEvent.ROLL_OUT,this.onHLOut);
 			this.hl_mc.visible = false;
 			this.hl_mc.alpha = 0;
-			this.texts_mc.minus_mc.callbackStr = "minusAbility";
-			this.texts_mc.plus_mc.callbackStr = "plusAbility";
+			// this.texts_mc.minus_mc.callbackStr = "minusAbility";
+			// this.texts_mc.plus_mc.callbackStr = "plusAbility";
 			hitArea = this.hl_mc;
 			this.texts_mc.label_txt.mouseEnabled = false;
 			this.texts_mc.text_txt.mouseEnabled = false;

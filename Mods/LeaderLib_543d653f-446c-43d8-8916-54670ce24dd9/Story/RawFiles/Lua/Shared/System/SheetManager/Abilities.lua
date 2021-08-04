@@ -325,29 +325,30 @@ if Ext.IsClient() then
 
 		for mod,dataTable in pairs(SheetManager.Data.Abilities) do
 			for id,data in pairs(dataTable) do
-				--TODO
-				local canAddPoints = false
-				if civilOnly then
-					canAddPoints = civilPoints > 0
-				else
-					canAddPoints = abilityPoints > 0
-				end
 				local value = data:GetValue(player)
-				---@type TalentManagerUITalentEntry
-				local data = {
-					ID = data.GeneratedID,
-					DisplayName = data.DisplayName,
-					IsCivil = data.IsCivil,
-					GroupID = data.GroupID,
-					IsCustom = true,
-					Value = string.format("%s", value),
-					Delta = value,
-					AddPointsTooltip = tooltip,
-					RemovePointsTooltip = "",
-					CanAdd = SheetManager:GetIsPlusVisible(data, player, canAddPoints, value),
-					CanRemove = SheetManager:GetIsMinusVisible(data, player, isCharacterCreation, value),
-				}
-				entries[#entries+1] = data
+				if SheetManager:IsEntryVisible(data, player, value) then
+					local canAddPoints = false
+					if civilOnly then
+						canAddPoints = civilPoints > 0
+					else
+						canAddPoints = abilityPoints > 0
+					end
+					---@type TalentManagerUITalentEntry
+					local data = {
+						ID = data.GeneratedID,
+						DisplayName = data.DisplayName,
+						IsCivil = data.IsCivil,
+						GroupID = data.GroupID,
+						IsCustom = true,
+						Value = string.format("%s", value),
+						Delta = value,
+						AddPointsTooltip = tooltip,
+						RemovePointsTooltip = "",
+						CanAdd = SheetManager:GetIsPlusVisible(data, player, canAddPoints, value),
+						CanRemove = SheetManager:GetIsMinusVisible(data, player, isCharacterCreation, value),
+					}
+					entries[#entries+1] = data
+				end
 			end
 		end
 

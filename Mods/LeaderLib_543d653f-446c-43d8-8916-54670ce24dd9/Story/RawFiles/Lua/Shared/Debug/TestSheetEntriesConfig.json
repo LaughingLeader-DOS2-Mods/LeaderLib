@@ -3,24 +3,26 @@
 		"DebugStat1": {
 			"DisplayName": "Debug Attribute",
 			"Description": "This is a test stat!",
-			"StatType": "Primary"
+			"StatType": "PrimaryStat"
 		},
 		"DebugStat2": {
 			"DisplayName": "Debug Resistance?",
 			"Description": "This is a test stat!",
-			"StatType": "Secondary",
-			"SecondaryStatType": "Resistance"
+			"StatType": "SecondaryStat",
+			"SecondaryStatType": "Resistance",
+			"Icon": "statIcons_TrollBlood"
 		},
 		"DebugStat3": {
-			"DisplayName": "Debug Experience Modifier",
+			"DisplayName": "Debug XP Mod",
 			"Description": "This is a test stat!",
-			"StatType": "Secondary",
-			"SecondaryStatType": "Experience"
+			"StatType": "SecondaryStat",
+			"SecondaryStatType": "Experience",
+			"Visible": false
 		},
 		"DebugStat4": {
 			"DisplayName": "Debug Info",
 			"Description": "This is a test stat!",
-			"StatType": "Secondary",
+			"StatType": "SecondaryStat",
 			"SecondaryStatType": "Info"
 		}
 	},
@@ -32,7 +34,7 @@
 			"GroupID": "Defense"
 		},
 		"Test2": {
-			"DisplayName": "Debug Combat Ability",
+			"DisplayName": "Debug Combat",
 			"Description": "This is a test ability!",
 			"Icon": "Tag_Barbarian_inv",
 			"GroupID": "Skills"

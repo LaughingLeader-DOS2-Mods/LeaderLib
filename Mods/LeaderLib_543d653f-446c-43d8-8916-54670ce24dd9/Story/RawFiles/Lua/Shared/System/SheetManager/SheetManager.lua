@@ -99,6 +99,18 @@ local function LoadData()
 		if Ext.IsModLoaded("ca32a698-d63e-4d20-92a7-dd83cba7bc56") or GameSettings.Settings.Client.DivineTalentsEnabled then
 			SheetManager.Talents.ToggleDivineTalents(true)
 		end
+	else
+		local valueData = {}
+		for id,charData in pairs(PersistentVars.CharacterSheetValues) do
+			valueData[id] = {}
+			for uuid,value in pairs(charData) do
+				local netid = GameHelpers.GetNetID(uuid)
+				if netid then
+					valueData[id][netid] = value
+				end
+			end
+		end
+		Ext.BroadcastMessage("LeaderLib_SheetManager_SyncCurrentValues", Ext.JsonStringify(valueData))
 	end
 
 	SheetManager.Loaded = true
@@ -178,8 +190,8 @@ function SheetManager:SetEntryValue(stat, characterId, value, skipListenerInvoke
 			self.CurrentValues[stat.ID] = {}
 		end
 		self.CurrentValues[stat.ID][characterId] = value
+		local character = Ext.GetCharacter(characterId)
 		if not skipListenerInvoke then
-			local character = Ext.GetGameObject(characterId)
 			for listener in self:GetListenerIterator(self.Listeners.OnEntryChanged[stat.ID], self.Listeners.OnEntryChanged.All) do
 				local b,err = xpcall(listener, debug.traceback, stat.ID, stat, character, last, value, isClient)
 				if not b then
@@ -187,9 +199,18 @@ function SheetManager:SetEntryValue(stat, characterId, value, skipListenerInvoke
 				end
 			end
 		end
-		if isClient and not skipSync then
+		if not skipSync and isClient then
 			self:RequestValueChange(stat, characterId, value)
 		end
+	end
+	if not skipSync and not isClient then
+		Ext.BroadcastMessage("LeaderLib_SheetManager_EntryValueChanged", Ext.JsonStringify({
+			ID = stat.ID,
+			Mod = stat.Mod,
+			NetID = characterId,
+			Value = value,
+			StatType = stat.StatType
+		}))
 	end
 end
 
@@ -224,13 +245,38 @@ if isClient then
 			StatType = stat.StatType
 		}))
 	end
-else
-	Ext.RegisterNetListener("LeaderLib_SheetManager_RequestValueChange", function(cmd, payload)
+
+	Ext.RegisterNetListener("LeaderLib_SheetManager_EntryValueChanged", function(cmd, payload)
+		print(cmd,payload)
 		local data = Common.JsonParse(payload)
 		if data then
+			local characterId = GameHelpers.GetCharacterID(data.NetID)
 			local stat = SheetManager:GetStatByID(data.ID, data.Mod, data.StatType)
-			if stat then
-				SheetManager:SetEntryValue(stat, Ext.GetCharacter(data.NetID), data.Value)
+			if characterId and stat then
+				local skipInvoke = data.SkipInvoke
+				if skipInvoke == nil then
+					skipInvoke = false
+				end
+				SheetManager:SetEntryValue(stat, characterId, data.Value, skipInvoke, true)
+			end
+		end
+	end)
+
+	Ext.RegisterNetListener("LeaderLib_SheetManager_SyncCurrentValues", function(cmd, payload)
+		local data = Common.JsonParse(payload)
+		if data then
+			SheetManager.CurrentValues = data
+		end
+	end)
+else
+	Ext.RegisterNetListener("LeaderLib_SheetManager_RequestValueChange", function(cmd, payload)
+		print(cmd,payload)
+		local data = Common.JsonParse(payload)
+		if data then
+			local characterId = GameHelpers.GetCharacterID(data.NetID)
+			local stat = SheetManager:GetStatByID(data.ID, data.Mod, data.StatType)
+			if character and stat then
+				SheetManager:SetEntryValue(stat, characterId, data.Value)
 			end
 		end
 	end)

@@ -57,11 +57,11 @@ end
 
 ---@private
 ---@param ui UIObject
-function CharacterSheet.Update(ui, method, ...)
-	PrintDebug("CharacterSheet.Update", method, ...)
+function CharacterSheet.Update(ui, method)
 	---@type CharacterSheetMainTimeline
 	local this = self.Root
-	if not this or not this.isExtended then
+	PrintDebug("CharacterSheet.Update", method, Lib.inspect(updateTargets))
+	if not this or this.isExtended ~= true then
 		return
 	end
 
@@ -84,7 +84,7 @@ function CharacterSheet.Update(ui, method, ...)
 		--this.clearStats()
 		for stat in SheetManager.Stats.GetVisible(player, false, isGM) do
 			if not Vars.ControllerEnabled then
-				if stat.StatType == SheetManager.Stats.Data.StatType.Primary then
+				if stat.StatType == SheetManager.Stats.Data.StatType.PrimaryStat then
 					targetsUpdated.PrimaryStats = true
 					this.stats_mc.addPrimaryStat(stat.ID, stat.DisplayName, stat.Value, stat.ID, stat.CanAdd, stat.CanRemove, stat.IsCustom)
 				else
@@ -94,7 +94,7 @@ function CharacterSheet.Update(ui, method, ...)
 					else
 						this.stats_mc.addSecondaryStat(stat.SecondaryStatTypeInteger, stat.DisplayName, stat.Value, stat.ID, stat.Frame, stat.BoostValue, stat.CanAdd, stat.CanRemove, stat.IsCustom, stat.IconClipName or "")
 						if not StringHelpers.IsNullOrWhitespace(stat.IconClipName) then
-							ui:SetCustomIcon(stat.IconDrawCallName, stat.Icon, stat.IconWidth. stat.IconHeight)
+							ui:SetCustomIcon(stat.IconDrawCallName, stat.Icon, stat.IconWidth, stat.IconHeight)
 						end
 					end
 				end
@@ -106,10 +106,9 @@ function CharacterSheet.Update(ui, method, ...)
 	end
 	
 	if updateTargets.Talents then
-		--this.clearTalents()
+		this.clearTalents()
 		--local points = this.stats_mc.pointsWarn[3].avPoints
-		local points = Client.Character.Points.Talent
-		for talent in SheetManager.Talents.GetVisible(player) do
+		for talent in SheetManager.Talents.GetVisible(player, false, isGM) do
 			targetsUpdated.Talents = true
 			if not Vars.ControllerEnabled then
 				this.stats_mc.addTalent(talent.DisplayName, talent.ID, talent.State, talent.CanAdd, talent.CanRemove, talent.IsCustom)
@@ -121,8 +120,8 @@ function CharacterSheet.Update(ui, method, ...)
 	end
 
 	if updateTargets.Abilities then
-		--this.clearAbilities()
-		for ability in SheetManager.Abilities.GetVisible(player, updateTargets.Civil, false) do
+		this.clearAbilities()
+		for ability in SheetManager.Abilities.GetVisible(player, updateTargets.Civil, false, isGM) do
 			this.stats_mc.addAbility(ability.IsCivil, ability.GroupID, ability.ID, ability.DisplayName, ability.Value, ability.AddPointsTooltip, ability.RemovePointsTooltip, ability.CanAdd, ability.CanRemove, ability.IsCustom)
 			targetsUpdated.Abilities = true
 			targetsUpdated.Civil = updateTargets.Civil
@@ -173,6 +172,155 @@ Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setTitle", functio
 	end
 end)
 Ext.RegisterUITypeCall(Data.UIType.statsPanel_c, "characterSheetUpdateDone", CharacterSheet.Update)
+
+Ext.RegisterUITypeCall(Data.UIType.characterSheet, "entryAdded", function(ui, call, isCustom, statID, listProperty)
+	print(call, isCustom, statID, listProperty)
+	if isCustom then
+		local stat = SheetManager:GetStatByGeneratedID(statID)
+		if stat then
+			stat.ListHolder = listProperty
+		end
+	end
+end)
+
+---@param entry SheetAbilityData|SheetStatData
+local function TryGetEntryMovieClip(entry, this)
+	if StringHelpers.IsNullOrWhitespace(entry.ListHolder) then
+		if entry.StatType == "PrimaryStat" then
+			entry.ListHolder = "primaryStatList"
+		elseif entry.StatType == "SecondaryStat" then
+			if entry.SecondaryStatType == SheetManager.Stats.Data.SecondaryStatType.Info then
+				entry.ListHolder = "infoStatList"
+			elseif entry.SecondaryStatType == SheetManager.Stats.Data.SecondaryStatType.Stat then
+				entry.ListHolder = "secondaryStatList"
+			elseif entry.SecondaryStatType == SheetManager.Stats.Data.SecondaryStatType.Resistance then
+				entry.ListHolder = "resistanceStatList"
+			elseif entry.SecondaryStatType == SheetManager.Stats.Data.SecondaryStatType.Experience then
+				entry.ListHolder = "expStatList"
+			end
+		elseif entry.StatType == "Ability" then
+			if entry.IsCivil then
+				entry.ListHolder = "civicAbilityHolder_mc"
+			else
+				entry.ListHolder = "combatAbilityHolder_mc"
+			end
+		elseif entry.StatType == "Talent" then
+			entry.ListHolder = "talentHolder_mc"
+		end
+	end
+
+	if not StringHelpers.IsNullOrWhitespace(entry.ListHolder) then
+		local holder = this[entry.ListHolder]
+		if holder then
+			local list = holder
+			if holder.list then
+				list = holder.list
+			end
+			if entry.StatType == "Ability" then
+				for i=0,#list.content_array-1 do
+					local group = list.content_array[i]
+					if group and group.groupId == entry.GroupID then
+						list = group.list
+						break
+					end
+				end
+			end
+			if list and list.content_array then
+				local mc = nil
+				for i=0,#list.content_array-1 do
+					local obj = list.content_array[i]
+					if obj and obj.statID == entry.GeneratedID then
+						mc = obj
+						break
+					end
+				end
+				return list.content_array,mc
+			end
+		end
+	end
+end
+
+local function getTalentStateFrame(talentState)
+	if talentState == 0 then
+		return 2
+	elseif talentState == 1 then
+		return 3
+	elseif talentState == 2 then
+		return 1
+	elseif talentState == 3 then
+		return 1
+	else
+		return 1
+	end
+end
+
+SheetManager:RegisterEntryChangedListener("All", function(id, entry, character, lastValue, value, isClientSide)
+	---@type CharacterSheetMainTimeline
+	local this = CharacterSheet.Root
+	if this and this.isExtended then
+		local isGM = GameHelpers.Client.IsGameMaster(CharacterSheet.Instance, this)
+
+		this = this.stats_mc
+		local content_array,mc = TryGetEntryMovieClip(entry, this)
+		fprint(LOGLEVEL.TRACE, "Entry[%s](%s) statID(%s) ListHolder(%s) content_array(%s) mc(%s)", entry.StatType, id, entry.GeneratedID, entry.ListHolder, content_array, mc)
+		if content_array and mc then
+			local plusVisible = SheetManager:GetIsPlusVisible(entry, character, isGM, value)
+			local minusVisible = SheetManager:GetIsMinusVisible(entry, character, isGM, value)
+			if entry.StatType == "Ability" then
+				mc.texts_mc.plus_mc.visible = plusVisible
+				mc.texts_mc.minus_mc.visible = minusVisible
+			else
+				mc.plus_mc.visible = plusVisible
+				mc.minus_mc.visible = minusVisible
+			end
+
+			if entry.StatType == "PrimaryStat" then
+				mc.text_txt.htmlText = string.format("%i", value)
+				mc.statBasePoints = value
+				-- mc.statPoints = 0
+			elseif entry.StatType == "SecondaryStat" then
+				mc.boostValue = value
+				mc.text_txt.htmlText = string.format("%i", value)
+				mc.statBasePoints = value
+				-- mc.statPoints = 0
+			elseif entry.StatType == "Ability" then
+				mc.am = value
+				mc.texts_mc.text_txt.htmlText = string.format("%i", value)
+				mc.statBasePoints = value
+				-- mc.statPoints = 0
+			elseif entry.StatType == "Talent" then
+				local talentState = entry:GetState(character)
+				local name = SheetManager.Talents.GetTalentDisplayName(entry.ID, talentState)
+				mc.label_txt.htmlText = name
+				mc.label = mc.label_txt.text
+				mc.talentState = talentState
+				mc.bullet_mc.gotoAndStop(this.getTalentStateFrame(talentState))
+			end
+		end
+		if entry.ListIndex and not StringHelpers.IsNullOrWhitespace(entry.ListHolder) then
+			local holder = this[entry.ListHolder]
+			if holder then
+				local list = holder
+				if holder.list then
+					list = holder.list
+				end
+				if entry.StatType == "Ability" then
+					for i=0,#list.content_array-1 do
+						local group = list.content_array[i]
+						if group and group.groupId == entry.GroupID then
+							list = group.list
+							break
+						end
+					end
+				end
+				
+				if list and list.content_array then
+
+				end
+			end
+		end
+	end
+end)
 
 if Vars.DebugMode then
 	RegisterListener("BeforeLuaReset", function()

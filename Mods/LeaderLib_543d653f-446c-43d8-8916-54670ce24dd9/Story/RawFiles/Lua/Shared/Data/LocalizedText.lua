@@ -40,7 +40,6 @@ LocalizedText.DamageTypeNames = {
 --MagicArmorMasteryDescription = ts:Create("h211cb400g5881g4b90g8bc8g0399d0288e00","Willpower determines how resistant you are to mental statuses like Fear or Charm."),
 --VitalityMasteryDescription = ts:Create("h2c42b179gd34bg45f8g9a81g847315e0319c","Bodybuilding determines how resistant you are to physical statuses like Bleeding or Crippled."),
 
----@type table<string, TranslatedString>
 LocalizedText.AbilityNames = {
 	--None = ts:Create("h9a2aead4gfa2dg4fbegae65g57c501cadf4f","None"),
 	WarriorLore = ts:Create("h8e4bebcbg21c7g43dag8b05gd3b13c1be651","Warfare"),
@@ -86,7 +85,6 @@ LocalizedText.AbilityNames = {
 	Brewmaster = ts:Create("hab7acde6g5af6g47a7ga65dgc633aef193cf","Brew Master"),
 }
 
----@type table<string, TranslatedString>
 LocalizedText.AttributeNames = {
 	Strength = ts:Create("hb4e3a075g5f82g4a0dgaffbg456e5c15c3db","Strength"),
 	Finesse = ts:Create("h281c2da7g2d2bg4d69g986agfd124c7f569f","Finesse"),
@@ -96,7 +94,6 @@ LocalizedText.AttributeNames = {
 	Wits = ts:Create("h2b03f6f9gbf5dg4f51g9b98gf01243633ed3","Wits"),
 }
 
----@type table<string, TranslatedString>
 LocalizedText.TalentNames = {
 	ActionPoints = ts:Create("h6f921734gc02bg415dg98dag0437a0bbd913", "Fleetfooted"),
 	ActionPoints2 = ts:Create("h9be2e2b0gfa3ag480dgbbabgd8f49fd46e5f", "Rosy-cheeked"),
@@ -312,6 +309,36 @@ LocalizedText.Base = {
 	Total = ts:Create("h9e9c017dg3bceg4c21ga665g71b50ca351b6", "Total"),
 }
 
+LocalizedText.CharacterSheet = {
+	Strength = LocalizedText.AttributeNames.Strength,
+	Finesse = LocalizedText.AttributeNames.Finesse,
+	Intelligence = LocalizedText.AttributeNames.Intelligence,
+	Constitution = LocalizedText.AttributeNames.Constitution,
+	Memory = LocalizedText.AttributeNames.Memory,
+	Wits = LocalizedText.AttributeNames.Wits,
+	Vitality = ts:Create("h67a4c781g589ag4872g8c46g870e336074bd", "Vitality"),
+	ActionPoints = ts:Create("h4ef9c467g3c7bg4614g96d0g801b09fcc05c", "Action Points"),
+	SourcePoints = ts:Create("hc4281cefg2577g4c22g9a01gf90be11a051f", "Source Points"),
+	Damage = ts:Create("h9531fd22g6366g4e93g9b08g11763cac0d86", "Damage"),
+	CriticalChance = ts:Create("h1b6a1120gb023g4df1gb463gc317e509ee2c", "Critical Chance"),
+	Accuracy = ts:Create("h6372c697g5d05g414cga3e3gbb2656f62f2d", "Accuracy"):WithFormat("<font color=\"#411600\">%s</font>"),
+	Dodging = ts:Create("h5b82f1a5gb4bcg48bdg8827g0d9baecfaada", "Dodging"):WithFormat("<font color=\"#411600\">%s</font>"),
+	Movement = ts:Create("ha9fe36bfg692ag4f8bg8d9eg379bbbf04c87", "Movement"),
+	Initiative = ts:Create("h8c8cc7e3gdaf7g46d2g9d3bg04a31d8f0599", "Initiative"),
+	--TODO Many entries for these words. Not sure which handle is actually used by the sheet.
+	PhysicalArmour = ts:Create("h161d5479g06d6g408egade2g37a203e3361f", "Physical Armour"),
+	MagicArmour = ts:Create("h50eb8e33g82edg412eg9886gec19ca591254", "Magic Armour"),
+	Fire = ts:Create("h051b2501g091ag4c93ga699g407cd2b29cdc", "Fire"),
+	Water = ts:Create("hd30196cdg0253g434dga42ag12be43dac4ec", "Water"),
+	Earth = ts:Create("h85fee3f4g0226g41c6g9d38g83b7b5bf96ba", "Earth"),
+	Air = ts:Create("h1cea7e28gc8f1g4915ga268g31f90767522c","Air"),
+	Poison = ts:Create("haa64cdb8g22d6g40d6g9918g61961514f70f", "Poison"),
+	Experience = ts:Create("he50fce4dg250cg4449g9f33g7706377086f6", "Experience"),
+	NextLevel = ts:Create("hd2c1d752gc727g4c69g9a6cg67116ca0b97e", "Next Level"),
+	--Custom replacement for Next Level
+	Total = ts:Create("h9e9c017dg3bceg4c21ga665g71b50ca351b6", "Total"),
+}
+
 ---Get localized damage text wrapped in that damage type's color.
 ---@param damageType string
 ---@param damageValue string|integer|number
@@ -377,7 +404,6 @@ local damageTypeToResistanceName = {
 ---@field Text TranslatedString
 ---@field Color string
 
----@type table<string, ResistanceTextEntry>
 LocalizedText.ResistanceNames = {
 	PureResistance = {Text=ts:Create("h71766947g9564g4a6bg936bga055cccc01a0","Pure Resistance"), Color="#13D177"}, -- Special LeaderLib handle
 	PhysicalResistance = {Text=ts:Create("hcd84ee03g9912g4b0dga49age6bce09b19d1","Physical Resistance"), Color="#AE9F95"},

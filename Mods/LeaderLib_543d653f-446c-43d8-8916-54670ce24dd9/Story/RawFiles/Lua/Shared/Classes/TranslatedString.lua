@@ -5,6 +5,7 @@ local TranslatedString = {
 	Content = "",
 	Value = "",
 	Key = "",
+	Format = "",
 	AutoReplacePlaceholders = false,
 }
 TranslatedString.__index = TranslatedString
@@ -30,6 +31,13 @@ function TranslatedString:Create(handle,content)
 	this.Update(this)
 	table.insert(TranslatedStringEntries, this)
 	return this
+end
+
+---@param format string Text to wrap around the content. Should include an %s for the content's position in the string, such as <font color='#FF0000'>%s</font>
+---@return TranslatedString
+function TranslatedString:WithFormat(format)
+	self.Format = format
+	return self
 end
 
 ---@param stringKey string
@@ -69,6 +77,19 @@ function TranslatedString:Update()
 			self.Value = self.Content
 		end
 	end
+	if not StringHelpers.IsNullOrWhitespace(self.Format) then
+		if not StringHelpers.IsNullOrEmpty(self.Content) then
+			local b,result = pcall(string.format, self.Format, self.Content)
+			if b then
+				self.Value = result
+			end
+		else
+			local b,result = pcall(string.format, self.Format, self.Value)
+			if b then
+				self.Value = result
+			end
+		end
+	end
 	if not StringHelpers.IsNullOrWhitespace(self.Value) and self.AutoReplacePlaceholders then
 		self.Value = GameHelpers.Tooltip.ReplacePlaceholders(self.Value)
 	end
@@ -86,6 +107,20 @@ function TranslatedString:ReplacePlaceholders(...)
 	end
 	local values = {...}
 	local str = self.Value
+	if not StringHelpers.IsNullOrWhitespace(self.Format) then
+		--Just in case the Value already has the format when it was updated.
+		if not StringHelpers.IsNullOrEmpty(self.Content) then
+			local b,result = pcall(string.format, self.Format, self.Content)
+			if b then
+				str = result
+			end
+		else
+			local b,result = pcall(string.format, self.Format, self.Value)
+			if b then
+				str = result
+			end
+		end
+	end
 	if #values > 0 then
 		if type(values[1]) == "table" then
 			values = values[1]

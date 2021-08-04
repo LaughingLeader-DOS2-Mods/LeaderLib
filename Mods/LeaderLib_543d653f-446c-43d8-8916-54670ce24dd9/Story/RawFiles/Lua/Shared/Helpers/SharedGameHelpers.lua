@@ -236,7 +236,7 @@ function GameHelpers.CharacterOrEquipmentHasTag(character, tag)
 	return false
 end
 
----Tries and get a string UUID from whatever variable type object is.
+---Tries to get a string UUID from whatever variable type object is.
 ---@param object EsvGameObject|EclGameObject|string|number
 ---@param returnNullId boolean|nil If true, returns NULL_00000000-0000-0000-0000-000000000000 if a UUID isn't found.
 ---@return UUID
@@ -255,7 +255,7 @@ function GameHelpers.GetUUID(object, returnNullId)
 	return returnNullId and "NULL_00000000-0000-0000-0000-000000000000" or nil
 end
 
----Tries and get a GetNetID from whatever variable type object is.
+---Tries to get a NetID from whatever variable type object is.
 ---@param object EsvGameObject|EclGameObject|string|number
 ---@return NETID
 function GameHelpers.GetNetID(object)
@@ -269,6 +269,30 @@ function GameHelpers.GetNetID(object)
 		end
 	elseif t == "number" then
 		return object
+	end
+	return nil
+end
+
+---Tries to get a UUID on the server or NetID on the client.
+---@param object EsvGameObject|EclGameObject|string|number
+---@return UUID|NETID
+function GameHelpers.GetCharacterID(object)
+	local t = type(object)
+	if t == "userdata" and object.NetID then
+		if not isClient then
+			return object.MyGuid
+		else
+			return object.NetID
+		end
+	elseif t == "string" or t == "number" then
+		local obj = Ext.GetCharacter(object)
+		if obj then
+			if not isClient then
+				return obj.MyGuid
+			else
+				return obj.NetID
+			end
+		end
 	end
 	return nil
 end

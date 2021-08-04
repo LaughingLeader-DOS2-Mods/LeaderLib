@@ -17,6 +17,45 @@ local updateTargetsDefaults = {
 ---@type SheetUpdateTargets
 local updateTargets = TableHelpers.Clone(updateTargetsDefaults)
 
+local function debugExportStatArrays(this)
+	local saveData = {
+		Default = {
+			Primary={},
+			Secondary={},
+			Spacing={},
+			Order={}
+		}
+	}
+	for i=0,#this.primStat_array-1,4 do
+		saveData.Default.Primary[this.primStat_array[i+1]] = {
+			StatID = this.primStat_array[i],
+			DisplayName = this.primStat_array[i+1],
+			TooltipID = this.primStat_array[i+3]
+		}
+		table.insert(saveData.Default.Order, this.primStat_array[i+1])
+	end
+	for i=0,#this.secStat_array-1,7 do
+		if this.secStat_array[i] then
+			table.insert(saveData.Default.Spacing, {
+				Type = "Spacing",
+				StatType = this.secStat_array[i+1],
+				Height = this.secStat_array[i+2]
+			})
+			table.insert(saveData.Default.Order, "Spacing")
+		else
+			saveData.Default.Secondary[this.secStat_array[i+2]] = {
+				Type = "SecondaryStat",
+				StatType = this.secStat_array[i+1],
+				StatID = this.secStat_array[i+4],
+				DisplayName = this.secStat_array[i+2],
+				Frame = this.secStat_array[i+5]
+			}
+			table.insert(saveData.Default.Order, this.secStat_array[i+2])
+		end
+	end
+	Ext.SaveFile("StatsArrayContents.lua", Lib.serpent.raw(saveData, {indent = '\t', sortkeys = false, comment = false}))
+end
+
 ---@private
 ---@param ui UIObject
 function CharacterSheet.PreUpdate(ui, method, updateTalents, updateAbilities, updateCivil)

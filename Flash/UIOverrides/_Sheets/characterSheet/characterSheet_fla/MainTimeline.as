@@ -420,9 +420,10 @@ package characterSheet_fla
 			this.stats_mc.addPrimaryStat(statID,labelText,valueText,tooltipType);
 		}
 		
-		public function addSecondaryStat(statType:Number, labelText:String, valueText:String, statID:Number, frame:Number, boostValue:Number) : *
+		//statType:Number, labelText:String, valueText:String, statID:Number, iconFrame:Number, boostValue:Number, plusVisible:Boolean = false, minusVisible:Boolean = false
+		public function addSecondaryStat(statType:Number, labelText:String, valueText:String, statID:Number, iconFrame:Number, boostValue:Number) : *
 		{
-			this.stats_mc.addSecondaryStat(statType,labelText,valueText,statID,frame,boostValue);
+			this.stats_mc.addSecondaryStat(statType,labelText,valueText,statID,iconFrame,boostValue);
 		}
 		
 		public function clearSecondaryStats() : *
@@ -623,7 +624,7 @@ package characterSheet_fla
 				}
 				else
 				{
-					//statType:Number, labelText:String, valueText:String, statID:Number, frame:Number, boostValue:Number
+					//statType:Number, labelText:String, valueText:String, statID:Number, iconFrame:Number, boostValue:Number)
 					this.addSecondaryStat(this.secStat_array[i + 1],this.secStat_array[i + 2],this.secStat_array[i + 3],this.secStat_array[i + 4],this.secStat_array[i + 5],this.secStat_array[i + 6]);
 				}
 				i = i + 7;
@@ -838,9 +839,9 @@ package characterSheet_fla
 			this.stats_mc.INTSetWarnAndPoints(4,amount);
 		}
 		
-		public function addSpacing(param1:Number, param2:Number) : *
+		public function addSpacing(statType:Number, height:Number) : *
 		{
-			this.stats_mc.addSpacing(param1,param2);
+			this.stats_mc.addSpacing(statType,height);
 		}
 		
 		public function addGoldWeight(param1:String, param2:String) : *

@@ -247,7 +247,6 @@ if isClient then
 	end
 
 	Ext.RegisterNetListener("LeaderLib_SheetManager_EntryValueChanged", function(cmd, payload)
-		print(cmd,payload)
 		local data = Common.JsonParse(payload)
 		if data then
 			local characterId = GameHelpers.GetCharacterID(data.NetID)
@@ -270,7 +269,6 @@ if isClient then
 	end)
 else
 	Ext.RegisterNetListener("LeaderLib_SheetManager_RequestValueChange", function(cmd, payload)
-		print(cmd,payload)
 		local data = Common.JsonParse(payload)
 		if data then
 			local characterId = GameHelpers.GetCharacterID(data.NetID)

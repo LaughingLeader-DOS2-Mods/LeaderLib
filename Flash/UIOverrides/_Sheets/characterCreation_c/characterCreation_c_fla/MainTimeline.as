@@ -90,10 +90,17 @@ package characterCreation_c_fla
 		public var eatup:Boolean;
 		public var textArray;
 
-		//LeaderLib
-		public var characterHandle:Number;
-		//In case mods are still using this.
 		public var charHandle:Number;
+		//LeaderLib
+
+		//Unified property name
+		public function get characterHandle():Number {
+			return charHandle;
+		}
+
+		public function set characterHandle(v:Number):void {
+			charHandle = v;
+		}
 		
 		public function MainTimeline()
 		{

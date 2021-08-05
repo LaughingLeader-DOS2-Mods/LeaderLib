@@ -80,11 +80,18 @@ package characterCreation_fla
 		public var textArray:Array;
 		public var enableOrigin:Boolean;
 
-		//LeaderLib
-		public var characterHandle:Number;
-		//In case mods are still using this.
 		public var charHandle:Number;
+		//LeaderLib
 		public var initialized:Boolean = false;
+
+		//Unified property name
+		public function get characterHandle():Number {
+			return charHandle;
+		}
+
+		public function set characterHandle(v:Number):void {
+			charHandle = v;
+		}
 		
 		public function MainTimeline()
 		{

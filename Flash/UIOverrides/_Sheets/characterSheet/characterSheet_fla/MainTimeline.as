@@ -89,12 +89,19 @@ package characterSheet_fla
 		public var generateTreasureId:int;
 		public var generateTreasureLevel:int;
 
-		//LeaderLib
-		public var characterHandle:Number;
-		//In case mods are still using this.
 		public var charHandle:Number;
+		//LeaderLib
 		public var isExtended:Boolean = true;
 		public var justUpdated:Boolean = false;
+
+		//Unified property name
+		public function get characterHandle():Number {
+			return charHandle;
+		}
+
+		public function set characterHandle(v:Number):void {
+			charHandle = v;
+		}
 		
 		public function MainTimeline()
 		{

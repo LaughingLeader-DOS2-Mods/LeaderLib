@@ -51,8 +51,19 @@ local function CreateTooltip(tooltipType, requestedUI, call, id)
 			elseif tooltipType == "PrimaryStat" or tooltipType == "SecondaryStat" then
 				this.tooltip_array[0] = Game.Tooltip.TooltipItemTypes.StatName
 				this.tooltip_array[1] = data:GetDisplayName()
-				this.tooltip_array[2] = Game.Tooltip.TooltipItemTypes.StatsDescription
-				this.tooltip_array[3] = data:GetDescription()
+				
+				if data.Icon then
+					this.tooltip_array[2] = Game.Tooltip.TooltipItemTypes.AbilityDescription
+					this.tooltip_array[3] = data.GeneratedID
+					this.tooltip_array[4] = data:GetDescription()
+					this.tooltip_array[5] = ""
+					this.tooltip_array[6] = ""
+					this.tooltip_array[7] = ""
+					Game.Tooltip.PrepareIcon(ui, string.format("tt_ability_%i", data.GeneratedID), data.Icon, data.IconWidth or 128, data.IconHeight or 128)
+				else
+					this.tooltip_array[2] = Game.Tooltip.TooltipItemTypes.StatsDescription
+					this.tooltip_array[3] = data:GetDescription()
+				end
 
 				request.Stat = data.ID
 				resolved = true

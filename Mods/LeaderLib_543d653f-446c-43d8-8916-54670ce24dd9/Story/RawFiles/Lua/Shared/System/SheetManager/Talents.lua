@@ -399,13 +399,13 @@ function SheetManager.Talents.HasTalent(player, talentId)
 end
 
 local function TryRequestRefresh()
-	if isClient then
-		if Vars.ControllerEnabled then
-			GameHelpers.UI.TryInvoke(Data.UIType.characterSheet, "clearTalents")
-		else
-			GameHelpers.UI.TryInvoke(Data.UIType.statsPanel_c, "clearTalents")
-		end
-	end
+	-- if isClient then
+	-- 	if Vars.ControllerEnabled then
+	-- 		GameHelpers.UI.TryInvoke(Data.UIType.characterSheet, "clearTalents")
+	-- 	else
+	-- 		GameHelpers.UI.TryInvoke(Data.UIType.statsPanel_c, "clearTalents")
+	-- 	end
+	-- end
 end
 
 --Requires a name and description to be manually set in the tooltip, as well as an icon
@@ -549,6 +549,17 @@ end
 ---@param id string
 ---@param talentState integer
 ---@return string,boolean
+function SheetManager.Talents.GetTalentStateFontFormat(talentState)
+	local color = SheetManager.Talents.Data.TalentStateColor[talentState]
+	if color then
+		return "<font color='"..color.."'>%s</font>"
+	end
+	return "%s"
+end
+
+---@param id string
+---@param talentState integer
+---@return string,boolean
 function SheetManager.Talents.GetTalentDisplayName(id, talentState)
 	local name = LocalizedText.TalentNames[id]
 	if not name or StringHelpers.IsNullOrEmpty(name.Value) then
@@ -556,11 +567,7 @@ function SheetManager.Talents.GetTalentDisplayName(id, talentState)
 	else
 		name = name.Value
 	end
-	local color = SheetManager.Talents.Data.TalentStateColor[talentState]
-	if color then
-		return string.format("<font color='%s'>%s</font>", color, name)
-	end
-	return name
+	return string.format(SheetManager.Talents.GetTalentStateFontFormat(talentState), name)
 end
 
 ---@param player EclCharacter
@@ -793,7 +800,7 @@ function SheetManager.Talents.GetVisible(player, isCharacterCreation, isGM)
 			local hasTalent = data:GetValue(player) == true
 			if SheetManager:IsEntryVisible(data, player, hasTalent) then
 				local talentState = data:GetState(player)
-				local name = SheetManager.Talents.GetTalentDisplayName(data.ID, talentState)
+				local name = string.format(SheetManager.Talents.GetTalentStateFontFormat(talentState), data:GetDisplayName())
 				local isRacial = data.IsRacial
 				local isChoosable = not isRacial and talentState ~= SheetManager.Talents.Data.TalentState.Locked
 				local canAdd = not hasTalent and isChoosable and talentPoints > 0
@@ -802,7 +809,7 @@ function SheetManager.Talents.GetVisible(player, isCharacterCreation, isGM)
 				local data = {
 					ID = data.GeneratedID,
 					HasTalent = hasTalent,
-					DisplayName = name,
+					DisplayName = name .. data.Suffix,
 					IsRacial = isRacial,
 					IsChoosable = isChoosable,
 					CanAdd = SheetManager:GetIsPlusVisible(data, player, canAdd, hasTalent),

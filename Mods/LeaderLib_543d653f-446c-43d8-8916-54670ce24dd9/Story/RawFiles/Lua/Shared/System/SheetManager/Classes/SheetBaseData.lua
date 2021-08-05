@@ -18,7 +18,12 @@ local SheetBaseData = {
 	---Optional setting to force the string key conversion for DisplayName, in case the value doesn't have an underscore.
 	LoadStringKey = false,
 	---A generated ID assigned by the SheetManager, used to associate a stat in the UI with this data.
-	GeneratedID = -1
+	GeneratedID = -1,
+	---The character attribute to use for automatic get/set outside of the PersistentVars system.
+	---If set, value get/set will use the built-in boost attribute of the character with this name.
+	BoostAttribute = "",
+	---Text to append to the value display, such as a percentage sign.
+	Suffix = ""
 }
 
 local defaults = {
@@ -30,7 +35,9 @@ local defaults = {
 	IconWidth = SheetBaseData.IconWidth,
 	IconHeight = SheetBaseData.IconHeight,
 	Visible = true,
-	GeneratedID = -1
+	GeneratedID = -1,
+	BoostAttribute = "",
+	Suffix = "",
 }
 
 ---@protected
@@ -75,6 +82,20 @@ function SheetBaseData:GetDescription()
 		return text
 	end
 	return ""
+end
+
+---@param character EsvCharacter|EclCharacter
+---@param fallback integer|boolean
+function SheetBaseData:GetBoostValue(character, fallback)
+	local character = GameHelpers.GetCharacter(character)
+	if character then
+		local value = character.Stats.DynamicStats[2][self.BoostAttribute]
+		if value == nil then
+			fprint(LOGLEVEL.ERROR, "[LeaderLib:SheetTalentData:GetValue] BoostAttribute(%s) for entry (%s) does not exist within StatCharacter!", self.BoostAttribute, self.ID)
+			return fallback
+		end
+		return value
+	end
 end
 
 Classes.SheetBaseData = SheetBaseData

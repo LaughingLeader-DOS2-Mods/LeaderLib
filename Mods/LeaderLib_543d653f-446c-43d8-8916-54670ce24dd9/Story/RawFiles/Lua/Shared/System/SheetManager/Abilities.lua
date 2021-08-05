@@ -336,11 +336,11 @@ if Ext.IsClient() then
 					---@type TalentManagerUITalentEntry
 					local data = {
 						ID = data.GeneratedID,
-						DisplayName = data.DisplayName,
+						DisplayName = data:GetDisplayName(),
 						IsCivil = data.IsCivil,
 						GroupID = data.GroupID,
 						IsCustom = true,
-						Value = string.format("%s", value),
+						Value = string.format("%s", value) .. data.Suffix,
 						Delta = value,
 						AddPointsTooltip = tooltip,
 						RemovePointsTooltip = "",

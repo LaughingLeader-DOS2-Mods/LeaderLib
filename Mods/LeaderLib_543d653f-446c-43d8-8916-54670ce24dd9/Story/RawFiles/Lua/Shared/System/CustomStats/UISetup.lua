@@ -111,6 +111,10 @@ end
 
 local function OnSheetUpdating(ui, method)
 	local this = ui:GetRoot()
+
+	if this.stats_mc.currentOpenPanel ~= 8 then
+		return
+	end
 	CustomStatSystem:SetupGroups(ui, method)
 
 	local client = CustomStatSystem:GetCharacter(ui, this)
@@ -134,7 +138,6 @@ local function OnSheetUpdating(ui, method)
 			Ext.PostMessageToServer("LeaderLib_CustomStatSystem_StatValuesChanged", Ext.JsonStringify(changedStats))
 		end
 	end
-
 	
 	if CustomStatSystem:GMStatsEnabled() then
 		local length = #this.customStats_array

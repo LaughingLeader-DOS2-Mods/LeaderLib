@@ -1,6 +1,7 @@
 local function OnPointsAdded(statType, ui, event, generatedId, ...)
 	print("OnPointsAdded", statType, event, generatedId, ...)
 	local stat = SheetManager:GetStatByGeneratedID(generatedId, statType)
+	print(stat, generatedId, statType)
 	if stat then
 		if statType ~= "Talent" then
 			stat:ModifyValue(Client:GetCharacter(), 1)

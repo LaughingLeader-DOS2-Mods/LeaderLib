@@ -186,20 +186,48 @@ end
 function SheetManager:SetEntryValue(stat, characterId, value, skipListenerInvoke, skipSync)
 	local last = stat:GetValue(characterId)
 	if last ~= value then
-		if self.CurrentValues[stat.ID] == nil then
-			self.CurrentValues[stat.ID] = {}
+		---@type EsvCharacter|EclCharacter
+		local character = characterId
+		if type(characterId) ~= "userdata" then
+			character = Ext.GetCharacter(characterId)
+		else
+			characterId = GameHelpers.GetCharacterID(characterId)
 		end
-		self.CurrentValues[stat.ID][characterId] = value
-		local character = Ext.GetCharacter(characterId)
-		if not skipListenerInvoke then
-			for listener in self:GetListenerIterator(self.Listeners.OnEntryChanged[stat.ID], self.Listeners.OnEntryChanged.All) do
-				local b,err = xpcall(listener, debug.traceback, stat.ID, stat, character, last, value, isClient)
-				if not b then
-					fprint(LOGLEVEL.ERROR, "[LeaderLib.CustomStatSystem:OnStatPointAdded] Error calling OnAvailablePointsChanged listener for stat (%s):\n%s", stat.ID, err)
+		if not StringHelpers.IsNullOrWhitespace(stat.BoostAttribute) then
+			if character and character.Stats then
+				if not isClient then
+					if stat.StatType == "Talent" then
+						NRD_CharacterSetPermanentBoostTalent(characterId, string.gsub(stat.BoostAttribute, "TALENT_", ""), value)
+						CharacterAddAttribute(characterId, "Dummy", 0)
+						--character.Stats.DynamicStats[2][stat.BoostAttribute] = value
+					else
+						NRD_CharacterSetPermanentBoostInt(characterId, stat.BoostAttribute, value)
+						--character.Stats.DynamicStats[2][stat.BoostAttribute] = value
+					end
+				else
+					character.Stats.DynamicStats[2][stat.BoostAttribute] = value
+				end
+				local success = character.Stats.DynamicStats[2][stat.BoostAttribute] == value
+				fprint(LOGLEVEL.DEFAULT, "[%s][SetEntryValue:%s] BoostAttribute(%s) Changed(%s) Current(%s) => Desired(%s)", isClient and "CLIENT" or "SERVER", stat.ID, stat.BoostAttribute, success, character.Stats.DynamicStats[2][stat.BoostAttribute], value)
+			else
+				fprint(LOGLEVEL.ERROR, "[%s][SetEntryValue:%s] Failed to get character from id (%s)", isClient and "CLIENT" or "SERVER", stat.ID, characterId)
+			end
+		else
+			if self.CurrentValues[stat.ID] == nil then
+				self.CurrentValues[stat.ID] = {}
+			end
+			self.CurrentValues[stat.ID][characterId] = value
+			if not skipListenerInvoke then
+				for listener in self:GetListenerIterator(self.Listeners.OnEntryChanged[stat.ID], self.Listeners.OnEntryChanged.All) do
+					local b,err = xpcall(listener, debug.traceback, stat.ID, stat, character, last, value, isClient)
+					if not b then
+						fprint(LOGLEVEL.ERROR, "[LeaderLib.CustomStatSystem:OnStatPointAdded] Error calling OnAvailablePointsChanged listener for stat (%s):\n%s", stat.ID, err)
+					end
 				end
 			end
 		end
 		if not skipSync and isClient then
+			--Server-side updating
 			self:RequestValueChange(stat, characterId, value)
 		end
 	end
@@ -217,11 +245,21 @@ end
 ---@param stat SheetAbilityData|SheetStatData|SheetTalentData
 ---@param characterId UUID|NETID
 function SheetManager:GetValueByEntry(stat, characterId)
-	local dataTable = self.CurrentValues[stat.ID]
-	if dataTable then
-		local charValue = dataTable[characterId]
-		if charValue ~= nil then
-			return charValue
+	if not StringHelpers.IsNullOrWhitespace(stat.BoostAttribute) then
+		local character = Ext.GetCharacter(characterId)
+		if character and character.Stats then
+			local charValue = character.Stats.DynamicStats[2][stat.BoostAttribute]
+			if charValue ~= nil then
+				return charValue
+			end
+		end
+	else
+		local dataTable = self.CurrentValues[stat.ID]
+		if dataTable then
+			local charValue = dataTable[characterId]
+			if charValue ~= nil then
+				return charValue
+			end
 		end
 	end
 	if stat.StatType == "Talent" then

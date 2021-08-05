@@ -48,10 +48,14 @@ function SheetTalentData:GetValue(character)
 	if StringHelpers.IsNullOrWhitespace(self.ID) then
 		return false
 	end
-	if not isClient then
-		return SheetManager:GetValueByEntry(self, GameHelpers.GetUUID(character))
+	if not StringHelpers.IsNullOrWhitespace(self.BoostAttribute) then
+		return self:GetBoostValue(character, false)
 	else
-		return SheetManager:GetValueByEntry(self, GameHelpers.GetNetID(character))
+		if not isClient then
+			return SheetManager:GetValueByEntry(self, GameHelpers.GetUUID(character))
+		else
+			return SheetManager:GetValueByEntry(self, GameHelpers.GetNetID(character))
+		end
 	end
 end
 

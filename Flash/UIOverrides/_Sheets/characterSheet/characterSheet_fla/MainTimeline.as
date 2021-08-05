@@ -94,6 +94,7 @@ package characterSheet_fla
 		//In case mods are still using this.
 		public var charHandle:Number;
 		public var isExtended:Boolean = true;
+		public var justUpdated:Boolean = false;
 		
 		public function MainTimeline()
 		{
@@ -537,6 +538,19 @@ package characterSheet_fla
 					this.aiArray = new Array();
 					this.inventoryUpdateList = new Array();
 					break;
+				case "update":
+					this.primStat_array = new Array();
+					this.ability_array = new Array();
+					this.talent_array = new Array();
+					this.secStat_array = new Array();
+					this.tags_array = new Array();
+					this.visualValues_array = new Array();
+					this.customStats_array = new Array();
+					this.lvlBtnAbility_array = new Array();
+					this.lvlBtnStat_array = new Array();
+					this.lvlBtnTalent_array = new Array();
+					this.lvlBtnSecStat_array = new Array();
+					break;
 				case "charList_array":
 					charList_array.length = 0;
 					break;
@@ -595,18 +609,19 @@ package characterSheet_fla
 					ExternalInterface.call("UIAssert","[characterSheet:clearArray] name ("+String(name)+") isn't valid.");
 			}
 		}
-		
-		public function updateArraySystem() : *
+
+		public function updateArraySystemOld() : *
 		{
 			var canAddPoints:Boolean = false;
 			var isCivil:Boolean = false;
 			var hasButtons:Boolean = false;
-			var statID:int = 0;
+			var statId:int = 0;
 			var showBothButtons:Boolean = false;
 			var minusVisible:Boolean = false;
 			var plusVisible:Boolean = false;
 			var spacing:Number = NaN;
-
+			var updateCivil:Boolean = false;
+			var updateCombat:Boolean = false;
 			var val4:Number = getTimer();
 			var i:uint = 0;
 			while(i < this.primStat_array.length)
@@ -614,7 +629,21 @@ package characterSheet_fla
 				this.addPrimaryStat(this.primStat_array[i],this.primStat_array[i + 1],this.primStat_array[i + 2],this.primStat_array[i + 3]);
 				i = i + 4;
 			}
-
+			i = 0;
+			while(i < this.ability_array.length)
+			{
+				isCivil = Boolean(this.ability_array[i]);
+				if(isCivil)
+				{
+					updateCivil = true;
+				}
+				else
+				{
+					updateCombat = true;
+				}
+				this.addAbility(isCivil,this.ability_array[i + 1],this.ability_array[i + 2],this.ability_array[i + 3],this.ability_array[i + 4],this.ability_array[i + 5],this.ability_array[i + 6]);
+				i = i + 7;
+			}
 			i = 0;
 			while(i < this.secStat_array.length)
 			{
@@ -624,12 +653,15 @@ package characterSheet_fla
 				}
 				else
 				{
-					//statType:Number, labelText:String, valueText:String, statID:Number, iconFrame:Number, boostValue:Number)
 					this.addSecondaryStat(this.secStat_array[i + 1],this.secStat_array[i + 2],this.secStat_array[i + 3],this.secStat_array[i + 4],this.secStat_array[i + 5],this.secStat_array[i + 6]);
 				}
 				i = i + 7;
 			}
-
+			i = 0;
+			while(i < this.talent_array.length)
+			{
+				this.addTalent(this.talent_array[i++],this.talent_array[i++],this.talent_array[i++]);
+			}
 			i = 0;
 			while(i < this.tags_array.length)
 			{
@@ -640,6 +672,13 @@ package characterSheet_fla
 			while(i < this.visualValues_array.length)
 			{
 				this.addVisualOption(this.visualValues_array[i++],this.visualValues_array[i++],this.visualValues_array[i++]);
+			}
+			this.stats_mc.clearCustomStatsOptions();
+			i = 0;
+			while(i < this.customStats_array.length)
+			{
+				this.stats_mc.addCustomStat(this.customStats_array[i],this.customStats_array[i + 1],this.customStats_array[i + 2]);
+				i = i + 3;
 			}
 			i = 0;
 			while(i < this.lvlBtnStat_array.length)
@@ -655,6 +694,140 @@ package characterSheet_fla
 				}
 				i = i + 3;
 			}
+			if(this.lvlBtnSecStat_array.length > 0)
+			{
+				hasButtons = this.lvlBtnSecStat_array[0];
+				i = 1;
+				while(i < this.lvlBtnSecStat_array.length)
+				{
+					statId = this.lvlBtnSecStat_array[i];
+					if(hasButtons)
+					{
+						showBothButtons = this.lvlBtnSecStat_array[i + 1];
+						minusVisible = this.lvlBtnSecStat_array[i + 2];
+						plusVisible = this.lvlBtnSecStat_array[i + 3];
+						spacing = 5;
+						if(statId == 44)
+						{
+							spacing = 9;
+						}
+						//id:int, showBoth:Boolean, minusVisible:Boolean, plusVisible:Boolean, param5:Number = 5
+						this.setupSecondaryStatsButtons(statId,showBothButtons,minusVisible,plusVisible,spacing);
+					}
+					else
+					{
+						this.setupSecondaryStatsButtons(statId,false,false,false);
+					}
+					i = i + 4;
+				}
+			}
+			i = 0;
+			while(i < this.lvlBtnAbility_array.length)
+			{
+				canAddPoints = Boolean(this.lvlBtnAbility_array[i]);
+				if(canAddPoints)
+				{
+					this.setAbilityPlusVisible(this.lvlBtnAbility_array[i + 1],this.lvlBtnAbility_array[i + 2],this.lvlBtnAbility_array[i + 3],this.lvlBtnAbility_array[i + 4]);
+				}
+				else
+				{
+					this.setAbilityMinusVisible(this.lvlBtnAbility_array[i + 1],this.lvlBtnAbility_array[i + 2],this.lvlBtnAbility_array[i + 3],this.lvlBtnAbility_array[i + 4]);
+				}
+				i = i + 5;
+			}
+			i = 0;
+			while(i < this.lvlBtnTalent_array.length)
+			{
+				canAddPoints = Boolean(this.lvlBtnTalent_array[i]);
+				if(canAddPoints)
+				{
+					this.setTalentPlusVisible(this.lvlBtnTalent_array[i + 1],this.lvlBtnTalent_array[i + 2]);
+				}
+				else
+				{
+					this.setTalentMinusVisible(this.lvlBtnTalent_array[i + 1],this.lvlBtnTalent_array[i + 2]);
+				}
+				i = i + 3;
+			}
+			if(updateCivil)
+			{
+				this.stats_mc.civicAbilityHolder_mc.list.positionElements();
+				this.stats_mc.recountAbilityPoints(true);
+			}
+			if(updateCombat)
+			{
+				this.stats_mc.combatAbilityHolder_mc.list.positionElements();
+				this.stats_mc.recountAbilityPoints(false);
+			}
+			if(this.tags_array.length > 0)
+			{
+				this.stats_mc.tagsHolder_mc.list.positionElements();
+			}
+			if(this.talent_array.length > 0)
+			{
+				this.stats_mc.talentHolder_mc.list.positionElements();
+			}
+			if(this.customStats_array.length > 0)
+			{
+				this.stats_mc.customStats_mc.positionElements();
+			}
+			this.primStat_array = new Array();
+			this.ability_array = new Array();
+			this.tags_array = new Array();
+			this.talent_array = new Array();
+			this.visualValues_array = new Array();
+			this.customStats_array = new Array();
+			this.secStat_array = new Array();
+			this.lvlBtnAbility_array = new Array();
+			this.lvlBtnStat_array = new Array();
+			this.lvlBtnTalent_array = new Array();
+			this.lvlBtnSecStat_array = new Array();
+			this.stats_mc.resetScrollBarsPositions();
+			this.stats_mc.resetListPositions();
+			this.stats_mc.recheckScrollbarVisibility();
+			this.initDone = true;
+		}
+		
+		public function updateArraySystem() : *
+		{
+			var canAddPoints:Boolean = false;
+			var hasButtons:Boolean = false;
+			var statID:int = 0;
+			var showBothButtons:Boolean = false;
+			var minusVisible:Boolean = false;
+			var plusVisible:Boolean = false;
+			var spacing:Number = NaN;
+
+			var i:uint = 0;
+
+			while(i < this.tags_array.length)
+			{
+				this.addTag(this.tags_array[i++],this.tags_array[i++],this.tags_array[i++],this.tags_array[i++]);
+			}
+
+			this.stats_mc.clearVisualOptions();
+
+			i = 0;
+			while(i < this.visualValues_array.length)
+			{
+				this.addVisualOption(this.visualValues_array[i++],this.visualValues_array[i++],this.visualValues_array[i++]);
+			}
+
+			i = 0;
+			while(i < this.lvlBtnStat_array.length)
+			{
+				canAddPoints = Boolean(this.lvlBtnStat_array[i]);
+				if(canAddPoints)
+				{
+					this.setStatPlusVisible(this.lvlBtnStat_array[i + 1],this.lvlBtnStat_array[i + 2]);
+				}
+				else
+				{
+					this.setStatMinusVisible(this.lvlBtnStat_array[i + 1],this.lvlBtnStat_array[i + 2]);
+				}
+				i = i + 3;
+			}
+
 			i = 0;
 			if(this.lvlBtnSecStat_array.length > 0)
 			{
@@ -683,6 +856,7 @@ package characterSheet_fla
 					i = i + 4;
 				}
 			}
+
 			if(this.tags_array.length > 0)
 			{
 				this.stats_mc.tagsHolder_mc.list.positionElements();
@@ -698,20 +872,6 @@ package characterSheet_fla
 			{
 				this.stats_mc.customStats_mc.positionElements();
 			}
-			this.primStat_array = new Array();
-			this.ability_array = new Array();
-			this.tags_array = new Array();
-			this.talent_array = new Array();
-			this.visualValues_array = new Array();
-			this.customStats_array = new Array();
-			this.secStat_array = new Array();
-			this.lvlBtnAbility_array = new Array();
-			this.lvlBtnStat_array = new Array();
-			this.lvlBtnTalent_array = new Array();
-			this.lvlBtnSecStat_array = new Array();
-			this.stats_mc.resetScrollBarsPositions();
-			this.stats_mc.resetListPositions();
-			this.stats_mc.recheckScrollbarVisibility();
 			this.initDone = true;
 			ExternalInterface.call("characterSheetUpdateDone");
 		}
@@ -771,15 +931,20 @@ package characterSheet_fla
 			this.setAvailableCustomStatPoints(0);
 		}
 		
-		public function hideLevelUpTalentButtons() : *
+		public function hideLevelUpTalentButtons(force:Boolean=false) : *
 		{
-			this.stats_mc.setVisibilityTalentButtons(false);
-			this.setAvailableTalentPoints(0);
+			// What's calling this after the array is parsed?
+			if (!this.justUpdated || force) {
+				this.stats_mc.setVisibilityTalentButtons(false);
+				this.setAvailableTalentPoints(0);
+			}
 		}
 		
-		public function clearStats() : *
+		public function clearStats(force:Boolean=false) : *
 		{
-			this.stats_mc.clearStats();
+			if (!this.justUpdated || force) {
+				this.stats_mc.clearStats();
+			}
 		}
 		
 		public function clearTags() : *
@@ -787,14 +952,19 @@ package characterSheet_fla
 			this.stats_mc.tagsHolder_mc.list.clearElements();
 		}
 		
-		public function clearTalents() : *
+		public function clearTalents(force:Boolean=false) : *
 		{
-			this.stats_mc.talentHolder_mc.list.clearElements();
+			// What's calling this after the array is parsed?
+			if (!this.justUpdated || force) {
+				this.stats_mc.talentHolder_mc.list.clearElements();
+			}
 		}
 		
-		public function clearAbilities() : *
+		public function clearAbilities(force:Boolean=false) : *
 		{
-			this.stats_mc.clearAbilities();
+			if (!this.justUpdated || force) {
+				this.stats_mc.clearAbilities();
+			}
 		}
 		
 		public function setPanelTitle(param1:Number, param2:String) : *

@@ -90,8 +90,10 @@ package characterSheet_fla
 		public const RightFrameW:Number = 304;
 
 		//LeaderLib
-		public var customStatIconOffsetX:Number = -2;
-		public var customStatIconOffsetY:Number = -6;
+		public var customPrimaryStatIconOffsetX:Number = 0;
+		public var customPrimaryStatIconOffsetY:Number = -2;
+		public var customSecStatIconOffsetX:Number = -2;
+		public var customSecStatIconOffsetY:Number = -6;
 		public var pointWarningOffsetX:Number = -16;
 		public var customStatPointsTextOffsetX:Number = -1.89;
 
@@ -506,8 +508,8 @@ package characterSheet_fla
 				this.currentOpenPanel = tabIndex;
 				this.INTSetAvailablePointsVisible();
 				this.pointsFrame_mc.setTab(this.currentOpenPanel);
+				ExternalInterface.call("selectedTab",this.currentOpenPanel);
 			}
-			ExternalInterface.call("selectedTab",this.currentOpenPanel);
 		}
 		
 		public function selectTab(index:Number) : *
@@ -852,7 +854,7 @@ package characterSheet_fla
 			{
 				this.primaryStatList.addElement(text_mc);
 			}
-			this.mainStatsList.positionElements();
+			//this.mainStatsList.positionElements();
 		}
 		
 		public function addSpacing(statType:Number, height:Number) : *
@@ -970,15 +972,15 @@ package characterSheet_fla
 				talent_mc.minus_mc.x = 260;
 				talent_mc.plus_mc.x = talent_mc.minus_mc.x + talent_mc.minus_mc.width;
 				//talent_mc.plus_mc.visible = talent_mc.minus_mc.visible = false;
+				talent_mc.hl_mc.width = this.statsElWidth;
+				talent_mc.hl_mc.height = talent_mc.label_txt.textHeight + talent_mc.label_txt.y;
+				talent_mc.plus_mc.y = talent_mc.minus_mc.y = talent_mc.hl_mc.y + Math.ceil((talent_mc.hl_mc.height - talent_mc.minus_mc.height) * 0.5) - 3;
 				talent_mc.id = this.talentHolder_mc.list.length;
 				this.talentHolder_mc.list.addElement(talent_mc,false);
 			}
 			talent_mc.plus_mc.visible = plusVisible;
 			talent_mc.minus_mc.visible = minusVisible;
 			talent_mc.label_txt.htmlText = labelText;
-			talent_mc.hl_mc.width = this.statsElWidth;
-			talent_mc.hl_mc.height = talent_mc.label_txt.textHeight + talent_mc.label_txt.y;
-			talent_mc.plus_mc.y = talent_mc.minus_mc.y = talent_mc.hl_mc.y + Math.ceil((talent_mc.hl_mc.height - talent_mc.minus_mc.height) * 0.5) - 3;
 			talent_mc.label = talent_mc.label_txt.text;
 			talent_mc.talentState = talentState;
 			talent_mc.bullet_mc.gotoAndStop(this.getTalentStateFrame(talentState));
@@ -1003,29 +1005,67 @@ package characterSheet_fla
 			}
 		}
 		
-		public function addPrimaryStat(statID:Number, displayName:String, value:String, tooltipId:Number, plusVisible:Boolean = false, minusVisible:Boolean = false, isCustom:Boolean=false) : *
+		public function addPrimaryStat(statID:Number, displayName:String, value:String, tooltipId:Number, plusVisible:Boolean = false, minusVisible:Boolean = false, isCustom:Boolean=false, iconFrame:Number = -1, iggyIconName:String = "") : *
 		{
-			var stat_mc:MovieClip = new Stat();
-			stat_mc.tooltipAlign = "right";
-			stat_mc.hl_mc.alpha = 0;
+			var stat_mc:MovieClip = this.getStat(statID, isCustom);
+			if(!stat_mc)
+			{
+				stat_mc = new Stat();
+				stat_mc.tooltipAlign = "right";
+				stat_mc.hl_mc.alpha = 0;
+				stat_mc.statPoints = 0;
+				stat_mc.statID = statID;
+				stat_mc.hl_mc.width = this.statsElWidth;
+				stat_mc.text_txt.mouseEnabled = false;
+				stat_mc.label_txt.mouseEnabled = false;
+				stat_mc.heightOverride = 26;
+				if(iggyIconName != "")
+				{
+					stat_mc.icon_mc.visible = false;
+					if(stat_mc.customIcon_mc == undefined)
+					{
+						stat_mc.customIcon_mc = new IggyIcon();
+						stat_mc.customIcon_mc.mouseEnabled = false;
+						stat_mc.addChild(stat_mc.customIcon_mc);
+						stat_mc.customIcon_mc.scale = 0.5625; // 36/64
+					}
+					stat_mc.customIcon_mc.x = stat_mc.icon_mc.x + customPrimaryStatIconOffsetX;
+					stat_mc.customIcon_mc.y = stat_mc.icon_mc.y + customPrimaryStatIconOffsetY;
+					stat_mc.customIcon_mc.name = iggyIconName;
+					stat_mc.customIcon_mc.visible = true;
+				}
+				else
+				{
+					if(stat_mc.customIcon_mc != undefined)
+					{
+						stat_mc.customIcon_mc.visible = false;
+					}
+					if (iconFrame > -1)
+					{
+						stat_mc.icon_mc.gotoAndStop(iconFrame);
+					}
+					else
+					{
+						stat_mc.icon_mc.gotoAndStop(statID + 1);
+					}
+				}
+				
+				stat_mc.id = this.primaryStatList.length;
+				this.primaryStatList.addElement(stat_mc);
+				//this.mainStatsList.positionElements();
+				stat_mc.label_txt.autoSize = TextFieldAutoSize.LEFT;
+
+				stat_mc.text_txt.htmlText = value;
+				stat_mc.text_txt.width = stat_mc.text_txt.width + 8;
+			}
+			stat_mc.tooltip = tooltipId;
 			stat_mc.plus_mc.visible = plusVisible;
 			stat_mc.minus_mc.visible = minusVisible;
-			stat_mc.label_txt.autoSize = TextFieldAutoSize.LEFT;
+			
 			stat_mc.label_txt.htmlText = displayName;
 			stat_mc.text_txt.htmlText = value;
-			stat_mc.text_txt.width = stat_mc.text_txt.width + 8;
+
 			stat_mc.statBasePoints = Number(value);
-			stat_mc.statPoints = 0;
-			stat_mc.tooltip = tooltipId;
-			stat_mc.statID = statID;
-			stat_mc.hl_mc.width = this.statsElWidth;
-			stat_mc.text_txt.mouseEnabled = false;
-			stat_mc.label_txt.mouseEnabled = false;
-			stat_mc.heightOverride = 26;
-			stat_mc.icon_mc.gotoAndStop(statID + 1);
-			stat_mc.id = this.primaryStatList.length;
-			this.primaryStatList.addElement(stat_mc);
-			this.mainStatsList.positionElements();
 			stat_mc.MakeCustom(statID, isCustom);
 			ExternalInterface.call("entryAdded", isCustom, stat_mc.statID, "primaryStatList", stat_mc.tooltipId);
 		}
@@ -1035,38 +1075,49 @@ package characterSheet_fla
 			var tween:larTween = null;
 			var xOffset:Number = 28;
 			var xOffset2:Number = this.statsElWidth;
-			var stat_mc:MovieClip = null;
+			var stat_mc:MovieClip = this.getSecStat(statID, isCustom);
+			var stat_initialized:Boolean = stat_mc != null;
+
+			if(!stat_mc)
+			{
+				if(statType == 0)
+				{
+					stat_mc = new InfoStat();
+				}
+				else
+				{
+					stat_mc = new SecStat();
+				}
+			}
+
 			if(statType == 0)
 			{
 				xOffset2 = this.statsElWidth;
-				stat_mc = new InfoStat();
 			}
-			else
+			else if(statType != 2)
 			{
-				stat_mc = new SecStat();
-				if(statType != 2)
-				{
-					stat_mc.heightOverride = 26;
-				}
+				stat_mc.heightOverride = 26;
 			}
+
 			stat_mc.boostValue = boostValue;
+
 			stat_mc.hl_mc.alpha = 0;
-			stat_mc.texts_mc.label_txt.autoSize = TextFieldAutoSize.LEFT;
-			stat_mc.texts_mc.label_txt.htmlText = labelText;
-			stat_mc.icon_mc.visible = Boolean(iconFrame != 0);
-			if(stat_mc.minus_mc != null)
+			if(!stat_initialized)
 			{
-				stat_mc.minus_mc.visible = minusVisible;
+				stat_mc.texts_mc.label_txt.autoSize = TextFieldAutoSize.LEFT;
+				stat_mc.texts_mc.text_txt.autoSize = TextFieldAutoSize.RIGHT;
+
+				stat_mc.tooltipAlign = "right";
+
+				stat_mc.texts_mc.mouseEnabled = false;
+				stat_mc.icon_mc.mouseEnabled = false;
+				stat_mc.texts_mc.text_txt.mouseEnabled = false;
+				stat_mc.texts_mc.label_txt.mouseEnabled = false;
 			}
-			if(stat_mc.plus_mc != null)
-			{
-				stat_mc.plus_mc.visible = plusVisible;
-			}
-			if(stat_mc.editText_txt != null)
-			{
-				stat_mc.editText_txt.visible = false;
-			}
-			stat_mc.texts_mc.text_txt.autoSize = TextFieldAutoSize.RIGHT;
+
+			stat_mc.hl_mc.width = xOffset2 + 8;
+			stat_mc.widthOverride = stat_mc.hl_mc.width;
+
 			if(statType == 0)
 			{
 				stat_mc.icon_mc.x = 3;
@@ -1084,15 +1135,24 @@ package characterSheet_fla
 				stat_mc.icon_mc.x = -23;
 				xOffset2 = xOffset2 + 28;
 			}
-			stat_mc.tooltipAlign = "right";
-			stat_mc.hl_mc.width = xOffset2 + 8;
-			stat_mc.widthOverride = stat_mc.hl_mc.width;
+
+			stat_mc.texts_mc.label_txt.htmlText = labelText;
+			stat_mc.icon_mc.visible = Boolean(iconFrame != 0);
+			if(stat_mc.minus_mc != null)
+			{
+				stat_mc.minus_mc.visible = minusVisible;
+			}
+			if(stat_mc.plus_mc != null)
+			{
+				stat_mc.plus_mc.visible = plusVisible;
+			}
+			if(stat_mc.editText_txt != null)
+			{
+				stat_mc.editText_txt.visible = false;
+			}
+			
 			stat_mc.texts_mc.text_txt.htmlText = valueText;
 			stat_mc.texts_mc.text_txt.width = stat_mc.texts_mc.text_txt.width + 8;
-			stat_mc.texts_mc.mouseEnabled = false;
-			stat_mc.icon_mc.mouseEnabled = false;
-			stat_mc.texts_mc.text_txt.mouseEnabled = false;
-			stat_mc.texts_mc.label_txt.mouseEnabled = false;
 			stat_mc.texts_mc.statBasePoints = Number(valueText);
 			stat_mc.texts_mc.statPoints = 0;
 			stat_mc.tooltip = statID;
@@ -1110,6 +1170,16 @@ package characterSheet_fla
 				stat_mc.texts_mc.text_txt.y = stat_mc.texts_mc.text_txt.y + 2;
 			}
 			
+			stat_mc.MakeCustom(statID, isCustom);
+			if(!stat_initialized)
+			{
+				this.addToListWithId(statType, stat_mc, true);
+			}
+			else
+			{
+				//ExternalInterface.call("entryAdded", mc.isCustom, mc.statID, "infoStatList");
+			}
+
 			if(iconFrame != 0)
 			{
 				var targetIcon:MovieClip = stat_mc.icon_mc;
@@ -1130,11 +1200,11 @@ package characterSheet_fla
 						stat_mc.customIcon_mc = new IggyIcon();
 						stat_mc.customIcon_mc.mouseEnabled = false;
 						stat_mc.addChild(stat_mc.customIcon_mc);
-						stat_mc.customIcon_mc.scale = 0.4375;
+						stat_mc.customIcon_mc.scale = 0.4375; // 28/64
 					}
 					targetIcon = stat_mc.customIcon_mc;
-					stat_mc.customIcon_mc.x = stat_mc.icon_mc.x + customStatIconOffsetX;
-					stat_mc.customIcon_mc.y = stat_mc.icon_mc.y + customStatIconOffsetY;
+					stat_mc.customIcon_mc.x = stat_mc.icon_mc.x + customSecStatIconOffsetX;
+					stat_mc.customIcon_mc.y = stat_mc.icon_mc.y + customSecStatIconOffsetY;
 					stat_mc.customIcon_mc.name = iggyIconName;
 					stat_mc.customIcon_mc.visible = true;
 				}
@@ -1153,8 +1223,6 @@ package characterSheet_fla
 			{
 				stat_mc.texts_mc.text_txt.x = xOffset2 - stat_mc.texts_mc.text_txt.width;
 			}
-			stat_mc.MakeCustom(statID, isCustom);
-			this.addToListWithId(statType, stat_mc, true);
 		}
 		
 		public function addTag(labelText:String, statID:Number, tooltipText:String, descriptionText:String) : *
@@ -1207,7 +1275,7 @@ package characterSheet_fla
 					ExternalInterface.call("entryAdded", mc.isCustom, mc.statID, "expStatList");
 				}
 			}
-			this.mainStatsList.positionElements();
+			//this.mainStatsList.positionElements();
 		}
 		
 		public function clearSecondaryStats() : *

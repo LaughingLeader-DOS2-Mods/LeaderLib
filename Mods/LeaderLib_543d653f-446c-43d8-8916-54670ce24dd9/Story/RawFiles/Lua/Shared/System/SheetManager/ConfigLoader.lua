@@ -32,6 +32,8 @@ local basePropertyMap = {
 	SORTNAME = {Name="SortName", Type = "string"},
 	SORTVALUE = {Name="SortValue", Type = "number"},
 	LOADSTRINGKEY = {Name="LoadStringKey", Type = "boolean"},
+	BOOSTATTRIBUTE = {Name="BoostAttribute", Type = "string"},
+	SUFFIX = {Name="Suffix", Type = "string"},
 }
 
 local statPropertyMap = {
@@ -69,6 +71,7 @@ local statPropertyMap = {
 	ICONWIDTH = {Name="IconWidth", Type = "number"},
 	ICONHEIGHT = {Name="IconHeight", Type = "number"},
 	SPACINGHEIGHT = {Name="SpacingHeight", Type = "number"},
+	FRAME = {Name="Frame", Type = "number"},
 }
 
 local talentPropertyMap = {

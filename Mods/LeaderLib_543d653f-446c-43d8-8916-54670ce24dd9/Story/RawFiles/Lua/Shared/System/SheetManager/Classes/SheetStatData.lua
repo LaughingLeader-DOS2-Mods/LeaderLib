@@ -11,6 +11,7 @@ local SheetStatData = {
 	Value = 0,
 	---For if the StatType is "Spacing".
 	SpacingHeight = 0,
+	Frame = 0,
 	Icon = "",
 	IconWidth = 28,
 	IconHeight = 28,
@@ -54,10 +55,14 @@ function SheetStatData:GetValue(character)
 	if StringHelpers.IsNullOrWhitespace(self.ID) then
 		return 0
 	end
-	if not isClient then
-		return SheetManager:GetValueByEntry(self, GameHelpers.GetUUID(character))
+	if not StringHelpers.IsNullOrWhitespace(self.BoostAttribute) then
+		return self:GetBoostValue(character, 0)
 	else
-		return SheetManager:GetValueByEntry(self, GameHelpers.GetNetID(character))
+		if not isClient then
+			return SheetManager:GetValueByEntry(self, GameHelpers.GetUUID(character))
+		else
+			return SheetManager:GetValueByEntry(self, GameHelpers.GetNetID(character))
+		end
 	end
 end
 

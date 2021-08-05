@@ -325,7 +325,7 @@
 ---@field recountAbilityPoints fun(isCivil:boolean):void
 ---@field addTalent fun(labelText:string, statID:number, talentState:number, plusVisible:boolean, minusVisible:boolean, isCustom:boolean):void
 ---@field getTalentStateFrame fun(state:number):number
----@field addPrimaryStat fun(statID:number, displayName:string, value:string, tooltipId:number, plusVisible:boolean, minusVisible:boolean, isCustom:boolean):void
+---@field addPrimaryStat fun(statID:number, displayName:string, value:string, tooltipId:number, plusVisible:boolean, minusVisible:boolean, isCustom:boolean, iconFrame:number, iggyIconName:string):void
 ---@field addSecondaryStat fun(statType:number, labelText:string, valueText:string, statID:number, iconFrame:number, boostValue:number, plusVisible:boolean, minusVisible:boolean, isCustom:boolean, iggyIconName:string):void
 ---@field addTag fun(labelText:string, statID:number, tooltipText:string, descriptionText:string):void
 ---@field addToListWithId fun(id:number, mc:FlashMovieClip):void

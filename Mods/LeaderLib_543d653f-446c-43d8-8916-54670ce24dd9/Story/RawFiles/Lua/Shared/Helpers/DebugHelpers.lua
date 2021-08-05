@@ -2,6 +2,8 @@ if DebugHelpers == nil then
 	DebugHelpers = {}
 end
 
+local userDataProps = {}
+
 local EsvItemProps = {
 	Activated = "boolean",
 	Amount = "integer",
@@ -394,6 +396,414 @@ local EsvCharacterProps = {
 	ManuallyLeveled = "boolean",
 }
 
+userDataProps.CDivinityStats_Character = {
+--- Properties from PropertyMap
+	Level = "integer",
+	Name = "string",
+	AIFlags = "integer",
+	CurrentVitality = "integer",
+	CurrentArmor = "integer",
+	CurrentMagicArmor = "integer",
+	ArmorAfterHitCooldownMultiplier = "integer",
+	MagicArmorAfterHitCooldownMultiplier = "integer",
+	MPStart = "integer",
+	CurrentAP = "integer",
+	BonusActionPoints = "integer",
+	Experience = "integer",
+	Reputation = "integer",
+	Flanked = "integer",
+	Karma = "integer",
+	MaxResistance = "integer",
+	HasTwoHandedWeapon = "integer",
+	IsIncapacitatedRefCount = "integer",
+	MaxVitality = "integer",
+	BaseMaxVitality = "integer",
+	MaxArmor = "integer",
+	BaseMaxArmor = "integer",
+	MaxMagicArmor = "integer",
+	BaseMaxMagicArmor = "integer",
+	Sight = "number",
+	BaseSight = "number",
+	MaxSummons = "integer",
+	BaseMaxSummons = "integer",
+	MaxMpOverride = "integer",
+--- StatCharacterFlags
+	IsPlayer = "boolean",
+	InParty = "boolean",
+	IsSneaking = "boolean",
+	Invisible = "boolean",
+	Blind = "boolean",
+	DrinkedPotion = "boolean",
+	EquipmentValidated = "boolean",
+--- Properties from CDivinityStats_Character::GetStat
+	PhysicalResistance = "integer",
+	PiercingResistance = "integer",
+	CorrosiveResistance = "integer",
+	MagicResistance = "integer",
+--- Base properties from CDivinityStats_Character::GetStat
+	BasePhysicalResistance = "integer",
+	BasePiercingResistance = "integer",
+	BaseCorrosiveResistance = "integer",
+	BaseMagicResistance = "integer",
+--- Properties from CharacterStatsGetters::GetStat
+	MaxMp = "integer",
+	APStart = "integer",
+	APRecovery = "integer",
+	APMaximum = "integer",
+	Strength = "integer",
+	Finesse = "integer",
+	Intelligence = "integer",
+	Constitution = "integer",
+	Memory = "integer",
+	Wits = "integer",
+	Accuracy = "integer",
+	Dodge = "integer",
+	CriticalChance = "integer",
+	FireResistance = "integer",
+	EarthResistance = "integer",
+	WaterResistance = "integer",
+	AirResistance = "integer",
+	PoisonResistance = "integer",
+	ShadowResistance = "integer",
+	CustomResistance = "integer",
+	LifeSteal = "integer",
+	Hearing = "integer",
+	Movement = "integer",
+	Initiative = "integer",
+	BlockChance = "integer",
+	ChanceToHitBoost = "integer",
+--- Base properties from CharacterStatsGetters::GetStat
+	BaseMaxMp = "integer",
+	BaseAPStart = "integer",
+	BaseAPRecovery = "integer",
+	BaseAPMaximum = "integer",
+	BaseStrength = "integer",
+	BaseFinesse = "integer",
+	BaseIntelligence = "integer",
+	BaseConstitution = "integer",
+	BaseMemory = "integer",
+	BaseWits = "integer",
+	BaseAccuracy = "integer",
+	BaseDodge = "integer",
+	BaseCriticalChance = "integer",
+	BaseFireResistance = "integer",
+	BaseEarthResistance = "integer",
+	BaseWaterResistance = "integer",
+	BaseAirResistance = "integer",
+	BasePoisonResistance = "integer",
+	BaseShadowResistance = "integer",
+	BaseCustomResistance = "integer",
+	BaseLifeSteal = "integer",
+	BaseHearing = "integer",
+	BaseMovement = "integer",
+	BaseInitiative = "integer",
+	BaseBlockChance = "integer",
+	BaseChanceToHitBoost = "integer",
+--- Properties from CharacterFetchStat
+	DynamicStats = "StatCharacterDynamic[]",
+	MainWeapon = "StatItem",
+	OffHandWeapon = "StatItem",
+	DamageBoost = "integer",
+	Character = "EsvCharacter",
+	Rotation = "number[]",
+	Position = "number[]",
+	MyGuid = "string",
+	NetID = "integer",
+}
+
+userDataProps.CharacterDynamicStat = {
+	--StatBase
+	FreezeImmunity = "boolean",
+	BurnImmunity = "boolean",
+	StunImmunity = "boolean",
+	PoisonImmunity = "boolean",
+	CharmImmunity = "boolean",
+	FearImmunity = "boolean",
+	KnockdownImmunity = "boolean",
+	MuteImmunity = "boolean",
+	ChilledImmunity = "boolean",
+	WarmImmunity = "boolean",
+	WetImmunity = "boolean",
+	BleedingImmunity = "boolean",
+	CrippledImmunity = "boolean",
+	BlindImmunity = "boolean",
+	CursedImmunity = "boolean",
+	WeakImmunity = "boolean",
+	SlowedImmunity = "boolean",
+	DiseasedImmunity = "boolean",
+	InfectiousDiseasedImmunity = "boolean",
+	PetrifiedImmunity = "boolean",
+	DrunkImmunity = "boolean",
+	SlippingImmunity = "boolean",
+	FreezeContact = "boolean",
+	BurnContact = "boolean",
+	StunContact = "boolean",
+	PoisonContact = "boolean",
+	ChillContact = "boolean",
+	Torch = "boolean",
+	Arrow = "boolean",
+	Unbreakable = "boolean",
+	Unrepairable = "boolean",
+	Unstorable = "boolean",
+	Grounded = "boolean",
+	HastedImmunity = "boolean",
+	TauntedImmunity = "boolean",
+	SleepingImmunity = "boolean",
+	AcidImmunity = "boolean",
+	SuffocatingImmunity = "boolean",
+	RegeneratingImmunity = "boolean",
+	DisarmedImmunity = "boolean",
+	DecayingImmunity = "boolean",
+	ClairvoyantImmunity = "boolean",
+	EnragedImmunity = "boolean",
+	BlessedImmunity = "boolean",
+	ProtectFromSummon = "boolean",
+	Floating = "boolean",
+	DeflectProjectiles = "boolean",
+	IgnoreClouds = "boolean",
+	MadnessImmunity = "boolean",
+	ChickenImmunity = "boolean",
+	IgnoreCursedOil = "boolean",
+	ShockedImmunity = "boolean",
+	WebImmunity = "boolean",
+	LootableWhenEquipped = "boolean",
+	PickpocketableWhenEquipped = "boolean",
+	LoseDurabilityOnCharacterHit = "boolean",
+	EntangledContact = "boolean",
+	ShacklesOfPainImmunity = "boolean",
+	MagicalSulfur = "boolean",
+	ThrownImmunity = "boolean",
+	InvisibilityImmunity = "boolean",
+	TALENT_None = "boolean",
+	TALENT_ItemMovement = "boolean",
+	TALENT_ItemCreation = "boolean",
+	TALENT_Flanking = "boolean",
+	TALENT_AttackOfOpportunity = "boolean",
+	TALENT_Backstab = "boolean",
+	TALENT_Trade = "boolean",
+	TALENT_Lockpick = "boolean",
+	TALENT_ChanceToHitRanged = "boolean",
+	TALENT_ChanceToHitMelee = "boolean",
+	TALENT_Damage = "boolean",
+	TALENT_ActionPoints = "boolean",
+	TALENT_ActionPoints2 = "boolean",
+	TALENT_Criticals = "boolean",
+	TALENT_IncreasedArmor = "boolean",
+	TALENT_Sight = "boolean",
+	TALENT_ResistFear = "boolean",
+	TALENT_ResistKnockdown = "boolean",
+	TALENT_ResistStun = "boolean",
+	TALENT_ResistPoison = "boolean",
+	TALENT_ResistSilence = "boolean",
+	TALENT_ResistDead = "boolean",
+	TALENT_Carry = "boolean",
+	TALENT_Throwing = "boolean",
+	TALENT_Repair = "boolean",
+	TALENT_ExpGain = "boolean",
+	TALENT_ExtraStatPoints = "boolean",
+	TALENT_ExtraSkillPoints = "boolean",
+	TALENT_Durability = "boolean",
+	TALENT_Awareness = "boolean",
+	TALENT_Vitality = "boolean",
+	TALENT_FireSpells = "boolean",
+	TALENT_WaterSpells = "boolean",
+	TALENT_AirSpells = "boolean",
+	TALENT_EarthSpells = "boolean",
+	TALENT_Charm = "boolean",
+	TALENT_Intimidate = "boolean",
+	TALENT_Reason = "boolean",
+	TALENT_Luck = "boolean",
+	TALENT_Initiative = "boolean",
+	TALENT_InventoryAccess = "boolean",
+	TALENT_AvoidDetection = "boolean",
+	TALENT_AnimalEmpathy = "boolean",
+	TALENT_Escapist = "boolean",
+	TALENT_StandYourGround = "boolean",
+	TALENT_SurpriseAttack = "boolean",
+	TALENT_LightStep = "boolean",
+	TALENT_ResurrectToFullHealth = "boolean",
+	TALENT_Scientist = "boolean",
+	TALENT_Raistlin = "boolean",
+	TALENT_MrKnowItAll = "boolean",
+	TALENT_WhatARush = "boolean",
+	TALENT_FaroutDude = "boolean",
+	TALENT_Leech = "boolean",
+	TALENT_ElementalAffinity = "boolean",
+	TALENT_FiveStarRestaurant = "boolean",
+	TALENT_Bully = "boolean",
+	TALENT_ElementalRanger = "boolean",
+	TALENT_LightningRod = "boolean",
+	TALENT_Politician = "boolean",
+	TALENT_WeatherProof = "boolean",
+	TALENT_LoneWolf = "boolean",
+	TALENT_Zombie = "boolean",
+	TALENT_Demon = "boolean",
+	TALENT_IceKing = "boolean",
+	TALENT_Courageous = "boolean",
+	TALENT_GoldenMage = "boolean",
+	TALENT_WalkItOff = "boolean",
+	TALENT_FolkDancer = "boolean",
+	TALENT_SpillNoBlood = "boolean",
+	TALENT_Stench = "boolean",
+	TALENT_Kickstarter = "boolean",
+	TALENT_WarriorLoreNaturalArmor = "boolean",
+	TALENT_WarriorLoreNaturalHealth = "boolean",
+	TALENT_WarriorLoreNaturalResistance = "boolean",
+	TALENT_RangerLoreArrowRecover = "boolean",
+	TALENT_RangerLoreEvasionBonus = "boolean",
+	TALENT_RangerLoreRangedAPBonus = "boolean",
+	TALENT_RogueLoreDaggerAPBonus = "boolean",
+	TALENT_RogueLoreDaggerBackStab = "boolean",
+	TALENT_RogueLoreMovementBonus = "boolean",
+	TALENT_RogueLoreHoldResistance = "boolean",
+	TALENT_NoAttackOfOpportunity = "boolean",
+	TALENT_WarriorLoreGrenadeRange = "boolean",
+	TALENT_RogueLoreGrenadePrecision = "boolean",
+	TALENT_WandCharge = "boolean",
+	TALENT_DualWieldingDodging = "boolean",
+	TALENT_Human_Inventive = "boolean",
+	TALENT_Human_Civil = "boolean",
+	TALENT_Elf_Lore = "boolean",
+	TALENT_Elf_CorpseEating = "boolean",
+	TALENT_Dwarf_Sturdy = "boolean",
+	TALENT_Dwarf_Sneaking = "boolean",
+	TALENT_Lizard_Resistance = "boolean",
+	TALENT_Lizard_Persuasion = "boolean",
+	TALENT_Perfectionist = "boolean",
+	TALENT_Executioner = "boolean",
+	TALENT_ViolentMagic = "boolean",
+	TALENT_QuickStep = "boolean",
+	TALENT_Quest_SpidersKiss_Str = "boolean",
+	TALENT_Quest_SpidersKiss_Int = "boolean",
+	TALENT_Quest_SpidersKiss_Per = "boolean",
+	TALENT_Quest_SpidersKiss_Null = "boolean",
+	TALENT_Memory = "boolean",
+	TALENT_Quest_TradeSecrets = "boolean",
+	TALENT_Quest_GhostTree = "boolean",
+	TALENT_BeastMaster = "boolean",
+	TALENT_LivingArmor = "boolean",
+	TALENT_Torturer = "boolean",
+	TALENT_Ambidextrous = "boolean",
+	TALENT_Unstable = "boolean",
+	TALENT_ResurrectExtraHealth = "boolean",
+	TALENT_NaturalConductor = "boolean",
+	TALENT_Quest_Rooted = "boolean",
+	TALENT_PainDrinker = "boolean",
+	TALENT_DeathfogResistant = "boolean",
+	TALENT_Sourcerer = "boolean",
+	TALENT_Rager = "boolean",
+	TALENT_Elementalist = "boolean",
+	TALENT_Sadist = "boolean",
+	TALENT_Haymaker = "boolean",
+	TALENT_Gladiator = "boolean",
+	TALENT_Indomitable = "boolean",
+	TALENT_WildMag = "boolean",
+	TALENT_Jitterbug = "boolean",
+	TALENT_Soulcatcher = "boolean",
+	TALENT_MasterThief = "boolean",
+	TALENT_GreedyVessel = "boolean",
+	TALENT_MagicCycles = "boolean",
+	WarriorLore = "integer",
+	RangerLore = "integer",
+	RogueLore = "integer",
+	SingleHanded = "integer",
+	TwoHanded = "integer",
+	PainReflection = "integer",
+	Ranged = "integer",
+	Shield = "integer",
+	Reflexes = "integer",
+	PhysicalArmorMastery = "integer",
+	MagicArmorMastery = "integer",
+	VitalityMastery = "integer",
+	Sourcery = "integer",
+	FireSpecialist = "integer",
+	WaterSpecialist = "integer",
+	AirSpecialist = "integer",
+	EarthSpecialist = "integer",
+	Necromancy = "integer",
+	Summoning = "integer",
+	Polymorph = "integer",
+	Telekinesis = "integer",
+	Repair = "integer",
+	Sneaking = "integer",
+	Pickpocket = "integer",
+	Thievery = "integer",
+	Loremaster = "integer",
+	Crafting = "integer",
+	Barter = "integer",
+	Charm = "integer",
+	Intimidate = "integer",
+	Reason = "integer",
+	Persuasion = "integer",
+	Leadership = "integer",
+	Luck = "integer",
+	DualWielding = "integer",
+	Wand = "integer",
+	Perseverance = "integer",
+	Runecrafting = "integer",
+	Brewmaster = "integer",
+	Sulfurology = "integer",
+	-- StatCharacterDynamic
+	-- Properties from PropertyMap
+	SummonLifelinkModifier = "integer",
+	Strength = "integer",
+	Memory = "integer",
+	Intelligence = "integer",
+	Movement = "integer",
+	MovementSpeedBoost = "integer",
+	Finesse = "integer",
+	Wits = "integer",
+	Constitution = "integer",
+	FireResistance = "integer",
+	EarthResistance = "integer",
+	WaterResistance = "integer",
+	AirResistance = "integer",
+	PoisonResistance = "integer",
+	ShadowResistance = "integer",
+	Willpower = "integer",
+	Bodybuilding = "integer",
+	PiercingResistance = "integer",
+	PhysicalResistance = "integer",
+	CorrosiveResistance = "integer",
+	MagicResistance = "integer",
+	CustomResistance = "integer",
+	Sight = "integer",
+	Hearing = "integer",
+	FOV = "integer",
+	APMaximum = "integer",
+	APStart = "integer",
+	APRecovery = "integer",
+	CriticalChance = "integer",
+	Initiative = "integer",
+	Vitality = "integer",
+	VitalityBoost = "integer",
+	MagicPoints = "integer",
+	Level = "integer",
+	Gain = "integer",
+	Armor = "integer",
+	MagicArmor = "integer",
+	ArmorBoost = "integer",
+	MagicArmorBoost = "integer",
+	ArmorBoostGrowthPerLevel = "integer",
+	MagicArmorBoostGrowthPerLevel = "integer",
+	DamageBoost = "integer",
+	DamageBoostGrowthPerLevel = "integer",
+	Accuracy = "integer",
+	Dodge = "integer",
+	MaxResistance = "integer",
+	LifeSteal = "integer",
+	Weight = "integer",
+	ChanceToHitBoost = "integer",
+	RangeBoost = "integer",
+	APCostBoost = "integer",
+	SPCostBoost = "integer",
+	MaxSummons = "integer",
+	BonusWeaponDamageMultiplier = "integer",
+	TranslationKey = "integer",
+	BonusWeapon = "integer",
+	StepsType = "integer",
+}
+
 local CharacterTemplate = {
 	CombatTemplate = "CombatComponentTemplate",
 	Icon = "string",
@@ -459,19 +869,78 @@ local CombatComponentTemplate = {
 	StartCombatRange = "number",
 }
 
-local userDataProps = {
-	["esv::Item"] = EsvItemProps,
-	["esv::Character"] = EsvCharacterProps,
-	["eoc::CharacterTemplate"] = CharacterTemplate,
-	["eoc::CombatComponentTemplate"] = CombatComponentTemplate,
-	["CDivinityStats_Item"] = CDivinityStats_Item,
-	["CDivinityStats_Equipment_Attributes"] = CDivinityStats_Equipment_Attributes,
-	["CDivinityStats_Weapon_Attributes"] = CDivinityStats_Weapon_Attributes,
-	["CDamageList"] = function(obj) return obj:ToTable() end,
+local TriggerTypeProps = {
+	TriggerSoundVolume = {
+		AmbientSound = "string",
+		Occlusion = "number",
+		AuxBus1 = "integer",
+		AuxBus2 = "integer",
+		AuxBus3 = "integer",
+		AuxBus4 = "integer",
+	},
+		TriggerAtmosphere = {
+		Atmospheres = "string[]",
+		FadeTime = "number",
+	}
 }
 
-local function TryGetValue(obj,k)
+userDataProps["esv::Trigger"] = {
+	Handle = "ObjectHandle",
+	UUID = "string",
+	SyncFlags = "integer",
+	Translate = "number[]",
+	IsGlobal = "boolean",
+	Level = "string",
+	--TriggerType = "string",
+	TriggerType = function(obj, data, k, printNil)
+		local t = obj[k]
+		data[k] = t
+		local props = TriggerTypeProps[t]
+		if props and obj.TriggerData then
+			DebugHelpers.ProcessProps(obj.TriggerData, props, data, printNil)
+		end
+	end,
+	--TODO Not supported yet?
+	--RootTemplate = "TriggerTemplate",
+	--TriggerData = "EsvAtmosphereTriggerData|EsvSoundVolumeTriggerData",
+	--Specific trigger type data
+}
+
+userDataProps["esv::Item"] = EsvItemProps
+userDataProps["esv::Character"] = EsvCharacterProps
+userDataProps["eoc::CharacterTemplate"] = CharacterTemplate
+userDataProps["eoc::CombatComponentTemplate"] = CombatComponentTemplate
+userDataProps["CDivinityStats_Item"] = CDivinityStats_Item
+userDataProps["CDivinityStats_Equipment_Attributes"] = CDivinityStats_Equipment_Attributes
+userDataProps["CDivinityStats_Weapon_Attributes"] = CDivinityStats_Weapon_Attributes
+userDataProps["CDamageList"] = function(obj) return obj:ToTable() end
+
+local function TryGetValue(obj,k,v)
 	return obj[k]
+end
+
+function DebugHelpers.ProcessProps(obj, props, data, printNil)
+	for k,v in pairs(props) do
+		if type(v) == "function" then
+			pcall(v, obj, data, k, printNil)
+		else
+			if v == "ObjectHandle" then
+				--data[k] = "ObjectHandle"
+				data[k] = tostring(obj[k])
+			else
+				local b,value = xpcall(TryGetValue, debug.traceback, obj, k, v)
+				if b and value ~= nil then
+					if props == userDataProps.CDivinityStats_Equipment_Attributes and ((type(value) == "number" and value == 0) or (type(value) == "string" and value == "None" or value == "")) then
+						-- skip
+					else
+						data[k] = value
+					end
+				elseif printNil == true then
+					data[k] = string.format("nil (%s)", v)
+				end
+			end
+		end
+	end
 end
 
 function DebugHelpers.TraceUserData(obj, printNil)
@@ -488,19 +957,34 @@ function DebugHelpers.TraceUserData(obj, printNil)
 			return Lib.inspect(props(obj))
 		else
 			local data = {}
-			for k,v in pairs(props) do
-				local b,value = xpcall(TryGetValue, debug.traceback, obj, k)
-				if b and value ~= nil then
-					if props == userDataProps.CDivinityStats_Equipment_Attributes and ((type(value) == "number" and value == 0) or (type(value) == "string" and value == "None" or value == "")) then
-						-- skip
-					else
-						data[k] = value
-					end
-				elseif printNil == true then
-					data[k] = string.format("nil (%s)", v)
-				end
-			end
+			DebugHelpers.ProcessProps(obj, props, data, printNil)
 			return Lib.inspect(data)
+		end
+	else
+		if meta then
+			return tostring(meta)
+		else
+			return tostring(obj)
+		end
+	end
+end
+
+function DebugHelpers.TraceUserDataSerpent(obj, opts)
+	if obj == nil then
+		return "nil"
+	end
+	local meta = getmetatable(obj)
+	local props = userDataProps[meta]
+	if props then
+		if meta == "CDivinityStats_Equipment_Attributes" and obj.ItemSlot == "Weapon" then
+			props = userDataProps.CDivinityStats_Weapon_Attributes
+		end
+		if type(props) == "function" then
+			return Lib.serpent.block(props(obj), opts)
+		else
+			local data = {}
+			DebugHelpers.ProcessProps(obj, props, data, false)
+			return data
 		end
 	else
 		if meta then

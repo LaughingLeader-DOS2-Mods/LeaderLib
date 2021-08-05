@@ -142,7 +142,7 @@ Ext.RegisterConsoleCommand("statusapply", function(command,status,duration,force
 		duration = tonumber(duration)
 	end
 	if force == nil then
-		force = 1
+		force = 0
 	else
 		force = tonumber(force)
 	end

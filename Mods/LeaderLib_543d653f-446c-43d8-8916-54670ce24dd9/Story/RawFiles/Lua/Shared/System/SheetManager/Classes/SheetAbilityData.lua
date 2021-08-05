@@ -24,12 +24,12 @@ SheetAbilityData.__index = function(t,k)
 end
 
 local defaults = {
+	Value = 0,
+	GroupID = 0,
+	IsCivil = false,
 	Icon = "",
 	IconWidth = SheetAbilityData.IconWidth,
 	IconHeight = SheetAbilityData.IconHeight,
-	Value = 0,
-	GroupID = 0,
-	IsCivil = false
 }
 
 ---@protected
@@ -52,10 +52,14 @@ function SheetAbilityData:GetValue(character)
 	if StringHelpers.IsNullOrWhitespace(self.ID) then
 		return 0
 	end
-	if not isClient then
-		return SheetManager:GetValueByEntry(self, GameHelpers.GetUUID(character))
+	if not StringHelpers.IsNullOrWhitespace(self.BoostAttribute) then
+		return self:GetBoostValue(character, 0)
 	else
-		return SheetManager:GetValueByEntry(self, GameHelpers.GetNetID(character))
+		if not isClient then
+			return SheetManager:GetValueByEntry(self, GameHelpers.GetUUID(character))
+		else
+			return SheetManager:GetValueByEntry(self, GameHelpers.GetNetID(character))
+		end
 	end
 end
 

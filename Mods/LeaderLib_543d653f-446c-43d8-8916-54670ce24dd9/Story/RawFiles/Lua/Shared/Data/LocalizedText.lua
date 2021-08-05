@@ -326,7 +326,7 @@ LocalizedText.CharacterSheet = {
 	Movement = ts:Create("ha9fe36bfg692ag4f8bg8d9eg379bbbf04c87", "Movement"),
 	Initiative = ts:Create("h8c8cc7e3gdaf7g46d2g9d3bg04a31d8f0599", "Initiative"),
 	--TODO Many entries for these words. Not sure which handle is actually used by the sheet.
-	PhysicalArmour = ts:Create("h161d5479g06d6g408egade2g37a203e3361f", "Physical Armour"),
+	PhysicalArmour = ts:Create("h1feadc00g239ag430bgac99g7b5f3605a1c1", "Physical Armour"),
 	MagicArmour = ts:Create("h50eb8e33g82edg412eg9886gec19ca591254", "Magic Armour"),
 	Fire = ts:Create("h051b2501g091ag4c93ga699g407cd2b29cdc", "Fire"),
 	Water = ts:Create("hd30196cdg0253g434dga42ag12be43dac4ec", "Water"),

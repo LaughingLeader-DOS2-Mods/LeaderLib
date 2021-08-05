@@ -1,15 +1,26 @@
 {
 	"Stats": {
-		"DebugStat1": {
-			"DisplayName": "Debug Attribute",
+		"DebugPrimaryStat1": {
+			"DisplayName": "Debugginess",
 			"Description": "This is a test stat!",
-			"StatType": "PrimaryStat"
+			"StatType": "PrimaryStat",
+			"Frame": 3
+		},
+		"DebugPrimaryStat2": {
+			"DisplayName": "Stackoverflow",
+			"Description": "This is a test stat!",
+			"StatType": "PrimaryStat",
+			"Icon": "statIcons_Hasted",
+			"IconWidth": 36,
+			"IconHeight": 36
 		},
 		"DebugStat2": {
-			"DisplayName": "Debug Resistance?",
+			"DisplayName": "Physical Resistance",
 			"Description": "This is a test stat!",
 			"StatType": "SecondaryStat",
 			"SecondaryStatType": "Resistance",
+			"BoostAttribute": "PhysicalResistance",
+			"Suffix": "%",
 			"Icon": "statIcons_TrollBlood"
 		},
 		"DebugStat3": {
@@ -40,10 +51,11 @@
 			"GroupID": "Skills"
 		},
 		"Test3": {
-			"DisplayName": "Debug Civil",
-			"Description": "This is a test ability!",
+			"DisplayName": "Brewmaster",
+			"Description": "Hardy har, ya be brewin",
+			"BoostAttribute": "Brewmaster",
 			"Icon": "Tag_ChampionFortJoy_inv",
-			"GroupID": "Personality",
+			"GroupID": "Craftsmanship",
 			"IsCivil": true
 		}
 	},
@@ -59,8 +71,9 @@
 			"Icon": "statIcons_Lucky"
 		},
 		"DebugRacialTalent1": {
-			"DisplayName": "Debug Race",
-			"Description": "This is a test talent!",
+			"DisplayName": "Resist Silence",
+			"Description": "Does what it says it does, probably.",
+			"BoostAttribute": "TALENT_ResistSilence",
 			"Icon": "Talent_IceKing"
 		}
 	}

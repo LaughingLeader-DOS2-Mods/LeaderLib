@@ -36,7 +36,7 @@ local lastEvent = "";
 ---@param self UIListenerWrapper
 ---@param ui UIObject
 local function OnUIListener(self, eventType, ui, event, ...)
-	if self.Enabled and Vars.DebugMode and Vars.Print.UI and not self.Ignored[event] then
+	if self.Enabled and Vars.DebugMode and (Vars.Print.UI or Vars.LeaderDebugMode) and not self.Ignored[event] then
 		if event == "addTooltip" then
 			local txt = table.unpack({...})
 			if string.find(txt, "Experience:", 1, true) then

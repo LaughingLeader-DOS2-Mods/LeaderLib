@@ -204,6 +204,10 @@ function SheetManager:IsEntryVisible(entry, character, entryValue)
 		entryValue = entry:GetValue(character)
 	end
 	local bResult = entry.Visible == true
+	--Default racial talents to not being visible
+	if entry.IsRacial then
+		bResult = false
+	end
 	for listener in self:GetListenerIterator(self.Listeners.IsEntryVisible[entry.ID], self.Listeners.IsEntryVisible.All) do
 		local b,result = xpcall(listener, debug.traceback, entry.ID, entry, character, entryValue, bResult)
 		if not b then
@@ -233,10 +237,12 @@ if Vars.DebugMode then
 		end
 		return true
 	end)
-	SheetManager:RegisterVisibilityListener("All", function(id, entry, character, currentValue, b)
-		--fprint(LOGLEVEL.TRACE, "[SheetManager.Listeners.IsEntryVisible] id(%s) character(%s) value(%s) visibility(%s) [CLIENT]", id, character.DisplayName, currentValue, b)
-		if id == "DebugStat3" and character.Stats.BaseStrength >= 11 then
-			return true
+	SheetManager:RegisterVisibilityListener("Demon", function(id, entry, character, currentValue, b)
+		if entry.StatType == "Talent" and entry.IsRacial then
+			if character:HasTag("DEMON") then
+				return true
+			end
 		end
+		--fprint(LOGLEVEL.TRACE, "[SheetManager.Listeners.IsEntryVisible] id(%s) character(%s) value(%s) visibility(%s) [CLIENT]", id, character.DisplayName, currentValue, b)
 	end)
 end

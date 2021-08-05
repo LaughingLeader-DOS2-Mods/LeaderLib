@@ -316,4 +316,47 @@ else
 			end
 		end
 	end)
+
+	--Query support
+
+	local function Query_GetAttribute(uuid, id, bool, boostCheck, statType)
+		if bool ~= 1 then
+			local stat = SheetManager:GetStatByID(id, nil, statType or "PrimaryStat")
+			if stat and (boostCheck ~= true or stat.BoostAttribute) then
+				return stat:GetValue(StringHelpers.GetUUID(uuid))
+			end
+		end
+	end
+	Ext.RegisterOsirisListener("CharacterGetAttribute", 3, "after", Query_GetAttribute)
+	Ext.RegisterOsirisListener("CharacterGetBaseAttribute", 3, "after", Query_GetAttribute)
+	Ext.RegisterOsirisListener("NRD_ItemGetPermanentBoostInt", 3, "after", function(uuid,id,bool) 
+		return Query_GetAttribute(uuid,id,bool,true,"Stat")
+	end)
+
+	local function Query_GetAbility(uuid, id, bool, boostCheck)
+		if bool ~= 1 then
+			local stat = SheetManager:GetStatByID(id, nil, "Ability")
+			if stat and (boostCheck ~= true or stat.BoostAttribute) then
+				return stat:GetValue(StringHelpers.GetUUID(uuid))
+			end
+		end
+	end
+	Ext.RegisterOsirisListener("CharacterGetAbility", 3, "after", Query_GetAbility)
+	Ext.RegisterOsirisListener("CharacterGetBaseAbility", 3, "after", Query_GetAbility)
+	Ext.RegisterOsirisListener("NRD_ItemGetPermanentBoostAbility", 3, "after", function(uuid,id,bool) 
+		return Query_GetAbility(uuid,id,bool,true) 
+	end)
+
+	local function Query_HasTalent(uuid, id, bool, boostCheck)
+		if bool ~= 1 then
+			local stat = SheetManager:GetStatByID(id, nil, "Talent")
+			if stat and (boostCheck ~= true or stat.BoostAttribute) then
+				return stat:GetValue(StringHelpers.GetUUID(uuid))
+			end
+		end
+	end
+	Ext.RegisterOsirisListener("CharacterHasTalent", 3, "after", Query_HasTalent)
+	Ext.RegisterOsirisListener("NRD_ItemGetPermanentBoostTalent", 3, "after", function(uuid,id,bool) 
+		return Query_HasTalent(uuid,id,bool,true) 
+	end)
 end

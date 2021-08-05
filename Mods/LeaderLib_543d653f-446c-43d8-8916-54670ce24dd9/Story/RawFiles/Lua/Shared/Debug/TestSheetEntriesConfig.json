@@ -70,7 +70,7 @@
 			"Description": "This is a test talent!",
 			"Icon": "statIcons_Lucky"
 		},
-		"DebugRacialTalent1": {
+		"DebugBoostTalent1": {
 			"DisplayName": "Resist Silence",
 			"Description": "Does what it says it does, probably.",
 			"BoostAttribute": "TALENT_ResistSilence",

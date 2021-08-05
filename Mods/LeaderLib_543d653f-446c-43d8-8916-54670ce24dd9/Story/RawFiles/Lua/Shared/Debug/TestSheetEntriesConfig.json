@@ -14,7 +14,7 @@
 			"IconWidth": 36,
 			"IconHeight": 36
 		},
-		"DebugStat2": {
+		"DebugResistanceStat1": {
 			"DisplayName": "Physical Resistance",
 			"Description": "This is a test stat!",
 			"StatType": "SecondaryStat",
@@ -23,14 +23,14 @@
 			"Suffix": "%",
 			"Icon": "statIcons_TrollBlood"
 		},
-		"DebugStat3": {
+		"DebugInfoStat1": {
 			"DisplayName": "Debug XP Mod",
 			"Description": "This is a test stat!",
 			"StatType": "SecondaryStat",
 			"SecondaryStatType": "Experience",
 			"Visible": false
 		},
-		"DebugStat4": {
+		"DebugInfoStat2": {
 			"DisplayName": "Debug Info",
 			"Description": "This is a test stat!",
 			"StatType": "SecondaryStat",
@@ -38,19 +38,19 @@
 		}
 	},
 	"Abilities": {
-		"Test1": {
+		"TestCombatAbility1": {
 			"DisplayName": "Debug Defense",
 			"Description": "This is a test ability!",
 			"Icon": "Tag_Elf_inv",
 			"GroupID": "Defense"
 		},
-		"Test2": {
+		"TestSkillAbility1": {
 			"DisplayName": "Debug Combat",
 			"Description": "This is a test ability!",
 			"Icon": "Tag_Barbarian_inv",
 			"GroupID": "Skills"
 		},
-		"Test3": {
+		"TestCivilAbility1": {
 			"DisplayName": "Brewmaster",
 			"Description": "Hardy har, ya be brewin",
 			"BoostAttribute": "Brewmaster",

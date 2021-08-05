@@ -1,0 +1,52 @@
+{
+	"Stats": {
+		"Agility": {
+			"DisplayName": "Agility",
+			"Description": "Increased AP recovery and maximum AP every 10 points.",
+			"StatType": "PrimaryStat",
+			"SheetIcon": "statIcons_Hasted",
+			"SheetIconWidth": 36,
+			"SheetIconHeight": 36
+		},
+		"PhysicalResistance": {
+			"DisplayName": "[Handle:hcd84ee03g9912g4b0dga49age6bce09b19d1:PhysicalResistance]",
+			"Description": "[Handle:hfac84824g2948g4fdbgb4c3g31b56922046c:Reduces the damage from physical attacks.]",
+			"StatType": "SecondaryStat",
+			"SecondaryStatType": "Resistance",
+			"BoostAttribute": "PhysicalResistance",
+			"Suffix": "%",
+			"SheetIcon": "statIcons_Immune_Physical"
+		}
+	},
+	"Abilities": {
+		"Sourcery": {
+			"DisplayName": "[Handle:ha8b343fbg4ebbg4e72gb58fg633850ad0580:Sourcery]",
+			"Description": "Sourcery empowers your ability to cast source abilities and grants passive source regeneration.",
+			"Icon": "Ability_Necromancy",
+			"GroupID": "Skills",
+			"BoostAttribute": "Sourcery"
+		},
+		"Brewmaster": {
+			"DisplayName": "[Handle:hab7acde6g5af6g47a7ga65dgc633aef193cf:Brew Master]",
+			"Description": "Hardy har, ya be brewin",
+			"BoostAttribute": "Brewmaster",
+			"Icon": "Ability_Perseverance",
+			"GroupID": "Craftsmanship",
+			"IsCivil": true
+		}
+	},
+	"Talents": {
+		"ResistSilence": {
+			"DisplayName": "Resist Silence",
+			"Description": "Does what it says it does, probably.",
+			"BoostAttribute": "TALENT_ResistSilence",
+			"Icon": "Talent_IceKing"
+		},
+		"Demon": {
+			"DisplayName": "Demon Race",
+			"Description": "[Handle:h2d68e1f9g8a98g4776gb145gccccd920260d:Test]",
+			"Icon": "Talent_Demon",
+			"IsRacial": true
+		}
+	}
+}

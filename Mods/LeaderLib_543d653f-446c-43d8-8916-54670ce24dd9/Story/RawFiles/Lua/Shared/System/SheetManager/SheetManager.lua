@@ -246,7 +246,7 @@ function SheetManager:SetEntryValue(stat, characterId, value, skipListenerInvoke
 		Ext.BroadcastMessage("LeaderLib_SheetManager_EntryValueChanged", Ext.JsonStringify({
 			ID = stat.ID,
 			Mod = stat.Mod,
-			NetID = characterId,
+			NetID = GameHelpers.GetNetID(characterId),
 			Value = value,
 			StatType = stat.StatType
 		}))
@@ -330,26 +330,22 @@ else
 
 	--Query support
 
-	local function Query_GetAttribute(uuid, id, bool, boostCheck, statType)
-		if bool ~= 1 then
-			local stat = SheetManager:GetStatByID(id, nil, statType or "PrimaryStat")
-			if stat and (boostCheck ~= true or stat.BoostAttribute) then
-				return stat:GetValue(StringHelpers.GetUUID(uuid))
-			end
+	local function Query_GetAttribute(uuid, id, val, boostCheck, statType)
+		local stat = SheetManager:GetStatByID(id, nil, statType or "PrimaryStat")
+		if stat and (boostCheck ~= true or stat.BoostAttribute) then
+			return stat:GetValue(StringHelpers.GetUUID(uuid))
 		end
 	end
 	Ext.RegisterOsirisListener("CharacterGetAttribute", 3, "after", Query_GetAttribute)
 	Ext.RegisterOsirisListener("CharacterGetBaseAttribute", 3, "after", Query_GetAttribute)
-	Ext.RegisterOsirisListener("NRD_ItemGetPermanentBoostInt", 3, "after", function(uuid,id,bool) 
-		return Query_GetAttribute(uuid,id,bool,true,"Stat")
+	Ext.RegisterOsirisListener("NRD_ItemGetPermanentBoostInt", 3, "after", function(uuid,id,val) 
+		return Query_GetAttribute(uuid,id,val,true,"Stat")
 	end)
 
-	local function Query_GetAbility(uuid, id, bool, boostCheck)
-		if bool ~= 1 then
-			local stat = SheetManager:GetStatByID(id, nil, "Ability")
-			if stat and (boostCheck ~= true or stat.BoostAttribute) then
-				return stat:GetValue(StringHelpers.GetUUID(uuid))
-			end
+	local function Query_GetAbility(uuid, id, value, boostCheck)
+		local stat = SheetManager:GetStatByID(id, nil, "Ability")
+		if stat and (boostCheck ~= true or stat.BoostAttribute) then
+			return stat:GetValue(StringHelpers.GetUUID(uuid))
 		end
 	end
 	Ext.RegisterOsirisListener("CharacterGetAbility", 3, "after", Query_GetAbility)
@@ -371,3 +367,6 @@ else
 		return Query_HasTalent(uuid,id,bool,true) 
 	end)
 end
+
+--print(CharacterGetAbility(Osi.DB_IsPlayer:Get(nil)[1][1], "Test1"))
+--print(CharacterGetAbility("41a06985-7851-4c29-8a78-398ccb313f39", "Test1"))

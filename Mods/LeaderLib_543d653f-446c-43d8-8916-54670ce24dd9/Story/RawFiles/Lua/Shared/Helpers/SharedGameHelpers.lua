@@ -296,3 +296,22 @@ function GameHelpers.GetCharacterID(object)
 	end
 	return nil
 end
+
+---Tries to get an Esv/EclCharacter from whatever the value is.
+---@param object EsvGameObject|EclGameObject|string|number
+---@return EsvCharacter|EclCharacter
+function GameHelpers.GetCharacter(object)
+	local t = type(object)
+	if t == "userdata" then
+		local meta = getmetatable(object)
+		if meta == "esv::Character" or meta == "ecl::Character" then
+			return object
+		end
+	elseif t == "string" or t == "number" then
+		local obj = Ext.GetCharacter(object)
+		if obj then
+			return obj
+		end
+	end
+	return nil
+end

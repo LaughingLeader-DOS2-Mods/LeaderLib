@@ -71,6 +71,10 @@ RequestProcessor.CallbackHandler[TooltipCalls.Item] = function (request, ui, uiT
 			end
 		end
 	else
+		if id == nil then
+			fprint(LOGLEVEL.WARNING, "[LeaderLib:TooltipRequestProcessor] Item handle (%s) is nil? UI(%s) Event(%s)", id, uiType, event)
+			return request
+		end
 		request.Item = Ext.GetItem(Ext.DoubleToHandle(id))
 	end
 	return request
@@ -210,23 +214,33 @@ function RequestProcessor.HandleStatCallback(requestType, ui, uiType, event, idO
 	local id = idOrHandle
 
 	local characterHandle = ui:GetPlayerHandle()
-	if event == "showSkillTooltip" or event == "showStatusTooltip" then
+	if (event == "showSkillTooltip" or event == "showStatusTooltip") then
 		id = statOrWidth
-		characterHandle = Ext.DoubleToHandle(idOrHandle)
+		if idOrHandle ~= nil and not Game.Math then
+			characterHandle = Ext.DoubleToHandle(idOrHandle)
+		end
+	end
+	--charHandle is NaN in GM mode
+	if event == "showSkillTooltip" and SharedData.GameMode == GAMEMODE.GAMEMASTER then
+		character = GameHelpers.Client.GetGMTargetCharacter()
 	end
 
-	if not characterHandle then
+	if not characterHandle and not character then
 		if this and this.characterHandle then
 			characterHandle = Ext.DoubleToHandle(this.characterHandle)
 		end
 	end
 
-	if characterHandle then
+	if not character and type(characterHandle) == "number" then
 		character = Ext.GetCharacter(characterHandle)
 	end
 
 	if not character then
-		character = Client:GetCharacter()
+		if (uiType == Data.UIType.characterSheet or uiType == Data.UIType.statsPanel_c) then
+			character = GameHelpers.Client.GetCharacterSheetCharacter(this)
+		else
+			character = Client:GetCharacter()
+		end
 	end
 
 	if uiType == Data.UIType.characterCreation then
@@ -237,6 +251,7 @@ function RequestProcessor.HandleStatCallback(requestType, ui, uiType, event, idO
 		Type = requestType,
 		Character = character
 	}
+	print(uiType, event, id, statOrWidth, character)
 	if RequestProcessor.CallbackHandler[event] then
 		local b,r = xpcall(RequestProcessor.CallbackHandler[event], debug.traceback, request, ui, uiType, event, id, statOrWidth, ...)
 		if b then

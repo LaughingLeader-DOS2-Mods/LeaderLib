@@ -11,6 +11,7 @@ for _,k in ipairs({'and', 'break', 'do', 'else', 'elseif', 'end', 'false',
 for k,v in pairs(G) do globals[v] = k end -- build func to name mapping
 for _,g in ipairs({'coroutine', 'debug', 'io', 'math', 'string', 'table', 'os'}) do
   for k,v in pairs(type(G[g]) == 'table' and G[g] or {}) do globals[v] = g..'.'..k end end
+local function merge(a, b) if b then for k,v in pairs(b) do a[k] = v end end; return a; end
 
 local function s(t, opts)
   local name, indent, fatal, maxnum = opts.name, opts.indent, opts.fatal, opts.maxnum
@@ -34,6 +35,12 @@ local function s(t, opts)
     local plain = type(n) == "string" and n:match("^[%l%u_][%w_]*$") and not keyword[n]
     local safe = plain and n or '['..safestr(n)..']'
     return (path or '')..(plain and path and '.' or '')..safe, safe end
+	local function customtostring(obj, opts)
+		if type(obj) == "userdata" then
+			return DebugHelpers.TraceUserDataSerpent(obj, merge(opts, {indent=string.rep(indent,level+1)}))
+		end
+		return safestr(obj)
+	end
   local alphanumsort = type(opts.sortkeys) == 'function' and opts.sortkeys or function(k, o, n) -- k=keys, o=originaltable, n=padding
     local maxn, to = tonumber(n) or 12, {number = 'a', string = 'b'}
     local function padnum(d) return ("%0"..tostring(maxn).."d"):format(tonumber(d)) end
@@ -59,6 +66,10 @@ local function s(t, opts)
         t = so and sr or tr
         ttype = type(t)
       end -- new value falls through to be serialized
+    end
+    if ttype == "userdata" then
+			t = DebugHelpers.TraceUserDataSerpent(t)
+      ttype = type(t)
     end
     if ttype == "table" then
       if level >= maxl then return tag..'{}'..comment('maxlvl', level) end
@@ -132,8 +143,6 @@ local function deserialize(data, opts)
   return pcall(f)
 end
 
-local function merge(a, b) if b then for k,v in pairs(b) do a[k] = v end end; return a; end
-
 ---@class serpent_options:table
 ---@field indent string indentation; triggers long multi-line output.
 ---@field comment boolean|integer provide stringified value in a comment (up to maxlevel of depth).
@@ -165,6 +174,6 @@ return { _NAME = n, _COPYRIGHT = c, _DESCRIPTION = d, _VERSION = v, serialize = 
   load = deserialize,
   dump = function(a, opts) return s(a, merge({name = '_', compact = true, sparse = true}, opts)) end,
   line = function(a, opts) return s(a, merge({sortkeys = true, comment = true}, opts)) end,
-  block = function(a, opts) return s(a, merge({indent = '  ', sortkeys = true, comment = true}, opts)) end,
+  block = function(a, opts) return s(a, merge({indent = '\t', sortkeys = true, comment = false}, opts)) end,
   raw = function(a, opts) return s(a, opts) end,
 }

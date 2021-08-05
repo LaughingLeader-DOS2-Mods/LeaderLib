@@ -451,7 +451,7 @@ data "StatusType" "CONSUME"
 data "ForGameMaster" "No"
 data "InitiateCombat" "No"
 data "StatsId" "Stats_LeaderLib_CombatMove"
-data "StatsId" "Stack_LeaderLib_CombatMove"
+data "StackId" "Stack_LeaderLib_CombatMove"
 
 new entry "Stats_LeaderLib_CombatMove"
 type "Potion"

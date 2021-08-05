@@ -433,11 +433,17 @@ SheetManager:RegisterEntryChangedListener("All", function(id, entry, character, 
 				-- mc.statPoints = 0
 			elseif entry.StatType == "Talent" then
 				local talentState = entry:GetState(character)
-				local name = SheetManager.Talents.GetTalentDisplayName(entry.ID, talentState)
+				local name = string.format(SheetManager.Talents.GetTalentStateFontFormat(talentState), entry:GetDisplayName())
 				mc.label_txt.htmlText = name
 				mc.label = mc.label_txt.text
 				mc.talentState = talentState
 				mc.bullet_mc.gotoAndStop(this.getTalentStateFrame(talentState))
+
+				if not Vars.ControllerEnabled then
+					this.talentHolder_mc.list.positionElements()
+				else
+					this.mainpanel_mc.stats_mc.talents_mc.updateDone()
+				end
 			end
 		end
 	end

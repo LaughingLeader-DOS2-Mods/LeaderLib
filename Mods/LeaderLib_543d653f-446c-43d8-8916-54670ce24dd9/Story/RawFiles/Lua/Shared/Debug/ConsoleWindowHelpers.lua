@@ -240,6 +240,67 @@ if Ext.IsDeveloperMode() then
 		AddConsoleVariable("party", party)
 	else
 		AddConsoleVariable("CombatLog", CombatLog)
+		local me = {}
+		setmetatable(me, {
+			__call = function()
+				return Client:GetCharacter()
+			end,
+			__index = function(tbl,k)
+				local char = Client:GetCharacter()
+				if k == "Print" then
+					return Lib.inspect(char)
+				end
+				local v = char[k]
+				if type(v) == "function" then
+					return function(...)
+						local b,result = pcall(v, char, ...)
+						return result
+					end
+				else
+					return v
+				end
+			end,
+			__newindex = function(tbl,k,v)
+				local char = Client:GetCharacter()
+				if char then
+					char[k] = v
+				end
+			end,
+			__tostring = function()
+				return tostring(Client:GetCharacter().NetID)
+			end
+		})
+		AddConsoleVariable("me", me)
+
+		local sheet = {}
+		setmetatable(sheet, {
+			__call = function()
+				return Ext.GetUIByType(Data.UIType.characterSheet):GetRoot()
+			end,
+			__index = function(tbl,k)
+				local ui = Ext.GetUIByType(Data.UIType.characterSheet):GetRoot()
+				print(k)
+				local v = ui[k]
+				if type(v) == "function" then
+					return function(...)
+						local b,result = pcall(v, ui, ...)
+						return result
+					end
+				else
+					return v
+				end
+			end,
+			__newindex = function(tbl,k,v)
+				local ui = Ext.GetUIByType(Data.UIType.characterSheet):GetRoot()
+				if ui then
+					ui[k] = v
+				end
+			end,
+			__tostring = function()
+				return tostring(Data.UIType.characterSheet)
+			end
+		})
+		AddConsoleVariable("sheet", sheet)
 	end
 else
 	AddConsoleVariable = function() end

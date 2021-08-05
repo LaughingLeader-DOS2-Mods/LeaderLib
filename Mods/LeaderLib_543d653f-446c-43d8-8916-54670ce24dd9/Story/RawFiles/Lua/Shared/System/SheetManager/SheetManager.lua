@@ -217,11 +217,22 @@ function SheetManager:SetEntryValue(stat, characterId, value, skipListenerInvoke
 				self.CurrentValues[stat.ID] = {}
 			end
 			self.CurrentValues[stat.ID][characterId] = value
-			if not skipListenerInvoke then
-				for listener in self:GetListenerIterator(self.Listeners.OnEntryChanged[stat.ID], self.Listeners.OnEntryChanged.All) do
-					local b,err = xpcall(listener, debug.traceback, stat.ID, stat, character, last, value, isClient)
-					if not b then
-						fprint(LOGLEVEL.ERROR, "[LeaderLib.CustomStatSystem:OnStatPointAdded] Error calling OnAvailablePointsChanged listener for stat (%s):\n%s", stat.ID, err)
+		end
+		if not skipListenerInvoke then
+			for listener in self:GetListenerIterator(self.Listeners.OnEntryChanged[stat.ID], self.Listeners.OnEntryChanged.All) do
+				local b,err = xpcall(listener, debug.traceback, stat.ID, stat, character, last, value, isClient)
+				if not b then
+					fprint(LOGLEVEL.ERROR, "[LeaderLib.CustomStatSystem:OnStatPointAdded] Error calling OnAvailablePointsChanged listener for stat (%s):\n%s", stat.ID, err)
+				end
+			end
+			if not isClient then
+				if stat.StatType == "Ability" then
+					Osi.CharacterBaseAbilityChanged(character.MyGuid, stat.ID, last, value)
+				elseif stat.StatType == "Talent" then
+					if value then
+						Osi.CharacterUnlockedTalent(character.MyGuid, stat.ID)
+					else
+						Osi.CharacterLockedTalent(character.MyGuid, stat.ID)
 					end
 				end
 			end

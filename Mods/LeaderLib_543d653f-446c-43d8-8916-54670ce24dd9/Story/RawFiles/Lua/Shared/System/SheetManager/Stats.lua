@@ -110,7 +110,15 @@ SheetManager.Stats = {
 						local minDamage = 0
 						local maxDamage = 0
 
+						local mainDamageType = "Sentinel"
+						local offDamageType = "Sentinel"
+
+						if mainWeapon ~= nil then
+							mainDamageType = mainWeapon["Damage Type"]
+						end
+
 						if offHandWeapon ~= nil and Game.Math.IsRangedWeapon(mainWeapon) == Game.Math.IsRangedWeapon(offHandWeapon) then
+							offDamageType = offHandWeapon["Damage Type"]
 							local offHandDamageRange = Game.Math.CalculateWeaponScaledDamageRanges(character, offHandWeapon)
 							local dualWieldPenalty = Ext.ExtraData.DualWieldingDamagePenalty
 							for damageType, range in pairs(offHandDamageRange) do
@@ -129,8 +137,34 @@ SheetManager.Stats = {
 						for damageType, range in pairs(mainDamageRange) do
 							local min = Ext.Round(range.Min * 1.0)
 							local max = Ext.Round(range.Max * 1.0)
-							minDamage = minDamage + min + math.ceil(min * Game.Math.GetDamageBoostByType(character, damageType))
-							maxDamage = maxDamage + max + math.ceil(max * Game.Math.GetDamageBoostByType(character, damageType))
+							range.Min = min + math.ceil(min * Game.Math.GetDamageBoostByType(character, damageType))
+							range.Max = max + math.ceil(max * Game.Math.GetDamageBoostByType(character, damageType))
+						end
+
+						-- if mainDamageType ~= "None" and mainDamageType ~= "Sentinel" then
+						-- 	local min, max = 0, 0
+						-- 	local boost = Game.Math.GetDamageBoostByType(character, mainDamageType)
+						-- 	for _, range in pairs(mainDamageRange) do
+						-- 		min = min + range.Min + math.ceil(range.Min * Game.Math.GetDamageBoostByType(character, mainDamageType))
+						-- 		max = max + range.Max + math.ceil(range.Min * Game.Math.GetDamageBoostByType(character, mainDamageType))
+						-- 	end
+					
+						-- 	mainDamageRange[mainDamageType] = {Min = min, Max = max}
+						-- end
+
+						-- if offDamageType ~= "None" and offDamageType ~= "Sentinel" and offDamageType ~= mainDamageType then
+						-- 	local min, max = 0, 0
+						-- 	local boost = Game.Math.GetDamageBoostByType(character, offDamageType)
+						-- 	for _, range in pairs(mainDamageRange) do
+						-- 		min = min + range.Min + math.ceil(range.Min * Game.Math.GetDamageBoostByType(character, offDamageType))
+						-- 		max = max + range.Max + math.ceil(range.Min * Game.Math.GetDamageBoostByType(character, offDamageType))
+						-- 	end
+						-- 	mainDamageRange[mainDamageType] = {Min = min, Max = max}
+						-- end
+
+						for damageType, range in pairs(mainDamageRange) do
+							minDamage = minDamage + range.Min
+							maxDamage = maxDamage + range.Max
 						end
 
 						return string.format("%s - %s", minDamage, maxDamage) 

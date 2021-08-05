@@ -12,22 +12,23 @@ function GameHelpers.Client.GetCharacterSheetCharacter(main)
 			main = Ext.GetUIByType(Data.UIType.characterSheet):GetRoot()
 		end
 		if main ~= nil then
-			local b,result = pcall(function()
-				return Ext.GetCharacter(Ext.DoubleToHandle(main.charHandle))
-			end)
-			if not b then
-				Ext.PrintError(result)
-			else
-				character = result
-			end
+			character = GameHelpers.Client.TryGetCharacterFromDouble(main.characterHandle)
 		end
-	else
-		--main = Ext.GetUIByType(Data.UIType.statsPanel_c):GetRoot()
-		return Client:GetCharacter()
 	end
 	
-	if character == nil then
-		character = Client:GetCharacter()
+	return character or Client:GetCharacter()
+end
+
+---Get the GM's target character in GM mode.
+---@return EclCharacter
+function GameHelpers.Client.GetGMTargetCharacter()
+	local character = nil
+	local ui = Ext.GetUIByType(Data.UIType.GMPanelHUD)
+	if ui then
+		local handle = ui:GetValue("targetHandle", "number")
+		if handle and handle ~= 0 then
+			character = GameHelpers.Client.TryGetCharacterFromDouble(handle)
+		end
 	end
 	return character
 end
@@ -35,38 +36,28 @@ end
 ---Get the current character set in the hotbar.
 ---@return EclCharacter|nil
 function GameHelpers.Client.GetCharacter()
-	local handle = nil
-	if Vars.ControllerEnabled ~= true then
-		local hotbar = Ext.GetUIByType(Data.UIType.hotBar)
-		if hotbar ~= nil then
-			local main = hotbar:GetRoot()
+	local character = nil
+	if not Vars.ControllerEnabled then
+		local ui = Ext.GetUIByType(Data.UIType.hotBar)
+		if ui ~= nil then
+			local main = ui:GetRoot()
 			if main ~= nil then
-				handle = Ext.DoubleToHandle(main.hotbar_mc.characterHandle)
+				character = GameHelpers.Client.TryGetCharacterFromDouble(main.hotbar_mc.characterHandle)
 			end
 		end
-		--print(Ext.GetUIByType(38):GetRoot().selectedCharacterHandle, Ext.GetUIByType(38):GetPlayerHandle())
-		--if SharedData.GameMode == GAMEMODE.GAMEMASTER then
-			-- local possessionBar = Ext.GetUIByType(Data.UIType.possessionBar)
-			-- if possessionBar ~= nil then
-			-- 	local main = possessionBar:GetRoot()
-			-- 	if main and main.selectedPlayer then
-			-- 		handle = Ext.DoubleToHandle(main.selectedPlayer.characterHandle)
-			-- 	end
-			-- end
-		--end
+		if not character and SharedData.GameMode == GAMEMODE.GAMEMASTER then
+			character = GameHelpers.Client.GetGMTargetCharacter()
+		end
 	else
-		local hotbar = Ext.GetUIByType(Data.UIType.bottomBar_c)
-		if hotbar ~= nil then
-			local main = hotbar:GetRoot()
+		local ui = Ext.GetUIByType(Data.UIType.bottomBar_c)
+		if ui ~= nil then
+			local main = ui:GetRoot()
 			if main ~= nil then
-				handle = Ext.DoubleToHandle(main.characterHandle)
+				character = GameHelpers.Client.TryGetCharacterFromDouble(main.characterHandle)
 			end
 		end
 	end
-	if handle ~= nil then
-		return Ext.GetCharacter(handle)
-	end
-	return nil
+	return character
 end
 
 ---@return boolean
@@ -85,4 +76,22 @@ function GameHelpers.Client.IsGameMaster(ui, this)
 		end
 	end
 	return false
+end
+
+---Tries to get a character from a double value.
+---@param double number
+---@return EclCharacter
+function GameHelpers.Client.TryGetCharacterFromDouble(double)
+	local b,character = xpcall(function()
+		if not GameHelpers.Math.IsNaN(double) then
+			local handle = Ext.DoubleToHandle(double)
+			if handle then
+				return Ext.GetCharacter(handle)
+			end
+		else
+			fprint(LOGLEVEL.WARNING, "[GameHelpers.Client.TryGetCharacterFromDouble] Double handle is NaN (not a number)!")
+			return nil
+		end
+	end, debug.traceback)
+	return character
 end

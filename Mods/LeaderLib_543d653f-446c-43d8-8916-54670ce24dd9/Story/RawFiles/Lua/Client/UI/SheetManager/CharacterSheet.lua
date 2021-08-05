@@ -201,8 +201,6 @@ function CharacterSheet.PreUpdate(ui, method, updateTalents, updateAbilities, up
 	-- if updateTargets.Talents then
 	-- 	this.clearTalents(true)
 	-- end
-
-	CharacterSheet.Update(ui, method)
 end
 
 local function getParamsValue(params, index, default)
@@ -342,7 +340,8 @@ function CharacterSheet.PostUpdate(ui, method)
 	this.clearArray("update")
 end
 
-Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem", CharacterSheet.PreUpdate)
+Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem", CharacterSheet.PreUpdate, "Before")
+Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem", CharacterSheet.Update, "After")
 Ext.RegisterUITypeCall(Data.UIType.characterSheet, "characterSheetUpdateDone", CharacterSheet.PostUpdate)
 --Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "changeSecStatCustom", function(...) CharacterSheet:ValueChanged("SecondaryStat", ...))
 

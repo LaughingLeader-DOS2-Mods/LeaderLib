@@ -875,10 +875,6 @@ package characterSheet_fla
 				this.stats_mc.customStats_mc.addCustomStat(this.customStats_array[i],this.customStats_array[i + 1],this.customStats_array[i + 2],this.customStats_array[i + 3],this.customStats_array[i + 4],this.customStats_array[i + 5]);
 				i = i + 6;
 			}
-			if(this.customStats_array.length > 0)
-			{
-				this.stats_mc.customStats_mc.positionElements();
-			}
 			this.initDone = true;
 			ExternalInterface.call("characterSheetUpdateDone");
 		}

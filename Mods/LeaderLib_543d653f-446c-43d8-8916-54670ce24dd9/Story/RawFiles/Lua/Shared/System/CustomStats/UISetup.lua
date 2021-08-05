@@ -86,7 +86,7 @@ function CustomStatSystem.SortStats(a,b)
 	local sortVal2 = b.Index
 	local trySortByValue = false
 	if a.Stat then
-		if a.Stat.SortName then
+		if a.Stat.SortName and type(a.Stat.SortName) == "string" then
 			name1 = a.Stat.SortName
 		end
 		if a.Stat.SortValue then
@@ -95,7 +95,7 @@ function CustomStatSystem.SortStats(a,b)
 		end
 	end
 	if b.Stat then
-		if b.Stat.SortName then
+		if b.Stat.SortName and type(b.Stat.SortName) == "string" then
 			name2 = b.Stat.SortName
 		end
 		if b.Stat.SortValue then
@@ -109,14 +109,9 @@ function CustomStatSystem.SortStats(a,b)
 	return name1 < name2
 end
 
-local function OnSheetUpdating(ui, method)
-	local this = ui:GetRoot()
-
-	if this.stats_mc.currentOpenPanel ~= 8 then
-		return
-	end
+---@param this CharacterSheetMainTimeline
+function CustomStatSystem.Update(ui, method, this)
 	CustomStatSystem:SetupGroups(ui, method)
-
 	local client = CustomStatSystem:GetCharacter(ui, this)
 	if client then
 		local changedStats = {NetID=client.NetID,Stats={}}
@@ -147,11 +142,18 @@ local function OnSheetUpdating(ui, method)
 		local sortList = {}
 		
 		for i=0,length-1,3 do
+			-- print("i", i,this.customStats_array[i])
+			-- print("i+1", i+1,this.customStats_array[i+1])
+			-- print("i+2", i+2,this.customStats_array[i+2])
 			local doubleHandle = this.customStats_array[i]
 			local displayName = this.customStats_array[i+1]
 			local value = this.customStats_array[i+2]
 			local groupId = self.MISC_CATEGORY
 			local hideStat = false
+
+			if type(displayName) ~= "string" then
+				goto continue
+			end
 	
 			if doubleHandle then
 				local stat = CustomStatSystem:GetStatByName(displayName)
@@ -163,30 +165,41 @@ local function OnSheetUpdating(ui, method)
 					if isVisible == false then
 						hideStat = true
 					end
+				else
+					local text,handle = Ext.GetTranslatedStringFromKey(displayName)
+					if not StringHelpers.IsNullOrWhitespace(text) then
+						displayName = text
+					end
 				end
 				if not hideStat then
-					sortList[#sortList+1] = {Index=i, DisplayName=this.customStats_array[i+1], Handle=doubleHandle, Value=value, GroupId=groupId, Stat=stat}
+					sortList[#sortList+1] = {Index=i, DisplayName=displayName, Handle=doubleHandle, Value=value, GroupId=groupId, Stat=stat}
 				end
 			end
+
+			::continue::
 		end
 
 		if #sortList > 0 then
 			table.sort(sortList, CustomStatSystem.SortStats)
-	
 			--Remove any stats that were hidden
 			this.clearArray("customStats_array")
-	
-			local arrayIndex = 0
+
 			for i=1,#sortList do
-				local v = sortList[i]
-				this.customStats_array[arrayIndex] = v.Handle
-				this.customStats_array[arrayIndex+1] = v.DisplayName
-				this.customStats_array[arrayIndex+2] = v.Value
-				this.customStats_array[arrayIndex+3] = v.GroupId
-				this.customStats_array[arrayIndex+4] = self:GetCanAddPoints(ui, v.Handle)
-				this.customStats_array[arrayIndex+5] = self:GetCanRemovePoints(ui, v.Handle)
-				arrayIndex = arrayIndex + 6
+				local entry = sortList[i]
+				this.stats_mc.customStats_mc.addCustomStat(entry.Handle, entry.DisplayName, entry.Value, entry.GroupId, self:GetCanAddPoints(ui, entry.Handle), self:GetCanRemovePoints(ui, entry.Handle), true)
 			end
+	
+			-- local arrayIndex = 0
+			-- for i=1,#sortList do
+			-- 	local v = sortList[i]
+			-- 	this.customStats_array[arrayIndex] = v.Handle
+			-- 	this.customStats_array[arrayIndex+1] = v.DisplayName
+			-- 	this.customStats_array[arrayIndex+2] = v.Value
+			-- 	this.customStats_array[arrayIndex+3] = v.GroupId
+			-- 	this.customStats_array[arrayIndex+4] = self:GetCanAddPoints(ui, v.Handle)
+			-- 	this.customStats_array[arrayIndex+5] = self:GetCanRemovePoints(ui, v.Handle)
+			-- 	arrayIndex = arrayIndex + 6
+			-- end
 		end
 	else
 		if this.isExtended then
@@ -221,8 +234,9 @@ function CustomStatSystem:SetupGroups(ui, call)
 	if not initializedGroups then
 		this.resetGroups()
 	end
+	local miscIsVisible = self:GetTotalStatsInCategory(nil, true) > 0 or not self:HasCategories()
 	-- Group for stats without an assigned category
-	this.addGroup(CustomStatSystem.MISC_CATEGORY, miscGroupDisplayName.Value, false, self:GetTotalStatsInCategory(nil, true) > 0)
+	this.addGroup(CustomStatSystem.MISC_CATEGORY, miscGroupDisplayName.Value, false, miscIsVisible)
 	for category in self:GetAllCategories() do
 		local isVisible = isGM or category.ShowAlways or self:GetTotalStatsInCategory(category.ID, true) > 0
 		this.addGroup(category.GroupId, category:GetDisplayName(), false, isVisible)
@@ -314,11 +328,10 @@ function CustomStatSystem:OnStatRemoved(ui, call, doubleHandle)
 	end
 end
 
-Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem", OnSheetUpdating)
 Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "clearCustomStats", function(...) CustomStatSystem:SetupGroups(...) end)
 Ext.RegisterUITypeCall(Data.UIType.characterSheet, "customStatsGroupAdded", function(...) CustomStatSystem:OnGroupAdded(...) end)
 Ext.RegisterUITypeCall(Data.UIType.characterSheet, "characterSheetUpdateDone", function(...) CustomStatSystem:OnUpdateDone(...) end, "After")
-Ext.RegisterUITypeCall(Data.UIType.characterSheet, "customStatAdded", function(...) CustomStatSystem:OnStatAdded(...) end, "After")
+Ext.RegisterUITypeCall(Data.UIType.characterSheet, "customStatAdded", function(...) CustomStatSystem:OnStatAdded(...) end, "Before")
 Ext.RegisterUITypeCall(Data.UIType.characterSheet, "statCategoryCollapseChanged", function(...) CustomStatSystem:OnGroupClicked(...) end, "After")
 Ext.RegisterUITypeCall(Data.UIType.characterSheet, "removeCustomStat", function(...) CustomStatSystem:OnStatRemoved(...) end, "Before")
 --Ext.RegisterUITypeCall(Data.UIType.characterSheet, "createCustomStatGroups", CustomStatSystem.SetupGroups)
@@ -394,6 +407,19 @@ function CustomStatSystem:OnStatAdded(ui, call, doubleHandle, index)
 				fprint(LOGLEVEL.ERROR, "[LeaderLib.CustomStatSystem:OnStatPointRemoved] Error calling OnAvailablePointsChanged listener for stat (%s):\n%s", stat.ID, err)
 			end
 		end
+	else
+		--[[ local text,handle = Ext.GetTranslatedStringFromKey(stat_mc.label_txt.htmlText)
+		if not StringHelpers.IsNullOrWhitespace(text) then
+			stat_mc.label_txt.htmlText = text
+			stat_mc.label_txt.height = math.min(22.05, stat_mc.label_txt.textHeight)
+			stat_mc.hl_mc.height = stat_mc.label_txt.y + stat_mc.label_txt.textHeight - stat_mc.hl_mc.y
+
+			-- Timer.StartOneshot("LeaderLib_CustomStats_Resort",1, function()
+			-- 	--this.stats_mc.customStats_mc.list.m_NeedsSorting = false
+			-- 	this.stats_mc.customStats_mc.positionElements(false)
+			-- 	print("LeaderLib_CustomStats_Resort")
+			-- end)
+		end ]]
 	end
 end
 

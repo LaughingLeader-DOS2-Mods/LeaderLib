@@ -12,6 +12,7 @@ local updateTargetsDefaults = {
 	PrimaryStats = false,
 	SecondaryStats = false,
 	Tags = false,
+	CustomStats = false,
 }
 
 ---@type SheetUpdateTargets
@@ -191,6 +192,7 @@ function CharacterSheet.PreUpdate(ui, method, updateTalents, updateAbilities, up
 	updateTargets.PrimaryStats = #this.primStat_array > 0
 	updateTargets.SecondaryStats = #this.secStat_array > 0
 	updateTargets.Tags = #this.tags_array > 0
+	updateTargets.CustomStats = #this.customStats_array > 0
 
 	-- if updateTargets.PrimaryStats or updateTargets.SecondaryStats then
 	-- 	this.clearStats(true)
@@ -291,6 +293,11 @@ function CharacterSheet.Update(ui, method)
 		--this.stats_mc.addAbility(true, 3, 78, "Test Ability2", "0", "", "", false, false, true)
 	end
 
+	if updateTargets.CustomStats then
+		CustomStatSystem.Update(ui, method, this)
+		targetsUpdated.CustomStats = true
+	end
+
 	if not Vars.ControllerEnabled then
 		if targetsUpdated.PrimaryStats or targetsUpdated.SecondaryStats then
 			this.stats_mc.mainStatsList.positionElements()
@@ -306,6 +313,9 @@ function CharacterSheet.Update(ui, method)
 				this.stats_mc.combatAbilityHolder_mc.list.positionElements()
 				this.stats_mc.recountAbilityPoints(false)
 			end
+		end
+		if targetsUpdated.CustomStats then
+			this.stats_mc.customStats_mc.positionElements()
 		end
 	else
 		if targetsUpdated.Talents then

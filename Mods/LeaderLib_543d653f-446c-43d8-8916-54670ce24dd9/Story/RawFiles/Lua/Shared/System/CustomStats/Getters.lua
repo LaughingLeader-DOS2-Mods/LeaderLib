@@ -174,6 +174,16 @@ function CustomStatSystem:GetCategoryGroupId(id, mod)
 	return self.MISC_CATEGORY
 end
 
+---@return boolean
+function CustomStatSystem:HasCategories()
+	for uuid,categories in pairs(self.Categories) do
+		for id,category in pairs(categories) do
+			return true
+		end
+	end
+	return false
+end
+
 ---Get an iterator of sorted categories.
 ---@param skipSort boolean|nil
 ---@return fun():CustomStatCategoryData

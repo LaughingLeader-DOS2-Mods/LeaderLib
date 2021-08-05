@@ -150,7 +150,9 @@ local function OnCharacterBaseAbilityChanged(uuid, ability, old, new)
 	if CharacterIsPlayer(uuid) == 1 then
 		uuid = StringHelpers.GetUUID(uuid)
 		FireListenerEvents(uuid, ability, old, new)
-		statChanges[uuid][ability] = new
+		if Data.AbilityEnum[ability] then
+			statChanges[uuid][ability] = new
+		end
 	end
 end
 

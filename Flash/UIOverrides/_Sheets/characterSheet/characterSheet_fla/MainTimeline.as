@@ -946,6 +946,13 @@ package characterSheet_fla
 				this.stats_mc.clearStats();
 			}
 		}
+
+		public function clearCustomStats(force:Boolean=false) : *
+		{
+			if (!this.justUpdated || force) {
+				this.stats_mc.clearCustomStatsOptions();
+			}
+		}
 		
 		public function clearTags() : *
 		{

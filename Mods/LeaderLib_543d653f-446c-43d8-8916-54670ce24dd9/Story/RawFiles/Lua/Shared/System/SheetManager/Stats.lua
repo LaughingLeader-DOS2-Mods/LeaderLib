@@ -58,7 +58,8 @@ SheetManager.Stats = {
 					DisplayName = LocalizedText.CharacterSheet.Dodging,
 					Type = "SecondaryStat",
 					Frame = 15,
-					Attribute = "Dodge"
+					Attribute = "Dodge",
+					Suffix = "%"
 				},
 				Movement = {
 					StatID = 20,

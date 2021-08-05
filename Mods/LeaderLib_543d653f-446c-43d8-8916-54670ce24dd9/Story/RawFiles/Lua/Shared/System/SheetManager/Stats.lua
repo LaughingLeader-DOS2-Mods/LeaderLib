@@ -409,7 +409,7 @@ if isClient then
 				if SheetManager:IsEntryVisible(data, player, value) then
 					local entry = {
 						ID = data.GeneratedID,
-						DisplayName = data.DisplayName,
+						DisplayName = data:GetDisplayName(),
 						Value = string.format("%s", value) .. data.Suffix,
 						CanAdd = SheetManager:GetIsPlusVisible(data, player, isGM, value),
 						CanRemove = SheetManager:GetIsMinusVisible(data, player, isGM, value),
@@ -419,9 +419,9 @@ if isClient then
 						SecondaryStatType = data.SecondaryStatType,
 						SecondaryStatTypeInteger = SheetManager.Stats.Data.SecondaryStatType[data.SecondaryStatType] or 0,
 						SpacingHeight = data.SpacingHeight,
-						Icon = data.Icon or "",
-						IconWidth = data.IconWidth or 0,
-						IconHeight = data.IconHeight or 0,
+						Icon = data.SheetIcon or "",
+						IconWidth = data.SheetIconWidth or 0,
+						IconHeight = data.SheetIconHeight or 0,
 						IconClipName = "",
 						IconDrawCallName = ""
 					}

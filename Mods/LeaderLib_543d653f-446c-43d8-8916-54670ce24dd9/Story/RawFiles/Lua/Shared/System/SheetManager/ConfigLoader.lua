@@ -34,6 +34,9 @@ local basePropertyMap = {
 	LOADSTRINGKEY = {Name="LoadStringKey", Type = "boolean"},
 	BOOSTATTRIBUTE = {Name="BoostAttribute", Type = "string"},
 	SUFFIX = {Name="Suffix", Type = "string"},
+	ICON = {Name="Icon", Type = "string"},
+	ICONWIDTH = {Name="IconWidth", Type = "number"},
+	ICONHEIGHT = {Name="IconHeight", Type = "number"},
 }
 
 local statPropertyMap = {
@@ -67,24 +70,18 @@ local statPropertyMap = {
 		fprint(LOGLEVEL.WARNING, "[SheetManager:ConfigLoader] Property value type [%s](%s) is incorrect for property Stat StatType. Using default.", t, val)
 		return SheetManager.Stats.Data.SecondaryStatType.Info
 	end},
-	ICON = {Name="Icon", Type = "string"},
-	ICONWIDTH = {Name="IconWidth", Type = "number"},
-	ICONHEIGHT = {Name="IconHeight", Type = "number"},
+	SHEETICON = {Name="SheetIcon", Type = "string"},
+	SHEETICONWIDTH = {Name="SheetIconWidth", Type = "number"},
+	SHEETICONHEIGHT = {Name="SheetIconHeight", Type = "number"},
 	SPACINGHEIGHT = {Name="SpacingHeight", Type = "number"},
 	FRAME = {Name="Frame", Type = "number"},
 }
 
 local talentPropertyMap = {
-	ICON = {Name="Icon", Type = "string"},
-	ICONWIDTH = {Name="IconWidth", Type = "number"},
-	ICONHEIGHT = {Name="IconHeight", Type = "number"},
 	ISRACIAL = {Name="IsRacial", Type = "boolean"},
 }
 
 local abilityPropertyMap = {
-	ICON = {Name="Icon", Type = "string"},
-	ICONWIDTH = {Name="IconWidth", Type = "number"},
-	ICONHEIGHT = {Name="IconHeight", Type = "number"},
 	ISCIVIL = {Name="IsCivil", Type = "boolean"},
 	GROUPID = {Name="GroupID", Type = "enum", Parse = function(val,t)
 		if t == "string" then
@@ -123,10 +120,12 @@ local function parseTable(tbl, propertyMap, modId, defaults, class, id_map)
 							local propKey = string.upper(property)
 							local propData = propertyMap[propKey] or basePropertyMap[propKey]
 							local t = type(value)
-							if propData.Type == "enum" then
-								data[propData.Name] = propData.Parse(value,t)
-							elseif propData and (propData.Type == "any" or t == propData.Type) then
-								data[propData.Name] = value
+							if propData then
+								if propData.Type == "enum" then
+									data[propData.Name] = propData.Parse(value,t)
+								elseif (propData.Type == "any" or t == propData.Type) then
+									data[propData.Name] = value
+								end
 							else
 								fprint(LOGLEVEL.WARNING, "[LeaderLib:SheetManager.ConfigLoader] Defaults for stat(%s) has unknown property (%s) with value type(%s)", k, property, t)
 							end
@@ -138,10 +137,12 @@ local function parseTable(tbl, propertyMap, modId, defaults, class, id_map)
 						local propKey = string.upper(property)
 						local propData = propertyMap[propKey] or basePropertyMap[propKey]
 						local t = type(value)
-						if propData.Type == "enum" then
-							data[propData.Name] = propData.Parse(value,t)
-						elseif propData and (propData.Type == "any" or t == propData.Type) then
-							data[propData.Name] = value
+						if propData then
+							if propData.Type == "enum" then
+								data[propData.Name] = propData.Parse(value,t)
+							elseif (propData.Type == "any" or t == propData.Type) then
+								data[propData.Name] = value
+							end
 						else
 							fprint(LOGLEVEL.WARNING, "[LeaderLib:SheetManager.ConfigLoader] Stat(%s) has unknown property (%s) with value type(%s)", k, property, t)
 						end
@@ -230,7 +231,8 @@ local function LoadConfigFiles()
 	end
 
 	if Vars.DebugMode and Vars.LeaderDebugMode then
-		local data = LoadConfig(ModuleUUID, Ext.LoadFile("Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/RawFiles/Lua/Shared/Debug/TestSheetEntriesConfig.json", "data"))
+		--local data = LoadConfig(ModuleUUID, Ext.LoadFile("Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/RawFiles/Lua/Shared/Debug/TestSheetEntriesConfig.json", "data"))
+		local data = LoadConfig(ModuleUUID, Ext.LoadFile("Mods/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/Story/RawFiles/Lua/Shared/Debug/TestSheetEntriesConfig2.json", "data"))
 		if data and data.Success then
 			entries[ModuleUUID] = data
 		end

@@ -12,9 +12,9 @@ local SheetStatData = {
 	---For if the StatType is "Spacing".
 	SpacingHeight = 0,
 	Frame = 0,
-	Icon = "",
-	IconWidth = 28,
-	IconHeight = 28,
+	SheetIcon = "",
+	SheetIconWidth = 28,
+	SheetIconHeight = 28,
 }
 
 SheetStatData.__index = function(t,k)

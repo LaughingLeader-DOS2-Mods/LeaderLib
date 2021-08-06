@@ -6,7 +6,8 @@
 			"StatType": "PrimaryStat",
 			"SheetIcon": "statIcons_Hasted",
 			"SheetIconWidth": 36,
-			"SheetIconHeight": 36
+			"SheetIconHeight": 36,
+			"UsePoints": true
 		},
 		"PhysicalResistance": {
 			"DisplayName": "[Handle:hcd84ee03g9912g4b0dga49age6bce09b19d1:PhysicalResistance]",
@@ -24,7 +25,8 @@
 			"Description": "Sourcery empowers your ability to cast source abilities and grants passive source regeneration.",
 			"Icon": "Ability_Necromancy",
 			"GroupID": "Skills",
-			"BoostAttribute": "Sourcery"
+			"BoostAttribute": "Sourcery",
+			"UsePoints": true
 		},
 		"Brewmaster": {
 			"DisplayName": "[Handle:hab7acde6g5af6g47a7ga65dgc633aef193cf:Brew Master]",
@@ -32,7 +34,8 @@
 			"BoostAttribute": "Brewmaster",
 			"Icon": "Ability_Perseverance",
 			"GroupID": "Craftsmanship",
-			"IsCivil": true
+			"IsCivil": true,
+			"UsePoints": true
 		}
 	},
 	"Talents": {
@@ -40,7 +43,8 @@
 			"DisplayName": "Resist Silence",
 			"Description": "Does what it says it does, probably.",
 			"BoostAttribute": "TALENT_ResistSilence",
-			"Icon": "Talent_IceKing"
+			"Icon": "Talent_IceKing",
+			"UsePoints": true
 		},
 		"Demon": {
 			"DisplayName": "Demon Race",

@@ -633,6 +633,7 @@ package characterSheet_fla
 			var i:uint = 0;
 			while(i < this.primStat_array.length)
 			{
+				//statID:Number, labelText:String, valueText:String, tooltipType:Number
 				this.addPrimaryStat(this.primStat_array[i],this.primStat_array[i + 1],this.primStat_array[i + 2],this.primStat_array[i + 3]);
 				i = i + 4;
 			}
@@ -648,6 +649,7 @@ package characterSheet_fla
 				{
 					updateCombat = true;
 				}
+				//isCivil:Boolean, groupId:Number, statID:Number, labelText:String, valueText:String, plusTooltip:String = "", minusTooltip:String = ""
 				this.addAbility(isCivil,this.ability_array[i + 1],this.ability_array[i + 2],this.ability_array[i + 3],this.ability_array[i + 4],this.ability_array[i + 5],this.ability_array[i + 6]);
 				i = i + 7;
 			}
@@ -660,6 +662,7 @@ package characterSheet_fla
 				}
 				else
 				{
+					//statType:Number, labelText:String, valueText:String, statID:Number, iconFrame:Number, boostValue:Number
 					this.addSecondaryStat(this.secStat_array[i + 1],this.secStat_array[i + 2],this.secStat_array[i + 3],this.secStat_array[i + 4],this.secStat_array[i + 5],this.secStat_array[i + 6]);
 				}
 				i = i + 7;
@@ -667,6 +670,7 @@ package characterSheet_fla
 			i = 0;
 			while(i < this.talent_array.length)
 			{
+				//labelText:String, statID:Number, talentState:Number
 				this.addTalent(this.talent_array[i++],this.talent_array[i++],this.talent_array[i++]);
 			}
 			i = 0;
@@ -693,6 +697,7 @@ package characterSheet_fla
 				canAddPoints = Boolean(this.lvlBtnStat_array[i]);
 				if(canAddPoints)
 				{
+					//statID:Number, isVisible:Boolean
 					this.setStatPlusVisible(this.lvlBtnStat_array[i + 1],this.lvlBtnStat_array[i + 2]);
 				}
 				else

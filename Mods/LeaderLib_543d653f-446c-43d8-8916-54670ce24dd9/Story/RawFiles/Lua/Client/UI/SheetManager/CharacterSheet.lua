@@ -215,6 +215,139 @@ end
 
 local targetsUpdated = {}
 
+local function GetArrayValues(this,baseChanges,modChanges)
+	local time = Ext.MonotonicTime()
+	local arr = this.primStat_array
+	for i=0,#arr-1,4 do
+		local id = arr[i]
+		local targetTable = modChanges
+		if SheetManager.Stats.Data.Builtin.ID[id] then
+			targetTable = baseChanges
+		end
+		targetTable.Stats[id] = {
+			DisplayName = arr[i+1],
+			Value = arr[i+2],
+			TooltipID = arr[i+3],
+			Type = "PrimaryStat",
+			CanAdd = false,
+			CanRemove = false
+		}
+	end
+	arr = this.secStat_array
+	for i=0,#arr-1,7 do
+		--Not spacing
+		if not arr[i] then
+			local id = arr[i+4]
+			local targetTable = modChanges
+			if SheetManager.Stats.Data.Builtin.ID[id] then
+				targetTable = baseChanges
+			end
+			targetTable.Stats[id] = {
+				DisplayName = arr[i+2],
+				Value = arr[i+3],
+				StatType = arr[i+1],
+				Frame = arr[i+5],
+				BoostValue = arr[i+6],
+				Type = "SecondaryStat",
+				CanAdd = false,
+				CanRemove = false
+			}
+		end
+	end
+	arr = this.talent_array
+	for i=0,#arr-1,3 do
+		local id = arr[i+1]
+		local targetTable = modChanges
+		if Data.Talents[id] then
+			targetTable = baseChanges
+		end
+		targetTable.Talents[id] = {
+			DisplayName = arr[i],
+			State = arr[i+2],
+			CanAdd = false,
+			CanRemove = false
+		}
+	end
+	arr = this.ability_array
+	for i=0,#arr-1,7 do
+		local id = arr[i+2]
+		local targetTable = modChanges
+		if Data.Ability[id] then
+			targetTable = baseChanges
+		end
+		local isCivil = arr[i] == true
+		targetTable.Abilities[id] = {
+			IsCivil = isCivil,
+			DisplayName = arr[i+3],
+			Value = arr[i+4],
+			GroupID = arr[i+1],
+			AddPointsTooltip = arr[i+5],
+			RemovePointsTooltip = arr[i+6],
+			CanAdd = false,
+			CanRemove = false
+		}
+	end
+	arr = this.lvlBtnStat_array
+	for i=0,#arr-1,3 do
+		local canAddPoints = arr[i]
+		local id = arr[i+1]
+		local isVisible = arr[i+2]
+		local entry = modChanges[id] or baseChanges[id]
+		if entry then
+			if canAddPoints then
+				entry.CanAdd = isVisible
+			else
+				entry.CanRemove = isVisible
+			end
+		end
+	end
+	arr = this.lvlBtnSecStat_array
+	local hasButtons = arr[0]
+	for i=1,#arr-1,4 do
+		local id = arr[i]
+		local entry = modChanges[id] or baseChanges[id]
+		if entry then
+			if hasButtons then
+				local showBothButtons = arr[i+1]
+				entry.CanRemove = arr[i+2]
+				entry.CanAdd = arr[i+3]
+			else
+				entry.CanRemove = false
+				entry.CanAdd = false
+			end
+		end
+	end
+	arr = this.lvlBtnAbility_array
+	for i=0,#arr-1,5 do
+		local canAddPoints = arr[i]
+		local id = arr[i+3]
+		local isVisible = arr[i+4]
+		local entry = modChanges[id] or baseChanges[id]
+		if entry then
+			if canAddPoints then
+				entry.CanAdd = isVisible
+			else
+				entry.CanRemove = isVisible
+			end
+		end
+	end
+	arr = this.lvlBtnTalent_array
+	for i=0,#arr-1,3 do
+		local canAddPoints = arr[i]
+		local id = arr[i+1]
+		local isVisible = arr[i+2]
+		local entry = modChanges[id] or baseChanges[id]
+		if entry then
+			if canAddPoints then
+				entry.CanAdd = isVisible
+			else
+				entry.CanRemove = isVisible
+			end
+		end
+	end
+	fprint(LOGLEVEL.DEFAULT, "Took (%s)ms to parse character sheet arrays.", Ext.MonotonicTime() - time)
+end
+
 ---@private
 ---@param ui UIObject
 function CharacterSheet.Update(ui, method)
@@ -226,6 +359,11 @@ function CharacterSheet.Update(ui, method)
 	end
 
 	local player = CustomStatSystem:GetCharacter(ui, this)
+
+	local modChanges = {Stats = {},Abilities = {},Talents = {}}
+	local baseChanges = {Stats = {},Abilities = {},Talents = {}}
+
+	pcall(GetArrayValues, this, baseChanges, modChanges)
 
 	-- if method == "setAvailableCombatAbilityPoints" then
 	-- 	availableCombatPoints[id] = amount
@@ -242,7 +380,12 @@ function CharacterSheet.Update(ui, method)
 	if updateTargets.PrimaryStats or updateTargets.SecondaryStats then
 		--this.clearStats()
 		for stat in SheetManager.Stats.GetVisible(player, false, isGM) do
-			print(stat.DisplayName, stat.Frame)
+			local arrayData = modChanges.Stats[stat.ID]
+			if arrayData then
+				if arrayData.Value ~= stat.Value then
+					fprint(LOGLEVEL.WARNING, "Stat value differs from the array value Lua(%s) <=> Array(%s)", stat.Value, arrayData.Value)
+				end
+			end
 			if not Vars.ControllerEnabled then
 				if stat.StatType == SheetManager.Stats.Data.StatType.PrimaryStat then
 					targetsUpdated.PrimaryStats = true
@@ -266,6 +409,18 @@ function CharacterSheet.Update(ui, method)
 				--this.mainpanel_mc.stats_mc.addPrimaryStat(stat.ID, stat.DisplayName, stat.Value, stat.TooltipID, canAdd, canRemove, stat.IsCustom)
 			end
 		end
+		for id,entry in pairs(modChanges.Stats) do
+			if entry.Type == "PrimaryStat" then
+				targetsUpdated.PrimaryStats = true
+				if not Vars.ControllerEnabled then
+					this.stats_mc.addPrimaryStat(id, entry.DisplayName, entry.Value, entry.TooltipID, entry.CanAdd, entry.CanRemove)
+				end
+			else
+				if not Vars.ControllerEnabled then
+					this.stats_mc.addSecondaryStat(entry.StatType, entry.DisplayName, entry.Value, id, entry.Frame, entry.BoostValue, entry.CanAdd, entry.CanRemove)
+				end
+			end
+		end
 	end
 	
 	if updateTargets.Talents then
@@ -279,6 +434,13 @@ function CharacterSheet.Update(ui, method)
 				this.mainpanel_mc.stats_mc.talents_mc.addTalent(talent.DisplayName, talent.ID, talent.State, talent.CanAdd, talent.CanRemove, talent.IsCustom)
 			end
 		end
+		for id,entry in pairs(modChanges.Talents) do
+			if not Vars.ControllerEnabled then
+				this.stats_mc.addTalent(entry.DisplayName, id, entry.State, entry.CanAdd, entry.CanRemove)
+			else
+				this.mainpanel_mc.stats_mc.talents_mc.addTalent(entry.DisplayName, id, entry.State, entry.CanAdd, entry.CanRemove)
+			end
+		end
 		--this.stats_mc.addTalent("Test", 404, 1, true, false, true)
 	end
 
@@ -288,6 +450,15 @@ function CharacterSheet.Update(ui, method)
 			this.stats_mc.addAbility(ability.IsCivil, ability.GroupID, ability.ID, ability.DisplayName, ability.Value, ability.AddPointsTooltip, ability.RemovePointsTooltip, ability.CanAdd, ability.CanRemove, ability.IsCustom)
 			targetsUpdated.Abilities = true
 			targetsUpdated.Civil = updateTargets.Civil
+		end
+		for id,entry in pairs(modChanges.Abilities) do
+			targetsUpdated.Abilities = true
+			targetsUpdated.Civil = updateTargets.Civil
+			if not Vars.ControllerEnabled then
+				this.stats_mc.addAbility(entry.IsCivil, entry.GroupID, id, entry.DisplayName, entry.Value, entry.AddPointsTooltip, entry.RemovePointsTooltip, entry.CanAdd, entry.CanRemove)
+			else
+				
+			end
 		end
 		--this.stats_mc.addAbility(false, 1, 77, "Test Ability", "0", "", "", false, false, true)
 		--this.stats_mc.addAbility(true, 3, 78, "Test Ability2", "0", "", "", false, false, true)

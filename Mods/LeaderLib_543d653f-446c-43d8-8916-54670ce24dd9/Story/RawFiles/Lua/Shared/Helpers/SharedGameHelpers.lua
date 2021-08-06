@@ -274,7 +274,7 @@ function GameHelpers.GetNetID(object)
 end
 
 ---Tries to get a UUID on the server or NetID on the client.
----@param object EsvGameObject|EclGameObject|string|number
+---@param object EsvCharacter|EclCharacter|string|number
 ---@return UUID|NETID
 function GameHelpers.GetCharacterID(object)
 	local t = type(object)

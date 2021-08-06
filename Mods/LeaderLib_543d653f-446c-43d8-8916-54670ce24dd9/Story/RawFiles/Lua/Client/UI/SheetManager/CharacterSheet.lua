@@ -581,14 +581,16 @@ SheetManager:RegisterEntryChangedListener("All", function(id, entry, character, 
 	---@type CharacterSheetMainTimeline
 	local this = CharacterSheet.Root
 	if this and this.isExtended then
-		local isGM = GameHelpers.Client.IsGameMaster(CharacterSheet.Instance, this)
+		local points = SheetManager:GetBuiltinAvailablePointsForType(entry.StatType, character, entry.IsCivil)
+		local defaultCanAdd = (entry.UsePoints and points > 0) or GameHelpers.Client.IsGameMaster(CharacterSheet.Instance, this)
 
 		this = this.stats_mc
 		local content_array,mc = TryGetEntryMovieClip(entry, this)
 		fprint(LOGLEVEL.TRACE, "Entry[%s](%s) statID(%s) ListHolder(%s) content_array(%s) mc(%s)", entry.StatType, id, entry.GeneratedID, entry.ListHolder, content_array, mc)
 		if content_array and mc then
-			local plusVisible = SheetManager:GetIsPlusVisible(entry, character, isGM, value)
-			local minusVisible = SheetManager:GetIsMinusVisible(entry, character, isGM, value)
+			local plusVisible = SheetManager:GetIsPlusVisible(entry, character, defaultCanAdd, value)
+			local minusVisible = SheetManager:GetIsMinusVisible(entry, character, defaultCanAdd, value)
+
 			if entry.StatType == "Ability" then
 				mc.texts_mc.plus_mc.visible = plusVisible
 				mc.texts_mc.minus_mc.visible = minusVisible

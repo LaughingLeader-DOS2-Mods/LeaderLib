@@ -10,6 +10,8 @@ SheetManager.Loaded = false
 local isClient = Ext.IsClient()
 
 Ext.Require("Shared/System/SheetManager/Data/SheetDataValues.lua")
+Ext.Require("Shared/System/SheetManager/Getters.lua")
+Ext.Require("Shared/System/SheetManager/Setters.lua")
 Ext.Require("Shared/System/SheetManager/Listeners.lua")
 
 ---@type table<SHEET_ENTRY_ID,table<UUID|NETID, integer|boolean>>
@@ -54,9 +56,6 @@ SheetManager.Data = {
 
 ---@type fun():table<string, table<string, SheetAbilityData|SheetTalentData|SheetStatData>>
 local loader = Ext.Require("Shared/System/SheetManager/ConfigLoader.lua")
---Ext.Require("Shared/System/SheetManager/DataSync.lua")
---Ext.Require("Shared/System/SheetManager/Getters.lua")
---Ext.Require("Shared/System/SheetManager/PointsHandler.lua")
 
 local function LoadData()
 	if Vars.DebugMode then
@@ -322,8 +321,17 @@ else
 		if data then
 			local characterId = GameHelpers.GetCharacterID(data.NetID)
 			local stat = SheetManager:GetStatByID(data.ID, data.Mod, data.StatType)
-			if character and stat then
-				SheetManager:SetEntryValue(stat, characterId, data.Value)
+			if characterId and stat then
+				if stat.UsePoints then
+					local points = SheetManager:GetBuiltinAvailablePointsForEntry(stat, characterId)
+					if points > 0 then
+						if SheetManager:ModifyAvailablePointsForEntry(stat, characterId, -1) then
+							SheetManager:SetEntryValue(stat, characterId, data.Value)
+						end
+					end
+				else
+					SheetManager:SetEntryValue(stat, characterId, data.Value)
+				end
 			end
 		end
 	end)

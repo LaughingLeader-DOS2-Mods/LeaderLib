@@ -30,9 +30,9 @@ local defaults = {
 	SecondaryStatType = "Info",
 	Value = 0,
 	SpacingHeight = 0,
-	Icon = "",
-	IconWidth = SheetStatData.IconWidth,
-	IconHeight = SheetStatData.IconHeight,
+	SheetIcon = "",
+	SheetIconWidth = 28,
+	SheetIconHeight = 28,
 }
 
 ---@protected

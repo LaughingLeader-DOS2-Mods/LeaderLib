@@ -325,6 +325,60 @@ SheetManager.Stats = {
 			[1] = "Stat",
 			[2] = "Resistance",
 			[3] = "Experience",
+		},
+		Builtin = {
+			StatEnum = {
+				Strength = 0,
+				Finesse = 1,
+				Intelligence = 2,
+				Constitution = 3,
+				Memory = 4,
+				Wit = 5,
+				Damage = 6,
+				PhysicalArmour = 7,
+				MagicArmour = 8,
+				CriticalChance = 9,
+				Accuracy = 10,
+				Dodging = 11,
+				Vitality = 12,
+				ActionPoints = 13,
+				SourcePoints = 14,
+				Movement = 20,
+				Initiative = 21,
+				Fire = 28,
+				Water = 29,
+				Earth = 30,
+				Air = 31,
+				Poison = 32,
+				Experience = 36,
+				NextLevel = 37,
+			},
+			ID = {
+				[1]="Finesse",
+				[2]="Intelligence",
+				[3]="Constitution",
+				[4]="Memory",
+				[5]="Wit",
+				[6]="Damage",
+				[7]="PhysicalArmour",
+				[8]="MagicArmour",
+				[9]="CriticalChance",
+				[10]="Accuracy",
+				[11]="Dodging",
+				[12]="Vitality",
+				[13]="ActionPoints",
+				[14]="SourcePoints",
+				[20]="Movement",
+				[21]="Initiative",
+				[0]="Strength",
+				[28]="Fire",
+				[29]="Water",
+				[30]="Earth",
+				[31]="Air",
+				[32]="Poison",
+				[36]="Experience",
+				[37]="NextLevel"
+			}
 		}
 	}
 }
@@ -403,16 +457,18 @@ if isClient then
 			end
 		end
 
+		local defaultCanRemove = isGM or isCharacterCreation
 		for mod,dataTable in pairs(SheetManager.Data.Stats) do
 			for id,data in pairs(dataTable) do
 				local value = data:GetValue(player)
 				if SheetManager:IsEntryVisible(data, player, value) then
+					local defaultCanAdd =  data.StatType == "PrimaryStat" and ((data.UsePoints == true and points > 0) or isGM)
 					local entry = {
 						ID = data.GeneratedID,
 						DisplayName = data:GetDisplayName(),
 						Value = string.format("%s", value) .. data.Suffix,
-						CanAdd = SheetManager:GetIsPlusVisible(data, player, isGM, value),
-						CanRemove = SheetManager:GetIsMinusVisible(data, player, isGM, value),
+						CanAdd = SheetManager:GetIsPlusVisible(data, player, defaultCanAdd, value),
+						CanRemove = SheetManager:GetIsMinusVisible(data, player, defaultCanRemove, value),
 						IsCustom = true,
 						StatType = data.StatType,
 						Frame = data.Frame or (data.StatType == "PrimaryStat" and -1 or 0),

@@ -37,6 +37,7 @@ local basePropertyMap = {
 	ICON = {Name="Icon", Type = "string"},
 	ICONWIDTH = {Name="IconWidth", Type = "number"},
 	ICONHEIGHT = {Name="IconHeight", Type = "number"},
+	USEPOINTS = {Name="UsePoints", Type = "boolean"},
 }
 
 local statPropertyMap = {

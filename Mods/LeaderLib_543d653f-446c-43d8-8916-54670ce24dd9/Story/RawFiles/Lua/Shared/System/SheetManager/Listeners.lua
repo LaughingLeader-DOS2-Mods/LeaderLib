@@ -199,14 +199,19 @@ end
 ---@param entry SheetStatData|SheetAbilityData|SheetTalentData
 ---@param character EclCharacter
 ---@param entryValue integer|boolean|nil The entry's current value. Provide one here to skip having to retrieve it.
-function SheetManager:IsEntryVisible(entry, character, entryValue)
+---@param isCharacterCreation boolean|nil
+---@param isGM boolean|nil
+function SheetManager:IsEntryVisible(entry, character, entryValue, isCharacterCreation, isGM)
 	if entryValue == nil then
 		entryValue = entry:GetValue(character)
+	end
+	if isGM == nil then
+		isGM = isClient and GameHelpers.Client.IsGameMaster()
 	end
 	local bResult = entry.Visible == true
 	--Default racial talents to not being visible
 	if entry.IsRacial then
-		bResult = false
+		bResult = isGM
 	end
 	for listener in self:GetListenerIterator(self.Listeners.IsEntryVisible[entry.ID], self.Listeners.IsEntryVisible.All) do
 		local b,result = xpcall(listener, debug.traceback, entry.ID, entry, character, entryValue, bResult)
@@ -225,18 +230,18 @@ if Vars.DebugMode then
 	--[[ SheetManager:RegisterEntryChangedListener("All", function(id, entry, character, lastValue, value, isClientSide)
 		fprint(LOGLEVEL.TRACE, "[SheetManager.Listeners.OnEntryChanged] id(%s) character(%s) lastValue(%s) value(%s) [%s]\n%s", id, character, lastValue, value, isClientSide and "CLIENT" or "SERVER", Lib.inspect(entry))
 	end) ]]
-	SheetManager:RegisterCanAddListener("All", function(id, entry, character, currentValue, b)
-		if entry.Type == "SheetStatData" and entry.StatType ~= "PrimaryStat" then
-			return false
-		end
-		return true
-	end)
-	SheetManager:RegisterCanRemoveListener("All", function(id, entry, character, currentValue, b)
-		if entry.Type == "SheetStatData" and entry.StatType ~= "PrimaryStat" then
-			return false
-		end
-		return true
-	end)
+	-- SheetManager:RegisterCanAddListener("All", function(id, entry, character, currentValue, b)
+	-- 	if entry.Type == "SheetStatData" and entry.StatType ~= "PrimaryStat" then
+	-- 		return false
+	-- 	end
+	-- 	--return true
+	-- end)
+	-- SheetManager:RegisterCanRemoveListener("All", function(id, entry, character, currentValue, b)
+	-- 	if entry.Type == "SheetStatData" and entry.StatType ~= "PrimaryStat" then
+	-- 		return false
+	-- 	end
+	-- 	return true
+	-- end)
 	SheetManager:RegisterVisibilityListener("Demon", function(id, entry, character, currentValue, b)
 		if entry.StatType == "Talent" and entry.IsRacial then
 			if character:HasTag("DEMON") then

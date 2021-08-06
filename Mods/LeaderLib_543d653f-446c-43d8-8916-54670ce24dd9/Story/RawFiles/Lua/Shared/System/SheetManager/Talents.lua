@@ -798,7 +798,7 @@ function SheetManager.Talents.GetVisible(player, isCharacterCreation, isGM)
 	for mod,dataTable in pairs(SheetManager.Data.Talents) do
 		for id,data in pairs(dataTable) do
 			local hasTalent = data:GetValue(player) == true
-			if SheetManager:IsEntryVisible(data, player, hasTalent) then
+			if SheetManager:IsEntryVisible(data, player, hasTalent, isCharacterCreation, isGM) then
 				local talentState = data:GetState(player)
 				local name = string.format(SheetManager.Talents.GetTalentStateFontFormat(talentState), data:GetDisplayName())
 				local isRacial = data.IsRacial

@@ -23,7 +23,9 @@ local SheetBaseData = {
 	---If set, value get/set will use the built-in boost attribute of the character with this name.
 	BoostAttribute = "",
 	---Text to append to the value display, such as a percentage sign.
-	Suffix = ""
+	Suffix = "",
+	---Whether  this entry uses character points, such as Attribute/Ability/Talent points.
+	UsePoints = false,
 }
 
 local defaults = {
@@ -38,6 +40,7 @@ local defaults = {
 	GeneratedID = -1,
 	BoostAttribute = "",
 	Suffix = "",
+	UsePoints = false,
 }
 
 ---@protected

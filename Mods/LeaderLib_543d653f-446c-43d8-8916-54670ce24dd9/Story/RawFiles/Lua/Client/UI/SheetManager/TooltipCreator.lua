@@ -26,7 +26,7 @@ local function CreateTooltip(tooltipType, requestedUI, call, id)
 
 				request.Ability = data.ID
 
-				if data.Icon then
+				if not StringHelpers.IsNullOrWhitespace(data.Icon) then
 					Game.Tooltip.PrepareIcon(ui, string.format("tt_ability_%i", data.GeneratedID), data.Icon, data.IconWidth or 128, data.IconHeight or 128)
 				end
 				resolved = true
@@ -44,15 +44,15 @@ local function CreateTooltip(tooltipType, requestedUI, call, id)
 
 				request.Talent = data.ID
 
-				if data.Icon then
+				if not StringHelpers.IsNullOrWhitespace(data.Icon) then
 					Game.Tooltip.PrepareIcon(ui, string.format("tt_talent_%i", data.GeneratedID), data.Icon, data.IconWidth or 128, data.IconHeight or 128)
 				end
 				resolved = true
 			elseif tooltipType == "PrimaryStat" or tooltipType == "SecondaryStat" then
 				this.tooltip_array[0] = Game.Tooltip.TooltipItemTypes.StatName
 				this.tooltip_array[1] = data:GetDisplayName()
-				
-				if data.Icon then
+
+				if not StringHelpers.IsNullOrWhitespace(data.Icon) then
 					this.tooltip_array[2] = Game.Tooltip.TooltipItemTypes.AbilityDescription
 					this.tooltip_array[3] = data.GeneratedID
 					this.tooltip_array[4] = data:GetDescription()

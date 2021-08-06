@@ -1021,24 +1021,13 @@ package characterSheet_fla
 				stat_mc.heightOverride = 26;
 				if(iggyIconName != "")
 				{
-					stat_mc.icon_mc.visible = false;
-					if(stat_mc.customIcon_mc == undefined)
-					{
-						stat_mc.customIcon_mc = new IggyIcon();
-						stat_mc.customIcon_mc.mouseEnabled = false;
-						stat_mc.addChild(stat_mc.customIcon_mc);
-						stat_mc.customIcon_mc.scale = 0.5625; // 36/64
-					}
-					stat_mc.customIcon_mc.x = stat_mc.icon_mc.x + customPrimaryStatIconOffsetX;
-					stat_mc.customIcon_mc.y = stat_mc.icon_mc.y + customPrimaryStatIconOffsetY;
-					stat_mc.customIcon_mc.name = iggyIconName;
-					stat_mc.customIcon_mc.visible = true;
+					stat_mc.SetCustomIcon(iggyIconName, customPrimaryStatIconOffsetX, customPrimaryStatIconOffsetY, false);
 				}
 				else
 				{
-					if(stat_mc.customIcon_mc != undefined)
+					if(stat_mc.hasCustomIcon == true)
 					{
-						stat_mc.customIcon_mc.visible = false;
+						stat_mc.RemoveCustomIcon();
 					}
 					if (iconFrame > -1)
 					{
@@ -1180,33 +1169,23 @@ package characterSheet_fla
 				//ExternalInterface.call("entryAdded", mc.isCustom, mc.statID, "infoStatList");
 			}
 
-			if(iconFrame != 0)
+			var hasValidIcon:Boolean = (iconFrame > 0 && iconFrame <= stat_mc.icon_mc.totalFrames) || iggyIconName != "";
+			if(hasValidIcon)
 			{
 				var targetIcon:MovieClip = stat_mc.icon_mc;
 				if (iconFrame <= stat_mc.icon_mc.totalFrames)
 				{
-					if(stat_mc.customIcon_mc != undefined)
+					if(stat_mc.hasCustomIcon == true)
 					{
-						stat_mc.customIcon_mc.visible = false;
+						stat_mc.RemoveCustomIcon();
 					}
 					stat_mc.icon_mc.visible = true;
 					stat_mc.icon_mc.gotoAndStop(iconFrame);
 				}
 				else if (iggyIconName != "")
 				{
-					stat_mc.icon_mc.visible = false;
-					if(stat_mc.customIcon_mc == undefined)
-					{
-						stat_mc.customIcon_mc = new IggyIcon();
-						stat_mc.customIcon_mc.mouseEnabled = false;
-						stat_mc.addChild(stat_mc.customIcon_mc);
-						stat_mc.customIcon_mc.scale = 0.4375; // 28/64
-					}
+					stat_mc.SetCustomIcon(iggyIconName, customSecStatIconOffsetX, customSecStatIconOffsetY, false);
 					targetIcon = stat_mc.customIcon_mc;
-					stat_mc.customIcon_mc.x = stat_mc.icon_mc.x + customSecStatIconOffsetX;
-					stat_mc.customIcon_mc.y = stat_mc.icon_mc.y + customSecStatIconOffsetY;
-					stat_mc.customIcon_mc.name = iggyIconName;
-					stat_mc.customIcon_mc.visible = true;
 				}
 				stat_mc.texts_mc.x = targetIcon.x + xOffset - 3;
 				if((root as MovieClip).initDone)

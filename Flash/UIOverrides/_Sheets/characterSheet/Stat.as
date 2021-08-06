@@ -23,6 +23,7 @@ package
 		public var tooltip:Number; // The tooltip ID
 		public var callbackStr:String = "showStatTooltip";
 		public var isCustom:Boolean = false;
+		public var hasCustomIcon:Boolean = false;
 
 		public function MakeCustom(statID:Number, b:Boolean=true) : *
 		{
@@ -65,6 +66,40 @@ package
 			this.timeline = new larTween(this.hl_mc,"alpha",Quartic.easeOut,this.hl_mc.alpha,0,0.01);
 			this.base.hasTooltip = false;
 			ExternalInterface.call("hideTooltip");
+		}
+
+		//LeaderLib
+		public function SetCustomIcon(iconName:String, offsetX:Number = 0, offsetY:Number = 0, useDefaultOffset:Boolean = true) : Boolean
+		{
+			if(useDefaultOffset) {
+				offsetX = this.base.stats_mc.customPrimaryStatIconOffsetX;
+				offsetY = this.base.stats_mc.customPrimaryStatIconOffsetY;
+			}
+			this.icon_mc.visible = false;
+			if(this.customIcon_mc == undefined)
+			{
+				this.customIcon_mc = new IggyIcon();
+				this.customIcon_mc.mouseEnabled = false;
+				this.addChild(this.customIcon_mc);
+				this.customIcon_mc.scale = 0.5625; // 36/64
+			}
+			this.customIcon_mc.x = this.icon_mc.x + offsetX;
+			this.customIcon_mc.y = this.icon_mc.y + offsetY;
+			this.customIcon_mc.name = iconName;
+			this.customIcon_mc.visible = true;
+			return true;
+		}
+
+		public function RemoveCustomIcon() : Boolean
+		{
+			this.icon_mc.visible = true;
+			if(this.customIcon_mc != undefined)
+			{
+				this.removeChild(this.customIcon_mc);
+				this.customIcon_mc = null;
+				return true;
+			}
+			return false;
 		}
 		
 		public function frame1() : *

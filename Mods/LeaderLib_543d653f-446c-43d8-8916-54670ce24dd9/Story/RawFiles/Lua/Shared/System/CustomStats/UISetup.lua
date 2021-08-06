@@ -159,7 +159,7 @@ function CustomStatSystem.Update(ui, method, this)
 				local stat = CustomStatSystem:GetStatByName(displayName)
 				if stat then
 					stat.Double = doubleHandle
-					this.customStats_array[i+1] = stat:GetDisplayName()
+					displayName = stat:GetDisplayName()
 					groupId = CustomStatSystem:GetCategoryGroupId(stat.Category, stat.Mod)
 					local isVisible = CustomStatSystem:GetStatVisibility(ui, doubleHandle, stat, client)
 					if isVisible == false then

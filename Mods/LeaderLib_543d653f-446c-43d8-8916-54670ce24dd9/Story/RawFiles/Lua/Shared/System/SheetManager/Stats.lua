@@ -481,7 +481,7 @@ if isClient then
 						IconClipName = "",
 						IconDrawCallName = ""
 					}
-					if not StringHelpers.IsNullOrEmpty(data.Icon) then
+					if not StringHelpers.IsNullOrEmpty(data.SheetIcon) then
 						entry.Frame = 99
 						entry.IconDrawCallName = string.format("LL_%s", data.ID)
 						entry.IconClipName = "iggy_" .. entry.IconDrawCallName

@@ -922,7 +922,7 @@ package characterSheet_fla
 			ability_mc.hl_mc.height = ability_mc.abilTooltip_mc.height = ability_mc.texts_mc.label_txt.y + ability_mc.texts_mc.label_txt.textHeight - ability_mc.hl_mc.y;
 			ability_mc.texts_mc.text_txt.y = Math.round((ability_mc.hl_mc.height - ability_mc.texts_mc.text_txt.textHeight) * 0.5);
 			ability_mc.MakeCustom(statID, isCustom);
-			ExternalInterface.call("entryAdded", isCustom, ability_mc.statID, groupHolder.name);
+			ExternalInterface.call("entryAdded", isCustom, ability_mc.statID, groupHolder.name, groupId);
 		}
 		
 		public function recountAbilityPoints(isCivil:Boolean) : *
@@ -1079,6 +1079,8 @@ package characterSheet_fla
 				}
 			}
 
+			stat_mc.statType = statType;
+
 			if(statType == 0)
 			{
 				xOffset2 = this.statsElWidth;
@@ -1162,11 +1164,7 @@ package characterSheet_fla
 			stat_mc.MakeCustom(statID, isCustom);
 			if(!stat_initialized)
 			{
-				this.addToListWithId(statType, stat_mc, true);
-			}
-			else
-			{
-				//ExternalInterface.call("entryAdded", mc.isCustom, mc.statID, "infoStatList");
+				this.addToListWithId(statType, stat_mc, false);
 			}
 
 			var hasValidIcon:Boolean = (iconFrame > 0 && iconFrame <= stat_mc.icon_mc.totalFrames) || iggyIconName != "";
@@ -1181,13 +1179,14 @@ package characterSheet_fla
 					}
 					stat_mc.icon_mc.visible = true;
 					stat_mc.icon_mc.gotoAndStop(iconFrame);
+					stat_mc.texts_mc.x = stat_mc.icon_mc.x + xOffset - 3;
+					stat_mc.texts_mc.text_txt.x = xOffset2 - xOffset - stat_mc.texts_mc.text_txt.width;
 				}
 				else if (iggyIconName != "")
 				{
 					stat_mc.SetCustomIcon(iggyIconName, customSecStatIconOffsetX, customSecStatIconOffsetY, false);
 					targetIcon = stat_mc.customIcon_mc;
 				}
-				stat_mc.texts_mc.x = targetIcon.x + xOffset - 3;
 				if((root as MovieClip).initDone)
 				{
 					targetIcon.alpha = 1;
@@ -1196,11 +1195,27 @@ package characterSheet_fla
 				{
 					tween = new larTween(targetIcon,"alpha",Sine.easeOut,targetIcon.alpha,1,0.1);
 				}
-				stat_mc.texts_mc.text_txt.x = xOffset2 - xOffset - stat_mc.texts_mc.text_txt.width;
 			}
 			else
 			{
-				stat_mc.texts_mc.text_txt.x = xOffset2 - stat_mc.texts_mc.text_txt.width;
+				//stat_mc.texts_mc.text_txt.x = xOffset2 - stat_mc.texts_mc.text_txt.width;
+				stat_mc.texts_mc.text_txt.x = xOffset2 - xOffset - stat_mc.texts_mc.text_txt.width;
+			}
+
+			switch(statType)
+			{
+				case 0:
+					ExternalInterface.call("entryAdded", stat_mc.isCustom, stat_mc.statID, "infoStatList");
+					break;
+				case 1:
+					ExternalInterface.call("entryAdded", stat_mc.isCustom, stat_mc.statID, "secondaryStatList");
+					break;
+				case 2:
+					ExternalInterface.call("entryAdded", stat_mc.isCustom, stat_mc.statID, "resistanceStatList");
+					break;
+				case 3:
+					ExternalInterface.call("entryAdded", stat_mc.isCustom, stat_mc.statID, "expStatList");
+					break;
 			}
 		}
 		

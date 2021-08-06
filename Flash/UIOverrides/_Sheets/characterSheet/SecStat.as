@@ -24,10 +24,12 @@ package
 
 		//LeaderLib Changes
 		public var statID:Number;
+		public var statType:int = 1;
 		public var tooltip:Number; // The tooltip ID
 		public var callbackStr:String = "showStatTooltip";
 		public var isCustom:Boolean = false;
 		public var hasCustomIcon:Boolean = false;
+		public var customIcon_mc:IggyIcon;
 
 		public function MakeCustom(statID:Number, b:Boolean=true) : *
 		{
@@ -175,6 +177,8 @@ package
 			this.customIcon_mc.name = iconName;
 			this.customIcon_mc.visible = true;
 			this.hasCustomIcon = true;
+			this.texts_mc.x = 2.0;
+			this.texts_mc.text_txt.x = 206.95999145508;
 			return true;
 		}
 

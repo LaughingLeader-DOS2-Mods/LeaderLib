@@ -59,14 +59,15 @@ end
 ---@type table<UUID|NETID, table<MOD_UUID, table<CUSTOMSTATID, integer>>>
 CustomStatSystem.CharacterStatValues = {}
 if not isClient then
-	setmetatable(CustomStatSystem.CharacterStatValues, {
+	local Handler = {
 		__index = function(tbl,k)
 			return PersistentVars.CustomStatValues[k]
 		end,
 		__newindex = function(tbl,k,v)
 			PersistentVars.CustomStatValues[k] = v
 		end
-	})
+	}
+	setmetatable(CustomStatSystem.CharacterStatValues, Handler)
 end
 
 ---@alias MOD_UUID string
@@ -100,49 +101,55 @@ local function LoadCustomStatsData()
 	TableHelpers.AddOrUpdate(CustomStatSystem.Categories, categories)
 	TableHelpers.AddOrUpdate(CustomStatSystem.Stats, stats)
 
+	Ext.SaveFile(string.format("ConsoleDebug/CustomStats_%s_%s.lua", "Categories", isClient and "CLIENT" or "SERVER"), Lib.serpent.block(CustomStatSystem.Categories))
+	Ext.SaveFile(string.format("ConsoleDebug/CustomStats_%s_%s.lua", "Stats", isClient and "CLIENT" or "SERVER"), Lib.serpent.block(CustomStatSystem.Stats))
+
 	if not isClient then
 		local foundStats = {}
-		for uuid,stats in pairs(CustomStatSystem.Stats) do
-			local modName = Ext.GetModInfo(uuid).Name
-			for id,stat in pairs(stats) do
-				if stat.DisplayName then
-					local existingData = Ext.GetCustomStatByName(stat.DisplayName)
-					if not existingData then
-						if stat.Create == true and CustomStatSystem:GMStatsEnabled() then
-							Ext.CreateCustomStat(stat.DisplayName, stat.Description)
-							fprint(LOGLEVEL.DEFAULT, "[LeaderLib:LoadCustomStatsData] Created a new custom stat for mod [%s]. ID(%s) DisplayName(%s) Description(%s)", modName, id, stat.DisplayName, stat.Description)
-							existingData = Ext.GetCustomStatByName(stat.DisplayName)
+		if CustomStatSystem:GMStatsEnabled() then
+			for uuid,stats in pairs(CustomStatSystem.Stats) do
+				local modName = Ext.GetModInfo(uuid).Name
+				for id,stat in pairs(stats) do
+					if stat.DisplayName then
+						local existingData = Ext.GetCustomStatByName(stat.DisplayName)
+						if not existingData then
+							if stat.Create then
+								Ext.CreateCustomStat(stat.DisplayName, stat.Description)
+								fprint(LOGLEVEL.DEFAULT, "[LeaderLib:LoadCustomStatsData] Created a new custom stat for mod [%s]. ID(%s) DisplayName(%s) Description(%s)", modName, id, stat.DisplayName, stat.Description)
+								existingData = Ext.GetCustomStatByName(stat.DisplayName)
+							end
 						end
-					end
-					if existingData then
-						stat.UUID = existingData.Id
-						for player in GameHelpers.Character.GetPlayers() do
-							stat:UpdateLastValue(player)
+						if existingData then
+							stat.UUID = existingData.Id
+							for player in GameHelpers.Character.GetPlayers() do
+								stat:UpdateLastValue(player)
+							end
+							foundStats[stat.UUID] = true
 						end
-						foundStats[stat.UUID] = true
 					end
 				end
 			end
-		end
-		CustomStatSystem.UnregisteredStats = {}
-	
-		for _,uuid in pairs(Ext.GetAllCustomStats()) do
-			if not foundStats[uuid] then
-				local stat = Ext.GetCustomStatById(uuid)
-				if stat then
-					local data = {
-						UUID = uuid,
-						ID = uuid,
-						DisplayName = stat.Name,
-						Description = stat.Description,
-						LastValue = {}
-					}
-					setmetatable(data, Classes.UnregisteredCustomStatData)
-					CustomStatSystem.UnregisteredStats[uuid] = data
-					foundStats[uuid] = true
 
-					for player in GameHelpers.Character.GetPlayers() do
-						data:UpdateLastValue(player)
+			CustomStatSystem.UnregisteredStats = {}
+	
+			for _,uuid in pairs(Ext.GetAllCustomStats()) do
+				if not foundStats[uuid] then
+					local stat = Ext.GetCustomStatById(uuid)
+					if stat then
+						local data = {
+							UUID = uuid,
+							ID = uuid,
+							DisplayName = stat.Name,
+							Description = stat.Description,
+							LastValue = {}
+						}
+						setmetatable(data, Classes.UnregisteredCustomStatData)
+						CustomStatSystem.UnregisteredStats[uuid] = data
+						foundStats[uuid] = true
+	
+						for player in GameHelpers.Character.GetPlayers() do
+							data:UpdateLastValue(player)
+						end
 					end
 				end
 			end

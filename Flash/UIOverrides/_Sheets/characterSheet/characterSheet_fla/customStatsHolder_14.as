@@ -106,6 +106,10 @@ package characterSheet_fla
 			this.create_mc.visible = isGM;
 
 			for each(var cstat_mc:CustomStat in stats_array) {
+				if(isGM) {
+					cstat_mc.plus_mc.visible = true;
+					cstat_mc.minus_mc.visible = true;
+				}
 				cstat_mc.edit_mc.visible = !cstat_mc.isCustom && isGM;
 				cstat_mc.delete_mc.visible = !cstat_mc.isCustom && isGM;
 			}

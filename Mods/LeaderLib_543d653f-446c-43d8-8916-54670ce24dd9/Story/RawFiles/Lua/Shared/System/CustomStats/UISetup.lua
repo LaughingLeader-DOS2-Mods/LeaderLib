@@ -206,8 +206,10 @@ function CustomStatSystem.Update(ui, method, this)
 		if this.isExtended then
 			this.clearArray("customStats_array")
 		end
+		Ext.PrintError("CustomStatSystem:GetAllStats")
 		for stat in CustomStatSystem:GetAllStats(false, true, true) do
 			local visible = CustomStatSystem:GetStatVisibility(ui, stat.Double, stat, client)
+			print(stat.ID, visible)
 			if visible then
 				local value = stat:GetValue(client)
 				local groupId = CustomStatSystem:GetCategoryGroupId(stat.Category, stat.Mod)
@@ -260,6 +262,33 @@ function CustomStatSystem:OnUpdateDone(ui, call)
 		this.list.m_scrollbar_mc.scrollTo(lastScrollY)
 	else
 		this.list.m_scrollbar_mc.visible = false
+	end
+end
+
+---@private
+function CustomStatSystem:UpdateStatMovieClips()
+	local character = self:GetCharacter()
+	---@type CharacterSheetMainTimeline
+	local this = SheetManager.UI.CharacterSheet.Root
+	if this then
+		if not Vars.ControllerEnabled then
+			local arr = this.stats_mc.customStats_mc.stats_array
+			for i=0,#arr-1 do
+				local cstat_mc = arr[i]
+				if cstat_mc then
+					local stat = self:GetStatByDouble(cstat_mc.statID)
+					if stat then
+						local value = stat:GetValue(character)
+						if value then
+							cstat_mc.setValue(value)
+						end
+						print(stat.ID, value, cstat_mc.text_txt.htmlText)
+					end
+				end
+			end
+		else
+	
+		end
 	end
 end
 
@@ -318,7 +347,7 @@ end
 ---@private
 function CustomStatSystem:OnStatRemoved(ui, call, doubleHandle)
 	local uuid = self:RemoveStatByDouble(doubleHandle)
-	if uuid then
+	if not StringHelpers.IsNullOrWhitespace(uuid) then
 		local client = Client:GetCharacter()
 		if client then
 			client = client.MyGuid

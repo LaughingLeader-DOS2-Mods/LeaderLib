@@ -541,7 +541,7 @@ function CharacterSheet.Update(ui, method, updateTalents, updateAbilities, updat
 		--this.stats_mc.addAbility(true, 3, 78, "Test Ability2", "0", "", "", false, false, true)
 	end
 
-	if updateTargets.CustomStats then
+	if updateTargets.CustomStats or this.stats_mc.currentOpenPanel == 8 then
 		CustomStatSystem.Update(ui, method, this)
 		targetsUpdated.CustomStats = true
 	end

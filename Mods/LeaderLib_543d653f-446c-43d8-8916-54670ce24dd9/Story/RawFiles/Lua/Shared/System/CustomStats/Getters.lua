@@ -252,7 +252,8 @@ function CustomStatSystem:GetTotalStatsInCategory(categoryId, visibleOnly)
 	local isUnsortedCategory = StringHelpers.IsNullOrWhitespace(categoryId)
 	for mod,stats in pairs(self.Stats) do
 		for id,stat in pairs(stats) do
-			local statIsVisible = not StringHelpers.IsNullOrWhitespace(stat.UUID) and self:GetStatVisibility(nil, stat.Double, stat) == true
+			local isRegistered = not self:GMStatsEnabled() or not StringHelpers.IsNullOrWhitespace(stat.UUID)
+			local statIsVisible = isRegistered and self:GetStatVisibility(nil, stat.Double, stat) == true
 			if (not visibleOnly or (visibleOnly == true and statIsVisible))
 			and ((isUnsortedCategory and StringHelpers.IsNullOrWhitespace(stat.Category)) 
 			or stat.Category == categoryId)
@@ -290,32 +291,22 @@ end
 
 --region Value Getters
 
----@param id string The stat ID or UUID.
----@param mod string|nil Optional mod UUID to filter for.
-function CustomStatSystem:GetStatValueForCharacter(character, id, mod)
-	if not character then
-		if Ext.IsServer() then
-			character = Ext.GetCharacter(CharacterGetHostCharacter())
-		else
-			character = self:GetCharacter()
+---@private
+---@param character EsvCharacter|EclCharacter
+---@param stat CustomStatData
+---@return integer
+function CustomStatSystem:GetStatValueForCharacter(character, stat)
+	if not self:GMStatsEnabled() then
+		local characterId = GameHelpers.GetCharacterID(character)
+		if self.CharacterStatValues[characterId] then
+			if self.CharacterStatValues[characterId][stat.Mod] then
+				return self.CharacterStatValues[characterId][stat.Mod][stat.ID] or 0
+			end
 		end
+		return 0
+	else
+		return character:GetCustomStat(stat.UUID) or 0
 	end
-	local statValue = 0
-	local stat = self:GetStatByID(id, mod) or self:GetStatByUUID(id)
-	if stat then
-		statValue = stat.Value or 0
-		local characterObject = character
-		local t = type(characterObject)
-		if t == "string" or t == "number" then
-			characterObject = Ext.GetCharacter(character)
-		end
-		if type(characterObject) == "userdata" and characterObject.GetCustomStat then
-			statValue = characterObject:GetCustomStat(stat.UUID) or stat.Value or 0
-		else
-			fprint(LOGLEVEL.ERROR, "[LeaderLib.CustomStatSystem.GetStatValueForCharacter] Failed to get character from param (%s) stat(%s) mod(%s)", character, stat or "", mod or "")
-		end
-	end
-	return statValue
 end
 
 ---@param id string|integer The category ID or GroupId.
@@ -342,7 +333,7 @@ function CustomStatSystem:GetStatValueForCategory(character, id, mod)
 	for uuid,stats in pairs(self.Stats) do
 		for statId,stat in pairs(stats) do
 			if stat.Category == category.ID then
-				statValue = statValue + self:GetStatValueForCharacter(character, id, mod)
+				statValue = statValue + self:GetStatValueForCharacter(character, stat)
 			end
 		end
 	end

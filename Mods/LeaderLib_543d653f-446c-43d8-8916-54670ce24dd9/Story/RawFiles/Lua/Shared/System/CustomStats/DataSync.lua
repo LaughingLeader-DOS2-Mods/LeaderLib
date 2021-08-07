@@ -32,26 +32,28 @@ if not isClient then
 	---@private
 	---Creates a table of stat id to uuid, for sending stat UUIDs to the client
 	function CustomStatSystem:GetSyncData()
-		local data = {
-			Registered = {},
-			Unregistered = {}
-		}
-		for uuid,stats in pairs(self.Stats) do
-			data.Registered[uuid] = {}
-			for id,stat in pairs(stats) do
-				if stat.UUID then
-					data.Registered[uuid][id] = stat.UUID
+		if self:GMStatsEnabled() then
+			local data = {
+				Registered = {},
+				Unregistered = {}
+			}
+			for uuid,stats in pairs(self.Stats) do
+				data.Registered[uuid] = {}
+				for id,stat in pairs(stats) do
+					if stat.UUID then
+						data.Registered[uuid][id] = stat.UUID
+					end
 				end
 			end
+			for uuid,stat in pairs(self.UnregisteredStats) do
+				data.Unregistered[uuid] = {
+					DisplayName = stat.DisplayName,
+					Description = stat.Description,
+					LastValue = stat.LastValue or {}
+				}
+			end
+			return data
 		end
-		for uuid,stat in pairs(self.UnregisteredStats) do
-			data.Unregistered[uuid] = {
-				DisplayName = stat.DisplayName,
-				Description = stat.Description,
-				LastValue = stat.LastValue or {}
-			}
-		end
-		return data
 	end
 
 	---@private
@@ -68,14 +70,37 @@ if not isClient then
 				end
 			end
 		end
-		local payload = Ext.JsonStringify({
-			CustomStats = self:GetSyncData(),
-			AvailablePoints = availablePoints
-		})
-		if user then
-			Ext.PostMessageToUser(user, "LeaderLib_SharedData_StoreCustomStatData", payload)
+		if self:GMStatsEnabled() then
+			local payload = Ext.JsonStringify({
+				CustomStats = self:GetSyncData(),
+				AvailablePoints = availablePoints
+			})
+			if user then
+				Ext.PostMessageToUser(user, "LeaderLib_SharedData_StoreCustomStatData", payload)
+			else
+				Ext.BroadcastMessage("LeaderLib_SharedData_StoreCustomStatData", payload)
+			end
 		else
-			Ext.BroadcastMessage("LeaderLib_SharedData_StoreCustomStatData", payload)
+			local valueData = {}
+			for characterId,modData in pairs(PersistentVars.CustomStatValues) do
+				local netid = GameHelpers.GetNetID(characterId)
+				valueData[netid] = {}
+				for modId,statsData in pairs(modData) do
+					valueData[netid][modId] = {}
+					for statId,value in pairs(statsData) do
+						valueData[netid][modId][statId] = value
+					end
+				end
+			end
+			local payload = Ext.JsonStringify({
+				CustomStats = valueData,
+				AvailablePoints = availablePoints
+			})
+			if user then
+				Ext.PostMessageToUser(user, "LeaderLib_SharedData_StoreCustomStatData", payload)
+			else
+				Ext.BroadcastMessage("LeaderLib_SharedData_StoreCustomStatData", payload)
+			end
 		end
 	end
 
@@ -113,20 +138,26 @@ if not isClient then
 else
 	---@private
 	---Loads a table of stat UUIDs from the server.
-	function CustomStatSystem:LoadSyncData(uuidList, availablePoints)
-		if uuidList then
-			local character = self:GetCharacter()
-			for uuid,stats in pairs(uuidList) do
-				local existing = self.Stats[uuid]
-				if existing then
-					for id,statId in pairs(stats) do
-						if existing[id] then
-							existing[id].UUID = statId
+	function CustomStatSystem:LoadSyncData(stats, availablePoints)
+		if stats then
+			if self:GMStatsEnabled() then
+				for uuid,stats in pairs(stats) do
+					local existing = self.Stats[uuid]
+					if existing then
+						for id,statId in pairs(stats) do
+							if existing[id] then
+								existing[id].UUID = statId
+							end
 						end
 					end
 				end
+			else
+				self.CharacterStatValues = stats
+
+				self:UpdateStatMovieClips()
 			end
 		end
+
 		if availablePoints then
 			self.PointsPool = availablePoints
 			self:UpdateAvailablePoints()
@@ -136,32 +167,37 @@ else
 				stat:UpdateLastValue(player)
 			end
 		end
+		self.Syncing = false
 	end
 
 	local function LoadSyncedCustomStatData(cmd, payload)
 		local data = Common.JsonParse(payload)
 		if data ~= nil then
-			if data.CustomStats or data.AvailablePoints then
-				self:LoadSyncData(data.CustomStats.Registered, data.AvailablePoints)
-			end
-			self.UnregisteredStats = {}
-			
-			for uuid,statData in pairs(data.CustomStats.Unregistered) do
-				local stat = {
-					ID = uuid,
-					UUID = uuid,
-					DisplayName = statData.DisplayName,
-					Description = statData.Description,
-					IsUnregistered = true,
-					Double = false,
-					LastValue = statData.LastValue
-				}
-				setmetatable(stat, Classes.UnregisteredCustomStatData)
-				self.UnregisteredStats[uuid] = stat
-
-				for player in GameHelpers.Character.GetPlayers() do
-					stat:UpdateLastValue(player)
+			if CustomStatSystem:GMStatsEnabled() then
+				if data.CustomStats or data.AvailablePoints then
+					self:LoadSyncData(data.CustomStats.Registered, data.AvailablePoints)
 				end
+				self.UnregisteredStats = {}
+				
+				for uuid,statData in pairs(data.CustomStats.Unregistered) do
+					local stat = {
+						ID = uuid,
+						UUID = uuid,
+						DisplayName = statData.DisplayName,
+						Description = statData.Description,
+						IsUnregistered = true,
+						Double = false,
+						LastValue = statData.LastValue
+					}
+					setmetatable(stat, Classes.UnregisteredCustomStatData)
+					self.UnregisteredStats[uuid] = stat
+	
+					for player in GameHelpers.Character.GetPlayers() do
+						stat:UpdateLastValue(player)
+					end
+				end
+			else
+				self:LoadSyncData(data.CustomStats, data.AvailablePoints)
 			end
 			return true
 		else
@@ -170,9 +206,17 @@ else
 	end
 
 	Ext.RegisterNetListener("LeaderLib_SharedData_StoreCustomStatData", function(cmd, payload)
+		print(cmd,payload)
 		local b,err = xpcall(LoadSyncedCustomStatData, debug.traceback, cmd, payload)
 		if not b then
 			Ext.PrintError(err)
+		end
+	end)
+
+	Ext.RegisterNetListener("LeaderLib_SharedData_StoreAvailablePoints", function(cmd, payload)
+		local availablePoints = Common.JsonParse(payload)
+		if availablePoints then
+			self:LoadSyncData(nil, availablePoints)
 		end
 	end)
 end

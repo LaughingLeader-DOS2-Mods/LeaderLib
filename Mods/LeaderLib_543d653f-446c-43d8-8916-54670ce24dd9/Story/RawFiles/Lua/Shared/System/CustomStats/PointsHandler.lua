@@ -104,12 +104,7 @@ end
 ---@param amount integer
 ---@param skipSync boolean Skips syncing if true.
 function CustomStatSystem:SetAvailablePoints(character, statId, amount, skipSync)
-	local characterId = character
-	if not isClient then
-		characterId = GameHelpers.GetUUID(character)
-	else
-		characterId = GameHelpers.GetNetID(character)
-	end
+	local characterId = GameHelpers.GetCharacterID(character)
 	if CharacterIdIsValid(characterId) and type(amount) == "number" then
 		if self.PointsPool then
 			if not self.PointsPool[characterId] then
@@ -136,42 +131,50 @@ function CustomStatSystem:SetAvailablePoints(character, statId, amount, skipSync
 end
 
 ---@param character EsvCharacter|UUID|EclCharacter|NETID
----@param statId string A stat id.
+---@param stat CustomStatData
 ---@param amount integer The amount to modify the stat by.
----@param mod string|nil A mod UUID to use when fetching the stat by ID.
-function CustomStatSystem:ModifyStat(character, statId, amount, mod)
-	return self:SetStat(character, statId, self:GetStatValueForCharacter(character, statId, mod) + amount, mod)
+function CustomStatSystem:ModifyStat(character, stat, amount)
+	return self:SetStat(character, stat, self:GetStatValueForCharacter(character, stat) + amount)
+end
+
+---@param character EsvCharacter|UUID|EclCharacter|NETID
+---@param stat CustomStatData
+---@param value integer The value to set the stat to.
+function CustomStatSystem:SetStat(character, stat, value, ...)
+	if type(stat) == "string" then
+		local mod = table.unpack({...}) or ""
+		stat = self:GetStatByID(stat, mod)
+	end
+	if not isClient then
+		if type(character) ~= "userdata" then
+			character = GameHelpers.GetCharacter(character)
+		end
+		
+		assert(character ~= nil, string.format("Character is nil!"))
+		assert(stat ~= nil, string.format("stat is nil!"))
+
+		if self:GMStatsEnabled() then
+			if StringHelpers.IsNullOrWhitespace(stat.UUID) then
+				stat.UUID = Ext.CreateCustomStat(stat.DisplayName, stat.Description)
+			end
+			character:SetCustomStat(stat.UUID, value)
+		else
+			CustomStatSystem:SetStatValueOnCharacter(character, stat, value)
+		end
+		return true
+	else
+		self:RequestValueChange(character, stat.ID, value, stat.Mod)
+	end
 end
 
 ---@param character EsvCharacter|UUID|NETID
 ---@param statId string A stat id.
 ---@param value integer The value to set the stat to.
 ---@param mod string|nil A mod UUID to use when fetching the stat by ID.
-function CustomStatSystem:SetStat(character, statId, value, mod)
-	if not isClient then
-		if type(character) ~= "userdata" then
-			character = GameHelpers.GetCharacter(character)
-		end
-		if character then
-			local stat = self:GetStatByID(statId, mod)
-			if stat then
-				if self:GMStatsEnabled() then
-					if StringHelpers.IsNullOrWhitespace(stat.UUID) then
-						stat.UUID = Ext.CreateCustomStat(stat.DisplayName, stat.Description)
-					end
-					character:SetCustomStat(stat.UUID, value)
-				else
-					CustomStatSystem:SetStatValueOnCharacter(character, stat, value)
-				end
-				return true
-			else
-				error(string.format("Stat does not exist. statId(%s) mod(%s)", statId or "nil", mod or ""), 2)
-			end
-		else
-			error(string.format("Failed to get character from (%s)", character or ""), 2)
-		end
-	else
-		self:RequestValueChange(character, statId, value, mod)
+function CustomStatSystem:SetStatByID(character, statId, value, mod)
+	local stat = self:GetStatByID(statId, mod)
+	if stat then
+		self:SetStat(character, stat, value)
 	end
 end
 
@@ -302,7 +305,7 @@ function CustomStatSystem:GetCanAddPoints(ui, doubleHandle, character, stat)
 	character = character or self:GetCharacter()
 	stat = stat or self:GetStatByDouble(doubleHandle)
 	if stat then
-		local value = self:GetStatValueForCharacter(character, stat.ID, stat.Mod)
+		local value = self:GetStatValueForCharacter(character, stat)
 		local availablePoints = self:GetAvailablePointsForStat(stat)
 		local canAdd = availablePoints > 0
 		if canAdd and stat.MaxAmount then
@@ -331,7 +334,7 @@ function CustomStatSystem:GetCanRemovePoints(ui, doubleHandle, character)
 	character = character or self:GetCharacter()
 	local stat = self:GetStatByDouble(doubleHandle)
 	if stat then
-		local value = self:GetStatValueForCharacter(character, stat.ID, stat.Mod)
+		local value = self:GetStatValueForCharacter(character, stat)
 		if value then
 			local canRemove = false
 			for listener in self:GetListenerIterator(self.Listeners.CanRemovePoints[stat.ID], self.Listeners.CanRemovePoints.All) do

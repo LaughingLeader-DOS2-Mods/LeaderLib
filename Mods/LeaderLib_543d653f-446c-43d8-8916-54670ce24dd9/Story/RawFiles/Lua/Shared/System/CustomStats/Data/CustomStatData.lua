@@ -115,15 +115,12 @@ end
 ---@param character UUID|NETID|EsvCharacter|EclCharacter
 ---@return integer
 function CustomStatData:GetValue(character)
-	if StringHelpers.IsNullOrWhitespace(self.UUID) then
-		return 0
-	end
 	if type(character) == "userdata" then
-		return CustomStatSystem:GetStatValueOnCharacter(character, self)
+		return CustomStatSystem:GetStatValueForCharacter(character, self)
 	else
 		character = Ext.GetCharacter(character)
 		if character then
-			return CustomStatSystem:GetStatValueOnCharacter(character, self)
+			return CustomStatSystem:GetStatValueForCharacter(character, self)
 		end
 	end
 	return 0
@@ -150,7 +147,7 @@ function CustomStatData:SetValue(character, value)
 	if value > STAT_VALUE_MAX then
 		value = STAT_VALUE_MAX
 	end
-	return CustomStatSystem:SetStat(character, self.ID, value, self.Mod)
+	return CustomStatSystem:SetStat(character, self, value)
 end
 
 ---[SERVER]
@@ -188,20 +185,18 @@ end
 ---Sets the stat's last value for a character.
 ---@param character EsvCharacter|EclCharacter|UUID|NETID
 function CustomStatData:UpdateLastValue(character)
-	if not StringHelpers.IsNullOrWhitespace(self.UUID) then
-		local characterId = character
-		if not isClient then
-			characterId = GameHelpers.GetUUID(character)
-		else
-			characterId = GameHelpers.GetNetID(character)
+	local characterId = character
+	if not isClient then
+		characterId = GameHelpers.GetUUID(character)
+	else
+		characterId = GameHelpers.GetNetID(character)
+	end
+	local value = self:GetValue(type(character) == "userdata" and character or characterId)
+	if value then
+		if Vars.DebugMode and Vars.Print.CustomStats then
+			fprint(LOGLEVEL.WARNING, "[CustomStatData:UpdateLastValue:%s] Set LastValue for (%s) to (%s) [%s]", self.Type, characterId, value, Ext.IsServer() and "SERVER" or "CLIENT")
 		end
-		local value = self:GetValue(type(character) == "userdata" and character or characterId)
-		if value then
-			if Vars.DebugMode and Vars.Print.CustomStats then
-				fprint(LOGLEVEL.WARNING, "[CustomStatData:UpdateLastValue:%s] Set LastValue for (%s) to (%s) [%s]", self.Type, characterId, value, Ext.IsServer() and "SERVER" or "CLIENT")
-			end
-			self.LastValue[characterId] = value
-		end
+		self.LastValue[characterId] = value
 	end
 end
 

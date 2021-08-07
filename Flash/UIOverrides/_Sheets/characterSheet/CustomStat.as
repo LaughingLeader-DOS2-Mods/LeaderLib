@@ -7,6 +7,8 @@ package
 	import flash.external.ExternalInterface;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
+	import flash.text.TextFormat;
+	import flash.text.TextFormatAlign;
 	
 	public dynamic class CustomStat extends MovieClip
 	{
@@ -96,6 +98,20 @@ package
 			if(!this.isCustom) {
 				ExternalInterface.call("removeCustomStat", this.statID);
 			}
+		}
+
+		//LeaderLib
+		public function setValue(value:Number) : void
+		{
+			this.am = value;
+			this.text_txt.htmlText = String(value);
+			var tf:TextFormat = this.text_txt.getTextFormat();
+			tf.align = TextFormatAlign.CENTER;
+			this.text_txt.setTextFormat(tf);
+			this.text_txt.x = 187.5; // Adjusted for 64 width
+			this.text_txt.width = 64; // Wider for larger text like 33.3M
+			this.text_txt.y = 0;
+			this.text_txt.height = 24;
 		}
 		
 		public function frame1() : *

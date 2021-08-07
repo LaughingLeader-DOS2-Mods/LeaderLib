@@ -46,6 +46,8 @@ local statPropertyMap = {
 
 local isClient = Ext.IsClient()
 
+local STAT_ID = -1
+
 local function setAvailablePointsHandler(data)
 	local AvailablePointsHandler = {}
 	AvailablePointsHandler.__index = function(table, characterId)
@@ -112,6 +114,10 @@ local function parseTable(tbl, propertyMap, modId, defaults)
 				if propertyMap == statPropertyMap then
 					data.Type = "CustomStatData"
 					data.AvailablePoints = {}
+					if not CustomStatSystem:GMStatsEnabled() then
+						STAT_ID = STAT_ID + 1
+						data.Double = STAT_ID
+					end
 					Classes.CustomStatData.SetDefaults(data)
 					setAvailablePointsHandler(data)
 					setmetatable(data, Classes.CustomStatData)

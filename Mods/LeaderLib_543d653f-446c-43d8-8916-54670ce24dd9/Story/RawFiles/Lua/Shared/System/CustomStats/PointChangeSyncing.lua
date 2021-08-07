@@ -4,7 +4,7 @@ local isClient = Ext.IsClient()
 ---@private
 ---@param character EsvCharacter|EclCharacter
 ---@param stat CustomStatData
-function CustomStatSystem:SetStatValueOnCharacter(character, stat, value)
+function CustomStatSystem:SetStatValueOnCharacter(character, stat, value, skipSync)
 	if not self:GMStatsEnabled() then
 		local last = stat:GetLastValue(character)
 		local characterId = GameHelpers.GetCharacterID(character)
@@ -18,38 +18,24 @@ function CustomStatSystem:SetStatValueOnCharacter(character, stat, value)
 		if last and value ~= last then
 			CustomStatSystem:InvokeStatValueChangedListeners(stat, character, last, value)
 		end
+
+		if not skipSync then
+			Timer.StartOneshot("CustomStatSystem_SyncValues", 2, function()
+				CustomStatSystem:SyncData()
+			end)
+		end
 	else
 		character:SetCustomStat(stat.UUID, value)
 	end
 end
 
----@private
----@param character EsvCharacter|EclCharacter
----@param stat CustomStatData
----@return integer
-function CustomStatSystem:GetStatValueOnCharacter(character, stat)
-	if not self:GMStatsEnabled() then
-		local characterId = GameHelpers.GetCharacterID(character)
-		if self.CharacterStatValues[characterId] then
-			if self.CharacterStatValues[characterId][stat.Mod] then
-				return self.CharacterStatValues[characterId][stat.Mod][stat.ID] or 0
-			end
-		end
-		return 0
-	else
-		return character:GetCustomStat(stat.UUID) or 0
-	end
-end
-
 if not isClient then
 	Ext.RegisterNetListener("LeaderLib_CustomStatSystem_RequestValueChange", function(cmd, payload, user)
-		print(cmd, payload, user)
 		local data = Common.JsonParse(payload)
 		if data then
 			local character = Ext.GetCharacter(data.NetID)
 			if character then
-				Ext.PostMessageToClient(character.MyGuid, "LeaderLib_CustomStatSystem_SyncSuccess", "")
-				CustomStatSystem:SetStat(character, data.ID, data.Value, data.Mod)
+				CustomStatSystem:SetStatByID(character, data.ID, data.Value, data.Mod)
 			end
 		end
 	end)

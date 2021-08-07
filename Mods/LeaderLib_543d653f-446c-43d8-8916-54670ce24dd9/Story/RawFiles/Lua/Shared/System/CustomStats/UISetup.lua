@@ -10,10 +10,10 @@ self.Syncing = false
 self.MaxVisibleValue = 999 -- Values greater than this are truncated visually in the UI
 
 ---Called when a stat movieclip is added or updated in the UI.
----@alias CustomStatMovieClipAddedCallback fun(id:string, stat:CustomStatData, character:EsvCharacter, stat_mc:FlashCustomStat):void
+---@alias CustomStatMovieClipAddedCallback fun(id:string, stat:SheetCustomStatData, character:EsvCharacter, stat_mc:FlashCustomStat):void
 
 ---Called when a stat is being added to the sheet.
----@alias CustomStatVisibilityCallback fun(id:string, stat:CustomStatData, character:EsvCharacter, isVisible:boolean):boolean
+---@alias CustomStatVisibilityCallback fun(id:string, stat:SheetCustomStatData, character:EsvCharacter, isVisible:boolean):boolean
 
 ---@type table<string, CustomStatMovieClipAddedCallback[]>
 CustomStatSystem.Listeners.StatAdded = {All = {}}
@@ -75,7 +75,7 @@ end
 ---@field Handle number
 ---@field Value number
 ---@field GroupId integer
----@field Stat CustomStatData|nil
+---@field Stat SheetCustomStatData|nil
 
 ---@private
 ---@param a CharacterSheetStatArrayData
@@ -465,7 +465,7 @@ end
 ---@param character EclCharacter
 function CustomStatSystem:OnRequestTooltip(ui, call, statId, character, x, y, width, height, alignment)
 	self.Requesting = false
-	---@type CustomStatData
+	---@type SheetCustomStatData
 	local stat = self:GetStatByDouble(statId)
 	local statName = ""
 	local statValue = nil
@@ -796,7 +796,7 @@ end)
 ---Displays custom stat values in a stat tooltip if the stat config has enabled DisplayValueInTooltip.
 ---@param ui UIObject
 ---@param character EclCharacter
----@param stat CustomStatData
+---@param stat SheetCustomStatData
 ---@param tooltip TooltipData
 function CustomStatSystem:OnTooltip(ui, character, stat, tooltip)
 	if self.TooltipValueEnabled[stat.ID] then

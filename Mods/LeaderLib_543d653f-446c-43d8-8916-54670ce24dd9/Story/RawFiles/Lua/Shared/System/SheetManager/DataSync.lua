@@ -57,7 +57,7 @@ function SheetManager.Save.GetTableNameForType(statType)
 end
 
 ---@param characterId UUID|EsvCharacter|NETID|EclCharacter
----@param entry SheetAbilityData|SheetStatData|SheetTalentData|CustomStatData
+---@param entry SheetAbilityData|SheetStatData|SheetTalentData|SheetCustomStatData
 ---@return integer|boolean
 ---@return table<SHEET_ENTRY_ID, integer> The mod data table containing all stats.
 function SheetManager.Save.GetEntryData(characterId, entry)
@@ -79,7 +79,7 @@ function SheetManager.Save.GetEntryData(characterId, entry)
 end
 
 ---@param characterId UUID|EsvCharacter|NETID|EclCharacter
----@param entry SheetAbilityData|SheetStatData|SheetTalentData|CustomStatData
+---@param entry SheetAbilityData|SheetStatData|SheetTalentData|SheetCustomStatData
 ---@param value integer|boolean
 ---@return boolean
 function SheetManager.Save.SetEntryValue(characterId, entry, value)
@@ -182,7 +182,7 @@ else
 	end)
 	
 	---Request a value change for a sheet entry on the server side.
-	---@param entry SheetAbilityData|SheetStatData|SheetTalentData|CustomStatData
+	---@param entry SheetAbilityData|SheetStatData|SheetTalentData|SheetCustomStatData
 	---@param character EclCharacter|NETID
 	---@param value integer|boolean
 	function SheetManager:RequestValueChange(entry, character, value)

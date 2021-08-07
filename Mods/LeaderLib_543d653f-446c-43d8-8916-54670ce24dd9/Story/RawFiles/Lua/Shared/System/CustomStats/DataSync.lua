@@ -121,7 +121,7 @@ if not isClient then
 		if data and data.NetID and data.ID and data.Value then
 			local character = Ext.GetCharacter(data.NetID)
 			local t = type(data.ID)
-			---@type CustomStatData
+			---@type SheetCustomStatData
 			local stat = nil
 			if t == "number" then
 				stat = CustomStatSystem:GetStatByDouble(data.ID)

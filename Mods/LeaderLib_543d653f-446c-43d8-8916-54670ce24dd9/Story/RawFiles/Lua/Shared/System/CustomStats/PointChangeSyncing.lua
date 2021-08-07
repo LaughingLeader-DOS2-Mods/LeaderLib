@@ -3,7 +3,7 @@ local isClient = Ext.IsClient()
 
 ---@private
 ---@param character EsvCharacter|EclCharacter
----@param stat CustomStatData
+---@param stat SheetCustomStatData
 function CustomStatSystem:SetStatValueOnCharacter(character, stat, value, skipSync)
 	if not self:GMStatsEnabled() then
 		local last = stat:GetLastValue(character)

@@ -1,6 +1,6 @@
----@class CustomStatCategoryData:CustomStatDataBase
-local CustomStatCategoryData = {
-	Type="CustomStatCategoryData",
+---@class SheetCustomStatCategoryData:CustomStatDataBase
+local SheetCustomStatCategoryData = {
+	Type="SheetCustomStatCategoryData",
 	ID = "",
 	Mod = "",
 	DisplayName = "",
@@ -12,7 +12,7 @@ local CustomStatCategoryData = {
 	GroupId = nil,
 }
 
-CustomStatCategoryData.__index = function(t,k)
+SheetCustomStatCategoryData.__index = function(t,k)
 	local v = Classes.CustomStatDataBase[k]
 	if v then
 		t[k] = v
@@ -20,5 +20,5 @@ CustomStatCategoryData.__index = function(t,k)
 	return v
 end
 
---setmetatable(CustomStatCategoryData, CustomStatCategoryData)
-Classes.CustomStatCategoryData = CustomStatCategoryData
+--setmetatable(SheetCustomStatCategoryData, SheetCustomStatCategoryData)
+Classes.SheetCustomStatCategoryData = SheetCustomStatCategoryData

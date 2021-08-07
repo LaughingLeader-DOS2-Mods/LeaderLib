@@ -3,7 +3,7 @@ local isClient = Ext.IsClient()
 
 --region Stat/Category Getting
 ---@param displayName string
----@return CustomStatData
+---@return SheetCustomStatData
 function CustomStatSystem:GetStatByName(displayName)
 	for uuid,stats in pairs(self.Stats) do
 		for id,stat in pairs(stats) do
@@ -22,7 +22,7 @@ end
 
 ---@param id string The stat id (not the UUID created by the game).
 ---@param mod string|nil Optional mod UUID to filter for.
----@return CustomStatData
+---@return SheetCustomStatData
 function CustomStatSystem:GetStatByID(id, mod)
 	if not self.Loaded then
 		return nil
@@ -48,7 +48,7 @@ function CustomStatSystem:GetStatByID(id, mod)
 end
 
 ---@param uuid string Unique UUID for the stat.
----@return CustomStatData
+---@return SheetCustomStatData
 function CustomStatSystem:GetStatByUUID(uuid)
 	for mod,stats in pairs(self.Stats) do
 		for id,stat in pairs(stats) do
@@ -64,7 +64,7 @@ end
 ---@param inSheetOnly boolean|nil Only get stats in the character sheet,
 ---@param sortStats boolean|nil
 ---@param includeUnregisteredStats boolean|nil
----@return fun():CustomStatData
+---@return fun():SheetCustomStatData
 function CustomStatSystem:GetAllStats(inSheetOnly, sortStats, includeUnregisteredStats)
 	local allStats = {}
 
@@ -123,7 +123,7 @@ end
 
 ---@param id string
 ---@param mod string
----@return CustomStatCategoryData
+---@return SheetCustomStatCategoryData
 function CustomStatSystem:GetCategoryById(id, mod)
 	if mod then
 		local categories = self.Categories[mod]
@@ -140,7 +140,7 @@ function CustomStatSystem:GetCategoryById(id, mod)
 end
 
 ---@param groupId integer
----@return CustomStatCategoryData
+---@return SheetCustomStatCategoryData
 function CustomStatSystem:GetCategoryByGroupId(groupId)
 	for uuid,categories in pairs(self.Categories) do
 		for id,category in pairs(categories) do
@@ -186,7 +186,7 @@ end
 
 ---Get an iterator of sorted categories.
 ---@param skipSort boolean|nil
----@return fun():CustomStatCategoryData
+---@return fun():SheetCustomStatCategoryData
 function CustomStatSystem:GetAllCategories(skipSort)
 	local allCategories = {}
 
@@ -200,7 +200,7 @@ function CustomStatSystem:GetAllCategories(skipSort)
 		end
 	end
 
-	---@type CustomStatCategoryData[]
+	---@type SheetCustomStatCategoryData[]
 	local categories = {}
 	for k,v in pairs(allCategories) do
 		categories[#categories+1] = v
@@ -271,7 +271,7 @@ function CustomStatSystem:GetTotalStatsInCategory(categoryId, visibleOnly)
 end
 
 ---@param double number
----@return CustomStatData
+---@return SheetCustomStatData
 function CustomStatSystem:GetStatByDouble(double)
 	for mod,stats in pairs(CustomStatSystem.Stats) do
 		for id,stat in pairs(stats) do
@@ -293,7 +293,7 @@ end
 
 ---@private
 ---@param character EsvCharacter|EclCharacter
----@param stat CustomStatData
+---@param stat SheetCustomStatData
 ---@return integer
 function CustomStatSystem:GetStatValueForCharacter(character, stat)
 	if not self:GMStatsEnabled() then
@@ -320,7 +320,7 @@ function CustomStatSystem:GetStatValueForCategory(character, id, mod)
 		end
 	end
 	local statValue = 0
-	---@type CustomStatCategoryData
+	---@type SheetCustomStatCategoryData
 	local category = nil
 	if Ext.IsClient() and type(id) == "number" then
 		category = self:GetCategoryByGroupId(id)

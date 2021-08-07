@@ -112,17 +112,17 @@ local function parseTable(tbl, propertyMap, modId, defaults)
 					end
 				end
 				if propertyMap == statPropertyMap then
-					data.Type = "CustomStatData"
+					data.Type = "SheetCustomStatData"
 					data.AvailablePoints = {}
 					if not CustomStatSystem:GMStatsEnabled() then
 						STAT_ID = STAT_ID + 1
 						data.Double = STAT_ID
 					end
-					Classes.CustomStatData.SetDefaults(data)
+					Classes.SheetCustomStatData.SetDefaults(data)
 					setAvailablePointsHandler(data)
-					setmetatable(data, Classes.CustomStatData)
+					setmetatable(data, Classes.SheetCustomStatData)
 				else
-					setmetatable(data, Classes.CustomStatCategoryData)
+					setmetatable(data, Classes.SheetCustomStatCategoryData)
 				end
 
 				tableData[k] = data

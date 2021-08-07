@@ -73,18 +73,14 @@ end
 ---@alias MOD_UUID string
 ---@alias CUSTOMSTATID string
 
----@type table<MOD_UUID, table<CUSTOMSTATID, CustomStatCategoryData>>
+---@type table<MOD_UUID, table<CUSTOMSTATID, SheetCustomStatCategoryData>>
 CustomStatSystem.Categories = {}
----@type table<MOD_UUID, table<CUSTOMSTATID, CustomStatData>>
+---@type table<MOD_UUID, table<CUSTOMSTATID, SheetCustomStatData>>
 CustomStatSystem.Stats = {}
 CustomStatSystem.UnregisteredStats = {}
 
-Ext.Require("Shared/System/CustomStats/Data/CustomStatBase.lua")
-Ext.Require("Shared/System/CustomStats/Data/CustomStatData.lua")
-Ext.Require("Shared/System/CustomStats/Data/CustomStatCategoryData.lua")
-
 Ext.Require("Shared/System/CustomStats/PointChangeSyncing.lua")
----@type fun():table<string, table<string, CustomStatData>>
+---@type fun():table<string, table<string, SheetCustomStatData>>
 local loader = Ext.Require("Shared/System/CustomStats/ConfigLoader.lua")
 Ext.Require("Shared/System/CustomStats/Getters.lua")
 Ext.Require("Shared/System/CustomStats/DataSync.lua")

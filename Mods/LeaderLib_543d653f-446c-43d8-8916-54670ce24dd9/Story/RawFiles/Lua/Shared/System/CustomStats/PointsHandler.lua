@@ -1,9 +1,9 @@
 local self = CustomStatSystem
 
----@alias CustomStatCanAddPointsCallback fun(id:string, stat:CustomStatData, character:EclCharacter, currentValue:integer, availablePoints:integer, canAdd:boolean):boolean
----@alias CustomStatCanRemovePointsCallback fun(id:string, stat:CustomStatData, character:EclCharacter, currentValue:integer, canRemove:boolean):boolean
----@alias OnAvailablePointsChangedCallback fun(id:string, stat:CustomStatData, character:EsvCharacter, previousPoints:integer, currentPoints:integer, isClientSide:boolean):void
----@alias OnCustomStatValueChangedCallback fun(id:string, stat:CustomStatData, character:EsvCharacter, previousPoints:integer, currentPoints:integer, isClientSide:boolean):void
+---@alias CustomStatCanAddPointsCallback fun(id:string, stat:SheetCustomStatData, character:EclCharacter, currentValue:integer, availablePoints:integer, canAdd:boolean):boolean
+---@alias CustomStatCanRemovePointsCallback fun(id:string, stat:SheetCustomStatData, character:EclCharacter, currentValue:integer, canRemove:boolean):boolean
+---@alias OnAvailablePointsChangedCallback fun(id:string, stat:SheetCustomStatData, character:EsvCharacter, previousPoints:integer, currentPoints:integer, isClientSide:boolean):void
+---@alias OnCustomStatValueChangedCallback fun(id:string, stat:SheetCustomStatData, character:EsvCharacter, previousPoints:integer, currentPoints:integer, isClientSide:boolean):void
 
 local isClient = Ext.IsClient()
 
@@ -131,14 +131,14 @@ function CustomStatSystem:SetAvailablePoints(character, statId, amount, skipSync
 end
 
 ---@param character EsvCharacter|UUID|EclCharacter|NETID
----@param stat CustomStatData
+---@param stat SheetCustomStatData
 ---@param amount integer The amount to modify the stat by.
 function CustomStatSystem:ModifyStat(character, stat, amount)
 	return self:SetStat(character, stat, self:GetStatValueForCharacter(character, stat) + amount)
 end
 
 ---@param character EsvCharacter|UUID|EclCharacter|NETID
----@param stat CustomStatData
+---@param stat SheetCustomStatData
 ---@param value integer The value to set the stat to.
 function CustomStatSystem:SetStat(character, stat, value, ...)
 	if type(stat) == "string" then
@@ -222,13 +222,13 @@ if not isClient then
 		if type(characterId) == "string" and type(amount) == "number" then
 			--Use the PointID for actual storage key.
 			local pointId = statId
-			---@type CustomStatData
+			---@type SheetCustomStatData
 			local stat = nil
 
 			local t = type(statId)
 			if t == "string" then
 				stat = self:GetStatByID(statId, modId)
-			elseif t == "table" and statId.Type == "CustomStatData" then
+			elseif t == "table" and statId.Type == "SheetCustomStatData" then
 				stat = statId
 			elseif t == "number" then
 				stat = self:GetStatByDouble(statId, modId)
@@ -261,7 +261,7 @@ if not isClient then
 	end
 end
 
----@param stat CustomStatData
+---@param stat SheetCustomStatData
 ---@param character EclCharacter|EsvCharacter|UUID|NETID|nil
 ---@return integer
 function CustomStatSystem:GetAvailablePointsForStat(stat, character)

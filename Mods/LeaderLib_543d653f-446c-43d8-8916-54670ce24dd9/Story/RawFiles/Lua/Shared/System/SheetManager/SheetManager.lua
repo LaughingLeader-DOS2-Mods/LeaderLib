@@ -7,6 +7,7 @@ end
 
 SheetManager.__index = SheetManager
 SheetManager.Loaded = false
+
 local isClient = Ext.IsClient()
 
 Ext.Require("Shared/System/SheetManager/Data/SheetDataValues.lua")
@@ -279,6 +280,10 @@ function SheetManager:GetValueByEntry(stat, characterId)
 end
 
 if isClient then
+	if SheetManager.UI == nil then
+		SheetManager.UI = {}
+	end
+
 	---Gets custom sheet data from a generated id.
 	---@param stat SheetAbilityData|SheetStatData|SheetTalentData
 	---@param character EsvCharacter|EclCharacter|string|number

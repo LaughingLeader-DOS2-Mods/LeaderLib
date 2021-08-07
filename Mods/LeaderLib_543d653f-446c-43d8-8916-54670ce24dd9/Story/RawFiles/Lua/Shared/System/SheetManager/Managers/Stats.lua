@@ -476,8 +476,8 @@ if isClient then
 						SecondaryStatTypeInteger = SheetManager.Stats.Data.SecondaryStatType[data.SecondaryStatType] or 0,
 						SpacingHeight = data.SpacingHeight,
 						Icon = data.SheetIcon or "",
-						IconWidth = data.SheetIconWidth or 0,
-						IconHeight = data.SheetIconHeight or 0,
+						IconWidth = data.SheetIconWidth or 28,
+						IconHeight = data.SheetIconHeight or 28,
 						IconClipName = "",
 						IconDrawCallName = ""
 					}

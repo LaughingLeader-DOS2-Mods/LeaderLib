@@ -13,6 +13,7 @@ if Ext.IsDeveloperMode() then
 	AddConsoleVariable("Common", Common)
 	AddConsoleVariable("GameHelpers", GameHelpers)
 	AddConsoleVariable("inspect", Lib.inspect)
+	AddConsoleVariable("serpent", Lib.serpent)
 
 	if not isClient then
 		local host = {}
@@ -279,7 +280,6 @@ if Ext.IsDeveloperMode() then
 			end,
 			__index = function(tbl,k)
 				local ui = Ext.GetUIByType(Data.UIType.characterSheet):GetRoot()
-				print(k)
 				local v = ui[k]
 				if type(v) == "function" then
 					return function(...)

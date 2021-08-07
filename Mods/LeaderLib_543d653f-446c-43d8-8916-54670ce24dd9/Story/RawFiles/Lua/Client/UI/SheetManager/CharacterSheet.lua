@@ -3,6 +3,8 @@
 local CharacterSheet = Classes.UIWrapper:CreateFromType(Data.UIType.characterSheet, {ControllerID = Data.UIType.statsPanel_c, IsControllerSupported = true})
 local self = CharacterSheet
 
+SheetManager.UI.CharacterSheet = CharacterSheet
+
 ---@private
 ---@class SheetUpdateTargets
 local updateTargetsDefaults = {
@@ -18,8 +20,88 @@ local updateTargetsDefaults = {
 ---@type SheetUpdateTargets
 local updateTargets = TableHelpers.Clone(updateTargetsDefaults)
 
+---@param this stats_1
+---@param listHolder string
+---@param id number
+---@param groupID integer|nil
+---@return FlashMovieClip,FlashArray,integer
+local function TryGetMovieClip(this, listHolder, id, groupID)
+	if this == nil then
+		this = CharacterSheet.Root
+		if this then
+			this = this.stats_mc
+		end
+	end
+	if this and not StringHelpers.IsNullOrWhitespace(listHolder) then
+		local holder = this[listHolder]
+		if holder then
+			local list = holder
+			if holder.list then
+				list = holder.list
+			end
+			if groupID ~= nil then
+				for i=0,#list.content_array-1 do
+					local group = list.content_array[i]
+					if group and group.groupId == groupID then
+						list = group.list
+						break
+					end
+				end
+			end
+			if list and list.content_array then
+				local mc = nil
+				local i = 0
+				while i < #list.content_array do
+					local obj = list.content_array[i]
+					if obj and obj.statID == id then
+						mc = obj
+						break
+					end
+					i = i + 1
+				end
+				return mc,list.content_array,i
+			end
+		end
+	end
+end
+
+---@param this stats_1
+---@param listHolder string
+---@param id number
+---@param groupID integer|nil
+---@return FlashMovieClip,FlashArray,integer
+local function TryGetMovieClip_Controller(this, listHolder, id, groupID)
+	--TODO
+	if this == nil then
+		this = CharacterSheet.Root
+		if this then
+			this = this.mainpanel_mc.stats_mc
+		end
+	end
+	return TryGetMovieClip(this, listHolder, id, groupID)
+end
+
+---@param this stats_1
+---@param listHolder string
+---@param id number
+---@param groupID integer|nil
+---@return FlashMovieClip,FlashArray,integer
+CharacterSheet.TryGetMovieClip = function(this, listHolder, id, groupID)
+	local func = TryGetMovieClip
+	if Vars.ControllerEnabled then
+		func = TryGetMovieClip_Controller
+	end
+	local b,result = xpcall(func, debug.traceback, this, listHolder, id, groupID)
+	if not b then
+		fprint(LOGLEVEL.ERROR, "[CharacterSheet.TryGetMovieClip] Error:\n%s", result)
+		return nil
+	end
+	return result
+end
+
 ---@param entry SheetAbilityData|SheetStatData
-local function TryGetEntryMovieClip(entry, this)
+---@return FlashMovieClip,FlashArray,integer
+CharacterSheet.TryGetEntryMovieClip = function(entry, this)
 	if StringHelpers.IsNullOrWhitespace(entry.ListHolder) then
 		if entry.StatType == "PrimaryStat" then
 			entry.ListHolder = "primaryStatList"
@@ -43,36 +125,7 @@ local function TryGetEntryMovieClip(entry, this)
 			entry.ListHolder = "talentHolder_mc"
 		end
 	end
-
-	if not StringHelpers.IsNullOrWhitespace(entry.ListHolder) then
-		local holder = this[entry.ListHolder]
-		if holder then
-			local list = holder
-			if holder.list then
-				list = holder.list
-			end
-			if entry.StatType == "Ability" then
-				for i=0,#list.content_array-1 do
-					local group = list.content_array[i]
-					if group and group.groupId == entry.GroupID then
-						list = group.list
-						break
-					end
-				end
-			end
-			if list and list.content_array then
-				local mc = nil
-				for i=0,#list.content_array-1 do
-					local obj = list.content_array[i]
-					if obj and obj.statID == entry.GeneratedID then
-						mc = obj
-						break
-					end
-				end
-				return list.content_array,mc
-			end
-		end
-	end
+	return CharacterSheet.TryGetMovieClip(this, entry.ListHolder, entry.GeneratedID, entry.GroupID)
 end
 
 local function debugExportStatArrays(this)
@@ -151,60 +204,6 @@ Ext.RegisterUITypeCall(Data.UIType.characterSheet, "selectedTab", function(ui, c
 	
 end, "Before")
 
----@private
----@param ui UIObject
-function CharacterSheet.PreUpdate(ui, method, updateTalents, updateAbilities, updateCivil)
-	updating = true
-	---@type CharacterSheetMainTimeline
-	local this = self.Root
-	local secStat_array = this.secStat_array
-
-	print(Lib.serpent.block(requestedClear))
-
-	--local currentPanelType = panelToTabType[this.stats_mc.currentOpenPanel]
-	for method,b in pairs(requestedClear) do
-		pcall(this[method], true)
-		-- if clearPanelMethods[currentPanelType] ~= method then
-		-- 	pcall(this[method], true)
-		-- end
-	end
-
-	this.justUpdated = true
-
-	--Renaming "Experience" to "Total"
-	-- for i=0,#secStat_array-1,7 do
-	-- 	if not secStat_array[i] then
-	-- 		local label = this.secStat_array[i + 2]
-	-- 		if LocalizedText.Base.Experience:Equals(label) then
-	-- 			secStat_array[i+2] = LocalizedText.Base.Total.Value
-	-- 			break
-	-- 		end
-	-- 	end
-	-- end
-
-	-- for i=0,#this.primStat_array-1 do
-	-- 	print("primStat_array",i,this.primStat_array[i])
-	-- end
-
-	updateTargets.Abilities = #this.ability_array > 0
-	updateTargets.Civil = updateTargets.Abilities and this.ability_array[0] == true
-	updateTargets.Talents = #this.talent_array > 0
-	updateTargets.PrimaryStats = #this.primStat_array > 0
-	updateTargets.SecondaryStats = #this.secStat_array > 0
-	updateTargets.Tags = #this.tags_array > 0
-	updateTargets.CustomStats = #this.customStats_array > 0
-
-	-- if updateTargets.PrimaryStats or updateTargets.SecondaryStats then
-	-- 	this.clearStats(true)
-	-- end
-	-- if updateTargets.Abilities then
-	-- 	this.clearAbilities(true)
-	-- end
-	-- if updateTargets.Talents then
-	-- 	this.clearTalents(true)
-	-- end
-end
-
 local function getParamsValue(params, index, default)
 	if params[index] ~= nil then
 		return params[index]
@@ -215,77 +214,118 @@ end
 
 local targetsUpdated = {}
 
+local function SortLists(this)
+	if not Vars.ControllerEnabled then
+		if targetsUpdated.PrimaryStats or targetsUpdated.SecondaryStats then
+			this.stats_mc.mainStatsList.positionElements()
+		end
+		if targetsUpdated.Talents then
+			this.stats_mc.talentHolder_mc.list.positionElements()
+		end
+		if targetsUpdated.Abilities then
+			this.stats_mc.combatAbilityHolder_mc.list.positionElements()
+			this.stats_mc.recountAbilityPoints(false)
+		end
+		if targetsUpdated.Civil then
+			this.stats_mc.civicAbilityHolder_mc.list.positionElements()
+			this.stats_mc.recountAbilityPoints(true)
+		end
+		if targetsUpdated.CustomStats then
+			this.stats_mc.customStats_mc.positionElements()
+		end
+	else
+		if targetsUpdated.Talents then
+			this.mainpanel_mc.stats_mc.talents_mc.updateDone()
+		end
+		if targetsUpdated.Abilities then
+			if targetsUpdated.Civil then
+				this.mainpanel_mc.stats_mc.civilAbilities_mc.updateDone()
+			else
+				this.mainpanel_mc.stats_mc.combatAbilities_mc.updateDone()
+			end
+		end
+	end
+end
+
 local function GetArrayValues(this,baseChanges,modChanges)
 	local time = Ext.MonotonicTime()
 	local arr = this.primStat_array
 	for i=0,#arr-1,4 do
 		local id = arr[i]
-		local targetTable = modChanges
-		if SheetManager.Stats.Data.Builtin.ID[id] then
-			targetTable = baseChanges
+		if id ~= nil then
+			local targetTable = modChanges
+			if SheetManager.Stats.Data.Builtin.ID[id] then
+				targetTable = baseChanges
+			end
+			targetTable.Stats[id] = {
+				DisplayName = arr[i+1],
+				Value = arr[i+2],
+				TooltipID = arr[i+3],
+				Type = "PrimaryStat",
+				CanAdd = false,
+				CanRemove = false
+			}
 		end
-		targetTable.Stats[id] = {
-			DisplayName = arr[i+1],
-			Value = arr[i+2],
-			TooltipID = arr[i+3],
-			Type = "PrimaryStat",
-			CanAdd = false,
-			CanRemove = false
-		}
 	end
 	arr = this.secStat_array
 	for i=0,#arr-1,7 do
 		--Not spacing
 		if not arr[i] then
 			local id = arr[i+4]
-			local targetTable = modChanges
-			if SheetManager.Stats.Data.Builtin.ID[id] then
-				targetTable = baseChanges
+			if id ~= nil then
+				local targetTable = modChanges
+				if SheetManager.Stats.Data.Builtin.ID[id] then
+					targetTable = baseChanges
+				end
+				targetTable.Stats[id] = {
+					DisplayName = arr[i+2],
+					Value = arr[i+3],
+					StatType = arr[i+1],
+					Frame = arr[i+5],
+					BoostValue = arr[i+6],
+					Type = "SecondaryStat",
+					CanAdd = false,
+					CanRemove = false
+				}
 			end
-			targetTable.Stats[id] = {
-				DisplayName = arr[i+2],
-				Value = arr[i+3],
-				StatType = arr[i+1],
-				Frame = arr[i+5],
-				BoostValue = arr[i+6],
-				Type = "SecondaryStat",
-				CanAdd = false,
-				CanRemove = false
-			}
 		end
 	end
 	arr = this.talent_array
 	for i=0,#arr-1,3 do
 		local id = arr[i+1]
-		local targetTable = modChanges
-		if Data.Talents[id] then
-			targetTable = baseChanges
+		if id ~= nil then
+			local targetTable = modChanges
+			if Data.Talents[id] then
+				targetTable = baseChanges
+			end
+			targetTable.Talents[id] = {
+				DisplayName = arr[i],
+				State = arr[i+2],
+				CanAdd = false,
+				CanRemove = false
+			}
 		end
-		targetTable.Talents[id] = {
-			DisplayName = arr[i],
-			State = arr[i+2],
-			CanAdd = false,
-			CanRemove = false
-		}
 	end
 	arr = this.ability_array
 	for i=0,#arr-1,7 do
 		local id = arr[i+2]
-		local targetTable = modChanges
-		if Data.Ability[id] then
-			targetTable = baseChanges
+		if id ~= nil then
+			local targetTable = modChanges
+			if Data.Ability[id] then
+				targetTable = baseChanges
+			end
+			local isCivil = arr[i] == true
+			targetTable.Abilities[id] = {
+				IsCivil = isCivil,
+				DisplayName = arr[i+3],
+				Value = arr[i+4],
+				GroupID = arr[i+1],
+				AddPointsTooltip = arr[i+5],
+				RemovePointsTooltip = arr[i+6],
+				CanAdd = false,
+				CanRemove = false
+			}
 		end
-		local isCivil = arr[i] == true
-		targetTable.Abilities[id] = {
-			IsCivil = isCivil,
-			DisplayName = arr[i+3],
-			Value = arr[i+4],
-			GroupID = arr[i+1],
-			AddPointsTooltip = arr[i+5],
-			RemovePointsTooltip = arr[i+6],
-			CanAdd = false,
-			CanRemove = false
-		}
 	end
 	arr = this.lvlBtnStat_array
 	for i=0,#arr-1,3 do
@@ -348,30 +388,85 @@ local function GetArrayValues(this,baseChanges,modChanges)
 	fprint(LOGLEVEL.DEFAULT, "Took (%s)ms to parse character sheet arrays.", Ext.MonotonicTime() - time)
 end
 
----@private
----@param ui UIObject
-function CharacterSheet.Update(ui, method)
-	---@type CharacterSheetMainTimeline
-	local this = self.Root
-	PrintDebug("CharacterSheet.Update", method, Lib.inspect(updateTargets))
-	if not this or this.isExtended ~= true then
-		return
-	end
-
-	local player = CustomStatSystem:GetCharacter(ui, this)
+local function ParseArrayValues(this, skipSort)
 
 	local modChanges = {Stats = {},Abilities = {},Talents = {}}
 	local baseChanges = {Stats = {},Abilities = {},Talents = {}}
 
 	pcall(GetArrayValues, this, baseChanges, modChanges)
 
-	-- if method == "setAvailableCombatAbilityPoints" then
-	-- 	availableCombatPoints[id] = amount
-	-- 	setAvailablePoints[id] = true
-	-- elseif method == "setAvailableCivilAbilityPoints" then
-	-- 	availableCivilPoints[id] = amount
-	-- 	setAvailablePoints[id] = true
-	-- end
+	print("baseChanges",Lib.serpent.dump(baseChanges))
+	print("modChanges",Lib.serpent.dump(modChanges))
+
+	for id,entry in pairs(modChanges.Stats) do
+		if entry.Type == "PrimaryStat" then
+			targetsUpdated.PrimaryStats = true
+			if not Vars.ControllerEnabled then
+				this.stats_mc.addPrimaryStat(id, entry.DisplayName, entry.Value, entry.TooltipID, entry.CanAdd, entry.CanRemove)
+			end
+		else
+			targetsUpdated.SecondaryStats = true
+			if not Vars.ControllerEnabled then
+				this.stats_mc.addSecondaryStat(entry.StatType, entry.DisplayName, entry.Value, id, entry.Frame or 0, entry.BoostValue, entry.CanAdd, entry.CanRemove)
+			end
+		end
+	end
+
+	for id,entry in pairs(modChanges.Talents) do
+		targetsUpdated.Talents = true
+		if not Vars.ControllerEnabled then
+			this.stats_mc.addTalent(entry.DisplayName, id, entry.State, entry.CanAdd, entry.CanRemove)
+		else
+			this.mainpanel_mc.stats_mc.talents_mc.addTalent(entry.DisplayName, id, entry.State, entry.CanAdd, entry.CanRemove)
+		end
+	end
+
+	for id,entry in pairs(modChanges.Abilities) do
+		if entry.IsCivil then
+			targetsUpdated.Civil = true
+		else
+			targetsUpdated.Abilities = true
+		end
+		if not Vars.ControllerEnabled then
+			this.stats_mc.addAbility(entry.IsCivil, entry.GroupID, id, entry.DisplayName, entry.Value, entry.AddPointsTooltip, entry.RemovePointsTooltip, entry.CanAdd, entry.CanRemove)
+		end
+	end
+
+	if skipSort ~= true then
+		SortLists(this)
+	end
+end
+
+---@private
+---@param ui UIObject
+function CharacterSheet.Update(ui, method, updateTalents, updateAbilities, updateCivil)
+	updating = true
+	---@type CharacterSheetMainTimeline
+	local this = self.Root
+
+	if not this or this.isExtended ~= true then
+		return
+	end
+
+	--local currentPanelType = panelToTabType[this.stats_mc.currentOpenPanel]
+	for method,b in pairs(requestedClear) do
+		pcall(this[method], true)
+		-- if clearPanelMethods[currentPanelType] ~= method then
+		-- 	pcall(this[method], true)
+		-- end
+	end
+
+	local player = CustomStatSystem:GetCharacter(ui, this)
+
+	this.justUpdated = true
+
+	updateTargets.Abilities = #this.ability_array > 0
+	updateTargets.Civil = updateTargets.Abilities and this.ability_array[0] == true
+	updateTargets.Talents = #this.talent_array > 0
+	updateTargets.PrimaryStats = #this.primStat_array > 0
+	updateTargets.SecondaryStats = #this.secStat_array > 0
+	updateTargets.Tags = #this.tags_array > 0
+	updateTargets.CustomStats = #this.customStats_array > 0
 
 	---@type SheetUpdateTargets
 	targetsUpdated = TableHelpers.Clone(updateTargetsDefaults)
@@ -380,12 +475,12 @@ function CharacterSheet.Update(ui, method)
 	if updateTargets.PrimaryStats or updateTargets.SecondaryStats then
 		--this.clearStats()
 		for stat in SheetManager.Stats.GetVisible(player, false, isGM) do
-			local arrayData = modChanges.Stats[stat.ID]
-			if arrayData then
-				if arrayData.Value ~= stat.Value then
-					fprint(LOGLEVEL.WARNING, "Stat value differs from the array value Lua(%s) <=> Array(%s)", stat.Value, arrayData.Value)
-				end
-			end
+			-- local arrayData = modChanges.Stats[stat.ID]
+			-- if arrayData then
+			-- 	if arrayData.Value ~= stat.Value then
+			-- 		fprint(LOGLEVEL.WARNING, "Stat value differs from the array value Lua(%s) <=> Array(%s)", stat.Value, arrayData.Value)
+			-- 	end
+			-- end
 			if not Vars.ControllerEnabled then
 				if stat.StatType == SheetManager.Stats.Data.StatType.PrimaryStat then
 					targetsUpdated.PrimaryStats = true
@@ -407,18 +502,6 @@ function CharacterSheet.Update(ui, method)
 			else
 				--TODO
 				--this.mainpanel_mc.stats_mc.addPrimaryStat(stat.ID, stat.DisplayName, stat.Value, stat.TooltipID, canAdd, canRemove, stat.IsCustom)
-			end
-		end
-		for id,entry in pairs(modChanges.Stats) do
-			if entry.Type == "PrimaryStat" then
-				targetsUpdated.PrimaryStats = true
-				if not Vars.ControllerEnabled then
-					this.stats_mc.addPrimaryStat(id, entry.DisplayName, entry.Value, entry.TooltipID, entry.CanAdd, entry.CanRemove)
-				end
-			else
-				if not Vars.ControllerEnabled then
-					this.stats_mc.addSecondaryStat(entry.StatType, entry.DisplayName, entry.Value, id, entry.Frame, entry.BoostValue, entry.CanAdd, entry.CanRemove)
-				end
 			end
 		end
 	end
@@ -448,16 +531,10 @@ function CharacterSheet.Update(ui, method)
 		--this.clearAbilities()
 		for ability in SheetManager.Abilities.GetVisible(player, updateTargets.Civil, false, isGM) do
 			this.stats_mc.addAbility(ability.IsCivil, ability.GroupID, ability.ID, ability.DisplayName, ability.Value, ability.AddPointsTooltip, ability.RemovePointsTooltip, ability.CanAdd, ability.CanRemove, ability.IsCustom)
-			targetsUpdated.Abilities = true
-			targetsUpdated.Civil = updateTargets.Civil
-		end
-		for id,entry in pairs(modChanges.Abilities) do
-			targetsUpdated.Abilities = true
-			targetsUpdated.Civil = updateTargets.Civil
-			if not Vars.ControllerEnabled then
-				this.stats_mc.addAbility(entry.IsCivil, entry.GroupID, id, entry.DisplayName, entry.Value, entry.AddPointsTooltip, entry.RemovePointsTooltip, entry.CanAdd, entry.CanRemove)
+			if ability.IsCivil then
+				targetsUpdated.Civil = true
 			else
-				
+				targetsUpdated.Abilities = true
 			end
 		end
 		--this.stats_mc.addAbility(false, 1, 77, "Test Ability", "0", "", "", false, false, true)
@@ -468,44 +545,10 @@ function CharacterSheet.Update(ui, method)
 		CustomStatSystem.Update(ui, method, this)
 		targetsUpdated.CustomStats = true
 	end
-
-	if not Vars.ControllerEnabled then
-		if targetsUpdated.PrimaryStats or targetsUpdated.SecondaryStats then
-			this.stats_mc.mainStatsList.positionElements()
-		end
-		if targetsUpdated.Talents then
-			this.stats_mc.talentHolder_mc.list.positionElements()
-		end
-		if targetsUpdated.Abilities then
-			if targetsUpdated.Civil then
-				this.stats_mc.civicAbilityHolder_mc.list.positionElements()
-				this.stats_mc.recountAbilityPoints(true)
-			else
-				this.stats_mc.combatAbilityHolder_mc.list.positionElements()
-				this.stats_mc.recountAbilityPoints(false)
-			end
-		end
-		if targetsUpdated.CustomStats then
-			this.stats_mc.customStats_mc.positionElements()
-		end
-	else
-		if targetsUpdated.Talents then
-			this.mainpanel_mc.stats_mc.talents_mc.updateDone()
-		end
-		if targetsUpdated.Abilities then
-			if targetsUpdated.Civil then
-				this.mainpanel_mc.stats_mc.civilAbilities_mc.updateDone()
-			else
-				this.mainpanel_mc.stats_mc.combatAbilities_mc.updateDone()
-			end
-		end
-	end
-
-	this.stats_mc.resetScrollBarsPositions()
-	this.stats_mc.resetListPositions()
-	this.stats_mc.recheckScrollbarVisibility()
 end
 
+---@private
+---@param ui UIObject
 function CharacterSheet.PostUpdate(ui, method)
 	---@type CharacterSheetMainTimeline
 	local this = self.Root
@@ -514,6 +557,26 @@ function CharacterSheet.PostUpdate(ui, method)
 		return
 	end
 
+	local player = CustomStatSystem:GetCharacter(ui, this)
+
+	SortLists(this)
+
+	this.stats_mc.resetScrollBarsPositions()
+	this.stats_mc.resetListPositions()
+	this.stats_mc.recheckScrollbarVisibility()
+end
+
+---@private
+function CharacterSheet.UpdateComplete(ui, method)
+	---@type CharacterSheetMainTimeline
+	local this = self.Root
+	PrintDebug("CharacterSheet.Update", method, Lib.inspect(updateTargets))
+	if not this or this.isExtended ~= true then
+		return
+	end
+
+	ParseArrayValues(this, false)
+
 	this.justUpdated = false
 	targetsUpdated = {}
 	updating = false
@@ -521,9 +584,9 @@ function CharacterSheet.PostUpdate(ui, method)
 	this.clearArray("update")
 end
 
-Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem", CharacterSheet.PreUpdate, "Before")
-Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem", CharacterSheet.Update, "After")
-Ext.RegisterUITypeCall(Data.UIType.characterSheet, "characterSheetUpdateDone", CharacterSheet.PostUpdate)
+Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem", CharacterSheet.Update, "Before")
+Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem", CharacterSheet.PostUpdate, "After")
+Ext.RegisterUITypeCall(Data.UIType.characterSheet, "characterSheetUpdateDone", CharacterSheet.UpdateComplete)
 --Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "changeSecStatCustom", function(...) CharacterSheet:ValueChanged("SecondaryStat", ...))
 
 Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setTitle", function(ui, method)
@@ -538,28 +601,22 @@ Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setTitle", functio
 end)
 Ext.RegisterUITypeCall(Data.UIType.statsPanel_c, "characterSheetUpdateDone", CharacterSheet.Update)
 
-Ext.RegisterUITypeCall(Data.UIType.characterSheet, "entryAdded", function(ui, call, isCustom, statID, listProperty)
+--local mc = sheet.stats_mc.resistanceStatList.content_array[8]; print(mc.statID, mc.texts_mc.label_txt.htmlText)
+--for i=5,9 do local mc = sheet.stats_mc.resistanceStatList.content_array[i]; print(mc.statID, mc.texts_mc.label_txt.htmlText) end
+
+Ext.RegisterUITypeCall(Data.UIType.characterSheet, "entryAdded", function(ui, call, isCustom, statID, listProperty, groupID)
 	--print(call, isCustom, statID, listProperty)
 	if isCustom then
 		local stat = SheetManager:GetStatByGeneratedID(statID)
 		if stat then
 			stat.ListHolder = listProperty
-			local arr,mc = TryGetEntryMovieClip(stat, ui:GetRoot())
-			if mc then
-				mc.customID = stat.ID
-				mc.customMod = stat.Mod
-			end
+			-- local this = CharacterSheet.Root.stats_mc
+			-- local mc,arr,index = TryGetEntryMovieClip(stat, this)
+			-- if mc then
+			-- 	mc.customID = stat.ID
+			-- 	mc.customMod = stat.Mod
+			-- end
 		end
-	else
-		-- local this = CharacterSheet.Root
-		-- local arr = this.stats_mc[listProperty].list.content_array
-		-- for i=0,#arr-1 do
-		-- 	local mc = arr[i]
-		-- 	if mc.statID == statID then
-		-- 		mc.visible = true
-		-- 		break
-		-- 	end
-		-- end
 	end
 end)
 
@@ -585,9 +642,9 @@ SheetManager:RegisterEntryChangedListener("All", function(id, entry, character, 
 		local defaultCanAdd = (entry.UsePoints and points > 0) or GameHelpers.Client.IsGameMaster(CharacterSheet.Instance, this)
 
 		this = this.stats_mc
-		local content_array,mc = TryGetEntryMovieClip(entry, this)
-		fprint(LOGLEVEL.TRACE, "Entry[%s](%s) statID(%s) ListHolder(%s) content_array(%s) mc(%s)", entry.StatType, id, entry.GeneratedID, entry.ListHolder, content_array, mc)
-		if content_array and mc then
+		local mc,arr,index = CharacterSheet.TryGetEntryMovieClip(entry, this)
+		--fprint(LOGLEVEL.TRACE, "Entry[%s](%s) statID(%s) ListHolder(%s) arr(%s) mc(%s)", entry.StatType, id, entry.GeneratedID, entry.ListHolder, arr, mc)
+		if arr and mc then
 			local plusVisible = SheetManager:GetIsPlusVisible(entry, character, defaultCanAdd, value)
 			local minusVisible = SheetManager:GetIsMinusVisible(entry, character, defaultCanAdd, value)
 

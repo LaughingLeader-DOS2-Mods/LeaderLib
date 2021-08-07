@@ -6,6 +6,7 @@ local lastTooltipX = nil
 local lastTooltipY = nil
 self.LastIconId = 1212
 self.TooltipValueEnabled = {}
+self.Syncing = false
 self.MaxVisibleValue = 999 -- Values greater than this are truncated visually in the UI
 
 ---Called when a stat movieclip is added or updated in the UI.
@@ -186,7 +187,7 @@ function CustomStatSystem.Update(ui, method, this)
 
 			for i=1,#sortList do
 				local entry = sortList[i]
-				this.stats_mc.customStats_mc.addCustomStat(entry.Handle, entry.DisplayName, entry.Value, entry.GroupId, self:GetCanAddPoints(ui, entry.Handle), self:GetCanRemovePoints(ui, entry.Handle), true)
+				this.stats_mc.customStats_mc.addCustomStat(entry.Handle, entry.DisplayName, entry.Value, entry.GroupId, self:GetCanAddPoints(ui, entry.Handle), self:GetCanRemovePoints(ui, entry.Handle), false)
 			end
 	
 			-- local arrayIndex = 0
@@ -339,12 +340,18 @@ Ext.RegisterUITypeCall(Data.UIType.characterSheet, "removeCustomStat", function(
 
 --Story mode changes so custom stats don't use the custom stats system, since they get added to every character apparently
 Ext.RegisterUITypeCall(Data.UIType.characterSheet, "minusCustomStatCustom", function(ui, call, statId)
+	if CustomStatSystem.Syncing == true then
+		return
+	end
 	local stat = CustomStatSystem:GetStatByDouble(statId)
 	if stat then
 		stat:ModifyValue(Client:GetCharacter(), -1)
 	end
 end)
 Ext.RegisterUITypeCall(Data.UIType.characterSheet, "plusCustomStatCustom", function(ui, call, statId)
+	if CustomStatSystem.Syncing == true then
+		return
+	end
 	local stat = CustomStatSystem:GetStatByDouble(statId)
 	if stat then
 		stat:ModifyValue(Client:GetCharacter(), 1)

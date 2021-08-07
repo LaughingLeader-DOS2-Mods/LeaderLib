@@ -6,30 +6,16 @@ local STAT_DISPLAY_MODE = {
 	Percentage = "Percentage"
 }
 
----@class CustomStatData:CustomStatDataBase
-local CustomStatData = {
-	Type="CustomStatData",
+---@class SheetCustomStatData:SheetCustomStatBase
+local SheetCustomStatData = {
+	Type="SheetCustomStatData",
 	StatType = "Custom",
-	ID = "",
-	---@type UUID
-	UUID = "",
-	---@type MOD_UUID
-	Mod = "",
-	DisplayName = "",
-	Description = "",
-	Icon = "",
-	IconWidth = 128,
-	IconHeight = 128,
-	Visible = true,
-	---@type CustomStatTooltipType
-	TooltipType = "Stat",
 	---If true, the custom stat is created automatically on the server.
 	Create = false,
 	---A category ID this stat belongs to, if any.
 	Category = "",
-	---The generated double the game creates for the stat on the client side.
-	---@type number
-	Double = nil,
+	---A generated ID assigned by the SheetManager, used to associate a stat in the UI with this data. In GM mode, this is also the double handle.
+	GeneratedID = -1,
 	---An ID to use for a common pool of available points.
 	PointID = "",
 	---@private
@@ -44,15 +30,51 @@ local CustomStatData = {
 	STAT_DISPLAY_MODE = STAT_DISPLAY_MODE,
 	---If set, the add button logic will check the current amount against this value when determining if the stat can be added to.
 	---@type integer
-	MaxAmount = nil
+	MaxAmount = nil,
+	---Text to append to the value display, such as a percentage sign.
+	Suffix = "",
+	AutoAddAvailablePointsOnRemove = true,
 }
 
-CustomStatData.__index = function(t,k)
-	local v = Classes.CustomStatData[k] or Classes.CustomStatDataBase[k]
+SheetCustomStatData.__index = function(t,k)
+	local v = Classes.SheetCustomStatData[k] or Classes.SheetCustomStatBase[k]
 	if v then
 		t[k] = v
 	end
 	return v
+end
+
+local defaults = {
+	Create = SheetCustomStatData.Create,
+	Category = SheetCustomStatData.Category,
+	GeneratedID = SheetCustomStatData.GeneratedID,
+	PointID = SheetCustomStatData.PointID,
+	LastValue = {},
+	AvailablePoints = {},
+	DisplayMode = SheetCustomStatData.DisplayMode,
+	MaxAmount = SheetCustomStatData.MaxAmount,
+	Suffix = SheetCustomStatData.Suffix,
+	AutoAddAvailablePointsOnRemove = SheetCustomStatData.AutoAddAvailablePointsOnRemove,
+}
+
+local ID_MAP = 0
+
+---@protected
+function SheetCustomStatData.SetDefaults(data)
+	Classes.SheetCustomStatBase.SetDefaults(data)
+	for k,v in pairs(defaults) do
+		if data[k] == nil then
+			if type(v) == "table" then
+				data[k] = {}
+			else
+				data[k] = v
+			end
+		end
+	end
+	if not CustomStatSystem:GMStatsEnabled() then
+		data.GeneratedID = ID_MAP
+		ID_MAP = ID_MAP + 1
+	end
 end
 
 local canUseRawFunctions = Ext.Version() >= 55
@@ -72,50 +94,13 @@ Classes.UnregisteredCustomStatData = {
 				return v
 			end
 		end
-		return Classes.CustomStatData[k] or Classes.CustomStatDataBase[k]
+		return Classes.SheetCustomStatData[k] or Classes.SheetCustomStatBase[k]
 	end
 }
-
-local defaults = {
-	ID = "",
-	UUID = "",
-	Mod = "",
-	DisplayName = "",
-	Description = "",
-	Icon = "",
-	Visible = true,
-	TooltipType = "Stat",
-	Create = false,
-	Category = "",
-	Double = nil,
-	PointID = "",
-	LastValue = {},
-	AvailablePoints = {},
-	--DisplayValueInTooltip = false -- Should be nil by default if not set by user
-}
-
-local ID_MAP = 0
-
----@protected
-function CustomStatData.SetDefaults(data)
-	for k,v in pairs(defaults) do
-		if data[k] == nil then
-			if type(v) == "table" then
-				data[k] = {}
-			else
-				data[k] = v
-			end
-		end
-	end
-	if CustomStatSystem:GMStatsEnabled() then
-		data.Double = ID_MAP
-		ID_MAP = ID_MAP + 1
-	end
-end
 
 ---@param character UUID|NETID|EsvCharacter|EclCharacter
 ---@return integer
-function CustomStatData:GetValue(character)
+function SheetCustomStatData:GetValue(character)
 	if type(character) == "userdata" then
 		return CustomStatSystem:GetStatValueForCharacter(character, self)
 	else
@@ -129,7 +114,7 @@ end
 
 ---@param character UUID|NETID|EsvCharacter|EclCharacter
 ---@return integer|boolean Returns false if it's never been set.
-function CustomStatData:GetLastValue(character)
+function SheetCustomStatData:GetLastValue(character)
 	local characterId = character
 	if not isClient then
 		characterId = GameHelpers.GetUUID(character)
@@ -144,7 +129,7 @@ local STAT_VALUE_MAX = 2147483647
 ---[SERVER]
 ---@param character EsvCharacter|string|number
 ---@param value integer
-function CustomStatData:SetValue(character, value)
+function SheetCustomStatData:SetValue(character, value)
 	if value > STAT_VALUE_MAX then
 		value = STAT_VALUE_MAX
 	end
@@ -155,18 +140,18 @@ end
 ---Adds an amount to the value. Can be negative.
 ---@param character EsvCharacter|string|number
 ---@param amount integer
-function CustomStatData:ModifyValue(character, amount)
+function SheetCustomStatData:ModifyValue(character, amount)
 	return self:SetValue(character, self:GetValue(character) + amount)
 end
 
 ---[SERVER]
 ---@param character EsvCharacter|string|number
 ---@param amount integer
-function CustomStatData:AddAvailablePoints(character, amount)
+function SheetCustomStatData:AddAvailablePoints(character, amount)
 	if not isClient then
 		return CustomStatSystem:AddAvailablePoints(character, self, amount)
 	else
-		fprint(LOGLEVEL.WARNING, "[CustomStatData:AddAvailablePoints(%s, %s, %s)] [WARNING] - This function is server-side only!", self.ID, character, amount)
+		fprint(LOGLEVEL.WARNING, "[SheetCustomStatData:AddAvailablePoints(%s, %s, %s)] [WARNING] - This function is server-side only!", self.ID, character, amount)
 	end
 end
 
@@ -174,7 +159,7 @@ end
 ---Server-side uses MyGuid for the character, client-side uses NetID.
 ---@param character EsvCharacter|EclCharacter|UUID|NETID
 ---@return integer
-function CustomStatData:GetAvailablePoints(character)
+function SheetCustomStatData:GetAvailablePoints(character)
 	if isClient then
 		return self.AvailablePoints[GameHelpers.GetNetID(character)]
 	else
@@ -185,7 +170,7 @@ end
 ---@protected
 ---Sets the stat's last value for a character.
 ---@param character EsvCharacter|EclCharacter|UUID|NETID
-function CustomStatData:UpdateLastValue(character)
+function SheetCustomStatData:UpdateLastValue(character)
 	local characterId = character
 	if not isClient then
 		characterId = GameHelpers.GetUUID(character)
@@ -195,11 +180,11 @@ function CustomStatData:UpdateLastValue(character)
 	local value = self:GetValue(type(character) == "userdata" and character or characterId)
 	if value then
 		if Vars.DebugMode and Vars.Print.CustomStats then
-			fprint(LOGLEVEL.WARNING, "[CustomStatData:UpdateLastValue:%s] Set LastValue for (%s) to (%s) [%s]", self.Type, characterId, value, Ext.IsServer() and "SERVER" or "CLIENT")
+			fprint(LOGLEVEL.WARNING, "[SheetCustomStatData:UpdateLastValue:%s] Set LastValue for (%s) to (%s) [%s]", self.Type, characterId, value, Ext.IsServer() and "SERVER" or "CLIENT")
 		end
 		self.LastValue[characterId] = value
 	end
 end
 
---setmetatable(CustomStatData, CustomStatData)
-Classes.CustomStatData = CustomStatData
+--setmetatable(SheetCustomStatData, SheetCustomStatData)
+Classes.SheetCustomStatData = SheetCustomStatData

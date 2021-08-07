@@ -1,6 +1,6 @@
 local isClient = Ext.IsClient()
 
----@class SheetBaseData:SheetBaseDataBase
+---@class SheetBaseData
 local SheetBaseData = {
 	Type="SheetBaseData",
 	TooltipType = "Stat",
@@ -10,7 +10,6 @@ local SheetBaseData = {
 	DisplayName = "",
 	Description = "",
 	Visible = true,
-	Value = 0,
 	---@type integer If set, this is the sort value number to use when the list of stats get sorted for display.
 	SortValue = nil,
 	---@type string If set, this is the name to use instead of DisplayName when the list of stats get sorted for display. 
@@ -26,21 +25,28 @@ local SheetBaseData = {
 	Suffix = "",
 	---Whether  this entry uses character points, such as Attribute/Ability/Talent points.
 	UsePoints = false,
+	Icon = "",
+	IconWidth = 128,
+	IconHeight = 128,
 }
 
 local defaults = {
-	ID = "",
-	Mod = "",
-	DisplayName = "",
-	Description = "",
-	Icon = "",
+	TooltipType = SheetBaseData.TooltipType,
+	ID = SheetBaseData.ID,
+	Mod = SheetBaseData.Mod,
+	DisplayName = SheetBaseData.DisplayName,
+	Description = SheetBaseData.Description,
+	Visible = SheetBaseData.Visible,
+	SortValue = SheetBaseData.SortValue,
+	SortName = SheetBaseData.SortName,
+	LoadStringKey = SheetBaseData.LoadStringKey,
+	GeneratedID = SheetBaseData.GeneratedID,
+	BoostAttribute = SheetBaseData.BoostAttribute,
+	Suffix = SheetBaseData.Suffix,
+	UsePoints = SheetBaseData.UsePoints,
+	Icon = SheetBaseData.Icon,
 	IconWidth = SheetBaseData.IconWidth,
-	IconHeight = SheetBaseData.IconHeight,
-	Visible = true,
-	GeneratedID = -1,
-	BoostAttribute = "",
-	Suffix = "",
-	UsePoints = false,
+	IconHeight = SheetBaseData.IconWidth,
 }
 
 ---@protected

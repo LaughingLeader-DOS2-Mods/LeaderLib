@@ -147,14 +147,10 @@ local STAT_VALUE_MAX = 2147483647
 ---@param character EsvCharacter|string|number
 ---@param value integer
 function CustomStatData:SetValue(character, value)
-	if not isClient then
-		if value > STAT_VALUE_MAX then
-			value = STAT_VALUE_MAX
-		end
-		return CustomStatSystem:SetStat(character, self.ID, value, self.Mod)
+	if value > STAT_VALUE_MAX then
+		value = STAT_VALUE_MAX
 	end
-	fprint(LOGLEVEL.WARNING, "[CustomStatData:SetValue(%s, %s)] This function only works on the server-side.", self.ID, value)
-	return false
+	return CustomStatSystem:SetStat(character, self.ID, value, self.Mod)
 end
 
 ---[SERVER]
@@ -162,11 +158,7 @@ end
 ---@param character EsvCharacter|string|number
 ---@param amount integer
 function CustomStatData:ModifyValue(character, amount)
-	if not isClient then
-		return CustomStatSystem:ModifyStat(character, self.ID, amount, self.Mod)
-	end
-	fprint(LOGLEVEL.WARNING, "[CustomStatData:ModifyValue(%s, %s)] This function only works on the server-side.", self.ID, amount)
-	return false
+	return self:SetValue(character, self:GetValue(character) + amount)
 end
 
 ---[SERVER]

@@ -100,10 +100,15 @@ package characterSheet_fla
 			//ExternalInterface.call("createCustomStatGroups");
 		}
 		
-		public function setGameMasterMode(isGM:Boolean) : *
+		public function setGameMasterMode(isGM:Boolean = false) : *
 		{
 			this.list.setFrame(328,!!isGM?Number(this.create_mc.y):Number(735));
 			this.create_mc.visible = isGM;
+
+			for each(var cstat_mc:CustomStat in stats_array) {
+				cstat_mc.edit_mc.visible = !cstat_mc.isCustom && isGM;
+				cstat_mc.delete_mc.visible = !cstat_mc.isCustom && isGM;
+			}
 		}
 
 		public function OnGroupClicked(group_mc:StatCategory) : *

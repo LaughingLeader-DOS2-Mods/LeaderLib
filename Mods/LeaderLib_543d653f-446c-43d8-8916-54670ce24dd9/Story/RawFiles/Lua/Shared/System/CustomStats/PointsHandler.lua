@@ -135,6 +135,46 @@ function CustomStatSystem:SetAvailablePoints(character, statId, amount, skipSync
 	end
 end
 
+---@param character EsvCharacter|UUID|EclCharacter|NETID
+---@param statId string A stat id.
+---@param amount integer The amount to modify the stat by.
+---@param mod string|nil A mod UUID to use when fetching the stat by ID.
+function CustomStatSystem:ModifyStat(character, statId, amount, mod)
+	return self:SetStat(character, statId, self:GetStatValueForCharacter(character, statId, mod) + amount, mod)
+end
+
+---@param character EsvCharacter|UUID|NETID
+---@param statId string A stat id.
+---@param value integer The value to set the stat to.
+---@param mod string|nil A mod UUID to use when fetching the stat by ID.
+function CustomStatSystem:SetStat(character, statId, value, mod)
+	if not isClient then
+		if type(character) ~= "userdata" then
+			character = GameHelpers.GetCharacter(character)
+		end
+		if character then
+			local stat = self:GetStatByID(statId, mod)
+			if stat then
+				if self:GMStatsEnabled() then
+					if StringHelpers.IsNullOrWhitespace(stat.UUID) then
+						stat.UUID = Ext.CreateCustomStat(stat.DisplayName, stat.Description)
+					end
+					character:SetCustomStat(stat.UUID, value)
+				else
+					CustomStatSystem:SetStatValueOnCharacter(character, stat, value)
+				end
+				return true
+			else
+				error(string.format("Stat does not exist. statId(%s) mod(%s)", statId or "nil", mod or ""), 2)
+			end
+		else
+			error(string.format("Failed to get character from (%s)", character or ""), 2)
+		end
+	else
+		self:RequestValueChange(character, statId, value, mod)
+	end
+end
+
 if not isClient then
 	Ext.RegisterNetListener("LeaderLib_CustomStatSystem_AvailablePointsChanged", function(cmd, payload)
 		local data = Common.JsonParse(payload)
@@ -152,48 +192,9 @@ if not isClient then
 		end
 	end)
 
-	local statChanges = {}
-	local function AggregateStatChanges(data)
-		if statChanges[data.NetID] == nil then
-			statChanges[data.NetID] = {}
-		end
-		for _,v in pairs(data.Stats) do
-			if v.Mod then
-				if statChanges[data.NetID][v.Mod] == nil then
-					statChanges[data.NetID][v.Mod] = {}
-				end
-				statChanges[data.NetID][v.Mod][v.ID] = true
-			end
-		end
-		Timer.StartOneshot("CustomStatSystem_InvokeChangedListener", 10, function()
-			for netid,data in pairs(statChanges) do
-				local character = Ext.GetCharacter(netid)
-				if not character then
-					fprint(LOGLEVEL.ERROR, "[LeaderLib:CustomStatSystem_InvokeChangedListener] Failed to get character with NetID(%s)", netid)
-				else
-					for mod,stats in pairs(data) do
-						for id,b in pairs(stats) do
-							local stat = CustomStatSystem:GetStatByID(id, mod)
-							if stat then
-								local val = stat:GetValue(character)
-								local last = stat:GetLastValue(character)
-								if not last or last ~= val then
-									CustomStatSystem:InvokeStatValueChangedListeners(stat, character, last or 0, val)
-									stat:UpdateLastValue(character)
-								end
-							end
-						end
-					end
-				end
-			end
-			statChanges = {}
-		end)
-	end
-
 	Ext.RegisterNetListener("LeaderLib_CustomStatSystem_StatValuesChanged", function(cmd, payload)
 		local data = Common.JsonParse(payload)
 		if data then
-			--AggregateStatChanges(data)
 			local character = Ext.GetCharacter(data.NetID)
 			for _,v in pairs(data.Stats) do
 				local stat = CustomStatSystem:GetStatByID(v.ID, v.Mod)
@@ -253,63 +254,6 @@ if not isClient then
 			end)
 		else
 			error(string.format("Invalid parameters character(%s) characterId(%s) statId(%s) amount(%s)", tostring(character), tostring(characterId), tostring(statId), tostring(amount)), 1)
-		end
-	end
-
-	---@param character EsvCharacter|UUID|NETID
-	---@param statId string A stat id.
-	---@param amount integer The amount to modify the stat by.
-	---@param mod string|nil A mod UUID to use when fetching the stat by ID.
-	function CustomStatSystem:ModifyStat(character, statId, amount, mod)
-		if type(character) ~= "userdata" then
-			character = Ext.GetCharacter(character)
-		end
-		if character then
-			local stat = self:GetStatByID(statId, mod)
-			if stat then
-				local current = stat:GetValue(character)
-				if self:GMStatsEnabled() then
-					if StringHelpers.IsNullOrWhitespace(stat.UUID) then
-						stat.UUID = Ext.CreateCustomStat(stat.DisplayName, stat.Description)
-					end
-					character:SetCustomStat(stat.UUID, current + amount)
-				else
-					CustomStatSystem:SetStatValueOnCharacter(character, stat, current + amount)
-				end
-				return true
-			else
-				error(string.format("Stat does not exist. statId(%s) mod(%s)", statId or "nil", mod or ""), 2)
-			end
-		else
-			error(string.format("Failed to get character from (%s)", character or ""), 2)
-		end
-	end
-
-	---@param character EsvCharacter|UUID|NETID
-	---@param statId string A stat id.
-	---@param amount integer The value to set the stat to.
-	---@param mod string|nil A mod UUID to use when fetching the stat by ID.
-	function CustomStatSystem:SetStat(character, statId, amount, mod)
-		if type(character) ~= "userdata" then
-			character = Ext.GetCharacter(character)
-		end
-		if character then
-			local stat = self:GetStatByID(statId, mod)
-			if stat then
-				if self:GMStatsEnabled() then
-					if StringHelpers.IsNullOrWhitespace(stat.UUID) then
-						stat.UUID = Ext.CreateCustomStat(stat.DisplayName, stat.Description)
-					end
-					character:SetCustomStat(stat.UUID, amount)
-				else
-					CustomStatSystem:SetStatValueOnCharacter(character, stat, amount)
-				end
-				return true
-			else
-				error(string.format("Stat does not exist. statId(%s) mod(%s)", statId or "nil", mod or ""), 2)
-			end
-		else
-			error(string.format("Failed to get character from (%s)", character or ""), 2)
 		end
 	end
 end

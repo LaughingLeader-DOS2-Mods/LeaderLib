@@ -20,7 +20,7 @@
 ---@field setGroupTooltip fun(groupId:number, text:string):void
 ---@field setGroupVisibility fun(groupId:number, visible:boolean):void
 ---@field recountAllPoints fun():void
----@field addCustomStat fun(doubleHandle:number, labelText:string, valueText:string, groupId:number, plusVisible:boolean, minusVisible:boolean):void
+---@field addCustomStat fun(doubleHandle:number, labelText:string, valueText:string, groupId:number, plusVisible:boolean, minusVisible:boolean, isCustom:boolean):void
 
 ---@class CharacterSheetMainTimeline:FlashMainTimeline
 ---@field stats_mc stats_1

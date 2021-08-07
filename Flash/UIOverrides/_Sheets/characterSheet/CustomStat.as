@@ -33,7 +33,9 @@ package
 		{
 			this.statID = id;
 			this.isCustom = b;
-			if(b)
+			this.minus_mc.callbackStr = "minusCustomStatCustom";
+			this.plus_mc.callbackStr = "plusCustomStatCustom";
+			/* if(b)
 			{
 				this.minus_mc.callbackStr = "minusCustomStatCustom";
 				this.plus_mc.callbackStr = "plusCustomStatCustom";
@@ -42,7 +44,7 @@ package
 			{
 				this.minus_mc.callbackStr = "minusCustomStat";
 				this.plus_mc.callbackStr = "plusCustomStat";
-			}
+			} */
 		}
 		
 		public function CustomStat()
@@ -53,8 +55,10 @@ package
 		
 		public function init() : *
 		{
-			this.minus_mc.callbackStr = "minusCustomStat";
-			this.plus_mc.callbackStr = "plusCustomStat";
+			// this.minus_mc.callbackStr = "minusCustomStat";
+			// this.plus_mc.callbackStr = "plusCustomStat";
+			this.minus_mc.callbackStr = "minusCustomStatCustom";
+			this.plus_mc.callbackStr = "plusCustomStatCustom";
 			this.edit_mc.init(this.onEditBtnClicked);
 			this.delete_mc.init(this.onDeleteBtnClicked);
 			this.label_txt.wordWrap = true;
@@ -62,7 +66,7 @@ package
 			this.label_txt.autoSize = TextFieldAutoSize.LEFT;
 		}
 		
-		public function onOver(param1:MouseEvent) : *
+		public function onOver(e:MouseEvent) : *
 		{
 			this.base.showCustomTooltipForMC(this,"showCustomStatTooltip",this.statID, this.id);
 			if(this.timeline && this.timeline.isPlaying)
@@ -73,7 +77,7 @@ package
 			this.timeline = new larTween(this.hl_mc,"alpha",Quartic.easeIn,this.hl_mc.alpha,1,0.1);
 		}
 		
-		public function onOut(param1:MouseEvent) : *
+		public function onOut(e:MouseEvent) : *
 		{
 			this.timeline = new larTween(this.hl_mc,"alpha",Quartic.easeOut,this.hl_mc.alpha,0,0.1);
 			this.base.hasTooltip = false;

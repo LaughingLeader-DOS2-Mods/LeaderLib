@@ -175,19 +175,6 @@ else
 			Ext.PrintError(err)
 		end
 	end)
-
-	---@param statId number|string The stat double or id.
-	---@param netId integer Character NetID to change the stat on.
-	---@param value integer
-	---@param modId MOD_UUID|nil Optional mod UUID.
-	function CustomStatSystem:RequestStatChange(statId, netId, value, modId)
-		Ext.PostMessageToServer("LeaderLib_CustomStatSystem_SetStatValue", Ext.JsonStringify({
-			ID = statId,
-			NetID = netId,
-			Value = value,
-			Mod = modId
-		}))
-	end
 end
 
 Ext.RegisterNetListener("LeaderLib_CustomStatSystem_RemoveStatByUUID", function(cmd, payload)

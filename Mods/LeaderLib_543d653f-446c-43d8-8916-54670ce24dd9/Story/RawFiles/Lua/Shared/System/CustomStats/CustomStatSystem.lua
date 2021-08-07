@@ -82,7 +82,7 @@ Ext.Require("Shared/System/CustomStats/Data/CustomStatBase.lua")
 Ext.Require("Shared/System/CustomStats/Data/CustomStatData.lua")
 Ext.Require("Shared/System/CustomStats/Data/CustomStatCategoryData.lua")
 
-Ext.Require("Shared/System/CustomStats/StoryModeWorkaround.lua")
+Ext.Require("Shared/System/CustomStats/PointChangeSyncing.lua")
 ---@type fun():table<string, table<string, CustomStatData>>
 local loader = Ext.Require("Shared/System/CustomStats/ConfigLoader.lua")
 Ext.Require("Shared/System/CustomStats/Getters.lua")

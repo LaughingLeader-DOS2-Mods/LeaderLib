@@ -9,6 +9,7 @@ local STAT_DISPLAY_MODE = {
 ---@class CustomStatData:CustomStatDataBase
 local CustomStatData = {
 	Type="CustomStatData",
+	StatType = "Custom",
 	ID = "",
 	---@type UUID
 	UUID = "",

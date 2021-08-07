@@ -3,7 +3,7 @@
 ---@param stat string
 ---@param tooltip TooltipData
 function TooltipHandler.OnStatTooltip(character, stat, tooltip)
-	--fprint(LOGLEVEL.DEFAULT, "[OnStatTooltip:%s]\n%s", stat, Ext.JsonStringify(tooltip.Data))
+	--fprint(LOGLEVEL.DEFAULT, "[OnStatTooltip:%s]\n%s", stat, Lib.serpent.block(tooltip.Data))
 	if stat == "APRecovery" then
 		local stat = Ext.GetStat(character.Stats.Name)
 		for i,element in ipairs(tooltip:GetElements("StatsAPBase")) do

@@ -1,8 +1,6 @@
 local self = SheetManager
 local isClient = Ext.IsClient()
 
----@alias SheetEntryType string |"PrimaryStat"|"Ability"|"CivilAbility"|"Talent"
-
 ---Gets the builtin available points for a stat type, such as PrimaryStat (attribute points), Ability (ability points), and Talent (talent points).
 ---@param entryType SheetEntryType
 ---@param character EsvCharacter|EclCharacter|UUID|NETID

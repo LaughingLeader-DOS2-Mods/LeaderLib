@@ -8,26 +8,29 @@ end
 SheetManager.__index = SheetManager
 SheetManager.Loaded = false
 
+---@alias SheetEntryType string |"PrimaryStat"|"SecondaryStat"|"Ability"|"CivilAbility"|"Talent"|"Custom"
+
+---@class SheetStatType
+SheetManager.StatType = {
+	---@type SheetEntryType
+	PrimaryStat = "PrimaryStat",
+	---@type SheetEntryType
+	SecondaryStat = "SecondaryStat",
+	---@type SheetEntryType
+	Ability = "Ability",
+	---@type SheetEntryType
+	Talent = "Talent",
+	---@type SheetEntryType
+	Custom = "Custom"
+}
+
 local isClient = Ext.IsClient()
 
 Ext.Require("Shared/System/SheetManager/Data/SheetDataValues.lua")
+Ext.Require("Shared/System/SheetManager/DataSync.lua")
 Ext.Require("Shared/System/SheetManager/Getters.lua")
 Ext.Require("Shared/System/SheetManager/Setters.lua")
 Ext.Require("Shared/System/SheetManager/Listeners.lua")
-
----@type table<SHEET_ENTRY_ID,table<UUID|NETID, integer|boolean>>
-SheetManager.CurrentValues = {}
-if not isClient then
-	local Handler = {
-		__index = function(tbl,k)
-			return PersistentVars.CharacterSheetValues[k]
-		end,
-		__newindex = function(tbl,k,v)
-			PersistentVars.CharacterSheetValues[k] = v
-		end
-	}
-	setmetatable(SheetManager.CurrentValues, Handler)
-end
 
 SheetManager.Data = {
 	---@type table<MOD_UUID, table<SHEET_ENTRY_ID, SheetAbilityData>>
@@ -94,27 +97,17 @@ local function LoadData()
 
 	--SheetManager.Talents.HideTalent("LoneWolf", ModuleUUID)
 
+	SheetManager.Loaded = true
+	InvokeListenerCallbacks(SheetManager.Listeners.Loaded, SheetManager)
+
 	if isClient then
 		---Divine Talents
 		if Ext.IsModLoaded("ca32a698-d63e-4d20-92a7-dd83cba7bc56") or GameSettings.Settings.Client.DivineTalentsEnabled then
 			SheetManager.Talents.ToggleDivineTalents(true)
 		end
 	else
-		local valueData = {}
-		for id,charData in pairs(PersistentVars.CharacterSheetValues) do
-			valueData[id] = {}
-			for uuid,value in pairs(charData) do
-				local netid = GameHelpers.GetNetID(uuid)
-				if netid then
-					valueData[id][netid] = value
-				end
-			end
-		end
-		Ext.BroadcastMessage("LeaderLib_SheetManager_SyncCurrentValues", Ext.JsonStringify(valueData))
+		SheetManager:SyncData()
 	end
-
-	SheetManager.Loaded = true
-	InvokeListenerCallbacks(SheetManager.Listeners.Loaded, SheetManager)
 end
 
 if not isClient then
@@ -283,43 +276,6 @@ if isClient then
 	if SheetManager.UI == nil then
 		SheetManager.UI = {}
 	end
-
-	---Gets custom sheet data from a generated id.
-	---@param stat SheetAbilityData|SheetStatData|SheetTalentData
-	---@param character EsvCharacter|EclCharacter|string|number
-	---@param value integer|boolean
-	function SheetManager:RequestValueChange(stat, character, value)
-		local netid = GameHelpers.GetNetID(character)
-		Ext.PostMessageToServer("LeaderLib_SheetManager_RequestValueChange", Ext.JsonStringify({
-			ID = stat.ID,
-			Mod = stat.Mod,
-			NetID = netid,
-			Value = value,
-			StatType = stat.StatType
-		}))
-	end
-
-	Ext.RegisterNetListener("LeaderLib_SheetManager_EntryValueChanged", function(cmd, payload)
-		local data = Common.JsonParse(payload)
-		if data then
-			local characterId = GameHelpers.GetCharacterID(data.NetID)
-			local stat = SheetManager:GetStatByID(data.ID, data.Mod, data.StatType)
-			if characterId and stat then
-				local skipInvoke = data.SkipInvoke
-				if skipInvoke == nil then
-					skipInvoke = false
-				end
-				SheetManager:SetEntryValue(stat, characterId, data.Value, skipInvoke, true)
-			end
-		end
-	end)
-
-	Ext.RegisterNetListener("LeaderLib_SheetManager_SyncCurrentValues", function(cmd, payload)
-		local data = Common.JsonParse(payload)
-		if data then
-			SheetManager.CurrentValues = data
-		end
-	end)
 else
 	Ext.RegisterNetListener("LeaderLib_SheetManager_RequestValueChange", function(cmd, payload)
 		local data = Common.JsonParse(payload)

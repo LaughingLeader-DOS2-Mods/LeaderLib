@@ -282,7 +282,6 @@ function CustomStatSystem:UpdateStatMovieClips()
 						if value then
 							cstat_mc.setValue(value)
 						end
-						print(stat.ID, value, cstat_mc.text_txt.htmlText)
 					end
 				end
 			end

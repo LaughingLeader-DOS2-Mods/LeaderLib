@@ -30,10 +30,6 @@ Ext.Require("Shared/Stats/StatOverrides.lua")
 Ext.Require("Shared/System/FeaturesHandler.lua")
 Ext.Require("Shared/System/SheetManager/_Init.lua")
 
-if Ext.Version() >= 55 then
-Ext.Require("Shared/System/CustomStats/CustomStatSystem.lua")
-end
-Ext.Require("Shared/System/CustomStats/_Debug.lua")
 Ext.Require("Shared/QOL/WingsWorkaround.lua")
 Ext.Require("Shared/QOL/SkipTutorial.lua")
 Ext.Require("Shared/QOL/WorldTooltips.lua")

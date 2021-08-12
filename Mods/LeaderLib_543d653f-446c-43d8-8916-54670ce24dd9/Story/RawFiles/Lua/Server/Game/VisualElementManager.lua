@@ -89,15 +89,53 @@ function VisualManager.Events.OnEquipmentChanged(char,item,equipped)
 end
 
 RegisterProtectedOsirisListener("ItemEquipped", 2, "after", function(item,char)
+	if ObjectExists(item) == 0 or ObjectExists(char) == 0 then
+		return
+	end
 	VisualManager.Events.OnEquipmentChanged(Ext.GetCharacter(char), Ext.GetItem(item), true)
 end)
 
 RegisterProtectedOsirisListener("ItemUnEquipped", 2, "after", function(item,char)
+	if ObjectExists(item) == 0 or ObjectExists(char) == 0 then
+		return
+	else
+		VisualManager.Events.OnEquipmentChanged(Ext.GetCharacter(char), Ext.GetItem(item), false)
+	end
+end)
+
+--[[ 
+-- Would work great if CharacterSetVisualElement worked in CC.
+local CCItemData = {}
+
+RegisterProtectedOsirisListener("ItemEquipped", 2, "after", function(item,char)
 	if ObjectExists(item) == 0 then
 		return
 	end
-	VisualManager.Events.OnEquipmentChanged(Ext.GetCharacter(char), Ext.GetItem(item), false)
-end)
+	if SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION then
+		local itemData = GameHelpers.Ext.CreateItemTable(item)
+		CCItemData[StringHelpers.GetUUID(item)] = itemData
+	end
+	VisualManager.Events.OnEquipmentChanged(Ext.GetCharacter(char), Ext.GetItem(item), true)
+end, true)
+
+RegisterProtectedOsirisListener("ItemUnEquipped", 2, "after", function(item,char)
+	item = StringHelpers.GetUUID(item)
+	if ObjectExists(item) == 0 then
+		if SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION then
+			local itemData = CCItemData[item]
+			if itemData then
+				VisualManager.Events.OnEquipmentChanged(Ext.GetCharacter(char), itemData, false)
+				CCItemData[item] = nil
+			else
+				return
+			end
+		else
+			return
+		end
+	else
+		VisualManager.Events.OnEquipmentChanged(Ext.GetCharacter(char), Ext.GetItem(item), false)
+	end
+end, true) ]]
 
 Ext.RegisterNetListener("LeaderLib_OnHelmetToggled", function(cmd, payload)
 	local data = Common.JsonParse(payload)

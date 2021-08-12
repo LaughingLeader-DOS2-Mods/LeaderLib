@@ -33,6 +33,7 @@ local editorVersion = "v3.6.51.9303"
 ---@param visualSlot integer
 ---@param elementName string
 local function SetVisualOnCharacter(char, visualSlot, elementName)
+	--fprint(LOGLEVEL.TRACE, "CharacterSetVisualElement(\"%s\", %s, \"%s\")", char, visualSlot, elementName)
 	CharacterSetVisualElement(char, visualSlot, elementName)
 end
 

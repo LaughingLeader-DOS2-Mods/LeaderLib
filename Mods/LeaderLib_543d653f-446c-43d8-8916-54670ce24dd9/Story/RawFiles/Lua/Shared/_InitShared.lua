@@ -233,6 +233,7 @@ local imports = {
 		"LOGLEVEL",
 		"StringHelpers",
 		"GameHelpers",
+		"TableHelpers",
 		"Common",
 		"SharedData",
 		"LocalizedText",

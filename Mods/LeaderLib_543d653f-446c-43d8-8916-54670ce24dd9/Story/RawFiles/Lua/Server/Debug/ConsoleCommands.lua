@@ -204,10 +204,10 @@ end)
 
 local treasureChest = nil
 Ext.RegisterConsoleCommand("addtreasure", function(command, treasure, identifyItems, levelstr)
-	if identifyItems then
-		identifyItems = true
-	else
+	if identifyItems == "false" or identifyItems == "0" then
 		identifyItems = false
+	else
+		identifyItems = true
 	end
 	if treasure == nil then
 		treasure = "ArenaMode_ArmsTrader"

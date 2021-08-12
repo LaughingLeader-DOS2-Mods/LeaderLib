@@ -10,7 +10,9 @@ if isClient then
 	---@field Index integer
 
 	---@type table<string,CombatLogFilterData>
-	CombatLog.Filters = {}
+	CombatLog.Filters = {
+		
+	}
 	---@type CombatLogFlashMainTimeline
 	CombatLog.Instance = nil
 	---@type UIObject
@@ -111,6 +113,15 @@ if isClient then
 		end
 	end
 
+	---@param index integer
+	---@param tooltip string
+	function CombatLog.AddTextToIndex(index, text)
+		local this = self.GetInstance()
+		if this then 
+			this.addTextToFilter(index, text)
+		end
+	end
+
 	function CombatLog.SetFilterEnabled(id, enabled)
 		local filter = self.Filters[id]
 		if filter then
@@ -140,11 +151,22 @@ if isClient then
 			CombatLog.AddTextToFilter(data.ID, data.Text)
 		end
 	end)
+
+	Ext.RegisterNetListener("LeaderLib_CombatLog_AddTextToIndex", function(cmd, payload)
+		local data = Common.JsonParse(payload)
+		if data.ID and data.Text then
+			CombatLog.AddTextToFilter(tonumber(data.ID) or 0, data.Text)
+		end
+	end)
 else
 	---@param filterId string
 	---@param tooltip string
 	function CombatLog.AddTextToHost(filterId, text)
-		Ext.PostMessageToClient(CharacterGetHostCharacter(), "LeaderLib_CombatLog_AddTextToFilter", Ext.JsonStringify({ID=filterId, Text=text}))
+		if type(filterId) == "string" then
+			Ext.PostMessageToClient(CharacterGetHostCharacter(), "LeaderLib_CombatLog_AddTextToFilter", Ext.JsonStringify({ID=filterId, Text=text}))
+		else
+			Ext.PostMessageToClient(CharacterGetHostCharacter(), "LeaderLib_CombatLog_AddTextToIndex", Ext.JsonStringify({ID=filterId, Text=text}))
+		end
 	end
 	
 	---@param client EsvCharacter|UUID|NETID
@@ -152,13 +174,21 @@ else
 	---@param tooltip string
 	function CombatLog.AddTextToPlayer(client, filterId, text)
 		local uuid = GameHelpers.GetUUID(client)
-		Ext.PostMessageToClient(uuid, "LeaderLib_CombatLog_AddTextToFilter", Ext.JsonStringify({ID=filterId, Text=text}))
+		if type(filterId) == "string" then
+			Ext.PostMessageToClient(uuid, "LeaderLib_CombatLog_AddTextToFilter", Ext.JsonStringify({ID=filterId, Text=text}))
+		else
+			Ext.PostMessageToClient(uuid, "LeaderLib_CombatLog_AddTextToIndex", Ext.JsonStringify({ID=filterId, Text=text}))
+		end
 	end
 
 	---@param filterId string
 	---@param tooltip string
 	function CombatLog.AddTextToAllPlayers(filterId, text)
-		Ext.BroadcastMessage("LeaderLib_CombatLog_AddTextToFilter", Ext.JsonStringify({ID=filterId, Text=text}))
+		if type(filterId) == "string" then
+			Ext.BroadcastMessage("LeaderLib_CombatLog_AddTextToFilter", Ext.JsonStringify({ID=filterId, Text=text}))
+		else
+			Ext.BroadcastMessage("LeaderLib_CombatLog_AddTextToIndex", Ext.JsonStringify({ID=filterId, Text=text}))
+		end
 	end
 end
 

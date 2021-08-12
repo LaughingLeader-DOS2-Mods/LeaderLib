@@ -730,7 +730,7 @@ local function copyValuesFromRef(target, source, refTable, objId)
 				if obj == nil then
 					if meta == "esv::item" or meta == "ecl::item" then
 						obj = Ext.GetItem(objId)
-					elseif meta == "StatItem" then
+					elseif meta == "CDivinityStats_Item" then
 						obj = Ext.GetItem(objId).Stats
 					end
 				end

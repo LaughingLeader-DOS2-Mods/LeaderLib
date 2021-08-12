@@ -706,3 +706,67 @@ function GameHelpers.Ext.ObjectIsItem(obj)
 	end
 	return false
 end
+
+local simpleTypes = {
+	number = true,
+	integer = true,
+	string = true,
+	boolean = true,
+	["number[]"] = true,
+	["string[]"] = true,
+}
+
+local function copyValuesFromRef(target, source, refTable, objId)
+	if not refTable then
+		return
+	end
+	for k,t in pairs(refTable) do
+		if simpleTypes[t] then
+			target[k] = source[k]
+		elseif t == "function" then
+			local meta = getmetatable(source)
+			target[k] = function(self, ...)
+				local obj = source
+				if obj == nil then
+					if meta == "esv::item" or meta == "ecl::item" then
+						obj = Ext.GetItem(objId)
+					elseif meta == "StatItem" then
+						obj = Ext.GetItem(objId).Stats
+					end
+				end
+				if obj ~= nil then
+					local b,result = pcall(obj[k], obj, ...)
+					if b then
+						return result
+					else
+						Ext.PrintError(result)
+					end
+				end
+			end
+		else
+			local metaName = getmetatable(source[k])
+			local ref2 = DebugHelpers.userDataProps[metaName]
+			if ref2 then
+				target[k] = {}
+				copyValuesFromRef(target[k], source[k], ref2,objId)
+			end
+		end
+	end
+end
+
+function GameHelpers.Ext.CreateItemTable(item)
+	local itemTable = {}
+	if type(item) == "string" then
+		item = Ext.GetItem(item)
+		if item then
+			if Ext.IsServer() then
+				local refTable = DebugHelpers.userDataProps["esv::Item"]
+				copyValuesFromRef(itemTable, item, refTable, item.MyGuid)
+			else
+				local refTable = DebugHelpers.userDataProps["ecl::Item"]
+				copyValuesFromRef(itemTable, item, refTable, item.NetID)
+			end
+		end
+	end
+	return itemTable
+end

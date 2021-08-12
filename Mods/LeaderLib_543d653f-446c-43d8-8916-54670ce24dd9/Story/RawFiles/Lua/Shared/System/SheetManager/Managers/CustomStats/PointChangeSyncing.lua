@@ -19,10 +19,14 @@ function CustomStatSystem:SetStatValueOnCharacter(character, stat, value, skipSy
 			CustomStatSystem:InvokeStatValueChangedListeners(stat, character, last, value)
 		end
 
-		if not skipSync then
-			Timer.StartOneshot("CustomStatSystem_SyncValues", 2, function()
+		if not skipSync and not isClient then
+			if Ext.OsirisIsCallable() then
+				Timer.StartOneshot("CustomStatSystem_SyncValues", 2, function()
+					CustomStatSystem:SyncData()
+				end)
+			else
 				CustomStatSystem:SyncData()
-			end)
+			end
 		end
 	else
 		character:SetCustomStat(stat.UUID, value)

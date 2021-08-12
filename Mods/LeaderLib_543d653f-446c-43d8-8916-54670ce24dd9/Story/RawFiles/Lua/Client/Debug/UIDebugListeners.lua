@@ -138,6 +138,8 @@ local defaultIgnored = {
 	LeaderLib_UIExtensions_InputEvent = true,
 	setAllSlotsEnabled = true,
 	setButtonEnable = true,
+	updateSlotData = true,
+	updateSlots = true,
 }
 
 Ext.RegisterListener("UICall", function(ui, event, ...)

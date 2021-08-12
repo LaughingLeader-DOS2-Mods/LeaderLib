@@ -91,12 +91,13 @@ CharacterSheet.TryGetMovieClip = function(this, listHolder, id, groupID)
 	if Vars.ControllerEnabled then
 		func = TryGetMovieClip_Controller
 	end
-	local b,result = xpcall(func, debug.traceback, this, listHolder, id, groupID)
-	if not b then
-		fprint(LOGLEVEL.ERROR, "[CharacterSheet.TryGetMovieClip] Error:\n%s", result)
+	local result = {xpcall(func, debug.traceback, this, listHolder, id, groupID)}
+	if not result[1] then
+		fprint(LOGLEVEL.ERROR, "[CharacterSheet.TryGetMovieClip] Error:\n%s", result[2])
 		return nil
 	end
-	return result
+	table.remove(result, 1)
+	return table.unpack(result)
 end
 
 ---@param entry SheetAbilityData|SheetStatData

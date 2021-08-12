@@ -106,7 +106,29 @@ SheetManager.Stats = {
 						local mainWeapon = character.MainWeapon
 						local offHandWeapon = character.OffHandWeapon
 
+						--- @param weapon StatItem
+						local getReqFunc = function(weapon)
+							local requirementName
+							local largestRequirement = -1
+
+							for i, requirement in pairs(weapon.Requirements) do
+								local reqName = requirement.Requirement
+								if not requirement.Not and type(requirement.Param) == "number" and requirement.Param > largestRequirement and
+									(reqName == "Strength" or reqName == "Finesse" or reqName == "Intelligence" or
+									reqName == "Constitution" or reqName == "Memory" or reqName == "Wits") then
+									requirementName = reqName
+									largestRequirement = requirement.Param
+								end
+							end
+
+							return requirementName
+						end
+						local originalFunc = Game.Math.GetWeaponScalingRequirement
+						Game.Math.GetWeaponScalingRequirement = getReqFunc
+
 						local mainDamageRange = Game.Math.CalculateWeaponScaledDamageRanges(character, mainWeapon)
+
+						Game.Math.GetWeaponScalingRequirement = originalFunc
 
 						local minDamage = 0
 						local maxDamage = 0

@@ -2,21 +2,53 @@ if CombatLog == nil then
 	CombatLog = {}
 end
 
+setmetatable(CombatLog, {
+	__index = function(tbl,k)
+		if k == "Root" then
+			return CombatLog.GetInstance()
+		elseif k == "PrintFilters" then
+			local this = CombatLog.GetInstance()
+			local arr = this.log_mc.filterList.content_array
+			for i=0,#arr-1 do 
+				local mc = arr[i]
+				fprint(LOGLEVEL.TRACE, "log_mc.filterList.content_array[%s] = id(%s) tooltip(%s)", i, mc.id, mc.tooltip)
+			end
+		end
+	end
+})
+
 local isClient = Ext.IsClient()
 
 if isClient then
 	---@class CombatLogFilterData
 	---@field DisplayName string
-	---@field Index integer
+	---@field Index integer The index in the content_array.
+	---@field ID integer Generated ID.
 
 	---@type table<string,CombatLogFilterData>
 	CombatLog.Filters = {
-		
+		Combat = {
+			Index = 0,
+			ID = 0,
+			DisplayName = "Combat"
+		},
+		Dialog = {
+			Index = 1,
+			ID = 2,
+			DisplayName = "Dialogue"
+		},
+		Banter = {
+			Index = 2,
+			ID = 1,
+			DisplayName = "Dialogue"
+		}
 	}
 	---@type CombatLogFlashMainTimeline
 	CombatLog.Instance = nil
 	---@type UIObject
 	CombatLog.UI = nil
+
+	CombatLog.LastID = 776
 
 	local self = CombatLog
 
@@ -30,6 +62,40 @@ if isClient then
 			end
 		end
 		return self.Instance
+	end
+
+	---@private
+	function CombatLog.UpdateIndexes()
+		local this = self.GetInstance()
+		if not this then 
+			return
+		end
+		local arr = this.log_mc.filterList.content_array
+		for i=0,#arr-1 do
+			---@type CombatLogFlashFilter
+			local filter = arr[i]
+			if filter then
+				if type(filter.registeredId) == "string" then
+					local data = CombatLog.Filters[filter.registeredId]
+					if not data then
+						CombatLog.Filters[filter.registeredId] = {
+							DisplayName = filter.tooltip,
+							ID = filter.id
+						}
+						data = CombatLog.Filters[filter.registeredId]
+					end
+					data.Index = i
+				else
+					for k,v in pairs(CombatLog.Filters) do
+						if v.ID == filter.id then
+							v.Index = i
+							filter.registeredId = k
+							break
+						end
+					end
+				end
+			end
+		end
 	end
 
 	---@param id string
@@ -50,8 +116,10 @@ if isClient then
 			local filter = arr[i]
 			if filter then
 				if filter.registeredId == id or filter.tooltip == tooltip then
+					CombatLog.LastID = CombatLog.LastID + 1
 					CombatLog.Filters[id] = {
 						Index = i,
+						ID = CombatLog.LastID,
 						DisplayName = tooltip
 					}
 					filter.gotoAndStop(frame)
@@ -61,19 +129,21 @@ if isClient then
 		end
 		if not exists then
 			local intId = #arr
+			CombatLog.LastID = CombatLog.LastID + 1
 			CombatLog.Filters[id] = {
 				Index = intId,
+				ID = CombatLog.LastID,
 				DisplayName = tooltip
 			}
 			this.addFilter(intId, tooltip, frame)
-			local filter = arr[CombatLog.Filters[id].Index]
+			local filter = arr[CombatLog.Filters[id].ID]
 			if filter then
 				filter.registeredId = id
 			end
 		end
 		local data = CombatLog.Filters[id]
 		if enabled ~= nil then
-			this.setFilterSelection(data.Index, enabled)
+			this.setFilterSelection(data.ID, enabled)
 		end
 		return data
 	end
@@ -84,8 +154,8 @@ if isClient then
 		if filter then
 			local this = self.GetInstance()
 			if this then
-				this.clearFilter(filter.Index)
-				this.log_mc.filterList.removeElement(filter.Index)
+				this.clearFilter(filter.ID)
+				this.log_mc.filterList.removeElement(filter.ID)
 			end
 		else
 			fprint(LOGLEVEL.WARNING, "[CombatLog.AddTextToFilter] Filter (%s) was not added!", id)
@@ -101,7 +171,7 @@ if isClient then
 			if t == "string" and not StringHelpers.IsNullOrWhitespace(id) then
 				local filter = self.Filters[id]
 				if filter then
-					this.addTextToFilter(filter.Index, text)
+					this.addTextToFilter(filter.ID, text)
 				else
 					fprint(LOGLEVEL.WARNING, "[CombatLog.AddTextToFilter] Filter (%s) was not added!", id)
 				end
@@ -127,7 +197,7 @@ if isClient then
 		if filter then
 			local this = self.GetInstance()
 			if this then 
-				this.setFilterSelection(filter.Index, enabled)
+				this.setFilterSelection(filter.ID, enabled)
 			end
 		else
 			fprint(LOGLEVEL.WARNING, "[CombatLog.AddTextToFilter] Filter (%s) was not added!", id)
@@ -156,6 +226,12 @@ if isClient then
 		local data = Common.JsonParse(payload)
 		if data.ID and data.Text then
 			CombatLog.AddTextToFilter(tonumber(data.ID) or 0, data.Text)
+		end
+	end)
+
+	Ext.RegisterUITypeInvokeListener(Data.UIType.combatLog, "setLogVisible", function(ui, event, b)
+		if b == true then
+			CombatLog.UpdateIndexes()
 		end
 	end)
 else

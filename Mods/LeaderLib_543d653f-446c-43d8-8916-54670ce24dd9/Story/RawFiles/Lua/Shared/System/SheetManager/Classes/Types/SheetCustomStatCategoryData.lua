@@ -1,4 +1,4 @@
----@class SheetCustomStatCategoryData:CustomStatDataBase
+---@class SheetCustomStatCategoryData:SheetCustomStatBase
 local SheetCustomStatCategoryData = {
 	Type="SheetCustomStatCategoryData",
 	ID = "",
@@ -13,7 +13,7 @@ local SheetCustomStatCategoryData = {
 }
 
 SheetCustomStatCategoryData.__index = function(t,k)
-	local v = Classes.CustomStatDataBase[k]
+	local v = Classes.SheetCustomStatBase[k]
 	if v then
 		t[k] = v
 	end

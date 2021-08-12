@@ -209,7 +209,7 @@ local function TryFindConfig(info)
 end
 
 
----@return table<string, table<string, CustomStatDataBase>>
+---@return table<string, table<string, SheetCustomStatBase>>
 local function LoadConfigFiles()
 	local entries = {}
 	local order = Ext.GetModLoadOrder()

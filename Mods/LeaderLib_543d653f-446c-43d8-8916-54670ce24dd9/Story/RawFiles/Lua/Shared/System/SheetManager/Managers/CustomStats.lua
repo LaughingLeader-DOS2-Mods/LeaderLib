@@ -81,13 +81,13 @@ CustomStatSystem.Categories = {}
 CustomStatSystem.Stats = {}
 CustomStatSystem.UnregisteredStats = {}
 
-Ext.Require("Shared/System/SheetManager/CustomStats/PointChangeSyncing.lua")
+Ext.Require("Shared/System/SheetManager/Managers/CustomStats/PointChangeSyncing.lua")
 ---@type fun():table<string, table<string, SheetCustomStatData>>
-local loader = Ext.Require("Shared/System/SheetManager/CustomStats/ConfigLoader.lua")
-Ext.Require("Shared/System/SheetManager/CustomStats/Getters.lua")
-Ext.Require("Shared/System/SheetManager/CustomStats/DataSync.lua")
-Ext.Require("Shared/System/SheetManager/CustomStats/PointsHandler.lua")
-Ext.Require("Shared/System/SheetManager/CustomStats/_Debug.lua")
+local loader = Ext.Require("Shared/System/SheetManager/Managers/CustomStats/ConfigLoader.lua")
+Ext.Require("Shared/System/SheetManager/Managers/CustomStats/Getters.lua")
+Ext.Require("Shared/System/SheetManager/Managers/CustomStats/DataSync.lua")
+Ext.Require("Shared/System/SheetManager/Managers/CustomStats/PointsHandler.lua")
+Ext.Require("Shared/System/SheetManager/Managers/CustomStats/_Debug.lua")
 
 ---Returns true if actual custom stats can be used, which are currently disabled if not in GM mode.
 ---This is due to the fact that custom stats may be added to every NPC, which can be an issue in story mode.
@@ -265,7 +265,7 @@ if not isClient then
 		end
 	end)
 else
-	Ext.Require("Shared/System/CustomStats/UISetup.lua")
+
 end
 
 ---@private

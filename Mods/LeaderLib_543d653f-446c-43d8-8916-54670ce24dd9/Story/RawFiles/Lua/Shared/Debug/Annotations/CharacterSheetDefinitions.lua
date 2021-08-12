@@ -11,7 +11,7 @@
 ---@field groups_array table
 ---@field init fun():void
 ---@field onCreateBtnClicked fun():void
----@field positionElements fun(sortElements:boolean, sortValue:string="groupName"):void
+---@field positionElements fun(sortElements:boolean, sortValue:string):void
 ---@field clearElements fun():void
 ---@field resetGroups fun():void
 ---@field setGameMasterMode fun(isGM:boolean):void
@@ -120,7 +120,7 @@
 ---@field addSecondaryStat fun(statType:number, labelText:string, valueText:string, statID:number, frame:number, boostValue:number):void
 ---@field clearSecondaryStats fun():void
 ---@field addAbilityGroup fun(isCivil:boolean, groupId:number, labelText:string):void
----@field addAbility fun(isCivil:boolean, groupId:number, statID:number, labelText:string, valueText:string, plusTooltip:string = "", minusTooltip:string = ""):void
+---@field addAbility fun(isCivil:boolean, groupId:number, statID:number, labelText:string, valueText:string, plusTooltip:string, minusTooltip:string):void
 ---@field addTalent fun(labelText:string, statID:number, talentState:number):void
 ---@field addTag fun(tooltipText:string, labelText:string, descriptionText:string, statID:number):void
 ---@field addVisual fun(titleText:string, contentID:number):void
@@ -444,8 +444,7 @@
 ---@field mousePosDown Point
 ---@field _canBeRemoved boolean
 ---@field onInit fun(param1:FlashMovieClip):void
----@field set canBeRemoved fun(param1:boolean):void
----@field get canBeRemoved fun():boolean
+---@field canBeRemoved fun(b:boolean):boolean
 ---@field onRemoveSkillButtonPressed fun(param1:FlashMovieClip):void
 ---@field onOver fun(param1:MouseEvent):void
 ---@field onOut fun(param1:MouseEvent):void
@@ -484,8 +483,8 @@
 ---@field onMouseOut fun(e:MouseEvent):void
 ---@field onDown fun(e:MouseEvent):void
 ---@field onUp fun(e:MouseEvent):void
----@field get length fun():number
----@field get content_array fun():table
+---@field length fun():number
+---@field content_array fun():table
 
 ---@class Talent
 ---@field bullet_mc FlashMovieClip

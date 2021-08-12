@@ -74,6 +74,7 @@ package
 		public function SetCustomIcon(iconName:String, offsetX:Number = 0, offsetY:Number = 0, useDefaultOffset:Boolean = true) : Boolean
 		{
 			if(useDefaultOffset) {
+				this.base = root as MovieClip;
 				offsetX = this.base.stats_mc.customSecStatIconOffsetX;
 				offsetY = this.base.stats_mc.customSecStatIconOffsetY;
 			}

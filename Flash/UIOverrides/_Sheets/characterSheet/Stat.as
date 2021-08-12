@@ -72,6 +72,7 @@ package
 		public function SetCustomIcon(iconName:String, offsetX:Number = 0, offsetY:Number = 0, useDefaultOffset:Boolean = true) : Boolean
 		{
 			if(useDefaultOffset) {
+				this.base = root as MovieClip;
 				offsetX = this.base.stats_mc.customPrimaryStatIconOffsetX;
 				offsetY = this.base.stats_mc.customPrimaryStatIconOffsetY;
 			}
@@ -87,12 +88,14 @@ package
 			this.customIcon_mc.y = this.icon_mc.y + offsetY;
 			this.customIcon_mc.name = iconName;
 			this.customIcon_mc.visible = true;
+			this.hasCustomIcon = true;
 			return true;
 		}
 
 		public function RemoveCustomIcon() : Boolean
 		{
 			this.icon_mc.visible = true;
+			this.hasCustomIcon = false;
 			if(this.customIcon_mc != undefined)
 			{
 				this.removeChild(this.customIcon_mc);

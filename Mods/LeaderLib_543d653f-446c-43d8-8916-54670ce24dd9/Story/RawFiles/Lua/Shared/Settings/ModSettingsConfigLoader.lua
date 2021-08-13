@@ -122,11 +122,11 @@ local function LoadModSettingsConfig(uuid, file)
 			-- end
 		end
 	end
+	InvokeListenerCallbacks(Listeners.ModSettingsLoaded[uuid], settings)
 	return true
 end
 
 local function TryFindConfig(info)
-	--local filePath = string.format("Mods/%s/ModSettingsConfig.json", info.Directory)
 	local filePath = string.format("Mods/%s/ModSettingsConfig.json", info.Directory)
 	local file = Ext.LoadFile(filePath, "data")
 	return file

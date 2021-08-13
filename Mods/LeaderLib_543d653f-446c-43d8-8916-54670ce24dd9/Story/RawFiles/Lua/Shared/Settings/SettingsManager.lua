@@ -62,11 +62,11 @@ local function ExportGlobalSettings(forSyncing)
 end
 
 function SettingsManager.LoadAllModSettings()
-	local mods = Ext.GetModLoadOrder()
+ 	--[[local mods = Ext.GetModLoadOrder()
 	for i,uuid in pairs(mods) do
 		if IgnoredMods[uuid] ~= true then
 			local info = Ext.GetModInfo(uuid)
-			local settingsFile = info.Directory .. "/ModSettings.json"
+			local settingsFile = info.Directory .. "/ModSettingsConfig.json"
 			local file = Ext.LoadFile(settingsFile)
 			if file ~= nil then
 				local data = Common.JsonParse(file)
@@ -88,6 +88,116 @@ function SettingsManager.LoadAllModSettings()
 				end
 			end
 		end
+	end ]]
+	SettingsManager.LoadConfigFiles()
+end
+
+---@param uuid string
+---@param tbl ModSettings
+local function ParseModData(uuid, tbl)
+	local modSettings = SettingsManager.GetMod(uuid, true)
+	local isOldModSettings = tbl.globalflags ~= nil or tbl.integers ~= nil
+
+	if not Ext.IsModLoaded(uuid) and modSettings ~= nil then
+		modSettings.Name = tbl.Name or ""
+	end
+
+	modSettings.LoadedExternally = true
+
+	if not isOldModSettings then
+		if tbl.Global ~= nil then
+			if tbl.Global.Flags ~= nil then
+				for flag,data in pairs(tbl.Global.Flags) do
+					modSettings.Global:AddFlag(flag, data.FlagType or "Global", data.Enabled, nil, nil, true, true)
+				end
+			end
+			if tbl.Global.Variables ~= nil then
+				for name,data in pairs(tbl.Global.Variables) do
+					modSettings.Global:AddVariable(name, data.Value, nil, nil, nil, nil, nil, true, true)
+				end
+			end
+		end
+	else
+		local flags = tbl["globalflags"]
+		if flags ~= nil and type(flags) == "table" then
+			for flag,v in pairs(flags) do
+				if modSettings ~= nil then
+					modSettings.Global:AddFlag(flag, "Global", v, nil, nil, true, true)
+				end
+			end
+		end
+		local integers = tbl["integers"]
+		if integers ~= nil and type(integers) == "table" then
+			for varname,v in pairs(integers) do
+				local intnum = math.tointeger(v)
+				if modSettings ~= nil then
+					modSettings.Global:AddVariable(varname, intnum, nil, nil, nil, nil, nil, true, true)
+					if Ext.IsServer() and Ext.OsirisIsCallable() then
+						Osi.LeaderLib_GlobalSettings_SetIntegerVariable(uuid, varname, intnum)
+					end
+				end
+			end
+		end
+	end
+	return true
+end
+
+local function ParseSettings(tbl)
+	for k,v in pairs(tbl) do
+		if Common.StringEquals(string.lower(k), "mods") then
+			for k2,v2 in pairs(v) do
+				local uuid = v2["uuid"] or v2["UUID"]
+				if not StringHelpers.IsNullOrEmpty(uuid) then
+					local status,err = xpcall(function()
+						ParseModData(uuid, v2)
+						return true
+					end, debug.traceback)
+					if not status then
+						Ext.PrintError("[LeaderLib:ParseSettings] Error parsing mod settings:")
+						Ext.PrintError(err)
+					end
+				end
+			end
+		end
+	end
+end
+
+function LoadGlobalSettings()
+	local b,result = xpcall(function()
+		--SettingsManager.LoadConfigFiles()
+		local json = Ext.LoadFile("LeaderLib_GlobalSettings.json")
+		if json ~= nil and json ~= "" then
+			local json_tbl = Common.JsonParse(json)
+			ParseSettings(json_tbl)
+		end
+		return true
+	end, debug.traceback)
+	if not b then
+		Ext.PrintError("[LeaderLib:LoadGlobalSettings] Error loading global settings:")
+		Ext.PrintError(result)
+		return false
+	else
+		if Ext.IsServer() and Ext.OsirisIsCallable() or Ext.GetGameState() == "Running" then
+			for uuid,v in pairs(GlobalSettings.Mods) do
+				v:ApplyToGame()
+			end
+		end
+		InvokeListenerCallbacks(Listeners.ModSettingsLoaded.All, GlobalSettings)
+		return result
+	end
+end
+
+function SaveGlobalSettings()
+	local status,err = xpcall(function()
+		local export = ExportGlobalSettings()
+		local json = Ext.JsonStringify(export)
+		Ext.SaveFile("LeaderLib_GlobalSettings.json", json)
+		PrintDebug("[LeaderLib] Saved LeaderLib_GlobalSettings.json")
+		return true
+	end, debug.traceback)
+	if not status then
+		Ext.PrintError("[LeaderLib:LoadGlobalSettings] Error loading global settings:")
+		Ext.PrintError(err)
 	end
 end
 
@@ -110,113 +220,6 @@ if Ext.IsServer() then
 		end
 		if skipSyncStatOverrides ~= true then
 			SyncStatOverrides(GameSettings, true)
-		end
-	end
-	
-	---@param uuid string
-	---@param tbl ModSettings
-	local function ParseModData(uuid, tbl)
-		local modSettings = SettingsManager.GetMod(uuid, true)
-		local isOldModSettings = tbl.globalflags ~= nil or tbl.integers ~= nil
-	
-		if not Ext.IsModLoaded(uuid) and modSettings ~= nil then
-			modSettings.Name = tbl.Name or ""
-		end
-	
-		modSettings.LoadedExternally = true
-	
-		if not isOldModSettings then
-			if tbl.Global ~= nil then
-				if tbl.Global.Flags ~= nil then
-					for flag,data in pairs(tbl.Global.Flags) do
-						modSettings.Global:AddFlag(flag, data.FlagType or "Global", data.Enabled, nil, nil, true, true)
-					end
-				end
-				if tbl.Global.Variables ~= nil then
-					for name,data in pairs(tbl.Global.Variables) do
-						modSettings.Global:AddVariable(name, data.Value, nil, nil, nil, nil, nil, true, true)
-					end
-				end
-			end
-		else
-			local flags = tbl["globalflags"]
-			if flags ~= nil and type(flags) == "table" then
-				for flag,v in pairs(flags) do
-					if modSettings ~= nil then
-						modSettings.Global:AddFlag(flag, "Global", v, nil, nil, true, true)
-					end
-				end
-			end
-			local integers = tbl["integers"]
-			if integers ~= nil and type(integers) == "table" then
-				for varname,v in pairs(integers) do
-					local intnum = math.tointeger(v)
-					if modSettings ~= nil then
-						modSettings.Global:AddVariable(varname, intnum, nil, nil, nil, nil, nil, true, true)
-						Osi.LeaderLib_GlobalSettings_SetIntegerVariable(uuid, varname, intnum)
-					end
-				end
-			end
-		end
-		return true
-	end
-	
-	local function ParseSettings(tbl)
-		for k,v in pairs(tbl) do
-			if Common.StringEquals(string.lower(k), "mods") then
-				for k2,v2 in pairs(v) do
-					local uuid = v2["uuid"] or v2["UUID"]
-					if not StringHelpers.IsNullOrEmpty(uuid) then
-						local status,err = xpcall(function()
-							ParseModData(uuid, v2)
-							return true
-						end, debug.traceback)
-						if not status then
-							Ext.PrintError("[LeaderLib:ParseSettings] Error parsing mod settings:")
-							Ext.PrintError(err)
-						end
-					end
-				end
-			end
-		end
-	end
-	
-	function LoadGlobalSettings()
-		local b,result = xpcall(function()
-			--SettingsManager.LoadConfigFiles()
-			local json = NRD_LoadFile("LeaderLib_GlobalSettings.json")
-			if json ~= nil and json ~= "" then
-				local json_tbl = Common.JsonParse(json)
-				ParseSettings(json_tbl)
-			end
-			return true
-		end, debug.traceback)
-		if not b then
-			Ext.PrintError("[LeaderLib:LoadGlobalSettings] Error loading global settings:")
-			Ext.PrintError(result)
-			return false
-		else
-			if Ext.OsirisIsCallable() or Ext.GetGameState() == "Running" then
-				for uuid,v in pairs(GlobalSettings.Mods) do
-					v:ApplyToGame()
-				end
-			end
-			InvokeListenerCallbacks(Listeners.ModSettingsLoaded, GlobalSettings)
-			return result
-		end
-	end
-	
-	function SaveGlobalSettings()
-		local status,err = xpcall(function()
-			local export = ExportGlobalSettings()
-			local json = Ext.JsonStringify(export)
-			NRD_SaveFile("LeaderLib_GlobalSettings.json", json)
-			PrintDebug("[LeaderLib] Saved LeaderLib_GlobalSettings.json")
-			return true
-		end, debug.traceback)
-		if not status then
-			Ext.PrintError("[LeaderLib:LoadGlobalSettings] Error loading global settings:")
-			Ext.PrintError(err)
 		end
 	end
 	
@@ -289,4 +292,5 @@ end
 
 Ext.RegisterListener("SessionLoading", function()
 	SettingsManager.LoadConfigFiles()
+	LoadGlobalSettings()
 end)

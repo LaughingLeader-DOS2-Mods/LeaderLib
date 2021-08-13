@@ -18,7 +18,8 @@ Listeners.BeforeLuaReset = {}
 ---Called when LeaderLib finishes loading its server-side or client-side scripts.
 Listeners.Loaded = {}
 
-Listeners.ModSettingsLoaded = {}
+---Callbacks for when all global settings are loaded, or when an individual mod's settings are loaded.
+Listeners.ModSettingsLoaded = {All = {}}
 ---Callbacks for when ModSettings are synced on both the server and client.
 ---@type fun(uuid:string, settings:ModSettings):void[]
 Listeners.ModSettingsSynced = {}

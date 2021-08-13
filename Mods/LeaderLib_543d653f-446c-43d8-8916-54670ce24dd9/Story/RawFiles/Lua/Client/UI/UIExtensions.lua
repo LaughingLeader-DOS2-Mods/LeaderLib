@@ -255,15 +255,10 @@ end
 ---@param id integer
 ---@return boolean
 function UIExtensions.RemoveControl(id)
-	if UIExtensions.Controls[id] ~= nil then
-		UIExtensions.Controls[id] = nil
-		if UIExtensions.Instance then
-			local main = UIExtensions.Instance:GetRoot()
-			if main then
-				main.removeControl(id)
-				return true
-			end
-		end
+	UIExtensions.Controls[id] = nil
+	local main = UIExtensions.Instance:GetRoot()
+	if main then
+		return main.removeControl(id) == true
 	end
 	return false
 end

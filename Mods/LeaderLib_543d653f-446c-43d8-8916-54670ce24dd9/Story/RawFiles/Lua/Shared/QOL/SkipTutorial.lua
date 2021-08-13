@@ -313,7 +313,7 @@ if Ext.IsServer() then
 		end)
 
 		function SkipTutorial.OnLeaderLibInitialized(region)
-			if SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION and SharedData.GameMode == GAMEMODE.CAMPAIGN then
+			if IsCharacterCreationLevel(region) == 1 and SharedData.GameMode == GAMEMODE.CAMPAIGN then
 				-- Skip setting up Skip Tutorial stuff if another mod is modifying that already.
 				if GameHelpers.DB.HasValue("DB_GLO_FirstLevelAfterCharacterCreation", "TUT_Tutorial_A") then
 					runSkipTutorialSetup = GameSettings.Settings.SkipTutorial.Enabled
@@ -323,6 +323,8 @@ if Ext.IsServer() then
 					Ext.Print("[LeaderLib] The tutorial is already being bypassed. Skipping Skip Tutorial setup.")
 				end
 			elseif skipTutorialControlEnabled and runSkipTutorialSetup and region == GameSettings.Settings.SkipTutorial.Destination then
+				GameHelpers.Net.PostMessageToHost("LeaderLib_ClearSkipTutorialUI", "")
+
 				local data = LevelSettings[region]
 				local settings = GameSettings.Settings.SkipTutorial
 	
@@ -334,7 +336,6 @@ if Ext.IsServer() then
 						Ext.PrintError(err)
 					end
 				end
-				Ext.BroadcastMessage("LeaderLib_ClearSkipTutorialUI", "")
 				runSkipTutorialSetup = false
 			end
 		end
@@ -358,6 +359,12 @@ if Ext.IsServer() then
 				if StringHelpers.IsNullOrEmpty(uuid) and runSkipTutorialSetup then
 					EnableSkipTutorial()
 				end
+			end
+		end)
+
+		Ext.RegisterOsirisListener("RegionEnded", 1, "before", function(region)
+			if IsCharacterCreationLevel(region) == 1 then
+				Ext.BroadcastMessage("LeaderLib_ClearSkipTutorialUI", "")
 			end
 		end)
 	end
@@ -411,28 +418,49 @@ elseif Ext.IsClient() then
 
 	local registeredStartListener = false
 
-	Ext.RegisterNetListener("LeaderLib_SetupSkipTutorialUI", function(cmd, payload)
+	local function SetupUI()
 		SetupSkipTutorialCheckbox()
-		if not registeredStartListener then
-			Ext.RegisterUINameCall("startGame", function(ui, call, ...)
-				if createdCheckboxID > -1 then
-					UIExtensions.RemoveControl(createdCheckboxID)
-					createdCheckboxID = -1
-				else
-					--Fallback
-					UIExtensions.RemoveAllControls()
-				end
-				Input.RemoveListener(OnInput)
-			end)
-			registeredStartListener = true
-		end
-	end)
+		-- if not registeredStartListener then
+		-- 	Ext.RegisterUINameCall("startGame", function(ui, call, ...)
+		-- 		if createdCheckboxID > -1 then
+		-- 			UIExtensions.RemoveControl(createdCheckboxID)
+		-- 			createdCheckboxID = -1
+		-- 		else
+		-- 			--Fallback
+		-- 			UIExtensions.RemoveAllControls()
+		-- 		end
+		-- 		Input.RemoveListener(OnInput)
+		-- 	end)
+		-- 	registeredStartListener = true
+		-- end
+	end
 
-	Ext.RegisterNetListener("LeaderLib_ClearSkipTutorialUI", function(cmd, payload)
+	local function ClearUI()
 		if createdCheckboxID > -1 then
 			UIExtensions.RemoveControl(createdCheckboxID)
 			createdCheckboxID = -1
 		end
 		Input.RemoveListener(OnInput)
+	end
+
+	---@param sharedData SharedData
+	RegisterListener("ClientDataSynced", function(modData, sharedData)
+		if Client.IsHost then
+			if sharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION and SharedData.GameMode == GAMEMODE.CAMPAIGN then
+				SetupUI()
+			else
+				ClearUI()
+			end
+		end
+	end)
+
+	Ext.RegisterNetListener("LeaderLib_SetupSkipTutorialUI", function(cmd, payload)
+		if sharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION then
+			SetupUI()
+		end
+	end)
+
+	Ext.RegisterNetListener("LeaderLib_ClearSkipTutorialUI", function(cmd, payload)
+		ClearUI()
 	end)
 end

@@ -9,27 +9,19 @@ package LS_Classes
    
    public class larTween extends IggyTween
    {
-       
-      
       public var m_FinishCallback:Function = null;
-      
       public var m_UpdateCallback:Function = null;
-      
       public var m_StopCallback:Function = null;
-      
       public var m_ResumeCallback:Function = null;
-      
       public var m_OverrideCallback:Function = null;
-      
       public var m_FinishCallbackParams:Object = null;
-      
       private var delayTimer:Timer = null;
       
-      public function larTween(param1:Object, param2:String, param3:Function, param4:Number, param5:Number, param6:Number, param7:Function = null, param8:Object = null, param9:Number = 0.0)
+      public function larTween(target:Object, properyName:String, param3:Function, param4:Number, param5:Number, param6:Number, param7:Function = null, param8:Object = null, param9:Number = 0.0)
       {
          var _loc12_:MovieClip = null;
          var _loc10_:Boolean = true;
-         var _loc11_:DisplayObject = param1 as DisplayObject;
+         var _loc11_:DisplayObject = target as DisplayObject;
          if(_loc11_)
          {
             if(!_loc11_.stage)
@@ -45,7 +37,7 @@ package LS_Classes
          }
          if(_loc10_)
          {
-            super(param1,param2,param3,param4,param5,param6,true,true,true);
+            super(target,properyName,param3,param4,param5,param6,true,true,true);
             if(param9 > 0)
             {
                super.stop();

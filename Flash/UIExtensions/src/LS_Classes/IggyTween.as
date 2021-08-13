@@ -8,42 +8,23 @@ package LS_Classes
 	
 	public class IggyTween extends EventDispatcher
 	{
-		
 		private static var _tweenObjects:Dictionary = new Dictionary(true);
-		 
-		
 		public var begin:Number;
-		
 		public var duration:Number;
-		
 		public var finish:Number;
-		
 		public var func:Function;
-		
 		public var isPlaying:Boolean;
-		
 		public var looping:Boolean;
-		
 		public var position:Number;
-		
 		public var useSeconds:Boolean;
-		
 		public var motionFinishCallback:Function = null;
-		
 		private var _time:Number;
-		
 		private var _beginTime:Number;
-		
 		private var _cachedDelta:Number;
-		
 		private var _sprite:Sprite;
-		
 		private var _manageCollisions:Boolean;
-		
 		private var _useWeakRef:Boolean;
-		
 		private var _obj:Object;
-		
 		private var _prop:String;
 		
 		public function IggyTween(param1:Object, param2:String, param3:Function, param4:Number, param5:Number, param6:Number, param7:Boolean = false, param8:Boolean = false, param9:Boolean = false)

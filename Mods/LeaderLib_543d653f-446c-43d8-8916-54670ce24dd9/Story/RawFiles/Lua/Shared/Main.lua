@@ -33,7 +33,11 @@ function RegisterListener(event, callbackOrKey, callbackOrNil)
 				Ext.PrintError(string.format("[LeaderLib__Main.lua:RegisterListener] Event (%s) with sub-key (%s) requires a function as the third parameter. Context: %s", event, callbackOrKey, Ext.IsServer() and "SERVER" or "CLIENT"))
 			end
 		else
-			table.insert(listenerTable, callbackOrKey)
+			if listenerTable.All ~= nil then
+				table.insert(listenerTable.All, callbackOrKey)
+			else
+				table.insert(listenerTable, callbackOrKey)
+			end
 		end
 	else
 		Ext.PrintError(string.format("[LeaderLib__Main.lua:RegisterListener] Event (%s) is not a valid LeaderLib listener event! Context: %s", event, Ext.IsServer() and "SERVER" or "CLIENT"))

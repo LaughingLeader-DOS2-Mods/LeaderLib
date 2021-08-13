@@ -2,6 +2,8 @@ local FlagData = Classes.ModSettingsClasses.FlagData
 local VariableData = Classes.ModSettingsClasses.VariableData
 local ButtonData = Classes.ModSettingsClasses.ButtonData
 
+local isClient = Ext.IsClient()
+
 ---@class SettingsData
 local SettingsData = {
 	Type = "SettingsData",
@@ -38,6 +40,11 @@ local function skey(key)
 		text = GameHelpers.Tooltip.ReplacePlaceholders(text)
 	end
 	return text
+end
+
+---@private
+function SettingsData:CanExecuteOsiris()
+	return not isClient and Ext.OsirisIsCallable()
 end
 
 ---@param flag string
@@ -186,6 +193,9 @@ function SettingsData:AddLocalizedButton(id, key, callback, enabled, hostOnly, t
 end
 
 function SettingsData:UpdateFlags()
+	if not self:CanExecuteOsiris() then
+		return
+	end
 	for flag,data in pairs(self.Flags) do
 		if data.FlagType == "Global" then
 			data.Enabled = GlobalGetFlag(flag) == 1
@@ -220,6 +230,9 @@ function SettingsData:UpdateVariables(func)
 end
 
 function SettingsData:ApplyFlags()
+	if not self:CanExecuteOsiris() then
+		return
+	end
 	for flag,data in pairs(self.Flags) do
 		if data.FlagType == "Global" then
 			if data.Enabled then
@@ -267,12 +280,14 @@ function SettingsData:ApplyVariables(uuid, callback)
 				pcall(callback, uuid, name, data)
 			end
 			if type(data.Value) == "number" then
-				local intVal = math.tointeger(data.Value) or math.ceil(data.Value)
-				if intVal ~= nil then
-					--print("Osi.LeaderLib_GlobalSettings_SetIntegerVariable", uuid, name, intVal)
-					Osi.LeaderLib_GlobalSettings_SetIntegerVariable(uuid, name, intVal)
-				else
-					Ext.PrintError("[LeaderLib:ModSettingsClasses.lua:ApplyVariables] Error converting variable",name,"to integer.")
+				if self:CanExecuteOsiris() then
+					local intVal = math.tointeger(data.Value) or math.ceil(data.Value)
+					if intVal ~= nil then
+						--print("Osi.LeaderLib_GlobalSettings_SetIntegerVariable", uuid, name, intVal)
+						Osi.LeaderLib_GlobalSettings_SetIntegerVariable(uuid, name, intVal)
+					else
+						Ext.PrintError("[LeaderLib:ModSettingsClasses.lua:ApplyVariables] Error converting variable",name,"to integer.")
+					end
 				end
 			end
 		elseif data == nil then
@@ -302,6 +317,9 @@ function SettingsData:FlagEquals(id, b, target)
 		if data.FlagType == "Global" then
 			return data.Enabled == b
 		elseif data.FlagType == "User" or data.FlagType == "Character" then
+			if not self:CanExecuteOsiris() then
+				return false
+			end
 			if target ~= nil then
 				local enabled = false
 				if data.FlagType == "User" then
@@ -311,16 +329,15 @@ function SettingsData:FlagEquals(id, b, target)
 				end
 				return enabled == b
 			else
-				for _,db in pairs(Osi.DB_IsPlayer:Get(nil)) do
-					local uuid = GetUUID(db[1])
+				for player in GameHelpers.Character.GetPlayers() do
 					if data.FlagType == "User" then
-						if UserGetFlag(uuid, data.ID) == 1 then
+						if UserGetFlag(player.MyGuid, data.ID) == 1 then
 							if b then
 								return true
 							end
 						end
 					elseif data.FlagType == "Character" then
-						local enabled = ObjectGetFlag(uuid, flag) == 1
+						local enabled = ObjectGetFlag(player.MyGuid, data.ID) == 1
 						if enabled and b then
 							return true
 						end

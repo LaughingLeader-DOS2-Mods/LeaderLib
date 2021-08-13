@@ -140,6 +140,8 @@ local defaultIgnored = {
 	setButtonEnable = true,
 	updateSlotData = true,
 	updateSlots = true,
+	showExpTooltip = true,
+	SlotHoverOut = true,
 }
 
 Ext.RegisterListener("UICall", function(ui, event, ...)

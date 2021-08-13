@@ -270,6 +270,9 @@ function CustomStatSystem:UpdateStatMovieClips()
 	local character = self:GetCharacter()
 	---@type CharacterSheetMainTimeline
 	local this = SheetManager.UI.CharacterSheet.Root
+	if not this or this.isExtended ~= true then
+		return
+	end
 	if this then
 		if not Vars.ControllerEnabled then
 			local arr = this.stats_mc.customStats_mc.stats_array

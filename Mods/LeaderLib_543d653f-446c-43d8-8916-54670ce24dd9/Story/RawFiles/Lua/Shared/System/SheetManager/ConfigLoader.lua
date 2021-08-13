@@ -202,7 +202,6 @@ local function LoadConfig(uuid, file)
 end
 
 local function TryFindConfig(info)
-	--local filePath = string.format("Mods/%s/ModSettingsConfig.json", info.Directory)
 	local filePath = string.format("Mods/%s/CharacterSheetConfig.json", info.Directory)
 	local file = Ext.LoadFile(filePath, "data")
 	return file

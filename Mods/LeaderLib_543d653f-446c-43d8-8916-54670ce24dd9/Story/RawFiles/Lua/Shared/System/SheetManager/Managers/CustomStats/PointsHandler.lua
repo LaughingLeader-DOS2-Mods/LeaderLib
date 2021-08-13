@@ -433,7 +433,7 @@ function CustomStatSystem:UpdateAvailablePoints(ui)
 	end
 	if ui then
 		local this = ui:GetRoot()
-		if not this then
+		if not this or this.isExtended ~= true then
 			return
 		end
 		local totalPoints = self:GetTotalAvailablePoints()

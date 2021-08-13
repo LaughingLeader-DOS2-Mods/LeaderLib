@@ -284,7 +284,6 @@ RegisterListener("FeatureEnabled", function(id)
 end)
 
 local function TryFindOsiToolsConfig(info)
-	--local filePath = string.format("Mods/%s/ModSettingsConfig.json", info.Directory)
 	local filePath = string.format("Mods/%s/OsiToolsConfig.json", info.Directory)
 	local file = Ext.LoadFile(filePath, "data")
 	if file then

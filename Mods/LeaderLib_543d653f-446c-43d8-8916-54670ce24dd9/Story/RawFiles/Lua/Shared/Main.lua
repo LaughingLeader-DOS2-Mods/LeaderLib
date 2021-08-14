@@ -1,8 +1,8 @@
 ---@class LeaderLib:table
----@field RegisterListener fun(event:string, callback:InputEventCallback, param:any|nil):void
+---@field RegisterListener fun(event:LeaderLibGlobalListenerEvent|LeaderLibServerListenerEvent|LeaderLibClientListenerEvent|string[], callbackOrKey:function|string, callbackOrNil:function|nil):void
 
 --- Registers a function to call when a specific Lua LeaderLib event fires.
----@param event string|string[] OnPrepareHit|OnHit|CharacterSheetPointChanged|CharacterBasePointsChanged|TimerFinished|FeatureEnabled|FeatureDisabled|Initialized|ModuleResume|SessionLoaded
+---@param event LeaderLibGlobalListenerEvent|LeaderLibServerListenerEvent|LeaderLibClientListenerEvent|string[] Listener table name.
 ---@param callbackOrKey function|string If a string, the function is stored in a subtable of the event, such as NamedTimerFinished.TimerName = function
 ---@param callbackOrNil function|nil If callback is a string, then this is the callback.
 function RegisterListener(event, callbackOrKey, callbackOrNil)

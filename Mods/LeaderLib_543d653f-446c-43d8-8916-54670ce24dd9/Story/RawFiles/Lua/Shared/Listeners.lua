@@ -1,3 +1,9 @@
+---@alias LeaderLibGlobalListenerEvent string|'"FeatureEnabled"' | '"FeatureDisabled"' | '"Initialized"' | '"ModuleResume"' | '"SessionLoaded"' | '"TurnDelayed"' | '"SyncData"' | '"ClientDataSynced"' | '"ClientCharacterChanged"' | '"GetTooltipSkillDamage"' | '"GetTooltipSkillParam"' | '"LuaReset"' | '"BeforeLuaReset"' | '"Loaded"' | '"ModSettingsLoaded"' | '"ModSettingsSynced"' | '"ModSettingsChanged"'
+
+---@alias LeaderLibServerListenerEvent string|'"ApplyDamageCharacterBonuses"' | '"CharacterBasePointsChanged"' | '"ComputeCharacterHit"' | '"DoHit"' | '"GetHitResistanceBonus"' | '"GlobalFlagChanged"' | '"NamedTimerFinished"' | '"ObjectEvent"' | '"OnHit"' | '"OnNamedTurnCounter"' | '"OnPrepareHit"' | '"OnSkillHit"' | '"OnSummonChanged"' | '"OnTurnCounter"' | '"PersistentVarsLoaded"' | '"ProcObjectTimerFinished"' | '"StatusHitEnter"' | '"TimerFinished"' | '"TreasureItemGenerated"'
+
+---@alias LeaderLibClientListenerEvent string|'"CharacterSheetPointChanged"' | '"ControllerModeEnabled"' | '"InputEvent"' | '"ModMenuSectionCreated"' | '"MouseInputEvent"' | '"NamedInputEvent"' | '"OnContextMenuEntryClicked"' | '"OnContextMenuOpening"' | '"OnTalentArrayUpdating"' | '"OnTooltipPositioned"' | '"OnWorldTooltip"' | '"ShouldOpenContextMenu"' | '"UICreated"'
+
 if not Listeners then
 	Listeners = {}
 end

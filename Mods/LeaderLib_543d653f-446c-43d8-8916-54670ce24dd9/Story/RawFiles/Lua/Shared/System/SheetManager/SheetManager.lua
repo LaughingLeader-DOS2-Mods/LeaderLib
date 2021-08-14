@@ -8,7 +8,7 @@ end
 SheetManager.__index = SheetManager
 SheetManager.Loaded = false
 
----@alias SheetEntryType string |"PrimaryStat"|"SecondaryStat"|"Ability"|"CivilAbility"|"Talent"|"Custom"
+---@alias SheetEntryType string|'"PrimaryStat"'|'"SecondaryStat"'|'"Ability"'|'"CivilAbility"'|'"Talent"'|'"Custom"'
 
 ---@class SheetStatType
 SheetManager.StatType = {

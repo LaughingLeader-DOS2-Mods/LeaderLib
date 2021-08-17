@@ -53,6 +53,8 @@ if not isClient then
 				}
 			end
 			return data
+		else
+			return {}
 		end
 	end
 
@@ -81,19 +83,8 @@ if not isClient then
 				Ext.BroadcastMessage("LeaderLib_SharedData_StoreCustomStatData", payload)
 			end
 		else
-			local valueData = {}
-			for characterId,modData in pairs(PersistentVars.CustomStatValues) do
-				local netid = GameHelpers.GetNetID(characterId)
-				valueData[netid] = {}
-				for modId,statsData in pairs(modData) do
-					valueData[netid][modId] = {}
-					for statId,value in pairs(statsData) do
-						valueData[netid][modId][statId] = value
-					end
-				end
-			end
 			local payload = Ext.JsonStringify({
-				CustomStats = valueData,
+				CustomStats = {},
 				AvailablePoints = availablePoints
 			})
 			if user then
@@ -115,26 +106,6 @@ if not isClient then
 			end
 		end
 	end)
-
-	Ext.RegisterNetListener("LeaderLib_CustomStatSystem_SetStatValue", function(cmd, payload)
-		local data = Common.JsonParse(payload)
-		if data and data.NetID and data.ID and data.Value then
-			local character = Ext.GetCharacter(data.NetID)
-			local t = type(data.ID)
-			---@type SheetCustomStatData
-			local stat = nil
-			if t == "number" then
-				stat = CustomStatSystem:GetStatByDouble(data.ID)
-			elseif t == "string" then
-				stat = CustomStatSystem:GetStatByID(data.ID, data.Mod)
-			end
-			if stat then
-				stat:SetValue(character, data.Value)
-			else
-				fprint(LOGLEVEL.WARNING, "[LeaderLib_CustomStatSystem_SetStatValue] Failed to find stat for id (%s) and mod(%s)", data.ID, data.Mod or "")
-			end
-		end
-	end)
 else
 	---@private
 	---Loads a table of stat UUIDs from the server.
@@ -152,8 +123,6 @@ else
 					end
 				end
 			else
-				self.CharacterStatValues = stats
-
 				self:UpdateStatMovieClips()
 			end
 		end
@@ -206,7 +175,6 @@ else
 	end
 
 	Ext.RegisterNetListener("LeaderLib_SharedData_StoreCustomStatData", function(cmd, payload)
-		print(cmd,payload)
 		local b,err = xpcall(LoadSyncedCustomStatData, debug.traceback, cmd, payload)
 		if not b then
 			Ext.PrintError(err)

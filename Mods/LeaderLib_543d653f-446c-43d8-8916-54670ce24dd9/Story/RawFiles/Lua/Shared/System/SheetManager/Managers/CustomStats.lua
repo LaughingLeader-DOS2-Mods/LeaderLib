@@ -58,20 +58,6 @@ if not isClient then
 	setmetatable(CustomStatSystem.PointsPool, PointsPoolHandler)
 end
 
----@type table<UUID|NETID, table<MOD_UUID, table<CUSTOMSTATID, integer>>>
-CustomStatSystem.CharacterStatValues = {}
-if not isClient then
-	local Handler = {
-		__index = function(tbl,k)
-			return PersistentVars.CustomStatValues[k]
-		end,
-		__newindex = function(tbl,k,v)
-			PersistentVars.CustomStatValues[k] = v
-		end
-	}
-	setmetatable(CustomStatSystem.CharacterStatValues, Handler)
-end
-
 ---@alias MOD_UUID string
 ---@alias CUSTOMSTATID string
 

@@ -295,15 +295,13 @@ end
 ---@param character EsvCharacter|EclCharacter
 ---@param stat SheetCustomStatData
 ---@return integer
-function CustomStatSystem:GetStatValueForCharacter(character, stat)
+function CustomStatSystem:GetStatValueForCharacter(character, stat, ...)
+	if type(stat) == "string" then
+		local mod = table.unpack({...}) or ""
+		stat = self:GetStatByID(stat, mod)
+	end
 	if not self:GMStatsEnabled() then
-		local characterId = GameHelpers.GetCharacterID(character)
-		if self.CharacterStatValues[characterId] then
-			if self.CharacterStatValues[characterId][stat.Mod] then
-				return self.CharacterStatValues[characterId][stat.Mod][stat.ID] or 0
-			end
-		end
-		return 0
+		return SheetManager.Save.GetEntryValue(character, stat)
 	else
 		return character:GetCustomStat(stat.UUID) or 0
 	end

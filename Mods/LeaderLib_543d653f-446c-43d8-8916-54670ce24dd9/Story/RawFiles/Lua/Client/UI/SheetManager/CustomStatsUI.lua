@@ -114,28 +114,29 @@ end
 function CustomStatSystem.Update(ui, method, this)
 	CustomStatSystem:SetupGroups(ui, method)
 	local client = CustomStatSystem:GetCharacter(ui, this)
-	if client then
-		local changedStats = {NetID=client.NetID,Stats={}}
-		for stat in CustomStatSystem:GetAllStats(false,false,true) do
-			local last = stat:GetLastValue(client)
-			local value = stat:GetValue(client)
-			if last and value ~= last then
-				changedStats.Stats[#changedStats.Stats+1] = {
-					ID = stat.ID,
-					Mod = stat.Mod,
-					Last = last,
-					Current = value
-				}
-				CustomStatSystem:InvokeStatValueChangedListeners(stat, client, last, value)
-			end
-			stat:UpdateLastValue(client)
-		end
-		if #changedStats.Stats > 0 then
-			Ext.PostMessageToServer("LeaderLib_CustomStatSystem_StatValuesChanged", Ext.JsonStringify(changedStats))
-		end
-	end
 	
 	if CustomStatSystem:GMStatsEnabled() then
+		if client then
+			local changedStats = {NetID=client.NetID,Stats={}}
+			for stat in CustomStatSystem:GetAllStats(false,false,true) do
+				local last = stat:GetLastValue(client)
+				local value = stat:GetValue(client)
+				if last and value ~= last then
+					changedStats.Stats[#changedStats.Stats+1] = {
+						ID = stat.ID,
+						Mod = stat.Mod,
+						Last = last,
+						Current = value
+					}
+					CustomStatSystem:InvokeStatValueChangedListeners(stat, client, last, value)
+				end
+				stat:UpdateLastValue(client)
+			end
+			if #changedStats.Stats > 0 then
+				Ext.PostMessageToServer("LeaderLib_CustomStatSystem_StatValuesChanged", Ext.JsonStringify(changedStats))
+			end
+		end
+
 		local length = #this.customStats_array
 		if length == 0 then
 			return
@@ -206,7 +207,6 @@ function CustomStatSystem.Update(ui, method, this)
 		if this.isExtended then
 			this.clearArray("customStats_array")
 		end
-		Ext.PrintError("CustomStatSystem:GetAllStats")
 		for stat in CustomStatSystem:GetAllStats(false, true, true) do
 			local visible = CustomStatSystem:GetStatVisibility(ui, stat.Double, stat, client)
 			print(stat.ID, visible)

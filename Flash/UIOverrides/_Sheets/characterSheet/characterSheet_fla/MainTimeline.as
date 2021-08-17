@@ -19,7 +19,7 @@ package characterSheet_fla
 		public var curTooltip:int;
 		public var hasTooltip:Boolean;
 		public var availableStr:String;
-		public var keepCustomInScreen;
+		public var keepCustomInScreen:Boolean;
 		public var uiLeft:uint;
 		public var uiRight:uint;
 		public var uiTop:uint;

@@ -1,6 +1,6 @@
 ---@alias BeforeStatusAttemptCallback fun(target:EsvCharacter|EsvItem, status:EsvStatus, source:EsvCharacter|EsvItem|nil, handle:integer, statusType:string):void
 ---@alias StatusEventCallback fun(target:string, status:string, source:string|nil, statusType:string):void
----@alias StatusEventID string
+---@alias StatusEventID string|'"BeforeAttempt"'|'"Attempt"'|'"Applied"'|'"Removed"'
 
 ---Values for the RegisterStatusListener event parameter.
 ---@class StatusEventValues
@@ -89,8 +89,10 @@ function RemoveStatusListener(event, status, callback, removeAll)
     end
 end
 
+---@alias StatusTypeID string|'"CONSUME"'|'"DAMAGE"'|'"HEAL"'|'"HEALING"'|'"ACTIVE_DEFENSE"'|'"BLIND"'|'"CHALLENGE"'|'"CHARMED"'|'"DAMAGE_ON_MOVE"'|'"DEACTIVATED"'|'"DECAYING_TOUCH"'|'"DEMONIC_BARGAIN"'|'"DISARMED"'|'"EFFECT"'|'"EXTRA_TURN"'|'"FEAR"'|'"FLOATING"'|'"GUARDIAN_ANGEL"'|'"HEAL_SHARING_CASTER"'|'"HEAL_SHARING"'|'"INCAPACITATED"'|'"INVISIBLE"'|'"KNOCKED_DOWN"'|'"MUTED"'|'"PLAY_DEAD"'|'"POLYMORPHED"'|'"SPARK"'|'"STANCE"'
+
 ---@param event StatusEventID BeforeAttempt, Attempt, Applied, Removed
----@param statusType string
+---@param statusType StatusTypeID|StatusTypeID[]
 ---@param callback StatusEventCallback
 function RegisterStatusTypeListener(event, statusType, callback)
     local statusEventHolder = StatusTypeListeners[event]
@@ -115,7 +117,7 @@ function RegisterStatusTypeListener(event, statusType, callback)
 end
 
 ---@param event StatusEventID
----@param statusType string
+---@param statusType StatusTypeID|StatusTypeID[]
 ---@param callback StatusEventCallback
 ---@param removeAll boolean|nil
 function RemoveStatusTypeListener(event, statusType, callback, removeAll)

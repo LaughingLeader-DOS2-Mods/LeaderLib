@@ -206,10 +206,7 @@ function SheetManager:SetEntryValue(stat, characterId, value, skipListenerInvoke
 				fprint(LOGLEVEL.ERROR, "[%s][SetEntryValue:%s] Failed to get character from id (%s)", isClient and "CLIENT" or "SERVER", stat.ID, characterId)
 			end
 		else
-			if self.CurrentValues[stat.ID] == nil then
-				self.CurrentValues[stat.ID] = {}
-			end
-			self.CurrentValues[stat.ID][characterId] = value
+			SheetManager.Save.SetEntryValue(characterId, stat, value)
 		end
 		if not skipListenerInvoke then
 			for listener in self:GetListenerIterator(self.Listeners.OnEntryChanged[stat.ID], self.Listeners.OnEntryChanged.All) do
@@ -258,13 +255,7 @@ function SheetManager:GetValueByEntry(stat, characterId)
 			end
 		end
 	else
-		local dataTable = self.CurrentValues[stat.ID]
-		if dataTable then
-			local charValue = dataTable[characterId]
-			if charValue ~= nil then
-				return charValue
-			end
-		end
+		return SheetManager.Save.GetEntryValue(characterId, stat)
 	end
 	if stat.StatType == "Talent" then
 		return false

@@ -57,25 +57,85 @@ function SheetManager.Save.GetTableNameForType(statType)
 end
 
 ---@param characterId UUID|EsvCharacter|NETID|EclCharacter
----@param entry SheetAbilityData|SheetStatData|SheetTalentData|SheetCustomStatData
----@return integer|boolean
----@return table<SHEET_ENTRY_ID, integer> The mod data table containing all stats.
-function SheetManager.Save.GetEntryData(characterId, entry)
-	characterId = GameHelpers.GetCharacterID(characterId)
+---@param statType SheetStatType|nil
+---@param mod string|nil
+---@param entryId string|nil
+---@return table
+function SheetManager.Save.GetCharacterData(characterId, statType, mod, entryId)
 	local data = self.CurrentValues[characterId]
-	if entry and data then
-		local tableName = SheetManager.Save.GetTableNameForType(entry.StatType)
-		if tableName ~= nil then
-			local statTypeTable = data[tableName]
-			if statTypeTable then
-				local modTable = statTypeTable[entry.Mod]
-				if modTable then
-					return modTable[entry.ID],modTable
+	if data then
+		if statType then
+			local tableName = SheetManager.Save.GetTableNameForType(statType)
+			if tableName ~= nil then
+				local statTypeTable = data[tableName]
+				if statTypeTable then
+					if mod then
+						local modData = statTypeTable[mod]
+						if entryId then
+							return modData[entryId]
+						end
+						return modData
+					end
+					return statTypeTable
 				end
 			end
 		end
+		if mod then
+			for statType,modData in pairs(data) do
+				if modData[mod] then
+					if entryId then
+						return modData[mod][entryId]
+					end
+					return modData[mod]
+				end
+			end
+		elseif entryId then
+			for statType,modData in pairs(data) do
+				for modId,statData in pairs(modData) do
+					if statData[entryId] then
+						return statData[entryId]
+					end
+				end
+			end
+		end
+		return data
 	end
-	return data
+	return nil
+end
+
+---@param characterId UUID|EsvCharacter|NETID|EclCharacter
+---@param entry SheetAbilityData|SheetStatData|SheetTalentData|SheetCustomStatData
+---@return integer|boolean
+---@return table<SHEET_ENTRY_ID, integer> The mod data table containing all stats.
+function SheetManager.Save.GetEntryValue(characterId, entry)
+	local t = type(entry)
+	assert(t == "table", string.format("[SheetManager.Save.GetEntryValue] Entry type invalid (%s). Must be one of the following types: SheetAbilityData|SheetStatData|SheetTalentData|SheetCustomStatData", t))
+	if entry then
+		local defaultValue = 0
+		if entry.ValueType == "boolean" then
+			defaultValue = false
+		end
+		characterId = GameHelpers.GetCharacterID(characterId)
+		local data = self.CurrentValues[characterId]
+		if data then
+			local tableName = SheetManager.Save.GetTableNameForType(entry.StatType)
+			if tableName ~= nil then
+				local statTypeTable = data[tableName]
+				if statTypeTable then
+					local modTable = statTypeTable[entry.Mod]
+					if modTable then
+						local value = modTable[entry.ID]
+						if value == nil then
+							value = defaultValue
+						end
+						return value,modTable
+					end
+				end
+			end
+		end
+		return defaultValue
+	end
+	return nil
 end
 
 ---@param characterId UUID|EsvCharacter|NETID|EclCharacter
@@ -153,15 +213,7 @@ else
 	Ext.RegisterNetListener("LeaderLib_SheetManager_LoadSyncData", function(cmd, payload)
 		local data = Common.JsonParse(payload)
 		if data then
-			self.CharacterStatValues = data
-
-			--[[ for characterId,values in pairs(data) do
-				local savedData = self.Save.CreateCharacterData(characterId)
-
-				for statTypeTable,mods in pairs(values) do
-					savedData[statTypeTable] = mods
-				end
-			end ]]
+			self.CurrentValues = data
 		end
 	end)
 
@@ -171,13 +223,7 @@ else
 			assert(type(data.NetID) == "number", "NetID is invalid.")
 			assert(data.Values ~= nil, "Payload has no values.")
 
-			self.CharacterStatValues[data.NetID] = data.Values
-
-			--[[ local savedData = self.Save.CreateCharacterData(data.NetID)
-
-			for statTypeTable,mods in pairs(data.Values) do
-				savedData[statTypeTable] = mods
-			end ]]
+			self.CurrentValues[data.NetID] = data.Values
 		end
 	end)
 	

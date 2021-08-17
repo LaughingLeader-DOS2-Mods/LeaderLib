@@ -127,6 +127,7 @@ function HitData:PrintTargets()
 	fprint(LOGLEVEL.TRACE, "[HitData:%s] Target(%s)", self.Handle, self.Target)
 end
 
+---Updates HitStatus.Hit and HitContext.Hit to HitRequest, so property changes are applied.
 function HitData:UpdateHitRequest()
 	if self.HitRequest then
 		self.HitStatus.Hit = self.HitRequest

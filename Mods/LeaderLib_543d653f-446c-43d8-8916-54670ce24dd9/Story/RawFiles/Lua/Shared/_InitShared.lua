@@ -29,6 +29,9 @@ Vars = {
 		Statuses = {},
 		Total = 0
 	},
+	Commands = {
+		CooldownsDisabled = false
+	},
 	DebugMode = Ext.IsDeveloperMode() == true,
 	LeaderDebugMode = false,
 	Print = {

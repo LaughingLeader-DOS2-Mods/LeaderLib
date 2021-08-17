@@ -1,5 +1,9 @@
 local MessageData = Classes.MessageData
 
+if Debug == nil then
+	Debug = {}
+end
+
 Ext.RegisterConsoleCommand("adddeltamod", function(command, slot, deltamod)
 	if slot == nil then
 		slot = "Weapon"
@@ -29,7 +33,8 @@ Ext.RegisterConsoleCommand("listenskill", function (call, skill)
 	
 	local function ResetLua()
 		local varData = {
-			_PrintSettings = Vars.Print
+			_PrintSettings = Vars.Print,
+			_CommandSettings = Vars.Commands,
 		}
 		
 		for name,data in pairs(Mods) do
@@ -1250,4 +1255,31 @@ Ext.RegisterConsoleCommand("partyrestore", function(cmd)
 		CharacterSetMagicArmorPercentage(player.MyGuid, 100.0)
 		ApplyStatus(player.MyGuid, "LEADERLIB_RECALC", 0.0, 1, player.MyGuid)
 	end
+end)
+
+local cooldownsDisabled_AddedListener = false
+
+function Debug.SetCooldownMode(b)
+	if b then
+		CharacterResetCooldowns(CharacterGetHostCharacter()) 
+		if not cooldownsDisabled_AddedListener then
+			Ext.RegisterOsirisListener("SkillCast", 4, "after", function(char,...)
+				if Vars.Commands.CooldownsDisabled then
+					CharacterResetCooldowns(char)
+				end
+			end)
+			cooldownsDisabled_AddedListener = true
+		end
+	end
+end
+
+Ext.RegisterConsoleCommand("nocd", function(command)
+	Vars.Commands.CooldownsDisabled = not Vars.Commands.CooldownsDisabled
+	print(Vars.Commands.CooldownsDisabled and "Cooldowns disabled." or "Cooldowns enabled.")
+	Debug.SetCooldownMode(Vars.Commands.CooldownsDisabled)
+end)
+
+Ext.RegisterConsoleCommand("refreshcd", function(command)
+	local host = CharacterGetHostCharacter()
+	GameHelpers.UI.RefreshSkillBarCooldowns(host)
 end)

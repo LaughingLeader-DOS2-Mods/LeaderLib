@@ -173,6 +173,12 @@ function OnLuaReset()
 					end
 					varData._PrintSettings = nil
 				end
+				if varData._CommandSettings then
+					for k,v in pairs(varData._CommandSettings) do
+						Vars.Commands[k] = v
+					end
+					varData._CommandSettings = nil
+				end
 				for name,data in pairs(varData) do
 					if Mods[name] ~= nil and Mods[name].PersistentVars ~= nil then
 						for k,v in pairs(data) do
@@ -183,6 +189,7 @@ function OnLuaReset()
 			end
 		end
 	end)
+	Debug.SetCooldownMode(Vars.Commands.CooldownsDisabled)
 	local region = Osi.DB_CurrentLevel:Get(nil)[1][1]
 	GameHelpers.Data.SetRegion(region)
 	GameHelpers.Data.SetGameMode()

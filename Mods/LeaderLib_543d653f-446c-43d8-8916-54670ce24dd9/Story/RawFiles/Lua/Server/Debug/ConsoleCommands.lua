@@ -308,28 +308,6 @@ Ext.RegisterConsoleCommand("addskill", function(command, skill)
 	CharacterAddSkill(host, skill, 1)
 end)
 
-local cooldownsDisabled = false
-local cooldownsDisabled_AddedListener = false
-Ext.RegisterConsoleCommand("nocd", function(command)
-	cooldownsDisabled = not cooldownsDisabled
-	if cooldownsDisabled then
-		CharacterResetCooldowns(CharacterGetHostCharacter()) 
-		if not cooldownsDisabled_AddedListener then
-			Ext.RegisterOsirisListener("SkillCast", 4, "after", function(char,...)
-				if cooldownsDisabled then
-					CharacterResetCooldowns(char)
-				end
-			end)
-			cooldownsDisabled_AddedListener = true
-		end
-	end
-end)
-
-Ext.RegisterConsoleCommand("refreshcd", function(command)
-	local host = CharacterGetHostCharacter()
-	GameHelpers.UI.RefreshSkillBarCooldowns(host)
-end)
-
 local removedSkills = {}
 
 Ext.RegisterConsoleCommand("removeskill", function(cmd, skill)

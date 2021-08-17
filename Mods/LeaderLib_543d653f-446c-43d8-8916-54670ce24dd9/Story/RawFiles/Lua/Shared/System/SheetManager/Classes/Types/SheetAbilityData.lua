@@ -5,7 +5,6 @@ local SheetAbilityData = {
 	Type = "SheetAbilityData",
 	TooltipType = "Ability",
 	StatType = "Ability",
-	Value = 0,
 	Icon = "",
 	IconWidth = 128,
 	IconHeight = 128,
@@ -24,7 +23,6 @@ SheetAbilityData.__index = function(t,k)
 end
 
 local defaults = {
-	Value = 0,
 	GroupID = 0,
 	IsCivil = false,
 	Icon = "",

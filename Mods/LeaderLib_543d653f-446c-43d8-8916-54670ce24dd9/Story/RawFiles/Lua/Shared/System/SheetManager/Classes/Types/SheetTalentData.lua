@@ -5,7 +5,7 @@ local SheetTalentData = {
 	Type = "SheetTalentData",
 	StatType = "Talent",
 	TooltipType = "Talent",
-	Value = false,
+	ValueType = "boolean",
 	Icon = "",
 	IconWidth = 128,
 	IconHeight = 128,
@@ -24,7 +24,6 @@ local defaults = {
 	Icon = "",
 	IconWidth = SheetTalentData.IconWidth,
 	IconHeight = SheetTalentData.IconHeight,
-	Value = false,
 	IsRacial = false
 }
 

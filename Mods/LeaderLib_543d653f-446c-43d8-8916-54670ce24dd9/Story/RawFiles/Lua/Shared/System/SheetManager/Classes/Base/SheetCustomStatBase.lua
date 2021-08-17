@@ -20,6 +20,7 @@ local SheetCustomStatBase = {
 	Icon = "",
 	IconWidth = 128,
 	IconHeight = 128,
+	ValueType = "number",
 }
 SheetCustomStatBase.__index = SheetCustomStatBase
 

@@ -36,11 +36,8 @@ local SheetCustomStatData = {
 	AutoAddAvailablePointsOnRemove = true,
 }
 
-SheetCustomStatData.__index = function(t,k)
-	local v = Classes.SheetCustomStatData[k] or Classes.SheetCustomStatBase[k]
-	if v then
-		t[k] = v
-	end
+SheetCustomStatData.__index = function(tbl,k)
+	local v = SheetCustomStatData[k] or Classes.SheetCustomStatBase[k]
 	return v
 end
 
@@ -102,11 +99,11 @@ Classes.UnregisteredCustomStatData = {
 ---@return integer
 function SheetCustomStatData:GetValue(character)
 	if type(character) == "userdata" then
-		return CustomStatSystem:GetStatValueForCharacter(character, self)
+		return CustomStatSystem:GetStatValueForCharacter(character, self) or 0
 	else
 		character = Ext.GetCharacter(character)
 		if character then
-			return CustomStatSystem:GetStatValueForCharacter(character, self)
+			return CustomStatSystem:GetStatValueForCharacter(character, self) or 0
 		end
 	end
 	return 0

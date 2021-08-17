@@ -8,7 +8,6 @@ local SheetStatData = {
 	StatType = "SecondaryStat",
 	---@type SheetSecondaryStatType
 	SecondaryStatType = "Info",
-	Value = 0,
 	---For if the StatType is "Spacing".
 	SpacingHeight = 0,
 	Frame = 0,
@@ -28,7 +27,6 @@ end
 local defaults = {
 	StatType = "Secondary",
 	SecondaryStatType = "Info",
-	Value = 0,
 	SpacingHeight = 0,
 	SheetIcon = "",
 	SheetIconWidth = 28,

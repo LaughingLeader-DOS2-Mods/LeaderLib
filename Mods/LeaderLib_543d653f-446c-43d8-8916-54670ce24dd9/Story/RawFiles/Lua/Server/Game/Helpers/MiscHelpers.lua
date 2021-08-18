@@ -227,6 +227,8 @@ function GameHelpers.IsActiveCombat(id)
 	return false
 end
 
+---Deprecated
+---@see GameHelpers.Combat.GetCharacters
 ---@param id integer
 ---@return EsvCharacter[]|nil
 function GameHelpers.GetCombatCharacters(id)

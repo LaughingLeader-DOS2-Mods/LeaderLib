@@ -4,7 +4,7 @@ end
 
 local isClient = Ext.IsClient()
 
----@param character EsvCharacter|EclCharacter|string|number
+---@param character EsvCharacter|EclCharacter|UUID|NETID
 ---@return boolean
 function GameHelpers.Character.IsPlayer(character)
 	if not character then
@@ -17,7 +17,7 @@ function GameHelpers.Character.IsPlayer(character)
 	if not isClient then
 		if not Ext.OsirisIsCallable() then
 			if t == "string" or t == "number" then
-				character = Ext.GetCharacter(character)
+				character = GameHelpers.GetCharacter(character)
 			end
 			if character and (character.IsPlayer or character.IsGameMaster) then
 				return true
@@ -35,7 +35,7 @@ function GameHelpers.Character.IsPlayer(character)
 		end
 	else
 		if t ~= "userdata" then
-			character = Ext.GetCharacter(character)
+			character = GameHelpers.GetCharacter(character)
 		end
 		---@type EclCharacter
 		local clientCharacter = character
@@ -51,33 +51,33 @@ function GameHelpers.Character.IsPlayer(character)
 	return false
 end
 
----@param character EsvCharacter|EclCharacter|string|number
+---@param character EsvCharacter|EclCharacter|UUID|NETID
 ---@return boolean
 function GameHelpers.Character.IsPlayerOrPartyMember(character)
 	if GameHelpers.Character.IsPlayer(character) then
 		return true
 	end
-	if not isClient then
+	if not isClient and Ext.OsirisIsCallable() then
 		return CharacterIsPartyMember(character) == 1
 	end
 	return false
 end
 
-function GameHelpers.Character.IsOrigin(uuid)
-	if not isClient then
-		return GameHelpers.DB.HasUUID("DB_Origins", uuid)
+---@param character EsvCharacter|EclCharacter|UUID|NETID
+function GameHelpers.Character.IsOrigin(character)
+	if not isClient and Ext.OsirisIsCallable() then
+		character = GameHelpers.GetUUID(character)
+		return GameHelpers.DB.HasUUID("DB_Origins", character)
 	else
-		if type(uuid) ~= "userdata" then
-			uuid = Ext.GetCharacter(uuid)
-		end
-		if uuid then
-			return uuid.PlayerCustomData and not StringHelpers.IsNullOrWhitespace(uuid.PlayerCustomData.OriginName)
+		character = GameHelpers.GetCharacter(character)
+		if type(character) == "userdata" then
+			return character.PlayerCustomData and not StringHelpers.IsNullOrWhitespace(character.PlayerCustomData.OriginName)
 		end
 	end
 	return false
 end
 
----@param character EsvCharacter|EclCharacter
+---@param character EsvCharacter|EclCharacter|UUID|NETID
 function GameHelpers.Character.IsSummonOrPartyFollower(character)
 	if not isClient then
 		if type(character) == "userdata" then
@@ -87,7 +87,7 @@ function GameHelpers.Character.IsSummonOrPartyFollower(character)
 		end
 	else
 		if type(character) ~= "userdata" then
-			character = Ext.GetCharacter(character)
+			character = GameHelpers.GetCharacter(character)
 		end
 		if character then
 			return character.Summon or character.PartyFollower
@@ -96,11 +96,12 @@ function GameHelpers.Character.IsSummonOrPartyFollower(character)
 	return false
 end
 
-function GameHelpers.Character.IsAllyOfParty(uuid)
-	if not isClient then
-		uuid = GameHelpers.GetUUID(uuid)
+---@param character EsvCharacter|EclCharacter|UUID|NETID
+function GameHelpers.Character.IsAllyOfParty(character)
+	if not isClient and Ext.OsirisIsCallable() then
+		character = GameHelpers.GetUUID(character)
 		for player in GameHelpers.Character.GetPlayers(false) do
-			if CharacterIsAlly(uuid, player.MyGuid) == 1 then
+			if CharacterIsAlly(character, player.MyGuid) == 1 then
 				return true
 			end
 		end
@@ -108,11 +109,12 @@ function GameHelpers.Character.IsAllyOfParty(uuid)
 	return false
 end
 
-function GameHelpers.Character.IsEnemyOfParty(uuid)
-	if not isClient then
-		uuid = GameHelpers.GetUUID(uuid)
+---@param character EsvCharacter|EclCharacter|UUID|NETID
+function GameHelpers.Character.IsEnemyOfParty(character)
+	if not isClient and Ext.OsirisIsCallable() then
+		character = GameHelpers.GetUUID(character)
 		for player in GameHelpers.Character.GetPlayers(false) do
-			if CharacterIsEnemy(uuid, player.MyGuid) == 1 then
+			if CharacterIsEnemy(character, player.MyGuid) == 1 then
 				return true
 			end
 		end
@@ -120,20 +122,23 @@ function GameHelpers.Character.IsEnemyOfParty(uuid)
 	return false
 end
 
-function GameHelpers.Character.IsEnemy(obj1, obj2)
-	if not isClient then
-		local a = GameHelpers.GetUUID(obj1)
-		local b = GameHelpers.GetUUID(obj2)
+---@param char1 UUID|NETID|EsvCharacter
+---@param char2 UUID|NETID|EsvCharacter
+function GameHelpers.Character.IsEnemy(char1, char2)
+	if not isClient and Ext.OsirisIsCallable() then
+		local a = GameHelpers.GetUUID(char1)
+		local b = GameHelpers.GetUUID(char2)
 		return CharacterIsEnemy(a,b) == 1
 	end
 	return false
 end
 
-function GameHelpers.Character.IsNeutralToParty(uuid)
-	if not isClient then
-		uuid = GameHelpers.GetUUID(uuid)
+---@param character EsvCharacter|EclCharacter|UUID|NETID
+function GameHelpers.Character.IsNeutralToParty(character)
+	if not isClient and Ext.OsirisIsCallable() then
+		character = GameHelpers.GetUUID(character)
 		for player in GameHelpers.Character.GetPlayers(false) do
-			if CharacterIsNeutral(uuid, player.MyGuid) == 1 then
+			if CharacterIsNeutral(character, player.MyGuid) == 1 then
 				return true
 			end
 		end
@@ -141,17 +146,19 @@ function GameHelpers.Character.IsNeutralToParty(uuid)
 	return false
 end
 
-function GameHelpers.Character.IsInCombat(uuid)
-	if not isClient then
-		if CharacterIsInCombat(uuid) == 1 then
+---@param character EsvCharacter|EclCharacter|UUID|NETID
+function GameHelpers.Character.IsInCombat(character)
+	if not isClient and Ext.OsirisIsCallable() then
+		if CharacterIsInCombat(character) == 1 then
 			return true
-		elseif GameHelpers.DB.HasUUID("DB_CombatCharacters", uuid, 2, 1) then
+		elseif GameHelpers.DB.HasUUID("DB_CombatCharacters", character, 2, 1) then
 			return true
 		end
 	end
 	return false
 end
 
+---@return integer
 function GameHelpers.Character.GetHighestPlayerLevel()
 	local level = 1
 	if not isClient then
@@ -171,11 +178,11 @@ function GameHelpers.Character.GetHighestPlayerLevel()
 	return level
 end
 
----@param character string|EsvCharacter|EclCharacter
+---@param character EsvCharacter|EclCharacter|UUID|NETID
 ---@return boolean
 function GameHelpers.Character.IsUndead(character)
 	if type(character) ~= "userdata" then
-		character = Ext.GetCharacter(character)
+		character = GameHelpers.GetCharacter(character)
 	end
 	if character and character.HasTag then
 		if character:HasTag("UNDEAD") or character.Stats.TALENT_Zombie then
@@ -185,14 +192,14 @@ function GameHelpers.Character.IsUndead(character)
 	return false
 end
 
----@param character string|EsvCharacter|EclCharacter
+---@param character EsvCharacter|EclCharacter|UUID|NETID
 ---@return boolean
 function GameHelpers.Character.GetDisplayName(character)
 	if not character then
 		return ""
 	end
 	if type(character) ~= "userdata" then
-		character = Ext.GetCharacter(character)
+		character = GameHelpers.GetCharacter(character)
 	end
 	if character then
 		local name = character.DisplayName
@@ -212,11 +219,11 @@ end
 
 if not isClient then
 
----@param character EsvCharacter|string|integer
+---@param character EsvCharacter|UUID|NETID
 ---@param level integer
 function GameHelpers.Character.SetLevel(character, level)
 	if type(character) ~= "userdata" then
-		character = Ext.GetCharacter(character)
+		character = GameHelpers.GetCharacter(character)
 	end
 	if character and character.Stats then
 		if (level < character.Stats.Level) or Ext.IsClient() then
@@ -245,14 +252,14 @@ function GameHelpers.Character.GetPlayers(includeSummons)
 	local players = {}
 	if not isClient then
 		for _,db in pairs(Osi.DB_IsPlayer:Get(nil)) do
-			local player = Ext.GetCharacter(db[1])
+			local player = GameHelpers.GetCharacter(db[1])
 			players[#players+1] = player
 			if includeSummons == true then
 				local summons = PersistentVars.Summons[player.MyGuid]
 				if summons then
 					for i,v in pairs(summons) do
 						if ObjectIsCharacter(v) == 1 then
-							local summon = Ext.GetCharacter(v)
+							local summon = GameHelpers.GetCharacter(v)
 							if summon then
 								players[#players+1] = summon
 							end
@@ -264,7 +271,7 @@ function GameHelpers.Character.GetPlayers(includeSummons)
 		if SharedData.GameMode == GAMEMODE.GAMEMASTER then
 			local gm = StringHelpers.GetUUID(CharacterGetHostCharacter())
 			if not StringHelpers.IsNullOrEmpty(gm) then
-				gm = Ext.GetCharacter(gm)
+				gm = GameHelpers.GetCharacter(gm)
 				if not Common.TableHasValue(players, gm) then
 					players[#players+1] = gm
 				end
@@ -272,7 +279,7 @@ function GameHelpers.Character.GetPlayers(includeSummons)
 		end
 	else
 		for mc in StatusHider.PlayerInfo:GetCharacterMovieClips(not includeSummons) do
-			local character = Ext.GetCharacter(Ext.DoubleToHandle(mc.characterHandle))
+			local character = GameHelpers.GetCharacter(Ext.DoubleToHandle(mc.characterHandle))
 			if character then
 				players[#players+1] = character
 			end
@@ -289,12 +296,14 @@ function GameHelpers.Character.GetPlayers(includeSummons)
 	end
 end
 
+---@param includeSummons boolean|nil
+---@return integer
 function GameHelpers.Character.GetPartySize(includeSummons)
 	local count = 0
 	local players = {}
 	if not isClient then
 		for _,db in pairs(Osi.DB_IsPlayer:Get(nil)) do
-			local player = Ext.GetCharacter(db[1])
+			local player = GameHelpers.GetCharacter(db[1])
 			if player then
 				count = count + 1
 			end
@@ -303,7 +312,7 @@ function GameHelpers.Character.GetPartySize(includeSummons)
 				if summons then
 					for i,v in pairs(summons) do
 						if ObjectIsCharacter(v) == 1 then
-							local summon = Ext.GetCharacter(v)
+							local summon = GameHelpers.GetCharacter(v)
 							if summon then
 								count = count + 1
 							end
@@ -322,7 +331,7 @@ function GameHelpers.Character.GetPartySize(includeSummons)
 end
 
 ---Gets all the active summons of a character.
----@param owner EsvCharacter|EclCharacter|string|number|nil
+---@param owner EsvCharacter|EclCharacter|UUID|NETID
 ---@param getItems boolean|nil If on the server, item summons can be fetched as well.
 ---@return fun():EsvCharacter|EclCharacter
 function GameHelpers.Character.GetSummons(owner, getItems)
@@ -338,9 +347,9 @@ function GameHelpers.Character.GetSummons(owner, getItems)
 		end
 		for ownerId,tbl in pairs(PersistentVars.Summons) do
 			if not matchId or ownerId == matchId then
-				for i,uuid in pairs(tbl) do
-					if getItems == true or ObjectIsItem(uuid) == false then
-						local summon = Ext.GetGameObject(uuid)
+				for i,character in pairs(tbl) do
+					if getItems == true or ObjectIsItem(character) == false then
+						local summon = Ext.GetGameObject(character)
 						if summon then
 							summons[#summons+1] = summon
 						end
@@ -355,7 +364,7 @@ function GameHelpers.Character.GetSummons(owner, getItems)
 			matchId = owner
 		end
 		for mc in StatusHider.PlayerInfo:GetSummonMovieClips(matchId) do
-			local character = Ext.GetCharacter(Ext.DoubleToHandle(mc.characterHandle))
+			local character = GameHelpers.GetCharacter(Ext.DoubleToHandle(mc.characterHandle))
 			if character then
 				summons[#summons+1] = character
 			end

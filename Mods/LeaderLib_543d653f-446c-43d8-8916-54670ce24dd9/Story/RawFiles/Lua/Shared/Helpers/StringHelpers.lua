@@ -320,3 +320,16 @@ function StringHelpers.CommaNumber(n)
 	local left,num,right = string.match(n,'^([^%d]*%d)(%d*)(.-)$')
 	return left..(num:reverse():gsub('(%d%d%d)','%1,'):reverse())..right
 end
+
+---Check if a string separated by a delimiter has a value.
+---@param str string
+---@param delimiter string
+---@param value string
+---@return boolean
+function StringHelpers.DelimitedStringContains(str, delimiter, value)
+	if StringHelpers.IsNullOrWhitespace(str) then
+		return false
+	end
+	local values = StringHelpers.Split(str, delimiter)
+	return Common.TableHasValue(values, value)
+end

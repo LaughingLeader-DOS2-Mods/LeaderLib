@@ -120,11 +120,17 @@ end
 function GameHelpers.Item.IsObject(item)
 	local t = type(item)
 	if t == "userdata" then
-		if Data.ObjectStats[item.StatsId] or item.ItemType == "Object" then
-			return true
-		end
-		if not item.Stats then
-			return true
+		if GameHelpers.Ext.ObjectIsItem(item) then
+			if Data.ObjectStats[item.StatsId] or item.ItemType == "Object" then
+				return true
+			end
+			if not item.Stats then
+				return true
+			end
+		elseif GameHelpers.Ext.ObjectIsStatItem(item) then
+			if Data.ObjectStats[item.Name] then
+				return true
+			end
 		end
 	elseif t == "string" then
 		return Data.ObjectStats[item] == true
@@ -134,17 +140,20 @@ end
 
 ---@param item EsvItem|EclItem
 ---@param tag string
-function GameHelpers.ItemHasStatsTag(item, tag)
-	if not GameHelpers.Item.IsObject(item) then
-		if not StringHelpers.IsNullOrWhitespace(item.Stats.Tags) and 
-		Common.TableHasValue(StringHelpers.Split(item.Stats.Tags, ";"), tag) then
+---@param statItem StatItem|nil
+function GameHelpers.ItemHasStatsTag(item, tag, statItem)
+	if statItem or not GameHelpers.Item.IsObject(item) then
+		statItem = statItem or item.Stats
+		if StringHelpers.DelimitedStringContains(statItem.Tags, ";", tag) then
 			return true
 		end
-		for _,v in pairs(item.Stats.DynamicStats) do
-			if not StringHelpers.IsNullOrWhitespace(v.ObjectInstanceName) then
-				local tags = Ext.StatGetAttribute(v.ObjectInstanceName, "Tags")
-				if not StringHelpers.IsNullOrWhitespace(tags) and Common.TableHasValue(StringHelpers.Split(tags, ";"), tag) then
-					return true
+		if statItem.DynamicStats then
+			for _,v in pairs(statItem.DynamicStats) do
+				if not StringHelpers.IsNullOrWhitespace(v.ObjectInstanceName) then
+					local tags = Ext.StatGetAttribute(v.ObjectInstanceName, "Tags")
+					if tags and StringHelpers.DelimitedStringContains(tags, ";", tag) then
+						return true
+					end
 				end
 			end
 		end
@@ -153,13 +162,32 @@ function GameHelpers.ItemHasStatsTag(item, tag)
 end
 
 ---@param item EsvItem|EclItem
----@param tag string
+---@param tag string|string[]
 function GameHelpers.ItemHasTag(item, tag)
-	if item:HasTag(tag) then
-		return true
-	end
-	if GameHelpers.ItemHasStatsTag(item, tag) then
-		return true
+	local t = type(tag)
+	if t == "table" then
+		for i=1,#tag do
+			if GameHelpers.ItemHasTag(item, tag[i]) then
+				return true
+			end
+		end
+	elseif t == "string" then
+		if type(item) == "table" then
+			if item.HasTag and item.HasTag(item, tag) == true then
+				return true
+			end
+		elseif GameHelpers.Ext.ObjectIsItem(item) then
+			if item:HasTag(tag) then
+				return true
+			end
+			if GameHelpers.ItemHasStatsTag(item, tag) then
+				return true
+			end
+		elseif GameHelpers.Ext.ObjectIsStatItem(item) then
+			if GameHelpers.ItemHasStatsTag(item, tag, item) then
+				return true
+			end
+		end
 	end
 	return false
 end
@@ -215,7 +243,7 @@ function GameHelpers.CharacterOrEquipmentHasTag(character, tag)
 		return true
 	end
 	for _,slot in Data.VisibleEquipmentSlots:Get() do
-		if not isClient then
+		if not isClient and Ext.OsirisIsCallable() then
 			local uuid = CharacterGetEquippedItem(character.MyGuid, slot)
 			if not StringHelpers.IsNullOrEmpty(uuid) then
 				local item = Ext.GetItem(uuid)
@@ -224,11 +252,22 @@ function GameHelpers.CharacterOrEquipmentHasTag(character, tag)
 				end
 			end
 		else
-			local uuid = character:GetItemBySlot(slot)
-			if not StringHelpers.IsNullOrEmpty(uuid) then
-				local item = Ext.GetItem(uuid)
-				if item and GameHelpers.ItemHasTag(item, tag) then
-					return true
+			if isClient then
+				local uuid = character:GetItemBySlot(slot)
+				if not StringHelpers.IsNullOrEmpty(uuid) then
+					local item = Ext.GetItem(uuid)
+					if item and GameHelpers.ItemHasTag(item, tag) then
+						return true
+					end
+				end
+			else
+				local items = character:GetInventoryItems()
+				local count = math.min(#items, 14)
+				for i=1,count do
+					local item = Ext.GetItem(items[i])
+					if item and Data.VisibleEquipmentSlots[item.Slot] and GameHelpers.ItemHasTag(item, tag) then
+						return true
+					end
 				end
 			end
 		end

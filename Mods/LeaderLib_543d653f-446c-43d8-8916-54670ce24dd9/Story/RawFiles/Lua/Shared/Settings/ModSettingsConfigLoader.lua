@@ -52,9 +52,12 @@ local function TryFindCallback(uuid, name)
 end
 
 local function LoadModSettingsConfig(uuid, file)
-	local settings = SettingsManager.GetMod(uuid, true)
 	local config = Common.JsonParse(file)
 	if config ~= nil then
+		if config.Enabled == false then
+			return false
+		end
+		local settings = SettingsManager.GetMod(uuid, true)
 		if config.TitleColor ~= nil then
 			settings.TitleColor = config.TitleColor
 		end
@@ -121,9 +124,10 @@ local function LoadModSettingsConfig(uuid, file)
 			-- 	local entries = section.Entries
 			-- end
 		end
+		InvokeListenerCallbacks(Listeners.ModSettingsLoaded[uuid], settings)
+		return true
 	end
-	InvokeListenerCallbacks(Listeners.ModSettingsLoaded[uuid], settings)
-	return true
+	return false
 end
 
 local function TryFindConfig(info)

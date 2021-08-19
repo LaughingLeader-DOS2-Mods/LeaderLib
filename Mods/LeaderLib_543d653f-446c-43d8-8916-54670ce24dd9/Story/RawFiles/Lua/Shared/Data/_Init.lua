@@ -88,28 +88,47 @@ function Data.DamageTypes:Get()
 	return iterateFromZero(self)
 end
 
----@alias ItemSlot "Weapon"|"Shield"|"Helmet"|"Breast"|"Gloves"|"Leggings"|"Boots"|"Belt"|"Amulet"|"Ring"|"Ring2"|"Wings"|"Horns"|"Overhead"
+---@alias ItemSlot '"Weapon"'|'"Shield"'|'"Helmet"'|'"Breast"'|'"Gloves"'|'"Leggings"'|'"Boots"'|'"Belt"'|'"Amulet"'|'"Ring"'|'"Ring2"'|'"Wings"'|'"Horns"'|'"Overhead"'|'"Sentintel"'
 
-local slots = {
-	[0] = "Weapon",
-	"Shield",
-	"Helmet",
-	"Breast",
-	"Gloves",
-	"Leggings",
-	"Boots",
-	"Belt",
-	"Amulet",
-	"Ring",
-	"Ring2",
-	"Wings",
-	"Horns",
-	"Overhead"
+Data.EquipmentSlots = {
+	[0]="Helmet",
+	[1]="Breast",
+	[2]="Leggings",
+	[3]="Weapon",
+	[4]="Shield",
+	[5]="Ring",
+	[6]="Belt",
+	[7]="Boots",
+	[8]="Gloves",
+	[9]="Amulet",
+	[10]="Ring2",
+	[11]="Wings",
+	[12]="Horns",
+	[13]="Overhead",
+	[14]="Sentinel"
 }
-Data.EquipmentSlots = setmetatable({},{__index = slots})
+
 function Data.EquipmentSlots:Get()
 	return iterateFromZero(self)
 end
+
+Data.EquipmentSlotNames = {
+	Helmet = 0,
+	Breast = 1,
+	Leggings = 2,
+	Weapon = 3,
+	Shield = 4,
+	Ring = 5,
+	Belt = 6,
+	Boots = 7,
+	Gloves = 8,
+	Amulet = 9,
+	Ring2 = 10,
+	Wings = 11,
+	Horns = 12,
+	Overhead = 13,
+	Sentinel = 14
+}
 
 local itemslot = {
 	[0] = "Helmet",
@@ -134,17 +153,17 @@ function Data.DeltaModSlotType:Get()
 end
 
 local visibleEquipmentSlots = {
-	[0] = "Weapon",
-	"Shield",
-	"Helmet",
-	"Breast",
-	"Gloves",
-	"Leggings",
-	"Boots",
-	"Belt",
-	"Amulet",
-	"Ring",
-	"Ring2"
+	[0]="Helmet",
+	[1]="Breast",
+	[2]="Leggings",
+	[3]="Weapon",
+	[4]="Shield",
+	[5]="Ring",
+	[6]="Belt",
+	[7]="Boots",
+	[8]="Gloves",
+	[9]="Amulet",
+	[10]="Ring2",
 }
 Data.VisibleEquipmentSlots = setmetatable({},{__index = visibleEquipmentSlots})
 function Data.VisibleEquipmentSlots:Get()
@@ -539,6 +558,7 @@ SKILL_STATE = {
 Ext.Require("Shared/Data/ResistancePenetrationTags.lua")
 Ext.Require("Shared/Data/LocalizedText.lua")
 Ext.Require("Shared/Data/ValueTypes.lua")
+Ext.Require("Shared/Data/ExtenderUserData.lua")
 
 Data.EngineStatus = {
 	ACTIVE_DEFENSE = true,

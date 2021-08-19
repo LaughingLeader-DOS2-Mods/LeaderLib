@@ -341,13 +341,26 @@ end
 ---@return EsvCharacter|EclCharacter
 function GameHelpers.GetCharacter(object)
 	local t = type(object)
-	if t == "userdata" then
-		local meta = getmetatable(object)
-		if meta == "esv::Character" or meta == "ecl::Character" then
-			return object
-		end
+	if t == "userdata" and GameHelpers.Ext.ObjectIsCharacter(object) then
+		return object
 	elseif t == "string" or t == "number" then
 		local obj = Ext.GetCharacter(object)
+		if obj then
+			return obj
+		end
+	end
+	return nil
+end
+
+---Tries to get an Esv/EclItem from whatever the value is.
+---@param object EsvGameObject|EclGameObject|string|number
+---@return EsvItem|EclItem
+function GameHelpers.GetItem(object)
+	local t = type(object)
+	if t == "userdata" and GameHelpers.Ext.ObjectIsItem(object) then
+		return object
+	elseif t == "string" or t == "number" then
+		local obj = Ext.GetItem(object)
 		if obj then
 			return obj
 		end

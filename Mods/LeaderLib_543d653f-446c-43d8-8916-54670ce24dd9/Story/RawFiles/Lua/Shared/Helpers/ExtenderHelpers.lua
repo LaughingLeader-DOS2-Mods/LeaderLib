@@ -750,3 +750,39 @@ function GameHelpers.Ext.CreateItemTable(item)
 	end
 	return itemTable
 end
+
+
+function GameHelpers.Ext.ObjectIsStatItem(obj)
+	local meta = getmetatable(obj)
+	return meta == Data.ExtenderClass.StatItem or meta == Data.ExtenderClass.StatItemWeapon or meta == Data.ExtenderClass.StatItemArmor
+end
+
+function GameHelpers.Ext.ObjectIsItem(obj)
+	local meta = getmetatable(obj)
+	return meta == Data.ExtenderClass.EsvItem or meta == Data.ExtenderClass.EclItem
+end
+
+function GameHelpers.Ext.ObjectIsCharacter(obj)
+	local meta = getmetatable(obj)
+	return meta == Data.ExtenderClass.EsvCharacter or meta == Data.ExtenderClass.EclCharacter
+end
+
+---@param obj EsvItem|EclItem|StatItem
+---@return string
+function GameHelpers.Ext.GetItemStatName(obj)
+	local t = type(obj)
+
+	if t == "string" or t == "number" then
+		local item = GameHelpers.GetItem(obj)
+		if item then
+			return item.StatsId
+		end
+	elseif t == "userdata" then
+		if GameHelpers.Ext.ObjectIsItem(obj) then
+			return obj.StatsId
+		elseif GameHelpers.Ext.ObjectIsStatItem(obj) then
+			return obj.Name
+		end
+	end
+	return nil
+end

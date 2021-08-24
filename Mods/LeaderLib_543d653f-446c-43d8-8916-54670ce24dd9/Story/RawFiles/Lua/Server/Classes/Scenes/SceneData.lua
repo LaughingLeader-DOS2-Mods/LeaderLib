@@ -125,7 +125,7 @@ end
 
 ---@param state SceneStateData
 function SceneData:StateDone(state, ...)
-	PrintDebug("SceneData:StateDone", self.ID, state.ID, ...)
+	fprint(LOGLEVEL.TRACE, "[SceneData:StateDone:%s] State(%s)", self.ID, state.ID)
 	if not self:Next(...) then
 		SceneManager.ResumeLastThread()
 	end

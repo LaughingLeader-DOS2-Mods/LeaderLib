@@ -152,6 +152,15 @@ function SceneManager.AddScene(scene, uniqueOnly)
 	return scene
 end
 
+---@param scene SceneData
+function SceneManager.RemoveScene(scene)
+	for i,v in pairs(SceneManager.Scenes) do
+		if v == scene then
+			table.remove(SceneManager.Scenes, i)
+		end
+	end
+end
+
 ---@param id string
 ---@param firstOnly boolean|nil
 ---@return SceneData|SceneData[]
@@ -218,7 +227,7 @@ Timer.RegisterListener("LeaderLib_SceneManager_WaitingTimer", function()
 		if data.Time <= SceneManager.CurrentTime then
 			SceneManager.Queue.Waiting[sceneId] = nil
 			local scene = SceneManager.GetSceneByID(sceneId)
-			if scene then
+			if scene and scene.Resume then
 				scene:Resume(data.State)
 			end
 		else
@@ -230,7 +239,7 @@ Timer.RegisterListener("LeaderLib_SceneManager_WaitingTimer", function()
 			if data.Time <= SceneManager.CurrentTime then
 				SceneManager.Queue.Signal[sceneId] = nil
 				local scene = SceneManager.GetSceneByID(sceneId)
-				if scene then
+				if scene and scene.Resume then
 					scene:Resume(data.State)
 				end
 			else

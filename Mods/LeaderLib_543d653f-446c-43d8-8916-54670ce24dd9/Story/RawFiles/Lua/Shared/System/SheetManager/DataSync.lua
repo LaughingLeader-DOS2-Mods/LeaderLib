@@ -221,7 +221,7 @@ else
 		local data = Common.JsonParse(payload)
 		if data then
 			assert(type(data.NetID) == "number", "NetID is invalid.")
-			assert(data.Values ~= nil, "Payload has no values.")
+			assert(data.Values ~= nil, "Payload has no Values table.")
 
 			self.CurrentValues[data.NetID] = data.Values
 		end

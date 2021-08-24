@@ -1404,12 +1404,15 @@ function TooltipHooks:NotifyAll(listeners, ...)
 end
 
 function TooltipHooks:RegisterListener(type, name, listener)
-	if not self.Initialized then
+	--[[ if not self.Initialized then
 		if self.SessionLoaded then
 			self:Init()
 		else
 			self.InitializationRequested = true
 		end
+	end ]]
+	if not self.Initialized then
+		self:Init()
 	end
 
 	if type == nil then
@@ -1639,9 +1642,8 @@ local function CaptureBuiltInUIs()
 	end
 end
 
-local function OnSessionLoaded()
+local function EnableHooks()
 	ControllerVars.Enabled = (Ext.GetBuiltinUI("Public/Game/GUI/msgBox_c.swf") or Ext.GetUIByType(Data.UIType.msgBox_c)) ~= nil
-	TooltipHooks.SessionLoaded = true
 	if TooltipHooks.InitializationRequested then
 		TooltipHooks:Init()
 	end
@@ -1649,7 +1651,16 @@ local function OnSessionLoaded()
 	CaptureBuiltInUIs()
 end
 
-Ext.RegisterListener("SessionLoaded", OnSessionLoaded)
+Ext.RegisterListener("GameStateChanged", function(lastState, nextState)
+	if nextState == "Menu" then
+		EnableHooks()
+	end
+end)
+
+Ext.RegisterListener("SessionLoaded", function()
+	TooltipHooks.SessionLoaded = true
+	EnableHooks()
+end)
 
 ---@param ui UIObject
 Ext.RegisterListener("UIObjectCreated", function (ui)

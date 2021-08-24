@@ -914,6 +914,53 @@ userDataProps["CDivinityStats_Item"] = CDivinityStats_Item
 userDataProps["CDivinityStats_Equipment_Attributes"] = CDivinityStats_Equipment_Attributes
 userDataProps["CDivinityStats_Weapon_Attributes"] = CDivinityStats_Weapon_Attributes
 userDataProps["CDamageList"] = function(obj) return obj:ToTable() end
+userDataProps["esv::HStatus"] = {
+	--EsvStatus
+	--StatusType = "string",
+	StatusId = "string",
+	CanEnterChance = "integer",
+	StartTimer = "number",
+	LifeTime = "number",
+	CurrentLifeTime = "number",
+	TurnTimer = "number",
+	Strength = "number",
+	StatsMultiplier = "number",
+	DamageSourceType = "string",
+	StatusHandle = "StatusHandle",
+	TargetHandle = "ObjectHandle",
+	StatusSourceHandle = "ObjectHandle",
+	KeepAlive = "boolean",
+	IsOnSourceSurface = "boolean",
+	IsFromItem = "boolean",
+	Channeled = "boolean",
+	IsLifeTimeSet = "boolean",
+	InitiateCombat = "boolean",
+	Influence = "boolean",
+	BringIntoCombat = "boolean",
+	IsHostileAct = "boolean",
+	IsInvulnerable = "boolean",
+	IsResistingDeath = "boolean",
+	ForceStatus = "boolean",
+	ForceFailStatus = "boolean",
+	RequestClientSync = "boolean",
+	RequestDelete = "boolean",
+	RequestDeleteAtTurnEnd = "boolean",
+	Started = "boolean",
+	--EsvStatusHit
+	Hit = "HitRequest",
+	HitByHandle = "ObjectHandle",
+	HitWithHandle = "ObjectHandle",
+	WeaponHandle = "ObjectHandle",
+	HitReason = "string",
+	SkillId = "string",
+	Interruption = "boolean",
+	AllowInterruptAction = "boolean",
+	ForceInterrupt = "boolean",
+	DecDelayDeathCount = "boolean",
+	ImpactPosition = "number[]",
+	ImpactOrigin = "number[]",
+	ImpactDirection = "number[]",
+}
 
 DebugHelpers.userDataProps = userDataProps
 
@@ -926,7 +973,7 @@ function DebugHelpers.ProcessProps(obj, props, data, printNil)
 		if type(v) == "function" then
 			pcall(v, obj, data, k, printNil)
 		else
-			if v == "ObjectHandle" then
+			if v == "ObjectHandle" or v == "StatusHandle" then
 				--data[k] = "ObjectHandle"
 				data[k] = tostring(obj[k])
 			else

@@ -564,6 +564,21 @@ end)
 
 ]]
 
+--Testing heal changing
+RegisterStatusTypeListener(Vars.StatusEvent.Applied, "HEAL", function(target, statusId, source, statusType)
+	if Vars.LeaderDebugMode then
+		---@type EsvStatusHeal
+		local status = Ext.GetGameObject(target):GetStatus(statusId)
+		if status then
+			if statusId == "FIRST_AID" then
+				status.HealAmount = 0
+				status.HealType = "None"
+			end
+			fprint(LOGLEVEL.DEFAULT, "[%s] HealAmount(%s) HealType(%s)", statusId, status.HealAmount, status.HealType)
+		end
+	end
+end)
+
 ---@param summon EsvCharacter|EsvItem
 ---@param owner EsvCharacter
 ---@param isDying boolean
@@ -729,16 +744,16 @@ end)
 -- end)
 
 local fields = {
-"HitId",
-"Weapon",
-"Hit",
-"HitType",
-"NoHitRoll",
-"ProcWindWalker",
-"ForceReduceDurability",
-"HighGround",
-"CriticalRoll",
-"HitStatus",
+	"HitId",
+	"Weapon",
+	"Hit",
+	"HitType",
+	"NoHitRoll",
+	"ProcWindWalker",
+	"ForceReduceDurability",
+	"HighGround",
+	"CriticalRoll",
+	"HitStatus",
 }
 
 
@@ -767,3 +782,22 @@ local fields = {
 		-- 		end
 	-- 	end
 -- end)
+
+-- ---@param hitStatus EsvStatusHit
+-- ---@param context HitContext
+-- Ext.RegisterListener("StatusHitEnter", function(hitStatus, hitContext)
+	
+-- end)
+
+-- local stat = Ext.GetStat("TEST_DAMAGE_PERCENTAGE") or Ext.CreateStat("TEST_DAMAGE_PERCENTAGE", "StatusData", "HEAL_LIGHT"); stat.HealType = "Percentage"; stat.HealValue = -20; Ext.SyncStat("TEST_DAMAGE_PERCENTAGE", false);
+
+-- local statusDamageFunctions = {
+-- 	MYMOD_PERCENTAGE_DAMAGE = 
+-- }
+
+-- Ext.RegisterOsirisListener("CharacterStatusApplied", 3, "after", function(target, status, source)
+	
+	
+-- end)
+
+--print(GetFaction("08348b3a-bded-4811-92ce-f127aa4310e0"), "<=>", GetFaction(host.MyGuid), CharacterGetRelationToCharacter("08348b3a-bded-4811-92ce-f127aa4310e0", host.MyGuid))

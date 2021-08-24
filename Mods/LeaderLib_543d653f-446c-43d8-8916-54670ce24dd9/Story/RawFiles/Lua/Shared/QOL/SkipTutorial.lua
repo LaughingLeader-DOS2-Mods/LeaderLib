@@ -313,7 +313,7 @@ if Ext.IsServer() then
 		end)
 
 		function SkipTutorial.OnLeaderLibInitialized(region)
-			if IsCharacterCreationLevel(region) == 1 and SharedData.GameMode == GAMEMODE.CAMPAIGN then
+			if (region and IsCharacterCreationLevel(region) == 1) or SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION and SharedData.GameMode == GAMEMODE.CAMPAIGN then
 				-- Skip setting up Skip Tutorial stuff if another mod is modifying that already.
 				if GameHelpers.DB.HasValue("DB_GLO_FirstLevelAfterCharacterCreation", "TUT_Tutorial_A") then
 					runSkipTutorialSetup = GameSettings.Settings.SkipTutorial.Enabled
@@ -354,7 +354,7 @@ if Ext.IsServer() then
 
 		Ext.RegisterOsirisListener("CharacterCreationFinished", 1, "before", function(uuid)
 			-- CharacterCreationFinished(NULL) means that everyone is ready
-			if skipTutorialControlEnabled then
+			if SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION then
 				runSkipTutorialSetup = GameSettings.Settings.SkipTutorial.Enabled
 				if StringHelpers.IsNullOrEmpty(uuid) and runSkipTutorialSetup then
 					EnableSkipTutorial()
@@ -376,6 +376,7 @@ elseif Ext.IsClient() then
 	---@param id number
 	---@param state number
 	local function SetSkipTutorial(ui, controlType, id, state)
+		GameSettings.Settings.SkipTutorial.Enabled = state == 0 and false or true
 		Ext.PostMessageToServer("LeaderLib_SetSkipTutorial", state == 0 and "false" or "true")
 	end
 
@@ -455,7 +456,7 @@ elseif Ext.IsClient() then
 	end)
 
 	Ext.RegisterNetListener("LeaderLib_SetupSkipTutorialUI", function(cmd, payload)
-		if sharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION then
+		if SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION then
 			SetupUI()
 		end
 	end)

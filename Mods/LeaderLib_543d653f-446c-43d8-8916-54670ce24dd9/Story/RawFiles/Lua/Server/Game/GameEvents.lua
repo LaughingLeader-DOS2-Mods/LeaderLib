@@ -197,7 +197,7 @@ function OnLuaReset()
 	InvokeListenerCallbacks(Listeners.LuaReset, region)
 	if IsCharacterCreationLevel(region) == 1 then
 		SkipTutorial.Initialize()
-		SkipTutorial.OnLeaderLibInitialized()
+		SkipTutorial.OnLeaderLibInitialized(region)
 	end
 	IterateUsers("LeaderLib_StoreUserData")
 	local payload = Ext.JsonStringify({Event="LuaReset", Args={region}})

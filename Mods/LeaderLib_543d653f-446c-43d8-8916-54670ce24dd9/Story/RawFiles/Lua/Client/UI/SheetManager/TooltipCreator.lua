@@ -6,7 +6,7 @@ local function CreateTooltip(tooltipType, requestedUI, call, id)
 	local ui = Ext.GetUIByType(Data.UIType.tooltip)
 	if ui then
 		local this = ui:GetRoot()
-		local data = SheetManager:GetStatByGeneratedID(id, tooltipType)
+		local data = SheetManager:GetEntryByGeneratedID(id, tooltipType)
 		if this and this.tooltip_array and data then
 			local request = {
 				Type = data.TooltipType,

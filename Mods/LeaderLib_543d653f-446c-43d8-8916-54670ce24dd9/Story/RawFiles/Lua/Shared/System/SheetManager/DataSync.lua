@@ -246,7 +246,7 @@ else
 		local data = Common.JsonParse(payload)
 		if data then
 			local characterId = GameHelpers.GetCharacterID(data.NetID)
-			local stat = SheetManager:GetStatByID(data.ID, data.Mod, data.StatType)
+			local stat = SheetManager:GetEntryByID(data.ID, data.Mod, data.StatType)
 			if characterId and stat then
 				local skipInvoke = data.SkipInvoke
 				if skipInvoke == nil then

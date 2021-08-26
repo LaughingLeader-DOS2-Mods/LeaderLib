@@ -117,152 +117,6 @@ else
 	--Ext.Require("Shared/System/SheetManager/UI/_Init.lua")
 end
 
----Gets custom sheet data from a string id.
----@param id string
----@param mod string|nil
----@param statType string|nil Stat,PrimaryStat,SecondaryStat,Ability,Talent
----@return SheetAbilityData|SheetStatData|SheetTalentData
-function SheetManager:GetStatByID(id, mod, statType)
-	local targetTable = nil
-	if statType then
-		if statType == "Stat" or statType == "PrimaryStat" or statType == "SecondaryStat" then
-			targetTable = self.Data.Stats
-		elseif statType == "Ability" then
-			targetTable = self.Data.Abilities
-		elseif statType == "Talent" then
-			targetTable = self.Data.Talents
-		end
-	end
-	if targetTable then
-		if mod then
-			return targetTable[mod][id]
-		else
-			for modId,tbl in pairs(targetTable) do
-				if tbl[id] then
-					return tbl[id]
-				end
-			end
-		end
-	end
-	return nil
-end
-
----Gets custom sheet data from a generated id.
----@param generatedId integer
----@param statType string|nil PrimaryStat,SecondaryStat,Ability,Talent
----@return SheetAbilityData|SheetStatData|SheetTalentData
-function SheetManager:GetStatByGeneratedID(generatedId, statType)
-	if statType then
-		if statType == "Stat" or statType == "PrimaryStat" or statType == "SecondaryStat" then
-			return self.Data.ID_MAP.Stats.Entries[generatedId]
-		elseif statType == "Ability" then
-			return self.Data.ID_MAP.Abilities.Entries[generatedId]
-		elseif statType == "Talent" then
-			return self.Data.ID_MAP.Talents.Entries[generatedId]
-		end
-	end
-	for t,tbl in pairs(self.Data.ID_MAP) do
-		for checkId,data in pairs(tbl.Entries) do
-			if checkId == generatedId then
-				return data
-			end
-		end
-	end
-	return nil
-end
-
----@param stat SheetAbilityData|SheetStatData|SheetTalentData
----@param characterId UUID|NETID
----@param value integer|boolean
----@param skipListenerInvoke boolean|nil If true, Listeners.OnEntryChanged invoking is skipped.
----@param skipSync boolean|nil If on the client and this is true, the value change won't be sent to the server.
-function SheetManager:SetEntryValue(stat, characterId, value, skipListenerInvoke, skipSync)
-	local last = stat:GetValue(characterId)
-	if last ~= value then
-		---@type EsvCharacter|EclCharacter
-		local character = characterId
-		if type(characterId) ~= "userdata" then
-			character = Ext.GetCharacter(characterId)
-		else
-			characterId = GameHelpers.GetCharacterID(characterId)
-		end
-		if not StringHelpers.IsNullOrWhitespace(stat.BoostAttribute) then
-			if character and character.Stats then
-				if not isClient then
-					if stat.StatType == "Talent" then
-						NRD_CharacterSetPermanentBoostTalent(characterId, string.gsub(stat.BoostAttribute, "TALENT_", ""), value)
-						CharacterAddAttribute(characterId, "Dummy", 0)
-						--character.Stats.DynamicStats[2][stat.BoostAttribute] = value
-					else
-						NRD_CharacterSetPermanentBoostInt(characterId, stat.BoostAttribute, value)
-						--character.Stats.DynamicStats[2][stat.BoostAttribute] = value
-					end
-				else
-					character.Stats.DynamicStats[2][stat.BoostAttribute] = value
-				end
-				local success = character.Stats.DynamicStats[2][stat.BoostAttribute] == value
-				fprint(LOGLEVEL.DEFAULT, "[%s][SetEntryValue:%s] BoostAttribute(%s) Changed(%s) Current(%s) => Desired(%s)", isClient and "CLIENT" or "SERVER", stat.ID, stat.BoostAttribute, success, character.Stats.DynamicStats[2][stat.BoostAttribute], value)
-			else
-				fprint(LOGLEVEL.ERROR, "[%s][SetEntryValue:%s] Failed to get character from id (%s)", isClient and "CLIENT" or "SERVER", stat.ID, characterId)
-			end
-		else
-			SheetManager.Save.SetEntryValue(characterId, stat, value)
-		end
-		if not skipListenerInvoke then
-			for listener in self:GetListenerIterator(self.Listeners.OnEntryChanged[stat.ID], self.Listeners.OnEntryChanged.All) do
-				local b,err = xpcall(listener, debug.traceback, stat.ID, stat, character, last, value, isClient)
-				if not b then
-					fprint(LOGLEVEL.ERROR, "[LeaderLib.CustomStatSystem:OnStatPointAdded] Error calling OnAvailablePointsChanged listener for stat (%s):\n%s", stat.ID, err)
-				end
-			end
-			if not isClient then
-				if stat.StatType == "Ability" then
-					Osi.CharacterBaseAbilityChanged(character.MyGuid, stat.ID, last, value)
-				elseif stat.StatType == "Talent" then
-					if value then
-						Osi.CharacterUnlockedTalent(character.MyGuid, stat.ID)
-					else
-						Osi.CharacterLockedTalent(character.MyGuid, stat.ID)
-					end
-				end
-			end
-		end
-		if not skipSync and isClient then
-			--Server-side updating
-			self:RequestValueChange(stat, characterId, value)
-		end
-	end
-	if not skipSync and not isClient then
-		Ext.BroadcastMessage("LeaderLib_SheetManager_EntryValueChanged", Ext.JsonStringify({
-			ID = stat.ID,
-			Mod = stat.Mod,
-			NetID = GameHelpers.GetNetID(characterId),
-			Value = value,
-			StatType = stat.StatType
-		}))
-	end
-end
-
----@param stat SheetAbilityData|SheetStatData|SheetTalentData
----@param characterId UUID|NETID
-function SheetManager:GetValueByEntry(stat, characterId)
-	if not StringHelpers.IsNullOrWhitespace(stat.BoostAttribute) then
-		local character = Ext.GetCharacter(characterId)
-		if character and character.Stats then
-			local charValue = character.Stats.DynamicStats[2][stat.BoostAttribute]
-			if charValue ~= nil then
-				return charValue
-			end
-		end
-	else
-		return SheetManager.Save.GetEntryValue(characterId, stat)
-	end
-	if stat.StatType == "Talent" then
-		return false
-	end
-	return 0
-end
-
 if isClient then
 	if SheetManager.UI == nil then
 		SheetManager.UI = {}
@@ -272,7 +126,7 @@ else
 		local data = Common.JsonParse(payload)
 		if data then
 			local characterId = GameHelpers.GetCharacterID(data.NetID)
-			local stat = SheetManager:GetStatByID(data.ID, data.Mod, data.StatType)
+			local stat = SheetManager:GetEntryByID(data.ID, data.Mod, data.StatType)
 			if characterId and stat then
 				if stat.UsePoints then
 					local points = SheetManager:GetBuiltinAvailablePointsForEntry(stat, characterId)
@@ -291,7 +145,7 @@ else
 	--Query support
 
 	local function Query_GetAttribute(uuid, id, val, boostCheck, statType)
-		local stat = SheetManager:GetStatByID(id, nil, statType or "PrimaryStat")
+		local stat = SheetManager:GetEntryByID(id, nil, statType or "PrimaryStat")
 		if stat and (boostCheck ~= true or stat.BoostAttribute) then
 			return stat:GetValue(StringHelpers.GetUUID(uuid))
 		end
@@ -303,7 +157,7 @@ else
 	end)
 
 	local function Query_GetAbility(uuid, id, value, boostCheck)
-		local stat = SheetManager:GetStatByID(id, nil, "Ability")
+		local stat = SheetManager:GetEntryByID(id, nil, "Ability")
 		if stat and (boostCheck ~= true or stat.BoostAttribute) then
 			return stat:GetValue(StringHelpers.GetUUID(uuid))
 		end
@@ -316,7 +170,7 @@ else
 
 	local function Query_HasTalent(uuid, id, bool, boostCheck)
 		if bool ~= 1 then
-			local stat = SheetManager:GetStatByID(id, nil, "Talent")
+			local stat = SheetManager:GetEntryByID(id, nil, "Talent")
 			if stat and (boostCheck ~= true or stat.BoostAttribute) then
 				return stat:GetValue(StringHelpers.GetUUID(uuid))
 			end

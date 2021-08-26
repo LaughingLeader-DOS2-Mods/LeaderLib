@@ -99,7 +99,7 @@ end
 
 RequestProcessor.CallbackHandler[TooltipCalls.Ability] = function(request, ui, uiType, event, id)
 	if SheetManager then
-		local stat = SheetManager:GetStatByGeneratedID(id, "Ability")
+		local stat = SheetManager:GetEntryByGeneratedID(id, "Ability")
 		if stat then
 			request.Ability = stat.ID
 			return request
@@ -111,7 +111,7 @@ end
 
 RequestProcessor.CallbackHandler[TooltipCalls.Talent] = function(request, ui, uiType, event, id)
 	if SheetManager then
-		local stat = SheetManager:GetStatByGeneratedID(id, "Talent")
+		local stat = SheetManager:GetEntryByGeneratedID(id, "Talent")
 		if stat then
 			request.Talent = stat.ID
 			return request

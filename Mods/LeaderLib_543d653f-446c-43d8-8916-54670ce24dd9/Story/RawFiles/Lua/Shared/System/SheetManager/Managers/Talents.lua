@@ -381,6 +381,7 @@ for talentId,enum in pairs(Data.TalentEnum) do
 	SheetManager.Talents.HiddenTalents[talentId] = {}
 end
 
+---@private
 ---@param talentId string
 ---@return boolean
 function SheetManager.Talents.IsRegisteredTalent(talentId)
@@ -388,12 +389,20 @@ function SheetManager.Talents.IsRegisteredTalent(talentId)
 end
 
 ---@param player EclCharacter|EsvCharacter
----@param talentId string
+---@param talentId string Builtin talent ID or a custom talent ID.
+---@param mod UUID|nil The mod UUID, if any (for custom talents).
 ---@return boolean
-function SheetManager.Talents.HasTalent(player, talentId)
-	local talentIdPrefixed = "TALENT_" .. talentId
-	if player ~= nil and player.Stats ~= nil and player.Stats[talentIdPrefixed] == true then
-		return true
+function SheetManager.Talents.HasTalent(player, talentId, mod)
+	if Data.TalentEnum[talentId] then
+		local talentIdPrefixed = "TALENT_" .. talentId
+		if player ~= nil and player.Stats ~= nil and player.Stats[talentIdPrefixed] == true then
+			return true
+		end
+	else
+		local talentData = SheetManager:GetEntryByID(talentId, mod, "Talent")
+		if talentData then
+			return SheetManager:GetValueByEntry(talentData, player) == true
+		end
 	end
 	return false
 end

@@ -608,7 +608,7 @@ Ext.RegisterUITypeCall(Data.UIType.statsPanel_c, "characterSheetUpdateDone", Cha
 Ext.RegisterUITypeCall(Data.UIType.characterSheet, "entryAdded", function(ui, call, isCustom, statID, listProperty, groupID)
 	--print(call, isCustom, statID, listProperty)
 	if isCustom then
-		local stat = SheetManager:GetStatByGeneratedID(statID)
+		local stat = SheetManager:GetEntryByGeneratedID(statID)
 		if stat then
 			stat.ListHolder = listProperty
 			-- local this = CharacterSheet.Root.stats_mc

@@ -1,6 +1,6 @@
 local function OnPointsAdded(statType, ui, event, generatedId, ...)
 	print("OnPointsAdded", statType, event, generatedId, ...)
-	local stat = SheetManager:GetStatByGeneratedID(generatedId, statType)
+	local stat = SheetManager:GetEntryByGeneratedID(generatedId, statType)
 	print(stat, generatedId, statType)
 	if stat then
 		if statType ~= "Talent" then
@@ -18,7 +18,7 @@ end
 
 local function OnPointsRemove(statType, ui, event, generatedId, ...)
 	print("OnPointsRemove", statType, event, generatedId, ...)
-	local stat = SheetManager:GetStatByGeneratedID(generatedId, statType)
+	local stat = SheetManager:GetEntryByGeneratedID(generatedId, statType)
 	if stat then
 		if statType ~= "Talent" then
 			stat:ModifyValue(Client:GetCharacter(), -1)

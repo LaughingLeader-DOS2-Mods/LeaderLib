@@ -24,7 +24,7 @@ function SceneManager.ResumeLastThread()
 	if SceneManager.LastThread then
 		local thread = SceneManager.LastThread
 		SceneManager.LastThread = nil
-		PrintDebug("[SceneManager.ResumeLastThread] Resuming last thread", thread)
+		fprint(LOGLEVEL.TRACE, "[SceneManager.ResumeLastThread] Resuming last thread (%s)", thread)
 		coroutine.resume(thread)
 	end
 end
@@ -94,7 +94,7 @@ function SceneManager.AddToQueue(group, sceneId, stateId, param, param2, param3,
 		SceneManager.Queue.Waiting[sceneId] = {State=stateId, Time=SceneManager.CurrentTime + param}
 		SceneManager.StartTimer()
 	end
-	PrintDebug("SceneManager.AddToQueue", group, sceneId, stateId, param, param2, param3, Ext.JsonStringify(SceneManager.Queue))
+	fprint(LOGLEVEL.TRACE, "[SceneManager.AddToQueue] group(%s) sceneId(%s) stateId(%s) param(%s) param2(%s) param3(%s)\nQueue:\n%s", group, sceneId, stateId, param, param2, param3, Lib.serpent.block(SceneManager.Queue))
 	SceneManager.Save()
 end
 
@@ -345,7 +345,7 @@ Ext.RegisterOsirisListener("DB_DialogName", 2, "after", function(dialog, instanc
 			end
 		end
 		if saveChanges then
-			PrintDebug("SceneManager.DB_DialogName", Ext.JsonStringify(SceneManager.Queue.DialogEnded))
+			fprint(LOGLEVEL.TRACE, "[SceneManager.DB_DialogName] Queue:\n%s", Lib.serpent.block(SceneManager.Queue.DialogEnded))
 			SceneManager.Save()
 		end
 	end

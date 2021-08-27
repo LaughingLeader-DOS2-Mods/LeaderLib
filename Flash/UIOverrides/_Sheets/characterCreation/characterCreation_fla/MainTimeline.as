@@ -82,6 +82,7 @@ package characterCreation_fla
 
 		public var charHandle:Number;
 		//LeaderLib
+		public var isExtended:Boolean = true;
 		public var initialized:Boolean = false;
 
 		//Unified property name

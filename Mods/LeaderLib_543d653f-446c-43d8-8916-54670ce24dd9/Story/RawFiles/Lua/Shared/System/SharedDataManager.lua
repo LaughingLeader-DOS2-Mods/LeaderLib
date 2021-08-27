@@ -204,9 +204,27 @@ if Ext.IsServer() then
 		return nil
 	end
 
+	local function TryGetProfileId(id)
+		local profileId = GetUserProfileID(id)
+		if profileId then
+			return profileId
+		end
+		local host = CharacterGetHostCharacter()
+		if not StringHelpers.IsNullOrEmpty(host) then
+			local hostId = CharacterGetReservedUserID(host)
+			if hostId then
+				profileId = GetUserProfileID(hostId)
+				if profileId then
+					return profileId
+				end
+			end
+		end
+		return nil
+	end
+
 	function GameHelpers.Data.SetCharacterData(id, profileId, uuid, isInCharacterCreation)
 		if profileId == nil then
-			profileId = GetUserProfileID(id) or GetUserProfileID(CharacterGetReservedUserID(CharacterGetHostCharacter()))
+			profileId = TryGetProfileId(id)
 		end
 		if profileId == nil then
 			return false

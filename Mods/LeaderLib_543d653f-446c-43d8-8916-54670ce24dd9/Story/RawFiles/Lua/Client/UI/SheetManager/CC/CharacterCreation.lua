@@ -60,5 +60,8 @@ end
 
 --Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateTalents", CharacterCreation.UpdateTalents)
 --Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation_c, "updateTalents", CharacterCreation.UpdateTalents)
--- Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateAbilities", CharacterCreation.UpdateAbilities)
--- Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation_c, "updateAbilities", CharacterCreation.UpdateAbilities)
+--Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation, "updateAbilities", CharacterCreation.UpdateAbilities)
+--Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation_c, "updateAbilities", CharacterCreation.UpdateAbilities)
+
+local contentParser = Ext.Require("Client/UI/SheetManager/CC/ContentParser.lua")
+contentParser.Init(CharacterCreation)

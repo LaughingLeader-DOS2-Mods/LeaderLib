@@ -87,3 +87,33 @@ function TableHelpers.AddOrUpdate(target, addFrom)
 		end
 	end
 end
+
+---@param tbl table
+---@param indent integer|nil
+---@return string
+function TableHelpers.ToString(tbl, indent)
+	if not indent then indent = 0 end
+	--local toprint = string.rep(" ", indent) .. "{\n"
+	--local toprint = string.rep(" ", indent) .. "{\n"
+	local toprint = "{\n"
+	indent = indent + 1
+	for k, v in pairs(tbl) do
+		toprint = toprint .. string.rep(" ", indent)
+		if (type(k) == "number") then
+			toprint = toprint .. "[" .. k .. "] = "
+		elseif (type(k) == "string") then
+			toprint = toprint  .. k ..  " = " 
+		end
+		if (type(v) == "number") then
+			toprint = toprint .. v .. ",\n"
+		elseif (type(v) == "string") then
+			toprint = toprint .. "\"" .. v .. "\",\n"
+		elseif (type(v) == "table") then
+			toprint = toprint .. TableHelpers.ToString(v, indent + 2) .. ",\n"
+		else
+			toprint = toprint .. "\"" .. tostring(v) .. "\",\n"
+		end
+	end
+	toprint = toprint .. string.rep(" ", indent-1) .. "}"
+	return toprint
+end

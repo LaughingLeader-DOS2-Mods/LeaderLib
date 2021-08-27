@@ -76,34 +76,6 @@ local ElementTypeNames = {
 	Title = "Title",
 }
 
-local function tprint(tbl, indent)
-	if not indent then indent = 0 end
-	--local toprint = string.rep(" ", indent) .. "{\r\n"
-	--local toprint = string.rep(" ", indent) .. "{\r\n"
-	local toprint = "{\r\n"
-	indent = indent + 1
-	for k, v in pairs(tbl) do
-		toprint = toprint .. string.rep(" ", indent)
-		if (type(k) == "number") then
-			toprint = toprint .. "[" .. k .. "] = "
-		elseif (type(k) == "string") then
-			toprint = toprint  .. k ..  " = " 
-		end
-		if (type(v) == "number") then
-			toprint = toprint .. v .. ",\r\n"
-		elseif (type(v) == "string") then
-			toprint = toprint .. "\"" .. v .. "\",\r\n"
-		elseif (type(v) == "table") then
-			toprint = toprint .. tprint(v, indent + 2) .. ",\r\n"
-		else
-			toprint = toprint .. "\"" .. tostring(v) .. "\",\r\n"
-		end
-	end
-	toprint = toprint .. string.rep(" ", indent-1) .. "}"
-	return toprint
-end
-
-
 local function ParseArray(arr)
 	local content = {}
 	local i = 0
@@ -130,7 +102,7 @@ local function ParseArray(arr)
 			end
 		end
 	end
-	print(tprint(content,0))
+	Ext.Print(TableHelpers.ToString(content))
 end
 
 ---@param self CharacterCreationWrapper

@@ -36,7 +36,7 @@ local lastEvent = "";
 ---@param self UIListenerWrapper
 ---@param ui UIObject
 local function OnUIListener(self, eventType, ui, event, ...)
-	if self.Enabled and Vars.DebugMode and (Vars.Print.UI and Vars.LeaderDebugMode) and not self.Ignored[event] then
+	if self.Enabled and Vars.DebugMode and (Vars.Print.UI or Vars.LeaderDebugMode) and not self.Ignored[event] then
 		if event == "addTooltip" then
 			local txt = table.unpack({...})
 			if string.find(txt, "Experience:", 1, true) then
@@ -192,6 +192,17 @@ local characterCreation = UIListenerWrapper:Create(Data.UIType.characterCreation
 local characterSheetDebug = UIListenerWrapper:Create(Data.UIType.characterSheet, enabledParam)
 local partyInventory = UIListenerWrapper:Create(Data.UIType.partyInventory, enabledParam)
 local pyramid = UIListenerWrapper:Create(Data.UIType.pyramid, enabledParam)
+
+characterCreation.CustomCallback.updateContent = function(self, ui, method)
+	local this = ui:GetRoot()
+	if this then
+		local content = {}
+		for i=0,#this.contentArray-1 do
+			content[#content+1] = this.contentArray[i]
+		end
+		Ext.SaveFile("ConsoleDebug/characterCreation_updateContent.lua", TableHelpers.ToString(content))
+	end
+end
 
 local printArrays = {
 	"lvlBtnAbility_array",

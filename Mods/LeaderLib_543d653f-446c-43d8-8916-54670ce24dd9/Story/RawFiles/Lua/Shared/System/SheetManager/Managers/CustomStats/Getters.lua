@@ -369,8 +369,8 @@ function CustomStatSystem:GetListenerIterator(...)
 end
 
 local function TryGetSheetCharacter(this)
-	if this.charHandle ~= nil and not GameHelpers.Math.IsNaN(this.charHandle) then
-		return Ext.GetCharacter(Ext.DoubleToHandle(this.charHandle))
+	if this.characterHandle ~= nil and not GameHelpers.Math.IsNaN(this.characterHandle) then
+		return Ext.GetCharacter(Ext.DoubleToHandle(this.characterHandle))
 	end
 end
 

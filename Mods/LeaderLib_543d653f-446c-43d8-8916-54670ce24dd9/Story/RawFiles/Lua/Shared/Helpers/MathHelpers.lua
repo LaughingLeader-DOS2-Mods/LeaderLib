@@ -257,5 +257,9 @@ end
 ---Returns true if a number is NaN.
 ---@param x number
 function GameHelpers.Math.IsNaN(x)
-    return tostring(x) == tostring(0/0)
+    if type(x) == "number" then
+        local str = tostring(x)
+        return str == "nan" or str == tostring(0/0)
+    end
+    return true
 end

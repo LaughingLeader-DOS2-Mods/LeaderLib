@@ -172,8 +172,9 @@ end
 ---@field load fun(data:string, options:serpent_options|nil):table Load a serpent-serialized string as a table.
 return { _NAME = n, _COPYRIGHT = c, _DESCRIPTION = d, _VERSION = v, serialize = s,
   load = deserialize,
-  dump = function(a, opts) return s(a, merge({name = '_', compact = true, sparse = true}, opts)) end,
+  --dump = function(a, opts) return s(a, merge({name = '_', compact = true, sparse = true}, opts)) end,
+  dump = function(a, opts) return s(a, merge({compact = false, sparse = false, indent = '\t', comment = false}, opts)) end,
   line = function(a, opts) return s(a, merge({sortkeys = true, comment = true}, opts)) end,
   block = function(a, opts) return s(a, merge({indent = '\t', sortkeys = true, comment = false}, opts)) end,
-  raw = function(a, opts) return s(a, opts) end,
+  raw = function(a, opts) return s(a, merge({}, opts)) end,
 }

@@ -396,8 +396,8 @@ local function ParseArrayValues(this, skipSort)
 
 	pcall(GetArrayValues, this, baseChanges, modChanges)
 
-	print("baseChanges",Lib.serpent.dump(baseChanges))
-	print("modChanges",Lib.serpent.dump(modChanges))
+	-- print("baseChanges",Lib.serpent.dump(baseChanges))
+	-- print("modChanges",Lib.serpent.dump(modChanges))
 
 	for id,entry in pairs(modChanges.Stats) do
 		if entry.Type == "PrimaryStat" then

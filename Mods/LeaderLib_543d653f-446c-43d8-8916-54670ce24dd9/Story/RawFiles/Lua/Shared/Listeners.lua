@@ -153,4 +153,7 @@ if Ext.IsClient() then
 	---Simple listener called when Vars.ControllerEnabled is set to true.
 	---@type function[]
 	Listeners.ControllerModeEnabled = {}
+
+	---@type fun(player:EclCharacter, origin:string, race:string, array:FlashArray):void[]
+	Listeners.SetCharacterCreationOriginSkills = {}
 end

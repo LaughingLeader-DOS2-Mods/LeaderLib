@@ -100,7 +100,6 @@ if Ext.IsServer() then
 						SendSyncListenerEvent(id, profile, uuid, isHost)
 						Ext.PostMessageToUser(id, "LeaderLib_SharedData_StoreData", Ext.JsonStringify(data))
 						GameSettingsManager.Sync(id)
-						CustomStatSystem:SyncData(id)
 					end
 				end
 			end
@@ -127,7 +126,6 @@ if Ext.IsServer() then
 				SendSyncListenerEvent(id, profile, uuid, isHost)
 				Ext.PostMessageToUser(id, "LeaderLib_SharedData_StoreData", Ext.JsonStringify(data))
 				GameSettingsManager.Sync(id)
-				CustomStatSystem:SyncData(id)
 			end
 		end
 		if syncSettings == true then

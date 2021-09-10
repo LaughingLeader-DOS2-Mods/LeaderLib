@@ -487,7 +487,9 @@ Ext.RegisterConsoleCommand("addpoints", function(cmd, pointType, amount, id)
 		local next = CharacterGetMaxSourcePoints(host) + amount
 		CharacterOverrideMaxSourcePoints(host, next)
 	elseif pointType == "custom" and id then
-		CustomStatSystem:AddAvailablePoints(host, id, amount)
+		if Mods.CharacterExpansionLib then
+			Mods.CharacterExpansionLib.CustomStatSystem:AddAvailablePoints(host, id, amount)
+		end
 	end
 end)
 

@@ -1069,7 +1069,9 @@ end)
 Ext.RegisterConsoleCommand("setcustomstat", function(cmd, id, amount)
 	amount = amount or "1"
 	amount = tonumber(amount) or 1
-	CustomStatSystem:SetStat(CharacterGetHostCharacter(), id, amount)
+	if Mods.CharacterExpansionLib then
+		Mods.CharacterExpansionLib.CustomStatSystem:SetStat(CharacterGetHostCharacter(), id, amount)
+	end
 end)
 
 Ext.RegisterConsoleCommand("testchaoswand", function(cmd)

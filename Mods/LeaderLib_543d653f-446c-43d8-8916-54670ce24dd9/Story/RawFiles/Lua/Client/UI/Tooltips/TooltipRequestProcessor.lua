@@ -251,7 +251,6 @@ function RequestProcessor.HandleStatCallback(requestType, ui, uiType, event, idO
 		Type = requestType,
 		Character = character
 	}
-	print(uiType, event, id, statOrWidth, character)
 	if RequestProcessor.CallbackHandler[event] then
 		local b,r = xpcall(RequestProcessor.CallbackHandler[event], debug.traceback, request, ui, uiType, event, id, statOrWidth, ...)
 		if b then
@@ -267,7 +266,9 @@ function RequestProcessor.HandleStatCallback(requestType, ui, uiType, event, idO
 	RequestProcessor.Tooltip.Last.UIType = uiType
 
 	if event == "showCustomStatTooltip" then
-		CustomStatSystem:OnRequestTooltip(ui, event, request.Stat, request.Character, table.unpack(params))
+		if Mods.CharacterExpansionLib then
+			Mods.CharacterExpansionLib.CustomStatSystem:OnRequestTooltip(ui, event, request.Stat, request.Character, table.unpack(params))
+		end
 	end
 end
 

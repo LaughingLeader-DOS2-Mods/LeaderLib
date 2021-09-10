@@ -34,40 +34,6 @@ end)
     
 -- end)
 
-local registeredContextListeners = false
-Ext.RegisterConsoleCommand("contextRollTest", function()
-    if not registeredContextListeners then
-        UI.ContextMenu.Register.ShouldOpenListener(function(contextMenu, x, y)
-            if Game.Tooltip.RequestTypeEquals("CustomStat") then
-                return true
-            end
-        end)
-        
-        UI.ContextMenu.Register.OpeningListener(function(contextMenu, x, y)
-            if Game.Tooltip.RequestTypeEquals("CustomStat") and Game.Tooltip.IsOpen() then
-                ---@type TooltipCustomStatRequest
-                local request = Game.Tooltip.GetCurrentOrLastRequest()
-                local characterId = request.Character.NetID
-                local modId = nil
-                local statId = request.Stat
-                if request.StatData then
-                    modId = request.StatData.Mod
-                    statId = request.StatData.ID
-                end
-                contextMenu:AddEntry("RollCustomStat", function(cMenu, ui, id, actionID, handle)
-                    CustomStatSystem:RequestStatChange(statId, characterId, Ext.Random(1,10), modId)
-                end, "<font color='#33AA33'>Roll</font>")
-            end
-        end)
-        
-        UI.ContextMenu.Register.EntryClickedListener(function(...)
-            fprint(LOGLEVEL.DEFAULT, "[ContextMenu.EntryClickedListener] %s", Lib.inspect({...}))
-        end)
-
-        registeredContextListeners = true
-    end
-end)
-
 AddConsoleVariable("UIExt", UIExtensions)
 
 -- local flagFound = false; local flags = {"GLO_PathOfBlood_MurderedInnocent", "GLO_PathOfBlood_DisrespectedSoul", "GLO_StoleItem"}; for i,db in pairs(Osi.DB_IsPlayer:Get(nil)) do local player = Ext.GetCharacter(db[1]); for _,flag in pairs(flags) do if ObjectGetFlag(player.MyGuid, flag) == 1 then Ext.Print(string.format("Player (%s) has flag (%s)", player.DisplayName, flag)); flagFound = true; end; end; end; if not flagFound then Ext.Print("No Path of Blood flags set on players.") end

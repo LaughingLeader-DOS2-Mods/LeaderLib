@@ -15,7 +15,6 @@ local LOGLEVEL = LOGLEVEL
 local fprint = fprint
 local Dump = Common.Dump
 local Data = Data
-local CustomStatSystem = CustomStatSystem
 local tostring = tostring
 
 Game.Tooltip = {}
@@ -1273,16 +1272,23 @@ function TooltipHooks:OnRenderSubTooltip(ui, propertyName, req, method, ...)
 		if req.Type == "Stat" then
 			self:NotifyListeners("Stat", req.Stat, req, tooltip, req.Character, req.Stat)
 		elseif req.Type == "CustomStat" then
-			if req.RequestUpdate then
-				CustomStatSystem:UpdateStatTooltipArray(ui, req.Stat, tooltip, req)
-				req.RequestUpdate = false
-			end
-			local statData = req.StatData or CustomStatSystem:GetStatByDouble(req.Stat)
-			if statData ~= nil then
-				req.StatData = statData
-				self:NotifyListeners("CustomStat", statData.ID or statData.UUID, req, tooltip, req.Character, statData)
-				CustomStatSystem:OnTooltip(ui, req.Character, statData, tooltip)
+			if Mods.CharacterExpansionLib then
+				local CustomStatSystem = Mods.CharacterExpansionLib.CustomStatSystem
+				if req.RequestUpdate then
+					CustomStatSystem:UpdateStatTooltipArray(ui, req.Stat, tooltip, req)
+					req.RequestUpdate = false
+				end
+
+				local statData = req.StatData or CustomStatSystem:GetStatByDouble(req.Stat)
+				if statData ~= nil then
+					req.StatData = statData
+					self:NotifyListeners("CustomStat", statData.ID or statData.UUID, req, tooltip, req.Character, statData)
+					CustomStatSystem:OnTooltip(ui, req.Character, statData, tooltip)
+				else
+					self:NotifyListeners("CustomStat", nil, req, tooltip, req.Character, {ID=req.Stat})
+				end
 			else
+				req.RequestUpdate = false
 				self:NotifyListeners("CustomStat", nil, req, tooltip, req.Character, {ID=req.Stat})
 			end
 		elseif req.Type == "Skill" then

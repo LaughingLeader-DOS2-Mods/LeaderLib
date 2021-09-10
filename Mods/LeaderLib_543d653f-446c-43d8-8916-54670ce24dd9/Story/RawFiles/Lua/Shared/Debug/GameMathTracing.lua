@@ -119,7 +119,7 @@ function Game.Math.GetVitalityBoostByLevel(level)
     end
 
     local vit = level * extra.VitalityLinearGrowth + extra.VitalityStartingAmount * growth
-    return Ext.Round(vit / 5.0) * 5.0
+    return math.floor(vit / 5.0) * 5.0
 end
 
 --- @param level integer

@@ -86,13 +86,6 @@ local function OnCharacterSheetUpdateDone(ui)
 	end
 end
 
----@param ui UIObject
-local function UpdateCharacterSheetPoints(ui, method, amount)
-	if method == "setAvailableCombatAbilityPoints" or method == "setAvailableCivilAbilityPoints" then
-		SheetManager.Abilities.UpdateCharacterSheetPoints(ui, method, ui:GetRoot(), amount)
-	end
-end
-
 local pointEvents = {
 	"minusAbility",
 	"plusAbility",
@@ -144,7 +137,6 @@ local sheetEvents = {
 	--"unregisterAnchorId",
 }
 
---TODO Remove?
 local function RegisterListeners()
 	---@type LeaderLibGameSettings
 	local data = GameSettings
@@ -161,17 +153,6 @@ local function RegisterListeners()
 		end
 		--Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "updateArraySystem", OnCharacterSheetUpdating)
 		Ext.RegisterUITypeCall(Data.UIType.characterSheet, "characterSheetUpdateDone", OnCharacterSheetUpdateDone)
-		Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setAvailableStatPoints", UpdateCharacterSheetPoints)
-		Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setAvailableCombatAbilityPoints", UpdateCharacterSheetPoints)
-		Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setAvailableCivilAbilityPoints", UpdateCharacterSheetPoints)
-
-		local function ResetAbilityPoints(ui, method, ...)
-			UpdateCharacterSheetPoints(ui, "setAvailableCombatAbilityPoints", 0)
-			UpdateCharacterSheetPoints(ui, "setAvailableCivilAbilityPoints", 0)
-		end
-
-		Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setAvailableLabels", ResetAbilityPoints)
-		Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "hideLevelUpAbilityButtons", ResetAbilityPoints)
 
 		Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "setHelmetOptionState", OnSetHelmetOptionState)
 
@@ -181,20 +162,6 @@ local function RegisterListeners()
 			Ext.PostMessageToServer("LeaderLib_OnDelayTurnClicked", Client.Character.UUID)
 			InvokeListenerCallbacks(Listeners.TurnDelayed, Client.Character.UUID)
 		end)
-	else
-		--Ext.RegisterUITypeInvokeListener(Data.UIType.statsPanel_c, "updateArraySystem", OnCharacterSheetUpdating)
-		---@param ui UIObject
-		---@param method string
-		---@param pointType number One of 4 values: 0,1,2,3 | 0 = attribute, 1 = combat ability points, 2 = civil points, 3 = talent points
-		Ext.RegisterUITypeInvokeListener(Data.UIType.statsPanel_c, "setStatPoints", function(ui, method, pointType, amountString)
-			local points = tonumber(amountString)
-			if pointType == 1 then
-				UpdateCharacterSheetPoints(ui, "setAvailableCombatAbilityPoints", points)
-			elseif pointType == 2 then
-				UpdateCharacterSheetPoints(ui, "setAvailableCivilAbilityPoints", points)
-			end
-		end)
-		--Ext.RegisterUITypeInvokeListener(Data.UIType.characterCreation_c, "updateAbilities", OnCharacterCreationUpdating)
 	end
 end
 Ext.RegisterListener("SessionLoaded", RegisterListeners)

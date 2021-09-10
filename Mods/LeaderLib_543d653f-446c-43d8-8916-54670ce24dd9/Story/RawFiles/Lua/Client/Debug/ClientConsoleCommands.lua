@@ -2,14 +2,6 @@ Ext.RegisterConsoleCommand("luareset", function(cmd, delay)
     Ext.PostMessageToServer("LeaderLib_Client_RequestLuaReset", delay or "")
 end)
 
-Ext.RegisterConsoleCommand("abilityTest", function(cmd, enabled)
-    if enabled == "false" then
-        SheetManager.Abilities.DisableAbility("all", ModuleUUID)
-    else
-        SheetManager.Abilities.EnableAbility("all", ModuleUUID)
-    end
-end)
-
 local pointsWarn = {}
 
 Input.RegisterListener("ToggleCraft", function(event, pressed, id, keys, controllerEnabled)

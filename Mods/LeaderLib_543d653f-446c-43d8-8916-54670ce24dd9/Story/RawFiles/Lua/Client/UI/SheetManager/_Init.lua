@@ -1,6 +1,0 @@
-Ext.Require("Client/UI/SheetManager/CC/CharacterCreation.lua")
-Ext.Require("Client/UI/SheetManager/CharacterSheet.lua")
-Ext.Require("Client/UI/SheetManager/Fixes.lua")
-Ext.Require("Client/UI/SheetManager/TooltipCreator.lua")
-Ext.Require("Client/UI/SheetManager/ValueChangedHandler.lua")
-Ext.Require("Client/UI/SheetManager/CustomStatsUI.lua")

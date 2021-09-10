@@ -144,6 +144,7 @@ function HitData:ApplyDamageList(recalculate)
 	for k,v in pairs(self.DamageList:ToTable()) do
 		NRD_HitStatusAddDamage(self.Target, self.Handle, v.DamageType, v.Amount)
 	end
+	self.HitRequest.DamageList = self.DamageList
 	if recalculate then
 		self:Recalculate(true, true)
 	else

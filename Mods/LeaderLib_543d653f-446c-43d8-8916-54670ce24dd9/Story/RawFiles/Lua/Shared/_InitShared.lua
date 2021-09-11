@@ -194,6 +194,60 @@ Features = {
 	CustomStatsSystem = false
 }
 
+local function SetupVarsMetaTable(targetModTable)
+	local meta = targetModTable.Vars and getmetatable(targetModTable.Vars) or {}
+	if not meta.__index then
+		meta.__index = Vars
+	end
+	if not targetModTable.Vars then
+		targetModTable.Vars = {}
+	end
+	setmetatable(targetModTable.Vars, meta)
+end
+
+---Makes LeaderLib's globals accessible using metamethod magic. Pass it a mod table, such as Mods.MyModTable.
+---@param targetModTable table
+function Import(targetModTable)
+	SetupVarsMetaTable(targetModTable)
+	local targetOriginalGetIndex = nil
+	local getIndex = function(tbl, k)
+		if k == "LeaderLib" then
+			return Mods.LeaderLib
+		end
+		if Mods.LeaderLib[k] then
+			return Mods.LeaderLib[k]
+		end
+		if targetOriginalGetIndex then
+			return targetOriginalGetIndex(tbl, k)
+		end
+	end
+	local targetMeta = getmetatable(targetModTable)
+	if not targetMeta then
+		setmetatable(targetModTable, {
+			__index = getIndex
+		})
+	else
+		if targetMeta.__index and targetMeta.__index ~= getIndex then
+			Ext.PrintWarning("targetMeta.__index TYPE", type(targetMeta.__index))
+			if type(targetMeta.__index) == "function" then
+				targetOriginalGetIndex = targetMeta.__index
+			else
+				local originalIndex = targetMeta.__index
+				targetOriginalGetIndex = function(tbl,k) 
+					return originalIndex[k]
+				end
+			end
+		end
+		targetMeta.__index = getIndex
+	end
+end
+
+---Makes LeaderLib's globals accessible using metamethod magic. Pass it a mod table, such as Mods.MyModTable.
+---@param targetModTable table
+function ImportUnsafe(targetModTable)
+	Import(targetModTable)
+end
+
 local ignoreImports = {
 	--lua base
 	["_G"] = true,
@@ -254,22 +308,11 @@ local imports = {
 	}
 }
 
-local function SetupMetaTables(targetModTable)
-	local meta = targetModTable.Vars and getmetatable(targetModTable.Vars) or {}
-	if not meta.__index then
-		meta.__index = Vars
-	end
-	if not targetModTable.Vars then
-		targetModTable.Vars = {}
-	end
-	setmetatable(targetModTable.Vars, meta)
-	targetModTable.LeaderLib = Mods.LeaderLib
-end
-
+---[DEPRECATED]
 ---Imports specific 'safe' LeaderLib globals to the target table.
 ---@param targetModTable table
 ---@param skipExistingCheck boolean If true, each key is set in the target table without checking if it already exists.
-function Import(targetModTable, skipExistingCheck)
+local function ImportOld(targetModTable, skipExistingCheck)
 	SetupMetaTables(targetModTable)
 	local modName = Ext.GetModInfo(targetModTable.ModuleUUID)
 	if modName then
@@ -313,10 +356,11 @@ function Import(targetModTable, skipExistingCheck)
 	end
 end
 
+---[DEPRECATED]
 ---Imports all of LeaderLib's globals to the target table, excluding PersistentVars and some truly unsafe tables.
 ---@param targetModTable table
 ---@param skipExistingCheck boolean If true, each key is set in the target table without checking if it already exists.
-function ImportUnsafe(targetModTable, skipExistingCheck)
+local function ImportUnsafeOld(targetModTable, skipExistingCheck)
 	SetupMetaTables(targetModTable)
 	local modName = Ext.GetModInfo(targetModTable.ModuleUUID)
 	if modName then

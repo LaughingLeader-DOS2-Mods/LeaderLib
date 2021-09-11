@@ -194,40 +194,87 @@ Features = {
 	CustomStatsSystem = false
 }
 
-local function SetupVarsMetaTable(targetModTable)
-	local meta = targetModTable.Vars and getmetatable(targetModTable.Vars) or {}
-	if not meta.__index then
-		meta.__index = Vars
+Importer = {
+	SetupVarsMetaTable = function(targetModTable)
+		local meta = targetModTable.Vars and getmetatable(targetModTable.Vars) or {}
+		if not meta.__index then
+			meta.__index = Vars
+		end
+		if not targetModTable.Vars then
+			targetModTable.Vars = {}
+		end
+		setmetatable(targetModTable.Vars, meta)
+	end,
+	PrivateKeys = {
+		--lua base
+		--[[ ["_G"] = true,
+		tonumber = true,
+		pairs = true,
+		ipairs = true,
+		table = true,
+		tostring = true,
+		math = true,
+		type = true,
+		print = true,
+		error = true,
+		next = true,
+		string = true,
+		rawget = true,
+		rawset = true,
+		--ositools base
+		Sandboxed = true,
+		Game = true,
+		Ext = true,
+		Osi = true, ]]
+		ModuleUUID = true,
+		PersistentVars = true,
+		LoadPersistentVars = true,
+		--LeaderLib ignores
+		Debug = true,
+		Vars = true,
+		Listeners = true,
+		SkillListeners = true,
+		ModListeners = true,
+		Settings = true,
+		ImportUnsafe = true,
+		Import = true,
+		CustomSkillProperties = true,
+	},
+	GetIndexer = function(originalGetIndex, additionalTable)
+		local getIndex = function(tbl, k)
+			if k == "LeaderLib" then
+				return Mods.LeaderLib
+			end
+			if Importer.PrivateKeys[k] then
+				return nil
+			end
+			if additionalTable and additionalTable[k] then
+				return additionalTable[k]
+			end
+			if Mods.LeaderLib[k] then
+				return Mods.LeaderLib[k]
+			end
+			if originalGetIndex then
+				return originalGetIndex(tbl, k)
+			end
+		end
+		return getIndex
 	end
-	if not targetModTable.Vars then
-		targetModTable.Vars = {}
-	end
-	setmetatable(targetModTable.Vars, meta)
-end
+}
 
 ---Makes LeaderLib's globals accessible using metamethod magic. Pass it a mod table, such as Mods.MyModTable.
 ---@param targetModTable table
-function Import(targetModTable)
-	SetupVarsMetaTable(targetModTable)
-	local targetOriginalGetIndex = nil
-	local getIndex = function(tbl, k)
-		if k == "LeaderLib" then
-			return Mods.LeaderLib
-		end
-		if Mods.LeaderLib[k] then
-			return Mods.LeaderLib[k]
-		end
-		if targetOriginalGetIndex then
-			return targetOriginalGetIndex(tbl, k)
-		end
-	end
+---@param additionalTable table|nil An additional table to use for __index lookup.
+function Import(targetModTable, additionalTable)
+	Importer.SetupVarsMetaTable(targetModTable)
 	local targetMeta = getmetatable(targetModTable)
 	if not targetMeta then
 		setmetatable(targetModTable, {
-			__index = getIndex
+			__index = Importer.GetIndexer(nil, additionalTable)
 		})
 	else
-		if targetMeta.__index and targetMeta.__index ~= getIndex then
+		local targetOriginalGetIndex = nil
+		if targetMeta.__index then
 			if type(targetMeta.__index) == "function" then
 				targetOriginalGetIndex = targetMeta.__index
 			else
@@ -237,7 +284,7 @@ function Import(targetModTable)
 				end
 			end
 		end
-		targetMeta.__index = getIndex
+		targetMeta.__index = Importer.GetIndexer(targetOriginalGetIndex, additionalTable)
 	end
 end
 
@@ -250,41 +297,6 @@ end
 
 --[[
 --Old import stuff.
-local ignoreImports = {
-	--lua base
-	["_G"] = true,
-	tonumber = true,
-	pairs = true,
-	ipairs = true,
-	table = true,
-	tostring = true,
-	math = true,
-	type = true,
-	print = true,
-	error = true,
-	next = true,
-	string = true,
-	rawget = true,
-	rawset = true,
-	--ositools base
-	Sandboxed = true,
-	ModuleUUID = true,
-	Game = true,
-	Ext = true,
-	Osi = true,
-	PersistentVars = true,
-	LoadPersistentVars = true,
-	--LeaderLib ignores
-	Debug = true,
-	Vars = true,
-	Listeners = true,
-	SkillListeners = true,
-	ModListeners = true,
-	Settings = true,
-	ImportUnsafe = true,
-	Import = true,
-	CustomSkillProperties = true,
-}
 
 --Data/table imports.
 local imports = {

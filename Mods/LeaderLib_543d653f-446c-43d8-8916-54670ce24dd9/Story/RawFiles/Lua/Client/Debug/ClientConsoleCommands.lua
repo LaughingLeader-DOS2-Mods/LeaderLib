@@ -2,34 +2,6 @@ Ext.RegisterConsoleCommand("luareset", function(cmd, delay)
     Ext.PostMessageToServer("LeaderLib_Client_RequestLuaReset", delay or "")
 end)
 
-local pointsWarn = {}
-
-Input.RegisterListener("ToggleCraft", function(event, pressed, id, keys, controllerEnabled)
-    if Input.IsPressed("ToggleInfo") then
-        local this = Ext.GetUIByType(Data.UIType.characterSheet):GetRoot()
-        Ext.Print("Toggling GM mode in character sheet: ", not this.isGameMasterChar)
-        if this.isGameMasterChar then
-            this.setGameMasterMode(false, false, false)
-            this.stats_mc.setVisibilityStatButtons(false)
-            this.stats_mc.setVisibilityAbilityButtons(true, false)
-            this.stats_mc.setVisibilityAbilityButtons(false, false)
-            this.stats_mc.setVisibilityTalentButtons(false)
-            Ext.PostMessageToServer("LeaderLib_RefreshCharacterSheet", Client.Character.UUID)
-
-            for i,v in pairs(pointsWarn) do
-                this.stats_mc.INTSetWarnAndPoints(i,v)
-            end
-            pointsWarn = {}
-        else
-            for i=0,#this.stats_mc.pointsWarn-1 do
-                pointsWarn[i] = this.stats_mc.pointsWarn[i].avPoints
-            end
-
-            this.setGameMasterMode(true, true, false)
-        end
-    end
-end)
-
 -- Ext.RegisterListener("SessionLoaded", function()
     
 -- end)
@@ -52,3 +24,50 @@ AddConsoleVariable("UIExt", UIExtensions)
 -- if not flagFound then 
 --     Ext.Print("No Path of Blood flags set on players.") 
 -- end
+
+if Vars.DebugMode then
+    local isSheetOpen = false
+    Ext.RegisterUITypeInvokeListener(Data.UIType.hotBar, "setButtonActive", function(ui, method, id, isActive)
+        if id == 1 then
+            isSheetOpen = isActive
+        end
+    end)
+    -- CTRL + G to toggle GameMasterMode
+    Input.RegisterListener("ToggleCraft", function(event, pressed, id, keys, controllerEnabled)
+        if Input.IsPressed("ToggleInfo") and isSheetOpen then
+            ---@type FlashMainTimeline
+            local this = nil
+            if not Vars.ControllerEnabled then
+                this = Ext.GetUIByType(Data.UIType.characterSheet):GetRoot()
+            else
+                this = Ext.GetUIByType(Data.UIType.statsPanel_c):GetRoot()
+            end
+            if not this then
+                return
+            end
+            Ext.Print("Toggling GM mode in character sheet: ", not this.isGameMasterChar)
+            if this.isGameMasterChar then
+                this.setGameMasterMode(false, false, false)
+                this.stats_mc.setVisibilityStatButtons(false)
+                this.stats_mc.setVisibilityAbilityButtons(true, false)
+                this.stats_mc.setVisibilityAbilityButtons(false, false)
+                this.stats_mc.setVisibilityTalentButtons(false)
+                Ext.PostMessageToServer("LeaderLib_RefreshCharacterSheet", Client.Character.UUID)
+    
+                this.setAvailableStatPoints(Client.Character.Points.Attribute)
+                this.setAvailableCombatAbilityPoints(Client.Character.Points.Ability)
+                this.setAvailableCivilAbilityPoints(Client.Character.Points.Civil)
+                this.setAvailableTalentPoints(Client.Character.Points.Talent)
+                if Mods.CharacterExpansionLib then
+                    this.setAvailableCustomStatPoints(Mods.CharacterExpansionLib.CustomStatSystem:GetTotalAvailablePoints())
+                end
+            else
+                this.setGameMasterMode(true, true, false)
+                this.stats_mc.setVisibilityStatButtons(true)
+                this.stats_mc.setVisibilityAbilityButtons(true, true)
+                this.stats_mc.setVisibilityAbilityButtons(false, true)
+                this.stats_mc.setVisibilityTalentButtons(true)
+            end
+        end
+    end)
+end

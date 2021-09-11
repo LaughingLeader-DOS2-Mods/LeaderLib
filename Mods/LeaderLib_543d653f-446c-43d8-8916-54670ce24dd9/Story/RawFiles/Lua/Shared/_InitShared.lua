@@ -228,7 +228,6 @@ function Import(targetModTable)
 		})
 	else
 		if targetMeta.__index and targetMeta.__index ~= getIndex then
-			Ext.PrintWarning("targetMeta.__index TYPE", type(targetMeta.__index))
 			if type(targetMeta.__index) == "function" then
 				targetOriginalGetIndex = targetMeta.__index
 			else
@@ -243,11 +242,14 @@ function Import(targetModTable)
 end
 
 ---Makes LeaderLib's globals accessible using metamethod magic. Pass it a mod table, such as Mods.MyModTable.
+---This is the same as the regular Import now.
 ---@param targetModTable table
 function ImportUnsafe(targetModTable)
 	Import(targetModTable)
 end
 
+--[[
+--Old import stuff.
 local ignoreImports = {
 	--lua base
 	["_G"] = true,
@@ -378,3 +380,4 @@ local function ImportUnsafeOld(targetModTable, skipExistingCheck)
 		end
 	end
 end
+]]

@@ -175,8 +175,8 @@ end
 ---@param character EclCharacter|EsvCharacter Optional character to use for the tooltip.
 ---@return string
 function GameHelpers.Tooltip.ReplacePlaceholders(str, character)
-	local status,result = xpcall(ReplacePlaceholders, debug.traceback, str, character)
-	if status then
+	local b,result = xpcall(ReplacePlaceholders, debug.traceback, str, character)
+	if b then
 		return result
 	else
 		Ext.PrintError("[LeaderLib:GameHelpers.Tooltip.ReplacePlaceholders] Error replacing placeholders:")

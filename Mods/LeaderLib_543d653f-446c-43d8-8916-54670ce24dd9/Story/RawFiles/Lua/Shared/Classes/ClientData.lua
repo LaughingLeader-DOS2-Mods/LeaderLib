@@ -183,9 +183,9 @@ function ClientData:GetCharacter()
 		if character == nil and not StringHelpers.IsNullOrEmpty(self.Character.UUID) then
 			character = Ext.GetCharacter(self.Character.UUID)
 		end
-		if character == nil then
-			character = GameHelpers.Client.GetCharacter()
-		end
+	end
+	if character == nil then
+		character = GameHelpers.Client.GetCharacter()
 	end
 	return character
 end

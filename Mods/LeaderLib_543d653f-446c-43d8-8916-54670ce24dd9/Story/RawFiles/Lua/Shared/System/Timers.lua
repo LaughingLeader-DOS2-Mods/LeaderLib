@@ -130,8 +130,11 @@ local function WrapCallbackObjects(tbl)
 	return table.unpack(tbl)
 end
 
----@alias TimerObjectParam string|EsvCharacter|EsvItem|table|number|boolean|nil
----@alias TimerCallback fun(timerName:string, vararg TimerObjectParam):void
+---@alias SerializableValue string|number|boolean
+---@alias TimerCallbackObjectParam SerializableValue|EsvCharacter|EsvItem|table<string|integer, SerializableValue>
+
+---A timer callback that returns any variable number of properties.
+---@alias TimerCallback fun(timerName:string, ...:TimerCallbackObjectParam):void
 
 ---@param name string|string[]|TimerCallback Timer name or the callback if a ganeric listener.
 ---@param callback TimerCallback

@@ -175,10 +175,10 @@ function GameHelpers.DB.HasUUID(databaseName, uuid, arity, checkColumn)
 		return nil
 	end, debug.traceback)
 
-	if not b or result == nil then
+	if not b then
 		fprint(LOGLEVEL.ERROR, "[LeaderLib:GameHelpers.DB.HasValue] Error checking database %s(%s):\n%s", databaseName, arity, result)
 		return false
-	else
+	elseif result ~= nil then
 		local t = type(uuid)
 		if t == "table" then
 			for _,uuid2 in pairs(uuid) do

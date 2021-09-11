@@ -361,3 +361,62 @@ function GameHelpers.TryGetObject(id, returnNil)
 	end
 	return result
 end
+
+---@param object EsvCharacter|EsvItem|UUID|NETID
+---@param level integer
+function GameHelpers.SetExperienceLevel(object, level)
+	if type(object) ~= "userdata" then
+		object = GameHelpers.TryGetObject(object, true)
+	end
+	if object then
+		if GameHelpers.Ext.ObjectIsItem(object) then
+			if not GameHelpers.Item.IsObject(object) then
+				if level > object.Stats.Level then
+					ItemLevelUpTo(object.MyGuid, level)
+					return true
+				else
+					local xpNeeded = Data.LevelExperience[level]
+					if xpNeeded then
+						if xpNeeded == 0 then
+							object.Stats.Experience = 1
+							Timer.StartOneshot("", 250, function()
+								object.Stats.Experience = 0
+							end)
+						else
+							object.Stats.Experience = xpNeeded
+						end
+						return true
+					end
+				end
+			else
+				ItemLevelUpTo(object.MyGuid, level)
+				return true
+			end
+		else
+			if object.Stats and level < object.Stats.Level then
+				local xpNeeded = Data.LevelExperience[level]
+				if xpNeeded then
+					if xpNeeded == 0 then
+						object.Stats.Experience = 1
+						Timer.StartOneshot("", 250, function()
+							object.Stats.Experience = 0
+						end)
+					else
+						object.Stats.Experience = xpNeeded
+					end
+					return true
+				end
+			else
+				CharacterLevelUpTo(object.MyGuid, level)
+				return true
+			end
+		end
+	end
+	return false
+end
+
+---@param character EsvCharacter|UUID|NETID
+---@param level integer
+function GameHelpers.Character.SetLevel(character, level)
+	return GameHelpers.SetExperienceLevel(character, level)
+end

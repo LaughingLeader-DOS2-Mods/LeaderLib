@@ -217,35 +217,6 @@ function GameHelpers.Character.GetDisplayName(character)
 	return ""
 end
 
-if not isClient then
-
----@param character EsvCharacter|UUID|NETID
----@param level integer
-function GameHelpers.Character.SetLevel(character, level)
-	if type(character) ~= "userdata" then
-		character = GameHelpers.GetCharacter(character)
-	end
-	if character and character.Stats then
-		if (level < character.Stats.Level) or Ext.IsClient() then
-			local xpNeeded = Data.LevelExperience[level]
-			if xpNeeded then
-				if xpNeeded == 0 then
-					character.Stats.Experience = 1
-					Timer.StartOneshot("", 250, function()
-						character.Stats.Experience = 0
-					end)
-				else
-					character.Stats.Experience = xpNeeded
-				end
-			end
-		else
-			CharacterLevelUpTo(character.MyGuid, level)
-		end
-	end
-end
-
-end
-
 ---@param includeSummons boolean|nil
 ---@return fun():EsvCharacter|EclCharacter
 function GameHelpers.Character.GetPlayers(includeSummons)

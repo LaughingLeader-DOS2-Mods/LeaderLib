@@ -1,33 +1,26 @@
----A global table used to update instances of CharacterData with the character's NetID.
-MonitoredCharacterData = {
-	---@type CharacterData[]
-	Entries = {}
-}
-MonitoredCharacterData.__index = MonitoredCharacterData
-
----@param region string
-function MonitoredCharacterData:Update(region)
-	for i=1,#self.Entries do
-		local entry = self.Entries[i]
-		if entry then
-			local character = entry:GetCharacter()
-			if character then
-				entry.Region = region
-				entry.NetID = character.NetID
-			end
-		end
-	end
-end
-
 ---A wrapper around common character queries with additional character-related helpers.
 ---@class CharacterData
+---@field NetID integer
+---@field Region string
 local CharacterData = {
 	Type = "CharacterData",
 	UUID = "",
 	NetID = -1,
 	Region = ""
 }
-CharacterData.__index = CharacterData
+
+local customAccessors = {
+	NetID = function(tbl) local char = Ext.GetCharacter(tbl.UUID); return char and char.NetID or nil end,
+	Region = function(tbl) return GetRegion(tbl.UUID) end
+}
+
+CharacterData.__index = function(tbl, k)
+	if customAccessors[k] then
+		return customAccessors[k](tbl)
+	end
+	return CharacterData[k]
+end
+
 ---@param uuid string
 ---@param params table<string,any>|nil
 CharacterData.__call = function(_, uuid, params)
@@ -42,20 +35,7 @@ CharacterData.__tostring = function(self)
 		return string.format("[CharacterData] UUID(%s)", self.UUID)
 	end
 end
--- CharacterData.__index = function(tbl, key)
--- 	if key == "NetID" and tbl.NetID == -1 and tbl.UUID ~= "" then
--- 		local character = Ext.GetCharacter(tbl.UUID)
--- 		if character then
--- 			tbl.NetID = character.NetID
--- 			return character.NetID
--- 		end
--- 	elseif key == "Region" and tbl.Region == "" and tbl.UUID ~= "" then
--- 		local region = GetRegion(tbl.UUID) or ""
--- 		tbl.Region = region
--- 		return region
--- 	end
--- 	return tbl[key]
--- end
+
 
 ---@param uuid string
 ---@param params table<string,any>|nil
@@ -63,10 +43,7 @@ end
 function CharacterData:Create(uuid, params)
     local this =
     {
-		UUID = uuid or "",
-		--AutoUpdate properties
-		NetID = -1,
-		Region = ""
+		UUID = uuid or ""
 	}
 	if params ~= nil then
 		for prop,value in pairs(params) do
@@ -74,9 +51,6 @@ function CharacterData:Create(uuid, params)
 		end
 	end
 	setmetatable(this, self)
-	if this.AutoUpdate == true then
-		MonitoredCharacterData.Entries[#MonitoredCharacterData.Entries+1] = this
-	end
     return this
 end
 

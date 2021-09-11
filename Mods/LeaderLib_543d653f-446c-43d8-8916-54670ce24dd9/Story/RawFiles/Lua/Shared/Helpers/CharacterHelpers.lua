@@ -67,6 +67,7 @@ end
 function GameHelpers.Character.IsOrigin(character)
 	if not isClient and Ext.OsirisIsCallable() then
 		character = GameHelpers.GetUUID(character)
+		if not character then return false end
 		return GameHelpers.DB.HasUUID("DB_Origins", character)
 	else
 		character = GameHelpers.GetCharacter(character)
@@ -100,6 +101,7 @@ end
 function GameHelpers.Character.IsAllyOfParty(character)
 	if not isClient and Ext.OsirisIsCallable() then
 		character = GameHelpers.GetUUID(character)
+		if not character then return false end
 		for player in GameHelpers.Character.GetPlayers(false) do
 			if CharacterIsAlly(character, player.MyGuid) == 1 then
 				return true
@@ -113,6 +115,7 @@ end
 function GameHelpers.Character.IsEnemyOfParty(character)
 	if not isClient and Ext.OsirisIsCallable() then
 		character = GameHelpers.GetUUID(character)
+		if not character then return false end
 		for player in GameHelpers.Character.GetPlayers(false) do
 			if CharacterIsEnemy(character, player.MyGuid) == 1 then
 				return true
@@ -128,6 +131,7 @@ function GameHelpers.Character.IsEnemy(char1, char2)
 	if not isClient and Ext.OsirisIsCallable() then
 		local a = GameHelpers.GetUUID(char1)
 		local b = GameHelpers.GetUUID(char2)
+		if not a or not b then return false end
 		return CharacterIsEnemy(a,b) == 1
 	end
 	return false
@@ -137,6 +141,7 @@ end
 function GameHelpers.Character.IsNeutralToParty(character)
 	if not isClient and Ext.OsirisIsCallable() then
 		character = GameHelpers.GetUUID(character)
+		if not character then return false end
 		for player in GameHelpers.Character.GetPlayers(false) do
 			if CharacterIsNeutral(character, player.MyGuid) == 1 then
 				return true
@@ -149,6 +154,8 @@ end
 ---@param character EsvCharacter|EclCharacter|UUID|NETID
 function GameHelpers.Character.IsInCombat(character)
 	if not isClient and Ext.OsirisIsCallable() then
+		character = GameHelpers.GetUUID(character)
+		if not character then return false end
 		if CharacterIsInCombat(character) == 1 then
 			return true
 		elseif GameHelpers.DB.HasUUID("DB_CombatCharacters", character, 2, 1) then

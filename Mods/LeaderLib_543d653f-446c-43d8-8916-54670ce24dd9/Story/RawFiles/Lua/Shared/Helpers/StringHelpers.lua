@@ -5,11 +5,16 @@ end
 ---Check if a string is equal to another. Case-insenstive.
 ---@param a string
 ---@param b string
----@param insensitive boolean
+---@param insensitive boolean|nil
+---@param trimWhitespace boolean|nil
 ---@return boolean
-function StringHelpers.Equals(a,b, insensitive)
+function StringHelpers.Equals(a,b, insensitive, trimWhitespace)
 	if insensitive == nil then insensitive = true end
 	if a ~= nil and b ~= nil then
+		if trimWhitespace == true then
+			a = StringHelpers.Trim(a)
+			b = StringHelpers.Trim(b)
+		end
 		if insensitive and type(a) == "string" and type(b) == "string" then
 			return string.upper(a) == string.upper(b)
 		else

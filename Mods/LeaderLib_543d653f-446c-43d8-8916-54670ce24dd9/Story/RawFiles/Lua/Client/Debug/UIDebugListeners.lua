@@ -142,6 +142,7 @@ local defaultIgnored = {
 	updateSlots = true,
 	showExpTooltip = true,
 	SlotHoverOut = true,
+	setInputDevice = true
 }
 
 Ext.RegisterListener("UICall", function(ui, event, ...)
@@ -192,6 +193,8 @@ local characterCreation = UIListenerWrapper:Create(Data.UIType.characterCreation
 local characterSheetDebug = UIListenerWrapper:Create(Data.UIType.characterSheet, enabledParam)
 local partyInventory = UIListenerWrapper:Create(Data.UIType.partyInventory, enabledParam)
 local pyramid = UIListenerWrapper:Create(Data.UIType.pyramid, enabledParam)
+local msgBox = UIListenerWrapper:Create(Data.UIType.msgBox, enabledParam)
+local msgBox_c = UIListenerWrapper:Create(Data.UIType.msgBox_c, enabledParam)
 
 characterCreation.CustomCallback.updateContent = function(self, ui, method)
 	local this = ui:GetRoot()

@@ -323,16 +323,14 @@ if Ext.IsServer() then
 		end
 	end)
 
-	local function OnPointsChanged(uuid, amount)
-		if amount == 0 then
-			return
-		end
-		uuid = StringHelpers.GetUUID(uuid)
-		local id,profile = GetUserData(uuid)
-		if id ~= nil then
-			GameHelpers.Data.SetCharacterData(id, profile, uuid, false)
+	local function OnPointsChanged(uuid)
+		if GameHelpers.Character.IsPlayer(uuid) then
+			GameHelpers.Data.StartSyncTimer(500)
 		end
 	end
+
+	Ext.RegisterOsirisListener("CharacterLeveledUp", 1, "after", OnPointsChanged)
+
 	--Calls not supported.
 	-- Ext.RegisterOsirisListener("CharacterAddAttributePoint", 2, "after", OnPointsChanged)
 	-- Ext.RegisterOsirisListener("CharacterAddAbilityPoint", 2, "after", OnPointsChanged)

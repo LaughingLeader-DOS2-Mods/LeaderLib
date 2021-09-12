@@ -491,6 +491,8 @@ Ext.RegisterConsoleCommand("addpoints", function(cmd, pointType, amount, id)
 			Mods.CharacterExpansionLib.CustomStatSystem:AddAvailablePoints(host, id, amount)
 		end
 	end
+
+	GameHelpers.Data.StartSyncTimer()
 end)
 
 Ext.RegisterConsoleCommand("printitemboosts", function(cmd)

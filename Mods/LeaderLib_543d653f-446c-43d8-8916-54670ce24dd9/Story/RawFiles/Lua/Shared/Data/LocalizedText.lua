@@ -419,6 +419,13 @@ LocalizedText.ResistanceNames = {
 	WaterResistance = {Text=ts:Create("he5441d99gdb3cg40acga0c4g24379b8b09f7","Water Resistance"), Color="#4197E2"},
 }
 
+LocalizedText.MessageBox = {
+	CancelChangesTitle = ts:Create("h28ee4af1geab8g41f0g94b5ga4e9ae85e8ff", "Cancel Changes"),
+	CancelChangesDescription = ts:Create("h554cccd7g50ffg4e7agae6cgef8b708bd622", "Are you sure you want to cancel your changes and exit?"),
+	WarningTitle = ts:Create("h0434b959gff6fg4e99g85c2g450cfe0b1335", "Warning"),
+	HasPointsDescription = ts:Create("h9962441bg2b65g4f24gbb4fgce984cdd0948", "You still have points to spend! Points can also be spent later, in-game. Continue?"),
+}
+
 ---Get localized resistance text wrapped in that resistance's color.
 ---@param resistance string
 ---@param amount integer

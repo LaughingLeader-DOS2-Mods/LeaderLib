@@ -108,6 +108,7 @@ Ext.RegisterListener("SessionLoading", function()
 end)
 
 Ext.RegisterListener("SessionLoaded", function()
+	Vars.LeaderDebugMode = Ext.LoadFile("LeaderDebug") ~= nil
 	local count = #TranslatedStringEntries
 	if TranslatedStringEntries ~= nil and count > 0 then
 		for i,v in pairs(TranslatedStringEntries) do

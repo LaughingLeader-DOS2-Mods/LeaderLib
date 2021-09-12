@@ -7,15 +7,34 @@ end
 ---@return EclCharacter
 function GameHelpers.Client.GetCharacterSheetCharacter(main)
 	local character = nil
-	if not Vars.ControllerEnabled then
-		if main == nil then
+	if main == nil then
+		if not Vars.ControllerEnabled then
 			main = Ext.GetUIByType(Data.UIType.characterSheet):GetRoot()
-		end
-		if main ~= nil then
-			character = GameHelpers.Client.TryGetCharacterFromDouble(main.characterHandle)
+		else
+			main = Ext.GetUIByType(Data.UIType.statsPanel_c):GetRoot()
 		end
 	end
-	
+	if main ~= nil then
+		character = GameHelpers.Client.TryGetCharacterFromDouble(main.characterHandle)
+	end
+	return character or Client:GetCharacter()
+end
+
+---Get the current character stored in characterSheet's main timeline.
+---@param main FlashObject|nil
+---@return EclCharacter
+function GameHelpers.Client.GetCharacterCreationCharacter(main)
+	local character = nil
+	if main == nil then
+		if not Vars.ControllerEnabled then
+			main = Ext.GetUIByType(Data.UIType.characterCreation):GetRoot()
+		else
+			main = Ext.GetUIByType(Data.UIType.characterCreation_c):GetRoot()
+		end
+	end
+	if main ~= nil then
+		character = GameHelpers.Client.TryGetCharacterFromDouble(main.characterHandle)
+	end
 	return character or Client:GetCharacter()
 end
 

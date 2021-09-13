@@ -492,7 +492,7 @@ Ext.RegisterConsoleCommand("addpoints", function(cmd, pointType, amount, id)
 		end
 	end
 
-	GameHelpers.Data.StartSyncTimer()
+	GameHelpers.Data.SyncSharedData(false, host)
 end)
 
 Ext.RegisterConsoleCommand("printitemboosts", function(cmd)

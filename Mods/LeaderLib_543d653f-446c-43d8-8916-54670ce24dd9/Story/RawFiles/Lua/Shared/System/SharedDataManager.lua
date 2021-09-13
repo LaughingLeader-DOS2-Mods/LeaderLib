@@ -505,7 +505,7 @@ if Ext.IsClient() then
 					--changeDetected = true
 				end
 				if changeDetected and skipSync ~= true then
-					Ext.PostMessageToServer("LeaderLib_SharedData_CharacterSelected", Ext.JsonStringify({Profile = SharedData.Profile, UUID = uuid, NetID=character.NetID}))
+					Ext.PostMessageToServer("LeaderLib_SharedData_CharacterSelected", Ext.JsonStringify({Profile = Client.Profile, UUID = uuid, NetID=character.NetID}))
 				end
 			end
 		end
@@ -518,6 +518,8 @@ if Ext.IsClient() then
 	Ext.RegisterUITypeInvokeListener(Data.UIType.bottomBar_c, "setPlayerHandle", OnCharacterSelected)
 	Ext.RegisterUITypeCall(Data.UIType.playerInfo, "charSel", OnCharacterSelected, "After")
 	Ext.RegisterUITypeCall(Data.UIType.characterSheet, "selectCharacter", OnCharacterSelected, "After")
+	--Sheet UI opened, or character switched
+	Ext.RegisterUITypeInvokeListener(Data.UIType.characterSheet, "selectCharacter", OnCharacterSelected, "After")
 	Ext.RegisterUITypeCall(Data.UIType.characterSheet, "centerCamOnCharacter", OnCharacterSelected, "After")
 	Ext.RegisterUITypeCall(Data.UIType.trade, "selectCharacter", function(ui, call, doubleHandle)
 		OnCharacterSelected(ui, call, doubleHandle, true)

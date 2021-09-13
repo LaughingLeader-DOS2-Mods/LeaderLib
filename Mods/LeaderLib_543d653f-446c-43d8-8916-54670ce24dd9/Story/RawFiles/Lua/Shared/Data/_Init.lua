@@ -247,7 +247,7 @@ Data.AttributeEnum = {
 	Intelligence = 2,
 	Constitution = 3,
 	Memory = 4,
-	Wit = 5
+	Wits = 5
 }
 
 local talents = {

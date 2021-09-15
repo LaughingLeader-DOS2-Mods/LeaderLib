@@ -1301,6 +1301,13 @@ THEN
 DB_NOOP(1);
 
 QRY
+LeaderLib_Debug_QRY_PrintRace((CHARACTERGUID)_Char)
+AND
+CharacterGetRace(_Char, 1, _Race)
+THEN
+CharacterStatusText(_Char, _Race);
+
+QRY
 LeaderLib_Helper_QRY_IsRaceOrOriginSkill((STRING)_Skill)
 AND
 DB_LeaderLib_RacialSkills(_, _Skill)

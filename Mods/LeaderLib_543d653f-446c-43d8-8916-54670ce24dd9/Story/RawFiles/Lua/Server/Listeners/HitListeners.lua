@@ -100,10 +100,10 @@ RegisterProtectedExtenderListener("StatusHitEnter", function(hitStatus, hitConte
 		end
 	end
 
-	if Vars.LeaderDebugMode then
-		Ext.Print("hitStatus", getmetatable(hitStatus), Lib.serpent.block(hitStatus))
-		Ext.Print("hitContext", getmetatable(hitContext), hitContext, Lib.serpent.block(hitContext))
-	end
+	-- if Vars.LeaderDebugMode then
+	-- 	Ext.Print("hitStatus", getmetatable(hitStatus), Lib.serpent.block(hitStatus))
+	-- 	Ext.Print("hitContext", getmetatable(hitContext), hitContext, Lib.serpent.block(hitContext))
+	-- end
 
 	if Vars.DebugMode and Vars.Print.Hit then
 		local wpn = hitStatus.WeaponHandle and Ext.GetItem(hitStatus.WeaponHandle) or nil

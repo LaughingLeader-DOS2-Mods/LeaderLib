@@ -138,12 +138,11 @@ function GameHelpers.Item.IsObject(item)
 	return false
 end
 
----@param item EsvItem|EclItem
----@param tag string
----@param statItem StatItem|nil
-function GameHelpers.ItemHasStatsTag(item, tag, statItem)
-	if statItem or not GameHelpers.Item.IsObject(item) then
-		statItem = statItem or item.Stats
+---@param statItem StatItem
+---@param tag string|string[]
+function GameHelpers.StatItemHasTag(statItem, tag)
+	local t = type(tag)
+	if t == "string" then
 		if StringHelpers.DelimitedStringContains(statItem.Tags, ";", tag) then
 			return true
 		end
@@ -157,6 +156,23 @@ function GameHelpers.ItemHasStatsTag(item, tag, statItem)
 				end
 			end
 		end
+	elseif t == "table" then
+		for _,v in pairs(tag) do
+			if GameHelpers.StatItemHasTag(statItem, v) then
+				return true
+			end
+		end
+	end
+	return false
+end
+
+---@param item EsvItem|EclItem
+---@param tag string|string[]
+---@param statItem StatItem|nil
+function GameHelpers.ItemHasStatsTag(item, tag, statItem)
+	if statItem or not GameHelpers.Item.IsObject(item) then
+		statItem = statItem or item.Stats
+		return GameHelpers.StatItemHasTag(statItem, tag)
 	end
 	return false
 end
@@ -184,7 +200,7 @@ function GameHelpers.ItemHasTag(item, tag)
 				return true
 			end
 		elseif GameHelpers.Ext.ObjectIsStatItem(item) then
-			if GameHelpers.ItemHasStatsTag(item, tag, item) then
+			if GameHelpers.ItemHasStatsTag(item, tag) then
 				return true
 			end
 		end

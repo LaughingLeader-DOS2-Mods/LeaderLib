@@ -19,30 +19,30 @@ setmetatable(CombatLog, {
 
 local isClient = Ext.IsClient()
 
-if isClient then
-	---@class CombatLogFilterData
-	---@field DisplayName string
-	---@field Index integer The index in the content_array.
-	---@field ID integer Generated ID.
+---@class CombatLogFilterData
+---@field DisplayName string
+---@field Index integer The index in the content_array.
+---@field ID integer Generated ID.
 
-	---@type table<string,CombatLogFilterData>
-	CombatLog.Filters = {
-		Combat = {
-			Index = 0,
-			ID = 0,
-			DisplayName = "Combat"
-		},
-		Dialog = {
-			Index = 1,
-			ID = 2,
-			DisplayName = "Dialogue"
-		},
-		Banter = {
-			Index = 2,
-			ID = 1,
-			DisplayName = "Dialogue"
-		}
+CombatLog.Filters = {
+	Combat = {
+		Index = 0,
+		ID = 0,
+		DisplayName = "Combat"
+	},
+	Dialog = {
+		Index = 1,
+		ID = 2,
+		DisplayName = "Dialogue"
+	},
+	Banter = {
+		Index = 2,
+		ID = 1,
+		DisplayName = "Dialogue"
 	}
+}
+
+if isClient then
 	---@type CombatLogFlashMainTimeline
 	CombatLog.Instance = nil
 	---@type UIObject

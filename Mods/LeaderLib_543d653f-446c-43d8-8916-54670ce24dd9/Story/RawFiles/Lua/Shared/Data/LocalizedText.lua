@@ -342,18 +342,23 @@ LocalizedText.CharacterSheet = {
 ---Get localized damage text wrapped in that damage type's color.
 ---@param damageType string
 ---@param damageValue string|integer|number
+---@param omitDamageName boolean|nil
 ---@return string
-local function GetDamageText(damageType, damageValue)
+local function GetDamageText(damageType, damageValue, omitDamageName)
 	local entry = LocalizedText.DamageTypeHandles[damageType]
 	if entry ~= nil then
-		if damageValue ~= nil then
-			if type(damageValue) == "number" then
-				return string.format("<font color='%s'>%i %s</font>", entry.Color, damageValue, entry.Text.Value)
-			else
-				return string.format("<font color='%s'>%s %s</font>", entry.Color, damageValue, entry.Text.Value)
-			end
+		if omitDamageName then
+			return string.format("<font color='%s'>%s</font>", entry.Color, damageValue)
 		else
-			return string.format("<font color='%s'>%s</font>", entry.Color, entry.Text.Value)
+			if damageValue ~= nil then
+				if type(damageValue) == "number" then
+					return string.format("<font color='%s'>%i %s</font>", entry.Color, damageValue, entry.Text.Value)
+				else
+					return string.format("<font color='%s'>%s %s</font>", entry.Color, damageValue, entry.Text.Value)
+				end
+			else
+				return string.format("<font color='%s'>%s</font>", entry.Color, entry.Text.Value)
+			end
 		end
 	else
 		Ext.PrintError("No damage name/color entry for type " .. tostring(damageType))
@@ -424,6 +429,16 @@ LocalizedText.MessageBox = {
 	CancelChangesDescription = ts:Create("h554cccd7g50ffg4e7agae6cgef8b708bd622", "Are you sure you want to cancel your changes and exit?"),
 	WarningTitle = ts:Create("h0434b959gff6fg4e99g85c2g450cfe0b1335", "Warning"),
 	HasPointsDescription = ts:Create("h9962441bg2b65g4f24gbb4fgce984cdd0948", "You still have points to spend! Points can also be spent later, in-game. Continue?"),
+}
+
+LocalizedText.Keywords = {
+	Hit = ts:Create("h8ade1bb0gb79eg44c0gbe01g1dd0d51935df", "hit"),
+}
+
+LocalizedText.CombatLog = {
+	WasHitFor = ts:Create("h3cc306cdg95b4g4803g803ag2dd33a722d6c", "[1] was [2] for [3]"),
+	WasHitBySurface = ts:Create("h3cc306cdg95b4g4803g803ag2dd33a722d6c", "[1] was [2] for [3] by a surface"),
+	WasDestroyed = ts:Create("h3d2c57b3g8b84g4315ga619g04367092ce5f", "[2] was destroyed"),
 }
 
 ---Get localized resistance text wrapped in that resistance's color.

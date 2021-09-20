@@ -135,11 +135,10 @@ local function CreateDamageMetaList(handle)
 		end
 	end
 	meta.__pairs = function (_)
-		local function iter(_, k)
-			local i = nil
-			i,k = next(Data.DamageTypes, k)
-			if i ~= nil then 
-				return k,NRD_HitGetDamage(handle, k)
+		local function iter(_,k)
+			local damageType,i = next(Data.DamageTypeEnums, k)
+			if i ~= nil then
+				return damageType,NRD_HitGetDamage(handle, damageType) or 0
 			end
 		end
 		-- Return an iterator function, the table, starting point

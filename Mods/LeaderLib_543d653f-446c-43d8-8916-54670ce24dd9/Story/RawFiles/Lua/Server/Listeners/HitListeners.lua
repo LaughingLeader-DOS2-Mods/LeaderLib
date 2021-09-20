@@ -12,10 +12,10 @@ local function OnPrepareHit(target, source, damage, handle)
 			fprint(LOGLEVEL.DEFAULT, "Fixing bad damage type in Chaos basic ranged attack None => %s (%s)", data.DamageType, amount)
 		end
 	end
-	if Vars.DebugMode and (Vars.Print.HitPrepare or Vars.LeaderDebugMode) 
-	and (Vars.Print.SpammyHits or (data.HitType ~= "Surface" --[[ and data.HitType ~= "DoT" ]])) then
-		Ext.Print("[HitPrepareData]", data:ToDebugString())
-	end
+	-- if Vars.DebugMode and (Vars.Print.HitPrepare or Vars.LeaderDebugMode) 
+	-- and (Vars.Print.SpammyHits or (data.HitType ~= "Surface" --[[ and data.HitType ~= "DoT" ]])) then
+	-- 	Ext.Print("[HitPrepareData]", data:ToDebugString())
+	-- end
 	InvokeListenerCallbacks(Listeners.OnPrepareHit, target, source, damage, handle, data)
 end
 

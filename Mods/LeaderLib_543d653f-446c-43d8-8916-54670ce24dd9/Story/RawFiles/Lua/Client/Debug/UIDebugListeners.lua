@@ -195,6 +195,11 @@ local partyInventory = UIListenerWrapper:Create(Data.UIType.partyInventory, enab
 local pyramid = UIListenerWrapper:Create(Data.UIType.pyramid, enabledParam)
 local msgBox = UIListenerWrapper:Create(Data.UIType.msgBox, enabledParam)
 local msgBox_c = UIListenerWrapper:Create(Data.UIType.msgBox_c, enabledParam)
+local overhead = UIListenerWrapper:Create(Data.UIType.overhead, enabledParam)
+
+-- overhead.CustomCallback.updateOHs = function(self, ui, method)
+	
+-- end
 
 characterCreation.CustomCallback.updateContent = function(self, ui, method)
 	local this = ui:GetRoot()

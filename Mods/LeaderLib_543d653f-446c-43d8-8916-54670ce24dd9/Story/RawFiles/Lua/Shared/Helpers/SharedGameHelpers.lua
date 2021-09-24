@@ -138,6 +138,38 @@ function GameHelpers.Item.IsObject(item)
 	return false
 end
 
+---@param item EsvItem|EclItem|UUID|NETID
+---@param returnNilUUID boolean|nil
+---@return UUID
+function GameHelpers.Item.GetOwner(item, returnNilUUID)
+	local item = GameHelpers.GetItem(item)
+	if item then
+		if item.OwnerHandle ~= nil then
+			local object = Ext.GetGameObject(item.OwnerHandle)
+			if object ~= nil then
+				return object.MyGuid
+			end
+		end
+		if Ext.OsirisIsCallable() then
+			local inventory = StringHelpers.GetUUID(GetInventoryOwner(item.MyGuid))
+			if not StringHelpers.IsNullOrEmpty(inventory) then
+				return inventory
+			end
+		else
+			if item.InventoryHandle then
+				local object = Ext.GetGameObject(item.InventoryHandle)
+				if object ~= nil then
+					return object.MyGuid
+				end
+			end
+		end
+	end
+	if returnNilUUID then
+		return StringHelpers.NULL_UUID
+	end
+	return nil
+end
+
 ---@param statItem StatItem
 ---@param tag string|string[]
 function GameHelpers.StatItemHasTag(statItem, tag)
@@ -382,4 +414,36 @@ function GameHelpers.GetItem(object)
 		end
 	end
 	return nil
+end
+
+---Checks if a character or item exists.
+---@param object EsvGameObject|EclGameObject|string|number
+---@return false
+function GameHelpers.ObjectExists(object, returnNullId)
+	local t = type(object)
+	if t == "string" and StringHelpers.IsNullOrWhitespace(object) then
+		return false
+	end
+	if Ext.OsirisIsCallable() then
+		if t == "userdata" and object.MyGuid then
+			return ObjectExists(object.MyGuid) == 1
+		elseif t == "string" and not StringHelpers.IsNullOrWhitespace(object) then
+			return ObjectExists(object) == 1
+		elseif t == "number" then
+			local obj = Ext.GetGameObject(object)
+			if obj then
+				return ObjectExists(obj.MyGuid) == 1
+			end
+		end
+	else
+		if t == "userdata" then
+			return true
+		elseif (t == "string" and not StringHelpers.IsNullOrWhitespace(object)) or t == "number" then
+			local obj = GameHelpers.TryGetObject(object, true)
+			if obj then
+				return true
+			end
+		end
+	end
+	return false
 end

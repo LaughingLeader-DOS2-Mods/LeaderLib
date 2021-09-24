@@ -10,6 +10,7 @@ end
 
 AddConsoleVariable("Common", Common)
 AddConsoleVariable("GameHelpers", GameHelpers)
+AddConsoleVariable("CombatLog", CombatLog)
 AddConsoleVariable("inspect", Lib.inspect)
 AddConsoleVariable("serpent", Lib.serpent)
 
@@ -238,7 +239,6 @@ if not isClient then
 	})
 	AddConsoleVariable("party", party)
 else
-	AddConsoleVariable("CombatLog", CombatLog)
 	local me = {}
 	setmetatable(me, {
 		__call = function()

@@ -35,7 +35,7 @@ local ContentTypeLength = {
 local function GetContentLength(arr, contentTypeEnum, contentStartIndex)
 	local length = 3
 	local contentType = ContentType[contentTypeEnum]
-	fprint("[GetContentLength] type(%s) name(%s)", contentTypeEnum, contentType)
+	fprint(LOGLEVEL.TRACE, "[GetContentLength] type(%s) name(%s)", contentTypeEnum, contentType)
 	if contentType then
 		if contentType ~= "List" then
 			return length + ContentTypeLength[Vars.ControllerEnabled][contentType],contentType

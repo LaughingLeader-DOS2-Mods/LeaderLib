@@ -159,7 +159,6 @@ IgnoredMods = {
 
 ---@alias ApplyDamageCharacterBonusesCallback fun(character:StatCharacter, attacker:StatCharacter, damageList:DamageList, preModifiedDamageList:DamageItem[], resistancePenetration:table<string,integer>)
 
-Listeners = {}
 Ext.Require("Shared/Listeners.lua")
 
 SkillListeners = {}

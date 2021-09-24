@@ -5,8 +5,11 @@
 ---@alias LeaderLibClientListenerEvent string|'"CharacterSheetPointChanged"' | '"ControllerModeEnabled"' | '"InputEvent"' | '"ModMenuSectionCreated"' | '"MouseInputEvent"' | '"NamedInputEvent"' | '"OnContextMenuEntryClicked"' | '"OnContextMenuOpening"' | '"OnTalentArrayUpdating"' | '"OnTooltipPositioned"' | '"OnWorldTooltip"' | '"ShouldOpenContextMenu"' | '"UICreated"'
 
 if not Listeners then
+	---@private
+	---@class LeaderLibListeners:table
 	Listeners = {}
 end
+
 Listeners.FeatureEnabled = {}
 Listeners.FeatureDisabled = {}
 Listeners.Initialized = {}

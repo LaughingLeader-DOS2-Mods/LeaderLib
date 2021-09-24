@@ -462,17 +462,23 @@ end
 
 GameHelpers.Item.EquipInSlot = EquipInSlot
 
+---@param char UUID|EsvCharacter
+---@param item UUID|EsvItem
 function GameHelpers.Item.ItemIsEquipped(char, item)
-    local itemObj = Ext.GetItem(item)
+    local itemObj = GameHelpers.GetItem(item)
     if itemObj ~= nil then
         local slot = itemObj.Slot
         if slot <= 13 then -- 13 is the Overhead slot
             return true
         end
     else
-        for i,slot in Data.EquipmentSlots:Get() do
-            if CharacterGetEquippedItem(char, slot) == item then
-                return true
+        char = GameHelpers.GetUUID(char)
+        item = GameHelpers.GetUUID(item)
+        if char and item then
+            for i,slot in Data.EquipmentSlots:Get() do
+                if CharacterGetEquippedItem(char, slot) == item then
+                    return true
+                end
             end
         end
     end
@@ -542,7 +548,7 @@ end
 ---Builds a list of items with a specific tag.
 ---@param character string
 ---@param tag string
----@return boolean
+---@return table<string,UUID>
 function GameHelpers.Item.FindTaggedEquipment(character, tag)
     local items = {}
 	for _,slotName in Data.VisibleEquipmentSlots:Get() do
@@ -551,6 +557,29 @@ function GameHelpers.Item.FindTaggedEquipment(character, tag)
 			items[slotName] = item
 		end
 	end
+	return items
+end
+
+---Gets an array of items with specific tag(s) on a character.
+---@param character string|EsvCharacter
+---@param tag string|string[]
+---@param asEsvItem boolean
+---@return string[]|EsvItem[]
+function GameHelpers.Item.FindTaggedItems(character, tag, asEsvItem)
+    local items = {}
+    character = GameHelpers.GetCharacter(character)
+    if character then
+        for i,v in pairs(character:GetInventoryItems()) do
+            local item = Ext.GetItem(v)
+            if GameHelpers.ItemHasTag(item, tag) then
+                if asEsvItem then
+                    items[#items+1] = item
+                else
+                    items[#items+1] = v
+                end
+            end
+        end
+    end
 	return items
 end
 

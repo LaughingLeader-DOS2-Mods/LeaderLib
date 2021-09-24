@@ -33,8 +33,8 @@ if Vars.DebugMode then
 	if coroutine then
 	Ext.Require("Server/Debug/CoroutineTests.lua")
 	end
-	Ext.Require("Server/Game/QOL/BuffStatusPreserver.lua")
 end
+Ext.Require("Server/Game/QOL/BuffStatusPreserver.lua")
 Ext.Require("Server/Updates.lua")
 
 local function table_has_index(tbl, index)

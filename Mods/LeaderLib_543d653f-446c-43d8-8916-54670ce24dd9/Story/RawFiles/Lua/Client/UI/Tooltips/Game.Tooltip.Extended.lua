@@ -1298,7 +1298,7 @@ function TooltipHooks:OnRenderSubTooltip(ui, propertyName, req, method, ...)
 		elseif req.Type == "Talent" then
 			self:NotifyListeners("Talent", req.Talent, req, tooltip, req.Character, req.Talent)
 		elseif req.Type == "Status" then
-			self:NotifyListeners("Status", req.Status.StatusId, req, tooltip, req.Character, req.Status)
+			self:NotifyListeners("Status", req.StatusId, req, tooltip, req.Character, req.Status)
 		elseif req.Type == "Item" then
 			self:NotifyListeners("Item", nil, req, tooltip, req.Item)
 		elseif req.Type == "Pyramid" then

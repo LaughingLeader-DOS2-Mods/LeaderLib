@@ -36,6 +36,7 @@ end
 
 RequestProcessor.CallbackHandler[TooltipCalls.Status] = function(request, ui, uiType, event, id)
 	request.Status = Ext.GetStatus(request.Character.Handle, Ext.DoubleToHandle(id))
+	request.StatusId = request.Status and request.Status.StatusId or ""
 	return request
 end
 
@@ -216,7 +217,7 @@ function RequestProcessor.HandleCallback(requestType, ui, uiType, event, idOrHan
 	local characterHandle = ui:GetPlayerHandle()
 	if (event == "showSkillTooltip" or event == "showStatusTooltip") then
 		id = statOrWidth
-		if idOrHandle ~= nil and not Game.Math then
+		if idOrHandle ~= nil and not GameHelpers.Math.IsNaN(idOrHandle) then
 			characterHandle = Ext.DoubleToHandle(idOrHandle)
 		end
 	end
@@ -231,13 +232,16 @@ function RequestProcessor.HandleCallback(requestType, ui, uiType, event, idOrHan
 		end
 	end
 
-	if not character and type(characterHandle) == "number" then
+	if not character and characterHandle then
 		character = Ext.GetCharacter(characterHandle)
 	end
 
 	if not character then
 		if (uiType == Data.UIType.characterSheet or uiType == Data.UIType.statsPanel_c) then
 			character = GameHelpers.Client.GetCharacterSheetCharacter(this)
+		elseif (uiType == Data.UIType.playerInfo or uiType == Data.UIType.playerInfo_c) then
+			--Help!
+			character = Client:GetCharacter()
 		else
 			character = Client:GetCharacter()
 		end

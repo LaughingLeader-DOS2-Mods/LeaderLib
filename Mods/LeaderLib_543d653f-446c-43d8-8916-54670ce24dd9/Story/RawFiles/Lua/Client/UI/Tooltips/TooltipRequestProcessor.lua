@@ -240,7 +240,8 @@ function RequestProcessor.HandleCallback(requestType, ui, uiType, event, idOrHan
 		if (uiType == Data.UIType.characterSheet or uiType == Data.UIType.statsPanel_c) then
 			character = GameHelpers.Client.GetCharacterSheetCharacter(this)
 		elseif (uiType == Data.UIType.playerInfo or uiType == Data.UIType.playerInfo_c) then
-			--Help!
+			--[[ Help! This shouldn't ever happen because the character handle is passed into the external call.
+			We have no idea which row of statuses/whatever is being looked at for a character otherwise.--]]
 			character = Client:GetCharacter()
 		else
 			character = Client:GetCharacter()

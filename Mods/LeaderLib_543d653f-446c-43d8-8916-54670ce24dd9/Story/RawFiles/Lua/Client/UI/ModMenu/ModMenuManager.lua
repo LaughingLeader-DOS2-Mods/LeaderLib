@@ -220,6 +220,7 @@ local function ParseModSettings(ui, mainMenu, modSettings, order)
 	for _,v in pairs(modSettings:GetAllEntries(Client.Profile)) do
 		if added[v.ID] == nil then
 			table.insert(otherEntries, v)
+			added[v.ID] = false
 		end
 	end
 	table.sort(otherEntries, function(a,b)
@@ -228,8 +229,10 @@ local function ParseModSettings(ui, mainMenu, modSettings, order)
 	for i=1,#otherEntries do
 		local v = otherEntries[i]
 		AddModSettingsEntry(ui, mainMenu, v.ID, v, modSettings.UUID)
+		added[v.ID] = true
 	end
 	mainMenu.list.positionElements()
+	return added
 end
 
 ---@param ui UIObject
@@ -241,6 +244,7 @@ function ModMenuManager.CreateMenu(ui, mainMenu)
 	local title = Ext.GetTranslatedString("h12905237ga2afg43fcg8fc4g6a993789ecba", "Mod Settings")
 	mainMenu.setTitle(title)
 
+	---@type ModSettings[]
 	local settings = {}
 	for uuid,v in pairs(GlobalSettings.Mods) do
 		settings[#settings+1] = v
@@ -253,7 +257,7 @@ function ModMenuManager.CreateMenu(ui, mainMenu)
 
 	for _,modSettings in pairs(settings) do
 		if modSettings.Global ~= nil then
-			if Ext.IsModLoaded(modSettings.UUID) then
+			if Ext.IsModLoaded(modSettings.UUID) and modSettings:HasEntries() then
 				local titleColor = not StringHelpers.IsNullOrEmpty(modSettings.TitleColor) and modSettings.TitleColor or "#369BFF"
 				local modInfo = Ext.GetModInfo(modSettings.UUID)
 				local modName = string.format("<font color='%s' size='24'>%s</font>", titleColor, modInfo.Name or modSettings.Name)

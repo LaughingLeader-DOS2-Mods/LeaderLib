@@ -174,6 +174,11 @@ function ModSettings:GetAllEntries(profile)
 			table.insert(entries, v)
 		end
 	end
+	for _,v in pairs(self.Global.Buttons) do
+		if not v.IsFromFile then
+			table.insert(entries, v)
+		end
+	end
 	if profile ~= nil and profile ~= "" then
 		local data = self.Profiles[profile]
 		if data ~= nil and data.Settings ~= nil then
@@ -190,6 +195,16 @@ function ModSettings:GetAllEntries(profile)
 		end
 	end
 	return entries
+end
+
+function ModSettings:HasEntries()
+	if Common.TableHasAnyEntry(self.Global.Flags) 
+	or Common.TableHasAnyEntry(self.Global.Variables)
+	or Common.TableHasAnyEntry(self.Global.Buttons)
+	then
+		return true
+	end
+	return false
 end
 
 function ModSettings:Copy(forSyncing)

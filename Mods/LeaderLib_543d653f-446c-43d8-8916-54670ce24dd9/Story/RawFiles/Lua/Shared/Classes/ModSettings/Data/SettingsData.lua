@@ -68,6 +68,9 @@ function SettingsData:AddFlag(flag, flagType, enabled, displayName, tooltip, can
 		existing.DisplayName = displayName or existing.DisplayName
 		existing.Tooltip = tooltip or existing.Tooltip
 		existing.CanExport = canExport ~= nil and canExport or existing.CanExport
+		if isFromFile == false then
+			existing.IsFromFile = false
+		end
 	end
 end
 
@@ -75,9 +78,9 @@ end
 ---@param flagType string Global|User|Character
 ---@param enabled boolean|nil
 ---@param canExport boolean|nil
-function SettingsData:AddFlags(flags, flagType, enabled, canExport)
+function SettingsData:AddFlags(flags, flagType, enabled, canExport, isFromFile)
 	for i,flag in pairs(flags) do
-		self:AddFlag(flag, flagType, enabled, nil, nil, canExport)
+		self:AddFlag(flag, flagType, enabled, nil, nil, canExport, isFromFile)
 	end
 end
 
@@ -87,10 +90,13 @@ end
 ---@param enabled boolean|nil
 ---@param tooltipKey string|nil A string key to use for the tooltip. Will default to Flag_Description.
 ---@param canExport boolean|nil
-function SettingsData:AddLocalizedFlag(flag, flagType, enabled, key, tooltipKey, canExport)
+function SettingsData:AddLocalizedFlag(flag, flagType, enabled, key, tooltipKey, canExport, isFromFile)
+	if isFromFile == nil then
+		isFromFile = false
+	end
 	key = key or flag
 	tooltipKey = tooltipKey or key.."_Description"
-	self:AddFlag(flag, flagType, enabled, skey(key), skey(tooltipKey), canExport)
+	self:AddFlag(flag, flagType, enabled, skey(key), skey(tooltipKey), canExport, isFromFile)
 end
 
 ---Same thing as AddFlags, but assumes each flag is its own DisplayName key.
@@ -98,9 +104,12 @@ end
 ---@param flagType string Global|User|Character
 ---@param enabled boolean|nil
 ---@param canExport boolean|nil
-function SettingsData:AddLocalizedFlags(flags, flagType, enabled, canExport)
+function SettingsData:AddLocalizedFlags(flags, flagType, enabled, canExport, isFromFile)
+	if isFromFile == nil then
+		isFromFile = false
+	end
 	for i,flag in pairs(flags) do
-		self:AddLocalizedFlag(flag, flagType, enabled, nil, nil, canExport)
+		self:AddLocalizedFlag(flag, flagType, enabled, nil, nil, canExport, isFromFile)
 	end
 end
 
@@ -127,6 +136,9 @@ function SettingsData:AddVariable(name, value, displayName, tooltip, min, max, i
 		existing.Max = max or existing.Max
 		existing.Interval = interval or existing.Interval
 		existing.CanExport = canExport ~= nil and canExport or existing.CanExport
+		if isFromFile == false then
+			existing.IsFromFile = false
+		end
 	end
 end
 
@@ -138,9 +150,12 @@ end
 ---@param interval any
 ---@param tooltipKey string|nil A string key to use for the tooltip. Will default to Key_Description.
 ---@param canExport boolean|nil
-function SettingsData:AddLocalizedVariable(name, key, value, min, max, interval, tooltipKey, canExport)
+function SettingsData:AddLocalizedVariable(name, key, value, min, max, interval, tooltipKey, canExport, isFromFile)
+	if isFromFile == nil then
+		isFromFile = false
+	end
 	tooltipKey = tooltipKey or key.."_Description"
-	self:AddVariable(name, value, skey(key), skey(tooltipKey), min, max, interval, canExport)
+	self:AddVariable(name, value, skey(key), skey(tooltipKey), min, max, interval, canExport, isFromFile)
 end
 
 ---@param name string
@@ -164,7 +179,9 @@ function SettingsData:AddButton(id, callback, displayName, tooltip, enabled, hos
 		existing.Tooltip = tooltip or existing.Tooltip
 		existing.Enabled = enabled ~= nil and enabled or existing.Enabled
 		existing.HostOnly = hostOnly ~= nil and hostOnly or existing.HostOnly
-		existing.CanExport = isFromFile ~= nil and isFromFile or existing.IsFromFile
+		if isFromFile == false then
+			existing.IsFromFile = false
+		end
 		if callback ~= nil and existing.Callback ~= callback then
 			if type(existing.Callback) == "table" then
 				if not Common.TableHasValue(existing.Callback, callback) then
@@ -187,9 +204,12 @@ end
 ---@param enabled boolean|nil
 ---@param hostOnly boolean|nil
 ---@param tooltipKey string|nil
-function SettingsData:AddLocalizedButton(id, key, callback, enabled, hostOnly, tooltipKey)
+function SettingsData:AddLocalizedButton(id, key, callback, enabled, hostOnly, tooltipKey, isFromFile)
+	if isFromFile == nil then
+		isFromFile = false
+	end
 	tooltipKey = tooltipKey or key.."_Description"
-	self:AddButton(id, callback, skey(key), skey(tooltipKey), enabled, hostOnly)
+	self:AddButton(id, callback, skey(key), skey(tooltipKey), enabled, hostOnly, isFromFile)
 end
 
 function SettingsData:UpdateFlags()

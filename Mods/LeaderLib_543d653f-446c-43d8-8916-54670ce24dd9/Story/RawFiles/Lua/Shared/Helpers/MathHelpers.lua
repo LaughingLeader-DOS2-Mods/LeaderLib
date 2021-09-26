@@ -254,7 +254,7 @@ function GameHelpers.Math.GetPosition(obj, unpack, fallback)
     return fallback
 end
 
----Returns true if a number is NaN.
+---Returns true if a number is NaN, probably.
 ---@param x number
 function GameHelpers.Math.IsNaN(x)
     if type(x) == "number" then

@@ -24,7 +24,9 @@ function FlagData:Create(flag, flagType, enabled, displayName, tooltip, isFromFi
 		ID = flag,
 		FlagType = flagType or "Global",
 		Enabled = enabled or false,
-		IsFromFile = false
+		IsFromFile = false,
+		DebugOnly = false,
+		CanExport = true,
 	}
 	if isFromFile ~= nil then
 		this.IsFromFile = isFromFile

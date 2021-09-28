@@ -1264,7 +1264,6 @@ end
 ---@param req TooltipRequest
 ---@param method string
 function TooltipHooks:OnRenderSubTooltip(ui, propertyName, req, method, ...)
-	iconUpdateRequired = false
 	local tt = TableFromFlash(ui, propertyName)
 	local params = ParseTooltipArray(tt)
 	if params ~= nil then

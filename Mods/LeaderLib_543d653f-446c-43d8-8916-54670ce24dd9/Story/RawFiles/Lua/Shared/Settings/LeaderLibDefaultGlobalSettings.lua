@@ -81,10 +81,13 @@ if Ext.IsDeveloperMode() then
 	end, true, true)
 end
 
-GlobalSettings.Mods["7e737d2f-31d2-4751-963f-be6ccc59cd0c"] = settings
+GlobalSettings.Mods[ModuleUUID] = settings
 
 if Ext.IsServer() then
 	settings.Global.Flags.LeaderLib_BuffStatusPreserverEnabled:AddListener(function(id, enabled, data, settingsData)
 		BuffStatusPreserver:SetEnabled(enabled)
+	end)
+	settings.Global.Flags.LeaderLib_FriendlyFireEnabled:AddListener(function(id, enabled, data, settingsData)
+		TagManager:TagAll(enabled)
 	end)
 end

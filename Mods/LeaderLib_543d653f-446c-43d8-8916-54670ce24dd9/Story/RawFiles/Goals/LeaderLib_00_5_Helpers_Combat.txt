@@ -589,6 +589,7 @@ LeaderLib_Combat_ClearRandomObjectData(_CombatID);
 //END_REGION
 
 //REGION FRIENDLY_FIRE
+// [BEGIN_NO_OSITOOLS]
 IF
 GlobalFlagSet("LeaderLib_FriendlyFireEnabled")
 THEN
@@ -616,7 +617,7 @@ AND
 DB_GlobalFlag("LeaderLib_FriendlyFireEnabled")
 THEN
 SetTag(_Character, "LeaderLib_FriendlyFireEnabled");
-
+// [END_NO_OSITOOLS]
 //END_REGION
 
 //REGION BRING_PARTY_INTO_COMBAT

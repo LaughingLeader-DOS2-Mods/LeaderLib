@@ -331,6 +331,9 @@ function SettingsData:GetVariable(name, fallback)
 	return fallback
 end
 
+---@param id string Flag id.
+---@param b boolean Value to compare, i.e. true for "Flag Is Set"
+---@param target UUID|nil Optional character UUID to check, for object or user flags.
 function SettingsData:FlagEquals(id, b, target)
 	local data = self.Flags[id]
 	if data ~= nil then
@@ -341,13 +344,16 @@ function SettingsData:FlagEquals(id, b, target)
 				return false
 			end
 			if target ~= nil then
-				local enabled = false
-				if data.FlagType == "User" then
-					enabled = UserGetFlag(target, data.ID) == 1
-				elseif data.FlagType == "Character" then
-					enabled = ObjectGetFlag(target, data.ID) == 1
+				target = GameHelpers.GetUUID(target)
+				if target then
+					local enabled = false
+					if data.FlagType == "User" then
+						enabled = UserGetFlag(target, data.ID) == 1
+					elseif data.FlagType == "Character" then
+						enabled = ObjectGetFlag(target, data.ID) == 1
+					end
+					return enabled == b
 				end
-				return enabled == b
 			else
 				for player in GameHelpers.Character.GetPlayers() do
 					if data.FlagType == "User" then

@@ -2,24 +2,22 @@ if TagManager == nil then
 	TagManager = {}
 end
 
-if TagManager.Listeners == nil then
-	TagManager.Listeners = {}
-end
+---@private
+TagManager.Callbacks = {
+	TagObject = {}
+}
 
 ---@alias TagManagerTagObjectCallback fun(object:EsvCharacter|EsvItem, isInCombat:boolean, isCharacter:boolean, ...:any):void
 
-TagManager.Listeners.TagObject = {
-	---@private
-	---@type TagManagerTagObjectCallback[]
-	Callbacks = {},
+TagManager.Register = {
 	---@param callback TagManagerTagObjectCallback
-	Register = function(callback)
-		table.insert(TagManager.Listeners.TagObject.Callbacks, callback)
+	TagObject = function(callback)
+		table.insert(TagManager.Callbacks.TagObject, callback)
 	end
 }
 
 --LeaderLib_FriendlyFireEnabled, BOSS, and IMMORTAL tags.
-TagManager.Listeners.TagObject.Register(function(object, isInCombat, isCharacter, ...)
+TagManager.Register.TagObject(function(object, isInCombat, isCharacter, ...)
 	if isCharacter then
 		local args = {...}
 		local friendlyFireEnabled = args[1] == true or SettingsManager.GetMod(ModuleUUID, false).Global:FlagEquals("LeaderLib_FriendlyFireEnabled", true)
@@ -40,17 +38,16 @@ TagManager.Listeners.TagObject.Register(function(object, isInCombat, isCharacter
 		else
 			ClearTag(object.MyGuid, "IMMORTAL")
 		end
+	else
+		if Ext.OsirisIsCallable() then
+			if ItemIsDestructible(object.MyGuid) == 0 then
+				SetTag(object.MyGuid, "IMMORTAL")
+			else
+				ClearTag(object.MyGuid, "IMMORTAL")
+			end
+		end
 	end
 end)
-
----@param ... any Optional parameters to pass to listeners.
-function TagManager:TagAll(...)
-	for i,v in pairs(Ext.GetAllCharacters()) do
-		local object = Ext.GetCharacter(v)
-		local isInCombat = Ext.OsirisIsCallable() and CharacterIsInCombat(object.MyGuid) == 1
-		InvokeListenerCallbacks(TagManager.Listeners.TagObject.Callbacks, object, isInCombat, true, ...)
-	end
-end
 
 ---@param object UUID|NETID|EsvCharacter|EsvItem
 ---@param isInCombat boolean|nil
@@ -62,7 +59,14 @@ function TagManager:TagObject(object, isInCombat, ...)
 	if isInCombat == nil then
 		isInCombat = (isCharacter and Ext.OsirisIsCallable() and CharacterIsInCombat(object.MyGuid) == 1)
 	end
-	InvokeListenerCallbacks(TagManager.Listeners.TagObject.Callbacks, object, isInCombat, isCharacter, ...)
+	InvokeListenerCallbacks(TagManager.Callbacks.TagObject, object, isInCombat, isCharacter, ...)
+end
+
+---@param ... any Optional parameters to pass to listeners.
+function TagManager:TagAll(...)
+	for i,v in pairs(Ext.GetAllCharacters()) do
+		TagManager:TagObject(v, nil, ...)
+	end
 end
 
 Ext.RegisterOsirisListener("ObjectEnteredCombat", 2, "after", function(uuid, combatId)
@@ -74,6 +78,10 @@ Ext.RegisterOsirisListener("ObjectLeftCombat", 2, "after", function(uuid, combat
 end)
 
 Ext.RegisterOsirisListener("ObjectSwitchedCombat", 3, "after", function(uuid, oldCombatId, combatId)
+	TagManager:TagObject(uuid, true)
+end)
+
+Ext.RegisterOsirisListener("ObjectTransformed", 2, "after", function(uuid, template)
 	TagManager:TagObject(uuid, true)
 end)
 

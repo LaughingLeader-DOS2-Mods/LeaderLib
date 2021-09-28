@@ -334,8 +334,11 @@ function GameHelpers.GetDialogInstance(dialog, ...)
 end
 
 local function TryGetObject(id)
-	if Ext.OsirisIsCallable() and type(id) == "string" and ObjectExists(id) == 0 then
+	local t = type(id)
+	if Ext.OsirisIsCallable() and t == "string" and ObjectExists(id) == 0 then
 		return nil
+	elseif t == "userdata" then
+		return id
 	end
 	return Ext.GetGameObject(id)
 end

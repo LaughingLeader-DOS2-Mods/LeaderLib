@@ -115,9 +115,6 @@ function RegisterLeaveActionPrefix(prefix)
 	table.insert(Vars.LeaveActionData.Prefixes, prefix)
 end
 
-ModRegistration = {}
-Register = {}
-
 ---@type LeaderLibGameSettings
 GameSettings = {Settings = {}}
 

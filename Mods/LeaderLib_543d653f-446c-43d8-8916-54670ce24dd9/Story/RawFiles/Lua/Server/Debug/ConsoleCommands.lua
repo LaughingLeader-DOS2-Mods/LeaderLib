@@ -229,17 +229,63 @@ Ext.RegisterConsoleCommand("addtreasure", function(command, treasure, identifyIt
 	end
 end)
 
+---@private
+---@class DebugCommandStatTables:table
+---@field Armor string[]
+---@field Weapon string[]
+---@field Shield string[]
+---@field Object string[]
+
+---@param name string
+---@param stats DebugCommandStatTables
+---@return string|nil
+local function findStatByObjectCategory(name, stats)
+	for statType,entries in pairs(stats) do
+		for _,v in pairs(entries) do
+			local stat = Ext.GetStat(v)
+			if stat and stat.ObjectCategory == name then
+				return stat
+			end
+		end
+	end
+	return nil
+end
+
 local function processTreasure(treasure, props, host, generateAmount)
+	generateAmount = generateAmount or 1
 	local tbl = Ext.GetTreasureTable(treasure)
 	if tbl then
+		local stats = {
+			Armor = Ext.GetStatEntries("Armor"),
+			Weapon = Ext.GetStatEntries("Weapon"),
+			Shield = Ext.GetStatEntries("Shield"),
+			Object = Ext.GetStatEntries("Object")
+		}
+
 		for _,sub in pairs(tbl.SubTables) do
 			for _,cat in pairs(sub.Categories) do
-				if cat.TreasureCategory and string.find(cat.TreasureCategory, "I_", nil, true) then
-					local stat = string.gsub(cat.TreasureCategory, "I_", "")
-					for i=0,generateAmount do
-						local item = GameHelpers.Item.CreateItemByStat(stat, props)
-						if item then
-							ItemToInventory(item, host, 1, 0, 0)
+				if cat.TreasureCategory then
+					if string.find(cat.TreasureCategory, "I_", nil, true) then
+						local stat = string.gsub(cat.TreasureCategory, "I_", "")
+						for i=0,generateAmount do
+							local item = GameHelpers.Item.CreateItemByStat(stat, props)
+							if item then
+								ItemToInventory(item, host, 1, 0, 0)
+							else
+								fprint(LOGLEVEL.WARNING, "Failed to create item for treasure (%s) stat (%s)", treasure, stat)
+							end
+						end
+					else
+						local stat = findStatByObjectCategory(cat.TreasureCategory, stats)
+						if stat then
+							for i=0,generateAmount do
+								local item = GameHelpers.Item.CreateItemByStat(stat, props)
+								if item then
+									ItemToInventory(item, host, 1, 0, 0)
+								else
+									fprint(LOGLEVEL.WARNING, "Failed to create item for treasure (%s) stat (%s)", treasure, stat)
+								end
+							end
 						end
 					end
 				elseif cat.TreasureTable then

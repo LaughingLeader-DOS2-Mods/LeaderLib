@@ -4,7 +4,8 @@
 		{
 			"label": "Build SWF Overrides",
 			"type": "shell",
-			"command": "py \"${fileWorkspaceFolder}\\_Sheets\\build.py\"",
+			"command": "py",
+			"args": ["${workspaceFolder}\\build.py"],
 			"problemMatcher": [],
 			"presentation": {
 				"echo": true,

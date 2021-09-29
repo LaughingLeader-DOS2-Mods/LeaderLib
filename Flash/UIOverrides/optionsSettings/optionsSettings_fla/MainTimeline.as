@@ -19,6 +19,7 @@ package optionsSettings_fla
 		public var update_Array:Array;
 		public var baseUpdate_Array:Array;
 		public var button_array:Array;
+		public var enableButtonOverride_array:Array;
 
 		public var focusedObject:MovieClip;
 		
@@ -216,7 +217,6 @@ package optionsSettings_fla
 		public function onEventDown(id:Number) : Boolean
 		{
 			var isHandled:Boolean = false;
-			trace("focusedObject", focusedObject);
 			if(focusedObject != null && focusedObject.handleEvent)
 			{
 				isHandled = focusedObject.handleEvent(this.events[id], true);
@@ -366,8 +366,21 @@ package optionsSettings_fla
 		
 		public function setButtonDisable(buttonId:Number, bDisabled:Boolean) : *
 		{
-			this.button_array[buttonId].disable_mc.visible = bDisabled;
-			this.button_array[buttonId].bg_mc.visible = !bDisabled;
+			//LeaderLib
+			if (this.enableButtonOverride_array[buttonId] != true)
+			{
+				this.button_array[buttonId].disable_mc.visible = bDisabled;
+				this.button_array[buttonId].bg_mc.visible = !bDisabled;
+			}
+		}
+		
+		//LeaderLib
+		public function forceMenuButtonEnable(buttonId:Number, bEnabled:Boolean = false) : *
+		{
+			this.enableButtonOverride_array[buttonId] = bEnabled;
+			this.button_array[buttonId].bg_mc.visible = bEnabled;
+			this.button_array[buttonId].text_txt.visible = bEnabled;
+			this.button_array[buttonId].disable_mc.visible = !bEnabled;
 		}
 
 		// LeaderLib Addition
@@ -473,6 +486,7 @@ package optionsSettings_fla
 			this.update_Array = new Array();
 			this.baseUpdate_Array = new Array();
 			this.button_array = new Array(this.mainMenu_mc.ok_mc,this.mainMenu_mc.cancel_mc,this.mainMenu_mc.apply_mc);
+			this.enableButtonOverride_array = new Array(false,false,false);
 		}
 	}
 }

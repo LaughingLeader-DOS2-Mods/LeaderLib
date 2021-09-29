@@ -331,10 +331,26 @@ local function OnAcceptChanges(ui, call)
 end
 
 local function SetApplyButtonClickable(ui, b)
-	if not Vars.ControllerEnabled then
-		ui:Invoke("setApplyButtonCopyVisible", b)
+	if ui == nil then
+		if not Vars.ControllerEnabled then
+			ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings.swf")
+		else
+			ui = Ext.GetBuiltinUI("Public/Game/GUI/optionsSettings_c.swf")
+		end
+	end
+	local this = ui:GetRoot()
+	if this then
+		if currentMenu == MOD_MENU_ID then
+			if this.setApplyButtonCopyVisible then
+				this.setApplyButtonCopyVisible(b)
+			end
+		elseif this.forceMenuButtonEnable then
+			this.forceMenuButtonEnable(LarianButtonID.Apply, b)
+		end
 	end
 end
+
+ModMenuManager.SetApplyButtonClickable = SetApplyButtonClickable
 
 local function OnApplyPressed(ui, call, ...)
 	if currentMenu == MOD_MENU_ID then

@@ -1,3 +1,25 @@
+---Similar to error, but formats a string with provided values.
+---@param message string The error message to display.
+---@vararg any
+---@see _G#error
+function ferror(message, ...)
+	local b,msg = pcall(string.format, message, ...)
+	error(msg,2)
+end
+
+---Similar to assert, but formats a string with provided values.
+---@param b boolean Whether the asset passes or not.
+---@param message string The assert message to display.
+---@vararg any
+---@see _G#assert
+function fassert(b, message, ...)
+	if b then
+		return b, ...
+	end
+	local b,msg = pcall(string.format, message, ...)
+	error(msg,2)
+end
+
 Ext.Require("Shared/_InitShared.lua")
 Ext.Require("Shared/Settings/GameSettingsManager.lua")
 Ext.Require("Shared/Helpers/DebugHelpers.lua")

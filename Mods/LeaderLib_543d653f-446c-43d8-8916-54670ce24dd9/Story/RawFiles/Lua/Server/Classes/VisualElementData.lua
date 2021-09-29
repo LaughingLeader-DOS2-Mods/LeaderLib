@@ -18,7 +18,7 @@ function VisualResourceData:Create(resourceName, visualSlot, params)
 		Resource = resourceName,
 		VisualSlot = visualSlot,
 	}
-	setmetatable(this, self)
+	setmetatable(this, VisualResourceData)
 	if params ~= nil then
 		for prop,value in pairs(params) do
 			this[prop] = value
@@ -44,8 +44,7 @@ end
 
 if Ext.GameVersion() == editorVersion then
 	Ext.PrintWarning("[LeaderLib:VisualResourceData:SetVisualOnCharacter] CharacterSetVisualElement isn't availble in the editor's game version (v3.6.51.9303).")
-	---@param char string
-	function VisualResourceData:SetVisualOnCharacter(char) end
+	VisualResourceData.SetVisualOnCharacter = function() end
 end
 
 Classes.VisualResourceData = VisualResourceData

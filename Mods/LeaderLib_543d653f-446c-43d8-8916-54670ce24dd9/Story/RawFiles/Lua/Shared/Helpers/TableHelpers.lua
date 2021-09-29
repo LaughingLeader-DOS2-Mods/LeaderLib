@@ -74,14 +74,17 @@ function TableHelpers.SanitizeTable(tbl)
 	return output
 end
 
-function TableHelpers.AddOrUpdate(target, addFrom)
+---@param target table
+---@param addFrom table
+---@param skipExisting boolean|nil If true, existing values aren't updated.
+function TableHelpers.AddOrUpdate(target, addFrom, skipExisting)
 	for k,v in pairs(addFrom) do
-		if not target[k] then
+		if target[k] == nil then
 			target[k] = v
 		else
 			if type(v) == "table" then
-				TableHelpers.AddOrUpdate(target[k], v)
-			else
+				TableHelpers.AddOrUpdate(target[k], v, skipExisting)
+			elseif skipExisting ~= true then
 				target[k] = v
 			end
 		end

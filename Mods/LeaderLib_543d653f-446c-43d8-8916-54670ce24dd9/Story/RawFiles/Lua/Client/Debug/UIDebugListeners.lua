@@ -308,6 +308,13 @@ local journal_csp = UIListenerWrapper:Create(Data.UIType.journal_csp)
 local skills = UIListenerWrapper:Create(Data.UIType.skills)
 local mainMenu = UIListenerWrapper:Create(Data.UIType.mainMenu)
 
+for k,v in pairs(Data.UIType.optionsSettings) do
+	UIListenerWrapper:Create(v, enabledParam)
+end
+for k,v in pairs(Data.UIType.optionsSettings_c) do
+	UIListenerWrapper:Create(v, enabledParam)
+end
+
 ---@param ui UIObject
 -- skills.CustomCallback["updateSkills"] = function(self, ui, method, b)
 -- 	local this = ui:GetRoot()

@@ -1,21 +1,22 @@
-local math = math
-local table = table
 local debug = debug
-local pairs = pairs
 local ipairs = ipairs
-local type = type
-local string = string
+local math = math
+local pairs = pairs
+local pcall = pcall
+local print = print
 local setmetatable = setmetatable
+local string = string
+local table = table
+local tostring = tostring
+local type = type
 local xpcall = xpcall
 local Ext = Ext
-local print = print
 local Mods = Mods
 local Game = Game
+local Dump = Common.Dump
 local LOGLEVEL = LOGLEVEL
 local fprint = fprint
-local Dump = Common.Dump
 local Data = Data
-local tostring = tostring
 
 Game.Tooltip = {}
 ---@type TooltipRequestProcessor
@@ -1641,8 +1642,8 @@ local function CaptureBuiltInUIs()
 	for i = 1,150 do
 		local ui = Ext.GetUIByType(i)
 		if ui ~= nil then
-			ui:CaptureExternalInterfaceCalls()
-			ui:CaptureInvokes()
+			pcall(ui.CaptureExternalInterfaceCalls, ui)
+			pcall(ui.CaptureInvokes, ui)
 		end
 	end
 end
@@ -1667,15 +1668,11 @@ Ext.RegisterListener("SessionLoaded", function()
 	EnableHooks()
 end)
 
+
 ---@param ui UIObject
 Ext.RegisterListener("UIObjectCreated", function (ui)
-	local t = ui:GetTypeId()
-	if t and ui:GetRoot() ~= nil then
-		ui:CaptureExternalInterfaceCalls()
-		ui:CaptureInvokes()
-	elseif Ext.GetGameState() == "Running" then
-		Ext.PostMessageToServer("LeaderLib_DeferUICapture", tostring(Mods.LeaderLib.Client.ID))
-	end
+	pcall(ui.CaptureExternalInterfaceCalls, ui)
+	pcall(ui.CaptureInvokes, ui)
 end)
 
 Ext.RegisterNetListener("LeaderLib_CaptureActiveUIs", function()

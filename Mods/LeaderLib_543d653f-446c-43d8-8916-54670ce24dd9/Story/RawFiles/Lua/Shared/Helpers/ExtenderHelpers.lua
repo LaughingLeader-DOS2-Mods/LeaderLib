@@ -535,8 +535,9 @@ function GameHelpers.Ext.CreateSkillTable(skillName, useWeaponDamage)
 			return nil
 		end
 		if useWeaponDamage == true then skill["UseWeaponDamage"] = "Yes" end
-		if skill.SkillProperties ~= nil then
-			for _,tbl in pairs(skill.SkillProperties) do
+		local skillProperties = GameHelpers.Stats.GetSkillProperties(skillName)
+		if skillProperties ~= nil then
+			for _,tbl in pairs(skillProperties) do
 				if tbl.Action == "AlwaysBackstab" then
 					skill.AlwaysBackstab = true
 				end

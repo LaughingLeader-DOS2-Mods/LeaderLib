@@ -1,12 +1,14 @@
 if BuffStatusPreserver == nil then
 	BuffStatusPreserver = {}
 end
-BuffStatusPreserver.Enabled = false
-BuffStatusPreserver.NextBuffStatus = {}
-if Vars.DebugMode then
-	--BuffStatusPreserver.Enabled = true
+BuffStatusPreserver.Enabled = function()
+	local settings = SettingsManager.GetMod(ModuleUUID, false)
+	if settings then
+		return settings.Global:FlagEquals("LeaderLib_BuffStatusPreserverEnabled", true)
+	end
+	return false
 end
-local self = BuffStatusPreserver
+BuffStatusPreserver.NextBuffStatus = {}
 
 BuffStatusPreserver.IgnoreStatusTypes = {
 	HEAL = true,
@@ -21,12 +23,12 @@ BuffStatusPreserver.IgnoreStatusTypes = {
 ---@param character EsvCharacter
 ---@param status EsvStatus
 function BuffStatusPreserver.PreserveStatus(character, status, skipCheck)
-	if status.CurrentLifeTime > 0 and (skipCheck == true or GameHelpers.Status.IsBeneficial(status.StatusId, true, self.IgnoreStatusTypes)) then
+	if status.CurrentLifeTime > 0 and (skipCheck == true or GameHelpers.Status.IsBeneficial(status.StatusId, true, BuffStatusPreserver.IgnoreStatusTypes)) then
 		if not PersistentVars.BuffStatuses[character.MyGuid] then
 			PersistentVars.BuffStatuses[character.MyGuid] = {}
 		end
 		local savedStatusData = PersistentVars.BuffStatuses[character.MyGuid]
-		savedStatusData[status.StatusId] = status.CurrentLifeTime
+		savedStatusData[status.StatusId] = math.ceil(status.CurrentLifeTime)
 		status.CurrentLifeTime = -1.0
 		status.LifeTime = -1.0
 		status.RequestClientSync = true
@@ -38,19 +40,19 @@ end
 
 ---@param character EsvCharacter
 function BuffStatusPreserver.PreserveAllStatuses(character)
-	if not self.Enabled then return end
+	if not BuffStatusPreserver.Enabled() then return end
 	for _,status in pairs(character:GetStatusObjects()) do
 		local statusType = GameHelpers.Status.GetStatusType(status.StatusId)
 		if statusType == "CONSUME" then
-			self.PreserveStatus(character, status)
+			BuffStatusPreserver.PreserveStatus(character, status)
 		end
 	end
 end
 
 function BuffStatusPreserver.OnLeftCombat(obj, id)
-	if not self.Enabled then return end
+	if not BuffStatusPreserver.Enabled() then return end
 	if GameHelpers.Character.IsPlayerOrPartyMember(obj) then
-		self.PreserveAllStatuses(Ext.GetCharacter(obj))
+		BuffStatusPreserver.PreserveAllStatuses(Ext.GetCharacter(obj))
 	end
 end
 
@@ -72,31 +74,31 @@ function BuffStatusPreserver.OnEnteredCombat(obj, combatId)
 end
 
 function BuffStatusPreserver.OnStatusApplied(target, status, source, statusType)
-	if not self.Enabled then return end
+	if not BuffStatusPreserver.Enabled() then return end
 	if CharacterIsInCombat(target) == 0 and GameHelpers.Character.IsPlayerOrPartyMember(target) then
-		local data = self.NextBuffStatus[target]
+		local data = BuffStatusPreserver.NextBuffStatus[target]
 		if data and data[status] then
-			self.NextBuffStatus[target][status] = nil
+			BuffStatusPreserver.NextBuffStatus[target][status] = nil
 			local character = Ext.GetCharacter(target)
-			self.PreserveStatus(character, character:GetStatus(status), true)
+			BuffStatusPreserver.PreserveStatus(character, character:GetStatus(status), true)
 		end
 	end
 end
 
 --Only preserve beneficial statuses applied by skills.
 function BuffStatusPreserver.OnSkillUsed(caster, skill, skillType, skillElement)
-	if not self.Enabled then return end
+	if not BuffStatusPreserver.Enabled() then return end
 	if CharacterIsInCombat(caster) == 0 and GameHelpers.Character.IsPlayerOrPartyMember(caster) then
 		caster = StringHelpers.GetUUID(caster)
 		---@type StatProperty[]
-		local props = Ext.StatGetAttribute(skill, "SkillProperties")
+		local props = GameHelpers.Stats.GetSkillProperties(skill)
 		if props then
 			for i,v in pairs(props) do
-				if v.Type == "Status" and GameHelpers.Status.IsBeneficial(v.Action, true, self.IgnoreStatusTypes) then
-					if self.NextBuffStatus[caster] == nil then
-						self.NextBuffStatus[caster] = {}
+				if v.Type == "Status" and GameHelpers.Status.IsBeneficial(v.Action, true, BuffStatusPreserver.IgnoreStatusTypes) then
+					if BuffStatusPreserver.NextBuffStatus[caster] == nil then
+						BuffStatusPreserver.NextBuffStatus[caster] = {}
 					end
-					self.NextBuffStatus[caster][v.Action] = true
+					BuffStatusPreserver.NextBuffStatus[caster][v.Action] = true
 				end
 			end
 		end
@@ -108,13 +110,11 @@ Ext.RegisterOsirisListener("ObjectEnteredCombat", 2, "after", BuffStatusPreserve
 Ext.RegisterOsirisListener("CharacterUsedSkill", 4, "after", BuffStatusPreserver.OnSkillUsed)
 RegisterStatusTypeListener(Vars.StatusEvent.Applied, "CONSUME", BuffStatusPreserver.OnStatusApplied)
 
-function BuffStatusPreserver:SetEnabled(enabled)
-	self.Enabled = enabled
-	if not enabled then
-		if self.PersistentVars.BuffStatuses then
-			for uuid,data in pairs(PersistentVars.BuffStatuses) do
-				self.OnEnteredCombat(uuid, 0)
-			end
+---@private
+function BuffStatusPreserver.Disable()
+	if BuffStatusPreserver.PersistentVars.BuffStatuses then
+		for uuid,data in pairs(PersistentVars.BuffStatuses) do
+			BuffStatusPreserver.OnEnteredCombat(uuid, 0)
 		end
 	end
 end

@@ -852,6 +852,7 @@ Ext.RegisterConsoleCommand("ap", function(command, amountStr)
 	if amountStr ~= nil then
 		amount = math.tointeger(tonumber(amountStr))
 	end
+	fprint(LOGLEVEL.TRACE, "CharacterAddActionPoints(\"%s\", %s)", host, amount)
 	CharacterAddActionPoints(host, amount)
 end)
 

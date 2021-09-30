@@ -193,8 +193,8 @@ function Debug_TraceStatus(obj, status, handle)
 	end
 end
 
-function Debug_TraceHitPrepare(target,attacker,damage,handle)
-	fprint(LOGLEVEL.TRACE, "[PrepareHit] damage(%s)[%s] attacker(%s) target(%s) handle(%s)", damage, NRD_HitGetString(handle, "DamageType"), attac)
+function Debug_TraceHitPrepare(target,attacker,damage,handle,state)
+	fprint(LOGLEVEL.TRACE, "[PrepareHit:%s] damage(%s)[%s] attacker(%s) target(%s) handle(%s)", state, damage, NRD_HitGetString(handle, "DamageType"), attacker,target,handle)
 	PrintDebug("=======================")
 	for i,damageType in Data.DamageTypes:Get() do
 		local amount = NRD_HitGetDamage(handle, damageType)
@@ -208,9 +208,16 @@ function Debug_TraceHitPrepare(target,attacker,damage,handle)
 	PrintDebug("=======================")
 end
 
-function Debug_TraceOnHit(target,attacker,damage,handle)
+function Debug_TraceOnHit(target,attacker,damage,handle,state)
 	PrintDebug("[LeaderLib_Debug.lua:TraceOnHit] damage("..tostring(damage)..") attacker("..tostring(attacker)..") target("..tostring(target)..") handle("..tostring(handle)..")")
 	PrintDebug("=======================")
+	for i,damageType in Data.DamageTypes:Get() do
+		local amount = NRD_HitStatusGetDamage(target,handle, damageType)
+		if amount then
+			fprint(LOGLEVEL.TRACE, "[%s] = (%s)", damageType, amount)
+		end
+	end
+	--[[ PrintDebug("=======================")
 	PrintDebug("==========HIT==========")
 	PrintDebug("=======================")
 	for attribute,attribute_type in pairs(HIT_ATTRIBUTE) do
@@ -233,16 +240,19 @@ function Debug_TraceOnHit(target,attacker,damage,handle)
 	local status = NRD_StatusGetString(target, handle, "StatusId")
 	if status ~= nil and status ~= "HIT" then
 		Debug_TraceStatus(target, status, handle)
-	end
+	end ]]
 	PrintDebug("=======================")
 end
 
+-- Ext.RegisterOsirisListener("NRD_OnPrepareHit", 4, "before", function(target, attacker, damage, handle)
+-- 	Debug_TraceHitPrepare(target, attacker, damage, handle, "before")
+-- end)
 -- Ext.RegisterOsirisListener("NRD_OnPrepareHit", 4, "after", function(target, attacker, damage, handle)
-	-- 	Debug_TraceHitPrepare(target, attacker, damage, handle)
+-- 	Debug_TraceHitPrepare(target, attacker, damage, handle, "after")
 -- end)
 
--- Ext.RegisterOsirisListener("NRD_OnHit", 4, "after", function(target, attacker, damage, handle)
-	-- 	Debug_TraceOnHit(target, attacker, damage, handle)
+-- Ext.RegisterOsirisListener("NRD_OnHit", 4, "before", function(target, attacker, damage, handle)
+-- 	Debug_TraceOnHit(target, attacker, damage, handle)
 -- end)
 
 function PrintModDB()

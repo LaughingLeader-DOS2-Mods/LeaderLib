@@ -60,8 +60,10 @@ function SettingsData:AddFlag(flag, flagType, enabled, displayName, tooltip, can
 		if canExport then
 			self.Flags[flag].CanExport = canExport
 		end
+		self:InvokeListenerCallbacks(flag, enabled, self.Flags[flag])
 	else
 		local existing = self.Flags[flag]
+		local changed = existing.Enabled ~= enabled
 		existing.ID = flag
 		existing.Enabled = enabled ~= nil and enabled or existing.Enabled
 		existing.FlagType = flagType or existing.FlagType
@@ -70,6 +72,9 @@ function SettingsData:AddFlag(flag, flagType, enabled, displayName, tooltip, can
 		existing.CanExport = canExport ~= nil and canExport or existing.CanExport
 		if isFromFile == false then
 			existing.IsFromFile = false
+		end
+		if changed then
+			self:InvokeListenerCallbacks(flag, enabled, existing)
 		end
 	end
 end
@@ -127,8 +132,10 @@ function SettingsData:AddVariable(name, value, displayName, tooltip, min, max, i
 		if canExport then
 			self.Variables[name].CanExport = canExport
 		end
+		self:InvokeListenerCallbacks(name, value, self.Variables[name])
 	else
 		local existing = self.Variables[name]
+		local changed = existing.Value ~= value
 		existing.Value = value ~= nil and value or existing.Value
 		existing.DisplayName = displayName or existing.DisplayName
 		existing.Tooltip = tooltip or existing.Tooltip
@@ -138,6 +145,9 @@ function SettingsData:AddVariable(name, value, displayName, tooltip, min, max, i
 		existing.CanExport = canExport ~= nil and canExport or existing.CanExport
 		if isFromFile == false then
 			existing.IsFromFile = false
+		end
+		if changed then
+			self:InvokeListenerCallbacks(name, value, existing)
 		end
 	end
 end

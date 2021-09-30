@@ -85,7 +85,9 @@ GlobalSettings.Mods[ModuleUUID] = settings
 
 if Ext.IsServer() then
 	settings.Global.Flags.LeaderLib_BuffStatusPreserverEnabled:AddListener(function(id, enabled, data, settingsData)
-		BuffStatusPreserver:SetEnabled(enabled)
+		if not enabled then
+			BuffStatusPreserver.Disable()
+		end
 	end)
 	settings.Global.Flags.LeaderLib_FriendlyFireEnabled:AddListener(function(id, enabled, data, settingsData)
 		TagManager:TagAll(enabled)

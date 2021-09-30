@@ -335,12 +335,19 @@ end
 
 local function TryGetObject(id)
 	local t = type(id)
-	if Ext.OsirisIsCallable() and t == "string" and ObjectExists(id) == 0 then
-		return nil
+	if Ext.OsirisIsCallable() and t == "string" then
+		if ObjectExists(id) == 0 then 
+			return nil
+		end
+		if ObjectIsCharacter(id) == 1 then
+			return Ext.GetCharacter(id)
+		elseif ObjectIsItem(id) == 1 then
+			return Ext.GetItem(id)
+		end
 	elseif t == "userdata" then
 		return id
 	end
-	return Ext.GetGameObject(id)
+	return nil
 end
 
 ---Tries to get a game object if the target exists, otherwise returns nil.

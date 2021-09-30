@@ -42,13 +42,13 @@ local function OnUIListener(self, eventType, ui, event, ...)
 			if string.find(txt, "Experience:", 1, true) then
 				return
 			end
-		elseif lastEvent == event and Ext.GetGameState() ~= "Running" then
-			return
+		-- elseif lastEvent == event and Ext.GetGameState() ~= "Running" then
+		-- 	return
 		end
 		if self.PrintParams then
-			fprint(LOGLEVEL.TRACE2, "[%s(%s)][%s] [%s] %s(%s)", self.Name, ui:GetTypeId(), eventType, Ext.MonotonicTime(), event, StringHelpers.DebugJoin(", ", {...}))
+			fprint(LOGLEVEL.TRACE2, "[%s(%s)][%s] %s(%s) [%s]", self.Name, ui:GetTypeId(), eventType, event, StringHelpers.DebugJoin(", ", {...}), Ext.MonotonicTime())
 		else
-			fprint(LOGLEVEL.TRACE2, "[%s(%s)] [%s] %s [%s]", self.Name, ui:GetTypeId(), eventType, event, Ext.MonotonicTime())
+			fprint(LOGLEVEL.TRACE2, "[%s(%s)][%s] %s [%s]", self.Name, ui:GetTypeId(), eventType, event, Ext.MonotonicTime())
 		end
 
 		if self.CustomCallback[event] then
@@ -78,6 +78,7 @@ function UIListenerWrapper:Create(id, params)
 	end
 
 	if type(id) == "string" then
+		this.Name = string.find
 		local ui = Ext.GetBuiltinUI(id)
 
 		if not ui then
@@ -94,7 +95,6 @@ function UIListenerWrapper:Create(id, params)
 		if type(id) == "table" then
 			for k,id2 in pairs(id) do
 				this.Name = Data.UITypeToName[id2] or ""
-
 				if this.Initialized then
 					local ui = Ext.GetBuiltinUI(id2)
 					if ui then
@@ -104,6 +104,7 @@ function UIListenerWrapper:Create(id, params)
 						end
 					end
 				end
+				typeListeners[id2] = this
 			end
 		else
 			this.Name = Data.UITypeToName[id] or ""
@@ -116,13 +117,13 @@ function UIListenerWrapper:Create(id, params)
 					end
 				end
 			end
+			typeListeners[this.ID] = this
 		end
 	end
 
 	setmetatable(this, UIListenerWrapper)
 
 	allListeners[#allListeners+1] = this
-	typeListeners[this.ID] = this
 
 	return this
 end
@@ -172,7 +173,7 @@ Ext.RegisterListener("UIObjectCreated", function(ui)
 	for path,data in pairs(deferredRegistrations) do
 		local ui2 = Ext.GetBuiltinUI(path)
 		if ui2 and (ui2:GetTypeId() == ui:GetTypeId() or ui == ui2) then
-			data:RegisterListeners(ui)
+			data.ID = ui2:GetTypeId()
 			deferredRegistrations[path] = nil
 			if data.Initialized then
 				local b,err = xpcall(this.Initialized, debug.traceback, ui)
@@ -196,6 +197,7 @@ local pyramid = UIListenerWrapper:Create(Data.UIType.pyramid, enabledParam)
 local msgBox = UIListenerWrapper:Create(Data.UIType.msgBox, enabledParam)
 local msgBox_c = UIListenerWrapper:Create(Data.UIType.msgBox_c, enabledParam)
 local overhead = UIListenerWrapper:Create(Data.UIType.overhead, enabledParam)
+local LeaderLib_UIExtensions = UIListenerWrapper:Create("Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/LeaderLib_UIExtensions.swf", enabledParam)
 
 -- overhead.CustomCallback.updateOHs = function(self, ui, method)
 	

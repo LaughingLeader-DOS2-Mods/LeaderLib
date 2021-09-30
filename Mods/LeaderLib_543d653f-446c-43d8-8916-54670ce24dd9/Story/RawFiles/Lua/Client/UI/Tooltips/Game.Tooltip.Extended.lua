@@ -1642,8 +1642,8 @@ local function CaptureBuiltInUIs()
 	for i = 1,150 do
 		local ui = Ext.GetUIByType(i)
 		if ui ~= nil then
-			pcall(ui.CaptureExternalInterfaceCalls, ui)
-			pcall(ui.CaptureInvokes, ui)
+			ui:CaptureExternalInterfaceCalls()
+			ui:CaptureInvokes()
 		end
 	end
 end
@@ -1671,8 +1671,13 @@ end)
 
 ---@param ui UIObject
 Ext.RegisterListener("UIObjectCreated", function (ui)
-	pcall(ui.CaptureExternalInterfaceCalls, ui)
-	pcall(ui.CaptureInvokes, ui)
+	ui:CaptureExternalInterfaceCalls()
+	-- Has the 'no flash player' warning if the root is nil
+	if ui:GetRoot() ~= nil then
+		ui:CaptureInvokes()
+	elseif Ext.GetGameState() == "Running" then
+		Ext.PostMessageToServer("LeaderLib_DeferUICapture", tostring(Mods.LeaderLib.Client.ID))
+	end
 end)
 
 Ext.RegisterNetListener("LeaderLib_CaptureActiveUIs", function()

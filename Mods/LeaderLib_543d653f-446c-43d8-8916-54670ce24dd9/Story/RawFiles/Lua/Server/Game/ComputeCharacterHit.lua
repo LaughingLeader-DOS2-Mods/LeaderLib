@@ -7,6 +7,8 @@ HitOverrides = {
 }
 --- This script tweaks Game.Math functions to allow lowering resistance with Resistance Penetration tags on items of the attacker.
 
+local extVersion = Ext.Version()
+
 --- @param character StatCharacter
 --- @param damageType string DamageType enumeration
 --- @param resistancePenetration integer
@@ -16,6 +18,23 @@ function HitOverrides.GetResistance(character, damageType, resistancePenetration
 	end
 	
 	local res = character[damageType .. "Resistance"]
+
+    --FIX Workaround for PhysicalResistance in StatCharacter being double what it actually is
+    if extVersion <= 55 and damageType == "Physical" then
+        local stat = Ext.GetStat(character.Name)
+        if stat then
+            res = stat.PhysicalResistance
+        else
+            res = 0
+        end
+        for i=2,#character.DynamicStats do
+            local v = character.DynamicStats[i]
+            if v and v.PhysicalResistance then
+                res = res + v.PhysicalResistance
+            end
+        end
+    end
+
 	if res > 0 and resistancePenetration ~= nil and resistancePenetration > 0 then
 		--PrintDebug(res, " => ", math.max(res - resistancePenetration, 0))
 		res = math.max(res - resistancePenetration, 0)
@@ -44,7 +63,8 @@ end
 function HitOverrides.ApplyHitResistances(character, damageList, resistancePenetration)
 	for i,damage in pairs(damageList:ToTable()) do
         local resistance = HitOverrides.GetResistance(character, damage.DamageType, resistancePenetration[damage.DamageType])
-        damageList:Add(damage.DamageType, math.floor(damage.Amount * -resistance / 100.0))
+        local modAmount = math.floor(damage.Amount * -resistance / 100.0)
+        damageList:Add(damage.DamageType, modAmount)
     end
 end
 
@@ -61,7 +81,6 @@ function HitOverrides.GetResistancePenetration(character, attacker)
         for i,itemId in pairs(attacker.Character:GetInventoryItems()) do
             ---@type EsvItem
             local item = Ext.GetItem(itemId)
-            --print(i, item.Slot, item.StatsId)
             if item.Slot < 15 and item:HasTag("LeaderLib_HasResistancePenetration") then
                 resPenItems[#resPenItems+1] = item
             elseif item.Slot >= 15 then
@@ -142,7 +161,6 @@ function HitOverrides.ComputeOverridesEnabled()
 end
 
 function HitOverrides.WithinMeleeDistance(pos1, pos2)
-    --print(GameSettings.Settings.BackstabSettings.MeleeSpellBackstabMaxDistance, GameHelpers.Math.GetDistance(pos1,pos2))
     return GameHelpers.Math.GetDistance(pos1,pos2) <= (GameSettings.Settings.BackstabSettings.MeleeSpellBackstabMaxDistance or 2.5)
 end
 
@@ -210,11 +228,57 @@ end
 --- @param hitType string HitType enumeration
 --- @param target StatCharacter
 --- @param attacker StatCharacter
+local function DoHitTest(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
+    hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.Hit;
+    damageList:AggregateSameTypeDamages()
+    damageList:Multiply(hit.DamageMultiplier)
+
+    local totalDamage = 0
+    for i,damage in pairs(damageList:ToTable()) do
+        totalDamage = totalDamage + damage.Amount
+    end
+
+    if totalDamage < 0 then
+        damageList:Clear()
+    end
+
+    Game.Math.ApplyDamageCharacterBonuses(target, attacker, damageList)
+    damageList:AggregateSameTypeDamages()
+    hit.DamageList = Ext.NewDamageList()
+
+    for i,damageType in pairs(statusBonusDmgTypes) do
+        damageList.Add(damageType, math.ceil(totalDamage * 0.1))
+    end
+
+    Game.Math.ApplyDamagesToHitInfo(damageList, hit)
+    hit.ArmorAbsorption = hit.ArmorAbsorption + Game.Math.ComputeArmorDamage(damageList, target.CurrentArmor)
+    hit.ArmorAbsorption = hit.ArmorAbsorption + Game.Math.ComputeMagicArmorDamage(damageList, target.CurrentMagicArmor)
+
+    if hit.TotalDamageDone > 0 then
+        Game.Math.ApplyLifeSteal(hit, target, attacker, hitType)
+    else
+        hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.DontCreateBloodSurface
+    end
+
+    if hitType == "Surface" then
+        hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.Surface
+    end
+
+    if hitType == "DoT" then
+        hit.EffectFlags = hit.EffectFlags | Game.Math.HitFlag.DoT
+    end
+end
+
+--- @param hit HitRequest
+--- @param damageList DamageList
+--- @param statusBonusDmgTypes DamageList
+--- @param hitType string HitType enumeration
+--- @param target StatCharacter
+--- @param attacker StatCharacter
 function HitOverrides.DoHit(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
     -- We're basically calling Game.Math.DoHit here, but it may be a modified version from a mod.
     HitOverrides.DoHitModified(hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
     InvokeListenerCallbacks(Listeners.DoHit, hit, damageList, statusBonusDmgTypes, hitType, target, attacker)
-	
 	return hit
 end
 
@@ -319,7 +383,6 @@ function HitOverrides.ComputeCharacterHit(target, attacker, weapon, damageList, 
         ::hit_done::
 
         InvokeListenerCallbacks(Listeners.ComputeCharacterHit, target, attacker, weapon, damageList, hitType, noHitRoll, forceReduceDurability, hit, alwaysBackstab, highGroundFlag, criticalRoll)
-
         return hit
     end
 end

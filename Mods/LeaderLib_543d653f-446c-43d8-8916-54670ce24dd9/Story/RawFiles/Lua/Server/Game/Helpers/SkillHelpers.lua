@@ -507,7 +507,7 @@ function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, level
             end
             ProcessProjectileProps(props)
             i = i + 1
-            if i <= count then
+            if i < count then
                 timerName = string.format("Timers_LeaderLib_ProjectileStrike%s%s", id, Ext.MonotonicTime())
                 Timer.StartOneshot(timerName, skill.StrikeDelay or 250, onTimer)
             end

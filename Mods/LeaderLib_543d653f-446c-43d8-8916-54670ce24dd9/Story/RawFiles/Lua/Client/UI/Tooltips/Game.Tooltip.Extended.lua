@@ -1166,7 +1166,7 @@ function TooltipHooks:GetCompareOwner(ui, item)
 	end
 
 	if character == nil then
-		--Default to the item's owner last since it may not be the active character.
+		--Fallback to the item's owner last, since it may not be the active character.
 		local itemOwner = item:GetOwnerCharacter()
 		if itemOwner ~= nil then
 			local ownerCharacter = Ext.GetCharacter(itemOwner)

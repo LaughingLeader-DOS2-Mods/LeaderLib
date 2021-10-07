@@ -165,6 +165,14 @@ function HitData:Recalculate(recalcLifeSteal, setLifeStealFlags, allowArmorDamag
 
 	--Recalculate LifeSteal
 	if self.HitRequest then
+		self.HitRequest.ArmorAbsorption = 0
+		if self.HitRequest.TotalDamageDone ~= total 
+		and total ~= 0 
+		and GameHelpers.Ext.ObjectIsCharacter(self.TargetObject)
+		then
+			self.HitRequest.ArmorAbsorption = self.HitRequest.ArmorAbsorption + Game.Math.ComputeArmorDamage(self.DamageList, self.TargetObject.Stats.CurrentArmor)
+			self.HitRequest.ArmorAbsorption = self.HitRequest.ArmorAbsorption + Game.Math.ComputeMagicArmorDamage(self.DamageList, self.TargetObject.Stats.CurrentMagicArmor)
+		end
 		self.HitRequest.TotalDamageDone = total
 	end
 	if self.HitContext and self.HitRequest then
@@ -173,6 +181,14 @@ function HitData:Recalculate(recalcLifeSteal, setLifeStealFlags, allowArmorDamag
 		end
 	end
 	self:UpdateHitRequest()
+end
+
+---Adds damage.
+---@param damageType string
+---@param amount number
+function HitData:AddDamage(damageType, amount)
+	self.DamageList:Add(damageType, amount)
+	self:ApplyDamageList(true)
 end
 
 ---Multiplies all damage by a value.
@@ -222,7 +238,19 @@ end
 ---Clears all damage, or damage from a specific type, from the damage list and recalculates totals / lifesteal.
 ---@param damageType string|nil If set, only damage from this specific type is cleared.
 function HitData:ClearDamage(damageType)
-	self.DamageList:Clear(damageType)
+	if damageType == nil then
+		self:ClearAllDamage()
+	else
+		self.DamageList:Clear(damageType)
+		self:ApplyDamageList(true)
+	end
+end
+
+---Clears all damage, or damage from a specific type, from the damage list and recalculates totals / lifesteal.
+function HitData:ClearAllDamage()
+	for damageType,_ in pairs(Data.DamageTypeEnums) do
+		self.DamageList:Clear(damageType)
+	end
 	self:ApplyDamageList(true)
 end
 

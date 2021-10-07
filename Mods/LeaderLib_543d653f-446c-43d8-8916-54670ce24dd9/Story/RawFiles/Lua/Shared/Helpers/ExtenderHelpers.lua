@@ -754,18 +754,27 @@ end
 
 
 function GameHelpers.Ext.ObjectIsStatItem(obj)
-	local meta = getmetatable(obj)
-	return meta == Data.ExtenderClass.StatItem or meta == Data.ExtenderClass.StatItemWeapon or meta == Data.ExtenderClass.StatItemArmor
+	if type(obj) == "userdata" then
+		local meta = getmetatable(obj)
+		return meta == Data.ExtenderClass.StatItem or meta == Data.ExtenderClass.StatItemWeapon or meta == Data.ExtenderClass.StatItemArmor
+	end
+	return false
 end
 
 function GameHelpers.Ext.ObjectIsItem(obj)
-	local meta = getmetatable(obj)
-	return meta == Data.ExtenderClass.EsvItem or meta == Data.ExtenderClass.EclItem
+	if type(obj) == "userdata" then
+		local meta = getmetatable(obj)
+		return meta == Data.ExtenderClass.EsvItem or meta == Data.ExtenderClass.EclItem
+	end
+	return false
 end
 
 function GameHelpers.Ext.ObjectIsCharacter(obj)
-	local meta = getmetatable(obj)
-	return meta == Data.ExtenderClass.EsvCharacter or meta == Data.ExtenderClass.EclCharacter
+	if type(obj) == "userdata" then
+		local meta = getmetatable(obj)
+		return meta == Data.ExtenderClass.EsvCharacter or meta == Data.ExtenderClass.EclCharacter
+	end
+	return false
 end
 
 ---@param obj EsvItem|EclItem|StatItem

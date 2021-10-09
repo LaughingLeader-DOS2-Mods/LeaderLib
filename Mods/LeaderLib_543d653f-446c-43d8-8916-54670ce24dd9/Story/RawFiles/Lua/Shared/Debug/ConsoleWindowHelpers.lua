@@ -4,7 +4,9 @@ local isClient = Ext.IsClient()
 local consoleEnvironment = getmetatable(_ENV).__index
 
 function AddConsoleVariable(name, value)
-	consoleEnvironment[name] = value
+	if consoleEnvironment[name] == nil then
+		consoleEnvironment[name] = value
+	end
 	Vars.ConsoleWindowVariables[name] = value
 end
 

@@ -962,6 +962,63 @@ userDataProps["esv::HStatus"] = {
 	ImpactDirection = "number[]",
 }
 
+userDataProps["esv::Status"] = {
+	StatusType = "string",
+	StatusId = "string",
+	CanEnterChance = "integer",
+	StartTimer = "number",
+	LifeTime = "number",
+	CurrentLifeTime = "number",
+	TurnTimer = "number",
+	Strength = "number",
+	StatsMultiplier = "number",
+	DamageSourceType = "string",
+	StatusHandle = "StatusHandle",
+	TargetHandle = "ObjectHandle",
+	StatusSourceHandle = "ObjectHandle",
+	KeepAlive = "boolean",
+	IsOnSourceSurface = "boolean",
+	IsFromItem = "boolean",
+	Channeled = "boolean",
+	IsLifeTimeSet = "boolean",
+	InitiateCombat = "boolean",
+	Influence = "boolean",
+	BringIntoCombat = "boolean",
+	IsHostileAct = "boolean",
+	IsInvulnerable = "boolean",
+	IsResistingDeath = "boolean",
+	ForceStatus = "boolean",
+	ForceFailStatus = "boolean",
+	RequestClientSync = "boolean",
+	RequestDelete = "boolean",
+	RequestDeleteAtTurnEnd = "boolean",
+	Started = "boolean",
+	SpecificStatusProperties = function(obj, data, k, printNil)
+		if obj.StatusType == "CONSUME" then
+			local props = {
+				--- EsvStatusConsumeBase
+				ResetAllCooldowns = "boolean",
+				ResetOncePerCombat = "boolean",
+				ScaleWithVitality = "boolean",
+				LoseControl = "boolean",
+				ApplyStatusOnTick = "string",
+				EffectTime = "number",
+				StatsId = "string",
+				StackId = "string",
+				OriginalWeaponStatsId = "string",
+				OverrideWeaponStatsId = "string",
+				OverrideWeaponHandle = "ObjectHandle",
+				SavingThrow = "integer",
+				SourceDirection = "number",
+				Turn = "integer",
+				HealEffectOverride = "string",
+				Poisoned = "boolean",
+			}
+			DebugHelpers.ProcessProps(obj, props, data, printNil)
+		end
+	end,
+}
+
 DebugHelpers.userDataProps = userDataProps
 
 local function TryGetValue(obj,k,v)

@@ -636,6 +636,7 @@ Data.IgnoredStatus = {}
 for k,b in pairs(Data.EngineStatus) do
 	Data.IgnoredStatus[k] = true
 end
+Data.IgnoredStatus.CONSUME = false
 
 Data.Surfaces = {
 	["SurfaceNone"] = -1,

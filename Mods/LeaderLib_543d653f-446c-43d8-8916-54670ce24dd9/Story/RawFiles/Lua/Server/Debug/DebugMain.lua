@@ -810,4 +810,32 @@ local fields = {
 	
 -- end)
 
+--[[ local lastPotion = {}
+
+Ext.RegisterOsirisListener("CanUseItem", 3, "after", function(targetId, itemId, request)
+	local item = Ext.GetItem(itemId)
+	if item and NRD_StatGetType(item.StatsId) == "Potion" then
+		lastPotion[GetUUID(targetId)] = item.StatsId
+	end
+end)
+
+-@param status EsvStatusConsume
+RegisterStatusListener("BeforeAttempt", "CONSUME", function(target, status, source, handle, statusType)
+	local statsId = lastPotion[target.MyGuid]
+	if statsId and status.LifeTime == 0 and GameHelpers.Character.IsUndead(target) then
+		local duration = math.ceil(Ext.GetStat(statsId).Duration * 6)
+		status.LifeTime = duration
+		status.CurrentLifeTime = duration
+	end
+	lastPotion[target.MyGuid] = nil
+end)
+
+RegisterStatusListener("Applied", "CONSUME", function(target, id, source, statusType)
+	local status = Ext.GetCharacter(target):GetStatus(id)
+	status.LifeTime = 1800
+	status.CurrentLifeTime = 1800
+	status.RequestClientSync = true
+	fprint(LOGLEVEL.WARNING, Lib.serpent.block(status))
+end) ]]
+
 --print(GetFaction("08348b3a-bded-4811-92ce-f127aa4310e0"), "<=>", GetFaction(host.MyGuid), CharacterGetRelationToCharacter("08348b3a-bded-4811-92ce-f127aa4310e0", host.MyGuid))

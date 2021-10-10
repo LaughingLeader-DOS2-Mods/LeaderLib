@@ -271,13 +271,13 @@ LocalizedText.ContextMenu = {
 LocalizedText.SkillTooltip = {
 	SkillRequiredEquipment = ts:Create("h0a088d84g04f9g47b5g8d4dg3021748bfe00", "Requires a [1]"),
 	RifleWeapon = ts:Create("ha3a18e3fge9e4g4496g84b8g5590844143f0", "Rifle Weapon"),
-	SafeForce = ts:Create("h788df33dg4d61g4cb7g8f2cgfb75e14e7ffc", "Pushes [1]m [2]"),
-	SafeForceRandom = ts:Create("h9308f157g1e5ag4051gbcc0g9d41c54ffa57", "Pushes [1]m [2] ([3]% Chance)"),
-	SafeForce_Negative = ts:Create("h3209c996gd9ebg4594ga886gddca741dafdd", "Pulls [1]m [2]"),
-	SafeForceRandom_Negative = ts:Create("h21fd2959g743dg49e6g9922g02b39ce3c8b8", "Pulls [1]m [2] ([3]% Chance)"),
-	FromTarget = ts:Create("hafb63d24gd9b3g47d2gbe4cg1ecb09f9c1c9", "From Target"),
-	FromSelf = ts:Create("h727273bcg948ag461agad93gef52b2419eca", "From Self"),
-	MoveToTarget = ts:Create("h19d1b9dag302dg4655g86fdgad6fe369db15", "Move to the Target"),
+	SafeForce = ts:Create("h788df33dg4d61g4cb7g8f2cgfb75e14e7ffc", "Pushes [1]m [2]."),
+	SafeForceRandom = ts:Create("h9308f157g1e5ag4051gbcc0g9d41c54ffa57", "Pushes [1]m [2] ([3]% Chance)."),
+	SafeForce_Negative = ts:Create("h3209c996gd9ebg4594ga886gddca741dafdd", "Pulls [1]m [2]."),
+	SafeForceRandom_Negative = ts:Create("h21fd2959g743dg49e6g9922g02b39ce3c8b8", "Pulls [1]m [2] ([3]% Chance)."),
+	FromTarget = ts:Create("hafb63d24gd9b3g47d2gbe4cg1ecb09f9c1c9", "from target"),
+	FromSelf = ts:Create("h727273bcg948ag461agad93gef52b2419eca", "from self"),
+	MoveToTarget = ts:Create("h19d1b9dag302dg4655g86fdgad6fe369db15", "Move to the target."),
 	--BasicAttack = ts:Create("hbdac34fdg43b6g4439g9947g6676e9c03294", "Basic Attack"),
 }
 

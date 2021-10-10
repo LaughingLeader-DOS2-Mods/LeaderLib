@@ -38,6 +38,8 @@ function Timer.StartObjectTimer(timerName, object, delay, ...)
 			local data = {...}
 			if #data > 0 then
 				Timer.StoreObjectData(uniqueTimerName, timerName, data)
+			else
+				Timer.StoreObjectData(uniqueTimerName, timerName, uuid)
 			end
 			TimerCancel(uniqueTimerName)
 			TimerLaunch(uniqueTimerName, delay)
@@ -182,10 +184,10 @@ if not IsClient then
 	end
 
 	local function InvokeTimerListeners(tbl, timerName, data)
-		if data then
+		if type(data) == "table" then
 			InvokeListenerCallbacks(tbl, timerName, table.unpack(data))
 		else
-			InvokeListenerCallbacks(tbl, timerName)
+			InvokeListenerCallbacks(tbl, timerName, data)
 		end
 	end
 
@@ -198,7 +200,7 @@ if not IsClient then
 			PersistentVars.TimerNameMap[timerName] = nil
 			timerName = realTimerName
 		end
-		if data then
+		if type(data) == "table" then
 			for i=1,#data do
 				local timerData = Lib.smallfolk.loads(data[i])
 				if OneshotTimerData[timerName] ~= nil then
@@ -208,7 +210,6 @@ if not IsClient then
 				InvokeTimerListeners(Listeners.TimerFinished, timerName, timerData)
 				InvokeTimerListeners(Listeners.NamedTimerFinished[timerName], timerName, timerData)
 			end
-			
 		else
 			if OneshotTimerData[timerName] ~= nil then
 				InvokeTimerListeners(OneshotTimerData[timerName], timerName, data)

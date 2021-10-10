@@ -4,6 +4,7 @@ Data.Input = {
 	["FlashScrollDown"] = -1,
 	["FlashScrollUp"] = -1,
 	["FlashCancel"] = -1,
+	["FlashHome"] = -1,
 	["Action1"] = 1,
 	["FlashLeftMouse"] = {1, 4},
 	["FlashRightMouse"] = 2,

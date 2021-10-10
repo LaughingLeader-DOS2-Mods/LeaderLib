@@ -59,7 +59,7 @@ function Input.RegisterListener(callbackOrInputName, callbackOrNil)
 end
 
 ---Wrapper around RegisterListener for easier auto-completion.
----@param callbackOrEventName InputEventCallback
+---@param callbackOrEventName InputEventCallback|string
 ---@param callbackOrNil InputEventCallback|nil
 function Input.RegisterMouseListener(callbackOrEventName, callbackOrNil)
 	local t = type(callbackOrEventName)

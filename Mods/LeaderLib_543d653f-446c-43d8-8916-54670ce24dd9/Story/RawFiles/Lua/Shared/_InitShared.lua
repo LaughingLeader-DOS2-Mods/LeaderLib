@@ -30,7 +30,8 @@ Vars = {
 		Total = 0
 	},
 	Commands = {
-		CooldownsDisabled = false
+		CooldownsDisabled = false,
+		Teleporting = false,
 	},
 	DebugMode = Ext.IsDeveloperMode() == true,
 	LeaderDebugMode = false,
@@ -47,7 +48,7 @@ Vars = {
 	ControllerEnabled = false,
 	Users = {},
 	IsEditorMode = false,
-	ConsoleWindowVariables = {}
+	ConsoleWindowVariables = {},
 }
 
 function PrintDebug(...)

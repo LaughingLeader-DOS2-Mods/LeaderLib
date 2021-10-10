@@ -575,7 +575,7 @@ end)
 ]]
 
 --Testing heal changing
-RegisterStatusTypeListener(Vars.StatusEvent.Applied, "HEAL", function(target, statusId, source, statusType)
+--[[ RegisterStatusTypeListener(Vars.StatusEvent.Applied, "HEAL", function(target, statusId, source, statusType)
 	if Vars.LeaderDebugMode then
 		---@type EsvStatusHeal
 		local status = Ext.GetGameObject(target):GetStatus(statusId)
@@ -587,7 +587,7 @@ RegisterStatusTypeListener(Vars.StatusEvent.Applied, "HEAL", function(target, st
 			fprint(LOGLEVEL.DEFAULT, "[%s] HealAmount(%s) HealType(%s)", statusId, status.HealAmount, status.HealType)
 		end
 	end
-end)
+end) ]]
 
 ---@param summon EsvCharacter|EsvItem
 ---@param owner EsvCharacter
@@ -656,7 +656,7 @@ local lastDamageType = {}
 ---@param projectile EsvProjectile
 ---@param hitObject EsvGameObject
 ---@param position number[]
-RegisterProtectedExtenderListener("ProjectileHit", function (projectile, hitObject, position)
+--[[ RegisterProtectedExtenderListener("ProjectileHit", function (projectile, hitObject, position)
 	local caster = Ext.GetGameObject(projectile.CasterHandle)
 	if caster then
 		if Features.FixChaosWeaponProjectileDamage and projectile.DamageType ~= "None" then
@@ -676,11 +676,11 @@ RegisterProtectedExtenderListener("ProjectileHit", function (projectile, hitObje
 	}
 	fprint(LOGLEVEL.DEFAULT, "[ProjectileHit]\n%s", Lib.inspect(data))
 end)
-
+ ]]
 --- @param caster EsvGameObject
 --- @param position number[]
 --- @param damageList DamageList
-RegisterProtectedExtenderListener("GroundHit", function (caster, position, damageList)
+--[[ RegisterProtectedExtenderListener("GroundHit", function (caster, position, damageList)
 	if caster then
 		if Features.FixChaosWeaponProjectileDamage then
 			local nextType = lastDamageType[caster.MyGuid]
@@ -706,9 +706,9 @@ RegisterProtectedExtenderListener("GroundHit", function (caster, position, damag
 		data.DamageList[v.DamageType] = v.Amount + (data.DamageList[v.DamageType] or 0)
 	end
 	--fprint(LOGLEVEL.DEFAULT, "[GroundHit]\n%s", Lib.pprint.pformat(data, {sort_keys=true}))
-	fprint(LOGLEVEL.DEFAULT, "[GroundHit]\n%s", Lib.inspect(data))
+	--fprint(LOGLEVEL.DEFAULT, "[GroundHit]\n%s", Lib.inspect(data))
 end)
-
+ ]]
 -- RegisterSkillListener("All", function(skill, uuid, state, data)
 	-- 	-- if state == SKILL_STATE.HIT then
 		-- 	-- 	data:MultiplyDamage(3,true)

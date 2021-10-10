@@ -94,7 +94,7 @@ function GameHelpers.ApplyProperties(source, target, properties, targetPosition,
 			TransformSurfaceAtPosition(x, y, z, v.Action, "Ground", 1.0, 6.0, source)
 		elseif v.Type == "Force" then
 			local distance = math.floor(v.Arg2/6) or 1.0
-			GameHelpers.ForceMoveObject(source, actionTarget, distance)
+			GameHelpers.ForceMoveObject(source, actionTarget, distance, nil, actionTarget.WorldPos)
 		end
 	end
 	return true

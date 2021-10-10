@@ -27,9 +27,9 @@ CustomSkillProperties.SafeForce = {
 	GetDescription = function(prop)
 		local chance = prop.Arg1
 		local distance = GameHelpers.Math.Round(math.floor(prop.Arg2/6), 1)
-		local useTargetForPosition = false
+		local useTargetForPosition = true
 		if not StringHelpers.IsNullOrWhitespace(prop.Arg3) then
-			useTargetForPosition = StringHelpers.Equals(prop.Arg3, "true", true, true)
+			useTargetForPosition = StringHelpers.Equals(prop.Arg3, "true", true, true) ~= true
 		end
 		
 		local fromText = useTargetForPosition and LocalizedText.SkillTooltip.FromTarget.Value or LocalizedText.SkillTooltip.FromSelf.Value
@@ -62,11 +62,9 @@ CustomSkillProperties.SafeForce = {
 				end
 			end
 			local startPos = attacker.WorldPos
-			local useTargetForPosition = false
+			local useTargetForPosition = true
 			if not StringHelpers.IsNullOrWhitespace(prop.Arg3) then
-				useTargetForPosition = StringHelpers.Equals(prop.Arg3, "true", true, true)
-			elseif skill then
-				useTargetForPosition = ShouldUseTargetPositionForForce(attacker, skill)
+				useTargetForPosition = StringHelpers.Equals(prop.Arg3, "true", true, true) ~= true
 			end
 			for i,v in pairs(characters) do
 				if v ~= attacker.MyGuid then
@@ -85,11 +83,9 @@ CustomSkillProperties.SafeForce = {
 			local distance = math.floor(prop.Arg2/6)
 			if chance >= 1.0 or Ext.Random(0,1) <= chance then
 				local startPos = attacker.WorldPos
-				local useTargetForPosition = false
+				local useTargetForPosition = true
 				if not StringHelpers.IsNullOrWhitespace(prop.Arg3) then
-					useTargetForPosition = StringHelpers.Equals(prop.Arg3, "true", true, true)
-				elseif skill then
-					useTargetForPosition = ShouldUseTargetPositionForForce(attacker, skill)
+					useTargetForPosition = StringHelpers.Equals(prop.Arg3, "true", true, true) ~= true
 				end
 				if useTargetForPosition then
 					startPos = target.WorldPos

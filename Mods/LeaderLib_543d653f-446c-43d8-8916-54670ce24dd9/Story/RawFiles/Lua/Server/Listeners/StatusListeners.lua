@@ -338,7 +338,8 @@ local function OnStatusApplied(target,status,source)
 	InvokeStatusListeners(Vars.StatusEvent.Applied, status, statusType, target, status, source, statusType)
 	if forceStatuses[status] and not StringHelpers.IsNullOrEmpty(source) and ObjectIsCharacter(source) == 1 then
 		--local distance = tonumber(string.gsub(status, "LEADERLIB_FORCE_PUSH", ""))
-		GameHelpers.ForceMoveObject(Ext.GetCharacter(source), Ext.GetGameObject(target), forceStatuses[status])
+		local target = Ext.GetGameObject(target)
+		GameHelpers.ForceMoveObject(Ext.GetCharacter(source), target, forceStatuses[status], nil, target.WorldPos)
 	end
 end
 

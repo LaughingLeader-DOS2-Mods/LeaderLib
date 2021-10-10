@@ -346,6 +346,16 @@ local function TryGetObject(id)
 		end
 	elseif t == "userdata" then
 		return id
+	elseif t == "number" then
+		local char = Ext.GetCharacter(id)
+		if char then
+			return char
+		end
+		local item = Ext.GetItem(id)
+		if item then
+			return item
+		end
+		return Ext.GetGameObject(id)
 	end
 	return nil
 end

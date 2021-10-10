@@ -5,10 +5,12 @@ LeaderLib_Tooltip_CreatedBy	[1]<br>Created by [2]	h1e7b9070ga8cag46f3ga7b4gfccd1
 LeaderLib_Tooltip_ExtraPropertiesCondensed	Apply On Hit:<br>[1] for [2] turns(s). ([3] Chance)	h3eff6bc1gb26dg4bb5gb3b9g2551c65026e0
 LeaderLib_Tooltip_Expander_Inactive	Hold [1] for More Info	h17380891g0e8eg42d3gbb55g9478bba4f684
 LeaderLib_Tooltip_Expander_Active	Release [1] for Less Info	h7b3bd7e6g9a34g4959gad11g241f6d8d33c1
-LeaderLib_Tooltip_SafeForce	Pushes [1]m	h788df33dg4d61g4cb7g8f2cgfb75e14e7ffc
-LeaderLib_Tooltip_SafeForceRandom	Pushes [1]m ([2]% Chance)	h9308f157g1e5ag4051gbcc0g9d41c54ffa57
-LeaderLib_Tooltip_SafeForce_Negative	Pulls [1]m	h3209c996gd9ebg4594ga886gddca741dafdd
-LeaderLib_Tooltip_SafeForceRandom_Negative	Pulls [1]m ([2]% Chance)	h21fd2959g743dg49e6g9922g02b39ce3c8b8
-LeaderLib_Tooltip_MoveToTarget	Move to the target	h19d1b9dag302dg4655g86fdgad6fe369db15
+LeaderLib_Tooltip_SafeForce	Pushes [1]m [2]	h788df33dg4d61g4cb7g8f2cgfb75e14e7ffc
+LeaderLib_Tooltip_SafeForceRandom	Pushes [1]m [2] ([3]% Chance)	h9308f157g1e5ag4051gbcc0g9d41c54ffa57
+LeaderLib_Tooltip_SafeForce_Negative	Pulls [1]m [2]	h3209c996gd9ebg4594ga886gddca741dafdd
+LeaderLib_Tooltip_SafeForceRandom_Negative	Pulls [1]m [2] ([3]% Chance)	h21fd2959g743dg49e6g9922g02b39ce3c8b8
+LeaderLib_Tooltip_MoveToTarget	Move to the Target	h19d1b9dag302dg4655g86fdgad6fe369db15
 LeaderLib_Tooltip_AbilityCurrentLevel	Level [1]: [2]	h8154ae8eg2b37g4f0fgb6b6gd7e27fed37a6
 LeaderLib_Tooltip_AbilityNextLevel	Next Level [1]: [2]	he31d5820g9ddbg4e08gac83g1358e22e499b
+LeaderLib_Tooltip_FromTarget	From Target	hafb63d24gd9b3g47d2gbe4cg1ecb09f9c1c9
+LeaderLib_Tooltip_FromSelf	From Self	h727273bcg948ag461agad93gef52b2419eca

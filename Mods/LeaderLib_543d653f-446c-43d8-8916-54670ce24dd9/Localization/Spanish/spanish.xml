@@ -50,6 +50,7 @@
 	<content contentuid="h1db4b34cg358dg49a2gbaeag3cb06a86ab4c">Character is selling new items.</content>
 	<content contentuid="h1e7b9070ga8cag46f3ga7b4gfccd1addb8ba">[1]&lt;br&gt;Created by [2]</content>
 	<content contentuid="h2033bb71g7004g4423ga633gd50bfc8fdd50">When combat starts, LeaderLib will autosave the game.</content>
+	<content contentuid="h21fd2959g743dg49e6g9922g02b39ce3c8b8">Pulls [1]m [2] ([3]% Chance)</content>
 	<content contentuid="h22e00201g6666g4837gaf8ega722712bad2a">[LeaderLib_DynamicMenu_MenuOption3_58379c79-1cf1-4129-bcf5-579f40a9ad11]</content>
 	<content contentuid="h24533724ga73fg4d76gb62egc700a193eb89">Must you, really?</content>
 	<content contentuid="h24e93debgf7e1g4a6ag9841g5ecca2c911f5">Non-Player Action Point Settings</content>
@@ -74,6 +75,7 @@
 	<content contentuid="h30327946g0ea7g4b53gada1g8fbaf61a8e84">*Ask if he&apos;s selling anything.*</content>
 	<content contentuid="h30855a9fga157g4ff1g83b7g7bb8fd640988">*Take your leave.*</content>
 	<content contentuid="h31a2f896g6e9fg47aegb876ga3d5ba3114b1">[Debug] Fix Dialog for Active LeaderLib Traders</content>
+	<content contentuid="h3209c996gd9ebg4594ga886gddca741dafdd">Pulls [1]m [2]</content>
 	<content contentuid="h3510e199g7d0cg404fga53bg052c534d94d1">&lt;font color=&apos;#3e81fc&apos; size=&apos;18&apos;&gt;LeaderLib&lt;/font&gt;&lt;br&gt;Open the mod menu to access registered settings menus.</content>
 	<content contentuid="h35914541gb69bg42f4gafa5gb90aeb1ec229">...</content>
 	<content contentuid="h386d715bg3f70g4373g8d64g99fb5f1010e8">*Ask why Lothar left his &quot;vacation&quot; on Reaper&apos;s Eye.*</content>
@@ -178,6 +180,7 @@
 	<content contentuid="h70864c17g1034g48ccgb6edg03dbeb743375">Enable User Restriction</content>
 	<content contentuid="h71766947g9564g4a6bg936bga055cccc01a0">&lt;font color=&apos;#13D177&apos;&gt;Pure Resistance&lt;/font&gt;</content>
 	<content contentuid="h71f43d4fg54f9g4ba5gac4dg71e8d4c4e056">[GLOBAL] Enable Autosaving when Combat Starts</content>
+	<content contentuid="h727273bcg948ag461agad93gef52b2419eca">From Self</content>
 	<content contentuid="h72b6a94cgb4dbg42f3ga2b0g97d70ba67eef">[Next]</content>
 	<content contentuid="h7322bed9g2ea5g4abeg9decga21994353d79">*He waits for you to speak.*</content>
 	<content contentuid="h73234319g4e6bg4967gb45cga511b60f0408">&lt;font color=&apos;#FF0000&apos;&gt;LeaderLib Failed to Save Global Settings&lt;/font&gt;</content>
@@ -185,7 +188,7 @@
 	<content contentuid="h75a91fefgc531g4bb1g82f2gec7122c62aff">Enabled</content>
 	<content contentuid="h76b098bdgb9f4g4ae8g8e5bg87f68b4599d9">Hey there, [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3]! You made it off that wreck in one piece, eh? *He snorts.* </content>
 	<content contentuid="h76d37069g565dg458bg8e57gdbd6f9b81b7a">[GLOBAL] Disable automatically unlocking every inventory in multiplayer. (Currently Enabled)</content>
-	<content contentuid="h788df33dg4d61g4cb7g8f2cgfb75e14e7ffc">Pushes [1]m</content>
+	<content contentuid="h788df33dg4d61g4cb7g8f2cgfb75e14e7ffc">Pushes [1]m [2]</content>
 	<content contentuid="h7942ef1ag44d9g49f0gab10ge07e419c1d32">[GLOBAL] Automatically pull party members within 30m into combat. (Currently Disabled)</content>
 	<content contentuid="h79b1fb29g8d95g4bcdg9af6g32e2593b0475">Melee Skill Maximum Distance</content>
 	<content contentuid="h7a4ddc58g1cbeg4e40gaba2g0b2bf5dedd98">[GLOBAL] Enable Debug Logging</content>
@@ -231,7 +234,7 @@
 	<content contentuid="h919b260ag66c4g4551gb4c7g793a12115cfc">Sulfurology</content>
 	<content contentuid="h91d3f79agc1fcg4995gad06gb9f45fd9ab49">Enable Friendly Fire</content>
 	<content contentuid="h92ae656agd5f1g4471g85dcgb2871834dd03">[USER] Enable auto-opening the Mod Settings Menu when closing another mod&apos;s settings menu.&lt;br&gt;Note that this could possibly have unintended side-effects if that mod opens a sub-menu dialog after the main menu dialog is closed.</content>
-	<content contentuid="h9308f157g1e5ag4051gbcc0g9d41c54ffa57">Pushes [1]m ([2]% Chance)</content>
+	<content contentuid="h9308f157g1e5ag4051gbcc0g9d41c54ffa57">Pushes [1]m [2] ([3]% Chance)</content>
 	<content contentuid="h938a3bd1gcfc3g4885gacb7geef71a63ea1b">The coast is clear then?</content>
 	<content contentuid="h93f14fd4gf2eag4e9egb5f6g134e1c8f9ad1">Me? Oh, I&apos;m just a retired old man, looking to sell his wares. *He rubs his beard, glancing around on the boat.* Afraid I&apos;m not much of a soldier anymore, so trading is all I&apos;ve got.</content>
 	<content contentuid="h941109e1g894dg49efgbd26g139bcb434deb">Skip Tutorial</content>
@@ -289,6 +292,7 @@
 	<content contentuid="hae9e720bgfb0bg43b4gb428g8b7fedf7193e">Hey, [LeaderLib_PlayerName_6c5b9559-53e3-47f7-8881-309a930e4be3]! We made it off that dreadful island!</content>
 	<content contentuid="haee6fb94g2ea6g4f56g800dg3e49e5b131ff">Character has taken a vow to avoid fighting, and will flee if pulled into combat.</content>
 	<content contentuid="haf24c059g3811g4babgb529g348a34b47d05">[LeaderLib_DynamicMenu_MenuOption8_f5ef1f68-8995-4c14-8e62-cf5f330cb31a]</content>
+	<content contentuid="hafb63d24gd9b3g47d2gbe4cg1ecb09f9c1c9">From Target</content>
 	<content contentuid="hb09fdd2dg134cg4361g8b7dg9a2b23a1ec41">Open Menu</content>
 	<content contentuid="hb2822093gaf6ag417dgab70g447f0b730fb4">[LeaderLib_DynamicMenu_MenuOption1_1f7c9690-58b3-4cf6-b17e-0da478b15e0e]</content>
 	<content contentuid="hb2e82c9dg3175g429cga865g3c670288b3c6">Always display the &quot;Scales With x&quot; text that isn&apos;t visible if the weapon has an attribute requirement above 0.</content>

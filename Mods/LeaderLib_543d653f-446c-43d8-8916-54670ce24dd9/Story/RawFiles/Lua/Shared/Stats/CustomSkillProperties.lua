@@ -3,12 +3,35 @@ if CustomSkillProperties == nil then
 	CustomSkillProperties = {}
 end
 
+---@param attacker EsvCharacter
+---@param skill StatEntrySkillData
+local function ShouldUseTargetPositionForForce(attacker, skill)
+	local skillTargetDist = 0
+	if skill.SkillType == "Shout" or skill.SkillType == "Quake" then
+		skillTargetDist = skill.AreaRadius
+	elseif skill.SkillType == "Cone" or skill.SkillType == "Zone" then
+		skillTargetDist = skill.Range
+	else
+		skillTargetDist = skill.TargetRadius or 0
+	end
+	local attackerDist = GameHelpers.Character.GetWeaponRange(attacker, false)
+	local isRangedSkill = skillTargetDist > attackerDist or skill.Requirement == "RangedWeapon" or skill.Requirement == "RifleWeapon"
+	if skill.SkillType == "Target" and skill.IsMelee == "Yes" then
+		return false
+	end
+	return isRangedSkill
+end
+
 ---@type CustomSkillProperty
 CustomSkillProperties.SafeForce = {
 	GetDescription = function(prop)
 		local chance = prop.Arg1
 		local distance = GameHelpers.Math.Round(math.floor(prop.Arg2/6), 1)
-		local useTargetForPosition = StringHelpers.Equals(prop.Arg3, "true", true, true)
+		local useTargetForPosition = false
+		if not StringHelpers.IsNullOrWhitespace(prop.Arg3) then
+			useTargetForPosition = StringHelpers.Equals(prop.Arg3, "true", true, true)
+		end
+		
 		local fromText = useTargetForPosition and LocalizedText.SkillTooltip.FromTarget.Value or LocalizedText.SkillTooltip.FromSelf.Value
 		if distance >= 0 then
 			if chance >= 1 then
@@ -39,7 +62,12 @@ CustomSkillProperties.SafeForce = {
 				end
 			end
 			local startPos = attacker.WorldPos
-			local useTargetForPosition = StringHelpers.Equals(prop.Arg3, "true", true, true)
+			local useTargetForPosition = false
+			if not StringHelpers.IsNullOrWhitespace(prop.Arg3) then
+				useTargetForPosition = StringHelpers.Equals(prop.Arg3, "true", true, true)
+			elseif skill then
+				useTargetForPosition = ShouldUseTargetPositionForForce(attacker, skill)
+			end
 			for i,v in pairs(characters) do
 				if v ~= attacker.MyGuid then
 					local target = Ext.GetCharacter(v)
@@ -57,7 +85,13 @@ CustomSkillProperties.SafeForce = {
 			local distance = math.floor(prop.Arg2/6)
 			if chance >= 1.0 or Ext.Random(0,1) <= chance then
 				local startPos = attacker.WorldPos
-				if StringHelpers.Equals(prop.Arg3, "true", true, true) then
+				local useTargetForPosition = false
+				if not StringHelpers.IsNullOrWhitespace(prop.Arg3) then
+					useTargetForPosition = StringHelpers.Equals(prop.Arg3, "true", true, true)
+				elseif skill then
+					useTargetForPosition = ShouldUseTargetPositionForForce(attacker, skill)
+				end
+				if useTargetForPosition then
 					startPos = target.WorldPos
 				end
 				GameHelpers.ForceMoveObject(attacker, target, distance, skill and skill.Name or nil, startPos)

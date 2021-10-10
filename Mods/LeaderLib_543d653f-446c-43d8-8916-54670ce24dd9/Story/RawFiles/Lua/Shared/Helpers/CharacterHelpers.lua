@@ -358,3 +358,40 @@ function GameHelpers.Character.GetSummons(owner, getItems)
 		end
 	end
 end
+
+---@param character EsvCharacter|EclCharacter
+---@param asMeters boolean|nil If true, the range is returned as meters (WeaponRange/100).
+---@return number
+function GameHelpers.Character.GetWeaponRange(character, asMeters)
+	local range = Ext.GetStat("NoWeapon").WeaponRange
+	character = GameHelpers.GetCharacter(character)
+	if character then
+		if isClient then
+			local mainhand = character:GetItemBySlot("Weapon")
+			local offhand = character:GetItemBySlot("Shield")
+			if mainhand then
+				range = mainhand.Stats.WeaponRange
+			end
+			if offhand then
+				if offhand.Stats.WeaponRange > range or mainhand == nil then
+					range = offhand.Stats.WeaponRange
+				end
+			end
+		else
+			local mainhand = GameHelpers.Item.GetItemInSlot(character, "Weapon")
+			local offhand = GameHelpers.Item.GetItemInSlot(character, "Shield")
+			if mainhand then
+				range = mainhand.Stats.WeaponRange
+			end
+			if offhand then
+				if offhand.Stats.WeaponRange > range or mainhand == nil then
+					range = offhand.Stats.WeaponRange
+				end
+			end
+		end
+	end
+	if asMeters then
+		return GameHelpers.Math.Round(range/100, 2)
+	end
+	return range
+end

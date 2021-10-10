@@ -149,16 +149,22 @@ end
 ---@param startPos number[]|nil If set, this will be the starting position to push from. Defaults to the source's WorldPosition otherwise.
 ---@return number,number|nil
 function GameHelpers.ForceMoveObject(source, target, distanceMultiplier, skill, startPos)
+	startPos = startPos or source.WorldPos
+	local dist = GetDistanceToPosition(target.MyGuid, startPos[1], startPos[2], startPos[3])
+	local distMult = math.abs(distanceMultiplier)
+	if dist > distMult then
+		fprint(LOGLEVEL.WARNING, "[GameHelpers.ForceMoveObject] target(%s) is outside of the push distance range (%s) > (%s) from the starting position(%s,%s,%s). Skipping.", target.MyGuid, dist, distMult, startPos[1], startPos[2], startPos[3])
+		return false
+	end
 	local existingData = PersistentVars.ForceMoveData[target.MyGuid]
 	if existingData ~= nil and existingData.Handle ~= nil then
 		NRD_GameActionDestroy(existingData.Handle)
 		PersistentVars.ForceMoveData[target.MyGuid] = nil
 	end
-	--local startPos = GameHelpers.Math.GetForwardPosition(source.MyGuid, distanceMultiplier)
+	--local startPos = GameHelpers.Math.GetForwardPosition(source.MyGuid, distMult)
 	local directionalVector = GameHelpers.Math.GetDirectionalVectorBetweenObjects(target, source, distanceMultiplier < 0)
-	distanceMultiplier = math.abs(distanceMultiplier)
-	local tx,ty,tz = GameHelpers.Grid.GetValidPositionAlongLine(startPos or source.WorldPos, directionalVector, distanceMultiplier)
-	
+	local tx,ty,tz = GameHelpers.Grid.GetValidPositionAlongLine(startPos or source.WorldPos, directionalVector, distMult)
+
 	if tx and tz then
 		local handle = NRD_CreateGameObjectMove(target.MyGuid, tx, ty, tz, "", source.MyGuid)
 		if handle then

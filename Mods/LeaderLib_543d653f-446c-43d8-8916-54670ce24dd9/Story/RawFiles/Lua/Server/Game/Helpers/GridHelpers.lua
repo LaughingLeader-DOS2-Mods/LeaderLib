@@ -94,15 +94,18 @@ function GameHelpers.Internal.OnForceMoveTimer(timerName, target)
 			if GetDistanceToPosition(target, x,y,z) < 1 then
 				NRD_GameActionDestroy(targetData.Handle)
 				PersistentVars.ForceMoveData[target] = nil
+				local targetObject = Ext.GetGameObject(target)
 				local source = targetData.Source
 				if source then
 					source = Ext.GetGameObject(targetData.Source)
+				else
+					source = targetObject
 				end
 				local skill = nil
 				if targetData.Skill then
 					skill = Ext.GetStat(targetData.Skill)
 				end
-				InvokeListenerCallbacks(Listeners.ForceMoveFinished, Ext.GetGameObject(target), source, targetData.IsFromSkill == true, skill)
+				InvokeListenerCallbacks(Listeners.ForceMoveFinished, targetObject, source, targetData.IsFromSkill == true, skill)
 				if skill then
 					Osi.LeaderLib_Force_OnLanded(GameHelpers.GetUUID(target,true), GameHelpers.GetUUID(targetData.Source, true), targetData.Skill or "Skill")
 				else
@@ -143,16 +146,19 @@ end
 ---@param target EsvCharacter|EsvItem
 ---@param distanceMultiplier number|nil
 ---@param skill string|nil
+---@param startPos number[]|nil If set, this will be the starting position to push from. Defaults to the source's WorldPosition otherwise.
 ---@return number,number|nil
-function GameHelpers.ForceMoveObject(source, target, distanceMultiplier, skill)
+function GameHelpers.ForceMoveObject(source, target, distanceMultiplier, skill, startPos)
 	local existingData = PersistentVars.ForceMoveData[target.MyGuid]
 	if existingData ~= nil and existingData.Handle ~= nil then
 		NRD_GameActionDestroy(existingData.Handle)
 		PersistentVars.ForceMoveData[target.MyGuid] = nil
 	end
 	--local startPos = GameHelpers.Math.GetForwardPosition(source.MyGuid, distanceMultiplier)
-	local directionalVector = GameHelpers.Math.GetDirectionalVectorBetweenObjects(target, source)
-	local tx,ty,tz = GameHelpers.Grid.GetValidPositionAlongLine(source.WorldPos, directionalVector, distanceMultiplier)
+	local directionalVector = GameHelpers.Math.GetDirectionalVectorBetweenObjects(target, source, distanceMultiplier < 0)
+	distanceMultiplier = math.abs(distanceMultiplier)
+	local tx,ty,tz = GameHelpers.Grid.GetValidPositionAlongLine(startPos or source.WorldPos, directionalVector, distanceMultiplier)
+	
 	if tx and tz then
 		local handle = NRD_CreateGameObjectMove(target.MyGuid, tx, ty, tz, "", source.MyGuid)
 		if handle then

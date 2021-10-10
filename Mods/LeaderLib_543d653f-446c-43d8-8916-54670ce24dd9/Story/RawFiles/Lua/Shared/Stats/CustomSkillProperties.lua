@@ -8,19 +8,21 @@ CustomSkillProperties.SafeForce = {
 	GetDescription = function(prop)
 		local chance = prop.Arg1
 		local distance = GameHelpers.Math.Round(math.floor(prop.Arg2/6), 1)
+		local useTargetForPosition = StringHelpers.Equals(prop.Arg3, "true", true, true)
+		local fromText = useTargetForPosition and LocalizedText.SkillTooltip.FromTarget.Value or LocalizedText.SkillTooltip.FromSelf.Value
 		if distance >= 0 then
 			if chance >= 1 then
-				return LocalizedText.SkillTooltip.SafeForce:ReplacePlaceholders(distance)
+				return LocalizedText.SkillTooltip.SafeForce:ReplacePlaceholders(distance, fromText)
 			else
 				chance = Ext.Round(chance * 100)
-				return LocalizedText.SkillTooltip.SafeForceRandom:ReplacePlaceholders(distance, chance)
+				return LocalizedText.SkillTooltip.SafeForceRandom:ReplacePlaceholders(distance, fromText, chance)
 			end
 		else
 			if chance >= 1 then
-				return LocalizedText.SkillTooltip.SafeForce_Negative:ReplacePlaceholders(distance)
+				return LocalizedText.SkillTooltip.SafeForce_Negative:ReplacePlaceholders(math.abs(distance), fromText)
 			else
 				chance = Ext.Round(chance * 100)
-				return LocalizedText.SkillTooltip.SafeForceRandom_Negative:ReplacePlaceholders(distance, chance)
+				return LocalizedText.SkillTooltip.SafeForceRandom_Negative:ReplacePlaceholders(math.abs(distance), fromText, chance)
 			end
 		end
 	end,
@@ -29,9 +31,22 @@ CustomSkillProperties.SafeForce = {
 		local distance = math.floor(prop.Arg2/6)
 		if chance >= 1.0 or Ext.Random(0,1) <= chance then
 			local x,y,z = table.unpack(position)
-			for i,v in pairs(Ext.GetCharactersAroundPosition(x,y,z, areaRadius)) do
+			--local characters = Ext.GetCharactersAroundPosition(x,y,z, areaRadius)
+			local characters = {}
+			for i,v in pairs(Ext.GetAllCharacters()) do
+				if GetDistanceToPosition(v, x,y,z) <= areaRadius then
+					characters[#characters+1] = v
+				end
+			end
+			local startPos = attacker.WorldPos
+			local useTargetForPosition = StringHelpers.Equals(prop.Arg3, "true", true, true)
+			for i,v in pairs(characters) do
 				if v ~= attacker.MyGuid then
-					GameHelpers.ForceMoveObject(attacker, Ext.GetGameObject(v), distance, skill.Name)
+					local target = Ext.GetCharacter(v)
+					if useTargetForPosition then
+						startPos = target.WorldPos
+					end
+					GameHelpers.ForceMoveObject(attacker, target, distance, skill and skill.Name or nil, startPos)
 				end
 			end
 		end
@@ -41,7 +56,11 @@ CustomSkillProperties.SafeForce = {
 			local chance = prop.Arg1
 			local distance = math.floor(prop.Arg2/6)
 			if chance >= 1.0 or Ext.Random(0,1) <= chance then
-				GameHelpers.ForceMoveObject(attacker, target, distance, skill.Name)
+				local startPos = attacker.WorldPos
+				if StringHelpers.Equals(prop.Arg3, "true", true, true) then
+					startPos = target.WorldPos
+				end
+				GameHelpers.ForceMoveObject(attacker, target, distance, skill and skill.Name or nil, startPos)
 			end
 		end
 	end

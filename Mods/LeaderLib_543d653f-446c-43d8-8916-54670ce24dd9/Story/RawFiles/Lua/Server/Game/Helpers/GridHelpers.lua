@@ -94,8 +94,23 @@ function GameHelpers.Internal.OnForceMoveTimer(timerName, target)
 			if GetDistanceToPosition(target, x,y,z) < 1 then
 				NRD_GameActionDestroy(targetData.Handle)
 				PersistentVars.ForceMoveData[target] = nil
+				local source = targetData.Source
+				if source then
+					source = Ext.GetGameObject(targetData.Source)
+				end
+				local skill = nil
+				if targetData.Skill then
+					skill = Ext.GetStat(targetData.Skill)
+				end
+				InvokeListenerCallbacks(Listeners.ForceMoveFinished, Ext.GetGameObject(target), source, targetData.IsFromSkill == true, skill)
+				if skill then
+					Osi.LeaderLib_Force_OnLanded(GameHelpers.GetUUID(target,true), GameHelpers.GetUUID(targetData.Source, true), targetData.Skill or "Skill")
+				else
+					--LeaderLib_Force_OnLanded((GUIDSTRING)_Target, (GUIDSTRING)_Source, (STRING)_Event)
+					Osi.LeaderLib_Force_OnLanded(GameHelpers.GetUUID(target,true), GameHelpers.GetUUID(targetData.Source, true), "Lua")
+				end
 			else
-				StartTimer(timerName, 250, target)
+				Timer.StartObjectTimer(timerName, target, 250)
 			end
 		end
 	end
@@ -127,8 +142,9 @@ end
 ---@param source EsvCharacter|EsvItem
 ---@param target EsvCharacter|EsvItem
 ---@param distanceMultiplier number|nil
+---@param skill string|nil
 ---@return number,number|nil
-function GameHelpers.ForceMoveObject(source, target, distanceMultiplier)
+function GameHelpers.ForceMoveObject(source, target, distanceMultiplier, skill)
 	local existingData = PersistentVars.ForceMoveData[target.MyGuid]
 	if existingData ~= nil and existingData.Handle ~= nil then
 		NRD_GameActionDestroy(existingData.Handle)
@@ -143,9 +159,11 @@ function GameHelpers.ForceMoveObject(source, target, distanceMultiplier)
 			PersistentVars.ForceMoveData[target.MyGuid] = {
 				Position = {tx,ty,tz},
 				Handle = handle,
-				Source = source.MyGuid
+				Source = source.MyGuid,
+				IsFromSkill = skill ~= nil,
+				Skill = skill,
 			}
-			StartTimer("Timers_LeaderLib_OnForceMoveAction", 250, target.MyGuid)
+			Timer.StartObjectTimer("Timers_LeaderLib_OnForceMoveAction", target.MyGuid, 250)
 		end
 	end
 end
@@ -153,8 +171,9 @@ end
 ---@param source EsvCharacter
 ---@param target EsvGameObject
 ---@param position number[]
+---@param skill string|nil
 ---@return number,number|nil
-function GameHelpers.ForceMoveObjectToPosition(source, target, position)
+function GameHelpers.ForceMoveObjectToPosition(source, target, position, skill)
 	local existingData = PersistentVars.ForceMoveData[target.MyGuid]
 	if existingData ~= nil and existingData.Handle ~= nil then
 		NRD_GameActionDestroy(existingData.Handle)
@@ -167,9 +186,11 @@ function GameHelpers.ForceMoveObjectToPosition(source, target, position)
 		PersistentVars.ForceMoveData[target.MyGuid] = {
 			Position = {tx,ty,tz},
 			Handle = handle,
-			Source = source.MyGuid
+			Source = source.MyGuid,
+			IsFromSkill = skill ~= nil,
+			Skill = skill,
 		}
-		StartTimer("Timers_LeaderLib_OnForceMoveAction", 250, target.MyGuid)
+		Timer.StartObjectTimer("Timers_LeaderLib_OnForceMoveAction", target.MyGuid, 250)
 	end
 end
 

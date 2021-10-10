@@ -8,6 +8,7 @@ local IsClient = Ext.IsClient()
 ---Starts an Osiris timer with optional data to include in the callback. Only strings, numbers, and booleans are accepted for optional parameters.
 ---@param timerName string
 ---@param delay integer
+---@param ... string|number|boolean Optional variable arguments that will be sent to the timer finished callback.
 ---@vararg string|number|boolean
 function Timer.Start(timerName, delay, ...)
 	if not IsClient then
@@ -27,6 +28,7 @@ end
 ---@param timerName string The generalized timer name. A unique name will be created using the timer name and object.
 ---@param object UUID|NETID|EsvGameObject
 ---@param delay integer
+---@param ... string|number|boolean Optional variable arguments that will be sent to the timer finished callback.
 ---@vararg string|number|boolean|table
 function Timer.StartObjectTimer(timerName, object, delay, ...)
 	if not IsClient then

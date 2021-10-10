@@ -273,6 +273,8 @@ LocalizedText.SkillTooltip = {
 	RifleWeapon = ts:Create("ha3a18e3fge9e4g4496g84b8g5590844143f0", "Rifle Weapon"),
 	SafeForce = ts:Create("h788df33dg4d61g4cb7g8f2cgfb75e14e7ffc", "Pushes [1]m"),
 	SafeForceRandom = ts:Create("h9308f157g1e5ag4051gbcc0g9d41c54ffa57", "Pushes [1]m ([2]% Chance)"),
+	SafeForce_Negative = ts:Create("h3209c996gd9ebg4594ga886gddca741dafdd", "Pulls [1]m"),
+	SafeForceRandom_Negative = ts:Create("h21fd2959g743dg49e6g9922g02b39ce3c8b8", "Pulls [1]m ([2]% Chance)"),
 	MoveToTarget = ts:Create("h19d1b9dag302dg4655g86fdgad6fe369db15", "Move to the target"),
 	--BasicAttack = ts:Create("hbdac34fdg43b6g4439g9947g6676e9c03294", "Basic Attack"),
 }

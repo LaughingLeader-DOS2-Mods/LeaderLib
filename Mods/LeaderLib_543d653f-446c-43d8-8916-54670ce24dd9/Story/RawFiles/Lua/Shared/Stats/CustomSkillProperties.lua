@@ -7,12 +7,21 @@ end
 CustomSkillProperties.SafeForce = {
 	GetDescription = function(prop)
 		local chance = prop.Arg1
-		local distance = math.floor(prop.Arg2/6)
-		if chance >= 1 then
-			return LocalizedText.SkillTooltip.SafeForce:ReplacePlaceholders(GameHelpers.Math.Round(distance, 1))
+		local distance = GameHelpers.Math.Round(math.floor(prop.Arg2/6), 1)
+		if distance >= 0 then
+			if chance >= 1 then
+				return LocalizedText.SkillTooltip.SafeForce:ReplacePlaceholders(distance)
+			else
+				chance = Ext.Round(chance * 100)
+				return LocalizedText.SkillTooltip.SafeForceRandom:ReplacePlaceholders(distance, chance)
+			end
 		else
-			chance = Ext.Round(chance * 100)
-			return LocalizedText.SkillTooltip.SafeForceRandom:ReplacePlaceholders(GameHelpers.Math.Round(distance, 1), chance)
+			if chance >= 1 then
+				return LocalizedText.SkillTooltip.SafeForce_Negative:ReplacePlaceholders(distance)
+			else
+				chance = Ext.Round(chance * 100)
+				return LocalizedText.SkillTooltip.SafeForceRandom_Negative:ReplacePlaceholders(distance, chance)
+			end
 		end
 	end,
 	ExecuteOnPosition = function(prop, attacker, position, areaRadius, isFromItem, skill, hit)
@@ -22,7 +31,7 @@ CustomSkillProperties.SafeForce = {
 			local x,y,z = table.unpack(position)
 			for i,v in pairs(Ext.GetCharactersAroundPosition(x,y,z, areaRadius)) do
 				if v ~= attacker.MyGuid then
-					GameHelpers.ForceMoveObject(attacker, Ext.GetGameObject(v), distance)
+					GameHelpers.ForceMoveObject(attacker, Ext.GetGameObject(v), distance, skill.Name)
 				end
 			end
 		end
@@ -32,7 +41,7 @@ CustomSkillProperties.SafeForce = {
 			local chance = prop.Arg1
 			local distance = math.floor(prop.Arg2/6)
 			if chance >= 1.0 or Ext.Random(0,1) <= chance then
-				GameHelpers.ForceMoveObject(attacker, target, distance)
+				GameHelpers.ForceMoveObject(attacker, target, distance, skill.Name)
 			end
 		end
 	end

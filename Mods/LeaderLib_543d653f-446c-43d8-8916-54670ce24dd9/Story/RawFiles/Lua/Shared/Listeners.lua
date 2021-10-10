@@ -107,6 +107,9 @@ if Ext.IsServer() then
 	---Called when PersistentVars should be initialized from a table of default values.
 	---@type function[]
 	Listeners.PersistentVarsLoaded = {}
+
+	---@type fun(target:EsvCharacter|EsvItem, source:EsvCharacter|EsvItem|nil, isFromSkill:boolean, skill:StatEntrySkillData|nil):void[]
+	Listeners.ForceMoveFinished = {}
 end
 if Ext.IsClient() then
 	-- Client-side Mod Menu events

@@ -7,6 +7,8 @@ LeaderLib_Tooltip_Expander_Inactive	Hold [1] for More Info	h17380891g0e8eg42d3gb
 LeaderLib_Tooltip_Expander_Active	Release [1] for Less Info	h7b3bd7e6g9a34g4959gad11g241f6d8d33c1
 LeaderLib_Tooltip_SafeForce	Pushes [1]m	h788df33dg4d61g4cb7g8f2cgfb75e14e7ffc
 LeaderLib_Tooltip_SafeForceRandom	Pushes [1]m ([2]% Chance)	h9308f157g1e5ag4051gbcc0g9d41c54ffa57
+LeaderLib_Tooltip_SafeForce_Negative	Pulls [1]m	h3209c996gd9ebg4594ga886gddca741dafdd
+LeaderLib_Tooltip_SafeForceRandom_Negative	Pulls [1]m ([2]% Chance)	h21fd2959g743dg49e6g9922g02b39ce3c8b8
 LeaderLib_Tooltip_MoveToTarget	Move to the target	h19d1b9dag302dg4655g86fdgad6fe369db15
 LeaderLib_Tooltip_AbilityCurrentLevel	Level [1]: [2]	h8154ae8eg2b37g4f0fgb6b6gd7e27fed37a6
 LeaderLib_Tooltip_AbilityNextLevel	Next Level [1]: [2]	he31d5820g9ddbg4e08gac83g1358e22e499b

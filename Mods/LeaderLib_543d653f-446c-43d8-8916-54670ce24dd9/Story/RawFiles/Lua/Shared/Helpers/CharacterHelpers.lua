@@ -395,3 +395,65 @@ function GameHelpers.Character.GetWeaponRange(character, asMeters)
 	end
 	return range
 end
+
+if not isClient then
+	---Equips an item to its stats Slot using NRD_CharacterEquipItem, and moves any existing item in that slot to the character's inventory.
+	---@param character EsvCharacter|UUID
+	---@param item EclItem|UUID
+	---@return boolean
+	function GameHelpers.Character.EquipItem(character, item)
+		local uuid = GameHelpers.GetUUID(character)
+		fassert(not StringHelpers.IsNullOrEmpty(uuid) and ObjectExists(uuid) == 1, "Character (%s) must be a valid UUID or EsvCharacter", character)
+		item = GameHelpers.GetItem(item)
+		fassert(item ~= nil and not GameHelpers.Item.IsObject(item), "Item (%s) must be a non-object item.", item and item.StatsId or "nil")
+		fassert(ItemIsEquipable(item.MyGuid) == 1, "Item (%s) is not equipable.", item.StatsId)
+		if item.Stats.Slot == "Weapon" then
+			local mainhand = GameHelpers.Item.GetItemInSlot(uuid, "Weapon")
+			local offhand = GameHelpers.Item.GetItemInSlot(uuid, "Shield")
+			if item.Stats.IsTwoHanded then
+				if mainhand then
+					ItemLockUnEquip(mainhand.MyGuid, 0)
+					ItemToInventory(mainhand.MyGuid, uuid, 1, 0, 0)
+				end
+				if offhand then
+					ItemLockUnEquip(offhand.MyGuid, 0)
+					ItemToInventory(offhand.MyGuid, uuid, 1, 0, 0)
+				end
+				NRD_CharacterEquipItem(uuid, item.MyGuid, "Weapon", 0, 0, 1, 1)
+				return true
+			else
+				if mainhand then
+					if not offhand then
+						NRD_CharacterEquipItem(uuid, item.MyGuid, "Shield", 0, 0, 1, 1)
+						return true
+					else
+						ItemLockUnEquip(mainhand.MyGuid, 0)
+						ItemToInventory(mainhand.MyGuid, uuid, 1, 0, 0)
+						NRD_CharacterEquipItem(uuid, item.MyGuid, "Weapon", 0, 0, 1, 1)
+						return true
+					end
+				else
+					NRD_CharacterEquipItem(uuid, item.MyGuid, "Weapon", 0, 0, 1, 1)
+					return true
+				end
+			end
+		elseif item.Stats.Slot == "Shield" then
+			local offhand = GameHelpers.Item.GetItemInSlot(uuid, "Shield")
+			if offhand then
+				ItemLockUnEquip(offhand.MyGuid, 0)
+				ItemToInventory(offhand.MyGuid, uuid, 1, 0, 0)
+			end
+			NRD_CharacterEquipItem(uuid, item.MyGuid, "Shield", 0, 0, 1, 1)
+			return true
+		else
+			local existing = GameHelpers.Item.GetItemInSlot(uuid, item.Stats.Slot)
+			if existing then
+				ItemLockUnEquip(existing.MyGuid, 0)
+				ItemToInventory(existing.MyGuid, uuid, 1, 0, 0)
+			end
+			NRD_CharacterEquipItem(uuid, item.MyGuid, item.Stats.Slot, 0, 0, 1, 1)
+			return true
+		end
+	end
+	return false
+end

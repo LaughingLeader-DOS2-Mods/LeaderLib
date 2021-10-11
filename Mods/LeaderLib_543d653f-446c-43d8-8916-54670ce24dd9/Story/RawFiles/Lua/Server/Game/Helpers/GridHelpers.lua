@@ -92,7 +92,7 @@ function GameHelpers.Internal.OnForceMoveTimer(timerName, target)
 		if targetData ~= nil then
 			local x,y,z = table.unpack(targetData.Position)
 			if GetDistanceToPosition(target, x,y,z) < 1 then
-				NRD_GameActionDestroy(targetData.Handle)
+				pcall(NRD_GameActionDestroy,targetData.Handle)
 				PersistentVars.ForceMoveData[target] = nil
 				local targetObject = Ext.GetGameObject(target)
 				local source = targetData.Source
@@ -105,7 +105,7 @@ function GameHelpers.Internal.OnForceMoveTimer(timerName, target)
 				if targetData.Skill then
 					skill = Ext.GetStat(targetData.Skill)
 				end
-				InvokeListenerCallbacks(Listeners.ForceMoveFinished, targetObject, source, targetData.IsFromSkill == true, skill)
+				InvokeListenerCallbacks(Listeners.ForceMoveFinished, targetObject, source, targetData.Distance, targetData.Start, skill)
 				if skill then
 					Osi.LeaderLib_Force_OnLanded(GameHelpers.GetUUID(target,true), GameHelpers.GetUUID(targetData.Source, true), targetData.Skill or "Skill")
 				else
@@ -158,22 +158,24 @@ function GameHelpers.ForceMoveObject(source, target, distanceMultiplier, skill, 
 	end
 	local existingData = PersistentVars.ForceMoveData[target.MyGuid]
 	if existingData ~= nil and existingData.Handle ~= nil then
-		NRD_GameActionDestroy(existingData.Handle)
+		--NRD_GameActionDestroy(existingData.Handle)
 		PersistentVars.ForceMoveData[target.MyGuid] = nil
 	end
 	--local startPos = GameHelpers.Math.GetForwardPosition(source.MyGuid, distMult)
 	local directionalVector = GameHelpers.Math.GetDirectionalVectorBetweenObjects(target, source, distanceMultiplier < 0)
-	local tx,ty,tz = GameHelpers.Grid.GetValidPositionAlongLine(startPos or source.WorldPos, directionalVector, distMult)
+	local tx,ty,tz = GameHelpers.Grid.GetValidPositionAlongLine(startPos, directionalVector, distMult)
 
 	if tx and tz then
 		local handle = NRD_CreateGameObjectMove(target.MyGuid, tx, ty, tz, "", source.MyGuid)
 		if handle then
 			PersistentVars.ForceMoveData[target.MyGuid] = {
 				Position = {tx,ty,tz},
+				Start = TableHelpers.Clone(startPos),
 				Handle = handle,
 				Source = source.MyGuid,
 				IsFromSkill = skill ~= nil,
 				Skill = skill,
+				Distance = distanceMultiplier
 			}
 			Timer.StartObjectTimer("Timers_LeaderLib_OnForceMoveAction", target.MyGuid, 250)
 		end
@@ -181,26 +183,28 @@ function GameHelpers.ForceMoveObject(source, target, distanceMultiplier, skill, 
 end
 
 ---@param source EsvCharacter
----@param target EsvGameObject
+---@param target EsvCharacter|EsvItem
 ---@param position number[]
 ---@param skill string|nil
 ---@return number,number|nil
 function GameHelpers.ForceMoveObjectToPosition(source, target, position, skill)
 	local existingData = PersistentVars.ForceMoveData[target.MyGuid]
 	if existingData ~= nil and existingData.Handle ~= nil then
-		NRD_GameActionDestroy(existingData.Handle)
+		--NRD_GameActionDestroy(existingData.Handle)
 		PersistentVars.ForceMoveData[target.MyGuid] = nil
 	end
-	local x,y,z = GetPosition(target.MyGuid)
+	local x,y,z = table.unpack(target.WorldPos)
 	local tx,ty,tz = table.unpack(position)
 	local handle = NRD_CreateGameObjectMove(target.MyGuid, tx, ty, tz, "", source.MyGuid)
 	if handle ~= nil then
 		PersistentVars.ForceMoveData[target.MyGuid] = {
 			Position = {tx,ty,tz},
+			Start = TableHelpers.Clone(target.WorldPos),
 			Handle = handle,
 			Source = source.MyGuid,
 			IsFromSkill = skill ~= nil,
 			Skill = skill,
+			Distance = GameHelpers.Math.GetDistance(target.WorldPos, position)
 		}
 		Timer.StartObjectTimer("Timers_LeaderLib_OnForceMoveAction", target.MyGuid, 250)
 	end

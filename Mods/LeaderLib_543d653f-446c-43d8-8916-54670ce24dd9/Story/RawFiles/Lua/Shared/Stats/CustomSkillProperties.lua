@@ -57,7 +57,7 @@ CustomSkillProperties.SafeForce = {
 			--local characters = Ext.GetCharactersAroundPosition(x,y,z, areaRadius)
 			local characters = {}
 			for i,v in pairs(Ext.GetAllCharacters()) do
-				if GetDistanceToPosition(v, x,y,z) <= areaRadius then
+				if v ~= attacker.MyGuid and GetDistanceToPosition(v, x,y,z) <= areaRadius then
 					characters[#characters+1] = v
 				end
 			end
@@ -67,13 +67,11 @@ CustomSkillProperties.SafeForce = {
 				useTargetForPosition = StringHelpers.Equals(prop.Arg3, "true", true, true) ~= true
 			end
 			for i,v in pairs(characters) do
-				if v ~= attacker.MyGuid then
-					local target = Ext.GetCharacter(v)
-					if useTargetForPosition then
-						startPos = target.WorldPos
-					end
-					GameHelpers.ForceMoveObject(attacker, target, distance, skill and skill.Name or nil, startPos)
+				local target = Ext.GetCharacter(v)
+				if useTargetForPosition then
+					startPos = target.WorldPos
 				end
+				GameHelpers.ForceMoveObject(attacker, target, distance, skill and skill.Name or nil, startPos)
 			end
 		end
 	end,

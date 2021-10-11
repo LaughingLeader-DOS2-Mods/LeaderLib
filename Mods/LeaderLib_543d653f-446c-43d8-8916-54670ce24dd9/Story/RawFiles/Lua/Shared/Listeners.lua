@@ -108,7 +108,7 @@ if Ext.IsServer() then
 	---@type function[]
 	Listeners.PersistentVarsLoaded = {}
 
-	---@type fun(target:EsvCharacter|EsvItem, source:EsvCharacter|EsvItem|nil, isFromSkill:boolean, skill:StatEntrySkillData|nil):void[]
+	---@type fun(target:EsvCharacter|EsvItem, source:EsvCharacter|EsvItem|nil, distance:number, startingPosition:number[], skill:StatEntrySkillData|nil):void[]
 	Listeners.ForceMoveFinished = {}
 end
 if Ext.IsClient() then

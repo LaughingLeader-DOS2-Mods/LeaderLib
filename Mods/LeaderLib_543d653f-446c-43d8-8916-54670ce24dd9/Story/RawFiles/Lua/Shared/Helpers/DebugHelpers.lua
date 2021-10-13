@@ -473,7 +473,7 @@ userDataProps.CDivinityStats_Character = {
 	BlockChance = "integer",
 	ChanceToHitBoost = "integer",
 --- Base properties from CharacterStatsGetters::GetStat
-	BaseMaxMp = "integer",
+	--BaseMaxMp = "integer", -- Broken, crashes the game
 	BaseAPStart = "integer",
 	BaseAPRecovery = "integer",
 	BaseAPMaximum = "integer",
@@ -913,7 +913,11 @@ userDataProps["eoc::CombatComponentTemplate"] = CombatComponentTemplate
 userDataProps["CDivinityStats_Item"] = CDivinityStats_Item
 userDataProps["CDivinityStats_Equipment_Attributes"] = CDivinityStats_Equipment_Attributes
 userDataProps["CDivinityStats_Weapon_Attributes"] = CDivinityStats_Weapon_Attributes
-userDataProps["CDamageList"] = function(obj) return obj:ToTable() end
+---@param obj DamageList
+userDataProps["CDamageList"] = function(obj) 
+	--return StringHelpers.Join(";", obj:ToTable(), false, function(i,v) return string.format("DamageType = %s, Amount = %i", v.DamageType, v.Amount) end)
+	return obj:ToTable()
+end
 userDataProps["esv::HStatus"] = {
 	--EsvStatus
 	--StatusType = "string",
@@ -1060,7 +1064,13 @@ function DebugHelpers.TraceUserData(obj, printNil)
 			props = userDataProps.CDivinityStats_Weapon_Attributes
 		end
 		if type(props) == "function" then
-			return Lib.inspect(props(obj))
+			local b,result = xpcall(props, debug.traceback, obj)
+			if b then
+				return result
+			else
+				Ext.PrintError(result)
+				return "nil"
+			end
 		else
 			local data = {}
 			DebugHelpers.ProcessProps(obj, props, data, printNil)
@@ -1086,7 +1096,13 @@ function DebugHelpers.TraceUserDataSerpent(obj, opts)
 			props = userDataProps.CDivinityStats_Weapon_Attributes
 		end
 		if type(props) == "function" then
-			return Lib.serpent.block(props(obj), opts)
+			local b,result = xpcall(props, debug.traceback, obj)
+			if b then
+				return result
+			else
+				Ext.PrintError(result)
+				return "nil"
+			end
 		else
 			local data = {}
 			DebugHelpers.ProcessProps(obj, props, data, false)

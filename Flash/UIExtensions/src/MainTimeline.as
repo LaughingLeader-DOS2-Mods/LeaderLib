@@ -18,16 +18,26 @@ package
 	import flash.ui.Keyboard;
 	import System.KeyCodeNames;
 	import flash.utils.Dictionary;
+	import flash.geom.Rectangle;
+	import flash.text.TextFieldAutoSize;
 	
 	public dynamic class MainTimeline extends MovieClip
 	{		
+		//Engine variables
 		public var layout:String;
 		public var events:Array;
 		public var anchorId:String;
+		public var anchorPos:String;
+		public var anchorTPos:String;
+		public var anchorTarget:String;
+		public var uiScaling:Number;
+
+		public const designResolution:Point = new Point(1920,1080);
 		
 		public var mainPanel_mc:MainPanel;
 		public var panels_mc:PanelManager;
 		public var context_menu:ContextMenu.ContextMenuMC;
+		public var screenScalingTest:MovieClip;
 		
 		public var curTooltip:String;
 	  	public var hasTooltip:Boolean;
@@ -140,18 +150,47 @@ package
 		public function onEventInit() : *
 		{
 			ExternalInterface.call("registeranchorId","LeaderLib_UIExtensions");
-			ExternalInterface.call("setAnchor","center","screen","center");
+			ExternalInterface.call("setAnchor",this.anchorPos,this.anchorTarget,this.anchorPos);
 		}
 
 		public function onEventResize() : *
 		{
-			ExternalInterface.call("setPosition","center","screen","center");
+			ExternalInterface.call("setPosition",this.anchorPos,this.anchorTarget,this.anchorPos);
 		}
 
 		public function onEventResolution(w:Number, h:Number) : *
 		{
-			this.screenWidth = w;
-			this.screenHeight = h;
+			if(this.screenWidth != w || this.screenHeight != h)
+			{
+				ExternalInterface.call("setPosition",this.anchorPos,this.anchorTarget,this.anchorPos);
+				this.screenWidth = w;
+				this.screenHeight = h;
+				this.uiScaling = h / this.designResolution.y;
+
+				if (this.screenScalingTest.visible) {
+					// var dx:Number = (this.designResolution.x - this.screenWidth)/2;
+					// var dy:Number = (this.designResolution.y - this.screenHeight)/2;
+					var rect:Rectangle = new Rectangle(0, 0, this.stage.stageWidth, this.stage.stageHeight);
+					this.screenScalingTest.width = rect.width;
+					this.screenScalingTest.height = rect.height;
+					this.screenScalingTest.x = rect.x;
+					this.screenScalingTest.y = rect.y;
+					trace(rect);
+				}
+				//ExternalInterface.call("setMcSize", w, h);
+				ExternalInterface.call("LeaderLib_UIExtensions_OnEventResolution", w, h);
+				
+			}
+			// var ratioHeight:Number = 1080 / h;
+			// var ratioWidth:Number = (1920 - w * ratioHeight) * 0.5;
+			// if(ratioWidth > 0)
+			// {
+			// 	this.mainPanel_mc.x = ratioWidth;
+			// }
+			// else
+			// {
+			// 	this.mainPanel_mc.x = 0;
+			// }
 		}
 
 		public function removeControl(id:Number) : Boolean
@@ -193,12 +232,12 @@ package
 			obj.addEventListener(MouseEvent.MOUSE_OUT, this.onMouseOutTooltip);
 		}
 		
-		public function addCheckbox(id:Number, label:String, tooltip:String, stateID:Number=0, x:Number=0, y:Number=0, filterBool:Boolean = false, enabled:Boolean = true) : *
+		public function addCheckbox(id:Number, label:String, tooltip:String, stateID:Number=0, x:Number=0, y:Number=0, filterBool:Boolean = false, enabled:Boolean = true) : uint
 		{
 			var checkbox:MovieClip = new Checkbox();
 			checkbox.x = x;
 			checkbox.y = y;
-			checkbox.label_txt.htmlText = label;
+			checkbox.setText(label);
 			checkbox.id = id;
 			checkbox.mHeight = 30;
 			checkbox.filterBool = filterBool;
@@ -206,15 +245,13 @@ package
 			checkbox.tooltip = tooltip;
 			checkbox.bg_mc.gotoAndStop(stateID * 3 + 1);
 			checkbox.enable = enabled;
-			//checkbox.label_txt.width = checkbox.label_txt.textWidth;
 			if(enabled == false)
 			{
 				checkbox.alpha = 0.3;
 			}
-			//setupControlForTooltip(checkbox);
 			mainPanel_mc.addElement(checkbox);
-			checkbox.label_bg_mc.width = (checkbox.label_txt.textWidth*1.2) + 12;
 			ExternalInterface.call("LeaderLib_UIExtensions_ControlAdded", "checkbox", id, checkbox.list_id);
+			return checkbox.list_id;
 		}
 
 		public function setCheckboxState(id:Number, state:Number): *
@@ -436,7 +473,6 @@ package
 			//ExternalInterface.call("inputFocus");
 			this.stage.addEventListener(KeyboardEvent.KEY_DOWN,this.onKeyboardDown);
 			this.stage.addEventListener(KeyboardEvent.KEY_UP,this.onKeyboardUp);
-			trace("Enabled keyboard event listeners");
 			this.stage.focus = this;
 		}
 
@@ -460,10 +496,14 @@ package
 		public function frame1() : void
 		{
 			this.anchorId = "LeaderLib_UIExtensions";
-			this.layout = "fixed";
-			//this.events = new Array("IE UICreationTabPrev", "IE UIStartGame", "IE ConnectivityMenu");
+			this.anchorPos = "topleft";
+			this.anchorTPos = "topleft";
+			this.anchorTarget = "screen";
+			//fixed, fitVertical, fitHorizontal, fit, fill, fillVFit
+			this.layout = "fillVFit";
 			this.curTooltip = "";
 		 	this.hasTooltip = false;
+			this.uiScaling = 1;
 
 			KeyCodeNames.Init();
 			workingKeys[8] = "FlashBackspace";
@@ -492,6 +532,10 @@ package
 
 			this.panels_mc = new PanelManager();
 			this.addChild(this.panels_mc);
+
+			this.screenScalingTest.visible = false;
+			this.screenScalingTest.mouseEnabled = false;
+			this.screenScalingTest.mouseChildren = false;
 
 			//this.addEventListener(MouseEvent.CLICK,this.fireOnMouseClick, true);
 			//this.addEventListener(MouseEvent.MOUSE_MOVE,this.fireOnMouseMove, true);

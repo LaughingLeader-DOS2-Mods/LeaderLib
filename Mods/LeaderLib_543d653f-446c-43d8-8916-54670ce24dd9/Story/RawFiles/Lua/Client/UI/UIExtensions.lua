@@ -71,8 +71,11 @@ Ext.RegisterConsoleCommand("llresetuiext", function(cmd)
 	DestroyInstance(true)
 end)
 
-local function OnControlAdded(ui, call, id, listid, ...)
-	PrintDebug("OnControlAdded", id, listid, Ext.JsonStringify({...}))
+local function OnControlAdded(ui, call, id, index, ...)
+	--PrintDebug("OnControlAdded", id, listid, Ext.JsonStringify({...}))
+	local main = UIExtensions.Instance:GetRoot()
+	local control = main.mainPanel_mc.elements[index]
+	InvokeListenerCallbacks(Listeners.UIExtensionsControlAdded, main, control, id, index, ...)
 end
 
 local function OnTimerComplete(ui, call, timerCallbackName)
@@ -181,6 +184,12 @@ function UIExtensions.SetupInstance()
 			Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_UIExtensions_RightMouseDown", OnRightMouseDown)
 			Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_UIExtensions_RightMouseUp", OnRightMouseUp)
 			Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_UIExtensions_KeyboardEvent", Input.OnKeyboardEvent)
+			Ext.RegisterUICall(UIExtensions.Instance, "LeaderLib_UIExtensions_OnEventResolution", function(ui, call, w, h)
+				if Vars.DebugMode and Vars.Print.UI then
+					local root = ui:GetRoot()
+					fprint(LOGLEVEL.DEFAULT, "[UIExtensions:onEventResolution] width(%s) height(%s) stage.width(%s) stage.height(%s)", w, h, root.stage.width, root.stage.height)
+				end
+			end)
 			-- Ext.RegisterUINameCall("LeaderLib_UIExtensions_OnControl", OnControl)
 			-- Ext.RegisterUINameCall("LeaderLib_UIExtensions_ControlAdded", OnControlAdded)
 			-- Ext.RegisterUINameCall("LeaderLib_UIExtensions_InputEvent", Input.OnFlashEvent)
@@ -244,8 +253,8 @@ function UIExtensions.AddCheckbox(onClick, label, tooltip, state, x, y, filterBo
 		if enabled == nil then
 			enabled = true
 		end
-		main.addCheckbox(id, label, tooltip, state or 0, x or 0, y or 0, filterBool, enabled)
-		return id
+		local index = main.addCheckbox(id, label, tooltip, state or 0, x or 0, y or 0, filterBool, enabled)
+		return id,index
 	else
 		Ext.PrintError("[LeaderLib:UIExtensions.AddCheckbox] Failed to get root of UIObject", UIExtensions.SwfPath)
 	end

@@ -5,7 +5,6 @@ package
 	public dynamic class MainPanel extends MovieClip
 	{
 		public var elements:Array;
-		public var idInc:uint = 0;
 
 		public function MainPanel()
 		{
@@ -15,9 +14,9 @@ package
 
 		public function addElement(obj:MovieClip) : *
 		{
+			obj.list_id = this.elements.length;
 			elements.push(obj);
 			this.addChild(obj);
-			obj.list_id = this.idInc++;
 		}
 
 		public function removeElement(obj:MovieClip) : *
@@ -69,7 +68,6 @@ package
 				index++;
 			}
 			this.elements = new Array();
-			this.idInc = 0;
 		}
 		
 		public function frame1() : void

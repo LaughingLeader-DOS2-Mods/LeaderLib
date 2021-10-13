@@ -397,7 +397,15 @@ elseif Ext.IsClient() then
 		end
 	end
 
-	local function GetCheckboxPos()
+	local function GetCheckboxPos(checkboxWidth,checkboxHeight)
+		checkboxWidth = checkboxWidth or 56
+		checkboxHeight = checkboxHeight or 44
+		local main = UIExtensions.Instance:GetRoot()
+		if main then
+			local x = math.abs(main.x) + 4
+			local y = main.height - (checkboxHeight + 4)
+			return x,y
+		end
 		return SkipTutorial.CheckBoxPos[1] or 0, SkipTutorial.CheckBoxPos[2] or 1016
 	end
 
@@ -412,7 +420,12 @@ elseif Ext.IsClient() then
 		local description = string.format(GameHelpers.GetStringKeyText("LeaderLib_UI_SkipTutorial_Description", "If enabled, the game will skip the tutorial and go right to the configured starting level (%s)."), levelName)
 		
 		local x,y = GetCheckboxPos()
-		createdCheckboxID = UIExtensions.AddCheckbox(SetSkipTutorial, title, description, GameSettings.Settings.SkipTutorial.Enabled and 1 or 0, x, y)
+		local controlId,index = UIExtensions.AddCheckbox(SetSkipTutorial, title, description, GameSettings.Settings.SkipTutorial.Enabled and 1 or 0, x, y)
+		createdCheckboxID = controlId
+		local main = UIExtensions.Instance:GetRoot()
+		local checkbox = main.mainPanel_mc.elements[index]
+		x,y = GetCheckboxPos(checkbox.width)
+		checkbox.x = x
 
 		Input.RegisterListener(OnInput)
 	end

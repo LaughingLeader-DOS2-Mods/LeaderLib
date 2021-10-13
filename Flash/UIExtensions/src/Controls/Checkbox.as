@@ -6,6 +6,7 @@ package Controls
    import flash.external.ExternalInterface;
    import flash.text.TextField;
    import flash.text.TextFieldAutoSize;
+   import flash.geom.Rectangle;
    
    public dynamic class Checkbox extends MovieClip
    {
@@ -74,6 +75,18 @@ package Controls
       {
          this.stateID = state;
          this.bg_mc.gotoAndStop(this.stateID * 3 + 1);
+      }
+
+      public function setText(text:String) : void
+      {
+         this.label_txt.defaultTextFormat.size = 16;
+         this.label_txt.defaultTextFormat.color = 0xFFFFFF;
+         this.label_txt.defaultTextFormat.font = "Quadraat Offc Pro";
+         this.label_txt.autoSize = TextFieldAutoSize.LEFT;
+         this.label_txt.htmlText = text;
+         var bounds:Rectangle = this.label_txt.getBounds(this);
+         this.label_bg_mc.width = Math.ceil(bounds.x + bounds.width);
+         //this.label_bg_mc.width = Math.ceil((this.label_txt.width*1.2) + 12);
       }
       
       public function frame1() : void

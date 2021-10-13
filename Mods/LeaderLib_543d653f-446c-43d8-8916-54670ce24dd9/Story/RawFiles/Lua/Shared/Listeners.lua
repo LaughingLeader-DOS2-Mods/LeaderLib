@@ -19,8 +19,17 @@ Listeners.TurnDelayed = {}
 Listeners.SyncData = {}
 Listeners.ClientDataSynced = {}
 Listeners.ClientCharacterChanged = {}
+
+---@alias LeaderLibGetTooltipSkillDamageCallback fun(skill:SkillEventData, character:StatCharacter):string
+---@alias LeaderLibGetTooltipSkillParam fun(skill:SkillEventData, character:StatCharacter, param:string):string
+
+---Called from GameHelpers.Tooltip.ReplacePlaceholders when [SkillDamage:SkillId] text exists in the string.
+---@type LeaderLibGetTooltipSkillDamageCallback[]
 Listeners.GetTooltipSkillDamage = {}
+---Called from GameHelpers.Tooltip.ReplacePlaceholders when [Skill:SkillId:Param] text exists in the string.
+---@type LeaderLibGetTooltipSkillParam[]
 Listeners.GetTooltipSkillParam = {}
+
 --Debug listeners
 Listeners.LuaReset = {}
 Listeners.BeforeLuaReset = {}
@@ -159,6 +168,9 @@ if Ext.IsClient() then
 	---Register to a UIType or "All" for all UIs.
 	---@type table<integer,UICreatedCallback>
 	Listeners.UICreated = {All = {}}
+
+	---@type fun(ui:UIExtensionsMain, control:FlashMovieClip, id:string, index:integer):void[]
+	Listeners.UIExtensionsControlAdded = {}
 
 	---Simple listener called when Vars.ControllerEnabled is set to true.
 	---@type function[]

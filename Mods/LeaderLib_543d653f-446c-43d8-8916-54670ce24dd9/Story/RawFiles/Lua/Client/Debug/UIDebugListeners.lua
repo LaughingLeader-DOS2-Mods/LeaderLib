@@ -187,17 +187,29 @@ end)
 
 local enabledParam = {Enabled=true}
 
-local enemyHealthBar = UIListenerWrapper:Create(Data.UIType.enemyHealthBar)
-local worldTooltip = UIListenerWrapper:Create(Data.UIType.worldTooltip)
-local examine = UIListenerWrapper:Create(Data.UIType.examine)
+local areaInteract_c = UIListenerWrapper:Create(Data.UIType.areaInteract_c)
 local characterCreation = UIListenerWrapper:Create(Data.UIType.characterCreation, enabledParam)
 local characterSheetDebug = UIListenerWrapper:Create(Data.UIType.characterSheet, enabledParam)
-local partyInventory = UIListenerWrapper:Create(Data.UIType.partyInventory, enabledParam)
-local pyramid = UIListenerWrapper:Create(Data.UIType.pyramid, enabledParam)
+local containerInventory = UIListenerWrapper:Create(Data.UIType.containerInventory, enabledParam)
+local contextMenu = UIListenerWrapper:Create(Data.UIType.contextMenu, enabledParam)
+local dialog = UIListenerWrapper:Create(Data.UIType.dialog,enabledParam)
+local enemyHealthBar = UIListenerWrapper:Create(Data.UIType.enemyHealthBar)
+local examine = UIListenerWrapper:Create(Data.UIType.examine)
+local gmPanelHUD = UIListenerWrapper:Create(Data.UIType.GMPanelHUD)
+local journal_csp = UIListenerWrapper:Create(Data.UIType.journal_csp)
+local LeaderLib_UIExtensions = UIListenerWrapper:Create("Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/LeaderLib_UIExtensions.swf", enabledParam)
+local mainMenu = UIListenerWrapper:Create(Data.UIType.mainMenu)
 local msgBox = UIListenerWrapper:Create(Data.UIType.msgBox, enabledParam)
 local msgBox_c = UIListenerWrapper:Create(Data.UIType.msgBox_c, enabledParam)
 local overhead = UIListenerWrapper:Create(Data.UIType.overhead, enabledParam)
-local LeaderLib_UIExtensions = UIListenerWrapper:Create("Public/LeaderLib_543d653f-446c-43d8-8916-54670ce24dd9/GUI/LeaderLib_UIExtensions.swf", enabledParam)
+local partyInventory = UIListenerWrapper:Create(Data.UIType.partyInventory, enabledParam)
+local playerInfo = UIListenerWrapper:Create(Data.UIType.playerInfo, {Enabled=true, Ignored={updateStatuses=true}})
+local possessionBar = UIListenerWrapper:Create(Data.UIType.possessionBar)
+local pyramid = UIListenerWrapper:Create(Data.UIType.pyramid, enabledParam)
+local skills = UIListenerWrapper:Create(Data.UIType.skills)
+local statusConsole = UIListenerWrapper:Create(Data.UIType.statusConsole)
+local tooltipMain = UIListenerWrapper:Create(Data.UIType.tooltip)
+local worldTooltip = UIListenerWrapper:Create(Data.UIType.worldTooltip)
 
 -- overhead.CustomCallback.updateOHs = function(self, ui, method)
 	
@@ -247,26 +259,30 @@ statsPanelDebug.CustomCallback["updateArraySystem"] = function(self, ui, method)
 	end
 end
 
-local playerInfo = UIListenerWrapper:Create(Data.UIType.playerInfo, {Enabled=true, Ignored={updateStatuses=true}})
-local tooltipMain = UIListenerWrapper:Create(Data.UIType.tooltip)
-local contextMenu = UIListenerWrapper:Create(Data.UIType.contextMenu)
-
 ---@param ui UIObject
-contextMenu.CustomCallback["updateButtons"] = function(self, ui, method)
-	local this = ui:GetRoot()
-	PrintDebug("windowsMenu_mc", this.windowsMenu_mc.x, this.windowsMenu_mc.y)
-	PrintDebug("stage", this.x, this.y)
-	local arr = this.buttonArr
-	if arr then
-		local length = #arr
-		PrintDebug("buttonArr", length)
-		if length > 0 then
-			for i=0,length do
-				PrintDebug(i, arr[i])
-			end
-		end
-	end
-end
+-- contextMenu.CustomCallback["updateButtons"] = function(self, ui, method)
+-- 	local this = ui:GetRoot()
+-- 	local buttons = {}
+-- 	local arr = this.buttonArr
+-- 	if arr then
+-- 		local length = #arr
+-- 		if length > 0 then
+-- 			for i=0,length,7 do
+-- 				buttons[#buttons+1] = {
+-- 					Index = i,
+-- 					id = arr[i],
+-- 					actionID = arr[i+1],
+-- 					clickSound = arr[i+2],
+-- 					text = arr[i+3],
+-- 					disabled = arr[i+4],
+-- 					legal = arr[i+5],
+-- 					unused = arr[i+6],
+-- 				}
+-- 			end
+-- 		end
+-- 	end
+-- 	Ext.Print(method,Lib.serpent.block(buttons))
+-- end
 
 local hotbar = UIListenerWrapper:Create(Data.UIType.hotBar)
 hotbar.Enabled = true
@@ -299,16 +315,6 @@ hotbar.CustomCallback["updateSlots"] = function(self, ui, method)
 	end
 end
 ]]
-
---"Public/Game/GUI/dialog.swf"
-local dialog = UIListenerWrapper:Create(Data.UIType.dialog)
-local possessionBar = UIListenerWrapper:Create(Data.UIType.possessionBar)
-local gmPanelHUD = UIListenerWrapper:Create(Data.UIType.GMPanelHUD)
-local statusConsole = UIListenerWrapper:Create(Data.UIType.statusConsole)
-local areaInteract_c = UIListenerWrapper:Create(Data.UIType.areaInteract_c)
-local journal_csp = UIListenerWrapper:Create(Data.UIType.journal_csp)
-local skills = UIListenerWrapper:Create(Data.UIType.skills)
-local mainMenu = UIListenerWrapper:Create(Data.UIType.mainMenu)
 
 for k,v in pairs(Data.UIType.optionsSettings) do
 	UIListenerWrapper:Create(v, enabledParam)

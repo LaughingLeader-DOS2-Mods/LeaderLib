@@ -59,7 +59,7 @@ end
 ---@param delimiter string
 ---@param list table
 ---@param uniqueOnly boolean 
----@param getStringFunction table
+---@param getStringFunction fun(k:any,v:any):string
 function StringHelpers.Join(delimiter, list, uniqueOnly, getStringFunction)
 	local finalResult = ""
 	local useFunction = type(getStringFunction) == "function"

@@ -359,6 +359,7 @@ local removedSkills = {}
 Ext.RegisterConsoleCommand("removeskill", function(cmd, skill)
 	local host = CharacterGetHostCharacter()
 	CharacterRemoveSkill(host, skill)
+	GameHelpers.Skill.RemoveFromSlots(host,skill)
 end)
 
 Ext.RegisterConsoleCommand("removeunmemorizedskills", function(cmd)

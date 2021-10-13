@@ -7,6 +7,7 @@ end
 ---@param skill string
 ---@param clearSkill boolean
 function StoreSkillCooldownData(char, skill, clearSkill)
+    char = GameHelpers.GetUUID(char)
     if CharacterIsPlayer(char) == 0 then
         return false
     end
@@ -61,6 +62,7 @@ end
 
 ---Sets a skill into an empty slot, or finds empty space.
 local function TrySetSkillSlot(char, slot, addskill, clearCurrentSlot)
+    char = GameHelpers.GetUUID(char)
     if CharacterIsPlayer(char) == 0 then
         return false
     end
@@ -109,6 +111,7 @@ end
 Ext.NewCall(RefreshSkill, "LeaderLib_Ext_RefreshSkill", "(CHARACTERGUID)_Character, (STRING)_Skill")
 
 function GameHelpers.Skill.GetSkillSlots(char, skill, makeLocal)
+    char = GameHelpers.GetUUID(char)
 	local slots = {}
 	for i=0,144,1 do
         local slot = NRD_SkillBarGetSkill(char, i)
@@ -132,6 +135,7 @@ GetSkillSlots = GameHelpers.Skill.GetSkillSlots
 ---@param removeTargetSkill boolean Optional, removes the swapped skill from the character.
 ---@param resetCooldowns boolean Optional, defaults to true.
 function GameHelpers.Skill.Swap(char, targetSkill, replacementSkill, removeTargetSkill, resetCooldowns)
+    char = GameHelpers.GetUUID(char)
     local cd = nil
     if CharacterHasSkill(char, targetSkill) == 1 then
         cd = NRD_SkillGetCooldown(char, targetSkill)
@@ -174,6 +178,7 @@ end
 ---@param skill string
 ---@param cooldown number
 function GameHelpers.Skill.SetCooldown(char, skill, cooldown)
+    char = GameHelpers.GetUUID(char)
     if CharacterHasSkill(char, skill) == 1 then
         if cooldown ~= 0 then
             --Cooldown 0 makes the engine stop sending updateSlotData invokes to hotBar.fla
@@ -185,6 +190,18 @@ function GameHelpers.Skill.SetCooldown(char, skill, cooldown)
         else
             NRD_SkillSetCooldown(char, skill, 0)
         end
+    end
+end
+
+---Set a skill cooldown if the character has the skill.
+---@param char string
+---@param skill string
+function GameHelpers.Skill.RemoveFromSlots(char, skill)
+    char = GameHelpers.GetUUID(char)
+    local slots = GameHelpers.Skill.GetSkillSlots(char, skill)
+    for i=1,#slots do
+        local slot = slots[i]
+        NRD_SkillBarClear(char,slot)
     end
 end
 

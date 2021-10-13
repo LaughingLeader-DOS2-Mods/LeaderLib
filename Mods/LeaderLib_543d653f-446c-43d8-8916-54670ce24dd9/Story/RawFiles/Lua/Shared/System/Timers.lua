@@ -87,6 +87,17 @@ function Timer.StartOneshot(timerName, delay, callback)
 	return true
 end
 
+---@param timerName string
+---@param delay integer
+function Timer.RestartOneShot(timerName, delay)
+	if OneshotTimerData[timerName] then
+		TimerCancel(timerName)
+		TimerLaunch(timerName, delay)
+		return true
+	end
+	return false
+end
+
 StartOneshotTimer = Timer.StartOneshot
 
 ---Cancels a timer with an optional UUID for object timers.

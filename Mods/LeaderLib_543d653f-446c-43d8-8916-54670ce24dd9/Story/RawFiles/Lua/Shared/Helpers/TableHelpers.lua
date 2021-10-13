@@ -78,6 +78,9 @@ end
 ---@param addFrom table
 ---@param skipExisting boolean|nil If true, existing values aren't updated.
 function TableHelpers.AddOrUpdate(target, addFrom, skipExisting)
+	if target == nil or addFrom == nil then
+		return
+	end
 	for k,v in pairs(addFrom) do
 		if target[k] == nil then
 			target[k] = v

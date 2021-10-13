@@ -415,7 +415,7 @@ end
 
 ---@param skill StatEntrySkillData
 ---@param props EsvShootProjectileRequest
-local function PlaySkillEffects(skill, props, playCastEffect, playTargetEffect)
+local function PlayProjectileSkillEffects(skill, props, playCastEffect, playTargetEffect)
     if playCastEffect and not StringHelpers.IsNullOrEmpty(skill.CastEffect) then
         local effects = StringHelpers.Split(skill.CastEffect, ";")
         for _,effectEntry in pairs(effects) do
@@ -429,7 +429,7 @@ local function PlaySkillEffects(skill, props, playCastEffect, playTargetEffect)
         end
     end
     if playTargetEffect and not StringHelpers.IsNullOrWhitespace(skill.TargetEffect) then
-        effects = StringHelpers.Split(skill.TargetEffect, ";")
+        local effects = StringHelpers.Split(skill.TargetEffect, ";")
         for _,effectEntry in pairs(effects) do
             local effect = string.gsub(effectEntry, ",.+", ""):gsub(":.+", "")
             local bone = effectEntry:gsub(".+:", "") or ""
@@ -495,7 +495,7 @@ function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, level
         end
     end
 
-    PlaySkillEffects(skill, props, playCastEffects, playTargetEffects)
+    PlayProjectileSkillEffects(skill, props, playCastEffects, playTargetEffects)
 
     if count > 0 then
         local i = 0
@@ -541,7 +541,7 @@ function GameHelpers.Skill.Explode(target, skillId, source, level, enemiesOnly, 
         props.SourcePosition = props.TargetPosition
     end
 
-    PlaySkillEffects(skill, props, playCastEffects, playTargetEffects)
+    PlayProjectileSkillEffects(skill, props, playCastEffects, playTargetEffects)
 
     ProcessProjectileProps(props)
 end
@@ -559,7 +559,161 @@ function GameHelpers.Skill.ShootProjectileAt(target, skillId, source, level, ene
     local skill = Ext.GetStat(skillId)
     local props,radius = PrepareProjectileProps(target, skill, source, level, enemiesOnly, extraParams)
 
-    PlaySkillEffects(skill, props, playCastEffects, playTargetEffects)
+    PlayProjectileSkillEffects(skill, props, playCastEffects, playTargetEffects)
 
     ProcessProjectileProps(props)
 end
+
+--Mods.LeaderLib.GameHelpers.Skill.CreateZone(GameHelpers.Math.GetForwardPosition(me.MyGuid, 10.0), "Zone_LaserRay", me.MyGuid)
+
+---@param skill StatEntrySkillData
+---@param source UUID
+---@param targetObject UUID
+---@param sourcePosition number[]
+---@param targetPosition number[]
+---@param playCastEffect boolean|nil
+---@param playTargetEffect boolean|nil
+local function PlayZoneSkillEffects(skill, source, targetObject, sourcePosition, targetPosition, playCastEffect, playTargetEffect)
+    if playCastEffect and not StringHelpers.IsNullOrEmpty(skill.CastEffect) then
+        local effects = StringHelpers.Split(skill.CastEffect, ";")
+        for _,effectEntry in pairs(effects) do
+            local effect = string.gsub(effectEntry, ",.+", ""):gsub(":.+", "")
+            local bone = effectEntry:gsub(".+:", "") or ""
+            if source and not StringHelpers.IsNullOrEmpty(bone) then
+                PlayEffect(source, effect, bone)
+            elseif sourcePosition then
+                PlayEffectAtPosition(effect, table.unpack(sourcePosition))
+            end
+        end
+    end
+    if playTargetEffect and not StringHelpers.IsNullOrWhitespace(skill.TargetEffect) then
+        local effects = StringHelpers.Split(skill.TargetEffect, ";")
+        for _,effectEntry in pairs(effects) do
+            local effect = string.gsub(effectEntry, ",.+", ""):gsub(":.+", "")
+            local bone = effectEntry:gsub(".+:", "") or ""
+            if targetObject and not StringHelpers.IsNullOrEmpty(bone) then
+                PlayEffect(targetObject, effect, bone)
+            elseif targetPosition then
+                PlayEffectAtPosition(effect, table.unpack(targetPosition))
+            end
+        end
+    end
+end
+
+---@class LeaderLibZoneCreationProperties:EsvZoneAction
+---@field PlayCastEffects boolean
+---@field PlayTargetEffects boolean
+---@field ApplySkillProperties boolean
+
+
+local LeaderLibZoneCreationPropertiesNames = {
+    PlayCastEffects = "boolean",
+    PlayTargetEffects = "boolean",
+    ApplySkillProperties = "boolean",
+}
+
+---Shoot a zone/cone skill at a target object or position.
+---@param skillId string Zone or Cone type skill.
+---@param source UUID|EsvCharacter|EsvItem
+---@param target UUID|number[]|EsvCharacter|EsvItem
+---@param extraParams LeaderLibZoneCreationProperties A table of properties to apply on top of the parsed skill properties.
+function GameHelpers.Skill.ShootZoneAt(skillId, source, target, extraParams)
+    ---@type StatEntrySkillData
+    local skill = Ext.GetStat(skillId)
+    ---@type EsvZoneAction
+    local action = Ext.CreateSurfaceAction("ZoneAction")
+    ---@type LeaderLibZoneCreationProperties
+    local props = {} 
+    props.SkillId = skillId
+    --zone.AiFlags = skill.AIFlags
+    props.AngleOrBase = math.max(skill.Base or 0, skill.Angle or 0)
+    props.BackStart = skill.BackStart
+    props.DeathType = skill.DeathType
+    props.FrontOffset = skill.FrontOffset
+    props.GrowStep = skill.SurfaceGrowStep
+    props.GrowTimer = skill.SurfaceGrowInterval * 0.01
+    props.MaxHeight = 2.4
+    props.Target = GameHelpers.Math.GetPosition(target, false, {0,0,0})
+    props.Shape = skill.Shape == "Square" and 1 or 0
+    props.Radius = skill.Range
+    --Inherited properties
+    props.SurfaceType = skill.SurfaceType
+    props.StatusChance = 1.0
+    props.Duration = (math.max(1, skill.SurfaceLifetime)) * 6.0
+    if source then
+        local sourceObject = GameHelpers.TryGetObject(source, true)
+        if sourceObject then
+            props.OwnerHandle = sourceObject.Handle
+            props.Position = sourceObject.WorldPos
+
+            if GameHelpers.Ext.ObjectIsCharacter(sourceObject) then
+                local b,damageList,deathType = xpcall(Game.Math.GetSkillDamage, debug.traceback, skill, sourceObject.Stats, false, false, props.Position, props.Target, sourceObject.Stats.Level, false)
+                if b then
+                    props.DamageList = damageList
+                else
+                    Ext.PrintError(damageList)
+                end
+            end
+        end
+    end
+    if not props.Position then
+        props.Position = props.Target
+    end
+
+    local playCastEffects, playTargetEffects, applySkillProperties = false,false,false
+    local sourceId = GameHelpers.GetUUID(source)
+
+    if type(extraParams) == "table" then
+        for k,v in pairs(extraParams) do
+            if LeaderLibZoneCreationPropertiesNames[k] then
+                if type(v) == LeaderLibZoneCreationPropertiesNames[k] then
+                    if k == "PlayCastEffects" then
+                        playCastEffects = v
+                    elseif k == "PlayTargetEffects" then
+                        playCastEffects = v
+                    elseif k == "ApplySkillProperties" and v == true then
+                        applySkillProperties = true
+                        if not Vars.ApplyZoneSkillProperties[skillId] then
+                            Vars.ApplyZoneSkillProperties[skillId] = {}
+                        end
+                        local timerName = string.format("%s_%s_ApplySkillPropertiesDone", skillId, sourceId)
+                        Vars.ApplyZoneSkillProperties[skillId][sourceId] = true
+                        Timer.StartOneshot(timerName, 2, function()
+                            if Vars.ApplyZoneSkillProperties[skillId] then
+                                Vars.ApplyZoneSkillProperties[skillId][sourceId] = timerName
+                            end
+                        end)
+                    end
+                end
+            else
+                props[k] = v
+            end
+        end
+    end
+
+    if applySkillProperties then
+        if GetDistanceToPosition(sourceId, props.Position[1], props.Position[2], props.Position[3]) <= 1 then
+            Ext.ExecuteSkillPropertiesOnTarget(skillId, sourceId, sourceId, props.Position, "Self", false)
+        end
+    end
+
+    PlayZoneSkillEffects(skill, sourceId, GameHelpers.GetUUID(target), props.Position, props.Target, playCastEffects, playTargetEffects)
+
+    for k,v in pairs(props) do
+        action[k] = v
+    end
+    Ext.ExecuteSurfaceAction(action)
+    return true
+end
+
+---Shoot a zone/cone skill in the direction the source object is looking.
+---@param skillId string Zone or Cone type skill.
+---@param source UUID|EsvCharacter|EsvItem
+---@param extraParams LeaderLibZoneCreationProperties A table of properties to apply on top of the parsed skill properties.
+function GameHelpers.Skill.ShootZoneFromSource(skillId, source, extraParams)
+    local dist = extraParams and extraParams.Radius or Ext.StatGetAttribute(skillId, "Range") or 2
+    local target = GameHelpers.Math.GetForwardPosition(source, dist)
+    GameHelpers.Skill.ShootZoneAt(skillId, source, target, extraParams)
+end
+
+--Mods.LeaderLib.GameHelpers.Skill.ShootZoneFromSource("Cone_SilencingStare", me.MyGuid, {PlayCastEffects=true,PlayTargetEffects=true,ApplySkillProperties=true})

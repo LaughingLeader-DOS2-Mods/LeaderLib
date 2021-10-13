@@ -29,6 +29,10 @@ Vars = {
 		Statuses = {},
 		Total = 0
 	},
+	---Temporary list of skills to listen for hitting, to then apply SkillProperties.
+	---@see GameHelpers.Skill.ShootZoneAt
+	---@type table<UUID,string>
+	ApplyZoneSkillProperties = {},
 	Commands = {
 		CooldownsDisabled = false,
 		Teleporting = false,
@@ -48,6 +52,7 @@ Vars = {
 	ControllerEnabled = false,
 	Users = {},
 	IsEditorMode = false,
+	IsClient = Ext.IsClient(),
 	ConsoleWindowVariables = {},
 }
 

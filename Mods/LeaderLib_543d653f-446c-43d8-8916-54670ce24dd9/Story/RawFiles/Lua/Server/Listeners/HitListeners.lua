@@ -82,6 +82,14 @@ RegisterProtectedExtenderListener("StatusHitEnter", function(hitStatus, hitConte
 	local targetId = GameHelpers.GetUUID(target, true)
 	local sourceId = GameHelpers.GetUUID(source, true)
 
+	local applySkillProperties = Vars.ApplyZoneSkillProperties[hitStatus.SkillId]
+	if applySkillProperties then
+		if applySkillProperties[sourceId] then
+			Ext.ExecuteSkillPropertiesOnTarget(hitStatus.SkillId, sourceId, targetId, target.WorldPos, "Target", GameHelpers.Ext.ObjectIsItem(source))
+			Timer.RestartOneShot(applySkillProperties[sourceId], 1)
+		end
+	end
+
 	---@type HitRequest
 	local hitRequest = hitContext.Hit or hitStatus.Hit
 
@@ -100,10 +108,19 @@ RegisterProtectedExtenderListener("StatusHitEnter", function(hitStatus, hitConte
 		end
 	end
 
-	-- if Vars.LeaderDebugMode then
-	-- 	Ext.Print("hitStatus", getmetatable(hitStatus), Lib.serpent.block(hitStatus))
-	-- 	Ext.Print("hitContext", getmetatable(hitContext), hitContext, Lib.serpent.block(hitContext))
-	-- end
+	if Vars.LeaderDebugMode then
+		local dataString = "local data = " .. Lib.serpent.block({
+			EsvStatusHit = hitStatus,
+			HitContext = hitContext, 	
+		})
+		if skill then
+			Ext.SaveFile(string.format("Logs/HitTracing/%s_%s.lua", skill.Name, Ext.MonotonicTime()), dataString)
+		else
+			Ext.SaveFile(string.format("Logs/HitTracing/%s_%s.lua", hitStatus.DamageSourceType, Ext.MonotonicTime()), dataString)
+		end
+		--Ext.Print("hitStatus", getmetatable(hitStatus), Lib.serpent.block(hitStatus))
+		--Ext.Print("hitContext", getmetatable(hitContext), hitContext, Lib.serpent.block(hitContext))
+	end
 
 	if Vars.DebugMode and Vars.Print.Hit then
 		local wpn = hitStatus.WeaponHandle and Ext.GetItem(hitStatus.WeaponHandle) or nil

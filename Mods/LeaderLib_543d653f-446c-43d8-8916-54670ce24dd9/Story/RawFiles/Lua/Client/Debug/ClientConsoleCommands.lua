@@ -80,7 +80,7 @@ if Vars.DebugMode then
     Input.RegisterListener("FlashHome", function(event, pressed, id, keys, controllerEnabled)
         if not pressed and Input.IsPressed("FlashCtrl") then
             Vars.Commands.Teleporting = not Vars.Commands.Teleporting
-            local text = string.format("<font color='#76FF00'>Click to Teleported %s</font>", Vars.Commands.Teleporting and "Enabled" or "Disabled")
+            local text = string.format("<font color='#76FF00'>Click to Teleport %s</font>", Vars.Commands.Teleporting and "Enabled" or "Disabled")
             Ext.PostMessageToServer("LeaderLib_CharacterStatusText", Ext.JsonStringify({
                 Target = Client.Character.UUID,
                 Text = text

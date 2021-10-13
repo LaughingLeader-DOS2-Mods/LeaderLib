@@ -243,6 +243,16 @@ end)
 Ext.RegisterNetListener("LeaderLib_Client_InvokeListeners", function(cmd, payload)
 	if string.find(payload, "{") then
 		local data = Common.JsonParse(payload)
+		if data._PrintSettings then
+			for k,v in pairs(data._PrintSettings) do
+				Vars.Print[k] = v
+			end
+		end
+		if data._CommandSettings then
+			for k,v in pairs(data._CommandSettings) do
+				Vars.Commands[k] = v
+			end
+		end
 		local listeners = Listeners[data.Event]
 		if listeners then
 			if data.Event == "LuaReset" then

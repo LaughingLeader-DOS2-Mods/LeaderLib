@@ -23,15 +23,12 @@ local function TryGetPos(x)
 end
 
 ---Get a position derived from a character's forward facing direction.
----@param char string
+---@param char UUID|EsvCharacter
 ---@param distanceMult number
 ---@param fromPosition number[]
 function GameHelpers.Math.GetForwardPosition(char, distanceMult, fromPosition)
     ---@type EsvCharacter
-    local character = char
-    if type(char) == "string" then
-        character = Ext.GetCharacter(char)
-    end
+    local character = GameHelpers.GetCharacter(char)
     local x,y,z = table.unpack(character.WorldPos)
     if character ~= nil then
         if distanceMult == nil then
@@ -54,32 +51,37 @@ function GameHelpers.Math.GetForwardPosition(char, distanceMult, fromPosition)
     return {x,y,z}
 end
 
+---@param source UUID|EsvCharacter
+---@param distanceMult number
+---@param x number
+---@param y number
+---@param z number
+---@param forwardVector number[]|nil
 function GameHelpers.Math.ExtendPositionWithForwardDirection(source, distanceMult, x,y,z, forwardVector)
-    local character = nil
-    if type(source) == "string" then
-        character = Ext.GetCharacter(source)
-    else
-        character = source
-    end
-    if character ~= nil then
+    local character = GameHelpers.GetCharacter(source)
+    if character then
         if not x and not y and not z then
             x,y,z = table.unpack(character.WorldPos)
         end
+        if not forwardVector then
+            forwardVector = {
+                -character.Stats.Rotation[7],
+                0,---rot[8] * distanceMult, -- Rot Y is never used since objects can't look "up"
+                -character.Stats.Rotation[9],
+            }
+        end
     end
-    if distanceMult == nil then
+    if type(distanceMult) ~= "number" then
         distanceMult = 1.0
     end
     if forwardVector then
-        x = x + (-forwardVector[7] * distanceMult)
-        z = z + (-forwardVector[9] * distanceMult)
-    elseif (character and character.Stats) then
-        forwardVector = {
-            -character.Stats.Rotation[7] * distanceMult,
-            0,---rot[8] * distanceMult, -- Rot Y is never used since objects can't look "up"
-            -character.Stats.Rotation[9] * distanceMult,
-        }
-        x = x + forwardVector[1]
-        z = z + forwardVector[3]
+        if #forwardVector >= 9 then
+            x = x + (-forwardVector[7] * distanceMult)
+            z = z + (-forwardVector[9] * distanceMult)
+        else
+            x = x + (-forwardVector[1] * distanceMult)
+            z = z + (-forwardVector[3] * distanceMult)
+        end
     end
 
     y = GameHelpers.Grid.GetY(x,z)

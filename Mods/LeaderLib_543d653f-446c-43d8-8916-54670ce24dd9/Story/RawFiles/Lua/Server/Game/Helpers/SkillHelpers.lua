@@ -478,11 +478,13 @@ function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, level
             props.TargetPosition = props.SourcePosition
         else
             props.TargetPosition = {0,0,0}
-            props.SourcePosition = props.TargetPosition
+            props.SourcePosition = {0,0,0}
         end
     else
-        props.SourcePosition = props.TargetPosition
+        props.SourcePosition = TableHelpers.Clone(props.TargetPosition)
     end
+
+    props.SourcePosition[2] = props.SourcePosition[2] + skill.Height
 
     local id = string.format("%s%s", Ext.MonotonicTime(), Ext.Random(999999999))
 

@@ -272,10 +272,26 @@ local function GetRandomPositionInCircleRadius(tx,ty,tz,radius,angle,theta)
     return GameHelpers.Grid.GetValidPositionInRadius({x,ty,z}, radius)
 end
 
+---@class LeaderLibProjectileCreationProperties:EsvShootProjectileRequest
+---@field PlayCastEffects boolean
+---@field PlayTargetEffects boolean
+---@field EnemiesOnly boolean
+
+local LeaderLibProjectileCreationPropertyNames = {
+    PlayCastEffects = "boolean",
+    PlayTargetEffects = "boolean",
+    EnemiesOnly = "boolean",
+}
+
+---@param target UUID|EsvCharacter|EsvItem|number[]
 ---@param skill StatEntrySkillData
+---@param source UUID|EsvCharacter|EsvItem|number[]
+---@param extraParams LeaderLibProjectileCreationProperties
 ---@return EsvShootProjectileRequest
-local function PrepareProjectileProps(target, skill, source, level, enemiesOnly, extraParams)
-    local sourceLevel = level or 1
+local function PrepareProjectileProps(target, skill, source, extraParams)
+    local enemiesOnly = extraParams and extraParams.EnemiesOnly
+
+    local sourceLevel = extraParams and extraParams.CasterLevel or nil
     ---@type number[]
     local targetPos,sourcePos = nil,nil
     ---@type EsvCharacter|EsvItem
@@ -300,9 +316,6 @@ local function PrepareProjectileProps(target, skill, source, level, enemiesOnly,
                 props.HitObject = targetObject.MyGuid
                 props.HitObjectPosition = targetObject.WorldPos
                 props.Target = targetObject.MyGuid
-                if ObjectIsCharacter(targetObject.MyGuid) == 1 then
-                    sourceLevel = CharacterGetLevel(targetObject.MyGuid)
-                end
                 props.Caster = targetObject.MyGuid
                 props.Source = targetObject.MyGuid
             end
@@ -323,9 +336,6 @@ local function PrepareProjectileProps(target, skill, source, level, enemiesOnly,
             props.Source = sourceObject.MyGuid
             local canCheckStats = ObjectIsItem(sourceObject.MyGuid) == 0 or not GameHelpers.Item.IsObject(sourceObject)
             if canCheckStats and sourceObject.Stats then
-                if not level then
-                    sourceLevel = sourceObject.Stats.Level
-                end
                 if sourceObject.Stats.IsSneaking ~= nil then
                     props.IsStealthed = sourceObject.Stats.IsSneaking
                 end
@@ -340,9 +350,24 @@ local function PrepareProjectileProps(target, skill, source, level, enemiesOnly,
         props.SourcePosition = target
     end
 
+    local sourceType = GameHelpers.Ext.ObjectIsCharacter(sourceObject) and "character" or GameHelpers.Ext.ObjectIsItem(sourceObject) and "item"
+    local targetType = GameHelpers.Ext.ObjectIsCharacter(targetObject) and "character" or GameHelpers.Ext.ObjectIsItem(targetObject) and "item"
+
+    if sourceLevel == nil then
+        if sourceObject then
+            if sourceType == "character" then
+                sourceLevel = sourceObject.Stats.Level
+            elseif sourceType == "item" and not GameHelpers.Item.IsObject(sourceObject) then
+                sourceLevel = sourceObject.Stats.Level
+            end
+        elseif targetType == "character" then
+            sourceLevel = targetObject.Stats.Level
+        end
+    end
+
     if targetObject and sourceObject and enemiesOnly == true then
-        if ObjectIsCharacter(sourceObject.MyGuid) == 1 
-        and ObjectIsCharacter(targetObject.MyGuid) == 1 
+        if sourceType == "character"
+        and targetType == "character"
         and (CharacterIsEnemy(targetObject.MyGuid, sourceObject.MyGuid) == 0 and IsTagged(target.MyGuid, "LeaderLib_FriendlyFireEnabled") == 0)
         then
             props.HitObject = nil
@@ -378,9 +403,9 @@ local function PrepareProjectileProps(target, skill, source, level, enemiesOnly,
         props.Source = "36069245-0e2d-44b1-9044-6797bd29bb15"
     end
 
-    if extraParams and type(extraParams) == "table" then
+    if type(extraParams) == "table" then
         for k,v in pairs(extraParams) do
-            if v ~= nil then
+            if not LeaderLibProjectileCreationPropertyNames[k] then
                 props[k] = v
             end
         end
@@ -462,15 +487,12 @@ end
 ---@param target string|number[]|EsvCharacter|EsvItem
 ---@param skillId string
 ---@param source string|EsvCharacter|EsvItem
----@param level integer|nil
----@param enemiesOnly boolean|nil
----@param playCastEffects boolean|nil
----@param playTargetEffects boolean|nil
----@param extraParams table|nil
-function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, level, enemiesOnly, playCastEffects, playTargetEffects, extraParams)
+---@param extraParams LeaderLibProjectileCreationProperties
+function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, extraParams)
+    extraParams = type(extraParams) == "table" and extraParams or {}
     local skill = Ext.GetStat(skillId)
     local count = skill.StrikeCount or 0
-    local props,radius = PrepareProjectileProps(target, skill, source, level, enemiesOnly, extraParams)
+    local props,radius = PrepareProjectileProps(target, skill, source, extraParams)
 
     --Making the source and target positions match
     if not props.TargetPosition then
@@ -514,7 +536,7 @@ function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, level
         end
     end
 
-    PlayProjectileSkillEffects(skill, props, playCastEffects, playTargetEffects)
+    PlayProjectileSkillEffects(skill, props, extraParams.PlayCastEffects, extraParams.PlayTargetEffects)
 
     if count > 0 then
         local i = 0
@@ -539,14 +561,11 @@ end
 ---@param target string|number[]|EsvCharacter|EsvItem
 ---@param skillId string
 ---@param source string|EsvCharacter|EsvItem
----@param level integer|nil
----@param enemiesOnly boolean|nil
----@param playCastEffects boolean|nil
----@param playTargetEffects boolean|nil
----@param extraParams table|nil
-function GameHelpers.Skill.Explode(target, skillId, source, level, enemiesOnly, playCastEffects, playTargetEffects, extraParams)
+---@param extraParams LeaderLibProjectileCreationProperties
+function GameHelpers.Skill.Explode(target, skillId, source, extraParams)
+    extraParams = type(extraParams) == "table" and extraParams or {}
     local skill = Ext.GetStat(skillId)
-    local props,radius = PrepareProjectileProps(target, skill, source, level, enemiesOnly, extraParams)
+    local props,radius = PrepareProjectileProps(target, skill, source, extraParams)
 
     --Making the source and target positions match
     if not props.TargetPosition then
@@ -560,7 +579,7 @@ function GameHelpers.Skill.Explode(target, skillId, source, level, enemiesOnly, 
         props.SourcePosition = props.TargetPosition
     end
 
-    PlayProjectileSkillEffects(skill, props, playCastEffects, playTargetEffects)
+    PlayProjectileSkillEffects(skill, props, extraParams.PlayCastEffects, extraParams.PlayTargetEffects)
 
     ProcessProjectileProps(props)
 end
@@ -569,16 +588,13 @@ end
 ---@param target string|number[]|EsvCharacter|EsvItem
 ---@param skillId string
 ---@param source string|EsvCharacter|EsvItem
----@param level integer|nil
----@param enemiesOnly boolean|nil
----@param playCastEffects boolean|nil
----@param playTargetEffects boolean|nil
----@param extraParams table|nil
-function GameHelpers.Skill.ShootProjectileAt(target, skillId, source, level, enemiesOnly, playCastEffects, playTargetEffects, extraParams)
+---@param extraParams LeaderLibProjectileCreationProperties|nil
+function GameHelpers.Skill.ShootProjectileAt(target, skillId, source, extraParams)
+    extraParams = type(extraParams) == "table" and extraParams or {}
     local skill = Ext.GetStat(skillId)
-    local props,radius = PrepareProjectileProps(target, skill, source, level, enemiesOnly, extraParams)
+    local props,radius = PrepareProjectileProps(target, skill, source, extraParams)
 
-    PlayProjectileSkillEffects(skill, props, playCastEffects, playTargetEffects)
+    PlayProjectileSkillEffects(skill, props, extraParams.PlayCastEffects, extraParams.PlayTargetEffects)
 
     ProcessProjectileProps(props)
 end

@@ -265,3 +265,10 @@ function GameHelpers.Math.IsNaN(x)
     end
     return true
 end
+
+---@param value number
+---@param minValue number
+---@param maxValue number
+function GameHelpers.Math.Clamp(value, minValue, maxValue)
+    return math.max(math.min(value, maxValue), minValue)
+end

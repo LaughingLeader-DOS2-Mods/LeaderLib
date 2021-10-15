@@ -123,3 +123,18 @@ function TableHelpers.ToString(tbl, indent)
 	toprint = toprint .. string.rep(" ", indent-1) .. "}"
 	return toprint
 end
+
+---Randomly reorders an array and returns a new copy.
+---@param tbl any[]
+---@return any[]
+function TableHelpers.ShuffleTable(tbl)
+	local newTable = {}
+	for i = 1, #tbl do
+	  newTable[i] = tbl[i]
+	end
+	for i = #newTable, 2, -1 do
+	  local j = Ext.Random(i)
+	  newTable[i], newTable[j] = newTable[j], newTable[i]
+	end
+	return newTable
+end

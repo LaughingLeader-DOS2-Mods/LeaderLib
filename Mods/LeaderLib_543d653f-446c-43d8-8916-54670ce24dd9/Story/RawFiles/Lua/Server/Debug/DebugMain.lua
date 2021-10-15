@@ -633,22 +633,18 @@ host = function() return Ext.GetCharacter(CharacterGetHostCharacter()) end
 
 ---@param request EsvShootProjectileRequest
 RegisterProtectedExtenderListener("BeforeShootProjectile", function (request)
-	local data = {
-	UnknownFlag1 = request.UnknownFlag1,
-	Random = request.Random,
-	}
-	fprint(LOGLEVEL.DEFAULT, "[BeforeShootProjectile]\n%s", Ext.JsonStringify(data))
+	--fprint(LOGLEVEL.DEFAULT, "[BeforeShootProjectile]\n%s", Lib.serpent.block(request))
+	-- if Vars.LeaderDebugMode then
+	-- 	Ext.SaveFile(string.format("Logs/HitTracing/%s_%s_BeforeShootProjectile.lua", request.SkillId, Ext.MonotonicTime()), "local data = " .. Lib.serpent.block(request))
+	-- end
 end)
 
 ---@param projectile EsvProjectile
 RegisterProtectedExtenderListener("ShootProjectile", function (projectile)
-	local data = {
-	DamageSourceType = projectile.DamageSourceType,
-	DamageType = projectile.DamageType,
-	HitInterpolation = projectile.HitInterpolation,
-	UseCharacterStats = projectile.UseCharacterStats,
-	}
-	fprint(LOGLEVEL.DEFAULT, "[ShootProjectile]\n%s", Ext.JsonStringify(data))
+	--fprint(LOGLEVEL.DEFAULT, "[ShootProjectile]\n%s", Lib.serpent.block(projectile))
+	-- if Vars.LeaderDebugMode then
+	-- 	Ext.SaveFile(string.format("Logs/HitTracing/%s_%s_ShootProjectile.lua", projectile.SkillId, Ext.MonotonicTime()), "local data = " .. Lib.serpent.block(projectile))
+	-- end
 end)
 
 local lastDamageType = {}
@@ -656,27 +652,23 @@ local lastDamageType = {}
 ---@param projectile EsvProjectile
 ---@param hitObject EsvGameObject
 ---@param position number[]
---[[ RegisterProtectedExtenderListener("ProjectileHit", function (projectile, hitObject, position)
-	local caster = Ext.GetGameObject(projectile.CasterHandle)
-	if caster then
-		if Features.FixChaosWeaponProjectileDamage and projectile.DamageType ~= "None" then
-			lastDamageType[caster.MyGuid] = projectile.DamageType
+RegisterProtectedExtenderListener("ProjectileHit", function (projectile, hitObject, position)
+	if Vars.LeaderDebugMode then
+		-- local data = {
+		-- 	EsvProjectile = projectile,
+		-- 	EsvGameObject = hitObject,
+		-- 	Position = position
+		-- }
+		-- Ext.SaveFile(string.format("Logs/HitTracing/%s_%s_ProjectileHit.lua", projectile.SkillId, Ext.MonotonicTime()), "local data = " .. Lib.serpent.block(data))
+		if string.find(projectile.SkillId, "HailStrike") then
+			local handle = PlayLoopEffectAtPosition("RS3_FX_UI_TargetPreviewer_Void_01", position[1], position[2], position[3])
+			Timer.StartOneshot(string.format("DebugHailStrikeEffect_%s_%s", projectile.NetID, Ext.Random(99999999)), 15000, function()
+				StopLoopEffect(handle)
+			end)
 		end
 	end
-	local data = {
-	Skill = projectile.SkillId,
-	DamageSourceType = projectile.DamageSourceType,
-	DamageType = projectile.DamageType,
-	HitInterpolation = projectile.HitInterpolation,
-	UseCharacterStats = projectile.UseCharacterStats,
-	Caster = caster and {
-	MyGuid = caster.MyGuid,
-	NetID = caster.NetID
-	} or "nil"
-	}
-	fprint(LOGLEVEL.DEFAULT, "[ProjectileHit]\n%s", Lib.inspect(data))
 end)
- ]]
+
 --- @param caster EsvGameObject
 --- @param position number[]
 --- @param damageList DamageList

@@ -373,12 +373,31 @@ function GameHelpers.Skill.CreateProjectileStrike(target, skillId, source, extra
     end
 end
 
+---@param target string|number[]|EsvCharacter|EsvItem
+---@param skillId string
+---@param source string|EsvCharacter|EsvItem
+---@param extraParams LeaderLibProjectileCreationProperties Optional table of properties to apply on top of the properties set from the skill stat.
+function GameHelpers.Skill.ShootProjectileAt(target, skillId, source, extraParams)
+    extraParams = type(extraParams) == "table" and extraParams or {}
+    local skill = Ext.GetStat(skillId)
+    local props,radius = PrepareProjectileProps(target, skill, source, extraParams)
+
+    PlayProjectileSkillEffects(skill, props, extraParams.PlayCastEffects, extraParams.PlayTargetEffects)
+
+    ProcessProjectileProps(props)
+end
 
 ---@param target string|number[]|EsvCharacter|EsvItem
 ---@param skillId string
 ---@param source string|EsvCharacter|EsvItem
----@param extraParams LeaderLibProjectileCreationProperties
+---@param extraParams LeaderLibProjectileCreationProperties Optional table of properties to apply on top of the properties set from the skill stat.
 function GameHelpers.Skill.Explode(target, skillId, source, extraParams)
+    --Support for older usage
+    if extraParams == true then
+        extraParams = {
+            EnemiesOnly = true
+        }
+    end
     extraParams = type(extraParams) == "table" and extraParams or {}
     local skill = Ext.GetStat(skillId)
     local props,radius = PrepareProjectileProps(target, skill, source, extraParams)
@@ -394,21 +413,6 @@ function GameHelpers.Skill.Explode(target, skillId, source, extraParams)
     else
         props.SourcePosition = props.TargetPosition
     end
-
-    PlayProjectileSkillEffects(skill, props, extraParams.PlayCastEffects, extraParams.PlayTargetEffects)
-
-    ProcessProjectileProps(props)
-end
-
-
----@param target string|number[]|EsvCharacter|EsvItem
----@param skillId string
----@param source string|EsvCharacter|EsvItem
----@param extraParams LeaderLibProjectileCreationProperties|nil
-function GameHelpers.Skill.ShootProjectileAt(target, skillId, source, extraParams)
-    extraParams = type(extraParams) == "table" and extraParams or {}
-    local skill = Ext.GetStat(skillId)
-    local props,radius = PrepareProjectileProps(target, skill, source, extraParams)
 
     PlayProjectileSkillEffects(skill, props, extraParams.PlayCastEffects, extraParams.PlayTargetEffects)
 
@@ -467,7 +471,7 @@ local LeaderLibZoneCreationPropertiesNames = {
 ---@param skillId string Zone or Cone type skill.
 ---@param source UUID|EsvCharacter|EsvItem
 ---@param target UUID|number[]|EsvCharacter|EsvItem
----@param extraParams LeaderLibZoneCreationProperties A table of properties to apply on top of the parsed skill properties.
+---@param extraParams LeaderLibZoneCreationProperties An optional table of properties to apply on top of the parsed skill properties.
 function GameHelpers.Skill.ShootZoneAt(skillId, source, target, extraParams)
     ---@type StatEntrySkillData
     local skill = Ext.GetStat(skillId)

@@ -379,12 +379,12 @@ local function TryFindUI(ui, tryFindId)
 			end
 		end
 	end
-	PrintDebug("Failed to find UI file for UI", ui, id)
+	fprint(LOGLEVEL.WARNING, "Failed to find UI file for UI", ui, id)
 end
 
-Ext.RegisterListener("UIObjectCreated", function(ui)
+--[[ Ext.RegisterListener("UIObjectCreated", function(ui)
 	TryFindUI(ui)
-end)
+end) ]]
 
 local function PrintAllUITypeID()
 	for i,v in ipairs(allUIFiles) do
@@ -421,7 +421,7 @@ Ext.RegisterConsoleCommand("tooltiptest", function(cmd, delay)
 	end, 50)
 end)
 
-Ext.RegisterListener("SessionLoaded", function()
+--[[ Ext.RegisterListener("SessionLoaded", function()
 	local tryFindUI = function(ui, ...)
 		if not foundUITypeIds[ui:GetTypeId()] then
 			local id,file = TryFindUI(ui)
@@ -433,4 +433,4 @@ Ext.RegisterListener("SessionLoaded", function()
 
 	Ext.RegisterUINameCall("PlaySound", tryFindUI)
 	Ext.RegisterUINameCall("UIAssert", tryFindUI)
-end)
+end) ]]

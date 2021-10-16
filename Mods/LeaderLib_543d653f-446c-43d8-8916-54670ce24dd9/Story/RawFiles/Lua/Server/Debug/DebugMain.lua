@@ -622,11 +622,6 @@ end) ]]
 	-- 	print("========")
 -- end)
 
-_ENV = _G
-if setfenv ~= nil then
-	setfenv(1, _G)
-end
-host = function() return Ext.GetCharacter(CharacterGetHostCharacter()) end
 -- local time = Ext.MonotonicTime(); local names = {}; for k,v in pairs(_G) do names[#names+1] = k end; table.sort(names); for _,v in ipairs(names) do print(v) end; print("Time total:", Ext.MonotonicTime() - time);
 -- local time = Ext.MonotonicTime(); local names = {}; for k,v in pairs(_G) do names[#names+1] = k end; table.sort(names); for _,v in pairs(names) do print(v) end; print("Time total:", Ext.MonotonicTime() - time);
 -- local time = Ext.MonotonicTime(); local names = {}; for k,v in pairs(_G) do if not Mods.LeaderLib.Data.OsirisEvents[k] then names[#names+1] = k end; end; table.sort(names); for i=1,#names do print(names[i]) end; print("Time total:", Ext.MonotonicTime() - time);

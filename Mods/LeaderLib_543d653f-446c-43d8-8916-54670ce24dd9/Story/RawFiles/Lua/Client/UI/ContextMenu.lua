@@ -1,8 +1,8 @@
 ---@alias ContextMenuActionCallback fun(self:ContextMenu, ui:UIObject, id:integer, actionID:integer, handle:number)
 
 ---@class ContextMenuEntry:table
----@field ID number
----@field ActionID number
+---@field ID integer
+---@field ActionID string
 ---@field Visible boolean
 ---@field ClickSound boolean
 ---@field Label string
@@ -10,6 +10,7 @@
 ---@field Legal boolean
 ---@field Callback ContextMenuActionCallback
 ---@field StayOpen boolean|nil
+---@field Handle number
 
 local ACTIONS = {
 	HideStatus = "hideStatus",
@@ -38,6 +39,12 @@ local ContextMenu = {
 }
 ContextMenu.__index = ContextMenu
 local self = ContextMenu
+
+---@type ContextMenuEntry[]
+local builtinEntries = {}
+local lastBuiltinID = 999
+---@type table<integer,ContextMenuEntry>
+local GENERATED_ID_TO_ENTRY = {}
 
 ContextMenu.Actions[ACTIONS.HideStatus] = function(self, ui, id, actionID, handle)
 	if self.ContextStatus and not StringHelpers.IsNullOrWhitespace(self.ContextStatus.StatusId) then
@@ -162,18 +169,18 @@ end
 
 ---@private
 ---@param ui UIObject
-function ContextMenu:OnEntryClicked(ui, event, id, actionID, handle)
+function ContextMenu:OnEntryClicked(ui, event, id, actionID, handle, isBuiltIn)
 	local entry = self.Entries[id]
 	local action = self.Actions[actionID] or (entry and entry.Callback)
 	if action then
-		local b,err = xpcall(action, debug.traceback, self, ui, id, actionID, handle)
+		local b,err = xpcall(action, debug.traceback, self, ui, id, actionID, entry.Handle)
 		if not b then
 			Ext.PrintError(err)
 		end
 	else
 		fprint(LOGLEVEL.WARNING, "[LeaderLib:ContextMenu:OnEntryClicked] No action registered for (%s).", actionID)
 	end
-	InvokeListenerCallbacks(Listeners.OnContextMenuEntryClicked, self, ui, id, actionID, handle)
+	InvokeListenerCallbacks(Listeners.OnContextMenuEntryClicked, self, ui, id, actionID, entry.Handle)
 	if not entry or (entry and not entry.StayOpen) then
 		ui:Invoke("showContextMenu", false)
 	end
@@ -301,6 +308,66 @@ function ContextMenu:OnShowExamineStatusTooltip(ui, event, typeIndex, statusDoub
 end
 
 ---@private
+function ContextMenu:OnBuiltinMenuUpdating(ui, event)
+	local this = ui:GetRoot()
+	local buttonArr = this.buttonArr
+	local buttons = {}
+	local length = #buttonArr
+	for i=0,length-1,7 do
+		--[[ id = Number(this.buttonArr[i]);
+		actionID = Number(this.buttonArr[i + 1]);
+		clickSound = Boolean(this.buttonArr[i + 2]);
+		unused = String(this.buttonArr[i + 3]);
+		text = String(this.buttonArr[i + 4]);
+		disabled = Boolean(this.buttonArr[i + 5]);
+		legal = Boolean(this.buttonArr[i + 6]); ]]
+		local entry = {
+			id = this.buttonArr[i],
+			actionID = this.buttonArr[i+1],
+			clickSound = this.buttonArr[i+2],
+			unused = this.buttonArr[i+3],
+			text = this.buttonArr[i+4],
+			disabled = this.buttonArr[i+5],
+			legal = this.buttonArr[i+6],
+		}
+		buttons[#buttons+1] = entry
+		--ContextMenu:AddEntry()
+	end
+	InvokeListenerCallbacks(Listeners.OnBuiltinContextMenuOpening, self, ui, this, buttonArr, buttons)
+
+	local i = length
+	for _,v in pairs(builtinEntries) do
+		buttonArr[i] = v.ID
+		buttonArr[i+1] = v.ID
+		buttonArr[i+2] = v.ClickSound
+		buttonArr[i+3] = ""
+		buttonArr[i+4] = v.Label
+		buttonArr[i+5] = v.Disabled
+		buttonArr[i+6] = v.Legal
+		i = i + 7
+	end
+
+	builtinEntries = {}
+end
+
+---@private
+function ContextMenu:OnBuiltinMenuClicked(ui, event, id, actionID, handleAlwaysZero)
+	local entry = GENERATED_ID_TO_ENTRY[id]
+	if entry then
+		local action = self.Actions[actionID] or (entry and entry.Callback)
+		if action then
+			local b,err = xpcall(action, debug.traceback, self, ui, id, actionID, entry.Handle)
+			if not b then
+				Ext.PrintError(err)
+			end
+		else
+			fprint(LOGLEVEL.WARNING, "[LeaderLib:ContextMenu:OnEntryClicked] No action registered for (%s).", actionID)
+		end
+		InvokeListenerCallbacks(Listeners.OnContextMenuEntryClicked, self, ui, id, actionID, entry.Handle)
+	end
+end
+
+---@private
 function ContextMenu:Init()
 	if not self.RegisteredListeners then
 		-- for i,v in pairs(Data.UIType.contextMenu) do
@@ -321,6 +388,25 @@ function ContextMenu:Init()
 		Ext.RegisterUITypeCall(Data.UIType.examine, "hideTooltip", function(...) self:OnHideTooltip(...) end)
 		Input.RegisterListener("ContextMenu", function(...) self:OnRightClick(...) end)
 		--Input.RegisterMouseListener(UIExtensions.MouseEvent.RightMouseUp, function(...) self:OnRightClick(...) end)
+
+		for _,v in pairs(Data.UIType.contextMenu) do
+			Ext.RegisterUITypeInvokeListener(v, "updateButtons", function(...) self:OnBuiltinMenuUpdating(...) end)
+			Ext.RegisterUITypeCall(v, "buttonPressed", function(...) self:OnBuiltinMenuClicked(...) end)
+			Ext.RegisterUITypeCall(v, "menuClosed", function(...)
+				builtinEntries = {}
+				GENERATED_ID_TO_ENTRY = {}
+				lastBuiltinID = 999
+			end)
+		end
+		for _,v in pairs(Data.UIType.contextMenu_c) do
+			Ext.RegisterUITypeInvokeListener(v, "updateButtons", function(...) self:OnBuiltinMenuUpdating(...) end)
+			Ext.RegisterUITypeCall(v, "buttonPressed", function(...) self:OnBuiltinMenuClicked(...) end)
+			Ext.RegisterUITypeCall(v, "menuClosed", function(...)
+				builtinEntries = {}
+				GENERATED_ID_TO_ENTRY = {}
+				lastBuiltinID = 999
+			end)
+		end
 		
 		self.RegisteredListeners = true
 	end
@@ -339,7 +425,7 @@ local ContextMenuEntry = {
 	Legal = true,
 	ClickSound = true,
 	ID = -1,
-	ActionID = -1,
+	ActionID = "",
 }
 ContextMenuEntry.__index = ContextMenuEntry
 
@@ -349,7 +435,9 @@ ContextMenuEntry.__index = ContextMenuEntry
 ---@param useClickSound boolean
 ---@param disabled boolean
 ---@param isLegal boolean
-function ContextMenu:AddEntry(actionId, callback, label, visible, useClickSound, disabled, isLegal)
+---@param handle any
+---@return ContextMenuEntry
+function ContextMenu:AddEntry(actionId, callback, label, visible, useClickSound, disabled, isLegal, handle)
 	if not self.Entries then
 		self.Entries = {}
 	end
@@ -361,10 +449,36 @@ function ContextMenu:AddEntry(actionId, callback, label, visible, useClickSound,
 		Label = GetVar(label, "Entry"),
 		Disabled = GetVar(disabled, false),
 		Legal = GetVar(isLegal, true),
-		Callback = callback
+		Callback = callback,
+		Handle = handle
 	}
 	setmetatable(entry, ContextMenuEntry)
 	self.Entries[id] = entry
+	return entry
+end
+
+---@param actionId string
+---@param callback ContextMenuActionCallback
+---@param label string
+---@param useClickSound boolean
+---@param disabled boolean
+---@param isLegal boolean
+---@param handle any
+function ContextMenu:AddBuiltinEntry(actionId, callback, label, visible, useClickSound, disabled, isLegal, handle)
+	local entry = {
+		ID = lastBuiltinID,
+		ActionID = GetVar(actionId, string.format("Entry%s", id)),
+		ClickSound = GetVar(useClickSound, true),
+		Label = GetVar(label, "Entry"),
+		Disabled = GetVar(disabled, false),
+		Legal = GetVar(isLegal, true),
+		Callback = callback,
+		Handle = handle
+	}
+	setmetatable(entry, ContextMenuEntry)
+	builtinEntries[#builtinEntries+1] = entry
+	GENERATED_ID_TO_ENTRY[entry.ID] = entry
+	lastBuiltinID = lastBuiltinID + 1
 end
 
 function ContextMenu:Close()
@@ -602,6 +716,11 @@ end
 ---@param callback OnContextMenuOpeningCallback
 function ContextMenu.Register.OpeningListener(callback)
 	RegisterListener("OnContextMenuOpening", callback)
+end
+
+---@param callback OnBuiltinContextMenuOpeningCallback
+function ContextMenu.Register.BuiltinOpeningListener(callback)
+	RegisterListener("OnBuiltinContextMenuOpening", callback)
 end
 
 ---@param callback OnContextMenuEntryClickedCallback

@@ -154,11 +154,18 @@ if Ext.IsClient() then
 	---Triggered when right clicking with KB+M.
 	---@type ShouldOpenContextMenuCallback[]
 	Listeners.ShouldOpenContextMenu = {}
+	
 	---@alias OnContextMenuOpeningCallback fun(contextMenu:ContextMenu, mouseX:number, mouseY:number):void
 	---Triggered when the custom context menu is opening. For adding entries to it, use contextMenu:AddEntry
 	---@see ContextMenu#AddEntry
 	---@type OnContextMenuOpeningCallback[]
 	Listeners.OnContextMenuOpening = {}
+	
+	---@alias OnBuiltinContextMenuOpeningCallback fun(contextMenu:ContextMenu, ui:UIObject, this:FlashMainTimeline, buttonArr:FlashArray, buttons:table):void
+	---Triggered when the regular context menu is opening.
+	---@type OnBuiltinContextMenuOpeningCallback[]
+	Listeners.OnBuiltinContextMenuOpening = {}
+	
 	---@alias OnContextMenuEntryClickedCallback fun(contextMenu:ContextMenu, ui:UIObject, entryID:integer, actionID:string, handle:number):void
 	---@type OnContextMenuEntryClickedCallback[]
 	Listeners.OnContextMenuEntryClicked = {}

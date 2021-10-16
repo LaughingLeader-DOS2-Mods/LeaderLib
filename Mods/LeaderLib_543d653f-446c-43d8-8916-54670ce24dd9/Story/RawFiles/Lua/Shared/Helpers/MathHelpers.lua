@@ -167,26 +167,46 @@ function GameHelpers.Math.GetDistance(pos1, pos2)
 end
 
 ---Get the directional vector between two Vector3 points.
+---@param pos1 number[]
+---@param pos2 number[]
+---@param reverse boolean
+---@param asVector3 boolean Optionally return the result as a Vector3
+---@return number[]|Vector3
+function GameHelpers.Math.GetDirectionalVectorBetweenPositions(pos1, pos2, reverse, asVector3)
+    local vec = Classes.Vector3
+    local a = vec(table.unpack(pos1))
+    local b = vec(table.unpack(pos2))
+    a:Sub(b)
+    a:Normalize()
+    if reverse then
+        a:Mul(vec(-1,-1,-1))
+    end
+    if asVector3 then
+        return a
+    else
+        return {a:Unpack()}
+    end
+end
+
+---Get the directional vector between two objects' WorldPos.
 ---@param obj1 EsvCharacter|EsvItem
 ---@param obj2 EsvCharacter|EsvItem
----@return number[]
-function GameHelpers.Math.GetDirectionalVectorBetweenObjects(obj1, obj2, reverse)
-    local vec = Classes.Vector3
-    local a = vec(table.unpack(obj1.WorldPos))
-    local b = vec(table.unpack(obj2.WorldPos))
-    a:Sub(b)
-    
-    if getmetatable(obj2) == "esv::Character" then
-        ---@type Quaternion
-        local angle = Classes.Quaternion(obj2.Stats.Rotation[7], obj2.Stats.Rotation[8], obj2.Stats.Rotation[9], 1)
-        a:Rotate(angle)
-    end
+---@param reverse boolean
+---@param asVector3 boolean Optionally return the result as a Vector3
+---@return number[]|Vector3
+function GameHelpers.Math.GetDirectionalVectorBetweenObjects(obj1, obj2, reverse, asVector3)
 
-    a:Normalize()
-    if not reverse then
-        return {a:Unpack()}
+    local dir = GameHelpers.Math.GetDirectionalVectorBetweenPositions(obj1.WorldPos, obj2.WorldPos, reverse, true)
+    -- if GameHelpers.Ext.ObjectIsCharacter(obj2) then
+    --     ---@type Quaternion
+    --     local angle = Classes.Quaternion(obj2.Stats.Rotation[7], obj2.Stats.Rotation[8], obj2.Stats.Rotation[9], 1)
+    --     a:Rotate(angle)
+    -- end
+
+    if asVector3 then
+        return dir
     else
-        return {-a.x,-a.y,-a.z}
+        return {dir:Unpack()}
     end
 end
 

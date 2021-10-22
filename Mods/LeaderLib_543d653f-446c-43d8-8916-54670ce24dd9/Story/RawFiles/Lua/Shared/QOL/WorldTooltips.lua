@@ -1,42 +1,44 @@
 local WorldTooltipper = {
-	TooltipMode = 2,
+	TooltipMode = 2, -- World and Hover
 	UpdateDelay = 2000
 }
-WorldTooltipper.__index = WorldTooltipper
 
 if Ext.IsClient() then
-	function WorldTooltipper.OnUpdate(ui, event, removeNotUpdated)
-		if Input.IsPressed(Data.Input.ShowWorldTooltips) then
-			--local player = Client:GetCharacter()
-			local this = ui:GetRoot()
-			local arr = this.worldTooltip_array
-			for i=0,#arr-1 do
-				PrintDebug("worldTooltip_array", i, arr[i])
-			end
-			arr = this.repos_array
-			for i=0,#arr-1 do
-				PrintDebug("repos_array", i, arr[i])
+	--Unused since setting RootTemplate.Tooltip on the server makes the client update as well.
+	if Vars.DebugMode then
+		function WorldTooltipper.OnUpdate(ui, event, removeNotUpdated)
+			if Input.IsPressed(Data.Input.ShowWorldTooltips) then
+				--local player = Client:GetCharacter()
+				local this = ui:GetRoot()
+				local arr = this.worldTooltip_array
+				for i=0,#arr-1 do
+					PrintDebug("worldTooltip_array", i, arr[i])
+				end
+				arr = this.repos_array
+				for i=0,#arr-1 do
+					PrintDebug("repos_array", i, arr[i])
+				end
 			end
 		end
-	end
+		
+		--Ext.RegisterUITypeInvokeListener(Data.UIType.worldTooltip, "updateTooltips", WorldTooltipper.OnUpdate)
 	
-	--Ext.RegisterUITypeInvokeListener(Data.UIType.worldTooltip, "updateTooltips", WorldTooltipper.OnUpdate)
-
-	function WorldTooltipper.UpdateItems(cmd, payload)
-		local ids = Common.JsonParse(payload)
-		if ids then
-			for i=1,#ids do
-				local item = Ext.GetItem(ids[i])
-				if item then
-					PrintDebug("CLIENT", item.DisplayName, item.RootTemplate.Tooltip)
-					if item.RootTemplate.Tooltip ~= WorldTooltipper.TooltipMode then
-						item.RootTemplate.Tooltip = WorldTooltipper.TooltipMode
+		function WorldTooltipper.UpdateItems(cmd, payload)
+			local ids = Common.JsonParse(payload)
+			if ids then
+				for i=1,#ids do
+					local item = Ext.GetItem(ids[i])
+					if item then
+						PrintDebug("CLIENT", item.DisplayName, item.RootTemplate.Tooltip)
+						if item.RootTemplate.Tooltip ~= WorldTooltipper.TooltipMode then
+							item.RootTemplate.Tooltip = WorldTooltipper.TooltipMode
+						end
 					end
 				end
 			end
 		end
+		Ext.RegisterNetListener("LeaderLib_WorldTooltipper_UpdateClient", WorldTooltipper.UpdateItems)
 	end
-	Ext.RegisterNetListener("LeaderLib_WorldTooltipper_UpdateClient", WorldTooltipper.UpdateItems)
 else
 	---@param item EsvItem
 	local function ShouldHaveTooltip(item)

@@ -6,7 +6,7 @@ end
 ---@param defaultTable table A table of default values to copy from.
 ---@param initializedCallback function|nil If set, this function will be called during the PersistentVarsLoaded event, and PersistentVars will be updated with the default values if needed (like from older saves).
 function GameHelpers.PersistentVars.Initialize(modGlobalTable, defaultTable, initializedCallback)
-	local data = Common.CloneTable(defaultTable) or {}
+	local data = TableHelpers.Clone(defaultTable) or {}
 	if initializedCallback then
 		local t = type(initializedCallback)
 		if t == "function" then

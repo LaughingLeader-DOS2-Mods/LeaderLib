@@ -201,7 +201,7 @@ Features = {
 	---Linked to a GameSettings option, allows various percentages of resistances to be ignored.
 	ResistancePenetration = false,
 	---Linked to a GameSettings option, allows spells to crit without the associated talent.
-	SpellCanCrit = false,
+	SpellsCanCrit = false,
 	---Fixes statuses not displaying skill damage correctly when using the Skill:SkillId:Damage param.
 	StatusParamSkillDamage = false,
 	---Fixes various tooltip things like extra spaces and grammar issues.
@@ -304,6 +304,7 @@ function Import(targetModTable, additionalTable)
 	end
 end
 
+---DEPRECATED
 ---Makes LeaderLib's globals accessible using metamethod magic. Pass it a mod table, such as Mods.MyModTable.
 ---This is the same as the regular Import now.
 ---@param targetModTable table

@@ -6,3 +6,6 @@ if not Mods.LeaderLib.Listeners then
 	---@type LeaderLibListeners
 	Mods.LeaderLib.Listeners = {}
 end
+if not Mods.LeaderLib.Import then
+	Mods.LeaderLib.Import = Import
+end

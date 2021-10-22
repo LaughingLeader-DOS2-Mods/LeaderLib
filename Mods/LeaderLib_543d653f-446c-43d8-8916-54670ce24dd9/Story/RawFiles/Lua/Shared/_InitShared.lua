@@ -178,22 +178,36 @@ TranslatedStringEntries = {}
 
 ---@type table<string,boolean>
 Features = {
+	---Enables backstabs to happen with various conditions, depending on game settings
 	BackstabCalculation = false,
-	FixPureDamageDisplay = true,
+	---Fixes the lack of a damage name for chaos damage in skills/statuses
 	FixChaosDamageDisplay = true,
+	---Fixes chaos damage not being applied correctly when from projectile weapons (wands).
 	FixChaosWeaponProjectileDamage = true,
+	---Changes Corrosive/Magic damage tooltip text from "Reduce Armor" to proper damage names.
 	FixCorrosiveMagicDamageDisplay = false,
-	FixItemAPCost = true,
-	RacialTalentsDisplayFix = true,
-	ReduceTooltipSize = true,
-	ReplaceTooltipPlaceholders = false,
-	ResistancePenetration = false,
-	StatusParamSkillDamage = false,
-	TooltipGrammarHelper = false,
-	WingsWorkaround = false,
-	FixRifleWeaponRequirement = false,
+	---Fixes the incorrect skill tooltip range when you have Far Out Man
 	FixFarOutManSkillRangeTooltip = false,
-	CustomStatsSystem = false
+	---Fixes the item tooltip AP cost being incorrect when a character has statuses that reduce AP costs.
+	FixItemAPCost = true,
+	---Fixes the lack of a damage name for pure type damage in tooltips.
+	FixPureDamageDisplay = true,
+	---Fixes tooltips not displaying "Requires a Rifle" when they have a RifleRequirement
+	FixRifleWeaponRequirement = false,
+	---Condenses item tooltips by simplifying the ExtraProperties text.
+	ReduceTooltipSize = true,
+	---Replaces various LeaderLib placeholders in tooltips.
+	ReplaceTooltipPlaceholders = false,
+	---Linked to a GameSettings option, allows various percentages of resistances to be ignored.
+	ResistancePenetration = false,
+	---Linked to a GameSettings option, allows spells to crit without the associated talent.
+	SpellCanCrit = false,
+	---Fixes statuses not displaying skill damage correctly when using the Skill:SkillId:Damage param.
+	StatusParamSkillDamage = false,
+	---Fixes various tooltip things like extra spaces and grammar issues.
+	TooltipGrammarHelper = false,
+	---Enables a workaround for requiring WINGS or PURE to make characters play the flying animation when moving around.
+	WingsWorkaround = false,
 }
 
 Importer = {

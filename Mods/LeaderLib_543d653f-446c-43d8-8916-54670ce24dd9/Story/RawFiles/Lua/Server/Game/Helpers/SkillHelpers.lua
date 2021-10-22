@@ -60,8 +60,8 @@ local function PrepareProjectileProps(target, skill, source, extraParams)
 
     local sourceLevel = extraParams and extraParams.CasterLevel or nil
 
-    local sourceObject = GameHelpers.TryGetObject(source, true)
-    local targetObject = GameHelpers.TryGetObject(target, true)
+    local sourceObject = GameHelpers.TryGetObject(source)
+    local targetObject = GameHelpers.TryGetObject(target)
 
     local sourcePos = GameHelpers.Math.GetPosition(sourceObject or source, false, {0,0,0})
     local targetPos = GameHelpers.Math.GetPosition(targetObject or target, false, {0,0,0})
@@ -510,7 +510,7 @@ function GameHelpers.Skill.ShootZoneAt(skillId, source, target, extraParams)
     props.StatusChance = 1.0
     props.Duration = (math.max(1, skill.SurfaceLifetime)) * 6.0
     if source then
-        local sourceObject = GameHelpers.TryGetObject(source, true)
+        local sourceObject = GameHelpers.TryGetObject(source)
         if sourceObject then
             props.OwnerHandle = sourceObject.Handle
             props.Position = sourceObject.WorldPos

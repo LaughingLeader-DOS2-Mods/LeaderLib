@@ -439,7 +439,7 @@ function GameHelpers.ObjectExists(object, returnNullId)
 		if t == "userdata" then
 			return true
 		elseif (t == "string" and not StringHelpers.IsNullOrWhitespace(object)) or t == "number" then
-			local obj = GameHelpers.TryGetObject(object, true)
+			local obj = GameHelpers.TryGetObject(object)
 			if obj then
 				return true
 			end
@@ -479,17 +479,17 @@ end
 
 ---Tries to get a game object if the target exists, otherwise returns nil.
 ---@param id string|integer|ObjectHandle
----@param returnNil boolean|nil Return nil if failed. Defaults to false, so the id value is returned.
+---@param returnOriginal boolean|nil Return the original value if failed. Defaults to false, so nil is returned.
 ---@return EsvCharacter|EsvItem|nil
-function GameHelpers.TryGetObject(id, returnNil)
+function GameHelpers.TryGetObject(id, returnOriginal)
 	local b,result = xpcall(TryGetObject, debug.traceback, id)
 	if not b then
 		if Vars.DebugMode then
 			fprint(LOGLEVEL.ERROR, "[GameHelpers.TryGetObject] Error getting object from id (%s):\n%s", id, result)
 		end
-		return returnNil ~= true and id or nil
+		return returnOriginal == true and id or nil
 	end
-	if result == nil and returnNil ~= true then
+	if result == nil and returnOriginal == true then
 		return id
 	end
 	return result

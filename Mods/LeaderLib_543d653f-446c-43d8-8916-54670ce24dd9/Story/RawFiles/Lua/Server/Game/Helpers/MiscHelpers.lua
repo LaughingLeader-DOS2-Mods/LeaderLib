@@ -337,7 +337,7 @@ end
 ---@param level integer
 function GameHelpers.SetExperienceLevel(object, level)
 	if type(object) ~= "userdata" then
-		object = GameHelpers.TryGetObject(object, true)
+		object = GameHelpers.TryGetObject(object)
 	end
 	if object then
 		if GameHelpers.Ext.ObjectIsItem(object) then

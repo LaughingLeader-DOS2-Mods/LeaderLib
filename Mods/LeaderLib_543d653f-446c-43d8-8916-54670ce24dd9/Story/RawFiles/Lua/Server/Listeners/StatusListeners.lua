@@ -226,7 +226,7 @@ RegisterProtectedOsirisListener("NRD_OnStatusAttempt", 4, "after", function(targ
 	if not IgnoreStatus(status) then
 		target = GameHelpers.GetUUID(target, true)
 		source = GameHelpers.GetUUID(source, true)
-		BeforeStatusAttempt(status, GameHelpers.TryGetObject(target, true), GameHelpers.TryGetObject(source, true), handle, target, source)
+		BeforeStatusAttempt(status, GameHelpers.TryGetObject(target), GameHelpers.TryGetObject(source), handle, target, source)
 	end
 end)
 

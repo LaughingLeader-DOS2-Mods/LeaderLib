@@ -46,7 +46,7 @@ if isClient then
 				if Vars.DebugMode then
 					local cursor = Ext.GetPickingState()
 					if cursor then
-						local target = GameHelpers.TryGetObject(cursor.HoverCharacter or cursor.HoverItem, true)
+						local target = GameHelpers.TryGetObject(cursor.HoverCharacter or cursor.HoverItem)
 						if target then
 							if StringHelpers.IsNullOrEmpty(target.MyGuid) then
 								Ext.PostMessageToServer("LeaderLib_ContextMenu_RequestUUID", target.NetID)
@@ -105,7 +105,7 @@ if isClient then
 else
 	Ext.RegisterNetListener("LeaderLib_ContextMenu_RequestUUID", function(cmd, payload, userid)
 		local netid = tonumber(payload)
-		local object = GameHelpers.TryGetObject(netid, true)
+		local object = GameHelpers.TryGetObject(netid)
 		if object then
 			Ext.PostMessageToUser(userid, "LeaderLib_ContextMenu_SetUUID", Ext.JsonStringify({NetID = netid, UUID = object.MyGuid}))
 		end

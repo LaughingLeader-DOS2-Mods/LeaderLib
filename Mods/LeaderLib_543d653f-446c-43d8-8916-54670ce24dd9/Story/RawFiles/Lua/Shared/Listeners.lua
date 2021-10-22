@@ -77,6 +77,12 @@ if Ext.IsServer() then
 	---HitOverrides.GetResistance during ComputeCharacterHit.
 	---@type fun(character:StatCharacter, damageType:string, resistancePenetration:integer, currentRes:integer):integer[]
 	Listeners.GetHitResistanceBonus = {}
+
+	---Modifies the result of HitOverrides.CanBackstab if true or false is returned. The second returned boolean is optional, and will make backstabs ignore positioning.
+	---@alias LeaderLibGetCanBackstabCallback fun(canBackstab:boolean, target:StatCharacter, attacker:StatCharacter, weapon:StatItem, damageList:DamageList, hitType:string, noHitRoll:boolean, forceReduceDurability:boolean, hit:HitRequest, alwaysBackstab:boolean, highGroundFlag:HighGroundFlag, criticalRoll:CriticalRollFlag):boolean,boolean
+	---@type LeaderLibGetCanBackstabCallback[]
+	Listeners.GetCanBackstab = {}
+
 	--Flag events
 	---@type table<string, fun(flag:string, enabled:boolean):void[]>
 	Listeners.GlobalFlagChanged = {}

@@ -209,7 +209,7 @@ function GameHelpers.ItemHasStatsTag(item, tag, statItem)
 	return false
 end
 
----@param item EsvItem|EclItem
+---@param item EsvItem|EclItem|UUID
 ---@param tag string|string[]
 function GameHelpers.ItemHasTag(item, tag)
 	local t = type(tag)
@@ -220,6 +220,9 @@ function GameHelpers.ItemHasTag(item, tag)
 			end
 		end
 	elseif t == "string" then
+		if type(item) == "string" then
+			item = GameHelpers.GetItem(item)
+		end
 		if type(item) == "table" then
 			if item.HasTag and item.HasTag(item, tag) == true then
 				return true
@@ -493,4 +496,27 @@ function GameHelpers.TryGetObject(id, returnOriginal)
 		return id
 	end
 	return result
+end
+
+
+---@param object UUID|NETID|EsvGameObject|ObjectHandle
+---@return boolean
+function GameHelpers.ObjectIsDead(object)
+	local object = GameHelpers.TryGetObject(object)
+	if object then
+		if GameHelpers.Ext.ObjectIsCharacter(object) then
+			if isClient then
+				return object.Stats.CurrentVitality == 0
+			else
+				return object.Dead
+			end
+		elseif GameHelpers.Ext.ObjectIsItem(object) then
+			if isClient then
+				return object.RootTemplate.Destroyed
+			else
+				return object.Destroyed
+			end
+		end
+	end
+	return false
 end

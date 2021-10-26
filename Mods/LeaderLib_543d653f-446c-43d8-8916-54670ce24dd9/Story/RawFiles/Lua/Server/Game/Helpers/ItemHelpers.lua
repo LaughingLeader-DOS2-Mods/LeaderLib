@@ -548,13 +548,18 @@ end
 ---Builds a list of items with a specific tag.
 ---@param character string
 ---@param tag string
+---@param asArray boolean Optional param to make the table returned just be an array of UUIDs, instead of <slot,UUID>
 ---@return table<string,UUID>
-function GameHelpers.Item.FindTaggedEquipment(character, tag)
+function GameHelpers.Item.FindTaggedEquipment(character, tag, asArray)
     local items = {}
 	for _,slotName in Data.VisibleEquipmentSlots:Get() do
 		local item = CharacterGetEquippedItem(character, slotName)
-		if item ~= nil and IsTagged(item, tag) == 1 then
-			items[slotName] = item
+		if item ~= nil and GameHelpers.ItemHasTag(item, tag) then
+            if asArray then
+                items[#items+1] = item
+            else
+                items[slotName] = item
+            end
 		end
 	end
 	return items
@@ -581,6 +586,37 @@ function GameHelpers.Item.FindTaggedItems(character, tag, asEsvItem)
         end
     end
 	return items
+end
+
+---Gets an array of items with specific tag(s) on a character.
+---@param item EsvItem|UUID|NETID
+---@param tag string|string[]
+---@param asEsvItem boolean
+---@return string[]|EsvItem[]
+function GameHelpers.Item.GetTags(item)
+    local item = GameHelpers.GetItem(item)
+    local tags = {}
+    if item then
+        local tagDict = {}
+        for _,v in pairs(item:GetTags()) do
+            if not tagDict[v] then
+                tagDict[v] = true
+            end
+        end
+        if not GameHelpers.Item.IsObject(item) then
+            local statTags = StringHelpers.Split(item.Stats.Tags, ";")
+            for _,v in pairs(statTags) do
+                if not tagDict[v] then
+                    tagDict[v] = true
+                end
+            end
+        end
+        for tag,_ in pairs(tagDict) do
+            table.insert(tags, tag)
+        end
+        table.sort(tags)
+    end
+	return tags
 end
 
 --- Checks if an item is locked from unequip.

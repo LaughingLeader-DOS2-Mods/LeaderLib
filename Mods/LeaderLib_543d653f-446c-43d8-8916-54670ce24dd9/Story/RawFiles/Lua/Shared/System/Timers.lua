@@ -63,7 +63,7 @@ StartTimer = Timer.Start
 ---@param callback function
 function Timer.StartOneshot(timerName, delay, callback)
 	if StringHelpers.IsNullOrEmpty(timerName) then
-		timerName = string.format("Timers_LeaderLib_%s%s", Ext.MonotonicTime(), Ext.Random())
+		timerName = string.format("LeaderLib_%s%s", Ext.MonotonicTime(), Ext.Random())
 	end
 	if not IsClient then
 		if OneshotTimerData[timerName] == nil then

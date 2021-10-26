@@ -79,6 +79,30 @@ function GameHelpers.Character.IsOrigin(character)
 end
 
 ---@param character EsvCharacter|EclCharacter|UUID|NETID
+function GameHelpers.Character.IsInCharacterCreation(character)
+	if not isClient and Ext.OsirisIsCallable() then
+		character = GameHelpers.GetUUID(character)
+		if not character then return false end
+		if GameHelpers.DB.HasUUID("DB_Illusionist", character, 2, 1) then
+			return true
+		end
+		if SharedData.RegionData.LevelType == LEVELTYPE.CHARACTER_CREATION then
+			return GameHelpers.DB.HasUUID("DB_AssignedDummyForUser", character, 2, 2)
+		end
+	else
+		---@type EclCharacter
+		local player = GameHelpers.GetCharacter(character)
+		if type(player) == "userdata" then
+			local currentCC = GameHelpers.Client.GetCharacterCreationCharacter()
+			if currentCC and currentCC.NetID == player.NetID then
+				return true
+			end
+		end
+	end
+	return false
+end
+
+---@param character EsvCharacter|EclCharacter|UUID|NETID
 function GameHelpers.Character.IsSummonOrPartyFollower(character)
 	if not isClient then
 		if type(character) == "userdata" then
@@ -91,7 +115,7 @@ function GameHelpers.Character.IsSummonOrPartyFollower(character)
 			character = GameHelpers.GetCharacter(character)
 		end
 		if character then
-			return character.Summon or character.PartyFollower
+			return character.HasOwner or character.PartyFollower
 		end
 	end
 	return false
@@ -396,6 +420,22 @@ function GameHelpers.Character.GetWeaponRange(character, asMeters)
 	return range
 end
 
+---@param character EsvCharacter|EclCharacter|UUID|NETID
+function GameHelpers.Character.IsUnsheathed(character)
+	if not isClient and Ext.OsirisIsCallable() then
+		character = GameHelpers.GetUUID(character)
+		if not character then return false end
+		return HasActiveStatus(character, "UNSHEATHED") == 1 or CharacterIsInFightMode(character) == 1
+	else
+		---@type EclCharacter
+		local character = GameHelpers.GetCharacter(character)
+		if character then
+			return character:GetStatus("UNSHEATHED") ~= nil
+		end
+	end
+	return false
+end
+
 if not isClient then
 	---Equips an item to its stats Slot using NRD_CharacterEquipItem, and moves any existing item in that slot to the character's inventory.
 	---@param character EsvCharacter|UUID
@@ -457,3 +497,5 @@ if not isClient then
 	end
 	return false
 end
+
+local skills = {}; for _,v in pairs(Ext.GetStatEntries("SkillData")) do local stat = Ext.GetStat(v); local name = Ext.GetTranslatedStringFromKey(stat.DisplayName); if not name or name == "" then name = v; end table.insert(skills, string.format("%s = %s", name, v)); end; table.sort(skills); Ext.SaveFile("GOTHAMPD_AllSkills.json", Ext.JsonStringify(skills));

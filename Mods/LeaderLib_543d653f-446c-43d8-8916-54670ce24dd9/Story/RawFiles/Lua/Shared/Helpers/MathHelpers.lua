@@ -65,9 +65,9 @@ function GameHelpers.Math.ExtendPositionWithForwardDirection(source, distanceMul
         end
         if not forwardVector then
             forwardVector = {
-                -character.Stats.Rotation[7],
+                character.Stats.Rotation[7],
                 0,---rot[8] * distanceMult, -- Rot Y is never used since objects can't look "up"
-                -character.Stats.Rotation[9],
+                character.Stats.Rotation[9],
             }
         end
     end

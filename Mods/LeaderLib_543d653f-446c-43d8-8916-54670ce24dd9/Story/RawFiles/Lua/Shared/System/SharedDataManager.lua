@@ -129,7 +129,7 @@ if Ext.IsServer() then
 			end
 		end
 		if syncSettings == true then
-			SettingsManager.SyncAllSettings(client)
+			SettingsManager.SyncAllSettings(client, true)
 		end
 	end
 

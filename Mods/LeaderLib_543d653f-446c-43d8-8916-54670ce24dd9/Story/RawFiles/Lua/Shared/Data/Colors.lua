@@ -2,6 +2,16 @@ if Data.Colors == nil then
 	Data.Colors = {}
 end
 
+Data.Colors.Rarity = {
+	Common = "#FFFFFF",
+	Uncommon = "#00A900",
+	Rare = "#33CCFF",
+	Epic = "#A346E9",
+	Legendary = "#D1007C",
+	Divine = "#EBC808",
+	Unique = "#C7A758"
+}
+
 Data.Colors.FormatStringColor = {
 	White = "#FFFFFF",
 	DarkGray = "#454545",

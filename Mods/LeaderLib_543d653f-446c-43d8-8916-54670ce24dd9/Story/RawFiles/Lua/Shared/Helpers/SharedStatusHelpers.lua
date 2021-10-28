@@ -70,7 +70,7 @@ function GameHelpers.Status.GetStatusType(statusId)
 	if StatusToType[statusId] then
 		return StatusToType[statusId]
 	end
-	if not isClient then
+	if not isClient and Ext.OsirisIsCallable() then
 		return GetStatusType(statusId)
 	elseif not Data.EngineStatus[statusId] then
 		local stat = Ext.GetStat(statusId)

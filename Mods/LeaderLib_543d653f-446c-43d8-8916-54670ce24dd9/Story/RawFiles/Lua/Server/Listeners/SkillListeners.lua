@@ -226,6 +226,12 @@ function OnSkillUsed(char, skill, skillType, skillAbility)
 	-- 	Osi.LeaderLib_LuaSkillListeners_RemoveIgnoredPrototype(char)
 	-- end
 	local uuid = StringHelpers.GetUUID(char)
+
+	if GameHelpers.Stats.IsHealingSkill(skill) then
+		PersistentVars.LastUsedHealingSkill[uuid] = skill
+		Timer.StartObjectTimer("LeaderLib_ClearLastUsedHealingSkill", uuid, 3000)
+	end
+	
 	local data = GetCharacterSkillData(skill, uuid, true, skillType, skillAbility)
 	if data then
 		--Quake doesn't fire any target events, but works like a shout

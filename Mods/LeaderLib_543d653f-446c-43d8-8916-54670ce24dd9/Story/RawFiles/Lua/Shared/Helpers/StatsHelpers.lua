@@ -103,3 +103,21 @@ end
 function GameHelpers.Stats.GetExtraProperties(statName)
 	return GameHelpers.Stats.GetCurrentOrInheritedProperty(statName, "ExtraProperties") or {}
 end
+
+---Returns true if the skill applies a HEAL status.
+---@param skillId string
+---@return boolean
+function GameHelpers.Stats.IsHealingSkill(skillId)
+	local props = GameHelpers.Stats.GetSkillProperties(skillId)
+	if props then
+		for _,v in pairs(props) do
+			if v.Type == "Status" then
+				local statusType = GameHelpers.Status.GetStatusType(v.Action)
+				if statusType == "HEAL" or statusType == "HEALING" then
+					return true
+				end
+			end
+		end
+	end
+	return false
+end

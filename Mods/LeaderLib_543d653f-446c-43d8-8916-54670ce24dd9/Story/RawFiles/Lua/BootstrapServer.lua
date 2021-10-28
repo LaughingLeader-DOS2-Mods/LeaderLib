@@ -31,7 +31,24 @@ local defaultPersistentVars = {
 	---@type table<UUID,UUID[]>
 	Summons = {},
 	---@type table<UUID,table<string,number>>
-	BuffStatuses = {}
+	BuffStatuses = {},
+
+	---@type table<UUID,LeaderLibObjectLoopEffectSaveData[]>
+	ObjectLoopEffects = {},
+
+	---@type table<string,LeaderLibWorldLoopEffectSaveData[]>
+	WorldLoopEffects = {},
+
+	---@type table<UUID,string>
+	LastUsedHealingSkill = {},
+
+	---@class LeaderLibNextGenericHealStatusSourceData
+	---@field StatusId string
+	---@field Source UUID
+	---@field Time number
+
+	---@type table<UUID,LeaderLibNextGenericHealStatusSourceData>
+	NextGenericHealStatusSource = {},
 }
 
 ---@private

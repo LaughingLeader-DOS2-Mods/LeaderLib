@@ -133,6 +133,37 @@ local function OnRightMouseUp(ui, call, x, y)
 	Input.OnMouseEvent(UIExtensions.MouseEvent.RightMouseUp)
 end
 
+local uiFlags = {
+	OF_Load = 0x1,
+	OF_Loaded = 0x2,
+	OF_RequestDelete = 0x4,
+	OF_Visible = 0x8,
+	OF_Activated = 0x10,
+	OF_PlayerInput1 = 0x20,
+	OF_PlayerInput2 = 0x40,
+	OF_PlayerInput3 = 0x80,
+	OF_PlayerInput4 = 0x100,
+	OF_PlayerModal1 = 0x200,
+	OF_PlayerModal2 = 0x400,
+	OF_PlayerModal3 = 0x800,
+	OF_PlayerModal4 = 0x1000,
+	OF_KeepInScreen = 0x8000,
+	OF_KeepCustomInScreen = 0x10000,
+	OF_DeleteOnChildDestroy = 0x20000,
+	OF_PauseRequest = 0x40000,
+	OF_SortOnAdd = 0x80000,
+	OF_FullScreen = 0x400000,
+	OF_PlayerTextInput1 = 0x800000,
+	OF_PlayerTextInput2 = 0x1000000,
+	OF_PlayerTextInput3 = 0x2000000,
+	OF_PlayerTextInput4 = 0x4000000,
+	OF_DontHideOnDelete = 0x10000000,
+	OF_PrecacheUIData = 0x20000000,
+	OF_PreventCameraMove = 0x40000000,
+}
+
+local defaultUIFlags = uiFlags.OF_Load | uiFlags.OF_PlayerInput1 | uiFlags.OF_DeleteOnChildDestroy | uiFlags.OF_FullScreen
+
 function UIExtensions.SetupInstance()
 	if Ext.GetGameState() == "Menu" then
 		Ext.PrintError("[UIExtensions.SetupInstance] Game not ready yet.")
@@ -145,7 +176,7 @@ function UIExtensions.SetupInstance()
 		UIExtensions.Instance = Ext.GetUI("LeaderLibUIExtensions")
 		if not UIExtensions.Instance then
 			print("Creating LeaderLibUIExtensions")
-			UIExtensions.Instance = Ext.CreateUI("LeaderLibUIExtensions", UIExtensions.SwfPath, UIExtensions.Layer)
+			UIExtensions.Instance = Ext.CreateUI("LeaderLibUIExtensions", UIExtensions.SwfPath, UIExtensions.Layer, defaultUIFlags)
 			UIExtensions.RegisteredListeners = false
 			UIExtensions.Visible = true
 		else
@@ -359,7 +390,7 @@ local function SetVisibility(b)
 	end
 	if not b then
 		if UIExtensions.Instance and UIExtensions.Visible then
-			UIExtensions.Instance:Hide()
+			UIExtensions.GetInstance():Hide()
 			UIExtensions.Visible = false
 		end
 	else
@@ -421,7 +452,6 @@ Ext.RegisterConsoleCommand("panelTest", function()
 		local panel = this.panels_mc.panels[this.addDarkPanel("test", 100, 100, "Test Text")]
 		if panel then
 			panel.addText("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer eu nibh aliquam, lacinia tellus sed, imperdiet elit. Mauris ultricies nunc at tortor tristique porttitor. Nam orci est, varius iaculis laoreet vel, ultricies in nisi. Pellentesque nec scelerisque nisi. Ut molestie sagittis tempor. Sed tincidunt purus sit amet magna accumsan, ut sollicitudin felis elementum. Mauris posuere malesuada mattis. Duis maximus non massa eu sodales. Pellentesque nibh felis, pellentesque in mauris pretium, vulputate malesuada nunc. Maecenas eget lacinia ex. Integer nec dui vel massa gravida elementum eget nec massa. Aenean tincidunt non est a scelerisque. Nam eu enim mi.\n\nMauris molestie commodo leo quis ultrices. Quisque elementum felis et neque vestibulum scelerisque. Cras sodales felis lorem, vel tempus justo porttitor quis. Suspendisse potenti. Phasellus nisi leo, cursus sed lorem sit amet, semper consequat orci. Aliquam sagittis pellentesque libero et interdum. Sed iaculis facilisis velit, quis hendrerit libero dapibus auctor.\n\n<font color='#FFCC11'>Phasellus mi metus, congue a tincidunt eget, viverra ut lectus. Cras elit quam, fringilla in dui sit amet, tristique faucibus mauris. Ut bibendum rutrum sem, efficitur malesuada nunc euismod quis. Morbi eros leo, commodo quis aliquet eget, pretium sit amet diam. Nullam posuere augue vel ligula gravida fermentum. Proin a consequat risus. Integer ac ligula condimentum, pretium est ac, feugiat lorem. Sed suscipit ut neque vel facilisis. Nullam lobortis lacinia lacus a mattis. Maecenas eget mi fermentum, aliquet odio at, feugiat risus. Integer finibus vitae tortor sed tristique. Pellentesque pellentesque venenatis velit, sit amet euismod dui eleifend eget. Donec malesuada ex nisi, sit amet imperdiet ex scelerisque at.\n\nNulla eget dui sed nulla tempus interdum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Duis a lobortis lacus. Morbi neque nulla, rutrum sit amet leo ac, rutrum efficitur magna. Nulla odio nisi, dignissim a justo rutrum, malesuada eleifend lectus. Fusce nec cursus augue. Morbi at sem iaculis, eleifend libero vel, posuere velit.</font>\n\nMauris non justo nec justo congue laoreet. Maecenas porttitor magna at libero rhoncus bibendum. Phasellus vel sem cursus, semper erat quis, aliquet metus. Aenean quis metus egestas, ultrices velit in, molestie tellus. Etiam nec purus nec quam varius luctus. Nulla quis suscipit tellus, maximus accumsan felis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed viverra quis nisi sit amet luctus. Cras dapibus sodales mauris ut tristique. Aliquam orci purus, suscipit in porttitor nec, tincidunt eget lectus.")
-			print(panel.list_id, panel.id)
 		end
 	end
 end)

@@ -497,5 +497,3 @@ if not isClient then
 	end
 	return false
 end
-
-local skills = {}; for _,v in pairs(Ext.GetStatEntries("SkillData")) do local stat = Ext.GetStat(v); local name = Ext.GetTranslatedStringFromKey(stat.DisplayName); if not name or name == "" then name = v; end table.insert(skills, string.format("%s = %s", name, v)); end; table.sort(skills); Ext.SaveFile("GOTHAMPD_AllSkills.json", Ext.JsonStringify(skills));

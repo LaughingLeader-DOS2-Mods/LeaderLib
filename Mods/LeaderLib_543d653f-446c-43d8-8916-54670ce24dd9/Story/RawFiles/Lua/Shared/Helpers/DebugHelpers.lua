@@ -964,6 +964,23 @@ userDataProps["esv::HStatus"] = {
 	ImpactPosition = "number[]",
 	ImpactOrigin = "number[]",
 	ImpactDirection = "number[]",
+	--EsvStatusHeal
+	EffectTime = "number",
+	HealAmount = "integer",
+	HealEffect = "string",
+	HealEffectId = "string",
+	HealType = "string",
+	AbsorbSurfaceRange = "integer",
+	TargetDependentHeal = "boolean",
+	--EsvStatusHealing
+	TimeElapsed = "number",
+	-- HealAmount = "integer",
+	-- HealEffect = "string",
+	-- HealEffectId = "string",
+	SkipInitialEffect = "boolean",
+	HealingEvent = "number",
+	HealStat = "string",
+	--AbsorbSurfaceRange = "integer",
 }
 
 userDataProps["esv::Status"] = {

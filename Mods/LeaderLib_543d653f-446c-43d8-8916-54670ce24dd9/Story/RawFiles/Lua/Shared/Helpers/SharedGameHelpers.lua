@@ -52,7 +52,7 @@ function GameHelpers.GetEnemiesInRange(uuid,radius)
 		end
 		return totalEnemies
 	end
-	-- Client-side relation detection isn't a thing yet
+	-- TODO Client-side relation detection isn't a thing yet
 	return 0
 end
 
@@ -519,4 +519,10 @@ function GameHelpers.ObjectIsDead(object)
 		end
 	end
 	return false
+end
+
+---@return GameDifficulty
+function GameHelpers.GetGameDifficulty()
+	--int to string
+	return Data.Difficulty(Ext.GetDifficulty())	
 end

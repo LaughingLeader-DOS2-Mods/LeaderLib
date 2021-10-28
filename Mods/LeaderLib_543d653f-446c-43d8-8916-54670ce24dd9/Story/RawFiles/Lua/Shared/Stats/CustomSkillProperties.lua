@@ -72,6 +72,7 @@ CustomSkillProperties.SafeForce = {
 					startPos = target.WorldPos
 				end
 				GameHelpers.ForceMoveObject(attacker, target, distance, skill and skill.Name or nil, startPos)
+				ApplyStatus(target.MyGuid, "LEADERLIB_FORCE_APPLIED", 0.0, 0, attacker.MyGuid)
 			end
 		end
 	end,
@@ -89,6 +90,7 @@ CustomSkillProperties.SafeForce = {
 					startPos = target.WorldPos
 				end
 				GameHelpers.ForceMoveObject(attacker, target, distance, skill and skill.Name or nil, startPos)
+				ApplyStatus(target.MyGuid, "LEADERLIB_FORCE_APPLIED", 0.0, 0, attacker.MyGuid)
 			end
 		end
 	end

@@ -23,34 +23,6 @@ function Timer.Start(timerName, delay, ...)
 	end
 end
 
----[SERVER]
----Starts an Osiris timer for an object, with optional data to include in the callback. Only strings, numbers, and booleans are accepted for optional parameters.
----@param timerName string The generalized timer name. A unique name will be created using the timer name and object.
----@param object UUID|NETID|EsvGameObject
----@param delay integer
----@param ... string|number|boolean Optional variable arguments that will be sent to the timer finished callback.
----@vararg string|number|boolean|table
-function Timer.StartObjectTimer(timerName, object, delay, ...)
-	if not IsClient then
-		local uuid = GameHelpers.GetUUID(object)
-		if uuid then
-			local uniqueTimerName = string.format("%s%s", timerName, uuid)
-			local data = {...}
-			if #data > 0 then
-				Timer.StoreObjectData(uniqueTimerName, timerName, data)
-			else
-				Timer.StoreObjectData(uniqueTimerName, timerName, uuid)
-			end
-			TimerCancel(uniqueTimerName)
-			TimerLaunch(uniqueTimerName, delay)
-		else
-			fprint(LOGLEVEL.WARNING, "[LeaderLib:StartObjectTimer] A valid object is required. Parameter (%s) is invalid!", object or "nil")
-		end
-	else
-		Ext.PrintWarning("[LeaderLib:StartObjectTimer] This function is intended for server-side. Use Timer.StartOneshot on the client!")
-	end
-end
-
 local OneshotTimerData = {}
 
 ---Deprecated @see Timer.Start
@@ -180,6 +152,46 @@ function Timer.RegisterListener(name, callback, fetchGameObjects)
 end
 
 if not IsClient then
+	---Starts an Osiris timer for an object, with optional data to include in the callback. Only strings, numbers, and booleans are accepted for optional parameters.
+	---@param timerName string The generalized timer name. A unique name will be created using the timer name and object.
+	---@param object UUID|NETID|EsvGameObject
+	---@param delay integer
+	---@param ... string|number|boolean Optional variable arguments that will be sent to the timer finished callback.
+	---@vararg string|number|boolean|table
+	function Timer.StartObjectTimer(timerName, object, delay, ...)
+		if not IsClient then
+			local uuid = GameHelpers.GetUUID(object)
+			if uuid then
+				local uniqueTimerName = string.format("%s%s", timerName, uuid)
+				local data = {...}
+				if #data > 0 then
+					Timer.StoreObjectData(uniqueTimerName, timerName, data)
+				else
+					Timer.StoreObjectData(uniqueTimerName, timerName, uuid)
+				end
+				TimerCancel(uniqueTimerName)
+				TimerLaunch(uniqueTimerName, delay)
+			else
+				fprint(LOGLEVEL.WARNING, "[LeaderLib:StartObjectTimer] A valid object is required. Parameter (%s) is invalid!", object or "nil")
+			end
+		else
+			Ext.PrintWarning("[LeaderLib:StartObjectTimer] This function is intended for server-side. Use Timer.StartOneshot on the client!")
+		end
+	end
+
+	---Restarts an object timers.
+	---@param timerName string The generalized timer name. A unique name will be created using the timer name and object.
+	---@param object UUID|NETID|EsvGameObject
+	---@param delay integer
+	function Timer.RestartObjectTimer(timerName, object, delay)
+		local uuid = GameHelpers.GetUUID(object)
+		if uuid then
+			local uniqueTimerName = string.format("%s%s", timerName, uuid)
+			TimerCancel(uniqueTimerName)
+			TimerLaunch(uniqueTimerName, delay)
+		end
+	end
+
 	---@private
 	function Timer.StoreData(timerName, data)
 		if not PersistentVars.TimerData[timerName] then
@@ -191,6 +203,8 @@ if not IsClient then
 	---@private
 	function Timer.StoreObjectData(uniqueTimerName, generalTimerName, data)
 		PersistentVars.TimerNameMap[uniqueTimerName] = generalTimerName
+		--Clear previous, in case the timer is being restarted
+		PersistentVars.TimerData[uniqueTimerName] = nil
 		Timer.StoreData(uniqueTimerName, data)
 	end
 

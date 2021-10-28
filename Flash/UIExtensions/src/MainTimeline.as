@@ -167,7 +167,7 @@ package
 				this.screenHeight = h;
 				this.uiScaling = h / this.designResolution.y;
 
-				if (this.screenScalingTest.visible) {
+				/* if (this.screenScalingTest.visible) {
 					// var dx:Number = (this.designResolution.x - this.screenWidth)/2;
 					// var dy:Number = (this.designResolution.y - this.screenHeight)/2;
 					var rect:Rectangle = new Rectangle(0, 0, this.stage.stageWidth, this.stage.stageHeight);
@@ -175,8 +175,8 @@ package
 					this.screenScalingTest.height = rect.height;
 					this.screenScalingTest.x = rect.x;
 					this.screenScalingTest.y = rect.y;
-					trace(rect);
-				}
+					//trace(rect);
+				} */
 				//ExternalInterface.call("setMcSize", w, h);
 				ExternalInterface.call("LeaderLib_UIExtensions_OnEventResolution", w, h);
 				
@@ -536,6 +536,11 @@ package
 			this.screenScalingTest.visible = false;
 			this.screenScalingTest.mouseEnabled = false;
 			this.screenScalingTest.mouseChildren = false;
+			this.screenScalingTest.buttonMode = false;
+			this.screenScalingTest.enabled = false;
+			this.screenScalingTest.doubleClickEnabled = false;
+			this.screenScalingTest.tabEnabled = false;
+			this.screenScalingTest.tabChildren = false;
 
 			//this.addEventListener(MouseEvent.CLICK,this.fireOnMouseClick, true);
 			//this.addEventListener(MouseEvent.MOUSE_MOVE,this.fireOnMouseMove, true);

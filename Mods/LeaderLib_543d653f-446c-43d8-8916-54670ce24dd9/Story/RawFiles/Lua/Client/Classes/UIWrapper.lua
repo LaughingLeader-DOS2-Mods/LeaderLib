@@ -104,7 +104,6 @@ end
 function UIWrapper:RegisterInvokeListener(event, callback, eventType, uiContext)
 	if self.ID ~= -1 and uiContext ~= "Controller" then
 		Ext.RegisterUITypeInvokeListener(self.ID, event, function(...)
-			print(self, event, ...)
 			local b,err = xpcall(callback, debug.traceback, self, ...)
 			if not b then
 				fprint(LOGLEVEL.ERROR, "[UIWrapper(%s):InvokeListener] Error:%s", self.ID, err)

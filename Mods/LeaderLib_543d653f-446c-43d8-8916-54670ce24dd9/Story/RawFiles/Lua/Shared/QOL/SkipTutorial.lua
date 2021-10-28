@@ -404,6 +404,7 @@ elseif Ext.IsClient() then
 		if main then
 			local x = math.abs(main.x) + 4
 			local y = main.height - (checkboxHeight + 4)
+			--local y = main.screenHeight - (checkboxHeight + 4)
 			return x,y
 		end
 		return SkipTutorial.CheckBoxPos[1] or 0, SkipTutorial.CheckBoxPos[2] or 1016

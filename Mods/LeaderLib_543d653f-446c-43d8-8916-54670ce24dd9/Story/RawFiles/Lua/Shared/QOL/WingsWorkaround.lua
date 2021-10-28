@@ -22,7 +22,8 @@ local wingsVisualProps = {
 	StatsId = "",
 	Arg4 = -1,
 	Arg5 = -1,
-	SurfaceBoost = false
+	SurfaceBoost = false,
+	SurfaceBoosts = {}
 }
 
 ---@param props StatPropertyStatus[]

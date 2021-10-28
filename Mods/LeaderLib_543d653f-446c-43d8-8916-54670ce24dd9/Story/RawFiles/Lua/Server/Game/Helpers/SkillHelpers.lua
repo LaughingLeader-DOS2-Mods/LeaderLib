@@ -169,8 +169,6 @@ local function PrepareProjectileProps(target, skill, source, extraParams)
         end
     end
 
-    print(Lib.serpent.block(props))
-
     return props,radius
 end
 

@@ -64,8 +64,10 @@ end
 
 ---@param ... any Optional parameters to pass to listeners.
 function TagManager:TagAll(...)
-	for i,v in pairs(Ext.GetAllCharacters()) do
-		TagManager:TagObject(v, nil, ...)
+	if not StringHelpers.IsNullOrEmpty(SharedData.RegionData.Current) then
+		for i,v in pairs(Ext.GetAllCharacters(SharedData.RegionData.Current)) do
+			TagManager:TagObject(v, nil, ...)
+		end
 	end
 end
 

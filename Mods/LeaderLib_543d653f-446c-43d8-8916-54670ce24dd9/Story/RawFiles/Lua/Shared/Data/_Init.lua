@@ -2,6 +2,54 @@ if Data == nil then
 	Data = {}
 end
 
+local function CreateEnum(target)
+	local integers = {}
+	local names = {}
+	local startIndex = 1
+	for k,v in pairs(target) do
+		if type(k) == "string" then
+			if v == 0 then startIndex = 0 end
+			names[v] = k
+		else
+			if k == 0 then startIndex = 0 end
+			integers[k] = v
+		end
+	end
+	setmetatable(target, {
+		__call = function(tbl, v)
+			local t = type(v)
+			if t == "number" or t == "string" then
+				return target[v]
+			end
+		end,
+		__newindex = function() end,
+		__index = function() end,
+		__pairs = function(tbl)
+			local i = startIndex
+			local function iter(tbl)
+				local name = names[i]
+				local v = target[name]
+				if v ~= nil then
+					i = i + 1
+					return name,v
+				end
+			end
+			return iter, tbl, names[i]
+		end,
+		__ipairs = function(tbl)
+			local i = startIndex
+			local function iter(tbl,i)
+				local v = target[integers[i]]
+				if v ~= nil then
+					i = i + 1
+					return integers[1],v
+				end
+			end
+			return iter, tbl, integers[1]
+		end
+	})
+end
+
 Ext.Require("Shared/Data/Colors.lua")
 
 Data.OriginalSkillTiers = {}
@@ -52,8 +100,22 @@ Data.DamageTypeEnums = {
 	Water = 8,
 	Earth = 9,
 	Poison = 10,
-	Shadow = 11
+	Shadow = 11,
+	[0] = "None",
+	[1] = "Physical",
+	[2] = "Piercing",
+	[3] = "Corrosive",
+	[4] = "Magic",
+	[5] = "Chaos",
+	[6] = "Fire",
+	[7] = "Air",
+	[8] = "Water",
+	[9] = "Earth",
+	[10] = "Poison",
+	[11] = "Shadow",
 }
+
+CreateEnum(Data.DamageTypeEnums)
 
 Data.DamageTypeToResistance = {
 	--None = "PureResistance", -- Special LeaderLib Addition
@@ -129,8 +191,25 @@ Data.EquipmentSlotNames = {
 	Wings = 11,
 	Horns = 12,
 	Overhead = 13,
-	Sentinel = 14
+	Sentinel = 14,
+	[0] = "Helmet",
+	[1] = "Breast",
+	[2] = "Leggings",
+	[3] = "Weapon",
+	[4] = "Shield",
+	[5] = "Ring",
+	[6] = "Belt",
+	[7] = "Boots",
+	[8] = "Gloves",
+	[9] = "Amulet",
+	[10] = "Ring2",
+	[11] = "Wings",
+	[12] = "Horns",
+	[13] = "Overhead",
+	[14] = "Sentinel",
 }
+
+CreateEnum(Data.EquipmentSlotNames)
 
 local itemslot = {
 	[0] = "Helmet",
@@ -524,17 +603,7 @@ Data.TalentEnum = {
 	MagicCycles = 128,
 }
 
-Data.ItemRarities = {
-	"Common",
-	"Unique",
-	"Uncommon",
-	"Rare",
-	"Epic",
-	"Legendary",
-	"Divine",
-}
-
-Data.RarityEnum = {
+Data.ItemRarity = {
 	Common = 0,
 	Unique = 1,
 	Uncommon = 2,
@@ -542,7 +611,16 @@ Data.RarityEnum = {
 	Epic = 4,
 	Legendary = 5,
 	Divine = 6,
+	[0] = "Common",
+	[1] = "Unique",
+	[2] = "Uncommon",
+	[3] = "Rare",
+	[4] = "Epic",
+	[5] = "Legendary",
+	[6] = "Divine",
 }
+
+CreateEnum(Data.ItemRarity)
 
 ---@class SKILL_STATE
 SKILL_STATE = {
@@ -716,23 +794,26 @@ Data.Surfaces = {
 	["SurfaceDeathfogCloud"] = 77,
 }
 
+for k,v in pairs(Data.Surfaces) do
+	Data.Surfaces[v] = k
+end
+
+CreateEnum(Data.Surfaces)
+
 Data.SurfaceChange = {
 	[0] = "None",
-	"Ignite",
-	"Melt",
-	"Freeze",
-	"Electrify",
-	"Bless",
-	"Curse",
-	"Condense",
-	"Vaporize",
-	"Bloodify",
-	"Contaminate",
-	"Oilify",
-	"Shatter",
-}
-
-Data.SurfaceChangeEnum = {
+	[1] = "Ignite",
+	[2] = "Melt",
+	[3] = "Freeze",
+	[4] = "Electrify",
+	[5] = "Bless",
+	[6] = "Curse",
+	[7] = "Condense",
+	[8] = "Vaporize",
+	[9] = "Bloodify",
+	[10] = "Contaminate",
+	[11] = "Oilify",
+	[12] = "Shatter",
 	None = 0,
 	Ignite = 1,
 	Melt = 2,
@@ -747,6 +828,8 @@ Data.SurfaceChangeEnum = {
 	Oilify = 11,
 	Shatter = 12,
 }
+
+CreateEnum(Data.SurfaceChange)
 
 Data.UIType = {
 	actionProgression = 0,
@@ -1199,3 +1282,20 @@ Data.HitReason = {
     [5] = "DoT",
     [6] = "Reflected",
 }
+
+CreateEnum(Data.HitReason)
+
+Data.Difficulty = {
+	[0] = "Story",
+	[1] = "Explorer",
+	[2] = "Classic",
+	[3] = "Tactician",
+	[4] = "Honour",
+	Story = 0,
+	Explorer = 1,
+	Classic = 2,
+	Tactician = 3,
+	Honour = 4,
+}
+
+CreateEnum(Data.Difficulty)

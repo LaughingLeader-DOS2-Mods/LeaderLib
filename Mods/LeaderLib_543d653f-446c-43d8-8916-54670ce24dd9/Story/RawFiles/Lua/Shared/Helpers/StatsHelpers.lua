@@ -106,15 +106,23 @@ end
 
 ---Returns true if the skill applies a HEAL status.
 ---@param skillId string
+---@param healTypes HealType[] If set, will return true only if the applied statuses matches a provided healing type.
 ---@return boolean
-function GameHelpers.Stats.IsHealingSkill(skillId)
+function GameHelpers.Stats.IsHealingSkill(skillId, healTypes)
 	local props = GameHelpers.Stats.GetSkillProperties(skillId)
 	if props then
 		for _,v in pairs(props) do
 			if v.Type == "Status" then
 				local statusType = GameHelpers.Status.GetStatusType(v.Action)
 				if statusType == "HEAL" or statusType == "HEALING" then
-					return true
+					if not healTypes then
+						return true
+					else
+						local healType = Ext.StatGetAttribute(v.Action, "HealStat")
+						if Common.TableHasValue(healTypes, healType) then
+							return true
+						end
+					end
 				end
 			end
 		end
